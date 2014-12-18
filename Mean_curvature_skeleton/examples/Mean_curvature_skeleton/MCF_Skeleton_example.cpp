@@ -127,7 +127,7 @@ int main()
   mcs->convert_to_skeleton(g, points);
 
   // Get the correspondent surface points.
-  mcs->get_correspondent_vertices(corr);
+  mcs->correspondent_vertices(corr);
 
   vertex_iterator vb, ve;
 

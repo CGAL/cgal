@@ -178,8 +178,8 @@ public:
 
   /**
    * The constructor of a MCF_skel_args object. The constructor
-   * will set the `edgelength_TH` to 0.002 * diagonal of the bounding box
-   * of the given mesh. The other parameters are set to their default values:
+   * will set the `edgelength_TH` to 0.002 * the length of the diagonal of the bounding box
+   * of the input mesh. The other parameters are set to their default values:
    *
    * omega_H = 0.1
    *
@@ -345,7 +345,7 @@ public:
 private:
 
   /** Source triangulated surface mesh for skeletonization */
-  HalfedgeGraph* mesh;
+  HalfedgeGraph* mesh_ptr;
   /** A copy of source mesh.
       All the modifications are operated on it. */
   HalfedgeGraph* hg_ptr;
@@ -362,26 +362,26 @@ private:
   HalfedgeGraphPointPMap hg_point_pmap;
 
   /** Controling the velocity of movement and approximation quality. */
-  double omega_H;
+  double m_omega_H;
   /** Controling the smoothness of the medial approximation. */
-  double omega_P;
+  double m_omega_P;
   /** Edges with length less than `edgelength_TH` will be collapsed. */
-  double edgelength_TH;
+  double m_edgelength_TH;
   /** Triangles with angle greater than `alpha_TH` will be split. */
-  double alpha_TH;
+  double m_alpha_TH;
   /** Value very close to zero. */
-  double zero_TH;
+  double m_zero_TH;
   /** `run_to_converge` will stop if the change of area in one iteration
    *  is less than `delta_area`. */
-  double delta_area;
+  double m_delta_area;
   /** Surface area of original mesh. */
-  double original_area;
+  double m_original_area;
   /** Maximum number of iterations. */
-  int max_iterations;
+  int m_max_iterations;
   /** Should the skeleton be medially centered? */
-  bool is_medially_centered;
+  bool m_is_medially_centered;
   /** Are poles computed? */
-  bool are_poles_computed;
+  bool m_are_poles_computed;
 
   /** Cotangent weight calculator. */
   Weight_calculator weight_calculator;
@@ -413,7 +413,7 @@ private:
   std::map<Skeleton_vertex_descriptor, std::vector<int> > skeleton_to_surface_map;
 
   /** Record the corresponding pole of a point. */
-  std::map<int, int> poles;
+  std::map<int, int> m_poles;
   /** The normal of surface points. */
   std::vector<Vector> normals;
   /** The dual of a cell in Triangulation(a Voronoi point). */
@@ -445,7 +445,7 @@ public:
               EdgeIndexMap Edge_index_map,
               MCF_skel_args<HalfedgeGraph> Skeleton_args
               )
-    :mesh(&P), hg_ptr(new HalfedgeGraph(P)),
+    :mesh_ptr(&P), hg_ptr(new HalfedgeGraph(P)),
      vertex_id_pmap(Vertex_index_map),
      edge_id_pmap(Edge_index_map),
      hg_point_pmap(get(vertex_point, P))
@@ -475,7 +475,7 @@ public:
               EdgeIndexMap Edge_index_map,
               MCF_skel_args<HalfedgeGraph> Skeleton_args
               )
-    :mesh(NULL), hg_ptr(P),
+    :mesh_ptr(NULL), hg_ptr(P),
      vertex_id_pmap(Vertex_index_map),
      edge_id_pmap(Edge_index_map),
      hg_point_pmap(get(vertex_point, *P))
@@ -485,11 +485,12 @@ public:
     init();
   }
 
+#ifndef DOXYGEN_RUNNING
   ~MCF_Skeleton()
   {
     if (owns_hg) delete hg_ptr;
   }
-
+#endif
   /// @} Constructor and Destructor
 
   /// \name Setter and Getter
@@ -497,62 +498,62 @@ public:
 
   void set_omega_H(double value)
   {
-    omega_H = value;
+    m_omega_H = value;
   }
 
-  double get_omega_H()
+  double omega_H()
   {
-    return omega_H;
+    return m_omega_H;
   }
 
   void set_omega_P(double value)
   {
-    omega_P = value;
+    m_omega_P = value;
   }
 
-  double get_omega_P()
+  double omega_P()
   {
-    return omega_P;
+    return m_omega_P;
   }
 
   void set_edgelength_TH(double value)
   {
-    edgelength_TH = value;
+    m_edgelength_TH = value;
   }
 
-  double get_edgelength_TH()
+  double edgelength_TH()
   {
-    return edgelength_TH;
+    return m_edgelength_TH;
   }
 
   void set_delta_area(double value)
   {
-    delta_area = value;
+    m_delta_area = value;
   }
 
-  double get_delta_area()
+  double delta_area()
   {
-    return delta_area;
+    return m_delta_area;
   }
 
   void set_is_medially_centered(bool value)
   {
-    is_medially_centered = value;
+    m_is_medially_centered = value;
   }
 
-  bool get_is_medially_centered()
+  bool is_medially_centered()
   {
-    return is_medially_centered;
+    return m_is_medially_centered;
   }
 
   void set_max_iterations(int value)
   {
-    max_iterations = value;
+    m_max_iterations = value;
   }
 
-  int get_max_iterations()
+  int max_iterations()
   {
-    return max_iterations;
+    return m_max_iterations;
   }
 
   /**
@@ -566,9 +567,9 @@ public:
   /**
    * Get the pointer to the copy of source mesh.
    */
-  HalfedgeGraph* get_mesh()
+  HalfedgeGraph* mesh()
   {
-    return mesh;
+    return mesh_ptr;
   }
 
   /**
@@ -589,22 +590,22 @@ public:
 
   void set_alpha_TH(double value)
   {
-    alpha_TH = value;
+    m_alpha_TH = value;
   }
 
-  double get_alpha_TH()
+  double alpha_TH()
   {
-    return alpha_TH;
+    return m_alpha_TH;
   }
 
   void set_zero_TH(double value)
   {
-    zero_TH = value;
+    m_zero_TH = value;
   }
 
-  double get_zero_TH()
+  double zero_TH()
   {
-    return zero_TH;
+    return m_zero_TH;
   }
 
   /// \endcond
@@ -617,7 +618,7 @@ public:
    * @param fixed_points
    *        return the positions of fixed points
    */
-  void get_fixed_points(std::vector<Point>& fixed_points)
+  void fixed_points(std::vector<Point>& fixed_points)
   {
     fixed_points.clear();
     vertex_iterator vb, ve;
@@ -638,7 +639,7 @@ public:
    * @param non_fixed_points
    *        return the positions of non-fixed points
    */
-  void get_non_fixed_points(std::vector<Point>& non_fixed_points)
+  void non_fixed_points(std::vector<Point>& non_fixed_points)
   {
     non_fixed_points.clear();
     vertex_iterator vb, ve;
@@ -659,7 +660,7 @@ public:
    * @param max_poles
    *        for each mesh vertex, record its correspondent Voronoi pole position
    */
-  void get_poles(std::vector<Point>& max_poles)
+  void poles(std::vector<Point>& max_poles)
   {
     max_poles.resize(num_vertices(*hg_ptr));
     vertex_iterator vb, ve;
@@ -668,7 +669,7 @@ public:
     {
       vertex_descriptor v = *vb;
       int vid = get(vertex_id_pmap, v);
-      max_poles[cnt++] = cell_dual[poles[vid]];
+      max_poles[cnt++] = cell_dual[m_poles[vid]];
     }
   }
 
@@ -677,12 +678,12 @@ public:
   /// @} Setter and Getter
 
 
-  /// \name Public Algorithm API
+  /// \name High Level Functions
   /// @{
 
   /**
-   * Extract the skeleton curve for the mesh. The algorithm repeatedly
-   * contract the mesh until convergence, then turn the contracted mesh
+   * Extract the skeleton curve for the mesh: the algorithm repeatedly
+   * contracts the mesh until convergence, then turns the contracted mesh
    * to a curve skeleton.
    *
    * @param g
@@ -697,8 +698,8 @@ public:
   }
 
   /**
-   * Extract the skeleton curve for the mesh. The algorithm repeatedly
-   * contract the mesh until convergence, then turn the contracted mesh
+   * Extract the skeleton curve for the mesh: the algorithm repeatedly
+   * contracts the mesh until convergence, then turns the contracted mesh
    * to a curve skeleton.
    *
    * @param g
@@ -713,8 +714,13 @@ public:
   {
     run_to_converge();
     convert_to_skeleton(g, points);
-    get_correspondent_vertices(skeleton_to_surface);
+    correspondent_vertices(skeleton_to_surface);
   }
+  /// @}
+  
+  /// \name Low Level Functions
+  /// The following functions enable the user to run the mean curvature flow skeleton algorithm step by step.
+  /// @{
 
   /**
    * Contract the mesh by mean curvature flow.
@@ -729,10 +735,10 @@ public:
 
     int nver = num_vertices(*hg_ptr);
     int nrows;
-    if (is_medially_centered)
+    if (m_is_medially_centered)
     {
       nrows = nver * 3;
-      if (!are_poles_computed)
+      if (!m_are_poles_computed)
       {
         compute_voronoi_pole();
       }
@@ -809,7 +815,7 @@ public:
   }
 
   /**
-   * Split triangles with one angle greater than `alpha_TH`.
+   * Split triangles with one angle greater than `m_alpha_TH`.
    */
   int split_triangles()
   {
@@ -903,20 +909,20 @@ public:
       detect_degeneracies();
 
       double area = internal::get_surface_area(*hg_ptr, hg_point_pmap);
-      double area_ratio = fabs(last_area - area) / original_area;
+      double area_ratio = fabs(last_area - area) / m_original_area;
 
       MCFSKEL_INFO(std::cout << "area " << area << "\n";)
       MCFSKEL_INFO(std::cout << "|area - last_area| / original_area "
                              << area_ratio << "\n";)
 
-      if (area_ratio < delta_area)
+      if (area_ratio < m_delta_area)
       {
         break;
       }
       last_area = area;
 
       num_iteration++;
-      if (num_iteration >= max_iterations)
+      if (num_iteration >= m_max_iterations)
       {
         break;
       }
@@ -943,7 +949,7 @@ public:
    * @param skeleton_to_surface
    *        for each skeletal point, record its correspondent surface points
    */
-  void get_correspondent_vertices(GraphCorrelationPMap& skeleton_to_surface)
+  void correspondent_vertices(GraphCorrelationPMap& skeleton_to_surface)
   {
     typename std::map<Skeleton_vertex_descriptor, std::vector<int> >::iterator iter;
     for (iter = skeleton_to_surface_map.begin();
@@ -982,27 +988,27 @@ private:
   /// Initialize the parameters for MCF_Skeleton
   void init_args(MCF_skel_args<HalfedgeGraph> Skeleton_args)
   {
-    omega_H = Skeleton_args.omega_H;
-    omega_P = Skeleton_args.omega_P;
-    edgelength_TH = Skeleton_args.edgelength_TH;
-    delta_area = Skeleton_args.delta_area;
-    max_iterations = Skeleton_args.max_iterations;
-    is_medially_centered = Skeleton_args.is_medially_centered;
+    m_omega_H = Skeleton_args.omega_H;
+    m_omega_P = Skeleton_args.omega_P;
+    m_edgelength_TH = Skeleton_args.edgelength_TH;
+    m_delta_area = Skeleton_args.delta_area;
+    m_max_iterations = Skeleton_args.max_iterations;
+    m_is_medially_centered = Skeleton_args.is_medially_centered;
     weight_calculator = Weight_calculator();
-    alpha_TH = 110;
-    zero_TH = 1e-7;
+    m_alpha_TH = 110;
+    m_zero_TH = 1e-7;
   }
 
   /// Initialize some global data structures such as vertex id.
   void init()
   {
-    are_poles_computed = false;
+    m_are_poles_computed = false;
 
     vertex_iterator vb, ve;
 
-    alpha_TH *= (M_PI / 180.0);
+    m_alpha_TH *= (M_PI / 180.0);
     double area = internal::get_surface_area(*hg_ptr, hg_point_pmap);
-    original_area = area;
+    m_original_area = area;
 
     // initialize index maps
     vertex_id_count = 0;
@@ -1010,10 +1016,10 @@ private:
     {
       put(vertex_id_pmap, *vb, vertex_id_count++);
     }
-    if (mesh != NULL)
+    if (mesh_ptr != NULL)
     {
       vertex_id_count = 0;
-      for (boost::tie(vb, ve) = vertices(*mesh); vb != ve; ++vb)
+      for (boost::tie(vb, ve) = vertices(*mesh_ptr); vb != ve; ++vb)
       {
         put(vertex_id_pmap, *vb, vertex_id_count++);
       }
@@ -1031,7 +1037,7 @@ private:
     is_vertex_fixed_map.clear();
     correspondence.clear();
 
-    if (is_medially_centered)
+    if (m_is_medially_centered)
     {
       compute_voronoi_pole();
     }
@@ -1071,18 +1077,18 @@ private:
       // if the vertex is fixed
       if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
       {
-        A.set_coef(i + nver, i, 1.0 / zero_TH, true);
+        A.set_coef(i + nver, i, 1.0 / m_zero_TH, true);
       }
       else
       {
-        A.set_coef(i + nver, i, omega_H, true);
-        if (is_medially_centered)
+        A.set_coef(i + nver, i, m_omega_H, true);
+        if (m_is_medially_centered)
         {
           if (id < max_id)
           {
-            if (test_inside(cell_dual[poles[id]]) == CGAL::ON_BOUNDED_SIDE)
+            if (test_inside(cell_dual[m_poles[id]]) == CGAL::ON_BOUNDED_SIDE)
             {
-              A.set_coef(i + nver * 2, i, omega_P, true);
+              A.set_coef(i + nver * 2, i, m_omega_P, true);
             }
           }
         }
@@ -1144,18 +1150,18 @@ private:
       double oh, op = 0.0;
       if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
       {
-        oh = 1.0 / zero_TH;
+        oh = 1.0 / m_zero_TH;
       }
       else
       {
-        oh = omega_H;
-        if (is_medially_centered)
+        oh = m_omega_H;
+        if (m_is_medially_centered)
         {
           if (id < max_id)
           {
-            if (test_inside(cell_dual[poles[id]]) == CGAL::ON_BOUNDED_SIDE)
+            if (test_inside(cell_dual[m_poles[id]]) == CGAL::ON_BOUNDED_SIDE)
             {
-              op = omega_P;
+              op = m_omega_P;
             }
           }
         }
@@ -1163,11 +1169,11 @@ private:
       Bx[i + nver] = get(hg_point_pmap, vi).x() * oh;
       By[i + nver] = get(hg_point_pmap, vi).y() * oh;
       Bz[i + nver] = get(hg_point_pmap, vi).z() * oh;
-      if (is_medially_centered)
+      if (m_is_medially_centered)
       {
-        double x = to_double(cell_dual[poles[id]].x());
-        double y = to_double(cell_dual[poles[id]].y());
-        double z = to_double(cell_dual[poles[id]].z());
+        double x = to_double(cell_dual[m_poles[id]].x());
+        double y = to_double(cell_dual[m_poles[id]].y());
+        double z = to_double(cell_dual[m_poles[id]].z());
         Bx[i + nver * 2] = x * op;
         By[i + nver * 2] = y * op;
         Bz[i + nver * 2] = z * op;
@@ -1212,16 +1218,16 @@ private:
     // This is a stop predicate (defines when the algorithm terminates).
     // The simplification stops when the length of all edges is greater
     // than the minimum threshold.
-    CGAL::internal::Minimum_length_predicate<HalfedgeGraph> stop(edgelength_TH);
+    CGAL::internal::Minimum_length_predicate<HalfedgeGraph> stop(m_edgelength_TH);
 
     // midpoint placement without geometric test
     SMS::Geometric_test_skipper< SMS::Midpoint_placement<HalfedgeGraph> > placement;
 
     internal::Track_correspondence_visitor<HalfedgeGraph, HalfedgeGraphPointPMap> vis;
-    if (is_medially_centered)
+    if (m_is_medially_centered)
     {
       vis = internal::Track_correspondence_visitor<HalfedgeGraph, HalfedgeGraphPointPMap>
-            (&hg_point_pmap, &correspondence, &poles, &cell_dual, max_id);
+            (&hg_point_pmap, &correspondence, &m_poles, &cell_dual, max_id);
     }
     else
     {
@@ -1280,23 +1286,23 @@ private:
       correspondence.erase(iter);
     }
 
-    if (is_medially_centered)
+    if (m_is_medially_centered)
     {
-      Point pole0 = Point(to_double(cell_dual[poles[id0]].x()),
-                          to_double(cell_dual[poles[id0]].y()),
-                          to_double(cell_dual[poles[id0]].z()));
-      Point pole1 = Point(to_double(cell_dual[poles[id1]].x()),
-                          to_double(cell_dual[poles[id1]].y()),
-                          to_double(cell_dual[poles[id1]].z()));
+      Point pole0 = Point(to_double(cell_dual[m_poles[id0]].x()),
+                          to_double(cell_dual[m_poles[id0]].y()),
+                          to_double(cell_dual[m_poles[id0]].z()));
+      Point pole1 = Point(to_double(cell_dual[m_poles[id1]].x()),
+                          to_double(cell_dual[m_poles[id1]].y()),
+                          to_double(cell_dual[m_poles[id1]].z()));
       Point p1 = get(hg_point_pmap, v1);
       double dis_to_pole0 = sqrt(squared_distance(pole0, p1));
       double dis_to_pole1 = sqrt(squared_distance(pole1, p1));
       if (dis_to_pole0 < dis_to_pole1)
       {
-        poles[id1] = poles[id0];
+        m_poles[id1] = m_poles[id0];
       }
-      std::map<int, int>::iterator pole_iter = poles.find(id0);
-      poles.erase(pole_iter);
+      std::map<int, int>::iterator pole_iter = m_poles.find(id0);
+      m_poles.erase(pole_iter);
     }
   }
 
@@ -1323,7 +1329,7 @@ private:
       vertex_descriptor vj = target(h, *hg_ptr);
       double edge_length = sqrt(squared_distance(get(hg_point_pmap, vi),
                                                  get(hg_point_pmap, vj)));
-      if (internal::is_collapse_ok(*hg_ptr, h) && edge_length < edgelength_TH)
+      if (internal::is_collapse_ok(*hg_ptr, h) && edge_length < m_edgelength_TH)
       {
         Point p = midpoint(
           get(vertex_point, *hg_ptr, source(h, *hg_ptr)),
@@ -1413,7 +1419,7 @@ private:
         double dis_jk = sqrt(dis2_jk);
 
         // A degenerate triangle will never undergo a split (but rather a collapse...)
-        if (dis_ij < zero_TH || dis_ik < zero_TH || dis_jk < zero_TH)
+        if (dis_ij < m_zero_TH || dis_ik < m_zero_TH || dis_jk < m_zero_TH)
         {
           halfedge_angle[e_id] = -1;
         }
@@ -1443,16 +1449,16 @@ private:
     Point pn = Point(ps[0] + st[0], ps[1] + st[1], ps[2] + st[2]);
 
     // project the pole
-    if (is_medially_centered)
+    if (m_is_medially_centered)
     {
       int sid = get(vertex_id_pmap, vs);
       int tid = get(vertex_id_pmap, vt);
-      Point pole_s = cell_dual[poles[sid]];
-      Point pole_t = cell_dual[poles[tid]];
+      Point pole_s = cell_dual[m_poles[sid]];
+      Point pole_t = cell_dual[m_poles[tid]];
       Vector pole_st = pole_t - pole_s;
       Vector p_projector = pole_st / sqrt(pole_st.squared_length());
       Point pole_n = pole_s + p_projector * t;
-      poles[vertex_id_count] = cell_dual.size();
+      m_poles[vertex_id_count] = cell_dual.size();
       cell_dual.push_back(pole_n);
     }
     return pn;
@@ -1484,7 +1490,7 @@ private:
 
       double angle_i = halfedge_angle[ei_id];
       double angle_j = halfedge_angle[ej_id];
-      if (angle_i < alpha_TH || angle_j < alpha_TH)
+      if (angle_i < m_alpha_TH || angle_j < m_alpha_TH)
       {
         continue;
       }
@@ -1526,7 +1532,7 @@ private:
       if (is_vertex_fixed_map.find(idx) == is_vertex_fixed_map.end())
       {
         bool willbefixed = internal::is_vertex_degenerate(*hg_ptr, hg_point_pmap,
-                                                          v, edgelength_TH);
+                                                          v, m_edgelength_TH);
         if (willbefixed)
         {
           is_vertex_fixed_map[idx] = willbefixed;
@@ -1545,7 +1551,7 @@ private:
   int detect_degeneracies_heuristic()
   {
     int num_fixed = 0;
-    double elength_fixed = edgelength_TH;
+    double elength_fixed = m_edgelength_TH;
     vertex_iterator vb, ve;
     for (boost::tie(vb, ve) = vertices(*hg_ptr); vb != ve; ++vb)
     {
@@ -1636,7 +1642,7 @@ private:
       cell_id++;
     }
 
-    poles.clear();
+    m_poles.clear();
     for (size_t i = 0; i < point_to_pole.size(); ++i)
     {
       Point surface_point = Point(to_double(points[i].first.x()),
@@ -1663,9 +1669,9 @@ private:
         }
       }
 
-      poles[i] = max_neg_i;
+      m_poles[i] = max_neg_i;
     }
-    are_poles_computed = true;
+    m_are_poles_computed = true;
   }
 
   /// Compute an approximate vertex normal for all vertices.
@@ -1711,7 +1717,7 @@ private:
 
 /// \ingroup PkgMeanCurvatureSkeleton3
 /// @brief Extract a medially centered curve skeleton for the mesh.
-///
+/// \todo check if the option in Skeleton_args is used
 /// @pre the surface mesh is a watertight triangular mesh
 ///
 /// @tparam HalfedgeGraph
@@ -1735,11 +1741,11 @@ private:
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with Graph::vertex_descriptor as key and
 ///         MCF_Skeleton::Point as value type
-///         The default is boost::property_map<HalfedgeGraph, CGAL::vertex_point_t>::type.
 /// @tparam HalfedgeGraphPointPMap
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with HalfedgeGraph::vertex_descriptor as key and
-///         MCF_Skeleton::Point as value type
+///         MCF_Skeleton::Point as value type.
+///         The default is `boost::property_map<HalfedgeGraph, CGAL::vertex_point_t>::type`.
 /// @tparam SparseLinearAlgebraTraits_d
 ///         a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
 ///         The default is CGAL::MCF_default_solver<double>::type.
@@ -1781,7 +1787,7 @@ void extract_skeleton(HalfedgeGraph& P,
   mcs.run_to_converge();
   mcs.convert_to_skeleton(g, points);
 
-  mcs.get_correspondent_vertices(skeleton_to_surface);
+  mcs.correspondent_vertices(skeleton_to_surface);
 }
 
 template <class HalfedgeGraph,

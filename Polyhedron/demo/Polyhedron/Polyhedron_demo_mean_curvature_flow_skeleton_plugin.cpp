@@ -253,7 +253,7 @@ public:
       Scene_polyhedron_item* contracted_item = new Scene_polyhedron_item(contracted_mesh);
       contracted_item->setName(QString("contracted mesh of %1").arg(item->name()));
 
-      mCopy = mcs->get_mesh();
+      mCopy = mcs->mesh();
       copyItemIndex = scene->mainSelectionIndex();
 
       contractedItemIndex = scene->addItem(contracted_item);
@@ -291,7 +291,7 @@ public:
         Scene_polyhedron_item* contracted_item = new Scene_polyhedron_item(contracted_mesh);
         contracted_item->setName(QString("contracted mesh of %1").arg(item->name()));
 
-        mCopy = mcs->get_mesh();
+        mCopy = mcs->mesh();
         copyItemIndex = scene->mainSelectionIndex();
 
         contractedItemIndex = scene->addItem(contracted_item);
@@ -431,7 +431,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   Correspondence_map corr_map;
   GraphCorrelationPMap corr(corr_map);
 
-  mcs->get_correspondent_vertices(corr);
+  mcs->correspondent_vertices(corr);
 
   // add segmentation
   vertex_iterator vb, ve;
@@ -773,7 +773,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
   fixedPointsItem->setName(QString("fixed points of %1").arg(item->name()));
 
   std::vector<Point> fixedPoints;
-  mcs->get_fixed_points(fixedPoints);
+  mcs->fixed_points(fixedPoints);
 
   Point_set *ps = fixedPointsItem->point_set();
   for (size_t i = 0; i < fixedPoints.size(); ++i)
@@ -835,7 +835,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
   fixedPointsItem->setName(QString("fixed points of %1").arg(contracted_item->name()));
 
   std::vector<Point> fixedPoints;
-  mcs->get_fixed_points(fixedPoints);
+  mcs->fixed_points(fixedPoints);
 
   Point_set *ps = fixedPointsItem->point_set();
   for (size_t i = 0; i < fixedPoints.size(); ++i)
@@ -866,7 +866,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
   nonFixedPointsItem->setName("non-fixed points");
   nonFixedPointsItem->setColor(QColor(0, 255, 0));
   std::vector<Point> nonFixedPoints;
-  mcs->get_non_fixed_points(nonFixedPoints);
+  mcs->non_fixed_points(nonFixedPoints);
   ps = nonFixedPointsItem->point_set();
   for (size_t i = 0; i < nonFixedPoints.size(); ++i)
   {
@@ -891,7 +891,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
 
   Polyhedron* pMesh = item->polyhedron();
   std::vector<Point> pole_points;
-  mcs->get_poles(pole_points);
+  mcs->poles(pole_points);
   vertex_iterator vb, ve;
   int id = 0;
   for (boost::tie(vb, ve) = vertices(*pMesh); vb != ve; ++vb)
@@ -952,7 +952,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   skeleton_points_map.clear();
   GraphPointPMap skeleton_points(skeleton_points_map);
   mcs->convert_to_skeleton(skeleton_curve, skeleton_points);
-  mcs->get_correspondent_vertices(corr);
+  mcs->correspondent_vertices(corr);
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
@@ -1015,7 +1015,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
   fixedPointsItem->setName(QString("fixed points of %1").arg(item->name()));
 
   std::vector<Point> fixedPoints;
-  mcs->get_fixed_points(fixedPoints);
+  mcs->fixed_points(fixedPoints);
 
   Point_set *ps = fixedPointsItem->point_set();
   for (size_t i = 0; i < fixedPoints.size(); ++i)
