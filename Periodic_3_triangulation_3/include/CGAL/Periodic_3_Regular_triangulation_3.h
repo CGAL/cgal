@@ -318,8 +318,7 @@ _side_of_power_sphere(const Cell_handle &c, const Weighted_point &q,
 
   // We successively look whether the leading monomial, then 2nd monomial
   // of the determinant has non null coefficient.
-  // 2 iterations are enough (cf paper)
-  for (int i=4; i>2; --i) {
+  for (int i=4; i>1; --i) {
     if (points[i] == &pts[4]) {
       CGAL_triangulation_assertion(orientation(p0, p1, p2, p3, o0, o1, o2, o3)
           == POSITIVE);
