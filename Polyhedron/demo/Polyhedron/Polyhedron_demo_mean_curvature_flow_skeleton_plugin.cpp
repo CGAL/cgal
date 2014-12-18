@@ -489,11 +489,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
     max_dis = (std::min)(max_dis, avg_dis);
   }
 
-  for (Facet_iterator f = segment_mesh->facets_begin(); f != segment_mesh->facets_end(); ++f)
-  {
-    sdf_property_map[f] = (sdf_property_map[f] - min_dis) / (max_dis - min_dis);
-  }
-
   CGAL::sdf_values_postprocessing (*segment_mesh, sdf_property_map);
 
   // create a property-map for segment-ids (it is an adaptor for this case)
