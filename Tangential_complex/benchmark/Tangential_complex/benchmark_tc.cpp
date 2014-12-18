@@ -156,8 +156,8 @@ int main()
     
     std::cerr << "Number of points before sparsification: "
       << points.size() << std::endl;
-    //points = sparsify_point_set(
-    //  k, points, FT(INPUT_SPARSITY)*FT(INPUT_SPARSITY));
+    points = sparsify_point_set(
+      k, points, FT(INPUT_SPARSITY)*FT(INPUT_SPARSITY));
     std::cerr << "Number of points after sparsification: "
       << points.size() << std::endl;
 
