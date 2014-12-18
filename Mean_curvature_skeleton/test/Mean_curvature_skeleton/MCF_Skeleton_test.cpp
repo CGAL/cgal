@@ -141,10 +141,10 @@ int main()
     return EXIT_FAILURE;
   }
 
-  double edgelength_TH = 0.002;
-  mcs->set_edgelength_TH(edgelength_TH);
-  value = mcs->get_edgelength_TH();
-  if (!check_value_equal(edgelength_TH, value))
+  double min_edge_length = 0.002;
+  mcs->set_min_edge_length(min_edge_length);
+  value = mcs->get_min_edge_length();
+  if (!check_value_equal(min_edge_length, value))
   {
     return EXIT_FAILURE;
   }
@@ -192,7 +192,7 @@ int main()
   // Check the following API does not crash.
   mcs->contract_geometry();
 
-  mcs->update_topology();
+  mcs->remesh();
 
   mcs->collapse_edges();
 
@@ -202,7 +202,7 @@ int main()
 
   mcs->contract();
 
-  mcs->run_to_converge();
+  mcs->contract_until_convergence();
 
   mcs->convert_to_skeleton(g, points);
 
@@ -236,7 +236,7 @@ int main()
   points_map.clear();
   corr_map.clear();
 
-  mcs->run_to_converge();
+  mcs->contract_until_convergence();
 
   mcs->convert_to_skeleton(g, points);
 

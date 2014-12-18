@@ -44,13 +44,13 @@ namespace internal {
 
 * @param hg the mesh containing the given vertex
 * @param root the given vertex
-* @param edgelength_TH the diameter of the geodesic disk
+* @param min_edge_length the diameter of the geodesic disk
 */
 template<class HalfedgeGraph, class HalfedgeGraphPointPMap>
 bool is_vertex_degenerate(HalfedgeGraph& hg,
                           HalfedgeGraphPointPMap& hg_point_pmap,
                           typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor root,
-                          double edgelength_TH)
+                          double min_edge_length)
 {
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor          vertex_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor        halfedge_descriptor;
@@ -63,7 +63,7 @@ bool is_vertex_degenerate(HalfedgeGraph& hg,
   std::set<Face_handle> faces_in_disk;
 
   vertices_in_disk.clear();
-  search_vertices_in_disk(hg, hg_point_pmap, root, vertices_in_disk, edgelength_TH);
+  search_vertices_in_disk(hg, hg_point_pmap, root, vertices_in_disk, min_edge_length);
 
   typename std::set<vertex_descriptor>::iterator v_iter;
   for (v_iter = vertices_in_disk.begin(); v_iter != vertices_in_disk.end(); ++v_iter)
@@ -117,14 +117,14 @@ bool is_vertex_degenerate(HalfedgeGraph& hg,
 * @param hg the mesh containing the vertices
 * @param root the center of the geodesic disk
 * @param vertices_in_disk containing the found vertices within the disk
-* @param edgelength_TH the diameter of the geodesic disk
+* @param min_edge_length the diameter of the geodesic disk
 */
 template<class HalfedgeGraph, class HalfedgeGraphPointPMap>
 void search_vertices_in_disk(HalfedgeGraph& hg,
                              HalfedgeGraphPointPMap& hg_point_pmap,
                              typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor root,
                              std::set<typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor>& vertices_in_disk,
-                             double edgelength_TH)
+                             double min_edge_length)
 {
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor          vertex_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor            halfedge_descriptor;
@@ -137,7 +137,7 @@ void search_vertices_in_disk(HalfedgeGraph& hg,
   vertices_in_disk.insert(root);
   vertex_visited[root] = true;
 
-  double dist_TH = edgelength_TH;
+  double dist_TH = min_edge_length;
   while (!Q.empty())
   {
     vertex_descriptor v = Q.front();

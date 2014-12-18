@@ -112,7 +112,7 @@ int main()
   mcs->contract_geometry();
 
   // 2. Collapse short edges and split bad triangles.
-  mcs->update_topology();
+  mcs->remesh();
 
   // 3. Fix degenerate vertices.
   mcs->detect_degeneracies();
@@ -121,7 +121,7 @@ int main()
   mcs->contract();
 
   // Iteratively apply step 1 to 3 until convergence.
-  mcs->run_to_converge();
+  mcs->contract_until_convergence();
 
   // Convert the contracted mesh into a curve skeleton.
   mcs->convert_to_skeleton(g, points);

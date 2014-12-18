@@ -37,7 +37,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="edgelength_TH">
+   <widget class="QDoubleSpinBox" name="min_edge_length">
     <property name="geometry">
      <rect>
       <x>124</x>
@@ -60,7 +60,7 @@
      <string>omega_H</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_edgelength_TH">
+   <widget class="QLabel" name="label_min_edge_length">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -70,7 +70,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>edgelength_TH</string>
+     <string>min_edge_length</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_collapse">
@@ -224,9 +224,9 @@
     </property>
    </widget>
    <zorder>omega_H</zorder>
-   <zorder>edgelength_TH</zorder>
+   <zorder>min_edge_length</zorder>
    <zorder>label_omega_H</zorder>
-   <zorder>label_edgelength_TH</zorder>
+   <zorder>label_min_edge_length</zorder>
    <zorder>pushButton_contract</zorder>
    <zorder>pushButton_collapse</zorder>
    <zorder>pushButton_split</zorder>

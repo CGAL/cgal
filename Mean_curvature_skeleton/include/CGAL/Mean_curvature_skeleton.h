@@ -169,7 +169,7 @@ public:
 
   /**
    * The constructor of a MCF_skel_args object. The constructor
-   * will set the `edgelength_TH` to 0.002 * the length of the diagonal of the bounding box
+   * will set the `min_edge_length` to 0.002 * the length of the diagonal of the bounding box
    * of the input mesh. The other parameters are set to their default values:
    *
    * omega_H = 0.1
@@ -193,7 +193,7 @@ public:
     Bbox bbox = CGAL::bbox_3(boost::make_transform_iterator(vb, v_to_p),
                              boost::make_transform_iterator(ve, v_to_p));
     double diag = diagonal(bbox);
-    edgelength_TH = 0.002 * diag;
+    min_edge_length = 0.002 * diag;
   }
 
   /** Control the velocity of movement and approximation quality.
@@ -204,9 +204,9 @@ public:
    *  Increasing `omega_P` will result a skeleton more closely attached
    *  to the medial axis, but slow down the speed of contraction. */
   double omega_P;
-  /** Edges with length less than `edgelength_TH` will be collapsed */
-  double edgelength_TH;
-  /** `run_to_converge` function of `Mean_curvature_flow_skeletonization` class will stop if
+  /** Edges with length less than `min_edge_length` will be collapsed */
+  double min_edge_length;
+  /** `contract_until_convergence` function of `Mean_curvature_flow_skeletonization` class will stop if
    *  the change of area in one iteration is less than `delta_area` */
   double delta_area;
   /** Maximum number of iterations. Used to prevent the algorithm running
@@ -351,13 +351,13 @@ private:
   double m_omega_H;
   /** Controling the smoothness of the medial approximation. */
   double m_omega_P;
-  /** Edges with length less than `edgelength_TH` will be collapsed. */
-  double m_edgelength_TH;
+  /** Edges with length less than `min_edge_length` will be collapsed. */
+  double m_min_edge_length;
   /** Triangles with angle greater than `alpha_TH` will be split. */
   double m_alpha_TH;
   /** Value very close to zero. */
   double m_zero_TH;
-  /** `run_to_converge` will stop if the change of area in one iteration
+  /** `contract_until_convergence` will stop if the change of area in one iteration
    *  is less than `delta_area`. */
   double m_delta_area;
   /** Surface area of original mesh. */
@@ -500,18 +500,17 @@ public:
   }
   
   /** Threshold used to select edges collapsed during contraction.*/
-  double edgelength_TH()
+  double min_edge_length()
   {
-    return m_edgelength_TH;
+    return m_min_edge_length;
   }
 
-  void set_edgelength_TH(double value)
+  void set_min_edge_length(double value)
   {
-    m_edgelength_TH = value;
+    m_min_edge_length = value;
   }
 
-  /** `run_to_converge` function of `Mean_curvature_flow_skeletonization` class will stop if
-   *  the change of area in one iteration is less than `delta_area` */
+  /** Stop criterium used by `contract_until_convergence()` to detect convergence. */
   double delta_area()
   {
     return m_delta_area;
@@ -522,8 +521,7 @@ public:
     m_delta_area = value;
   }
 
-  /** If set to true, the result skeleton is medially centered.
-      Otherwise set to false. */
+  /** If `true`, the result skeleton is medially centered. */
   bool is_medially_centered()
   {
     return m_is_medially_centered;
@@ -534,9 +532,7 @@ public:
     m_is_medially_centered = value;
   }
   
-  /** Maximum number of iterations. Used to prevent the algorithm running
-      too many iterations but still does not satisfy the stopping criteria
-      defined by `delta_area` */
+  /** Maximum number of iterations performed by `contract_until_convergence()`. */
   int max_iterations()
   {
     return m_max_iterations;
@@ -679,13 +675,15 @@ public:
   template <class Graph, class GraphPointPMap>
   void extract_skeleton(Graph& skeleton, GraphPointPMap& skeleton_points)
   {
-    run_to_converge();
+    contract_until_convergence();
     convert_to_skeleton(skeleton, skeleton_points);
   }
 
   /**
    * Creates the curve skeleton: the input surface mesh is iteratively
    * contracted until convergence, and then turned into a curve skeleton.
+   *
+   * This is equivalent to calling `contract_until_convergence()` and `convert_to_skeleton()`.
    *
    * @param skeleton
    *        graph that will contain the skeleton of the input mesh
@@ -712,7 +710,7 @@ public:
                         GraphPointPMap& skeleton_points,
                         GraphVerticesPMap& skeleton_to_hg_vertices)
   {
-    run_to_converge();
+    contract_until_convergence();
     convert_to_skeleton(skeleton, skeleton_points);
     correspondent_vertices(skeleton_to_hg_vertices);
   }
@@ -782,7 +780,7 @@ public:
   }
 
   /**
-   * Collapse short edges with length less than `edgelength_TH()`.
+   * Collapses edges with length less than `min_edge_length()` and returns the number of edges collapsed.
    */
   int collapse_edges()
   {
@@ -815,7 +813,8 @@ public:
   }
 
   /**
-   * Split faces having one angle greater than `alpha_TH()`.
+   * Splits faces having one angle greater than `alpha_TH()` and returns the number of faces split.
+   * \todo define alpha_TH.
    */
   int split_faces()
   {
@@ -844,10 +843,11 @@ public:
     return num_splits;
   }
 
+#ifndef DOXYGEN_RUNNING
   /**
-   * Run a combination of `collapse_edges()` and `split_faces()`.
+   * Sequentially calls `collapse_edges()` and `split_faces()` and returns the number of edges collapsed and faces split.
    */
-  int update_topology()
+  int remesh()
   {
     MCFSKEL_DEBUG(std::cerr << "before collapse edges\n";)
 
@@ -859,10 +859,11 @@ public:
 
     return num_collapses + num_splits;
   }
+#endif
 
   /**
-   * Fix degenerate vertices.
-   * \todo add return type definition
+   * Fixes the position of degenerate vertices and returns the number of newly fixed vertices.
+   * \todo int -> size_t
    */
   int detect_degeneracies()
   {
@@ -876,14 +877,11 @@ public:
     }
   }
 
-  /**
-   * Run an iteration of `contract_geometry()`, `update_topology()` and
-   * `detect_degeneracies()`.
-   */
+#ifndef DOXYGEN_RUNNING
   void contract()
   {
     contract_geometry();
-    update_topology();
+    remesh();
     detect_degeneracies();
 
     MCFSKEL_DEBUG(print_edges();)
@@ -891,13 +889,14 @@ public:
     MCFSKEL_INFO(double area = internal::get_surface_area(*hg_ptr, hg_point_pmap);)
     MCFSKEL_INFO(std::cout << "area " << area << "\n";)
   }
+#endif
 
   /**
-   * Run iterations of `contract_geometry()`, `update_topology()` and
-   * `detect_degeneracies()` until the change of surface area during one
+   * Iteratively calls the sequence `contract_geometry()`,  `collapse_edges()`, `split_faces()`, and `detect_degeneracies()`
+   * until the change of surface area during one
    * iteration is less than `delta_area()` * original surface area.
    */
-  void run_to_converge()
+  void contract_until_convergence()
   {
     double last_area = 0;
     int num_iteration = 0;
@@ -906,7 +905,7 @@ public:
       MCFSKEL_INFO(std::cout << "iteration " << num_iteration + 1 << "\n";)
 
       contract_geometry();
-      update_topology();
+      remesh();
       detect_degeneracies();
 
       double area = internal::get_surface_area(*hg_ptr, hg_point_pmap);
@@ -931,7 +930,7 @@ public:
   }
 
   /**
-   * Convert the contracted mesh to a skeleton curve.
+   * Converts the contracted mesh to a skeleton curve.
    * @param skeleton
    *       graph that will contain the skeleton of `hg`
    * @param skeleton_points
@@ -1004,7 +1003,7 @@ private:
   {
     m_omega_H = Skeleton_args.omega_H;
     m_omega_P = Skeleton_args.omega_P;
-    m_edgelength_TH = Skeleton_args.edgelength_TH;
+    m_min_edge_length = Skeleton_args.min_edge_length;
     m_delta_area = Skeleton_args.delta_area;
     m_max_iterations = Skeleton_args.max_iterations;
     m_is_medially_centered = Skeleton_args.is_medially_centered;
@@ -1232,7 +1231,7 @@ private:
     // This is a stop predicate (defines when the algorithm terminates).
     // The simplification stops when the length of all edges is greater
     // than the minimum threshold.
-    CGAL::internal::Minimum_length_predicate<HalfedgeGraph> stop(m_edgelength_TH);
+    CGAL::internal::Minimum_length_predicate<HalfedgeGraph> stop(m_min_edge_length);
 
     // midpoint placement without geometric test
     SMS::Geometric_test_skipper< SMS::Midpoint_placement<HalfedgeGraph> > placement;
@@ -1343,7 +1342,7 @@ private:
       vertex_descriptor vj = target(h, *hg_ptr);
       double edge_length = sqrt(squared_distance(get(hg_point_pmap, vi),
                                                  get(hg_point_pmap, vj)));
-      if (internal::is_collapse_ok(*hg_ptr, h) && edge_length < m_edgelength_TH)
+      if (internal::is_collapse_ok(*hg_ptr, h) && edge_length < m_min_edge_length)
       {
         Point p = midpoint(
           get(vertex_point, *hg_ptr, source(h, *hg_ptr)),
@@ -1546,7 +1545,7 @@ private:
       if (is_vertex_fixed_map.find(idx) == is_vertex_fixed_map.end())
       {
         bool willbefixed = internal::is_vertex_degenerate(*hg_ptr, hg_point_pmap,
-                                                          v, m_edgelength_TH);
+                                                          v, m_min_edge_length);
         if (willbefixed)
         {
           is_vertex_fixed_map[idx] = willbefixed;
@@ -1565,7 +1564,7 @@ private:
   int detect_degeneracies_heuristic()
   {
     int num_fixed = 0;
-    double elength_fixed = m_edgelength_TH;
+    double elength_fixed = m_min_edge_length;
     vertex_iterator vb, ve;
     for (boost::tie(vb, ve) = vertices(*hg_ptr); vb != ve; ++vb)
     {
@@ -1749,7 +1748,7 @@ void extract_skeleton(HalfedgeGraph& P,
 
   MCFSKEL mcs(P, Vertex_index_map, Edge_index_map, Skeleton_args);
 
-  mcs.run_to_converge();
+  mcs.contract_until_convergence();
   mcs.convert_to_skeleton(g, points);
 
   mcs.correspondent_vertices(skeleton_to_surface);
