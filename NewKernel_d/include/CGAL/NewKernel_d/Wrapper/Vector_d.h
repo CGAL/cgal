@@ -45,6 +45,7 @@ class Vector_d : public Get_type<typename R_::Kernel_base, Vector_tag>::type
   typedef typename Get_functor<Kbase, Construct_ttag<Vector_tag> >::type CVBase;
   typedef typename Get_functor<Kbase, Compute_vector_cartesian_coordinate_tag>::type CCBase;
   typedef typename Get_functor<Kbase, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CVI;
+  typedef typename Get_functor<Kbase, Squared_length_tag>::type SLBase;
 
   typedef Vector_d                            Self;
   BOOST_STATIC_ASSERT((boost::is_same<Self, typename Get_type<R_, Vector_tag>::type>::value));
@@ -236,13 +237,10 @@ public:
   {
       return rep.dimension();
   }
-
-  typename Qualified_result_of<typename R::Compute_squared_length_3, Vector_3>::type
-  squared_length() const
-  {
-    return R().compute_squared_length_3_object()(*this);
-  }
 */
+  typename boost::result_of<SLBase(Rep)>::type squared_length()const{
+	  return SLBase()(rep());
+  }
 };
 #if 0
 template <class R_> Vector_d<R_>::Vector_d(Vector_d &)=default;
