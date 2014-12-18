@@ -71,8 +71,8 @@ typedef boost::associative_property_map<GraphPointMap>                      Grap
 
 typedef CGAL::MCF_default_solver<double>::type                              Sparse_linear_solver;
 
-typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron, SkeletonGraph, Vertex_index_map, Edge_index_map,
-GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap, Sparse_linear_solver> Mean_curvature_skeleton;
+typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron, Vertex_index_map, Edge_index_map,
+HalfedgeGraphPointPMap, Sparse_linear_solver> Mean_curvature_skeleton;
 
 typedef Polyhedron::Traits         Kernel;
 typedef Kernel::Point_3            Point;
@@ -359,6 +359,7 @@ private:
 
   SkeletonGraph skeleton_curve;
   GraphPointMap skeleton_points_map;
+  Correspondence_map corr_map;
 }; // end Polyhedron_demo_mean_curvature_flow_skeleton_plugin
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_triggered()
@@ -428,10 +429,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   time.start();
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  Correspondence_map corr_map;
   GraphCorrelationPMap corr(corr_map);
-
-  mcs->correspondent_vertices(corr);
 
   // add segmentation
   vertex_iterator vb, ve;
@@ -549,7 +547,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
     GraphPointMap points_map;
     GraphPointPMap points(points_map);
 
-    Correspondence_map corr_map;
     GraphCorrelationPMap corr(corr_map);
 
     CGAL::MCF_skel_args<Polyhedron> skeleton_args(tempMesh);
@@ -621,8 +618,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
     SkeletonGraph g;
     GraphPointMap points_map;
     GraphPointPMap points(points_map);
+    GraphCorrelationPMap corr(corr_map);
 
-    temp_mcs->extract_skeleton(g, points);
+
+    temp_mcs->extract_skeleton(g, points, corr);
 
     std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
@@ -733,7 +732,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   update_parameters(mcs);
-  int num_split = mcs->split_triangles();
+  int num_split = mcs->split_faces();
   std::cout << "split " << num_split << " triangles.\n";
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
@@ -945,14 +944,13 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 
   update_parameters(mcs);
 
-  Correspondence_map corr_map;
   GraphCorrelationPMap corr(corr_map);
 
   skeleton_curve.clear();
   skeleton_points_map.clear();
   GraphPointPMap skeleton_points(skeleton_points_map);
-  mcs->convert_to_skeleton(skeleton_curve, skeleton_points);
-  mcs->correspondent_vertices(corr);
+  mcs->convert_to_skeleton(skeleton_curve, skeleton_points, corr);
+
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 

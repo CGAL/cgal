@@ -49,8 +49,10 @@ typedef boost::associative_property_map<GraphPointMap>                 GraphPoin
 
 typedef CGAL::MCF_default_solver<double>::type                         Sparse_linear_solver;
 
-typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron, Graph, Vertex_index_map, Edge_index_map,
-GraphVerticesPMap, GraphPointPMap, HalfedgeGraphPointPMap, Sparse_linear_solver> 
+typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron, 
+                                                  Vertex_index_map,
+                                                  Edge_index_map,
+                                                  HalfedgeGraphPointPMap, Sparse_linear_solver> 
 Mean_curvature_skeleton;
 
 // The input of the skeletonization algorithm must be a pure triangular closed
@@ -123,11 +125,9 @@ int main()
   // Iteratively apply step 1 to 3 until convergence.
   mcs->contract_until_convergence();
 
-  // Convert the contracted mesh into a curve skeleton.
-  mcs->convert_to_skeleton(g, points);
-
-  // Get the correspondent surface points.
-  mcs->correspondent_vertices(corr);
+  // Convert the contracted mesh into a curve skeleton and 
+  // get the correspondent surface points
+  mcs->convert_to_skeleton(g, points, corr);
 
   vertex_iterator vb, ve;
 

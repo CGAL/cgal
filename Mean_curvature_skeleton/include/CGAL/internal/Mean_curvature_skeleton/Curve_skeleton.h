@@ -40,9 +40,8 @@
 namespace CGAL {
 namespace internal {
 
-template <class HalfedgeGraph, class Graph,
-          class VertexIndexMap, class EdgeIndexMap,
-          class HalfedgeGraphPointPMap, class GraphPointPMap>
+template <class HalfedgeGraph, class VertexIndexMap,
+          class HalfedgeIndexMap, class HalfedgeGraphPointPMap>
 class Curve_skeleton
 {
 // Public types
@@ -61,10 +60,6 @@ public:
   typedef typename boost::graph_traits<HalfedgeGraph>::in_edge_iterator           in_edge_iterator;
   typedef typename HalfedgeGraph::Facet_iterator                                  Facet_iterator;
   typedef typename HalfedgeGraph::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
-
-  // Repeat Graph types
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor                  vertex_desc;
-  typedef typename boost::graph_traits<Graph>::edge_descriptor                    edge_desc;
 
 // Data members
 private:
@@ -85,7 +80,7 @@ private:
   HalfedgeGraph& hg;
 
   VertexIndexMap vertex_id_pmap;
-  EdgeIndexMap edge_id_pmap;
+  HalfedgeIndexMap hedge_id_pmap;
   HalfedgeGraphPointPMap hg_point_pmap;
 
   std::vector<double> edge_lengths;
@@ -115,19 +110,25 @@ private:
 public:
   Curve_skeleton(HalfedgeGraph& hg,
                  VertexIndexMap vertex_id_pmap,
-                 EdgeIndexMap edge_id_pmap,
+                 HalfedgeIndexMap hedge_id_pmap,
                  HalfedgeGraphPointPMap hg_point_pmap) :
                  hg(hg),
                  vertex_id_pmap(vertex_id_pmap),
-                 edge_id_pmap(edge_id_pmap),
+                 hedge_id_pmap(hedge_id_pmap),
                  hg_point_pmap(hg_point_pmap)
   {
   }
 
   // Extracting the skeleton to a boost::graph data structure.
-  void extract_skeleton(Graph& curve, GraphPointPMap& points,
-                        std::map<vertex_desc, std::vector<int> >& corr)
+  template <class Graph, class GraphPointPMap>
+  void extract_skeleton( Graph& curve,
+                         const GraphPointPMap& points,
+                         std::map< typename Graph::vertex_descriptor, std::vector<int> >& corr)
   {
+    typedef typename boost::graph_traits<Graph>::vertex_descriptor                  vertex_desc;
+    typedef typename boost::graph_traits<Graph>::edge_descriptor                    edge_desc;
+
+    
     init();
     collapse();
 
@@ -271,17 +272,17 @@ private:
     idx = 0;
     for (boost::tie(eb, ee) = halfedges(hg); eb != ee; ++eb)
     {
-      put(edge_id_pmap, *eb, -1);
+      put(hedge_id_pmap, *eb, -1);
     }
     for (boost::tie(eb, ee) = halfedges(hg); eb != ee; ++eb)
     {
       halfedge_descriptor ed = *eb;
-      int id = get(edge_id_pmap, ed);
+      int id = get(hedge_id_pmap, ed);
       if (id == -1)
       {
-        put(edge_id_pmap, ed, idx);
+        put(hedge_id_pmap, ed, idx);
         halfedge_descriptor ed_opposite = ed->opposite();
-        put(edge_id_pmap, ed_opposite, idx);
+        put(hedge_id_pmap, ed_opposite, idx);
 
         // also cache the length of the edge
         vertex_descriptor v1 = ed->vertex();
@@ -319,7 +320,7 @@ private:
       for (boost::tie(e, e_end) = in_edges(*vb, hg); e != e_end; ++e)
       {
         halfedge_descriptor ed = halfedge(*e, hg);
-        int eid = get(edge_id_pmap, ed);
+        int eid = get(hedge_id_pmap, ed);
         vertex_to_edge[vid].push_back(eid);
         edge_to_vertex[eid].push_back(vid);
       }
@@ -340,7 +341,7 @@ private:
     for (boost::tie(eb, ee) = halfedges(hg); eb != ee; ++eb)
     {
       halfedge_descriptor ed = *eb;
-      int id = get(edge_id_pmap, ed);
+      int id = get(hedge_id_pmap, ed);
 
       if (is_edge_inserted[id])
       {
@@ -616,7 +617,7 @@ private:
     for (boost::tie(eb, ee) = halfedges(hg); eb != ee; ++eb)
     {
       halfedge_descriptor ed = *eb;
-      int id = get(edge_id_pmap, ed);
+      int id = get(hedge_id_pmap, ed);
       if (!is_edge_deleted[id])
       {
         if (edge_to_face[id].size() > 0)

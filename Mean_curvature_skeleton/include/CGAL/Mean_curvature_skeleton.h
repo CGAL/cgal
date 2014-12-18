@@ -302,12 +302,10 @@ public:
   internal::Cotangent_value_minimum_zero<HalfedgeGraph,
   internal::Cotangent_value_Meyer_secure<HalfedgeGraph> > >                    Weight_calculator;
 
-  typedef internal::Curve_skeleton<HalfedgeGraph, Graph,
-  VertexIndexMap, HalfedgeIndexMap,
-  HalfedgeGraphPointPMap, GraphPointPMap>                                      Skeleton;
-
-  // Repeat Graph types
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor               Skeleton_vertex_descriptor;
+  typedef internal::Curve_skeleton<HalfedgeGraph,
+                                   VertexIndexMap,
+                                   HalfedgeIndexMap,
+                                   HalfedgeGraphPointPMap>                     Skeleton;
 
   // Mesh simplification types
   typedef SMS::Edge_profile<HalfedgeGraph>                                     Profile;
@@ -394,9 +392,6 @@ private:
   /** Record the correspondence between final surface
    *  and original surface points. */
   std::map<int, std::vector<int> > correspondence;
-  /** Record the correspondence between skeletal points
-   *  and original surface points. */
-  std::map<Skeleton_vertex_descriptor, std::vector<int> > skeleton_to_surface_map;
 
   /** Record the corresponding pole of a point. */
   std::map<int, int> m_poles;
@@ -432,7 +427,7 @@ public:
                                       MCF_skel_args<HalfedgeGraph> Skeleton_args)
     : mesh_ptr(NULL), hg_ptr(P),
       vertex_id_pmap(Vertex_index_map),
-      m_edge_id_pmap(Halfedge_index_map),
+      m_hedge_id_pmap(Halfedge_index_map),
       hg_point_pmap(get(vertex_point, *P))
   {
     owns_hg = false;
@@ -706,13 +701,13 @@ public:
    *         with Graph::vertex_descriptor as key and
    *         Mean_curvature_flow_skeletonization::Point as value type  
    */
+  template <class Graph, class GraphPointPMap, class GraphVerticesPMap>
   void extract_skeleton(Graph& skeleton,
                         GraphPointPMap& skeleton_points,
                         GraphVerticesPMap& skeleton_to_hg_vertices)
   {
     contract_until_convergence();
-    convert_to_skeleton(skeleton, skeleton_points);
-    correspondent_vertices(skeleton_to_hg_vertices);
+    convert_to_skeleton(skeleton, skeleton_points, skeleton_to_hg_vertices);
   }
   /// @}
   
@@ -951,18 +946,22 @@ public:
    *         with Graph::vertex_descriptor as key and
    *         Mean_curvature_flow_skeletonization::Point as value type  
    */
-   template <class Graph, class GraphPointPMap, class GraphVerticesPMap>
+  template <class Graph, class GraphPointPMap, class GraphVerticesPMap>
   void convert_to_skeleton(Graph& skeleton, GraphPointPMap& skeleton_points, GraphVerticesPMap& skeleton_to_hg_vertices)
   {
-    Skeleton skeleton(*hg_ptr, vertex_id_pmap, m_hedge_id_pmap, hg_point_pmap);
-
-    skeleton.extract_skeleton(skeleton, skeleton_points, skeleton_to_hg_vertices);
+    Skeleton skeletonization(*hg_ptr, vertex_id_pmap, m_hedge_id_pmap, hg_point_pmap);
+    std::map<typename Graph::vertex_descriptor, std::vector<int> > skeleton_to_surface_map;
+    
+    skeletonization.extract_skeleton(skeleton, skeleton_points, skeleton_to_surface_map);
+    correspondent_vertices(skeleton_to_surface_map, skeleton_to_hg_vertices);
   }
 
   /**
    * REMOVE ME
    */
-  void correspondent_vertices(GraphVerticesPMap& skeleton_to_surface)
+  template <class Skeleton_vertex_descriptor, class GraphVerticesPMap>
+  void correspondent_vertices(std::map<Skeleton_vertex_descriptor, std::vector<int> >& skeleton_to_surface_map,
+                              GraphVerticesPMap& skeleton_to_surface)
   {
     typename std::map<Skeleton_vertex_descriptor, std::vector<int> >::iterator iter;
     for (iter = skeleton_to_surface_map.begin();
@@ -1743,15 +1742,13 @@ void extract_skeleton(HalfedgeGraph& P,
                       Graph& g, GraphPointPMap& points,
                       GraphVerticesPMap& skeleton_to_surface)
 {
-  typedef CGAL::Mean_curvature_flow_skeletonization<HalfedgeGraph, Graph, VertexIndexMap, HalfedgeIndexMap,
-  GraphVerticesPMap, GraphPointPMap, HalfedgeGraphPointPMap, SparseLinearAlgebraTraits_d> MCFSKEL;
+  typedef CGAL::Mean_curvature_flow_skeletonization<HalfedgeGraph, VertexIndexMap, HalfedgeIndexMap,
+                                                    HalfedgeGraphPointPMap, SparseLinearAlgebraTraits_d> MCFSKEL;
 
   MCFSKEL mcs(P, Vertex_index_map, Edge_index_map, Skeleton_args);
 
   mcs.contract_until_convergence();
-  mcs.convert_to_skeleton(g, points);
-
-  mcs.correspondent_vertices(skeleton_to_surface);
+  mcs.convert_to_skeleton(g, points, skeleton_to_surface);
 }
 
 template <class HalfedgeGraph,
