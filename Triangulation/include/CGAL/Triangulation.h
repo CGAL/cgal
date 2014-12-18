@@ -888,7 +888,7 @@ Triangulation<TT, TDS>
             ochtp(*this, p, ori);
         tds().gather_full_cells(s, ochtp, out);
     }
-    int inf_v_index = s->index(infinite_vertex());
+    int inf_v_index = s->index(t_.infinite_vertex());
     Vertex_handle v = insert_in_hole(
       p, simps.begin(), simps.end(), Facet(s, inf_v_index));
     return v;
