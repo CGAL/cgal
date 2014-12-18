@@ -713,7 +713,9 @@ Triangulation_data_structure<Dim, Vb, Fcb>
             }
         }
     }
-    clear_visited_marks(start);
+    clear_visited_marks(start); // CJTODO: couldn't we use what is in "out" 
+                                // to make ot faster? (would require to
+                                // replace the output iterator by a container)
     return ft;
 }
 
@@ -999,7 +1001,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
       associate_vertex_with_full_cell(new_s, facet_index, v);
       set_neighbors(new_s,
                     facet_index,
-                    neighbor(old_s, facet_index),
+                    outside_neighbor,
                     mirror_index(old_s, facet_index));
 
       // add the new full_cell to the list of new full_cells
