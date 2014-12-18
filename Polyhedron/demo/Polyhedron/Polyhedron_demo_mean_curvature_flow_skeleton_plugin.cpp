@@ -28,7 +28,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Eigen_solver_traits.h>
-#include <CGAL/Mean_curvature_skeleton.h>
+#include <CGAL/Mean_curvature_skeleton_functions.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/iterator.h>
 #include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
@@ -111,14 +111,12 @@ class Polyhedron_demo_mean_curvature_flow_skeleton_plugin :
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
   QAction* actionMCFSkeleton;
-  QAction* actionConvert_to_skeleton;
   QAction* actionConvert_to_medial_skeleton;
 
 public:
   // used by Polyhedron_demo_plugin_helper
   QStringList actionsNames() const {
-    return QStringList() << "actionMCFSkeleton" << "actionConvert_to_skeleton"
-                         << "actionConvert_to_medial_skeleton";
+    return QStringList() << "actionMCFSkeleton" << "actionConvert_to_medial_skeleton";
   }
 
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
@@ -129,9 +127,6 @@ public:
     actionMCFSkeleton = new QAction(tr("Mean Curvature Skeleton"), mainWindow);
     actionMCFSkeleton->setObjectName("actionMCFSkeleton");
 
-    actionConvert_to_skeleton = new QAction(tr("Extract Skeleton"), mainWindow);
-    actionConvert_to_skeleton->setObjectName("actionConvert_to_skeleton");
-
     actionConvert_to_medial_skeleton = new QAction(tr("Extract Medial Skeleton"), mainWindow);
     actionConvert_to_medial_skeleton->setObjectName("actionConvert_to_medial_skeleton");
 
@@ -139,8 +134,7 @@ public:
   }
 
   QList<QAction*> actions() const {
-    return QList<QAction*>() << actionMCFSkeleton << actionConvert_to_skeleton
-                             << actionConvert_to_medial_skeleton;
+    return QList<QAction*>() << actionMCFSkeleton << actionConvert_to_medial_skeleton;
   }
 
   bool applicable() const {
@@ -331,7 +325,6 @@ public:
 
 public slots:
   void on_actionMCFSkeleton_triggered();
-  void on_actionConvert_to_skeleton_triggered();
   void on_actionConvert_to_medial_skeleton_triggered();
   void on_actionContract();
   void on_actionCollapse();
@@ -510,75 +503,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   QApplication::restoreOverrideCursor();
 }
 
-void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_skeleton_triggered()
-{
-  double diag = scene->len_diagonal();
-  double omega_H = 0.1;
-  double min_edge_length = 0.002 * diag;
-  double delta_area = 1e-4;
-
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
-
-  Scene_polyhedron_item* item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-
-  if(item)
-  {
-    Polyhedron* pMesh = item->polyhedron();
-
-    if(!pMesh) return;
-
-    Polyhedron tempMesh = *pMesh;
-
-    QTime time;
-    time.start();
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-
-    SkeletonGraph g;
-    GraphPointMap points_map;
-    GraphPointPMap points(points_map);
-
-    GraphCorrelationPMap corr(corr_map);
-
-    CGAL::MCF_skel_args<Polyhedron> skeleton_args(tempMesh);
-    skeleton_args.omega_H = omega_H;
-    skeleton_args.min_edge_length = min_edge_length;
-    skeleton_args.is_medially_centered = false;
-    skeleton_args.delta_area = delta_area;
-
-    CGAL::extract_skeleton(
-                     tempMesh, Vertex_index_map(), Edge_index_map(),
-                     skeleton_args, g, points, corr);
-
-    std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
-
-    //create the polylines representing the skeleton
-    Scene_polylines_item* skeleton = new Scene_polylines_item();
-    skeleton->setColor(QColor(175, 0, 255));
-
-    Polyline_visitor polyline_visitor(skeleton->polylines, points);
-    CGAL::split_graph_into_polylines( g,
-                                      polyline_visitor,
-                                      CGAL::IsTerminalDefault() );
-
-    skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
-    scene->addItem(skeleton);
-
-    item->setGouraudMode();
-    item->switch_transparency_on_off();
-
-    QApplication::restoreOverrideCursor();
-  }
-}
-
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_medial_skeleton_triggered()
 {
-  double diag = scene->len_diagonal();
-  double omega_H = 0.1;
-  double omega_P = 0.2;
-  double min_edge_length = 0.002 * diag;
-  double delta_area = 1e-4;
-
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_polyhedron_item* item =
@@ -587,20 +513,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
   if(item)
   {
     Polyhedron* pMesh = item->polyhedron();
-
-    if(!pMesh) return;
-
-    Polyhedron tempMesh = *pMesh;
-
-    CGAL::MCF_skel_args<Polyhedron> skeleton_args(tempMesh);
-    skeleton_args.omega_H = omega_H;
-    skeleton_args.omega_P = omega_P;
-    skeleton_args.min_edge_length = min_edge_length;
-    skeleton_args.is_medially_centered = true;
-    skeleton_args.delta_area = delta_area;
-
-    Mean_curvature_skeleton* temp_mcs = new Mean_curvature_skeleton(tempMesh, Vertex_index_map(),
-                                            Edge_index_map(), skeleton_args);
 
     QTime time;
     time.start();
@@ -611,8 +523,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
     GraphPointPMap points(points_map);
     GraphCorrelationPMap corr(corr_map);
 
-
-    temp_mcs->extract_skeleton(g, points, corr);
+    CGAL::extract_mean_curvature_flow_skeleton(*pMesh, g, points, corr);
 
     std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
@@ -632,8 +543,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
     item->switch_transparency_on_off();
 
     QApplication::restoreOverrideCursor();
-
-    delete temp_mcs;
   }
 }
 

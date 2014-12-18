@@ -2,7 +2,7 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Eigen_solver_traits.h>
-#include <CGAL/Mean_curvature_skeleton.h>
+#include <CGAL/Mean_curvature_skeleton_functions.h>
 #include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/mesh_segmentation.h>
@@ -96,12 +96,8 @@ int main()
 
   Correspondence_map corr_map;
   GraphVerticesPMap corr(corr_map);
-
-  CGAL::MCF_skel_args<Polyhedron> skeleton_args(mesh);
   
-  CGAL::extract_skeleton(
-      mesh, Vertex_index_map(), Edge_index_map(),
-      skeleton_args, g, points, corr);
+  CGAL::extract_mean_curvature_flow_skeleton(mesh, g, points, corr);
 
   // add segmentation
   vertex_iterator vb, ve;

@@ -2,7 +2,7 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Eigen_solver_traits.h>
-#include <CGAL/Mean_curvature_skeleton.h>
+#include <CGAL/Mean_curvature_skeleton_functions.h>
 #include <CGAL/iterator.h>
 #include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -36,13 +36,8 @@ typedef boost::graph_traits<Graph>::vertex_descriptor                  vertex_de
 typedef boost::graph_traits<Graph>::vertex_iterator                    vertex_iter;
 typedef boost::graph_traits<Graph>::edge_iterator                      edge_iter;
 
-typedef boost::property_map<Polyhedron, boost::vertex_index_t>::type     Vertex_index_map;
-typedef boost::property_map<Polyhedron, boost::halfedge_index_t>::type   Edge_index_map;
-
 typedef std::map<vertex_desc, std::vector<int> >                       Correspondence_map;
 typedef boost::associative_property_map<Correspondence_map>            GraphCorrelationPMap;
-
-typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type        HalfedgeGraphPointPMap;
 
 typedef std::map<vertex_desc, Point>                                   GraphPointMap;
 typedef boost::associative_property_map<GraphPointMap>                 GraphPointPMap;
@@ -98,16 +93,8 @@ int main()
   Correspondence_map corr_map;
   GraphCorrelationPMap corr(corr_map);
 
-  // Create default parameters.
-  CGAL::MCF_skel_args<Polyhedron> skeleton_args(mesh);
 
-  // Customize the parameters.
-  skeleton_args.omega_H = 0.2;
-  skeleton_args.omega_P = 0.3;
-
-  CGAL::extract_skeleton(
-      mesh, Vertex_index_map(), Edge_index_map(),
-      skeleton_args, g, points, corr);
+  CGAL::extract_mean_curvature_flow_skeleton(mesh, g, points, corr);
 
   vertex_iterator vb, ve;
 
@@ -125,11 +112,12 @@ int main()
 
   std::vector<vertex_descriptor> id_to_vd;
   id_to_vd.clear();
-  id_to_vd.resize(boost::num_vertices(mesh));
-  for (boost::tie(vb, ve) = boost::vertices(mesh); vb != ve; ++vb)
+  id_to_vd.resize(num_vertices(mesh));
+  std::size_t id=0;
+  for (boost::tie(vb, ve) = vertices(mesh); vb != ve; ++vb)
   {
     vertex_descriptor v = *vb;
-    id_to_vd[v->id()] = v;
+    id_to_vd[id++] = v;
   }
 
   // Output skeletal points and the corresponding surface points
