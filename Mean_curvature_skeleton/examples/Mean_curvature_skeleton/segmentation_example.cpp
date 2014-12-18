@@ -135,8 +135,6 @@ int main()
   }
 
   // compute sdf values with skeleton
-  double min_dis = 1e10;
-  double max_dis = -1000;
   for (Facet_iterator f = mesh.facets_begin(); f != mesh.facets_end(); ++f)
   {
     Polyhedron::Halfedge_const_handle he = f->facet_begin();
@@ -148,13 +146,6 @@ int main()
     double dis3 = distances[vid3];
     double avg_dis = (dis1 + dis2 + dis3) / 3.0;
     sdf_property_map[f] = avg_dis;
-    min_dis = std::min(min_dis, avg_dis);
-    max_dis = std::min(max_dis, avg_dis);
-  }
-
-  for (Facet_iterator f = mesh.facets_begin(); f != mesh.facets_end(); ++f)
-  {
-    sdf_property_map[f] = (sdf_property_map[f] - min_dis) / (max_dis - min_dis);
   }
 
   CGAL::sdf_values_postprocessing(mesh, sdf_property_map);

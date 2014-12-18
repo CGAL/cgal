@@ -547,7 +547,7 @@ public:
   }
 
   /**
-   * REMOVEME
+   * \todo REMOVEME
    */
   HalfedgeGraph* mesh()
   {
@@ -555,14 +555,14 @@ public:
   }
 
   /**
-   * REMOVEME
+   * \todo REMOVEME
    */
   void set_own_halfedge_graph(bool value)
   {
     owns_hg = value;
   }
   /**
-   * REMOVEME
+   * \todo REMOVEME
    */
   bool owns_halfedge_graph()
   {
@@ -665,7 +665,7 @@ public:
   /// @{
 
   /**
-   * REMOVEME
+   * \todo REMOVEME
    */
   template <class Graph, class GraphPointPMap>
   void extract_skeleton(Graph& skeleton, GraphPointPMap& skeleton_points)
@@ -957,7 +957,7 @@ public:
   }
 
   /**
-   * REMOVE ME
+   * \todo REMOVE ME
    */
   template <class Skeleton_vertex_descriptor, class GraphVerticesPMap>
   void correspondent_vertices(std::map<Skeleton_vertex_descriptor, std::vector<int> >& skeleton_to_surface_map,
