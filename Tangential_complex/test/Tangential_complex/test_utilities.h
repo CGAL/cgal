@@ -146,7 +146,8 @@ sparsify_point_set(
 
 template<typename Point, typename OutputIterator>
 bool load_points_from_file(
-  const std::string &filename, OutputIterator points)
+  const std::string &filename, OutputIterator points,
+  std::size_t only_first_n_points = std::numeric_limits<std::size_t>::max())
 {
   std::ifstream in(filename);
   if (!in.is_open())
@@ -159,8 +160,12 @@ bool load_points_from_file(
   int dim_from_file;
   in >> dim_from_file;
 
-  while(in >> p)
+  std::size_t i = 0;
+  while(i < only_first_n_points && in >> p)
+  {
     *points++ = p;
+    ++i;
+  }
 
   return true;
 }
