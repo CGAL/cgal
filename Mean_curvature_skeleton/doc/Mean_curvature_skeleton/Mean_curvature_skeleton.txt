@@ -15,7 +15,7 @@ namespace CGAL {
 curve skeleton of a horse model.
 \cgalFigureEnd
 
-Skeletons are effective shape abstractions used in segmentation, shape matching, reconstruction, virtual navigation, etc. As the name implies, a curve skeleton is a graph of curvilinear structures (1D). This is direct contrapposition to the <a href="http://en.wikipedia.org/wiki/Medial_axis"><em>medial axis</em></a> that for 3D geometry is composed by surfaces (2D). As illustrated in \cgalFigureRef{Main_image_suggestion}, the curve skeleton of a shape captures its essential topology. In this package, we implement the "Mean Curvature Skeleton" algorithm described in \cgalCite{tagliasacchi2012mean} that extracts a curve skeleton from a watertight triangulated surface mesh.
+Skeletons are effective shape abstractions used in segmentation, shape matching, reconstruction, virtual navigation, etc. As the name implies, a curve skeleton is a graph of curvilinear structures (1D). This is direct contraposition to the <a href="http://en.wikipedia.org/wiki/Medial_axis"><em>medial axis</em></a> that for 3D geometry is composed by surfaces (2D). As illustrated in \cgalFigureRef{Main_image_suggestion}, the curve skeleton of a shape captures its essential topology. In this package, we implement the "Mean Curvature Skeleton" algorithm described in \cgalCite{tagliasacchi2012mean} that extracts a curve skeleton from a watertight triangulated surface mesh.
 
 \section MCFSkelSecAlgo Algorithm Description
 
