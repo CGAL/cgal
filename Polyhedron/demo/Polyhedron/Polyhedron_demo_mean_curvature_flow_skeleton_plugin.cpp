@@ -32,7 +32,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/iterator.h>
 #include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
-#include <CGAL/split_graph_into_polylines.h>
+#include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/mesh_segmentation.h>
 
 #include <queue>
