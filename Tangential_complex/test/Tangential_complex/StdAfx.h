@@ -2,6 +2,7 @@
 #define STDAFX_H
 
 // CGAL
+#include <CGAL/Tangential_complex/config.h>
 #include <CGAL/Epick_d.h>
 #include <CGAL/Regular_triangulation_euclidean_traits.h>
 #include <CGAL/Regular_triangulation.h>
