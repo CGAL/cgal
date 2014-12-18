@@ -2134,7 +2134,18 @@ private: //------------------------------------------------------- private data
       os << "\n";
     }
     return os;
-    }
+  }
+
+  inline std::istream& sm_skip_comments( std::istream& in) {
+      char c;
+      in >> c;
+      if (c == '#')
+        in.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
+      else
+        in.putback(c);
+      return in;
+  }
+
   /// \relates Surface_mesh
   /// Extracts the surface mesh from an input stream in Ascii OFF format.
   /// The operator only reads the point property and does not read files 
@@ -2154,6 +2165,7 @@ private: //------------------------------------------------------- private data
     sm.reserve(n,2*f,e);
     P p;
     for(int i=0; i < n; i++){
+      is >> sm_skip_comments;
       is >> p;
       sm.add_vertex(p);
       is.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
@@ -2161,6 +2173,7 @@ private: //------------------------------------------------------- private data
     std::vector<size_type> vr;
     std::size_t d;
     for(std::size_t i=0; i < f; i++){
+      is >> sm_skip_comments;
       is >> d;
       vr.resize(d);
       for(std::size_t j=0; j<d; j++){
