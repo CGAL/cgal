@@ -133,7 +133,7 @@ specific.  It may depend on the pen size or the pixel size when
 drawing, or on the grid size when the polyline points are on a grid.
 
 \cgalFigureBegin{figure_scaledAndHybrid,scaledAndHybridMaxDist.png}
-The scaled and hybrid maximum squared distance between `q` and `(p,r).
+The scaled and hybrid maximum squared distance between `q` and `(p,r)`.
 \cgalFigureEnd
 
 

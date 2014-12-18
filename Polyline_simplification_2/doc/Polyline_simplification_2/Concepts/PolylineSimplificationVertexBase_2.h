@@ -21,7 +21,7 @@ Defines the same types as the `TriangulationVertexBase_2` concept
 
 class PolylineSimplificationVertexBase_2 {
 public:
-  /// A number type which must be the same as the <code>FT</code> of the geometric traits class of the triangulation.
+  /// A number type which must be the same as the <code>FT</code> of the geometric traits class of the triangulation
   typedef Hidden_type FT;
 
 /// \name Access Functions 
