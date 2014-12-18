@@ -284,9 +284,11 @@ minimum spanning tree algorithm directly on a surface mesh.
 
 \cgalExample{Surface_mesh/sm_kruskal.cpp}
 
-The second example shows how we can use property maps for built-in
-properties like `vertex_index_t`, but also for the dynamic properties
-introduced with the surface mesh package.
+The second example shows how we can use property maps for 
+algorithms such as Prim's minimum spanning tree.
+The algorithm internally also uses a <em>vertex index property map</em>
+calling `get(boost::vertex_index_t,sm)`.  For the class `Surface_mesh`
+this boils down to an identity function as vertices \em are indices.
 
 \cgalExample{Surface_mesh/sm_bgl.cpp}
 

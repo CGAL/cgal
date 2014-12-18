@@ -249,7 +249,7 @@ put(CGAL::vertex_point_t p, const CGAL::Surface_mesh<K>& g,
 
 } // boost
 
-#if 1
+#if 0
 // 
 namespace CGAL {
 template <typename Point, typename T>
