@@ -58,7 +58,7 @@ const double SQ_HALF_SPARSITY = 0.5*0.5*INPUT_SPARSITY*INPUT_SPARSITY;
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/parallel_for.h>
-# include <tbb/queuing_mutex.h>
+//# include <tbb/queuing_mutex.h>
 #endif
 
 //#define CGAL_TC_EXPORT_NORMALS // Only for 3D surfaces (k=2, d=3)
@@ -165,7 +165,7 @@ class Tangential_complex
 #ifdef CGAL_LINKED_WITH_TBB
   // CJTODO: test other mutexes
   // http://www.threadingbuildingblocks.org/docs/help/reference/synchronization/mutexes/mutex_concept.htm
-  typedef tbb::queuing_mutex                          Tr_mutex;
+  //typedef tbb::queuing_mutex                          Tr_mutex;
 #endif
 #ifdef CGAL_TC_EXPORT_NORMALS
   typedef typename std::vector<Vector>                Normals;
@@ -201,7 +201,7 @@ public:
     // invalidate the vertex handles stored beside the triangulations
     m_triangulations.resize(m_points.size());
 #ifdef CGAL_LINKED_WITH_TBB
-    m_tr_mutexes.resize(m_points.size());
+    //m_tr_mutexes.resize(m_points.size());
 #endif
     m_tangent_spaces.resize(m_points.size());
     m_weights.resize(m_points.size(), FT(0));
@@ -1102,7 +1102,7 @@ private:
                                                           std::size_t tr_index)
   {
 #ifdef CGAL_LINKED_WITH_TBB
-    Tr_mutex::scoped_lock lock(m_tr_mutexes[tr_index]);
+    //Tr_mutex::scoped_lock lock(m_tr_mutexes[tr_index]);
 #endif
 
     Triangulation const& tr    = m_triangulations[tr_index].tr();
@@ -1400,7 +1400,7 @@ private:
   Tr_container              m_triangulations; // Contains the triangulations
                                               // and their center vertex
 #ifdef CGAL_LINKED_WITH_TBB
-  std::vector<Tr_mutex>     m_tr_mutexes;
+  //std::vector<Tr_mutex>     m_tr_mutexes;
 #endif
 #ifdef CGAL_TC_EXPORT_NORMALS
   Normals                   m_normals;
