@@ -17,13 +17,13 @@ typedef boost::graph_traits<Mesh>::vertex_iterator   vertex_iterator;
 typedef boost::graph_traits<Mesh>::edge_descriptor   edge_descriptor;
 
 void
-kruskal(const Mesh& P)
+kruskal(const Mesh& sm)
 {
    // We use the default edge weight which is the squared length of the edge
 
   std::list<edge_descriptor> mst;
 
-  boost::kruskal_minimum_spanning_tree(P, 
+  boost::kruskal_minimum_spanning_tree(sm, 
                                        std::back_inserter(mst));
 
   std::cout << "#VRML V2.0 utf8\n"
@@ -36,8 +36,8 @@ kruskal(const Mesh& P)
     "        point [ \n";
 
   vertex_iterator vb,ve;
-  for(boost::tie(vb, ve) = vertices(P); vb!=ve; ++vb){
-    std::cout <<  "        " << P.point(*vb) << "\n";
+  for(boost::tie(vb, ve) = vertices(sm); vb!=ve; ++vb){
+    std::cout <<  "        " << sm.point(*vb) << "\n";
   }
 
   std::cout << "        ]\n"
@@ -47,8 +47,8 @@ kruskal(const Mesh& P)
   for(std::list<edge_descriptor>::iterator it = mst.begin(); it != mst.end(); ++it)
   {
     edge_descriptor e = *it ;
-    vertex_descriptor s = source(e,P);
-    vertex_descriptor t = target(e,P);
+    vertex_descriptor s = source(e,sm);
+    vertex_descriptor t = target(e,sm);
     std::cout << "      " << s << ", " << t <<  ", -1\n";
   }
 
@@ -60,11 +60,11 @@ kruskal(const Mesh& P)
 
 int main(int,char** argv) {
 
-  Mesh P;
+  Mesh sm;
   std::ifstream input(argv[1]);
-  input >> P;
+  input >> sm;
 
-  kruskal(P);
+  kruskal(sm);
 
   return 0;
 }
