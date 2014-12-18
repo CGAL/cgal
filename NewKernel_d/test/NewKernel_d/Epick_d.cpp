@@ -12,6 +12,7 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/use.h>
 #include <iostream>
+#include <CGAL/NewKernel_d/Types/Weighted_point.h>
 
 //typedef CGAL::Cartesian_base_d<double,CGAL::Dimension_tag<2> > K0;
 //typedef CGAL::Cartesian_base_d<CGAL::Interval_nt_advanced,CGAL::Dimension_tag<2> > KA;
@@ -493,6 +494,7 @@ void test3(){
   P x4=cp(0,0,1);
   P x5=cp(0,0,0);
   P x6=cp(0,0,-1);
+  assert(!ed(x1,x2));
   P tab2[]={x1,x2,x3,x4,x5};
   assert(cis(tab2+0,tab2+4,x5));
   assert(po(tab2+0,tab2+4)==CGAL::POSITIVE);
@@ -540,6 +542,26 @@ void test3(){
   assert(ifsos(fozn, tz+0, tz+3, tz[4]) == CGAL::ON_NEGATIVE_SIDE);
   assert(ifsos(fozp, tz+0, tz+3, tz[5]) == CGAL::ON_NEGATIVE_SIDE);
   assert(ifsos(fozn, tz+0, tz+3, tz[5]) == CGAL::ON_POSITIVE_SIDE);
+
+  typedef typename K1::Weighted_point_d WP;
+  typedef typename K1::Construct_weighted_point_d CWP;
+  typedef typename K1::Point_drop_weight_d PDW;
+  typedef typename K1::Point_weight_d PW;
+  typedef typename K1::Power_test_d PT;
+  typedef typename K1::In_flat_power_test_d IFPT;
+  CWP cwp Kinit(construct_weighted_point_d_object);
+  PDW pdw Kinit(point_drop_weight_d_object);
+  PW pw Kinit(point_weight_d_object);
+  PT pt Kinit(power_test_d_object);
+  IFPT ifpt Kinit(in_flat_power_test_d_object);
+  WP wp;
+  wp = cwp (x1, 2);
+  WP xw6 = cwp (x6, 0);
+  assert (pw(wp) == 2);
+  assert (ed(pdw(wp), x1));
+  WP tabw[]={cwp(x1,0),cwp(x2,0),cwp(x3,0),cwp(x4,0),cwp(x5,0)};
+  assert(pt(tabw+0,tabw+4,tabw[4])==CGAL::ON_POSITIVE_SIDE);
+  assert(ifpt(fo4,tabw+0,tabw+3,xw6)==CGAL::ON_POSITIVE_SIDE);
 }
 template struct CGAL::Epick_d<CGAL::Dimension_tag<2> >;
 template struct CGAL::Epick_d<CGAL::Dimension_tag<3> >;
