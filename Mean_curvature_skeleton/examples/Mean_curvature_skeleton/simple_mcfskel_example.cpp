@@ -27,7 +27,7 @@ typedef boost::graph_traits<Polyhedron>::halfedge_descriptor         halfedge_de
 
 struct Skeleton_vertex_info
 {
-  std::size_t id;
+  //~ std::size_t id;
 };
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Skeleton_vertex_info> Graph;

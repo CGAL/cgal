@@ -49,7 +49,7 @@ typedef boost::associative_property_map<GraphPointMap>                 GraphPoin
 
 typedef CGAL::MCF_default_solver<double>::type                         Sparse_linear_solver;
 
-typedef CGAL::MCF_Skeleton<Polyhedron, Graph, Vertex_index_map, Edge_index_map,
+typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron, Graph, Vertex_index_map, Edge_index_map,
 GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap, Sparse_linear_solver> 
 Mean_curvature_skeleton;
 

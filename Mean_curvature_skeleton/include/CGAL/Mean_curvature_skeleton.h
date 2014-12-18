@@ -22,7 +22,7 @@
 
 /**
  * @file Mean_curvature_skeleton.h
- * @brief The class `MCF_Skeleton` containing the API to extract
+ * @brief The class `Mean_curvature_flow_skeletonization` containing the API to extract
  * curve skeleton for a closed triangular mesh.
  */
 
@@ -120,8 +120,6 @@ enum Degeneracy_algorithm_tag
 
 /// @endcond
 
-/// \ingroup PkgMeanCurvatureSkeleton3
-///@brief Define the default sparse linear systems solver type.
 template <class FT>
 struct MCF_default_solver
 {
@@ -132,8 +130,6 @@ struct MCF_default_solver
           Eigen::COLAMDOrdering<int> > > type;
 };
 
-/// \ingroup PkgMeanCurvatureSkeleton3
-///@brief Define the default HalfedgeGraphPointPMap type.
 template <class HalfedgeGraph>
 struct MCF_default_halfedge_graph_pmap
 {
@@ -141,11 +137,6 @@ struct MCF_default_halfedge_graph_pmap
   typedef typename boost::property_map<HalfedgeGraph, CGAL::vertex_point_t>::type type;
 };
 
-/// \ingroup PkgMeanCurvatureSkeleton3
-/// @brief Class providing necessary parameters for `MCF_Skeleton`.
-///
-/// @tparam HalfedgeGraph
-///         a model of `HalfedgeGraph`
 template<class HalfedgeGraph>
 class MCF_skel_args
 {
@@ -215,7 +206,7 @@ public:
   double omega_P;
   /** Edges with length less than `edgelength_TH` will be collapsed */
   double edgelength_TH;
-  /** `run_to_converge` function of `MCF_Skeleton` class will stop if
+  /** `run_to_converge` function of `Mean_curvature_flow_skeletonization` class will stop if
    *  the change of area in one iteration is less than `delta_area` */
   double delta_area;
   /** Maximum number of iterations. Used to prevent the algorithm running
@@ -238,11 +229,11 @@ public:
 ///         It is a data structure for the skeleton curve.
 /// @tparam VertexIndexMap
 ///         a model of `ReadWritePropertyMap`</a>
-///         with MCF_Skeleton::vertex_descriptor as key and
+///         with Mean_curvature_flow_skeletonization::vertex_descriptor as key and
 ///         `unsigned int` as value type
 /// @tparam EdgeIndexMap
 ///         a model of `ReadWritePropertyMap`</a>
-///         with MCF_Skeleton::halfedge_descriptor as key and
+///         with Mean_curvature_flow_skeletonization::halfedge_descriptor as key and
 ///         `unsigned int` as value type
 /// @tparam GraphCorrelationPMap
 ///         a model of `ReadWritePropertyMap`/a>
@@ -251,11 +242,11 @@ public:
 /// @tparam GraphPointPMap
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with Graph::vertex_descriptor as key and
-///         MCF_Skeleton::Point as value type
+///         Mean_curvature_flow_skeletonization::Point as value type
 /// @tparam HalfedgeGraphPointPMap
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with HalfedgeGraph::vertex_descriptor as key and
-///         MCF_Skeleton::Point as value type
+///         Mean_curvature_flow_skeletonization::Point as value type
 /// @tparam SparseLinearAlgebraTraits_d
 ///         a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
 /// @cond CGAL_DOCUMENT_INTERNAL
@@ -285,7 +276,7 @@ template <class HalfedgeGraph,
           Collapse_algorithm_tag Collapse_tag = LINEAR,
           Degeneracy_algorithm_tag Degeneracy_tag = EULER>
 #endif
-class MCF_Skeleton
+class Mean_curvature_flow_skeletonization
 {
 // Public types
 public:
@@ -426,7 +417,7 @@ public:
   /// @{
 
   /**
-   * The constructor of a MCF_Skeleton object.
+   * The constructor of a Mean_curvature_flow_skeletonization object.
    *
    * @pre the surface mesh is a watertight triangular mesh
    * @param P
@@ -438,17 +429,16 @@ public:
    * @param Edge_index_map
    *        property map for associating an id to each edge
    * @param Skeleton_args
-   *        parameters for MCF_Skeleton algorithm
+   *        parameters for Mean_curvature_flow_skeletonization algorithm
    */
-  MCF_Skeleton(HalfedgeGraph& P,
-              VertexIndexMap Vertex_index_map,
-              EdgeIndexMap Edge_index_map,
-              MCF_skel_args<HalfedgeGraph> Skeleton_args
-              )
-    :mesh_ptr(&P), hg_ptr(new HalfedgeGraph(P)),
-     vertex_id_pmap(Vertex_index_map),
-     edge_id_pmap(Edge_index_map),
-     hg_point_pmap(get(vertex_point, P))
+  Mean_curvature_flow_skeletonization(HalfedgeGraph& P,
+                                      VertexIndexMap Vertex_index_map,
+                                      EdgeIndexMap Edge_index_map,
+                                      MCF_skel_args<HalfedgeGraph> Skeleton_args)
+    : mesh_ptr(&P), hg_ptr(new HalfedgeGraph(P)),
+      vertex_id_pmap(Vertex_index_map),
+      edge_id_pmap(Edge_index_map),
+      hg_point_pmap(get(vertex_point, P))
   {
     owns_hg = true;
     init_args(Skeleton_args);
@@ -456,7 +446,7 @@ public:
   }
 
   /**
-   * The constructor of a MCF_Skeleton object.
+   * The constructor of a Mean_curvature_flow_skeletonization object.
    *
    * @pre The surface mesh is a watertight triangular mesh.
    * @pre Number of component equals 1.
@@ -468,17 +458,16 @@ public:
    * @param Edge_index_map
    *        property map for associating an id to each edge
    * @param Skeleton_args
-   *        parameters for MCF_Skeleton algorithm
+   *        parameters for Mean_curvature_flow_skeletonization algorithm
    */
-  MCF_Skeleton(HalfedgeGraph* P,
-              VertexIndexMap Vertex_index_map,
-              EdgeIndexMap Edge_index_map,
-              MCF_skel_args<HalfedgeGraph> Skeleton_args
-              )
-    :mesh_ptr(NULL), hg_ptr(P),
-     vertex_id_pmap(Vertex_index_map),
-     edge_id_pmap(Edge_index_map),
-     hg_point_pmap(get(vertex_point, *P))
+  Mean_curvature_flow_skeletonization(HalfedgeGraph* P,
+                                      VertexIndexMap Vertex_index_map,
+                                      EdgeIndexMap Edge_index_map,
+                                      MCF_skel_args<HalfedgeGraph> Skeleton_args)
+    : mesh_ptr(NULL), hg_ptr(P),
+      vertex_id_pmap(Vertex_index_map),
+      edge_id_pmap(Edge_index_map),
+      hg_point_pmap(get(vertex_point, *P))
   {
     owns_hg = false;
     init_args(Skeleton_args);
@@ -486,7 +475,7 @@ public:
   }
 
 #ifndef DOXYGEN_RUNNING
-  ~MCF_Skeleton()
+  ~Mean_curvature_flow_skeletonization()
   {
     if (owns_hg) delete hg_ptr;
   }
@@ -985,7 +974,7 @@ private:
   // Initialization
   // --------------------------------------------------------------------------
 
-  /// Initialize the parameters for MCF_Skeleton
+  /// Initialize the parameters for Mean_curvature_flow_skeletonization
   void init_args(MCF_skel_args<HalfedgeGraph> Skeleton_args)
   {
     m_omega_H = Skeleton_args.omega_H;
@@ -1715,55 +1704,6 @@ private:
   }
 };
 
-/// \ingroup PkgMeanCurvatureSkeleton3
-/// @brief Extract a medially centered curve skeleton for the mesh.
-/// \todo check if the option in Skeleton_args is used
-/// @pre the surface mesh is a watertight triangular mesh
-///
-/// @tparam HalfedgeGraph
-///         a model of `HalfedgeGraph`
-/// @tparam Graph
-///         a model of boost::adjacency_list
-///         data structure for skeleton curve
-/// @tparam VertexIndexMap
-///         a model of `ReadWritePropertyMap`</a>
-///         with MCF_Skeleton::vertex_descriptor as key and
-///         `unsigned int` as value type
-/// @tparam EdgeIndexMap
-///         a model of `ReadWritePropertyMap`</a>
-///         with MCF_Skeleton::halfedge_descriptor as key and
-///         `unsigned int` as value type
-/// @tparam GraphCorrelationPMap
-///         a model of `ReadWritePropertyMap`</a>
-///         with Graph::vertex_descriptor as key and
-///         `std::vector<int>` as value type
-/// @tparam GraphPointPMap
-///         a model of `ReadWritePropertyMap`</a>
-///         with Graph::vertex_descriptor as key and
-///         MCF_Skeleton::Point as value type
-/// @tparam HalfedgeGraphPointPMap
-///         a model of `ReadWritePropertyMap`</a>
-///         with HalfedgeGraph::vertex_descriptor as key and
-///         MCF_Skeleton::Point as value type.
-///         The default is `boost::property_map<HalfedgeGraph, CGAL::vertex_point_t>::type`.
-/// @tparam SparseLinearAlgebraTraits_d
-///         a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
-///         The default is CGAL::MCF_default_solver<double>::type.
-///
-/// @param P
-///        triangulated surface mesh used to extract skeleton
-/// @param Vertex_index_map
-///        property map for associating an id to each vertex
-/// @param Edge_index_map
-///        property map for associating an id to each edge
-/// @param Skeleton_args
-///        parameters for MCF_Skeleton algorithm
-/// @param g
-///        a boost::graph containing the connectivity of the skeleton
-/// @param points
-///        the locations of the skeletal points
-/// @param skeleton_to_surface
-///        for each skeletal point, record its correspondent surface points
 template <class HalfedgeGraph,
           class Graph,
           class VertexIndexMap,
@@ -1779,7 +1719,7 @@ void extract_skeleton(HalfedgeGraph& P,
                       Graph& g, GraphPointPMap& points,
                       GraphCorrelationPMap& skeleton_to_surface)
 {
-  typedef CGAL::MCF_Skeleton<HalfedgeGraph, Graph, VertexIndexMap, EdgeIndexMap,
+  typedef CGAL::Mean_curvature_flow_skeletonization<HalfedgeGraph, Graph, VertexIndexMap, EdgeIndexMap,
   GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap, SparseLinearAlgebraTraits_d> MCFSKEL;
 
   MCFSKEL mcs(P, Vertex_index_map, Edge_index_map, Skeleton_args);
@@ -1833,6 +1773,45 @@ void extract_skeleton(HalfedgeGraph& P,
                    Sparse_linear_solver>
       (P, Vertex_index_map, Edge_index_map, Skeleton_args, g, points, skeleton_to_surface);
 }
+
+
+/// \ingroup PkgMeanCurvatureSkeleton3
+/// @brief Extracts a medially centered curve skeleton for the mesh `hg`.
+/// This function uses the class CGAL::Mean_curvature_flow_skeletonization with the default parameters.
+/// This function is available if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined.
+/// @pre The surface mesh is a watertight triangulated surface mesh
+/// @pre The specialization `boost::property_map<HalfedgeGraph, boost::vertex_point_t>::%type` and `get(vertex_point, hg)` are defined.
+/// @pre The value type of `boost::property_map<HalfedgeGraph, boost::vertex_point_t>::%type` is a point type from a \cgal Kernel.
+///
+/// @tparam HalfedgeGraph
+///         a model of `HalfedgeGraph`
+/// @tparam Graph
+///         an instantiation of `boost::adjacency_list` data structure for skeleton curve
+/// @tparam VerticesPMap
+///         a model of `ReadWritePropertyMap`</a>
+///         with Graph::vertex_descriptor as key and
+///         `std::vector< boost::graph_traits<HalfedgeGraph>::%vertex_descriptor >` as value type
+/// @tparam PointPMap
+///         a model of `ReadWritePropertyMap`</a>
+///         with Graph::vertex_descriptor as key and
+///         the value type of `boost::property_map<HalfedgeGraph, boost::vertex_point_t>::%type`
+///         as value type.
+///
+/// @param hg
+///        triangulated surface mesh used to extract skeleton
+/// @param skeleton
+///        a boost::graph containing the connectivity of the skeleton
+/// @param skeleton_points
+///        the locations of the skeletal points
+template <class HalfedgeGraph,
+          class Graph,
+          class PointPMap,
+          class VerticesPMap>
+void extract_mean_curvature_flow_skeleton(const HalfedgeGraph& hg,
+                                          Graph& skeleton,
+                                          PointPMap& skeleton_points,
+                                          VerticesPMap& skeleton_to_hg_vertices)
+{}
 
 } //namespace CGAL
 
