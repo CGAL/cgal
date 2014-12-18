@@ -40,7 +40,7 @@ typedef boost::property_map<Polyhedron, boost::vertex_index_t>::type     Vertex_
 typedef boost::property_map<Polyhedron, boost::halfedge_index_t>::type   Halfedge_index_map;
 
 typedef std::map<vertex_desc, std::vector<int> >                       Correspondence_map;
-typedef boost::associative_property_map<Correspondence_map>            GraphCorrelationPMap;
+typedef boost::associative_property_map<Correspondence_map>            GraphVerticesPMap;
 
 typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type        HalfedgeGraphPointPMap;
 
@@ -50,7 +50,7 @@ typedef boost::associative_property_map<GraphPointMap>                 GraphPoin
 typedef CGAL::MCF_default_solver<double>::type                         Sparse_linear_solver;
 
 typedef CGAL::MCF_Skeleton<Polyhedron, Graph, Vertex_index_map, Halfedge_index_map,
-GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap, Sparse_linear_solver> 
+GraphVerticesPMap, GraphPointPMap, HalfedgeGraphPointPMap, Sparse_linear_solver> 
 Mean_curvature_skeleton;
 
 // The input of the skeletonization algorithm must be a pure triangular closed
@@ -114,7 +114,7 @@ int main()
   GraphPointPMap points(points_map);
 
   Correspondence_map corr_map;
-  GraphCorrelationPMap corr(corr_map);
+  GraphVerticesPMap corr(corr_map);
 
   CGAL::MCF_skel_args<Polyhedron> skeleton_args(mesh);
 

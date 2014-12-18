@@ -41,7 +41,7 @@ typedef boost::property_map<Polyhedron, boost::vertex_index_t>::type     Vertex_
 typedef boost::property_map<Polyhedron, boost::halfedge_index_t>::type   Halfedge_index_map;
 
 typedef std::map<vertex_desc, std::vector<int> >                       Correspondence_map;
-typedef boost::associative_property_map<Correspondence_map>            GraphCorrelationPMap;
+typedef boost::associative_property_map<Correspondence_map>            GraphVerticesPMap;
 
 typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type        HalfedgeGraphPointPMap;
 
@@ -96,7 +96,7 @@ int main()
   GraphPointPMap points(points_map);
 
   Correspondence_map corr_map;
-  GraphCorrelationPMap corr(corr_map);
+  GraphVerticesPMap corr(corr_map);
 
   CGAL::MCF_skel_args<Polyhedron> skeleton_args(mesh);
 

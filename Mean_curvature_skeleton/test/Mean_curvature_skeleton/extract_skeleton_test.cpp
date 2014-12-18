@@ -43,7 +43,7 @@ typedef boost::property_map<Polyhedron, boost::vertex_index_t>::type     Vertex_
 typedef boost::property_map<Polyhedron, boost::halfedge_index_t>::type   Halfedge_index_map;
 
 typedef std::map<vertex_desc, std::vector<int> >                       Correspondence_map;
-typedef boost::associative_property_map<Correspondence_map>            GraphCorrelationPMap;
+typedef boost::associative_property_map<Correspondence_map>            GraphVerticesPMap;
 
 typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type        HalfedgeGraphPointPMap;
 
@@ -104,12 +104,12 @@ int main()
   GraphPointPMap points(points_map);
 
   Correspondence_map corr_map;
-  GraphCorrelationPMap corr(corr_map);
+  GraphVerticesPMap corr(corr_map);
 
   CGAL::MCF_skel_args<Polyhedron> skeleton_args(mesh);
 
   CGAL::extract_skeleton<Polyhedron, Graph, Vertex_index_map, Halfedge_index_map,
-  GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap, Sparse_linear_solver>(
+  GraphVerticesPMap, GraphPointPMap, HalfedgeGraphPointPMap, Sparse_linear_solver>(
       mesh, Vertex_index_map(), Halfedge_index_map(),
       skeleton_args, g, points, corr);
 
@@ -117,7 +117,7 @@ int main()
   points_map.clear();
   corr_map.clear();
   CGAL::extract_skeleton<Polyhedron, Graph, Vertex_index_map, Halfedge_index_map,
-  GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap>(
+  GraphVerticesPMap, GraphPointPMap, HalfedgeGraphPointPMap>(
       mesh, Vertex_index_map(), Halfedge_index_map(),
       skeleton_args, g, points, corr);
 
@@ -125,7 +125,7 @@ int main()
   points_map.clear();
   corr_map.clear();
   CGAL::extract_skeleton<Polyhedron, Graph, Vertex_index_map, Halfedge_index_map,
-  GraphCorrelationPMap, GraphPointPMap>(
+  GraphVerticesPMap, GraphPointPMap>(
       mesh, Vertex_index_map(), Halfedge_index_map(),
       skeleton_args, g, points, corr);
 
