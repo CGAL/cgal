@@ -368,7 +368,8 @@ double init_min_edge_length()
 public:
 
   /// \name Constructor
-  /// @{
+  ///@{
+  #ifdef DOXYGEN_RUNNING
   /**
    * The constructor of a skeletonization object.
    *
@@ -392,9 +393,22 @@ public:
    *        property map which associates a point to each vertex of the graph.
    */
   Mean_curvature_flow_skeletonization(HalfedgeGraph& hg,
-                                      VertexIndexMap vertex_index_map = VertexIndexMap() /* =get(boost::vertex_index, hg) */,
-                                      HalfedgeIndexMap halfedge_index_map = HalfedgeIndexMap() /* =get(boost::halfedge_index, hg) */,
-                                      HalfedgeGraphPointPMap vertex_point_map = HalfedgeGraphPointPMap()/* =get(boost::vertex_point, hg) */ )
+                                      VertexIndexMap vertex_index_map =get(boost::vertex_index, hg),
+                                      HalfedgeIndexMap halfedge_index_map = HalfedgeIndexMap()=get(boost::halfedge_index, hg),
+                                      HalfedgeGraphPointPMap vertex_point_map = HalfedgeGraphPointPMap()=get(boost::vertex_point, hg) )
+    : m_hg(hg)
+    , vertex_id_pmap(vertex_index_map)
+    , m_hedge_id_pmap(halfedge_index_map)
+    , hg_point_pmap(vertex_point_map)
+  {
+    init_args();
+    init();
+  }
+  #else
+  Mean_curvature_flow_skeletonization(HalfedgeGraph& hg,
+                                      VertexIndexMap vertex_index_map,
+                                      HalfedgeIndexMap halfedge_index_map,
+                                      HalfedgeGraphPointPMap vertex_point_map)
     : m_hg(hg)
     , vertex_id_pmap(vertex_index_map)
     , m_hedge_id_pmap(halfedge_index_map)
@@ -404,6 +418,38 @@ public:
     init();
   }
 
+  Mean_curvature_flow_skeletonization(HalfedgeGraph& hg,
+                                      VertexIndexMap vertex_index_map,
+                                      HalfedgeIndexMap halfedge_index_map)
+    : m_hg(hg)
+    , vertex_id_pmap(vertex_index_map)
+    , m_hedge_id_pmap(halfedge_index_map)
+    , hg_point_pmap(get(boost::vertex_point, m_hg))
+  {
+    init_args();
+    init();
+  }
+
+  Mean_curvature_flow_skeletonization(HalfedgeGraph& hg, VertexIndexMap vertex_index_map)
+    : m_hg(hg)
+    , vertex_id_pmap(vertex_index_map)
+    , m_hedge_id_pmap(get(boost::halfedge_index, m_hg))
+    , hg_point_pmap(get(boost::vertex_point, m_hg))
+  {
+    init_args();
+    init();
+  }
+
+  Mean_curvature_flow_skeletonization(HalfedgeGraph& hg)
+    : m_hg(hg)
+    , vertex_id_pmap(get(boost::vertex_index, m_hg))
+    , m_hedge_id_pmap(get(boost::halfedge_index, m_hg))
+    , hg_point_pmap(get(boost::vertex_point, m_hg))
+  {
+    init_args();
+    init();
+  }
+  #endif
   /// @} Constructor
 
   /// \name Algorithm Parameters
