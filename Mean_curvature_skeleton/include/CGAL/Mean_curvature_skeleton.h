@@ -270,11 +270,11 @@ private:
   HalfedgeGraph& m_hg;
 
   /** Storing indices of all vertices. */
-  VertexIndexMap vertex_id_pmap;
+  VertexIndexMap m_vertex_id_pmap;
   /** Storing indices of all edges. */
   HalfedgeIndexMap m_hedge_id_pmap;
   /** Storing the point for HalfedgeGraph vertex_descriptor. */
-  HalfedgeGraphPointPMap hg_point_pmap;
+  HalfedgeGraphPointPMap m_hg_point_pmap;
 
   /** Controling the velocity of movement and approximation quality. */
   double m_omega_H;
@@ -299,37 +299,37 @@ private:
   bool m_are_poles_computed;
 
   /** Cotangent weight calculator. */
-  Weight_calculator weight_calculator;
+  Weight_calculator m_weight_calculator;
   /** Storing the weights for edges. */
-  std::vector<double> edge_weight;
+  std::vector<double> m_edge_weight;
   /** The sparse solver. */
   SparseLinearAlgebraTraits_d m_solver;
 
   /** Assign a unique id to a new vertex. */
-  int vertex_id_count;
+  int m_vertex_id_count;
   /** The maximum id for original surface. vertices with ids
-   *  greater than `max_id` are created during split,
+   *  greater than `m_max_id` are created during split,
    *  thus will not be considered in correspondence tracking. */
-  int max_id;
+  int m_max_id;
   /** Used when assembling the matrix. */
-  std::map<int, int> new_id;
+  std::map<int, int> m_new_id;
 
   /** Store the id of fixed vertices. */
-  std::map<size_t, bool> is_vertex_fixed_map;
+  std::map<size_t, bool> m_is_vertex_fixed_map;
 
   /** The incident angle for a halfedge. */
-  std::vector<double> halfedge_angle;
+  std::vector<double> m_halfedge_angle;
 
   /** Record the correspondence between final surface
    *  and original surface points. */
-  std::map<int, std::vector<int> > correspondence;
+  std::map<int, std::vector<int> > m_correspondence;
 
   /** Record the corresponding pole of a point. */
   std::map<int, int> m_poles;
   /** The normal of surface points. */
-  std::vector<Vector> normals;
+  std::vector<Vector> m_normals;
   /** The dual of a cell in Triangulation(a Voronoi point). */
-  std::vector<Point> cell_dual;
+  std::vector<Point> m_cell_dual;
 
 // Private functions and classes
 
@@ -358,7 +358,7 @@ double init_min_edge_length()
 {
   vertex_iterator vb, ve;
   boost::tie(vb, ve) = vertices(m_hg);
-  Vertex_to_point v_to_p(hg_point_pmap);
+  Vertex_to_point v_to_p(m_hg_point_pmap);
   Bbox_3 bbox = CGAL::bbox_3(boost::make_transform_iterator(vb, v_to_p),
                              boost::make_transform_iterator(ve, v_to_p));
   return 0.002 * diagonal_length(bbox);
@@ -402,9 +402,9 @@ public:
                                       HalfedgeIndexMap halfedge_index_map,
                                       HalfedgeGraphPointPMap vertex_point_map)
     : m_hg(hg)
-    , vertex_id_pmap(vertex_index_map)
+    , m_vertex_id_pmap(vertex_index_map)
     , m_hedge_id_pmap(halfedge_index_map)
-    , hg_point_pmap(vertex_point_map)
+    , m_hg_point_pmap(vertex_point_map)
   {
     init_args();
     init();
@@ -414,9 +414,9 @@ public:
                                       VertexIndexMap vertex_index_map,
                                       HalfedgeIndexMap halfedge_index_map)
     : m_hg(hg)
-    , vertex_id_pmap(vertex_index_map)
+    , m_vertex_id_pmap(vertex_index_map)
     , m_hedge_id_pmap(halfedge_index_map)
-    , hg_point_pmap(get(boost::vertex_point, m_hg))
+    , m_hg_point_pmap(get(boost::vertex_point, m_hg))
   {
     init_args();
     init();
@@ -424,9 +424,9 @@ public:
 
   Mean_curvature_flow_skeletonization(HalfedgeGraph& hg, VertexIndexMap vertex_index_map)
     : m_hg(hg)
-    , vertex_id_pmap(vertex_index_map)
+    , m_vertex_id_pmap(vertex_index_map)
     , m_hedge_id_pmap(get(boost::halfedge_index, m_hg))
-    , hg_point_pmap(get(boost::vertex_point, m_hg))
+    , m_hg_point_pmap(get(boost::vertex_point, m_hg))
   {
     init_args();
     init();
@@ -434,9 +434,9 @@ public:
 
   Mean_curvature_flow_skeletonization(HalfedgeGraph& hg)
     : m_hg(hg)
-    , vertex_id_pmap(get(boost::vertex_index, m_hg))
+    , m_vertex_id_pmap(get(boost::vertex_index, m_hg))
     , m_hedge_id_pmap(get(boost::halfedge_index, m_hg))
-    , hg_point_pmap(get(boost::vertex_point, m_hg))
+    , m_hg_point_pmap(get(boost::vertex_point, m_hg))
   {
     init_args();
     init();
@@ -563,11 +563,11 @@ public:
     vertex_iterator vb, ve;
     for (boost::tie(vb, ve) = vertices(m_hg); vb != ve; ++vb)
     {
-      int id = get(vertex_id_pmap, *vb);
-      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
+      int id = get(m_vertex_id_pmap, *vb);
+      if (m_is_vertex_fixed_map.find(id) != m_is_vertex_fixed_map.end())
       {
         vertex_descriptor vd = *vb;
-        fixed_points.push_back(get(hg_point_pmap, vd));
+        fixed_points.push_back(get(m_hg_point_pmap, vd));
       }
     }
   }
@@ -584,11 +584,11 @@ public:
     vertex_iterator vb, ve;
     for (boost::tie(vb, ve) = vertices(m_hg); vb != ve; ++vb)
     {
-      int id = get(vertex_id_pmap, *vb);
-      if (is_vertex_fixed_map.find(id) == is_vertex_fixed_map.end())
+      int id = get(m_vertex_id_pmap, *vb);
+      if (m_is_vertex_fixed_map.find(id) == m_is_vertex_fixed_map.end())
       {
           vertex_descriptor vd = *vb;
-          non_fixed_points.push_back(get(hg_point_pmap, vd));
+          non_fixed_points.push_back(get(m_hg_point_pmap, vd));
       }
     }
   }
@@ -607,8 +607,8 @@ public:
     for (boost::tie(vb, ve) = vertices(m_hg); vb != ve; ++vb)
     {
       vertex_descriptor v = *vb;
-      int vid = get(vertex_id_pmap, v);
-      max_poles[cnt++] = cell_dual[m_poles[vid]];
+      int vid = get(m_vertex_id_pmap, v);
+      max_poles[cnt++] = m_cell_dual[m_poles[vid]];
     }
   }
 
@@ -721,10 +721,10 @@ public:
     for (boost::tie(vb, ve) = vertices(m_hg); vb != ve; ++vb)
     {
       vertex_descriptor vi = *vb;
-      int id = get(vertex_id_pmap, vi);
-      int i = new_id[id];
+      int id = get(m_vertex_id_pmap, vi);
+      int i = m_new_id[id];
       Point p(X[i], Y[i], Z[i]);
-      put(hg_point_pmap, vi, p);
+      put(m_hg_point_pmap, vi, p);
     }
 
     MCFSKEL_DEBUG(std::cerr << "leave contract geometry\n";)
@@ -837,7 +837,7 @@ public:
 
     MCFSKEL_DEBUG(print_edges();)
 
-    MCFSKEL_INFO(double area = internal::get_surface_area(m_hg, hg_point_pmap);)
+    MCFSKEL_INFO(double area = internal::get_surface_area(m_hg, m_hg_point_pmap);)
     MCFSKEL_INFO(std::cout << "area " << area << "\n";)
   }
 #endif
@@ -859,7 +859,7 @@ public:
       remesh();
       detect_degeneracies();
 
-      double area = internal::get_surface_area(m_hg, hg_point_pmap);
+      double area = internal::get_surface_area(m_hg, m_hg_point_pmap);
       double area_ratio = fabs(last_area - area) / m_original_area;
 
       MCFSKEL_INFO(std::cout << "area " << area << "\n";)
@@ -905,7 +905,7 @@ public:
   template <class Graph, class GraphPointPMap, class GraphVerticesPMap>
   void convert_to_skeleton(Graph& skeleton, GraphPointPMap& skeleton_points, GraphVerticesPMap& skeleton_to_hg_vertices)
   {
-    Skeleton skeletonization(m_hg, vertex_id_pmap, m_hedge_id_pmap, hg_point_pmap);
+    Skeleton skeletonization(m_hg, m_vertex_id_pmap, m_hedge_id_pmap, m_hg_point_pmap);
     std::map<typename Graph::vertex_descriptor, std::vector<int> > skeleton_to_surface_map;
     
     skeletonization.extract_skeleton(skeleton, skeleton_points, skeleton_to_surface_map);
@@ -929,14 +929,14 @@ public:
       for (size_t j = 0; j < skeleton_to_surface_map[i].size(); ++j)
       {
         int id = skeleton_to_surface_map[i][j];
-        if (correspondence.find(id) != correspondence.end())
+        if (m_correspondence.find(id) != m_correspondence.end())
         {
           skeleton_to_surface[i].insert(skeleton_to_surface[i].end(),
-                                        correspondence[id].begin(),
-                                        correspondence[id].end());
+                                        m_correspondence[id].begin(),
+                                        m_correspondence[id].end());
         }
 
-        if (id < max_id)
+        if (id < m_max_id)
         {
           skeleton_to_surface[i].push_back(id);
         }
@@ -972,13 +972,13 @@ private:
     m_are_poles_computed = false;
 
     m_alpha_TH *= (M_PI / 180.0);
-    m_original_area = internal::get_surface_area(m_hg, hg_point_pmap);
+    m_original_area = internal::get_surface_area(m_hg, m_hg_point_pmap);
 
-    vertex_id_count = num_vertices(m_hg);
-    max_id = vertex_id_count;
+    m_vertex_id_count = num_vertices(m_hg);
+    m_max_id = m_vertex_id_count;
 
-    is_vertex_fixed_map.clear();
-    correspondence.clear();
+    m_is_vertex_fixed_map.clear();
+    m_correspondence.clear();
 
     if (m_is_medially_centered)
       compute_voronoi_pole();
@@ -991,12 +991,12 @@ private:
   /// Compute cotangent weights of all edges.
   void compute_edge_weight()
   {
-    edge_weight.clear();
-    edge_weight.reserve(2 * num_edges(m_hg));
+    m_edge_weight.clear();
+    m_edge_weight.reserve(2 * num_edges(m_hg));
     halfedge_iterator eb, ee;
     for(boost::tie(eb, ee) = halfedges(m_hg); eb != ee; ++eb)
     {
-      edge_weight.push_back(this->weight_calculator(*eb, m_hg));
+      m_edge_weight.push_back(this->m_weight_calculator(*eb, m_hg));
     }
   }
 
@@ -1012,11 +1012,11 @@ private:
     vertex_iterator vb, ve;
     for (boost::tie(vb, ve) = vertices(m_hg); vb != ve; ++vb)
     {
-      int id = get(vertex_id_pmap, *vb);
+      int id = get(m_vertex_id_pmap, *vb);
 
-      int i = new_id[id];
+      int i = m_new_id[id];
       // if the vertex is fixed
-      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
+      if (m_is_vertex_fixed_map.find(id) != m_is_vertex_fixed_map.end())
       {
         A.set_coef(i + nver, i, 1.0 / m_zero_TH, true);
       }
@@ -1025,9 +1025,9 @@ private:
         A.set_coef(i + nver, i, m_omega_H, true);
         if (m_is_medially_centered)
         {
-          if (id < max_id)
+          if (id < m_max_id)
           {
-            if (test_inside(cell_dual[m_poles[id]]) == CGAL::ON_BOUNDED_SIDE)
+            if (test_inside(m_cell_dual[m_poles[id]]) == CGAL::ON_BOUNDED_SIDE)
             {
               A.set_coef(i + nver * 2, i, m_omega_P, true);
             }
@@ -1038,11 +1038,11 @@ private:
 
     for (boost::tie(vb, ve) = vertices(m_hg); vb != ve; ++vb)
     {
-      int id = get(vertex_id_pmap, *vb);
-      int i = new_id[id];
+      int id = get(m_vertex_id_pmap, *vb);
+      int i = m_new_id[id];
       double L = 1.0;
       // if the vertex is fixed
-      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
+      if (m_is_vertex_fixed_map.find(id) != m_is_vertex_fixed_map.end())
       {
         L = 0;
       }
@@ -1051,9 +1051,9 @@ private:
       for (boost::tie(e, e_end) = in_edges(*vb, m_hg); e != e_end; ++e)
       {
         vertex_descriptor vj = source(*e, m_hg);
-        double wij = edge_weight[get(m_hedge_id_pmap, halfedge(*e, m_hg))] * 2.0;
-        int jd = get(vertex_id_pmap, vj);
-        int j = new_id[jd];
+        double wij = m_edge_weight[get(m_hedge_id_pmap, halfedge(*e, m_hg))] * 2.0;
+        int jd = get(m_vertex_id_pmap, vj);
+        int j = m_new_id[jd];
         A.set_coef(i, j, wij * L, true);
         diagonal += -wij;
       }
@@ -1085,11 +1085,11 @@ private:
     for (boost::tie(vb, ve) = vertices(m_hg); vb != ve; ++vb)
     {
       vertex_descriptor vi = *vb;
-      int id = get(vertex_id_pmap, vi);
-      int i = new_id[id];
+      int id = get(m_vertex_id_pmap, vi);
+      int i = m_new_id[id];
 
       double oh, op = 0.0;
-      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
+      if (m_is_vertex_fixed_map.find(id) != m_is_vertex_fixed_map.end())
       {
         oh = 1.0 / m_zero_TH;
       }
@@ -1098,23 +1098,23 @@ private:
         oh = m_omega_H;
         if (m_is_medially_centered)
         {
-          if (id < max_id)
+          if (id < m_max_id)
           {
-            if (test_inside(cell_dual[m_poles[id]]) == CGAL::ON_BOUNDED_SIDE)
+            if (test_inside(m_cell_dual[m_poles[id]]) == CGAL::ON_BOUNDED_SIDE)
             {
               op = m_omega_P;
             }
           }
         }
       }
-      Bx[i + nver] = get(hg_point_pmap, vi).x() * oh;
-      By[i + nver] = get(hg_point_pmap, vi).y() * oh;
-      Bz[i + nver] = get(hg_point_pmap, vi).z() * oh;
+      Bx[i + nver] = get(m_hg_point_pmap, vi).x() * oh;
+      By[i + nver] = get(m_hg_point_pmap, vi).y() * oh;
+      Bz[i + nver] = get(m_hg_point_pmap, vi).z() * oh;
       if (m_is_medially_centered)
       {
-        double x = to_double(cell_dual[m_poles[id]].x());
-        double y = to_double(cell_dual[m_poles[id]].y());
-        double z = to_double(cell_dual[m_poles[id]].z());
+        double x = to_double(m_cell_dual[m_poles[id]].x());
+        double y = to_double(m_cell_dual[m_poles[id]].y());
+        double z = to_double(m_cell_dual[m_poles[id]].z());
         Bx[i + nver * 2] = x * op;
         By[i + nver * 2] = y * op;
         Bz[i + nver * 2] = z * op;
@@ -1127,13 +1127,13 @@ private:
   /// The order of vertex id is the same as the traverse order.
   void update_vertex_id()
   {
-    new_id.clear();
+    m_new_id.clear();
     int cnt = 0;
     vertex_iterator vb, ve;
     for (boost::tie(vb, ve) = vertices(m_hg); vb != ve; ++vb)
     {
-      int id = get(vertex_id_pmap, *vb);
-      new_id[id] = cnt++;
+      int id = get(m_vertex_id_pmap, *vb);
+      m_new_id[id] = cnt++;
     }
   }
 
@@ -1168,12 +1168,12 @@ private:
     if (m_is_medially_centered)
     {
       vis = internal::Track_correspondence_visitor<HalfedgeGraph, HalfedgeGraphPointPMap>
-            (&hg_point_pmap, &correspondence, &m_poles, &cell_dual, max_id);
+            (&m_hg_point_pmap, &m_correspondence, &m_poles, &m_cell_dual, m_max_id);
     }
     else
     {
       vis = internal::Track_correspondence_visitor<HalfedgeGraph, HalfedgeGraphPointPMap>
-            (&hg_point_pmap, &correspondence, max_id);
+            (&m_hg_point_pmap, &m_correspondence, m_max_id);
     }
 
     int r = SMS::edge_collapse
@@ -1192,9 +1192,9 @@ private:
   void track_correspondence(vertex_descriptor v0, vertex_descriptor v1,
                             vertex_descriptor v)
   {
-    int id0 = get(vertex_id_pmap, v0);
-    int id1 = get(vertex_id_pmap, v1);
-    int vid = get(vertex_id_pmap, v);
+    int id0 = get(m_vertex_id_pmap, v0);
+    int id1 = get(m_vertex_id_pmap, v1);
+    int vid = get(m_vertex_id_pmap, v);
     int from, to;
     if (id0 == vid)
     {
@@ -1207,35 +1207,35 @@ private:
       to = id1;
     }
 
-    if (correspondence.find(to) == correspondence.end())
+    if (m_correspondence.find(to) == m_correspondence.end())
     {
-      correspondence[to] = std::vector<int>();
+      m_correspondence[to] = std::vector<int>();
     }
     // only track vertex in original mesh
-    if (from < max_id)
+    if (from < m_max_id)
     {
-      correspondence[to].push_back(from);
+      m_correspondence[to].push_back(from);
     }
-    std::map<int, std::vector<int> >::iterator iter = correspondence.find(from);
-    if (iter != correspondence.end())
+    std::map<int, std::vector<int> >::iterator iter = m_correspondence.find(from);
+    if (iter != m_correspondence.end())
     {
       for (size_t i = 0; i < (iter->second).size(); ++i)
       {
-        correspondence[to].push_back((iter->second)[i]);
+        m_correspondence[to].push_back((iter->second)[i]);
       }
       (iter->second).clear();
-      correspondence.erase(iter);
+      m_correspondence.erase(iter);
     }
 
     if (m_is_medially_centered)
     {
-      Point pole0 = Point(to_double(cell_dual[m_poles[id0]].x()),
-                          to_double(cell_dual[m_poles[id0]].y()),
-                          to_double(cell_dual[m_poles[id0]].z()));
-      Point pole1 = Point(to_double(cell_dual[m_poles[id1]].x()),
-                          to_double(cell_dual[m_poles[id1]].y()),
-                          to_double(cell_dual[m_poles[id1]].z()));
-      Point p1 = get(hg_point_pmap, v1);
+      Point pole0 = Point(to_double(m_cell_dual[m_poles[id0]].x()),
+                          to_double(m_cell_dual[m_poles[id0]].y()),
+                          to_double(m_cell_dual[m_poles[id0]].z()));
+      Point pole1 = Point(to_double(m_cell_dual[m_poles[id1]].x()),
+                          to_double(m_cell_dual[m_poles[id1]].y()),
+                          to_double(m_cell_dual[m_poles[id1]].z()));
+      Point p1 = get(m_hg_point_pmap, v1);
       double dis_to_pole0 = sqrt(squared_distance(pole0, p1));
       double dis_to_pole1 = sqrt(squared_distance(pole1, p1));
       if (dis_to_pole0 < dis_to_pole1)
@@ -1268,8 +1268,8 @@ private:
 
       vertex_descriptor vi = source(h, m_hg);
       vertex_descriptor vj = target(h, m_hg);
-      double edge_length = sqrt(squared_distance(get(hg_point_pmap, vi),
-                                                 get(hg_point_pmap, vj)));
+      double edge_length = sqrt(squared_distance(get(m_hg_point_pmap, vi),
+                                                 get(m_hg_point_pmap, vj)));
       if (internal::is_collapse_ok(m_hg, h) && edge_length < m_min_edge_length)
       {
         Point p = midpoint(
@@ -1304,11 +1304,11 @@ private:
       halfedge_descriptor h = halfedge(*eb, m_hg);
       vertex_descriptor vi = source(h, m_hg);
       vertex_descriptor vj = target(h, m_hg);
-      size_t vi_idx = get(vertex_id_pmap, vi);
-      size_t vj_idx = get(vertex_id_pmap, vj);
+      size_t vi_idx = get(m_vertex_id_pmap, vi);
+      size_t vj_idx = get(m_vertex_id_pmap, vj);
 
-      if (is_vertex_fixed_map.find(vi_idx) != is_vertex_fixed_map.end()
-       && is_vertex_fixed_map.find(vj_idx) != is_vertex_fixed_map.end())
+      if (m_is_vertex_fixed_map.find(vi_idx) != m_is_vertex_fixed_map.end()
+       && m_is_vertex_fixed_map.find(vj_idx) != m_is_vertex_fixed_map.end())
       {
         fixed_edge_map.set_is_fixed(h, true); // opposite is automatically added
       }
@@ -1322,9 +1322,9 @@ private:
   /// Compute the incident angles for all the halfedges.
   void compute_incident_angle()
   {
-    halfedge_angle.clear();
+    m_halfedge_angle.clear();
     int ne = 2 * num_edges(m_hg);
-    halfedge_angle.resize(ne, 0);
+    m_halfedge_angle.resize(ne, 0);
 
     halfedge_iterator eb, ee;
     int idx = 0;
@@ -1340,7 +1340,7 @@ private:
 
       if (is_border(ed, m_hg))
       {
-        halfedge_angle[e_id] = -1;
+        m_halfedge_angle[e_id] = -1;
       }
       else
       {
@@ -1348,9 +1348,9 @@ private:
         vertex_descriptor vj = target(ed, m_hg);
         halfedge_descriptor ed_next = ed->next();
         vertex_descriptor vk = target(ed_next, m_hg);
-        Point pi = get(hg_point_pmap, vi);
-        Point pj = get(hg_point_pmap, vj);
-        Point pk = get(hg_point_pmap, vk);
+        Point pi = get(m_hg_point_pmap, vi);
+        Point pj = get(m_hg_point_pmap, vj);
+        Point pk = get(m_hg_point_pmap, vk);
 
         double dis2_ij = squared_distance(pi, pj);
         double dis2_ik = squared_distance(pi, pk);
@@ -1362,11 +1362,11 @@ private:
         // A degenerate triangle will never undergo a split (but rather a collapse...)
         if (dis_ij < m_zero_TH || dis_ik < m_zero_TH || dis_jk < m_zero_TH)
         {
-          halfedge_angle[e_id] = -1;
+          m_halfedge_angle[e_id] = -1;
         }
         else
         {
-          halfedge_angle[e_id] =
+          m_halfedge_angle[e_id] =
               acos((dis2_ik + dis2_jk - dis2_ij) / (2.0 * dis_ik * dis_jk));
         }
       }
@@ -1378,9 +1378,9 @@ private:
                        const vertex_descriptor vt,
                        const vertex_descriptor vk)
   {
-    Point ps = get(hg_point_pmap, vs);
-    Point pt = get(hg_point_pmap, vt);
-    Point pk = get(hg_point_pmap, vk);
+    Point ps = get(m_hg_point_pmap, vs);
+    Point pt = get(m_hg_point_pmap, vt);
+    Point pk = get(m_hg_point_pmap, vk);
     CGAL::internal::Vector vec_st = CGAL::internal::Vector(ps, pt);
     CGAL::internal::Vector vec_sk = CGAL::internal::Vector(ps, pk);
 
@@ -1392,15 +1392,15 @@ private:
     // project the pole
     if (m_is_medially_centered)
     {
-      int sid = get(vertex_id_pmap, vs);
-      int tid = get(vertex_id_pmap, vt);
-      Point pole_s = cell_dual[m_poles[sid]];
-      Point pole_t = cell_dual[m_poles[tid]];
+      int sid = get(m_vertex_id_pmap, vs);
+      int tid = get(m_vertex_id_pmap, vt);
+      Point pole_s = m_cell_dual[m_poles[sid]];
+      Point pole_t = m_cell_dual[m_poles[tid]];
       Vector pole_st = pole_t - pole_s;
       Vector p_projector = pole_st / sqrt(pole_st.squared_length());
       Point pole_n = pole_s + p_projector * t;
-      m_poles[vertex_id_count] = cell_dual.size();
-      cell_dual.push_back(pole_n);
+      m_poles[m_vertex_id_count] = m_cell_dual.size();
+      m_cell_dual.push_back(pole_n);
     }
     return pn;
   }
@@ -1429,8 +1429,8 @@ private:
       vertex_descriptor vs = source(ei, m_hg);
       vertex_descriptor vt = target(ei, m_hg);
 
-      double angle_i = halfedge_angle[ei_id];
-      double angle_j = halfedge_angle[ej_id];
+      double angle_i = m_halfedge_angle[ei_id];
+      double angle_j = m_halfedge_angle[ej_id];
       if (angle_i < m_alpha_TH || angle_j < m_alpha_TH)
       {
         continue;
@@ -1447,9 +1447,9 @@ private:
       }
       vertex_descriptor vk = target(ek, m_hg);
       Point pn = project_vertex(vs, vt, vk);
-      halfedge_descriptor en = internal::mesh_split(m_hg, hg_point_pmap, ei, pn);
+      halfedge_descriptor en = internal::mesh_split(m_hg, m_hg_point_pmap, ei, pn);
       // set id for new vertex
-      put(vertex_id_pmap, en->vertex(), vertex_id_count++);
+      put(m_vertex_id_pmap, en->vertex(), m_vertex_id_count++);
       cnt++;
     }
     return cnt;
@@ -1468,15 +1468,15 @@ private:
     for (boost::tie(vb, ve) = vertices(m_hg); vb != ve; ++vb)
     {
       vertex_descriptor v = *vb;
-      int idx = get(vertex_id_pmap, v);
+      int idx = get(m_vertex_id_pmap, v);
 
-      if (is_vertex_fixed_map.find(idx) == is_vertex_fixed_map.end())
+      if (m_is_vertex_fixed_map.find(idx) == m_is_vertex_fixed_map.end())
       {
-        bool willbefixed = internal::is_vertex_degenerate(m_hg, hg_point_pmap,
+        bool willbefixed = internal::is_vertex_degenerate(m_hg, m_hg_point_pmap,
                                                           v, m_min_edge_length);
         if (willbefixed)
         {
-          is_vertex_fixed_map[idx] = willbefixed;
+          m_is_vertex_fixed_map[idx] = willbefixed;
           num_fixed++;
         }
       }
@@ -1497,8 +1497,8 @@ private:
     for (boost::tie(vb, ve) = vertices(m_hg); vb != ve; ++vb)
     {
       vertex_descriptor v = *vb;
-      int idx = boost::get(vertex_id_pmap, v);
-      if (is_vertex_fixed_map.find(idx) == is_vertex_fixed_map.end())
+      int idx = boost::get(m_vertex_id_pmap, v);
+      if (m_is_vertex_fixed_map.find(idx) == m_is_vertex_fixed_map.end())
       {
         bool willbefixed = false;
         int bad_counter = 0;
@@ -1509,8 +1509,8 @@ private:
           halfedge_descriptor edge = halfedge(*eb, m_hg);
           vertex_descriptor v0 = source(edge, m_hg);
           vertex_descriptor v1 = target(edge, m_hg);
-          double length = sqrt(squared_distance(get(hg_point_pmap, v0),
-                                                get(hg_point_pmap, v1)));
+          double length = sqrt(squared_distance(get(m_hg_point_pmap, v0),
+                                                get(m_hg_point_pmap, v1)));
           if (length < elength_fixed)
           {
             if (!internal::is_collapse_ok(m_hg, edge))
@@ -1522,7 +1522,7 @@ private:
         willbefixed = (bad_counter >= 2);
         if (willbefixed)
         {
-          is_vertex_fixed_map[idx] = willbefixed;
+          m_is_vertex_fixed_map[idx] = willbefixed;
           num_fixed++;
         }
       }
@@ -1548,7 +1548,7 @@ private:
     std::vector<std::vector<int> > point_to_pole;
 
     points.clear();
-    cell_dual.clear();
+    m_cell_dual.clear();
     point_to_pole.clear();
     point_to_pole.resize(num_vertices(m_hg));
 
@@ -1556,10 +1556,10 @@ private:
     for (boost::tie(vb, ve) = vertices(m_hg); vb != ve; ++vb)
     {
       vertex_descriptor v = *vb;
-      int vid = get(vertex_id_pmap, v);
-      Exact_point tp((get(hg_point_pmap, v)).x(),
-                     (get(hg_point_pmap, v)).y(),
-                     (get(hg_point_pmap, v)).z());
+      int vid = get(m_vertex_id_pmap, v);
+      Exact_point tp((get(m_hg_point_pmap, v)).x(),
+                     (get(m_hg_point_pmap, v)).y(),
+                     (get(m_hg_point_pmap, v)).z());
       points.push_back(std::make_pair(tp, vid));
     }
 
@@ -1572,7 +1572,7 @@ private:
       Cell_handle cell = cit;
       Exact_point point = T.dual(cell);
       Point pt(to_double(point.x()), to_double(point.y()), to_double(point.z()));
-      cell_dual.push_back(pt);
+      m_cell_dual.push_back(pt);
       // each cell has 4 incident vertices
       for (int i = 0; i < 4; ++i)
       {
@@ -1596,9 +1596,9 @@ private:
       for (size_t j = 0; j < point_to_pole[i].size(); ++j)
       {
         int pole_id = point_to_pole[i][j];
-        Point cell_point = cell_dual[pole_id];
+        Point cell_point = m_cell_dual[pole_id];
         Vector vt = cell_point - surface_point;
-        Vector n = normals[i];
+        Vector n = m_normals[i];
 
         double t = vt * n;
 
@@ -1618,14 +1618,14 @@ private:
   /// Compute an approximate vertex normal for all vertices.
   void compute_vertex_normal()
   {
-    normals.resize(num_vertices(m_hg));
+    m_normals.resize(num_vertices(m_hg));
 
     vertex_iterator vb, ve;
     for (boost::tie(vb, ve) = vertices(m_hg); vb != ve; ++vb)
     {
       vertex_descriptor v = *vb;
-      int vid = get(vertex_id_pmap, v);
-      normals[vid] = internal::get_vertex_normal<typename HalfedgeGraph::Vertex,Kernel>(*v);
+      int vid = get(m_vertex_id_pmap, v);
+      m_normals[vid] = internal::get_vertex_normal<typename HalfedgeGraph::Vertex,Kernel>(*v);
     }
   }
 
@@ -1645,8 +1645,8 @@ private:
       {
         vertex_descriptor vi = source(*eb, m_hg);
         vertex_descriptor vj = target(*eb, m_hg);
-        size_t vi_idx = get(vertex_id_pmap, vi);
-        size_t vj_idx = get(vertex_id_pmap, vj);
+        size_t vi_idx = get(m_vertex_id_pmap, vi);
+        size_t vj_idx = get(m_vertex_id_pmap, vj);
         std::cout << vi_idx << " " << vj_idx << "\n";
 
         visited[*eb] = true;
