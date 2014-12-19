@@ -103,8 +103,8 @@ int main(int argc, char * argv[])
 
   //Algorithm parameters
   const double retain_percentage = 2;   // percentage of points to retain.
-  const double neighbor_radius = 0.03;   // neighbors size.
-  const unsigned int iter_number = 30;     // number of iterations.
+  const double neighbor_radius = 0.5;   // neighbors size.
+  const unsigned int iter_number = 25;     // number of iterations.
   const bool need_compute_density = false;  // if needed to compute density.
 
   // Accumulated errors

@@ -513,8 +513,10 @@ wlop_simplify_and_regularize_point_set(
     radius = std::sqrt(bbox_diameter) * 0.07; // using this estimation may not  
                                               // be able to generate good result
 
+#ifdef CGAL_DEBUG_MODE
     std::cout << "The estimated radius size is: " << radius << std::endl;
     std::cout << "Be careful! Using this radius estimation may not be able to have good performance/result for different input" << std::endl;
+#endif
   }
 
   FT radius2 = radius * radius;

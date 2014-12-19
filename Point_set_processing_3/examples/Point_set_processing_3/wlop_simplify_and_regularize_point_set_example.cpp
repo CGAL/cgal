@@ -30,13 +30,17 @@ int main(void)
 
   std::vector<Point> output;
 
-  //with default parameters begins
+  //parameters
+  const double retain_percentage = 2;   // percentage of points to retain.
+  const double neighbor_radius = 0.5;   // neighbors size.
+
   CGAL::wlop_simplify_and_regularize_point_set
                           <CGAL::Parallel_tag> // parallel version
                           (points.begin(), 
                            points.end(),
-                           std::back_inserter(output));
-  //with default parameters ends
+                           std::back_inserter(output),
+                           retain_percentage,
+                           neighbor_radius);
   
   std::ofstream out(OUTPUT_FILENAME.c_str()); 
   if (!out || !CGAL::write_xyz_points(
