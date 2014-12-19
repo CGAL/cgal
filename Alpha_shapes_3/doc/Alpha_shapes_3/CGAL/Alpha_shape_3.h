@@ -336,6 +336,10 @@ lower dimensional faces are output first.
 
 \tparam OutputIterator must be an output iterator accepting
 variables of type `Object`.
+
+\warning The result of this function depends on the mode of the Alpha-shape.
+         In most case, `Alpha_shape_3::GENERAL` is the most interesting one.
+
 */
 template<class OutputIterator>
 OutputIterator filtration(OutputIterator it) const;
@@ -351,6 +355,9 @@ are reported successively.
 \tparam OutputIterator must be an output iterator accepting variables of type
 `Object` and `FT`. The class `Dispatch_output_iterator` can be used for this
 purpose.
+
+\warning The result of this function dependents on the mode of the Alpha-shape.
+         In most case, `Alpha_shape_3::GENERAL` is the most interesting one.
 */
 template<class OutputIterator>
 OutputIterator filtration_with_alpha_values(OutputIterator it) const;
