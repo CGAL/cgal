@@ -183,16 +183,16 @@ void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert,
   typedef typename Kernel::FT FT;
 
   rich_points.resize(vert.size());
-  for(int i = 0; i < rich_points.size(); ++i)
+  for(size_t i = 0; i < rich_points.size(); ++i)
   {
     rich_points[i] = &vert[i];
   }
 
   radius = _radius;
 
-  x_side = (int)ceil((bbox.xmax() - bbox.xmin()) / radius);
-  y_side = (int)ceil((bbox.ymax() - bbox.ymin()) / radius);
-  z_side = (int)ceil((bbox.zmax() - bbox.zmin()) / radius);
+  x_side = (unsigned int)ceil((bbox.xmax() - bbox.xmin()) / radius);
+  y_side = (unsigned int)ceil((bbox.ymax() - bbox.ymin()) / radius);
+  z_side = (unsigned int)ceil((bbox.zmax() - bbox.zmin()) / radius);
 
 
   x_side = (x_side > 0) ? x_side : 1;
@@ -206,7 +206,7 @@ void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert,
   unsigned int start_z = 0;
   for(unsigned int z = 0; z < z_side; z++) 
   {
-    int end_z = start_z;
+    size_t end_z = start_z;
     FT max_z = bbox.zmin() + (z+1)*radius;
     while(end_z < rich_points.size() && rich_points[end_z]->pt.z() < max_z)
       ++end_z; 

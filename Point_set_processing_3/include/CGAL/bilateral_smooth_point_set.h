@@ -210,7 +210,6 @@ compute_kdtree_neighbors(
   Neighbor_search search(tree, query, k+1);
   Search_iterator search_iterator = search.begin();
   ++search_iterator;
-  FT max_distance = (FT)0.0;
   unsigned int i;
   std::vector<CGAL::Point_with_normal_3<Kernel>
     , CGAL_PSP3_DEFAULT_ALLOCATOR<CGAL::Point_with_normal_3<Kernel> > 
