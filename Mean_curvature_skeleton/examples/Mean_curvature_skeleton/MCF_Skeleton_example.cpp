@@ -94,7 +94,9 @@ int main()
   Correspondence_map corr_map;
   GraphVerticesPMap corr(corr_map);
 
+  //make a copy of the polyhedron and init the ids
   Polyhedron mesh_copy(mesh);
+  CGAL::set_halfedgeds_items_id(mesh_copy);
 
   Mean_curvature_skeleton mcs(mesh_copy);
 

@@ -127,12 +127,12 @@ enum Degeneracy_algorithm_tag
 /// @tparam HalfedgeGraph
 ///         a model of `HalfedgeGraph`
 /// @tparam VertexIndexMap
-///         a model of `ReadWritePropertyMap`
+///         a model of `ReadablePropertyMap`
 ///         with `#Mean_curvature_flow_skeletonization::vertex_descriptor` as key and
 ///         `unsigned int` as value type.
 ///         The default is `boost::property_map<HalfedgeGraph, boost::vertex_index_t>::%type`.
 /// @tparam HalfedgeIndexMap
-///         a model of `ReadWritePropertyMap`</a>
+///         a model of `ReadablePropertyMap`</a>
 ///         with `#Mean_curvature_flow_skeletonization::halfedge_descriptor` as key and
 ///         `unsigned int` as value type
 ///         The default is `boost::property_map<HalfedgeGraph, boost::halfedge_index_t>::%type`.
@@ -985,29 +985,14 @@ private:
     double area = internal::get_surface_area(m_hg, hg_point_pmap);
     m_original_area = area;
 
-    // initialize index maps
-    vertex_id_count = 0;
-    for (boost::tie(vb, ve) = vertices(m_hg); vb != ve; ++vb)
-    {
-      put(vertex_id_pmap, *vb, vertex_id_count++);
-    }
-
+    vertex_id_count = num_vertices(m_hg);
     max_id = vertex_id_count;
-
-    halfedge_iterator eb, ee;
-    int idx = 0;
-    for (boost::tie(eb, ee) = halfedges(m_hg); eb != ee; ++eb)
-    {
-      put(m_hedge_id_pmap, *eb, idx++);
-    }
 
     is_vertex_fixed_map.clear();
     correspondence.clear();
 
     if (m_is_medially_centered)
-    {
       compute_voronoi_pole();
-    }
   }
 
   // --------------------------------------------------------------------------

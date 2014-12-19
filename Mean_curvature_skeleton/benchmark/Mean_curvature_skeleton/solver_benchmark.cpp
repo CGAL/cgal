@@ -114,6 +114,7 @@ int main()
     points_map.clear();
     corr_map.clear();
     Polyhedron mesh_copy(mesh);
+    CGAL::set_halfedgeds_items_id(mesh_copy);
 
     CGAL::Timer timer;
     timer.start();
@@ -133,6 +134,7 @@ int main()
     points_map.clear();
     corr_map.clear();
     Polyhedron mesh_copy(mesh);
+    CGAL::set_halfedgeds_items_id(mesh_copy);
 
     CGAL::Timer timer;
     timer.start();

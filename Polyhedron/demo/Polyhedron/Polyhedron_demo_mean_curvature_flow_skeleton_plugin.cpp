@@ -225,6 +225,7 @@ public:
       }
 
       Polyhedron* contracted_mesh_ptr = new Polyhedron(*pMesh);
+      CGAL::set_halfedgeds_items_id(*contracted_mesh_ptr);
       mcs = new Mean_curvature_skeleton(*contracted_mesh_ptr);
       //set algorithm parameters
       mcs->set_omega_H(omega_H);
@@ -260,6 +261,7 @@ public:
         delete mcs;
 
         Polyhedron* contracted_mesh_ptr = new Polyhedron(*pMesh);
+        CGAL::set_halfedgeds_items_id(*contracted_mesh_ptr);
         mcs = new Mean_curvature_skeleton(*pMesh);
         //set algorithm parameters
         mcs->set_omega_H(omega_H);
