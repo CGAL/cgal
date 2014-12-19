@@ -7,3 +7,4 @@ INPUT =  ${CMAKE_SOURCE_DIR}/Mean_curvature_skeleton/doc/Mean_curvature_skeleton
 EXTRACT_ALL                =  false
 HIDE_UNDOC_MEMBERS         =  true
 HIDE_UNDOC_CLASSES         =  true
+MULTILINE_CPP_IS_BRIEF = YES

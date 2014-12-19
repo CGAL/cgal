@@ -124,18 +124,18 @@ enum Degeneracy_algorithm_tag
 ///         a model of `HalfedgeGraph`
 /// @tparam VertexIndexMap
 ///         a model of `ReadablePropertyMap`
-///         with `#Mean_curvature_flow_skeletonization::vertex_descriptor` as key and
+///         with `Mean_curvature_flow_skeletonization::vertex_descriptor` as key and
 ///         `unsigned int` as value type.
 ///         The default is `boost::property_map<HalfedgeGraph, boost::vertex_index_t>::%type`.
 /// @tparam HalfedgeIndexMap
 ///         a model of `ReadablePropertyMap`</a>
-///         with `#Mean_curvature_flow_skeletonization::halfedge_descriptor` as key and
-///         `unsigned int` as value type
+///         with `Mean_curvature_flow_skeletonization::halfedge_descriptor` as key and
+///         `unsigned int` as value type.
 ///         The default is `boost::property_map<HalfedgeGraph, boost::halfedge_index_t>::%type`.
 /// @tparam HalfedgeGraphPointPMap
 ///         a model of `ReadWritePropertyMap`
-///         with `HalfedgeGraph::vertex_descriptor` as key and
-///         `#Mean_curvature_flow_skeletonization::Point` as value type.
+///         with `Mean_curvature_flow_skeletonization::vertex_descriptor` as key and
+///         `Mean_curvature_flow_skeletonization::Point` as value type.
 ///         The default is `boost::property_map<HalfedgeGraph, boost::vertex_point_t>::%type`.
 /// @tparam SparseLinearAlgebraTraits_d
 ///         a model of `SparseLinearAlgebraTraitsWithFactor_d`.
@@ -173,6 +173,8 @@ class Mean_curvature_flow_skeletonization
 {
 // Public types
 public:
+/// \name Types
+/// @{
   // Template parameters
   #ifndef DOXYGEN_RUNNING
     typedef typename Default::Get<
@@ -188,8 +190,11 @@ public:
     typename boost::property_map<HalfedgeGraph, boost::vertex_point_t>::type
   >::type HalfedgeGraphPointPMap;
   #else
+    ///
     typedef VertexIndexMap_ Vertex_index_map;
+    ///
     typedef HalfedgeIndexMap_ Hedge_index_map;
+    ///
     typedef HalfedgeGraphPointPMap_ HalfedgeGraphPointPMap;
   #endif
 
@@ -206,26 +211,30 @@ public:
   #endif
   >::type SparseLinearAlgebraTraits_d;
   #else
+  ///
   typedef SparseLinearAlgebraTraits_d_ SparseLinearAlgebraTraits_d;
   #endif
+  /// Point type
+  typedef typename boost::property_traits<HalfedgeGraphPointPMap>::value_type    Point;
+  ///
+  typedef typename Kernel_traits<Point>::Kernel                                 Kernel;
+  /// Vertex descriptor type
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor       vertex_descriptor;
+  /// Halfedge descriptor type
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor     halfedge_descriptor;
+/// @}
 
+  typedef typename Kernel::Vector_3                                             Vector;
 
-  // Geometric types
-  typedef typename HalfedgeGraph::Traits         Kernel;
-  typedef typename Kernel::Vector_3              Vector;
-  typedef typename Kernel::Point_3               Point;
 
   // Repeat HalfedgeGraph types
-  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor       vertex_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_iterator         vertex_iterator;
   typedef typename HalfedgeGraph::Vertex_handle                                Vertex_handle;
-
-  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor     halfedge_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_iterator       halfedge_iterator;
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor         edge_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_iterator           edge_iterator;
   typedef typename boost::graph_traits<HalfedgeGraph>::in_edge_iterator        in_edge_iterator;
-  typedef typename boost::graph_traits<HalfedgeGraph>::out_edge_iterator	     out_edge_iterator;
+  typedef typename boost::graph_traits<HalfedgeGraph>::out_edge_iterator       out_edge_iterator;
 
   typedef typename HalfedgeGraph::Face_handle                                  Face_handle;
   typedef typename HalfedgeGraph::Facet_iterator                               Facet_iterator;
@@ -383,7 +392,7 @@ public:
    * @attention  `hg` will be modified (edge collapses and triangle splits) while creating the skeleton.
    * @param vertex_index_map 
    *        property map which associates an id to each vertex, from `0` to `num_vertices(hg)-1`.
-   * @param edge_index_map
+   * @param halfedge_index_map
    *        property map which associates an id to each halfedge, from `0` to `num_halfedges(hg)-1`.
    * @param vertex_point_map 
    *        property map which associates a point to each vertex of the graph.
@@ -443,9 +452,9 @@ public:
   /// \name Algorithm Parameters
   /// @{
 
-  /** Controls the velocity of movement and approximation quality:
-   *  increasing `omega_H` makes the mean curvature flow based contraction converge
-   *  faster, but results in a skeleton of worse quality. */
+  /// Controls the velocity of movement and approximation quality:
+  /// increasing `omega_H` makes the mean curvature flow based contraction converge
+  /// faster, but results in a skeleton of worse quality.
   double omega_H()
   {
     return m_omega_H;
@@ -456,9 +465,9 @@ public:
     m_omega_H = value;
   }
 
-  /** Controls the smoothness of the medial approximation:
-   *  increasing `omega_P` results in a skeleton closer
-   *  to the medial axis, but slows down the speed of contraction. */
+  /// Controls the smoothness of the medial approximation:
+  /// increasing `omega_P` results in a skeleton closer
+  /// to the medial axis, but slows down the speed of contraction.
   double omega_P()
   {
     return m_omega_P;
@@ -469,7 +478,7 @@ public:
     m_omega_P = value;
   }
   
-  /** Threshold used to select edges collapsed during contraction.*/
+  /// Threshold used to select edges collapsed during contraction.
   double min_edge_length()
   {
     return m_min_edge_length;
@@ -480,7 +489,7 @@ public:
     m_min_edge_length = value;
   }
 
-  /** Stop criterium used by `contract_until_convergence()` to detect convergence. */
+  /// Stop criterium used by `contract_until_convergence()` to detect convergence.
   double delta_area()
   {
     return m_delta_area;
@@ -491,7 +500,7 @@ public:
     m_delta_area = value;
   }
 
-  /** If `true`, the result skeleton is medially centered. */
+  /// If `true`, the result skeleton is medially centered.
   bool is_medially_centered()
   {
     return m_is_medially_centered;
@@ -502,7 +511,7 @@ public:
     m_is_medially_centered = value;
   }
   
-  /** Maximum number of iterations performed by `contract_until_convergence()`. */
+  /// Maximum number of iterations performed by `contract_until_convergence()`.
   int max_iterations()
   {
     return m_max_iterations;
@@ -513,9 +522,7 @@ public:
     m_max_iterations = value;
   }
   
-  /**
-   * Reference to the input surface mesh.
-   */
+  /// Reference to the input surface mesh.
   HalfedgeGraph& halfedge_graph()
   {
     return m_hg;
