@@ -12,7 +12,7 @@ typedef Kernel::Point_3 Point;
 
 int main(void)
 {
-  const std::string input_filename_without_ext = "data/saint_jean_370K";
+  const std::string input_filename_without_ext = "data/sphere_20k";
   const std::string input_filename = input_filename_without_ext + ".xyz";
   const std::string OUTPUT_FILENAME = input_filename_without_ext + "_WLOPED.xyz";
 
