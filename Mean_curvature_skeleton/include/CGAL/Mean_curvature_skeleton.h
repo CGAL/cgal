@@ -368,10 +368,10 @@ double init_min_edge_length()
 public:
 
   /// \name Constructor
-  /// \todo remove non documented functions
   /// @{
   /**
-   * The constructor of a skeletonization object
+   * The constructor of a skeletonization object.
+   *
    * The algorithm parameters are initialized such that:
    * - `omega_H()` returns 0.1
    * - `omega_P()` returns 0.2
@@ -387,7 +387,7 @@ public:
    * @param vertex_index_map 
    *        property map which associates an id to each vertex, from `0` to `num_vertices(hg)-1`.
    * @param edge_index_map
-   *        property map which associates an id to each halfedge, from `0` to `2*num_edges(hg)-1`.
+   *        property map which associates an id to each halfedge, from `0` to `num_halfedges(hg)-1`.
    * @param vertex_point_map 
    *        property map which associates a point to each vertex of the graph.
    */
