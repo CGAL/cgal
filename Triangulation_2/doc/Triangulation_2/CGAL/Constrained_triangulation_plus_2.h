@@ -63,7 +63,9 @@ The intersection tag as defined in `Tr`.
   
 /*!
 The identifier of a polyline constraint. 
-The class is model of `Assignable`, `CopyConstructible`, `DefaultConstructible`, and  `Comparable`.  
+The class is model of `Assignable`, `CopyConstructible`, `DefaultConstructible`, `LessThanComparable` and  `EqualityComparable`.  
+
+A default constructed `Constraint_id` is a singular value that can not be the ID of a constraint.
 */
   typedef unspecified_type Constraint_id;
 
@@ -243,9 +245,9 @@ Inserts a polyline defined by the points in the range `[first,last)`
 and returns the constraint id.
 The polyline is considered as a closed curve if the first and last point are equal or if  `close == true`. This enables for example passing the vertex range of a `Polygon_2`.
 When traversing the vertices of a closed polyline constraint with a  `Vertices_in_constraint_iterator` the first and last vertex are the same.
-In case the range is empty `Constrained_id(NULL)`is returned.
+In case the range is empty `Constraint_id()`is returned.
 In case all points are equal the point is inserted but no constraint,
-and `Constrained_id(NULL)`is returned.
+and `Constraint_id()`is returned.
 \tparam PointIterator must be an `InputIterator` with the value type `Point`. 
 */
 template < class PointIterator>
