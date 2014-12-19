@@ -357,12 +357,15 @@ void Rich_grid<Kernel>::find_original_neighbors(
   typedef typename Kernel::FT FT;
   FT radius2 = radius*radius;
 
-  for(Rich_grid::iterator dest = starta; dest != enda; dest++) 
+  Rich_grid::iterator dest;
+  for(dest = starta; dest != enda; dest++) 
   {
     Rich_point<Kernel> &v = *(*dest);
 
     Point &p = v.pt;
-    for(Rich_grid::iterator origin = startb; origin != endb; origin++)
+
+    Rich_grid::iterator origin;
+    for(origin = startb; origin != endb; origin++)
     {
       Rich_point<Kernel> &t = *(*origin);
       Point &q = t.pt;
