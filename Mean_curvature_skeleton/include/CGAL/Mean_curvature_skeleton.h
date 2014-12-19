@@ -124,6 +124,8 @@ enum Degeneracy_algorithm_tag
 /// @brief Class providing the functionalities for extracting
 ///        the skeleton of a triangulated surface mesh.
 ///
+/// \todo index pmap should also be writable :/
+///
 /// @tparam HalfedgeGraph
 ///         a model of `HalfedgeGraph`
 /// @tparam VertexIndexMap
@@ -620,15 +622,6 @@ public:
   /// \name High Level Functions
   /// @{
 
-  /**
-   * \todo REMOVEME
-   */
-  template <class Graph, class GraphPointPMap>
-  void extract_skeleton(Graph& skeleton, GraphPointPMap& skeleton_points)
-  {
-    contract_until_convergence();
-    convert_to_skeleton(skeleton, skeleton_points);
-  }
 
   /**
    * Creates the curve skeleton: the input surface mesh is iteratively
@@ -1284,7 +1277,7 @@ private:
         fixed_edge_map.set_is_fixed(prev(opposite(h, m_hg), m_hg), true);
 
         vertex_descriptor v = Euler::collapse_edge(edge(h, m_hg), m_hg);
-        put(vertex_point, m_hg, v, p);
+        put(m_hg_point_pmap, v, p);
 
         track_correspondence(vi, vj, v);
 
