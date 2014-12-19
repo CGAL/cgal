@@ -2,7 +2,7 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Eigen_solver_traits.h>
-#include <CGAL/Mean_curvature_skeleton.h>
+#include <CGAL/Mean_curvature_skeleton_functions.h>
 #include <CGAL/iterator.h>
 #include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -21,10 +21,6 @@ typedef Kernel::Point_3                                              Point;
 typedef Kernel::Vector_3                                             Vector;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_iterator             vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::halfedge_descriptor         halfedge_descriptor;
-
 struct Skeleton_vertex_info
 {
   std::size_t id;
@@ -34,16 +30,10 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Skel
 
 typedef boost::graph_traits<Graph>::vertex_descriptor                  vertex_desc;
 typedef boost::graph_traits<Graph>::vertex_iterator                    vertex_iter;
-typedef boost::graph_traits<Graph>::edge_iterator                      edge_iter;
 typedef boost::graph_traits<Graph>::in_edge_iterator                   in_edge_iter;
-
-typedef boost::property_map<Polyhedron, boost::vertex_index_t>::type     Vertex_index_map;
-typedef boost::property_map<Polyhedron, boost::halfedge_index_t>::type   Halfedge_index_map;
 
 typedef std::map<vertex_desc, std::vector<int> >                       Correspondence_map;
 typedef boost::associative_property_map<Correspondence_map>            GraphVerticesPMap;
-
-typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type        HalfedgeGraphPointPMap;
 
 typedef std::map<vertex_desc, Point>                                   GraphPointMap;
 typedef boost::associative_property_map<GraphPointMap>                 GraphPointPMap;
@@ -98,14 +88,10 @@ int main()
   Correspondence_map corr_map;
   GraphVerticesPMap corr(corr_map);
 
-  CGAL::MCF_skel_args<Polyhedron> skeleton_args(mesh);
+  CGAL::extract_mean_curvature_flow_skeleton(mesh, g, points, corr);
 
-  CGAL::extract_skeleton(
-      mesh, Vertex_index_map(), Halfedge_index_map(),
-      skeleton_args, g, points, corr);
-
-  int num_vertices = boost::num_vertices(g);
-  if (num_vertices == 0)
+  int nb_vertices = num_vertices(g);
+  if (nb_vertices == 0)
   {
     std::cerr << "The number of skeletal points is zero!\n";
     return EXIT_FAILURE;
@@ -115,7 +101,7 @@ int main()
   std::map<vertex_desc, int> visited;
 
   vertex_iter vi, vi_end;
-  boost::tie(vi, vi_end) = boost::vertices(g);
+  boost::tie(vi, vi_end) = vertices(g);
   qu.push(*vi);
   visited[*vi] = true;
 
@@ -125,9 +111,9 @@ int main()
     qu.pop();
 
     in_edge_iter eb, ee;
-    for (boost::tie(eb, ee) = boost::in_edges(cur, g); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = in_edges(cur, g); eb != ee; ++eb)
     {
-      vertex_desc next = boost::source(*eb, g);
+      vertex_desc next = source(*eb, g);
       if (!visited.count(next))
       {
         qu.push(next);
@@ -136,7 +122,7 @@ int main()
     }
   }
 
-  for (boost::tie(vi, vi_end) = boost::vertices(g); vi != vi_end; ++vi)
+  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
   {
     if (!visited.count(*vi))
     {

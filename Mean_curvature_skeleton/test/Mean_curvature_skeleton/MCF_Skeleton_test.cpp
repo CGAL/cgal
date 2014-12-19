@@ -21,9 +21,6 @@ typedef Kernel::Point_3                                              Point;
 typedef Kernel::Vector_3                                             Vector;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_iterator             vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::halfedge_descriptor         halfedge_descriptor;
 
 struct Skeleton_vertex_info
 {
@@ -36,22 +33,14 @@ typedef boost::graph_traits<Graph>::vertex_descriptor                  vertex_de
 typedef boost::graph_traits<Graph>::vertex_iterator                    vertex_iter;
 typedef boost::graph_traits<Graph>::edge_iterator                      edge_iter;
 
-typedef boost::property_map<Polyhedron, boost::vertex_index_t>::type     Vertex_index_map;
-typedef boost::property_map<Polyhedron, boost::halfedge_index_t>::type   Halfedge_index_map;
-
 typedef std::map<vertex_desc, std::vector<int> >                       Correspondence_map;
 typedef boost::associative_property_map<Correspondence_map>            GraphVerticesPMap;
-
-typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type        HalfedgeGraphPointPMap;
 
 typedef std::map<vertex_desc, Point>                                   GraphPointMap;
 typedef boost::associative_property_map<GraphPointMap>                 GraphPointPMap;
 
-typedef CGAL::MCF_default_solver<double>::type                         Sparse_linear_solver;
 
-typedef CGAL::MCF_Skeleton<Polyhedron, Graph, Vertex_index_map, Halfedge_index_map,
-GraphVerticesPMap, GraphPointPMap, HalfedgeGraphPointPMap, Sparse_linear_solver> 
-Mean_curvature_skeleton;
+typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron>          Mean_curvature_skeleton;
 
 // The input of the skeletonization algorithm must be a pure triangular closed
 // mesh and has only one component.
@@ -116,10 +105,9 @@ int main()
   Correspondence_map corr_map;
   GraphVerticesPMap corr(corr_map);
 
-  CGAL::MCF_skel_args<Polyhedron> skeleton_args(mesh);
-
-  Mean_curvature_skeleton* mcs = new Mean_curvature_skeleton(mesh,
-      Vertex_index_map(), Halfedge_index_map(), skeleton_args);
+  Polyhedron mesh_copy(mesh);
+  CGAL::set_halfedgeds_items_id(mesh_copy);
+  Mean_curvature_skeleton* mcs = new Mean_curvature_skeleton(mesh_copy);
 
   double value;
   bool bvalue;
@@ -127,7 +115,7 @@ int main()
 
   double omega_H = 0.2;
   mcs->set_omega_H(omega_H);
-  value = mcs->get_omega_H();
+  value = mcs->omega_H();
   if (!check_value_equal(omega_H, value))
   {
     return EXIT_FAILURE;
@@ -135,7 +123,7 @@ int main()
 
   double omega_P = 0.3;
   mcs->set_omega_P(omega_P);
-  value = mcs->get_omega_P();
+  value = mcs->omega_P();
   if (!check_value_equal(omega_P, value))
   {
     return EXIT_FAILURE;
@@ -143,7 +131,7 @@ int main()
 
   double min_edge_length = 0.002;
   mcs->set_min_edge_length(min_edge_length);
-  value = mcs->get_min_edge_length();
+  value = mcs->min_edge_length();
   if (!check_value_equal(min_edge_length, value))
   {
     return EXIT_FAILURE;
@@ -151,7 +139,7 @@ int main()
 
   double delta_area = 0.0005;
   mcs->set_delta_area(delta_area);
-  value = mcs->get_delta_area();
+  value = mcs->delta_area();
   if (!check_value_equal(delta_area, value))
   {
     return EXIT_FAILURE;
@@ -159,7 +147,7 @@ int main()
 
   bool is_medially_centered = false;
   mcs->set_is_medially_centered(is_medially_centered);
-  bvalue = mcs->get_is_medially_centered();
+  bvalue = mcs->is_medially_centered();
   if (!check_value_equal(is_medially_centered, bvalue))
   {
     return EXIT_FAILURE;
@@ -167,27 +155,15 @@ int main()
 
   int max_iterations = 200;
   mcs->set_max_iterations(max_iterations);
-  ivalue = mcs->get_max_iterations();
+  ivalue = mcs->max_iterations();
   if (!check_value_equal(max_iterations, ivalue))
   {
     return EXIT_FAILURE;
   }
 
-  bool own_halfedge_graph = false;
-  mcs->set_own_halfedge_graph(own_halfedge_graph);
-  bvalue = mcs->owns_halfedge_graph();
-  if (!check_value_equal(own_halfedge_graph, bvalue))
-  {
-    return EXIT_FAILURE;
-  }
 
-  Polyhedron *source = mcs->get_mesh();
-  if (!check_value_equal(source, &mesh))
-  {
-    return EXIT_FAILURE;
-  }
-
-  Polyhedron *contracted = &(mcs->halfedge_graph());
+  Polyhedron* contracted = &(mcs->halfedge_graph());
+  assert(contracted==&mesh_copy);
 
   // Check the following API does not crash.
   mcs->contract_geometry();
@@ -196,7 +172,7 @@ int main()
 
   mcs->collapse_edges();
 
-  mcs->split_triangles();
+  mcs->split_faces();
 
   mcs->detect_degeneracies();
 
@@ -204,33 +180,34 @@ int main()
 
   mcs->contract_until_convergence();
 
-  mcs->convert_to_skeleton(g, points);
-
-  mcs->get_correspondent_vertices(corr);
+  mcs->convert_to_skeleton(g, points, corr);
 
   delete mcs;
-  delete contracted;
 
-  mcs = new Mean_curvature_skeleton(mesh,
-      Vertex_index_map(), Halfedge_index_map(), skeleton_args);
+  mesh_copy=Polyhedron(mesh);
+  CGAL::set_halfedgeds_items_id(mesh_copy);
+  mcs = new Mean_curvature_skeleton(mesh_copy);
 
   g.clear();
   points_map.clear();
-  mcs->extract_skeleton(g, points);
+  corr_map.clear();
+  mcs->extract_skeleton(g, points, corr);
 
   delete mcs;
 
   g.clear();
   points_map.clear();
   corr_map.clear();
-  mcs = new Mean_curvature_skeleton(mesh,
-      Vertex_index_map(), Halfedge_index_map(), skeleton_args);
+  mesh_copy=Polyhedron(mesh);
+  CGAL::set_halfedgeds_items_id(mesh_copy);
+  mcs = new Mean_curvature_skeleton(mesh_copy);
 
   mcs->extract_skeleton(g, points, corr);
   delete mcs;
 
-  mcs = new Mean_curvature_skeleton(&mesh,
-      Vertex_index_map(), Halfedge_index_map(), skeleton_args);
+  mesh_copy=Polyhedron(mesh);
+  CGAL::set_halfedgeds_items_id(mesh_copy);
+  mcs = new Mean_curvature_skeleton(mesh_copy);
 
   g.clear();
   points_map.clear();
@@ -238,9 +215,7 @@ int main()
 
   mcs->contract_until_convergence();
 
-  mcs->convert_to_skeleton(g, points);
-
-  mcs->get_correspondent_vertices(corr);
+  mcs->convert_to_skeleton(g, points, corr);
 
   delete mcs;
 

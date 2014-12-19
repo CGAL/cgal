@@ -2,7 +2,7 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Eigen_solver_traits.h>
-#include <CGAL/Mean_curvature_skeleton.h>
+#include <CGAL/Mean_curvature_skeleton_functions.h>
 #include <CGAL/iterator.h>
 #include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -23,9 +23,6 @@ typedef Kernel::Point_3                                              Point;
 typedef Kernel::Vector_3                                             Vector;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_iterator             vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::halfedge_descriptor         halfedge_descriptor;
 
 struct Skeleton_vertex_info
 {
@@ -35,9 +32,6 @@ struct Skeleton_vertex_info
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Skeleton_vertex_info> Graph;
 
 typedef boost::graph_traits<Graph>::vertex_descriptor                  vertex_desc;
-typedef boost::graph_traits<Graph>::vertex_iterator                    vertex_iter;
-typedef boost::graph_traits<Graph>::edge_iterator                      edge_iter;
-typedef boost::graph_traits<Graph>::in_edge_iterator                   in_edge_iter;
 
 typedef boost::property_map<Polyhedron, boost::vertex_index_t>::type     Vertex_index_map;
 typedef boost::property_map<Polyhedron, boost::halfedge_index_t>::type   Halfedge_index_map;
@@ -45,16 +39,8 @@ typedef boost::property_map<Polyhedron, boost::halfedge_index_t>::type   Halfedg
 typedef std::map<vertex_desc, std::vector<int> >                       Correspondence_map;
 typedef boost::associative_property_map<Correspondence_map>            GraphVerticesPMap;
 
-typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type        HalfedgeGraphPointPMap;
-
 typedef std::map<vertex_desc, Point>                                   GraphPointMap;
 typedef boost::associative_property_map<GraphPointMap>                 GraphPointPMap;
-
-typedef CGAL::Eigen_solver_traits<
-        Eigen::SparseLU<
-        CGAL::Eigen_sparse_matrix<double>::EigenType,
-        Eigen::COLAMDOrdering<int> >  > Sparse_linear_solver;
-
 
 // The input of the skeletonization algorithm must be a pure triangular closed
 // mesh and has only one component.
@@ -106,28 +92,17 @@ int main()
   Correspondence_map corr_map;
   GraphVerticesPMap corr(corr_map);
 
-  CGAL::MCF_skel_args<Polyhedron> skeleton_args(mesh);
-
-  CGAL::extract_skeleton<Polyhedron, Graph, Vertex_index_map, Halfedge_index_map,
-  GraphVerticesPMap, GraphPointPMap, HalfedgeGraphPointPMap, Sparse_linear_solver>(
-      mesh, Vertex_index_map(), Halfedge_index_map(),
-      skeleton_args, g, points, corr);
+  CGAL::extract_mean_curvature_flow_skeleton(mesh, g, points, corr);
 
   g.clear();
   points_map.clear();
   corr_map.clear();
-  CGAL::extract_skeleton<Polyhedron, Graph, Vertex_index_map, Halfedge_index_map,
-  GraphVerticesPMap, GraphPointPMap, HalfedgeGraphPointPMap>(
-      mesh, Vertex_index_map(), Halfedge_index_map(),
-      skeleton_args, g, points, corr);
+  CGAL::extract_mean_curvature_flow_skeleton(mesh, g, points, corr);
 
   g.clear();
   points_map.clear();
   corr_map.clear();
-  CGAL::extract_skeleton<Polyhedron, Graph, Vertex_index_map, Halfedge_index_map,
-  GraphVerticesPMap, GraphPointPMap>(
-      mesh, Vertex_index_map(), Halfedge_index_map(),
-      skeleton_args, g, points, corr);
+  CGAL::extract_mean_curvature_flow_skeleton(mesh, g, points, corr);
 
   std::cout << "Pass extract_skeleton test.\n";
   return EXIT_SUCCESS;
