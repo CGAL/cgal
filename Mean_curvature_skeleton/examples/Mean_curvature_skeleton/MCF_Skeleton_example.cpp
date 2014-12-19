@@ -36,24 +36,13 @@ typedef boost::graph_traits<Graph>::vertex_descriptor                  vertex_de
 typedef boost::graph_traits<Graph>::vertex_iterator                    vertex_iter;
 typedef boost::graph_traits<Graph>::edge_iterator                      edge_iter;
 
-typedef boost::property_map<Polyhedron, boost::vertex_index_t>::type     Vertex_index_map;
-typedef boost::property_map<Polyhedron, boost::halfedge_index_t>::type   Edge_index_map;
-
 typedef std::map<vertex_desc, std::vector<int> >                       Correspondence_map;
 typedef boost::associative_property_map<Correspondence_map>            GraphVerticesPMap;
-
-typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type        HalfedgeGraphPointPMap;
 
 typedef std::map<vertex_desc, Point>                                   GraphPointMap;
 typedef boost::associative_property_map<GraphPointMap>                 GraphPointPMap;
 
-typedef CGAL::MCF_default_solver<double>::type                         Sparse_linear_solver;
-
-typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron, 
-                                                  Vertex_index_map,
-                                                  Edge_index_map,
-                                                  HalfedgeGraphPointPMap, Sparse_linear_solver> 
-Mean_curvature_skeleton;
+typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron>       Mean_curvature_skeleton;
 
 // The input of the skeletonization algorithm must be a pure triangular closed
 // mesh and has only one component.
@@ -105,29 +94,28 @@ int main()
   Correspondence_map corr_map;
   GraphVerticesPMap corr(corr_map);
 
-  CGAL::MCF_skel_args<Polyhedron> skeleton_args(mesh);
+  Polyhedron mesh_copy(mesh);
 
-  Mean_curvature_skeleton* mcs = new Mean_curvature_skeleton(mesh,
-      Vertex_index_map(), Edge_index_map(), skeleton_args);
+  Mean_curvature_skeleton mcs(mesh_copy);
 
   // 1. Contract the mesh by mean curvature flow.
-  mcs->contract_geometry();
+  mcs.contract_geometry();
 
   // 2. Collapse short edges and split bad triangles.
-  mcs->remesh();
+  mcs.remesh();
 
   // 3. Fix degenerate vertices.
-  mcs->detect_degeneracies();
+  mcs.detect_degeneracies();
 
   // Perform the above three steps in one iteration.
-  mcs->contract();
+  mcs.contract();
 
   // Iteratively apply step 1 to 3 until convergence.
-  mcs->contract_until_convergence();
+  mcs.contract_until_convergence();
 
   // Convert the contracted mesh into a curve skeleton and 
   // get the correspondent surface points
-  mcs->convert_to_skeleton(g, points, corr);
+  mcs.convert_to_skeleton(g, points, corr);
 
   vertex_iterator vb, ve;
 
@@ -146,10 +134,11 @@ int main()
   std::vector<vertex_descriptor> id_to_vd;
   id_to_vd.clear();
   id_to_vd.resize(boost::num_vertices(mesh));
+  std::size_t id=0;
   for (boost::tie(vb, ve) = boost::vertices(mesh); vb != ve; ++vb)
   {
     vertex_descriptor v = *vb;
-    id_to_vd[v->id()] = v;
+    id_to_vd[id++] = v;
   }
 
   // Output skeletal points and the corresponding surface points.

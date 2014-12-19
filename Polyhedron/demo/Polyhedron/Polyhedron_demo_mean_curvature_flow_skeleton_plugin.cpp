@@ -44,9 +44,6 @@ typedef boost::graph_traits<Polyhedron>::halfedge_descriptor        halfedge_des
 typedef Polyhedron::Facet_iterator                                  Facet_iterator;
 typedef Polyhedron::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
 
-typedef boost::property_map<Polyhedron, boost::vertex_index_t>::type Vertex_index_map; // use id field of vertices
-typedef boost::property_map<Polyhedron, boost::halfedge_index_t>::type   Edge_index_map;   // use id field of edges
-
 struct Skeleton_vertex_info
 {
   std::size_t id;
@@ -64,15 +61,10 @@ typedef boost::graph_traits<SkeletonGraph>::edge_descriptor                 edge
 typedef std::map<vertex_desc, std::vector<int> >                            Correspondence_map;
 typedef boost::associative_property_map<Correspondence_map>                 GraphCorrelationPMap;
 
-typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type             HalfedgeGraphPointPMap;
-
 typedef std::map<std::size_t, Polyhedron::Traits::Point_3>                  GraphPointMap;
 typedef boost::associative_property_map<GraphPointMap>                      GraphPointPMap;
 
-typedef CGAL::MCF_default_solver<double>::type                              Sparse_linear_solver;
-
-typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron, Vertex_index_map, Edge_index_map,
-HalfedgeGraphPointPMap, Sparse_linear_solver> Mean_curvature_skeleton;
+typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron>      Mean_curvature_skeleton;
 
 typedef Polyhedron::Traits         Kernel;
 typedef Kernel::Point_3            Point;
@@ -232,22 +224,19 @@ public:
         return false;
       }
 
-      CGAL::MCF_skel_args<Polyhedron> skeleton_args(*pMesh);
-      skeleton_args.omega_H = omega_H;
-      skeleton_args.omega_P = omega_P;
-      skeleton_args.min_edge_length = min_edge_length;
-      skeleton_args.is_medially_centered = is_medially_centered;
-      skeleton_args.delta_area = delta_area;
+      Polyhedron* contracted_mesh_ptr = new Polyhedron(*pMesh);
+      mcs = new Mean_curvature_skeleton(*contracted_mesh_ptr);
+      //set algorithm parameters
+      mcs->set_omega_H(omega_H);
+      mcs->set_omega_P(omega_P);
+      mcs->set_min_edge_length(min_edge_length);
+      mcs->set_is_medially_centered(is_medially_centered);
+      mcs->set_delta_area(delta_area);
 
-      mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
-                                        skeleton_args);
-      mcs->set_own_halfedge_graph(false);
-
-      Polyhedron* contracted_mesh = &(mcs->halfedge_graph());
-      Scene_polyhedron_item* contracted_item = new Scene_polyhedron_item(contracted_mesh);
+      Scene_polyhedron_item* contracted_item = new Scene_polyhedron_item(contracted_mesh_ptr);
       contracted_item->setName(QString("contracted mesh of %1").arg(item->name()));
 
-      mCopy = mcs->mesh();
+      mCopy = pMesh;
       copyItemIndex = scene->mainSelectionIndex();
 
       contractedItemIndex = scene->addItem(contracted_item);
@@ -270,22 +259,19 @@ public:
 
         delete mcs;
 
-        CGAL::MCF_skel_args<Polyhedron> skeleton_args(*pMesh);
-        skeleton_args.omega_H = omega_H;
-        skeleton_args.omega_P = omega_P;
-        skeleton_args.min_edge_length = min_edge_length;
-        skeleton_args.is_medially_centered = is_medially_centered;
-        skeleton_args.delta_area = delta_area;
+        Polyhedron* contracted_mesh_ptr = new Polyhedron(*pMesh);
+        mcs = new Mean_curvature_skeleton(*pMesh);
+        //set algorithm parameters
+        mcs->set_omega_H(omega_H);
+        mcs->set_omega_P(omega_P);
+        mcs->set_min_edge_length(min_edge_length);
+        mcs->set_is_medially_centered(is_medially_centered);
+        mcs->set_delta_area(delta_area);
 
-        mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
-                                          skeleton_args);
-        mcs->set_own_halfedge_graph(false);
-
-        Polyhedron* contracted_mesh = &(mcs->halfedge_graph());
-        Scene_polyhedron_item* contracted_item = new Scene_polyhedron_item(contracted_mesh);
+        Scene_polyhedron_item* contracted_item = new Scene_polyhedron_item(contracted_mesh_ptr);
         contracted_item->setName(QString("contracted mesh of %1").arg(item->name()));
 
-        mCopy = mcs->mesh();
+        mCopy = pMesh;
         copyItemIndex = scene->mainSelectionIndex();
 
         contractedItemIndex = scene->addItem(contracted_item);

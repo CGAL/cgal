@@ -36,13 +36,8 @@ typedef boost::graph_traits<SkeletonGraph>::vertex_descriptor          vertex_de
 typedef boost::graph_traits<SkeletonGraph>::vertex_iterator            vertex_iter;
 typedef boost::graph_traits<SkeletonGraph>::edge_iterator              edge_iter;
 
-typedef boost::property_map<Polyhedron, boost::vertex_index_t>::type     Vertex_index_map;
-typedef boost::property_map<Polyhedron, boost::halfedge_index_t>::type   Edge_index_map;
-
 typedef std::map<vertex_desc, std::vector<int> >                       Correspondence_map;
 typedef boost::associative_property_map<Correspondence_map>            GraphVerticesPMap;
-
-typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type        HalfedgeGraphPointPMap;
 
 typedef std::map<vertex_desc, Point>                                   GraphPointMap;
 typedef boost::associative_property_map<GraphPointMap>                 GraphPointPMap;
@@ -104,9 +99,11 @@ int main()
   std::vector<vertex_descriptor> id_to_vd;
   id_to_vd.clear();
   id_to_vd.resize(boost::num_vertices(mesh));
+  std::size_t id=0;
   for (boost::tie(vb, ve) = boost::vertices(mesh); vb != ve; ++vb)
   {
     vertex_descriptor v = *vb;
+    v->id()=id++;
     id_to_vd[v->id()] = v;
   }
 

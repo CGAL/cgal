@@ -110,8 +110,7 @@ void extract_mean_curvature_flow_skeleton(const HalfedgeGraph& hg,
                                                     HedgeIndexMap,
                                                     PolyVertexPointMap,
                                                     SparseLinearAlgebraTraits_d> Mcfskel;
-  MCF_skel_args<Polyhedron> args(P);
-  Mcfskel mcfs(&P, get(boost::vertex_index,P), get(halfedge_index,P), args);
+  Mcfskel mcfs(P, get(boost::vertex_index,P), get(halfedge_index,P));
 
   mcfs.contract_until_convergence();
   mcfs.convert_to_skeleton(skeleton, skeleton_points, skeleton_to_hg_vertices);
