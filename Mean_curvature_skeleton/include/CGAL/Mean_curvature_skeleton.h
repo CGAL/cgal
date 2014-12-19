@@ -20,12 +20,6 @@
 #ifndef CGAL_MEAN_CURVATURE_SKELETON_H
 #define CGAL_MEAN_CURVATURE_SKELETON_H
 
-/**
- * @file Mean_curvature_skeleton.h
- * @brief The class `Mean_curvature_flow_skeletonization` containing the API to extract
- * curve skeleton for a closed triangular mesh.
- */
-
 #include <CGAL/trace.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Default.h>
@@ -291,7 +285,7 @@ private:
   /** `contract_until_convergence` will stop if the change of area in one iteration
    *  is less than `delta_area`. */
   double m_delta_area;
-  /** Surface area of original mesh. */
+  /** Surface area of original surface mesh. */
   double m_original_area;
   /** Maximum number of iterations. */
   int m_max_iterations;
@@ -599,7 +593,7 @@ public:
    * Get the Voronoi pole for the surface mesh.
    *
    * @param max_poles
-   *        for each mesh vertex, record its correspondent Voronoi pole position
+   *        for each surface mesh vertex, record its correspondent Voronoi pole position
    */
   void poles(std::vector<Point>& max_poles)
   {
@@ -630,7 +624,7 @@ public:
    * This is equivalent to calling `contract_until_convergence()` and `convert_to_skeleton()`.
    *
    * @param skeleton
-   *        graph that will contain the skeleton of the input mesh
+   *        graph that will contain the skeleton of the input surface mesh
    * @param skeleton_points
    *        property map containing the location of the vertices of the graph `skeleton`
    * @param skeleton_to_hg_vertices property map associating a vertex `v` of the graph `skeleton`
@@ -665,7 +659,7 @@ public:
   /// @{
 
   /**
-   * Contract the mesh by mean curvature flow.
+   * Contract the surface mesh by mean curvature flow.
    */
   void contract_geometry()
   {
@@ -709,7 +703,7 @@ public:
 
     MCFSKEL_DEBUG(std::cerr << "after solve\n";)
 
-    // copy to mesh
+    // copy to surface mesh
     vertex_iterator vb, ve;
     for (boost::tie(vb, ve) = vertices(m_hg); vb != ve; ++vb)
     {
@@ -874,7 +868,7 @@ public:
   }
 
   /**
-   * Converts the contracted mesh to a skeleton curve.
+   * Converts the contracted surface mesh to a skeleton curve.
    * @param skeleton
    *       graph that will contain the skeleton of `hg`
    * @param skeleton_points
@@ -1172,7 +1166,7 @@ private:
     {
       m_correspondence[to] = std::vector<int>();
     }
-    // only track vertex in original mesh
+    // only track vertex in original surface mesh
     if (from < m_max_id)
     {
       m_correspondence[to].push_back(from);
@@ -1238,7 +1232,7 @@ private:
           get(vertex_point, m_hg, target(h, m_hg)));
 
         // invalidate the edges that will be collapsed
-        // since the mesh is closed, 6 halfedges will be collapsed
+        // since the surface mesh is closed, 6 halfedges will be collapsed
         // (opposite is automatically added)
         fixed_edge_map.set_is_fixed(h, true);
         fixed_edge_map.set_is_fixed(prev(h, m_hg), true);
