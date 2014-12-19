@@ -905,38 +905,6 @@ public:
     correspondent_vertices(skeleton_to_surface_map, skeleton_to_hg_vertices);
   }
 
-  /**
-   * \todo REMOVE ME
-   */
-  template <class Skeleton_vertex_descriptor, class GraphVerticesPMap>
-  void correspondent_vertices(std::map<Skeleton_vertex_descriptor, std::vector<int> >& skeleton_to_surface_map,
-                              GraphVerticesPMap& skeleton_to_surface)
-  {
-    typename std::map<Skeleton_vertex_descriptor, std::vector<int> >::iterator iter;
-    for (iter = skeleton_to_surface_map.begin();
-         iter != skeleton_to_surface_map.end(); ++iter)
-    {
-      Skeleton_vertex_descriptor i = iter->first;
-
-      skeleton_to_surface[i] = std::vector<int>();
-      for (size_t j = 0; j < skeleton_to_surface_map[i].size(); ++j)
-      {
-        int id = skeleton_to_surface_map[i][j];
-        if (m_correspondence.find(id) != m_correspondence.end())
-        {
-          skeleton_to_surface[i].insert(skeleton_to_surface[i].end(),
-                                        m_correspondence[id].begin(),
-                                        m_correspondence[id].end());
-        }
-
-        if (id < m_max_id)
-        {
-          skeleton_to_surface[i].push_back(id);
-        }
-      }
-    }
-  }
-
   /// @} Public Algorithm API
 
 
@@ -1621,6 +1589,40 @@ private:
       m_normals[vid] = internal::get_vertex_normal<typename HalfedgeGraph::Vertex,Kernel>(*v);
     }
   }
+
+  // --------------------------------------------------------------------------
+  // Vertex info association
+  // --------------------------------------------------------------------------
+
+  template <class Skeleton_vertex_descriptor, class GraphVerticesPMap>
+  void correspondent_vertices(std::map<Skeleton_vertex_descriptor, std::vector<int> >& skeleton_to_surface_map,
+                              GraphVerticesPMap& skeleton_to_surface)
+  {
+    typename std::map<Skeleton_vertex_descriptor, std::vector<int> >::iterator iter;
+    for (iter = skeleton_to_surface_map.begin();
+         iter != skeleton_to_surface_map.end(); ++iter)
+    {
+      Skeleton_vertex_descriptor i = iter->first;
+
+      skeleton_to_surface[i] = std::vector<int>();
+      for (size_t j = 0; j < skeleton_to_surface_map[i].size(); ++j)
+      {
+        int id = skeleton_to_surface_map[i][j];
+        if (m_correspondence.find(id) != m_correspondence.end())
+        {
+          skeleton_to_surface[i].insert(skeleton_to_surface[i].end(),
+                                        m_correspondence[id].begin(),
+                                        m_correspondence[id].end());
+        }
+
+        if (id < m_max_id)
+        {
+          skeleton_to_surface[i].push_back(id);
+        }
+      }
+    }
+  }
+
 
   // --------------------------------------------------------------------------
   // Debug
