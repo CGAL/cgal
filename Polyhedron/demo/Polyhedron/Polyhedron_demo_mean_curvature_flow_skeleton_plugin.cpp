@@ -417,9 +417,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   std::vector<vertex_descriptor> id_to_vd;
   id_to_vd.clear();
   id_to_vd.resize(num_vertices(*mCopy));
+  std::size_t id=0;
   for (boost::tie(vb, ve) = vertices(*mCopy); vb != ve; ++vb)
   {
     vertex_descriptor v = *vb;
+    v->id()=id++;
     id_to_vd[v->id()] = v;
   }
 
