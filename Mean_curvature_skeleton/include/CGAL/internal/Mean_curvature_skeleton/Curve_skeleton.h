@@ -160,7 +160,7 @@ public:
     for (int i = 0; i < id; ++i)
     {
       id_to_vd[i] = boost::add_vertex(curve);
-      /// \todo remove the setting of the id
+      /// \todo remove the setting of the id if possible
       curve[id_to_vd[i]].id = i;
     }
 
