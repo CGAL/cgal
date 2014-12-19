@@ -33,14 +33,8 @@
 #include <CGAL/QP_solver/assertions.h>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4244)
-#endif
-#include <boost/iterator/counting_iterator.hpp>
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
+
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {

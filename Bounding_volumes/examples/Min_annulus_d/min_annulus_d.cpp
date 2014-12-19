@@ -3,7 +3,26 @@
 // as input type and some internal EXACT floating point type
 #include <iostream>
 #include <cassert>
+
+#if 0
+#include <CGAL/config.h>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4244)
+#endif
+
+//#include <boost/iterator/counting_iterator.hpp>
+#include <boost/iterator/iterator_adaptor.hpp>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+#endif
+
 #include <CGAL/Homogeneous.h>
+
+
 #include <CGAL/Min_annulus_d.h>
 #include <CGAL/Min_sphere_annulus_d_traits_2.h>
 

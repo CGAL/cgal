@@ -32,15 +32,7 @@
 #include <istream>
 #include <sstream>
 
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4244)
-#endif
-#include <boost/iterator/counting_iterator.hpp>
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
-
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
 // this file defines the following models:
