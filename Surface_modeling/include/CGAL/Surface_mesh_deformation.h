@@ -95,7 +95,7 @@ struct Weight_calculator_selector<HalfedgeGraph, CGAL::ORIGINAL_ARAP> {
  /// \endcode
  /// @tparam CR a model of DeformationClosestRotationTraits_3. If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined,
  /// `Deformation_Eigen_polar_closest_rotation_traits_3` is provided as default parameter.
- /// @tparam VPM a model of `ReadWritePropertyMap`</a>  with Surface_mesh_deformation::vertex_descriptor as key and a point as value type. The point type must be a model of `::RawPoint_3`.
+ /// @tparam VPM a model of `ReadWritePropertyMap`</a>  with `Surface_mesh_deformation::vertex_descriptor` as key and a point as value type. The point type must be a model of `::RawPoint_3`.
  /// The default is `boost::property_map<HG, CGAL::vertex_point_t>::%type`.
 template <
   class HG,
@@ -351,15 +351,15 @@ public:
    *
    * @pre the halfedge_graph consists of only triangular facets
    * @param halfedge_graph triangulated surface mesh to deform
-   * @param vertex_index_map property map for associating an id to each vertex, from `0` to `num_vertices(halfedge_graph)-1`.
-   * @param hedge_index_map property map for associating an id to each halfedge, from `0` to `2*num_edges(halfedge_graph)-1`.
-   * @param vertex_point_map property map used to access the points associated to each vertex of the graph.
+   * @param vertex_index_map property map which associates an id to each vertex, from `0` to `num_vertices(halfedge_graph)-1`.
+   * @param hedge_index_map property map which associates an id to each halfedge, from `0` to `2*num_edges(halfedge_graph)-1`.
+   * @param vertex_point_map property map which associates a point to each vertex of the graph.
    * @param weight_calculator function object or pointer for weight calculation
    */
   Surface_mesh_deformation(Halfedge_graph& halfedge_graph,
     Vertex_index_map vertex_index_map=get(boost::vertex_index, halfedge_graph),
     Hedge_index_map hedge_index_map=get(boost::halfedge_index, halfedge_graph),
-    Vertex_point_map vertex_point_map=get(vertex_point, halfedge_graph),
+    Vertex_point_map vertex_point_map=get(boost::vertex_point, halfedge_graph),
     Weight_calculator weight_calculator = Weight_calculator()
     );
 /// @}
