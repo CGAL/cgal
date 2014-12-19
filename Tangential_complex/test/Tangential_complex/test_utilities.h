@@ -357,7 +357,7 @@ std::vector<typename Kernel::Point_d> generate_points_on_klein_bottle_3D(
 // a = big radius, b = small radius
 template <typename Kernel>
 std::vector<typename Kernel::Point_d> generate_points_on_klein_bottle_4D(
-  std::size_t num_points, double a, double b, bool uniform = false)
+  std::size_t num_points, double a, double b, double noise = 0., bool uniform = false)
 {
   typedef typename Kernel::Point_d Point;
   typedef typename Kernel::FT FT;
@@ -389,10 +389,10 @@ std::vector<typename Kernel::Point_d> generate_points_on_klein_bottle_4D(
     }
     Point p = Kernel().construct_point_d_object()(
       Kernel().construct_point_d_object()(
-        (a + b*cos(v))*cos(u) /*+ rng.get_double(0, 0.01)*/,
-        (a + b*cos(v))*sin(u) /*+ rng.get_double(0, 0.01)*/,
-        b*sin(v)*cos(u/2)     /*+ rng.get_double(0, 0.01)*/,
-        b*sin(v)*sin(u/2)     /*+ rng.get_double(0, 0.01)*/) );
+        (a + b*cos(v))*cos(u) + (noise == 0. ? 0. : rng.get_double(0, noise)),
+        (a + b*cos(v))*sin(u) + (noise == 0. ? 0. : rng.get_double(0, noise)),
+        b*sin(v)*cos(u/2)     + (noise == 0. ? 0. : rng.get_double(0, noise)),
+        b*sin(v)*sin(u/2)     + (noise == 0. ? 0. : rng.get_double(0, noise))));
 #ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
     if (sparsifier.try_to_insert_point(p))
       ++i;

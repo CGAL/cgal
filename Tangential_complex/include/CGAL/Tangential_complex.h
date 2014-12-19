@@ -366,6 +366,10 @@ public:
           try_to_solve_inconsistencies_in_a_local_triangulation(i);
       }
 
+#ifdef CGAL_TC_GLOBAL_REFRESH
+      refresh_tangential_complex();
+#endif
+
       std::pair<std::size_t, std::size_t> stats_after =
         number_of_inconsistent_simplices(false);
 
@@ -1141,8 +1145,10 @@ private:
         {
           m_weights[*it] = rng.get_double(0., SQ_HALF_SPARSITY);
         }
-
+        
+#if !defined(CGAL_TC_GLOBAL_REFRESH)
         refresh_tangential_complex();
+#endif
 
         // We will try the other cells next time (incident_cells is not
         // valid anymore here)
@@ -1212,8 +1218,10 @@ private:
         {
           m_weights[*it] = rng.get_double(0., SQ_HALF_SPARSITY);
         }
-        
+
+#if !defined(CGAL_TC_GLOBAL_REFRESH)
         refresh_tangential_complex();
+#endif
 
         // We will try the other cells next time (incident_cells is not
         // valid anymore here)

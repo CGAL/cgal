@@ -52,7 +52,7 @@ protected:
   static std::string build_filename()
   {
     std::stringstream sstr;
-    sstr << "Performance_log_" << time(0) << ".xml";
+    sstr << "perf_logs/Performance_log_" << time(0) << ".xml";
     return sstr.str();
   }
 
@@ -64,9 +64,11 @@ protected:
     subelements.push_back("Ambient_dim");
     subelements.push_back("Num_points");
     subelements.push_back("Noise");
+    subelements.push_back("Info");
     subelements.push_back("Init_time");
     subelements.push_back("Comput_time");
     subelements.push_back("Fix_time");
+    subelements.push_back("Fix_steps");
 
     return subelements;
   }
@@ -94,6 +96,7 @@ protected:
   XML_exporter::Element_with_map m_current_element;
 };
 
+const double NOISE = 0.01; 
 #ifdef _DEBUG
   const int NUM_POINTS = 50;
 #else
@@ -117,9 +120,11 @@ int main()
   typedef Kernel::FT                                             FT;
   typedef Kernel::Point_d                                        Point;
  
-  int i = 0;
   bool stop = false;
-  //for ( ; !stop ; ++i)
+  //for (int i = 0, NUM_POINTS = 10000 ; 
+  //     NUM_POINTS <= 50000 && !stop ; 
+  //     ++i, NUM_POINTS += (i%3 == 0 ? 5000 : 0))
+  for (int i = 0 ; i < 5 && !stop ; ++i)
   {
     Kernel k;
     Wall_clock_timer t;
@@ -140,14 +145,22 @@ int main()
       //generate_points_on_sphere_3<Kernel>(NUM_POINTS, 3.0);
       //generate_points_on_sphere_d<Kernel>(NUM_POINTS, AMBIENT_DIMENSION, 3.0);
       //generate_points_on_klein_bottle_3D<Kernel>(NUM_POINTS, 4., 3.);
-      generate_points_on_klein_bottle_4D<Kernel>(NUM_POINTS, 4., 3.);
+      generate_points_on_klein_bottle_4D<Kernel>(NUM_POINTS, 4., 3., NOISE);
       //generate_points_on_klein_bottle_variant_5D<Kernel>(NUM_POINTS, 4., 3.);
     
 
     CGAL_TC_SET_PERFORMANCE_DATA("Name", "Klein bottle 4D");
     CGAL_TC_SET_PERFORMANCE_DATA("Intrinsic_dim", INTRINSIC_DIMENSION);
     CGAL_TC_SET_PERFORMANCE_DATA("Ambient_dim", AMBIENT_DIMENSION);
-    CGAL_TC_SET_PERFORMANCE_DATA("Noise", 0.01);
+    CGAL_TC_SET_PERFORMANCE_DATA("Noise", NOISE);
+    XML_perf_data::set("Info", ""
+#ifdef CGAL_TC_ONLY_CHANGE_SIMPLEX_WEIGHTS
+      "ONLY_CHANGE_SIMPLEX_WEIGHTS "
+#endif
+#ifdef CGAL_TC_GLOBAL_REFRESH
+      "GLOBAL_REFRESH "
+#endif
+      );
     
 #ifdef CGAL_TC_PROFILING
     std::cerr << "Point set generated in " << t_gen.elapsed()
@@ -175,7 +188,7 @@ int main()
     //stop = !tc.check_if_all_simplices_are_in_the_ambient_delaunay(&incorrect_simplices);
 
     t.reset();
-    tc.fix_inconsistencies();
+    unsigned int num_fix_steps = tc.fix_inconsistencies();
     double fix_time = t.elapsed(); t.reset();
 
     double export_time = -1.;
@@ -197,11 +210,11 @@ int main()
       << "================================================" << std::endl
       << "Number of vertices: " << tc.number_of_vertices() << std::endl
       << "Computation times (seconds): " << std::endl
-      << "  * Tangential complex: " << init_time + computation_time
-      << std::endl
+      << "  * Tangential complex: " << init_time + computation_time <<std::endl
       << "    - Init + kd-tree = " << init_time << std::endl
       << "    - TC computation = " << computation_time << std::endl
-      << "  * Fix inconsistencies: " << fix_time << std::endl
+      << "  * Fix inconsistencies: " << fix_time << " (" 
+      <<                                num_fix_steps << " steps)" << std::endl
       << "  * Export to OFF: " << export_time << std::endl
       << "================================================" << std::endl
       << std::endl;
@@ -210,6 +223,8 @@ int main()
     CGAL_TC_SET_PERFORMANCE_DATA("Init_time", init_time);
     CGAL_TC_SET_PERFORMANCE_DATA("Comput_time", computation_time);
     CGAL_TC_SET_PERFORMANCE_DATA("Fix_time", fix_time);
+    CGAL_TC_SET_PERFORMANCE_DATA("Fix_steps", num_fix_steps);
+    XML_perf_data::commit();
   }
 
   return 0;

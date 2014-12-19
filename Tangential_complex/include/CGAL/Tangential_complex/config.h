@@ -45,9 +45,15 @@ const int CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS = 1;
 //========================= Strategy ==========================================
 //#define CGAL_TC_USE_NANOFLANN
 //#define CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
+#define CGAL_TC_GLOBAL_REFRESH
+//#define CGAL_TC_ON_DEMAND_REFRESH // CJTODO: not implemented yet
+    // The idea is to perform a global refresh + some local refreshes, just
+    // for local tri where there are some inconsistencies
+    // But be careful: refreshing the TC may invalidate cells, so the
+    // incident cells have to be recomputed again
 
 //========================= Parameters ========================================
 const std::size_t NUM_POINTS_FOR_PCA = 50;
-const double INPUT_SPARSITY = 0.1;
+const double INPUT_SPARSITY = 0.05;
 
 #endif // CGAL_TC_CONFIG_H
