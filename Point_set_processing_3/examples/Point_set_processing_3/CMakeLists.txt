@@ -46,11 +46,11 @@ if ( CGAL_FOUND )
   endif()
 
   # Activate concurrency?
-  option(ACTIVATE_CONCURRENCY
+  option(ACTIVATE_CONCURRENT_PSP3
          "Enable concurrency"
-         ON)
+         OFF)
      
-  if( ACTIVATE_CONCURRENCY )
+  if( ACTIVATE_CONCURRENT_PSP3 OR ENV{ACTIVATE_CONCURRENT_PSP3} )
     find_package( TBB REQUIRED )
     if( TBB_FOUND )
       include(${TBB_USE_FILE})

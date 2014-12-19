@@ -25,7 +25,6 @@ int main(void)
     std::cerr << "Error: cannot read file "
               << input_filename.c_str()  << std::endl;
 
-    system("Pause");
     return EXIT_FAILURE;
   }
 

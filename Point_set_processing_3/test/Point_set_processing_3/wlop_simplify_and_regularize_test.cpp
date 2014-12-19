@@ -39,6 +39,7 @@ typedef Kernel::Point_3 Point;
 // ----------------------------------------------------------------------------
 
 // Removes outliers
+template<typename Concurrency_tag>
 void test_wlop_simplify_and_regularize(
                               std::vector<Point>& points, // input point set   
                               std::vector<Point>& output,
@@ -49,7 +50,7 @@ void test_wlop_simplify_and_regularize(
 
 {
   CGAL::Timer task_timer; task_timer.start();
-  std::cerr << "Run WLOP simplify and regularize, (retain_percentage: "
+  std::cerr << "Running WLOP simplify and regularize, (retain_percentage: "
             << retain_percentage << "%, neighbor_radius="
             << neighbor_radius << ")...\n";
 
@@ -59,7 +60,7 @@ void test_wlop_simplify_and_regularize(
 
   output.clear();
   // Run algorithm 
-  CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
+  CGAL::wlop_simplify_and_regularize_point_set<Concurrency_tag>(
                                                points.begin(), 
                                                points.end(), 
                                                std::back_inserter(output),
@@ -123,7 +124,7 @@ int main(int argc, char * argv[])
 
     // Reads the point set file in points[].
     std::vector<Point> points;
-    std::cerr << "Open " << input_filename << " for reading..." << std::endl;
+    std::cerr << "Opening " << input_filename << " for reading..." << std::endl;
 
     // If XYZ file format:
     std::ifstream stream(input_filename.c_str());
@@ -142,15 +143,21 @@ int main(int argc, char * argv[])
     //***************************************
     // Test
     //***************************************
+#ifdef CGAL_LINKED_WITH_TBB
+    std::vector<Point> points2(points);
+#endif
     std::vector<Point> output;
+    test_wlop_simplify_and_regularize<CGAL::Sequential_tag>(
+      points, output, retain_percentage, neighbor_radius, 
+      iter_number, need_compute_density);
 
+#ifdef CGAL_LINKED_WITH_TBB
+    output.clear();
+    test_wlop_simplify_and_regularize<CGAL::Parallel_tag>(
+      points2, output, retain_percentage, neighbor_radius, 
+      iter_number, need_compute_density);
+#endif // CGAL_LINKED_WITH_TBB
 
-    test_wlop_simplify_and_regularize(points, 
-                                      output,
-                                      retain_percentage,
-                                      neighbor_radius,
-                                      iter_number,
-                                      need_compute_density);
 
   } // for each input file
 
@@ -159,4 +166,3 @@ int main(int argc, char * argv[])
   std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
   return accumulated_fatal_err;
 }
-

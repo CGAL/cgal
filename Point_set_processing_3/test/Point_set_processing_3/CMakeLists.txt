@@ -48,17 +48,11 @@ if ( CGAL_FOUND )
   # Temporary debugging stuff
   ADD_DEFINITIONS( "-DDEBUG_TRACE" )
 
-  # Activate concurrency?
-  option(ACTIVATE_CONCURRENCY
-         "Enable concurrency"
-         ON)
-     
-  if( ACTIVATE_CONCURRENCY )
-    find_package( TBB REQUIRED )
-    if( TBB_FOUND )
-      include(${TBB_USE_FILE})
-      list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
-    endif()
+  find_package( TBB QUIET )
+
+  if( TBB_FOUND )
+    include(${TBB_USE_FILE})
+    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
   endif()
   
   # Executables that do *not* require LAPACK

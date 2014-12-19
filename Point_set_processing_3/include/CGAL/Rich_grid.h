@@ -32,10 +32,6 @@
 #include <cmath>
 #include <ctime>
 
-
-//#include <tbb/parallel_for.h>
-//#include <tbb/blocked_range.h>
-
 namespace CGAL {
 
 /// \cond SKIP_IN_MANUAL
