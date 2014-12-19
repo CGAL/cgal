@@ -360,7 +360,7 @@ double init_min_edge_length()
   boost::tie(vb, ve) = vertices(m_hg);
   Vertex_to_point v_to_p(hg_point_pmap);
   Bbox_3 bbox = CGAL::bbox_3(boost::make_transform_iterator(vb, v_to_p),
-                           boost::make_transform_iterator(ve, v_to_p));
+                             boost::make_transform_iterator(ve, v_to_p));
   return 0.002 * diagonal_length(bbox);
 }
 
@@ -979,11 +979,8 @@ private:
   {
     m_are_poles_computed = false;
 
-    vertex_iterator vb, ve;
-
     m_alpha_TH *= (M_PI / 180.0);
-    double area = internal::get_surface_area(m_hg, hg_point_pmap);
-    m_original_area = area;
+    m_original_area = internal::get_surface_area(m_hg, hg_point_pmap);
 
     vertex_id_count = num_vertices(m_hg);
     max_id = vertex_id_count;
