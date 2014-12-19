@@ -318,7 +318,7 @@ public:
 #endif
   }
 
-  void fix_inconsistencies()
+  unsigned int fix_inconsistencies()
   {
     typename Kernel::Point_drop_weight_d drop_w = m_k.point_drop_weight_d_object();
     typename Kernel::Construct_weighted_point_d cwp =
@@ -341,10 +341,11 @@ public:
 #ifdef CGAL_TC_VERBOSE
       std::cerr << "Nothing to fix." << std::endl;
 #endif
-      return;
+      return 0;
     }
 
     bool done = false;
+    unsigned int num_steps = 0;
     while (!done)
     {
 // CJTODO: the parallel version is not working for now
@@ -395,7 +396,10 @@ public:
 #endif
       done = (stats_after.second == 0);
       stats_before = stats_after;
+      ++num_steps;
     }
+
+    return num_steps;
   }
 
 
