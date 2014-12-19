@@ -395,15 +395,7 @@ public:
   Mean_curvature_flow_skeletonization(HalfedgeGraph& hg,
                                       VertexIndexMap vertex_index_map =get(boost::vertex_index, hg),
                                       HalfedgeIndexMap halfedge_index_map = HalfedgeIndexMap()=get(boost::halfedge_index, hg),
-                                      HalfedgeGraphPointPMap vertex_point_map = HalfedgeGraphPointPMap()=get(boost::vertex_point, hg) )
-    : m_hg(hg)
-    , vertex_id_pmap(vertex_index_map)
-    , m_hedge_id_pmap(halfedge_index_map)
-    , hg_point_pmap(vertex_point_map)
-  {
-    init_args();
-    init();
-  }
+                                      HalfedgeGraphPointPMap vertex_point_map = HalfedgeGraphPointPMap()=get(boost::vertex_point, hg) );
   #else
   Mean_curvature_flow_skeletonization(HalfedgeGraph& hg,
                                       VertexIndexMap vertex_index_map,
