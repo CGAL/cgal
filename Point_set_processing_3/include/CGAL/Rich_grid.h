@@ -110,17 +110,17 @@ public:
 
 
   // functions for neighborhood searching
-  void static find_original_neighbors(iterator starta, 
+  static void find_original_neighbors(iterator starta, 
                                               iterator enda, 
                                               iterator startb,
                                               iterator endb, 
                                               FT radius);
 
-  void static find_self_neighbors(iterator start, 
+  static void find_self_neighbors(iterator start, 
                                            iterator end, 
                                            FT radius);
  
-  void static find_other_neighbors(iterator starta, 
+  static void find_other_neighbors(iterator starta, 
                                             iterator enda, 
                                             iterator startb, 
                                             iterator endb, 
