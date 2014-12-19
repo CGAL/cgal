@@ -19,56 +19,42 @@
 #include <fstream>
 #include <map>
 
-template<class PolyhedronWithId, class KeyType>
-struct Polyhedron_with_id_property_map
-    : public boost::put_get_helper<std::size_t&,
-             Polyhedron_with_id_property_map<PolyhedronWithId, KeyType> >
-{
-public:
-    typedef KeyType      key_type;
-    typedef std::size_t  value_type;
-    typedef value_type&  reference;
-    typedef boost::lvalue_property_map_tag category;
 
-    reference operator[](key_type key) const { return key->id(); }
-};
-
-typedef CGAL::Simple_cartesian<double>                               Kernel;
-typedef Kernel::Point_3                                              Point;
-typedef Kernel::Vector_3                                             Vector;
+typedef CGAL::Simple_cartesian<double>                                    Kernel;
+typedef Kernel::Point_3                                                    Point;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_iterator             vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::edge_descriptor             edge_descriptor;
+typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
 
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
+struct Skeleton_vertex_info
+{
+  std::size_t id;
+};
 
-typedef boost::graph_traits<Graph>::vertex_descriptor                  vertex_desc;
-typedef boost::graph_traits<Graph>::vertex_iterator                    vertex_iter;
-typedef boost::graph_traits<Graph>::edge_iterator                      edge_iter;
-typedef boost::graph_traits<Graph>::in_edge_iterator                   in_edge_iter;
+typedef boost::adjacency_list<boost::vecS,
+                              boost::vecS,
+                              boost::undirectedS,
+                              Skeleton_vertex_info>                       Graph;
 
-typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map;
-typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map;
+typedef boost::graph_traits<Graph>::vertex_descriptor               vertex_desc;
 
-typedef std::map<vertex_desc, std::vector<int> >                       Correspondence_map;
-typedef boost::associative_property_map<Correspondence_map>            GraphVerticesPMap;
+typedef std::map<vertex_desc, std::vector<int> >             Correspondence_map;
+typedef boost::associative_property_map<Correspondence_map>   GraphVerticesPMap;
 
-typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type        HalfedgeGraphPointPMap;
-
-typedef std::map<vertex_desc, Point>                                   GraphPointMap;
-typedef boost::associative_property_map<GraphPointMap>                 GraphPointPMap;
+typedef std::map<vertex_desc, Point>                              GraphPointMap;
+typedef boost::associative_property_map<GraphPointMap>           GraphPointPMap;
 
 typedef CGAL::Eigen_solver_traits<
         Eigen::SparseLU<
         CGAL::Eigen_sparse_matrix<double>::EigenType,
-        Eigen::COLAMDOrdering<int> >  > SparseLU_solver;
+        Eigen::COLAMDOrdering<int> >  >                         SparseLU_solver;
 
 typedef CGAL::Eigen_solver_traits<
         Eigen::SimplicialLDLT<
         CGAL::Eigen_sparse_matrix<double>::EigenType
-         >  > SimplicialLDLT_solver;
+         >  >                                             SimplicialLDLT_solver;
+
+typedef CGAL::Default                                                         D;
 
 // The input of the skeletonization algorithm must be a pure triangular closed
 // mesh and has only one component.
@@ -93,7 +79,7 @@ bool is_mesh_valid(Polyhedron& pMesh)
   ++output_it;
   if (num_component != 1)
   {
-    std::cerr << "The mesh is not a single closed mesh. It has " 
+    std::cerr << "The mesh is not a single closed mesh. It has "
               << num_component << " components.";
     return false;
   }
@@ -120,8 +106,6 @@ int main()
   Correspondence_map corr_map;
   GraphVerticesPMap corr(corr_map);
 
-  CGAL::MCF_skel_args<Polyhedron> skeleton_args(mesh);
-
   int NTEST = 10;
   double sum = 0;
   for (int i = 0; i < NTEST; i++)
@@ -129,13 +113,14 @@ int main()
     g.clear();
     points_map.clear();
     corr_map.clear();
+    Polyhedron mesh_copy(mesh);
 
     CGAL::Timer timer;
     timer.start();
-    CGAL::extract_skeleton<Polyhedron, Graph, Vertex_index_map, Edge_index_map,
-      GraphVerticesPMap, GraphPointPMap, HalfedgeGraphPointPMap, SparseLU_solver>(
-          mesh, Vertex_index_map(), Edge_index_map(),
-          skeleton_args, g, points, corr);
+    CGAL::Mean_curvature_flow_skeletonization<Polyhedron, D, D, D, SparseLU_solver>
+      mcf_skel(mesh_copy);
+    mcf_skel.contract_until_convergence();
+    mcf_skel.extract_skeleton(g, points, corr);
     timer.stop();
     sum += timer.time();
   }
@@ -147,13 +132,14 @@ int main()
     g.clear();
     points_map.clear();
     corr_map.clear();
+    Polyhedron mesh_copy(mesh);
 
     CGAL::Timer timer;
     timer.start();
-    CGAL::extract_skeleton<Polyhedron, Graph, Vertex_index_map, Edge_index_map,
-      GraphVerticesPMap, GraphPointPMap, HalfedgeGraphPointPMap, SimplicialLDLT_solver>(
-          mesh, Vertex_index_map(), Edge_index_map(),
-          skeleton_args, g, points, corr);
+    CGAL::Mean_curvature_flow_skeletonization<Polyhedron, D, D, D, SimplicialLDLT_solver>
+      mcf_skel(mesh_copy);
+    mcf_skel.contract_until_convergence();
+    mcf_skel.extract_skeleton(g, points, corr);
     timer.stop();
     sum += timer.time();
   }

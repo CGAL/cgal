@@ -3,11 +3,8 @@
 
 project( Mean_curvature_skeleton )
 
-SET(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 #SET(CMAKE_BUILD_TYPE "Debug")
-
 #SET(GCC_COVERAGE_COMPILE_FLAGS "-fprofile-arcs -ftest-coverage")
-
 #SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
 
 cmake_minimum_required(VERSION 2.6.2)
