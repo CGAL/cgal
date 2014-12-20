@@ -22,8 +22,8 @@
 //
 // Author(s)     : Andreas Fabri
  
-#ifndef CGAL_BOOST_ITERATOR_COUNTING_ITERATOR_H
-#define CGAL_BOOST_ITERATOR_COUNTING_ITERATOR_H
+#ifndef CGAL_BOOST_ITERATOR_TRANSFORM_ITERATOR_H
+#define CGAL_BOOST_ITERATOR_TRANSFORM_ITERATOR_H
 
 #include <boost/config.hpp>
 
@@ -32,10 +32,10 @@
 #  pragma warning(disable:4244)
 #endif
 
-#include <boost/iterator/counting_iterator.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
 
-#endif // CGAL_BOOST_ITERATOR_COUNTING_ITERATOR_H
+#endif // CGAL_BOOST_ITERATOR_TRANSFORM_ITERATOR_H
