@@ -2,5 +2,5 @@
 
 setopt extendedglob
 
-ls -1 ^build*/**/(#i)*.^(py|sh|run|sh|csh|pl|perl|bin|out)(.x) 2>/dev/null || exit 0
+ls -1 ((^build*)/)#/(#i)*.^(py|sh|run|sh|csh|pl|perl|bin|out)(.x) 2>/dev/null || exit 0
 exit 1
