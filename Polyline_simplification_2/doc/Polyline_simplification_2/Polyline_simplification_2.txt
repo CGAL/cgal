@@ -108,7 +108,7 @@ Let \f$t_0,...,t_m\f$ be the points of the vertices adjacent to vertex
 t_i) | i=0,..,n\}\f$. The cost of removing vertex `q` is
 \f$v_1/v_2\f$, and it is +infinity when the set of points \f${t_1..t_m}\f$ 
 is empty (possible if the point `q` is on the convex hull).
-See also Figure \cgalFigureRef{figure_scaledAndHybrid}.
+See also \cgalFigureRef{figure_scaledAndHybrid}.
 
 This distance measure gives lower priority to vertices with close
 neighboring polylines.
