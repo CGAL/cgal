@@ -58,6 +58,9 @@ rm -rf Surface_modeling_Demo
 # Demo not announced in the CGAL manual, from CGAL-3.8:
 rm -rf Circular_kernel_3_Demo
 
+# CGAL-4.6
+pushd Polyline_simplification_2_Demo;   zip ../polyline_simplification_2.zip *; popd
+
 # check
 echo CHECK now
 for f in *zip; do unzip -qql $f; done | awk '{print $4}' >| done
