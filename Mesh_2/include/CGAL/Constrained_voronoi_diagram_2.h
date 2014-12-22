@@ -411,7 +411,7 @@ template<typename Tr>
 Cvd_cell_2<Tr> dual(const Tr& tr,
                     const typename Tr::Vertex_handle& v)
 {
-  CGAL_triangulation_precondition( v != Tr::Vertex_handle());
+  CGAL_triangulation_precondition( v != typename Tr::Vertex_handle());
   CGAL_triangulation_precondition( !tr.is_infinite(v));
 
   Constrained_voronoi_diagram_2<Tr> diagram(tr);
