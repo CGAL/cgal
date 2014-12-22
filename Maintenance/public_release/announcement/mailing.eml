@@ -1,60 +1,30 @@
-Subject: CGAL 4.5 Released, Computational Geometry Algorithms Library
+Subject: CGAL 4.5.1 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
 Body: 
 
-The CGAL Open Source Project is pleased to announce the release 4.5
+The CGAL Open Source Project is pleased to announce the release 4.5.1
 of CGAL, the Computational Geometry Algorithms Library.
 
-Besides fixes to existing packages, the following has changed since
-CGAL 4.4:
+
+Version 4.5.1 is a bug-fix release for version 4.5. The following has been
+changed since CGAL-4.5:
 
   o Support
 
-    - CMake version 3.0 is now supported.
+    - Fix a compilation error when the third-party library TBB version 4.3
+      is used.
 
-    - Microsoft Windows Visual C++ compiler 2008 (VC9) is no longer
-      supported.
-
-
-  o Triangulated Surface Mesh Deformation (new package)
-
-    This package allows to deform a triangulated surface mesh under
-    positional constraints of some of its vertices without requiring any
-    additional structure other than the surface mesh itself. The methods
-    provided implements an as-rigid-as-possible deformation.
-
-
-  o Breaking change in the support of Boost Graph Library
-    
-   - Introduction of the FaceGraph concept.
-
-   - Cleanup of the HalfedgeGraph concept. In particular:
-
-      - Deprecation of halfedge_graph_traits.
-
-      - A model of HalfedgeGraph is considered as an undirected graph. Thus
-        any call to edges() should be replaced by halfedges() and
-        num_edges() now returns the number of (undirected) edges.
-
-      - Breaking change: is_border_edge and is_border_halfedge properties
-        are removed. The free functions is_border() and is_border_edge()
-        should be used instead.
-
-
-  o 3D Triangulations
-
-    Add an experimental parallel version of the Delaunay triangulation and
-    the regular triangulation algorithms, which allows parallel insertion
-    and removal of point ranges.
+    - Fix an infinite loop when the parallel version of 3D Mesh Generation
+      was compiled using Microsoft Visual Studio 2010.
 
 
   o 3D Mesh Generation
 
-    Add an experimental parallel version of the 3D mesh refinement and mesh
-    optimization methods.
+    - Fix a bug in the sliver exudation preservation of boundaries.
 
+    - Fix a regression the 1D meshing algorithm that meshes the 1D features
+      of the domain.
 
-See http://www.cgal.org/releases.html for a complete list of changes.
 
 
 The CGAL project is a collaborative effort to develop a robust,
