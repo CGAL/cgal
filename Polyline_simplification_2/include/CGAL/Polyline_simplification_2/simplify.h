@@ -307,7 +307,7 @@ operator()()
 
 Simplifies a single polygon.
 
-\tparam Traits must be a model of `PolylineSimplificationTraits_2`
+\tparam Traits must be a model of `ConstrainedDelaunayTriangulationTraits_2`
 \tparam CostFunction must be a model of `PolylineSimplificationCostFunction`.
 \tparam StopFunction must be a model of `PolylineSimplificationStopPredicate`
 
@@ -409,9 +409,9 @@ Simplifies a single polyline in a triangulation with polylines as constraints.
 \param cid The constraint identifier of the polyline constraint to simplify
 \param cost The cost function
 \param stop The stop function
-\param remove_points  If `true` the function `ct.remove_points_without_corresponding_vertex()` is called.
+\param remove_points  If `true` the function \link CGAL::Constrained_triangulation_plus_2::remove_points_without_corresponding_vertex() `ct.remove_points_without_corresponding_vertex()` \endlink is called.
 \returns the number of removed vertices
-\tparam CDT  must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
+\tparam CDT  must be `CGAL::Constrained_triangulation_plus_2` with a vertex type that
 is model of  `PolylineSimplificationVertexBase_2`.
 \tparam CostFunction must be a model of `PolylineSimplificationCostFunction`
 \tparam StopFunction must be a model of `PolylineSimplificationStopPredicate`
@@ -440,9 +440,9 @@ Simplifies all polylines in a triangulation with polylines as constraints.
 \param ct The underlying constrained Delaunay triangulation which embeds the polyline constraints
 \param cost The cost function
 \param stop The stop function
-\param remove_points If `true` the function `ct.remove_points_without_corresponding_vertex()` is called.
+\param remove_points If `true` the function \link CGAL::Constrained_triangulation_plus_2::remove_points_without_corresponding_vertex() `ct.remove_points_without_corresponding_vertex()`\endlink is called.
 \returns the number of removed vertices
-\tparam CDT  must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
+\tparam CDT  must be `CGAL::Constrained_triangulation_plus_2` with a vertex type that
 is model of  `PolylineSimplificationVertexBase_2`.
 \tparam CostFunction must be a model of `PolylineSimplificationCostFunction`
 \tparam StopFunction must be a model of `PolylineSimplificationStopPredicate`

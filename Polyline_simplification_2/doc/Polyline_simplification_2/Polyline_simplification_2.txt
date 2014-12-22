@@ -86,7 +86,7 @@ The maximum squared distance is the maximum of the squared Euclidean
 distances between each point on the original polyline between `p` and
 `r` and the line segment `(p,r)`. Let \f$s_0,...,s_n\f$ be the points
 strictly between `p` and `r` on the original polyline.  The cost of
-removing vertex `q` is: \f$ v_1 = \max \{ squared\_distance((p,r), s_i) |
+removing vertex `q` is: \f$ v_1 = \max \{ \mathrm{squared\_distance}((p,r), s_i) |
 i=0,..,n\} \f$
 
 \cgalFigureBegin{figure_maxDist,maxDist.png}
@@ -104,9 +104,11 @@ the candidate vertex `q` and all its adjacent vertices (except `p` and
 regions of the same polyline.
 
 Let \f$t_0,...,t_m\f$ be the points of the vertices adjacent to vertex
-`q`, different from `p` and `r` and let \f$ v_2 = \min \{ squared\_distance((p,r),
+`q`, different from `p` and `r` and let \f$ v_2 = \min \{ \mathrm{squared\_distance}((p,r),
 t_i) | i=0,..,n\}\f$. The cost of removing vertex `q` is
-\f$v_1/v_2\f$.  See also Figure \cgalFigureRef{figure_scaledAndHybrid}.
+\f$v_1/v_2\f$, and it is +infinity when the set of points \f${t_1..t_m}\f$ 
+is empty (possible if the point `q` is on the convex hull).
+See also Figure \cgalFigureRef{figure_scaledAndHybrid}.
 
 This distance measure gives lower priority to vertices with close
 neighboring polylines.

@@ -26,11 +26,11 @@ public:
 /*! 
 Given a vertex in constraint iterator `viq` computes `vip=std::prev(viq)` and `vir=std::next(vir)`, and the cost of removing vertex `*viq`, replacing edges `(*vip,*viq)` and `(*viq,*vir)` with edge `(*vip,*vir)`. 
 
-\param ct The underlying constrained Delaunay triangulation with constraint hierarchy which embeds the polyline constraints
+\param ct The underlying constrained Delaunay triangulation which embeds the polyline constraints
 \param viq The vertex in constraint iterator of the vertex to remove
 \returns The cost for removing `*viq`. The value `boost::none` can be returned to indicate an infinite or uncomputable cost.
 
-\tparam CDT must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
+\tparam CDT must be `CGAL::Constrained_triangulation_plus_2` with a vertex type that
 is model of `PolylineSimplificationVertexBase_2`. `CDT::Geom_traits` must be model of
 the concept `ConstrainedDelaunayTriangulationTraits_2`.
 
