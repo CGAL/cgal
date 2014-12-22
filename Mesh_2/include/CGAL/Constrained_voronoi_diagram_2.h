@@ -163,7 +163,7 @@ protected:
   const Cdt& m_cdt;
 
 public:
-  Cvd(const Cdt& cdt)
+  Constrained_voronoi_diagram_2(const Cdt& cdt)
     : m_cdt(cdt)
   {
   }

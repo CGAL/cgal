@@ -34,36 +34,36 @@ public:
   };
 
 public:
-  CDT_face_base()
+  Constrained_Delaunay_triangulation_face_base_2()
     : Base(),
       m_blind(false)
   {
   }
-  CDT_face_base(Vertex_handle v1,
-                Vertex_handle v2,
-                Vertex_handle v3)
+  Constrained_Delaunay_triangulation_face_base_2( Vertex_handle v1,
+                                                  Vertex_handle v2,
+                                                  Vertex_handle v3)
     : Base(v1,v2,v3),
       m_blind(false)
   {
   }
-  CDT_face_base(Vertex_handle v1,
-                Vertex_handle v2,
-                Vertex_handle v3,
-                Face_handle f1,
-                Face_handle f2,
-                Face_handle f3)
+  Constrained_Delaunay_triangulation_face_base_2( Vertex_handle v1,
+                                                  Vertex_handle v2,
+                                                  Vertex_handle v3,
+                                                  Face_handle f1,
+                                                  Face_handle f2,
+                                                  Face_handle f3)
     : Base(v1,v2,v3,f1,f2,f3),
       m_blind(false)
   {
   }
-  CDT_face_base(Face_handle f)
+  Constrained_Delaunay_triangulation_face_base_2(Face_handle f)
     : Base(f),
       m_blind(false)
   {
   }
 
   // sees its circumcenter or not?
-  const bool is_blind() const { return m_blind; }
+  bool is_blind() const { return m_blind; }
   void set_blind(const bool b){ m_blind = b; }
 
   // if blind, the constrained edge that prevents the face
