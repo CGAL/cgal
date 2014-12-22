@@ -32,7 +32,7 @@ Given a vertex in constraint iterator `viq` computes `vip=std::prev(viq)` and `v
 
 \tparam CDT must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
 is model of `PolylineSimplificationVertexBase_2`. `CDT::Geom_traits` must be model of
-the concept `PolylineSimplificationTraits_2`.
+the concept `ConstrainedDelaunayTriangulationTraits_2`.
 
 */ 
   template <typename CDT>

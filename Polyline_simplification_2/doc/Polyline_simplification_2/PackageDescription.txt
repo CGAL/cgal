@@ -34,7 +34,6 @@
 
 ## Concepts ##
 
-- `PolylineSimplificationTraits_2`
 - `PolylineSimplificationCostFunction`
 - `PolylineSimplificationStopPredicate`
 - `PolylineSimplificationVertexBase_2`
