@@ -28,7 +28,7 @@ public:
   In case the surface has boundaries, the 2D surface has one vertex which is associated to the infinite
   vertex of the 3D triangulation.  
 */ 
-  typedef Hidden_type TDS_2; 
+  typedef unspecified_type TDS_2; 
 
 /*! 
 The type of the 3D triangulation.
@@ -60,7 +60,7 @@ The facet type of the 3D triangulation.
   from the 3D Delaunay triangulation during the surface reconstruction. The value type
   of the iterator is `Triangulation_3::Point_3`. 
 */ 
-typedef Hidden_type Outlier_iterator; 
+typedef unspecified_type Outlier_iterator; 
 
 /*! 
   A forward iterator which allows to visit all boundaries. It 
@@ -69,7 +69,7 @@ typedef Hidden_type Outlier_iterator;
   brings us to the vertex on the next boundary. 
   The value type of the iterator is `Triangulation_3::Vertex_handle`.
 */ 
-typedef Hidden_type Boundary_iterator; 
+typedef unspecified_type Boundary_iterator; 
 
 
 /// @} 
@@ -106,7 +106,7 @@ tds_2();
 /*! 
 returns the underlying 3D Delaunay triangulation. 
 */ 
-const Triangulation_3_& 
+const Triangulation_3& 
 triangulation_3(); 
 
 
@@ -179,6 +179,9 @@ describing the faces of the reconstructed surface.
 \tparam IndicesOutputIterator must be an output iterator to which 
 `CGAL::cpp11::tuple<std::size_t,std::size_t,std::size_t>` can be assigned.
 
+\param begin iterator on the first point of the sequence
+\param end past the end iterator the point sequence
+\param out output iterator
 \param K  described in Section \ref AFSR_Boundaries
 \param beta described in Section \ref AFSR_Selection
 

@@ -131,7 +131,7 @@ or a hole.
 
 As we do not want the algorithm to rely on a uniformity condition on
 the sampling it will fill holes cut off from "flat" regions of the
-surface. However, in many cases a boundary component cannot be cloded
+surface. However, in many cases a boundary component cannot be closed
 by adding a spanning disk such that the resulting disk is well
 sampled. Typically, closing a boundary component due to a transversal
 clipping of the operation, would yield large dihedral angles at
