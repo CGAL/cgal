@@ -238,7 +238,8 @@ and `CGAL::Triangulation_ds_full_cell<TDS>`
 where `TDS` is the current class `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
 <I>This creates a circular dependency</I>, which we resolve in the same way
 as in the \cgal `Triangulation_2` and `Triangulation_3` packages (see
-Chapters \ref chapterTDS2, \ref chapterTriangulation2, \ref chapterTDS3, and \ref chapterTriangulation3).
+Chapters \ref Chapter_2D_Triangulation_Data_Structure, \ref Chapter_2D_Triangulations, 
+\ref Chapter_3D_Triangulation_Data_Structure, and \ref Chapter_3D_Triangulations).
 In particular, models of the concepts `TriangulationDSVertex` and
 `TriangulationDSFullCell` must provide a nested template `Rebind_TDS`
 which is documented in those two concept's reference manual pages.
