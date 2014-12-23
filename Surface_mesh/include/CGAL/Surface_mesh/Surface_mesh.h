@@ -2171,7 +2171,7 @@ private: //------------------------------------------------------- private data
     }
     std::vector<size_type> vr;
     std::size_t d;
-    for(std::size_t i=0; i < f; i++){
+    for(int i=0; i < f; i++){
       is >> sm_skip_comments;
       is >> d;
       vr.resize(d);
