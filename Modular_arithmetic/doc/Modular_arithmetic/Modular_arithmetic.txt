@@ -20,7 +20,7 @@ correspondent with respect to one prime only.
 \section Modular_arithmetic_residue Residue and Modularizable
 
 First of all, this package introduces a type `Residue`.
-It represents \f$ \Z_{/p\Z}\f$ for some prime \f$ p\f$. 
+It represents \f$ \mathbb{Z}{/p\mathbb{Z}}\f$ for some prime \f$ p\f$. 
 The prime number \f$ p\f$ is stored in a static member variable. 
 The class provides static member functions to change this value. 
 
@@ -30,7 +30,7 @@ However, already existing objects do not lose their value with respect to the
 old prime and can be reused after restoring the old prime. 
 Since the type is based on double 
 arithmetic the prime is restricted to values less than \f$ 2^{26}\f$. 
-The initial value of \f$ p\f$ is 67111067.
+The initial value of \f$ p\f$ is 67108859.
 
 
 Moreover, the package introduces the concept `Modularizable`. 
@@ -38,7 +38,7 @@ An algebraic structure `T` is considered as `Modularizable` if there
 is a mapping from `T` into an algebraic structure that is based on 
 the type `Residue`. 
 For scalar types, e.g. Integers, this mapping is just the canonical 
-homomorphism into \f$ \Z_{/p\Z}\f$ represented by `Residue`. 
+homomorphism into \f$ \mathbb{Z}{/p\mathbb{Z}}\f$ represented by `Residue`. 
 For compound types, e.g. Polynomials, the mapping is applied to the 
 coefficients of the compound type. 
 The mapping is provided by the class `Modular_traits<T>`.

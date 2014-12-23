@@ -27,7 +27,7 @@
 
 namespace CGAL { 
 namespace internal {
-CGAL_EXPORT extern int primes[2000];
+CGAL_EXPORT extern const int primes[2000];
 
 static inline 
 int get_next_lower_prime(int current_prime){
