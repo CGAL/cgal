@@ -52,7 +52,7 @@ public:
     In_surface_tester() {}
     In_surface_tester( const Shape* s ): _s(s) {}
 
-    inline bool operator()( const Cell_iterator& c ) const {
+    inline bool operator()( const Cell_iterator& /* c */ ) const {
         return false;
     }
 
