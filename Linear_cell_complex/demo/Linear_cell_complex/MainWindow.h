@@ -96,9 +96,7 @@ template < class First, class Second, class Third > struct Triplet
   }
 
   Triplet()
-  {
-
-  }
+  {}
 };
 
 class MainWindow : public CGAL::Qt::DemosMainWindow, private Ui::MainWindow

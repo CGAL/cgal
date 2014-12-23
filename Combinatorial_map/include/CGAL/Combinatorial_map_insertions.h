@@ -30,6 +30,7 @@ namespace CGAL
  * @param amap the used combinatorial map.
  * @param adart a dart of the edge (!=NULL && !=null_dart_handle).
  * @param update_attributes a boolean to update the enabled attributes
+ *        (deprecated, now we use are_attributes_automatically_managed())
  * @return a dart of the new vertex.
  */
 template<class CMap>
@@ -72,7 +73,7 @@ insert_cell_0_in_cell_1( CMap& amap, typename CMap::Dart_handle adart,
 
     amap.basic_link_beta_1(*it, d1);
 
-    if (amap.are_attributes_automatically_managed())
+    if (amap.are_attributes_automatically_managed() && update_attributes)
     {
       // We copy all the attributes except for dim=0
       CMap::Helper::template Foreach_enabled_attributes_except
@@ -100,7 +101,7 @@ insert_cell_0_in_cell_1( CMap& amap, typename CMap::Dart_handle adart,
   amap.free_mark(m);
   amap.free_mark(mark);
 
-  if (amap.are_attributes_automatically_managed())
+  if (amap.are_attributes_automatically_managed() && update_attributes)
   {
     CGAL::internal::Degroup_attribute_functor_run<CMap, 1>::
       run(&amap, adart, amap.template beta<1>(adart));
@@ -118,6 +119,7 @@ insert_cell_0_in_cell_1( CMap& amap, typename CMap::Dart_handle adart,
  * @param amap the used combinatorial map.
  * @param adart a dart of the facet to triangulate.
  * @param update_attributes a boolean to update the enabled attributes
+ *        (deprecated, now we use are_attributes_automatically_managed())
  * @return A dart incident to the new vertex.
  */
 template < class CMap >
@@ -175,7 +177,7 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
       if ( prev!=amap.null_handle )
         amap.template basic_link_beta_for_involution<2>(prev, n1);
 
-      if (amap.are_attributes_automatically_managed())
+      if (amap.are_attributes_automatically_managed() && update_attributes)
       {
         CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
             run(&amap, n1, ah);
@@ -201,7 +203,7 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
             nn2=amap.create_dart();
             amap.link_beta_0(amap.beta(cur, dim), nn2);
             amap.basic_link_beta_for_involution(n2, nn2, dim);
-            if (amap.are_attributes_automatically_managed())
+            if (amap.are_attributes_automatically_managed() && update_attributes)
             {
               CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
                   run(&amap, nn2, ah);
@@ -261,7 +263,7 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
         amap.unmark(amap.beta(*itd, dim), treated);
     }
     if ( *itd!=adart )
-      if (amap.are_attributes_automatically_managed())
+      if (amap.are_attributes_automatically_managed() && update_attributes)
       {
         CGAL::internal::Degroup_attribute_functor_run<CMap, 2>::
             run(&amap, adart, *itd);
@@ -281,6 +283,7 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
  * @param amap the used combinatorial map.
  * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
  * @param update_attributes a boolean to update the enabled attributes
+ *        (deprecated, now we use are_attributes_automatically_managed())
  * @return a dart of the new edge, not incident to the vertex of adart1.
  */
 template<class CMap>
@@ -351,7 +354,7 @@ insert_dangling_cell_1_in_cell_2( CMap& amap,
           (amap.beta(it1, dim, CGAL_BETAINV(s1), 2), d2, dim);
       }
     }
-    if (amap.are_attributes_automatically_managed())
+    if (amap.are_attributes_automatically_managed() && update_attributes)
     {
       CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
           run(&amap, d1, ah);
@@ -405,6 +408,7 @@ bool is_insertable_cell_1_in_cell_2(const CMap& amap,
  * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
  * @param adart2 a second dart of the facet. If NULL insert a dangling edge.
  * @param update_attributes a boolean to update the enabled attributes
+ *        (deprecated, now we use are_attributes_automatically_managed())
  * @return a dart of the new edge, and not incident to the
  *         same vertex than adart1.
  */
@@ -415,7 +419,8 @@ insert_cell_1_in_cell_2(CMap& amap,
                         typename CMap::Dart_handle adart2,
                         bool update_attributes=true)
 {
-  if ( adart2==amap.null_handle ) return insert_dangling_cell_1_in_cell_2(amap,adart1);
+  if ( adart2==amap.null_handle )
+    return insert_dangling_cell_1_in_cell_2(amap,adart1);
 
   CGAL_assertion(is_insertable_cell_1_in_cell_2<CMap>(amap, adart1, adart2));
 
@@ -490,7 +495,7 @@ insert_cell_1_in_cell_2(CMap& amap,
     amap.mark(it1,treated);
   }
 
-  if (amap.are_attributes_automatically_managed())
+  if (amap.are_attributes_automatically_managed() && update_attributes)
   {
     CGAL::internal::Degroup_attribute_functor_run<CMap, 2>::run(&amap, d1, d2);
   }
@@ -580,6 +585,7 @@ bool is_insertable_cell_2_in_cell_3(const CMap& amap,
  * @param afirst iterator on the begining of the path.
  * @param alast  iterator on the end of the path.
  * @param update_attributes a boolean to update the enabled attributes
+ *        (deprecated, now we use are_attributes_automatically_managed())
  * @return a dart of the new 2-cell.
  */
 template<class CMap, class InputIterator>
@@ -702,7 +708,7 @@ insert_cell_2_in_cell_3(CMap& amap, InputIterator afirst, InputIterator alast,
   if ( withBeta3 )
   { // Here we cannot use Degroup_attribute_functor_run as new darts do not
     // have their 3-attribute
-    if (amap.are_attributes_automatically_managed())
+    if (amap.are_attributes_automatically_managed() && update_attributes)
     {
       CGAL::internal::Degroup_attribute_functor_run<CMap, 3>::
           run(&amap, first, amap.template beta<3>(first));

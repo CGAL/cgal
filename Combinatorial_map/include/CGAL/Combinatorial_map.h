@@ -1178,7 +1178,6 @@ namespace CGAL {
         Helper::template Foreach_enabled_attributes
           <internal::Correct_invalid_attributes_functor<Self> >::
           run(this,it,&marks);
-
       }
 
       for ( int i=0; i<=dimension; ++i)
@@ -1708,6 +1707,7 @@ namespace CGAL {
      * @param adart1 a first dart.
      * @param adart2 a second dart.
      * @param update_attributes a boolean to update the enabled attributes.
+     *         (deprecated, now we use are_attributes_automatically_managed())
      */
     template<unsigned int i>
     void link_beta(Dart_handle adart1, Dart_handle adart2,
@@ -2111,6 +2111,7 @@ namespace CGAL {
      * @param adart1 the first dart.
      * @param adart2 the second dart.
      * @param update_attributes a boolean to update the enabled attributes
+     *         (deprecated, now we use are_attributes_automatically_managed())
      * @pre is_sewable<i>(adart1, adart2).
      */
     template<unsigned int i>
@@ -2351,7 +2352,7 @@ namespace CGAL {
         else if ( i==1 ) unsew_1(adart);
         else unsew_for_involution<i>(adart);
       }
-      // else topo_unsew<i>(adart);
+      else topo_unsew<i>(adart);
     }
 
     /** Unsew by betai the given dart plus all the required darts
@@ -2359,6 +2360,7 @@ namespace CGAL {
      * are updated only if update_attributes==true.
      * @param adart first dart.
      * @param update_attributes a boolean to update the enabled attributes
+     *         (deprecated, now we use are_attributes_automatically_managed())
      * @pre !adart->is_free(i).
      */
     template<unsigned int i>
@@ -3682,14 +3684,14 @@ namespace CGAL {
 
     /** Sets the automatic_attributes_management boolean.
      */
-    void set_automatic_attributes_management(bool automatic_attributes_management)
+    void set_automatic_attributes_management(bool newval)
     {
-      if (this->automatic_attributes_management == false && automatic_attributes_management == true)
+      if (this->automatic_attributes_management == false && newval == true)
       {
         correct_invalid_attributes();
       }
 
-      this->automatic_attributes_management = automatic_attributes_management;
+      this->automatic_attributes_management = newval;
     }
 
   protected:
@@ -3714,7 +3716,8 @@ namespace CGAL {
     /// Number of marked darts for each used marks.
     mutable size_type mnb_marked_darts[NB_MARKS];
 
-    /// Automatic management of the attributes: true means attributes are allways maintained updated
+    /// Automatic management of the attributes:
+    /// true means attributes are always maintained updated during operations.
     bool automatic_attributes_management;
 
     /// Tuple of unary and binary functors (for all non void attributes).

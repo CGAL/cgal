@@ -114,6 +114,12 @@ namespace CGAL {
     using Base::null_handle;
     using Base::point_of_vertex_attribute;
 
+    using Base::are_attributes_automatically_managed;
+    using Base::mark;
+    using Base::unmark;
+    using Base::free_mark;
+    using Base::get_new_mark;
+    
     Linear_cell_complex_base() : Base()
     {}
 
@@ -352,18 +358,37 @@ namespace CGAL {
      */
     void correct_invalid_attributes()
     {
-      Base::correct_invalid_attributes();
+      // Copy of the code in CMap::correct_invalid_attributes() to avoid
+      // 2 iterations through the darts of the map.
 
-      // Each dart needs to have a 0-embedding
-      for (typename Dart_range::iterator it(this->darts().begin()),
-             itend(this->darts().end()); it != itend; ++it)
+      std::vector<int> marks(dimension+1);
+      for ( int i=0; i<=dimension; ++i)
+        marks[i] = -1;
+
+      Helper::template
+        Foreach_enabled_attributes<Reserve_mark_functor<Self> >::
+          run(this,&marks);
+
+      for ( typename Dart_range::iterator it(this->darts().begin()),
+             itend(this->darts().end()); it!=itend; ++it)
       {
+        Helper::template Foreach_enabled_attributes
+          <internal::Correct_invalid_attributes_functor<Self> >::
+          run(this,it,&marks);
+
         if ( vertex_attribute(it)==null_handle )
         {
           // If a dart don't have a 0-attribute, we create a Point at the origin
           set_vertex_attribute(it, create_vertex_attribute(CGAL::ORIGIN));
         }
       }
+
+      for ( int i=0; i<=dimension; ++i)
+        if ( marks[i]!=-1 )
+        {
+          CGAL_assertion( this->is_whole_map_marked(marks[i]) );
+          free_mark(marks[i]);
+        }
     }
 
     /** test if the two given facets have the same geometry
@@ -802,18 +827,18 @@ namespace CGAL {
       return res;
     }
 
-    /** Return the status of the managment of the attributes of the CMap
-     */
-    bool are_attributes_automatically_managed() const
-    {
-      return Base::are_attributes_automatically_managed();
-    }
-
     /** Set the status of the managment of the attributes of the CMap
      */
-    void set_update_attributes(bool automatic_attributes_management)
+    void set_update_attributes(bool newval)
     {
-      Base::set_automatic_attributes_management(automatic_attributes_management);
+      if (this->automatic_attributes_management == false && newval == true)
+      {
+        // We need to recode this function because correct_invalid_attributes
+        // is not a virtual function.
+        correct_invalid_attributes();
+      }
+
+      this->automatic_attributes_management = newval;
     }
   };
 

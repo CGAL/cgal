@@ -290,8 +290,8 @@ struct Correct_invalid_attributes_functor
     unsigned int nb=0;
     bool found_dart = false;
 
-    for ( CGAL::CMap_dart_iterator_of_cell<CMap,i>
-          it(*amap, adart); it.cont(); ++it, ++nb )
+    for ( CGAL::CMap_dart_iterator_basic_of_cell<CMap,i>
+            it(*amap, adart, amark); it.cont(); ++it, ++nb )
     {
       if ( a!=amap->template attribute<i>(it) )
       {
@@ -312,18 +312,13 @@ struct Correct_invalid_attributes_functor
       amap->template set_dart_of_attribute<i>(a,adart);
     }
 
-    // If the cells has less darts than the ref counter of the i-attribute,
+    // If the i-cell has less darts than the ref counter of the i-attribute,
     // the i-attribute is shared by different cells => we duplicate it.
     if ( nb!=amap->template get_attribute<i>(a).get_nb_refs() )
     {
       typename CMap::template Attribute_handle<i>::type
         a2=amap->template create_attribute<i>(amap->template get_attribute<i>(a));
-
-      for ( CGAL::CMap_dart_iterator_of_cell<CMap,i>
-              it(*amap, adart); it.cont(); ++it )
-      {
-        amap->template set_dart_attribute<i>(it, a2);
-      }
+      amap->template set_attribute<i>(adart, a2);
     }
   }
 };
