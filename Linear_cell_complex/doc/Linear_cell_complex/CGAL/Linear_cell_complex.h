@@ -262,6 +262,22 @@ void set_vertex_attribute(Dart_handle dh, Vertex_attribute_handle vh);
 
 /// @}
 
+/// \name Attributes management
+/// @{
+/*!
+Correct the invalid attributes of the linear cell complex. 
+We can have invalid attribute either if we have called \link CombinatorialMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink before to use some modification operations.
+ 
+\f$ \forall i \f$, 0 \f$ \leq \f$ i \f$ \leq \f$ \ref CombinatorialMap::dimension "dimension" such that the i-attributes are non void, \f$ \forall \f$ d \f$ \in\f$`darts()`:
+ - if there exists a dart `d2` in the same i-cell than `d` with a different i-attribute, then the i-attribute of `d2` is set to the i-attribute of `d`;
+ - if there exists a dart `d2` in a different i-cell than `d` with the same i-attribute, then the i-attribute of all the darts in i-cell(`d`) is set to a new i-attribute (copy of the original attribute);
+ - ensure that \link CombinatorialMap::dart_of_attribute `dart_of_attribute(d)`\endlink \f$ \in \f$ i-cell(`d`);
+ - if \link Linear_cell_complex::vertex_attribute `vertex_attribute(d)`\endlink`==NULL`, then the vertex attribute of all the darts in 0-cell(`d`) is set to a new \link Linear_cell_complex::Vertex_attribute `Vertex_attribute`\endlink.
+*/
+void correct_invalid_attributes();
+
+/// @}
+
 /// \name Operations
 /// @{
 
