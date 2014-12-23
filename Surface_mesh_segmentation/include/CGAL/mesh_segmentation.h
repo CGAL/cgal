@@ -31,11 +31,11 @@ namespace CGAL
 template <bool Fast_sdf_calculation_mode, class Polyhedron,
          class SDFPropertyMap,
          class PointPropertyMap
-#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+#ifdef DOXYGEN_RUNNING
          = typename boost::property_map<Polyhedron, boost::vertex_point_t>::type
 #endif
          , class GeomTraits
-  #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+#ifdef DOXYGEN_RUNNING
          = typename Kernel_traits<typename boost::property_traits<PointPropertyMap>::value_type>::Kernel
 #endif
          >
@@ -82,11 +82,11 @@ sdf_values( const Polyhedron& polyhedron,
  * @return minimum and maximum raw SDF values if @a postprocess is `true`, otherwise minimum and maximum SDF values (before linear normalization)
  */
 template <class Polyhedron, class SDFPropertyMap, class PointPropertyMap
-#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+#ifdef DOXYGEN_RUNNING
          = typename boost::property_map<Polyhedron, boost::vertex_point_t>::type
 #endif
 , class GeomTraits
-#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+#ifdef DOXYGEN_RUNNING
 =  typename Kernel_traits<typename boost::property_traits<PointPropertyMap>::value_type>::Kernel
 #endif
 >
@@ -177,11 +177,11 @@ sdf_values_postprocessing(const Polyhedron& polyhedron,
  */
 template <class Polyhedron, class SDFPropertyMap, class SegmentPropertyMap,
           class PointPropertyMap
-#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+#ifdef DOXYGEN_RUNNING
          = typename boost::property_map<Polyhedron, boost::vertex_point_t>::type
 #endif
          , class GeomTraits
-#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+#ifdef DOXYGEN_RUNNING
          = typename Kernel_traits<typename boost::property_traits<PointPropertyMap>::value_type>::Kernel
 #endif
          >
@@ -204,11 +204,11 @@ segmentation_from_sdf_values( const Polyhedron& polyhedron,
 ///\cond SKIP_IN_MANUAL
 template < bool Fast_sdf_calculation_mode, class Polyhedron,
          class SegmentPropertyMap, class PointPropertyMap
-#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+#ifdef DOXYGEN_RUNNING
          = typename boost::property_map<Polyhedron, boost::vertex_point_t>::type
 #endif
         , class GeomTraits
-#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+#ifdef DOXYGEN_RUNNING
          = typename Kernel_traits<typename boost::property_traits<PointPropertyMap>::value_type>::Kernel
 #endif
         >
@@ -273,11 +273,11 @@ segmentation_via_sdf_values(const Polyhedron& polyhedron,
  * @return number of segments if `output_cluster_ids` is set to `false` and `number_of_clusters` otherwise
  */
 template < class Polyhedron, class SegmentPropertyMap, class PointPropertyMap
-#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+#ifdef DOXYGEN_RUNNING
          = typename boost::property_map<Polyhedron, boost::vertex_point_t>::type
 #endif
 , class GeomTraits
-#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+#ifdef DOXYGEN_RUNNING
 = typename Kernel_traits<typename boost::property_traits<PointPropertyMap>::value_type>::Kernel
 #endif
 >
@@ -297,7 +297,7 @@ segmentation_via_sdf_values(const Polyhedron& polyhedron,
           smoothing_lambda, output_cluster_ids, ppmap, traits);
 }
 
-#ifdef  CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+#ifndef DOXYGEN_RUNNING
 // we need these overloads for the default of the point property map
 
 /// sdf_values ///
