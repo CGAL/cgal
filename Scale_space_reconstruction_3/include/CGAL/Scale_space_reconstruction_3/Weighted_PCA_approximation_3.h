@@ -130,7 +130,7 @@ public:
 
         // Construct the weighted covariance matrix.
         Matrix3 covar = Matrix3::Zero();
-        for( unsigned int column = 0; column < _pts.cols(); ++column )
+        for( int column = 0; column < _pts.cols(); ++column )
             covar += _wts.matrix()(column) * _pts.col(column) * _pts.col(column).transpose();
 
         // Construct the Eigen system.
