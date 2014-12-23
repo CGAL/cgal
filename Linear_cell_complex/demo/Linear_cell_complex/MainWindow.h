@@ -16,7 +16,7 @@
 // $Id$
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
-//                 Kumar Snehasish <kumar.snehasish@gmail.com>
+// Contributor(s): Kumar Snehasish <kumar.snehasish@gmail.com>
 //
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H

@@ -100,7 +100,6 @@ void MainWindow::connect_actions ()
   QObject::connect(this->volumeList->horizontalHeader(),
                    SIGNAL(sectionClicked(int)),
                    this, SLOT(onHeaderClicked(int)));
-
   QObject::connect(dialogmenger.mengerLevel, SIGNAL(valueChanged(int)),
                    this, SLOT(onMengerChange(int)));
   QObject::connect(dialogmenger.updateAttributes, SIGNAL(clicked(bool)),
@@ -784,6 +783,8 @@ void MainWindow::on_actionMerge_all_volumes_triggered()
   timer.start();
 #endif
 
+  scene.lcc->set_update_attributes(false);
+
   Dart_handle prev = scene.lcc->null_handle;
   for (LCC::Dart_range::iterator it(scene.lcc->darts().begin()),
        itend=scene.lcc->darts().end(); it!=itend; )
@@ -801,6 +802,8 @@ void MainWindow::on_actionMerge_all_volumes_triggered()
     else
       ++it;
   }
+
+  scene.lcc->set_update_attributes(true);
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
@@ -831,7 +834,7 @@ bool MainWindow::is_volume_in_list(LCC::Attribute_handle<3>::type ah)
 
 void MainWindow::update_volume_list_add(LCC::Attribute_handle<3>::type ah)
 {
-  CGAL_assertion( !is_volume_in_list(ah) );
+  // CGAL_assertion( !is_volume_in_list(ah) );
 
   volumeList->disconnect(this);
 
@@ -1165,6 +1168,7 @@ void MainWindow::onMengerCancel()
 
   recreate_whole_volume_list();
   mengerVolumes.clear();
+  update_operations_entries(true);
   emit(sceneChanged());
 }
 
@@ -1274,9 +1278,8 @@ void MainWindow::onMengerInc()
     for(unsigned int i = nbvolinit; i < (unsigned int)mengerVolumes.size(); i++)
     {
       LCC::Attribute_handle<3>::type ah = (scene.lcc)->create_attribute<3>();
-        CGAL::Set_i_attribute_functor<LCC, 3>::
-            run(scene.lcc, mengerVolumes[i], ah);
-        scene.lcc->info<3>(mengerVolumes[i]).color()=
+      scene.lcc->set_attribute<3>(mengerVolumes[i], ah);
+      scene.lcc->info<3>(mengerVolumes[i]).color()=
           (CGAL::Color(myrandom.get_int(0,256),
                        myrandom.get_int(0,256),
                        myrandom.get_int(0,256)));
@@ -1780,6 +1783,7 @@ void MainWindow::onSierpinskiCarpetCancel()
 
   recreate_whole_volume_list();
   sierpinskiCarpetSurfaces.clear();
+  update_operations_entries(true);
   emit(sceneChanged());
 }
 
@@ -2554,6 +2558,7 @@ void MainWindow::onSierpinskiTriangleCancel()
 
   recreate_whole_volume_list();
   sierpinskiTriangleSurfaces.clear();
+  update_operations_entries(true);
   emit(sceneChanged());
 }
 

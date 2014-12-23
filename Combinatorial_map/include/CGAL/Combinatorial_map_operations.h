@@ -169,12 +169,9 @@ namespace CGAL
                 amap.template basic_link_beta<i>(d1, d2);
                 amap.mark(d1, mark_modified_darts);
                 amap.mark(d2, mark_modified_darts);
-                if (amap.are_attributes_automatically_managed() && update_attributes)
-                {
-                  first_modified_darts.push_back(d1);
-                  modified_darts.push_back(d2);
-                  // TODO push only one out of two dart ?
-                }
+                first_modified_darts.push_back(d1);
+                modified_darts.push_back(d2);
+                // TODO push only one out of two dart ?
 
                 /*if ( i==1 )
                 {
@@ -190,10 +187,7 @@ namespace CGAL
                   amap.template unlink_beta<i>(d1);
                   CGAL_assertion( !amap.is_marked(d1, mark_modified_darts) );
                   amap.mark(d1, mark_modified_darts);
-                  if (amap.are_attributes_automatically_managed() && update_attributes)
-                  {
-                    first_modified_darts.push_back(d1);
-                  }
+                  first_modified_darts.push_back(d1);
                 }
               }
             }
@@ -204,10 +198,7 @@ namespace CGAL
                 amap.template unlink_beta<iinv>(d2);
                 CGAL_assertion( !amap.is_marked(d2, mark_modified_darts) );
                 amap.mark(d2, mark_modified_darts);
-                if (amap.are_attributes_automatically_managed() && update_attributes)
-                {
-                  modified_darts.push_back(d2);
-                }
+                modified_darts.push_back(d2);
               }
             }
           }
@@ -221,10 +212,7 @@ namespace CGAL
             amap.template unlink_beta<iinv>(d1);
             CGAL_assertion( !amap.is_marked(d1, mark_modified_darts) );
             amap.mark(d1, mark_modified_darts);
-            if (amap.are_attributes_automatically_managed() && update_attributes)
-            {
-              modified_darts.push_back(d1);
-            }
+            modified_darts.push_back(d1);
           }
         }
       }
@@ -257,16 +245,15 @@ namespace CGAL
       if ( !amap.is_whole_map_unmarked(mark_modified_darts) )
       {
         for ( typename std::deque<typename CMap::Dart_handle>::
-              iterator it=modified_darts.begin();
+                iterator it=modified_darts.begin();
               it!=modified_darts.end(); ++it )
           amap.unmark(*it, mark_modified_darts);
         if ( i==1 )
         {
           for ( typename std::deque<typename CMap::Dart_handle>::
-                iterator it=modified_darts2.begin();
+                  iterator it=modified_darts2.begin();
                 it!=modified_darts2.end(); ++it )
             amap.unmark(*it, mark_modified_darts);
-
         }
       }
 
@@ -617,12 +604,9 @@ namespace CGAL
                 amap.template basic_link_beta_for_involution<i>(d1, d2);
                 amap.mark(d1, mark_modified_darts);
                 amap.mark(d2, mark_modified_darts);
-                if ( amap.are_attributes_automatically_managed() )
-                {
-                  modified_darts.push_back(d1);
-                  modified_darts.push_back(d2);
-                  // TODO push only one out of two dart ?
-                }
+                modified_darts.push_back(d1);
+                modified_darts.push_back(d2);
+                // TODO push only one out of two dart ?
               }
               else
               {
@@ -631,10 +615,7 @@ namespace CGAL
                   amap.template unlink_beta<i>(d1);
                   CGAL_assertion( !amap.is_marked(d1, mark_modified_darts) );
                   amap.mark(d1, mark_modified_darts);
-                  if ( amap.are_attributes_automatically_managed() )
-                  {
-                    modified_darts.push_back(d1);
-                  }
+                  modified_darts.push_back(d1);
                 }
               }
             }
@@ -645,10 +626,7 @@ namespace CGAL
                 amap.template unlink_beta<i>(d2);
                 CGAL_assertion( !amap.is_marked(d2, mark_modified_darts) );
                 amap.mark(d2, mark_modified_darts);
-                if ( amap.are_attributes_automatically_managed() )
-                {
-                  modified_darts.push_back(d2);
-                }
+                modified_darts.push_back(d2);
               }
             }
           }
@@ -661,10 +639,7 @@ namespace CGAL
             amap.template unlink_beta<i>(d1);
             CGAL_assertion( !amap.is_marked(d1, mark_modified_darts) );
             amap.mark(d1, mark_modified_darts);
-            if ( amap.are_attributes_automatically_managed() )
-            {
-              modified_darts.push_back(d1);
-            }
+            modified_darts.push_back(d1);
           }
         }
       }
