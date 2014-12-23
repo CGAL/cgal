@@ -157,8 +157,14 @@ public:
   
   virtual ~Polyhedron_demo_cut_plugin();
 
-  bool applicable() const { 
-    return true;
+  bool applicable() const {
+    // returns true if one polyhedron is in the entries
+    for (int i=0; i< scene->numberOfEntries(); ++i)
+    {
+      if ( qobject_cast<Scene_polyhedron_item*>(scene->item(i)) )
+        return true;
+    }
+    return false;
   }
 
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface,
