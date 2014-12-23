@@ -470,8 +470,7 @@ template < class Gt, class FS, class Sh, class wA, class Ct >
 void
 Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 collect_surface() {
-    _surface.clear();
-    _shells.clear();
+    clear_surface();
     if( !has_shape() )
         construct_shape();
     collect_facets();

@@ -228,7 +228,7 @@ private:
     void deinit_shape() { if( _shape != 0 ) { delete _shape; _shape = 0; } }
 
     void clear_tree() { _tree.clear(); }
-	void clear_surface() { _surface.clear(); deinit_shape(); }
+	void clear_surface() { _shells.clear(); _surface.clear(); deinit_shape(); }
     
     // SURFACE COLLECTION
 	// Once a facet is added to the surface, it is marked as handled.
