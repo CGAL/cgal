@@ -646,20 +646,26 @@ Vertex_handle insert_outside_affine_hull(const Point &);
 /// @{
 
 /*!
-\cgalDebug Partially checks whether `tr` is a triangulation. This function returns
+\cgalDebugFunction
+\cgalDebugBegin
+Partially checks whether `tr` is a triangulation. This function returns
 `true` if the combinatorial triangulation data structure's `is_valid()`
 test returns `true` and if some geometric tests are passed with success. It
 is checked that the orientation of each finite full cell is positive and that
 the orientation of each infinite full cell is consistent with their finite
 adjacent full cells.
 The `verbose` parameter is not used.
+\cgalDebugEnd
 */
 bool is_valid(bool verbose=false) const;
 
 /*!
-\cgalDebug Returns `true` if and only if all
+\cgalDebugFunction
+\cgalDebugBegin
+Returns `true` if and only if all
 finite full cells incident to `v` have positive orientation.
 The `verbose` parameter is not used.
+\cgalDebugEnd
 */
 bool are_incident_full_cells_valid(Vertex_const_handle v, bool
 verbose = false) const;

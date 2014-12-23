@@ -603,9 +603,11 @@ delete_full_cells(ForwardIterator start, ForwardIterator end);
 /// @{
 
 /*!
+\cgalDebugFunction
+\cgalDebugBegin
 Partially checks whether `tds` is indeed a triangulation.
 
-\cgalDebug It must <I>at least</I>
+It must <I>at least</I>
 <UL>
 <LI>check the validity of the vertices and full cells of `tds` by calling
 their respective `is_valid` method.
@@ -621,6 +623,7 @@ a precise indication on the kind of invalidity encountered.
 Returns `true` if all the tests pass, `false` if any test fails. See
 the documentation for the models of this concept to see the additionnal (if
 any) validity checks that they implement.
+\cgalDebugEnd
 */
 bool is_valid(bool verbose=false) const;
 
@@ -703,7 +706,9 @@ Full_cell_handle full_cell() const;
 /// @{
 
 /*!
-\cgalDebug Performs some validity checks on the vertex `v`.
+\cgalDebugFunction
+\cgalDebugBegin
+Performs some validity checks on the vertex `v`.
 
 It must <I>at least</I> check that `v` has an incident full cell, which in
 turn must contain `v` as one of its vertices.
@@ -711,6 +716,7 @@ turn must contain `v` as one of its vertices.
 Returns `true` if all the tests pass, `false` if any test fails. See
 the documentation for the models of this concept to see the additionnal (if
 any) validity checks that they implement.
+\cgalDebugEnd
 */
 bool is_valid(bool verbose=false) const;
 
@@ -974,14 +980,17 @@ bool has_neighbor(Full_cell_handle n, int & ret) const;
 /// @{
 
 /*!
+\cgalDebugFunction
+\cgalDebugBegin
 Performs some validity checks on the full cell `c`.
 
-\cgalDebug It must <I>at least</I> check that for each <I>existing</I> neighbor `n`,
+It must <I>at least</I> check that for each <I>existing</I> neighbor `n`,
 `c` is also a neighbor of `n`.
 
-\cgalDebug Returns `true` if all the tests pass, `false` if any test fails. See
+Returns `true` if all the tests pass, `false` if any test fails. See
 the documentation for the models of this concept to see the additionnal (if
 any) validity checks that they implement.
+\cgalDebugEnd
 */
 bool is_valid(bool verbose=false) const;
 
