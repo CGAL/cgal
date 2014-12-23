@@ -1,9 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/spherical_degenerate_sweep.cpp
 // Using the global aggregated insertion function.
 
-//#define CGAL_SL_VERBOSE 1
+//#define CGAL_SL_VERBOSE 0
 
-//#define CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE 1
+//#define CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE 0
 
 #include <vector>
 
@@ -31,7 +31,6 @@ int main()
 
   CGAL::set_pretty_mode(std::cout);
 
-  Arrangement_2 arr;
   Point_2 sp(0, 0, -1);
   Point_2 np(0, 0, 1);
   points.push_back(sp);
@@ -71,47 +70,55 @@ int main()
   xcvs.push_back(xcv_np2);
   xcvs.push_back(xcv_np3);
 
-  unsigned subsetsp = ((1 << points.size()) -1);
-  std::cout << "subsetsp: " << subsetsp << std::endl << std::endl;
+  unsigned subsetsp = (1 << points.size());
+  std::cout << "#subsets points: " << subsetsp << std::endl;
 
-  unsigned subsets = ((1 << xcvs.size()) -1);
-  std::cout << "subsets: " << subsets << std::endl << std::endl;
+  unsigned subsets = (1 << xcvs.size());
+  std::cout << "#subsets curves: " << subsets << std::endl;
 
-  for (unsigned up = 1; up <= subsetsp; up++) {
-    std::vector< X_monotone_curve_2 > points_sub;
-    for (unsigned ep = 0; ep < points.size(); ep++) {
+  std::cout << "total combinations: " << (subsetsp)*(subsets) << std::endl<< std::endl;;
+
+  for (unsigned up = 0; up < subsetsp; up++) {
+    std::vector< Point_2 > points_sub;
+    for (unsigned ep = 0; ep <= points.size(); ep++) {
       if (up & (1 << ep)) {
         std::cout << "take pt: "  << ep << std::endl;
-        points_sub.push_back(xcvs[ep]);
+        points_sub.push_back(points[ep]);
       }
-      std::cout << "subsetp #" << up << " has size: "  << points_sub.size() << std::endl;
+    }
 
-      for (unsigned u = 1; u <= subsets; u++) {
-        std::vector< X_monotone_curve_2 > xcvs_sub;
-        for (unsigned e = 0; e < xcvs.size(); e++) {
-          if (u & (1 << e)) {
-            std::cout << "take xcv: "  << e << std::endl;
-            xcvs_sub.push_back(xcvs[e]);
-          }
+    for (unsigned u = 0; u < subsets; u++) {
+      std::vector< X_monotone_curve_2 > xcvs_sub;
+      for (unsigned e = 0; e <= xcvs.size(); e++) {
+        if (u & (1 << e)) {
+          std::cout << "take xcv: "  << e << std::endl;
+          xcvs_sub.push_back(xcvs[e]);
         }
-        std::cout << "subset #" << u << " has size: "  << xcvs_sub.size() << std::endl;
-
-        std::cout << "inserting "
-                  << std::distance(xcvs_sub.begin(), xcvs_sub.end()) << " x-monotone curves and "
-                  << std::distance(points.begin(), points.end()) << " isolated points."
-                  << std::endl;
-
-        // TODO why is this signature not available as "insert(...)"
-        CGAL::insert_empty(arr, xcvs_sub.begin(), xcvs_sub.end(), points.begin(), points.end());
-
-        // Print the size of the arrangement.
-        std::cout << "The arrangement size:" << std::endl
-                  << "   V = " << arr.number_of_vertices()
-                  << ",  E = " << arr.number_of_edges()
-                  << ",  F = " << arr.number_of_faces() << std::endl;
-        //std::cout << "arr: " << arr << std::endl;
-        std::cout << std::endl;
       }
+
+      std::cout << "subsetpoints #" << up << " has size: "  << points_sub.size() << std::endl;
+      std::cout << "subsetcurves #" << u << " has size: "  << xcvs_sub.size() << std::endl;
+
+#if 1
+      Arrangement_2 arr;
+      std::cout << "inserting "
+                << xcvs_sub.size() << " x-monotone curves and "
+                << points_sub.size() << " isolated points."
+                << std::endl;
+
+      // TODO why is this signature not available as "insert(...)"
+      CGAL::insert_empty(arr, xcvs_sub.begin(), xcvs_sub.end(), points_sub.begin(), points_sub.end());
+
+      // Print the size of the arrangement.
+      std::cout << "The arrangement size:" << std::endl
+                << "   V = " << arr.number_of_vertices()
+                << ",  E = " << arr.number_of_edges()
+                << ",  F = " << arr.number_of_faces() << std::endl;
+
+      std::cout << "=======================================================" << std::endl << std::endl << std::endl;
+#endif
+      //std::cout << "arr: " << arr << std::endl;
+      std::cout << std::endl;
     }
   }
   return 0;
