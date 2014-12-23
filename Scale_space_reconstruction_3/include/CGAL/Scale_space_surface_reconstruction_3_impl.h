@@ -471,6 +471,7 @@ void
 Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 collect_surface() {
     _surface.clear();
+    _shells.clear();
     if( !has_shape() )
         construct_shape();
     collect_facets();
