@@ -124,6 +124,7 @@ public:
     }
     emit itemChanged();
   }
+
   // filter events for selecting / activating holes with mouse input
   bool eventFilter(QObject* /*target*/, QEvent *event)
   {
@@ -330,6 +331,7 @@ public slots:
   void item_about_to_be_destroyed(Scene_item*);
   void hole_visualizer_changed();
   void dock_widget_closed();
+  void on_Select_small_holes_button();
 protected:
   bool eventFilter(QObject *, QEvent *event) {
     if(event->type() == QEvent::Close) {
@@ -413,6 +415,7 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
   connect(ui_widget.Create_polyline_items_button,  SIGNAL(clicked()), this, SLOT(on_Create_polyline_items_button()));
   connect(ui_widget.Accept_button,  SIGNAL(clicked()), this, SLOT(on_Accept_button()));
   connect(ui_widget.Reject_button,  SIGNAL(clicked()), this, SLOT(on_Reject_button()));
+  connect(ui_widget.Select_small_holes_button,  SIGNAL(clicked()), this, SLOT(on_Select_small_holes_button()));
 
   if(Scene* scene_casted = dynamic_cast<Scene*>(scene_interface)) 
   { connect(scene_casted, SIGNAL(itemAboutToBeDestroyed(Scene_item*)), this, SLOT(item_about_to_be_destroyed(Scene_item*))); }
@@ -509,6 +512,24 @@ void Polyhedron_demo_hole_filling_plugin::on_Select_all_holes_button() {
     return;
   }
   hole_visualizer->select_deselect_all(true);
+}
+
+void Polyhedron_demo_hole_filling_plugin::on_Select_small_holes_button() {
+  Scene_hole_visualizer* hole_visualizer = get_selected_item<Scene_hole_visualizer>();
+  if(!hole_visualizer) {
+    print_message(no_selected_hole_visualizer_error_message());
+    return;
+  }
+
+  std::size_t threshold = ui_widget.vertices_threshold_spin_box->value();
+  typedef Scene_hole_visualizer::Polyline_data_list::const_iterator const_iterator;
+  for(const_iterator it = hole_visualizer->polyline_data_list.begin();
+                     it != hole_visualizer->polyline_data_list.end(); ++it)
+  {
+    if(it->polyline->polylines.front().size() <= threshold+1)
+      hole_visualizer->selected_holes.insert(it);
+  }
+  scene->itemChanged(hole_visualizer);
 }
 
 void Polyhedron_demo_hole_filling_plugin::on_Deselect_all_holes_button() {
