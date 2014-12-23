@@ -10,14 +10,6 @@ if( "${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6 )
   endif()
 endif()
 
-# Preprocessor directives
-if( WIN32 )
-  add_definitions( "/W3 /D_CRT_SECURE_NO_WARNINGS /wd4005 /wd4307 /wd4308 /nologo" )
-endif()
-if( UNIX )
-  add_definitions( "-fpermissive" )
-endif()
-
 find_package( CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
