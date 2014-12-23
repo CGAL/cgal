@@ -100,6 +100,7 @@ public:
 #if defined(CGAL_USE_OM_POINTS)
     return pm.sm_->point(v);
 #else
+    CGAL_assertion(pm.sm_!=NULL);
     typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point const& omp = pm.sm_->point(v);
     return value_type(omp[0], omp[1], omp[2]);
 #endif
