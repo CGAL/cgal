@@ -254,7 +254,7 @@ collect_shell( Cell_handle c, unsigned int li ) {
         }
 		
         // Pivot over each of the facet's edges and continue the surface at the next regular or singular facet.
-        for( unsigned int i = 0; i < 4; ++i ) {
+        for( int i = 0; i < 4; ++i ) {
             // Skip the current facet.
             if( i == f.second || is_handled(f.first, i) )
                 continue;
