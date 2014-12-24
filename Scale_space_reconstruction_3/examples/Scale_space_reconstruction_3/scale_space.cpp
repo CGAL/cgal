@@ -17,9 +17,13 @@ typedef std::vector< Point >                                    Point_collection
 typedef Reconstruction::Triple_const_iterator                   Triple_iterator;
 
 int main(int argc, char* argv[]) {
+    if (argc!=2){
+      std::cerr << "Error, no input file provided\n";
+      return 1;
+    }
     // Read the data.
-	Point_collection points;
-	std::ifstream in(argv[1]);
+    Point_collection points;
+    std::ifstream in(argv[1]);
     std::cerr << "Reading " << std::flush;
     if( !in || !CGAL::read_off_points( in, std::back_inserter( points ) ) ) {
         std::cerr << "Error: cannot read file" << std::endl;
