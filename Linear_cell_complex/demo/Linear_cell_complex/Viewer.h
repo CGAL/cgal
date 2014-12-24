@@ -25,7 +25,7 @@
 #include <QGLViewer/qglviewer.h>
 #include <QKeyEvent>
 
-class Viewer : public QGLViewer 
+class Viewer : public QGLViewer
 {
   Q_OBJECT
 
@@ -35,6 +35,13 @@ class Viewer : public QGLViewer
   bool flatShading;
   bool edges;
   bool vertices;
+  CGAL::Bbox_3 bb;
+
+  GLuint m_dlFaces;
+  GLuint m_dlFacesFlat;
+  GLuint m_dlEdges;
+  GLuint m_dlVertices;
+  bool m_displayListCreated;
 
   typedef LCC::Dart_handle Dart_handle;
   typedef LCC::Dart_const_handle Dart_const_handle;
@@ -43,8 +50,13 @@ class Viewer : public QGLViewer
 public:
   Viewer(QWidget* parent)
     : QGLViewer(parent), wireframe(false), flatShading(true),
-      edges(true), vertices(true)
-  {}
+      edges(true), vertices(true), m_displayListCreated(false)
+  {
+    QGLFormat newFormat = this->format();
+    newFormat.setSampleBuffers(true);
+    newFormat.setSamples(16);
+    this->setFormat(newFormat);
+  }
 
   void setScene(Scene* scene_)
   {
@@ -57,18 +69,18 @@ public:
   virtual void init();
 
   void keyPressEvent(QKeyEvent *e);
-  
+
   virtual QString helpString() const;
 
 public slots :
-  
+
   void sceneChanged();
 
 protected:
-  void drawFacet(Dart_const_handle ADart);
-  void drawEdges(Dart_const_handle ADart);
-  void draw_one_vol(Dart_const_handle ADart, bool filled);
-  CGAL::Bbox_3 bbox();
+  void initDraw();
+  void drawAllFaces(bool flat);
+  void drawAllEdges();
+  void drawAllVertices();
 };
 
 #endif

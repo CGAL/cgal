@@ -221,34 +221,35 @@ protected :
   void initDraw()
   {
     //Compile drawFacet
-    std::cout << "Compile Display List : Faces" << std::endl;
+    std::cout << "Compile Display Lists : Faces," << std::flush;
     m_dlFaces = ::glGenLists(1);
     ::glNewList(m_dlFaces, GL_COMPILE);
     drawAllFaces(false);
     ::glEndList();
 
     //Compile drawFacet with flat shading
-    std::cout << "Compile Display List : Faces (flat shading)" << std::endl;
+    std::cout << "Faces (flat shading), " << std::flush;
     m_dlFacesFlat = ::glGenLists(1);
     ::glNewList(m_dlFacesFlat, GL_COMPILE);
     drawAllFaces(true);
     ::glEndList();
 
     //Compile drawEdge
-    std::cout << "Compile Display List : Edges" << std::endl;
+    std::cout << "edges, " << std::flush;
     m_dlEdges = ::glGenLists(1);
     ::glNewList(m_dlEdges, GL_COMPILE);
     drawAllEdges();
     ::glEndList();
 
     //Compile drawvertices
-    std::cout << "Compile Display List : Vertices" << std::endl;
+    std::cout << "vertices" << std::flush;
     m_dlVertices = ::glGenLists(1);
     ::glNewList(m_dlVertices, GL_COMPILE);
     drawAllVertices();
     ::glEndList();
 
-    m_displayListCreated = true;
+     std::cout << ". DONE." << std::endl;
+     m_displayListCreated = true;
   }
 
   virtual void draw()
