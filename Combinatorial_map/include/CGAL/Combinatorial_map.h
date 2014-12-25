@@ -1165,7 +1165,7 @@ namespace CGAL {
     void correct_invalid_attributes()
     {
       std::vector<int> marks(dimension+1);
-      for ( int i=0; i<=dimension; ++i)
+      for ( unsigned int i=0; i<=dimension; ++i)
         marks[i] = -1;
 
       Helper::template
@@ -1180,7 +1180,7 @@ namespace CGAL {
           run(this,it,&marks);
       }
 
-      for ( int i=0; i<=dimension; ++i)
+      for ( unsigned int i=0; i<=dimension; ++i)
         if ( marks[i]!=-1 )
         {
           CGAL_assertion( is_whole_map_marked(marks[i]) );

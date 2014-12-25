@@ -1799,7 +1799,7 @@ void MainWindow::onSierpinskiCarpetChangeLevel(int newLevel)
   while ( newLevel < sierpinskiCarpetLevel ) onSierpinskiCarpetDec();
 }
 
-void MainWindow::onSierpinskiCarpetNeverUpdateAttributes(bool newValue)
+void MainWindow::onSierpinskiCarpetNeverUpdateAttributes(bool /*newValue*/)
 {
   if (afterConstructionUpdateAttributes)
   {
@@ -1811,7 +1811,7 @@ void MainWindow::onSierpinskiCarpetNeverUpdateAttributes(bool newValue)
   afterConstructionUpdateAttributes = false;
 }
 
-void MainWindow::onSierpinskiCarpetDuringConstructionUpdateAttributes(bool newValue)
+void MainWindow::onSierpinskiCarpetDuringConstructionUpdateAttributes(bool /*newValue*/)
 {
   if (afterConstructionUpdateAttributes)
   {
@@ -1823,7 +1823,7 @@ void MainWindow::onSierpinskiCarpetDuringConstructionUpdateAttributes(bool newVa
   afterConstructionUpdateAttributes = false;
 }
 
-void MainWindow::onSierpinskiCarpetAfterConstructionUpdateAttributes(bool newValue)
+void MainWindow::onSierpinskiCarpetAfterConstructionUpdateAttributes(bool /*newValue*/)
 {
   if (!afterConstructionUpdateAttributes)
   {
@@ -1835,19 +1835,19 @@ void MainWindow::onSierpinskiCarpetAfterConstructionUpdateAttributes(bool newVal
   afterConstructionUpdateAttributes = true;
 }
 
-void MainWindow::onSierpinskiCarpetUpdateAttributesMethodStdMap(bool newValue)
+void MainWindow::onSierpinskiCarpetUpdateAttributesMethodStdMap(bool /*newValue*/)
 {
   updateAttributesMethodStdMap = true;
   updateAttributesMethodTraversal = false;
 }
 
-void MainWindow::onSierpinskiCarpetUpdateAttributesMethodTraversal(bool newValue)
+void MainWindow::onSierpinskiCarpetUpdateAttributesMethodTraversal(bool /*newValue*/)
 {
   updateAttributesMethodStdMap = false;
   updateAttributesMethodTraversal = true;
 }
 
-void MainWindow::onSierpinskiCarpetComputeGeometry(bool newValue)
+void MainWindow::onSierpinskiCarpetComputeGeometry(bool /*newValue*/)
 {
   sierpinski_carpet_compute_geometry();
 

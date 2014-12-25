@@ -362,7 +362,7 @@ namespace CGAL {
       // 2 iterations through the darts of the map.
 
       std::vector<int> marks(dimension+1);
-      for ( int i=0; i<=dimension; ++i)
+      for ( unsigned int i=0; i<=dimension; ++i)
         marks[i] = -1;
 
       Helper::template
@@ -383,7 +383,7 @@ namespace CGAL {
         }
       }
 
-      for ( int i=0; i<=dimension; ++i)
+      for ( unsigned int i=0; i<=dimension; ++i)
         if ( marks[i]!=-1 )
         {
           CGAL_assertion( this->is_whole_map_marked(marks[i]) );

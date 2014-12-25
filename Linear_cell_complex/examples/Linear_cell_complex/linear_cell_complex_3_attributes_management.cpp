@@ -10,10 +10,10 @@ typedef LCC_3::Dart_handle             Dart_handle;
 typedef LCC_3::Point                   Point;
 typedef LCC_3::FT                      FT;
 
-void load_and_simplify_off(LCC_3& lcc, char* filename,
+void load_and_simplify_off(LCC_3& lcc, std::string& filename,
                            bool updateattribs, int percent)
 {
-  std::ifstream ifile(filename);
+  std::ifstream ifile(filename.c_str());
   int nb=0;
   if (ifile)
   {
@@ -44,24 +44,36 @@ void load_and_simplify_off(LCC_3& lcc, char* filename,
 
 int main(int narg, char** argv)
 {
-  if ( narg==1 )
+  if (narg>1 && (!strcmp(argv[1],"-h") || !strcmp(argv[1],"-?")) )
   {
     std::cout<<"Usage: a.out file.off [percentage]"<<std::endl;
     return EXIT_FAILURE;
   }
   
+  std::string filename;
+  if ( narg==1 )
+  {
+    filename=std::string("data/armadillo.off");
+    std::cout<<"No filename given: use data/armadillo.off by default."<<std::endl;
+  }
+  else
+    filename=std::string(argv[1]);
+
   int percent = 30; // remove 30 percent of edges 
   if ( narg>2 ) { percent = atoi(argv[2]); }
   std::cout<<percent<<"% edges to remove."<<std::endl;
+
   {
     LCC_3 lcc;
     std::cout<<"Update attribute DURING operations: ";
-    load_and_simplify_off(lcc, argv[1], true, percent);
+    load_and_simplify_off(lcc, filename, true, percent);
   }
+
   {
     LCC_3 lcc2;
     std::cout<<"Update attribute AFTER operations: ";
-    load_and_simplify_off(lcc2, argv[1], false, percent);
+    load_and_simplify_off(lcc2, filename, false, percent);
   }
+
   return EXIT_SUCCESS;
 }

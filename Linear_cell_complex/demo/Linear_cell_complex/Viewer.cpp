@@ -48,8 +48,8 @@ void Viewer::drawAllFaces(bool flat)
   {
     if ( it->info().is_visible() )
     {
-      for(typename LCC::template One_dart_per_incident_cell_range<2,3>::iterator
-            dartIter=lcc.template one_dart_per_incident_cell<2,3>
+      for(LCC::One_dart_per_incident_cell_range<2,3>::iterator
+            dartIter=lcc.one_dart_per_incident_cell<2,3>
             (lcc.dart_of_attribute<3>(it)).begin(); dartIter.cont(); ++dartIter)
       {
         // We draw the polygon
@@ -76,8 +76,8 @@ void Viewer::drawAllFaces(bool flat)
           ::glNormal3d(normal.x(), normal.y(), normal.z());
         }
 
-        for (typename LCC::template Dart_of_orbit_range<1>::const_iterator
-               orbitIter = lcc.template darts_of_orbit<1>(dartIter).begin();
+        for (LCC::Dart_of_orbit_range<1>::const_iterator
+               orbitIter = lcc.darts_of_orbit<1>(dartIter).begin();
              orbitIter.cont(); ++orbitIter)
         {
           if(!flat)
@@ -115,8 +115,8 @@ void Viewer::drawAllEdges()
   {
     if ( it->info().is_visible() )
     {
-      for(typename LCC::template One_dart_per_incident_cell_range<1,3>::iterator
-            dartIter=lcc.template one_dart_per_incident_cell<1,3>
+      for(LCC::One_dart_per_incident_cell_range<1,3>::iterator
+            dartIter=lcc.one_dart_per_incident_cell<1,3>
             (lcc.dart_of_attribute<3>(it)).begin(); dartIter.cont(); ++dartIter)
       {
         const LCC::Point& p =  lcc.point(dartIter);
@@ -157,8 +157,8 @@ void Viewer::drawAllVertices()
   {
     if ( it->info().is_visible() )
     {
-      for(typename LCC::template One_dart_per_incident_cell_range<0,3>::iterator
-            dartIter=lcc.template one_dart_per_incident_cell<0,3>
+      for(LCC::One_dart_per_incident_cell_range<0,3>::iterator
+            dartIter=lcc.one_dart_per_incident_cell<0,3>
             (lcc.dart_of_attribute<3>(it)).begin();
           dartIter.cont(); ++dartIter)
       {
