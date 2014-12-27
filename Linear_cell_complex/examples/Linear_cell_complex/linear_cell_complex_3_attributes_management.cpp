@@ -14,13 +14,12 @@ void load_and_simplify_off(LCC_3& lcc, std::string& filename,
                            bool updateattribs, int percent)
 {
   std::ifstream ifile(filename.c_str());
-  int nb=0;
   if (ifile)
   {
     CGAL::load_off(lcc, ifile);
     CGAL::Timer timer;
     Dart_handle dh;
-    unsigned int nb=(lcc.number_of_darts()*percent)/200;
+    std::size_t nb=(lcc.number_of_darts()*percent)/200;
     timer.start();  
     for (LCC_3::Dart_range::iterator it=lcc.darts().begin(),
            itend=lcc.darts().end(); it!=itend && nb>0; )

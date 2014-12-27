@@ -236,7 +236,7 @@ protected:
   std::vector<Dart_handle> mengerVolumes;
 
   int sierpinskiCarpetLevel;
-  unsigned int nbfacesinit;
+  std::size_t nbfacesinit;
   bool neverUpdateAttributes;
   bool duringConstructionUpdateAttributes;
   bool afterConstructionUpdateAttributes;

@@ -1205,7 +1205,7 @@ void MainWindow::onMengerInc()
 
   std::vector<Dart_handle> edges;
   std::vector<Dart_handle> faces;
-  unsigned int nbvolinit = (unsigned int)mengerVolumes.size();
+  std::size_t nbvolinit = mengerVolumes.size();
 
   int markEdges = (scene.lcc)->get_new_mark();
   int markFaces = (scene.lcc)->get_new_mark();
@@ -1256,26 +1256,26 @@ void MainWindow::onMengerInc()
   (scene.lcc)->free_mark(markFaces);
   (scene.lcc)->free_mark(markVols);
 
-  for(unsigned int i = 0; i < (unsigned int)edges.size(); i++)
+  for(std::size_t i = 0; i < edges.size(); i++)
   {
     split_edge_in_three(edges[i]);
   }
   edges.clear();
 
-  for(unsigned int i = 0; i < (unsigned int)faces.size(); i++)
+  for(std::size_t i = 0; i < faces.size(); i++)
   {
     split_face_in_nine(faces[i]);
   }
   faces.clear();
 
-  for(unsigned int i = 0; i < nbvolinit; i++)
+  for(std::size_t i = 0; i < nbvolinit; i++)
   {
     split_vol_in_twentyseven(mengerVolumes[i]);
   }
 
   if (!mengerUpdateAttributes)
   {
-    for(unsigned int i = nbvolinit; i < (unsigned int)mengerVolumes.size(); i++)
+    for(std::size_t i = nbvolinit; i < mengerVolumes.size(); i++)
     {
       LCC::Attribute_handle<3>::type ah = (scene.lcc)->create_attribute<3>();
       scene.lcc->set_attribute<3>(mengerVolumes[i], ah);
@@ -1626,7 +1626,7 @@ void MainWindow::onMengerDec()
     }
   }
 
-  for(unsigned int i = 0; i < faces.size(); i++)
+  for(std::size_t i = 0; i < faces.size(); i++)
   {
     CGAL::remove_cell<LCC,2>(*scene.lcc, faces[i],mengerUpdateAttributes);
   }
@@ -1652,7 +1652,7 @@ void MainWindow::onMengerDec()
 
   CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markVols) );
 
-  for(unsigned int i = 0; i < edges.size(); i++)
+  for(std::size_t i = 0; i < edges.size(); i++)
   {
     CGAL::remove_cell<LCC,1>(*scene.lcc, scene.lcc->beta(edges[i],0),mengerUpdateAttributes);
     CGAL::remove_cell<LCC,1>(*scene.lcc, scene.lcc->beta(edges[i],1),mengerUpdateAttributes);
@@ -1698,7 +1698,7 @@ void MainWindow::onMengerDec()
   CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markVols) );
   CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markVertices) );
 
-  for(unsigned int i = 0; i < vertices.size(); i++)
+  for(std::size_t i = 0; i < vertices.size(); i++)
   {
     CGAL::remove_cell<LCC,0>(*scene.lcc, vertices[i],mengerUpdateAttributes);
   }
@@ -1876,7 +1876,7 @@ void MainWindow::onSierpinskiCarpetInc()
   }
 
   std::vector<Dart_handle> edges;
-  nbfacesinit = (unsigned int)sierpinskiCarpetSurfaces.size();
+  nbfacesinit = sierpinskiCarpetSurfaces.size();
 
   int markEdges = (scene.lcc)->get_new_mark();
   int markFaces = (scene.lcc)->get_new_mark();
@@ -1923,7 +1923,7 @@ void MainWindow::onSierpinskiCarpetInc()
     if (updateAttributesMethodStdMap)
     {
       // We create a map to associate embeddings to new darts
-      for(unsigned int i = 0; i < (unsigned int)edges.size(); i++)
+      for(std::size_t i = 0; i < edges.size(); i++)
       {
         dart_map.insert(std::pair<Dart_handle, LCC::Point>
                         (edges[i], scene.lcc->point(edges[i])));
@@ -1937,13 +1937,13 @@ void MainWindow::onSierpinskiCarpetInc()
     }
   }
 
-  for(unsigned int i = 0; i < (unsigned int)edges.size(); i++)
+  for(std::size_t i = 0; i < edges.size(); i++)
   {
     sierpinski_carpet_split_edge_in_three(edges[i]);
   }
   edges.clear();
 
-  for(unsigned int i = 0; i < nbfacesinit; i++)
+  for(std::size_t i = 0; i < nbfacesinit; i++)
   {
     sierpinski_carpet_split_face_in_nine(sierpinskiCarpetSurfaces[i]);
   }
@@ -1982,7 +1982,7 @@ void MainWindow::sierpinski_carpet_update_geometry()
 {
   if (updateAttributesMethodStdMap)
   {
-    for(unsigned int i = 0; i < (unsigned int)new_darts.size(); i++)
+    for(std::size_t i = 0; i < new_darts.size(); i++)
     {
       sierpinski_carpet_copy_attributes_and_embed_vertex(new_darts[i], dart_map[new_darts[i]]);
     }
@@ -1995,7 +1995,7 @@ void MainWindow::sierpinski_carpet_update_geometry()
   {
     int markVertices = (scene.lcc)->get_new_mark();
 
-    for(unsigned int i = 0; i < nbfacesinit; i++)
+    for(std::size_t i = 0; i < nbfacesinit; i++)
     {
       // Geometry of the 4 corners of the current face
       LCC::Point p[4][4];
@@ -2095,7 +2095,7 @@ void MainWindow::sierpinski_carpet_compute_geometry()
 {
   int markVertices = (scene.lcc)->get_new_mark();
 
-  for(unsigned int i = 0; i < nbfacesinit; i++)
+  for(std::size_t i = 0; i < nbfacesinit; i++)
   {
     // on récupère la géométrie des 4 coins de la face courante
     LCC::Point p[4][4];
@@ -2426,7 +2426,7 @@ void MainWindow::onSierpinskiCarpetDec()
     edges.push_back(dh);
   }
 
-  for(unsigned int i = 0; i < edges.size(); i++)
+  for(std::size_t i = 0; i < edges.size(); i++)
   {
     CGAL::remove_cell<LCC,1>(*scene.lcc, scene.lcc->beta(edges[i],0),
                              duringConstructionUpdateAttributes);
@@ -2480,7 +2480,7 @@ void MainWindow::onSierpinskiCarpetDec()
   CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markSurfaces) );
   CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markVertices) );
 
-  for(unsigned int i = 0; i < vertices.size(); i++)
+  for(std::size_t i = 0; i < vertices.size(); i++)
   {
     CGAL::remove_cell<LCC,0>(*scene.lcc, vertices[i], duringConstructionUpdateAttributes);
   }
@@ -2589,7 +2589,7 @@ void MainWindow::onSierpinskiTriangleInc()
   this->sierpinskiTriangleLevel++;
 
   std::vector<Dart_handle> edges;
-  nbfacesinit = (unsigned int)sierpinskiTriangleSurfaces.size();
+  nbfacesinit = sierpinskiTriangleSurfaces.size();
 
   int markEdges = (scene.lcc)->get_new_mark();
   int markFaces = (scene.lcc)->get_new_mark();
@@ -2631,20 +2631,20 @@ void MainWindow::onSierpinskiTriangleInc()
   (scene.lcc)->free_mark(markEdges);
   (scene.lcc)->free_mark(markFaces);
 
-  for(unsigned int i = 0; i < (unsigned int)edges.size(); i++)
+  for(std::size_t i = 0; i < edges.size(); i++)
   {
     sierpinski_triangle_split_edge_in_two(edges[i]);
   }
   edges.clear();
 
-  for(unsigned int i = 0; i < nbfacesinit; i++)
+  for(std::size_t i = 0; i < nbfacesinit; i++)
   {
     sierpinski_triangle_split_face_in_four(sierpinskiTriangleSurfaces[i],true);
   }
 
   if (!sierpinskiTriangleUpdateAttributes)
   {
-    for(unsigned int i = nbfacesinit; i < (unsigned int)sierpinskiTriangleSurfaces.size(); i++)
+    for(std::size_t i = nbfacesinit; i < sierpinskiTriangleSurfaces.size(); i++)
     {
       LCC::Attribute_handle<3>::type ah = (scene.lcc)->create_attribute<3>();
         CGAL::Set_i_attribute_functor<LCC, 3>::
@@ -2749,7 +2749,7 @@ void MainWindow::onSierpinskiTriangleDec()
   int nbt = CGAL::ipower(3,this->sierpinskiTriangleLevel);
 
   // First we add triangles removed during construction process
-  for ( unsigned int i = removedTriangles.size() - nbt; i < removedTriangles.size(); i++)
+  for ( std::size_t i = removedTriangles.size() - nbt; i < removedTriangles.size(); i++)
   {
     Dart_handle d1 = scene.lcc->create_dart();
     Dart_handle d2 = scene.lcc->create_dart();
@@ -2787,7 +2787,7 @@ void MainWindow::onSierpinskiTriangleDec()
     edges.push_back(dh);
   }
 
-  for(unsigned int i = 0; i < edges.size(); i++)
+  for(std::size_t i = 0; i < edges.size(); i++)
   {
     CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i], duringConstructionUpdateAttributes);
   }
@@ -2836,7 +2836,7 @@ void MainWindow::onSierpinskiTriangleDec()
   CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markSurfaces) );
   CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markVertices) );
 
-  for(unsigned int i = 0; i < vertices.size(); i++)
+  for(std::size_t i = 0; i < vertices.size(); i++)
   {
     CGAL::remove_cell<LCC,0>(*scene.lcc, vertices[i], duringConstructionUpdateAttributes);
   }
