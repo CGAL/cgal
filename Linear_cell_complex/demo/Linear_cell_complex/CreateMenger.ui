@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>264</width>
+    <width>288</width>
     <height>106</height>
    </rect>
   </property>
@@ -32,7 +32,7 @@
   <widget class="QSpinBox" name="mengerLevel">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>170</x>
      <y>10</y>
      <width>51</width>
      <height>27</height>
@@ -59,7 +59,7 @@
     <rect>
      <x>23</x>
      <y>15</y>
-     <width>121</width>
+     <width>141</width>
      <height>17</height>
     </rect>
    </property>
@@ -70,9 +70,9 @@
   <widget class="QCheckBox" name="updateAttributes">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>0</x>
      <y>40</y>
-     <width>241</width>
+     <width>291</width>
      <height>18</height>
     </rect>
    </property>
@@ -80,7 +80,7 @@
     <string>Update attributes during construction</string>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
   </widget>
  </widget>

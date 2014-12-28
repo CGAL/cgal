@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>325</width>
-    <height>151</height>
+    <height>119</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>120</y>
+     <x>80</x>
+     <y>80</y>
      <width>171</width>
      <height>32</height>
     </rect>
@@ -34,7 +34,7 @@
     <rect>
      <x>20</x>
      <y>13</y>
-     <width>181</width>
+     <width>201</width>
      <height>16</height>
     </rect>
    </property>
@@ -45,130 +45,30 @@
   <widget class="QSpinBox" name="level">
    <property name="geometry">
     <rect>
-     <x>200</x>
+     <x>230</x>
      <y>10</y>
      <width>47</width>
      <height>24</height>
     </rect>
    </property>
   </widget>
-  <widget class="QGroupBox" name="groupBox1">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>30</y>
-     <width>161</width>
-     <height>81</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Update Attributes</string>
-   </property>
-   <widget class="QRadioButton" name="never">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>97</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Never</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="during">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>40</y>
-      <width>141</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>During construction</string>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="after">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>60</y>
-      <width>141</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>After construction</string>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox2">
+  <widget class="QCheckBox" name="updateAttributes">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>30</y>
-     <width>91</width>
-     <height>61</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Method</string>
-   </property>
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <widget class="QRadioButton" name="stdmap">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>81</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>std map</string>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="traversal">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>40</y>
-      <width>81</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>traversal</string>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QPushButton" name="computeGeometry">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>120</y>
-     <width>151</width>
-     <height>32</height>
+     <x>20</x>
+     <y>50</y>
+     <width>291</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="text">
-    <string>Compute geometry</string>
+    <string>Update attributes during construction</string>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
    </property>
   </widget>
  </widget>

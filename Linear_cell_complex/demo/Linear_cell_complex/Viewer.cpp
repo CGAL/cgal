@@ -188,34 +188,34 @@ void Viewer::drawAllVertices()
 void Viewer::initDraw()
 {
     //Compile drawFacet
-    std::cout << "Compile Display Lists : Faces, " << std::flush;
+    //    std::cout << "Compile Display Lists : Faces, " << std::flush;
     m_dlFaces = ::glGenLists(1);
     ::glNewList(m_dlFaces, GL_COMPILE);
     drawAllFaces(false);
     ::glEndList();
 
     //Compile drawFacet with flat shading
-    std::cout << "Faces (flat shading), " << std::flush;
+    //    std::cout << "Faces (flat shading), " << std::flush;
     m_dlFacesFlat = ::glGenLists(1);
     ::glNewList(m_dlFacesFlat, GL_COMPILE);
     drawAllFaces(true);
     ::glEndList();
 
     //Compile drawEdge
-    std::cout << "edges, " << std::flush;
+    //    std::cout << "edges, " << std::flush;
     m_dlEdges = ::glGenLists(1);
     ::glNewList(m_dlEdges, GL_COMPILE);
     drawAllEdges();
     ::glEndList();
 
     //Compile drawvertices
-    std::cout << "vertices" << std::flush;
+    //    std::cout << "vertices" << std::flush;
     m_dlVertices = ::glGenLists(1);
     ::glNewList(m_dlVertices, GL_COMPILE);
     drawAllVertices();
     ::glEndList();
 
-    std::cout << ". DONE." << std::endl;
+    //    std::cout << ". DONE." << std::endl;
     m_displayListCreated = true;
 }
 

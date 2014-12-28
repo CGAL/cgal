@@ -111,7 +111,9 @@ void MainWindow::connect_actions ()
 
   QObject::connect(dialogsierpinskicarpet.level, SIGNAL(valueChanged(int)),
                    this, SLOT(onSierpinskiCarpetChangeLevel(int)));
-  QObject::connect(dialogsierpinskicarpet.never, SIGNAL(clicked(bool)),
+  QObject::connect(dialogsierpinskicarpet.updateAttributes, SIGNAL(clicked(bool)),
+                   this, SLOT(onSierpinskiCarpetUpdateAttributes(bool)));
+/*  QObject::connect(dialogsierpinskicarpet.never, SIGNAL(clicked(bool)),
                    this, SLOT(onSierpinskiCarpetNeverUpdateAttributes(bool)));
   QObject::connect(dialogsierpinskicarpet.during, SIGNAL(clicked(bool)),
                    this, SLOT(onSierpinskiCarpetDuringConstructionUpdateAttributes(bool)));
@@ -122,7 +124,7 @@ void MainWindow::connect_actions ()
   QObject::connect(dialogsierpinskicarpet.traversal, SIGNAL(clicked(bool)),
                    this, SLOT(onSierpinskiCarpetUpdateAttributesMethodTraversal(bool)));
   QObject::connect(dialogsierpinskicarpet.computeGeometry, SIGNAL(clicked(bool)),
-                   this, SLOT(onSierpinskiCarpetComputeGeometry(bool)));
+                   this, SLOT(onSierpinskiCarpetComputeGeometry(bool)));*/
   QObject::connect(&dialogsierpinskicarpet, SIGNAL(accepted()),
                    this, SLOT(onSierpinskiCarpetOk()));
   QObject::connect(&dialogsierpinskicarpet, SIGNAL(rejected()),
@@ -157,6 +159,8 @@ void MainWindow::update_operations_entries(bool show)
 
 void MainWindow::onSceneChanged ()
 {
+  QApplication::setOverrideCursor( Qt::WaitCursor );
+
   int mark = scene.lcc->get_new_mark ();
   scene.lcc->negate_mark (mark);
 
@@ -183,9 +187,12 @@ void MainWindow::onSceneChanged ()
   scene.lcc->negate_mark (mark);
   scene.lcc->free_mark (mark);
 
+  // statusBar()->showMessage (QString ("Update OpenGL lists"), DELAY_STATUSMSG);
+
   viewer->sceneChanged ();
 
   statusMessage->setText (os.str().c_str ());
+  QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::clear_all()
@@ -414,6 +421,8 @@ void MainWindow::on_actionCreate_mesh_triggered ()
 
 void MainWindow::onCreateMeshOk()
 {
+  QApplication::setOverrideCursor (Qt::WaitCursor);
+
 #ifdef CGAL_PROFILE_LCC_DEMO
   CGAL::Timer timer;
   timer.start();
@@ -436,13 +445,16 @@ void MainWindow::onCreateMeshOk()
            <<timer.time()<<" seconds."<<std::endl;
 #endif
 
-  statusBar ()->showMessage (QString ("mesh created"),DELAY_STATUSMSG);
+  statusBar ()->showMessage (QString ("Mesh created"),DELAY_STATUSMSG);
 
+  QApplication::restoreOverrideCursor ();
   emit (sceneChanged ());
 }
 
 void MainWindow::on_actionSubdivide_triggered ()
 {
+  QApplication::setOverrideCursor (Qt::WaitCursor);
+
 #ifdef CGAL_PROFILE_LCC_DEMO
   CGAL::Timer timer;
   timer.start();
@@ -456,6 +468,7 @@ void MainWindow::on_actionSubdivide_triggered ()
            <<timer.time()<<" seconds."<<std::endl;
 #endif
 
+  QApplication::restoreOverrideCursor ();
   emit (sceneChanged ());
   statusBar ()->showMessage (QString ("Objects were subdivided"),
                              DELAY_STATUSMSG);
@@ -463,6 +476,8 @@ void MainWindow::on_actionSubdivide_triggered ()
 
 void MainWindow::on_actionSubdivide_pqq_triggered ()
 {
+  QApplication::setOverrideCursor (Qt::WaitCursor);
+
 #ifdef CGAL_PROFILE_LCC_DEMO
   CGAL::Timer timer;
   timer.start();
@@ -476,6 +491,7 @@ void MainWindow::on_actionSubdivide_pqq_triggered ()
            <<timer.time()<<" seconds."<<std::endl;
 #endif
 
+  QApplication::restoreOverrideCursor ();
   emit (sceneChanged ());
   statusBar ()->showMessage (QString ("Objects were subdivided"),
                              DELAY_STATUSMSG);
@@ -497,6 +513,8 @@ void MainWindow::on_actionCompute_Voronoi_3D_triggered ()
                                                    tr ("Data file (*)"));
 
   if (fileName.isEmpty ()) return;
+
+  QApplication::setOverrideCursor (Qt::WaitCursor);
 
   this->clear_all();
 
@@ -582,6 +600,7 @@ void MainWindow::on_actionCompute_Voronoi_3D_triggered ()
 #endif
 
   init_all_new_volumes();
+  QApplication::restoreOverrideCursor ();
   emit (sceneChanged ());
   statusBar ()->showMessage (QString ("Voronoi 3D of points in ") + fileName,
                              DELAY_STATUSMSG);
@@ -596,6 +615,8 @@ void MainWindow::on_actionDual_3_triggered ()
          DELAY_STATUSMSG);
     return;
   }
+
+  QApplication::setOverrideCursor (Qt::WaitCursor);
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   CGAL::Timer timer;
@@ -618,11 +639,14 @@ void MainWindow::on_actionDual_3_triggered ()
   init_all_new_volumes();
 
   statusBar ()->showMessage (QString ("Dual_3 computed"), DELAY_STATUSMSG);
+  QApplication::restoreOverrideCursor ();
   emit (sceneChanged ());
 }
 
 void MainWindow::on_actionClose_volume_triggered()
 {
+  QApplication::setOverrideCursor (Qt::WaitCursor);
+
 #ifdef CGAL_PROFILE_LCC_DEMO
   CGAL::Timer timer;
   timer.start();
@@ -639,6 +663,8 @@ void MainWindow::on_actionClose_volume_triggered()
     statusBar ()->showMessage
         (QString ("LCC already 3-closed"), DELAY_STATUSMSG);
 
+  QApplication::restoreOverrideCursor ();
+
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
   std::cout<<"Time to 3-close the current lcc: "
@@ -651,6 +677,8 @@ void MainWindow::on_actionSew3_same_facets_triggered()
 {
   int mymark = scene.lcc->get_new_mark();
   mark_all_filled_and_visible_volumes(mymark);
+
+  QApplication::setOverrideCursor (Qt::WaitCursor);
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   CGAL::Timer timer;
@@ -669,6 +697,8 @@ void MainWindow::on_actionSew3_same_facets_triggered()
 
   scene.lcc->free_mark(mymark);
 
+  QApplication::restoreOverrideCursor ();
+
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
   std::cout<<"Time to sew3 all same facets: "
@@ -679,6 +709,7 @@ void MainWindow::on_actionSew3_same_facets_triggered()
 void MainWindow::on_actionUnsew3_all_triggered()
 {
   unsigned int nb=0;
+  QApplication::setOverrideCursor (Qt::WaitCursor);
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   CGAL::Timer timer;
@@ -700,6 +731,7 @@ void MainWindow::on_actionUnsew3_all_triggered()
   std::cout<<"Time to unsew3 all filled volumes: "
            <<timer.time()<<" seconds."<<std::endl;
 #endif
+  QApplication::restoreOverrideCursor ();
 
   if ( nb > 0 )
   {
@@ -714,6 +746,8 @@ void MainWindow::on_actionUnsew3_all_triggered()
 
 void MainWindow::on_actionRemove_filled_volumes_triggered()
 {
+  QApplication::setOverrideCursor (Qt::WaitCursor);
+
 #ifdef CGAL_PROFILE_LCC_DEMO
   CGAL::Timer timer;
   timer.start();
@@ -739,6 +773,7 @@ void MainWindow::on_actionRemove_filled_volumes_triggered()
 #endif
 
   recreate_whole_volume_list();
+  QApplication::restoreOverrideCursor ();
   emit(sceneChanged());
 
   statusBar()->showMessage
@@ -748,6 +783,8 @@ void MainWindow::on_actionRemove_filled_volumes_triggered()
 
 void MainWindow::on_actionTriangulate_all_facets_triggered()
 {
+  QApplication::setOverrideCursor (Qt::WaitCursor);
+
 #ifdef CGAL_PROFILE_LCC_DEMO
   CGAL::Timer timer;
   timer.start();
@@ -770,6 +807,7 @@ void MainWindow::on_actionTriangulate_all_facets_triggered()
            <<timer.time()<<" seconds."<<std::endl;
 #endif
 
+  QApplication::restoreOverrideCursor ();
   emit (sceneChanged ());
   statusBar()->showMessage
       (QString ("Facets of visible and filled volume(s) triangulated"),
@@ -778,6 +816,8 @@ void MainWindow::on_actionTriangulate_all_facets_triggered()
 
 void MainWindow::on_actionMerge_all_volumes_triggered()
 {
+  QApplication::setOverrideCursor (Qt::WaitCursor);
+
 #ifdef CGAL_PROFILE_LCC_DEMO
   CGAL::Timer timer;
   timer.start();
@@ -813,9 +853,10 @@ void MainWindow::on_actionMerge_all_volumes_triggered()
 
   recreate_whole_volume_list();
 
+  QApplication::restoreOverrideCursor ();
   emit (sceneChanged ());
   statusBar()->showMessage
-      (QString ("All volume(s) merged"), DELAY_STATUSMSG);
+      (QString ("Visible and filled volume(s) merged"), DELAY_STATUSMSG);
 }
 
 bool MainWindow::is_volume_in_list(LCC::Attribute_handle<3>::type ah)
@@ -865,7 +906,8 @@ void MainWindow::update_volume_list_add(LCC::Attribute_handle<3>::type ah)
 
   QTableWidgetItem* attribHandle = new QTableWidgetItem;
   attribHandle->setData
-      (Qt::UserRole, reinterpret_cast<quintptr>(&scene.lcc->get_attribute<3>(ah)));
+      (Qt::UserRole,
+       reinterpret_cast<quintptr>(&scene.lcc->get_attribute<3>(ah)));
 
   volumeList->setItem(newRow,3,attribHandle);
 
@@ -1169,6 +1211,8 @@ void MainWindow::onMengerCancel()
   recreate_whole_volume_list();
   mengerVolumes.clear();
   update_operations_entries(true);
+  statusBar()->showMessage (QString ("Menger sponge creation canceled"),
+                            DELAY_STATUSMSG);
   emit(sceneChanged());
 }
 
@@ -1191,6 +1235,8 @@ void MainWindow::onMengerUpdateAttributes(bool newValue)
 
 void MainWindow::onMengerInc()
 {
+  QApplication::setOverrideCursor (Qt::WaitCursor);
+
 #ifdef CGAL_PROFILE_LCC_DEMO
   CGAL::Timer timer;
   timer.start();
@@ -1292,12 +1338,20 @@ void MainWindow::onMengerInc()
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
-  std::cout<<"Time to increase the level of menger sponge ("
-           <<this->mengerLevel-1<<" -> "<<this->mengerLevel<<"): "
-           <<timer.time()<<" seconds."<<std::endl;
+  std::cout<<"Menger sponge "
+           <<this->mengerLevel-1<<" -> "<<this->mengerLevel<<", "
+          <<"attributes updated "
+         <<(mengerUpdateAttributes ? "DURING" : "AFTER")
+        << " construction: "
+        <<timer.time()<<" seconds."<<std::endl;
 #endif
 
   CGAL_assertion( (scene.lcc)->is_valid() );
+
+  QApplication::restoreOverrideCursor ();
+  statusBar()->showMessage(QString ("Menger sponge creation %1 -> %2").
+                           arg(this->mengerLevel-1).arg(this->mengerLevel),
+                           DELAY_STATUSMSG);
 
   emit(sceneChanged());
 }
@@ -1592,6 +1646,8 @@ void MainWindow::process_inter_slice(Dart_handle init,
 
 void MainWindow::onMengerDec()
 {
+  QApplication::setOverrideCursor (Qt::WaitCursor);
+
 #ifdef CGAL_PROFILE_LCC_DEMO
   CGAL::Timer timer;
   timer.start();
@@ -1714,14 +1770,21 @@ void MainWindow::onMengerDec()
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
-  std::cout<<"Time to decrease the level of menger sponge ("
-           <<this->mengerLevel+1<<" -> "<<this->mengerLevel<<"): "
-           <<timer.time()<<" seconds."<<std::endl;
+  std::cout<<"Menger sponge "
+           <<this->mengerLevel+1<<" -> "<<this->mengerLevel<<", "
+          <<"attributes updated "
+         <<(mengerUpdateAttributes ? "DURING" : "AFTER")
+        << " construction: "
+        <<timer.time()<<" seconds."<<std::endl;
 #endif
 
   recreate_whole_volume_list();
 
-  statusBar ()->showMessage (QString ("Menger Dec"),DELAY_STATUSMSG);
+  statusBar()->showMessage(QString ("Menger sponge creation %1 -> %2").
+                           arg(this->mengerLevel+1).arg(this->mengerLevel),
+                           DELAY_STATUSMSG);
+
+  QApplication::restoreOverrideCursor ();
   emit(sceneChanged());
 }
 
@@ -1731,14 +1794,18 @@ void MainWindow::onMengerDec()
 
 void MainWindow::on_actionCreate_Sierpinski_Carpet_triggered ()
 {
-  neverUpdateAttributes = dialogsierpinskicarpet.never->isChecked();
+  /*neverUpdateAttributes = dialogsierpinskicarpet.never->isChecked();
   duringConstructionUpdateAttributes = dialogsierpinskicarpet.during->isChecked();
   afterConstructionUpdateAttributes = dialogsierpinskicarpet.after->isChecked();
   updateAttributesMethodStdMap = dialogsierpinskicarpet.stdmap->isChecked();
   updateAttributesMethodTraversal = dialogsierpinskicarpet.traversal->isChecked();
-  computeGeometry = false;
   // By default, the geometry will be computed after the construction
-  isComputableGeometry = true;
+  isComputableGeometry = true;*/
+
+  computeGeometry = false;
+
+  sierpinskiCarpetUpdateAttributes
+    = dialogsierpinskicarpet.updateAttributes->isChecked();
 
   dialogsierpinskicarpet.level->disconnect(this);
 
@@ -1775,6 +1842,7 @@ void MainWindow::on_actionCreate_Sierpinski_Carpet_triggered ()
 
 void MainWindow::onSierpinskiCarpetCancel()
 {
+  QApplication::setOverrideCursor (Qt::WaitCursor);
   for(std::vector<Dart_handle>::iterator it=sierpinskiCarpetSurfaces.begin();
       it!=sierpinskiCarpetSurfaces.end(); ++it)
   {
@@ -1784,6 +1852,7 @@ void MainWindow::onSierpinskiCarpetCancel()
   recreate_whole_volume_list();
   sierpinskiCarpetSurfaces.clear();
   update_operations_entries(true);
+  QApplication::restoreOverrideCursor ();
   emit(sceneChanged());
 }
 
@@ -1799,7 +1868,12 @@ void MainWindow::onSierpinskiCarpetChangeLevel(int newLevel)
   while ( newLevel < sierpinskiCarpetLevel ) onSierpinskiCarpetDec();
 }
 
-void MainWindow::onSierpinskiCarpetNeverUpdateAttributes(bool /*newValue*/)
+void MainWindow::onSierpinskiCarpetUpdateAttributes(bool newValue)
+{
+  sierpinskiCarpetUpdateAttributes = newValue;
+}
+
+/*void MainWindow::onSierpinskiCarpetNeverUpdateAttributes(bool newValue)
 {
   if (afterConstructionUpdateAttributes)
   {
@@ -1811,7 +1885,7 @@ void MainWindow::onSierpinskiCarpetNeverUpdateAttributes(bool /*newValue*/)
   afterConstructionUpdateAttributes = false;
 }
 
-void MainWindow::onSierpinskiCarpetDuringConstructionUpdateAttributes(bool /*newValue*/)
+void MainWindow::onSierpinskiCarpetDuringConstructionUpdateAttributes(bool newValue)
 {
   if (afterConstructionUpdateAttributes)
   {
@@ -1823,7 +1897,7 @@ void MainWindow::onSierpinskiCarpetDuringConstructionUpdateAttributes(bool /*new
   afterConstructionUpdateAttributes = false;
 }
 
-void MainWindow::onSierpinskiCarpetAfterConstructionUpdateAttributes(bool /*newValue*/)
+void MainWindow::onSierpinskiCarpetAfterConstructionUpdateAttributes(bool newValue)
 {
   if (!afterConstructionUpdateAttributes)
   {
@@ -1835,19 +1909,19 @@ void MainWindow::onSierpinskiCarpetAfterConstructionUpdateAttributes(bool /*newV
   afterConstructionUpdateAttributes = true;
 }
 
-void MainWindow::onSierpinskiCarpetUpdateAttributesMethodStdMap(bool /*newValue*/)
+void MainWindow::onSierpinskiCarpetUpdateAttributesMethodStdMap(bool newValue)
 {
   updateAttributesMethodStdMap = true;
   updateAttributesMethodTraversal = false;
 }
 
-void MainWindow::onSierpinskiCarpetUpdateAttributesMethodTraversal(bool /*newValue*/)
+void MainWindow::onSierpinskiCarpetUpdateAttributesMethodTraversal(bool newValue)
 {
   updateAttributesMethodStdMap = false;
   updateAttributesMethodTraversal = true;
 }
 
-void MainWindow::onSierpinskiCarpetComputeGeometry(bool /*newValue*/)
+void MainWindow::onSierpinskiCarpetComputeGeometry(bool newValue)
 {
   sierpinski_carpet_compute_geometry();
 
@@ -1855,10 +1929,12 @@ void MainWindow::onSierpinskiCarpetComputeGeometry(bool /*newValue*/)
   dialogsierpinskicarpet.computeGeometry->setEnabled(false);
 
   emit(sceneChanged());
-}
+}*/
 
 void MainWindow::onSierpinskiCarpetInc()
 {
+  QApplication::setOverrideCursor (Qt::WaitCursor);
+
 #ifdef CGAL_PROFILE_LCC_DEMO
   CGAL::Timer timer;
   timer.start();
@@ -1866,14 +1942,14 @@ void MainWindow::onSierpinskiCarpetInc()
 
   this->sierpinskiCarpetLevel++;
 
-  if (computeGeometry)
+/*  if (computeGeometry)
   {
     // Here case where the geometry could be computed after the construction, but it was not updated.
     computeGeometry = false;
     dialogsierpinskicarpet.computeGeometry->setEnabled(false);
     //  => geometry will not be computed later.
     isComputableGeometry = false;
-  }
+  }*/
 
   std::vector<Dart_handle> edges;
   nbfacesinit = sierpinskiCarpetSurfaces.size();
@@ -1918,7 +1994,7 @@ void MainWindow::onSierpinskiCarpetInc()
   (scene.lcc)->free_mark(markEdges);
   (scene.lcc)->free_mark(markFaces);
 
-  if (afterConstructionUpdateAttributes)
+/*  if (afterConstructionUpdateAttributes)
   {
     if (updateAttributesMethodStdMap)
     {
@@ -1935,7 +2011,7 @@ void MainWindow::onSierpinskiCarpetInc()
         }
       }
     }
-  }
+  }*/
 
   for(std::size_t i = 0; i < edges.size(); i++)
   {
@@ -1948,12 +2024,12 @@ void MainWindow::onSierpinskiCarpetInc()
     sierpinski_carpet_split_face_in_nine(sierpinskiCarpetSurfaces[i]);
   }
 
-  if (afterConstructionUpdateAttributes)
+  if (!sierpinskiCarpetUpdateAttributes)
   {
     sierpinski_carpet_update_geometry();
   }
 
-  if (neverUpdateAttributes)
+/*  if (neverUpdateAttributes)
   {
     scene.lcc->correct_invalid_attributes();
 
@@ -1963,24 +2039,33 @@ void MainWindow::onSierpinskiCarpetInc()
       computeGeometry = true;
       dialogsierpinskicarpet.computeGeometry->setEnabled(true);
     }
-  }
+  }*/
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
-  std::cout<<"Time to increase the level of sierpinski carpet ("
-           <<this->sierpinskiCarpetLevel-1<<" -> "<<this->sierpinskiCarpetLevel<<") "
-           <<(duringConstructionUpdateAttributes ? "DURING" : "AFTER") << " construction update attributes: "
-           <<timer.time()<<" seconds."<<std::endl;
+  std::cout<<"Sierpinski carpet "
+           <<this->sierpinskiCarpetLevel-1<<" -> "
+          <<this->sierpinskiCarpetLevel<<", "
+         <<"attributes updated "
+        <<(sierpinskiCarpetUpdateAttributes ? "DURING" : "AFTER")
+       << " construction: "
+       <<timer.time()<<" seconds."<<std::endl;
 #endif
 
   CGAL_assertion( (scene.lcc)->is_valid() );
 
+  statusBar()->showMessage(QString ("Sierpinski carpet creation %1 -> %2").
+                           arg(this->sierpinskiCarpetLevel-1).
+                           arg(this->sierpinskiCarpetLevel),
+                           DELAY_STATUSMSG);
+
+  QApplication::restoreOverrideCursor ();
   emit(sceneChanged());
 }
 
 void MainWindow::sierpinski_carpet_update_geometry()
 {
-  if (updateAttributesMethodStdMap)
+/*  if (updateAttributesMethodStdMap)
   {
     for(std::size_t i = 0; i < new_darts.size(); i++)
     {
@@ -1991,7 +2076,7 @@ void MainWindow::sierpinski_carpet_update_geometry()
     new_darts.clear();
   }
 
-  if (updateAttributesMethodTraversal)
+  if (updateAttributesMethodTraversal)*/
   {
     int markVertices = (scene.lcc)->get_new_mark();
 
@@ -2257,7 +2342,7 @@ void MainWindow::sierpinski_carpet_copy_attributes_and_embed_vertex
 
 void MainWindow::sierpinski_carpet_split_edge_in_three(Dart_handle dh)
 {
-  if (duringConstructionUpdateAttributes)
+  if (sierpinskiCarpetUpdateAttributes)
   {
     LCC::Point p1 = scene.lcc->point(dh);
     LCC::Point p2 = scene.lcc->point(scene.lcc->other_extremity(dh));
@@ -2276,7 +2361,7 @@ void MainWindow::sierpinski_carpet_split_edge_in_three(Dart_handle dh)
   {
     LCC::Point p3, p4;
 
-    if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
+    /*if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
     {
       LCC::Point p1 = dart_map[dh];
       LCC::Point p2 = dart_map[scene.lcc->other_extremity(dh)];
@@ -2286,7 +2371,7 @@ void MainWindow::sierpinski_carpet_split_edge_in_three(Dart_handle dh)
 
       p3 = LCC::Traits::Construct_translated_point() (p1,v2);
       p4 = LCC::Traits::Construct_translated_point() (p1,v3);
-    }
+    }*/
 
     Dart_handle d1=
         CGAL::insert_cell_0_in_cell_1(*(scene.lcc),
@@ -2294,7 +2379,7 @@ void MainWindow::sierpinski_carpet_split_edge_in_three(Dart_handle dh)
                                       LCC::null_handle,
                                       false);
 
-    if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
+    /*if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
     {
       dart_map.insert(std::pair<Dart_handle, LCC::Point>(d1, p4));
       if (!(scene.lcc)->is_free(d1,2))
@@ -2302,7 +2387,7 @@ void MainWindow::sierpinski_carpet_split_edge_in_three(Dart_handle dh)
         dart_map.insert(std::pair<Dart_handle, LCC::Point>((scene.lcc)->beta(d1,2,1), p4));
       }
       new_darts.push_back((scene.lcc)->beta(dh,1));
-    }
+    }*/
 
     Dart_handle d2=
         CGAL::insert_cell_0_in_cell_1(*(scene.lcc),
@@ -2310,7 +2395,7 @@ void MainWindow::sierpinski_carpet_split_edge_in_three(Dart_handle dh)
                                       LCC::null_handle,
                                       false);
 
-    if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
+    /*if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
     {
       dart_map.insert(std::pair<Dart_handle, LCC::Point>(d2, p3));
       if (!(scene.lcc)->is_free(d2,2))
@@ -2318,7 +2403,7 @@ void MainWindow::sierpinski_carpet_split_edge_in_three(Dart_handle dh)
         dart_map.insert(std::pair<Dart_handle, LCC::Point>((scene.lcc)->beta(d2,2,1), p3));
       }
       new_darts.push_back((scene.lcc)->beta(dh,1));
-    }
+    }*/
   }
 }
 
@@ -2329,16 +2414,16 @@ void MainWindow::sierpinski_carpet_split_face_in_three(Dart_handle dh,
   CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
                                 scene.lcc->beta(dh,1,1,1),
                                 scene.lcc->beta(dh,0,0),
-                                duringConstructionUpdateAttributes);
+                                sierpinskiCarpetUpdateAttributes);
   Dart_handle d2=
   CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
                                 scene.lcc->beta(dh,1,1),
                                 scene.lcc->beta(dh,0),
-                                duringConstructionUpdateAttributes);
+                                sierpinskiCarpetUpdateAttributes);
 
   if ( removecenter )
   {
-    CGAL::remove_cell<LCC,2>(*scene.lcc,d2,duringConstructionUpdateAttributes);
+    CGAL::remove_cell<LCC,2>(*scene.lcc,d2,sierpinskiCarpetUpdateAttributes);
   }
   else
   {
@@ -2359,25 +2444,25 @@ void MainWindow::sierpinski_carpet_split_face_in_nine(Dart_handle dh)
   CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
                                 d1,
                                 d2,
-                                duringConstructionUpdateAttributes);
+                                sierpinskiCarpetUpdateAttributes);
 
-  if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
+  /*if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
   {
     dart_map.insert(std::pair<Dart_handle, LCC::Point>(e2, dart_map[d2]));
     dart_map.insert(std::pair<Dart_handle, LCC::Point>((scene.lcc)->beta(e2,2), dart_map[d1]));
-  }
+  }*/
 
   Dart_handle e1=
   CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
                                 d3,
                                 d4,
-                                duringConstructionUpdateAttributes);
+                                sierpinskiCarpetUpdateAttributes);
 
-  if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
+  /*if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
   {
     dart_map.insert(std::pair<Dart_handle, LCC::Point>(e1, dart_map[d4]));
     dart_map.insert(std::pair<Dart_handle, LCC::Point>((scene.lcc)->beta(e1,2), dart_map[d3]));
-  }
+  }*/
 
   sierpinskiCarpetSurfaces.push_back(e2);
   sierpinskiCarpetSurfaces.push_back(e1);
@@ -2394,6 +2479,8 @@ void MainWindow::sierpinski_carpet_split_face_in_nine(Dart_handle dh)
 
 void MainWindow::onSierpinskiCarpetDec()
 {
+  QApplication::setOverrideCursor (Qt::WaitCursor);
+
 #ifdef CGAL_PROFILE_LCC_DEMO
   CGAL::Timer timer;
   timer.start();
@@ -2412,7 +2499,8 @@ void MainWindow::onSierpinskiCarpetDec()
   std::vector<Dart_handle> vertices;
 
   // First we remove edges.
-  for ( std::vector<Dart_handle>::iterator itsurfaces=sierpinskiCarpetSurfaces.begin();
+  for ( std::vector<Dart_handle>::iterator
+        itsurfaces=sierpinskiCarpetSurfaces.begin();
         itsurfaces!=sierpinskiCarpetSurfaces.end(); ++itsurfaces)
   {
     Dart_handle dh = *itsurfaces;
@@ -2429,16 +2517,17 @@ void MainWindow::onSierpinskiCarpetDec()
   for(std::size_t i = 0; i < edges.size(); i++)
   {
     CGAL::remove_cell<LCC,1>(*scene.lcc, scene.lcc->beta(edges[i],0),
-                             duringConstructionUpdateAttributes);
+                             sierpinskiCarpetUpdateAttributes);
     CGAL::remove_cell<LCC,1>(*scene.lcc, scene.lcc->beta(edges[i],1),
-                             duringConstructionUpdateAttributes);
+                             sierpinskiCarpetUpdateAttributes);
     CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i],
-                             duringConstructionUpdateAttributes);
+                             sierpinskiCarpetUpdateAttributes);
   }
   edges.clear();
 
   // Lastly we remove vertices.
-  for ( std::vector<Dart_handle>::iterator itsurfaces=sierpinskiCarpetSurfaces.begin();
+  for ( std::vector<Dart_handle>::iterator
+        itsurfaces=sierpinskiCarpetSurfaces.begin();
         itsurfaces!=sierpinskiCarpetSurfaces.end(); ++itsurfaces)
   {
     Dart_handle dh = scene.lcc->beta(*itsurfaces,1);
@@ -2461,7 +2550,8 @@ void MainWindow::onSierpinskiCarpetDec()
   }
 
   (scene.lcc)->negate_mark(markSurfaces);
-  for ( std::vector<Dart_handle>::iterator itsurfaces=sierpinskiCarpetSurfaces.begin();
+  for ( std::vector<Dart_handle>::iterator
+        itsurfaces=sierpinskiCarpetSurfaces.begin();
         itsurfaces!=sierpinskiCarpetSurfaces.end(); ++itsurfaces)
   {
     Dart_handle dh = scene.lcc->beta(*itsurfaces,1);
@@ -2482,28 +2572,37 @@ void MainWindow::onSierpinskiCarpetDec()
 
   for(std::size_t i = 0; i < vertices.size(); i++)
   {
-    CGAL::remove_cell<LCC,0>(*scene.lcc, vertices[i], duringConstructionUpdateAttributes);
+    CGAL::remove_cell<LCC,0>(*scene.lcc, vertices[i],
+                             sierpinskiCarpetUpdateAttributes);
   }
   vertices.clear();
 
   (scene.lcc)->free_mark(markSurfaces);
   (scene.lcc)->free_mark(markVertices);
 
-  if (!duringConstructionUpdateAttributes)
+  if (!sierpinskiCarpetUpdateAttributes)
   {
     scene.lcc->correct_invalid_attributes();
   }
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
-  std::cout<<"Time to decrease the level of sierpinski carpet ("
-           <<this->sierpinskiCarpetLevel+1<<" -> "<<this->sierpinskiCarpetLevel<<"): "
-           <<timer.time()<<" seconds."<<std::endl;
+  std::cout<<"Sierpinski carpet "
+           <<this->sierpinskiCarpetLevel+1<<" -> "
+          <<this->sierpinskiCarpetLevel<<", "
+         <<"attributes updated "
+        <<(sierpinskiCarpetUpdateAttributes ? "DURING" : "AFTER")
+       << " construction: "
+       <<timer.time()<<" seconds."<<std::endl;
 #endif
 
   recreate_whole_volume_list();
+  QApplication::restoreOverrideCursor ();
 
-  statusBar ()->showMessage (QString ("Menger Dec"),DELAY_STATUSMSG);
+  statusBar()->showMessage(QString ("Sierpinski carpet creation %1 -> %2").
+                           arg(this->sierpinskiCarpetLevel+1).
+                           arg(this->sierpinskiCarpetLevel),
+                           DELAY_STATUSMSG);
   emit(sceneChanged());
 }
 
@@ -2581,6 +2680,8 @@ void MainWindow::onSierpinskiTriangleUpdateAttributes(bool newValue)
 
 void MainWindow::onSierpinskiTriangleInc()
 {
+  QApplication::setOverrideCursor (Qt::WaitCursor);
+
 #ifdef CGAL_PROFILE_LCC_DEMO
   CGAL::Timer timer;
   timer.start();
@@ -2662,13 +2763,21 @@ void MainWindow::onSierpinskiTriangleInc()
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
-  std::cout<<"Time to increase the level of sierpinski triangle ("
-           <<this->sierpinskiTriangleLevel-1<<" -> "<<this->sierpinskiTriangleLevel<<") "
-           <<(sierpinskiTriangleUpdateAttributes ? "DURING" : "AFTER") << " construction update attributes: "
-           <<timer.time()<<" seconds."<<std::endl;
+  std::cout<<"Sierpinski triangle "
+           <<this->sierpinskiTriangleLevel-1<<" -> "
+          <<this->sierpinskiTriangleLevel<<", "
+         <<"attributes updated "
+        <<(sierpinskiTriangleUpdateAttributes ? "DURING" : "AFTER")
+       << " construction: "
+       <<timer.time()<<" seconds."<<std::endl;
 #endif
 
   //CGAL_assertion( (scene.lcc)->is_valid() );
+  statusBar()->showMessage(QString ("Sierpinski triangle creation %1 -> %2").
+                           arg(this->sierpinskiTriangleLevel-1).
+                           arg(this->sierpinskiTriangleLevel),
+                           DELAY_STATUSMSG);
+  QApplication::restoreOverrideCursor ();
 
   emit(sceneChanged());
 }
@@ -2739,6 +2848,8 @@ void MainWindow::sierpinski_triangle_split_face_in_four(Dart_handle dh, bool rem
 
 void MainWindow::onSierpinskiTriangleDec()
 {
+  QApplication::setOverrideCursor( Qt::WaitCursor );
+
 #ifdef CGAL_PROFILE_LCC_DEMO
   CGAL::Timer timer;
   timer.start();
@@ -2775,7 +2886,8 @@ void MainWindow::onSierpinskiTriangleDec()
   std::vector<Dart_handle> vertices;
 
   // Now we remove edges.
-  for ( std::vector<Dart_handle>::iterator itsurfaces=sierpinskiTriangleSurfaces.begin();
+  for ( std::vector<Dart_handle>::iterator
+        itsurfaces=sierpinskiTriangleSurfaces.begin();
         itsurfaces!=sierpinskiTriangleSurfaces.end(); ++itsurfaces)
   {
     Dart_handle dh = *itsurfaces;
@@ -2789,12 +2901,14 @@ void MainWindow::onSierpinskiTriangleDec()
 
   for(std::size_t i = 0; i < edges.size(); i++)
   {
-    CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i], duringConstructionUpdateAttributes);
+    CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i],
+                             sierpinskiTriangleUpdateAttributes);
   }
   edges.clear();
 
   // Lastly we remove vertices.
-  for ( std::vector<Dart_handle>::iterator itsurfaces=sierpinskiTriangleSurfaces.begin();
+  for ( std::vector<Dart_handle>::iterator
+        itsurfaces=sierpinskiTriangleSurfaces.begin();
         itsurfaces!=sierpinskiTriangleSurfaces.end(); ++itsurfaces)
   {
     Dart_handle dh = scene.lcc->beta(*itsurfaces,1);
@@ -2818,7 +2932,8 @@ void MainWindow::onSierpinskiTriangleDec()
   }
 
   (scene.lcc)->negate_mark(markSurfaces);
-  for ( std::vector<Dart_handle>::iterator itsurfaces=sierpinskiTriangleSurfaces.begin();
+  for ( std::vector<Dart_handle>::iterator
+        itsurfaces=sierpinskiTriangleSurfaces.begin();
         itsurfaces!=sierpinskiTriangleSurfaces.end(); ++itsurfaces)
   {
     Dart_handle dh = scene.lcc->beta(*itsurfaces,1);
@@ -2838,7 +2953,8 @@ void MainWindow::onSierpinskiTriangleDec()
 
   for(std::size_t i = 0; i < vertices.size(); i++)
   {
-    CGAL::remove_cell<LCC,0>(*scene.lcc, vertices[i], duringConstructionUpdateAttributes);
+    CGAL::remove_cell<LCC,0>(*scene.lcc, vertices[i],
+                             sierpinskiTriangleUpdateAttributes);
   }
   vertices.clear();
 
@@ -2852,14 +2968,22 @@ void MainWindow::onSierpinskiTriangleDec()
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
-  std::cout<<"Time to decrease the level of sierpinski triangle ("
-           <<this->sierpinskiTriangleLevel+1<<" -> "<<this->sierpinskiTriangleLevel<<"): "
-           <<timer.time()<<" seconds."<<std::endl;
+  std::cout<<"Sierpinski triangle "
+           <<this->sierpinskiTriangleLevel+1<<" -> "
+          <<this->sierpinskiTriangleLevel<<", "
+         <<"attributes updated "
+        <<(sierpinskiTriangleUpdateAttributes ? "DURING" : "AFTER")
+       << " construction: "
+       <<timer.time()<<" seconds."<<std::endl;
 #endif
 
   recreate_whole_volume_list();
+  statusBar()->showMessage(QString ("Sierpinski triangle creation %1 -> %2").
+                           arg(this->sierpinskiTriangleLevel+1).
+                           arg(this->sierpinskiTriangleLevel),
+                           DELAY_STATUSMSG);
+  QApplication::restoreOverrideCursor ();
 
-  // statusBar ()->showMessage (QString ("Sirpinski Triangle Dec"),DELAY_STATUSMSG);
   emit(sceneChanged());
 }
 

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>265</width>
+    <width>303</width>
     <height>112</height>
    </rect>
   </property>
@@ -32,9 +32,9 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>10</x>
      <y>13</y>
-     <width>181</width>
+     <width>211</width>
      <height>16</height>
     </rect>
    </property>
@@ -45,7 +45,7 @@
   <widget class="QSpinBox" name="level">
    <property name="geometry">
     <rect>
-     <x>200</x>
+     <x>220</x>
      <y>10</y>
      <width>53</width>
      <height>24</height>
@@ -55,17 +55,17 @@
   <widget class="QCheckBox" name="updateAttributes">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>10</x>
      <y>40</y>
-     <width>241</width>
-     <height>18</height>
+     <width>291</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="text">
     <string>Update attributes during construction</string>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
   </widget>
  </widget>
