@@ -38,6 +38,9 @@ public:
   void new_vertex(const double&, const double&, const double&);
   void new_triangle(const std::size_t, const std::size_t, const std::size_t);
 
+  void init_polygon_soup(std::size_t nb_pts, std::size_t nb_polygons);
+  void finalize_polygon_soup();
+
 public slots:
   void shuffle_orientations();
   bool orient();
