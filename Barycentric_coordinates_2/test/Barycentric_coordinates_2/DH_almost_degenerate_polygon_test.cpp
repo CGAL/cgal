@@ -7,6 +7,8 @@
 
 // Does not work with inexact kernel. We get division by zero due to W = 0.
 
+#include <math.h>
+#include <assert.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>
 #include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
@@ -97,6 +99,8 @@ int main()
 
         const Point difference(linear_combination.x() - query_points[i].x(), linear_combination.y() - query_points[i].y());
 
+        assert( (coordinate_sum == Scalar(1)) && (difference == zero) );
+
         if( (coordinate_sum != Scalar(1)) || (difference != zero) )
         {
             cout << endl << "DH_almost_degenerate_polygon_test: FAILED." << endl << endl;
@@ -106,6 +110,10 @@ int main()
     }
 
     const Scalar quater  = Scalar(1)/Scalar(4);
+
+    assert(coordinates[120] - quater == Scalar(0) && coordinates[121] - quater == Scalar(0) && 
+           coordinates[122] - quater == Scalar(0) && coordinates[123] - quater == Scalar(0) );
+
     if( coordinates[120] - quater != Scalar(0) ||
         coordinates[121] - quater != Scalar(0) ||
         coordinates[122] - quater != Scalar(0) ||

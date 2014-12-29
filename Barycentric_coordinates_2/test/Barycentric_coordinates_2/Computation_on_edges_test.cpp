@@ -6,6 +6,7 @@
 
 // Works with inexact kernel, too.
 
+#include <assert.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>
 #include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
@@ -58,6 +59,10 @@ int main()
     for(int i = 0; i < 6; ++i) {
         const Output_type result = discrete_harmonic_coordinates.compute_on_edge(query_points[i], i, coordinates);
 
+        assert(coordinates[count + 0] - expected_coordinates[count + 0] == Scalar(0) && coordinates[count + 1] - expected_coordinates[count + 1] == Scalar(0) &&
+               coordinates[count + 2] - expected_coordinates[count + 2] == Scalar(0) && coordinates[count + 3] - expected_coordinates[count + 3] == Scalar(0) &&
+               coordinates[count + 4] - expected_coordinates[count + 4] == Scalar(0) && coordinates[count + 5] - expected_coordinates[count + 5] == Scalar(0) );
+
         if( coordinates[count + 0] - expected_coordinates[count + 0] != Scalar(0) ||
             coordinates[count + 1] - expected_coordinates[count + 1] != Scalar(0) ||
             coordinates[count + 2] - expected_coordinates[count + 2] != Scalar(0) ||
@@ -75,6 +80,10 @@ int main()
     count = 0;
     for(int i = 0; i < 6; ++i) {
         const Output_type result = discrete_harmonic_coordinates(query_points[i], coordinates, CGAL::Barycentric_coordinates::ON_BOUNDARY);
+
+        assert(coordinates[count + 0] - expected_coordinates[count + 0] == Scalar(0) && coordinates[count + 1] - expected_coordinates[count + 1] == Scalar(0) &&
+               coordinates[count + 2] - expected_coordinates[count + 2] == Scalar(0) && coordinates[count + 3] - expected_coordinates[count + 3] == Scalar(0) &&
+               coordinates[count + 4] - expected_coordinates[count + 4] == Scalar(0) && coordinates[count + 5] - expected_coordinates[count + 5] == Scalar(0) );
 
         if( coordinates[count + 0] - expected_coordinates[count + 0] != Scalar(0) ||
             coordinates[count + 1] - expected_coordinates[count + 1] != Scalar(0) ||

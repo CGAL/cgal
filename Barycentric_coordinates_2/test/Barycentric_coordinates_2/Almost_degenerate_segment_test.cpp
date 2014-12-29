@@ -7,6 +7,8 @@
 
 // Does not work with inexact kernel! Get division by zero during the normalization step.
 
+#include <math.h>
+#include <assert.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Segment_coordinates_2.h>
 
@@ -53,6 +55,8 @@ int main()
 
         const Point difference(linear_combination.x() - query_points[i].x(), linear_combination.y() - query_points[i].y());
 
+        assert(difference == zero);
+
         if(difference != zero) 
         {
             cout << endl << "Almost_degenerate_segment_test: FAILED." << endl << endl;
@@ -62,6 +66,9 @@ int main()
     }
 
     const Scalar half = Scalar(1)/Scalar(2);
+
+    assert(coordinates[12] - half == Scalar(0) && coordinates[13] - half == Scalar(0));
+
     if( coordinates[12] - half != Scalar(0) ||
         coordinates[13] - half != Scalar(0)  ) 
     {

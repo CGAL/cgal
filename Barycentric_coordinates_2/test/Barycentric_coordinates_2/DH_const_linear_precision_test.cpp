@@ -5,6 +5,7 @@
 
 // Does not work with inexact kernel. We get inconsistency when comparing difference with zero.
 
+#include <assert.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>
 #include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
@@ -73,6 +74,8 @@ int main()
                                             vertices[5].y()*coordinates[count + 5] );
 
             const Point difference(linear_combination.x() - point.x(), linear_combination.y() - point.y());
+
+            assert( (coordinate_sum == Scalar(1)) && (difference == zero) );
 
             if( (coordinate_sum != Scalar(1)) || (difference != zero) )
             {

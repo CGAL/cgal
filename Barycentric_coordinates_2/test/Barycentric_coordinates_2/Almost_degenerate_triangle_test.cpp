@@ -7,6 +7,8 @@
 
 // Does not work with inexact kernel! Get inconsistency when comparing difference with zero.
 
+#include <math.h>
+#include <assert.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
 
@@ -63,6 +65,8 @@ int main()
 
         const Point difference(linear_combination.x() - query_points[i].x(), linear_combination.y() - query_points[i].y());
 
+        assert(difference == zero);
+
         if(difference != zero)
         {
             cout << endl << "Almost_degenerate_triangle_test: FAILED." << endl << endl;
@@ -72,6 +76,9 @@ int main()
     }
 
     const Scalar third = Scalar(1)/Scalar(3);
+
+    assert(coordinates[33] - third == Scalar(0) && coordinates[34] - third == Scalar(0) && coordinates[35] - third == Scalar(0));
+
     if( coordinates[33] - third != Scalar(0) ||
         coordinates[34] - third != Scalar(0) ||
         coordinates[35] - third != Scalar(0)  )
