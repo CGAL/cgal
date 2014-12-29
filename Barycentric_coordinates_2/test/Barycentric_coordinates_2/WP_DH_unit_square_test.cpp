@@ -6,7 +6,7 @@
 
 // Does not work with inexact kernel. We get inconsistency when comparing coordinates.
 
-#include <assert.h>
+#include <cassert>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Wachspress_2.h>
 #include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>

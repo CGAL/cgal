@@ -7,8 +7,8 @@
 
 // Does not work with inexact kernel. We get division by zero due to W = 0.
 
-#include <math.h>
-#include <assert.h>
+#include <cmath>
+#include <cassert>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>
 #include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>

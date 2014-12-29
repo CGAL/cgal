@@ -5,7 +5,7 @@
 
 // Does not work with inexact kernel. Get inconsistency when comparing coordinates with expected_coordinates.
 
-#include <assert.h>
+#include <cassert>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Segment_coordinates_2.h>
 

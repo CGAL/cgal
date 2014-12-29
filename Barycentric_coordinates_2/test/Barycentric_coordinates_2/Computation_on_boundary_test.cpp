@@ -6,7 +6,7 @@
 
 // Works with inexact kernel, too.
 
-#include <assert.h>
+#include <cassert>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Mean_value_2.h>
 #include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>

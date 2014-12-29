@@ -5,8 +5,8 @@
 
 // Works with an exact type, too.
 
-#include <math.h>
-#include <assert.h>
+#include <cmath>
+#include <cassert>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Mean_value_2.h>

@@ -5,7 +5,7 @@
 
 // It also works with exact kernel.
 
-#include <assert.h>
+#include <cassert>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Segment_coordinates_2.h>
 

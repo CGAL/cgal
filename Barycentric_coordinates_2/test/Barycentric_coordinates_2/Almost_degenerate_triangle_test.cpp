@@ -7,8 +7,8 @@
 
 // Does not work with inexact kernel! Get inconsistency when comparing difference with zero.
 
-#include <math.h>
-#include <assert.h>
+#include <cmath>
+#include <cassert>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
 

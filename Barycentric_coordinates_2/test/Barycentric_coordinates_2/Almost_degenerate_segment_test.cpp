@@ -7,8 +7,8 @@
 
 // Does not work with inexact kernel! Get division by zero during the normalization step.
 
-#include <math.h>
-#include <assert.h>
+#include <cmath>
+#include <cassert>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Segment_coordinates_2.h>
 
