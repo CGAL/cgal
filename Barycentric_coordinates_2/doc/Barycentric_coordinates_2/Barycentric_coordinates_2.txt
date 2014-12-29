@@ -207,11 +207,9 @@ Apart from the most important requirement on barycentric coordinates to be as pr
 
 The structure of the speed test that we ran for all functions consists of computing coordinate values (or weights) at >= 1 million strictly interior points with respect to some polygon (or triangle, or segment). At each iteration of the loop we create a query point, pass it to the function, and compute all the related coordinates. We run this loop 10 times in a row, and the time presented in the log-log scale plot at the end of the section is the arithmetic mean of all trials.
 
-<!-- Example has been moved to benchmark directory to reduce the testsuite runtime
-A typical example of this performance test for triangle coordinates can be found below. This example also illustrates how to construct an iterator and pass it to the class. In this example we create an iterator that writes coordinate values for each new query point over coordinate values of the previous point in the fixed-size standard C++ array, so that memory is allocated only once.
+A typical example of this performance test for triangle coordinates with reduced number of query points can be found below. This example also illustrates how to construct an iterator and pass it to the class. In this example we create an iterator that writes coordinate values for each new query point over coordinate values of the previous point in the fixed-size standard C++ array, so that memory is allocated only once.
 
 \cgalExample{Barycentric_coordinates_2/Triangle_coordinates_speed_test.cpp}
--->
 
 The time to compute coordinates depends on many factors such as memory allocation, input kernel, output container, number of points, etc. In our tests we used the most standard C++ and \cgal features with minimum memory allocation. Therefore, the final time presented is the average time that can be expected without deep optimization but still with efficient memory allocation. It also means that it may vary depending on the usage of the package.
 

@@ -38,7 +38,7 @@ using std::cout; using std::endl; using std::string;
 int main()
 {
     // Number of x and y coordinates together gives the number of points.
-    const int number_of_x_coordinates = 1000000;
+    const int number_of_x_coordinates = 100000;
     const int number_of_y_coordinates = 1000;
 
     // Number of runs to compute the arithmetic mean of the time.
