@@ -5,6 +5,8 @@
 
 // Works with an exact type, too.
 
+#include <math.h>
+#include <assert.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Mean_value_2.h>
@@ -58,6 +60,10 @@ int main()
 
             const Output_type tri_result = triangle_coordinates(point, tri_coordinates);
             const Output_type  mv_result = mean_value_coordinates(point, mv_coordinates);
+
+            assert((tri_coordinates[count + 0] - mv_coordinates[count + 0]) < epsilon &&
+                   (tri_coordinates[count + 1] - mv_coordinates[count + 1]) < epsilon &&
+                   (tri_coordinates[count + 2] - mv_coordinates[count + 2]) < epsilon );
 
             if( (tri_coordinates[count + 0] - mv_coordinates[count + 0]) > epsilon ||
                 (tri_coordinates[count + 1] - mv_coordinates[count + 1]) > epsilon ||

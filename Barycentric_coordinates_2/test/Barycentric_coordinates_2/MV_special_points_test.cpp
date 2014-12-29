@@ -1,10 +1,12 @@
 // Author: Dmitry Anisimov.
 // In this test we compute mean value coordinates at some particular points,
 // where the computation might break. The used polygon is a concave polygon with 7 vertices.
-// We also use inexact kernel and epsilon 1.0e-15.
+// We also use inexact kernel and epsilon = 1.0e-15.
 
 // Works with an exact kernel, too.
 
+#include <math.h>
+#include <assert.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Mean_value_2.h>
 #include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
@@ -106,6 +108,8 @@ int main()
                                         vertices[6].y()*coordinates[count + 6] );
 
         const Point difference(linear_combination.x() - query_points[i].x(), linear_combination.y() - query_points[i].y());
+
+        assert( ((coordinate_sum - Scalar(1)) < epsilon) && difference.x() < epsilon && difference.y() < epsilon );
 
         if( ((coordinate_sum - Scalar(1)) > epsilon) || difference.x() > epsilon || difference.y() > epsilon )
         {

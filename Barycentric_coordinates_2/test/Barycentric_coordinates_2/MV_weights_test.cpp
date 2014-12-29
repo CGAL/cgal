@@ -5,6 +5,8 @@
 
 // Does not work with inexact kernel. We get inconsistency when comparing coordinates and expected_coordinates.
 
+#include <math.h>
+#include <assert.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Mean_value_2.h>
 #include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
@@ -62,6 +64,12 @@ int main()
             for(int j = 0; j < 5; ++j) coordinates.push_back(weights[count + j] * inverted_W);
 
             const Output_type c_result = mean_value_coordinates(point, expected_coordinates);
+
+            assert(coordinates[count + 0] - expected_coordinates[count + 0] < epsilon &&
+                   coordinates[count + 1] - expected_coordinates[count + 1] < epsilon &&
+                   coordinates[count + 2] - expected_coordinates[count + 2] < epsilon &&
+                   coordinates[count + 3] - expected_coordinates[count + 3] < epsilon &&
+                   coordinates[count + 4] - expected_coordinates[count + 4] < epsilon );
 
             if( coordinates[count + 0] - expected_coordinates[count + 0] > epsilon ||
                 coordinates[count + 1] - expected_coordinates[count + 1] > epsilon ||

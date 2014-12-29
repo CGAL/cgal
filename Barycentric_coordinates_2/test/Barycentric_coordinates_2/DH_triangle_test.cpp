@@ -5,6 +5,7 @@
 
 // Does not work with inexact kernel. We get inconsistency when comparing triangle and discrete harmonic coordinates.
 
+#include <assert.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>
@@ -56,6 +57,10 @@ int main()
 
             const Output_type tri_result = triangle_coordinates(point, tri_coordinates);
             const Output_type  dh_result = discrete_harmonic_coordinates(point, dh_coordinates);
+
+            assert(tri_coordinates[count + 0] - dh_coordinates[count + 0] == Scalar(0) &&
+                   tri_coordinates[count + 1] - dh_coordinates[count + 1] == Scalar(0) && 
+                   tri_coordinates[count + 2] - dh_coordinates[count + 2] == Scalar(0) );
 
             if( tri_coordinates[count + 0] - dh_coordinates[count + 0] != Scalar(0) ||
                 tri_coordinates[count + 1] - dh_coordinates[count + 1] != Scalar(0) ||

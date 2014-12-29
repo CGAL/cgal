@@ -5,6 +5,8 @@
 
 // Works with an exact type, too.
 
+#include <math.h>
+#include <assert.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Mean_value_2.h>
 #include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
@@ -91,6 +93,8 @@ int main()
                                             vertices[9].y()*coordinates[count + 9] );
 
             const Point difference(linear_combination.x() - point.x(), linear_combination.y() - point.y());
+
+            assert( ((coordinate_sum - Scalar(1)) < epsilon) && difference.x() < epsilon && difference.y() < epsilon );
 
             if( ((coordinate_sum - Scalar(1)) > epsilon) || difference.x() > epsilon || difference.y() > epsilon )
             {

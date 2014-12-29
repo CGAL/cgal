@@ -1,10 +1,12 @@
 // Author: Dmitry Anisimov.
 // In this test we compute mean value coordinates at some particular points,
 // where the computation might break, with respect to a weakly convex polygon.
-// We use inexact kernel, epsilon 1.0e-15, and we check if the resulting coordinate values are correct.
+// We use inexact kernel, epsilon = 1.0e-15, and we check if the resulting coordinate values are correct.
 
 // Works with an exact kernel, too.
 
+#include <math.h>
+#include <assert.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Mean_value_2.h>
 #include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
@@ -60,6 +62,13 @@ int main()
 
     for(int i = 0; i < 5; ++i) {
         const Output_type result = mean_value_coordinates(query_points[i], coordinates);
+
+        assert(CGAL::abs(coordinates[count + 0] - expected_coordinates[count + 0]) < epsilon &&
+               CGAL::abs(coordinates[count + 1] - expected_coordinates[count + 1]) < epsilon &&
+               CGAL::abs(coordinates[count + 2] - expected_coordinates[count + 2]) < epsilon &&
+               CGAL::abs(coordinates[count + 3] - expected_coordinates[count + 3]) < epsilon &&
+               CGAL::abs(coordinates[count + 4] - expected_coordinates[count + 4]) < epsilon &&
+               CGAL::abs(coordinates[count + 5] - expected_coordinates[count + 5]) < epsilon );
 
         if( CGAL::abs(coordinates[count + 0] - expected_coordinates[count + 0]) > epsilon ||
             CGAL::abs(coordinates[count + 1] - expected_coordinates[count + 1]) > epsilon ||
