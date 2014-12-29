@@ -5,6 +5,7 @@
 
 // It also works with exact kernel.
 
+#include <assert.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
 
@@ -25,6 +26,10 @@ int main()
     const Point center        = Point(1, 1);
 
     const Triple p = CGAL::Barycentric_coordinates::compute_triangle_coordinates_2(first_vertex, second_vertex, third_vertex, center, Kernel());
+
+    assert(p[0] - (Scalar(1) / Scalar(4)) == Scalar(0) && 
+           p[1] - (Scalar(1) / Scalar(4)) == Scalar(0) &&
+           p[2] - (Scalar(1) / Scalar(2)) == Scalar(0) );
 
     if( p[0] - (Scalar(1) / Scalar(4)) != Scalar(0) ||
         p[1] - (Scalar(1) / Scalar(4)) != Scalar(0) ||

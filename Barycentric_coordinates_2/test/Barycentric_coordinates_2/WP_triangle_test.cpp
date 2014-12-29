@@ -4,10 +4,10 @@
 
 // Does not work with inexact kernel. We get inconsistency when comparing triangle and Wachspress coordinates.
 
+#include <assert.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
-#include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Wachspress_2.h>
+#include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
@@ -57,6 +57,10 @@ int main()
 
             const Output_type tri_result =  triangle_coordinates(point, tri_coordinates);
             const Output_type  wp_result = wachspress_coordinates(point, wp_coordinates);
+
+            assert(tri_coordinates[count + 0] - wp_coordinates[count + 0] == Scalar(0) &&
+                   tri_coordinates[count + 1] - wp_coordinates[count + 1] == Scalar(0) &&
+                   tri_coordinates[count + 2] - wp_coordinates[count + 2] == Scalar(0) );
 
             if( tri_coordinates[count + 0] - wp_coordinates[count + 0] != Scalar(0) ||
                 tri_coordinates[count + 1] - wp_coordinates[count + 1] != Scalar(0) ||

@@ -6,6 +6,7 @@
 
 // Does not work with inexact kernel. We get inconsistency when comparing coordinates.
 
+#include <assert.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Wachspress_2.h>
 #include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>
@@ -56,6 +57,10 @@ int main()
 
             const Output_type wp_result = wachspress_coordinates(point, wp_coordinates);
             const Output_type dh_result = discrete_harmonic_coordinates(point, dh_coordinates);
+
+            assert(wp_coordinates[count + 0] - dh_coordinates[count + 0] == Scalar(0) &&
+                   wp_coordinates[count + 1] - dh_coordinates[count + 1] == Scalar(0) &&
+                   wp_coordinates[count + 2] - dh_coordinates[count + 2] == Scalar(0) );
 
             if( wp_coordinates[count + 0] - dh_coordinates[count + 0] != Scalar(0) ||
                 wp_coordinates[count + 1] - dh_coordinates[count + 1] != Scalar(0) ||

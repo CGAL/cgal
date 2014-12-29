@@ -5,6 +5,7 @@
 
 // It also works with exact kernel.
 
+#include <assert.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Segment_coordinates_2.h>
 
@@ -26,6 +27,9 @@ int main()
     const Pair p = CGAL::Barycentric_coordinates::compute_segment_coordinates_2(first_vertex, second_vertex, center, Kernel());
 
     const Scalar half = Scalar(1)/Scalar(2);
+
+    assert( p[0] - half == Scalar(0) && p[1] - half == Scalar(0) );
+
     if( p[0] - half != Scalar(0) ||
         p[1] - half != Scalar(0)  )
     {

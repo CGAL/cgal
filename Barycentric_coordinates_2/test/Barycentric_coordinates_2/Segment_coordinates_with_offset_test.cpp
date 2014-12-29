@@ -5,6 +5,7 @@
 
 // Does not work with inexact kernel. Get inconsistency when comparing coordinates with expected_coordinates.
 
+#include <assert.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Segment_coordinates_2.h>
 
@@ -51,6 +52,9 @@ int main()
     for(int i = 0; i < 6; ++i) {
         const Output_type result = segment_coordinates(query_points[i], std::back_inserter(coordinates));
 
+        assert(coordinates[count + 0] - expected_coordinates[count + 0] == Scalar(0) &&
+               coordinates[count + 1] - expected_coordinates[count + 1] == Scalar(0) );
+
         if( coordinates[count + 0] - expected_coordinates[count + 0] != Scalar(0) ||
             coordinates[count + 1] - expected_coordinates[count + 1] != Scalar(0)  )
         {
@@ -64,6 +68,9 @@ int main()
     count = 0;
     for(int i = 0; i < 6; ++i) {
         const Output_type result = segment_coordinates(query_points[i], coordinates);
+
+        assert(coordinates[count + 0] - expected_coordinates[count + 0] == Scalar(0) &&
+               coordinates[count + 1] - expected_coordinates[count + 1] == Scalar(0) );
 
         if( coordinates[count + 0] - expected_coordinates[count + 0] != Scalar(0) ||
             coordinates[count + 1] - expected_coordinates[count + 1] != Scalar(0)  )
