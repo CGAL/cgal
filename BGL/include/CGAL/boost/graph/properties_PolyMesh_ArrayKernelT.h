@@ -260,10 +260,10 @@ get(boost::vertex_point_t, const OpenMesh::PolyMesh_ArrayKernelT<K>& g)
       typename boost::graph_traits< OpenMesh::PolyMesh_ArrayKernelT<K> >::TYPE x) \
   { return get(get(p, sm), x); }                                        \
 
-  CGAL_OM_INTRINSIC_PROPERTY(std::size_t, boost::vertex_index_t, vertex_descriptor)
-  CGAL_OM_INTRINSIC_PROPERTY(std::size_t, boost::edge_index_t, edge_descriptor)
+  CGAL_OM_INTRINSIC_PROPERTY(int, boost::vertex_index_t, vertex_descriptor)
+  CGAL_OM_INTRINSIC_PROPERTY(int, boost::edge_index_t, edge_descriptor)
   CGAL_OM_INTRINSIC_PROPERTY(int, boost::halfedge_index_t, halfedge_descriptor)
-  CGAL_OM_INTRINSIC_PROPERTY(std::size_t, boost::face_index_t, face_descriptor)
+  CGAL_OM_INTRINSIC_PROPERTY(int, boost::face_index_t, face_descriptor)
   //  CGAL_OM_INTRINSIC_PROPERTY(std::size_t, boost::halfedge_index_t, face_descriptor)
   CGAL_OM_INTRINSIC_PROPERTY(typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3, boost::vertex_point_t, vertex_descriptor)
 

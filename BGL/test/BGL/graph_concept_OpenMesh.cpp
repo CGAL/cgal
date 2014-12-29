@@ -26,6 +26,7 @@
 
 #include <CGAL/boost/graph/graph_concepts.h>
 
+
 typedef OpenMesh::PolyMesh_ArrayKernelT<> Sm;
 typedef boost::graph_traits< Sm >         Traits;
 typedef Traits::edge_descriptor           edge_descriptor;

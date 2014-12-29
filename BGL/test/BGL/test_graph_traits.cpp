@@ -55,7 +55,7 @@ void test_edge_iterators(const G& g)
   // do we iterate as many as that?
   edge_iterator eb, ee;
   boost::tie(eb, ee) = edges(g);
-  assert(std::distance(eb, ee) == num_edges(g));
+  assert(CGAL::abs(std::distance(eb, ee)) == num_edges(g));
 
   id_map ids;
   unsigned int count = 0;
