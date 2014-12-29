@@ -17,7 +17,7 @@
 \cgalPkgManuals{Chapter_Scale_space_reconstruction,PkgScaleSpaceReconstruction3}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.5}
+\cgalPkgSince{4.6}
 \cgalPkgBib{cgal:ssr3}
 \cgalPkgLicense{\ref licensesGPL "GPL" }
 \cgalPkgDependsOn{\ref PkgAlphaShapes3Summary, \ref PkgSpatialSearchingDSummary, eigenvector solver such as \ref thirdpartyEigen 3.1.2 (or greater)}
