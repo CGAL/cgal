@@ -387,8 +387,8 @@ private:
   
   boost::scoped_ptr<PQ> mPQ ;
     
-  std::size_t mInitialEdgeCount ;
-  std::size_t mCurrentEdgeCount ; 
+  size_type mInitialEdgeCount ;
+  size_type mCurrentEdgeCount ; 
 
   FT          mcMaxDihedralAngleCos2 ;
   
