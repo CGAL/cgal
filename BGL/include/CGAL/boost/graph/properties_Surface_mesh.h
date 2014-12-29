@@ -63,12 +63,12 @@ private:
 
 
 template <typename K, typename VEF>
-class SM_index_pmap : public boost::put_get_helper<std::size_t, SM_index_pmap<K,VEF> >
+class SM_index_pmap : public boost::put_get_helper<int, SM_index_pmap<K,VEF> >
 {
 public:
   typedef boost::readable_property_map_tag category;
-  typedef std::size_t                      value_type;
-  typedef std::size_t                      reference;
+  typedef int                              value_type;
+  typedef int                              reference;
   typedef VEF                              key_type;
 
   value_type operator[](const key_type& vd) const

@@ -53,12 +53,12 @@ private:
 };
 
 template <typename K, typename VEF>
-class OM_index_pmap : public boost::put_get_helper<std::size_t, OM_index_pmap<K,VEF> >
+class OM_index_pmap : public boost::put_get_helper<unsigned int, OM_index_pmap<K,VEF> >
 {
 public:
   typedef boost::readable_property_map_tag category;
-  typedef std::size_t                      value_type;
-  typedef std::size_t                      reference;
+  typedef unsigned int                      value_type;
+  typedef unsigned int                      reference;
   typedef VEF                              key_type;
 
   value_type operator[](const key_type& vd) const
@@ -113,7 +113,7 @@ public:
     const_cast<OpenMesh::PolyMesh_ArrayKernelT<K>&>(*pm.sm_).set_point(v,p);
 #else
     const_cast<OpenMesh::PolyMesh_ArrayKernelT<K>&>(*pm.sm_).set_point
-      (v, typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point(p[0], p[1], p[2]));
+      (v, typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point((float)p[0], (float)p[1], (float)p[2]));
 #endif
   }
 

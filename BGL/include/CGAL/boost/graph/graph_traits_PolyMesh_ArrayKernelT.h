@@ -69,7 +69,7 @@ public:
   OMesh_edge
   opposite_edge() const { return OMesh_edge(Halfedge_handle((halfedge_.idx() & 1) ? halfedge_.idx()-1 : halfedge_.idx()+1)); }
 
-  std::size_t idx() const { return halfedge_.idx() / 2; }
+  unsigned int idx() const { return halfedge_.idx() / 2; }
 private:
   Halfedge_handle halfedge_;
 };
