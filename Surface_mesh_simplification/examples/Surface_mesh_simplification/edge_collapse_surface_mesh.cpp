@@ -1,8 +1,6 @@
 #include <iostream>
 #include <fstream>
 
-#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 1
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 
@@ -138,18 +136,20 @@ int main( int argc, char** argv )
   int r = SMS::edge_collapse
            (surface_mesh
            ,stop
+            /*
            ,CGAL::get_cost     (SMS::Edge_length_cost  <Surface_mesh>())
                  .get_placement(SMS::Midpoint_placement<Surface_mesh>())
                  .visitor      (vis)
+            */
            );
   
   std::cout << "\nEdges collected: "  << stats.collected
             << "\nEdges proccessed: " << stats.processed
             << "\nEdges collapsed: "  << stats.collapsed
             << std::endl
-            << "\nEdges not collapsed due to topological constrians: "  << stats.non_collapsable
-            << "\nEdge not collapsed due to cost computation constrians: "  << stats.cost_uncomputable 
-            << "\nEdge not collapsed due to placement computation constrians: " << stats.placement_uncomputable 
+            << "\nEdges not collapsed due to topological constraints: "  << stats.non_collapsable
+            << "\nEdge not collapsed due to cost computation constraints: "  << stats.cost_uncomputable 
+            << "\nEdge not collapsed due to placement computation constraints: " << stats.placement_uncomputable 
             << std::endl ; 
             
   std::cout << "\nFinished...\n" << r << " edges removed.\n" 

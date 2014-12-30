@@ -56,10 +56,10 @@ public :
   Count_stop_predicate( std::size_t aThres ) : mThres(aThres) {}
   
   template <typename F, typename Profile> 
-  bool operator()( F const&      // aCurrentCost
-                 , Profile const& //aEdgeProfile
-                   , std::size_t      //aInitialCount
-                   , std::size_t      aCurrentCount
+  bool operator()( F const&         // aCurrentCost
+                 , Profile const& // aEdgeProfile
+                 , std::size_t    // aInitialCount
+                 , std::size_t       aCurrentCount
                  ) const 
   {
     return aCurrentCount < mThres ;
