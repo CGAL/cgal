@@ -110,10 +110,10 @@ private :
   void Extract_triangle_data();
   void Extract_boundary_data();
   
-  void Add_boundary_preservation_constrians( Boundary_data_vector const& aBdry ) ;
-  void Add_volume_preservation_constrians( Triangle_data_vector const& aTriangles );
-  void Add_boundary_and_volume_optimization_constrians( Boundary_data_vector const& aBdry, Triangle_data_vector const& aTriangles ) ;
-  void Add_shape_optimization_constrians( vertex_descriptor_vector const& aLink ) ;
+  void Add_boundary_preservation_constraints( Boundary_data_vector const& aBdry ) ;
+  void Add_volume_preservation_constraints( Triangle_data_vector const& aTriangles );
+  void Add_boundary_and_volume_optimization_constraints( Boundary_data_vector const& aBdry, Triangle_data_vector const& aTriangles ) ;
+  void Add_shape_optimization_constraints( vertex_descriptor_vector const& aLink ) ;
 
   FT Compute_boundary_cost( Vector const& v, Boundary_data_vector const& aBdry ) ;
   FT Compute_volume_cost  ( Vector const& v, Triangle_data_vector const& aTriangles ) ;

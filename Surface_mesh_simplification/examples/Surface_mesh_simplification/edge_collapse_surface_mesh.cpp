@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 
+#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 1
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 
