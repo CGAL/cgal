@@ -242,7 +242,6 @@ self_intersect(const FaceGraph& polyhedron, OutputIterator out, const GeomTraits
     fi != e;
       ++fi){
     Facet_hdl f = *fi;
-    typename GeomTraits::Point_3 p = m_point[target(halfedge(f,polyhedron),polyhedron)];
     boxes.push_back(Box( m_point[target(halfedge(f,polyhedron),polyhedron)].bbox() +
                          m_point[target(next(halfedge(f,polyhedron),polyhedron),polyhedron)].bbox() +
                          m_point[target(next(next(halfedge(f,polyhedron),polyhedron),polyhedron),polyhedron)].bbox(),
