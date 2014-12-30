@@ -139,7 +139,8 @@ bool read_off_ascii(Surface_mesh<Point_3>& mesh,
 
     boost::array<double, 3> buffer;
     char                    line[100], *lp;
-    unsigned int            i, j, items, idx, nc;
+    unsigned int            i, j, items, idx;
+    int                     nc;
     unsigned int            nV, nF, nE;
     typename Mesh::Vertex_index   v;
 
@@ -179,7 +180,7 @@ bool read_off_ascii(Surface_mesh<Point_3>& mesh,
         }
 
         // position
-        items = sscanf(lp, "%lf %lf %lf%u", &(buffer[0]), &buffer[1], &buffer[2], &nc);
+        items = sscanf(lp, "%lf %lf %lf%n", &(buffer[0]), &buffer[1], &buffer[2], &nc);
         CGAL_assertion(items==3);
         v = mesh.add_vertex(Point_3(buffer[0], buffer[1], buffer[2]));
         lp += nc;
@@ -187,7 +188,7 @@ bool read_off_ascii(Surface_mesh<Point_3>& mesh,
         // normal
         if (has_normals)
         {
-            if (sscanf(lp, "%lf %lf %lf%u", &buffer[0], &buffer[1], &buffer[2], &nc) == 3)
+            if (sscanf(lp, "%lf %lf %lf%n", &buffer[0], &buffer[1], &buffer[2], &nc) == 3)
             {
               normals[v] = Vector_3(buffer[0], buffer[1], buffer[2]);
             }
@@ -197,7 +198,7 @@ bool read_off_ascii(Surface_mesh<Point_3>& mesh,
         // tex coord
         if (has_texcoords)
         {
-            items = sscanf(lp, "%lf %lf%u", &buffer[0], &buffer[1], &nc);
+            items = sscanf(lp, "%lf %lf%n", &buffer[0], &buffer[1], &nc);
             CGAL_assertion(items == 2);
             texcoords[v] = Vector_3(buffer[0], buffer[1], 0.0);
             lp += nc;
@@ -217,7 +218,7 @@ bool read_off_ascii(Surface_mesh<Point_3>& mesh,
         }
 
         // #vertices
-        items = sscanf(lp, "%d%u", (int*)&nV, &nc);
+        items = sscanf(lp, "%d%n", (int*)&nV, &nc);
         CGAL_assertion(items == 1);
         vertices.resize(nV);
         lp += nc;
@@ -225,7 +226,7 @@ bool read_off_ascii(Surface_mesh<Point_3>& mesh,
         // indices
         for (j=0; j<nV; ++j)
         {
-            items = sscanf(lp, "%d%u", (int*)&idx, &nc);
+            items = sscanf(lp, "%d%n", (int*)&idx, &nc);
             CGAL_assertion(items == 1);
             vertices[j] = typename Mesh::Vertex_index(idx);
             lp += nc;
