@@ -48,11 +48,6 @@ namespace CGAL {
       : Base(ip)
     {}
 
-    operator Base() const
-    {
-      return std::make_pair(begin(),end());
-    }
-
   I begin() const
   {
     return this->first;
