@@ -531,7 +531,7 @@ private:
     typedef P Point;
 
     /// The type used to represent an index.
-    typedef int size_type;
+    typedef unsigned int size_type;
 
     ///@}
 
@@ -611,8 +611,10 @@ private:
 #endif
     {
     public:
-        /// %Default constructor (with invalid index).
-        explicit Vertex_index(size_type _idx=-1) : Index<Vertex_index>(_idx) {}
+        /// %Default constructor.
+        Vertex_index() : Index<Vertex_index>(-1) {}
+
+        explicit Vertex_index(size_type _idx) : Index<Vertex_index>(_idx) {}
 
         /// prints the index and a short identification string to an ostream.
         friend std::ostream& operator<<(std::ostream& os, typename Surface_mesh::Vertex_index const& v)
@@ -630,8 +632,10 @@ private:
 #endif
     {
     public:
-        /// %Default constructor (with invalid index)
-        explicit Halfedge_index(size_type _idx=-1) : Index<Halfedge_index>(_idx) {}
+        /// %Default constructor
+        Halfedge_index() : Index<Halfedge_index>(-1) {}
+
+        explicit Halfedge_index(size_type _idx) : Index<Halfedge_index>(_idx) {}
 
         /// prints the index and a short identification string to an ostream.
         friend std::ostream& operator<<(std::ostream& os, typename Surface_mesh::Halfedge_index const& h)
@@ -649,8 +653,10 @@ private:
 #endif
     {
     public:
-        /// %Default constructor (with invalid index)
-        explicit Face_index(size_type _idx=-1) : Index<Face_index>(_idx) {}
+        /// %Default constructor
+        Face_index() : Index<Face_index>(-1) {}
+
+        explicit Face_index(size_type _idx) : Index<Face_index>(_idx) {}
 
         /// prints the index and a short identification string to an ostream.
         friend std::ostream& operator<<(std::ostream& os, typename Surface_mesh::Face_index const& f)
@@ -665,8 +671,10 @@ private:
     class Edge_index
     {
     public:
-        /// %Default constructor (with invalid index).
-        Edge_index(size_type idx=-1) : halfedge_(idx * 2) { }
+        /// %Default constructor
+        Edge_index() : halfedge_(-1) { }
+
+        Edge_index(size_type idx) : halfedge_(idx * 2) { }
 
         /// constructs an `Edge_index` from a halfedge.
         Edge_index(Halfedge_index he) : halfedge_(he) { }
@@ -675,7 +683,7 @@ private:
         Halfedge_index halfedge() const { return halfedge_; }
 
         /// returns the underlying index of this index.
-      operator size_type() const { return (size_type)halfedge_ / 2; }
+        operator size_type() const { return (size_type)halfedge_ / 2; }
 
         /// resets index to be invalid (index=-1)
         void reset() { halfedge_.reset(); }
@@ -684,13 +692,13 @@ private:
         bool is_valid() const { return halfedge_.is_valid(); }
 
         /// Are two indices equal?
-      bool operator==(const Edge_index& other) const { return (size_type)(*this) == (size_type)other; }
+        bool operator==(const Edge_index& other) const { return (size_type)(*this) == (size_type)other; }
 
         /// Are two indices different?
-      bool operator!=(const Edge_index& other) const { return (size_type)(*this) != (size_type)other; }
+        bool operator!=(const Edge_index& other) const { return (size_type)(*this) != (size_type)other; }
 
         /// compares by index.
-      bool operator<(const Edge_index& other) const { return (size_type)(*this) < (size_type)other;}
+        bool operator<(const Edge_index& other) const { return (size_type)(*this) < (size_type)other;}
 
         /// decrements the internal index. This operation does not
         /// guarantee that the index is valid or undeleted after the

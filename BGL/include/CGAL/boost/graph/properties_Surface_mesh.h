@@ -67,8 +67,8 @@ class SM_index_pmap : public boost::put_get_helper<int, SM_index_pmap<K,VEF> >
 {
 public:
   typedef boost::readable_property_map_tag category;
-  typedef int                              value_type;
-  typedef int                              reference;
+  typedef unsigned int                     value_type;
+  typedef unsigned int                     reference;
   typedef VEF                              key_type;
 
   value_type operator[](const key_type& vd) const
