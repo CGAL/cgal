@@ -51,8 +51,8 @@ void test_descriptors()
 {
   Sm::Vertex_index v;
   Sm::Halfedge_index h;
-  v < v;
-  h == h; 
+  CGAL_USE(v < v);
+  CGAL_USE(h == h); 
 }
 
 void test_remove_edge () 
