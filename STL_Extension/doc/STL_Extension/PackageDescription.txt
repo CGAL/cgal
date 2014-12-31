@@ -64,7 +64,7 @@
 - `CGAL::Random_access_value_adaptor<IC,T>`
 
 ## Ranges ##
-- `CGAL::iterator_range`
+- `CGAL::Iterator_range`
 
 ## Projection Function Objects ##
 - `CGAL::Identity<Value>`
