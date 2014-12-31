@@ -107,8 +107,10 @@ int main( int argc, char** argv )
   BOOST_FOREACH(halfedge_descriptor hd, halfedges(surface_mesh)){
     if(CGAL::is_border(hd,surface_mesh)){
       --nb_border_edges;
-      constrained_halfedges[hd] == std::make_pair(surface_mesh.point(source(hd,surface_mesh)),
-                                                  surface_mesh.point(target(hd,surface_mesh)));
+      if(constrained_halfedges[hd] != std::make_pair(surface_mesh.point(source(hd,surface_mesh)),
+                                                     surface_mesh.point(target(hd,surface_mesh)))){
+        std::cerr << "oops. send us a bug report\n";
+      }
 
     }
   }
