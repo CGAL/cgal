@@ -4,6 +4,9 @@
 #include <iostream>
 #include <fstream>
 
+// workaround a bug in Boost-1.54
+#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
+
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
 #include <boost/foreach.hpp>
 
