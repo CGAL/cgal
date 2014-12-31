@@ -28,6 +28,7 @@
 #include <string>
 #include <typeinfo>
 
+#include <boost/cstdint.hpp>
 #include <boost/array.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/fusion/container/map.hpp>
@@ -531,7 +532,7 @@ private:
     typedef P Point;
 
     /// The type used to represent an index.
-    typedef unsigned int size_type;
+    typedef boost::uint32_t size_type;
 
     ///@}
 
