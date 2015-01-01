@@ -630,7 +630,7 @@ namespace CGAL {
     { 
       return vh->point(); 
     }
-    friend void put(T2_vertex_point_map<Gt,Tds>, key_type vh, const reference v)
+    friend void put(T2_vertex_point_map<Gt,Tds>, key_type vh, reference v)
     {
       vh->point()=v; 
     }
