@@ -15,7 +15,7 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel K;
 
 typedef K::Triangle_3 Triangle_3;
 typedef K::Point_3 Point_3;
-typedef CGAL::Surface_mesh<typename K::Point_3> Mesh;
+typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 typedef CGAL::Bbox_3 Bbox_3;
 typedef CGAL::Timer Timer;
 
