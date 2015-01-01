@@ -1148,7 +1148,8 @@ public:
    /// adds a new vertex, and resizes vertex properties if necessary.
     Vertex_index add_vertex()
     {
-      if(vertices_freelist_ != -1){
+      size_type inf = -1;
+      if(vertices_freelist_ != inf){
         size_type idx = vertices_freelist_;
         vertices_freelist_ = (size_type)vconn_[Vertex_index(vertices_freelist_)].halfedge_;
         --removed_vertices_;
@@ -1178,7 +1179,8 @@ public:
     Halfedge_index add_edge()
     {
       Halfedge_index h0, h1;
-      if(edges_freelist_ != -1){
+      size_type inf = -1;
+      if(edges_freelist_ != inf){
         size_type idx = edges_freelist_;
         edges_freelist_ = (size_type)hconn_[Halfedge_index(edges_freelist_)].next_halfedge_;
         --removed_edges_;
@@ -1213,7 +1215,8 @@ public:
     /// adds a new face, and resizes face properties if necessary.
     Face_index add_face()
     {
-      if(faces_freelist_ != -1){
+      size_type inf = -1;
+      if(faces_freelist_ != inf){
         size_type idx = faces_freelist_;
         faces_freelist_ = (size_type)fconn_[Face_index(faces_freelist_)].halfedge_;
         --removed_faces_;
