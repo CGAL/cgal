@@ -36,6 +36,7 @@ int main(){
             typedef DFAI::result_type result_type;
             CGAL_USE_TYPE(result_type);
             CGAL_static_assertion((::boost::is_same<result_type,int>::value));
+            DFAI dfai;
             assert(dfai(3)==1);
         }
     }
