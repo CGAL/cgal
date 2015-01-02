@@ -624,10 +624,10 @@ public:
         return incident_faces(v, dim, out, std::less<Vertex_const_handle>(), true);
     }
     template< typename OutputIterator, typename Comparator >
-    OutputIterator incident_faces(Vertex_const_handle, const int, OutputIterator, Comparator = Comparator(), bool = false);
+    OutputIterator incident_faces(Vertex_const_handle, const int, OutputIterator, Comparator = Comparator(), bool = false) const;
     template< typename OutputIterator >
     OutputIterator incident_faces(Vertex_const_handle, const int, OutputIterator,
-        std::less<Vertex_const_handle> = std::less<Vertex_const_handle>(), bool = false);
+        std::less<Vertex_const_handle> = std::less<Vertex_const_handle>(), bool = false) const;
 #endif
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - INPUT / OUTPUT
@@ -725,7 +725,7 @@ template< typename OutputIterator >
 OutputIterator
 Triangulation_data_structure<Dim, Vb, Fcb>
 ::incident_faces(Vertex_const_handle v, const int dim, OutputIterator out,
-    std::less<Vertex_const_handle> cmp, bool upper_faces)
+    std::less<Vertex_const_handle> cmp, bool upper_faces) const
 {
     return incident_faces<OutputIterator, std::less<Vertex_const_handle> >(v, dim, out, cmp, upper_faces);
 }
@@ -735,7 +735,7 @@ template< class Dim, class Vb, class Fcb >
 template< typename OutputIterator, typename Comparator >
 OutputIterator
 Triangulation_data_structure<Dim, Vb, Fcb>
-::incident_faces(Vertex_const_handle v, const int dim, OutputIterator out, Comparator cmp, bool upper_faces)
+::incident_faces(Vertex_const_handle v, const int dim, OutputIterator out, Comparator cmp, bool upper_faces) const
 {
     CGAL_precondition( 0 < dim );
     if( dim >= current_dimension() )
@@ -789,13 +789,13 @@ Triangulation_data_structure<Dim, Vb, Fcb>
         // init state for enumerating all candidate faces:
         internal::Combination_enumerator f_idx(dim, v_idx + 1, current_dimension());
         Face f(*s);
-        f.set_index(0, v_idx);
+        f.set_index(0, sorted_idx[v_idx]);
         while( ! f_idx.end() )
         {
-            // check if face has already been found
             for( int i = 0; i < dim; ++i )
                 f.set_index(1 + i, sorted_idx[f_idx[i]]);
-            face_set.insert(f);
+            face_set.insert(f); // checks if face has already been found
+
             // compute next sorted face (lexicographic enumeration)
             ++f_idx;
         }

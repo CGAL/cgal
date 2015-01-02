@@ -567,7 +567,7 @@ public:
     }
 
     template< typename OutputIterator >
-    OutputIterator incident_faces(Vertex_const_handle v, int d, OutputIterator out)
+    OutputIterator incident_faces(Vertex_const_handle v, int d, OutputIterator out) const
     {
         return tds().incident_faces(v, d, out);
     }
