@@ -2373,7 +2373,7 @@ void MainWindow::sierpinski_carpet_split_edge_in_three(Dart_handle dh)
       p4 = LCC::Traits::Construct_translated_point() (p1,v3);
     }*/
 
-    Dart_handle d1=
+    //    Dart_handle d1=
         CGAL::insert_cell_0_in_cell_1(*(scene.lcc),
                                       dh,
                                       LCC::null_handle,
@@ -2389,7 +2389,7 @@ void MainWindow::sierpinski_carpet_split_edge_in_three(Dart_handle dh)
       new_darts.push_back((scene.lcc)->beta(dh,1));
     }*/
 
-    Dart_handle d2=
+    //    Dart_handle d2=
         CGAL::insert_cell_0_in_cell_1(*(scene.lcc),
                                       dh,
                                       LCC::null_handle,
