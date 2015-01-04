@@ -34,7 +34,7 @@ typedef unspecified_type NT;
 /// @{
 
 /*!
-This constructs a bounding box with the dimensions specified by the last 4 arguments. They are optional and will take the values \f$ \pm\f$10 if omitted. 
+This constructs a bounding box with the dimensions specified by the last 4 arguments. They are optional and will take the values \f$ \pm\f$ 10 if omitted. 
 */ 
 Enclosing_box_2(Traits, NT xmin, NT xmax, NT ymin, NT ymax); 
 

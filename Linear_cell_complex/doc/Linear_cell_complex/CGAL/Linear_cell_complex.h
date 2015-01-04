@@ -287,7 +287,7 @@ template<unsigned int i> Point barycenter(Dart_const_handle dh) const;
 /*!
 Inserts a point, copy of `p`, in the <I>i</I>-cell containing `dh`.
 Returns a handle on one dart of this cell.
-\pre <I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension"\f$ \leq\f$2 and `*dh`\f$ \in\f$\ref CombinatorialMap::darts "darts()".
+\pre <I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension"\f$ \leq\f$ 2 and `*dh`\f$ \in\f$\ref CombinatorialMap::darts "darts()".
 
 If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`,
 if <I>i</I>-attributes are non void,
@@ -306,7 +306,7 @@ template <unsigned int i> Dart_handle insert_point_in_cell(Dart_handle dh, Point
 /*!
 Inserts a point in the barycenter of the <I>i</I>-cell containing `dh`.
 Returns a handle on one dart of this cell.
-\pre <I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension"\f$ \leq\f$2 and `*dh`\f$ \in\f$\ref CombinatorialMap::darts "darts()".
+\pre <I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension"\f$ \leq\f$ 2 and `*dh`\f$ \in\f$\ref CombinatorialMap::darts "darts()".
 
 If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`,
 if <I>i</I>-attributes are non void,

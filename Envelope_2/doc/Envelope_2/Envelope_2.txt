@@ -174,7 +174,7 @@ the lines that form the lower envelope of \f$ {\cal P}^{*}\f$ are dual to the
 points along the <I>upper</I> part of \f$ {\cal P}\f$'s convex hull, and the
 lines that form the upper envelope of \f$ {\cal P}^{*}\f$ are dual to the
 points along the <I>lower</I> part of the convex hull; see,
-e.g., [\cgalCite{Section} 11.4 for more details.
+e.g., \cgalCite{bkos-cgaa-97}, Section 11.4 for more details.
 Note that the leftmost edge of the minimization diagram is associated
 with the same line as the rightmost edge of the maximization diagram,
 and vice-verse. We can therefore skip the rightmost edges of both

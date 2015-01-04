@@ -809,7 +809,7 @@ range of all the darts of the orbit
 \f$ i_k\f$,  each \f$ i_j\f$\f$ \in\f${0, ...,
 <I>d</I>}.  These integers must satisfy: \f$ i_1\f$\f$ <\f$\f$
 i_2\f$\f$ <\f$...\f$ <\f$\f$ i_k\f$, and (\f$ i_1\f$\f$
-\neq\f$ 0 or \f$ i_2\f$\f$ \neq\f$1)  (for example
+\neq\f$ 0 or \f$ i_2\f$\f$ \neq\f$ 1)  (for example
 \link CombinatorialMap::Dart_of_orbit_range `Dart_of_orbit_range<1,2>`\endlink
 for the orbit \f$ \langle{}\f$\f$
 \beta_1\f$,\f$ \beta_2\f$\f$ \rangle{}\f$(<I>d0</I>));
