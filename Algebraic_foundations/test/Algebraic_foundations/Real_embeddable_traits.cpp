@@ -16,6 +16,7 @@ int main(){
     typedef CGAL::Real_embeddable_traits<void> RET;
     
     typedef RET::Type Type;
+    CGAL_USE_TYPE(Type);
     CGAL_static_assertion((::boost::is_same<void,Type>::value)); 
 
     typedef RET::Is_real_embeddable Is_real_embeddable;
