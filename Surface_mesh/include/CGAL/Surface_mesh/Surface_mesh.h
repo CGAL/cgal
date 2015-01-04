@@ -563,7 +563,10 @@ private:
         void reset() { idx_=-1; }
 
         /// return whether the index is valid, i.e., the index is not equal to -1.
-        bool is_valid() const { return idx_ != -1; }
+        bool is_valid() const { 
+          size_type inf = -1;
+          return idx_ != inf;
+        }
 
         /// are two indices equal?
         bool operator==(const T& _rhs) const {
@@ -1477,22 +1480,22 @@ public:
     /// returns whether the index of vertex `v` is valid, that is within the current array bounds.
     bool has_valid_index(Vertex_index v) const
     {
-      return (0 <= (size_type)v) && ((size_type)v < (int)num_vertices());
+      return ((size_type)v < num_vertices());
     }
     /// returns whether the index of halfedge `h` is valid, that is within the current array bounds.
     bool has_valid_index(Halfedge_index h) const
     {
-        return (0 <= (size_type)h) && ((size_type)h < (int)num_halfedges());
+      return ((size_type)h < num_halfedges());
     }
     /// returns whether the index of edge `e` is valid, that is within the current array bounds.
     bool has_valid_index(Edge_index e) const
     {
-      return (0 <= (size_type)e) && ((size_type)e < (int)num_edges());
+      return ((size_type)e < num_edges());
     }
     /// returns whether the index of face `f` is valid, that is within the current array bounds.
     bool has_valid_index(Face_index f) const
     {
-        return (0 <= (size_type)f) && ((size_type)f < (int)num_faces());
+        return ((size_type)f < num_faces());
     }
 
     /// @}
