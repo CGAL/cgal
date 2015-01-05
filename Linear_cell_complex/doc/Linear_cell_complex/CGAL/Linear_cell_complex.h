@@ -266,7 +266,7 @@ void set_vertex_attribute(Dart_handle dh, Vertex_attribute_handle vh);
 /// @{
 /*!
 Correct the invalid attributes of the linear cell complex.
-We can have invalid attribute either if we have called \link CombinatorialMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink before to use some modification operations.
+We can have invalid attribute either if we have called \link CombinatorialMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink before to use some modification operations or if we have modified the combinatorial map by using low level operations.
 
 The validation process of a linear cell complex validates its combinatorial map (cf. \link CombinatorialMap::correct_invalid_attributes `correct_invalid_attributes()`\endlink), and for each dart `d` having no vertex attribute, a new vertex attribute is created, with its Point initialized to `CGAL::Origin`, and all the darts of the 0-cell containing `d` are linked with the new attribute.
 */

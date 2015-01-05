@@ -1129,6 +1129,7 @@ attributes.  In \cgalFigureRef{figexemplesew} (Left), if we call
 \f$ \beta_3\f$(1)=5 and \f$ \beta_3\f$(5)=1. This combinatorial map is
 no longer valid (for example dart 2 is 3-free and we should have \f$
 \beta_3\f$(2)=8).
+A call latter to \link CombinatorialMap::set_automatic_attributes_management `set_automatic_attributes_management(true)`\endlink will correct the invalid non void attributes.
 \cgalAdvancedEnd
 
 \subsection ssecoperations Removal and Insertion Operations
@@ -1228,6 +1229,10 @@ dart `d5`, we obtain the initial combinatorial map.
 
 Some examples of use of these operations are given in Section \ref
 ssecexempleoperations "High Level Operations".
+
+\cgalAdvancedBegin
+If \link CombinatorialMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink is called, all the future insertion or removal operations will not update non void attributes. These attributes will be updated latter by the call to \link CombinatorialMap::set_automatic_attributes_management `set_automatic_attributes_management(true)`\endlink. This can be useful to speed up an algorithm which uses several successive insertion and removal operations. See example \ref ssecAttributesManagement "Automatic attributes management".
+\cgalAdvancedEnd
 
 \section Combinatorial_mapExamples Examples
 
