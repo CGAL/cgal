@@ -895,10 +895,18 @@ void MainWindow::selectSceneItem(int i)
 
 void MainWindow::showSelectedPoint(double x, double y, double z)
 {
-  information(QString("Selected point: (%1, %2, %3)").
+  static double x_prev = 0;
+  static double y_prev = 0;
+  static double z_prev = 0;
+  double dist = std::sqrt((x-x_prev)*(x-x_prev) + (y-y_prev)*(y-y_prev) + (z-z_prev)*(z-z_prev)); 
+  information(QString("Selected point: (%1, %2, %3) distance to previous: %4").
               arg(x, 0, 'g', 10).
               arg(y, 0, 'g', 10).
-              arg(z, 0, 'g', 10));
+              arg(z, 0, 'g', 10).
+              arg(dist,0,'g',10));
+  x_prev = x;
+  y_prev = y;
+  z_prev = z;
 }
 
 void MainWindow::unSelectSceneItem(int i)
