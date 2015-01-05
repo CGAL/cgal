@@ -24,8 +24,8 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point_3;
 
 typedef CGAL::Surface_mesh<Point_3> Surface_mesh; 
-  typedef boost::graph_traits<Surface_mesh>::halfedge_descriptor halfedge_descriptor;
-  typedef boost::graph_traits<Surface_mesh>::edge_descriptor edge_descriptor;
+typedef boost::graph_traits<Surface_mesh>::halfedge_descriptor halfedge_descriptor;
+typedef boost::graph_traits<Surface_mesh>::edge_descriptor edge_descriptor;
 
 namespace SMS = CGAL::Surface_mesh_simplification ;
 

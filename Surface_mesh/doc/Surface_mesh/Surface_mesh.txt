@@ -46,7 +46,7 @@ represent the basic elements of the halfedge data structure:
 - `Surface_mesh::Face_index`
 - `Surface_mesh::Edge_index`
 
-These types are just wrappers for an `unsigned int` and their
+These types are just wrappers for an integer and their
 main purpose is to guarantee type safety.  
 They are default constructible, which yields an *invalid* element. New
 elements can be added and removed to the `Surface_mesh` through a
@@ -58,9 +58,9 @@ operation is not topologically valid.
 \code
 typedef Surface_mesh<Point> Mesh;
 Mesh m;
-Mesh::Vertex_index u = m.add_vertex(K::Point_3(0,1,0));
-Mesh::Vertex_index v = m.add_vertex(K::Point_3(0,0,0));
-Mesh::Vertex_index w = m.add_vertex(K::Point_3(1,0,0));
+Mesh::Vertex_index u = m.add_vertex(Point(0,1,0));
+Mesh::Vertex_index v = m.add_vertex(Point(0,0,0));
+Mesh::Vertex_index w = m.add_vertex(Point(1,0,0));
 m.add_face(u, v, w);
 \endcode
 
@@ -235,7 +235,6 @@ for example
 | `vd = source(ed,g)` | `vd = sm.source(ed)` | |
 | na  | `n = sm.number_of_vertices()` | counts non-deleted vertices and has no BGL equivalent |
 | `n = num_vertices(g)`  | `n = sm.number_of_vertices() +  sm.number_of_removed_vertices()` | counts used and deleted vertices in order to have an upper bound on the largest vertex index used|
-| etc. | | |
 
 
 
@@ -334,6 +333,13 @@ refering to the right vertices.
 \subsection SubsectionSurfaceMeshMemoryManagementExample Example
 \cgalExample{Surface_mesh/sm_memory.cpp}
 
+\section sectionSurfaceMeshImplementation Implementation Details
+\todo integer type
+\todo vector used to store properties and simplex indices
+\todo to reduce to the minimum the size of the structure use garbage_collect even if no element should be removed
+\todo Question: is there an optimization in case we do the previous operation with no removal needed?
+\todo document properties that are created by default (like `v:removed` for example)
+\todo use of a free list: if an element is removed, the next inserted does not have necessarily number_of_vertices as index and the element will not appear at the end while iterating
 
 
 \section sectionSurfaceMeshHistory Implementation History
