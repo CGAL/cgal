@@ -103,9 +103,9 @@ template <typename Kernel,
 typename Kernel::Point_3
 compute_update_sample_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  Tree& original_kd_tree,              ///< original Kd-tree
-  Tree& sample_kd_tree,                ///< sample Kd-tree
-  const typename Kernel::FT radius,     ///< neighborhood radius square
+  const Tree& original_kd_tree,          ///< original Kd-tree
+  const Tree& sample_kd_tree,            ///< sample Kd-tree
+  const typename Kernel::FT radius,      ///< neighborhood radius square
   const std::vector<typename Kernel::FT>& original_densities, ///<  
   const std::vector<typename Kernel::FT>& sample_densities ///< 
 )
@@ -339,23 +339,23 @@ class Sample_point_updater
   typedef typename Kernel::Point_3   Point;
   typedef typename Kernel::FT        FT;
 
-  std::vector<Point>* update_sample_points;
-  std::vector<Point>* sample_points;
-  Tree* original_kd_tree;            
-  Tree* sample_kd_tree;              
+  std::vector<Point> &update_sample_points;
+  std::vector<Point> &sample_points;
+  const Tree &original_kd_tree;            
+  const Tree &sample_kd_tree;              
   const typename Kernel::FT radius;  
-  const std::vector<typename Kernel::FT>* original_densities;
-  const std::vector<typename Kernel::FT>* sample_densities; 
+  const std::vector<typename Kernel::FT> &original_densities;
+  const std::vector<typename Kernel::FT> &sample_densities; 
 
 public:
   Sample_point_updater(
-    std::vector<Point>* out,
-    std::vector<Point>* in,
-    Tree* _original_kd_tree,            
-    Tree* _sample_kd_tree,              
-    const typename Kernel::FT _radius,  
-    const std::vector<typename Kernel::FT>* _original_densities,
-    const std::vector<typename Kernel::FT>* _sample_densities): 
+    std::vector<Point> &out,
+    std::vector<Point> &in,
+    const Tree &_original_kd_tree,            
+    const Tree &_sample_kd_tree,              
+    const typename Kernel::FT _radius,
+    const std::vector<typename Kernel::FT> &_original_densities,
+    const std::vector<typename Kernel::FT> &_sample_densities): 
   update_sample_points(out), 
     sample_points(in),
     original_kd_tree(_original_kd_tree),
@@ -369,14 +369,14 @@ public:
   { 
     for (size_t i = r.begin(); i != r.end(); ++i) 
     {
-      (*update_sample_points)[i] = simplify_and_regularize_internal::
+      update_sample_points[i] = simplify_and_regularize_internal::
         compute_update_sample_point<Kernel, Tree, RandomAccessIterator>(
-        (*sample_points)[i], 
-        *original_kd_tree,
-        *sample_kd_tree,
+        sample_points[i], 
+        original_kd_tree,
+        sample_kd_tree,
         radius, 
-        *original_densities,
-        *sample_densities);
+        original_densities,
+        sample_densities);
     }
   }
 };
@@ -598,13 +598,13 @@ wlop_simplify_and_regularize_point_set(
     {
       tbb::blocked_range<size_t> block(0, number_of_sample);
       Sample_point_updater<Kernel, Kd_Tree, RandomAccessIterator> sample_updater(
-                           &update_sample_points,
-                           &sample_points,          
-                           &original_kd_tree,
-                           &sample_kd_tree,
+                           update_sample_points,
+                           sample_points,          
+                           original_kd_tree,
+                           sample_kd_tree,
                            radius, 
-                           &original_density_weights,
-                           &sample_density_weights);
+                           original_density_weights,
+                           sample_density_weights);
 
        tbb::parallel_for(block, sample_updater);
     }else
