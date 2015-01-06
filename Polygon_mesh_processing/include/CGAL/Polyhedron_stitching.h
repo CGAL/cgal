@@ -230,6 +230,9 @@ struct Naive_border_stitching_modifier:
 
 } //end of namespace Polyhedron_stitching
 
+
+
+/// \ingroup polyhedron_stitching_grp
 /// Stitches together border halfedges in a polyhedron.
 /// The halfedge to be stitched are provided in `hedge_pairs_to_stitch`.
 /// Foreach pair `p` in this vector, p.second and its opposite will be removed
@@ -253,6 +256,7 @@ void polyhedron_stitching(
   P.delegate(modifier);
 }
 
+/// \ingroup polyhedron_stitching_grp
 /// Same as above but the pair of halfedges to be stitched are found
 /// using `less_hedge`. Two halfedges `h1` and `h2` are set to be stitched
 /// if `less_hedge(h1,h2)=less_hedge(h2,h1)=true`.
@@ -268,6 +272,7 @@ void polyhedron_stitching(Polyhedron& P, LessHedge less_hedge)
   polyhedron_stitching(P, hedge_pairs_to_stitch);
 }
 
+/// \ingroup polyhedron_stitching_grp
 /// Same as above using the sorted pair of vertices incidents to the halfedges
 /// as comparision
 template <class Polyhedron>

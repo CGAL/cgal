@@ -1,6 +1,9 @@
 /// \defgroup PkgPolygonMeshProcessing Polygon Mesh Processing Reference
 /// \defgroup PkgPolygonMeshProcessingConcepts Concepts
 /// \ingroup PkgPolygonMeshProcessing
+/// \defgroup polyhedron_stitching_grp CGAL::polyhedron_stitching()
+/// \ingroup PkgPolygonMeshProcessing
+
  
 /*!
 \addtogroup PkgPolygonMeshProcessing
@@ -34,6 +37,6 @@
 - `CGAL::triangulate_hole()`
 - `CGAL::triangulate_hole_polyline()`
 - `CGAL::is_oriented()`
-
+- \link polyhedron_stitching_grp `CGAL::polyhedron_stitching()` \endlink
 
 */
