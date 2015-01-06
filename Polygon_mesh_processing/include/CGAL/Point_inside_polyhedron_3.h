@@ -22,8 +22,8 @@
 #ifndef CGAL_POINT_INSIDE_POLYHEDRON_H
 #define CGAL_POINT_INSIDE_POLYHEDRON_H
 
-#include <CGAL/internal/Operations_on_polyhedra/Point_inside_vertical_ray_cast.h>
-#include <CGAL/internal/Operations_on_polyhedra/AABB_triangle_accessor_3_primitive.h>
+#include <CGAL/internal/Point_inside_polyhedron_3/Point_inside_vertical_ray_cast.h>
+#include <CGAL/internal/Point_inside_polyhedron_3/AABB_triangle_accessor_3_primitive.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -32,6 +32,7 @@
 namespace CGAL {
 
 /** 
+ * \ingroup PkgPolygonMeshProcessing
  * This class provides an efficient point location functionality with respect to a domain bounded
  * by one or several disjoint triangulated closed polyhedral (manifold) surfaces.
  * In case several polyhedral surface are provided as input, a point is said to be inside the domain

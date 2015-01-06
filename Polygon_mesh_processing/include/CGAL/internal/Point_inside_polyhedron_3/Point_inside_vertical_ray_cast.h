@@ -22,7 +22,7 @@
 #ifndef CGAL_POINT_INSIDE_POLYHEDRON_POINT_INSIDE_VERTICAL_RAY_CAST_H
 #define CGAL_POINT_INSIDE_POLYHEDRON_POINT_INSIDE_VERTICAL_RAY_CAST_H
 
-#include <CGAL/internal/Operations_on_polyhedra/Ray_3_Triangle_3_traversal_traits.h>
+#include <CGAL/internal/Point_inside_polyhedron_3/Ray_3_Triangle_3_traversal_traits.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Origin.h>
 

@@ -3,7 +3,6 @@
 /// \ingroup PkgPolygonMeshProcessing
 /// \defgroup polyhedron_stitching_grp CGAL::polyhedron_stitching()
 /// \ingroup PkgPolygonMeshProcessing
-
  
 /*!
 \addtogroup PkgPolygonMeshProcessing
@@ -46,4 +45,5 @@
 ## Classes ##
 - `CGAL::Polygon_soup_to_polyhedron_3`
 - `CGAL::Polyhedron_slicer_3`
+- `CGAL::Point_inside_polyhedron_3`
 */
