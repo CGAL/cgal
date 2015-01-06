@@ -204,33 +204,33 @@ void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert,
   std::sort(rich_points.begin(), rich_points.end(), Z_Sort<Kernel>()); 
 
   unsigned int start_z = 0;
-  for(unsigned int z = 0; z < z_side; z++) 
+  for(int z = 0; z < z_side; z++) 
   {
-    size_t end_z = start_z;
-    FT max_z = bbox.zmin() + (z+1)*radius;
+    unsigned int end_z = start_z;
+    FT max_z = bbox.zmin() + FT(z+1)*radius;
     while(end_z < rich_points.size() && rich_points[end_z]->pt.z() < max_z)
       ++end_z; 
 
     sort(rich_points.begin() + start_z, 
          rich_points.begin() + end_z, Y_Sort<Kernel>());
 
-    int start_y = start_z;
+    unsigned int start_y = start_z;
     for(int y = 0; y < y_side; y++) 
     {
-      int end_y = start_y;        
-      FT max_y = bbox.ymin() + (y+1) * radius;
+      unsigned int end_y = start_y;        
+      FT max_y = bbox.ymin() + FT(y+1) * radius;
       while(end_y < end_z && rich_points[end_y]->pt.y() < max_y)
         ++end_y;
 
       sort(rich_points.begin() + start_y, 
            rich_points.begin() + end_y, X_Sort<Kernel>());
 
-      int start_x = start_y;
+      unsigned int start_x = start_y;
       for(int x = 0; x < x_side; x++) 
       {
-        int end_x = start_x;
+        unsigned int end_x = start_x;
         indices[x + x_side * y + x_side * y_side * z] = end_x;          
-        FT max_x = bbox.xmin() + (x+1) * radius;
+        FT max_x = bbox.xmin() + FT(x+1) * radius;
         while(end_x < end_y && rich_points[end_x]->pt.x() < max_x)
           ++end_x;
 
@@ -357,14 +357,14 @@ void Rich_grid<Kernel>::find_original_neighbors(
   typedef typename Kernel::FT FT;
   FT radius2 = radius*radius;
 
-  Rich_grid::iterator dest;
+  iterator dest;
   for(dest = starta; dest != enda; dest++) 
   {
     Rich_point<Kernel> &v = *(*dest);
 
     Point &p = v.pt;
 
-    Rich_grid::iterator origin;
+    iterator origin;
     for(origin = startb; origin != endb; origin++)
     {
       Rich_point<Kernel> &t = *(*origin);

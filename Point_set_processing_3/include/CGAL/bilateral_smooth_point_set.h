@@ -196,7 +196,6 @@ compute_kdtree_neighbors(
 )                       
 {
   // basic geometric types
-  typedef typename Kernel::FT FT;
   typedef CGAL::Point_with_normal_3<Kernel> Pwn;
 
   // types for K nearest neighbors search
