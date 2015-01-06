@@ -41,4 +41,8 @@
 - `CGAL::triangulate_polyhedron()`
 - `CGAL::self_intersect()`
 - `CGAL::do_self_intersect()`
+- `CGAL::orient_polygon_soup()`
+
+## Classes ##
+- `CGAL::Polygon_soup_to_polyhedron_3`
 */

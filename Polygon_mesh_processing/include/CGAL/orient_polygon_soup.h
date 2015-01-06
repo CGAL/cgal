@@ -212,6 +212,7 @@ public:
 } // namespace internal
 
 /** 
+ * \ingroup PkgPolygonMeshProcessing
  * Tries to consistently orient a soup of polygons in 3D space.  
  * If a consistent orientation has been found, `true` is returned.
  * In any case `polygons` is updated.
@@ -222,8 +223,8 @@ public:
  *
  * @return true if a consistent orientation has been found
  *
- * \TODO code: there is no check for duplicate points, yet it can be implemented as separate filter function
- * \TODO code: support fixed size arrays for polygons, or creating a concept which provides .size and .operator[]
+ * \todo code: there is no check for duplicate points, yet it can be implemented as separate filter function
+ * \todo code: support fixed size arrays for polygons, or creating a concept which provides .size and .operator[]
  */ 
 template <class Point_3>
 bool orient_polygon_soup(const std::vector<Point_3>& points,
@@ -234,7 +235,9 @@ bool orient_polygon_soup(const std::vector<Point_3>& points,
 }
 
 /**
-  * Modifier to build a polyhedron from a soup of polygons.
+  * \ingroup PkgPolygonMeshProcessing
+  * Polyhedron modifier to build a polyhedron from a soup of polygons.
+  * \todo move me to a separate header file
   */
 template <class HDS, class Point_3>
 class Polygon_soup_to_polyhedron_3: public CGAL::Modifier_base<HDS>
