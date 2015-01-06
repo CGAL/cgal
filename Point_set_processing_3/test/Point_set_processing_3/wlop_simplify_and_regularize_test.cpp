@@ -28,7 +28,7 @@
 // ----------------------------------------------------------------------------
 
 // kernel
-typedef CGAL::Simple_cartesian<float> Kernel;
+typedef CGAL::Simple_cartesian<double> Kernel;
 
 // Simple geometric types
 typedef Kernel::FT FT;
