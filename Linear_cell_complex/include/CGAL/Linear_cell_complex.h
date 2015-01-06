@@ -119,7 +119,7 @@ namespace CGAL {
     using Base::unmark;
     using Base::free_mark;
     using Base::get_new_mark;
-    
+
     Linear_cell_complex_base() : Base()
     {}
 
