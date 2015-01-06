@@ -1199,6 +1199,7 @@ Note that the range (@a pbegin, @a pend) and (@a qbegin, @a qend) may or may not
 @param qbegin first iterator of the range of third points, can be omitted
 @param qend past-the-end iterator of the range of third points, can be omitted
 @param out iterator over output patch triangles
+@param use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
 */
 template <typename OutputIteratorValueType, typename InputIterator, typename OutputIterator>
 OutputIterator

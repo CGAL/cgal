@@ -275,7 +275,7 @@ public:
 @tparam FacetOutputIterator iterator holding `Polyhedron::Facet_handle` for patch facets
 @tparam VertexOutputIterator iterator holding `Polyhedron::Vertex_handle` for patch vertices
 
-@param polyhedron surface mesh to be refined
+@param poly surface mesh to be refined
 @param facet_begin first iterator of the range of facets
 @param facet_end past-the-end iterator of the range of facets
 @param facet_out iterator over newly created facets

@@ -26,6 +26,7 @@ namespace CGAL {
 @param facet_out iterator over patch facets
 @param vertex_out iterator over patch vertices without including the boundary
 @param density_control_factor factor for density where larger values cause denser refinements
+@param use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
 
 @return pair of @a facet_out and @a vertex_out
 */
@@ -66,6 +67,8 @@ triangulate_and_refine_hole(Polyhedron& polyhedron,
 @param weight_calculator function object to calculate weights, default to Cotangent weights and can be omitted
 @param density_control_factor factor for density where larger values cause denser refinements
 @param continuity tangential continuity, default to `FAIRING_C_1` and can be omitted
+@param use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
+
 @return tuple of 
  - bool: `true` if fairing is successful
  - @a facet_out

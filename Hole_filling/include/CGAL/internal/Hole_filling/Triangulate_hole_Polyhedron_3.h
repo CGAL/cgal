@@ -158,7 +158,7 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
 
  @param polyhedron surface mesh containing the hole
  @param border_halfedge a border halfedge incident to the hole
- @param output iterator over patch facets.
+ @param out over patch facets.
  @param use_delaunay_triangulation
 
  @return @a out
