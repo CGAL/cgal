@@ -38,6 +38,7 @@ struct Axis_compare {
 } // namespace internal
 
 /**
+ * \ingroup PkgPolygonMeshProcessing
  * Tests whether a closed polyhedron has a positive orientation.
  * A polyhedron is considered to have positive orientation if the normal vectors
  * of the facets point outside of the polyhedron. For each facet, its normal vector

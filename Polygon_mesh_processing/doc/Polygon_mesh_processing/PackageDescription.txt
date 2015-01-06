@@ -33,6 +33,7 @@
 - `CGAL::refine()`
 - `CGAL::triangulate_hole()`
 - `CGAL::triangulate_hole_polyline()`
+- `CGAL::is_oriented()`
 
 
 */
