@@ -44,6 +44,9 @@
 
 namespace CGAL {
 
+/// \ingroup PkgPolygonMeshProcessing
+/// Cut a triangulated polyhedron in slices
+/// Depends on \ref PkgAABB_treeSummary
 template<class Polyhedron, class Kernel>
 class Polyhedron_slicer_3
 {
@@ -430,7 +433,7 @@ public:
   /**
    * @tparam OutputIterator an output iterator accepting polylines. A polyline is considered to be a `std::vector<Kernel::Point_3>`. A polyline is closed if its first and last points are identical.
    * @param plane the plane to intersect the polyhedron with
-   * @out output iterator of polylines
+   * @param out output iterator of polylines
    * computes the intersection polylines of the polyhedron passed in the constructor with `plane` and puts each of them in `out`
    */
   template <class OutputIterator>

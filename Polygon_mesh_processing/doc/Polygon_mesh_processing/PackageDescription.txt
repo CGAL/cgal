@@ -45,4 +45,5 @@
 
 ## Classes ##
 - `CGAL::Polygon_soup_to_polyhedron_3`
+- `CGAL::Polyhedron_slicer_3`
 */
