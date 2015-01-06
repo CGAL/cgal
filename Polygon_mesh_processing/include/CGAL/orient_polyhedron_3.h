@@ -53,6 +53,8 @@ struct Axis_compare {
  *
  * \todo The following only handle polyhedron with one connected component
  *       the code, the sample example and the plugin must be updated.
+ * \todo Polyhedron should be a model of `FaceListGraph`
+ * \todo find a better name for the function
  * @code
  * // use inside out to fix orientation
  * if(!is_oriented(polyhedron)) {

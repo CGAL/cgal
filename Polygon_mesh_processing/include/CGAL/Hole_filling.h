@@ -29,6 +29,10 @@ namespace CGAL {
 @param use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
 
 @return pair of @a facet_out and @a vertex_out
+
+\todo handle islands
+\todo `Polyhedron` should be a model of `MutableFaceGraph`
+\todo use Delaunay by default
 */
 template<
   class Polyhedron,
@@ -73,6 +77,11 @@ triangulate_and_refine_hole(Polyhedron& polyhedron,
  - bool: `true` if fairing is successful
  - @a facet_out
  - @a vertex_out
+ 
+\todo handle islands
+\todo `Polyhedron` should be a model of `MutableFaceGraph`
+\todo use Delaunay by default
+\todo WeightCalculator should be a property map
  */
 template<
   class SparseLinearSolver,

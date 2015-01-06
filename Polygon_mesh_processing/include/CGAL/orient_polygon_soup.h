@@ -238,6 +238,7 @@ bool orient_polygon_soup(const std::vector<Point_3>& points,
   * \ingroup PkgPolygonMeshProcessing
   * Polyhedron modifier to build a polyhedron from a soup of polygons.
   * \todo move me to a separate header file
+  * \todo convert to a function that is creating a model of `MutableFaceGraph`
   */
 template <class HDS, class Point_3>
 class Polygon_soup_to_polyhedron_3: public CGAL::Modifier_base<HDS>

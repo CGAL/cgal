@@ -166,40 +166,6 @@ struct Throw_at_output {
 
 }// namespace internal
 
-////////////////////////////////////////////////////////////////////////////////////
-/*
-/// Geometric traits concept for the functions `self_intersect`
-concept SelfIntersectionTraits{
-  /// @name Geometric Types
-  /// @{
-  /// 3D point type
-  typedef unspecified_type Point_3;
-  /// 3D triangle type
-  typedef unspecified_type Triangle_3;
-  /// 3D segment type
-  typedef unspecified_type Segment_3;
-  /// @}
-
-  /// @name Functors
-  /// @{
-  /// Functor constructing triangles. It provides `Triangle_3 operator() const(const Point_3&, const Point_3&, const Point_3&)
-  typedef unspecified_type Construct_triangle_3;
-  /// Functor constructing segments. It provides `Segment_3 operator() const(const Point_3&, const Point_3&)
-  typedef unspecified_type Construct_segment_3;
-  /// Functor testing intersections between triangles and segment. It provides `bool operator() const (const Triangle_3&, const Segment_3&)` and `bool operator() const (const Triangle_3&, const Triangle_3&)`
-  typedef unspecified_type Do_intersect_3;
-  /// @}
-
-  /// @name Functions
-  /// @{
-  Construct_triangle_3 construct_triangle_3_object() const;
-  Construct_segment_3 construct_segment_3_object() const;
-  Do_intersect_3 do_intersect_3_object() const;
-  /// @}
-};
-*/
-////////////////////////////////////////////////////////////////////////////////////
-
 /** 
  * \ingroup PkgPolygonMeshProcessing
  * Detects and reports self-intersections of a triangulated polyhedral surface.
@@ -216,7 +182,9 @@ concept SelfIntersectionTraits{
  * @param geom_traits traits class providing intersection test primitives
  * @return pair of bool and out, where the bool indicates whether there is an intersection or not
  *
- * \todo Doc: move SelfIntersectionTraits concept to appropriate location.
+ * \todo Polyhedron should be a model of `FaceListGraph`
+ * \todo rename to self_intersections
+ * \todo do not return a bool
  */
 template <class GeomTraits, class Polyhedron, class OutputIterator>
 std::pair<bool, OutputIterator>
@@ -277,6 +245,7 @@ self_intersect(Polyhedron& polyhedron, OutputIterator out, const GeomTraits& geo
  * @param polyhedron polyhedron to be tested
  * @param geom_traits traits class providing intersection test primitives
  *
+ * \todo Polyhedron should be a model of `FaceListGraph`
  * @return true if `polyhedron` is self-intersecting
  */
 template <class GeomTraits, class Polyhedron>

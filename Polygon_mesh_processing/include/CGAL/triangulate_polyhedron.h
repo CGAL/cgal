@@ -218,6 +218,7 @@ public:
 
 /// \ingroup PkgPolygonMeshProcessing
 /// Triangulates facets of  polyhedron `p`. Depends on \ref PkgTriangulation2Summary
+/// \todo `Polyhedron` should be a model of `FaceListGraph` and `MutableFaceGraph`
 template <typename Polyhedron>
 void triangulate_polyhedron(Polyhedron& p)
 {

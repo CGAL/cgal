@@ -214,6 +214,9 @@ The larger @a continuity gets, the more fixed vertices are required.
 @return true if fairing is successful, otherwise no vertex position is changed
 
 @todo accuracy of solvers are not good, for example when there is no boundary condition pre_factor should fail, but it does not.
+\todo move to a non-internal header file
+\todo `Polyhedron` should be a model of `MutableFaceGraph`
+\todo WeightCalculator should be a property map
 */
 template<class SparseLinearSolver, class WeightCalculator, class Polyhedron, class InputIterator>
 bool fair(Polyhedron& polyhedron, 

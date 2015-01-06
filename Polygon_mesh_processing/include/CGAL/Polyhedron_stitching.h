@@ -273,8 +273,8 @@ void polyhedron_stitching(Polyhedron& P, LessHedge less_hedge)
 }
 
 /// \ingroup polyhedron_stitching_grp
-/// Same as above using the sorted pair of vertices incidents to the halfedges
-/// as comparision
+/// Same as above using the source and target points of the halfedges
+/// for comparision
 template <class Polyhedron>
 void polyhedron_stitching(Polyhedron& P)
 {

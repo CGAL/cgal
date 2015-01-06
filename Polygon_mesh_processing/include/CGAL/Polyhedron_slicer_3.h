@@ -45,8 +45,11 @@
 namespace CGAL {
 
 /// \ingroup PkgPolygonMeshProcessing
-/// Cut a triangulated polyhedron in slices
+/// Cut a triangulated polyhedron in slices.
+///  
 /// Depends on \ref PkgAABB_treeSummary
+/// \todo `Polyhedron` should be a model of `FaceListGraph`
+/// \todo Add a constructor from an AABB-tree (the type is hardcoded given `Polyhedron`)
 template<class Polyhedron, class Kernel>
 class Polyhedron_slicer_3
 {

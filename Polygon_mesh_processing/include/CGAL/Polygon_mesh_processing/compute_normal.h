@@ -29,6 +29,7 @@ namespace Polygon_mesh_processing{
 /// \ingroup PkgPolygonMeshProcessing
 /// computes the outward unit vector normal to facet `f`.
 /// `%Kernel::%FT` should be a model of `FieldWithSqrt`
+/// \todo make this function working with a `FaceGraph`
 template <class Kernel, class Facet>
 typename Kernel::Vector_3 compute_facet_normal(const Facet& f)
 {
@@ -52,6 +53,7 @@ typename Kernel::Vector_3 compute_facet_normal(const Facet& f)
 /// \ingroup PkgPolygonMeshProcessing
 /// computes the unit normal at vertex `v` as the average of the normals of incident facets.
 /// `%Kernel::%FT` should be a model of `FieldWithSqrt`
+/// \todo make this function working with a `FaceGraph`
 template <class Kernel, class Vertex>
 typename Kernel::Vector_3 compute_vertex_normal(const Vertex& v)
 {

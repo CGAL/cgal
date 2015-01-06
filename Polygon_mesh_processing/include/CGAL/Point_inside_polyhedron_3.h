@@ -37,15 +37,18 @@ namespace CGAL {
  * by one or several disjoint triangulated closed polyhedral (manifold) surfaces.
  * In case several polyhedral surface are provided as input, a point is said to be inside the domain
  * if an odd number of surfaces is crossed when walking from infinity to the point.
- * The implementation is based on an AABB-tree.
+ * The implementation depends on the package \ref PkgAABB_treeSummary.
  * @tparam Polyhedron a triangulated polyhedral surface
  * @tparam Kernel a \cgal kernel
  * @tparam TriangleAccessor a model of the concept `TriangleAccessor_3`, with `TriangleAccessor_3::Triangle_3` being `Kernel::Triangle_3`. 
  *         If `Polyhedron` is a \cgal Polyhedron, a default is provided.
- * \todo Doc: move the concept `TriangleAccessor_3` into the "Operation on Polyhedra" package
  * \todo Code: Use this class as an implementation detail of Mesh_3's Polyhedral_mesh_domain_3
  * \todo Code: current version puts all polyhedra under one AABB, more proper approach might be using separate AABB for each polyhedron 
  *       and filtering query point with bboxes of polyhedra...
+ * \todo `Polyhedron` should be a model of `FaceListGraph`
+ * \todo Remove `TriangleAccessor_3` as well as the concept in Mesh_3 since making `Polyhedron` a model of `FaceListGraph` will make it useless
+ * \todo Add a constructor from AABB-tree (once Polyhedron is a FaceListGraph, the type is hardcoded)
+ * \todo check the implementation
  */
 template <class Polyhedron, 
           class Kernel,

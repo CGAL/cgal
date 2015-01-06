@@ -2,6 +2,8 @@
 /// \defgroup PkgPolygonMeshProcessingConcepts Concepts
 /// \ingroup PkgPolygonMeshProcessing
 /// \defgroup polyhedron_stitching_grp CGAL::polyhedron_stitching()
+/// \todo `Polyhedron` should be a model of `MutableFaceGraph` and `FaceListGraph`
+/// \todo rename Polygon_mesh_processing::stitch
 /// \ingroup PkgPolygonMeshProcessing
  
 /*!
@@ -30,9 +32,9 @@
 
 
 ## Hole Filling Functions ##
+- `CGAL::triangulate_hole()`
 - `CGAL::triangulate_and_refine_hole()`
 - `CGAL::triangulate_refine_and_fair_hole()`
-- `CGAL::triangulate_hole()`
 - `CGAL::triangulate_hole_polyline()`
 
 ## Predicate Functions and Classes ##
@@ -57,5 +59,8 @@
 
 ## Other Classes ##
 - `CGAL::Polyhedron_slicer_3`
+
+\todo remove FairWeightCalculator and replace it by a property map. Note that the default property map should be documented
+\todo add header file CGAL/Hole_filling/do_not_use_DT3.h that disable the need of having Triangulation_3 package
 
 */

@@ -162,6 +162,10 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
  @param use_delaunay_triangulation
 
  @return @a out
+
+  \todo move to a non-internal header file
+  \todo handle islands
+  \todo `Polyhedron` should be a model of `MutableFaceGraph`
 */
 template<class Polyhedron, class OutputIterator>
 OutputIterator 

@@ -285,6 +285,8 @@ public:
 @return pair of @a facet_out and @a vertex_out
 
 @todo current algorithm iterates 10 times at most, since (I guess) there is no termination proof.
+\todo move to a non-internal header file
+\todo `Polyhedron` should be a model of `MutableFaceGraph`
  */
 template<
   class Polyhedron,
