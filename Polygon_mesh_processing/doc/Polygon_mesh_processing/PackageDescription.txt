@@ -28,24 +28,34 @@
 
 \cgalClassifedRefPages
 
-## Functions ##
+
+## Hole Filling Functions ##
 - `CGAL::triangulate_and_refine_hole()`
 - `CGAL::triangulate_refine_and_fair_hole()`
-- `CGAL::fair()`
-- `CGAL::refine()`
 - `CGAL::triangulate_hole()`
 - `CGAL::triangulate_hole_polyline()`
+
+## Predicate Functions and Classes ##
 - `CGAL::is_oriented()`
-- \link polyhedron_stitching_grp `CGAL::polyhedron_stitching()` \endlink
-- `CGAL::triangulate_polyhedron()`
-- `CGAL::self_intersect()`
 - `CGAL::do_self_intersect()`
+- `CGAL::self_intersect()`
+- `CGAL::Point_inside_polyhedron_3`
+
+## Combinatorial Repairing Functions and Classes ##
+- \link polyhedron_stitching_grp `CGAL::polyhedron_stitching()` \endlink
 - `CGAL::orient_polygon_soup()`
+- `CGAL::Polygon_soup_to_polyhedron_3`
+
+## Meshing Functions ##
+- `CGAL::fair()`
+- `CGAL::refine()`
+- `CGAL::triangulate_polyhedron()`
+
+## Normal Computation Functions ##
 - `CGAL::Polygon_mesh_processing::compute_facet_normal()`
 - `CGAL::Polygon_mesh_processing::compute_vertex_normal()`
 
-## Classes ##
-- `CGAL::Polygon_soup_to_polyhedron_3`
+## Other Classes ##
 - `CGAL::Polyhedron_slicer_3`
-- `CGAL::Point_inside_polyhedron_3`
+
 */
