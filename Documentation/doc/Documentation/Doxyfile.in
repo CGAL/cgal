@@ -113,4 +113,4 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Stream_lines_2/doc/Stream_lines_2/fig \
              ${CMAKE_SOURCE_DIR}/Stream_support/doc/Stream_support/fig \
              ${CMAKE_SOURCE_DIR}/Surface_modeling/doc/Surface_modeling/fig \
-             ${CMAKE_SOURCE_DIR}/Hole_filling/doc/Hole_filling/fig \
+             ${CMAKE_SOURCE_DIR}/Polygon_mesh_processing/doc/Polygon_mesh_processing/fig \

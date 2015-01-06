@@ -1,21 +1,21 @@
-/// \defgroup PkgHoleFilling Hole Filling Reference
-/// \defgroup PkgHoleFillingConcepts Concepts
-/// \ingroup PkgHoleFilling
+/// \defgroup PkgPolygonMeshProcessing Polygon Mesh Processing Reference
+/// \defgroup PkgPolygonMeshProcessingConcepts Concepts
+/// \ingroup PkgPolygonMeshProcessing
  
 /*!
-\addtogroup PkgHoleFilling
+\addtogroup PkgPolygonMeshProcessing
  
-\cgalPkgDescriptionBegin{Hole Filling, PkgHoleFillingSummary}
+\cgalPkgDescriptionBegin{Polygon Mesh Processing, PkgPolygonMeshProcessingSummary}
 \cgalPkgPicture{hole_filling_ico.png}
  
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Ilker O. Yaz}
 \cgalPkgDesc{This package provides functionality to fill holes, refine and fair triangulated regions on surface mesh.}
-\cgalPkgManuals{Chapter_HoleFilling,PkgHoleFilling}
+\cgalPkgManuals{Chapter_PolygonMeshProcessing,PkgPolygonMeshProcessing}
 \cgalPkgSummaryEnd
  
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.3}
+\cgalPkgSince{4.7}
 \cgalPkgDependsOn{\ref PkgTriangulation3Summary, Sparse square solver such as those from  \ref thirdpartyEigen}
 \cgalPkgBib{cgal-tmp}
 \cgalPkgLicense{\ref licensesGPL "GPL"}

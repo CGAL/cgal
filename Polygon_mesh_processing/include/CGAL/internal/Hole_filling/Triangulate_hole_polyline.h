@@ -1180,7 +1180,7 @@ triangulate_hole_polyline(std::vector<Point_3>& P,
 } // namespace internal
 
 /*!
-\ingroup PkgHoleFilling
+\ingroup PkgPolygonMeshProcessing
 Creates triangles to fill the hole defined by points in the range (@a pbegin, @a pend). Triangles are put into @a out
 using the indices of the input points in the range (@a pbegin, @a pend).
 Note that no degenerate triangle is allowed during filling. If no possible patch is found, then no triangle is put into @a out.

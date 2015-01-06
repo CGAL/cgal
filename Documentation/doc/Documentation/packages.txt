@@ -94,6 +94,7 @@ h1 {
 
 \section PartGeometryProcessing Geometry Processing
 
+\package_listing{Polygon_mesh_processing}
 \package_listing{Subdivision_method_3}
 \package_listing{Surface_mesh_segmentation}
 \package_listing{Surface_mesh_simplification}
@@ -103,7 +104,6 @@ h1 {
 \package_listing{Jet_fitting_3}
 \package_listing{Point_set_processing_3}
 \package_listing{Stream_lines_2}
-\package_listing{Hole_filling}
 
 \section PartSearchStructures Spatial Searching and Sorting
 

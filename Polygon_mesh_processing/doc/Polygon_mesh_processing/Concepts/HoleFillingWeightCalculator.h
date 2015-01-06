@@ -1,4 +1,4 @@
- /// \ingroup PkgHoleFillingConcepts
+ /// \ingroup PkgPolygonMeshProcessingConcepts
  /// \cgalConcept
  ///
  /// @brief Concept describing requirements for calculating weights for edges and vertices. 

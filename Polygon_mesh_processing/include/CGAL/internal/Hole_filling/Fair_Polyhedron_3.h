@@ -15,7 +15,7 @@
 
 namespace CGAL {
 /*!
-\ingroup PkgHoleFilling
+\ingroup PkgPolygonMeshProcessing
 @brief Fairing continuity type
 */
 enum Fairing_continuity 
@@ -191,7 +191,7 @@ public:
 }//namespace internal
 
 /*!
-\ingroup PkgHoleFilling
+\ingroup PkgPolygonMeshProcessing
 @brief Function fairing a region on surface mesh. 
 The region denoted by @a vertex_begin and @a vertex_end might contain multiple disconnected components.
 Note that the structure is not altered in any way, only positions of the vertices get updated.

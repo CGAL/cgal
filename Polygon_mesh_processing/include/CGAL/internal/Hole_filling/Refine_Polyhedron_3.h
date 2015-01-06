@@ -267,7 +267,7 @@ public:
 }//namespace internal
 
 /*!
-\ingroup PkgHoleFilling
+\ingroup PkgPolygonMeshProcessing
 @brief Function refining a region on surface mesh
 
 @tparam Polyhedron a %CGAL polyhedron

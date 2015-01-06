@@ -1,5 +1,0 @@
-/*!
-\example Hole_filling/triangulate_polyline_example.cpp
-\example Hole_filling/fair_polyhedron_example.cpp
-\example Hole_filling/refine_polyhedron_example.cpp
-*/

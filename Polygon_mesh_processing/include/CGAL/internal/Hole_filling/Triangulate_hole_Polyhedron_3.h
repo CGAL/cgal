@@ -148,7 +148,7 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
 }// namespace internal
 
 /*!
- \ingroup PkgHoleFilling
+ \ingroup PkgPolygonMeshProcessing
  Function triangulating a hole in surface mesh.
  The hole should contain no non-manifold vertex. Generated patch is guaranteed to not to break edge manifoldness and contain no degenerate triangle.
  If no possible patch is found, @a polyhedron is not altered in any way, and no facet handle is put into @a out.

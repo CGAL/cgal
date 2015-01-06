@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
-\mainpage Hole Filling
-\anchor Chapter_HoleFilling
+\mainpage Polygon Mesh Processing
+\anchor Chapter_PolygonMeshProcessing
 
 \cgalAutoToc
 \author ... Ilker %O. Yaz ...
@@ -50,20 +50,20 @@ Note that refinement and fairing functions can be applied to an arbitrary region
 \section HFExamples Examples
 
 \subsection HFExample_1 Example: Triangulating a Polyline
-\cgalExample{Hole_filling/triangulate_polyline_example.cpp}
+\cgalExample{Polygon_mesh_processing/triangulate_polyline_example.cpp}
 
 
 
 \subsection HFExample_2 Example: Refining a Region on a Mesh
 
-\cgalExample{Hole_filling/refine_polyhedron_example.cpp}
+\cgalExample{Polygon_mesh_processing/refine_polyhedron_example.cpp}
 
 \cgalFigureBegin{Max_refine, max_refine.png}
 Result of refine example. 
 \cgalFigureEnd
 
 \subsection HFExample_3 Example: Fairing a Region on a Mesh
-\cgalExample{Hole_filling/fair_polyhedron_example.cpp}
+\cgalExample{Polygon_mesh_processing/fair_polyhedron_example.cpp}
 
 \cgalFigureBegin{Max_fair, max_fair.png}
 Result of fairing example. 
