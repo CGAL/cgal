@@ -38,5 +38,6 @@
 - `CGAL::triangulate_hole_polyline()`
 - `CGAL::is_oriented()`
 - \link polyhedron_stitching_grp `CGAL::polyhedron_stitching()` \endlink
+- `CGAL::triangulate_polyhedron()`
 
 */

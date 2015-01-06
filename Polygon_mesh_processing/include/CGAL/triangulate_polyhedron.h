@@ -213,6 +213,11 @@ public:
   }
 }; // end class Triangulate_modifier
 
+
+
+
+/// \ingroup PkgPolygonMeshProcessing
+/// Triangulates facets of  polyhedron `p`. Depends on \ref PkgTriangulation2Summary
 template <typename Polyhedron>
 void triangulate_polyhedron(Polyhedron& p)
 {
