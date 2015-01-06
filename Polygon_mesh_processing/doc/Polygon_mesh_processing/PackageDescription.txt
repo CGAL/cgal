@@ -23,5 +23,16 @@
 \cgalPkgShortInfoEnd
  
 \cgalPkgDescriptionEnd
- 
+
+\cgalClassifedRefPages
+
+## Functions ##
+- `CGAL::triangulate_and_refine_hole()`
+- `CGAL::triangulate_refine_and_fair_hole()`
+- `CGAL::fair()`
+- `CGAL::refine()`
+- `CGAL::triangulate_hole()`
+- `CGAL::triangulate_hole_polyline()`
+
+
 */
