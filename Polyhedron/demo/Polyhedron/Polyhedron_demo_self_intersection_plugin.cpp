@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QMainWindow>
+#include "opengl_tools.h"
 #include "Kernel_type.h"
 #include "Polyhedron_type.h"
 #include "Scene_polyhedron_item.h"
