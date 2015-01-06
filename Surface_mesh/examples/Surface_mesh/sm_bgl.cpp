@@ -16,7 +16,7 @@ typedef CGAL::Surface_mesh<Point>                            Mesh;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
-int main(int argc, char* argv[]) 
+int main(int /* argc */, char* argv[]) 
 {
   Mesh sm;
   std::ifstream in(argv[1]);
