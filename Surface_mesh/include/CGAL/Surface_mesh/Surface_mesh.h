@@ -2204,10 +2204,10 @@ private: //------------------------------------------------------- private data
 template <typename P>
 Surface_mesh<P>::
 Surface_mesh()
-  : pmap_(boost::fusion::make_pair< Surface_mesh::Vertex_index >(&Surface_mesh::vprops_)
-          , boost::fusion::make_pair< Surface_mesh::Halfedge_index >(&Surface_mesh::hprops_)
-          , boost::fusion::make_pair< Surface_mesh::Edge_index >(&Surface_mesh::eprops_)
-          , boost::fusion::make_pair< Surface_mesh::Face_index >(&Surface_mesh::fprops_))
+  : pmap_(boost::fusion::make_pair< typename Surface_mesh::Vertex_index >(&Surface_mesh::vprops_)
+          , boost::fusion::make_pair< typename Surface_mesh::Halfedge_index >(&Surface_mesh::hprops_)
+          , boost::fusion::make_pair< typename Surface_mesh::Edge_index >(&Surface_mesh::eprops_)
+          , boost::fusion::make_pair< typename Surface_mesh::Face_index >(&Surface_mesh::fprops_))
 {
     // allocate standard properties
     // same list is used in operator=() and assign()
