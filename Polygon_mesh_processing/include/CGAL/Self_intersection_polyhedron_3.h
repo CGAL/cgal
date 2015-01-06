@@ -201,7 +201,9 @@ concept SelfIntersectionTraits{
 ////////////////////////////////////////////////////////////////////////////////////
 
 /** 
- * Detects and reports self-intersections of a triangulated polyhedral surface
+ * \ingroup PkgPolygonMeshProcessing
+ * Detects and reports self-intersections of a triangulated polyhedral surface.
+ * Depends on \ref PkgBoxIntersectionDSummary
  * @pre @a p.is_pure_triangle()
  *
  * @tparam GeomTraits a model of `SelfIntersectionTraits`
@@ -211,10 +213,10 @@ concept SelfIntersectionTraits{
  *
  * @param polyhedron polyhedron to be checked, might be passed by const reference or reference
  * @param out all pairs of non-adjacent facets intersecting are put in it
- *
+ * @param geom_traits traits class providing intersection test primitives
  * @return pair of bool and out, where the bool indicates whether there is an intersection or not
  *
- * \TODO Doc: move SelfIntersectionTraits concept to appropriate location.
+ * \todo Doc: move SelfIntersectionTraits concept to appropriate location.
  */
 template <class GeomTraits, class Polyhedron, class OutputIterator>
 std::pair<bool, OutputIterator>
@@ -263,19 +265,22 @@ self_intersect(Polyhedron& polyhedron, OutputIterator out, const GeomTraits& geo
   return std::make_pair(intersect_facets.m_intersected, intersect_facets.m_iterator);
 }
 
-/** 
- * Checks if a polyhedron is self-intersecting
+/**
+ * \ingroup PkgPolygonMeshProcessing
+ * Checks if a polyhedron is self-intersecting.
+ * Depends on \ref PkgBoxIntersectionDSummary
  * @pre @a p.is_pure_triangle()
  *
  * @tparam GeomTraits a model of `SelfIntersectionTraits`
  * @tparam Polyhedron a %CGAL polyhedron
  *
  * @param polyhedron polyhedron to be tested
+ * @param geom_traits traits class providing intersection test primitives
  *
  * @return true if `polyhedron` is self-intersecting
  */
 template <class GeomTraits, class Polyhedron>
-bool self_intersect(const Polyhedron& polyhedron, const GeomTraits& geom_traits = GeomTraits())
+bool do_self_intersect(const Polyhedron& polyhedron, const GeomTraits& geom_traits = GeomTraits())
 {
   try 
   {
