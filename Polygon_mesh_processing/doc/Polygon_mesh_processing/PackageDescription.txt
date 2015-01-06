@@ -41,6 +41,8 @@
 - `CGAL::self_intersect()`
 - `CGAL::do_self_intersect()`
 - `CGAL::orient_polygon_soup()`
+- `CGAL::Polygon_mesh_processing::compute_facet_normal()`
+- `CGAL::Polygon_mesh_processing::compute_vertex_normal()`
 
 ## Classes ##
 - `CGAL::Polygon_soup_to_polyhedron_3`

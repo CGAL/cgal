@@ -23,7 +23,7 @@
 #define CGAL_ORIENT_POLYHEDRON_3
 
 #include <algorithm>
-#include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 namespace CGAL {
 namespace internal {
@@ -69,7 +69,7 @@ bool is_oriented(const Polyhedron& polyhedron) {
     = std::min_element(polyhedron.vertices_begin(), polyhedron.vertices_end(), internal::Axis_compare<axis>());
 
   typedef typename Polyhedron::Traits K;
-  const typename K::Vector_3& normal_v_min = compute_vertex_normal<typename Polyhedron::Vertex, K>(*v_min);
+  const typename K::Vector_3& normal_v_min = Polygon_mesh_processing::compute_vertex_normal<K>(*v_min);
 
   CGAL_warning(normal_v_min[axis] != 0);
   return normal_v_min[axis] < 0;

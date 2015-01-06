@@ -19,10 +19,17 @@
 // Author(s)     : Pierre Alliez
 
 
-#ifndef CGAL_INTERNAL_OPERATIONS_ON_POLYHEDRA_COMPUTE_NORMAL_H
-#define CGAL_INTERNAL_OPERATIONS_ON_POLYHEDRA_COMPUTE_NORMAL_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_COMPUTE_NORMAL_H
+#define CGAL_POLYGON_MESH_PROCESSING_COMPUTE_NORMAL_H
 
-template <class Facet, class Kernel>
+namespace CGAL{
+
+namespace Polygon_mesh_processing{
+
+/// \ingroup PkgPolygonMeshProcessing
+/// computes the outward unit vector normal to facet `f`.
+/// `%Kernel::%FT` should be a model of `FieldWithSqrt`
+template <class Kernel, class Facet>
 typename Kernel::Vector_3 compute_facet_normal(const Facet& f)
 {
   typedef typename Kernel::Point_3 Point;
@@ -42,12 +49,14 @@ typename Kernel::Vector_3 compute_facet_normal(const Facet& f)
   return normal / std::sqrt(normal * normal);
 }
 
-template <class Vertex, class Kernel>
+/// \ingroup PkgPolygonMeshProcessing
+/// computes the unit normal at vertex `v` as the average of the normals of incident facets.
+/// `%Kernel::%FT` should be a model of `FieldWithSqrt`
+template <class Kernel, class Vertex>
 typename Kernel::Vector_3 compute_vertex_normal(const Vertex& v)
 {
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Vertex::Halfedge_around_vertex_const_circulator HV_circulator;
-  typedef typename Vertex::Facet Facet;
   Vector normal = CGAL::NULL_VECTOR;
   HV_circulator he = v.vertex_begin();
   HV_circulator end = he;
@@ -55,11 +64,13 @@ typename Kernel::Vector_3 compute_vertex_normal(const Vertex& v)
   {
     if(!he->is_border())
     {
-      Vector n = compute_facet_normal<Facet,Kernel>(*he->facet());
+      Vector n = compute_facet_normal<Kernel>(*he->facet());
       normal = normal + (n / std::sqrt(n*n));
     }
   }
   return normal / std::sqrt(normal * normal);
 }
 
-#endif // CGAL_INTERNAL_OPERATIONS_ON_POLYHEDRA_COMPUTE_NORMAL_H
+} } // end of namespace CGAL::Polygon_mesh_processing
+
+#endif // CGAL_POLYGON_MESH_PROCESSING_COMPUTE_NORMAL_H

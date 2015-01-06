@@ -29,7 +29,7 @@
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
 
-#include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <queue>
 #include <vector>
@@ -103,7 +103,7 @@ public:
     {
       Facet_handle fit = *fit_it;
       typename Traits::Vector_3 normal = 
-        compute_facet_normal<Facet,Traits>(*fit);
+        Polygon_mesh_processing::compute_facet_normal<Traits>(*fit);
 
       P_traits cdt_traits(normal);
       CDT cdt(cdt_traits);

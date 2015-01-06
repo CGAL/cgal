@@ -244,7 +244,7 @@ public:
         it != end; ++it)
     {
       const Kernel::Vector_3 n =
-        compute_facet_normal<Polyhedron::Facet,Kernel>(**it);
+        CGAL::Polygon_mesh_processing::compute_facet_normal<Kernel>(**it);
       ::glNormal3d(n.x(),n.y(),n.z());
 
       Polyhedron::Halfedge_around_facet_circulator
