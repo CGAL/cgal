@@ -47,14 +47,14 @@ Note that refinement and fairing functions can be applied to an arbitrary region
 	- `fair()` : given a set of vertices on a mesh, fairs the region.
 	
 
-\section Examples Examples
+\section HFExamples Examples
 
-\subsection Example_1 Example: Triangulating a Polyline
+\subsection HFExample_1 Example: Triangulating a Polyline
 \cgalExample{Hole_filling/triangulate_polyline_example.cpp}
 
 
 
-\subsection Example_2 Example: Refining a Region on a Mesh
+\subsection HFExample_2 Example: Refining a Region on a Mesh
 
 \cgalExample{Hole_filling/refine_polyhedron_example.cpp}
 
@@ -62,7 +62,7 @@ Note that refinement and fairing functions can be applied to an arbitrary region
 Result of refine example. 
 \cgalFigureEnd
 
-\subsection Example_3 Example: Fairing a Region on a Mesh
+\subsection HFExample_3 Example: Fairing a Region on a Mesh
 \cgalExample{Hole_filling/fair_polyhedron_example.cpp}
 
 \cgalFigureBegin{Max_fair, max_fair.png}
