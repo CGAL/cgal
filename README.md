@@ -17,7 +17,7 @@ CGAL Git repository layout
 The Git repository of CGAL has a different layout from release tarballs. It
 contains a `CMakeLists.txt` file that serves as anchor for building, and a
 set of subfolders, so called *packages* (packages have their own
-[certain structure](Directory_Structure_for_Packages.md). Most packages
+[certain structure](Directory_Structure_for_Packages.md)). Most packages
 implement a data structure or an algorithm for CGAL (e.g., `Convex_hull_2`,
 or `Triangulation_3`); however some packages serve special needs:
 
