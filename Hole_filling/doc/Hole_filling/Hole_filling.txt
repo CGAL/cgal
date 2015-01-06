@@ -1,0 +1,78 @@
+namespace CGAL {
+/*!
+\mainpage Hole Filling
+\anchor Chapter_HoleFilling
+
+\cgalAutoToc
+\author ... Ilker %O. Yaz ...
+
+\image html neptun_head.png
+\image latex neptun_head.png
+<BR>
+
+\section HoleFillingIntroduction Introduction
+
+This package provides algorithms for filling a hole that is either in a triangulated surface mesh (<B>mesh</B> in the following) or defined by a sequence of points. 
+The main steps of the algorithm are described in \cgalCite{Lipea2003FillingHoles} and can be summarized as follows.
+
+First, a triangular patch for the hole is generated without introducing any new vertex. 
+The patch minimizes a quality function for all possible triangular patches.
+The quality function first minimizes the worst dihedral angle between patch triangles, then the total surface area as a tiebreaker.
+Following the suggestions in \cgalCite{Zou2013AnAlgorithm}, the performance of the algorithm is significantly improved 
+by narrowing the search space to faces of a 3D Delaunay triangulation of the border vertices, from all possible patches, while searching for the best patch. 
+
+Then, the generated patch is refined by creating new vertices to approximate the density of near boundary triangles and flipping edges to obtain a Delaunay-like triangulation.
+Using a criteria presented in \cgalCite{Lipea2003FillingHoles}, 
+an edge is only flipped if the opposite edge does not exist in the mesh and if no degenerate triangle is produced.
+
+Finally, the refined region is faired to obtain a tangential continuous and smooth patch. 
+The fairing step minimizes a linear bi-Laplacian system with boundary constraints \cgalCite{Botsch2008OnLinearVariational}. 
+The visual results of aforementioned steps can be seen in \cgalFigureRef{Mech_steps}
+
+\cgalFigureBegin{Mech_steps, mech_hole_horz.png}
+Results of the main steps of the algorithm. Respectively: the hole, after triangulation, after triangulation and refinement, after triangulation, refinement and fairing.
+\cgalFigureEnd
+
+\section HoleFillingAPI API
+
+This package provides four functions for hole filling:
+	- `triangulate_hole_polyline()` : given a sequence of points defining the hole, triangulates the hole.
+	- `triangulate_hole()` : given a border halfedge defining the hole on a mesh, triangulates the hole.
+	- `triangulate_and_refine_hole()` : in addition to `triangulate_hole()` the generated patch is also refined.
+	- `triangulate_refine_and_fair_hole()` : in addition to `triangulate_and_refine_hole()` the generated patch is also faired.
+
+
+Note that refinement and fairing functions can be applied to an arbitrary region on a mesh:
+	- `refine()` : given a set of facets on a mesh, refines the region.
+	- `fair()` : given a set of vertices on a mesh, fairs the region.
+	
+
+\section HFExamples Examples
+
+\subsection HFExample_1 Example: Triangulating a Polyline
+\cgalExample{Hole_filling/triangulate_polyline_example.cpp}
+
+
+
+\subsection HFExample_2 Example: Refining a Region on a Mesh
+
+\cgalExample{Hole_filling/refine_polyhedron_example.cpp}
+
+\cgalFigureBegin{Max_refine, max_refine.png}
+Result of refine example. 
+\cgalFigureEnd
+
+\subsection HFExample_3 Example: Fairing a Region on a Mesh
+\cgalExample{Hole_filling/fair_polyhedron_example.cpp}
+
+\cgalFigureBegin{Max_fair, max_fair.png}
+Result of fairing example. 
+\cgalFigureEnd
+
+*/
+ \cgalFigureBegin{Triangulated_fork, fork.gif}
+ Holes in fork model are filled with only triangulating.
+ \cgalFigureEnd
+/*!
+*/
+} /* namespace CGAL */
