@@ -108,7 +108,7 @@ namespace CGAL {
     }
 
     //DIM = 2 loop unrolled
-    inline FT transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<2> dt) const {
+    inline FT transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<2> ) const {
         typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
         typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),pit = construct_it(p);
         FT distance = square(*qit - *pit);
@@ -118,7 +118,7 @@ namespace CGAL {
     }
 
     //DIM = 3 loop unrolled
-    inline FT transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<3> dt) const {
+    inline FT transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<3> ) const {
         typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
         typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),pit = construct_it(p);
         FT distance = square(*qit - *pit);

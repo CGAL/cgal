@@ -136,7 +136,7 @@ private:
   create_leaf_node(Point_container& c)
   {
     Leaf_node node(true , static_cast<unsigned int>(c.size()));
-    int tmp = c.begin() - data.begin();
+    std::ptrdiff_t tmp = c.begin() - data.begin();
     node.data = pts.begin() + tmp;
 
     leaf_nodes.push_back(node);
@@ -286,7 +286,7 @@ public:
       ptstmp[i] = *data[i];
     }
     for(std::size_t i = 0; i < leaf_nodes.size(); ++i){
-      int tmp = leaf_nodes[i].begin() - pts.begin();
+      std::ptrdiff_t tmp = leaf_nodes[i].begin() - pts.begin();
       leaf_nodes[i].data = ptstmp.begin() + tmp;
     }
     pts.swap(ptstmp);
