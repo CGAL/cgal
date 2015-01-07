@@ -89,16 +89,16 @@ struct Intersect_facets
   void operator()(const Box* b,
     const Box* c) const
   {
-    halfedge_descriptor h  = halfedge(b->handle(),m_polyhedron);
+    halfedge_descriptor h  = halfedge(b->info(),m_polyhedron);
 
     // check for shared egde --> no intersection
-    if(face(opposite(h,m_polyhedron),m_polyhedron) == c->handle() ||
-       face(opposite(next(h,m_polyhedron),m_polyhedron),m_polyhedron) == c->handle() ||
-       face(opposite(next(next(h,m_polyhedron),m_polyhedron),m_polyhedron),m_polyhedron) == c->handle())
+    if(face(opposite(h,m_polyhedron),m_polyhedron) == c->info() ||
+       face(opposite(next(h,m_polyhedron),m_polyhedron),m_polyhedron) == c->info() ||
+       face(opposite(next(next(h,m_polyhedron),m_polyhedron),m_polyhedron),m_polyhedron) == c->info())
       return;
 
     // check for shared vertex --> maybe intersection, maybe not
-    halfedge_descriptor g = halfedge(c->handle(),m_polyhedron);
+    halfedge_descriptor g = halfedge(c->info(),m_polyhedron);
     halfedge_descriptor v;
 
     if(target(h,m_polyhedron) == target(g,m_polyhedron))
@@ -138,9 +138,9 @@ struct Intersect_facets
       Segment s2 = segment_functor( m_point[target(next(v,m_polyhedron),m_polyhedron)], m_point[target(next(next(v,m_polyhedron),m_polyhedron),m_polyhedron)]);
       
       if(do_intersect_3_functor(t1,s2)){
-        *m_iterator_wrapper++ = std::make_pair(b->handle(), c->handle());
+        *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
       } else if(do_intersect_3_functor(t2,s1)){
-        *m_iterator_wrapper++ = std::make_pair(b->handle(), c->handle());
+        *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
       }
       return;
     }
@@ -149,7 +149,7 @@ struct Intersect_facets
     Triangle t1 = triangle_functor( m_point[target(h,m_polyhedron)], m_point[target(next(h,m_polyhedron),m_polyhedron)], m_point[target(next(next(h,m_polyhedron),m_polyhedron),m_polyhedron)]);
     Triangle t2 = triangle_functor( m_point[target(g,m_polyhedron)], m_point[target(next(g,m_polyhedron),m_polyhedron)], m_point[target(next(next(g,m_polyhedron),m_polyhedron),m_polyhedron)]);
     if(do_intersect_3_functor(t1, t2)){
-      *m_iterator_wrapper++ = std::make_pair(b->handle(), c->handle());
+      *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
     }
   } // end operator ()
 }; // end struct Intersect_facets
@@ -226,7 +226,7 @@ self_intersect(const FaceGraph& polyhedron, OutputIterator out, const GeomTraits
 
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor Facet_hdl;
 
-  typedef typename CGAL::Box_intersection_d::Box_with_handle_d<double, 3, Facet_hdl> Box;
+  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, Facet_hdl> Box;
 
   typedef typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::const_type Ppmap;
 
