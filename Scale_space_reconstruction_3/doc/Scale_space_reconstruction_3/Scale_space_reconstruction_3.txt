@@ -223,7 +223,7 @@ The times were measured on a 64-bit Windows 7 system with 8 2.5GHz Intel process
        Carc 21 | 5,800,135 | 23,042,576 | 2,916 | 365,731 | 212,840 | 581,535 |
 </center>
 \cgalFigureCaptionBegin{chapterScaleSpaceReconstruction3figBenchmarks}
-Number of triangles of the surfaces constructed and running times in miliseconds for the scale-space method. Data sets indicated by "(s)" are synthetic.
+Number of triangles of the surfaces constructed and running times in milliseconds for the scale-space method. Data sets indicated by "(s)" are synthetic.
 \cgalFigureCaptionEnd
 
 
