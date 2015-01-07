@@ -62,7 +62,7 @@ with platform-specific options or other flags as switching on or off
 components of CGAL, e.g.,
 
 ``` {.bash}
-  -DWITH_CGAL_Core=ON -DWITH_CGAL_Qt3=OFF -DWITH_CGAL_Qt4=ON -DWITH_CGAL_ImageIO=ON -DWITH_examples=OFF -DWITH_demos=OFF
+ -DWITH_CGAL_Core=ON -DWITH_CGAL_Qt3=OFF -DWITH_CGAL_Qt4=ON -DWITH_CGAL_ImageIO=ON -DWITH_examples=OFF -DWITH_demos=OFF
 ```
 
 or configuring external libraries, e.g.,

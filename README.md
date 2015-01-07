@@ -42,6 +42,10 @@ repository. That kind of compilation is called a *branch build*, and is
 described in the file [INSTALL.md](INSTALL.md) that is at the root of the
 Git repository.
 
+License
+=======
+See the file [LICENSE.md](LICENSE.md).
+
 More information
 ================
 * [The CGAL web site](http://www.cgal.org/)
