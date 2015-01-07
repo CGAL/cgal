@@ -1,6 +1,6 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Polygon_mesh_processing"
+PROJECT_NAME =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Polygon Mesh Processing"
 INPUT =  ${CMAKE_SOURCE_DIR}/Polygon_mesh_processing/doc/Polygon_mesh_processing/ \
          ${CMAKE_SOURCE_DIR}/Polygon_mesh_processing/include
 

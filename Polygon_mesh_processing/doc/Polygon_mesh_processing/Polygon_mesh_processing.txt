@@ -1,6 +1,6 @@
 namespace CGAL {
 /*!
-\mainpage Polygon Mesh Processing
+\mainpage User Manual
 \anchor Chapter_PolygonMeshProcessing
 
 \cgalAutoToc
