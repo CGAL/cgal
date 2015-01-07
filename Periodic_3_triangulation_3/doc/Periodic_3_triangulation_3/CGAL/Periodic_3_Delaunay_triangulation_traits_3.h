@@ -7,7 +7,7 @@ namespace CGAL {
 The class `Periodic_3_Delaunay_triangulation_traits_3` is designed as a default traits class for the
 class `Periodic_3_Delaunay_triangulation_3<Periodic_3DelaunayTriangulationTraits_3,TriangulationDataStructure_3>`.
 
-\tparam Traits must be a model of the `Periodic_3DelaunayTriangulationTraits_3` concept.
+\tparam Traits must be a model of the `DelaunayTriangulationTraits_3` concept.
 \tparam Periodic_3Offset_3 must be a model of the concept `Periodic_3Offset_3` and defaults to `Periodic_3_offset_3`. 
 
 Note that this template class is specialized for 

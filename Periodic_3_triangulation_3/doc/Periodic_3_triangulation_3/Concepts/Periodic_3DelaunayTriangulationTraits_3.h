@@ -4,7 +4,8 @@
 \cgalConcept
 
 The concept `Periodic_3DelaunayTriangulationTraits_3` is the first template parameter of the classes 
-`Periodic_3_Delaunay_triangulation_3`. It refines the concept
+`Periodic_3_Delaunay_triangulation_3`.
+It refines the concept
 `DelaunayTriangulationTraits_3` from the \cgal \ref PkgTriangulation3 package. 
 It redefines the geometric objects, predicates and constructions to 
 work with point-offset pairs. In most cases the offsets will be 
@@ -15,8 +16,6 @@ functor the version without offsets.
 \cgalRefines `DelaunayTriangulationTraits_3` 
 
 \cgalHasModel CGAL::Periodic_3_Delaunay_triangulation_traits_3 
-
-\sa `DelaunayTriangulationTraits_3` 
 
 In addition to the requirements described for the traits class 
 DelaunayTriangulationTraits_3, the geometric traits class of a 
