@@ -1,4 +1,4 @@
-/// \defgroup PkgScaleSpaceReconstruction3 Scale-space Surface Reconstruction Reference
+/// \defgroup PkgScaleSpaceReconstruction3 Scale-Space Surface Reconstruction Reference
 
 /// \defgroup PkgScaleSpaceReconstruction3Concepts Concepts
 /// \ingroup PkgScaleSpaceReconstruction3
@@ -9,7 +9,7 @@
 
 /*!
 \addtogroup PkgScaleSpaceReconstruction3
-\cgalPkgDescriptionBegin{Scale-space Surface Reconstruction,PkgScaleSpaceReconstruction3Summary}
+\cgalPkgDescriptionBegin{Scale-Space Surface Reconstruction,PkgScaleSpaceReconstruction3Summary}
 \cgalPkgPicture{knot_thumb.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Thijs van Lankveld}
