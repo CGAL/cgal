@@ -126,7 +126,7 @@ namespace CGAL {
     //Dynamic version for runtime dimension
     inline 
     FT 
-    transformed_distance(const Query_item& q, const Point_d& p, Dynamic_dimension_tag dt) const
+    transformed_distance(const Query_item& q, const Point_d& p, Dynamic_dimension_tag) const
     {
       FT distance = FT(0);
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
@@ -149,7 +149,7 @@ namespace CGAL {
     //Generic version for DIM > 3
     template <int DIM>
     inline FT 
-    transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<DIM> dt) const
+    transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<DIM>) const
     {
       FT distance = FT(0);
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
@@ -171,7 +171,7 @@ namespace CGAL {
 
     //DIM = 2 loop unrolled
     inline FT 
-    transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<2> dt) const
+    transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<2>) const
     {
       FT distance = FT(0);
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
@@ -197,7 +197,7 @@ namespace CGAL {
 
     //DIM = 3 loop unrolled
     inline FT 
-    transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<3> dt) const
+    transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<3>) const
     {
       FT distance = FT(0);
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
