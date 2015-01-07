@@ -34,8 +34,10 @@ class Orthogonal_k_neighbor_search: public internal::K_neighbor_search<SearchTra
 
   typename SearchTraits::Cartesian_const_iterator_d query_object_it;
   
+  std::vector<typename Base::FT> dists;
 public:
   typedef typename Base::FT FT;
+
 
   Orthogonal_k_neighbor_search(const Tree& tree, const typename Base::Query_item& q,  
                                unsigned int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance(),bool sorted=true)
@@ -47,18 +49,19 @@ public:
     query_object_it = construct_it(this->query_object);
 
     int dim = static_cast<int>(std::distance(query_object_it, construct_it(this->query_object,0)));
-    std::vector<FT> dists(dim);
+
+    dists.resize(dim);
     for(int i=0;i<dim;i++)
         dists[i]=0;
 
     FT distance_to_root;
     if (this->search_nearest){ 
       distance_to_root = this->distance_instance.min_distance_to_rectangle(q, tree.bounding_box(),dists);
-      compute_nearest_neighbors_orthogonally(tree.root(), distance_to_root,dists);
+      compute_nearest_neighbors_orthogonally(tree.root(), distance_to_root);
     }
     else {
       distance_to_root = this->distance_instance.max_distance_to_rectangle(q, tree.bounding_box(),dists);
-      compute_furthest_neighbors_orthogonally(tree.root(), distance_to_root,dists);
+      compute_furthest_neighbors_orthogonally(tree.root(), distance_to_root);
     }
 
     
@@ -69,7 +72,7 @@ public:
   }
 private:
 
-  void compute_nearest_neighbors_orthogonally(typename Base::Node_const_handle N, FT rd,std::vector<FT>& dists)
+  void compute_nearest_neighbors_orthogonally(typename Base::Node_const_handle N, FT rd)
   {
     if (!(N->is_leaf())) 
     {
@@ -94,13 +97,13 @@ private:
           bestChild = node->upper();
           otherChild = node->lower();
       }
-      compute_nearest_neighbors_orthogonally(bestChild, rd,dists); 
+      compute_nearest_neighbors_orthogonally(bestChild, rd);
       FT dst=dists[new_cut_dim];
       FT new_rd = this->distance_instance.new_distance(rd,dst,new_off,new_cut_dim);
       dists[new_cut_dim]=new_off;
         if (this->branch_nearest(new_rd)) 
         {
-          compute_nearest_neighbors_orthogonally(otherChild, new_rd,dists); 
+          compute_nearest_neighbors_orthogonally(otherChild, new_rd);
         }
       dists[new_cut_dim]=dst;
     }
@@ -127,7 +130,7 @@ private:
     }
   }    
 
-   void compute_furthest_neighbors_orthogonally(typename Base::Node_const_handle N, FT rd,std::vector<FT>& dists)
+   void compute_furthest_neighbors_orthogonally(typename Base::Node_const_handle N, FT rd)
   {
     if (!(N->is_leaf())) 
     {
@@ -152,12 +155,12 @@ private:
           bestChild = node->lower();
           otherChild = node->upper();             
       }
-      compute_furthest_neighbors_orthogonally(bestChild, rd,dists); 
+      compute_furthest_neighbors_orthogonally(bestChild,rd);
       FT dst=dists[new_cut_dim];
       FT new_rd = this->distance_instance.new_distance(rd,dst,new_off,new_cut_dim);
       dists[new_cut_dim]=new_off;
         if (this->branch_furthest(new_rd)) 
-          compute_furthest_neighbors_orthogonally(otherChild, new_rd,dists); 
+          compute_furthest_neighbors_orthogonally(otherChild, new_rd);
       dists[new_cut_dim]=dst;
     }
     else
