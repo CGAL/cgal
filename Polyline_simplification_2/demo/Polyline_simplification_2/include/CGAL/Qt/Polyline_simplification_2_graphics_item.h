@@ -22,7 +22,7 @@
 #define CGAL_QT_POLYLINE_SIMPLIFICATION_2_GRAPHICS_ITEM_H
 
 #include <CGAL/Qt/TriangulationGraphicsItem.h>
-#include <CGAL/Polyline_constrained_triangulation_2.h>
+#include <CGAL/Constrained_triangulation_plus_2.h>
 #include <QPen>
 
 namespace CGAL {
