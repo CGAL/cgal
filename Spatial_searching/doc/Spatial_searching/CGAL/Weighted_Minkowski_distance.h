@@ -2,9 +2,6 @@ namespace CGAL {
 
 /*!
 \ingroup DistanceClasses
-\cgalModifBegin
-Added overloads to min_dist and max_dist to initialize distance vector
-\cgalModifEnd
 
 The class `Weighted_Minkowski_distance` provides an implementation of the concept `OrthogonalDistance`, with a weighted 
 Minkowski metric on \f$ d\f$-dimensional points 
@@ -16,7 +13,7 @@ the transformed distance \f$ {\sigma_{i=1}^{i=d} \, w_i(r_i-q_i)^p}\f$ instead o
 \cgalHeading{Parameters}
 
 \tparam Traits must be a model of the concept 
-`SearchTraits`, for example `Search_traits_2<Kernel>`. 
+`SearchTraits`, for example `Search_traits_2`. 
 
 \cgalModels `OrthogonalDistance`
 

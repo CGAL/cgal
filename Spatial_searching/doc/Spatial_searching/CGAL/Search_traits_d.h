@@ -4,11 +4,7 @@ namespace CGAL {
 \ingroup SearchTraitsClasses
 
 The class `Search_traits_d` can be used as a template parameter of the kd tree 
-and the search classes. `Kernel` must be a \cgal kernel. 
-\cgalModifBegin
-Added Dimension
-\cgalModifEnd
-`Kernel` must be a d-dimensional \cgal kernel. 
+and the search classes. `Kernel` must be a d-dimensional \cgal kernel. 
 
 \cgalHeading{Parameters}
 

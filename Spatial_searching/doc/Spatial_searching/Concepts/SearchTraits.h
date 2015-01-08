@@ -4,9 +4,6 @@
 
 The concept `SearchTraits` defines the requirements for the template 
 parameter of the search classes. 
-\cgalModifBegin
-Added Search_traits_d and Dimension
-\cgalModifEnd
 
 \cgalHasModel `CGAL::Cartesian_d<FT>` 
 \cgalHasModel `CGAL::Homogeneous_d<RT>` 

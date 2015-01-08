@@ -17,8 +17,7 @@ the ratio of the resulting rectangles.
 \cgalHeading{Parameters}
 
 \tparam Traits must be a model of 
-the concept `SearchTraits`, 
-for example `Simple_cartesian<double>`. 
+the concept `SearchTraits`, for example `CGAL::Search_traits_2`. 
 
 \tparam SpatialSeparator must be a model of the concept `SpatialSeparator`. 
 It has as default value the type `Plane_separator<Traits::FT>`. 

@@ -3,10 +3,6 @@ namespace CGAL {
 /*!
 \ingroup DistanceClasses
 
-\cgalModifBegin
-Added overloads to min_dist and max_dist to initialize distance vector
-\cgalModifEnd
-
 The class `Euclidean_distance` provides an implementation of the concept `OrthogonalDistance`, with the 
 Euclidean distance (\f$ l_2\f$ metric). 
 To optimize distance computations squared distances are used. 

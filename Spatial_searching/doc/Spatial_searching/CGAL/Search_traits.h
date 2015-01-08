@@ -6,9 +6,6 @@ namespace CGAL {
 The class `Search_traits` can be used as a template parameter of the kd tree 
 and the search classes. It is a mere wrapper for the geometric types needed 
 by these classes. 
-\cgalModifBegin
-Added Dimension
-\cgalModifEnd
 \cgalModels `SearchTraits`
 
 \sa `Search_traits_2<Kernel>` 

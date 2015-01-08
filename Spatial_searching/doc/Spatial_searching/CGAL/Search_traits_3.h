@@ -5,9 +5,6 @@ namespace CGAL {
 
 The class `Search_traits_3` can be used as a template parameter of the kd tree 
 and the search classes. `Kernel` must be a \cgal kernel. 
-\cgalModifBegin
-Added Dimension
-\cgalModifEnd
 \cgalHeading{Parameters}
 
 \tparam Kernel must be a model of the concept `Kernel`, 
