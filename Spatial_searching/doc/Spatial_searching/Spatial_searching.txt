@@ -404,7 +404,7 @@ higher dimensions.
 
 \subsection OrthogonalPerfomance Performance of the Orthogonal Search
 
-We took the gargoyle data set (Surface) from aim@shape, and generated the same number of random points in the bbox of the gargoyle (Random). 
+We took the gargoyle data set (Surface) from aim\@shape, and generated the same number of random points in the bbox of the gargoyle (Random). 
 We then consider three scenarios as data/queries.
 The data set contains 800K points. For each query point we compute the K=10,20,30 closest points, with the default splitter and for the bucket size 10 (default) and 20. 
 
