@@ -24,6 +24,8 @@
 
 #include <CGAL/Splitters.h>
 #include <CGAL/Compact_container.h>
+#include <boost/cstdint.hpp>
+
 namespace CGAL {
 
   template <class SearchTraits, class Splitter, class UseExtendedNode> 
@@ -208,7 +210,7 @@ namespace CGAL {
   private:
     
     // private variables for leaf nodes
-    uint32_t n; // denotes number of items in a leaf node
+    boost::int32_t n; // denotes number of items in a leaf node
     iterator data; // iterator to data in leaf node
 
                     
@@ -269,7 +271,7 @@ namespace CGAL {
   private:
     
        // private variables for internal nodes
-    uint32_t cut_dim;
+    boost::int32_t cut_dim;
     FT cut_val;
     Node_handle lower_ch, upper_ch;
 
@@ -381,7 +383,7 @@ namespace CGAL {
   private:
     
        // private variables for internal nodes
-    uint8_t cut_dim;
+    boost::uint8_t cut_dim;
     FT cut_val;
 
     Node_handle lower_ch, upper_ch;
