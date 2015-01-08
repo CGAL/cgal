@@ -36,6 +36,7 @@ achieve random permutations for otherwise regular generators (
 - `PointGenerator`
 - `RandomConvexSetTraits_2`
 - `RandomPolygonTraits_2`
+- `RandomConvexHullTraits_2`
 
 ## Functions ##
 
@@ -48,6 +49,7 @@ achieve random permutations for otherwise regular generators (
 - `CGAL::random_convex_set_2()` 
 - `CGAL::random_polygon_2()` 
 - `CGAL::random_selection()` 
+- `CGAL::random_convex_hull_in_disc_2()`
 
 ## Variables ##
 

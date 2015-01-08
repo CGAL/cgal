@@ -56,7 +56,7 @@ We also provide two functions for generating more complex geometric objects.
 The function `random_convex_set_2()` computes a random convex planar
 point set of a given size where the points are drawn from a specific
 domain and `random_polygon_2()` generates a random simple polygon from
-points drawn from a specific domain.
+points drawn from a specific domain. The function `random_convex_hull_in_disc_2()` computes a random polygon as a convex hull from uniformly generated random points in a disc.
 
 \subsection GeneratorRandomPerturbations Random Perturbations
 
@@ -252,6 +252,7 @@ normalized.
 If needed a random radius (with relevant distribution)
 is used to put the point inside the ball.
 
+Remy Thomasse coded the random convex hull in a disc.
 */ 
 } /* namespace CGAL */
 
