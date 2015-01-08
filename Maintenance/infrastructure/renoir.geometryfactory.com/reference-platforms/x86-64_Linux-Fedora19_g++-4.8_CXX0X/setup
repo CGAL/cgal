@@ -3,9 +3,6 @@ LD_LIBRARY_PATH=/usr/local/packages/gcc-4.8/lib64
 CXX=/usr/local/packages/gcc-4.8/bin/g++
 CC=/usr/local/packages/gcc-4.8/bin/gcc
 
-BOOST_ROOT=/home/lrineau/CGAL/boost/1.48
-export BOOST_ROOT
-
 export CXX CC
 export LD_LIBRARY_PATH QTDIR
 
