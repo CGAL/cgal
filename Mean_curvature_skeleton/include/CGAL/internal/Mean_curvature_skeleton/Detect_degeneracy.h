@@ -29,7 +29,7 @@
  */
 
 #include <boost/graph/graph_traits.hpp>
-
+#include <cmath>
 #include <queue>
 
 namespace CGAL {
@@ -151,8 +151,8 @@ void search_vertices_in_disk(HalfedgeGraph& hg,
       vertex_descriptor new_v = target(ed, hg);
       if (vertex_visited.find(new_v) == vertex_visited.end())
       {
-        double distance = sqrtf(squared_distance(get(hg_point_pmap, new_v),
-                                                 get(hg_point_pmap, root)));
+        double distance = std::sqrt(squared_distance(get(hg_point_pmap, new_v),
+                                                     get(hg_point_pmap, root)));
         if (distance < dist_TH)
         {
           vertex_visited[new_v] = true;

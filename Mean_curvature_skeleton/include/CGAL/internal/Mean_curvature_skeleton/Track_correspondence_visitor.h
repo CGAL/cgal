@@ -34,6 +34,7 @@
 
 // Visitor base
 #include <CGAL/Surface_mesh_simplification/Edge_collapse_visitor_base.h>
+#include <cmath>
 
 namespace SMS = CGAL::Surface_mesh_simplification;
 
@@ -125,8 +126,8 @@ struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<HalfedgeGr
                           to_double((*cell_dual)[(*poles)[id1]].y()),
                           to_double((*cell_dual)[(*poles)[id1]].z()));
       Point p1 = boost::get(*hg_point_pmap, v1);
-      double dis_to_pole0 = sqrtf(squared_distance(pole0, p1));
-      double dis_to_pole1 = sqrtf(squared_distance(pole1, p1));
+      double dis_to_pole0 = std::sqrt(squared_distance(pole0, p1));
+      double dis_to_pole1 = std::sqrt(squared_distance(pole1, p1));
       if (dis_to_pole0 < dis_to_pole1)
       {
         (*poles)[id1] = (*poles)[id0];

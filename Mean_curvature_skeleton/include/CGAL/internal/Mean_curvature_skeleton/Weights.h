@@ -3,6 +3,7 @@
 /// @cond CGAL_DOCUMENT_INTERNAL
 
 #include <boost/graph/graph_traits.hpp>
+#include <cmath>
 
 namespace CGAL {
 namespace internal {
@@ -21,7 +22,7 @@ struct Vector{
     return coords[0]*coords[0] + coords[1]*coords[1] + coords[2]*coords[2];
   }
   double length() const {
-    return sqrtf(coords[0]*coords[0] + coords[1]*coords[1] + coords[2]*coords[2]);
+    return std::sqrt(coords[0]*coords[0] + coords[1]*coords[1] + coords[2]*coords[2]);
   }
   bool normalize() {
     double len = length();
@@ -100,10 +101,10 @@ public:
     double dot_aa = a.squared_length();
     double dot_bb = b.squared_length();
     double lb = -0.999, ub = 0.999;
-    double cosine = dot_ab / sqrtf(dot_aa) / sqrtf(dot_bb);
+    double cosine = dot_ab / std::sqrt(dot_aa) / std::sqrt(dot_bb);
     cosine = (cosine < lb) ? lb : cosine;
     cosine = (cosine > ub) ? ub : cosine;
-    double sine = sqrtf(1.0 - cosine * cosine);
+    double sine = std::sqrt(1.0 - cosine * cosine);
     return cosine / sine;
   }
 };

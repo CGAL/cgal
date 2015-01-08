@@ -28,7 +28,7 @@
  * curve skeleton.
  * 
  */
-
+#include <cmath>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
@@ -289,7 +289,7 @@ private:
         vertex_descriptor v2 = ed->opposite()->vertex();
         Point source = get(hg_point_pmap, v1);
         Point target = get(hg_point_pmap, v2);
-        edge_lengths[idx] = sqrtf(squared_distance(source, target));
+        edge_lengths[idx] = std::sqrt(squared_distance(source, target));
 
         idx++;
       }
@@ -602,7 +602,7 @@ private:
 
     Point source = get(hg_point_pmap, v1);
     Point target = get(hg_point_pmap, v2);
-    double new_len = sqrtf(squared_distance(source, target));
+    double new_len = std::sqrt(squared_distance(source, target));
 
     if (queue.find(eid) != queue.end())
     {

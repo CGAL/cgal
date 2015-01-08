@@ -933,7 +933,7 @@ private:
   {
     m_are_poles_computed = false;
 
-    m_alpha_TH *= (M_PI / 180.0);
+    m_alpha_TH *= (CGAL_PI / 180.0);
     m_original_area = internal::get_surface_area(m_hg, m_hg_point_pmap);
 
     m_vertex_id_count = num_vertices(m_hg);

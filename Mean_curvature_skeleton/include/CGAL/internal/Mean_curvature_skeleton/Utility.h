@@ -29,6 +29,7 @@
  */
 
 #include <boost/graph/graph_traits.hpp>
+#include <cmath>
 
 namespace CGAL {
 namespace internal {
@@ -84,7 +85,7 @@ double get_triangle_area(typename Kernel::Point_3 p1,
   typedef typename Kernel::Vector_3 Vector;
   Vector v12(p1, p2);
   Vector v13(p1, p3);
-  return sqrtf(cross_product(v12, v13).squared_length()) * 0.5;
+  return std::sqrt(cross_product(v12, v13).squared_length()) * 0.5;
 }
 
 template<class HalfedgeGraph, class HalfedgeGraphPointPMap>
