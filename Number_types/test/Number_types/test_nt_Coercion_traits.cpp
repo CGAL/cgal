@@ -13,6 +13,7 @@
 
 
 #include <CGAL/basic.h>
+#include <CGAL/use.h>
 #include <cassert>
 #include <CGAL/Arithmetic_kernel.h>
 
@@ -163,7 +164,7 @@ void AT_coercion_test_for_cgal_types_rat(){
     typedef typename AT::Rational Rational;
     typedef typename AT::Bigfloat_interval Bigfloat_interval; 
 
-
+    CGAL_USE_TYPE(Bigfloat_interval);
     CGAL_static_assertion(!(::boost::is_same<Integer, CGAL::Null_tag>::value));
     CGAL_static_assertion(!(::boost::is_same<Rational, CGAL::Null_tag>::value));
     CGAL_static_assertion(!(::boost::is_same<Bigfloat_interval, CGAL::Null_tag>::value));
@@ -224,6 +225,7 @@ void AT_coercion_test_for_cgal_types_fws(){
     typedef typename AT::Bigfloat_interval Bigfloat_interval;
     typedef typename AT::Field_with_sqrt Real;
 
+    CGAL_USE_TYPE(Bigfloat_interval);
     CGAL_static_assertion(!(::boost::is_same<Integer, CGAL::Null_tag>::value));
     CGAL_static_assertion(!(::boost::is_same<Rational, CGAL::Null_tag>::value));
     CGAL_static_assertion(!(::boost::is_same<Bigfloat_interval, CGAL::Null_tag>::value));

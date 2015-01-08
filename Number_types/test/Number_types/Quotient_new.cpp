@@ -1,5 +1,6 @@
 #include <iostream>
 #include <CGAL/basic.h>
+#include <CGAL/use.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Test/_test_algebraic_structure.h>
@@ -60,6 +61,7 @@ void test_quotient() {
       typedef typename AT::Integer                 I ;
       typedef CGAL::Quotient<typename AT::Integer> QI;
       typedef CGAL::Coercion_traits<I,QI>  CT;
+      CGAL_USE_TYPE(CT);
       CGAL_static_assertion((boost::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_true>::value));
       CGAL_static_assertion((boost::is_same< typename CT::Are_implicit_interoperable,CGAL::Tag_true>::value));
       CGAL_static_assertion((boost::is_same< typename CT::Type,QI>::value));

@@ -27,6 +27,7 @@
 
 #include <cassert>
 #include <CGAL/tags.h>
+#include <CGAL/use.h>
 #include <CGAL/number_type_config.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Algebraic_structure_traits.h>
@@ -352,7 +353,7 @@ void test_explicit_interoperable_one_way(){
   typedef typename CT::Type Type;
   typedef typename CT::Cast Cast; 
   typedef typename Cast::result_type result_type; 
-  
+  CGAL_USE_TYPE(result_type);
   CGAL_static_assertion((::boost::is_same<result_type,Type>::value)); 
   CGAL_static_assertion((::boost::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_true>::value));
   CGAL_static_assertion((::boost::is_same<Type,RT>::value));
