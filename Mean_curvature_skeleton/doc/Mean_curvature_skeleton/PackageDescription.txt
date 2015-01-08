@@ -10,7 +10,7 @@
 \cgalPkgManuals{Chapter_3D_Mean_Curvature_Skeleton,PkgMeanCurvatureSkeleton3}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.5}
+\cgalPkgSince{4.7}
 \cgalPkgDependsOn{\ref thirdpartyEigen}
 \cgalPkgBib{cgal:gt-tsms}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
