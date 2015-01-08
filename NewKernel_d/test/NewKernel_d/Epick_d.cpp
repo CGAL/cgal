@@ -115,6 +115,10 @@ void test2(){
   typedef typename K1::Position_on_line_d PoL;
   typedef typename K1::Equal_d E;
   typedef typename K1::Squared_distance_d SD;
+  typedef typename K1::Squared_length_d SL;
+  typedef typename K1::Scalar_product_d SP;
+  typedef typename K1::Difference_of_vectors_d DV;
+  typedef typename K1::Difference_of_points_d DP;
 
   CGAL_USE_TYPE(AT);
   CGAL_USE_TYPE(D);
@@ -168,6 +172,10 @@ void test2(){
   PoL pol Kinit(position_on_line_d_object);
   E ed Kinit(equal_d_object);
   SD sd Kinit(squared_distance_d_object);
+  SL sl Kinit(squared_length_d_object);
+  SP spr Kinit(scalar_product_d_object);
+  DV dv Kinit(difference_of_vectors_d_object);
+  DP dp Kinit(difference_of_points_d_object);
 
   CGAL_USE(bc);
   CGAL_USE(pol);
@@ -227,11 +235,16 @@ void test2(){
   P x4=cp(0,0);
   P x5=cp(0,-1);
   P tab2[]={x1,x2,x3,x4};
+  assert(dp(x1,x2)[1]==2);
   assert(po(tab2+0,tab2+3)==CGAL::COUNTERCLOCKWISE);
   assert(sos(tab2+0,tab2+3,x4)==CGAL::ON_POSITIVE_SIDE);
   assert(sbs(tab2+0,tab2+3,x4)==CGAL::ON_BOUNDED_SIDE);
   V y1=cv(1,-1);
+  assert(y1.squared_length()==2);
+  assert(sl(y1)==2);
   V y2=cv(3,-3);
+  assert(spr(y1,y2)==6);
+  assert(dv(y2,y1)[0]==2);
   V tab3[]={y1,y2};
   std::vector<V> v;
   std::back_insert_iterator<std::vector<V> > bii(v);
@@ -372,6 +385,7 @@ void test3(){
   typedef typename K1::Squared_distance_d SD;
   typedef typename K1::Point_dimension_d PD;
   typedef typename K1::Affinely_independent_d AI;
+  typedef typename K1::Scaled_vector_d SV;
 
   Ker k
 #if 1
@@ -388,6 +402,7 @@ void test3(){
   PO po Kinit(orientation_d_object);
   CS cs Kinit(construct_segment_d_object);
   CSE cse (k);
+  SV sv Kinit(scaled_vector_d_object);
   LI li Kinit(linearly_independent_d_object);
   SOS sos Kinit(side_of_oriented_sphere_d_object);
   SBS sbs Kinit(side_of_bounded_sphere_d_object);
@@ -447,6 +462,7 @@ void test3(){
   assert(!cah(y+0,y+2,y[2]));
   assert( ai(y+0,y+3));
   assert(!ai(y+0,y+4));
+  assert(sv(yv[0],3)[1]==6);
   FO fo3=cfo(&y[0],y+3);
   assert(fo3.rest.size()==1 && fo3.rest[0]!=3);
   std::cout << fo3;

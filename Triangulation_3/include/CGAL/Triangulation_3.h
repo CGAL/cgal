@@ -792,7 +792,7 @@ public:
 
   // TEST IF INFINITE FEATURES
   bool is_infinite(const Vertex_handle v) const
-    { return v == infinite_vertex(); }
+  { return v == infinite_vertex(); }
 
   bool is_infinite(const Cell_handle c) const
     {

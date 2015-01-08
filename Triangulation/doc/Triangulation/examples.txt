@@ -1,0 +1,9 @@
+/*!
+\example barycentric_subdivision.cpp
+\example delaunay_triangulation.cpp
+\example triangulation.cpp
+\example triangulation1.cpp
+\example triangulation2.cpp
+\example triangulation_data_structure_dynamic.cpp
+\example triangulation_data_structure_static.cpp
+*/
