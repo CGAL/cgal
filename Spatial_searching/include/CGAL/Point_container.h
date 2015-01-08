@@ -41,7 +41,7 @@ class Point_container;
 namespace internal{
 	    #ifndef HAS_DIMENSION_TAG
 		#define HAS_DIMENSION_TAG
-		BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_dimension,Dimension,false);
+		BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_dimension,Dimension,false)
 		#endif
 
 		template <class SearchTraits, bool has_dim = has_dimension<SearchTraits>::value>
