@@ -48,11 +48,11 @@ struct Geom_utils;
 template<class LCC>
 struct Geom_utils<LCC,3>
 {
-  Local_point get_point(typename LCC::Vertex_attribute_const_handle vh)
-  { return converter(vh->point()); }
+  Local_point get_point(LCC& lcc, typename LCC::Vertex_attribute_const_handle vh)
+  { return converter(lcc.point_of_vertex_attribute(vh)); }
 
-  Local_point get_point(typename LCC::Dart_const_handle dh)
-  { return converter(LCC::point(dh)); }
+  Local_point get_point(LCC& lcc, typename LCC::Dart_const_handle dh)
+  { return converter(lcc.point(dh)); }
   
   Local_vector get_facet_normal(LCC& lcc, typename LCC::Dart_const_handle dh)
   {
@@ -74,14 +74,15 @@ protected:
 template<class LCC>
 struct Geom_utils<LCC,2>
 {
-  Local_point get_point(typename LCC::Vertex_attribute_const_handle vh)
+  Local_point get_point(LCC& lcc, typename LCC::Vertex_attribute_const_handle vh)
   {
-    Local_point p(converter(vh->point().x()),0,converter(vh->point().y()));
+    Local_point p(converter(lcc.point_of_vertex_attribute(vh).x()),0,
+                  converter(lcc.point_of_vertex_attribute(vh).y()));
     return p;
   }
 
-  Local_point get_point(typename LCC::Dart_const_handle dh)
-  { return get_point(LCC::vertex_attribute(dh)); }
+  Local_point get_point(LCC& lcc, typename LCC::Dart_const_handle dh)
+  { return get_point(lcc, lcc.vertex_attribute(dh)); }
 
   Local_vector get_facet_normal(LCC&, typename LCC::Dart_const_handle)
   {
@@ -171,7 +172,8 @@ public:
         {
           ++nb;
           lcc.mark(it2, facettreated);
-          if ( lcc.dimension>=3 && !it2->is_free(3) ) lcc.mark(it2->beta(3), facettreated);
+          if ( lcc.dimension>=3 && !lcc.is_free(it2, 3) )
+            lcc.mark(lcc.beta(it2, 3), facettreated);
         }
 
         polygons->InsertNextCell(nb);
@@ -179,7 +181,7 @@ public:
                it2=lcc.template darts_of_orbit<1>(it).begin();
              it2.cont(); ++it2)
         {
-          Local_point p =  geomutils.get_point(it2);
+          Local_point p =  geomutils.get_point(lcc, it2);
           vtkIdType id=points->InsertNextPoint(p.x(),p.y(),p.z());
           ++nbpoints;
 

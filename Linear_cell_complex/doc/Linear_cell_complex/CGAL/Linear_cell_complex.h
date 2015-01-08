@@ -262,6 +262,18 @@ void set_vertex_attribute(Dart_handle dh, Vertex_attribute_handle vh);
 
 /// @}
 
+/// \name Attributes management
+/// @{
+/*!
+Correct the invalid attributes of the linear cell complex.
+We can have invalid attribute either if we have called \link CombinatorialMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink before to use some modification operations or if we have modified the combinatorial map by using low level operations.
+
+The validation process of a linear cell complex validates its combinatorial map (cf. \link CombinatorialMap::correct_invalid_attributes `correct_invalid_attributes()`\endlink), and for each dart `d` having no vertex attribute, a new vertex attribute is created, with its Point initialized to `CGAL::Origin`, and all the darts of the 0-cell containing `d` are linked with the new attribute.
+*/
+void correct_invalid_attributes();
+
+/// @}
+
 /// \name Operations
 /// @{
 
@@ -277,10 +289,16 @@ Inserts a point, copy of `p`, in the <I>i</I>-cell containing `dh`.
 Returns a handle on one dart of this cell.
 \pre <I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension"\f$ \leq\f$2 and `*dh`\f$ \in\f$\ref CombinatorialMap::darts "darts()".
 
-If <I>i</I>-attributes are non void,
+If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`,
+if <I>i</I>-attributes are non void,
  \ref CellAttribute::On_split "Attribute_type<i>::type::On_split"(<I>a</I>,<I>a'</I>) is called,
 with <I>a</I> the original <I>i</I>-attribute associated
 with <I>dh</I> and <I>a'</I> each new <I>i</I>-attribute created during the operation.
+
+\cgalAdvancedBegin
+If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are
+not updated; thus the combinatorial map can be no more valid after this operation.
+\cgalAdvancedEnd
 
 */
 template <unsigned int i> Dart_handle insert_point_in_cell(Dart_handle dh, Point p);
@@ -290,10 +308,16 @@ Inserts a point in the barycenter of the <I>i</I>-cell containing `dh`.
 Returns a handle on one dart of this cell.
 \pre <I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension"\f$ \leq\f$2 and `*dh`\f$ \in\f$\ref CombinatorialMap::darts "darts()".
 
-If <I>i</I>-attributes are non void,
+If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`,
+if <I>i</I>-attributes are non void,
 \ref CellAttribute::On_split "Attribute_type<i>::type::On_split"(<I>a</I>,<I>a'</I>) is called,
 with <I>a</I> the original <I>i</I>-attribute associated
 with <I>dh</I> and <I>a'</I> each new <I>i</I>-attribute created during the operation.
+
+\cgalAdvancedBegin
+If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are
+not updated; thus the combinatorial map can be no more valid after this operation.
+\cgalAdvancedEnd
 
 */
 template <unsigned int i> Dart_handle insert_barycenter_in_cell(Dart_handle dh);
@@ -304,6 +328,11 @@ being attached only by one of its vertex to the 0-cell containing `dh`.
 The second vertex is associated with a new 0-attribute containing a copy of
 `p` as point. Returns a handle on one dart belonging to the new 0-cell.
 \pre 2\f$ \leq\f$\ref CombinatorialMap::dimension "dimension" and `*dh`\f$ \in\f$\ref CombinatorialMap::darts "darts()".
+
+\cgalAdvancedBegin
+If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are
+not updated; thus the combinatorial map can be no more valid after this operation.
+\cgalAdvancedEnd
 
 */
 Dart_handle insert_dangling_cell_1_in_cell_2(Dart_handle dh, Point p);

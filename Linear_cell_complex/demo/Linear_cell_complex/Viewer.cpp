@@ -24,183 +24,214 @@
 #include <QGLViewer/vec.h>
 #include <CGAL/Linear_cell_complex_operations.h>
 
-CGAL::Bbox_3 Viewer::bbox()
-{
-  CGAL::Bbox_3 bb;
-
-  bool empty = true;
-  for (LCC::Attribute_range<3>::type::iterator
-       it=scene->lcc->attributes<3>().begin(),
-       itend=scene->lcc->attributes<3>().end(); it!=itend; ++it )
-  {
-    if ( it->info().is_visible() )
-    {
-      if ( empty )
-      {
-        bb = scene->lcc->point(it->dart()).bbox();
-        empty = false;
-      }
-      for( LCC::Dart_of_cell_range<3>::iterator
-           it2=scene->lcc->darts_of_cell<3>(it->dart()).begin();
-           it2.cont(); ++it2)
-        bb = bb + scene->lcc->point(it2).bbox();
-    }
-  }
-
-  if ( empty )
-  {
-    bb = LCC::Point(CGAL::ORIGIN).bbox();
-    bb = bb + LCC::Point(1,1,1).bbox(); // To avoid a warning from Qglviewer
-  }
-  
-  return bb;
-}
-
 void
 Viewer::sceneChanged()
 {
-  CGAL::Bbox_3 bb = bbox();
-   
+  this->initDraw();
+
   this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(),
 						     bb.ymin(),
 						     bb.zmin()),
 				      qglviewer::Vec(bb.xmax(),
 						     bb.ymax(),
 						     bb.zmax()));
-    
   this->showEntireScene();
 }
 
-
-void Viewer::drawFacet(Dart_const_handle ADart)
+void Viewer::drawAllFaces(bool flat)
 {
-  LCC &m = *scene->lcc;
-  ::glBegin(GL_POLYGON);
-  CGAL_assertion( m.attribute<3>(ADart)!=LCC::null_handle );
-
-  //  double r = (double)ADart->attribute<3>()->info().r()/255.0;
-  double r = (double)m.info<3>(ADart).color().r()/255.0;
-  double g = (double)m.info<3>(ADart).color().g()/255.0;
-  double b = (double)m.info<3>(ADart).color().b()/255.0;
-  if ( !m.is_free(ADart, 3) )
-  {
-    r += (double)m.info<3>(m.beta(ADart,3)).color().r()/255.0;
-    g += (double)m.info<3>(m.beta(ADart,3)).color().g()/255.0;
-    b += (double)m.info<3>(m.beta(ADart,3)).color().b()/255.0;
-    r /= 2; g /= 2; b /= 2;
-  }
-
-  ::glColor3f(r,g,b);
-
-  // If Flat shading: 1 normal per polygon
-  if (flatShading)
-  {
-    LCC::Vector n = CGAL::compute_normal_of_cell_2(m,ADart);
-    n = n/(CGAL::sqrt(n*n));
-    ::glNormal3d(n.x(),n.y(),n.z());
-  }
-
-  for ( LCC::Dart_of_orbit_range<1>::const_iterator it(m,ADart);
-        it.cont(); ++it)
-  {
-    // If Gouraud shading: 1 normal per vertex
-    if (!flatShading)
-    {
-      LCC::Vector n = CGAL::compute_normal_of_cell_0<LCC>(m,it);
-      n = n/(CGAL::sqrt(n*n));
-      ::glNormal3d(n.x(),n.y(),n.z());
-    }
-
-    LCC::Point p = m.point(it);
-    ::glVertex3d( p.x(),p.y(),p.z());
-  }
-  ::glEnd();
-}
-
-/// Draw all the edge of the facet given by ADart
-void Viewer::drawEdges(Dart_const_handle ADart)
-{ 
-  LCC &m = *scene->lcc;
-  glBegin(GL_LINES);
-  glColor3f(.2f,.2f,.6f);
-  for ( LCC::Dart_of_orbit_range<1>::const_iterator it(m,ADart);
-        it.cont(); ++it)
-  {
-    LCC::Point p = m.point(it);
-    Dart_const_handle d2 = m.other_extremity(it);
-    if ( d2!=LCC::null_handle )
-    {
-      LCC::Point p2 = m.point(d2);
-      glVertex3f( p.x(),p.y(),p.z());
-      glVertex3f( p2.x(),p2.y(),p2.z());
-    }
-  }
-  glEnd();
-}
-
-void Viewer::draw_one_vol(Dart_const_handle adart, bool filled)
-{
-  LCC &m = *scene->lcc;
-
-  if ( filled )
-  {
-    for (LCC::One_dart_per_incident_cell_range<2,3>::const_iterator it(m,adart);
-         it.cont(); ++it)
-    {
-      drawFacet(it);
-      if (edges) drawEdges(it);
-    }
-  }
-  else
-  {
-    glBegin(GL_LINES);
-    glColor3f(.2f,.2f,.6f);
-    for (LCC::One_dart_per_incident_cell_range<1,3>::const_iterator
-           it(m,adart); it.cont(); ++it)
-    {
-      if ( m.other_extremity(it)!=LCC::null_handle )
-      {
-        LCC::Point p1 = m.point(it);
-        LCC::Point p2 = m.point(m.other_extremity(it));
-        glVertex3f( p1.x(),p1.y(),p1.z());
-        glVertex3f( p2.x(),p2.y(),p2.z());
-      }
-    }
-    glEnd();
-  }
-}
-
-void Viewer::draw()
-{
-  LCC &m = *scene->lcc;
-
-  if ( m.is_empty() ) return;
+  LCC &lcc = *scene->lcc;
 
   for (LCC::Attribute_range<3>::type::iterator
-       it=m.attributes<3>().begin(),
-       itend=m.attributes<3>().end(); it!=itend; ++it )
+         it=lcc.attributes<3>().begin(),
+         itend=lcc.attributes<3>().end(); it!=itend; ++it )
   {
     if ( it->info().is_visible() )
     {
-      // TODO allow to select one volume ?
-      // if(selectedVolumeIndex == (int)i) glLineWidth(5.0f);
-      draw_one_vol(it->dart(), it->info().is_filled());
-      // if(selectedVolumeIndex == (int)i) glLineWidth(1.4f);
-
-      if(vertices)
+      for(LCC::One_dart_per_incident_cell_range<2,3>::iterator
+            dartIter=lcc.one_dart_per_incident_cell<2,3>
+            (lcc.dart_of_attribute<3>(it)).begin(); dartIter.cont(); ++dartIter)
       {
-        for( LCC::One_dart_per_incident_cell_range<0,3>::iterator
-             it2(m, it->dart()); it2.cont(); ++it2)
+        // We draw the polygon
+        ::glBegin(GL_POLYGON);
+
+        //  double r = (double)dartIter->attribute<3>()->info().r()/255.0;
+        double r = (double)lcc.info<3>(dartIter).color().r()/255.0;
+        double g = (double)lcc.info<3>(dartIter).color().g()/255.0;
+        double b = (double)lcc.info<3>(dartIter).color().b()/255.0;
+        if ( !lcc.is_free(dartIter, 3) )
         {
-          LCC::Point p = m.point(it2);
-          glBegin(GL_POINTS);
-          glColor3f(.6f,.2f,.8f);
+          r += (double)lcc.info<3>(lcc.beta(dartIter,3)).color().r()/255.0;
+          g += (double)lcc.info<3>(lcc.beta(dartIter,3)).color().g()/255.0;
+          b += (double)lcc.info<3>(lcc.beta(dartIter,3)).color().b()/255.0;
+          r /= 2; g /= 2; b /= 2;
+        }
+
+        ::glColor3f(r,g,b);
+
+        if(flat)
+        {
+          LCC::Vector normal = CGAL::compute_normal_of_cell_2(lcc,dartIter);
+          normal = normal/(CGAL::sqrt(normal*normal));
+          ::glNormal3d(normal.x(), normal.y(), normal.z());
+        }
+
+        for (LCC::Dart_of_orbit_range<1>::const_iterator
+               orbitIter = lcc.darts_of_orbit<1>(dartIter).begin();
+             orbitIter.cont(); ++orbitIter)
+        {
+          if(!flat)
+          {
+            // If Gouraud shading: 1 normal per vertex
+            LCC::Vector normal = CGAL::compute_normal_of_cell_0(lcc,orbitIter);
+            normal = normal/(CGAL::sqrt(normal*normal));
+            ::glNormal3d(normal.x(), normal.y(), normal.z());
+          }
+
+          const LCC::Point& p = lcc.point(orbitIter);
+          ::glVertex3d(p.x(),p.y(),p.z());
+        }
+
+        ::glEnd();
+      }
+    }
+  }
+}
+
+void Viewer::drawAllEdges()
+{
+  LCC &lcc = *scene->lcc;
+
+  if ( lcc.is_empty() ) return;
+
+  //    ::glDepthRange(0.0, 1.0-0.005);
+  ::glBegin(GL_LINES);
+  //::glColor3f(0.0f, 0.0f, 0.0f);
+  ::glColor3f(.2f,.2f,.6f);
+
+  for (LCC::Attribute_range<3>::type::iterator
+         it=lcc.attributes<3>().begin(),
+         itend=lcc.attributes<3>().end(); it!=itend; ++it )
+  {
+    if ( it->info().is_visible() )
+    {
+      for(LCC::One_dart_per_incident_cell_range<1,3>::iterator
+            dartIter=lcc.one_dart_per_incident_cell<1,3>
+            (lcc.dart_of_attribute<3>(it)).begin(); dartIter.cont(); ++dartIter)
+      {
+        const LCC::Point& p =  lcc.point(dartIter);
+        Dart_handle d2 = lcc.other_extremity(dartIter);
+        if ( d2!=NULL )
+        {
+          const LCC::Point& p2 = lcc.point(d2);
           glVertex3f( p.x(),p.y(),p.z());
-          glEnd();
+          glVertex3f( p2.x(),p2.y(),p2.z());
         }
       }
     }
   }
+
+  ::glEnd();
+}
+
+void Viewer::drawAllVertices()
+{
+  LCC &lcc = *scene->lcc;
+
+  if ( lcc.is_empty() )
+  {
+    bb = LCC::Point(CGAL::ORIGIN).bbox();
+    bb = bb + LCC::Point(1,1,1).bbox(); // To avoid a warning from Qglviewer
+    return;
+  }
+
+  //    ::glDepthRange(0.0, 1.0-0.005);
+  ::glPointSize(7.0);
+  ::glBegin(GL_POINTS);
+  ::glColor3f(0.2f, 0.2f, 0.7f);
+
+  bool empty = true;
+  for (LCC::Attribute_range<3>::type::iterator
+         it=lcc.attributes<3>().begin(),
+         itend=lcc.attributes<3>().end(); it!=itend; ++it )
+  {
+    if ( it->info().is_visible() )
+    {
+      for(LCC::One_dart_per_incident_cell_range<0,3>::iterator
+            dartIter=lcc.one_dart_per_incident_cell<0,3>
+            (lcc.dart_of_attribute<3>(it)).begin();
+          dartIter.cont(); ++dartIter)
+      {
+        const LCC::Point& p =  lcc.point(dartIter);
+        ::glVertex3f(p.x(), p.y(), p.z());
+
+        if ( empty )
+        {
+          bb = p.bbox();
+          empty = false;
+        }
+        else
+          bb = bb + p.bbox();
+      }
+    }
+  }
+
+  ::glEnd();
+
+  if ( lcc.is_empty() )
+  {
+    bb = LCC::Point(CGAL::ORIGIN).bbox();
+    bb = bb + LCC::Point(1,1,1).bbox(); // To avoid a warning from Qglviewer
+  }
+}
+
+void Viewer::initDraw()
+{
+    //Compile drawFacet
+    //    std::cout << "Compile Display Lists : Faces, " << std::flush;
+    m_dlFaces = ::glGenLists(1);
+    ::glNewList(m_dlFaces, GL_COMPILE);
+    drawAllFaces(false);
+    ::glEndList();
+
+    //Compile drawFacet with flat shading
+    //    std::cout << "Faces (flat shading), " << std::flush;
+    m_dlFacesFlat = ::glGenLists(1);
+    ::glNewList(m_dlFacesFlat, GL_COMPILE);
+    drawAllFaces(true);
+    ::glEndList();
+
+    //Compile drawEdge
+    //    std::cout << "edges, " << std::flush;
+    m_dlEdges = ::glGenLists(1);
+    ::glNewList(m_dlEdges, GL_COMPILE);
+    drawAllEdges();
+    ::glEndList();
+
+    //Compile drawvertices
+    //    std::cout << "vertices" << std::flush;
+    m_dlVertices = ::glGenLists(1);
+    ::glNewList(m_dlVertices, GL_COMPILE);
+    drawAllVertices();
+    ::glEndList();
+
+    //    std::cout << ". DONE." << std::endl;
+    m_displayListCreated = true;
+}
+
+void Viewer::draw()
+{
+  if(!m_displayListCreated) initDraw();
+
+  if ( !wireframe )
+  {
+    if(flatShading) ::glCallList(m_dlFacesFlat);
+    else ::glCallList(m_dlFaces);
+  }
+
+  if(edges) ::glCallList(m_dlEdges);
+
+  if(vertices) ::glCallList(m_dlVertices);
 }
 
 void Viewer::init()
@@ -226,17 +257,17 @@ void Viewer::init()
   ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
   ::glEnable(GL_LIGHTING);
-    
+
   ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
   // ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 
   if (flatShading)
   {
     ::glShadeModel(GL_FLAT);
-    ::glDisable(GL_BLEND); 
-    ::glDisable(GL_LINE_SMOOTH); 
-    ::glDisable(GL_POLYGON_SMOOTH_HINT); 
-    ::glBlendFunc(GL_ONE, GL_ZERO); 
+    ::glDisable(GL_BLEND);
+    ::glDisable(GL_LINE_SMOOTH);
+    ::glDisable(GL_POLYGON_SMOOTH_HINT);
+    ::glBlendFunc(GL_ONE, GL_ZERO);
     ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
   }
   else
@@ -246,7 +277,7 @@ void Viewer::init()
     ::glEnable(GL_LINE_SMOOTH);
     ::glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  }    
+  }
 }
 
 void Viewer::keyPressEvent(QKeyEvent *e)
@@ -270,10 +301,10 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     if (flatShading)
     {
       ::glShadeModel(GL_FLAT);
-      ::glDisable(GL_BLEND); 
-      ::glDisable(GL_LINE_SMOOTH); 
-      ::glDisable(GL_POLYGON_SMOOTH_HINT); 
-      ::glBlendFunc(GL_ONE, GL_ZERO); 
+      ::glDisable(GL_BLEND);
+      ::glDisable(GL_LINE_SMOOTH);
+      ::glDisable(GL_POLYGON_SMOOTH_HINT);
+      ::glBlendFunc(GL_ONE, GL_ZERO);
       ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
     }
     else
@@ -299,7 +330,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     handled = true;
     updateGL();
   }
-    
+
   if (!handled)
     QGLViewer::keyPressEvent(e);
 }

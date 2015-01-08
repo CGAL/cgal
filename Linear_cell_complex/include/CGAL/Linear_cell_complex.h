@@ -114,6 +114,12 @@ namespace CGAL {
     using Base::null_handle;
     using Base::point_of_vertex_attribute;
 
+    using Base::are_attributes_automatically_managed;
+    using Base::mark;
+    using Base::unmark;
+    using Base::free_mark;
+    using Base::get_new_mark;
+
     Linear_cell_complex_base() : Base()
     {}
 
@@ -346,6 +352,43 @@ namespace CGAL {
         }
       }
       return valid;
+    }
+
+    /** validate the lcc
+     */
+    void correct_invalid_attributes()
+    {
+      // Copy of the code in CMap::correct_invalid_attributes() to avoid
+      // 2 iterations through the darts of the map.
+
+      std::vector<int> marks(dimension+1);
+      for ( unsigned int i=0; i<=dimension; ++i)
+        marks[i] = -1;
+
+      Helper::template
+        Foreach_enabled_attributes<Reserve_mark_functor<Self> >::
+          run(this,&marks);
+
+      for ( typename Dart_range::iterator it(this->darts().begin()),
+             itend(this->darts().end()); it!=itend; ++it)
+      {
+        Helper::template Foreach_enabled_attributes
+          <internal::Correct_invalid_attributes_functor<Self> >::
+          run(this,it,&marks);
+
+        if ( vertex_attribute(it)==null_handle )
+        {
+          // If a dart don't have a 0-attribute, we create a Point at the origin
+          set_vertex_attribute(it, create_vertex_attribute(CGAL::ORIGIN));
+        }
+      }
+
+      for ( unsigned int i=0; i<=dimension; ++i)
+        if ( marks[i]!=-1 )
+        {
+          CGAL_assertion( this->is_whole_map_marked(marks[i]) );
+          free_mark(marks[i]);
+        }
     }
 
     /** test if the two given facets have the same geometry
@@ -684,24 +727,27 @@ namespace CGAL {
     /** Insert a point in a given 1-cell.
      * @param dh a dart handle to the 1-cell
      * @param p the point to insert
+     * @param update_attributes a boolean to update the enabled attributes
      * @return a dart handle to the new vertex containing p.
      */
-    Dart_handle insert_point_in_cell_1(Dart_handle dh, const Point& p)
+    Dart_handle insert_point_in_cell_1(Dart_handle dh, const Point& p, bool update_attributes)
     {
       return CGAL::insert_cell_0_in_cell_1(*this, dh,
-                                           create_vertex_attribute(p));
+                                           create_vertex_attribute(p),
+                                           update_attributes);
     }
 
     /** Insert a point in a given 2-cell.
      * @param dh a dart handle to the 2-cell
      * @param p the point to insert
+     * @param update_attributes a boolean to update the enabled attributes
      * @return a dart handle to the new vertex containing p.
      */
-    Dart_handle insert_point_in_cell_2(Dart_handle dh, const Point& p)
+    Dart_handle insert_point_in_cell_2(Dart_handle dh, const Point& p, bool update_attributes)
     {
       Vertex_attribute_handle v = create_vertex_attribute(p);
 
-      Dart_handle first = CGAL::insert_cell_0_in_cell_2(*this, dh, v);
+      Dart_handle first = CGAL::insert_cell_0_in_cell_2(*this, dh, v, update_attributes);
 
       if ( first==null_handle ) // If the triangulated facet was made of one dart
         erase_vertex_attribute(v);
@@ -716,36 +762,40 @@ namespace CGAL {
     /** Insert a point in a given i-cell.
      * @param dh a dart handle to the i-cell
      * @param p the point to insert
+     * @param update_attributes a boolean to update the enabled attributes
      * @return a dart handle to the new vertex containing p.
      */
     template <unsigned int i>
-    Dart_handle insert_point_in_cell(Dart_handle dh, const Point& p)
+    Dart_handle insert_point_in_cell(Dart_handle dh, const Point& p, bool update_attributes = true)
     {
       CGAL_static_assertion(1<=i && i<=2);
-      if (i==1) return insert_point_in_cell_1(dh, p);
-      return insert_point_in_cell_2(dh, p);
+      if (i==1) return insert_point_in_cell_1(dh, p, update_attributes);
+      return insert_point_in_cell_2(dh, p, update_attributes);
     }
 
     /** Insert a dangling edge in a given facet.
      * @param dh a dart of the facet (!=NULL).
      * @param p the coordinates of the new vertex.
+     * @param update_attributes a boolean to update the enabled attributes
      * @return a dart of the new edge, incident to the new vertex.
      */
     Dart_handle insert_dangling_cell_1_in_cell_2(Dart_handle dh,
-                                                 const Point& p)
+                                                 const Point& p,
+                                                 bool update_attributes = true)
     {
       return CGAL::insert_dangling_cell_1_in_cell_2
-          (*this, dh, create_vertex_attribute(p));
+          (*this, dh, create_vertex_attribute(p), update_attributes);
     }
 
     /** Insert a point in a given i-cell.
      * @param dh a dart handle to the i-cell
      * @param p the point to insert
+     * @param update_attributes a boolean to update the enabled attributes
      * @return a dart handle to the new vertex containing p.
      */
     template <unsigned int i>
-    Dart_handle insert_barycenter_in_cell(Dart_handle dh)
-    { return insert_point_in_cell<i>(dh, barycenter<i>(dh)); }
+    Dart_handle insert_barycenter_in_cell(Dart_handle dh, bool update_attributes = true)
+    { return insert_point_in_cell<i>(dh, barycenter<i>(dh), update_attributes); }
 
     /** Compute the dual of a Linear_cell_complex.
      * @param alcc the lcc in which we build the dual of this lcc.
@@ -775,6 +825,20 @@ namespace CGAL {
       }
 
       return res;
+    }
+
+    /** Set the status of the managment of the attributes of the CMap
+     */
+    void set_update_attributes(bool newval)
+    {
+      if (this->automatic_attributes_management == false && newval == true)
+      {
+        // We need to recode this function because correct_invalid_attributes
+        // is not a virtual function.
+        correct_invalid_attributes();
+      }
+
+      this->automatic_attributes_management = newval;
     }
   };
 

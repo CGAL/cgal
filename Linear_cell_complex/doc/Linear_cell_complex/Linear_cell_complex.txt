@@ -225,6 +225,11 @@ The \ref CombinatorialMap::unsew "unsew<3>" operation
 has removed the four \f$ \beta_3\f$ links, and has duplicated the 0-attributes
 since vertices are split in two after the unsew operation.
 
+\cgalAdvancedBegin
+If \link CombinatorialMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink is called, all the future sew and unsew operations will not update non void attributes. These attributes will be updated latter by the call to \link CombinatorialMap::set_automatic_attributes_management `set_automatic_attributes_management(true)`\endlink.
+\cgalAdvancedEnd
+
+
 \subsection Linear_cell_complexConstructionOperations Construction Operations
 \anchor ssecconstructionsop
 
@@ -300,6 +305,10 @@ Example of \ref Linear_cell_complex::insert_dangling_cell_1_in_cell_2 "insert_da
 
 Some examples of use of these operations are given in
 Section \ref ssec5dexample "A 4D Linear Cell Complex".
+
+\cgalAdvancedBegin
+If \link CombinatorialMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink is called, all the future insertion or removal operations will not update non void attributes. These attributes will be updated latter by the call to \link CombinatorialMap::set_automatic_attributes_management `set_automatic_attributes_management(true)`\endlink. This can be useful to speed up an algorithm which uses several successive insertion and removal operations. See example \ref ssecAttributesManagement "Automatic attributes management".
+\cgalAdvancedEnd
 
 \section Linear_cell_complexExamples Examples
 
@@ -423,6 +432,15 @@ vertex are initialized with the barycenter of the 2-cell
 set its color manually by using the result of
 \ref Linear_cell_complex::insert_barycenter_in_cell "insert_barycenter_in_cell<2>" which is a dart incident to the
 new vertex.
+
+\subsection Linear_cell_complexAutomaticAttributesManagement Automatic attributes management
+\anchor ssecAttributesManagement
+
+The following example illustrates the use of the automatic attributes management for a linear cell complex. An off file is loaded into a 2D linear cell complex embedded in 3D. Then, a certain percentage of edges is removed from the linear cell complex. The same method is applied twice: the first time by using the automatic attributes management (which is the default behaviour) and the second time by calling first  \link CombinatorialMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink to disable the automatic updating of attributes.
+
+We can observe that the second run is faster than the first one. Indeed, updating attribute for each edge removal give a bigger complexity. Moreover, the gain increases when the percentage of removed edges increases.
+
+\cgalExample{Linear_cell_complex/linear_cell_complex_3_attributes_management.cpp}
 
 \section Linear_cell_complexDesign Design and Implementation History
 

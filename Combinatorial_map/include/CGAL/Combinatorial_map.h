@@ -167,6 +167,8 @@ namespace CGAL {
         this->mnb_times_reserved_marks[i] = 0;
       }
 
+      this->automatic_attributes_management = true;
+
       init_dart(null_dart_handle);
 
       CGAL_assertion(number_of_darts()==0);
@@ -1178,6 +1180,33 @@ namespace CGAL {
       return valid;
     }
 
+    /// correct invalid attributes in the map
+    void correct_invalid_attributes()
+    {
+      std::vector<int> marks(dimension+1);
+      for ( unsigned int i=0; i<=dimension; ++i)
+        marks[i] = -1;
+
+      Helper::template
+        Foreach_enabled_attributes<Reserve_mark_functor<Self> >::
+          run(this,&marks);
+
+      for ( typename Dart_range::iterator it(darts().begin()),
+             itend(darts().end()); it!=itend; ++it)
+      {
+        Helper::template Foreach_enabled_attributes
+          <internal::Correct_invalid_attributes_functor<Self> >::
+          run(this,it,&marks);
+      }
+
+      for ( unsigned int i=0; i<=dimension; ++i)
+        if ( marks[i]!=-1 )
+        {
+          CGAL_assertion( is_whole_map_marked(marks[i]) );
+          free_mark(marks[i]);
+        }
+    }
+
     /// @return the number of darts.
     size_type number_of_darts() const
     { return mdarts.size(); }
@@ -1679,9 +1708,13 @@ namespace CGAL {
     template<unsigned int i>
     void link_beta(Dart_handle adart1, Dart_handle adart2)
     {
-      if ( i==0 ) link_beta_0(adart1, adart2);
-      else if ( i==1 ) link_beta_1(adart1, adart2);
-      else link_beta_for_involution<i>(adart1, adart2);
+      if ( are_attributes_automatically_managed() )
+      {
+        if ( i==0 ) link_beta_0(adart1, adart2);
+        else if ( i==1 ) link_beta_1(adart1, adart2);
+        else link_beta_for_involution<i>(adart1, adart2);
+      }
+      else basic_link_beta<i>(adart1, adart2);
     }
 
     /** Double link a dart with betai to a second dart.
@@ -1693,6 +1726,7 @@ namespace CGAL {
      * @param adart1 a first dart.
      * @param adart2 a second dart.
      * @param update_attributes a boolean to update the enabled attributes.
+     *         (deprecated, now we use are_attributes_automatically_managed())
      */
     template<unsigned int i>
     void link_beta(Dart_handle adart1, Dart_handle adart2,
@@ -2081,9 +2115,13 @@ namespace CGAL {
     template<unsigned int i>
     void sew(Dart_handle adart1, Dart_handle adart2)
     {
-      if ( i==0 ) sew_0(adart1, adart2);
-      else if ( i==1 ) sew_1(adart1, adart2);
-      else sew_for_involution<i>(adart1, adart2);
+      if ( are_attributes_automatically_managed() )
+      {
+        if ( i==0 ) sew_0(adart1, adart2);
+        else if ( i==1 ) sew_1(adart1, adart2);
+        else sew_for_involution<i>(adart1, adart2);
+      }
+      else topo_sew<i>(adart1, adart2);
     }
 
     /** Sew by betai the two given darts plus all the required darts
@@ -2092,6 +2130,7 @@ namespace CGAL {
      * @param adart1 the first dart.
      * @param adart2 the second dart.
      * @param update_attributes a boolean to update the enabled attributes
+     *         (deprecated, now we use are_attributes_automatically_managed())
      * @pre is_sewable<i>(adart1, adart2).
      */
     template<unsigned int i>
@@ -2109,22 +2148,22 @@ namespace CGAL {
      */
     void topo_unsew_1(Dart_handle adart)
     {
-      CGAL_assertion( !is_free<1>(adart) );
+      CGAL_assertion( !this->template is_free<1>(adart) );
 
       int m = get_new_mark();
       std::deque<Dart_handle> dartv;
       for ( CGAL::CMap_dart_iterator_basic_of_cell<Self,0> it(*this, adart, m);
             it.cont(); ++it )
       {
-        mark(*it,m);
-        dartv.push_back(*it);
+        mark(it,m);
+        dartv.push_back(it);
       }
 
       for ( CGAL::CMap_dart_iterator_of_involution<Self,1> it(*this, adart);
             it.cont(); ++it )
       {
-        if ( is_marked(*it,m) ) unlink_beta_1(*it);
-        else unlink_beta_0(*it);
+        if ( is_marked(it,m) ) unlink_beta_1(it);
+        else unlink_beta_0(it);
       }
 
       for ( typename std::deque<Dart_handle>::iterator it=dartv.begin();
@@ -2142,7 +2181,7 @@ namespace CGAL {
      */
     void topo_unsew_0(Dart_handle adart)
     {
-      CGAL_assertion( !is_free<0>(adart) );
+      CGAL_assertion( !this->template is_free<0>(adart) );
       topo_unsew_1( adart->template beta<0>() );
     }
 
@@ -2156,12 +2195,12 @@ namespace CGAL {
     template<unsigned int i>
     void topo_unsew_for_involution(Dart_handle adart)
     {
-      CGAL_assertion( !is_free<i>(adart) );
+      CGAL_assertion( !this->template is_free<i>(adart) );
       CGAL_assertion( 2<=i && i<=Self::dimension );
 
       for ( CGAL::CMap_dart_iterator_of_involution<Self,i> it(*this, adart);
             it.cont(); ++it )
-      { unlink_beta<i>(*it); }
+      { unlink_beta<i>(it); }
     }
 
     /** Topological unsew by betai the given dart plus all the required darts
@@ -2326,9 +2365,13 @@ namespace CGAL {
     template<unsigned int i>
     void unsew(Dart_handle adart)
     {
-      if ( i==0 ) unsew_0(adart);
-      else if ( i==1 ) unsew_1(adart);
-      else unsew_for_involution<i>(adart);
+      if ( are_attributes_automatically_managed() )
+      {
+        if ( i==0 ) unsew_0(adart);
+        else if ( i==1 ) unsew_1(adart);
+        else unsew_for_involution<i>(adart);
+      }
+      else topo_unsew<i>(adart);
     }
 
     /** Unsew by betai the given dart plus all the required darts
@@ -2336,6 +2379,7 @@ namespace CGAL {
      * are updated only if update_attributes==true.
      * @param adart first dart.
      * @param update_attributes a boolean to update the enabled attributes
+     *         (deprecated, now we use are_attributes_automatically_managed())
      * @pre !adart->is_free(i).
      */
     template<unsigned int i>
@@ -3649,6 +3693,26 @@ namespace CGAL {
       return false;
     }
 
+    /** Test if the attributes of this map are automatically updated.
+     * @return true iff the boolean automatic_attributes_management is set to true.
+     */
+    bool are_attributes_automatically_managed() const
+    {
+      return automatic_attributes_management;
+    }
+
+    /** Sets the automatic_attributes_management boolean.
+     */
+    void set_automatic_attributes_management(bool newval)
+    {
+      if (this->automatic_attributes_management == false && newval == true)
+      {
+        correct_invalid_attributes();
+      }
+
+      this->automatic_attributes_management = newval;
+    }
+
   protected:
     /// Number of times each mark is reserved. 0 if the mark is free.
     mutable size_type mnb_times_reserved_marks[NB_MARKS];
@@ -3670,6 +3734,10 @@ namespace CGAL {
 
     /// Number of marked darts for each used marks.
     mutable size_type mnb_marked_darts[NB_MARKS];
+
+    /// Automatic management of the attributes:
+    /// true means attributes are always maintained updated during operations.
+    bool automatic_attributes_management;
 
     /// Tuple of unary and binary functors (for all non void attributes).
     typename Helper::Split_functors m_onsplit_functors;

@@ -41,6 +41,7 @@ if ( CGAL_FOUND )
                   "linear_cell_complex_3_with_mypoint.cpp" )
 
   create_single_source_cgal_program("plane_graph_to_lcc_2.cpp")
+  create_single_source_cgal_program("linear_cell_complex_3_attributes_management.cpp")
 
   add_executable(linear_cell_complex_3_triangulation
                           linear_cell_complex_3_triangulation.cpp)

@@ -121,6 +121,16 @@ and <code>src/</code> directories).
 <!-- Major and breaking changes -->
 <!-- Arithmetic and Algebra -->
 <!-- Combinatorial Algorithms -->
+  <h3>Combinatorial Maps and Linear Cell Complex</h3>
+  <ul>
+    <li>Added <code>correct_invalid_attributes</code>,
+      <code>set_automatic_attributes_management</code> and
+      <code>are_attributes_automatically_managed</code> methods in 
+      <code>CombinatorialMap</code> concept. This allows high level
+      operations to not update non void attributes during massive calls
+      of these operations, but only after the end of their executions.
+    </li>
+  </ul>
 <!-- Geometry Kernels -->
   <h3>dD Geometry Kernel</h3>
   <ul>
