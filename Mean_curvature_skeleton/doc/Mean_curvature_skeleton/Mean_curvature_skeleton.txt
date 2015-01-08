@@ -2,6 +2,9 @@ namespace CGAL {
 /*!
 
 \todo add please cite if used
+\todo `delta_area` is the wrong name. As we multiply it with the original area it should be `area_ratio`. Or we keep delta, but compute it once as a fraction.
+\todo change the variables wirth `_TH` as postfix. Should become something with min or max
+\todo Find better names than `omega_P` and `omega_H`
 
 \mainpage User Manual 
 \anchor Chapter_3D_Mean_Curvature_Skeleton
@@ -11,7 +14,6 @@ namespace CGAL {
 
 \section MCFSkelSecMot Introduction
 
-\todo delta_area is the wrong name. As we multiply it with the original area it should be area_ratio. Or we keep delta, but compute it once as a fraction.
 
 \cgalFigureBegin{Main_image_suggestion, main_image_suggestion.png}
 curve skeleton of a horse model.
@@ -26,16 +28,16 @@ Three iterations of mean curvature flow contraction of the horse in figure \cgal
 \cgalFigureEnd
 
 <!-- <b>Algorithm Core.</b> -->
-<em>Mean Curvature Flow</em> (MCF) is a motion where each point on the surface is moved in a direction opposite to its normal with a speed proportional to its mean curvature. Its use in skeletonization is connected to its area minimization and anisotropic distortion properties; see \cgalCite{tagliasacchi2012mean} for details. In curve skeletonization, MCF is employed to iteratively contract (i.e. by reducing its area) the mesh geometry until it locally <em>degenerates</em> into a curve; see \cgalFigureRef{Iterations}. The contraction process halts when the surface area of the whole mesh has vanished by checking if \f$ |\mathrm{area}_{i} - \mathrm{area}_{i-1}|  \lt  \mathrm{delta\_area} \times \mathrm{original\_area}\f$ (\f$ \mathrm{area}_{i} \f$ is the area in iteration \f$ i \f$, default value for \f$ \mathrm{area\_ratio} \f$ is 0.0001). Upon convergence, the mesh is then converted into a curve skeleton by a simple shortest edge collapse procedure.
+<em>Mean Curvature Flow</em> (MCF) is a motion where each point on the surface is moved in a direction opposite to its normal with a speed proportional to its mean curvature. Its use in skeletonization is connected to its area minimization and anisotropic distortion properties; see \cgalCite{tagliasacchi2012mean} for details. In curve skeletonization, MCF is employed to iteratively contract (i.e. by reducing its area) the mesh geometry until it locally <em>degenerates</em> into a curve; see \cgalFigureRef{Iterations}. The contraction process halts when the surface area of the whole mesh has vanished by checking if \f$ |\mathrm{area}_{i} - \mathrm{area}_{i-1}|  \lt  \mathrm{delta\_area} \times \mathrm{original\_area}\f$ (\f$ \mathrm{area}_{i} \f$ is the area in iteration \f$ i \f$, default value for \f$ \mathrm{de`lta\_area} \f$ is 0.0001). Upon convergence, the mesh is then converted into a curve skeleton by a simple shortest edge collapse procedure.
 
 <b>Flow discretization and control.</b>
-The MCF is discretized by finite elements (discrete Laplacian operator) and solved by a sparse solver with factorization. After each iteration, the local curvature changes and the weights in the Laplacian operator need to be updated. A parameter \f$ \mathrm{omega\_H} \f$ is provided to control the speed of the motion. By default the value is set to 0.1. There is a tradeoff between speed and accuracy. With higher \f$ \mathrm{omega\_H} \f$, the algorithm converges quickly, however the result is less accurate.
+The MCF is discretized by finite elements (discrete Laplacian operator) and solved by a sparse solver with factorization. After each iteration, the local curvature changes and the weights in the Laplacian operator need to be updated. A parameter `omega_H is provided to control the speed of the motion. By default the value is set to 0.1. There is a tradeoff between speed and accuracy. With higher `omega_H`, the algorithm converges quickly, however the result is less accurate.
 
 <b>Medial Centering.</b> 
-The curve skeletons extracted by MCF only are not guaranteed to <em>lie medially</em> within the shape. To overcome this problem, the flow can be augmented with an attraction force that pulls the geometry toward the shape's medial axis. The algorithm employs a sampling of the medial axis obtained by computing the <em>Voronoi poles</em> of the input model. These poles are known to lie on the medial axis when the surface is sufficiently densely sampled \cgalCite{amenta2001power}. The density of the mesh also affect the quality of poles. If the sampling of the mesh is not dense enough, the poles tend to contain noise, and would lead to skeletons of bad quality (e.g. \cgalFigureRef{Comparison}). We provide the user a parameter \f$ \mathrm{omega\_P} \f$ to control the degree to which the surface is attracted to the medial axis. Some initial experiments suggest setting \f$ \mathrm{omega\_P} \f$ to 0.1 or 0.2 is a good choice. The medial criteria can also be turned off by calling \link CGAL::Mean_curvature_flow_skeletonization::set_is_medially_centered() `CGAL::Mean_curvature_flow_skeletonization::set_is_medially_centered(false)`\endlink.
+The curve skeletons extracted by MCF only are not guaranteed to <em>lie medially</em> within the shape. To overcome this problem, the flow can be augmented with an attraction force that pulls the geometry toward the shape's medial axis. The algorithm employs a sampling of the medial axis obtained by computing the <em>Voronoi poles</em> of the input model. These poles are known to lie on the medial axis when the surface is sufficiently densely sampled \cgalCite{amenta2001power}. The density of the mesh also affect the quality of poles. If the sampling of the mesh is not dense enough, the poles tend to contain noise, and would lead to skeletons of bad quality as can be seen in \cgalFigureRef{Comparison}. We provide the user a parameter `omega_P  to control the degree to which the surface is attracted to the medial axis. Some initial experiments suggest setting `omega_P  to 0.1 or 0.2 is a good choice. The medial criteria can also be turned off by calling \link CGAL::Mean_curvature_flow_skeletonization::is_medially_centered() `CGAL::Mean_curvature_flow_skeletonization::set_is_medially_centered(false)`\endlink.
 
 <b>Local remeshing.</b> 
-While the anisotropic effects of MCF are essential for curve-skeletonization, this has the side effect of progressively degrading the quality of the triangulation. As a low quality triangulation hinders the finite element discretization, we perform local remeshing to remove these degeneracies. After each contraction iteration we perform two local remeshing operations. We collapse edges shorter than min_edge_length and we split edges whose opposite angle is greater than alpha_TH. By default `min_edge_length` is set to 0.002 times the length of the diagonal of the bounding box of the original mesh while alpha_TH is \f$ 110 ^{\circ} \f$.
+While the anisotropic effects of MCF are essential for curve-skeletonization, this has the side effect of progressively degrading the quality of the triangulation. As a low quality triangulation hinders the finite element discretization, we perform local remeshing to remove these degeneracies. After each contraction iteration we perform two local remeshing operations. We collapse edges shorter than `min_edge_length` and we split edges whose opposite angle is greater than `alpha_TH`. By default `min_edge_length` is set to 0.002 times the length of the diagonal of the bounding box of the original mesh while `alpha_TH` is \f$ 110 ^{\circ} \f$.
 
 \section MCFSkelSecAlgoDetailed Detailed Algorithm Description
 
@@ -111,7 +113,7 @@ where the \f$ W_{P} \f$ are weights to control the smoothness of the medial appr
 
 The curve skeleton can be extracted by the free function `CGAL::extract_mean_curvature_flow_skeleton()`. This function extracts a skeleton from the given mesh using the default parameters, that is the skeleton extracted is medially centered and XXX , which works well in most cases. 
 
-The class `CGAL::Mean_curvature_flow_skeletonization` enables the usage of low level functions such as \link CGAL::Mean_curvature_flow_skeletonization::contract_geometry() `contract_geometry()`\endlink and \link CGAL::Mean_curvature_flow_skeletonization::collapse_edges() `collapse_edges()`\endlink. The class further enables to change the parameters of the algorithm, for example by calling \link CGAL::Mean_curvature_flow_skeletonization::`set_is_medially_centered() `set_is_medially_centered()`\endlink.    The class gives the user full control over each step of the algorithm. The Polyhedron demo contains a plugin implemented based on the API of `CGAL::Mean_curvature_flow_skeletonization`. \cgalFigureRef{Demo} shows an example of an interative demo. In the example code, we show how to call those functions.
+The class `CGAL::Mean_curvature_flow_skeletonization` enables the usage of low level functions such as \link CGAL::Mean_curvature_flow_skeletonization::contract_geometry() `contract_geometry()`\endlink and \link CGAL::Mean_curvature_flow_skeletonization::collapse_edges() `collapse_edges()`\endlink. The class further enables to change the parameters of the algorithm, for example by calling \link CGAL::Mean_curvature_flow_skeletonization::is_medially_centered() `set_is_medially_centered()`\endlink.    The class gives the user full control over each step of the algorithm. The Polyhedron demo contains a plugin implemented based on the API of `CGAL::Mean_curvature_flow_skeletonization`. \cgalFigureRef{Demo} shows an example of an interative demo. In the example code, we show how to call those functions.
 
 \cgalFigureBegin{Demo, demo.png}
 A screenshot of the interactive demo.
@@ -188,7 +190,7 @@ We have recorded the running time of the algorithm. The CPU of the test machine 
 </table>
 </center>
 
-\todo the benchmark should also contains something about omega_H and omega_P
+\todo the benchmark should also contains something about `omega_H` and `omega_P`
 
 \section MCFSkelSecDesign Design and Implementation History
 
