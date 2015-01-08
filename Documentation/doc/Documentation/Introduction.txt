@@ -43,7 +43,7 @@ precision floating point numbers for the %Cartesian coordinates of the point.
 
 Besides the types we see \em predicates like the orientation test for
 three points, and \em constructions like the distance and midpoint 
-computation. A predicate has a discrete set of possible answers,
+computation. A predicate has a discrete set of possible results,
 whereas a construction produces either a number, or another
 geometric entity.
 
@@ -83,15 +83,40 @@ extract constructions.
 
 \cgalExample{Kernel_23/exact.cpp}
 
+Here comes the output and you may still be surprised.
+
+\verbatim
+not collinear
+collinear
+collinear
+\endverbatim
+
+In the first block the points are still not collinear,
+for the simple reason that the coordinates you see as text
+get turned into floating point numbers. When they are then
+turned into arbitrary precision rationals, they exactly
+represent the floating point number, but not the text.
+
+This is different in the second block, which corresponds
+to reading numbers from a file. The arbitrary precision
+rationals are then directly constructed from a string
+so that they represent exactly the text.
+
+In the third block you see that constructions as
+midpoint constructions are exact, just as the name
+of the kernel type suggests.
+
+
 In many cases you will have floating point numbers that are "exact",
 in the sense that they were computed by some application or obtained
 from a sensor. They are not the string "0.1" or computed on the 
 fly as "1.0/10.0", but a full precision floating point number.
 If they are input to an algorithm that makes no constructions
 you can use a kernel that provides exact predicates, but inexact
-constructions.  An example for that is the convex hull algorithm.
-The output is a subset of the input, and all the algorithm 
-does is to compare coordinates and perform orientation tests. 
+constructions.  An example for that is the convex hull algorithm
+which we will see in the next section.
+The output is a subset of the input, and the algorithm 
+only compares coordinates and performs orientation tests. 
 
 At a first glance the kernel doing exact predicates and constructions
 seems to be the perfect choice, but performance requirements
