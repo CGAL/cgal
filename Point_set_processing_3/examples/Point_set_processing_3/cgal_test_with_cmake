@@ -171,6 +171,14 @@ else
     compile_and_run average_spacing_example
     [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
   fi
+  if [ `can_compile bilateral_smooth_point_set_example` = "y" ]; then
+    compile_and_run bilateral_smooth_point_set_example
+    [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
+  fi
+  if [ `can_compile edge_aware_upsample_point_set_example` = "y" ]; then
+    compile_and_run edge_aware_upsample_point_set_example
+    [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
+  fi
   if [ `can_compile grid_simplification_example` = "y" ]; then
     compile_and_run grid_simplification_example
     [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
@@ -201,6 +209,10 @@ else
   fi
   if [ `can_compile remove_outliers_example` = "y" ]; then
     compile_and_run remove_outliers_example
+    [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
+  fi
+  if [ `can_compile wlop_simplify_and_regularize_point_set_example` = "y" ]; then
+    compile_and_run wlop_simplify_and_regularize_point_set_example
     [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
   fi
 fi
