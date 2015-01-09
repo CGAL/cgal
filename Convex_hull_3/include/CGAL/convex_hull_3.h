@@ -69,7 +69,7 @@ struct Default_traits_for_Chull_3{
 //FT is a floating point type and Kernel is a filtered kernel
 template <class Point_3>
 struct Default_traits_for_Chull_3<Point_3,boost::true_type,Tag_true>{
-  typedef Convex_hull_traits_3< typename Kernel_traits<Point_3>::Kernel > type;
+  typedef Convex_hull_traits_3< typename Kernel_traits<Point_3>::Kernel, Tag_true > type;
 };
 
 template <class Traits>
@@ -77,9 +77,9 @@ struct Default_polyhedron_for_Chull_3{
   typedef CGAL::Polyhedron_3<Traits> type;
 };
 
-template <class K>
-struct Default_polyhedron_for_Chull_3<Convex_hull_traits_3<K> >{
-  typedef typename  Convex_hull_traits_3<K>::Polyhedron_3 type;
+template <class K,class Tag>
+struct Default_polyhedron_for_Chull_3<Convex_hull_traits_3<K, Tag> >{
+  typedef typename  Convex_hull_traits_3<K, Tag>::Polyhedron_3 type;
 };
  
 //utility class to select the right version of internal predicate Is_on_positive_side_of_plane_3
@@ -129,10 +129,10 @@ public:
 //interval arithmetic (the protector must be created before using this predicate)
 //and in case of failure, exact arithmetic is used.
 template <class Kernel>
-class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel>,Tag_true>{
+class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel, Tag_true>,Tag_true>{
   typedef Simple_cartesian<CGAL::internal::Exact_field_selector<double>::Type>         PK;
   typedef Simple_cartesian<Interval_nt_advanced >                               CK;  
-  typedef Convex_hull_traits_3<Kernel>                                          Traits;
+  typedef Convex_hull_traits_3<Kernel, Tag_true>                                Traits;
   typedef typename Traits::Point_3                                              Point_3;
   
   Cartesian_converter<Kernel,CK>                        to_CK;
@@ -312,12 +312,8 @@ struct Projection_traits<T,true>{
 template <class InputIterator, class Point_3, class Polyhedron_3, class Traits>
 void coplanar_3_hull(InputIterator first, InputIterator beyond,
                      const Point_3& p1, const Point_3& p2, const Point_3& p3, 
-                     Polyhedron_3& P, const Traits& traits)
+                     Polyhedron_3& P, const Traits& /* traits */)
 {
-  typedef typename Traits::Vector_3              Vector_3;
-  typedef typename Traits::Construct_vector_3    Construct_vector_3;
-  typedef typename Traits::Orientation_3         Orientation_3;
-
   typedef typename internal::Convex_hull_3::Projection_traits<Traits> PTraits;
   typedef typename PTraits::Traits_xy_3 Traits_xy_3;
   typedef typename PTraits::Traits_yz_3 Traits_yz_3;
@@ -326,31 +322,26 @@ void coplanar_3_hull(InputIterator first, InputIterator beyond,
   std::list<Point_3> CH_2;
   typedef typename std::list<Point_3>::iterator  CH_2_iterator;
  
-  Construct_vector_3 vector_3 = traits.construct_vector_3_object();
-  Orientation_3 orientation = traits.orientation_3_object();
-  Vector_3 v1 = vector_3(p1,p2);
-  Vector_3 v2 = vector_3(p1,p3);
- 
-  Vector_3 vx = vector_3(1,0,0);
-  
- 
-
-  if ( orientation(v1, v2, vx) != COPLANAR  )
+  Traits_xy_3 traits_xy;
+  typename Traits_xy_3::Left_turn_2 left_turn_in_xy = traits_xy.left_turn_2_object();
+  if ( left_turn_in_xy(p1,p2,p3) || left_turn_in_xy(p2,p1,p3) )
      convex_hull_points_2( first, beyond,
                            std::back_inserter(CH_2),
-                           Traits_yz_3() );
+                           traits_xy );
   else{
-    Vector_3 vy = vector_3(0,1,0);
-    if ( orientation(v1,v2,vy) != COPLANAR )
+    Traits_yz_3 traits_yz;
+    typename Traits_yz_3::Left_turn_2 left_turn_in_yz = traits_yz.left_turn_2_object();
+    if ( left_turn_in_yz(p1,p2,p3) || left_turn_in_yz(p2,p1,p3) )
        convex_hull_points_2( first, beyond,
                              std::back_inserter(CH_2),
-                             Traits_xz_3() );
+                             traits_yz );
     else{
-      CGAL_assertion_code( Vector_3 vz = vector_3(0,0,1); )
-      CGAL_assertion( orientation(v1,v2,vz) != COPLANAR );
-      convex_hull_points_2( first, beyond,
-                             std::back_inserter(CH_2),
-                             Traits_xy_3() );
+      Traits_xz_3 traits_xz;
+      CGAL_assertion_code( typename Traits_xz_3::Left_turn_2 left_turn_in_xz = traits_xz.left_turn_2_object(); )
+      CGAL_assertion( left_turn_in_xz(p1,p2,p3) || left_turn_in_xz(p2,p1,p3) );
+         convex_hull_points_2( first, beyond,
+                               std::back_inserter(CH_2),
+                               traits_xz );
     }
   }
 
