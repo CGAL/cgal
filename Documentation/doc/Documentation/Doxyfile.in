@@ -101,6 +101,7 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Kinetic_data_structures/doc/Kinetic_framework/fig \
              ${CMAKE_SOURCE_DIR}/Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig \
              ${CMAKE_SOURCE_DIR}/Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig \
+             ${CMAKE_SOURCE_DIR}/Scale_space_reconstruction_3/doc/Scale_space_reconstruction_3/fig \
              ${CMAKE_SOURCE_DIR}/Spatial_searching/doc/Spatial_searching/fig \
              ${CMAKE_SOURCE_DIR}/Spatial_sorting/doc/Spatial_sorting/fig \
              ${CMAKE_SOURCE_DIR}/Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig \

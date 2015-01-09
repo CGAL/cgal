@@ -1,0 +1,9 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME		=  "CGAL ${CGAL_CREATED_VERSION_NUM} - Scale-Space Surface Reconstruction"
+
+INPUT   		=  ${CMAKE_SOURCE_DIR}/Scale_space_reconstruction_3/
+
+EXTRACT_ALL		=  NO
+HIDE_UNDOC_CLASSES	=  YES
+HIDE_UNDOC_MEMBERS	=  YES

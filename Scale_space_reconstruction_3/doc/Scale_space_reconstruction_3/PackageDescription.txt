@@ -1,0 +1,39 @@
+/// \defgroup PkgScaleSpaceReconstruction3 Scale-Space Surface Reconstruction Reference
+
+/// \defgroup PkgScaleSpaceReconstruction3Concepts Concepts
+/// \ingroup PkgScaleSpaceReconstruction3
+
+/// \defgroup PkgScaleSpaceReconstruction3Classes Classes
+/// \ingroup PkgScaleSpaceReconstruction3
+
+
+/*!
+\addtogroup PkgScaleSpaceReconstruction3
+\cgalPkgDescriptionBegin{Scale-Space Surface Reconstruction,PkgScaleSpaceReconstruction3Summary}
+\cgalPkgPicture{knot_thumb.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Thijs van Lankveld}
+\cgalPkgDesc{This method allows to reconstruct a surface that interpolates a set of 3D points. This method provides an efficient alternative to the Poisson surface reconstruction method. The main difference in output is that this method reconstructs a surface that interpolates the point set (as opposed to approximating the point set). How the surface connects the points depends on a scale variable, which can be estimated semi-automatically.}
+\cgalPkgManuals{Chapter_Scale_space_reconstruction,PkgScaleSpaceReconstruction3}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.6}
+\cgalPkgBib{cgal:ssr3}
+\cgalPkgLicense{\ref licensesGPL "GPL" }
+\cgalPkgDependsOn{\ref PkgAlphaShapes3Summary, \ref PkgSpatialSearchingDSummary, eigenvector solver such as \ref thirdpartyEigen 3.1.2 (or greater)}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+
+- `WeightedApproximation_3`
+
+## Classes ##
+
+- `CGAL::Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>`
+- `CGAL::Weighted_PCA_approximation_3<Kernel>`
+
+*/
+
