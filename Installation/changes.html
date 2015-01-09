@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- $Id$
      $URL$
 -->
@@ -146,7 +146,9 @@ and <code>src/</code> directories).
             caused the kd-tree to get linear.
         </li>
         <li>
-            Improved performance of <code>orthogonal_k_neighbor_search</code>.
+            Improved performance of <code>Orthogonal_k_neighbor_search</code>.
+            Note that VC 2013 does not compile boost::container::deque of Boost 1_55
+            and does hence have a workaround which does not have the improvement.
         </li>
         <li>
             <b>Breaking change:</b> The concept <code>OrthogonalDistance</code> has

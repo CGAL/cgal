@@ -162,10 +162,9 @@ namespace CGAL {
         
         if (search_nearest){ 
 	  distance_to_root=
-	    Orthogonal_distance_instance.min_distance_to_rectangle(q,
-								    tree.bounding_box(),dists);
+	    Orthogonal_distance_instance.min_distance_to_rectangle(q, tree.bounding_box(),dists);
           Node_with_distance *The_Root = new Node_with_distance(tree.root(),
-							        distance_to_root,dists);
+							        distance_to_root, dists);
           PriorityQueue.push(The_Root);
 
           // rd is the distance of the top of the priority queue to q
@@ -177,7 +176,7 @@ namespace CGAL {
    	 Orthogonal_distance_instance.max_distance_to_rectangle(q,
 						tree.bounding_box());
            Node_with_distance *The_Root = new Node_with_distance(tree.root(),
-							      distance_to_root,dists);
+                                                                 distance_to_root, dists);
         PriorityQueue.push(The_Root);
 
         // rd is the distance of the top of the priority queue to q
@@ -293,7 +292,7 @@ namespace CGAL {
 	      CGAL_assertion(new_rd >= copy_rd);
                 dists[new_cut_dim] = diff1;
                 Node_with_distance *Upper_Child =
-		  new Node_with_distance(node->upper(), new_rd,dists);
+		  new Node_with_distance(node->upper(), new_rd, dists);
 		PriorityQueue.push(Upper_Child);
                 dists[new_cut_dim] = dst;
 		N=node->lower();
@@ -304,7 +303,7 @@ namespace CGAL {
 	      CGAL_assertion(new_rd >= copy_rd);
                 dists[new_cut_dim] = diff2;
 		Node_with_distance *Lower_Child =
-		  new Node_with_distance(node->lower(), new_rd,dists);
+		  new Node_with_distance(node->lower(), new_rd, dists);
 		PriorityQueue.push(Lower_Child);
                 dists[new_cut_dim] = dst;
 		N=node->upper();
@@ -378,7 +377,7 @@ namespace CGAL {
                 
 	      CGAL_assertion(new_rd >= copy_rd);
 		Node_with_distance *Lower_Child =
-		  new Node_with_distance(node->lower(), copy_rd,dists);
+		  new Node_with_distance(node->lower(), copy_rd, dists);
 		PriorityQueue.push(Lower_Child);
 		N=node->upper();
                 dists[new_cut_dim] = diff1;
@@ -389,7 +388,7 @@ namespace CGAL {
 	      new_rd=Orthogonal_distance_instance.new_distance(copy_rd,dst,diff2,new_cut_dim);  
 	      CGAL_assertion(new_rd >= copy_rd);
 		Node_with_distance *Upper_Child =
-		  new Node_with_distance(node->upper(), copy_rd);
+		  new Node_with_distance(node->upper(), copy_rd, dists);
 		PriorityQueue.push(Upper_Child);
 		N=node->lower();
                 dists[new_cut_dim] = diff2;

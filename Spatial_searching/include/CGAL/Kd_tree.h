@@ -76,8 +76,16 @@ public:
 private:
   SearchTraits traits_;
   Splitter split;
+
+
+  // wokaround for https://svn.boost.org/trac/boost/ticket/9332
+#if   (_MSC_VER == 1800) && (BOOST_VERSION == 105500)
+  std::deque<Internal_node> internal_nodes;
+  std::deque<Leaf_node> leaf_nodes;
+#else
   boost::container::deque<Internal_node> internal_nodes;
   boost::container::deque<Leaf_node> leaf_nodes;
+#endif
 
   Node_handle tree_root;
 
