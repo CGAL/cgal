@@ -655,9 +655,9 @@ private:
     }
 
     // tries to perform a functor in parallel.
-    template< class F > void try_parallel( const F& func, size_t begin, size_t end, Sequential_tag ) const;
-    template< class F > void try_parallel( const F& func, size_t begin, size_t end, Parallel_tag ) const;
-    template< class F > void try_parallel( const F& func, size_t begin, size_t end ) const { try_parallel( func, begin, end, Ct() );}
+    template< class F > void try_parallel( const F& func, std::size_t begin, std::size_t end, Sequential_tag ) const;
+    template< class F > void try_parallel( const F& func, std::size_t begin, std::size_t end, Parallel_tag ) const;
+    template< class F > void try_parallel( const F& func, std::size_t begin, std::size_t end ) const { try_parallel( func, begin, end, Ct() );}
     
 private:
 /// \name Shape

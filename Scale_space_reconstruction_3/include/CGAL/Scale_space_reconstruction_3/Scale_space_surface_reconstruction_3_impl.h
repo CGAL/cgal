@@ -95,7 +95,7 @@ public:
     
 #ifdef CGAL_LINKED_WITH_TBB
     void operator()( const tbb::blocked_range< std::size_t >& range ) const {
-        for( size_t i = range.begin(); i != range.end(); ++i )
+        for( std::size_t i = range.begin(); i != range.end(); ++i )
             (*this)( i );
     }
 #endif // CGAL_LINKED_WITH_TBB
@@ -118,7 +118,7 @@ AdvanceSS {
 public:
     typedef std::vector< Point >            Pointset;
     typedef std::vector< unsigned int >	    CountVec;
-    typedef std::map< Point, size_t >       PIMap;
+    typedef std::map< Point, std::size_t >       PIMap;
 
 private:
     const Search_tree&  _tree;
@@ -133,7 +133,7 @@ public:
     
 #ifdef CGAL_LINKED_WITH_TBB
     void operator()( const tbb::blocked_range< std::size_t >& range ) const {
-        for( size_t i = range.begin(); i != range.end(); ++i )
+        for( std::size_t i = range.begin(); i != range.end(); ++i )
             (*this)( i );
     }
 #endif // CGAL_LINKED_WITH_TBB
@@ -392,11 +392,9 @@ void
 Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 increase_scale( unsigned int iterations ) {
     typedef std::vector< unsigned int >		CountVec;
-    typedef std::map<Point, size_t>			PIMap;
+    typedef std::map<Point, std::size_t>			PIMap;
     typedef std::vector<Point>              Pointset;
 
-    typedef internal::_ENVIRONMENT::s_ptr_type			p_size_t;
-		
     // This method must be called after filling the point collection.
     if( iterations == 0 || _tree.empty() ) return;
         
@@ -419,7 +417,7 @@ increase_scale( unsigned int iterations ) {
 
         // Construct a mapping from each point to its index.
         PIMap indices;
-        p_size_t index = 0;
+        std::size_t index = 0;
         for( typename Pointset::const_iterator pit = points.begin(); pit != points.end(); ++pit, ++index)
             indices[ *pit ] = index;
 
@@ -437,7 +435,7 @@ template < class Gt, class FS, class Sh, class wA, class Ct >
 template< class F >
 void
 Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
-try_parallel( const F& func, size_t begin, size_t end, Sequential_tag ) const {
+try_parallel( const F& func, std::size_t begin, std::size_t end, Sequential_tag ) const {
     for( std::size_t i = begin; i < end; ++i ) func( i );
 }
     
@@ -445,7 +443,7 @@ template < class Gt, class FS, class Sh, class wA, class Ct >
 template< class F >
 void
 Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
-try_parallel( const F& func, size_t begin, size_t end, Parallel_tag ) const {
+try_parallel( const F& func, std::size_t begin, std::size_t end, Parallel_tag ) const {
 #ifdef CGAL_LINKED_WITH_TBB
     tbb::parallel_for( tbb::blocked_range< std::size_t >( begin, end ), func );
 #else // CGAL_LINKED_WITH_TBB
