@@ -69,7 +69,7 @@ struct Default_traits_for_Chull_3{
 //FT is a floating point type and Kernel is a filtered kernel
 template <class Point_3>
 struct Default_traits_for_Chull_3<Point_3,boost::true_type,Tag_true>{
-  typedef Convex_hull_traits_3< typename Kernel_traits<Point_3>::Kernel > type;
+  typedef Convex_hull_traits_3< typename Kernel_traits<Point_3>::Kernel, Tag_true > type;
 };
 
 template <class Traits>
@@ -77,9 +77,9 @@ struct Default_polyhedron_for_Chull_3{
   typedef CGAL::Polyhedron_3<Traits> type;
 };
 
-template <class K>
-struct Default_polyhedron_for_Chull_3<Convex_hull_traits_3<K> >{
-  typedef typename  Convex_hull_traits_3<K>::Polyhedron_3 type;
+template <class K,class Tag>
+struct Default_polyhedron_for_Chull_3<Convex_hull_traits_3<K, Tag> >{
+  typedef typename  Convex_hull_traits_3<K, Tag>::Polyhedron_3 type;
 };
  
 //utility class to select the right version of internal predicate Is_on_positive_side_of_plane_3
@@ -129,10 +129,10 @@ public:
 //interval arithmetic (the protector must be created before using this predicate)
 //and in case of failure, exact arithmetic is used.
 template <class Kernel>
-class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel>,Tag_true>{
+class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel, Tag_true>,Tag_true>{
   typedef Simple_cartesian<CGAL::internal::Exact_field_selector<double>::Type>         PK;
   typedef Simple_cartesian<Interval_nt_advanced >                               CK;  
-  typedef Convex_hull_traits_3<Kernel>                                          Traits;
+  typedef Convex_hull_traits_3<Kernel, Tag_true>                                Traits;
   typedef typename Traits::Point_3                                              Point_3;
   
   Cartesian_converter<Kernel,CK>                        to_CK;
