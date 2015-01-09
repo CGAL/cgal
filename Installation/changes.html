@@ -120,10 +120,12 @@ and <code>src/</code> directories).
 <!-- New packages -->
   <h3>2D Generalized Barycentric Coordinates (new package)</h3>
   <ul>
-    <li> This package offers an efficient and robust implementation of two-dimensional closed-form generalized barycentric coordinates defined for simple two-dimensional polygons.</li>
+    <li>  This package offers an efficient and robust implementation of
+          two-dimensional closed-form generalized barycentric coordinates
+          defined for simple two-dimensional polygons.</li>
   </ul>
 
-  <h3>Triangulation</h3>
+  <h3>Triangulation (new package)</h3>
   <ul>
     <li>This new package provides classes for manipulating triangulations
         in Euclidean spaces whose dimension can be specified at compile-time or at run-time.</li>
@@ -131,16 +133,6 @@ and <code>src/</code> directories).
 <!-- Major and breaking changes -->
 <!-- Arithmetic and Algebra -->
 <!-- Combinatorial Algorithms -->
-  <h3>Combinatorial Maps and Linear Cell Complex</h3>
-  <ul>
-    <li>Added <code>correct_invalid_attributes</code>,
-      <code>set_automatic_attributes_management</code> and
-      <code>are_attributes_automatically_managed</code> methods in 
-      <code>CombinatorialMap</code> concept. This allows high level
-      operations to not update non void attributes during massive calls
-      of these operations, but only after the end of their executions.
-    </li>
-  </ul>
 <!-- Geometry Kernels -->
   <h3>dD Geometry Kernel</h3>
   <ul>
@@ -157,6 +149,16 @@ and <code>src/</code> directories).
   </ul>
 <!-- Polygons -->
 <!-- Cell Complexes and Polyhedra -->
+  <h3>Combinatorial Maps and Linear Cell Complex</h3>
+  <ul>
+    <li>Added <code>correct_invalid_attributes</code>,
+      <code>set_automatic_attributes_management</code> and
+      <code>are_attributes_automatically_managed</code> methods in 
+      <code>CombinatorialMap</code> concept. This allows high level
+      operations to not update non void attributes during massive calls
+      of these operations, but only after the end of their executions.
+    </li>
+  </ul>
 <!-- Arrangements -->
 <!-- Triangulations and Delaunay Triangulations -->
 <!-- Voronoi Diagrams -->
@@ -181,14 +183,16 @@ and <code>src/</code> directories).
 <!-- Support Library -->
   <h3>Geometric Object Generators</h3>
   <ul>
-    <li>Add a new function  <code>random_convex_hull_in_disc_2</code> that generates efficiently a random polygon as the convex hull of uniform random points chosen in a disc.</li>
+    <li>Add a new function  <code>random_convex_hull_in_disc_2</code> that
+        efficiently generates a random polygon as the convex hull of uniform random
+        points chosen in a disc.</li>
   </ul>
 <!-- end of the div for 4.6 -->
 </div>
 
 <h2 id="release4.5.1">Release 4.5.1 </h2>
 <div>
-  <p>Release date: XX 2014 </p>
+  <p>Release date: December 2014 </p>
 
   <h3>3D Mesh Generation</h3>
   <ul>
