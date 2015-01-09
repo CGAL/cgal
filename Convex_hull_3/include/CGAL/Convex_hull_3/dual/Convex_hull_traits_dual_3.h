@@ -61,7 +61,6 @@ namespace CGAL
           typedef Plane_dual<R>               Plane_3;
           typedef Segment_dual<R>             Segment_3;
           typedef Plane_dual<R>               Triangle_3;
-          typedef Vector_dual<R>              Vector_3;
 
           // Traits used by convex_hull_2
           typedef typename CGAL::Convex_hull_3::Traits_xy_dual<R> Traits_xy_3;
@@ -89,26 +88,6 @@ namespace CGAL
               }
           };
 
-          // Vector_3
-          class Construct_vector_3 {
-            public:
-                Vector_3 operator ()(const Point_3& p,
-                                     const Point_3& q)
-              {
-                return Vector_3(p, q);
-              }
-
-              Vector_3 operator ()(int x,
-                                   int y,
-                                   int z)
-              {
-                  Point_3 p(0, 0, 0, -1);
-                  Point_3 q(x, y, z, -1);
-
-                  return Vector_3(p, q);
-              }
-          };
-
           // Plane_3
           class Construct_plane_3 {
               public:
@@ -127,7 +106,6 @@ namespace CGAL
           typedef Has_on_positive_side_3_dual_point<R>      Has_on_positive_side_3;
           typedef Less_distance_to_point_3_dual_point<R>    Less_distance_to_point_3;
           typedef Less_signed_distance_to_plane_3_dual_point<R> Less_signed_distance_to_plane_3;
-          typedef Orientation_3_dual_point<R> Orientation_3;
 
           Construct_segment_3
               construct_segment_3_object() const
@@ -140,10 +118,6 @@ namespace CGAL
           Construct_triangle_3
               construct_triangle_3_object() const
               { return Construct_triangle_3(); }
-
-          Construct_vector_3
-              construct_vector_3_object() const
-              { return Construct_vector_3(); }
 
           Collinear_3
               collinear_3_object() const
@@ -169,9 +143,6 @@ namespace CGAL
               less_signed_distance_to_plane_3_object() const
               { return Less_signed_distance_to_plane_3(origin); }
 
-          Orientation_3
-              orientation_3_object() const
-              { return Orientation_3(origin); }
       };
 
     // Non-filtered traits class
@@ -188,7 +159,7 @@ namespace CGAL
                 {}
         } ;
 
-    // Converter for dual planes and dual vectors
+    // Converter for dual planes
     template <class K1, class K2>
         struct Cartesian_converter_dual : public Cartesian_converter<K1, K2>
     {
@@ -199,12 +170,6 @@ namespace CGAL
             return Plane_dual<K2>(operator()(in.p1),
                                   operator()(in.p2),
                                   operator()(in.p3));
-        }
-
-        Vector_dual<K2> operator() (const Vector_dual<K1> &in) const
-        {
-            return Vector_dual<K2>(operator()(in.p),
-                                   operator()(in.q));
         }
     };
 
@@ -274,12 +239,6 @@ namespace CGAL
                     Converter_exact_dual,
                     Converter_approx_dual > Less_signed_distance_to_plane_3;
 
-                typedef Filtered_predicate<
-                    typename Exact_traits::Orientation_3,
-                    typename Filtering_traits::Orientation_3,
-                    Converter_exact_dual,
-                    Converter_approx_dual > Orientation_3;
-
                 Collinear_3 collinear_3_object() const
                 { return Collinear_3(origin); }
 
@@ -298,10 +257,6 @@ namespace CGAL
                 Less_signed_distance_to_plane_3
                 less_signed_distance_to_plane_3_object() const
                 { return Less_signed_distance_to_plane_3(origin); }
-
-                Orientation_3
-                orientation_3_object() const
-                { return Orientation_3(origin); }
 
                 // Constructions are inherited
         };
