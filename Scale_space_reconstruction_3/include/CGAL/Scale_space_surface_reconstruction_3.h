@@ -880,6 +880,6 @@ operator>>( std::istream& is, CGAL::cpp11::array< T, 3 >& t ) {
     return is >> get<0>(t) >> get<1>(t) >> get<2>(t);
 }
 
-#include <CGAL/Scale_space_surface_reconstruction_3_impl.h>
+#include <CGAL/Scale_space_reconstruction_3/Scale_space_surface_reconstruction_3_impl.h>
 
 #endif // CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_H
