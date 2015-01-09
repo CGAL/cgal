@@ -22,7 +22,7 @@
 #define  CGAL_K_NEIGHBOR_SEARCH_H
 
 #include <CGAL/internal/K_neighbor_search.h>
-#include <boost/mpl/has_xxx.hpp>
+#include <CGAL/internal/Get_dimension_tag.h>
 
 
 
@@ -31,25 +31,6 @@ namespace CGAL {
 	template <class SearchTraits, class Distance,class Splitter,class Tree>
 class K_neighbor_search;
 
-namespace internal{
-	 #ifndef HAS_DIMENSION_TAG
-	 #define HAS_DIMENSION_TAG
-	 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_dimension,Dimension,false)
-	 #endif
-
-	template <class SearchTraits, bool has_dim = has_dimension<SearchTraits>::value>
-  struct K_neighbor_search_base;
-
-  template <class SearchTraits>
-  struct K_neighbor_search_base<SearchTraits,true>{
-	  typedef typename SearchTraits::Dimension Dimension;
-  };
-
-  template <class SearchTraits>
-  struct K_neighbor_search_base<SearchTraits,false>{
-	  typedef Dynamic_dimension_tag Dimension;
-  };
-}//internal
 template <class SearchTraits, 
           class Distance= typename internal::Spatial_searching_default_distance<SearchTraits>::type,
           class Splitter= Sliding_midpoint<SearchTraits> ,
@@ -59,7 +40,7 @@ class K_neighbor_search: public internal::K_neighbor_search<SearchTraits,Distanc
   
 public:
   typedef typename Base::FT FT;  
-  typedef typename internal::K_neighbor_search_base<SearchTraits>::Dimension D;
+  typedef typename internal::Get_dimension_tag<SearchTraits>::Dimension D;
 
   K_neighbor_search(const Tree& tree, const typename Base::Query_item& q,  
     unsigned int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance(),bool sorted=true)

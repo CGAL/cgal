@@ -24,29 +24,9 @@
 
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/Dimension.h>
+#include <CGAL/internal/Get_dimension_tag.h>
 
 namespace CGAL {
-
-  namespace internal{
-	    #ifndef HAS_DIMENSION_TAG
-		#define HAS_DIMENSION_TAG
-		BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_dimension,Dimension,false)
-	    #endif
-
-	  template <class SearchTraits, bool has_dim = has_dimension<SearchTraits>::value>
-	  struct Euclidean_distance_sphere_point_base;
-
-	  template <class SearchTraits>
-	  struct Euclidean_distance_sphere_point_base<SearchTraits,true>{
-		  typedef typename SearchTraits::Dimension Dimension;
-	  };
-
-	  template <class SearchTraits>
-	  struct Euclidean_distance_sphere_point_base<SearchTraits,false>{
-		  typedef Dynamic_dimension_tag Dimension;
-	  };
-   }
 
   template <class SearchTraits>
   class Euclidean_distance_sphere_point {
@@ -64,7 +44,7 @@ namespace CGAL {
     typedef typename SearchTraits::Construct_cartesian_const_iterator_d Construct_cartesian_const_iterator_d;
     typedef typename SearchTraits::Cartesian_const_iterator_d Cartesian_const_iterator_d;
     typedef Sphere_d Query_item;   
-    typedef typename internal::Euclidean_distance_sphere_point_base<SearchTraits>::Dimension Dimension;
+    typedef typename internal::Get_dimension_tag<SearchTraits>::Dimension Dimension;
     public:
 
     	// default constructor

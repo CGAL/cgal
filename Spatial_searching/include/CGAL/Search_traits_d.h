@@ -30,7 +30,7 @@ namespace CGAL {
   class Search_traits_d {
 
   public:
-	  typedef D Dimension;
+    typedef D Dimension;
     typedef typename K::Cartesian_const_iterator_d Cartesian_const_iterator_d;
     typedef typename K::Construct_cartesian_const_iterator_d Construct_cartesian_const_iterator_d;
     typedef typename K::Construct_iso_box_d Construct_iso_box_d;

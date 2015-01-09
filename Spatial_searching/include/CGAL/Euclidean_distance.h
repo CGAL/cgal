@@ -24,8 +24,7 @@
 
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/Dimension.h>
-#include <boost/mpl/has_xxx.hpp>
+#include <CGAL/internal/Get_dimension_tag.h>
 
 
 namespace CGAL {
@@ -35,25 +34,6 @@ namespace CGAL {
 
     
   namespace internal{
-	    #ifndef HAS_DIMENSION_TAG
-		#define HAS_DIMENSION_TAG
-		BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_dimension,Dimension,false)
-		#endif
-
-	  template <class SearchTraits, bool has_dim = has_dimension<SearchTraits>::value>
-	  struct Euclidean_distance_base;
-
-	  template <class SearchTraits>
-	  struct Euclidean_distance_base<SearchTraits,true>{
-		  typedef typename SearchTraits::Dimension Dimension;
-	  };
-
-	  template <class SearchTraits>
-	  struct Euclidean_distance_base<SearchTraits,false>{
-		  typedef Dynamic_dimension_tag Dimension;
-	  };
-
-
     template <class SearchTraits>
     struct Spatial_searching_default_distance{
       typedef ::CGAL::Euclidean_distance<SearchTraits> type;
@@ -71,7 +51,7 @@ namespace CGAL {
     typedef typename SearchTraits::Point_d Point_d;
     typedef Point_d Query_item;
 
-    typedef typename internal::Euclidean_distance_base<SearchTraits>::Dimension D;
+    typedef typename internal::Get_dimension_tag<SearchTraits>::Dimension D;
 	
 
     // default constructor

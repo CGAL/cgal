@@ -28,9 +28,10 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/Kd_tree_node.h>
 #include <CGAL/Splitters.h>
-#include <deque>
-#include <boost/mpl/has_xxx.hpp>
 #include <CGAL/Memory_sizer.h>
+#include <CGAL/internal/Get_dimension_tag.h>
+
+#include <deque>
 #include <boost/container/deque.hpp>
 
 #ifdef CGAL_HAS_THREADS
@@ -39,31 +40,7 @@
 
 namespace CGAL {
 
-
-	template <class SearchTraits, class Splitter_, class UseExtendedNode >
-class Kd_tree;
-
-	namespace internal{
-		#ifndef HAS_DIMENSION_TAG
-		#define HAS_DIMENSION_TAG
-		BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_dimension,Dimension,false)
-		#endif
-
-	 template <class SearchTraits, bool has_dim = has_dimension<SearchTraits>::value>
-	  struct Kd_tree_base;
-
-	  template <class SearchTraits>
-	  struct Kd_tree_base<SearchTraits,true>{
-		  typedef typename SearchTraits::Dimension Dimension;
-	  };
-
-	  template <class SearchTraits>
-	  struct Kd_tree_base<SearchTraits,false>{
-		  typedef Dynamic_dimension_tag Dimension;
-	  };
-	}
-
-  //template <class SearchTraits, class Splitter_=Median_of_rectangle<SearchTraits>, class UseExtendedNode = Tag_true >
+//template <class SearchTraits, class Splitter_=Median_of_rectangle<SearchTraits>, class UseExtendedNode = Tag_true >
 template <class SearchTraits, class Splitter_=Sliding_midpoint<SearchTraits>, class UseExtendedNode = Tag_true >
 class Kd_tree {
 
@@ -94,9 +71,7 @@ public:
 
   typedef typename std::vector<Point_d>::size_type size_type;
 
-  
-
-  typedef typename internal::Kd_tree_base<SearchTraits>::Dimension D;
+  typedef typename internal::Get_dimension_tag<SearchTraits>::Dimension D;
 
 private:
   SearchTraits traits_;
