@@ -298,7 +298,7 @@ public:
     const Vertex_handle hint)
   {
     CGAL_assertion( Vertex_handle() != hint );
-    return insert_if_in_star(p, hint->full_cell());
+    return insert_if_in_star(p, star_center, hint->full_cell());
   }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - GATHERING CONFLICTING SIMPLICES
