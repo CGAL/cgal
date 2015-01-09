@@ -146,6 +146,11 @@ and <code>src/</code> directories).
     <li>Add functions <code>halfspace_intersection_3</code> and
         <code>halfspace_intersection_with_constructions_3</code> to compute
         the intersection of halfspaces defining a closed polyhedron.</li>
+    <li>Fix a bug introduced in CGAL 4.5 that can appear while computing
+        the convex hull of coplanar points.</li>
+    <li>Fix a robustness issue in <code>Convex_hull_traits_3</code>.
+        This traits is used by default with the kernel
+        <code>Exact_predicates_inexact_constructions_kernel</code>.</li>
   </ul>
 <!-- Polygons -->
 <!-- Cell Complexes and Polyhedra -->
