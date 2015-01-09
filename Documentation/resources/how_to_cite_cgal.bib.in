@@ -866,3 +866,13 @@
 , url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgBarycentric_coordinates_2Summary"
 , year =        ${CGAL_BUILD_YEAR4}
 }
+
+@incollection{cgal:hdj-t-${CGAL_RELEASE_YEAR_ID}
+, author =  "Samuel Hornus and Olivier Devillers and Clément Jamin"
+, title =   "Triangulations"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgTriangulationsSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}

@@ -23,7 +23,7 @@ insertion are supported. The Delaunay triangulation also supports point removal.
 \cgalPkgManuals{Chapter_Triangulations,PkgTriangulations}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.5}
+\cgalPkgSince{4.6}
 \cgalPkgBib{cgal:hd-t}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
