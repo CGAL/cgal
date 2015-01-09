@@ -24,7 +24,6 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Weighted_point.h>
 #include <CGAL/representation_tags.h>
-#include <CGAL/Kernel_traits.h>
 
 #include <boost/iterator/transform_iterator.hpp>
 
