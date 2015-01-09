@@ -1,4 +1,3 @@
-//A method to construct a surface.
 //Copyright (C) 2014  INRIA - Sophia Antipolis
 //
 //This program is free software: you can redistribute it and/or modify
