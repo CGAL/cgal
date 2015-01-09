@@ -142,7 +142,7 @@
 }
 
 @incollection{cgal:cpt-cgk2-${CGAL_RELEASE_YEAR_ID}
-, author =  "Pedro Machado Manh\~{a}es de Castro and Sylvain Pion and Monique Teillaud"
+, author =  "Pedro Machado Manh{\~a}es de Castro and Sylvain Pion and Monique Teillaud"
 , title =   "{2D} Circular Geometry Kernel"
 , publisher =  "{CGAL Editorial Board}"
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
@@ -152,7 +152,7 @@
 }
 
 @incollection{cgal:cclt-sgk3-${CGAL_RELEASE_YEAR_ID}
-, author =  "Pedro Machado Manh\~{a}es de Castro and Fr{\'e}d{\'e}ric Cazals and S{\'e}bastien Loriot and Monique Teillaud"
+, author =  "Pedro Machado Manh{\~a}es de Castro and Fr{\'e}d{\'e}ric Cazals and S{\'e}bastien Loriot and Monique Teillaud"
 , title =   "{3D} Spherical Geometry Kernel"
 , publisher =  "{CGAL Editorial Board}"
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
@@ -711,7 +711,7 @@
 
 @incollection{cgal:atw-aabb-${CGAL_RELEASE_YEAR_ID}
 , author =  "Pierre Alliez and St\'ephane Tayeb and Camille Wormser"
-, title =   "3D Fast Intersection and Distance Computation (AABB Tree)"
+, title =   "{3D} Fast Intersection and Distance Computation (AABB Tree)"
 , publisher =  "{CGAL Editorial Board}"
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
 , booktitle =   "{CGAL} User and Reference Manual"
