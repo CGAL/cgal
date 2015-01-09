@@ -1,1 +1,0 @@
-del *.vcproj* *.user *.cmake ZERO* *.ncb *.sln *.suo CMakeCache.txt /Q
