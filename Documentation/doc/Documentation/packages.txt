@@ -125,6 +125,7 @@ h1 {
 \section PartInterpolation Interpolation
 
 \package_listing{Interpolation}
+\package_listing{Barycentric_coordinates_2}
 
 \section PartKineticDataStructures Kinetic Data Structures
 

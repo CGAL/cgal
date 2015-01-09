@@ -50,6 +50,8 @@ struct Projector<R,0>
   
   static typename R::FT x(const typename R::Point_3& p) {return p.y();}
   static typename R::FT y(const typename R::Point_3& p) {return p.z();}
+  static typename R::FT x(const typename R::Vector_3& p) {return p.y();}
+  static typename R::FT y(const typename R::Vector_3& p) {return p.z();}
   static const int x_index=1;
   static const int y_index=2;
 };
@@ -65,6 +67,8 @@ struct Projector<R,1>
   typedef typename R::Equal_z_3               Equal_y_2;    
   static typename R::FT x(const typename R::Point_3& p) {return p.x();}
   static typename R::FT y(const typename R::Point_3& p) {return p.z();}
+  static typename R::FT x(const typename R::Vector_3& p) {return p.x();}
+  static typename R::FT y(const typename R::Vector_3& p) {return p.z();}
   static const int x_index=0;
   static const int y_index=2;  
 };
@@ -81,6 +85,8 @@ struct Projector<R,2>
   typedef typename R::Equal_y_3               Equal_y_2;    
   static typename R::FT x(const typename R::Point_3& p) {return p.x();}
   static typename R::FT y(const typename R::Point_3& p) {return p.y();}
+  static typename R::FT x(const typename R::Vector_3& p) {return p.x();}
+  static typename R::FT y(const typename R::Vector_3& p) {return p.y();}
   static const int x_index=0;
   static const int y_index=1;  
 };
@@ -180,6 +186,30 @@ public:
     Point_2 q2 = project(q);
     Point_2 r2 = project(r);
     return compare_distance_to_point(p2,q2,r2);
+  }
+};
+
+template <class R,int dim>
+class Collinear_are_ordered_along_line_projected_3
+{
+public:
+  typedef typename R::Point_3   Point_3;
+  typedef typename R::Point_2   Point_2;
+  typedef typename R::FT        FT;
+  FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
+  FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
+
+  Point_2 project(const Point_3& p) const
+  {
+    return Point_2(x(p),y(p));
+  }
+
+  bool operator()(const Point_3& p,const Point_3& q,const Point_3& r) const
+  {
+    Point_2 p2 = project(p);
+    Point_2 q2 = project(q);
+    Point_2 r2 = project(r);
+    return collinear_are_ordered_along_line(p2,q2,r2);
   }
 };
 
@@ -408,6 +438,39 @@ public:
   }
 };
 
+template <class R,int dim>
+class Compute_scalar_product_projected_3
+{
+public:
+  typedef typename R::Vector_3    Vector_3;
+  typedef typename R::FT          FT;
+  FT x(const Vector_3 &v) const { return Projector<R,dim>::x(v); }
+  FT y(const Vector_3 &v) const { return Projector<R,dim>::y(v); }
+
+  FT operator()(const Vector_3& v1, const Vector_3& v2) const
+  {
+    return x(v1)*x(v2) + y(v1)*y(v2);
+  }
+};
+
+template <class R,int dim>
+class Compute_squared_length_projected_3
+{
+  typedef typename R::Vector_3    Vector_3;
+  typedef typename R::FT          FT;
+
+  typedef FT result_type;
+
+  FT x(const Vector_3 &v) const { return Projector<R,dim>::x(v); }
+  FT y(const Vector_3 &v) const { return Projector<R,dim>::y(v); }
+
+public:
+  FT operator()(const Vector_3& v) const
+  {
+    return CGAL::square(x(v)) + CGAL::square(y(v));
+  }
+};
+
 template <class R, int dim>
 struct Angle_projected_3{
   typedef typename R::Point_3   Point_3;
@@ -449,9 +512,12 @@ public:
   typedef Less_signed_distance_to_line_projected_3<Rp,dim>    Less_signed_distance_to_line_2;
   typedef Side_of_bounded_circle_projected_3<Rp,dim>          Side_of_bounded_circle_2;
   typedef Compare_distance_projected_3<Rp,dim>                Compare_distance_2;
+  typedef Collinear_are_ordered_along_line_projected_3<Rp,dim> Collinear_are_ordered_along_line_2;
   typedef Squared_distance_projected_3<Rp,dim>                Compute_squared_distance_2;
   typedef Intersect_projected_3<Rp,dim>                       Intersect_2;
   typedef Compute_squared_radius_projected<Rp,dim>            Compute_squared_radius_2;
+  typedef Compute_scalar_product_projected_3<Rp,dim>          Compute_scalar_product_2;
+  typedef Compute_squared_length_projected_3<Rp,dim>          Compute_squared_length_2;
   typedef typename Rp::Construct_segment_3                    Construct_segment_2;
   typedef typename Rp::Construct_translated_point_3           Construct_translated_point_2;
   typedef typename Rp::Construct_midpoint_3                   Construct_midpoint_2;
@@ -505,6 +571,15 @@ public:
       
       Orientation_2 ori;
       return ori(p,q,r) == LEFT_TURN;
+    }
+  };
+
+  struct Collinear_2 {
+    typedef bool result_type;
+    bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    {
+      Orientation_2 ori;
+      return ori(p,q,r) == COLLINEAR;
     }
   };
 
@@ -627,7 +702,19 @@ public:
     
   Construct_line_2  construct_line_2_object() const
     {return Construct_line_2();}
-   
+
+  Compute_scalar_product_2 compute_scalar_product_2_object() const
+    {return Compute_scalar_product_2();}
+
+  Collinear_2 collinear_2_object() const
+    {return Collinear_2();}
+
+  Collinear_are_ordered_along_line_2 collinear_are_ordered_along_line_2_object() const
+    {return Collinear_are_ordered_along_line_2();}
+
+  Compute_squared_length_2 compute_squared_length_2_object() const
+    {return Compute_squared_length_2();}
+
 };
   
 

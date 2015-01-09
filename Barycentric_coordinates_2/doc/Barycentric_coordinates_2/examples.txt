@@ -1,0 +1,11 @@
+/*!
+
+\example Barycentric_coordinates_2/Segment_coordinates_example.cpp
+\example Barycentric_coordinates_2/Triangle_coordinates_example.cpp
+\example Barycentric_coordinates_2/Wachspress_coordinates_example.cpp
+\example Barycentric_coordinates_2/Mean_value_coordinates_example.cpp
+\example Barycentric_coordinates_2/Discrete_harmonic_coordinates_example.cpp
+\example Barycentric_coordinates_2/Terrain_height_modeling.cpp
+\example Barycentric_coordinates_2/Triangle_coordinates_speed_test.cpp
+
+*/
