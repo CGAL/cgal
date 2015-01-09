@@ -44,13 +44,6 @@ Generally, a reconstruction interpolating the original point set is desired. Thi
 The surfaces constructed from the point set at the original scale (left) and at a higher scale (right). The surface points in the right figure are reverted back to the original scale. The dashed paths shows the inward-facing shell where it does not overlap the outward-facing shell. Note how the scale-space reconstruction assumes the points on the right side of the object sample small features.
 \cgalFigureEnd
 
-The surface mesh constructed at scale \f$ s \f$ is non-self-intersecting. The interiors of any two triangles cannot pairwise intersect in a line segment. However, the surface does not need to be manifold. An edge may be incident to more than two triangles and triangles may overlap exactly if large regions on both sides of the triangle are empty of points. Note that we count overlapping triangles with opposite orientations as separate triangles. In many cases where the points sample the surface of an object, the computed surface will contain both an <em>outward-facing</em> and a similar <em>inward-facing</em> surface, with a thin volume between them.
-
-The surface mesh will not have edges incident to only one triangle or holes, loops of such edges, and the triangles are all oriented away from the point set. If the point set has <em>holes</em>, it is likely that the surface mesh will contain overlapping triangles with opposite orientation touching this hole.
-
-If the object is not densely sampled or has disconnected components, the reconstructed surface may have several disconnected components. The surface may be presented as an unordered collection of triangles, or as the same collection sorted per \em shell. A shell is a collection of connected triangles that are locally oriented towards the same side of the surface.
-
-When reverted to the original scale, we cannot guarantee the surface is a valid embedding, because the triangles of this surface may pairwise intersect in their interior. It may also have boundary edges, although these will always be incident to two surface triangles oriented in opposite directions. However, when using appropriate parameter settings for the number of iterations and neighborhood size the surface will generally not self-intersect. The appropriate parameter settings depend on the geometry of the point set and generally need to be fine-tuned per data set, as described later.
 
 Both the smoothing operator and the mesh reconstruction assume that points near each other belong to the same part of the object. This is expressed in the notion of balls with a fixed size, the neighborhood radius. If such a ball contains multiple points, these points are \em near each other and will influence each other while increasing the scale. If such a ball is empty, it lies outside the object. Note that \em outside is based on regions empty of points, not on whether a volume is enclosed by the surface.
 
@@ -79,6 +72,16 @@ The radius estimation is based on a number of sample points. This number of samp
 The scale-space method tries to make the surface reconstruction problem less ill-posed by increasing the scale to an appropriately coarse scale. At this coarse scale the point set samples a smoothed surface, which is easier to reconstruct. The number of scale increase iterations determines how much this surface is smoothed.
 
 The number of iterations is related to the noise in the point set, the acuteness of surface features, and the thickness of the object. Point sets with a lot of noise and objects with sharp or small features will require more iterations. At the same time, processing too many iterations can degenerate a volume into a plane. These degeneracies may cause the reconstructed surface to connect points on opposite sides of the object. Generally, 4 iterations of increasing the scale are appropriate.
+
+\subsection ScaleSpaceReconstruction3secOutput Output Surface
+
+The surface mesh constructed at scale \f$ s \f$ is non-self-intersecting. The interiors of any two triangles cannot pairwise intersect in a line segment. However, the surface does not need to be 2-manifold. An edge may be incident to more than two triangles and triangles may overlap exactly if large regions on both sides of the triangle are empty of points. Note that we count overlapping triangles with opposite orientations as separate triangles. In many cases where the points sample the surface of an object, the computed surface will contain both an <em>outward-facing</em> and a similar <em>inward-facing</em> surface, with a thin volume between them.
+
+The surface mesh will not have edges incident to only one triangle or holes, loops of such edges, and the triangles are all oriented away from the point set. If the point set has <em>holes</em>, it is likely that the surface mesh will contain overlapping triangles with opposite orientation touching this hole.
+
+If the object is not densely sampled or has disconnected components, the reconstructed surface may have several disconnected components. The surface is either an unordered collection of triangles, or the same collection sorted per \em shell. A shell is a collection of connected triangles that are locally oriented towards the same side of the surface.
+
+When reverted to the original scale, we cannot guarantee the surface is a valid embedding, because the triangles of this surface may pairwise intersect in their interior. It may also have boundary edges, although these will always be incident to two surface triangles oriented in opposite directions. However, when using appropriate parameter settings for the number of iterations and neighborhood size the surface will generally not self-intersect. The appropriate parameter settings depend on the geometry of the point set and generally need to be fine-tuned per data set, as described later.
 
 
 \section ScaleSpaceReconstruction3secDesign Software Design
