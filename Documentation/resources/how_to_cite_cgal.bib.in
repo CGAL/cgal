@@ -545,6 +545,16 @@
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
+@incollection{cgal:vl-sssr-${CGAL_RELEASE_YEAR_ID}
+, author =  "Thijs van Lankveld"
+, title =   "Scale-Space Surface Reconstruction"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgScaleSpaceReconstruction3Summary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
 @incollection{cgal:k-ssm3-${CGAL_RELEASE_YEAR_ID}
 , author =  "Nico Kruithof"
 , title =   "{3D} Skin Surface Meshing"

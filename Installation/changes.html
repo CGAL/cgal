@@ -125,6 +125,18 @@ and <code>src/</code> directories).
           defined for simple two-dimensional polygons.</li>
   </ul>
 
+  <h3>Scale-Space Surface Reconstruction (new package)</h3>
+  <ul>
+    <li>This new package provides a class gathering a dedicated smoothing
+        algorithm and some convenience functions to help the creation of
+        a surface out of a point set using the 3D Alpha Shapes package.
+        The particularity of this reconstruction pipeline is that the
+        input point are in the output and no new points are created.
+        Note that in the current version, the output is a triangle soup
+        that is not necessarily a valid (manifold) polyhedral surface.
+    </li>
+  </ul>
+
   <h3>Triangulation (new package)</h3>
   <ul>
     <li>This new package provides classes for manipulating triangulations
