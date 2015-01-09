@@ -33,7 +33,6 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Random.h>
 
-#include <CGAL/Scale_space_reconstruction_3/internal/check3264.h>
 #include <CGAL/Scale_space_reconstruction_3/Shape_construction_3.h>
 
 #ifdef CGAL_EIGEN3_ENABLED
