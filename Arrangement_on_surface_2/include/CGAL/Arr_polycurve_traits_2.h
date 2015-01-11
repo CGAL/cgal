@@ -125,6 +125,49 @@ public:
     // Oblivious implementation
     Comparison_result operator()(const X_monotone_segment_2& xs1,
                                  Arr_curve_end ce1,
+                                 const Point_2& p2,
+                                 Arr_all_sides_oblivious_tag) const
+    {
+      const Geometry_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
+      const Point_2& p1 = (ce1 == ARR_MAX_END) ?
+        geom_traits->construct_max_vertex_2_object()(xs1) :
+        geom_traits->construct_min_vertex_2_object()(xs1);
+      return geom_traits->compare_x_2_object()(p1, p2);
+    }
+
+    // Boundary implementation
+    Comparison_result operator()(const X_monotone_segment_2& xs1,
+                                 Arr_curve_end ce1,
+                                 const Point_2& p2,
+                                 Arr_not_all_sides_oblivious_tag) const
+    {
+      const Geometry_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
+      typename Geometry_traits_2::Parameter_space_in_x_2 ps_x =
+        geom_traits->parameter_space_in_x_2_object();
+      const Arr_parameter_space ps_x1 = ps_x(xs1, ce1);
+
+      if (ps_x1 != ARR_INTERIOR) {
+        if (ps_x1 == ARR_LEFT_BOUNDARY) return SMALLER;
+        if (ps_x1 == ARR_RIGHT_BOUNDARY) return LARGER;
+      }
+
+      typename Geometry_traits_2::Parameter_space_in_y_2 ps_y =
+        geom_traits->parameter_space_in_y_2_object();
+      const Arr_parameter_space ps_y1 = ps_y(xs1, ce1);
+      if (ps_y1 == ARR_INTERIOR) {
+        const Point_2& p1 = (ce1 == ARR_MAX_END) ?
+          geom_traits->construct_max_vertex_2_object()(xs1) :
+          geom_traits->construct_min_vertex_2_object()(xs1);
+        return geom_traits->compare_x_2_object()(p1, p2);
+      }
+      typename Geometry_traits_2::Compare_x_on_boundary_2 cmp_x_on_bnd =
+        geom_traits->compare_x_on_boundary_2_object();
+      return opposite(cmp_x_on_bnd(p2, xs1, ce1));
+    }
+
+    // Oblivious implementation
+    Comparison_result operator()(const X_monotone_segment_2& xs1,
+                                 Arr_curve_end ce1,
                                  const X_monotone_segment_2& xs2,
                                  Arr_curve_end ce2,
                                  Arr_all_sides_oblivious_tag) const
@@ -153,10 +196,10 @@ public:
       const Arr_parameter_space ps_x2 = ps_x(xs2, ce2);
 
       if (ps_x1 != ps_x2) {
-        if (ps_x1 == ARR_LEFT_BOUNDARY) return LARGER;
-        if (ps_x1 == ARR_RIGHT_BOUNDARY) return SMALLER;
-        if (ps_x2 == ARR_LEFT_BOUNDARY) return SMALLER;
-        if (ps_x2 == ARR_RIGHT_BOUNDARY) return LARGER;
+        if (ps_x1 == ARR_LEFT_BOUNDARY) return SMALLER;
+        if (ps_x1 == ARR_RIGHT_BOUNDARY) return LARGER;
+        if (ps_x2 == ARR_LEFT_BOUNDARY) return LARGER;
+        if (ps_x2 == ARR_RIGHT_BOUNDARY) return SMALLER;
       }
 
       // ps_x1 == ps_x2
@@ -217,6 +260,18 @@ public:
      * \param ce1 the curve-end indicator of the first x-monotone curve xs1:
      *            ARR_MIN_END - the minimal end of xs1 or
      *            ARR_MAX_END - the maximal end of xs1.
+     * \param p2 the second curve end.
+     */
+    Comparison_result operator()(const X_monotone_segment_2& xs1,
+                                 Arr_curve_end ce1,
+                                 const Point_2& p2)
+    { return operator()(xs1, ce1, p2, Are_all_sides_oblivious_tag()); }
+
+    /*! Compare two ends of x-monotone curves in x.
+     * \param xs1 the first curve.
+     * \param ce1 the curve-end indicator of the first x-monotone curve xs1:
+     *            ARR_MIN_END - the minimal end of xs1 or
+     *            ARR_MAX_END - the maximal end of xs1.
      * \param xs2 the second curve.
      * \param ce2 the curve-end indicator of the second x-monoton curve xs2:
      *            ARR_MIN_END - the minimal end of xs2 or
@@ -236,6 +291,55 @@ public:
   /*! Compare two curve-ends or points lexigoraphically: by x, then by y. */
   class Compare_xy_2 {
   private:
+    // Oblivious implementation
+    Comparison_result operator()(const X_monotone_segment_2& xs1,
+                                 Arr_curve_end ce1,
+                                 const Point_2& p2,
+                                 Arr_all_sides_oblivious_tag) const
+    {
+      const Geometry_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
+      const Point_2& p1 = (ce1 == ARR_MAX_END) ?
+        geom_traits->construct_max_vertex_2_object()(xs1) :
+        geom_traits->construct_min_vertex_2_object()(xs1);
+      return geom_traits->compare_xy_2_object()(p1, p2);
+    }
+
+    // Boundary implementation
+    Comparison_result operator()(const X_monotone_segment_2& xs1,
+                                 Arr_curve_end ce1,
+                                 const Point_2& p2,
+                                 Arr_not_all_sides_oblivious_tag) const
+    {
+      const Geometry_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
+      typename Geometry_traits_2::Parameter_space_in_x_2 ps_x =
+        geom_traits->parameter_space_in_x_2_object();
+      typename Geometry_traits_2::Parameter_space_in_y_2 ps_y =
+        geom_traits->parameter_space_in_y_2_object();
+      const Arr_parameter_space ps_x1 = ps_x(xs1, ce1);
+      const Arr_parameter_space ps_y1 = ps_y(xs1, ce1);
+
+      if (ps_x1 != ARR_INTERIOR) {
+        if (ps_x1 == ARR_LEFT_BOUNDARY) return SMALLER;
+        if (ps_x1 == ARR_RIGHT_BOUNDARY) return LARGER;
+      }
+
+      if (ps_y1 == ARR_INTERIOR) {
+        const Point_2& p1 = (ce1 == ARR_MAX_END) ?
+          geom_traits->construct_max_vertex_2_object()(xs1) :
+          geom_traits->construct_min_vertex_2_object()(xs1);
+        return geom_traits->compare_xy_2_object()(p1, p2);
+      }
+
+      // EFEF: missing implementation for open boundary.
+      typename Geometry_traits_2::Compare_x_on_boundary_2 cmp_x_on_bnd =
+        geom_traits->compare_x_on_boundary_2_object();
+      Comparison_result res = opposite(cmp_x_on_bnd(p2, xs1, ce1));
+      if (res != EQUAL) return res;
+      if (ps_y1 == ARR_TOP_BOUNDARY) return LARGER;
+      CGAL_assertion(ps_y1 == ARR_BOTTOM_BOUNDARY);
+      return SMALLER;
+    }
+
     // Oblivious implementation
     Comparison_result operator()(const X_monotone_segment_2& xs1,
                                  Arr_curve_end ce1,
@@ -271,10 +375,10 @@ public:
       const Arr_parameter_space ps_y2 = ps_y(xs2, ce2);
 
       if (ps_x1 != ps_x2) {
-        if (ps_x1 == ARR_LEFT_BOUNDARY) return LARGER;
-        if (ps_x1 == ARR_RIGHT_BOUNDARY) return SMALLER;
-        if (ps_x2 == ARR_LEFT_BOUNDARY) return SMALLER;
-        if (ps_x2 == ARR_RIGHT_BOUNDARY) return LARGER;
+        if (ps_x1 == ARR_LEFT_BOUNDARY) return SMALLER;
+        if (ps_x1 == ARR_RIGHT_BOUNDARY) return LARGER;
+        if (ps_x2 == ARR_LEFT_BOUNDARY) return LARGER;
+        if (ps_x2 == ARR_RIGHT_BOUNDARY) return SMALLER;
       }
 
       if ((ps_x1 == ARR_INTERIOR) && (ps_y1 == ARR_INTERIOR)) {
@@ -375,6 +479,18 @@ public:
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     { return m_poly_traits.geometry_traits_2()->compare_xy_2_object()(p1, p2); }
+
+    /*! Compare two ends of x-monotone curves lexicographically.
+     * \param xs1 the first curve.
+     * \param ce1 the curve-end indicator of the first x-monotone curve xs1:
+     *            ARR_MIN_END - the minimal end of xs1 or
+     *            ARR_MAX_END - the maximal end of xs1.
+     * \param p2 the second curve end.
+     */
+    Comparison_result operator()(const X_monotone_segment_2& xs1,
+                                 Arr_curve_end ce1,
+                                 const Point_2& p2)
+    { return operator()(xs1, ce1, p2, Are_all_sides_oblivious_tag()); }
 
     /*! Compare two ends of x-monotone curves lexicographically.
      * \param xs1 the first curve.
@@ -611,7 +727,8 @@ public:
                                  const X_monotone_curve_2& xcv) const
     {
       // Get the index of the segment in xcv containing p.
-      std::size_t i = m_poly_traits.locate(xcv, p);
+      std::size_t i =
+        m_poly_traits.locate_impl(xcv, p, Are_all_sides_oblivious_tag());
       CGAL_precondition(i != INVALID_INDEX);
 
       // Compare the segment xcv[i] and p.
@@ -727,7 +844,8 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_at_x_right_2 functor object. */
+  /*! Obtain a Compare_y_at_x_right_2 functor object.
+   */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   { return Compare_y_at_x_right_2(*this); }
 
@@ -1188,8 +1306,11 @@ public:
              max_seg_v(x_seg) : min_seg_v(x_seg);
            );
 
-          Arr_curve_end polyline_target = ( (cmp_seg_endpts(x_polyline[0])  == SMALLER ) ? ARR_MAX_END : ARR_MIN_END );
-          Arr_curve_end seg_source = ( (cmp_seg_endpts(x_seg) == SMALLER) ? ARR_MIN_END : ARR_MAX_END);
+          Arr_curve_end polyline_target =
+            (cmp_seg_endpts(x_polyline[0]) == SMALLER) ?
+            ARR_MAX_END : ARR_MIN_END;
+          Arr_curve_end seg_source = (cmp_seg_endpts(x_seg) == SMALLER) ?
+            ARR_MIN_END : ARR_MAX_END;
           unsigned int num_segs = x_polyline.number_of_segments();
 
         if ((cmp_seg_endpts(x_seg) != start_dir) ||
@@ -1204,15 +1325,15 @@ public:
 #endif
           x_polyline = ctr_x_curve(x_seg);
         }
-          else if (ps_x(x_polyline[num_segs-1], polyline_target) != ARR_INTERIOR ||
-                   ps_x(x_seg, seg_source) != ARR_INTERIOR)
-          {
-            *oi++ = make_object(x_polyline);
+        else if (ps_x(x_polyline[num_segs-1], polyline_target) != ARR_INTERIOR ||
+                 ps_x(x_seg, seg_source) != ARR_INTERIOR)
+        {
+          *oi++ = make_object(x_polyline);
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
           if (cmp_seg_endpts(x_seg) == LARGER) x_seg = ctr_seg_opposite(x_seg);
 #endif
             x_polyline = ctr_x_curve(x_seg);
-          }
+        }
 
         else {
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
@@ -1226,7 +1347,6 @@ public:
           push_back(x_polyline, x_seg);
 #endif
         }
-
       } // for loop
       if (x_polyline.number_of_segments() != 0)
         *oi++ = make_object(x_polyline);
@@ -3232,12 +3352,34 @@ private:
     Comparison_result operator()(const X_monotone_segment_2& xs,
                                  Arr_curve_end ce)
     {
+      std::cout << "Compare_points" << std::endl;
       const Geometry_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
       const Point_2& p = (ce == ARR_MAX_END) ?
         geom_traits->construct_max_vertex_2_object()(xs) :
         geom_traits->construct_min_vertex_2_object()(xs);
       return m_compare(p, m_point);
     }
+  };
+
+  // A utility class that compare two curve-ends.
+  template <typename Comparer>
+  class Compare_point_curve_end {
+  private:
+    const Point_2& m_point;
+
+    Comparer m_compare;
+
+  public:
+    // Constructor
+    Compare_point_curve_end(Comparer compare, const Point_2& p) :
+      m_point(p),
+      m_compare(compare)
+    {}
+
+    // Compare the given curve-end with the stored point.
+    Comparison_result operator()(const X_monotone_segment_2& xs,
+                                 Arr_curve_end ce)
+    { return m_compare(xs, ce, m_point); }
   };
 
   // A utility class that compare two curve-ends.
@@ -3259,13 +3401,20 @@ private:
       m_compare(compare)
     {}
 
-    // Compare the given curve-end with the stored point.
+    // Compare the given curve-end with the stored curve end.
     Comparison_result operator()(const X_monotone_segment_2& xs,
                                  Arr_curve_end ce)
     { return m_compare(xs, ce, m_x_monotone_segment, m_curve_end); }
   };
 
-  //
+  /*! Locate the index of a curve in a polycurve that contains an endpoint
+   * of a curve.
+   * This implementation is used in the case where at least one side of the
+   * parameter space is not oblivious.
+   * \param xcv (in) the given polycurve.
+   * \param xs (in) the given curve.
+   * \param cd (in) the curve-end indicator.
+   */
   std::size_t locate_impl(const X_monotone_curve_2& xcv,
                           const X_monotone_segment_2& xs,
                           Arr_curve_end ce,
@@ -3286,7 +3435,14 @@ private:
     return locate_gen(xcv, compare);
   }
 
-  //
+  /*! Locate the index of a curve in a polycurve that contains an endpoint
+   * of a curve.
+   * This implementation is used in the case where all sides of the parameter
+   * space is oblivious.
+   * \param xcv (in) the given polycurve.
+   * \param xs (in) the given curve.
+   * \param cd (in) the curve-end indicator.
+   */
   std::size_t locate_impl(const X_monotone_curve_2& xcv,
                           const X_monotone_segment_2& xs,
                           Arr_curve_end ce,
@@ -3298,6 +3454,43 @@ private:
       geom_traits->construct_min_vertex_2_object()(xs);
     return locate(xcv, p);
   }
+
+  /*! Locate the index of a curve in a polycurve that contains an endpoint
+   * of a curve.
+   * This implementation is used in the case where at least one side of the
+   * parameter space is not oblivious.
+   * \param xcv (in) the given polycurve.
+   * \param p (in) the endpoint of a curve.
+   */
+  std::size_t locate_impl(const X_monotone_curve_2& xcv,
+                          const Point_2& p,
+                          Arr_not_all_sides_oblivious_tag) const
+  {
+    const Geometry_traits_2* geom_traits = geometry_traits_2();
+    if (geom_traits->is_vertical_2_object()(xcv[0])) {
+      // Verify that q has the same x-coord as xcv (which is vertical)
+      Compare_x_2 compare_x = compare_x_2_object();
+      Comparison_result res = compare_x(xcv[0], ARR_MIN_END, p);
+      if (res != EQUAL) return INVALID_INDEX;
+
+      Compare_point_curve_end<Compare_xy_2> compare(compare_xy_2_object(), p);
+      return locate_gen(xcv, compare);
+    }
+
+    Compare_point_curve_end<Compare_x_2> compare(compare_x_2_object(), p);
+    return locate_gen(xcv, compare);
+  }
+
+  /*! Locate the index of a curve in a polycurve that contains an endpoint
+   * of a curve.
+   * This implementation is used in the case where all sides of the parameter
+   * space is oblivious.
+   * \param xcv (in) the given polycurve.
+   * \param p (in) the endpoint of a curve.
+   */
+  std::size_t locate_impl(const X_monotone_curve_2& xcv, const Point_2& p,
+                          Arr_all_sides_oblivious_tag) const
+  { return locate(xcv, p); }
 
   //
   std::size_t locate(const X_monotone_curve_2& xcv, const Point_2& q) const
