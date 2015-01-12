@@ -29,6 +29,7 @@
 
 #include <cassert>
 #include <CGAL/tags.h>
+#include <CGAL/use.h>
 
 #include <CGAL/Interval_traits.h> 
 
@@ -42,6 +43,7 @@ template <class Interval>
 void test_with_empty_interval(CGAL::Tag_false) {
     typedef CGAL::Interval_traits<Interval> IT;
     typedef typename IT::Empty Empty;
+    CGAL_USE_TYPE(Empty);
     CGAL_static_assertion(
             (::boost::is_same< Empty, CGAL::Null_functor>::value));
     
@@ -78,7 +80,7 @@ void test_interval_traits() {
     typedef typename IT::Bound Bound;
     typedef typename IT::Is_interval Is_interval;
     typedef typename IT::With_empty_interval With_empty_interval;
-
+    CGAL_USE_TYPE(Is_interval);
     using CGAL::Tag_true;
     CGAL_static_assertion(( ::boost::is_same< Is_interval, Tag_true>::value));
     CGAL_static_assertion(( ::boost::is_same< Interval_, Interval>::value));

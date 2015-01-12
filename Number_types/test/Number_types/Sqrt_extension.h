@@ -1,4 +1,5 @@
 
+#include <CGAL/use.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/convert_to_bfi.h>
@@ -20,6 +21,7 @@ inline
 void convert_to(const NT& x, RT& r){ 
     typedef CGAL::Coercion_traits<NT,RT> CT;
     typedef typename CT::Type Type;
+    CGAL_USE_TYPE(Type);
     CGAL_static_assertion((::boost::is_same<Type,RT>::value));
     r = typename CT::Cast()(x);
 }
@@ -695,14 +697,17 @@ void test_get_arithmetic_kernel(){
   {
     typedef CGAL::Sqrt_extension<Integer,Integer,ACDE_TAG> EXT;
     typedef typename CGAL::Get_arithmetic_kernel<EXT>::Arithmetic_kernel AT_;
+    CGAL_USE_TYPE(AT_);
     CGAL_static_assertion((boost::is_same<AT,AT_>::value));
   } {
     typedef CGAL::Sqrt_extension<Rational,Integer,ACDE_TAG> EXT;
     typedef typename CGAL::Get_arithmetic_kernel<EXT>::Arithmetic_kernel AT_;
+    CGAL_USE_TYPE(AT_);
     CGAL_static_assertion((boost::is_same<AT,AT_>::value));
   } {
     typedef CGAL::Sqrt_extension<Rational,Rational,ACDE_TAG> EXT;
     typedef typename CGAL::Get_arithmetic_kernel<EXT>::Arithmetic_kernel AT_;
+    CGAL_USE_TYPE(AT_);
     CGAL_static_assertion((boost::is_same<AT,AT_>::value));
   }
 }

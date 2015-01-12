@@ -33,8 +33,8 @@ VerticalRayGraphicsItem::VerticalRayGraphicsItem( ) :
 {}
 
 void VerticalRayGraphicsItem::paint( QPainter* painter,
-                                     const QStyleOptionGraphicsItem* option,
-                                     QWidget* widget )
+                                     const QStyleOptionGraphicsItem* /* option*/,
+                                     QWidget* /* widget */ )
 {
   QPen rayPen( this->m_color, this->m_width );
   painter->setPen( rayPen );
