@@ -823,7 +823,7 @@ Regular_triangulation<RTTraits, TDS>
     case Base::ON_VERTEX:
     {
       Vertex_handle v = s->vertex(f.index(0));
-      v->set_point(p);
+      //v->set_point(p); // CJTODO see T3.h l.3570
       return v;
       break;
     }
@@ -885,7 +885,7 @@ Regular_triangulation<RTTraits, TDS>
     case Base::ON_VERTEX:
     {
       Vertex_handle v = s->vertex(f.index(0));
-      v->set_point(p);
+      //v->set_point(p); // CJTODO see T3.h l.3570
       return v;
       break;
     }
