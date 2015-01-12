@@ -823,9 +823,23 @@ Regular_triangulation<RTTraits, TDS>
     case Base::ON_VERTEX:
     {
       Vertex_handle v = s->vertex(f.index(0));
-      //v->set_point(p); // CJTODO see T3.h l.3570
-      return v;
-      break;
+      typename RTTraits::Point_weight_d pw =
+        geom_traits().point_weight_d_object();
+      
+      if (pw(p) == pw(v->point()))
+        return v;
+      // If dim == 0 and the new point has a bigger weight, 
+      // we replace the point
+      else if (current_dimension() == 0)
+      {
+        if (pw(p) > pw(v->point()))
+          v->set_point(p);
+        else
+          return v;
+      }
+      // Otherwise, we apply the "normal" algorithm
+
+      // !NO break here!
     }
     default:
       if( 1 == current_dimension() )
@@ -885,9 +899,22 @@ Regular_triangulation<RTTraits, TDS>
     case Base::ON_VERTEX:
     {
       Vertex_handle v = s->vertex(f.index(0));
-      //v->set_point(p); // CJTODO see T3.h l.3570
-      return v;
-      break;
+      typename RTTraits::Point_weight_d pw =
+        geom_traits().point_weight_d_object();
+      if (pw(p) == pw(v->point()))
+        return v;
+      // If dim == 0 and the new point has a bigger weight, 
+      // we replace the point
+      else if (current_dimension() == 0)
+      {
+        if (pw(p) > pw(v->point()))
+          v->set_point(p);
+        else
+          return v;
+      }
+      // Otherwise, we apply the "normal" algorithm
+
+      // !NO break here!
     }
     default:
     {
