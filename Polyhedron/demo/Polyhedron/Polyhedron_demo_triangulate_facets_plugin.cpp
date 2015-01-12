@@ -77,13 +77,14 @@ public slots:
         if(!eit_copy->is_border()) {
           Polyhedron::Facet_handle fh1 = eit_copy->facet();
           Polyhedron::Facet_handle fh2 = eit_copy->opposite()->facet();
-          typedef Polyhedron::Facet Facet;
           if( fh1 != fh2 &&  
               !eit_copy->vertex()->is_bivalent() && 
               !eit_copy->opposite()->vertex()->is_bivalent())
           {
-            Kernel::Vector_3 v1 = compute_facet_normal<Facet, Kernel>(*fh1);
-            Kernel::Vector_3 v2 = compute_facet_normal<Facet, Kernel>(*fh2);
+            Kernel::Vector_3 v1 =
+              CGAL::Polygon_mesh_processing::compute_facet_normal<Kernel>(*fh1);
+            Kernel::Vector_3 v2 =
+              CGAL::Polygon_mesh_processing::compute_facet_normal<Kernel>(*fh2);
             if(v1 * v2 > 0.99) {
               std::cerr << "join\n";
               // pMesh->is_valid(true);

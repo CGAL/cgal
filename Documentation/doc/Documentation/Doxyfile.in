@@ -117,3 +117,4 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Stream_support/doc/Stream_support/fig \
              ${CMAKE_SOURCE_DIR}/Surface_modeling/doc/Surface_modeling/fig \
              ${CMAKE_SOURCE_DIR}/Barycentric_coordinates_2/doc/Barycentric_coordinates_2/fig \
+             ${CMAKE_SOURCE_DIR}/Polygon_mesh_processing/doc/Polygon_mesh_processing/fig \
