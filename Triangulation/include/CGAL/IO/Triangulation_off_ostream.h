@@ -32,7 +32,7 @@ namespace Triangulation_IO
 {
 // TODO: test if the stream is binary or text?
 template<typename Traits, typename P>
-void
+int
 output_point(std::ostream & os, const Traits &traits, const P & p)
 {
   typedef typename Traits::Compute_coordinate_d Ccd;
@@ -44,11 +44,12 @@ output_point(std::ostream & os, const Traits &traits, const P & p)
     for (int i = 1 ; i < dim ; ++i)
       os << " " << CGAL::to_double(ccd(p, i));
   }
+  return dim;
 }
 
 // TODO: test if the stream is binary or text?
 template<typename Traits, typename P>
-void
+int
 output_weighted_point(std::ostream & os, const Traits &traits, const P & p, 
                       bool output_weight = true)
 {
@@ -63,6 +64,26 @@ output_weighted_point(std::ostream & os, const Traits &traits, const P & p,
     output_point(os, traits, p);
     if (output_weight)
       os << " " << pt_weight(p);
+  }
+  return dim;
+}
+
+// TODO: test if the stream is binary or text?
+template<typename Traits, typename FCH>
+void
+output_full_cell(std::ostream & os, const Traits &traits, const FCH & fch, 
+                      bool output_weights = false)
+{
+  typename FCH::value_type::Vertex_handle_iterator vit = fch->vertices_begin();
+  for( ; vit != fch->vertices_end(); ++vit ) 
+  {
+    int dim;
+    if (output_weights)
+      dim = output_weighted_point(os, traits, (*vit)->point());
+    else
+      dim = output_point(os, traits, (*vit)->point());
+    if (dim > 0)
+      os << std::endl;
   }
 }
 
