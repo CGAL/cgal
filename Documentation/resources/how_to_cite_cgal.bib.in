@@ -45,6 +45,7 @@
 , url =    "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html"
 }
 
+%%% Arithmetic and Algebra %%%
 
 @incollection{cgal:h-af-${CGAL_RELEASE_YEAR_ID}
 , author =  "Michael Hemmer"
@@ -53,16 +54,6 @@
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
 , booktitle =   "{CGAL} User and Reference Manual"
 , url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgAlgebraicFoundationsSummary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:bht-ak-${CGAL_RELEASE_YEAR_ID}
-, author =  "Eric Berberich and Michael Hemmer and Michael Kerber and Sylvain Lazard and Luis Pe{\~n}aranda and Monique Teillaud"
-, title =   "Algebraic Kernel"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgAlgebraicKerneldSummary"
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
@@ -76,6 +67,16 @@
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
+@incollection{cgal:h-ma-${CGAL_RELEASE_YEAR_ID}
+, author =  "Michael Hemmer"
+, title =   "Modular Arithmetic"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgModularArithmeticSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
 @incollection{cgal:h-p-${CGAL_RELEASE_YEAR_ID}
 , author =  "Michael Hemmer"
 , title =   "Polynomial"
@@ -86,15 +87,39 @@
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
-@incollection{cgal:h-ma-${CGAL_RELEASE_YEAR_ID}
-, author =  "Michael Hemmer"
-, title =   "Modular Arithmetic"
+@incollection{cgal:bht-ak-${CGAL_RELEASE_YEAR_ID}
+, author =  "Eric Berberich and Michael Hemmer and Michael Kerber and Sylvain Lazard and Luis Pe{\~n}aranda and Monique Teillaud"
+, title =   "Algebraic Kernel"
 , publisher =  "{CGAL Editorial Board}"
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
 , booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgModularArithmeticSummary"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgAlgebraicKerneldSummary"
 , year =        ${CGAL_BUILD_YEAR4}
 }
+
+%%% Combinatorial Algorithms %%%
+
+@incollection{cgal:h-msms-${CGAL_RELEASE_YEAR_ID}
+, author =  "Michael Hoffmann"
+, title =   "Monotone and Sorted Matrix Search"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgMatrixSearchSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+@incollection{cgal:fgsw-lqps-${CGAL_RELEASE_YEAR_ID}
+, author =  "Kaspar Fischer and Bernd G{\"a}rtner and Sven Sch{\"o}nherr and Frans Wessendorp"
+, title =   "Linear and Quadratic Programming Solver"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgQPSolverSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+%%% Geometry Kernels %%%
 
 @incollection{cgal:bfghhkps-lgk23-${CGAL_RELEASE_YEAR_ID}
 , author =  "Herv{\'e} Br{\"o}nnimann and Andreas Fabri and Geert-Jan Giezeman and Susan Hert and Michael Hoffmann and Lutz Kettner and Sylvain Pion and Stefan Schirra"
@@ -117,7 +142,7 @@
 }
 
 @incollection{cgal:cpt-cgk2-${CGAL_RELEASE_YEAR_ID}
-, author =  "Pedro Machado Manh\~{a}es de Castro and Sylvain Pion and Monique Teillaud"
+, author =  "Pedro Machado Manh{\~a}es de Castro and Sylvain Pion and Monique Teillaud"
 , title =   "{2D} Circular Geometry Kernel"
 , publisher =  "{CGAL Editorial Board}"
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
@@ -127,7 +152,7 @@
 }
 
 @incollection{cgal:cclt-sgk3-${CGAL_RELEASE_YEAR_ID}
-, author =  "Pedro Machado Manh\~{a}es de Castro and Fr{\'e}d{\'e}ric Cazals and S{\'e}bastien Loriot and Monique Teillaud"
+, author =  "Pedro Machado Manh{\~a}es de Castro and Fr{\'e}d{\'e}ric Cazals and S{\'e}bastien Loriot and Monique Teillaud"
 , title =   "{3D} Spherical Geometry Kernel"
 , publisher =  "{CGAL Editorial Board}"
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
@@ -135,6 +160,8 @@
 , url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgSphericalKernel3Summary"
 , year =        ${CGAL_BUILD_YEAR4}
 }
+
+%%% Convex Hull Algorithms %%%
 
 @incollection{cgal:hs-chep2-${CGAL_RELEASE_YEAR_ID}
 , author =  "Susan Hert and Stefan Schirra"
@@ -156,6 +183,18 @@
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
+@incollection{cgal:hs-chdt3-${CGAL_RELEASE_YEAR_ID}
+, author =  "Susan Hert and Michael Seel"
+, title =   "{dD} Convex Hulls and {Delaunay} Triangulations"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgConvexHullDSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+%%% Polygons %%%
+
 @incollection{cgal:gw-p2-${CGAL_RELEASE_YEAR_ID}
 , author =  "Geert-Jan Giezeman and Wieger Wesselink"
 , title =   "{2D} Polygons"
@@ -163,6 +202,36 @@
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
 , booktitle =   "{CGAL} User and Reference Manual"
 , url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgPolygon2Summary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+@incollection{cgal:fwzh-rbso2-${CGAL_RELEASE_YEAR_ID}
+, author =  "Efi Fogel and  Ron Wein and  Baruch Zukerman and Dan Halperin"
+, title =   "{2D} Regularized {Boolean} Set-Operations"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgBooleanSetOperations2Summary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+@incollection{cgal:s-bonp2-${CGAL_RELEASE_YEAR_ID}
+, author =  "Michael Seel"
+, title =   "{2D} {Boolean} Operations on {Nef} Polygons"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgNef2Summary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+@incollection{cgal:hk-bonpes2-${CGAL_RELEASE_YEAR_ID}
+, author =  "Peter Hachenberger and Lutz Kettner"
+, title =   "{2D} {Boolean} Operations on {Nef} Polygons Embedded on the Sphere"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgNefS2Summary"
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
@@ -176,15 +245,27 @@
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
-@incollection{cgal:hs-chdt3-${CGAL_RELEASE_YEAR_ID}
-, author =  "Susan Hert and Michael Seel"
-, title =   "{dD} Convex Hulls and {Delaunay} Triangulations"
+@incollection{cgal:c-sspo2-${CGAL_RELEASE_YEAR_ID}
+, author =  "Fernando Cacciola"
+, title =   "{2D} Straight Skeleton and Polygon Offsetting"
 , publisher =  "{CGAL Editorial Board}"
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
 , booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgConvexHullDSummary"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgStraightSkeleton2Summary"
 , year =        ${CGAL_BUILD_YEAR4}
 }
+
+@incollection{cgal:w-rms2-${CGAL_RELEASE_YEAR_ID}
+, author =  "Ron Wein"
+, title =   "{2D} {Minkowski} Sums"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgMinkowskiSum2Summary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+%%% Cell Complexes and Polyhedra %%%
 
 @incollection{cgal:k-ps-${CGAL_RELEASE_YEAR_ID}
 , author =  "Lutz Kettner"
@@ -215,6 +296,7 @@
 , url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgSurfaceMeshSummary"
 , year =        ${CGAL_BUILD_YEAR4}
 }
+
 @incollection{cgal:d-cm-${CGAL_RELEASE_YEAR_ID}
 , author =  "Guillaume Damiand"
 , title =   "Combinatorial Maps"
@@ -232,46 +314,6 @@
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
 , booktitle =   "{CGAL} User and Reference Manual"
 , url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgLinearCellComplexSummary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:fwzh-rbso2-${CGAL_RELEASE_YEAR_ID}
-, author =  "Efi Fogel and  Ron Wein and  Baruch Zukerman and Dan Halperin"
-, title =   "{2D} Regularized {Boolean} Set-Operations"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgBooleanSetOperations2Summary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:w-rms2-${CGAL_RELEASE_YEAR_ID}
-, author =  "Ron Wein"
-, title =   "{2D} {Minkowski} Sums"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgMinkowskiSum2Summary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:s-bonp2-${CGAL_RELEASE_YEAR_ID}
-, author =  "Michael Seel"
-, title =   "{2D} {Boolean} Operations on {Nef} Polygons"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgNef2Summary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:hk-bonpes2-${CGAL_RELEASE_YEAR_ID}
-, author =  "Peter Hachenberger and Lutz Kettner"
-, title =   "{2D} {Boolean} Operations on {Nef} Polygons Embedded on the Sphere"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgNefS2Summary"
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
@@ -305,15 +347,7 @@
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
-@incollection{cgal:c-sspo2-${CGAL_RELEASE_YEAR_ID}
-, author =  "Fernando Cacciola"
-, title =   "{2D} Straight Skeleton and Polygon Offsetting"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgStraightSkeleton2Summary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
+%%% Arrangements %%%
 
 @incollection{cgal:wfzh-a2-${CGAL_RELEASE_YEAR_ID}
 , author =  "Ron Wein and Eric Berberich and Efi Fogel and Dan Halperin and Michael Hemmer and Oren Salzman and Baruch Zukerman"
@@ -365,6 +399,8 @@
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
+%%% Triangulations and Delaunay Triangulations %%%
+
 @incollection{cgal:y-t2-${CGAL_RELEASE_YEAR_ID}
 , author =  "Mariette Yvinec"
 , title =   "{2D} Triangulations"
@@ -382,6 +418,16 @@
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
 , booktitle =   "{CGAL} User and Reference Manual"
 , url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgTDS2Summary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+@incollection{cgal:k-pt2-${CGAL_RELEASE_YEAR_ID}
+, author =  "Nico Kruithof"
+, title =   "{2D} Periodic Triangulations"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgPeriodic3Triangulation3Summary"
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
@@ -405,16 +451,6 @@
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
-@incollection{cgal:k-pt2-${CGAL_RELEASE_YEAR_ID}
-, author =  "Nico Kruithof"
-, title =   "{2D} Periodic Triangulations"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgPeriodic3Triangulation3Summary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
 @incollection{cgal:ct-pt3-${CGAL_RELEASE_YEAR_ID}
 , author =  "Manuel Caroli and Monique Teillaud"
 , title =   "{3D} Periodic Triangulations"
@@ -422,6 +458,16 @@
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
 , booktitle =   "{CGAL} User and Reference Manual"
 , url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgPeriodic3Triangulation3Summary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+@incollection{cgal:hdj-t-${CGAL_RELEASE_YEAR_ID}
+, author =  "Samuel Hornus and Olivier Devillers and Clément Jamin"
+, title =   "Triangulations"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgTriangulationsSummary"
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
@@ -444,6 +490,8 @@
 , url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgAlphaShapes3Summary"
 , year =        ${CGAL_BUILD_YEAR4}
 }
+
+%%% Voronoi Diagrams %%%
 
 @incollection{cgal:k-sdg2-${CGAL_RELEASE_YEAR_ID}
 , author =  "Menelaos Karavelas"
@@ -474,6 +522,8 @@
 , url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgVoronoiDiagramAdaptor2Summary"
 , year =        ${CGAL_BUILD_YEAR4}
 }
+
+%%% Mesh Generation %%%
 
 @incollection{cgal:r-ctm2-${CGAL_RELEASE_YEAR_ID}
 , author =  "Laurent Rineau"
@@ -525,6 +575,8 @@
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
+%%% Geometry Processing %%%
+
 @incollection{cgal:s-ssm2-${CGAL_RELEASE_YEAR_ID}
 , author =  "Le-Jeng Andy Shiue"
 , title =   "{3D} Surface Subdivision Methods"
@@ -532,6 +584,16 @@
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
 , booktitle =   "{CGAL} User and Reference Manual"
 , url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgSurfaceSubdivisionMethods3Summary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+@incollection{cgal:yl-tsms-${CGAL_RELEASE_YEAR_ID}
+, author =  "Ílker O. Yaz and S\'ebastien Loriot"
+, title =   "Triangulated Surface Mesh Segmentation"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgSurfaceSegmentationSummary"
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
@@ -545,6 +607,16 @@
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
+@incollection{cgal:lshxy-tsmd-${CGAL_RELEASE_YEAR_ID}
+, author =  "Sébastien Loriot, Olga Sorkine-Hornung, Yin Xu and Ilker %O. Yaz"
+, title =   "Triangulated Surface Mesh Deformation"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgSurfaceModelingSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
 @incollection{cgal:sal-pptsm2-${CGAL_RELEASE_YEAR_ID}
 , author =  "Laurent Saboret and Pierre Alliez and Bruno L\'evy"
 , title =   "Planar Parameterization of Triangulated Surface Meshes"
@@ -552,127 +624,6 @@
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
 , booktitle =   "{CGAL} User and Reference Manual"
 , url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgSurfaceParameterizationSummary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:b-ss2-${CGAL_RELEASE_YEAR_ID}
-, author =  "Matthias B{\"a}sken"
-, title =   "{2D} Range and Neighbor Search"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgPointSet2Summary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:n-rstd-${CGAL_RELEASE_YEAR_ID}
-, author =  "Gabriele Neyer"
-, title =   "{dD} Range and Segment Trees"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgRangeSegmentTreesDSummary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:f-isl-${CGAL_RELEASE_YEAR_ID}
-, author =  "Andreas Fabri"
-, title =   "Interval Skip List"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgIntervalSkipListSummary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:tf-ssd-${CGAL_RELEASE_YEAR_ID}
-, author =  "Hans Tangelder and Andreas Fabri"
-, title =   "{dD} Spatial Searching"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgSpatialSearchingDSummary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:kmz-isiobd-${CGAL_RELEASE_YEAR_ID}
-, author =  "Lutz Kettner and Andreas Meyer and Afra Zomorodian"
-, title =   "Intersecting Sequences of {dD} Iso-oriented Boxes"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgBoxIntersectionDSummary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:fghhs-bv-${CGAL_RELEASE_YEAR_ID}
-, author =  "Kaspar Fischer and Bernd G{\"a}rtner and Thomas Herrmann and Michael Hoffmann and Sven Sch{\"o}nherr"
-, title =   "Bounding Volumes"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgBoundingVolumesSummary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:fgsw-lqps-${CGAL_RELEASE_YEAR_ID}
-, author =  "Kaspar Fischer and Bernd G{\"a}rtner and Sven Sch{\"o}nherr and Frans Wessendorp"
-, title =   "Linear and Quadratic Programming Solver"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgQPSolverSummary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:hp-ia-${CGAL_RELEASE_YEAR_ID}
-, author =  "Michael Hoffmann and Eli Packer"
-, title =   "Inscribed Areas"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgInscribedAreasSummary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:fghhs-od-${CGAL_RELEASE_YEAR_ID}
-, author =  "Kaspar Fischer and Bernd G{\"a}rtner and Thomas Herrmann and Michael Hoffmann
-                and Sven Sch{\"o}nherr"
-, title =   "Optimal Distances"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgOptimalDistancesSummary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:f-i-${CGAL_RELEASE_YEAR_ID}
-, author =  "Julia Fl{\"o}totto"
-, title =   "{2D} and Surface Function Interpolation"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgInterpolation2Summary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:ap-pcad-${CGAL_RELEASE_YEAR_ID}
-, author =  "Pierre Alliez and Sylvain Pion and Ankit Gupta"
-, title =   "Principal Component Analysis"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgPrincipalComponentAnalysisDSummary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:m-ps-${CGAL_RELEASE_YEAR_ID}
-, author =  "Abdelkrim Mebarki"
-, title =   "{2D} Placement of Streamlines"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgPlacementOfStreamlines2Summary"
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
@@ -706,6 +657,155 @@
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
+@incollection{cgal:m-ps-${CGAL_RELEASE_YEAR_ID}
+, author =  "Abdelkrim Mebarki"
+, title =   "{2D} Placement of Streamlines"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgPlacementOfStreamlines2Summary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+%%% Spatial Searching and Sorting %%%
+
+@incollection{cgal:b-ss2-${CGAL_RELEASE_YEAR_ID}
+, author =  "Matthias B{\"a}sken"
+, title =   "{2D} Range and Neighbor Search"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgPointSet2Summary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+@incollection{cgal:f-isl-${CGAL_RELEASE_YEAR_ID}
+, author =  "Andreas Fabri"
+, title =   "Interval Skip List"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgIntervalSkipListSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+@incollection{cgal:tf-ssd-${CGAL_RELEASE_YEAR_ID}
+, author =  "Hans Tangelder and Andreas Fabri"
+, title =   "{dD} Spatial Searching"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgSpatialSearchingDSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+@incollection{cgal:n-rstd-${CGAL_RELEASE_YEAR_ID}
+, author =  "Gabriele Neyer"
+, title =   "{dD} Range and Segment Trees"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgRangeSegmentTreesDSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+@incollection{cgal:kmz-isiobd-${CGAL_RELEASE_YEAR_ID}
+, author =  "Lutz Kettner and Andreas Meyer and Afra Zomorodian"
+, title =   "Intersecting Sequences of {dD} Iso-oriented Boxes"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgBoxIntersectionDSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+@incollection{cgal:atw-aabb-${CGAL_RELEASE_YEAR_ID}
+, author =  "Pierre Alliez and St\'ephane Tayeb and Camille Wormser"
+, title =   "{3D} Fast Intersection and Distance Computation (AABB Tree)"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgAABB_treeSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+@incollection{cgal:dd-ss-${CGAL_RELEASE_YEAR_ID}
+, author =  "Christophe Delage and Olivier Devillers"
+, title =   "Spatial Sorting"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgSpatialSortingSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+%%% Geometric Optimization %%%
+
+@incollection{cgal:fghhs-bv-${CGAL_RELEASE_YEAR_ID}
+, author =  "Kaspar Fischer and Bernd G{\"a}rtner and Thomas Herrmann and Michael Hoffmann and Sven Sch{\"o}nherr"
+, title =   "Bounding Volumes"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgBoundingVolumesSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+@incollection{cgal:hp-ia-${CGAL_RELEASE_YEAR_ID}
+, author =  "Michael Hoffmann and Eli Packer"
+, title =   "Inscribed Areas"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgInscribedAreasSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+@incollection{cgal:fghhs-od-${CGAL_RELEASE_YEAR_ID}
+, author =  "Kaspar Fischer and Bernd G{\"a}rtner and Thomas Herrmann and Michael Hoffmann
+                and Sven Sch{\"o}nherr"
+, title =   "Optimal Distances"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgOptimalDistancesSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+@incollection{cgal:ap-pcad-${CGAL_RELEASE_YEAR_ID}
+, author =  "Pierre Alliez and Sylvain Pion and Ankit Gupta"
+, title =   "Principal Component Analysis"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgPrincipalComponentAnalysisDSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+%%% Interpolation %%%
+
+@incollection{cgal:f-i-${CGAL_RELEASE_YEAR_ID}
+, author =  "Julia Fl{\"o}totto"
+, title =   "{2D} and Surface Function Interpolation"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgInterpolation2Summary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+@incollection{cgal:abha-gbc-${CGAL_RELEASE_YEAR_ID}
+, author =  "Dmitry Anisimov and David Bommes and Kai Hormann and Pierre Alliez"
+, title =   "2D Generalized Barycentric Coordinates"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgBarycentric_coordinates_2Summary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+%%% Kinetic Data Structures %%%
+
 @incollection{cgal:r-kds-${CGAL_RELEASE_YEAR_ID}
 , author =  "Daniel Russel"
 , title =   "Kinetic Data Structures"
@@ -726,6 +826,18 @@
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
+%%% Support Library %%%
+
+@incollection{cgal:hkpw-se-${CGAL_RELEASE_YEAR_ID}
+, author =  "Michael Hoffmann and  Lutz Kettner and Sylvain Pion and Ron Wein"
+, title =   "STL Extensions for {CGAL}"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgStlExtensionSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
 @incollection{cgal:cfw-cbgl-${CGAL_RELEASE_YEAR_ID}
 , author =  "Andreas Fabri and Fernando Cacciola and Ron Wein"
 , title =   "{CGAL} and the {Boost} Graph Library"
@@ -743,46 +855,6 @@
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
 , booktitle =   "{CGAL} User and Reference Manual"
 , url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgProperty_mapSummary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:dd-ss-${CGAL_RELEASE_YEAR_ID}
-, author =  "Christophe Delage and Olivier Devillers"
-, title =   "Spatial Sorting"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgSpatialSortingSummary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:atw-aabb-${CGAL_RELEASE_YEAR_ID}
-, author =  "Pierre Alliez and St\'ephane Tayeb and Camille Wormser"
-, title =   "3D Fast Intersection and Distance Computation (AABB Tree)"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgAABB_treeSummary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:h-msms-${CGAL_RELEASE_YEAR_ID}
-, author =  "Michael Hoffmann"
-, title =   "Monotone and Sorted Matrix Search"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgMatrixSearchSummary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:hkpw-se-${CGAL_RELEASE_YEAR_ID}
-, author =  "Michael Hoffmann and  Lutz Kettner and Sylvain Pion and Ron Wein"
-, title =   "STL Extensions for {CGAL}"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgStlExtensionSummary"
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
@@ -826,6 +898,8 @@
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
+%%% Visualization %%%
+
 @incollection{cgal:fp-gv-${CGAL_RELEASE_YEAR_ID}
 , author =  "Andreas Fabri and Sylvain Pion"
 , title =   "Geomview"
@@ -853,15 +927,5 @@
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
 , booktitle =   "{CGAL} User and Reference Manual"
 , url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgCGALIpeletsSummary"
-, year =        ${CGAL_BUILD_YEAR4}
-}
-
-@incollection{cgal:yl-tsms-${CGAL_RELEASE_YEAR_ID}
-, author =  "Ílker O. Yaz and S\'ebastien Loriot"
-, title =   "Triangulated Surface Mesh Segmentation"
-, publisher =  "{CGAL Editorial Board}"
-, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
-, booktitle =   "{CGAL} User and Reference Manual"
-, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgSurfaceSegmentationSummary"
 , year =        ${CGAL_BUILD_YEAR4}
 }
