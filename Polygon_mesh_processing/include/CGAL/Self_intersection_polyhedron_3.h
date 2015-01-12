@@ -179,13 +179,9 @@ struct Throw_at_output {
  *
  * @param polyhedron polyhedron to be checked, might be passed by const reference or reference
  * @param out all pairs of non-adjacent facets intersecting are put in it
-<<<<<<< HEAD:Operations_on_polyhedra/include/CGAL/Self_intersection_polyhedron_3.h
+ * @param geom_traits traits class providing intersection test primitives
  *
  * @return pair of `bool` and `out`, where the Boolean indicates whether there is an intersection or not
-=======
- * @param geom_traits traits class providing intersection test primitives
- * @return pair of bool and out, where the bool indicates whether there is an intersection or not
->>>>>>> old/Polygon_mesh_processing-GF:Polygon_mesh_processing/include/CGAL/Self_intersection_polyhedron_3.h
  *
  * \todo Polyhedron should be a model of `FaceListGraph`
  * \todo rename to self_intersections
