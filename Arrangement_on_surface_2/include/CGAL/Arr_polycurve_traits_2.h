@@ -2043,7 +2043,7 @@ public:
         }
 
         else if (left_coincides && !right_coincides) {
-          std::cout << "Left is coinciding but right is not." << std::endl;
+          // std::cout << "Left is coinciding but right is not." << std::endl;
           // The left point of the current segment of one polyline
           // coincides with the current segment of the other polyline.
           if (left_overlap) {
@@ -2685,7 +2685,7 @@ public:
       const X_monotone_segment_2& xs =
         (((direction == SMALLER) && (ce == ARR_MAX_END)) ||
          ((direction == LARGER) && (ce == ARR_MIN_END))) ?
-        xcv[0] : xcv[xcv.number_of_segments()-1];
+        xcv[xcv.number_of_segments()-1] : xcv[0];
       return geom_traits->parameter_space_in_x_2_object()(xs, ce);
     }
 
@@ -2748,7 +2748,7 @@ public:
       const X_monotone_segment_2& xs =
         (((direction == SMALLER) && (ce == ARR_MAX_END)) ||
          ((direction == LARGER) && (ce == ARR_MIN_END))) ?
-        xcv[0] : xcv[xcv.number_of_segments()-1];
+        xcv[xcv.number_of_segments()-1] : xcv[0];
       return geom_traits->parameter_space_in_y_2_object()(xs, ce);
     }
 
@@ -3352,7 +3352,6 @@ private:
     Comparison_result operator()(const X_monotone_segment_2& xs,
                                  Arr_curve_end ce)
     {
-      std::cout << "Compare_points" << std::endl;
       const Geometry_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
       const Point_2& p = (ce == ARR_MAX_END) ?
         geom_traits->construct_max_vertex_2_object()(xs) :
