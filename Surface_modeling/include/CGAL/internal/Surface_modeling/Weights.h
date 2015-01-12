@@ -23,10 +23,12 @@
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Simple_cartesian.h>
-typedef CGAL::Simple_cartesian<double>::Vector_3 Vector;
+
 
 namespace CGAL {
 namespace internal {
+
+typedef CGAL::Simple_cartesian<double>::Vector_3 Vector;
 
 template<class Point>
 Vector to_vector(const Point& b, const Point& a) {
