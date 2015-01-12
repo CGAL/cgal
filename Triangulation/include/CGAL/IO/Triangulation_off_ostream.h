@@ -47,6 +47,26 @@ output_point(std::ostream & os, const Traits &traits, const P & p)
 }
 
 // TODO: test if the stream is binary or text?
+template<typename Traits, typename P>
+void
+output_weighted_point(std::ostream & os, const Traits &traits, const P & p, 
+                      bool output_weight = true)
+{
+  typedef typename Traits::Compute_coordinate_d Ccd;
+  typename Traits::Point_drop_weight_d drop_w = 
+    traits.point_drop_weight_d_object();
+  typename Traits::Point_weight_d pt_weight = traits.point_weight_d_object();
+  const Ccd ccd = traits.compute_coordinate_d_object();
+  const int dim = traits.point_dimension_d_object()(p);
+  if (dim > 0)
+  {
+    output_point(os, traits, p);
+    if (output_weight)
+      os << " " << pt_weight(p);
+  }
+}
+
+// TODO: test if the stream is binary or text?
 /*template<typename Traits, typename P>
 void
 input_point(std::istream & is, const Traits &traits, P & p)
