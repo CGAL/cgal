@@ -35,9 +35,6 @@ struct Border_is_constrained_edge_map{
   typedef value_type reference;
   typedef boost::readable_property_map_tag category;
 
-  Border_is_constrained_edge_map()
-  {}
-
   Border_is_constrained_edge_map(const Surface_mesh& sm)
     : sm_ptr(&sm)
   {}
@@ -89,6 +86,9 @@ int main( int argc, char** argv )
   // Contract the surface mesh as much as possible
   SMS::Count_stop_predicate<Surface_mesh> stop(0);
 
+  Border_is_constrained_edge_map bem(surface_mesh);
+
+
   // This the actual call to the simplification algorithm.
   // The surface mesh and stop conditions are mandatory arguments.
   // The index maps are needed because the vertices and edges
@@ -98,8 +98,8 @@ int main( int argc, char** argv )
             ,stop
             ,CGAL::vertex_index_map(get(CGAL::vertex_external_index,surface_mesh))
                   .halfedge_index_map  (get(CGAL::halfedge_external_index  ,surface_mesh))
-                  .edge_is_constrained_map(Border_is_constrained_edge_map(surface_mesh))
-                  .get_placement(Placement())
+                  .edge_is_constrained_map(bem)
+                  .get_placement(Placement(bem))
             );
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n"

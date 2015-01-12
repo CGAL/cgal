@@ -1,7 +1,7 @@
 
 
 #include "test_Prefix.h"
-
+#include <boost/numeric/conversion/cast.hpp>
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -49,13 +49,14 @@ void test_edge_iterators(const G& g)
   typedef boost::graph_traits< G > Traits;
   typedef typename Traits::edge_descriptor edge_descriptor;
   typedef typename Traits::edge_iterator edge_iterator;
+  typedef typename Traits::edges_size_type edges_size_type;
 
-  assert(g.size_of_halfedges() / 2 == num_edges(g));
+  // assert(g.size_of_halfedges() / 2 == num_edges(g));
   
   // do we iterate as many as that?
   edge_iterator eb, ee;
   boost::tie(eb, ee) = edges(g);
-  assert(std::distance(eb, ee) == static_cast<std::ptrdiff_t>(g.size_of_halfedges() / 2));
+  assert(boost::numeric_cast<edges_size_type>(std::distance(eb, ee)) == num_edges(g));
 
   id_map ids;
   unsigned int count = 0;

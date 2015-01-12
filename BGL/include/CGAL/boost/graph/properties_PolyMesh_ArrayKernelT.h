@@ -53,12 +53,12 @@ private:
 };
 
 template <typename K, typename VEF>
-class OM_index_pmap : public boost::put_get_helper<std::size_t, OM_index_pmap<K,VEF> >
+class OM_index_pmap : public boost::put_get_helper<unsigned int, OM_index_pmap<K,VEF> >
 {
 public:
   typedef boost::readable_property_map_tag category;
-  typedef std::size_t                      value_type;
-  typedef std::size_t                      reference;
+  typedef unsigned int                      value_type;
+  typedef unsigned int                      reference;
   typedef VEF                              key_type;
 
   value_type operator[](const key_type& vd) const
@@ -100,6 +100,7 @@ public:
 #if defined(CGAL_USE_OM_POINTS)
     return pm.sm_->point(v);
 #else
+    CGAL_assertion(pm.sm_!=NULL);
     typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point const& omp = pm.sm_->point(v);
     return value_type(omp[0], omp[1], omp[2]);
 #endif
@@ -112,7 +113,7 @@ public:
     const_cast<OpenMesh::PolyMesh_ArrayKernelT<K>&>(*pm.sm_).set_point(v,p);
 #else
     const_cast<OpenMesh::PolyMesh_ArrayKernelT<K>&>(*pm.sm_).set_point
-      (v, typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point(p[0], p[1], p[2]));
+      (v, typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point((float)p[0], (float)p[1], (float)p[2]));
 #endif
   }
 
@@ -259,10 +260,10 @@ get(boost::vertex_point_t, const OpenMesh::PolyMesh_ArrayKernelT<K>& g)
       typename boost::graph_traits< OpenMesh::PolyMesh_ArrayKernelT<K> >::TYPE x) \
   { return get(get(p, sm), x); }                                        \
 
-  CGAL_OM_INTRINSIC_PROPERTY(std::size_t, boost::vertex_index_t, vertex_descriptor)
-  CGAL_OM_INTRINSIC_PROPERTY(std::size_t, boost::edge_index_t, edge_descriptor)
+  CGAL_OM_INTRINSIC_PROPERTY(int, boost::vertex_index_t, vertex_descriptor)
+  CGAL_OM_INTRINSIC_PROPERTY(int, boost::edge_index_t, edge_descriptor)
   CGAL_OM_INTRINSIC_PROPERTY(int, boost::halfedge_index_t, halfedge_descriptor)
-  CGAL_OM_INTRINSIC_PROPERTY(std::size_t, boost::face_index_t, face_descriptor)
+  CGAL_OM_INTRINSIC_PROPERTY(int, boost::face_index_t, face_descriptor)
   //  CGAL_OM_INTRINSIC_PROPERTY(std::size_t, boost::halfedge_index_t, face_descriptor)
   CGAL_OM_INTRINSIC_PROPERTY(typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3, boost::vertex_point_t, vertex_descriptor)
 

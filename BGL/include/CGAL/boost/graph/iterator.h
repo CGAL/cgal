@@ -25,6 +25,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
+#include <CGAL/Iterator_range.h>
 #include <CGAL/assertions.h>
 #include <CGAL/circulator_bases.h>
 #include <CGAL/boost/graph/internal/helpers.h>
@@ -761,11 +762,11 @@ private:
  * returns an iterator range over all halfedges with vertex `source(h,g)` as source.
  */
 template<typename Graph>
-std::pair<Halfedge_around_source_iterator<Graph>,Halfedge_around_source_iterator<Graph> >
+Iterator_range<Halfedge_around_source_iterator<Graph> >
 halfedges_around_source(typename boost::graph_traits<Graph>::halfedge_descriptor h, Graph& g)
 {
   typedef Halfedge_around_source_iterator<Graph> I;
-  return std::make_pair(I(h,g), I(h,g,1));
+  return make_range(I(h,g), I(h,g,1));
 }
 
 /**  
@@ -773,7 +774,7 @@ halfedges_around_source(typename boost::graph_traits<Graph>::halfedge_descriptor
  * returns an iterator range over all halfedges with vertex `v` as source.
  */
 template<typename Graph>
-std::pair<Halfedge_around_source_iterator<Graph>,Halfedge_around_source_iterator<Graph> >
+Iterator_range<Halfedge_around_source_iterator<Graph> >
 halfedges_around_source(typename boost::graph_traits<Graph>::vertex_descriptor v, Graph& g)
 {
   return halfedges_around_source(opposite(halfedge(v,g),g),g);
@@ -784,11 +785,11 @@ halfedges_around_source(typename boost::graph_traits<Graph>::vertex_descriptor v
  * returns an iterator range over all halfedges with vertex `target(h,g)` as target. 
  */
 template<typename Graph>
-std::pair<Halfedge_around_target_iterator<Graph>,Halfedge_around_target_iterator<Graph> >
+Iterator_range<Halfedge_around_target_iterator<Graph> >
 halfedges_around_target(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Halfedge_around_target_iterator<Graph> I;
-  return std::make_pair(I(h,g), I(h,g,1));
+  return make_range(I(h,g), I(h,g,1));
 }
 
 /**  
@@ -796,7 +797,7 @@ halfedges_around_target(typename boost::graph_traits<Graph>::halfedge_descriptor
  * returns an iterator range over all halfedges with vertex `v` as target. 
  */
 template<typename Graph>
-std::pair<Halfedge_around_target_iterator<Graph>,Halfedge_around_target_iterator<Graph> >
+Iterator_range<Halfedge_around_target_iterator<Graph> >
 halfedges_around_target(typename boost::graph_traits<Graph>::vertex_descriptor v, Graph& g)
 {
   return halfedges_around_target(halfedge(v,g),g);
@@ -807,11 +808,11 @@ halfedges_around_target(typename boost::graph_traits<Graph>::vertex_descriptor v
  * returns an iterator range over all halfedges incident to the same face as `h`. 
  */
 template<typename Graph>
-std::pair<Halfedge_around_face_iterator<Graph>,Halfedge_around_face_iterator<Graph> >
+Iterator_range<Halfedge_around_face_iterator<Graph> >
 halfedges_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Halfedge_around_face_iterator<Graph> I;
-  return std::make_pair(I(h,g), I(h,g,1));
+  return make_range(I(h,g), I(h,g,1));
 }
 
 
@@ -881,11 +882,11 @@ public:
  * returns an iterator range over all faces around  vertex `target(h,g)`. 
  */
 template<typename Graph>
-std::pair<Face_around_target_iterator<Graph>,Face_around_target_iterator<Graph> >
+Iterator_range<Face_around_target_iterator<Graph> >
 faces_around_target(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Face_around_target_iterator<Graph> I;
-  return std::make_pair(I(h,g), I(h,g,1));
+  return make_range(I(h,g), I(h,g,1));
 }
 
 /**  
@@ -893,11 +894,11 @@ faces_around_target(typename boost::graph_traits<Graph>::halfedge_descriptor h, 
  * returns an iterator range over all faces adjacent to the same face `face(h,g)`. 
  */
 template<typename Graph>
-std::pair<Face_around_face_iterator<Graph>,Face_around_face_iterator<Graph> >
+Iterator_range<Face_around_face_iterator<Graph> >
 faces_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Face_around_face_iterator<Graph> I;
-  return std::make_pair(I(h,g), I(h,g,1));
+  return make_range(I(h,g), I(h,g,1));
 }
 
 template <typename Graph>
@@ -1069,20 +1070,20 @@ public:
 
 
 template <typename Graph>
-std::pair<Vertex_around_target_iterator<Graph>, Vertex_around_target_iterator<Graph> >
+Iterator_range<Vertex_around_target_iterator<Graph> >
 adjacent_vertices(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Vertex_around_face_iterator<Graph> I;
-  return std::make_pair(I(h,g), I(h,g,1));
+  return make_range(I(h,g), I(h,g,1));
 }
 
 
 template <typename Graph>
-std::pair<Vertex_around_target_iterator<Graph>, Vertex_around_target_iterator<Graph> >
+Iterator_range<Vertex_around_target_iterator<Graph> >
 adjacent_vertices(typename boost::graph_traits<Graph>::vertex_descriptor v, const Graph& g)
 {
   typedef Vertex_around_face_iterator<Graph> I;
-  return std::make_pair(I(halfedge(v,g),g), I(halfedge(v,g),g,1));
+  return make_range(I(halfedge(v,g),g), I(halfedge(v,g),g,1));
 }
 
 /**  
@@ -1090,30 +1091,30 @@ adjacent_vertices(typename boost::graph_traits<Graph>::vertex_descriptor v, cons
  * returns an iterator range over all vertices adjacent to the vertex `target(h,g)`. 
  */
 template <typename Graph>
-std::pair<Vertex_around_target_iterator<Graph>, Vertex_around_target_iterator<Graph> >
+Iterator_range<Vertex_around_target_iterator<Graph> >
 vertices_around_target(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Vertex_around_target_iterator<Graph> I;
-  return std::make_pair(I(h,g), I(h,g,1));
+  return make_range(I(h,g), I(h,g,1));
 }
 
 template <typename Graph>
-std::pair<Vertex_around_target_iterator<Graph>, Vertex_around_target_iterator<Graph> >
+Iterator_range<Vertex_around_target_iterator<Graph> >
 vertices_around_target(typename boost::graph_traits<Graph>::vertex_descriptor v, const Graph& g)
 {
   typedef Vertex_around_target_iterator<Graph> I;
-  return std::make_pair(I(halfedge(v,g),g), I(halfedge(v,g),g,1));
+  return make_range(I(halfedge(v,g),g), I(halfedge(v,g),g,1));
 }
 /**  
  * \ingroup PkgBGLIterators
  * returns an iterator range over all vertices adjacent to the face `face(h,g)`. 
  */
 template <typename Graph>
-std::pair<Vertex_around_face_iterator<Graph>, Vertex_around_face_iterator<Graph> >
+Iterator_range<Vertex_around_face_iterator<Graph> >
 vertices_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
   typedef Vertex_around_face_iterator<Graph> I;
-  return std::make_pair(I(h,g), I(h,g,1));
+  return make_range(I(h,g), I(h,g,1));
 }
 
 template <typename Graph>

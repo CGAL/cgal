@@ -12,4 +12,5 @@
 \example BGL_triangulation_2/dijkstra.cpp
 \example BGL_triangulation_2/dijkstra_with_internal_properties.cpp
 \example BGL_triangulation_2/emst.cpp
+\example BGL_surface_mesh/prim.cpp
 */

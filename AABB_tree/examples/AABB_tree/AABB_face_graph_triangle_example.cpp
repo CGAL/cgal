@@ -5,10 +5,9 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <boost/iterator/transform_iterator.hpp>
-#include <boost/bind.hpp>
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::FT FT;

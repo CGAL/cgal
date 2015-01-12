@@ -67,10 +67,10 @@ namespace Surface_mesh_simplification
   
 #ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE
     vertex_iterator vb, ve ;     
-    for ( boost::tie(vb,ve) = boost::vertices(mSurface) ; vb != ve ; ++ vb )  
+    for ( boost::tie(vb,ve) = vertices(mSurface) ; vb != ve ; ++ vb )  
       CGAL_ECMS_TRACE(1, vertex_to_string(*vb) ) ;
       
-    for ( boost::tie(eb,ee) = edges(mSurface); eb!=ee; ++eb )
+    for ( boost::tie(eb,ee) = halfedges(mSurface); eb!=ee; ++eb )
       CGAL_ECMS_TRACE(1, edge_to_string(*eb) ) ;
 #endif
 }
@@ -130,8 +130,8 @@ namespace Surface_mesh_simplification
 
     if ( is_constrained(lEdge) ) continue;//no not insert constrainted edges
 
-    CGAL_assertion( get_halfedge_id(lEdge) == id ) ;
-    CGAL_assertion( get_halfedge_id(opposite(lEdge,mSurface)) == id+1 ) ;
+    // AF CGAL_assertion( get_halfedge_id(lEdge) == id ) ;
+    // AF CGAL_assertion( get_halfedge_id(opposite(lEdge,mSurface)) == id+1 ) ;
 
     Profile const& lProfile = create_profile(lEdge);
     if ( !equal_points(lProfile.p0(),lProfile.p1()) )
@@ -343,8 +343,8 @@ bool EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::Is_collapse_topologically_vali
 {
   bool rR = true ;
 
-  CGAL_ECMS_TRACE(3,"Testing topological collapsabilty of p_q=V" << get(Vertex_index_map,aProfile.v0()) << "(%" << aProfile.v0()->vertex_degree() << ")"
-                 << "->V" << get(Vertex_index_map,aProfile.v1()) << "(%" << aProfile.v1()->vertex_degree() << ")" 
+  CGAL_ECMS_TRACE(3,"Testing topological collapsabilty of p_q=V" << get(Vertex_index_map,aProfile.v0()) << "(%" << degree(aProfile.v0(),mSurface) << ")"
+                  << "->V" << get(Vertex_index_map,aProfile.v1()) << "(%" << degree(aProfile.v1(),mSurface) << ")" 
                  );
                  
   CGAL_ECMS_TRACE(4, "is p_q border:" << aProfile.is_v0_v1_a_border() );
@@ -356,13 +356,13 @@ bool EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::Is_collapse_topologically_vali
   CGAL_ECMS_TRACE(4,"  t=V" 
                    << ( aProfile.left_face_exists() ? get(Vertex_index_map,aProfile.vL()) : -1 )
                    << "(%" 
-                   << ( aProfile.left_face_exists() ? aProfile.vL()->vertex_degree() : 0 ) 
+                  << ( aProfile.left_face_exists() ? degree(aProfile.vL(),mSurface) : 0 ) 
                    << ")" 
                  );
   CGAL_ECMS_TRACE(4,"  b=V" 
                    << ( aProfile.right_face_exists() ? get(Vertex_index_map,aProfile.vR()) : -1 )
                    << "(%" 
-                   << ( aProfile.right_face_exists() ? aProfile.vR()->vertex_degree() :0 ) 
+                  << ( aProfile.right_face_exists() ? degree(aProfile.vR(),mSurface) :0 ) 
                    << ")" 
                    );
 
@@ -757,7 +757,7 @@ void EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::Collapse( Profile const& aProf
       lV0VL=primary_edge(aProfile.v1_vL());
     
     CGAL_ECMS_TRACE(3,"V0VL E" << get(Edge_index_map,lV0VL)
-                   << "(V" <<  get(Vertex_index_map,lV0VL->vertex()) << "->V" << get(Vertex_index_map,lV0VL->opposite()->vertex()) << ")"
+                    << "(V" <<  get(Vertex_index_map, source(lV0VL,mSurface)) << "->V" << get(Vertex_index_map,target(lV0VL,mSurface)) << ")"
                    ) ;
                    
     Edge_data& lData = get_data(lV0VL) ;
@@ -778,7 +778,7 @@ void EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::Collapse( Profile const& aProf
       lVRV1=primary_edge(aProfile.v0_vR());
 
     CGAL_ECMS_TRACE(3,"V1VRE" << get(Edge_index_map,lVRV1)
-                   << "(V" <<  get(Vertex_index_map,lVRV1->vertex()) << "->V" << get(Vertex_index_map,lVRV1->opposite()->vertex()) << ")"
+                    << "(V" <<  get(Vertex_index_map, source(lVRV1,mSurface)) << "->V" << get(Vertex_index_map, target(lVRV1,mSurface)) << ")"
                    ) ;
                    
     Edge_data& lData = get_data(lVRV1) ;
@@ -816,7 +816,7 @@ void EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::Collapse( Profile const& aProf
                  
 #ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE
   out_edge_iterator eb1, ee1 ;     
-  for ( boost::tie(eb1,ee1) = out_edges(rResult,mSurface) ; eb1 != ee1 ; ++ eb1 )  
+  for ( boost::tie(eb1,ee1) = halfedges_around_source(rResult,mSurface) ; eb1 != ee1 ; ++ eb1 )  
     CGAL_ECMS_TRACE(2, edge_to_string(*eb1) ) ;
 #endif
 

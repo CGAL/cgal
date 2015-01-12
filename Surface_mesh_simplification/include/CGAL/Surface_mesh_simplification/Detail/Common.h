@@ -131,11 +131,11 @@ inline std::string optional_to_string( boost::optional<T> const& o )
 #  include<string>
 #  include<iostream>
 #  include<sstream>
-namespace internal { namespace  { bool cgal_enable_ecms_trace = false ; } }
+namespace internal { namespace  { bool cgal_enable_ecms_trace = true ; } }
 #  define CGAL_ECMS_TRACE_IMPL(m) \
      if ( ::internal::cgal_enable_ecms_trace ) { \
        std::ostringstream ss ; ss << m ; std::string s = ss.str(); \
-       Surface_simplification_external_trace(s); \
+       /*Surface_simplification_external_trace(s)*/ std::cerr << s << std::endl; \
      }
      
 #  define CGAL_ECMS_DEBUG_CODE(code) code     

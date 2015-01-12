@@ -1,6 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/iterator_range.h>
+#include <CGAL/Iterator_range.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <boost/foreach.hpp>
@@ -18,7 +18,7 @@ typedef CGAL::Polyhedron_3<Kernel>                           Polyhedron;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator   vertex_iterator;
 
-typedef CGAL::iterator_range<vertex_iterator> vertex_range;
+typedef CGAL::Iterator_range<vertex_iterator> vertex_range;
 
 
 vertex_range vertices_range(const Polyhedron& p)

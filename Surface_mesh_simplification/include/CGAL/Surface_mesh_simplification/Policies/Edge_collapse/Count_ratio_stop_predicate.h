@@ -53,10 +53,10 @@ public:
   Count_ratio_stop_predicate( double aRatio ) : mRatio(aRatio) {}
   
   template <typename F> 
-  bool operator()( F const&      // aCurrentCost
-                 , Profile const& //aEdgeProfile
-                 , size_type      aInitialCount
-                 , size_type      aCurrentCount
+  bool operator()( F const&       // aCurrentCost
+                 , Profile const& // aEdgeProfile
+                 , size_type         aInitialCount
+                 , size_type         aCurrentCount
                  ) const 
   {
     return ( static_cast<double>(aCurrentCount) / static_cast<double>(aInitialCount) ) < mRatio ;

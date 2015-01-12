@@ -22,7 +22,7 @@
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 #include <CGAL/boost/graph/Euler_operations.h>
-
+#include <CGAL/boost/graph/helpers.h>
 namespace CGAL {
 
 namespace Surface_mesh_simplification
@@ -242,16 +242,16 @@ private:
   boost::tuple<vertex_descriptor,vertex_descriptor> get_vertices( halfedge_descriptor const& aEdge ) const
   {
     vertex_descriptor p,q ;
-    p = boost::source(aEdge,mSurface);
-    q = boost::target(aEdge,mSurface);
+    p = source(aEdge,mSurface);
+    q = target(aEdge,mSurface);
     return boost::make_tuple(p,q);
   }
   
   boost::tuple<vertex_descriptor,vertex_descriptor> get_vertices( halfedge_descriptor const& aEdge ) 
   {
     vertex_descriptor p,q ;
-    p = boost::source(aEdge,mSurface);
-    q = boost::target(aEdge,mSurface);
+    p = source(aEdge,mSurface);
+    q = target(aEdge,mSurface);
     return boost::make_tuple(p,q);
   }
   
@@ -264,7 +264,7 @@ private:
   std::string edge_to_string ( halfedge_descriptor const& aEdge ) const
   {
     vertex_descriptor p,q ; boost::tie(p,q) = get_vertices(aEdge);
-    return boost::str( boost::format("{E%1% %2%->%3%}%4%") % get(Edge_index_map,aEdge) % vertex_to_string(p) % vertex_to_string(q) % ( is_border(aEdge) ? " (BORDER)" : ( is_border(aEdge->opposite()) ? " (~BORDER)": "" ) ) ) ;
+    return boost::str( boost::format("{E%1% %2%->%3%}%4%") % get(Edge_index_map,aEdge) % vertex_to_string(p) % vertex_to_string(q) % ( is_border(aEdge) ? " (BORDER)" : ( is_border(opposite(aEdge,mSurface)) ? " (~BORDER)": "" ) ) ) ;
   }
   
   Cost_type get_cost ( Profile const& aProfile ) const
@@ -387,8 +387,8 @@ private:
   
   boost::scoped_ptr<PQ> mPQ ;
     
-  std::size_t mInitialEdgeCount ;
-  std::size_t mCurrentEdgeCount ; 
+  size_type mInitialEdgeCount ;
+  size_type mCurrentEdgeCount ; 
 
   FT          mcMaxDihedralAngleCos2 ;
   

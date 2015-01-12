@@ -68,19 +68,19 @@ namespace boost {
 } // namespace boost
 
 
-namespace boost {
+namespace CGAL {
 
   template <class Gt, class Tds>
-  typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_descriptor
-  source(typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::edge_descriptor e,
+  typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_descriptor
+  source(typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::edge_descriptor e,
          const CGAL::Delaunay_triangulation_2<Gt,Tds>& g)
   {
     return e.first->vertex(g.ccw(e.second));
   }
 
   template <class Gt, class Tds>
-  typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_descriptor
-  target(typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::edge_descriptor e,
+  typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_descriptor
+  target(typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::edge_descriptor e,
          const CGAL::Delaunay_triangulation_2<Gt,Tds>& g)
   {
     return e.first->vertex(g.cw(e.second));
@@ -88,11 +88,11 @@ namespace boost {
 
   template <class Gt, class Tds>
   inline std::pair<
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_iterator,
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_iterator >  
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_iterator,
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_iterator >  
   vertices(const CGAL::Delaunay_triangulation_2<Gt,Tds>& g)
   {
-    typedef typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_iterator
+    typedef typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_iterator
       Iter;
     return std::make_pair( Iter(g.all_vertices_begin()), Iter(g.all_vertices_end()) );
   }
@@ -100,8 +100,8 @@ namespace boost {
 
   template <class Gt, class Tds>
   inline std::pair<
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::edge_iterator,
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::edge_iterator >  
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::edge_iterator,
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::edge_iterator >  
   edges(const CGAL::Delaunay_triangulation_2<Gt,Tds>& g)
   {    
     return std::make_pair(g.all_edges_begin(), g.all_edges_end());
@@ -109,15 +109,15 @@ namespace boost {
 
   template <class Gt, class Tds>
   inline std::pair<
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::out_edge_iterator,
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::out_edge_iterator >  
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::out_edge_iterator,
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::out_edge_iterator >  
   out_edges(
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_descriptor u, 
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_descriptor u, 
     const CGAL::Delaunay_triangulation_2<Gt,Tds>& g)
   {
     typename CGAL::Delaunay_triangulation_2<Gt,Tds>::Edge_circulator ec(u,u->face());
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::degree_size_type out_deg = out_degree(u,g);
-    typedef typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::degree_size_type out_deg = out_degree(u,g);
+    typedef typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >
       ::out_edge_iterator Iter;
     
     return std::make_pair( Iter(ec), Iter(ec,out_deg) );
@@ -125,55 +125,55 @@ namespace boost {
 
   template <class Gt, class Tds>
   inline std::pair<
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::in_edge_iterator,
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::in_edge_iterator >  
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::in_edge_iterator,
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::in_edge_iterator >  
   in_edges(
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_descriptor u, 
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_descriptor u, 
     const CGAL::Delaunay_triangulation_2<Gt,Tds>& g)
   {
     typename CGAL::Delaunay_triangulation_2<Gt,Tds>::Edge_circulator ec(u,u->face());
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::degree_size_type out_deg = out_degree(u,g);
-    typedef typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::degree_size_type out_deg = out_degree(u,g);
+    typedef typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >
       ::in_edge_iterator Iter;
     return std::make_pair( Iter(ec), Iter(ec,out_deg) );
   }
 
   template <class Gt, class Tds>
   inline std::pair<
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::adjacency_iterator,
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::adjacency_iterator >  
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::adjacency_iterator,
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::adjacency_iterator >  
   adjacent_vertices(
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_descriptor u, 
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_descriptor u, 
     const CGAL::Delaunay_triangulation_2<Gt,Tds>& g)
   {
     typename CGAL::Delaunay_triangulation_2<Gt,Tds>::Vertex_circulator vc = out_edge_iterator(u,u.face());
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::degree_size_type out_deg = out_degree(u,g);
-    typedef typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::degree_size_type out_deg = out_degree(u,g);
+    typedef typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >
       ::adjacency_iterator Iter;
     return std::make_pair( Iter(vc), Iter(vc,out_deg) );
   }
 
   template <class Gt, class Tds>
-  typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertices_size_type
+  typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertices_size_type
   num_vertices(const CGAL::Delaunay_triangulation_2<Gt,Tds>& g)
   {
     return g.number_of_vertices()+1;
   }  
 
   template <class Gt, class Tds>
-  typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::edges_size_type
+  typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::edges_size_type
   num_edges(const CGAL::Delaunay_triangulation_2<Gt,Tds>& g)
   {
     return  g.number_of_vertices() + 1 + g.number_of_faces() + degree(g.infinite_vertex(), g) - 2;
   }  
 
   template <class Gt, class Tds>
-  typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::degree_size_type
+  typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::degree_size_type
   out_degree(
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_descriptor u, 
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_descriptor u, 
     const CGAL::Delaunay_triangulation_2<Gt,Tds>& g)
   {
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::degree_size_type deg = 0;
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::degree_size_type deg = 0;
     typename CGAL::Delaunay_triangulation_2<Gt,Tds>::Edge_circulator c = g.incident_edges(u), done(c);
     if ( c != 0) {
         do {
@@ -184,12 +184,12 @@ namespace boost {
   }
 
   template <class Gt, class Tds>
-  typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::degree_size_type
+  typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::degree_size_type
   in_degree(
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_descriptor u, 
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_descriptor u, 
     const CGAL::Delaunay_triangulation_2<Gt,Tds>& g)
   {
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::degree_size_type deg = 0;
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::degree_size_type deg = 0;
     typename CGAL::Delaunay_triangulation_2<Gt,Tds>::Edge_circulator c = g.incident_edges(u), done(c);
     if ( c != 0) {
         do {
@@ -200,12 +200,12 @@ namespace boost {
   }
 
   template <class Gt, class Tds>
-  typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::degree_size_type
+  typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::degree_size_type
   degree(
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_descriptor u, 
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::vertex_descriptor u, 
     const CGAL::Delaunay_triangulation_2<Gt,Tds>& g)
   {
-    typename graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::degree_size_type deg = 0;
+    typename boost::graph_traits< CGAL::Delaunay_triangulation_2<Gt,Tds> >::degree_size_type deg = 0;
     typename CGAL::Delaunay_triangulation_2<Gt,Tds>::Edge_circulator c = g.incident_edges(u), done(c);
     if ( c != 0) {
         do {
@@ -219,10 +219,10 @@ namespace boost {
   // property maps
   template <class Gt, class Tds>
   class DT2_vertex_id_map
-    : public put_get_helper<int, DT2_vertex_id_map<Gt,Tds> >
+    : public boost::put_get_helper<int, DT2_vertex_id_map<Gt,Tds> >
   {
   public:
-    typedef readable_property_map_tag category;
+    typedef boost::readable_property_map_tag category;
     typedef int value_type;
     typedef int reference;
     typedef typename CGAL::Delaunay_triangulation_2<Gt,Tds>::Vertex_handle key_type;
@@ -237,10 +237,10 @@ namespace boost {
 
   template <class Gt, class Tds>
   class DT2_edge_id_map
-    : public put_get_helper<int, DT2_edge_id_map<Gt,Tds> >
+    : public boost::put_get_helper<int, DT2_edge_id_map<Gt,Tds> >
   {
   public:
-    typedef readable_property_map_tag category;
+    typedef boost::readable_property_map_tag category;
     typedef int value_type;
     typedef int reference;
     typedef typename CGAL::Delaunay_triangulation_2<Gt,Tds>::Edge key_type;
@@ -255,12 +255,12 @@ namespace boost {
 
   template <class Gt, class Tds>
   class DT2_edge_weight_map
-    : public put_get_helper<typename Gt::FT, DT2_edge_weight_map<Gt, Tds> >
+    : public boost::put_get_helper<typename Gt::FT, DT2_edge_weight_map<Gt, Tds> >
   {
   private:
     const CGAL::Delaunay_triangulation_2<Gt,Tds>& tr;
   public:
-    typedef readable_property_map_tag category;
+    typedef boost::readable_property_map_tag category;
     typedef typename Gt::FT value_type;
     typedef value_type reference;
     typedef typename CGAL::Delaunay_triangulation_2<Gt,Tds>::Edge key_type;
@@ -277,21 +277,21 @@ namespace boost {
 
   template <class Gt, class Tds>
   inline DT2_vertex_id_map<Gt,Tds>
-  get(vertex_index_t, const CGAL::Delaunay_triangulation_2<Gt,Tds>& ) {
+  get(boost::vertex_index_t, const CGAL::Delaunay_triangulation_2<Gt,Tds>& ) {
     DT2_vertex_id_map<Gt,Tds> m;
     return m;
   }
 
   template <class Gt, class Tds>
   inline DT2_edge_id_map<Gt,Tds>
-  get(edge_index_t, const CGAL::Delaunay_triangulation_2<Gt,Tds>& ) {
+  get(boost::edge_index_t, const CGAL::Delaunay_triangulation_2<Gt,Tds>& ) {
     DT2_edge_id_map<Gt,Tds> m;
     return m;
   }
 
   template <class Gt, class Tds>
   inline DT2_edge_weight_map<Gt,Tds>
-  get(edge_weight_t, const CGAL::Delaunay_triangulation_2<Gt,Tds>& g) {
+  get(boost::edge_weight_t, const CGAL::Delaunay_triangulation_2<Gt,Tds>& g) {
     DT2_edge_weight_map<Gt,Tds> m(g);
     return m;
   }
@@ -300,7 +300,7 @@ namespace boost {
   struct DT2_property_map { };
 
   template <>
-  struct DT2_property_map<vertex_index_t> {
+  struct DT2_property_map<boost::vertex_index_t> {
     template <class Gt, class Tds>
     struct bind_ {
       typedef DT2_vertex_id_map<Gt,Tds> type;
@@ -310,7 +310,7 @@ namespace boost {
 
 
   template <>
-  struct DT2_property_map<edge_index_t> {
+  struct DT2_property_map<boost::edge_index_t> {
     template <class Gt, class Tds>
     struct bind_ {
       typedef DT2_edge_id_map<Gt,Tds> type;
@@ -320,7 +320,7 @@ namespace boost {
 
 
   template <>
-  struct DT2_property_map<edge_weight_t> {
+  struct DT2_property_map<boost::edge_weight_t> {
     template <class Gt, class Tds>
     struct bind_ {
       typedef DT2_edge_weight_map<Gt,Tds> type;
@@ -328,11 +328,15 @@ namespace boost {
     };
   };
 
+} // namespace CGAL
+
+namespace boost {
+
   // g++ 'enumeral_type' in template unification not implemented workaround
   template <class Gt, class Tds, class Tag>
   struct property_map<CGAL::Delaunay_triangulation_2<Gt,Tds>, Tag> {
     typedef typename 
-      DT2_property_map<Tag>::template bind_<Gt,Tds> map_gen;
+    CGAL::DT2_property_map<Tag>::template bind_<Gt,Tds> map_gen;
     typedef typename map_gen::type type;
     typedef typename map_gen::const_type const_type;
   };
@@ -341,11 +345,14 @@ namespace boost {
   template <class Gt, class Tds, class Tag>
   struct property_map<const CGAL::Delaunay_triangulation_2<Gt,Tds>, Tag> {
     typedef typename 
-      DT2_property_map<Tag>::template bind_<Gt,Tds> map_gen;
+    CGAL::DT2_property_map<Tag>::template bind_<Gt,Tds> map_gen;
     typedef typename map_gen::type type;
     typedef typename map_gen::const_type const_type;
   };
 
+} // namespace boost
+
+namespace CGAL {
   template <class Gt, class Tds, class PropertyTag, class Key>
   inline
   typename boost::property_traits<
@@ -359,11 +366,14 @@ namespace boost {
   put(PropertyTag p, CGAL::Delaunay_triangulation_2<Gt,Tds>& g, 
       const Key& key, const Value& value)
   {
-    typedef typename property_map<CGAL::Delaunay_triangulation_2<Gt,Tds>, PropertyTag>::type Map;
+    typedef typename boost::property_map<CGAL::Delaunay_triangulation_2<Gt,Tds>, PropertyTag>::type Map;
     Map pmap = get(p, g);
     put(pmap, key, value);
   }
 
+} // namespace CGAL
+
+namespace boost {
 
   // What are those needed for ???
   template <typename Gt, typename Tds>

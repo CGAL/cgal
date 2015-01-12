@@ -28,8 +28,8 @@ void test(const char* file_name) {
 }
 
 int main(int argc, char** argv) {
-  files.push_back("data/elephant.off");
-  files.push_back("data/camel.off");
+  //files.push_back("data/elephant.off");
+  //files.push_back("data/camel.off");
 
   for(int i=1;i<argc;++i) {
     test(argv[i]);
