@@ -29,9 +29,16 @@
 #include <utility>
 #include <CGAL/basic.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4244)
+#endif
+#include <boost/random/uniform_smallint.hpp>
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_int.hpp>
-#include <boost/random/uniform_smallint.hpp>
 #include <boost/random/uniform_real.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>

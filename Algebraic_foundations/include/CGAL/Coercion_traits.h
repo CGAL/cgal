@@ -32,7 +32,7 @@
 
 #include <iterator>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/tags.h>
