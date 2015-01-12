@@ -55,6 +55,7 @@ int main()
 #ifdef CGAL_TC_PROFILING
     Wall_clock_timer t_gen;
 #endif
+
     std::vector<Point> points =
       //generate_points_on_circle_2<Kernel>(NUM_POINTS, 3.);
       //generate_points_on_moment_curve<Kernel>(NUM_POINTS, AMBIENT_DIMENSION, 0., 1.);
@@ -64,7 +65,12 @@ int main()
       //generate_points_on_klein_bottle_3D<Kernel>(NUM_POINTS, 4., 3.);
       generate_points_on_klein_bottle_4D<Kernel>(NUM_POINTS, 4., 3.);
       //generate_points_on_klein_bottle_variant_5D<Kernel>(NUM_POINTS, 4., 3.);
-    
+
+    // LOAD FROM A FILE
+    //std::vector<Point> points;
+    //load_points_from_file<Point>(
+    //  "data/points_10_10k.cin", std::back_inserter(points));
+
 #ifdef CGAL_TC_PROFILING
     std::cerr << "Point set generated in " << t_gen.elapsed()
               << " seconds." << std::endl;
