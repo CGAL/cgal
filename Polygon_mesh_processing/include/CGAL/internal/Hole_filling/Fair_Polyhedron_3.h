@@ -51,11 +51,12 @@ struct Fair_default_sparse_linear_solver {
 // [On Linear Variational Surface Deformation Methods-2008]
 template<class Polyhedron, class SparseLinearSolver, class WeightCalculator>
 class Fair_Polyhedron_3 {
-// typedefs
-  typedef typename Polyhedron::Traits::Point_3 Point_3;
-  typedef typename Polyhedron::Vertex_handle Vertex_handle;
-  typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
-  typedef typename Polyhedron::Halfedge_around_vertex_circulator  Halfedge_around_vertex_circulator;
+  // typedefs
+  typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
+  typedef typename boost::property_traits<Point_property_map>::value_type Point_3;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor Vertex_handle;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
+  typedef  Halfedge_around_target_circulator<Polyhedron>  Halfedge_around_vertex_circulator;
 
   typedef SparseLinearSolver Sparse_linear_solver;
 // members
@@ -63,14 +64,14 @@ class Fair_Polyhedron_3 {
 public:
   Fair_Polyhedron_3(WeightCalculator weight_calculator = WeightCalculator())
     : weight_calculator(weight_calculator) { }
-
+  
 private:
   double sum_weight(Vertex_handle v, Polyhedron& polyhedron) {
-    double weight = 0;
-    Halfedge_around_vertex_circulator circ = v->vertex_begin();
-    do {
-      weight += weight_calculator.w_ij(circ, polyhedron);
-    } while(++circ != v->vertex_begin());
+  double weight = 0;
+  Halfedge_around_vertex_circulator circ(halfedge(v,polyhedron),polyhedron), done(circ);
+  do {
+    weight += weight_calculator.w_ij(*circ, polyhedron);
+    } while(++circ != done);
     return weight;
   }
 
@@ -100,13 +101,13 @@ private:
     else {
       double w_i = weight_calculator.w_i(v, polyhedron);
 
-      Halfedge_around_vertex_circulator circ = v->vertex_begin();
+  Halfedge_around_vertex_circulator circ(halfedge(v,polyhedron),polyhedron), done(circ);
       do {
-        double w_i_w_ij = w_i * weight_calculator.w_ij(circ, polyhedron) ;
+        double w_i_w_ij = w_i * weight_calculator.w_ij(*circ, polyhedron) ;
 
-        Vertex_handle nv = circ->opposite()->vertex();
+        Vertex_handle nv = target(opposite(*circ,polyhedron),polyhedron);
         compute_row(nv, polyhedron, row_id, matrix, x, y, z, -w_i_w_ij*multiplier, vertex_id_map, depth-1);
-      } while(++circ != v->vertex_begin());
+      } while(++circ != done);
 
       double w_i_w_ij_sum = w_i * sum_weight(v, polyhedron);
       compute_row(v, polyhedron, row_id, matrix, x, y, z, w_i_w_ij_sum*multiplier, vertex_id_map, depth-1);
