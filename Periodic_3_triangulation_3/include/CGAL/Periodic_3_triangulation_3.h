@@ -3920,19 +3920,19 @@ namespace internal {
 
   /// Internal function used by operator==.
   // This function tests and registers the 4 neighbors of c1/c2,
-  // and recursively calls itself over them.
+  // and performs a bfs traversal
   // Returns false if an inequality has been found.
   //TODO: introduce offsets
   template <class GT, class TDS1, class TDS2>
   bool
   test_next(const Periodic_3_triangulation_3<GT, TDS1> &t1,
-      const Periodic_3_triangulation_3<GT, TDS2> &t2,
-      typename Periodic_3_triangulation_3<GT, TDS1>::Cell_handle c1,
-      typename Periodic_3_triangulation_3<GT, TDS2>::Cell_handle c2,
-      std::map<typename Periodic_3_triangulation_3<GT, TDS1>::Cell_handle,
-          typename Periodic_3_triangulation_3<GT, TDS2>::Cell_handle> &Cmap,
-      std::map<typename Periodic_3_triangulation_3<GT, TDS1>::Vertex_handle,
-          typename Periodic_3_triangulation_3<GT, TDS2>::Vertex_handle> &Vmap)
+            const Periodic_3_triangulation_3<GT, TDS2> & /* needed_for_deducing_TDS2 */,
+            typename Periodic_3_triangulation_3<GT, TDS1>::Cell_handle c1,
+            typename Periodic_3_triangulation_3<GT, TDS2>::Cell_handle c2,
+            std::map<typename Periodic_3_triangulation_3<GT, TDS1>::Cell_handle,
+            typename Periodic_3_triangulation_3<GT, TDS2>::Cell_handle> &Cmap,
+            std::map<typename Periodic_3_triangulation_3<GT, TDS1>::Vertex_handle,
+            typename Periodic_3_triangulation_3<GT, TDS2>::Vertex_handle> &Vmap)
   {  
     typedef Periodic_3_triangulation_3<GT, TDS1> Tr1;
     typedef Periodic_3_triangulation_3<GT, TDS2> Tr2;
@@ -3993,7 +3993,6 @@ namespace internal {
         
         // We register n1/n2.
         Cmap.insert(std::make_pair(n1, n2));
-        // We recurse on n1/n2.
         queue.push_back(std::make_pair(n1, n2));
       }
     }
@@ -4123,9 +4122,8 @@ operator==(const Periodic_3_triangulation_3<GT,TDS1> &t1,
   if (Cmap.size() == 0)
     return false;
 
-  // We now have one cell, we need to propagate recursively.
-  return internal::test_next(t1, t2,
-      Cmap.begin()->first, Cmap.begin()->second, Cmap, Vmap);
+  // We now have one cell, we need to compare in a bfs graph traversal
+  return internal::test_next(t1, t2, Cmap.begin()->first, Cmap.begin()->second, Cmap, Vmap);
 }
 
 template < class GT, class TDS1, class TDS2 >
