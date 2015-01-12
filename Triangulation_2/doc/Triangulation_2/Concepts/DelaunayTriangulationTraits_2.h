@@ -67,8 +67,8 @@ Provides the operator:
 
 `Comparison_result operator()(Point_2 p, Point_2 q, Point_2 r)` 
 which returns `SMALLER`, `EQUAL` or `LARGER` 
-according to the distance between p and q being smaller, equal or larger 
-than the distance between p and r. This type is only require if 
+according to the distance between `p` and `q` being smaller, equal or larger 
+than the distance between `p` and `r`. This type is only require if 
 `nearest_vertex` queries are issued. 
 */ 
 typedef unspecified_type Compare_distance_2; 

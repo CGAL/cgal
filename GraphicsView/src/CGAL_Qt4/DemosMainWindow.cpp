@@ -165,7 +165,7 @@ void DemosMainWindow::exportSVG()
   svg.setFileName(fileName);
 
   svg.setSize(this->view->size());
-  svg.setViewBox(this->view->geometry());
+  svg.setViewBox(this->view->sceneRect());
   svg.setTitle(tr("%1 drawing").arg(qApp->applicationName()));
   svg.setDescription(tr("Generated using %1").arg(qApp->applicationName()));
 

@@ -34,7 +34,6 @@ The concept `ConstrainedDelaunayTriangulationTraits_2` refines both the concept
 class ConstrainedDelaunayTriangulationTraits_2 {
 public:
 
-/// @}
 
 }; /* end ConstrainedDelaunayTriangulationTraits_2 */
 
