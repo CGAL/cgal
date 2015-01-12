@@ -798,8 +798,9 @@ Regular_triangulation<RTTraits, TDS>
   reset_flat_orientation();
   if( 1 <= current_dimension() )
   {
-    // FIXME: infinite vertex is NOT at index 0 a priori.
-    Full_cell_handle s = infinite_vertex()->full_cell()->neighbor(0);
+    Full_cell_handle inf_v_cell = infinite_vertex()->full_cell();
+    int inf_v_index = inf_v_cell->index(infinite_vertex());
+    Full_cell_handle s = inf_v_cell->neighbor(inf_v_index);
     Orientation o = orientation(s);
     CGAL_assertion( ZERO != o );
     if( NEGATIVE == o )
@@ -857,8 +858,9 @@ Regular_triangulation<RTTraits, TDS>
   v->set_point(p);
   if( current_dimension() >= 1 )
   {
-    // FIXME: infinite vertex is NOT at index 0 a priori.
-    Full_cell_handle s = infinite_vertex()->full_cell()->neighbor(0);
+    Full_cell_handle inf_v_cell = infinite_vertex()->full_cell();
+    int inf_v_index = inf_v_cell->index(infinite_vertex());
+    Full_cell_handle s = inf_v_cell->neighbor(inf_v_index);
     Orientation o = orientation(s);
     CGAL_assertion( ZERO != o );
       if( NEGATIVE == o )
