@@ -60,13 +60,17 @@ class Fair_Polyhedron_3 {
 
   typedef SparseLinearSolver Sparse_linear_solver;
 // members
+  Polyhedron& polyhedron;
   WeightCalculator weight_calculator;
+  Point_property_map ppmap;
+
 public:
-  Fair_Polyhedron_3(WeightCalculator weight_calculator = WeightCalculator())
-    : weight_calculator(weight_calculator) { }
+  Fair_Polyhedron_3(Polyhedron& polyhedron, WeightCalculator weight_calculator = WeightCalculator())
+    : polyhedron(polyhedron), weight_calculator(weight_calculator), ppmap(get(CGAL::vertex_point, polyhedron))
+  { }
   
 private:
-  double sum_weight(Vertex_handle v, Polyhedron& polyhedron) {
+  double sum_weight(Vertex_handle v) {
   double weight = 0;
   Halfedge_around_vertex_circulator circ(halfedge(v,polyhedron),polyhedron), done(circ);
   do {
@@ -79,7 +83,6 @@ private:
   // Equation 6 in [On Linear Variational Surface Deformation Methods]
   void compute_row(
     Vertex_handle v, 
-    Polyhedron& polyhedron,
     std::size_t row_id,                            // which row to insert in [ frees stay left-hand side ]
     typename Sparse_linear_solver::Matrix& matrix, 
     double& x, double& y, double& z,               // constants transfered to right-hand side
@@ -93,30 +96,31 @@ private:
         matrix.add_coef(row_id, vertex_id_it->second, multiplier);
       }
       else { 
-        x += multiplier * -v->point().x(); 
-        y += multiplier * -v->point().y(); 
-        z += multiplier * -v->point().z(); 
+        Point_3& p = ppmap[v];
+        x += multiplier * - p.x(); 
+        y += multiplier * - p.y(); 
+        z += multiplier * - p.z(); 
       }
     }
     else {
-      double w_i = weight_calculator.w_i(v, polyhedron);
+      double w_i = weight_calculator.w_i(v,polyhedron);
 
   Halfedge_around_vertex_circulator circ(halfedge(v,polyhedron),polyhedron), done(circ);
       do {
         double w_i_w_ij = w_i * weight_calculator.w_ij(*circ, polyhedron) ;
 
         Vertex_handle nv = target(opposite(*circ,polyhedron),polyhedron);
-        compute_row(nv, polyhedron, row_id, matrix, x, y, z, -w_i_w_ij*multiplier, vertex_id_map, depth-1);
+        compute_row(nv, row_id, matrix, x, y, z, -w_i_w_ij*multiplier, vertex_id_map, depth-1);
       } while(++circ != done);
 
-      double w_i_w_ij_sum = w_i * sum_weight(v, polyhedron);
-      compute_row(v, polyhedron, row_id, matrix, x, y, z, w_i_w_ij_sum*multiplier, vertex_id_map, depth-1);
+      double w_i_w_ij_sum = w_i * sum_weight(v);
+      compute_row(v, row_id, matrix, x, y, z, w_i_w_ij_sum*multiplier, vertex_id_map, depth-1);
     }
   }
 
 public:
   template<class InputIterator>
-  bool fair(Polyhedron& polyhedron, InputIterator vb, InputIterator ve, Fairing_continuity fc)
+  bool fair(InputIterator vb, InputIterator ve, Fairing_continuity fc)
   {
     int depth = static_cast<int>(fc) + 1;
     if(depth < 1 || depth > 3) {
@@ -147,7 +151,7 @@ public:
 
     for(typename std::set<Vertex_handle>::iterator vb = interior_vertices.begin(); vb != interior_vertices.end(); ++vb) {
       std::size_t v_id = vertex_id_map[*vb];
-      compute_row(*vb, polyhedron, v_id, A, Bx[v_id], By[v_id], Bz[v_id], 1, vertex_id_map, depth);
+      compute_row(*vb, v_id, A, Bx[v_id], By[v_id], Bz[v_id], 1, vertex_id_map, depth);
     }
     CGAL_TRACE_STREAM << "**Timer** System construction: " << timer.time() << std::endl; timer.reset();
 
@@ -183,7 +187,7 @@ public:
     // update 
     id = 0;
     for(typename std::set<Vertex_handle>::iterator it = interior_vertices.begin(); it != interior_vertices.end(); ++it, ++id) {
-      (*it)->point() = Point_3(X[id], Y[id], Z[id]);
+      put(ppmap, *it, Point_3(X[id], Y[id], Z[id]));
     }
     return true;
   }
@@ -221,24 +225,24 @@ The larger @a continuity gets, the more fixed vertices are required.
 */
 template<class SparseLinearSolver, class WeightCalculator, class Polyhedron, class InputIterator>
 bool fair(Polyhedron& polyhedron, 
-  InputIterator vertex_begin,
-  InputIterator vertex_end,
-  WeightCalculator weight_calculator,
-  Fairing_continuity continuity = FAIRING_C_1
-  )
+          InputIterator vertex_begin,
+          InputIterator vertex_end,
+          WeightCalculator weight_calculator,
+          Fairing_continuity continuity = FAIRING_C_1
+          )
 {
-  internal::Fair_Polyhedron_3<Polyhedron, SparseLinearSolver, WeightCalculator> fair_functor(weight_calculator);
-  return fair_functor.fair(polyhedron, vertex_begin, vertex_end, continuity);
+  internal::Fair_Polyhedron_3<Polyhedron, SparseLinearSolver, WeightCalculator> fair_functor(polyhedron, weight_calculator);
+  return fair_functor.fair(vertex_begin, vertex_end, continuity);
 }
 
 //use default SparseLinearSolver
 template<class WeightCalculator, class Polyhedron, class InputIterator>
 bool fair(Polyhedron& poly, 
-  InputIterator vb,
-  InputIterator ve,
-  WeightCalculator weight_calculator,
-  Fairing_continuity continuity = FAIRING_C_1
-  )
+          InputIterator vb,
+          InputIterator ve,
+          WeightCalculator weight_calculator,
+          Fairing_continuity continuity = FAIRING_C_1
+          )
 {
   typedef internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
   return fair<Sparse_linear_solver, WeightCalculator, Polyhedron, InputIterator>
@@ -248,9 +252,9 @@ bool fair(Polyhedron& poly,
 //use default WeightCalculator
 template<class SparseLinearSolver, class Polyhedron, class InputIterator>
 bool fair(Polyhedron& poly, 
-  InputIterator vb,
-  InputIterator ve,
-  Fairing_continuity continuity = FAIRING_C_1
+          InputIterator vb,
+          InputIterator ve,
+          Fairing_continuity continuity = FAIRING_C_1
   )
 {
   typedef internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron> Weight_calculator;
@@ -261,10 +265,10 @@ bool fair(Polyhedron& poly,
 //use default SparseLinearSolver and WeightCalculator
 template<class Polyhedron, class InputIterator>
 bool fair(Polyhedron& poly, 
-  InputIterator vb,
-  InputIterator ve,
-  Fairing_continuity continuity = FAIRING_C_1
-  )
+          InputIterator vb,
+          InputIterator ve,
+          Fairing_continuity continuity = FAIRING_C_1
+          )
 {
   typedef internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
   return fair<Sparse_linear_solver, Polyhedron, InputIterator>(poly, vb, ve, continuity);
