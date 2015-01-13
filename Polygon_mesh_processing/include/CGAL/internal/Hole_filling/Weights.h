@@ -35,7 +35,11 @@ class Cotangent_value
 {
 public:
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-  typedef typename Polyhedron::Traits::Vector_3  Vector;
+
+  typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
+  typedef typename boost::property_traits<Point_property_map>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
+
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
@@ -61,15 +65,35 @@ public:
 // This one provides stable results.
 template<class Polyhedron>
 class Cotangent_value_Meyer
-{
+{ 
 public:
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-  typedef typename Polyhedron::Traits::Vector_3  Vector;
+  typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
+  typedef typename boost::property_traits<Point_property_map>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
+
+  Polyhedron& polyhedron_;
+  Point_property_map ppmap;
+  
+private:
+  Cotangent_value_Meyer()
+  {}
+
+public:
+  
+  Cotangent_value_Meyer(Polyhedron& polyhedron_)
+    : polyhedron_(polyhedron_), ppmap(get(vertex_point,polyhedron_))
+  {}
+
+  Polyhedron& polyhedron()
+  {
+    return polyhedron_;
+  }
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    Vector a = v0->point() - v1->point();
-    Vector b = v2->point() - v1->point();
+    Vector a = ppmap[v0] - ppmap[v1];
+    Vector b = ppmap[v2] - ppmap[v1];
 
     
     double dot_ab = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
@@ -83,7 +107,7 @@ public:
 
     if(divider == 0 /*|| divider != divider*/) 
     {
-      CGAL::collinear(v0->point(), v1->point(), v2->point()) ? 
+      CGAL::collinear(ppmap[v0], ppmap[v1], ppmap[v2]) ? 
         CGAL_warning(!"Infinite Cotangent value with degenerate triangle!") :
         CGAL_warning(!"Infinite Cotangent value due to floating point arithmetic!");
       
@@ -101,7 +125,19 @@ public:
 template<class Polyhedron, class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
 class Cotangent_value_clamped : CotangentValue
 {
+  Cotangent_value_clamped()
+  {}
 public:
+
+  Cotangent_value_clamped(Polyhedron& polyhedron_)
+    : CotangentValue(polyhedron_)
+  {}
+
+  Polyhedron& polyhedron()
+  {
+    return CotangentValue::polyhedron();
+  }
+
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
@@ -116,7 +152,20 @@ public:
 template<class Polyhedron, class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
 class Cotangent_value_clamped_2 : CotangentValue
 {
+  Cotangent_value_clamped_2()
+  {}
+
 public:
+
+  Cotangent_value_clamped_2(Polyhedron& polyhedron_)
+    : CotangentValue(polyhedron_)
+  {}
+
+  Polyhedron& polyhedron()
+  {
+    return CotangentValue::polyhedron();
+  }
+
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
@@ -131,7 +180,18 @@ public:
 template<class Polyhedron, class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
 class Cotangent_value_minimum_zero : CotangentValue
 {
+  Cotangent_value_minimum_zero()
+  {}
 public:
+  Cotangent_value_minimum_zero(Polyhedron& polyhedron_)
+    : CotangentValue(polyhedron_)
+  {}
+
+  Polyhedron& polyhedron()
+  {
+    return CotangentValue::polyhedron();
+  }
+
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
@@ -145,27 +205,43 @@ template<class Polyhedron,
          class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
 class Voronoi_area : CotangentValue
 {
+  Voronoi_area()
+  {}
+  
 public:
+  Voronoi_area(Polyhedron& polyhedron_)
+    : CotangentValue(polyhedron_)
+  {}
+
+  Polyhedron& polyhedron()
+  {
+    return CotangentValue::polyhedron();
+  }
+
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator in_edge_iterator;
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
-  typedef typename Polyhedron::Traits::Point_3   Point;
 
-  double operator()(vertex_descriptor v0, Polyhedron& polyhedron) {
+  typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
+  typedef typename boost::property_traits<Point_property_map>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
+
+  double operator()(vertex_descriptor v0) {
+
     //return 1.0;
     double voronoi_area = 0.0;
     in_edge_iterator e, e_end;
-    for (boost::tie(e,e_end) = boost::in_edges(v0, polyhedron); e != e_end; e++)
+    for (boost::tie(e,e_end) = in_edges(v0, polyhedron()); e != e_end; e++)
     {
-      halfedge_descriptor he = halfedge(*e,polyhedron);
-      if( is_border(he,polyhedron) ) { continue; }
+      halfedge_descriptor he = halfedge(*e,polyhedron());
+      if( is_border(he,polyhedron()) ) { continue; }
 
-      vertex_descriptor v1 = source(he, polyhedron);
-      vertex_descriptor v_op = target(next(he, polyhedron), polyhedron);
+      vertex_descriptor v1 = source(he, polyhedron());
+      vertex_descriptor v_op = target(next(he, polyhedron()), polyhedron());
 
-      const Point& v0_p = v0->point();
-      const Point& v1_p = v1->point();
-      const Point& v_op_p = v_op->point();
+      const Point& v0_p = this->ppmap[v0];
+      const Point& v1_p = this->ppmap[v1];
+      const Point& v_op_p = this->ppmap[v_op];
 
       // (?) check if there is a better way to predicate triangle is obtuse or not
       CGAL::Angle angle0 = CGAL::angle(v1_p, v0_p, v_op_p);
@@ -202,7 +278,20 @@ template<class Polyhedron,
          class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
 class Cotangent_value_area_weighted : CotangentValue
 {
+  Cotangent_value_area_weighted()
+  {}
+
 public:
+
+  Cotangent_value_area_weighted(Polyhedron& polyhedron_)
+    : CotangentValue(polyhedron_)
+  {}
+
+  Polyhedron& polyhedron()
+  {
+    return CotangentValue::polyhedron();
+  }
+
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
@@ -221,38 +310,51 @@ template<class Polyhedron,
          class CotangentValue = Cotangent_value_minimum_zero<Polyhedron> >
 class Cotangent_weight : CotangentValue
 {
+  Cotangent_weight()
+  {}
+
 public:
+  Cotangent_weight(Polyhedron& polyhedron_)
+    : CotangentValue(polyhedron_)
+  {}
+
+  Polyhedron& polyhedron()
+  {
+    return CotangentValue::polyhedron();
+  }
+
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
-  typedef typename Polyhedron::Traits::Vector_3  Vector;
-  typedef typename Polyhedron::Traits::Point_3   Point;
+  typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
+  typedef typename boost::property_traits<Point_property_map>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
 
   // Returns the cotangent weight of specified halfedge_descriptor
   // Edge orientation is trivial
-  double operator()(halfedge_descriptor he, Polyhedron& polyhedron)
+  double operator()(halfedge_descriptor he)
   {
-     vertex_descriptor v0 = target(he, polyhedron);
-     vertex_descriptor v1 = source(he, polyhedron);
+    vertex_descriptor v0 = target(he, polyhedron());
+    vertex_descriptor v1 = source(he, polyhedron());
      // Only one triangle for border edges
-     if (is_border_edge(he, polyhedron))
+    if (is_border_edge(he, polyhedron()))
      {
        
-       halfedge_descriptor he_cw = opposite( next(he, polyhedron) , polyhedron );
-       vertex_descriptor v2 = source(he_cw, polyhedron);
-       if (is_border_edge(he_cw, polyhedron) )
+       halfedge_descriptor he_cw = opposite( next(he, polyhedron()) , polyhedron() );
+       vertex_descriptor v2 = source(he_cw, polyhedron());
+       if (is_border_edge(he_cw, polyhedron()) )
        {
-          halfedge_descriptor he_ccw = prev( opposite(he, polyhedron) , polyhedron );
-          v2 = source(he_ccw, polyhedron);
+         halfedge_descriptor he_ccw = prev( opposite(he, polyhedron()) , polyhedron() );
+         v2 = source(he_ccw, polyhedron());
        }
        return ( CotangentValue::operator()(v0, v2, v1)/2.0 );
      }
      else
      {
-        halfedge_descriptor he_cw = opposite( next(he, polyhedron) , polyhedron );
-        vertex_descriptor v2 = source(he_cw, polyhedron);     
-        halfedge_descriptor he_ccw = prev( opposite(he, polyhedron) , polyhedron );
-        vertex_descriptor v3 = source(he_ccw, polyhedron);
+       halfedge_descriptor he_cw = opposite( next(he, polyhedron()) , polyhedron() );
+       vertex_descriptor v2 = source(he_cw, polyhedron());     
+       halfedge_descriptor he_ccw = prev( opposite(he, polyhedron()) , polyhedron() );
+       vertex_descriptor v3 = source(he_ccw, polyhedron());
 
         return ( CotangentValue::operator()(v0, v2, v1)/2.0 + CotangentValue::operator()(v0, v3, v1)/2.0 );
      }
@@ -264,23 +366,35 @@ template<class Polyhedron,
          class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
 class Single_cotangent_weight : CotangentValue
 {
+  Single_cotangent_weight()
+  {}
 public:
+  Single_cotangent_weight(Polyhedron& polyhedron_)
+    : CotangentValue(polyhedron_)
+  {}
+
+  Polyhedron& polyhedron()
+  {
+    return CotangentValue::polyhedron();
+  }
+
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
-  typedef typename Polyhedron::Traits::Vector_3  Vector;
-  typedef typename Polyhedron::Traits::Point_3   Point;
+  typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
+  typedef typename boost::property_traits<Point_property_map>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
 
   // Returns the cotangent of the opposite angle of the edge
   // 0 for border edges (which does not have an opposite angle)
-  double operator()(halfedge_descriptor he, Polyhedron& polyhedron)
+  double operator()(halfedge_descriptor he)
   {
-     if(is_border(he, polyhedron)) { return 0.0;}
+    if(is_border(he, polyhedron())) { return 0.0;}
      
-     vertex_descriptor v0 = target(he, polyhedron);
-     vertex_descriptor v1 = source(he, polyhedron);
+    vertex_descriptor v0 = target(he, polyhedron());
+    vertex_descriptor v1 = source(he, polyhedron());
 
-     vertex_descriptor v_op = target(CGAL::next_edge(he, polyhedron), polyhedron);
+    vertex_descriptor v_op = target(CGAL::next_edge(he, polyhedron()), polyhedron());
      return CotangentValue::operator()(v0, v_op, v1);
   }
 };
@@ -289,41 +403,55 @@ public:
 template<class Polyhedron>
 class Mean_value_weight
 {
+  Mean_value_weight()
+  {}
+
+  Polyhedron& polyhedron_;
 public:
+  Mean_value_weight(Polyhedron& polyhedron_)
+    : polyhedron_(polyhedron_)
+  {}
+
+  Polyhedron& polyhedron()
+  {
+    return polyhedron_;
+  }
+
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
-  typedef typename Polyhedron::Traits::Vector_3  Vector;
-  typedef typename Polyhedron::Traits::Point_3   Point;
+  typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
+  typedef typename boost::property_traits<Point_property_map>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
 
   // Returns the mean-value coordinate of specified halfedge_descriptor
   // Returns different value for different edge orientation (which is a normal behaivour according to formula)
-  double operator()(halfedge_descriptor he, Polyhedron& polyhedron)
+  double operator()(halfedge_descriptor he)
   {
-    vertex_descriptor v0 = target(he, polyhedron);
-    vertex_descriptor v1 = source(he, polyhedron);
+    vertex_descriptor v0 = target(he, polyhedron());
+    vertex_descriptor v1 = source(he, polyhedron());
     Vector vec = v0->point() - v1->point();
     double norm = std::sqrt( vec.squared_length() );
 
     // Only one triangle for border edges
-    if ( is_border_edge(he, polyhedron) )
+    if ( is_border_edge(he, polyhedron()) )
     {
-      halfedge_descriptor he_cw = opposite( next(he, polyhedron) , polyhedron );
-      vertex_descriptor v2 = source(he_cw, polyhedron);
-      if ( is_border_edge(he_cw, polyhedron) )
+      halfedge_descriptor he_cw = opposite( next(he, polyhedron()) , polyhedron() );
+      vertex_descriptor v2 = source(he_cw, polyhedron());
+      if ( is_border_edge(he_cw, polyhedron()) )
       {
-        halfedge_descriptor he_ccw = prev( opposite(he, polyhedron) , polyhedron );
-        v2 = source(he_ccw, polyhedron);
+        halfedge_descriptor he_ccw = prev( opposite(he, polyhedron()) , polyhedron() );
+        v2 = source(he_ccw, polyhedron());
       }
 
       return ( half_tan_value_2(v1, v0, v2)/norm);
     }
     else
     {
-      halfedge_descriptor he_cw = opposite( next(he, polyhedron) , polyhedron );
-      vertex_descriptor v2 = source(he_cw, polyhedron);     
-      halfedge_descriptor he_ccw = prev( opposite(he, polyhedron) , polyhedron );
-      vertex_descriptor v3 = source(he_ccw, polyhedron);
+      halfedge_descriptor he_cw = opposite( next(he, polyhedron()) , polyhedron() );
+      vertex_descriptor v2 = source(he_cw, polyhedron());     
+      halfedge_descriptor he_ccw = prev( opposite(he, polyhedron()) , polyhedron() );
+      vertex_descriptor v3 = source(he_ccw, polyhedron());
 
       return ( half_tan_value_2(v1, v0, v2)/norm + half_tan_value_2(v1, v0, v3)/norm);
     }
@@ -372,14 +500,29 @@ template< class Polyhedron,
           class SecondaryWeight = Mean_value_weight<Polyhedron> >
 class Hybrid_weight : public PrimaryWeight, SecondaryWeight
 {
+  PrimaryWeight primary;
+  SecondaryWeight secondary;
+
+  Hybrid_weight()
+  {}
+
 public:
+  Hybrid_weight(Polyhedron& polyhedron_)
+    : primary(polyhedron_), secondary(polyhedron_)
+  {}
+
+  Polyhedron& polyhedron()
+  {
+    return primary.polyhedron();
+  }
+
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
 
-  double operator()(halfedge_descriptor he, Polyhedron& polyhedron)
+  double operator()(halfedge_descriptor he)
   {
-    double weight = PrimaryWeight::operator()(he, polyhedron);
+    double weight = primary(he);
     //if(weight < 0) { std::cout << "Negative weight" << std::endl; }
-    return (weight >= 0) ? weight : SecondaryWeight::operator()(he, polyhedron);
+    return (weight >= 0) ? weight : secondary(he);
   }
 };
 
@@ -390,7 +533,7 @@ class Uniform_weight
 public:
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
 
-  double operator()(halfedge_descriptor /*e*/, Polyhedron& /*polyhedron*/)
+  double operator()(halfedge_descriptor /*e*/)
   { return 1.0; }
 };
 
@@ -399,16 +542,29 @@ public:
 template<class Polyhedron>
 class Scale_dependent_weight_fairing
 {
+  Polyhedron& polyhedron_;
 public:
+  Scale_dependent_weight_fairing(Polyhedron& polyhedron_)
+    : polyhedron_(polyhedron_)
+  {}
+
+  Polyhedron& polyhedron()
+  {
+    return polyhedron_;
+  }
+
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-  typedef typename Polyhedron::Traits::Vector_3  Vector;
 
-  double w_i(vertex_descriptor /*v_i*/, Polyhedron& /*polyhedron*/) { return 1.0; }
+  typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
+  typedef typename boost::property_traits<Point_property_map>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
 
-  double w_ij(halfedge_descriptor he, Polyhedron& polyhedron)
+  double w_i(vertex_descriptor /*v_i*/) { return 1.0; }
+
+  double w_ij(halfedge_descriptor he)
   {
-    Vector v = target(he, polyhedron)->point() - source(he, polyhedron)->point();
+    Vector v = target(he, polyhedron())->point() - source(he, polyhedron())->point();
     double divider = std::sqrt(v.squared_length());
     if(divider == 0.0) {
       CGAL_warning(!"Scale dependent weight - zero length edge.");
@@ -420,18 +576,29 @@ public:
 
 template<class Polyhedron>
 class Cotangent_weight_with_voronoi_area_fairing {
+  Voronoi_area<Polyhedron> voronoi_functor;
+  Cotangent_weight<Polyhedron, Cotangent_value_Meyer<Polyhedron> > cotangent_functor;
 public:
+  Cotangent_weight_with_voronoi_area_fairing(Polyhedron& polyhedron_)
+    : voronoi_functor(polyhedron_), cotangent_functor(polyhedron_)
+  {}
+
+  Polyhedron& polyhedron()
+  {
+    return voronoi_functor.polyhedron();
+  }
+
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
-  double w_i(vertex_descriptor v_i, Polyhedron& polyhedron) {
-    Voronoi_area<Polyhedron> voronoi_functor;
-    return 0.5 / voronoi_functor(v_i, polyhedron);
+  double w_i(vertex_descriptor v_i) {
+    
+    return 0.5 / voronoi_functor(v_i);
   }
 
-  double w_ij(halfedge_descriptor he, Polyhedron& polyhedron) {
-    Cotangent_weight<Polyhedron, Cotangent_value_Meyer<Polyhedron> > cotangent_functor;
-    return cotangent_functor(he, polyhedron) * 2.0;
+  double w_ij(halfedge_descriptor he) {
+
+    return cotangent_functor(he) * 2.0;
   }
 };
 
@@ -442,9 +609,9 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
-  double w_ij(halfedge_descriptor /*e*/, Polyhedron& /*polyhedron*/) { return 1.0; }
+  double w_ij(halfedge_descriptor /*e*/) { return 1.0; }
 
-  double w_i(vertex_descriptor /*v_i*/, Polyhedron& /*polyhedron*/) { return 1.0; }
+  double w_i(vertex_descriptor /*v_i*/) { return 1.0; }
 };
 ////////////////////////////////////////////////////////////////////////////
 

@@ -9,6 +9,7 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 
 namespace CGAL {
 namespace internal {
@@ -58,7 +59,7 @@ private:
         (CGAL::ON_UNBOUNDED_SIDE  != CGAL::side_of_bounded_sphere(p,q,s,r)) )
     {
       if(flippable(h)) {
-        poly.flip_edge(h);
+        Euler::flip_edge(h,poly);
         return true;
       }
     }
@@ -77,7 +78,7 @@ private:
     for(std::size_t i = 0; i < facet_size; ++i){
       CGAL_assertion(facets[i]  != Facet_handle());
 
-      Halfedge_handle hh =  facets[i]->halfedge();
+      Halfedge_handle hh =  halfedge(facets[i],poly);
       Vertex_handle vi = target(halfedge(facets[i],poly),poly);
       Vertex_handle vj = target(next(halfedge(facets[i],poly),poly),poly);
       Vertex_handle vk = target(prev(halfedge(facets[i],poly),poly),poly);
@@ -92,7 +93,7 @@ private:
          (alpha * dist_c_vi > scale_attribute[vi]) &&
          (alpha * dist_c_vj > scale_attribute[vj]) &&
          (alpha * dist_c_vk > scale_attribute[vk])){
-        Halfedge_handle h = poly.create_center_vertex(halfedge(facets[i],poly));
+        Halfedge_handle h = Euler::add_center_vertex(halfedge(facets[i],poly),poly);
         put(ppmap, target(h,poly), c);
           scale_attribute[target(h,poly)] = sac;
           *vertex_out++ = target(h,poly);
@@ -136,7 +137,7 @@ private:
           // do not remove included_map and use if(&*h < &*oh) { interior_edges.push_back(h) } 
           // which will change the order of edges from run to run
           Halfedge_handle oh = opposite(h,poly);
-          Halfedge_handle h_rep = (&*h < &*oh) ? h : oh;
+          Halfedge_handle h_rep = (h < oh) ? h : oh; // AF: was &*h < &*oh
           if(included_map.insert(h_rep).second) {
             interior_edges.push_back(h_rep);
           }
@@ -224,7 +225,7 @@ private:
 
 public:
   Refine_Polyhedron_3(Polyhedron& poly)
-    : poly(poly), ppmap(get(CGAL::vertex_point, poly))
+    : poly(poly), ppmap(get(vertex_point, poly))
   {}
 
   template<class InputIterator, class FacetOutputIterator, class VertexOutputIterator>

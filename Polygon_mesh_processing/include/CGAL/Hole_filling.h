@@ -152,7 +152,7 @@ triangulate_refine_and_fair_hole(Polyhedron& polyhedron,
                                  bool use_delaunay_triangulation = false,
                                  Fairing_continuity continuity = FAIRING_C_1)
 {
-  CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron> wc;
+  CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron> wc(polyhedron);
 
   return triangulate_refine_and_fair_hole
     (polyhedron, border_halfedge, facet_out, vertex_out, wc, Default(), density_control_factor, use_delaunay_triangulation, continuity);

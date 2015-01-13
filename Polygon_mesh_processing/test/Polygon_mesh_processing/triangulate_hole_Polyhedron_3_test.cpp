@@ -85,7 +85,7 @@ CGAL::internal::Weight_min_max_dihedral_and_area
   return res;
 }
 
-#if 0
+
 void test_triangulate_hole_weight(const char* file_name, bool use_DT) {
   typedef CGAL::internal::Weight_min_max_dihedral_and_area Weight;
 
@@ -283,7 +283,7 @@ void test_ouput_iterators_triangulate_and_refine_hole(const char* file_name) {
   }
   std::cerr << "  Done!" << std::endl;
 }
-#endif 
+
 
 void test_triangulate_refine_and_fair_hole_compile() {
   typedef CGAL::Eigen_solver_traits<
@@ -317,7 +317,7 @@ void test_triangulate_refine_and_fair_hole_compile() {
 }
 
 int main() {
-#if 0
+
   std::vector<std::string> input_files;
   input_files.push_back("data/elephant_triangle_hole.off");
   input_files.push_back("data/elephant_quad_hole.off");
@@ -338,7 +338,7 @@ int main() {
 
   test_triangulate_hole_should_be_no_output("data/non_manifold_vertex.off");
   test_triangulate_hole_should_be_no_output("data/two_tris_collinear.off");
-#endif
+
   test_triangulate_refine_and_fair_hole_compile();
   std::cerr << "All Done!" << std::endl;
 }

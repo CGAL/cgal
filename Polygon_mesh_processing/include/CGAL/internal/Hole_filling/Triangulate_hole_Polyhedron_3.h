@@ -33,9 +33,11 @@ struct Tracer_polyhedron
     Halfedge_handle h, g;
     if(i+2 == k){
       if(last)
-      { h = polyhedron.fill_hole(P[i+1]); }
+        {
+          h = P[i+1];
+          Euler::fill_hole(h,polyhedron); }
       else 
-        { h = polyhedron.add_facet_to_border(prev(P[i+1],polyhedron), P[i+2/*k*/]); }
+        { h = Euler::add_face_to_border(prev(P[i+1],polyhedron), P[i+2/*k*/], polyhedron); }
       
       CGAL_assertion(face(h,polyhedron) != boost::graph_traits<Polyhedron>::null_face());
       *out++ = face(h,polyhedron);
@@ -48,9 +50,12 @@ struct Tracer_polyhedron
       g = operator()(lambda, la, k, false);
 
       if(last)
-      { h = polyhedron.fill_hole(g); }
+        {
+          h = g;
+          Euler::fill_hole(g,polyhedron);
+        }
       else 
-        { h = polyhedron.add_facet_to_border(prev(h,polyhedron), g); }
+        { h = Euler::add_face_to_border(prev(h,polyhedron), g, polyhedron); }
 
       CGAL_assertion(face(h,polyhedron) != boost::graph_traits<Polyhedron>::null_face());
       *out++ = face(h,polyhedron);
@@ -105,7 +110,7 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
     int v_it_prev = v_it_id == 0   ? n-1 : v_it_id-1;
     int v_it_next = v_it_id == n-1 ? 0   : v_it_id+1;
 
-    Halfedge_around_target_circulator<Polyhedron> circ_vertex(v_it->first->vertex_begin(),polyhedron), done_vertex(circ_vertex);
+    Halfedge_around_target_circulator<Polyhedron> circ_vertex(halfedge(v_it->first,polyhedron),polyhedron), done_vertex(circ_vertex);
     do {
       Vertex_set_it v_it_neigh_it = vertex_set.find(source(*circ_vertex,polyhedron));
 

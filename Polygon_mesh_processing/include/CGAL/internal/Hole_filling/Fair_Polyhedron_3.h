@@ -66,7 +66,7 @@ private:
   double weight = 0;
   Halfedge_around_vertex_circulator circ(halfedge(v,polyhedron),polyhedron), done(circ);
   do {
-    weight += weight_calculator.w_ij(*circ, polyhedron);
+    weight += weight_calculator.w_ij(*circ);
     } while(++circ != done);
     return weight;
   }
@@ -95,11 +95,11 @@ private:
       }
     }
     else {
-      double w_i = weight_calculator.w_i(v,polyhedron);
+      double w_i = weight_calculator.w_i(v);
 
       Halfedge_around_vertex_circulator circ(halfedge(v,polyhedron),polyhedron), done(circ);
       do {
-        double w_i_w_ij = w_i * weight_calculator.w_ij(*circ, polyhedron) ;
+        double w_i_w_ij = w_i * weight_calculator.w_ij(*circ) ;
 
         Vertex_handle nv = target(opposite(*circ,polyhedron),polyhedron);
         compute_row(nv, row_id, matrix, x, y, z, -w_i_w_ij*multiplier, vertex_id_map, depth-1);
