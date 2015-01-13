@@ -45,7 +45,7 @@
 ## Combinatorial Repairing Functions and Classes ##
 - \link polyhedron_stitching_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
 - `CGAL::orient_polygon_soup()`
-- `CGAL::Polygon_mesh_processing::polygon_soup_to_polyhedron()`
+- `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 
 ## Meshing Functions ##
 - `CGAL::fair()`

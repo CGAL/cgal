@@ -18,7 +18,7 @@
 #include <CGAL/IO/File_writer_OFF.h>
 #include <CGAL/version.h> 
 
-#include <CGAL/polygon_soup_to_polyhedron.h>
+#include <CGAL/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/orient_polygon_soup.h>
 #include <CGAL/orient_polyhedron_3.h>
 
@@ -305,7 +305,7 @@ bool
 Scene_polygon_soup_item::exportAsPolyhedron(Polyhedron* out_polyhedron)
 {
   orient();
-  CGAL::Polygon_mesh_processing::polygon_soup_to_polyhedron<Polyhedron>(
+  CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh<Polyhedron>(
     soup->points, soup->polygons, *out_polyhedron);
   
   if(out_polyhedron->size_of_vertices() > 0) {

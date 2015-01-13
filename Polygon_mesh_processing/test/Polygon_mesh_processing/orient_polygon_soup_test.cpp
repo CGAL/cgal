@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/orient_polygon_soup.h>
-#include <CGAL/polygon_soup_to_polyhedron.h>
+#include <CGAL/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
@@ -62,7 +62,7 @@ int main(int,char** argv) {
   
   if(oriented) {
     Polyhedron poly;
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polyhedron<Polyhedron>(
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh<Polyhedron>(
       points, polygons, poly);
 
     std::ofstream out("oriented.off");

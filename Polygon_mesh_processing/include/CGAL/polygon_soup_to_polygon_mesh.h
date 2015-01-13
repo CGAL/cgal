@@ -27,10 +27,12 @@
 
 namespace CGAL
 {
+namespace Polygon_mesh_processing
+{
 namespace internal
 {
 template <class HDS, class Point_3>
-class Polygon_soup_to_polyhedron_3 : public CGAL::Modifier_base < HDS >
+class Polygon_soup_to_polygon_mesh : public CGAL::Modifier_base < HDS >
 {
   typedef std::vector<std::size_t> Polygon_3;
 
@@ -42,7 +44,7 @@ public:
   * @param points points of the soup of polygons.
   * @param polygons each element in the vector describes a polygon using the index of the points in the vector.
   */
-  Polygon_soup_to_polyhedron_3(const std::vector<Point_3>& points,
+  Polygon_soup_to_polygon_mesh(const std::vector<Point_3>& points,
     const std::vector<std::vector<std::size_t> >& polygons)
     : points(points), polygons(polygons)
   { }
@@ -74,25 +76,25 @@ public:
 };
 }//end namespace internal
 
-namespace Polygon_mesh_processing
-{
   /**
   * \ingroup PkgPolygonMeshProcessing
-  * build a polyhedron from a soup of polygons.
+  * build a polygon mesh from a soup of polygons.
   * \todo modify so that the built object is a model of `MutableFaceGraph`
+  * \todo write documentation
   */
-  template<class Polyhedron>
-  void polygon_soup_to_polyhedron(
-    const std::vector<typename Polyhedron::Point_3>& points,
+  template<class PolygonMesh>
+  void polygon_soup_to_polygon_mesh(
+    const std::vector<typename PolygonMesh::Point_3>& points,
     const std::vector<std::vector<std::size_t> >& polygons,
-    Polyhedron& out)
+    PolygonMesh& out)
   {
-    internal::Polygon_soup_to_polyhedron_3<typename Polyhedron::HalfedgeDS,
-      typename Polyhedron::Point_3>
+    internal::Polygon_soup_to_polygon_mesh<typename PolygonMesh::HalfedgeDS,
+      typename PolygonMesh::Point_3>
       converter(points, polygons);
     out.delegate(converter);
   }
-}
+
+}//end namespace Polygon_mesh_processing
 
 }// end namespace CGAL
 

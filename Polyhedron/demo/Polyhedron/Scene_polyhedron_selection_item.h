@@ -640,7 +640,7 @@ public:
         polygons[counter].push_back(hb->vertex()->id() -1);
       } while(++hb != hend);
     }
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polyhedron<Polyhedron>(
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh<Polyhedron>(
       points, polygons, *out);
 
     return out->size_of_vertices() > 0;
