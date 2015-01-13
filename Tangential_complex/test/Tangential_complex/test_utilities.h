@@ -167,6 +167,10 @@ bool load_points_from_file(
     ++i;
   }
 
+#ifdef CGAL_TC_VERBOSE
+  std::cerr << "'" << filename << "' loaded." << std::endl;
+#endif
+
   return true;
 }
 
