@@ -469,7 +469,7 @@ public:
      */
     inline 
     bool is_finite() const {
-        return this->ptr()->_m_xy;
+        return bool(this->ptr()->_m_xy);
     }
     
     //!@}      

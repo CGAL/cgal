@@ -586,7 +586,7 @@ public:
     /*! \brief Returns whether the curve has a valid defining polynomial
      */
     bool has_defining_polynomial() const {
-        return this->ptr()->f;
+        return bool(this->ptr()->f);
     }
         
 public:
