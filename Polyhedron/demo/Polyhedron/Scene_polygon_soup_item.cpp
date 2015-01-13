@@ -264,7 +264,8 @@ Scene_polygon_soup_item::orient()
   if(isEmpty() || this->oriented)
     return true; // nothing to do
   
-  oriented = CGAL::orient_polygon_soup(soup->points, soup->polygons);
+  oriented = CGAL::Polygon_mesh_processing::orient_polygon_soup(soup->points,
+                                                              soup->polygons);
   return oriented;
 }
 

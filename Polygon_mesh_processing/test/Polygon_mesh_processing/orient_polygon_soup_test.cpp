@@ -57,7 +57,8 @@ int main(int,char** argv) {
     return 1;
   }
 
-  bool oriented = CGAL::orient_polygon_soup(points, polygons);
+  bool oriented
+    = CGAL::Polygon_mesh_processing::orient_polygon_soup(points, polygons);
   std::cerr << (oriented ? "Oriented." : "Not orientabled.") << std::endl;
   
   if(oriented) {

@@ -31,6 +31,8 @@
 
 namespace CGAL {
 
+namespace Polygon_mesh_processing {
+
 namespace internal {
 
 template<class Point_3>
@@ -230,6 +232,8 @@ bool orient_polygon_soup(const std::vector<Point_3>& points,
   internal::Polygon_soup_orienter<Point_3> orienter(points, polygons);
   return orienter.orient();
 }
+
+}//end namespace Polygon_mesh_processing
 
 }//namespace CGAL
 
