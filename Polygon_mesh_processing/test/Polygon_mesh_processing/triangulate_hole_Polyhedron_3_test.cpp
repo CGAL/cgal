@@ -1,4 +1,4 @@
-#define POLY 
+//#define POLY 
 #include <CGAL/Hole_filling.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #ifdef POLY
