@@ -40,7 +40,7 @@
 ## Predicate Functions and Classes ##
 - `CGAL::is_oriented()`
 - `CGAL::do_self_intersect()`
-- `CGAL::self_intersect()`
+- `CGAL::self_intersections()`
 - `CGAL::Point_inside_polyhedron_3`
 
 ## Combinatorial Repairing Functions and Classes ##

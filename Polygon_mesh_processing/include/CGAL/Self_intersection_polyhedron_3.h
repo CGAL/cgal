@@ -184,12 +184,11 @@ struct Throw_at_output {
  * @return `out`. Note the OutputIterator can be empty.
  *
  * \todo Polyhedron should be a model of `FaceListGraph`
- * \todo rename to self_intersections
  * \todo check whether polyhedron should be `p.is_pure_triangle()`. Inconsistency between code and doc
  */
 template <class GeomTraits, class FaceGraph, class OutputIterator>
 OutputIterator
-self_intersect(const FaceGraph& polyhedron,
+self_intersections(const FaceGraph& polyhedron,
                OutputIterator out,
                const GeomTraits& geom_traits = GeomTraits())
 {
@@ -257,7 +256,7 @@ bool do_self_intersect(const FaceGraph& polyhedron, const GeomTraits& geom_trait
   try 
   {
     typedef boost::function_output_iterator<internal::Throw_at_output> OutputIterator;
-    self_intersect<GeomTraits>(polyhedron, OutputIterator(), geom_traits); 
+    self_intersections<GeomTraits>(polyhedron, OutputIterator(), geom_traits); 
   }
   catch( internal::Throw_at_output::Throw_at_output_exception& ) 
   { return true; }
