@@ -1,9 +1,8 @@
 /// \defgroup PkgPolygonMeshProcessing Polygon Mesh Processing Reference
 /// \defgroup PkgPolygonMeshProcessingConcepts Concepts
 /// \ingroup PkgPolygonMeshProcessing
-/// \defgroup polyhedron_stitching_grp CGAL::polyhedron_stitching()
+/// \defgroup polyhedron_stitching_grp CGAL::Polygon_mesh_processing::stitch_polyhedron()
 /// \todo `Polyhedron` should be a model of `MutableFaceGraph` and `FaceListGraph`
-/// \todo rename Polygon_mesh_processing::stitch
 /// \ingroup PkgPolygonMeshProcessing
  
 /*!
@@ -44,7 +43,7 @@
 - `CGAL::Point_inside_polyhedron_3`
 
 ## Combinatorial Repairing Functions and Classes ##
-- \link polyhedron_stitching_grp `CGAL::polyhedron_stitching()` \endlink
+- \link polyhedron_stitching_grp `CGAL::Polygon_mesh_processing::stitch_polyhedron()` \endlink
 - `CGAL::orient_polygon_soup()`
 - `CGAL::Polygon_soup_to_polyhedron_3`
 
