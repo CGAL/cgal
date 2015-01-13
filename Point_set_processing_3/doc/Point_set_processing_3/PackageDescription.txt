@@ -1,13 +1,12 @@
-/// \defgroup PkgPointSetProcessing Point Set Processing Reference
+﻿/// \defgroup PkgPointSetProcessing Point Set Processing Reference
 
 /*!
 \addtogroup PkgPointSetProcessing
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Point Set Processing,PkgPointSetProcessingSummary}
 \cgalPkgPicture{point_set_processing_detail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Pierre Alliez, Laurent Saboret, Nader Salman}
-\cgalPkgDesc{This \cgal component implements methods to analyze and process unorganized point sets. The input is an unorganized point set, possibly with normal attributes (unoriented or oriented). The point set can be analyzed to measure its average spacing, and processed through functions devoted to the simplification, outlier removal, smoothing, normal estimation and normal orientation.}
+\cgalPkgAuthors{Pierre Alliez, Clément Jamin, Laurent Saboret, Nader Salman, Shihao Wu}
+\cgalPkgDesc{This \cgal component implements methods to analyze and process point sets. The input is an unorganized point set, possibly with normal attributes (unoriented or oriented). The point set can be analyzed to measure its average spacing, and processed through functions devised for simplification, regularization, upsampling, outlier removal, smoothing, normal estimation and normal orientation.}
 \cgalPkgManuals{Chapter_Point_Set_Processing,PkgPointSetProcessing}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -29,12 +28,14 @@
 - `CGAL::remove_outliers()`
 - `CGAL::grid_simplify_point_set()`
 - `CGAL::random_simplify_point_set()`
+- `CGAL::wlop_simplify_and_regularize_point_set()`
 - `CGAL::jet_smooth_point_set()`
+- `CGAL::bilateral_smooth_point_set()`
 - `CGAL::jet_estimate_normals()`
 - `CGAL::pca_estimate_normals()`
 - `CGAL::mst_orient_normals()`
+- `CGAL::edge_aware_upsample_point_set()`
 - `CGAL::write_off_points()`
 - `CGAL::write_xyz_points()`
-
 */
 
