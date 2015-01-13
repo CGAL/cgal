@@ -105,7 +105,7 @@ private:
     else {
       double w_i = weight_calculator.w_i(v,polyhedron);
 
-  Halfedge_around_vertex_circulator circ(halfedge(v,polyhedron),polyhedron), done(circ);
+      Halfedge_around_vertex_circulator circ(halfedge(v,polyhedron),polyhedron), done(circ);
       do {
         double w_i_w_ij = w_i * weight_calculator.w_ij(*circ, polyhedron) ;
 

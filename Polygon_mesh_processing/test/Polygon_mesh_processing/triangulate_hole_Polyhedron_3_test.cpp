@@ -1,9 +1,10 @@
-#include <CGAL/Hole_filling.h>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Hole_filling.h>
 #include <CGAL/assertions.h>
 
 #include <cassert>
@@ -47,7 +48,6 @@ template<class Iterator>
 CGAL::internal::Weight_min_max_dihedral_and_area
 calculate_weight_for_patch(Iterator begin, Iterator end) 
 {
-  typedef Polyhedron::Traits::Point_3 Point_3;
   typedef Polyhedron::Halfedge_handle Halfedge_handle;
   typedef CGAL::internal::Weight_min_max_dihedral_and_area Weight;
 
