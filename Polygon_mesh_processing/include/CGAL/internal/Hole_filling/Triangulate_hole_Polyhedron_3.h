@@ -71,8 +71,7 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
                             OutputIterator out,
                             bool use_delaunay_triangulation = false)
 {
-  typedef Halfedge_around_target_circulator<Polyhedron>  Halfedge_around_vertex_circulator;
-  typedef Halfedge_around_face_circulator<Polyhedron>   Halfedge_around_face_circulator;
+  typedef Halfedge_around_face_circulator<Polyhedron>   Hedge_around_face_circulator;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor Vertex_handle;
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
   typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
@@ -86,7 +85,7 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
   Point_property_map ppmap = get(vertex_point,polyhedron);
 
   int n = 0;
-  Halfedge_around_face_circulator circ(border_halfedge,polyhedron), done(circ);
+  Hedge_around_face_circulator circ(border_halfedge,polyhedron), done(circ);
   do{
     P.push_back(ppmap[target(*circ, polyhedron)]);
     Q.push_back(ppmap[target(next(opposite(next(*circ,polyhedron),polyhedron),polyhedron),polyhedron)]);
