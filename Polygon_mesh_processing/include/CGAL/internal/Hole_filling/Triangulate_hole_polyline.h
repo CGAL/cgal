@@ -751,18 +751,18 @@ public:
     std::vector<bool> edge_exist;
     std::pair<int, int> range(0, n-1);
     boost::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, range, T, edge_exist);
-    if(!res.get<2>()) {
+    if(!res.template get<2>()) {
       CGAL_warning(!"Returning no output. Dimension of 3D Triangulation is below 2!");
       return Weight::NOT_VALID();
     }
 
     // all border edges inside 3D Triangulation
-    if(res.get<1>()) {
+    if(boost::get<1>(res)) {
       LookupTable<Weight> W(n, Weight::DEFAULT()); // do not forget that these default values are not changed for [i, i+1]
       LookupTable<int>    lambda(n,-1);
 
       typename Incident_facet_circulator_base<Triangulate_hole_polyline_DT>::Edge_wrapper
-        e_start(*res.get<0>()); 
+        e_start(*boost::get<0>(res)); 
       if(T.dimension() == 3) {
         triangulate_DT<IFC_3>(P, Q, W, lambda, e_start, T, WC, false);
       }
@@ -997,11 +997,11 @@ private:
       h = remaining_holes.back();
       T.clear();
       boost::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, h, T, edge_exist);
-      if(!res.get<0>()) {
+      if(!boost::get<0>(res)) {
         CGAL_warning(!"Returning no output. Filling hole with incomplete patches is not successful!");
         return Weight::NOT_VALID();
       }
-      start_edge = *res.get<0>();
+      start_edge = *boost::get<0>(res);
       // clear related regions in W, lambda for next coming hole
       W.set_range_to_default(h.first, h.second);
       lambda.set_range_to_default(h.first, h.second);

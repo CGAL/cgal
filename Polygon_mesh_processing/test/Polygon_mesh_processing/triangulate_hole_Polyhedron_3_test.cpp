@@ -59,7 +59,7 @@ template<class Polyhedron, class Iterator>
 CGAL::internal::Weight_min_max_dihedral_and_area
            calculate_weight_for_patch(Polyhedron& poly,Iterator begin, Iterator end) 
 {
-  typedef boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
   typedef CGAL::internal::Weight_min_max_dihedral_and_area Weight;
 
   Point_property_map ppmap = get(CGAL::vertex_point, poly);
