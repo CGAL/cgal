@@ -250,7 +250,7 @@ self_intersections(const PolygonMesh& pmesh,
  * @param geom_traits traits class providing intersection test primitives
  *
  * \todo Polyhedron should be a model of `FaceListGraph`
- * @return true if `mes` is self-intersecting
+ * @return true if `pmesh` is self-intersecting
  */
 template <class GeomTraits, class PolygonMesh>
 bool is_self_intersecting(const PolygonMesh& pmesh,
