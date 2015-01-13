@@ -123,7 +123,7 @@ void check_constructed_polyhedron(const char* file_name,
   }
   std::string out_file_name;
   out_file_name.append(file_name).append(".off");
-  std::ofstream out(out_file_name);
+  std::ofstream out(out_file_name.c_str());
   out << poly; out.close();
 }
 
