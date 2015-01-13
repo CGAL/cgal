@@ -506,7 +506,7 @@ void compute_ball_neighbors_one_to_another(
 }
 
 
-} //namespace internal
+} //namespace rich_grid_internal
 
 /// \endcond
 
