@@ -25,17 +25,17 @@ int main(int, char** argv) {
   timer.start();
 
   std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
-  bool intersecting_1 = CGAL::self_intersect<K>(m, back_inserter(intersected_tris)).first;
-  assert(intersecting_1 == !intersected_tris.empty());
+  CGAL::self_intersections<K>(m, back_inserter(intersected_tris));
+  bool intersecting_1 = !intersected_tris.empty();
 
-  std::cerr << "Self-intersection test took " << timer.time() << " sec." << std::endl;
-  std::cerr << intersected_tris.size() << " pair of triangles are intersecting." << std::endl;
+  std::cerr << "self_intersections test took " << timer.time() << " sec." << std::endl;
+  std::cerr << intersected_tris.size() << " pairs of triangles are intersecting." << std::endl;
 
   timer.reset();
-  bool intersecting_2 = CGAL::self_intersect<K>(m);
-  assert(intersecting_1 == intersecting_2);
+  bool intersecting_2 = CGAL::do_self_intersect<K>(m);
+  CGAL_assertion(intersecting_1 == intersecting_2);
 
-  std::cerr << "Is self-intersection test took " << timer.time() << " sec." << std::endl;
+  std::cerr << "do_self_intersect test took " << timer.time() << " sec." << std::endl;
   std::cerr << (intersecting_2 ? "There is a self-intersection." : "There is no self-intersection.") << std::endl;
 
   return 0;

@@ -2,7 +2,7 @@
 #include <fstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Point_inside_polyhedron_3_old.h>
+#include <CGAL/Point_inside_polyhedron_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
   }
   std::cerr << "gridsize = " << gridsize << std::endl;
   
-  int nb_points=points.size();
+  std::size_t nb_points=points.size();
   
   std::vector<bool> ray_res(nb_points);
   std::vector<bool> grid_res(nb_points);
@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
     
     CGAL::Timer timer;
     timer.start();
-    CGAL::Point_inside_polyhedron_3<Polyhedron,K> inside_with_ray(polyhedron,0);
+    CGAL::Point_inside_polyhedron_3<Polyhedron,K> inside_with_ray(polyhedron);
     timer.stop();
     std::cerr <<"Using ray"<< std::endl;
     std::cerr << "  Preprocessing took " << timer.time() << " sec." << std::endl;
@@ -73,8 +73,8 @@ int main(int argc, char* argv[])
     int n_inside = 0;
     
     timer.start();
-    for(int k=0;k<nb_points;++k){
-      ray_res[k]=inside_with_ray(points[k]);
+    for(std::size_t k=0; k<nb_points; ++k){
+      ray_res[k] = (inside_with_ray(points[k]) == CGAL::ON_BOUNDED_SIDE);
       if(ray_res[k]){
         ++n_inside;
       }

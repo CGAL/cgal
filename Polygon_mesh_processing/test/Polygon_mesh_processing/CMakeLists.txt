@@ -63,11 +63,13 @@ include_directories( BEFORE ../../include )
 include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "test_polyhedron_stitching.cpp" )
-
+create_single_source_cgal_program( "orient_polygon_soup_test.cpp" )
+create_single_source_cgal_program( "orient_polyhedron_3_test.cpp" )
+create_single_source_cgal_program( "point_inside_polyhedron_boundary_test.cpp" )
+create_single_source_cgal_program( "self_intersection_polyhedron_test.cpp" )
+create_single_source_cgal_program( "self_intersection_surface_mesh_test.cpp" )
 create_single_source_cgal_program( "triangulate_hole_Polyhedron_3_test.cpp" )
-
 create_single_source_cgal_program( "triangulate_hole_polyline_test.cpp" )
-
 
   else(EIGEN3_FOUND)
     message(STATUS "NOTICE: Some examples require Eigen 3.1 (or greater) and will not be compiled.")  
