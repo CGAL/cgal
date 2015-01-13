@@ -185,6 +185,7 @@ struct Throw_at_output {
  *
  * \todo Polyhedron should be a model of `FaceListGraph`
  * \todo rename to self_intersections
+ * \todo check whether polyhedron should be `p.is_pure_triangle()`. Inconsistency between code and doc
  */
 template <class GeomTraits, class FaceGraph, class OutputIterator>
 OutputIterator
