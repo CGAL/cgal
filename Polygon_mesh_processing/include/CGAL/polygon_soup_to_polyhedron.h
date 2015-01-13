@@ -27,13 +27,10 @@
 
 namespace CGAL
 {
-/**
-* \ingroup PkgPolygonMeshProcessing
-* Polyhedron modifier to build a polyhedron from a soup of polygons.
-* \todo convert to a function that is creating a model of `MutableFaceGraph`
-*/
+namespace internal
+{
 template <class HDS, class Point_3>
-class Polygon_soup_to_polyhedron_3 : public CGAL::Modifier_base<HDS>
+class Polygon_soup_to_polyhedron_3 : public CGAL::Modifier_base < HDS >
 {
   typedef std::vector<std::size_t> Polygon_3;
 
@@ -75,6 +72,27 @@ public:
     builder.end_surface();
   }
 };
+}//end namespace internal
+
+namespace Polygon_mesh_processing
+{
+  /**
+  * \ingroup PkgPolygonMeshProcessing
+  * build a polyhedron from a soup of polygons.
+  * \todo modify so that the built object is a model of `MutableFaceGraph`
+  */
+  template<class Polyhedron>
+  void polygon_soup_to_polyhedron(
+    const std::vector<typename Polyhedron::Point_3>& points,
+    const std::vector<std::vector<std::size_t> >& polygons,
+    Polyhedron& out)
+  {
+    internal::Polygon_soup_to_polyhedron_3<typename Polyhedron::HalfedgeDS,
+      typename Polyhedron::Point_3>
+      converter(points, polygons);
+    out.delegate(converter);
+  }
+}
 
 }// end namespace CGAL
 

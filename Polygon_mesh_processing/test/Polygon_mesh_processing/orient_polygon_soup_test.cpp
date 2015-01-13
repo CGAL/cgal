@@ -62,8 +62,8 @@ int main(int,char** argv) {
   
   if(oriented) {
     Polyhedron poly;
-    CGAL::Polygon_soup_to_polyhedron_3<Polyhedron::HalfedgeDS, Point_3> builder(points, polygons);
-    poly.delegate(builder);
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polyhedron<Polyhedron>(
+      points, polygons, poly);
 
     std::ofstream out("oriented.off");
     out << poly;
