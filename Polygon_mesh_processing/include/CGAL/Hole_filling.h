@@ -41,13 +41,13 @@ template<
 >
 std::pair<FacetOutputIterator, VertexOutputIterator> 
 triangulate_and_refine_hole(Polyhedron& polyhedron, 
-                            typename Polyhedron::Halfedge_handle border_halfedge, 
+                            typename boost::graph_traits<Polyhedron>::halfedge_descriptor border_halfedge, 
                             FacetOutputIterator facet_out,
                             VertexOutputIterator vertex_out,
                             double density_control_factor = std::sqrt(2.0),
                             bool use_delaunay_triangulation = false) 
 {
-  std::vector<typename Polyhedron::Facet_handle> patch;
+  std::vector<typename boost::graph_traits<Polyhedron>::face_descriptor> patch;
   triangulate_hole(polyhedron, border_halfedge, std::back_inserter(patch), use_delaunay_triangulation);
   facet_out = std::copy(patch.begin(), patch.end(), facet_out);
   return refine(polyhedron, patch.begin(), patch.end(), facet_out, vertex_out, density_control_factor);
@@ -92,7 +92,7 @@ template<
 >
 boost::tuple<bool, FacetOutputIterator, VertexOutputIterator>
 triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 
-                                 typename Polyhedron::Halfedge_handle border_halfedge, 
+                                 typename boost::graph_traits<Polyhedron>::halfedge_descriptor border_halfedge, 
                                  FacetOutputIterator facet_out,
                                  VertexOutputIterator vertex_out,
                                  WeightCalculator weight_calculator,
@@ -100,7 +100,7 @@ triangulate_refine_and_fair_hole(Polyhedron& polyhedron,
                                  bool use_delaunay_triangulation = false,
                                  Fairing_continuity continuity = FAIRING_C_1)
 {
-  std::vector<typename Polyhedron::Vertex_handle> patch;
+  std::vector<typename boost::graph_traits<Polyhedron>::vertex_descriptor> patch;
 
   facet_out = triangulate_and_refine_hole
     (polyhedron, border_halfedge, facet_out, std::back_inserter(patch), density_control_factor, use_delaunay_triangulation)
@@ -112,6 +112,7 @@ triangulate_refine_and_fair_hole(Polyhedron& polyhedron,
   return boost::make_tuple(fair_success, facet_out, vertex_out);
 }
 
+
 //use default SparseLinearSolver
 template<
   class WeightCalculator,
@@ -121,7 +122,7 @@ template<
 >
 boost::tuple<bool, FacetOutputIterator, VertexOutputIterator>
 triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 
-                                 typename Polyhedron::Halfedge_handle border_halfedge, 
+                                 typename boost::graph_traits<Polyhedron>::halfedge_descriptor border_halfedge, 
                                  FacetOutputIterator facet_out,
                                  VertexOutputIterator vertex_out,
                                  WeightCalculator weight_calculator,
@@ -143,7 +144,7 @@ template<
 >
 boost::tuple<bool, FacetOutputIterator, VertexOutputIterator>
 triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 
-                                 typename Polyhedron::Halfedge_handle border_halfedge, 
+                                 typename boost::graph_traits<Polyhedron>::halfedge_descriptor border_halfedge, 
                                  FacetOutputIterator facet_out,
                                  VertexOutputIterator vertex_out,
                                  double density_control_factor = std::sqrt(2.0),
@@ -155,6 +156,7 @@ triangulate_refine_and_fair_hole(Polyhedron& polyhedron,
     (polyhedron, border_halfedge, facet_out, vertex_out,  Weight_calculator(), density_control_factor, use_delaunay_triangulation, continuity);
 }
 
+
 //use default SparseLinearSolver and WeightCalculator
 template<
   class Polyhedron,
@@ -163,7 +165,7 @@ template<
 >
 boost::tuple<bool, FacetOutputIterator, VertexOutputIterator>
 triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 
-                                 typename Polyhedron::Halfedge_handle border_halfedge, 
+                                 typename boost::graph_traits<Polyhedron>::halfedge_descriptor border_halfedge, 
                                  FacetOutputIterator facet_out,
                                  VertexOutputIterator vertex_out,
                                  double density_control_factor = std::sqrt(2.0),
@@ -174,6 +176,7 @@ triangulate_refine_and_fair_hole(Polyhedron& polyhedron,
   return triangulate_refine_and_fair_hole<Sparse_linear_solver, Polyhedron, FacetOutputIterator, VertexOutputIterator>
     (polyhedron, border_halfedge, facet_out, vertex_out, density_control_factor, use_delaunay_triangulation, continuity);
 }
+
 
 } // namespace CGAL
 

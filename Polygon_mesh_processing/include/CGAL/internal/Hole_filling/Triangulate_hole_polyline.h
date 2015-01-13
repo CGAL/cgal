@@ -202,7 +202,7 @@ private:
   {
     CGAL_assertion(i < j);
     CGAL_assertion(j < k);
-    int n = P.size() -1; // because the first and last point are equal
+    int n = static_cast<int>(P.size()) -1; // because the first and last point are equal
     
     // The CGAL::dihedral angle is measured between the oriented triangles, that is it goes from [-pi, pi]
     // What we need is the angle between the normals of the triangles between [0, pi]
@@ -654,7 +654,7 @@ struct Edge_graph
   {
     typedef typename Triangulation::Finite_edges_iterator Finite_edges_iterator;
 
-    n = edge_exist.size();
+    n = static_cast<int>(edge_exist.size());
     for(Finite_edges_iterator eb = T.finite_edges_begin(); eb != T.finite_edges_end(); ++eb) 
     {
       int v0 = eb->first->vertex(eb->second)->info();
@@ -746,7 +746,7 @@ public:
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
     CGAL_assertion(Q.empty() || (P.size() == Q.size()));
 
-    int n = P.size()-1; // because the first and last point are equal
+    int n = static_cast<int>(P.size())-1; // because the first and last point are equal
     Triangulation T;
     std::vector<bool> edge_exist;
     std::pair<int, int> range(0, n-1);
@@ -1042,7 +1042,7 @@ private:
                                  Tracer& tracer,
                                  const WeightCalculator& WC) const
   {
-    int n = edge_exist.size();
+    int n = static_cast<int>(edge_exist.size());
     LookupTable<Weight> W(n, Weight::DEFAULT()); // do not forget that these default values are not changed for [i, i+1]
     LookupTable<int>    lambda(n,-1);
 
@@ -1091,7 +1091,7 @@ public:
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
     CGAL_assertion(Q.empty() || (P.size() == Q.size()));
     
-    int n = P.size() - 1;                       // because the first and last point are equal
+    int n = static_cast<int>(P.size()) - 1;                       // because the first and last point are equal
     LookupTable<Weight> W(n,Weight::DEFAULT()); // do not forget that these default values are not changed for [i, i+1]
     LookupTable<int>    lambda(n,-1);
     
