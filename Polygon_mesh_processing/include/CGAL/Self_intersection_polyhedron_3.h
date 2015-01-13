@@ -181,15 +181,16 @@ struct Throw_at_output {
  * @param out all pairs of non-adjacent facets intersecting are put in it
  * @param geom_traits traits class providing intersection test primitives
  *
- * @return pair of `bool` and `out`, where the Boolean indicates whether there is an intersection or not
+ * @return `out`. Note the OutputIterator can be empty.
  *
  * \todo Polyhedron should be a model of `FaceListGraph`
  * \todo rename to self_intersections
- * \todo do not return a bool
  */
 template <class GeomTraits, class FaceGraph, class OutputIterator>
-std::pair<bool, OutputIterator>
-self_intersect(const FaceGraph& polyhedron, OutputIterator out, const GeomTraits& geom_traits = GeomTraits())
+OutputIterator
+self_intersect(const FaceGraph& polyhedron,
+               OutputIterator out,
+               const GeomTraits& geom_traits = GeomTraits())
 {
   //CGAL_assertion(polyhedron.is_pure_triangle());
 
@@ -231,7 +232,7 @@ self_intersect(const FaceGraph& polyhedron, OutputIterator out, const GeomTraits
   internal::Intersect_facets<FaceGraph,GeomTraits,Box,OutputIterator> intersect_facets(polyhedron, out, geom_traits);
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets,cutoff);
-  return std::make_pair(intersect_facets.m_intersected, intersect_facets.m_iterator);
+  return intersect_facets.m_iterator;
 }
 
 /**
