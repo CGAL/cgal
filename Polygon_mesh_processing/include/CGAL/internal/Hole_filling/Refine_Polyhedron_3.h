@@ -93,7 +93,7 @@ private:
          (alpha * dist_c_vj > scale_attribute[vj]) &&
          (alpha * dist_c_vk > scale_attribute[vk])){
         Halfedge_handle h = poly.create_center_vertex(halfedge(facets[i],poly));
-        put(ppmap, target(h,poly)->point(), c);
+        put(ppmap, target(h,poly), c);
           scale_attribute[target(h,poly)] = sac;
           *vertex_out++ = target(h,poly);
 
