@@ -4,7 +4,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/Self_intersection_polyhedron_3.h>
+#include <CGAL/polygon_mesh_self_intersections.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/Timer.h>
@@ -27,7 +27,8 @@ int main(int, char** argv) {
   timer.start();
 
   std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
-  CGAL::self_intersections<K>(poly, back_inserter(intersected_tris));
+  CGAL::Polygon_mesh_processing::self_intersections<K>
+    (poly, back_inserter(intersected_tris));
   bool intersecting_1 = !intersected_tris.empty();
   CGAL_assertion(intersecting_1);
 
@@ -35,10 +36,11 @@ int main(int, char** argv) {
   std::cerr << intersected_tris.size() << " pairs of triangles are intersecting." << std::endl;
 
   timer.reset();
-  bool intersecting_2 = CGAL::do_self_intersect<K>(poly);
+  bool intersecting_2
+    = CGAL::Polygon_mesh_processing::is_self_intersecting<K>(poly);
   CGAL_assertion(intersecting_1 == intersecting_2);
 
-  std::cerr << "Is self-intersection test took " << timer.time() << " sec." << std::endl;
+  std::cerr << "is_self_intersecting test took " << timer.time() << " sec." << std::endl;
   std::cerr << (intersecting_2 ? "There is a self-intersection." : "There is no self-intersection.") << std::endl;
 
   return 0;
