@@ -46,19 +46,19 @@ struct Less_for_halfedge{
   }
 };
 
-template <class LessHedge, class Polyhedron, class OutputIterator>
+template <class LessHedge, class PolygonMesh, class OutputIterator>
 OutputIterator
 detect_duplicated_boundary_edges
-(Polyhedron& P, OutputIterator out, LessHedge less_hedge)
+(PolygonMesh& P, OutputIterator out, LessHedge less_hedge)
 {
-  typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
+  typedef typename PolygonMesh::Halfedge_handle Halfedge_handle;
 
   P.normalize_border();
 
   typedef
     std::set<Halfedge_handle, LessHedge > Border_halfedge_set;
   Border_halfedge_set border_halfedge_set(less_hedge);
-  for (typename Polyhedron::Halfedge_iterator
+  for (typename PolygonMesh::Halfedge_iterator
           it=P.border_halfedges_begin(), it_end=P.halfedges_end();
           it!=it_end; ++it)
   {
@@ -73,15 +73,15 @@ detect_duplicated_boundary_edges
   return out;
 }
 
-template <class Polyhedron>
+template <class PolygonMesh>
 struct Naive_border_stitching_modifier:
-  CGAL::Modifier_base<typename Polyhedron::HalfedgeDS>
+  CGAL::Modifier_base<typename PolygonMesh::HalfedgeDS>
 {
-  typedef typename Polyhedron::HalfedgeDS HDS;
+  typedef typename PolygonMesh::HalfedgeDS HDS;
   typedef typename HDS::Halfedge_handle Halfedge_handle;
   typedef typename HDS::Vertex_handle Vertex_handle;
   typedef typename HDS::Halfedge::Base HBase;
-  typedef typename Polyhedron::Vertex::Point Point_3;
+  typedef typename PolygonMesh::Vertex::Point Point_3;
 
   std::vector <std::pair<Halfedge_handle,Halfedge_handle> >& hedge_pairs_to_stitch;
 
@@ -245,14 +245,14 @@ namespace Polygon_mesh_processing{
 /// then the source of p.second is.
 /// If the target of p.second has not been marked for deletion,
 /// then the source of p.first is.
-template <class Polyhedron>
+template <class PolygonMesh>
 void stitch_borders(
-  Polyhedron& P,
-  std::vector <std::pair<typename Polyhedron::Halfedge_handle,
-                         typename Polyhedron::Halfedge_handle> >&
+  PolygonMesh& P,
+  std::vector <std::pair<typename PolygonMesh::Halfedge_handle,
+                         typename PolygonMesh::Halfedge_handle> >&
     hedge_pairs_to_stitch)
 {
-  Polyhedron_stitching::Naive_border_stitching_modifier<Polyhedron>
+  Polyhedron_stitching::Naive_border_stitching_modifier<PolygonMesh>
     modifier(hedge_pairs_to_stitch);
   P.delegate(modifier);
 }
@@ -262,10 +262,10 @@ void stitch_borders(
 /// using `less_hedge`. Two halfedges `h1` and `h2` are set to be stitched
 /// if `less_hedge(h1,h2)=less_hedge(h2,h1)=true`.
 /// `LessHedge` is a key comparison function that is used to sort halfedges
-template <class Polyhedron, class LessHedge>
-void stitch_borders(Polyhedron& P, LessHedge less_hedge)
+template <class PolygonMesh, class LessHedge>
+void stitch_borders(PolygonMesh& P, LessHedge less_hedge)
 {
-  typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
+  typedef typename PolygonMesh::Halfedge_handle Halfedge_handle;
 
   std::vector <std::pair<Halfedge_handle,Halfedge_handle> > hedge_pairs_to_stitch;
   Polyhedron_stitching::detect_duplicated_boundary_edges(
@@ -276,11 +276,11 @@ void stitch_borders(Polyhedron& P, LessHedge less_hedge)
 /// \ingroup polyhedron_stitching_grp
 /// Same as above using the source and target points of the halfedges
 /// for comparision
-template <class Polyhedron>
-void stitch_borders(Polyhedron& P)
+template <class PolygonMesh>
+void stitch_borders(PolygonMesh& P)
 {
-  typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
-  typedef typename Polyhedron::Vertex::Point_3 Point_3;
+  typedef typename PolygonMesh::Halfedge_handle Halfedge_handle;
+  typedef typename PolygonMesh::Vertex::Point_3 Point_3;
 
   Polyhedron_stitching::Less_for_halfedge<Halfedge_handle, Point_3> less_hedge;
   stitch_borders(P, less_hedge);
