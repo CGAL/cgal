@@ -300,25 +300,20 @@ void test_triangulate_refine_and_fair_hole_compile() {
 
   // use all param
   read_poly_with_borders("data/elephant_quad_hole.off", poly, border_reps);
-  CGAL::triangulate_refine_and_fair_hole<Default_solver>
-  (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices), 
-    CGAL::internal::Uniform_weight_fairing<Polyhedron>());
+  CGAL::triangulate_refine_and_fair_hole
+  (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
+    CGAL::internal::Uniform_weight_fairing<Polyhedron>(), Default_solver());
 
-#if 0
-  // default weight
-  read_poly_with_borders("data/elephant_quad_hole.off", poly, border_reps);
-  CGAL::triangulate_refine_and_fair_hole<Default_solver>
-  (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices));
   // default solver
   read_poly_with_borders("data/elephant_quad_hole.off", poly, border_reps);
   CGAL::triangulate_refine_and_fair_hole
     (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
-    CGAL::internal::Uniform_weight_fairing<Polyhedron>());
+    CGAL::internal::Uniform_weight_fairing<Polyhedron>(), CGAL::Default());
+
   // default solver and weight
   read_poly_with_borders("data/elephant_quad_hole.off", poly, border_reps);
-  CGAL::triangulate_refine_and_fair_hole<Default_solver>
+  CGAL::triangulate_refine_and_fair_hole
     (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices));
-#endif
 }
 
 int main() {

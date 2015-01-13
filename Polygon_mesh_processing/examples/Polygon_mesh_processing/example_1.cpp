@@ -1,4 +1,3 @@
-#define CGAL_SUPERLU_ENABLED
 #undef NDEBUG
 #define DEBUG_TRACE
 #include <CGAL/Hole_filling.h>
