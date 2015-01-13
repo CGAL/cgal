@@ -56,7 +56,7 @@ struct Axis_compare {
  * \todo Polyhedron should be a model of `FaceListGraph`
  * \todo find a better name for the function
  * @code
- * // use inside out to fix orientation
+ * // use inside out to reverse orientation
  * if(!is_oriented(polyhedron)) {
  *   polyhedron.inside_out();
  * }
