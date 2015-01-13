@@ -29,19 +29,11 @@ namespace internal {
 
 struct Fair_default_sparse_linear_solver {
   typedef
-#if defined(CGAL_EIGEN3_ENABLED)
-  #if defined(CGAL_SUPERLU_ENABLED)
-    CGAL::Eigen_solver_traits<Eigen::SuperLU<CGAL::Eigen_sparse_matrix<double>::EigenType> >
-  #else
-    #if EIGEN_VERSION_AT_LEAST(3,2,0)
-    CGAL::Eigen_solver_traits<
-      Eigen::SparseLU<
-        CGAL::Eigen_sparse_matrix<double>::EigenType,
-        Eigen::COLAMDOrdering<int> >  >
-    #else
-    Fair_default_sparse_linear_solver // dummy type to make it compile
-    #endif
-  #endif
+#if defined(CGAL_EIGEN3_ENABLED) && EIGEN_VERSION_AT_LEAST(3,2,0)
+  CGAL::Eigen_solver_traits<
+    Eigen::SparseLU<
+      CGAL::Eigen_sparse_matrix<double>::EigenType,
+      Eigen::COLAMDOrdering<int> >  >
 #else
   Fair_default_sparse_linear_solver // dummy type to make it compile
 #endif

@@ -1,5 +1,4 @@
 #undef NDEBUG
-//#define CGAL_SUPERLU_ENABLED
 #include <QtCore/qglobal.h>
 
 #include "Messages_interface.h"
