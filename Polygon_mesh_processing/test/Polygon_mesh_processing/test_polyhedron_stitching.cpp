@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/stitch_polyhedron.h>
+#include <CGAL/stitch_polygon_mesh.h>
 
 #include <iostream>
 #include <fstream>
@@ -20,7 +20,7 @@ void test(const char* fname)
 
   assert(P.size_of_vertices()!=0);
   
-  CGAL::Polygon_mesh_processing::stitch_polyhedron(P);
+  CGAL::Polygon_mesh_processing::stitch_borders(P);
 
   std::ofstream output("output.off");
   output << P;

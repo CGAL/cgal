@@ -19,8 +19,8 @@
 // Author(s)     : Sebastien Loriot
 
 
-#ifndef CGAL_POLYHEDRON_STITCHING_H
-#define CGAL_POLYHEDRON_STITCHING_H
+#ifndef CGAL_STITCH_POLYGON_MESH_H
+#define CGAL_STITCH_POLYGON_MESH_H
 
 #include <CGAL/Modifier_base.h>
 #include <CGAL/HalfedgeDS_decorator.h>
@@ -246,7 +246,7 @@ namespace Polygon_mesh_processing{
 /// If the target of p.second has not been marked for deletion,
 /// then the source of p.first is.
 template <class Polyhedron>
-void stitch_polyhedron(
+void stitch_borders(
   Polyhedron& P,
   std::vector <std::pair<typename Polyhedron::Halfedge_handle,
                          typename Polyhedron::Halfedge_handle> >&
@@ -263,27 +263,27 @@ void stitch_polyhedron(
 /// if `less_hedge(h1,h2)=less_hedge(h2,h1)=true`.
 /// `LessHedge` is a key comparison function that is used to sort halfedges
 template <class Polyhedron, class LessHedge>
-void stitch_polyhedron(Polyhedron& P, LessHedge less_hedge)
+void stitch_borders(Polyhedron& P, LessHedge less_hedge)
 {
   typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
 
   std::vector <std::pair<Halfedge_handle,Halfedge_handle> > hedge_pairs_to_stitch;
   Polyhedron_stitching::detect_duplicated_boundary_edges(
     P, std::back_inserter(hedge_pairs_to_stitch), less_hedge );
-  stitch_polyhedron(P, hedge_pairs_to_stitch);
+  stitch_borders(P, hedge_pairs_to_stitch);
 }
 
 /// \ingroup polyhedron_stitching_grp
 /// Same as above using the source and target points of the halfedges
 /// for comparision
 template <class Polyhedron>
-void stitch_polyhedron(Polyhedron& P)
+void stitch_borders(Polyhedron& P)
 {
   typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
   typedef typename Polyhedron::Vertex::Point_3 Point_3;
 
   Polyhedron_stitching::Less_for_halfedge<Halfedge_handle, Point_3> less_hedge;
-  stitch_polyhedron(P, less_hedge);
+  stitch_borders(P, less_hedge);
 }
 
 } //end of namespace Polygon_mesh_processing
@@ -291,4 +291,4 @@ void stitch_polyhedron(Polyhedron& P)
 } //end of namespace CGAL
 
 
-#endif //CGAL_POLYHEDRON_STITCHING_H
+#endif //CGAL_STITCH_POLYGON_MESH_H
