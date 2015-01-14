@@ -1403,7 +1403,7 @@ public:
 	return point(periodic_point(cells[i],cells[i]->index(canonic_vh[idx])));
     }
     CGAL_assertion(false);
-  
+  return Point();
   }
 };
 
