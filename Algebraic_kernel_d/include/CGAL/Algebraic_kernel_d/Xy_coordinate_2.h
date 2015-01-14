@@ -387,7 +387,7 @@ public:
                         (*candidates.begin())->high()
                 );
         }
-        CGAL_postcondition(this->ptr()->_m_y);
+        CGAL_postcondition(bool(this->ptr()->_m_y));
         return *this->ptr()->_m_y;
     }
     

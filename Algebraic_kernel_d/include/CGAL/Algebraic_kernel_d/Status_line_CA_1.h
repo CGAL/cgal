@@ -560,7 +560,7 @@ public:
 
     //! Returns the isolator instance
     Bitstream_descartes& isolator() const {
-        CGAL_assertion(this->ptr()->isolator);
+        CGAL_assertion(bool(this->ptr()->isolator));
         return this->ptr()->isolator.get();
     }
 
