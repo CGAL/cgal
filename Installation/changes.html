@@ -125,10 +125,16 @@ and <code>src/</code> directories).
           defined for simple two-dimensional polygons.</li>
   </ul>
 
-  <h3>Triangulation (new package)</h3>
+  <h3>Scale-Space Surface Reconstruction (new package)</h3>
   <ul>
-    <li>This new package provides classes for manipulating triangulations
-        in Euclidean spaces whose dimension can be specified at compile-time or at run-time.</li>
+    <li>This new package provides a class gathering a dedicated smoothing
+        algorithm and some convenience functions to help the creation of
+        a surface out of a point set using the 3D Alpha Shapes package.
+        The particularity of this reconstruction pipeline is that the
+        input point are in the output and no new points are created.
+        Note that in the current version, the output is a triangle soup
+        that is not necessarily a valid (manifold) polyhedral surface.
+    </li>
   </ul>
 
   <h3>Surface Mesh (new package)</h3>
@@ -136,6 +142,12 @@ and <code>src/</code> directories).
     <li>The surface mesh class provided by this package is a data structure
       that can be used as halfedge data structure or polyhedral surface. It is
       an alternative to the packages <code>CGAL::Polyhedron_3</code> and <code>CGAL::HalfedgeDS</code>. </li>
+  </ul>
+
+  <h3>Triangulation (new package)</h3>
+  <ul>
+    <li>This new package provides classes for manipulating triangulations
+        in Euclidean spaces whose dimension can be specified at compile-time or at run-time.</li>
   </ul>
 
 <!-- Major and breaking changes -->

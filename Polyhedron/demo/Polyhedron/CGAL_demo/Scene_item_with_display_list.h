@@ -3,7 +3,11 @@
 
 #include "Scene_item.h"
 #include <Scene_interface.h>
-#include <CGAL/gl.h>
+#ifdef CGAL_GLEW_ENABLED
+# include <GL/glew.h>
+#else
+# include <CGAL/gl.h>
+#endif
 
 class Viewer_interface;
 
