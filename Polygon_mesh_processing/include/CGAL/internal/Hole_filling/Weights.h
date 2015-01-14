@@ -30,13 +30,13 @@ namespace CGAL {
 namespace internal {
 /////////////////////////////////////////////////////////////////////////////////////////
 // Returns the cotangent value of half angle v0 v1 v2
-template<class Polyhedron>
+template<class PolygonMesh>
 class Cotangent_value
 {
 public:
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
-  typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
+  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
   typedef typename boost::property_traits<Point_property_map>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
 
@@ -63,16 +63,16 @@ public:
 // The potential problem with previous one (Cotangent_value) is that it does not produce symmetric results
 // (i.e. for v0, v1, v2 and v2, v1, v0 returned cot weights can be slightly different)
 // This one provides stable results.
-template<class Polyhedron>
+template<class PolygonMesh>
 class Cotangent_value_Meyer
 { 
 public:
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
   typedef typename boost::property_traits<Point_property_map>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
 
-  Polyhedron& polyhedron_;
+  PolygonMesh& polyhedron_;
   Point_property_map ppmap;
   
 private:
@@ -81,11 +81,11 @@ private:
 
 public:
   
-  Cotangent_value_Meyer(Polyhedron& polyhedron_)
+  Cotangent_value_Meyer(PolygonMesh& polyhedron_)
     : polyhedron_(polyhedron_), ppmap(get(vertex_point,polyhedron_))
   {}
 
-  Polyhedron& polyhedron()
+  PolygonMesh& polyhedron()
   {
     return polyhedron_;
   }
@@ -122,23 +122,23 @@ public:
 
 // Returns the cotangent value of half angle v0 v1 v2 by clamping between [1, 89] degrees
 // as suggested by -[Friedel] Unconstrained Spherical Parameterization-
-template<class Polyhedron, class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+template<class PolygonMesh, class CotangentValue = Cotangent_value_Meyer<PolygonMesh> >
 class Cotangent_value_clamped : CotangentValue
 {
   Cotangent_value_clamped()
   {}
 public:
 
-  Cotangent_value_clamped(Polyhedron& polyhedron_)
+  Cotangent_value_clamped(PolygonMesh& polyhedron_)
     : CotangentValue(polyhedron_)
   {}
 
-  Polyhedron& polyhedron()
+  PolygonMesh& polyhedron()
   {
     return CotangentValue::polyhedron();
   }
 
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
@@ -149,7 +149,7 @@ public:
   }
 };
 
-template<class Polyhedron, class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+template<class PolygonMesh, class CotangentValue = Cotangent_value_Meyer<PolygonMesh> >
 class Cotangent_value_clamped_2 : CotangentValue
 {
   Cotangent_value_clamped_2()
@@ -157,16 +157,16 @@ class Cotangent_value_clamped_2 : CotangentValue
 
 public:
 
-  Cotangent_value_clamped_2(Polyhedron& polyhedron_)
+  Cotangent_value_clamped_2(PolygonMesh& polyhedron_)
     : CotangentValue(polyhedron_)
   {}
 
-  Polyhedron& polyhedron()
+  PolygonMesh& polyhedron()
   {
     return CotangentValue::polyhedron();
   }
 
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
@@ -177,22 +177,22 @@ public:
   }
 };
 
-template<class Polyhedron, class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+template<class PolygonMesh, class CotangentValue = Cotangent_value_Meyer<PolygonMesh> >
 class Cotangent_value_minimum_zero : CotangentValue
 {
   Cotangent_value_minimum_zero()
   {}
 public:
-  Cotangent_value_minimum_zero(Polyhedron& polyhedron_)
+  Cotangent_value_minimum_zero(PolygonMesh& polyhedron_)
     : CotangentValue(polyhedron_)
   {}
 
-  Polyhedron& polyhedron()
+  PolygonMesh& polyhedron()
   {
     return CotangentValue::polyhedron();
   }
 
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
@@ -201,28 +201,28 @@ public:
   }
 };
 
-template<class Polyhedron, 
-         class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+template<class PolygonMesh, 
+         class CotangentValue = Cotangent_value_Meyer<PolygonMesh> >
 class Voronoi_area : CotangentValue
 {
   Voronoi_area()
   {}
   
 public:
-  Voronoi_area(Polyhedron& polyhedron_)
+  Voronoi_area(PolygonMesh& polyhedron_)
     : CotangentValue(polyhedron_)
   {}
 
-  Polyhedron& polyhedron()
+  PolygonMesh& polyhedron()
   {
     return CotangentValue::polyhedron();
   }
 
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator in_edge_iterator;
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::in_edge_iterator in_edge_iterator;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
-  typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
+  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
   typedef typename boost::property_traits<Point_property_map>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
 
@@ -274,8 +274,8 @@ public:
 };
 // Returns the cotangent value of half angle v0 v1 v2 by dividing the triangle area
 // as suggested by -[Mullen08] Spectral Conformal Parameterization-
-template<class Polyhedron, 
-         class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+template<class PolygonMesh, 
+         class CotangentValue = Cotangent_value_Meyer<PolygonMesh> >
 class Cotangent_value_area_weighted : CotangentValue
 {
   Cotangent_value_area_weighted()
@@ -283,16 +283,16 @@ class Cotangent_value_area_weighted : CotangentValue
 
 public:
 
-  Cotangent_value_area_weighted(Polyhedron& polyhedron_)
+  Cotangent_value_area_weighted(PolygonMesh& polyhedron_)
     : CotangentValue(polyhedron_)
   {}
 
-  Polyhedron& polyhedron()
+  PolygonMesh& polyhedron()
   {
     return CotangentValue::polyhedron();
   }
 
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
@@ -306,27 +306,27 @@ public:
 // Cotangent weight calculator 
 // Cotangent_value:               as suggested by -[Sorkine07] ARAP Surface Modeling-
 // Cotangent_value_area_weighted: as suggested by -[Mullen08] Spectral Conformal Parameterization-
-template<class Polyhedron, 
-         class CotangentValue = Cotangent_value_minimum_zero<Polyhedron> >
+template<class PolygonMesh, 
+         class CotangentValue = Cotangent_value_minimum_zero<PolygonMesh> >
 class Cotangent_weight : CotangentValue
 {
   Cotangent_weight()
   {}
 
 public:
-  Cotangent_weight(Polyhedron& polyhedron_)
+  Cotangent_weight(PolygonMesh& polyhedron_)
     : CotangentValue(polyhedron_)
   {}
 
-  Polyhedron& polyhedron()
+  PolygonMesh& polyhedron()
   {
     return CotangentValue::polyhedron();
   }
 
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
-  typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
+  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
   typedef typename boost::property_traits<Point_property_map>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
 
@@ -362,26 +362,26 @@ public:
 };
 
 // Single cotangent from -[Chao10] Simple Geometric Model for Elastic Deformation
-template<class Polyhedron, 
-         class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+template<class PolygonMesh, 
+         class CotangentValue = Cotangent_value_Meyer<PolygonMesh> >
 class Single_cotangent_weight : CotangentValue
 {
   Single_cotangent_weight()
   {}
 public:
-  Single_cotangent_weight(Polyhedron& polyhedron_)
+  Single_cotangent_weight(PolygonMesh& polyhedron_)
     : CotangentValue(polyhedron_)
   {}
 
-  Polyhedron& polyhedron()
+  PolygonMesh& polyhedron()
   {
     return CotangentValue::polyhedron();
   }
 
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
-  typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
+  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
   typedef typename boost::property_traits<Point_property_map>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
 
@@ -400,27 +400,27 @@ public:
 };
 
 // Mean value calculator described in -[Floater04] Mean Value Coordinates-
-template<class Polyhedron>
+template<class PolygonMesh>
 class Mean_value_weight
 {
   Mean_value_weight()
   {}
 
-  Polyhedron& polyhedron_;
+  PolygonMesh& polyhedron_;
 public:
-  Mean_value_weight(Polyhedron& polyhedron_)
+  Mean_value_weight(PolygonMesh& polyhedron_)
     : polyhedron_(polyhedron_)
   {}
 
-  Polyhedron& polyhedron()
+  PolygonMesh& polyhedron()
   {
     return polyhedron_;
   }
 
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
-  typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
+  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
   typedef typename boost::property_traits<Point_property_map>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
 
@@ -495,9 +495,9 @@ private:
   }
 };
 
-template< class Polyhedron, 
-          class PrimaryWeight = Cotangent_weight<Polyhedron>,
-          class SecondaryWeight = Mean_value_weight<Polyhedron> >
+template< class PolygonMesh, 
+          class PrimaryWeight = Cotangent_weight<PolygonMesh>,
+          class SecondaryWeight = Mean_value_weight<PolygonMesh> >
 class Hybrid_weight : public PrimaryWeight, SecondaryWeight
 {
   PrimaryWeight primary;
@@ -507,16 +507,16 @@ class Hybrid_weight : public PrimaryWeight, SecondaryWeight
   {}
 
 public:
-  Hybrid_weight(Polyhedron& polyhedron_)
+  Hybrid_weight(PolygonMesh& polyhedron_)
     : primary(polyhedron_), secondary(polyhedron_)
   {}
 
-  Polyhedron& polyhedron()
+  PolygonMesh& polyhedron()
   {
     return primary.polyhedron();
   }
 
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
 
   double operator()(halfedge_descriptor he)
   {
@@ -527,11 +527,11 @@ public:
 };
 
 // Trivial uniform weights (created for test purposes)
-template<class Polyhedron>
+template<class PolygonMesh>
 class Uniform_weight
 {
 public:
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
 
   double operator()(halfedge_descriptor /*e*/)
   { return 1.0; }
@@ -539,24 +539,24 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////
 //                              FAIRING                                   //
-template<class Polyhedron>
+template<class PolygonMesh>
 class Scale_dependent_weight_fairing
 {
-  Polyhedron& polyhedron_;
+  PolygonMesh& polyhedron_;
 public:
-  Scale_dependent_weight_fairing(Polyhedron& polyhedron_)
+  Scale_dependent_weight_fairing(PolygonMesh& polyhedron_)
     : polyhedron_(polyhedron_)
   {}
 
-  Polyhedron& polyhedron()
+  PolygonMesh& polyhedron()
   {
     return polyhedron_;
   }
 
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
-  typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
+  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
   typedef typename boost::property_traits<Point_property_map>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
 
@@ -574,22 +574,22 @@ public:
   }
 };
 
-template<class Polyhedron>
+template<class PolygonMesh>
 class Cotangent_weight_with_voronoi_area_fairing {
-  Voronoi_area<Polyhedron> voronoi_functor;
-  Cotangent_weight<Polyhedron, Cotangent_value_Meyer<Polyhedron> > cotangent_functor;
+  Voronoi_area<PolygonMesh> voronoi_functor;
+  Cotangent_weight<PolygonMesh, Cotangent_value_Meyer<PolygonMesh> > cotangent_functor;
 public:
-  Cotangent_weight_with_voronoi_area_fairing(Polyhedron& polyhedron_)
+  Cotangent_weight_with_voronoi_area_fairing(PolygonMesh& polyhedron_)
     : voronoi_functor(polyhedron_), cotangent_functor(polyhedron_)
   {}
 
-  Polyhedron& polyhedron()
+  PolygonMesh& polyhedron()
   {
     return voronoi_functor.polyhedron();
   }
 
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
   double w_i(vertex_descriptor v_i) {
     
@@ -602,12 +602,12 @@ public:
   }
 };
 
-template<class Polyhedron>
+template<class PolygonMesh>
 class Uniform_weight_fairing
 {
 public:
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
   double w_ij(halfedge_descriptor /*e*/) { return 1.0; }
 

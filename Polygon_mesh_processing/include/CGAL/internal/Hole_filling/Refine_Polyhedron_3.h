@@ -14,20 +14,20 @@
 namespace CGAL {
 namespace internal {
 
-template<class Polyhedron>
+template<class PolygonMesh>
 class Refine_Polyhedron_3 {
 // typedefs
-  typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
+  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
   typedef typename boost::property_traits<Point_property_map>::value_type Point_3;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor Vertex_handle;
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
-  typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_handle;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor Vertex_handle;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor Halfedge_handle;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor Facet_handle;
 
-  typedef Halfedge_around_face_circulator<Polyhedron>   Halfedge_around_facet_circulator;
-  typedef Halfedge_around_target_circulator<Polyhedron>  Halfedge_around_vertex_circulator;
+  typedef Halfedge_around_face_circulator<PolygonMesh>   Halfedge_around_facet_circulator;
+  typedef Halfedge_around_target_circulator<PolygonMesh>  Halfedge_around_vertex_circulator;
 
 private:
-  Polyhedron& poly;
+  PolygonMesh& poly;
   Point_property_map ppmap;
   
   bool flippable(Halfedge_handle h) {
@@ -130,7 +130,7 @@ private:
     std::set<Halfedge_handle> included_map; 
 
     for(typename std::vector<Facet_handle>::const_iterator it = facets.begin(); it!= facets.end(); ++it) {
-      Halfedge_around_face_circulator<Polyhedron>  circ(halfedge(*it,poly),poly), done(circ);
+      Halfedge_around_face_circulator<PolygonMesh>  circ(halfedge(*it,poly),poly), done(circ);
       do {
         Halfedge_handle h = *circ;        
         if(border_edges.find(h) == border_edges.end()){
@@ -162,7 +162,7 @@ private:
                         bool accept_internal_facets)
   {
     const Point_3& vp = ppmap[vh]; 
-    Halfedge_around_target_circulator<Polyhedron> circ(halfedge(vh,poly),poly), done(circ);
+    Halfedge_around_target_circulator<PolygonMesh> circ(halfedge(vh,poly),poly), done(circ);
     int deg = 0;
     double sum = 0;
     do {
@@ -188,7 +188,7 @@ private:
                                  bool accept_internal_facets) 
   {
     for(typename std::vector<Facet_handle>::const_iterator f_it = facets.begin(); f_it != facets.end(); ++f_it) {
-      Halfedge_around_face_circulator<Polyhedron> circ(halfedge(*f_it,poly),poly), done(circ);
+      Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(*f_it,poly),poly), done(circ);
       do {
         Vertex_handle v = target(*circ,poly);
         std::pair<typename std::map<Vertex_handle, double>::iterator, bool> v_insert 
@@ -203,10 +203,10 @@ private:
                                const std::set<Facet_handle>& interior_map) const
   {
     for(typename std::vector<Facet_handle>::const_iterator f_it = facets.begin(); f_it != facets.end(); ++f_it) {
-      Halfedge_around_face_circulator<Polyhedron> circ(halfedge(*f_it,poly),poly), done(circ);
+      Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(*f_it,poly),poly), done(circ);
       do {
         Vertex_handle v = target(*circ,poly);
-        Halfedge_around_target_circulator<Polyhedron> circ_v(*circ,poly), done_v(circ_v);
+        Halfedge_around_target_circulator<PolygonMesh> circ_v(*circ,poly), done_v(circ_v);
         bool internal_v = true;
         do {
           Facet_handle f(face(*circ,poly)), f_op(face(opposite(*circ_v,poly),poly));
@@ -224,7 +224,7 @@ private:
   }
 
 public:
-  Refine_Polyhedron_3(Polyhedron& poly)
+  Refine_Polyhedron_3(PolygonMesh& poly)
     : poly(poly), ppmap(get(vertex_point, poly))
   {}
 
@@ -241,7 +241,7 @@ public:
     // store boundary edges - to be used in relax 
     std::set<Halfedge_handle> border_edges;
     for(typename std::vector<Facet_handle>::const_iterator it = facets.begin(); it!= facets.end(); ++it){
-      Halfedge_around_face_circulator<Polyhedron>  circ(halfedge(*it,poly),poly), done(circ);
+      Halfedge_around_face_circulator<PolygonMesh>  circ(halfedge(*it,poly),poly), done(circ);
       do {
         if(interior_map.find(face(opposite(*circ,poly),poly)) == interior_map.end()) {
           border_edges.insert(*circ);
@@ -274,14 +274,14 @@ public:
 
 /*!
 \ingroup PkgPolygonMeshProcessing
-@brief Function refining a region on surface mesh
+@brief Function refining a region on polygon mesh
 
-@tparam Polyhedron a %CGAL polyhedron
+@tparam Polyhedron must be a model of `MutableFaceGraph`
 @tparam InputIterator iterator over input facets
-@tparam FacetOutputIterator iterator holding `Polyhedron::Facet_handle` for patch facets
-@tparam VertexOutputIterator iterator holding `Polyhedron::Vertex_handle` for patch vertices
+@tparam FacetOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::face_descriptor` for patch facets
+@tparam VertexOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::vertex_descriptor` for patch vertices
 
-@param poly surface mesh to be refined
+@param polygon mesh to be refined
 @param facet_begin first iterator of the range of facets
 @param facet_end past-the-end iterator of the range of facets
 @param facet_out iterator over newly created facets
@@ -292,23 +292,23 @@ public:
 
 @todo current algorithm iterates 10 times at most, since (I guess) there is no termination proof.
 \todo move to a non-internal header file
-\todo `Polyhedron` should be a model of `MutableFaceGraph`
+
  */
 template<
-  class Polyhedron,
+  class PolygonMesh,
   class InputIterator,
   class FacetOutputIterator,
   class VertexOutputIterator
 >
 std::pair<FacetOutputIterator, VertexOutputIterator>
-refine(Polyhedron& poly,
+refine(PolygonMesh& poly,
        InputIterator facet_begin, 
        InputIterator facet_end,
        FacetOutputIterator facet_out,
        VertexOutputIterator vertex_out,
        double density_control_factor = std::sqrt(2.0))
 {
-  internal::Refine_Polyhedron_3<Polyhedron> refine_functor(poly);
+  internal::Refine_Polyhedron_3<PolygonMesh> refine_functor(poly);
   refine_functor.refine
     (facet_begin, facet_end, facet_out, vertex_out, density_control_factor);
   return std::make_pair(facet_out, vertex_out);

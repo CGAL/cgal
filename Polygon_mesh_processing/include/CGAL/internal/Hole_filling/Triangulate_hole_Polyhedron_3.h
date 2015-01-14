@@ -10,16 +10,16 @@ namespace CGAL {
 namespace internal {
 
 
-template<class Polyhedron, class OutputIterator>
+template<class PolygonMesh, class OutputIterator>
 struct Tracer_polyhedron 
 {
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
-  typedef typename boost::graph_traits<Polyhedron>::face_descriptor    Facet_handle;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor Halfedge_handle;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor    Facet_handle;
 
   Tracer_polyhedron(OutputIterator out,
-                    Polyhedron& polyhedron,
+                    PolygonMesh& poly,
                     std::vector<Halfedge_handle>& P)
-    : out(out), polyhedron(polyhedron), P(P)
+    : out(out), poly(poly), P(P)
   { }
 
   template <class LookupTable>
@@ -35,13 +35,13 @@ struct Tracer_polyhedron
       if(last)
         {
           h = P[i+1];
-          Euler::fill_hole(h,polyhedron); }
+          Euler::fill_hole(h,poly); }
       else 
-        { h = Euler::add_face_to_border(prev(P[i+1],polyhedron), P[i+2/*k*/], polyhedron); }
+        { h = Euler::add_face_to_border(prev(P[i+1],poly), P[i+2/*k*/], poly); }
       
-      CGAL_assertion(face(h,polyhedron) != boost::graph_traits<Polyhedron>::null_face());
-      *out++ = face(h,polyhedron);
-      return opposite(h,polyhedron);
+      CGAL_assertion(face(h,poly) != boost::graph_traits<PolygonMesh>::null_face());
+      *out++ = face(h,poly);
+      return opposite(h,poly);
     } 
     else 
     {
@@ -52,34 +52,34 @@ struct Tracer_polyhedron
       if(last)
         {
           h = g;
-          Euler::fill_hole(g,polyhedron);
+          Euler::fill_hole(g,poly);
         }
       else 
-        { h = Euler::add_face_to_border(prev(h,polyhedron), g, polyhedron); }
+        { h = Euler::add_face_to_border(prev(h,poly), g, poly); }
 
-      CGAL_assertion(face(h,polyhedron) != boost::graph_traits<Polyhedron>::null_face());
-      *out++ = face(h,polyhedron);
-      return opposite(h,polyhedron);
+      CGAL_assertion(face(h,poly) != boost::graph_traits<PolygonMesh>::null_face());
+      *out++ = face(h,poly);
+      return opposite(h,poly);
     }
   }
 
   OutputIterator out;
-  Polyhedron& polyhedron;
+  PolygonMesh& poly;
   std::vector<Halfedge_handle>& P;
 };
 
 // This function is used in test cases (since it returns not just OutputIterator but also Weight)
-template<class Polyhedron, class OutputIterator>
+template<class PolygonMesh, class OutputIterator>
 std::pair<OutputIterator, Weight_min_max_dihedral_and_area> 
-triangulate_hole_Polyhedron(Polyhedron& polyhedron, 
-                            typename boost::graph_traits<Polyhedron>::halfedge_descriptor border_halfedge, 
+triangulate_hole_Polyhedron(PolygonMesh& poly, 
+                            typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge, 
                             OutputIterator out,
                             bool use_delaunay_triangulation = false)
 {
-  typedef Halfedge_around_face_circulator<Polyhedron>   Hedge_around_face_circulator;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor Vertex_handle;
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
-  typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
+  typedef Halfedge_around_face_circulator<PolygonMesh>   Hedge_around_face_circulator;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor Vertex_handle;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor Halfedge_handle;
+  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
   typedef typename boost::property_traits<Point_property_map>::value_type Point_3;
   
   typedef typename std::map<Vertex_handle, int>::iterator         Vertex_set_it;
@@ -87,15 +87,15 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
   std::vector<Point_3>         P, Q;
   std::vector<Halfedge_handle> P_edges;
   std::map<Vertex_handle, int> vertex_set;
-  Point_property_map ppmap = get(vertex_point,polyhedron);
+  Point_property_map ppmap = get(vertex_point,poly);
 
   int n = 0;
-  Hedge_around_face_circulator circ(border_halfedge,polyhedron), done(circ);
+  Hedge_around_face_circulator circ(border_halfedge,poly), done(circ);
   do{
-    P.push_back(ppmap[target(*circ, polyhedron)]);
-    Q.push_back(ppmap[target(next(opposite(next(*circ,polyhedron),polyhedron),polyhedron),polyhedron)]);
+    P.push_back(ppmap[target(*circ, poly)]);
+    Q.push_back(ppmap[target(next(opposite(next(*circ,poly),poly),poly),poly)]);
     P_edges.push_back(*circ);
-    if(!vertex_set.insert(std::make_pair(target(*circ,polyhedron), n++)).second) {
+    if(!vertex_set.insert(std::make_pair(target(*circ,poly), n++)).second) {
       CGAL_warning(!"Returning no output. Non-manifold vertex is found on boundary!");
       return std::make_pair(out, Weight_min_max_dihedral_and_area::NOT_VALID());
     }
@@ -110,9 +110,9 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
     int v_it_prev = v_it_id == 0   ? n-1 : v_it_id-1;
     int v_it_next = v_it_id == n-1 ? 0   : v_it_id+1;
 
-    Halfedge_around_target_circulator<Polyhedron> circ_vertex(halfedge(v_it->first,polyhedron),polyhedron), done_vertex(circ_vertex);
+    Halfedge_around_target_circulator<PolygonMesh> circ_vertex(halfedge(v_it->first,poly),poly), done_vertex(circ_vertex);
     do {
-      Vertex_set_it v_it_neigh_it = vertex_set.find(source(*circ_vertex,polyhedron));
+      Vertex_set_it v_it_neigh_it = vertex_set.find(source(*circ_vertex,poly));
 
       if(v_it_neigh_it != vertex_set.end()) {
         int v_it_neigh_id = v_it_neigh_it->second;
@@ -135,9 +135,9 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
 
   Is_valid_existing_edges_and_degenerate_triangle iv(existing_edges);
   
-  // fill hole using polyline function, with custom tracer for Polyhedron
-  Tracer_polyhedron<Polyhedron, OutputIterator>
-    tracer(out, polyhedron, P_edges);
+  // fill hole using polyline function, with custom tracer for PolygonMesh
+  Tracer_polyhedron<PolygonMesh, OutputIterator>
+    tracer(out, poly, P_edges);
   Weight_min_max_dihedral_and_area weight = 
     internal::triangulate_hole_polyline(P, Q, 
                                         tracer, WC(iv), use_delaunay_triangulation)
@@ -157,12 +157,12 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
  \ingroup PkgPolygonMeshProcessing
  Function triangulating a hole in surface mesh.
  The hole should contain no non-manifold vertex. Generated patch is guaranteed to not to break edge manifoldness and contain no degenerate triangle.
- If no possible patch is found, @a polyhedron is not altered in any way, and no face descriptor is put into @a out.
+ If no possible patch is found, @a poly is not altered in any way, and no face descriptor is put into @a out.
 
- @tparam Polyhedron a %CGAL polyhedron
- @tparam OutputIterator iterator holding `boost::graph_traits<Polyhedron>::face_descriptor` for patch faces.
+ @tparam PolygonMesh must be a model of `MutableFaceGraph`
+ @tparam OutputIterator iterator holding `boost::graph_traits<PolygonMesh>::face_descriptor` for patch faces.
 
- @param polyhedron surface mesh containing the hole
+ @param poly surface mesh containing the hole
  @param border_halfedge a border halfedge incident to the hole
  @param out over patch faces.
  @param use_delaunay_triangulation
@@ -171,18 +171,17 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
 
   \todo move to a non-internal header file
   \todo handle islands
-  \todo `Polyhedron` should be a model of `MutableFaceGraph`
 */
-template<class Polyhedron, class OutputIterator>
+template<class PolygonMesh, class OutputIterator>
 OutputIterator 
-triangulate_hole(Polyhedron& polyhedron, 
-                 typename boost::graph_traits<Polyhedron>::halfedge_descriptor border_halfedge, 
+triangulate_hole(PolygonMesh& poly, 
+                 typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge, 
                  OutputIterator out,
                  bool use_delaunay_triangulation = false)
 {
-  CGAL_precondition(face(border_halfedge,polyhedron) == boost::graph_traits<Polyhedron>::null_face());
+  CGAL_precondition(face(border_halfedge,poly) == boost::graph_traits<PolygonMesh>::null_face());
   return internal::triangulate_hole_Polyhedron
-    (polyhedron, border_halfedge, out, use_delaunay_triangulation).first;
+    (poly, border_halfedge, out, use_delaunay_triangulation).first;
 }
 
 }//namespace CGAL

@@ -41,30 +41,30 @@ struct Fair_default_sparse_linear_solver {
 };
 
 // [On Linear Variational Surface Deformation Methods-2008]
-template<class Polyhedron, class SparseLinearSolver, class WeightCalculator>
+template<class PolygonMesh, class SparseLinearSolver, class WeightCalculator>
 class Fair_Polyhedron_3 {
   // typedefs
-  typedef typename boost::property_map<Polyhedron,vertex_point_t>::type Point_property_map;
+  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
   typedef typename boost::property_traits<Point_property_map>::value_type Point_3;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor Vertex_handle;
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
-  typedef  Halfedge_around_target_circulator<Polyhedron>  Halfedge_around_vertex_circulator;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor Vertex_handle;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor Halfedge_handle;
+  typedef  Halfedge_around_target_circulator<PolygonMesh>  Halfedge_around_vertex_circulator;
 
   typedef SparseLinearSolver Sparse_linear_solver;
 // members
-  Polyhedron& polyhedron;
+  PolygonMesh& poly;
   WeightCalculator weight_calculator;
   Point_property_map ppmap;
 
 public:
-  Fair_Polyhedron_3(Polyhedron& polyhedron, WeightCalculator weight_calculator = WeightCalculator())
-    : polyhedron(polyhedron), weight_calculator(weight_calculator), ppmap(get(CGAL::vertex_point, polyhedron))
+  Fair_Polyhedron_3(PolygonMesh& poly, WeightCalculator weight_calculator = WeightCalculator())
+    : poly(poly), weight_calculator(weight_calculator), ppmap(get(CGAL::vertex_point, poly))
   { }
   
 private:
   double sum_weight(Vertex_handle v) {
   double weight = 0;
-  Halfedge_around_vertex_circulator circ(halfedge(v,polyhedron),polyhedron), done(circ);
+  Halfedge_around_vertex_circulator circ(halfedge(v,poly),poly), done(circ);
   do {
     weight += weight_calculator.w_ij(*circ);
     } while(++circ != done);
@@ -97,11 +97,11 @@ private:
     else {
       double w_i = weight_calculator.w_i(v);
 
-      Halfedge_around_vertex_circulator circ(halfedge(v,polyhedron),polyhedron), done(circ);
+      Halfedge_around_vertex_circulator circ(halfedge(v,poly),poly), done(circ);
       do {
         double w_i_w_ij = w_i * weight_calculator.w_ij(*circ) ;
 
-        Vertex_handle nv = target(opposite(*circ,polyhedron),polyhedron);
+        Vertex_handle nv = target(opposite(*circ,poly),poly);
         compute_row(nv, row_id, matrix, x, y, z, -w_i_w_ij*multiplier, vertex_id_map, depth-1);
       } while(++circ != done);
 
@@ -189,47 +189,46 @@ public:
 
 /*!
 \ingroup PkgPolygonMeshProcessing
-@brief Function fairing a region on surface mesh. 
+@brief Function fairing a region on polygon mesh. 
 The region denoted by @a vertex_begin and @a vertex_end might contain multiple disconnected components.
 Note that the structure is not altered in any way, only positions of the vertices get updated.
 
 Fairing might fail if fixed vertices, which are used as boundary conditions, do not suffice to solve constructed linear system.
 The larger @a continuity gets, the more fixed vertices are required.
 
-@tparam SparseLinearSolver a model of SparseLinearAlgebraTraitsWithPreFactor_d. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available 
+@tparam SparseLinearSolver a model of `SparseLinearAlgebraTraitsWithPreFactor_d`. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available 
         and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter.
-@tparam WeightCalculator a model of FairWeightCalculator and can be omitted to use default Cotangent weights
-@tparam Polyhedron a %CGAL polyhedron
+@tparam WeightCalculator a model of `FairWeightCalculator` and can be omitted to use default Cotangent weights
+@tparam PolygonMesh must be a model of `MutableFaceGraph`
 @tparam InputIterator iterator over input vertices
 
-@param polyhedron surface mesh to be faired
+@param poly polygon mesh to be faired
 @param vertex_begin first iterator of the range of vertices
 @param vertex_end past-the-end iterator of the range of vertices
 @param weight_calculator function object to calculate weights, default to Cotangent weights and can be omitted
-@param continuity tangential continuity, default to FAIRING_C_1 and can be omitted
+@param continuity tangential continuity, default to `FAIRING_C_1` and can be omitted
 
-@return true if fairing is successful, otherwise no vertex position is changed
+@return `true` if fairing is successful, otherwise no vertex position is changed
 
 @todo accuracy of solvers are not good, for example when there is no boundary condition pre_factor should fail, but it does not.
 \todo move to a non-internal header file
-\todo `Polyhedron` should be a model of `MutableFaceGraph`
 \todo WeightCalculator should be a property map
 */
-template<class SparseLinearSolver, class WeightCalculator, class Polyhedron, class InputIterator>
-bool fair(Polyhedron& polyhedron, 
+template<class SparseLinearSolver, class WeightCalculator, class PolygonMesh, class InputIterator>
+bool fair(PolygonMesh& poly, 
           InputIterator vertex_begin,
           InputIterator vertex_end,
           WeightCalculator weight_calculator,
           Fairing_continuity continuity = FAIRING_C_1
           )
 {
-  internal::Fair_Polyhedron_3<Polyhedron, SparseLinearSolver, WeightCalculator> fair_functor(polyhedron, weight_calculator);
+  internal::Fair_Polyhedron_3<PolygonMesh, SparseLinearSolver, WeightCalculator> fair_functor(poly, weight_calculator);
   return fair_functor.fair(vertex_begin, vertex_end, continuity);
 }
 
 //use default SparseLinearSolver
-template<class WeightCalculator, class Polyhedron, class InputIterator>
-bool fair(Polyhedron& poly, 
+template<class WeightCalculator, class PolygonMesh, class InputIterator>
+bool fair(PolygonMesh& poly, 
           InputIterator vb,
           InputIterator ve,
           WeightCalculator weight_calculator,
@@ -237,33 +236,33 @@ bool fair(Polyhedron& poly,
           )
 {
   typedef internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
-  return fair<Sparse_linear_solver, WeightCalculator, Polyhedron, InputIterator>
+  return fair<Sparse_linear_solver, WeightCalculator, PolygonMesh, InputIterator>
     (poly, vb, ve, weight_calculator, continuity);
 }
 
 //use default WeightCalculator
-template<class SparseLinearSolver, class Polyhedron, class InputIterator>
-bool fair(Polyhedron& poly, 
+template<class SparseLinearSolver, class PolygonMesh, class InputIterator>
+bool fair(PolygonMesh& poly, 
           InputIterator vb,
           InputIterator ve,
           Fairing_continuity continuity = FAIRING_C_1
   )
 {
-  typedef internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron> Weight_calculator;
-  return fair<SparseLinearSolver, Weight_calculator, Polyhedron, InputIterator>
+  typedef internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh> Weight_calculator;
+  return fair<SparseLinearSolver, Weight_calculator, PolygonMesh, InputIterator>
     (poly, vb, ve, Weight_calculator(), continuity);
 }
 
 //use default SparseLinearSolver and WeightCalculator
-template<class Polyhedron, class InputIterator>
-bool fair(Polyhedron& poly, 
+template<class PolygonMesh, class InputIterator>
+bool fair(PolygonMesh& poly, 
           InputIterator vb,
           InputIterator ve,
           Fairing_continuity continuity = FAIRING_C_1
           )
 {
   typedef internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
-  return fair<Sparse_linear_solver, Polyhedron, InputIterator>(poly, vb, ve, continuity);
+  return fair<Sparse_linear_solver, PolygonMesh, InputIterator>(poly, vb, ve, continuity);
 }
 
 }//namespace CGAL
