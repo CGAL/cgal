@@ -290,7 +290,7 @@ public:
 	const_build();
       }
       Kd_tree_rectangle<FT> b(*bbox);
-      tree_root->search(it,q,b);
+      return tree_root->search(it,q,b);
     }
     return it;
   }
