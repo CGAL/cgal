@@ -52,19 +52,19 @@ class Fair_Polyhedron_3 {
 
   typedef SparseLinearSolver Sparse_linear_solver;
 // members
-  PolygonMesh& poly;
+  PolygonMesh& pmesh;
   WeightCalculator weight_calculator;
   Point_property_map ppmap;
 
 public:
-  Fair_Polyhedron_3(PolygonMesh& poly, WeightCalculator weight_calculator = WeightCalculator())
-    : poly(poly), weight_calculator(weight_calculator), ppmap(get(CGAL::vertex_point, poly))
+  Fair_Polyhedron_3(PolygonMesh& pmesh, WeightCalculator weight_calculator = WeightCalculator())
+    : pmesh(pmesh), weight_calculator(weight_calculator), ppmap(get(CGAL::vertex_point, pmesh))
   { }
   
 private:
   double sum_weight(Vertex_handle v) {
   double weight = 0;
-  Halfedge_around_vertex_circulator circ(halfedge(v,poly),poly), done(circ);
+  Halfedge_around_vertex_circulator circ(halfedge(v,pmesh),pmesh), done(circ);
   do {
     weight += weight_calculator.w_ij(*circ);
     } while(++circ != done);
@@ -97,11 +97,11 @@ private:
     else {
       double w_i = weight_calculator.w_i(v);
 
-      Halfedge_around_vertex_circulator circ(halfedge(v,poly),poly), done(circ);
+      Halfedge_around_vertex_circulator circ(halfedge(v,pmesh),pmesh), done(circ);
       do {
         double w_i_w_ij = w_i * weight_calculator.w_ij(*circ) ;
 
-        Vertex_handle nv = target(opposite(*circ,poly),poly);
+        Vertex_handle nv = target(opposite(*circ,pmesh),pmesh);
         compute_row(nv, row_id, matrix, x, y, z, -w_i_w_ij*multiplier, vertex_id_map, depth-1);
       } while(++circ != done);
 
@@ -202,7 +202,7 @@ The larger @a continuity gets, the more fixed vertices are required.
 @tparam PolygonMesh must be a model of `MutableFaceGraph`
 @tparam InputIterator iterator over input vertices
 
-@param poly polygon mesh to be faired
+@param pmesh polygon mesh to be faired
 @param vertex_begin first iterator of the range of vertices
 @param vertex_end past-the-end iterator of the range of vertices
 @param weight_calculator function object to calculate weights, default to Cotangent weights and can be omitted
@@ -215,20 +215,20 @@ The larger @a continuity gets, the more fixed vertices are required.
 \todo WeightCalculator should be a property map
 */
 template<class SparseLinearSolver, class WeightCalculator, class PolygonMesh, class InputIterator>
-bool fair(PolygonMesh& poly, 
+bool fair(PolygonMesh& pmesh, 
           InputIterator vertex_begin,
           InputIterator vertex_end,
           WeightCalculator weight_calculator,
           Fairing_continuity continuity = FAIRING_C_1
           )
 {
-  internal::Fair_Polyhedron_3<PolygonMesh, SparseLinearSolver, WeightCalculator> fair_functor(poly, weight_calculator);
+  internal::Fair_Polyhedron_3<PolygonMesh, SparseLinearSolver, WeightCalculator> fair_functor(pmesh, weight_calculator);
   return fair_functor.fair(vertex_begin, vertex_end, continuity);
 }
 
 //use default SparseLinearSolver
 template<class WeightCalculator, class PolygonMesh, class InputIterator>
-bool fair(PolygonMesh& poly, 
+bool fair(PolygonMesh& pmesh, 
           InputIterator vb,
           InputIterator ve,
           WeightCalculator weight_calculator,
@@ -237,12 +237,12 @@ bool fair(PolygonMesh& poly,
 {
   typedef internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
   return fair<Sparse_linear_solver, WeightCalculator, PolygonMesh, InputIterator>
-    (poly, vb, ve, weight_calculator, continuity);
+    (pmesh, vb, ve, weight_calculator, continuity);
 }
 
 //use default WeightCalculator
 template<class SparseLinearSolver, class PolygonMesh, class InputIterator>
-bool fair(PolygonMesh& poly, 
+bool fair(PolygonMesh& pmesh, 
           InputIterator vb,
           InputIterator ve,
           Fairing_continuity continuity = FAIRING_C_1
@@ -250,19 +250,19 @@ bool fair(PolygonMesh& poly,
 {
   typedef internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh> Weight_calculator;
   return fair<SparseLinearSolver, Weight_calculator, PolygonMesh, InputIterator>
-    (poly, vb, ve, Weight_calculator(), continuity);
+    (pmesh, vb, ve, Weight_calculator(), continuity);
 }
 
 //use default SparseLinearSolver and WeightCalculator
 template<class PolygonMesh, class InputIterator>
-bool fair(PolygonMesh& poly, 
+bool fair(PolygonMesh& pmesh, 
           InputIterator vb,
           InputIterator ve,
           Fairing_continuity continuity = FAIRING_C_1
           )
 {
   typedef internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
-  return fair<Sparse_linear_solver, PolygonMesh, InputIterator>(poly, vb, ve, continuity);
+  return fair<Sparse_linear_solver, PolygonMesh, InputIterator>(pmesh, vb, ve, continuity);
 }
 
 }//namespace CGAL

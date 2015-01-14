@@ -1,5 +1,5 @@
 //#define POLY 
-#include <CGAL/Hole_filling.h>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #ifdef POLY
 #include <CGAL/Polyhedron_3.h>
@@ -11,6 +11,7 @@
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
 #endif
+#include <CGAL/Hole_filling.h>
 #include <CGAL/assertions.h>
 
 #include <cassert>

@@ -27,22 +27,22 @@ class Refine_Polyhedron_3 {
   typedef Halfedge_around_target_circulator<PolygonMesh>  Halfedge_around_vertex_circulator;
 
 private:
-  PolygonMesh& poly;
+  PolygonMesh& pmesh;
   Point_property_map ppmap;
   
   bool flippable(Halfedge_handle h) {
     // this check is added so that edge flip does not break manifoldness
     // it might happen when there is an edge where flip_edge(h) will be placed (i.e. two edges collide after flip)
-    Vertex_handle v_tip_0 = target(next(h,poly),poly);
-    Vertex_handle v_tip_1 = target(next(opposite(h,poly),poly),poly);
-    Halfedge_around_vertex_circulator v_cir(next(h,poly), poly), v_end(v_cir);
+    Vertex_handle v_tip_0 = target(next(h,pmesh),pmesh);
+    Vertex_handle v_tip_1 = target(next(opposite(h,pmesh),pmesh),pmesh);
+    Halfedge_around_vertex_circulator v_cir(next(h,pmesh), pmesh), v_end(v_cir);
     do {
-      if(target(opposite(*v_cir, poly),poly) == v_tip_1) { return false; }
+      if(target(opposite(*v_cir, pmesh),pmesh) == v_tip_1) { return false; }
     } while(++v_cir != v_end);
     
     // also eliminate collinear triangle generation
-    if( CGAL::collinear(ppmap[v_tip_0], ppmap[v_tip_1], ppmap[target(h, poly)]) ||
-        CGAL::collinear(ppmap[v_tip_0], ppmap[v_tip_1], ppmap[target(opposite(h, poly),poly)]) ) {
+    if( CGAL::collinear(ppmap[v_tip_0], ppmap[v_tip_1], ppmap[target(h, pmesh)]) ||
+        CGAL::collinear(ppmap[v_tip_0], ppmap[v_tip_1], ppmap[target(opposite(h, pmesh),pmesh)]) ) {
       return false;
     }
 
@@ -51,15 +51,15 @@ private:
 
   bool relax(Halfedge_handle h)
   {
-    const Point_3& p = ppmap[target(h,poly)];
-    const Point_3& q = ppmap[target(opposite(h,poly),poly)];
-    const Point_3& r = ppmap[target(next(h,poly),poly)];
-    const Point_3& s = ppmap[target(next(opposite(h,poly),poly),poly)];
+    const Point_3& p = ppmap[target(h,pmesh)];
+    const Point_3& q = ppmap[target(opposite(h,pmesh),pmesh)];
+    const Point_3& r = ppmap[target(next(h,pmesh),pmesh)];
+    const Point_3& s = ppmap[target(next(opposite(h,pmesh),pmesh),pmesh)];
     if( (CGAL::ON_UNBOUNDED_SIDE  != CGAL::side_of_bounded_sphere(p,q,r,s)) ||
         (CGAL::ON_UNBOUNDED_SIDE  != CGAL::side_of_bounded_sphere(p,q,s,r)) )
     {
       if(flippable(h)) {
-        Euler::flip_edge(h,poly);
+        Euler::flip_edge(h,pmesh);
         return true;
       }
     }
@@ -78,10 +78,10 @@ private:
     for(std::size_t i = 0; i < facet_size; ++i){
       CGAL_assertion(facets[i]  != Facet_handle());
 
-      Halfedge_handle hh =  halfedge(facets[i],poly);
-      Vertex_handle vi = target(halfedge(facets[i],poly),poly);
-      Vertex_handle vj = target(next(halfedge(facets[i],poly),poly),poly);
-      Vertex_handle vk = target(prev(halfedge(facets[i],poly),poly),poly);
+      Halfedge_handle hh =  halfedge(facets[i],pmesh);
+      Vertex_handle vi = target(halfedge(facets[i],pmesh),pmesh);
+      Vertex_handle vj = target(next(halfedge(facets[i],pmesh),pmesh),pmesh);
+      Vertex_handle vk = target(prev(halfedge(facets[i],pmesh),pmesh),pmesh);
       Point_3 c = CGAL::centroid(ppmap[vi], ppmap[vj], ppmap[vk]);
       double sac  = (scale_attribute[vi] + scale_attribute[vj] + scale_attribute[vk])/3.0;
       double dist_c_vi = std::sqrt(CGAL::squared_distance(c,ppmap[vi]));
@@ -93,20 +93,20 @@ private:
          (alpha * dist_c_vi > scale_attribute[vi]) &&
          (alpha * dist_c_vj > scale_attribute[vj]) &&
          (alpha * dist_c_vk > scale_attribute[vk])){
-        Halfedge_handle h = Euler::add_center_vertex(halfedge(facets[i],poly),poly);
-        put(ppmap, target(h,poly), c);
-          scale_attribute[target(h,poly)] = sac;
-          *vertex_out++ = target(h,poly);
+        Halfedge_handle h = Euler::add_center_vertex(halfedge(facets[i],pmesh),pmesh);
+        put(ppmap, target(h,pmesh), c);
+          scale_attribute[target(h,pmesh)] = sac;
+          *vertex_out++ = target(h,pmesh);
 
           // collect 2 new facets for next round 
-          Facet_handle h1 = face(opposite(next(h,poly),poly),poly);
-          Facet_handle h2 = face(opposite(h,poly),poly);
+          Facet_handle h1 = face(opposite(next(h,pmesh),pmesh),pmesh);
+          Facet_handle h2 = face(opposite(h,pmesh),pmesh);
           facets.push_back(h1); facets.push_back(h2);
           *facet_out++ = h1;    *facet_out++ = h2;
           // relax edges of the  patching mesh 
-          Halfedge_handle e_ij = prev(h,poly);
-          Halfedge_handle e_ik = next(opposite(h,poly),poly);
-          Halfedge_handle e_jk = prev(opposite(next(h,poly),poly),poly);
+          Halfedge_handle e_ij = prev(h,pmesh);
+          Halfedge_handle e_ik = next(opposite(h,pmesh),pmesh);
+          Halfedge_handle e_jk = prev(opposite(next(h,pmesh),pmesh),pmesh);
 
           if(border_edges.find(e_ij) == border_edges.end()){
             relax(e_ij);
@@ -130,13 +130,13 @@ private:
     std::set<Halfedge_handle> included_map; 
 
     for(typename std::vector<Facet_handle>::const_iterator it = facets.begin(); it!= facets.end(); ++it) {
-      Halfedge_around_face_circulator<PolygonMesh>  circ(halfedge(*it,poly),poly), done(circ);
+      Halfedge_around_face_circulator<PolygonMesh>  circ(halfedge(*it,pmesh),pmesh), done(circ);
       do {
         Halfedge_handle h = *circ;        
         if(border_edges.find(h) == border_edges.end()){
           // do not remove included_map and use if(&*h < &*oh) { interior_edges.push_back(h) } 
           // which will change the order of edges from run to run
-          Halfedge_handle oh = opposite(h,poly);
+          Halfedge_handle oh = opposite(h,pmesh);
           Halfedge_handle h_rep = (h < oh) ? h : oh; // AF: was &*h < &*oh
           if(included_map.insert(h_rep).second) {
             interior_edges.push_back(h_rep);
@@ -162,18 +162,18 @@ private:
                         bool accept_internal_facets)
   {
     const Point_3& vp = ppmap[vh]; 
-    Halfedge_around_target_circulator<PolygonMesh> circ(halfedge(vh,poly),poly), done(circ);
+    Halfedge_around_target_circulator<PolygonMesh> circ(halfedge(vh,pmesh),pmesh), done(circ);
     int deg = 0;
     double sum = 0;
     do {
-      Facet_handle f(face(*circ,poly)), f_op(face(opposite(*circ,poly),poly));
+      Facet_handle f(face(*circ,pmesh)), f_op(face(opposite(*circ,pmesh),pmesh));
 
       if(!accept_internal_facets) {
         if(interior_map.find(f) != interior_map.end() && interior_map.find(f_op) != interior_map.end())
         { continue; } // which means current edge is an interior edge and should not be included in scale attribute calculation
       }
 
-      const Point_3& vq = ppmap[target(opposite(*circ,poly),poly)];
+      const Point_3& vq = ppmap[target(opposite(*circ,pmesh),pmesh)];
       sum += std::sqrt(CGAL::squared_distance(vp, vq));
       ++deg;
     } while(++circ != done);
@@ -188,9 +188,9 @@ private:
                                  bool accept_internal_facets) 
   {
     for(typename std::vector<Facet_handle>::const_iterator f_it = facets.begin(); f_it != facets.end(); ++f_it) {
-      Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(*f_it,poly),poly), done(circ);
+      Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(*f_it,pmesh),pmesh), done(circ);
       do {
-        Vertex_handle v = target(*circ,poly);
+        Vertex_handle v = target(*circ,pmesh);
         std::pair<typename std::map<Vertex_handle, double>::iterator, bool> v_insert 
           = scale_attribute.insert(std::make_pair(v, 0));
         if(!v_insert.second) { continue; } // already calculated
@@ -203,13 +203,13 @@ private:
                                const std::set<Facet_handle>& interior_map) const
   {
     for(typename std::vector<Facet_handle>::const_iterator f_it = facets.begin(); f_it != facets.end(); ++f_it) {
-      Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(*f_it,poly),poly), done(circ);
+      Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(*f_it,pmesh),pmesh), done(circ);
       do {
-        Vertex_handle v = target(*circ,poly);
-        Halfedge_around_target_circulator<PolygonMesh> circ_v(*circ,poly), done_v(circ_v);
+        Vertex_handle v = target(*circ,pmesh);
+        Halfedge_around_target_circulator<PolygonMesh> circ_v(*circ,pmesh), done_v(circ_v);
         bool internal_v = true;
         do {
-          Facet_handle f(face(*circ,poly)), f_op(face(opposite(*circ_v,poly),poly));
+          Facet_handle f(face(*circ,pmesh)), f_op(face(opposite(*circ_v,pmesh),pmesh));
 
           if(interior_map.find(f) == interior_map.end() || interior_map.find(f_op) == interior_map.end()) {
             internal_v = false;
@@ -224,8 +224,8 @@ private:
   }
 
 public:
-  Refine_Polyhedron_3(PolygonMesh& poly)
-    : poly(poly), ppmap(get(vertex_point, poly))
+  Refine_Polyhedron_3(PolygonMesh& pmesh)
+    : pmesh(pmesh), ppmap(get(vertex_point, pmesh))
   {}
 
   template<class InputIterator, class FacetOutputIterator, class VertexOutputIterator>
@@ -241,9 +241,9 @@ public:
     // store boundary edges - to be used in relax 
     std::set<Halfedge_handle> border_edges;
     for(typename std::vector<Facet_handle>::const_iterator it = facets.begin(); it!= facets.end(); ++it){
-      Halfedge_around_face_circulator<PolygonMesh>  circ(halfedge(*it,poly),poly), done(circ);
+      Halfedge_around_face_circulator<PolygonMesh>  circ(halfedge(*it,pmesh),pmesh), done(circ);
       do {
-        if(interior_map.find(face(opposite(*circ,poly),poly)) == interior_map.end()) {
+        if(interior_map.find(face(opposite(*circ,pmesh),pmesh)) == interior_map.end()) {
           border_edges.insert(*circ);
         }
       } while(++circ != done);
@@ -281,7 +281,7 @@ public:
 @tparam FacetOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::face_descriptor` for patch facets
 @tparam VertexOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::vertex_descriptor` for patch vertices
 
-@param polygon mesh to be refined
+@param pmesh mesh to be refined
 @param facet_begin first iterator of the range of facets
 @param facet_end past-the-end iterator of the range of facets
 @param facet_out iterator over newly created facets
@@ -301,14 +301,14 @@ template<
   class VertexOutputIterator
 >
 std::pair<FacetOutputIterator, VertexOutputIterator>
-refine(PolygonMesh& poly,
+refine(PolygonMesh& pmesh,
        InputIterator facet_begin, 
        InputIterator facet_end,
        FacetOutputIterator facet_out,
        VertexOutputIterator vertex_out,
        double density_control_factor = std::sqrt(2.0))
 {
-  internal::Refine_Polyhedron_3<PolygonMesh> refine_functor(poly);
+  internal::Refine_Polyhedron_3<PolygonMesh> refine_functor(pmesh);
   refine_functor.refine
     (facet_begin, facet_end, facet_out, vertex_out, density_control_factor);
   return std::make_pair(facet_out, vertex_out);
