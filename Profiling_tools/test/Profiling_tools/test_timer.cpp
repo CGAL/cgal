@@ -15,8 +15,9 @@ double test_timer() {
     assert( t.is_running());
     t.stop();
     assert( ! t.is_running());
-    assert( t.time() >= 0.0);
+    std::cout.precision(17);
     std::cout << "time()                 : " << t.time() << "\n";
+    assert( t.time() >= 0.0);
     assert( t.intervals() == 1);
     assert( t.precision() >= 0.0);
     std::cout << "precision()            : " << t.precision() << "\n"; 
