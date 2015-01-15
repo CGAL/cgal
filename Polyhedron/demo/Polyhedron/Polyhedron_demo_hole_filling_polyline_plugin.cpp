@@ -123,7 +123,8 @@ public slots:
 
       CGAL::Timer timer; timer.start();
       std::vector<CGAL::Triple<int, int, int> > patch;
-      CGAL::triangulate_hole_polyline(it->begin(), --it->end(), std::back_inserter(patch), use_DT);
+      CGAL::Polygon_mesh_processing::triangulate_hole_polyline(it->begin(),
+            --it->end(), std::back_inserter(patch), use_DT);
       print_message(QString("Triangulated in %1 sec.").arg(timer.time()));
 
       if(patch.empty()) {

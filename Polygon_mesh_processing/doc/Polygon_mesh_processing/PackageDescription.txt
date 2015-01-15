@@ -31,10 +31,10 @@
 
 
 ## Hole Filling Functions ##
-- `CGAL::triangulate_hole()`
-- `CGAL::triangulate_and_refine_hole()`
-- `CGAL::triangulate_refine_and_fair_hole()`
-- `CGAL::triangulate_hole_polyline()`
+- `CGAL::Polygon_mesh_processing::triangulate_hole()`
+- `CGAL::Polygon_mesh_processing::triangulate_and_refine_hole()`
+- `CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()`
+- `CGAL::Polygon_mesh_processing::triangulate_hole_polyline()`
 
 ## Predicate Functions and Classes ##
 - `CGAL::is_oriented()`

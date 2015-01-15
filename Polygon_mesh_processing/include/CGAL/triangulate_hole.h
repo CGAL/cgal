@@ -11,6 +11,8 @@
 
 namespace CGAL {
 
+namespace Polygon_mesh_processing {
+
   /*!
   \ingroup PkgPolygonMeshProcessing
   Function triangulating a hole in a polygon mesh.
@@ -266,6 +268,8 @@ namespace CGAL {
     return triangulate_hole_polyline<typename value_type_traits<OutputIterator>::type>
       (pbegin, pend, out, use_delaunay_triangulation);
   }
+
+} //end namespace Polygon_mesh_processing
 
 } //end namespace CGAL
 
