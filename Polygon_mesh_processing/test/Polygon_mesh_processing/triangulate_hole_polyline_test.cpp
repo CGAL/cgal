@@ -139,7 +139,8 @@ void test_1(const char* file_name, bool use_DT) {
   read_polyline_one_line(file_name, points);
 
   std::vector<boost::tuple<int, int, int> > tris;
-  CGAL::triangulate_hole_polyline(points.begin(), --points.end(), std::back_inserter(tris), use_DT);
+  CGAL::Polygon_mesh_processing::triangulate_hole_polyline(points.begin(),
+    --points.end(), std::back_inserter(tris), use_DT);
 
   check_triangles(points, tris);
   check_constructed_polyhedron(file_name, &tris, &points);
@@ -155,8 +156,8 @@ void test_2(const char* file_name, bool use_DT) {
   read_polyline_with_extra_points(file_name, points, extras);
 
   std::vector<boost::tuple<int, int, int> > tris;
-  CGAL::triangulate_hole_polyline(points.begin(), points.end(),
-    extras.begin(), extras.end(), std::back_inserter(tris), use_DT);
+  CGAL::Polygon_mesh_processing::triangulate_hole_polyline(points.begin(),
+    points.end(), extras.begin(), extras.end(), std::back_inserter(tris), use_DT);
 
   check_triangles(points, tris);
   check_constructed_polyhedron(file_name, &tris, &points);
@@ -171,7 +172,8 @@ void test_should_be_no_output(const char* file_name, bool use_DT) {
   read_polyline_one_line(file_name, points);
 
   std::vector<boost::tuple<int, int, int> > tris;
-  CGAL::triangulate_hole_polyline(points.begin(), points.end(), std::back_inserter(tris), use_DT);
+  CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
+    points.begin(), points.end(), std::back_inserter(tris), use_DT);
 
   if(!tris.empty()) {
     std::cerr << "  Error: patch should be empty" << std::endl;

@@ -48,8 +48,8 @@
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 
 ## Meshing Functions ##
-- `CGAL::fair()`
-- `CGAL::refine()`
+- `CGAL::Polygon_mesh_processing::fair()`
+- `CGAL::Polygon_mesh_processing::refine()`
 - `CGAL::Polygon_mesh_processing::triangulate_faces()`
 
 ## Normal Computation Functions ##

@@ -8,6 +8,7 @@
 #include <vector>
 
 namespace CGAL {
+namespace Polygon_mesh_processing {
 namespace internal {
 
 
@@ -71,7 +72,7 @@ struct Tracer_polyhedron
 
 // This function is used in test cases (since it returns not just OutputIterator but also Weight)
 template<class PolygonMesh, class OutputIterator>
-std::pair<OutputIterator, Weight_min_max_dihedral_and_area> 
+std::pair<OutputIterator, CGAL::internal::Weight_min_max_dihedral_and_area> 
 triangulate_hole_Polyhedron(PolygonMesh& pmesh, 
                             typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge, 
                             OutputIterator out,
@@ -98,7 +99,8 @@ triangulate_hole_Polyhedron(PolygonMesh& pmesh,
     P_edges.push_back(*circ);
     if(!vertex_set.insert(std::make_pair(target(*circ,pmesh), n++)).second) {
       CGAL_warning(!"Returning no output. Non-manifold vertex is found on boundary!");
-      return std::make_pair(out, Weight_min_max_dihedral_and_area::NOT_VALID());
+      return std::make_pair(out,
+                            CGAL::internal::Weight_min_max_dihedral_and_area::NOT_VALID());
     }
   } while (++circ != done);
   
@@ -129,18 +131,20 @@ triangulate_hole_Polyhedron(PolygonMesh& pmesh,
 
   //#define CGAL_USE_WEIGHT_INCOMPLETE
   #ifdef CGAL_USE_WEIGHT_INCOMPLETE
-  typedef Weight_calculator<Weight_incomplete<Weight_min_max_dihedral_and_area>, Is_valid_existing_edges_and_degenerate_triangle> WC;
+  typedef CGAL::internal::Weight_calculator<Weight_incomplete<CGAL::internal::Weight_min_max_dihedral_and_area>,
+        CGAL::internal::Is_valid_existing_edges_and_degenerate_triangle> WC;
   #else
-  typedef Weight_calculator<Weight_min_max_dihedral_and_area, Is_valid_existing_edges_and_degenerate_triangle> WC;
+  typedef CGAL::internal::Weight_calculator<CGAL::internal::Weight_min_max_dihedral_and_area,
+        CGAL::internal::Is_valid_existing_edges_and_degenerate_triangle> WC;
   #endif
 
-  Is_valid_existing_edges_and_degenerate_triangle iv(existing_edges);
+  CGAL::internal::Is_valid_existing_edges_and_degenerate_triangle iv(existing_edges);
   
   // fill hole using polyline function, with custom tracer for PolygonMesh
   Tracer_polyhedron<PolygonMesh, OutputIterator>
     tracer(out, pmesh, P_edges);
-  Weight_min_max_dihedral_and_area weight = 
-    internal::triangulate_hole_polyline(P, Q, 
+  CGAL::internal::Weight_min_max_dihedral_and_area weight = 
+        triangulate_hole_polyline(P, Q, 
                                         tracer, WC(iv), use_delaunay_triangulation)
                                       #ifdef CGAL_USE_WEIGHT_INCOMPLETE
                                         .weight; // get actual weight in Weight_incomplete
@@ -153,6 +157,6 @@ triangulate_hole_Polyhedron(PolygonMesh& pmesh,
 }
 
 }// namespace internal
-
-}//namespace CGAL
+}// namespace Polygon_mesh_processing
+}// namespace CGAL
 #endif //CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYHEDRON_3_H

@@ -2,9 +2,9 @@
 #define CGAL_TRIANGULATE_HOLE_H
 
 #include <CGAL/internal/Hole_filling/Triangulate_hole_Polyhedron_3.h>
-#include <CGAL/internal/Hole_filling/Refine_Polyhedron_3.h>
-#include <CGAL/internal/Hole_filling/Fair_Polyhedron_3.h>
 #include <CGAL/internal/Hole_filling/Triangulate_hole_polyline.h>
+#include <CGAL/Polygon_mesh_processing/refine.h>
+#include <CGAL/Polygon_mesh_processing/fair.h>
 #include <CGAL/Default.h>
 
 #include <boost/tuple/tuple.hpp>
@@ -149,7 +149,7 @@ namespace Polygon_mesh_processing {
       (pmesh, border_halfedge, face_out, std::back_inserter(patch),
       density_control_factor, use_delaunay_triangulation).first;
 
-    typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Default_solver;
+    typedef internal::Fair_default_sparse_linear_solver::Solver Default_solver;
     typedef typename Default::Get<SparseLinearSolver, Default_solver>::type Solver;
 
     bool fair_success = fair<Solver>(pmesh, patch.begin(), patch.end(), weight_calculator, continuity);
@@ -212,8 +212,9 @@ namespace Polygon_mesh_processing {
                               bool use_delaunay_triangulation = false)
   {
     typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
-    typedef internal::Weight_min_max_dihedral_and_area      Weight;
-    typedef internal::Weight_calculator<Weight, internal::Is_valid_degenerate_triangle>  WC;
+    typedef CGAL::internal::Weight_min_max_dihedral_and_area      Weight;
+    typedef CGAL::internal::Weight_calculator<Weight,
+                  CGAL::internal::Is_valid_degenerate_triangle>  WC;
     typedef std::vector<std::pair<int, int> > Holes;
     typedef std::back_insert_iterator<Holes>  Holes_out;
 
@@ -221,9 +222,9 @@ namespace Polygon_mesh_processing {
     std::vector<Point_3> Q(qbegin, qend);
     Holes holes;//just to check there is no holes
 
-    internal::Tracer_polyline_incomplete<OutputIteratorValueType, OutputIterator, Holes_out>
+    CGAL::internal::Tracer_polyline_incomplete<OutputIteratorValueType, OutputIterator, Holes_out>
       tracer(out, Holes_out(holes));
-    internal::triangulate_hole_polyline(P, Q, tracer, WC(), use_delaunay_triangulation);
+    triangulate_hole_polyline(P, Q, tracer, WC(), use_delaunay_triangulation);
     CGAL_assertion(holes.empty());
     return tracer.out;
   }

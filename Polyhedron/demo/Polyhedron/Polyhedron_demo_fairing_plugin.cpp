@@ -7,8 +7,9 @@
 #include "ui_Fairing_widget.h"
 #include "Polyhedron_type.h"
 
-#include <CGAL/Hole_filling.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Polygon_mesh_processing/fair.h>
+#include <CGAL/Polygon_mesh_processing/refine.h>
 
 #include <QTime>
 #include <QAction>
@@ -74,14 +75,16 @@ public slots:
     CGAL::Fairing_continuity continuity = static_cast<CGAL::Fairing_continuity>(ui_widget.Continuity_spin_box->value());
 
     if(weight_index == 1)
-      CGAL::fair(*selection_item->polyhedron(), selection_item->selected_vertices.begin(),
+      CGAL::Polygon_mesh_processing::fair(*selection_item->polyhedron(),
+        selection_item->selected_vertices.begin(),
         selection_item->selected_vertices.end(),
-        CGAL::internal::Uniform_weight_fairing<Polyhedron>(),
+        CGAL::internal::Uniform_weight_fairing<Polyhedron>(*selection_item->polyhedron()),
         continuity);
     if(weight_index == 0)
-      CGAL::fair(*selection_item->polyhedron(), selection_item->selected_vertices.begin(),
+      CGAL::Polygon_mesh_processing::fair(*selection_item->polyhedron(),
+        selection_item->selected_vertices.begin(),
         selection_item->selected_vertices.end(),
-        CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(),
+        CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(*selection_item->polyhedron()),
         continuity);
     selection_item->changed_with_poly_item();
     QApplication::restoreOverrideCursor();
@@ -98,8 +101,12 @@ public slots:
     double alpha = ui_widget.Density_control_factor_spin_box->value();
     std::vector<Polyhedron::Facet_handle> new_facets;
 
-    CGAL::refine(*selection_item->polyhedron(), selection_item->selected_facets.begin(),
-      selection_item->selected_facets.end(), std::back_inserter(new_facets), CGAL::Emptyset_iterator(), alpha);
+    CGAL::Polygon_mesh_processing::refine(*selection_item->polyhedron(),
+      selection_item->selected_facets.begin(),
+      selection_item->selected_facets.end(),
+      std::back_inserter(new_facets),
+      CGAL::Emptyset_iterator(),
+      alpha);
     // add new facets to selection
     for(std::vector<Polyhedron::Facet_handle>::iterator it = new_facets.begin(); it != new_facets.end(); ++it) {
       selection_item->selected_facets.insert(*it);

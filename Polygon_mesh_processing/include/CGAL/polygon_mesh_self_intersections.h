@@ -231,7 +231,7 @@ self_intersections(const PolygonMesh& pmesh,
     box_ptr.push_back(&*b);
 
   // compute self-intersections filtered out by boxes
-  internal::Intersect_facets<PolygonMesh,GeomTraits,Box,OutputIterator> intersect_facets(pmesh, out, geom_traits);
+  CGAL::internal::Intersect_facets<PolygonMesh,GeomTraits,Box,OutputIterator> intersect_facets(pmesh, out, geom_traits);
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets,cutoff);
   return intersect_facets.m_iterator;

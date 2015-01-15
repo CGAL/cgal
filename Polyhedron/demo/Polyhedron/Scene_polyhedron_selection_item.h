@@ -9,7 +9,7 @@
 #include "Polyhedron_type.h"
 #include <CGAL/gl_render.h>
 #include <CGAL/orient_polygon_soup.h>
-#include <CGAL/polygon_soup_to_polyhedron.h>
+#include <CGAL/polygon_soup_to_polygon_mesh.h>
 
 #include <fstream>
 #include <boost/foreach.hpp>
