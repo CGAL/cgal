@@ -22,8 +22,14 @@
 #define  CGAL_K_NEIGHBOR_SEARCH_H
 
 #include <CGAL/internal/K_neighbor_search.h>
+#include <CGAL/internal/Get_dimension_tag.h>
+
+
+
 
 namespace CGAL {
+	template <class SearchTraits, class Distance,class Splitter,class Tree>
+class K_neighbor_search;
 
 template <class SearchTraits, 
           class Distance= typename internal::Spatial_searching_default_distance<SearchTraits>::type,
@@ -34,6 +40,7 @@ class K_neighbor_search: public internal::K_neighbor_search<SearchTraits,Distanc
   
 public:
   typedef typename Base::FT FT;  
+  typedef typename internal::Get_dimension_tag<SearchTraits>::Dimension D;
 
   K_neighbor_search(const Tree& tree, const typename Base::Query_item& q,  
     unsigned int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance(),bool sorted=true)
@@ -49,17 +56,19 @@ private:
   using Base::branch;
 
   void 
-  compute_neighbors_general(typename Base::Node_const_handle N, const Kd_tree_rectangle<FT>& r) 
+  compute_neighbors_general(typename Base::Node_const_handle N, const Kd_tree_rectangle<FT,D>& r) 
   {
     if (!(N->is_leaf())) {
+       typename Tree::Internal_node_const_handle node =
+        static_cast<typename Tree::Internal_node_const_handle>(N);
       this->number_of_internal_nodes_visited++;
-      int new_cut_dim=N->cutting_dimension();
-      FT  new_cut_val=N->cutting_value();
+      int new_cut_dim=node->cutting_dimension();
+      FT  new_cut_val=node->cutting_value();
 
-      Kd_tree_rectangle<FT> r_lower(r);
+      Kd_tree_rectangle<FT,D> r_lower(r);
 
       // modifies also r_lower to lower half
-      Kd_tree_rectangle<FT> r_upper(r_lower);
+      Kd_tree_rectangle<FT,D> r_upper(r_lower);
       r_lower.split(r_upper, new_cut_dim, new_cut_val);
 
       FT distance_to_lower_half;
@@ -97,14 +106,14 @@ private:
             (distance_to_lower_half >= 
              distance_to_upper_half))  )
         {
-          compute_neighbors_general(N->lower(), r_lower);
+          compute_neighbors_general(node->lower(), r_lower);
           if (branch(distance_to_upper_half)) 
-            compute_neighbors_general (N->upper(), r_upper);
+            compute_neighbors_general (node->upper(), r_upper);
         }  
       else
-        {	compute_neighbors_general(N->upper(), r_upper);
+        {	compute_neighbors_general(node->upper(), r_upper);
         if (branch(distance_to_lower_half)) 
-          compute_neighbors_general (N->lower(), 
+          compute_neighbors_general (node->lower(), 
                                      r_lower);
         }
 
@@ -112,13 +121,15 @@ private:
     else
       {
         // n is a leaf
+         typename Tree::Leaf_node_const_handle node =
+          static_cast<typename Tree::Leaf_node_const_handle>(N);
         this->number_of_leaf_nodes_visited++;
-        if (N->size() > 0)
-          for (typename Base::Point_d_iterator it = N->begin(); it != N->end(); it++) {
+        if (node->size() > 0)
+          for (typename Tree::iterator it = node->begin(); it != node->end(); it++) {
             this->number_of_items_visited++;
             FT distance_to_query_object =
-              this->distance_instance.transformed_distance(this->query_object,**it);
-            this->queue.insert(std::make_pair(*it,distance_to_query_object));
+              this->distance_instance.transformed_distance(this->query_object,*it);
+            this->queue.insert(std::make_pair(&(*it),distance_to_query_object));
           }
       }
   }

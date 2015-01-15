@@ -11,8 +11,8 @@ rectangle is called the associated rectangle.  Provides a method to
 split a container and a number of methods to support the
 implementation of splitting rules.
 
-\tparam Traits must be model of the concept `SearchTraits`, for example 
-`Simple_cartesian<double>`. 
+\tparam Traits must be model of the concept `SearchTraits`.
+
 
 \sa `SearchTraits` 
 \sa `SpatialSeparator` 

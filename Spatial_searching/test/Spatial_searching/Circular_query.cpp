@@ -44,7 +44,13 @@ void run(std::list<Point> all_points){
     
   std::list<typename Traits::Point_d> result;
   tree.search(std::back_inserter( result ), exact_range);
-  
+
+  typedef std::vector<typename Traits::Point_d> V;
+  V vec;
+  vec.resize(result.size());
+  typename V::iterator it = tree.search(vec.begin(), exact_range);
+  assert(it == vec.end());
+ 
   tree.search(CGAL::Emptyset_iterator(), Fuzzy_circle(center, 0.25) ); //test compilation when Point != Traits::Point_d
   
   // test the results of the exact query

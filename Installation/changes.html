@@ -211,6 +211,29 @@ and <code>src/</code> directories).
     <code>AABB_face_graph_triangle_primitive</code> in order to be able to build primitives
     one by one.</li>
   </ul>
+  <h3>Spatial Searching</h3>
+  <ul>
+    <li>
+      Fixed a bug in <code>CGAL::Splitters.h</code> sliding mitdpoint rule, 
+      where degenerated point sets (e.g.,points on segment)
+      caused the kd-tree to get linear.
+    </li>
+    <li>
+      Improved performance of <code>Orthogonal_k_neighbor_search</code>.
+      Note that VC 2013 does not compile <code>boost::container::deque</code> of Boost 1_55
+      and does hence have a workaround which does not have the improvement.
+    </li>
+    <li>
+      <b>Breaking change:</b> The concept <code>OrthogonalDistance</code> has
+      new function overloads for <code>min_distance_to_rectangle</code> and
+      <code>max_distance_to_rectangle</code> with an additional reference 
+      parameter <code>std::vector</code>.
+    </li>
+    <li>
+      Derived <code>kd_tree_leaf_node</code> and <code>kd_tree_internal_node</code>
+      from <code>kd_tree_node</code> to save memory.
+    </li>
+  </ul>
 <!-- Geometric Optimization -->
 <!-- Interpolation -->
 <!-- Support Library -->

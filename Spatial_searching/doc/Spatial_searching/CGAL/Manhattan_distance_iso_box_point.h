@@ -12,7 +12,7 @@ and a `d`-dimensional iso-box defined as a `k-d` tree rectangle.
 
 \cgalHeading{Parameters}
 
-Expects for the template argument a model for the concept 
+\tparam Traits must be a model for the concept 
 `SearchTraits`, for example `Search_traits_3<Simple_cartesian<double> >`. 
 
 \cgalModels `GeneralDistance`
@@ -26,6 +26,11 @@ public:
 
 /// \name Types 
 /// @{
+
+/*!
+Dimension Tag.
+*/
+typedef unspecified_type D;
 
 /*!
 Number type. 
@@ -78,13 +83,13 @@ FT inverse_of_transformed_distance(FT d) const;
 Returns the minimal distance between a point from `b` and a point from 
 `r`. 
 */ 
-FT min_distance_to_rectangle(Query_item b, Kd_tree_rectangle<FT> r) const; 
+FT min_distance_to_rectangle(Query_item b, Kd_tree_rectangle<FT,D> r) const; 
 
 /*!
 Returns the maximal distance between the iso-box `b` and 
 a point from `r` furthest to `b`. 
 */ 
-FT max_distance_to_rectangle(Query_item b, Kd_tree_rectangle<FT> r) const; 
+FT max_distance_to_rectangle(Query_item b, Kd_tree_rectangle<FT,D> r) const; 
 
 /// @}
 

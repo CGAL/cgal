@@ -8,19 +8,19 @@ on a tree. The tree may have extended or unextended nodes.
 
 \cgalHeading{Parameters}
 
-Expects for the first template argument a model of the concept `SearchTraits`, 
+\tparam Traits must be a model of the concept `SearchTraits`, 
 for example `Search_traits_2<Simple_cartesian<double> >`. 
 
-Expects for the second template argument a model of the 
+\tparam GeneralDistance must be a model of the 
 concept `GeneralDistance`. If `Traits` is 
 `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` 
 the default type is `Distance_adapter<Key,PointPropertyMap,Euclidean_distance<BaseTraits> >`, 
 and `Euclidean_distance<Traits>` otherwise. 
 
-Expects for third template argument a model of the concept `Splitter`. 
+\tparam Splitter must be a model of the concept `Splitter`. 
 The default type is `Sliding_midpoint<Traits>`. 
 
-Expects for fourth template argument a model of the concept `SpatialTree`. 
+\tparam SpatialTree must be a model of the concept `SpatialTree`. 
 The default type is `Kd_tree<Traits,Splitter,Tag_false>`. The 
 template argument `Tag_false` makes that the tree is built with unextended nodes. 
 

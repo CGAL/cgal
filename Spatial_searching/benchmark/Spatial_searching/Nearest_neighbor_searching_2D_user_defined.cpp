@@ -40,7 +40,7 @@ int main() {
   std::cout << "Enter input file name containing data points: \n" ;
   std::cin >> filename_data_points;
   
-  ifstream in_data_points, in_query_points;
+  std::ifstream in_data_points, in_query_points;
   int data_point_number;
   int query_point_number;
   int N, N_data_points, N_query_points; // dimension of input data
@@ -67,7 +67,7 @@ int main() {
   point_list query_points, data_points;
 
   for (int i = 0; i < query_point_number; i++) {
-	double p[N];
+	std::vector<double> p(N);
         for (int j = 0; j < N; j++) {
           in_query_points >> p[j];
         } 	
@@ -76,7 +76,7 @@ int main() {
   }; 
   
  for (int i = 0; i < data_point_number; i++) {
-	double p[N];
+	std::vector<double> p(N);
         for (int j = 0; j < N; j++) {
           in_data_points >> p[j];
         } 	
@@ -90,7 +90,6 @@ int main() {
   Tree tree(data_points.begin(), data_points.end(), sliding_midpoint);
   t.stop();
 
-  std::cout << "bucket size is " << tree.bucket_size() << std::endl;
   data_points.clear();
    
   std::cout << "created binary search tree containing" << std::endl

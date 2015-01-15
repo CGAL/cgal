@@ -131,9 +131,9 @@ struct Euclidean_distance_vertex_handle_3
            distz * distz;
   }
 
-  template <class TreeTraits>
+
   double min_distance_to_rectangle(const Point_vertex_handle_3& p,
-           const Kd_tree_rectangle<TreeTraits>& b) const {
+                                   const Kd_tree_rectangle<double, Dimension_tag<3> >& b) const {
     double distance(0.0), h = p.x();
     if (h < b.min_coord(0)) distance += (b.min_coord(0)-h)*(b.min_coord(0)-h);
     if (h > b.max_coord(0)) distance += (h-b.max_coord(0))*(h-b.max_coord(0));
@@ -146,9 +146,45 @@ struct Euclidean_distance_vertex_handle_3
     return distance;
   }
 
-  template <class TreeTraits>
+
+  double min_distance_to_rectangle(const Point_vertex_handle_3& p,
+                                   const Kd_tree_rectangle<double,Dimension_tag<3> >& b,
+                                   std::vector<double>& dists) const {
+    double distance(0.0), h = p.x();
+    if (h < b.min_coord(0)){
+      dists[0] = (b.min_coord(0)-h);
+      distance += dists[0] * dists[0];
+    }
+    else if (h > b.max_coord(0)){
+      dists[0] = (h-b.max_coord(0));
+      distance += dists[0] * dists[0];
+    }
+
+    h=p.y();
+    if (h < b.min_coord(1)){
+      dists[1] = (b.min_coord(1)-h);
+      distance += dists[1] * dists[1];
+    }
+    else if (h > b.max_coord(1)){
+      dists[1] = (h-b.max_coord(1));
+      distance += dists[1] * dists[1];
+    }
+
+    h=p.z();
+    if (h < b.min_coord(2)){
+      dists[2] = (b.min_coord(2)-h);
+      distance += dists[2] * dists[2];
+    }
+    else if (h > b.max_coord(2)){
+      dists[2] = (h-b.max_coord(2));
+      distance += dists[2] * dists[2];
+    }
+    return distance;
+  }
+
+
   double max_distance_to_rectangle(const Point_vertex_handle_3& p,
-           const Kd_tree_rectangle<TreeTraits>& b) const {
+                                   const Kd_tree_rectangle<double,Dimension_tag<3> >& b) const {
     double h = p.x();
 
     double d0 = (h >= (b.min_coord(0)+b.max_coord(0))/2.0) ?
@@ -162,6 +198,28 @@ struct Euclidean_distance_vertex_handle_3
                 (h-b.min_coord(2))*(h-b.min_coord(2)) : (b.max_coord(2)-h)*(b.max_coord(2)-h);
     return d0 + d1 + d2;
   }
+
+
+
+  double max_distance_to_rectangle(const Point_vertex_handle_3& p,
+                                   const Kd_tree_rectangle<double, Dimension_tag<3> >& b,
+                                   std::vector<double>& dists) const {
+    double h = p.x();
+    dists[0] = (h >= (b.min_coord(0)+b.max_coord(0))/2.0)? h-b.min_coord(0) : b.max_coord(0)-h;
+    double d0 = dists[0]*dists[0];
+
+    h=p.y();
+    dists[1] = (h >= (b.min_coord(1)+b.max_coord(1))/2.0)? h-b.min_coord(1): b.max_coord(1)-h;
+    double d1 = dists[1]*dists[1];
+
+    h=p.z();
+    dists[2] = (h >= (b.min_coord(2)+b.max_coord(2))/2.0)? h-b.min_coord(2) : b.max_coord(2)-h;
+    
+    double d2 = dists[2]*dists[2];
+
+    return d0 + d1 + d2;
+  }
+
 
   double new_distance(double& dist, double old_off, double new_off, int /*cutting_dimension*/) const
   {
@@ -185,7 +243,9 @@ class Search_traits_vertex_handle_3
   : public Search_traits< double,
                           Point_vertex_handle_3<Vertex_handle>,
                           const double*,
-                          Construct_cartesian_const_iterator_vertex_handle_3<Vertex_handle> >
+                          Construct_cartesian_const_iterator_vertex_handle_3<Vertex_handle> ,
+                          Dimension_tag<3>
+                          >
 {};
 
 /// \endcond

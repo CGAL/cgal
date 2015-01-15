@@ -92,7 +92,9 @@ classes that are described in the reference pages.
 
 ## Advanced Classes ##
 - `CGAL::Kd_tree_node<Traits, Splitter, UseExtendedNode>`
-- `CGAL::Kd_tree_rectangle<FT>`
+- `CGAL::Kd_tree_leaf_node<Traits, Splitter, UseExtendedNode>`
+- `CGAL::Kd_tree_internal_node<Traits, Splitter, UseExtendedNode>`
+- `CGAL::Kd_tree_rectangle<FT,Dimension>`
 - `CGAL::Plane_separator<FT>`
 - `CGAL::Point_container<Traits>`
 

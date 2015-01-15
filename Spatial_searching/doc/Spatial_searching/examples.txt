@@ -14,4 +14,6 @@
 \example Spatial_searching/user_defined_point_and_distance.cpp
 \example Spatial_searching/using_fair_splitting_rule.cpp
 \example Spatial_searching/weighted_Minkowski_distance.cpp
+\example Spatial_searching/splitter_worst_cases.cpp
+\example Spatial_searching/searching_sphere_orthogonally.cpp
 */

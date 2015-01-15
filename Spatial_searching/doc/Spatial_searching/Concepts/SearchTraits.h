@@ -9,6 +9,7 @@ parameter of the search classes.
 \cgalHasModel `CGAL::Homogeneous_d<RT>` 
 \cgalHasModel `CGAL::Search_traits_2<Kernel>` 
 \cgalHasModel `CGAL::Search_traits_3<Kernel>`
+\cgalHasModel `CGAL::Search_traits_d<Kernel,Dim>`
 \cgalHasModel `CGAL::Search_traits<NT,Point,CartesianCoordinateIterator,ConstructCartesianCoordinateIterator,ConstructMinVertex,ConstructMaxVertex>`
 
 \sa `RangeSearchTraits` 
@@ -21,6 +22,12 @@ public:
 
 /// \name Types 
 /// @{
+
+/*!
+Dimension type. Either `CGAL::Dimension_tag`
+or `CGAL::Dynamic_dimension_tag`.
+*/
+typedef unspecified_type Dimension;
 
 /*!
 Point type. `CGAL::Kernel_traits` has to be 
