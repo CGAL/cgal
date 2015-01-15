@@ -59,7 +59,6 @@ namespace CGAL {
   @return pair of @a face_out and @a vertex_out
 
   \todo handle islands
-  \todo use Delaunay by default
   */
   template<class PolygonMesh,
            class FaceOutputIterator,
@@ -70,7 +69,7 @@ namespace CGAL {
       FaceOutputIterator face_out,
       VertexOutputIterator vertex_out,
       double density_control_factor = std::sqrt(2.0),
-      bool use_delaunay_triangulation = false)
+      bool use_delaunay_triangulation = true)
   {
     std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor> patch;
     triangulate_hole(pmesh, border_halfedge, std::back_inserter(patch), use_delaunay_triangulation);
@@ -119,8 +118,6 @@ namespace CGAL {
   - @a vertex_out
 
   \todo handle islands
-
-  \todo use Delaunay by default
   \todo WeightCalculator should be a property map
   */
   template<class WeightCalculator,
@@ -141,7 +138,7 @@ namespace CGAL {
         /* solver */,
       #endif
       double density_control_factor = std::sqrt(2.0),
-      bool use_delaunay_triangulation = false,
+      bool use_delaunay_triangulation = true,
       Fairing_continuity continuity = FAIRING_C_1)
   {
     std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor> patch;
