@@ -298,16 +298,6 @@ public:
       return (is_right ? ps : pt);
     }
 
-    // waqar: functions to return the protected ps and pt
-    const Point_2& get_ps() const
-    {
-      return ps;
-    }
-    const Point_2& get_pt() const
-    {
-      return pt;
-    }
-
     /*!
      * Set the (lexicographically) left endpoint.
      * \param p The point to set.
@@ -655,16 +645,17 @@ public:
     return Compare_x_2(this);
   }
 
-
-
-  //waqar add functor start()
+  /*! A functor that compares the he endpoints of an $x$-monotone curve. */
   class Compare_endpoints_xy_2{
   public:
-
-    Comparison_result operator() (const X_monotone_curve_2& xcv) const
-    {
-      return (xcv.is_directed_right()) ? (SMALLER) : (LARGER);
-    }
+    /*! Compare the endpoints of an $x$-monotone curve lexicographically.
+     * (assuming the curve has a designated source and target points).
+     * \param cv The curve.
+     * \return SMALLER if the curve is directed right;
+     *         LARGER if the curve is directed left.
+     */
+     Comparison_result operator() (const X_monotone_curve_2& xcv) const
+    { return (xcv.is_directed_right()) ? (SMALLER) : (LARGER); }
   };
 
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
@@ -785,11 +776,6 @@ public:
   {
     return Construct_opposite_2(this);
   }
-
-  //waqar: add functor end()
-
-
-
 
   /*! A functor that compares the x-coordinates of two points */
   class Compare_xy_2 {
