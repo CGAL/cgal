@@ -27,7 +27,7 @@ Dt::Vertex_handle nearest_neighbor(const Dt& delau, Dt::Vertex_handle v);
 namespace CGAL {
 
 /*!
-\ingroup PkgPointSet2NeighborSearch
+  \ingroup PkgPointSet2NeighborSearch
 
 computes the `k` nearest neighbors of `p` in `delau`, and places the
 handles to the corresponding vertices as a sequence of objects of type
