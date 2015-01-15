@@ -141,12 +141,9 @@ public:
     size_t *neighbor_indices,
     FT *squared_distance) const
   {
-    /*std::vector<FT> sp_vec(
+    std::vector<FT> sp_vec(
       m_adaptor.kernel().construct_cartesian_const_iterator_d_object()(sp),
-      m_adaptor.kernel().construct_cartesian_const_iterator_d_object()(sp, 0));*/ // CJTODO remettre
-    std::vector<FT> sp_vec;
-    for (int i = 0 ; i < 4 ; ++i)
-      sp_vec.push_back(sp[i]);
+      m_adaptor.kernel().construct_cartesian_const_iterator_d_object()(sp, 0));
     nanoflann::KNNResultSet<FT> result_set(k);
     result_set.init(neighbor_indices, squared_distance);
     m_kd_tree.findNeighbors(result_set,
@@ -167,12 +164,9 @@ public:
                   std::vector<std::pair<std::size_t, FT> > &neighbors,
                   bool sort_output = true)
   {
-    /*std::vector<FT> sp_vec(
+    std::vector<FT> sp_vec(
       m_adaptor.kernel().construct_cartesian_const_iterator_d_object()(sp),
-      m_adaptor.kernel().construct_cartesian_const_iterator_d_object()(sp, 0));*/ // CJTODO remettre
-    std::vector<FT> sp_vec;
-    for (int i = 0 ; i < 4 ; ++i)
-      sp_vec.push_back(sp[i]);
+      m_adaptor.kernel().construct_cartesian_const_iterator_d_object()(sp, 0));
     m_kd_tree.radiusSearch(&sp_vec[0],
                            radius,
                            neighbors,
