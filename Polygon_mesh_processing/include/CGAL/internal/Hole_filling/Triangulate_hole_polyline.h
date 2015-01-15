@@ -6,6 +6,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/iterator.h>
+#include <CGAL/trace.h>
 
 #include <vector>
 #include <stack>
@@ -1178,89 +1179,6 @@ triangulate_hole_polyline(std::vector<Point_3>& P,
 }
 
 } // namespace internal
-
-/*!
-\ingroup PkgPolygonMeshProcessing
-Creates triangles to fill the hole defined by points in the range (@a pbegin, @a pend). Triangles are put into @a out
-using the indices of the input points in the range (@a pbegin, @a pend).
-Note that no degenerate triangle is allowed during filling. If no possible patch is found, then no triangle is put into @a out.
-
-The optional range (@a qbegin, @a qend) indicate for each pair of consecutive points in the range (@a pbegin, @a pend),
-the third point of the facet this segment is incident to. 
-
-Note that the range (@a pbegin, @a pend) and (@a qbegin, @a qend) may or may not contain duplicated first point at the end of sequence.
-
-@tparam OutputIteratorValueType value type of OutputIterator having a constructor `OutputIteratorValueType(int p0, int p1, int p2)` available. 
-        It is default to value_type_traits<OutputIterator>::type, and can be omitted when the default is fine
-@tparam InputIterator iterator over input points
-@tparam OutputIterator iterator over patch triangles
-@param pbegin first iterator of the range of points
-@param pend past-the-end iterator of the range of points
-@param qbegin first iterator of the range of third points, can be omitted
-@param qend past-the-end iterator of the range of third points, can be omitted
-@param out iterator over output patch triangles
-@param use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
-
-\todo move to a non-internal header file
-\todo handle islands
-
-*/
-template <typename OutputIteratorValueType, typename InputIterator, typename OutputIterator>
-OutputIterator
-triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
-                          InputIterator qbegin, InputIterator qend, 
-                          OutputIterator out, bool use_delaunay_triangulation = false)
-{
-  typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
-  typedef internal::Weight_min_max_dihedral_and_area      Weight;
-  typedef internal::Weight_calculator<Weight, internal::Is_valid_degenerate_triangle>  WC;
-  typedef std::vector<std::pair<int, int> > Holes;
-  typedef std::back_insert_iterator<Holes>  Holes_out;
-
-  std::vector<Point_3> P(pbegin, pend);
-  std::vector<Point_3> Q(qbegin, qend);
-  Holes                holes; // no actual use, just to check there is no holes
-
-  internal::Tracer_polyline_incomplete<OutputIteratorValueType, OutputIterator, Holes_out> 
-    tracer(out, Holes_out(holes));
-  internal::triangulate_hole_polyline(P, Q, tracer, WC(), use_delaunay_triangulation);
-  CGAL_assertion(holes.empty());
-  return tracer.out;
-}
-
-// overload for OutputIteratorValueType
-template <typename InputIterator, typename OutputIterator>
-OutputIterator
-triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
-                          InputIterator qbegin, InputIterator qend, 
-                          OutputIterator out, bool use_delaunay_triangulation = false)
-{
-  return triangulate_hole_polyline<typename value_type_traits<OutputIterator>::type>
-    (pbegin, pend, qbegin, qend, out, use_delaunay_triangulation);
-}
-
-// overload no (qbegin, qend)
-template <typename OutputIteratorValueType, typename InputIterator, typename OutputIterator>
-OutputIterator
-triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
-                          OutputIterator out, bool use_delaunay_triangulation = false)
-{
-  typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
-  typedef std::vector<typename Kernel::Point_3> Polyline_3;
-  Polyline_3 Q;
-  return triangulate_hole_polyline<OutputIteratorValueType>
-    (pbegin, pend, Q.begin(), Q.end(), out, use_delaunay_triangulation);
-}
-
-// overload for OutputIteratorValueType
-template <typename InputIterator, typename OutputIterator>
-OutputIterator
-triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
-                          OutputIterator out, bool use_delaunay_triangulation = false)
-{
-  return triangulate_hole_polyline<typename value_type_traits<OutputIterator>::type>
-    (pbegin, pend, out, use_delaunay_triangulation);
-}
 
 } // namespace CGAL
 

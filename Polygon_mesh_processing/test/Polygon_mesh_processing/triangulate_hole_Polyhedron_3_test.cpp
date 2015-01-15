@@ -11,12 +11,17 @@
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
 #endif
-#include <CGAL/Hole_filling.h>
+#include <CGAL/boost/graph/helpers.h>
+
+#include <CGAL/triangulate_hole.h>
+#include <CGAL/internal/Hole_filling/Triangulate_hole_Polyhedron_3.h>
+
 #include <CGAL/assertions.h>
 
 #include <cassert>
 #include <vector>
 #include <set>
+#include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
 #ifdef POLY
@@ -303,13 +308,13 @@ void test_triangulate_refine_and_fair_hole_compile() {
   read_poly_with_borders("data/elephant_quad_hole.off", poly, border_reps);
   CGAL::triangulate_refine_and_fair_hole
   (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
-    CGAL::internal::Uniform_weight_fairing<Polyhedron>(), Default_solver());
+    CGAL::internal::Uniform_weight_fairing<Polyhedron>(poly), Default_solver());
 
   // default solver
   read_poly_with_borders("data/elephant_quad_hole.off", poly, border_reps);
   CGAL::triangulate_refine_and_fair_hole
     (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
-    CGAL::internal::Uniform_weight_fairing<Polyhedron>(), CGAL::Default());
+    CGAL::internal::Uniform_weight_fairing<Polyhedron>(poly), CGAL::Default());
 
   // default solver and weight
   read_poly_with_borders("data/elephant_quad_hole.off", poly, border_reps);

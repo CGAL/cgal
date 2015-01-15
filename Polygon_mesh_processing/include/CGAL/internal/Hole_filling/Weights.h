@@ -603,8 +603,11 @@ template<class PolygonMesh>
 class Uniform_weight_fairing
 {
 public:
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+
+  Uniform_weight_fairing(PolygonMesh&)
+  {}
 
   double w_ij(halfedge_descriptor /*e*/) { return 1.0; }
 

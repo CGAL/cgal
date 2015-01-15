@@ -1,8 +1,9 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <cassert>>
+#include <cassert>
 #include <vector>
+#include <fstream>
 #include <boost/tuple/tuple.hpp>
 
 #include <CGAL/Polyhedron_incremental_builder_3.h>
@@ -10,7 +11,8 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/Hole_filling.h>
+
+#include <CGAL/triangulate_hole.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
 typedef Kernel::Point_3                  Point_3;
@@ -92,7 +94,7 @@ void check_triangles(std::vector<Point_3>& points, std::vector<boost::tuple<int,
     assert(false);
   }
 
-  const int max_index = points.size()-1;
+  const int max_index = static_cast<int>(points.size())-1;
   for(std::vector<boost::tuple<int, int, int> >::iterator it = tris.begin(); it != tris.end(); ++it) {
     if(it->get<0>() == it->get<1>() ||
       it->get<0>() == it->get<2>() ||

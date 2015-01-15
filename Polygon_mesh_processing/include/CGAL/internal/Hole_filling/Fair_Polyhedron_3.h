@@ -51,6 +51,9 @@ class Fair_Polyhedron_3 {
   typedef  Halfedge_around_target_circulator<PolygonMesh>  Halfedge_around_vertex_circulator;
 
   typedef SparseLinearSolver Sparse_linear_solver;
+  typedef typename Sparse_linear_solver::Matrix Solver_matrix;
+  typedef typename Sparse_linear_solver::Vector Solver_vector;
+
 // members
   PolygonMesh& pmesh;
   WeightCalculator weight_calculator;
@@ -74,9 +77,9 @@ private:
   // recursively computes a row (use depth parameter to compute L, L^2, L^3)
   // Equation 6 in [On Linear Variational Surface Deformation Methods]
   void compute_row(
-    Vertex_handle v, 
-    std::size_t row_id,                            // which row to insert in [ frees stay left-hand side ]
-    typename Sparse_linear_solver::Matrix& matrix, 
+    Vertex_handle v,
+    int row_id,                            // which row to insert in [ frees stay left-hand side ]
+    Solver_matrix& matrix, 
     double& x, double& y, double& z,               // constants transfered to right-hand side
     double multiplier,
     const std::map<Vertex_handle, std::size_t>& vertex_id_map,
@@ -85,7 +88,8 @@ private:
     if(depth == 0) {
       typename std::map<Vertex_handle, std::size_t>::const_iterator vertex_id_it = vertex_id_map.find(v);
       if(vertex_id_it != vertex_id_map.end()) {
-        matrix.add_coef(row_id, vertex_id_it->second, multiplier);
+        int col_id = static_cast<int>(vertex_id_it->second);
+        matrix.add_coef(row_id, col_id, multiplier);
       }
       else { 
         Point_3& p = ppmap[v];
@@ -115,7 +119,7 @@ public:
   bool fair(InputIterator vb, InputIterator ve, Fairing_continuity fc)
   {
     int depth = static_cast<int>(fc) + 1;
-    if(depth < 1 || depth > 3) {
+    if(depth < 0 || depth > 3) {
       CGAL_warning(!"Continuity should be between 0 and 2 inclusively!");
       return false; 
     }
@@ -126,9 +130,9 @@ public:
     CGAL::Timer timer; timer.start();
 
     const std::size_t nb_vertices = interior_vertices.size();
-    typename Sparse_linear_solver::Vector X(nb_vertices), Bx(nb_vertices);
-    typename Sparse_linear_solver::Vector Y(nb_vertices), By(nb_vertices);
-    typename Sparse_linear_solver::Vector Z(nb_vertices), Bz(nb_vertices);
+    Solver_vector X(nb_vertices), Bx(nb_vertices);
+    Solver_vector Y(nb_vertices), By(nb_vertices);
+    Solver_vector Z(nb_vertices), Bz(nb_vertices);
 
     std::map<Vertex_handle, std::size_t> vertex_id_map;
     std::size_t id = 0;
@@ -139,10 +143,12 @@ public:
       }
     }
 
-    typename Sparse_linear_solver::Matrix A(nb_vertices);
+    typename Solver_matrix A(nb_vertices);
 
-    for(typename std::set<Vertex_handle>::iterator vb = interior_vertices.begin(); vb != interior_vertices.end(); ++vb) {
-      std::size_t v_id = vertex_id_map[*vb];
+    for(typename std::set<Vertex_handle>::iterator vb = interior_vertices.begin();
+        vb != interior_vertices.end();
+        ++vb) {
+      int v_id = static_cast<int>(vertex_id_map[*vb]);
       compute_row(*vb, v_id, A, Bx[v_id], By[v_id], Bz[v_id], 1, vertex_id_map, depth);
     }
     CGAL_TRACE_STREAM << "**Timer** System construction: " << timer.time() << std::endl; timer.reset();
