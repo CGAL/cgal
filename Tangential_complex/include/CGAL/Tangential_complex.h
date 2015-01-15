@@ -439,7 +439,7 @@ public:
         if (tr.is_infinite(*it_c)) // Don't check infinite cells
           continue;
 
-        if (!is_simplex_consistent(*it_c))
+        if (!is_simplex_consistent(*it_c, tr.current_dimension()))
           ++num_inconsistent_simplices;
         ++num_simplices;
       }
@@ -596,7 +596,7 @@ public:
           continue;
         }
         Indexed_simplex simplex;
-        for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+        for (int i = 0 ; i < tr.current_dimension() + 1 ; ++i)
           simplex.insert((*it_c)->vertex(i)->data());
 
         stars_simplices.insert(simplex);
@@ -1029,10 +1029,10 @@ private:
   }
 
   // A simplex here is a local tri's full cell handle
-  bool is_simplex_consistent(Tr_full_cell_handle fch)
+  bool is_simplex_consistent(Tr_full_cell_handle fch, int cur_dim)
   {
     std::set<std::size_t> c;
-    for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+    for (int i = 0 ; i < cur_dim + 1 ; ++i)
     {
       std::size_t data = fch->vertex(i)->data();
       c.insert(data);
@@ -1043,6 +1043,8 @@ private:
   // A simplex here is a list of point indices
   bool is_simplex_consistent(std::set<std::size_t> const& simplex)
   {
+    int cur_dim_plus_1 = static_cast<int>(simplex.size());
+
     // Check if the simplex is in the stars of all its vertices
     std::set<std::size_t>::const_iterator it_point_idx = simplex.begin();
     // For each point p of the simplex, we parse the incidents cells of p
@@ -1065,7 +1067,7 @@ private:
       for ( ; !found && it_c != it_c_end ; ++it_c)
       {
         std::set<std::size_t> cell;
-        for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+        for (int i = 0 ; i < cur_dim_plus_1 ; ++i)
           cell.insert((*it_c)->vertex(i)->data());
         if (cell == simplex)
           found = true;
@@ -1116,6 +1118,7 @@ private:
     Triangulation const& tr    = m_triangulations[tr_index].tr();
     Tr_vertex_handle center_vh = m_triangulations[tr_index].center_vertex();
     const Tr_traits &local_tr_traits = tr.geom_traits();
+    int cur_dim = tr.current_dimension();
 
     std::vector<Tr_full_cell_handle> incident_cells;
     tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
@@ -1127,11 +1130,10 @@ private:
     // For each cell
     for ( ; it_c != it_c_end ; ++it_c)
     {
-
 #ifdef CGAL_TC_ONLY_CHANGE_SIMPLEX_WEIGHTS
 
       std::set<std::size_t> c;
-      for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+      for (int i = 0 ; i < tr.current_dimension() + 1 ; ++i)
       {
         std::size_t data = (*it_c)->vertex(i)->data();
         c.insert(data);
@@ -1140,6 +1142,8 @@ private:
       // Inconsistent?
       if (!is_simplex_consistent(c))
       {
+        //m_weights[tr_index] = rng.get_double(0., SQ_HALF_SPARSITY);
+        //break; // CJTODO TEMP
         CGAL::Random rng;
         for (std::set<std::size_t>::iterator it=c.begin(); it!=c.end(); ++it)
         {
@@ -1156,7 +1160,7 @@ private:
       }
 #else      
       // Inconsistent?
-      if (!is_simplex_consistent(*it_c))
+      if (!is_simplex_consistent(*it_c, cur_dim))
       {
         // Get the k + 2 closest points
 
@@ -1175,7 +1179,7 @@ private:
         Point global_center(center.begin(), center.end());*/
 
         std::vector<Tr_point> simplex_pts;
-        for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+        for (int i = 0 ; i < cur_dim + 1 ; ++i)
           simplex_pts.push_back((*it_c)->vertex(i)->point());
 
         //typename Tr_traits::Power_center_d power_center =
