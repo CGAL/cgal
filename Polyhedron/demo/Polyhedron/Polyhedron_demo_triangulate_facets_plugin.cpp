@@ -7,7 +7,7 @@
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
 
-#include <CGAL/triangulate_polyhedron.h>
+#include <CGAL/triangulate_faces.h>
 
 class Polyhedron_demo_triangulate_facets_plugin : 
   public QObject,
@@ -119,7 +119,7 @@ public slots:
 
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
-      CGAL::triangulate_polyhedron(*pMesh);
+      CGAL::triangulate_faces(*pMesh);
 
       CGAL_assertion_code(pMesh->normalize_border());
       CGAL_assertion(pMesh->is_valid(false, 3));

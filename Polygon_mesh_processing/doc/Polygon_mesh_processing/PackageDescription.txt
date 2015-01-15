@@ -50,7 +50,7 @@
 ## Meshing Functions ##
 - `CGAL::fair()`
 - `CGAL::refine()`
-- `CGAL::triangulate_polyhedron()`
+- `CGAL::triangulate_faces()`
 
 ## Normal Computation Functions ##
 - `CGAL::Polygon_mesh_processing::compute_facet_normal()`
