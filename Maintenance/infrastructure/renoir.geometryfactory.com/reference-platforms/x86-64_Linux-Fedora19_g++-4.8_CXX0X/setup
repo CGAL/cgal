@@ -11,3 +11,4 @@ export LD_LIBRARY_PATH QTDIR
 
 source /home/lrineau/infrastructure/reference-platforms/setup-common
 
+source /opt/intel/tbb/bin/tbbvars.sh intel64
