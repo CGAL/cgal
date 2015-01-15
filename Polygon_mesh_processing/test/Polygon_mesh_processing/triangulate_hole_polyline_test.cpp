@@ -1,13 +1,16 @@
-#include <CGAL/Hole_filling.h>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <cassert>
+#include <cassert>>
 #include <vector>
 #include <boost/tuple/tuple.hpp>
 
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
+#include <CGAL/Hole_filling.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
 typedef Kernel::Point_3                  Point_3;
