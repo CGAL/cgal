@@ -1,3 +1,5 @@
+#ifndef CGAL_POLYGON_MESH_PROCESSING_FAIR_H
+#define CGAL_POLYGON_MESH_PROCESSING_FAIR_H
 
 #include <CGAL/internal/Meshing_functions/Fair_Polyhedron_3.h>
 
@@ -39,7 +41,8 @@ namespace Polygon_mesh_processing {
     Fairing_continuity continuity = FAIRING_C_1
     )
   {
-    internal::Fair_Polyhedron_3<PolygonMesh, SparseLinearSolver, WeightCalculator> fair_functor(pmesh, weight_calculator);
+    CGAL::Polygon_mesh_processing::internal::Fair_Polyhedron_3<PolygonMesh,
+      SparseLinearSolver, WeightCalculator> fair_functor(pmesh, weight_calculator);
     return fair_functor.fair(vertex_begin, vertex_end, continuity);
   }
 
@@ -65,9 +68,9 @@ namespace Polygon_mesh_processing {
     Fairing_continuity continuity = FAIRING_C_1
     )
   {
-    typedef internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh> Weight_calculator;
+    typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh> Weight_calculator;
     return fair<SparseLinearSolver, Weight_calculator, PolygonMesh, InputIterator>
-      (pmesh, vb, ve, Weight_calculator(), continuity);
+      (pmesh, vb, ve, Weight_calculator(pmesh), continuity);
   }
 
   //use default SparseLinearSolver and WeightCalculator
@@ -85,3 +88,5 @@ namespace Polygon_mesh_processing {
 } //end namespace Polygon_mesh_processing
 
 } //end namespace CGAL
+
+#endif //CGAL_POLYGON_MESH_PROCESSING_FAIR_H

@@ -1,3 +1,5 @@
+#ifndef CGAL_POLYGON_MESH_PROCESSING_REFINE_H
+#define CGAL_POLYGON_MESH_PROCESSING_REFINE_H
 
 #include <CGAL/internal/Meshing_functions/Refine_Polyhedron_3.h>
 
@@ -49,3 +51,5 @@ namespace Polygon_mesh_processing {
 }//end namespace Polygon_mesh_processing
 
 }//end namespace CGAL
+
+#endif //CGAL_POLYGON_MESH_PROCESSING_REFINE_H
