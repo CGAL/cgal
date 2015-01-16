@@ -140,8 +140,8 @@ namespace Polygon_mesh_processing {
         /* solver */,
       #endif
       double density_control_factor = std::sqrt(2.0),
-      bool use_delaunay_triangulation = true,
-      Fairing_continuity continuity = FAIRING_C_1)
+      Fairing_continuity continuity = FAIRING_C_1,
+      bool use_delaunay_triangulation = true)
   {
     std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor> patch;
 
@@ -168,14 +168,14 @@ namespace Polygon_mesh_processing {
       FaceOutputIterator face_out,
       VertexOutputIterator vertex_out,
       double density_control_factor = std::sqrt(2.0),
-      bool use_delaunay_triangulation = true,
-      Fairing_continuity continuity = FAIRING_C_1)
+      Fairing_continuity continuity = FAIRING_C_1,
+      bool use_delaunay_triangulation = true)
   {
     CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh> wc(pmesh);
 
     return triangulate_refine_and_fair_hole
       (pmesh, border_halfedge, face_out, vertex_out, wc, Default(),
-       density_control_factor, use_delaunay_triangulation, continuity);
+        density_control_factor, continuity, use_delaunay_triangulation);
   }
 
   /*!
