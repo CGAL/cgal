@@ -36,7 +36,7 @@ namespace Polygon_mesh_processing {
     triangulate_hole(PolygonMesh& pmesh,
       typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
       OutputIterator out,
-      bool use_delaunay_triangulation = false)
+      bool use_delaunay_triangulation = true)
   {
     CGAL_precondition(face(border_halfedge, pmesh) == boost::graph_traits<PolygonMesh>::null_face());
     return internal::triangulate_hole_Polyhedron
@@ -168,7 +168,7 @@ namespace Polygon_mesh_processing {
       FaceOutputIterator face_out,
       VertexOutputIterator vertex_out,
       double density_control_factor = std::sqrt(2.0),
-      bool use_delaunay_triangulation = false,
+      bool use_delaunay_triangulation = true,
       Fairing_continuity continuity = FAIRING_C_1)
   {
     CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh> wc(pmesh);
@@ -209,7 +209,7 @@ namespace Polygon_mesh_processing {
     triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
                               InputIterator qbegin, InputIterator qend,
                               OutputIterator out,
-                              bool use_delaunay_triangulation = false)
+                              bool use_delaunay_triangulation = true)
   {
     typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
     typedef CGAL::internal::Weight_min_max_dihedral_and_area      Weight;
@@ -236,7 +236,7 @@ namespace Polygon_mesh_processing {
     triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
                               InputIterator qbegin, InputIterator qend,
                               OutputIterator out,
-                              bool use_delaunay_triangulation = false)
+                              bool use_delaunay_triangulation = true)
   {
     return triangulate_hole_polyline<typename value_type_traits<OutputIterator>::type>
       (pbegin, pend, qbegin, qend, out, use_delaunay_triangulation);
@@ -249,7 +249,7 @@ namespace Polygon_mesh_processing {
   OutputIterator
     triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
                               OutputIterator out,
-                              bool use_delaunay_triangulation = false)
+                              bool use_delaunay_triangulation = true)
   {
     typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
     typedef std::vector<typename Kernel::Point_3> Polyline_3;
@@ -264,7 +264,7 @@ namespace Polygon_mesh_processing {
   OutputIterator
     triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
                               OutputIterator out,
-                              bool use_delaunay_triangulation = false)
+                              bool use_delaunay_triangulation = true)
   {
     return triangulate_hole_polyline<typename value_type_traits<OutputIterator>::type>
       (pbegin, pend, out, use_delaunay_triangulation);
