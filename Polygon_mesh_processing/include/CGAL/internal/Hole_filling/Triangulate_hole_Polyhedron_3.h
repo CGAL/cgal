@@ -76,7 +76,7 @@ std::pair<OutputIterator, CGAL::internal::Weight_min_max_dihedral_and_area>
 triangulate_hole_Polyhedron(PolygonMesh& pmesh, 
                             typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge, 
                             OutputIterator out,
-                            bool use_delaunay_triangulation = true)
+                            bool use_delaunay_triangulation)
 {
   typedef Halfedge_around_face_circulator<PolygonMesh>   Hedge_around_face_circulator;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor Vertex_handle;

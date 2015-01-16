@@ -38,9 +38,15 @@ namespace Polygon_mesh_processing {
       OutputIterator out,
       bool use_delaunay_triangulation = true)
   {
+    bool use_dt3 =
+#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
+      false;
+#else
+      use_delaunay_triangulation;
+#endif
     CGAL_precondition(face(border_halfedge, pmesh) == boost::graph_traits<PolygonMesh>::null_face());
     return internal::triangulate_hole_Polyhedron
-      (pmesh, border_halfedge, out, use_delaunay_triangulation).first;
+      (pmesh, border_halfedge, out, use_dt3).first;
   }
 
   /*!
@@ -73,8 +79,14 @@ namespace Polygon_mesh_processing {
       double density_control_factor = std::sqrt(2.0),
       bool use_delaunay_triangulation = true)
   {
+    bool use_dt3 =
+#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
+      false;
+#else
+      use_delaunay_triangulation;
+#endif
     std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor> patch;
-    triangulate_hole(pmesh, border_halfedge, std::back_inserter(patch), use_delaunay_triangulation);
+    triangulate_hole(pmesh, border_halfedge, std::back_inserter(patch), use_dt3);
     face_out = std::copy(patch.begin(), patch.end(), face_out);
     return refine(pmesh, patch.begin(), patch.end(), face_out, vertex_out, density_control_factor);
   }
@@ -143,11 +155,17 @@ namespace Polygon_mesh_processing {
       Fairing_continuity continuity = FAIRING_C_1,
       bool use_delaunay_triangulation = true)
   {
+    bool use_dt3 =
+#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
+      false;
+#else
+      use_delaunay_triangulation;
+#endif
     std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor> patch;
 
     face_out = triangulate_and_refine_hole
       (pmesh, border_halfedge, face_out, std::back_inserter(patch),
-      density_control_factor, use_delaunay_triangulation).first;
+      density_control_factor, use_dt3).first;
 
     typedef internal::Fair_default_sparse_linear_solver::Solver Default_solver;
     typedef typename Default::Get<SparseLinearSolver, Default_solver>::type Solver;
@@ -171,11 +189,17 @@ namespace Polygon_mesh_processing {
       Fairing_continuity continuity = FAIRING_C_1,
       bool use_delaunay_triangulation = true)
   {
+    bool use_dt3 =
+#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
+      false;
+#else
+      use_delaunay_triangulation;
+#endif
     CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh> wc(pmesh);
 
     return triangulate_refine_and_fair_hole
       (pmesh, border_halfedge, face_out, vertex_out, wc, Default(),
-        density_control_factor, continuity, use_delaunay_triangulation);
+        density_control_factor, continuity, use_dt3);
   }
 
   /*!
@@ -211,6 +235,12 @@ namespace Polygon_mesh_processing {
                               OutputIterator out,
                               bool use_delaunay_triangulation = true)
   {
+    bool use_dt3 =
+#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
+      false;
+#else
+      use_delaunay_triangulation;
+#endif
     typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
     typedef CGAL::internal::Weight_min_max_dihedral_and_area      Weight;
     typedef CGAL::internal::Weight_calculator<Weight,
@@ -224,7 +254,7 @@ namespace Polygon_mesh_processing {
 
     CGAL::internal::Tracer_polyline_incomplete<OutputIteratorValueType, OutputIterator, Holes_out>
       tracer(out, Holes_out(holes));
-    triangulate_hole_polyline(P, Q, tracer, WC(), use_delaunay_triangulation);
+    triangulate_hole_polyline(P, Q, tracer, WC(), use_dt3);
     CGAL_assertion(holes.empty());
     return tracer.out;
   }
@@ -238,8 +268,14 @@ namespace Polygon_mesh_processing {
                               OutputIterator out,
                               bool use_delaunay_triangulation = true)
   {
+    bool use_dt3 =
+#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
+      false;
+#else
+      use_delaunay_triangulation;
+#endif
     return triangulate_hole_polyline<typename value_type_traits<OutputIterator>::type>
-      (pbegin, pend, qbegin, qend, out, use_delaunay_triangulation);
+      (pbegin, pend, qbegin, qend, out, use_dt3);
   }
 
   // overload no (qbegin, qend)
@@ -251,11 +287,17 @@ namespace Polygon_mesh_processing {
                               OutputIterator out,
                               bool use_delaunay_triangulation = true)
   {
+    bool use_dt3 =
+#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
+      false;
+#else
+      use_delaunay_triangulation;
+#endif
     typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
     typedef std::vector<typename Kernel::Point_3> Polyline_3;
     Polyline_3 Q;
     return triangulate_hole_polyline<OutputIteratorValueType>
-      (pbegin, pend, Q.begin(), Q.end(), out, use_delaunay_triangulation);
+      (pbegin, pend, Q.begin(), Q.end(), out, use_dt3);
   }
 
   // overload for OutputIteratorValueType
@@ -266,8 +308,14 @@ namespace Polygon_mesh_processing {
                               OutputIterator out,
                               bool use_delaunay_triangulation = true)
   {
+    bool use_dt3 =
+#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
+      false;
+#else
+      use_delaunay_triangulation;
+#endif
     return triangulate_hole_polyline<typename value_type_traits<OutputIterator>::type>
-      (pbegin, pend, out, use_delaunay_triangulation);
+      (pbegin, pend, out, use_dt3);
   }
 
 } //end namespace Polygon_mesh_processing
