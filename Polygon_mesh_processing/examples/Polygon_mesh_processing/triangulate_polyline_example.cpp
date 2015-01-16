@@ -1,5 +1,5 @@
-#include <CGAL/Hole_filling.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/triangulate_hole.h>
 
 #include <vector>
 #include <boost/tuple/tuple.hpp>
@@ -27,17 +27,23 @@ int main() {
   std::vector<My_triangle>                  patch_3;
 
   patch_1.reserve(polyline.size() -2); // there will be exactly n-2 triangles in the patch
-  CGAL::triangulate_hole_polyline(polyline.begin(), polyline.end(), back_inserter(patch_1));
-  CGAL::triangulate_hole_polyline(polyline.begin(), polyline.end(), back_inserter(patch_2));
-  CGAL::triangulate_hole_polyline(polyline.begin(), polyline.end(), back_inserter(patch_3));
+  CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
+    polyline.begin(), polyline.end(), back_inserter(patch_1));
+  CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
+    polyline.begin(), polyline.end(), back_inserter(patch_2));
+  CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
+    polyline.begin(), polyline.end(), back_inserter(patch_3));
 
   for(std::size_t i = 0; i < patch_1.size(); ++i) {
     std::cout << "Triangle " << i << ": " << patch_1[i].get<0>() << " " 
               << patch_1[i].get<1>() << " " << patch_1[i].get<2>() << std::endl;
 
-    assert(patch_1[i].get<0>() == patch_2[i].first  && patch_2[i].first  == patch_3[i].v0);
-    assert(patch_1[i].get<1>() == patch_2[i].second && patch_2[i].second == patch_3[i].v1);
-    assert(patch_1[i].get<2>() == patch_2[i].third  && patch_2[i].third  == patch_3[i].v2);
+    CGAL_assertion(patch_1[i].get<0>() == patch_2[i].first
+                && patch_2[i].first  == patch_3[i].v0);
+    CGAL_assertion(patch_1[i].get<1>() == patch_2[i].second
+                && patch_2[i].second == patch_3[i].v1);
+    CGAL_assertion(patch_1[i].get<2>() == patch_2[i].third
+                && patch_2[i].third == patch_3[i].v2);
   }
 
   // note that no degenerate triangle is constructed in patch
@@ -47,8 +53,8 @@ int main() {
   polyline_collinear.push_back(Point_3(3.,0.,0.));
   polyline_collinear.push_back(Point_3(4.,0.,0.));
   std::vector<My_triangle> patch_will_be_empty;
-  CGAL::triangulate_hole_polyline(polyline_collinear.begin(), 
-                                  polyline_collinear.end(), 
-                                  back_inserter(patch_will_be_empty));
-  assert(patch_will_be_empty.empty());
+  CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
+    polyline_collinear.begin(), polyline_collinear.end(), 
+    back_inserter(patch_will_be_empty));
+  CGAL_assertion(patch_will_be_empty.empty());
 }

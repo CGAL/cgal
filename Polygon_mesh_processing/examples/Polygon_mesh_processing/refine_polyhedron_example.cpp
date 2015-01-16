@@ -1,8 +1,8 @@
-#include <CGAL/Hole_filling.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Polygon_mesh_processing/refine.h>
 
 #include <iostream>
 #include <fstream>
@@ -37,7 +37,7 @@ int main() {
   std::vector<Vertex_handle> new_vertices;
   // `facets_begin()` returns `Facet_iterator` which is an iterator over `Facet`, 
   // what `refine()` requires is an iterator over `Facet_handle`, hence a transformer is used
-  CGAL::refine(poly_1, 
+  CGAL::Polygon_mesh_processing::refine(poly_1,
     boost::make_transform_iterator(poly_1.facets_begin(), Facet_to_facet_handle()),
     boost::make_transform_iterator(poly_1.facets_end()  , Facet_to_facet_handle()),
     back_inserter(new_facets), back_inserter(new_vertices), 2.0);
@@ -46,10 +46,10 @@ int main() {
   poly_1_off << poly_1;
   poly_1_off.close();
   
-  CGAL::refine(poly_2, 
+  CGAL::Polygon_mesh_processing::refine(poly_2,
     boost::make_transform_iterator(poly_2.facets_begin(), Facet_to_facet_handle()),
     boost::make_transform_iterator(poly_2.facets_end()  , Facet_to_facet_handle()),
-               CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(), 3.0);
+    CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(), 3.0);
 	
   std::ofstream poly_2_off("data/poly_2.off");
   poly_2_off << poly_2;

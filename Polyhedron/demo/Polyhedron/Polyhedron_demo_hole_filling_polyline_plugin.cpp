@@ -9,6 +9,7 @@
 #include "Polyhedron_type.h"
 
 #include <CGAL/triangulate_hole.h>
+#include <CGAL/Polygon_mesh_processing/refine.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Timer.h>
 
@@ -137,7 +138,7 @@ public slots:
 
       if(also_refine) {
         timer.reset();
-        CGAL::refine(*poly, 
+        CGAL::Polygon_mesh_processing::refine(*poly, 
           boost::make_transform_iterator(poly->facets_begin(), Get_handle()),
           boost::make_transform_iterator(poly->facets_end(), Get_handle()),
           Nop_out(), Nop_out(), density_control_factor);

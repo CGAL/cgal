@@ -1,7 +1,7 @@
-#include <CGAL/Hole_filling.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/triangulate_hole.h>
 
 #include <iostream>
 #include <fstream>
@@ -34,7 +34,8 @@ int main() {
   for(Halfedge_iterator h = poly_1.halfedges_begin(); h != poly_1.halfedges_end(); ++h) {
     if(h->is_border()) {
       std::vector<Facet_handle> patch;
-      CGAL::triangulate_hole(poly_1, h, back_inserter(patch));
+      CGAL::Polygon_mesh_processing::triangulate_hole(poly_1,
+        h, back_inserter(patch));
       std::cout << "Number of facets in constructed patch: " << patch.size() << std::endl;
     }
   }
@@ -43,7 +44,7 @@ int main() {
     if(h->is_border()) {
       std::vector<Facet_handle>  patch_facets;
       std::vector<Vertex_handle> patch_vertices;
-      CGAL::triangulate_and_refine_hole(poly_2, 
+      CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly_2,
                                         h,
                                         back_inserter(patch_facets),
                                         back_inserter(patch_vertices));
@@ -56,7 +57,7 @@ int main() {
     if(h->is_border()) {
       std::vector<Facet_handle>  patch_facets;
       std::vector<Vertex_handle> patch_vertices;
-      bool success = CGAL::triangulate_refine_and_fair_hole(poly_3, 
+      bool success = CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly_3,
                                                             h,
                                                             back_inserter(patch_facets),
                                                             back_inserter(patch_vertices)).get<0>();

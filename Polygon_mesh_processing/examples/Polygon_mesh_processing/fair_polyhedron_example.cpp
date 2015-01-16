@@ -1,7 +1,7 @@
-#include <CGAL/Hole_filling.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Polygon_mesh_processing/fair.h>
 
 #include <iostream>
 #include <fstream>
@@ -47,7 +47,8 @@ int main() {
   std::advance(v, 8286);
   const std::vector<Vertex_handle>& region = extract_k_ring(v, 45);
 
-  bool success = CGAL::fair(poly, region.begin(), region.end());
+  bool success = CGAL::Polygon_mesh_processing::fair(poly,
+    region.begin(), region.end());
   std::cout << "Is fairing successful: " << success << std::endl;
 
   std::ofstream faired_off("data/faired.off");
