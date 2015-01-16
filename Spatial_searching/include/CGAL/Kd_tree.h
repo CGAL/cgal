@@ -28,7 +28,6 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/Kd_tree_node.h>
 #include <CGAL/Splitters.h>
-#include <CGAL/Memory_sizer.h>
 #include <CGAL/internal/Get_dimension_tag.h>
 
 #include <deque>
@@ -430,15 +429,12 @@ public:
     if(! is_built()){
       const_build();
     }
-    Memory_sizer mem;
-
     s << "Tree statistics:" << std::endl;
     s << "Number of items stored: "
       << root()->num_items() << std::endl;
     s << "Number of nodes: "
       << root()->num_nodes() << std::endl;
     s << " Tree depth: " << root()->depth() << std::endl;
-    s << "Memory: " << mem.resident_size() << std::endl;
     return s;
   }
 
