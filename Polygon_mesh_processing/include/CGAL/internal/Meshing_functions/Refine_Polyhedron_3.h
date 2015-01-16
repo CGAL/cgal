@@ -1,8 +1,10 @@
-#ifndef CGAL_HOLE_FILLING_REFINE_POLYHEDRON_3_H
-#define CGAL_HOLE_FILLING_REFINE_POLYHEDRON_3_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_REFINE_POLYHEDRON_3_H
+#define CGAL_POLYGON_MESH_PROCESSING_REFINE_POLYHEDRON_3_H
+
 #include <cmath>
 #include <map>
 #include <set>
+
 #include <CGAL/assertions.h>
 #include <CGAL/trace.h>
 #include <CGAL/Timer.h>
@@ -10,6 +12,8 @@
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/properties.h>
+#include <boost/property_map/property_map.hpp>
 
 namespace CGAL {
 
@@ -19,8 +23,9 @@ namespace internal {
 
 template<class PolygonMesh>
 class Refine_Polyhedron_3 {
-// typedefs
-  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
+//// typedefs
+  typedef typename boost::property_map<PolygonMesh,
+                                       boost::vertex_point_t>::type Point_property_map;
   typedef typename boost::property_traits<Point_property_map>::value_type Point_3;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor Vertex_handle;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor Halfedge_handle;
@@ -271,11 +276,13 @@ public:
 
     CGAL_TRACE_STREAM << "**Timer** TOTAL: " << total_timer.time() << std::endl;
   }
-};
+
+}; //end class Refine_Polyhedron_3
 
 }//namespace internal
 
 }//namespace Polygon_mesh_processing
 
 }//namespace CGAL
-#endif //CGAL_HOLE_FILLING_REFINE_POLYHEDRON_3_H
+
+#endif //CGAL_POLYGON_MESH_PROCESSING_REFINE_POLYHEDRON_3_H
