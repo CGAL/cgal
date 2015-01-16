@@ -57,7 +57,7 @@
 - `CGAL::Polygon_mesh_processing::compute_vertex_normal()`
 
 ## Other Classes ##
-- `CGAL::Polyhedron_slicer_3`
+- `CGAL::Polygon_mesh_slicer_3`
 
 \todo remove FairWeightCalculator and replace it by a property map. Note that the default property map should be documented
 \todo make template parameter names uniform in other packages using BGL. Here we chose PolygonMesh as template parameter.

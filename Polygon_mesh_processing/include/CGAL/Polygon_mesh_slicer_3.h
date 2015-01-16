@@ -18,8 +18,8 @@
 //
 // Author(s)     : Ilker O. Yaz
 
-#ifndef CGAL_POLYHEDRON_SLICER_3_H
-#define CGAL_POLYHEDRON_SLICER_3_H
+#ifndef CGAL_POLYGON_MESH_SLICER_3_H
+#define CGAL_POLYGON_MESH_SLICER_3_H
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -45,16 +45,16 @@
 namespace CGAL {
 
 /// \ingroup PkgPolygonMeshProcessing
-/// Cut a triangulated polyhedron in slices.
+/// Cut a triangulated polygon mesh in slices.
 ///  
 /// Depends on \ref PkgAABB_treeSummary
-/// \todo `Polyhedron` should be a model of `FaceListGraph`
-/// \todo Add a constructor from an AABB-tree (the type is hardcoded given `Polyhedron`)
-template<class Polyhedron, class Kernel>
-class Polyhedron_slicer_3
+/// \todo `PolygonMesh` should be a model of `FaceListGraph`
+/// \todo Add a constructor from an AABB-tree (the type is hardcoded given `PolygonMesh`)
+template<class PolygonMesh, class Kernel>
+class Polygon_mesh_slicer_3
 {
 private:
-  typedef AABB_halfedge_graph_segment_primitive<Polyhedron>         AABB_primitive;
+  typedef AABB_halfedge_graph_segment_primitive<PolygonMesh>         AABB_primitive;
   typedef AABB_traits<Kernel, AABB_primitive>                       AABB_traits_;
   typedef AABB_tree<AABB_traits_>                                   AABB_tree_;
 
@@ -65,13 +65,13 @@ private:
   typedef typename Kernel::Segment_3  Segment;
   typedef typename Kernel::Point_3    Point;
 
-  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   Edge_const_handle;
-  typedef typename boost::graph_traits<Polyhedron>::edge_iterator   Edge_const_iterator;
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_const_handle;
-  typedef typename boost::graph_traits<Polyhedron>::face_descriptor    Facet_const_handle;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor   Vertex_const_handle;
-  typedef Halfedge_around_target_circulator<Polyhedron> Halfedge_around_vertex_const_circulator;
-  typedef Halfedge_around_face_circulator<Polyhedron>  Halfedge_around_facet_const_circulator;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor   Edge_const_handle;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_iterator   Edge_const_iterator;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor Halfedge_const_handle;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor    Facet_const_handle;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor   Vertex_const_handle;
+  typedef Halfedge_around_target_circulator<PolygonMesh> Halfedge_around_vertex_const_circulator;
+  typedef Halfedge_around_face_circulator<PolygonMesh>  Halfedge_around_facet_const_circulator;
 
   // to unite halfedges under an "edge"
   struct Edge_comparator {
@@ -134,7 +134,7 @@ private:
   typename Kernel::Intersect_3 intersect_3_functor;
   AABB_tree_ tree;
   mutable Node_graph node_graph;
-  Polyhedron& polyhedron;
+  PolygonMesh& m_pmesh;
 
   boost::tuple<Point, Intersection_type, Vertex_const_handle>
   halfedge_intersection(Halfedge_const_handle hf, const Plane& plane) const
@@ -185,7 +185,7 @@ private:
     Vertex_g v_g = boost::add_vertex(node_graph);
     node_graph[v_g].point = v->point();
 
-    Halfedge_around_vertex_const_circulator around_vertex_c(v,polyhedron), done(around_vertex_c);
+    Halfedge_around_vertex_const_circulator around_vertex_c(v,m_pmesh), done(around_vertex_c);
     do {
       edge_node_map[*around_vertex_c].put(v_g);
     } 
@@ -220,11 +220,11 @@ private:
     Node_pair& hf_node_pair = edge_node_map.find(hf)->second;
     Vertex_g v_g = node_graph[hf_node_pair.v1].point == v->point() ? hf_node_pair.v1 : hf_node_pair.v2;// find node containing v
 
-    Halfedge_around_vertex_const_circulator around_vertex_c(v, polyhedron), done(around_vertex_c);
+    Halfedge_around_vertex_const_circulator around_vertex_c(v, m_pmesh), done(around_vertex_c);
     do {
       if((*around_vertex_c)->is_border()) { continue;} 
       Node_pair& around_vertex_node_pair = edge_node_map.find(*around_vertex_c)->second;
-      Halfedge_around_facet_const_circulator around_facet_c(*around_vertex_c,polyhedron), done2(around_facet_c);
+      Halfedge_around_facet_const_circulator around_facet_c(*around_vertex_c,m_pmesh), done2(around_facet_c);
       do {
         CGAL_assertion(around_vertex_node_pair.vertex_count != 0);
         if(around_vertex_node_pair.v1 != v_g) {
@@ -255,7 +255,7 @@ private:
     for(typename std::vector<Edge_const_handle>::iterator it = intersected_edges.begin();
       it != intersected_edges.end(); ++it)
     {
-      Halfedge_const_handle hf = halfedge(*it,polyhedron);
+      Halfedge_const_handle hf = halfedge(*it,m_pmesh);
       Node_pair& assoc_nodes = edge_node_map[hf];
       CGAL_assertion(assoc_nodes.vertex_count < 3); // every Node_pair can at most contain 2 nodes
 
@@ -308,7 +308,7 @@ private:
     for(typename std::vector<Edge_const_handle>::iterator it = intersected_edges.begin();
       it != intersected_edges.end(); ++it)
     {
-      Halfedge_const_handle hf = halfedge(*it,polyhedron);
+      Halfedge_const_handle hf = halfedge(*it,m_pmesh);
       Edge_intersection_map_iterator intersection_it = edge_intersection_map.find(hf);
       CGAL_assertion(intersection_it != edge_intersection_map.end());
 
@@ -421,30 +421,31 @@ private:
 public:
 
   /**
-  * Constructor. `polyhedron` must be valid polyhedron as long as this functor is used.
-  * @param polyhedron the polyhedron to be cut
+  * Constructor. `pmesh` must be a valid polygon mesh as long as this functor is used.
+  * @param pmesh the polygon mesh to be cut
   * @param kernel the kernel
   */
-  Polyhedron_slicer_3(const Polyhedron& polyhedron, const Kernel& kernel = Kernel())
+  Polygon_mesh_slicer_3(const PolygonMesh& pmesh, const Kernel& kernel = Kernel())
   : intersect_3_functor(kernel.intersect_3_object()),
-    tree( edges(polyhedron).first,
-          edges(polyhedron).second,
-          polyhedron),
-    polyhedron(const_cast<Polyhedron&>(polyhedron))
+    tree( edges(pmesh).first,
+          edges(pmesh).second,
+          pmesh),
+    m_pmesh(const_cast<PolygonMesh&>(pmesh))
   { }
 
   /**
    * @tparam OutputIterator an output iterator accepting polylines. A polyline is considered to be a `std::vector<Kernel::Point_3>`. A polyline is closed if its first and last points are identical.
-   * @param plane the plane to intersect the polyhedron with
+   * @param plane the plane to intersect the polygon mesh with
    * @param out output iterator of polylines
-   * computes the intersection polylines of the polyhedron passed in the constructor with `plane` and puts each of them in `out`
+   * computes the intersection polylines of the polygon mesh passed in the constructor with `plane` and puts each of them in `out`
    */
   template <class OutputIterator>
-  OutputIterator operator() (const typename Kernel::Plane_3& plane, OutputIterator out) const {
+  OutputIterator operator() (const typename Kernel::Plane_3& plane,
+                             OutputIterator out) const {
     CGAL_precondition(!plane.is_degenerate());
     return intersect_plane(plane, out);
   }
 };
 
 }// end of namespace CGAL
-#endif //CGAL_POLYHEDRON_SLICER_3_H
+#endif //CGAL_POLYGON_MESH_SLICER_3_H
