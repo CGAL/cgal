@@ -1373,6 +1373,7 @@ public:
   void add_filtered_intersection(Halfedge_handle eh,Halfedge_handle fh,Polyhedron& Pe,Polyhedron& Pf){
     //use the representant halfedge of the facet as key
     //--set polyhedron for the two facets incident to the edge
+    CGAL_assertion(!eh->is_border());
     hedge_to_polyhedron.insert(std::make_pair(eh->facet()->halfedge(),&Pe));
     if ( !eh->opposite()->is_border() )
       hedge_to_polyhedron.insert(std::make_pair(eh->opposite()->facet()->halfedge(),&Pe));
