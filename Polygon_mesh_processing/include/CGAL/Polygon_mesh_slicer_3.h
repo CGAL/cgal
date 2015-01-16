@@ -49,18 +49,14 @@ namespace CGAL {
 ///  
 /// Depends on \ref PkgAABB_treeSummary
 /// \todo `PolygonMesh` should be a model of `FaceListGraph`
-/// \todo Add a constructor from an AABB-tree (the type is hardcoded given `PolygonMesh`)
-template<class PolygonMesh, class Kernel>
+template<class PolygonMesh,
+  class Kernel,
+  class AABB_tree_ = AABB_tree<
+                       AABB_traits<Kernel,
+                         AABB_halfedge_graph_segment_primitive<PolygonMesh> > > >
 class Polygon_mesh_slicer_3
 {
 private:
-  typedef AABB_halfedge_graph_segment_primitive<PolygonMesh>         AABB_primitive;
-  typedef AABB_traits<Kernel, AABB_primitive>                       AABB_traits_;
-  typedef AABB_tree<AABB_traits_>                                   AABB_tree_;
-
-  typedef typename AABB_tree_::Object_and_primitive_id             Object_and_primitive_id;
-  typedef typename AABB_tree_::Primitive_id                        Primitive_id;
-
   typedef typename Kernel::Plane_3    Plane;
   typedef typename Kernel::Segment_3  Segment;
   typedef typename Kernel::Point_3    Point;
@@ -132,7 +128,7 @@ private:
 
   // member variables //
   typename Kernel::Intersect_3 intersect_3_functor;
-  AABB_tree_ tree;
+  const AABB_tree_* tree_ptr;
   mutable Node_graph node_graph;
   PolygonMesh& m_pmesh;
 
@@ -244,9 +240,9 @@ private:
   {
     node_graph.clear();
 
-    // find out intersecting halfedges (note that tree contains edges only with custom comparator)
+    // find out intersecting halfedges (note that tree_ptr contains edges only with custom comparator)
     std::vector<Edge_const_handle> intersected_edges;
-    tree.all_intersected_primitives(plane, std::back_inserter(intersected_edges));
+    tree_ptr->all_intersected_primitives(plane, std::back_inserter(intersected_edges));
 
     // create node graph from segments
     // each node is associated with multiple edges
@@ -425,12 +421,28 @@ public:
   * @param pmesh the polygon mesh to be cut
   * @param kernel the kernel
   */
-  Polygon_mesh_slicer_3(const PolygonMesh& pmesh, const Kernel& kernel = Kernel())
+  Polygon_mesh_slicer_3(const PolygonMesh& pmesh,
+                        const Kernel& kernel = Kernel())
   : intersect_3_functor(kernel.intersect_3_object()),
-    tree( edges(pmesh).first,
-          edges(pmesh).second,
-          pmesh),
     m_pmesh(const_cast<PolygonMesh&>(pmesh))
+ {
+    tree_ptr = new AABB_tree_(edges(pmesh).first,
+                              edges(pmesh).second,
+                              pmesh);
+ }
+
+  /**
+  * Constructor. `pmesh` must be a valid polygon mesh as long as this functor is used.
+  * @param pmesh the polygon mesh to be cut
+  * @param tree a `CGAL::AABB_tree` containing the edges of `pmesh`
+  * @param kernel the kernel
+  */
+  Polygon_mesh_slicer_3(const PolygonMesh& pmesh,
+                        const AABB_tree_& tree,
+                        const Kernel& kernel = Kernel())
+    : intersect_3_functor(kernel.intersect_3_object()),
+      tree_ptr(&tree),
+      m_pmesh(const_cast<PolygonMesh&>(pmesh))
   { }
 
   /**
@@ -444,6 +456,11 @@ public:
                              OutputIterator out) const {
     CGAL_precondition(!plane.is_degenerate());
     return intersect_plane(plane, out);
+  }
+
+  ~Polygon_mesh_slicer_3()
+  {
+    delete tree_ptr;
   }
 };
 
