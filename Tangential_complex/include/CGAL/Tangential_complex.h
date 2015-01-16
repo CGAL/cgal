@@ -47,6 +47,7 @@ const double SQ_HALF_SPARSITY = 0.5*0.5*INPUT_SPARSITY*INPUT_SPARSITY;
 #include <Eigen/Eigen>
 
 #include <boost/optional.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 #include <vector>
 #include <set>
@@ -170,6 +171,12 @@ class Tangential_complex
 #ifdef CGAL_TC_EXPORT_NORMALS
   typedef typename std::vector<Vector>                Normals;
 #endif
+
+  // For transform_iterator
+  static const Tr_point &vertex_handle_to_point(Tr_vertex_handle vh)
+  {
+    return vh->point();
+  }
 
 public:
 
@@ -833,13 +840,12 @@ private:
               }
               else
               {
-                std::vector<Tr_point> cell_pts;
-                cell_pts.reserve(Intrinsic_dimension + 1);
-                // For each point p
-                for (int ii = 0 ; ii <= Intrinsic_dimension ; ++ii)
-                  cell_pts.push_back(cell->vertex(ii)->point());
+                Tr_point c = power_center(
+                  boost::make_transform_iterator(
+                    cell->vertices_begin(), vertex_handle_to_point),
+                  boost::make_transform_iterator(
+                    cell->vertices_end(), vertex_handle_to_point));
 
-                Tr_point c = power_center(cell_pts.begin(), cell_pts.end());
                 FT sq_power_sphere_diam = 4*point_weight(c);
 
                 if (!star_sphere_squared_radius
