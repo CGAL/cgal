@@ -69,6 +69,7 @@ create_single_source_cgal_program( "point_inside_polyhedron_boundary_test.cpp" )
 create_single_source_cgal_program( "self_intersection_polyhedron_test.cpp" )
 create_single_source_cgal_program( "self_intersection_surface_mesh_test.cpp" )
 create_single_source_cgal_program( "triangulate_hole_Polyhedron_3_test.cpp" )
+create_single_source_cgal_program( "triangulate_hole_Polyhedron_3_no_delaunay_test.cpp" )
 create_single_source_cgal_program( "triangulate_hole_polyline_test.cpp" )
 
   else(EIGEN3_FOUND)
