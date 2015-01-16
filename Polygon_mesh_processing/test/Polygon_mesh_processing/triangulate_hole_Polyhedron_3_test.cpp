@@ -14,7 +14,6 @@
 #include <CGAL/boost/graph/helpers.h>
 
 #include <CGAL/triangulate_hole.h>
-#include <CGAL/internal/Hole_filling/Triangulate_hole_Polyhedron_3.h>
 
 #include <CGAL/assertions.h>
 
