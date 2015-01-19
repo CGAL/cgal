@@ -23,7 +23,7 @@
 #define CGAL_POINT_INSIDE_POLYGON_MESH_H
 
 #include <CGAL/internal/Point_inside_polygon_mesh/Point_inside_vertical_ray_cast.h>
-#include <CGAL/internal/Point_inside_polygon_mesh/AABB_triangle_accessor_3_primitive.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -42,21 +42,19 @@ namespace CGAL {
  * @tparam Kernel a \cgal kernel
  * @tparam TriangleAccessor a model of the concept `TriangleAccessor_3`, with `TriangleAccessor_3::Triangle_3` being `Kernel::Triangle_3`. 
  *         If `TriangleMesh` is a \cgal Polyhedron, a default is provided.
- * \todo Code: Use this class as an implementation detail of Mesh_3's Polyhedral_mesh_domain_3
- * \todo Code: current version puts all polyhedra under one AABB, more proper approach might be using separate AABB for each triangle mesh 
- *       and filtering query point with bboxes of polyhedra...
+ * \todo Code: Use this class as an implementation detail of Mesh_3's Polyhedral_mesh_domain_3.
+       Remove `TriangleAccessor_3` as well as the concept in Mesh_3 since making `TriangleMesh`
+       a model of `FaceListGraph` will make it useless
  * \todo `TriangleMesh` should be a model of `FaceListGraph`
- * \todo Remove `TriangleAccessor_3` as well as the concept in Mesh_3 since making `TriangleMesh` a model of `FaceListGraph` will make it useless
  * \todo Add a constructor from AABB-tree (once TriangleMesh is a FaceListGraph, the type is hardcoded)
  * \todo check the implementation
  */
-template <class TriangleMesh, 
-          class Kernel,
-          class TriangleAccessor_3 = Triangle_accessor_3<TriangleMesh, typename TriangleMesh::Traits> 
->
-class Point_inside_polygon_mesh{
+template <class TriangleMesh,
+          class Kernel>
+class Point_inside_polygon_mesh
+{
   // typedefs
-  typedef CGAL::internal::AABB_triangle_accessor_3_primitive<Kernel, TriangleAccessor_3> Primitive;
+  typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
   typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Tree;
   typedef typename Kernel::Point_3 Point;
@@ -72,36 +70,31 @@ public:
    */
   Point_inside_polygon_mesh(const Kernel& kernel=Kernel())
   : ray_functor(kernel.construct_ray_3_object()),
-  vector_functor(kernel.construct_vector_3_object())
+    vector_functor(kernel.construct_vector_3_object()),
+    tree(Traits())
   { }
  
   /** 
    * Constructor with one polyhedral surface. `mesh` must be closed and triangulated.
    */
-  Point_inside_polygon_mesh(const TriangleMesh& mesh, const Kernel& kernel=Kernel()) 
+  Point_inside_polygon_mesh(const TriangleMesh& mesh,
+                            const Kernel& kernel=Kernel())
   : ray_functor(kernel.construct_ray_3_object()),
-  vector_functor(kernel.construct_vector_3_object())
+    vector_functor(kernel.construct_vector_3_object()),
+    tree(Traits())
   {
     add_triangle_mesh(mesh);
   }
 
   /** 
-   * Constructor with several polyhedral surfaces. All the polyhedral surfaces must be closed, triangulated and disjoint.
-   * \tparam InputIterator is an input iterator with `TriangleMesh` or `cpp11::reference_wrapper<TriangleMesh>` as value type.
-   */
-  template <class InputIterator>
-  Point_inside_polygon_mesh(InputIterator begin, InputIterator beyond, const Kernel& kernel=Kernel()) 
-  : ray_functor(kernel.construct_ray_3_object()),
-  vector_functor(kernel.construct_vector_3_object())
-  {
-    add_polyhedra(begin, beyond);
-  }
-
-  /** 
    * Builds internal AABB tree. Optional to call, since the tree is automatically built at the time of first query.
    */ 
-  void build() { tree.build(); }
+  void build()
+  {
+    tree.build();
+  }
 
+private:
   /**
    * `mesh` is added as input
    */
@@ -110,22 +103,10 @@ public:
     CGAL_assertion(mesh.is_pure_triangle());
     CGAL_assertion(mesh.is_closed());
 
-    tree.insert(TriangleAccessor_3().triangles_begin(mesh),
-                TriangleAccessor_3().triangles_end(mesh));
+    tree.insert(faces(mesh).first, faces(mesh).second, mesh);
   }
- 
-  /**
-   * The polyhedral surfaces in the range `[begin,beyond[` are added as input
-   * \tparam InputIterator is an input iterator with `TriangleMesh` or `cpp11::reference_wrapper<TriangleMesh>` as value type.
-   */
-  template<class InputIterator>
-  void add_polyhedra(InputIterator begin, InputIterator beyond) 
-  {
-    for(; begin != beyond; ++begin) {
-      add_triangle_mesh(*begin);
-    }
-  }
- 
+
+public:
   /**
    * Query function to determine point location.
    * @return 
@@ -135,8 +116,10 @@ public:
    */
   Bounded_side operator()(const Point& point) const
   {
-    return internal::Point_inside_vertical_ray_cast<Kernel, Tree>()(point, tree, ray_functor, vector_functor);
+    return internal::Point_inside_vertical_ray_cast<Kernel, Tree>()(
+      point, tree, ray_functor, vector_functor);
   }
+
 };
 
 } // namespace CGAL

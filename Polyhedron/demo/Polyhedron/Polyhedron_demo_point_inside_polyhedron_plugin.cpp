@@ -11,7 +11,7 @@
 
 #include <CGAL/Timer.h>
 #include <CGAL/Random.h>
-#include <CGAL/Point_inside_polyhedron_3.h>
+#include <CGAL/Point_inside_polygon_mesh_3.h>
 #include "ui_Point_inside_polyhedron_widget.h"
 
 #include <QAction>
@@ -99,19 +99,24 @@ public slots:
 
     // place all selected polyhedron and point items to vectors below
     std::vector<const Polyhedron*> polys;
+    typedef CGAL::Point_inside_polygon_mesh<Polyhedron, Kernel> Point_inside;
+    std::vector<Point_inside*> inside_testers;// to put all polyhedra to query object
+        // it does not support copy-construction so let's use pointers
     std::vector<Point_set*> point_sets;
     foreach(Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
+      if (poly_item)
+        inside_testers.push_back(new Point_inside(*(poly_item->polyhedron())));
       if(poly_item) { polys.push_back(poly_item->polyhedron()); }
 
       Scene_points_with_normal_item* point_item = qobject_cast<Scene_points_with_normal_item*>(scene->item(id));
       if(point_item) { point_sets.push_back(point_item->point_set()); }
     }
-    
+
     // there should be at least one selected polyhedron and point item
-    if(polys.empty())      { print_message("Error: there is no selected polyhedron item(s)."); }
+    if(inside_testers.empty()) { print_message("Error: there is no selected polyhedron item(s)."); }
     if(point_sets.empty()) { print_message("Error: there is no selected point set item(s)."); }
-    if(polys.empty() || point_sets.empty()) { return; }
+    if(inside_testers.empty() || point_sets.empty()) { return; }
 
     // deselect all points
     for(std::vector<Point_set*>::iterator point_set_it = point_sets.begin(); 
@@ -121,13 +126,8 @@ public slots:
 
     CGAL::Timer timer; timer.start();
 
-    // put all polyhedra to query object
-    CGAL::Point_inside_polyhedron_3<Polyhedron, Epic_kernel> query_functor(
-      boost::make_transform_iterator(polys.begin(), Get_ref()),
-      boost::make_transform_iterator(polys.end(), Get_ref()));
-    query_functor.build();
-
-    print_message(QString("Constructing with %1 items is done in %2 sec.").arg(polys.size()).arg(timer.time()));
+    print_message(
+      QString("Constructing with %1 items is done in %2 sec.").arg(inside_testers.size()).arg(timer.time()));
     timer.reset();
 
     std::size_t nb_query = 0, nb_selected = 0;// for print message
@@ -135,21 +135,31 @@ public slots:
       point_set_it != point_sets.end(); ++point_set_it) 
     {
       Point_set* point_set = *point_set_it;
-      for(Point_set::iterator point_it = point_set->begin(); point_it != point_set->end(); ++point_it, ++nb_query)
+      for(Point_set::iterator point_it = point_set->begin();
+          point_it != point_set->end();
+          ++point_it, ++nb_query)
       {
-        CGAL::Bounded_side res = query_functor(point_it->position());
+        for (std::size_t i = 0; i < inside_testers.size(); ++i)
+        {
+        CGAL::Bounded_side res = (*inside_testers[i])(point_it->position());
 
         if( (inside      && res == CGAL::ON_BOUNDED_SIDE) ||
             (on_boundary && res == CGAL::ON_BOUNDARY)     ||
             (outside     && res == CGAL::ON_UNBOUNDED_SIDE) )
         {
           point_set->select(&*point_it); ++nb_selected;
-        } 
+          break;//loop on i
+        }
+        }
       } // loop on points in point_set
     }// loop on selected point sets
 
     print_message(QString("Querying with %1 points is done in %2 sec.").arg(nb_query).arg(timer.time()));
     print_message(QString("%1 points are selected. All Done!").arg(nb_selected));
+
+    // delete testers
+    for (std::size_t i = 0; i < inside_testers.size(); ++i)
+      delete inside_testers[i];
 
     // for repaint
     foreach(Scene_interface::Item_id id, scene->selectionIndices()) {

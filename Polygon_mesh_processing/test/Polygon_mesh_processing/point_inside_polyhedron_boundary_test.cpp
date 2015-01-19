@@ -2,7 +2,7 @@
 #include <fstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Point_inside_polyhedron_3.h>
+#include <CGAL/Point_inside_polygon_mesh_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
@@ -95,7 +95,7 @@ void test(
 
   CGAL::Timer timer;
   timer.start();
-  CGAL::Point_inside_polyhedron_3<Polyhedron, K> inside(poly);
+  CGAL::Point_inside_polygon_mesh<Polyhedron, K> inside(poly);
   std::cerr << "  Preprocessing took " << timer.time() << " sec." << std::endl;
   timer.reset();  
 

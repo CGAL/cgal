@@ -26,6 +26,7 @@
 #include <CGAL/tags.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Triangle_3_Ray_3_do_intersect.h>
+#include <CGAL/internal/AABB_tree/Primitive_helper.h>
 
 namespace CGAL {
 namespace internal {
@@ -51,7 +52,9 @@ public:
   {
     internal::r3t3_do_intersect_endpoint_position_visitor visitor;
     std::pair<bool,internal::R3T3_intersection::type> res=
-      internal::do_intersect(primitive.datum(),query,Kernel(),visitor);
+      internal::do_intersect(
+        (internal::Primitive_helper<AABBTraits>::get_datum(primitive, AABBTraits())),
+        query,Kernel(),visitor);
     
     if (res.first){
       switch (res.second){
@@ -125,7 +128,8 @@ public:
   template<class Query>
   void intersection(const Query& query, const Primitive& primitive)
   {
-    typename Kernel::Triangle_3 t=primitive.datum();
+    typename Kernel::Triangle_3 t
+      = (internal::Primitive_helper<AABBTraits>::get_datum(primitive, AABBTraits()));
     if ( !do_intersect(query,t.bbox()) ) return;
     
     typename Kernel::Point_2 p0=z_project(t[0]);
