@@ -89,7 +89,7 @@ make_tetrahedron(Graph& g, const P& p0, const P& p1, const P& p2, const P& p3)
   typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
   typedef typename Traits::vertex_descriptor               vertex_descriptor;
   typedef typename Traits::face_descriptor               face_descriptor;
-  typedef boost::property_map<Graph,vertex_point_t>::type Point_property_map;
+  typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
 
   Point_property_map ppmap = get(CGAL::vertex_point, g);
   vertex_descriptor v0, v1, v2, v3, v4;
