@@ -75,7 +75,8 @@ public:
   { }
  
   /** 
-   * Constructor with one polyhedral surface. `mesh` must be closed and triangulated.
+   * Constructor with one polyhedral surface.
+   * @pre `mesh` must be closed and triangulated.
    */
   Point_inside_polygon_mesh(const TriangleMesh& mesh,
                             const Kernel& kernel=Kernel())
@@ -83,6 +84,9 @@ public:
     vector_functor(kernel.construct_vector_3_object()),
     tree(Traits())
   {
+    CGAL_assertion(mesh.is_pure_triangle());
+    CGAL_assertion(mesh.is_closed());
+
     add_triangle_mesh(mesh);
   }
 
