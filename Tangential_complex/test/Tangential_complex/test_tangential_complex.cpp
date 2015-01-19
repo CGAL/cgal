@@ -23,7 +23,7 @@
 #ifdef _DEBUG
   const int NUM_POINTS = 50;
 #else
-  const int NUM_POINTS = 10000;
+  const int NUM_POINTS = 30000;
 #endif
 
 int main()
@@ -36,8 +36,8 @@ int main()
 # endif
 #endif
 
-  const int INTRINSIC_DIMENSION = 2;
-  const int AMBIENT_DIMENSION   = 4;
+  const int INTRINSIC_DIMENSION = 3;
+  const int AMBIENT_DIMENSION   = 9;
 
   typedef CGAL::Epick_d<CGAL::Dimension_tag<AMBIENT_DIMENSION> > Kernel;
   typedef Kernel::FT                                             FT;
@@ -56,7 +56,7 @@ int main()
     Wall_clock_timer t_gen;
 #endif
 
-    std::vector<Point> points =
+    /*std::vector<Point> points =
       //generate_points_on_circle_2<Kernel>(NUM_POINTS, 3.);
       //generate_points_on_moment_curve<Kernel>(NUM_POINTS, AMBIENT_DIMENSION, 0., 1.);
       //generate_points_on_plane<Kernel>(NUM_POINTS);
@@ -64,22 +64,23 @@ int main()
       //generate_points_on_sphere_d<Kernel>(NUM_POINTS, AMBIENT_DIMENSION, 3.0);
       //generate_points_on_klein_bottle_3D<Kernel>(NUM_POINTS, 4., 3.);
       generate_points_on_klein_bottle_4D<Kernel>(NUM_POINTS, 4., 3.);
-      //generate_points_on_klein_bottle_variant_5D<Kernel>(NUM_POINTS, 4., 3.);
+      //generate_points_on_klein_bottle_variant_5D<Kernel>(NUM_POINTS, 4., 3.);*/
 
     // LOAD FROM A FILE
-    //std::vector<Point> points;
-    //load_points_from_file<Point>(
-    //  "data/points_10_10k.cin", std::back_inserter(points));
+    std::vector<Point> points;
+    load_points_from_file<Point>(
+      "data/SO3_10000.txt", std::back_inserter(points));
 
 #ifdef CGAL_TC_PROFILING
     std::cerr << "Point set generated in " << t_gen.elapsed()
               << " seconds." << std::endl;
 #endif
 
+    std::size_t num_points_before = points.size();
     points = sparsify_point_set(
       k, points, FT(INPUT_SPARSITY)*FT(INPUT_SPARSITY));
-    std::cerr << "Number of points after sparsification: "
-      << points.size() << std::endl;
+    std::cerr << "Number of points before/after sparsification: "
+      << num_points_before << " / " << points.size() << std::endl;
 
     CGAL::Tangential_complex<
       Kernel,
@@ -89,24 +90,37 @@ int main()
 
     tc.compute_tangential_complex();
     double computation_time = t.elapsed(); t.reset();
-
+    
     std::set<std::set<std::size_t> > incorrect_simplices;
     //stop = !tc.check_if_all_simplices_are_in_the_ambient_delaunay(&incorrect_simplices);
+
+    double export_before_time = -1.;
+    if (INTRINSIC_DIMENSION <= 3)
+    {
+      t.reset();
+      std::stringstream output_filename;
+      output_filename << "output/test_tc_" << INTRINSIC_DIMENSION
+        << "_in_R" << AMBIENT_DIMENSION << "_BEFORE_FIX.off";
+      std::ofstream off_stream(output_filename.str().c_str());
+      tc.export_to_off(off_stream, true, &incorrect_simplices, true);
+      export_before_time = t.elapsed(); t.reset();
+    }
+
 
     t.reset();
     tc.fix_inconsistencies();
     double fix_time = t.elapsed(); t.reset();
 
-    double export_time = -1.;
+    double export_after_time = -1.;
     if (INTRINSIC_DIMENSION <= 3)
     {
       t.reset();
       std::stringstream output_filename;
-      output_filename << "data/test_tc_" << INTRINSIC_DIMENSION
-        << "_in_R" << AMBIENT_DIMENSION << ".off";
+      output_filename << "output/test_tc_" << INTRINSIC_DIMENSION
+        << "_in_R" << AMBIENT_DIMENSION << "_AFTER_FIX.off";
       std::ofstream off_stream(output_filename.str().c_str());
       tc.export_to_off(off_stream, true, &incorrect_simplices, true);
-      double export_time = t.elapsed(); t.reset();
+      export_after_time = t.elapsed(); t.reset();
     }
     /*else
       tc.number_of_inconsistent_simplices();*/
@@ -120,8 +134,9 @@ int main()
       << std::endl
       << "    - Init + kd-tree = " << init_time << std::endl
       << "    - TC computation = " << computation_time << std::endl
+      << "  * Export to OFF (before fix): " << export_before_time << std::endl
       << "  * Fix inconsistencies: " << fix_time << std::endl
-      << "  * Export to OFF: " << export_time << std::endl
+      << "  * Export to OFF (after fix): " << export_after_time << std::endl
       << "================================================" << std::endl
       << std::endl;
   }
