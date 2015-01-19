@@ -146,7 +146,7 @@ public:
       }
     }
 
-    typename Solver_matrix A(nb_vertices);
+    Solver_matrix A(nb_vertices);
 
     for(typename std::set<Vertex_handle>::iterator vb = interior_vertices.begin();
         vb != interior_vertices.end();
