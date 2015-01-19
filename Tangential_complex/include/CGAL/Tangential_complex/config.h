@@ -51,6 +51,10 @@ const int CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS = 1;
     // for local tri where there are some inconsistencies
     // But be careful: refreshing the TC may invalidate cells, so the
     // incident cells have to be recomputed again
+#define CGAL_TC_PERTURB_POSITION
+# define CGAL_TC_PERTURB_POSITION_TANGENTIAL // default
+//# define CGAL_TC_PERTURB_POSITION_GLOBAL
+//#define CGAL_TC_PERTURB_WEIGHT
 
 //========================= Parameters ========================================
 const std::size_t NUM_POINTS_FOR_PCA = 50;

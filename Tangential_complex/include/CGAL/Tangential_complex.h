@@ -23,7 +23,8 @@
 #define TANGENTIAL_COMPLEX_H
 
 #include <CGAL/Tangential_complex/config.h>
-const double SQ_HALF_SPARSITY = 0.5*0.5*INPUT_SPARSITY*INPUT_SPARSITY;
+const double HALF_SPARSITY = 0.5*INPUT_SPARSITY;
+const double SQ_HALF_SPARSITY = HALF_SPARSITY*HALF_SPARSITY;
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -36,6 +37,7 @@ const double SQ_HALF_SPARSITY = 0.5*0.5*INPUT_SPARSITY*INPUT_SPARSITY;
 #include <CGAL/Tangential_complex/utilities.h>
 #include <CGAL/Tangential_complex/Point_cloud.h>
 #include <CGAL/Combination_enumerator.h>
+#include <CGAL/point_generators_d.h>
 
 #ifdef CGAL_TC_PROFILING
 # include <CGAL/Mesh_3/Profiling_tools.h>
@@ -114,6 +116,7 @@ class Tangential_complex
   typedef typename Triangulation::Bare_point          Tr_bare_point;
   typedef typename Triangulation::Vertex_handle       Tr_vertex_handle;
   typedef typename Triangulation::Full_cell_handle    Tr_full_cell_handle;
+  typedef typename Tr_traits::Vector_d                Tr_vector;
 
   typedef std::vector<Vector>                         Tangent_space_basis;
 
@@ -163,13 +166,11 @@ class Tangential_complex
 
   typedef typename std::vector<Tangent_space_basis>   TS_container;
   typedef typename std::vector<Tr_and_VH>             Tr_container;
+  typedef typename std::vector<Vector>                Vectors;
 #ifdef CGAL_LINKED_WITH_TBB
   // CJTODO: test other mutexes
   // http://www.threadingbuildingblocks.org/docs/help/reference/synchronization/mutexes/mutex_concept.htm
   //typedef tbb::queuing_mutex                          Tr_mutex;
-#endif
-#ifdef CGAL_TC_EXPORT_NORMALS
-  typedef typename std::vector<Vector>                Normals;
 #endif
 
   // For transform_iterator
@@ -186,7 +187,8 @@ public:
                      const Kernel &k = Kernel())
   : m_k(k),
     m_points(first, last),
-    m_points_ds(m_points)
+    m_points_ds(m_points),
+    m_ambiant_dim(k.point_dimension_d_object()(*first))
   {}
 
   /// Destructor
@@ -211,7 +213,12 @@ public:
     //m_tr_mutexes.resize(m_points.size());
 #endif
     m_tangent_spaces.resize(m_points.size());
+#ifdef CGAL_TC_PERTURB_WEIGHT
     m_weights.resize(m_points.size(), FT(0));
+#endif
+#ifdef CGAL_TC_PERTURB_POSITION
+    m_translations.resize(m_points.size());
+#endif
 #ifdef CGAL_TC_EXPORT_NORMALS
     m_normals.resize(m_points.size());
 #endif
@@ -240,13 +247,11 @@ public:
   
   void estimate_intrinsic_dimension()
   {
-    const int amb_dim = m_k.point_dimension_d_object()(*m_points.begin());
-
     // Kernel functors
     typename Kernel::Compute_coordinate_d coord =
       m_k.compute_coordinate_d_object();
 
-    std::vector<FT> sum_eigen_values(amb_dim, FT(0));
+    std::vector<FT> sum_eigen_values(m_ambiant_dim, FT(0));
 
     Points::const_iterator it_p = m_points.begin();
     Points::const_iterator it_p_end = m_points.end();
@@ -261,13 +266,13 @@ public:
       //******************************* PCA *************************************
 
       // One row = one point
-      Eigen::MatrixXd mat_points(NUM_POINTS_FOR_PCA, amb_dim);
+      Eigen::MatrixXd mat_points(NUM_POINTS_FOR_PCA, m_ambiant_dim);
       KNS_iterator nn_it = kns_range.begin();
       for (int j = 0 ;
             j < NUM_POINTS_FOR_PCA && nn_it != kns_range.end() ;
             ++j, ++nn_it)
       {
-        for (int i = 0 ; i < amb_dim ; ++i)
+        for (int i = 0 ; i < m_ambiant_dim ; ++i)
           mat_points(j, i) = CGAL::to_double(coord(m_points[nn_it->first], i));
       }
       Eigen::MatrixXd centered = mat_points.rowwise() - mat_points.colwise().mean();
@@ -277,7 +282,7 @@ public:
       // The eigenvectors are sorted in increasing order of their corresponding
       // eigenvalues
       Tangent_space_basis ts;
-      for (int i = 0 ; i < amb_dim ; ++i)
+      for (int i = 0 ; i < m_ambiant_dim ; ++i)
         sum_eigen_values[i] += eig.eigenvalues()[i];
 
       //*************************************************************************
@@ -327,9 +332,8 @@ public:
 
   unsigned int fix_inconsistencies()
   {
-    typename Kernel::Point_drop_weight_d drop_w = m_k.point_drop_weight_d_object();
-    typename Kernel::Construct_weighted_point_d cwp =
-      m_k.construct_weighted_point_d_object();
+    typename Kernel::Point_drop_weight_d drop_w = 
+      m_k.point_drop_weight_d_object();
 
 #ifdef CGAL_TC_VERBOSE
     std::cerr << "Fixing inconsistencies..." << std::endl;
@@ -741,6 +745,8 @@ private:
       m_k.difference_of_points_d_object();
     typename Kernel::Squared_distance_d k_sqdist =
       m_k.squared_distance_d_object();
+    typename Kernel::Translated_point_d k_transl =
+      m_k.translated_point_d_object();
 
     // Triangulation's traits functor & objects
     typename Tr_traits::Squared_distance_d sqdist =
@@ -753,8 +759,13 @@ private:
       local_tr_traits.power_center_d_object();*/ // CJTODO
     typename Get_functor<Tr_traits, Power_center_tag>::type power_center(local_tr_traits);
 
-    // Estimate the tangent space
+#ifdef CGAL_TC_PERTURB_POSITION
+    const Point center_pt = k_transl(m_points[i], m_translations[i]);
+#else
     const Point &center_pt = m_points[i];
+#endif
+    
+    // Estimate the tangent space
     if (!tangent_spaces_are_already_computed)
     {
 #ifdef CGAL_TC_EXPORT_NORMALS
@@ -772,7 +783,12 @@ private:
     // Insert p
     Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
       local_tr_traits.construct_point_d_object()(Intrinsic_dimension, ORIGIN),
-      m_weights[i]);
+#ifdef CGAL_TC_PERTURB_WEIGHT
+      m_weights[i]
+#else
+      0
+#endif
+    );
     center_vertex = local_tr.insert(wp);
     center_vertex->data() = i;
 
@@ -796,12 +812,21 @@ private:
       // ith point = p, which is already inserted
       if (neighbor_point_idx != i)
       {
+#ifdef CGAL_TC_PERTURB_POSITION
+        const Point neighbor_pt = k_transl(
+          m_points[neighbor_point_idx], m_translations[neighbor_point_idx]);
+#else
         const Point &neighbor_pt = m_points[neighbor_point_idx];
+#endif
+#ifdef CGAL_TC_PERTURB_WEIGHT
         FT neighbor_weight = m_weights[neighbor_point_idx];
+#else
+        FT neighbor_weight = 0;
+#endif
 
         if (star_sphere_squared_radius
           && k_sqdist(center_pt, neighbor_pt)
-             > *star_sphere_squared_radius + SQ_HALF_SPARSITY)
+             > *star_sphere_squared_radius + 4*SQ_HALF_SPARSITY) // CJTODO: why is "4*" needed?
           break;
 
         Tr_point proj_pt = project_point_and_compute_weight(
@@ -815,7 +840,7 @@ private:
           // CJTODO TEMP TEST
           /*if (star_sphere_squared_radius
             && k_sqdist(center_pt, neighbor_pt)
-               > *star_sphere_squared_radius + SQ_HALF_SPARSITY)
+               > *star_sphere_squared_radius + 4*SQ_HALF_SPARSITY)
             std::cout << "ARGGGGGGGH" << std::endl;*/
 
           vh->data() = neighbor_point_idx;
@@ -897,15 +922,14 @@ private:
 
     //******************************* PCA *************************************
 
-    const int amb_dim = m_k.point_dimension_d_object()(p);
     // One row = one point
-    Eigen::MatrixXd mat_points(NUM_POINTS_FOR_PCA, amb_dim);
+    Eigen::MatrixXd mat_points(NUM_POINTS_FOR_PCA, m_ambiant_dim);
     KNS_iterator nn_it = kns_range.begin();
     for (int j = 0 ;
          j < NUM_POINTS_FOR_PCA && nn_it != kns_range.end() ;
          ++j, ++nn_it)
     {
-      for (int i = 0 ; i < amb_dim ; ++i)
+      for (int i = 0 ; i < m_ambiant_dim ; ++i)
         mat_points(j, i) = CGAL::to_double(coord(m_points[nn_it->first], i));
     }
     Eigen::MatrixXd centered = mat_points.rowwise() - mat_points.colwise().mean();
@@ -915,18 +939,20 @@ private:
     // The eigenvectors are sorted in increasing order of their corresponding
     // eigenvalues
     Tangent_space_basis ts;
-    for (int i = amb_dim - 1 ; i >= amb_dim - Intrinsic_dimension ; --i)
+    for (int i = m_ambiant_dim - 1 ; 
+         i >= m_ambiant_dim - Intrinsic_dimension ; 
+         --i)
     {
       ts.push_back(constr_vec(
-        amb_dim,
+        m_ambiant_dim,
         eig.eigenvectors().col(i).data(),
-        eig.eigenvectors().col(i).data() + amb_dim));
+        eig.eigenvectors().col(i).data() + m_ambiant_dim));
     }
 #ifdef CGAL_TC_EXPORT_NORMALS
     *p_normal = constr_vec(
-        amb_dim,
-        eig.eigenvectors().col(amb_dim - Intrinsic_dimension - 1).data(),
-        eig.eigenvectors().col(amb_dim - Intrinsic_dimension - 1).data() + amb_dim);
+        m_ambiant_dim,
+        eig.eigenvectors().col(m_ambiant_dim - Intrinsic_dimension - 1).data(),
+        eig.eigenvectors().col(m_ambiant_dim - Intrinsic_dimension - 1).data() + m_ambiant_dim);
 #endif
 
     //*************************************************************************
@@ -1120,6 +1146,16 @@ private:
 #ifdef CGAL_LINKED_WITH_TBB
     //Tr_mutex::scoped_lock lock(m_tr_mutexes[tr_index]);
 #endif
+    
+#ifdef CGAL_TC_PERTURB_POSITION
+# ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
+    CGAL::Random_points_on_sphere_d<Point> 
+      tr_point_on_sphere_generator(m_ambiant_dim, 1);
+# else
+    CGAL::Random_points_on_sphere_d<Tr_bare_point> 
+      tr_point_on_sphere_generator(Intrinsic_dimension, 1);
+# endif
+#endif
 
     Triangulation const& tr    = m_triangulations[tr_index].tr();
     Tr_vertex_handle center_vh = m_triangulations[tr_index].center_vertex();
@@ -1193,11 +1229,21 @@ private:
         typename Get_functor<Tr_traits, Power_center_tag>::type power_center(local_tr_traits);
         typename Tr_traits::Compute_coordinate_d coord =
           local_tr_traits.compute_coordinate_d_object();
+        typename Tr_traits::Construct_weighted_point_d cwp =
+          local_tr_traits.construct_weighted_point_d_object();
+        //typename Tr_traits::Point_to_vector_d pt_to_vec =
+        //  local_tr_traits.construct_point_to_vector_d_object();
         
         typename Kernel::Translated_point_d k_transl =
           m_k.translated_point_d_object();
         typename Kernel::Scaled_vector_d k_scaled_vec =
           m_k.scaled_vector_d_object();
+        typename Kernel::Construct_vector_d k_constr_vec =
+          m_k.construct_vector_d_object();
+#if defined(CGAL_TC_PERTURB_POSITION) && defined(CGAL_TC_PERTURB_POSITION_GLOBAL)
+        typename Kernel::Point_to_vector_d k_pt_to_vec =
+          m_k.point_to_vector_d_object();
+#endif
 
         Tr_point local_center = power_center(simplex_pts.begin(), simplex_pts.end());
         Point global_center = m_points[tr_index];
@@ -1226,7 +1272,28 @@ private:
              it != neighbors.end() ; 
              ++it)
         {
+#ifdef CGAL_TC_PERTURB_WEIGHT
           m_weights[*it] = rng.get_double(0., SQ_HALF_SPARSITY);
+#endif
+
+#ifdef CGAL_TC_PERTURB_POSITION
+# ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
+          m_translations[*it] = k_scaled_vec(k_pt_to_vec(
+            *tr_point_on_sphere_generator++), HALF_SPARSITY);
+# else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
+          Tr_point local_random_transl =
+            cwp(*tr_point_on_sphere_generator++, 0);
+          Vector &global_transl = m_translations[*it];
+          global_transl = k_constr_vec(m_ambiant_dim);
+          for (int i = 0 ; i < Intrinsic_dimension ; ++i)
+          {
+            global_transl = k_transl(
+              global_transl, 
+              k_scaled_vec(tsb[i], HALF_SPARSITY*coord(local_random_transl, i))
+            );
+          }
+# endif
+#endif
         }
 
 #if !defined(CGAL_TC_GLOBAL_REFRESH)
@@ -1263,7 +1330,7 @@ private:
 
     int num_coords = min(ambient_dim, 3);
 #ifdef CGAL_TC_EXPORT_NORMALS
-    Normals::const_iterator it_n = m_normals.begin();
+    Vectors::const_iterator it_n = m_normals.begin();
 #endif
     typename Points::const_iterator it_p = m_points.begin();
     typename Points::const_iterator it_p_end = m_points.end();
@@ -1413,9 +1480,15 @@ private:
 
 private:
   const Kernel              m_k;
+  const int                 m_ambiant_dim;
   
   Points                    m_points;
+#ifdef CGAL_TC_PERTURB_WEIGHT
   Weights                   m_weights;
+#endif
+#ifdef CGAL_TC_PERTURB_POSITION
+  Vectors                   m_translations;
+#endif
 
   Points_ds                 m_points_ds;
   TS_container              m_tangent_spaces;
@@ -1425,7 +1498,7 @@ private:
   //std::vector<Tr_mutex>     m_tr_mutexes;
 #endif
 #ifdef CGAL_TC_EXPORT_NORMALS
-  Normals                   m_normals;
+  Vectors                   m_normals;
 #endif
 
 }; // /class Tangential_complex
