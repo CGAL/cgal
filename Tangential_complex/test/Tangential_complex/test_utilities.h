@@ -105,6 +105,8 @@ sparsify_point_set(
   
   Points_ds points_ds(input_pts);
 
+  std::vector<bool> dropped_points(input_pts.size(), false);
+
   // Parse the following points, and add them if they are not too close to
   // the other points
   std::size_t pt_idx = 0;
@@ -112,6 +114,11 @@ sparsify_point_set(
        it_pt != input_pts.end();
        ++it_pt, ++pt_idx)
   {
+    if (dropped_points[pt_idx])
+      continue;
+    
+    output.push_back(*it_pt);
+
     INS_range ins_range = points_ds.query_incremental_ANN(*it_pt);
 
     // Drop it if there is another point that:
@@ -123,16 +130,11 @@ sparsify_point_set(
     {
       std::size_t neighbor_point_idx = nn_it->first;
       typename Kernel::FT sq_dist = nn_it->second;
-      // The neighbor is further, we keep the point
-      if (sq_dist >= min_squared_dist)
-      {
-        output.push_back(*it_pt);
+      // The neighbor is too close, we drop the neighbor
+      if (sq_dist < min_squared_dist)
+        dropped_points[neighbor_point_idx] = true;
+      else
         break;
-      }
-      // The neighbor is close and it has a higher index
-      else if (neighbor_point_idx > pt_idx)
-        break; // We drop the point
-      // Otherwise, we go the next closest point
     }
   }
   
