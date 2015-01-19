@@ -7,6 +7,9 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <CGAL/boost/graph/properties_Surface_mesh.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point;
@@ -28,11 +31,11 @@ int main()
     Point r(0.0, 0.0, 1.0);
     Point s(0.0, 0.0, 0.0);
     Mesh m;
-    // m.make_tetrahedron(p, q, r, s);
+    CGAL::Euler::make_tetrahedron(m, p, q, r, s);
 
     // constructs AABB tree
     Tree tree(m.faces_begin(),m.faces_end(),m);
-#if 0
+
     // constructs segment query
     Point a(-0.2, 0.2, -0.2);
     Point b(1.3, 0.2, 1.3);
@@ -80,6 +83,6 @@ int main()
       if(boost::get<Segment>(&(plane_intersection->first)))
             std::cout << "intersection object is a segment" << std::endl;
     }
-#endif
+
     return EXIT_SUCCESS;
 }
