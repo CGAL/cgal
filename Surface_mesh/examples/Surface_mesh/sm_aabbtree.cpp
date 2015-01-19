@@ -1,5 +1,3 @@
-// Author(s) : Camille Wormser, Pierre Alliez
-
 #include <iostream>
 
 #include <CGAL/Simple_cartesian.h>
@@ -55,11 +53,13 @@ int main()
     // (generally a point)
     Segment_intersection intersection =
         tree.any_intersection(segment_query);
-    if(intersection)
-    {
-        // gets intersection object
-      if(boost::get<Point>(&(intersection->first)))
-        std::cout << "intersection object is a point" << std::endl;
+    if(intersection){
+      // gets intersection object
+      if(boost::get<Point>(&(intersection->first))){
+        Point* p = boost::get<Point>(&(intersection->first));
+        std::cout << "intersection object is a point " << *p <<  std::endl;
+        std::cout << "with face "<< intersection->second  <<  std::endl;
+      }
     }
 
     // computes all intersections with segment query (as pairs object - primitive_id)
@@ -71,17 +71,19 @@ int main()
     tree.all_intersected_primitives(segment_query, std::back_inserter(primitives));
 
     // constructs plane query
+    Point base(0.0,0.0,0.5);
     Vector vec(0.0,0.0,1.0);
-    Plane plane_query(a,vec);
+    Plane plane_query(base,vec);
 
     // computes first encountered intersection with plane query
     // (generally a segment)
     Plane_intersection plane_intersection = tree.any_intersection(plane_query);
-    if(plane_intersection)
-    {
-      
-      if(boost::get<Segment>(&(plane_intersection->first)))
-            std::cout << "intersection object is a segment" << std::endl;
+    if(plane_intersection){
+      if(boost::get<Segment>(&(plane_intersection->first))){
+        Segment* s = boost::get<Segment>(&(plane_intersection->first));
+        std::cout << "one intersection object is the segment " << s << std::endl;
+        std::cout << "with face "<< intersection->second  <<  std::endl;
+      }
     }
 
     return EXIT_SUCCESS;
