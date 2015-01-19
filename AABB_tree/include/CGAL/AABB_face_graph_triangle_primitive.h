@@ -38,8 +38,9 @@ namespace CGAL {
  * \cgalModels `AABBPrimitiveWithSharedData`
  *
  *\tparam FaceGraph is a model of the face graph concept.
- *\tparam VertexPointPMap  is a property map with `boost::graph_traits<HalfedgeGraph>::%vertex_descriptor`
+ *\tparam VertexPointPMap  is a property map with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
  *   as key type and a \cgal Kernel `Point_3` as value type.
+ *                         The default is `typename boost::property_map< FaceGraph,vertex_point_t>::%type`.
  *\tparam OneFaceGraphPerTree is either `CGAL::Tag_true` or `CGAL::Tag_false`.
  * In the former case, we guarantee that all the primitives will be from a
  * common polyhedron and some data will be factorized so that the size of
@@ -54,21 +55,31 @@ namespace CGAL {
  *\sa `AABB_halfedge_graph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>`
  */
 template < class FaceGraph,
-           class VertexPointPMap = typename boost::property_map< FaceGraph, vertex_point_t>::type,
+           class VertexPointPMap = Default,
            class OneFaceGraphPerTree = Tag_true,
            class CacheDatum=Tag_false >
 class AABB_face_graph_triangle_primitive
 #ifndef DOXYGEN_RUNNING
   : public AABB_primitive<typename boost::graph_traits<FaceGraph>::face_descriptor,
-                        Triangle_from_face_descriptor_property_map<FaceGraph, VertexPointPMap>,
-                        One_point_from_face_descriptor_property_map<FaceGraph, VertexPointPMap>,
+                        Triangle_from_face_descriptor_property_map<
+                          FaceGraph,
+                          typename Default::Get<VertexPointPMap,
+                                                typename boost::property_map< FaceGraph,
+                                                                              vertex_point_t>::type >::type>,
+                        One_point_from_face_descriptor_property_map<
+                          FaceGraph,
+                          typename Default::Get<VertexPointPMap,
+                                                typename boost::property_map< FaceGraph,
+                                                                              vertex_point_t>::type >::type>,
                         OneFaceGraphPerTree,
                         CacheDatum >
 #endif
 {
+  typedef typename Default::Get<VertexPointPMap, typename boost::property_map< FaceGraph, vertex_point_t>::type >::type VertexPointPMap_;
+
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor Id_;
-  typedef Triangle_from_face_descriptor_property_map<FaceGraph,VertexPointPMap>  Triangle_property_map;
-  typedef One_point_from_face_descriptor_property_map<FaceGraph,VertexPointPMap> Point_property_map;
+  typedef Triangle_from_face_descriptor_property_map<FaceGraph,VertexPointPMap_>  Triangle_property_map;
+  typedef One_point_from_face_descriptor_property_map<FaceGraph,VertexPointPMap_> Point_property_map;
 
   typedef AABB_primitive< Id_,
                           Triangle_property_map,
@@ -110,7 +121,7 @@ public:
     is available with `vppm` set to `boost::get(vertex_point, graph)`.
   */
   template <class Iterator>
-  AABB_face_graph_triangle_primitive(Iterator it, const FaceGraph& graph, VertexPointPMap vppm)
+  AABB_face_graph_triangle_primitive(Iterator it, const FaceGraph& graph, VertexPointPMap_ vppm)
     : Base( Id_(*it),
             Triangle_property_map(const_cast<FaceGraph*>(&graph),vppm),
             Point_property_map(const_cast<FaceGraph*>(&graph),vppm) )
@@ -121,7 +132,7 @@ public:
     If `VertexPointPMap` is the default of the class, an additional constructor
     is available with `vppm` set to `boost::get(vertex_point, graph)`.
   */
-  AABB_face_graph_triangle_primitive(Id id, const FaceGraph& graph, VertexPointPMap vppm)
+  AABB_face_graph_triangle_primitive(Id id, const FaceGraph& graph, VertexPointPMap_ vppm)
     : Base( Id_(id),
             Triangle_property_map(const_cast<FaceGraph*>(&graph),vppm),
             Point_property_map(const_cast<FaceGraph*>(&graph),vppm) )
@@ -154,7 +165,7 @@ public:
 
   static
   typename Cstr_shared_data::Shared_data
-  construct_shared_data(const FaceGraph& graph, const VertexPointPMap& vpm)
+  construct_shared_data(const FaceGraph& graph, const VertexPointPMap_& vpm)
   {
     return Cstr_shared_data::construct_shared_data(const_cast<FaceGraph&>(graph), vpm);
   }
