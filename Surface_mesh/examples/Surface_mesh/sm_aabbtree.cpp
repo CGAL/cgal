@@ -34,7 +34,7 @@ int main()
     CGAL::Euler::make_tetrahedron(m, p, q, r, s);
 
     // constructs AABB tree
-    Tree tree(m.faces_begin(),m.faces_end(),m);
+    Tree tree(faces(m).first, faces(m).second, m);
 
     // constructs segment query
     Point a(-0.2, 0.2, -0.2);
