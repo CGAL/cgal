@@ -8,6 +8,7 @@
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
 
 #include <CGAL/Timer.h>
 #include <boost/foreach.hpp>
@@ -161,4 +162,14 @@ int main(int, char** argv) {
   points.reserve(nb_query);
   random_points(bbox(poly), nb_query, back_inserter(points));
   test(poly, points);
+
+  //test compilation of constructor from AABB_tree
+  
+  typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> FGTP;
+  typedef CGAL::AABB_traits<K, FGTP>    AABB_traits;
+  typedef CGAL::AABB_tree<AABB_traits>  AABB_tree;
+
+  AABB_tree tree(faces(poly).first, faces(poly).second, poly);
+  CGAL::Point_inside_polygon_mesh<Polyhedron, K> inside_test(tree);
+
 }

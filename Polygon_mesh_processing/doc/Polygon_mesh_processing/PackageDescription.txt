@@ -40,7 +40,7 @@
 - `CGAL::is_oriented()`
 - `CGAL::Polygon_mesh_processing::is_self_intersecting()`
 - `CGAL::Polygon_mesh_processing::self_intersections()`
-- `CGAL::Point_inside_polyhedron_3`
+- `CGAL::Point_inside_polygon_mesh`
 
 ## Combinatorial Repairing Functions and Classes ##
 - \link polyhedron_stitching_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink

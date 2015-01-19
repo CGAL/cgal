@@ -46,7 +46,6 @@ namespace CGAL {
        Remove `TriangleAccessor_3` as well as the concept in Mesh_3 since making `TriangleMesh`
        a model of `FaceListGraph` will make it useless
  * \todo `TriangleMesh` should be a model of `FaceListGraph`
- * \todo Add a constructor from AABB-tree (once TriangleMesh is a FaceListGraph, the type is hardcoded)
  * \todo check the implementation
  */
 template <class TriangleMesh,
@@ -56,13 +55,13 @@ class Point_inside_polygon_mesh
   // typedefs
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
   typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
-  typedef CGAL::AABB_tree<Traits> Tree;
+  typedef CGAL::AABB_tree<Traits> AABB_tree;
   typedef typename Kernel::Point_3 Point;
 
   //members
   typename Kernel::Construct_ray_3     ray_functor;
   typename Kernel::Construct_vector_3  vector_functor;
-  Tree tree;
+  const AABB_tree* tree_ptr;
 
 public:
   /**
@@ -70,24 +69,39 @@ public:
    */
   Point_inside_polygon_mesh(const Kernel& kernel=Kernel())
   : ray_functor(kernel.construct_ray_3_object()),
-    vector_functor(kernel.construct_vector_3_object()),
-    tree(Traits())
-  { }
+    vector_functor(kernel.construct_vector_3_object())
+  {
+    tree_ptr = new AABB_tree(Traits());
+  }
  
-  /** 
-   * Constructor with one polyhedral surface.
+  /**
+   * Constructor with one surface polygon mesh.
    * @pre `mesh` must be closed and triangulated.
    */
   Point_inside_polygon_mesh(const TriangleMesh& mesh,
                             const Kernel& kernel=Kernel())
   : ray_functor(kernel.construct_ray_3_object()),
-    vector_functor(kernel.construct_vector_3_object()),
-    tree(Traits())
+    vector_functor(kernel.construct_vector_3_object())
   {
     CGAL_assertion(mesh.is_pure_triangle());
     CGAL_assertion(mesh.is_closed());
 
-    add_triangle_mesh(mesh);
+    tree_ptr = new AABB_tree(faces(mesh).first,
+                             faces(mesh).second,
+                             mesh);
+  }
+
+  /**
+  * Constructor that takes a \cgal `AABB_tree` with 
+  * `AABB_face_graph_triangle_primitive` as Primitive type.
+  * Note the domain should be closed.
+  */
+  Point_inside_polygon_mesh(const AABB_tree& tree,
+    const Kernel& kernel = Kernel())
+  : ray_functor(kernel.construct_ray_3_object()),
+    vector_functor(kernel.construct_vector_3_object()),
+    tree_ptr(&tree)
+  {
   }
 
   /** 
@@ -95,19 +109,12 @@ public:
    */ 
   void build()
   {
-    tree.build();
+    tree_ptr->build();
   }
 
-private:
-  /**
-   * `mesh` is added as input
-   */
-  void add_triangle_mesh(const TriangleMesh& mesh) 
+  ~Point_inside_polygon_mesh()
   {
-    CGAL_assertion(mesh.is_pure_triangle());
-    CGAL_assertion(mesh.is_closed());
-
-    tree.insert(faces(mesh).first, faces(mesh).second, mesh);
+    delete tree_ptr;
   }
 
 public:
@@ -120,8 +127,8 @@ public:
    */
   Bounded_side operator()(const Point& point) const
   {
-    return internal::Point_inside_vertical_ray_cast<Kernel, Tree>()(
-      point, tree, ray_functor, vector_functor);
+    return internal::Point_inside_vertical_ray_cast<Kernel, AABB_tree>()(
+      point, *tree_ptr, ray_functor, vector_functor);
   }
 
 };
