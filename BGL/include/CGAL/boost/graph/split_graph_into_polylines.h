@@ -38,11 +38,12 @@ struct IsTerminalDefault
   }
 };
 
-
+template <class Graph>
 struct Dummy_visitor_for_split_graph_into_polylines
 {
   void start_new_polyline(){}
-  void add_node(size_t /* node_id */){}
+  void add_node(typename boost::graph_traits<Graph>::vertex_descriptor){}
+  void end_polyline(){}
 };
 
 
@@ -201,6 +202,7 @@ split_graph_into_polylines(const Graph& graph,
       u = v;
     }
     terminal.erase(u);
+    polyline_visitor.end_polyline();
   }
 
   // do the same but for cycles
@@ -226,6 +228,7 @@ split_graph_into_polylines(const Graph& graph,
       remove_edge(b, g);
       u = v;
     }
+    polyline_visitor.end_polyline();
   }
 }
 

@@ -84,6 +84,7 @@ struct Polyline_visitor
   {
     new_item->polylines.back().push_back(vd->point());
   }
+  void end_polyline(){}
 };
 
 void Polyhedron_demo_polyhedron_stitching_plugin::on_actionDetectBorders_triggered()
