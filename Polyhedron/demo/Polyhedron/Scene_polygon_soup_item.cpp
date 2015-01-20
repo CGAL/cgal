@@ -20,7 +20,7 @@
 
 #include <CGAL/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/orient_polygon_soup.h>
-#include <CGAL/orient_polyhedron_3.h>
+#include <CGAL/orient_polygon_mesh.h>
 
 typedef Kernel::Point_3 Point_3;
 
@@ -311,7 +311,7 @@ Scene_polygon_soup_item::exportAsPolyhedron(Polyhedron* out_polyhedron)
   
   if(out_polyhedron->size_of_vertices() > 0) {
     // Also check whether the consistent orientation is fine
-    if(!CGAL::is_oriented(*out_polyhedron)) {
+    if(!CGAL::Polygon_mesh_processing::is_oriented(*out_polyhedron)) {
       out_polyhedron->inside_out();
     }
     return true;

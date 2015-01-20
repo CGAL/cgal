@@ -37,7 +37,7 @@
 - `CGAL::Polygon_mesh_processing::triangulate_hole_polyline()`
 
 ## Predicate Functions and Classes ##
-- `CGAL::is_oriented()`
+- `CGAL::Polygon_mesh_processing::is_oriented()`
 - `CGAL::Polygon_mesh_processing::is_self_intersecting()`
 - `CGAL::Polygon_mesh_processing::self_intersections()`
 - `CGAL::Point_inside_polygon_mesh`

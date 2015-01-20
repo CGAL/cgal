@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/orient_polyhedron_3.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/orient_polygon_mesh.h>
+
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Timer.h>
 
@@ -20,9 +21,9 @@ void test(const char* file_name) {
     assert(false);
   }
 
-  assert(CGAL::is_oriented(oriented_poly));
+  assert(CGAL::Polygon_mesh_processing::is_oriented(oriented_poly));
   oriented_poly.inside_out();
-  assert(!CGAL::is_oriented(oriented_poly));
+  assert(!CGAL::Polygon_mesh_processing::is_oriented(oriented_poly));
 
   std::cerr << file_name << " passed the test." << std::endl;
 }
