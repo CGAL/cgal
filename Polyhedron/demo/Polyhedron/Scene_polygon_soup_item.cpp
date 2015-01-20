@@ -311,7 +311,7 @@ Scene_polygon_soup_item::exportAsPolyhedron(Polyhedron* out_polyhedron)
   
   if(out_polyhedron->size_of_vertices() > 0) {
     // Also check whether the consistent orientation is fine
-    if(!CGAL::Polygon_mesh_processing::is_oriented(*out_polyhedron)) {
+    if(!CGAL::Polygon_mesh_processing::is_outward_oriented(*out_polyhedron)) {
       out_polyhedron->inside_out();
     }
     return true;

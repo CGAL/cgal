@@ -12,18 +12,24 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
 
 
-void test(const char* file_name) {
-
+void test(const char* file_name)
+{
   std::ifstream input(file_name);
-  Polyhedron oriented_poly; // file should contain oriented poly
-  if ( !input || !(input >> oriented_poly) || oriented_poly.empty() ){
+  Polyhedron poly; // file should contain oriented polyhedron
+  
+  if ( !input || !(input >> poly) || poly.empty() )
+  {
     std::cerr << "Error: can not read file: " << file_name;
     CGAL_assertion(false);
   }
 
-  CGAL_assertion(CGAL::Polygon_mesh_processing::is_oriented(oriented_poly));
-  oriented_poly.inside_out();
-  CGAL_assertion(!CGAL::Polygon_mesh_processing::is_oriented(oriented_poly));
+  bool before = CGAL::Polygon_mesh_processing::is_outward_oriented(poly);
+  CGAL_assertion(before);
+
+  poly.inside_out();
+
+  bool after = CGAL::Polygon_mesh_processing::is_outward_oriented(poly);
+  CGAL_assertion(!after);
 
   std::cerr << file_name << " passed the test." << std::endl;
 }

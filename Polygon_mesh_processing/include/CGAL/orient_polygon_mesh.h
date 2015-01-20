@@ -57,16 +57,15 @@ struct Axis_compare {
  * \todo The following only handle polyhedron with one connected component
  *       the code, the sample example and the plugin must be updated.
  * \todo PolygonMesh should be a model of `FaceListGraph`
- * \todo find a better name for the function
  * @code
- * // use inside out to reverse orientation
- * if(!is_oriented(pmesh)) {
+ * // use inside_out operator to reverse orientation
+ * if(!is_outward_oriented(pmesh)) {
  *   pmesh.inside_out();
  * }
  * @endcode
  */
 template<class PolygonMesh>
-bool is_oriented(const PolygonMesh& pmesh)
+bool is_outward_oriented(const PolygonMesh& pmesh)
 {
   CGAL_precondition(pmesh.is_closed());
   CGAL_precondition(pmesh.is_valid()); //will check consistent orientation
