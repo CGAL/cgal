@@ -69,6 +69,8 @@ template<class PolygonMesh>
 bool is_oriented(const PolygonMesh& pmesh)
 {
   CGAL_precondition(pmesh.is_closed());
+  CGAL_precondition(pmesh.is_valid()); //will check consistent orientation
+
   const unsigned int axis = 0;
 
   typename Polyhedron::Vertex_const_iterator v_min
