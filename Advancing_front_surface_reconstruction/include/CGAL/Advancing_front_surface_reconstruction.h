@@ -2284,7 +2284,7 @@ advancing_front_surface_reconstruction(PointIterator b, PointIterator e, IndexTr
 }
 template <typename PointIterator, typename Kernel>
 void
-advancing_front_surface_reconstruction(PointIterator b, PointIterator e, Polyhedron_3<Kernel>& polyhedron)
+advancing_front_surface_reconstruction(PointIterator b, PointIterator e, Polyhedron_3<Kernel>& polyhedron, double max_perimeter = 2)
 {
   typedef Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
   typedef Advancing_front_surface_reconstruction_cell_base_3<Kernel> LCb;
@@ -2297,8 +2297,10 @@ advancing_front_surface_reconstruction(PointIterator b, PointIterator e, Polyhed
   
   Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count<Point_3>()),
                       boost::make_transform_iterator(e, AFSR::Auto_count<Point_3>() )  );
-
-  Reconstruction R(dt);
+  
+  AFSR_options opt;
+  opt.abs_perimeter = max_perimeter;
+  Reconstruction R(dt, opt);
   R();
   AFSR::construct_polyhedron(polyhedron, R);
 }
