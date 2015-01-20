@@ -69,7 +69,7 @@ protected:
   std::istream& skip_comments(std::istream& is, std::string& line);
 
   /*! Remove blanks */
-  std::string remove_blanks(char* str);
+  std::string remove_blanks(const char* str);
 
   /*! Print an error message */
   void print_error(const std::string& msg)
@@ -224,7 +224,7 @@ std::istream& IO_test<Geom_traits_T>::skip_comments(std::istream& is,
 /*!
  */
 template <typename Geom_traits_T>
-std::string IO_test<Geom_traits_T>::remove_blanks(char* str)
+std::string IO_test<Geom_traits_T>::remove_blanks(const char* str)
 {
   std::string result = "";
   bool flag = false;

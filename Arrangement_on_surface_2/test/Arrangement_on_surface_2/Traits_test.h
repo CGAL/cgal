@@ -32,8 +32,8 @@ private:
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Traits::Curve_2                      Curve_2;
 
-  // some polycurve functors needs Segment and x-monotone segment to be defined which are normally
-  // not found in other geom_traits.
+  // some polycurve functors needs Segment and x-monotone segment to be defined
+  // which are normally not found in other geom_traits.
   #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
       TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
       TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
@@ -257,8 +257,6 @@ private:
       TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS
   bool push_back_wrapper(std::istringstream& str_stream);
   bool push_front_wrapper(std::istringstream& str_stream);
-  bool compare_x_polycurve_wrapper(std::istringstream& str_stream);
-  bool compare_xy_polycurve_wrapper(std::istringstream& str_stream);
   bool number_of_points_wrapper(std::istringstream& str_stream);
   bool compare_endpoints_xy_wrapper(std::istringstream& str_stream);
   bool construct_opposite_wrapper(std::istringstream& str_stream);
@@ -353,10 +351,6 @@ Base(traits)
     &Traits_test<Traits>::push_back_wrapper;
   m_wrappers[std::string("push_front")] =
     &Traits_test<Traits>::push_front_wrapper;
-  m_wrappers[std::string("compare_x_polycurve")] =
-    &Traits_test<Traits>::compare_x_polycurve_wrapper;
-  m_wrappers[std::string("compare_xy_polycurve")] =
-    &Traits_test<Traits>::compare_xy_polycurve_wrapper;
   m_wrappers[std::string("number_of_points")] =
     &Traits_test<Traits>::number_of_points_wrapper;
   m_wrappers[std::string("compare_endpoints_xy")] =
@@ -374,8 +368,8 @@ Base(traits)
 template <typename Geom_traits_T>
 Traits_test<Geom_traits_T>::~Traits_test() {}
 
- // some polycurve functors needs Segment and x-monotone segment to be defined which are normally
- // not found in other geom_traits.
+// some polycurve functors needs Segment and x-monotone segment to be defined
+// which are normally not found in other geom_traits.
 #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
     TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
     TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS || \
@@ -572,55 +566,91 @@ push_front_wrapper(std::istringstream& str_stream)
  */
 template <typename Geom_traits_T>
 bool Traits_test<Geom_traits_T>::
-compare_x_polycurve_wrapper(std::istringstream& str_stream)
+compare_x_wrapper(std::istringstream& str_stream)
 {
   unsigned int id1, id2;
-  str_stream >> id1 >> id2;
-  unsigned int end1, end2;
-  str_stream >> end1 >> end2;
-  unsigned int expected_answer = this->get_expected_enum(str_stream);
+  unsigned int expected_answer;
+  unsigned int real_answer;
 
-  std::cout << "Test: compare_x( " << this->m_xsegments[id1] << "at "
-            << ((end1 == 0) ? "MIN_END" : "MAX_END") << " vs "
-                                   << this->m_xsegments[id2] << "at "
-            << ((end2 == 0) ? "MIN_END" : "MAX_END") << " ) ? "
-                                   << expected_answer << " ";
-
-  unsigned int real_answer =
-    this->m_geom_traits.compare_x_2_object()(this->m_xsegments[id1],
-                                             ((end1 == 0) ? CGAL::ARR_MIN_END :
-                                              CGAL::ARR_MAX_END),
-                                             this->m_xsegments[id2],
-                                             ((end2 == 0) ? CGAL::ARR_MIN_END :
-                                              CGAL::ARR_MAX_END) );
-
+  str_stream >> id1;
+  std::pair<Enum_type, unsigned int> next_input =
+    this->get_next_input(str_stream);
+  if (next_input.first == Base::NUMBER) {
+    id2 = next_input.second;
+    expected_answer = this->get_expected_enum(str_stream);
+    std::cout << "Test: compare_x( "
+              << this->m_points[id1] << ", "
+              << this->m_points[id2] << " ) ? ";
+    real_answer = this->m_geom_traits.compare_x_2_object()(this->m_points[id1],
+                                                           this->m_points[id2]);
+  }
+  else {
+    assert(next_input.first == Base::CURVE_END);
+    CGAL::Arr_curve_end end1 =
+      static_cast<CGAL::Arr_curve_end>(next_input.second);
+    str_stream >> id2;
+    next_input = this->get_next_input(str_stream);
+    assert(next_input.first == Base::CURVE_END);
+    CGAL::Arr_curve_end end2 =
+      static_cast<CGAL::Arr_curve_end>(next_input.second);
+    expected_answer = this->get_expected_enum(str_stream);
+    std::cout << "Test: compare_x( "
+              << this->m_xsegments[id1] << ", "
+              << this->curve_end_str(end1) << ", "
+              << this->m_xsegments[id2] << ", "
+              << this->curve_end_str(end2) << " ) ? ";
+    real_answer =
+      this->m_geom_traits.compare_x_2_object()(this->m_xsegments[id1], end1,
+                                               this->m_xsegments[id2], end2);
+  }
+  std::cout << (expected_answer == CGAL::SMALLER ? "SMALLER":
+               (expected_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
   return this->compare(expected_answer, real_answer);
 }
 
 template <typename Geom_traits_T>
 bool Traits_test<Geom_traits_T>::
-compare_xy_polycurve_wrapper(std::istringstream& str_stream)
+compare_xy_wrapper(std::istringstream& str_stream)
 {
   unsigned int id1, id2;
-  str_stream >> id1 >> id2;
-  unsigned int end1, end2;
-  str_stream >> end1 >> end2;
-  unsigned int expected_answer = this->get_expected_enum(str_stream);
+  unsigned int expected_answer;
+  unsigned int real_answer;
 
-  std::cout << "Test: compare_xy( " << this->m_xsegments[id1] << "at "
-            << ((end1 == 0) ? "MIN_END" : "MAX_END") << " vs "
-                                    << this->m_xsegments[id2] << "at "
-            << ((end2 == 0) ? "MIN_END" : "MAX_END") << " ) ? "
-                                    << expected_answer << " ";
+  str_stream >> id1;
+  std::pair<Enum_type, unsigned int> next_input =
+    this->get_next_input(str_stream);
+  if (next_input.first == Base::NUMBER) {
+    id2 = next_input.second;
+    expected_answer = this->get_expected_enum(str_stream);
+    std::cout << "Test: compare_xy( "
+              << this->m_points[id1] << ", "
+              << this->m_points[id2] << " ) ? ";
+    real_answer =
+      this->m_geom_traits.compare_xy_2_object()(this->m_points[id1],
+                                                this->m_points[id2]);
+  }
+  else {
+    assert(next_input.first == Base::CURVE_END);
+    CGAL::Arr_curve_end end1 =
+      static_cast<CGAL::Arr_curve_end>(next_input.second);
+    str_stream >> id2;
+    next_input = this->get_next_input(str_stream);
+    assert(next_input.first == Base::CURVE_END);
+    CGAL::Arr_curve_end end2 =
+      static_cast<CGAL::Arr_curve_end>(next_input.second);
+    expected_answer = this->get_expected_enum(str_stream);
+    std::cout << "Test: compare_xy( "
+              << this->m_xsegments[id1] << ", "
+              << this->curve_end_str(end1) << ", "
+              << this->m_xsegments[id2] << ", "
+              << this->curve_end_str(end2) << " ) ? ";
+    real_answer =
+      this->m_geom_traits.compare_xy_2_object()(this->m_xsegments[id1], end1,
+                                                this->m_xsegments[id2], end2);
+  }
 
-  unsigned int real_answer =
-    this->m_geom_traits.compare_xy_2_object()(this->m_xsegments[id1],
-                                              ((end1 == 0) ? CGAL::ARR_MIN_END :
-                                               CGAL::ARR_MAX_END),
-                                             this->m_xsegments[id2],
-                                              ((end2 == 0) ? CGAL::ARR_MIN_END :
-                                               CGAL::ARR_MAX_END) );
-
+  std::cout << (expected_answer == CGAL::SMALLER ? "SMALLER":
+               (expected_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
   return this->compare(expected_answer, real_answer);
 }
 
@@ -675,6 +705,10 @@ construct_opposite_wrapper(std::istringstream& str_stream)
 #endif
 //  end of POLYCURVE_CONIC_GEOM_TRAITS preprocessor if
 
+#if TEST_GEOM_TRAITS != POLYCURVE_CONIC_GEOM_TRAITS && \
+    TEST_GEOM_TRAITS != POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS && \
+    TEST_GEOM_TRAITS != POLYCURVE_BEZIER_GEOM_TRAITS && \
+    TEST_GEOM_TRAITS != POLYLINE_GEOM_TRAITS
 /*! Test Compare_x_2
  */
 template <typename Geom_traits_T>
@@ -710,6 +744,8 @@ compare_xy_wrapper(std::istringstream& str_stream)
                                               this->m_points[id2]);
   return this->compare(exp_answer, real_answer);
 }
+
+#endif
 
 /*! Tests Construct_min_vertex_2.
  * Degenerate case: vertical curve.

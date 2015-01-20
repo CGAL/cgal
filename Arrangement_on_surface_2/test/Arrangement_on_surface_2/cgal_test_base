@@ -116,8 +116,6 @@ IS_BETWEEN_CW=26
 COMPARE_CW_AROUND_POINT=27
 PUSH_BACK=28
 PUSH_FRONT=29
-COMPARE_X_POLYCURVE=30
-COMPARE_XY_POLYCURVE=31
 NUMBER_OF_POINTS=32
 COMPARE_ENDPOINTS_XY=33
 CONSTRUCT_OPPOSITE=34
@@ -507,8 +505,6 @@ execute_commands_new_structure()
     commands_indicator[EQUAL]=0
     commands_indicator[PUSH_BACK]=0
     commands_indicator[PUSH_FRONT]=0
-    commands_indicator[COMPARE_X_POLYCURVE]=0
-    commands_indicator[COMPARE_XY_POLYCURVE]=0
     commands_indicator[NUMBER_OF_POINTS]=0
     commands_indicator[COMPARE_ENDPOINTS_XY]=0
     commands_indicator[CONSTRUCT_OPPOSITE]=0
@@ -603,40 +599,32 @@ execute_commands_new_structure()
 	    data/$1/xcurves data/$1/curves data/$1/constructor $2
     fi
     if [ ${commands_indicator[$EQUAL]} -ne 0 ] ; then
-  run_trapped_test test_traits data/$1/points \
-      data/$1/xcurves data/$1/curves data/$1/equal $2
+	run_trapped_test test_traits data/$1/points \
+	    data/$1/xcurves data/$1/curves data/$1/equal $2
     fi
     if [ ${commands_indicator[$PUSH_BACK]} -ne 0 ] ; then
-  run_trapped_test test_traits data/$1/points \
-      data/$1/xcurves data/$1/curves data/$1/push_back $2
+	run_trapped_test test_traits data/$1/points \
+	    data/$1/xcurves data/$1/curves data/$1/push_back $2
     fi
     if [ ${commands_indicator[$PUSH_FRONT]} -ne 0 ] ; then
-  run_trapped_test test_traits data/$1/points \
-      data/$1/xcurves data/$1/curves data/$1/push_front $2
-    fi
-    if [ ${commands_indicator[$COMPARE_X_POLYCURVE]} -ne 0 ] ; then
-  run_trapped_test test_traits data/$1/points \
-      data/$1/xcurves data/$1/curves data/$1/compare_x_polycurve $2
-    fi
-    if [ ${commands_indicator[$COMPARE_XY_POLYCURVE]} -ne 0 ] ; then
-  run_trapped_test test_traits data/$1/points \
-      data/$1/xcurves data/$1/curves data/$1/compare_xy_polycurve $2
+	run_trapped_test test_traits data/$1/points \
+	    data/$1/xcurves data/$1/curves data/$1/push_front $2
     fi
     if [ ${commands_indicator[$NUMBER_OF_POINTS]} -ne 0 ] ; then
-  run_trapped_test test_traits data/$1/points \
-      data/$1/xcurves data/$1/curves data/$1/number_of_points $2
+	run_trapped_test test_traits data/$1/points \
+	    data/$1/xcurves data/$1/curves data/$1/number_of_points $2
     fi
     if [ ${commands_indicator[$COMPARE_ENDPOINTS_XY]} -ne 0 ] ; then
-  run_trapped_test test_traits data/$1/points \
-      data/$1/xcurves data/$1/curves data/$1/compare_endpoints_xy $2
+	run_trapped_test test_traits data/$1/points \
+	    data/$1/xcurves data/$1/curves data/$1/compare_endpoints_xy $2
     fi
     if [ ${commands_indicator[$CONSTRUCT_OPPOSITE]} -ne 0 ] ; then
-  run_trapped_test test_traits data/$1/points \
-      data/$1/xcurves data/$1/curves data/$1/construct_opposite $2
+	run_trapped_test test_traits data/$1/points \
+	    data/$1/xcurves data/$1/curves data/$1/construct_opposite $2
     fi
     if [ ${commands_indicator[$TRIM]} -ne 0 ] ; then
-  run_trapped_test test_traits data/$1/points \
-      data/$1/xcurves data/$1/curves data/$1/trim $2
+	run_trapped_test test_traits data/$1/points \
+	    data/$1/xcurves data/$1/curves data/$1/trim $2
     fi
 }
 
@@ -1139,8 +1127,6 @@ test_polycurve_conic_traits()
       MAKE_X_MONOTONE \
       PUSH_BACK \
       PUSH_FRONT \
-      COMPARE_X_POLYCURVE \
-      COMPARE_XY_POLYCURVE \
       NUMBER_OF_POINTS \
       VERTEX \
       CONSTRUCT_OPPOSITE \
@@ -1177,8 +1163,6 @@ test_polycurve_circular_arc_traits()
     MAKE_X_MONOTONE \
     PUSH_BACK \
     PUSH_FRONT \
-    COMPARE_X_POLYCURVE \
-    COMPARE_XY_POLYCURVE \
     NUMBER_OF_POINTS \
     VERTEX \
     CONSTRUCT_OPPOSITE \
@@ -1220,8 +1204,6 @@ test_polycurve_bezier_traits()
     # COMPARE_Y_AT_X_LEFT \
     # COMPARE_Y_AT_X_RIGHT \
     # MAKE_X_MONOTONE \
-    # COMPARE_X_POLYCURVE \
-    # COMPARE_XY_POLYCURVE \
     # CONSTRUCT_OPPOSITE \
 
     # INTERSECT
