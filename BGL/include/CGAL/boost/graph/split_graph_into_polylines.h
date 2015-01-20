@@ -229,6 +229,19 @@ split_graph_into_polylines(const Graph& graph,
   }
 }
 
+/// Split graph into polylines delimited by vertices of degree different from 2.
+/// Then the graph is visited and Visitor is called to describe the polylines
+/// Graph must be undirected
+template <typename Graph,
+          typename Visitor>
+void
+split_graph_into_polylines(const Graph& graph,
+                           Visitor& polyline_visitor)
+{
+  split_graph_into_polylines(graph, polyline_visitor, IsTerminalDefault());
+}
+
+
 } //end of namespace CGAL
 
 #endif //CGAL_SPLIT_GRAPH_INTO_POLYLINES
