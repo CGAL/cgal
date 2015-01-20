@@ -67,11 +67,8 @@ void split_graph_into_polylines(Graph& graph,
   vertex_iterator b,e;
   boost::tie(b,e) = vertices(graph);
   std::vector<vertex_descriptor> V(b,e);
-  for (typename std::vector<vertex_descriptor>::iterator it = V.begin();
-       it != V.end();
-       ++it) {
-    vertex_descriptor v = *it;
-
+  BOOST_FOREACH(vertex_descriptor v, V)
+  {
     if (degree(v, graph) > 2 || is_terminal(graph[v], orig))
       {
         out_edge_iterator b, e;
