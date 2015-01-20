@@ -1210,6 +1210,9 @@ private:
     // For each cell
     for ( ; it_c != it_c_end ; ++it_c)
     {
+//*****************************************************************************
+// STRATEGY 1: perturb all the points of the first inconsistent simplex
+//*****************************************************************************
 #ifdef CGAL_TC_PERTURB_THE_SIMPLEX_ONLY
 
       std::set<std::size_t> c;
@@ -1223,44 +1226,130 @@ private:
       if (!is_simplex_consistent(c))
       {
         is_inconsistent = true;
+        
+# ifdef CGAL_TC_PERTURB_POSITION
+          typename Tr_traits::Construct_weighted_point_d cwp =
+            local_tr_traits.construct_weighted_point_d_object();
+          typename Tr_traits::Compute_coordinate_d coord =
+            local_tr_traits.compute_coordinate_d_object();
 
-        //m_weights[tr_index] = rng.get_double(0., SQ_HALF_SPARSITY);
-        //break; // CJTODO TEMP
+          typename Kernel::Translated_point_d k_transl =
+            m_k.translated_point_d_object();
+          typename Kernel::Scaled_vector_d k_scaled_vec =
+            m_k.scaled_vector_d_object();
+          typename Kernel::Construct_vector_d k_constr_vec =
+            m_k.construct_vector_d_object();
+#   ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
+          typename Kernel::Point_to_vector_d k_pt_to_vec =
+            m_k.point_to_vector_d_object();
+#   endif
+# endif
+
         CGAL::Random rng;
         for (std::set<std::size_t>::iterator it=c.begin(); it!=c.end(); ++it)
         {
+# ifdef CGAL_TC_PERTURB_WEIGHT
           m_weights[*it] = rng.get_double(0., SQ_HALF_SPARSITY);
+# endif
+
+# ifdef CGAL_TC_PERTURB_POSITION
+#   ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
+          m_translations[*it] = k_scaled_vec(k_pt_to_vec(
+            *tr_point_on_sphere_generator++), HALF_SPARSITY);
+#   else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
+          Tr_point local_random_transl =
+            cwp(*tr_point_on_sphere_generator++, 0);
+          Vector &global_transl = m_translations[*it];
+          global_transl = k_constr_vec(m_ambiant_dim);
+          const Tangent_space_basis &tsb = m_tangent_spaces[*it];
+          for (int i = 0 ; i < Intrinsic_dimension ; ++i)
+          {
+            global_transl = k_transl(
+              global_transl, 
+              k_scaled_vec(tsb[i], HALF_SPARSITY*coord(local_random_transl, i))
+            );
+          }
+#   endif
+# endif
         }
         
-#if !defined(CGAL_TC_GLOBAL_REFRESH)
+# if !defined(CGAL_TC_GLOBAL_REFRESH)
         refresh_tangential_complex();
-#endif
+# endif
 
         // We will try the other cells next time (incident_cells is not
         // valid anymore here)
         break;
       }
-#else      
+
+//*****************************************************************************
+// STRATEGY 2: perturb the center point only
+//*****************************************************************************
+#elif defined(CGAL_TC_PERTURB_THE_CENTER_VERTEX_ONLY)
+      if (!is_simplex_consistent(*it_c, cur_dim))
+      {
+        is_inconsistent = true;
+# ifdef CGAL_TC_PERTURB_WEIGHT
+        m_weights[tr_index] = rng.get_double(0., SQ_HALF_SPARSITY);
+# endif
+
+# ifdef CGAL_TC_PERTURB_POSITION
+        typename Tr_traits::Construct_weighted_point_d cwp =
+          local_tr_traits.construct_weighted_point_d_object();
+        typename Tr_traits::Compute_coordinate_d coord =
+          local_tr_traits.compute_coordinate_d_object();
+
+        typename Kernel::Translated_point_d k_transl =
+          m_k.translated_point_d_object();
+        typename Kernel::Scaled_vector_d k_scaled_vec =
+          m_k.scaled_vector_d_object();
+        typename Kernel::Construct_vector_d k_constr_vec =
+          m_k.construct_vector_d_object();
+
+#   ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
+        typename Kernel::Point_to_vector_d k_pt_to_vec =
+          m_k.point_to_vector_d_object();
+        m_translations[tr_index] = k_scaled_vec(k_pt_to_vec(
+          *tr_point_on_sphere_generator++), HALF_SPARSITY);
+#   else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
+        Tr_point local_random_transl =
+          cwp(*tr_point_on_sphere_generator++, 0);
+        Vector &global_transl = m_translations[tr_index];
+        //Vector &global_transl = m_translations[
+        //  (*it_c)->vertex(rand()%tr.current_dimension())->data()];
+        global_transl = k_constr_vec(m_ambiant_dim);
+        const Tangent_space_basis &tsb = m_tangent_spaces[tr_index];
+        for (int i = 0 ; i < Intrinsic_dimension ; ++i)
+        {
+          global_transl = k_transl(
+            global_transl, 
+            k_scaled_vec(tsb[i], HALF_SPARSITY*coord(local_random_transl, i))
+          );
+        }
+#   endif
+# endif
+
+# if !defined(CGAL_TC_GLOBAL_REFRESH)
+        refresh_tangential_complex();
+# endif
+
+        // We will try the other cells next time (incident_cells is not
+        // valid anymore here)
+        break;
+      }
+
+//*****************************************************************************
+// STRATEGY 3: perturb the k + 1 + CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS
+// closest points (to the power center of first the inconsistent cell)
+//*****************************************************************************
+#else
       // Inconsistent?
       if (!is_simplex_consistent(*it_c, cur_dim))
       {
         is_inconsistent = true;
 
-        // Get the k + 2 closest points
-
-        /*int point_dim = m_k.point_dimension_d_object()(*m_points.begin());
-        std::vector<FT> center(point_dim, FT(0));
-        for (int i = 0 ; i < point_dim ; ++i)
-        {
-          for (int j = 0 ; j < Intrinsic_dimension + 1 ; ++j)
-          {
-            std::size_t data = (*it_c)->vertex(j)->data();
-            const Point &p = m_points[data];
-            center[i] += p[i];
-          }
-          center[i] /= (Intrinsic_dimension + 1);
-        }
-        Point global_center(center.begin(), center.end());*/
+        // Get the k + 1 + CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS
+        // closest points
 
         std::vector<Tr_point> simplex_pts;
         for (int i = 0 ; i < cur_dim + 1 ; ++i)
@@ -1280,12 +1369,16 @@ private:
           m_k.translated_point_d_object();
         typename Kernel::Scaled_vector_d k_scaled_vec =
           m_k.scaled_vector_d_object();
-        typename Kernel::Construct_vector_d k_constr_vec =
-          m_k.construct_vector_d_object();
-#if defined(CGAL_TC_PERTURB_POSITION) && defined(CGAL_TC_PERTURB_POSITION_GLOBAL)
+
+# ifdef CGAL_TC_PERTURB_POSITION
+#   ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
         typename Kernel::Point_to_vector_d k_pt_to_vec =
           m_k.point_to_vector_d_object();
-#endif
+#   else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
+        typename Kernel::Construct_vector_d k_constr_vec =
+          m_k.construct_vector_d_object();
+#   endif
+# endif
 
         Tr_point local_center = power_center(simplex_pts.begin(), simplex_pts.end());
         Point global_center = m_points[tr_index];
@@ -1314,15 +1407,15 @@ private:
              it != neighbors.end() ; 
              ++it)
         {
-#ifdef CGAL_TC_PERTURB_WEIGHT
+# ifdef CGAL_TC_PERTURB_WEIGHT
           m_weights[*it] = rng.get_double(0., SQ_HALF_SPARSITY);
-#endif
+# endif
 
-#ifdef CGAL_TC_PERTURB_POSITION
-# ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
+# ifdef CGAL_TC_PERTURB_POSITION
+#   ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
           m_translations[*it] = k_scaled_vec(k_pt_to_vec(
             *tr_point_on_sphere_generator++), HALF_SPARSITY);
-# else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
+#   else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
           Tr_point local_random_transl =
             cwp(*tr_point_on_sphere_generator++, 0);
           Vector &global_transl = m_translations[*it];
@@ -1334,20 +1427,20 @@ private:
               k_scaled_vec(tsb[i], HALF_SPARSITY*coord(local_random_transl, i))
             );
           }
+#   endif
 # endif
-#endif
         }
 
-#if !defined(CGAL_TC_GLOBAL_REFRESH)
+# if !defined(CGAL_TC_GLOBAL_REFRESH)
         refresh_tangential_complex();
-#endif
+# endif
 
         // We will try the other cells next time (incident_cells is not
         // valid anymore here)
         break;
       }
 
-#endif
+#endif // CGAL_TC_PERTURB_THE_SIMPLEX_ONLY
     }
 
     return is_inconsistent;
