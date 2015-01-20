@@ -14,11 +14,12 @@ void test(const char* fname)
 {
   std::cout << "Testing " << fname << "..." << std::flush;
   std::ifstream input(fname);
-  assert(input);
+  if (!input)
+    CGAL_assertion(false);
   Polyhedron P;
   input >> P;
 
-  assert(P.size_of_vertices()!=0);
+  CGAL_assertion(P.size_of_vertices()!=0);
   
   CGAL::Polygon_mesh_processing::stitch_borders(P);
 
@@ -27,7 +28,7 @@ void test(const char* fname)
   output.close();
 
   P.normalize_border();
-  assert(P.is_valid(false, 5));
+  CGAL_assertion(P.is_valid(false, 5));
   std::cout << "OK\n";
 }
 

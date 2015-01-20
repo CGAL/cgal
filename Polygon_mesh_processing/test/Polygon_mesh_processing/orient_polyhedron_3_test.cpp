@@ -18,12 +18,12 @@ void test(const char* file_name) {
   Polyhedron oriented_poly; // file should contain oriented poly
   if ( !input || !(input >> oriented_poly) || oriented_poly.empty() ){
     std::cerr << "Error: can not read file: " << file_name;
-    assert(false);
+    CGAL_assertion(false);
   }
 
-  assert(CGAL::Polygon_mesh_processing::is_oriented(oriented_poly));
+  CGAL_assertion(CGAL::Polygon_mesh_processing::is_oriented(oriented_poly));
   oriented_poly.inside_out();
-  assert(!CGAL::Polygon_mesh_processing::is_oriented(oriented_poly));
+  CGAL_assertion(!CGAL::Polygon_mesh_processing::is_oriented(oriented_poly));
 
   std::cerr << file_name << " passed the test." << std::endl;
 }

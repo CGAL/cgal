@@ -106,7 +106,7 @@ void test(
     CGAL::Bounded_side res = inside(points[i]);
 
     if(!on_boundary.empty()) {
-      assert(on_boundary[i] == (res == CGAL::ON_BOUNDARY));
+      CGAL_assertion(on_boundary[i] == (res == CGAL::ON_BOUNDARY));
     }
 
     if(res == CGAL::ON_BOUNDED_SIDE) { ++nb_inside; }

@@ -42,7 +42,7 @@ void read_poly_with_borders(const char* file_name, Polyhedron& poly, std::vector
   std::ifstream input(file_name);
   if ( !input || !(input >> poly)  || (num_vertices(poly) == 0)){
     std::cerr << "  Error: can not read file." << std::endl;
-    assert(false);
+    CGAL_assertion(false);
   }
 
   std::set<Halfedge_handle> border_map;
@@ -112,10 +112,10 @@ void test_triangulate_hole_weight(const char* file_name, bool use_DT) {
 
     const double epsilon = 1e-10;
     if(std::abs(w_algo.w.first - w_test.w.first) > epsilon) {
-      assert(false);
+      CGAL_assertion(false);
     }
     if(std::abs(w_algo.w.second - w_test.w.second) > epsilon) {
-      assert(false);
+      CGAL_assertion(false);
     }
   }
 
@@ -135,13 +135,13 @@ void test_triangulate_hole(const char* file_name) {
     CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch));
     if(patch.empty()) {
       std::cerr << "  Error: empty patch created." << std::endl;
-      assert(false);
+      CGAL_assertion(false);
     }
   }
 
   if(!poly.is_valid() || ! is_closed(poly)) {
     std::cerr << "  Error: patched polyhedron is not valid or closed." << std::endl;
-    assert(false);
+    CGAL_assertion(false);
   }
   
   std::cerr << "  Done!" << std::endl;
@@ -159,13 +159,13 @@ void test_triangulate_hole_should_be_no_output(const char* file_name) {
     CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch), false);
     if(!patch.empty()) {
       std::cerr << "  Error: patch should be empty" << std::endl;
-      assert(false);
+      CGAL_assertion(false);
     }
 
     CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch), true);
     if(!patch.empty()) {
       std::cerr << "  Error: patch should be empty" << std::endl;
-      assert(false);
+      CGAL_assertion(false);
     }
   }
 
@@ -187,13 +187,13 @@ void test_triangulate_and_refine_hole(const char* file_name) {
 
     if(patch_facets.empty()) {
       std::cerr << "  Error: empty patch created." << std::endl;
-      assert(false);
+      CGAL_assertion(false);
     }
   }
 
   if(!poly.is_valid() || ! is_closed(poly)) {
     std::cerr << "  Error: patched polyhedron is not valid or closed." << std::endl;
-    assert(false);
+    CGAL_assertion(false);
   }
 
   std::cerr << "  Done!" << std::endl;
@@ -214,13 +214,13 @@ void test_triangulate_refine_and_fair_hole(const char* file_name) {
 
     if(patch_facets.empty()) {
       std::cerr << "  Error: empty patch created." << std::endl;
-      assert(false);
+      CGAL_assertion(false);
     }
   }
 
   if(!poly.is_valid() || ! is_closed(poly)) {
     std::cerr << "  Error: patched polyhedron is not valid or closed." << std::endl;
-    assert(false);
+    CGAL_assertion(false);
   }
 
   std::cerr << "  Done!" << std::endl;
@@ -248,7 +248,7 @@ void test_ouput_iterators_triangulate_hole(const char* file_name) {
     if(patch.size() != (output_it - &*patch_2.begin())) {
       std::cerr << "  Error: returned facet output iterator is not valid!" << std::endl;
       std::cerr << "  " << patch.size() << " vs " << (output_it - &*patch_2.begin()) << std::endl;
-      assert(false);
+      CGAL_assertion(false);
     }
   }
   std::cerr << "  Done!" << std::endl;
@@ -282,13 +282,13 @@ void test_ouput_iterators_triangulate_and_refine_hole(const char* file_name) {
     if(patch_facets.size() != (output_its.first - &*patch_facets_2.begin())) {
       std::cerr << "  Error: returned facet output iterator is not valid!" << std::endl;
       std::cerr << "  " << patch_facets.size() << " vs " << (output_its.first - &*patch_facets_2.begin()) << std::endl;
-      assert(false);
+      CGAL_assertion(false);
     }
 
     if(patch_vertices.size() != (output_its.second - &*patch_vertices_2.begin())) {
       std::cerr << "  Error: returned vertex output iterator is not valid!" << std::endl;
       std::cerr << "  " << patch_vertices.size() << " vs " << (output_its.second - &*patch_vertices_2.begin()) << std::endl;
-      assert(false);
+      CGAL_assertion(false);
     }
   }
   std::cerr << "  Done!" << std::endl;

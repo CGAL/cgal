@@ -57,13 +57,13 @@ private:
 // it reads .polylines.txt (there should be one polyline with last point repeated)
 void read_polyline_one_line(const char* file_name, std::vector<Point_3>& points) {
   std::ifstream stream(file_name);
-  if(!stream) { assert(false); }
+  if(!stream) { CGAL_assertion(false); }
 
   int count;
-  if(!(stream >> count)) { assert(false); }
+  if(!(stream >> count)) { CGAL_assertion(false); }
   while(count-- > 0) {
     Point_3 p;
-    if(!(stream >> p)) { assert(false); }
+    if(!(stream >> p)) { CGAL_assertion(false); }
     points.push_back(p);
   }
 }
@@ -75,14 +75,14 @@ void read_polyline_with_extra_points(
   std::vector<Point_3>& extras)
 {
   std::ifstream stream(file_name);
-  if(!stream) { assert(false); }
+  if(!stream) { CGAL_assertion(false); }
 
   for(int i =0; i < 2; ++i) {
     int count;
-    if(!(stream >> count)) { assert(false); }
+    if(!(stream >> count)) { CGAL_assertion(false); }
     while(count-- > 0) {
       Point_3 p;
-      if(!(stream >> p)) { assert(false); }
+      if(!(stream >> p)) { CGAL_assertion(false); }
       i == 0 ? points.push_back(p) : extras.push_back(p);
     }
   }
@@ -91,7 +91,7 @@ void read_polyline_with_extra_points(
 void check_triangles(std::vector<Point_3>& points, std::vector<boost::tuple<int, int, int> >& tris) {
   if(points.size() - 3 != tris.size()) {
     std::cerr << "  Error: there should be n-2 triangles in generated patch." << std::endl;
-    assert(false);
+    CGAL_assertion(false);
   }
 
   const int max_index = static_cast<int>(points.size())-1;
@@ -101,7 +101,7 @@ void check_triangles(std::vector<Point_3>& points, std::vector<boost::tuple<int,
       it->get<1>() == it->get<2>() ) 
     {
       std::cerr << "Error: indices of triangles should be all different." << std::endl;
-      assert(false); 
+      CGAL_assertion(false); 
     }  
 
     if(it->get<0>() >= max_index ||
@@ -109,7 +109,7 @@ void check_triangles(std::vector<Point_3>& points, std::vector<boost::tuple<int,
       it->get<2>() >= max_index ) 
     {
       std::cerr << "  Error: max possible index check failed." << std::endl;
-      assert(false);
+      CGAL_assertion(false);
     } 
   }
 }
@@ -124,7 +124,7 @@ void check_constructed_polyhedron(const char* file_name,
 
   if(!poly.is_valid()) {
     std::cerr << "  Error: constructed patch does not constitute a valid polyhedron." << std::endl;
-    assert(false);
+    CGAL_assertion(false);
   }
   std::string out_file_name;
   out_file_name.append(file_name).append(".off");
@@ -177,7 +177,7 @@ void test_should_be_no_output(const char* file_name, bool use_DT) {
 
   if(!tris.empty()) {
     std::cerr << "  Error: patch should be empty" << std::endl;
-    assert(false);
+    CGAL_assertion(false);
   }
   std::cerr << "  Done!" << std::endl;
 }
