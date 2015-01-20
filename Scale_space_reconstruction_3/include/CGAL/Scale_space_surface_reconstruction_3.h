@@ -201,6 +201,9 @@ private:
     // The shells can be accessed through iterators to the surface.
     TripleIterSet   _shells;
 
+    typedef std::vector<Point> Pointset;
+    Pointset _points;
+
 public:
 /// \name Constructors
 /// \{
@@ -292,6 +295,7 @@ public:
                      typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* = NULL ) {
 #endif // DOXYGEN_RUNNING
 		_tree.insert( begin, end );
+                _points.insert(_points.end(), begin, end);
 	}
     
     /// inserts a point into the scale-space at the current scale.
@@ -310,6 +314,7 @@ public:
      */
 	void insert( const Point& p ) {
 		_tree.insert( p );
+                _points.push_back(p);
 	}
     
     /// clears the stored scale-space surface reconstruction data.
@@ -803,20 +808,20 @@ public:
 /// \name Iterators
 /// \{
     /// gives an iterator to the first point at the current scale.
-    Point_const_iterator points_begin() const { return _tree.begin(); }
+    Point_const_iterator points_begin() const { return _points.begin(); }
     /// gives an iterator to the first point at the current scale.
     /** \warning Changes to the scale-space do not cause an automatic update to
      *  the surface.
      */
-    Point_iterator points_begin() { return _tree.begin(); }
+    Point_iterator points_begin() { return _points.begin(); }
 
     /// gives a past-the-end iterator of the points at the current scale.
-    Point_const_iterator points_end() const { return _tree.end(); }
+    Point_const_iterator points_end() const { return _points.end(); }
     /// gives a past-the-end iterator of the points at the current scale.
     /** \warning Changes to the scale-space do not cause an automatic update to
      *  the surface.
      */
-    Point_iterator points_end() { return _tree.end(); }
+    Point_iterator points_end() { return _points.end(); }
 
     /// gives an iterator to the first triple in the surface.
     Triple_const_iterator surface_begin() const { return _surface.begin(); }
