@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polygon_mesh_processing/orient_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/is_oriented.h>
 
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Timer.h>
