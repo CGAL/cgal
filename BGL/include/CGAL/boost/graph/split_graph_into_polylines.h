@@ -92,7 +92,6 @@ void split_graph_into_polylines(Graph& graph,
                       BOOST_FOREACH(vertex_descriptor v, vertices(graph)){
                         typename boost::graph_traits<Graph>::degree_size_type
                           n = degree(v, graph);
-                        
                         CGAL_assertion( n == 0 || n == 1 || n == 2);
                       }
                       BOOST_FOREACH(edge_descriptor e, edges(graph)){
@@ -177,7 +176,14 @@ split_graph_into_polylines(const Graph& graph,
   std::set<vertex_descriptor> terminal;
 
   BOOST_FOREACH(vertex_descriptor v, vertices(g)){
-    if (degree(v, g) == 1) terminal.insert(v);
+    int n = degree(v, g);
+    if ( n == 1 ) terminal.insert(v);
+    if ( n ==0 ){
+      //isolated vertex
+      polyline_visitor.start_new_polyline();
+      polyline_visitor.add_node(g[v]);
+      polyline_visitor.end_polyline();
+    }
   }
 
   // go over all polylines and provide the description to the visitor
