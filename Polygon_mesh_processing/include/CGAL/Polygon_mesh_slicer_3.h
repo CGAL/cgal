@@ -129,14 +129,15 @@ class Polygon_mesh_slicer_3
       AL_vertex_info v = al_graph[node_id];
       if (const vertex_descriptor* vd_ptr = boost::get<vertex_descriptor>(&v) )
       {
-        current_poly.push_back( m_vpmap[*vd_ptr] );
+        ///\todo why get isn't working?
+        current_poly.push_back( get(m_vpmap, *vd_ptr) );
       }
       else
       {
         edge_descriptor ed = boost::get<edge_descriptor>(v);
         Segment_3 s(
-          m_vpmap[source(ed, m_pmesh)],
-          m_vpmap[target(ed, m_pmesh)]
+          get(m_vpmap, source(ed, m_pmesh)),
+          get(m_vpmap,target(ed, m_pmesh))
         );
         Intersect_3 intersection = m_traits.intersect_3_object();
         typename cpp11::result_of<Intersect_3(Plane_3, Segment_3)>::type
