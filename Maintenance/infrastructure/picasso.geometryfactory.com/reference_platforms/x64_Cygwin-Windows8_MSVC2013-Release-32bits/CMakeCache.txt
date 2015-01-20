@@ -20,24 +20,6 @@ BUILD_SHARED_LIBS:BOOL=ON
 //The directory containing a CMake configuration file for Boost.
 Boost_DIR:PATH=Boost_DIR-NOTFOUND
 
-//Path to a file.
-Boost_INCLUDE_DIR:PATH=C:/3rdPartyLibs/boost_1_55_0
-
-//Boost library directory
-Boost_LIBRARY_DIR:PATH=C:/3rdPartyLibs/boost_1_55_0/lib32
-
-//Boost system library (debug)
-Boost_SYSTEM_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/boost_1_55_0/lib32/boost_system-vc120-mt-gd-1_55.lib
-
-//Boost system library (release)
-Boost_SYSTEM_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/boost_1_55_0/lib32/boost_system-vc120-mt-1_55.lib
-
-//Boost thread library (debug)
-Boost_THREAD_LIBRARY_DEBUG:FILEPATH=C:/3rdPartyLibs/boost_1_55_0/lib32/boost_thread-vc120-mt-gd-1_55.lib
-
-//Boost thread library (release)
-Boost_THREAD_LIBRARY_RELEASE:FILEPATH=C:/3rdPartyLibs/boost_1_55_0/lib32/boost_thread-vc120-mt-1_55.lib
-
 //Select to allow to use all preconfigured external libraries
 CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT:BOOL=OFF
 
