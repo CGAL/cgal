@@ -1210,7 +1210,7 @@ private:
     // For each cell
     for ( ; it_c != it_c_end ; ++it_c)
     {
-#ifdef CGAL_TC_ONLY_CHANGE_SIMPLEX_WEIGHTS
+#ifdef CGAL_TC_PERTURB_THE_SIMPLEX_ONLY
 
       std::set<std::size_t> c;
       for (int i = 0 ; i < tr.current_dimension() + 1 ; ++i)

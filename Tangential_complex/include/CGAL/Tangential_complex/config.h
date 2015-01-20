@@ -36,9 +36,8 @@
 #define CGAL_TC_VERBOSE
 //#define CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
 
-// Solving inconsistencies: only change the weights of the inconsistent simplex
-// or more?
-//#define CGAL_TC_ONLY_CHANGE_SIMPLEX_WEIGHTS
+// Solving inconsistencies: only perturb the inconsistent simplex or more?
+//#define CGAL_TC_PERTURB_THE_SIMPLEX_ONLY
 
 // Otherwise...
 const int CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS = 1;
