@@ -8,6 +8,7 @@ fi
 export CMAKE_GENERATOR='-GNMake Makefiles'
 export MAKE_CMD='/cygdrive/c/bin/jom/jom.exe'
 export PATH=$PATH:'/cygdrive/c/CGAL/CGAL-I/scripts:/cygdrive/c/CGAL/CGAL-I/developer_scripts'
+export PATH=$PATH:'/cygdrive/c/bin/depends'
 
 #Header only libraries
 export BOOST_INCLUDEDIR="C:\3rdPartyLibs\boost_${BOOST_VERSION}"
