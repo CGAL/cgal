@@ -5,7 +5,7 @@
 template <class T>
 bool is_intersection_empty(const boost::optional<T>& t)
 {
-  return t;
+  return bool(t);
 }
 
 bool is_intersection_empty(CGAL::Object o)

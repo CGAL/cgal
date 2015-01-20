@@ -133,7 +133,7 @@ public:
     //typedef typename Root_of_2::RT RT_2;
     typename Intersection_traits<CK, Line_2, Line_2>::result_type 
       v = CGAL::internal::intersection(support, l1, CK());
-    CGAL_assertion(v);
+    CGAL_assertion(bool(v));
 
     const Point_2 *pt = CGAL::internal::intersect_get<Point_2>(v);
     CGAL_assertion(pt != NULL);

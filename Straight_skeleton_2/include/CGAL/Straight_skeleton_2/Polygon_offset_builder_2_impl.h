@@ -226,7 +226,7 @@ void Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::AddOffsetVertex( FT          
   if ( !lP )
     lP = mVisitor.on_offset_point_overflowed(aHook) ;
     
-  CGAL_postcondition(lP);
+  CGAL_postcondition(bool(lP));
   
   CGAL_POLYOFFSET_TRACE(1,"Found offset point p=" << p2str(*lP) << " at offset " << aTime << " along bisector " << e2str(*aHook) << " reaching " << v2str(*aHook->vertex()) ) ;
   

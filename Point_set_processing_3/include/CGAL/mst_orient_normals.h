@@ -498,6 +498,9 @@ create_mst_graph(
     // Add vertices. source_point is the unique point marked "oriented".
     for (ForwardIterator it = first; it != beyond; it++)
     {
+        // With C++11, the following line triggers a bug in Boost versions
+        // 1.56 and 1.57:
+        //   https://svn.boost.org/trac/boost/ticket/10382
         typename MST_graph::vertex_descriptor v = add_vertex(mst_graph);
         CGAL_point_set_processing_assertion(v == get(index_pmap,it));
         mst_graph[v].input_point = it;

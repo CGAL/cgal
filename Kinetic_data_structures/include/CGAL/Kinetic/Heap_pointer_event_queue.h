@@ -401,7 +401,7 @@ public:
   //! Access the time of a particular event
   const Priority& priority(const Key &item) const
   {
-    CGAL_precondition(item);
+    CGAL_precondition(bool(item));
     return item->time();
   }
 
