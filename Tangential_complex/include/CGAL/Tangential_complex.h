@@ -339,26 +339,29 @@ public:
     std::cerr << "Fixing inconsistencies..." << std::endl;
 #endif
 
+#ifdef CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
     std::pair<std::size_t, std::size_t> stats_before =
       number_of_inconsistent_simplices(false);
 
-#ifdef CGAL_TC_VERBOSE
+# ifdef CGAL_TC_VERBOSE
       std::cerr << "Initial number of inconsistencies: "
       << stats_before.second << std::endl;
-#endif
+# endif
 
     if (stats_before.second == 0)
     {
-#ifdef CGAL_TC_VERBOSE
+# ifdef CGAL_TC_VERBOSE
       std::cerr << "Nothing to fix." << std::endl;
-#endif
+# endif
       return 0;
     }
+#endif // CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
 
     bool done = false;
     unsigned int num_steps = 0;
     while (!done)
     {
+      std::size_t num_inconsistent_local_tr = 0;
 // CJTODO: the parallel version is not working for now
 /*#ifdef CGAL_LINKED_WITH_TBB
       // Parallel
@@ -373,45 +376,76 @@ public:
       else
 #endif // CGAL_LINKED_WITH_TBB*/
       {
+#ifdef CGAL_TC_PROFILING
+        Wall_clock_timer t;
+#endif
         for (std::size_t i = 0 ; i < m_triangulations.size() ; ++i)
-          try_to_solve_inconsistencies_in_a_local_triangulation(i);
+        {
+          num_inconsistent_local_tr += 
+            (try_to_solve_inconsistencies_in_a_local_triangulation(i) ? 1 : 0);
+        }
+#ifdef CGAL_TC_PROFILING
+    std::cerr << "Attempt to fix inconsistencies: " << t.elapsed()
+              << " seconds." << std::endl;
+#endif
       }
 
 #ifdef CGAL_TC_GLOBAL_REFRESH
       refresh_tangential_complex();
 #endif
 
+#ifdef CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
       std::pair<std::size_t, std::size_t> stats_after =
         number_of_inconsistent_simplices(false);
 
-#ifdef CGAL_TC_VERBOSE
       std::cerr << std::endl
-        << "================================================" << std::endl
-        << "Inconsistencies:\n"
+        << "==========================================================" 
+        << std::endl
+        << "Inconsistencies (detailed stats):\n"
         << "  * Number of vertices: " << m_points.size() << std::endl
         << std::endl
         << "  * BEFORE fix_inconsistencies:" << std::endl
         << "    - Total number of simplices in stars (incl. duplicates): "
         << stats_before.first << std::endl
-        << "    - Number of inconsistent simplices in stars (incl. duplicates): "
-        << stats_before.second << std::endl
-        << "    - Percentage of inconsistencies: "
-        << 100. * stats_before.second / stats_before.first << "%"
+        << "    - Num inconsistent simplices in stars (incl. duplicates): "
+        << stats_before.second 
+        << " (" << 100. * stats_before.second / stats_before.first << "%)"
+        << std::endl
+        << "  * Num inconsistent local triangulations: "
+        << num_inconsistent_local_tr 
+        << " (" << 100. * num_inconsistent_local_tr / m_points.size() << "%)" 
         << std::endl
         << std::endl
         << "  * AFTER fix_inconsistencies:" << std::endl
         << "    - Total number of simplices in stars (incl. duplicates): "
         << stats_after.first << std::endl
-        << "    - Number of inconsistent simplices in stars (incl. duplicates): "
+        << "    - Num inconsistent simplices in stars (incl. duplicates): "
         << stats_after.second << std::endl
         << "    - Percentage of inconsistencies: "
         << 100. * stats_after.second / stats_before.first << "%"
         << std::endl
-        << "================================================" << std::endl;
-#endif
-      done = (stats_after.second == 0);
+        << "=========================================================="
+        << std::endl;
+
       stats_before = stats_after;
+
+#else // CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
+# ifdef CGAL_TC_VERBOSE
+      std::cerr << std::endl
+        << "=========================================================="
+        << std::endl
+        << "fix_inconsistencies():\n"
+        << "  * " << m_points.size() << " vertices" << std::endl
+        << "  * " << num_inconsistent_local_tr 
+        << " (" << 100. * num_inconsistent_local_tr / m_points.size() << "%)"
+        << " inconsistent triangulations encountered" << std::endl
+        << "=========================================================="
+        << std::endl;
+# endif
+#endif // CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
+
       ++num_steps;
+      done = (num_inconsistent_local_tr == 0);
     }
 
     return num_steps;
@@ -459,7 +493,8 @@ public:
     if (verbose)
     {
       std::cerr << std::endl
-        << "================================================" << std::endl
+        << "=========================================================="
+        << std::endl
         << "Inconsistencies:\n"
         << "  * Number of vertices: " << m_points.size() << std::endl
         << "  * Total number of simplices in stars (incl. duplicates): "
@@ -468,7 +503,8 @@ public:
         << num_inconsistent_simplices << std::endl
         << "  * Percentage of inconsistencies: "
         << 100 * num_inconsistent_simplices / num_simplices << "%" << std::endl
-        << "================================================" << std::endl;
+        << "=========================================================="
+        << std::endl;
     }
 
     return std::make_pair(num_simplices, num_inconsistent_simplices);
@@ -1140,9 +1176,11 @@ private:
   };
 #endif // CGAL_LINKED_WITH_TBB
 
-  void try_to_solve_inconsistencies_in_a_local_triangulation(
+  bool try_to_solve_inconsistencies_in_a_local_triangulation(
                                                           std::size_t tr_index)
   {
+    bool is_inconsistent = false;
+
 #ifdef CGAL_LINKED_WITH_TBB
     //Tr_mutex::scoped_lock lock(m_tr_mutexes[tr_index]);
 #endif
@@ -1184,6 +1222,8 @@ private:
       // Inconsistent?
       if (!is_simplex_consistent(c))
       {
+        is_inconsistent = true;
+
         //m_weights[tr_index] = rng.get_double(0., SQ_HALF_SPARSITY);
         //break; // CJTODO TEMP
         CGAL::Random rng;
@@ -1204,6 +1244,8 @@ private:
       // Inconsistent?
       if (!is_simplex_consistent(*it_c, cur_dim))
       {
+        is_inconsistent = true;
+
         // Get the k + 2 closest points
 
         /*int point_dim = m_k.point_dimension_d_object()(*m_points.begin());
@@ -1307,6 +1349,8 @@ private:
 
 #endif
     }
+
+    return is_inconsistent;
   }
 
   std::ostream &export_vertices_to_off(
@@ -1461,7 +1505,8 @@ private:
 
 #ifdef CGAL_TC_VERBOSE
     std::cerr << std::endl
-      << "================================================" << std::endl
+      << "=========================================================="
+      << std::endl
       << "Export to OFF:\n"
       << "  * Number of vertices: " << m_points.size() << std::endl
       << "  * Total number of simplices in stars (incl. duplicates): "
@@ -1472,7 +1517,8 @@ private:
       << (num_simplices > 0 ?
           100. * num_inconsistent_simplices / num_simplices : 0.) << "%"
       << std::endl
-      << "================================================" << std::endl;
+      << "=========================================================="
+      << std::endl;
 #endif
 
     return os;

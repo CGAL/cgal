@@ -34,6 +34,7 @@
 //========================= Debugging & profiling =============================
 #define CGAL_TC_PROFILING
 #define CGAL_TC_VERBOSE
+//#define CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
 
 // Solving inconsistencies: only change the weights of the inconsistent simplex
 // or more?
@@ -57,7 +58,7 @@ const int CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS = 1;
 //#define CGAL_TC_PERTURB_WEIGHT
 
 //========================= Parameters ========================================
-const std::size_t NUM_POINTS_FOR_PCA = 50;
+const std::size_t NUM_POINTS_FOR_PCA = 30;
 const double INPUT_SPARSITY = 0.05;
 
 #endif // CGAL_TC_CONFIG_H
