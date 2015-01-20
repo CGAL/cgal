@@ -35,10 +35,13 @@
 #include <boost/function_output_iterator.hpp>
 #include <boost/type_traits/is_const.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <CGAL/boost/graph/helpers.h>
 
 namespace CGAL {
 namespace internal {
-template <class PolygonMesh, class Kernel, class Box, class OutputIterator>
+template <class TM,//TriangleMesh
+          class Kernel,
+          class Box, class OutputIterator>
 struct Intersect_facets
 {
   // wrapper to check whether anything is inserted to output iterator
@@ -59,11 +62,11 @@ struct Intersect_facets
 // typedefs
   typedef typename Kernel::Segment_3    Segment;
   typedef typename Kernel::Triangle_3   Triangle;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type Ppmap;
+  typedef typename boost::graph_traits<TM>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::property_map<TM, boost::vertex_point_t>::const_type Ppmap;
 
 // members
-  const PolygonMesh& m_pmesh;
+  const TM& m_tmesh;
   const Ppmap m_point;
   mutable OutputIterator  m_iterator;
   mutable bool            m_intersected;
@@ -74,10 +77,10 @@ struct Intersect_facets
   typename Kernel::Do_intersect_3       do_intersect_3_functor;
 
   
-  Intersect_facets(const PolygonMesh& pmesh, OutputIterator it, const Kernel& kernel)
+  Intersect_facets(const TM& tmesh, OutputIterator it, const Kernel& kernel)
     : 
-    m_pmesh(pmesh),
-    m_point(get(vertex_point, m_pmesh)),
+    m_tmesh(tmesh),
+    m_point(get(vertex_point, m_tmesh)),
     m_iterator(it),
     m_intersected(false),
     m_iterator_wrapper(Output_iterator_with_bool(&m_iterator, &m_intersected)),
@@ -89,53 +92,53 @@ struct Intersect_facets
   void operator()(const Box* b,
     const Box* c) const
   {
-    halfedge_descriptor h  = halfedge(b->info(),m_pmesh);
+    halfedge_descriptor h  = halfedge(b->info(),m_tmesh);
 
     // check for shared egde --> no intersection
-    if(face(opposite(h,m_pmesh),m_pmesh) == c->info() ||
-       face(opposite(next(h,m_pmesh),m_pmesh),m_pmesh) == c->info() ||
-       face(opposite(next(next(h,m_pmesh),m_pmesh),m_pmesh),m_pmesh) == c->info())
+    if(face(opposite(h,m_tmesh),m_tmesh) == c->info() ||
+       face(opposite(next(h,m_tmesh),m_tmesh),m_tmesh) == c->info() ||
+       face(opposite(next(next(h,m_tmesh),m_tmesh),m_tmesh),m_tmesh) == c->info())
       return;
 
     // check for shared vertex --> maybe intersection, maybe not
-    halfedge_descriptor g = halfedge(c->info(),m_pmesh);
+    halfedge_descriptor g = halfedge(c->info(),m_tmesh);
     halfedge_descriptor v;
 
-    if(target(h,m_pmesh) == target(g,m_pmesh))
+    if(target(h,m_tmesh) == target(g,m_tmesh))
       v = g;
-    if(target(h,m_pmesh) == target(next(g,m_pmesh),m_pmesh))
-      v = next(g,m_pmesh);
-    if(target(h,m_pmesh) == target(next(next(g,m_pmesh),m_pmesh),m_pmesh))
-      v = next(next(g,m_pmesh),m_pmesh);
+    if(target(h,m_tmesh) == target(next(g,m_tmesh),m_tmesh))
+      v = next(g,m_tmesh);
+    if(target(h,m_tmesh) == target(next(next(g,m_tmesh),m_tmesh),m_tmesh))
+      v = next(next(g,m_tmesh),m_tmesh);
 
     if(v == halfedge_descriptor()){
-      h = next(h,m_pmesh);
-      if(target(h,m_pmesh) == target(g,m_pmesh))
+      h = next(h,m_tmesh);
+      if(target(h,m_tmesh) == target(g,m_tmesh))
         v = g;
-      if(target(h,m_pmesh) == target(next(g,m_pmesh),m_pmesh))
-        v = next(g,m_pmesh);
-      if(target(h,m_pmesh) == target(next(next(g,m_pmesh),m_pmesh),m_pmesh))
-        v = next(next(g,m_pmesh),m_pmesh);
+      if(target(h,m_tmesh) == target(next(g,m_tmesh),m_tmesh))
+        v = next(g,m_tmesh);
+      if(target(h,m_tmesh) == target(next(next(g,m_tmesh),m_tmesh),m_tmesh))
+        v = next(next(g,m_tmesh),m_tmesh);
       if(v == halfedge_descriptor()){
-        h = next(h,m_pmesh);
-        if(target(h,m_pmesh) == target(g,m_pmesh))
+        h = next(h,m_tmesh);
+        if(target(h,m_tmesh) == target(g,m_tmesh))
           v = g;
-        if(target(h,m_pmesh) == target(next(g,m_pmesh),m_pmesh))
-          v = next(g,m_pmesh);
-        if(target(h,m_pmesh) == target(next(next(g,m_pmesh),m_pmesh),m_pmesh))
-          v = next(next(g,m_pmesh),m_pmesh);
+        if(target(h,m_tmesh) == target(next(g,m_tmesh),m_tmesh))
+          v = next(g,m_tmesh);
+        if(target(h,m_tmesh) == target(next(next(g,m_tmesh),m_tmesh),m_tmesh))
+          v = next(next(g,m_tmesh),m_tmesh);
       }
     }
 
     if(v != halfedge_descriptor()){
       // found shared vertex: 
-      CGAL_assertion(target(h,m_pmesh) == target(v,m_pmesh));
+      CGAL_assertion(target(h,m_tmesh) == target(v,m_tmesh));
       // geometric check if the opposite segments intersect the triangles
-      Triangle t1 = triangle_functor( m_point[target(h,m_pmesh)], m_point[target(next(h,m_pmesh),m_pmesh)], m_point[target(next(next(h,m_pmesh),m_pmesh),m_pmesh)]);
-      Triangle t2 = triangle_functor( m_point[target(v,m_pmesh)], m_point[target(next(v,m_pmesh),m_pmesh)], m_point[target(next(next(v,m_pmesh),m_pmesh),m_pmesh)]);
+      Triangle t1 = triangle_functor( m_point[target(h,m_tmesh)], m_point[target(next(h,m_tmesh),m_tmesh)], m_point[target(next(next(h,m_tmesh),m_tmesh),m_tmesh)]);
+      Triangle t2 = triangle_functor( m_point[target(v,m_tmesh)], m_point[target(next(v,m_tmesh),m_tmesh)], m_point[target(next(next(v,m_tmesh),m_tmesh),m_tmesh)]);
       
-      Segment s1 = segment_functor( m_point[target(next(h,m_pmesh),m_pmesh)], m_point[target(next(next(h,m_pmesh),m_pmesh),m_pmesh)]);
-      Segment s2 = segment_functor( m_point[target(next(v,m_pmesh),m_pmesh)], m_point[target(next(next(v,m_pmesh),m_pmesh),m_pmesh)]);
+      Segment s1 = segment_functor( m_point[target(next(h,m_tmesh),m_tmesh)], m_point[target(next(next(h,m_tmesh),m_tmesh),m_tmesh)]);
+      Segment s2 = segment_functor( m_point[target(next(v,m_tmesh),m_tmesh)], m_point[target(next(next(v,m_tmesh),m_tmesh),m_tmesh)]);
       
       if(do_intersect_3_functor(t1,s2)){
         *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
@@ -146,8 +149,8 @@ struct Intersect_facets
     }
     
     // check for geometric intersection
-    Triangle t1 = triangle_functor( m_point[target(h,m_pmesh)], m_point[target(next(h,m_pmesh),m_pmesh)], m_point[target(next(next(h,m_pmesh),m_pmesh),m_pmesh)]);
-    Triangle t2 = triangle_functor( m_point[target(g,m_pmesh)], m_point[target(next(g,m_pmesh),m_pmesh)], m_point[target(next(next(g,m_pmesh),m_pmesh),m_pmesh)]);
+    Triangle t1 = triangle_functor( m_point[target(h,m_tmesh)], m_point[target(next(h,m_tmesh),m_tmesh)], m_point[target(next(next(h,m_tmesh),m_tmesh),m_tmesh)]);
+    Triangle t2 = triangle_functor( m_point[target(g,m_tmesh)], m_point[target(next(g,m_tmesh),m_tmesh)], m_point[target(next(next(g,m_tmesh),m_tmesh),m_tmesh)]);
     if(do_intersect_3_functor(t1, t2)){
       *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
     }
@@ -172,58 +175,58 @@ namespace Polygon_mesh_processing {
  * \ingroup PkgPolygonMeshProcessing
  * Detects and reports self-intersections of a triangulated polyhedral surface.
  * Depends on \ref PkgBoxIntersectionDSummary
- * @pre @a p.is_pure_triangle()
+ * @pre @a CGAL::is_pure_triangle(tmesh)
  *
  * @tparam GeomTraits a model of `SelfIntersectionTraits`
- * @tparam PolygonMesh a model of `FaceListGraph` (possibly a \cgal polyhedron)
+ * @tparam TriangleMesh a model of `FaceListGraph` (possibly a \cgal polyhedron)
  * @tparam OutputIterator Output iterator accepting objects of type 
- *   `std::pair<PolygonMesh::face_descriptor, PolygonMesh::face_descriptor>`
+ *   `std::pair<TriangleMesh::face_descriptor, TriangleMesh::face_descriptor>`
  *   if @a polygon mesh is passed by const reference.
  *
- * @param pmesh polygon mesh to be checked, might be passed by const reference or reference
+ * @param tmesh triangle mesh to be checked, might be passed by const reference or reference
  * @param out all pairs of non-adjacent facets intersecting are put in it
  * @param geom_traits traits class providing intersection test primitives
  *
  * @return `out`. Note the OutputIterator can be empty.
- *
- * \todo check whether polygon mesh should be `p.is_pure_triangle()`. Inconsistency between code and doc
  */
-template <class GeomTraits, class PolygonMesh, class OutputIterator>
+template <class GeomTraits, class TriangleMesh, class OutputIterator>
 OutputIterator
-self_intersections(const PolygonMesh& pmesh,
+self_intersections(const TriangleMesh& tmesh,
                OutputIterator out,
                const GeomTraits& geom_traits = GeomTraits())
 {
-  //CGAL_assertion(pmesh.is_pure_triangle());
+  CGAL_precondition(CGAL::is_pure_triangle(tmesh));
 
-  typedef typename boost::graph_traits<PolygonMesh>::face_iterator Facet_it;
+  typedef TriangleMesh TM;
 
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor Facet_hdl;
+  typedef typename boost::graph_traits<TM>::face_iterator Facet_it;
+
+  typedef typename boost::graph_traits<TM>::face_descriptor Facet_hdl;
 
   typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, Facet_hdl> Box;
 
-  typedef typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type Ppmap;
+  typedef typename boost::property_map<TM, CGAL::vertex_point_t>::const_type Ppmap;
 
-  Ppmap m_point = get(CGAL::vertex_point, pmesh);
+  Ppmap m_point = get(CGAL::vertex_point, tmesh);
 
   // make one box per facet
   std::vector<Box> boxes;
-  boxes.reserve(num_faces(pmesh));
+  boxes.reserve(num_faces(tmesh));
 
   Facet_it fi,e;
 
-  for(boost::tie(fi,e)= faces(pmesh);
+  for(boost::tie(fi,e)= faces(tmesh);
     fi != e;
       ++fi){
     Facet_hdl f = *fi;
-    boxes.push_back(Box( m_point[target(halfedge(f,pmesh),pmesh)].bbox() +
-                         m_point[target(next(halfedge(f,pmesh),pmesh),pmesh)].bbox() +
-                         m_point[target(next(next(halfedge(f,pmesh),pmesh),pmesh),pmesh)].bbox(),
+    boxes.push_back(Box( m_point[target(halfedge(f,tmesh),tmesh)].bbox() +
+                         m_point[target(next(halfedge(f,tmesh),tmesh),tmesh)].bbox() +
+                         m_point[target(next(next(halfedge(f,tmesh),tmesh),tmesh),tmesh)].bbox(),
     f));
   }
   // generate box pointers
   std::vector<const Box*> box_ptr;
-  box_ptr.reserve(num_faces(pmesh));
+  box_ptr.reserve(num_faces(tmesh));
   typename std::vector<Box>::iterator b;
   for(b = boxes.begin();
     b != boxes.end();
@@ -231,7 +234,7 @@ self_intersections(const PolygonMesh& pmesh,
     box_ptr.push_back(&*b);
 
   // compute self-intersections filtered out by boxes
-  CGAL::internal::Intersect_facets<PolygonMesh,GeomTraits,Box,OutputIterator> intersect_facets(pmesh, out, geom_traits);
+  CGAL::internal::Intersect_facets<TM,GeomTraits,Box,OutputIterator> intersect_facets(tmesh, out, geom_traits);
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets,cutoff);
   return intersect_facets.m_iterator;
@@ -241,25 +244,27 @@ self_intersections(const PolygonMesh& pmesh,
  * \ingroup PkgPolygonMeshProcessing
  * Checks if a polygon mesh is self-intersecting.
  * Depends on \ref PkgBoxIntersectionDSummary
- * @pre @a p.is_pure_triangle()
+ * @pre @a CGAL::is_pure_triangle(tmesh)
  *
  * @tparam GeomTraits a model of `SelfIntersectionTraits`
- * @tparam PolygonMesh a model of `FaceListGraph` (possibly a %CGAL polyhedron)
+ * @tparam TriangleMesh a model of `FaceListGraph` (possibly a %CGAL polyhedron)
  *
- * @param pmesh PolygonMesh to be tested
+ * @param tmesh TriangleMesh to be tested
  * @param geom_traits traits class providing intersection test primitives
  *
  * \todo Polyhedron should be a model of `FaceListGraph`
- * @return true if `pmesh` is self-intersecting
+ * @return true if `tmesh` is self-intersecting
  */
-template <class GeomTraits, class PolygonMesh>
-bool is_self_intersecting(const PolygonMesh& pmesh,
+template <class GeomTraits, class TriangleMesh>
+bool is_self_intersecting(const TriangleMesh& tmesh,
                           const GeomTraits& geom_traits = GeomTraits())
 {
-  try 
+  CGAL_precondition(CGAL::is_pure_triangle(tmesh));
+
+  try
   {
     typedef boost::function_output_iterator<internal::Throw_at_output> OutputIterator;
-    self_intersections<GeomTraits>(pmesh, OutputIterator(), geom_traits); 
+    self_intersections<GeomTraits>(tmesh, OutputIterator(), geom_traits); 
   }
   catch( internal::Throw_at_output::Throw_at_output_exception& ) 
   { return true; }
