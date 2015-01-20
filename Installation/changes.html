@@ -230,6 +230,12 @@ and <code>src/</code> directories).
       parameter <code>std::vector</code>.
     </li>
     <li>
+      <b>Breaking change:</b> The order of the points in the iterator range 
+      <code>[tree.begin(),tree.end()]</code> is not the order of 
+      insertion of the points into the tree.  This was not guaranteed before
+      but might have beeen observed and exploited by users.
+    </li>
+    <li>
       Derived <code>kd_tree_leaf_node</code> and <code>kd_tree_internal_node</code>
       from <code>kd_tree_node</code> to save memory.
     </li>
