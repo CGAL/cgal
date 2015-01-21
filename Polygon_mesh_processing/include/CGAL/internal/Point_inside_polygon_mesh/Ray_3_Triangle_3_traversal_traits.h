@@ -38,11 +38,13 @@ protected:
   //the status indicates whether the query point is strictly inside the polyhedron, and the number of intersected triangles if yes
   std::pair<boost::logic::tribool,std::size_t>& m_status;
   bool m_stop;
+  const AABBTraits& m_aabb_traits;
   typedef typename AABBTraits::Primitive Primitive;
 
 public:
-  Ray_3_Triangle_3_traversal_traits(std::pair<boost::logic::tribool,std::size_t>& status)
-    :m_status(status),m_stop(false)
+  Ray_3_Triangle_3_traversal_traits(std::pair<boost::logic::tribool,std::size_t>& status,
+                                    const AABBTraits& aabb_traits)
+    :m_status(status),m_stop(false), m_aabb_traits(aabb_traits)
   {m_status.first=true;}
 
   bool go_further() const { return !m_stop; }
@@ -53,7 +55,7 @@ public:
     internal::r3t3_do_intersect_endpoint_position_visitor visitor;
     std::pair<bool,internal::R3T3_intersection::type> res=
       internal::do_intersect(
-        (internal::Primitive_helper<AABBTraits>::get_datum(primitive, AABBTraits())),
+        (internal::Primitive_helper<AABBTraits>::get_datum(primitive, m_aabb_traits)),
         query,Kernel(),visitor);
     
     if (res.first){
@@ -75,7 +77,7 @@ public:
   template<class Query,class Node>
   bool do_intersect(const Query& query, const Node& node) const
   {
-    return AABBTraits().do_intersect_object()(query, node.bbox());
+    return m_aabb_traits.do_intersect_object()(query, node.bbox());
   }
 };
 
@@ -89,7 +91,8 @@ class Ray_3_Triangle_3_traversal_traits<AABBTraits,Kernel,Tag_true>:
   typedef typename Kernel::Point_3 Point;
   typedef typename Base::Primitive Primitive;
 public:
-  Ray_3_Triangle_3_traversal_traits(std::pair<boost::logic::tribool,std::size_t>& status):Base(status){}
+  Ray_3_Triangle_3_traversal_traits(std::pair<boost::logic::tribool,std::size_t>& status, const AABBTraits& aabb_traits)
+    :Base(status, aabb_traits){}
 
   template <class Query>
   bool do_intersect(const Query& query, const Bbox_3& bbox) const
@@ -129,7 +132,7 @@ public:
   void intersection(const Query& query, const Primitive& primitive)
   {
     typename Kernel::Triangle_3 t
-      = (internal::Primitive_helper<AABBTraits>::get_datum(primitive, AABBTraits()));
+      = (internal::Primitive_helper<AABBTraits>::get_datum(primitive, this->m_aabb_traits));
     if ( !do_intersect(query,t.bbox()) ) return;
     
     typename Kernel::Point_2 p0=z_project(t[0]);

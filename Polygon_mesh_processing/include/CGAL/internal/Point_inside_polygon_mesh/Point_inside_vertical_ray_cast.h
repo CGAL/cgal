@@ -81,7 +81,7 @@ private:
   {
     std::pair<boost::logic::tribool,std::size_t> status( boost::logic::tribool(boost::logic::indeterminate), 0);
 
-    Ray_3_Triangle_3_traversal_traits<Traits, Kernel, Boolean_tag<ray_is_vertical> > traversal_traits(status);
+    Ray_3_Triangle_3_traversal_traits<Traits, Kernel, Boolean_tag<ray_is_vertical> > traversal_traits(status, tree.traits());
     tree.traversal(ray, traversal_traits);
 
     if ( !boost::logic::indeterminate(status.first) )
