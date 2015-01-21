@@ -31,6 +31,8 @@
 
 #include <boost/foreach.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <CGAL/internal/Polygon_mesh_slicer_3/Traversal_traits.h>
+
 #include <boost/variant.hpp>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
@@ -48,7 +50,6 @@ namespace CGAL {
 /// \tparam AABBTree must be an instanciation of `CGAL::AABB_tree` able to handle
 ///         the edges of TriangleMesh, having its `edge_descriptor` as primitive id.
 /// Depends on \ref PkgAABB_treeSummary
-/// \todo use a custom traversal traits
 /// \todo use dedicated predicates if the plane is axis aligned
 template<class TriangleMesh,
   class Traits,
@@ -71,9 +72,6 @@ class Polygon_mesh_slicer_3
   typedef typename Traits::Intersect_3                              Intersect_3;
   typedef typename Traits::Point_3                                      Point_3;
 
-  enum Intersection_type_enum { POINT, SRC_VERTEX, SEGMENT };
-  typedef std::pair<edge_descriptor, Intersection_type_enum>  Intersection_type;
-
 /// typedefs for internal graph to get connectivity of the polylines
   typedef boost::variant<vertex_descriptor, edge_descriptor>     AL_vertex_info;
   typedef boost::adjacency_list <
@@ -83,6 +81,14 @@ class Polygon_mesh_slicer_3
                               AL_vertex_info >                         AL_graph;
   typedef typename AL_graph::vertex_descriptor             AL_vertex_descriptor;
   typedef std::pair<AL_vertex_descriptor, AL_vertex_descriptor>  AL_vertex_pair;
+  typedef std::map<vertex_descriptor, AL_vertex_descriptor>        Vertices_map;
+  typedef std::pair<const vertex_descriptor,AL_vertex_descriptor>   Vertex_pair;
+/// Traversal traits for the AABB-tree selecting edges and classifying them
+  typedef Polygon_mesh_slicer::Traversal_traits<  AL_graph,
+                                                  TriangleMesh,
+                                                  VertexPointPmap,
+                                                  typename AABBTree::AABB_traits,
+                                                  Traits >     Traversal_traits;
 
   // compare the faces using the halfedge descriptors
   struct Compare_face{
@@ -165,11 +171,6 @@ class Polygon_mesh_slicer_3
   bool m_own_tree;
 
 /// Convenience graph functions
-  edge_descriptor opposite_edge(edge_descriptor ed) const
-  {
-    return edge( opposite( halfedge(ed, m_tmesh), m_tmesh), m_tmesh );
-  }
-
   edge_descriptor next_edge(edge_descriptor ed) const
   {
     return edge( next( halfedge(ed, m_tmesh), m_tmesh), m_tmesh );
@@ -183,29 +184,6 @@ class Polygon_mesh_slicer_3
   face_descriptor opposite_face(edge_descriptor ed) const
   {
     return face( opposite( halfedge(ed, m_tmesh), m_tmesh), m_tmesh);
-  }
-
-  /// given an edge intersected by `plane` indicates whether the edge is
-  /// intersected in its interior, at an endpoint or if it's coplanar
-  Intersection_type
-  classify_edge(edge_descriptor ed, const Plane_3& plane) const
-  {
-    typename Traits::Oriented_side_3 oriented_side = m_traits.oriented_side_3_object();
-    Oriented_side src = oriented_side(plane, get(m_vpmap, source(ed,m_tmesh)) );
-    Oriented_side tgt = oriented_side(plane, get(m_vpmap, target(ed,m_tmesh)) );
-
-    if (src==ON_ORIENTED_BOUNDARY)
-    {
-      return tgt==ON_ORIENTED_BOUNDARY?
-                  Intersection_type(ed, SEGMENT):
-                  Intersection_type(ed, SRC_VERTEX);
-    }
-
-    if (tgt==ON_ORIENTED_BOUNDARY)
-      return Intersection_type(opposite_edge(ed), SRC_VERTEX);
-
-    CGAL_assertion (src!=tgt);
-    return Intersection_type(ed,POINT);
   }
 
   /// handle edge insertion in the adjacency_list graph
@@ -353,47 +331,30 @@ public:
   {
     CGAL_precondition(!plane.is_degenerate());
 
-    /// get all edges intersected by the plane
-    std::vector<edge_descriptor> intersected_edges;
-    m_tree_ptr->all_intersected_primitives(plane, std::back_inserter(intersected_edges));
-
+    /// containers for storing edges wrt their position with the plane
     std::set<edge_descriptor> all_coplanar_edges;
     std::vector<edge_descriptor> iedges;
-    typedef std::map<vertex_descriptor, AL_vertex_descriptor> Src_vertices_map;
-    Src_vertices_map src_vertices;
+    Vertices_map vertices;
 
-    AL_graph al_graph; //< output graph
+    /// get all edges intersected by the plane and classify them
+    Traversal_traits ttraits(
+      all_coplanar_edges,
+      iedges,
+      vertices,
+      m_tmesh,
+      m_vpmap,
+      m_tree_ptr->traits(),
+      m_traits);
+    m_tree_ptr->traversal(plane, ttraits);
 
-    // classify each intersected edge according to how the plane intersects it
-    BOOST_FOREACH(edge_descriptor ed, intersected_edges)
+    /// init output graph
+    AL_graph al_graph;
+
+    // add nodes for each vertex in the plane
+    BOOST_FOREACH(Vertex_pair& vdp, vertices)
     {
-      Intersection_type itype=classify_edge(ed, plane);
-      switch(itype.second)
-      {
-        case SEGMENT:
-          all_coplanar_edges.insert(ed);
-        break;
-        case SRC_VERTEX:
-        {
-          //insert vertices and make sure it is a new one
-          typename Src_vertices_map::iterator it_insert;
-          bool is_new;
-          cpp11::tie(it_insert, is_new) =
-            src_vertices.insert(
-              std::pair<vertex_descriptor,AL_vertex_descriptor>(
-                source(itype.first,m_tmesh), AL_graph::null_vertex()
-              )
-            );
-          if (is_new)
-          {
-            it_insert->second=add_vertex(al_graph);
-            al_graph[it_insert->second]=it_insert->first;
-          }
-        }
-        break;
-        default:
-          iedges.push_back(ed);
-      }
+      vdp.second=add_vertex(al_graph);
+      al_graph[vdp.second]=vdp.first;
     }
 
     Compare_face less_face(m_tmesh);
@@ -409,14 +370,14 @@ public:
             !all_coplanar_edges.count( next_edge(ed) ) ||
             !all_coplanar_edges.count( next_of_opposite_edge(ed) ) )
       {
-        typename Src_vertices_map::iterator it_insert1, it_insert2;
+        typename Vertices_map::iterator it_insert1, it_insert2;
         bool is_new;
 
         /// Each coplanar edge is connecting two nodes
         //  handle source
         cpp11::tie(it_insert1, is_new) =
-          src_vertices.insert(
-              std::pair<vertex_descriptor,AL_vertex_descriptor>(
+          vertices.insert(
+              Vertex_pair(
                 source(ed,m_tmesh), AL_graph::null_vertex()
               )
           );
@@ -427,8 +388,8 @@ public:
         }
         //  handle target
         cpp11::tie(it_insert2, is_new) =
-          src_vertices.insert(
-              std::pair<vertex_descriptor,AL_vertex_descriptor>(
+          vertices.insert(
+              Vertex_pair(
                 target(ed,m_tmesh), AL_graph::null_vertex()
               )
           );
@@ -464,13 +425,13 @@ public:
       {
         //get the edge and test opposite vertices (if the edge is not on the boundary)
         vertex_descriptor vd = target( next(hnv.first, m_tmesh), m_tmesh);
-        typename Src_vertices_map::iterator itv=src_vertices.find(vd);
-        CGAL_assertion( itv!=src_vertices.end() );
+        typename Vertices_map::iterator itv=vertices.find(vd);
+        CGAL_assertion( itv!=vertices.end() );
         add_edge(itv->second, hnv.second.first, al_graph);
       }
     }
 
-    CGAL_assertion(num_vertices(al_graph)==iedges.size()+src_vertices.size());
+    CGAL_assertion(num_vertices(al_graph)==iedges.size()+vertices.size());
 
     /// now assemble the edges of al_graph to define polylines,
     /// putting them in the output iterator
