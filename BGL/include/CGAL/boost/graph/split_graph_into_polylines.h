@@ -176,7 +176,7 @@ split_graph_into_polylines(const Graph& graph,
   std::set<vertex_descriptor> terminal;
 
   BOOST_FOREACH(vertex_descriptor v, vertices(g)){
-    int n = degree(v, g);
+    typename boost::graph_traits<Graph>::degree_size_type n = degree(v, g);
     if ( n == 1 ) terminal.insert(v);
     if ( n ==0 ){
       //isolated vertex
