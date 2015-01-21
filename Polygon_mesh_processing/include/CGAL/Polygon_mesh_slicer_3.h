@@ -43,6 +43,7 @@ namespace CGAL {
 /// \ingroup PkgPolygonMeshProcessing
 /// Function object that can compute the intersection of planes with
 /// a triangulated surface mesh.
+///
 /// \tparam TriangleMesh must be a model of `FaceGraph` and `HalfedgeListGraph`
 /// \tparam Traits must be a model of `AABBGeomTraits`
 /// \tparam VertexPointPmap is a model of `ReadablePropertyMap` with
@@ -50,14 +51,33 @@ namespace CGAL {
 ///         `Traits::Point_3` as value type
 /// \tparam AABBTree must be an instanciation of `CGAL::AABB_tree` able to handle
 ///         the edges of TriangleMesh, having its `edge_descriptor` as primitive id.
+/// \tparam UseParallelPlaneOptimization if `true`, the code will use specific
+///         predicates and constructions in case the functor is called with a plane
+///         orthogonal to a frame axis, the non-null coefficient being 1 or -1.
 /// Depends on \ref PkgAABB_treeSummary
-/// \todo document usage of custom traits when plane is Plane(1,0,0,d), Plane(0,1,0,d), Plane(0,0,1,d)
+/// \todo Shall we document more in details what is required?
+///       `Traits` must provide:
+///        - `Plane_3`
+///        - `Point_3`
+///        - `Segment_3`
+///        - `Oriented_side_3` with `Oriented_side operator()(Plane_3, Point_3)`
+///        - `Do_intersect_3` with` boost::optional<variant<Point_3,Segment_3> operator()(Plane_3,Segment_3)`
+///        - `Do_intersect_3` with bool operator()(Plane_3, Bbox_3)`
+///
+/// \todo If we keep the traits for plane orthogonal to a frame axis, `Traits` must also provide:
+///       - `FT`
+///       - `Construct_cartesian_const_iterator_3` with `Iterator operator()(Point_3)` `Iterator` being a random access iterator with `FT` as value type
+///       - `Construct_point_3` with `Point_3 operator()(FT,FT,FT)`; `Construct_source_3` with  `const Point_3& operator()(Segment_3)`
+///       - `Construct_target_3` with `const Point_3& operator()(Segment_3)`
+///
+/// \todo `_object()` functions must also be provided
 template<class TriangleMesh,
   class Traits,
   class VertexPointPmap = typename boost::property_map< TriangleMesh, vertex_point_t>::type,
   class AABBTree = AABB_tree<
                        AABB_traits<Traits,
-                         AABB_halfedge_graph_segment_primitive<TriangleMesh> > > >
+                         AABB_halfedge_graph_segment_primitive<TriangleMesh> > >
+  bool UseParallelPlaneOptimization=true>
 class Polygon_mesh_slicer_3
 {
 /// Polygon_mesh typedefs
@@ -375,7 +395,7 @@ public:
     /// get all edges intersected by the plane and classify them
 
     std::pair<int, FT> app_info = axis_parallel_plane_info(plane);
-    if (app_info.first==-1)
+    if (!UseParallelPlaneOptimization || app_info.first==-1)
     {
       General_traversal_traits ttraits(
         all_coplanar_edges,
@@ -491,7 +511,7 @@ public:
 
     /// now assemble the edges of al_graph to define polylines,
     /// putting them in the output iterator
-    if (app_info.first==-1)
+    if (!UseParallelPlaneOptimization || app_info.first==-1)
     {
       Polyline_visitor<OutputIterator, Traits> visitor(m_tmesh, al_graph, plane, m_vpmap, m_traits, out);
       split_graph_into_polylines(al_graph, visitor);
