@@ -330,39 +330,11 @@ void Polyhedron_demo_polyhedron_slicer_plugin::intersection_of_plane_Polyhedra_3
   const std::vector<qglviewer::Vec>& plane_positions,
   std::list<std::vector<Epic_kernel::Point_3> >& polylines) 
 {
-  typedef std::list<std::vector<Epic_kernel::Point_3> >::iterator Polyline_it;
-
-  std::size_t nb_projection = 0;
   CGAL::Polygon_mesh_slicer_3<Polyhedron, Epic_kernel> slicer(poly);
   std::vector<qglviewer::Vec>::const_iterator plane_position_it = plane_positions.begin();
   for(std::vector<Epic_kernel::Plane_3>::const_iterator plane_it = planes.begin(); plane_it != planes.end(); ++plane_it, ++plane_position_it) 
-  {
-    Polyline_it last_processed_polyline = polylines.begin();
     slicer(*plane_it, std::front_inserter(polylines));
-    
-    double a = planes.front().a(); double b = planes.front().b(); double c = planes.front().c();
-    // std::cout << "plane a, b, c: " << a << " " << b << " " << c << std::endl;
-    int on_axis = (a == 0.0 && b == 0.0) ? 2 :
-      (a == 0.0 && c == 0.0) ? 1 :
-      (b == 0.0 && c == 0.0) ? 0 : -1;
-    
-    // continue if planes are not axis oriented
-    if( on_axis == -1) { continue; }
-    ++nb_projection;
 
-    for(Polyline_it polyline_it = polylines.begin(); polyline_it != last_processed_polyline; ++polyline_it) 
-    {
-      for(std::vector<Epic_kernel::Point_3>::iterator point_it = polyline_it->begin();
-        point_it != polyline_it->end(); ++ point_it) 
-      {
-        *point_it = Epic_kernel::Point_3(
-          on_axis != 0 ? point_it->x() : plane_position_it->x,
-          on_axis != 1 ? point_it->y() : plane_position_it->y,
-          on_axis != 2 ? point_it->z() : plane_position_it->z);
-      }
-    }
-  }
-  print_message(QString("%1 axis aligned planes are found, and points are projected...").arg(nb_projection));
 }
 Q_EXPORT_PLUGIN2(Polyhedron_demo_polyhedron_slicer_plugin, Polyhedron_demo_polyhedron_slicer_plugin)
 
