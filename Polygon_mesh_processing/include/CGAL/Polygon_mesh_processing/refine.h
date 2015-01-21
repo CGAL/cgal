@@ -13,8 +13,8 @@ namespace Polygon_mesh_processing {
 
   @tparam Polyhedron must be a model of `MutableFaceGraph`
   @tparam InputIterator iterator over input facets
-  @tparam FacetOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::face_descriptor` for patch facets
-  @tparam VertexOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::vertex_descriptor` for patch vertices
+  @tparam FacetOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch facets
+  @tparam VertexOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices
 
   @param pmesh mesh to be refined
   @param facet_begin first iterator of the range of facets

@@ -20,7 +20,7 @@ namespace Polygon_mesh_processing {
   If no possible patch is found, @a pmesh is not altered in any way, and no face descriptor is put into @a out.
 
   @tparam PolygonMesh must be a model of `MutableFaceGraph`
-  @tparam OutputIterator iterator holding `boost::graph_traits<PolygonMesh>::face_descriptor` for patch faces.
+  @tparam OutputIterator iterator holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
 
   @param pmesh polygon mesh containing the hole
   @param border_halfedge a border halfedge incident to the hole
@@ -54,8 +54,8 @@ namespace Polygon_mesh_processing {
   @brief Function triangulating and refining a hole in a polygon mesh.
 
   @tparam PolygonMesh must be model of `MutableFaceGraph`
-  @tparam FacetOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::face_descriptor` for patch faces.
-  @tparam VertexOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::vertex_descriptor` for patch vertices.
+  @tparam FacetOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
+  @tparam VertexOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices.
 
   @param pmesh polygon mesh which has the hole
   @param border_halfedge a border halfedge incident to the hole
@@ -112,8 +112,8 @@ namespace Polygon_mesh_processing {
   @tparam SparseLinearSolver a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
   @tparam WeightCalculator a model of `FairWeightCalculator`
   @tparam PolygonMesh must be model of  `MutableFaceGraph`
-  @tparam FaceOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::face_descriptor` for patch faces.
-  @tparam VertexOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::vertex_descriptor` for patch vertices.
+  @tparam FaceOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
+  @tparam VertexOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices.
 
   @param pmesh a polygon mesh which has the hole
   @param border_halfedge a border halfedge incident to the hole
