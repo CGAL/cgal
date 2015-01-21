@@ -38,24 +38,28 @@
 namespace CGAL {
 
 /// \ingroup PkgPolygonMeshProcessing
-/// Cut a triangulated polygon mesh in slices.
-///
+/// Function object that can compute the intersection of planes with
+/// a triangulated surface mesh.
+/// \tparam TriangleMesh must be a model of `FaceGraph` and `HalfedgeListGraph`
+/// \tparam Traits must be a model of `AABBGeomTraits`
+/// \tparam VertexPointPmap is a model of `ReadablePropertyMap` with
+///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
+///         `Traits::Point_3` as value type
+/// \tparam AABBTree must be an instanciation of `CGAL::AABB_tree` able to handle
+///         the edges of TriangleMesh, having its `edge_descriptor` as primitive id.
 /// Depends on \ref PkgAABB_treeSummary
-/// \todo `PolygonMesh` should be a model of `FaceListGraph`
 /// \todo use a custom traversal traits
 /// \todo use dedicated predicates if the plane is axis aligned
-/// \todo we should restrict ourselves to triangulated meshes since
-///       the coplanar status of edges requires the facets to be planar
-template<class PolygonMesh,
+template<class TriangleMesh,
   class Traits,
-  class VertexPointPmap = typename boost::property_map< PolygonMesh, vertex_point_t>::type,
-  class AABB_tree_ = AABB_tree<
+  class VertexPointPmap = typename boost::property_map< TriangleMesh, vertex_point_t>::type,
+  class AABBTree = AABB_tree<
                        AABB_traits<Traits,
-                         AABB_halfedge_graph_segment_primitive<PolygonMesh> > > >
+                         AABB_halfedge_graph_segment_primitive<TriangleMesh> > > >
 class Polygon_mesh_slicer_3
 {
 /// Polygon_mesh typedefs
-  typedef typename boost::graph_traits<PolygonMesh>                graph_traits;
+  typedef typename boost::graph_traits<TriangleMesh>               graph_traits;
   typedef typename graph_traits::vertex_descriptor            vertex_descriptor;
   typedef typename graph_traits::edge_descriptor                edge_descriptor;
   typedef typename graph_traits::halfedge_descriptor        halfedge_descriptor;
@@ -70,26 +74,26 @@ class Polygon_mesh_slicer_3
   enum Intersection_type_enum { POINT, SRC_VERTEX, SEGMENT };
   typedef std::pair<edge_descriptor, Intersection_type_enum>  Intersection_type;
 
-/// typedefs for internal graph to rebuild connectivity of the intersection polylines
-  typedef boost::variant<vertex_descriptor, edge_descriptor> AL_vertex_info;
+/// typedefs for internal graph to get connectivity of the polylines
+  typedef boost::variant<vertex_descriptor, edge_descriptor>     AL_vertex_info;
   typedef boost::adjacency_list <
                               boost::vecS,
                               boost::vecS,
                               boost::undirectedS,
-                              AL_vertex_info > AL_graph;
-  typedef typename AL_graph::vertex_descriptor AL_vertex_descriptor;
-  typedef std::pair<AL_vertex_descriptor, AL_vertex_descriptor> AL_vertex_pair;
+                              AL_vertex_info >                         AL_graph;
+  typedef typename AL_graph::vertex_descriptor             AL_vertex_descriptor;
+  typedef std::pair<AL_vertex_descriptor, AL_vertex_descriptor>  AL_vertex_pair;
 
   // compare the faces using the halfedge descriptors
   struct Compare_face{
-    PolygonMesh& m_pmesh;
-    Compare_face(PolygonMesh& pmesh)
-      :m_pmesh(pmesh)
+    TriangleMesh& m_tmesh;
+    Compare_face(TriangleMesh& tmesh)
+      :m_tmesh(tmesh)
     {}
 
     bool operator()(halfedge_descriptor hd1, halfedge_descriptor hd2) const
     {
-      return face(hd1,m_pmesh) < face(hd2,m_pmesh);
+      return face(hd1,m_tmesh) < face(hd2,m_tmesh);
     }
   };
 
@@ -98,20 +102,20 @@ class Polygon_mesh_slicer_3
   template <class OutputIterator>
   struct Polyline_visitor{
     AL_graph& al_graph;
-    PolygonMesh& m_pmesh;
+    TriangleMesh& m_tmesh;
     const Plane_3& m_plane;
     VertexPointPmap m_vpmap;
     const Traits& m_traits;
     OutputIterator out;
 
-    Polyline_visitor( PolygonMesh& pmesh,
+    Polyline_visitor( TriangleMesh& tmesh,
                       AL_graph& al_graph,
                       const Plane_3& plane,
                       VertexPointPmap vpmap,
                       const Traits& traits,
                       OutputIterator out)
       : al_graph(al_graph)
-      , m_pmesh(pmesh)
+      , m_tmesh(tmesh)
       , m_plane(plane)
       , m_vpmap(vpmap)
       , m_traits(traits)
@@ -125,19 +129,17 @@ class Polygon_mesh_slicer_3
     }
     void add_node(AL_vertex_descriptor node_id)
     {
-      /// \todo if it is closed, then the last point will be duplicated???
       AL_vertex_info v = al_graph[node_id];
       if (const vertex_descriptor* vd_ptr = boost::get<vertex_descriptor>(&v) )
       {
-        ///\todo why get isn't working?
         current_poly.push_back( get(m_vpmap, *vd_ptr) );
       }
       else
       {
         edge_descriptor ed = boost::get<edge_descriptor>(v);
         Segment_3 s(
-          get(m_vpmap, source(ed, m_pmesh)),
-          get(m_vpmap,target(ed, m_pmesh))
+          get(m_vpmap, source(ed, m_tmesh)),
+          get(m_vpmap,target(ed, m_tmesh))
         );
         Intersect_3 intersection = m_traits.intersect_3_object();
         typename cpp11::result_of<Intersect_3(Plane_3, Segment_3)>::type
@@ -156,31 +158,31 @@ class Polygon_mesh_slicer_3
   };
 
 /// member variables
-  const AABB_tree_* m_tree_ptr;
-  PolygonMesh& m_pmesh;
+  const AABBTree* m_tree_ptr;
+  TriangleMesh& m_tmesh;
   VertexPointPmap m_vpmap;
   Traits m_traits;
   bool m_own_tree;
 
-  /// Convenience graph functions
+/// Convenience graph functions
   edge_descriptor opposite_edge(edge_descriptor ed) const
   {
-    return edge( opposite( halfedge(ed, m_pmesh), m_pmesh), m_pmesh );
+    return edge( opposite( halfedge(ed, m_tmesh), m_tmesh), m_tmesh );
   }
 
   edge_descriptor next_edge(edge_descriptor ed) const
   {
-    return edge( next( halfedge(ed, m_pmesh), m_pmesh), m_pmesh );
+    return edge( next( halfedge(ed, m_tmesh), m_tmesh), m_tmesh );
   }
 
   edge_descriptor next_of_opposite_edge(edge_descriptor ed) const
   {
-    return edge( next( opposite( halfedge(ed, m_pmesh), m_pmesh), m_pmesh), m_pmesh );
+    return edge( next( opposite( halfedge(ed, m_tmesh), m_tmesh), m_tmesh), m_tmesh );
   }
 
   face_descriptor opposite_face(edge_descriptor ed) const
   {
-    return face( opposite( halfedge(ed, m_pmesh), m_pmesh), m_pmesh);
+    return face( opposite( halfedge(ed, m_tmesh), m_tmesh), m_tmesh);
   }
 
   /// given an edge intersected by `plane` indicates whether the edge is
@@ -189,8 +191,8 @@ class Polygon_mesh_slicer_3
   classify_edge(edge_descriptor ed, const Plane_3& plane) const
   {
     typename Traits::Oriented_side_3 oriented_side = m_traits.oriented_side_3_object();
-    Oriented_side src = oriented_side(plane, get(m_vpmap, source(ed,m_pmesh)) );
-    Oriented_side tgt = oriented_side(plane, get(m_vpmap, target(ed,m_pmesh)) );
+    Oriented_side src = oriented_side(plane, get(m_vpmap, source(ed,m_tmesh)) );
+    Oriented_side tgt = oriented_side(plane, get(m_vpmap, target(ed,m_tmesh)) );
 
     if (src==ON_ORIENTED_BOUNDARY)
     {
@@ -218,9 +220,9 @@ class Polygon_mesh_slicer_3
       typename AL_edge_map::iterator itm;
       bool new_insertion;
 
-      halfedge_descriptor hd=halfedge(ed, m_pmesh);
+      halfedge_descriptor hd=halfedge(ed, m_tmesh);
 
-      if (face(hd, m_pmesh)!=graph_traits::null_face())
+      if (face(hd, m_tmesh)!=graph_traits::null_face())
       {
         cpp11::tie(itm, new_insertion) =
           al_edge_map.insert( std::pair< halfedge_descriptor, AL_vertex_pair >
@@ -235,8 +237,8 @@ class Polygon_mesh_slicer_3
         }
       }
 
-      hd=opposite(hd, m_pmesh);
-      if (face(hd, m_pmesh)!=graph_traits::null_face())
+      hd=opposite(hd, m_tmesh);
+      if (face(hd, m_tmesh)!=graph_traits::null_face())
       {
         cpp11::tie(itm, new_insertion) =
           al_edge_map.insert( std::pair< halfedge_descriptor, AL_vertex_pair >
@@ -255,80 +257,95 @@ class Polygon_mesh_slicer_3
 public:
 
   /**
-  * Constructor. `pmesh` must be a valid polygon mesh as long as this functor is used.
-  * @param pmesh the polygon mesh to be cut
-  * @param traits the traits type providing ...
+  * Constructor using all `edges(tmesh)` to initialize the
+  * internal `AABB_tree`.
+  * @param tmesh the triangulated surface mesh to be cut.
+  *              it must be valid and non modified as long
+  *              as the functor is used
+  * @param vpmap an intance of the vertex point property map
+  * @param traits a traits class instance
   */
-  Polygon_mesh_slicer_3(const PolygonMesh& pmesh,
+  Polygon_mesh_slicer_3(const TriangleMesh& tmesh,
                         VertexPointPmap vpmap,
                         const Traits& traits = Traits())
-  : m_pmesh(const_cast<PolygonMesh&>(pmesh))
+  : m_tmesh(const_cast<TriangleMesh&>(tmesh))
   , m_vpmap(vpmap)
   , m_traits(traits)
   , m_own_tree(true)
   {
-    m_tree_ptr = new AABB_tree_(edges(m_pmesh).first,
-                                edges(m_pmesh).second,
-                                m_pmesh,
-                                m_vpmap);
+    m_tree_ptr = new AABBTree(edges(m_tmesh).first,
+                              edges(m_tmesh).second,
+                              m_tmesh,
+                              m_vpmap);
   }
 
   /**
-  * Constructor. `pmesh` must be a valid polygon mesh as long as this functor is used.
-  * @param pmesh the polygon mesh to be cut
-  * @param tree a `CGAL::AABB_tree` containing the edges of `pmesh`
-  * @param kernel the kernel
+  * Constructor using an `AABB_tree` provided by the user.
+  * @param tmesh the triangulated surface mesh to be cut.
+  *              it must be valid and non modified as long
+  *              as the functor is used
+  * @param tree must be initialized with all the edge of `tmesh`
+  * @param vpmap an intance of the vertex point property map
+  * @param traits a traits class instance
   */
-  Polygon_mesh_slicer_3(const PolygonMesh& pmesh,
-                        const AABB_tree_& tree,
+  Polygon_mesh_slicer_3(const TriangleMesh& tmesh,
+                        const AABBTree& tree,
                         VertexPointPmap vpmap,
                         const Traits& traits = Traits())
     : m_tree_ptr(&tree)
-    , m_pmesh(const_cast<PolygonMesh&>(pmesh))
+    , m_tmesh(const_cast<TriangleMesh&>(tmesh))
     , m_vpmap(vpmap)
     , m_traits(traits)
     , m_own_tree(false)
   { }
 
   /**
-  * Constructor. `pmesh` must be a valid polygon mesh as long as this functor is used.
-  * @param pmesh the polygon mesh to be cut
-  * @param traits the traits type providing ...
+  * Constructor using all `edges(tmesh)` to initialize the
+  * internal `AABB_tree`. The vertex point property map used
+  * is `get(boost::vertex_point, tmesh)`
+  * @param tmesh the triangulated surface mesh to be cut.
+  *              it must be valid and non modified as long
+  *              as the functor is used
+  * @param traits a traits class instance
   */
-  Polygon_mesh_slicer_3(const PolygonMesh& pmesh,
+  Polygon_mesh_slicer_3(const TriangleMesh& tmesh,
                         const Traits& traits = Traits())
-  : m_pmesh(const_cast<PolygonMesh&>(pmesh))
-  , m_vpmap(get(boost::vertex_point, m_pmesh))
+  : m_tmesh(const_cast<TriangleMesh&>(tmesh))
+  , m_vpmap(get(boost::vertex_point, m_tmesh))
   , m_traits(traits)
   , m_own_tree(true)
   {
-    m_tree_ptr = new AABB_tree_(edges(m_pmesh).first,
-                                edges(m_pmesh).second,
-                                m_pmesh,
-                                m_vpmap);
+    m_tree_ptr = new AABBTree(edges(m_tmesh).first,
+                              edges(m_tmesh).second,
+                              m_tmesh,
+                              m_vpmap);
   }
 
   /**
-  * Constructor. `pmesh` must be a valid polygon mesh as long as this functor is used.
-  * @param pmesh the polygon mesh to be cut
-  * @param tree a `CGAL::AABB_tree` containing the edges of `pmesh`
-  * @param kernel the kernel
+  * Constructor using an `AABB_tree` provided by the user.
+  * The vertex point property map used is `get(boost::vertex_point, tmesh)`
+  * @param tmesh the triangulated surface mesh to be cut.
+  *              it must be valid and non modified as long
+  *              as the functor is used
+  * @param tree must be initialized with all the edge of `tmesh`
+  * @param traits a traits class instance
   */
-  Polygon_mesh_slicer_3(const PolygonMesh& pmesh,
-                        const AABB_tree_& tree,
+  Polygon_mesh_slicer_3(const TriangleMesh& tmesh,
+                        const AABBTree& tree,
                         const Traits& traits = Traits())
     : m_tree_ptr(&tree)
-    , m_pmesh(const_cast<PolygonMesh&>(pmesh))
-    , m_vpmap(get(boost::vertex_point, m_pmesh))
+    , m_tmesh(const_cast<TriangleMesh&>(tmesh))
+    , m_vpmap(get(boost::vertex_point, m_tmesh))
     , m_traits(traits)
     , m_own_tree(false)
   { }
 
   /**
-   * @tparam OutputIterator an output iterator accepting polylines. A polyline is considered to be a `std::vector<Kernel::Point_3>`. A polyline is closed if its first and last points are identical.
-   * @param plane the plane to intersect the polygon mesh with
+   * Construct the intersecting polylines of `plane` with the input triangulated surface mesh.
+   * @tparam OutputIterator an output iterator accepting polylines. A polyline is provided as `std::vector<Kernel::Point_3>`.
+   *                        A polyline is closed if its first and last points are identical.
+   * @param plane the plane to intersect the triangulated surface mesh with
    * @param out output iterator of polylines
-   * computes the intersection polylines of the polygon mesh passed in the constructor with `plane` and puts each of them in `out`
    */
   template <class OutputIterator>
   OutputIterator operator() (const Plane_3& plane,
@@ -364,7 +381,7 @@ public:
           cpp11::tie(it_insert, is_new) =
             src_vertices.insert(
               std::pair<vertex_descriptor,AL_vertex_descriptor>(
-                source(itype.first,m_pmesh), AL_graph::null_vertex()
+                source(itype.first,m_tmesh), AL_graph::null_vertex()
               )
             );
           if (is_new)
@@ -379,7 +396,7 @@ public:
       }
     }
 
-    Compare_face less_face(m_pmesh);
+    Compare_face less_face(m_tmesh);
     AL_edge_map al_edge_map( less_face );
 
     /// Filter coplanar edges: we consider only coplanar edges incident to one non-coplanar facet
@@ -387,7 +404,7 @@ public:
     ///   the edge
     BOOST_FOREACH(const edge_descriptor ed, all_coplanar_edges)
     {
-      if (  face(halfedge(ed, m_pmesh), m_pmesh)==graph_traits::null_face() ||
+      if (  face(halfedge(ed, m_tmesh), m_tmesh)==graph_traits::null_face() ||
             opposite_face(ed)==graph_traits::null_face()  ||
             !all_coplanar_edges.count( next_edge(ed) ) ||
             !all_coplanar_edges.count( next_of_opposite_edge(ed) ) )
@@ -400,7 +417,7 @@ public:
         cpp11::tie(it_insert1, is_new) =
           src_vertices.insert(
               std::pair<vertex_descriptor,AL_vertex_descriptor>(
-                source(ed,m_pmesh), AL_graph::null_vertex()
+                source(ed,m_tmesh), AL_graph::null_vertex()
               )
           );
         if (is_new)
@@ -412,7 +429,7 @@ public:
         cpp11::tie(it_insert2, is_new) =
           src_vertices.insert(
               std::pair<vertex_descriptor,AL_vertex_descriptor>(
-                target(ed,m_pmesh), AL_graph::null_vertex()
+                target(ed,m_tmesh), AL_graph::null_vertex()
               )
           );
         if (is_new)
@@ -446,7 +463,7 @@ public:
       if (hnv.second.second==AL_graph::null_vertex())
       {
         //get the edge and test opposite vertices (if the edge is not on the boundary)
-        vertex_descriptor vd = target( next(hnv.first, m_pmesh), m_pmesh);
+        vertex_descriptor vd = target( next(hnv.first, m_tmesh), m_tmesh);
         typename Src_vertices_map::iterator itv=src_vertices.find(vd);
         CGAL_assertion( itv!=src_vertices.end() );
         add_edge(itv->second, hnv.second.first, al_graph);
@@ -457,7 +474,7 @@ public:
 
     /// now assemble the edges of al_graph to define polylines,
     /// putting them in the output iterator
-    Polyline_visitor<OutputIterator> visitor(m_pmesh, al_graph, plane, m_vpmap, m_traits, out);
+    Polyline_visitor<OutputIterator> visitor(m_tmesh, al_graph, plane, m_vpmap, m_traits, out);
     split_graph_into_polylines(al_graph, visitor);
     return visitor.out;
   }
