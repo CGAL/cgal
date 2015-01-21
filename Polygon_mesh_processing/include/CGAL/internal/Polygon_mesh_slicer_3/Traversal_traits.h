@@ -37,22 +37,25 @@ template <typename AL_graph,
           class Traits>
 class Traversal_traits
 {
-///typedefs
+/// typedefs
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor     edge_descriptor;
   typedef typename AL_graph::vertex_descriptor                       AL_vertex_descriptor;
   typedef std::pair<const vertex_descriptor, AL_vertex_descriptor>            Vertex_pair;
   typedef std::map<vertex_descriptor, AL_vertex_descriptor>                  Vertices_map;
-///container filled by `intersection()`
+/// container filled by `intersection()`
   std::set<edge_descriptor>& m_all_coplanar_edges;
   Vertices_map& m_vertices;
   std::vector<edge_descriptor>& m_iedges;
-///data members
+/// data members
   TriangleMesh& m_tmesh;
   const VertexPointPmap& m_vpmap;
   const AABBTraits& m_aabb_traits;
   const Traits& m_traits;
   const typename AL_graph::vertex_descriptor null_vertex;
+/// predicates
+  typename Traits::Oriented_side_3 oriented_side_3;
+  typename Traits::Do_intersect_3 do_intersect_3;
 
 public:
 
@@ -71,17 +74,18 @@ public:
     , m_aabb_traits(aabb_traits)
     , m_traits(traits)
     , null_vertex( boost::graph_traits<AL_graph>::null_vertex() )
+    , oriented_side_3( m_traits.oriented_side_3_object() )
+    , do_intersect_3( m_traits.do_intersect_3_object() )
   {}
 
   bool go_further() const { return true; }
 
   void intersection(const typename Traits::Plane_3& plane, const typename AABBTraits::Primitive& primitive)
   {
-    typename Traits::Oriented_side_3 oriented_side = m_traits.oriented_side_3_object();
     typename boost::graph_traits<TriangleMesh>::edge_descriptor ed = primitive.id();
 
-    Oriented_side src = oriented_side(plane, get(m_vpmap, source(ed,m_tmesh)) );
-    Oriented_side tgt = oriented_side(plane, get(m_vpmap, target(ed,m_tmesh)) );
+    Oriented_side src = oriented_side_3(plane, get(m_vpmap, source(ed,m_tmesh)) );
+    Oriented_side tgt = oriented_side_3(plane, get(m_vpmap, target(ed,m_tmesh)) );
 
     if (src==ON_ORIENTED_BOUNDARY)
     {
@@ -99,10 +103,10 @@ public:
     }
   }
 
-  template<class Query,class Node>
-  bool do_intersect(const Query& query, const Node& node) const
+  template<class Node>
+  bool do_intersect(const typename Traits::Plane_3& plane, const Node& node) const
   {
-    return m_aabb_traits.do_intersect_object()(query, node.bbox());
+    return do_intersect_3(plane, node.bbox());
   }
 };
 

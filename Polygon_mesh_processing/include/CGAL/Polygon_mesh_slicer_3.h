@@ -32,6 +32,7 @@
 #include <boost/foreach.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/internal/Polygon_mesh_slicer_3/Traversal_traits.h>
+#include <CGAL/internal/Polygon_mesh_slicer_3/Axis_parallel_plane_traits.h>
 
 #include <boost/variant.hpp>
 
@@ -50,7 +51,7 @@ namespace CGAL {
 /// \tparam AABBTree must be an instanciation of `CGAL::AABB_tree` able to handle
 ///         the edges of TriangleMesh, having its `edge_descriptor` as primitive id.
 /// Depends on \ref PkgAABB_treeSummary
-/// \todo use dedicated predicates if the plane is axis aligned
+/// \todo document usage of custom traits when plane is Plane(1,0,0,d), Plane(0,1,0,d), Plane(0,0,1,d)
 template<class TriangleMesh,
   class Traits,
   class VertexPointPmap = typename boost::property_map< TriangleMesh, vertex_point_t>::type,
@@ -69,8 +70,8 @@ class Polygon_mesh_slicer_3
 /// Geometric typedefs
   typedef typename Traits::Plane_3                                      Plane_3;
   typedef typename Traits::Segment_3                                  Segment_3;
-  typedef typename Traits::Intersect_3                              Intersect_3;
   typedef typename Traits::Point_3                                      Point_3;
+  typedef typename Traits::FT                                                FT;
 
 /// typedefs for internal graph to get connectivity of the polylines
   typedef boost::variant<vertex_descriptor, edge_descriptor>     AL_vertex_info;
@@ -83,13 +84,22 @@ class Polygon_mesh_slicer_3
   typedef std::pair<AL_vertex_descriptor, AL_vertex_descriptor>  AL_vertex_pair;
   typedef std::map<vertex_descriptor, AL_vertex_descriptor>        Vertices_map;
   typedef std::pair<const vertex_descriptor,AL_vertex_descriptor>   Vertex_pair;
-/// Traversal traits for the AABB-tree selecting edges and classifying them
-  typedef Polygon_mesh_slicer::Traversal_traits<  AL_graph,
-                                                  TriangleMesh,
-                                                  VertexPointPmap,
-                                                  typename AABBTree::AABB_traits,
-                                                  Traits >     Traversal_traits;
+/// Traversal traits
+  typedef Polygon_mesh_slicer::Traversal_traits<
+    AL_graph,
+    TriangleMesh,
+    VertexPointPmap,
+    typename AABBTree::AABB_traits,
+    Traits >                                           General_traversal_traits;
 
+  typedef Polygon_mesh_slicer::Traversal_traits<
+    AL_graph,
+    TriangleMesh,
+    VertexPointPmap,
+    typename AABBTree::AABB_traits,
+    Polygon_mesh_slicer::Axis_parallel_plane_traits<Traits>
+  >                                              Axis_parallel_traversal_traits;
+/// Auxiliary classes
   // compare the faces using the halfedge descriptors
   struct Compare_face{
     TriangleMesh& m_tmesh;
@@ -105,26 +115,26 @@ class Polygon_mesh_slicer_3
 
   typedef std::map< halfedge_descriptor, AL_vertex_pair, Compare_face > AL_edge_map;
 
-  template <class OutputIterator>
+  template <class OutputIterator, class Traits_>
   struct Polyline_visitor{
     AL_graph& al_graph;
     TriangleMesh& m_tmesh;
     const Plane_3& m_plane;
     VertexPointPmap m_vpmap;
-    const Traits& m_traits;
+    typename Traits_::Intersect_3 intersect_3;
     OutputIterator out;
 
     Polyline_visitor( TriangleMesh& tmesh,
                       AL_graph& al_graph,
                       const Plane_3& plane,
                       VertexPointPmap vpmap,
-                      const Traits& traits,
+                      const Traits_& traits,
                       OutputIterator out)
       : al_graph(al_graph)
       , m_tmesh(tmesh)
       , m_plane(plane)
       , m_vpmap(vpmap)
-      , m_traits(traits)
+      , intersect_3( traits.intersect_3_object() )
       , out(out)
     {}
 
@@ -147,9 +157,8 @@ class Polygon_mesh_slicer_3
           get(m_vpmap, source(ed, m_tmesh)),
           get(m_vpmap,target(ed, m_tmesh))
         );
-        Intersect_3 intersection = m_traits.intersect_3_object();
-        typename cpp11::result_of<Intersect_3(Plane_3, Segment_3)>::type
-          inter = intersection(m_plane, s);
+        typename cpp11::result_of<typename Traits_::Intersect_3(Plane_3, Segment_3)>::type
+          inter = intersect_3(m_plane, s);
         CGAL_assertion( inter );
         const Point_3* pt_ptr = boost::get<Point_3>(&(*inter));
         current_poly.push_back( *pt_ptr );
@@ -185,7 +194,7 @@ class Polygon_mesh_slicer_3
   {
     return face( opposite( halfedge(ed, m_tmesh), m_tmesh), m_tmesh);
   }
-
+/// Other private functions
   /// handle edge insertion in the adjacency_list graph
   /// we add an edge betweem two edge_descriptor if they
   /// share a common facet
@@ -230,6 +239,33 @@ class Polygon_mesh_slicer_3
                     al_graph);
         }
       }
+  }
+
+  std::pair<int, FT>
+  axis_parallel_plane_info(const Plane_3& plane) const
+  {
+    FT a = m_traits.compute_a_3_object()(plane);
+    FT b = m_traits.compute_b_3_object()(plane);
+    FT c = m_traits.compute_c_3_object()(plane);
+    FT d = m_traits.compute_d_3_object()(plane);
+
+    if (a==0)
+    {
+      if (b==0)
+      {
+        if (c==1 || c==-1)
+          return std::pair<int,FT>(2, -d*c); /// z=-d
+      }
+      else
+      {
+        if (c==0 && (b==1 || b==-1))
+          return std::pair<int,FT>(1, -d*b); /// y=-d
+      }
+    }
+    else
+      if (b==0 && c==0 && ( a==1 || a==-1))
+        return std::pair<int,FT>(0, -d*a); /// x=-d
+    return std::pair<int,FT>(-1, 0);
   }
 
 public:
@@ -337,15 +373,35 @@ public:
     Vertices_map vertices;
 
     /// get all edges intersected by the plane and classify them
-    Traversal_traits ttraits(
-      all_coplanar_edges,
-      iedges,
-      vertices,
-      m_tmesh,
-      m_vpmap,
-      m_tree_ptr->traits(),
-      m_traits);
-    m_tree_ptr->traversal(plane, ttraits);
+
+    std::pair<int, FT> app_info = axis_parallel_plane_info(plane);
+    if (app_info.first==-1)
+    {
+      General_traversal_traits ttraits(
+        all_coplanar_edges,
+        iedges,
+        vertices,
+        m_tmesh,
+        m_vpmap,
+        m_tree_ptr->traits(),
+        m_traits);
+      m_tree_ptr->traversal(plane, ttraits);
+    }
+    else
+    {
+      Polygon_mesh_slicer::Axis_parallel_plane_traits<Traits>
+        traits(app_info.first, app_info.second, m_traits);
+
+      Axis_parallel_traversal_traits ttraits(
+        all_coplanar_edges,
+        iedges,
+        vertices,
+        m_tmesh,
+        m_vpmap,
+        m_tree_ptr->traits(),
+        traits);
+      m_tree_ptr->traversal(plane, ttraits);
+    }
 
     /// init output graph
     AL_graph al_graph;
@@ -435,9 +491,22 @@ public:
 
     /// now assemble the edges of al_graph to define polylines,
     /// putting them in the output iterator
-    Polyline_visitor<OutputIterator> visitor(m_tmesh, al_graph, plane, m_vpmap, m_traits, out);
-    split_graph_into_polylines(al_graph, visitor);
-    return visitor.out;
+    if (app_info.first==-1)
+    {
+      Polyline_visitor<OutputIterator, Traits> visitor(m_tmesh, al_graph, plane, m_vpmap, m_traits, out);
+      split_graph_into_polylines(al_graph, visitor);
+      return visitor.out;
+    }
+    else
+    {
+      typedef Polygon_mesh_slicer::Axis_parallel_plane_traits<Traits> App_traits;
+      App_traits app_traits(app_info.first, app_info.second, m_traits);
+
+      Polyline_visitor<OutputIterator, App_traits> visitor
+        (m_tmesh, al_graph, plane, m_vpmap, app_traits, out);
+      split_graph_into_polylines(al_graph, visitor);
+      return visitor.out;
+    }
   }
 
   ~Polygon_mesh_slicer_3()
