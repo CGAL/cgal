@@ -62,26 +62,18 @@ class Point_inside_polygon_mesh
   typename Kernel::Construct_ray_3     ray_functor;
   typename Kernel::Construct_vector_3  vector_functor;
   const AABB_tree* tree_ptr;
+  bool own_tree;
 
 public:
-  /**
-   * Default constructor. The domain is considered to be empty.
-   */
-  Point_inside_polygon_mesh(const Kernel& kernel=Kernel())
-  : ray_functor(kernel.construct_ray_3_object()),
-    vector_functor(kernel.construct_vector_3_object())
-  {
-    tree_ptr = new AABB_tree(Traits());
-  }
- 
-  /**
+   /**
    * Constructor with one surface polygon mesh.
    * @pre `mesh` must be closed and triangulated.
    */
   Point_inside_polygon_mesh(const TriangleMesh& mesh,
                             const Kernel& kernel=Kernel())
-  : ray_functor(kernel.construct_ray_3_object()),
-    vector_functor(kernel.construct_vector_3_object())
+  : ray_functor(kernel.construct_ray_3_object())
+  , vector_functor(kernel.construct_vector_3_object())
+  , own_tree(true)
   {
     CGAL_assertion(mesh.is_pure_triangle());
     CGAL_assertion(mesh.is_closed());
@@ -98,23 +90,17 @@ public:
   */
   Point_inside_polygon_mesh(const AABB_tree& tree,
     const Kernel& kernel = Kernel())
-  : ray_functor(kernel.construct_ray_3_object()),
-    vector_functor(kernel.construct_vector_3_object()),
-    tree_ptr(&tree)
+  : ray_functor(kernel.construct_ray_3_object())
+  , vector_functor(kernel.construct_vector_3_object())
+  , tree_ptr(&tree)
+  , own_tree(false)
   {
-  }
-
-  /** 
-   * Builds internal AABB tree. Optional to call, since the tree is automatically built at the time of first query.
-   */ 
-  void build()
-  {
-    tree_ptr->build();
   }
 
   ~Point_inside_polygon_mesh()
   {
-    delete tree_ptr;
+    if (own_tree)
+      delete tree_ptr;
   }
 
 public:
