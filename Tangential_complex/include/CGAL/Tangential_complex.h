@@ -1315,8 +1315,13 @@ private:
         Tr_point local_random_transl =
           cwp(*tr_point_on_sphere_generator++, 0);
         Vector &global_transl = m_translations[tr_index];
-        //Vector &global_transl = m_translations[
-        //  (*it_c)->vertex(rand()%tr.current_dimension())->data()];
+        /*int idx;
+        do
+        {
+          idx = rand() % tr.current_dimension();
+        } while ((*it_c)->vertex(idx) == center_vh);
+        Vector &global_transl = m_translations[
+          (*it_c)->vertex(idx)->data()];*/
         global_transl = k_constr_vec(m_ambiant_dim);
         const Tangent_space_basis &tsb = m_tangent_spaces[tr_index];
         for (int i = 0 ; i < Intrinsic_dimension ; ++i)
@@ -1337,9 +1342,88 @@ private:
         // valid anymore here)
         break;
       }
+      
+//*****************************************************************************
+// STRATEGY 3: perturb all the points of the 1-star
+//*****************************************************************************
+#elif defined(CGAL_TC_PERTURB_THE_1_STAR)
+
+      // Inconsistent?
+      if (!is_simplex_consistent(*it_c, cur_dim))
+      {
+        is_inconsistent = true;
+        
+        std::set<std::size_t> c;
+      
+        typename std::vector<Tr_full_cell_handle>::const_iterator it_c2 =
+                                                            incident_cells.begin();
+        // For each cell
+        for ( ; it_c2 != it_c_end ; ++it_c2)
+        {
+          for (int i = 0 ; i < tr.current_dimension() + 1 ; ++i)
+          {
+            std::size_t data = (*it_c2)->vertex(i)->data();
+            c.insert(data);
+          }
+        }
+        
+# ifdef CGAL_TC_PERTURB_POSITION
+        typename Tr_traits::Construct_weighted_point_d cwp =
+          local_tr_traits.construct_weighted_point_d_object();
+        typename Tr_traits::Compute_coordinate_d coord =
+          local_tr_traits.compute_coordinate_d_object();
+
+        typename Kernel::Translated_point_d k_transl =
+          m_k.translated_point_d_object();
+        typename Kernel::Scaled_vector_d k_scaled_vec =
+          m_k.scaled_vector_d_object();
+        typename Kernel::Construct_vector_d k_constr_vec =
+          m_k.construct_vector_d_object();
+#   ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
+        typename Kernel::Point_to_vector_d k_pt_to_vec =
+          m_k.point_to_vector_d_object();
+#   endif
+# endif
+
+        CGAL::Random rng;
+        for (std::set<std::size_t>::iterator it=c.begin(); it!=c.end(); ++it)
+        {
+# ifdef CGAL_TC_PERTURB_WEIGHT
+          m_weights[*it] = rng.get_double(0., SQ_HALF_SPARSITY);
+# endif
+
+# ifdef CGAL_TC_PERTURB_POSITION
+#   ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
+          m_translations[*it] = k_scaled_vec(k_pt_to_vec(
+            *tr_point_on_sphere_generator++), HALF_SPARSITY);
+#   else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
+          Tr_point local_random_transl =
+            cwp(*tr_point_on_sphere_generator++, 0);
+          Vector &global_transl = m_translations[*it];
+          global_transl = k_constr_vec(m_ambiant_dim);
+          const Tangent_space_basis &tsb = m_tangent_spaces[*it];
+          for (int i = 0 ; i < Intrinsic_dimension ; ++i)
+          {
+            global_transl = k_transl(
+              global_transl, 
+              k_scaled_vec(tsb[i], HALF_SPARSITY*coord(local_random_transl, i))
+            );
+          }
+#   endif
+# endif
+        }
+        
+# if !defined(CGAL_TC_GLOBAL_REFRESH)
+        refresh_tangential_complex();
+# endif
+
+        // We will try the other cells next time (incident_cells is not
+        // valid anymore here)
+        break;
+      }
 
 //*****************************************************************************
-// STRATEGY 3: perturb the k + 1 + CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS
+// STRATEGY 4: perturb the k + 1 + CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS
 // closest points (to the power center of first the inconsistent cell)
 //*****************************************************************************
 #else

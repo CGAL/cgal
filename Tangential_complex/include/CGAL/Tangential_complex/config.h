@@ -39,6 +39,7 @@
 // Solving inconsistencies: only perturb the vertex, the simplex or more?
 #define CGAL_TC_PERTURB_THE_CENTER_VERTEX_ONLY
 //#define CGAL_TC_PERTURB_THE_SIMPLEX_ONLY
+//#define CGAL_TC_PERTURB_THE_1_STAR
 
 // Otherwise, perturb the k + 1 + CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS
 // closest points
