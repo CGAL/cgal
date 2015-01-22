@@ -84,20 +84,23 @@ triangulate_hole_Polyhedron(PolygonMesh& pmesh,
   typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
   typedef typename boost::property_traits<Point_property_map>::value_type Point_3;
   
-  typedef typename std::map<Vertex_handle, int>::iterator         Vertex_set_it;
+  typedef std::map<Vertex_handle, int>        Vertex_map;
+  typedef typename Vertex_map::iterator       Vertex_map_it;
+
+  CGAL::Timer timer; timer.start();
 
   std::vector<Point_3>         P, Q;
   std::vector<Halfedge_handle> P_edges;
-  std::map<Vertex_handle, int> vertex_set;
+  Vertex_map vertex_map;
   Point_property_map ppmap = get(vertex_point,pmesh);
 
-  int n = 0;
+  int id = 0;
   Hedge_around_face_circulator circ(border_halfedge,pmesh), done(circ);
   do{
     P.push_back(ppmap[target(*circ, pmesh)]);
     Q.push_back(ppmap[target(next(opposite(next(*circ,pmesh),pmesh),pmesh),pmesh)]);
     P_edges.push_back(*circ);
-    if(!vertex_set.insert(std::make_pair(target(*circ,pmesh), n++)).second) {
+    if(!vertex_map.insert(std::make_pair(target(*circ,pmesh), id++)).second) {
       CGAL_warning(!"Returning no output. Non-manifold vertex is found on boundary!");
       return std::make_pair(out,
                             CGAL::internal::Weight_min_max_dihedral_and_area::NOT_VALID());
@@ -108,26 +111,31 @@ triangulate_hole_Polyhedron(PolygonMesh& pmesh,
   // more precisely if v_i is neighbor to any other vertex than v_(i-1) and v_(i+1),
   // this edge is put into existing_edges
   std::vector<std::pair<int, int> > existing_edges;
-  for(Vertex_set_it v_it = vertex_set.begin(); v_it != vertex_set.end(); ++v_it) {
+  for(Vertex_map_it v_it = vertex_map.begin(); v_it != vertex_map.end(); ++v_it)
+  {
     int v_it_id = v_it->second;
-    int v_it_prev = v_it_id == 0   ? n-1 : v_it_id-1;
-    int v_it_next = v_it_id == n-1 ? 0   : v_it_id+1;
+    int v_it_prev = (v_it_id == 0)   ? (id-1) : (v_it_id-1);
+    int v_it_next = (v_it_id == id-1) ?  0    : (v_it_id+1);
 
-    Halfedge_around_target_circulator<PolygonMesh> circ_vertex(halfedge(v_it->first,pmesh),pmesh), done_vertex(circ_vertex);
-    do {
-      Vertex_set_it v_it_neigh_it = vertex_set.find(source(*circ_vertex,pmesh));
+    Halfedge_around_target_circulator<PolygonMesh>
+      circ_vertex(halfedge(v_it->first,pmesh),pmesh),
+      done_vertex(circ_vertex);
+    do
+    {
+      Vertex_map_it v_it_neigh_it = vertex_map.find(source(*circ_vertex,pmesh));
 
-      if(v_it_neigh_it != vertex_set.end()) {
+      if(v_it_neigh_it != vertex_map.end()) //other endpoint found in the map
+      {
         int v_it_neigh_id = v_it_neigh_it->second;
-        if( v_it_neigh_id != v_it_prev && v_it_neigh_id != v_it_next ) {
-          if(v_it_id < v_it_neigh_id) // to include one edge just one time
+        if( v_it_neigh_id != v_it_prev && v_it_neigh_id != v_it_next )
+        { //there is an edge incident to v_it, which is not next or previous
+          //from vertex_map (checked by comparing IDs)
+          if(v_it_id < v_it_neigh_id) // to include each edge only once
           { existing_edges.push_back(std::make_pair(v_it_id, v_it_neigh_id)); }
         }
       }
     } while(++circ_vertex != done_vertex);
   }
-
-  CGAL::Timer timer; timer.start();
 
   //#define CGAL_USE_WEIGHT_INCOMPLETE
   #ifdef CGAL_USE_WEIGHT_INCOMPLETE
@@ -138,19 +146,17 @@ triangulate_hole_Polyhedron(PolygonMesh& pmesh,
         CGAL::internal::Is_valid_existing_edges_and_degenerate_triangle> WC;
   #endif
 
-  CGAL::internal::Is_valid_existing_edges_and_degenerate_triangle iv(existing_edges);
-  
+  CGAL::internal::Is_valid_existing_edges_and_degenerate_triangle is_valid(existing_edges);
+
   // fill hole using polyline function, with custom tracer for PolygonMesh
   Tracer_polyhedron<PolygonMesh, OutputIterator>
     tracer(out, pmesh, P_edges);
   CGAL::internal::Weight_min_max_dihedral_and_area weight = 
-        triangulate_hole_polyline(P, Q, 
-                                        tracer, WC(iv), use_delaunay_triangulation)
-                                      #ifdef CGAL_USE_WEIGHT_INCOMPLETE
-                                        .weight; // get actual weight in Weight_incomplete
-                                      #else
-                                        ;
-                                      #endif
+        triangulate_hole_polyline(P, Q, tracer, WC(is_valid), use_delaunay_triangulation)
+#ifdef CGAL_USE_WEIGHT_INCOMPLETE
+              .weight // get actual weight in Weight_incomplete
+#endif
+  ;
 
   CGAL_TRACE_STREAM << "Hole filling: " << timer.time() << " sc." << std::endl; timer.reset();
   return std::make_pair(tracer.out, weight);

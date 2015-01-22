@@ -111,7 +111,7 @@ private:
 /************************************************************************
  * Is_valid classes (to be used in Weight_calculator)
  ************************************************************************/
-struct Is_valid_existing_edges 
+struct Is_valid_existing_edges
 {
   typedef std::vector<std::pair<int, int> > Edge_container;
   
@@ -127,11 +127,12 @@ struct Is_valid_existing_edges
 #endif
   }
 
-  template<class Point_3, class LookupTable>
-  bool operator()(const std::vector<Point_3>&, const std::vector<Point_3>&, 
-                  int v0, int v1, int v2, const LookupTable&) const 
+  template<class Point_3>
+  bool operator()(const std::vector<Point_3>&,
+                  int v0, int v1, int v2) const 
   {
     CGAL_assertion(v0 < v1 && v1 < v2);
+
     if(v0 + 1 != v1 && // border edges can not be inside existing_edges, so no need to check
        std::binary_search(existing_edges.begin(), existing_edges.end(), std::make_pair(v0,v1)) )
     { return false; }
@@ -140,7 +141,7 @@ struct Is_valid_existing_edges
       std::binary_search(existing_edges.begin(), existing_edges.end(), std::make_pair(v1,v2)) )
     { return false; }
     
-    if(std::binary_search(existing_edges.begin(), existing_edges.end(), std::make_pair(v0,v2)) )
+    if(std::binary_search(existing_edges.begin(), existing_edges.end(), std::make_pair(v2,v0)) )
     { return false; }
 
     return true;
@@ -149,27 +150,28 @@ struct Is_valid_existing_edges
   Edge_container& existing_edges;
 };
 
-struct Is_valid_degenerate_triangle 
+struct Is_not_degenerate_triangle
 {
-  template<class Point_3, class LookupTable>
-  bool operator()(const std::vector<Point_3>& P, const std::vector<Point_3>&, 
-                  int v0, int v1, int v2, const LookupTable&) const 
+  template<class Point_3>
+  bool operator()(const std::vector<Point_3>& P,
+                  int v0, int v1, int v2) const 
   {
     return !CGAL::collinear(P[v0], P[v1], P[v2]);
   }
 };
 
 // Combine above two
-struct Is_valid_existing_edges_and_degenerate_triangle 
+struct Is_valid_existing_edges_and_degenerate_triangle
 {
-  Is_valid_existing_edges_and_degenerate_triangle(Is_valid_existing_edges::Edge_container& edges) 
+  Is_valid_existing_edges_and_degenerate_triangle(Is_valid_existing_edges::Edge_container& edges)
     : is_valid_edges(edges) { }
 
-  template<class Point_3, class LookupTable>
-  bool operator()(const std::vector<Point_3>& P, const std::vector<Point_3>& Q, 
-                  int v0, int v1, int v2, const LookupTable& t) const 
+  template<class Point_3>
+  bool operator()(const std::vector<Point_3>& P,
+                  int v0, int v1, int v2) const 
   {
-    return Is_valid_degenerate_triangle()(P,Q,v0,v1,v2,t) && is_valid_edges(P,Q,v0,v1,v2,t);
+    return Is_not_degenerate_triangle()(P,v0,v1,v2)
+                      && is_valid_edges(P,v0,v1,v2);
   }
 
   Is_valid_existing_edges is_valid_edges;
@@ -410,7 +412,7 @@ struct Weight_calculator
     int i, int j, int k, 
     const LookupTable& lambda) const 
   {
-    if( !is_valid(P, Q, i,j,k, lambda) ) 
+    if( !is_valid(P,i,j,k) ) 
     { return Weight::NOT_VALID(); }
     return Weight(P, Q, i,j,k, lambda);
   }
@@ -580,8 +582,8 @@ struct Incident_facet_circulator<3, Triangulator>
   typedef typename Triangulator::Facet_circulator Facet_circulator;
   typedef typename Incident_facet_circulator_base<Triangulator>::Edge_wrapper Edge_wrapper;
 
-  Incident_facet_circulator(Edge_wrapper ew, const Triangulation& T)
-    : it(T.incident_facets(ew.e)), end(it), e(ew.e)
+  Incident_facet_circulator(Edge_wrapper ew, const Triangulation& tr)
+    : it(tr.incident_facets(ew.e)), end(it), e(ew.e)
   { }
   Incident_facet_circulator& operator++() {
     ++it;
@@ -627,10 +629,10 @@ struct Edge_graph
 
   struct Incident_facet_circulator
   {
-    Incident_facet_circulator(Edge_wrapper ew, const Edge_graph& T)
+    Incident_facet_circulator(Edge_wrapper ew, const Edge_graph& tr)
     {
-      Graph::const_iterator it_e = T.graph.find(ew.e);
-      CGAL_assertion(it_e != T.graph.end());
+      Graph::const_iterator it_e = tr.graph.find(ew.e);
+      CGAL_assertion(it_e != tr.graph.end());
       it = it_e->second.begin();
       end = it_e->second.end();
       e = ew.e;
@@ -651,18 +653,18 @@ struct Edge_graph
   };
 
   template<class IncidentFacetCirculator, class Triangulation>
-  void init(const Triangulation& T, const std::vector<bool>& edge_exist)
+  void init(const Triangulation& tr, const std::vector<bool>& edge_exist)
   {
     typedef typename Triangulation::Finite_edges_iterator Finite_edges_iterator;
 
     n = static_cast<int>(edge_exist.size());
-    for(Finite_edges_iterator eb = T.finite_edges_begin(); eb != T.finite_edges_end(); ++eb) 
+    for(Finite_edges_iterator eb = tr.finite_edges_begin(); eb != tr.finite_edges_end(); ++eb) 
     {
       int v0 = eb->first->vertex(eb->second)->info();
       int v1 = eb->first->vertex(eb->third )->info();
       Vertex_container& e_neighs = graph[std::make_pair(v0, v1)];
 
-      IncidentFacetCirculator fb(*eb, T);
+      IncidentFacetCirculator fb(*eb, tr);
       do {
         int v2 = fb.get_third();
         if(v2 == -1) { continue; }
@@ -748,10 +750,10 @@ public:
     CGAL_assertion(Q.empty() || (P.size() == Q.size()));
 
     int n = static_cast<int>(P.size())-1; // because the first and last point are equal
-    Triangulation T;
+    Triangulation tr;
     std::vector<bool> edge_exist;
     std::pair<int, int> range(0, n-1);
-    boost::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, range, T, edge_exist);
+    boost::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, range, tr, edge_exist);
     if(!res.template get<2>()) {
       CGAL_warning(!"Returning no output. Dimension of 3D Triangulation is below 2!");
       return Weight::NOT_VALID();
@@ -764,12 +766,12 @@ public:
 
       typename Incident_facet_circulator_base<Triangulate_hole_polyline_DT>::Edge_wrapper
         e_start(*boost::get<0>(res)); 
-      if(T.dimension() == 3) {
-        triangulate_DT<IFC_3>(P, Q, W, lambda, e_start, T, WC, false);
+      if(tr.dimension() == 3) {
+        triangulate_DT<IFC_3>(P, Q, W, lambda, e_start, tr, WC, false);
       }
       else {
-        CGAL_assertion(T.dimension() == 2);
-        triangulate_DT<IFC_2>(P, Q, W, lambda, e_start, T, WC, false);
+        CGAL_assertion(tr.dimension() == 2);
+        triangulate_DT<IFC_2>(P, Q, W, lambda, e_start, tr, WC, false);
       }
 
       if(W.get(0, n-1) == Weight::NOT_VALID()) {
@@ -783,18 +785,18 @@ public:
     
     // How to handle missing border edges
     #if 1
-    return fill_by_extra_triangles(T, edge_exist, P, Q, tracer, WC);
+    return fill_by_extra_triangles(tr, edge_exist, P, Q, tracer, WC);
     #else
     // This approach produce better patches when used with Weight_incomplete 
     // (which should be arranged in internal::triangulate_hole_Polyhedron, triangulate_polyline)
-    return fill_by_incomplete_patches(T, res.get<0>(), edge_exist, P, Q, tracer, WC);
+    return fill_by_incomplete_patches(tr, res.get<0>(), edge_exist, P, Q, tracer, WC);
     #endif
   }
 
 private:
 
   /************************************************************************
-  * Main algorithm which construct a minimum patch top-down searching through the space of T
+  * Main algorithm which construct a minimum patch top-down searching through the space of tr
   *
   * + Edge_DT should have:
   *   - vertex_first() vertex_second() functions where vertex_first() always returns vertex with smaller id
@@ -810,7 +812,7 @@ private:
                       LookupTable<Weight>& W, 
                       LookupTable<int>& lambda, 
                       Edge_DT e,
-                      const Triangulation_DT& T,
+                      const Triangulation_DT& tr,
                       const WeightCalculator& WC,
                       const bool produce_incomplete) const
   {
@@ -832,7 +834,7 @@ private:
     int m_min = -1;
     Weight w_min = Weight::NOT_VALID();
 
-    IncidentFacetCirculator fb(e, T);
+    IncidentFacetCirculator fb(e, tr);
     do {
       int v2 = fb.get_third();
       if(v2 < v0 || v2 > v1) { continue; } // this will also skip infinite vertex
@@ -845,7 +847,7 @@ private:
 
       Edge_DT e0 = fb.edge_first(); // edge v0-v2
       CGAL_assertion(e0.vertex_first() == v0 && e0.vertex_second() == v2);
-      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e0, T, WC, produce_incomplete); // region v0-v2
+      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e0, tr, WC, produce_incomplete); // region v0-v2
       const Weight& we0 = W.get(v0, v2);
 
       if(!produce_incomplete && we0 == Weight::NOT_VALID()) 
@@ -855,7 +857,7 @@ private:
 
       Edge_DT e1 = fb.edge_second(); // edge v2-v1
       CGAL_assertion(e1.vertex_first() == v2 && e1.vertex_second() == v1);
-      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e1, T, WC, produce_incomplete); // region v2-v1
+      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e1, tr, WC, produce_incomplete); // region v2-v1
       const Weight& we1 = W.get(v2, v1);
 
       if(!produce_incomplete && we1 == Weight::NOT_VALID()) 
@@ -875,27 +877,29 @@ private:
     lambda.put(v0,v1, m_min);
   }
 
-  // returns [h.first-h.second edge, true if all edges inside 3D triangulation, true if T.dimension() >= 2]
+  // returns [h.first-h.second edge, true if all edges inside 3D triangulation, true if tr.dimension() >= 2]
   boost::tuple<boost::optional<Edge>, bool, bool>
-  construct_3D_triangulation(const Polyline_3& P, 
-                             std::pair<int,int> h, 
-                             Triangulation& T, 
+  construct_3D_triangulation(const Polyline_3& P,
+                             std::pair<int,int> h,
+                             Triangulation& tr,
                              std::vector<bool>& edge_exist) const 
   {
-    // construct 3D T with P[h.first], P[h.second] also assign ids from h.first to h.second
+    // construct 3D tr with P[h.first], P[h.second] also assign ids from h.first to h.second
     boost::optional<Edge> e;
     int n_border = h.second - h.first + 1;
-    T.insert(boost::make_transform_iterator(boost::next(P.begin(), h.first), Auto_count(h.first)),
-             boost::make_transform_iterator(boost::next(P.begin(), h.second +1), Auto_count(h.first)));
-    T.infinite_vertex()->info() = -1;
+    tr.insert(boost::make_transform_iterator(boost::next(P.begin(), h.first), Auto_count(h.first)),
+              boost::make_transform_iterator(boost::next(P.begin(), h.second +1), Auto_count(h.first)));
+    tr.infinite_vertex()->info() = -1;
 
-    if(T.dimension() < 2) { return boost::make_tuple(e, false, false); }
+    if(tr.dimension() < 2) { return boost::make_tuple(e, false, false); }
 
     // check whether all edges are included in DT, and get v0-vn-1 edge
     edge_exist.assign(n_border, false);
     int nb_exists = 0;
     Finite_edges_iterator v_first_v_second_edge; // range.first - range.second edge
-    for(Finite_edges_iterator eb = T.finite_edges_begin(); eb != T.finite_edges_end(); ++eb) 
+    for(Finite_edges_iterator eb = tr.finite_edges_begin();
+        eb != tr.finite_edges_end();
+        ++eb) 
     {
       int v0_id = eb->first->vertex(eb->second)->info();
       int v1_id = eb->first->vertex(eb->third )->info();
@@ -916,7 +920,7 @@ private:
     }
     CGAL_assertion(n_border >= nb_exists);
 
-    bool is_3D_T_complete = nb_exists == n_border;
+    bool is_3D_T_complete = (nb_exists == n_border);
     if(edge_exist[n_border-1]) { e = *v_first_v_second_edge; }
     return boost::make_tuple(e, is_3D_T_complete, true);
   }
@@ -928,7 +932,7 @@ private:
   *  + if 3D triangulation does not contain the start-edge (edge between v0 vn-1) we directly switch to all space. 
   *  + when switched to all-space, we use map based lookup tables.
   ************************************************************************/
-  Weight fill_by_incomplete_patches(Triangulation& T,
+  Weight fill_by_incomplete_patches(Triangulation& tr,
                                     boost::optional<Edge> start_edge,
                                     std::vector<bool>& edge_exist,
                                     const Polyline_3& P, 
@@ -970,13 +974,13 @@ private:
       else {
         // run the algorithm
         typename IFC_3::Edge_wrapper e(*start_edge);
-        if(T.dimension() == 3) 
+        if(tr.dimension() == 3) 
         {
-          triangulate_DT<IFC_3>(P, Q, W, lambda, e, T, WC, true);
+          triangulate_DT<IFC_3>(P, Q, W, lambda, e, tr, WC, true);
         }
         else {
-          CGAL_assertion(T.dimension() == 2);
-          triangulate_DT<IFC_2>(P, Q, W, lambda, e, T, WC, true);
+          CGAL_assertion(tr.dimension() == 2);
+          triangulate_DT<IFC_2>(P, Q, W, lambda, e, tr, WC, true);
         }
         // check whether there is any improvement (at least we should construct one triangle)
         if(W.get(h.first, h.second) == Weight::NOT_VALID()) {
@@ -994,10 +998,10 @@ private:
       }
 
       if(remaining_holes.empty()) { break; }
-      // construct T for next coming hole
+      // construct tr for next coming hole
       h = remaining_holes.back();
-      T.clear();
-      boost::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, h, T, edge_exist);
+      tr.clear();
+      boost::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, h, tr, edge_exist);
       if(!boost::get<0>(res)) {
         CGAL_warning(!"Returning no output. Filling hole with incomplete patches is not successful!");
         return Weight::NOT_VALID();
@@ -1036,7 +1040,7 @@ private:
    *
    * I guess this approach does not make the search space complete, since there are some cases that it still returns no patch.
    ************************************************************************/
-  Weight fill_by_extra_triangles(const Triangulation& T, 
+  Weight fill_by_extra_triangles(const Triangulation& tr, 
                                  const std::vector<bool>& edge_exist,
                                  const Polyline_3& P, 
                                  const Polyline_3& Q,
@@ -1049,10 +1053,10 @@ private:
 
     Edge_graph edge_graph;
 
-    if(T.dimension() == 3) 
-    { edge_graph.init<IFC_3>(T, edge_exist); }
+    if(tr.dimension() == 3) 
+    { edge_graph.init<IFC_3>(tr, edge_exist); }
     else 
-    { edge_graph.init<IFC_2>(T, edge_exist); }
+    { edge_graph.init<IFC_2>(tr, edge_exist); }
 
     Edge_graph::Edge_wrapper e_start(std::make_pair(0, n-1));
     triangulate_DT<Edge_graph::Incident_facet_circulator>

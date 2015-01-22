@@ -244,7 +244,7 @@ namespace Polygon_mesh_processing {
     typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
     typedef CGAL::internal::Weight_min_max_dihedral_and_area      Weight;
     typedef CGAL::internal::Weight_calculator<Weight,
-                  CGAL::internal::Is_valid_degenerate_triangle>  WC;
+                  CGAL::internal::Is_not_degenerate_triangle>  WC;
     typedef std::vector<std::pair<int, int> > Holes;
     typedef std::back_insert_iterator<Holes>  Holes_out;
 
