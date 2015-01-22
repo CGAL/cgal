@@ -27,6 +27,7 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
+#include <CGAL/boost/graph/helpers.h>
 
 namespace CGAL {
 
@@ -37,14 +38,13 @@ namespace CGAL {
  * In case several polyhedral surface are provided as input, a point is said to be inside the domain
  * if an odd number of surfaces is crossed when walking from infinity to the point.
  * The implementation depends on the package \ref PkgAABB_treeSummary.
- * @tparam TriangleMesh a triangulated polyhedral surface
+ * @tparam TriangleMesh a triangulated polyhedral surface, a model of `FaceListGraph`
  * @tparam Kernel a \cgal kernel
  * @tparam TriangleAccessor a model of the concept `TriangleAccessor_3`, with `TriangleAccessor_3::Triangle_3` being `Kernel::Triangle_3`. 
  *         If `TriangleMesh` is a \cgal Polyhedron, a default is provided.
  * \todo Code: Use this class as an implementation detail of Mesh_3's Polyhedral_mesh_domain_3.
        Remove `TriangleAccessor_3` as well as the concept in Mesh_3 since making `TriangleMesh`
        a model of `FaceListGraph` will make it useless
- * \todo `TriangleMesh` should be a model of `FaceListGraph`
  * \todo check the implementation
  */
 template <class TriangleMesh,
@@ -74,8 +74,8 @@ public:
   , vector_functor(kernel.construct_vector_3_object())
   , own_tree(true)
   {
-    CGAL_assertion(mesh.is_pure_triangle());
-    CGAL_assertion(mesh.is_closed());
+    CGAL_assertion(CGAL::is_pure_triangle(mesh));
+    CGAL_assertion(CGAL::is_closed(mesh));
 
     tree_ptr = new AABB_tree(faces(mesh).first,
                              faces(mesh).second,
