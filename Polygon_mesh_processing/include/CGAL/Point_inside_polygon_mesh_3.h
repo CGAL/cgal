@@ -27,7 +27,6 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/Triangle_accessor_3.h>
 
 namespace CGAL {
 
