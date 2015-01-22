@@ -31,7 +31,7 @@ fi
 trap 'echo "(aborting the merge now)" && git merge --abort' EXIT
 
 echo ".. Test merging of the branch \"$branch\"..."
-git merge --quiet --no-commit "$branch"
+git merge --no-commit "$branch" && git status && git diff --staged --summary
 
 if true; then # REMOVE
 echo '.. Testing permissions...'
