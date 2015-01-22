@@ -393,7 +393,6 @@ Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 increase_scale( unsigned int iterations ) {
     typedef std::vector< unsigned int >		CountVec;
     typedef std::map<Point, std::size_t>			PIMap;
-    typedef std::vector<Point>              Pointset;
 
     // This method must be called after filling the point collection.
     if( iterations == 0 || _tree.empty() ) return;
@@ -401,10 +400,6 @@ increase_scale( unsigned int iterations ) {
     if( !has_neighborhood_squared_radius() )
         estimate_neighborhood_squared_radius();
 
-    // To enable concurrent processing, we maintain two data structures:
-    // a search tree and a vector for the points after smoothing.
-    Pointset points;
-    points.assign( _tree.begin(), _tree.end() );
 
     for( unsigned int iter = 0; iter < iterations; ++iter ) {
         if( !_tree.is_built() )
@@ -413,21 +408,21 @@ increase_scale( unsigned int iterations ) {
         // Collect the number of neighbors of each point.
         // This can be done concurrently.
         CountVec neighbors( _tree.size(), 0 );
-        try_parallel( ComputeNN( points, _tree, _squared_radius, neighbors ), 0, _tree.size() );
+        try_parallel( ComputeNN( _points, _tree, _squared_radius, neighbors ), 0, _tree.size() );
 
         // Construct a mapping from each point to its index.
         PIMap indices;
         std::size_t index = 0;
-        for( typename Pointset::const_iterator pit = points.begin(); pit != points.end(); ++pit, ++index)
+        for( typename Pointset::const_iterator pit = _points.begin(); pit != _points.end(); ++pit, ++index)
             indices[ *pit ] = index;
 
         // Compute the tranformed point locations.
         // This can be done concurrently.
-        try_parallel( AdvanceSS( _tree, neighbors, indices, points ), 0, _tree.size() );
+        try_parallel( AdvanceSS( _tree, neighbors, indices, _points ), 0, _tree.size() );
 
         // Put the new points back in the tree.
         _tree.clear();
-        _tree.insert( points.begin(), points.end() );
+        _tree.insert( _points.begin(), _points.end() );
     }
 }
 
