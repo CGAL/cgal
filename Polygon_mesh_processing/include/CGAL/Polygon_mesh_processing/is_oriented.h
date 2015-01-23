@@ -61,8 +61,6 @@ struct Axis_compare {
  *
  * \todo The following only handles polyhedron with one connected component
  *       the code, the sample example and the plugin must be updated.
- * \todo implement precondition about being consistently oriented,
- *       or document the fact that otherwise the returned value is not safe
  * @code
  * // use inside_out operator to reverse orientation
  * if(!is_outward_oriented(pmesh)) {
@@ -78,7 +76,7 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
                          const Kernel& = Kernel())
 {
   CGAL_precondition(CGAL::is_closed(pmesh));
-    //TODO : check consistent orientation in a precondition
+  CGAL_precondition(CGAL::is_valid(pmesh));
 
   const unsigned int axis = 0;
 
