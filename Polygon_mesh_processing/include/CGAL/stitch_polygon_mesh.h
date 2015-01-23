@@ -29,7 +29,9 @@
 
 namespace CGAL{
 
-namespace Polyhedron_stitching{
+namespace Polygon_mesh_processing{
+
+namespace internal{
 
 template <class Halfedge_handle, class Point_3>
 struct Less_for_halfedge{
@@ -228,10 +230,9 @@ struct Naive_border_stitching_modifier:
   }
 };
 
-} //end of namespace Polyhedron_stitching
+} //end of namespace internal
 
 
-namespace Polygon_mesh_processing{
 
 /// \ingroup polyhedron_stitching_grp
 /// Stitches together border halfedges in a polyhedron.
@@ -252,7 +253,7 @@ void stitch_borders(
                          typename PolygonMesh::Halfedge_handle> >&
     hedge_pairs_to_stitch)
 {
-  Polyhedron_stitching::Naive_border_stitching_modifier<PolygonMesh>
+  internal::Naive_border_stitching_modifier<PolygonMesh>
     modifier(hedge_pairs_to_stitch);
   P.delegate(modifier);
 }
@@ -268,7 +269,7 @@ void stitch_borders(PolygonMesh& P, LessHedge less_hedge)
   typedef typename PolygonMesh::Halfedge_handle Halfedge_handle;
 
   std::vector <std::pair<Halfedge_handle,Halfedge_handle> > hedge_pairs_to_stitch;
-  Polyhedron_stitching::detect_duplicated_boundary_edges(
+  internal::detect_duplicated_boundary_edges(
     P, std::back_inserter(hedge_pairs_to_stitch), less_hedge );
   stitch_borders(P, hedge_pairs_to_stitch);
 }
@@ -282,7 +283,7 @@ void stitch_borders(PolygonMesh& P)
   typedef typename PolygonMesh::Halfedge_handle Halfedge_handle;
   typedef typename PolygonMesh::Vertex::Point_3 Point_3;
 
-  Polyhedron_stitching::Less_for_halfedge<Halfedge_handle, Point_3> less_hedge;
+  internal::Less_for_halfedge<Halfedge_handle, Point_3> less_hedge;
   stitch_borders(P, less_hedge);
 }
 
