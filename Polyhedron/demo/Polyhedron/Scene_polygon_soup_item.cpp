@@ -19,7 +19,7 @@
 #include <CGAL/version.h> 
 
 #include <CGAL/orient_polygon_soup.h>
-#include <CGAL/Polygon_soup_to_polyhedron_3.h>
+#include <CGAL/polygon_soup_to_polyhedron_3.h>
 #include <CGAL/orient_polyhedron_3.h>
 
 typedef Kernel::Point_3 Point_3;

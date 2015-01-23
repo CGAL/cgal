@@ -27,6 +27,7 @@
 
 namespace CGAL{
 
+namespace internal{
 /**
   * Modifier to build a polyhedron from a soup of polygons.
   */
@@ -71,6 +72,8 @@ public:
   }
 };
 
+} //namespace internal
+
 /**
   * Append a soup of polygons in a Polyhedron
   */
@@ -79,8 +82,8 @@ void polygon_soup_to_polyhedron_3(Polyhedron& P,
                                   const std::vector<Point>& points,
                                   const std::vector<Polygon>& polygons)
 {
-  Polygon_soup_to_polyhedron_3< typename Polyhedron::HalfedgeDS,
-                                Point, Polygon > modifier(points, polygons);
+  internal::Polygon_soup_to_polyhedron_3< typename Polyhedron::HalfedgeDS,
+                                          Point, Polygon > modifier(points, polygons);
   P.delegate(modifier);
 }
 

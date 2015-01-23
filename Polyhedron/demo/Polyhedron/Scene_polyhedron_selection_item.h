@@ -8,7 +8,7 @@
 #include "Scene_polyhedron_item_decorator.h"
 #include "Polyhedron_type.h"
 #include <CGAL/gl_render.h>
-#include <CGAL/Polygon_soup_to_polyhedron_3.h>
+#include <CGAL/polygon_soup_to_polyhedron_3.h>
 
 #include <fstream>
 #include <boost/foreach.hpp>
