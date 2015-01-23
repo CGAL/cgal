@@ -21,7 +21,7 @@
 
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
-#include <CGAL/tuple.h>
+#include <CGAL/array.h>
 
 #include <iostream>
 
@@ -31,7 +31,7 @@ template <class HDS>
 class Polyhedron_builder_from_STL : public CGAL::Modifier_base<HDS> {
   typedef typename HDS::Vertex::Point Point_3;
   typedef std::vector<Point_3> Points_3;
-  typedef cpp11::tuple<int,int,int> Facet;
+  typedef cpp11::array<int,3> Facet;
   typedef std::vector<Facet> Surface;
 
   std::istream& is;
@@ -95,7 +95,7 @@ class Polyhedron_builder_from_STL : public CGAL::Modifier_base<HDS> {
           }
         }while(s != endloop);
 
-        surface.push_back(cpp11::make_tuple(ijk[0], ijk[1], ijk[2]));
+        surface.push_back( make_array(ijk[0], ijk[1], ijk[2]) );
       }
     }
     return true;
@@ -122,9 +122,9 @@ public:
     }
     for(size_type i=0; i < mesh.size(); i++){
       B.begin_facet();
-      B.add_vertex_to_facet( mesh[i].template get<0>());
-      B.add_vertex_to_facet( mesh[i].template get<1>());
-      B.add_vertex_to_facet( mesh[i].template get<2>());
+      B.add_vertex_to_facet( mesh[i][0]);
+      B.add_vertex_to_facet( mesh[i][1]);
+      B.add_vertex_to_facet( mesh[i][2]);
       B.end_facet();
     }
     if(B.error())
