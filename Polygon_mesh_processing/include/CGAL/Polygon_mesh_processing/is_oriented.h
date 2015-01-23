@@ -24,6 +24,11 @@
 
 #include <algorithm>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/iterator.h>
+#include <CGAL/Kernel_traits.h>
+
+#include <boost/foreach.hpp>
 
 namespace CGAL {
 
@@ -33,9 +38,9 @@ namespace internal {
 
 template<unsigned int axis>
 struct Axis_compare {
-  template<class Vertex>
-  bool operator()(const Vertex& v0, const Vertex& v1) const
-  { return v0.point()[axis] < v1.point()[axis]; }
+  template<class Point>
+  bool operator()(const Point& p0, const Point& p1) const
+  { return p0[axis] < p1[axis]; }
 };
 
 } // namespace internal
@@ -47,16 +52,17 @@ struct Axis_compare {
  * of the facets point outside of the polygon mesh. For each facet, its normal vector
  * is considered to point on the side of the facet where the sequence of vertices of
  * the facet is seen counterclockwise.
- * @pre @a `pmesh`.is_closed()
+ * @pre @a `pmesh` is closed
  * @pre @a `pmesh` is consistently oriented
  *
- * @tparam PolygonMesh a %CGAL polyhedron
+ * @tparam PolygonMesh a model of `FaceListGraph`, possibly a %CGAL polyhedron
  *
  * @param pmesh a closed polygon mesh to be tested
  *
- * \todo The following only handle polyhedron with one connected component
+ * \todo The following only handles polyhedron with one connected component
  *       the code, the sample example and the plugin must be updated.
- * \todo PolygonMesh should be a model of `FaceListGraph`
+ * \todo implement precondition about being consistently oriented,
+ *       or document the fact that otherwise the returned value is not safe
  * @code
  * // use inside_out operator to reverse orientation
  * if(!is_outward_oriented(pmesh)) {
@@ -64,22 +70,30 @@ struct Axis_compare {
  * }
  * @endcode
  */
-template<class PolygonMesh>
-bool is_outward_oriented(const PolygonMesh& pmesh)
+template<
+  class PolygonMesh,
+  typename Kernel
+    = typename CGAL::Kernel_traits<typename PolygonMesh::Point>::Kernel >
+bool is_outward_oriented(const PolygonMesh& pmesh,
+                         const Kernel& = Kernel())
 {
-  CGAL_precondition(pmesh.is_closed());
-  CGAL_precondition(pmesh.is_valid()); //will check consistent orientation
+  CGAL_precondition(CGAL::is_closed(pmesh));
+    //TODO : check consistent orientation in a precondition
 
   const unsigned int axis = 0;
 
-  typename Polyhedron::Vertex_const_iterator v_min
-    = std::min_element(pmesh.vertices_begin(),
-                       pmesh.vertices_end(),
-                       internal::Axis_compare<axis>());
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typename boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type
+    ppmap = get(boost::vertex_point, pmesh);
 
-  typedef typename Polyhedron::Traits K;
-  const typename K::Vector_3& normal_v_min
-    = compute_vertex_normal<K>(*v_min);
+  vertex_descriptor v_min = *vertices(pmesh).first;
+  BOOST_FOREACH(vertex_descriptor vd, vertices(pmesh)) {
+    if(internal::Axis_compare<axis>()(ppmap[vd], ppmap[v_min]))
+      v_min = vd;
+  }
+
+  const typename Kernel::Vector_3&
+    normal_v_min = compute_vertex_normal<Kernel>(v_min, pmesh);
 
   CGAL_warning(normal_v_min[axis] != 0);
   return normal_v_min[axis] < 0;

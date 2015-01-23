@@ -28,50 +28,76 @@ namespace CGAL{
 
 namespace Polygon_mesh_processing{
 
-/// \ingroup PkgPolygonMeshProcessing
-/// computes the outward unit vector normal to facet `f`.
-/// `%Kernel::%FT` should be a model of `FieldWithSqrt`
-/// \todo make this function working with a `FaceGraph`
-template <class Kernel, class Facet>
-typename Kernel::Vector_3 compute_facet_normal(const Facet& f)
+/**
+* \ingroup PkgPolygonMeshProcessing
+* computes the outward unit vector normal to facet `f`.
+* @tparam Kernel a %CGAL `Kernel` with `FT` a model of `FieldWithSqrt`
+* @tparam PolygonMesh a model of `FaceGraph`
+*
+* @param f the facet on which the normal is computed
+* @param pmesh the polygon mesh to which `f` belongs
+*/
+template <class Kernel, class PolygonMesh>
+typename Kernel::Vector_3
+compute_facet_normal(
+  const typename boost::graph_traits<PolygonMesh>::face_descriptor& f,
+  const PolygonMesh& pmesh)
 {
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
-  typedef typename Facet::Halfedge_around_facet_const_circulator HF_circulator;
+
+  typename boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type
+    ppmap = get(boost::vertex_point, pmesh);
+
   Vector normal = CGAL::NULL_VECTOR;
-  HF_circulator he = f.facet_begin();
-  HF_circulator end = he;
-  CGAL_For_all(he,end)
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  halfedge_descriptor he = halfedge(f, pmesh);
+  halfedge_descriptor end = he;
+  do
   {
-    const Point& prev = he->prev()->vertex()->point();
-    const Point& curr = he->vertex()->point();
-    const Point& next = he->next()->vertex()->point();
-    Vector n = CGAL::cross_product(next-curr,prev-curr);
+    const Point& prv = ppmap[target(prev(he, pmesh), pmesh)];
+    const Point& curr = ppmap[target(he, pmesh)];
+    const Point& nxt = ppmap[target(next(he, pmesh), pmesh)];
+    Vector n = CGAL::cross_product(nxt - curr, prv - curr);
     normal = normal + n;
-  }
+
+    he = next(he, pmesh);
+  } while (he != end);
+
   return normal / std::sqrt(normal * normal);
 }
 
-/// \ingroup PkgPolygonMeshProcessing
-/// computes the unit normal at vertex `v` as the average of the normals of incident facets.
-/// `%Kernel::%FT` should be a model of `FieldWithSqrt`
-/// \todo make this function working with a `FaceGraph`
-template <class Kernel, class Vertex>
-typename Kernel::Vector_3 compute_vertex_normal(const Vertex& v)
+/**
+* \ingroup PkgPolygonMeshProcessing
+* computes the unit normal at vertex `v` as the average of the normals of incident facets.
+* @tparam Kernel a %CGAL `Kernel` with `FT` a model of `FieldWithSqrt`
+* @tparam PolygonMesh a model of `FaceGraph`
+*
+* @param v the vertex around which the normal is computed
+* @param pmesh the polygon mesh to which `v` belongs
+*/
+template<typename Kernel, typename PolygonMesh>
+typename Kernel::Vector_3
+compute_vertex_normal(
+    const typename boost::graph_traits<PolygonMesh>::vertex_descriptor& v,
+    const PolygonMesh& pmesh)
 {
   typedef typename Kernel::Vector_3 Vector;
-  typedef typename Vertex::Halfedge_around_vertex_const_circulator HV_circulator;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+
   Vector normal = CGAL::NULL_VECTOR;
-  HV_circulator he = v.vertex_begin();
-  HV_circulator end = he;
-  CGAL_For_all(he,end)
+  halfedge_descriptor he = halfedge(v, pmesh);
+  halfedge_descriptor end = he;
+  do
   {
-    if(!he->is_border())
+    if (!is_border(he, pmesh))
     {
-      Vector n = compute_facet_normal<Kernel>(*he->facet());
+      Vector n = compute_facet_normal<K>(face(he, pmesh), pmesh);
       normal = normal + (n / std::sqrt(n*n));
     }
-  }
+    he = opposite(next(he, pmesh), pmesh);
+  } while (he != end);
+
   return normal / std::sqrt(normal * normal);
 }
 

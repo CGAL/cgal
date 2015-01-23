@@ -124,8 +124,8 @@ void test(
 template<typename PolygonMesh>
 CGAL::Bbox_3 bbox(const PolygonMesh& mesh)
 {
-  typedef boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-  boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typename boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type
       ppmap = get(boost::vertex_point, mesh);
 
   CGAL::Bbox_3 bbox(ppmap[*vertices(mesh).first].bbox());
