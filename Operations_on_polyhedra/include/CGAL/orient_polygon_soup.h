@@ -27,7 +27,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include <boost/array.hpp>
+#include <CGAL/array.h>
 
 namespace CGAL {
 
@@ -36,9 +36,10 @@ namespace internal {
 template<class Point_3, class Polygon_3>
 class Polygon_soup_orienter
 {
+  typedef typename std::iterator_traits<typename Polygon_3::iterator>::value_type Index;
   typedef std::vector<Point_3> Points;
-  typedef std::map<std::pair<std::size_t, std::size_t>, std::set<std::size_t> > Edges_map;
-  typedef boost::array<std::size_t, 2> Edge;
+  typedef std::map<std::pair<Index, Index>, std::set<std::size_t> > Edges_map;
+  typedef cpp11::array<Index, 2> Edge;
   typedef std::vector<Polygon_3> Polygons;
   typedef std::set<Edge> Edges;
   typedef typename Polygons::size_type size_type;
@@ -57,6 +58,11 @@ public:
   }
 
 private:
+  Edge canonical_edge(Index i, Index j)
+  {
+    return i<j ? CGAL::make_array(i,j):CGAL::make_array(j,i);
+  }
+
   void fill_edges() {
     // Fill edges
     edges.clear();
@@ -64,8 +70,8 @@ private:
     {
       const size_type size = polygons[i].size();
       for(size_type j = 0; j < size; ++j) {
-        const std::size_t& i0 = polygons[i][j];
-        const std::size_t& i1 = polygons[i][ j+1 < size ? j+1: 0];
+        const Index& i0 = polygons[i][j];
+        const Index& i1 = polygons[i][ j+1 < size ? j+1: 0];
         edges[std::make_pair(i0, i1)].insert(i);
       }
     }
@@ -76,17 +82,13 @@ private:
     {
       const size_type size = polygons[i].size();
       for(size_type j = 0; j < size; ++j) {
-        const std::size_t& i0 = polygons[i][j];
-        const std::size_t& i1 = polygons[i][ j+1 < size ? j+1: 0];
+        const Index& i0 = polygons[i][j];
+        const Index& i1 = polygons[i][ j+1 < size ? j+1: 0];
         if( (i0 < i1) && 
             (edges[std::make_pair(i0, i1)].size() +
              edges[std::make_pair(i1, i0)].size() > 2) )
         {
-          Edge edge;
-          edge[0] = i0;
-          edge[1] = i1;
-          if(i0 > i1) std::swap(edge[0], edge[1]);
-          non_manifold_edges.insert(edge);
+          non_manifold_edges.insert(CGAL::make_array(i0,i1));
         }
       }
     }
@@ -126,22 +128,17 @@ public:
         for(size_type ih = 0 ; ih < size ; ++ih) {
           size_type ihp1 = ih+1;
           if(ihp1>=size) ihp1 = 0;
-          const std::size_t& i1 = polygons[to_be_oriented_index][ih];
-          const std::size_t& i2 = polygons[to_be_oriented_index][ihp1];
+          const Index& i1 = polygons[to_be_oriented_index][ih];
+          const Index& i2 = polygons[to_be_oriented_index][ihp1];
 
-          Edge edge;
-          edge[0] = i1;
-          edge[1] = i2;
-          if(i1 > i2) std::swap(edge[0], edge[1]);
-
-          if(non_manifold_edges.count(edge) > 0) {
+          if(non_manifold_edges.count(canonical_edge(i1,i2)) > 0) {
             continue;
           }
 
           // edge (i1,i2)
-          Edges_map::iterator it_same_orient = edges.find(make_pair(i1, i2));
+          typename Edges_map::iterator it_same_orient = edges.find(make_pair(i1, i2));
           // edges (i2,i1)
-          Edges_map::iterator it_other_orient = edges.find(make_pair(i2, i1));
+          typename Edges_map::iterator it_other_orient = edges.find(make_pair(i2, i1));
 
           CGAL_assertion(it_same_orient != edges.end());
           if(it_same_orient->second.size() > 1) {
@@ -164,8 +161,8 @@ public:
               // reverse the orientation
               const size_type size = polygons[index].size();
               for(size_type j = 0; j < size; ++j) {
-                const std::size_t& i0 = polygons[index][j];
-                const std::size_t& i1 = polygons[index][ j+1 < size ? j+1: 0];
+                const Index& i0 = polygons[index][j];
+                const Index& i1 = polygons[index][ j+1 < size ? j+1: 0];
                 CGAL_assertion_code(const bool r = )
                   edges[std::make_pair(i0, i1)].erase(index)
                 CGAL_assertion_code(!= 0);
@@ -173,8 +170,8 @@ public:
               }
               inverse_orientation(index);
               for(size_type j = 0; j < size; ++j) {
-                const std::size_t& i0 = polygons[index][j];
-                const std::size_t& i1 = polygons[index][ j+1 < size ? j+1: 0];
+                const Index& i0 = polygons[index][j];
+                const Index& i1 = polygons[index][ j+1 < size ? j+1: 0];
                 edges[std::make_pair(i0, i1)].insert(index);
               }
               // "inverse the orientation of polygon #%1\n").arg(index);
