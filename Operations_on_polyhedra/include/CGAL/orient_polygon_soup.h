@@ -84,11 +84,11 @@ private:
       for(size_type j = 0; j < size; ++j) {
         const Index& i0 = polygons[i][j];
         const Index& i1 = polygons[i][ j+1 < size ? j+1: 0];
-        if( (i0 < i1) && 
-            (edges[std::make_pair(i0, i1)].size() +
-             edges[std::make_pair(i1, i0)].size() > 2) )
+
+        if( edges[std::make_pair(i0, i1)].size() +
+            edges[std::make_pair(i1, i0)].size() > 2 )
         {
-          non_manifold_edges.insert(CGAL::make_array(i0,i1));
+          non_manifold_edges.insert(canonical_edge(i0,i1));
         }
       }
     }
