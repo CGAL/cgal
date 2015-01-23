@@ -246,16 +246,18 @@ struct Naive_border_stitching_modifier:
 /// then the source of p.second is.
 /// If the target of p.second has not been marked for deletion,
 /// then the source of p.first is.
+/// @tparam PolygonMesh a model of `MutableFaceGraph` and `FaceListGraph`
 template <class PolygonMesh>
 void stitch_borders(
-  PolygonMesh& P,
-  std::vector <std::pair<typename PolygonMesh::Halfedge_handle,
-                         typename PolygonMesh::Halfedge_handle> >&
-    hedge_pairs_to_stitch)
+  PolygonMesh& pmesh,
+  std::vector <std::pair<
+    typename boost::graph_traits<PolygonMesh>::halfedge_descriptor,
+    typename boost::graph_traits<PolygonMesh>::halfedge_descriptor> >& 
+     hedge_pairs_to_stitch)
 {
   internal::Naive_border_stitching_modifier<PolygonMesh>
     modifier(hedge_pairs_to_stitch);
-  P.delegate(modifier);
+  pmesh.delegate(modifier);
 }
 
 /// \ingroup polyhedron_stitching_grp
@@ -264,27 +266,29 @@ void stitch_borders(
 /// if `less_hedge(h1,h2)=less_hedge(h2,h1)=true`.
 /// `LessHedge` is a key comparison function that is used to sort halfedges
 template <class PolygonMesh, class LessHedge>
-void stitch_borders(PolygonMesh& P, LessHedge less_hedge)
+void stitch_borders(PolygonMesh& pmesh, LessHedge less_hedge)
 {
-  typedef typename PolygonMesh::Halfedge_handle Halfedge_handle;
-
-  std::vector <std::pair<Halfedge_handle,Halfedge_handle> > hedge_pairs_to_stitch;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
+    halfedge_descriptor;
+  std::vector <std::pair<halfedge_descriptor, halfedge_descriptor> > hedge_pairs_to_stitch;
+  
   internal::detect_duplicated_boundary_edges(
-    P, std::back_inserter(hedge_pairs_to_stitch), less_hedge );
-  stitch_borders(P, hedge_pairs_to_stitch);
+    pmesh, std::back_inserter(hedge_pairs_to_stitch), less_hedge);
+  stitch_borders(pmesh, hedge_pairs_to_stitch);
 }
 
 /// \ingroup polyhedron_stitching_grp
 /// Same as above using the source and target points of the halfedges
 /// for comparision
 template <class PolygonMesh>
-void stitch_borders(PolygonMesh& P)
+void stitch_borders(PolygonMesh& pmesh)
 {
-  typedef typename PolygonMesh::Halfedge_handle Halfedge_handle;
-  typedef typename PolygonMesh::Vertex::Point_3 Point_3;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
+    halfedge_descriptor;
+  typedef typename PolygonMesh::Point Point;
 
-  internal::Less_for_halfedge<Halfedge_handle, Point_3> less_hedge;
-  stitch_borders(P, less_hedge);
+  internal::Less_for_halfedge<halfedge_descriptor, Point> less_hedge;
+  stitch_borders(pmesh, less_hedge);
 }
 
 } //end of namespace Polygon_mesh_processing
