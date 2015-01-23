@@ -315,9 +315,7 @@ bool
 Scene_polygon_soup_item::exportAsPolyhedron(Polyhedron* out_polyhedron)
 {
   orient();
-  CGAL::Polygon_soup_to_polyhedron_3<Polyhedron::HalfedgeDS, Point_3> builder(
-    soup->points, soup->polygons);
-  out_polyhedron->delegate(builder);
+  CGAL::polygon_soup_to_polyhedron_3(*out_polyhedron, soup->points, soup->polygons);
 
   if(out_polyhedron->size_of_vertices() > 0) {
     // Also check whether the consistent orientation is fine

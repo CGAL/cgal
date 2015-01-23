@@ -639,8 +639,7 @@ public:
         polygons[counter].push_back(hb->vertex()->id() -1);
       } while(++hb != hend);
     }
-    CGAL::Polygon_soup_to_polyhedron_3<Polyhedron::HalfedgeDS, Polyhedron::Point_3> builder(points, polygons);
-    out->delegate(builder);
+    CGAL::polygon_soup_to_polyhedron_3(*out, points, polygons);
     return out->size_of_vertices() > 0;
   }
 

@@ -14,37 +14,37 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau and Sebastien Loriot
+
+#ifndef CGAL_POLYGON_SOUP_TO_POLYHEDRON_3_H
+#define CGAL_POLYGON_SOUP_TO_POLYHEDRON_3_H
 
 #include <CGAL/IO/generic_print_polyhedron.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Modifier_base.h>
-
-#ifndef CGAL_POLYGON_SOUP_TO_POLYHEDRON_3_H
-#define CGAL_POLYGON_SOUP_TO_POLYHEDRON_3_H
 
 namespace CGAL{
 
 /**
   * Modifier to build a polyhedron from a soup of polygons.
   */
-template <class HDS, class Point_3>
+template <class HDS, class Point, class Polygon>
 class Polygon_soup_to_polyhedron_3: public CGAL::Modifier_base<HDS>
 {
-  typedef std::vector<std::size_t> Polygon_3;
-
-  const std::vector<Point_3>& points;
-  const std::vector<std::vector<std::size_t> >& polygons;
+  const std::vector<Point>& points;
+  const std::vector<Polygon>& polygons;
+  typedef typename HDS::Vertex::Point Point_3;
 public:
-  /** 
+  /**
    * The constructor for modifier object.
    * @param points points of the soup of polygons.
    * @param polygons each element in the vector describes a polygon using the index of the points in the vector.
    */
-  Polygon_soup_to_polyhedron_3(const std::vector<Point_3>& points, 
-    const std::vector<std::vector<std::size_t> >& polygons) 
+  Polygon_soup_to_polyhedron_3(
+    const std::vector<Point>& points,
+    const std::vector<Polygon>& polygons)
     : points(points), polygons(polygons)
   { }
 
@@ -55,22 +55,34 @@ public:
     builder.begin_surface(points.size(), polygons.size());
 
     for(std::size_t i = 0, end = points.size(); i < end; ++i)
-    { builder.add_vertex(points[i]); }
+      builder.add_vertex( Point_3(points[i][0], points[i][1], points[i][2]) );
 
     for(std::size_t i = 0, end = polygons.size(); i < end; ++i)
     {
-      const Polygon_3& polygon = polygons[i]; 
+      const Polygon& polygon = polygons[i];
       const std::size_t size = polygon.size();
 
       builder.begin_facet();
-      for(std::size_t j = 0; j < size; ++j) {
+      for(std::size_t j = 0; j < size; ++j)
         builder.add_vertex_to_facet(polygon[j]);
-      }
       builder.end_facet();
     }
     builder.end_surface();
   }
 };
+
+/**
+  * Append a soup of polygons in a Polyhedron
+  */
+template <class Polyhedron, class Point, class Polygon>
+void polygon_soup_to_polyhedron_3(Polyhedron& P,
+                                  const std::vector<Point>& points,
+                                  const std::vector<Polygon>& polygons)
+{
+  Polygon_soup_to_polyhedron_3< typename Polyhedron::HalfedgeDS,
+                                Point, Polygon > modifier(points, polygons);
+  P.delegate(modifier);
+}
 
 } //end of namespace CGAL
 
