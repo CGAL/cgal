@@ -66,18 +66,7 @@ Polyhedron_demo_stl_plugin::load(QFileInfo fileinfo) {
   }  
 
   Scene_polyhedron_item* item = new Scene_polyhedron_item(P);
-  if(builder.name.size() == 0){
-    item->setName(fileinfo.baseName());
-  } else {
-    item->setName(builder.name.c_str());
-  }
-  QColor color(builder.color.c_str());
-  if(color.isValid()) 
-  {  
-    item->setColor(color);
-    item->changed();
-  }
-  
+  item->setName(fileinfo.baseName());
 
   return item;
 }

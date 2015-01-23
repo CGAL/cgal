@@ -21,7 +21,7 @@
 
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
-#include <CGAL/array.h>
+#include <CGAL/IO/STL_reader.h>
 
 #include <iostream>
 
@@ -30,96 +30,33 @@ namespace CGAL{
 template <class HDS>
 class Polyhedron_builder_from_STL : public CGAL::Modifier_base<HDS> {
   typedef typename HDS::Vertex::Point Point_3;
-  typedef std::vector<Point_3> Points_3;
+  typedef std::vector<cpp11::array<double, 3> > Points_3;
   typedef cpp11::array<int,3> Facet;
   typedef std::vector<Facet> Surface;
 
   std::istream& is;
-  int counter;
   Points_3 meshPoints;
   Surface mesh;
-
-  bool
-  read(std::istream& input, Points_3& points, Surface& surface, int /*offset*/ = 0)
-  {
-    std::string s, solid("solid"), facet("facet"), outer("outer"), loop("loop"), vertex("vertex"), endloop("endloop"), endsolid("endsolid");
-
-    std::map<Point_3, int> vertex_index;
-    int index = 0;
-    cpp11::array<int,3> ijk;
-    Point_3 p;
-
-    input >> s;
-    if(s == solid){
-      std::getline(input, s);
-    } else {
-      std::cerr << "We expect keyword 'solid'" << std::endl;
-      return false;
-    }
-
-    while(input >> s){
-      if(s == endsolid){
-        //std::cerr << "found endsolid" << std::endl;
-      } else if(s == facet){
-        //std::cerr << "found facet" << std::endl;
-        std::getline(input, s); // ignore the normal
-        input >> s;
-        if(s != outer){
-          std::cerr << "Expect 'outer' and got " << s << std::endl;
-          return false;
-        }
-        input >> s;
-        if(s != loop){
-          std::cerr << "Expect 'loop' and got " << s << std::endl;
-          return false;
-       }
-        int count = 0;
-        do {
-          input >> s;
-          if(s == vertex){
-            //      std::cerr << "found vertex" << std::endl;
-            if(count < 3){
-              input >> p;
-              typename std::map<Point_3, int>::iterator iti=
-                vertex_index.insert(std::make_pair(p,-1)).first;
-              if(iti->second==-1){
-                ijk[count] = index;
-                iti->second = index++;
-                points.push_back(p);
-              } else {
-                ijk[count] = iti->second;
-              }
-              ++count;
-            } else {
-              std::cerr << "We can only read triangulated surfaces" << std::endl;
-              return false;
-            }
-          }
-        }while(s != endloop);
-
-        surface.push_back(ijk);
-      }
-    }
-    return true;
-  }
-
 
 public:
 
   Polyhedron_builder_from_STL(std::istream& is_)
-    : is(is_), counter(0)
+    : is(is_)
   {}
 
   void operator()( HDS& hds) {
-    if(!read(is, meshPoints, mesh)) return;
+    if(!read_STL(is, meshPoints, mesh)) return;
 
     CGAL::Polyhedron_incremental_builder_3<HDS> B(hds);
     B.begin_surface( meshPoints.size(), mesh.size());
     typedef typename Points_3::size_type size_type;
 
     for(size_type i=0; i < meshPoints.size(); i++){
-      B.add_vertex( meshPoints[i]);
+      B.add_vertex(
+        Point_3(meshPoints[i][0], meshPoints[i][1], meshPoints[i][2])
+      );
     }
+
     for(size_type i=0; i < mesh.size(); i++){
       B.begin_facet();
       B.add_vertex_to_facet( mesh[i][0]);
