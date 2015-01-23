@@ -35,16 +35,16 @@ namespace Polygon_mesh_processing{
 
 namespace internal{
 
-template <class PolygonMesh>
+template <class PM>
 struct Less_for_halfedge
 {
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
+  typedef typename boost::graph_traits<PM>::halfedge_descriptor
     halfedge_descriptor;
-  typedef typename boost::property_map<PolygonMesh,
+  typedef typename boost::property_map<PM,
                              boost::vertex_point_t>::type   Ppmap;
-  typedef typename PolygonMesh::Point Point;
+  typedef typename PM::Point Point;
 
-  Less_for_halfedge(const PolygonMesh& pmesh_,
+  Less_for_halfedge(const PM& pmesh_,
                     const Ppmap& ppmap_)
     : pmesh(pmesh_),
       ppmap(ppmap_)
@@ -63,16 +63,16 @@ struct Less_for_halfedge
     ( s2 < t2?  std::make_pair(s2,t2) : std::make_pair(t2, s2) );
   }
 
-  const PolygonMesh& pmesh;
+  const PM& pmesh;
   const Ppmap& ppmap;
 };
 
-template <class LessHedge, class PolygonMesh, class OutputIterator>
+template <class LessHedge, class PM, class OutputIterator>
 OutputIterator
 detect_duplicated_boundary_edges
-(PolygonMesh& pmesh, OutputIterator out, LessHedge less_hedge)
+(PM& pmesh, OutputIterator out, LessHedge less_hedge)
 {
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
 
   pmesh.normalize_border();
 
@@ -93,101 +93,100 @@ detect_duplicated_boundary_edges
   return out;
 }
 
-template <class PolygonMesh>
-struct Naive_border_stitching_modifier:
-  CGAL::Modifier_base<typename PolygonMesh::HalfedgeDS>
+template <class PM>
+struct Naive_border_stitching_modifier
+  : CGAL::Modifier_base<PM>
 {
-  typedef typename PolygonMesh::HalfedgeDS HDS;
-  typedef typename HDS::Halfedge_handle Halfedge_handle;
-  typedef typename HDS::Vertex_handle Vertex_handle;
-  typedef typename HDS::Halfedge::Base HBase;
-  typedef typename PolygonMesh::Vertex::Point Point_3;
+  typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
+  typedef typename PM::Point Point;
 
-  std::vector <std::pair<Halfedge_handle,Halfedge_handle> >& hedge_pairs_to_stitch;
+  std::vector<std::pair<halfedge_descriptor, halfedge_descriptor> >& to_stitch;
 
-  Naive_border_stitching_modifier(
-    std::vector< std::pair<Halfedge_handle,Halfedge_handle> >&
-      hedge_pairs_to_stitch_) :hedge_pairs_to_stitch(hedge_pairs_to_stitch_)
+  Naive_border_stitching_modifier(PM& pmesh_,
+    std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> >&
+      to_stitch_)
+      : to_stitch(to_stitch_)
   {}
 
-  void update_target_vertex(Halfedge_handle h,
-                            Vertex_handle v_kept,
-                            CGAL::HalfedgeDS_decorator<HDS>& decorator)
+  void update_target_vertex(halfedge_descriptor h,
+                            vertex_descriptor v_kept,
+                            PM& pmesh)
   {
-    Halfedge_handle start=h;
+    halfedge_descriptor start = h;
     do{
-      decorator.set_vertex(h, v_kept);
-      h=h->next()->opposite();
-    } while( h!=start );
+      set_target(h, v_kept, pmesh);
+      h = opposite(next(h, pmesh), pmesh);
+    } while( h != start );
   }
-
-
-  void operator() (HDS& hds)
+  
+  void operator() (PM& pmesh)
   {
-    std::size_t nb_hedges=hedge_pairs_to_stitch.size();
+    std::size_t nb_hedges = to_stitch.size();
 
-    CGAL::HalfedgeDS_decorator<HDS> decorator(hds);
+    typename boost::property_map<PM, boost::vertex_point_t>::type
+      ppmap = get(boost::vertex_point, pmesh);
 
     /// Merge the vertices
-    std::vector<Vertex_handle> vertices_to_delete;
+    std::vector<vertex_descriptor> vertices_to_delete;
     // since there might be several vertices with identical point
     // we use the following map to choose one vertex per point
-    std::map<Point_3, Vertex_handle> vertices_kept;
-    for (std::size_t k=0; k<nb_hedges; ++k)
+    std::map<Point, vertex_descriptor> vertices_kept;
+    for (std::size_t k = 0; k < nb_hedges; ++k)
     {
-      Halfedge_handle h1=hedge_pairs_to_stitch[k].first;
-      Halfedge_handle h2=hedge_pairs_to_stitch[k].second;
+      halfedge_descriptor h1 = to_stitch[k].first;
+      halfedge_descriptor h2 = to_stitch[k].second;
 
-      CGAL_assertion( h1->is_border() );
-      CGAL_assertion( h2->is_border() );
-      CGAL_assertion( !h1->opposite()->is_border() );
-      CGAL_assertion( !h2->opposite()->is_border() );
+      CGAL_assertion(CGAL::is_border(h1, pmesh));
+      CGAL_assertion(CGAL::is_border(h2, pmesh));
+      CGAL_assertion(!CGAL::is_border(opposite(h1, pmesh), pmesh));
+      CGAL_assertion(!CGAL::is_border(opposite(h2, pmesh), pmesh));
 
-      Vertex_handle h1_tgt=h1->vertex();
-      Vertex_handle h2_src=h2->opposite()->vertex();
+      vertex_descriptor h1_tgt = target(h1, pmesh);
+      vertex_descriptor h2_src = source(h2, pmesh);
 
       //update vertex pointers: target of h1 vs source of h2
-      Vertex_handle v_to_keep=h1_tgt;
+      vertex_descriptor v_to_keep = h1_tgt;
       std::pair<
-        typename std::map<Point_3, Vertex_handle>::iterator,
+        typename std::map<Point, vertex_descriptor>::iterator,
         bool > insert_res =
-          vertices_kept.insert( std::make_pair(v_to_keep->point(), v_to_keep) );
-      if (!insert_res.second && v_to_keep!=insert_res.first->second)
+          vertices_kept.insert( std::make_pair(ppmap[v_to_keep], v_to_keep) );
+      if (!insert_res.second && v_to_keep != insert_res.first->second)
       {
-        v_to_keep=insert_res.first->second;
+        v_to_keep = insert_res.first->second;
         //we remove h1->vertex()
         vertices_to_delete.push_back( h1_tgt );
-        update_target_vertex(h1, v_to_keep, decorator);
+        update_target_vertex(h1, v_to_keep, pmesh);
       }
-      if (v_to_keep!=h2_src)
+      if (v_to_keep != h2_src)
       {
         //we remove h2->opposite()->vertex()
         vertices_to_delete.push_back( h2_src );
-        update_target_vertex(h2->opposite(), v_to_keep, decorator);
+        update_target_vertex(h2->opposite(), v_to_keep, pmesh);
       }
-      decorator.set_vertex_halfedge(v_to_keep, h1);
+      set_halfedge(v_to_keep, h1, pmesh);
 
-      Vertex_handle h1_src=h1->opposite()->vertex();
-      Vertex_handle h2_tgt=h2->vertex();
+      vertex_descriptor h1_src = source(h1, pmesh);
+      vertex_descriptor h2_tgt = target(h2, pmesh);
 
       //update vertex pointers: target of h1 vs source of h2
-      v_to_keep=h2_tgt;
+      v_to_keep = h2_tgt;
       insert_res =
-          vertices_kept.insert( std::make_pair(v_to_keep->point(), v_to_keep) );
-      if (!insert_res.second && v_to_keep!=insert_res.first->second)
+          vertices_kept.insert( std::make_pair(ppmap[v_to_keep], v_to_keep) );
+      if (!insert_res.second && v_to_keep != insert_res.first->second)
       {
-        v_to_keep=insert_res.first->second;
+        v_to_keep = insert_res.first->second;
         //we remove h2->vertex()
         vertices_to_delete.push_back( h2_tgt );
-        update_target_vertex(h2, v_to_keep, decorator);
+        update_target_vertex(h2, v_to_keep, pmesh);
       }
       if (v_to_keep!=h1_src)
       {
         //we remove h1->opposite()->vertex()
         vertices_to_delete.push_back( h1_src );
-        update_target_vertex(h1->opposite(), v_to_keep, decorator);
+        update_target_vertex(h1->opposite(), v_to_keep, pmesh);
       }
-      decorator.set_vertex_halfedge(v_to_keep, h1->opposite());
+      set_halfedge(v_to_keep, opposite(h1,pmesh), pmesh);
     }
 
     /// Update next/prev of neighbor halfedges (that are not set for stiching)
@@ -197,53 +196,56 @@ struct Naive_border_stitching_modifier:
     /// In order to avoid having to maintain a set with halfedges to stitch
     /// we do on purpose next-prev linking that might not be useful but that
     /// is harmless and still less expensive than doing queries in a set
-    for (std::size_t k=0; k<nb_hedges; ++k)
+    for (std::size_t k=0; k < nb_hedges; ++k)
     {
-      Halfedge_handle h1=hedge_pairs_to_stitch[k].first;
-      Halfedge_handle h2=hedge_pairs_to_stitch[k].second;
+      halfedge_descriptor h1 = to_stitch[k].first;
+      halfedge_descriptor h2 = to_stitch[k].second;
 
       //link h2->prev() to h1->next()
-      Halfedge_handle prev=h2->prev();
-      Halfedge_handle next=h1->next();
-      prev->HBase::set_next(next);
-      decorator.set_prev(next, prev);
+      halfedge_descriptor pr = prev(h2, pmesh);
+      halfedge_descriptor nx = next(h1, pmesh);
+      set_next(pr, nx, pmesh);
+//      set_prev(nx, pr, pmesh);
 
       //link h1->prev() to h2->next()
-      prev=h1->prev();
-      next=h2->next();
-      prev->HBase::set_next(next);
-      decorator.set_prev(next, prev);
+      pr = prev(h1, pmesh);
+      nx = next(h2, pmesh);
+      set_next(pr, nx, pmesh);
+//      set_prev(nx, pr, pmesh);
     }
 
     /// update HDS connectivity, removing the second halfedge
     /// of each the pair and its opposite
     for (std::size_t k=0; k<nb_hedges; ++k)
     {
-      Halfedge_handle h1=hedge_pairs_to_stitch[k].first;
-      Halfedge_handle h2=hedge_pairs_to_stitch[k].second;
+      halfedge_descriptor h1 = to_stitch[k].first;
+      halfedge_descriptor h2 = to_stitch[k].second;
 
     ///Set face-halfedge relationship
       //h2 and its opposite will be removed
-      decorator.set_face(h1,h2->opposite()->face());
-      decorator.set_face_halfedge(h1->face(),h1);
+      set_face(h1, face(opposite(h2, pmesh), pmesh), pmesh);
+      set_halfedge(face(h1, pmesh), h1, pmesh);
       //update next/prev pointers
-      Halfedge_handle tmp=h2->opposite()->prev();
-      tmp->HBase::set_next(h1);
-      decorator.set_prev(h1,tmp);
-      tmp=h2->opposite()->next();
-      h1->HBase::set_next(tmp);
-      decorator.set_prev(tmp,h1);
+      halfedge_descriptor tmp = prev(opposite(h2, pmesh), pmesh);
+      set_next(tmp, h1, pmesh);
+//      set_prev(h1, tmp, pmesh);
+      tmp = next(opposite(h2, pmesh), pmesh);
+      set_next(h1, tmp, pmesh);
+//      set_prev(tmp, h1, pmesh);
+
+      //todo : check set_next does set_prev's job
 
     /// remove the extra halfedges
-      hds.edges_erase( h2 );
+      remove_edge(edge(h2, pmesh), pmesh);
     }
 
     //remove the extra vertices
-    for(typename std::vector<Vertex_handle>::iterator
-          itv=vertices_to_delete.begin(),itv_end=vertices_to_delete.end();
+    for(typename std::vector<vertex_descriptor>::iterator
+          itv = vertices_to_delete.begin(),
+          itv_end = vertices_to_delete.end();
           itv!=itv_end; ++itv)
     {
-      hds.vertices_erase(*itv);
+      remove_vertex(*itv, pmesh);
     }
   }
 };
@@ -274,8 +276,8 @@ void stitch_borders(
      hedge_pairs_to_stitch)
 {
   internal::Naive_border_stitching_modifier<PolygonMesh>
-    modifier(hedge_pairs_to_stitch);
-  pmesh.delegate(modifier);
+    modifier(pmesh, hedge_pairs_to_stitch);
+  modifier(pmesh);
 }
 
 /// \ingroup polyhedron_stitching_grp

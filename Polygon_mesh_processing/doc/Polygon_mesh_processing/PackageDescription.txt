@@ -2,7 +2,6 @@
 /// \defgroup PkgPolygonMeshProcessingConcepts Concepts
 /// \ingroup PkgPolygonMeshProcessing
 /// \defgroup polyhedron_stitching_grp CGAL::Polygon_mesh_processing::stitch_polyhedron()
-/// \todo `Polyhedron` should be a model of `MutableFaceGraph` and `FaceListGraph`
 /// \ingroup PkgPolygonMeshProcessing
  
 /*!
