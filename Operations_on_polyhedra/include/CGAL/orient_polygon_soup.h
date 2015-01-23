@@ -33,16 +33,15 @@ namespace CGAL {
 
 namespace internal {
 
-template<class Point_3>
+template<class Point_3, class Polygon_3>
 class Polygon_soup_orienter
 {
-  typedef std::vector<std::size_t> Polygon_3;
   typedef std::vector<Point_3> Points;
   typedef std::map<std::pair<std::size_t, std::size_t>, std::set<std::size_t> > Edges_map;
   typedef boost::array<std::size_t, 2> Edge;
   typedef std::vector<Polygon_3> Polygons;
   typedef std::set<Edge> Edges;
-  typedef Polygons::size_type size_type;
+  typedef typename Polygons::size_type size_type;
 
   const Points& points;
   Polygons&     polygons;
@@ -220,13 +219,12 @@ public:
  * @return true if a consistent orientation has been found
  *
  * \TODO code: there is no check for duplicate points, yet it can be implemented as separate filter function
- * \TODO code: support fixed size arrays for polygons, or creating a concept which provides .size and .operator[]
  */ 
-template <class Point_3>
+template <class Point_3, class Polygon_3>
 bool orient_polygon_soup(const std::vector<Point_3>& points,
-                         std::vector< std::vector<std::size_t> >& polygons)
+                         std::vector< Polygon_3 >& polygons)
 {
-  internal::Polygon_soup_orienter<Point_3> orienter(points, polygons);
+  internal::Polygon_soup_orienter<Point_3, Polygon_3> orienter(points, polygons);
   return orienter.orient();
 }
 
