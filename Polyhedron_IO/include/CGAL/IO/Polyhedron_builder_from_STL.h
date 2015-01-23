@@ -80,12 +80,14 @@ class Polyhedron_builder_from_STL : public CGAL::Modifier_base<HDS> {
             //      std::cerr << "found vertex" << std::endl;
             if(count < 3){
               input >> p;
-              if(vertex_index.find(p) == vertex_index.end()){
+              typename std::map<Point_3, int>::iterator iti=
+                vertex_index.insert(std::make_pair(p,-1)).first;
+              if(iti->second==-1){
                 ijk[count] = index;
-                vertex_index[p] = index++;
+                iti->second = index++;
                 points.push_back(p);
               } else {
-                ijk[count] = vertex_index[p];
+                ijk[count] = iti->second;
               }
               ++count;
             } else {
@@ -103,8 +105,6 @@ class Polyhedron_builder_from_STL : public CGAL::Modifier_base<HDS> {
 
 
 public:
-
-  std::string name, color;
 
   Polyhedron_builder_from_STL(std::istream& is_)
     : is(is_), counter(0)
