@@ -24,6 +24,8 @@
 
 #include <CGAL/Modifier_base.h>
 #include <CGAL/HalfedgeDS_decorator.h>
+#include <CGAL/boost/graph/helpers.h>
+
 #include <vector>
 #include <set>
 
@@ -33,44 +35,60 @@ namespace Polygon_mesh_processing{
 
 namespace internal{
 
-template <class Halfedge_handle, class Point_3>
-struct Less_for_halfedge{
-  bool operator()( Halfedge_handle h1, Halfedge_handle h2 ) const
+template <class PolygonMesh>
+struct Less_for_halfedge
+{
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
+    halfedge_descriptor;
+  typedef typename boost::property_map<PolygonMesh,
+                             boost::vertex_point_t>::type   Ppmap;
+  typedef typename PolygonMesh::Point Point;
+
+  Less_for_halfedge(const PolygonMesh& pmesh_,
+                    const Ppmap& ppmap_)
+    : pmesh(pmesh_),
+      ppmap(ppmap_)
+  {}
+
+  bool operator()(halfedge_descriptor h1,
+                  halfedge_descriptor h2) const
   {
-    const Point_3& s1=h1->opposite()->vertex()->point();
-    const Point_3& t1=h1->vertex()->point();
-    const Point_3& s2=h2->opposite()->vertex()->point();
-    const Point_3& t2=h2->vertex()->point();
+    const Point& s1 = ppmap[target(opposite(h1, pmesh), pmesh)];
+    const Point& t1 = ppmap[target(h1, pmesh)];
+    const Point& s2 = ppmap[target(opposite(h2, pmesh), pmesh)];
+    const Point& t2 = ppmap[target(h2, pmesh)];
     return
     ( s1 < t1?  std::make_pair(s1,t1) : std::make_pair(t1, s1) )
     <
     ( s2 < t2?  std::make_pair(s2,t2) : std::make_pair(t2, s2) );
   }
+
+  const PolygonMesh& pmesh;
+  const Ppmap& ppmap;
 };
 
 template <class LessHedge, class PolygonMesh, class OutputIterator>
 OutputIterator
 detect_duplicated_boundary_edges
-(PolygonMesh& P, OutputIterator out, LessHedge less_hedge)
+(PolygonMesh& pmesh, OutputIterator out, LessHedge less_hedge)
 {
-  typedef typename PolygonMesh::Halfedge_handle Halfedge_handle;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
-  P.normalize_border();
+  pmesh.normalize_border();
 
-  typedef
-    std::set<Halfedge_handle, LessHedge > Border_halfedge_set;
+  typedef std::set<halfedge_descriptor, LessHedge> Border_halfedge_set;
   Border_halfedge_set border_halfedge_set(less_hedge);
-  for (typename PolygonMesh::Halfedge_iterator
-          it=P.border_halfedges_begin(), it_end=P.halfedges_end();
-          it!=it_end; ++it)
+  BOOST_FOREACH(halfedge_descriptor he, halfedges(pmesh))
   {
-    if ( !it->is_border() ) continue;
+    if ( !CGAL::is_border(he, pmesh) )
+      continue;
     typename Border_halfedge_set::iterator set_it;
     bool insertion_ok;
-    CGAL::cpp11::tie(set_it,insertion_ok)=
-      border_halfedge_set.insert(it);
+    CGAL::cpp11::tie(set_it, insertion_ok)
+      = border_halfedge_set.insert(he);
 
-    if ( !insertion_ok ) *out++=std::make_pair(*set_it, it);
+    if ( !insertion_ok )
+      *out++ = std::make_pair(*set_it, he);
   }
   return out;
 }
@@ -283,11 +301,9 @@ void stitch_borders(PolygonMesh& pmesh, LessHedge less_hedge)
 template <class PolygonMesh>
 void stitch_borders(PolygonMesh& pmesh)
 {
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
-    halfedge_descriptor;
-  typedef typename PolygonMesh::Point Point;
-
-  internal::Less_for_halfedge<halfedge_descriptor, Point> less_hedge;
+  typename boost::property_map<PolygonMesh, boost::vertex_point_t>::type
+    ppmap = get(boost::vertex_point, pmesh);
+  internal::Less_for_halfedge<PolygonMesh> less_hedge(pmesh, ppmap);
   stitch_borders(pmesh, less_hedge);
 }
 
