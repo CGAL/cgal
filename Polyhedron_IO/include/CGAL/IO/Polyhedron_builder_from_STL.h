@@ -46,7 +46,7 @@ class Polyhedron_builder_from_STL : public CGAL::Modifier_base<HDS> {
 
     std::map<Point_3, int> vertex_index;
     int index = 0;
-    int ijk[3];
+    cpp11::array<int,3> ijk;
     Point_3 p;
 
     input >> s;
@@ -95,7 +95,7 @@ class Polyhedron_builder_from_STL : public CGAL::Modifier_base<HDS> {
           }
         }while(s != endloop);
 
-        surface.push_back( make_array(ijk[0], ijk[1], ijk[2]) );
+        surface.push_back(ijk);
       }
     }
     return true;
