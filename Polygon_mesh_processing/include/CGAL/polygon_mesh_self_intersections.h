@@ -252,7 +252,6 @@ self_intersections(const TriangleMesh& tmesh,
  * @param tmesh TriangleMesh to be tested
  * @param geom_traits traits class providing intersection test primitives
  *
- * \todo Polyhedron should be a model of `FaceListGraph`
  * @return true if `tmesh` is self-intersecting
  */
 template <class GeomTraits, class TriangleMesh>
