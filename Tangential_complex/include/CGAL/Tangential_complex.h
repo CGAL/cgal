@@ -70,6 +70,8 @@ namespace CGAL {
 
 using namespace Tangential_complex_;
 
+enum Fix_inconsistencies_status { TC_FIXED = 0, TIME_LIMIT_REACHED };
+
 class Vertex_data
 {
 public:
@@ -330,8 +332,12 @@ public:
 #endif
   }
 
-  unsigned int fix_inconsistencies()
+  // time_limit in seconds
+  Fix_inconsistencies_status fix_inconsistencies(
+    unsigned int &num_steps, double time_limit = 0.)
   {
+    Wall_clock_timer t;
+
     typename Kernel::Point_drop_weight_d drop_w = 
       m_k.point_drop_weight_d_object();
 
@@ -358,7 +364,7 @@ public:
 #endif // CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
 
     bool done = false;
-    unsigned int num_steps = 0;
+    num_steps = 0;
     while (!done)
     {
       std::size_t num_inconsistent_local_tr = 0;
@@ -446,9 +452,16 @@ public:
 
       ++num_steps;
       done = (num_inconsistent_local_tr == 0);
+      if (time_limit != 0 && t.elapsed() > time_limit)
+      {
+#ifdef CGAL_TC_VERBOSE
+        std::cerr << "Time limit reached." << std::endl;
+#endif
+        return TIME_LIMIT_REACHED;
+      }
     }
 
-    return num_steps;
+    return TC_FIXED;
   }
 
 
