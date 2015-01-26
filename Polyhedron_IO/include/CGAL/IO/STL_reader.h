@@ -81,7 +81,7 @@ namespace CGAL{
             //      std::cerr << "found vertex" << std::endl;
             if(count < 3){
               input >> p[0] >> p[1] >> p[2];
-              typename std::map<cpp11::array<double,3>, int>::iterator iti=
+              std::map<cpp11::array<double,3>, int>::iterator iti=
                 vertex_index.insert(std::make_pair(p,-1)).first;
               if(iti->second==-1){
                 ijk[count] = index;
