@@ -117,9 +117,10 @@ public:
   static const int AMB_DIM = Ambient_dimension<Point>::value; // CJTODO: use Point_dimension_d or similar
 
   /// Constructor
+  /// "points" must not be empty
   Point_cloud_data_structure(Point_container_ &points, Kernel const& k)
   : m_adaptor(points, k),
-    m_kd_tree(AMB_DIM,
+    m_kd_tree(k.point_dimension_d_object()(*points.begin()),
               m_adaptor,
               nanoflann::KDTreeSingleIndexAdaptorParams(10 /* max leaf */) )
   {
@@ -242,8 +243,6 @@ public:
                                                    Incremental_neighbor_search;
   typedef typename Incremental_neighbor_search::iterator    INS_iterator;
   typedef Incremental_neighbor_search                       INS_range;
-
-  static const int AMB_DIM = Ambient_dimension<Point>::value; // CJTODO: use Point_dimension_d or similar
 
   /// Constructor
   Point_cloud_data_structure(Point_container_ const& points)

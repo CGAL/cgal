@@ -88,21 +88,21 @@ private:
 /// The class Tangential_complex represents a tangential complex
 template <
   typename Kernel,
-  int Intrinsic_dimension,
+  typename DimensionTag,
   typename Concurrency_tag = CGAL::Parallel_tag,
   typename Tr = Regular_triangulation
   <
     Regular_triangulation_euclidean_traits<
-      Epick_d<Dimension_tag<Intrinsic_dimension> > >,
+      Epick_d<DimensionTag> >,
 
     Triangulation_data_structure
     <
       typename Regular_triangulation_euclidean_traits<
-        Epick_d<Dimension_tag<Intrinsic_dimension> > >::Dimension,
+        Epick_d<DimensionTag> >::Dimension,
       Triangulation_vertex<Regular_triangulation_euclidean_traits<
-        Epick_d<Dimension_tag<Intrinsic_dimension> > >, Vertex_data >,
+        Epick_d<DimensionTag> >, Vertex_data >,
       Triangulation_full_cell<Regular_triangulation_euclidean_traits<
-        Epick_d<Dimension_tag<Intrinsic_dimension> > > >
+        Epick_d<DimensionTag> > >
     >
   >
 >
@@ -186,8 +186,10 @@ public:
   /// Constructor for a range of points
   template <typename InputIterator>
   Tangential_complex(InputIterator first, InputIterator last,
+                     int intrinsic_dimension,
                      const Kernel &k = Kernel())
   : m_k(k),
+    m_intrinsic_dimension(intrinsic_dimension),
     m_points(first, last),
     m_points_ds(m_points),
     m_ambiant_dim(k.point_dimension_d_object()(*first))
@@ -219,10 +221,12 @@ public:
     m_weights.resize(m_points.size(), FT(0));
 #endif
 #ifdef CGAL_TC_PERTURB_POSITION
-    m_translations.resize(m_points.size());
+    m_translations.resize(m_points.size(),
+                          m_k.construct_vector_d_object()(m_ambiant_dim));
 #endif
 #ifdef CGAL_TC_EXPORT_NORMALS
-    m_normals.resize(m_points.size());
+    m_normals.resize(m_points.size(),
+                     m_k.construct_vector_d_object()(m_ambiant_dim));
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -548,7 +552,7 @@ public:
                 << std::endl;
     }
 
-    if (Intrinsic_dimension < 1 || Intrinsic_dimension > 3)
+    if (m_intrinsic_dimension < 1 || m_intrinsic_dimension > 3)
     {
       std::cerr << "Error: export_to_off => intrinsic dimension should be "
                    "between 1 and 3."
@@ -614,12 +618,12 @@ public:
          cit != ambient_dt.finite_full_cells_end() ; ++cit )
     {
       CGAL::Combination_enumerator<int> combi(
-        Intrinsic_dimension + 1, 0, ambient_dim + 1);
+        m_intrinsic_dimension + 1, 0, ambient_dim + 1);
 
       for ( ; !combi.finished() ; ++combi)
       {
         Indexed_simplex simplex;
-        for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+        for (int i = 0 ; i < m_intrinsic_dimension + 1 ; ++i)
           simplex.insert(cit.base()->vertex(combi[i])->data());
 
         amb_dt_simplices.insert(simplex);
@@ -785,7 +789,7 @@ private:
   {
     //std::cerr << "***********************************************" << std::endl;
     Triangulation &local_tr =
-      m_triangulations[i].construct_triangulation(Intrinsic_dimension);
+      m_triangulations[i].construct_triangulation(m_intrinsic_dimension);
     const Tr_traits &local_tr_traits = local_tr.geom_traits();
     Tr_vertex_handle &center_vertex = m_triangulations[i].center_vertex();
 
@@ -831,7 +835,7 @@ private:
 
     // Insert p
     Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
-      local_tr_traits.construct_point_d_object()(Intrinsic_dimension, ORIGIN),
+      local_tr_traits.construct_point_d_object()(m_intrinsic_dimension, ORIGIN),
 #ifdef CGAL_TC_PERTURB_WEIGHT
       m_weights[i]
 #else
@@ -895,7 +899,7 @@ private:
           vh->data() = neighbor_point_idx;
 
           // Let's recompute star_sphere_squared_radius
-          if (local_tr.current_dimension() >= Intrinsic_dimension)
+          if (local_tr.current_dimension() >= m_intrinsic_dimension)
           {
             star_sphere_squared_radius = 0;
             // Get the incident cells and look for the biggest circumsphere
@@ -989,7 +993,7 @@ private:
     // eigenvalues
     Tangent_space_basis ts;
     for (int i = m_ambiant_dim - 1 ; 
-         i >= m_ambiant_dim - Intrinsic_dimension ; 
+         i >= m_ambiant_dim - m_intrinsic_dimension ; 
          --i)
     {
       ts.push_back(constr_vec(
@@ -1000,8 +1004,8 @@ private:
 #ifdef CGAL_TC_EXPORT_NORMALS
     *p_normal = constr_vec(
         m_ambiant_dim,
-        eig.eigenvectors().col(m_ambiant_dim - Intrinsic_dimension - 1).data(),
-        eig.eigenvectors().col(m_ambiant_dim - Intrinsic_dimension - 1).data() + m_ambiant_dim);
+        eig.eigenvectors().col(m_ambiant_dim - m_intrinsic_dimension - 1).data(),
+        eig.eigenvectors().col(m_ambiant_dim - m_intrinsic_dimension - 1).data() + m_ambiant_dim);
 #endif
 
     //*************************************************************************
@@ -1024,7 +1028,7 @@ private:
     typename Kernel::Scaled_vector_d  scaled_vec = m_k.scaled_vector_d_object();
 
     Tangent_space_basis ts;
-    ts.reserve(Intrinsic_dimension);
+    ts.reserve(m_intrinsic_dimension);
     ts.push_back(scaled_vec(t1, FT(1)/CGAL::sqrt(sqlen(t1))));
     ts.push_back(scaled_vec(t2, FT(1)/CGAL::sqrt(sqlen(t2))));
 
@@ -1037,7 +1041,7 @@ private:
     //Vector t1(12., 15., 65.);
     //Vector t2(32., 5., 85.);
     //Tangent_space_basis ts;
-    //ts.reserve(Intrinsic_dimension);
+    //ts.reserve(m_intrinsic_dimension);
     //ts.push_back(diff_vec(t1, scaled_vec(n, inner_pdct(t1, n))));
     //ts.push_back(diff_vec(t2, scaled_vec(n, inner_pdct(t2, n))));
     //return compute_gram_schmidt_basis(ts, m_k);
@@ -1056,8 +1060,8 @@ private:
 
     std::vector<FT> coords;
     // Ambiant-space coords of the projected point
-    coords.reserve(Intrinsic_dimension);
-    for (std::size_t i = 0 ; i < Intrinsic_dimension ; ++i)
+    coords.reserve(m_intrinsic_dimension);
+    for (std::size_t i = 0 ; i < m_intrinsic_dimension ; ++i)
     {
       // Compute the inner product p * ts[i]
       Vector v = diff_points(p, origin);
@@ -1065,7 +1069,7 @@ private:
       coords.push_back(coord);
     }
 
-    return Tr_bare_point(Intrinsic_dimension, coords.begin(), coords.end());
+    return Tr_bare_point(m_intrinsic_dimension, coords.begin(), coords.end());
   }
 
   // Project the point in the tangent space
@@ -1087,8 +1091,8 @@ private:
     std::vector<FT> coords;
     // Ambiant-space coords of the projected point
     std::vector<FT> p_proj(ccci(origin), ccci(origin, 0));
-    coords.reserve(Intrinsic_dimension);
-    for (std::size_t i = 0 ; i < Intrinsic_dimension ; ++i)
+    coords.reserve(m_intrinsic_dimension);
+    for (std::size_t i = 0 ; i < m_intrinsic_dimension ; ++i)
     {
       // Compute the inner product p * ts[i]
       FT coord = inner_pdct(v, ts[i]);
@@ -1104,7 +1108,7 @@ private:
     return tr_traits.construct_weighted_point_d_object()
     (
       tr_traits.construct_point_d_object()(
-        Intrinsic_dimension, coords.begin(), coords.end()),
+        m_intrinsic_dimension, coords.begin(), coords.end()),
       w - m_k.squared_distance_d_object()(p, projected_pt)
     );
   }
@@ -1221,7 +1225,7 @@ private:
       m_k.scaled_vector_d_object();
     
     CGAL::Random_points_on_sphere_d<Tr_bare_point> 
-      tr_point_on_sphere_generator(Intrinsic_dimension, 1);
+      tr_point_on_sphere_generator(m_intrinsic_dimension, 1);
 
     Tr_point local_random_transl =
       local_tr_traits.construct_weighted_point_d_object()(
@@ -1229,7 +1233,7 @@ private:
     Vector &global_transl = m_translations[point_idx];
     global_transl = k_constr_vec(m_ambiant_dim);
     const Tangent_space_basis &tsb = m_tangent_spaces[point_idx];
-    for (int i = 0 ; i < Intrinsic_dimension ; ++i)
+    for (int i = 0 ; i < m_intrinsic_dimension ; ++i)
     {
       global_transl = k_transl(
         global_transl, 
@@ -1388,7 +1392,7 @@ private:
         Tr_point local_center = power_center(simplex_pts.begin(), simplex_pts.end());
         Point global_center = m_points[tr_index];
         const Tangent_space_basis &tsb = m_tangent_spaces[tr_index];
-        for (int i = 0 ; i < Intrinsic_dimension ; ++i)
+        for (int i = 0 ; i < m_intrinsic_dimension ; ++i)
         {
           global_center = k_transl(
             global_center, 
@@ -1397,7 +1401,7 @@ private:
         
         KNS_range kns_range = m_points_ds.query_ANN(
           global_center, 
-          Intrinsic_dimension + 1 
+          m_intrinsic_dimension + 1 
           + CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS);
         std::vector<std::size_t> neighbors;
         for (KNS_iterator nn_it = kns_range.begin() ;
@@ -1439,10 +1443,10 @@ private:
       return os;
     }
 
-    // If Intrinsic_dimension = 1, we output each point two times
+    // If m_intrinsic_dimension = 1, we output each point two times
     // to be able to export each segment as a flat triangle with 3 different
     // indices (otherwise, Meshlab detects degenerated simplices)
-    const int N = (Intrinsic_dimension == 1 ? 2 : 1);
+    const int N = (m_intrinsic_dimension == 1 ? 2 : 1);
     const int ambient_dim = m_k.point_dimension_d_object()(*m_points.begin());
 
     // Kernel functors
@@ -1487,11 +1491,11 @@ private:
     std::set<std::set<std::size_t> > const* excluded_simplices = NULL,
     bool show_excluded_vertices_in_color = false)
   {
-    // If Intrinsic_dimension = 1, each point is output two times
+    // If m_intrinsic_dimension = 1, each point is output two times
     // (see export_vertices_to_off)
-    int factor = (Intrinsic_dimension == 1 ? 2 : 1);
+    int factor = (m_intrinsic_dimension == 1 ? 2 : 1);
     int OFF_simplices_dim =
-      (Intrinsic_dimension == 1 ? 3 : Intrinsic_dimension + 1);
+      (m_intrinsic_dimension == 1 ? 3 : m_intrinsic_dimension + 1);
     num_simplices = 0;
     std::size_t num_inconsistent_simplices = 0;
     typename Tr_container::const_iterator it_tr = m_triangulations.begin();
@@ -1502,7 +1506,7 @@ private:
       Triangulation const& tr    = it_tr->tr();
       Tr_vertex_handle center_vh = it_tr->center_vertex();
 
-      if (tr.current_dimension() < Intrinsic_dimension)
+      if (tr.current_dimension() < m_intrinsic_dimension)
         continue;
 
       // Color for this star
@@ -1526,14 +1530,14 @@ private:
           std::set<std::size_t> c;
           std::stringstream sstr_c;
           std::size_t data;
-          for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+          for (int i = 0 ; i < m_intrinsic_dimension + 1 ; ++i)
           {
             data = (*it_c)->vertex(i)->data();
             sstr_c << data*factor << " ";
             c.insert(data);
           }
           // See export_vertices_to_off
-          if (Intrinsic_dimension == 1)
+          if (m_intrinsic_dimension == 1)
             sstr_c << (data*factor + 1) << " ";
 
           bool excluded =
@@ -1564,13 +1568,13 @@ private:
         {
           os << OFF_simplices_dim << " ";
           std::size_t data;
-          for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+          for (int i = 0 ; i < m_intrinsic_dimension + 1 ; ++i)
           {
             data = (*it_c)->vertex(i)->data();
             os << data*factor << " ";
           }
           // See export_vertices_to_off
-          if (Intrinsic_dimension == 1)
+          if (m_intrinsic_dimension == 1)
             os << (data*factor + 1) << " ";
 
           ++num_simplices;
@@ -1603,6 +1607,7 @@ private:
 
 private:
   const Kernel              m_k;
+  const int                 m_intrinsic_dimension;
   const int                 m_ambiant_dim;
   
   Points                    m_points;

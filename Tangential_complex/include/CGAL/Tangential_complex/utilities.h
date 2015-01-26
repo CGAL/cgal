@@ -39,8 +39,6 @@ namespace Tangential_complex_ {
     typedef typename K::Vector_d      Vector;
     typedef std::vector<Vector>       Basis;
 
-    const int D = Ambient_dimension<Vector>::value; // CJTODO: use Point_dimension_d or similar
-
     // Kernel functors
     typename K::Squared_length_d        sqlen      = kernel.squared_length_d_object();
     typename K::Scaled_vector_d         scaled_vec = kernel.scaled_vector_d_object();
