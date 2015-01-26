@@ -136,9 +136,9 @@ int main()
       << "    - Init + kd-tree = " << init_time << std::endl
       << "    - TC computation = " << computation_time << std::endl
       << "  * Export to OFF (before fix): " << export_before_time << std::endl
-      << "  * Fix inconsistencies: "
-      << (fix_ret == CGAL::TC_FIXED ? "FIXED / " : "NOT fixed / ") << fix_time 
-      <<      " (" << num_fix_steps << " steps)" << std::endl
+      << "  * Fix inconsistencies: " << fix_time 
+      <<      " (" << num_fix_steps << " steps) ==> " 
+      <<      (fix_ret == CGAL::TC_FIXED ? "FIXED" : "NOT fixed") << std::endl
       << "  * Export to OFF (after fix): " << export_after_time << std::endl
       << "================================================" << std::endl
       << std::endl;
