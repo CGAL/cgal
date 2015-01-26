@@ -576,7 +576,7 @@ void sew_3_marked_darts( Combinatorial_map_3& final_map,
     darts_to_remove.insert(not_top);   darts_to_remove.insert(not_top->beta(1)); darts_to_remove.insert(not_top->beta(1)->beta(1));
     darts_to_remove.insert(not_top->beta(3));   darts_to_remove.insert(not_top->beta(3)->beta(1)); darts_to_remove.insert(not_top->beta(3)->beta(1)->beta(1));
     O_Dart_handle current_1=next_marked_dart_around_target_vertex(final_map,not_top,mark_index);
-    CGAL_precondition(current_1);
+    CGAL_precondition(bool(current_1));
     not_top=*current_1;
   }
   while(not_top!=start);

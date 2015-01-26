@@ -115,7 +115,7 @@ namespace CGAL
 
                                 // Compute the intersection
                                 result_inter result = CGAL::intersection(pp1, pp2, pp3);
-                                CGAL_assertion_msg(result,
+                                CGAL_assertion_msg(bool(result),
                                                    "halfspace_intersection_3: no intersection");
                                 CGAL_assertion_msg(boost::get<Point_3>(& *result) != NULL,
                                                    "halfspace_intersection_3: intersection is not a point");

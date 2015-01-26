@@ -91,17 +91,10 @@ namespace CGAL {
   }  
 } // namespace CGAL
 
+#include <boost/range.hpp>
+
 namespace boost {
   
-  template <typename X> 
-  struct range_iterator;
-
-  template <typename X> 
-  struct range_mutable_iterator;
-
-  template <typename X> 
-  struct range_const_iterator;
-
   template <typename T> 
   struct range_iterator<CGAL::Iterator_range<T> >
   {
