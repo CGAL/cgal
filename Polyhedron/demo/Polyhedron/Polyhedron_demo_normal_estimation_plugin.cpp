@@ -19,6 +19,12 @@
 
 #include "ui_Polyhedron_demo_normal_estimation_plugin.h"
 
+#if BOOST_VERSION == 105700
+#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES) && !defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS)
+#  define CGAL_DISABLE_NORMAL_ESTIMATION_PLUGIN 1
+#endif
+#endif
+
 class Polyhedron_demo_normal_estimation_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
@@ -45,7 +51,11 @@ public:
   }
 
   bool applicable() const {
+#if CGAL_DISABLE_NORMAL_ESTIMATION_PLUGIN
+    return false;
+#else
     return qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+#endif
   }
 
 public slots:
@@ -93,6 +103,7 @@ void Polyhedron_demo_normal_estimation_plugin::on_actionNormalInversion_triggere
 
 void Polyhedron_demo_normal_estimation_plugin::on_actionNormalEstimation_triggered()
 {
+#if !CGAL_DISABLE_NORMAL_ESTIMATION_PLUGIN
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* item =
@@ -200,6 +211,7 @@ void Polyhedron_demo_normal_estimation_plugin::on_actionNormalEstimation_trigger
                                .arg(nb_unoriented_normals));
     }
   }
+#endif // !CGAL_DISABLE_NORMAL_ESTIMATION_PLUGIN
 }
 
 Q_EXPORT_PLUGIN2(Polyhedron_demo_normal_estimation_plugin, Polyhedron_demo_normal_estimation_plugin)
