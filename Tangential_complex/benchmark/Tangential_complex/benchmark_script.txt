@@ -1,0 +1,2 @@
+#Input									AMB		INTR	SPARSITY	TIME_LIMIT		NUM_ITERATIONS
+data/SO3_10000.txt 						9 		3 		0.05 		60 				5
