@@ -1,5 +1,3 @@
-// Author(s) : Camille Wormser, Pierre Alliez
-
 #include <iostream>
 
 #include <CGAL/Simple_cartesian.h>
@@ -7,6 +5,9 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <CGAL/boost/graph/properties_Surface_mesh.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point;
@@ -28,11 +29,11 @@ int main()
     Point r(0.0, 0.0, 1.0);
     Point s(0.0, 0.0, 0.0);
     Mesh m;
-    // m.make_tetrahedron(p, q, r, s);
+    CGAL::Euler::make_tetrahedron(m, p, q, r, s);
 
     // constructs AABB tree
-    Tree tree(m.faces_begin(),m.faces_end(),m);
-#if 0
+    Tree tree(faces(m).first, faces(m).second, m);
+
     // constructs segment query
     Point a(-0.2, 0.2, -0.2);
     Point b(1.3, 0.2, 1.3);
@@ -52,11 +53,13 @@ int main()
     // (generally a point)
     Segment_intersection intersection =
         tree.any_intersection(segment_query);
-    if(intersection)
-    {
-        // gets intersection object
-      if(boost::get<Point>(&(intersection->first)))
-        std::cout << "intersection object is a point" << std::endl;
+    if(intersection){
+      // gets intersection object
+      if(boost::get<Point>(&(intersection->first))){
+        Point* p = boost::get<Point>(&(intersection->first));
+        std::cout << "intersection object is a point " << *p <<  std::endl;
+        std::cout << "with face "<< intersection->second  <<  std::endl;
+      }
     }
 
     // computes all intersections with segment query (as pairs object - primitive_id)
@@ -68,18 +71,20 @@ int main()
     tree.all_intersected_primitives(segment_query, std::back_inserter(primitives));
 
     // constructs plane query
+    Point base(0.0,0.0,0.5);
     Vector vec(0.0,0.0,1.0);
-    Plane plane_query(a,vec);
+    Plane plane_query(base,vec);
 
     // computes first encountered intersection with plane query
     // (generally a segment)
     Plane_intersection plane_intersection = tree.any_intersection(plane_query);
-    if(plane_intersection)
-    {
-      
-      if(boost::get<Segment>(&(plane_intersection->first)))
-            std::cout << "intersection object is a segment" << std::endl;
+    if(plane_intersection){
+      if(boost::get<Segment>(&(plane_intersection->first))){
+        Segment* s = boost::get<Segment>(&(plane_intersection->first));
+        std::cout << "one intersection object is the segment " << s << std::endl;
+        std::cout << "with face "<< intersection->second  <<  std::endl;
+      }
     }
-#endif
+
     return EXIT_SUCCESS;
 }
