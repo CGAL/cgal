@@ -1189,6 +1189,57 @@ private:
   };
 #endif // CGAL_LINKED_WITH_TBB
 
+  void perturb(std::size_t point_idx)
+  {
+    CGAL::Random rng;
+
+    // Perturb the weight?
+#ifdef CGAL_TC_PERTURB_WEIGHT
+    m_weights[point_idx] = rng.get_double(0., SQ_HALF_SPARSITY);
+#endif
+
+    // Perturb the position?
+#ifdef CGAL_TC_PERTURB_POSITION
+# ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
+    typename Kernel::Point_to_vector_d k_pt_to_vec =
+      m_k.point_to_vector_d_object();
+    CGAL::Random_points_on_sphere_d<Point> 
+      tr_point_on_sphere_generator(m_ambiant_dim, 1);
+
+    m_translations[point_idx] = k_scaled_vec(k_pt_to_vec(
+      *tr_point_on_sphere_generator++), HALF_SPARSITY);
+# else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
+    const Tr_traits &local_tr_traits = 
+      m_triangulations[point_idx].tr().geom_traits();
+    typename Tr_traits::Compute_coordinate_d coord =
+      local_tr_traits.compute_coordinate_d_object();
+    typename Kernel::Translated_point_d k_transl =
+      m_k.translated_point_d_object();
+    typename Kernel::Construct_vector_d k_constr_vec =
+      m_k.construct_vector_d_object();
+    typename Kernel::Scaled_vector_d k_scaled_vec =
+      m_k.scaled_vector_d_object();
+    
+    CGAL::Random_points_on_sphere_d<Tr_bare_point> 
+      tr_point_on_sphere_generator(Intrinsic_dimension, 1);
+
+    Tr_point local_random_transl =
+      local_tr_traits.construct_weighted_point_d_object()(
+        *tr_point_on_sphere_generator++, 0);
+    Vector &global_transl = m_translations[point_idx];
+    global_transl = k_constr_vec(m_ambiant_dim);
+    const Tangent_space_basis &tsb = m_tangent_spaces[point_idx];
+    for (int i = 0 ; i < Intrinsic_dimension ; ++i)
+    {
+      global_transl = k_transl(
+        global_transl, 
+        k_scaled_vec(tsb[i], HALF_SPARSITY*coord(local_random_transl, i))
+      );
+    }
+# endif
+#endif // CGAL_TC_PERTURB_POSITION
+  }
+
   bool try_to_solve_inconsistencies_in_a_local_triangulation(
                                                           std::size_t tr_index)
   {
@@ -1198,16 +1249,6 @@ private:
     //Tr_mutex::scoped_lock lock(m_tr_mutexes[tr_index]);
 #endif
     
-#ifdef CGAL_TC_PERTURB_POSITION
-# ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
-    CGAL::Random_points_on_sphere_d<Point> 
-      tr_point_on_sphere_generator(m_ambiant_dim, 1);
-# else
-    CGAL::Random_points_on_sphere_d<Tr_bare_point> 
-      tr_point_on_sphere_generator(Intrinsic_dimension, 1);
-# endif
-#endif
-
     Triangulation const& tr    = m_triangulations[tr_index].tr();
     Tr_vertex_handle center_vh = m_triangulations[tr_index].center_vertex();
     const Tr_traits &local_tr_traits = tr.geom_traits();
@@ -1240,51 +1281,8 @@ private:
       {
         is_inconsistent = true;
         
-# ifdef CGAL_TC_PERTURB_POSITION
-          typename Tr_traits::Construct_weighted_point_d cwp =
-            local_tr_traits.construct_weighted_point_d_object();
-          typename Tr_traits::Compute_coordinate_d coord =
-            local_tr_traits.compute_coordinate_d_object();
-
-          typename Kernel::Translated_point_d k_transl =
-            m_k.translated_point_d_object();
-          typename Kernel::Scaled_vector_d k_scaled_vec =
-            m_k.scaled_vector_d_object();
-          typename Kernel::Construct_vector_d k_constr_vec =
-            m_k.construct_vector_d_object();
-#   ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
-          typename Kernel::Point_to_vector_d k_pt_to_vec =
-            m_k.point_to_vector_d_object();
-#   endif
-# endif
-
-        CGAL::Random rng;
         for (std::set<std::size_t>::iterator it=c.begin(); it!=c.end(); ++it)
-        {
-# ifdef CGAL_TC_PERTURB_WEIGHT
-          m_weights[*it] = rng.get_double(0., SQ_HALF_SPARSITY);
-# endif
-
-# ifdef CGAL_TC_PERTURB_POSITION
-#   ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
-          m_translations[*it] = k_scaled_vec(k_pt_to_vec(
-            *tr_point_on_sphere_generator++), HALF_SPARSITY);
-#   else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
-          Tr_point local_random_transl =
-            cwp(*tr_point_on_sphere_generator++, 0);
-          Vector &global_transl = m_translations[*it];
-          global_transl = k_constr_vec(m_ambiant_dim);
-          const Tangent_space_basis &tsb = m_tangent_spaces[*it];
-          for (int i = 0 ; i < Intrinsic_dimension ; ++i)
-          {
-            global_transl = k_transl(
-              global_transl, 
-              k_scaled_vec(tsb[i], HALF_SPARSITY*coord(local_random_transl, i))
-            );
-          }
-#   endif
-# endif
-        }
+          perturb(*it);
         
 # if !defined(CGAL_TC_GLOBAL_REFRESH)
         refresh_tangential_complex();
@@ -1302,50 +1300,16 @@ private:
       if (!is_simplex_consistent(*it_c, cur_dim))
       {
         is_inconsistent = true;
-# ifdef CGAL_TC_PERTURB_WEIGHT
-        m_weights[tr_index] = rng.get_double(0., SQ_HALF_SPARSITY);
-# endif
-
-# ifdef CGAL_TC_PERTURB_POSITION
-        typename Tr_traits::Construct_weighted_point_d cwp =
-          local_tr_traits.construct_weighted_point_d_object();
-        typename Tr_traits::Compute_coordinate_d coord =
-          local_tr_traits.compute_coordinate_d_object();
-
-        typename Kernel::Translated_point_d k_transl =
-          m_k.translated_point_d_object();
-        typename Kernel::Scaled_vector_d k_scaled_vec =
-          m_k.scaled_vector_d_object();
-        typename Kernel::Construct_vector_d k_constr_vec =
-          m_k.construct_vector_d_object();
-
-#   ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
-        typename Kernel::Point_to_vector_d k_pt_to_vec =
-          m_k.point_to_vector_d_object();
-        m_translations[tr_index] = k_scaled_vec(k_pt_to_vec(
-          *tr_point_on_sphere_generator++), HALF_SPARSITY);
-#   else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
-        Tr_point local_random_transl =
-          cwp(*tr_point_on_sphere_generator++, 0);
-        Vector &global_transl = m_translations[tr_index];
-        /*int idx;
+        
+        std::size_t idx = tr_index;
+        /*int k;
         do
         {
-          idx = rand() % tr.current_dimension();
-        } while ((*it_c)->vertex(idx) == center_vh);
-        Vector &global_transl = m_translations[
-          (*it_c)->vertex(idx)->data()];*/
-        global_transl = k_constr_vec(m_ambiant_dim);
-        const Tangent_space_basis &tsb = m_tangent_spaces[tr_index];
-        for (int i = 0 ; i < Intrinsic_dimension ; ++i)
-        {
-          global_transl = k_transl(
-            global_transl, 
-            k_scaled_vec(tsb[i], HALF_SPARSITY*coord(local_random_transl, i))
-          );
-        }
-#   endif
-# endif
+          k = rand() % tr.current_dimension();
+        } while ((*it_c)->vertex(k) == center_vh);
+        std::size_t idx = (*it_c)->vertex(k)->data();*/
+
+        perturb(idx);
 
 # if !defined(CGAL_TC_GLOBAL_REFRESH)
         refresh_tangential_complex();
@@ -1369,7 +1333,7 @@ private:
         std::set<std::size_t> c;
       
         typename std::vector<Tr_full_cell_handle>::const_iterator it_c2 =
-                                                            incident_cells.begin();
+                                                        incident_cells.begin();
         // For each cell
         for ( ; it_c2 != it_c_end ; ++it_c2)
         {
@@ -1380,51 +1344,8 @@ private:
           }
         }
         
-# ifdef CGAL_TC_PERTURB_POSITION
-        typename Tr_traits::Construct_weighted_point_d cwp =
-          local_tr_traits.construct_weighted_point_d_object();
-        typename Tr_traits::Compute_coordinate_d coord =
-          local_tr_traits.compute_coordinate_d_object();
-
-        typename Kernel::Translated_point_d k_transl =
-          m_k.translated_point_d_object();
-        typename Kernel::Scaled_vector_d k_scaled_vec =
-          m_k.scaled_vector_d_object();
-        typename Kernel::Construct_vector_d k_constr_vec =
-          m_k.construct_vector_d_object();
-#   ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
-        typename Kernel::Point_to_vector_d k_pt_to_vec =
-          m_k.point_to_vector_d_object();
-#   endif
-# endif
-
-        CGAL::Random rng;
         for (std::set<std::size_t>::iterator it=c.begin(); it!=c.end(); ++it)
-        {
-# ifdef CGAL_TC_PERTURB_WEIGHT
-          m_weights[*it] = rng.get_double(0., SQ_HALF_SPARSITY);
-# endif
-
-# ifdef CGAL_TC_PERTURB_POSITION
-#   ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
-          m_translations[*it] = k_scaled_vec(k_pt_to_vec(
-            *tr_point_on_sphere_generator++), HALF_SPARSITY);
-#   else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
-          Tr_point local_random_transl =
-            cwp(*tr_point_on_sphere_generator++, 0);
-          Vector &global_transl = m_translations[*it];
-          global_transl = k_constr_vec(m_ambiant_dim);
-          const Tangent_space_basis &tsb = m_tangent_spaces[*it];
-          for (int i = 0 ; i < Intrinsic_dimension ; ++i)
-          {
-            global_transl = k_transl(
-              global_transl, 
-              k_scaled_vec(tsb[i], HALF_SPARSITY*coord(local_random_transl, i))
-            );
-          }
-#   endif
-# endif
-        }
+          perturb(*it);
         
 # if !defined(CGAL_TC_GLOBAL_REFRESH)
         refresh_tangential_complex();
@@ -1457,25 +1378,12 @@ private:
         typename Get_functor<Tr_traits, Power_center_tag>::type power_center(local_tr_traits);
         typename Tr_traits::Compute_coordinate_d coord =
           local_tr_traits.compute_coordinate_d_object();
-        typename Tr_traits::Construct_weighted_point_d cwp =
-          local_tr_traits.construct_weighted_point_d_object();
-        //typename Tr_traits::Point_to_vector_d pt_to_vec =
-        //  local_tr_traits.construct_point_to_vector_d_object();
         
         typename Kernel::Translated_point_d k_transl =
           m_k.translated_point_d_object();
         typename Kernel::Scaled_vector_d k_scaled_vec =
           m_k.scaled_vector_d_object();
 
-# ifdef CGAL_TC_PERTURB_POSITION
-#   ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
-        typename Kernel::Point_to_vector_d k_pt_to_vec =
-          m_k.point_to_vector_d_object();
-#   else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
-        typename Kernel::Construct_vector_d k_constr_vec =
-          m_k.construct_vector_d_object();
-#   endif
-# endif
 
         Tr_point local_center = power_center(simplex_pts.begin(), simplex_pts.end());
         Point global_center = m_points[tr_index];
@@ -1504,28 +1412,7 @@ private:
              it != neighbors.end() ; 
              ++it)
         {
-# ifdef CGAL_TC_PERTURB_WEIGHT
-          m_weights[*it] = rng.get_double(0., SQ_HALF_SPARSITY);
-# endif
-
-# ifdef CGAL_TC_PERTURB_POSITION
-#   ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
-          m_translations[*it] = k_scaled_vec(k_pt_to_vec(
-            *tr_point_on_sphere_generator++), HALF_SPARSITY);
-#   else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
-          Tr_point local_random_transl =
-            cwp(*tr_point_on_sphere_generator++, 0);
-          Vector &global_transl = m_translations[*it];
-          global_transl = k_constr_vec(m_ambiant_dim);
-          for (int i = 0 ; i < Intrinsic_dimension ; ++i)
-          {
-            global_transl = k_transl(
-              global_transl, 
-              k_scaled_vec(tsb[i], HALF_SPARSITY*coord(local_random_transl, i))
-            );
-          }
-#   endif
-# endif
+          perturb(*it);
         }
 
 # if !defined(CGAL_TC_GLOBAL_REFRESH)
