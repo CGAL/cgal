@@ -50,13 +50,6 @@ class Polygon_soup_orienter
   Edges_map edges;
   Edges non_manifold_edges;
 
-public:
-  Polygon_soup_orienter(const Points& points, Polygons& polygons)
-    : points(points), polygons(polygons)
-  {
-    fill_edges();
-  }
-
 private:
   Edge canonical_edge(Index i, Index j)
   {
@@ -99,6 +92,13 @@ private:
   }
 
 public:
+
+  Polygon_soup_orienter(const Points& points, Polygons& polygons)
+    : points(points), polygons(polygons)
+  {
+    fill_edges();
+  }
+
   bool orient()
   {
     std::vector<bool> oriented;
