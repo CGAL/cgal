@@ -61,7 +61,6 @@ struct Axis_compare {
  */
 template<class Polyhedron>
 bool is_oriented(const Polyhedron& polyhedron) {
-  CGAL_precondition(polyhedron.is_closed());
   const unsigned int axis = 0;
 
   typename Polyhedron::Vertex_const_iterator v_min
