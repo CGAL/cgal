@@ -25,7 +25,8 @@ typedef K_neighbor_search::Distance                                     Distance
 
 int main(int argc, char* argv[]) {
   Mesh mesh;
-  std::ifstream in(argv[1]);
+  std::cerr << argc <<std::endl;
+  std::ifstream in((argc>1)?argv[1]:"data/tripod.off");
   in  >> mesh;
   const unsigned int K = 5;
 
