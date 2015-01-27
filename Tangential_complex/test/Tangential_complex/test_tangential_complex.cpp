@@ -6,6 +6,7 @@
 # define TBB_USE_THREADING_TOOL
 #endif
 
+#include <CGAL/assertions_behaviour.h>
 #include <CGAL/Epick_d.h>
 #include <CGAL/Tangential_complex.h>
 #include <CGAL/Random.h>
@@ -28,6 +29,11 @@
 
 int main()
 {
+#if defined(CHECK_MEMORY_LEAKS_ON_MSVC) && defined(_MSC_VER)
+  _CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+#endif
+  CGAL::set_error_behaviour(CGAL::ABORT);
+
 #ifdef CGAL_LINKED_WITH_TBB
 # ifdef _DEBUG
   tbb::task_scheduler_init init(1);
@@ -43,7 +49,8 @@ int main()
   typedef Kernel::FT                                              FT;
   typedef Kernel::Point_d                                         Point;
   typedef CGAL::Tangential_complex<
-    Kernel, INTRINSIC_DIMENSION, CGAL::Parallel_tag>              TC;
+    Kernel, CGAL::Dimension_tag<INTRINSIC_DIMENSION>, 
+    CGAL::Parallel_tag>                                           TC;
  
   int i = 0;
   bool stop = false;
@@ -84,7 +91,7 @@ int main()
     std::cerr << "Number of points before/after sparsification: "
       << num_points_before << " / " << points.size() << std::endl;
 
-    TC tc(points.begin(), points.end(), k);
+    TC tc(points.begin(), points.end(), INTRINSIC_DIMENSION, k);
     double init_time = t.elapsed(); t.reset();
 
     tc.compute_tangential_complex();
