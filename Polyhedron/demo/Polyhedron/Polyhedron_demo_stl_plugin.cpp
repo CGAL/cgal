@@ -7,6 +7,7 @@
 #include <fstream>
 
 #include <CGAL/IO/Polyhedron_builder_from_STL.h>
+#include <CGAL/polygon_soup_to_polyhedron_3.h>
 
 #include <QColor>
 
@@ -45,29 +46,34 @@ Polyhedron_demo_stl_plugin::load(QFileInfo fileinfo) {
     std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
     return NULL;
   }
+
+  std::vector<CGAL::cpp11::array<double, 3> > points;
+  std::vector<CGAL::cpp11::array<int, 3> > triangles;
+  if (!CGAL::read_STL(in, points, triangles))
+  {
+    std::cerr << "Error: invalid STL file" << std::endl;
+    return NULL;
+  }
+
+  try{
+    // Try building a polyhedron
+    Polyhedron P;
+    CGAL::polygon_soup_to_polyhedron_3(P, points, triangles);
     
-  // Try to read STL file in a polyhedron
-  Polyhedron P;
-  //Scene_polyhedron_item* item = new Scene_polyhedron_item(P);
-  //item->setName(fileinfo.baseName());
-  
-  CGAL::Polyhedron_builder_from_STL<Polyhedron::HalfedgeDS> builder(in);
-  //  item->polyhedron()->
+    if(! P.is_valid() || P.empty()){
+      std::cerr << "Error: Invalid polyhedron" << std::endl;
+    }
+    else{
+      Scene_polyhedron_item* item = new Scene_polyhedron_item(P);
+      item->setName(fileinfo.baseName());
+      return item;
+    }
+  }
+  catch(...){}
 
-  P.delegate(builder);
- 
-  if(! P.is_valid()){
-    std::cerr << "Error: Invalid polyhedron" << std::endl;
-    return 0;
-  }  
-
-  if(P.empty()){
-    return 0;
-  }  
-
-  Scene_polyhedron_item* item = new Scene_polyhedron_item(P);
+  Scene_polygon_soup_item* item = new Scene_polygon_soup_item();
   item->setName(fileinfo.baseName());
-
+  item->load(points, triangles);
   return item;
 }
 
