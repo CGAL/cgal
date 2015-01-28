@@ -91,7 +91,7 @@ int main()
     std::cerr << "Number of points before/after sparsification: "
       << num_points_before << " / " << points.size() << std::endl;
 
-    TC tc(points.begin(), points.end(), INTRINSIC_DIMENSION, k);
+    TC tc(points.begin(), points.end(), INPUT_SPARSITY, INTRINSIC_DIMENSION, k);
     double init_time = t.elapsed(); t.reset();
 
     tc.compute_tangential_complex();
@@ -115,8 +115,11 @@ int main()
 
     t.reset();
     unsigned int num_fix_steps;
-    CGAL::Fix_inconsistencies_status fix_ret =
-      tc.fix_inconsistencies(num_fix_steps, 3000.);
+    std::size_t initial_num_inconsistent_local_tr;
+    std::size_t best_num_inconsistent_local_tr;
+    CGAL::Fix_inconsistencies_status fix_ret = tc.fix_inconsistencies(
+      num_fix_steps, initial_num_inconsistent_local_tr,
+      best_num_inconsistent_local_tr, 3000.);
     double fix_time = t.elapsed(); t.reset();
 
     double export_after_time = -1.;
