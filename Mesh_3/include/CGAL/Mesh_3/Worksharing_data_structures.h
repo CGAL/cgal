@@ -690,7 +690,7 @@ protected:
 
   }
 
-  const int                         NUM_WORK_ITEMS_PER_BATCH;
+  const size_t                      NUM_WORK_ITEMS_PER_BATCH;
 
   int                               m_num_cells_per_axis;
   int                               m_num_cells;
