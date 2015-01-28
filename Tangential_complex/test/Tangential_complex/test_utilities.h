@@ -30,6 +30,7 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/point_generators_d.h>
+#include <CGAL/function_objects.h>
 #include <CGAL/Tangential_complex/Point_cloud.h>
 
 // Actually, this is very slow because the "m_points_ds->insert"
@@ -81,6 +82,52 @@ private:
   FT                    m_sparsity;
 };
 #endif
+
+// construct_point: dim 2
+template <typename Kernel>
+typename Kernel::Point_d construct_point(
+  const Kernel &k,
+  typename Kernel::FT x1, typename Kernel::FT x2)
+{
+  typename Kernel::FT tab[2];
+  tab[0] = x1; tab[1] = x2;
+  return k.construct_point_d_object()(2, &tab[0], &tab[2]);
+}
+
+// construct_point: dim 3
+template <typename Kernel>
+typename Kernel::Point_d construct_point(
+  const Kernel &k,
+  typename Kernel::FT x1, typename Kernel::FT x2, typename Kernel::FT x3)
+{
+  typename Kernel::FT tab[3];
+  tab[0] = x1; tab[1] = x2; tab[2] = x3;
+  return k.construct_point_d_object()(3, &tab[0], &tab[3]);
+}
+
+// construct_point: dim 4
+template <typename Kernel>
+typename Kernel::Point_d construct_point(
+  const Kernel &k,
+  typename Kernel::FT x1, typename Kernel::FT x2, typename Kernel::FT x3,
+  typename Kernel::FT x4)
+{
+  typename Kernel::FT tab[4];
+  tab[0] = x1; tab[1] = x2; tab[2] = x3; tab[3] = x4;
+  return k.construct_point_d_object()(4, &tab[0], &tab[4]);
+}
+
+// construct_point: dim 5
+template <typename Kernel>
+typename Kernel::Point_d construct_point(
+  const Kernel &k,
+  typename Kernel::FT x1, typename Kernel::FT x2, typename Kernel::FT x3,
+  typename Kernel::FT x4, typename Kernel::FT x5)
+{
+  typename Kernel::FT tab[5];
+  tab[0] = x1; tab[1] = x2; tab[2] = x3; tab[3] = x4; tab[4] = x5;
+  return k.construct_point_d_object()(5, &tab[0], &tab[5]);
+}
 
 template <typename Kernel, typename Point_container>
 std::vector<typename Point_container::value_type>
@@ -181,6 +228,7 @@ std::vector<typename Kernel::Point_d> generate_points_on_plane(std::size_t num_p
 {
   typedef typename Kernel::Point_d Point;
   typedef typename Kernel::FT FT;
+  Kernel k;
   CGAL::Random rng;
   std::vector<Point> points;
   points.reserve(num_points);
@@ -191,7 +239,7 @@ std::vector<typename Kernel::Point_d> generate_points_on_plane(std::size_t num_p
   {
     FT x = rng.get_double(0, 5);
     FT y = rng.get_double(0, 5);
-    Point p = Kernel().construct_point_d_object()(x, y, 0);
+    Point p = construct_point(k, x, y, FT(0));
 #ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
     if (sparsifier.try_to_insert_point(p))
       ++i;
@@ -210,6 +258,7 @@ std::vector<typename Kernel::Point_d> generate_points_on_moment_curve(
 {
   typedef typename Kernel::Point_d Point;
   typedef typename Kernel::FT FT;
+  Kernel k;
   CGAL::Random rng;
   std::vector<Point> points;
   points.reserve(num_points);
@@ -223,63 +272,13 @@ std::vector<typename Kernel::Point_d> generate_points_on_moment_curve(
     coords.reserve(dim);
     for (int p = 1 ; p <= dim ; ++p)
       coords.push_back(std::pow(CGAL::to_double(x), p));
-    Point p = Kernel().construct_point_d_object()(
+    Point p = k.construct_point_d_object()(
       dim, coords.begin(), coords.end());
 #ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
     if (sparsifier.try_to_insert_point(p))
       ++i;
 #else
     points.push_back(p);    
-    ++i;
-#endif
-  }
-  return points;
-}
-
-template <typename Kernel>
-std::vector<typename Kernel::Point_d> generate_points_on_circle_2(
-  std::size_t num_points, double radius)
-{
-  typedef typename Kernel::Point_d Point;
-  CGAL::Random_points_on_circle_2<Point> generator(radius);
-  std::vector<Point> points;
-  points.reserve(num_points);
-#ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
-  Point_sparsifier<Kernel, std::vector<Point> > sparsifier(points);
-#endif
-  for (std::size_t i = 0 ; i < num_points ; )
-  {
-    Point p = *generator++;
-#ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
-    if (sparsifier.try_to_insert_point(p))
-      ++i;
-#else
-    points.push_back(p);
-    ++i;
-#endif
-  }
-  return points;
-}
-
-template <typename Kernel>
-std::vector<typename Kernel::Point_d> generate_points_on_sphere_3(
-  std::size_t num_points, double radius)
-{
-  typedef typename Kernel::Point_d Point;
-  CGAL::Random_points_on_sphere_3<Point> generator(radius);
-  std::vector<Point> points;
-  points.reserve(num_points);
-#ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
-  Point_sparsifier<Kernel, std::vector<Point> > sparsifier(points);
-#endif
-  for (std::size_t i = 0 ; i < num_points ; )
-  {
-    Point p = *generator++;
-#ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
-    if (sparsifier.try_to_insert_point(p))
-      ++i;
-#else
-    points.push_back(p);
     ++i;
 #endif
   }
@@ -318,6 +317,7 @@ std::vector<typename Kernel::Point_d> generate_points_on_klein_bottle_3D(
 {
   typedef typename Kernel::Point_d Point;
   typedef typename Kernel::FT FT;
+  Kernel k;
   CGAL::Random rng;
 
   // if uniform
@@ -345,7 +345,7 @@ std::vector<typename Kernel::Point_d> generate_points_on_klein_bottle_3D(
       v = rng.get_double(0, 6.2832);
     }
     double tmp = cos(u/2)*sin(v) - sin(u/2)*sin(2.*v);
-    Point p = Kernel().construct_point_d_object()(
+    Point p = construct_point(k,
       (a + b*tmp)*cos(u),
       (a + b*tmp)*sin(u),
       b*(sin(u/2)*sin(v) + cos(u/2)*sin(2.*v)));
@@ -367,6 +367,7 @@ std::vector<typename Kernel::Point_d> generate_points_on_klein_bottle_4D(
 {
   typedef typename Kernel::Point_d Point;
   typedef typename Kernel::FT FT;
+  Kernel k;
   CGAL::Random rng;
 
   // if uniform
@@ -393,12 +394,11 @@ std::vector<typename Kernel::Point_d> generate_points_on_klein_bottle_4D(
       u = rng.get_double(0, 6.2832);
       v = rng.get_double(0, 6.2832);
     }
-    Point p = Kernel().construct_point_d_object()(
-      Kernel().construct_point_d_object()(
+    Point p = construct_point(k,
         (a + b*cos(v))*cos(u) + (noise == 0. ? 0. : rng.get_double(0, noise)),
         (a + b*cos(v))*sin(u) + (noise == 0. ? 0. : rng.get_double(0, noise)),
         b*sin(v)*cos(u/2)     + (noise == 0. ? 0. : rng.get_double(0, noise)),
-        b*sin(v)*sin(u/2)     + (noise == 0. ? 0. : rng.get_double(0, noise))));
+        b*sin(v)*sin(u/2)     + (noise == 0. ? 0. : rng.get_double(0, noise)));
 #ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
     if (sparsifier.try_to_insert_point(p))
       ++i;
@@ -419,6 +419,7 @@ generate_points_on_klein_bottle_variant_5D(
 {
   typedef typename Kernel::Point_d Point;
   typedef typename Kernel::FT FT;
+  Kernel k;
   CGAL::Random rng;
 
   // if uniform
@@ -451,7 +452,7 @@ generate_points_on_klein_bottle_variant_5D(
     FT x4 = b*sin(v)*sin(u/2);
     FT x5 = x1 + x2 + x3 + x4;
     
-    Point p = Kernel().construct_point_d_object()(x1, x2, x3, x4, x5);
+    Point p = construct_point(k, x1, x2, x3, x4, x5);
 #ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
     if (sparsifier.try_to_insert_point(p))
       ++i;

@@ -1,2 +1,12 @@
-#Input									AMB		INTR	SPARSITY	TIME_LIMIT		NUM_ITERATIONS
-data/SO3_10000.txt 						9 		3 		0.05 		60 				5
+#Input															PARAM1	PARAM2	PARAM3	NUM_P	AMB		INTR	SPARSITY	TIME_LIMIT	NUM_ITERATIONS
+#data/SO3_10000.txt 											-		-		-		0		9 		3 		0.05 		60 			1
+
+############### Generated point sets ###################		
+#generate_sphere_d												3		-		-		30000	3		2		0.05		60			1
+#generate_moment_curve											0		1		-		30000	6		1		0.05		60			1
+#generate_plane													-		-		-		30000	3		2		0.05		60			1
+#generate_sphere_d												3		-		-		30000	3		2		0.05		60			1
+#generate_sphere_d												3		-		-		1000	6		5		0.05		60			1
+generate_klein_bottle_3D										4		3		-		30000	3		2		0.05		60			1
+generate_klein_bottle_4D										4		3		-		10000	4		2		0.05		60			1
+generate_klein_bottle_variant_5D								4		3		-		30000	5		2		0.05		60			1

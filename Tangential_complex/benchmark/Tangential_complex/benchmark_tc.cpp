@@ -14,7 +14,10 @@
 
 #include "../../test/Tangential_complex/test_utilities.h"
 
+#include <boost/algorithm/string/replace.hpp>
+#include <boost/algorithm/string/trim_all.hpp>
 
+#include <cstdlib>
 #include <fstream>
 #include <math.h>
 
@@ -114,13 +117,6 @@ protected:
   XML_exporter m_xml;
   XML_exporter::Element_with_map m_current_element;
 };
-
-const double NOISE = 0.01; 
-#ifdef _DEBUG
-  const int NUM_POINTS = 50;
-#else
-  const int NUM_POINTS = 30000;
-#endif
 
 void make_tc(std::vector<Point> &points, int intrinsic_dim,
              double sparsity = 0., double time_limit_for_fix = 0.)
@@ -267,6 +263,8 @@ int main()
         std::getline(script_file, line);
         if (line.size() > 1 && line[0] != '#')
         {
+          boost::replace_all(line, "\t", " ");
+          boost::trim_all(line);
           std::cerr << std::endl << std::endl;
           std::cerr << "*****************************************" << std::endl;
           std::cerr << "******* " << line << std::endl;
@@ -274,12 +272,20 @@ int main()
           std::stringstream sstr(line);
 
           std::string input;
+          std::string param1;
+          std::string param2;
+          std::string param3;
+          std::size_t num_points;
           int ambient_dim;
           int intrinsic_dim;
           double sparsity;
           double time_limit_for_fix;
           int num_iteration;
           sstr >> input;
+          sstr >> param1;
+          sstr >> param2;
+          sstr >> param3;
+          sstr >> num_points;
           sstr >> ambient_dim;
           sstr >> intrinsic_dim;
           sstr >> sparsity;
@@ -313,29 +319,59 @@ int main()
             std::cerr << std::endl << "TC #" << i << "..." << std::endl;
             
             std::vector<Point> points;
-          
 
-            //points =
-              //generate_points_on_circle_2<Kernel>(NUM_POINTS, 3.);
-              //generate_points_on_moment_curve<Kernel>(NUM_POINTS, ambient_dim, 0., 1.);
-              //generate_points_on_plane<Kernel>(NUM_POINTS);
-              //generate_points_on_sphere_3<Kernel>(NUM_POINTS, 3.0);
-              //generate_points_on_sphere_d<Kernel>(NUM_POINTS, ambient_dim, 3.0);
-              //generate_points_on_klein_bottle_3D<Kernel>(NUM_POINTS, 4., 3.);
-              //generate_points_on_klein_bottle_4D<Kernel>(NUM_POINTS, 4., 3., NOISE);
-              //generate_points_on_klein_bottle_variant_5D<Kernel>(NUM_POINTS, 4., 3.);
-
-            /*if (input == "Klein_function")
-              make_mesh_implicit(facet_approx, facet_sizing, cell_sizing, Klein_function(), input);
-            else*/
+            if (input == "generate_moment_curve")
+            {
+              points = generate_points_on_moment_curve<Kernel>(
+                num_points, ambient_dim, 
+                std::atof(param1.c_str()), std::atof(param2.c_str()));
+            }
+            else if (input == "generate_plane")
+            {
+              points = generate_points_on_plane<Kernel>(num_points);
+            }
+            else if (input == "generate_sphere_d")
+            {
+              points = generate_points_on_sphere_d<Kernel>(
+                num_points, ambient_dim, 
+                std::atof(param1.c_str()));
+            }
+            else if (input == "generate_klein_bottle_3D")
+            {
+              points = generate_points_on_klein_bottle_3D<Kernel>(
+                num_points,
+                std::atof(param1.c_str()), std::atof(param2.c_str()));
+            }
+            else if (input == "generate_klein_bottle_4D")
+            {
+              points = generate_points_on_klein_bottle_4D<Kernel>(
+                num_points,
+                std::atof(param1.c_str()), std::atof(param2.c_str()));
+            }
+            else if (input == "generate_klein_bottle_variant_5D")
+            {
+              points = generate_points_on_klein_bottle_variant_5D<Kernel>(
+                num_points,
+                std::atof(param1.c_str()), std::atof(param2.c_str()));
+            }
+            else
             {
               load_points_from_file<Point>(
                 input, std::back_inserter(points)/*, 600*/);
-              make_tc(points, intrinsic_dim, sparsity, time_limit_for_fix);
             }
 
-            std::cerr << "TC #" << i++ << " done." << std::endl;
-            std::cerr << std::endl << "---------------------------------" << std::endl << std::endl;
+            if (!points.empty())
+            {
+              make_tc(points, intrinsic_dim, sparsity, time_limit_for_fix);
+
+              std::cerr << "TC #" << i++ << " done." << std::endl;
+              std::cerr << std::endl << "---------------------------------" 
+                        << std::endl << std::endl;
+            }
+            else
+            {
+              std::cerr << "TC #" << i++ << ": no points loaded." << std::endl;
+            }
 
             XML_perf_data::commit();
           }
