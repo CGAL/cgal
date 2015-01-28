@@ -83,8 +83,11 @@ protected:
     subelements.push_back("Input");
     subelements.push_back("Intrinsic_dim");
     subelements.push_back("Ambient_dim");
-    subelements.push_back("Num_points");
     subelements.push_back("Sparsity");
+    subelements.push_back("Num_points_in_input");
+    subelements.push_back("Num_points");
+    subelements.push_back("Initial_num_inconsistent_local_tr");
+    subelements.push_back("Best_num_inconsistent_local_tr");
     subelements.push_back("Init_time");
     subelements.push_back("Comput_time");
     subelements.push_back("Fix_successful");
@@ -119,7 +122,8 @@ protected:
 };
 
 void make_tc(std::vector<Point> &points, int intrinsic_dim,
-             double sparsity = 0., double time_limit_for_fix = 0.)
+             double sparsity = 0., double time_limit_for_fix = 0.,
+             const char *input_name = "tc")
 {
   Kernel k;
   Wall_clock_timer t;
@@ -134,6 +138,8 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
   std::cerr << "Point set generated in " << t_gen.elapsed()
             << " seconds." << std::endl;
 #endif
+  
+  CGAL_TC_SET_PERFORMANCE_DATA("Num_points_in_input", points.size());
 
   if (sparsity != 0.)
   {
@@ -144,8 +150,8 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
       << num_points_before << " / " << points.size() << std::endl;
   }
   
-  CGAL_TC_SET_PERFORMANCE_DATA("Num_points", points.size());
   CGAL_TC_SET_PERFORMANCE_DATA("Sparsity", sparsity);
+  CGAL_TC_SET_PERFORMANCE_DATA("Num_points", points.size());
 
   TC tc(points.begin(), points.end(), intrinsic_dim, k);
   double init_time = t.elapsed(); t.reset();
@@ -161,7 +167,7 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
   {
     t.reset();
     std::stringstream output_filename;
-    output_filename << "output/test_tc_" << intrinsic_dim
+    output_filename << "output/" << input_name << "_" << intrinsic_dim
       << "_in_R" << ambient_dim << "_BEFORE_FIX.off";
     std::ofstream off_stream(output_filename.str().c_str());
     tc.export_to_off(off_stream, true, &incorrect_simplices, true);
@@ -171,16 +177,24 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
 
   t.reset();
   unsigned int num_fix_steps;
-  CGAL::Fix_inconsistencies_status fix_ret =
-    tc.fix_inconsistencies(num_fix_steps, time_limit_for_fix);
+  std::size_t initial_num_inconsistent_local_tr;
+  std::size_t best_num_inconsistent_local_tr;
+  CGAL::Fix_inconsistencies_status fix_ret = tc.fix_inconsistencies(
+    num_fix_steps, initial_num_inconsistent_local_tr,
+    best_num_inconsistent_local_tr, time_limit_for_fix);
   double fix_time = t.elapsed(); t.reset();
+  
+  CGAL_TC_SET_PERFORMANCE_DATA("Initial_num_inconsistent_local_tr", 
+                               initial_num_inconsistent_local_tr);
+  CGAL_TC_SET_PERFORMANCE_DATA("Best_num_inconsistent_local_tr", 
+                               best_num_inconsistent_local_tr);
 
   double export_after_time = -1.;
   if (intrinsic_dim <= 3)
   {
     t.reset();
     std::stringstream output_filename;
-    output_filename << "output/test_tc_" << intrinsic_dim
+    output_filename << "output/" << input_name << "_" << intrinsic_dim
       << "_in_R" << ambient_dim << "_AFTER_FIX.off";
     std::ofstream off_stream(output_filename.str().c_str());
     tc.export_to_off(off_stream, true, &incorrect_simplices, true);
@@ -362,7 +376,8 @@ int main()
 
             if (!points.empty())
             {
-              make_tc(points, intrinsic_dim, sparsity, time_limit_for_fix);
+              make_tc(points, intrinsic_dim, sparsity, 
+                      time_limit_for_fix, input.c_str());
 
               std::cerr << "TC #" << i++ << " done." << std::endl;
               std::cerr << std::endl << "---------------------------------" 

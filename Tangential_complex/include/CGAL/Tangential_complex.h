@@ -338,7 +338,8 @@ public:
 
   // time_limit in seconds
   Fix_inconsistencies_status fix_inconsistencies(
-    unsigned int &num_steps, double time_limit = 0.)
+    unsigned int &num_steps, std::size_t &initial_num_inconsistent_local_tr,
+    std::size_t &best_num_inconsistent_local_tr, double time_limit = 0.)
   {
     Wall_clock_timer t;
 
@@ -368,6 +369,7 @@ public:
 #endif // CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
 
     bool done = false;
+    best_num_inconsistent_local_tr = m_triangulations.size();
     num_steps = 0;
     while (!done)
     {
@@ -453,6 +455,12 @@ public:
         << std::endl;
 # endif
 #endif // CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
+
+      if (num_steps == 0)
+        initial_num_inconsistent_local_tr = num_inconsistent_local_tr;
+
+      if (num_inconsistent_local_tr < best_num_inconsistent_local_tr)
+        best_num_inconsistent_local_tr = num_inconsistent_local_tr;
 
       ++num_steps;
       done = (num_inconsistent_local_tr == 0);
@@ -1268,6 +1276,9 @@ private:
     // For each cell
     for ( ; it_c != it_c_end ; ++it_c)
     {
+      if (tr.is_infinite(*it_c)) // Don't check infinite cells
+        continue;
+
 //*****************************************************************************
 // STRATEGY 1: perturb all the points of the first inconsistent simplex
 //*****************************************************************************
