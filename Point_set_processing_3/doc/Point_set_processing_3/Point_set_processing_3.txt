@@ -146,7 +146,7 @@ but also regularizes downsampled points. This is an implementation of
 the Weighted Locally Optimal Projection (WLOP) algorithm \cgalCite{wlop-2009}.
 
 
-\subsection Point_set_processing_3Example_3 Grid simplification example
+\subsection Point_set_processing_3Example_3 Grid Simplification Example
 
 The following example reads a point set and simplifies it by clustering.
 \cgalExample{Point_set_processing_3/grid_simplification_example.cpp}
@@ -155,7 +155,7 @@ The following example reads a point set and simplifies it by clustering.
 Point set simplification through grid-based clustering. Removed points are depicted in red. Notice how low-density areas (in green) are not simplified.
 \cgalFigureEnd
 
-\subsection Point_set_processing_3Example_4 WLOP simplification example
+\subsection Point_set_processing_3Example_4 WLOP Simplification Example
 The following example reads a point set, simplifies and regularizes it by WLOP.
 
 \cgalExample{Point_set_processing_3/wlop_simplify_and_regularize_point_set_example.cpp}
@@ -196,13 +196,13 @@ iteratively projecting each point onto the implicit surface patch fitted over it
 Bilateral projection preserves sharp features according to the normal (gradient) information. 
 Normals are thus required as input. For more details, see section 4 of \cgalCite{ear-2013}.
 
-\subsection Point_set_processing_3Example_5 Jet smoothing example
+\subsection Point_set_processing_3Example_5 Jet Smoothing Example
 
 The following example generates a set of 9 points close to the `xy` 
 plane and smooths them using 8 nearest neighbors:
 \cgalExample{Point_set_processing_3/jet_smoothing_example.cpp}
 
-\subsection Point_set_processing_3Example_6 Bilateral smoothing example
+\subsection Point_set_processing_3Example_6 Bilateral Smoothing Example
 
 The following example reads a set of points with normals and smooths them via bilateral smoothing:
 \cgalExample{Point_set_processing_3/bilateral_smooth_point_set_example.cpp}
