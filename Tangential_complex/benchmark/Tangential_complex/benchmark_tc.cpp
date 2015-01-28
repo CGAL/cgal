@@ -88,6 +88,7 @@ protected:
     subelements.push_back("Num_points");
     subelements.push_back("Initial_num_inconsistent_local_tr");
     subelements.push_back("Best_num_inconsistent_local_tr");
+    subelements.push_back("Final_num_inconsistent_local_tr");
     subelements.push_back("Init_time");
     subelements.push_back("Comput_time");
     subelements.push_back("Fix_successful");
@@ -128,6 +129,17 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
   Kernel k;
   Wall_clock_timer t;
 
+  std::string input_name_stripped(input_name);
+  size_t slash_index = input_name_stripped.find_last_of('/');
+  if (slash_index == std::string::npos)
+    slash_index = input_name_stripped.find_last_of('\\');
+  if (slash_index == std::string::npos)
+    slash_index = 0;
+  else
+    ++slash_index;
+  input_name_stripped = input_name_stripped.substr(
+    slash_index, input_name_stripped.find_last_of('.') - slash_index);
+
   int ambient_dim = k.point_dimension_d_object()(*points.begin());
     
 #ifdef CGAL_TC_PROFILING
@@ -166,7 +178,7 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
   {
     t.reset();
     std::stringstream output_filename;
-    output_filename << "output/" << input_name << "_" << intrinsic_dim
+    output_filename << "output/" << input_name_stripped << "_" << intrinsic_dim
       << "_in_R" << ambient_dim << "_BEFORE_FIX.off";
     std::ofstream off_stream(output_filename.str().c_str());
     tc.export_to_off(off_stream, true, &incorrect_simplices, true);
@@ -178,22 +190,26 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
   unsigned int num_fix_steps;
   std::size_t initial_num_inconsistent_local_tr;
   std::size_t best_num_inconsistent_local_tr;
+  std::size_t final_num_inconsistent_local_tr;
   CGAL::Fix_inconsistencies_status fix_ret = tc.fix_inconsistencies(
     num_fix_steps, initial_num_inconsistent_local_tr,
-    best_num_inconsistent_local_tr, time_limit_for_fix);
+    best_num_inconsistent_local_tr, final_num_inconsistent_local_tr,
+    time_limit_for_fix);
   double fix_time = t.elapsed(); t.reset();
   
   CGAL_TC_SET_PERFORMANCE_DATA("Initial_num_inconsistent_local_tr", 
                                initial_num_inconsistent_local_tr);
   CGAL_TC_SET_PERFORMANCE_DATA("Best_num_inconsistent_local_tr", 
                                best_num_inconsistent_local_tr);
+  CGAL_TC_SET_PERFORMANCE_DATA("Final_num_inconsistent_local_tr", 
+                               final_num_inconsistent_local_tr);
 
   double export_after_time = -1.;
   if (intrinsic_dim <= 3)
   {
     t.reset();
     std::stringstream output_filename;
-    output_filename << "output/" << input_name << "_" << intrinsic_dim
+    output_filename << "output/" << input_name_stripped << "_" << intrinsic_dim
       << "_in_R" << ambient_dim << "_AFTER_FIX.off";
     std::ofstream off_stream(output_filename.str().c_str());
     tc.export_to_off(off_stream, true, &incorrect_simplices, true);

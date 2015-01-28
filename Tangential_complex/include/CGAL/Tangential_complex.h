@@ -338,8 +338,11 @@ public:
 
   // time_limit in seconds
   Fix_inconsistencies_status fix_inconsistencies(
-    unsigned int &num_steps, std::size_t &initial_num_inconsistent_local_tr,
-    std::size_t &best_num_inconsistent_local_tr, double time_limit = 0.)
+    unsigned int &num_steps, 
+    std::size_t &initial_num_inconsistent_local_tr,
+    std::size_t &best_num_inconsistent_local_tr, 
+    std::size_t &final_num_inconsistent_local_tr, 
+    double time_limit = 0.)
   {
     Wall_clock_timer t;
 
@@ -461,6 +464,8 @@ public:
 
       if (num_inconsistent_local_tr < best_num_inconsistent_local_tr)
         best_num_inconsistent_local_tr = num_inconsistent_local_tr;
+
+      final_num_inconsistent_local_tr = num_inconsistent_local_tr;
 
       ++num_steps;
       done = (num_inconsistent_local_tr == 0);
