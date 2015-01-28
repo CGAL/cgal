@@ -1,0 +1,92 @@
+// Copyright (c) 2006  GeometryFactory (France). All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
+//
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_TRIANGLE_DONTFLIP_PLACEMENT_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_TRIANGLE_DONTFLIP_PLACEMENT_H
+
+
+namespace CGAL {
+
+namespace Surface_mesh_simplification  
+{
+
+  template<class Placement>
+  class Triangle_dontflip_placement
+{
+public:
+    
+  typedef typename Placement::ECM ECM ;
+  
+public:
+  
+  Triangle_dontflip_placement(const Placement& placement = Placement() )
+    : mPlacement(placement)
+  {}
+     
+  template <typename Profile> 
+  optional<typename Profile::Point>
+  operator()( Profile const& aProfile) const
+  {
+    optional<typename Profile::Point> op = mPlacement(aProfile); 
+    if(op){
+       const typename Profile::Triangle_vector& triangles = aProfile.triangles();
+       if(triangles.size()>2){
+         typedef typename Profile::Point Point;
+         typedef typename Profile::Kernel Traits;
+         typedef typename Traits::Vector_3 Vector;
+         typename Profile::VertexPointMap ppmap = aProfile.vertex_point_map();
+         typename Profile::Triangle_vector::const_iterator it = triangles.begin();
+         ++it; ++it;
+         while(it!= triangles.end()){
+           const Profile::Triangle& t = *it;
+           Point p = get(ppmap,t.v0);
+           Point q = get(ppmap,t.v1);
+           Point r = get(ppmap,t.v2);
+           Point q2 = *op;
+           
+           Vector eqp = Traits().construct_vector_3_object()(q,p) ;
+           Vector eqr = Traits().construct_vector_3_object()(q,r) ;
+           Vector eq2p = Traits().construct_vector_3_object()(q2,p) ;
+           Vector eq2r = Traits().construct_vector_3_object()(q2,r) ;
+           
+           Vector n1 = Traits().construct_cross_product_vector_3_object()(eqp,eqr);
+           Vector n2 = Traits().construct_cross_product_vector_3_object()(eq2p,eq2r);
+           if(! is_positive(Traits().compute_scalar_product_3_object()(n1, n2))){
+             return optional<typename Profile::Point>();
+           }
+           ++it;
+         }
+       }
+    }
+    return op;
+  }
+  
+private:
+
+  Placement  mPlacement ;
+
+};
+
+
+} // namespace Surface_mesh_simplification
+
+} //namespace CGAL
+
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_TRIANGLE_DONTFLIP_PLACEMENT_H
+
+ 

@@ -660,35 +660,6 @@ bool EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::Is_collapse_geometrically_vali
   CGAL_ECMS_TRACE(3,"Testing geometrical collapsabilty of v0-v1=E" << get(Edge_index_map,aProfile.v0_v1()) );
   if ( k0 )
   {
-#ifdef CGAL_SMS_CHECK_TRIANGLE_FLIP    
-    const typename Profile::Triangle_vector& triangles = aProfile.triangles();
-    if(triangles.size()>2){
-      typedef typename Profile::Point Point;
-      typename Profile::VertexPointMap ppmap = aProfile.vertex_point_map();
-      typename Profile::Triangle_vector::const_iterator it = triangles.begin();
-      ++it; ++it;
-      while(it!= triangles.end()){
-        const Profile::Triangle& t = *it;
-        Point p = get(ppmap,t.v0);
-        Point q = get(ppmap,t.v1);
-        Point r = get(ppmap,t.v2);
-        Point q2 = *k0;
-
-        Vector eqp = Traits().construct_vector_3_object()(q,p) ;
-        Vector eqr = Traits().construct_vector_3_object()(q,r) ;
-        Vector eq2p = Traits().construct_vector_3_object()(q2,p) ;
-        Vector eq2r = Traits().construct_vector_3_object()(q2,r) ;
-        
-        Vector n1 = Traits().construct_cross_product_vector_3_object()(eqp,eqr);
-        Vector n2 = Traits().construct_cross_product_vector_3_object()(eq2p,eq2r);
-        if(! is_positive(Traits().compute_scalar_product_3_object()(n1, n2))){
-          return false;
-        }
-        ++it;
-      }
-    }
-#endif    
-    //
     // Use the current link to extract all local triangles incident to 'vx' in the collapsed mesh (which at this point doesn't exist yet)
     //
     typedef typename Profile::vertex_descriptor_vector::const_iterator link_iterator ;
