@@ -144,8 +144,7 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
   if (sparsity != 0.)
   {
     std::size_t num_points_before = points.size();
-    points = sparsify_point_set(
-      k, points, FT(INPUT_SPARSITY)*FT(INPUT_SPARSITY));
+    points = sparsify_point_set(k, points, sparsity*sparsity);
     std::cerr << "Number of points before/after sparsification: "
       << num_points_before << " / " << points.size() << std::endl;
   }

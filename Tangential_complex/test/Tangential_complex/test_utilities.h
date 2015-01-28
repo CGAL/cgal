@@ -49,7 +49,7 @@ public:
   // We can't instantiate m_points_ds right now since it requires that
   // points is not empty (which be the case here)
   Point_sparsifier(Point_container &points, 
-                   FT sparsity = FT(INPUT_SPARSITY*INPUT_SPARSITY))
+                   FT sparsity = FT(0.05*0.05))
     : m_points(points), m_sparsity(sparsity), m_points_ds(NULL)
   {}
 

@@ -21,11 +21,14 @@
 # include <tbb/task_scheduler_init.h>
 #endif
 
+//=============== Constants =================
+const double INPUT_SPARSITY = 0.05;
 #ifdef _DEBUG
   const int NUM_POINTS = 50;
 #else
   const int NUM_POINTS = 30000;
 #endif
+//===========================================
 
 int main()
 {
