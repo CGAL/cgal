@@ -23,8 +23,6 @@
 #define TANGENTIAL_COMPLEX_H
 
 #include <CGAL/Tangential_complex/config.h>
-const double HALF_SPARSITY = 0.5*INPUT_SPARSITY;
-const double SQ_HALF_SPARSITY = HALF_SPARSITY*HALF_SPARSITY;
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -186,13 +184,15 @@ public:
   /// Constructor for a range of points
   template <typename InputIterator>
   Tangential_complex(InputIterator first, InputIterator last,
-                     int intrinsic_dimension,
+                     double sparsity, int intrinsic_dimension,
                      const Kernel &k = Kernel())
   : m_k(k),
     m_intrinsic_dimension(intrinsic_dimension),
+    m_half_sparsity(0.5*sparsity),
+    m_sq_half_sparsity(m_half_sparsity*m_half_sparsity),
+    m_ambiant_dim(k.point_dimension_d_object()(*first)),
     m_points(first, last),
-    m_points_ds(m_points),
-    m_ambiant_dim(k.point_dimension_d_object()(*first))
+    m_points_ds(m_points)
   {}
 
   /// Destructor
@@ -887,7 +887,7 @@ private:
 
         if (star_sphere_squared_radius
           && k_sqdist(center_pt, neighbor_pt)
-             > *star_sphere_squared_radius + 4*SQ_HALF_SPARSITY) // CJTODO: why is "4*" needed?
+             > *star_sphere_squared_radius + 4*m_sq_half_sparsity) // CJTODO: why is "4*" needed?
           break;
 
         Tr_point proj_pt = project_point_and_compute_weight(
@@ -901,7 +901,7 @@ private:
           // CJTODO TEMP TEST
           /*if (star_sphere_squared_radius
             && k_sqdist(center_pt, neighbor_pt)
-               > *star_sphere_squared_radius + 4*SQ_HALF_SPARSITY)
+               > *star_sphere_squared_radius + 4*m_sq_half_sparsity)
             std::cout << "ARGGGGGGGH" << std::endl;*/
 
           vh->data() = neighbor_point_idx;
@@ -1207,7 +1207,7 @@ private:
 
     // Perturb the weight?
 #ifdef CGAL_TC_PERTURB_WEIGHT
-    m_weights[point_idx] = rng.get_double(0., SQ_HALF_SPARSITY);
+    m_weights[point_idx] = rng.get_double(0., m_sq_half_sparsity);
 #endif
 
     // Perturb the position?
@@ -1219,7 +1219,7 @@ private:
       tr_point_on_sphere_generator(m_ambiant_dim, 1);
 
     m_translations[point_idx] = k_scaled_vec(k_pt_to_vec(
-      *tr_point_on_sphere_generator++), HALF_SPARSITY);
+      *tr_point_on_sphere_generator++), m_half_sparsity);
 # else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
     const Tr_traits &local_tr_traits = 
       m_triangulations[point_idx].tr().geom_traits();
@@ -1245,7 +1245,7 @@ private:
     {
       global_transl = k_transl(
         global_transl, 
-        k_scaled_vec(tsb[i], HALF_SPARSITY*coord(local_random_transl, i))
+        k_scaled_vec(tsb[i], m_half_sparsity*coord(local_random_transl, i))
       );
     }
 # endif
@@ -1618,6 +1618,8 @@ private:
 private:
   const Kernel              m_k;
   const int                 m_intrinsic_dimension;
+  const double              m_half_sparsity;
+  const double              m_sq_half_sparsity;
   const int                 m_ambiant_dim;
   
   Points                    m_points;

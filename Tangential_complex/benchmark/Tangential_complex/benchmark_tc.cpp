@@ -153,7 +153,7 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
   CGAL_TC_SET_PERFORMANCE_DATA("Sparsity", sparsity);
   CGAL_TC_SET_PERFORMANCE_DATA("Num_points", points.size());
 
-  TC tc(points.begin(), points.end(), intrinsic_dim, k);
+  TC tc(points.begin(), points.end(), sparsity, intrinsic_dim, k);
   double init_time = t.elapsed(); t.reset();
 
   tc.compute_tangential_complex();
