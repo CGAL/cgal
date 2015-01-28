@@ -43,8 +43,8 @@
 
 // Otherwise, perturb the k + 1 + CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS
 // closest points
-//#define CGAL_TC_NUMBER_OF_PERTURBED_POINTS(intr_dim) (1)
-#define CGAL_TC_NUMBER_OF_PERTURBED_POINTS(intr_dim) (intr_dim + 2)
+#define CGAL_TC_NUMBER_OF_PERTURBED_POINTS(intr_dim) (1)
+//#define CGAL_TC_NUMBER_OF_PERTURBED_POINTS(intr_dim) (intr_dim + 2)
 
 //========================= Strategy ==========================================
 //#define CGAL_TC_USE_NANOFLANN
