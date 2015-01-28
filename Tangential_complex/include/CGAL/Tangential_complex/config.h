@@ -37,13 +37,14 @@
 //#define CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
 
 // Solving inconsistencies: only perturb the vertex, the simplex or more?
-#define CGAL_TC_PERTURB_THE_CENTER_VERTEX_ONLY
+//#define CGAL_TC_PERTURB_THE_CENTER_VERTEX_ONLY
 //#define CGAL_TC_PERTURB_THE_SIMPLEX_ONLY
 //#define CGAL_TC_PERTURB_THE_1_STAR
 
 // Otherwise, perturb the k + 1 + CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS
 // closest points
-const int CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS = -2;
+//#define CGAL_TC_NUMBER_OF_PERTURBED_POINTS(intr_dim) (1)
+#define CGAL_TC_NUMBER_OF_PERTURBED_POINTS(intr_dim) (intr_dim + 2)
 
 //========================= Strategy ==========================================
 //#define CGAL_TC_USE_NANOFLANN

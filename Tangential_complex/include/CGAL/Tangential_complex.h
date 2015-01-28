@@ -1401,8 +1401,7 @@ private:
         
         KNS_range kns_range = m_points_ds.query_ANN(
           global_center, 
-          m_intrinsic_dimension + 1 
-          + CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS);
+          CGAL_TC_NUMBER_OF_PERTURBED_POINTS(m_intrinsic_dimension));
         std::vector<std::size_t> neighbors;
         for (KNS_iterator nn_it = kns_range.begin() ;
              nn_it != kns_range.end() ;
