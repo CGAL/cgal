@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70005" creator="Ipe 7.1.4">
-<info created="D:20050330173517" modified="D:20150128161436"/>
+<info created="D:20050330173517" modified="D:20150128165104"/>
 <ipestyle name="ipe6">
 <symbol name="mark/circle(sx)" transformations="translations">
 <path fill="sym-stroke">
@@ -113,13 +113,13 @@ h
 <dashstyle name="dash dotted" value="[4 2 1 2] 0"/>
 <dashstyle name="dash dot dotted" value="[4 2 1 2 1 2] 0"/>
 <textsize name="large" value="\large"/>
+<textsize name="small" value="\small"/>
+<textsize name="tiny" value="\tiny"/>
 <textsize name="Large" value="\Large"/>
 <textsize name="LARGE" value="\LARGE"/>
 <textsize name="huge" value="\huge"/>
 <textsize name="Huge" value="\Huge"/>
-<textsize name="small" value="\small"/>
 <textsize name="footnote" value="\footnotesize"/>
-<textsize name="tiny" value="\tiny"/>
 <textstyle name="center" begin="\begin{center}" end="\end{center}"/>
 <textstyle name="itemize" begin="\begin{itemize}" end="\end{itemize}"/>
 <textstyle name="item" begin="\begin{itemize}\item{}" end="\end{itemize}"/>
@@ -127,7 +127,7 @@ h
 <page>
 <layer name="alpha"/>
 <view layers="alpha" active="alpha"/>
-<path layer="alpha" matrix="1 0 0 1 272 624" fill="0.898" pen="0.4" arrow="normal/7">
+<path layer="alpha" matrix="1 0 0 1 272 624" fill="0.898">
 -174.947 77.6599 m
 -126.212 129.86 l
 -188.786 146.06 l
@@ -147,10 +147,6 @@ h
 <path matrix="1 0 0 1 272 624" stroke="black" dash="[1 3] 0" pen="0.4">
 -174.947 77.6599 m
 -126.212 129.86 l
-</path>
-<path matrix="1 0 0 1 272 624" stroke="black" pen="0.4" arrow="normal/7">
--174.947 77.6599 m
--188.786 146.06 l
 </path>
 <text matrix="1 0 0 1 272 624" transformations="translations" pos="-193.599 66.2599" stroke="black" type="label" width="128.862" height="7.473" depth="2.49" valign="bottom" size="10">vertex \textit{vertex\_triple\_index(i,0)}</text>
 <text matrix="1 0 0 1 260.382 632.8" transformations="translations" pos="-229.699 138.26" stroke="black" type="label" width="128.862" height="7.473" depth="2.49" valign="bottom" size="10">vertex \textit{vertex\_triple\_index(i,2)}</text>
