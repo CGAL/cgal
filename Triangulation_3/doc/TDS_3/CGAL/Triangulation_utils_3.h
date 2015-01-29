@@ -24,7 +24,7 @@ and neighbors within a cell.
 </center>
 \cgalFigureCaptionBegin{Triangulation3figutils}
 Operations on indices.
-\cgalFigureCaptionEnd{Triangulation3figutils}
+\cgalFigureCaptionEnd
 */
 
 class Triangulation_utils_3 {
