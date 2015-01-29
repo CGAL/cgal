@@ -155,11 +155,10 @@ void Scene_polygon_soup_item::inside_out()
 bool 
 Scene_polygon_soup_item::orient()
 {
-  if(isEmpty() || this->oriented)
+  if(isEmpty() || oriented)
     return true; // nothing to do
-  
-  oriented = CGAL::orient_polygon_soup(soup->points, soup->polygons);
-  return oriented;
+  oriented=true;
+  return CGAL::orient_polygon_soup(soup->points, soup->polygons);
 }
 
 
