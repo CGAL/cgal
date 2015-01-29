@@ -6,6 +6,7 @@
 #include "Polyhedron_type.h"
 
 #include <boost/foreach.hpp>
+#include <boost/array.hpp>
 
 #include <iostream>
 
