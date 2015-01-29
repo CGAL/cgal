@@ -376,7 +376,8 @@ Points are read from a `std::map`. The search tree stores integers of type `std:
 
 This example programs shows how to search the closest vertices of a `Surface_mesh` or, quite similar, of a 
 `Polyhedron_3`.
-Points are stored in the polygonal mesh. The search tree stores vertex descriptors. The value type of the iterator of the neighbor searching algorithm is `boost::graph_traits<Mesh>::vertex_descriptor`.
+Points are stored in the polygonal mesh. The search tree stores vertex descriptors.
+The value type of the iterator of the neighbor searching algorithm is \link  BGLSMGT `boost::graph_traits<Surface_mesh>::vertex_descriptor` \endlink.
 
 \cgalExample{Spatial_searching/searching_surface_mesh_vertices.cpp}
 
