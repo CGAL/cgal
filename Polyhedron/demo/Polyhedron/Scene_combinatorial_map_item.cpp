@@ -9,8 +9,7 @@
  #include <QKeyEvent>
 #include <CGAL/corefinement_operations.h>
 
-Scene_combinatorial_map_item::Scene_combinatorial_map_item(Scene_interface* scene,void* address):last_known_scene(scene),volume_to_display(0),exportSelectedVolume(NULL),address_of_A(address){m_combinatorial_map=NULL;}
-Scene_combinatorial_map_item::~Scene_combinatorial_map_item(){if (m_combinatorial_map!=NULL) delete m_combinatorial_map;}
+Scene_combinatorial_map_item::Scene_combinatorial_map_item(Scene_interface* scene,void* address):last_known_scene(scene),volume_to_display(0),exportSelectedVolume(NULL),address_of_A(address){}
 
 Scene_combinatorial_map_item* Scene_combinatorial_map_item::clone() const{return NULL;}
 
