@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/IO/File_scanner_OFF.h>
+#include <CGAL/IO/OFF_reader.h>
 #include <CGAL/IO/File_writer_OFF.h>
 #include <CGAL/version.h> 
 
@@ -85,45 +85,9 @@ Scene_polygon_soup_item::clone() const {
 bool
 Scene_polygon_soup_item::load(std::istream& in)
 {
-#if CGAL_VERSION_NR >= 1030700091
-  typedef std::size_t indices_t;
-#else
-  typedef boost::int32_t indices_t;
-#endif
-  if(!soup)
-    soup = new Polygon_soup;
-  CGAL::File_scanner_OFF scanner(in);
-  soup->clear();
-  soup->points.resize(scanner.size_of_vertices());
-  soup->polygons.resize(scanner.size_of_facets());
-  for (indices_t i = 0; i < scanner.size_of_vertices(); ++i) {
-    double x, y, z, w;
-    scanner.scan_vertex( x, y, z, w);
-    soup->points[i] = Point_3(x, y, z, w);
-    scanner.skip_to_next_vertex( i);
-  }
-  if(!in)
-    return false;
-
-  for (indices_t i = 0; i < scanner.size_of_facets(); ++i) {
-    indices_t no;
-
-    scanner.scan_facet( no, i);
-    soup->polygons[i].resize(no);
-    for(indices_t j = 0; j < no; ++j) {
-      indices_t id;
-      scanner.scan_facet_vertex_index(id, i);
-      if(id < scanner.size_of_vertices())
-      {
-        soup->polygons[i][j] = id;
-      }
-      else
-        return false;
-    }
-  }
-  soup->fill_edges();
-  oriented = false;
-  return (bool) in;
+  if (!soup) soup=new Polygon_soup();
+  else soup->clear();
+  return CGAL::read_OFF(in, soup->points, soup->polygons);
 }
 
 void Scene_polygon_soup_item::init_polygon_soup(std::size_t nb_pts, std::size_t nb_polygons){
