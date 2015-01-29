@@ -39,6 +39,8 @@ struct Triangle_accessor_with_ppmap_3
 
   PolyhedronPointPMap ppmap;
 
+  Triangle_accessor_with_ppmap_3(){}
+
   Triangle_accessor_with_ppmap_3(PolyhedronPointPMap ppmap):ppmap(ppmap) {}
 
   Triangle_iterator triangles_begin(const Polyhedron& p) const

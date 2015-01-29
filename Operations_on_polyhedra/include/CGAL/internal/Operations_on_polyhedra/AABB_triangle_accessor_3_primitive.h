@@ -33,13 +33,13 @@ public:
   typedef typename GeomTraits::Triangle_3              Datum;
   typedef Datum Datum_reference;
   typedef Point Point_reference;
-  typedef TriangleAccessor_3* Shared_data;
+  typedef TriangleAccessor_3 Shared_data;
 
   AABB_triangle_accessor_3_primitive(const Id& handle, Shared_data)
   : m_triangle_handle(handle) { }
 
   Datum_reference datum(Shared_data t3_accessor) const
-  { return t3_accessor->triangle(m_triangle_handle); }
+  { return t3_accessor.triangle(m_triangle_handle); }
   Point_reference reference_point(Shared_data t3_accessor) const
   { return datum(t3_accessor).vertex(0); }
 

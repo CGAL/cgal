@@ -119,7 +119,7 @@ public:
 
     tree.insert(t3_accessor.triangles_begin(polyhedron),
                 t3_accessor.triangles_end(polyhedron),
-                &t3_accessor);
+                t3_accessor);
   }
  
   /**
