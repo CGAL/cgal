@@ -1027,7 +1027,7 @@ The following iterators allow the user to visit cells, facets, edges and vertice
 /// @{
 
 /*!
-Starts at an arbitrary finite vertex. Then `++` and `-` will 
+Starts at an arbitrary finite vertex. Then `++` and `--` will 
 iterate over finite vertices. Returns `finite_vertices_end()` when 
 `t.number_of_vertices() == 0`. 
 */ 
@@ -1039,7 +1039,7 @@ Past-the-end iterator
 Finite_vertices_iterator finite_vertices_end() const; 
 
 /*!
-Starts at an arbitrary finite edge. Then `++` and `-` will 
+Starts at an arbitrary finite edge. Then `++` and `--` will 
 iterate over finite edges. Returns `finite_edges_end()` when 
 `t.dimension() < 1`. 
 */ 
@@ -1051,7 +1051,7 @@ Past-the-end iterator
 Finite_edges_iterator finite_edges_end() const; 
 
 /*!
-Starts at an arbitrary finite facet. Then `++` and `-` will 
+Starts at an arbitrary finite facet. Then `++` and `--` will 
 iterate over finite facets. Returns `finite_facets_end()` when 
 `t.dimension() < 2`. 
 */ 
@@ -1063,7 +1063,7 @@ Past-the-end iterator
 Finite_facets_iterator finite_facets_end() const; 
 
 /*!
-Starts at an arbitrary finite cell. Then `++` and `-` will 
+Starts at an arbitrary finite cell. Then `++` and `--` will 
 iterate over finite cells. Returns `finite_cells_end()` when 
 `t.dimension() < 3`. 
 */ 
