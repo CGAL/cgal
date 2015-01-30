@@ -1071,9 +1071,17 @@ protected:
     {
       typename Virtual_vertex_map::iterator iter = this->virtual_vertices.find(vertex_handle);
       if (iter != this->virtual_vertices.end())
+      {
         this->virtual_vertices.erase(iter);
-      else
-        this->virtual_vertices_reverse.erase(vertex_handle);
+
+        typename Virtual_vertex_reverse_map::iterator origin_it = this->virtual_vertices_reverse.find(iter->second.first);
+        std::vector<Vertex_handle>& copies = origin_it->second;
+        typename std::vector<Vertex_handle>::iterator copy_iter = std::find(copies.begin(), copies.end(), vertex_handle);
+        CGAL_triangulation_assertion(copy_iter != copies.end());
+        copies.erase(copy_iter);
+        if (copies.empty())
+          virtual_vertices_reverse.erase(origin_it);
+      }
       return;
     }
 
