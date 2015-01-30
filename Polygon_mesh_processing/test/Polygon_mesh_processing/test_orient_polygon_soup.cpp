@@ -2,7 +2,7 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/orient_polygon_soup.h>
-#include <CGAL/polygon_soup_to_polyhedron_3.h>
+#include <CGAL/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/IO/OFF_reader.h>
 
 #include <string>
@@ -30,12 +30,12 @@ void test(std::string fname, std::size_t expected_duplicated_vertices)
   }
   
   std::size_t initial_nb_points = points.size();
-  CGAL::orient_polygon_soup(points, polygons);
+  CGAL::Polygon_mesh_processing::orient_polygon_soup(points, polygons);
 
   assert(expected_duplicated_vertices == points.size()-initial_nb_points);
 
   Polyhedron P;
-  CGAL::polygon_soup_to_polyhedron_3(P, points, polygons);
+  CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, P);
   assert(P.is_valid());
   std::cout << fname << " OK\n";
 }
