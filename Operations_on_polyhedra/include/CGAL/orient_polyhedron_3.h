@@ -25,17 +25,22 @@
 #include <algorithm>
 #include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
 
-namespace CGAL {
-namespace internal {
+namespace CGAL{
 
-template<unsigned int axis>
-struct Axis_compare {
-  template<class Vertex>
-  bool operator()(const Vertex& v0, const Vertex& v1) const
-  { return v0.point()[axis] < v1.point()[axis]; }
-};
+namespace internal{
+  template <class Less_xyz>
+  struct Compare_vertex_points_xyz_3{
+    Less_xyz less;
 
-} // namespace internal
+    typedef bool result_type;
+    template <class Vertex>
+    bool operator()(const Vertex& v1, const Vertex& v2) const
+    {
+      return less(v1.point(), v2.point());
+    }
+
+  };
+} // end of namespace internal
 
 /**
  * Tests whether a closed polyhedron has a positive orientation.
@@ -60,18 +65,23 @@ struct Axis_compare {
  * @endcode
  */
 template<class Polyhedron>
-bool is_oriented(const Polyhedron& polyhedron) {
-  CGAL_precondition(polyhedron.is_closed());
-  const unsigned int axis = 0;
+bool is_oriented(const Polyhedron& polyhedron)
+{
+  typedef typename Polyhedron::Traits K;
+  internal::Compare_vertex_points_xyz_3< typename K::Less_xyz_3 > less_xyz;
 
   typename Polyhedron::Vertex_const_iterator v_min
-    = std::min_element(polyhedron.vertices_begin(), polyhedron.vertices_end(), internal::Axis_compare<axis>());
+    = std::min_element(polyhedron.vertices_begin(), polyhedron.vertices_end(), less_xyz);
 
-  typedef typename Polyhedron::Traits K;
   const typename K::Vector_3& normal_v_min = compute_vertex_normal<typename Polyhedron::Vertex, K>(*v_min);
 
-  CGAL_warning(normal_v_min[axis] != 0);
-  return normal_v_min[axis] < 0;
+  return normal_v_min[0] < 0 || (
+            normal_v_min[0] == 0 && (
+              normal_v_min[1] < 0  ||
+              ( normal_v_min[1]==0  && normal_v_min[2] < 0 )
+            )
+         );
 }
+
 } // namespace CGAL
 #endif // CGAL_ORIENT_POLYHEDRON_3
