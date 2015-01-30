@@ -1063,6 +1063,24 @@ protected:
   void remove(Vertex_handle v, PointRemover &remover, CT &ct);
   //@}
 
+  void delete_vertex (Vertex_handle vertex_handle)
+  {
+    tds().delete_vertex(vertex_handle);
+
+    if (!is_1_cover())
+    {
+      typename Virtual_vertex_map::iterator iter = this->virtual_vertices.find(vertex_handle);
+      if (iter != this->virtual_vertices.end())
+        this->virtual_vertices.erase(iter);
+      else
+        this->virtual_vertices_reverse.erase(vertex_handle);
+      return;
+    }
+
+    CGAL_triangulation_assertion(this->virtual_vertices.find(vertex_handle) == this->virtual_vertices.end());
+    CGAL_triangulation_assertion(this->virtual_vertices_reverse.find(vertex_handle) == this->virtual_vertices_reverse.end());
+  }
+
 public:
   /** @name Traversal */ //@{
   Cell_iterator cells_begin() const {
@@ -2172,6 +2190,7 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
       lt_assert, i_assert, j_assert) != ON_UNBOUNDED_SIDE);
 
   tester.set_offset(o);
+  hider.set_offset(o);
 
   // This only holds for Delaunay
   CGAL_triangulation_assertion(lt != VERTEX);
@@ -2237,6 +2256,7 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
   v_offsets.clear();
 
   if (vh != Vertex_handle()) {
+    CGAL_triangulation_assertion(virtual_vertices.find(v) == virtual_vertices.end());
     virtual_vertices[v] = Virtual_vertex(vh,o);
     virtual_vertices_reverse[vh].push_back(v);
   }
