@@ -59,7 +59,7 @@ public:
 	typedef typename Base::All_edges_iterator     All_edges_iterator;
 	typedef typename Base::All_vertices_iterator  All_vertices_iterator;
 
-	typedef typename Base::size_type              size_type;
+  typedef typename Base::size_type              size_type;
 	typedef typename Base::difference_type        difference_type;
 
 	typedef typename Base::Locate_type            Locate_type;
@@ -479,9 +479,14 @@ class Periodic_3_Regular_triangulation_3<GT,Tds>::Point_hider
   Self *t;
   mutable std::vector<Vertex_handle> vertices;
   mutable std::vector<Weighted_point> hidden_points;
+  mutable Offset o;
 
 public:
   Point_hider(Self *tr) : t(tr) {}
+
+  void set_offset(const Offset &off) const {
+    o = off;
+  }
 
   template <class InputIterator>
   inline void set_vertices(InputIterator start, InputIterator end) const
@@ -504,18 +509,21 @@ public:
 
   inline void reinsert_vertices(Vertex_handle v)
   {
+    Locate_type lt = Locate_type();
+    int li=0, lj=0;
+
     Cell_handle hc = v->cell();
     for (typename std::vector<Vertex_handle>::iterator
         vi = vertices.begin(); vi != vertices.end(); ++vi) {
       if ((*vi)->cell() != Cell_handle()) continue;
-      hc = t->locate ((*vi)->point(), hc);
+      hc = t->periodic_locate((*vi)->point(), o, lt, li, lj, hc);
       hide_point(hc, (*vi)->point());
-      t->tds().delete_vertex(*vi);
+      t->delete_vertex(*vi);
     }
     vertices.clear();
     for (typename std::vector<Weighted_point>::iterator
         hp = hidden_points.begin(); hp != hidden_points.end(); ++hp) {
-      hc = t->locate (*hp, hc);
+      hc = t->periodic_locate(*hp, o, lt, li, lj, hc);
       hide_point (hc, *hp);
     }
     hidden_points.clear();
