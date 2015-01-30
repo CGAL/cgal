@@ -17,12 +17,13 @@ void generate_near_boundary(const PolygonMesh& mesh,
 {
   CGAL_assertion(CGAL::is_pure_triangle(mesh));
 
-  typedef boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-  typedef boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-  typedef boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
-  typedef boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-  typedef boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type Ppmap;
+  typedef typename CGAL::Kernel_traits<Point>::type K;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type Ppmap;
 
   std::size_t exp_size = num_vertices(mesh) + num_faces(mesh) + num_edges(mesh);
   points.reserve(exp_size);
@@ -68,7 +69,10 @@ void generate_near_boundary(const PolygonMesh& mesh,
   }
 }
 
-template<class OutputIterator, typename PolygonMesh>
+template<typename PolygonMesh>
+CGAL::Bbox_3 bbox(const PolygonMesh& mesh);
+
+template<class Point, class OutputIterator, typename PolygonMesh>
 void random_points(const PolygonMesh& mesh,
                    int n,
                    OutputIterator out)
@@ -93,6 +97,7 @@ void test(
   const std::vector<Point>& points,
   const std::vector<bool>& on_boundary = std::vector<bool>())
 {
+  typedef typename CGAL::Kernel_traits<Point>::type K;
   std::cerr << "|V| = " << num_vertices(mesh) << std::endl;
 
   CGAL::Timer timer;

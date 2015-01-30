@@ -107,7 +107,7 @@ public:
     {
       Facet_handle fit = *fit_it;
       typename Traits::Vector_3 normal = 
-        Polygon_mesh_processing::compute_facet_normal<Traits>(*fit);
+        Polygon_mesh_processing::compute_facet_normal<Traits>(fit, Polyhedron());
 
       P_traits cdt_traits(normal);
       CDT cdt(cdt_traits);

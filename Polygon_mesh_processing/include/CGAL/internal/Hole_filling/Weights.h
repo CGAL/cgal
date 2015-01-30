@@ -391,7 +391,7 @@ public:
     vertex_descriptor v0 = target(he, pmesh());
     vertex_descriptor v1 = source(he, pmesh());
 
-    vertex_descriptor v_op = target(CGAL::next_edge(he, pmesh()), pmesh());
+    vertex_descriptor v_op = target(next(he, pmesh()), pmesh());
      return CotangentValue::operator()(v0, v_op, v1);
   }
 };

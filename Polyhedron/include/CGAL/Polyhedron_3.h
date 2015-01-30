@@ -506,7 +506,7 @@ public:
 
     // Geometry
     typedef typename Traits::Point_3              Point_3;
-    typedef typename Point_3                      Point;
+    typedef Point_3                               Point;
     typedef typename Traits::Plane_3              Plane_3;
     // No longer required.
     //typedef typename Traits::Normal               Normal;

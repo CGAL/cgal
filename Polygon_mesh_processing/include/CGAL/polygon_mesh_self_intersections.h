@@ -262,10 +262,10 @@ bool is_self_intersecting(const TriangleMesh& tmesh,
 
   try
   {
-    typedef boost::function_output_iterator<internal::Throw_at_output> OutputIterator;
+    typedef boost::function_output_iterator<CGAL::internal::Throw_at_output> OutputIterator;
     self_intersections<GeomTraits>(tmesh, OutputIterator(), geom_traits); 
   }
-  catch( internal::Throw_at_output::Throw_at_output_exception& ) 
+  catch( CGAL::internal::Throw_at_output::Throw_at_output_exception& ) 
   { return true; }
 
   return false;

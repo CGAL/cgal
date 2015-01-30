@@ -5,6 +5,7 @@
 #include <CGAL/Timer.h>
 #include <CGAL/trace.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 #include <vector>
 
 namespace CGAL {

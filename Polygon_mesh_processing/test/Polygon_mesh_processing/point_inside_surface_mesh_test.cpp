@@ -31,7 +31,7 @@ int main(int, char** argv)
   points.clear();
   const int nb_query = (int)1.e6;
   points.reserve(nb_query);
-  random_points(mesh, nb_query, back_inserter(points));
+  random_points<Point>(mesh, nb_query, back_inserter(points));
   test(mesh, points);
 
   //test compilation of constructor from AABB_tree  

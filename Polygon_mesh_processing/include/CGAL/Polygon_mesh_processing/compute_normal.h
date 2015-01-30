@@ -22,6 +22,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_COMPUTE_NORMAL_H
 #define CGAL_POLYGON_MESH_PROCESSING_COMPUTE_NORMAL_H
 
+#include <CGAL/boost/graph/helpers.h>
 
 namespace CGAL{
 
@@ -39,7 +40,7 @@ namespace Polygon_mesh_processing{
 template <class Kernel, class PolygonMesh>
 typename Kernel::Vector_3
 compute_facet_normal(
-  const typename boost::graph_traits<PolygonMesh>::face_descriptor& f,
+  typename boost::graph_traits<PolygonMesh>::face_descriptor f,
   const PolygonMesh& pmesh)
 {
   typedef typename Kernel::Point_3 Point;
@@ -78,7 +79,7 @@ compute_facet_normal(
 template<typename Kernel, typename PolygonMesh>
 typename Kernel::Vector_3
 compute_vertex_normal(
-    const typename boost::graph_traits<PolygonMesh>::vertex_descriptor& v,
+    typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
     const PolygonMesh& pmesh)
 {
   typedef typename Kernel::Vector_3 Vector;
@@ -91,7 +92,7 @@ compute_vertex_normal(
   {
     if (!is_border(he, pmesh))
     {
-      Vector n = compute_facet_normal<K>(face(he, pmesh), pmesh);
+      Vector n = compute_facet_normal<Kernel>(face(he, pmesh), pmesh);
       normal = normal + (n / std::sqrt(n*n));
     }
     he = opposite(next(he, pmesh), pmesh);
