@@ -2256,7 +2256,7 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
   v_offsets.clear();
 
   if (vh != Vertex_handle()) {
-    CGAL_triangulation_assertion(virtual_vertices.find(v) == virtual_vertices.end());
+//    CGAL_triangulation_assertion(virtual_vertices.find(v) == virtual_vertices.end());
     virtual_vertices[v] = Virtual_vertex(vh,o);
     virtual_vertices_reverse[vh].push_back(v);
   }
@@ -2653,6 +2653,23 @@ template < class GT, class TDS >
 bool
 Periodic_3_triangulation_3<GT,TDS>::
 is_valid(bool verbose, int level) const {
+  if (!is_1_cover())
+  {
+    for (Virtual_vertex_reverse_map_it iter = virtual_vertices_reverse.begin(), end_iter = virtual_vertices_reverse.end();
+         iter != end_iter;
+         ++iter)
+    {
+      for (typename Virtual_vertex_reverse_map::mapped_type::const_iterator iter_2 = iter->second.begin(),
+           end_iter_2 = iter->second.end();
+           iter_2 != end_iter_2;
+           ++iter_2)
+      {
+        CGAL_triangulation_assertion(virtual_vertices.find(*iter_2) != virtual_vertices.end());
+        CGAL_triangulation_assertion(virtual_vertices.at(*iter_2).first == iter->first);
+      }
+    }
+  }
+
   bool error = false;
   for (Cell_iterator cit = cells_begin();
        cit != cells_end(); ++cit) {
