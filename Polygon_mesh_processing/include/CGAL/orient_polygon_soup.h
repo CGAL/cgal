@@ -22,6 +22,7 @@
 #ifndef CGAL_ORIENT_POLYGON_SOUP
 #define CGAL_ORIENT_POLYGON_SOUP
 
+#include <CGAL/tuple.h>
 #include <boost/foreach.hpp>
 
 #include <set>

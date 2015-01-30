@@ -34,16 +34,24 @@ namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
-namespace internal {
+namespace internal{
+  template <class Less_xyz, class VPmap>
+  struct Compare_vertex_points_xyz_3{
+    Less_xyz less;
+    VPmap vpmap;
 
-template<unsigned int axis>
-struct Axis_compare {
-  template<class Point>
-  bool operator()(const Point& p0, const Point& p1) const
-  { return p0[axis] < p1[axis]; }
-};
+   Compare_vertex_points_xyz_3(VPmap vpmap)
+	: vpmap(vpmap){}
 
-} // namespace internal
+    typedef bool result_type;
+    template <class vertex_descriptor>
+    bool operator()(vertex_descriptor v1, vertex_descriptor v2) const
+    {
+      return less(get(vpmap, v1), get(vpmap, v2));
+    }
+
+  };
+} // end of namespace internal
 
 /**
  * \ingroup PkgPolygonMeshProcessing
@@ -68,33 +76,32 @@ struct Axis_compare {
  * }
  * @endcode
  */
-template<
-  class PolygonMesh,
-  typename Kernel
-    = typename CGAL::Kernel_traits<typename PolygonMesh::Point>::Kernel >
-bool is_outward_oriented(const PolygonMesh& pmesh,
-                         const Kernel& = Kernel())
+template< class PolygonMesh >
+bool is_outward_oriented(const PolygonMesh& pmesh)
 {
-  CGAL_precondition(CGAL::is_closed(pmesh));
+  typedef typename CGAL::Kernel_traits<typename PolygonMesh::Point>::Kernel Kernel;
+  CGAL_warning(CGAL::is_closed(pmesh));
   CGAL_precondition(CGAL::is_valid(pmesh));
 
-  const unsigned int axis = 0;
+  typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type VPmap;
+  VPmap ppmap = get(boost::vertex_point, pmesh);
 
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-  typename boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type
-    ppmap = get(boost::vertex_point, pmesh);
+  internal::Compare_vertex_points_xyz_3< typename Kernel::Less_xyz_3, VPmap > less_xyz(ppmap);
 
-  vertex_descriptor v_min = *vertices(pmesh).first;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(pmesh)) {
-    if(internal::Axis_compare<axis>()(ppmap[vd], ppmap[v_min]))
-      v_min = vd;
-  }
+  typename boost::graph_traits<PolygonMesh>::vertex_iterator vbegin, vend;
+  cpp11::tie(vbegin, vend) = vertices(pmesh);
+  typename boost::graph_traits<PolygonMesh>::vertex_iterator v_min
+    = std::min_element(vbegin, vend, less_xyz);
 
   const typename Kernel::Vector_3&
-    normal_v_min = compute_vertex_normal<Kernel>(v_min, pmesh);
+    normal_v_min = compute_vertex_normal<Kernel>(*v_min, pmesh);
 
-  CGAL_warning(normal_v_min[axis] != 0);
-  return normal_v_min[axis] < 0;
+  return normal_v_min[0] < 0 || (
+            normal_v_min[0] == 0 && (
+              normal_v_min[1] < 0  ||
+              ( normal_v_min[1]==0  && normal_v_min[2] < 0 )
+            )
+         );
 }
 
 } // namespace Polygon_mesh_processing

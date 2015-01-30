@@ -31,21 +31,20 @@ namespace Polygon_mesh_processing
 {
 namespace internal
 {
-template <class HDS, class Point_3>
+template <class HDS, class Point, class Polygon_3>
 class Polygon_soup_to_polygon_mesh : public CGAL::Modifier_base < HDS >
 {
-  typedef std::vector<std::size_t> Polygon_3;
-
-  const std::vector<Point_3>& points;
-  const std::vector<std::vector<std::size_t> >& polygons;
+  const std::vector<Point>& points;
+  const std::vector<Polygon_3>& polygons;
+  typedef typename HDS::Vertex::Point Point_3;
 public:
   /**
   * The constructor for modifier object.
   * @param points points of the soup of polygons.
   * @param polygons each element in the vector describes a polygon using the index of the points in the vector.
   */
-  Polygon_soup_to_polygon_mesh(const std::vector<Point_3>& points,
-    const std::vector<std::vector<std::size_t> >& polygons)
+  Polygon_soup_to_polygon_mesh(const std::vector<Point>& points,
+    const std::vector<Polygon_3>& polygons)
     : points(points), polygons(polygons)
   { }
 
@@ -57,7 +56,7 @@ public:
 
     for (std::size_t i = 0, end = points.size(); i < end; ++i)
     {
-      builder.add_vertex(points[i]);
+      builder.add_vertex( Point_3(points[i][0], points[i][1], points[i][2]) );
     }
 
     for (std::size_t i = 0, end = polygons.size(); i < end; ++i)
@@ -82,14 +81,14 @@ public:
   * \todo modify so that the built object is a model of `MutableFaceGraph`
   * \todo write documentation
   */
-  template<class PolygonMesh>
+  template<class PolygonMesh, class Point_3, class Polygon_3>
   void polygon_soup_to_polygon_mesh(
-    const std::vector<typename PolygonMesh::Point_3>& points,
-    const std::vector<std::vector<std::size_t> >& polygons,
+    const std::vector<Point_3>& points,
+    const std::vector<Polygon_3 >& polygons,
     PolygonMesh& out)
   {
-    internal::Polygon_soup_to_polygon_mesh<typename PolygonMesh::HalfedgeDS,
-      typename PolygonMesh::Point_3>
+    internal::Polygon_soup_to_polygon_mesh<
+      typename PolygonMesh::HalfedgeDS, Point_3, Polygon_3>
       converter(points, polygons);
     out.delegate(converter);
   }
