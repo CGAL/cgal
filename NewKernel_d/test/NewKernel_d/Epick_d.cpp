@@ -372,6 +372,7 @@ void test3(){
   typedef typename K1::Squared_distance_d SD;
   typedef typename K1::Point_dimension_d PD;
   typedef typename K1::Affinely_independent_d AI;
+  typedef typename CGAL::Get_functor<K1, CGAL::Side_of_bounded_diametral_sphere_tag>::type SBDS;
 
   Ker k
 #if 1
@@ -402,6 +403,7 @@ void test3(){
   SD sd Kinit(squared_distance_d_object);
   PD pd Kinit(point_dimension_d_object);
   AI ai Kinit(affinely_independent_d_object);
+  SBDS sbds (k);
   P a; // Triangulation needs this :-(
   a=cp(2,3,4);
   assert(pd(a)==3);
@@ -524,6 +526,12 @@ void test3(){
   assert(ifsos(fozn, tz+0, tz+3, tz[4]) == CGAL::ON_NEGATIVE_SIDE);
   assert(ifsos(fozp, tz+0, tz+3, tz[5]) == CGAL::ON_NEGATIVE_SIDE);
   assert(ifsos(fozn, tz+0, tz+3, tz[5]) == CGAL::ON_POSITIVE_SIDE);
+  P t1[]={cp(1,2,3),cp(3,2,1),cp(2,4,2)};
+  assert(sbds(t1+0,t1+2,cp(2,2,3.414)) == CGAL::ON_BOUNDED_SIDE);
+  assert(sbds(t1+0,t1+2,cp(1,2,3)) == CGAL::ON_BOUNDARY);
+  assert(sbds(t1+0,t1+2,cp(2,2,3.415)) == CGAL::ON_UNBOUNDED_SIDE);
+  assert(sbds(t1+0,t1+3,cp(2.1,3.5,1.9)) == CGAL::ON_BOUNDED_SIDE);
+  assert(sbds(t1+0,t1+3,cp(10,10,10)) == CGAL::ON_UNBOUNDED_SIDE);
 }
 template struct CGAL::Epick_d<CGAL::Dimension_tag<2> >;
 template struct CGAL::Epick_d<CGAL::Dimension_tag<3> >;

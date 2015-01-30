@@ -291,6 +291,7 @@ namespace CGAL {
 	CGAL_DECL_PREDICATE(Orientation_of_vectors);
 	CGAL_DECL_PREDICATE(Side_of_oriented_sphere);
 	CGAL_DECL_PREDICATE(Side_of_bounded_sphere);
+	CGAL_DECL_PREDICATE(Side_of_bounded_diametral_sphere);
 	CGAL_DECL_PREDICATE(Contained_in_affine_hull);
 	CGAL_DECL_PREDICATE(In_flat_orientation);
 	CGAL_DECL_PREDICATE(In_flat_side_of_oriented_sphere);
