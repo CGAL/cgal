@@ -8,7 +8,8 @@
 #include "Scene_polyhedron_item_decorator.h"
 #include "Polyhedron_type.h"
 #include <CGAL/gl_render.h>
-#include <CGAL/polygon_soup_to_polyhedron_3.h>
+#include <CGAL/orient_polygon_soup.h>
+#include <CGAL/polygon_soup_to_polygon_mesh.h>
 
 #include <fstream>
 #include <boost/foreach.hpp>
@@ -244,7 +245,7 @@ public:
         it != end; ++it)
     {
       const Kernel::Vector_3 n =
-        compute_facet_normal<Polyhedron::Facet,Kernel>(**it);
+        CGAL::Polygon_mesh_processing::compute_facet_normal<Kernel>(**it);
       ::glNormal3d(n.x(),n.y(),n.z());
 
       Polyhedron::Halfedge_around_facet_circulator
@@ -639,7 +640,9 @@ public:
         polygons[counter].push_back(hb->vertex()->id() -1);
       } while(++hb != hend);
     }
-    CGAL::polygon_soup_to_polyhedron_3(*out, points, polygons);
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh<Polyhedron>(
+      points, polygons, *out);
+
     return out->size_of_vertices() > 0;
   }
 

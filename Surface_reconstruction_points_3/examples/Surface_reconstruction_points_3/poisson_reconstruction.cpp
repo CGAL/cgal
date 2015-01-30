@@ -25,8 +25,7 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/compute_average_spacing.h>
-
-#include "compute_normal.h"
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <deque>
 #include <cstdlib>
@@ -183,7 +182,7 @@ int main(int argc, char * argv[])
       for (v = input_mesh.vertices_begin(); v != input_mesh.vertices_end(); v++)
       {
         const Point& p = v->point();
-        Vector n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*v);
+        Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal<Kernel>(*v);
         points.push_back(Point_with_normal(p,n));
       }
     }

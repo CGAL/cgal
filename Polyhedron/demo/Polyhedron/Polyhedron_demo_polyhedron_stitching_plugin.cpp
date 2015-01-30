@@ -9,7 +9,7 @@
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
 
-#include <CGAL/Polyhedron_stitching.h>
+#include <CGAL/stitch_polygon_mesh.h>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -84,6 +84,7 @@ struct Polyline_visitor
   {
     new_item->polylines.back().push_back(vd->point());
   }
+  void end_polyline(){}
 };
 
 void Polyhedron_demo_polyhedron_stitching_plugin::on_actionDetectBorders_triggered()
@@ -146,7 +147,7 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchBorders_trigger
     if(item)
     {
       Polyhedron* pMesh = item->polyhedron();
-      CGAL::polyhedron_stitching(*pMesh);
+      CGAL::Polygon_mesh_processing::stitch_borders(*pMesh);
       scene->itemChanged(item);
     }
   }

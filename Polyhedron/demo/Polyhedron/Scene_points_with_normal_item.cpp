@@ -1,6 +1,6 @@
 #include "Scene_points_with_normal_item.h"
 #include "Polyhedron_type.h"
-#include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/IO/read_off_points.h>
 #include <CGAL/IO/write_off_points.h>
@@ -53,7 +53,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& i
   for (v = input_mesh.vertices_begin(); v != input_mesh.vertices_end(); v++)
   {
     const Kernel::Point_3& p = v->point();
-    Kernel::Vector_3 n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*v);
+    Kernel::Vector_3 n = CGAL::Polygon_mesh_processing::compute_vertex_normal<Kernel>(*v);
     m_points->push_back(UI_point(p,n));
   }
 

@@ -38,11 +38,12 @@ struct IsTerminalDefault
   }
 };
 
-
+template <class Graph>
 struct Dummy_visitor_for_split_graph_into_polylines
 {
   void start_new_polyline(){}
-  void add_node(size_t /* node_id */){}
+  void add_node(typename boost::graph_traits<Graph>::vertex_descriptor){}
+  void end_polyline(){}
 };
 
 
@@ -66,11 +67,8 @@ void split_graph_into_polylines(Graph& graph,
   vertex_iterator b,e;
   boost::tie(b,e) = vertices(graph);
   std::vector<vertex_descriptor> V(b,e);
-  for (typename std::vector<vertex_descriptor>::iterator it = V.begin();
-       it != V.end();
-       ++it) {
-    vertex_descriptor v = *it;
-
+  BOOST_FOREACH(vertex_descriptor v, V)
+  {
     if (degree(v, graph) > 2 || is_terminal(graph[v], orig))
       {
         out_edge_iterator b, e;
@@ -94,7 +92,6 @@ void split_graph_into_polylines(Graph& graph,
                       BOOST_FOREACH(vertex_descriptor v, vertices(graph)){
                         typename boost::graph_traits<Graph>::degree_size_type
                           n = degree(v, graph);
-                        
                         CGAL_assertion( n == 0 || n == 1 || n == 2);
                       }
                       BOOST_FOREACH(edge_descriptor e, edges(graph)){
@@ -179,7 +176,14 @@ split_graph_into_polylines(const Graph& graph,
   std::set<vertex_descriptor> terminal;
 
   BOOST_FOREACH(vertex_descriptor v, vertices(g)){
-    if (degree(v, g) == 1) terminal.insert(v);
+    typename boost::graph_traits<Graph>::degree_size_type n = degree(v, g);
+    if ( n == 1 ) terminal.insert(v);
+    if ( n ==0 ){
+      //isolated vertex
+      polyline_visitor.start_new_polyline();
+      polyline_visitor.add_node(g[v]);
+      polyline_visitor.end_polyline();
+    }
   }
 
   // go over all polylines and provide the description to the visitor
@@ -201,6 +205,7 @@ split_graph_into_polylines(const Graph& graph,
       u = v;
     }
     terminal.erase(u);
+    polyline_visitor.end_polyline();
   }
 
   // do the same but for cycles
@@ -226,8 +231,22 @@ split_graph_into_polylines(const Graph& graph,
       remove_edge(b, g);
       u = v;
     }
+    polyline_visitor.end_polyline();
   }
 }
+
+/// Split graph into polylines delimited by vertices of degree different from 2.
+/// Then the graph is visited and Visitor is called to describe the polylines
+/// Graph must be undirected
+template <typename Graph,
+          typename Visitor>
+void
+split_graph_into_polylines(const Graph& graph,
+                           Visitor& polyline_visitor)
+{
+  split_graph_into_polylines(graph, polyline_visitor, IsTerminalDefault());
+}
+
 
 } //end of namespace CGAL
 

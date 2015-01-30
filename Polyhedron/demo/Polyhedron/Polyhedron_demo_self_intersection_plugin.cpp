@@ -1,9 +1,11 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QMainWindow>
+#include "opengl_tools.h"
 #include "Kernel_type.h"
 #include "Polyhedron_type.h"
 #include "Scene_polyhedron_item.h"
+#include "Scene_polyhedron_selection_item.h"
 
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
@@ -12,7 +14,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/box_intersection_d.h>
 
-#include <CGAL/Self_intersection_polyhedron_3.h>
+#include <CGAL/polygon_mesh_self_intersections.h>
 #include <CGAL/Make_triangle_soup.h>
 
 typedef Kernel::Triangle_3 Triangle;
@@ -52,32 +54,24 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
 
     // compute self-intersections
 
-    typedef Polyhedron::Facet_const_handle Facet_const_handle;
-    std::vector<std::pair<Facet_const_handle, Facet_const_handle> > facets;
-    CGAL::self_intersect<Kernel>(*pMesh, back_inserter(facets));
+    typedef Polyhedron::Facet_handle Facet_handle;
+    std::vector<std::pair<Facet_handle, Facet_handle> > facets;
+    CGAL::Polygon_mesh_processing::self_intersections<Kernel>
+      (*pMesh, back_inserter(facets));
 
     std::cout << "ok (" << facets.size() << " triangle pair(s))" << std::endl;
 
     // add intersecting triangles as a new polyhedron, i.e., a triangle soup.
     if(!facets.empty())
     {
-      Polyhedron *pSoup = new Polyhedron;
-
-      std::vector<Facet_const_handle> facets_flat;
-      facets_flat.reserve(2 * facets.size());
-      for(std::size_t i = 0; i < facets.size(); ++i) 
-      { facets_flat.push_back(facets[i].first); 
-        facets_flat.push_back(facets[i].second); 
+      Scene_polyhedron_selection_item* selection_item = new Scene_polyhedron_selection_item(item, mw);
+      for(std::vector<std::pair<Facet_handle, Facet_handle> >::iterator fb = facets.begin();
+        fb != facets.end(); ++fb) {
+        selection_item->selected_facets.insert(fb->first);
+        selection_item->selected_facets.insert(fb->second);
       }
-
-      Make_triangle_soup<Polyhedron,Kernel,std::vector<Facet_const_handle>::iterator> soup_builder;
-      soup_builder.run(facets_flat.begin(), facets_flat.end(),*pSoup);
-
-      Scene_polyhedron_item* new_item = new Scene_polyhedron_item(pSoup);
-      new_item->setName(tr("%1 (intersecting triangles)").arg(item->name()));
-      new_item->setColor(Qt::magenta);
-      new_item->setRenderingMode(item->renderingMode());
-      scene->addItem(new_item);
+      selection_item->setName(tr("%1 (selection) (intersecting triangles)").arg(item->name()));
+      scene->addItem(selection_item);
       item->setRenderingMode(Wireframe);
       scene->itemChanged(item);
     }

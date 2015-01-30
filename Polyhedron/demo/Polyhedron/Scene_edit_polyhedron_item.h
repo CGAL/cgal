@@ -8,7 +8,7 @@
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <iostream>
 #include <fstream>
@@ -658,7 +658,7 @@ protected:
     {
       std::size_t id = vd->id();
       const Polyhedron::Traits::Vector_3& n = 
-        compute_vertex_normal<Polyhedron::Vertex, Polyhedron::Traits>(*vd);
+        CGAL::Polygon_mesh_processing::compute_vertex_normal<Polyhedron::Traits>(*vd);
       normals[id*3] = n.x();
       normals[id*3+1] = n.y(); 
       normals[id*3+2] = n.z(); 
