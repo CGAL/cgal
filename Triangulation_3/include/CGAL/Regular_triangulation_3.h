@@ -274,7 +274,7 @@ namespace CGAL {
         }
 #endif // CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
       
-        int i = 0;
+        size_t i = 0;
         // Insert "num_points_seq" points sequentially
         // (or more if dim < 3 after that)
         size_t num_points_seq = (std::min)(num_points, (size_t)500);
