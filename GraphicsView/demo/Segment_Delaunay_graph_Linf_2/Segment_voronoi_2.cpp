@@ -1,11 +1,4 @@
 //#define CGAL_USE_BOOST_BIMAP
-//#define CGAL_SDG_VERBOSE
-
-#ifndef CGAL_SDG_VERBOSE
-#define CGAL_SDG_DEBUG(a)
-#else
-#define CGAL_SDG_DEBUG(a) { a }
-#endif
 
 #include <fstream>
 #include <vector>

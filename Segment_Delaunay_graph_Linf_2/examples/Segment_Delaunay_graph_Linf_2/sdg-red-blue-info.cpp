@@ -8,15 +8,6 @@
 // purple.
 
 // standard includes
-
-//#define CGAL_SDG_VERBOSE
-
-#ifndef CGAL_SDG_VERBOSE
-#define CGAL_SDG_DEBUG(a)
-#else
-#define CGAL_SDG_DEBUG(a) { a }
-#endif
-
 #include <iostream>
 #include <fstream>
 #include <cassert>

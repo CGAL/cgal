@@ -7,15 +7,6 @@
 // the labels from the different sites they belong to.
 
 // standard includes
-
-//#define CGAL_SDG_VERBOSE
-
-#ifndef CGAL_SDG_VERBOSE
-#define CGAL_SDG_DEBUG(a)
-#else
-#define CGAL_SDG_DEBUG(a) { a }
-#endif
-
 #include <iostream>
 #include <string>
 #include <fstream>

@@ -5,14 +5,6 @@
 #include <fstream>
 #include <cassert>
 
-//#define CGAL_SDG_VERBOSE
-
-#ifndef CGAL_SDG_VERBOSE
-#define CGAL_SDG_DEBUG(a)
-#else
-#define CGAL_SDG_DEBUG(a) { a }
-#endif
-
 // add this to profile
 //#define CGAL_PROFILE 1
 
