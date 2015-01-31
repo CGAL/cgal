@@ -14,7 +14,7 @@
 \cgalPkgDescriptionBegin{2D Range and Neighbor Search,PkgPointSet2Summary}
 \cgalPkgPicture{Point_set_2/fig/point_set.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Matthias B&auml;sken}
+\cgalPkgAuthor{Matthias Bäsken}
 \cgalPkgDesc{This package supports circular, triangular, and isorectangular range search queries as well as (k) nearest neighbor search queries on 2D point sets. In contrast to the spatial searching package, this package uses a  Delaunay triangulation as underlying data structure.}
 \cgalPkgManuals{Chapter_2D_Range_and_Neighbor_Search,PkgPointSet2}
 \cgalPkgSummaryEnd

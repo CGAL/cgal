@@ -8,7 +8,7 @@
 \cgalPkgDescriptionBegin{3D Fast Intersection and Distance Computation,PkgAABB_treeSummary}
 \cgalPkgPicture{aabb-teaser-thumb.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Pierre Alliez, St&eacute;phane Tayeb, Camille Wormser}
+\cgalPkgAuthors{Pierre Alliez, Stéphane Tayeb, Camille Wormser}
 \cgalPkgDesc{The AABB (axis-aligned bounding box) tree component offers a static data structure and algorithms to perform efficient intersection and distance queries on sets of finite 3D geometric objects.}
 \cgalPkgManuals{Chapter_3D_Fast_Intersection_and_Distance_Computation,PkgAABB_tree}
 \cgalPkgSummaryEnd
