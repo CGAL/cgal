@@ -11,8 +11,8 @@ bisectors between two sites, that is explained in the User Manual,
 and this reflects on the constructed graph (and
 its dual diagram).
 These traits should be used in the Gt template parameter with the
-`Segment_Delaunay_graph_2<Gt,DS>` and
-`Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>` classes.
+`CGAL::Segment_Delaunay_graph_Linf_2<Gt,DS>` and
+`CGAL::Segment_Delaunay_graph_Linf_hierarchy_2<Gt,STag,DS>` classes.
 The concept is a refinement of `SegmentDelaunayGraphTraits_2`.
 In particular, it provides a type `Site_2`, which must be a model of
 the concept `SegmentDelaunayGraphSite_2`. It also provides
@@ -41,8 +41,8 @@ with respect to the
 \cgalHasModel `CGAL::Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
 
 \sa `SegmentDelaunayGraphSite_2`
-\sa `CGAL::Segment_Delaunay_graph_2<Gt,DS>`
-\sa `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>`
+\sa `CGAL::Segment_Delaunay_graph_Linf_2<Gt,DS>`
+\sa `CGAL::Segment_Delaunay_graph_Linf_hierarchy_2<Gt,STag,DS>`
 \sa `CGAL::Segment_Delaunay_graph_Linf_traits_2<K,MTag>`
 \sa `CGAL::Segment_Delaunay_graph_Linf_traits_without_intersections_2<K,MTag>`
 \sa `CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
