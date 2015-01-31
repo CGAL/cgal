@@ -24,8 +24,6 @@ the Voronoi diagram of a set of points and segments under the
 \cgalPkgDependsOn{\ref PkgSegmentDelaunayGraph2Summary}
 \cgalPkgBib{cgal:x-x}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{DEMO 1,demo1.zip}
-\cgalPkgDemo{DEMO 2,demo2.zip}
 \cgalPkgShortInfoEnd
 
 \cgal provides algorithms for computing the segment Delaunay
