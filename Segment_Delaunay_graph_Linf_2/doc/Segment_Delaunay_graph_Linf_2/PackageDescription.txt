@@ -1,4 +1,4 @@
-/// \defgroup PkgSDGLinf L\f${\infty}\f$ Segment Delaunay graphs Reference
+/// \defgroup PkgSDGLinf L infinity Segment Delaunay graphs Reference
 /// \defgroup PkgSDGLinfConcepts Concepts
 /// \ingroup PkgSDGLinf
 
