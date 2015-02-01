@@ -4,6 +4,7 @@
 import re
 import codecs
 from sys import argv
+from sys import stderr
 
 ### Constants ###
 
@@ -139,7 +140,13 @@ def protect_upper_case(title):
   return title.replace("dD","{dD}").replace("2D","{2D}").replace("3D","{3D}").replace("CGAL","{CGAL}").replace("Qt","{Qt}").replace("Boost","{Boost}")
 
 def protect_accentuated_letters(authors):
-  return authors.replace(u"é",r"{\'e}").replace(u"ä",r"{\"a}").replace(u"ö",r"{\"o}").replace(u"ñ",r"{\~n}").replace(u"ã",r"{\~a}").replace(u"ë",r"{\"e}").replace("%","")
+  res=authors.replace(u"é",r"{\'e}").replace(u"ä",r"{\"a}").replace(u"ö",r"{\"o}").replace(u"ñ",r"{\~n}").replace(u"ã",r"{\~a}").replace(u"ë",r"{\"e}").replace("%","")
+  try:
+    res.decode('ascii')
+  except UnicodeEncodeError:
+    stderr.write("WARNING: a non ascii character has been found in author string for bibtex (probably a non-handled accentuated letter)."
+                 "Check the new package added and update the function protect_accentuated_letters in Documentation/scripts/generate_how_to_cite.py\n\n")
+  return res
 
 ### Start of the main function ###
 
