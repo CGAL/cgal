@@ -2601,17 +2601,18 @@ Periodic_3_triangulation_3<GT,TDS>::insert_in_conflict(const Point & p,
         it->neighbor(3)->index(it))==it);
   }
 
-  std::vector<Vertex_handle> start_vertices
-      = virtual_vertices_reverse.find(vstart)->second;
-  Cell_handle start;
+//  std::vector<Vertex_handle> start_vertices
+//      = virtual_vertices_reverse.find(vstart)->second;
+//  Cell_handle start;
   virtual_vertices_reverse[vh] = std::vector<Vertex_handle>();
   // insert 26 periodic copies
   for (int i=0; i<_cover[0]; i++) {
     for (int j=0; j<_cover[1]; j++) {
       for (int k=0; k<_cover[2]; k++) {
         if ((i!=0)||(j!=0)||(k!=0)) {
-          start = start_vertices[i*9+j*3+k-1]->cell();
-          c = periodic_locate(p, Offset(i,j,k), lt, li, lj, start);
+//          start = start_vertices[i*9+j*3+k-1]->cell();
+//          c = periodic_locate(p, Offset(i,j,k), lt, li, lj, start);
+          c = periodic_locate(p, Offset(i,j,k), lt, li, lj, Cell_handle());
           periodic_insert(p, Offset(i,j,k), lt, c, tester, hider,vh);
         }
       }
