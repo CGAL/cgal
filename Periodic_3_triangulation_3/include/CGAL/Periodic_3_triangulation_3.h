@@ -1371,7 +1371,11 @@ protected:
   Cell_handle get_cell(const Vertex_handle* vh) const;
   template<class Conflict_tester>
   Offset get_location_offset(const Conflict_tester& tester,
-	  Cell_handle c) const;
+    Cell_handle c) const;
+
+  template<class Conflict_tester>
+  Offset get_location_offset(const Conflict_tester& tester,
+    Cell_handle c, bool& found) const;
 
   Offset get_neighbor_offset(Cell_handle ch, int i, Cell_handle nb) const;
   
@@ -2205,13 +2209,14 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
   CGAL_USE(lt);
 
   // Choose the periodic copy of tester.point() that is inside c.
-  Offset current_off = get_location_offset(tester, c);
+  bool found = false;
+  Offset current_off = get_location_offset(tester, c, found);
 
   CGAL_triangulation_assertion(side_of_cell(tester.point(),
       combine_offsets(o,current_off),c,lt_assert,i_assert,j_assert)
       != ON_UNBOUNDED_SIDE);
   // If the new point is not in conflict with its cell, it is hidden.
-  if (!tester.test_initial_cell(c, current_off)) {
+  if (!found || !tester.test_initial_cell(c, current_off)) {
     hider.hide_point(c,p);
     return Vertex_handle();
   }
@@ -2577,6 +2582,7 @@ Periodic_3_triangulation_3<GT,TDS>::insert_in_conflict(const Point & p,
     CGAL_triangulation_assertion(virtual_vertices_reverse.find(vstart)
         != virtual_vertices_reverse.end());
   }
+
   CGAL_triangulation_assertion( number_of_vertices() != 0 );
   CGAL_triangulation_expensive_assertion(is_valid());
   Vertex_handle vh = periodic_insert(p, Offset(), lt, c, tester, hider);
@@ -3646,12 +3652,45 @@ Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
     for (int i=0; i<8; i++) {
       if (((cumm_off | (~i))&7) == 7) {
 		  if (tester(c,int_to_off(i))) {
-			return int_to_off(i);
+		    return int_to_off(i);
         }
       }
     }
   }
   CGAL_triangulation_assertion(false);
+  return Offset();
+}
+
+template < class GT, class TDS >
+template < class Conflict_tester >
+inline typename Periodic_3_triangulation_3<GT,TDS>::Offset
+Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
+    const Conflict_tester& tester, Cell_handle c, bool& found) const {
+  CGAL_triangulation_precondition( number_of_vertices() != 0 );
+
+  //  CGAL_triangulation_precondition_code(Locate_type lt; int i; int j;);
+  //  CGAL_triangulation_precondition(side_of_cell(q,o,c,lt,i,j)
+  //      != ON_UNBOUNDED_SIDE);
+
+  found = false;
+
+  int cumm_off = c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
+  if (cumm_off == 0) {
+    // default case:
+    found = true;
+    return Offset();
+  } else {
+    // Main idea seems to just test all possibilities.
+    for (int i=0; i<8; i++) {
+      if (((cumm_off | (~i))&7) == 7) {
+      if (tester(c,int_to_off(i))) {
+        found = true;
+        return int_to_off(i);
+        }
+      }
+    }
+  }
+
   return Offset();
 }
 
