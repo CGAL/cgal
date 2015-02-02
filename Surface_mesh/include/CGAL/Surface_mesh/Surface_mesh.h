@@ -101,6 +101,8 @@ public:
     /// Extend the number of elements by one.
     virtual void push_back() = 0;
 
+  //    virtual void add(const Base_property_array& other);
+
     /// Let two elements swap their storage place.
     virtual void swap(size_t i0, size_t i1) = 0;
 
@@ -153,6 +155,11 @@ public: // virtual interface of Base_property_array
     virtual void push_back()
     {
         data_.push_back(value_);
+    }
+
+    void add(const Property_array& other)
+    {
+      std::copy(other.data_.begin(), other.data_.end(), data_.end()-other.data_.size());
     }
 
     virtual void shrink_to_fit()
@@ -488,6 +495,11 @@ public:
       return (*parray_)[i];
     }
 
+    void add (const Property_map& other)
+    {
+      parray_->add(*(other.parray_));
+    }
+
     /// Allows access to the underlying storage of the property. This
     /// is useful when the key associated with the properties is
     /// unimportant and only the properties are of interest
@@ -646,6 +658,7 @@ private:
         {
           return (os << 'h' << (size_type)h );
         }
+
     };
 
     /// This class represents a face
@@ -1363,6 +1376,47 @@ public:
         fprops_.reserve(nfaces);
     }
 
+      void resize(size_type nvertices,
+                 size_type nedges,
+                 size_type nfaces )
+    {
+        vprops_.resize(nvertices);
+        hprops_.resize(2*nedges);
+        eprops_.resize(nedges);
+        fprops_.resize(nfaces);
+    }
+  
+  bool  join(const Surface_mesh& other)
+  {
+    if(other.has_garbage()){
+      std::cerr << "join not implemented  if other has garbage"<< std::endl;
+      return false;
+    }
+    size_type nv = num_vertices(), nh = num_halfedges(), nf = num_faces();
+    resize(num_vertices()+  other.num_vertices(),
+            num_edges()+  other.num_edges(),
+            num_faces()+  other.num_faces());
+    vconn_.add(other.vconn_);
+    hconn_.add(other.hconn_);
+    fconn_.add(other.fconn_);
+    vpoint_.add(other.vpoint_);
+    for(size_type i = nv; i < nv+other.num_vertices(); i++){
+      vconn_[Vertex_index(i)].halfedge_ = Halfedge_index(size_type(vconn_[Vertex_index(i)].halfedge_)+nh);
+    }
+    for(size_type i = nf; i < nf+other.num_faces(); i++){
+      fconn_[Face_index(i)].halfedge_ = Halfedge_index(size_type(fconn_[Face_index(i)].halfedge_)+nh);
+    }
+    for(size_type i = nh; i < nh+other.num_halfedges(); i++){
+      Halfedge_index hi(i);
+      if(hconn_[hi].face_ != null_face()){
+        hconn_[hi].face_ = Face_index(size_type(hconn_[hi].face_)+nf);
+      }
+      hconn_[hi].vertex_ = Vertex_index(size_type(hconn_[hi].vertex_)+nv);
+      hconn_[hi].next_halfedge_ = Halfedge_index(size_type(hconn_[hi].next_halfedge_)+nh);
+      hconn_[hi].prev_halfedge_ = Halfedge_index(size_type(hconn_[hi].prev_halfedge_)+nh);
+    }
+    return true;
+  }
 
     ///@}
 
@@ -2119,6 +2173,17 @@ private: //------------------------------------------------------- private data
    *
    * @{
    */
+
+  /// \relates Surface_mesh
+  /// Inserts `other` into `sm`. Only the incidence information is transfered.
+  /// If `sm` has gar
+  /// \pre There must not be garbage in `other`.
+  template <typename P>
+  Surface_mesh<P>& operator+=(Surface_mesh<P>& sm, const Surface_mesh<P>& other)
+  {
+    sm.join(other);
+    return sm;
+  }
 
   /// \relates Surface_mesh
   /// Inserts the surface mesh in an output stream in Ascii OFF format. 
