@@ -29,6 +29,7 @@
 
 namespace CGAL {
  namespace internal{
+   namespace corefinement{
 
 template <class Polyhedron>
 struct Compare_handle_ptr{
@@ -323,6 +324,6 @@ mark_connected_components_v2(
   return patch_id;
 }
 
-} } //namespace CGAL::internal
+} } } //namespace CGAL::internal::corefinement
 
 #endif //CGAL_INTERNAL_POLYHEDRON_SUBSET_EXTRACTION_H
