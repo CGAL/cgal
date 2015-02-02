@@ -46,6 +46,8 @@ typedef CGAL::Periodic_3_Regular_triangulation_traits_3<Regular_traits> Traits;
 
 template class CGAL::Periodic_3_Regular_triangulation_3<Traits>;
 typedef CGAL::Periodic_3_Regular_triangulation_3<Traits> P3RT3;
+typedef P3RT3::Vertex_handle Vertex_handle;
+typedef P3RT3::Cell_handle Cell_handle;
 
 typedef Traits::Weighted_point Weighted_point;
 typedef Traits::Bare_point Bare_point;
@@ -209,6 +211,86 @@ void test_insert_1 ()
   assert(p3rt3.number_of_stored_vertices() == 27);
 }
 
+void test_insert_point ()
+{
+  std::cout << "--- test_insert_point" << std::endl;
+
+  P3RT3 p3rt3(P3RT3::Iso_cuboid(0,0,0, 1,1,1));
+
+  Vertex_handle vh;
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.01));
+  assert(vh != Vertex_handle());
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.9,0.1,0.1),0.01));
+  assert(vh != Vertex_handle());
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.9,0.1),0.01));
+  assert(vh != Vertex_handle());
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.9),0.01));
+  assert(vh != Vertex_handle());
+  assert(p3rt3.is_valid(true));
+  assert(p3rt3.number_of_vertices() == 4);
+  assert(p3rt3.number_of_stored_vertices() == 108);
+
+  Weighted_point p(Bare_point(0.4, 0.4, 0.4), 0.001);
+  vh = p3rt3.insert(p);
+  assert(vh != Vertex_handle());
+  assert(p3rt3.is_valid(true));
+  assert(p3rt3.number_of_vertices() == 5);
+  assert(p3rt3.number_of_stored_vertices() == 135);
+}
+
+void test_insert_hidden_point ()
+{
+  std::cout << "--- test_insert_hidden_point" << std::endl;
+
+  P3RT3 p3rt3(P3RT3::Iso_cuboid(0,0,0, 1,1,1));
+
+  Vertex_handle vh;
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.01));
+  assert(vh != Vertex_handle());
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.9,0.1,0.1),0.01));
+  assert(vh != Vertex_handle());
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.9,0.1),0.01));
+  assert(vh != Vertex_handle());
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.9),0.01));
+  assert(vh != Vertex_handle());
+  assert(p3rt3.is_valid(true));
+  assert(p3rt3.number_of_vertices() == 4);
+  assert(p3rt3.number_of_stored_vertices() == 108);
+
+  Weighted_point p(Bare_point(0.101, 0.101, 0.101), 0.001);
+  vh = p3rt3.insert(p);
+  assert(vh == Vertex_handle());
+  assert(p3rt3.is_valid(true));
+  assert(p3rt3.number_of_vertices() == 4);
+  assert(p3rt3.number_of_stored_vertices() == 108);
+}
+
+void test_insert_hiding_point ()
+{
+  std::cout << "--- test_insert_hiding_point" << std::endl;
+
+  P3RT3 p3rt3(P3RT3::Iso_cuboid(0,0,0, 1,1,1));
+
+  Vertex_handle vh;
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.9,0.1,0.1),0.01));
+  assert(vh != Vertex_handle());
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.9,0.1),0.01));
+  assert(vh != Vertex_handle());
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.9),0.01));
+  assert(vh != Vertex_handle());
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.101, 0.101, 0.101), 0.001));
+  assert(vh != Vertex_handle());
+  assert(p3rt3.is_valid(true));
+  assert(p3rt3.number_of_vertices() == 4);
+  assert(p3rt3.number_of_stored_vertices() == 108);
+
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.01));
+  assert(vh != Vertex_handle());
+  assert(p3rt3.is_valid(true));
+  assert(p3rt3.number_of_vertices() == 4);
+  assert(p3rt3.number_of_stored_vertices() == 108);
+}
+
 void test_insert_rnd_as_delaunay (unsigned pt_count, double weight)
 {
   std::cout << "--- test_insert_rnd_as_delaunay (" << pt_count << ',' << weight << ')' << std::endl;
@@ -304,26 +386,20 @@ void test_insert_rt3_pointset ()
   assert(p3rt3.is_valid(true));
 }
 
-/*
- * reinsert_vertices qui gere pas les offsets
- * side_of_power_sphere faux
- * get_offsets juste avant side_of_power_sphere qui merde. (valeurs que je ne comprendrais pas)
- *
- * assert dans get_offsets ou plutot combine_offset pour etre sur que ca fonctionne comme je pense. (0 ou 1 + 0 ou 1 ou 2)
- */
 int main (int argc, char** argv)
 {
   std::cout << "TESTING ..." << std::endl;
 
-//  test_construction();
-//  test_insert_1();
-//  test_insert_rt3_pointset();
+  test_construction();
+  test_insert_1();
+  test_insert_point();
+  test_insert_hidden_point();
+  test_insert_hiding_point();
 //    Iso_cuboid unitaire ->  0 <= weight < 0.015625
-//  test_insert_rnd_as_delaunay(200, 0.);
+//  test_insert_rnd_as_delaunay(100, 0.);
 //  test_insert_rnd_as_delaunay(100, 0.01);
 //  test_insert_rnd(100);
-  test_insert_rnd(5000);
-//  test_insert_from_file("out_p3rt3_test");
+//  test_insert_rnd(5000);
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return EXIT_SUCCESS;
