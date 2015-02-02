@@ -24,7 +24,7 @@ In Section \ref secsdglinfdefinitions we give some definitions.
 In Section \ref secsdglinfdesign we explain the design of the
 algorithm and traits.
 
-\cgalFigureBegin{figsvdlinf,svdlinfweak.png,svdlinfstrong.png}
+\cgalFigureBegin{figsvdlinf,svdlinfweak.svg,svdlinfstrong.svg}
 The \f$ L_{\infty} \f$ segment Voronoi diagram for a set of weakly (left) and
 strongly (right) intersecting sites.
 \cgalFigureEnd
@@ -55,7 +55,7 @@ the diagram are also rational, which is not true for the
 For more details on \f$ L_{\infty} \f$ bisectors and the diagram,
 see \cite pl-svdlinf-2001.
 
-\cgalFigureBegin{figbislinf,bislinf.png}
+\cgalFigureBegin{figbislinf,bislinf.svg}
 The \f$ L_{\infty} \f$ bisectors between two points and
 between a segment and a point.
 \cgalFigureEnd
@@ -79,7 +79,7 @@ in \cgalFigureRef{figbispointsbidim}. In this special case,
 we 1-dimensionalize the bisector,
 by taking instead the Euclidean bisector of the two points.
 
-\cgalFigureBegin{figbispointsbidim,bidim1dim.png}
+\cgalFigureBegin{figbispointsbidim,bidim1dim.svg}
 The \f$ L_{\infty} \f$ bisector between two points with the same
 \f$ y \f$ coordinate and its 1-dimensionalization.
 \cgalFigureEnd
@@ -90,7 +90,7 @@ in \cgalFigureRef{figbisspbidim}. We 1-dimensionalize this
 bisector by taking instead the line passing through the endpoint
 that is perpendicular to the segment.
 
-\cgalFigureBegin{figbisspbidim,bidim1dimsp.png}
+\cgalFigureBegin{figbisspbidim,bidim1dimsp.svg}
 The \f$ L_{\infty} \f$ bisector between a vertical segment and
 one of its endpoints and its 1-dimensionalization.
 \cgalFigureEnd
