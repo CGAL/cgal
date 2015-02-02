@@ -1426,7 +1426,6 @@ private:
           neighbors.push_back(nn_it->first);
         }
 
-        CGAL::Random rng;
         for (std::vector<std::size_t>::iterator it = neighbors.begin(); 
              it != neighbors.end() ; 
              ++it)
