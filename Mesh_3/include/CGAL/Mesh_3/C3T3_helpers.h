@@ -1506,16 +1506,6 @@ private:
 
         c->set_facet_surface_center(i, facet_surface_center_[old_i]);
         c->set_facet_surface_center_index(i, surface_center_index_table_[old_i]);
-
-        //we need to update mirror_facet when the i-th neighbor is
-        // an infinite cell
-        Cell_handle c2 = c->neighbor(i);
-        if(c3t3.triangulation().is_infinite(c2))
-        {
-          const int i2 = c2->index(c);
-          c2->set_facet_surface_center(i2, facet_surface_center_[old_i]);
-          c2->set_facet_surface_center_index(i2, surface_center_index_table_[old_i]);
-        }
       }
     }
 
