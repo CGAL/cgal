@@ -1401,19 +1401,31 @@ public:
     fconn_.add(other.fconn_);
     vpoint_.add(other.vpoint_);
     for(size_type i = nv; i < nv+other.num_vertices(); i++){
-      vconn_[Vertex_index(i)].halfedge_ = Halfedge_index(size_type(vconn_[Vertex_index(i)].halfedge_)+nh);
+      Vertex_index vi(i);
+      if(vconn_[vi].halfedge_ != null_halfedge()){
+        vconn_[vi].halfedge_ = Halfedge_index(size_type(vconn_[vi].halfedge_)+nh);
+      }
     }
     for(size_type i = nf; i < nf+other.num_faces(); i++){
-      fconn_[Face_index(i)].halfedge_ = Halfedge_index(size_type(fconn_[Face_index(i)].halfedge_)+nh);
+      Face_index fi(i);
+      if(fconn_[fi].halfedge_ != null_halfedge()){
+        fconn_[fi].halfedge_ = Halfedge_index(size_type(fconn_[fi].halfedge_)+nh);
+      }
     }
     for(size_type i = nh; i < nh+other.num_halfedges(); i++){
       Halfedge_index hi(i);
       if(hconn_[hi].face_ != null_face()){
         hconn_[hi].face_ = Face_index(size_type(hconn_[hi].face_)+nf);
       }
-      hconn_[hi].vertex_ = Vertex_index(size_type(hconn_[hi].vertex_)+nv);
-      hconn_[hi].next_halfedge_ = Halfedge_index(size_type(hconn_[hi].next_halfedge_)+nh);
-      hconn_[hi].prev_halfedge_ = Halfedge_index(size_type(hconn_[hi].prev_halfedge_)+nh);
+      if( hconn_[hi].vertex_ != null_vertex()){
+        hconn_[hi].vertex_ = Vertex_index(size_type(hconn_[hi].vertex_)+nv);
+      }
+      if(hconn_[hi].next_halfedge_ != null_halfedge()){
+        hconn_[hi].next_halfedge_ = Halfedge_index(size_type(hconn_[hi].next_halfedge_)+nh);
+      }
+      if(hconn_[hi].prev_halfedge_ != null_halfedge()){
+        hconn_[hi].prev_halfedge_ = Halfedge_index(size_type(hconn_[hi].prev_halfedge_)+nh);
+      }
     }
     return true;
   }
@@ -2176,8 +2188,8 @@ private: //------------------------------------------------------- private data
 
   /// \relates Surface_mesh
   /// Inserts `other` into `sm`. Only the incidence information is transfered.
-  /// If `sm` has gar
-  /// \pre There must not be garbage in `other`.
+  /// \note Removed elements of `sm` are not reused.
+
   template <typename P>
   Surface_mesh<P>& operator+=(Surface_mesh<P>& sm, const Surface_mesh<P>& other)
   {
