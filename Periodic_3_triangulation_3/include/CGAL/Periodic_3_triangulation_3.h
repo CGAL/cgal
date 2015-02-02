@@ -2204,10 +2204,6 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
   tester.set_offset(o);
   hider.set_offset(o);
 
-  // This only holds for Delaunay
-  CGAL_triangulation_assertion(lt != VERTEX);
-  CGAL_USE(lt);
-
   // Choose the periodic copy of tester.point() that is inside c.
   bool found = false;
   Offset current_off = get_location_offset(tester, c, found);
