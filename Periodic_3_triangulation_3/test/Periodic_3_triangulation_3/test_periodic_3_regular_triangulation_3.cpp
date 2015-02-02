@@ -189,6 +189,8 @@ Weighted_point read_wpoint (std::istream& stream)
 
 void test_construction ()
 {
+  std::cout << "--- test_construction" << std::endl;
+
   P3RT3 p3rt3;
   assert(p3rt3.is_valid(true));
 }
@@ -209,43 +211,41 @@ void test_insert_1 ()
 
 void test_insert_rnd_as_delaunay (unsigned pt_count, double weight)
 {
-  std::cout << "--- test_insert_rnd_as_delaunay " << weight << std::endl;
+  std::cout << "--- test_insert_rnd_as_delaunay (" << pt_count << ',' << weight << ')' << std::endl;
 
   CGAL::Random random(7);
   typedef CGAL::Creator_uniform_3<double,Bare_point>  Creator;
   CGAL::Random_points_in_cube_3<Bare_point, Creator> in_cube(0.5, random);
 
-  P3RT3 p3rt3(P3RT3::Iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5));
-
-  std::ofstream stream("out");
-  assert(stream);
+  P3RT3::Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
+  P3RT3 p3rt3(iso_cuboid);
 
   for (unsigned cnt = 1; cnt <= pt_count; ++cnt)
   {
     Weighted_point p(*in_cube++, weight);
     std::cout << cnt << " : " << p << std::endl;
-    stream << p << std::endl;
+    assert(iso_cuboid.has_on_bounded_side(p));
+    assert(p.weight() < 0.015625);
     p3rt3.insert(p);
-    assert(p3rt3.is_valid());
   }
 
-  stream.close();
-
   assert(p3rt3.is_valid(true));
-
-  std::cout << "MEDIT" << std::endl;
-  std::ofstream medit_stream("medit_rnd_out.mesh");
-  periodic_triangulation_to_medit_file(p3rt3, medit_stream);
+  assert(p3rt3.number_of_vertices() == pt_count);
+  assert(p3rt3.number_of_sheets() == CGAL::make_array(3,3,3) ?
+      p3rt3.number_of_stored_vertices() == 27 * pt_count
+      : p3rt3.number_of_stored_vertices() == pt_count);
 }
 
 void test_insert_rnd (unsigned pt_count)
 {
-  std::cout << "--- test_insert_rnd" << std::endl;
+  std::cout << "--- test_insert_rnd (" << pt_count << ')' << std::endl;
+
   CGAL::Random random(7);
   typedef CGAL::Creator_uniform_3<double,Bare_point>  Creator;
   CGAL::Random_points_in_cube_3<Bare_point, Creator> in_cube(0.5, random);
 
-  P3RT3 p3rt3(P3RT3::Iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5));
+  P3RT3::Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
+  P3RT3 p3rt3(iso_cuboid);
 
   std::ofstream stream("out_p3rt3_test");
   assert(stream);
@@ -254,18 +254,15 @@ void test_insert_rnd (unsigned pt_count)
   {
     Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
     std::cout << cnt << " : " << p << std::endl;
+    assert(p.weight() < 0.015625);
     stream << p << std::endl;
     p3rt3.insert(p);
-    assert(p3rt3.is_valid(cnt >= 64));
+    std::cout << "p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
   }
 
   stream.close();
 
   assert(p3rt3.is_valid(true));
-
-  std::cout << "MEDIT" << std::endl;
-  std::ofstream medit_stream("medit_rnd_out.mesh");
-  periodic_triangulation_to_medit_file(p3rt3, medit_stream);
 }
 
 void test_insert_from_file (const char* filename)
@@ -283,18 +280,13 @@ void test_insert_from_file (const char* filename)
     Weighted_point p = read_wpoint(stream);
     std::cout << cnt << " : " << p << std::endl;
     assert(p.weight() < 0.015625);
+    std::cout << "p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
     p3rt3.insert(p);
-    assert(p3rt3.is_valid(true));
+    std::cout << "p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
     ++cnt;
   }
-  assert(p3rt3.is_valid(true));
 
-  std::cout << "Number of vertices : " << p3rt3.number_of_vertices() << std::endl;
-  std::cout << "MEDIT" << std::endl;
-  std::ofstream medit_stream("medit_out.mesh");
-  periodic_triangulation_to_medit_file(p3rt3, medit_stream);
-  std::ofstream medit_stream_1("medit_out_1.mesh");
-  periodic_triangulation_to_medit_1_file(p3rt3, medit_stream_1);
+  assert(p3rt3.is_valid(true));
 }
 
 void test_insert_rt3_pointset ()
@@ -312,6 +304,13 @@ void test_insert_rt3_pointset ()
   assert(p3rt3.is_valid(true));
 }
 
+/*
+ * reinsert_vertices qui gere pas les offsets
+ * side_of_power_sphere faux
+ * get_offsets juste avant side_of_power_sphere qui merde. (valeurs que je ne comprendrais pas)
+ *
+ * assert dans get_offsets ou plutot combine_offset pour etre sur que ca fonctionne comme je pense. (0 ou 1 + 0 ou 1 ou 2)
+ */
 int main (int argc, char** argv)
 {
   std::cout << "TESTING ..." << std::endl;
@@ -320,9 +319,10 @@ int main (int argc, char** argv)
 //  test_insert_1();
 //  test_insert_rt3_pointset();
 //    Iso_cuboid unitaire ->  0 <= weight < 0.015625
+//  test_insert_rnd_as_delaunay(200, 0.);
 //  test_insert_rnd_as_delaunay(100, 0.01);
-//  test_insert_rnd_as_delaunay(100, 0.);
-  test_insert_rnd(100);
+//  test_insert_rnd(100);
+  test_insert_rnd(5000);
 //  test_insert_from_file("out_p3rt3_test");
 
   std::cout << "EXIT SUCCESS" << std::endl;
