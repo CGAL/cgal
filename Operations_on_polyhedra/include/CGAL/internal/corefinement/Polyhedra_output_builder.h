@@ -1402,16 +1402,16 @@ public:
 #endif //CGAL_COREFINEMENT_POLYHEDRA_DEBUG
 
     /// \todo I need a property map indicating if an edge is an intersection edge
-    init_facet_indices(*P_ptr, P_facet_id_pmap);
-    std::size_t P_nb_cc=
+    internal::corefinement::init_facet_indices(*P_ptr, P_facet_id_pmap);
+    std::size_t P_nb_cc = internal::corefinement::
       mark_connected_components_v2(*P_ptr,
                                    is_not_marked,
                                    P_facet_id_pmap,
                                    P_patch_ids,
                                    P_patch_sizes);
 
-    init_facet_indices(*Q_ptr, Q_facet_id_pmap);
-    std::size_t Q_nb_cc=
+    internal::corefinement::init_facet_indices(*Q_ptr, Q_facet_id_pmap);
+    std::size_t Q_nb_cc = internal::corefinement::
       mark_connected_components_v2(*Q_ptr,
                                    is_not_marked,
                                    Q_facet_id_pmap,

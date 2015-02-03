@@ -98,7 +98,7 @@ int main(int argc,char** argv) {
 
     Is_not_marked criterium;
     std::list<Polyhedron> decomposition;
-    CGAL::internal::extract_connected_components(Q,criterium,std::back_inserter(decomposition));
+    CGAL::internal::corefinement::extract_connected_components(Q,criterium,std::back_inserter(decomposition));
     
     std::cout << "Q is decomposed in " << decomposition.size() << " pieces\n";
     

@@ -908,10 +908,10 @@ public:
       typedef typename UF::handle UF_handle;
       typedef std::map< Facet_const_handle,
                         std::list<Facet_const_handle>,
-                        internal::Compare_handle_ptr<Polyhedron> > Result;
+                        internal::corefinement::Compare_handle_ptr<Polyhedron> > Result;
       typedef std::map< Facet_const_handle,
                         UF_handle,
-                        internal::Compare_handle_ptr<Polyhedron> >
+                        internal::corefinement::Compare_handle_ptr<Polyhedron> >
           Facet_to_handle_map;
 
       UF uf;
@@ -927,8 +927,8 @@ public:
       output_debug << *current_poly;
 #endif
 
-      extract_connected_components(*(static_cast<Polyhedron const *> (current_poly) ),
-                                   criterium,uf,map_f2h,result);
+      internal::corefinement::extract_connected_components(*(static_cast<Polyhedron const *> (current_poly) ),
+                                                           criterium,uf,map_f2h,result);
 
       //add each connected component in the map with 2 volumes per component.
       for (typename Result::iterator it_res=result.begin(); it_res!=result.end();

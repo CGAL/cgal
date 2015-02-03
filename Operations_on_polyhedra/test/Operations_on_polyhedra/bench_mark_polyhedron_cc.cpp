@@ -10,7 +10,7 @@
 
 #include <CGAL/intersection_of_Polyhedra_3.h>
 #include <CGAL/intersection_of_Polyhedra_3_refinement_visitor.h>
-#include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
+#include <CGAL/Polygon_mesh_processing/Connected_components.h>
 
 template <class Refs>
 struct Halfedge_with_mark : public CGAL::HalfedgeDS_halfedge_base<Refs> {
@@ -78,7 +78,7 @@ struct My_facet_marker{
 
 std::size_t nb_cc_v1(Polyhedron& P, Is_not_marked adjacent, My_facet_marker& fm)
 {
-  mark_connected_components(P, adjacent, fm);
+  CGAL::internal::corefinement::mark_connected_components(P, adjacent, fm);
   return fm.pi+1;
 }
 
@@ -89,8 +89,8 @@ std::size_t nb_cc_v2(const Polyhedron& P, Is_not_marked adjacent,
 {
   std::vector<std::size_t> patch_ids;
   std::vector<std::size_t> patch_sizes;
-  CGAL::internal::init_facet_indices(P, facet_ids);
-  return CGAL::internal::mark_connected_components_v2
+  CGAL::internal::corefinement::init_facet_indices(P, facet_ids);
+  return CGAL::internal::corefinement::mark_connected_components_v2
     (P, adjacent, facet_ids, patch_ids, patch_sizes);
 }
 
