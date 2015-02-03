@@ -22,7 +22,7 @@
 #define CGAL_INTERNAL_COREFINEMENT_COMBINATORIAL_MAP_OUTPUT_BUILDER_H
 
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
+#include <CGAL/Polygon_mesh_processing/Connected_components.h>
 #include <CGAL/Point_inside_polyhedron_3.h>
 #include <CGAL/Triangle_accessor_with_ppmap_3.h>
 #include <CGAL/internal/corefinement/predicates.h>
