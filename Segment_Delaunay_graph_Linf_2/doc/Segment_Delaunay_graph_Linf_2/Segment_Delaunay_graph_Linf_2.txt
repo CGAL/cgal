@@ -113,11 +113,11 @@ manual for complexity analysis.
 
 \subsection Segment_Delaunay_graph_Linf_2_Graph Segment Delaunay Graph
 
-The  \f$ L_{\infty} \f$ Segment Delaunay graph template class
+The  \f$ L_{\infty} \f$ Segment Delaunay graph class template
 `Segment_Delaunay_graph_Linf_2<SegmentDelaunayGraphLinfTraits_2,SegmentDelaunayGraphDataStructure_2>`
-is a subclass of template class
+is derived from the class template
 `Segment_Delaunay_graph_2`.
-In the \f$ L_{\infty} \f$ class, a few methods that
+In the \f$ L_{\infty} \f$ class template, a few methods that
 are used when inserting a point in the interior of an existing
 segment are overridden. The details are not of interest to the end
 user, so we do not elaborate further.

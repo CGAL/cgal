@@ -21,7 +21,7 @@ types for the predicates.
 
 In contrast with \f$ L_{2} \f$, the concept also contains drawing
 methods for the edges of the \f$ L_{\infty} \f$ segment Voronoi diagram
-(template classes
+(class templates
 `Construct_sdg_bisector_2`,
 `Construct_sdg_bisector_ray_2`, and
 `Construct_sdg_bisector_segment_2`).
@@ -59,7 +59,7 @@ public:
 /*!
 If this tag type is defined in the concept, then
 the concept should also contain three bisector drawing
-template classes, `Construct_sdg_bisector_2`,
+class templates, `Construct_sdg_bisector_2`,
 `Construct_sdg_bisector_ray_2`, and
 `Construct_sdg_bisector_segment_2`, that will be used when drawing the
 dual of the \f$L_{\infty}\f$ segment Delaunay graph.
@@ -332,12 +332,12 @@ construct_svd_vertex_2_object();
 
 
 
-/// \name Bisector construction template classes
+/// \name Bisector construction class templates
 /// @{
 
 
 /*!
-The templated class drawing the
+The class template drawing the
 \f$L_{\infty}\f$ bisector between two sites.
 
 The class should define a
@@ -350,7 +350,7 @@ class Construct_sdg_bisector_2
 {};
 
 /*!
-The templated class drawing the \f$L_{\infty}\f$
+The class template drawing the \f$L_{\infty}\f$
 edge between two sites, that is bounded by another site and
 the dummy site \f$s_{\infty}\f$ (at infinity).
 
@@ -365,7 +365,7 @@ class Construct_sdg_bisector_ray_2
 {};
 
 /*!
-The templated class drawing the \f$L_{\infty}\f$
+The class template drawing the \f$L_{\infty}\f$
 edge between two sites, that is bounded by two other sites.
 
 The class should define a
