@@ -155,6 +155,15 @@ public:
      Conflict_tester ct(this);
 
      Base::remove(v, remover, ct);
+
+     // Re-insert the points that v was hiding.
+     for (typename Remover::Hidden_points_iterator hi = remover.hidden_points_begin();
+          hi != remover.hidden_points_end();
+          ++hi)
+     {
+         insert(*hi);
+     }
+
      CGAL_triangulation_expensive_assertion(is_valid());
    }
 
@@ -479,22 +488,23 @@ class Periodic_3_Regular_triangulation_3<GT,Tds>::Point_hider
   Self *t;
   mutable std::vector<Vertex_handle> vertices;
   mutable std::vector<Weighted_point> hidden_points;
-  mutable Offset o;
+  mutable bool is_original_cube;
 
 public:
-  Point_hider(Self *tr) : t(tr) {}
+  Point_hider(Self *tr) : t(tr), is_original_cube(true) {}
 
-  void set_offset(const Offset &off) const {
-    o = off;
+  void set_original_cube (bool b) const {
+    is_original_cube = b;
   }
 
   template <class InputIterator>
   inline void set_vertices(InputIterator start, InputIterator end) const
   {
     while (start != end) {
-      std::copy((*start)->hidden_points_begin(),
-          (*start)->hidden_points_end(),
-          std::back_inserter(hidden_points));
+      if (is_original_cube)
+        std::copy((*start)->hidden_points_begin(),
+            (*start)->hidden_points_end(),
+            std::back_inserter(hidden_points));
 
       for (int i=0; i<=3; i++) {
         Vertex_handle v = (*start)->vertex(i);
@@ -516,17 +526,23 @@ public:
     for (typename std::vector<Vertex_handle>::iterator
         vi = vertices.begin(); vi != vertices.end(); ++vi) {
       if ((*vi)->cell() != Cell_handle()) continue;
-      hc = t->periodic_locate((*vi)->point(), o, lt, li, lj, hc);
-      hide_point(hc, (*vi)->point());
+      if (is_original_cube)
+      {
+        hc = t->locate((*vi)->point(), lt, li, lj, hc);
+        hide_point(hc, (*vi)->point());
+      }
       t->delete_vertex(*vi);
     }
     vertices.clear();
-    for (typename std::vector<Weighted_point>::iterator
-        hp = hidden_points.begin(); hp != hidden_points.end(); ++hp) {
-      hc = t->periodic_locate(*hp, o, lt, li, lj, hc);
-      hide_point (hc, *hp);
+    if (is_original_cube)
+    {
+      for (typename std::vector<Weighted_point>::iterator
+          hp = hidden_points.begin(); hp != hidden_points.end(); ++hp) {
+        hc = t->locate(*hp, lt, li, lj, hc);
+        hide_point (hc, *hp);
+      }
+      hidden_points.clear();
     }
-    hidden_points.clear();
   }
 
   inline Vertex_handle replace_vertex(Cell_handle c, int index, const Weighted_point& p)
@@ -607,7 +623,7 @@ struct Periodic_3_Regular_triangulation_3<GT,Tds>::Vertex_remover
   Hidden_points_iterator hidden_points_end() {
     return hidden.end();
   }
-  //private:
+  private:
   // The removal of v may un-hide some points,
   // Space functions output them.
   std::vector<Weighted_point> hidden;

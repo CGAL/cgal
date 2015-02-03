@@ -2202,7 +2202,7 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
       lt_assert, i_assert, j_assert) != ON_UNBOUNDED_SIDE);
 
   tester.set_offset(o);
-  hider.set_offset(o);
+  hider.set_original_cube(vh == Vertex_handle());
 
   // Choose the periodic copy of tester.point() that is inside c.
   bool found = false;
@@ -2863,8 +2863,6 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(Vertex_handle v,
   make_hole(v, outer_map, hole);
 
   CGAL_triangulation_assertion(outer_map.size()==hole.size());
-  CGAL_triangulation_assertion(remover.hidden_points_begin() == 
-      remover.hidden_points_end());
 
   if (!is_1_cover()) {
     delete_too_long_edges(hole.begin(), hole.end());
