@@ -1348,7 +1348,10 @@ private:
       {
         if (c3t3.triangulation().is_infinite(c->vertex(i)))
           continue;
-        vertices_.push_back(c->vertex(i)->meshing_info());
+        //the Id is set with an int by Sliver_perturber,
+        // in initialize_vertices_id
+        int id = static_cast<int>(c->vertex(i)->meshing_info());
+        vertices_.push_back(id);
       }
       sorted_vertices_ = vertices_;//makes a copy of each element
       std::sort(sorted_vertices_.begin(), sorted_vertices_.end());
@@ -1372,9 +1375,9 @@ private:
   private:
     bool infinite_;
     // vertices IDs, not sorted, to keep the ordering of the Cell_handle id's
-    std::vector<std::size_t> vertices_;
+    std::vector<int> vertices_;
     // vertices IDs, sorted, to be found in a std::set<Cell_from_ids>
-    std::vector<std::size_t> sorted_vertices_;
+    std::vector<int> sorted_vertices_;
   };
 
   class Cell_data_backup
