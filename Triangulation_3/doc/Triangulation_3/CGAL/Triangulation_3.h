@@ -544,7 +544,7 @@ Cell_handle & c) const;
 /// @}
 
 /*! \name
-There is a method `has_vertex` in the cell class. The analogous methods for facets are defined here. 
+There is a method `has_vertex()` in the cell class. The analogous methods for facets are defined here. 
 */
 /// @{
 /*!
@@ -784,7 +784,7 @@ Locate_type & lt, int & li) const;
 Two kinds of flips exist for a three-dimensional triangulation. They
 are reciprocal. To be flipped, an edge must be incident to three
 tetrahedra. During the flip, these three tetrahedra disappear and two
-tetrahedra appear. Figure \ref Triangulation3figflips (left) shows the
+tetrahedra appear.  \cgalFigureRef{Triangulation3figflips} (left) shows the
 edge that is flipped as bold dashed, and one of its three incident
 facets is shaded. On the right, the facet shared by the two new
 tetrahedra is shaded. Flips are possible only under the following
@@ -792,9 +792,9 @@ conditions: - the edge or facet to be flipped is not on the boundary
 of the convex hull of the triangulation - the five points involved are
 in convex position. 
 
-\anchor Triangulation3figflips
-\image html flips.png "Flips"
-\image latex flips.png "Flips"
+\cgalFigureBegin{Triangulation3figflips, flips.png}
+Flips
+\cgalFigureEnd
 
 The following methods guarantee the validity of the resulting 3D
 triangulation. Flips for a 2d triangulation are not implemented yet.
@@ -1027,7 +1027,7 @@ The following iterators allow the user to visit cells, facets, edges and vertice
 /// @{
 
 /*!
-Starts at an arbitrary finite vertex. Then `++` and `-` will 
+Starts at an arbitrary finite vertex. Then `++` and `--` will 
 iterate over finite vertices. Returns `finite_vertices_end()` when 
 `t.number_of_vertices() == 0`. 
 */ 
@@ -1039,7 +1039,7 @@ Past-the-end iterator
 Finite_vertices_iterator finite_vertices_end() const; 
 
 /*!
-Starts at an arbitrary finite edge. Then `++` and `-` will 
+Starts at an arbitrary finite edge. Then `++` and `--` will 
 iterate over finite edges. Returns `finite_edges_end()` when 
 `t.dimension() < 1`. 
 */ 
@@ -1051,7 +1051,7 @@ Past-the-end iterator
 Finite_edges_iterator finite_edges_end() const; 
 
 /*!
-Starts at an arbitrary finite facet. Then `++` and `-` will 
+Starts at an arbitrary finite facet. Then `++` and `--` will 
 iterate over finite facets. Returns `finite_facets_end()` when 
 `t.dimension() < 2`. 
 */ 
@@ -1063,7 +1063,7 @@ Past-the-end iterator
 Finite_facets_iterator finite_facets_end() const; 
 
 /*!
-Starts at an arbitrary finite cell. Then `++` and `-` will 
+Starts at an arbitrary finite cell. Then `++` and `--` will 
 iterate over finite cells. Returns `finite_cells_end()` when 
 `t.dimension() < 3`. 
 */ 
@@ -1224,7 +1224,7 @@ Try to lock and copy the `Cell_handle`s of all cells incident to `v` into
 `cells`. 
 Returns `true` in case of success. Otherwise, `cells` is emptied and the function
 returns false. In any case, the locked cells are not unlocked by 
-`try_lock_and_get_incident_cells`, leaving this choice to the user.
+`try_lock_and_get_incident_cells()`, leaving this choice to the user.
 
 \pre `t.dimension() == 3`, `v != Vertex_handle()`, `t.is_vertex(v)`. 
 */

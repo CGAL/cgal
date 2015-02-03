@@ -25,7 +25,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
+#include <CGAL/Polygon_mesh_processing/Connected_components.h>
 #include <CGAL/internal/corefinement/utils.h>
 
 #include <CGAL/property_map.h>

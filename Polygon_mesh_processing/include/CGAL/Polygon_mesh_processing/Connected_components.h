@@ -29,6 +29,7 @@
 
 namespace CGAL {
  namespace internal{
+   namespace corefinement{
 
 template <class Polyhedron>
 struct Compare_handle_ptr{
@@ -132,8 +133,6 @@ void extract_connected_components(
   typedef ::CGAL::Union_find<Facet_handle> UF;
   typedef typename UF::handle UF_handle;
   typedef typename UF::iterator UF_iterator;
-  
-  CGAL_precondition(P.is_pure_triangle());
 
 //init union-find: each facet is in its own set  
   for (Facet_iterator it=P.facets_begin();it!=P.facets_end();++it){
@@ -144,13 +143,18 @@ void extract_connected_components(
     Facet_handle facet=it;
     
     UF_handle current=map_f2h.find(it)->second;
-    Halfedge_handle neighbors[3];
-    neighbors[0]=facet->halfedge()->opposite();
-    neighbors[1]=facet->halfedge()->next()->opposite();
-    neighbors[2]=facet->halfedge()->next()->next()->opposite();
-    
-    for (int i=0;i!=3;++i){
-      if ( neighbors[i]->is_border_edge() ) continue;
+    std::vector<Halfedge_handle> neighbors;
+    Halfedge_handle hedge=facet->halfedge();
+    do
+    {
+      neighbors.push_back( hedge->opposite() );
+      hedge=hedge->next();
+    }
+    while(hedge!=facet->halfedge());
+
+    std::size_t nb_edges=neighbors.size();
+    for (std::size_t i=0;i<nb_edges;++i){
+      if ( neighbors[i]->is_border() ) continue;
       UF_handle neigh=map_f2h.find(neighbors[i]->facet())->second;
       if ( adjacent(neighbors[i]) && !uf.same_set(current,neigh) ){
         uf.unify_sets(current,neigh);
@@ -320,6 +324,6 @@ mark_connected_components_v2(
   return patch_id;
 }
 
-} } //namespace CGAL::internal
+} } } //namespace CGAL::internal::corefinement
 
 #endif //CGAL_INTERNAL_POLYHEDRON_SUBSET_EXTRACTION_H
