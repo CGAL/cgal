@@ -147,7 +147,7 @@ public:
   {
     os.precision(17);
     for(size_t i = 0, end = edges.size(); i < end; ++i){
-      os << edges[i].source() << " " <<  edges[i].target() << "\n";
+      os << "2 " << edges[i].source() << " " <<  edges[i].target() << "\n";
     }
     return true;
   }
