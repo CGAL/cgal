@@ -180,15 +180,15 @@ public:
       assert(funcs.size() == mask.size());
       boost::dynamic_bitset<>& bmask = bmasks[mask_index++];
 
-      std::size_t bit_index = 0;
+      typename boost::dynamic_bitset<>::size_type bit_index = 0;
       for (std::vector<Sign>::const_iterator iter = mask.begin(), endIter = mask.end(); iter != endIter; ++iter)
       {
         std::string::value_type character = *iter;
         assert(character == POSITIVE || character == NEGATIVE);
 
-        bmask[bit_index] = character == POSITIVE;
+        bmask[bit_index] = (character == POSITIVE);
         ++bit_index;
-        bmask[bit_index] = character == NEGATIVE;
+        bmask[bit_index] = (character == NEGATIVE);
         ++bit_index;
       }
     }
@@ -235,15 +235,15 @@ public:
       assert(funcs.size() == mask_str.length());
       boost::dynamic_bitset<>& bmask = bmasks[mask_index++];
 
-      std::size_t bit_index = 0;
+      typename boost::dynamic_bitset<>::size_type bit_index = 0;
       for (std::string::const_iterator iter = mask_str.begin(), endIter = mask_str.end(); iter != endIter; ++iter)
       {
         std::string::value_type character = *iter;
         assert(character == '+' || character == '-');
 
-        bmask[bit_index] = character == '+';
+        bmask[bit_index] = (character == '+');
         ++bit_index;
-        bmask[bit_index] = character == '-';
+        bmask[bit_index] = (character == '-');
         ++bit_index;
       }
     }
