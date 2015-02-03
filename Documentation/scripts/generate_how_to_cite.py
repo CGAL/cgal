@@ -46,7 +46,7 @@ software.
 If you want to cite the %CGAL Library or project as a whole, please
 
 - cite: %CGAL, Computational Geometry Algorithms Library, http://www.cgal.org 
-- use the following <a href="how_to_cite_cgal.bib">bibtex entry</a>.
+- use the first bibtex entry from the file <a href="how_to_cite_cgal.bib">how_to_cite_cgal.bib</a>.
 
 ## Citing the User and Reference Manual ##
 
