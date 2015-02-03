@@ -194,7 +194,7 @@ void test_construction ()
   std::cout << "--- test_construction" << std::endl;
 
   P3RT3 p3rt3;
-  assert(p3rt3.is_valid(true));
+  assert(p3rt3.is_valid());
 }
 
 void test_insert_1 ()
@@ -206,7 +206,7 @@ void test_insert_1 ()
   Weighted_point p(Bare_point(0,0,0), 0.1);
   p3rt3.insert(p);
 
-  assert(p3rt3.is_valid(true));
+  assert(p3rt3.is_valid());
   assert(p3rt3.number_of_vertices() == 1);
   assert(p3rt3.number_of_stored_vertices() == 27);
 }
@@ -226,14 +226,14 @@ void test_insert_point ()
   assert(vh != Vertex_handle());
   vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.9),0.01));
   assert(vh != Vertex_handle());
-  assert(p3rt3.is_valid(true));
+  assert(p3rt3.is_valid());
   assert(p3rt3.number_of_vertices() == 4);
   assert(p3rt3.number_of_stored_vertices() == 108);
 
   Weighted_point p(Bare_point(0.4, 0.4, 0.4), 0.001);
   vh = p3rt3.insert(p);
   assert(vh != Vertex_handle());
-  assert(p3rt3.is_valid(true));
+  assert(p3rt3.is_valid());
   assert(p3rt3.number_of_vertices() == 5);
   assert(p3rt3.number_of_stored_vertices() == 135);
 }
@@ -253,14 +253,14 @@ void test_insert_hidden_point ()
   assert(vh != Vertex_handle());
   vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.9),0.01));
   assert(vh != Vertex_handle());
-  assert(p3rt3.is_valid(true));
+  assert(p3rt3.is_valid());
   assert(p3rt3.number_of_vertices() == 4);
   assert(p3rt3.number_of_stored_vertices() == 108);
 
   Weighted_point p(Bare_point(0.101, 0.101, 0.101), 0.001);
   vh = p3rt3.insert(p);
   assert(vh == Vertex_handle());
-  assert(p3rt3.is_valid(true));
+  assert(p3rt3.is_valid());
   assert(p3rt3.number_of_vertices() == 4);
   assert(p3rt3.number_of_stored_vertices() == 108);
 }
@@ -280,15 +280,54 @@ void test_insert_hiding_point ()
   assert(vh != Vertex_handle());
   vh = p3rt3.insert(Weighted_point(Bare_point(0.101, 0.101, 0.101), 0.001));
   assert(vh != Vertex_handle());
-  assert(p3rt3.is_valid(true));
+  assert(p3rt3.is_valid());
   assert(p3rt3.number_of_vertices() == 4);
   assert(p3rt3.number_of_stored_vertices() == 108);
 
   vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.01));
   assert(vh != Vertex_handle());
-  assert(p3rt3.is_valid(true));
+  assert(p3rt3.is_valid());
   assert(p3rt3.number_of_vertices() == 4);
   assert(p3rt3.number_of_stored_vertices() == 108);
+}
+
+void test_insert_a_point_twice ()
+{
+  std::cout << "--- test_insert_a_point_twice" << std::endl;
+
+  P3RT3 p3rt3(P3RT3::Iso_cuboid(0,0,0, 1,1,1));
+
+  Vertex_handle vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.01));
+  assert(vh != Vertex_handle());
+  assert(p3rt3.is_valid());
+  assert(p3rt3.number_of_vertices() == 1);
+  assert(p3rt3.number_of_stored_vertices() == 27);
+
+  Vertex_handle vh2 = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.01));
+  assert(vh2 == vh);
+  assert(p3rt3.is_valid());
+  assert(p3rt3.number_of_vertices() == 1);
+  assert(p3rt3.number_of_stored_vertices() == 27);
+}
+
+void test_insert_two_points_with_the_same_position ()
+{
+  std::cout << "--- test_insert_two_points_with_the_same_position" << std::endl;
+
+  P3RT3 p3rt3(P3RT3::Iso_cuboid(0,0,0, 1,1,1));
+
+  Vertex_handle vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.01));
+  assert(vh != Vertex_handle());
+  assert(p3rt3.is_valid());
+  assert(p3rt3.number_of_vertices() == 1);
+  assert(p3rt3.number_of_stored_vertices() == 27);
+
+  Vertex_handle vh2 = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.02));
+  assert(vh2 != Vertex_handle());
+  assert(vh2 != vh);
+  assert(p3rt3.is_valid());
+  assert(p3rt3.number_of_vertices() == 1);
+  assert(p3rt3.number_of_stored_vertices() == 27);
 }
 
 void test_insert_rnd_as_delaunay (unsigned pt_count, double weight)
@@ -311,7 +350,7 @@ void test_insert_rnd_as_delaunay (unsigned pt_count, double weight)
     p3rt3.insert(p);
   }
 
-  assert(p3rt3.is_valid(true));
+  assert(p3rt3.is_valid());
   assert(p3rt3.number_of_vertices() == pt_count);
   assert(p3rt3.number_of_sheets() == CGAL::make_array(3,3,3) ?
       p3rt3.number_of_stored_vertices() == 27 * pt_count
@@ -344,7 +383,7 @@ void test_insert_rnd (unsigned pt_count)
 
   stream.close();
 
-  assert(p3rt3.is_valid(true));
+  assert(p3rt3.is_valid());
 }
 
 void test_insert_from_file (const char* filename)
@@ -368,7 +407,7 @@ void test_insert_from_file (const char* filename)
     ++cnt;
   }
 
-  assert(p3rt3.is_valid(true));
+  assert(p3rt3.is_valid());
 }
 
 void test_insert_rt3_pointset ()
@@ -383,7 +422,7 @@ void test_insert_rt3_pointset ()
         std::cout << p << std::endl;
         p3rt3.insert(p);
       }
-  assert(p3rt3.is_valid(true));
+  assert(p3rt3.is_valid());
 }
 
 int main (int argc, char** argv)
@@ -395,6 +434,8 @@ int main (int argc, char** argv)
   test_insert_point();
   test_insert_hidden_point();
   test_insert_hiding_point();
+  test_insert_a_point_twice();
+  test_insert_two_points_with_the_same_position();
 //    Iso_cuboid unitaire ->  0 <= weight < 0.015625
 //  test_insert_rnd_as_delaunay(100, 0.);
 //  test_insert_rnd_as_delaunay(100, 0.01);
