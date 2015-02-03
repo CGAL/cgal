@@ -155,14 +155,16 @@ if(DOXYGEN_FOUND)
   endif()
 
   ## generate how_to_cite files
-  execute_process(COMMAND ${PYTHON_EXECUTABLE}
-                          ${CMAKE_CURRENT_SOURCE_DIR}/scripts/generate_how_to_cite.py
-                          ${CMAKE_CURRENT_SOURCE_DIR}
-                          ${CMAKE_BINARY_DIR})
+  if(PYTHONINTERP_FOUND)
+    execute_process(COMMAND ${PYTHON_EXECUTABLE}
+                            ${CMAKE_CURRENT_SOURCE_DIR}/scripts/generate_how_to_cite.py
+                            ${CMAKE_CURRENT_SOURCE_DIR}
+                            ${CMAKE_BINARY_DIR})
 
-  configure_file(${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib.in ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib)
-  configure_file(${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt.in ${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt)
-  configure_file(${CMAKE_BINARY_DIR}/how_to_cite.html.in ${CMAKE_BINARY_DIR}/how_to_cite.html)
+    configure_file(${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib.in ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib)
+    configure_file(${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt.in ${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt)
+    configure_file(${CMAKE_BINARY_DIR}/how_to_cite.html.in ${CMAKE_BINARY_DIR}/how_to_cite.html)
+  endif()
   ##
 
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BaseDoxyfile.in ${CGAL_DOC_DXY_DIR}/BaseDoxyfile)
@@ -220,19 +222,18 @@ if(DOXYGEN_FOUND)
       )
       add_dependencies(Documentation_test doc)
 
-      if (BIBTEX2HTML_EXECUTABLE AND SH_EXECUTABLE)
-        add_custom_target(Documentation_test_publish
-          ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results
-        )
-        add_dependencies(Documentation_test_publish doc)
+      add_custom_target(Documentation_test_publish
+        ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results
+      )
+      add_dependencies(Documentation_test_publish doc)
 
-        set(CGAL_DOC_VERSION_H "/tmp/version.h" CACHE PATH "Path to CGAL/version.h")
+      set(CGAL_DOC_VERSION_H "/tmp/version.h" CACHE PATH "Path to CGAL/version.h")
 
-        add_custom_target(doc_and_publish_testsuite
-          ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results --cgal-version ${CGAL_DOC_VERSION_H} --version-to-keep 10
-        )
-        add_dependencies(doc_and_publish_testsuite doc_with_postprocessing)
-      endif()
+      add_custom_target(doc_and_publish_testsuite
+        ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results --cgal-version ${CGAL_DOC_VERSION_H} --version-to-keep 10
+      )
+      add_dependencies(doc_and_publish_testsuite doc_with_postprocessing)
+
     endif()
   endif()
   
