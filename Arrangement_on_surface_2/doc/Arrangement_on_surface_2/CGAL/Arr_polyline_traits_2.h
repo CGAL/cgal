@@ -31,14 +31,22 @@ namespace CGAL {
    * of the concepts
    *   - `ArrangementTraits_2`,
    *   - `ArrangementDirectionalXMonotoneTraits_2`,
-   *   - `ArrangementApproximateTraits_2`, and
    *   - `ArrangementConstructXMonotoneCurveTraits_2`.
    *
-   * If no type is provided, then `Arr_segment_traits_2`
-   * (instantiated with `Exact_predicates_exact_constructions_kernel` as the
-   * kernel) is used. Currently, `Arr_segment_traits_2<Kernel>`,
-   * `Arr_non_caching_segment_traits_2<Kernel>`, or
-   * `Arr_linear_traits_2<Kernel>` can be used.
+   * If, in addition, the GeometryTraits_2 models the concept
+   * `ArrangementApproximateTraits_2` then `Arr_polycurve_traits_2` models
+   * this concept as well. The same holds for the concept
+   * `ArrangementOpenBoundaryTraits_2`. If no type is provided, then
+   * `Arr_segment_traits_2` (instantiated with
+   * `Exact_predicates_exact_constructions_kernel` as the kernel) is used.
+   * Otherwise,
+   * `Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>`,
+   * `Arr_circle_segment_traits_2<Kernel>`,
+   * `Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>`
+   * `Arr_linear_traits_2<Kernel>`
+   * `Arr_non_caching_segment_traits_2<Kernel>`,
+   * `Arr_segment_traits_2<Kernel>`,
+   * or any other model of the concepts above can be used.
    *
    * The number type used by the injected segment traits should support
    * exact rational arithmetic (that is, the number type should support
@@ -76,9 +84,12 @@ namespace CGAL {
    * \cgalModels `ArrangementApproximateTraits_2` (if the type that substitutes
    *   the template parameter `SegmentTraits_2` models the concept as well)
    *
-   * \sa `Arr_segment_traits_2<Kernel>`
-   * \sa `Arr_non_caching_segment_traits_2<Kernel>`
+   * \sa `Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>`
+   * \sa `Arr_circle_segment_traits_2<Kernel>`
+   * \sa `Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>`
    * \sa `Arr_linear_traits_2<Kernel>`
+   * \sa `Arr_non_caching_segment_traits_2<Kernel>`
+   * \sa `Arr_segment_traits_2<Kernel>`
    * \sa `CGAL_ALWAYS_LEFT_TO_RIGHT`
    */
 

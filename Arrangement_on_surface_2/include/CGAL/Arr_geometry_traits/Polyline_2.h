@@ -364,20 +364,22 @@ namespace CGAL {
         return (const_reverse_iterator(begin()));
       }
 
+      typedef typename Segments_container::iterator
+                                                Segment_iterator;
       typedef typename Segments_container::const_iterator
-      Segment_const_iterator;
+                                                Segment_const_iterator;
       typedef typename std::reverse_iterator<Segment_const_iterator>
-      Segment_const_reverse_iterator;
+                                                Segment_const_reverse_iterator;
 
-      /*! Get an iterator for the polyline's segments. */
+      /*! Get an iterator for the polyline segments. */
       Segment_const_iterator begin_segments() const
       { return m_segments.begin(); }
 
-      /*! Get a past-the-end iterator for the polyline's segments. */
+      /*! Get a past-the-end iterator for the polyline segments. */
       Segment_const_iterator end_segments() const
       { return m_segments.end(); }
 
-      /*! Get a reverse iterator for the polyline's segments. */
+      /*! Get a reverse iterator for the polyline segments. */
       Segment_const_reverse_iterator rbegin_segments() const
       { return (Segment_const_reverse_iterator(end_segments())); }
 
@@ -393,9 +395,7 @@ namespace CGAL {
        * \return The number of points.
        */
       CGAL_DEPRECATED std::size_t points() const
-      {
-        return (number_of_segments() == 0) ? 0 : number_of_segments() + 1;
-      }
+      { return (number_of_segments() == 0) ? 0 : number_of_segments() + 1; }
 
       /*! Deprecated! Replaced by number_of_segments()
        * Get the number of segments that comprise the poyline.
@@ -423,10 +423,7 @@ namespace CGAL {
       }
 
       /*! Clear the polyline. */
-      inline void clear()
-      {
-        m_segments.clear();
-      }
+      inline void clear() { m_segments.clear(); }
     };
 
     /*! \class

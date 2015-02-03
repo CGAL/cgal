@@ -238,7 +238,10 @@ public:
 
   public:
     /*! Constructor. */
-    Push_front_2(const Polyline_traits_2& traits) : m_poly_traits(traits), Base::Push_front_2(traits) {}
+    Push_front_2(const Polyline_traits_2& traits) :
+      m_poly_traits(traits),
+      Base::Push_front_2(traits)
+    {}
 
     using Base::Push_front_2::operator();
 
@@ -441,7 +444,25 @@ public:
      * \return A segment connecting p and q.
      */
     X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q) const
-    { return Base::Construct_x_monotone_curve_2::operator()(p, q); }
+    {
+      CGAL_precondition_code
+        (typename Segment_traits_2::Equal_2 equal =
+         this->m_poly_traits.segment_traits_2()->equal_2_object(););
+      CGAL_precondition_msg
+        (!equal(p,q),
+         "Cannot construct a degenerated segment as a polyline");
+      X_monotone_segment_2 seg =  this->m_poly_traits.segment_traits_2()->
+        construct_x_monotone_curve_2_object()(p, q);
+
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+      if (this->m_poly_traits.segment_traits_2()->compare_xy_2_object()(p,q) ==
+          LARGER)
+        seg = m_poly_traits.geometry_traits_2()->
+          construct_opposite_2_object()(seg);
+#endif
+
+      return X_monotone_curve_2(seg);
+    }
 
     /*! Obtain an x-monotone polyline that consists of one given segment.
      * \param seg input segment.

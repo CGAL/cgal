@@ -1024,11 +1024,12 @@ public:
       const Geometry_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
       typename Geometry_traits_2::Construct_opposite_2 const_op =
         geom_traits->construct_opposite_2_object();
-      std::vector<X_monotone_segment_2> rev_segs;
-      typename X_monotone_curve_2::Segment_const_iterator it;
-      for (it = xcv.begin_segments(); it != xcv.end_segments(); ++it)
-        rev_segs.push_back(const_op(*it));
-      return X_monotone_curve_2(rev_segs.rbegin(),rev_segs.rend());
+      std::vector<X_monotone_segment_2> rev_segs(xcv.number_of_segments());;
+      typename X_monotone_curve_2::Segment_const_iterator sit;
+      typename X_monotone_curve_2::Segment_iterator tit = rev_segs.begin();
+      for (sit = xcv.begin_segments(); sit != xcv.end_segments(); ++sit)
+        *tit++ = const_op(*sit);
+      return X_monotone_curve_2(rev_segs.rbegin(), rev_segs.rend());
     }
   };
 
@@ -1063,7 +1064,8 @@ public:
      */
   private:
     template <typename OutputIterator>
-    OutputIterator operator_impl(const Curve_2& cv, OutputIterator oi, Arr_all_sides_oblivious_tag) const
+    OutputIterator operator_impl(const Curve_2& cv, OutputIterator oi,
+                                 Arr_all_sides_oblivious_tag) const
     {
        typedef typename Curve_2::Segment_const_iterator const_seg_iterator;
 
@@ -1339,7 +1341,7 @@ public:
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
           if (cmp_seg_endpts(x_seg) == LARGER) {
             x_seg = ctr_seg_opposite(x_seg);
-              push_front(x_polyline, x_seg);
+            push_front(x_polyline, x_seg);
           }
           else
             push_back(x_polyline, x_seg);
@@ -2334,8 +2336,8 @@ public:
   template <typename T, typename _ = void>
   struct has_approximate_2 {
     // Generic implementation
-    typedef void                      Approximate_number_type;
-    typedef void                      Approximate_2;
+    typedef void                        Approximate_number_type;
+    typedef void                        Approximate_2;
   };
 
   template <typename T>
@@ -2343,14 +2345,14 @@ public:
   {
     // Specialization for types holding a nested type T::Approximate_2
     typedef typename T::Approximate_number_type
-    Approximate_number_type;
-    typedef typename T::Approximate_2  Approximate_2;
+                                        Approximate_number_type;
+    typedef typename T::Approximate_2   Approximate_2;
   };
 
   typedef typename has_approximate_2<Geometry_traits_2>::Approximate_number_type
-  Approximate_number_type;
+                                        Approximate_number_type;
   typedef typename has_approximate_2<Geometry_traits_2>::Approximate_2
-  Approximate_2;
+                                        Approximate_2;
 
   /*! Obtain an Approximate_2 functor object. */
   Approximate_2 approximate_2_object_impl(boost::false_type) const
@@ -2445,33 +2447,8 @@ public:
   public:
     /*! Constructor. */
     Construct_x_monotone_curve_2(const Polycurve_traits_2& traits) :
-      m_poly_traits(traits) {}
-
-    /*! Obtain an x-monotone polyline connecting the two given endpoints.
-     * \param p The first point.
-     * \param q The second point.
-     * \pre p and q must not be the same.
-     * \return A segment connecting p and q.
-     */
-    X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q) const
-    {
-      CGAL_precondition_code
-        (typename Geometry_traits_2::Equal_2 equal =
-         m_poly_traits.geometry_traits_2()->equal_2_object(););
-      CGAL_precondition_msg
-        (!equal(p,q),
-         "Cannot construct a degenerated segment as a polyline");
-      X_monotone_segment_2 seg(p, q);
-
-#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-      if (m_poly_traits.geometry_traits_2()->compare_xy_2_object()(p,q) ==
-          LARGER)
-        seg = m_poly_traits.geometry_traits_2()->
-          construct_opposite_2_object()(seg);
-#endif
-
-      return X_monotone_curve_2(seg);
-    }
+      m_poly_traits(traits)
+    {}
 
     /*! Obtain an x-monotone polyline that consists of one given segment.
      * \param seg input segment.
