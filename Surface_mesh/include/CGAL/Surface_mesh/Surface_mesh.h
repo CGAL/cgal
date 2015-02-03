@@ -2264,8 +2264,12 @@ private: //------------------------------------------------------- private data
    */
 
   /// \relates Surface_mesh
-  /// Inserts `other` into `sm`. Only the incidence information is transfered.
-  /// \note Removed elements of `sm` are not reused.
+  /// Inserts `other` into `sm`. 
+  /// Shifts the indices of vertices of `other` by `sm.number_of_vertices() + sm.number_of_removed_vertices()`
+  /// and analoguously for halfedges, edges, and faces.
+  /// Copies entries of all property maps which have the same name in `sm` and `other`. 
+  /// that is, property maps which are only in `other` are ignored.
+  /// Also copies elements which are marked as removed, and concatenates the freelists of sm and other. 
 
   template <typename P>
   Surface_mesh<P>& operator+=(Surface_mesh<P>& sm, const Surface_mesh<P>& other)
