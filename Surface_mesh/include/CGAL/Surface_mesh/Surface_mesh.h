@@ -2269,7 +2269,7 @@ private: //------------------------------------------------------- private data
   /// and analoguously for halfedges, edges, and faces.
   /// Copies entries of all property maps which have the same name in `sm` and `other`. 
   /// that is, property maps which are only in `other` are ignored.
-  /// Also copies elements which are marked as removed, and concatenates the freelists of sm and other. 
+  /// Also copies elements which are marked as removed, and concatenates the freelists of `sm` and `other`. 
 
   template <typename P>
   Surface_mesh<P>& operator+=(Surface_mesh<P>& sm, const Surface_mesh<P>& other)
