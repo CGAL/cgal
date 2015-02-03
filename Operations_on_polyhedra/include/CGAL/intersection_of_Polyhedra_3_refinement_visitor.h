@@ -30,7 +30,7 @@
 
 #include <CGAL/internal/corefinement/Combinatorial_map_for_corefinement.h> 
 
-#include <CGAL/Point_inside_polygon_mesh_3.h>
+#include <CGAL/Point_inside_polygon_mesh.h>
 #include <CGAL/property_map.h>
 #include <boost/optional.hpp>
 #include <boost/next_prior.hpp>

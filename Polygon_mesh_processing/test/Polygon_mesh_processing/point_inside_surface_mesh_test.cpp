@@ -4,7 +4,7 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/boost/graph/helpers.h>
 
-#include <CGAL/Point_inside_polygon_mesh_3.h>
+#include <CGAL/Point_inside_polygon_mesh.h>
 
 #include "point_inside_helpers.h"
 
