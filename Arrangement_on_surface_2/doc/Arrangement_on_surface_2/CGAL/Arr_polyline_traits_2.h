@@ -26,20 +26,19 @@ namespace CGAL {
    * template-parameter to handle the segments that compose the
    * polyline curves.
    *
-   * The type substituting the template parameter `SegmentTraits` when
+   * The type substituting the template parameter `SegmentTraits_2` when
    * the template Arr_polyline_traits_2 is instantiated must be a model
    * of the concepts
-   *   - `ArrangementTraits_2` and
-   *   - `ArrangementDirectionalXMonotoneTraits_2`.
+   *   - `ArrangementTraits_2`,
+   *   - `ArrangementDirectionalXMonotoneTraits_2`,
+   *   - `ArrangementApproximateTraits_2`, and
+   *   - `ArrangementConstructXMonotoneCurveTraits_2`.
    *
-   * If, in addition, the segment traits models the concept
-   * `ArrangementConstructXMonotoneCurveTraits_2` and
-   * `ArrangementApproximateTraits_2` then `Arr_polyline_traits_2` models this
-   * concept as well. If no type is provided, then `Arr_segment_traits_2`
+   * If no type is provided, then `Arr_segment_traits_2`
    * (instantiated with `Exact_predicates_exact_constructions_kernel` as the
-   * kernel) is used. Otherwise, `Arr_segment_traits_2<Kernel>` or
-   * `Arr_non_caching_segment_traits_2<Kernel>` can be used, where the first
-   * alternative is recommended.
+   * kernel) is used. Currently, `Arr_segment_traits_2<Kernel>`,
+   * `Arr_non_caching_segment_traits_2<Kernel>`, or
+   * `Arr_linear_traits_2<Kernel>` can be used.
    *
    * The number type used by the injected segment traits should support
    * exact rational arithmetic (that is, the number type should support

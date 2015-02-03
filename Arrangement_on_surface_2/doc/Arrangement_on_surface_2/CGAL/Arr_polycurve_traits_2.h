@@ -15,21 +15,20 @@ namespace CGAL {
    *       Circular_arc, Bezier_curves or Linear_curves. A portion or a part
    *       of any of the above mentioned geometric traits is called a segment.
    *
-   * The traits class `Arr_polycurve_traits_2` handles piecewise linear/nonlinear
-   * segments, commonly referred to as a polycurve. A polycurve is a
-   * chain of segments, where each two neighboring segments in the
-   * chain share a common endpoint; that is, the polycurve is
-   * continuous. Furthermore, the target of the \f$i\f$th segement of
-   * a polycurve has to coincide with the source of the \f$i+1\f$st
-   * segment; that is, the polycurve has to be \a well-oriented. Note
-   * that it is possible to construct general polycurves that are
-   * neither continuous nor well-oriented, as it is impossible to
-   * enforce this precondition (using the set of predicates required by
-   * the relevant concepts, see below). However, such polycurves cannot
-   * be used for the actual computation of arrangements. The traits
-   * class template exploits the functionality of the `GeometryTraits_2`
-   * template-parameter to handle the segments that compose the
-   * polycurve segments.
+   * The traits class `Arr_polycurve_traits_2` handles piecewise curves that are
+   * not necessarily linear, such as conic arcs, circular arcs, Bezier curves,
+   * or line segments. We call such a compound curve a polycurve.  A polycurve
+   * is a chain of subcurves, where each two neighboring subcurves in the chain
+   * share a common endpoint; that is, the polycurve is continuous. Furthermore,
+   * the target of the \f$i\f$th segement of a polycurve has to coincide with
+   * the source of the \f$i+1\f$st segment; that is, the polycurve has to be \a
+   * well-oriented. Note that it is possible to construct general polycurves
+   * that are neither continuous nor well-oriented, as it is impossible to
+   * enforce this precondition (using the set of predicates required by the
+   * relevant concepts, see below). However, such polycurves cannot be used for
+   * the actual computation of arrangements. The traits class template exploits
+   * the functionality of the `GeometryTraits_2` template-parameter to handle
+   * the subcurves that compose the polycurve.
    *
    * The type substituting the template parameter `GeometryTraits_2` when
    * the template Arr_polycurve_traits_2 is instantiated must be a model

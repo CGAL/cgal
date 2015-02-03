@@ -12,7 +12,7 @@ is substituted with a model of this concept.
 
 \cgalRefines `ArrangementBasicTraits_2`,
              `ArrangementApproximateTraits_2`, and
-             `ArrangementConstructXMonotoneCurve_2`
+             `ArrangementConstructXMonotoneCurveTraits_2`
 
 \cgalHasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>`
 \cond \cgalHasModel `CGAL::Arr_geodesic_arc_on_sphere_traits_2` \endcond
