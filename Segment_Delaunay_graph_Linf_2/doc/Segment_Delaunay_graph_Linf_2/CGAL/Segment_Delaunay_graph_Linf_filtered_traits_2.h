@@ -38,10 +38,7 @@ The class is derived from class
 
 \cgalModels `SegmentDelaunayGraphLinfTraits_2`
 
-\sa `SegmentDelaunayGraphLinfTraits_2`
 \sa `CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
-\sa `CGAL::Euclidean_ring_tag`
-\sa `CGAL::Field_with_sqrt_tag`
 \sa `CGAL::Segment_Delaunay_graph_2<Gt,DS>`
 \sa `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>`
 \sa `CGAL::Segment_Delaunay_graph_Linf_traits_2<K,MTag>`
