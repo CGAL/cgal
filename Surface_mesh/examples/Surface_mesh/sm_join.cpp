@@ -31,6 +31,10 @@ int main(int /* argc */, char* argv[])
   BOOST_FOREACH(std::string name , prop_names){
     std::cout << name <<std::endl;
   }
+  BOOST_FOREACH(vertex_descriptor vd , vertices(sm1)){
+    std::cout << vd << " " <<  name1[vd] <<std::endl;
+  }
+  
   
   assert(sm1.is_valid());
 

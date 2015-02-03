@@ -101,7 +101,7 @@ public:
     /// Extend the number of elements by one.
     virtual void push_back() = 0;
 
-  //    virtual void add(const Base_property_array& other);
+    virtual bool transfer(const Base_property_array& other) = 0;
 
     /// Let two elements swap their storage place.
     virtual void swap(size_t i0, size_t i1) = 0;
@@ -157,9 +157,14 @@ public: // virtual interface of Base_property_array
         data_.push_back(value_);
     }
 
-    void add(const Property_array& other)
+    bool transfer(const Base_property_array& other)
     {
-      std::copy(other.data_.begin(), other.data_.end(), data_.end()-other.data_.size());
+      const Property_array<T>* pa = dynamic_cast<const Property_array*>(&other);
+      if(pa != NULL){
+        std::copy((*pa).data_.begin(), (*pa).data_.end(), data_.end()-(*pa).data_.size());
+        return true;
+      } 
+      return false;
     }
 
     virtual void shrink_to_fit()
@@ -275,20 +280,11 @@ public:
     void transfer(const Property_container& _rhs)
     {
       for(unsigned int i=0; i<parrays_.size(); ++i){
-        if(parrays_[i]->name() == "v:connectivity" || parrays_[i]->name() == "v:point" || parrays_[i]->name() == "v:removed"){
-          continue;
-        }
-        bool found = false;
         for (unsigned int j=0; j<_rhs.parrays_.size(); ++j){
           if(parrays_[i]->name() ==  _rhs.parrays_[j]->name()){
-            found = true;
-            std::cout << "found property with the same name: " << parrays_[i]->name() << std::endl;
-            // AF: parrays_[i]->add( _rhs.parrays_[j]);
+            parrays_[i]->transfer(* _rhs.parrays_[j]);
             break;
           }
-        }
-        if(! found){
-          std::cout << "no property named " << parrays_[i]->name() << " in other" << std::endl;
         }
       }
     }
@@ -521,9 +517,9 @@ public:
       return (*parray_)[i];
     }
 
-    void add (const Property_map& other)
+    bool transfer (const Property_map& other)
     {
-      parray_->add(*(other.parray_));
+      return parray_->transfer(*(other.parray_));
     }
 
     /// Allows access to the underlying storage of the property. This
@@ -1422,10 +1418,12 @@ public:
     resize(num_vertices()+  other.num_vertices(),
             num_edges()+  other.num_edges(),
             num_faces()+  other.num_faces());
-    vconn_.add(other.vconn_);
-    hconn_.add(other.hconn_);
-    fconn_.add(other.fconn_);
-    vpoint_.add(other.vpoint_);
+
+    vprops_.transfer(other.vprops_);
+    hprops_.transfer(other.hprops_);
+    fprops_.transfer(other.fprops_);
+    eprops_.transfer(other.eprops_);
+
     for(size_type i = nv; i < nv+other.num_vertices(); i++){
       Vertex_index vi(i);
       if(vconn_[vi].halfedge_ != null_halfedge()){
@@ -1453,7 +1451,6 @@ public:
         hconn_[hi].prev_halfedge_ = Halfedge_index(size_type(hconn_[hi].prev_halfedge_)+nh);
       }
     }
-    vprops_.transfer(other.vprops_);
     return true;
   }
 
