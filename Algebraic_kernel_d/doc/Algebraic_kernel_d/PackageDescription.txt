@@ -20,7 +20,7 @@
 \cgalPkgDescriptionBegin{Algebraic Kernel,PkgAlgebraicKerneldSummary}
 \cgalPkgPicture{Algebraic_kernel_d.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Eric Berberich, Michael Hemmer, Michael Kerber, Sylvain Lazard, Luis Pe&ntilde;aranda, and Monique Teillaud}
+\cgalPkgAuthors{Eric Berberich, Michael Hemmer, Michael Kerber, Sylvain Lazard, Luis Peñaranda, and Monique Teillaud}
 \cgalPkgDesc{Real solving of polynomials is a fundamental problem with a wide application range.  This package is targeted to provide black-box implementations of state-of-the-art  algorithms to determine, compare and approximate real roots of univariate polynomials and bivariate polynomial systems. Such a black-box is called an *Algebraic %Kernel*.  So far the package only provides models for the univariate kernel. Nevertheless,  it already defines concepts for the bivariate kernel, since this settles the interface for upcoming implementations.}
 \cgalPkgManuals{Chapter_Algebraic_Kernel,PkgAlgebraicKerneld}
 \cgalPkgSummaryEnd
