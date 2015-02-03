@@ -1159,7 +1159,7 @@ class Periodic_3_Delaunay_triangulation_3<GT,Tds>::Point_hider
 public:
   Point_hider() {}
 
-  void set_offset(const Offset &off) const {}
+  void set_original_cube (bool) const {}
 
   template <class InputIterator>
   inline void set_vertices(InputIterator, InputIterator) const {}
