@@ -890,9 +890,10 @@ private:
         FT neighbor_weight = 0;
 #endif
 
+        // "4*m_sq_half_sparsity" because both points can be perturbed
         if (star_sphere_squared_radius
           && k_sqdist(center_pt, neighbor_pt)
-             > *star_sphere_squared_radius + 4*m_sq_half_sparsity) // CJTODO: why is "4*" needed?
+             > *star_sphere_squared_radius + 4*m_sq_half_sparsity)
           break;
 
         Tr_point proj_pt = project_point_and_compute_weight(
