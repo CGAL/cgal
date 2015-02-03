@@ -40,19 +40,21 @@ namespace CGAL {
  * The implementation depends on the package \ref PkgAABB_treeSummary.
  * @tparam TriangleMesh a triangulated polyhedral surface, a model of `FaceListGraph`
  * @tparam Kernel a \cgal kernel
- * @tparam TriangleAccessor a model of the concept `TriangleAccessor_3`, with `TriangleAccessor_3::Triangle_3` being `Kernel::Triangle_3`. 
- *         If `TriangleMesh` is a \cgal Polyhedron, a default is provided.
+ * @tparam VertexPointMap is a property map with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+ *   as key type and a `Kernel::Point_3` as value type.
+ *   The default is `typename boost::property_map< FaceGraph,vertex_point_t>::%type`.
  * \todo Code: Use this class as an implementation detail of Mesh_3's Polyhedral_mesh_domain_3.
        Remove `TriangleAccessor_3` as well as the concept in Mesh_3 since making `TriangleMesh`
        a model of `FaceListGraph` will make it useless
  * \todo check the implementation
  */
 template <class TriangleMesh,
-          class Kernel>
+          class Kernel,
+          class VertexPointMap = Default >
 class Point_inside_polygon_mesh
 {
   // typedefs
-  typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
+  typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VertexPointMap> Primitive;
   typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> AABB_tree;
   typedef typename Kernel::Point_3 Point;
@@ -66,6 +68,26 @@ class Point_inside_polygon_mesh
 public:
    /**
    * Constructor with one surface polygon mesh.
+   * @pre `mesh` must be closed and triangulated.
+   */
+  Point_inside_polygon_mesh(const TriangleMesh& mesh,
+                            VertexPointMap vpmap,
+                            const Kernel& kernel=Kernel())
+  : ray_functor(kernel.construct_ray_3_object())
+  , vector_functor(kernel.construct_vector_3_object())
+  , own_tree(true)
+  {
+    CGAL_assertion(CGAL::is_pure_triangle(mesh));
+    CGAL_assertion(CGAL::is_closed(mesh));
+
+    tree_ptr = new AABB_tree(faces(mesh).first,
+                             faces(mesh).second,
+                             mesh, vpmap);
+  }
+
+  /**
+   * Constructor using `get(boost::vertex_point, mesh)` as
+   * vertex point property map.
    * @pre `mesh` must be closed and triangulated.
    */
   Point_inside_polygon_mesh(const TriangleMesh& mesh,
