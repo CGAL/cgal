@@ -26,11 +26,11 @@
 #include <boost/variant.hpp>
 
 
-#ifndef CGAL_INTERNAL_POLYGON_MESH_SLICER_3_AXIS_PARALLEL_PLANE_TRAITS_H
-#define CGAL_INTERNAL_POLYGON_MESH_SLICER_3_AXIS_PARALLEL_PLANE_TRAITS_H
+#ifndef CGAL_INTERNAL_POLYGON_MESH_SLICER_AXIS_PARALLEL_PLANE_TRAITS_H
+#define CGAL_INTERNAL_POLYGON_MESH_SLICER_AXIS_PARALLEL_PLANE_TRAITS_H
 
 namespace CGAL{
-namespace Polygon_mesh_slicer{
+namespace Polygon_mesh_slicer_{
 
 template <class Traits>
 class Axis_parallel_plane_traits
@@ -154,7 +154,7 @@ public:
   }
 };
 
-} } // end of namespace CGAL::Polygon_mesh_slicer
+} } // end of namespace CGAL::Polygon_mesh_slicer_
 
 
-#endif // CGAL_INTERNAL_POLYGON_MESH_SLICER_3_AXIS_PARALLEL_PLANE_TRAITS_H
+#endif // CGAL_INTERNAL_POLYGON_MESH_SLICER_AXIS_PARALLEL_PLANE_TRAITS_H

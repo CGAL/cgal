@@ -13,7 +13,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/bounding_box.h> 
-#include <CGAL/Polygon_mesh_slicer_3.h>
+#include <CGAL/Polygon_mesh_slicer.h>
 
 #include "Polyhedron_type.h"
 
@@ -330,7 +330,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::intersection_of_plane_Polyhedra_3
   const std::vector<qglviewer::Vec>& plane_positions,
   std::list<std::vector<Epic_kernel::Point_3> >& polylines) 
 {
-  CGAL::Polygon_mesh_slicer_3<Polyhedron, Epic_kernel> slicer(poly);
+  CGAL::Polygon_mesh_slicer<Polyhedron, Epic_kernel> slicer(poly);
   std::vector<qglviewer::Vec>::const_iterator plane_position_it = plane_positions.begin();
   for(std::vector<Epic_kernel::Plane_3>::const_iterator plane_it = planes.begin(); plane_it != planes.end(); ++plane_it, ++plane_position_it) 
     slicer(*plane_it, std::front_inserter(polylines));

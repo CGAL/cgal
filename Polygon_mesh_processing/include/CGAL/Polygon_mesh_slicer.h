@@ -18,8 +18,8 @@
 //
 // Author(s)     : Ilker O. Yaz and Sebastien Loriot
 
-#ifndef CGAL_POLYGON_MESH_SLICER_3_H
-#define CGAL_POLYGON_MESH_SLICER_3_H
+#ifndef CGAL_POLYGON_MESH_SLICER_H
+#define CGAL_POLYGON_MESH_SLICER_H
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -31,8 +31,8 @@
 
 #include <boost/foreach.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <CGAL/internal/Polygon_mesh_slicer_3/Traversal_traits.h>
-#include <CGAL/internal/Polygon_mesh_slicer_3/Axis_parallel_plane_traits.h>
+#include <CGAL/internal/Polygon_mesh_slicer/Traversal_traits.h>
+#include <CGAL/internal/Polygon_mesh_slicer/Axis_parallel_plane_traits.h>
 
 #include <boost/variant.hpp>
 
@@ -78,7 +78,7 @@ template<class TriangleMesh,
                        AABB_traits<Traits,
                          AABB_halfedge_graph_segment_primitive<TriangleMesh> > >,
   bool UseParallelPlaneOptimization=true>
-class Polygon_mesh_slicer_3
+class Polygon_mesh_slicer
 {
 /// Polygon_mesh typedefs
   typedef typename boost::graph_traits<TriangleMesh>               graph_traits;
@@ -105,19 +105,19 @@ class Polygon_mesh_slicer_3
   typedef std::map<vertex_descriptor, AL_vertex_descriptor>        Vertices_map;
   typedef std::pair<const vertex_descriptor,AL_vertex_descriptor>   Vertex_pair;
 /// Traversal traits
-  typedef Polygon_mesh_slicer::Traversal_traits<
+  typedef Polygon_mesh_slicer_::Traversal_traits<
     AL_graph,
     TriangleMesh,
     VertexPointPmap,
     typename AABBTree::AABB_traits,
     Traits >                                           General_traversal_traits;
 
-  typedef Polygon_mesh_slicer::Traversal_traits<
+  typedef Polygon_mesh_slicer_::Traversal_traits<
     AL_graph,
     TriangleMesh,
     VertexPointPmap,
     typename AABBTree::AABB_traits,
-    Polygon_mesh_slicer::Axis_parallel_plane_traits<Traits>
+    Polygon_mesh_slicer_::Axis_parallel_plane_traits<Traits>
   >                                              Axis_parallel_traversal_traits;
 /// Auxiliary classes
   // compare the faces using the halfedge descriptors
@@ -299,9 +299,9 @@ public:
   * @param vpmap an intance of the vertex point property map
   * @param traits a traits class instance
   */
-  Polygon_mesh_slicer_3(const TriangleMesh& tmesh,
-                        VertexPointPmap vpmap,
-                        const Traits& traits = Traits())
+  Polygon_mesh_slicer(const TriangleMesh& tmesh,
+                      VertexPointPmap vpmap,
+                      const Traits& traits = Traits())
   : m_tmesh(const_cast<TriangleMesh&>(tmesh))
   , m_vpmap(vpmap)
   , m_traits(traits)
@@ -322,10 +322,10 @@ public:
   * @param vpmap an intance of the vertex point property map
   * @param traits a traits class instance
   */
-  Polygon_mesh_slicer_3(const TriangleMesh& tmesh,
-                        const AABBTree& tree,
-                        VertexPointPmap vpmap,
-                        const Traits& traits = Traits())
+  Polygon_mesh_slicer(const TriangleMesh& tmesh,
+                      const AABBTree& tree,
+                      VertexPointPmap vpmap,
+                      const Traits& traits = Traits())
     : m_tree_ptr(&tree)
     , m_tmesh(const_cast<TriangleMesh&>(tmesh))
     , m_vpmap(vpmap)
@@ -342,8 +342,8 @@ public:
   *              as the functor is used
   * @param traits a traits class instance
   */
-  Polygon_mesh_slicer_3(const TriangleMesh& tmesh,
-                        const Traits& traits = Traits())
+  Polygon_mesh_slicer(const TriangleMesh& tmesh,
+                      const Traits& traits = Traits())
   : m_tmesh(const_cast<TriangleMesh&>(tmesh))
   , m_vpmap(get(boost::vertex_point, m_tmesh))
   , m_traits(traits)
@@ -364,9 +364,9 @@ public:
   * @param tree must be initialized with all the edge of `tmesh`
   * @param traits a traits class instance
   */
-  Polygon_mesh_slicer_3(const TriangleMesh& tmesh,
-                        const AABBTree& tree,
-                        const Traits& traits = Traits())
+  Polygon_mesh_slicer(const TriangleMesh& tmesh,
+                      const AABBTree& tree,
+                      const Traits& traits = Traits())
     : m_tree_ptr(&tree)
     , m_tmesh(const_cast<TriangleMesh&>(tmesh))
     , m_vpmap(get(boost::vertex_point, m_tmesh))
@@ -409,7 +409,7 @@ public:
     }
     else
     {
-      Polygon_mesh_slicer::Axis_parallel_plane_traits<Traits>
+      Polygon_mesh_slicer_::Axis_parallel_plane_traits<Traits>
         traits(app_info.first, app_info.second, m_traits);
 
       Axis_parallel_traversal_traits ttraits(
@@ -519,7 +519,7 @@ public:
     }
     else
     {
-      typedef Polygon_mesh_slicer::Axis_parallel_plane_traits<Traits> App_traits;
+      typedef Polygon_mesh_slicer_::Axis_parallel_plane_traits<Traits> App_traits;
       App_traits app_traits(app_info.first, app_info.second, m_traits);
 
       Polyline_visitor<OutputIterator, App_traits> visitor
@@ -529,11 +529,11 @@ public:
     }
   }
 
-  ~Polygon_mesh_slicer_3()
+  ~Polygon_mesh_slicer()
   {
     if (m_own_tree) delete m_tree_ptr;
   }
 };
 
 }// end of namespace CGAL
-#endif //CGAL_POLYGON_MESH_SLICER_3_H
+#endif //CGAL_POLYGON_MESH_SLICER_H

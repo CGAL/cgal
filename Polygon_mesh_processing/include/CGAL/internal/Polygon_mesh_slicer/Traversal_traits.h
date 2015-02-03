@@ -19,8 +19,8 @@
 // Author(s)     :  Sebastien Loriot
 
 
-#ifndef CGAL_INTERNAL_POLYGON_MESH_SLICER_3_TRAVERSAL_TRAITS_H
-#define CGAL_INTERNAL_POLYGON_MESH_SLICER_3_TRAVERSAL_TRAITS_H
+#ifndef CGAL_INTERNAL_POLYGON_MESH_SLICER_TRAVERSAL_TRAITS_H
+#define CGAL_INTERNAL_POLYGON_MESH_SLICER_TRAVERSAL_TRAITS_H
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Triangle_3_Ray_3_do_intersect.h>
@@ -28,7 +28,7 @@
 #include <CGAL/enum.h>
 
 namespace CGAL{
-namespace Polygon_mesh_slicer{
+namespace Polygon_mesh_slicer_{
 
 template <typename AL_graph,
           typename TriangleMesh,
@@ -110,6 +110,6 @@ public:
   }
 };
 
-} } //end of namespace CGAL::Polygon_mesh_slicer
+} } //end of namespace CGAL::Polygon_mesh_slicer_
 
-#endif // CGAL_INTERNAL_POLYGON_MESH_SLICER_3_TRAVERSAL_TRAITS_H
+#endif // CGAL_INTERNAL_POLYGON_MESH_SLICER_TRAVERSAL_TRAITS_H
