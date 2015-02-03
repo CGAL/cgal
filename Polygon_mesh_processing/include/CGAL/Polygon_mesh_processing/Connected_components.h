@@ -324,6 +324,23 @@ mark_connected_components_v2(
   return patch_id;
 }
 
-} } } //namespace CGAL::internal::corefinement
+} } // end of namespace internal::corefinement
+
+namespace Polygon_mesh_processing{
+  /*!
+  * \ingroup PkgPolygonMeshProcessing
+  *  Erases the small connected components and the isolated vertices.
+  *  Keep `nb_components_to_keep` largest connected components.
+  *  Returns the number of connected components erased (ignoring isolated vertices).
+  * \todo BGLize me
+  */
+  template <class PolygonMesh>
+  std::size_t keep_largest_connected_components(PolygonMesh& pmesh, std::size_t nb_components_to_keep)
+  {
+    return pmesh.keep_largest_connected_components(nb_components_to_keep);
+  }
+}
+
+} // end namespace CGAL
 
 #endif //CGAL_INTERNAL_POLYHEDRON_SUBSET_EXTRACTION_H
