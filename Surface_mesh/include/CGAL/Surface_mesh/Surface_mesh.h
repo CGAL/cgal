@@ -272,6 +272,27 @@ public:
         return *this;
     }
 
+    void transfer(const Property_container& _rhs)
+    {
+      for(unsigned int i=0; i<parrays_.size(); ++i){
+        if(parrays_[i]->name() == "v:connectivity" || parrays_[i]->name() == "v:point" || parrays_[i]->name() == "v:removed"){
+          continue;
+        }
+        bool found = false;
+        for (unsigned int j=0; j<_rhs.parrays_.size(); ++j){
+          if(parrays_[i]->name() ==  _rhs.parrays_[j]->name()){
+            found = true;
+            std::cout << "found property with the same name: " << parrays_[i]->name() << std::endl;
+            // AF: parrays_[i]->add( _rhs.parrays_[j]);
+            break;
+          }
+        }
+        if(! found){
+          std::cout << "no property named " << parrays_[i]->name() << " in other" << std::endl;
+        }
+      }
+    }
+
     // returns the current size of the property arrays
     size_t size() const { return size_; }
 
@@ -321,7 +342,9 @@ public:
 
 
     // returns a property if it exists, otherwise it creates it first.
-    template <class T> Property_map<Key, T> get_or_add(const std::string& name, const T t=T())
+    template <class T>
+    Property_map<Key, T> 
+    get_or_add(const std::string& name, const T t=T())
     {
       Property_map<Key, T> p;
       bool b;
@@ -332,7 +355,8 @@ public:
 
 
     // get the type of property by its name. returns typeid(void) if it does not exist.
-    const std::type_info& get_type(const std::string& name)
+    const std::type_info& 
+    get_type(const std::string& name)
     {
         for (unsigned int i=0; i<parrays_.size(); ++i)
             if (parrays_[i]->name() == name)
@@ -342,7 +366,9 @@ public:
 
 
     // delete a property
-    template <class T> void remove(Property_map<Key, T>& h)
+    template <class T> 
+    void
+    remove(Property_map<Key, T>& h)
     {
         typename std::vector<Base_property_array*>::iterator it=parrays_.begin(), end=parrays_.end();
         for (; it!=end; ++it)
@@ -1427,6 +1453,7 @@ public:
         hconn_[hi].prev_halfedge_ = Halfedge_index(size_type(hconn_[hi].prev_halfedge_)+nh);
       }
     }
+    vprops_.transfer(other.vprops_);
     return true;
   }
 
