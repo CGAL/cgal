@@ -30,7 +30,7 @@
 
 #include <CGAL/internal/corefinement/Combinatorial_map_for_corefinement.h> 
 
-#include <CGAL/Point_inside_polyhedron_3.h>
+#include <CGAL/Point_inside_polygon_mesh_3.h>
 #include <CGAL/property_map.h>
 #include <boost/optional.hpp>
 #include <boost/next_prior.hpp>
@@ -2139,7 +2139,7 @@ public:
     //this happens when one polyhedron has a connected component
     //that do not intersect the other polyhedron
 
-    typedef Point_inside_polyhedron_3<Polyhedron, Kernel> Inside_poly_test;
+    typedef Point_inside_polygon_mesh<Polyhedron, Kernel> Inside_poly_test;
 
     CGAL_precondition(polyhedron_to_map_node_to_polyhedron_vertex.size()==2);
     Polyhedron* Poly_A = polyhedron_to_map_node_to_polyhedron_vertex.begin()->first;
