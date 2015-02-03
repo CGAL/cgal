@@ -1408,12 +1408,8 @@ public:
         fprops_.resize(nfaces);
     }
   
-  bool  join(const Surface_mesh& other)
+  bool join(const Surface_mesh& other)
   {
-    if(other.has_garbage()){
-      std::cerr << "join not implemented  if other has garbage"<< std::endl;
-      return false;
-    }
     size_type nv = num_vertices(), nh = num_halfedges(), nf = num_faces();
     resize(num_vertices()+  other.num_vertices(),
             num_edges()+  other.num_edges(),
@@ -1451,6 +1447,44 @@ public:
         hconn_[hi].prev_halfedge_ = Halfedge_index(size_type(hconn_[hi].prev_halfedge_)+nh);
       }
     }
+
+    if(other.vertices_freelist_ != -1){
+      if(vertices_freelist_ != -1){
+        Vertex_index vi(nv+other.vertices_freelist_);
+        Halfedge_index inf(-1);
+        while(vconn_[vi].halfedge_ != inf){
+          vi = Vertex_index(size_type(vconn_[vi].halfedge_));
+        }
+        vconn_[vi].halfedge_ = Halfedge_index(vertices_freelist_);
+      }
+      vertices_freelist_ = nv + other.vertices_freelist_; 
+    }
+    if(other.faces_freelist_ != -1){
+      if(faces_freelist_ != -1){
+        Face_index fi(nf+other.faces_freelist_);
+        Halfedge_index inf(-1);
+        while(fconn_[fi].halfedge_ != inf){
+          fi = Face_index(size_type(fconn_[fi].halfedge_));
+        }
+        fconn_[fi].halfedge_ = Halfedge_index(faces_freelist_);
+      }
+      faces_freelist_ = nf + other.faces_freelist_; 
+    }
+    if(other.edges_freelist_ != -1){
+      if(edges_freelist_ != -1){
+        Halfedge_index hi((nh>>1)+other.edges_freelist_);
+        Halfedge_index inf(-1);
+        while(hconn_[hi].next_halfedge_ != inf){
+          hi = hconn_[hi].next_halfedge_;
+        }
+        hconn_[hi].next_halfedge_ = Halfedge_index(edges_freelist_);
+      }
+      edges_freelist_ = (nh>>1) + other.edges_freelist_; 
+    }
+    garbage_ = garbage_ || other.garbage_;
+    removed_vertices_ += other.removed_vertices_;
+    removed_edges_ += other.removed_edges_;
+    removed_faces_ += other.removed_faces_;
     return true;
   }
 
@@ -1604,7 +1638,9 @@ public:
   bool is_valid(bool verbose = true) const
     {
         bool valid = true;
+        size_type vcount = 0, hcount = 0, fcount = 0;
         for(Halfedge_iterator it = halfedges_begin(); it != halfedges_end(); ++it) { 
+            ++hcount;
             valid = valid && next(*it).is_valid();
             valid = valid && opposite(*it).is_valid();
             if(!valid) {
@@ -1650,7 +1686,8 @@ public:
             }
         }
 
-        for(Vertex_iterator it = vertices_begin(); it != vertices_end(); ++it) { 
+        for(Vertex_iterator it = vertices_begin(); it != vertices_end(); ++it) {
+          ++vcount;
             if(halfedge(*it).is_valid()) {
                 // not an isolated vertex
                 valid = valid && (target(halfedge(*it)) == *it);
@@ -1661,8 +1698,24 @@ public:
                 }
             }
         }
+        for(Face_iterator it = faces_begin(); it != faces_end(); ++it) {
+          ++fcount;
+        }
+        
+        valid = valid && (vcount == number_of_vertices());
+        if(!valid && verbose){
+          std::cerr << "#vertices: iterated: " << vcount << " vs number_of_vertices(): " << number_of_vertices()<< std::endl;
+        }
 
+        valid = valid && (hcount == number_of_halfedges());
+        if(!valid && verbose){
+          std::cerr << "#halfedges: iterated: " << hcount << " vs number_of_halfedges(): " << number_of_halfedges()<< std::endl;
+        }
 
+        valid = valid && (fcount == number_of_faces());
+        if(!valid && verbose){
+          std::cerr << "#faces: iterated: " << fcount << " vs number_of_faces(): " << number_of_faces()<< std::endl;
+        }
         return valid;
     }
 
