@@ -29,6 +29,7 @@
 
 namespace CGAL {
  namespace internal{
+   namespace corefinement{
 
 template <class Polyhedron>
 struct Compare_handle_ptr{
@@ -251,6 +252,78 @@ void extract_connected_components(const Polyhedron& P,Output_iterator out)
   extract_connected_components(P,Dummy_true(),out);
 }
 
-} } //namespace CGAL::internal
+template <class Polyhedron, class Polyhedron_facet_index_map>
+std::size_t
+init_facet_indices(
+  const Polyhedron& P,
+  Polyhedron_facet_index_map facet_index_map)
+{
+  //init facet indices
+  std::size_t index=0;
+  for (typename Polyhedron::Facet_const_iterator fit=P.facets_begin(),
+                                                 fit_end=P.facets_end();
+                                                 fit!=fit_end; ++fit)
+  {
+    put(facet_index_map, fit, index++);
+  }
+  return index;
+}
+
+// alternative method by propagation
+template <class Polyhedron, class Adjacency_criterium, class Polyhedron_facet_index_map>
+std::size_t
+mark_connected_components_v2(
+  const Polyhedron& P,
+  const Adjacency_criterium& adjacent,
+  Polyhedron_facet_index_map facet_index_map,
+  std::vector<std::size_t>& patch_ids,
+  std::vector<std::size_t>& patch_sizes)
+{
+  typedef typename Polyhedron::Halfedge_const_handle Halfedge_handle;
+
+  std::size_t max_id=(std::numeric_limits<std::size_t>::max)();
+  patch_ids.clear();
+  patch_ids.resize(P.size_of_facets(), max_id);
+
+  //traversal of the facets to discover connected components
+  std::size_t patch_id=0;
+  for (typename Polyhedron::Facet_const_iterator fit=P.facets_begin(),
+                                                 fit_end=P.facets_end();
+                                                 fit!=fit_end; ++fit)
+  {
+    std::size_t index=get(facet_index_map, fit);
+    if ( patch_ids[index]==max_id )
+    {
+      patch_sizes.push_back(0);
+      patch_ids[index]=patch_id;// set patch id
+      ++(patch_sizes.back());
+      std::vector<typename Polyhedron::Halfedge_const_handle> queue;
+      if ( adjacent(fit->halfedge()) )
+        queue.push_back( fit->halfedge()->opposite() );
+      if ( adjacent(fit->halfedge()->next()) )
+        queue.push_back( fit->halfedge()->next()->opposite() );
+      if ( adjacent(fit->halfedge()->next()->next()) )
+        queue.push_back( fit->halfedge()->next()->next()->opposite() );
+      while (!queue.empty())
+      {
+        Halfedge_handle h=queue.back();
+        queue.pop_back();
+        index=get(facet_index_map, h->facet());
+        if ( patch_ids[index]!=max_id ) continue;
+        patch_ids[index]=patch_id;
+        ++(patch_sizes.back());
+        if ( adjacent(h->next()) )
+          queue.push_back( h->next()->opposite() );
+        if ( adjacent(h->next()->next()) )
+          queue.push_back( h->next()->next()->opposite() );
+      }
+      ++patch_id;
+    }
+  }
+
+  return patch_id;
+}
+
+} } } //namespace CGAL::internal::corefinement
 
 #endif //CGAL_INTERNAL_POLYHEDRON_SUBSET_EXTRACTION_H

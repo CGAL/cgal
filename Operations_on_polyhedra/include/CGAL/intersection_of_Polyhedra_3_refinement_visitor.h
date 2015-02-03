@@ -22,7 +22,7 @@
 #define CGAL_INTERSECTION_OF_POLYHEDRA_3_REFINEMENT_VISITOR_H
 
 #include <CGAL/intersection_of_Polyhedra_3.h>
-#include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
+#include <CGAL/Polygon_mesh_processing/Connected_components.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
@@ -1894,8 +1894,8 @@ public:
       typedef typename Polyhedron::Facet_const_handle Facet_const_handle;
       typedef ::CGAL::Union_find<Facet_const_handle> UF;
       typedef typename UF::handle UF_handle;
-      typedef std::map<Facet_const_handle,std::list<Facet_const_handle>,internal::Compare_handle_ptr<Polyhedron> > Result;
-      typedef std::map<Facet_const_handle,UF_handle,internal::Compare_handle_ptr<Polyhedron> > Facet_to_handle_map;
+      typedef std::map<Facet_const_handle,std::list<Facet_const_handle>,internal::corefinement::Compare_handle_ptr<Polyhedron> > Result;
+      typedef std::map<Facet_const_handle,UF_handle,internal::corefinement::Compare_handle_ptr<Polyhedron> > Facet_to_handle_map;
       
       UF uf;
       Facet_to_handle_map map_f2h;
@@ -1910,7 +1910,7 @@ public:
       output_debug << *current_poly;
       #endif
       
-      extract_connected_components(*(static_cast<Polyhedron const *> (current_poly) ),criterium,uf,map_f2h,result);
+      internal::corefinement::extract_connected_components(*(static_cast<Polyhedron const *> (current_poly) ),criterium,uf,map_f2h,result);
 
       
       //add each connected component in the map with 2 volumes per component.
