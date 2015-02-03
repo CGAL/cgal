@@ -11,10 +11,7 @@ The class is derived from class
 
 \cgalModels `SegmentDelaunayGraphLinfTraits_2`
 
-\sa `SegmentDelaunayGraphLinfTraits_2`
 \sa `CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
-\sa `CGAL::Field_tag`
-\sa `CGAL::Field_with_sqrt_tag`
 \sa `CGAL::Segment_Delaunay_graph_Linf_2<Gt,STag,DS>`
 \sa `CGAL::Segment_Delaunay_graph_Linf_hierarchy_2<Gt,STag,DS>`
 \sa `CGAL::Segment_Delaunay_graph_Linf_traits_2<K,MTag>`
