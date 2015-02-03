@@ -13,7 +13,7 @@ namespace CGAL
 {
 template < class Gt,
 		   class Tds = Triangulation_data_structure_3 < Triangulation_vertex_base_3<Gt, Periodic_3_triangulation_ds_vertex_base_3<> >,
-		   	   	   	   Triangulation_cell_base_3<Gt, Periodic_3_triangulation_ds_cell_base_3<> > >
+		                                                Regular_triangulation_cell_base_3<Gt, Periodic_3_triangulation_ds_cell_base_3<> > >
 		 >
 class Periodic_3_Regular_triangulation_3 : public Periodic_3_triangulation_3<Gt,Tds>
 {
