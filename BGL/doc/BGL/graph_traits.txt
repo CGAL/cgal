@@ -88,7 +88,7 @@ that is the default hash functor of `CGAL::Unique_hash_map`.
 
 Defined in `<CGAL/boost/graph/graph_traits_Triangulation_2.h>` and `<CGAL/boost/graph/graph_traits_Delaunay_triangulation_2.h>`
 
-We provide partial specialization for the classes `Triangulation_2` and `Delaunay_triangulation_2`
+We provide partial specialization for the classes `CGAL::Triangulation_2` and `CGAL::Delaunay_triangulation_2`
 so that they are model of the graph concepts
 <A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and
 <A HREF="http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html">`EdgeAndVertexListGraph`</A>.

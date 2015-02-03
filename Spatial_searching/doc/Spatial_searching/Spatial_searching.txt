@@ -346,31 +346,42 @@ wrapper for all our defined types. The searching itself works exactly as for \cg
 
 \subsection Spatial_searchingExamplesforUsinganArbitrary Examples for Using an Arbitrary Point Type with Point Property Maps
 
-The following three example programs illustrate how to use the classes `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` and
+The following four example programs illustrate how to use the classes `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` and
 `Distance_adapter<Key,PointPropertyMap,Base_distance>` to store in the kd-tree objects of an arbitrary key type. Points are
 accessed through a point <A HREF="http://www.boost.org/doc/libs/release/libs/property_map/index.html">property map</A>.
 This enables to associate information to a point or to reduce the size of the search structure.
 
-\subsection Spatial_searchingUsingaPointandanInteger Using a Point and an Integer as Key Type
+\subsubsection Spatial_searchingUsingaPointandanInteger Using a Point and an Integer as Key Type
 
 In this example program, the search tree stores tuples of point and integer.
 The value type of the iterator of the neighbor searching algorithm is this tuple type.
 
 \cgalExample{Spatial_searching/searching_with_point_with_info.cpp}
 
-\subsection Spatial_searchingUsinganIntegerasKeyType Using an Integer as Key Type
+\subsubsection Spatial_searchingUsinganIntegerasKeyType Using an Integer as Key Type
 
 In this example program, the search tree stores only integers that refer to points stored within a user vector.
 The point type of the search traits is `std::size_t`.
 
 \cgalExample{Spatial_searching/searching_with_point_with_info_inplace.cpp}
 
-\subsection Spatial_searchingUsingaModelofLvalueProperty Using a Model of L-value Property Map Concept
+\subsubsection Spatial_searchingUsingaModelofLvalueProperty Using a Model of L-value Property Map Concept
 
 This example programs uses a model of `LvaluePropertyMap`.
 Points are read from a `std::map`. The search tree stores integers of type `std::size_t`. The value type of the iterator of the neighbor searching algorithm is `std::size_t`.
 
 \cgalExample{Spatial_searching/searching_with_point_with_info_pmap.cpp}
+
+\subsubsection Spatial_searchingUsingSurfaceMesh Using a Point Property Map of a Polygonal Mesh
+
+This example programs shows how to search the closest vertices of a `Surface_mesh` or, quite similar, of a 
+`Polyhedron_3`.
+Points are stored in the polygonal mesh. The search tree stores vertex descriptors.
+The value type of the iterator of the neighbor searching algorithm is \link  BGLSMGT `boost::graph_traits<Surface_mesh>::vertex_descriptor` \endlink.
+
+\cgalExample{Spatial_searching/searching_surface_mesh_vertices.cpp}
+
+
 
 \subsection Spatial_searchingExampleforSelectingaSplitting Example for Selecting a Splitting Rule and Setting the Bucket Size
 
