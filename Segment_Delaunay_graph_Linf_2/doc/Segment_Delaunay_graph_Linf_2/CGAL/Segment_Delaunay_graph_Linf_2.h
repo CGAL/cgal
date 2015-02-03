@@ -20,19 +20,13 @@ This class is derived from class
 
 \cgalModels `DelaunayGraph_2`
 
-\sa `DelaunayGraph_2`
 \sa `SegmentDelaunayGraphLinfTraits_2`
 \sa `SegmentDelaunayGraphDataStructure_2`
-\sa `SegmentDelaunayGraphVertexBase_2`
-\sa `TriangulationFaceBase_2`
 \sa `CGAL::Segment_Delaunay_graph_Linf_hierarchy_2<Gt,STag,DS>`
 \sa `CGAL::Segment_Delaunay_graph_Linf_traits_2<K,MTag>`
 \sa `CGAL::Segment_Delaunay_graph_Linf_traits_without_intersections_2<K,MTag>`
 \sa `CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
 \sa `CGAL::Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
-\sa `CGAL::Triangulation_data_structure_2<Vb,Fb>`
-\sa `CGAL::Segment_Delaunay_graph_vertex_base_2<Gt,SSTag>`
-\sa `CGAL::Triangulation_face_base_2<Gt>`
 
 */
 template< typename Gt, typename DS >
