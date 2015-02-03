@@ -184,16 +184,16 @@ public:
 
   virtual QString nameFilters() const
   {
-    return "segment file (*.polylines.txt)";
+    return "Segment soup file (*.polylines.txt *.cgal)";
   }
 
 
-  virtual bool canLoad() const
+  bool canLoad() const
   {
     return false;
   }
 
-  virtual Scene_item* load(QFileInfo fileinfo)
+  virtual Scene_item* load(QFileInfo /* fileinfo */)
   {
     return 0;
   }
@@ -217,7 +217,7 @@ public:
     
     std::ofstream out(fileinfo.filePath().toUtf8());
     
-    return (edges_item && edges_item->save(out));
+    return (out && edges_item->save(out));
   }
 
 
