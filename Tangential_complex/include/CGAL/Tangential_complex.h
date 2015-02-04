@@ -1301,7 +1301,7 @@ private:
       if (!is_simplex_consistent(c))
       {
         is_inconsistent = true;
-        
+
         for (std::set<std::size_t>::iterator it=c.begin(); it!=c.end(); ++it)
           perturb(*it);
         
@@ -1516,7 +1516,7 @@ private:
     typename Tr_container::const_iterator it_tr = m_triangulations.begin();
     typename Tr_container::const_iterator it_tr_end = m_triangulations.end();
     // For each triangulation
-    for ( ; it_tr != it_tr_end ; ++it_tr)
+    for (std::size_t idx = 0 ; it_tr != it_tr_end ; ++it_tr, ++idx)
     {
       Triangulation const& tr    = it_tr->tr();
       Tr_vertex_handle center_vh = it_tr->center_vertex();
@@ -1555,6 +1555,11 @@ private:
           if (m_intrinsic_dimension == 1)
             sstr_c << (data*factor + 1) << " ";
 
+          // In order to have only one time each simplex, we only keep it
+          // if the lowest index is the index of the center vertex
+          if (*c.begin() != idx)
+            continue;
+
           bool excluded =
             (excluded_simplices
             && excluded_simplices->find(c) != excluded_simplices->end());
@@ -1582,16 +1587,27 @@ private:
         else
         {
           os << OFF_simplices_dim << " ";
+          std::size_t min_index = std::numeric_limits<std::size_t>::max();
           std::size_t data;
+          std::stringstream sstr_c;
           for (int i = 0 ; i < m_intrinsic_dimension + 1 ; ++i)
           {
             data = (*it_c)->vertex(i)->data();
-            os << data*factor << " ";
+            if (data < min_index)
+              min_index = data;
+            sstr_c << data*factor << " ";
           }
+          
+          // In order to have only one time each simplex, we only keep it
+          // if the lowest index is the index of the center vertex
+          if (min_index != idx)
+            continue;
+
           // See export_vertices_to_off
           if (m_intrinsic_dimension == 1)
-            os << (data*factor + 1) << " ";
+            sstr_c << (data*factor + 1) << " ";
 
+          os << sstr_c.str();
           ++num_simplices;
         }
 
