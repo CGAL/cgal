@@ -970,6 +970,8 @@ private:
 #endif
                                             ) const
   {
+    //******************************* PCA *************************************
+
     // Kernel functors
     typename Kernel::Construct_vector_d      constr_vec =
       m_k.construct_vector_d_object();
@@ -986,8 +988,6 @@ private:
 
     KNS_range kns_range = m_points_ds.query_ANN(
       p, NUM_POINTS_FOR_PCA, false);
-
-    //******************************* PCA *************************************
 
     // One row = one point
     Eigen::MatrixXd mat_points(NUM_POINTS_FOR_PCA, m_ambiant_dim);
@@ -1030,12 +1030,14 @@ private:
 
     return compute_gram_schmidt_basis(ts, m_k);
 
-    /*
+    
     // CJTODO: this is only for a sphere in R^3
-    Vector t1(-p[1] - p[2], p[0], p[0]);
-    Vector t2(p[1] * t1[2] - p[2] * t1[1],
-              p[2] * t1[0] - p[0] * t1[2],
-              p[0] * t1[1] - p[1] * t1[0]);
+    /*double tt1[3] = {-p[1] - p[2], p[0], p[0]};
+    double tt2[3] = {p[1] * tt1[2] - p[2] * tt1[1],
+                     p[2] * tt1[0] - p[0] * tt1[2],
+                     p[0] * tt1[1] - p[1] * tt1[0]};
+    Vector t1(3, &tt1[0], &tt1[3]);
+    Vector t2(3, &tt2[0], &tt2[3]);
 
     // Normalize t1 and t2
     typename Kernel::Squared_length_d sqlen      = m_k.squared_length_d_object();
