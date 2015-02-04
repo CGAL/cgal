@@ -365,7 +365,7 @@ public:
 
 /**
  * \ingroup PkgBGLIterators
- * A bidirectional iterator  with value type `boost::graph_traits<Graph>::%halfedge_descriptor` over all halfedges incident to the same face.
+ * A bidirectional iterator  with value type `boost::graph_traits<Graph>::%halfedge_descriptor` over all halfedges incident to the same face or border.
  * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_face_iterator` `hafi` with  `h = *hafi` 
  * the following holds: Either `++hafi` is the past the end iterator, or `next(h,g) == *++hafi`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
@@ -664,7 +664,7 @@ private:
 
 /**
  * \ingroup PkgBGLIterators
- * A bidirectional circulator  with value type `boost::graph_traits<Graph>::%halfedge_descriptor` over all halfedges incident to the same face.
+ * A bidirectional circulator  with value type `boost::graph_traits<Graph>::%halfedge_descriptor` over all halfedges incident to the same face or border.
  * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_face_circulator` `hafc` with  `h = *hafc` 
  * the following holds:  `next(h,g) == *++hafc`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
@@ -805,7 +805,7 @@ halfedges_around_target(typename boost::graph_traits<Graph>::vertex_descriptor v
 
 /**  
  * \ingroup PkgBGLIterators
- * returns an iterator range over all halfedges incident to the same face as `h`. 
+ * returns an iterator range over all halfedges incident to the same face or border as `h`. 
  */
 template<typename Graph>
 Iterator_range<Halfedge_around_face_iterator<Graph> >
