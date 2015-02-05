@@ -285,7 +285,7 @@ update_new_point(
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` 
 ///         with the value type of `ForwardIterator` as key and `Kernel::Point_3` as value type.
-///         It can be omitted if ForwardIterator::value_type is convertible to 
+///         It can be omitted if the value type of `ForwardIterator` is convertible to 
 ///         `Kernel::Point_3`.
 /// @tparam NormalPMap is a model of `ReadablePropertyMap` with the value type of `ForwardIterator` as key
 ///         and `Kernel::Vector_3` as value type.
