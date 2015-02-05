@@ -7,12 +7,12 @@ The concept `SegmentDelaunayGraphDataStructure_2` refines the
 concept `ApolloniusGraphDataStructure_2`. In addition 
 it provides two methods for the merging of two vertices joined by an 
 edge of the data structure, and the splitting of a vertex into two. 
-The method that merges two vertices, called `join_vertices` 
+The method that merges two vertices, called `join_vertices()` 
 identifies the two vertices and deletes their common two faces. The 
-method that splits a vertex, called `split_vertex` introduces a 
+method that splits a vertex, called `split_vertex()` introduces a 
 new vertex that shares an edge and two faces with the old vertex (see 
-figure below). Notice that the `join_vertices` and 
-`split_vertex` operations are complementary, in the sense that one 
+figure below). Notice that the `join_vertices()` and 
+`split_vertex()` operations are complementary, in the sense that one 
 reverses the action of the other. 
 
 \anchor figsdgdssplitjoin 
