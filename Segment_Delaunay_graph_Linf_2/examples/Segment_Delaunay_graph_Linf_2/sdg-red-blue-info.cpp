@@ -73,7 +73,7 @@ struct Red_blue_merge_info
 // choose the kernel
 #include <CGAL/Simple_cartesian.h>
 
-struct Rep : public CGAL::Simple_cartesian<double> {};
+typedef CGAL::Simple_cartesian<double> Rep;
 
 // typedefs for the geometric traits, storage traits and the algorithm
 #include <CGAL/Segment_Delaunay_graph_Linf_2.h>
