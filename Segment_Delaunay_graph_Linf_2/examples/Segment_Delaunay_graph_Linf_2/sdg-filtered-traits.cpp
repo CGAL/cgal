@@ -9,14 +9,13 @@
 // choose the kernel
 #include <CGAL/Simple_cartesian.h>
 
-struct Rep : public CGAL::Simple_cartesian<double> {};
+typedef CGAL::Simple_cartesian<double> Rep;
 
 // typedefs for the traits and the algorithm
 #include <CGAL/Segment_Delaunay_graph_Linf_hierarchy_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_filtered_traits_2.h>
 
-struct Gt
-  : public CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<Rep> {};
+typedef CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<Rep> Gt;
 
 typedef CGAL::Segment_Delaunay_graph_Linf_hierarchy_2<Gt>  SDG2;
 
