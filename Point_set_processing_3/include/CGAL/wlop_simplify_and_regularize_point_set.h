@@ -436,14 +436,14 @@ wlop_simplify_and_regularize_point_set(
                                ///< This is a key parameter that needs to be finely tuned.  
                                ///< The result will be irregular if too small, but a larger
                                ///< value will impact the runtime.
-                               ///< In practice, choosing a radius such that each point has at least4 neighbors
+                               ///< In practice, choosing a radius such that each point has at least 4 neighbors
                                ///< gives satisfactory result.
-                               ///< The default value is set to `0.05 * diameter of bounding box`.
+                               ///< The default value is set to 0.05 * the diameter of the bounding box.
   unsigned int iter_number,    ///< number of iterations to solve the optimsation problem. The default value is 35.
                                ///< More iterations give a more regular result but increase the runtime.
   bool require_uniform_sampling,///< an optional preprocessing, which will give better result
                                ///< if the distribution of the input points is highly non-uniform. 
-                               ///< The default value is false. 
+                               ///< The default value is `false`. 
   const Kernel&                ///< geometric traits.
 )
 {
