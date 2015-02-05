@@ -152,6 +152,10 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
 #endif
   
   CGAL_TC_SET_PERFORMANCE_DATA("Num_points_in_input", points.size());
+  
+#ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
+  std::vector<Point> points_not_sparse = points;
+#endif
 
   if (sparsity != 0.)
   {
@@ -163,8 +167,14 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
   
   CGAL_TC_SET_PERFORMANCE_DATA("Sparsity", sparsity);
   CGAL_TC_SET_PERFORMANCE_DATA("Num_points", points.size());
-
+  
+#ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
+  TC tc(points.begin(), points.end(), sparsity, intrinsic_dim,
+    points_not_sparse.begin(), points_not_sparse.end(), k);
+#else
   TC tc(points.begin(), points.end(), sparsity, intrinsic_dim, k);
+#endif
+
   double init_time = t.elapsed(); t.reset();
 
   tc.compute_tangential_complex();

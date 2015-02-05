@@ -35,6 +35,7 @@
 #define CGAL_TC_PROFILING
 #define CGAL_TC_VERBOSE
 //#define CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
+#define USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
 
 // Solving inconsistencies: only perturb the vertex, the simplex or more?
 //#define CGAL_TC_PERTURB_THE_CENTER_VERTEX_ONLY

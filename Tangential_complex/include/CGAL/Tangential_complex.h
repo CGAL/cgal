@@ -185,7 +185,11 @@ public:
   template <typename InputIterator>
   Tangential_complex(InputIterator first, InputIterator last,
                      double sparsity, int intrinsic_dimension,
-                     const Kernel &k = Kernel())
+#ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
+                     InputIterator first_for_tse, InputIterator last_for_tse,
+#endif
+                     const Kernel &k = Kernel()
+                     )
   : m_k(k),
     m_intrinsic_dimension(intrinsic_dimension),
     m_half_sparsity(0.5*sparsity),
@@ -193,6 +197,10 @@ public:
     m_ambiant_dim(k.point_dimension_d_object()(*first)),
     m_points(first, last),
     m_points_ds(m_points)
+#ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
+    , m_points_for_tse(first_for_tse, last_for_tse)
+    , m_points_ds_for_tse(m_points_for_tse)
+#endif
   {}
 
   /// Destructor
@@ -985,9 +993,15 @@ private:
       m_k.scalar_product_d_object();
     typename Kernel::Difference_of_vectors_d diff_vec =
       m_k.difference_of_vectors_d_object();
-
-    KNS_range kns_range = m_points_ds.query_ANN(
+    
+#ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
+    KNS_range kns_range = m_points_ds_for_tse.query_ANN(
       p, NUM_POINTS_FOR_PCA, false);
+    const Points &points_for_pca = m_points_for_tse;
+#else
+    KNS_range kns_range = m_points_ds.query_ANN(p, NUM_POINTS_FOR_PCA, false);
+    const Points &points_for_pca = m_points;
+#endif
 
     // One row = one point
     Eigen::MatrixXd mat_points(NUM_POINTS_FOR_PCA, m_ambiant_dim);
@@ -997,7 +1011,7 @@ private:
          ++j, ++nn_it)
     {
       for (int i = 0 ; i < m_ambiant_dim ; ++i)
-        mat_points(j, i) = CGAL::to_double(coord(m_points[nn_it->first], i));
+        mat_points(j, i) = CGAL::to_double(coord(points_for_pca[nn_it->first], i));
     }
     Eigen::MatrixXd centered = mat_points.rowwise() - mat_points.colwise().mean();
     Eigen::MatrixXd cov = centered.adjoint() * centered;
@@ -1515,11 +1529,14 @@ private:
       (m_intrinsic_dimension == 1 ? 3 : m_intrinsic_dimension + 1);
     num_simplices = 0;
     std::size_t num_inconsistent_simplices = 0;
+    std::size_t num_inconsistent_stars = 0;
     typename Tr_container::const_iterator it_tr = m_triangulations.begin();
     typename Tr_container::const_iterator it_tr_end = m_triangulations.end();
     // For each triangulation
     for (std::size_t idx = 0 ; it_tr != it_tr_end ; ++it_tr, ++idx)
     {
+      bool is_star_inconsistent = false;
+
       Triangulation const& tr    = it_tr->tr();
       Tr_vertex_handle center_vh = it_tr->center_vertex();
 
@@ -1553,13 +1570,18 @@ private:
             sstr_c << data*factor << " ";
             c.insert(data);
           }
+
+          bool is_simpl_consistent = is_simplex_consistent(c);
+          if (!is_simpl_consistent) 
+            is_star_inconsistent = true;
+
           // See export_vertices_to_off
           if (m_intrinsic_dimension == 1)
             sstr_c << (data*factor + 1) << " ";
 
           // In order to have only one time each simplex, we only keep it
           // if the lowest index is the index of the center vertex
-          if (*c.begin() != idx)
+          if (*c.begin() != idx && is_simpl_consistent)
             continue;
 
           bool excluded =
@@ -1569,7 +1591,7 @@ private:
           if (!excluded)
           {
             os << OFF_simplices_dim << " " << sstr_c.str() << " ";
-            if (color_inconsistencies && is_simplex_consistent(c))
+            if (color_inconsistencies && is_simpl_consistent)
               os << color.str();
             else
             {
@@ -1615,6 +1637,8 @@ private:
 
         os << std::endl;
       }
+      if (is_star_inconsistent)
+        ++num_inconsistent_stars;
     }
 
 #ifdef CGAL_TC_VERBOSE
@@ -1623,13 +1647,16 @@ private:
       << std::endl
       << "Export to OFF:\n"
       << "  * Number of vertices: " << m_points.size() << std::endl
-      << "  * Total number of simplices in stars (incl. duplicates): "
-      << num_simplices << std::endl
-      << "  * Number of inconsistent simplices in stars (incl. duplicates): "
-      << num_inconsistent_simplices << std::endl
-      << "  * Percentage of inconsistencies: "
+      << "  * Total number of simplices: " << num_simplices << std::endl
+      << "  * Number of inconsistent stars: "
+      << num_inconsistent_stars << " ("
+      << (m_points.size() > 0 ?
+          100. * num_inconsistent_stars / m_points.size() : 0.) << "%)"
+      << std::endl
+      << "  * Number of inconsistent simplices: "
+      << num_inconsistent_simplices << " ("
       << (num_simplices > 0 ?
-          100. * num_inconsistent_simplices / num_simplices : 0.) << "%"
+          100. * num_inconsistent_simplices / num_simplices : 0.) << "%)"
       << std::endl
       << "=========================================================="
       << std::endl;
@@ -1662,6 +1689,11 @@ private:
 #endif
 #ifdef CGAL_TC_EXPORT_NORMALS
   Vectors                   m_normals;
+#endif
+
+#ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
+  Points                    m_points_for_tse;
+  Points_ds                 m_points_ds_for_tse;
 #endif
 
 }; // /class Tangential_complex
