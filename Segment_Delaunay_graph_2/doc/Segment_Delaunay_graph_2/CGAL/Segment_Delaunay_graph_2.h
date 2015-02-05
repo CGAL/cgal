@@ -7,11 +7,10 @@ namespace CGAL {
 The class `Segment_Delaunay_graph_2` represents the segment Delaunay graph (which is 
 the dual graph of the 2D segment Voronoi diagram). 
 Currently it supports only insertions of sites. 
-It is templated by two template arguments `Gt`, which 
-must be a model of `SegmentDelaunayGraphTraits_2` 
-and `DS`, 
-which must be a model of `SegmentDelaunayGraphDataStructure_2`. 
-The second template argument defaults to 
+
+\tparam Gt must be a model of `SegmentDelaunayGraphTraits_2` 
+\tparam DS must be a model of `SegmentDelaunayGraphDataStructure_2`. 
+`DS` defaults to 
 `CGAL::Triangulation_data_structure_2< CGAL::Segment_Delaunay_graph_vertex_base_2<Gt>, CGAL::Triangulation_face_base_2<Gt> >`. 
 
 \cgalHeading{Traversal of the Segment Delaunay Graph}
