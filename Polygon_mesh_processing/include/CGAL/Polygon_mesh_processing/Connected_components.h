@@ -21,6 +21,10 @@
 #ifndef CGAL_INTERNAL_POLYHEDRON_SUBSET_EXTRACTION_H
 #define CGAL_INTERNAL_POLYHEDRON_SUBSET_EXTRACTION_H
 
+#include <boost/graph/graph_traits.hpp>
+#include <boost/foreach.hpp>
+#include <CGAL/boost/graph/iterator.h>
+
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Union_find.h>
@@ -328,19 +332,56 @@ mark_connected_components_v2(
 
 namespace Polygon_mesh_processing{
   /*!
-  * \ingroup PkgPolygonMeshProcessing
-  *  Erases the small connected components and the isolated vertices.
-  *  Keep `nb_components_to_keep` largest connected components.
-  *  Returns the number of connected components erased (ignoring isolated vertices).
-  * \todo BGLize me
+   * \ingroup PkgPolygonMeshProcessing
+   *  Erases the small connected components and the isolated vertices.
+   *  Keep `nb_components_to_keep` largest connected components.
+   *  \return the number of connected components erased (ignoring isolated vertices).
+   * \todo BGLize me
   */
   template <class PolygonMesh>
   std::size_t keep_largest_connected_components(PolygonMesh& pmesh, std::size_t nb_components_to_keep)
   {
     return pmesh.keep_largest_connected_components(nb_components_to_keep);
   }
-}
 
-} // end namespace CGAL
+  /*!
+   * \ingroup PkgPolygonMeshProcessing
+   *  Discovers all the faces in the same connected component as `seed_face` and put them in `out`.
+   * `seed_face` will also be added in `out`.
+   *  Two faces are considered to be in the same connected component if they share an edge.
+   *  \tparam PolygonMesh a model of `FaceGraph`
+   *  \tparam OutputIterator a output iterator that accepts face descriptors.
+   *  \returns the number of faces in the connected component (including `seed_face`)
+  */
+  template <class PolygonMesh, class OutputIterator>
+  OutputIterator
+  discover_connected_component(
+    typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face,
+    PolygonMesh& pmesh,
+    OutputIterator out)
+  {
+    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+    std::set<face_descriptor> already_processed;
+    std::vector< face_descriptor > stack;
+    stack.push_back(seed_face);
+    while (!stack.empty())
+    {
+      seed_face=stack.back();
+      stack.pop_back();
+      if (!already_processed.insert(seed_face).second) continue;
+      *out++=seed_face;
+      BOOST_FOREACH(halfedge_descriptor hd,
+                    CGAL::halfedges_around_face(halfedge(seed_face, pmesh), pmesh) )
+      {
+        face_descriptor neighbor = face( opposite(hd, pmesh), pmesh );
+        if ( neighbor != boost::graph_traits<PolygonMesh>::null_face() )
+          stack.push_back(neighbor);
+      }
+    }
+    return out;
+  }
+
+} } // end namespace CGAL::Polygon_mesh_processing
 
 #endif //CGAL_INTERNAL_POLYHEDRON_SUBSET_EXTRACTION_H
