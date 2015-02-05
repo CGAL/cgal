@@ -10,11 +10,11 @@
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 
-int main(void)
+int main(int argc, char* argv[])
 {
   const std::string input_filename_without_ext = "data/sphere_20k";
-  const std::string input_filename = input_filename_without_ext + ".xyz";
-  const std::string OUTPUT_FILENAME = input_filename_without_ext + "_WLOPED.xyz";
+  const std::string input_filename = std::string(argv[1]); // input_filename_without_ext + ".xyz";
+  const std::string OUTPUT_FILENAME = std::string(argv[2]); //input_filename_without_ext + "_WLOPED.xyz";
 
   // Reads a .xyz point set file in points[]
   std::vector<Point> points;
@@ -31,7 +31,7 @@ int main(void)
   std::vector<Point> output;
 
   //parameters
-  const double retain_percentage = 2;   // percentage of points to retain.
+  const double retain_percentage = 20;   // percentage of points to retain.
   const double neighbor_radius = 0.5;   // neighbors size.
 
   CGAL::wlop_simplify_and_regularize_point_set
@@ -39,8 +39,9 @@ int main(void)
                           (points.begin(), 
                            points.end(),
                            std::back_inserter(output),
-                           retain_percentage,
-                           neighbor_radius);
+                           retain_percentage//,
+                           //neighbor_radius
+                           );
   
   std::ofstream out(OUTPUT_FILENAME.c_str()); 
   if (!out || !CGAL::write_xyz_points(

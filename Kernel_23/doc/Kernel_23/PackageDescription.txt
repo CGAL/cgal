@@ -38,7 +38,7 @@
 \cgalPkgDescriptionBegin{2D and 3D Linear Geometry Kernel,PkgKernel23Summary}
 \cgalPkgPicture{pointSegmentTriangle.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Herv&eacute; Br&ouml;nnimann, Andreas Fabri, Geert-Jan Giezeman, Susan Hert, Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Stefan Schirra}
+\cgalPkgAuthors{Hervé Brönnimann, Andreas Fabri, Geert-Jan Giezeman, Susan Hert, Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Stefan Schirra}
 \cgalPkgDesc{This package contains kernels each containing objects of  constant size, such as point, vector, direction, line, ray, segment, circle as well as predicates and constructions for these objects. The kernels mainly differ in the way they handle robustness issues.}
 \cgalPkgManuals{Chapter_2D_and_3D_Geometry_Kernel,PkgKernel23}
 \cgalPkgSummaryEnd

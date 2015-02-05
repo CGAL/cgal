@@ -19,7 +19,7 @@
 \cgalPkgDescriptionBegin{2D and Surface Function Interpolation,PkgInterpolation2Summary}
 \cgalPkgPicture{interpolation.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Julia Fl&ouml;totto}
+\cgalPkgAuthor{Julia Flötotto}
 \cgalPkgDesc{This package implements different methods for scattered data interpolation: Given measures of a function on a set of discrete data points, the task is to interpolate this function on an arbitrary query point. The package further offers functions for natural neighbor interpolation.}
 \cgalPkgManuals{Chapter_2D_and_Surface_Function_Interpolation,PkgInterpolation2}
 \cgalPkgSummaryEnd

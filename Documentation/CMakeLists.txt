@@ -154,38 +154,18 @@ if(DOXYGEN_FOUND)
     SET(CGAL_RELEASE_YEAR_ID "${CGAL_BUILD_YEAR2}a")
   endif()
 
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/how_to_cite_cgal.bib.in
-  ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib)
+  ## generate how_to_cite files
+  if(PYTHONINTERP_FOUND)
+    execute_process(COMMAND ${PYTHON_EXECUTABLE}
+                            ${CMAKE_CURRENT_SOURCE_DIR}/scripts/generate_how_to_cite.py
+                            ${CMAKE_CURRENT_SOURCE_DIR}
+                            ${CMAKE_BINARY_DIR})
 
-  find_program(BIBTEX2HTML_EXECUTABLE bibtex2html DOC "Path to bibtex2html")
-  find_program(SH_EXECUTABLE sh DOC "Path to sh")
-  if (BIBTEX2HTML_EXECUTABLE AND SH_EXECUTABLE)
-    set(ENV{openout_any} "a") # may be needed with TexLive
-    execute_process(COMMAND ${SH_EXECUTABLE}
-                            ${CMAKE_CURRENT_SOURCE_DIR}/scripts/makebiblio
-                            ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib
-                            ${BIBTEX2HTML_EXECUTABLE}
-                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                    OUTPUT_VARIABLE makebiblio_OUTPUT
-                    ERROR_VARIABLE makebiblio_ERROR
-                    RESULT_VARIABLE makebiblio_RESULT) #bibtex2html also prints info in stderr
-    if(makebiblio_RESULT GREATER 0)
-      message(WARNING "
-= makebiblio returned the error number ${makebiblio_RESULT}
-
-== Its standard output was:
-${makebiblio_OUTPUT}
-== Its error output was:
-${makebiblio_ERROR}
-"
-        )
-    endif()
-  else()
-    MESSAGE(WARNING "bibtex2html or sh missing, using default how_to_cite files")
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/how_to_cite.html.default ${CMAKE_BINARY_DIR}/how_to_cite.html COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/how_to_cite_cgal.txt.default ${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt COPYONLY)
+    configure_file(${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib.in ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib)
+    configure_file(${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt.in ${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt)
+    configure_file(${CMAKE_BINARY_DIR}/how_to_cite.html.in ${CMAKE_BINARY_DIR}/how_to_cite.html)
   endif()
-  ## end bibtex configuration
+  ##
 
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BaseDoxyfile.in ${CGAL_DOC_DXY_DIR}/BaseDoxyfile)
   
@@ -194,10 +174,10 @@ ${makebiblio_ERROR}
   # pkglist_filter gets the path to the pkglist_filter of this source
   # directory.
   if(WIN32)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pkglist_filter.bat ${CMAKE_BINARY_DIR}/pkglist_filter.bat)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/scripts/pkglist_filter.bat ${CMAKE_BINARY_DIR}/pkglist_filter.bat)
   endif()
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pkglist_filter ${CMAKE_BINARY_DIR}/pkglist_filter)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pkglist_filter.py ${CMAKE_BINARY_DIR}/pkglist_filter.py)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/scripts/pkglist_filter ${CMAKE_BINARY_DIR}/pkglist_filter)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/scripts/pkglist_filter.py ${CMAKE_BINARY_DIR}/pkglist_filter.py)
 
   foreach(package ${CGAL_CONFIGURED_PACKAGES_NAMES})
     configure_doxygen_package(${package})
@@ -242,19 +222,18 @@ ${makebiblio_ERROR}
       )
       add_dependencies(Documentation_test doc)
 
-      if (BIBTEX2HTML_EXECUTABLE AND SH_EXECUTABLE)
-        add_custom_target(Documentation_test_publish
-          ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results
-        )
-        add_dependencies(Documentation_test_publish doc)
+      add_custom_target(Documentation_test_publish
+        ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results
+      )
+      add_dependencies(Documentation_test_publish doc)
 
-        set(CGAL_DOC_VERSION_H "/tmp/version.h" CACHE PATH "Path to CGAL/version.h")
+      set(CGAL_DOC_VERSION_H "/tmp/version.h" CACHE PATH "Path to CGAL/version.h")
 
-        add_custom_target(doc_and_publish_testsuite
-          ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results --cgal-version ${CGAL_DOC_VERSION_H} --version-to-keep 10
-        )
-        add_dependencies(doc_and_publish_testsuite doc_with_postprocessing)
-      endif()
+      add_custom_target(doc_and_publish_testsuite
+        ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results --cgal-version ${CGAL_DOC_VERSION_H} --version-to-keep 10
+      )
+      add_dependencies(doc_and_publish_testsuite doc_with_postprocessing)
+
     endif()
   endif()
   
