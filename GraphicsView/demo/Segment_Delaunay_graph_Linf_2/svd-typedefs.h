@@ -27,19 +27,16 @@ typedef CGAL::Simple_cartesian<CORE::Expr> Rep;
 typedef CGAL::Field_with_sqrt_tag MTag;
 typedef CGAL::Field_with_sqrt_tag EMTag;
 typedef CGAL::Simple_cartesian<CORE::Expr> ERep;
-struct Gt
-  : public CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<Rep,
+typedef CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<Rep,
 							  MTag,
 							  ERep,
 							  EMTag>
-{};
+Gt;
 #else
-struct Gt
-  : public CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<Rep> {};
+typedef CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<Rep> Gt;
 #endif
 #else
-struct Gt
-  : public CGAL::Segment_Delaunay_graph_Linf_traits_2<Rep,CGAL::Field_tag> {};
+typedef CGAL::Segment_Delaunay_graph_Linf_traits_2<Rep,CGAL::Field_tag> Gt;
 #endif
 
 typedef Gt::Point_2            Point_2;
