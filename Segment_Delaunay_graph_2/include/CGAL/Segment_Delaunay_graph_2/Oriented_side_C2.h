@@ -67,8 +67,8 @@ public:
   Oriented_side operator()(const Site_2& s1, const Site_2& s2,
 			   const Site_2& s, const Site_2& p) const
   {
-    CGAL_precondition(s1.is_point() or s2.is_point());
-    CGAL_precondition(s1.is_segment() or s2.is_segment());
+    CGAL_precondition(s1.is_point() || s2.is_point());
+    CGAL_precondition(s1.is_segment() || s2.is_segment());
 
     return this->operator()((s1.is_point()? s1: s2), s, p);
   }
