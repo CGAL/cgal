@@ -22,7 +22,7 @@ the Voronoi diagram of a set of points and segments under the
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.X}
 \cgalPkgDependsOn{\ref PkgSegmentDelaunayGraph2Summary}
-\cgalPkgBib{cgal:x-x}
+\cgalPkgBib{cgal:cdp-sdglinf2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
 
