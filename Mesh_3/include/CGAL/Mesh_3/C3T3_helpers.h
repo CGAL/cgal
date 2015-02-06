@@ -1340,9 +1340,9 @@ private:
   {
   public:
     Cell_from_ids(const C3T3& c3t3, const Cell_handle& c)
-      : vertices_()
+      : infinite_(c3t3.triangulation().is_infinite(c))
+      , vertices_()
       , sorted_vertices_()
-      , infinite_(c3t3.triangulation().is_infinite(c))
     {
       for(int i = 0; i < 4; ++i)
       {
