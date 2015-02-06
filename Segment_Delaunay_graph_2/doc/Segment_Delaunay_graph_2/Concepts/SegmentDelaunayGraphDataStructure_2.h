@@ -50,7 +50,7 @@ public:
 
 /*!
 Joins 
-the vertices that are endpoints of the edge `(f,i)`. It returns 
+the vertices that are endpoints of the edge `(f,i)` and returns 
 a vertex handle to common vertex. 
 */ 
 Vertex_handle join_vertices(Face_handle f, int i); 
