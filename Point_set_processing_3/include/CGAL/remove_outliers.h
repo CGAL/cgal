@@ -113,7 +113,7 @@ compute_avg_knn_sq_distance_3(
 ///
 /// @tparam InputIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-///        It can be omitted ifthe value type of  InputIterator` is convertible to `Point_3<Kernel>`.
+///        It can be omitted ifthe value type of `InputIterator` is convertible to `Point_3<Kernel>`.
 /// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from the value type of `PointPMap`.
 ///

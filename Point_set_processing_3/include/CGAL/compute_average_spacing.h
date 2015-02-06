@@ -102,7 +102,7 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
 ///        It can be omitted if the value type of `InputIterator`  is convertible to `Point_3<Kernel>`.
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value typ of `PointPMap`.
+///        It can be omitted and deduced automatically from the value type of `PointPMap`.
 ///
 /// @return average spacing (scalar).
 
