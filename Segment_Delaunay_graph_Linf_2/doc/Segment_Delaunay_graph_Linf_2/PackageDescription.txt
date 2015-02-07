@@ -14,7 +14,7 @@
 \cgalPkgDesc{Algorithms and geometric traits for computing the dual of
 the Voronoi diagram of a set of points and segments under the
 \f$L_{\infty}\f$ metric.}
-\cgalPkgManuals{Chapter_L_infinity_Segment_Delaunay_graph,PkgSDGLinf}
+\cgalPkgManuals{Chapter_L_infinity_Segment_Delaunay_graphs,PkgSDGLinf}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
