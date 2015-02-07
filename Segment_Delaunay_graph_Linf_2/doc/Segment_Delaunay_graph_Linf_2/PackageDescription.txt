@@ -6,8 +6,7 @@
 \addtogroup PkgSDGLinf
 \todo check generated documentation
 
-\cgalPkgDescriptionBegin{L\f${\infty}\f$ Segment Delaunay graph,
-PkgSDGLinfSummary}
+\cgalPkgDescriptionBegin{L infinity Segment Delaunay graph,PkgSDGLinfSummary}
 \cgalPkgPicture{sdglinf-small.png}
 
 \cgalPkgSummaryBegin
