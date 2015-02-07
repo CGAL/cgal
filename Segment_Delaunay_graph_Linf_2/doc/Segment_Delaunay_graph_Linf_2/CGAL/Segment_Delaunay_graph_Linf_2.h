@@ -8,13 +8,16 @@ The class `Segment_Delaunay_graph_Linf_2`
 represents the segment Delaunay graph under the \f$ L_{\infty} \f$ metric (which is
 the dual graph of the 2D segment Voronoi diagram under the \f$ L_{\infty} \f$
 metric).
+This class is derived from class `CGAL::Segment_Delaunay_graph_2<Gt,DS>`.
 Currently it supports only insertions of sites.
-\tparam Gt must be a model of `SegmentDelaunayGraphLinfTraits_2`
-\taram DS must be a model of `SegmentDelaunayGraphDataStructure_2`.
+
+\tparam Gt is the geometric traits
+which must be a model of `SegmentDelaunayGraphLinfTraits_2`
+
+\tparam DS is the segment Delaunay graph data structure
+which must be a model of `SegmentDelaunayGraphDataStructure_2`.
 `DS` defaults to
 `CGAL::Triangulation_data_structure_2< CGAL::Segment_Delaunay_graph_vertex_base_2<Gt>, CGAL::Triangulation_face_base_2<Gt> >`.
-This class is derived from class
-`CGAL::Segment_Delaunay_graph_2<Gt,DS>`.
 
 \cgalModels `DelaunayGraph_2`
 
