@@ -23,6 +23,7 @@ the Voronoi diagram of a set of points and segments under the
 \cgalPkgBib{cgal:cdp-sdglinf2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 
 \cgal provides algorithms for computing the segment Delaunay
 graph, i.e., the dual of the
@@ -40,8 +41,6 @@ The classes `CGAL::Segment_Delaunay_graph_Linf_traits_2<K,MTag>`,
 `CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<K,MTag>`
 `CGAL::Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2<K,MTag>`
 are models of the `SegmentDelaunayGraphLinfTraits_2` concept.
-
-\cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
 
