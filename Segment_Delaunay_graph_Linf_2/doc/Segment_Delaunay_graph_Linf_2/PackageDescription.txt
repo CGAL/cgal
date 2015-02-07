@@ -11,8 +11,7 @@ PkgSDGLinfSummary}
 \cgalPkgPicture{sdglinf-small.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Panagiotis Cheilaris,
-Sandeep Kumar Dey, Evanthia Papadopoulou}
+\cgalPkgAuthors{Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou}
 \cgalPkgDesc{Algorithms and geometric traits for computing the dual of
 the Voronoi diagram of a set of points and segments under the
 \f$L_{\infty}\f$ metric.}
