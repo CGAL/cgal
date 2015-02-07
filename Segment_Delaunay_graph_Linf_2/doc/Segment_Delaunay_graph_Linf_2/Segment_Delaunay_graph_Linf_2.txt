@@ -2,7 +2,7 @@ namespace CGAL {
 /*!
 
 \mainpage User Manual
-\anchor Chapter_L_infinity_Segment_Delaunay_graphs
+\anchor Chapter_L_Infinity_Segment_Delaunay_Graphs
 \anchor chaptersdglinf
 \cgalAutoToc
 \authors Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
