@@ -157,6 +157,12 @@ We refer the end user to the
 Segment Delaunay graph package manual for a comparison of the
 performance of the plain graph class and the hierarchy class.
 
+\subsection secsdglinfVD Obtaining the Voronoi Diagram from the Delaunay Graph
+
+Class `Voronoi_diagram_2` from the Voronoi diagram adaptor package
+can be used to obtain the \f$ L_{\infty} \f$ segment Voronoi diagram
+from the \f$ L_{\infty} \f$ segment Delaunay graph (or hierarchy).
+
 \section secsdglinfexamples Examples
 
 The following examples show the usage of the \f$ L_{\infty} \f$
