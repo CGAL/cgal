@@ -1,0 +1,10 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+ 
+PROJECT_NAME =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Triangulated Surface Mesh Skeletonization"
+INPUT =  ${CMAKE_SOURCE_DIR}/Mean_curvature_skeleton/doc/Mean_curvature_skeleton/ \ 
+         ${CMAKE_SOURCE_DIR}/Mean_curvature_skeleton/include
+
+EXTRACT_ALL                =  false
+HIDE_UNDOC_MEMBERS         =  true
+HIDE_UNDOC_CLASSES         =  true
+MULTILINE_CPP_IS_BRIEF = YES

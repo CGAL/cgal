@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Mean_curvature_flow_skeleton_plugin</class>
+ <widget class="QDockWidget" name="Mean_curvature_flow_skeleton_plugin">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>429</width>
+    <height>291</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>DockWidget</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <widget class="QPushButton" name="pushButton_contract">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>220</y>
+      <width>101</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Contract</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="omega_H">
+    <property name="geometry">
+     <rect>
+      <x>124</x>
+      <y>66</y>
+      <width>101</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="min_edge_length">
+    <property name="geometry">
+     <rect>
+      <x>124</x>
+      <y>136</y>
+      <width>101</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_omega_H">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>66</y>
+      <width>59</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>omega_H</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_min_edge_length">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>136</y>
+      <width>96</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>min_edge_length</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_collapse">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>220</y>
+      <width>101</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Collapse</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_split">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>220</y>
+      <width>101</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Split</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_degeneracy">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>220</y>
+      <width>101</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Degeneracy</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_run">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>60</y>
+      <width>171</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Run one iteration</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_skeletonize">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>140</y>
+      <width>171</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Skeletonize</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_converge">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>100</y>
+      <width>171</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Run to convergence</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="delta_area">
+    <property name="geometry">
+     <rect>
+      <x>124</x>
+      <y>170</y>
+      <width>101</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_delta_area">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>170</y>
+      <width>71</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>delta_area</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_omega_P">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>100</y>
+      <width>59</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>omega_P</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="omega_P">
+    <property name="geometry">
+     <rect>
+      <x>124</x>
+      <y>100</y>
+      <width>101</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="is_medially_centered">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>20</y>
+      <width>151</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Is medially centered</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_segment">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>180</y>
+      <width>171</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Segment</string>
+    </property>
+   </widget>
+   <zorder>omega_H</zorder>
+   <zorder>min_edge_length</zorder>
+   <zorder>label_omega_H</zorder>
+   <zorder>label_min_edge_length</zorder>
+   <zorder>pushButton_contract</zorder>
+   <zorder>pushButton_collapse</zorder>
+   <zorder>pushButton_split</zorder>
+   <zorder>pushButton_degeneracy</zorder>
+   <zorder>pushButton_run</zorder>
+   <zorder>pushButton_skeletonize</zorder>
+   <zorder>pushButton_converge</zorder>
+   <zorder>delta_area</zorder>
+   <zorder>label_delta_area</zorder>
+   <zorder>label_omega_P</zorder>
+   <zorder>omega_P</zorder>
+   <zorder>is_medially_centered</zorder>
+   <zorder>pushButton_segment</zorder>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+ <slots>
+  <slot>contract()</slot>
+ </slots>
+</ui>

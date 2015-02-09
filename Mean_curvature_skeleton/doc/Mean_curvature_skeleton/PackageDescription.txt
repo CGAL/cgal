@@ -1,0 +1,24 @@
+/// \defgroup PkgMeanCurvatureSkeleton3 Triangulated Surface Mesh Skeletonization Reference
+
+/*!
+\addtogroup PkgMeanCurvatureSkeleton3
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Skeletonization,PkgMeanCurvatureSkeleton3Summary}
+\cgalPkgPicture{mcfskel-small.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Xiang Gao, Sébastien Loriot and Andrea Tagliasacchi}
+\cgalPkgDesc{This package provides a curve skeleton extraction algorithm for a watertight manifold triangle mesh.}
+\cgalPkgManuals{Chapter_3D_Mean_Curvature_Skeleton,PkgMeanCurvatureSkeleton3}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.7}
+\cgalPkgDependsOn{\ref thirdpartyEigen}
+\cgalPkgBib{cgal:gt-tsms}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{See Polyhedral Surface,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+
+
+*/
+
