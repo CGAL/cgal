@@ -105,8 +105,8 @@ int main()
   edge_iter ei, ei_end;
   for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
   {
-    Point s = points[boost::source(*ei, g)];
-    Point t = points[boost::target(*ei, g)];
+    Point s = points[source(*ei, g)];
+    Point t = points[target(*ei, g)];
     std::cout << s << " " << t << "\n";
   }
 
