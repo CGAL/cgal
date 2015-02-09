@@ -70,5 +70,7 @@ create_single_source_cgal_program( "simple_mcfskel_sm_example.cpp" )
 
 create_single_source_cgal_program( "MCF_Skeleton_example.cpp" )
 
+create_single_source_cgal_program( "MCF_Skeleton_sm_example.cpp" )
+
 create_single_source_cgal_program( "segmentation_example.cpp" )
 

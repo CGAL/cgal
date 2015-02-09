@@ -58,8 +58,8 @@ public:
   typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor        halfedge_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_iterator          halfedge_iterator;
   typedef typename boost::graph_traits<HalfedgeGraph>::in_edge_iterator           in_edge_iterator;
-  typedef typename HalfedgeGraph::Facet_iterator                                  Facet_iterator;
-  typedef typename HalfedgeGraph::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
+  typedef typename boost::graph_traits<HalfedgeGraph>::face_iterator              face_iterator;
+  typedef Halfedge_around_face_circulator<HalfedgeGraph>                Halfedge_face_circulator;
 
 // Data members
 private:
@@ -224,6 +224,8 @@ public:
 private:
   void init()
   {
+    std::cerr <<"init" << std::endl;
+        
     int nb_edges = num_edges(hg);
     int num_faces = hg.size_of_facets();
     int nb_vertices = num_vertices(hg);
@@ -281,12 +283,12 @@ private:
       if (id == -1)
       {
         put(hedge_id_pmap, ed, idx);
-        halfedge_descriptor ed_opposite = ed->opposite();
+        halfedge_descriptor ed_opposite = opposite(ed,hg);
         put(hedge_id_pmap, ed_opposite, idx);
 
         // also cache the length of the edge
-        vertex_descriptor v1 = ed->vertex();
-        vertex_descriptor v2 = ed->opposite()->vertex();
+        vertex_descriptor v1 = target(ed,hg);
+        vertex_descriptor v2 = source(ed,hg);
         Point source = get(hg_point_pmap, v1);
         Point target = get(hg_point_pmap, v2);
         edge_lengths[idx] = std::sqrt(squared_distance(source, target));
@@ -299,15 +301,16 @@ private:
     int face_id = 0;
     for (Facet_iterator i = hg.facets_begin(); i != hg.facets_end(); ++i)
     {
-      Halfedge_facet_circulator j = i->facet_begin();
+      Halfedge_face_circulator j(halfedge(*i,hg),hg), done(j);
       // Facets in polyhedral surfaces are at least triangles.
       CGAL_assertion(CGAL::circulator_size(j) >= 3);
       do
       {
-        int id = j->id();
+        halfedge_descriptor hd = *j;
+        int id = get(vertex_index_t , hd, hg);
         face_to_edge[face_id].push_back(id);
         edge_to_face[id].push_back(face_id);
-      } while (++j != i->facet_begin());
+      } while (++j != done);
       face_id++;
     }
 

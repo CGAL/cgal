@@ -52,26 +52,26 @@ mesh_split(HalfedgeGraph& hg,
   
   // halfedge_descriptor en = Euler::split_edge(ei, hg); // there is an issue in this function for now use the polyhedron version in the meantime
   halfedge_descriptor en = hg.split_edge(ei);
-  boost::put(hg_point_pmap, en->vertex(), pn);
-  Euler::split_face(en, ei->next(), hg);
+  boost::put(hg_point_pmap, target(en,hg), pn);
+  Euler::split_face(en, next(ei,hg), hg);
 
   en->id() = -1;
-  en->opposite()->id() = -1;
+  opposite(en,hg)->id() = -1;
   ei->id() = -1;
-  ei->opposite()->id() = -1;
-  en->next()->id() = -1;
-  en->next()->opposite()->id() = -1;
-  en->next()->next()->id() = -1;
-  ei->next()->id() = -1;
+  opposite(ei,hg)->id() = -1;
+  next(en,hg)->id() = -1;
+  opposite(next(en,hg),hg)->id() = -1;
+  next(next(en,hg),hg)->id() = -1;
+  next(en,hg)->id() = -1; // AF: the same as 3 lines above? error or duplicate?
   halfedge_descriptor ej = opposite(en, hg);
-  if (!(ej->is_border()))
+  if (! is_border(wj,hg))
   {
-    Euler::split_face(ei->opposite(), ej->next(), hg);
-    ej->next()->id() = -1;
-    halfedge_descriptor ei_op_next = ei->opposite()->next();
+    Euler::split_face(opposite(ei,hg), next(ej,hg), hg);
+    next(ej,hg)->id() = -1;
+    halfedge_descriptor ei_op_next = next(opposite(ei,hg),hg);
     ei_op_next->id() = -1;
-    ei_op_next->opposite()->id() = -1;
-    ei_op_next->next()->id() = -1;
+    opposite(ei_op_next,hg)->id() = -1;
+    next(ei_op_next,hg)->id() = -1;
   }
 
   return en;

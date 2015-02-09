@@ -168,7 +168,7 @@ public:
   typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor   halfedge_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
 
-  typedef typename HalfedgeGraph::Traits::Point_3   Point;
+  //  typedef typename HalfedgeGraph::Traits::Point_3   Point;
 
   // Returns the cotangent weight of specified halfedge_descriptor
   // Edge orientation is trivial
@@ -211,7 +211,7 @@ public:
   typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor   halfedge_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
 
-  typedef typename HalfedgeGraph::Traits::Point_3   Point;
+  //  typedef typename HalfedgeGraph::Traits::Point_3   Point;
 
   // Returns the cotangent of the opposite angle of the edge
   // 0 for border edges (which does not have an opposite angle)

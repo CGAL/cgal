@@ -97,7 +97,7 @@ int main()
 
 
   CGAL::extract_mean_curvature_flow_skeleton(mesh, g, points, corr);
-
+#if 0
   vertex_iterator vb, ve;
 
   std::cout << "vertices: " << boost::num_vertices(g) << "\n";
@@ -137,6 +137,7 @@ int main()
     }
     std::cout << "\n";
   }
+#endif
   return 0;
 }
 

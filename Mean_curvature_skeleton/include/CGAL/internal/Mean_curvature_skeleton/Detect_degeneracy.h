@@ -55,12 +55,12 @@ bool is_vertex_degenerate(HalfedgeGraph& hg,
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor          vertex_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor        halfedge_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::out_edge_iterator          out_edge_iterator;
-  typedef typename HalfedgeGraph::Face_handle                                     Face_handle;
-  typedef typename HalfedgeGraph::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
+  typedef typename HalfedgeGraph::face_descriptor                                 face_descriptor;
+  typedef typename Halfedge_around_face_circulator<HalfedgeGraph>                 Halfedge_face_circulator;
 
   std::set<vertex_descriptor> vertices_in_disk;
   std::set<halfedge_descriptor> edges_in_disk;
-  std::set<Face_handle> faces_in_disk;
+  std::set<face_descriptor> faces_in_disk;
 
   vertices_in_disk.clear();
   search_vertices_in_disk(hg, hg_point_pmap, root, vertices_in_disk, min_edge_length);
@@ -80,22 +80,22 @@ bool is_vertex_degenerate(HalfedgeGraph& hg,
         edges_in_disk.insert(ed);
         edges_in_disk.insert(ed_op);
       }
-      Face_handle f = ed->face();
-      Halfedge_facet_circulator j = f->facet_begin();
+
+      Halfedge_face_circulator j(ed,hg), done(j);
       bool in = true;
       do
       {
-        vertex_descriptor v = j->vertex();
+        vertex_descriptor v = target(j,hg);
         if (vertices_in_disk.find(v) == vertices_in_disk.end())
         {
           in = false;
           break;
         }
-      } while (++j != f->facet_begin());
+      } while (++j != done);
 
       if (in)
       {
-        faces_in_disk.insert(f);
+        faces_in_disk.insert(face(ed,hg));
       }
     }
   }
@@ -127,8 +127,8 @@ void search_vertices_in_disk(HalfedgeGraph& hg,
                              double min_edge_length)
 {
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor          vertex_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor            halfedge_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::out_edge_iterator		      out_edge_iterator;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor        halfedge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::out_edge_iterator	  out_edge_iterator;
 
   std::map<vertex_descriptor, bool> vertex_visited;
 

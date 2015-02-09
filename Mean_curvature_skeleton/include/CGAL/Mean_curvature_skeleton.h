@@ -30,6 +30,8 @@
 
 #include <boost/iterator/transform_iterator.hpp>
 
+#include <CGAL/boost/graph/iterator.h>
+
 // Compute cotangent Laplacian
 #include <CGAL/internal/Mean_curvature_skeleton/Weights.h>
 
@@ -229,16 +231,14 @@ public:
 
   // Repeat HalfedgeGraph types
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_iterator         vertex_iterator;
-  typedef typename HalfedgeGraph::Vertex_handle                                Vertex_handle;
   typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_iterator       halfedge_iterator;
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor         edge_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_iterator           edge_iterator;
   typedef typename boost::graph_traits<HalfedgeGraph>::in_edge_iterator        in_edge_iterator;
   typedef typename boost::graph_traits<HalfedgeGraph>::out_edge_iterator       out_edge_iterator;
 
-  typedef typename HalfedgeGraph::Face_handle                                  Face_handle;
-  typedef typename HalfedgeGraph::Facet_iterator                               Facet_iterator;
-  typedef typename HalfedgeGraph::Halfedge_around_facet_circulator             Halfedge_facet_circulator;
+  typedef typename boost::graph_traits<HalfedgeGraph>::face_iterator           Facet_iterator;
+  typedef Halfedge_around_face_circulator<HalfedgeGraph>            Halfedge_facet_circulator;
 
   // Cotangent weight calculator
   typedef typename internal::Cotangent_weight<HalfedgeGraph,
@@ -1308,7 +1308,7 @@ private:
       {
         vertex_descriptor vi = source(ed, m_hg);
         vertex_descriptor vj = target(ed, m_hg);
-        halfedge_descriptor ed_next = ed->next();
+        halfedge_descriptor ed_next = next(ed, m_hg);
         vertex_descriptor vk = target(ed_next, m_hg);
         Point pi = get(m_hg_point_pmap, vi);
         Point pj = get(m_hg_point_pmap, vj);
@@ -1401,17 +1401,17 @@ private:
       halfedge_descriptor ek;
       if (angle_i > angle_j)
       {
-        ek = ei->next();
+        ek = next(ei, m_hg);
       }
       else
       {
-        ek = ej->next();
+        ek = next(ej, m_hg);
       }
       vertex_descriptor vk = target(ek, m_hg);
       Point pn = project_vertex(vs, vt, vk);
       halfedge_descriptor en = internal::mesh_split(m_hg, m_hg_point_pmap, ei, pn);
       // set id for new vertex
-      put(m_vertex_id_pmap, en->vertex(), m_vertex_id_count++);
+      put(m_vertex_id_pmap, en->target(en,m_hg), m_vertex_id_count++);
       cnt++;
     }
     return cnt;
