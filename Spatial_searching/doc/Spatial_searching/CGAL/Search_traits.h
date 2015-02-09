@@ -6,7 +6,6 @@ namespace CGAL {
 The class `Search_traits` can be used as a template parameter of the kd tree 
 and the search classes. It is a mere wrapper for the geometric types needed 
 by these classes. 
-
 \cgalModels `SearchTraits`
 
 \sa `Search_traits_2<Kernel>` 
@@ -14,12 +13,18 @@ by these classes.
 \sa `Search_traits_d<Kernel>` 
 
 */
-template< typename NT, typename Point, typename CartesianIterator, typename ConstructCartesianIterator, typename ConstructMinVertex, typename ConstructMaxVertex >
+template< typename NT, typename Point, typename CartesianIterator, typename ConstructCartesianIterator, typename ConstructMinVertex, typename ConstructMaxVertex, typename Dim >
 class Search_traits {
 public:
 
 /// \name Types 
 /// @{
+
+/*!
+Dimension type. Either `Dimension_tag<int dim>`
+or `Dynamic_dimension_tag`.
+*/
+typedef unspecified_type Dimension;
 
 /*!
 The number type of the coordinates. 

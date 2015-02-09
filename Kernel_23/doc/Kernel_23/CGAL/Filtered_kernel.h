@@ -4,11 +4,12 @@ namespace CGAL {
 /*!
 \ingroup kernel_classes
 
-\brief `Filtered_kernel_adaptor` is a kernel that uses the filtering technique from \cgalCite{cgal:bbp-iayed-01} to obtain a kernel with exact and efficient predicate functors. 
+\brief `Filtered_kernel_adaptor` is a kernel that uses a filtering technique to obtain a kernel with exact and efficient predicate functors.
 
 \details
-The geometric constructions are exactly those 
-of the kernel `CK`, which means that they are not necessarily exact. 
+The geometric constructions are exactly those
+of the kernel `CK`, which means that they are not necessarily exact.
+More details about the filtering technique can be found in  \cgalCite{cgal:bbp-iayed-01}.
 
 In contrast to `Filtered_kernel`, 
 the global functions are those of `CK`. 
@@ -52,11 +53,11 @@ namespace CGAL {
 /*!
 \ingroup kernel_classes
 
-`Filtered_kernel` is a kernel that uses the filtering technique based 
-on interval arithmetic from \cgalCite{cgal:bbp-iayed-01} to achieve 
-exact and efficient predicates. In addition, a few selected important 
-predicates are implemented using the formally proved, semi-static, filtering 
-techniques from \cgalCite{cgal:mp-fcafg-05}. 
+`Filtered_kernel` is a kernel that uses a filtering technique based
+on interval arithmetic from to achieve exact and efficient predicates.
+It is based on \cgalCite{cgal:bbp-iayed-01}. In addition, a few selected important
+predicates are implemented using the formally proved, semi-static, filtering
+techniques from \cgalCite{cgal:mp-fcafg-05}.
 
 The geometric constructions are exactly those 
 of the kernel `CK`, which means that they are not necessarily exact. 

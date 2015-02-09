@@ -95,19 +95,16 @@ void test_periodic_3_triangulation_traits_3()
   std::cout<<"  GMP not available"<<std::endl;
 #endif
 
+#ifdef TEST_CARTESIAN
 #ifdef CGAL_USE_LEDA
   std::cout<<"  LEDA...";std::cout.flush();
 #define RT leda_integer
 #define FT leda_rational
   test_traits<KERNEL>();
-#define LRT CGAL::Lazy_exact_nt< RT >
-#define LFT CGAL::Lazy_exact_nt< FT >
-  test_traits<LAZY_KERNEL>();
+
   std::cout<<" done"<<std::endl;
 #undef RT
 #undef FT
-#undef LRT
-#undef LFT
 #else
   std::cout<<"  LEDA not available"<<std::endl;
 #endif
@@ -117,15 +114,13 @@ void test_periodic_3_triangulation_traits_3()
 #define RT CORE::Expr
 #define FT CGAL::Quotient<RT>
   test_traits<KERNEL>();
-#define LRT CGAL::Lazy_exact_nt< RT >
-#define LFT CGAL::Lazy_exact_nt< FT >
-  test_traits<LAZY_KERNEL>();
+
   std::cout<<" done"<<std::endl;
 #undef RT
 #undef FT
-#undef LRT
-#undef LFT
 #else
   std::cout<<"  CORE not available"<<std::endl;
+#endif
+
 #endif
 }

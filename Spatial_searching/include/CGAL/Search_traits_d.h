@@ -21,13 +21,16 @@
 
 #ifndef CGAL_SEARCH_TRAITS_D_H
 #define CGAL_SEARCH_TRAITS_D_H
+#include <CGAL/Dimension.h>
 
 namespace CGAL {
 
-  template <class K>
+
+  template <class K,typename D = Dynamic_dimension_tag>
   class Search_traits_d {
 
   public:
+    typedef D Dimension;
     typedef typename K::Cartesian_const_iterator_d Cartesian_const_iterator_d;
     typedef typename K::Construct_cartesian_const_iterator_d Construct_cartesian_const_iterator_d;
     typedef typename K::Construct_iso_box_d Construct_iso_box_d;

@@ -20,13 +20,13 @@ int main(void)
 {
     // Reads a .xyz point set file in points[].
     std::list<PointVectorPair> points;
-    std::ifstream stream("data/sphere_20k.xyz");
+    std::ifstream stream("data/sphere_1k.xyz");
     if (!stream ||
         !CGAL::read_xyz_points(stream,
                                std::back_inserter(points),
                                CGAL::First_of_pair_property_map<PointVectorPair>()))
     {
-        std::cerr << "Error: cannot read file data/sphere_20k.xyz" << std::endl;
+        std::cerr << "Error: cannot read file data/sphere_1k.xyz" << std::endl;
         return EXIT_FAILURE;
     }
 

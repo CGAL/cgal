@@ -63,11 +63,13 @@ Triangulation_3
 Triangulation
 Ridges_3
 Point_set_processing_3
+Polyline_simplification_2
 Property_map
 Kinetic_framework
 Kinetic_data_structures
 Periodic_2_triangulation_2
 Periodic_3_triangulation_3
+Scale_space_reconstruction_3
 Spatial_searching
 Spatial_sorting
 Segment_Delaunay_graph_2

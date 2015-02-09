@@ -24,7 +24,7 @@ insertion are supported. The Delaunay triangulation also supports point removal.
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.6}
-\cgalPkgBib{cgal:hd-t}
+\cgalPkgBib{cgal:hdj-t}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd

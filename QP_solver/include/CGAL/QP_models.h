@@ -31,7 +31,8 @@
 #include <iomanip>
 #include <istream>
 #include <sstream>
-#include <boost/iterator/counting_iterator.hpp>
+
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
 // this file defines the following models:

@@ -26,6 +26,7 @@
 #include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/to_rational.h>
+#include <CGAL/use.h>
 
 #ifndef CGAL_TEST_FRACTION_TRAITS_H
 #define CGAL_TEST_FRACTION_TRAITS_H
@@ -44,6 +45,7 @@ void test_fraction_traits(){
     typedef typename FT::Decompose Decompose;
     typedef typename FT::Compose   Compose;
 
+    CGAL_USE_TYPE(Is_fraction);
     CGAL_static_assertion( (::boost::is_same<Type,T>::value));
     CGAL_static_assertion( (::boost::is_same<Is_fraction,Tag_true>::value));
     CGAL_static_assertion(!(::boost::is_same<Common_factor,Null_functor>::value));

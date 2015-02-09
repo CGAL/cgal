@@ -86,7 +86,6 @@ is opposite to the vertex with the same index. See
 
 - `CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3,SurjectiveLockDataStructure>`
 - `CGAL::Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3,LocationPolicy,SurjectiveLockDataStructure>`
-- `CGAL::Triangulation_hierarchy_3<Tr>`
 - `CGAL::Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3,SurjectiveLockDataStructure>`
 - `CGAL::Triangulation_vertex_base_3<TriangulationTraits_3, TriangulationDSVertexBase_3>`
 - `CGAL::Triangulation_vertex_base_with_info_3<Info, TriangulationTraits_3, TriangulationVertexBase_3>`

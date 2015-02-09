@@ -11,7 +11,7 @@ Euclidean distance between a \f$ d\f$-dimensional sphere and a
 
 \cgalHeading{Parameters}
 
-Expects for the template argument a model of the concept `SearchTraits`, 
+\tparam Traits must be a model of the concept `SearchTraits`, 
 for example `Simple_cartesian_d<double>`. 
 
 \cgalModels `GeneralDistance`
@@ -25,6 +25,11 @@ public:
 
 /// \name Types 
 /// @{
+
+/*!
+Dimension Tag.
+*/
+typedef unspecified_type D;
 
 /*!
 Number type. 
@@ -65,13 +70,13 @@ NT transformed_distance(Query_item s, Point_d p) const;
 Returns the minimal distance between a point from the sphere `s` and a point from 
 `r`. 
 */ 
-NT min_distance_to_rectangle(Query_item s, Kd_tree_rectangle<FT> r) const; 
+NT min_distance_to_rectangle(Query_item s, Kd_tree_rectangle<FT,D> r) const; 
 
 /*!
 Returns the maximal distance between the sphere `s` and 
 a point from `r` furthest to `s`. 
 */ 
-NT max_distance_to_rectangle(Query_item s, Kd_tree_rectangle<FT> r) const; 
+NT max_distance_to_rectangle(Query_item s, Kd_tree_rectangle<FT,D> r) const; 
 
 /*!
 Returns \f$ d^2\f$. 

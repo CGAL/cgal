@@ -241,7 +241,7 @@ private slots:
         builder.enter_contour((*bit)->begin(),(*bit)->end());
       }
       sskel = builder.construct_skeleton() ;
-      sskel_valid = sskel ;
+      sskel_valid = bool(sskel) ;
       if ( !sskel_valid )
         QMessageBox::critical( this, my_title_string,"Straight Skeleton construction failed." );
       widget->redraw();
@@ -284,7 +284,7 @@ private slots:
           builder.enter_contour(lFrame,lFrame+4);
           builder.enter_contour(lOuter.rbegin(),lOuter.rend());
           sskel = builder.construct_skeleton() ;
-          sskel_valid = sskel ;
+          sskel_valid = bool(sskel) ;
           if ( !sskel_valid )
             QMessageBox::critical( this, my_title_string,"Straight Skeleton construction failed." );
 

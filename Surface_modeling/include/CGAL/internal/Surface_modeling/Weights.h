@@ -23,14 +23,18 @@
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Simple_cartesian.h>
-typedef CGAL::Simple_cartesian<double>::Vector_3 Vector;
+
 
 namespace CGAL {
 namespace internal {
 
+namespace Surface_modeling{
+typedef CGAL::Simple_cartesian<double>::Vector_3 Vector;
+} //end of namespace Surface_modeling
+
 template<class Point>
-Vector to_vector(const Point& b, const Point& a) {
-  return Vector(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+Surface_modeling::Vector to_vector(const Point& b, const Point& a) {
+  return Surface_modeling::Vector(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
 }
 
 // Returns the cotangent value of half angle v0 v1 v2
@@ -49,11 +53,11 @@ public:
   template<class VertexPointMap>
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2, VertexPointMap vpm)
   {
-    const Vector& a = to_vector(get(vpm, v1), get(vpm, v0));
-    const Vector& b = to_vector(get(vpm, v1), get(vpm, v2));
+    const Surface_modeling::Vector& a = to_vector(get(vpm, v1), get(vpm, v0));
+    const Surface_modeling::Vector& b = to_vector(get(vpm, v1), get(vpm, v2));
 
     double dot_ab = a*b;
-    Vector cross_ab = CGAL::cross_product(a, b);
+    Surface_modeling::Vector cross_ab = CGAL::cross_product(a, b);
     double divider = std::sqrt(cross_ab*cross_ab);
 
     if(divider == 0 /*|| divider != divider*/)
@@ -205,7 +209,7 @@ public:
   {
     vertex_descriptor v0 = target(he, halfedge_graph);
     vertex_descriptor v1 = source(he, halfedge_graph);
-    Vector vec(v1->point(), v0->point());
+    Surface_modeling::Vector vec(v1->point(), v0->point());
     double norm = std::sqrt( vec.squared_length() );
 
     // Only one triangle for border edges
@@ -238,9 +242,9 @@ private:
   // Returns the tangent value of half angle v0_v1_v2/2
   double half_tan_value(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    Vector vec0(v2->point(), v1->point());
-    Vector vec1(v0->point(), v2->point());
-    Vector vec2(v1->point(), v0->point());
+    Surface_modeling::Vector vec0(v2->point(), v1->point());
+    Surface_modeling::Vector vec1(v0->point(), v2->point());
+    Surface_modeling::Vector vec2(v1->point(), v0->point());
     double e0_square = vec0.squared_length();
     double e1_square = vec1.squared_length();
     double e2_square = vec2.squared_length();
@@ -256,8 +260,8 @@ private:
   // My deviation built on Meyer_02
   double half_tan_value_2(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    Vector a(v1->point(), v0->point());
-    Vector b(v1->point(), v2->point());
+    Surface_modeling::Vector a(v1->point(), v0->point());
+    Surface_modeling::Vector b(v1->point(), v2->point());
     double dot_ab = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     double dot_aa = a.squared_length();
     double dot_bb = b.squared_length();

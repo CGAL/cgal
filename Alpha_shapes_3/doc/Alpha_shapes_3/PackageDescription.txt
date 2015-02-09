@@ -6,7 +6,7 @@
 \cgalPkgDescriptionBegin{3D Alpha Shapes,PkgAlphaShapes3Summary}
 \cgalPkgPicture{alpha_shapes_3_small.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Tran Kai Frank Da, S&eacute;bastien Loriot, and Mariette Yvinec}
+\cgalPkgAuthors{Tran Kai Frank Da, Sébastien Loriot, and Mariette Yvinec}
 \cgalPkgDesc{This package offers a data structure encoding either one alpha-complex or the whole family of alpha-complexes related to a given 3D Delaunay or regular triangulation. In the latter case, the data structure allows to retrieve   the alpha-complex for any alpha value, the whole spectrum of critical alpha values and a filtration on the triangulation faces (this filtration is based on the first  alpha value for which each face is included on the alpha-complex). }
 \cgalPkgManuals{Chapter_3D_Alpha_Shapes,PkgAlphaShapes3}
 \cgalPkgSummaryEnd

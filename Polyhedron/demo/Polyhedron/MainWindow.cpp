@@ -796,6 +796,7 @@ void MainWindow::open(QString filename)
     // collect all io_plugins and offer them to load if the file extension match one name filter
     // also collect all available plugin in case of a no extension match
     Q_FOREACH(Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
+      if ( !io_plugin->canLoad() ) continue;
       all_items << io_plugin->name();
       if ( file_matches_filter(io_plugin->nameFilters(), filename) )
         selected_items << io_plugin->name();

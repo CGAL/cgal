@@ -46,6 +46,7 @@ void test_bigfloat_interval_traits() {
   CGAL_USE_TYPE(typename BFIT::Bound);
 
   typedef typename BFIT::Is_bigfloat_interval Is_bigfloat_interval;
+  CGAL_USE_TYPE(Is_bigfloat_interval);
   // using CGAL::Tag_true;
   CGAL_static_assertion(( ::boost::is_same< Is_bigfloat_interval, CGAL::Tag_true>::value));
   

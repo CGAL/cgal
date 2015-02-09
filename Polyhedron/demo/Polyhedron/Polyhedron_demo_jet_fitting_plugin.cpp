@@ -99,7 +99,7 @@ void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
       // make monge form comply with vertex normal (to get correct
       // orientation)
       typedef Kernel::Vector_3 Vector;
-      Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal<Kernel>(*v);
+      Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal<Kernel>(v, *pMesh);
       monge_form.comply_wrt_given_normal(n);
 
       Vector umin = min_edge_len * monge_form.minimal_principal_direction();

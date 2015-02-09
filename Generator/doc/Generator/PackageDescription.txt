@@ -6,7 +6,7 @@
 \cgalPkgDescriptionBegin{Geometric Object Generators,PkgGeneratorsSummary}
 \cgalPkgPicture{dice.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Olivier Devillers, Susan Hert, Michael Hoffmann, Lutz Kettner, and Sven Sch&ouml;nherr}
+\cgalPkgAuthors{Olivier Devillers, Susan Hert, Michael Hoffmann, Lutz Kettner, and Sven Schönherr}
 \cgalPkgDesc{This package provides a variety of generators for geometric objects. They are useful as synthetic test data sets, e.g. for testing algorithms on degenerate object sets and for performance analysis. }
 \cgalPkgManuals{Chapter_Geometric_Object_Generators,PkgGenerators}
 \cgalPkgSummaryEnd

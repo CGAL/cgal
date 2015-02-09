@@ -46,6 +46,7 @@ h1 {
 \package_listing{Partition_2}
 \package_listing{Straight_skeleton_2}
 \package_listing{Minkowski_sum_2}
+\package_listing{Polyline_simplification_2}
 
 
 \section PartPolyhedra Cell Complexes and Polyhedra
@@ -91,6 +92,7 @@ h1 {
 \package_listing{Mesh_2}
 \package_listing{Surface_mesher}
 \package_listing{Surface_reconstruction_points_3}
+\package_listing{Scale_space_reconstruction_3}
 \package_listing{Skin_surface_3}
 \package_listing{Mesh_3}
 

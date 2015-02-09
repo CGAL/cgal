@@ -33,6 +33,7 @@
 #include <list>
 #include <vector>
 #include <cassert>
+#include <CGAL/use.h>
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
 #include <CGAL/algorithm.h>
@@ -8113,7 +8114,8 @@ void test_tuple(){
   typedef CGAL::cpp11::tuple<int,int> T1;
   typedef CGAL::cpp11::tuple<int,My_to_int,int,int> T2;
   
-  
+  CGAL_USE_TYPE(T0);
+  CGAL_USE_TYPE(T2);
   CGAL_static_assertion( CGAL::cpp11::tuple_size<T0>::value == 0 );
   CGAL_static_assertion( CGAL::cpp11::tuple_size<T1>::value == 2 );
   CGAL_static_assertion( CGAL::cpp11::tuple_size<T2>::value == 4 );

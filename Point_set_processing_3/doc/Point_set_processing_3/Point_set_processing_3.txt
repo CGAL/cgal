@@ -1,4 +1,4 @@
-namespace CGAL {
+﻿namespace CGAL {
 /*!
 
 \mainpage User Manual 
@@ -7,23 +7,16 @@ namespace CGAL {
 
 \cgalAutoToc
 
-\authors Pierre Alliez, Laurent Saboret, Nader Salman
+\authors Pierre Alliez, Clément Jamin, Laurent Saboret, Nader Salman, Shihao Wu
 
 \section Point_set_processing_3Introduction Introduction
 
-This \cgal component implements methods to analyze and process
-unorganized 3D point sets. The input is an unorganized 3D point set,
-possibly with normal attributes (unoriented or oriented). This point
-set can be analyzed to measure geometric properties such as average
+This \cgal component implements methods to analyze and process 3D point sets. The input is an unorganized 3D point set, possibly with normal attributes (unoriented or oriented). The input point set can be analyzed to measure geometric properties such as average
 spacing between the points and their `k` nearest neighbors. It
-can be processed with functions devoted to the simplification, outlier
-removal, smoothing, normal estimation and normal orientation. The
-processing of point sets is often needed in applications dealing with
-measurement data, such as surface reconstruction from laser scanned
-data (see \cgalFigureRef{Point_set_processing_3figintroduction}).
+can be processed with functions devoted to the simplification, regularization, upsampling, outlier removal, smoothing, normal estimation and normal orientation. The processing of point sets is often needed in applications dealing with measurement data, such as surface reconstruction from laser scanned data (see \cgalFigureRef{Point_set_processing_3figintroduction}).
 
 \cgalFigureBegin{Point_set_processing_3figintroduction,introduction.jpg}
-Point set processing. Left: 275K points sampled on the statue of an elephant with a Minolta laser scanner. Right: point set after clean-up and simplification to 17K points.
+Point set processing. Left: 275K points sampled on the statue of an elephant with a Minolta laser scanner. Right: point set after outlier removal, denoising and simplification to 17K points.
 \cgalFigureEnd
 
 In the context of surface reconstruction we can position the elements
@@ -136,8 +129,7 @@ functions in this component.)
 \section Point_set_processing_3Simplification Simplification
 
 
-Two simplification functions are devised to reduce an input point set,
-either randomly or using a grid-based clustering approach.
+Three simplification functions are devised to reduce an input point set.
 
 Function `random_simplify_point_set()` randomly deletes a
 user-specified fraction of points from the input point set. This
@@ -149,7 +141,12 @@ points sharing the same cell of the grid by picking as representant
 one arbitrarily chosen point. This algorithm is slower than
 `random_simplify_point_set()`.
 
-\subsection Point_set_processing_3Example_3 Example
+Function `wlop_simplify_and_regularize_point_set()` not only simplifies, 
+but also regularizes downsampled points. This is an implementation of
+the Weighted Locally Optimal Projection (WLOP) algorithm \cgalCite{wlop-2009}.
+
+
+\subsection Point_set_processing_3Example_3 Grid Simplification Example
 
 The following example reads a point set and simplifies it by clustering.
 \cgalExample{Point_set_processing_3/grid_simplification_example.cpp}
@@ -158,24 +155,78 @@ The following example reads a point set and simplifies it by clustering.
 Point set simplification through grid-based clustering. Removed points are depicted in red. Notice how low-density areas (in green) are not simplified.
 \cgalFigureEnd
 
+\subsection Point_set_processing_3Example_4 WLOP Simplification Example
+The following example reads a point set, simplifies and regularizes it by WLOP.
+
+\cgalExample{Point_set_processing_3/wlop_simplify_and_regularize_point_set_example.cpp}
+
+\cgalFigureBegin{Point_set_processing_3figsimplification_comparison, simplification_comparison.jpg}
+Comparison for three simplification methods: Left: Random simplification result. Middle: Grid simplification result. Right: WLOP simplification result.
+\cgalFigureEnd
+
+\subsubsection Point_set_processing_3WLOP_Parameter Parameter: require_uniform_sampling
+Computing density weights for each point is an optional preprocessing. For example, as shown in the following figure, when require_uniform_sampling is set to false, WLOP preserves the intrinsic non-uniform sampling of the original points; if require_uniform_sampling is set to true, WLOP is resilient to non-uniform sampling and generates sample points with more uniform distribution, at the expense of computational time.
+
+
+\cgalFigureBegin{Point_set_processing_3figWLOP_parameter_density, WLOP_parameter_density.jpg}
+Comparison between with and without density: Left: input. Middle: `require_uniform_sampling = false`. Right: `require_uniform_sampling=true`. 
+\cgalFigureEnd
+
+\subsubsection Point_set_processing_3WLOP_parallel_performance Parallel Performance
+A parallel version of WLOP is provided and requires the executable to be linked against the 
+<a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+To control the number of threads used, the user may use the tbb::task_scheduler_init class.
+See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+for more details. We provide below a speed-up chart generated using the parallel version of the WLOP algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
+
+\cgalFigureBegin{Point_set_processing_3figWLOP_parallel_performance, parallel_WLOP_performance.jpg}
+Parallel WLOP speed-up, compared to the sequential version of the algorithm. 
+\cgalFigureEnd
+
 \section Point_set_processing_3Smoothing Smoothing
 
+Two smoothing functions are devised to smooth an input point set.
 
 Function `jet_smooth_point_set()` smooths the input point set by
 projecting each point onto a smooth parametric surface patch
 (so-called jet surface) fitted over its `k` nearest neighbors.
 
+Function `bilateral_smooth_point_set()` smooths the input point set by
+iteratively projecting each point onto the implicit surface patch fitted over its `k` nearest neighbors.
+Bilateral projection preserves sharp features according to the normal (gradient) information. 
+Normals are thus required as input. For more details, see section 4 of \cgalCite{ear-2013}.
 
-\subsection Point_set_processing_3Example_4 Example
+\subsection Point_set_processing_3Example_5 Jet Smoothing Example
 
 The following example generates a set of 9 points close to the `xy` 
 plane and smooths them using 8 nearest neighbors:
 \cgalExample{Point_set_processing_3/jet_smoothing_example.cpp}
 
+\subsection Point_set_processing_3Example_6 Bilateral Smoothing Example
+
+The following example reads a set of points with normals and smooths them via bilateral smoothing:
+\cgalExample{Point_set_processing_3/bilateral_smooth_point_set_example.cpp}
+
+\cgalFigureBegin{Point_set_processing_3figsmoothing_comparison, smoothing_comparison.jpg}
+Comparison for two smoothing methods: Left: Input, 250K points, normal-color mapping. Middle: Jet smoothing result, 197 seconds. Right: Bilateral smoothing result, 110 seconds.
+\cgalFigureEnd
+
+\subsubsection Point_set_processing_3Bilateral_smoothing_parallel_performance Parallel
+
+Performance: 
+A parallel version of bilateral smoothing is provided and requires the executable to be linked against the 
+<a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+The number of threads used is controlled through the tbb::task_scheduler_init class.
+See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> for more details. We provide below a speed-up chart generated using the parallel version of the bilateral smoothing algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
+
+\cgalFigureBegin{Point_set_processing_3Bilateral_smoothing_parallel_performance, parallel_bilateral_smooth_point_set_performance.jpg}
+Parallel bilateral smoothing speed-up, compared to the sequential version of the algorithm. 
+\cgalFigureEnd
+
 \section Point_set_processing_3NormalEstimation Normal Estimation
 
-Assuming a point set sampled over an inferred surface \f$ S\f$, two
-functions provide an estimate of the normal to \f$ S\f$ at each
+Assuming a point set sampled over an inferred surface \b S, two
+functions provide an estimate of the normal to \b S at each
 point. The result is an unoriented normal vector for each input point.
 
 Function `jet_estimate_normals()` estimates the normal direction
@@ -198,18 +249,53 @@ Riemannian graph over the input points (the graph of the `k`
 nearest neighbor points) and propagates a seed normal orientation
 within a minimum spanning tree computed over this graph. The result is
 an oriented normal vector for each input unoriented normal, except for
-the normals which could not be successfully oriented.
+the normals which cannot be successfully oriented.
 
 \cgalFigureBegin{Point_set_processing_3figmst_orient_normals,mst_orient_normals.jpg}
 Normal orientation of a sampled cube surface. Left: unoriented normals. Right: orientation of right face normals is propagated to bottom face.
 \cgalFigureEnd
 
-\subsection Point_set_processing_3Example_5 Example
+\subsection Point_set_processing_3Example_7 Example
 
 The following example reads a point set from a file, estimates the
 normals through PCA over the 6 nearest neighbors and orients the
 normals:
 \cgalExample{Point_set_processing_3/normals_example.cpp}
+
+
+
+
+\section Point_set_processing_3Upsampling Upsampling
+
+The function `edge_aware_upsample_point_set()` generates a denser point set from an input point set. This has applications in point-based rendering, hole filling, and sparse surface reconstruction.
+The algorithm can progressively upsample the point set while approaching the edge singularities. See \cgalCite{ear-2013} for more details.
+
+\subsection Point_set_processing_3Example_8 Example
+
+The following example reads a point set from a file, upsamples it to get a denser result.
+
+\cgalExample{Point_set_processing_3/edge_aware_upsample_point_set_example.cpp}
+
+\subsubsection Point_set_processing_3Upsample_Parameter1 Parameter: edge_sensitivity
+This parameter controls where the new points are inserted. Larger values of edge-sensitivity give higher priority to inserting points along the sharp features.
+For example, as shown in the following figure, high value is preferable when one wants to insert more points on sharp features, where the local gradient is high, e.g., darts, cusps, creases and corners. In contrast, points are evenly inserted when edge_sensitivity is set to 0. The range of possible value is [0, 1]. 
+
+
+\cgalFigureBegin{Point_set_processing_3figUpsample_edge_sensitivity, upsample_edge_sensitivity.jpg}
+Upsampling for different edge-sensitivity parameter values. The input containing 850 points is upsampled to 1,500 points in all cases depicted.
+\cgalFigureEnd
+
+\subsubsection Point_set_processing_3Upsample_Parameter2 Parameter: sharpness_angle
+This parameter controls the preservation of sharp features.
+
+\cgalFigureBegin{Point_set_processing_3figUpsample_sharpness_angle, upsample_sharpness_angle.jpg}
+Upsampling for different sharpness_angle parameter values. The input containing 850 points is upsampled to 425K points in all cases depicted. 
+\cgalFigureEnd
+
+
+\subsection Point_set_processing_3ImplementationHistory Implementation History
+
+Pierre Alliez and Laurent Saboret contributed the initial component. Nader Salman contributed the grid simplification. Started from GSoC'2013, three new algorithms were implemented by Shihao Wu and Clément Jamin: WLOP, bilateral smoothing and upsampling. 
 
 */ 
 } /* namespace CGAL */

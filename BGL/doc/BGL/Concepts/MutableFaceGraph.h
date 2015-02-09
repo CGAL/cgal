@@ -8,6 +8,7 @@ the requirement for operations to add faces and to modify face-halfedge relation
 \cgalRefines `FaceGraph`
 \cgalRefines `MutableHalfedgeGraph`
 \cgalHasModel `CGAL::Polyhedron_3`
+\cgalHasModel `CGAL::Surface_mesh`
 
 \cgalHeading{Notations}
 

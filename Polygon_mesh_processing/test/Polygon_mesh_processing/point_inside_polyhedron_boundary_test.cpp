@@ -1,6 +1,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Point_inside_polygon_mesh_3.h>
+#include <CGAL/Point_inside_polygon_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
@@ -28,7 +28,7 @@ int main(int, char** argv)
   points.clear();
   const int nb_query = (int)1.e6;
   points.reserve(nb_query);
-  random_points(poly, nb_query, back_inserter(points));
+  random_points<Point>(poly, nb_query, back_inserter(points));
   test(poly, points);
 
   //test compilation of constructor from AABB_tree  

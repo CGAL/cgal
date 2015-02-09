@@ -1,0 +1,5 @@
+/*!
+\example Polyline_simplification_2/simplify_polygon.cpp
+\example Polyline_simplification_2/simplify.cpp
+\example Polyline_simplification_2/points_and_vertices.cpp
+*/

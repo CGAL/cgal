@@ -7,6 +7,7 @@ the requirement for traversal of all faces in a graph.
 
 \cgalRefines `FaceGraph`
 \cgalHasModel `CGAL::Polyhedron_3`
+\cgalHasModel `CGAL::Surface_mesh`
 
 \cgalHeading{Notations}
 

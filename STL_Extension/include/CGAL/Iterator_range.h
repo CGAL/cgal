@@ -23,6 +23,7 @@
 #include <CGAL/tuple.h>
 #include <utility>
 
+
 namespace CGAL {
 
   /*!
@@ -91,34 +92,4 @@ namespace CGAL {
   }  
 } // namespace CGAL
 
-namespace boost {
-  
-  template <typename X> 
-  struct range_iterator;
-
-  template <typename X> 
-  struct range_mutable_iterator;
-
-  template <typename X> 
-  struct range_const_iterator;
-
-  template <typename T> 
-  struct range_iterator<CGAL::Iterator_range<T> >
-  {
-    typedef T type;
-  };
-
-
-  template<typename T>
-  struct range_mutable_iterator< CGAL::Iterator_range<T> >
-  {
-    typedef T type;
-  };
-  
-  template<typename T>
-  struct range_const_iterator< CGAL::Iterator_range<T> >
-  {
-    typedef T type;
-  };
-}
 #endif // CGAL_ITERATOR_RANGE_H

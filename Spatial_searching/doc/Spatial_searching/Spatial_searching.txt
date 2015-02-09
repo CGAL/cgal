@@ -91,34 +91,60 @@ neighbor must not be smaller than \f$ r/(1+\epsilon)\f$. Obviously, for
 \f$ \epsilon=0\f$ we get the exact result, and the larger \f$ \epsilon\f$ is,
 the less exact the result.
 
-Neighbor searching is implemented by the following four classes.
+While searching the nearest neighbor the algorithm descends the kd-tree
+and has to decide two things for each node : Which child node should be visited 
+first and could there be possible nearest neighbors in the other child. This 
+basically comes down to computing the distance to the further child, because the
+distance to the closer child is the same as the one to the parent. There are 
+two options now:<br>
+-# In general, we compute the distance with the given metric. This is the
+<I>k-neighbor search</I> with a <I>general distance</I> class.
+-# For point queries we can "update" the distance, because it is only 
+changed in one dimension at a time. This is the <I>orthogonal k-neighbor search</I>
+with an <I>orthogonal distance</I> class.
+The following example shows the orthogonal distance computation in detail:
 
-The class `Orthogonal_k_neighbor_search<Traits,
-OrthogonalDistance, Splitter, SpatialTree>` implements the standard
+\cgalFigureBegin{Spatial_searchingorthogonaldistance, orthogonalDistance.svg}
+Orthogonal distance computation technique
+\cgalFigureEnd
+
+Assume we are searching the nearest neighbor, descending the kd-tree, with \f$ R_{p} \f$
+as the parent rectangle and \f$ R_{lo} \f$ and \f$ R_{hi}\f$ as its childs in the current step.
+Further assume \f$ R_{lo} \f$ is closer to query point \f$q\f$. Let \f$cd\f$ denote the cutting dimension and let 
+\f$cv\f$ denote the cutting value. At this point we already know the distance \f$rd_{p}\f$
+to the parent rectangle and need to check if \f$R_{hi}\f$ could contain 
+nearest neighbors. Because \f$R_{lo}\f$ is the closer rectangle, its distance
+to \f$q\f$, \f$rd_{lo}\f$, is the same as \f$rd_{p}\f$. 
+Notice that for each dimension \f$i \neq cd \f$, \f$ \mathrm{dists}_{lo}[i] = \mathrm{dists}_{hi}[i]\f$, 
+since these coordinates are not affected by the current cut. So the new distance along the 
+cutting dimension is \f$ \mathrm{dists}_{hi}[cd] = cv - q[cd]\f$. Now we can compute \f$rd_{hi}\f$
+in constant time (independent of dimension) with 
+\f$rd_{hi} = rd_{p} - \mathrm{dists}_{lo}[cd]^2 + (cv - q[cd])^2\f$.<br>
+This strategy can be used if and only if the distance changes only in one dimension at a time,
+which is the case for point queries.
+
+
+The following two classes implement the standard
 search strategy for orthogonal distances like the weighted Minkowski
-distance. It requires the use of extended nodes in the spatial tree
-and supports only `k` neighbor searching for point queries.
+distance. The second one is a specialization for incremental neighbor 
+searching and distance browsing. Both require extendes nodes.
 
-The class `K_neighbor_search<Traits, GeneralDistance,
-Splitter, SpatialTree>` implements the standard search strategy for
-general distances like the Manhattan distance for iso-rectangles.
-It does not require the use of extended nodes in the spatial tree and supports
-only `k` neighbor searching for queries defined by points or spatial
-objects.
+`Orthogonal_k_neighbor_search<Traits,
+OrthogonalDistance, Splitter, SpatialTree>` 
 
-The class `Orthogonal_incremental_neighbor_search<Traits,
-GeneralDistance, Splitter, SpatialTree>` implements the incremental
-search strategy for general distances like the weighted Minkowski
-distance. It requires the use of extended nodes in the spatial tree
-and supports incremental neighbor searching and distance browsing for
-point queries.
+`Orthogonal_incremental_neighbor_search<Traits,
+OrthogonalDistance, Splitter, SpatialTree>` 
 
-The class `Incremental_neighbor_search<Traits,
-GeneralDistance, Splitter, SpatialTree>` implements the incremental
-search strategy for general distances like the Manhattan distance for
-iso-rectangles. It does not require the use of extended nodes in the
-spatial tree and supports incremental neighbor searching and distance
-browsing for queries defined by points or spatial objects.
+The other two classes implement the standard search strategy for
+general distances like the Manhattan distance for iso-rectangle queries.
+Again, the second one is a specialization for incremental neighbor 
+searching and distance browsing .
+
+`K_neighbor_search<Traits, GeneralDistance,
+Splitter, SpatialTree>` 
+
+`Incremental_neighbor_search<Traits,
+GeneralDistance, Splitter, SpatialTree>` 
 
 \subsection Spatial_searchingRangeSearching Range Searching
 
@@ -145,7 +171,9 @@ because in general the query time will be less then using the default value.
 Instead of using the default splitting rule `Sliding_midpoint` described below,
 a user may, depending upon the data, select 
 one from the following splitting rules,
-which determine how a separating hyperplane is computed:
+which determine how a separating hyperplane is computed. Every splitter has 
+degenerated worst cases, which may lead to a linear tree and a stack overflow. 
+Switching the splitting rule to one of a different kind will solve the problem.
 
 <DL>
 
@@ -168,7 +196,16 @@ plane the sliding midpoint rule computes the same separator as
 the midpoint of rectangle rule. If the data points lie only on one
 side it avoids this by sliding the separator, computed by
 the midpoint of rectangle rule, to the nearest data point.
+</DL>
 
+As all the midpoint rules cut the bounding box in the middle of the longest side, the tree will
+become linear for a dataset with exponential increasing distances in one dimension.
+
+\cgalFigureBegin{Spatial_searchingslidingworstcase, Sliding_worst_case.jpg}
+Midpoint worst case point set in 2d.
+\cgalFigureEnd
+
+<DL>
 <DT><B> `Median_of_rectangle`</B><DD>
 
 The splitting dimension is the dimension of the longest side of the rectangle.
@@ -180,7 +217,17 @@ along this dimension.
 The splitting dimension is the dimension of the longest side of the rectangle.
 The splitting value is defined by the median of the coordinates of the data points
 along this dimension.
+</DL>
 
+
+The tree can become linear for the median rules, if many points are collinear in a dimension 
+which is not the cutting dimension.
+\cgalFigureBegin{Spatial_searchingmedianworstcase, Median_worst_case.jpg}
+Median worst case point set in 2d.\n
+a is longer than b, so this will be the cutting dimension.
+\cgalFigureEnd
+
+<DL>
 <DT><B> `Fair`</B><DD>
 
 This splitting rule is a compromise between the median of rectangle
@@ -219,14 +266,15 @@ generate empty cells.
 
 \section Spatial_searchingExample Example Programs
 
-We give six examples. The first example illustrates k nearest neighbor
+We give seven examples. The first example illustrates k nearest neighbor
 searching, and the second example incremental neighbor searching. 
 The third is an example of approximate furthest neighbor searching
 using a `d`-dimensional iso-rectangle as an query object. Approximate
 range searching is illustrated by the fourth example. The fifth
 example illustrates k neighbor searching for a user defined point
-class. The last example shows how to choose another splitting rule in the
-`k-d` tree that is used as search tree.
+class. The sixth example shows how to choose another splitting rule in the
+`k-d` tree that is used as search tree. The last example shows two worst-case
+scenarios for different splitter types.
 
 \subsection Spatial_searchingExampleforKNeighborSearching Example for K Neighbor Searching
 
@@ -291,38 +339,49 @@ such an iterator for a point. We next need a distance class
 \cgalExample{Spatial_searching/Distance.h}
 
 We are ready to put the pieces together.
-The class `Search_traits<..>` which you see in the next file is then a mere 
-wrapper for all these types. The searching itself works exactly as for \cgal kernels.
+The class `Search_traits<..>` ,which you see in the next file, is a mere 
+wrapper for all our defined types. The searching itself works exactly as for \cgal kernels.
 
 \cgalExample{Spatial_searching/user_defined_point_and_distance.cpp}
 
 \subsection Spatial_searchingExamplesforUsinganArbitrary Examples for Using an Arbitrary Point Type with Point Property Maps
 
-The following three example programs illustrate how to use the classes `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` and
+The following four example programs illustrate how to use the classes `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` and
 `Distance_adapter<Key,PointPropertyMap,Base_distance>` to store in the kd-tree objects of an arbitrary key type. Points are
 accessed through a point <A HREF="http://www.boost.org/doc/libs/release/libs/property_map/index.html">property map</A>.
-This is really convenient to associate information to a point or to reduce the size of the search structure.
+This enables to associate information to a point or to reduce the size of the search structure.
 
-\subsection Spatial_searchingUsingaPointandanInteger Using a Point and an Integer as Key Type
+\subsubsection Spatial_searchingUsingaPointandanInteger Using a Point and an Integer as Key Type
 
 In this example program, the search tree stores tuples of point and integer.
 The value type of the iterator of the neighbor searching algorithm is this tuple type.
 
 \cgalExample{Spatial_searching/searching_with_point_with_info.cpp}
 
-\subsection Spatial_searchingUsinganIntegerasKeyType Using an Integer as Key Type
+\subsubsection Spatial_searchingUsinganIntegerasKeyType Using an Integer as Key Type
 
 In this example program, the search tree stores only integers that refer to points stored within a user vector.
 The point type of the search traits is `std::size_t`.
 
 \cgalExample{Spatial_searching/searching_with_point_with_info_inplace.cpp}
 
-\subsection Spatial_searchingUsingaModelofLvalueProperty Using a Model of L-value Property Map Concept
+\subsubsection Spatial_searchingUsingaModelofLvalueProperty Using a Model of L-value Property Map Concept
 
 This example programs uses a model of `LvaluePropertyMap`.
 Points are read from a `std::map`. The search tree stores integers of type `std::size_t`. The value type of the iterator of the neighbor searching algorithm is `std::size_t`.
 
 \cgalExample{Spatial_searching/searching_with_point_with_info_pmap.cpp}
+
+\subsubsection Spatial_searchingUsingSurfaceMesh Using a Point Property Map of a Polygonal Mesh
+
+This example programs shows how to search the closest vertices of a `Surface_mesh` or, quite similar, of a 
+`Polyhedron_3`.
+Points are stored in the polygonal mesh. The search tree stores vertex descriptors.
+The value type of the iterator of the neighbor searching algorithm is \link  BGLSMGT `boost::graph_traits<Surface_mesh>::vertex_descriptor` \endlink.
+
+\cgalExample{Spatial_searching/searching_surface_mesh_vertices.cpp}
+
+
 
 \subsection Spatial_searchingExampleforSelectingaSplitting Example for Selecting a Splitting Rule and Setting the Bucket Size
 
@@ -332,6 +391,47 @@ the first example are the declaration of the <I>Fair</I>
 splitting rule, needed to set the maximal allowed bucket size.
 
 \cgalExample{Spatial_searching/using_fair_splitting_rule.cpp}
+
+\subsection Spatial_searchingExampleforWorstCaseScenarios Example for Worst-Case Scenarios for Different Splitters
+
+This example program has two 2-dimensional data sets: The first one containing 
+collinear points with exponential increasing distances and the second
+one with collinear points in the firstdimension and one point with a distance
+exceeding the spread of the other points in the second dimension. These are 
+the worst cases for the midpoint/median rules and can also occur in 
+higher dimensions. 
+
+\cgalExample{Spatial_searching/splitter_worst_cases.cpp}
+
+\section Performance Performance
+
+\subsection OrthogonalPerfomance Performance of the Orthogonal Search
+
+We took the gargoyle data set (Surface) from aim\@shape, and generated the same number of random points in the bbox of the gargoyle (Random). 
+We then consider three scenarios as data/queries.
+The data set contains 800K points. For each query point we compute the K=10,20,30 closest points, with the default splitter and for the bucket size 10 (default) and 20. 
+
+The results were produced with the release 4.6 of \cgal, on an Intel i7 2.7 Ghz 
+laptop with 16 GB RAM, compiled with Visual C++ 2012 with the /O2 option.
+
+The values are the average of ten tests each.
+
+
+<center>
+k | bucket size | Surface/Surface  | Surface/Random | Random/Random
+--|------------:|-----------------:|---------------:|----------------:
+10|       10    |        0.89      |     11.48      |     2.63         
+10|       20    |        0.89      |      9.80      |     2.25         
+20|       10    |        1.60      |     13.41      |     4.06          
+20|       20    |        1.59      |     11.62      |     3.46         
+30|       10    |        2.35      |     15.52      |     5.42          
+30|       20    |        2.33      |     13.50      |     4.61         
+</center>
+
+\cgalFigureBegin{Spatial_searchingfigbenchmark,gargoyle.png}
+Benchmark dataset(downsampled for visualization).\n
+Blue: Gargoyle surface. Green: Gargoyle bbox random.
+\cgalFigureEnd
 
 \section Spatial_searchingSoftware Software Design
 
@@ -398,6 +498,12 @@ To speed up distance computations also transformed distances are used
 instead of the distance itself. For instance for the Euclidean
 distance, to avoid the expensive computation of square roots, squared
 distances are used instead of the Euclidean distance itself.
+
+\section Spatial_searchingImplementationHistory Implementation History
+
+The initial implementation of this package was done by Hans Tangelder and
+Andreas Fabri. It was optimized in speed and memory consumption by Markus
+Overtheil during an internship at GeometryFactory in 2014.
 
 */ 
 } /* namespace CGAL */

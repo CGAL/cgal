@@ -57,7 +57,7 @@ void test(const char* file_name)
   std::cerr << "Surface_mesh " << file_name << " passed the test." << std::endl;
 }
 
-int main(int argc, char** argv)
+int main()
 {
   test("data/elephant.off");
 

@@ -29,6 +29,7 @@
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/utility.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Dimension.h>
 
 #include <boost/type_traits/is_pointer.hpp>
 
@@ -84,6 +85,7 @@ public:
   typedef Traits_                                                Traits;
   typedef Point_                                                 Point_d;
 
+  typedef Dimension_tag<2>                                       Dimension;
   typedef typename Traits::Iso_rectangle_2                       Iso_box_d;
   typedef typename Traits::Cartesian_const_iterator_2            Cartesian_const_iterator_d;
   typedef typename Traits::Construct_cartesian_const_iterator_2  Construct_cartesian_const_iterator_d;

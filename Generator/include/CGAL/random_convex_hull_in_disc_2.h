@@ -220,9 +220,8 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
     FT squared_small_radius = squared_radius;
 
     {
-
       typename std::list<P>::iterator it = l.begin();
-      typename std::list<P>::iterator it2 = ++it;
+      typename std::list<P>::iterator it2=++l.begin();
       for (; it != l.end();
            ++it, Cyclic_increment(it2, l)) {  // computation of annulus
         typename Traits::Segment_2 s(*it, *it2);

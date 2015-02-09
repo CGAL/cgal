@@ -6,7 +6,7 @@
 \cgalPkgDescriptionBegin{Planar Parameterization of Triangulated Surface Meshes,PkgSurfaceParameterizationSummary}
 \cgalPkgPicture{bimbaDetail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Laurent Saboret, Pierre Alliez and Bruno L&eacute;vy}
+\cgalPkgAuthors{Laurent Saboret, Pierre Alliez and Bruno Lévy}
 \cgalPkgDesc{Parameterizing a surface amounts to finding a one-to-one mapping from a suitable domain to the surface. In this package, we focus on triangulated surfaces that are homeomorphic to a disk and on piecewise linear mappings into a planar domain.  This package implements several surface mesh parameterization methods, such as least squares conformal maps, discrete conformal map, discrete authalic parameterization, Floater mean value coordinates or Tutte barycentric mapping.}
 \cgalPkgManuals{Chapter_Planar_Parameterization_of_Triangulated_Surface_Meshes,PkgSurfaceParameterization}
 \cgalPkgSummaryEnd

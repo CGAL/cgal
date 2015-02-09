@@ -36,20 +36,13 @@ namespace CGAL {
              >
   class Polyhedron_3;
   
-// changed since CGAL-3.8-Ic-8
-#if CGAL_VERSION_NR > 1030800008 
   class Epick;
-#endif
 } // end namespace CGAL
 
 // kernel
 namespace polyhedron_type_fwd_h {
 // changed since CGAL-3.8-Ic-8
-#if CGAL_VERSION_NR > 1030800008 
   typedef CGAL::Epick K1;
-#else
-  typedef CGAL::Filtered_kernel< CGAL::Simple_cartesian<double>, true > K1;
-#endif
   typedef CGAL::Mesh_3::Robust_intersection_traits_3<K1> Kernel;
 }
 

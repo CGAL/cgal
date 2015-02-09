@@ -11,7 +11,7 @@
 
 #include <CGAL/Timer.h>
 #include <CGAL/Random.h>
-#include <CGAL/Point_inside_polygon_mesh_3.h>
+#include <CGAL/Point_inside_polygon_mesh.h>
 #include "ui_Point_inside_polyhedron_widget.h"
 
 #include <QAction>

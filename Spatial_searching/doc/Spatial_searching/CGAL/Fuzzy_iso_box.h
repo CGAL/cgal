@@ -10,7 +10,7 @@ by a `d`-dim square with side length \f$ \epsilon\f$.
 
 \cgalHeading{Parameters}
 
-Expects for the template argument a model of the concept 
+\tparam Traits must be a model of the concept 
 `SearchTraits`, for example `CGAL::Search_traits_2<CGAL::Simple_cartesian<double> >`. 
 
 \cgalModels `FuzzyQueryItem`
@@ -24,6 +24,11 @@ public:
 
 /// \name Types 
 /// @{
+
+/*!
+Dimension Tag.
+*/
+typedef unspecified_type D;
 
 /*!
 Point type. 
@@ -71,12 +76,12 @@ bool contains(Point_d p) const;
 test whether the inner box intersects the rectangle 
 associated with a node of a tree. 
 */ 
-bool inner_range_intersects(const Kd_tree_rectangle<FT>& rectangle) const; 
+bool inner_range_intersects(const Kd_tree_rectangle<FT,D>& rectangle) const; 
 
 /*!
 test whether the outer box encloses the rectangle associated with a node of a tree. 
 */ 
-bool outer_range_contains(const Kd_tree_rectangle<FT>& rectangle) const; 
+bool outer_range_contains(const Kd_tree_rectangle<FT,D>& rectangle) const; 
 
 /// @}
 

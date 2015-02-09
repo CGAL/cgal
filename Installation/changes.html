@@ -60,7 +60,8 @@
 
 <table CELLSPACING=0>
 <tr><td><a href="#release4.6">4.6</a>&nbsp;<td> (? 2015)
-<tr><td><a href="#release4.5.1">4.5.1</a>&nbsp;<td> (? 2014)
+<tr><td><a href="#release4.5.2">4.5.2</a>&nbsp;<td> (January 2015)
+<tr><td><a href="#release4.5.1">4.5.1</a>&nbsp;<td> (December 2014)
 <tr><td><a href="#release4.5">4.5</a>&nbsp;<td> (October 2014)
 <tr><td><a href="#release4.4">4.4</a>&nbsp;<td> (April 2014)
 <tr><td><a href="#release4.3">4.3.1</a>&nbsp;<td> (November 2013)
@@ -111,7 +112,6 @@ and <code>src/</code> directories).
 
 <HR>
 
-
 <h2 id="release4.6">Release 4.6 </h2>
 <div>
   <p>Release date: XXX 2015 </p>
@@ -125,10 +125,16 @@ and <code>src/</code> directories).
           defined for simple two-dimensional polygons.</li>
   </ul>
 
-  <h3>Triangulation (new package)</h3>
+  <h3>Scale-Space Surface Reconstruction (new package)</h3>
   <ul>
-    <li>This new package provides classes for manipulating triangulations
-        in Euclidean spaces whose dimension can be specified at compile-time or at run-time.</li>
+    <li>This new package provides a class gathering a dedicated smoothing
+        algorithm and some convenience functions to help the creation of
+        a surface out of a point set using the 3D Alpha Shapes package.
+        The particularity of this reconstruction pipeline is that the
+        input point are in the output and no new points are created.
+        Note that in the current version, the output is a triangle soup
+        that is not necessarily a valid (manifold) polyhedral surface.
+    </li>
   </ul>
 
   <h3>Surface Mesh (new package)</h3>
@@ -136,6 +142,12 @@ and <code>src/</code> directories).
     <li>The surface mesh class provided by this package is a data structure
       that can be used as halfedge data structure or polyhedral surface. It is
       an alternative to the packages <code>CGAL::Polyhedron_3</code> and <code>CGAL::HalfedgeDS</code>. </li>
+  </ul>
+
+  <h3>Triangulation (new package)</h3>
+  <ul>
+    <li>This new package provides classes for manipulating triangulations
+        in Euclidean spaces whose dimension can be specified at compile-time or at run-time.</li>
   </ul>
 
 <!-- Major and breaking changes -->
@@ -174,6 +186,14 @@ and <code>src/</code> directories).
   </ul>
 <!-- Arrangements -->
 <!-- Triangulations and Delaunay Triangulations -->
+ <h3>2D Triangulations</h3>
+  <ul>
+    <li>The class <code>Constrained_triangulation_plus_2</code> now
+        can handle polylines as constraints.</li>
+    <li>As a consequence a <code>Constraint_id</code> has been introduced
+        which replaces <code>pair&lt;Vertex_handle,Vertex_handle&gt;</code> as
+        identifier of a constraint.
+  </ul>
 <!-- Voronoi Diagrams -->
 <!-- Mesh Generation -->
   <h3>3D Mesh Generation</h3>
@@ -191,6 +211,35 @@ and <code>src/</code> directories).
     <code>AABB_face_graph_triangle_primitive</code> in order to be able to build primitives
     one by one.</li>
   </ul>
+  <h3>Spatial Searching</h3>
+  <ul>
+    <li>
+      Fixed a bug in <code>CGAL::Splitters.h</code> sliding mitdpoint rule, 
+      where degenerated point sets (e.g.,points on segment)
+      caused the kd-tree to get linear.
+    </li>
+    <li>
+      Improved performance of <code>Orthogonal_k_neighbor_search</code>.
+      Note that VC 2013 does not compile <code>boost::container::deque</code> of Boost 1_55
+      and does hence have a workaround which does not have the improvement.
+    </li>
+    <li>
+      <b>Breaking change:</b> The concept <code>OrthogonalDistance</code> has
+      new function overloads for <code>min_distance_to_rectangle</code> and
+      <code>max_distance_to_rectangle</code> with an additional reference 
+      parameter <code>std::vector</code>.
+    </li>
+    <li>
+      <b>Breaking change:</b> The order of the points in the iterator range 
+      <code>[tree.begin(),tree.end()]</code> is not the order of 
+      insertion of the points into the tree.  This was not guaranteed before
+      but might have beeen observed and exploited by users.
+    </li>
+    <li>
+      Derived <code>kd_tree_leaf_node</code> and <code>kd_tree_internal_node</code>
+      from <code>kd_tree_node</code> to save memory.
+    </li>
+  </ul>
 <!-- Geometric Optimization -->
 <!-- Interpolation -->
 <!-- Support Library -->
@@ -201,6 +250,19 @@ and <code>src/</code> directories).
         points chosen in a disc.</li>
   </ul>
 <!-- end of the div for 4.6 -->
+</div>
+
+<h2 id="release4.5.2">Release 4.5.2</h2>
+<div>
+  <p>Release date: January 2015</p>
+
+  <h3>General</h3>
+  <ul>
+    <li> Fix a bug that prevented the compilation with recent versions of
+    Boost (>=1.56) when explicit conversions operators (from C++11) are
+    supported. That prevented the compilation with Microsoft Visual Studio
+    2013.
+  </ul>
 </div>
 
 <h2 id="release4.5.1">Release 4.5.1 </h2>

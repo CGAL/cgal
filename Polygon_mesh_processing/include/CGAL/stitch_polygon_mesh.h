@@ -103,7 +103,7 @@ struct Naive_border_stitching_modifier
 
   std::vector<std::pair<halfedge_descriptor, halfedge_descriptor> >& to_stitch;
 
-  Naive_border_stitching_modifier(PM& pmesh_,
+  Naive_border_stitching_modifier(PM& /* pmesh_ */,
     std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> >&
       to_stitch_)
       : to_stitch(to_stitch_)

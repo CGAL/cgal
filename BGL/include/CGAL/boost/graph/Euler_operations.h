@@ -81,6 +81,93 @@ join_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
 /// \ingroup PkgBGLEulerOperations
 /// @{
 
+template<typename Graph, typename P>
+typename boost::graph_traits<Graph>::halfedge_descriptor
+make_tetrahedron(Graph& g, const P& p0, const P& p1, const P& p2, const P& p3)
+{
+  typedef typename boost::graph_traits<Graph>              Traits;
+  typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
+  typedef typename Traits::vertex_descriptor               vertex_descriptor;
+  typedef typename Traits::face_descriptor               face_descriptor;
+  typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
+
+  Point_property_map ppmap = get(CGAL::vertex_point, g);
+  vertex_descriptor v0, v1, v2, v3, v4;
+  v0 = add_vertex(g);
+  v1 = add_vertex(g);
+  v2 = add_vertex(g);
+  v3 = add_vertex(g);
+
+  ppmap[v0] = p0;
+  ppmap[v1] = p1;
+  ppmap[v2] = p2;
+  ppmap[v3] = p3;
+  halfedge_descriptor h0 = halfedge(add_edge(g),g);
+  halfedge_descriptor h1 = halfedge(add_edge(g),g);
+  halfedge_descriptor h2 = halfedge(add_edge(g),g);
+  set_next(h0, h1, g);
+  set_next(h1, h2, g);
+  set_next(h2, h0, g);
+  set_target(h0, v1, g);
+  set_target(h1, v2, g);
+  set_target(h2, v0, g);
+  set_halfedge(v1, h0, g);
+  set_halfedge(v2, h1, g);
+  set_halfedge(v0, h2, g);
+  face_descriptor f = add_face(g);
+  set_face(h0,f,g);
+  set_face(h1,f,g);
+  set_face(h2,f,g);
+  set_halfedge(f,h0,g);
+  h0 = opposite(h0,g);
+  h1 = opposite(h1,g);
+  h2 = opposite(h2,g);
+  set_target(h0, v0, g);
+  set_target(h1, v1, g);
+  set_target(h2, v2, g);
+  halfedge_descriptor h3 = halfedge(add_edge(g),g);
+  halfedge_descriptor h4 = halfedge(add_edge(g),g);
+  halfedge_descriptor h5 = halfedge(add_edge(g),g);
+  set_target(h3, v3, g);
+  set_target(h4, v3, g);
+  set_target(h5, v3, g);
+  set_halfedge(v3, h3, g);
+  
+  set_next(h0, h3, g);
+  set_next(h1, h4, g);
+  set_next(h2, h5, g);
+
+  set_next(h3, opposite(h4,g), g);
+  set_next(h4, opposite(h5,g), g);
+  set_next(h5, opposite(h3,g), g);
+  set_next(opposite(h4,g), h0, g);
+  set_next(opposite(h5,g), h1, g);
+  set_next(opposite(h3,g), h2, g);
+
+  set_target(opposite(h3,g), v0, g);
+  set_target(opposite(h4,g), v1, g);
+  set_target(opposite(h5,g), v2, g);
+
+  f = add_face(g);
+  set_halfedge(f,h0,g);
+  set_face(h0, f, g);
+  set_face(h3, f, g);
+  set_face(opposite(h4,g), f, g);
+  f = add_face(g);
+  set_halfedge(f,h1,g);
+  set_face(h1, f, g);
+  set_face(h4, f, g);
+  set_face(opposite(h5,g), f, g);
+  f = add_face(g);
+  set_halfedge(f,h2,g);
+  set_face(h2, f, g);
+  set_face(h5, f, g);
+  set_face(opposite(h3,g), f, g);
+  
+  return h0;
+}
+
+
 /**  
  * joins the two vertices incident to `h`, (that is `source(h, g)` and
  * `target(h, g)`) and removes `source(h,g)`. Returns the predecessor

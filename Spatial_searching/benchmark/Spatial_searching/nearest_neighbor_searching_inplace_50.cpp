@@ -24,7 +24,7 @@ public:
   typedef Point_3 value_type;
   typedef const value_type& reference;
   typedef Point key_type;
-  typedef boost::readable_property_map_tag category;  
+  typedef boost::lvalue_property_map_tag category;  
 
   My_point_property_map(const std::vector<Point_3>& pts):points(pts){}
 

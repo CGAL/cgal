@@ -22,7 +22,7 @@
 #define CGAL_INTERSECTION_OF_POLYHEDRA_3_REFINEMENT_VISITOR_H
 
 #include <CGAL/intersection_of_Polyhedra_3.h>
-#include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
+#include <CGAL/Polygon_mesh_processing/Connected_components.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
@@ -30,7 +30,7 @@
 
 #include <CGAL/internal/corefinement/Combinatorial_map_for_corefinement.h> 
 
-#include <CGAL/Point_inside_polyhedron_3.h>
+#include <CGAL/Point_inside_polygon_mesh.h>
 #include <CGAL/property_map.h>
 #include <boost/optional.hpp>
 #include <boost/next_prior.hpp>
@@ -576,7 +576,7 @@ void sew_3_marked_darts( Combinatorial_map_3& final_map,
     darts_to_remove.insert(not_top);   darts_to_remove.insert(not_top->beta(1)); darts_to_remove.insert(not_top->beta(1)->beta(1));
     darts_to_remove.insert(not_top->beta(3));   darts_to_remove.insert(not_top->beta(3)->beta(1)); darts_to_remove.insert(not_top->beta(3)->beta(1)->beta(1));
     O_Dart_handle current_1=next_marked_dart_around_target_vertex(final_map,not_top,mark_index);
-    CGAL_precondition(current_1);
+    CGAL_precondition(bool(current_1));
     not_top=*current_1;
   }
   while(not_top!=start);
@@ -1373,6 +1373,7 @@ public:
   void add_filtered_intersection(Halfedge_handle eh,Halfedge_handle fh,Polyhedron& Pe,Polyhedron& Pf){
     //use the representant halfedge of the facet as key
     //--set polyhedron for the two facets incident to the edge
+    CGAL_assertion(!eh->is_border());
     hedge_to_polyhedron.insert(std::make_pair(eh->facet()->halfedge(),&Pe));
     if ( !eh->opposite()->is_border() )
       hedge_to_polyhedron.insert(std::make_pair(eh->opposite()->facet()->halfedge(),&Pe));
@@ -1893,8 +1894,8 @@ public:
       typedef typename Polyhedron::Facet_const_handle Facet_const_handle;
       typedef ::CGAL::Union_find<Facet_const_handle> UF;
       typedef typename UF::handle UF_handle;
-      typedef std::map<Facet_const_handle,std::list<Facet_const_handle>,internal::Compare_handle_ptr<Polyhedron> > Result;
-      typedef std::map<Facet_const_handle,UF_handle,internal::Compare_handle_ptr<Polyhedron> > Facet_to_handle_map;
+      typedef std::map<Facet_const_handle,std::list<Facet_const_handle>,internal::corefinement::Compare_handle_ptr<Polyhedron> > Result;
+      typedef std::map<Facet_const_handle,UF_handle,internal::corefinement::Compare_handle_ptr<Polyhedron> > Facet_to_handle_map;
       
       UF uf;
       Facet_to_handle_map map_f2h;
@@ -1909,7 +1910,7 @@ public:
       output_debug << *current_poly;
       #endif
       
-      extract_connected_components(*(static_cast<Polyhedron const *> (current_poly) ),criterium,uf,map_f2h,result);
+      internal::corefinement::extract_connected_components(*(static_cast<Polyhedron const *> (current_poly) ),criterium,uf,map_f2h,result);
 
       
       //add each connected component in the map with 2 volumes per component.
@@ -2138,7 +2139,7 @@ public:
     //this happens when one polyhedron has a connected component
     //that do not intersect the other polyhedron
 
-    typedef Point_inside_polyhedron_3<Polyhedron, Kernel> Inside_poly_test;
+    typedef Point_inside_polygon_mesh<Polyhedron, Kernel> Inside_poly_test;
 
     CGAL_precondition(polyhedron_to_map_node_to_polyhedron_vertex.size()==2);
     Polyhedron* Poly_A = polyhedron_to_map_node_to_polyhedron_vertex.begin()->first;

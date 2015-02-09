@@ -28,7 +28,7 @@ concept `TriangulationTraits_2`, providing
 a predicate type to check the empty circle property. 
 
 Changing this predicate type 
-allows to build Delaunay triangulations for different metrics 
+allows the user to build Delaunay triangulations for different metrics 
 such that \f$ L_1\f$ or \f$ L_{\infty}\f$ or any metric defined by a 
 convex object. However, the user of an exotic metric 
 must be careful that the constructed triangulation 

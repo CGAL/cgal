@@ -99,7 +99,7 @@ compile_and_run()
   echo "Compiling \$1 ... "
   SUCCESS="y"
 
-  if eval '\${MAKE_CMD} VERBOSE=ON -fMakefile \$1' ; then
+  if eval '"\${MAKE_CMD}" VERBOSE=ON -fMakefile \$1' ; then
     echo "   successful compilation of \$1" >> \$ERRORFILE
   else
     echo "   ERROR:    compilation of \$1" >> \$ERRORFILE
@@ -177,7 +177,7 @@ fi
 #
 if [ -n "\${NEED_CLEAN}" ]; then
   if ! ( uname | grep -q "CYGWIN" ) ; then
-    \${MAKE_CMD} -fMakefile clean
+    "\${MAKE_CMD}" -fMakefile clean
   fi
 fi
 EOF

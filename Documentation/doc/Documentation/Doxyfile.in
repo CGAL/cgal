@@ -36,6 +36,7 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Algebraic_foundations/doc/Algebraic_foundations/fig \
              ${CMAKE_SOURCE_DIR}/AABB_tree/doc/AABB_tree/fig \
              ${CMAKE_SOURCE_DIR}/Polygon/doc/Polygon/fig \
+             ${CMAKE_SOURCE_DIR}/Polyline_simplification_2/doc/Polyline_simplification_2/fig \
              ${CMAKE_SOURCE_DIR}/Number_types/doc/Number_types/fig \
              ${CMAKE_SOURCE_DIR}/Alpha_shapes_2/doc/Alpha_shapes_2/fig \
              ${CMAKE_SOURCE_DIR}/Alpha_shapes_3/doc/Alpha_shapes_3/fig \
@@ -102,6 +103,7 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Kinetic_data_structures/doc/Kinetic_framework/fig \
              ${CMAKE_SOURCE_DIR}/Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig \
              ${CMAKE_SOURCE_DIR}/Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig \
+             ${CMAKE_SOURCE_DIR}/Scale_space_reconstruction_3/doc/Scale_space_reconstruction_3/fig \
              ${CMAKE_SOURCE_DIR}/Spatial_searching/doc/Spatial_searching/fig \
              ${CMAKE_SOURCE_DIR}/Spatial_sorting/doc/Spatial_sorting/fig \
              ${CMAKE_SOURCE_DIR}/Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig \

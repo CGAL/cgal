@@ -31,6 +31,8 @@
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/utility/enable_if.hpp>
 
+#include <CGAL/Default.h>
+
 namespace CGAL {
 
 
@@ -47,8 +49,9 @@ namespace CGAL {
  *    and `AABBPrimitiveWithSharedData` if `OneHalfedgeGraphPerTree` is `CGAL::Tag_true`.
  *
  * \tparam HalfedgeGraph is a model of the halfedge graph concept.
- * \tparam VertexPointPMap is a property map with `boost::graph_traits<HalfedgeGraph>::%vertex_descriptor`
- *   as key type and a \cgal Kernel `Point_3` as value type.
+ *   as key type and a \cgal Kernel `Point_3` as value type. 
+ * \tparam VertexPointPMap is a property map with `boost::graph_traits<HalfedgeGraph>::%vertex_descriptor`.
+ *                         The default is `typename boost::property_map< HalfedgeGraph,vertex_point_t>::%type`.
  * \tparam OneHalfedgeGraphPerTree is either `CGAL::Tag_true` or `CGAL::Tag_false`.
  * In the former case, we guarantee that all the primitives will be from a
  * common `HalfedgeGraph` and some data will be factorized so that the size of
@@ -64,21 +67,31 @@ namespace CGAL {
  * \sa \link BGLPolyGT `boost::graph_traits<Polyhedron>` \endlink
  */
 template < class HalfedgeGraph,
-           class VertexPointPMap = typename boost::property_map< HalfedgeGraph, vertex_point_t>::type,
+           class VertexPointPMap = Default,
            class OneHalfedgeGraphPerTree = Tag_true,
            class CacheDatum = Tag_false >
 class AABB_halfedge_graph_segment_primitive
 #ifndef DOXYGEN_RUNNING
   : public AABB_primitive<  typename boost::graph_traits<HalfedgeGraph>::edge_descriptor,
-                            Segment_from_edge_descriptor_property_map<HalfedgeGraph,VertexPointPMap>,
-                            Source_point_from_edge_descriptor<HalfedgeGraph,VertexPointPMap>,
+                            Segment_from_edge_descriptor_property_map<
+                              HalfedgeGraph,
+                              typename Default::Get<VertexPointPMap,
+                                                    typename boost::property_map< HalfedgeGraph,
+                                                                                  vertex_point_t>::type >::type >,
+                            Source_point_from_edge_descriptor<
+                              HalfedgeGraph,
+                              typename Default::Get<VertexPointPMap,
+                                                    typename boost::property_map< HalfedgeGraph,
+                                                                                  vertex_point_t>::type >::type >,
                             OneHalfedgeGraphPerTree,
                             CacheDatum >
 #endif
 {
+  typedef typename Default::Get<VertexPointPMap,typename boost::property_map< HalfedgeGraph,vertex_point_t>::type >::type  VertexPointPMap_;
+
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor Id_;
-  typedef Segment_from_edge_descriptor_property_map<HalfedgeGraph,VertexPointPMap>  Segment_property_map;
-  typedef Source_point_from_edge_descriptor<HalfedgeGraph,VertexPointPMap> Point_property_map;
+  typedef Segment_from_edge_descriptor_property_map<HalfedgeGraph,VertexPointPMap_>  Segment_property_map;
+  typedef Source_point_from_edge_descriptor<HalfedgeGraph,VertexPointPMap_> Point_property_map;
 
   typedef AABB_primitive< Id_,
                           Segment_property_map,
@@ -122,7 +135,7 @@ public:
   is available with `vppm` set to `boost::get(vertex_point, graph)`.
   */
   template <class Iterator>
-  AABB_halfedge_graph_segment_primitive(Iterator it, const HalfedgeGraph& graph, VertexPointPMap vppm)
+  AABB_halfedge_graph_segment_primitive(Iterator it, const HalfedgeGraph& graph, VertexPointPMap_ vppm)
     : Base( Id_(*it),
             Segment_property_map(const_cast<HalfedgeGraph*>(&graph), vppm),
             Point_property_map(const_cast<HalfedgeGraph*>(&graph), vppm) )
@@ -133,7 +146,7 @@ public:
   If `VertexPointPMap` is the default of the class, an additional constructor
   is available with `vppm` set to `boost::get(vertex_point, graph)`.
   */
-  AABB_halfedge_graph_segment_primitive(Id id, const HalfedgeGraph& graph, VertexPointPMap vppm)
+  AABB_halfedge_graph_segment_primitive(Id id, const HalfedgeGraph& graph, VertexPointPMap_ vppm)
     : Base( Id_(id),
             Segment_property_map(const_cast<HalfedgeGraph*>(&graph), vppm),
             Point_property_map(const_cast<HalfedgeGraph*>(&graph), vppm) )
@@ -164,7 +177,7 @@ public:
 
   static
   typename Cstr_shared_data::Shared_data
-  construct_shared_data(const HalfedgeGraph& graph, const VertexPointPMap& vpm)
+  construct_shared_data(const HalfedgeGraph& graph, const VertexPointPMap_& vpm)
   {
     return Cstr_shared_data::construct_shared_data(const_cast<HalfedgeGraph&>(graph), vpm);
   }

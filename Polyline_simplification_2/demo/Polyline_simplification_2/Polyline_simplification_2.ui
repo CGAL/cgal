@@ -1,0 +1,293 @@
+<ui version="4.0" >
+ <author>GeometryFactory</author>
+ <class>Polyline_simplification_2</class>
+ <widget class="QMainWindow" name="Polyline_simplification_2" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>CGAL Polyline Simplification</string>
+  </property>
+  <property name="windowIcon" >
+   <iconset resource="../resources/CGAL.qrc" >
+    <normaloff>:/cgal/logos/cgal_icon</normaloff>:/cgal/logos/cgal_icon</iconset>
+  </property>
+  <widget class="QStatusBar" name="statusbar" >
+  </widget>
+  <widget class="QToolBar" name="fileToolBar" >
+   <property name="windowTitle" >
+    <string>File Tools</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionClear" />
+   <addaction name="actionLoadConstraints" />
+  </widget>
+  <widget class="QWidget" name="centralwidget" >
+   <layout class="QGridLayout" >
+    <item row="0" column="0" >
+     <widget class="QGraphicsView" name="graphicsView" >
+      <property name="focusPolicy" >
+       <enum>Qt::StrongFocus</enum>
+      </property>
+      <property name="verticalScrollBarPolicy" >
+       <enum>Qt::ScrollBarAlwaysOn</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy" >
+       <enum>Qt::ScrollBarAlwaysOn</enum>
+      </property>
+      <property name="transformationAnchor" >
+       <enum>QGraphicsView::NoAnchor</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+
+
+  <widget class="QToolBar" name="toolBar" >
+   <property name="windowTitle" >
+    <string>Visualization Tools</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+   <addaction name="separator" />
+   <addaction name="actionShowTriangulation" />
+   <addaction name="actionInsertPolyline" />
+   <addaction name="separator" />
+   <addaction name="actionSimplify" />
+   <addaction name="separator" />
+   <addaction name="actionRecenter" />
+   <widget class="QLabel" name="textCaption" >
+     <property name="text">
+       <string>Error or % value:</string>
+     </property>
+   </widget>
+   <addaction name="separator" />
+   <widget class="QLineEdit" name="textValue" >
+     <property name="text">
+       <string>50</string>
+     </property>
+   </widget>
+  </widget>
+
+  <widget class="QToolBar" name="StopCondToolBar" >
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+   <widget class="QRadioButton" name="rbuttonPercentage" >
+     <property name="checked" >
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>Stop at %</string>
+     </property>
+   </widget>
+   <widget class="QRadioButton" name="rbuttonError" >
+     <property name="text">
+       <string>Stop at Error</string>
+     </property>
+   </widget>
+  </widget>
+
+  <widget class="QToolBar" name="ErrTypeToolBar" >
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+    <widget class="QRadioButton" name="rbuttonAbsError" >
+      <property name="checked" >
+        <bool>true</bool>
+      </property>
+      <property name="text">
+        <string>Abs</string>
+      </property>
+    </widget>
+    <widget class="QRadioButton" name="rbuttonRelError" >
+     <property name="text">
+       <string>Rel</string>
+     </property>
+   </widget>
+   <widget class="QRadioButton" name="rbuttonHybrid" >
+     <property name="text">
+       <string>Mixed</string>
+     </property>
+   </widget>
+  </widget>
+  
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile" >
+    <property name="title" >
+     <string>&amp;File</string>
+    </property>
+    <addaction name="separator" />
+    <addaction name="actionClear" />
+    <addaction name="actionLoadConstraints" />
+    <addaction name="action_Export_SVG"/>
+    <addaction name="separator" />
+    <addaction name="actionQuit" />
+   </widget>
+   <widget class="QMenu" name="menuTools" >
+    <property name="title" >
+     <string>&amp;Tools</string>
+    </property>
+    <addaction name="actionShowTriangulation" />
+    <addaction name="actionInsertPolyline" />
+    <addaction name="separator" />
+    <addaction name="actionSimplify" />
+    <addaction name="separator" />
+    <addaction name="actionRecenter" />
+   </widget>
+   <addaction name="menuFile" />
+   <addaction name="menuTools" />
+  </widget>
+  <action name="actionAbout" >
+   <property name="text" >
+    <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="actionAboutCGAL" >
+   <property name="text" >
+    <string>About &amp;CGAL</string>
+   </property>
+  </action>
+  <action name="actionQuit" >
+   <property name="text" >
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionInsertPolyline" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="../icons/Input.qrc" >
+     <normaloff>:/cgal/Input/inputPolyline.png</normaloff>:/cgal/Input/inputPolyline.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Insert Polyline</string>
+   </property>
+   <property name="toolTip" >
+    <string>Insert Point or Polyline</string>
+   </property>
+   <property name="statusTip" >
+    <string>Left: Insert vtx | Right: Final vtx | Del: Delete vtx</string>
+   </property>
+  </action>
+  <action name="actionClear" >
+   <property name="icon" >
+    <iconset resource="../icons/File.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileNew.png</normaloff>:/cgal/fileToolbar/fileNew.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Clear</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionShowTriangulation" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="Polyline_simplification_2.qrc" >
+     <normaloff>:/cgal/Actions/icons/triangulation.png</normaloff>:/cgal/Actions/icons/triangulation.png
+    </iconset>
+   </property>
+   <property name="text" >
+    <string>Show &amp;triangulation</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionLoadConstraints" >
+   <property name="icon" >
+    <iconset resource="../icons/File.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Load...</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionRecenter" >
+   <property name="icon" >
+    <iconset resource="../icons/Input.qrc" >
+     <normaloff>:/cgal/Input/zoom-best-fit</normaloff>:/cgal/Input/zoom-best-fit</iconset>
+   </property>
+   <property name="text" >
+    <string>Re&amp;center the viewport</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionSimplify" >
+   <property name="text" >
+    <string>Simplify polylines</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="action_Export_SVG">
+   <property name="text">
+    <string>&amp;Export SVG...</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="Polyline_simplification_2.qrc" />
+  <include location="../icons/File.qrc" />
+  <include location="../resources/CGAL.qrc" />
+  <include location="../icons/Triangulation_2.qrc" />
+  <include location="../icons/Input.qrc" />
+ </resources>
+ <connections>
+  <connection>
+   <sender>thresholdSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setThreshold(int)</slot>
+  </connection>
+ </connections>
+ <slots>
+  <slot>setThreshold(int)</slot>
+ </slots>
+</ui>

@@ -28,6 +28,8 @@
 
 #include <CGAL/boost/graph/properties.h>
 
+#include <boost/cstdint.hpp>
+
 namespace CGAL {
 
 template <typename Point>
@@ -62,17 +64,17 @@ private:
 
 
 template <typename K, typename VEF>
-class SM_index_pmap : public boost::put_get_helper<int, SM_index_pmap<K,VEF> >
+class SM_index_pmap : public boost::put_get_helper<boost::uint32_t, SM_index_pmap<K,VEF> >
 {
 public:
   typedef boost::readable_property_map_tag category;
-  typedef unsigned int                     value_type;
-  typedef unsigned int                     reference;
+  typedef boost::uint32_t                  value_type;
+  typedef boost::uint32_t                  reference;
   typedef VEF                              key_type;
 
   value_type operator[](const key_type& vd) const
   {
-    return (size_t)vd;
+    return vd;
   }
 };
 
@@ -224,10 +226,10 @@ get(CGAL::vertex_point_t, const CGAL::Surface_mesh<K>& g) {
       typename boost::graph_traits< CGAL::Surface_mesh<Point> >::TYPE x) \
   { return get(get(p, sm), x); }                                        \
 
-CGAL_SM_INTRINSIC_PROPERTY(std::size_t, boost::vertex_index_t, vertex_descriptor)
-CGAL_SM_INTRINSIC_PROPERTY(std::size_t, boost::edge_index_t, edge_descriptor)
-CGAL_SM_INTRINSIC_PROPERTY(std::size_t, boost::halfedge_index_t, halfedge_descriptor)
-CGAL_SM_INTRINSIC_PROPERTY(std::size_t, boost::face_index_t, face_descriptor)
+CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::vertex_index_t, vertex_descriptor)
+CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::edge_index_t, edge_descriptor)
+CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::halfedge_index_t, halfedge_descriptor)
+CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::face_index_t, face_descriptor)
 CGAL_SM_INTRINSIC_PROPERTY(Point&, CGAL::vertex_point_t, vertex_descriptor)
 
 #undef CGAL_SM_INTRINSIC_PROPERTY

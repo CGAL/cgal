@@ -892,7 +892,8 @@ class Intersection_of_Polyhedra_3{
     void operator()( const Box* fb, const Box* eb) const {
       Halfedge_handle fh = fb->handle(); //handle for the face
       Halfedge_handle eh = eb->handle(); //handle for the edge
-      
+      if(eh->is_border()) eh = eh->opposite();
+      CGAL_assertion(!eh->is_border());
       
       //check if the segment intersects the plane of the facet or if it is included in the plane
       const typename Kernel::Point_3 & a = fh->vertex()->point();
@@ -906,7 +907,7 @@ class Intersection_of_Polyhedra_3{
           return; //no intersection
         }
         //WARNING THIS IS DONE ONLY FOR POLYHEDRON (MAX TWO INCIDENT FACETS TO EDGE)
-        if (!eh->is_border() && orientation(a,b,c,eh->next()->vertex()->point())==COPLANAR){
+        if (/* !eh->is_border() && */ orientation(a,b,c,eh->next()->vertex()->point())==COPLANAR){
           coplanar_facets.insert(make_sorted_pair_of_facets(eh->facet(),fh->facet()));
         }
         if (!eh->opposite()->is_border() && orientation(a,b,c,eh->opposite()->next()->vertex()->point())==COPLANAR){

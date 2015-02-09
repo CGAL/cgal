@@ -7,6 +7,7 @@ and adds the requirements for traversal of all halfedges in the graph.
 
 \cgalRefines `HalfedgeGraph`
 \cgalHasModel `CGAL::Polyhedron_3`
+\cgalHasModel `CGAL::Surface_mesh`
 
 \cgalHeading{Notations}
 

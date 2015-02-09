@@ -126,6 +126,22 @@ protected:
         return (distance > queue.top().second*multiplication_factor);      
   }
 
+  inline bool branch_nearest(FT distance) 
+  {
+    if (!queue.full()) 
+      return true;
+    else
+        return (distance*multiplication_factor < queue.top().second);     
+  }
+
+  inline bool branch_furthest(FT distance) 
+  {
+    if (!queue.full()) 
+      return true;
+    else
+        return (distance > queue.top().second*multiplication_factor);      
+  }
+
 public:
 
   iterator begin() const
@@ -164,7 +180,18 @@ public:
       << number_of_items_visited << std::endl;
     return s;
   }
-    
+
+  int internals_visited(){
+    return number_of_internal_nodes_visited;
+  }
+  
+  int leafs_visited(){
+    return number_of_leaf_nodes_visited;
+  }
+
+  int items_visited(){
+    return number_of_items_visited;
+  }
 }; // class 
 
 }} // namespace CGAL::internal

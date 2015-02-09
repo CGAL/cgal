@@ -1,0 +1,4 @@
+/*!
+\example Scale_space_reconstruction_3/scale_space.cpp
+\example Scale_space_reconstruction_3/scale_space_incremental.cpp
+*/
