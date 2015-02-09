@@ -121,23 +121,23 @@ int main()
 
   vertex_iterator vb, ve;
 
-  std::cout << "vertices: " << boost::num_vertices(g) << "\n";
-  std::cout << "edges: " << boost::num_edges(g) << "\n";
+  std::cout << "vertices: " << num_vertices(g) << "\n";
+  std::cout << "edges: " << num_edges(g) << "\n";
 
   // Output all the edges.
   edge_iter ei, ei_end;
-  for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
+  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
   {
-    Point s = points[boost::source(*ei, g)];
-    Point t = points[boost::target(*ei, g)];
+    Point s = points[source(*ei, g)];
+    Point t = points[target(*ei, g)];
     std::cout << s << " " << t << "\n";
   }
 
   std::vector<vertex_descriptor> id_to_vd;
   id_to_vd.clear();
-  id_to_vd.resize(boost::num_vertices(mesh));
+  id_to_vd.resize(num_vertices(mesh));
   std::size_t id=0;
-  for (boost::tie(vb, ve) = boost::vertices(mesh); vb != ve; ++vb)
+  for (boost::tie(vb, ve) = vertices(mesh); vb != ve; ++vb)
   {
     vertex_descriptor v = *vb;
     id_to_vd[id++] = v;
@@ -145,7 +145,7 @@ int main()
 
   // Output skeletal points and the corresponding surface points.
   vertex_iter gvb, gve;
-  for (boost::tie(gvb, gve) = boost::vertices(g); gvb != gve; ++gvb)
+  for (boost::tie(gvb, gve) = vertices(g); gvb != gve; ++gvb)
   {
     vertex_desc i = *gvb;
     Point skel = points[i];
