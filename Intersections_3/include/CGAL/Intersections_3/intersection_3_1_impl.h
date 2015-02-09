@@ -1564,8 +1564,9 @@ intersection(const typename K::Segment_3 &seg,
     if (_max == _min) {
         return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Iso_cuboid_3>(Point_3(_ref_point + _dir * _min ));
     }
+   
     return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Iso_cuboid_3>(
-        Segment_3(_ref_point + _dir*_min, _ref_point + _dir*_max));
+            Segment_3(_ref_point + _dir*_min, _ref_point + _dir*_max));
 }
 
 

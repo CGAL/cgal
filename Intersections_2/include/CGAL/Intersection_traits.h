@@ -165,7 +165,7 @@ namespace internal {
   inline
   CGAL::Object intersection_return() { return CGAL::Object(); }
 #else
-  #if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
+#if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
     template<typename F, typename A, typename B, typename T>
     inline typename cpp11::result_of<F(A, B)>::type
     intersection_return(const T& t) { return typename cpp11::result_of<F(A, B)>::type(t); }

@@ -1271,7 +1271,7 @@ struct Derivator<D, cpp11::tuple<V1, V...>, cpp11::tuple<O1, O...> >
 
 
 // OutputIterator which accepts several types in *o++= and dispatches,
-// wraps several other outputiterators, and dispatches accordingly.
+// wraps several other output iterators, and dispatches accordingly.
 template < typename V, typename O >
 class Dispatch_output_iterator;
 
