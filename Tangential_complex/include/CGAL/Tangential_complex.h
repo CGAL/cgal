@@ -518,6 +518,7 @@ public:
       Triangulation const& tr    = it_tr->tr();
       Tr_vertex_handle center_vh = it_tr->center_vertex();
 
+      // CJTODO: use m_stars[...]
       std::vector<Tr_full_cell_handle> incident_cells;
       tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
 
@@ -970,8 +971,6 @@ private:
       }
     }
 
-
-
     //***************************************************
     // Update the associated star (in m_stars)
     //***************************************************
@@ -1262,11 +1261,9 @@ private:
 
   void perturb(std::size_t point_idx)
   {
-    CGAL::Random rng;
-
     // Perturb the weight?
 #ifdef CGAL_TC_PERTURB_WEIGHT
-    m_weights[point_idx] = rng.get_double(0., m_sq_half_sparsity);
+    m_weights[point_idx] = m_random_generator.get_double(0., m_sq_half_sparsity);
 #endif
 
     // Perturb the position?
@@ -1320,50 +1317,46 @@ private:
     //Tr_mutex::scoped_lock lock(m_tr_mutexes[tr_index]);
 #endif
     
+    Star const& star = m_stars[tr_index];
     Triangulation const& tr    = m_triangulations[tr_index].tr();
     Tr_vertex_handle center_vh = m_triangulations[tr_index].center_vertex();
     const Tr_traits &local_tr_traits = tr.geom_traits();
     int cur_dim = tr.current_dimension();
 
-    std::vector<Tr_full_cell_handle> incident_cells;
-    tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
-
-    typename std::vector<Tr_full_cell_handle>::const_iterator it_c =
-                                                        incident_cells.begin();
-    typename std::vector<Tr_full_cell_handle>::const_iterator it_c_end=
-                                                        incident_cells.end();
-    // For each cell
-    for ( ; it_c != it_c_end ; ++it_c)
+    // For each incident simplex
+    Star::const_iterator it_inc_simplex = star.begin();
+    Star::const_iterator it_inc_simplex_end = star.end();
+    for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
     {
-      if (tr.is_infinite(*it_c)) // Don't check infinite cells
+      const Incident_simplex &inc_simplex = *it_inc_simplex;
+
+      // Don't check infinite cells
+      if (*inc_simplex.rbegin() == std::numeric_limits<std::size_t>::max())
         continue;
+
+      std::set<std::size_t> c = inc_simplex;
+      c.insert(tr_index); // Add the missing index
 
 //*****************************************************************************
 // STRATEGY 1: perturb all the points of the first inconsistent simplex
 //*****************************************************************************
 #ifdef CGAL_TC_PERTURB_THE_SIMPLEX_ONLY
-
-      std::set<std::size_t> c;
-      for (int i = 0 ; i < tr.current_dimension() + 1 ; ++i)
-      {
-        std::size_t data = (*it_c)->vertex(i)->data();
-        c.insert(data);
-      }
-
       // Inconsistent?
       if (!is_simplex_consistent(c))
       {
         is_inconsistent = true;
 
-        for (std::set<std::size_t>::iterator it=c.begin(); it!=c.end(); ++it)
+        for (std::set<std::size_t>::const_iterator it = c.begin(); 
+             it != c.end() ; ++it)
+        {
           perturb(*it);
+        }
         
 # if !defined(CGAL_TC_GLOBAL_REFRESH)
         refresh_tangential_complex();
 # endif
 
-        // We will try the other cells next time (incident_cells is not
-        // valid anymore here)
+        // We will try the other cells next time
         break;
       }
 
@@ -1371,7 +1364,7 @@ private:
 // STRATEGY 2: perturb the center point only
 //*****************************************************************************
 #elif defined(CGAL_TC_PERTURB_THE_CENTER_VERTEX_ONLY)
-      if (!is_simplex_consistent(*it_c, cur_dim))
+      if (!is_simplex_consistent(c))
       {
         is_inconsistent = true;
         
@@ -1389,8 +1382,7 @@ private:
         refresh_tangential_complex();
 # endif
 
-        // We will try the other cells next time (incident_cells is not
-        // valid anymore here)
+        // We will try the other cells next time
         break;
       }
       
@@ -1400,43 +1392,68 @@ private:
 #elif defined(CGAL_TC_PERTURB_THE_1_STAR)
 
       // Inconsistent?
-      if (!is_simplex_consistent(*it_c, cur_dim))
+      if (!is_simplex_consistent(c))
       {
         is_inconsistent = true;
         
-        std::set<std::size_t> c;
+        std::set<std::size_t> the_1_star;
       
-        typename std::vector<Tr_full_cell_handle>::const_iterator it_c2 =
-                                                        incident_cells.begin();
-        // For each cell
-        for ( ; it_c2 != it_c_end ; ++it_c2)
+        Star::const_iterator it_inc_simplex = star.begin();
+        Star::const_iterator it_inc_simplex_end = star.end();
+        for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
         {
-          for (int i = 0 ; i < tr.current_dimension() + 1 ; ++i)
-          {
-            std::size_t data = (*it_c2)->vertex(i)->data();
-            c.insert(data);
-          }
+          the_1_star.insert(it_inc_simplex->begin(), it_inc_simplex ->end());
         }
         
-        for (std::set<std::size_t>::iterator it=c.begin(); it!=c.end(); ++it)
+        for (std::set<std::size_t>::iterator it = the_1_star.begin() ; 
+             it != the_1_star.end() ; ++it)
+        {
           perturb(*it);
+        }
         
 # if !defined(CGAL_TC_GLOBAL_REFRESH)
         refresh_tangential_complex();
 # endif
 
-        // We will try the other cells next time (incident_cells is not
-        // valid anymore here)
+        // We will try the other cells next time
         break;
       }
+
+//*****************************************************************************
+// STRATEGY 4: perturb one random point of the simplex
+//*****************************************************************************
+#else
+      // Inconsistent?
+      if (!is_simplex_consistent(c))
+      {
+        is_inconsistent = true;
+        int rnd = m_random_generator.get_int(0, static_cast<int>(c.size()));
+        if (rnd == 0)
+          perturb(tr_index);
+        else
+        {
+          std::set<std::size_t>::const_iterator it_idx = c.begin();
+          std::advance(it_idx, rnd - 1);
+          perturb(*it_idx);
+        }
+
+# if !defined(CGAL_TC_GLOBAL_REFRESH)
+        refresh_tangential_complex();
+# endif
+
+        // We will try the other cells next time
+        break;
+      }
+
+#endif // CGAL_TC_PERTURB_THE_SIMPLEX_ONLY
 
 //*****************************************************************************
 // STRATEGY 4: perturb the k + 1 + CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS
 // closest points (to the power center of first the inconsistent cell)
 //*****************************************************************************
-#else
+/*#else
       // Inconsistent?
-      if (!is_simplex_consistent(*it_c, cur_dim))
+      if (!is_simplex_consistent(c))
       {
         is_inconsistent = true;
 
@@ -1444,8 +1461,13 @@ private:
         // closest points
 
         std::vector<Tr_point> simplex_pts;
-        for (int i = 0 ; i < cur_dim + 1 ; ++i)
-          simplex_pts.push_back((*it_c)->vertex(i)->point());
+        
+        Incident_simplex::const_iterator it_point_idx = c.begin();
+        Incident_simplex::const_iterator it_point_idx_end = c.end();
+        // For each point p of the simplex, we parse the incidents cells of p
+        // and we check if "simplex" is among them
+        for ( ; it_point_idx != it_point_idx_end ; ++it_point_idx)
+          simplex_pts.push_back(m_points[*it_point_idx]);
 
         //typename Tr_traits::Power_center_d power_center =
         //  local_tr_traits.power_center_d_object(); // CJTODO
@@ -1491,12 +1513,11 @@ private:
         refresh_tangential_complex();
 # endif
 
-        // We will try the other cells next time (incident_cells is not
-        // valid anymore here)
+        // We will try the other cells next time
         break;
       }
 
-#endif // CGAL_TC_PERTURB_THE_SIMPLEX_ONLY
+#endif // CGAL_TC_PERTURB_THE_SIMPLEX_ONLY*/
     }
 
     return is_inconsistent;
@@ -1584,28 +1605,29 @@ private:
       std::stringstream color;
       //color << rand()%256 << " " << 100+rand()%156 << " " << 100+rand()%156;
       color << 128 << " " << 128 << " " << 128;
-
-      std::vector<Tr_full_cell_handle> incident_cells;
-      tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
-
-      typename std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
-      typename std::vector<Tr_full_cell_handle>::const_iterator it_c_end= incident_cells.end();
+      
       // For each cell
-      for ( ; it_c != it_c_end ; ++it_c)
+      Star::const_iterator it_inc_simplex = m_stars[idx].begin();
+      Star::const_iterator it_inc_simplex_end = m_stars[idx].end();
+      for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
       {
-        if (tr.is_infinite(*it_c)) // Don't export infinite cells
+        // Don't export infinite cells
+        if (*it_inc_simplex->rbegin() == std::numeric_limits<std::size_t>::max())
           continue;
+        
+        std::set<std::size_t> c = *it_inc_simplex;
+        c.insert(idx);
 
         if (color_inconsistencies || excluded_simplices)
         {
-          std::set<std::size_t> c;
           std::stringstream sstr_c;
           std::size_t data;
-          for (int i = 0 ; i < m_intrinsic_dimension + 1 ; ++i)
+          
+          std::set<std::size_t>::const_iterator it_point_idx = c.begin();
+          for ( ; it_point_idx != c.end() ; ++it_point_idx)
           {
-            data = (*it_c)->vertex(i)->data();
+            data = *it_point_idx;
             sstr_c << data*factor << " ";
-            c.insert(data);
           }
 
           bool is_simpl_consistent = is_simplex_consistent(c);
@@ -1651,11 +1673,11 @@ private:
           std::size_t min_index = std::numeric_limits<std::size_t>::max();
           std::size_t data;
           std::stringstream sstr_c;
-          for (int i = 0 ; i < m_intrinsic_dimension + 1 ; ++i)
+          std::set<std::size_t>::const_iterator it_point_idx = c.begin();
+          min_index = *it_point_idx;
+          for ( ; it_point_idx != c.end() ; ++it_point_idx)
           {
-            data = (*it_c)->vertex(i)->data();
-            if (data < min_index)
-              min_index = data;
+            data = *it_point_idx;
             sstr_c << data*factor << " ";
           }
           
@@ -1733,6 +1755,9 @@ private:
   Points                    m_points_for_tse;
   Points_ds                 m_points_ds_for_tse;
 #endif
+
+  
+  CGAL::Random              m_random_generator;
 
 }; // /class Tangential_complex
 
