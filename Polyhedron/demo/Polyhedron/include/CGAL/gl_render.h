@@ -50,7 +50,7 @@ void gl_render_facets(Polyhedron& polyhedron, const std::vector<QColor>& colors)
     // If Flat shading: 1 normal per polygon
     if (shading == GL_FLAT)
     {
-      Vector n = CGAL::Polygon_mesh_processing::compute_facet_normal<Kernel>(f, polyhedron);
+      Vector n = CGAL::Polygon_mesh_processing::compute_facet_normal(f, polyhedron);
       ::glNormal3d(n.x(),n.y(),n.z());
     }
 
@@ -62,7 +62,7 @@ void gl_render_facets(Polyhedron& polyhedron, const std::vector<QColor>& colors)
       // If Gouraud shading: 1 normal per vertex
       if (shading == GL_SMOOTH)
       {
-        Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal<Kernel>(he->vertex(), polyhedron);
+        Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal(he->vertex(), polyhedron);
         ::glNormal3d(n.x(),n.y(),n.z());
       }
 
