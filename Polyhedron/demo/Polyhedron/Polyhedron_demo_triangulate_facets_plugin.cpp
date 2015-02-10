@@ -82,9 +82,9 @@ public slots:
               !eit_copy->opposite()->vertex()->is_bivalent())
           {
             Kernel::Vector_3 v1 =
-              CGAL::Polygon_mesh_processing::compute_facet_normal<Kernel>(fh1, *pMesh);
+              CGAL::Polygon_mesh_processing::compute_facet_normal(fh1, *pMesh);
             Kernel::Vector_3 v2 =
-              CGAL::Polygon_mesh_processing::compute_facet_normal<Kernel>(fh2, *pMesh);
+              CGAL::Polygon_mesh_processing::compute_facet_normal(fh2, *pMesh);
             if(v1 * v2 > 0.99) {
               std::cerr << "join\n";
               // pMesh->is_valid(true);
@@ -119,7 +119,7 @@ public slots:
 
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
-      CGAL::Polygon_mesh_processing::triangulate_faces(*pMesh);
+      CGAL::Polygon_mesh_processing::triangulate_faces<Kernel>(*pMesh);
 
       CGAL_assertion_code(pMesh->normalize_border());
       CGAL_assertion(pMesh->is_valid(false, 3));
