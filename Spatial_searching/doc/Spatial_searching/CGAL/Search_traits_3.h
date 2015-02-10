@@ -4,8 +4,7 @@ namespace CGAL {
 \ingroup SearchTraitsClasses
 
 The class `Search_traits_3` can be used as a template parameter of the kd tree 
-and the search classes. `Kernel` must be a \cgal kernel. 
-\cgalHeading{Parameters}
+and the search classes.
 
 \tparam Kernel must be a model of the concept `Kernel`, 
 for example `Simple_cartesian<double>` or `Simple_cartesian<Gmpq>`. 
@@ -14,7 +13,7 @@ for example `Simple_cartesian<double>` or `Simple_cartesian<Gmpq>`.
 \cgalModels `RangeSearchTraits`
 
 \sa `Search_traits_2<Kernel>` 
-\sa `Search_traits<Point,CartesianConstIterator,ConstructCartesianConstIterator` 
+\sa `Search_traits<NT,Point,CartesianConstIterator,ConstructCartesianConstIterator>` 
 
 */
 template< typename Kernel >

@@ -24,7 +24,7 @@ public:
 Dimension type. Either `Dimension_tag<int dim>`
 or `Dynamic_dimension_tag`.
 */
-typedef unspecified_type Dimension;
+typedef Dim Dimension;
 
 /*!
 The number type of the coordinates. 
@@ -59,7 +59,7 @@ typedef ConstructMinVertex Construct_min_vertex_d;
 Functor with operator to construct 
 the vertex with lexicographically largest coordinates of an object of type `Iso_box_d`. 
 */ 
-typedef Kernel::ConstructMaxVertex Construct_max_vertex_d; 
+typedef ConstructMaxVertex Construct_max_vertex_d; 
 
 /// @}
 

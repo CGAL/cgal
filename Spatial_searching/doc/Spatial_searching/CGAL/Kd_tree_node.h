@@ -13,7 +13,6 @@ used, it also contains the upper limit of the lower child's
 tight rectangle and the lower limit of the upper child's tight rectangle 
 along the node's cutting dimension.
 
-\cgalHeading{Parameters}
 
 \tparam Traits must be a model of the concept `SearchTraits`, 
 for example `Search_traits_2<Simple_cartesian<double> >`, or `Cartesian_d<double>`. 

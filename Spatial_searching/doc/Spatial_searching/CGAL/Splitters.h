@@ -14,8 +14,6 @@ which the points have the largest spread. It then splits the points
 in the most even manner possible, subject to maintaining the bound on 
 the ratio of the resulting rectangles. 
 
-\cgalHeading{Parameters}
-
 \tparam Traits must be a model of 
 the concept `SearchTraits`, for example `CGAL::Search_traits_2`. 
 

@@ -7,8 +7,6 @@ The class `Euclidean_distance` provides an implementation of the concept `Orthog
 Euclidean distance (\f$ l_2\f$ metric). 
 To optimize distance computations squared distances are used. 
 
-\cgalHeading{Parameters}
-
 \tparam Traits must be a model of the concept 
 `SearchTraits`, for example `Search_traits_2<Simple_cartesian<double> >`. 
 

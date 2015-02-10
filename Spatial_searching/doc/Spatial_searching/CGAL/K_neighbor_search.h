@@ -7,7 +7,6 @@ The class `K_neighbor_search` implements approximate `k`-nearest and `k`-furthes
 using standard search on a tree using a general distance class. The tree may be built with 
 extended or unextended nodes. 
 
-\cgalHeading{Parameters}
 
 \tparam Traits must be an implementation of the concept `SearchTraits`, 
 for example `Simple_cartesian<double>`. 

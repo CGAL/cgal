@@ -8,7 +8,6 @@ A fuzzy sphere with radius \f$ r\f$ and fuzziness value \f$ \epsilon\f$ has
 as outer approximation a sphere with radius \f$ r+\epsilon\f$ and 
 as inner approximation a sphere with radius \f$ r-\epsilon\f$. 
 
-\cgalHeading{Parameters}
 
 \tparam Traits must be a model of the concept 
 `SearchTraits`, for example `CGAL::Cartesian_d<double>`. 
