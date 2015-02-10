@@ -28,19 +28,39 @@ namespace CGAL{
 
 namespace Polygon_mesh_processing{
 
-#ifndef DOXYGEN_RUNNING
+///\cond SKIP_IN_MANUAL  
+
 template <class PolygonMesh>
-typename Kernel_traits<typename boost::property_traits<typename boost::property_map<PolygonMesh,CGAL::vertex_point_t>::type>::value_type>::Kernel::Vector_3
+typename Kernel_traits<
+  typename boost::property_traits<
+    typename boost::property_map<
+      PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel::Vector_3
 compute_facet_normal(
   typename boost::graph_traits<PolygonMesh>::face_descriptor f,
   const PolygonMesh& pmesh)
 {
-  typedef typename Kernel_traits<typename boost::property_traits<typename boost::property_map<PolygonMesh,CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
-  return compute_facet_normal(f, pmesh, Kernel());
+  typedef typename Kernel_traits<
+    typename boost::property_traits<
+      typename boost::property_map<
+        PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
+  return compute_facet_normal(f, pmesh, get(CGAL::vertex_point, pmesh), Kernel());
 }
-#endif
+ 
 
-  // %CGAL `Kernel` with `FT` a model of `FieldWithSqrt`. This
+
+template <class PolygonMesh, class Kernel>
+typename Kernel::Vector_3
+compute_facet_normal(
+  typename boost::graph_traits<PolygonMesh>::face_descriptor f,
+  const PolygonMesh& pmesh,
+  const Kernel& k)
+{
+  return compute_facet_normal(f, pmesh, get(CGAL::vertex_point, pmesh), k);
+}
+ 
+/// \endcond 
+
+
 /**
 * \ingroup PkgPolygonMeshProcessing
 * computes the outward unit vector normal to facet `f`.
@@ -50,18 +70,33 @@ compute_facet_normal(
 * @param f the facet on which the normal is computed
 * @param pmesh the polygon mesh to which `f` belongs
 */
-template <class Kernel, class PolygonMesh>
-typename Kernel::Vector_3
-compute_facet_normal(
-  typename boost::graph_traits<PolygonMesh>::face_descriptor f,
-  const PolygonMesh& pmesh,
-  const Kernel& )
+template <typename PolygonMesh
+          , typename PointPropertyMap
+#ifdef DOXYGEN_RUNNING
+          = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type
+#endif
+          , typename Kernel
+#ifdef DOXYGEN_RUNNING
+          = typename Kernel_traits<
+              typename boost::property_traits<PointPropertyMap>::value_type>::Kernel
+#endif
+          >
+typename Kernel_traits<
+  typename boost::property_traits<PointPropertyMap>::value_type>::Kernel::Vector_3
+compute_facet_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
+                     const PolygonMesh& pmesh
+                     , PointPropertyMap ppmap 
+#ifdef DOXYGEN_RUNNING
+                     = get(CGAL::vertex_point_t, pmesh)
+#endif
+                     , const Kernel& k
+#ifdef DOXYGEN_RUNNING 
+                     = Kernel()
+#endif
+                     )
 {
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
-
-  typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type
-    ppmap = get(CGAL::vertex_point, pmesh);
 
   Vector normal = CGAL::NULL_VECTOR;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
@@ -81,18 +116,39 @@ compute_facet_normal(
   return normal / std::sqrt(normal * normal);
 }
 
+///\cond SKIP_IN_MANUAL  
 
-#ifndef DOXYGEN_RUNNING
 template <class PolygonMesh>
-typename Kernel_traits<typename boost::property_traits<typename boost::property_map<PolygonMesh,CGAL::vertex_point_t>::type>::value_type>::Kernel::Vector_3
+typename Kernel_traits<
+  typename boost::property_traits<
+    typename boost::property_map<
+      PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel::Vector_3
 compute_vertex_normal(
   typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
   const PolygonMesh& pmesh)
 {
-  typedef typename Kernel_traits<typename boost::property_traits<typename boost::property_map<PolygonMesh,CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
-  return compute_vertex_normal(v, pmesh, Kernel());
+  typedef typename Kernel_traits<
+    typename boost::property_traits<
+      typename boost::property_map<
+        PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
+  return compute_vertex_normal(v, pmesh, get(CGAL::vertex_point, pmesh), Kernel());
 }
-#endif
+ 
+
+
+template <class PolygonMesh, class Kernel>
+typename Kernel::Vector_3
+compute_vertex_normal(
+  typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
+  const PolygonMesh& pmesh,
+  const Kernel& k)
+{
+  return compute_vertex_normal(v, pmesh, get(CGAL::vertex_point, pmesh), k);
+}
+  
+/// \endcond 
+
+
 
 /**
 * \ingroup PkgPolygonMeshProcessing
@@ -103,12 +159,29 @@ compute_vertex_normal(
 * @param v the vertex around which the normal is computed
 * @param pmesh the polygon mesh to which `v` belongs
 */
-template<typename Kernel, typename PolygonMesh>
+template<typename PolygonMesh
+          , typename PointPropertyMap
+#ifdef DOXYGEN_RUNNING
+          = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type
+#endif
+         , typename Kernel
+#ifdef DOXYGEN_RUNNING
+         = typename Kernel_traits<
+             typename boost::property_traits<PointPropertyMap>::value_type>::Kernel
+#endif
+         >
 typename Kernel::Vector_3
-compute_vertex_normal(
-    typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
-    const PolygonMesh& pmesh,
-                      const Kernel& k)
+compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
+                      const PolygonMesh& pmesh,
+                      PointPropertyMap ppmap 
+#ifdef DOXYGEN_RUNNING
+                      = get(CGAL::vertex_point_t, pmesh)
+#endif
+                      , const Kernel& k
+#ifdef DOXYGEN_RUNNING 
+                      = Kernel()
+#endif
+                      )
 {
   typedef typename Kernel::Vector_3 Vector;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
@@ -117,10 +190,10 @@ compute_vertex_normal(
   halfedge_descriptor he = halfedge(v, pmesh);
   halfedge_descriptor end = he;
   do
-  {
+    {
     if (!is_border(he, pmesh))
     {
-      Vector n = compute_facet_normal(face(he, pmesh), pmesh, k);
+      Vector n = compute_facet_normal(face(he, pmesh), pmesh, ppmap, k);
       normal = normal + (n / std::sqrt(n*n));
     }
     he = opposite(next(he, pmesh), pmesh);
@@ -129,6 +202,8 @@ compute_vertex_normal(
   return normal / std::sqrt(normal * normal);
 }
 
-} } // end of namespace CGAL::Polygon_mesh_processing
+} 
+
+} // end of namespace CGAL::Polygon_mesh_processing
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_COMPUTE_NORMAL_H
