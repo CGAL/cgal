@@ -491,7 +491,7 @@ class Periodic_3_Regular_triangulation_3<GT,Tds>::Point_hider
   mutable bool is_original_cube;
 
 public:
-  Point_hider(Self *tr) : t(tr), is_original_cube(true) {}
+  Point_hider(Self *tr) : t(tr), is_original_cube(false) {}
 
   void set_original_cube (bool b) const {
     is_original_cube = b;
@@ -501,7 +501,6 @@ public:
   inline void set_vertices(InputIterator start, InputIterator end) const
   {
     while (start != end) {
-      if (is_original_cube)
         std::copy((*start)->hidden_points_begin(),
             (*start)->hidden_points_end(),
             std::back_inserter(hidden_points));
@@ -529,33 +528,31 @@ public:
       if (is_original_cube)
       {
         hc = t->locate((*vi)->point(), lt, li, lj, hc);
-        hide_point(hc, (*vi)->point());
+        hc->hide_point((*vi)->point());
       }
       t->delete_vertex(*vi);
     }
     vertices.clear();
-    if (is_original_cube)
-    {
       for (typename std::vector<Weighted_point>::iterator
           hp = hidden_points.begin(); hp != hidden_points.end(); ++hp) {
         hc = t->locate(*hp, lt, li, lj, hc);
-        hide_point (hc, *hp);
+        hc->hide_point(*hp);
       }
       hidden_points.clear();
-    }
   }
 
   inline Vertex_handle replace_vertex(Cell_handle c, int index, const Weighted_point& p)
   {
     Vertex_handle v = c->vertex(index);
-    hide_point(c, v->point());
+    c->hide_point(v->point());
     v->set_point(p);
     return v;
   }
 
   inline void hide_point(Cell_handle c, const Weighted_point& p)
   {
-    c->hide_point(p);
+    if (is_original_cube)
+      c->hide_point(p);
   }
 
 //  inline void hide(Weighted_point&, Cell_handle ) const  // useless?

@@ -209,6 +209,11 @@ void test_insert_1 ()
   assert(p3rt3.is_valid());
   assert(p3rt3.number_of_vertices() == 1);
   assert(p3rt3.number_of_stored_vertices() == 27);
+
+  unsigned hidden_point_count = 0;
+  for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+    hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+  assert(hidden_point_count == 0);
 }
 
 void test_insert_point ()
@@ -236,6 +241,11 @@ void test_insert_point ()
   assert(p3rt3.is_valid());
   assert(p3rt3.number_of_vertices() == 5);
   assert(p3rt3.number_of_stored_vertices() == 135);
+
+  unsigned hidden_point_count = 0;
+  for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+    hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+  assert(hidden_point_count == 0);
 }
 
 void test_insert_hidden_point ()
@@ -257,12 +267,27 @@ void test_insert_hidden_point ()
   assert(p3rt3.number_of_vertices() == 4);
   assert(p3rt3.number_of_stored_vertices() == 108);
 
-  Weighted_point p(Bare_point(0.101, 0.101, 0.101), 0.001);
-  vh = p3rt3.insert(p);
+  unsigned hidden_point_count = 0;
+  for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+    hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+  assert(hidden_point_count == 0);
+
+  Weighted_point hidden_point(Bare_point(0.101, 0.101, 0.101), 0.001);
+  vh = p3rt3.insert(hidden_point);
   assert(vh == Vertex_handle());
   assert(p3rt3.is_valid());
   assert(p3rt3.number_of_vertices() == 4);
   assert(p3rt3.number_of_stored_vertices() == 108);
+
+  unsigned hidden_found_count = 0;
+  hidden_point_count = 0;
+  for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+  {
+    hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+    hidden_found_count += static_cast<unsigned>(std::find(iter->hidden_points_begin(), iter->hidden_points_end(), hidden_point) != iter->hidden_points_end());
+  }
+  assert(hidden_point_count == 1);
+  assert(hidden_found_count == 1);
 }
 
 void test_insert_hiding_point ()
@@ -278,17 +303,33 @@ void test_insert_hiding_point ()
   assert(vh != Vertex_handle());
   vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.9),0.01));
   assert(vh != Vertex_handle());
-  vh = p3rt3.insert(Weighted_point(Bare_point(0.101, 0.101, 0.101), 0.001));
+  Weighted_point hidden_point(Bare_point(0.101, 0.101, 0.101), 0.001);
+  vh = p3rt3.insert(hidden_point);
   assert(vh != Vertex_handle());
   assert(p3rt3.is_valid());
   assert(p3rt3.number_of_vertices() == 4);
   assert(p3rt3.number_of_stored_vertices() == 108);
+
+  unsigned hidden_point_count = 0;
+  for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+    hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+  assert(hidden_point_count == 0);
 
   vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.01));
   assert(vh != Vertex_handle());
   assert(p3rt3.is_valid());
   assert(p3rt3.number_of_vertices() == 4);
   assert(p3rt3.number_of_stored_vertices() == 108);
+
+  unsigned hidden_found_count = 0;
+  hidden_point_count = 0;
+  for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+  {
+    hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+    hidden_found_count += static_cast<unsigned>(std::find(iter->hidden_points_begin(), iter->hidden_points_end(), hidden_point) != iter->hidden_points_end());
+  }
+  assert(hidden_point_count == 1);
+  assert(hidden_found_count == 1);
 }
 
 void test_insert_a_point_twice ()
@@ -308,6 +349,11 @@ void test_insert_a_point_twice ()
   assert(p3rt3.is_valid());
   assert(p3rt3.number_of_vertices() == 1);
   assert(p3rt3.number_of_stored_vertices() == 27);
+
+  unsigned hidden_point_count = 0;
+  for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+    hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+  assert(hidden_point_count == 0);
 }
 
 void test_insert_two_points_with_the_same_position ()
@@ -316,7 +362,8 @@ void test_insert_two_points_with_the_same_position ()
 
   P3RT3 p3rt3(P3RT3::Iso_cuboid(0,0,0, 1,1,1));
 
-  Vertex_handle vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.01));
+  Weighted_point hidden_point(Bare_point(0.1,0.1,0.1),0.01);
+  Vertex_handle vh = p3rt3.insert(hidden_point);
   assert(vh != Vertex_handle());
   assert(p3rt3.is_valid());
   assert(p3rt3.number_of_vertices() == 1);
@@ -328,6 +375,16 @@ void test_insert_two_points_with_the_same_position ()
   assert(p3rt3.is_valid());
   assert(p3rt3.number_of_vertices() == 1);
   assert(p3rt3.number_of_stored_vertices() == 27);
+
+  unsigned hidden_found_count = 0;
+  unsigned hidden_point_count = 0;
+  for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+  {
+    hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+    hidden_found_count += static_cast<unsigned>(std::find(iter->hidden_points_begin(), iter->hidden_points_end(), hidden_point) != iter->hidden_points_end());
+  }
+  assert(hidden_point_count == 1);
+  assert(hidden_found_count == 1);
 }
 
 void test_remove ()
@@ -349,7 +406,8 @@ void test_remove ()
   assert(p3rt3.number_of_vertices() == 4);
   assert(p3rt3.number_of_stored_vertices() == 108);
 
-  Vertex_handle vhh = p3rt3.insert(Weighted_point(Bare_point(0.101, 0.101, 0.101), 0.001));
+  Weighted_point hidden_point(Bare_point(0.101, 0.101, 0.101), 0.001);
+  Vertex_handle vhh = p3rt3.insert(hidden_point);
   assert(vhh == Vertex_handle());
   assert(p3rt3.is_valid());
   assert(p3rt3.number_of_vertices() == 4);
@@ -359,6 +417,11 @@ void test_remove ()
   assert(p3rt3.is_valid());
   assert(p3rt3.number_of_vertices() == 4);
   assert(p3rt3.number_of_stored_vertices() == 108);
+
+  unsigned point_found_count = 0;
+  for (P3RT3::Vertex_iterator iter = p3rt3.vertices_begin(), end_iter = p3rt3.vertices_end(); iter != end_iter; ++iter)
+    point_found_count += (iter->point() == hidden_point);
+  assert(point_found_count == 27);
 }
 
 void test_insert_rnd_as_delaunay (unsigned pt_count, double weight)
@@ -388,7 +451,7 @@ void test_insert_rnd_as_delaunay (unsigned pt_count, double weight)
       : p3rt3.number_of_stored_vertices() == pt_count);
 }
 
-void test_insert_rnd (unsigned pt_count)
+void test_insert_rnd_then_remove_all (unsigned pt_count)
 {
   std::cout << "--- test_insert_rnd (" << pt_count << ')' << std::endl;
 
@@ -405,14 +468,31 @@ void test_insert_rnd (unsigned pt_count)
   for (unsigned cnt = 1; cnt <= pt_count; ++cnt)
   {
     Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
-    std::cout << cnt << " : " << p << std::endl;
+//    std::cout << cnt << " : " << p << std::endl;
     assert(p.weight() < 0.015625);
     stream << p << std::endl;
     p3rt3.insert(p);
-    std::cout << "p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
   }
 
   stream.close();
+
+  assert(p3rt3.is_valid());
+
+//  std::cout << "REMOVE" << std::endl;
+
+  for (unsigned cnt = 1; pt_count; --pt_count, ++cnt)
+  {
+    P3RT3::Vertex_iterator iter = p3rt3.vertices_begin();
+    for (unsigned j = random.get_int(0, pt_count); j; --j)
+      ++iter;
+
+//    std::cout << cnt << " : " << iter->point() << std::endl;
+    p3rt3.remove(iter);
+//    std::cout << "p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
+    unsigned hidden_point_count = 0;
+    for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+      hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+  }
 
   assert(p3rt3.is_valid());
 }
@@ -472,7 +552,7 @@ int main (int argc, char** argv)
 //  test_insert_rnd_as_delaunay(100, 0.);
 //  test_insert_rnd_as_delaunay(100, 0.01);
 //  test_insert_rnd(100);
-//  test_insert_rnd(5000);
+  test_insert_rnd_then_remove_all(100);
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return EXIT_SUCCESS;

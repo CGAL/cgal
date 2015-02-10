@@ -2202,7 +2202,6 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
       lt_assert, i_assert, j_assert) != ON_UNBOUNDED_SIDE);
 
   tester.set_offset(o);
-  hider.set_original_cube(vh == Vertex_handle());
 
   // Choose the periodic copy of tester.point() that is inside c.
   bool found = false;
@@ -2581,11 +2580,13 @@ Periodic_3_triangulation_3<GT,TDS>::insert_in_conflict(const Point & p,
 
   CGAL_triangulation_assertion( number_of_vertices() != 0 );
   CGAL_triangulation_expensive_assertion(is_valid());
+  hider.set_original_cube(true);
   Vertex_handle vh = periodic_insert(p, Offset(), lt, c, tester, hider);
   if (is_1_cover()) {
     return vh;
   }
   
+  hider.set_original_cube(false);
   for (Cell_iterator it = all_cells_begin() ;
       it != all_cells_end() ; it++){
     CGAL_triangulation_assertion(it->neighbor(0)->neighbor(
