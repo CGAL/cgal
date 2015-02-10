@@ -28,9 +28,72 @@ namespace CGAL{
 
 namespace Polygon_mesh_processing{
 
-///\cond SKIP_IN_MANUAL  
+///\cond SKIP_IN_MANUAL
 
-template <class PolygonMesh>
+template <typename PolygonMesh, typename FaceNormalPropertyMap>
+void
+compute_facet_normals(const PolygonMesh& pmesh,
+                      FaceNormalPropertyMap npm)
+{  
+  typedef typename Kernel_traits<
+    typename boost::property_traits<
+      typename boost::property_map<
+        PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
+  compute_facet_normals(pmesh, npm, get(vertex_point, pmesh), Kernel());
+}
+
+
+template <typename PolygonMesh, typename FaceNormalPropertyMap, typename PointPropertyMap>
+void
+compute_facet_normals(const PolygonMesh& pmesh,
+                      FaceNormalPropertyMap npm,
+                      PointPropertyMap ppmap)
+{  
+  typedef typename Kernel_traits<
+    typename boost::property_traits<
+      typename boost::property_map<
+        PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
+  compute_facet_normals(pmesh, npm, ppmap, Kernel());
+}
+
+///\endcond
+
+template <typename PolygonMesh
+          , typename FaceNormalPropertyMap
+          , typename PointPropertyMap
+#ifdef DOXYGEN_RUNNING
+          = typename boost::property_map<PolygonMesh, vertex_point_t>::type
+#endif
+          , typename Kernel
+#ifdef DOXYGEN_RUNNING
+          = typename Kernel_traits<
+              typename boost::property_traits<PointPropertyMap>::value_type>::Kernel
+#endif
+          >
+void
+compute_facet_normals(const PolygonMesh& pmesh
+                      , FaceNormalPropertyMap npm
+                      , PointPropertyMap ppmap
+#ifdef DOXYGEN_RUNNING
+                      = get(vertex_point, pmesh)
+#endif
+                      ,const Kernel& k
+#ifdef DOXYGEN_RUNNING
+                      = Kernel()
+#endif
+                      )
+{
+  typename boost::graph_traits<PolygonMesh>::face_descriptor f;
+  BOOST_FOREACH(f, faces(pmesh)){
+    typename Kernel::Vector_3 v = compute_facet_normal(f,pmesh, ppmap, k);
+    put(npm, f, v);
+  }
+}
+
+
+///\cond SKIP_IN_MANUAL
+
+template <typename PolygonMesh>
 typename Kernel_traits<
   typename boost::property_traits<
     typename boost::property_map<
@@ -43,19 +106,22 @@ compute_facet_normal(
     typename boost::property_traits<
       typename boost::property_map<
         PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
-  return compute_facet_normal(f, pmesh, get(CGAL::vertex_point, pmesh), Kernel());
+  return compute_facet_normal(f, pmesh, get(vertex_point, pmesh), Kernel());
 }
  
 
 
-template <class PolygonMesh, class Kernel>
-typename Kernel::Vector_3
+template <typename PolygonMesh, typename PointPropertyMap>
+typename Kernel_traits<
+  typename boost::property_traits<PointPropertyMap>::value_type>::Kernel::Vector_3
 compute_facet_normal(
   typename boost::graph_traits<PolygonMesh>::face_descriptor f,
   const PolygonMesh& pmesh,
-  const Kernel& k)
+  PointPropertyMap ppmap)
 {
-  return compute_facet_normal(f, pmesh, get(CGAL::vertex_point, pmesh), k);
+  typedef typename Kernel_traits<
+    typename boost::property_traits<PointPropertyMap>::value_type>::Kernel Kernel;
+  return compute_facet_normal(f, pmesh, ppmap, Kernel());
 }
  
 /// \endcond 
@@ -81,13 +147,12 @@ template <typename PolygonMesh
               typename boost::property_traits<PointPropertyMap>::value_type>::Kernel
 #endif
           >
-typename Kernel_traits<
-  typename boost::property_traits<PointPropertyMap>::value_type>::Kernel::Vector_3
+typename Kernel::Vector_3
 compute_facet_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
                      const PolygonMesh& pmesh
                      , PointPropertyMap ppmap 
 #ifdef DOXYGEN_RUNNING
-                     = get(CGAL::vertex_point_t, pmesh)
+                     = get(vertex_point_t, pmesh)
 #endif
                      , const Kernel& k
 #ifdef DOXYGEN_RUNNING 
@@ -118,7 +183,7 @@ compute_facet_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor 
 
 ///\cond SKIP_IN_MANUAL  
 
-template <class PolygonMesh>
+template <typename PolygonMesh>
 typename Kernel_traits<
   typename boost::property_traits<
     typename boost::property_map<
@@ -131,19 +196,23 @@ compute_vertex_normal(
     typename boost::property_traits<
       typename boost::property_map<
         PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
-  return compute_vertex_normal(v, pmesh, get(CGAL::vertex_point, pmesh), Kernel());
+  return compute_vertex_normal(v, pmesh, get(vertex_point, pmesh), Kernel());
 }
  
 
 
-template <class PolygonMesh, class Kernel>
-typename Kernel::Vector_3
+template <typename PolygonMesh, typename PointPropertyMap>
+typename Kernel_traits<
+  typename boost::property_traits<
+    typename boost::property_map<
+      PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel::Vector_3
 compute_vertex_normal(
   typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
   const PolygonMesh& pmesh,
-  const Kernel& k)
-{
-  return compute_vertex_normal(v, pmesh, get(CGAL::vertex_point, pmesh), k);
+  PointPropertyMap ppmap)
+{ typedef typename Kernel_traits<
+    typename boost::property_traits<PointPropertyMap>::value_type>::Kernel Kernel;
+  return compute_vertex_normal(v, pmesh, ppmap, Kernel);
 }
   
 /// \endcond 
@@ -162,7 +231,7 @@ compute_vertex_normal(
 template<typename PolygonMesh
           , typename PointPropertyMap
 #ifdef DOXYGEN_RUNNING
-          = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type
+          = typename boost::property_map<PolygonMesh, vertex_point_t>::type
 #endif
          , typename Kernel
 #ifdef DOXYGEN_RUNNING
@@ -175,7 +244,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
                       const PolygonMesh& pmesh,
                       PointPropertyMap ppmap 
 #ifdef DOXYGEN_RUNNING
-                      = get(CGAL::vertex_point_t, pmesh)
+                      = get(vertex_point_t, pmesh)
 #endif
                       , const Kernel& k
 #ifdef DOXYGEN_RUNNING 
