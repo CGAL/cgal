@@ -57,6 +57,6 @@ include_directories( BEFORE ../../include )
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
-create_single_source_cgal_program( "polygon_mesh_slicer_test.cpp" )
+create_single_source_cgal_program( "polygon_mesh_slicer.cpp" )
 
 

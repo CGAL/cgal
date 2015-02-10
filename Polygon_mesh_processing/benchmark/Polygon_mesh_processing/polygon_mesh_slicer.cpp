@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
 {
   std::ifstream input(argv[1]);
   Mesh m;
-  int N = 10;
+  int N = 100;
   if (!input || !(input >> m)){
     std::cerr << "Error: can not read file.\n";
     return 1;
@@ -116,6 +116,7 @@ int main(int argc, char* argv[])
   CGAL::Polygon_mesh_slicer_3<Mesh, K> slicer(m);
 
 
+  std::ofstream out("out.off");
   int polycount = 0;
   int vertex_count = 0;
   for(int i=0; i < N; i++){
@@ -125,11 +126,11 @@ int main(int argc, char* argv[])
     polycount += polylines.size();
     BOOST_FOREACH(Polyline pl, polylines){
       vertex_count += pl.size();
-      std::cout << pl.size();
+      out << pl.size();
       BOOST_FOREACH(Point_3 p, pl){
-        std::cout << " " << p;
+        out << " " << p;
       }
-      std::cout << std::endl;
+      out << std::endl;
     }
     t.start();
     
