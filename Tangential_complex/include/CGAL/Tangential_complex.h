@@ -122,6 +122,7 @@ class Tangential_complex
 
   typedef std::vector<Point>                          Points;
   typedef std::vector<FT>                             Weights;
+
   typedef Point_cloud_data_structure<Kernel, Points>  Points_ds;
   typedef typename Points_ds::KNS_range               KNS_range;
   typedef typename Points_ds::KNS_iterator            KNS_iterator;
@@ -167,6 +168,13 @@ class Tangential_complex
   typedef typename std::vector<Tangent_space_basis>   TS_container;
   typedef typename std::vector<Tr_and_VH>             Tr_container;
   typedef typename std::vector<Vector>                Vectors;
+
+  // An Incident_simplex is the list of the verter indices 
+  // except the center vertex
+  typedef std::set<std::size_t>                       Incident_simplex;
+  typedef std::vector<Incident_simplex>               Star;
+  typedef std::vector<Star>                           Stars_container;
+
 #ifdef CGAL_LINKED_WITH_TBB
   // CJTODO: test other mutexes
   // http://www.threadingbuildingblocks.org/docs/help/reference/synchronization/mutexes/mutex_concept.htm
@@ -221,6 +229,7 @@ public:
     // already-computed triangulations (while resizing) since it would
     // invalidate the vertex handles stored beside the triangulations
     m_triangulations.resize(m_points.size());
+    m_stars.resize(m_points.size());
 #ifdef CGAL_LINKED_WITH_TBB
     //m_tr_mutexes.resize(m_points.size());
 #endif
@@ -962,6 +971,34 @@ private:
     }
 
 
+
+    //***************************************************
+    // Update the associated star (in m_stars)
+    //***************************************************
+    Star &star = m_stars[i];
+    int cur_dim_plus_1 = local_tr.current_dimension() + 1;
+    star.clear();
+    
+    std::vector<Tr_full_cell_handle> incident_cells;
+    local_tr.incident_full_cells(
+      center_vertex, std::back_inserter(incident_cells));
+
+    typename std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
+    typename std::vector<Tr_full_cell_handle>::const_iterator it_c_end= incident_cells.end();
+    // For each cell
+    for ( ; it_c != it_c_end ; ++it_c)
+    {
+      // Will contain all indices except center_vertex
+      Incident_simplex inc_simplex;
+      for (int j = 0 ; j < cur_dim_plus_1 ; ++j)
+      {
+        std::size_t index = (*it_c)->vertex(j)->data();
+        if (index != i)
+          inc_simplex.insert(index);
+      }
+      star.push_back(inc_simplex);
+    }
+
     // CJTODO DEBUG
     //std::cerr << "\nChecking topology and geometry..."
     //          << (local_tr.is_valid(true) ? "OK.\n" : "Error.\n");
@@ -1169,23 +1206,23 @@ private:
       std::size_t point_idx = *it_point_idx;
       if (point_idx == std::numeric_limits<std::size_t>::max())
         continue;
-      Triangulation const& tr = m_triangulations[point_idx].tr();
-      Tr_vertex_handle center_vh = m_triangulations[point_idx].center_vertex();
+      Star const& star = m_stars[point_idx];
 
-      std::vector<Tr_full_cell_handle> incident_cells;
-      tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
+      // What we're looking for is "simplex" \ point_idx
+      Incident_simplex ic_to_find = simplex;
+      ic_to_find.erase(point_idx);
 
-      typename std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
-      typename std::vector<Tr_full_cell_handle>::const_iterator it_c_end= incident_cells.end();
       // For each cell
       bool found = false;
-      for ( ; !found && it_c != it_c_end ; ++it_c)
+      Star::const_iterator it_inc_simplex = star.begin();
+      Star::const_iterator it_inc_simplex_end = star.end();
+      for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
       {
-        std::set<std::size_t> cell;
-        for (int i = 0 ; i < cur_dim_plus_1 ; ++i)
-          cell.insert((*it_c)->vertex(i)->data());
-        if (cell == simplex)
+        if (*it_inc_simplex == ic_to_find)
+        {
           found = true;
+          break;
+        }
       }
 
       if (!found)
@@ -1684,6 +1721,7 @@ private:
   TS_container              m_tangent_spaces;
   Tr_container              m_triangulations; // Contains the triangulations
                                               // and their center vertex
+  Stars_container           m_stars;
 #ifdef CGAL_LINKED_WITH_TBB
   //std::vector<Tr_mutex>     m_tr_mutexes;
 #endif
