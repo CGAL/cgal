@@ -74,7 +74,7 @@ class Polygon_soup_orienter
 
   bool is_edge_marked(V_ID i, V_ID j)
   {
-    return marked_edges.count(canonical_edge(i,j));
+    return marked_edges.count(canonical_edge(i,j)) > 0;
   }
 
   void set_edge_marked(V_ID i, V_ID j)
