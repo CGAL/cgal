@@ -60,20 +60,20 @@ typedef Kernel::Cartesian_const_iterator_d Cartesian_const_iterator;
 /*!
 A functor with 
 two function operators, which return the begin and past the end iterator for the %Cartesian coordinates. 
-The functor for begin has as argument a `Point_d`. The functor for the past the end iterator, 
-has as argument a `Point_d` and an `int`. 
+The functor for begin has as argument a \link Search_traits_d::Point_d `Point_d`\endlink. The functor for the past the end iterator, 
+has as argument a \link Search_traits_d::Point_d `Point_d`\endlink and an `int`. 
 */ 
 typedef Kernel::Construct_cartesian_const_iterator_d Construct_cartesian_const_iterator; 
 
 /*!
 Functor with operator to construct 
-the vertex with lexicographically smallest coordinates of an object of type `Iso_box_d`. 
+the vertex with lexicographically smallest coordinates of an object of type \link Search_traits_d::Iso_box_d `Iso_box_d`\endlink. 
 */ 
 typedef Kernel::Construct_min_vertex_d Construct_min_vertex_d; 
 
 /*!
 Functor with operator to construct 
-the vertex with lexicographically largest coordinates of an object of type `Iso_box_d`. 
+the vertex with lexicographically largest coordinates of an object of type \link Search_traits_d::Iso_box_d `Iso_box_d`\endlink. 
 */ 
 typedef Kernel::Construct_max_vertex_d Construct_max_vertex_d; 
 
