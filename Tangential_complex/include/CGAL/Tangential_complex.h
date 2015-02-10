@@ -241,6 +241,9 @@ public:
     m_translations.resize(m_points.size(),
                           m_k.construct_vector_d_object()(m_ambiant_dim));
 #endif
+#ifdef CGAL_TC_PERTURB_TANGENT_SPACE
+    m_perturb_tangent_space.resize(m_points.size(), false);
+#endif
 #ifdef CGAL_TC_EXPORT_NORMALS
     m_normals.resize(m_points.size(),
                      m_k.construct_vector_d_object()(m_ambiant_dim));
@@ -800,7 +803,9 @@ private:
 
     // Constructor
     Compute_tangent_triangulation(const Compute_tangent_triangulation &ctt)
-    : m_tc(ctt.m_tc)
+    : m_tc(ctt.m_tc),
+      m_tangent_spaces_are_already_computed(
+        ctt.m_tangent_spaces_are_already_computed)
     {}
 
     // operator()
@@ -858,6 +863,17 @@ private:
       m_tangent_spaces[i] = compute_tangent_space(center_pt);
 #endif
     }
+#ifdef CGAL_TC_PERTURB_TANGENT_SPACE
+    else if (m_perturb_tangent_space[i])
+    {
+#ifdef CGAL_TC_EXPORT_NORMALS
+      m_tangent_spaces[i] = compute_tangent_space(center_pt,&m_normals[i],true);
+#else
+      m_tangent_spaces[i] = compute_tangent_space(center_pt, true);
+#endif
+      m_perturb_tangent_space[i] = false;
+    }
+#endif
 
     //***************************************************
     // Build a minimal triangulation in the tangent space
@@ -1012,6 +1028,9 @@ private:
 #ifdef CGAL_TC_EXPORT_NORMALS
                                             , Vector *p_normal
 #endif
+#ifdef CGAL_TC_PERTURB_TANGENT_SPACE
+                                            , bool perturb = false
+#endif
                                             ) const
   {
     //******************************* PCA *************************************
@@ -1029,6 +1048,8 @@ private:
       m_k.scalar_product_d_object();
     typename Kernel::Difference_of_vectors_d diff_vec =
       m_k.difference_of_vectors_d_object();
+    //typename Kernel::Translated_point_d      transl =
+    //  m_k.translated_point_d_object();
     
 #ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
     KNS_range kns_range = m_points_ds_for_tse.query_ANN(
@@ -1047,7 +1068,15 @@ private:
          ++j, ++nn_it)
     {
       for (int i = 0 ; i < m_ambiant_dim ; ++i)
-        mat_points(j, i) = CGAL::to_double(coord(points_for_pca[nn_it->first], i));
+      {
+        //const Point p = transl(
+        //  m_points[nn_it->first], m_translations[nn_it->first]);
+        mat_points(j, i) = CGAL::to_double(coord(m_points[nn_it->first], i));
+#ifdef CGAL_TC_PERTURB_TANGENT_SPACE
+        if (perturb)
+          mat_points(j, i) += m_random_generator.get_double(-0.3, 0.3);
+#endif
+      }
     }
     Eigen::MatrixXd centered = mat_points.rowwise() - mat_points.colwise().mean();
     Eigen::MatrixXd cov = centered.adjoint() * centered;
@@ -1203,8 +1232,10 @@ private:
     for ( ; it_point_idx != simplex.end() ; ++it_point_idx)
     {
       std::size_t point_idx = *it_point_idx;
+      // Don't check infinite simplices
       if (point_idx == std::numeric_limits<std::size_t>::max())
         continue;
+
       Star const& star = m_stars[point_idx];
 
       // What we're looking for is "simplex" \ point_idx
@@ -1264,6 +1295,10 @@ private:
     // Perturb the weight?
 #ifdef CGAL_TC_PERTURB_WEIGHT
     m_weights[point_idx] = m_random_generator.get_double(0., m_sq_half_sparsity);
+#endif
+    
+#ifdef CGAL_TC_PERTURB_TANGENT_SPACE
+    m_perturb_tangent_space[point_idx] = true;
 #endif
 
     // Perturb the position?
@@ -1738,6 +1773,9 @@ private:
 #ifdef CGAL_TC_PERTURB_POSITION
   Vectors                   m_translations;
 #endif
+#ifdef CGAL_TC_PERTURB_TANGENT_SPACE
+  std::vector<bool>         m_perturb_tangent_space;
+#endif
 
   Points_ds                 m_points_ds;
   TS_container              m_tangent_spaces;
@@ -1756,8 +1794,7 @@ private:
   Points_ds                 m_points_ds_for_tse;
 #endif
 
-  
-  CGAL::Random              m_random_generator;
+  mutable CGAL::Random      m_random_generator;
 
 }; // /class Tangential_complex
 

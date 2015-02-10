@@ -64,6 +64,7 @@
 # define CGAL_TC_PERTURB_POSITION_TANGENTIAL // default
 //# define CGAL_TC_PERTURB_POSITION_GLOBAL
 //#define CGAL_TC_PERTURB_WEIGHT
+//#define CGAL_TC_PERTURB_TANGENT_SPACE
 
 //========================= Parameters ========================================
 const std::size_t NUM_POINTS_FOR_PCA = 20;
