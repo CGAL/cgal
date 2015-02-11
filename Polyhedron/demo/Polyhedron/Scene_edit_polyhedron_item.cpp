@@ -21,8 +21,8 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
   mw->installEventFilter(this);
   gluQuadricNormals(quadric, GLU_SMOOTH);
   // bind vertex picking 
-  connect(&k_ring_selector, SIGNAL(selected(const std::map<Polyhedron::Vertex_handle, int>&)), this, 
-    SLOT(selected(const std::map<Polyhedron::Vertex_handle, int>&)));
+  connect(&k_ring_selector, SIGNAL(selected(const std::set<Polyhedron::Vertex_handle>&)), this,
+    SLOT(selected(const std::set<Polyhedron::Vertex_handle>&)));
 
   poly_item->set_color_vector_read_only(true); // to prevent recomputation of color vector in changed()
   poly_item->update_vertex_indices();
