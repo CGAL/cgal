@@ -489,11 +489,13 @@ public:
 
       ++num_steps;
       done = (num_inconsistent_local_tr == 0);
-      if (time_limit != 0 && t.elapsed() > time_limit)
+      if (!done && time_limit != 0 && t.elapsed() > time_limit)
       {
 #ifdef CGAL_TC_VERBOSE
         std::cerr << "Time limit reached." << std::endl;
 #endif
+        check_and_solve_inconsistencies_by_adding_higher_dim_simplices(); // CJTODO: make it optional?
+
         return TIME_LIMIT_REACHED;
       }
     }
@@ -561,10 +563,7 @@ public:
   }
 
   std::ostream &export_to_off(
-    std::ostream & os,
-    bool color_inconsistencies = false,
-    std::set<std::set<std::size_t> > const* excluded_simplices = NULL,
-    bool show_excluded_vertices_in_color = false)
+    std::ostream & os, bool color_inconsistencies = false)
   {
     if (m_points.empty())
       return os;
@@ -600,8 +599,7 @@ public:
     std::size_t num_simplices, num_vertices;
     export_vertices_to_off(output, num_vertices);
     export_simplices_to_off(
-      output, num_simplices, color_inconsistencies,
-      excluded_simplices, show_excluded_vertices_in_color);
+      output, num_simplices, color_inconsistencies);
 
 #ifdef CGAL_TC_EXPORT_NORMALS
     os << "N";
@@ -1629,15 +1627,245 @@ private:
     return os;
   }
 
+  void insert_higher_dim_simplex_into_star(
+    std::size_t index,
+    const std::set<std::size_t> &simplex)
+  {
+    Incident_simplex incident_simplex = simplex;
+    incident_simplex.erase(index); // Remove the center index
+
+    Star &star = m_stars[index];
+    
+    std::set<std::size_t>::const_iterator it_point_idx = simplex.begin();
+    std::set<std::size_t>::const_iterator it_point_idx_end = simplex.end();
+    for ( ; it_point_idx != it_point_idx_end ; ++it_point_idx)
+    {
+      // Skip center index
+      if (*it_point_idx == index)
+        continue;
+
+      // Temporarily remove this index
+      incident_simplex.erase(*it_point_idx);
+      // Erase incident_simplex from star
+      star.erase(std::remove(star.begin(), star.end(), incident_simplex), 
+                 star.end());
+      incident_simplex.insert(*it_point_idx);
+    }
+
+    star.push_back(incident_simplex);
+  }
+  
+  // Solves one inconsistency
+  // "inconsistent_simplex" must contain p_idx and q_idx
+  void solve_inconsistency_by_adding_higher_dimensional_simplices(
+    std::size_t p_idx, std::size_t q_idx,
+    const std::set<std::size_t> &inconsistent_simplex)
+  {
+    typename Kernel::Translated_point_d k_transl =
+      m_k.translated_point_d_object();
+
+    const Tr_traits &q_tr_traits = m_triangulations[q_idx].tr().geom_traits();
+    /*typename Tr_traits::Power_center_d power_center =
+      local_tr_traits.power_center_d_object();*/ // CJTODO
+    typename Get_functor<Tr_traits, Power_center_tag>::type tr_power_center(q_tr_traits);
+    typename Tr_traits::Point_weight_d tr_point_weight =
+      q_tr_traits.point_weight_d_object();
+
+    //-------------------------------------------------------------------------
+    //1. Compute power_center(p'q'r') in Tp => cp
+    //-------------------------------------------------------------------------
+    // CJTODO
+
+    //-------------------------------------------------------------------------
+    //2. Compute power_center(inconsistent_simplex projected in Tq)
+    // => gives Cq and radius Rq
+    // Rq is also the radius of the ambient sphere S whose center is Cq and
+    // which goes through all the ambient points of "inconsistent_simplex"
+    //-------------------------------------------------------------------------
+    std::vector<Tr_point> simplex_pts_in_Tq;
+    simplex_pts_in_Tq.reserve(inconsistent_simplex.size());
+        
+#ifdef CGAL_TC_PERTURB_POSITION
+    const Point center_pt = k_transl(m_points[q_idx], m_translations[q_idx]);
+#else
+    const Point &center_pt = m_points[q_idx];
+#endif
+
+    std::set<std::size_t>::const_iterator it_point_idx = 
+                                                  inconsistent_simplex.begin();
+    std::set<std::size_t>::const_iterator it_point_idx_end = 
+                                                  inconsistent_simplex.end();
+    // For each point p of the simplex, we reproject it onto the tangent
+    // space. Could be optimized since it's already been computed before.
+    for ( ; it_point_idx != it_point_idx_end ; ++it_point_idx)
+    {
+#ifdef CGAL_TC_PERTURB_POSITION
+      const Point p = k_transl(
+        m_points[*it_point_idx], m_translations[*it_point_idx]);
+#else
+      const Point &p = m_points[*it_point_idx];
+#endif
+#ifdef CGAL_TC_PERTURB_WEIGHT
+      FT w = m_weights[*it_point_idx];
+#else
+      FT w = 0;
+#endif
+      simplex_pts_in_Tq.push_back(project_point_and_compute_weight(
+        p, w, center_pt, m_tangent_spaces[q_idx], q_tr_traits));
+    }
+
+    Tr_point Cq = tr_power_center(
+      simplex_pts_in_Tq.begin(), simplex_pts_in_Tq.end());
+
+    //-------------------------------------------------------------------------
+    //3. Find points t1, t2... (in ambient space) which are inside S
+    //-------------------------------------------------------------------------
+    
+    // CJTODO: on prend le point le plus proche pour l'instant, mais il 
+    // faudra changer ça (cf 4 5 6, ci dessous)
+    Point global_Cq = unproject_point(Cq, center_pt,
+                                      m_tangent_spaces[q_idx], q_tr_traits);
+    std::size_t inside_point_idx;
+    INS_range ins_range = m_points_ds.query_incremental_ANN(global_Cq);
+    for (INS_iterator nn_it = ins_range.begin() ;
+         nn_it != ins_range.end() ;
+         ++nn_it)
+    {
+      std::size_t neighbor_point_idx = nn_it->first;
+      if (inconsistent_simplex.find(neighbor_point_idx) == 
+          inconsistent_simplex.end())
+      {
+        inside_point_idx = neighbor_point_idx;
+        break;
+      }
+    }
+
+    //std::size_t inside_point_idx = kns_range.begin()->first;
+        
+    //-------------------------------------------------------------------------
+    //4. S'il n'y a qu'un seul points ti, passer à la dernière étape
+    //-------------------------------------------------------------------------
+    
+    //-------------------------------------------------------------------------
+    //5. Pour chaque ti, calculer la sphère qui passe par p, q, r, ti dont le centre est sur la droite (cq, cq)
+    //-------------------------------------------------------------------------
+    
+    //-------------------------------------------------------------------------
+    //6. Conserver le point ti tel que dist(cp, ci) soit la plus petite
+    //-------------------------------------------------------------------------
+    
+    //-------------------------------------------------------------------------
+    //7. Créer un k+1-simplex (inconsistent_simplex, ti)
+    //-------------------------------------------------------------------------
+    std::set<std::size_t> new_simplex = inconsistent_simplex;
+    new_simplex.insert(inside_point_idx);
+    
+    it_point_idx = new_simplex.begin();
+    it_point_idx_end = new_simplex.end();
+    for ( ; it_point_idx != it_point_idx_end ; ++it_point_idx)
+    {
+      insert_higher_dim_simplex_into_star(*it_point_idx, new_simplex);
+    }
+    // CJTODO: call 
+    // check_and_solve_inconsistencies_by_adding_higher_dim_simplices
+    // recursively? Not sure, since the star will be parsed again from
+    // the beginning
+  }
+
+  // Test and solve inconsistencies of a simplex.
+  // Returns true if some inconsistencies were found.
+  bool check_and_solve_inconsistencies_by_adding_higher_dim_simplices(
+    std::size_t tr_index, const std::set<std::size_t> &incident_simplex)
+  {
+    bool inconsistencies_found = false;
+
+    std::set<std::size_t> simplex = incident_simplex;
+    simplex.insert(tr_index);
+
+    // Check if the simplex is in the stars of all its vertices
+    std::set<std::size_t>::const_iterator it_point_idx = simplex.begin();
+    // For each point p of the simplex, we parse the incidents cells of p
+    // and we check if "simplex" is among them
+    for ( ; it_point_idx != simplex.end() ; ++it_point_idx)
+    {
+      std::size_t point_idx = *it_point_idx;
+      // Don't check infinite simplices
+      if (point_idx == std::numeric_limits<std::size_t>::max())
+        continue;
+
+      Star const& star = m_stars[point_idx];
+
+      // What we're looking for is "simplex" \ point_idx
+      Incident_simplex ic_to_find = simplex;
+      ic_to_find.erase(point_idx);
+
+      // For each cell
+      bool found = false;
+      Star::const_iterator it_inc_simplex = star.begin();
+      Star::const_iterator it_inc_simplex_end = star.end();
+      for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
+      {
+        if (*it_inc_simplex == ic_to_find)
+        {
+          found = true;
+          break;
+        }
+      }
+
+      if (!found)
+      {
+        solve_inconsistency_by_adding_higher_dimensional_simplices(
+          tr_index, *it_point_idx, simplex);
+        inconsistencies_found = true;
+        break;
+      }
+    }
+
+    return inconsistencies_found;
+  }
+
+  void check_and_solve_inconsistencies_by_adding_higher_dim_simplices()
+  {
+    for (std::size_t idx = 0 ; idx < m_triangulations.size() ; ++idx)
+    {
+      bool inconsistencies_found;
+      do
+      {
+        Star::const_iterator it_inc_simplex = m_stars[idx].begin();
+        Star::const_iterator it_inc_simplex_end = m_stars[idx].end();
+        for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
+        {
+          inconsistencies_found = 
+            check_and_solve_inconsistencies_by_adding_higher_dim_simplices(
+              idx, *it_inc_simplex);
+
+          // m_stars[idx] has been modified, let's start again
+          // CJTODO: optimize?
+          if (inconsistencies_found)
+            break;
+        }     
+      } while (inconsistencies_found);
+    }
+    
+    // CJTODO TEMP
+    std::pair<std::size_t, std::size_t> stats_after =
+      number_of_inconsistent_simplices(false);
+    std::cerr << "AFTER check_and_solve_inconsistencies_by_adding_higher_dim_simplices():\n"
+      << "    - Total number of simplices in stars (incl. duplicates): "
+      << stats_after.first << std::endl
+      << "    - Num inconsistent simplices in stars (incl. duplicates): "
+      << stats_after.second << std::endl
+      << "    - Percentage of inconsistencies: "
+      << 100. * stats_after.second / stats_after.first << "%"
+      << std::endl;
+  }
+
   std::ostream &export_simplices_to_off(
     std::ostream & os, std::size_t &num_simplices,
-    bool color_inconsistencies = false,
-    std::set<std::set<std::size_t> > const* excluded_simplices = NULL,
-    bool show_excluded_vertices_in_color = false)
+    bool color_inconsistencies = false)
   {
     // If m_intrinsic_dimension = 1, each point is output two times
     // (see export_vertices_to_off)
-    int factor = (m_intrinsic_dimension == 1 ? 2 : 1);
     num_simplices = 0;
     std::size_t num_inconsistent_simplices = 0;
     std::size_t num_inconsistent_stars = 0;
@@ -1659,100 +1887,104 @@ private:
       //color << rand()%256 << " " << 100+rand()%156 << " " << 100+rand()%156;
       color << 128 << " " << 128 << " " << 128;
       
-      // For each cell
+      // Gather the triangles here, with a bool saying if it's consistent
+      typedef std::vector<std::pair<std::set<std::size_t>, bool> > 
+                                                           Star_using_triangles;
+      Star_using_triangles star_using_triangles;
+
+      // For each cell of the star
       Star::const_iterator it_inc_simplex = m_stars[idx].begin();
       Star::const_iterator it_inc_simplex_end = m_stars[idx].end();
       for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
       {
-        // Don't export infinite cells
-        if (*it_inc_simplex->rbegin() == std::numeric_limits<std::size_t>::max())
-          continue;
-        
         std::set<std::size_t> c = *it_inc_simplex;
         c.insert(idx);
         std::size_t num_vertices = c.size();
 
-        if (color_inconsistencies || excluded_simplices)
+        bool is_simpl_consistent = true;
+        if (color_inconsistencies)
         {
-          std::stringstream sstr_c;
-          std::size_t data;
-          
-          std::set<std::size_t>::const_iterator it_point_idx = c.begin();
-          for ( ; it_point_idx != c.end() ; ++it_point_idx)
-          {
-            data = *it_point_idx;
-            sstr_c << data*factor << " ";
-          }
-
-          bool is_simpl_consistent = is_simplex_consistent(c);
+          is_simpl_consistent = is_simplex_consistent(c);
           if (!is_simpl_consistent) 
             is_star_inconsistent = true;
+        }
 
-          // See export_vertices_to_off
-          if (m_intrinsic_dimension == 1)
-          {
-            sstr_c << (data*factor + 1) << " ";
-            ++num_vertices;
-          }
+        // If only 2 vertices, add a third one (each vertex is duplicated in
+        // the file when m_intrinsic dim = 2)
+        if (num_vertices == 2)
+        {
+          std::set<std::size_t> tmp_c;
+          std::set<std::size_t>::iterator it = c.begin();
+          for ( ; it != c.end() ; ++it)
+            tmp_c.insert(*it * 2);
+          tmp_c.insert(*c.rbegin() + 1);
+          c = tmp_c;
+        }
 
-          // In order to have only one time each simplex, we only keep it
-          // if the lowest index is the index of the center vertex
-          if (*c.begin() != idx && is_simpl_consistent)
-            continue;
-
-          bool excluded =
-            (excluded_simplices
-            && excluded_simplices->find(c) != excluded_simplices->end());
-
-          if (!excluded)
-          {
-            os << num_vertices << " " << sstr_c.str() << " ";
-            if (color_inconsistencies && is_simpl_consistent)
-              os << color.str();
-            else
-            {
-              os << "255 0 0";
-              ++num_inconsistent_simplices;
-            }
-            ++num_simplices;
-          }
-          else if (show_excluded_vertices_in_color)
-          {
-            os << num_vertices << " "
-               << sstr_c.str() << " "
-               << "0 0 255";
-            ++num_simplices;
-          }
+        if (num_vertices <= 3)
+        {
+          star_using_triangles.push_back(std::make_pair(c, is_simpl_consistent));
         }
         else
         {
-          std::size_t min_index = std::numeric_limits<std::size_t>::max();
-          std::size_t data;
-          std::stringstream sstr_c;
-          std::set<std::size_t>::const_iterator it_point_idx = c.begin();
-          min_index = *it_point_idx;
-          for ( ; it_point_idx != c.end() ; ++it_point_idx)
+          // num_vertices >= 4: decompose the simplex in triangles
+          std::vector<bool> booleans(num_vertices, false);
+          std::fill(booleans.begin() + num_vertices - 3, booleans.end(), true);
+          do
           {
-            data = *it_point_idx;
-            sstr_c << data*factor << " ";
-          }
-          
-          // In order to have only one time each simplex, we only keep it
-          // if the lowest index is the index of the center vertex
-          if (min_index != idx)
-            continue;
+            std::set<std::size_t> triangle;
+            std::set<std::size_t>::iterator it = c.begin();
+            for (int i = 0; it != c.end() ; ++i, ++it) 
+            {
+              if (booleans[i])
+                triangle.insert(*it);
+            }
+            star_using_triangles.push_back(
+              std::make_pair(triangle, is_simpl_consistent));
+          } while (std::next_permutation(booleans.begin(), booleans.end()));
+        }
+      }
 
-          // See export_vertices_to_off
-          if (m_intrinsic_dimension == 1)
-          {
-            sstr_c << (data*factor + 1) << " ";
-            ++num_vertices;
-          }
+      // For each cell
+      Star_using_triangles::const_iterator it_simplex = 
+                                                  star_using_triangles.begin();
+      Star_using_triangles::const_iterator it_simplex_end = 
+                                                  star_using_triangles.end();
+      for ( ; it_simplex != it_simplex_end ; ++it_simplex)
+      {
+        // Don't export infinite cells
+        if (*it_simplex->first.rbegin() 
+            == std::numeric_limits<std::size_t>::max())
+          continue;
+        
+        const std::set<std::size_t> &c = it_simplex->first;
+        bool is_simpl_consistent = it_simplex->second;
 
-          os << num_vertices << " " << sstr_c.str();
-          ++num_simplices;
+        std::stringstream sstr_c;
+
+        std::set<std::size_t>::const_iterator it_point_idx = c.begin();
+        for ( ; it_point_idx != c.end() ; ++it_point_idx)
+        {
+          sstr_c << *it_point_idx << " ";
         }
 
+        // In order to have only one time each simplex, we only keep it
+        // if the lowest index is the index of the center vertex
+        if (*c.begin() != idx && is_simpl_consistent)
+          continue;
+
+        os << 3 << " " << sstr_c.str();
+        if (color_inconsistencies)
+        {
+          if (is_simpl_consistent)
+            os << " " << color.str();
+          else
+          {
+            os << " 255 0 0";
+            ++num_inconsistent_simplices;
+          }
+        }
+        ++num_simplices;
         os << std::endl;
       }
       if (is_star_inconsistent)

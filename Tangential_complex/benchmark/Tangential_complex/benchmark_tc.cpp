@@ -180,8 +180,7 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
   tc.compute_tangential_complex();
   double computation_time = t.elapsed(); t.reset();
     
-  std::set<std::set<std::size_t> > incorrect_simplices;
-  //stop = !tc.check_if_all_simplices_are_in_the_ambient_delaunay(&incorrect_simplices);
+  //tc.check_if_all_simplices_are_in_the_ambient_delaunay();
 
   double export_before_time = -1.;
   if (intrinsic_dim <= 3)
@@ -191,7 +190,7 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
     output_filename << "output/" << input_name_stripped << "_" << intrinsic_dim
       << "_in_R" << ambient_dim << "_BEFORE_FIX.off";
     std::ofstream off_stream(output_filename.str().c_str());
-    tc.export_to_off(off_stream, true, &incorrect_simplices, true);
+    tc.export_to_off(off_stream, true);
     export_before_time = t.elapsed(); t.reset();
   }
 
@@ -222,7 +221,7 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
     output_filename << "output/" << input_name_stripped << "_" << intrinsic_dim
       << "_in_R" << ambient_dim << "_AFTER_FIX.off";
     std::ofstream off_stream(output_filename.str().c_str());
-    tc.export_to_off(off_stream, true, &incorrect_simplices, true);
+    tc.export_to_off(off_stream, true);
     export_after_time = t.elapsed(); t.reset();
   }
   /*else

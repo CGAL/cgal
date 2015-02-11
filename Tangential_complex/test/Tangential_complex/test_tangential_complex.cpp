@@ -100,8 +100,7 @@ int main()
     tc.compute_tangential_complex();
     double computation_time = t.elapsed(); t.reset();
     
-    std::set<std::set<std::size_t> > incorrect_simplices;
-    //stop = !tc.check_if_all_simplices_are_in_the_ambient_delaunay(&incorrect_simplices);
+    tc.check_if_all_simplices_are_in_the_ambient_delaunay();
 
     double export_before_time = -1.;
     if (INTRINSIC_DIMENSION <= 3)
@@ -111,7 +110,7 @@ int main()
       output_filename << "output/test_tc_" << INTRINSIC_DIMENSION
         << "_in_R" << AMBIENT_DIMENSION << "_BEFORE_FIX.off";
       std::ofstream off_stream(output_filename.str().c_str());
-      tc.export_to_off(off_stream, true, &incorrect_simplices, true);
+      tc.export_to_off(off_stream, true);
       export_before_time = t.elapsed(); t.reset();
     }
 
@@ -134,7 +133,7 @@ int main()
       output_filename << "output/test_tc_" << INTRINSIC_DIMENSION
         << "_in_R" << AMBIENT_DIMENSION << "_AFTER_FIX.off";
       std::ofstream off_stream(output_filename.str().c_str());
-      tc.export_to_off(off_stream, true, &incorrect_simplices, true);
+      tc.export_to_off(off_stream, true);
       export_after_time = t.elapsed(); t.reset();
     }
     /*else
