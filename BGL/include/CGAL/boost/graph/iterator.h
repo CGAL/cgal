@@ -23,7 +23,7 @@
 #include <stdexcept>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <boost/iterator/iterator_adaptor.hpp>
 
 #include <CGAL/Iterator_range.h>
 #include <CGAL/assertions.h>
@@ -477,11 +477,18 @@ class Halfedge_around_target_circulator;
 template <typename Graph>
 class Halfedge_around_source_circulator
 #ifndef DOXYGEN_RUNNING
-  : public boost::transform_iterator<internal::OppositeHalfedge<Graph>, Halfedge_around_target_circulator<Graph> >
+ : public boost::iterator_adaptor<
+             Halfedge_around_source_circulator<Graph>                    // Derived
+             , Halfedge_around_target_circulator<Graph>                  // Base
+             , typename boost::graph_traits<Graph>::halfedge_descriptor  // Value
+             , Bidirectional_circulator_tag                              // CategoryOrTraversal
+             , typename boost::graph_traits<Graph>::halfedge_descriptor  // Reference
+             >
 #endif
 {
+private:
+  internal::OppositeHalfedge<Graph> opp;
 #ifndef DOXYGEN_RUNNING
-  typedef boost::transform_iterator<internal::OppositeHalfedge<Graph>, Halfedge_around_target_circulator<Graph> > Base;
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
 #endif
@@ -489,7 +496,6 @@ class Halfedge_around_source_circulator
 public:
 
 #ifndef DOXYGEN_RUNNING
-  typedef Bidirectional_circulator_tag iterator_category;
   typedef std::size_t size_type;
 #endif
 
@@ -497,12 +503,32 @@ public:
   {}
 
   Halfedge_around_source_circulator(halfedge_descriptor hd, const Graph& g)
-    : Base(Halfedge_around_target_circulator<Graph>(hd,g), internal::OppositeHalfedge<Graph>(g))
+    : Halfedge_around_source_circulator::iterator_adaptor_(Halfedge_around_target_circulator<Graph>(hd,g)), opp(g)
   {}
 
   Halfedge_around_source_circulator(vertex_descriptor vd, const Graph& g)
-    : Base(Halfedge_around_target_circulator<Graph>(halfedge(vd,g),g), internal::OppositeHalfedge<Graph>(g))
+    : Halfedge_around_source_circulator::iterator_adaptor_(Halfedge_around_target_circulator<Graph>(halfedge(vd,g),g)), opp(g)
   {}
+  // design patter: "safe bool"
+  // will be replaced by explicit operator bool with C++11
+  typedef void (Halfedge_around_source_circulator::*bool_type)() const;
+  
+  void this_type_does_not_support_comparisons() const {}
+  
+  operator bool_type() const
+  {
+    return (! (this->base_reference() == NULL)) ?
+      &Halfedge_around_source_circulator::this_type_does_not_support_comparisons : 0;
+  }
+  
+  bool operator== (void*) const
+  {
+    return this->base_reference() == NULL;
+  }
+  
+private:
+  friend class boost::iterator_core_access;
+  typename  boost::graph_traits<Graph>::halfedge_descriptor dereference() const { return opp(*this->base_reference()); }
 }; 
 
 
@@ -518,11 +544,17 @@ public:
 template <typename Graph>
 class Face_around_target_circulator
 #ifndef DOXYGEN_RUNNING
-  : public boost::transform_iterator<internal::Face<Graph>, Halfedge_around_target_circulator<Graph> >
+  : public boost::iterator_adaptor<
+             Face_around_target_circulator<Graph>                    // Derived
+             , Halfedge_around_target_circulator<Graph>                  // Base
+             , typename boost::graph_traits<Graph>::face_descriptor  // Value
+             , Bidirectional_circulator_tag                              // CategoryOrTraversal
+             , typename boost::graph_traits<Graph>::face_descriptor  // Reference
+             >
 #endif
 {
-  typedef boost::transform_iterator<internal::Face<Graph>, Halfedge_around_target_circulator<Graph> > Base;
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
+  internal::Face<Graph> fct;
 
 public:
 
@@ -530,10 +562,9 @@ public:
   {}
 
   Face_around_target_circulator(halfedge_descriptor hd, const Graph& g)
-    : Base(Halfedge_around_target_circulator<Graph>(hd,g), internal::Face<Graph>(g))
+    : Face_around_target_circulator::iterator_adaptor_(Halfedge_around_target_circulator<Graph>(hd,g)), fct(g)
   {}
 #ifndef DOXYGEN_RUNNING
-  typedef Bidirectional_circulator_tag iterator_category;
   typedef std::size_t size_type;
 
   // design patter: "safe bool"
@@ -544,14 +575,19 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base() == NULL)) ?
+    return (! (this->base_reference() == NULL)) ?
       &Face_around_target_circulator::this_type_does_not_support_comparisons : 0;
   }
 
   bool operator== (void*) const
   {
-    return this->base() == NULL;
+    return this->base_reference() == NULL;
   }
+
+
+private:
+  friend class boost::iterator_core_access;
+  typename  boost::graph_traits<Graph>::face_descriptor dereference() const { return fct(*this->base_reference()); }
 #endif
 
 }; 
@@ -711,7 +747,7 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base() == NULL)) ?
+    return (! (g == NULL)) ?
       &Halfedge_around_face_circulator::this_type_does_not_support_comparisons : 0;
   }
 
@@ -819,30 +855,37 @@ halfedges_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h
 template <typename Graph>
 class Face_around_face_iterator
 #ifndef DOXYGEN_RUNNING
-  : public boost::transform_iterator<internal::Face<Graph>, Halfedge_around_face_iterator<Graph> >
+  : public boost::iterator_adaptor<
+            Face_around_face_iterator<Graph>                       // Derived
+             , Halfedge_around_face_iterator<Graph>                // Base
+             , typename boost::graph_traits<Graph>::face_descriptor  // Value
+             , std::bidirectional_iterator_tag                       // CategoryOrTraversal
+             , typename boost::graph_traits<Graph>::face_descriptor  // Reference
+             >
 #endif
 {
-  typedef boost::transform_iterator<internal::Face<Graph>, Halfedge_around_face_iterator<Graph> > Base;
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
-
+  internal::Face<Graph> fct;
 public:
-#ifndef DOXYGEN_RUNNING
-  typedef std::bidirectional_iterator_tag iterator_category;
-#endif
 
   Face_around_face_iterator()
   {}
 
   Face_around_face_iterator(halfedge_descriptor h, const Graph& g, int n = 0)
-    : Base(Halfedge_around_face_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n), internal::Face<Graph>(g))
+    : Face_around_face_iterator::iterator_adaptor_(Halfedge_around_face_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n)), fct(g)
   {}
+private:
+  friend class boost::iterator_core_access;
+  typename  boost::graph_traits<Graph>::face_descriptor dereference() const { return fct(*this->base_reference()); }
 }; 
 
 
 /**
  * \ingroup PkgBGLIterators
- * A bidirectional circulator  with value type `boost::graph_traits<Graph>::%face_descriptor` over all faces adjacent to the same face.
- * It circulates over the same halfedges as the `Halfedge_around_face_circulator`.
+ * A bidirectional circulator  with value type `boost::graph_traits<Graph>::%face_descriptor`.
+ * It circulates over the same halfedges as the `Halfedge_around_face_circulator`,
+ * and provides the face descriptor associated to the opposite halfedge.  The face descriptor
+ * may be the null face, and it may be several times the same face descriptor.
  *
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
  * \cgalModels `BidirectionalCirculator`
@@ -857,24 +900,32 @@ class Face_around_face_circulator
 
 template <typename Graph>
 class Face_around_target_iterator
-#ifndef DOXYGEN_RUNNING
-  : public boost::transform_iterator<internal::Face<Graph>, Halfedge_around_target_iterator<Graph> >
+#ifndef DOXYGEN_RUNNING  
+  : public boost::iterator_adaptor<
+            Face_around_target_iterator<Graph>                       // Derived
+             , Halfedge_around_target_iterator<Graph>                // Base
+             , typename boost::graph_traits<Graph>::face_descriptor  // Value
+             , std::bidirectional_iterator_tag                       // CategoryOrTraversal
+             , typename boost::graph_traits<Graph>::face_descriptor  // Reference
+             >
 #endif
 {
-  typedef boost::transform_iterator<internal::Face<Graph>, Halfedge_around_target_iterator<Graph> > Base;
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
 
+  internal::Face<Graph> fct;
+
 public:
-#ifndef DOXYGEN_RUNNING
-  typedef std::bidirectional_iterator_tag iterator_category;
-#endif
 
   Face_around_target_iterator()
   {}
 
   Face_around_target_iterator(halfedge_descriptor h, const Graph& g, int n = 0)
-    : Base(Halfedge_around_target_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n), internal::Face<Graph>(g))
+    : Face_around_target_iterator::iterator_adaptor_(Halfedge_around_target_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n)), fct(g)
   {}
+
+private:
+  friend class boost::iterator_core_access;
+  typename  boost::graph_traits<Graph>::face_descriptor dereference() const { return fct(*this->base_reference()); }
 }; 
 
 /**  
@@ -891,7 +942,7 @@ faces_around_target(typename boost::graph_traits<Graph>::halfedge_descriptor h, 
 
 /**  
  * \ingroup PkgBGLIterators
- * returns an iterator range over all faces adjacent to the same face `face(h,g)`. 
+ * returns an iterator range over all edge-adjacent faces to the same face `face(h,g)`.
  */
 template<typename Graph>
 Iterator_range<Face_around_face_iterator<Graph> >
@@ -903,16 +954,21 @@ faces_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, co
 
 template <typename Graph>
 class Vertex_around_face_circulator
-#ifndef DOXYGEN_RUNNING
-  : public boost::transform_iterator<internal::Target<Graph>, Halfedge_around_face_circulator<Graph> >
+#ifndef DOXYGEN_RUNNING 
+  : public boost::iterator_adaptor<
+             Vertex_around_face_circulator<Graph>                    // Derived
+             , Halfedge_around_face_circulator<Graph>                  // Base
+             , typename boost::graph_traits<Graph>::vertex_descriptor  // Value
+             , Bidirectional_circulator_tag                              // CategoryOrTraversal
+             , typename boost::graph_traits<Graph>::vertex_descriptor  // Reference
+             >
 #endif
 {
-  typedef boost::transform_iterator<internal::Target<Graph>, Halfedge_around_face_circulator<Graph> > Base;
+  internal::Target<Graph> fct;
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
 
 public:
 #ifndef DOXYGEN_RUNNING
-  typedef Bidirectional_circulator_tag iterator_category;
   typedef std::size_t size_type;
 #endif
 
@@ -920,7 +976,7 @@ public:
   {}
 
   Vertex_around_face_circulator(halfedge_descriptor h, const Graph& g)
-    : Base(Halfedge_around_face_circulator<Graph>(h,g), internal::Target<Graph>(g))
+    : Vertex_around_face_circulator::iterator_adaptor_(Halfedge_around_face_circulator<Graph>(h,g)), fct(g)
   {}
 
 #ifndef DOXYGEN_RUNNING
@@ -932,36 +988,42 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base() == NULL)) ?
+    return (! (this->base_reference() == NULL)) ?
       &Vertex_around_face_circulator::this_type_does_not_support_comparisons : 0;
   }
 
   bool operator== (void*) const
   {
-    return this->base()== NULL;
+    return this->base_reference()== NULL;
   }
+private:
+  friend class boost::iterator_core_access;
+  typename  boost::graph_traits<Graph>::vertex_descriptor dereference() const { return fct(*this->base_reference()); }
 #endif
 }; 
 
 template <typename Graph>
 class Vertex_around_face_iterator
 #ifndef DOXYGEN_RUNNING
-  : public boost::transform_iterator<internal::Target<Graph>, Halfedge_around_face_iterator<Graph> >
+   : public boost::iterator_adaptor<
+            Vertex_around_face_iterator<Graph>                       // Derived
+             , Halfedge_around_face_iterator<Graph>                // Base
+             , typename boost::graph_traits<Graph>::vertex_descriptor  // Value
+             , std::bidirectional_iterator_tag                       // CategoryOrTraversal
+             , typename boost::graph_traits<Graph>::vertex_descriptor  // Reference
+             >
 #endif
 {
-  typedef boost::transform_iterator<internal::Target<Graph>, Halfedge_around_face_iterator<Graph> > Base;
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
 
+  internal::Target<Graph> fct;
 public:
-#ifndef DOXYGEN_RUNNING
-  typedef std::bidirectional_iterator_tag iterator_category;
-#endif
 
   Vertex_around_face_iterator()
   {}
 
   Vertex_around_face_iterator(halfedge_descriptor h, const Graph& g, int n = 0)
-    : Base(Halfedge_around_face_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n), internal::Target<Graph>(g))
+    : Vertex_around_face_iterator::iterator_adaptor_(Halfedge_around_face_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n)), fct(g)
   {}
 
 #ifndef DOXYGEN_RUNNING
@@ -973,14 +1035,17 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base() == NULL)) ?
+    return (! (this->base_reference() == NULL)) ?
       &Vertex_around_face_iterator::this_type_does_not_support_comparisons : 0;
   }
 
   bool operator== (void*) const
   {
-    return this->base()== NULL;
+    return this->base_reference()== NULL;
   }
+private:
+  friend class boost::iterator_core_access;
+  typename  boost::graph_traits<Graph>::vertex_descriptor dereference() const { return fct(*this->base_reference()); }
 #endif
 }; 
 
@@ -997,15 +1062,19 @@ public:
 template <typename Graph>
 class Vertex_around_target_circulator
 #ifndef DOXYGEN_RUNNING
-  : public boost::transform_iterator<internal::Source<Graph>, Halfedge_around_target_circulator<Graph> >
+  : public boost::iterator_adaptor<
+            Vertex_around_target_circulator<Graph>                       // Derived
+             , Halfedge_around_target_circulator<Graph>                // Base
+             , typename boost::graph_traits<Graph>::vertex_descriptor  // Value
+             , Bidirectional_circulator_tag                       // CategoryOrTraversal
+             , typename boost::graph_traits<Graph>::vertex_descriptor  // Reference
+             >
 #endif
 {
-  typedef boost::transform_iterator<internal::Source<Graph>, Halfedge_around_target_circulator<Graph> > Base;
-
+  internal::Source<Graph> fct;
 public:
 #ifndef DOXYGEN_RUNNING
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
-  typedef Bidirectional_circulator_tag iterator_category;
   typedef std::size_t size_type;
 #endif
 
@@ -1013,7 +1082,7 @@ public:
   {}
 
   Vertex_around_target_circulator(halfedge_descriptor h, const Graph& g)
-    : Base(Halfedge_around_target_circulator<Graph>(h,g), internal::Source<Graph>(g))
+    : Vertex_around_target_circulator::iterator_adaptor_(Halfedge_around_target_circulator<Graph>(h,g)), fct(g)
   {}
 
 #ifndef DOXYGEN_RUNNING  
@@ -1025,9 +1094,18 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base() == NULL)) ?
+    return (! (this->base_reference() == NULL)) ?
       &Vertex_around_target_circulator::this_type_does_not_support_comparisons : 0;
   }
+
+  bool operator== (void*) const
+  {
+    return this->base_reference()== NULL;
+  }
+
+private:
+  friend class boost::iterator_core_access;
+  typename  boost::graph_traits<Graph>::vertex_descriptor dereference() const { return fct(*this->base_reference()); }
 #endif
 }; 
 
@@ -1037,20 +1115,25 @@ public:
 template <typename Graph>
 class Vertex_around_target_iterator
 #ifndef DOXYGEN_RUNNING
-  : public boost::transform_iterator<internal::Source<Graph>, Halfedge_around_target_iterator<Graph> >
+  : public boost::iterator_adaptor<
+            Vertex_around_target_iterator<Graph>                       // Derived
+             , Halfedge_around_target_iterator<Graph>                // Base
+             , typename boost::graph_traits<Graph>::vertex_descriptor  // Value
+             , std::bidirectional_iterator_tag                       // CategoryOrTraversal
+             , typename boost::graph_traits<Graph>::vertex_descriptor  // Reference
+             >
 #endif
 {
-  typedef boost::transform_iterator<internal::Source<Graph>, Halfedge_around_target_iterator<Graph> > Base;
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
+  internal::Source<Graph> fct;
 
 public:
-  typedef std::bidirectional_iterator_tag iterator_category;
 
   Vertex_around_target_iterator()
   {}
 
   Vertex_around_target_iterator(halfedge_descriptor h, const Graph& g, int n = 0)
-    : Base(Halfedge_around_target_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n), internal::Source<Graph>(g))
+    : Vertex_around_target_iterator::iterator_adaptor_(Halfedge_around_target_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n)), fct(g)
   {}
 
 #ifndef DOXYGEN_RUNNING
@@ -1062,9 +1145,12 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base() == NULL)) ?
+    return (! (this->base_reference() == NULL)) ?
       &Vertex_around_target_iterator::this_type_does_not_support_comparisons : 0;
   }
+private:
+  friend class boost::iterator_core_access;
+  typename  boost::graph_traits<Graph>::vertex_descriptor dereference() const { return fct(*this->base_reference()); }
 #endif
 }; 
 
@@ -1117,56 +1203,68 @@ vertices_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
   return make_range(I(h,g), I(h,g,1));
 }
 
-template <typename Graph>
+
+template <class Graph>
 class Out_edge_iterator
-  : public boost::transform_iterator<internal::OppositeEdge<Graph>, Halfedge_around_target_iterator<Graph> >
+  : public boost::iterator_adaptor<
+             Out_edge_iterator<Graph>                                // Derived
+             , Halfedge_around_target_iterator<Graph>                // Base
+             , typename boost::graph_traits<Graph>::edge_descriptor  // Value
+             , std::bidirectional_iterator_tag                       // CategoryOrTraversal
+             , typename boost::graph_traits<Graph>::edge_descriptor  // Reference
+             >
 {
-  typedef boost::transform_iterator<internal::OppositeEdge<Graph>, Halfedge_around_target_iterator<Graph> > Base;
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
-
+private:
+  internal::OppositeEdge<Graph> opp;
 public:
-  typedef std::bidirectional_iterator_tag iterator_category;
-
   Out_edge_iterator()
   {}
-
+  
   Out_edge_iterator(halfedge_descriptor h, const Graph& g, int n = 0)
-    : Base(Halfedge_around_target_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n), internal::OppositeEdge<Graph>(g))
-  {} 
-
-
+    : Out_edge_iterator::iterator_adaptor_(Halfedge_around_target_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n)), opp(g) {}
+  
   // design patter: "safe bool"
   // will be replaced by explicit operator bool with C++11
   typedef void (Out_edge_iterator::*bool_type)() const;
-
+  
   void this_type_does_not_support_comparisons() const {}
-
+  
   operator bool_type() const
   {
-    return (! (this->base() == NULL)) ?
+    return (! (this->base_reference() == NULL)) ?
       &Out_edge_iterator::this_type_does_not_support_comparisons : 0;
   }
+  
+  
+private:
+  friend class boost::iterator_core_access;
+  typename  boost::graph_traits<Graph>::edge_descriptor dereference() const { return opp(*this->base_reference()); }
+};
 
-}; 
 
 
-template <typename Graph>
+
+template <class Graph>
 class In_edge_iterator
-  : public boost::transform_iterator<internal::Edge<Graph>, Halfedge_around_target_iterator<Graph> >
+  : public boost::iterator_adaptor<
+             In_edge_iterator<Graph>                                 // Derived
+             , Halfedge_around_target_iterator<Graph>                // Base
+             , typename boost::graph_traits<Graph>::edge_descriptor  // Value
+             , std::bidirectional_iterator_tag                       // CategoryOrTraversal
+             , typename boost::graph_traits<Graph>::edge_descriptor  // Reference
+             >
 {
-  typedef boost::transform_iterator<internal::Edge<Graph>, Halfedge_around_target_iterator<Graph> > Base;
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
-
+private:
+  internal::Edge<Graph> fct;
 public:
-  typedef std::bidirectional_iterator_tag iterator_category;
-
   In_edge_iterator()
   {}
-
+  
   In_edge_iterator(halfedge_descriptor h, const Graph& g, int n = 0)
-    : Base(Halfedge_around_target_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n), internal::Edge<Graph>(g))
+    : In_edge_iterator::iterator_adaptor_(Halfedge_around_target_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n)), fct(g)
   {}
-
 
   // design patter: "safe bool"
   // will be replaced by explicit operator bool with C++11
@@ -1176,11 +1274,17 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base() == NULL)) ?
+    return (! (this->base_reference() == NULL)) ?
       &In_edge_iterator::this_type_does_not_support_comparisons : 0;
   }
 
-}; 
+ private:
+    friend class boost::iterator_core_access;
+  typename  boost::graph_traits<Graph>::edge_descriptor dereference() const { return fct(*this->base_reference()); }
+};
+
+
+
 
 
 
