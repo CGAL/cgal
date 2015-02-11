@@ -841,8 +841,10 @@ public:
 
 /**
  * \ingroup PkgBGLIterators
- * A bidirectional circulator  with value type `boost::graph_traits<Graph>::%face_descriptor` over all faces adjacent to the same face.
- * It circulates over the same halfedges as the `Halfedge_around_face_circulator`.
+ * A bidirectional circulator  with value type `boost::graph_traits<Graph>::%face_descriptor`.
+ * It circulates over the same halfedges as the `Halfedge_around_face_circulator`,
+ * and provides the face descriptor associated to the opposite halfedge.  The face descriptor
+ * may be the null face, and it may be several times the same face descriptor.
  *
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
  * \cgalModels `BidirectionalCirculator`
@@ -891,7 +893,7 @@ faces_around_target(typename boost::graph_traits<Graph>::halfedge_descriptor h, 
 
 /**  
  * \ingroup PkgBGLIterators
- * returns an iterator range over all faces adjacent to the same face `face(h,g)`. 
+ * returns an iterator range over all edge-adjacent faces to the same face `face(h,g)`.
  */
 template<typename Graph>
 Iterator_range<Face_around_face_iterator<Graph> >
