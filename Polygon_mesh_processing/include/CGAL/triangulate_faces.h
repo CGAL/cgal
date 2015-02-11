@@ -105,7 +105,7 @@ public:
     {
       face_descriptor f = facets[i];
       typename Traits::Vector_3 normal =
-        Polygon_mesh_processing::compute_facet_normal(f, PM());
+        Polygon_mesh_processing::compute_face_normal(f, pmesh);
 
       P_traits cdt_traits(normal);
       CDT cdt(cdt_traits);

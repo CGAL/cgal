@@ -52,8 +52,11 @@
 - `CGAL::Polygon_mesh_processing::triangulate_faces()`
 
 ## Normal Computation Functions ##
-- `CGAL::Polygon_mesh_processing::compute_facet_normal()`
+- `CGAL::Polygon_mesh_processing::compute_face_normal()`
 - `CGAL::Polygon_mesh_processing::compute_vertex_normal()`
+- `CGAL::Polygon_mesh_processing::compute_normals()`
+- `CGAL::Polygon_mesh_processing::compute_face_normals()`
+- `CGAL::Polygon_mesh_processing::compute_vertex_normals()`
 
 ## Other Classes and Functions ##
 - `CGAL::Polygon_mesh_slicer`

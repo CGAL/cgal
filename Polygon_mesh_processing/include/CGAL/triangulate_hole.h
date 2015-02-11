@@ -16,7 +16,7 @@ namespace Polygon_mesh_processing {
   /*!
   \ingroup PkgPolygonMeshProcessing
   Function triangulating a hole in a polygon mesh.
-  The hole should contain no non-manifold vertex. Generated patch is guaranteed to not to break edge manifoldness and contain no degenerate triangle.
+  The hole should contain no non-manifold vertex. Generated patch is guaranteed to not break edge manifoldness and contain no degenerate triangle.
   If no possible patch is found, @a pmesh is not altered in any way, and no face descriptor is put into @a out.
 
   @tparam PolygonMesh must be a model of `MutableFaceGraph`

@@ -46,7 +46,7 @@ namespace CGAL {
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph` and `HalfedgeListGraph`
 /// \tparam Traits must be a model of `AABBGeomTraits`
-/// \tparam VertexPointPmap is a model of `ReadablePropertyMap` with
+/// \tparam VertexPointMap is a model of `ReadablePropertyMap` with
 ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
 ///         `Traits::Point_3` as value type
 /// \tparam AABBTree must be an instanciation of `CGAL::AABB_tree` able to handle
@@ -73,7 +73,7 @@ namespace CGAL {
 /// \todo `_object()` functions must also be provided
 template<class TriangleMesh,
   class Traits,
-  class VertexPointPmap = typename boost::property_map< TriangleMesh, vertex_point_t>::type,
+  class VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::type,
   class AABBTree = AABB_tree<
                        AABB_traits<Traits,
                          AABB_halfedge_graph_segment_primitive<TriangleMesh> > >,
@@ -108,14 +108,14 @@ class Polygon_mesh_slicer
   typedef Polygon_mesh_slicer_::Traversal_traits<
     AL_graph,
     TriangleMesh,
-    VertexPointPmap,
+    VertexPointMap,
     typename AABBTree::AABB_traits,
     Traits >                                           General_traversal_traits;
 
   typedef Polygon_mesh_slicer_::Traversal_traits<
     AL_graph,
     TriangleMesh,
-    VertexPointPmap,
+    VertexPointMap,
     typename AABBTree::AABB_traits,
     Polygon_mesh_slicer_::Axis_parallel_plane_traits<Traits>
   >                                              Axis_parallel_traversal_traits;
@@ -140,14 +140,14 @@ class Polygon_mesh_slicer
     AL_graph& al_graph;
     TriangleMesh& m_tmesh;
     const Plane_3& m_plane;
-    VertexPointPmap m_vpmap;
+    VertexPointMap m_vpmap;
     typename Traits_::Intersect_3 intersect_3;
     OutputIterator out;
 
     Polyline_visitor( TriangleMesh& tmesh,
                       AL_graph& al_graph,
                       const Plane_3& plane,
-                      VertexPointPmap vpmap,
+                      VertexPointMap vpmap,
                       const Traits_& traits,
                       OutputIterator out)
       : al_graph(al_graph)
@@ -195,7 +195,7 @@ class Polygon_mesh_slicer
 /// member variables
   const AABBTree* m_tree_ptr;
   TriangleMesh& m_tmesh;
-  VertexPointPmap m_vpmap;
+  VertexPointMap m_vpmap;
   Traits m_traits;
   bool m_own_tree;
 
@@ -300,7 +300,7 @@ public:
   * @param traits a traits class instance
   */
   Polygon_mesh_slicer(const TriangleMesh& tmesh,
-                      VertexPointPmap vpmap,
+                      VertexPointMap vpmap,
                       const Traits& traits = Traits())
   : m_tmesh(const_cast<TriangleMesh&>(tmesh))
   , m_vpmap(vpmap)
@@ -324,7 +324,7 @@ public:
   */
   Polygon_mesh_slicer(const TriangleMesh& tmesh,
                       const AABBTree& tree,
-                      VertexPointPmap vpmap,
+                      VertexPointMap vpmap,
                       const Traits& traits = Traits())
     : m_tree_ptr(&tree)
     , m_tmesh(const_cast<TriangleMesh&>(tmesh))
