@@ -457,7 +457,7 @@ public:
         << "    - Num inconsistent simplices in stars (incl. duplicates): "
         << stats_after.second << std::endl
         << "    - Percentage of inconsistencies: "
-        << 100. * stats_after.second / stats_before.first << "%"
+        << 100. * stats_after.second / stats_after.first << "%"
         << std::endl
         << "=========================================================="
         << std::endl;
@@ -516,27 +516,26 @@ public:
     typename Tr_container::const_iterator it_tr = m_triangulations.begin();
     typename Tr_container::const_iterator it_tr_end = m_triangulations.end();
     // For each triangulation
-    for ( ; it_tr != it_tr_end ; ++it_tr)
+    for (std::size_t idx = 0 ; it_tr != it_tr_end ; ++it_tr, ++idx)
     {
       Triangulation const& tr    = it_tr->tr();
       Tr_vertex_handle center_vh = it_tr->center_vertex();
 
-      // CJTODO: use m_stars[...]
-      std::vector<Tr_full_cell_handle> incident_cells;
-      tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
-
-      typename std::vector<Tr_full_cell_handle>::const_iterator it_c =
-                                                         incident_cells.begin();
-      typename std::vector<Tr_full_cell_handle>::const_iterator it_c_end =
-                                                           incident_cells.end();
       // For each cell
-      for ( ; it_c != it_c_end ; ++it_c)
+      Star::const_iterator it_inc_simplex = m_stars[idx].begin();
+      Star::const_iterator it_inc_simplex_end = m_stars[idx].end();
+      for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
       {
-        if (tr.is_infinite(*it_c)) // Don't check infinite cells
+        // Don't export infinite cells
+        if (*it_inc_simplex->rbegin() == std::numeric_limits<std::size_t>::max())
           continue;
+        
+        std::set<std::size_t> c = *it_inc_simplex;
+        c.insert(idx); // Add the missing index
 
-        if (!is_simplex_consistent(*it_c, tr.current_dimension()))
+        if (!is_simplex_consistent(c))
           ++num_inconsistent_simplices;
+
         ++num_simplices;
       }
     }
