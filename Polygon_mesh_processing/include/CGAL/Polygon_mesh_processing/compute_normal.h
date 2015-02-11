@@ -27,6 +27,88 @@
 namespace CGAL{
 
 namespace Polygon_mesh_processing{
+///\cond SKIP_IN_MANUAL
+
+  template <typename PolygonMesh, typename VertexNormalPropertyMap, typename FaceNormalPropertyMap>
+void
+compute_normals(const PolygonMesh& pmesh,
+                VertexNormalPropertyMap vnpm,
+                FaceNormalPropertyMap fnpm)
+{  
+  typedef typename Kernel_traits<
+    typename boost::property_traits<
+      typename boost::property_map<
+        PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
+  compute_normals(pmesh, vnpm, fnpm, get(vertex_point, pmesh), Kernel());
+}
+
+
+template <typename PolygonMesh, typename VertexNormalPropertyMap, typename FaceNormalPropertyMap, typename PointPropertyMap>
+void
+compute_normals(const PolygonMesh& pmesh,
+                VertexNormalPropertyMap vnpm,
+                FaceNormalPropertyMap fnpm,
+                PointPropertyMap ppmap)
+{  
+  typedef typename Kernel_traits<
+    typename boost::property_traits<
+      typename boost::property_map<
+        PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
+  compute_normals(pmesh, vnpm, fnpm, ppmap, Kernel());
+}
+
+///\endcond
+/**
+* \ingroup PkgPolygonMeshProcessing
+* computes the outward unit vector normal for all vertices and faces of the polygon mesh.
+* @tparam Kernel Geometric traits class. It can be omitted and deduced automatically from the point type of `PolygonMesh`.
+* @tparam PolygonMesh a model of `FaceGraph`
+* @tparam VertexNormalPropertyMap the property map in which the vertex normals are written.
+* @tparam FaceNormalPropertyMap the property map in which the face normals are written.
+* @tparam PointPropertyMap the property map with the points associated to the vertices.
+*
+* @param pmesh the polygon mesh
+*/
+template <typename PolygonMesh
+          , typename VertexNormalPropertyMap
+          , typename FaceNormalPropertyMap
+          , typename PointPropertyMap
+#ifdef DOXYGEN_RUNNING
+          = typename boost::property_map<PolygonMesh, vertex_point_t>::type
+#endif
+          , typename Kernel
+#ifdef DOXYGEN_RUNNING
+          = typename Kernel_traits<
+              typename boost::property_traits<PointPropertyMap>::value_type>::Kernel
+#endif
+          >
+void
+compute_normals(const PolygonMesh& pmesh
+                , VertexNormalPropertyMap vnpm
+                , FaceNormalPropertyMap fnpm
+                , PointPropertyMap ppmap
+#ifdef DOXYGEN_RUNNING
+                = get(vertex_point, pmesh)
+#endif
+                ,const Kernel& k
+#ifdef DOXYGEN_RUNNING
+                = Kernel()
+#endif
+                )
+{
+  typename boost::graph_traits<PolygonMesh>::vertex_descriptor v;
+  BOOST_FOREACH(v, vertices(pmesh)){
+    typename Kernel::Vector_3 vec = compute_vertex_normal(v,pmesh, ppmap, k);
+    put(vnpm, v, vec);
+  }
+  typename boost::graph_traits<PolygonMesh>::face_descriptor f;
+  BOOST_FOREACH(f, faces(pmesh)){
+    typename Kernel::Vector_3 vec = compute_face_normal(f,pmesh, ppmap, k);
+    put(fnpm, f, vec);
+  }
+}
+
+
 
 ///\cond SKIP_IN_MANUAL
 
@@ -65,7 +147,7 @@ compute_vertex_normals(const PolygonMesh& pmesh,
 * @tparam VertexNormalPropertyMap the property map in which the normals are written.
 * @tparam PointPropertyMap the property map with the points associated to the vertices.
 *
-* @param f the facet on which the normal is computed
+* @param f the face on which the normal is computed
 * @param pmesh the polygon mesh
 */
 template <typename PolygonMesh
@@ -104,20 +186,20 @@ compute_vertex_normals(const PolygonMesh& pmesh
 
 template <typename PolygonMesh, typename FaceNormalPropertyMap>
 void
-compute_facet_normals(const PolygonMesh& pmesh,
+compute_face_normals(const PolygonMesh& pmesh,
                       FaceNormalPropertyMap npm)
 {  
   typedef typename Kernel_traits<
     typename boost::property_traits<
       typename boost::property_map<
         PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
-  compute_facet_normals(pmesh, npm, get(vertex_point, pmesh), Kernel());
+  compute_face_normals(pmesh, npm, get(vertex_point, pmesh), Kernel());
 }
 
 
 template <typename PolygonMesh, typename FaceNormalPropertyMap, typename PointPropertyMap>
 void
-compute_facet_normals(const PolygonMesh& pmesh,
+compute_face_normals(const PolygonMesh& pmesh,
                       FaceNormalPropertyMap npm,
                       PointPropertyMap ppmap)
 {  
@@ -125,7 +207,7 @@ compute_facet_normals(const PolygonMesh& pmesh,
     typename boost::property_traits<
       typename boost::property_map<
         PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
-  compute_facet_normals(pmesh, npm, ppmap, Kernel());
+  compute_face_normals(pmesh, npm, ppmap, Kernel());
 }
 
 ///\endcond
@@ -154,7 +236,7 @@ template <typename PolygonMesh
 #endif
           >
 void
-compute_facet_normals(const PolygonMesh& pmesh
+compute_face_normals(const PolygonMesh& pmesh
                       , FaceNormalPropertyMap npm
                       , PointPropertyMap ppmap
 #ifdef DOXYGEN_RUNNING
@@ -168,7 +250,7 @@ compute_facet_normals(const PolygonMesh& pmesh
 {
   typename boost::graph_traits<PolygonMesh>::face_descriptor f;
   BOOST_FOREACH(f, faces(pmesh)){
-    typename Kernel::Vector_3 vec = compute_facet_normal(f,pmesh, ppmap, k);
+    typename Kernel::Vector_3 vec = compute_face_normal(f,pmesh, ppmap, k);
     put(npm, f, vec);
   }
 }
@@ -181,7 +263,7 @@ typename Kernel_traits<
   typename boost::property_traits<
     typename boost::property_map<
       PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel::Vector_3
-compute_facet_normal(
+compute_face_normal(
   typename boost::graph_traits<PolygonMesh>::face_descriptor f,
   const PolygonMesh& pmesh)
 {
@@ -189,7 +271,7 @@ compute_facet_normal(
     typename boost::property_traits<
       typename boost::property_map<
         PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
-  return compute_facet_normal(f, pmesh, get(vertex_point, pmesh), Kernel());
+  return compute_face_normal(f, pmesh, get(vertex_point, pmesh), Kernel());
 }
  
 
@@ -197,14 +279,14 @@ compute_facet_normal(
 template <typename PolygonMesh, typename PointPropertyMap>
 typename Kernel_traits<
   typename boost::property_traits<PointPropertyMap>::value_type>::Kernel::Vector_3
-compute_facet_normal(
+compute_face_normal(
   typename boost::graph_traits<PolygonMesh>::face_descriptor f,
   const PolygonMesh& pmesh,
   PointPropertyMap ppmap)
 {
   typedef typename Kernel_traits<
     typename boost::property_traits<PointPropertyMap>::value_type>::Kernel Kernel;
-  return compute_facet_normal(f, pmesh, ppmap, Kernel());
+  return compute_face_normal(f, pmesh, ppmap, Kernel());
 }
  
 /// \endcond 
@@ -212,11 +294,11 @@ compute_facet_normal(
 
 /**
 * \ingroup PkgPolygonMeshProcessing
-* computes the outward unit vector normal to facet `f`.
+* computes the outward unit vector normal to face `f`.
 * @tparam Kernel Geometric traits class. It can be omitted and deduced automatically from the point type of `PolygonMesh`.
 * @tparam PolygonMesh a model of `FaceGraph`
 *
-* @param f the facet on which the normal is computed
+* @param f the face on which the normal is computed
 * @param pmesh the polygon mesh to which `f` belongs
 */
 template <typename PolygonMesh
@@ -231,7 +313,7 @@ template <typename PolygonMesh
 #endif
           >
 typename Kernel::Vector_3
-compute_facet_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
+compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
                      const PolygonMesh& pmesh
                      , PointPropertyMap ppmap 
 #ifdef DOXYGEN_RUNNING
@@ -304,7 +386,7 @@ compute_vertex_normal(
 
 /**
 * \ingroup PkgPolygonMeshProcessing
-* computes the unit normal at vertex `v` as the average of the normals of incident facets.
+* computes the unit normal at vertex `v` as the average of the normals of incident faces.
 * @tparam Kernel a %CGAL `Kernel` with `FT` a model of `FieldWithSqrt`
 * @tparam PolygonMesh a model of `FaceGraph`
 *
@@ -345,7 +427,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
     {
     if (!is_border(he, pmesh))
     {
-      Vector n = compute_facet_normal(face(he, pmesh), pmesh, ppmap, k);
+      Vector n = compute_face_normal(face(he, pmesh), pmesh, ppmap, k);
       normal = normal + (n / std::sqrt(n*n));
     }
     he = opposite(next(he, pmesh), pmesh);
