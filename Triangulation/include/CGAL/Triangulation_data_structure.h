@@ -664,6 +664,9 @@ Triangulation_data_structure<Dim, Vb, Fcb>
 {
 //    CGAL_expensive_precondition(is_vertex(v));
     CGAL_precondition(Vertex_handle() != v);
+    CGAL_precondition(v->full_cell()->has_vertex(v));
+    if (!v->full_cell()->has_vertex(v)) // CJTODO TEMP
+      std::cout << "ERROR: incident_full_cells !v->full_cell()->has_vertex(v). Is the point cloud sparse enough?";
     Face f(v->full_cell());
     f.set_index(0, v->full_cell()->index(v));
     return incident_full_cells(f, out);
