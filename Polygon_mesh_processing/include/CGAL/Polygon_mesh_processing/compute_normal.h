@@ -57,7 +57,17 @@ compute_vertex_normals(const PolygonMesh& pmesh,
 }
 
 ///\endcond
-
+/**
+* \ingroup PkgPolygonMeshProcessing
+* computes the outward unit vector normal for all vertices of the polygon mesh.
+* @tparam Kernel Geometric traits class. It can be omitted and deduced automatically from the point type of `PolygonMesh`.
+* @tparam PolygonMesh a model of `FaceGraph`
+* @tparam VertexNormalPropertyMap the property map in which the normals are written.
+* @tparam PointPropertyMap the property map with the points associated to the vertices.
+*
+* @param f the facet on which the normal is computed
+* @param pmesh the polygon mesh
+*/
 template <typename PolygonMesh
           , typename VertexNormalPropertyMap
           , typename PointPropertyMap
@@ -120,6 +130,17 @@ compute_facet_normals(const PolygonMesh& pmesh,
 
 ///\endcond
 
+/**
+* \ingroup PkgPolygonMeshProcessing
+* computes the outward unit vector normal for all faces of the polygon mesh.
+* @tparam Kernel Geometric traits class. It can be omitted and deduced automatically from the point type of `PolygonMesh`.
+* @tparam PolygonMesh a model of `FaceGraph`
+* @tparam FaceNormalPropertyMap the property map in which the normals are written.
+* @tparam PointPropertyMap the property map with the points associated to the vertices.
+*
+
+* @param pmesh the polygon mesh
+*/
 template <typename PolygonMesh
           , typename FaceNormalPropertyMap
           , typename PointPropertyMap
