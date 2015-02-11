@@ -1003,14 +1003,14 @@ private:
     for ( ; it_c != it_c_end ; ++it_c)
     {
       // Will contain all indices except center_vertex
-      Incident_simplex inc_simplex;
+      Incident_simplex incident_simplex;
       for (int j = 0 ; j < cur_dim_plus_1 ; ++j)
       {
         std::size_t index = (*it_c)->vertex(j)->data();
         if (index != i)
-          inc_simplex.insert(index);
+          incident_simplex.insert(index);
       }
-      star.push_back(inc_simplex);
+      star.push_back(incident_simplex);
     }
 
     // CJTODO DEBUG
@@ -1140,6 +1140,28 @@ private:
     //ts.push_back(diff_vec(t2, scaled_vec(n, inner_pdct(t2, n))));
     //return compute_gram_schmidt_basis(ts, m_k);
     */
+  }
+
+  Point unproject_point(const Tr_point &p, const Point &origin,
+                        const Tangent_space_basis &tsb,
+                        const Tr_traits &tr_traits)
+  {
+    typename Kernel::Translated_point_d k_transl =
+      m_k.translated_point_d_object();
+    typename Kernel::Scaled_vector_d k_scaled_vec =
+      m_k.scaled_vector_d_object();
+    typename Tr_traits::Compute_coordinate_d coord =
+      tr_traits.compute_coordinate_d_object();
+
+    Point global_point = origin;
+    for (int i = 0 ; i < m_intrinsic_dimension ; ++i)
+    {
+      global_point = k_transl(
+        global_point, 
+        k_scaled_vec(tsb[i], coord(p, i)));
+    }
+
+    return global_point;
   }
 
   // Project the point in the tangent space
@@ -1362,13 +1384,13 @@ private:
     Star::const_iterator it_inc_simplex_end = star.end();
     for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
     {
-      const Incident_simplex &inc_simplex = *it_inc_simplex;
+      const Incident_simplex &incident_simplex = *it_inc_simplex;
 
       // Don't check infinite cells
-      if (*inc_simplex.rbegin() == std::numeric_limits<std::size_t>::max())
+      if (*incident_simplex.rbegin() == std::numeric_limits<std::size_t>::max())
         continue;
 
-      std::set<std::size_t> c = inc_simplex;
+      std::set<std::size_t> c = incident_simplex;
       c.insert(tr_index); // Add the missing index
 
 //*****************************************************************************
@@ -1617,8 +1639,6 @@ private:
     // If m_intrinsic_dimension = 1, each point is output two times
     // (see export_vertices_to_off)
     int factor = (m_intrinsic_dimension == 1 ? 2 : 1);
-    int OFF_simplices_dim =
-      (m_intrinsic_dimension == 1 ? 3 : m_intrinsic_dimension + 1);
     num_simplices = 0;
     std::size_t num_inconsistent_simplices = 0;
     std::size_t num_inconsistent_stars = 0;
@@ -1651,6 +1671,7 @@ private:
         
         std::set<std::size_t> c = *it_inc_simplex;
         c.insert(idx);
+        std::size_t num_vertices = c.size();
 
         if (color_inconsistencies || excluded_simplices)
         {
@@ -1670,7 +1691,10 @@ private:
 
           // See export_vertices_to_off
           if (m_intrinsic_dimension == 1)
+          {
             sstr_c << (data*factor + 1) << " ";
+            ++num_vertices;
+          }
 
           // In order to have only one time each simplex, we only keep it
           // if the lowest index is the index of the center vertex
@@ -1683,7 +1707,7 @@ private:
 
           if (!excluded)
           {
-            os << OFF_simplices_dim << " " << sstr_c.str() << " ";
+            os << num_vertices << " " << sstr_c.str() << " ";
             if (color_inconsistencies && is_simpl_consistent)
               os << color.str();
             else
@@ -1695,7 +1719,7 @@ private:
           }
           else if (show_excluded_vertices_in_color)
           {
-            os << OFF_simplices_dim << " "
+            os << num_vertices << " "
                << sstr_c.str() << " "
                << "0 0 255";
             ++num_simplices;
@@ -1703,7 +1727,6 @@ private:
         }
         else
         {
-          os << OFF_simplices_dim << " ";
           std::size_t min_index = std::numeric_limits<std::size_t>::max();
           std::size_t data;
           std::stringstream sstr_c;
@@ -1722,9 +1745,12 @@ private:
 
           // See export_vertices_to_off
           if (m_intrinsic_dimension == 1)
+          {
             sstr_c << (data*factor + 1) << " ";
+            ++num_vertices;
+          }
 
-          os << sstr_c.str();
+          os << num_vertices << " " << sstr_c.str();
           ++num_simplices;
         }
 
