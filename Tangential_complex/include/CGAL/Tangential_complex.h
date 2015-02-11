@@ -1476,38 +1476,11 @@ private:
       }
 
 //*****************************************************************************
-// STRATEGY 4: perturb one random point of the simplex
-//*****************************************************************************
-#else
-      // Inconsistent?
-      if (!is_simplex_consistent(c))
-      {
-        is_inconsistent = true;
-        int rnd = m_random_generator.get_int(0, static_cast<int>(c.size()));
-        if (rnd == 0)
-          perturb(tr_index);
-        else
-        {
-          std::set<std::size_t>::const_iterator it_idx = c.begin();
-          std::advance(it_idx, rnd - 1);
-          perturb(*it_idx);
-        }
-
-# if !defined(CGAL_TC_GLOBAL_REFRESH)
-        refresh_tangential_complex();
-# endif
-
-        // We will try the other cells next time
-        break;
-      }
-
-#endif // CGAL_TC_PERTURB_THE_SIMPLEX_ONLY
-
-//*****************************************************************************
 // STRATEGY 4: perturb the k + 1 + CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS
 // closest points (to the power center of first the inconsistent cell)
 //*****************************************************************************
-/*#else
+#elif defined(CGAL_TC_PERTURB_N_CLOSEST_POINTS)
+      
       // Inconsistent?
       if (!is_simplex_consistent(c))
       {
@@ -1517,35 +1490,36 @@ private:
         // closest points
 
         std::vector<Tr_point> simplex_pts;
+        simplex_pts.reserve(c.size());
         
         Incident_simplex::const_iterator it_point_idx = c.begin();
         Incident_simplex::const_iterator it_point_idx_end = c.end();
-        // For each point p of the simplex, we parse the incidents cells of p
-        // and we check if "simplex" is among them
+        // For each point p of the simplex, we reproject it onto the tangent
+        // space. Could be optimized since it's already been computed before.
         for ( ; it_point_idx != it_point_idx_end ; ++it_point_idx)
-          simplex_pts.push_back(m_points[*it_point_idx]);
+        {
+#ifdef CGAL_TC_PERTURB_WEIGHT
+          FT w = m_weights[*it_point_idx];
+#else
+          FT w = 0;
+#endif
+          simplex_pts.push_back(project_point_and_compute_weight(
+            m_points[*it_point_idx], w,
+            m_points[tr_index], m_tangent_spaces[tr_index],
+            local_tr_traits));
+        }
 
         //typename Tr_traits::Power_center_d power_center =
         //  local_tr_traits.power_center_d_object(); // CJTODO
         typename Get_functor<Tr_traits, Power_center_tag>::type power_center(local_tr_traits);
         typename Tr_traits::Compute_coordinate_d coord =
           local_tr_traits.compute_coordinate_d_object();
-        
-        typename Kernel::Translated_point_d k_transl =
-          m_k.translated_point_d_object();
-        typename Kernel::Scaled_vector_d k_scaled_vec =
-          m_k.scaled_vector_d_object();
 
-
-        Tr_point local_center = power_center(simplex_pts.begin(), simplex_pts.end());
-        Point global_center = m_points[tr_index];
-        const Tangent_space_basis &tsb = m_tangent_spaces[tr_index];
-        for (int i = 0 ; i < m_intrinsic_dimension ; ++i)
-        {
-          global_center = k_transl(
-            global_center, 
-            k_scaled_vec(tsb[i], coord(local_center, i)));
-        }
+        Point global_center = unproject_point(
+          power_center(simplex_pts.begin(), simplex_pts.end()),
+          m_points[tr_index],
+          m_tangent_spaces[tr_index],
+          local_tr_traits);
         
         KNS_range kns_range = m_points_ds.query_ANN(
           global_center, 
@@ -1572,8 +1546,33 @@ private:
         // We will try the other cells next time
         break;
       }
+//*****************************************************************************
+// STRATEGY 5: perturb one random point of the simplex
+//*****************************************************************************
+#else
+      // Inconsistent?
+      if (!is_simplex_consistent(c))
+      {
+        is_inconsistent = true;
+        int rnd = m_random_generator.get_int(0, static_cast<int>(c.size()));
+        if (rnd == 0)
+          perturb(tr_index);
+        else
+        {
+          std::set<std::size_t>::const_iterator it_idx = c.begin();
+          std::advance(it_idx, rnd - 1);
+          perturb(*it_idx);
+        }
 
-#endif // CGAL_TC_PERTURB_THE_SIMPLEX_ONLY*/
+# if !defined(CGAL_TC_GLOBAL_REFRESH)
+        refresh_tangential_complex();
+# endif
+
+        // We will try the other cells next time
+        break;
+      }
+
+#endif // CGAL_TC_PERTURB_THE_SIMPLEX_ONLY
     }
 
     return is_inconsistent;

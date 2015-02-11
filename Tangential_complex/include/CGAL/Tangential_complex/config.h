@@ -41,15 +41,13 @@
 //#define CGAL_TC_PERTURB_THE_CENTER_VERTEX_ONLY
 //#define CGAL_TC_PERTURB_THE_SIMPLEX_ONLY
 //#define CGAL_TC_PERTURB_THE_1_STAR
+#define CGAL_TC_PERTURB_N_CLOSEST_POINTS // perturb the k + 1 + CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS closest points
 // Otherwise, perturb one random point of the simplex
 
-
-/*
-// Otherwise, perturb the k + 1 + CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS
-// closest points
+// Only used if CGAL_TC_PERTURB_N_CLOSEST_POINTS is defined
 #define CGAL_TC_NUMBER_OF_PERTURBED_POINTS(intr_dim) (1)
 //#define CGAL_TC_NUMBER_OF_PERTURBED_POINTS(intr_dim) (intr_dim + 2)
-*/
+
 
 //========================= Strategy ==========================================
 //#define CGAL_TC_USE_NANOFLANN
