@@ -19,11 +19,12 @@ int main(int argc, char* argv[])
   in >> sm;
 
   Mesh::Property_map<vertex_descriptor,int> ccmap;
-  ccmap = sm.add_property_map<vertex_descriptor,int>("v:CC").first; 
-  int num = connected_components(sm, ccmap);
+  ccmap = sm.add_property_map<vertex_descriptor,int>("v:CC").first;
 
+  int num = connected_components(sm, ccmap);
+  std::cout  << num << " connected components" << std::endl;
   BOOST_FOREACH(vertex_descriptor v, vertices(sm)){
-    std::cout  << v << " is in component " << ccmap[v] << "\n";
+    std::cout  << v << " is in component " << ccmap[v] << std::endl;
   }
   
   return 0;
