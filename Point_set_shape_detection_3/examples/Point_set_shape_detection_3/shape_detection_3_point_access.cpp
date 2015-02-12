@@ -7,6 +7,10 @@
 
 #include <CGAL/Shape_detection_3.h>
 #include <CGAL/Plane_shape.h>
+#include <CGAL/Cylinder_shape.h>
+#include <CGAL/Cone_shape.h>
+#include <CGAL/Sphere_shape.h>
+#include <CGAL/Torus_shape.h>
 
 #include <iostream>
 #include <fstream>
@@ -53,8 +57,21 @@ int main()
     points.end(), Point_pmap(), Normal_pmap());
 
   // Registers detection of planes
+
   sd.add_shape_factory(new 
     CGAL::Shape_factory<CGAL::Plane_shape<Traits> >);
+
+//   sd.add_shape_factory(new 
+//     CGAL::Shape_factory<CGAL::Cylinder_shape<Traits> >);
+// 
+//   sd.add_shape_factory(new 
+//     CGAL::Shape_factory<CGAL::Sphere_shape<Traits> >);
+// 
+//   sd.add_shape_factory(new 
+//     CGAL::Shape_factory<CGAL::Cone_shape<Traits> >);
+// 
+//   sd.add_shape_factory(new 
+//     CGAL::Shape_factory<CGAL::Torus_shape<Traits> >);
 
   // Detects shapes.
   sd.detect();

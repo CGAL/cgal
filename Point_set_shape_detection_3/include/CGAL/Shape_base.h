@@ -33,10 +33,10 @@ namespace CGAL {
       /// \endcond
 
   public:
-    /// \name Types 
-    /// @{
-
+    /// \cond SKIP_IN_MANUAL
     typedef typename Sd_traits::Input_iterator Input_iterator; ///< random access iterator for input data.
+    /// \endcond
+
     typedef typename Sd_traits::Geom_traits::FT FT; ///< number type.
     typedef typename Sd_traits::Geom_traits::Point_3 Point; ///< point type.
     typedef typename Sd_traits::Geom_traits::Vector_3 Vector; ///< vector type.
@@ -68,15 +68,187 @@ namespace CGAL {
     /*!
       Helper function writing shape type and numerical parameters into a string.
      */
-    
-    virtual std::string info() const = 0;
+
+    virtual std::string info() const {
+      return std::string();
+    }
 
     /*!
       Provides the squared Euclidean distance of the point to the shape.
      */
+
     virtual FT squared_distance(const Point &p) const = 0;
 
   protected:
+      
+    /*!
+      Constructs the shape based on a minimal set of samples from the input data.
+     */
+    virtual void create_shape(const std::vector<size_t> &indices) = 0;
+    
+    /*!
+      Determines the largest cluster of with a point to point distance not larger than cluster_epsilon.
+     */
+    size_t connected_component(FT cluster_epsilon) {
+      if (m_indices.size() == 0)
+        return 0;
+
+      //       if (m_hasconnected_component)
+      //         return m_score;
+
+      m_has_connected_component = true;
+      if (!supports_connected_component())
+        return m_indices.size();
+
+      FT min[2], max[2];
+      //parameterExtend(center, width, min, max);
+      std::vector<std::pair<FT, FT> > parameterSpace;
+      parameterSpace.resize(m_indices.size());
+
+      parameters(parameterSpace, m_indices, min, max);
+      int iMin[2], iMax[2];
+      iMin[0] = (int) (min[0] / cluster_epsilon);
+      iMin[1] = (int) (min[1] / cluster_epsilon);
+      iMax[0] = (int) (max[0] / cluster_epsilon);
+      iMax[1] = (int) (max[1] / cluster_epsilon);
+
+      size_t uExtent = abs(iMax[0] - iMin[0]) + 2;
+      size_t vExtent = abs(iMax[1] - iMin[1]) + 2;
+
+      std::vector<std::vector<int> > bitmap;
+      std::vector<bool> visited;
+      bitmap.resize(uExtent * vExtent);
+      visited.resize(uExtent * vExtent, false);
+
+      bool wrapU = wraps_u();
+      bool wrapV = wraps_v();
+
+      for (size_t i = 0;i<parameterSpace.size();i++) {
+        int u = (parameterSpace[i].first - min[0]) / cluster_epsilon;
+        int v = (parameterSpace[i].second - min[1]) / cluster_epsilon;
+        if (u < 0 || u >= uExtent) {
+          if (wrapU) {
+            while (u < 0) u += uExtent;
+            while (u >= uExtent) u-= uExtent;
+          }
+          else {
+            std::cout << "cc: u out of bounds: " << u << std::endl;
+            u = (u < 0) ? 0 : (u >= uExtent) ? uExtent - 1 : u;
+          }
+        }
+        if (v < 0 || v >= vExtent) {
+          if (wrapV) {
+            while (v < 0) v += vExtent;
+            while (v >= vExtent) v-= vExtent;
+          }
+          else {
+            std::cout << "cc: v out of bounds: " << u << std::endl;
+            v = (v < 0) ? 0 : (v >= vExtent) ? vExtent - 1 : v;
+          }
+        }
+        bitmap[v * uExtent + u].push_back(m_indices[i]);
+      }
+
+      std::vector<std::vector<size_t> > cluster;
+      for (size_t i = 0;i<(uExtent * vExtent);i++) {
+        cluster.push_back(std::vector<size_t>());
+        if (bitmap[i].empty())
+          continue;
+        if (visited[i])
+          continue;
+
+        std::stack<size_t> fields;
+        fields.push(i);
+        while (!fields.empty()) {
+          size_t f = fields.top();
+          fields.pop();
+          if (visited[f])
+            continue;
+          visited[f] = true;
+          if (bitmap[f].empty())
+            continue;
+
+          // copy indices
+          std::copy(bitmap[f].begin(), bitmap[f].end(),
+            std::back_inserter(cluster.back()));
+
+          // grow 8-neighborhood
+          int vIndex = f / uExtent;
+          int uIndex = f % uExtent;
+          bool upperBorder = vIndex == 0;
+          bool lowerBorder = vIndex == (vExtent - 1);
+          bool leftBorder = uIndex == 0;
+          bool rightBorder = uIndex == (uExtent - 1);
+
+          int n;
+          if (!upperBorder) {
+            n = f - uExtent;
+            if (!visited[n])
+              fields.push(n);
+          }
+          else if (wrapV) {
+            n = f + (vExtent - 1) * uExtent;
+            if (!visited[n]) fields.push(n);
+          }
+
+          if (!leftBorder) {
+            n = f - 1;
+            if (!visited[n]) fields.push(n);
+          }
+          else if (wrapU) {
+            n = f + uExtent - 1;
+            if (!visited[n]) fields.push(n);
+          }
+
+          if (!lowerBorder) {
+            n = f + uExtent;
+            if (!visited[n]) fields.push(n);
+          }
+          else if (wrapV) {
+            n = f - (vExtent - 1) * uExtent;
+            if (!visited[n]) fields.push(n);
+          }
+
+          if (!rightBorder) {
+            n = f + 1;
+            if (!visited[n]) fields.push(n);
+          }
+          else if (wrapU) {
+            n = f - uExtent + 1;
+            if (!visited[n]) fields.push(n);
+          }
+        }
+      }
+
+      int maxCluster = 0;
+      for (size_t i = 1;i<cluster.size();i++) {
+        if (cluster[i].size() > cluster[maxCluster].size()) {
+          maxCluster = i;
+        }
+      }
+
+      m_indices = cluster[maxCluster];
+
+      return m_score = m_indices.size();
+    }
+ 
+    /*!
+      Provides the squared Euclidean distance of a set of points.
+     */
+    virtual void squared_distance(std::vector<FT> &dists,
+      const std::vector<size_t> &indices) = 0;   
+
+    /*!
+      Provides the deviation of the point normal from the surface normal at the projected point in form of the dot product.
+     */
+    virtual void cos_to_normal(std::vector<FT> &angles,
+      const std::vector<size_t> &indices) const = 0;
+
+    /*!
+      Defines the minimal number of samples required for construction.
+     */
+    virtual size_t required_samples() const = 0;
+
       /// \cond SKIP_IN_MANUAL
       struct Compare_by_max_bound {
           bool operator() (Shape *a, Shape *b) {
@@ -141,7 +313,7 @@ namespace CGAL {
                                   const std::vector<int> &shapeIndex,
                                   const std::vector<size_t> &indices) = 0;
 
-    virtual FT cos_to_normal(const Point &p, const Vector &n) const = 0;
+    //virtual FT cos_to_normal(const Point &p, const Vector &n) const = 0;
 
     virtual void cos_to_normal(std::vector<FT> &angles,
                                const std::vector<int> &shapeIndex,
@@ -150,151 +322,7 @@ namespace CGAL {
     virtual void parameters(std::vector<std::pair<FT, FT> > &parameterSpace,
                             const std::vector<size_t> &indices,
                             FT min[2],
-                            FT max[2]) const = 0;
-
-    size_t connected_component(FT m_bitmapEpsilon,
-                               const Point &center,
-                               FT width) {
-      if (m_indices.size() == 0)
-        return 0;
-
-      //       if (m_hasconnected_component)
-      //         return m_score;
-
-      m_has_connected_component = true;
-      if (!supports_connected_component())
-        return m_indices.size();
-
-      FT min[2], max[2];
-      //parameterExtend(center, width, min, max);
-      std::vector<std::pair<FT, FT> > parameterSpace;
-      parameterSpace.resize(m_indices.size());
-
-      parameters(parameterSpace, m_indices, min, max);
-      int iMin[2], iMax[2];
-      iMin[0] = (int) (min[0] / m_bitmapEpsilon);
-      iMin[1] = (int) (min[1] / m_bitmapEpsilon);
-      iMax[0] = (int) (max[0] / m_bitmapEpsilon);
-      iMax[1] = (int) (max[1] / m_bitmapEpsilon);
-
-      size_t uExtent = abs(iMax[0] - iMin[0]) + 2;
-      size_t vExtent = abs(iMax[1] - iMin[1]) + 2;
-
-      std::vector<std::vector<int> > bitmap;
-      std::vector<bool> visited;
-      bitmap.resize(uExtent * vExtent);
-      visited.resize(uExtent * vExtent, false);
-
-      bool wrapU = wraps_u();
-      bool wrapV = wraps_v();
-
-      for (size_t i = 0;i<parameterSpace.size();i++) {
-        int u = (parameterSpace[i].first - min[0]) / m_bitmapEpsilon;
-        int v = (parameterSpace[i].second - min[1]) / m_bitmapEpsilon;
-        if (u < 0 || u >= uExtent) {
-          if (wrapU) {
-            while (u < 0) u += uExtent;
-            while (u >= uExtent) u-= uExtent;
-          }
-          else {
-            std::cout << "cc: u out of bounds: " << u << std::endl;
-            u = (u < 0) ? 0 : (u >= uExtent) ? uExtent - 1 : u;
-          }
-        }
-        if (v < 0 || v >= vExtent) {
-          if (wrapV) {
-            while (v < 0) v += vExtent;
-            while (v >= vExtent) v-= vExtent;
-          }
-          else {
-            std::cout << "cc: v out of bounds: " << u << std::endl;
-            v = (v < 0) ? 0 : (v >= vExtent) ? vExtent - 1 : v;
-          }
-        }
-        bitmap[v * uExtent + u].push_back(m_indices[i]);
-      }
-
-      std::vector<std::vector<size_t> > cluster;
-      for (size_t i = 0;i<(uExtent * vExtent);i++) {
-        cluster.push_back(std::vector<size_t>());
-        if (bitmap[i].empty())
-          continue;
-        if (visited[i])
-          continue;
-
-        std::stack<size_t> fields;
-        fields.push(i);
-        while (!fields.empty()) {
-          size_t f = fields.top();
-          fields.pop();
-          if (visited[f])
-            continue;
-          visited[f] = true;
-          if (bitmap[f].empty())
-            continue;
-
-          // copy indices
-          std::copy(bitmap[f].begin(), bitmap[f].end(),
-                               std::back_inserter(cluster.back()));
-
-          // grow 8-neighborhood
-          int vIndex = f / uExtent;
-          int uIndex = f % uExtent;
-          bool upperBorder = vIndex == 0;
-          bool lowerBorder = vIndex == (vExtent - 1);
-          bool leftBorder = uIndex == 0;
-          bool rightBorder = uIndex == (uExtent - 1);
-
-          int n;
-          if (!upperBorder) {
-            n = f - uExtent;
-            if (!visited[n])
-              fields.push(n);
-          }
-          else if (wrapV) {
-            n = f + (vExtent - 1) * uExtent;
-            if (!visited[n]) fields.push(n);
-          }
-
-          if (!leftBorder) {
-            n = f - 1;
-            if (!visited[n]) fields.push(n);
-          }
-          else if (wrapU) {
-            n = f + uExtent - 1;
-            if (!visited[n]) fields.push(n);
-          }
-
-          if (!lowerBorder) {
-            n = f + uExtent;
-            if (!visited[n]) fields.push(n);
-          }
-          else if (wrapV) {
-            n = f - (vExtent - 1) * uExtent;
-            if (!visited[n]) fields.push(n);
-          }
-
-          if (!rightBorder) {
-            n = f + 1;
-            if (!visited[n]) fields.push(n);
-          }
-          else if (wrapU) {
-            n = f - uExtent + 1;
-            if (!visited[n]) fields.push(n);
-          }
-        }
-      }
-
-      int maxCluster = 0;
-      for (size_t i = 1;i<cluster.size();i++) {
-        if (cluster[i].size() > cluster[maxCluster].size()) {
-          maxCluster = i;
-        }
-      }
-
-      m_indices = cluster[maxCluster];
-
-      return m_score = m_indices.size();
+                            FT max[2]) const {
     }
 
     void compute(const std::set<size_t> &indices,
@@ -316,8 +344,6 @@ namespace CGAL {
 
       create_shape(output);
     }
-
-    virtual void create_shape(const std::vector<size_t> &indices) = 0;
 
     inline bool operator<(const Shape &c) const {
       return expected_value() < c.expected_value();
@@ -382,13 +408,28 @@ namespace CGAL {
       }
     }
 
-    virtual size_t required_samples() const = 0;
 
-    virtual bool supports_connected_component() const = 0;
-    virtual bool wraps_u() const = 0;
-    virtual bool wraps_v() const = 0;
+    virtual bool supports_connected_component() {
+      return false;
+    };
+
+    virtual bool wraps_u() const {
+      return false;
+    };
+
+    virtual bool wraps_v() const {
+      return false;
+    };
 
   protected:
+    /// \endcond
+    // 
+    /*!
+      Contains indices of the points supporting the candidate. Access to the point and normal data is provided via property maps.
+     */
+    std::vector<size_t> m_indices;
+    /// \cond SKIP_IN_MANUAL
+
     FT m_epsilon;
 
     //deviation of normal, used during first check of the 3 normal

@@ -12,19 +12,24 @@
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.4}
+\cgalPkgSince{4.6}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{examples,shape_detection_example.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
 ## Classes ##
-- `CGAL::Cone_shape<Sd_traits>`
-- `CGAL::Cylinder_shape<Sd_traits>`
-- `CGAL::Shape_base<Sd_traits>`
 - `CGAL::Shape_detection_3<Sd_traits>`
 - `CGAL::Shape_detection_traits_3`
+
+## Shape interface ##
+- `CGAL::Shape_base<Sd_traits>`
 - `CGAL::Shape_factory<Shape>`
+
+## Shapes ##
+- `CGAL::Cone_shape<Sd_traits>`
+- `CGAL::Cylinder_shape<Sd_traits>`
+- `CGAL::Plane_shape<Sd_traits>`
 - `CGAL::Sphere_shape<Sd_traits>`
 - `CGAL::Torus_shape<Sd_traits>`
 */

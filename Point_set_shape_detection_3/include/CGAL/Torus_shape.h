@@ -16,12 +16,15 @@ namespace CGAL {
   template <class Sd_traits>
   class Torus_shape : public Shape_base<Sd_traits> {
   public:
+    /// \cond SKIP_IN_MANUAL
     typedef typename Sd_traits::Input_iterator Input_iterator; ///< random access iterator for input data.
+    typedef typename Sd_traits::Point_pmap Point_pmap;  ///< property map to access the location of an input point.
+    typedef typename Sd_traits::Normal_pmap Normal_pmap;  ///< property map to access the unoriented normal of an input point.
+    /// \endcond
+
     typedef typename Sd_traits::Geom_traits::FT FT; ///< number type.
     typedef typename Sd_traits::Geom_traits::Point_3 Point;///< point type.
     typedef typename Sd_traits::Geom_traits::Vector_3 Vector;///< vector type.
-      typedef typename Sd_traits::Point_pmap Point_pmap;  ///< property map to access the location of an input point.
-      typedef typename Sd_traits::Normal_pmap Normal_pmap;  ///< property map to access the unoriented normal of an input point.
 
     Torus_shape() : Shape_base<Sd_traits>() {}
       
