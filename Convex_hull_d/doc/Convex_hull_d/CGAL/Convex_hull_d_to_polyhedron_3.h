@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\deprecated This package is deprecated since the version 4.6 of \cgal. The package \ref PkgTriangulationsSummary should be used instead 
+\deprecated This package is deprecated since the version 4.6 of \cgal. The package \ref PkgTriangulationsSummary should be used instead.
 
 converts the convex hull `C` to polyhedral surface stored in 
 `P`. 
