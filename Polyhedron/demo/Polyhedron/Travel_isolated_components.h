@@ -87,7 +87,7 @@ public:
         for(One_ring_iterator<HandleType> circ(current); circ; ++circ)
         {
           HandleType nv = circ;
-          neigh_to_selection |= selection.count(nv);
+          neigh_to_selection |= (selection.count(nv)!=0);
           if(!mark[id(nv)] && !selection.count(nv)) {
             mark[id(nv)] = true;
             C.push_back(nv);

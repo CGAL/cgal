@@ -596,7 +596,7 @@ public:
     bool any_change = false;
     for(typename Tr::Iterator it = tr.iterator_begin() ; it != tr.iterator_end(); ++it) {
       if(!mark[tr.id(*it)]) {
-        any_change |= tr.container().erase(*it);
+        any_change |= (tr.container().erase(*it)!=0);
       }
     }
     if(any_change) { emit itemChanged(); }
@@ -718,7 +718,7 @@ protected:
     }
     else{
       BOOST_FOREACH(HandleType h, selection)
-        any_change |= tr.container().erase(h);
+        any_change |= (tr.container().erase(h)!=0);
     }
     if(any_change) { emit itemChanged(); }
   }
