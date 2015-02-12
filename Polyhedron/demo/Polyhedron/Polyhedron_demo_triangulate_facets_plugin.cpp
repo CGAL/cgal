@@ -82,9 +82,9 @@ public slots:
               !eit_copy->opposite()->vertex()->is_bivalent())
           {
             Kernel::Vector_3 v1 =
-              CGAL::Polygon_mesh_processing::compute_facet_normal(fh1, *pMesh);
+              CGAL::Polygon_mesh_processing::compute_face_normal(fh1, *pMesh);
             Kernel::Vector_3 v2 =
-              CGAL::Polygon_mesh_processing::compute_facet_normal(fh2, *pMesh);
+              CGAL::Polygon_mesh_processing::compute_face_normal(fh2, *pMesh);
             if(v1 * v2 > 0.99) {
               std::cerr << "join\n";
               // pMesh->is_valid(true);

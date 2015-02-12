@@ -50,7 +50,7 @@ void gl_render_facets(Polyhedron& polyhedron, const std::vector<QColor>& colors)
     // If Flat shading: 1 normal per polygon
     if (shading == GL_FLAT)
     {
-      Vector n = CGAL::Polygon_mesh_processing::compute_facet_normal(f, polyhedron);
+      Vector n = CGAL::Polygon_mesh_processing::compute_face_normal(f, polyhedron);
       ::glNormal3d(n.x(),n.y(),n.z());
     }
 
