@@ -1,6 +1,9 @@
 #ifndef CGAL_BGL_DUAL_H
 #define CGAL_BGL_DUAL_H
 
+#include <CGAL/boost/graph/properties.h>
+#include <boost/range/distance.hpp>
+
 namespace CGAL {
 
 template <typename Primal_>
@@ -30,9 +33,9 @@ template <typename Primal>
 class graph_traits<CGAL::Dual<Primal> >
 {
   typedef boost::graph_traits<Primal> GTP;
-  struct SM_graph_traversal_category : public virtual boost::bidirectional_graph_tag,
-                                       public virtual boost::vertex_list_graph_tag,
-                                       public virtual boost::edge_list_graph_tag
+  struct Dual_traversal_category : public virtual boost::bidirectional_graph_tag,
+                                   public virtual boost::vertex_list_graph_tag,
+                                   public virtual boost::edge_list_graph_tag
   {};
 
 public:
@@ -42,7 +45,7 @@ public:
   typedef typename GTP::edge_descriptor     edge_descriptor;
   typedef typename GTP::directed_category   directed_category;
   typedef boost::allow_parallel_edge_tag    edge_parallel_category; 
-  typedef SM_graph_traversal_category       traversal_category;
+  typedef Dual_traversal_category           traversal_category;
 
   typedef typename GTP::faces_size_type          vertices_size_type;
   typedef typename GTP::vertices_size_type       faces_size_type;
@@ -55,8 +58,8 @@ public:
   typedef typename GTP::halfedge_iterator halfedge_iterator;
   typedef typename GTP::edge_iterator     edge_iterator;
 
-  typedef CGAL::In_edge_iterator<CGAL::Dual<Primal> > in_edge_iterator;
-  typedef CGAL::Out_edge_iterator<CGAL::Dual<Primal> > out_edge_iterator;
+  typedef CGAL::Halfedge_around_face_iterator<Primal> in_edge_iterator;
+  typedef CGAL::Opposite_halfedge_around_face_iterator<Primal> out_edge_iterator;
 
   static vertex_descriptor   null_vertex()   { return vertex_descriptor(); }
   static face_descriptor     null_face()     { return face_descriptor(); }
@@ -66,11 +69,27 @@ public:
 template<typename P>
 struct graph_traits< const CGAL::Dual<P> >  
   : public graph_traits< CGAL::Dual<P> >
-{ }; 
+{}; 
+
+template <typename P>
+struct property_map<CGAL::Dual<P>, boost::vertex_index_t>
+{
+  typedef typename property_map<P, CGAL::face_index_t>::type type; 
+  typedef typename property_map<P, CGAL::face_index_t>::const_type const_type; 
+};
+
 } // namespace boost
 
 
 namespace CGAL {
+
+template <typename P>
+typename boost::property_map<P, boost::face_index_t>::type
+get(boost::vertex_index_t, const Dual<P>& dual)
+{
+  return get(CGAL::face_index, dual.primal());
+}
+
 
 template <typename P>
 typename boost::graph_traits<CGAL::Dual<P> >::vertices_size_type
@@ -188,6 +207,41 @@ prev(typename boost::graph_traits<Dual<P> >::halfedge_descriptor h,
   return next(opposite(h,primal),primal);
 }  
 
+template <typename P>
+Iterator_range<typename boost::graph_traits<Dual<P> >::out_edge_iterator>
+out_edges(typename boost::graph_traits<Dual<P> >::vertex_descriptor v,
+          const Dual<P>& dual)
+{
+  typename const Dual<P>::Primal& primal = dual.primal();
+  return opposite_halfedges_around_face(halfedge(v,primal),primal);
+}
+
+template <typename P>
+Iterator_range<typename boost::graph_traits<Dual<P> >::out_edge_iterator>
+in_edges(typename boost::graph_traits<Dual<P> >::vertex_descriptor v,
+         const Dual<P>& dual)
+{
+  typename const Dual<P>::Primal& primal = dual.primal();
+  return halfedges_around_face(halfedge(v,primal),primal);
+}
+       
+template <typename P>
+typename boost::graph_traits<Dual<P> >::degree_size_type
+out_degree(typename boost::graph_traits<Dual<P> >::vertex_descriptor v,
+           const Dual<P>& dual)
+{
+  typename const Dual<P>::Primal& primal = dual.primal();
+  return boost::distance(halfedges_around_face(halfedge(v,primal),primal));
+}
+
+ template <typename P>
+typename boost::graph_traits<Dual<P> >::degree_size_type
+in_degree(typename boost::graph_traits<Dual<P> >::vertex_descriptor v,
+           const Dual<P>& dual)
+{
+  return out_degree(v,dual);
+}
+         
         
 } // namespace CGAL
 

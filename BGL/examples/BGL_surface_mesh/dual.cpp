@@ -40,6 +40,10 @@ int main(int, char* argv[])
   ccmap = sm.add_property_map<face_descriptor,int>("f:CC").first; 
   int num = connected_components(dsm, ccmap);
 
+ BOOST_FOREACH(face_descriptor f , faces(sm)){
+   std::cout  << f << "in connected component " <<  ccmap[f]   << std::endl;
+  }
+  
 #if 0
 
   Mesh::Property_map<vertex_descriptor,vertex_descriptor> predecessor;

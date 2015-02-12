@@ -1050,6 +1050,44 @@ private:
 }; 
 
 
+template <typename Graph>
+class Opposite_halfedge_around_face_iterator
+#ifndef DOXYGEN_RUNNING
+  : public boost::iterator_adaptor<
+            Opposite_halfedge_around_face_iterator<Graph>                       // Derived
+             , Halfedge_around_face_iterator<Graph>                // Base
+             , typename boost::graph_traits<Graph>::halfedge_descriptor  // Value
+             , std::bidirectional_iterator_tag                       // CategoryOrTraversal
+             , typename boost::graph_traits<Graph>::halfedge_descriptor  // Reference
+             >
+#endif
+{
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
+  internal::OppositeHalfedge<Graph> fct;
+public:
+
+  Opposite_halfedge_around_face_iterator()
+  {}
+
+  Opposite_halfedge_around_face_iterator(halfedge_descriptor h, const Graph& g, int n = 0)
+    : Opposite_halfedge_around_face_iterator::iterator_adaptor_(Halfedge_around_face_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n)), fct(g)
+  {}
+private:
+  friend class boost::iterator_core_access;
+  typename  boost::graph_traits<Graph>::halfedge_descriptor dereference() const { return fct(*this->base_reference()); }
+}; 
+
+template<typename Graph>
+Iterator_range<Opposite_halfedge_around_face_iterator<Graph> >
+opposite_halfedges_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
+{
+  typedef Opposite_halfedge_around_face_iterator<Graph> I;
+  return make_range(I(h,g), I(h,g,1));
+}
+
+
+
+
 /**
  * \ingroup PkgBGLIterators
  * A bidirectional circulator  with value type `boost::graph_traits<Graph>::%vertex_descriptor` over all vertices adjacent to the same vertex.
