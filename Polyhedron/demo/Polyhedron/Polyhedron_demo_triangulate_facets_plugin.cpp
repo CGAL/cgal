@@ -119,7 +119,7 @@ public slots:
 
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
-      CGAL::Polygon_mesh_processing::triangulate_faces<Kernel>(*pMesh);
+      CGAL::Polygon_mesh_processing::triangulate_faces(*pMesh);
 
       CGAL_assertion_code(pMesh->normalize_border());
       CGAL_assertion(pMesh->is_valid(false, 3));

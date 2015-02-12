@@ -45,7 +45,9 @@ namespace Polygon_mesh_processing {
 
 namespace internal {
 
-template <class PM, typename Kernel>
+template <class PM
+          , typename VertexPointMap
+          , typename Kernel>
 class Triangulate_modifier
   : public CGAL::Modifier_base<PM>
 {
@@ -55,7 +57,7 @@ class Triangulate_modifier
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
-  typedef typename PM::Point Point;
+  typedef typename Kernel::Point_3 Point;
 
   typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
 
@@ -69,7 +71,6 @@ class Triangulate_modifier
 
   typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
                                                     P_traits>          Fb1;
-
   typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
   typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
   typedef CGAL::No_intersection_tag                                    Itag;
@@ -78,8 +79,11 @@ class Triangulate_modifier
                                                      Itag>             CDTbase;
   typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
 
+  VertexPointMap _vpmap;
+
 public:
-  Triangulate_modifier() 
+  Triangulate_modifier(VertexPointMap vpmap)
+    : _vpmap(vpmap)
   {
   }
 
@@ -89,9 +93,6 @@ public:
 
   void operator()(PM& pmesh)
   {
-    typename boost::property_map<PM, boost::vertex_point_t>::type
-      ppmap = get(boost::vertex_point, pmesh);
-
     // One need to store facet handles into a vector, because the list of
     // facets of the polyhedron will be modified during the loop, and
     // that invalidates the range [facets_begin(), facets_end()[.
@@ -117,7 +118,7 @@ public:
       Tr_Vertex_handle previous, first;
       do
       {
-        Tr_Vertex_handle vh = cdt.insert(ppmap[target(h, pmesh)]);
+        Tr_Vertex_handle vh = cdt.insert(_vpmap[target(h, pmesh)]);
         if(first == 0) {
           first = vh;
         }
@@ -233,20 +234,53 @@ public:
 
 }//end namespace internal
 
-
-/// \ingroup PkgPolygonMeshProcessing
-/// Triangulates faces of the polygon mesh `pmesh`. Depends on \ref PkgTriangulation2Summary
-/// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-/// @todo : add point property map as a parameter with a default
-/// @todo : add a default value for Kernel
-template <typename Kernel,
-          typename PolygonMesh>
-void triangulate_faces(PolygonMesh& pmesh,
-  const Kernel& k = Kernel())
+///\cond SKIP_IN_MANUAL
+template <typename PolygonMesh>
+void triangulate_faces(PolygonMesh& pmesh)
 {
-  internal::Triangulate_modifier<PolygonMesh, Kernel> modifier;
+  return triangulate_faces(pmesh, get(boost::vertex_point, pmesh));
+}
+
+template <typename PolygonMesh
+        , typename VertexPointMap>
+void triangulate_faces(PolygonMesh& pmesh
+                     , VertexPointMap vpmap)
+{
+  typedef typename Kernel_traits<
+    typename boost::property_traits<
+    typename boost::property_map<
+    PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
+  return triangulate_faces(pmesh, vpmap, Kernel());
+}
+///\endcond
+
+/**
+* \ingroup PkgPolygonMeshProcessing
+* Triangulates faces of the polygon mesh `pmesh`. Depends on \ref PkgTriangulation2Summary
+* @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+* @tparam VertexPointMap the property map with the points associated to the vertices.
+* @tparam Kernel Geometric traits class.It can be omitted and deduced automatically from the point type of `PolygonMesh`.
+*
+* @param pmesh the polygon mesh
+*/
+template <typename PolygonMesh
+        , typename VertexPointMap
+        , typename Kernel>
+void triangulate_faces(PolygonMesh& pmesh
+                     , VertexPointMap vpmap
+#ifdef DOXYGEN_RUNNING
+                     = get(vertex_point, pmesh)
+#endif
+                     , const Kernel& k
+#ifdef DOXYGEN_RUNNING
+                     = Kernel()
+#endif
+                    )
+{
+  internal::Triangulate_modifier<PolygonMesh, VertexPointMap, Kernel> modifier(vpmap);
   modifier(pmesh);
 }
+
 
 } // end namespace Polygon_mesh_processing
 
