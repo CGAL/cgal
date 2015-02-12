@@ -85,18 +85,18 @@ For providing an own shape type one has to provide functionality to extract shap
 The exact functions to be implemented are defined in the interface `Shape_base`:
 - `Shape_base::required_samples``()` const: Provides the minimal number of required samples.
 
-- `Shape_base::create_shape``(const std::vector<size_t> &indices)`: The drawn samples are provided via a vector of indices. The property maps are used to retrieve the actual points and normals (see example below). The provided number of samples might actually be larger than the set minimal number of required samples, depending on the other sought after shape types. If the provided samples are not sufficient for extracting shape parameters, e.g. in a singular case, the m_isValid variable is set to false, in case of success it is set to true.
+- `Shape_base::create_shape``(const std::vector<size_t> &indices)`: The drawn samples are provided via a vector of indices. `Shape_base::get_point``(size_t i)` and `Shape_base::get_normal``(size_t i)` are used to retrieve the actual points and normals (see example below). The provided number of samples might actually be larger than the set minimal number of required samples, depending on the other sought after shape types. If the provided samples are not sufficient for extracting shape parameters, e.g. in a singular case, the m_isValid variable is set to false, in case of success it is set to true.
 
 - `Shape_base::squared_distance``(const Point &p)` const: This function provides the squared distance of a point to the shape. It is used for traversing a spatial data structure.
 - `Shape_base::squared_distance``(std::vector<FT> &dists, const std::vector<size_t> &indices)`
 - `Shape_base::cos_to_normal``(std::vector<FT> &angles, const std::vector<size_t> &indices)` const:
-These functions are used to determine the supporting points to the shape and provide the squared distance and the dot product between shape normal and point normal for point and normal pairs located close to the shape surface. The access to the actual point and normal data is carried out via property maps (see example below). The resulting squared distance/dot product is stored in the vector provided as the first argument.
+These functions are used to determine the supporting points to the shape and provide the squared distance and the dot product between shape normal and point normal for point and normal pairs located close to the shape surface. The access to the actual point and normal data is carried out via `Shape_base::get_point``(size_t i)` and `Shape_base::get_normal``(size_t i)` (see example below). The resulting squared distance/dot product is stored in the vector provided as the first argument.
 
 Optionally, the user can provide an implementation for the connected component determination:
 - `Shape_base::connected_component``(FT cluster_epsilon)`: The indices of all supporting points are stored in the vector `m_indices`. All points not belonging to the largest cluster of points have to be removed from the vector `m_indices`. If this method is not overwritten a fallback solution is applied using a kd-tree to organize the support and performing a region growing to determine the largest cluster of points. The main reason to implement an own shape specific solution would be to lower computational time.
 
 Another optional method can be implemented to provide a helper function provinding the shape parameters written to a string:
-- `Shape_base::info``()`: This function returns a string suitable for printing the shape parameters into a log/console.
+- `Shape_base::info``()`: This function returns a string suitable for printing the shape parameters into a log/console. The default solution just provides an empty string.
 
 The property maps are used to map the indices to the corresponding points and normals. The following example shows a simple implementation of a planar shape primitive.
 \cgalExample{Point_set_shape_detection_3/shape_detection_3_minimal_planar_shape.h}

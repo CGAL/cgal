@@ -2,7 +2,6 @@
 #define CGAL_SHAPE_DETECTION_3_CONE_SHAPE_H
 
 #include "Shape_base.h"
-#include <set>
 #include <math.h>
 
 #ifndef M_PI

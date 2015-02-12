@@ -2,7 +2,6 @@
 #define CGAL_SHAPE_DETECTION_3_SHAPE_BASE_H
 
 #include <vector>
-#include <set>
 #include <boost/tuple/tuple.hpp>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Fuzzy_sphere.h>
@@ -249,12 +248,26 @@ namespace CGAL {
      */
     virtual size_t required_samples() const = 0;
 
-      /// \cond SKIP_IN_MANUAL
-      struct Compare_by_max_bound {
-          bool operator() (Shape *a, Shape *b) {
-              return a->max_bound() < b->max_bound();
-          }
-      };
+    /*!
+      Retrieves the point for an index.
+     */
+    const Point_3 &get_point(size_t i) const {
+      return get(this->m_point_pmap, *(this->m_first + i));
+    }
+    
+    /*!
+      Retrieves the normal vector for an index.
+     */
+    const Vector_3 &get_normal(size_t i) const {
+      return get(this->m_normal_pmap, *(this->m_first + i));
+    }
+    
+    /// \cond SKIP_IN_MANUAL
+    struct Compare_by_max_bound {
+        bool operator() (Shape *a, Shape *b) {
+            return a->max_bound() < b->max_bound();
+        }
+    };
       
     FT expected_value() const {
       return (m_lower_bound + m_upper_bound) / 2.f;
