@@ -173,12 +173,19 @@ halfedge(typename boost::graph_traits<Dual<P> >::face_descriptor f,
 }
 
 template <typename P>
+typename boost::graph_traits<Dual<P> >::halfedge_descriptor
+halfedge(typename boost::graph_traits<Dual<P> >::edge_descriptor e,
+         const Dual<P>& dual)
+{
+  return halfedge(e, dual.primal());
+}
+template <typename P>
 typename boost::graph_traits<Dual<P> >::face_descriptor
 face(typename boost::graph_traits<Dual<P> >::halfedge_descriptor h,
        const Dual<P>& dual)
 {
   const Dual<P>::Primal& primal = dual.primal();
-  return vertex(h,primal);
+  return target(h,primal);
 }
 
 template <typename P>
