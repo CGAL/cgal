@@ -37,6 +37,7 @@
 #include <cassert>
 #include <iostream>
 #include <fstream>
+#include <set>
 
 
 typedef CGAL::Epeck K;
@@ -418,6 +419,11 @@ void test_remove ()
   assert(p3rt3.number_of_vertices() == 4);
   assert(p3rt3.number_of_stored_vertices() == 108);
 
+  unsigned hidden_point_count = 0;
+  for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+    hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+  assert(hidden_point_count == 0);
+
   unsigned point_found_count = 0;
   for (P3RT3::Vertex_iterator iter = p3rt3.vertices_begin(), end_iter = p3rt3.vertices_end(); iter != end_iter; ++iter)
     point_found_count += (iter->point() == hidden_point);
@@ -449,13 +455,18 @@ void test_insert_rnd_as_delaunay (unsigned pt_count, double weight)
   assert(p3rt3.number_of_sheets() == CGAL::make_array(3,3,3) ?
       p3rt3.number_of_stored_vertices() == 27 * pt_count
       : p3rt3.number_of_stored_vertices() == pt_count);
+
+  unsigned hidden_point_count = 0;
+  for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+    hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+  assert(hidden_point_count == 0);
 }
 
-void test_insert_rnd_then_remove_all (unsigned pt_count)
+void test_insert_rnd_then_remove_all (unsigned pt_count, unsigned seed)
 {
-  std::cout << "--- test_insert_rnd (" << pt_count << ')' << std::endl;
+  std::cout << "--- test_insert_rnd (" << pt_count << ", " << seed << ')' << std::endl;
 
-  CGAL::Random random(7);
+  CGAL::Random random(seed);
   typedef CGAL::Creator_uniform_3<double,Bare_point>  Creator;
   CGAL::Random_points_in_cube_3<Bare_point, Creator> in_cube(0.5, random);
 
@@ -465,13 +476,16 @@ void test_insert_rnd_then_remove_all (unsigned pt_count)
   std::ofstream stream("out_p3rt3_test");
   assert(stream);
 
+  std::set<Weighted_point> hidden_point_set;
   for (unsigned cnt = 1; cnt <= pt_count; ++cnt)
   {
     Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
 //    std::cout << cnt << " : " << p << std::endl;
     assert(p.weight() < 0.015625);
     stream << p << std::endl;
-    p3rt3.insert(p);
+    Vertex_handle vh = p3rt3.insert(p);
+    if (vh == Vertex_handle() && hidden_point_set.find(p) != hidden_point_set.end())
+      hidden_point_set.insert(p);
   }
 
   stream.close();
@@ -488,12 +502,14 @@ void test_insert_rnd_then_remove_all (unsigned pt_count)
 
 //    std::cout << cnt << " : " << iter->point() << std::endl;
     p3rt3.remove(iter);
+    hidden_point_set.erase(iter->point());
 //    std::cout << "p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
     unsigned hidden_point_count = 0;
     for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
       hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
   }
 
+  assert(hidden_point_set.empty());
   assert(p3rt3.is_valid());
 }
 
@@ -549,10 +565,10 @@ int main (int argc, char** argv)
   test_insert_two_points_with_the_same_position();
   test_remove();
 //    Iso_cuboid unitaire ->  0 <= weight < 0.015625
-//  test_insert_rnd_as_delaunay(100, 0.);
-//  test_insert_rnd_as_delaunay(100, 0.01);
-//  test_insert_rnd(100);
-  test_insert_rnd_then_remove_all(100);
+  test_insert_rnd_as_delaunay(100, 0.);
+  test_insert_rnd_as_delaunay(100, 0.01);
+  test_insert_rnd_then_remove_all(5000, 7);
+  test_insert_rnd_then_remove_all(5000, 12);
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return EXIT_SUCCESS;
