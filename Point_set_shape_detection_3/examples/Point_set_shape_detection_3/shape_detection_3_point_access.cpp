@@ -27,7 +27,7 @@ typedef CGAL::Normal_of_point_with_normal_pmap<Kernel>      Normal_pmap;
 // as well as iterator type and property maps, are defined.
 typedef CGAL::Shape_detection_traits_3<Kernel,
   Pwn_vector::iterator, Point_pmap, Normal_pmap>            Traits;
-typedef CGAL::Shape_detection_3<Traits>                   Shape_detection;
+typedef CGAL::Shape_detection_3<Traits>                     Shape_detection;
 
 
 int main() 
