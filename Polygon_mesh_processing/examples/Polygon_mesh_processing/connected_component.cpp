@@ -49,7 +49,7 @@ int main(int, char* argv[])
   Mesh::Property_map<face_descriptor,int> fccmap;
   fccmap = sm.add_property_map<face_descriptor,int>("f:CC").first; 
   int num = CGAL::Polygon_mesh_processing::connected_components(sm,
-                                                                Constraint<Mesh>(sm),
+                                                                //Constraint<Mesh>(sm),
                                                                 fccmap);
   
  std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;

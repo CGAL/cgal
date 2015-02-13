@@ -398,7 +398,8 @@ template <typename G>
 struct No_constraint {
   No_constraint() { }
 
-  No_constraint(G & g) : g(&g) { }
+  No_constraint(G & g)
+    : g(&g) { }
 
   template <typename T>
   bool operator[](const T & ) const {
@@ -408,12 +409,13 @@ struct No_constraint {
   G* g;
 };
 
-template <typename G, typename EdgeConstraintMap>
+  template <typename G, typename EdgeConstraintMap = No_constraint<G> >
 struct No_border {
   No_border() 
   {}
   
-  No_border(G & g, EdgeConstraintMap ecm) : g(&g), ecm(ecm)
+    No_border(G & g, EdgeConstraintMap ecm = EdgeConstraintMap())
+      : g(&g), ecm(ecm)
   { }
   
   bool operator()(typename boost::graph_traits<G>::edge_descriptor e) const {
@@ -426,6 +428,8 @@ struct No_border {
   G* g;
   EdgeConstraintMap ecm;
 };
+
+
 
 }// namespace internal
  
@@ -474,6 +478,26 @@ struct No_border {
     return boost::connected_components(finite_dual, fim);
   }
 
+ /*!
+   * \ingroup PkgPolygonMeshProcessing
+   *  computes for each face the index of the connected components to which it belongs.
+   *  Two faces are considered to be in the same connected component if they share an edge.
+   *  \tparam PolygonMesh a model of `FaceGraph`
+   *  \tparam FaceIndexMap the property map with the face index as value type, and the index of its connected component
+   *  \returns the number of connected components.
+  */
+  template <class PolygonMesh, class FaceIndexMap>
+  typename boost::graph_traits<PolygonMesh>::faces_size_type
+  connected_components(PolygonMesh& pmesh,
+                       FaceIndexMap& fim)
+  {
+    typedef Dual<PolygonMesh> Dual;
+    typedef boost::filtered_graph<Dual, internal::No_border<PolygonMesh> > FiniteDual;
+
+    Dual dual(pmesh);
+    FiniteDual finite_dual(dual,internal::No_border<PolygonMesh>(pmesh));
+    return boost::connected_components(finite_dual, fim);
+  }
 } // namespace Polygon_mesh_processing
 
 } // namespace CGAL

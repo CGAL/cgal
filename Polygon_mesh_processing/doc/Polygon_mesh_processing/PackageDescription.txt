@@ -61,7 +61,8 @@
 ## Other Classes and Functions ##
 - `CGAL::Polygon_mesh_slicer`
 - `CGAL::Polygon_Mesh_processing::keep_largest_connected_components()`
-- `CGAL::Polygon_Mesh_processing::discover_connected_component()`
+- `CGAL::Polygon_Mesh_processing::connected_component()`
+- `CGAL::Polygon_Mesh_processing::connected_components()`
 
 \todo remove FairWeightCalculator and replace it by a property map. Note that the default property map should be documented
 \todo make template parameter names uniform in other packages using BGL. Here we chose PolygonMesh as template parameter.
