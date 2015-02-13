@@ -461,14 +461,14 @@ struct No_border {
    *  Two faces are considered to be in the same connected component if they share an edge that is not constrained.
    *  \tparam PolygonMesh a model of `FaceGraph`
    *  \tparam EdgeConstraintMap a property map with the edge descriptor as key type and `bool` as value type.
-   *  \tparam FaceIndexMap the property map with the face index as value type, and the index of its connected component
+   *  \tparam FaceComponentIndexMap the property map with the face index as value type, and the index of its connected component
    *  \returns the number of connected components.
   */
-  template <class PolygonMesh, class EdgeConstraintMap, class FaceIndexMap>
+  template <class PolygonMesh, class EdgeConstraintMap, class FaceComponentIndexMap>
   typename boost::graph_traits<PolygonMesh>::faces_size_type
   connected_components(PolygonMesh& pmesh,
                        EdgeConstraintMap ecmap,
-                       FaceIndexMap& fim)
+                       FaceComponentIndexMap& fim)
   {
     typedef Dual<PolygonMesh> Dual;
     typedef boost::filtered_graph<Dual, internal::No_border<PolygonMesh,EdgeConstraintMap> > FiniteDual;
@@ -483,13 +483,13 @@ struct No_border {
    *  computes for each face the index of the connected components to which it belongs.
    *  Two faces are considered to be in the same connected component if they share an edge.
    *  \tparam PolygonMesh a model of `FaceGraph`
-   *  \tparam FaceIndexMap the property map with the face index as value type, and the index of its connected component
+   *  \tparam FaceComponentIndexMap the property map with the face index as value type, and the index of its connected component
    *  \returns the number of connected components.
   */
-  template <class PolygonMesh, class FaceIndexMap>
+  template <class PolygonMesh, class FaceComponentIndexMap>
   typename boost::graph_traits<PolygonMesh>::faces_size_type
   connected_components(PolygonMesh& pmesh,
-                       FaceIndexMap& fim)
+                       FaceComponentIndexMap& fim)
   {
     typedef Dual<PolygonMesh> Dual;
     typedef boost::filtered_graph<Dual, internal::No_border<PolygonMesh> > FiniteDual;
