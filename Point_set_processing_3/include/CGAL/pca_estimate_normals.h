@@ -38,9 +38,9 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
+/// \cond SKIP_IN_MANUAL
 namespace internal {
 
-/// \cond SKIP_IN_MANUAL
 
 /// Estimates normal direction using linear least
 /// squares fitting of a plane on the K nearest neighbors.
@@ -93,9 +93,9 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
   return plane.orthogonal_vector();
 }
 
+} /* namespace internal */
 /// \endcond
 
-} /* namespace internal */
 
 
 // ----------------------------------------------------------------------------

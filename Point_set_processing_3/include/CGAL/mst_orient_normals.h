@@ -46,8 +46,8 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace internal {
 /// \cond SKIP_IN_MANUAL
+namespace internal {
 
 /// Generalization of std::distance() to compute the distance between 2 integers
 inline std::size_t
@@ -523,10 +523,8 @@ create_mst_graph(
     return mst_graph;
 }
 
-/// \endcond
-
 } /* namespace internal */
-
+/// \endcond
 
 // ----------------------------------------------------------------------------
 // Public section

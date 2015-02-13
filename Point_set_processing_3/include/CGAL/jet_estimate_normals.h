@@ -37,9 +37,9 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
+/// \cond SKIP_IN_MANUAL
 namespace internal {
 
-/// \cond SKIP_IN_MANUAL
 
 /// Estimates normal direction using jet fitting
 /// on the k nearest neighbors.
@@ -101,9 +101,9 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
   return monge_form.normal_direction();
 }
 
+} /* namespace internal */
 /// \endcond
 
-} /* namespace internal */
 
 
 // ----------------------------------------------------------------------------

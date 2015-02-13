@@ -36,9 +36,10 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
+/// \cond SKIP_IN_MANUAL
+
 namespace internal {
 
-/// \cond SKIP_IN_MANUAL
 
 /// Smoothes one point position using jet fitting on the k
 /// nearest neighbors and reprojection onto the jet.
@@ -101,9 +102,10 @@ jet_smooth_point(
   return monge_form.origin();
 }
 
+} /* namespace internal */
+
 /// \endcond
 
-} /* namespace internal */
 
 
 // ----------------------------------------------------------------------------

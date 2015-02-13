@@ -35,9 +35,9 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
+/// \cond SKIP_IN_MANUAL
 namespace internal {
 
-/// \cond SKIP_IN_MANUAL
 
 /// Utility function for remove_outliers():
 /// Computes average squared distance to the K nearest neighbors.
@@ -91,9 +91,8 @@ compute_avg_knn_sq_distance_3(
     return sq_distance;
 }
 
-/// \endcond
-
 } /* namespace internal */
+/// \endcond
 
 
 // ----------------------------------------------------------------------------

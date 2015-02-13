@@ -35,9 +35,9 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
+/// \cond SKIP_IN_MANUAL
 namespace internal {
 
-/// \cond SKIP_IN_MANUAL
 
 /// Utility function for remove_outliers_wrt_median_knn_sq_distance():
 /// Computes median squared distance to the K nearest neighbors.
@@ -88,9 +88,9 @@ compute_median_knn_sq_distance_3(
     return sqd(points[k_median]/*[points.size()/2]*/, query);
 }
 
-/// \endcond
-
 } /* namespace internal */
+
+/// \endcond
 
 
 // ----------------------------------------------------------------------------

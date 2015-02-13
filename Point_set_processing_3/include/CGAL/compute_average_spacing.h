@@ -35,9 +35,9 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
+/// \cond SKIP_IN_MANUAL
 namespace internal {
 
-/// \cond SKIP_IN_MANUAL
 
 /// Computes average spacing of one query point from K nearest neighbors.
 ///
@@ -84,9 +84,9 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
   return sum_distances / (FT)i;
 }
 
+} /* namespace internal */
 /// \endcond
 
-} /* namespace internal */
 
 
 // ----------------------------------------------------------------------------

@@ -36,9 +36,9 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
+/// \cond SKIP_IN_MANUAL
 namespace internal {
 
-/// \cond SKIP_IN_MANUAL
 
 /// Smoothes one point position using linear least
 /// squares fitting of a plane (PCA) on the K
@@ -93,9 +93,9 @@ pca_smooth_point(
   return plane.projection(query);
 }
 
+} /* namespace internal */
 /// \endcond
 
-} /* namespace internal */
 
 // ----------------------------------------------------------------------------
 // Public section
