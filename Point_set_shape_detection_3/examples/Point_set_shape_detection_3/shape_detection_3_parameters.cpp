@@ -25,7 +25,7 @@ typedef CGAL::Normal_of_point_with_normal_pmap<Kernel>      Normal_pmap;
 // In Shape_detection_traits_3 the basic types, i.e., Point and Vector types
 // as well as iterator type and property maps, are defined.
 typedef CGAL::Shape_detection_traits_3<Kernel,
-  Pwn_list::iterator, Point_pmap, Normal_pmap>            Traits;
+  Pwn_list::iterator, Point_pmap, Normal_pmap>              Traits;
 typedef CGAL::Shape_detection_3<Traits>                     Shape_detection;
 
 
@@ -51,28 +51,14 @@ int main()
   Shape_detection sd(points.begin(),
     points.end(), Point_pmap(), Normal_pmap());
     
-  // Shapes to be detected are registered
-  // by using the template Shape_factory
-
+  // Detect only planar shapes
   sd.add_shape_factory(new 
     CGAL::Shape_factory<CGAL::Plane_shape<Traits> >);
 
-//   sd.add_shape_factory(new 
-//     CGAL::Shape_factory<CGAL::Cylinder_shape<Traits> >);
-// 
-//   sd.add_shape_factory(new 
-//     CGAL::Shape_factory<CGAL::Sphere_shape<Traits> >);
-// 
-//   sd.add_shape_factory(new 
-//     CGAL::Shape_factory<CGAL::Cone_shape<Traits> >);
-// 
-//   sd.add_shape_factory(new 
-//     CGAL::Shape_factory<CGAL::Torus_shape<Traits> >);
-    
   // Setting parameters for shape detection.
   Shape_detection::Parameters parameters;
 
-  // 5% probability to miss the largest primitive on each iteration.
+  // 5% probability to miss the largest primitive at each iteration.
   parameters.probability = 0.05;
  
   // Detect shapes with at least 500 points.
@@ -100,8 +86,7 @@ int main()
   Shape_detection::Shape_iterator it = sd.shapes_begin();
   while (it != sd.shapes_end()) {
     const Shape_detection::Shape *shape = *it;
-    // Uses Shape_base::info() for printing 
-    // the parameters of the detected shape.
+    // prints the parameters of the detected shape.
     std::cout << (*it)->info() << std::endl;
 
     // Proceeds with next detected shape.

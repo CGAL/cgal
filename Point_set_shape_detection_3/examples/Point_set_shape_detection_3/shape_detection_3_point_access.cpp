@@ -19,20 +19,20 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT                                          FT;
 typedef CGAL::Point_with_normal_3<Kernel>                   Point_with_normal;
-typedef std::vector<Point_with_normal>                      Pwn_list;
+typedef std::vector<Point_with_normal>                      Pwn_vector;
 typedef CGAL::Identity_property_map<Point_with_normal>      Point_pmap;
 typedef CGAL::Normal_of_point_with_normal_pmap<Kernel>      Normal_pmap;
 
-// In Shape_detection_traits_3 the used types, i.e. Point and Vector types
+// In Shape_detection_traits_3 the used types, i.e., Point and Vector types
 // as well as iterator type and property maps, are defined.
 typedef CGAL::Shape_detection_traits_3<Kernel,
-  Pwn_list::iterator, Point_pmap, Normal_pmap>            Traits;
-typedef CGAL::Shape_detection_3<Traits>                     Shape_detection;
+  Pwn_vector::iterator, Point_pmap, Normal_pmap>            Traits;
+typedef CGAL::Shape_detection_3<Traits>                   Shape_detection;
 
 
 int main() 
 {
-  Pwn_list points;
+  Pwn_vector points;
 
   // Loading a point set from file. 
   // read_xyz_points_and_normals takes an OutputIterator for storing the points
