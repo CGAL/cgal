@@ -80,8 +80,8 @@ popd
 printf "Now use:\n"
 printf "  cd ${DEST_DIR}\n"
 printf "  mv cgal_manual.zip /srv/CGAL/www/%s/Manual/\n" "${PUBLIC_RELEASE_NAME#CGAL-}"
-printf "  rsync --compress -av doc_html_online/ %s:/www/inf-websites/doc.cgal.org/Manual/%s\n" \
-    cgal@contact.mpi-inf.mpg.de \
+printf "  rsync --compress -av doc_html_online/ %s:doc.cgal.org/Manual/%s\n" \
+    cgalorgmnx@ftp.cgal.org \
     "${PUBLIC_RELEASE_NAME#CGAL-}"
 
 printf "DONE!\n"
