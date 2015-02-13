@@ -87,6 +87,7 @@ void calculate_face_normals(const HalfedgeGraph& g,
   }
 }
 
+/// \cond SKIP_IN_MANUAL
 namespace internal {
 template<typename T>
 typename Kernel_traits<T>::Kernel::FT
@@ -98,6 +99,7 @@ dot(const T& t1, const T& t2)
 }
   
 } // internal
+/// \endcond
 
 template<typename HalfedgeGraph, 
          typename Position, 

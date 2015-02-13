@@ -32,6 +32,7 @@
 
 namespace CGAL {
 
+/// \cond SKIP_IN_MANUAL
 
 namespace internal {
 
@@ -161,8 +162,8 @@ struct Face {
   }
 };
 
-  } // namespace internal
-
+} // namespace internal
+/// \endcond
 
 /**
  * \ingroup PkgBGLIterators

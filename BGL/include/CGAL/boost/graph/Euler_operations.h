@@ -30,6 +30,8 @@
 
 namespace CGAL {
 
+/// \cond SKIP_IN_MANUAL
+
 namespace EulerImpl {
 
 template<typename Graph>
@@ -76,6 +78,7 @@ join_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
 }
 } // namespace EulerImpl
 
+/// \endcond
 
   namespace Euler {
 /// \ingroup PkgBGLEulerOperations
