@@ -25,12 +25,16 @@
 #include<vector>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
+#include <boost/graph/filtered_graph.hpp>
+#include <boost/graph/connected_components.hpp>
 #include <CGAL/boost/graph/iterator.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Union_find.h>
 #include <CGAL/tuple.h>
+#include <CGAL/boost/graph/Dual.h>
+#include <CGAL/boost/graph/helpers.h>
 #include <CGAL/internal/corefinement/Polyhedron_constness_types.h>
 
 namespace CGAL {
@@ -352,14 +356,16 @@ namespace Polygon_mesh_processing{
    * `seed_face` will also be added in `out`.
    *  Two faces are considered to be in the same connected component if they share an edge.
    *  \tparam PolygonMesh a model of `FaceGraph`
+   *  \tparam EdgeConstraintMap a property map with the edge descriptor as key type and `bool` as vaue type
    *  \tparam OutputIterator an output iterator that accepts face descriptors.
    *  \returns the output iterator.
   */
-  template <class PolygonMesh, class OutputIterator>
+  template <class PolygonMesh, class EdgeConstraintMap, class OutputIterator>
   OutputIterator
-  discover_connected_component(
+  connected_component(
     typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face,
     PolygonMesh& pmesh,
+    EdgeConstraintMap ecmap,
     OutputIterator out)
   {
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
@@ -376,14 +382,92 @@ namespace Polygon_mesh_processing{
       BOOST_FOREACH(halfedge_descriptor hd,
                     CGAL::halfedges_around_face(halfedge(seed_face, pmesh), pmesh) )
       {
-        face_descriptor neighbor = face( opposite(hd, pmesh), pmesh );
-        if ( neighbor != boost::graph_traits<PolygonMesh>::null_face() )
-          stack.push_back(neighbor);
+        if(! ecmap[hd]){
+            face_descriptor neighbor = face( opposite(hd, pmesh), pmesh );
+            if ( neighbor != boost::graph_traits<PolygonMesh>::null_face() )
+              stack.push_back(neighbor);
+          }
       }
     }
     return out;
   }
 
-} } // end namespace CGAL::Polygon_mesh_processing
+namespace internal {
+
+template <typename G>
+struct No_constraint {
+  No_constraint() { }
+
+  No_constraint(G & g) : g(&g) { }
+
+  template <typename T>
+  bool operator[](const T & ) const {
+    return true;
+  }
+
+  G* g;
+};
+
+template <typename G, typename EdgeConstraintMap>
+struct No_border {
+  No_border() 
+  {}
+  
+  No_border(G & g, EdgeConstraintMap ecm) : g(&g), ecm(ecm)
+  { }
+  
+  bool operator()(typename boost::graph_traits<G>::edge_descriptor e) const {
+    if(! is_border(e,*g)){
+      return ! ecm[e];
+    }
+    return false;
+  }
+
+  G* g;
+  EdgeConstraintMap ecm;
+};
+
+}// namespace internal
+ 
+
+  /*!
+   * \ingroup PkgPolygonMeshProcessing
+   *  Discovers all the faces in the same connected component as `seed_face` and put them in `out`.
+   * `seed_face` will also be added in `out`.
+   *  Two faces are considered to be in the same connected component if they share an edge.
+   *  \tparam PolygonMesh a model of `FaceGraph`
+   *  \tparam EdgeConstraintMap a property map with the edge descriptor as key type and `bool` as vaue type
+   *  \tparam OutputIterator an output iterator that accepts face descriptors.
+   *  \returns the output iterator.
+  */
+  template <class PolygonMesh, class OutputIterator>
+  OutputIterator
+  connected_component(
+    typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face,
+    PolygonMesh& pmesh,
+    OutputIterator out)
+  {
+    return connected_component(seed_face, pmesh, internal::No_constraint<PolygonMesh>(pmesh), out);
+  }
+
+
+  template <class PolygonMesh, class EdgeConstraintMap, class FaceIndexMap>
+  typename boost::graph_traits<PolygonMesh>::faces_size_type
+  connected_components(
+    PolygonMesh& pmesh,
+    EdgeConstraintMap ecmap,
+    FaceIndexMap& fim)
+  {
+    typedef Dual<PolygonMesh> Dual;
+    typedef boost::filtered_graph<Dual, internal::No_border<PolygonMesh,EdgeConstraintMap> > FiniteDual;
+
+    Dual dual(pmesh);
+    FiniteDual finite_dual(dual,internal::No_border<PolygonMesh,EdgeConstraintMap>(pmesh,ecmap));
+    return boost::connected_components(finite_dual, fim);
+  }
+
+} // namespace Polygon_mesh_processing
+
+} // namespace CGAL
 
 #endif //CGAL_INTERNAL_POLYHEDRON_SUBSET_EXTRACTION_H

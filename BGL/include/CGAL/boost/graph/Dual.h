@@ -59,7 +59,7 @@ public:
   typedef typename GTP::edge_iterator     edge_iterator;
 
   typedef CGAL::Halfedge_around_face_iterator<Primal> in_edge_iterator;
-  typedef CGAL::Opposite_halfedge_around_face_iterator<Primal> out_edge_iterator;
+  typedef CGAL::Opposite_edge_around_face_iterator<Primal> out_edge_iterator;
 
   static vertex_descriptor   null_vertex()   { return vertex_descriptor(); }
   static face_descriptor     null_face()     { return face_descriptor(); }
@@ -220,7 +220,7 @@ out_edges(typename boost::graph_traits<Dual<P> >::vertex_descriptor v,
           const Dual<P>& dual)
 {
   typename const Dual<P>::Primal& primal = dual.primal();
-  return opposite_halfedges_around_face(halfedge(v,primal),primal);
+  return opposite_edges_around_face(halfedge(v,primal),primal);
 }
 
 template <typename P>
