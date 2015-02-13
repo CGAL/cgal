@@ -38,6 +38,7 @@
 
 #include <CGAL/OpenNL/full_vector.h>
 #include <CGAL/assertions.h>
+#include <CGAL/use.h>
 
 #include <vector>
 #include <cstdlib>
@@ -149,6 +150,7 @@ public:
     // (added for SparseLinearAlgebraTraits_d::Matrix concept)
     // WARNING: this class supports square matrices only
     SparseMatrix (unsigned int rows, unsigned int columns ) {
+        CGAL_USE(rows);
         CGAL_assertion(rows == columns);
         CGAL_assertion(columns > 0);
         dimension_ = columns ;
