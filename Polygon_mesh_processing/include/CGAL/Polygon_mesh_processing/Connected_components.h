@@ -21,6 +21,8 @@
 #ifndef CGAL_INTERNAL_POLYHEDRON_SUBSET_EXTRACTION_H
 #define CGAL_INTERNAL_POLYHEDRON_SUBSET_EXTRACTION_H
 
+#include<set>
+#include<vector>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 #include <CGAL/boost/graph/iterator.h>
@@ -350,8 +352,8 @@ namespace Polygon_mesh_processing{
    * `seed_face` will also be added in `out`.
    *  Two faces are considered to be in the same connected component if they share an edge.
    *  \tparam PolygonMesh a model of `FaceGraph`
-   *  \tparam OutputIterator a output iterator that accepts face descriptors.
-   *  \returns the number of faces in the connected component (including `seed_face`)
+   *  \tparam OutputIterator an output iterator that accepts face descriptors.
+   *  \returns the output iterator.
   */
   template <class PolygonMesh, class OutputIterator>
   OutputIterator
