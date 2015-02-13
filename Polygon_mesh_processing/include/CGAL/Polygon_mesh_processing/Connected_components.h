@@ -352,7 +352,7 @@ namespace Polygon_mesh_processing{
 
   /*!
    * \ingroup PkgPolygonMeshProcessing
-   *  Discovers all the faces in the same connected component as `seed_face` and put them in `out`.
+   *  Discovers all the faces in the same connected component as `seed_face` and puts them in `out`.
    * `seed_face` will also be added in `out`.
    *  Two faces are considered to be in the same connected component if they share an edge.
    *  \tparam PolygonMesh a model of `FaceGraph`
@@ -432,11 +432,11 @@ struct No_border {
 
   /*!
    * \ingroup PkgPolygonMeshProcessing
-   *  Discovers all the faces in the same connected component as `seed_face` and put them in `out`.
+   *  Discovers all the faces in the same connected component as `seed_face` and puts them in `out`.
    * `seed_face` will also be added in `out`.
    *  Two faces are considered to be in the same connected component if they share an edge.
    *  \tparam PolygonMesh a model of `FaceGraph`
-   *  \tparam EdgeConstraintMap a property map with the edge descriptor as key type and `bool` as vaue type
+   *  \tparam EdgeConstraintMap a property map with the edge descriptor as key type and `bool` as value type
    *  \tparam OutputIterator an output iterator that accepts face descriptors.
    *  \returns the output iterator.
   */
@@ -451,12 +451,20 @@ struct No_border {
   }
 
 
+  /*!
+   * \ingroup PkgPolygonMeshProcessing
+   *  computes for each face the index of the connected components to which it belongs.
+   *  Two faces are considered to be in the same connected component if they share an edge that is not constrained.
+   *  \tparam PolygonMesh a model of `FaceGraph`
+   *  \tparam EdgeConstraintMap a property map with the edge descriptor as key type and `bool` as value type.
+   *  \tparam FaceIndexMap the property map with the face index as value type, and the index of its connected component
+   *  \returns the number of connected components.
+  */
   template <class PolygonMesh, class EdgeConstraintMap, class FaceIndexMap>
   typename boost::graph_traits<PolygonMesh>::faces_size_type
-  connected_components(
-    PolygonMesh& pmesh,
-    EdgeConstraintMap ecmap,
-    FaceIndexMap& fim)
+  connected_components(PolygonMesh& pmesh,
+                       EdgeConstraintMap ecmap,
+                       FaceIndexMap& fim)
   {
     typedef Dual<PolygonMesh> Dual;
     typedef boost::filtered_graph<Dual, internal::No_border<PolygonMesh,EdgeConstraintMap> > FiniteDual;
