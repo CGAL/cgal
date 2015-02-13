@@ -8,7 +8,7 @@
  */
 namespace CGAL {
     /*!
-     \brief My_Plane implements Shape_base. The plane is parameterized by the normal vector and the distance to the origin.
+     \brief My_Plane derives from Shape_base. The plane is parameterized by the normal vector and the distance to the origin.
      */
   template <class Sd_traits>
   class My_Plane : public Shape_base<Sd_traits> {
@@ -67,8 +67,8 @@ namespace CGAL {
     std::string info() const {
       std::stringstream sstr;
       sstr << "Type: plane (" << m_normal.x() << ", " 
-		                      << m_normal.y() << ", " 
-							  << m_normal.z() << ")x - " << m_d << " = 0" << " #Pts: " << this->m_indices.size();
+		              << m_normal.y() << ", " 
+			      << m_normal.z() << ")x - " << m_d << " = 0" << " #Pts: " << this->m_indices.size();
 
       return sstr.str();
     }
