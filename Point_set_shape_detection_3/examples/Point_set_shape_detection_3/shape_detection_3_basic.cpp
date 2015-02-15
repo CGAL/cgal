@@ -49,18 +49,6 @@ int main()
   sd.add_shape_factory(new 
     CGAL::Shape_factory<CGAL::Plane_shape<Traits> >);
 
-  sd.add_shape_factory(new 
-    CGAL::Shape_factory<CGAL::Cylinder_shape<Traits> >);
-
-  sd.add_shape_factory(new 
-    CGAL::Shape_factory<CGAL::Sphere_shape<Traits> >);
- 
-  sd.add_shape_factory(new 
-    CGAL::Shape_factory<CGAL::Cone_shape<Traits> >);
- 
-  sd.add_shape_factory(new 
-    CGAL::Shape_factory<CGAL::Torus_shape<Traits> >);
-
   // Detects registered shapes with default parameters.
   sd.detect();
 
