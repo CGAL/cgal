@@ -80,7 +80,7 @@ namespace CGAL {
     }
 
     /*!
-      Provides the squared Euclidean distance of the point to the shape.
+      Computes squared Euclidean distance from query point to the shape.
      */
 
     virtual FT squared_distance(const Point &p) const = 0;
