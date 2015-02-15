@@ -22,7 +22,6 @@ typedef CGAL::Shape_detection_traits_3<Kernel,
   Pwn_vector::iterator, Point_pmap, Normal_pmap>            Traits;
 typedef CGAL::Shape_detection_3<Traits>                     Shape_detection;
 
-
 int main() 
 {
   // Points with normals.

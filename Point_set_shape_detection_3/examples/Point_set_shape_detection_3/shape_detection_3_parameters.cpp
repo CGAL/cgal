@@ -58,19 +58,20 @@ int main()
   // Setting parameters for shape detection.
   Shape_detection::Parameters parameters;
 
-  // 5% probability to miss the largest primitive at each iteration.
+  // Set probability to miss the largest primitive at each iteration.
   parameters.probability = 0.05;
  
   // Detect shapes with at least 500 points.
   parameters.min_points = 500;
 
-  // 0.002 maximum Euclidean distance between a point and a shape.
+  // Set maximum Euclidean distance between a point and a shape.
   parameters.epsilon = 0.002;
  
-  // 0.01 maximum Euclidean distance between points to be clustered.
+  // Set maximum Euclidean distance between points to be clustered.
   parameters.cluster_epsilon = 0.01;
  
-  // 0.9 < dot(surface_normal, point_normal); maximum normal deviation.    
+  // Set maximum normal deviation.
+  // 0.9 < dot(surface_normal, point_normal); 
   parameters.normal_threshold = 0.9;   
   
   // Detects shapes
@@ -86,7 +87,7 @@ int main()
   Shape_detection::Shape_iterator it = sd.shapes_begin();
   while (it != sd.shapes_end()) {
     const Shape_detection::Shape *shape = *it;
-    // prints the parameters of the detected shape.
+    // Prints the parameters of the detected shape.
     std::cout << (*it)->info() << std::endl;
 
     // Proceeds with next detected shape.

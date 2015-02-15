@@ -8,7 +8,7 @@
  */
 namespace CGAL {
     /*!
-     \brief My_Plane derives from Shape_base. The plane is parameterized by the normal vector and the distance to the origin.
+     \brief My_Plane derives from Shape_base. The plane is defined by its normal vector and distance to the origin.
      */
   template <class Sd_traits>
   class My_Plane : public Shape_base<Sd_traits> {
@@ -20,7 +20,7 @@ namespace CGAL {
     My_Plane() : Shape_base<Sd_traits>() {}
             
     /*!
-      Computes the squared Euclidean distance from the query point to the shape.
+      Computes squared Euclidean distance from query point to the shape.
       */
     FT squared_distance(const Point &p) const {
       const FT sd = (p - m_point_on_primitive) * m_normal;
@@ -30,7 +30,7 @@ namespace CGAL {
   protected:
 
     /*!
-      Constructs the shape based on a minimal set of samples from the input data.
+      Constructs shape based on minimal set of samples from the input data.
      */          
     virtual void create_shape(const std::vector<size_t> &indices) {
       const Point p1 = this->get_point(indices[0]);
@@ -67,8 +67,8 @@ namespace CGAL {
     std::string info() const {
       std::stringstream sstr;
       sstr << "Type: plane (" << m_normal.x() << ", " 
-		              << m_normal.y() << ", " 
-			      << m_normal.z() << ")x - " << m_d << " = 0" << " #Pts: " << this->m_indices.size();
+	    << m_normal.y() << ", " << m_normal.z() << ")x - " <<
+		m_d << " = 0" << " #Pts: " << this->m_indices.size();
 
       return sstr.str();
     }
