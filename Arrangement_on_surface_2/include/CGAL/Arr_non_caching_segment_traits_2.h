@@ -12,9 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
 // Author(s)     : Efi Fogel    <efif@post.tau.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
 //                 (base on old version by: Iddo Hanniel)
@@ -31,6 +28,7 @@
  * functors required by the concept it models.
  */
 
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_non_caching_segment_basic_traits_2.h>
@@ -38,17 +36,17 @@
 
 namespace CGAL {
 
-/*! \class 
- * A model of the ArrangementTraits_2 concept that handles general 
+/*! \class
+ * A model of the ArrangementTraits_2 concept that handles general
  * line segments.
  */
-template <class T_Kernel>
+template <class Kernel_T = Exact_predicates_exact_constructions_kernel>
 class Arr_non_caching_segment_traits_2 :
-  public Arr_non_caching_segment_basic_traits_2<T_Kernel>
+  public Arr_non_caching_segment_basic_traits_2<Kernel_T>
 {
 public:
-  typedef T_Kernel                                         Kernel;
-  
+  typedef Kernel_T                                         Kernel;
+
   typedef Arr_non_caching_segment_basic_traits_2<Kernel>   Base;
   typedef typename Base::Segment_assertions                Segment_assertions;
   typedef typename Base::Has_exact_division                Has_exact_division;
@@ -83,13 +81,13 @@ public:
 
   /*! Obtain the right endpoint of a given segment */
   typedef typename Base::Construct_max_vertex_2 Construct_max_vertex_2;
-  
+
   /*! Check whether a given segment is vertical */
   typedef typename Base::Is_vertical_2          Is_vertical_2;
-  
+
   /*! Return the location of a given point with respect to an input segment */
   typedef typename Base::Compare_y_at_x_2       Compare_y_at_x_2;
-  
+
   /*! Check if two segments or if two points are identical */
   typedef typename Base::Equal_2                Equal_2;
 
@@ -102,7 +100,7 @@ public:
    * intersection point
    */
   typedef typename Base::Compare_y_at_x_right_2 Compare_y_at_x_right_2;
-  
+
   //@}
 
   /// \name Types and functors introduced here (based on the kernel)
@@ -110,7 +108,7 @@ public:
 
   // Categories:
   typedef Tag_true                              Has_merge_category;
-  
+
   // Traits types:
   typedef X_monotone_curve_2                    Curve_2;
 
@@ -120,8 +118,8 @@ public:
   class Make_x_monotone_2
   {
   public:
-   
-    /*! 
+
+    /*!
      * Cut the given segment into x-monotone subcurves and insert them into
      * the given output iterator. As segments are always x_monotone, only one
      * x-monotone curve is inserted into the output iterator.
@@ -150,9 +148,9 @@ public:
    */
   class Split_2
   {
-    typedef Arr_non_caching_segment_traits_2<T_Kernel>    Self;
+    typedef Arr_non_caching_segment_traits_2<Kernel_T>    Self;
   public:
-    
+
     /*!
      * Split a given x-monotone curve at a given point into two sub-curves.
      * \param cv The curve to split
@@ -205,11 +203,12 @@ public:
   }
 
   /*! \class
-   * A functor for computing intersections. 
+   * A functor for computing intersections.
    */
   class Intersect_2
   {
-    typedef Arr_non_caching_segment_traits_2<T_Kernel>    Self;
+    typedef Arr_non_caching_segment_traits_2<Kernel_T>    Self;
+
   public:
     /*! Find the intersections of the two given segments and insert them into
      * the given output iterator. As two segments may itersect only once, only
@@ -226,7 +225,7 @@ public:
     {
       Base   base;
       Object res = base.intersect_2_object()(cv1, cv2);
-    
+
       // There is no intersection:
       if (res.is_empty())
         return (oi);
@@ -249,13 +248,13 @@ public:
       {
         // The intersection is a segment.
 
-        const X_monotone_curve_2 *ov = object_cast<X_monotone_curve_2>(&res);  
+        const X_monotone_curve_2 *ov = object_cast<X_monotone_curve_2>(&res);
         CGAL_assertion (ov != NULL);
 
         Self self;
         Comparison_result cmp1 = self.compare_endpoints_xy_2_object()(cv1);
         Comparison_result cmp2 = self.compare_endpoints_xy_2_object()(cv2);
-        
+
         if(cmp1 == cmp2)
         {
           // cv1 and cv2 have the same directions, maintain this direction
@@ -290,7 +289,7 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
@@ -299,7 +298,7 @@ public:
     friend class Arr_non_caching_segment_traits_2<Kernel>;
 
   public:
-   
+
     /*!
      * Check whether it is possible to merge two given x-monotone curves.
      * \param cv1 The first curve.
@@ -318,7 +317,7 @@ public:
       if (!equal(max_vertex(cv1), min_vertex(cv2)) &&
           !equal(max_vertex(cv2), min_vertex(cv1)))
         return false;
-      
+
       // Check if the two curves have the same supporting line.
       return (base->compare_slope_2_object()(cv1, cv2) == EQUAL);
     }
@@ -337,7 +336,7 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
@@ -388,7 +387,7 @@ public:
 
   //! \name Functor definitions for the Boolean set-operations.
   //@{
-  typedef typename Kernel::Construct_opposite_segment_2  Construct_opposite_2; 
+  typedef typename Kernel::Construct_opposite_segment_2  Construct_opposite_2;
 
   /*! Obtain a Construct_opposite_2 functor object */
   Construct_opposite_2 construct_opposite_2_object() const
@@ -396,7 +395,7 @@ public:
     return Construct_opposite_2();
   }
 
-  class Compare_endpoints_xy_2 
+  class Compare_endpoints_xy_2
   {
   public:
     /*!

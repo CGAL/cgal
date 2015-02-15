@@ -43,80 +43,92 @@ namespace CGAL {
 
 // If no template instantiation is provided, it will be instantiated
 // with Arr_segment_traits.
-template < typename SegmentTraits_2 >
-
+template <typename SegmentTraits_2 = Arr_segment_traits_2<> >
 class Arr_polyline_traits_2 : public Arr_polycurve_traits_2<SegmentTraits_2> {
 public:
-  typedef SegmentTraits_2                                 Segment_traits_2;
-
-  // Tag definitions:
-  typedef Tag_true                                        Has_left_category;
-  typedef Tag_true                                        Has_merge_category;
-  typedef Tag_false
-    Has_do_intersect_category;
-
-  typedef typename Segment_traits_2::Left_side_category   Left_side_category;
-  typedef typename Segment_traits_2::Bottom_side_category Bottom_side_category;
-  typedef typename Segment_traits_2::Top_side_category    Top_side_category;
-  typedef typename Segment_traits_2::Right_side_category  Right_side_category;
-
-  typedef typename Arr_are_all_sides_oblivious_tag<Left_side_category,
-                                                   Bottom_side_category,
-                                                   Top_side_category,
-                                                   Right_side_category>::result
-    Are_all_sides_oblivious_tag;
+  typedef SegmentTraits_2                             Segment_traits_2;
 
 private:
-  typedef Arr_polyline_traits_2<Segment_traits_2>  Self;
-  typedef Arr_polycurve_traits_2<Segment_traits_2> Base;
-
-  // Data members:
-  const Segment_traits_2* m_geom_traits;    // The base segment-traits class.
-  bool m_own_traits;
-
-private:
-  enum { INVALID_INDEX = 0xffffffff };
+  typedef Arr_polyline_traits_2<Segment_traits_2>     Self;
+  typedef Arr_polycurve_traits_2<Segment_traits_2>    Base;
 
 public:
-  /*! Default constructor */
-  Arr_polyline_traits_2() :
-    m_geom_traits(new Segment_traits_2()), m_own_traits(true)
-  {}
+  /// \name Types inherited from the polycurve traits class.
+  //@{
 
-  /*! Constructor with given segment traits
+  // Tag definitions:
+  typedef typename Base::Has_left_category            Has_left_category;
+  typedef typename Base::Has_merge_category           Has_merge_category;
+  typedef typename Base::Has_do_intersect_category
+    Has_do_intersect_category;
+
+  typedef typename Base::Left_side_category           Left_side_category;
+  typedef typename Base::Bottom_side_category         Bottom_side_category;
+  typedef typename Base::Top_side_category            Top_side_category;
+  typedef typename Base::Right_side_category          Right_side_category;
+
+  typedef typename Base::Are_all_sides_oblivious_tag
+    Are_all_sides_oblivious_tag;
+
+  typedef typename Base::X_monotone_subcurve_2         X_monotone_subcurve_2;
+  typedef typename Base::Subcurve_2                   Subcurve_2;
+
+  typedef typename Base::Point_2                      Point_2;
+  typedef typename Base::Curve_2                      Curve_2;
+  typedef typename Base::X_monotone_curve_2           X_monotone_curve_2;
+
+  typedef typename Base::Multiplicity                 Multiplicity;
+
+  typedef typename Base::Compare_x_2                  Compare_x_2;
+  typedef typename Base::Compare_xy_2                 Compare_xy_2;
+  typedef typename Base::Construct_min_vertex_2       Construct_min_vertex_2;
+  typedef typename Base::Construct_max_vertex_2       Construct_max_vertex_2;
+  typedef typename Base::Is_vertical_2                Is_vertical_2;
+  typedef typename Base::Compare_y_at_x_2             Compare_y_at_x_2;
+  typedef typename Base::Compare_y_at_x_left_2        Compare_y_at_x_left_2;
+  typedef typename Base::Compare_y_at_x_right_2       Compare_y_at_x_right_2;
+  typedef typename Base::Equal_2                      Equal_2;
+  typedef typename Base::Compare_endpoints_xy_2       Compare_endpoints_xy_2;
+  typedef typename Base::Construct_opposite_2         Construct_opposite_2;
+  typedef typename Base::Approximate_2                Approximate_2;
+  typedef typename Base::Parameter_space_in_x_2       Parameter_space_in_x_2;
+  typedef typename Base::Parameter_space_in_y_2       Parameter_space_in_y_2;
+  typedef typename Base::Compare_x_on_boundary_2      Compare_x_on_boundary_2;
+  typedef typename Base::Compare_x_at_limit_2         Compare_x_at_limit_2;
+  typedef typename Base::Compare_x_near_limit_2       Compare_x_near_limit_2;
+  typedef typename Base::Compare_y_on_boundary_2      Compare_y_on_boundary_2;
+  typedef typename Base::Compare_y_near_boundary_2    Compare_y_near_boundary_2;
+  typedef typename Base::Is_on_y_identification_2     Is_on_y_identification_2;
+  typedef typename Base::Is_on_x_identification_2     Is_on_x_identification_2;
+
+  typedef typename Base::Split_2                      Split_2;
+  typedef typename Base::Intersect_2                  Intersect_2;
+  typedef typename Base::Are_mergeable_2              Are_mergeable_2;
+  typedef typename Base::Merge_2                      Merge_2;
+
+  typedef typename Base::Number_of_points_2           Number_of_points_2;
+  typedef typename Base::Trim_2                       Trim_2;
+
+  //@}
+
+public:
+  /*! Construct default. */
+  Arr_polyline_traits_2() : Base() {}
+
+  /*! Construct from a segment traits
    * \param geom_traits an already existing segment tarits which is passed will
    *        be used by the class.
    */
   Arr_polyline_traits_2(const Segment_traits_2* geom_traits) :
-    m_geom_traits(geom_traits), m_own_traits(false)
+    Base(geom_traits)
   {}
 
-  /* Destructor
-   * Deletes the segment tarits class in case it was constructed during the
-   * construction of this.
-   */
-  ~Arr_polyline_traits_2() { if (m_own_traits) delete m_geom_traits; }
-
-  /*! Obtain the segment traits.
-   * \return the segment traits.
-   */
-  const Segment_traits_2* segment_traits_2() const { return m_geom_traits; }
-
-  /// \name Types and functors inherited from the base segment traits.
+  /// \name Types and functors defined here.
   //@{
 
-  // Traits types:
-  typedef typename Segment_traits_2::Point_2            Point_2;
-  typedef typename Segment_traits_2::X_monotone_curve_2 X_monotone_segment_2;
-  typedef typename Segment_traits_2::Curve_2            Segment_2;
-
-  typedef typename Base::Curve_2                        Curve_2;
-  typedef typename Base::X_monotone_curve_2             X_monotone_curve_2;
-
-  typedef typename Segment_traits_2::Multiplicity       Multiplicity;
-
-
-
+  /* Functor to augment a polyline by either adding a vertex or a segment
+   * at the back.
+   */
   class Push_back_2 : public Base::Push_back_2 {
   protected:
     typedef Arr_polyline_traits_2<SegmentTraits_2>     Polyline_traits_2;
@@ -136,13 +148,13 @@ public:
     /* Append a point `p` to an existing polyline `cv` at the back. */
     void operator()(Curve_2& cv, const Point_2& p) const
     {
-      typedef typename Curve_2::Segments_size_type size_type;
-      size_type num_seg = cv.number_of_segments();
+      typedef typename Curve_2::size_type size_type;
+      size_type num_seg = cv.number_of_subcurves();
       CGAL_precondition(num_seg > 0);
       int last_seg = num_seg-1;
 
-      const SegmentTraits_2* seg_traits = m_poly_traits.segment_traits_2();
-      typename SegmentTraits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
+      const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+      typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
         seg_traits->compare_endpoints_xy_2_object();
 
       /* Since it is desired to maintain `cv` well-oriented, we have
@@ -151,14 +163,14 @@ public:
        * the target, i.e. the actual end of `cv`.
        */
       if (cmp_seg_endpts(cv[last_seg]) == SMALLER) {
-        typename SegmentTraits_2::Construct_max_vertex_2 get_max_v =
+        typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
           seg_traits->construct_max_vertex_2_object();
-        cv.push_back(Segment_2(get_max_v(cv[last_seg]), p));
+        cv.push_back(Subcurve_2(get_max_v(cv[last_seg]), p));
       }
       else {
-        typename SegmentTraits_2::Construct_min_vertex_2 get_min_v =
+        typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
           seg_traits->construct_min_vertex_2_object();
-        cv.push_back(Segment_2(get_min_v(cv[last_seg]), p));
+        cv.push_back(Subcurve_2(get_min_v(cv[last_seg]), p));
       }
     }
 
@@ -170,16 +182,16 @@ public:
     /* Append a point `p` to an existing polyline `xcv` at the back. */
     void operator()(X_monotone_curve_2& xcv, const Point_2& p) const
     {
-      typedef typename X_monotone_curve_2::Segments_size_type size_type;
-      size_type num_seg = xcv.number_of_segments();
+      typedef typename X_monotone_curve_2::size_type size_type;
+      size_type num_seg = xcv.number_of_subcurves();
       CGAL_precondition(num_seg > 0);
 
-      const SegmentTraits_2* seg_traits = m_poly_traits.segment_traits_2();
+      const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
       CGAL_precondition_code
         (
-         typename SegmentTraits_2::Compare_x_2 comp_x =
+         typename Segment_traits_2::Compare_x_2 comp_x =
            seg_traits->compare_x_2_object();
-         typename SegmentTraits_2::Compare_xy_2 comp_xy =
+         typename Segment_traits_2::Compare_xy_2 comp_xy =
            seg_traits->compare_xy_2_object();
          typename Base::Is_vertical_2 is_vertical =
            m_poly_traits.is_vertical_2_object();
@@ -187,7 +199,7 @@ public:
 
       if (seg_traits->compare_endpoints_xy_2_object()(xcv[0]) == SMALLER) {
         // xcv is oriented left-to-right
-        typename SegmentTraits_2::Construct_max_vertex_2 get_max_v =
+        typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
           seg_traits->construct_max_vertex_2_object();
         CGAL_precondition
           (
@@ -197,11 +209,11 @@ public:
             (comp_x(get_max_v(xcv[num_seg-1]), p) == EQUAL) &&
             (comp_xy(get_max_v(xcv[num_seg-1]), p) == SMALLER))
            );
-        xcv.push_back(X_monotone_segment_2(get_max_v(xcv[num_seg-1]), p));
+        xcv.push_back(X_monotone_subcurve_2(get_max_v(xcv[num_seg-1]), p));
       }
       else {
         // xcv is oriented right-to-left
-        typename SegmentTraits_2::Construct_min_vertex_2 get_min_v =
+        typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
           seg_traits->construct_min_vertex_2_object();
         CGAL_precondition
           (
@@ -211,19 +223,19 @@ public:
             (comp_x(get_min_v(xcv[num_seg-1]), p) == EQUAL) &&
             (comp_xy(get_min_v(xcv[num_seg-1]), p) == LARGER))
            );
-        xcv.push_back(X_monotone_segment_2(get_min_v(xcv[num_seg-1]), p));
+        xcv.push_back(X_monotone_subcurve_2(get_min_v(xcv[num_seg-1]), p));
       }
     }
 
     // /* Append a segment `seg` to an existing polyline `xcv` at the back. */
     // void operator()(X_monotone_curve_2& xcv,
-    //                 const X_monotone_segment_2& seg) const
+    //                 const X_monotone_subcurve_2& seg) const
     // {
     //   Base::Push_back_2::operator()(xcv, seg);
     // }
   };
 
-  /*! Get a Push_back_2 functor object. */
+  /*! Obtain a Push_back_2 functor object. */
   Push_back_2 push_back_2_object() const { return Push_back_2(*this); }
 
   /* Functor to augment a polyline by either adding a vertex or a segment
@@ -250,43 +262,42 @@ public:
     {
       CGAL_precondition_code
         (
-         typedef typename Curve_2::Segments_size_type size_type;
-         size_type num_seg = cv.number_of_segments();
+         typedef typename Curve_2::size_type size_type;
+         size_type num_seg = cv.number_of_subcurves();
          );
       CGAL_precondition(num_seg > 0);
 
-      const SegmentTraits_2* geom_traits = m_poly_traits.geometry_traits_2();
-      typename SegmentTraits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
+      const Segment_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
+      typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
         geom_traits->compare_endpoints_xy_2_object();
 
       if (cmp_seg_endpts(cv[0]) == SMALLER) {
-        typename SegmentTraits_2::Construct_min_vertex_2 get_min_v =
+        typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
           geom_traits->construct_min_vertex_2_object();
-        cv.push_front(Segment_2(p, get_min_v(cv[0])));
+        cv.push_front(Subcurve_2(p, get_min_v(cv[0])));
       }
       else {
-        typename SegmentTraits_2::Construct_max_vertex_2 get_max_v =
+        typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
           geom_traits->construct_max_vertex_2_object();
-        cv.push_front(Segment_2(p, get_max_v(cv[0])));
+        cv.push_front(Subcurve_2(p, get_max_v(cv[0])));
       }
     }
 
-
-    /* Append a segment `seg` to an existing polyline `cv` at the front. */
-    void operator()(Curve_2& cv, const Segment_2& seg) const
+    /*! Append a segment `seg` to an existing polyline `cv` at the front. */
+    void operator()(Curve_2& cv, const Subcurve_2& seg) const
     { Base::Push_front_2::operator()(cv, seg); }
 
-    /* Append a point `p` to an existing polyline `xcv` at the front. */
+    /*! Append a point `p` to an existing polyline `xcv` at the front. */
     void operator()(const X_monotone_curve_2& xcv, Point_2& p) const
     {
       const SegmentTraits_2* geom_traits = m_poly_traits.geometry_traits_2();
       CGAL_precondition_code
         (
-         typedef typename X_monotone_curve_2::Segments_size_type size_type;
-         size_type num_seg = xcv.number_of_segments();
-         typename SegmentTraits_2::Compare_x_2 comp_x =
+         typedef typename X_monotone_curve_2::size_type size_type;
+         size_type num_seg = xcv.number_of_subcurves();
+         typename Segment_traits_2::Compare_x_2 comp_x =
          geom_traits->compare_x_2_object();
-         typename SegmentTraits_2::Compare_xy_2 comp_xy =
+         typename Segment_traits_2::Compare_xy_2 comp_xy =
          geom_traits->compare_xy_2_object();
          typename Base::Is_vertical_2 is_vertical =
            m_poly_traits.is_vertical_2_object();
@@ -295,7 +306,7 @@ public:
 
       if (geom_traits->compare_endpoints_xy_2_object()(xcv[0]) == SMALLER) {
         // xcv is oriented left-to-right
-        typename SegmentTraits_2::Construct_max_vertex_2 get_max_v =
+        typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
           geom_traits->construct_max_vertex_2_object();
         CGAL_precondition
           (
@@ -305,11 +316,11 @@ public:
             (comp_x(get_max_v(xcv[0]), p) == EQUAL) &&
             (comp_xy(get_max_v(xcv[0]), p) == LARGER))
            );
-        xcv.push_front(X_monotone_segment_2(p, get_max_v(xcv[0])));
+        xcv.push_front(X_monotone_subcurve_2(p, get_max_v(xcv[0])));
       }
       else {
         // xcv is oriented right-to-left
-        typename SegmentTraits_2::Construct_min_vertex_2 get_min_v =
+        typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
           geom_traits->construct_min_vertex_2_object();
         CGAL_precondition
           (
@@ -319,13 +330,13 @@ public:
             (comp_x(get_min_v(xcv[0]), p) == EQUAL) &&
             (comp_xy(get_min_v(xcv[0]), p) == SMALLER))
            );
-        xcv.push_front(X_monotone_segment_2(p, get_min_v(xcv[0])));
+        xcv.push_front(X_monotone_subcurve_2(p, get_min_v(xcv[0])));
       }
     }
 
     /* Append a segment `seg` to an existing polyline `xcv` at the front. */
     void operator()(X_monotone_curve_2& xcv,
-                    const X_monotone_segment_2& seg) const
+                    const X_monotone_subcurve_2& seg) const
     { Base::Push_front_2::operator()(xcv, seg); }
   };
 
@@ -347,15 +358,15 @@ public:
     /* Obtain an polyline connecting two given endpoints.
      */
     Curve_2 operator()(const Point_2& p, const Point_2& q) const
-    { Base::Construct_curve_2::operator()(p, q); }
+    { return Curve_2(Subcurve_2(p, q)); }
 
     /* Obtain a polyline consists of one given segment.
      */
-    Curve_2 operator()(const Segment_2& seg) const
+    Curve_2 operator()(const Subcurve_2& seg) const
     { return Base::Construct_curve_2::operator()(seg); }
 
     /* Construct a well-oriented polyline from a range of either
-     * `SegmentTraits::Point_2` or `SegmentTraits::Segment_2`.
+     * `Segment_traits::Point_2` or `Segment_traits::Subcurve_2`.
      */
     template <typename ForwardIterator>
     Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const
@@ -394,7 +405,7 @@ public:
                             "Range of points must contain at least 2 points");
 
       // Container of the segments to be constructed from the range of points
-      std::list<Segment_2> segs;
+      std::list<Subcurve_2> segs;
 
       CGAL_precondition_code
         (
@@ -411,7 +422,7 @@ public:
       while (next != end) {
         CGAL_precondition_msg(!equal(*curr,*next),
                               "Cannot construct a degenerated segment");
-        segs.push_back(Segment_2(*curr, *next));
+        segs.push_back(Subcurve_2(*curr, *next));
         curr = next++;
       }
 
@@ -448,7 +459,7 @@ public:
       CGAL_precondition_msg
         (!this->m_poly_traits.geometry_traits_2()->equal_2_object()(p,q),
          "Cannot construct a degenerated segment as a polyline");
-      X_monotone_segment_2 seg =  this->m_poly_traits.geometry_traits_2()->
+      X_monotone_subcurve_2 seg =  this->m_poly_traits.geometry_traits_2()->
         construct_x_monotone_curve_2_object()(p, q);
 
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
@@ -466,7 +477,7 @@ public:
      * \pre seg is not degenerated.
      * \return An x-monotone polyline with one segment.
      */
-    X_monotone_curve_2 operator()(const X_monotone_segment_2& seg) const
+    X_monotone_curve_2 operator()(const X_monotone_subcurve_2& seg) const
     { return Base::Construct_x_monotone_curve_2::operator()(seg); }
 
     /*! Construct an x-monotone polyline from a range of elements.
@@ -522,7 +533,7 @@ public:
                             "Range of points must contain at least 2 points");
 
       // Container of the segments to be constructed from the range of points
-      std::list<X_monotone_segment_2> segs;
+      std::list<X_monotone_subcurve_2> segs;
       // Make sure the range of points contains at least two points.
       ForwardIterator next = begin;
       ForwardIterator curr = next++;
@@ -552,7 +563,7 @@ public:
         CGAL_precondition(compare_xy(*curr, *next) == cmp_xy_res);
         CGAL_precondition(compare_x(*curr, *next) == cmp_x_res);
 
-        segs.push_back(X_monotone_segment_2(*curr, *next));
+        segs.push_back(X_monotone_subcurve_2(*curr, *next));
         curr = next++;
       }
 
@@ -573,26 +584,12 @@ public:
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
   { return Construct_x_monotone_curve_2(*this); }
 
-  // These functors are defined in the base class.
-  // class Compare_x_2 {};
-  // class Compare_xy_2 {};
-  // class Number_of_points_2 {};
-  // class Construct_max_vertex_2 {};
-  // class Is_vertical_2 {};
-  // class Compare_y_at_x_2 {};
-  // class Compare_y_at_x_left_2 {};
-  // class Compare_y_at_x_right_2 {};
-  // class Equal_2 {};
-  // class Compare_endpoints_xy_2 {};
-  // class Construct_opposite_2 {};
-  // class Make_x_monotone_2 {};
-  // class Push_back_2 {}:
-  // class Push_front_2 {};
-  // class Split_2 {};
-  // class Intersect_2 {};
-  // class Are_mergeable_2 {};
-  // class Merge_2 {};
-  // class Trim_2{};
+  /*! Deprecated!
+   * Obtain the segment traits.
+   * \return the segment traits.
+   */
+  CGAL_DEPRECATED const Segment_traits_2* segment_traits_2() const
+  { return this->geometry_traits_2(); }
 };
 
 } // namespace CGAL
