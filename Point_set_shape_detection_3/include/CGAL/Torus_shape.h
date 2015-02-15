@@ -28,13 +28,13 @@ namespace CGAL {
     Torus_shape() : Shape_base<Sd_traits>() {}
       
       /*!
-       Direction of the symmetry axis.
+       Direction of symmetry axis.
        */
     Vector axis() const {
       return m_axis;
     }
       /*!
-       Center point on the symmetry axis.
+       Center point on symmetry axis.
        */
     Point center() const {
       return m_center;
@@ -62,36 +62,39 @@ namespace CGAL {
       return m_majorRad;
     }
       
-      /*!
-            Minor radius of the torus.
-            */
+    /*!
+      Minor radius of the torus.
+      */
     FT minor_radius() const {
       return m_minorRad;
     }
 
     /*!
-      Provides the squared Euclidean distance of the point to the shape.
+      Computes squared Euclidean distance from query point to the shape.
       */
-    FT squared_distance(const Point &_p) const {
-      Vector d = _p - m_center;
-      // height over symmetry plane
-      FT p = d * m_axis;
+    FT squared_distance(const Point &p) const {
+
+      const Vector d = p - m_center;
+      
+	  // height over symmetry plane
+      const FT p = d * m_axis;
 
       // distance from axis in plane
-      FT l = sqrt(d * d - p * p);
+      const FT l = sqrt(d * d - p * p);
 
       // inPlane distance from circle
-      FT l2 = m_majorRad - l;
+      const FT l2 = m_majorRad - l;
 
       // distance from torus
-      l = sqrt(p * p + l2 * l2) - m_minorRad;
+      const dist = sqrt(p * p + l2 * l2) - m_minorRad;
 
-      return l * l;
+      return dist * dist;
     }
 
   protected:
       /// \cond SKIP_IN_MANUAL
       void create_shape(const std::vector<size_t> &indices) {
+
       Point p1 = get(this->m_point_pmap, *(this->m_first + indices[0]));
       Point p2 = get(this->m_point_pmap, *(this->m_first + indices[1]));
       Point p3 = get(this->m_point_pmap, *(this->m_first + indices[2]));

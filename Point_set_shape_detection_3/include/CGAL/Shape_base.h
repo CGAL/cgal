@@ -13,6 +13,13 @@
  \file Shape_base.h
  */
 
+// CODE REVIEW
+// fix hypergeometrical_dist() 
+// make code more modular: connected_component()
+// use const where relevant, eg wrapU
+// initialize all variables including max
+
+
 namespace CGAL {
   namespace internal {
     template<class PointAccessor>
@@ -86,7 +93,7 @@ namespace CGAL {
     virtual void create_shape(const std::vector<size_t> &indices) = 0;
     
     /*!
-      Determines the largest cluster of with a point to point distance not larger than cluster_epsilon.
+      Determines the largest cluster with a point-to-point distance not larger than cluster_epsilon.
      */
     size_t connected_component(FT cluster_epsilon) {
       if (m_indices.size() == 0)
@@ -232,19 +239,19 @@ namespace CGAL {
     }
  
     /*!
-      Provides the squared Euclidean distance of a set of points.
+      Computes squared Euclidean distance from a set of points to the shape.
      */
     virtual void squared_distance(std::vector<FT> &dists,
       const std::vector<size_t> &indices) = 0;   
 
     /*!
-      Provides the deviation of the point normal from the surface normal at the projected point in form of the dot product.
+      Computes the deviation of the point normal from the surface normal at the projected point in form of the dot product.
      */
     virtual void cos_to_normal(std::vector<FT> &angles,
       const std::vector<size_t> &indices) const = 0;
 
     /*!
-      Defines the minimal number of samples required for construction.
+      Returns minimal number of samples required for construction.
      */
     virtual size_t required_samples() const = 0;
 
@@ -281,7 +288,7 @@ namespace CGAL {
       return  m_upper_bound;
     }
 
-    //return last computed score, or -1 if no score yet
+    // return last computed score, or -1 if no score yet
     FT inline score() const {
       return m_score;
     } 
@@ -290,7 +297,7 @@ namespace CGAL {
       return m_nb_subset_used;
     }
 
-    //so we can sort by expected value
+    // sorting is performed by expected value
     operator FT() const {
       return expected_value();
     }

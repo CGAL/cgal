@@ -65,11 +65,11 @@ namespace CGAL {
     }
 
     /*!
-      Provides the squared Euclidean distance of the point to the shape.
+      Computes the squared Euclidean distance from query point to the shape.
       */
-    FT squared_distance(const Point &_p) const {
-      FT d = sqrt((m_sphere.center() - _p).squared_length()) - sqrt(m_sphere.squared_radius());
-      return d*d;
+    FT squared_distance(const Point &p) const {
+      const FT d = sqrt((m_sphere.center() - p).squared_length()) - sqrt(m_sphere.squared_radius());
+      return d * d;
     }
 
   protected:
@@ -85,8 +85,7 @@ namespace CGAL {
 
 
       // Determine center: select midpoint of shortest line segment
-      //  between p1 and p2
-      // implemented from "3D game engine design" by Eberly 2001
+      // between p1 and p2. Implemented from "3D game engine design" by Eberly 2001
 
       Vector diff = p1 - p2;
       FT a = n1 * n1;
@@ -96,8 +95,8 @@ namespace CGAL {
 
       FT det = abs(a * c - b * b);
 
-      // parallel?
-      if (det < 0.00001) {
+      // degenerated when nearly parallel
+      if (det < (FT)0.00001) {
         this->m_isValid = false;
         return;
       }
@@ -115,7 +114,7 @@ namespace CGAL {
       FT d1 = sqrt(v1.squared_length());
       FT d2 = sqrt(v2.squared_length());
 
-      if (abs(d1-d2) > 2 * this->m_epsilon) {
+      if (abs(d1 - d2) > (FT)2.0 * this->m_epsilon) {
         this->m_isValid = false;
         return;
       }

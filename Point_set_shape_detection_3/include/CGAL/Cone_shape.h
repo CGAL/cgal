@@ -15,6 +15,12 @@
  \file Cone_shape.h
  */
 
+// CODE REVIEW
+// fix naming
+// check degenerate cases, eg every time a division occurs
+// is m_pointOnPrimitive used?
+// 
+
 
 namespace CGAL {
     /*!
@@ -76,7 +82,7 @@ namespace CGAL {
       }
 
       /*!
-      Provides the squared Euclidean distance of the point to the shape.
+      Computes squared Euclidean distance from query point to the shape.
       */ 
       FT squared_distance(const Point &_p) const {
         Vector toApex = _p - m_apex;

@@ -6,8 +6,12 @@
 #include <stack>
 
 #include <CGAL/Bbox_3.h>
-
 #include "Shape_base.h"
+
+
+// CODE REVIEW
+// fix naming: m_bucketSize -> m_bucket_size
+// make code modular
 
 extern int scoreTime;
 

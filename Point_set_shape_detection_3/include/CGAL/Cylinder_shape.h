@@ -11,6 +11,12 @@
 #define M_PI_2 1.57079632679489661923
 #endif
 
+// CODE REVIEW
+// fix naming, eg _p
+// check all degenerate cases
+// use (FT) in front of const such as (FT)1.0
+// remove commented lines
+
 /*!
  \file Cylinder_shape.h
  */
@@ -65,7 +71,7 @@ namespace CGAL {
     }
 
     /*!
-      Provides the squared Euclidean distance of the point to the shape.
+      Computes squared Euclidean distance from query point to the shape.
       */ 
     FT squared_distance(const Point &_p) const {
       Vector a = m_axis.to_vector();

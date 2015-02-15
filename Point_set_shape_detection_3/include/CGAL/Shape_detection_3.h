@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2013-2015 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     : Sven Oesau, Yannick Verdié, Clément Jamin
+// Author(s)     : Sven Oesau, Yannick Verdié, Clément Jamin, Pierre Alliez
 //
 //******************************************************************************
 // File Description :
@@ -88,9 +88,9 @@ namespace CGAL {
   /*!
 \brief Implementation of a RANSAC method for shape detection.
 
-Given a point set in 3D space with unoriented normals sampled surfaces,
+Given a point set in 3D space with unoriented normals, sampled on surfaces,
 the method detects sets of connected points on the surface of primitive shapes.
-Each input point is assigned to at most one detected primitive shape.
+Each input point is assigned to either none or at most one detected primitive shape.
 This implementation follows the algorithm published by Schnabel
 et al. in 2007 \cgalCite{Schnabel07}.
 
@@ -137,11 +137,11 @@ et al. in 2007 \cgalCite{Schnabel07}.
        */
     struct Parameters {
       Parameters() : probability(0.01), min_points(SIZE_MAX), normal_threshold(0.9), epsilon(-1), cluster_epsilon(-1) {}
-      FT probability;         ///< Probability to control search thoroughness. The default value is 0.05.
-      size_t min_points;      ///< Minimum number of points of a shape. The default value is 1% of the number input points.
-      FT epsilon;             ///< Maximal euclidian distance allowed between point and shape. The default value is 1% of the bounding box diagonal.
-      FT normal_threshold;	  ///< Maximum normal deviation from point normal to normal on shape at projected point. The default value is 0.9, which corresponds to a tolerance of approximately 25 degrees.
-      FT cluster_epsilon;	    ///< Maximum distance between points to be considered connected. The default value is 1% of the bounding box diagonal.
+      FT probability;         ///< Probability to control search endurance. Default value 0.05.
+      size_t min_points;      ///< Minimum number of points of a shape. Default value 1% of total number of input points.
+      FT epsilon;             ///< Maximum tolerance Euclidian distance from a point and a shape. Default value 1% of bounding box diagonal.
+      FT normal_threshold;	  ///< Maximum tolerance normal deviation from a point's normal to the normal on shape at projected point. Default value 0.9 (around 25 degrees).
+      FT cluster_epsilon;	    ///< Maximum distance between points to be considered connected. Default value 1% of bounding box diagonal.
     };
     /// @}
 
@@ -269,13 +269,13 @@ et al. in 2007 \cgalCite{Schnabel07}.
     /// \name Detection 
     /// @{
     /*! 
-      This function initiates the shape detection. Shape types to be searched
-      after have to be registered with 'add_shape_factory' before.
+      This function initiates the shape detection. Shape types to be detected
+      must be registered before with 'add_shape_factory'.
     */ 
     void detect(
-      const Parameters &options = Parameters()///< Parameterization for the shape detection.
+      const Parameters &options = Parameters()///< Parameters for shape detection.
                 ) {
-      //no shape types for detection, exit
+      // no shape types for detection, exit
       if (m_shapeFactories.size() == 0) return;
 
       // use bounding box diagonal as reference for default values
@@ -393,8 +393,8 @@ et al. in 2007 \cgalCite{Schnabel07}.
         if (candidates.empty())
           continue;
 
-        //now get the best candidate in the current set of all candidates
-        //Note that the function sort the candidates:
+        // Now get the best candidate in the current set of all candidates
+        // Note that the function sorts the candidates:
         //  the best candidate is always the last element of the vector
 
         Shape *best_Candidate = 
@@ -554,14 +554,14 @@ et al. in 2007 \cgalCite{Schnabel07}.
     }
       
     /*! 
-      Number of points that have not been assigned to a shape.
+      Number of points not assigned to a shape.
     */ 
     std::size_t number_of_unassigned_points() {
       return m_numAvailablePoints;
     }
     
     /*! 
-      Provides the iterator to the index of the first point in
+      Provides iterator to the index of the first point in
       the input data that has not been assigned to a shape.
     */ 
     Point_index_iterator unassigned_points_begin() {
@@ -739,7 +739,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
     Normal_pmap m_normal_pmap;
 
     FT m_max_radiusSphere_Octree;
-    std::vector<FT> m_level_weighting;  	//sum must be 1
+    std::vector<FT> m_level_weighting;  // sum must be 1
   };
 }
 
