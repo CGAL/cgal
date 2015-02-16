@@ -1669,7 +1669,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
                                                  X_monotone_curve_2& xcv)
 {
   Base_geom_traits traits;
-  Base_geom_traits::Construct_x_monotone_subcurve_2 construct_segment_2 =
+  Base_geom_traits::Construct_x_monotone_segment_2 construct_segment_2 =
     traits.construct_x_monotone_segment_2_object();
   char type;
   is >> type;
