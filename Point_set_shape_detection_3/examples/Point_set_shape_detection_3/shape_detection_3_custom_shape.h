@@ -17,17 +17,14 @@ namespace CGAL {
 
   public:
     My_Plane() : Shape_base<Sd_traits>() {}
-            
 
     //  Computes squared Euclidean distance from query point to the shape.
-    FT squared_distance(const Point &p) const {
+    virtual FT squared_distance(const Point &p) const {
       const FT sd = (p - m_point_on_primitive) * m_normal;
       return sd * sd;
     }
 
   protected:
-
-
     // Constructs shape based on minimal set of samples from the input data.    
     virtual void create_shape(const std::vector<size_t> &indices) {
       const Point p1 = this->get_point(indices[0]);
@@ -42,9 +39,8 @@ namespace CGAL {
 	  m_isValid = true;
     }
 
-
     // Computes squared Euclidean distance from a set of points.
-	void squared_distance(std::vector<FT> &dists,
+	virtual void squared_distance(std::vector<FT> &dists,
                           const std::vector<size_t> &indices) {
       for (size_t i = 0; i < indices.size(); i++) {
         const FT sd = (this->get_point(indices[i])
@@ -57,7 +53,7 @@ namespace CGAL {
       Computes the normal deviation between shape and
 	  a set of points with normals.
      */
-    void cos_to_normal(std::vector<FT> &angles,
+    virtual void cos_to_normal(std::vector<FT> &angles,
                        const std::vector<size_t> &indices) const {
       for (size_t i = 0; i < indices.size(); i++)
         angles[i] = abs(this->get_normal(indices[i]) * m_normal);
@@ -66,11 +62,10 @@ namespace CGAL {
     // Returns the number of required samples for construction.
     virtual size_t required_samples() const {
       return 3;
-    } 
-    
+    }
 
     // Returns a string with shape parameters.
-    std::string info() const {
+    virtual std::string info() const {
       std::stringstream sstr;
       sstr << "Type: plane (" << m_normal.x() << ", " 
         << m_normal.y() << ", " << m_normal.z() << ")x - " <<
