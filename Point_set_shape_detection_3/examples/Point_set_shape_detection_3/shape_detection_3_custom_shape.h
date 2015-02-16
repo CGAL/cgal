@@ -8,7 +8,8 @@
  */
 namespace CGAL {
     /*!
-     \brief My_Plane derives from Shape_base. The plane is defined by its normal vector and distance to the origin.
+     \brief My_Plane derives from Shape_base. The plane is defined by
+	 its normal vector and distance to the origin.
      */
   template <class Sd_traits>
   class My_Plane : public Shape_base<Sd_traits> {
@@ -48,27 +49,40 @@ namespace CGAL {
     /*!
       Computes squared Euclidean distance from a set of points.
      */    
-    void squared_distance(std::vector<FT> &dists, const std::vector<size_t> &indices) {
+	void squared_distance(std::vector<FT> &dists,
+                          const std::vector<size_t> &indices) {
       for (size_t i = 0; i < indices.size(); i++) {
-        const FT sd = (this->get_point(indices[i]) - m_point_on_primitive) * m_normal;
+        const FT sd = (this->get_point(indices[i])
+                       - m_point_on_primitive) * m_normal;
         dists[i] = sd * sd;
       }
     }
-
-    void cos_to_normal(std::vector<FT> &angles, const std::vector<size_t> &indices) const {
+    
+    /*!
+      Computes the normal deviation between shape and
+	  a set of points with normals.
+     */
+    void cos_to_normal(std::vector<FT> &angles,
+                       const std::vector<size_t> &indices) const {
       for (size_t i = 0; i < indices.size(); i++)
         angles[i] = abs(this->get_normal(indices[i]) * m_normal);
     }
-
+    
+    /*!
+      Returns the number of required samples for construction.
+     */ 
     virtual size_t required_samples() const {
       return 3;
     } 
     
+    /*!
+      Returns a string with shape parameters.
+     */     
     std::string info() const {
       std::stringstream sstr;
       sstr << "Type: plane (" << m_normal.x() << ", " 
-	    << m_normal.y() << ", " << m_normal.z() << ")x - " <<
-		m_d << " = 0" << " #Pts: " << this->m_indices.size();
+        << m_normal.y() << ", " << m_normal.z() << ")x - " <<
+        m_d << " = 0" << " #Pts: " << this->m_indices.size();
 
       return sstr.str();
     }
