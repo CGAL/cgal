@@ -23,6 +23,7 @@
 #include <stdexcept>
 
 #include <boost/graph/graph_traits.hpp>
+#include <CGAL/boost/graph/properties.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/helpers.h>
