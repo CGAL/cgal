@@ -2,7 +2,7 @@
 #define CGAL_SHAPE_DETECTION_3_TORUS_SHAPE_H
 
 #include "Shape_base.h"
-#include <math.h>
+#include <math.h> //CJ: Why include both math.h and cmath => keep the second one and add some "std::"
 #include <cmath>
 
 /*!
