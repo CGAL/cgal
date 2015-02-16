@@ -186,8 +186,6 @@ face(typename boost::graph_traits<Dual<P> >::halfedge_descriptor h,
 {
   const typename Dual<P>::Primal& primal = dual.primal();
   return target(h,primal);
-  const typename Dual<P>::Primal& primal = dual.primal();
-  return vertex(h,primal);
 }
 
 template <typename P>
