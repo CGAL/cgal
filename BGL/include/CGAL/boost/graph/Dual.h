@@ -78,6 +78,13 @@ struct property_map<CGAL::Dual<P>, boost::vertex_index_t>
   typedef typename property_map<P, CGAL::face_index_t>::const_type const_type; 
 };
 
+template <typename P>
+struct property_map<CGAL::Dual<P>, boost::face_index_t>
+{
+  typedef typename property_map<P, CGAL::vertex_index_t>::type type;
+  typedef typename property_map<P, CGAL::vertex_index_t>::const_type const_type;
+};
+
 } // namespace boost
 
 
@@ -88,6 +95,13 @@ typename boost::property_map<P, boost::face_index_t>::type
 get(boost::vertex_index_t, const Dual<P>& dual)
 {
   return get(CGAL::face_index, dual.primal());
+}
+
+template <typename P>
+typename boost::property_map<P, boost::vertex_index_t>::type
+get(boost::face_index_t, const Dual<P>& dual)
+{
+  return get(CGAL::vertex_index, dual.primal());
 }
 
 

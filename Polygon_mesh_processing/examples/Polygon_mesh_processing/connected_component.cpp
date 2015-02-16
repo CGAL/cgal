@@ -56,6 +56,9 @@ int main(int, char* argv[])
  BOOST_FOREACH(face_descriptor f , faces(sm)){
    std::cout  << f << " in connected component " << fccmap[f] << std::endl;
   }
+ 
+ CGAL::Polygon_mesh_processing::keep_largest_connected_components(sm,2);
 
+ std::cout << "mesh:\n" << sm << std::endl;
   return 0;
 }
