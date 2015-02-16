@@ -124,7 +124,7 @@ typename boost::graph_traits<Dual<P> >::vertex_descriptor
 source(typename boost::graph_traits<Dual<P> >::halfedge_descriptor h,
        const Dual<P>& dual)
 {
-  const Dual<P>::Primal& primal = dual.primal();
+  const typename Dual<P>::Primal& primal = dual.primal();
   return face(opposite(h,primal),primal);
 }
  
@@ -133,7 +133,7 @@ typename boost::graph_traits<Dual<P> >::vertex_descriptor
 target(typename boost::graph_traits<Dual<P> >::halfedge_descriptor h,
        const Dual<P>& dual)
 {
-  const Dual<P>::Primal& primal = dual.primal();
+  const typename Dual<P>::Primal& primal = dual.primal();
   return face(h,primal);
 }
  
@@ -143,7 +143,7 @@ typename boost::graph_traits<Dual<P> >::vertex_descriptor
 source(typename boost::graph_traits<Dual<P> >::edge_descriptor h,
        const Dual<P>& dual)
 {
-  const Dual<P>::Primal& primal = dual.primal();
+  const typename Dual<P>::Primal& primal = dual.primal();
   return face(opposite(halfedge(h,primal),primal),primal);
 }
  
@@ -152,7 +152,7 @@ typename boost::graph_traits<Dual<P> >::vertex_descriptor
 target(typename boost::graph_traits<Dual<P> >::edge_descriptor h,
        const Dual<P>& dual)
 {
-  const Dual<P>::Primal& primal = dual.primal();
+  const typename Dual<P>::Primal& primal = dual.primal();
   return face(halfedge(h,primal),primal);
 }
 
@@ -184,8 +184,10 @@ typename boost::graph_traits<Dual<P> >::face_descriptor
 face(typename boost::graph_traits<Dual<P> >::halfedge_descriptor h,
        const Dual<P>& dual)
 {
-  const Dual<P>::Primal& primal = dual.primal();
+  const typename Dual<P>::Primal& primal = dual.primal();
   return target(h,primal);
+  const typename Dual<P>::Primal& primal = dual.primal();
+  return vertex(h,primal);
 }
 
 template <typename P>
@@ -201,7 +203,7 @@ typename boost::graph_traits<Dual<P> >::halfedge_descriptor
 next(typename boost::graph_traits<Dual<P> >::halfedge_descriptor h,
          const Dual<P>& dual)
 {
-  const Dual<P>::Primal& primal = dual.primal();
+  const typename Dual<P>::Primal& primal = dual.primal();
   return opposite(prev(h,primal),primal);
 }  
 
@@ -210,7 +212,7 @@ typename boost::graph_traits<Dual<P> >::halfedge_descriptor
 prev(typename boost::graph_traits<Dual<P> >::halfedge_descriptor h,
          const Dual<P>& dual)
 {
-  const Dual<P>::Primal& primal = dual.primal();
+  const typename Dual<P>::Primal& primal = dual.primal();
   return next(opposite(h,primal),primal);
 }  
 
