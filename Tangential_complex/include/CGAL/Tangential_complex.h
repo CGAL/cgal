@@ -56,9 +56,11 @@
 #include <iostream>
 #include <limits>
 #include <algorithm>
+#include <functional>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/parallel_for.h>
+# include <tbb/combinable.h>
 //# include <tbb/queuing_mutex.h>
 #endif
 
@@ -122,6 +124,17 @@ class Tangential_complex
 
   typedef std::vector<Point>                          Points;
   typedef std::vector<FT>                             Weights;
+
+#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)\
+  && !defined(CGAL_TC_PERTURB_POSITION) // CJTODO TEMP
+  // C++11
+  typedef Atomic_wrapper<Vector>                      Translation_for_perturb;
+  typedef std::vector<Atomic_wrapper<FT> >            Weights_for_perturb;
+#else
+  typedef Vector                                      Translation_for_perturb;
+  typedef std::vector<FT>                             Weights_for_perturb;
+#endif
+  typedef std::vector<Translation_for_perturb>        Translations_for_perturb;
 
   typedef Point_cloud_data_structure<Kernel, Points>  Points_ds;
   typedef typename Points_ds::KNS_range               KNS_range;
@@ -398,18 +411,23 @@ public:
     {
       std::size_t num_inconsistent_local_tr = 0;
 // CJTODO: the parallel version is not working for now
-/*#ifdef CGAL_LINKED_WITH_TBB
+#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH) \
+  && !defined(CGAL_TC_PERTURB_POSITION) // CJTODO TEMP
       // Parallel
       if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
       {
+        tbb::combinable<std::size_t> num_inconsistencies;
         tbb::parallel_for(
           tbb::blocked_range<size_t>(0, m_triangulations.size()),
-          Try_to_solve_inconsistencies_in_a_local_triangulation(*this)
+          Try_to_solve_inconsistencies_in_a_local_triangulation(
+            *this, num_inconsistencies)
         );
+        num_inconsistent_local_tr =
+          num_inconsistencies.combine(std::plus<std::size_t>());
       }
       // Sequential
       else
-#endif // CGAL_LINKED_WITH_TBB*/
+#endif // CGAL_LINKED_WITH_TBB
       {
 #ifdef CGAL_TC_PROFILING
         Wall_clock_timer t;
@@ -1286,25 +1304,29 @@ private:
   class Try_to_solve_inconsistencies_in_a_local_triangulation
   {
     Tangential_complex & m_tc;
+    tbb::combinable<std::size_t> &m_num_inconsistencies;
 
   public:
     // Constructor
     Try_to_solve_inconsistencies_in_a_local_triangulation(
-      Tangential_complex &tc)
-    : m_tc(tc)
+      Tangential_complex &tc, tbb::combinable<std::size_t> &num_inconsistencies)
+    : m_tc(tc), m_num_inconsistencies(num_inconsistencies)
     {}
 
     // Constructor
     Try_to_solve_inconsistencies_in_a_local_triangulation(
       const Compute_tangent_triangulation &ctt)
-    : m_tc(ctt.m_tc)
+    : m_tc(ctt.m_tc), m_num_inconsistencies(ctt.m_num_inc)
     {}
 
     // operator()
     void operator()( const tbb::blocked_range<size_t>& r ) const
     {
       for( size_t i = r.begin() ; i != r.end() ; ++i)
-        m_tc.try_to_solve_inconsistencies_in_a_local_triangulation(i);
+      {
+        m_num_inconsistencies.local() +=
+          m_tc.try_to_solve_inconsistencies_in_a_local_triangulation(i);
+      }
     }
   };
 #endif // CGAL_LINKED_WITH_TBB
@@ -1348,7 +1370,7 @@ private:
     Tr_point local_random_transl =
       local_tr_traits.construct_weighted_point_d_object()(
         *tr_point_on_sphere_generator++, 0);
-    Vector &global_transl = m_translations[point_idx];
+    Translation_for_perturb &global_transl = m_translations[point_idx];
     global_transl = k_constr_vec(m_ambiant_dim);
     const Tangent_space_basis &tsb = m_tangent_spaces[point_idx];
     for (int i = 0 ; i < m_intrinsic_dimension ; ++i)
@@ -2024,13 +2046,13 @@ private:
   
   Points                    m_points;
 #ifdef CGAL_TC_PERTURB_WEIGHT
-  Weights                   m_weights;
+  Weights_for_perturb       m_weights;
 #endif
 #ifdef CGAL_TC_PERTURB_POSITION
-  Vectors                   m_translations;
+  Translations_for_perturb  m_translations;
 #endif
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
-  std::vector<bool>         m_perturb_tangent_space;
+  std::vector<Atomic_wrapper<bool> > m_perturb_tangent_space;
 #endif
 
   Points_ds                 m_points_ds;

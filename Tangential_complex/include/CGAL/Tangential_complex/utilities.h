@@ -25,9 +25,92 @@
 #include <CGAL/Dimension.h>
 
 #include <vector>
+#include <atomic> // C++11
 
 namespace CGAL {
 namespace Tangential_complex_ {
+
+  // Provides copy constructors to std::atomic so that
+  // it can be used in a vector
+  template <typename T>
+  struct Atomic_wrapper 
+    : public std::atomic<T>
+  {
+    typedef std::atomic<T> Base;
+
+    Atomic_wrapper() {}
+    Atomic_wrapper(const T &t) : Base(t) {}
+    Atomic_wrapper(const std::atomic<T> &a) : Base(a.load()) {}
+    Atomic_wrapper(const Atomic_wrapper &other) : Base(other.load())
+    {}
+    
+    Atomic_wrapper &operator=(const T &other)
+    {
+      Base::store(other);
+      return *this;
+    }
+    Atomic_wrapper &operator=(const std::atomic<T> &other)
+    {
+      Base::store(other.load());
+      return *this;
+    }
+    Atomic_wrapper &operator=(const Atomic_wrapper &other)
+    {
+      Base::store(other.load());
+      return *this;
+    }
+  };
+
+  /*template <typename T>
+  struct Atomic_wrapper
+  {
+    std::atomic<T> _a;
+
+    Atomic_wrapper()
+      :_a()
+    {}
+
+    Atomic_wrapper(const std::atomic<T> &other)
+      :_a(other.load())
+    {}
+
+    Atomic_wrapper(const Atomic_wrapper &other)
+      :_a(other._a.load())
+    {}
+
+    Atomic_wrapper(const T &other)
+      :_a(other)
+    {}
+
+    Atomic_wrapper &operator=(const std::atomic<T> &other)
+    {
+      _a.store(other._a.load());
+      return *this;
+    }
+
+    Atomic_wrapper &operator=(const Atomic_wrapper &other)
+    {
+      _a.store(other._a.load());
+      return *this;
+    }
+
+    Atomic_wrapper &operator=(const T &other)
+    {
+      _a.store(other);
+      return *this;
+    }
+
+    operator T() const
+    {
+      return _a.load();
+    }
+
+    operator std::atomic<T>() const
+    {
+      return _a;
+    }
+  };*/
+
 
   template <typename K>
   std::vector<typename K::Vector_d>
