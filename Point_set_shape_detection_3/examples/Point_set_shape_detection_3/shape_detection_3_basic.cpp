@@ -26,10 +26,10 @@ int main()
 {
   // Points with normals.
   Pwn_vector points;
-	
-  // Loads input point set from a file. 
-  // read_xyz_points_and_normals takes an OutputIterator for writing the points
-  // and a property map for storing the normal vector associated to each point.
+
+  // Loads point set from a file. 
+  // read_xyz_points_and_normals takes an OutputIterator for storing the points
+  // and a property map to store the normal vector with each point.
   std::ifstream stream("cube.pwn");
 
   if (!stream || 

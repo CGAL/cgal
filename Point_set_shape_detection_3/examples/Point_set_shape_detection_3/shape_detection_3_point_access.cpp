@@ -23,7 +23,7 @@ typedef std::vector<Point_with_normal>                      Pwn_vector;
 typedef CGAL::Identity_property_map<Point_with_normal>      Point_pmap;
 typedef CGAL::Normal_of_point_with_normal_pmap<Kernel>      Normal_pmap;
 
-// In Shape_detection_traits_3 the used types, i.e., Point and Vector types
+// In Shape_detection_traits_3 the basic types, i.e., Point and Vector types
 // as well as iterator type and property maps, are defined.
 typedef CGAL::Shape_detection_traits_3<Kernel,
   Pwn_vector::iterator, Point_pmap, Normal_pmap>            Traits;
@@ -32,9 +32,10 @@ typedef CGAL::Shape_detection_3<Traits>                     Shape_detection;
 
 int main() 
 {
+  // Points with normals.
   Pwn_vector points;
 
-  // Loading a point set from file. 
+  // Loads point set from a file. 
   // read_xyz_points_and_normals takes an OutputIterator for storing the points
   // and a property map to store the normal vector with each point.
   std::ifstream stream("cube.pwn");
@@ -48,11 +49,11 @@ int main()
       return EXIT_FAILURE;
   }
 
-  // Measure time before setting up the shape detection.
+  // Measures time before setting up the shape detection.
   CGAL::Timer time;
   time.start();
 
-  // Creation of the instance and providing the input data.
+  // Instantiates shape detection engine and provides input data.
   Shape_detection sd(points.begin(),
     points.end(), Point_pmap(), Normal_pmap());
 

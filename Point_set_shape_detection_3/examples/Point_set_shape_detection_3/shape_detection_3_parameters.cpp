@@ -18,24 +18,25 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT                                          FT;
 typedef CGAL::Point_with_normal_3<Kernel>                   Point_with_normal;
-typedef std::vector<Point_with_normal>                      Pwn_list;
+typedef std::vector<Point_with_normal>                      Pwn_vector;
 typedef CGAL::Identity_property_map<Point_with_normal>      Point_pmap;
 typedef CGAL::Normal_of_point_with_normal_pmap<Kernel>      Normal_pmap;
 
 // In Shape_detection_traits_3 the basic types, i.e., Point and Vector types
 // as well as iterator type and property maps, are defined.
 typedef CGAL::Shape_detection_traits_3<Kernel,
-  Pwn_list::iterator, Point_pmap, Normal_pmap>              Traits;
+  Pwn_vector::iterator, Point_pmap, Normal_pmap>            Traits;
 typedef CGAL::Shape_detection_3<Traits>                     Shape_detection;
 
 
 int main() 
 {
-  Pwn_list points;
+  // Points with normals.
+  Pwn_vector points;
 
   // Loads point set from a file. 
-  // read_xyz_points_and_normals takes an OutputIterator for writing the points
-  // and a property map for storing the normal vector associated to each point.
+  // read_xyz_points_and_normals takes an OutputIterator for storing the points
+  // and a property map to store the normal vector with each point.
   std::ifstream stream("cube.pwn");
 
   if (!stream ||
@@ -69,22 +70,22 @@ int main()
     CGAL::Shape_factory<CGAL::Torus_shape<Traits> >);
 		
 
-  // Setting parameters for shape detection.
+  // Sets parameters for shape detection.
   Shape_detection::Parameters parameters;
 
-  // Set probability to miss the largest primitive at each iteration.
+  // Sets probability to miss the largest primitive at each iteration.
   parameters.probability = 0.05;
  
   // Detect shapes with at least 500 points.
   parameters.min_points = 500;
 
-  // Set maximum Euclidean distance between a point and a shape.
+  // Sets maximum Euclidean distance between a point and a shape.
   parameters.epsilon = 0.002;
  
-  // Set maximum Euclidean distance between points to be clustered.
+  // Sets maximum Euclidean distance between points to be clustered.
   parameters.cluster_epsilon = 0.01;
  
-  // Set maximum normal deviation.
+  // Sets maximum normal deviation.
   // 0.9 < dot(surface_normal, point_normal); 
   parameters.normal_threshold = 0.9;   
   
