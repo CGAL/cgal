@@ -55,9 +55,9 @@ namespace CGAL {
  *  three types of graphs, please see the documentations of BGL.
  *
  *  The constructor of this class will compute the rays that divide the cones. This computation can
- *  be either inexact by simply dividing Pi by the number of cones (which is quick), or exact by using roots of 
- *  polynomials (entailing number types such as `CORE::Expr` or `LEDA::Real`, which are slow). 
- *  The inexact computation is done by the general class definition of `Cone_spanners_2` below. 
+ *  be either inexact by simply dividing an approximate Pi by the number of cones (which is quick), 
+ *  or exact by using roots of polynomials (entailing number types such as `CORE::Expr` or `LEDA::Real`, 
+ *  which are slow). The inexact computation is done by the general class definition of `Cone_spanners_2` below. 
  *  For exact computation, a partial specialization of this class is defined.
  *  If the template parameter `Kernel` is `Exact_predicates_exact_constructions_kernel_with_sqrt`,
  *  this partial specialization class will be invoked. 
@@ -68,8 +68,8 @@ namespace CGAL {
  *  the Yao or Theta graph will be constructed exactly, otherwise inexactly.
  *
  *  Also, in the computation of rays, the direction of the first ray can be specified by passing a parameter
- *  to the constructor, which allows the first ray to start at any direction.
- *
+ *  to the constructor, which allows the first ray to start at any direction. The remaining rays are calculated in 
+ *  counter-clockwise order
  */
 template <typename Kernel, typename Directedness, typename EdgeProperty>
 class Cone_spanners_2 {
@@ -81,6 +81,7 @@ class Cone_spanners_2 {
     typedef typename Kernel::Point_2                 Point_2;
     typedef typename Kernel::Line_2                 Line_2;
 	typedef typename Kernel::Aff_transformation_2    Transformation;
+    // it is important that the edgelist is 'setS', such that duplicate edges will be automatically removed.
     typedef boost::adjacency_list<boost::setS,
                                   boost::vecS,
                                   Directedness,
@@ -200,12 +201,15 @@ class Cone_spanners_2 {
     }
 
     /** @brief returns the vector of directions. 
+	 *
+	 *  @return a vector of Direction_2
      */
     const std::vector<Direction_2>& directions() const {
       return rays;
     }
 
-    /** casts the cone spanner graph into a `boost::adjacency_list`. 
+    /** @brief casts the cone spanner graph into a `boost::adjacency_list`. 
+	 * @return The cone spanner as an boost::adjacency_list.
      */
     operator Graph() const {
       return graph();
@@ -216,7 +220,10 @@ class Cone_spanners_2 {
      *
      *  This function object is based on the function `CGAL::compare_signed_distance_to_line_2()`, 
 	 *  which orders two points according to their signed distance to a line.
-     *
+     *  
+	 *  NB: The way the tie is broken in this functor potentially prevents the overlapping of cone boundaries.
+	 *  Basically, the cw boundary will be considered to be inside this cone, while the ccw boundary not. 
+
      *  @see  `CGAL::compare_signed_distance_to_line_2()`
      */
     struct  vertex_smaller_2
@@ -323,10 +330,8 @@ class Cone_spanners_2 <Exact_predicates_exact_constructions_kernel_with_sqrt,
      *              (default: nullptr)
      * @param end   An iterator pointing to the place that passes the last point. 
 	                (default: nullptr)
-     * @param ray0  A direction denoting one of the rays dividing the
-     *              cones. This allows arbitary rotations of the rays 
-     *              that divide the plane.
-	 *              (default: positive x-axis) 
+     * @param ray0  The direction of the first ray. This allows the first ray can be at an arbitary 
+	 *              direction.  (default: positive x-axis) 
      */
 #ifdef GXX11
     template <typename PointInputIterator=Point_2*>
@@ -363,12 +368,13 @@ class Cone_spanners_2 <Exact_predicates_exact_constructions_kernel_with_sqrt,
 
 		unsigned int m, i;
 		if (num_cones % 2 == 0)
-			m = num_cones/2;
+			m = num_cones/2;       // for even number of cones
 		else 
-			m= num_cones/2 + 1;
+			m= num_cones/2 + 1;    // for odd number of cones
 
 		FT cos_value, sin_value; 
 		Direction_2 ray_i;
+		// add the first half number of rays in counter clockwise order
 		for (i = 1; i <= m; i++) {
             cos_value = - root_of(i, a.begin(), a.end());
 	        sin_value = sqrt(FT(1) - cos_value*cos_value);
@@ -376,7 +382,7 @@ class Cone_spanners_2 <Exact_predicates_exact_constructions_kernel_with_sqrt,
 		    rays.push_back(ray_i);
 		}
 
-		// add the remaining half number of rays
+		// add the remaining half number of rays in ccw order
 		if (num_cones % 2 == 0) {
 		    for (i = 0; i < m; i++) {
 		        rays.push_back(-rays[i]);
