@@ -39,7 +39,7 @@ private:
       TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
 
   typedef typename Traits::Segment_2                    Segment_2;
-  typedef typename Traits::X_monotone_segment_2         X_monotone_segment_2;
+  typedef typename Traits::X_monotone_subcurve_2        X_monotone_subcurve_2;
 
   #endif
 
@@ -458,7 +458,7 @@ push_back_wrapper(std::istringstream& str_stream)
 
   else if (type == 1) {
     X_monotone_curve_2 base_curve = this->m_xcurves[id1];
-    X_monotone_segment_2 x_segment = this->m_xsegments[segment_id];
+    X_monotone_subcurve_2 x_segment = this->m_xsegments[segment_id];
 
     std::cout << "Test: push_back ( "
               << x_segment << " into "
@@ -535,7 +535,7 @@ push_front_wrapper(std::istringstream& str_stream)
 
   else if (type == 1) {
     X_monotone_curve_2 base_curve = this->m_xcurves[id1];
-    X_monotone_segment_2 x_segment = this->m_xsegments[segment_id];
+    X_monotone_subcurve_2 x_segment = this->m_xsegments[segment_id];
 
     std::cout << "Test: push_front ( "
               << x_segment << "into"

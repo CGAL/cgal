@@ -28,7 +28,7 @@ typedef Geom_traits_2::Segment_2                          Segment_2;
 typedef Geom_traits_2::Curve_2                            Polyline_2;
 typedef CGAL::Arrangement_2<Geom_traits_2>                Arrangement_2;
 typedef Geom_traits_2::X_monotone_curve_2                 X_monotone_polyline;
-typedef Geom_traits_2::X_monotone_segment_2               X_monotone_segment;
+typedef Geom_traits_2::X_monotone_subcurve_2              X_monotone_subcurve;
 
 int main(int argc, char* argv[])
 {
@@ -36,13 +36,14 @@ int main(int argc, char* argv[])
   Arrangement_2 arr(&traits);
 
   Geom_traits_2::Construct_x_monotone_curve_2 x_mono_polyline_construct =
-                                  traits.construct_x_monotone_curve_2_object();
+    traits.construct_x_monotone_curve_2_object();
 
-  std::vector<X_monotone_segment> x_segments;
-  x_segments.push_back(X_monotone_segment( Point_2(0,0), Point_2(1,1) ));
-  x_segments.push_back(X_monotone_segment( Point_2(1,1), Point_2(10,10) ));
-  x_segments.push_back(X_monotone_segment( Point_2(10,10), Point_2(15,20) ));
-  X_monotone_polyline pi1 = x_mono_polyline_construct( x_segments.begin(), x_segments.end() );
+  std::vector<X_monotone_subcurve> x_segments;
+  x_segments.push_back(X_monotone_subcurve( Point_2(0,0), Point_2(1,1) ));
+  x_segments.push_back(X_monotone_subcurve( Point_2(1,1), Point_2(10,10) ));
+  x_segments.push_back(X_monotone_subcurve( Point_2(10,10), Point_2(15,20) ));
+  X_monotone_polyline pi1 = x_mono_polyline_construct(x_segments.begin(),
+                                                      x_segments.end() );
 
   std::cout << "polline is: " << pi1 << std::endl;
 
@@ -50,7 +51,6 @@ int main(int argc, char* argv[])
   Point_2 tgt(atoi(argv[3]), atoi(argv[4]));
   X_monotone_polyline trimmed_polyline = traits.trim_2_object()(pi1, src, tgt);
   std::cout << "trimmed polline is: " << trimmed_polyline << std::endl;
-
 
   return 0;
 }

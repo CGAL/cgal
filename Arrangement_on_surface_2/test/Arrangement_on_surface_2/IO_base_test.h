@@ -14,12 +14,12 @@ public:
     TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS || \
     TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS ||\
     TEST_GEOM_TRAITS == NON_CACHING_POLYLINE_GEOM_TRAITS
-  // Poly curves needs some testing where Segments and X-monotone segments are required
-  // instead of polycurves/x-monotone polycurves.
+  // Poly curves needs some testing where Segments and X-monotone segments are
+  // required instead of polycurves/x-monotone polycurves.
   template <typename InputStream_>
   bool read_segment(InputStream_& is, Segment_2& seg);
   template <typename InputStream_>
-  bool read_xsegment(InputStream_& is, X_monotone_segment_2& xseg);
+  bool read_xsegment(InputStream_& is, X_monotone_subcurve_2& xseg);
 #endif
 
   /*! Constructor */
@@ -166,35 +166,25 @@ bool IO_base_test<Base_geom_traits>::read_segment(InputStream_& is,
                                                   Segment_2& seg)
 {
   Basic_number_type x, y;
-
   is >> x >> y;
   Point_2 p_src(x, y);
-
   is >> x >> y;
   Point_2 p_tgt(x, y);
-
-
   seg = Segment_2(p_src, p_tgt);
-
   return true;
 }
 
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
-                                                   X_monotone_segment_2& xseg)
+                                                   X_monotone_subcurve_2& xseg)
 {
   Basic_number_type x, y;
-
   is >> x >> y;
   Point_2 p_src(x, y);
-
   is >> x >> y;
   Point_2 p_tgt(x, y);
-
-
-  xseg = X_monotone_segment_2(p_src, p_tgt);
-
+  xseg = X_monotone_subcurve_2(p_src, p_tgt);
   return true;
 }
 
@@ -324,13 +314,14 @@ bool read_general_curve(InputStream_& is, Curve& cv)
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
-                                                 X_monotone_curve_2& xcv)                               //read x-curve
+                                                 X_monotone_curve_2& xcv)
 {
-  //since we are dealing with polycurve, we will make more than 1 conic curves (polycurve compatible)
-  //and return the x-monotone-constructed polycurve.
+  // since we are dealing with polycurve, we will make more than 1 conic curves
+  // (polycurve compatible) and return the x-monotone-constructed polycurve.
 
-  //to store x-monotoneConic curves i.e in Arr_polyline_traits_2 they are called X_monotone_segment_2
-  std::vector<X_monotone_segment_2> conic_x_monotone_segments;
+  // to store x-monotoneConic curves i.e in Arr_polyline_traits_2 they are
+  // called X_monotone_subcurve_2
+  std::vector<X_monotone_subcurve_2> conic_x_monotone_segments;
 
   Segment_2 tmp_cv;
 
@@ -349,7 +340,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
       if( !read_general_curve(is, tmp_cv) )
         return false;
 
-      X_monotone_segment_2 tmp_xcv(tmp_cv);
+      X_monotone_subcurve_2 tmp_xcv(tmp_cv);
       conic_x_monotone_segments.push_back ( tmp_xcv );
     }
 
@@ -358,7 +349,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
       if( !read_general_conic(is, tmp_cv) )
         return false;
 
-      X_monotone_segment_2 tmp_xcv(tmp_cv);
+      X_monotone_subcurve_2 tmp_xcv(tmp_cv);
       conic_x_monotone_segments.push_back ( tmp_xcv );
     }
 
@@ -367,7 +358,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
       if( !read_general_arc(is, tmp_cv) )
         return false;
 
-      X_monotone_segment_2 tmp_xcv(tmp_cv);
+      X_monotone_subcurve_2 tmp_xcv(tmp_cv);
       conic_x_monotone_segments.push_back ( tmp_xcv );
     }
 
@@ -478,7 +469,7 @@ bool IO_base_test<Base_geom_traits>::read_segment(InputStream_& is,
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
-                                                   X_monotone_segment_2& xseg)
+                                                   X_monotone_subcurve_2& xseg)
 {
   char type;
   is >> type;
@@ -487,7 +478,7 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
   if( !read_general_curve(is, tmp_seg) )
         return false;
 
-  xseg = X_monotone_segment_2(tmp_seg);
+  xseg = X_monotone_subcurve_2(tmp_seg);
 
   return true;
 }
@@ -511,7 +502,7 @@ template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
                                                  X_monotone_curve_2& xcv)
 {
-   std::vector<X_monotone_segment_2> x_segments;
+   std::vector<X_monotone_subcurve_2> x_segments;
 
    char type;
    is >> type;
@@ -547,7 +538,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
       is >> point_x >> point_y;
       pt = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
 
-      X_monotone_segment_2 x_seg (c, ps, pt, c.orientation());
+      X_monotone_subcurve_2 x_seg (c, ps, pt, c.orientation());
       x_segments.push_back( x_seg );
     }
 
@@ -662,7 +653,7 @@ bool IO_base_test<Base_geom_traits>::read_segment(InputStream_& is,
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
-                                                   X_monotone_segment_2& xseg)
+                                                   X_monotone_subcurve_2& xseg)
 {
   //we dont need to check this type as it has already been checked in the IO_test.h
   char type;
@@ -691,7 +682,7 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
   is >> point_x >> point_y;
   pt = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
 
-  X_monotone_segment_2 x_seg (c, ps, pt, c.orientation());
+  X_monotone_subcurve_2 x_seg (c, ps, pt, c.orientation());
   xseg = x_seg;
 
 
@@ -760,7 +751,7 @@ bool IO_base_test<Base_geom_traits>::read_segment(InputStream_& is,
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
-                                                   X_monotone_segment_2& xseg)
+                                                   X_monotone_subcurve_2& xseg)
 {
   char type;
   is >> type;
@@ -786,8 +777,8 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
   std::vector<CGAL::Object> obj_vector;
   bezier_traits.make_x_monotone_2_object()(seg,
                                            std::back_inserter(obj_vector));
-  X_monotone_segment_2 x_segment =
-    CGAL::object_cast<X_monotone_segment_2>((obj_vector[0]));
+  X_monotone_subcurve_2 x_segment =
+    CGAL::object_cast<X_monotone_subcurve_2>((obj_vector[0]));
 
   xseg = x_segment;
 
@@ -800,7 +791,7 @@ template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
                                                  X_monotone_curve_2& xcv)
 {
-  std::vector<X_monotone_segment_2> x_segments;
+  std::vector<X_monotone_subcurve_2> x_segments;
   std::vector<Control_point_2> point_vector;
 
   Bezier_tratis bezier_traits;
@@ -833,8 +824,8 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
       std::vector<CGAL::Object> obj_vector;
       bezier_traits.make_x_monotone_2_object()(seg,
                                                std::back_inserter(obj_vector));
-      X_monotone_segment_2 x_seg =
-        CGAL::object_cast<X_monotone_segment_2>( (obj_vector[0]) );
+      X_monotone_subcurve_2 x_seg =
+        CGAL::object_cast<X_monotone_subcurve_2>((obj_vector[0]));
 
       x_segments.push_back( x_seg );
 
@@ -1678,7 +1669,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
                                                  X_monotone_curve_2& xcv)
 {
   Base_geom_traits traits;
-  Base_geom_traits::Construct_x_monotone_segment_2 construct_segment_2 =
+  Base_geom_traits::Construct_x_monotone_subcurve_2 construct_segment_2 =
     traits.construct_x_monotone_segment_2_object();
   char type;
   is >> type;

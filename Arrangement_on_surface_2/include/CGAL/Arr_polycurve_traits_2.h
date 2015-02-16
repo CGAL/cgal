@@ -33,7 +33,7 @@
 #include <CGAL/tags.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polycurve_basic_traits_2.h>
-#include <CGAL/Arr_geometry_traits/Polyline_2.h>
+#include <CGAL/Arr_geometry_traits/Polycurve_2.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 
@@ -129,7 +129,7 @@ public:
   /*! A polycurve represents a general continuous piecewise-linear
    * curve, without degenerated subcurves.
    */
-  typedef polyline::Polyline_2<Subcurve_2, Point_2>      Curve_2;
+  typedef internal::Polycurve_2<Subcurve_2, Point_2>      Curve_2;
 
   /// \name Basic predicate functors(based on the subcurve traits).
   //@{
@@ -194,14 +194,14 @@ public:
         m_poly_traits.construct_x_monotone_curve_2_object();
 
       typename Subcurve_traits_2::Make_x_monotone_2 make_seg_x_monotone =
-        m_poly_traits.geometry_traits_2()->make_x_monotone_2_object();
+        m_poly_traits.subcurve_traits_2()->make_x_monotone_2_object();
 
       typename Subcurve_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
-        m_poly_traits.geometry_traits_2()->compare_endpoints_xy_2_object();
+        m_poly_traits.subcurve_traits_2()->compare_endpoints_xy_2_object();
 
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
       typename Subcurve_traits_2::Construct_opposite_2 ctr_seg_opposite =
-        m_poly_traits.geometry_traits_2()->construct_opposite_2_object();
+        m_poly_traits.subcurve_traits_2()->construct_opposite_2_object();
 #endif
 
       // Convert the input polycurve to a sequence of CGAL objects, such
@@ -236,11 +236,11 @@ public:
          // To be used in order to verify continuity and well-orientedness
          // of the input curve cv.
          typename Subcurve_traits_2::Construct_min_vertex_2 min_seg_v =
-           m_poly_traits.geometry_traits_2()->construct_min_vertex_2_object();
+           m_poly_traits.subcurve_traits_2()->construct_min_vertex_2_object();
          typename Subcurve_traits_2::Construct_max_vertex_2 max_seg_v =
-           m_poly_traits.geometry_traits_2()->construct_max_vertex_2_object();
+           m_poly_traits.subcurve_traits_2()->construct_max_vertex_2_object();
          typename Subcurve_traits_2::Equal_2 equal =
-           m_poly_traits.geometry_traits_2()->equal_2_object();
+           m_poly_traits.subcurve_traits_2()->equal_2_object();
          Point_2 last_target = (cmp_seg_endpts(x_seg) == SMALLER) ?
            max_seg_v(x_seg) : min_seg_v(x_seg);
          Point_2 next_src;
@@ -249,7 +249,7 @@ public:
       // The polycurve consists of at least 2 x-monotone subcurves:
       Push_back_2 push_back = m_poly_traits.push_back_2_object();
       typename Subcurve_traits_2::Is_vertical_2 is_seg_vertical =
-        m_poly_traits.geometry_traits_2()->is_vertical_2_object();
+        m_poly_traits.subcurve_traits_2()->is_vertical_2_object();
 
       bool is_start_vertical = is_seg_vertical(x_seg);
       Comparison_result start_dir = cmp_seg_endpts(x_seg);
@@ -330,19 +330,19 @@ public:
         m_poly_traits.construct_x_monotone_curve_2_object();
 
       typename Subcurve_traits_2::Make_x_monotone_2 make_seg_x_monotone =
-        m_poly_traits.geometry_traits_2()->make_x_monotone_2_object();
+        m_poly_traits.subcurve_traits_2()->make_x_monotone_2_object();
 
       typename Subcurve_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
-        m_poly_traits.geometry_traits_2()->compare_endpoints_xy_2_object();
+        m_poly_traits.subcurve_traits_2()->compare_endpoints_xy_2_object();
 
       typename Subcurve_traits_2::Parameter_space_in_x_2 ps_x =
-           m_poly_traits.geometry_traits_2()->parameter_space_in_x_2_object();
+           m_poly_traits.subcurve_traits_2()->parameter_space_in_x_2_object();
       typename Subcurve_traits_2::Parameter_space_in_y_2 ps_y =
-           m_poly_traits.geometry_traits_2()->parameter_space_in_y_2_object();
+           m_poly_traits.subcurve_traits_2()->parameter_space_in_y_2_object();
 
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
       typename Subcurve_traits_2::Construct_opposite_2 ctr_seg_opposite =
-        m_poly_traits.geometry_traits_2()->construct_opposite_2_object();
+        m_poly_traits.subcurve_traits_2()->construct_opposite_2_object();
 #endif
 
       // Convert the input polycurve to a sequence of CGAL objects, such
@@ -377,11 +377,11 @@ public:
          // To be used in order to verify continuity and well-orientedness
          // of the input curve cv.
          typename Subcurve_traits_2::Construct_min_vertex_2 min_seg_v =
-           m_poly_traits.geometry_traits_2()->construct_min_vertex_2_object();
+           m_poly_traits.subcurve_traits_2()->construct_min_vertex_2_object();
          typename Subcurve_traits_2::Construct_max_vertex_2 max_seg_v =
-           m_poly_traits.geometry_traits_2()->construct_max_vertex_2_object();
+           m_poly_traits.subcurve_traits_2()->construct_max_vertex_2_object();
          typename Subcurve_traits_2::Equal_2 equal =
-           m_poly_traits.geometry_traits_2()->equal_2_object();
+           m_poly_traits.subcurve_traits_2()->equal_2_object();
          Point_2 last_target = (cmp_seg_endpts(x_seg) == SMALLER) ?
            max_seg_v(x_seg) : min_seg_v(x_seg);
          Point_2 next_src;
@@ -390,7 +390,7 @@ public:
       // The polycurve consists of at least 2 x-monotone subcurves:
       Push_back_2 push_back = m_poly_traits.push_back_2_object();
       typename Subcurve_traits_2::Is_vertical_2 is_seg_vertical =
-        m_poly_traits.geometry_traits_2()->is_vertical_2_object();
+        m_poly_traits.subcurve_traits_2()->is_vertical_2_object();
 
       bool is_start_vertical = is_seg_vertical(x_seg);
       Comparison_result start_dir = cmp_seg_endpts(x_seg);
@@ -563,7 +563,7 @@ public:
     void operator()(const X_monotone_curve_2& xcv, const Point_2& p,
                     X_monotone_curve_2& xcv1, X_monotone_curve_2& xcv2) const
     {
-      const Subcurve_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
+      const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
       typename Subcurve_traits_2::Construct_min_vertex_2 min_vertex =
         geom_traits->construct_min_vertex_2_object();
       typename Subcurve_traits_2::Construct_max_vertex_2 max_vertex =
@@ -610,7 +610,7 @@ public:
           // The i'th subcurve should be split: The left part(seg1)
           // goes to xcv1, and the right part(seg2) goes to xcv2.
           X_monotone_subcurve_2 seg1, seg2;
-          m_poly_traits.geometry_traits_2()->split_2_object()(xcv[i], p,
+          m_poly_traits.subcurve_traits_2()->split_2_object()(xcv[i], p,
                                                               seg1, seg2);
 
           xcv1.push_back(seg1);
@@ -626,7 +626,7 @@ public:
         }
         else {
           X_monotone_subcurve_2 seg1, seg2;
-          m_poly_traits.geometry_traits_2()->
+          m_poly_traits.subcurve_traits_2()->
             split_2_object()(xcv[i], p, seg1, seg2);
 
           if (cmp_seg_endpts(seg2) == LARGER){
@@ -634,7 +634,7 @@ public:
           }
           else {
             // seg2 has to be reversed
-            seg2 = m_poly_traits.geometry_traits_2()->
+            seg2 = m_poly_traits.subcurve_traits_2()->
               construct_opposite_2_object()(seg2);
             xcv1.push_back(seg2);
           }
@@ -644,7 +644,7 @@ public:
           }
           else {
             // seg2 has to be reversed
-            seg1 = m_poly_traits.geometry_traits_2()->
+            seg1 = m_poly_traits.subcurve_traits_2()->
               construct_opposite_2_object()(seg1);
             xcv1.push_back(seg1);
           }
@@ -689,7 +689,7 @@ public:
                const X_monotone_curve_2& cv2,
                OutputIterator oi) const
     {
-      const Subcurve_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
+      const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
       Compare_y_at_x_2 cmp_y_at_x = m_poly_traits.compare_y_at_x_2_object();
       typename Subcurve_traits_2::Equal_2 equal =
         geom_traits->equal_2_object();
@@ -978,7 +978,7 @@ public:
     bool operator()(const X_monotone_curve_2& cv1,
                     const X_monotone_curve_2& cv2) const
     {
-      const Subcurve_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
+      const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
       Construct_min_vertex_2 min_vertex =
         m_poly_traits.construct_min_vertex_2_object();
       Construct_max_vertex_2 max_vertex =
@@ -1057,28 +1057,26 @@ public:
       Equal_2 equal = m_poly_traits.equal_2_object();
 
       c.clear();
-      if (
-          // Either both are left-to-right and cv2 is to the right of cv1
+      if (// Either both are left-to-right and cv2 is to the right of cv1
           ((cmp_seg_endpts(cv1)==SMALLER) &&
            (equal(get_max_v(cv1),get_min_v(cv2)))) ||
           // or both are right-to-left and cv2 is to the left of cv1
           ((cmp_seg_endpts(cv1)==LARGER) &&
-           (equal(get_min_v(cv1), get_max_v(cv2))))
-          )
+           (equal(get_min_v(cv1), get_max_v(cv2)))))
       {
         const std::size_t n1 = cv1.number_of_subcurves();
         const std::size_t n2 = cv2.number_of_subcurves();
         std::size_t i;
 
         // cv2 extends cv1 to the right:
-        for (i = 0; i < n1 - 1; ++i)
-          c.push_back(cv1[i]);
+        for (i = 0; i < n1 - 1; ++i) c.push_back(cv1[i]);
 
         // Try to merge the to contiguous line subcurves:
-        if (m_poly_traits.geometry_traits_2()->
-            are_mergeable_2_object()(cv1[n1 - 1], cv2[0])) {
+        if (m_poly_traits.subcurve_traits_2()->
+            are_mergeable_2_object()(cv1[n1 - 1], cv2[0]))
+        {
           X_monotone_subcurve_2 seg;
-          m_poly_traits.geometry_traits_2()->
+          m_poly_traits.subcurve_traits_2()->
             merge_2_object()(cv1[n1 - 1], cv2[0], seg);
           c.push_back(seg);
         }
@@ -1087,8 +1085,7 @@ public:
           c.push_back(cv2[0]);
         }
 
-        for (i = 1; i < n2; ++i)
-          c.push_back(cv2[i]);
+        for (i = 1; i < n2; ++i) c.push_back(cv2[i]);
       }
       else
         return this->operator()(cv2,cv1,c);

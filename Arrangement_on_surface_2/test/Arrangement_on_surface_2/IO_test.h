@@ -29,10 +29,10 @@ public:
       TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS ||\
       TEST_GEOM_TRAITS == NON_CACHING_POLYLINE_GEOM_TRAITS
 
-  typedef typename Geom_traits_T::X_monotone_segment_2             X_monotone_segment_2;
-  typedef typename Geom_traits_T::Segment_2                        Segment_2;
-  typedef typename std::vector<X_monotone_segment_2>               Xsegment_vector;
-  typedef typename std::vector<Segment_2>                          Segment_vector;
+  typedef typename Geom_traits_T::X_monotone_subcurve_2  X_monotone_subcurve_2;
+  typedef typename Geom_traits_T::Segment_2             Segment_2;
+  typedef typename std::vector<X_monotone_subcurve_2>    Xsegment_vector;
+  typedef typename std::vector<Segment_2>               Segment_vector;
 
   //vector containers for segments and xsegments
   Xsegment_vector m_xsegments;
@@ -299,7 +299,7 @@ bool IO_test<Geom_traits_T>::read_xcurves(const char* filename,
       if (line[0] == 's') //segment (see segment in 'Arr_polyline_traits.h')
       {
          std::istringstream line_stream(line);
-         typename Geom_traits::X_monotone_segment_2 xseg;
+         typename Geom_traits::X_monotone_subcurve_2 xseg;
          this->read_xsegment(line_stream, xseg);
          m_xsegments.push_back(xseg);
          line_stream.clear();

@@ -34,7 +34,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arr_geometry_traits/Polyline_2.h>
 #include <CGAL/Arr_polycurve_traits_2.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
@@ -153,7 +152,7 @@ public:
       CGAL_precondition(num_seg > 0);
       int last_seg = num_seg-1;
 
-      const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+      const Segment_traits_2* seg_traits = m_poly_traits.subcurve_traits_2();
       typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
         seg_traits->compare_endpoints_xy_2_object();
 
@@ -186,7 +185,7 @@ public:
       size_type num_seg = xcv.number_of_subcurves();
       CGAL_precondition(num_seg > 0);
 
-      const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+      const Segment_traits_2* seg_traits = m_poly_traits.subcurves_traits_2();
       CGAL_precondition_code
         (
          typename Segment_traits_2::Compare_x_2 comp_x =
@@ -267,7 +266,7 @@ public:
          );
       CGAL_precondition(num_seg > 0);
 
-      const Segment_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
+      const Segment_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
       typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
         geom_traits->compare_endpoints_xy_2_object();
 
@@ -290,7 +289,7 @@ public:
     /*! Append a point `p` to an existing polyline `xcv` at the front. */
     void operator()(const X_monotone_curve_2& xcv, Point_2& p) const
     {
-      const SegmentTraits_2* geom_traits = m_poly_traits.geometry_traits_2();
+      const SegmentTraits_2* geom_traits = m_poly_traits.subcurve_traits_2();
       CGAL_precondition_code
         (
          typedef typename X_monotone_curve_2::size_type size_type;
@@ -410,7 +409,7 @@ public:
       CGAL_precondition_code
         (
          typename Segment_traits_2::Equal_2 equal =
-         this->m_poly_traits.geometry_traits_2()->equal_2_object();
+         this->m_poly_traits.subcurve_traits_2()->equal_2_object();
          );
 
       // Check whether there are no points in the range:
@@ -457,15 +456,15 @@ public:
     X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q) const
     {
       CGAL_precondition_msg
-        (!this->m_poly_traits.geometry_traits_2()->equal_2_object()(p,q),
+        (!this->m_poly_traits.subcurve_traits_2()->equal_2_object()(p,q),
          "Cannot construct a degenerated segment as a polyline");
-      X_monotone_subcurve_2 seg =  this->m_poly_traits.geometry_traits_2()->
+      X_monotone_subcurve_2 seg =  this->m_poly_traits.subcurve_traits_2()->
         construct_x_monotone_curve_2_object()(p, q);
 
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-      if (this->m_poly_traits.geometry_traits_2()->compare_xy_2_object()(p,q) ==
+      if (this->m_poly_traits.subcurve_traits_2()->compare_xy_2_object()(p,q) ==
           LARGER)
-        seg = m_poly_traits.geometry_traits_2()->
+        seg = m_poly_traits.subcurve_traits_2()->
           construct_opposite_2_object()(seg);
 #endif
 
@@ -541,7 +540,7 @@ public:
       CGAL_precondition_code
         (
          const Segment_traits_2* geom_traits =
-           this->m_poly_traits.geometry_traits_2();
+           this->m_poly_traits.subcurve_traits_2();
          // Initialize two comparison functors
          typename Segment_traits_2::Compare_x_2 compare_x =
            geom_traits->compare_x_2_object();
@@ -568,7 +567,7 @@ public:
       }
 
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-      if (m_poly_traits.geometry_traits_2()->
+      if (m_poly_traits.subcurve_traits_2()->
           compare_endpoints_xy_2_object()(*segs.begin()) == LARGER)
       {
         X_monotone_curve_2 xcv(segs.begin(), segs.end());
@@ -589,7 +588,7 @@ public:
    * \return the segment traits.
    */
   CGAL_DEPRECATED const Segment_traits_2* segment_traits_2() const
-  { return this->geometry_traits_2(); }
+  { return this->subcurve_traits_2(); }
 };
 
 } // namespace CGAL
