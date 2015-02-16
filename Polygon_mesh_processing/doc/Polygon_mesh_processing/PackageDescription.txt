@@ -67,5 +67,6 @@
 \todo remove FairWeightCalculator and replace it by a property map. Note that the default property map should be documented
 \todo make template parameter names uniform in other packages using BGL. Here we chose PolygonMesh as template parameter.
 It can be made short to PM. And TriangleMesh (or TM) specifies when the parameter should be a triangle mesh.
-
+\todo document `BGL/include/CGAL/boost/graph/selection.h`
+\todo document `BGL/include/CGAL/boost/graph/split_graph_into_polylines.h`
 */
