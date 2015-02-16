@@ -658,7 +658,7 @@ protected:
     {
       std::size_t id = vd->id();
       const Polyhedron::Traits::Vector_3& n = 
-        CGAL::Polygon_mesh_processing::compute_vertex_normal<Polyhedron::Traits>(vd, deform_mesh.halfedge_graph());
+        CGAL::Polygon_mesh_processing::compute_vertex_normal(vd, deform_mesh.halfedge_graph());
       normals[id*3] = n.x();
       normals[id*3+1] = n.y(); 
       normals[id*3+2] = n.z(); 

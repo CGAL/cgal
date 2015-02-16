@@ -51,7 +51,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
     positions[counter*3+2] = vb->point().z();
 
     const Polyhedron::Traits::Vector_3& n = 
-      CGAL::Polygon_mesh_processing::compute_vertex_normal<Polyhedron::Traits>(vb, deform_mesh.halfedge_graph());
+      CGAL::Polygon_mesh_processing::compute_vertex_normal(vb, deform_mesh.halfedge_graph());
 
     normals[counter*3] = n.x();
     normals[counter*3+1] = n.y();

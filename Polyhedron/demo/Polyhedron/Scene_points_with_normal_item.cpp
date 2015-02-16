@@ -56,7 +56,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& i
   {
     const Kernel::Point_3& p = v->point();
     Kernel::Vector_3 n =
-      CGAL::Polygon_mesh_processing::compute_vertex_normal<Kernel>(v, input_mesh);
+      CGAL::Polygon_mesh_processing::compute_vertex_normal(v, input_mesh);
     m_points->push_back(UI_point(p,n));
   }
 
