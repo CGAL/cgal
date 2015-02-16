@@ -411,11 +411,11 @@ public:
 ///         It must accept objects of type `Kernel::Point_3`.
 /// @tparam RandomAccessIterator Iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` 
-///         with the value type of `ForwardIterator` as key and `Kernel::Point_3` as value type.
-///         It can be omitted if RandomAccessIterator value_type is convertible  
+///         with the value type of `ForwardIterator` as key type and `Kernel::Point_3` as value type.
+///         It can be omitted if the value type of ` RandomAccessIterator` is convertible  
 ///         to `Kernel::Point_3`.
 /// @tparam Kernel Geometric traits class.
-///      It can be omitted and deduced automatically from the value type of  `PointPMap`
+///      It can be omitted and deduced automatically from the value type of `PointPMap`
 ///      using `Kernel_traits`.
 
 // This variant requires all parameters.

@@ -16,15 +16,14 @@ typedef Kernel::Vector_3 Vector;
 typedef std::pair<Point, Vector> PointVectorPair;
 
 
-int main(void)
+int main(int argc, char* argv[])
 {
-  const std::string input_filename_without_ext = "data/before_upsample";
-  const std::string input_filename = input_filename_without_ext + ".xyz";
-  const std::string output_filename = input_filename_without_ext + "_UPSAMPLED.xyz";
+  const char* input_filename = (argc>1)?argv[1]:"data/before_upsample.xyz";
+  const char* output_filename = (argc>2)?argv[2]:"data/before_upsample_UPSAMPLED.xyz";
 
   // Reads a .xyz point set file in points[], *with normals*.
   std::vector<PointVectorPair> points;
-  std::ifstream stream(input_filename.c_str());
+  std::ifstream stream(input_filename);
 
   if (!stream ||
       !CGAL::read_xyz_points_and_normals(stream,
@@ -32,8 +31,7 @@ int main(void)
                         CGAL::First_of_pair_property_map<PointVectorPair>(),
                         CGAL::Second_of_pair_property_map<PointVectorPair>()))
   {
-    std::cerr << "Error: cannot read file " 
-      << input_filename_without_ext << ".xyz" << std::endl;
+    std::cerr << "Error: cannot read file " << input_filename << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -56,7 +54,7 @@ int main(void)
             number_of_output_points);
 
   // Saves point set.
-  std::ofstream out(output_filename.c_str());  
+  std::ofstream out(output_filename);  
 
   if (!out ||
      !CGAL::write_xyz_points_and_normals(
