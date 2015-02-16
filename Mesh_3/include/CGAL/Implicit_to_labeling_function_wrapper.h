@@ -190,9 +190,9 @@ public:
         std::string::value_type character = *iter;
         assert(character == POSITIVE || character == NEGATIVE);
 
-        bmask[bit_index] = character == POSITIVE;
+        bmask[bit_index] = (character == POSITIVE);
         ++bit_index;
-        bmask[bit_index] = character == NEGATIVE;
+        bmask[bit_index] = (character == NEGATIVE);
         ++bit_index;
       }
     }
@@ -245,9 +245,9 @@ public:
         std::string::value_type character = *iter;
         assert(character == '+' || character == '-');
 
-        bmask[bit_index] = character == '+';
+        bmask[bit_index] = (character == '+');
         ++bit_index;
-        bmask[bit_index] = character == '-';
+        bmask[bit_index] = (character == '-');
         ++bit_index;
       }
     }

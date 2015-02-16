@@ -1,7 +1,7 @@
 
 -------------------------------- Release 4.5.2 --------------------------------
 
-Release date: January 2015
+Release date: February 2015
 
 
 * General
@@ -9,6 +9,18 @@ Release date: January 2015
   - Fix a bug that prevented the compilation with recent versions of Boost
     (>=1.56) when explicit conversions operators (from C++11) are supported.
     That prevented the compilation with Microsoft Visual Studio 2013.
+
+
+* 3D Convex Hulls
+
+  - Fix a non-robust predicate bug that was showing up when input points where
+    lexicographically sorted.
+
+
+* 3D Mesh Generation
+
+  - Fix a bug in the sliver perturbation optimization method. It could create
+    some holes on the surface of the mesh.
 
 
 -------------------------------- Release 4.5.1 --------------------------------
