@@ -99,7 +99,9 @@ public:
     std::vector<face_descriptor> facets;
     facets.reserve(num_faces(pmesh));
     BOOST_FOREACH(face_descriptor fit, faces(pmesh))
-      facets.push_back(fit);
+      //only consider non-triangular faces
+      if ( next( next( halfedge(fit, pmesh), pmesh), pmesh) !=
+           prev( halfedge(fit, pmesh), pmesh) ) facets.push_back(fit);
 
     // Iterates on the vector of facet handles
     for (unsigned int i = 0; i < facets.size(); ++i)
