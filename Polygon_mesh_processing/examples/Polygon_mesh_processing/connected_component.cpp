@@ -22,7 +22,7 @@ struct Constraint {
 
   Constraint(G & g) : g(&g) { }
 
-  bool operator[](const edge_descriptor& e) const {
+  bool operator[](const edge_descriptor&) const {
     return false; // no constraint
   }
 

@@ -366,17 +366,17 @@ namespace Polygon_mesh_processing{
 template <class PolygonMesh>
 std::size_t keep_largest_connected_components(PolygonMesh& pmesh, std::size_t nb_components_to_keep)
 {
-  typedef boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-  typedef boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-  typedef boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
-  boost::vector_property_map<int, boost::property_map<PolygonMesh, boost::face_index_t>::type> face_cc(get(boost::face_index,pmesh));
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
+  boost::vector_property_map<int, typename boost::property_map<PolygonMesh, boost::face_index_t>::type> face_cc(get(boost::face_index,pmesh));
   
   int num = connected_components(pmesh,face_cc);
   if((num == 1)|| (nb_components_to_keep > num) ){
     return 0;
   }
-  boost::vector_property_map<bool, boost::property_map<PolygonMesh, boost::vertex_index_t>::type> keep_vertex(get(boost::vertex_index,pmesh)); 
+  boost::vector_property_map<bool, typename boost::property_map<PolygonMesh, boost::vertex_index_t>::type> keep_vertex(get(boost::vertex_index,pmesh)); 
   BOOST_FOREACH(vertex_descriptor v, vertices(pmesh)){
     keep_vertex[v] = false;
   }
