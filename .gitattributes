@@ -75,7 +75,6 @@ Scripts/scripts/cgal_create_assertions.sh text eol=lf
 *.bat text eol=crlf
 *.nsh text eol=crlf
 *.vcproj  text eol=crlf
-/Maintenance/infrastructure/picasso.geometryfactory.com/reference_platforms/*/CMakeCache.txt eol=crlf
 
 # Denote all files that are truly binary and should not be modified.
 *.png binary

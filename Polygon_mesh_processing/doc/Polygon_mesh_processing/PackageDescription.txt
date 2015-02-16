@@ -1,0 +1,71 @@
+/// \defgroup PkgPolygonMeshProcessing Polygon Mesh Processing Reference
+/// \defgroup PkgPolygonMeshProcessingConcepts Concepts
+/// \ingroup PkgPolygonMeshProcessing
+/// \defgroup polyhedron_stitching_grp CGAL::Polygon_mesh_processing::stitch_polyhedron()
+/// \ingroup PkgPolygonMeshProcessing
+ 
+/*!
+\addtogroup PkgPolygonMeshProcessing
+ 
+\cgalPkgDescriptionBegin{Polygon Mesh Processing, PkgPolygonMeshProcessingSummary}
+\cgalPkgPicture{hole_filling_ico.png}
+ 
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Ilker O. Yaz}
+\cgalPkgDesc{This package provides functionality to fill holes, refine and fair triangulated regions on surface mesh.}
+\cgalPkgManuals{Chapter_PolygonMeshProcessing,PkgPolygonMeshProcessing}
+\cgalPkgSummaryEnd
+ 
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.7}
+\cgalPkgDependsOn{\ref PkgTriangulation3Summary, Sparse square solver such as those from  \ref thirdpartyEigen}
+\cgalPkgBib{cgal-tmp}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+ 
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+
+## Hole Filling Functions ##
+- `CGAL::Polygon_mesh_processing::triangulate_hole()`
+- `CGAL::Polygon_mesh_processing::triangulate_and_refine_hole()`
+- `CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()`
+- `CGAL::Polygon_mesh_processing::triangulate_hole_polyline()`
+
+## Predicate Functions and Classes ##
+- `CGAL::Polygon_mesh_processing::is_outward_oriented()`
+- `CGAL::Polygon_mesh_processing::is_self_intersecting()`
+- `CGAL::Polygon_mesh_processing::self_intersections()`
+- `CGAL::Point_inside_polygon_mesh`
+
+## Combinatorial Repairing Functions and Classes ##
+- \link polyhedron_stitching_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
+- `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
+- `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
+
+## Meshing Functions ##
+- `CGAL::Polygon_mesh_processing::fair()`
+- `CGAL::Polygon_mesh_processing::refine()`
+- `CGAL::Polygon_mesh_processing::triangulate_faces()`
+
+## Normal Computation Functions ##
+- `CGAL::Polygon_mesh_processing::compute_face_normal()`
+- `CGAL::Polygon_mesh_processing::compute_vertex_normal()`
+- `CGAL::Polygon_mesh_processing::compute_normals()`
+- `CGAL::Polygon_mesh_processing::compute_face_normals()`
+- `CGAL::Polygon_mesh_processing::compute_vertex_normals()`
+
+## Other Classes and Functions ##
+- `CGAL::Polygon_mesh_slicer`
+- `CGAL::Polygon_Mesh_processing::keep_largest_connected_components()`
+- `CGAL::Polygon_Mesh_processing::connected_component()`
+- `CGAL::Polygon_Mesh_processing::connected_components()`
+
+\todo remove FairWeightCalculator and replace it by a property map. Note that the default property map should be documented
+\todo make template parameter names uniform in other packages using BGL. Here we chose PolygonMesh as template parameter.
+It can be made short to PM. And TriangleMesh (or TM) specifies when the parameter should be a triangle mesh.
+
+*/

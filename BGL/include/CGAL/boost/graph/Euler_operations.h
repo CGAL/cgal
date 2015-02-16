@@ -626,7 +626,6 @@ void remove_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
 
   /**
    * removes the incident face of `h` and changes all halfedges incident to the face into border halfedges. See `remove_face(g,h)` for a more generalized variant.
-   * \returns `h`.
    *
    * \pre None of the incident halfedges of the face is a border halfedge.
    */
@@ -650,6 +649,24 @@ void make_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
   remove_face(fd,g);  
 }
 
+
+    /** fills the hole incident to `h`.
+     * \pre `h`must be a border halfedge
+     */
+template< typename Graph>
+void fill_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
+               Graph& g)
+{
+  typedef typename boost::graph_traits<Graph>  Traits;
+  typedef typename Traits::face_descriptor     face_descriptor;
+  typedef typename Traits::halfedge_descriptor halfedge_descriptor;
+
+  face_descriptor f = add_face(g);
+  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(h,g)){
+    set_face(hd, f,g);
+  }
+  set_halfedge(f,h,g);
+}
 
 
 /** 

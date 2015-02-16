@@ -7,7 +7,7 @@
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
 
-#include <CGAL/triangulate_polyhedron.h>
+#include <CGAL/triangulate_faces.h>
 
 class Polyhedron_demo_triangulate_facets_plugin : 
   public QObject,
@@ -77,13 +77,14 @@ public slots:
         if(!eit_copy->is_border()) {
           Polyhedron::Facet_handle fh1 = eit_copy->facet();
           Polyhedron::Facet_handle fh2 = eit_copy->opposite()->facet();
-          typedef Polyhedron::Facet Facet;
           if( fh1 != fh2 &&  
               !eit_copy->vertex()->is_bivalent() && 
               !eit_copy->opposite()->vertex()->is_bivalent())
           {
-            Kernel::Vector_3 v1 = compute_facet_normal<Facet, Kernel>(*fh1);
-            Kernel::Vector_3 v2 = compute_facet_normal<Facet, Kernel>(*fh2);
+            Kernel::Vector_3 v1 =
+              CGAL::Polygon_mesh_processing::compute_face_normal(fh1, *pMesh);
+            Kernel::Vector_3 v2 =
+              CGAL::Polygon_mesh_processing::compute_face_normal(fh2, *pMesh);
             if(v1 * v2 > 0.99) {
               std::cerr << "join\n";
               // pMesh->is_valid(true);
@@ -118,7 +119,7 @@ public slots:
 
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
-      CGAL::triangulate_polyhedron(*pMesh);
+      CGAL::Polygon_mesh_processing::triangulate_faces(*pMesh);
 
       CGAL_assertion_code(pMesh->normalize_border());
       CGAL_assertion(pMesh->is_valid(false, 3));

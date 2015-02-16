@@ -7,7 +7,7 @@
 #include <fstream>
 
 #include <CGAL/IO/Polyhedron_builder_from_STL.h>
-#include <CGAL/polygon_soup_to_polyhedron_3.h>
+#include <CGAL/polygon_soup_to_polygon_mesh.h>
 
 #include <QColor>
 
@@ -58,7 +58,7 @@ Polyhedron_demo_stl_plugin::load(QFileInfo fileinfo) {
   try{
     // Try building a polyhedron
     Polyhedron P;
-    CGAL::polygon_soup_to_polyhedron_3(P, points, triangles);
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, P);
     
     if(! P.is_valid() || P.empty()){
       std::cerr << "Error: Invalid polyhedron" << std::endl;

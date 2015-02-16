@@ -1,0 +1,2 @@
+
+#define CGAL_HOLE_FILLING_DO_NOT_USE_DT3

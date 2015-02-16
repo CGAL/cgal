@@ -2,7 +2,7 @@
 #define _GL_RENDER_
 
 #include <CGAL/gl.h>
-#include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 
 
@@ -26,7 +26,6 @@ void gl_render_facets(Polyhedron& polyhedron, const std::vector<QColor>& colors)
   typedef typename Polyhedron::Traits	    Kernel;
   typedef typename Kernel::Point_3	    Point;
   typedef typename Kernel::Vector_3	    Vector;
-  typedef typename Polyhedron::Facet	    Facet;
   typedef typename Polyhedron::Facet_iterator Facet_iterator;
   typedef typename Polyhedron::Halfedge_around_facet_circulator HF_circulator;
 
@@ -51,7 +50,7 @@ void gl_render_facets(Polyhedron& polyhedron, const std::vector<QColor>& colors)
     // If Flat shading: 1 normal per polygon
     if (shading == GL_FLAT)
     {
-      Vector n = compute_facet_normal<Facet,Kernel>(*f);
+      Vector n = CGAL::Polygon_mesh_processing::compute_face_normal(f, polyhedron);
       ::glNormal3d(n.x(),n.y(),n.z());
     }
 
@@ -63,7 +62,7 @@ void gl_render_facets(Polyhedron& polyhedron, const std::vector<QColor>& colors)
       // If Gouraud shading: 1 normal per vertex
       if (shading == GL_SMOOTH)
       {
-        Vector n = compute_vertex_normal<typename Polyhedron::Vertex,Kernel>(*he->vertex());
+        Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal(he->vertex(), polyhedron);
         ::glNormal3d(n.x(),n.y(),n.z());
       }
 

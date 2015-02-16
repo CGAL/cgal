@@ -270,7 +270,6 @@ typename boost::graph_traits<CGAL::Surface_mesh<P> >::halfedge_descriptor
 halfedge(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor v,
          const CGAL::Surface_mesh<P>& sm)
 {
-  // prev because OpenMesh stores out-going halfedges
   return sm.halfedge(v);
 }
 

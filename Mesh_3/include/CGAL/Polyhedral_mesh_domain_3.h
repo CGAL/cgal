@@ -27,7 +27,7 @@
 #ifndef CGAL_POLYHEDRAL_MESH_DOMAIN_3_H
 #define CGAL_POLYHEDRAL_MESH_DOMAIN_3_H
 
-#include <CGAL/internal/Operations_on_polyhedra/Point_inside_vertical_ray_cast.h>
+#include <CGAL/internal/Point_inside_polygon_mesh/Point_inside_vertical_ray_cast.h>
 
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 #include <CGAL/Mesh_3/Triangle_accessor_primitive.h>
