@@ -12,7 +12,8 @@
 
 #include <map>
 #include <queue>
-#include "One_ring_iterators.h"
+
+#include <CGAL/boost/graph/selection.h>
 
 class SCENE_POLYHEDRON_ITEM_K_RING_SELECTION_EXPORT Scene_polyhedron_item_k_ring_selection 
   : public QObject
@@ -20,6 +21,8 @@ class SCENE_POLYHEDRON_ITEM_K_RING_SELECTION_EXPORT Scene_polyhedron_item_k_ring
   Q_OBJECT
 public:
   struct Active_handle { enum Type{ VERTEX = 0, FACET = 1, EDGE = 2 }; };
+
+  typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
 
   // Hold mouse keyboard state together
   struct Mouse_keyboard_state
@@ -74,43 +77,85 @@ public slots:
   void edge_has_been_selected(void* void_ptr) 
   {
     if(active_handle_type != Active_handle::EDGE) { return; }
-    process_selection( static_cast<Polyhedron::Halfedge*>(void_ptr)->opposite()->opposite() );
+    process_selection( edge(static_cast<Polyhedron::Halfedge*>(void_ptr)->opposite()->opposite(), *poly_item->polyhedron()) );
   }
 
 signals:
-  void selected(const std::map<Polyhedron::Vertex_handle, int>&);
-  void selected(const std::map<Polyhedron::Facet_handle, int>&);
-  void selected(const std::map<Polyhedron::Halfedge_handle, int>&);
+  void selected(const std::set<Polyhedron::Vertex_handle>&);
+  void selected(const std::set<Polyhedron::Facet_handle>&);
+  void selected(const std::set<edge_descriptor>&);
 
 protected:
+
   template<class HandleType>
   void process_selection(HandleType clicked) {
-    const std::map<HandleType, int>& selection = extract_k_ring(clicked, k_ring);
+    const std::set<HandleType>& selection = extract_k_ring(clicked, k_ring);
     emit selected(selection);
   }
 
-  template<class HandleType>
-  std::map<HandleType, int> extract_k_ring(HandleType v, int k)
-  {
-    std::map<HandleType, int>  D;
-    std::queue<HandleType>     Q;
-    Q.push(v); D[v] = 0;
-
-    int dist_v;
-    while( !Q.empty() && (dist_v = D[Q.front()]) < k ) {
-      v = Q.front();
-      Q.pop();
-
-      for(One_ring_iterator<HandleType> circ(v); circ; ++circ)
-      {
-        HandleType new_v = circ;
-        if(D.insert(std::make_pair(new_v, dist_v + 1)).second) {
-          Q.push(new_v);
-        }
-      }
+  template <class Handle>
+  struct Is_selected_from_set{
+    std::set<Handle>& selection;
+    Is_selected_from_set(std::set<Handle>& selection)
+      :selection(selection) {}
+    friend bool get(Is_selected_from_set<Handle> map, Handle k)
+    {
+      return map.selection.count(k);
     }
-    return D;
+    friend void put(Is_selected_from_set<Handle> map, Handle k, bool b)
+    {
+      if (b)
+        map.selection.insert(k);
+      else
+        map.selection.erase(k);
+    }
+  };
+
+  std::set<Polyhedron::Vertex_handle>
+  extract_k_ring(Polyhedron::Vertex_handle clicked, unsigned int k)
+  {
+    std::set<Polyhedron::Vertex_handle> selection;
+    selection.insert(clicked);
+    if (k>0)
+      CGAL::dilate_vertex_selection(CGAL::make_array(clicked),
+                                    *poly_item->polyhedron(),
+                                    k,
+                                    Is_selected_from_set<Polyhedron::Vertex_handle>(selection),
+                                    CGAL::Emptyset_iterator());
+
+    return selection;
   }
+
+  std::set<Polyhedron::Facet_handle>
+  extract_k_ring(Polyhedron::Facet_handle clicked, unsigned int k)
+  {
+    std::set<Polyhedron::Facet_handle> selection;
+    selection.insert(clicked);
+    if (k>0)
+      CGAL::dilate_face_selection(CGAL::make_array(clicked),
+                                  *poly_item->polyhedron(),
+                                  k,
+                                  Is_selected_from_set<Polyhedron::Facet_handle>(selection),
+                                  CGAL::Emptyset_iterator());
+
+    return selection;
+  }
+
+  std::set<edge_descriptor>
+  extract_k_ring(edge_descriptor clicked, unsigned int k)
+  {
+    std::set<edge_descriptor> selection;
+    selection.insert(clicked);
+    if (k>0)
+      CGAL::dilate_edge_selection(CGAL::make_array(clicked),
+                                  *poly_item->polyhedron(),
+                                  k,
+                                  Is_selected_from_set<edge_descriptor>(selection),
+                                  CGAL::Emptyset_iterator());
+
+    return selection;
+  }
+
 
   bool eventFilter(QObject* /*target*/, QEvent *event)
   {

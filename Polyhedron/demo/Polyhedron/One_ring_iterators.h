@@ -67,15 +67,16 @@ struct One_ring_iterator<Polyhedron::Facet_handle> {
 };
 
 template<>
-struct One_ring_iterator<Polyhedron::Halfedge_handle> {
-  One_ring_iterator(Polyhedron::Halfedge_handle h)
-    : it_1(h->vertex()), it_2(h->opposite()->vertex())
+struct One_ring_iterator<boost::graph_traits<Polyhedron>::edge_descriptor> {
+  One_ring_iterator(boost::graph_traits<Polyhedron>::edge_descriptor h)
+    : it_1(h.halfedge()->vertex()), it_2(h.halfedge()->opposite()->vertex())
   { }
 
   operator bool() const { return it_1 || it_2; }
-  operator Polyhedron::Halfedge_handle() const {
-     if(it_1) { return it_1; }
-     return it_2;
+  operator boost::graph_traits<Polyhedron>::edge_descriptor() const {
+     Polyhedron tmp;
+     if(it_1) { return edge(it_1, tmp); }
+     return edge(it_2, tmp);
   }
   One_ring_iterator& operator++() {
     it_1 ? ++it_1 : ++it_2;

@@ -56,7 +56,7 @@ public:
     connect(ui_widget.Brush_size_spin_box, SIGNAL(valueChanged(int)), this, SLOT(on_Brush_size_spin_box_changed(int)));
     connect(ui_widget.Create_point_set_item_button, SIGNAL(clicked()), this, SLOT(on_Create_point_set_item_button_clicked()));
     connect(ui_widget.Erase_selected_facets_button, SIGNAL(clicked()), this, SLOT(on_Erase_selected_facets_button_clicked()));
-    connect(ui_widget.Expand_shrink_button, SIGNAL(clicked()), this, SLOT(on_Expand_shrink_button_clicked()));
+    connect(ui_widget.Dilate_erode_button, SIGNAL(clicked()), this, SLOT(on_Dilate_erode_button_clicked()));
     connect(ui_widget.Create_polyhedron_item_button, SIGNAL(clicked()), this, SLOT(on_Create_polyhedron_item_button_clicked()));
     QObject* scene = dynamic_cast<QObject*>(scene_interface);
     if(scene) { 
@@ -194,15 +194,15 @@ public slots:
       print_message("Error: polyhedron item is not created!");
     }
   }
-  void on_Expand_shrink_button_clicked() {
+  void on_Dilate_erode_button_clicked() {
     Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
     if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
       return; 
     }
 
-    int steps = ui_widget.Expand_shrink_spin_box->value();
-    selection_item->expand_or_shrink(steps);
+    int steps = ui_widget.Dilate_erode_spin_box->value();
+    selection_item->dilate_or_erode(steps);
   }
   // To handle empty selection items coming from loader
   void new_item_created(int item_id) {
