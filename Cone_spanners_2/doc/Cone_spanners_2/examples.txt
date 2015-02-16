@@ -2,4 +2,15 @@
 \example Cone_spanners_2/exact_theta_io.cpp
 \example Cone_spanners_2/theta_io.cpp
 \example Cone_spanners_2/dijkstra_theta.cpp
+
+// code snippets used in user manual
+\example Cone_spanners_2/theta_graph.h
+\example Cone_spanners_2/theta_graph_typedef.cpp
+\example Cone_spanners_2/inexact_typedef.cpp
+\example Cone_spanners_2/theta_constructor.h
+\example Cone_spanners_2/theta_instantiation.cpp
+\example Cone_spanners_2/gnuplot_output.cpp
+\example Cone_spanners_2/cmd_line.txt
+\example Cone_spanners_2/edge_property.h
+\example Cone_spanners_2/get_graph.cpp
 */
