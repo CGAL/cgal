@@ -88,10 +88,11 @@ public:
 
   /**
   * \ingroup PkgPolygonMeshProcessing
-  * build a polygon mesh from a soup of polygons.
-  * \todo modify so that the built object is a model of `MutableFaceGraph`
-  * \todo write documentation
-  * @tparam Polygon should be a vector<std::size_t>
+  * builds a polygon mesh from a soup of polygons.
+  * @tparam PolygonMesh a model of `MutableFaceGraph`
+  * @tparam Point a point type that has the three operators `x()`, `y()`, and `z()`.
+  * @tparam Polygon be a `vector<std::size_t>` corresponding to the indices
+  *         of points in `points`
   */
   template<class PolygonMesh, class Point, class Polygon>
   void polygon_soup_to_polygon_mesh(
