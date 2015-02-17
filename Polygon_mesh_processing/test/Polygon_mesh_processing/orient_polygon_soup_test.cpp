@@ -67,11 +67,11 @@ int main(int,char** ) {
   
   if(oriented) {
     Surface_mesh mesh;
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh<Surface_mesh>(
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
       points, polygons, mesh);
 
     Polyhedron poly;
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh<Polyhedron>(
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
       points, polygons, poly);
 
     std::ofstream out("oriented.off");
