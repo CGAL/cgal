@@ -27,6 +27,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/internal/helpers.h>
+#include <CGAL/boost/graph/iterator.h>
 
 namespace CGAL {
 
@@ -619,6 +620,195 @@ void remove_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
   remove_face(f, g);
   if(is_border(opposite(h, g),g))
     remove_edge(edge(h, g), g);
+}
+
+/**
+* if possible, adds a new face with vertices from a range with value type
+* `boost::graph_traits<Graph>::vertex_descriptor`.
+* The function adds halfedges between successive vertices if they are not
+* yet indicent to halfedges, or updates the connectivity of halfedges already in place.
+*
+* @pre `vr` contains at least 3 vertices
+* @returns the added face, or `boost::graph_traits<Graph>::null_face()` if the face could not be added.
+*/
+template< typename Graph, typename VertexRange >
+typename boost::graph_traits<Graph>::face_descriptor
+add_face(const VertexRange& vr, Graph& g)
+{
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor   vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<Graph>::face_descriptor     face_descriptor;
+  typedef typename boost::graph_traits<Graph>::edge_descriptor     edge_descriptor;
+
+  std::vector<vertex_descriptor> vertices(vr.begin(), vr.end()); // quick and dirty copy
+  unsigned int n = (unsigned int)vertices.size();
+  // don't allow degenerated faces
+  CGAL_assertion(n > 2);
+
+  std::vector<halfedge_descriptor> halfedges(n);
+  std::vector<bool>                is_new(n);
+
+  for (unsigned int i = 0, ii = 1; i<n; ++i, ++ii, ii %= n)
+  {
+    if ( ! internal::is_isolated(vertices[i], g)
+      && ! is_border(vertices[i], g))
+      return boost::graph_traits<Graph>::null_face();
+
+    std::pair<halfedge_descriptor, bool> he
+      = halfedge(vertices[i], vertices[ii], g);
+    halfedges[i] = he.first;//collect if exists
+    is_new[i] = !(he.second/*true if exists*/);
+
+    if (!is_new[i] && !is_border(halfedges[i], g))
+      return boost::graph_traits<Graph>::null_face();
+  }
+
+  halfedge_descriptor inner_next, inner_prev,
+                      outer_next, outer_prev,
+                      border_next, border_prev,
+                      patch_start, patch_end;
+  // cache for set_next and vertex' set_halfedge
+  typedef std::pair<halfedge_descriptor, halfedge_descriptor> NextCacheEntry;
+  typedef std::vector<NextCacheEntry>    NextCache;
+  NextCache next_cache;
+  next_cache.reserve(3 * n);
+
+  // re-link patches if necessary
+  for (unsigned int i = 0, ii = 1; i<n; ++i, ++ii, ii %= n)
+  {
+    if (!is_new[i] && !is_new[ii])
+    {
+      inner_prev = halfedges[i];
+      inner_next = halfedges[ii];
+
+      if (next(inner_prev, g) != inner_next)
+      {
+        // here comes the ugly part... we have to relink a whole patch
+
+        // search a free gap
+        // free gap will be between border_prev and border_next
+        outer_prev = opposite(inner_next, g);
+        outer_next = opposite(inner_prev, g);
+        border_prev = outer_prev;
+        do{
+          border_prev = opposite(next(border_prev, g), g);
+        }while (!is_border(border_prev, g) || border_prev == inner_prev);
+        border_next = next(border_prev, g);
+        CGAL_assertion(is_border(border_prev, g));
+        CGAL_assertion(is_border(border_next, g));
+
+        if (border_next == inner_next)
+          return boost::graph_traits<Graph>::null_face();
+
+        // other halfedges' indices
+        patch_start = next(inner_prev, g);
+        patch_end   = prev(inner_next, g);
+
+        // relink
+        next_cache.push_back(NextCacheEntry(border_prev, patch_start));
+        next_cache.push_back(NextCacheEntry(patch_end, border_next));
+        next_cache.push_back(NextCacheEntry(inner_prev, inner_next));
+      }
+    }
+  }
+  // create missing edges
+  for (unsigned int i = 0, ii = 1; i<n; ++i, ++ii, ii %= n)
+  {
+    if (is_new[i])
+    {
+      edge_descriptor ne = add_edge(vertices[i], vertices[ii], g);
+      halfedges[i] = halfedge(ne, g);
+      CGAL_assertion(halfedges[i] != boost::graph_traits<Graph>::null_halfedge());
+
+      set_face(opposite(halfedges[i], g), boost::graph_traits<Graph>::null_face(), g); // as it may be recycled we have to reset it  
+      CGAL_assertion(source(halfedges[i], g) == vertices[i]);
+    }
+  }
+  // create the face
+  face_descriptor f = add_face(g);
+  set_halfedge(f, halfedges[n - 1], g);
+
+  // setup halfedges
+  for (unsigned int i = 0, ii = 1; i<n; ++i, ++ii, ii %= n)
+  {
+    vertex_descriptor v = vertices[ii];
+    inner_prev = halfedges[i];
+    inner_next = halfedges[ii];
+
+    unsigned int id = 0;
+    if (is_new[i])  id |= 1;
+    if (is_new[ii]) id |= 2;
+
+    if (id)
+    {
+      outer_prev = opposite(inner_next, g);
+      outer_next = opposite(inner_prev, g);
+
+      // set outer links
+      switch (id)
+      {
+      case 1: // prev is new, next is old
+        border_prev = prev(inner_next, g);
+        next_cache.push_back(NextCacheEntry(border_prev, outer_next));
+        set_halfedge(v, border_prev, g);
+        break;
+
+      case 2: // next is new, prev is old
+        border_next = next(inner_prev, g);
+        next_cache.push_back(NextCacheEntry(outer_prev, border_next));
+        set_halfedge(v, outer_prev, g);
+        break;
+
+      case 3: // both are new
+        if (halfedge(v, g) == boost::graph_traits<Graph>::null_halfedge())
+        {
+          set_halfedge(v, outer_prev, g);
+          next_cache.push_back(NextCacheEntry(outer_prev, outer_next));
+        }
+        else
+        {
+          border_prev = halfedge(v, g);
+          border_next = next(border_prev, g);
+          next_cache.push_back(NextCacheEntry(border_prev, outer_next));
+          next_cache.push_back(NextCacheEntry(outer_prev, border_next));
+        }
+        break;
+      }
+
+      // set inner link
+      next_cache.push_back(NextCacheEntry(inner_prev, inner_next));
+    }
+
+    // set face index
+    set_face(halfedges[i], f, g);
+  }
+
+  // process next halfedge cache
+  typename NextCache::const_iterator ncIt(next_cache.begin()), ncEnd(next_cache.end());
+  for (; ncIt != ncEnd; ++ncIt)
+    set_next(ncIt->first, ncIt->second, g);
+
+  // adjust vertices' halfedge index
+  for (unsigned int i = 0; i<n; ++i)
+    internal::adjust_incoming_halfedge(vertices[i], g);
+
+  return f;
+}
+
+/**
+* adds and returns the edge `e` connecting `s` and `t`
+* halfedge(e, g) has s as source and t as target
+*/
+template<typename Graph>
+typename boost::graph_traits<Graph>::edge_descriptor
+add_edge(typename boost::graph_traits<Graph>::vertex_descriptor s,
+         typename boost::graph_traits<Graph>::vertex_descriptor t,
+         Graph& g)
+{
+  typename boost::graph_traits<Graph>::edge_descriptor e = add_edge(g);
+  set_target(halfedge(e, g), t, g);
+  set_target(opposite(halfedge(e, g), g), s, g);
+  return e;
 }
 
   /**
