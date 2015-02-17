@@ -251,7 +251,7 @@ compute_face_normals(const PolygonMesh& pmesh
   typename boost::graph_traits<PolygonMesh>::face_descriptor f;
   BOOST_FOREACH(f, faces(pmesh)){
     typename Kernel::Vector_3 vec = compute_face_normal(f,pmesh, vpmap, k);
-    put(nm<, f, vec);
+    put(fnm, f, vec);
   }
 }
 
