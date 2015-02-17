@@ -188,7 +188,7 @@ class Cone_spanners_2 {
       return this->g;
     }
 
-    /** @brief returns the cone spanner graph as a `boost::adjacency_list`.
+    /** @brief returns the `boost::adjacency_list` object for the cone spanner graph.
      */
     Graph graph() {
       return this->g;
