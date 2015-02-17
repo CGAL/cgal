@@ -213,19 +213,6 @@ add_edge(CGAL::Polyhedron_3<Gt,I,HDS,A>& g)
 }
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor
-add_edge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor u
-         , typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor v
-         , CGAL::Polyhedron_3<Gt,I,HDS,A>& g)
-{
-  typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor 
-    e = add_edge(g);
-  set_target(halfedge(e, g), u, g);
-  set_target(opposite(halfedge(e, g), g), v, g);
-  return e;
-}
-
-template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 void
 remove_edge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor e
             , CGAL::Polyhedron_3<Gt,I,HDS,A>& g)
