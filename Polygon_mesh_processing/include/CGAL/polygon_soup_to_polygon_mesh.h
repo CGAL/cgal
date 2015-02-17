@@ -61,9 +61,6 @@ public:
 
   void operator()(PM& pmesh)
   {
-    typename boost::property_map<PM, vertex_point_t>::type ppmap
-      = get(CGAL::vertex_point, pmesh);
-
     std::vector<vertex_descriptor> vertices(_points.size());
     for (std::size_t i = 0, end = _points.size(); i < end; ++i)
     {
