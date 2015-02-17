@@ -23,7 +23,7 @@
 #include <CGAL/Modifier_base.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
@@ -157,8 +157,7 @@ public:
 
       // then modify the polyhedron
       // make_hole
-      remove_face(face(halfedge(f, pmesh), pmesh), pmesh);
-      set_face_in_face_loop(halfedge(f, pmesh), face_descriptor(), pmesh);
+      Euler::make_hole(halfedge(f, pmesh), pmesh);
 
       for(typename CDT::Finite_edges_iterator eit = cdt.finite_edges_begin(),
                                               end = cdt.finite_edges_end();
@@ -210,24 +209,10 @@ public:
           set_next(h1, h2, pmesh);
           set_next(h2, h0, pmesh);
 
-          // fill_hole(h0)
-          face_descriptor fd = add_face(pmesh);
-          set_face_in_face_loop(h0, fd, pmesh);
-          set_halfedge(fd, h0, pmesh);
+          Euler::fill_hole(h0, pmesh);
         }
       }
     } // end loop on facets of the input polyhedron
-  }
-
-  void set_face_in_face_loop(halfedge_descriptor end,
-                             face_descriptor f,
-                             PM& pmesh)
-  {
-    halfedge_descriptor h = end;
-    do {
-      set_face(h, f, pmesh);
-      h = next(h, pmesh);
-    } while (h != end);
   }
 
 }; // end class Triangulate_modifier
