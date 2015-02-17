@@ -1,15 +1,19 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Surface_mesh.h>
+
 #include <CGAL/orient_polygon_soup.h>
 #include <CGAL/polygon_soup_to_polygon_mesh.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 
+#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Timer.h>
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point_3;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
+typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
 
 std::istream& read_soup(
   std::istream& stream, 
@@ -47,11 +51,11 @@ std::istream& read_soup(
   return stream;
 }
 
-int main(int,char** argv) {
+int main(int,char** ) {
   std::vector<Point_3> points;
   std::vector< std::vector<std::size_t> > polygons;
 
-  std::ifstream input(argv[1]);
+  std::ifstream input("data/elephant-shuffled.off");
   if ( !input || !read_soup(input, points, polygons)){
     std::cerr << "Error: can not read file.\n";
     return 1;
@@ -62,6 +66,10 @@ int main(int,char** argv) {
   std::cerr << (oriented ? "Oriented." : "Not orientabled.") << std::endl;
   
   if(oriented) {
+    Surface_mesh mesh;
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh<Surface_mesh>(
+      points, polygons, mesh);
+
     Polyhedron poly;
     CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh<Polyhedron>(
       points, polygons, poly);
