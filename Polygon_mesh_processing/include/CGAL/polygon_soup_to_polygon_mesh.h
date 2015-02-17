@@ -89,6 +89,7 @@ public:
   /**
   * \ingroup PkgPolygonMeshProcessing
   * builds a polygon mesh from a soup of polygons.
+  * @pre the input polygon soup is consistently oriented.
   * @tparam PolygonMesh a model of `MutableFaceGraph`
   * @tparam Point a point type that has the three operators `x()`, `y()`, and `z()`.
   * @tparam Polygon be a `vector<std::size_t>` corresponding to the indices
