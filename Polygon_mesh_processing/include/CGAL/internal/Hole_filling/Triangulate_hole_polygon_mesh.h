@@ -16,24 +16,23 @@ namespace internal {
 template<class PolygonMesh, class OutputIterator>
 struct Tracer_polyhedron 
 {
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor Halfedge_handle;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor    Facet_handle;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
   Tracer_polyhedron(OutputIterator out,
                     PolygonMesh& pmesh,
-                    std::vector<Halfedge_handle>& P)
+                    std::vector<halfedge_descriptor>& P)
     : out(out), pmesh(pmesh), P(P)
   { }
 
   template <class LookupTable>
-  Halfedge_handle 
+  halfedge_descriptor 
   operator()(const LookupTable& lambda, 
              int i, int k,
              bool last = true)
   {
     if(i + 1 == k) { return P[i+1]; }
 
-    Halfedge_handle h, g;
+    halfedge_descriptor h, g;
     if(i+2 == k){
       if(last)
         {
@@ -68,32 +67,32 @@ struct Tracer_polyhedron
 
   OutputIterator out;
   PolygonMesh& pmesh;
-  std::vector<Halfedge_handle>& P;
+  std::vector<halfedge_descriptor>& P;
 };
 
 // This function is used in test cases (since it returns not just OutputIterator but also Weight)
 template<class PolygonMesh, class OutputIterator>
 std::pair<OutputIterator, CGAL::internal::Weight_min_max_dihedral_and_area> 
-triangulate_hole_Polyhedron(PolygonMesh& pmesh, 
-                            typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge, 
-                            OutputIterator out,
-                            bool use_delaunay_triangulation)
+triangulate_hole_polygon_mesh(PolygonMesh& pmesh, 
+            typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
+            OutputIterator out,
+            bool use_delaunay_triangulation)
 {
   typedef Halfedge_around_face_circulator<PolygonMesh>   Hedge_around_face_circulator;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor Vertex_handle;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor Halfedge_handle;
-  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
-  typedef typename boost::property_traits<Point_property_map>::value_type Point_3;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type VertexPointMap;
+  typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   
-  typedef std::map<Vertex_handle, int>        Vertex_map;
+  typedef std::map<vertex_descriptor, int>    Vertex_map;
   typedef typename Vertex_map::iterator       Vertex_map_it;
 
   CGAL::Timer timer; timer.start();
 
   std::vector<Point_3>         P, Q;
-  std::vector<Halfedge_handle> P_edges;
+  std::vector<halfedge_descriptor> P_edges;
   Vertex_map vertex_map;
-  Point_property_map ppmap = get(vertex_point,pmesh);
+  VertexPointMap ppmap = get(vertex_point,pmesh);
 
   int id = 0;
   Hedge_around_face_circulator circ(border_halfedge,pmesh), done(circ);

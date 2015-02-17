@@ -1,7 +1,7 @@
 #ifndef CGAL_TRIANGULATE_HOLE_H
 #define CGAL_TRIANGULATE_HOLE_H
 
-#include <CGAL/internal/Hole_filling/Triangulate_hole_Polyhedron_3.h>
+#include <CGAL/internal/Hole_filling/Triangulate_hole_polygon_mesh.h>
 #include <CGAL/internal/Hole_filling/Triangulate_hole_polyline.h>
 #include <CGAL/Polygon_mesh_processing/refine.h>
 #include <CGAL/Polygon_mesh_processing/fair.h>
@@ -45,7 +45,7 @@ namespace Polygon_mesh_processing {
       use_delaunay_triangulation;
 #endif
     CGAL_precondition(face(border_halfedge, pmesh) == boost::graph_traits<PolygonMesh>::null_face());
-    return internal::triangulate_hole_Polyhedron
+    return internal::triangulate_hole_polygon_mesh
       (pmesh, border_halfedge, out, use_dt3).first;
   }
 
@@ -293,8 +293,8 @@ namespace Polygon_mesh_processing {
 #else
       use_delaunay_triangulation;
 #endif
-    typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
-    typedef std::vector<typename Kernel::Point_3> Polyline_3;
+    typedef typename std::iterator_traits<InputIterator>::value_type Point;
+    typedef std::vector<Point> Polyline_3;
     Polyline_3 Q;
     return triangulate_hole_polyline<OutputIteratorValueType>
       (pbegin, pend, Q.begin(), Q.end(), out, use_dt3);
