@@ -64,6 +64,8 @@ namespace internal{
  * @pre @a `pmesh` is consistently oriented
  *
  * @tparam PolygonMesh a model of `FaceListGraph`, possibly a %CGAL polyhedron
+ * @tparam VertexPointMap the property map with the points associated to the vertices.
+ * @tparam Kernel Geometric traits class. It can be omitted and deduced automatically from the point type of `PolygonMesh`.
  *
  * @param pmesh a closed polygon mesh to be tested
  *
