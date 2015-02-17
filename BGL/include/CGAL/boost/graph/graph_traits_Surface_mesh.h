@@ -426,20 +426,19 @@ add_vertex(CGAL::Surface_mesh<P>& sm) {
   return sm.add_vertex();
 }
 
-  /*
+template <typename P>
+typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor
+add_vertex(const typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_property_type& p, CGAL::Surface_mesh<P>& sm) {
+  return sm.add_vertex(p);
+}
 
+/*
 // MutableGraph
 // add a vertex with a default constructed property
 template <typename P>
 typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor
 add_vertex(CGAL::Surface_mesh<P>& sm) {
   return sm.add_vertex(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_property_type());
-}
-
-template <typename P>
-typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor
-add_vertex(const typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_property_type& p, CGAL::Surface_mesh<P>& sm) {
-  return sm.add_vertex(p);
 }
 
 template <typename P>
@@ -495,17 +494,6 @@ remove_face(typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descripto
 
   sm.remove_face(f);
 }
-
-
-  /* AF: why a bool??
-template<typename P>
-std::pair<typename boost::graph_traits<CGAL::Surface_mesh<P> >::edge_descriptor,
-          bool>
-add_edge(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor v1, 
-         typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor v2, 
-         CGAL::Surface_mesh<P>& sm) {
-}
-  */
 
 template<typename P>
 typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor
