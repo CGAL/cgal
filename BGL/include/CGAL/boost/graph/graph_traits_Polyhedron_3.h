@@ -294,9 +294,11 @@ template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 void
 set_halfedge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::face_descriptor f
   , typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::halfedge_descriptor h
-  , const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
+  , CGAL::Polyhedron_3<Gt,I,HDS,A>& g)
 {
-  f->set_halfedge(h);
+  typedef typename CGAL::Polyhedron_3<Gt, I, HDS, A>::Halfedge_data_structure Hds;
+  CGAL::HalfedgeDS_decorator<Hds> D(g.hds());
+  D.set_face_halfedge(f, h);
 }
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
