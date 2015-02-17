@@ -76,16 +76,33 @@ namespace internal{
  * }
  * @endcode
  */
-  template<class Kernel, class PolygonMesh >
-  bool is_outward_oriented(const PolygonMesh& pmesh, const Kernel&k)
+template<typename PolygonMesh
+       , typename VertexPointMap
+#ifdef DOXYGEN_RUNNING
+       = typename boost::property_map<PolygonMesh, vertex_point_t>::type
+#endif
+       , typename Kernel
+#ifdef DOXYGEN_RUNNING
+       = typename Kernel_traits<
+           typename boost::property_traits<VertexPointMap>::value_type>::Kernel
+#endif
+         >
+bool is_outward_oriented(const PolygonMesh& pmesh
+                       , VertexPointMap vpmap
+#ifdef DOXYGEN_RUNNING
+                       = get(vertex_point, pmesh)
+#endif
+                       , const Kernel& k
+#ifdef DOXYGEN_RUNNING
+                       = Kernel()
+#endif
+                       )
 {
   CGAL_warning(CGAL::is_closed(pmesh));
   CGAL_precondition(CGAL::is_valid(pmesh));
 
-  typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type VPmap;
-  VPmap ppmap = get(boost::vertex_point, pmesh);
-
-  internal::Compare_vertex_points_xyz_3< typename Kernel::Less_xyz_3, VPmap > less_xyz(ppmap);
+  internal::Compare_vertex_points_xyz_3<typename Kernel::Less_xyz_3,
+                                        VertexPointMap > less_xyz(vpmap);
 
   typename boost::graph_traits<PolygonMesh>::vertex_iterator vbegin, vend;
   cpp11::tie(vbegin, vend) = vertices(pmesh);
@@ -93,7 +110,7 @@ namespace internal{
     = std::min_element(vbegin, vend, less_xyz);
 
   const typename Kernel::Vector_3&
-    normal_v_min = compute_vertex_normal(*v_min, pmesh);
+    normal_v_min = compute_vertex_normal(*v_min, pmesh, vpmap, k);
 
   return normal_v_min[0] < 0 || (
             normal_v_min[0] == 0 && (
@@ -103,16 +120,28 @@ namespace internal{
          );
 }
 
-#ifndef DOXYGEN_RUNNING
-template <class PolygonMesh>
-bool
-is_outward_oriented(
-  const PolygonMesh& pmesh)
+///\cond SKIP_IN_MANUAL
+
+template<typename PolygonMesh
+       , typename VertexPointMap>
+bool is_outward_oriented(const PolygonMesh& pmesh
+                       , VertexPointMap vpmap)
 {
-  typedef typename Kernel_traits<typename boost::property_traits<typename boost::property_map<PolygonMesh,CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
-  return is_outward_oriented(pmesh, Kernel());
+  typedef typename Kernel_traits<
+      typename boost::property_traits<
+        typename boost::property_map<PolygonMesh, 
+          CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
+  return is_outward_oriented(pmesh, vpmap, Kernel());
 }
-#endif
+
+template<typename PolygonMesh>
+bool is_outward_oriented(const PolygonMesh& pmesh)
+{
+  return is_outward_oriented(pmesh, get(boost::vertex_point, pmesh));
+}
+
+/// \endcond
+
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
