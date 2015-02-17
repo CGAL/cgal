@@ -8,6 +8,21 @@
 typedef boost::unordered_set<std::size_t> id_map;
 
 template <typename Graph>
+void test_isolated_vertex(const Graph& g)
+{
+  std::cerr << typeid(g).name() << std::endl;
+  Graph G;
+  typedef boost::graph_traits< Graph > Traits;
+  typedef typename Traits::vertex_descriptor vertex_descriptor;
+  typedef typename Traits::halfedge_descriptor halfedge_descriptor;
+  vertex_descriptor v = add_vertex(G);
+  // the connectivity of v may be anything
+  set_halfedge(v, Traits::null_halfedge(), G);
+  halfedge_descriptor h = halfedge(v,G);
+}
+
+
+template <typename Graph>
 void test_halfedge_around_vertex_iterator(const Graph& g)
 {
   CGAL_GRAPH_TRAITS_MEMBERS(Graph);
@@ -255,6 +270,7 @@ test(const std::vector<Graph>& graphs)
     test_faces(p);
     test_halfedge_around_vertex_iterator(p);
     test_halfedge_around_face_iterator(p);
+    test_isolated_vertex(p);
   }
 }
 
