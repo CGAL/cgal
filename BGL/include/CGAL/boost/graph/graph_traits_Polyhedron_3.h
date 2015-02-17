@@ -336,7 +336,6 @@ typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::halfedge_descrip
 halfedge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor v
          , const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
 { 
-  CGAL_assertion(v->halfedge()->vertex() == v);
   return v->halfedge();
 }
 
