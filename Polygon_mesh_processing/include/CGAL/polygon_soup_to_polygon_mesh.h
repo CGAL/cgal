@@ -24,6 +24,7 @@
 #include <CGAL/Modifier_base.h>
 #include <CGAL/IO/generic_print_polyhedron.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 
 namespace CGAL
 {
@@ -31,12 +32,21 @@ namespace Polygon_mesh_processing
 {
 namespace internal
 {
-template <class HDS, class Point, class Polygon_3>
-class Polygon_soup_to_polygon_mesh : public CGAL::Modifier_base < HDS >
+template <typename PM
+        , typename Point
+        , typename Polygon>
+class Polygon_soup_to_polygon_mesh
+  : public CGAL::Modifier_base< PM >
 {
-  const std::vector<Point>& points;
-  const std::vector<Polygon_3>& polygons;
-  typedef typename HDS::Vertex::Point Point_3;
+  const std::vector<Point>& _points;
+  const std::vector<Polygon>& _polygons;
+
+  typedef typename PM::Point Point_3;
+
+  typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
+
 public:
   /**
   * The constructor for modifier object.
@@ -44,33 +54,37 @@ public:
   * @param polygons each element in the vector describes a polygon using the index of the points in the vector.
   */
   Polygon_soup_to_polygon_mesh(const std::vector<Point>& points,
-    const std::vector<Polygon_3>& polygons)
-    : points(points), polygons(polygons)
+                               const std::vector<Polygon>& polygons)
+    : _points(points),
+      _polygons(polygons)
   { }
 
-  void operator()(HDS& out_hds)
+  void operator()(PM& pmesh)
   {
-    Polyhedron_incremental_builder_3<HDS> builder(out_hds);
+    typename boost::property_map<PM, vertex_point_t>::type ppmap
+      = get(CGAL::vertex_point, pmesh);
 
-    builder.begin_surface(points.size(), polygons.size());
-
-    for (std::size_t i = 0, end = points.size(); i < end; ++i)
+    std::vector<vertex_descriptor> vertices(_points.size());
+    for (std::size_t i = 0, end = _points.size(); i < end; ++i)
     {
-      builder.add_vertex( Point_3(points[i][0], points[i][1], points[i][2]) );
+      Point pi(_points[i].x(), _points[i].y(), _points[i].z());
+      vertices[i] = add_vertex(pi, pmesh);
     }
 
-    for (std::size_t i = 0, end = polygons.size(); i < end; ++i)
+    for (std::size_t i = 0, end = _polygons.size(); i < end; ++i)
     {
-      const Polygon_3& polygon = polygons[i];
+      const Polygon& polygon = _polygons[i];
       const std::size_t size = polygon.size();
 
-      builder.begin_facet();
-      for (std::size_t j = 0; j < size; ++j) {
-        builder.add_vertex_to_facet(polygon[j]);
-      }
-      builder.end_facet();
+      std::vector<vertex_descriptor> vr(size); //vertex range
+      vr.resize(size);
+      for (std::size_t j = 0; j < size; ++j)
+        vr[j] = vertices[polygon[j] ];
+
+      CGAL_assertion_code(face_descriptor fd = )
+      CGAL::Euler::add_face(vr, pmesh);
+      CGAL_assertion(fd != boost::graph_traits<PM>::null_face());
     }
-    builder.end_surface();
   }
 };
 }//end namespace internal
@@ -80,17 +94,17 @@ public:
   * build a polygon mesh from a soup of polygons.
   * \todo modify so that the built object is a model of `MutableFaceGraph`
   * \todo write documentation
+  * @tparam Polygon should be a vector<std::size_t>
   */
-  template<class PolygonMesh, class Point_3, class Polygon_3>
+  template<class PolygonMesh, class Point, class Polygon>
   void polygon_soup_to_polygon_mesh(
-    const std::vector<Point_3>& points,
-    const std::vector<Polygon_3 >& polygons,
+    const std::vector<Point>& points,
+    const std::vector<Polygon>& polygons,
     PolygonMesh& out)
   {
-    internal::Polygon_soup_to_polygon_mesh<
-      typename PolygonMesh::HalfedgeDS, Point_3, Polygon_3>
+    internal::Polygon_soup_to_polygon_mesh<PolygonMesh, Point, Polygon>
       converter(points, polygons);
-    out.delegate(converter);
+    converter(out);
   }
 
 }//end namespace Polygon_mesh_processing
