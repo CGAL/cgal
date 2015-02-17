@@ -189,12 +189,12 @@
        <item>
         <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>Expand or shrink selection:</string>
+          <string>Dilate or erode selection:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="Expand_shrink_spin_box">
+        <widget class="QSpinBox" name="Dilate_erode_spin_box">
          <property name="minimum">
           <number>-50</number>
          </property>
@@ -204,7 +204,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="Expand_shrink_button">
+        <widget class="QPushButton" name="Dilate_erode_button">
          <property name="text">
           <string>Apply</string>
          </property>

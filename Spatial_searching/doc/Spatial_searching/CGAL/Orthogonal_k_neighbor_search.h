@@ -7,8 +7,6 @@ The class `Orthogonal_k_neighbor_search` implements approximate`k`-nearest and
 `k`-furthest neighbor searching on a tree 
 using an orthogonal distance class. 
 
-\cgalHeading{Parameters}
-
 \tparam Traits must be a model of the concept `SearchTraits`, 
 for example `Search_traits_2<Simple_cartesian<double> >`. 
 

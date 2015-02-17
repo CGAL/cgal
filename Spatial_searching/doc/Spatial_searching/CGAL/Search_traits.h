@@ -13,7 +13,7 @@ by these classes.
 \sa `Search_traits_d<Kernel>` 
 
 */
-template< typename NT, typename Point, typename CartesianIterator, typename ConstructCartesianIterator, typename ConstructMinVertex, typename ConstructMaxVertex, typename Dim >
+  template< typename NT, typename Point, typename CartesianIterator, typename ConstructCartesianIterator, typename Dim >
 class Search_traits {
 public:
 
@@ -24,7 +24,7 @@ public:
 Dimension type. Either `Dimension_tag<int dim>`
 or `Dynamic_dimension_tag`.
 */
-typedef unspecified_type Dimension;
+typedef Dim Dimension;
 
 /*!
 The number type of the coordinates. 
@@ -49,17 +49,6 @@ has as argument a `Point_d` and an `int`.
 */ 
 typedef ConstructCartesianIterator Construct_Cartesian_const_iterator_d; 
 
-/*!
-Functor with operator to construct 
-the vertex with lexicographically smallest coordinates of an object of type `Iso_box_d`. 
-*/ 
-typedef ConstructMinVertex Construct_min_vertex_d; 
-
-/*!
-Functor with operator to construct 
-the vertex with lexicographically largest coordinates of an object of type `Iso_box_d`. 
-*/ 
-typedef Kernel::ConstructMaxVertex Construct_max_vertex_d; 
 
 /// @}
 

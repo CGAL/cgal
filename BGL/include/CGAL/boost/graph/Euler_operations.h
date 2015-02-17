@@ -23,6 +23,7 @@
 #include <stdexcept>
 
 #include <boost/graph/graph_traits.hpp>
+#include <CGAL/boost/graph/properties.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -30,6 +31,8 @@
 #include <CGAL/boost/graph/iterator.h>
 
 namespace CGAL {
+
+/// \cond SKIP_IN_MANUAL
 
 namespace EulerImpl {
 
@@ -77,6 +80,7 @@ join_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
 }
 } // namespace EulerImpl
 
+/// \endcond
 
   namespace Euler {
 /// \ingroup PkgBGLEulerOperations

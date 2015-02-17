@@ -10,8 +10,6 @@ defined by \f$ l_{\infty}(w)(r,q)=max \{w_i |r_i-q_i| \mid 1 \leq i \leq d\}\f$.
 For the purpose of the distance computations it is more efficient to compute 
 the transformed distance \f$ {\sigma_{i=1}^{i=d} \, w_i(r_i-q_i)^p}\f$ instead of the actual distance. 
 
-\cgalHeading{Parameters}
-
 \tparam Traits must be a model of the concept 
 `SearchTraits`, for example `Search_traits_2`. 
 

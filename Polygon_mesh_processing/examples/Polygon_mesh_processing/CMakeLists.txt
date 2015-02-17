@@ -67,6 +67,7 @@ create_single_source_cgal_program( "fair_polyhedron_example.cpp" )
 create_single_source_cgal_program( "fill_polyhedron_example.cpp" )
 create_single_source_cgal_program( "refine_polyhedron_example.cpp" )
 create_single_source_cgal_program( "triangulate_polyline_example.cpp" )
+create_single_source_cgal_program( "connected_component.cpp" )
 
 
 else(EIGEN3_FOUND)

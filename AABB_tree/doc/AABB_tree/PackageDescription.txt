@@ -33,8 +33,8 @@
 - `CGAL::AABB_tree<AT>`
 
 ## Primitives ##
-- `CGAL::AABB_triangle_primitive<Iterator,CacheDatum>`
-- `CGAL::AABB_segment_primitive<Iterator,CacheDatum>`
+- `CGAL::AABB_triangle_primitive<GeomTraits, Iterator, CacheDatum>`
+- `CGAL::AABB_segment_primitive<GeomTraits, Iterator, CacheDatum>`
 - `CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>`
 - `CGAL::AABB_halfedge_graph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>`
 - `CGAL::AABB_face_graph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>`

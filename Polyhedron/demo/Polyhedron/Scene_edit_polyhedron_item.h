@@ -229,12 +229,12 @@ protected:
 
 public slots:
   void changed();
-  void selected(const std::map<Polyhedron::Vertex_handle, int>& m)
+  void selected(const std::set<Polyhedron::Vertex_handle>& m)
   {
     bool any_changes = false;
-    for(std::map<vertex_descriptor, int>::const_iterator it = m.begin(); it != m.end(); ++it)
+    for(std::set<vertex_descriptor>::const_iterator it = m.begin(); it != m.end(); ++it)
     {
-      vertex_descriptor vh = it->first;
+      vertex_descriptor vh = *it;
       bool changed = false;
       if(ui_widget->ROIRadioButton->isChecked()) {
         if(ui_widget->InsertRadioButton->isChecked()) { changed = insert_roi_vertex(vh); }
@@ -531,7 +531,7 @@ public:
   struct Is_selected {
     Deform_mesh& dm;
     Is_selected(Deform_mesh& dm) : dm(dm) {}
-    bool is_selected(Vertex_handle vh) const {
+    bool count(Vertex_handle vh) const {
       return dm.is_roi_vertex(vh);
     }
   };
@@ -539,7 +539,7 @@ public:
   boost::optional<std::size_t> get_minimum_isolated_component() {
     Travel_isolated_components::Minimum_visitor visitor;
     Travel_isolated_components().travel<Vertex_handle>
-      (polyhedron()->vertices_begin(), polyhedron()->vertices_end(), 
+      (vertices(*polyhedron()).first, vertices(*polyhedron()).second, 
        polyhedron()->size_of_vertices(), Is_selected(deform_mesh), visitor);
     return visitor.minimum;
   }
@@ -558,7 +558,7 @@ public:
 
     Travel_isolated_components::Selection_visitor<Output_iterator> visitor(threshold, out);
     Travel_isolated_components().travel<Vertex_handle>
-      (polyhedron()->vertices_begin(), polyhedron()->vertices_end(), 
+      (vertices(*polyhedron()).first, vertices(*polyhedron()).second,
       polyhedron()->size_of_vertices(), Is_selected(deform_mesh), visitor);
 
     if(visitor.any_inserted) { emit itemChanged(); }
@@ -658,7 +658,7 @@ protected:
     {
       std::size_t id = vd->id();
       const Polyhedron::Traits::Vector_3& n = 
-        CGAL::Polygon_mesh_processing::compute_vertex_normal<Polyhedron::Traits>(vd, deform_mesh.halfedge_graph());
+        CGAL::Polygon_mesh_processing::compute_vertex_normal(vd, deform_mesh.halfedge_graph());
       normals[id*3] = n.x();
       normals[id*3+1] = n.y(); 
       normals[id*3+2] = n.z(); 

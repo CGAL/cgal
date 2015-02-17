@@ -10,15 +10,16 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point;
 
-int main(void)
+int main(int argc, char*argv[])
 {
+  const char* fname = (argc>1)?argv[1]:"data/oni.xyz";
   // Reads a .xyz point set file in points[].
   std::vector<Point> points;
-  std::ifstream stream("data/oni.xyz");
+  std::ifstream stream(fname);
   if (!stream ||
       !CGAL::read_xyz_points(stream, std::back_inserter(points)))
   {
-    std::cerr << "Error: cannot read file data/oni.xyz" << std::endl;
+    std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -34,7 +35,7 @@ int main(void)
   // Note: write_xyz_points_and_normals() requires an output iterator
   // over points as well as property maps to access each
   // point position and normal.
-  std::ofstream out("Three_lady_copy.xyz");
+  std::ofstream out((argc>2)?argv[2]:"Three_lady_copy.xyz");
   if (!out ||
 	  !CGAL::write_xyz_points(
 	  out, points.begin(), points.end()))

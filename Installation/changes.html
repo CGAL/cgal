@@ -60,7 +60,7 @@
 
 <table CELLSPACING=0>
 <tr><td><a href="#release4.6">4.6</a>&nbsp;<td> (? 2015)
-<tr><td><a href="#release4.5.2">4.5.2</a>&nbsp;<td> (January 2015)
+<tr><td><a href="#release4.5.2">4.5.2</a>&nbsp;<td> (February 2015)
 <tr><td><a href="#release4.5.1">4.5.1</a>&nbsp;<td> (December 2014)
 <tr><td><a href="#release4.5">4.5</a>&nbsp;<td> (October 2014)
 <tr><td><a href="#release4.4">4.4</a>&nbsp;<td> (April 2014)
@@ -254,7 +254,7 @@ and <code>src/</code> directories).
 
 <h2 id="release4.5.2">Release 4.5.2</h2>
 <div>
-  <p>Release date: January 2015</p>
+  <p>Release date: February 2015</p>
 
   <h3>General</h3>
   <ul>
@@ -262,6 +262,16 @@ and <code>src/</code> directories).
     Boost (>=1.56) when explicit conversions operators (from C++11) are
     supported. That prevented the compilation with Microsoft Visual Studio
     2013.
+  </ul>
+  <h3>3D Convex Hulls</h3>
+  <ul>
+    <li> Fix a non-robust predicate bug that was showing up when input
+    points where lexicographically sorted.</li>
+  </ul>
+  <h3>3D Mesh Generation</h3>
+  <ul>
+    <li>Fix a bug in the sliver perturbation optimization method.  It could
+      create some holes on the surface of the mesh.</li>
   </ul>
 </div>
 

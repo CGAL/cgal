@@ -101,6 +101,8 @@ public:
     /// Extend the number of elements by one.
     virtual void push_back() = 0;
 
+    virtual bool transfer(const Base_property_array& other) = 0;
+
     /// Let two elements swap their storage place.
     virtual void swap(size_t i0, size_t i1) = 0;
 
@@ -153,6 +155,16 @@ public: // virtual interface of Base_property_array
     virtual void push_back()
     {
         data_.push_back(value_);
+    }
+
+    bool transfer(const Base_property_array& other)
+    {
+      const Property_array<T>* pa = dynamic_cast<const Property_array*>(&other);
+      if(pa != NULL){
+        std::copy((*pa).data_.begin(), (*pa).data_.end(), data_.end()-(*pa).data_.size());
+        return true;
+      } 
+      return false;
     }
 
     virtual void shrink_to_fit()
@@ -265,6 +277,18 @@ public:
         return *this;
     }
 
+    void transfer(const Property_container& _rhs)
+    {
+      for(unsigned int i=0; i<parrays_.size(); ++i){
+        for (unsigned int j=0; j<_rhs.parrays_.size(); ++j){
+          if(parrays_[i]->name() ==  _rhs.parrays_[j]->name()){
+            parrays_[i]->transfer(* _rhs.parrays_[j]);
+            break;
+          }
+        }
+      }
+    }
+
     // returns the current size of the property arrays
     size_t size() const { return size_; }
 
@@ -314,7 +338,9 @@ public:
 
 
     // returns a property if it exists, otherwise it creates it first.
-    template <class T> Property_map<Key, T> get_or_add(const std::string& name, const T t=T())
+    template <class T>
+    Property_map<Key, T> 
+    get_or_add(const std::string& name, const T t=T())
     {
       Property_map<Key, T> p;
       bool b;
@@ -325,7 +351,8 @@ public:
 
 
     // get the type of property by its name. returns typeid(void) if it does not exist.
-    const std::type_info& get_type(const std::string& name)
+    const std::type_info& 
+    get_type(const std::string& name)
     {
         for (unsigned int i=0; i<parrays_.size(); ++i)
             if (parrays_[i]->name() == name)
@@ -335,7 +362,9 @@ public:
 
 
     // delete a property
-    template <class T> void remove(Property_map<Key, T>& h)
+    template <class T> 
+    void
+    remove(Property_map<Key, T>& h)
     {
         typename std::vector<Base_property_array*>::iterator it=parrays_.begin(), end=parrays_.end();
         for (; it!=end; ++it)
@@ -486,6 +515,11 @@ public:
     {
       CGAL_assertion(parray_ != NULL);
       return (*parray_)[i];
+    }
+
+    bool transfer (const Property_map& other)
+    {
+      return parray_->transfer(*(other.parray_));
     }
 
     /// Allows access to the underlying storage of the property. This
@@ -646,6 +680,7 @@ private:
         {
           return (os << 'h' << (size_type)h );
         }
+
     };
 
     /// This class represents a face
@@ -1363,6 +1398,95 @@ public:
         fprops_.reserve(nfaces);
     }
 
+      void resize(size_type nvertices,
+                 size_type nedges,
+                 size_type nfaces )
+    {
+        vprops_.resize(nvertices);
+        hprops_.resize(2*nedges);
+        eprops_.resize(nedges);
+        fprops_.resize(nfaces);
+    }
+  
+  bool join(const Surface_mesh& other)
+  {
+    size_type nv = num_vertices(), nh = num_halfedges(), nf = num_faces();
+    resize(num_vertices()+  other.num_vertices(),
+            num_edges()+  other.num_edges(),
+            num_faces()+  other.num_faces());
+
+    vprops_.transfer(other.vprops_);
+    hprops_.transfer(other.hprops_);
+    fprops_.transfer(other.fprops_);
+    eprops_.transfer(other.eprops_);
+
+    for(size_type i = nv; i < nv+other.num_vertices(); i++){
+      Vertex_index vi(i);
+      if(vconn_[vi].halfedge_ != null_halfedge()){
+        vconn_[vi].halfedge_ = Halfedge_index(size_type(vconn_[vi].halfedge_)+nh);
+      }
+    }
+    for(size_type i = nf; i < nf+other.num_faces(); i++){
+      Face_index fi(i);
+      if(fconn_[fi].halfedge_ != null_halfedge()){
+        fconn_[fi].halfedge_ = Halfedge_index(size_type(fconn_[fi].halfedge_)+nh);
+      }
+    }
+    for(size_type i = nh; i < nh+other.num_halfedges(); i++){
+      Halfedge_index hi(i);
+      if(hconn_[hi].face_ != null_face()){
+        hconn_[hi].face_ = Face_index(size_type(hconn_[hi].face_)+nf);
+      }
+      if( hconn_[hi].vertex_ != null_vertex()){
+        hconn_[hi].vertex_ = Vertex_index(size_type(hconn_[hi].vertex_)+nv);
+      }
+      if(hconn_[hi].next_halfedge_ != null_halfedge()){
+        hconn_[hi].next_halfedge_ = Halfedge_index(size_type(hconn_[hi].next_halfedge_)+nh);
+      }
+      if(hconn_[hi].prev_halfedge_ != null_halfedge()){
+        hconn_[hi].prev_halfedge_ = Halfedge_index(size_type(hconn_[hi].prev_halfedge_)+nh);
+      }
+    }
+
+    if(other.vertices_freelist_ != -1){
+      if(vertices_freelist_ != -1){
+        Vertex_index vi(nv+other.vertices_freelist_);
+        Halfedge_index inf(-1);
+        while(vconn_[vi].halfedge_ != inf){
+          vi = Vertex_index(size_type(vconn_[vi].halfedge_));
+        }
+        vconn_[vi].halfedge_ = Halfedge_index(vertices_freelist_);
+      }
+      vertices_freelist_ = nv + other.vertices_freelist_; 
+    }
+    if(other.faces_freelist_ != -1){
+      if(faces_freelist_ != -1){
+        Face_index fi(nf+other.faces_freelist_);
+        Halfedge_index inf(-1);
+        while(fconn_[fi].halfedge_ != inf){
+          fi = Face_index(size_type(fconn_[fi].halfedge_));
+        }
+        fconn_[fi].halfedge_ = Halfedge_index(faces_freelist_);
+      }
+      faces_freelist_ = nf + other.faces_freelist_; 
+    }
+    if(other.edges_freelist_ != -1){
+      if(edges_freelist_ != -1){
+        Halfedge_index hi((nh>>1)+other.edges_freelist_);
+        Halfedge_index inf(-1);
+        while(hconn_[hi].next_halfedge_ != inf){
+          hi = hconn_[hi].next_halfedge_;
+        }
+        hconn_[hi].next_halfedge_ = Halfedge_index(edges_freelist_);
+      }
+      edges_freelist_ = (nh>>1) + other.edges_freelist_; 
+    }
+    garbage_ = garbage_ || other.garbage_;
+    removed_vertices_ += other.removed_vertices_;
+    removed_edges_ += other.removed_edges_;
+    removed_faces_ += other.removed_faces_;
+    return true;
+  }
 
     ///@}
 
@@ -1514,7 +1638,9 @@ public:
   bool is_valid(bool verbose = true) const
     {
         bool valid = true;
+        size_type vcount = 0, hcount = 0, fcount = 0;
         for(Halfedge_iterator it = halfedges_begin(); it != halfedges_end(); ++it) { 
+            ++hcount;
             valid = valid && next(*it).is_valid();
             valid = valid && opposite(*it).is_valid();
             if(!valid) {
@@ -1560,7 +1686,8 @@ public:
             }
         }
 
-        for(Vertex_iterator it = vertices_begin(); it != vertices_end(); ++it) { 
+        for(Vertex_iterator it = vertices_begin(); it != vertices_end(); ++it) {
+          ++vcount;
             if(halfedge(*it).is_valid()) {
                 // not an isolated vertex
                 valid = valid && (target(halfedge(*it)) == *it);
@@ -1571,8 +1698,24 @@ public:
                 }
             }
         }
+        for(Face_iterator it = faces_begin(); it != faces_end(); ++it) {
+          ++fcount;
+        }
+        
+        valid = valid && (vcount == number_of_vertices());
+        if(!valid && verbose){
+          std::cerr << "#vertices: iterated: " << vcount << " vs number_of_vertices(): " << number_of_vertices()<< std::endl;
+        }
 
+        valid = valid && (hcount == number_of_halfedges());
+        if(!valid && verbose){
+          std::cerr << "#halfedges: iterated: " << hcount << " vs number_of_halfedges(): " << number_of_halfedges()<< std::endl;
+        }
 
+        valid = valid && (fcount == number_of_faces());
+        if(!valid && verbose){
+          std::cerr << "#faces: iterated: " << fcount << " vs number_of_faces(): " << number_of_faces()<< std::endl;
+        }
         return valid;
     }
 
@@ -2119,6 +2262,21 @@ private: //------------------------------------------------------- private data
    *
    * @{
    */
+
+  /// \relates Surface_mesh
+  /// Inserts `other` into `sm`. 
+  /// Shifts the indices of vertices of `other` by `sm.number_of_vertices() + sm.number_of_removed_vertices()`
+  /// and analoguously for halfedges, edges, and faces.
+  /// Copies entries of all property maps which have the same name in `sm` and `other`. 
+  /// that is, property maps which are only in `other` are ignored.
+  /// Also copies elements which are marked as removed, and concatenates the freelists of `sm` and `other`. 
+
+  template <typename P>
+  Surface_mesh<P>& operator+=(Surface_mesh<P>& sm, const Surface_mesh<P>& other)
+  {
+    sm.join(other);
+    return sm;
+  }
 
   /// \relates Surface_mesh
   /// Inserts the surface mesh in an output stream in Ascii OFF format. 

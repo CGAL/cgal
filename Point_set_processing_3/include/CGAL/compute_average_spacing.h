@@ -35,9 +35,9 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
+/// \cond SKIP_IN_MANUAL
 namespace internal {
 
-/// \cond SKIP_IN_MANUAL
 
 /// Computes average spacing of one query point from K nearest neighbors.
 ///
@@ -84,9 +84,9 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
   return sum_distances / (FT)i;
 }
 
+} /* namespace internal */
 /// \endcond
 
-} /* namespace internal */
 
 
 // ----------------------------------------------------------------------------
@@ -99,10 +99,10 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
 /// \pre `k >= 2.`
 ///
 /// @tparam InputIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
-///        It can be omitted if InputIterator value_type is convertible to Point_3<Kernel>.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
+///        It can be omitted if the value type of `InputIterator`  is convertible to `Point_3<Kernel>`.
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from PointPMap value_type.
+///        It can be omitted and deduced automatically from the value type of `PointPMap`.
 ///
 /// @return average spacing (scalar).
 

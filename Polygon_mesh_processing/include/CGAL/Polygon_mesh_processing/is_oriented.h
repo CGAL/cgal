@@ -52,16 +52,7 @@ namespace internal{
 
   };
 } // end of namespace internal
-#ifndef DOXYGEN_RUNNING
-template <class PolygonMesh>
-bool
-is_outward_oriented(
-  const PolygonMesh& pmesh)
-{
-  typedef typename Kernel_traits<typename boost::property_traits<typename boost::property_map<PolygonMesh,CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
-  return is_outward_oriented(pmesh, Kernel());
-}
-#endif
+
 /**
  * \ingroup PkgPolygonMeshProcessing
  * Tests whether a closed surface polygon mesh has a positive orientation.
@@ -102,7 +93,7 @@ is_outward_oriented(
     = std::min_element(vbegin, vend, less_xyz);
 
   const typename Kernel::Vector_3&
-    normal_v_min = compute_vertex_normal(*v_min, pmesh, ppmap, k);
+    normal_v_min = compute_vertex_normal(*v_min, pmesh);
 
   return normal_v_min[0] < 0 || (
             normal_v_min[0] == 0 && (
@@ -111,6 +102,17 @@ is_outward_oriented(
             )
          );
 }
+
+#ifndef DOXYGEN_RUNNING
+template <class PolygonMesh>
+bool
+is_outward_oriented(
+  const PolygonMesh& pmesh)
+{
+  typedef typename Kernel_traits<typename boost::property_traits<typename boost::property_map<PolygonMesh,CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
+  return is_outward_oriented(pmesh, Kernel());
+}
+#endif
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

@@ -1,30 +1,32 @@
-Subject: CGAL 4.5.1 Released, Computational Geometry Algorithms Library
+Subject: CGAL 4.5.2 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
 Body: 
 
-The CGAL Open Source Project is pleased to announce the release 4.5.1
+The CGAL Open Source Project is pleased to announce the release 4.5.2
 of CGAL, the Computational Geometry Algorithms Library.
 
 
-Version 4.5.1 is a bug-fix release for version 4.5. The following has been
-changed since CGAL-4.5:
+Version 4.5.2 is a bug-fix release for version 4.5. The following has been
+changed since CGAL-4.5.1:
 
-  o Support
-
-    - Fix a compilation error when the third-party library TBB version 4.3
-      is used.
-
-    - Fix an infinite loop when the parallel version of 3D Mesh Generation
-      was compiled using Microsoft Visual Studio 2010.
-
-
+  o General
+  
+    - Fix a bug that prevented the compilation with recent versions of Boost
+      (>=1.56) when explicit conversions operators (from C++11) are supported.
+      That prevented the compilation with Microsoft Visual Studio 2013.
+  
+  
+  o 3D Convex Hulls
+  
+    - Fix a non-robust predicate bug that was showing up when input points where
+      lexicographically sorted.
+  
+  
   o 3D Mesh Generation
-
-    - Fix a bug in the sliver exudation preservation of boundaries.
-
-    - Fix a regression the 1D meshing algorithm that meshes the 1D features
-      of the domain.
-
+  
+    - Fix a bug in the sliver perturbation optimization method. It could create
+      some holes on the surface of the mesh.
+  
 
 
 The CGAL project is a collaborative effort to develop a robust,

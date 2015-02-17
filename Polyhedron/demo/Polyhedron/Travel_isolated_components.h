@@ -52,6 +52,13 @@ public:
     Minimum_visitor minimum_visitor; // hold minimum of NOT inserted components
   };
 
+  template <class Handle>
+  std::size_t id(Handle h) { return h->id(); }
+  std::size_t id(boost::graph_traits<Polyhedron>::edge_descriptor ed)
+  {
+    return ed.halfedge()->id() / 2;
+  }
+
   // NOTE: prior to call this function, id fields should be updated
   template<class HandleType, class InputIterator, class IsSelected, class Visitor>
   void travel(InputIterator begin, 
@@ -64,13 +71,13 @@ public:
 
     for(; begin != end; ++begin) 
     {
-      HandleType h = begin;
+      HandleType h = *begin;
 
-      if(mark[h->id()] || selection.is_selected(h)) { continue; }
+      if(mark[id(h)] || selection.count(h)) { continue; }
 
       std::vector<HandleType> C;
       C.push_back(h);
-      mark[h->id()] = true;
+      mark[id(h)] = true;
       std::size_t current_index = 0;
 
       bool neigh_to_selection = false;
@@ -80,9 +87,9 @@ public:
         for(One_ring_iterator<HandleType> circ(current); circ; ++circ)
         {
           HandleType nv = circ;
-          neigh_to_selection |= selection.is_selected(nv);
-          if(!mark[nv->id()] && !selection.is_selected(nv)) {
-            mark[nv->id()] = true; 
+          neigh_to_selection |= (selection.count(nv)!=0);
+          if(!mark[id(nv)] && !selection.count(nv)) {
+            mark[id(nv)] = true;
             C.push_back(nv);
           }
         }

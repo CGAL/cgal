@@ -51,7 +51,7 @@ template <class PM
 class Triangulate_modifier
   : public CGAL::Modifier_base<PM>
 {
-  typedef typename Kernel Traits;
+  typedef Kernel Traits;
 
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
@@ -99,7 +99,9 @@ public:
     std::vector<face_descriptor> facets;
     facets.reserve(num_faces(pmesh));
     BOOST_FOREACH(face_descriptor fit, faces(pmesh))
-      facets.push_back(fit);
+      //only consider non-triangular faces
+      if ( next( next( halfedge(fit, pmesh), pmesh), pmesh) !=
+           prev( halfedge(fit, pmesh), pmesh) ) facets.push_back(fit);
 
     // Iterates on the vector of facet handles
     for (unsigned int i = 0; i < facets.size(); ++i)
@@ -219,26 +221,6 @@ public:
 
 }//end namespace internal
 
-///\cond SKIP_IN_MANUAL
-template <typename PolygonMesh>
-void triangulate_faces(PolygonMesh& pmesh)
-{
-  return triangulate_faces(pmesh, get(boost::vertex_point, pmesh));
-}
-
-template <typename PolygonMesh
-        , typename VertexPointMap>
-void triangulate_faces(PolygonMesh& pmesh
-                     , VertexPointMap vpmap)
-{
-  typedef typename Kernel_traits<
-    typename boost::property_traits<
-    typename boost::property_map<
-    PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
-  return triangulate_faces(pmesh, vpmap, Kernel());
-}
-///\endcond
-
 /**
 * \ingroup PkgPolygonMeshProcessing
 * Triangulates faces of the polygon mesh `pmesh`. Depends on \ref PkgTriangulation2Summary
@@ -256,15 +238,36 @@ void triangulate_faces(PolygonMesh& pmesh
 #ifdef DOXYGEN_RUNNING
                      = get(vertex_point, pmesh)
 #endif
-                     , const Kernel& k
+                     , const Kernel&
 #ifdef DOXYGEN_RUNNING
-                     = Kernel()
+                     k = Kernel()
 #endif
                     )
 {
   internal::Triangulate_modifier<PolygonMesh, VertexPointMap, Kernel> modifier(vpmap);
   modifier(pmesh);
 }
+
+///\cond SKIP_IN_MANUAL
+template <typename PolygonMesh
+        , typename VertexPointMap>
+void triangulate_faces(PolygonMesh& pmesh
+                     , VertexPointMap vpmap)
+{
+  typedef typename Kernel_traits<
+    typename boost::property_traits<
+    typename boost::property_map<
+    PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
+  return triangulate_faces(pmesh, vpmap, Kernel());
+}
+
+template <typename PolygonMesh>
+void triangulate_faces(PolygonMesh& pmesh)
+{
+  return triangulate_faces(pmesh, get(boost::vertex_point, pmesh));
+}
+///\endcond
+
 
 
 } // end namespace Polygon_mesh_processing

@@ -75,7 +75,7 @@ sdf_values( const Polyhedron& polyhedron,
  * @param[out] sdf_values_map the SDF value of each facet
  * @param cone_angle opening angle in radians for the cone of each facet
  * @param number_of_rays number of rays picked in the cone of each facet. In our experiments, we observe that increasing the number of rays beyond the default has little effect on the quality of the segmentation result
- * @param postprocess if `true`, `CGAL::sdf_values_postprocessing` is called on raw SDF value computed.
+ * @param postprocess if `true`, `CGAL::sdf_values_postprocessing()` is called on raw SDF value computed.
  * @param traits traits class
  * @param ppmap point property map. An overload is provided with `get(boost::vertex_point,polyhedron)` as default.
  *
@@ -111,7 +111,7 @@ sdf_values( const Polyhedron& polyhedron,
  * Post-processing steps applied :
  *   - Facets with -1 SDF values are assigned the average SDF value of their edge-adjacent neighbors.
  *     If there is still a facet having -1 SDF value, the minimum valid SDF value assigned to it. Note that this step is not inherited from the paper.
- *     The main reason for not assigning 0 to facets with no SDF values (i.e. -1) is that it can obstruct log-normalization process which takes place at the beginning of `CGAL::segmentation_from_sdf_values`.
+ *     The main reason for not assigning 0 to facets with no SDF values (i.e. -1) is that it can obstruct log-normalization process which takes place at the beginning of `CGAL::segmentation_from_sdf_values()`.
  *   - SDF values are smoothed with bilateral filtering.
  *   - SDF values are linearly normalized between [0,1].
  *

@@ -22,13 +22,9 @@ LC_CTYPE=en_US.UTF-8
 0 21  *  *  Sun                      cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/branches/master.git --public --do-it
 #0 21  *  *  Mon,Tue,Wed,Thu,Fri,Sun  cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/branches/master.git --public --do-it
 # "integration"
-0 21  *  *  Mon,Tue,Wed,Thu,Fri      cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/branches/integration.git $HOME/CGAL/branches/empty-dir --do-it 
-# "integration-4.5"
-0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release-4.5-branch && $HOME/bin/create_release $HOME/CGAL/branches/integration-4.5.git $HOME/CGAL/branches/empty-dir --do-it --public
+0 21  *  *  Mon,Tue,Wed,Fri          cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/branches/integration.git $HOME/CGAL/branches/empty-dir --do-it 
 # from branch 4.5
-#0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release-4.5-branch && $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.5-branch.git --public --do-it
-# from branch 4.4
-#0 21  *  *  Sun                      cd $HOME/CGAL/create_internal_release-4.4-branch && $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.4-branch.git --public --do-it
+0 21  *  *  Thu,Sat                  cd $HOME/CGAL/create_internal_release-4.5-branch && $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.5-branch.git --public --do-it
 
 # Try to launch the test suite, every 10mn, from 21:00 to 22:50
 */10 21-22 * * * setarch i686 $HOME/CGAL/Scripts/developer_scripts/autotest_cgal_with_cmake
@@ -52,6 +48,10 @@ LC_CTYPE=en_US.UTF-8
 #0 21  *  *  Mon,Tue,Wed,Thu,Fri      cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/next.svn $HOME/CGAL/candidate-packages --public --do-it
 # from branch 4.1
 #0 21  *  *  Sun                      cd $HOME/CGAL/create_internal_release-4.1-branch && $HOME/bin/create_release $HOME/CGAL/CGAL-4.1-branch --public --do-it
+# from branch 4.4
+#0 21  *  *  Sun                      cd $HOME/CGAL/create_internal_release-4.4-branch && $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.4-branch.git --public --do-it
+# "integration-4.5"
+#0 21  *  *  Sat,Mon                  cd $HOME/CGAL/create_internal_release-4.5-branch && $HOME/bin/create_release $HOME/CGAL/branches/integration-4.5.git $HOME/CGAL/branches/empty-dir --do-it --public
 
 #  - from branch 3.4
 #0 21 * * Sat cd $HOME/CGAL/create_internal_release-3.4-branch; $HOME/bin/create_release $HOME/CGAL/CGAL-3.4-branch --public --do-it
