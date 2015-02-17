@@ -25,11 +25,17 @@ namespace Polygon_mesh_processing {
   @param pmesh polygon mesh containing the hole
   @param border_halfedge a border halfedge incident to the hole
   @param out iterator over patch faces.
-  @param use_delaunay_triangulation
+  @param use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
 
   @return @a out
 
   \todo handle islands
+  @todo Replace border_halfedge by a range of border halfedges.
+        The first one would describe the hole,
+        the other ones would describe the islands.
+  @todo Then, insert the holes vertices in the set of possibilities
+        for connecting vertices together
+  @todo Handle the case where an island is reduced to a point
   */
   template<class PolygonMesh, class OutputIterator>
   OutputIterator
