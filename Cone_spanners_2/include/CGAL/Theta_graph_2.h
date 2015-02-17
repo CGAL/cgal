@@ -21,7 +21,7 @@
 /** @file Theta_graph_2.h
  *
  * This header implements the class Theta_graph_2, the constructor of which 
- * builds a Theta graph on a set of given vertices.
+ * builds a Theta graph on a set of given vertices in the plane.
  */
 
 #ifndef CGAL_THETA_GRAPH_2_H
@@ -73,9 +73,8 @@ namespace CGAL {
 		* @param start An iterator pointing to the first point (vertex) in the graph.
 		*              (default: nullptr)
 		* @param end   An iterator pointing to the place that passes the last point.  (default: nullptr)
-		* @param ray0  A direction denoting one of the rays deviding the
-		*              cones. This allows arbitary rotations of the way space is
-		*              divided.  (default: positive x-axis) 
+		* @param ray0  The direction of the first ray. This allows the first ray to be at an arbitary 
+		*              direction.  (default: positive x-axis) 
 		*/
 #ifdef GXX11
 	    template <typename PointInputIterator=Point_2*>
@@ -117,7 +116,7 @@ namespace CGAL {
 			return this->g;
 		}
 
-		/** @brief Construct edges bounded by two directions. 
+		/** @brief Construct edges in one cone bounded by two directions. 
 		*
 		* @param cwBound      The direction that bounds the cone on the clockwise
 		*                      direction.
