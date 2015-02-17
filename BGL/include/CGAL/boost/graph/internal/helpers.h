@@ -166,9 +166,45 @@ exact_num_faces(const Graph& g)
   typename boost::graph_traits<Graph>::face_iterator beg, end;
   boost::tie(beg,end) = faces(g);
   return std::distance(beg,end);
- }
+}
 
+template<typename Graph>
+bool
+is_isolated(typename boost::graph_traits<Graph>::vertex_descriptor v,
+            Graph& g)
+{
+  return halfedge(v, g) == typename boost::graph_traits<Graph>::null_halfedge();
+}
 
+template<typename Graph>
+void
+adjust_incoming_halfedge(typename boost::graph_traits<Graph>::vertex_descriptor v,
+                         Graph& g)
+{
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
+
+  halfedge_descriptor h = halfedge(v, g);
+  halfedge_descriptor hh = h;
+  if (h != boost::graph_traits<Graph>::null_halfedge())
+  {
+    if (target(h, g) != v)
+    {
+      // wrong target, flip
+      h = opposite(h, g);
+      hh = h;
+      set_halfedge(v, h, g);
+    }
+    do
+    {
+      if(is_border(h, g))
+      {
+        set_halfedge(v, h, g);
+        return;
+      }
+      h = opposite(next(h, g), g);
+    } while (h != hh);
+  }
+}
 
 
 } // internal
