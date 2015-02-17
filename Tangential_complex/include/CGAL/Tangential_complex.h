@@ -215,11 +215,11 @@ public:
     m_half_sparsity(0.5*sparsity),
     m_sq_half_sparsity(m_half_sparsity*m_half_sparsity),
     m_ambiant_dim(k.point_dimension_d_object()(*first)),
-    m_points(first, last),
-    m_points_ds(m_points)
+    m_points(first, last)
 # if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
     , m_p_perturb_mutexes(NULL)
 # endif
+    , m_points_ds(m_points)
 #ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
     , m_points_for_tse(first_for_tse, last_for_tse)
     , m_points_ds_for_tse(m_points_for_tse)
