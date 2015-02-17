@@ -130,10 +130,10 @@ int main( int argc, char** argv )
   int r
   = SMS::edge_collapse(surface_mesh
                        ,stop
-                       ,CGAL::vertex_index_map(get(CGAL::vertex_external_index, surface_mesh))
-                       .halfedge_index_map(get(CGAL::halfedge_external_index, surface_mesh))
-                       .edge_is_constrained_map(constraints_map)
-                       .get_placement(placement)
+                       ,CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index, surface_mesh))
+                                         .halfedge_index_map(get(CGAL::halfedge_external_index, surface_mesh))
+                                         .edge_is_constrained_map(constraints_map)
+                                         .get_placement(placement)
    );
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n"
@@ -170,10 +170,10 @@ int main( int argc, char** argv )
   std::cout << "Check that no removable edge has been forgotten..." << std::endl;
   r = SMS::edge_collapse(surface_mesh
                          ,stop
-                         ,CGAL::vertex_index_map(get(CGAL::vertex_external_index, surface_mesh))
-                         .halfedge_index_map  (get(CGAL::halfedge_external_index, surface_mesh))
-                         .edge_is_constrained_map(constraints_map)
-                         .get_placement(placement)
+                         ,CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index, surface_mesh))
+                                           .halfedge_index_map  (get(CGAL::halfedge_external_index, surface_mesh))
+                                           .edge_is_constrained_map(constraints_map)
+                                           .get_placement(placement)
    );
 
   assert(r==0);

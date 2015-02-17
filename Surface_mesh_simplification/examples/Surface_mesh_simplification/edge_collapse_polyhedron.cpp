@@ -38,10 +38,10 @@ int main( int argc, char** argv )
   int r = SMS::edge_collapse
             (surface_mesh
             ,stop
-            ,CGAL::vertex_index_map(get(CGAL::vertex_external_index,surface_mesh)) 
-             .halfedge_index_map  (get(CGAL::halfedge_external_index  ,surface_mesh)) 
-             .get_cost (SMS::Edge_length_cost <Surface_mesh>())
-             .get_placement(SMS::Midpoint_placement<Surface_mesh>())
+             ,CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index,surface_mesh)) 
+                               .halfedge_index_map  (get(CGAL::halfedge_external_index  ,surface_mesh)) 
+                               .get_cost (SMS::Edge_length_cost <Surface_mesh>())
+                               .get_placement(SMS::Midpoint_placement<Surface_mesh>())
             );
   
   std::cout << "\nFinished...\n" << r << " edges removed.\n" 

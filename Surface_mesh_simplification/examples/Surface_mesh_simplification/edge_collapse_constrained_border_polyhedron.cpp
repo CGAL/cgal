@@ -96,10 +96,10 @@ int main( int argc, char** argv )
   int r = SMS::edge_collapse
             (surface_mesh
             ,stop
-            ,CGAL::vertex_index_map(get(CGAL::vertex_external_index,surface_mesh))
-                  .halfedge_index_map  (get(CGAL::halfedge_external_index  ,surface_mesh))
-                  .edge_is_constrained_map(bem)
-                  .get_placement(Placement(bem))
+             ,CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index,surface_mesh))
+                               .halfedge_index_map  (get(CGAL::halfedge_external_index  ,surface_mesh))
+                               .edge_is_constrained_map(bem)
+                               .get_placement(Placement(bem))
             );
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n"

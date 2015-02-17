@@ -121,6 +121,14 @@ namespace CGAL {
       typedef cgal_bgl_named_params<IndexMap, boost::halfedge_index_t, self> Params;
       return Params(p, *this);
     }
+
+      template <typename IndexMap>
+    cgal_bgl_named_params<IndexMap, boost::face_index_t, self>
+    face_index_map(const IndexMap& p) const 
+    {
+      typedef cgal_bgl_named_params<IndexMap, boost::face_index_t, self> Params;
+      return Params(p, *this);
+    }
     
     template <typename Visitor>
     cgal_bgl_named_params<Visitor, boost::graph_visitor_t, self>
@@ -321,6 +329,9 @@ namespace CGAL {
   }
 #endif
 
+
+  namespace parameters {
+
   template <typename IndexMap>
   cgal_bgl_named_params<IndexMap, boost::vertex_index_t>
   vertex_index_map(IndexMap const& p) 
@@ -334,6 +345,14 @@ namespace CGAL {
   halfedge_index_map(IndexMap const& p) 
   {
     typedef cgal_bgl_named_params<IndexMap, boost::halfedge_index_t> Params;
+    return Params(p);
+  }
+  
+  template <typename IndexMap>
+  cgal_bgl_named_params<IndexMap, boost::face_index_t>
+  face_index_map(IndexMap const& p) 
+  {
+    typedef cgal_bgl_named_params<IndexMap, boost::face_index_t> Params;
     return Params(p);
   }
   
@@ -424,6 +443,9 @@ namespace CGAL {
     typedef cgal_bgl_named_params<EdgeIsConstrainedParams, edge_is_constrained_params_t> Params;
     return Params(em);
   }
+
+  } // namespace parameters
+
 } //namespace CGAL
 
 #if BOOST_VERSION >= 105100

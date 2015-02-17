@@ -94,8 +94,8 @@ int main( int argc, char** argv )
   int r = SMS::edge_collapse
             (surface_mesh
             ,stop
-            ,CGAL::edge_is_constrained_map(bem)
-             .get_placement(Placement(bem))
+             ,CGAL::parameters::edge_is_constrained_map(bem)
+                               .get_placement(Placement(bem))
             );
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n"

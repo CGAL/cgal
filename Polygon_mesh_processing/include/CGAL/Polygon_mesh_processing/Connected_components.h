@@ -28,6 +28,7 @@
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/connected_components.hpp>
 #include <boost/property_map/vector_property_map.hpp>
+#include <CGAL/boost/graph/named_function_params.h>
 
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -468,66 +469,96 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
  *  Two faces are considered to be in the same connected component if they share an edge that is not constrained.
  *  \tparam PolygonMesh a model of `FaceGraph`
  *  \tparam EdgeConstraintMap a property map with the edge descriptor as key type and `bool` as value type.
- *  \tparam FaceComponentIndexMap the property map with the face index as value type, and the index of its connected component
+ *  \tparam FaceComponentMap the property map with the face index as value type, and the index of its connected component
  *  \returns the number of connected components.
  */
-template <class PolygonMesh, class EdgeConstraintMap, class FaceComponentIndexMap>
+  template <class PolygonMesh, class EdgeConstraintMap, class FaceComponentMap, class FaceIndexMap>
 typename boost::graph_traits<PolygonMesh>::faces_size_type
 connected_components(PolygonMesh& pmesh,
+                     FaceComponentMap& fcm,
                      EdgeConstraintMap ecmap,
-                     FaceComponentIndexMap& fim)
+                     FaceIndexMap fim)
 {
   typedef Dual<PolygonMesh> Dual;
   typedef boost::filtered_graph<Dual, internal::No_border<PolygonMesh,EdgeConstraintMap> > FiniteDual;
   
   Dual dual(pmesh);
   FiniteDual finite_dual(dual,internal::No_border<PolygonMesh,EdgeConstraintMap>(pmesh,ecmap));
-  return boost::connected_components(finite_dual, fim);
+  return boost::connected_components(finite_dual, fcm);
 }
 
-  
+
+template <class PolygonMesh, class FaceComponentMap, class P, class T, class R>
+typename boost::graph_traits<PolygonMesh>::faces_size_type
+connected_components(PolygonMesh& pmesh,
+                     FaceComponentMap& fcm,
+                     const cgal_bgl_named_params<P,T,R>& params) 
+{
+  using boost::choose_param;
+  using boost::choose_const_pmap;
+  using boost::get_param;
+
+  return connected_components(pmesh,
+                              fcm,
+                              choose_param(get_param(params,edge_is_constrained),internal::No_constraint<PolygonMesh>(pmesh)),
+                              choose_const_pmap(get_param(params,boost::face_index),pmesh,boost::face_index)
+    );
+}
+
+
+
 /*!
  * \ingroup PkgPolygonMeshProcessing
  *  computes for each face the index of the connected components to which it belongs.
  *  Two faces are considered to be in the same connected component if they share an edge.
  *  \tparam PolygonMesh a model of `FaceGraph`
- *  \tparam FaceComponentIndexMap the property map with the face index as value type, and the index of its connected component
+ *  \tparam FaceComponentMap the property map with the face index as value type, and the index of its connected component
  *  \returns the number of connected components.
  */
-template <class PolygonMesh, class FaceComponentIndexMap>
+template <class PolygonMesh, class FaceComponentMap>
 typename boost::graph_traits<PolygonMesh>::faces_size_type
 connected_components(PolygonMesh& pmesh,
-                     FaceComponentIndexMap& fim)
+                     FaceComponentMap& fcm)
 {
-  typedef Dual<PolygonMesh> Dual;
-  typedef boost::filtered_graph<Dual, internal::No_border<PolygonMesh> > FiniteDual;
-  
-  Dual dual(pmesh);
-    FiniteDual finite_dual(dual,internal::No_border<PolygonMesh>(pmesh));
-    return boost::connected_components(finite_dual, fim);
+  return connected_components(pmesh, 
+                              fcm,
+                              internal::No_constraint<PolygonMesh>(pmesh),
+                              get(boost::face_index,pmesh));
 }
+
+
+
 
 /*!
  * \ingroup PkgPolygonMeshProcessing
  *  Erases the small connected components and the isolated vertices.
  *  Keep `nb_components_to_keep` largest connected components.
  *  \return the number of connected components erased (ignoring isolated vertices).
- * \todo BGLize me
  */
-template <class PolygonMesh>
-std::size_t keep_largest_connected_components(PolygonMesh& pmesh, std::size_t nb_components_to_keep)
+template <class PolygonMesh, class EdgeConstraintMap, class VertexIndexMap, class FaceIndexMap>
+std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
+                                              std::size_t nb_components_to_keep,
+                                              EdgeConstraintMap ecmap,
+                                              VertexIndexMap vim,
+                                              FaceIndexMap fim)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_iterator vertex_iterator;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_iterator face_iterator;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
-  boost::vector_property_map<int, typename boost::property_map<PolygonMesh, boost::face_index_t>::type> face_cc(get(boost::face_index,pmesh));
+  typedef typename boost::graph_traits<PolygonMesh>::edge_iterator edge_iterator;
+  boost::vector_property_map<int, typename boost::property_map<PolygonMesh, boost::face_index_t>::type> face_cc(fim);
   
-  int num = connected_components(pmesh,face_cc);
+  int num = connected_components(pmesh,
+                                 face_cc,
+                                 ecmap,
+                                 fim);
   if((num == 1)|| (nb_components_to_keep > num) ){
     return 0;
   }
-  boost::vector_property_map<bool, typename boost::property_map<PolygonMesh, boost::vertex_index_t>::type> keep_vertex(get(boost::vertex_index,pmesh)); 
+  boost::vector_property_map<bool, typename boost::property_map<PolygonMesh, boost::vertex_index_t>::type> keep_vertex(vim); 
   BOOST_FOREACH(vertex_descriptor v, vertices(pmesh)){
     keep_vertex[v] = false;
   }
@@ -540,9 +571,13 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh, std::size_t nb
   BOOST_FOREACH(face_descriptor f, faces(pmesh)){
     component_size[face_cc[f]].second++;
   }
+
+#ifdef CGAL_CC_DEBUG
   for(int i=0; i < component_size.size(); ++i){
     std::cerr << "component " << i << " has " << component_size[i].second << " faces\n";
   }
+#endif
+
   // we have to sort the range [0, num) by component size
   internal::MoreSecond ls;
   std::sort(component_size.begin(), component_size.end(), ls);
@@ -551,14 +586,20 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh, std::size_t nb
   }
   internal::LessFirst lsinv;
   std::sort(component_size.begin(), component_size.end(), lsinv);
+
+#ifdef CGAL_CC_DEBUG
   for(std::size_t i=0; i < num; i++){
     std::cout << i  << " " << component_size[i].first  << " " << component_size[i].second << std::endl;
   }
+#endif
+
   BOOST_FOREACH(face_descriptor f, faces(pmesh)){
     face_cc[f] = component_size[face_cc[f]].second;
+#ifdef CGAL_CC_DEBUG
     if(face_cc[f] == 1){
       std::cerr << "keep " << f << std::endl;
     }
+#endif
   }
   // Now face_cc[f] == 1 means that we want to keep the face
 
@@ -567,11 +608,17 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh, std::size_t nb
       BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f,pmesh),pmesh)){
           vertex_descriptor v = target(h,pmesh);
           keep_vertex[v] = true;
+#ifdef CGAL_CC_DEBUG
           std::cout << "keep vertex "<< v << std::endl;
+#endif
         }
     }
   }
-  BOOST_FOREACH(edge_descriptor e, edges(pmesh)){
+
+  edge_iterator eb, ee;
+  for(boost::tie(eb,ee)= edges(pmesh);eb!= ee;){
+    edge_descriptor e = *eb;
+    ++eb;
     vertex_descriptor v = source(e,pmesh);
     vertex_descriptor w = target(e,pmesh);
     halfedge_descriptor h = halfedge(e,pmesh);
@@ -580,10 +627,13 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh, std::size_t nb
       // don't care about connectivity
       // As vertices are not kept the faces and vertices will be removed later
       remove_edge(e,pmesh);
+      std::cerr << "after remove_edge"<< std::endl;
     } else if( keep_vertex[v] &&  keep_vertex[w]){
       face_descriptor fh = face(h,pmesh), ofh = face(oh,pmesh);
       if(is_border(h,pmesh) && is_border(oh,pmesh)){
+#ifdef CGAL_CC_DEBUG
         std::cerr << "null_face on both sides of " << e << " is kept\n";
+#endif
       } else if( (face_cc[fh] && is_border(oh,pmesh)) ||
                  (face_cc[ofh] && is_border(h,pmesh)) ||
                  (face_cc[fh] && face_cc[ofh]) ){
@@ -622,21 +672,56 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh, std::size_t nb
         remove_edge(e,pmesh);
     }
   }
+ 
+  face_iterator fb, fe;
   // We now can remove all vertices and faces not marked as kept
-  BOOST_FOREACH(face_descriptor f, faces(pmesh)){
+  for(boost::tie(fb,fe)=faces(pmesh); fb!=fe;){
+    face_descriptor f = *fb;
+    ++fb;
     if(face_cc[f] != 1){
       remove_face(f,pmesh);
     }
   }
-  BOOST_FOREACH(vertex_descriptor v, vertices(pmesh)){
+  vertex_iterator b,e;
+  for(boost::tie(b,e)=vertices(pmesh); b!=e;){
+    vertex_descriptor v = *b;
+    ++b;
     if(! keep_vertex[v]){
       remove_vertex(v,pmesh);
     }
   }
-
   return num - nb_components_to_keep;
 }
 
+template <class PolygonMesh, class P, class T, class R>
+std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
+                                              std::size_t nb_components_to_keep,
+                                              const cgal_bgl_named_params<P,T,R>& params)
+{
+  
+  using boost::choose_param;
+  using boost::choose_const_pmap;
+  using boost::get_param;
+
+  return keep_largest_connected_component(pmesh,
+                                          nb_components_to_keep,
+                                          choose_param(get_param(params,edge_is_constrained),internal::No_constraint<PolygonMesh>(pmesh)),
+                                          choose_const_pmap(get_param(params,boost::vertex_index),pmesh,boost::vertex_index)
+                                          choose_const_pmap(get_param(params,boost::face_index),pmesh,boost::face_index)
+                                          );
+}
+
+
+template <class PolygonMesh>
+std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
+                                              std::size_t nb_components_to_keep)
+{
+  return keep_largest_connected_components(pmesh,
+                                           nb_components_to_keep,
+                                           internal::No_constraint<PolygonMesh>(pmesh),
+                                           get(boost::vertex_index, pmesh),
+                                           get(boost::face_index, pmesh));
+}
 
 } // namespace Polygon_mesh_processing
 

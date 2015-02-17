@@ -392,14 +392,14 @@ bool Test ( string aName )
             SMS::Edge_length_cost  <Surface> cost ;
             SMS::Midpoint_placement<Surface> placement ;
             
-            edge_collapse(lSurface,stop,get_cost(cost).get_placement(placement).visitor(vis) );
+            edge_collapse(lSurface,stop,CGAL::parameters::get_cost(cost).get_placement(placement).visitor(vis) );
           }
           else
           {
             SMS::LindstromTurk_cost     <Surface> cost ;
             SMS::LindstromTurk_placement<Surface> placement ;
             
-            edge_collapse(lSurface,stop,get_cost(cost).get_placement(placement).visitor(vis) );
+            edge_collapse(lSurface,stop,CGAL::parameters::get_cost(cost).get_placement(placement).visitor(vis) );
           } 
 
           t.stop();
