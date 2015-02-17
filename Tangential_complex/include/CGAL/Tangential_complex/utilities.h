@@ -25,7 +25,8 @@
 #include <CGAL/Dimension.h>
 
 #include <vector>
-#include <atomic> // C++11
+#include <atomic> // CJTODO: this is C++11 => use boost.Atomic (but it's too recent) 
+                  // or tbb::atomic (works for doubles, but not officially)
 
 namespace CGAL {
 namespace Tangential_complex_ {

@@ -61,7 +61,7 @@
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/parallel_for.h>
 # include <tbb/combinable.h>
-//# include <tbb/queuing_mutex.h>
+# include <tbb/mutex.h>
 #endif
 
 //#define CGAL_TC_EXPORT_NORMALS // Only for 3D surfaces (k=2, d=3)
@@ -125,10 +125,9 @@ class Tangential_complex
   typedef std::vector<Point>                          Points;
   typedef std::vector<FT>                             Weights;
 
-#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)\
-  && !defined(CGAL_TC_PERTURB_POSITION) // CJTODO TEMP
-  // C++11
-  typedef Atomic_wrapper<Vector>                      Translation_for_perturb;
+#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
+  typedef tbb::mutex                                  Mutex_for_perturb;
+  typedef Vector                                      Translation_for_perturb;
   typedef std::vector<Atomic_wrapper<FT> >            Weights_for_perturb;
 #else
   typedef Vector                                      Translation_for_perturb;
@@ -218,6 +217,9 @@ public:
     m_ambiant_dim(k.point_dimension_d_object()(*first)),
     m_points(first, last),
     m_points_ds(m_points)
+# if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
+    , m_p_perturb_mutexes(NULL)
+# endif
 #ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
     , m_points_for_tse(first_for_tse, last_for_tse)
     , m_points_ds_for_tse(m_points_for_tse)
@@ -225,7 +227,12 @@ public:
   {}
 
   /// Destructor
-  ~Tangential_complex() {}
+  ~Tangential_complex() 
+  {
+#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
+    delete [] m_p_perturb_mutexes;
+#endif
+  }
 
   std::size_t number_of_vertices()
   {
@@ -253,6 +260,10 @@ public:
 #ifdef CGAL_TC_PERTURB_POSITION
     m_translations.resize(m_points.size(),
                           m_k.construct_vector_d_object()(m_ambiant_dim));
+# if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
+    delete [] m_p_perturb_mutexes;
+    m_p_perturb_mutexes = new Mutex_for_perturb[m_points.size()];
+# endif
 #endif
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
     m_perturb_tangent_space.resize(m_points.size(), false);
@@ -410,10 +421,13 @@ public:
     while (!done)
     {
       std::size_t num_inconsistent_local_tr = 0;
-// CJTODO: the parallel version is not working for now
-#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH) \
-  && !defined(CGAL_TC_PERTURB_POSITION) // CJTODO TEMP
+      
+#ifdef CGAL_TC_PROFILING
+      Wall_clock_timer t_fix_step;
+#endif
+
       // Parallel
+#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
       if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
       {
         tbb::combinable<std::size_t> num_inconsistencies;
@@ -429,19 +443,17 @@ public:
       else
 #endif // CGAL_LINKED_WITH_TBB
       {
-#ifdef CGAL_TC_PROFILING
-        Wall_clock_timer t;
-#endif
         for (std::size_t i = 0 ; i < m_triangulations.size() ; ++i)
         {
           num_inconsistent_local_tr += 
             (try_to_solve_inconsistencies_in_a_local_triangulation(i) ? 1 : 0);
         }
-#ifdef CGAL_TC_PROFILING
-    std::cerr << "Attempt to fix inconsistencies: " << t.elapsed()
-              << " seconds." << std::endl;
-#endif
       }
+
+#ifdef CGAL_TC_PROFILING
+      std::cerr << "Attempt to fix inconsistencies: " << t_fix_step.elapsed()
+                << " seconds." << std::endl;
+#endif
 
 #ifdef CGAL_TC_GLOBAL_REFRESH
       refresh_tangential_complex();
@@ -864,6 +876,8 @@ private:
     typename Get_functor<Tr_traits, Power_center_tag>::type power_center(local_tr_traits);
 
 #ifdef CGAL_TC_PERTURB_POSITION
+    // No need to lock the mutex here since this will not be called while
+    // other threads are perturbing the positions
     const Point center_pt = k_transl(m_points[i], m_translations[i]);
 #else
     const Point &center_pt = m_points[i];
@@ -928,6 +942,8 @@ private:
       if (neighbor_point_idx != i)
       {
 #ifdef CGAL_TC_PERTURB_POSITION
+        // No need to lock the mutex here since this will not be called while
+        // other threads are perturbing the positions
         const Point neighbor_pt = k_transl(
           m_points[neighbor_point_idx], m_translations[neighbor_point_idx]);
 #else
@@ -1349,9 +1365,19 @@ private:
       m_k.point_to_vector_d_object();
     CGAL::Random_points_on_sphere_d<Point> 
       tr_point_on_sphere_generator(m_ambiant_dim, 1);
-
+    // Parallel
+#   if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
+    Vector transl = k_scaled_vec(k_pt_to_vec(
+      *tr_point_on_sphere_generator++), m_half_sparsity);
+    m_p_perturb_mutexes[point_idx].lock();
+    m_translations[point_idx] = transl;
+    m_p_perturb_mutexes[point_idx].unlock();
+    // Sequential
+#   else
     m_translations[point_idx] = k_scaled_vec(k_pt_to_vec(
       *tr_point_on_sphere_generator++), m_half_sparsity);
+#   endif
+
 # else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
     const Tr_traits &local_tr_traits = 
       m_triangulations[point_idx].tr().geom_traits();
@@ -1370,8 +1396,7 @@ private:
     Tr_point local_random_transl =
       local_tr_traits.construct_weighted_point_d_object()(
         *tr_point_on_sphere_generator++, 0);
-    Translation_for_perturb &global_transl = m_translations[point_idx];
-    global_transl = k_constr_vec(m_ambiant_dim);
+    Translation_for_perturb global_transl = k_constr_vec(m_ambiant_dim);
     const Tangent_space_basis &tsb = m_tangent_spaces[point_idx];
     for (int i = 0 ; i < m_intrinsic_dimension ; ++i)
     {
@@ -1380,7 +1405,17 @@ private:
         k_scaled_vec(tsb[i], m_half_sparsity*coord(local_random_transl, i))
       );
     }
-# endif
+    // Parallel
+#   if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
+    m_p_perturb_mutexes[point_idx].lock();
+    m_translations[point_idx] = global_transl;
+    m_p_perturb_mutexes[point_idx].unlock();
+    // Sequential
+#   else
+    m_translations[point_idx] = global_transl;
+#   endif
+
+# endif // CGAL_TC_PERTURB_POSITION_TANGENTIAL
 #endif // CGAL_TC_PERTURB_POSITION
   }
 
@@ -1708,6 +1743,8 @@ private:
     simplex_pts_in_Tq.reserve(inconsistent_simplex.size());
         
 #ifdef CGAL_TC_PERTURB_POSITION
+    // No need to lock the mutex here since this will not be called while
+    // other threads are perturbing the positions
     const Point center_pt = k_transl(m_points[q_idx], m_translations[q_idx]);
 #else
     const Point &center_pt = m_points[q_idx];
@@ -1722,6 +1759,8 @@ private:
     for ( ; it_point_idx != it_point_idx_end ; ++it_point_idx)
     {
 #ifdef CGAL_TC_PERTURB_POSITION
+      // No need to lock the mutex here since this will not be called while
+      // other threads are perturbing the positions
       const Point p = k_transl(
         m_points[*it_point_idx], m_translations[*it_point_idx]);
 #else
@@ -2050,6 +2089,9 @@ private:
 #endif
 #ifdef CGAL_TC_PERTURB_POSITION
   Translations_for_perturb  m_translations;
+# if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
+  Mutex_for_perturb        *m_p_perturb_mutexes;
+# endif
 #endif
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
   std::vector<Atomic_wrapper<bool> > m_perturb_tangent_space;
