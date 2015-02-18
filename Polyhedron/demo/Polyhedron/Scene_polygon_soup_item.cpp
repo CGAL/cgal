@@ -109,37 +109,37 @@ GLuint compile_shaders(void)
     };
 
     //creates and compiles the vertex shader
-     vertex_shader =	glCreateShader(GL_VERTEX_SHADER);
+    vertex_shader =	glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
     glCompileShader(vertex_shader);
 
     GLint result;
     glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&result);
     if(result == GL_TRUE){
-    std::cout<<"Vertex compilation OK"<<std::endl;
+        std::cout<<"Vertex compilation OK"<<std::endl;
     } else {
-      int maxLength;
-      int length;
-      glGetShaderiv(vertex_shader,GL_INFO_LOG_LENGTH,&maxLength);
-      char* log = new char[maxLength];
-      glGetShaderInfoLog(vertex_shader,maxLength,&length,log);
-       std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
+        int maxLength;
+        int length;
+        glGetShaderiv(vertex_shader,GL_INFO_LOG_LENGTH,&maxLength);
+        char* log = new char[maxLength];
+        glGetShaderInfoLog(vertex_shader,maxLength,&length,log);
+        std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
     }
     fragment_shader =	glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-  glCompileShader(fragment_shader);
+    glCompileShader(fragment_shader);
 
- glGetShaderiv(fragment_shader,GL_COMPILE_STATUS,&result);
-  if(result == GL_TRUE){
-  std::cout<<"Fragment compilation OK"<<std::endl;
-  } else {
-    int maxLength;
-    int length;
-    glGetShaderiv(fragment_shader,GL_INFO_LOG_LENGTH,&maxLength);
-    char* log = new char[maxLength];
-    glGetShaderInfoLog(fragment_shader,maxLength,&length,log);
-     std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
-  }
+    glGetShaderiv(fragment_shader,GL_COMPILE_STATUS,&result);
+    if(result == GL_TRUE){
+        std::cout<<"Fragment compilation OK"<<std::endl;
+    } else {
+        int maxLength;
+        int length;
+        glGetShaderiv(fragment_shader,GL_INFO_LOG_LENGTH,&maxLength);
+        char* log = new char[maxLength];
+        glGetShaderInfoLog(fragment_shader,maxLength,&length,log);
+        std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
+    }
 
 
     //creates the program, attaches and links the shaders
@@ -150,14 +150,14 @@ GLuint compile_shaders(void)
 
     glGetProgramiv(program,GL_LINK_STATUS,&result);
     if(result == GL_TRUE){
-    std::cout<<"Link OK"<<std::endl;
+        std::cout<<"Link OK"<<std::endl;
     } else {
-      int maxLength;
-      int length;
-      glGetProgramiv(program,GL_INFO_LOG_LENGTH,&maxLength);
-      char* log = new char[maxLength];
-      glGetProgramInfoLog(program,maxLength,&length,log);
-       std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
+        int maxLength;
+        int length;
+        glGetProgramiv(program,GL_INFO_LOG_LENGTH,&maxLength);
+        char* log = new char[maxLength];
+        glGetProgramInfoLog(program,maxLength,&length,log);
+        std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
     }
     //Delete the shaders which are now in the memory
     glDeleteShader(vertex_shader);
@@ -172,7 +172,8 @@ void render()
         rendering_program = compile_shaders();
 
     const GLfloat color[] = { 0.9f, 0.9f, 0.9f, 1.0f };
-    glClearBufferfv(GL_COLOR, 0, color);
+    if(isInit !=1)
+        glClearBufferfv(GL_COLOR, 0, color);
     // tells the GPU to use the program just created
     glUseProgram(rendering_program);
     //Allocates a uniform location for the MVP matrix
@@ -183,7 +184,7 @@ void render()
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
     glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
-
+glUseProgram(0);
 }
 
 struct Polyhedron_to_polygon_soup_writer {
@@ -509,8 +510,8 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     GLdouble plouf[16];
     viewer->camera()->getModelViewProjectionMatrix(plouf);
 
-       for (int i=0; i<16; ++i)
-          mvp_mat[i] = GLfloat(plouf[i]);
+    for (int i=0; i<16; ++i)
+        mvp_mat[i] = GLfloat(plouf[i]);
 
 
     if(isInit!=1)
