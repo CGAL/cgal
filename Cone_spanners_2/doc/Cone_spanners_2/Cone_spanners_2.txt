@@ -54,16 +54,16 @@ Note that an optimal algorithm for constructing Yao graph with a complexity of \
 
 \subsection subsec_CBS_gnuplot Function `CGAL::gnuplot_output_2`
 
-This package also implements a template function `CGAL::gnuplot_output_2()`, which will read a `boost::adjacency_list` class  and output two files used by Gnuplot to display the graph represented by the `boost::adjacency_list`. These two files are:
+This package also implements a template function `CGAL::gnuplot_output_2()`, which will read a `boost::adjacency_list` object  and output two files used by Gnuplot to display the graph represented by the `boost::adjacency_list`. These two files are:
 <ul>
 <li> A data file that contains the \f$(x, y)\f$-coordinates of the set of vertices. To be read by Gnuplot, 
-      the \f$(x, y)\f$-coordinates are written into the data file with decimal format, no matter which number type is used in the CGAL kernel. This is achieved by calling CGAL::to_double() on \f$x\f$ or \f$y\f$ coordinate before outputing them. 
-	  </li>
+      the \f$(x, y)\f$-coordinates are written into the data file with decimal format, no matter which number type is used in the \cgal kernel. This is achieved by calling `CGAL::to_double()` on \f$x\f$ or \f$y\f$ coordinate before outputing them. 
+</li>
 <li> A Gnuplot script file that can be loaded by Gnuplot to plot the set of vertices and the set of edges. The set of vertices is read from the above data file and the set of edges are included in the script file itself.
-      </li>
+</li>
 </ul>
 
-For details on how to use this function to output Gnuplot files, please proceed to Section \ref sec_CBS_examples.
+Note that `CGAL::gnuplot_output_2()` requires that the class `boost::adjacency_list` uses Point_2 from \cgal as the Vertex Propery. As long as this requirement is satisfied, `CGAL::gnuplot_output_2()` can be used to generate Gnuplot files to plot the graph represented by the `boost::adjacency_list` object. Therefore, so `CGAL::gnuplot_output_2()` is not limited to plot cone based spanners only. For details on how to use this function to generate Gnuplot files, please proceed to Section \ref sec_CBS_examples.
  
 \section sec_CBS_examples Examples
 
@@ -78,7 +78,7 @@ Three exemplar '.cpp' files are provided to demonstrate how to use the package. 
 
 The 'exact_theta_io.cpp' shows how to read a set of vertices from a file, construct exactly a Theta graph on this set of vertices, and then output the constructed graph to files ready for Gnuplot to display.
 
-Basically, the template class definition of CGAL::Theta_graph_2 provides the interface to set the CGAL kernel type, the directedness of the graph, and the struct that specifies the edge property. Note that for the CGAL kernel type, if the kernel
+Basically, the template class definition of `CGAL::Theta_graph_2` provides the interface to set the CGAL kernel type, the directedness of the graph, and the struct that specifies the edge property. Note that for the CGAL kernel type, if the kernel
 'Exact_predicates_exact_constructions_kernel_with_sqrt' is selected, the Theta graph will be constructed exactly; if the kernels other than this one is selected, the graph will be constructed inexactly. So it is very easy to control whether you have an exact construction. 
 
 For your reference, the definition of the class `CGAL::Theta_graph_2` in 'Theta_graph_2.h' is as follows:
