@@ -549,12 +549,12 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_iterator edge_iterator;
-  boost::vector_property_map<int, FaceIndexMap> face_cc(fim);
+  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
   
-  int num = connected_components(pmesh,
-                                 face_cc,
-                                 ecmap,
-                                 fim);
+  std::size_t num = connected_components(pmesh,
+                                         face_cc,
+                                         ecmap,
+                                         fim);
   if((num == 1)|| (nb_components_to_keep > num) ){
     return 0;
   }
