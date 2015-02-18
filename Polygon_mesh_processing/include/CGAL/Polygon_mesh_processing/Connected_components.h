@@ -468,12 +468,14 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
  *  computes for each face the index of the connected components to which it belongs.
  *  Two faces are considered to be in the same connected component if they share an edge that is not constrained.
  *  \tparam PolygonMesh a model of `FaceGraph`
+ *  \tparam FaceComponentMap the property map with the face descriptor as key type, and the index of its connected component as value type
  *  \tparam EdgeConstraintMap a property map with the edge descriptor as key type and `bool` as value type.
- *  \tparam FaceComponentMap the property map with the face index as value type, and the index of its connected component
+ * \tparam FaceIndexMap a property map for the face index
+ *  \tparam 
  *  \returns the number of connected components.
  */
   template <class PolygonMesh, class EdgeConstraintMap, class FaceComponentMap, class FaceIndexMap>
-typename boost::graph_traits<PolygonMesh>::faces_size_type
+typename boost::property_traits<FaceComponentMap>::value_type
 connected_components(PolygonMesh& pmesh,
                      FaceComponentMap& fcm,
                      EdgeConstraintMap ecmap,
@@ -489,7 +491,7 @@ connected_components(PolygonMesh& pmesh,
 
 
 template <class PolygonMesh, class FaceComponentMap, class P, class T, class R>
-typename boost::graph_traits<PolygonMesh>::faces_size_type
+typename boost::property_traits<FaceComponentMap>::value_type
 connected_components(PolygonMesh& pmesh,
                      FaceComponentMap& fcm,
                      const cgal_bgl_named_params<P,T,R>& params) 
@@ -516,7 +518,7 @@ connected_components(PolygonMesh& pmesh,
  *  \returns the number of connected components.
  */
 template <class PolygonMesh, class FaceComponentMap>
-typename boost::graph_traits<PolygonMesh>::faces_size_type
+typename boost::property_traits<FaceComponentMap>::value_type
 connected_components(PolygonMesh& pmesh,
                      FaceComponentMap& fcm)
 {

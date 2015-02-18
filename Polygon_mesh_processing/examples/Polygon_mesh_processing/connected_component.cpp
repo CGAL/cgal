@@ -47,13 +47,12 @@ int main(int, char* argv[])
 
   std::cerr << cc.size() << " faces in the CC of " << fd << std::endl;
 
-  Mesh::Property_map<face_descriptor,int> fccmap;
-  fccmap = sm.add_property_map<face_descriptor,int>("f:CC").first; 
-  int num = PMP::connected_components(sm,
-                                      fccmap,
-                                      CGAL::parameters::edge_is_constrained_map(Constraint<Mesh>())
-                                      .face_index_map(get(CGAL::face_index, sm))
-                                                                );
+  Mesh::Property_map<face_descriptor,std::size_t> fccmap;
+  fccmap = sm.add_property_map<face_descriptor,std::size_t>("f:CC").first; 
+  std::size_t num = PMP::connected_components(sm,
+                                              fccmap,
+                                              CGAL::parameters::edge_is_constrained_map(Constraint<Mesh>())
+                                              );
   
  std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
  BOOST_FOREACH(face_descriptor f , faces(sm)){
