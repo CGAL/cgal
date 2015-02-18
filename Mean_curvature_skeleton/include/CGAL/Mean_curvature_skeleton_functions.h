@@ -36,7 +36,7 @@ namespace CGAL{
 /// @brief extracts a medially centered curve skeleton for the polygonal mesh `pmesh`.
 /// This function uses the class CGAL::Mean_curvature_flow_skeletonization with the default parameters.
 /// This function is available if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined.
-/// @pre `pmesh` is a triangulated surface mesh without borders and has exactly one connected component.
+/// @pre `pmesh` is a triangulated polygonal mesh without borders and has exactly one connected component.
 /// @pre The specialization `boost::property_map<HalfedgeGraph, boost::vertex_point_t>::%type` and `get(vertex_point, pmesh)` are defined.
 /// @pre The value type of `boost::property_map<HalfedgeGraph, boost::vertex_point_t>::%type` is a point type from a \cgal Kernel.
 ///
@@ -73,14 +73,14 @@ void extract_mean_curvature_flow_skeleton(const HalfedgeGraph& pmesh,
                                           GraphVertexPointMap& skeleton_points,
                                           GraphVertexIndicesMap& skeleton_to_pmesh_vertices)
 {
-  typedef typename boost::property_map<HalfedgeGraph, boost::vertex_point_t>::type PMESHPointPMap;
-  typedef typename boost::property_traits<PMESHPointPMap>::value_type Point;
+  typedef typename boost::property_map<HalfedgeGraph, boost::vertex_point_t>::type PmeshPointPMap;
+  typedef typename boost::property_traits<PmeshPointPMap>::value_type Point;
   typedef typename CGAL::Kernel_traits< Point >::Kernel K;
   typedef CGAL::Polyhedron_3<K,CGAL::Polyhedron_items_with_id_3> Polyhedron;
 
   // copy the input FaceGraph into a Polyhedron
   CGAL::FaceGraph_to_Polyhedron_3<HalfedgeGraph,
-                                  PMESHPointPMap,
+                                  PmeshPointPMap,
                                   typename Polyhedron::HalfedgeDS,
                                   false> modifier(pmesh, get(vertex_point, const_cast<HalfedgeGraph&>(pmesh)) );
   Polyhedron P;

@@ -454,7 +454,7 @@ public:
 
   /// Controls the velocity of movement and approximation quality:
   /// increasing `omega_H` makes the mean curvature flow based contraction converge
-  /// faster, but results in a skeleton of worse quality.
+  /// faster, but results in a skeleton of lower quality.
   double omega_H()
   {
     return m_omega_H;
