@@ -1178,7 +1178,9 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
   };
 }
 
-
+/// performs an edge flip, rotating the edge pointed by
+/// `h` by one vertex in the direction of the face orientation.
+/// \pre Both faces incident to `h` are triangles.
 template<typename Graph>
 void
 flip_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h,
@@ -1216,30 +1218,6 @@ flip_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h,
   set_halfedge(fh,h,g);
   set_halfedge(foh,oh,g);
 }
-
-
-  ///\cond DO_NOT_INCLUDE_IN_SUBMISSION
-
-  /**  collapses `edge(coll,g)` and removes the edges `edge(rm0,g)` and `edge(rm1,g)`
-   *   \todo  implement
-   *   \todo finish doc
-   */  
-#if 0
-
-template<typename Graph>
-typename boost::graph_traits<Graph>::vertex_descriptor
-collapse_edge(typename boost::graph_traits<Graph>::halfedge_descriptor coll,
-              typename boost::graph_traits<Graph>::halfedge_descriptor rm0,
-              typename boost::graph_traits<Graph>::halfedge_descriptor rm1,
-              Graph& g)
-{}
-
-#endif
-
-  ///\endcond
-
-	
-
 
 /**
  *  \returns `true` if `e` satisfies the *link condition* \cgalCite{degn-tpec-98}, which guarantees that the surface is also 2-manifold after the edge collapse.
