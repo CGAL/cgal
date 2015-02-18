@@ -263,7 +263,6 @@ template<class Gt, class I, CGAL_HDS_PARAM_, class A, class InputIterator>
 typename boost::graph_traits< CGAL::Polyhedron_3<Gt, I, HDS, A> >::face_descriptor
 add_face(InputIterator begin, InputIterator end, CGAL::Polyhedron_3<Gt, I, HDS, A>& g)
 {
-  CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
   return g.hds().add_facet(begin, end);
 }
 
