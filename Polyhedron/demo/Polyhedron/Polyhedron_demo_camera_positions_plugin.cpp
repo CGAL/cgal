@@ -26,7 +26,7 @@ public:
 
   bool canSave(const Scene_item*) { return false; }
   bool save(const Scene_item*, QFileInfo ) {return false; }
-  bool applicable() const {return false;}
+  bool applicable(QAction*) const {return false;}
 private:
   Camera_positions_list* cpl;
 };

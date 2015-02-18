@@ -24,7 +24,7 @@ class Polyhedron_demo_selection_plugin :
     Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
-  bool applicable() const { 
+  bool applicable(QAction*) const { 
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
         || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex())); 
   }

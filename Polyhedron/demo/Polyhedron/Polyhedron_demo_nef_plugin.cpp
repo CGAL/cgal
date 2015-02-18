@@ -30,7 +30,7 @@ public:
                          << "actionMinkowskiSum";
   }
 
-  bool applicable() const {
+  bool applicable(QAction*) const {
     const int indexA = scene->selectionAindex();
     const int indexB = scene->selectionBindex();
 

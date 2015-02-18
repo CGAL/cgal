@@ -340,14 +340,8 @@ MainWindow::MainWindow(QWidget* parent)
 void MainWindow::filterOperations()
 {
   Q_FOREACH(const PluginNamePair& p, plugins) {
-    if(p.first->applicable()) {
-      Q_FOREACH(QAction* action, p.first->actions()) {
-        action->setVisible(true);
-      }
-    } else {
-      Q_FOREACH(QAction* action, p.first->actions()) {
-        action->setVisible(false);
-      }
+    Q_FOREACH(QAction* action, p.first->actions()) {
+        action->setVisible( p.first->applicable(action) );
     }
   }
 
