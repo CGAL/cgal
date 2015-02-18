@@ -1,8 +1,9 @@
 #ifndef SCENE_POLYGON_SOUP_ITEM_H
 #define SCENE_POLYGON_SOUP_ITEM_H
-
+#include <GL/glew.h>
 #include "Scene_polygon_soup_item_config.h"
-#include "Scene_item_with_display_list.h"
+#include "Scene_item.h"
+#include "Viewer.h"
 #include "Polyhedron_type.h"
 
 #include <boost/foreach.hpp>
@@ -93,7 +94,7 @@ struct Polygon_soup
 class Scene_polyhedron_item;
 
 class SCENE_POLYGON_SOUP_ITEM_EXPORT Scene_polygon_soup_item 
-  : public Scene_item_with_display_list 
+  : public Scene_item 
 {
   typedef Kernel::Point_3 Point_3;
 
@@ -136,7 +137,8 @@ public:
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=Gouraud && m!=PointsPlusNormals && m!=Splatting); } // CHECK THIS!
   // OpenGL drawing in a display list
-  void direct_draw() const;
+  void draw() const;
+  void draw(Viewer_interface*) const;
   void draw_points() const;
 
   bool isFinite() const { return true; }
