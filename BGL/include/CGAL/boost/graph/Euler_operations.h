@@ -1178,7 +1178,9 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
   };
 }
 
-
+/// performs an edge flip, rotating the edge pointed by
+/// `h` by one vertex in the direction of the face orientation.
+/// \pre Both faces incident to `h` are triangles.
 template<typename Graph>
 void
 flip_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h,
