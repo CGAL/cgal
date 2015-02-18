@@ -620,7 +620,6 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
       // don't care about connectivity
       // As vertices are not kept the faces and vertices will be removed later
       remove_edge(e,pmesh);
-      std::cerr << "after remove_edge"<< std::endl;
     } else if( keep_vertex[v] &&  keep_vertex[w]){
       face_descriptor fh = face(h,pmesh), ofh = face(oh,pmesh);
       if(is_border(h,pmesh) && is_border(oh,pmesh)){
