@@ -6,7 +6,7 @@
 \cgalPkgPicture{mcfskel-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Xiang Gao, Sébastien Loriot and Andrea Tagliasacchi}
-\cgalPkgDesc{This package provides a curve skeleton extraction algorithm for a watertight manifold triangle mesh.}
+\cgalPkgDesc{This package provides a curve skeleton extraction algorithm for a triangulated poylgonal mesh without borders based on the mean curvature flow.}
 \cgalPkgManuals{Chapter_3D_Mean_Curvature_Skeleton,PkgMeanCurvatureSkeleton3}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
