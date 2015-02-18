@@ -484,7 +484,7 @@ connected_components(PolygonMesh& pmesh,
   
   Dual dual(pmesh);
   FiniteDual finite_dual(dual,internal::No_border<PolygonMesh,EdgeConstraintMap>(pmesh,ecmap));
-  return boost::connected_components(finite_dual, fcm);
+  return boost::connected_components(finite_dual, fcm, boost::vertex_index_map(fim));
 }
 
 
