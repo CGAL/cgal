@@ -4,6 +4,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
+#include <CGAL/use.h>
 
 typedef boost::unordered_set<std::size_t> id_map;
 
@@ -19,6 +20,7 @@ void test_isolated_vertex(const Graph& g)
   // the connectivity of v may be anything
   set_halfedge(v, Traits::null_halfedge(), G);
   halfedge_descriptor h = halfedge(v,G);
+  CGAL_USE(h);
 }
 
 
