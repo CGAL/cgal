@@ -69,7 +69,7 @@ namespace CGAL {
  *
  *  Also, in the computation of rays, the direction of the first ray can be specified by passing a parameter
  *  to the constructor, which allows the first ray to start at any direction. The remaining rays are calculated in 
- *  counter-clockwise order
+ *  counter-clockwise order.
  */
 template <typename Kernel, typename Directedness, typename EdgeProperty>
 class Cone_spanners_2 {
@@ -194,13 +194,13 @@ class Cone_spanners_2 {
       return this->g;
     }
 
-    /** @brief returns the number of cones configured. 
+    /** @brief returns the number of cones. 
      */
     const unsigned int& number_of_cones() const {
       return num_cones;
     }
 
-    /** @brief returns the vector of directions. 
+    /** @brief returns the vector of the directions of the rays dividing the plane. 
 	 *
 	 *  @return a vector of Direction_2
      */
@@ -282,7 +282,7 @@ class Cone_spanners_2 {
 #ifndef DOXYGEN_RUNNING
 protected:
 
-	/** Store the rays to divide the plane  */
+	/** Store the directions of the rays dividing the plane  */
     std::vector<Direction_2>    rays;
 
 	/** Store the number of cones.  */
