@@ -172,6 +172,13 @@ Computing density weights for each point is an optional preprocessing. For examp
 Comparison between with and without density: Left: input. Middle: `require_uniform_sampling = false`. Right: `require_uniform_sampling=true`. 
 \cgalFigureEnd
 
+\subsubsection Point_set_processing_3WLOP_parameter_neighborhood_size Parameter: neighbor_radius
+Usually, the neighborhood of sample points should include at least two rings of neighboring sample points. Using a small neighborhood size may not be able to generate regularized result, while using big neighborhood size will make the sample points shrink into the interior of the local surface (under-fitting). The function will use a neighborhood size estimation if this parameter value is set to default or smaller that zero.
+
+\cgalFigureBegin{Point_set_processing_3figWLOP_parameter_neighborhood_size, WLOP_parameter_neighborhood_size.jpg}
+Comparison between different sizes of neighbor radius.
+\cgalFigureEnd
+
 \subsubsection Point_set_processing_3WLOP_parallel_performance Parallel Performance
 A parallel version of WLOP is provided and requires the executable to be linked against the 
 <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
@@ -291,6 +298,15 @@ This parameter controls the preservation of sharp features.
 \cgalFigureBegin{Point_set_processing_3figUpsample_sharpness_angle, upsample_sharpness_angle.jpg}
 Upsampling for different sharpness_angle parameter values. The input containing 850 points is upsampled to 425K points in all cases depicted. 
 \cgalFigureEnd
+
+\subsubsection Point_set_processing_3upsample_neighborhood_size Parameter: neighbor_radius
+Usually, the neighborhood of sample points should include at least one ring of neighboring sample points. Using small neighborhood size may not be able to insert new points. Using big neighborhood size can fill small holes, but points inserted on the edges could be irregular. The function will use a neigbhorhood size estimation if this parameter value is set to default or smaller that zero.
+
+\cgalFigureBegin{Point_set_processing_3figupsample_neighborhood_size, upsample_neighborhood_size.jpg}
+Comparison between different sizes of neighbor radius. 
+\cgalFigureEnd
+
+
 
 
 \subsection Point_set_processing_3ImplementationHistory Implementation History
