@@ -41,7 +41,6 @@ void mesh_with_id(char* argv1)
 {
   typedef boost::graph_traits<Mesh_with_id>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<Mesh_with_id>::face_descriptor face_descriptor;
-  typedef boost::graph_traits<Mesh_with_id>::halfedge_descriptor halfedge_descriptor;
 
   Mesh_with_id sm;
   std::ifstream in(argv1);
@@ -84,9 +83,7 @@ void mesh_with_id(char* argv1)
 void mesh_no_id(char* argv1)
 {
 
-  typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
-  typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
 
   Mesh sm;
   std::ifstream in(argv1);
