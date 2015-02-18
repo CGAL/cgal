@@ -45,8 +45,8 @@
 namespace CGAL {
 
 	/**
-        * \ingroup PkgConeBasedSpanners
-        * @brief A derived class for constructing Yao graphs with a given set of 2D points.
+    * \ingroup PkgConeBasedSpanners
+    * @brief A derived class for constructing Yao graphs with a given set of 2D points.
 	*  
 	*  Its base class is `Cone_spanners_2`.
 	*  Directed, undirected and bidirectional graphs are supported. For differences among these
@@ -76,9 +76,8 @@ namespace CGAL {
 		* @param start An iterator pointing to the first point (vertex) in the graph.
 		*              (default: nullptr)
 		* @param end   An iterator pointing to the place that passes the last point. (default: nullptr)
-		* @param ray0  A direction denoting one of the rays deviding the
-		*              cones. This allows arbitary rotations of the way space is
-		*              divided.  (default: positive x-axis) 
+		* @param ray0  The direction of the first ray. This allows arbitary direction of the first ray.
+		*              (default: positive x-axis) 
 		*/
 #ifdef GXX11
 	    template <typename PointInputIterator=Point_2*>
@@ -102,6 +101,7 @@ namespace CGAL {
 			: Cone_spanners_2<Kernel, Directedness, EdgeProperty>(x) {}
 
 		/** @brief This function implements the algorithm for adding edges to build the Yao graph.
+		  * 
 		  * The algorithm implemented is a slight adaptation to the algorithm for Theta graph described in 
 		  * Giri Narasimhan and Michiel Smid, Chapter 4: Spanners based on the Theta graph, Geometric Spanner Networks,
 		  * Cambridge University Press, 2007.
@@ -175,7 +175,7 @@ namespace CGAL {
 
 		}
 
-		/** functor for comparing Euclidean distances of two vertices to a given vertex */
+		/* functor for comparing Euclidean distances of two vertices to a given vertex */
 		struct Compare_Euclidean_Distance {
 			const Point_2& p;
 			const Graph& g;
