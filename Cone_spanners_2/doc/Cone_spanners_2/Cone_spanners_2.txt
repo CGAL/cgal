@@ -1,11 +1,11 @@
 namespace CGAL {
-/*!
 
+/*!
 \mainpage User Manual
-\anchor Chapter_ConeBasedSpannerss
+\anchor Chapter_ConeBasedSpanners
 
 \cgalAutoToc
-\author Weisheng Si and  Quincy Tse
+\author Weisheng Si and Quincy Tse
 
 This chapter describes classes for constructing two kinds of cone-based spanners (Yao graph and Theta
  graph) given a set of vertices on the plane. Both exact and inexact constructions can be performed.
@@ -44,7 +44,7 @@ In addition to the above two classes, for visualizing the constructed graphs, th
 
 The construction algorithm for Theta graph is taken from Chapter 4 of the Book \cgalCite{ns-gsn-07}. Basically, it is a sweep line algorithm and uses a balanced search tree to store the vertices that have already been scanned. It has the complexity of \f$O(n \log n)\f$, where \f$n\f$ is the number of vertices on the plane. This complexity has been proved to be optimal. 
 
-For more details on how to use this `CGAL::Theta_graph_2` class to write an application that builds Theta graphs, please proceed to Section 3 Examples.
+For more details on how to use this `CGAL::Theta_graph_2` class to write an application that builds Theta graphs, please proceed to Section \ref sec_CBS_examples.
 
 \subsection subsec_CBS_yao Class `CGAL::Yao_graph_2`
 
@@ -63,7 +63,7 @@ This package also implements a template function `CGAL::gnuplot_output_2()`, whi
       </li>
 </ul>
 
-For details on how to use this function to output Gnuplot files, please proceed to Section 3 Examples.
+For details on how to use this function to output Gnuplot files, please proceed to Section \ref sec_CBS_examples.
  
 \section sec_CBS_examples Examples
 
@@ -83,38 +83,68 @@ Basically, the template class definition of CGAL::Theta_graph_2 provides the int
 
 For your reference, the definition of the class `CGAL::Theta_graph_2` in 'Theta_graph_2.h' is as follows:
 
-\cgalExample{Cone_spanners_2/theta_graph.h}
+\code{.cpp}
+    template <typename Kernel, 
+              typename Directedness=boost::undirectedS,  
+              typename EdgeProperty=boost::no_property>
+    class Theta_graph_2 : public Cone_spanners_2  {}   
+\endcode
 
 In the case of exact_theta_io.cpp, the use of the above interface is as follows:
 
-\cgalExample{Cone_spanners_2/theta_graph_typedef.cpp}
+\code{.cpp}
+  typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt   Kernel;  
+  typedef Theta_graph_2<Kernel, boost::directedS>      T;      
+\endcode
 
 So in this definition, the Theta graph will be constructed exactly, will be directed, and will have no edge property. 
 
 Note that to have the inexact construction, just replace the above Kernel definition to the following line, as we did
 in the 'theta_io.cpp'.
 
-\cgalExample{Cone_spanners_2/inexact_typedef.cpp}
+\code{.cpp}
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
+\endcode
 
 Also note that for Theta graph, the Kernel selected must support the `CGAL::sqrt()` operation. This is required by the CGAL::bisector() function, which is used to calculate the angle bisector of a cone. For instance, the compiler will complain if Exact_predicates_exact_constructions_kernel (not supporting CGAL::bisector()) is used as the kernel, but Exact_predicates_inexact_constructions_kernel will be fine since it supports `CGAL::sqrt()`. For Yao graph, there is no such restriction, since its construction does not need `CGAL::sqrt()`. 
 
 In addition to the interface provided by the template class definition, the constructor definition of `CGAL::Theta_graph_2` provides the interface to specify the number of cones in the graph, the iterator to the beginning of the list of vertices, the iterator to the position one after the end, and the direction of the starting ray \f$l_1\f$.
 
-\cgalExample{Cone_spanners_2/theta_constructor.h}
+\code{.cpp}
+    Theta_graph_2(const unsigned int k,
+                  const PointInputIterator& start=nullptr,
+                  const PointInputIterator& end=nullptr,
+                  const Direction_2& ray0 = Direction_2(1,0) );
+\endcode
 
 With the above interface, the instantiation of the Theta graph variable 't' in exact_theta_io.cpp is as follows:
 
-\cgalExample{Cone_spanners_2/theta_instantiation.cpp}
+\code{.cpp}
+    std::ifstream inf(argv[2]);
+    std::istream_iterator<Point_2> input_begin( inf );
+    std::istream_iterator<Point_2> input_end;
+    T t(4, input_begin, input_end, Direction_2(1,0));
+\endcode
 
 So in this instantiation, the Theta graph to be constructed has 4 cones, will read the set of vertices from the file with name argv[2], and starts the first ray with the direction of the positive \f$x\f$-axis.
 
 To generate the files for Gnuplot to plot the graph constructed, the exact_theta_io.cpp first obtains a reference to the boost::adjacency_list object of the constructed graph, and then invokes CGAL::gnuplot_output_2(g, fileprefix), as illustrated in the following codes.
 
-\cgalExample{Cone_spanners_2/gnuplot_output.cpp}
+\code{.cpp}
+  // get the adjacency_list object
+  const Graph& g = t.graph();
+  // obtain the number of vertices in the constructed graph
+  unsigned int n = boost::num_vertices(g);
+  std::string fileprefix = "t" + std::to_string(k) + "n" + std::to_string(n);  
+  // generate gnuplot files for plotting this graph
+  CGAL::gnuplot_output_2(g, fileprefix);
+\endcode
 
-After compiling 'exact_theta_io.cpp', execute the executable `exact_theta_io` to construct a Theta graph with 4 cones on a set of 20 vertices (which is given in the file n20.cin):
+After compiling 'exact_theta_io.cpp', execute the executable `exact_theta_io` to construct a Theta graph with 4 cones on a set of 20 vertices (which is given in the file data/n20.cin):
 
-\cgalExample{Cone_spanners_2/cmd_line.txt}
+\code{.txt}
+      $ ./exact_theta_io  4  data/n20.cin
+\endcode
 
 The following two files will be generated for Gnuplot: 
 <ul>
@@ -138,11 +168,23 @@ Since the constructed Theta or Yao graphs are stored in the class `boost::adjace
 
 The 'dijkstra_theta.cpp' provides an exemplar application that calculates the shortest paths on a constructed Theta graph by calling the Dijkstra's algorithm from BGL. Basically, it first defines a struct for storing the Euclidean length of each edge, since the Dijkstra's algorithm requires each edge has a length; then, it passes this struct as the edge property to the `Theta_graph_2` template. The source codes are as follows.
 
-\cgalExample{Cone_spanners_2/edge_property.h}
+\code{.cpp}
+	// define the struct for edge property
+	struct Edge_property {
+		double euclidean_length;
+	};
+	// define the theta graph to use Edge_property as the edge property
+	typedef CGAL::Theta_graph_2<Kernel, boost::undirectedS, Edge_property>   T;
+\endcode
 
 After the definition, 'dijkstra_theta.cpp' constructs the Theta graph and copies the boost::adjacency_list object of the constructed graph to a new variable. See the source codes below.
 
-\cgalExample{Cone_spanners_2/get_graph.cpp}
+\code{.cpp}
+	// construct the theta graph on the vertex list
+	T t(k, input_begin, input_end, Direction_2(1,0));
+	// copy the boost::adjacency_list object of the constructed graph from t
+	Graph g = t.graph(); 
+\endcode
 
 Note that copying instead of referencing is used here because the edge property has to be modified when calling the dijkstra's algorithm but the `boost::adjacency_list` object inside the class `Theta_graph_2` cannot be modified.
 
