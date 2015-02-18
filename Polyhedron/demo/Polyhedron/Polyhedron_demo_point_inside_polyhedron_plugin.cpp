@@ -36,7 +36,7 @@ class Polyhedron_demo_point_inside_polyhedron_plugin :
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
-  bool applicable() const 
+  bool applicable(QAction*) const 
   {
     bool poly_item_exists = false;
     bool point_item_exists = false;

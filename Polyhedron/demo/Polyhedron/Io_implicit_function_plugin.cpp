@@ -54,7 +54,7 @@ public:
   Io_implicit_function_plugin();
   virtual ~Io_implicit_function_plugin() {}
 
-  bool applicable() const { return true; }
+  bool applicable(QAction*) const { return true; }
 
   QString name() const { return "implicit functions"; }
   // QString nameFilters() const { return ""; }

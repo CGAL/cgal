@@ -37,7 +37,7 @@ public:
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
 
-  bool applicable() const {
+  bool applicable(QAction*) const {
     Q_FOREACH(int index, scene->selectionIndices())
     {
       if ( qobject_cast<Scene_polyhedron_item*>(scene->item(index)) )

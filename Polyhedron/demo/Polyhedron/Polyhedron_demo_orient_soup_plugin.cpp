@@ -23,10 +23,14 @@ public:
             Scene_interface* scene_interface,
             Messages_interface* m);
 
-  bool applicable() const {
+  bool applicable(QAction* action) const {
     Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices()) {
       if(qobject_cast<Scene_polygon_soup_item*>(scene->item(index)))
         return true;
+      else
+        if (action==actionShuffle && 
+            qobject_cast<Scene_polyhedron_item*>(scene->item(index)))
+            return true;
     }
     return false;
   }
