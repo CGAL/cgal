@@ -23,6 +23,9 @@
 #define TANGENTIAL_COMPLEX_H
 
 #include <CGAL/Tangential_complex/config.h>
+#include <CGAL/Tangential_complex/Simplicial_complex.h>
+#include <CGAL/Tangential_complex/utilities.h>
+#include <CGAL/Tangential_complex/Point_cloud.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -32,8 +35,6 @@
 #include <CGAL/Regular_triangulation_euclidean_traits.h>
 #include <CGAL/Regular_triangulation.h>
 #include <CGAL/Delaunay_triangulation.h>
-#include <CGAL/Tangential_complex/utilities.h>
-#include <CGAL/Tangential_complex/Point_cloud.h>
 #include <CGAL/Combination_enumerator.h>
 #include <CGAL/point_generators_d.h>
 
@@ -57,6 +58,7 @@
 #include <limits>
 #include <algorithm>
 #include <functional>
+#include <iterator>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/parallel_for.h>
@@ -525,6 +527,13 @@ public:
         std::cerr << "Time limit reached." << std::endl;
 #endif
         check_and_solve_inconsistencies_by_adding_higher_dim_simplices(); // CJTODO: make it optional?
+        Simplicial_complex complex;         // CJTODO: don't do it here
+        int max_dim = export_TC(complex);
+        complex.collapse(max_dim);
+        complex.display_stats();
+
+        std::ofstream off_stream("output/test.off"); // CJTODO TEMP TEST
+        export_to_off(complex, off_stream);
 
         return TIME_LIMIT_REACHED;
       }
@@ -592,8 +601,43 @@ public:
     return std::make_pair(num_simplices, num_inconsistent_simplices);
   }
 
+  // Return the max dimension of the simplices
+  int export_TC(Simplicial_complex &complex)
+  {
+    int max_dim = -1;
+
+    typename Tr_container::const_iterator it_tr = m_triangulations.begin();
+    typename Tr_container::const_iterator it_tr_end = m_triangulations.end();
+    // For each triangulation
+    for (std::size_t idx = 0 ; it_tr != it_tr_end ; ++it_tr, ++idx)
+    {
+      Triangulation const& tr    = it_tr->tr();
+
+      // For each cell of the star
+      Star::const_iterator it_inc_simplex = m_stars[idx].begin();
+      Star::const_iterator it_inc_simplex_end = m_stars[idx].end();
+      for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
+      {
+        std::set<std::size_t> c = *it_inc_simplex;
+        if (static_cast<int>(c.size()) > max_dim)
+          max_dim = static_cast<int>(c.size());
+        // Add the missing center vertex
+        c.insert(idx);
+        complex.add_simplex(c);
+      }
+    }
+    return max_dim;
+  }
+  
   std::ostream &export_to_off(
-    std::ostream & os, bool color_inconsistencies = false)
+    const Simplicial_complex &complex, std::ostream & os)
+  {
+    return export_to_off(os, false, &complex);
+  }
+
+  std::ostream &export_to_off(
+    std::ostream & os, bool color_inconsistencies = false, 
+    const Simplicial_complex *p_complex = NULL)
   {
     if (m_points.empty())
       return os;
@@ -628,8 +672,12 @@ public:
     std::stringstream output;
     std::size_t num_simplices, num_vertices;
     export_vertices_to_off(output, num_vertices);
-    export_simplices_to_off(
-      output, num_simplices, color_inconsistencies);
+    if (p_complex)
+      export_simplices_to_off(
+        *p_complex, output, num_simplices, color_inconsistencies);
+    else
+      export_simplices_to_off(
+        output, num_simplices, color_inconsistencies);
 
 #ifdef CGAL_TC_EXPORT_NORMALS
     os << "N";
@@ -2069,6 +2117,106 @@ private:
       << (num_simplices > 0 ?
           100. * num_inconsistent_simplices / num_simplices : 0.) << "%)"
       << std::endl
+      << "=========================================================="
+      << std::endl;
+#endif
+
+    return os;
+  }
+
+  
+  std::ostream &export_simplices_to_off(
+    const Simplicial_complex &complex,
+    std::ostream & os, std::size_t &num_simplices,
+    bool color_inconsistencies = false)
+  {
+    typedef Simplicial_complex::Simplex                     Simplex;
+    typedef Simplicial_complex::Simplex_range               Simplex_range;
+
+    // If m_intrinsic_dimension = 1, each point is output two times
+    // (see export_vertices_to_off)
+    num_simplices = 0;
+    typename Simplex_range::const_iterator it_s =
+      complex.simplex_range().begin();
+    typename Simplex_range::const_iterator it_s_end =
+      complex.simplex_range().end();
+    // For each triangulation
+    for ( ; it_s != it_s_end ; ++it_s)
+    {
+      Simplex c = *it_s;
+
+      // Gather the triangles here, with a bool saying if it's consistent
+      typedef std::vector<Simplex> Triangles;
+      Triangles triangles;
+
+      std::size_t num_vertices = c.size();
+      // Do not export smaller dimension simplices
+      if (num_vertices < m_intrinsic_dimension + 1)
+        continue;
+      
+      // If only 2 vertices, add a third one (each vertex is duplicated in
+      // the file when m_intrinsic dim = 2)
+      if (num_vertices == 2)
+      {
+        std::set<std::size_t> tmp_c;
+        std::set<std::size_t>::iterator it = c.begin();
+        for ( ; it != c.end() ; ++it)
+          tmp_c.insert(*it * 2);
+        tmp_c.insert(*c.rbegin() + 1);
+        c = tmp_c;
+      }
+
+      if (num_vertices <= 3)
+      {
+        triangles.push_back(c);
+      }
+      else
+      {
+        // num_vertices >= 4: decompose the simplex in triangles
+        std::vector<bool> booleans(num_vertices, false);
+        std::fill(booleans.begin() + num_vertices - 3, booleans.end(), true);
+        do
+        {
+          std::set<std::size_t> triangle;
+          std::set<std::size_t>::iterator it = c.begin();
+          for (int i = 0; it != c.end() ; ++i, ++it) 
+          {
+            if (booleans[i])
+              triangle.insert(*it);
+          }
+          triangles.push_back(triangle);
+        } 
+        while (std::next_permutation(booleans.begin(), booleans.end()));
+      }
+
+      // For each cell
+      Triangles::const_iterator it_tri = triangles.begin();
+      Triangles::const_iterator it_tri_end = triangles.end();
+      for ( ; it_tri != it_tri_end ; ++it_tri)
+      {
+        // Don't export infinite cells
+        if (*it_tri->rbegin() == std::numeric_limits<std::size_t>::max())
+          continue;
+        
+        os << 3 << " ";
+        std::set<std::size_t>::const_iterator it_point_idx = it_tri->begin();
+        for ( ; it_point_idx != it_tri->end() ; ++it_point_idx)
+        {
+          os << *it_point_idx << " ";
+        }
+
+        ++num_simplices;
+        os << std::endl;
+      }
+    }
+
+#ifdef CGAL_TC_VERBOSE
+    std::cerr << std::endl
+      << "=========================================================="
+      << std::endl
+      << "Export to OFF:\n"
+      << "  * Number of vertices: " << m_points.size() << std::endl
+      << "  * Total number of simplices: " << num_simplices << std::endl
       << "=========================================================="
       << std::endl;
 #endif

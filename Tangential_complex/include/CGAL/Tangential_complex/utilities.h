@@ -24,6 +24,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Dimension.h>
 
+#include <set>
 #include <vector>
 #include <atomic> // CJTODO: this is C++11 => use boost.Atomic (but it's too recent) 
                   // or tbb::atomic (works for doubles, but not officially)
@@ -150,6 +151,29 @@ namespace Tangential_complex_ {
     }
 
     return output_basis;
+  }
+  
+  // Compute all the k-combinations of elements
+  // Output_iterator::value_type must be std::set<std::size_t> >
+  template <typename Elements_container, typename Output_iterator>
+  void combinations(const Elements_container elements, int k,
+                        Output_iterator combinations)
+  {
+    std::size_t n = elements.size();
+    std::vector<bool> booleans(n, false);
+    std::fill(booleans.begin() + n - k, booleans.end(), true);
+    do
+    {
+      std::set<std::size_t> combination;
+      Elements_container::const_iterator it_elt = elements.begin();
+      for (std::size_t i = 0 ; i < n ; ++i, ++it_elt)
+      {
+        if (booleans[i])
+          combination.insert(*it_elt);
+      }
+      *combinations++ = combination;
+
+    } while (std::next_permutation(booleans.begin(), booleans.end()));
   }
 
 } // namespace Tangential_complex_
