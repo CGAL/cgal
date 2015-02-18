@@ -7,19 +7,146 @@ namespace CGAL {
 \cgalAutoToc
 \author Weisheng Si and  Quincy Tse
 
-This chapter describes the ...
-
+This chapter describes classes for constructing two kinds of cone-based spanners (Yao graph and Theta
+ graph) given a set of vertices on the plane. Both exact and inexact constructions can be performed.
+In exact construction, the cone boundaries are calculated using roots of polynomials (requiring `CORE::Expr` or `LEDA::real`). In inexact construction, the cone boundaries are calculated using an approximate Pi (3.14159265358979323846), which is still accurate enough for most applications. Moreover, this chapter describes functions for generating the data and script files used by Gnuplot to plot the constructed graphs.
+ 
 \section sec_CBS_mydefinitions Definitions
 
-Section on definitions here ...
+Given a set \f$V\f$ of vertices on the plane, the directed Yao Graph with an integer parameter \f$k (k > 1)\f$ on \f$V\f$ is obtained as follows. For each vertex \f$u \in V\f$ starting from a given direction (e.g., the direction of positive \f$y\f$-axis), draw \f$k\f$ equally-spaced rays \f$l_0\f$, \f$l_1\f$, \ldots, \f$l_{k-1}\f$ originating from \f$u\f$ in clockwise order (see \cgalFigureRef{f-y5} (a)). These rays divide the plane into \f$k\f$ cones of angle \f$2\pi/k\f$, denoted by \(c(u, 1), c(u, 2), \ldots, c(u, k)\) respectively in clockwise order. To avoid overlapping at boundaries, it is assumed here that the area of \(c(u, i)\), where \(i=1, \ldots, k\),  includes the ray \f$l_{i-1}\f$ but includes the ray \f$l_{i\% k}\f$. In each cone of \f$u\f$, draw a directed edge from \f$u\f$ to its closest vertex by Euclidean distance in that cone. Ties are broken arbitrarily. These directed edges will form the edge set of the directed Yao graph on \f$V\f$. The undirected Yao Graph on \f$V\f$ is obtained by ignoring the directions of the edges. Note that if both edge \f$uv\f$ and \f$vu\f$ are in the directed Yao graph, only one edge \f$uv\f$ exists in the undirected Yao graph. \cgalFigureRef{f-y5} (b) gives an example of Yao graph with \f$k=5\f$.
 
-\section sec_CBS_myexamples Examples
+\cgalFigureBegin{f-y5, Example-Y5.jpg}
+Cones and an example of Yao Graph with \f$k=5\f$.
+\cgalFigureEnd
 
-\subsection CBS_myFirstExample First Example
+Similar to Yao graph, the directed or undirected Theta Graph is also obtained by letting each vertex \f$u \in V\f$ select a 'closest' vertex in each of its cones to have an edge. The only difference is that 'closest' in Theta Graph means the smallest projection distance onto the bisector of that cone, not the direct Euclidean distance. For instance, in \cgalFigureRef{f-theta}, vertex \f$u\f$'s 'closest' vertex will be vertex \f$b\f$. 
 
-The following example shows ...
+\cgalFigureBegin{f-theta, BisectorInThetaGraph.jpg}
+The bisector in a cone of a Theta Graph.
+\cgalFigureEnd
 
-\cgalExample{Cone_spanners_2/theta_io.cpp}
+\section sec_CBS_design Software Design
+This package provides two template classes, `CGAL::Theta_graph_2` and `CGAL::Yao_graph_2`, which can construct Yao graphs and Theta graphs respectively given a set of vertices on the plane. The data structure used to store the constructed graphs is the class "boost::adjacency_list" taken from the Boost Graph Library (BGL, http://www.boost.org/). This offers convenience to the post-construction processing of Theta graphs and Yao graphs using BGL, which includes almost all common graph algorithms. 
+
+With `CGAL::Theta_graph_2` and `CGAL::Yao_graph_2`, the users can configure the following parameters when constructing these two graphs:
+<ol>
+<li> The CGAL kernel type (deciding exact or inexact construction). </li>
+<li> The directedness of the graph (undirected, directed, or bidirectional). For the differences among these three, please
+      refer to the documentation of Boost Graph Library (BGL). </li>
+<li> The struct that defines edge property. </li>
+<li> The number of cones \f$k\f$.  </li>
+<li> The direction of the starting ray \f$l_1\f$.  </li>
+</ol>
+
+In addition to the above two classes, for visualizing the constructed graphs, this package provides a function called `CGAL::gnuplot_output_2()` to output a `boost::adjacency_list` data structure to Gnuplot data and script files.
+
+\subsection subsec_CBS_theta Class `CGAL::Theta_graph_2`
+
+The construction algorithm for Theta graph is taken from Chapter 4 of the Book \cgalCite{ns-gsn-07}. Basically, it is a sweep line algorithm and uses a balanced search tree to store the vertices that have already been scanned. It has the complexity of \f$O(n \log n)\f$, where \f$n\f$ is the number of vertices on the plane. This complexity has been proved to be optimal. 
+
+For more details on how to use this `CGAL::Theta_graph_2` class to write an application that builds Theta graphs, please proceed to Section 3 Examples.
+
+\subsection subsec_CBS_yao Class `CGAL::Yao_graph_2`
+
+The construction algorithm for Yao graph is a slight adaptation of the algorithm for constructing Theta graph, having a complexity of \f$O(n^2)\f$. The increase of complexity in this adaptation is because in constructing Theta graph, the searching of the 'closest' node by projection distance can be done by a balanced search tree, but in constructing Yao graph, the searching of the 'closest' node by Euclidean distance cannot be done by a balanced search tree. 
+
+Note that an optimal algorithm for constructing Yao graph with a complexity of \f$O(n \log n)\f$ is described in \cgalCite{cht-oacov-90}. However, this algorithm is much more complex to implement than the current algorithm implemented, and it can hardly reuse the codes for constructing Theta graphs. In future, we will also provide an implementation of this algorithm to make two algorithms available for Yao graph.
+
+\subsection subsec_CBS_gnuplot Function `CGAL::gnuplot_output_2`
+
+This package also implements a template function `CGAL::gnuplot_output_2()`, which will read a `boost::adjacency_list` class  and output two files used by Gnuplot to display the graph represented by the `boost::adjacency_list`. These two files are:
+<ul>
+<li> A data file that contains the \f$(x, y)\f$-coordinates of the set of vertices. To be read by Gnuplot, 
+      the \f$(x, y)\f$-coordinates are written into the data file with decimal format, no matter which number type is used in the CGAL kernel. This is achieved by calling CGAL::to_double() on \f$x\f$ or \f$y\f$ coordinate before outputing them. 
+	  </li>
+<li> A Gnuplot script file that can be loaded by Gnuplot to plot the set of vertices and the set of edges. The set of vertices is read from the above data file and the set of edges are included in the script file itself.
+      </li>
+</ul>
+
+For details on how to use this function to output Gnuplot files, please proceed to Section 3 Examples.
+ 
+\section sec_CBS_examples Examples
+
+Three exemplar '.cpp' files are provided to demonstrate how to use the package. All three examples deal with Theta graphs. To deal with Yao graphs, the way of writing codes is the same. Specifically, 
+<ul>
+<li> 'exact_theta_io.cpp' shows how to construct Theta graphs exactly and generate Gnuplot files. </li>
+<li> 'theta_io.cpp' shows how to construct Theta graphs inexactly and generate Gnuplot files. </li>
+<li> 'dijkstra_theta.cpp' shows how to call algorithms from BGL to do other processing after the graphs are constructed. </li>
+</ul>
+
+\subsection CBS_construction Constructing graphs exactly or inexactly and generating Gnuplot files
+
+The 'exact_theta_io.cpp' shows how to read a set of vertices from a file, construct exactly a Theta graph on this set of vertices, and then output the constructed graph to files ready for Gnuplot to display.
+
+Basically, the template class definition of CGAL::Theta_graph_2 provides the interface to set the CGAL kernel type, the directedness of the graph, and the struct that specifies the edge property. Note that for the CGAL kernel type, if the kernel
+'Exact_predicates_exact_constructions_kernel_with_sqrt' is selected, the Theta graph will be constructed exactly; if the kernels other than this one is selected, the graph will be constructed inexactly. So it is very easy to control whether you have an exact construction. 
+
+For your reference, the definition of the class `CGAL::Theta_graph_2` in 'Theta_graph_2.h' is as follows:
+
+\cgalExample{Cone_spanners_2/theta_graph.h}
+
+In the case of exact_theta_io.cpp, the use of the above interface is as follows:
+
+\cgalExample{Cone_spanners_2/theta_graph_typedef.cpp}
+
+So in this definition, the Theta graph will be constructed exactly, will be directed, and will have no edge property. 
+
+Note that to have the inexact construction, just replace the above Kernel definition to the following line, as we did
+in the 'theta_io.cpp'.
+
+\cgalExample{Cone_spanners_2/inexact_typedef.cpp}
+
+Also note that for Theta graph, the Kernel selected must support the `CGAL::sqrt()` operation. This is required by the CGAL::bisector() function, which is used to calculate the angle bisector of a cone. For instance, the compiler will complain if Exact_predicates_exact_constructions_kernel (not supporting CGAL::bisector()) is used as the kernel, but Exact_predicates_inexact_constructions_kernel will be fine since it supports `CGAL::sqrt()`. For Yao graph, there is no such restriction, since its construction does not need `CGAL::sqrt()`. 
+
+In addition to the interface provided by the template class definition, the constructor definition of `CGAL::Theta_graph_2` provides the interface to specify the number of cones in the graph, the iterator to the beginning of the list of vertices, the iterator to the position one after the end, and the direction of the starting ray \f$l_1\f$.
+
+\cgalExample{Cone_spanners_2/theta_constructor.h}
+
+With the above interface, the instantiation of the Theta graph variable 't' in exact_theta_io.cpp is as follows:
+
+\cgalExample{Cone_spanners_2/theta_instantiation.cpp}
+
+So in this instantiation, the Theta graph to be constructed has 4 cones, will read the set of vertices from the file with name argv[2], and starts the first ray with the direction of the positive \f$x\f$-axis.
+
+To generate the files for Gnuplot to plot the graph constructed, the exact_theta_io.cpp first obtains a reference to the boost::adjacency_list object of the constructed graph, and then invokes CGAL::gnuplot_output_2(g, fileprefix), as illustrated in the following codes.
+
+\cgalExample{Cone_spanners_2/gnuplot_output.cpp}
+
+After compiling 'exact_theta_io.cpp', execute the executable `exact_theta_io` to construct a Theta graph with 4 cones on a set of 20 vertices (which is given in the file n20.cin):
+
+\cgalExample{Cone_spanners_2/cmd_line.txt}
+
+The following two files will be generated for Gnuplot: 
+<ul>
+<li> <b>t4n20.v</b>:  This file contains the \f$(x, y)\f$-coordinates of the 20 vertices. 
+      </li>
+<li> <b>t4n20.plt</b>: This is the script to be loaded by Gnuplot. It will read 
+          t4n20.v to plot the vertices. It will also plot all the edges, 
+		  as the edge list is included in this script itself.
+	</li>
+</ul>
+
+\cgalFigureRef{f-t4} shows the Theta graph plotted when the above t4n20.plt is loaded by Gnuplot.
+  
+\cgalFigureBegin{f-t4, t4n20.jpg}
+A directed Theta graph of 20 vertices with \f$k=4\f$.
+\cgalFigureEnd
+
+\subsection CBS_using_BGL Using algorithms from BGL
+
+Since the constructed Theta or Yao graphs are stored in the class `boost::adjacency_list` from BGL, it is convenient to apply BGL algorithms into the constructed graphs.
+
+The 'dijkstra_theta.cpp' provides an exemplar application that calculates the shortest paths on a constructed Theta graph by calling the Dijkstra's algorithm from BGL. Basically, it first defines a struct for storing the Euclidean length of each edge, since the Dijkstra's algorithm requires each edge has a length; then, it passes this struct as the edge property to the `Theta_graph_2` template. The source codes are as follows.
+
+\cgalExample{Cone_spanners_2/edge_property.h}
+
+After the definition, 'dijkstra_theta.cpp' constructs the Theta graph and copies the boost::adjacency_list object of the constructed graph to a new variable. See the source codes below.
+
+\cgalExample{Cone_spanners_2/get_graph.cpp}
+
+Note that copying instead of referencing is used here because the edge property has to be modified when calling the dijkstra's algorithm but the `boost::adjacency_list` object inside the class `Theta_graph_2` cannot be modified.
+
+Then, 'dijkstra_theta.cpp' calculates the Euclidean length of each edge and store them in the edge property. Finally, it calls the `dijkstra_shortest_paths()` function from BGL to calculate the shortest paths. For details, please refer to the entire 'dijkstra_theta.cpp'. 
 
 */
 } /* namespace CGAL */
