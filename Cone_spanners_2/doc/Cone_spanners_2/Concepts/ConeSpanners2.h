@@ -57,7 +57,16 @@ ConeSpanners_2(const unsigned int k,
  */
 Graph graph();
 
+/** @brief returns the number of cones in this graph. 
+ */
+const unsigned int& number_of_cones() const;
 
+/** @brief returns the vector of the directions of the rays dividing the plane. 
+ *
+ *  @return a vector of Direction_2
+ */
+const std::vector<Direction_2>& directions() const;
+	
 /// @} 
 
 }; /* end ConeSpanners_2 */
