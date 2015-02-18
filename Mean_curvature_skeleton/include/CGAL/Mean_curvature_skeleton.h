@@ -1411,7 +1411,7 @@ private:
       Point pn = project_vertex(vs, vt, vk);
       halfedge_descriptor en = internal::mesh_split(m_hg, m_hg_point_pmap, ei, pn);
       // set id for new vertex
-      put(m_vertex_id_pmap, en->target(en,m_hg), m_vertex_id_count++);
+      put(m_vertex_id_pmap, target(en,m_hg), m_vertex_id_count++);
       cnt++;
     }
     return cnt;

@@ -64,7 +64,7 @@ mesh_split(HalfedgeGraph& hg,
   next(next(en,hg),hg)->id() = -1;
   next(en,hg)->id() = -1; // AF: the same as 3 lines above? error or duplicate?
   halfedge_descriptor ej = opposite(en, hg);
-  if (! is_border(wj,hg))
+  if (! is_border(ej,hg))
   {
     Euler::split_face(opposite(ei,hg), next(ej,hg), hg);
     next(ej,hg)->id() = -1;

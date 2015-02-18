@@ -299,7 +299,7 @@ private:
 
     // assign face id and compute edge-face connectivity
     int face_id = 0;
-    for (Facet_iterator i = hg.facets_begin(); i != hg.facets_end(); ++i)
+    for(face_iterator i = faces(hg).first; i != faces(hg).end(); ++i)
     {
       Halfedge_face_circulator j(halfedge(*i,hg),hg), done(j);
       // Facets in polyhedral surfaces are at least triangles.
@@ -307,7 +307,7 @@ private:
       do
       {
         halfedge_descriptor hd = *j;
-        int id = get(vertex_index_t , hd, hg);
+        int id = get(hedge_id_pmap, hd);
         face_to_edge[face_id].push_back(id);
         edge_to_face[id].push_back(face_id);
       } while (++j != done);

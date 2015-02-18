@@ -55,7 +55,7 @@ bool is_vertex_degenerate(HalfedgeGraph& hg,
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor          vertex_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor        halfedge_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::out_edge_iterator          out_edge_iterator;
-  typedef typename HalfedgeGraph::face_descriptor                                 face_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::face_descriptor            face_descriptor;
   typedef typename Halfedge_around_face_circulator<HalfedgeGraph>                 Halfedge_face_circulator;
 
   std::set<vertex_descriptor> vertices_in_disk;
@@ -85,7 +85,7 @@ bool is_vertex_degenerate(HalfedgeGraph& hg,
       bool in = true;
       do
       {
-        vertex_descriptor v = target(j,hg);
+        vertex_descriptor v = target(*j,hg);
         if (vertices_in_disk.find(v) == vertices_in_disk.end())
         {
           in = false;
