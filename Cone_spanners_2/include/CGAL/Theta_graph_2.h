@@ -45,8 +45,8 @@
 namespace CGAL {
 
 	/**
-        * \ingroup PkgConeBasedSpanners
-        * @brief A derived class for constructing Theta graphs with a given set of 2D points.
+    * \ingroup PkgConeBasedSpanners
+    * @brief A derived class for constructing Theta graphs with a given set of 2D points.
 	*
 	*  Its base class is Cone_spanners_2. 
 	*  Directed,undirected and bidirectional graphs are supported. For differences among these
