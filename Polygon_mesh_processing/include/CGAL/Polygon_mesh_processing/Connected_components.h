@@ -549,7 +549,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_iterator edge_iterator;
-  boost::vector_property_map<int, typename boost::property_map<PolygonMesh, boost::face_index_t>::type> face_cc(fim);
+  boost::vector_property_map<int, FaceIndexMap> face_cc(fim);
   
   int num = connected_components(pmesh,
                                  face_cc,
@@ -558,7 +558,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
   if((num == 1)|| (nb_components_to_keep > num) ){
     return 0;
   }
-  boost::vector_property_map<bool, typename boost::property_map<PolygonMesh, boost::vertex_index_t>::type> keep_vertex(vim); 
+  boost::vector_property_map<bool, VertexIndexMap> keep_vertex(vim); 
   BOOST_FOREACH(vertex_descriptor v, vertices(pmesh)){
     keep_vertex[v] = false;
   }
@@ -703,11 +703,11 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
   using boost::choose_const_pmap;
   using boost::get_param;
 
-  return keep_largest_connected_component(pmesh,
-                                          nb_components_to_keep,
-                                          choose_param(get_param(params,edge_is_constrained),internal::No_constraint<PolygonMesh>(pmesh)),
-                                          choose_const_pmap(get_param(params,boost::vertex_index),pmesh,boost::vertex_index)
-                                          choose_const_pmap(get_param(params,boost::face_index),pmesh,boost::face_index)
+  return keep_largest_connected_components(pmesh,
+                                           nb_components_to_keep,
+                                           choose_param(get_param(params,edge_is_constrained),internal::No_constraint<PolygonMesh>(pmesh)),
+                                           choose_const_pmap(get_param(params,boost::vertex_index),pmesh,boost::vertex_index),
+                                           choose_const_pmap(get_param(params,boost::face_index),pmesh,boost::face_index)
                                           );
 }
 
