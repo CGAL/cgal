@@ -34,7 +34,7 @@ int isInit = 0;
 GLint location[7];
 GLfloat *mvp_mat;
 GLfloat *mv_mat;
-GLfloat colors[3];
+GLfloat colors[4];
 
 GLuint vertex_shader;
 GLuint fragment_shader;
@@ -471,7 +471,7 @@ Scene_polygon_soup_item::toolTip() const
 
 void
 Scene_polygon_soup_item::draw() const {
-    std::cout<<"Erreur de Draw"<<std::endl;
+
     typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
     typedef Polygon_soup::Polygons::size_type size_type;
     if(isInit!=1)
@@ -551,10 +551,8 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     GLdouble d_mvp_mat[16];
     viewer->camera()->getModelViewProjectionMatrix(d_mvp_mat);
     viewer->camera()->getModelViewMatrix(mv_mat);
-    colors[0] = this->color().redF();
-    colors[1] = this->color().greenF();
-    colors[2] = this->color().blueF();
 
+    glGetFloatv(GL_CURRENT_COLOR, colors );
     //position
     glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
 
@@ -580,121 +578,7 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
 
     draw();
 }
-void
-Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const
-{
-    typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
-    typedef Polygon_soup::Polygons::size_type size_type;
 
-    //Remplit la matrice MVP
-    GLdouble d_mvp_mat[16];
-    viewer->camera()->getModelViewProjectionMatrix(d_mvp_mat);
-    viewer->camera()->getModelViewMatrix(mv_mat);
-    colors[0] = this->color().redF()/2.0;
-    colors[1] = this->color().greenF()/2.0;
-    colors[2] = this->color().blueF()/2.0;
-
-    //position
-    glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
-
-    //ambient
-    glGetLightfv(GL_LIGHT0, GL_AMBIENT, light.ambient);
-    light.ambient[0]*=colors[0];
-    light.ambient[1]*=colors[1];
-    light.ambient[2]*=colors[2];
-
-    //specular
-    glGetLightfv(GL_LIGHT0, GL_SPECULAR, light.specular);
-
-    //diffuse
-    glGetLightfv(GL_LIGHT0, GL_DIFFUSE, light.diffuse);
-
-    light.diffuse[0]*=colors[0];
-    light.diffuse[1]*=colors[1];
-    light.diffuse[2]*=colors[2];
-
-    //Convert the GLdoubles matrix in GLfloats
-    for (int i=0; i<16; ++i)
-        mvp_mat[i] = GLfloat(d_mvp_mat[i]);
-
-
-
-    if(isInit!=1)
-    {
-        for(Polygons_iterator it = soup->polygons.begin();
-            it != soup->polygons.end(); ++it)
-        {
-
-            const Point_3& pa = soup->points[it->at(0)];
-            const Point_3& pb = soup->points[it->at(1)];
-            const Point_3& pc = soup->points[it->at(2)];
-
-            Kernel::Vector_3 n = CGAL::cross_product(pb-pa, pc -pa);
-            n = n / std::sqrt(n * n);
-            //  ::glBegin(GL_POLYGON);
-            //::glNormal3d(n.x(),n.y(),n.z());
-            normals.push_back(n.x());
-            normals.push_back(n.y());
-            normals.push_back(n.z());
-
-            normals.push_back(n.x());
-            normals.push_back(n.y());
-            normals.push_back(n.z());
-
-
-            normals.push_back(n.x());
-            normals.push_back(n.y());
-            normals.push_back(n.z());
-
-
-            for(size_type i = 0; i < it->size(); ++i)
-            {
-                const Point_3& p = soup->points[it->at(i)];
-
-                positions_poly.push_back(p.x());
-                positions_poly.push_back(p.y());
-                positions_poly.push_back(p.z());
-                positions_poly.push_back(1.0);
-
-
-            }
-
-        }
-
-        if(soup->display_non_manifold_edges) {
-            double current_color[4];
-            GLboolean lightning;
-            ::glGetDoublev(GL_CURRENT_COLOR, current_color);
-            //::glColor3d(1., 0., 0.); // red
-            ::glGetBooleanv(GL_LIGHTING, &lightning);
-            ::glDisable(GL_LIGHTING);
-
-            BOOST_FOREACH(const Polygon_soup::Edge& edge,
-                          soup->non_manifold_edges)
-            {
-                const Point_3& a = soup->points[edge[0]];
-                const Point_3& b = soup->points[edge[1]];
-
-                //  ::glBegin(GL_LINES);
-                // ::glVertex3d(a.x(), a.y(), a.z());
-                // ::glVertex3d(b.x(), b.y(), b.z());
-                // ::glEnd();
-                positions_lines.push_back(a.x());
-                positions_lines.push_back(a.y());
-                positions_lines.push_back(a.y());
-
-                positions_lines.push_back(b.x());
-                positions_lines.push_back(b.y());
-                positions_lines.push_back(b.y());
-
-            }
-            if(lightning) glEnable(GL_LIGHTING);
-            //	::glColor4dv(current_color);
-        }
-    }
-
-    render();
-}
 void
 Scene_polygon_soup_item::draw_points() const {
 
