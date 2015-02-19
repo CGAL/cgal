@@ -1,4 +1,137 @@
 
+-------------------------------- Release 4.6 --------------------------------
+
+Release date: March 2015
+
+
+
+
+* 2D Generalized Barycentric Coordinates (new package)
+
+  - This package offers an efficient and robust implementation of two-
+    dimensional closed-form generalized barycentric coordinates defined for
+    simple two-dimensional polygons.
+
+
+* Scale-Space Surface Reconstruction (new package)
+
+  - This new package provides a class gathering a dedicated smoothing algorithm
+    and some convenience functions to help the creation of a surface out of a
+    point set using the 3D Alpha Shapes package. The particularity of this
+    reconstruction pipeline is that the input point are in the output and no
+    new points are created. Note that in the current version, the output is a
+    triangle soup that is not necessarily a valid (manifold) polyhedral
+    surface.
+
+
+* Surface Mesh (new package)
+
+  - The surface mesh class provided by this package is a data structure that
+    can be used as halfedge data structure or polyhedral surface. It is an
+    alternative to the packages CGAL::Polyhedron_3 and CGAL::HalfedgeDS.
+
+
+* Triangulation (new package)
+
+  - This new package provides classes for manipulating triangulations in
+    Euclidean spaces whose dimension can be specified at compile-time or at
+    run-time.
+
+
+
+
+* dD Geometry Kernel
+
+  - It has been reported that the recently introduced Epick_d kernel may not
+    work with Intel C++ Compiler prior to version 15. Documentation has been
+    updated.
+
+
+* 3D Convex Hulls
+
+  - Add functions halfspace_intersection_3 and
+    halfspace_intersection_with_constructions_3 to compute the intersection of
+    halfspaces defining a closed polyhedron.
+
+  - Fix a bug introduced in CGAL 4.5 that can appear while computing the convex
+    hull of coplanar points.
+
+  - Fix a robustness issue in Convex_hull_traits_3. This traits is used by
+    default with the kernel Exact_predicates_inexact_constructions_kernel.
+
+
+
+
+* Combinatorial Maps and Linear Cell Complex
+
+  - Added correct_invalid_attributes, set_automatic_attributes_management and
+    are_attributes_automatically_managed methods in CombinatorialMap concept.
+    This allows high level operations to not update non void attributes during
+    massive calls of these operations, but only after the end of their
+    executions.
+
+
+
+
+* 2D Triangulations
+
+  - The class Constrained_triangulation_plus_2 now can handle polylines as
+    constraints.
+
+  - As a consequence a Constraint_id has been introduced which replaces
+    pair<Vertex_handle,Vertex_handle> as identifier of a constraint.
+
+
+
+
+* 3D Mesh Generation
+
+  - Add member functions output_boundary_to_off and
+    output_facets_in_complex_to_off in the class CGAL::
+    Mesh_complex_3_in_triangulation_3 to export the boundary of a domain or a
+    subdomain.
+
+
+
+
+* 3D Fast Intersection and Distance Computation
+
+  - Add new constructors to AABB_halfedge_graph_segment_primitive and
+    AABB_face_graph_triangle_primitive in order to be able to build primitives
+    one by one.
+
+
+* Spatial Searching
+
+  - Fixed a bug in CGAL::Splitters.h sliding mitdpoint rule, where degenerated
+    point sets (e.g.,points on segment) caused the kd-tree to get linear.
+
+  - Improved performance of Orthogonal_k_neighbor_search. Note that VC 2013
+    does not compile boost::container::deque of Boost 1_55 and does hence have
+    a workaround which does not have the improvement.
+
+  - Breaking change: The concept OrthogonalDistance has new function overloads
+    for min_distance_to_rectangle and max_distance_to_rectangle with an
+    additional reference parameter std::vector.
+
+  - Breaking change: The order of the points in the iterator range [tree.begin
+    (),tree.end()] is not the order of insertion of the points into the tree.
+    This was not guaranteed before but might have beeen observed and exploited
+    by users.
+
+  - Derived kd_tree_leaf_node and kd_tree_internal_node from kd_tree_node to
+    save memory.
+
+
+
+
+* Geometric Object Generators
+
+  - Add a new function random_convex_hull_in_disc_2 that efficiently generates
+    a random polygon as the convex hull of uniform random points chosen in a
+    disc.
+
+
 -------------------------------- Release 4.5.2 --------------------------------
 
 Release date: February 2015
