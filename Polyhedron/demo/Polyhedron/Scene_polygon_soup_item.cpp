@@ -26,22 +26,21 @@
 std::vector<float> positions_poly(0);
 std::vector<float> positions_lines(0);
 std::vector<float> positions_points(0);
-std::vector<float> colors(0);
 std::vector<float> normals(0);
 
 GLuint rendering_program;
 GLuint vertex_array_object;
 int isInit = 0;
-GLint location[6];
+GLint location[7];
 GLfloat *mvp_mat;
 GLfloat *mv_mat;
-
+GLfloat colors[3];
 
 GLuint vertex_shader;
 GLuint fragment_shader;
 GLuint program;
 GLuint vao;
-GLuint buffer[3];
+GLuint buffer[2];
 
 struct light_info
 {
@@ -82,20 +81,11 @@ GLuint compile_shaders(void)
                           );
     glEnableVertexAttribArray(0);
 
-
-
     //Bind the second and initialize it
     glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-    glBufferData(GL_ARRAY_BUFFER, (colors.size())*sizeof(colors.data()), colors.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, (normals.size())*sizeof(normals.data()), normals.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
     glEnableVertexAttribArray(1);
-
-    //Bind the second and initialize it
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
-    glBufferData(GL_ARRAY_BUFFER, (normals.size())*sizeof(normals.data()), normals.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-    glEnableVertexAttribArray(2);
-
 
 
     //fill the vertex shader
@@ -104,17 +94,15 @@ GLuint compile_shaders(void)
         "#version 300 es \n"
         " \n"
         "layout (location = 0) in vec4 positions_poly; \n"
-        "layout (location = 1) in vec3 vColors; \n"
-        "layout (location = 2) in vec3 vNormals; \n"
+        "layout (location = 1) in vec3 vNormals; \n"
         "uniform mat4 mvp_matrix; \n"
-
         "uniform mat4 mv_matrix; \n"
-
-        " uniform vec3 light_pos;  \n"
-        " uniform vec3 light_diff; \n"
-        " uniform vec3 light_spec; \n"
-        " uniform vec3 light_amb;  \n"
-        " float spec_power = 0.0; \n"
+        "uniform vec3 vColors; \n"
+        "uniform vec3 light_pos;  \n"
+        "uniform vec3 light_diff; \n"
+        "uniform vec3 light_spec; \n"
+        "uniform vec3 light_amb;  \n"
+        "float spec_power = 0.0; \n"
 
         "out highp vec3 fColors; \n"
         "out highp vec3 fNormals; \n"
@@ -238,6 +226,7 @@ void render()
     location[3] = glGetUniformLocation(rendering_program, "light_diff");
     location[4] = glGetUniformLocation(rendering_program, "light_spec");
     location[5] = glGetUniformLocation(rendering_program, "light_amb");
+    location[6] = glGetUniformLocation(rendering_program, "vColors");
 
     //Set the ModelViewProjection and ModelView matrices
     glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
@@ -248,6 +237,7 @@ void render()
     glUniform3fv(location[3], 1, light.diffuse);
     glUniform3fv(location[4], 1, light.specular);
     glUniform3fv(location[5], 1, light.ambient);
+    glUniform3fv(location[6], 1, colors);
 
     isInit = 1;
     //draw the polygons
@@ -309,25 +299,7 @@ Scene_polygon_soup_item::Scene_polygon_soup_item()
     mvp_mat = new GLfloat[16];
     mv_mat = new GLfloat[16];
 
-
-    //position
-    glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
-
-    //ambient
-    glGetLightfv(GL_LIGHT0, GL_AMBIENT, light.ambient);
-
-    //specular
-    glGetLightfv(GL_LIGHT0, GL_SPECULAR, light.specular);
-
-    //diffuse
-    glGetLightfv(GL_LIGHT0, GL_DIFFUSE, light.diffuse);
-
-    std::cout<<"position : "<<light.position[0]<<", "<<light.position[1]<<", "<<light.position[2]<<std::endl;
-    std::cout<<"ambient : "<<light.ambient[0]<<", "<<light.ambient[1]<<", "<<light.ambient[2]<<std::endl;
-    std::cout<<"specular : "<<light.specular[0]<<", "<<light.specular[1]<<", "<<light.specular[2]<<std::endl;
-    std::cout<<"diffuse : "<<light.diffuse[0]<<", "<<light.diffuse[1]<<", "<<light.diffuse[2]<<std::endl;
-
-}
+   }
 
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
 {
@@ -514,44 +486,29 @@ Scene_polygon_soup_item::draw() const {
 
             Kernel::Vector_3 n = CGAL::cross_product(pb-pa, pc -pa);
             n = n / std::sqrt(n * n);
-            //  ::glBegin(GL_POLYGON);
-            //::glNormal3d(n.x(),n.y(),n.z());
-            normals.push_back(n.x());
-            normals.push_back(n.y());
-            normals.push_back(n.z());
-
-            colors.push_back(this->color().redF());
-            colors.push_back(this->color().greenF());
-            colors.push_back(this->color().blueF());
 
             normals.push_back(n.x());
             normals.push_back(n.y());
             normals.push_back(n.z());
 
-            colors.push_back(this->color().redF());
-            colors.push_back(this->color().greenF());
-            colors.push_back(this->color().blueF());
+            normals.push_back(n.x());
+            normals.push_back(n.y());
+            normals.push_back(n.z());
+
 
             normals.push_back(n.x());
             normals.push_back(n.y());
             normals.push_back(n.z());
 
-            colors.push_back(this->color().redF());
-            colors.push_back(this->color().greenF());
-            colors.push_back(this->color().blueF());
 
             for(size_type i = 0; i < it->size(); ++i)
             {
                 const Point_3& p = soup->points[it->at(i)];
-
                 positions_poly.push_back(p.x());
                 positions_poly.push_back(p.y());
                 positions_poly.push_back(p.z());
                 positions_poly.push_back(1.0);
-
-
             }
-
         }
 
         if(soup->display_non_manifold_edges) {
@@ -567,11 +524,6 @@ Scene_polygon_soup_item::draw() const {
             {
                 const Point_3& a = soup->points[edge[0]];
                 const Point_3& b = soup->points[edge[1]];
-
-                //  ::glBegin(GL_LINES);
-                // ::glVertex3d(a.x(), a.y(), a.z());
-                // ::glVertex3d(b.x(), b.y(), b.z());
-                // ::glEnd();
                 positions_lines.push_back(a.x());
                 positions_lines.push_back(a.y());
                 positions_lines.push_back(a.y());
@@ -584,8 +536,8 @@ Scene_polygon_soup_item::draw() const {
             if(lightning) glEnable(GL_LIGHTING);
             //	::glColor4dv(current_color);
         }
-
     }
+
     render();
 }
 
@@ -599,6 +551,68 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     GLdouble d_mvp_mat[16];
     viewer->camera()->getModelViewProjectionMatrix(d_mvp_mat);
     viewer->camera()->getModelViewMatrix(mv_mat);
+    colors[0] = this->color().redF();
+    colors[1] = this->color().greenF();
+    colors[2] = this->color().blueF();
+
+    //position
+    glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
+
+    //ambient
+    glGetLightfv(GL_LIGHT0, GL_AMBIENT, light.ambient);
+    light.ambient[0]*=colors[0];
+    light.ambient[1]*=colors[1];
+    light.ambient[2]*=colors[2];
+
+    //specular
+    glGetLightfv(GL_LIGHT0, GL_SPECULAR, light.specular);
+
+    //diffuse
+    glGetLightfv(GL_LIGHT0, GL_DIFFUSE, light.diffuse);
+
+    light.diffuse[0]*=colors[0];
+    light.diffuse[1]*=colors[1];
+    light.diffuse[2]*=colors[2];
+
+    //Convert the GLdoubles matrix in GLfloats
+    for (int i=0; i<16; ++i)
+        mvp_mat[i] = GLfloat(d_mvp_mat[i]);
+
+    draw();
+}
+void
+Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const
+{
+    typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
+    typedef Polygon_soup::Polygons::size_type size_type;
+
+    //Remplit la matrice MVP
+    GLdouble d_mvp_mat[16];
+    viewer->camera()->getModelViewProjectionMatrix(d_mvp_mat);
+    viewer->camera()->getModelViewMatrix(mv_mat);
+    colors[0] = this->color().redF()/2.0;
+    colors[1] = this->color().greenF()/2.0;
+    colors[2] = this->color().blueF()/2.0;
+
+    //position
+    glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
+
+    //ambient
+    glGetLightfv(GL_LIGHT0, GL_AMBIENT, light.ambient);
+    light.ambient[0]*=colors[0];
+    light.ambient[1]*=colors[1];
+    light.ambient[2]*=colors[2];
+
+    //specular
+    glGetLightfv(GL_LIGHT0, GL_SPECULAR, light.specular);
+
+    //diffuse
+    glGetLightfv(GL_LIGHT0, GL_DIFFUSE, light.diffuse);
+
+    light.diffuse[0]*=colors[0];
+    light.diffuse[1]*=colors[1];
+    light.diffuse[2]*=colors[2];
+
     //Convert the GLdoubles matrix in GLfloats
     for (int i=0; i<16; ++i)
         mvp_mat[i] = GLfloat(d_mvp_mat[i]);
@@ -623,25 +637,15 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
             normals.push_back(n.y());
             normals.push_back(n.z());
 
-            colors.push_back(this->color().redF());
-            colors.push_back(this->color().greenF());
-            colors.push_back(this->color().blueF());
+            normals.push_back(n.x());
+            normals.push_back(n.y());
+            normals.push_back(n.z());
+
 
             normals.push_back(n.x());
             normals.push_back(n.y());
             normals.push_back(n.z());
 
-            colors.push_back(this->color().redF());
-            colors.push_back(this->color().greenF());
-            colors.push_back(this->color().blueF());
-
-            normals.push_back(n.x());
-            normals.push_back(n.y());
-            normals.push_back(n.z());
-
-            colors.push_back(this->color().redF());
-            colors.push_back(this->color().greenF());
-            colors.push_back(this->color().blueF());
 
             for(size_type i = 0; i < it->size(); ++i)
             {
@@ -691,7 +695,6 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
 
     render();
 }
-
 void
 Scene_polygon_soup_item::draw_points() const {
 

@@ -22,6 +22,7 @@
 #include <QList>
 #include <QAbstractProxyModel>
 
+
 namespace {
   void CGALglcolor(QColor c)
   {
@@ -216,10 +217,10 @@ void Scene::initializeGL()
   //Setting the light options
 
   // Create light components
-  GLfloat ambientLight[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+  GLfloat ambientLight[] = { 0.4f, 0.4f, 0.4f, 1.0f };
   GLfloat diffuseLight[] = { 1.0f, 1.0f, 1.0, 1.0f };
   GLfloat specularLight[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-  GLfloat position[] = { 3.0f, 2.0f, 1.0f, 1.0f };
+  GLfloat position[] = { 0.0f, 0.0f, 1.0f, 1.0f };
 
   // Assign created components to GL_LIGHT0
   glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
@@ -337,6 +338,8 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
           CGALglcolor(Qt::black);
         else
           CGALglcolor(item.color().lighter(50));
+
+
 
         if(viewer)
           item.draw_edges(viewer);
