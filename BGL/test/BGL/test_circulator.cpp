@@ -5,6 +5,8 @@
 #include <CGAL/boost/graph/iterator.h>
 
 #include <boost/foreach.hpp>
+#include <boost/concept/assert.hpp>
+#include <CGAL/Circulator/Circulator_concepts.h>
 
 #include <iostream>
 #include <fstream>
@@ -17,6 +19,7 @@ typedef GraphTraits::vertex_descriptor vertex_descriptor;
 typedef GraphTraits::halfedge_descriptor halfedge_descriptor;
 typedef GraphTraits::edge_descriptor edge_descriptor;
 typedef GraphTraits::out_edge_iterator out_edge_iterator;
+typedef GraphTraits::in_edge_iterator in_edge_iterator;
 
 typedef CGAL::Halfedge_around_face_circulator<Polyhedron> halfedge_around_face_circulator;
 typedef CGAL::Halfedge_around_target_circulator<Polyhedron> halfedge_around_target_circulator;
@@ -27,9 +30,27 @@ typedef CGAL::Halfedge_around_source_circulator<Polyhedron> halfedge_around_sour
 
 typedef CGAL::Halfedge_around_target_iterator<Polyhedron> halfedge_around_target_iterator;
 typedef CGAL::Halfedge_around_face_iterator<Polyhedron> halfedge_around_face_iterator;
-
+typedef CGAL::Face_around_face_iterator<Polyhedron> face_around_face_iterator;
+typedef CGAL::Vertex_around_target_iterator<Polyhedron> vertex_around_target_iterator;
 int main(int, char* argv[])
 {
+
+  BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<halfedge_around_face_circulator>)) CGAL_UNUSED;
+  BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<halfedge_around_target_circulator>)) CGAL_UNUSED;
+  BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<vertex_around_target_circulator>)) CGAL_UNUSED;
+  BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<face_around_target_circulator>)) CGAL_UNUSED;
+  BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<halfedge_around_source_circulator>)) CGAL_UNUSED;
+
+  BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<halfedge_around_source_circulator>)) CGAL_UNUSED;
+
+   BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<face_around_face_iterator>));
+   BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<halfedge_around_face_iterator>));
+   BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<halfedge_around_target_iterator>));
+   BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<vertex_around_target_iterator>));
+
+   BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<in_edge_iterator>));
+   BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<out_edge_iterator>));
+
   std::ifstream in(argv[1]);
   Polyhedron P;
   in >> P;
