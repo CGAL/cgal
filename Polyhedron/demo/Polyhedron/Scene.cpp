@@ -212,6 +212,21 @@ void Scene::initializeGL()
 {
 #ifdef CGAL_GLEW_ENABLED
   ms_splatting->init();
+
+  //Setting the light options
+
+  // Create light components
+  GLfloat ambientLight[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+  GLfloat diffuseLight[] = { 1.0f, 1.0f, 1.0, 1.0f };
+  GLfloat specularLight[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+  GLfloat position[] = { 3.0f, 2.0f, 1.0f, 1.0f };
+
+  // Assign created components to GL_LIGHT0
+  glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+  glLightfv(GL_LIGHT0, GL_POSITION, position);
+
 #endif
 }
 

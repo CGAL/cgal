@@ -32,7 +32,7 @@ std::vector<float> normals(0);
 GLuint rendering_program;
 GLuint vertex_array_object;
 int isInit = 0;
-GLint location[2];
+GLint location[6];
 GLfloat *mvp_mat;
 GLfloat *mv_mat;
 
@@ -46,26 +46,17 @@ GLuint buffer[3];
 struct light_info
 {
     //position
-    GLfloat pos_x;
-    GLfloat pos_y;
-    GLfloat pos_z;
-    GLfloat alpha;
+    GLfloat position[4];
 
     //ambient
-    GLfloat amb_x;
-    GLfloat amb_y;
-    GLfloat amb_z;
-    GLfloat amb_alpha;
+    GLfloat ambient[4];
+
     //diffuse
-    GLfloat diff_x;
-    GLfloat diff_y;
-    GLfloat diff_z;
-    GLfloat diff_alpha;
+    GLfloat diffuse[4];
+
     //specular
-    GLfloat spec_x;
-    GLfloat spec_y;
-    GLfloat spec_z;
-    GLfloat spec_alpha;
+    GLfloat specular[4];
+    GLfloat spec_power;
 
 };
 light_info light;
@@ -119,11 +110,11 @@ GLuint compile_shaders(void)
 
         "uniform mat4 mv_matrix; \n"
 
-        " vec3 light_pos =  vec3(0.0,0.0,1.0); \n"
-        " vec3 light_diff = vColors; \n"
-        " vec3 light_spec =  vec3(0.2,0.2,0.2); \n"
-        " vec3 light_amb =  vec3(0.1,0.1,0.1); \n"
-        " float spec_power = 0.128; \n"
+        " uniform vec3 light_pos;  \n"
+        " uniform vec3 light_diff; \n"
+        " uniform vec3 light_spec; \n"
+        " uniform vec3 light_amb;  \n"
+        " float spec_power = 0.0; \n"
 
         "out highp vec3 fColors; \n"
         "out highp vec3 fNormals; \n"
@@ -238,13 +229,25 @@ void render()
     // tells the GPU to use the program just created
     glUseProgram(rendering_program);
 
-    //Allocates a uniform location for the MVP matrix
+    //Allocates a uniform location for the MVP and MV matrices
     location[0] = glGetUniformLocation(rendering_program, "mvp_matrix");
     location[1] = glGetUniformLocation(rendering_program, "mv_matrix");
 
-    //Set the ModelViewProjection matrix
+    //Allocates a uniform location for the light values
+    location[2] = glGetUniformLocation(rendering_program, "light_pos");
+    location[3] = glGetUniformLocation(rendering_program, "light_diff");
+    location[4] = glGetUniformLocation(rendering_program, "light_spec");
+    location[5] = glGetUniformLocation(rendering_program, "light_amb");
+
+    //Set the ModelViewProjection and ModelView matrices
     glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
     glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
+
+    //Set the light infos
+    glUniform3fv(location[2], 1, light.position);
+    glUniform3fv(location[3], 1, light.diffuse);
+    glUniform3fv(location[4], 1, light.specular);
+    glUniform3fv(location[5], 1, light.ambient);
 
     isInit = 1;
     //draw the polygons
@@ -305,12 +308,25 @@ Scene_polygon_soup_item::Scene_polygon_soup_item()
     glewInit();
     mvp_mat = new GLfloat[16];
     mv_mat = new GLfloat[16];
-    //gets the lighting info
-    GLfloat result[4];
-    glGetLightfv(GL_LIGHT0, GL_POSITION, result);
-    light.pos_x=result[0];light.pos_y=result[1];light.pos_z=result[2];light.alpha=result[3];
-    glGetLightfv(GL_LIGHT0, GL_AMBIENT, result);
-    light.amb_x=result[0];light.amb_y=result[1];light.amb_z=result[2];light.amb_alpha=result[3];
+
+
+    //position
+    glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
+
+    //ambient
+    glGetLightfv(GL_LIGHT0, GL_AMBIENT, light.ambient);
+
+    //specular
+    glGetLightfv(GL_LIGHT0, GL_SPECULAR, light.specular);
+
+    //diffuse
+    glGetLightfv(GL_LIGHT0, GL_DIFFUSE, light.diffuse);
+
+    std::cout<<"position : "<<light.position[0]<<", "<<light.position[1]<<", "<<light.position[2]<<std::endl;
+    std::cout<<"ambient : "<<light.ambient[0]<<", "<<light.ambient[1]<<", "<<light.ambient[2]<<std::endl;
+    std::cout<<"specular : "<<light.specular[0]<<", "<<light.specular[1]<<", "<<light.specular[2]<<std::endl;
+    std::cout<<"diffuse : "<<light.diffuse[0]<<", "<<light.diffuse[1]<<", "<<light.diffuse[2]<<std::endl;
+
 }
 
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
