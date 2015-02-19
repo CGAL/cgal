@@ -28,11 +28,14 @@ std::vector<float> positions_lines(0);
 std::vector<float> positions_points(0);
 std::vector<float> colors(0);
 std::vector<float> normals(0);
+
 GLuint rendering_program;
 GLuint vertex_array_object;
 int isInit = 0;
-GLint location;
+GLint location[2];
 GLfloat *mvp_mat;
+GLfloat *mv_mat;
+
 
 GLuint vertex_shader;
 GLuint fragment_shader;
@@ -40,6 +43,32 @@ GLuint program;
 GLuint vao;
 GLuint buffer[3];
 
+struct light_info
+{
+    //position
+    GLfloat pos_x;
+    GLfloat pos_y;
+    GLfloat pos_z;
+    GLfloat alpha;
+
+    //ambient
+    GLfloat amb_x;
+    GLfloat amb_y;
+    GLfloat amb_z;
+    GLfloat amb_alpha;
+    //diffuse
+    GLfloat diff_x;
+    GLfloat diff_y;
+    GLfloat diff_z;
+    GLfloat diff_alpha;
+    //specular
+    GLfloat spec_x;
+    GLfloat spec_y;
+    GLfloat spec_z;
+    GLfloat spec_alpha;
+
+};
+light_info light;
 GLuint compile_shaders(void)
 {
 
@@ -85,13 +114,41 @@ GLuint compile_shaders(void)
         " \n"
         "layout (location = 0) in vec4 positions_poly; \n"
         "layout (location = 1) in vec3 vColors; \n"
+        "layout (location = 2) in vec3 vNormals; \n"
         "uniform mat4 mvp_matrix; \n"
+
+        "uniform mat4 mv_matrix; \n"
+
+        " vec3 light_pos =  vec3(0.0,0.0,1.0); \n"
+        " vec3 light_diff = vColors; \n"
+        " vec3 light_spec =  vec3(0.2,0.2,0.2); \n"
+        " vec3 light_amb =  vec3(0.1,0.1,0.1); \n"
+        " float spec_power = 0.128; \n"
+
         "out highp vec3 fColors; \n"
+        "out highp vec3 fNormals; \n"
         " \n"
+
         "void main(void) \n"
         "{ \n"
+        "vec4 P = mv_matrix * positions_poly; \n"
+        "vec3 N = mat3(mv_matrix)* vNormals; \n"
+        "vec3 L = light_pos - P.xyz; \n"
+        "vec3 V = -P.xyz; \n"
+
+        "N=normalize(N); \n"
+        "L = normalize(L); \n"
+        "V = normalize(V); \n"
+
+        "vec3 R = reflect(-L, N); \n"
+
+        "vec3 diffuse = max(dot(N,L), 0.0) * light_diff; \n"
+        "vec3 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+
+        "fColors = light_amb + diffuse + specular ; \n"
+
         "gl_Position = mvp_matrix * positions_poly; \n"
-        "fColors = vColors; \n"
+        "fNormals = vNormals; \n"
         "} \n"
     };
     //fill the fragment shader
@@ -100,10 +157,13 @@ GLuint compile_shaders(void)
         "#version 300 es \n"
         " \n"
         "in highp vec3 fColors; \n"
+        "in highp vec3 fNormals; \n"
+
         "out highp vec3 color; \n"
         " \n"
         "void main(void) \n"
         "{ \n"
+        "/* Lighting gestion */ \n"
         " color = fColors; \n" //polygons de couleur rouge
         "} \n"
     };
@@ -174,17 +234,23 @@ void render()
     const GLfloat color[] = { 0.9f, 0.9f, 0.9f, 1.0f };
     if(isInit !=1)
         glClearBufferfv(GL_COLOR, 0, color);
+
     // tells the GPU to use the program just created
     glUseProgram(rendering_program);
+
     //Allocates a uniform location for the MVP matrix
-    location = glGetUniformLocation(rendering_program, "mvp_matrix");
+    location[0] = glGetUniformLocation(rendering_program, "mvp_matrix");
+    location[1] = glGetUniformLocation(rendering_program, "mv_matrix");
+
     //Set the ModelViewProjection matrix
-    glUniformMatrix4fv(location, 1, GL_FALSE, mvp_mat);
+    glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
+    glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
+
     isInit = 1;
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
     glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
-glUseProgram(0);
+//glUseProgram(0);
 }
 
 struct Polyhedron_to_polygon_soup_writer {
@@ -238,6 +304,13 @@ Scene_polygon_soup_item::Scene_polygon_soup_item()
 {
     glewInit();
     mvp_mat = new GLfloat[16];
+    mv_mat = new GLfloat[16];
+    //gets the lighting info
+    GLfloat result[4];
+    glGetLightfv(GL_LIGHT0, GL_POSITION, result);
+    light.pos_x=result[0];light.pos_y=result[1];light.pos_z=result[2];light.alpha=result[3];
+    glGetLightfv(GL_LIGHT0, GL_AMBIENT, result);
+    light.amb_x=result[0];light.amb_y=result[1];light.amb_z=result[2];light.amb_alpha=result[3];
 }
 
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
@@ -507,11 +580,13 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     typedef Polygon_soup::Polygons::size_type size_type;
 
     //Remplit la matrice MVP
-    GLdouble plouf[16];
-    viewer->camera()->getModelViewProjectionMatrix(plouf);
-
+    GLdouble d_mvp_mat[16];
+    viewer->camera()->getModelViewProjectionMatrix(d_mvp_mat);
+    viewer->camera()->getModelViewMatrix(mv_mat);
+    //Convert the GLdoubles matrix in GLfloats
     for (int i=0; i<16; ++i)
-        mvp_mat[i] = GLfloat(plouf[i]);
+        mvp_mat[i] = GLfloat(d_mvp_mat[i]);
+
 
 
     if(isInit!=1)
