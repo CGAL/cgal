@@ -469,7 +469,7 @@ namespace CGAL {
     /// \endcond
     // 
     /*!
-      Contains indices of the points supporting the candidate. Access to the point and normal data is provided via property maps.
+      Contains indices of the points supporting the candidate, access to the point and normal data is provided via property maps.
      */
     std::vector<size_t> m_indices;
     /// \cond SKIP_IN_MANUAL
