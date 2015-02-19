@@ -97,6 +97,7 @@ namespace CGAL {
       Determines the largest cluster with a point-to-point distance not larger than cluster_epsilon.
      */
     size_t connected_component(FT cluster_epsilon) {
+
       if (m_indices.size() == 0)
         return 0;
 
@@ -131,8 +132,8 @@ namespace CGAL {
       bool wrapV = wraps_v();
 
       for (size_t i = 0;i<parameterSpace.size();i++) {
-        int u = (parameterSpace[i].first - min[0]) / cluster_epsilon;
-        int v = (parameterSpace[i].second - min[1]) / cluster_epsilon;
+        int u = (int)((parameterSpace[i].first - min[0]) / cluster_epsilon);
+        int v = (int)((parameterSpace[i].second - min[1]) / cluster_epsilon);
         if (u < 0 || (size_t)u >= uExtent) {
           if (wrapU) {
             while (u < 0) u += uExtent;

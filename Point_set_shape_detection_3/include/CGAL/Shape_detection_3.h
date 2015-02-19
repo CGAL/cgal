@@ -289,7 +289,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
       m_options.cluster_epsilon = (m_options.cluster_epsilon < 0) ? bboxDiagonal * 0.01 : m_options.cluster_epsilon;
 
       // minimum number of points has been set?
-      m_options.min_points = (m_options.min_points >= m_numAvailablePoints) ? 0.001 * m_numAvailablePoints : m_options.min_points;
+      m_options.min_points = (m_options.min_points >= m_numAvailablePoints) ? (size_t)((FT)0.001 * m_numAvailablePoints) : m_options.min_points;
       
       // initializing the shape index
       m_shapeIndex.resize(m_numAvailablePoints, -1);
