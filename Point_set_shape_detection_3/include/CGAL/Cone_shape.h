@@ -44,6 +44,8 @@ namespace CGAL {
     typedef typename Sd_traits::Geom_traits::Vector_3 Vector;///< vector type.
 
       Cone_shape() : Shape_base<Sd_traits>() {}
+
+	
       
       /*!
        Opening angle between the axis and the surface of the cone.

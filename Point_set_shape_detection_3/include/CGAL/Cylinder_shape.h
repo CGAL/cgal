@@ -70,6 +70,9 @@ namespace CGAL {
       return m_radius;
     }
 
+
+	
+
     /*!
       Computes squared Euclidean distance from query point to the shape.
       */ 

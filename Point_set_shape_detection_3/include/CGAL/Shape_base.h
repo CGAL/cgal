@@ -488,7 +488,8 @@ namespace CGAL {
     /*!
      \brief Template class for creating a factory for a shape type.
      */
-  template<class Shape>
+  
+  template < class Shape >
   class Shape_factory
 #ifndef DOXYGEN_RUNNING
   : public internal::Shape_factory_base
@@ -499,8 +500,9 @@ namespace CGAL {
        Returns a new instance of the shape type.
        */
     virtual void *create() {
-      return NULL;//new Shape;
+      return new Shape;
     }
   };
+  
 }
 #endif

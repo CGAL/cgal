@@ -34,6 +34,7 @@ namespace CGAL {
     operator Sphere() const {
       return m_sphere;
     }
+
       
       /*!
        Access to the center.

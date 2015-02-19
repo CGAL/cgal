@@ -33,6 +33,8 @@ namespace CGAL {
     Vector axis() const {
       return m_axis;
     }
+
+
       /*!
        Center point on symmetry axis.
        */
