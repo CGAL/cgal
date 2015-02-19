@@ -2,6 +2,7 @@
 #define CGAL_SHAPE_DETECTION_3_SHAPE_BASE_H
 
 #include <vector>
+#include <set>
 #include <boost/tuple/tuple.hpp>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Fuzzy_sphere.h>
@@ -132,24 +133,24 @@ namespace CGAL {
       for (size_t i = 0;i<parameterSpace.size();i++) {
         int u = (parameterSpace[i].first - min[0]) / cluster_epsilon;
         int v = (parameterSpace[i].second - min[1]) / cluster_epsilon;
-        if (u < 0 || u >= uExtent) {
+        if (u < 0 || (size_t)u >= uExtent) {
           if (wrapU) {
             while (u < 0) u += uExtent;
-            while (u >= uExtent) u-= uExtent;
+            while ((size_t)u >= uExtent) u-= uExtent;
           }
           else {
             std::cout << "cc: u out of bounds: " << u << std::endl;
-            u = (u < 0) ? 0 : (u >= uExtent) ? uExtent - 1 : u;
+            u = (u < 0) ? 0 : ((size_t)u >= uExtent) ? (int)uExtent - 1 : u;
           }
         }
-        if (v < 0 || v >= vExtent) {
+        if (v < 0 || (size_t)v >= vExtent) {
           if (wrapV) {
             while (v < 0) v += vExtent;
-            while (v >= vExtent) v-= vExtent;
+            while ((size_t)v >= vExtent) v-= vExtent;
           }
           else {
             std::cout << "cc: v out of bounds: " << u << std::endl;
-            v = (v < 0) ? 0 : (v >= vExtent) ? vExtent - 1 : v;
+            v = (v < 0) ? 0 : ((size_t)v >= vExtent) ? (int)vExtent - 1 : v;
           }
         }
         bitmap[v * uExtent + u].push_back(m_indices[i]);
@@ -182,9 +183,9 @@ namespace CGAL {
           int vIndex = f / uExtent;
           int uIndex = f % uExtent;
           bool upperBorder = vIndex == 0;
-          bool lowerBorder = vIndex == (vExtent - 1);
+          bool lowerBorder = vIndex == ((int)vExtent - 1);
           bool leftBorder = uIndex == 0;
-          bool rightBorder = uIndex == (uExtent - 1);
+          bool rightBorder = uIndex == ((int)uExtent - 1);
 
           int n;
           if (!upperBorder) {
@@ -258,14 +259,14 @@ namespace CGAL {
     /*!
       Retrieves the point for an index.
      */
-    const Point_3 &get_point(size_t i) const {
+    const Point& get_point(size_t i) const {
       return get(this->m_point_pmap, *(this->m_first + i));
     }
     
     /*!
       Retrieves the normal vector for an index.
      */
-    const Vector_3 &get_normal(size_t i) const {
+    const Vector& get_normal(size_t i) const {
       return get(this->m_normal_pmap, *(this->m_first + i));
     }
     
@@ -335,17 +336,17 @@ namespace CGAL {
 
     //virtual FT cos_to_normal(const Point &p, const Vector &n) const = 0;
 
-    virtual void cos_to_normal(std::vector<FT> &angles,
-                               const std::vector<int> &shapeIndex,
-                               const std::vector<size_t> &indices) const = 0;
+    virtual void cos_to_normal(std::vector<FT>& angles,
+                               const std::vector<int>& shapeIndex,
+                               const std::vector<size_t>& indices) const = 0;
 
-    virtual void parameters(std::vector<std::pair<FT, FT> > &parameterSpace,
-                            const std::vector<size_t> &indices,
+    virtual void parameters(std::vector<std::pair<FT, FT> >& parameterSpace,
+                            const std::vector<size_t>& indices,
                             FT min[2],
                             FT max[2]) const {
     }
 
-    void compute(const std::set<size_t> &indices,
+    void compute(const std::set<size_t>& indices,
                  Input_iterator first,
                  Point_pmap point_pmap,
                  Normal_pmap normal_pmap,
@@ -469,7 +470,6 @@ namespace CGAL {
     bool m_has_connected_component;
 
     //indices of the points fitting to the candidate
-    std::vector<size_t> m_indices;
     Input_iterator m_first;
     Point_pmap m_point_pmap;
     Normal_pmap m_normal_pmap;
@@ -494,7 +494,7 @@ namespace CGAL {
        Returns a new instance of the shape type.
        */
     virtual void *create() {
-      return new Shape;
+      return NULL;//new Shape;
     }
   };
 }

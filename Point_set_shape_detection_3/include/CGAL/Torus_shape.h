@@ -72,9 +72,9 @@ namespace CGAL {
     /*!
       Computes squared Euclidean distance from query point to the shape.
       */
-    FT squared_distance(const Point &p) const {
+    FT squared_distance(const Point &point) const {
 
-      const Vector d = p - m_center;
+      const Vector d = point - m_center;
       
 	  // height over symmetry plane
       const FT p = d * m_axis;
@@ -86,7 +86,7 @@ namespace CGAL {
       const FT l2 = m_majorRad - l;
 
       // distance from torus
-      const dist = sqrt(p * p + l2 * l2) - m_minorRad;
+      const FT dist = sqrt(p * p + l2 * l2) - m_minorRad;
 
       return dist * dist;
     }

@@ -136,7 +136,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
        \brief parameters for Shape_detection_3.
        */
     struct Parameters {
-      Parameters() : probability(0.01), min_points(SIZE_MAX), normal_threshold(0.9), epsilon(-1), cluster_epsilon(-1) {}
+      Parameters() : probability(0.01), min_points(SIZE_MAX), epsilon(-1), normal_threshold(0.9), cluster_epsilon(-1) {}
       FT probability;         ///< Probability to control search endurance. Default value 0.05.
       size_t min_points;      ///< Minimum number of points of a shape. Default value 1% of total number of input points.
       FT epsilon;             ///< Maximum tolerance Euclidian distance from a point and a shape. Default value 1% of bounding box diagonal.
@@ -411,9 +411,9 @@ et al. in 2007 \cgalCite{Schnabel07}.
                                  3 * m_options.epsilon,
                                  m_options.normal_threshold);
 
-        best_Candidate->connected_component(m_options.cluster_epsilon, 
+        best_Candidate->connected_component(m_options.cluster_epsilon/*, 
                                             m_global_octree->m_center,
-                                            m_global_octree->m_width);
+                                            m_global_octree->m_width*/);
 
         if (StopProbability(best_Candidate->expected_value(),
                             (m_numAvailablePoints - numInvalid),
@@ -600,7 +600,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
       int index_worse_candidate = 0;
       bool improved = true;
 
-      while (index_worse_candidate < candidates.size() - 1 && improved) {
+      while (index_worse_candidate < (int)candidates.size() - 1 && improved) {
         improved = false;
 
         typename Shape::Compare_by_max_bound comp;

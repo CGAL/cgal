@@ -21,7 +21,8 @@ namespace CGAL {
 
     typedef typename Sd_traits::Geom_traits::FT FT;///< number type.
     typedef typename Sd_traits::Geom_traits::Point_3 Point;///< point type.
-    typedef typename Sd_traits::Geom_traits::Plane_3 Plane_3;///< plane type for conversion operator.
+    typedef typename Sd_traits::Geom_traits::Plane_3 Plane;///< plane type for conversion operator.
+    typedef typename Sd_traits::Geom_traits::Vector_3 Vector;
 
   public:
     Plane_shape() : Shape_base<Sd_traits>() {}
@@ -38,8 +39,8 @@ namespace CGAL {
        Conversion operator to Plane_3 type.
        */
 
-    operator Plane_3() const {
-      return Plane_3(m_normal.x(), m_normal.y(), m_normal.z(), m_d);
+    operator Plane() const {
+      return Plane(m_normal.x(), m_normal.y(), m_normal.z(), m_d);
     }
             
       /*!

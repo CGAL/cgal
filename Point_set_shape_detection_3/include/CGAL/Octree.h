@@ -4,6 +4,7 @@
 #include <limits>
 #include <random>
 #include <stack>
+#include <set>
 
 #include <CGAL/Bbox_3.h>
 #include "Shape_base.h"
@@ -427,7 +428,7 @@ namespace CGAL {
             }
           }
 
-          int sum = 0;
+          size_t sum = 0;
           for (size_t i = 0;i<8;i++)
             sum += (cell->child[i]) ? cell->child[i]->size() : 0;
 
@@ -441,8 +442,8 @@ namespace CGAL {
 
       bool drawSamplesFromCellContainingPoint(const Point &p,
                                               size_t level,
-                                              std::set<size_t> &indices, 
-                                              const std::vector<int> &shapeIndex,
+                                              std::set<size_t>& indices,
+                                              const std::vector<int>& shapeIndex,
                                               int requiredSamples) {
         static std::random_device rd;
         static std::mt19937 rng(rd());
@@ -470,7 +471,7 @@ namespace CGAL {
 
         if (cur) {
           int enough = 0;
-          for (size_t i = cur->first;i<=cur->last;i++) {
+          for (int i = cur->first;i<=cur->last;i++) {
             int j = this->index(i);
             if (shapeIndex[j] == -1) {
               enough++;
@@ -483,8 +484,8 @@ namespace CGAL {
               int p = dis(rng) % cur->size();
               int j = this->index(cur->first + p);
               if (shapeIndex[j] == -1)
-                indices.insert(j);
-            } while (indices.size() < requiredSamples);
+                indices.insert((size_t)j);
+            } while ((int)indices.size() < requiredSamples);
 
             return true;
           }
