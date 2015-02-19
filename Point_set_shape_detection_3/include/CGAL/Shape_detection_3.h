@@ -91,7 +91,7 @@ Each input point is assigned to either none or at most one detected primitive sh
 This implementation follows the algorithm published by Schnabel
 et al. in 2007 \cgalCite{Schnabel07}.
 
-\tparam Shape detection traits class. 
+\tparam Sd_traits Shape detection traits class.
 
 */
   template <class Sd_traits>
