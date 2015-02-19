@@ -19,7 +19,6 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  create_single_source_cgal_program( "incremental_hull_3_demo.cpp" )
   create_single_source_cgal_program( "quickhull_3_demo.cpp" )
 
 else()

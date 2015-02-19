@@ -20,6 +20,9 @@
 
 #ifndef CGAL_CONVEX_HULL_D_TO_POLYHEDRON_3_H
 #define CGAL_CONVEX_HULL_D_TO_POLYHEDRON_3_H
+#define CGAL_DEPRECATED_HEADER "<CGAL/Convex_hull_d_to_polyhedron_3.h>"
+#define CGAL_REPLACEMENT_HEADER "the Triangulation package (see http://doc.cgal.org/latest/Triangulation)"
+#include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/Convex_hull_d.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
