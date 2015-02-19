@@ -38,7 +38,7 @@
   #include <boost/property_map.hpp>
 #endif
 
-//#define  CGAL_DEBUG_MODE
+#define  CGAL_DEBUG_MODE
 
 namespace CGAL {
 
@@ -348,15 +348,14 @@ edge_aware_upsample_point_set(
   std::size_t number_of_input = std::distance(first, beyond);
   CGAL_point_set_processing_precondition(number_of_output_points > number_of_input);
 
-  if (neighbor_radius < 0)
-  {
-    const unsigned int nb_neighbors = 6; // 1 ring
-    FT average_spacing = CGAL::compute_average_spacing(
+
+  const unsigned int nb_neighbors = 6; // 1 ring
+  FT average_spacing = CGAL::compute_average_spacing(
                    first, beyond,
                    point_pmap,
                    nb_neighbors);
-    neighbor_radius = average_spacing * 3.0;
-  }
+  neighbor_radius = average_spacing * 2.0;
+  
 
   Timer task_timer;
 
@@ -384,28 +383,12 @@ edge_aware_upsample_point_set(
                                                       bbox,
                                                       neighbor_radius);
 
-  // make sure the neighbor size is not too small
-  unsigned int empty_neighbor_num = 0;
-  for (unsigned int i = 0; i < rich_point_set.size(); ++i)
-  {
-    Rich_point& v = rich_point_set[i];
-    if (v.neighbors.empty())
-    {
-      empty_neighbor_num++;
-    }
-  }
-  CGAL_point_set_processing_precondition(empty_neighbor_num < rich_point_set.size() * 0.75);
-  if (empty_neighbor_num >= rich_point_set.size() * 0.75)
-  {
-    return output;
-  }
-
   //
   FT cos_sigma = std::cos(sharpness_angle / 180.0 * 3.1415926);
   FT sharpness_bandwidth = std::pow((CGAL::max)((FT)1e-8, (FT)1.0 - cos_sigma), 2);
 
   FT sum_density = 0.0;
-  unsigned int count_density = 0;
+  unsigned int count_density = 1;
   double max_iter_time = 20;
   FT current_radius = neighbor_radius;
   FT density_pass_threshold = 0.0;
@@ -440,6 +423,9 @@ edge_aware_upsample_point_set(
       {
         Rich_point& v = rich_point_set[i];
 
+				if (v.neighbors.empty())
+					continue;
+
         // extract neighbor rich points by index
         std::vector<Rich_point> neighbor_rich_points(v.neighbors.size());
         for (unsigned int n = 0; n < v.neighbors.size(); n++)
@@ -450,9 +436,9 @@ edge_aware_upsample_point_set(
         unsigned int base_index = 0;
         double density2 = upsample_internal::
                               base_point_selection(v,
-                                                    neighbor_rich_points,
-                                                    edge_sensitivity,
-                                                    base_index);
+                                                   neighbor_rich_points,
+                                                   edge_sensitivity,
+                                                   base_index);
 
         if (density2 < 0)
         {
@@ -468,7 +454,6 @@ edge_aware_upsample_point_set(
     sum_density = 0.;
     count_density = 0;
 
-    //FT density_pass_threshold = 0.02;
     FT density_pass_threshold2 = density_pass_threshold * 
                                  density_pass_threshold;
  #ifdef CGAL_DEBUG_MODE
@@ -493,10 +478,8 @@ edge_aware_upsample_point_set(
 
         Rich_point& v = rich_point_set[i];
 
-        if (v.neighbors.empty())
-        {
-          continue;
-        }
+				if (v.neighbors.empty())
+					continue;
 
         // extract neighbor rich points by index
         std::vector<Rich_point> neighbor_rich_points(v.neighbors.size());
