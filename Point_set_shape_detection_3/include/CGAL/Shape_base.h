@@ -261,7 +261,8 @@ namespace CGAL {
 
       return m_score = m_indices.size();
     }
- 
+
+    #ifdef DOXYGEN_RUNNING
     /*!
       Computes squared Euclidean distance from a set of points to the shape.
      */
@@ -273,6 +274,7 @@ namespace CGAL {
      */
     virtual void cos_to_normal(std::vector<FT> &angles,
       const std::vector<size_t> &indices) const = 0;
+    #endif
 
     /*!
       Returns minimal number of samples required for construction.
