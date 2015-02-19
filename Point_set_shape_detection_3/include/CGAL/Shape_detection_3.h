@@ -256,7 +256,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
     This function registers a shape type for detection.
   */ 
     template <class Shape_factory>
-    void add_shape_factory(Shape_factory *factory///< Factory for shape type defined by 'Shape_factory<"shape_type">'
+    void add_shape_factory(Shape_factory *factory///< Factory for shape type defined by `Shape_factory`
       ) {
       m_shapeFactories.push_back(factory);
     }
@@ -267,7 +267,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
     /// @{
     /*! 
       This function initiates the shape detection. Shape types to be detected
-      must be registered before with 'add_shape_factory'.
+      must be registered before with `add_shape_factory()`.
     */ 
     void detect(
       const Parameters &options = Parameters()///< Parameters for shape detection.
