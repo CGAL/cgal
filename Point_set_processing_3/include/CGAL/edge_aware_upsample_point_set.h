@@ -74,6 +74,15 @@ base_point_selection(
   typedef typename Kernel::FT FT;
   typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
 
+  if (neighbor_points.empty())
+  {
+#ifdef CGAL_DEBUG_MODE
+    std::cout << "empty neighborhood" << std::endl;
+#endif
+    output_base_index = query.index;
+    return 0.0;
+  }
+
   FT best_dist2 = -10.0;
   const Rich_point& v = query;
   typename std::vector<Rich_point>::const_iterator iter = neighbor_points.begin();
@@ -324,6 +333,8 @@ edge_aware_upsample_point_set(
   typename Kernel::FT neighbor_radius, ///< 
                     ///< indicates the radius of the largest hole that should be filled.
                     ///< The default value is set to 3 times the average spacing of the point set.
+                    ///< If the value given by user is smaller than the default value, 
+                    ///< the function will use the default value instead.
   const unsigned int number_of_output_points,///< number of output
                                              ///< points to generate.
   const Kernel& /*kernel*/ ///< geometric traits.
@@ -354,7 +365,14 @@ edge_aware_upsample_point_set(
                    first, beyond,
                    point_pmap,
                    nb_neighbors);
-  neighbor_radius = average_spacing * 2.0;
+
+  if (neighbor_radius < average_spacing * 3.0)
+  {
+    neighbor_radius = average_spacing * 3.0;
+#ifdef CGAL_DEBUG_MODE
+    std::cout << "neighbor radius: " << neighbor_radius << std::endl;
+#endif
+  }
   
 
   Timer task_timer;
@@ -362,6 +380,9 @@ edge_aware_upsample_point_set(
   // copy rich point set
   std::vector<Rich_point> rich_point_set(number_of_input);
   CGAL::Bbox_3 bbox;
+  Point p_temp(0., 0., 0.);
+  bbox += p_temp.bbox();
+  
   ForwardIterator it = first; // point iterator
   for(unsigned int i = 0; it != beyond; ++it, ++i)
   {
@@ -377,6 +398,9 @@ edge_aware_upsample_point_set(
     bbox += rich_point_set[i].pt.bbox();
     CGAL_point_set_processing_precondition(rich_point_set[i].normal.squared_length() > 1e-10);
   }
+
+  std::cout << bbox.xmin() << " " << bbox.xmax() << " " << bbox.ymin() << " " << bbox.ymin() << " " << std::endl;
+  system("Pause");
 
   // compute neighborhood
   rich_grid_internal::compute_ball_neighbors_one_self(rich_point_set,
@@ -452,7 +476,7 @@ edge_aware_upsample_point_set(
 
     density_pass_threshold = sqrt(sum_density / count_density) * 0.65;
     sum_density = 0.;
-    count_density = 0;
+    count_density = 1;
 
     FT density_pass_threshold2 = density_pass_threshold * 
                                  density_pass_threshold;
