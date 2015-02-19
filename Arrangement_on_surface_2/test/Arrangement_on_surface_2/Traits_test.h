@@ -34,15 +34,14 @@ private:
 
   // some polycurve functors needs Segment and x-monotone segment to be defined
   // which are normally not found in other geom_traits.
-  #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
-      TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
-      TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
+#if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS ||          \
+  TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS ||     \
+  TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
 
-  typedef typename Traits::Segment_2                    Segment_2;
+  typedef typename Traits::Subcurve_2                   Subcurve_2;
   typedef typename Traits::X_monotone_subcurve_2        X_monotone_subcurve_2;
 
-  #endif
-
+#endif
 
   /*! A map between (strings) commands and (member functions) operations */
   typedef bool(Traits_test::* Wrapper)(std::istringstream&);
@@ -428,25 +427,21 @@ push_back_wrapper(std::istringstream& str_stream)
   str_stream >> expected_curve_id;
 
   if (type == 0) {
+    /* THERE IS NO WAY AS OF NOW TO CHECK IF THE POLYCURVE (NON X-MONOTONE) IS
+     * EQUAL. HENCE, UNTILL THAT COMPARISON IS NOT AVAILABLE IN THE
+     * ARR_POLYCURVE_TRAITS, THIS TEST WILL PASS ONLY IF THE PRINTED RESULT
+     * OF THE EXPECTED CURVE AND THE ACTUAL OBTAINED CURVE IS IDENTICAL.
+     */
+#if 0
     Curve_2 base_curve = this->m_curves[id1];
-    Segment_2 segment = this->m_segments[segment_id];
-
-    std::cout << "Test: push_back ( "
-              << segment << " into "
+    Subcurve_2 segment = this->m_segments[segment_id];
+    std::cout << "Test: push_back ( " << segment << " into "
               << base_curve << " ) ? ";
-
     this->m_geom_traits.push_back_2_object()( base_curve, segment );
-
     Curve_2 exp_curve = this->m_curves[expected_curve_id];
-     /* THERE IS NO WAY AS OF NOW TO CHECK IF THE POLYCURVE (NON X-MONOTONE) IS
-      * EQUAL. HENCE, UNTILL THAT COMPARISON IS NOT AVAILABLE IN THE
-      * ARR_POLYCURVE_TRAITS, THIS TEST WILL PASS ONLY IF THE PRINTED RESULT
-      * OF THE EXPECTED CURVE AND THE ACTUAL OBTAINED CURVE IS IDENTICAL.
-      */
     std::stringstream sstr1, sstr2;
     sstr1 << std::cout << base_curve;
     sstr2 << std::cout << exp_curve;
-
     if (sstr1.str() != sstr2.str()) {
       std::cout << "Obtained result and expected result does not match"
                 << std::endl;
@@ -454,6 +449,7 @@ push_back_wrapper(std::istringstream& str_stream)
       std::cout << std::endl << "Expected result: " << sstr2.str() << std::endl;
       return false;
     }
+#endif
   }
 
   else if (type == 1) {
@@ -470,7 +466,6 @@ push_back_wrapper(std::istringstream& str_stream)
 
     if (!this->compare_curves(exp_curve, base_curve)) return false;
   }
-
   else {
     std::cout << "Incorrect type of operator. "
               << "Please refer to the descriptopn in the data file."
@@ -505,25 +500,21 @@ push_front_wrapper(std::istringstream& str_stream)
   str_stream >> expected_curve_id;
 
   if (type == 0) {
-    Curve_2 base_curve = this->m_curves[id1];
-    Segment_2 segment = this->m_segments[segment_id];
-
-    std::cout << "Test: push_front ( "
-              << segment << "into "
-              << base_curve << " ) ? ";
-
-    this->m_geom_traits.push_front_2_object()( base_curve, segment );
-
-    Curve_2 exp_curve = this->m_curves[expected_curve_id];
     /* THERE IS NO WAY AS OF NOW TO CHECK IF THE POLYCURVE (NON X-MONOTONE) IS
      * EQUAL. HENCE, UNTILL THAT COMPARISON IS NOT AVAILABLE IN THE
      * ARR_POLYCURVE_TRAITS, THIS TEST WILL PASS ONLY IF THE PRINTED RESULT
      * OF THE EXPECTED CURVE AND THE ACTUAL OBTAINED CURVE IS IDENTICAL.
      */
+#if 0
+    Curve_2 base_curve = this->m_curves[id1];
+    Subcurve_2 segment = this->m_segments[segment_id];
+    std::cout << "Test: push_front ( " << segment << "into "
+              << base_curve << " ) ? ";
+    this->m_geom_traits.push_front_2_object()( base_curve, segment );
+    Curve_2 exp_curve = this->m_curves[expected_curve_id];
     std::stringstream sstr1, sstr2;
     sstr1 << std::cout << base_curve;
     sstr2 << std::cout << exp_curve;
-
     if (sstr1.str() != sstr2.str()) {
       std::cout << "Obtained result and expected result does not match"
                 << std::endl;
@@ -531,8 +522,8 @@ push_front_wrapper(std::istringstream& str_stream)
       std::cout << std::endl << "Expected result: " << sstr2.str() << std::endl;
       return false;
     }
+#endif
   }
-
   else if (type == 1) {
     X_monotone_curve_2 base_curve = this->m_xcurves[id1];
     X_monotone_subcurve_2 x_segment = this->m_xsegments[segment_id];
@@ -658,14 +649,15 @@ template <typename Geom_traits_T>
 bool Traits_test<Geom_traits_T>::
 number_of_points_wrapper(std::istringstream& str_stream)
 {
-  unsigned int id, expected_result;
+  typedef Geom_traits_T                         Geom_traits;
+  typedef typename Geom_traits_T::size_type     size_type;
+
+  unsigned int id;
+  size_type expected_result;
   str_stream >> id >> expected_result;
-
   std::cout << "Test: Number_of_points( " << this->m_curves[id] << " ) ? " ;
-
-  unsigned int real_answer =
+  size_type real_answer =
     this->m_geom_traits.number_of_points_2_object()(this->m_curves[id]);
-
   return this->compare(expected_result, real_answer);
 }
 
@@ -809,11 +801,8 @@ bool
 Traits_test<Geom_traits_T>::
 compare_y_at_x_wrapper(std::istringstream& str_stream)
 {
-  //std::cout<< "******** I am in the compare_y_at_x wrapper" << std::endl;
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
-  //waqar
-  //std::cout<< "Compare y at x wrapper ids are: " << id1 << " " << id2 << std::endl;
   unsigned int exp_answer = this->get_expected_enum(str_stream);
   std::cout << "Test: compare_y_at_x( " << this->m_points[id1] << ","
            << this->m_xcurves[id2] << " ) ? " << exp_answer << " ";

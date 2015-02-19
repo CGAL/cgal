@@ -296,32 +296,6 @@ void check_push_back(Polycurve_arc_traits_2::Make_x_monotone_2
   //throws a warning "size is depricated"
   std::cout << "size of polycurve after 2 push_backs: "
             << polycurve.number_of_subcurves()() << std::endl;
-
-  //pushing xmonotone segments in xmonotone polycurves
-  // CGAL::polyline::Polyline_2<Arc_section_x_monotone_2, Arc_point_2>
-  //   x_monotone_polycurve;
-
-  //  Kernel::Point_2  p5 = Kernel::Point_2(7, 1);
-  //  Kernel::Point_2  p6 = Kernel::Point_2(-3, -3);
-  //  Kernel::Point_2  p7 = Kernel::Point_2(13, 1);
-  //  curves.push_back(Arc_section_2(p5, p6, p7));
-
-  //  std::vector<CGAL::Object> X_monotone_curves;
-  //  make_x_monotone_2(curves[0], std::back_inserter(X_monotone_curves));
-  //  make_x_monotone_2(curves[1], std::back_inserter(X_monotone_curves));
-
-  // Arc_section_x_monotone_2 x_monotone_polycurve1, x_monotone_polycurve2;
-  // CGAL::assign(x_monotone_polycurve1, X_monotone_curves[0]);
-  // CGAL::assign(x_monotone_polycurve2, X_monotone_curves[1]);
-
-  // push_back_2(x_monotone_polycurve, x_monotone_polycurve1);
-  // std::cout << "size of x-monotone-polycurve after 1 push_back: "
-  //           << polycurve.size() << std::endl;
-
-  // push_back_2(x_monotone_polycurve, x_monotone_polycurve2);
-  // std::cout << "size of x-monotone-polycurve after 2 push_backs: "
-  //           << polycurve.size() << std::endl;
-  // throws a warning "size is depricated"
 }
 
 int main()

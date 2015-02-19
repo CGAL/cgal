@@ -17,7 +17,7 @@ public:
   // Poly curves needs some testing where Segments and X-monotone segments are
   // required instead of polycurves/x-monotone polycurves.
   template <typename InputStream_>
-  bool read_segment(InputStream_& is, Segment_2& seg);
+  bool read_segment(InputStream_& is, Subcurve_2& seg);
   template <typename InputStream_>
   bool read_xsegment(InputStream_& is, X_monotone_subcurve_2& xseg);
 #endif
@@ -134,10 +134,6 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
     Point_2 p(x, y);
     points.push_back(p);
   }
-  //waqar: debugging remove later
-  // for(int i=0; i<points.size(); i++)
-  //       std::cout << "*#*#*#*# points are: " << points[i] << std::endl;
-
   xcv = m_geom_traits.construct_x_monotone_curve_2_object()(points.begin(),
                                                             points.end());
   return true;
@@ -163,14 +159,14 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_segment(InputStream_& is,
-                                                  Segment_2& seg)
+                                                  Subcurve_2& seg)
 {
   Basic_number_type x, y;
   is >> x >> y;
   Point_2 p_src(x, y);
   is >> x >> y;
   Point_2 p_tgt(x, y);
-  seg = Segment_2(p_src, p_tgt);
+  seg = Subcurve_2(p_src, p_tgt);
   return true;
 }
 
@@ -220,7 +216,6 @@ bool read_orientation(InputStream_& is, CGAL::Orientation& orient)
 template <typename InputStream_>
 bool read_app_point(InputStream_& is, Point_2& p)
 {
-  ////waqar: original
   double x, y;
   is >> x >> y;
   p = Point_2(Algebraic(x), Algebraic(y));
@@ -291,9 +286,7 @@ bool read_general_conic(InputStream_& is, Curve& cv)
   return true;
 }
 
-
-
-// /*! */
+/*! */
 template <typename InputStream_, typename Curve>
 bool read_general_curve(InputStream_& is, Curve& cv)
 {
@@ -323,7 +316,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
   // called X_monotone_subcurve_2
   std::vector<X_monotone_subcurve_2> conic_x_monotone_segments;
 
-  Segment_2 tmp_cv;
+  Subcurve_2 tmp_cv;
 
   // Get the arc type:
   char type;
@@ -333,37 +326,23 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
   unsigned int number_of_curves;
   is >> number_of_curves;
 
-  for(int i=0; i<number_of_curves; i++)
-  {
-    if ((type == 'a') || (type == 'A'))
-    {
-      if( !read_general_curve(is, tmp_cv) )
-        return false;
-
+  for (unsigned int i=0; i<number_of_curves; ++i) {
+    if ((type == 'a') || (type == 'A')) {
+      if (!read_general_curve(is, tmp_cv)) return false;
       X_monotone_subcurve_2 tmp_xcv(tmp_cv);
-      conic_x_monotone_segments.push_back ( tmp_xcv );
+      conic_x_monotone_segments.push_back(tmp_xcv);
     }
-
-    else if ((type == 'c') || (type == 'C'))
-    {
-      if( !read_general_conic(is, tmp_cv) )
-        return false;
-
+    else if ((type == 'c') || (type == 'C')) {
+      if (!read_general_conic(is, tmp_cv)) return false;
       X_monotone_subcurve_2 tmp_xcv(tmp_cv);
-      conic_x_monotone_segments.push_back ( tmp_xcv );
+      conic_x_monotone_segments.push_back(tmp_xcv);
     }
-
-    else if ((type == 'i') || (type == 'I'))
-    {
-      if( !read_general_arc(is, tmp_cv) )
-        return false;
-
+    else if ((type == 'i') || (type == 'I')) {
+      if (!read_general_arc(is, tmp_cv)) return false;
       X_monotone_subcurve_2 tmp_xcv(tmp_cv);
-      conic_x_monotone_segments.push_back ( tmp_xcv );
+      conic_x_monotone_segments.push_back(tmp_xcv);
     }
-
-    else
-    {
+    else {
       std::cerr << "Illegal conic type specification: " << type << "."
                 << std::endl;
       return false;
@@ -372,7 +351,8 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
   } //for loop
 
   //construct x-monotone polycurve
-  xcv = m_geom_traits.construct_x_monotone_curve_2_object()(conic_x_monotone_segments.begin(), conic_x_monotone_segments.end());
+  xcv = m_geom_traits.construct_x_monotone_curve_2_object()
+    (conic_x_monotone_segments.begin(), conic_x_monotone_segments.end());
 
   return true;
 }
@@ -382,13 +362,13 @@ template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
 {
-  //since we are dealing with polycurve, we will make more than 1 conic curves (polycurve compatible)
-  //and return the constructed polycurve.
+  // since we are dealing with polycurve, we will make more than 1 conic curves
+  // (polycurve compatible) and return the constructed polycurve.
 
-  //to store Conic curves i.e in Arr_polyline_traits_2 they are called Segment_2
-  std::vector<Segment_2> conic_segments;
+  //to store Conic curves i.e in Arr_polyline_traits_2 they are called Subcurve_2
+  std::vector<Subcurve_2> conic_segments;
 
-  Segment_2 tmp_cv;
+  Subcurve_2 tmp_cv;
 
   // Get the arc type:
   char type;
@@ -398,44 +378,32 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
   unsigned int number_of_curves;
   is >> number_of_curves;
 
-  for(int i=0; i<number_of_curves; i++)
-  {
-
-    if ((type == 'a') || (type == 'A'))
-    {
-      if( !read_general_curve(is, tmp_cv) )
-        return false;
-
-      conic_segments.push_back( tmp_cv );
+  for (unsigned int i = 0; i < number_of_curves; ++i) {
+    if ((type == 'a') || (type == 'A')) {
+      if (!read_general_curve(is, tmp_cv)) return false;
+      conic_segments.push_back(tmp_cv);
     }
-
-    else if ((type == 'c') || (type == 'C'))
-    {
-      if( !read_general_conic(is, tmp_cv) )
-        return false;
-
-      conic_segments.push_back( tmp_cv );
+    else if ((type == 'c') || (type == 'C')) {
+      if (!read_general_conic(is, tmp_cv)) return false;
+      conic_segments.push_back(tmp_cv);
     }
-
-    else if ((type == 'i') || (type == 'I'))
-    {
-      if( !read_general_arc(is, tmp_cv) )
-        return false;
-
-      conic_segments.push_back( tmp_cv );
+    else if ((type == 'i') || (type == 'I')) {
+      if (!read_general_arc(is, tmp_cv)) return false;
+      conic_segments.push_back(tmp_cv);
     }
 
     // Enable these later if needed.
-    //else if ((type == 'e') || (type == 'E')) return read_partial_ellipse(is, cv);
+    //else if ((type == 'e') || (type == 'E'))
+    //  return read_partial_ellipse(is, cv);
     //else if ((type == 'h') || (type == 'H')) return read_hyperbola(is, cv);
     //else if ((type == 'p') || (type == 'P')) return read_parabola(is, cv);
     //else if ((type == 'f') || (type == 'F')) return read_full_ellipse(is, cv);
     //else if ((type == 's') || (type == 'S')) return read_segment(is, cv);
 
     // If we reached here, we have an unknown conic type:
-    else
-    {
-      std::cerr << "Illegal conic type specification: " << type << "." << std::endl;
+    else {
+      std::cerr << "Illegal conic type specification: " << type << "."
+                << std::endl;
       return false;
     }
 
@@ -451,18 +419,13 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_segment(InputStream_& is,
-                                                  Segment_2& seg)
+                                                  Subcurve_2& seg)
 {
-  Segment_2 tmp_seg;
-
+  Subcurve_2 tmp_seg;
   char type;
   is >> type;
-
-  if( !read_general_curve(is, tmp_seg) )
-    return false;
-
+  if (!read_general_curve(is, tmp_seg)) return false;
   seg = tmp_seg;
-
    return true;
 }
 
@@ -473,13 +436,9 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
 {
   char type;
   is >> type;
-  Segment_2 tmp_seg;
-
-  if( !read_general_curve(is, tmp_seg) )
-        return false;
-
+  Subcurve_2 tmp_seg;
+  if (!read_general_curve(is, tmp_seg)) return false;
   xseg = X_monotone_subcurve_2(tmp_seg);
-
   return true;
 }
 
@@ -502,21 +461,14 @@ template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
                                                  X_monotone_curve_2& xcv)
 {
-   std::vector<X_monotone_subcurve_2> x_segments;
-
-   char type;
-   is >> type;
-
-   unsigned int number_of_segments;
-   is >> number_of_segments;
-
-   CGAL::Orientation orientation;
-
-  for(unsigned int i=0; i<number_of_segments; i++)
-  {
-
-    if ((type == 'x') || (type == 'X'))
-    {
+  std::vector<X_monotone_subcurve_2> x_segments;
+  char type;
+  is >> type;
+  unsigned int number_of_segments;
+  is >> number_of_segments;
+  CGAL::Orientation orientation;
+  for (unsigned int i = 0; i < number_of_segments; ++i) {
+    if ((type == 'x') || (type == 'X')) {
       Rat_point_2 circle_center;
       Point_2 ps, pt;
       Rat_nt circle_radius;
@@ -527,30 +479,29 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
 
       is >> circle_radius;
 
-      if(!read_orientation(is, orientation))
-        return false;
+      if (!read_orientation(is, orientation)) return false;
 
-      Circle_2 c = Circle_2 (circle_center, circle_radius, orientation);
-
-      is >> point_x >> point_y;
-      ps = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
+      Circle_2 c = Circle_2(circle_center, circle_radius, orientation);
 
       is >> point_x >> point_y;
-      pt = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
+      ps = Point_2(Number_type(point_x, 1), Number_type(point_y, 1));
 
-      X_monotone_subcurve_2 x_seg (c, ps, pt, c.orientation());
-      x_segments.push_back( x_seg );
+      is >> point_x >> point_y;
+      pt = Point_2(Number_type(point_x, 1), Number_type(point_y, 1));
+
+      X_monotone_subcurve_2 x_seg(c, ps, pt, c.orientation());
+      x_segments.push_back(x_seg);
     }
-
-    else
-    {
-      std::cerr << "Illegal Circle segment type specification: " << type << "." << std::endl;
+    else {
+      std::cerr << "Illegal Circle segment type specification: " << type
+                << "." << std::endl;
       return false;
     }
   } //for loop
 
   //construct x-monotone polycurve
-  xcv = m_geom_traits.construct_x_monotone_curve_2_object()(x_segments.begin(), x_segments.end());
+  xcv = m_geom_traits.construct_x_monotone_curve_2_object()(x_segments.begin(),
+                                                            x_segments.end());
 
   return true;
 }
@@ -559,21 +510,14 @@ template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
 {
-  std::vector<Segment_2> segments;
-
-   char type;
-   is >> type;
-
-   unsigned int number_of_segments;
-   is >> number_of_segments;
-
-   CGAL::Orientation orientation;
-
-  for(unsigned int i=0; i<number_of_segments; i++)
-  {
-
-    if ((type == 'c') || (type == 'C'))
-    {
+  std::vector<Subcurve_2> segments;
+  char type;
+  is >> type;
+  unsigned int number_of_segments;
+  is >> number_of_segments;
+  CGAL::Orientation orientation;
+  for (unsigned int i = 0; i<  number_of_segments; ++i) {
+    if ((type == 'c') || (type == 'C')) {
       Rat_point_2 circle_center;
       Point_2 ps, pt;
       Rat_nt circle_radius;
@@ -584,21 +528,18 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
 
       is >> circle_radius;
 
-      if(!read_orientation(is, orientation))
-        return false;
+      if (!read_orientation(is, orientation)) return false;
 
       is >> point_x >> point_y;
-      ps = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
+      ps = Point_2(Number_type(point_x, 1), Number_type(point_y, 1));
 
       is >> point_x >> point_y;
-      pt = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
+      pt = Point_2(Number_type(point_x, 1), Number_type(point_y, 1));
 
-      Segment_2 tmp_seg (circle_center, circle_radius, orientation, ps, pt);
-      segments.push_back( tmp_seg );
+      Subcurve_2 tmp_seg(circle_center, circle_radius, orientation, ps, pt);
+      segments.push_back(tmp_seg);
     }
-
-    else
-    {
+    else {
       std::cerr << "Illegal Circle segment type specification: " << type
                 << "." << std::endl;
       return false;
@@ -615,12 +556,12 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_segment(InputStream_& is,
-                                                  Segment_2& seg)
+                                                  Subcurve_2& seg)
 {
-  //we dont need to check this type as it has already been checked in the IO_test.h
+  //we dont need to check this type as it has already been checked in the
+  //IO_test.h
   char type;
   is >> type;
-
 
   Rat_point_2 circle_center;
   Point_2 ps, pt;
@@ -634,16 +575,15 @@ bool IO_base_test<Base_geom_traits>::read_segment(InputStream_& is,
 
   CGAL::Orientation orientation;
 
-  if(!read_orientation(is, orientation))
-    return false;
+  if (!read_orientation(is, orientation)) return false;
 
   is >> point_x >> point_y;
-  ps = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
+  ps = Point_2(Number_type(point_x, 1), Number_type(point_y, 1));
 
   is >> point_x >> point_y;
-  pt = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
+  pt = Point_2(Number_type(point_x, 1), Number_type(point_y, 1));
 
-  Segment_2 tmp_seg (circle_center, circle_radius, orientation, ps, pt);
+  Subcurve_2 tmp_seg(circle_center, circle_radius, orientation, ps, pt);
 
   seg = tmp_seg;
 
@@ -655,37 +595,28 @@ template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
                                                    X_monotone_subcurve_2& xseg)
 {
-  //we dont need to check this type as it has already been checked in the IO_test.h
+  //we dont need to check this type as it has already been checked in the
+  //IO_test.h
   char type;
   is >> type;
 
   CGAL::Orientation orientation;
-
   Rat_point_2 circle_center;
   Point_2 ps, pt;
   Rat_nt circle_radius;
-
   int point_x, point_y;
   is >> point_x >> point_y;
   circle_center = Rat_point_2(point_x, point_y);
-
   is >> circle_radius;
+  if (!read_orientation(is, orientation)) return false;
 
-  if(!read_orientation(is, orientation))
-    return false;
-
-  Circle_2 c = Circle_2 (circle_center, circle_radius, orientation);
-
+  Circle_2 c = Circle_2(circle_center, circle_radius, orientation);
   is >> point_x >> point_y;
-  ps = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
-
+  ps = Point_2(Number_type(point_x, 1), Number_type(point_y, 1));
   is >> point_x >> point_y;
-  pt = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
-
-  X_monotone_subcurve_2 x_seg (c, ps, pt, c.orientation());
+  pt = Point_2(Number_type(point_x, 1), Number_type(point_y, 1));
+  X_monotone_subcurve_2 x_seg(c, ps, pt, c.orientation());
   xseg = x_seg;
-
-
   return true;
 }
 
@@ -699,19 +630,16 @@ bool IO_base_test<Base_geom_traits>::read_point(InputStream_& is, Point_2& p)
   is >> type;
 
   //Read bezier segment
-  Segment_2 seg;
-  if( !read_segment(is, seg) )
-    return false;
+  Subcurve_2 seg;
+  if (!read_segment(is, seg)) return false;
 
   Point_2 point;
-  if(type == 'r')
-  {
+  if (type == 'r') {
     Rational rat_t;
     is >> rat_t;
     point = Point_2(seg, rat_t);
   }
-  else if (type == 'a')
-  {
+  else if (type == 'a') {
     Algebraic alg_t;
     is >> alg_t;
     point = Point_2(seg, alg_t);
@@ -724,27 +652,22 @@ bool IO_base_test<Base_geom_traits>::read_point(InputStream_& is, Point_2& p)
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_segment(InputStream_& is,
-                                                  Segment_2& seg)
+                                                  Subcurve_2& seg)
 {
   char type;
   is >> type;
-
   Bezier_tratis bezier_traits;
   std::vector<Control_point_2> point_vector;
-
   unsigned int num_control_points;
   is >> num_control_points;
-
   point_vector.clear();
-
-  for (unsigned int j=0; j<num_control_points; ++j)
-  {
+  for (unsigned int j = 0; j < num_control_points; ++j) {
     int point_x, point_y;
     is >> point_x >> point_y;
-    point_vector.push_back( Control_point_2(point_x, point_y) );
+    point_vector.push_back(Control_point_2(point_x, point_y));
   }
   //get the non x-monotone bezier segment
-  seg = Segment_2( point_vector.begin(), point_vector.end() );
+  seg = Subcurve_2(point_vector.begin(), point_vector.end());
   return true;
 }
 
@@ -755,23 +678,18 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
 {
   char type;
   is >> type;
-
   Bezier_tratis bezier_traits;
   std::vector<Control_point_2> point_vector;
-
   unsigned int num_control_points;
   is >> num_control_points;
-
   point_vector.clear();
-
-  for (unsigned int j=0; j<num_control_points; ++j)
-  {
+  for (unsigned int j = 0; j < num_control_points; ++j) {
     int point_x, point_y;
     is >> point_x >> point_y;
-    point_vector.push_back( Control_point_2(point_x, point_y) );
+    point_vector.push_back(Control_point_2(point_x, point_y));
   }
   //get the non x-monotone bezier segment
-  Segment_2 seg (point_vector.begin(), point_vector.end());
+  Subcurve_2 seg (point_vector.begin(), point_vector.end());
 
   //convert it into x-monotone bezier segment.
   std::vector<CGAL::Object> obj_vector;
@@ -802,23 +720,20 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
   unsigned int number_of_segments;
   is >> number_of_segments;
 
-  if ((type == 'x') || (type == 'X'))
-  {
-    for(unsigned int i=0; i<number_of_segments; i++)
-    {
+  if ((type == 'x') || (type == 'X')) {
+    for (unsigned int i=0; i<number_of_segments; ++i) {
       unsigned int num_control_points;
       is >> num_control_points;
 
       point_vector.clear();
 
-      for (unsigned int j=0; j<num_control_points; ++j)
-      {
+      for (unsigned int j=0; j<num_control_points; ++j) {
         int point_x, point_y;
         is >> point_x >> point_y;
-        point_vector.push_back( Control_point_2(point_x, point_y) );
+        point_vector.push_back(Control_point_2(point_x, point_y));
       }
       //get the non x-monotone bezier segment
-      Segment_2 seg (point_vector.begin(), point_vector.end());
+      Subcurve_2 seg(point_vector.begin(), point_vector.end());
 
       //convert it into x-monotone bezier segment.
       std::vector<CGAL::Object> obj_vector;
@@ -827,13 +742,11 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
       X_monotone_subcurve_2 x_seg =
         CGAL::object_cast<X_monotone_subcurve_2>((obj_vector[0]));
 
-      x_segments.push_back( x_seg );
+      x_segments.push_back(x_seg);
 
     } //for loop (number of segments)
   }
-
-  else
-  {
+  else {
     std::cerr << "Illegal Bezier segment type specification: " << type << "."
               << std::endl;
     return false;
@@ -849,7 +762,7 @@ template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
 {
-  std::vector<Segment_2> segments;
+  std::vector<Subcurve_2> segments;
   std::vector<Control_point_2> point_vector;
 
   Bezier_tratis bezier_traits;
@@ -860,31 +773,26 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
   unsigned int number_of_segments;
   is >> number_of_segments;
 
-  if ((type == 'c') || (type == 'C'))
-  {
-    for(unsigned int i=0; i<number_of_segments; i++)
-    {
+  if ((type == 'c') || (type == 'C')) {
+    for (unsigned int i=0; i<number_of_segments; ++i) {
       unsigned int num_control_points;
       is >> num_control_points;
 
       point_vector.clear();
 
-      for (unsigned int j=0; j<num_control_points; ++j)
-      {
+      for (unsigned int j=0; j<num_control_points; ++j) {
         int point_x, point_y;
         is >> point_x >> point_y;
-        point_vector.push_back( Control_point_2(point_x, point_y) );
+        point_vector.push_back(Control_point_2(point_x, point_y));
       }
       //get the non x-monotone bezier segment
-      Segment_2 seg (point_vector.begin(), point_vector.end());
+      Subcurve_2 seg (point_vector.begin(), point_vector.end());
 
-      segments.push_back( seg );
+      segments.push_back(seg);
 
-    } //for loop (number of segments)
+    } //for loop(number of segments)
   }
-
-  else
-  {
+  else {
     std::cerr << "Illegal Bezier segment type specification: " << type << "."
               << std::endl;
     return false;

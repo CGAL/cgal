@@ -25,8 +25,6 @@ int main()
 #include <CGAL/Arr_tags.h>
 #include <boost/type_traits/is_same.hpp>
 
-//#include <CGAL/Arr_geometry_traits/Polyline_2.h>
-
 ////////////////////
 //conic traits
 ////////////////////

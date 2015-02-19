@@ -1910,8 +1910,6 @@ public:
            geom_traits->equal_2_object();
          typename Subcurve_traits_2::Is_vertical_2 is_vertical =
            geom_traits->is_vertical_2_object();
-         Polycurve_basic_traits_2::Compare_endpoints_xy_2 cmp_poly_endpts =
-           m_poly_traits.compare_endpoints_xy_2_object();
 
          CGAL_precondition_msg((num_seg == 0) ||
                                ((is_vertical(xcv[0]) && is_vertical(seg)) ||
@@ -1970,8 +1968,6 @@ public:
            geom_traits->parameter_space_in_x_2_object();
          typename Subcurve_traits_2::Parameter_space_in_y_2 ps_y =
            geom_traits->parameter_space_in_y_2_object();
-         Polycurve_basic_traits_2::Compare_endpoints_xy_2 cmp_poly_endpts =
-           m_poly_traits.compare_endpoints_xy_2_object();
 
          CGAL_precondition_msg((num_seg == 0) ||
                                ((is_vertical(xcv[0]) && is_vertical(seg)) ||

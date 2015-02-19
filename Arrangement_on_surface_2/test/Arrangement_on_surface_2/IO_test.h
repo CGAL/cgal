@@ -22,23 +22,22 @@ public:
   typedef typename std::vector<X_monotone_curve_2>      Xcurves_vector;
   typedef typename std::vector<Curve_2>                 Curves_vector;
 
+#if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS ||          \
+  TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS ||     \
+  TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS ||           \
+  TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS ||                   \
+  TEST_GEOM_TRAITS == NON_CACHING_POLYLINE_GEOM_TRAITS
 
-  #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
-      TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
-      TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS || \
-      TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS ||\
-      TEST_GEOM_TRAITS == NON_CACHING_POLYLINE_GEOM_TRAITS
-
-  typedef typename Geom_traits_T::X_monotone_subcurve_2  X_monotone_subcurve_2;
-  typedef typename Geom_traits_T::Segment_2             Segment_2;
-  typedef typename std::vector<X_monotone_subcurve_2>    Xsegment_vector;
-  typedef typename std::vector<Segment_2>               Segment_vector;
+  typedef typename Geom_traits_T::X_monotone_subcurve_2 X_monotone_subcurve_2;
+  typedef typename Geom_traits_T::Subcurve_2            Subcurve_2;
+  typedef typename std::vector<X_monotone_subcurve_2>   X_segment_vector;
+  typedef typename std::vector<Subcurve_2>              Subcurve_vector;
 
   //vector containers for segments and xsegments
-  Xsegment_vector m_xsegments;
-  Segment_vector m_segments;
+  X_segment_vector m_xsegments;
+  Subcurve_vector m_segments;
 
-  #endif
+#endif
 
   /*! Constructor */
   IO_test(const Geom_traits& traits);
@@ -258,8 +257,7 @@ bool IO_test<Geom_traits_T>::read_points(const char* filename,
   }
 
   std::string line;
-  while (skip_comments(p_stream, line))
-  {
+  while (skip_comments(p_stream, line)) {
     std::istringstream line_stream(line);
     typename Geom_traits::Point_2 p;
     this->read_point(line_stream, p);
@@ -280,48 +278,44 @@ bool IO_test<Geom_traits_T>::read_xcurves(const char* filename,
   // read x-monotone curves from file into associative container
   std::ifstream xcv_stream(filename);
 
-  if (!xcv_stream.is_open())
-  {
+  if (!xcv_stream.is_open()) {
     std::cerr << "Cannot open file " << filename << "!" << std::endl;
     return false;
   }
 
   std::string line;
 
-  while (skip_comments(xcv_stream, line))
-  {
-    #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
-        TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
-        TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS || \
-        TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS ||\
-        TEST_GEOM_TRAITS == NON_CACHING_POLYLINE_GEOM_TRAITS
+  while (skip_comments(xcv_stream, line)) {
+#if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS ||            \
+  TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS ||       \
+  TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS ||             \
+  TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS ||                     \
+  TEST_GEOM_TRAITS == NON_CACHING_POLYLINE_GEOM_TRAITS
 
-      if (line[0] == 's') //segment (see segment in 'Arr_polyline_traits.h')
-      {
-         std::istringstream line_stream(line);
-         typename Geom_traits::X_monotone_subcurve_2 xseg;
-         this->read_xsegment(line_stream, xseg);
-         m_xsegments.push_back(xseg);
-         line_stream.clear();
-      }
-      else
-      {
-        std::istringstream line_stream(line);
-        typename Geom_traits::X_monotone_curve_2 xcv;
-        this->read_xcurve(line_stream, xcv);
-        xcurves.push_back(xcv);
-        line_stream.clear();
-      }
-
-    #else
-
+    if (line[0] == 's') { //segment (see segment in 'Arr_polyline_traits.h')
+      std::istringstream line_stream(line);
+      typename Geom_traits::X_monotone_subcurve_2 xseg;
+      this->read_xsegment(line_stream, xseg);
+      m_xsegments.push_back(xseg);
+      line_stream.clear();
+    }
+    else {
       std::istringstream line_stream(line);
       typename Geom_traits::X_monotone_curve_2 xcv;
       this->read_xcurve(line_stream, xcv);
       xcurves.push_back(xcv);
       line_stream.clear();
+    }
 
-    #endif
+#else
+
+    std::istringstream line_stream(line);
+    typename Geom_traits::X_monotone_curve_2 xcv;
+    this->read_xcurve(line_stream, xcv);
+    xcurves.push_back(xcv);
+    line_stream.clear();
+
+#endif
   }
 
   xcv_stream.close();
@@ -339,46 +333,42 @@ IO_test<Geom_traits_T>::read_curves(const char* filename,
   // Read curves from file into associative container
   std::ifstream cv_stream(filename);
 
-  if (!cv_stream.is_open())
-  {
+  if (!cv_stream.is_open()) {
     std::cerr << "Cannot open file " << filename << "!" << std::endl;
     return false;
   }
 
   std::string line;
 
-  while (skip_comments(cv_stream, line))
-  {
-     #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
-         TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
-         TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS || \
-         TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS ||\
-         TEST_GEOM_TRAITS == NON_CACHING_POLYLINE_GEOM_TRAITS
+  while (skip_comments(cv_stream, line)) {
+#if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS ||             \
+  TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS ||        \
+  TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS ||              \
+  TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS ||                      \
+  TEST_GEOM_TRAITS == NON_CACHING_POLYLINE_GEOM_TRAITS
 
-       if (line[0] == 's') //segment (see segment in 'Arr_polyline_traits.h')
-        {
-           std::istringstream line_stream(line);
-           typename Geom_traits::Segment_2 seg;
-           this->read_segment(line_stream, seg);
-           m_segments.push_back(seg);
-           line_stream.clear();
-        }
-        else
-        {
-          std::istringstream line_stream(line);
-          typename Geom_traits::Curve_2 cv;
-          this->read_curve(line_stream, cv);
-          curves.push_back(cv);
-          line_stream.clear();
-        }
+    if (line[0] == 's') { //segment (see segment in 'Arr_polyline_traits.h')
+      std::istringstream line_stream(line);
+      typename Geom_traits::Subcurve_2 seg;
+      this->read_segment(line_stream, seg);
+      m_segments.push_back(seg);
+      line_stream.clear();
+    }
+    else {
+      std::istringstream line_stream(line);
+      typename Geom_traits::Curve_2 cv;
+      this->read_curve(line_stream, cv);
+      curves.push_back(cv);
+      line_stream.clear();
+    }
 
-     #else
-        std::istringstream line_stream(line);
-        typename Geom_traits::Curve_2 cv;
-        this->read_curve(line_stream, cv);
-        curves.push_back(cv);
-        line_stream.clear();
-     #endif
+#else
+    std::istringstream line_stream(line);
+    typename Geom_traits::Curve_2 cv;
+    this->read_curve(line_stream, cv);
+    curves.push_back(cv);
+    line_stream.clear();
+#endif
   }
 
   cv_stream.close();
