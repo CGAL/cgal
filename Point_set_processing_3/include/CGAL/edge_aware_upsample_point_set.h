@@ -38,7 +38,7 @@
   #include <boost/property_map.hpp>
 #endif
 
-#define  CGAL_DEBUG_MODE
+//#define  CGAL_DEBUG_MODE
 
 namespace CGAL {
 
@@ -333,7 +333,7 @@ edge_aware_upsample_point_set(
   typename Kernel::FT neighbor_radius, ///< 
                     ///< indicates the radius of the largest hole that should be filled.
                     ///< The default value is set to 3 times the average spacing of the point set.
-                    ///< If the value given by user is smaller than the default value, 
+                    ///< If the value given by user is smaller than the average spacing, 
                     ///< the function will use the default value instead.
   const unsigned int number_of_output_points,///< number of output
                                              ///< points to generate.
@@ -366,7 +366,7 @@ edge_aware_upsample_point_set(
                    point_pmap,
                    nb_neighbors);
 
-  if (neighbor_radius < average_spacing * 3.0)
+  if (neighbor_radius < average_spacing * 1.0)
   {
     neighbor_radius = average_spacing * 3.0;
 #ifdef CGAL_DEBUG_MODE
@@ -374,14 +374,11 @@ edge_aware_upsample_point_set(
 #endif
   }
   
-
   Timer task_timer;
 
   // copy rich point set
   std::vector<Rich_point> rich_point_set(number_of_input);
-  CGAL::Bbox_3 bbox;
-  Point p_temp(0., 0., 0.);
-  bbox += p_temp.bbox();
+  CGAL::Bbox_3 bbox(0., 0., 0., 0., 0., 0.);
   
   ForwardIterator it = first; // point iterator
   for(unsigned int i = 0; it != beyond; ++it, ++i)
@@ -398,9 +395,6 @@ edge_aware_upsample_point_set(
     bbox += rich_point_set[i].pt.bbox();
     CGAL_point_set_processing_precondition(rich_point_set[i].normal.squared_length() > 1e-10);
   }
-
-  std::cout << bbox.xmin() << " " << bbox.xmax() << " " << bbox.ymin() << " " << bbox.ymin() << " " << std::endl;
-  system("Pause");
 
   // compute neighborhood
   rich_grid_internal::compute_ball_neighbors_one_self(rich_point_set,
