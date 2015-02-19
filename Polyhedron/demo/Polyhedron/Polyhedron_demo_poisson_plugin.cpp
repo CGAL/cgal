@@ -40,7 +40,7 @@ public:
   }
 
   //! Applicate for Point_sets with normals.
-  bool applicable() const {
+  bool applicable(QAction*) const {
     Scene_points_with_normal_item* item =
       qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
     return item && item->has_normals();

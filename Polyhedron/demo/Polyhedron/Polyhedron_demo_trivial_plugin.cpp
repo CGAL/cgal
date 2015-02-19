@@ -103,7 +103,7 @@ public:
     return QList<QAction*>() << actionBbox; 
   }
 
-  bool applicable() const { 
+  bool applicable(QAction*) const { 
     return true;
   }
 public slots:

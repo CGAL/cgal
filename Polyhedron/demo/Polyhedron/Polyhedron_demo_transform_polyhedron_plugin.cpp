@@ -30,7 +30,7 @@ public:
     return QList<QAction*>() << actionTransformPolyhedron;
   }
 
-  bool applicable() const { 
+  bool applicable(QAction*) const { 
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
            qobject_cast<Scene_polyhedron_transform_item*>(scene->item(scene->mainSelectionIndex()));
   }
