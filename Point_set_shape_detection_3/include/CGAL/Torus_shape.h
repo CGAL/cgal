@@ -11,6 +11,7 @@
 
 namespace CGAL {
     /*!
+     \ingroup PkgPointSetShapeDetection3
      \brief Torus_shape implements Shape_base. The torus is parameterized by the symmetry axis, its center on the axis and the major and minor radii.     */
   template <class Sd_traits>
   class Torus_shape : public Shape_base<Sd_traits> {

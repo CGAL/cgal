@@ -26,6 +26,7 @@ namespace CGAL {
      \brief Cylinder_shape implements Shape_base. 
             The cylinder is parameterized by the axis,
             i.e. point and direction, and the radius.
+     \ingroup PkgPointSetShapeDetection3
      */
   template <class Sd_traits>
   class Cylinder_shape : public Shape_base<Sd_traits> {

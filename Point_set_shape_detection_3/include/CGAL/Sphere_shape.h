@@ -9,6 +9,7 @@
 
 namespace CGAL {
     /*!
+     \ingroup PkgPointSetShapeDetection3
      \brief Sphere_shape implements Shape_base. The sphere is parameterized by its center and the radius.
      */
   template <class Sd_traits>

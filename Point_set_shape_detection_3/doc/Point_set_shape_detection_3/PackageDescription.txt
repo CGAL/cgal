@@ -1,4 +1,5 @@
 ﻿/// \defgroup PkgPointSetShapeDetection3 Point Set Shape Detection Reference
+/// \defgroup PkgPointSetShapeDetection3Shapes
 /*!
 \addtogroup PkgPointSetShapeDetection3
 
@@ -13,20 +14,24 @@
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.6}
+\cgalPkgBib{cgal:ovja-pssd}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{examples,shape_detection_example.zip}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
-## Classes ##
+
+\cgalClassifedRefPages
+
+## Main Classes ##
 - `CGAL::Shape_detection_3<Sd_traits>`
 - `CGAL::Shape_detection_traits_3`
 
-## Shape interface ##
+## Shape Interface ##
 - `CGAL::Shape_base<Sd_traits>`
 - `CGAL::Shape_factory<Shape>`
 
-## Shapes ##
+## Shape Classes ##
 - `CGAL::Plane_shape<Sd_traits>`
 - `CGAL::Sphere_shape<Sd_traits>`
 - `CGAL::Cylinder_shape<Sd_traits>`

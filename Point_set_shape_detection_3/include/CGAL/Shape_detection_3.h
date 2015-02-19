@@ -71,6 +71,7 @@
 
 namespace CGAL {
     /*!
+     \ingroup PkgPointSetShapeDetection3
      \brief Traits class for definition of types.
      */
 
@@ -86,6 +87,7 @@ namespace CGAL {
   };
 
   /*!
+\ingroup PkgPointSetShapeDetection3
 \brief Implementation of a RANSAC method for shape detection.
 
 Given a point set in 3D space with unoriented normals, sampled on surfaces,

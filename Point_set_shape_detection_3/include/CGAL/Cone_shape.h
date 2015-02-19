@@ -28,6 +28,7 @@ namespace CGAL {
       The cone is parameterized by its apex, the axis and the opening angle.
       This representation models an infinite single-cone
        and does not consider a base plane.
+     \ingroup PkgPointSetShapeDetection3
      */
 
   template <class Sd_traits>

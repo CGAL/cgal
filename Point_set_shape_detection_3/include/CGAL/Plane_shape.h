@@ -8,6 +8,7 @@
  */
 namespace CGAL {
     /*!
+     \ingroup PkgPointSetShapeDetection3
      \brief Plane_shape implements Shape_base. The plane is parameterized by the normal vector and the distance to the origin.
      */
   template <class Sd_traits>

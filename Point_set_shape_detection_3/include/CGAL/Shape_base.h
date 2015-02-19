@@ -28,6 +28,7 @@ namespace CGAL {
   }
     
     /*!
+     \ingroup PkgPointSetShapeDetection3
      \brief Base class of shape types. Provides access to assigned points.
      */
   template <class Sd_traits>
@@ -486,6 +487,7 @@ namespace CGAL {
   }
     
     /*!
+     \ingroup PkgPointSetShapeDetection3
      \brief Template class for creating a factory for a shape type.
      */
   
