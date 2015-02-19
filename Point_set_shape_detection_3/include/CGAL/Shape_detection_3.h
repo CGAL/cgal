@@ -258,8 +258,8 @@ et al. in 2007 \cgalCite{Schnabel07}.
   /*!
     This function registers a shape type for detection.
   */ 
-    template <class S>
-    void add_shape_factory(Shape_factory<S> *factory///< Factory for shape type defined by 'Shape_factory<"shape_type">'
+    template <class Shape_factory>
+    void add_shape_factory(Shape_factory *factory///< Factory for shape type defined by 'Shape_factory<"shape_type">'
       ) {
       m_shapeFactories.push_back(factory);
     }

@@ -27,8 +27,6 @@ namespace CGAL {
   public:
     Plane_shape() : Shape_base<Sd_traits>() {}
 
-
-
       /*!
        Helper function to write the plane equation and number of assigned points into a string.
        */

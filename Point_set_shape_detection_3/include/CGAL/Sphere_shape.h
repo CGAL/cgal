@@ -27,7 +27,8 @@ namespace CGAL {
 
   public:
     Sphere_shape() :  Shape_base<Sd_traits>() {}
-      
+
+     
       /*!
        Conversion operator to convert to common Sphere_3 type.
        */

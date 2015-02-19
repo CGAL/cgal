@@ -499,9 +499,11 @@ namespace CGAL {
       /*!
        Returns a new instance of the shape type.
        */
-    virtual void *create() {
-      return new Shape;
-    }
+	  virtual void *create()
+	  { 
+		  return new Shape;
+	  }
+    
   };
   
 }
