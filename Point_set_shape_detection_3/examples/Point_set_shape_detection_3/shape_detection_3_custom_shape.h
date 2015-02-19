@@ -3,12 +3,11 @@
 
 #include "Shape_base.h"
 
-/*!
- \file My_Plane.h
- */
+
 namespace CGAL {
-    /*!
-     \brief My_Plane derives from Shape_base. The plane is defined by its normal vector and distance to the origin.
+    /*
+     My_Plane derives from Shape_base. The plane is defined by
+	 its normal vector and distance to the origin.
      */
   template <class Sd_traits>
   class My_Plane : public Shape_base<Sd_traits> {
@@ -18,20 +17,15 @@ namespace CGAL {
 
   public:
     My_Plane() : Shape_base<Sd_traits>() {}
-            
-    /*!
-      Computes squared Euclidean distance from query point to the shape.
-      */
-    FT squared_distance(const Point &p) const {
+
+    //  Computes squared Euclidean distance from query point to the shape.
+    virtual FT squared_distance(const Point &p) const {
       const FT sd = (p - m_point_on_primitive) * m_normal;
       return sd * sd;
     }
 
   protected:
-
-    /*!
-      Constructs shape based on minimal set of samples from the input data.
-     */          
+    // Constructs shape based on minimal set of samples from the input data.    
     virtual void create_shape(const std::vector<size_t> &indices) {
       const Point p1 = this->get_point(indices[0]);
       const Point p2 = this->get_point(indices[1]);
@@ -45,30 +39,37 @@ namespace CGAL {
 	  m_isValid = true;
     }
 
-    /*!
-      Computes squared Euclidean distance from a set of points.
-     */    
-    void squared_distance(std::vector<FT> &dists, const std::vector<size_t> &indices) {
+    // Computes squared Euclidean distance from a set of points.
+	virtual void squared_distance(std::vector<FT> &dists,
+                          const std::vector<size_t> &indices) {
       for (size_t i = 0; i < indices.size(); i++) {
-        const FT sd = (this->get_point(indices[i]) - m_point_on_primitive) * m_normal;
+        const FT sd = (this->get_point(indices[i])
+                       - m_point_on_primitive) * m_normal;
         dists[i] = sd * sd;
       }
     }
-
-    void cos_to_normal(std::vector<FT> &angles, const std::vector<size_t> &indices) const {
+    
+    /*
+      Computes the normal deviation between shape and
+	  a set of points with normals.
+     */
+    virtual void cos_to_normal(std::vector<FT> &angles,
+                       const std::vector<size_t> &indices) const {
       for (size_t i = 0; i < indices.size(); i++)
         angles[i] = abs(this->get_normal(indices[i]) * m_normal);
     }
-
+    
+    // Returns the number of required samples for construction.
     virtual size_t required_samples() const {
       return 3;
-    } 
-    
-    std::string info() const {
+    }
+
+    // Returns a string with shape parameters.
+    virtual std::string info() const {
       std::stringstream sstr;
       sstr << "Type: plane (" << m_normal.x() << ", " 
-	    << m_normal.y() << ", " << m_normal.z() << ")x - " <<
-		m_d << " = 0" << " #Pts: " << this->m_indices.size();
+        << m_normal.y() << ", " << m_normal.z() << ")x - " <<
+        m_d << " = 0" << " #Pts: " << this->m_indices.size();
 
       return sstr.str();
     }

@@ -2,5 +2,5 @@
 \example Point_set_shape_detection_3/shape_detection_3_basic.cpp
 \example Point_set_shape_detection_3/shape_detection_3_parameters.cpp
 \example Point_set_shape_detection_3/shape_detection_3_point_access.cpp
-\example Point_set_shape_detection_3/shape_detection_3_custom_shape.cpp
+\example Point_set_shape_detection_3/shape_detection_3_custom_shape.h
 */
