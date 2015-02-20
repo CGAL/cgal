@@ -328,7 +328,6 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
     }
 
 
-    rendering_program = compile_shaders();
     //Allocates a uniform location for the MVP and MV matrices
     location[0] = glGetUniformLocation(rendering_program, "mvp_matrix");
     location[1] = glGetUniformLocation(rendering_program, "mv_matrix");
@@ -352,6 +351,7 @@ Scene_polygon_soup_item::Scene_polygon_soup_item()
     mvp_mat = new GLfloat[16];
     mv_mat = new GLfloat[16];
 
+    rendering_program = compile_shaders();
 }
 
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
