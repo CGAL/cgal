@@ -83,7 +83,6 @@ struct Polyhedron_to_polygon_soup_writer {
         polygon.clear();
     }
 }; // end struct Polyhedron_to_soup_writer
-light_info light;
 
 GLuint
 Scene_polygon_soup_item::compile_shaders(void)
@@ -233,6 +232,34 @@ Scene_polygon_soup_item::compile_shaders(void)
 void
 Scene_polygon_soup_item::uniform_attrib(void) const
 {
+    GLfloat colors[4];
+    light_info light;
+
+    //fills the arraw of colors with the current color
+    GLfloat temp[4];
+    glGetFloatv(GL_CURRENT_COLOR, temp);
+    for(int i=0; i<4; i++)
+        colors[i] = temp[i];
+    //Gets lighting info :
+
+    //position
+    glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
+
+    //ambient
+    glGetLightfv(GL_LIGHT0, GL_AMBIENT, light.ambient);
+    light.ambient[0]*=colors[0];
+    light.ambient[1]*=colors[1];
+    light.ambient[2]*=colors[2];
+
+    //specular
+    glGetLightfv(GL_LIGHT0, GL_SPECULAR, light.specular);
+
+    //diffuse
+    glGetLightfv(GL_LIGHT0, GL_DIFFUSE, light.diffuse);
+
+    light.diffuse[0]*=colors[0];
+    light.diffuse[1]*=colors[1];
+    light.diffuse[2]*=colors[2];
 
 
     //Set the ModelViewProjection and ModelView matrices
@@ -560,31 +587,6 @@ Scene_polygon_soup_item::isEmpty() const {
 void
 Scene_polygon_soup_item::changed()
 {
-    //fills the arraw of colors with the current color
-    GLfloat temp[4];
-    glGetFloatv(GL_CURRENT_COLOR, temp);
-    for(int i=0; i<4; i++)
-        colors[i] = temp[i];
-    //Gets lighting info :
-
-    //position
-    glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
-
-    //ambient
-    glGetLightfv(GL_LIGHT0, GL_AMBIENT, light.ambient);
-    light.ambient[0]*=colors[0];
-    light.ambient[1]*=colors[1];
-    light.ambient[2]*=colors[2];
-
-    //specular
-    glGetLightfv(GL_LIGHT0, GL_SPECULAR, light.specular);
-
-    //diffuse
-    glGetLightfv(GL_LIGHT0, GL_DIFFUSE, light.diffuse);
-
-    light.diffuse[0]*=colors[0];
-    light.diffuse[1]*=colors[1];
-    light.diffuse[2]*=colors[2];
 
 }
 

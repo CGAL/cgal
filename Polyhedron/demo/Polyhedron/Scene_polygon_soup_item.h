@@ -171,7 +171,7 @@ private:
   GLint location[7];
   GLfloat *mvp_mat;
   GLfloat *mv_mat;
-  GLfloat colors[4];
+
 
   GLuint vertex_shader;
   GLuint fragment_shader;
