@@ -243,7 +243,8 @@ void render()
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
     glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
-//glUseProgram(0);
+    //Tells OpenGL not to use the program anymore
+    glUseProgram(0);
 }
 
 struct Polyhedron_to_polygon_soup_writer {
@@ -299,7 +300,7 @@ Scene_polygon_soup_item::Scene_polygon_soup_item()
     mvp_mat = new GLfloat[16];
     mv_mat = new GLfloat[16];
 
-   }
+}
 
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
 {
