@@ -84,20 +84,16 @@ struct Polyhedron_to_polygon_soup_writer {
     }
 }; // end struct Polyhedron_to_soup_writer
 
-GLuint
-Scene_polygon_soup_item::compile_shaders(void)
+void
+Scene_polygon_soup_item::initialize_buffers()
 {
-
-
-
-    glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
-    //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(2, buffer);
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-
-    glBufferData(GL_ARRAY_BUFFER, (positions_poly.size())*sizeof(positions_poly.data()), positions_poly.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER,
+		 (positions_poly.size())*sizeof(positions_poly.data()),
+		 positions_poly.data(),
+		 GL_STATIC_DRAW);
     glVertexAttribPointer(0, //number of the buffer
                           4, //number of floats to be taken
                           GL_FLOAT, // type of data
@@ -105,14 +101,26 @@ Scene_polygon_soup_item::compile_shaders(void)
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
-    glEnableVertexAttribArray(0);
-    //Bind the second and initialize it
+
     glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-    glBufferData(GL_ARRAY_BUFFER, (normals.size())*sizeof(normals.data()), normals.data(), GL_DYNAMIC_DRAW);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-    glEnableVertexAttribArray(1);
+    glBufferData(GL_ARRAY_BUFFER,
+		 (normals.size())*sizeof(normals.data()),
+		 normals.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(1,
+			  3,
+			  GL_FLOAT,
+			  GL_FALSE,
+			  0,
+			  NULL
+			  );
+    // Clean-up
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
 
-
+GLuint
+Scene_polygon_soup_item::compile_shaders(void)
+{
     //fill the vertex shader
     static const GLchar* vertex_shader_source[] =
     {
@@ -347,16 +355,15 @@ Scene_polygon_soup_item::Scene_polygon_soup_item()
       soup(0),positions_poly(0), normals(0),
       oriented(false)
 {
-    glewInit();
-    mvp_mat = new GLfloat[16];
-    mv_mat = new GLfloat[16];
+    glGenVertexArrays(1, &vao);
+    //Generates an integer which will be used as ID for each buffer
+    glGenBuffers(2, buffer);
 
     rendering_program = compile_shaders();
 }
 
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
 {
-
     glDeleteBuffers(2, buffer);
     glDeleteVertexArrays(1, &vao);
     glDeleteProgram(rendering_program);
@@ -627,6 +634,7 @@ void
 Scene_polygon_soup_item::changed()
 {
     compute_normals_and_vertices();
+    initialize_buffers();
 }
 
 Scene_polygon_soup_item::Bbox
@@ -666,3 +674,7 @@ Scene_polygon_soup_item::new_triangle(const std::size_t i,
 }
 
 #include "Scene_polygon_soup_item.moc"
+
+// Local Variables:
+// c-basic-offset: 4
+// End:

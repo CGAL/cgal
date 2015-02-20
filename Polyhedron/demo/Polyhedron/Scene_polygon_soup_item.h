@@ -178,6 +178,7 @@ private:
   GLuint program;
   GLuint vao;
   GLuint buffer[2];
+  void initialize_buffers();
   GLuint compile_shaders(void);
   void compute_normals_and_vertices(void);
   void uniform_attrib(void) const;
