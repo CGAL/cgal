@@ -97,7 +97,7 @@ Scene_polygon_soup_item::compile_shaders(void)
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
 
-    glBufferData(GL_ARRAY_BUFFER, (positions_poly.size())*sizeof(positions_poly.data()), positions_poly.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, (positions_poly.size())*sizeof(positions_poly.data()), positions_poly.data(), GL_DYNAMIC_DRAW);
     glVertexAttribPointer(0, //number of the buffer
                           4, //number of floats to be taken
                           GL_FLOAT, // type of data
@@ -106,10 +106,9 @@ Scene_polygon_soup_item::compile_shaders(void)
                           NULL //no offset (seperated in several buffers)
                           );
     glEnableVertexAttribArray(0);
-
     //Bind the second and initialize it
     glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-    glBufferData(GL_ARRAY_BUFFER, (normals.size())*sizeof(normals.data()), normals.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, (normals.size())*sizeof(normals.data()), normals.data(), GL_DYNAMIC_DRAW);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
     glEnableVertexAttribArray(1);
 
@@ -218,6 +217,7 @@ Scene_polygon_soup_item::compile_shaders(void)
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
 
+
     glGetProgramiv(program,GL_LINK_STATUS,&result);
     if(result == GL_TRUE){
         std::cout<<"Link OK"<<std::endl;
@@ -232,6 +232,8 @@ Scene_polygon_soup_item::compile_shaders(void)
     //Delete the shaders which are now in the memory
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
+
+
     return program;
 }
 void
@@ -288,6 +290,8 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
     //get the vertices and normals
     typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
     typedef Polygon_soup::Polygons::size_type size_type;
+    positions_poly.clear();
+    normals.clear();
     for(Polygons_iterator it = soup->polygons.begin();
         it != soup->polygons.end(); ++it)
     {
@@ -352,8 +356,9 @@ Scene_polygon_soup_item::Scene_polygon_soup_item()
 
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
 {
-    glDeleteBuffers(2, buffer);
-    glDeleteVertexArrays(1, &vao);
+
+     //glDeleteBuffers(2, buffer);
+    //glDeleteVertexArrays(1, &vao);
     glDeleteProgram(rendering_program);
 
     delete soup;
@@ -525,7 +530,6 @@ void
 Scene_polygon_soup_item::draw() const {
 
 
-
     // tells the GPU to use the program just created
     glUseProgram(rendering_program);
     uniform_attrib();
@@ -568,7 +572,7 @@ Scene_polygon_soup_item::draw_points() const {
     uniform_attrib();
 
     //draw the points
-    glDrawArrays(GL_POINTS, 0, positions_poly.size());
+    glDrawArrays(GL_POINTS, 0, positions_poly.size()/4);
     //Tells OpenGL not to use the program anymore
     glUseProgram(0);
 }
