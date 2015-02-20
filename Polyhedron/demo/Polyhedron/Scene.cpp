@@ -272,6 +272,7 @@ Scene::drawWithNames(Viewer_interface* viewer)
 void 
 Scene::draw_aux(bool with_names, Viewer_interface* viewer)
 {
+
   // Flat/Gouraud OpenGL drawing
   for(int index = 0; index < m_entries.size(); ++index)
   {
@@ -284,7 +285,7 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
       if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
       {
 	::glEnable(GL_LIGHTING);
-	::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+        ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
         ::glPointSize(2.f);
         ::glLineWidth(1.0f);
 	if(index == selected_item)
@@ -302,6 +303,7 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
                     << "  with_name = " << std::boolalpha << with_names
                     << std::endl;
         }
+
         if(viewer)
           item.draw(viewer);
         else

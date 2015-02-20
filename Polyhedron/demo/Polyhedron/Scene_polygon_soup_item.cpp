@@ -245,6 +245,32 @@ GLuint compile_shaders(void)
     glDeleteShader(fragment_shader);
     return program;
 }
+
+void uniform_attrib()
+{
+    //Allocates a uniform location for the MVP and MV matrices
+    location[0] = glGetUniformLocation(rendering_program, "mvp_matrix");
+    location[1] = glGetUniformLocation(rendering_program, "mv_matrix");
+
+    //Allocates a uniform location for the light values
+    location[2] = glGetUniformLocation(rendering_program, "light_pos");
+    location[3] = glGetUniformLocation(rendering_program, "light_diff");
+    location[4] = glGetUniformLocation(rendering_program, "light_spec");
+    location[5] = glGetUniformLocation(rendering_program, "light_amb");
+    location[6] = glGetUniformLocation(rendering_program, "vColors");
+
+    //Set the ModelViewProjection and ModelView matrices
+    glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
+    glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
+
+    //Set the light infos
+    glUniform3fv(location[2], 1, light.position);
+    glUniform3fv(location[3], 1, light.diffuse);
+    glUniform3fv(location[4], 1, light.specular);
+    glUniform3fv(location[5], 1, light.ambient);
+    glUniform3fv(location[6], 1, colors);
+}
+
 void
 Scene_polygon_soup_item::compute_normals_and_vertices(){
     //get the vertices and normals
@@ -499,34 +525,9 @@ Scene_polygon_soup_item::toolTip() const
 
 void
 Scene_polygon_soup_item::draw() const {
-
-
-
     // tells the GPU to use the program just created
     glUseProgram(rendering_program);
-
-    //Allocates a uniform location for the MVP and MV matrices
-    location[0] = glGetUniformLocation(rendering_program, "mvp_matrix");
-    location[1] = glGetUniformLocation(rendering_program, "mv_matrix");
-
-    //Allocates a uniform location for the light values
-    location[2] = glGetUniformLocation(rendering_program, "light_pos");
-    location[3] = glGetUniformLocation(rendering_program, "light_diff");
-    location[4] = glGetUniformLocation(rendering_program, "light_spec");
-    location[5] = glGetUniformLocation(rendering_program, "light_amb");
-    location[6] = glGetUniformLocation(rendering_program, "vColors");
-
-    //Set the ModelViewProjection and ModelView matrices
-    glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
-    glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
-
-    //Set the light infos
-    glUniform3fv(location[2], 1, light.position);
-    glUniform3fv(location[3], 1, light.diffuse);
-    glUniform3fv(location[4], 1, light.specular);
-    glUniform3fv(location[5], 1, light.ambient);
-    glUniform3fv(location[6], 1, colors);
-
+    uniform_attrib();
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
     glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
@@ -537,9 +538,9 @@ Scene_polygon_soup_item::draw() const {
 void
 Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
 
-    typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
+    /* typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
     typedef Polygon_soup::Polygons::size_type size_type;
-
+*/
     //Remplit la matrice MVP
     GLdouble d_mat[16];
     viewer->camera()->getModelViewProjectionMatrix(d_mat);
@@ -581,19 +582,65 @@ Scene_polygon_soup_item::draw_points() const {
 
     if(soup == 0) return;
     //::glBegin(GL_POINTS);
-    for(Polygon_soup::Points::const_iterator pit = soup->points.begin(),
+    /*  for(Polygon_soup::Points::const_iterator pit = soup->points.begin(),
         end = soup->points.end();
         pit != end; ++pit)
     {
-        // ::glVertex3d(pit->x(), pit->y(), pit->z());
+         ::glVertex3d(pit->x(), pit->y(), pit->z());
         positions_points.push_back(pit->x());
         positions_points.push_back(pit->y());
-        positions_points.push_back(pit->y());
+        positions_points.push_back(pit->z());
 
     }
-    //::glEnd();
+    //::glEnd();*/
+    // tells the GPU to use the program just created
+    glUseProgram(rendering_program);
+
+    uniform_attrib();
+
+    //draw the polygons
+    // the third argument is the number of vec4 that will be entered
+    glDrawArrays(GL_POINTS, 0, positions_poly.size()/4);
+    //Tells OpenGL not to use the program anymore
+    glUseProgram(0);
 }
 
+void
+Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
+    //Remplit la matrice MVP
+    GLdouble d_mat[16];
+    viewer->camera()->getModelViewProjectionMatrix(d_mat);
+    //Convert the GLdoubles matrix in GLfloats
+    for (int i=0; i<16; ++i)
+        mvp_mat[i] = GLfloat(d_mat[i]);
+
+    viewer->camera()->getModelViewMatrix(d_mat);
+    for (int i=0; i<16; ++i)
+        mv_mat[i] = GLfloat(d_mat[i]);
+
+
+    glGetFloatv(GL_CURRENT_COLOR, colors );
+    //position
+    glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
+
+    //ambient
+    glGetLightfv(GL_LIGHT0, GL_AMBIENT, light.ambient);
+    light.ambient[0]*=colors[0];
+    light.ambient[1]*=colors[1];
+    light.ambient[2]*=colors[2];
+
+    //specular
+    glGetLightfv(GL_LIGHT0, GL_SPECULAR, light.specular);
+
+    //diffuse
+    glGetLightfv(GL_LIGHT0, GL_DIFFUSE, light.diffuse);
+
+    light.diffuse[0]*=colors[0];
+    light.diffuse[1]*=colors[1];
+    light.diffuse[2]*=colors[2];
+
+    draw_points();
+}
 bool
 Scene_polygon_soup_item::isEmpty() const {
 

@@ -140,6 +140,7 @@ public:
   void draw() const;
   void draw(Viewer_interface*) const;
   void draw_points() const;
+ void draw_points(Viewer_interface*) const;
 
   bool isFinite() const { return true; }
   bool isEmpty() const;
