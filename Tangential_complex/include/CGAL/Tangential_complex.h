@@ -220,7 +220,8 @@ public:
     m_sq_half_sparsity(m_half_sparsity*m_half_sparsity),
     m_ambiant_dim(k.point_dimension_d_object()(*first)),
     m_points(first, last)
-# if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
+# if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_PERTURB_POSITION) \
+  && defined(CGAL_TC_GLOBAL_REFRESH)
     , m_p_perturb_mutexes(NULL)
 # endif
     , m_points_ds(m_points)
@@ -233,7 +234,8 @@ public:
   /// Destructor
   ~Tangential_complex() 
   {
-#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
+#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_PERTURB_POSITION) \
+ && defined(CGAL_TC_GLOBAL_REFRESH)
     delete [] m_p_perturb_mutexes;
 #endif
   }
@@ -595,7 +597,8 @@ public:
   }
 
   // Return the max dimension of the simplices
-  int export_TC(Simplicial_complex &complex)
+  int export_TC(Simplicial_complex &complex,
+    bool export_infinite_simplices = false)
   {
     int max_dim = -1;
 
@@ -611,6 +614,11 @@ public:
       Star::const_iterator it_inc_simplex_end = m_stars[idx].end();
       for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
       {
+        // Don't export infinite cells
+        if (!export_infinite_simplices && *it_inc_simplex->rbegin()
+            == std::numeric_limits<std::size_t>::max())
+          continue;
+
         std::set<std::size_t> c = *it_inc_simplex;
         if (static_cast<int>(c.size()) > max_dim)
           max_dim = static_cast<int>(c.size());
@@ -657,15 +665,17 @@ public:
       << 100. * stats_after.second / stats_after.first << "%"
       << std::endl;
   }
-
+  
   std::ostream &export_to_off(
-    const Simplicial_complex &complex, std::ostream & os)
+    const Simplicial_complex &complex, std::ostream & os,
+    std::set<std::set<std::size_t> > const *p_additional_simpl_to_color = NULL)
   {
-    return export_to_off(os, false, &complex);
+    return export_to_off(os, false, p_additional_simpl_to_color, &complex);
   }
-
+  
   std::ostream &export_to_off(
-    std::ostream & os, bool color_inconsistencies = false, 
+    std::ostream & os, bool color_inconsistencies = false,
+    std::set<std::set<std::size_t> > const *p_additional_simpl_to_color = NULL, 
     const Simplicial_complex *p_complex = NULL)
   {
     if (m_points.empty())
@@ -702,11 +712,16 @@ public:
     std::size_t num_simplices, num_vertices;
     export_vertices_to_off(output, num_vertices);
     if (p_complex)
+    {
       export_simplices_to_off(
-        *p_complex, output, num_simplices, color_inconsistencies);
+        *p_complex, output, num_simplices, p_additional_simpl_to_color);
+    }
     else
+    {
       export_simplices_to_off(
-        output, num_simplices, color_inconsistencies);
+        output, num_simplices, color_inconsistencies, 
+        p_additional_simpl_to_color);
+    }
 
 #ifdef CGAL_TC_EXPORT_NORMALS
     os << "N";
@@ -1892,6 +1907,8 @@ private:
     Tr_point Cq = tr_power_center(
       simplex_pts_in_Tq.begin(), simplex_pts_in_Tq.end());
 
+    //std::cerr << "Cq weight: " << tr_point_weight(Cq) << std::endl; // CJTODO TEMP
+
     //-------------------------------------------------------------------------
     //3. Find points t1, t2... (in ambient space) which are inside S
     //-------------------------------------------------------------------------
@@ -1911,6 +1928,36 @@ private:
           inconsistent_simplex.end())
       {
         inside_point_idx = neighbor_point_idx;
+        
+        { // CJTODO TEMP DEBUG
+        ++nn_it;
+        int count_insiders = 1;
+        for (int count = 0 ; count < inconsistent_simplex.size() ; ++count, ++nn_it)
+        {
+          std::size_t neighbor_point_idx = nn_it->first;
+          if (inconsistent_simplex.find(neighbor_point_idx) == 
+              inconsistent_simplex.end())
+          {
+            //std::cerr << "insider dist: " << nn_it->second << std::endl; // CJTODO TEMP
+            ++count_insiders;
+          }
+          else
+          {
+            //std::cerr << "Simplex point dist: " << nn_it->second << std::endl; // CJTODO TEMP
+            ++count;
+          }
+        }
+        
+        if (count_insiders > 1)
+        {
+          std::cerr << "Warning: " << count_insiders << " insiders in " 
+            << inconsistent_simplex.size() - 1 << " simplex\n";
+        }
+        //else
+        //  std::cerr << "Ok: only one vertex inside the sphere\n";
+
+        } // END CJTODO
+
         break;
       }
     }
@@ -1954,6 +2001,11 @@ private:
   {
     bool inconsistencies_found = false;
 
+    // Don't check infinite simplices
+    if (*incident_simplex.rbegin() 
+        == std::numeric_limits<std::size_t>::max())
+      return false;
+
     std::set<std::size_t> simplex = incident_simplex;
     simplex.insert(tr_index);
 
@@ -1964,9 +2016,6 @@ private:
     for ( ; it_point_idx != simplex.end() ; ++it_point_idx)
     {
       std::size_t point_idx = *it_point_idx;
-      // Don't check infinite simplices
-      if (point_idx == std::numeric_limits<std::size_t>::max())
-        continue;
 
       Star const& star = m_stars[point_idx];
 
@@ -2001,7 +2050,8 @@ private:
 
   std::ostream &export_simplices_to_off(
     std::ostream & os, std::size_t &num_simplices,
-    bool color_inconsistencies = false)
+    bool color_inconsistencies = false,
+    std::set<std::set<std::size_t> > const *p_additional_simpl_to_color = NULL)
   {
     // If m_intrinsic_dimension = 1, each point is output two times
     // (see export_vertices_to_off)
@@ -2040,12 +2090,20 @@ private:
         c.insert(idx);
         std::size_t num_vertices = c.size();
 
-        bool is_simpl_consistent = true;
+        bool color_simplex = false;
         if (color_inconsistencies)
         {
-          is_simpl_consistent = is_simplex_consistent(c);
-          if (!is_simpl_consistent) 
+          color_simplex = !is_simplex_consistent(c);
+          if (color_simplex) 
             is_star_inconsistent = true;
+        }
+
+        if (p_additional_simpl_to_color && !color_simplex)
+        {
+          color_simplex = (std::find(
+            p_additional_simpl_to_color->begin(),
+            p_additional_simpl_to_color->end(),
+            c) != p_additional_simpl_to_color->end());
         }
 
         // If only 2 vertices, add a third one (each vertex is duplicated in
@@ -2062,7 +2120,7 @@ private:
 
         if (num_vertices <= 3)
         {
-          star_using_triangles.push_back(std::make_pair(c, is_simpl_consistent));
+          star_using_triangles.push_back(std::make_pair(c, color_simplex));
         }
         else
         {
@@ -2079,7 +2137,7 @@ private:
                 triangle.insert(*it);
             }
             star_using_triangles.push_back(
-              std::make_pair(triangle, is_simpl_consistent));
+              std::make_pair(triangle, color_simplex));
           } while (std::next_permutation(booleans.begin(), booleans.end()));
         }
       }
@@ -2097,7 +2155,7 @@ private:
           continue;
         
         const std::set<std::size_t> &c = it_simplex->first;
-        bool is_simpl_consistent = it_simplex->second;
+        bool color_simplex = it_simplex->second;
 
         std::stringstream sstr_c;
 
@@ -2109,19 +2167,19 @@ private:
 
         // In order to have only one time each simplex, we only keep it
         // if the lowest index is the index of the center vertex
-        if (*c.begin() != idx && is_simpl_consistent)
+        if (*c.begin() != idx && !color_simplex)
           continue;
 
         os << 3 << " " << sstr_c.str();
-        if (color_inconsistencies)
+        if (color_inconsistencies || p_additional_simpl_to_color)
         {
-          if (is_simpl_consistent)
-            os << " " << color.str();
-          else
+          if (color_simplex)
           {
             os << " 255 0 0";
             ++num_inconsistent_simplices;
           }
+          else
+            os << " " << color.str();
         }
         ++num_simplices;
         os << std::endl;
@@ -2154,11 +2212,10 @@ private:
     return os;
   }
 
-  
   std::ostream &export_simplices_to_off(
     const Simplicial_complex &complex,
     std::ostream & os, std::size_t &num_simplices,
-    bool color_inconsistencies = false)
+    std::set<std::set<std::size_t> > const *p_additional_simpl_to_color = NULL)
   {
     typedef Simplicial_complex::Simplex                     Simplex;
     typedef Simplicial_complex::Simplex_range               Simplex_range;
@@ -2175,7 +2232,16 @@ private:
     {
       Simplex c = *it_s;
 
-      // Gather the triangles here, with a bool saying if it's consistent
+      bool color_simplex = false;
+      if (p_additional_simpl_to_color)
+      {
+        color_simplex = (std::find(
+          p_additional_simpl_to_color->begin(),
+          p_additional_simpl_to_color->end(),
+          c) != p_additional_simpl_to_color->end());
+      }
+
+      // Gather the triangles here
       typedef std::vector<Simplex> Triangles;
       Triangles triangles;
 
@@ -2233,6 +2299,14 @@ private:
         for ( ; it_point_idx != it_tri->end() ; ++it_point_idx)
         {
           os << *it_point_idx << " ";
+        }
+
+        if (p_additional_simpl_to_color)
+        {
+          if (color_simplex)
+            os << " 255 0 0";
+          else
+            os << " 128 128 128";
         }
 
         ++num_simplices;
