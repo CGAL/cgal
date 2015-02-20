@@ -23,23 +23,7 @@
 
 
 
-std::vector<float> positions_poly(0);
-std::vector<float> positions_lines(0);
-std::vector<float> positions_points(0);
-std::vector<float> normals(0);
 
-GLuint rendering_program;
-GLuint vertex_array_object;
-GLint location[7];
-GLfloat *mvp_mat;
-GLfloat *mv_mat;
-GLfloat colors[4];
-
-GLuint vertex_shader;
-GLuint fragment_shader;
-GLuint program;
-GLuint vao;
-GLuint buffer[2];
 
 struct light_info
 {
@@ -101,7 +85,8 @@ struct Polyhedron_to_polygon_soup_writer {
 }; // end struct Polyhedron_to_soup_writer
 light_info light;
 
-GLuint compile_shaders(void)
+GLuint
+Scene_polygon_soup_item::compile_shaders(void)
 {
 
 
@@ -109,7 +94,7 @@ GLuint compile_shaders(void)
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(3, buffer);
+    glGenBuffers(2, buffer);
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
 
@@ -245,8 +230,8 @@ GLuint compile_shaders(void)
     glDeleteShader(fragment_shader);
     return program;
 }
-
-void uniform_attrib()
+void
+Scene_polygon_soup_item::uniform_attrib(void) const
 {
 
 
@@ -302,31 +287,6 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
         }
     }
 
-    if(soup->display_non_manifold_edges) {
-        double current_color[4];
-        GLboolean lightning;
-        ::glGetDoublev(GL_CURRENT_COLOR, current_color);
-        //::glColor3d(1., 0., 0.); // red
-        ::glGetBooleanv(GL_LIGHTING, &lightning);
-        ::glDisable(GL_LIGHTING);
-
-        BOOST_FOREACH(const Polygon_soup::Edge& edge,
-                      soup->non_manifold_edges)
-        {
-            const Point_3& a = soup->points[edge[0]];
-            const Point_3& b = soup->points[edge[1]];
-            positions_lines.push_back(a.x());
-            positions_lines.push_back(a.y());
-            positions_lines.push_back(a.y());
-
-            positions_lines.push_back(b.x());
-            positions_lines.push_back(b.y());
-            positions_lines.push_back(b.y());
-
-        }
-        if(lightning) glEnable(GL_LIGHTING);
-        //	::glColor4dv(current_color);
-    }
 
     rendering_program = compile_shaders();
     //Allocates a uniform location for the MVP and MV matrices
@@ -344,7 +304,7 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
 
 Scene_polygon_soup_item::Scene_polygon_soup_item()
     : Scene_item(),
-      soup(0),
+      soup(0),positions_poly(0), normals(0),
       oriented(false)
 {
     glewInit();
@@ -355,9 +315,9 @@ Scene_polygon_soup_item::Scene_polygon_soup_item()
 
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
 {
-    glDeleteVertexArrays(1, &vertex_array_object);
+    glDeleteBuffers(2, buffer);
+    glDeleteVertexArrays(1, &vao);
     glDeleteProgram(rendering_program);
-    glDeleteVertexArrays(1, &vertex_array_object);
 
     delete soup;
 }
@@ -527,29 +487,7 @@ Scene_polygon_soup_item::toolTip() const
 void
 Scene_polygon_soup_item::draw() const {
 
-    //fills the arraw of colors with the current color
-    glGetFloatv(GL_CURRENT_COLOR, colors );
 
-    //Gets lighting info :
-
-    //position
-    glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
-
-    //ambient
-    glGetLightfv(GL_LIGHT0, GL_AMBIENT, light.ambient);
-    light.ambient[0]*=colors[0];
-    light.ambient[1]*=colors[1];
-    light.ambient[2]*=colors[2];
-
-    //specular
-    glGetLightfv(GL_LIGHT0, GL_SPECULAR, light.specular);
-
-    //diffuse
-    glGetLightfv(GL_LIGHT0, GL_DIFFUSE, light.diffuse);
-
-    light.diffuse[0]*=colors[0];
-    light.diffuse[1]*=colors[1];
-    light.diffuse[2]*=colors[2];
 
     // tells the GPU to use the program just created
     glUseProgram(rendering_program);
@@ -612,7 +550,23 @@ Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
         mv_mat[i] = GLfloat(d_mat[i]);
 
 
-    glGetFloatv(GL_CURRENT_COLOR, colors );
+    draw_points();
+}
+bool
+Scene_polygon_soup_item::isEmpty() const {
+
+    return (soup == 0 || soup->points.empty());
+}
+void
+Scene_polygon_soup_item::changed()
+{
+    //fills the arraw of colors with the current color
+    GLfloat temp[4];
+    glGetFloatv(GL_CURRENT_COLOR, temp);
+    for(int i=0; i<4; i++)
+        colors[i] = temp[i];
+    //Gets lighting info :
+
     //position
     glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
 
@@ -632,12 +586,6 @@ Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
     light.diffuse[1]*=colors[1];
     light.diffuse[2]*=colors[2];
 
-    draw_points();
-}
-bool
-Scene_polygon_soup_item::isEmpty() const {
-
-    return (soup == 0 || soup->points.empty());
 }
 
 Scene_polygon_soup_item::Bbox

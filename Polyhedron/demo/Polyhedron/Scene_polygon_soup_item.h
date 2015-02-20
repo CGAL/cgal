@@ -140,8 +140,8 @@ public:
   void draw() const;
   void draw(Viewer_interface*) const;
   void draw_points() const;
- void draw_points(Viewer_interface*) const;
-
+  void draw_points(Viewer_interface*) const;
+  void changed();
   bool isFinite() const { return true; }
   bool isEmpty() const;
   Bbox bbox() const;
@@ -164,7 +164,24 @@ public slots:
 private:
   Polygon_soup* soup;
   bool oriented;
-  void compute_normals_and_vertices();
+  std::vector<float> positions_poly;
+  std::vector<float> normals;
+
+  GLuint rendering_program;
+  GLint location[7];
+  GLfloat *mvp_mat;
+  GLfloat *mv_mat;
+  GLfloat colors[4];
+
+  GLuint vertex_shader;
+  GLuint fragment_shader;
+  GLuint program;
+  GLuint vao;
+  GLuint buffer[2];
+  GLuint compile_shaders(void);
+  void compute_normals_and_vertices(void);
+  void uniform_attrib(void) const;
+
 }; // end class Scene_polygon_soup_item
 
 #endif // SCENE_POLYGON_SOUP_ITEM_H
