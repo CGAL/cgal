@@ -526,35 +526,12 @@ Scene_polygon_soup_item::toolTip() const
 
 void
 Scene_polygon_soup_item::draw() const {
-    // tells the GPU to use the program just created
-    glUseProgram(rendering_program);
-    uniform_attrib();
-    //draw the polygons
-    // the third argument is the number of vec4 that will be entered
-    glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
-    //Tells OpenGL not to use the program anymore
-    glUseProgram(0);
-}
 
-void
-Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
-
-    /* typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
-    typedef Polygon_soup::Polygons::size_type size_type;
-*/
-    //Remplit la matrice MVP
-    GLdouble d_mat[16];
-    viewer->camera()->getModelViewProjectionMatrix(d_mat);
-    //Convert the GLdoubles matrix in GLfloats
-    for (int i=0; i<16; ++i)
-        mvp_mat[i] = GLfloat(d_mat[i]);
-
-    viewer->camera()->getModelViewMatrix(d_mat);
-    for (int i=0; i<16; ++i)
-        mv_mat[i] = GLfloat(d_mat[i]);
-
-
+    //fills the arraw of colors with the current color
     glGetFloatv(GL_CURRENT_COLOR, colors );
+
+    //Gets lighting info :
+
     //position
     glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
 
@@ -574,6 +551,33 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     light.diffuse[1]*=colors[1];
     light.diffuse[2]*=colors[2];
 
+    // tells the GPU to use the program just created
+    glUseProgram(rendering_program);
+    uniform_attrib();
+    //draw the polygons
+    // the third argument is the number of vec4 that will be entered
+    glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
+    //Tells OpenGL not to use the program anymore
+    glUseProgram(0);
+}
+
+void
+Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
+
+
+    //fills the MVP and MV matrices.
+
+    GLdouble d_mat[16];
+    viewer->camera()->getModelViewProjectionMatrix(d_mat);
+    //Convert the GLdoubles matrix in GLfloats
+    for (int i=0; i<16; ++i)
+        mvp_mat[i] = GLfloat(d_mat[i]);
+
+    viewer->camera()->getModelViewMatrix(d_mat);
+    for (int i=0; i<16; ++i)
+        mv_mat[i] = GLfloat(d_mat[i]);
+
+
     draw();
 }
 
@@ -582,33 +586,21 @@ Scene_polygon_soup_item::draw_points() const {
 
 
     if(soup == 0) return;
-    //::glBegin(GL_POINTS);
-    /*  for(Polygon_soup::Points::const_iterator pit = soup->points.begin(),
-        end = soup->points.end();
-        pit != end; ++pit)
-    {
-         ::glVertex3d(pit->x(), pit->y(), pit->z());
-        positions_points.push_back(pit->x());
-        positions_points.push_back(pit->y());
-        positions_points.push_back(pit->z());
 
-    }
-    //::glEnd();*/
     // tells the GPU to use the program just created
     glUseProgram(rendering_program);
 
     uniform_attrib();
 
-    //draw the polygons
-    // the third argument is the number of vec4 that will be entered
-    glDrawArrays(GL_POINTS, 0, positions_poly.size()/4);
+    //draw the points
+    glDrawArrays(GL_POINTS, 0, positions_poly.size());
     //Tells OpenGL not to use the program anymore
     glUseProgram(0);
 }
 
 void
 Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
-    //Remplit la matrice MVP
+    //fills the MVP Matrix
     GLdouble d_mat[16];
     viewer->camera()->getModelViewProjectionMatrix(d_mat);
     //Convert the GLdoubles matrix in GLfloats
