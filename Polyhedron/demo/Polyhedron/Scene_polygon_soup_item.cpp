@@ -357,8 +357,8 @@ Scene_polygon_soup_item::Scene_polygon_soup_item()
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
 {
 
-     //glDeleteBuffers(2, buffer);
-    //glDeleteVertexArrays(1, &vao);
+    glDeleteBuffers(2, buffer);
+    glDeleteVertexArrays(1, &vao);
     glDeleteProgram(rendering_program);
 
     delete soup;
@@ -529,6 +529,16 @@ Scene_polygon_soup_item::toolTip() const
 void
 Scene_polygon_soup_item::draw() const {
 
+    //Calls the buffer info again so that it's the right one used even if there are several objects drawn
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+    glBufferData(GL_ARRAY_BUFFER, (positions_poly.size())*sizeof(positions_poly.data()), positions_poly.data(), GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(0,4,GL_FLOAT,GL_FALSE,0, NULL);
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
+    glBufferData(GL_ARRAY_BUFFER, (normals.size())*sizeof(normals.data()), normals.data(), GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glEnableVertexAttribArray(1);
 
     // tells the GPU to use the program just created
     glUseProgram(rendering_program);
@@ -537,7 +547,11 @@ Scene_polygon_soup_item::draw() const {
     // the third argument is the number of vec4 that will be entered
     glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
     //Tells OpenGL not to use the program anymore
+
     glUseProgram(0);
+
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
 }
 
 void
@@ -565,6 +579,17 @@ Scene_polygon_soup_item::draw_points() const {
 
 
     if(soup == 0) return;
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+
+    glBufferData(GL_ARRAY_BUFFER, (positions_poly.size())*sizeof(positions_poly.data()), positions_poly.data(), GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(0,4,GL_FLOAT, GL_FALSE, 0, NULL);
+    glEnableVertexAttribArray(0);
+    //Bind the second and initialize it
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
+    glBufferData(GL_ARRAY_BUFFER, (normals.size())*sizeof(normals.data()), normals.data(), GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glEnableVertexAttribArray(1);
 
     // tells the GPU to use the program just created
     glUseProgram(rendering_program);
