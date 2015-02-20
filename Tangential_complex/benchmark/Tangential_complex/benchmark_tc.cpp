@@ -213,17 +213,7 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
   CGAL_TC_SET_PERFORMANCE_DATA("Final_num_inconsistent_local_tr", 
                                final_num_inconsistent_local_tr);
   
-  tc.check_and_solve_inconsistencies_by_adding_higher_dim_simplices();
-  TC::Simplicial_complex complex;
-  int max_dim = tc.export_TC(complex);
-  tc.check_if_all_simplices_are_in_the_ambient_delaunay(&complex);
-  complex.collapse(max_dim);
-  complex.display_stats();
-
-  std::ofstream off_stream("output/test.off"); // CJTODO TEMP TEST
-  tc.export_to_off(complex, off_stream);
-  
-  double export_after_time = -1.;
+  double export_after_fix_time = -1.;
   if (intrinsic_dim <= 3)
   {
     t.reset();
@@ -232,10 +222,48 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
       << "_in_R" << ambient_dim << "_AFTER_FIX.off";
     std::ofstream off_stream(output_filename.str().c_str());
     tc.export_to_off(off_stream, true);
-    export_after_time = t.elapsed(); t.reset();
+    export_after_fix_time = t.elapsed(); t.reset();
   }
-  /*else
-    tc.number_of_inconsistent_simplices();*/
+  
+  // Try to solve the remaining inconstencies
+  tc.check_and_solve_inconsistencies_by_adding_higher_dim_simplices();
+  TC::Simplicial_complex complex;
+  int max_dim = tc.export_TC(complex, false);
+  std::set<std::set<std::size_t> > not_delaunay_simplices;
+  if (ambient_dim <= 4)
+  {
+    tc.check_if_all_simplices_are_in_the_ambient_delaunay(
+      &complex, true, &not_delaunay_simplices);
+  }
+
+  double export_after_fix2_time = -1.;
+  if (intrinsic_dim <= 3)
+  {
+    t.reset();
+    std::stringstream output_filename;
+    output_filename << "output/" << input_name_stripped << "_" << intrinsic_dim
+      << "_in_R" << ambient_dim << "_AFTER_FIX2.off";
+    std::ofstream off_stream(output_filename.str().c_str());
+    tc.export_to_off(complex, off_stream, &not_delaunay_simplices);
+    export_after_fix2_time = t.elapsed(); t.reset();
+  }
+
+  // Collapse
+  complex.collapse(max_dim);
+  
+  double export_after_collapse_time = -1.;
+  if (intrinsic_dim <= 3)
+  {
+    t.reset();
+    std::stringstream output_filename;
+    output_filename << "output/" << input_name_stripped << "_" << intrinsic_dim
+      << "_in_R" << ambient_dim << "_AFTER_COLLAPSE.off";
+    std::ofstream off_stream(output_filename.str().c_str());
+    tc.export_to_off(complex, off_stream);
+    export_after_collapse_time = t.elapsed(); t.reset();
+  }
+
+  complex.display_stats();
 
   std::cerr << std::endl
     << "================================================" << std::endl
@@ -249,7 +277,10 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
     << "  * Fix inconsistencies: " << fix_time 
     <<      " (" << num_fix_steps << " steps) ==> " 
     <<      (fix_ret == CGAL::TC_FIXED ? "FIXED" : "NOT fixed") << std::endl
-    << "  * Export to OFF (after fix): " << export_after_time << std::endl
+    << "  * Export to OFF (after fix): " << export_after_fix_time << std::endl
+    << "  * Export to OFF (after fix2): "<< export_after_fix2_time << std::endl
+    << "  * Export to OFF (after collapse): "
+    <<      export_after_collapse_time << std::endl
     << "================================================" << std::endl
     << std::endl;
 

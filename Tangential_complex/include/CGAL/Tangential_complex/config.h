@@ -58,10 +58,10 @@
     // for local tri where there are some inconsistencies
     // But be careful: refreshing the TC may invalidate cells, so the
     // incident cells have to be recomputed again
-#define CGAL_TC_PERTURB_POSITION
+//#define CGAL_TC_PERTURB_POSITION
 # define CGAL_TC_PERTURB_POSITION_TANGENTIAL // default
 //# define CGAL_TC_PERTURB_POSITION_GLOBAL
-//#define CGAL_TC_PERTURB_WEIGHT
+#define CGAL_TC_PERTURB_WEIGHT
 //#define CGAL_TC_PERTURB_TANGENT_SPACE
 
 //========================= Parameters ========================================
