@@ -245,19 +245,32 @@ Scene_polygon_soup_item::compile_shaders(void)
     return program;
 }
 void
-Scene_polygon_soup_item::uniform_attrib(void) const
+Scene_polygon_soup_item::uniform_attrib(Viewer_interface* viewer) const
 {
     GLfloat colors[4];
     light_info light;
     GLint is_both_sides = 0;
+    GLfloat mvp_mat[16];
+    GLfloat mv_mat[16];
+
+    //fills the MVP and MV matrices.
+
+    GLdouble d_mat[16];
+    viewer->camera()->getModelViewProjectionMatrix(d_mat);
+    //Convert the GLdoubles matrix in GLfloats
+    for (int i=0; i<16; ++i)
+        mvp_mat[i] = GLfloat(d_mat[i]);
+
+    viewer->camera()->getModelViewMatrix(d_mat);
+    for (int i=0; i<16; ++i)
+        mv_mat[i] = GLfloat(d_mat[i]);
+
 
     glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
 
     //fills the arraw of colors with the current color
-    GLfloat temp[4];
-    glGetFloatv(GL_CURRENT_COLOR, temp);
-    for(int i=0; i<4; i++)
-        colors[i] = temp[i];
+    glGetFloatv(GL_CURRENT_COLOR, colors);
+
     //Gets lighting info :
 
     //position
@@ -534,97 +547,64 @@ Scene_polygon_soup_item::toolTip() const
 }
 
 void
-Scene_polygon_soup_item::draw() const {
+Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
+    if(soup == 0) return;
 
-    //Calls the buffer info again so that it's the right one used even if there are several objects drawn
+    //Calls the buffer info again so that it's the right one used even if
+    //there are several objects drawn
+
+    glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-    glBufferData(GL_ARRAY_BUFFER, (positions_poly.size())*sizeof(positions_poly.data()), positions_poly.data(), GL_DYNAMIC_DRAW);
-    glVertexAttribPointer(0,4,GL_FLOAT,GL_FALSE,0, NULL);
     glEnableVertexAttribArray(0);
+
     glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-    glBufferData(GL_ARRAY_BUFFER, (normals.size())*sizeof(normals.data()), normals.data(), GL_DYNAMIC_DRAW);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
     glEnableVertexAttribArray(1);
 
     // tells the GPU to use the program just created
     glUseProgram(rendering_program);
-    uniform_attrib();
+    uniform_attrib(viewer);
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
     glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
     //Tells OpenGL not to use the program anymore
 
+    // Clean-up
     glUseProgram(0);
-
-    glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
 
 void
-Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
-
-
-    //fills the MVP and MV matrices.
-
-    GLdouble d_mat[16];
-    viewer->camera()->getModelViewProjectionMatrix(d_mat);
-    //Convert the GLdoubles matrix in GLfloats
-    for (int i=0; i<16; ++i)
-        mvp_mat[i] = GLfloat(d_mat[i]);
-
-    viewer->camera()->getModelViewMatrix(d_mat);
-    for (int i=0; i<16; ++i)
-        mv_mat[i] = GLfloat(d_mat[i]);
-
-
-    draw();
-}
-
-void
-Scene_polygon_soup_item::draw_points() const {
-
-
+Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
     if(soup == 0) return;
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+    glBindVertexArray(vao);
 
-    glBufferData(GL_ARRAY_BUFFER, (positions_poly.size())*sizeof(positions_poly.data()), positions_poly.data(), GL_DYNAMIC_DRAW);
-    glVertexAttribPointer(0,4,GL_FLOAT, GL_FALSE, 0, NULL);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
     glEnableVertexAttribArray(0);
     //Bind the second and initialize it
     glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-    glBufferData(GL_ARRAY_BUFFER, (normals.size())*sizeof(normals.data()), normals.data(), GL_DYNAMIC_DRAW);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
     glEnableVertexAttribArray(1);
 
     // tells the GPU to use the program just created
     glUseProgram(rendering_program);
 
-    uniform_attrib();
+    uniform_attrib(viewer);
 
     //draw the points
     glDrawArrays(GL_POINTS, 0, positions_poly.size()/4);
-    //Tells OpenGL not to use the program anymore
+
+    // Clean-up
     glUseProgram(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
 
-void
-Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
-    //fills the MVP Matrix
-    GLdouble d_mat[16];
-    viewer->camera()->getModelViewProjectionMatrix(d_mat);
-    //Convert the GLdoubles matrix in GLfloats
-    for (int i=0; i<16; ++i)
-        mvp_mat[i] = GLfloat(d_mat[i]);
-
-    viewer->camera()->getModelViewMatrix(d_mat);
-    for (int i=0; i<16; ++i)
-        mv_mat[i] = GLfloat(d_mat[i]);
-
-
-    draw_points();
-}
 bool
 Scene_polygon_soup_item::isEmpty() const {
 

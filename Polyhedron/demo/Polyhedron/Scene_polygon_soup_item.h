@@ -137,9 +137,8 @@ public:
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=Gouraud && m!=PointsPlusNormals && m!=Splatting); } // CHECK THIS!
   // OpenGL drawing in a display list
-  void draw() const;
+  void draw() const {}
   void draw(Viewer_interface*) const;
-  void draw_points() const;
   void draw_points(Viewer_interface*) const;
   void changed();
   bool isFinite() const { return true; }
@@ -169,8 +168,6 @@ private:
 
   GLuint rendering_program;
   GLint location[8];
-  GLfloat *mvp_mat;
-  GLfloat *mv_mat;
 
 
   GLuint vertex_shader;
@@ -181,7 +178,7 @@ private:
   void initialize_buffers();
   GLuint compile_shaders(void);
   void compute_normals_and_vertices(void);
-  void uniform_attrib(void) const;
+  void uniform_attrib(Viewer_interface*) const;
 
 }; // end class Scene_polygon_soup_item
 
