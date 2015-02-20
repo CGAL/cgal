@@ -380,7 +380,7 @@ Scene_polygon_soup_item::load(std::istream& in)
     else soup->clear();
 
     bool result = CGAL::read_OFF(in, soup->points, soup->polygons);
-    compute_normals_and_vertices();
+    emit changed();
     return result;
 }
 
@@ -626,7 +626,7 @@ Scene_polygon_soup_item::isEmpty() const {
 void
 Scene_polygon_soup_item::changed()
 {
-
+    compute_normals_and_vertices();
 }
 
 Scene_polygon_soup_item::Bbox
