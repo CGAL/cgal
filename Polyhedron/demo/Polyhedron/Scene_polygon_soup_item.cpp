@@ -123,6 +123,8 @@ Scene_polygon_soup_item::compile_shaders(void)
         "layout (location = 1) in vec3 vNormals; \n"
         "uniform mat4 mvp_matrix; \n"
         "uniform mat4 mv_matrix; \n"
+
+        "uniform int is_two_side; \n"
         "uniform vec3 vColors; \n"
         "uniform vec3 light_pos;  \n"
         "uniform vec3 light_diff; \n"
@@ -146,8 +148,11 @@ Scene_polygon_soup_item::compile_shaders(void)
         "V = normalize(V); \n"
 
         "vec3 R = reflect(-L, N); \n"
-
-        "vec3 diffuse = max(dot(N,L), 0.0) * light_diff; \n"
+        "  vec3 diffuse; \n"
+        "if(is_two_side == 1) \n"
+        "   diffuse = abs(dot(N,L)) * light_diff; \n"
+        "else \n"
+        "   diffuse = max(dot(N,L), 0.0) * light_diff; \n"
         "vec3 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
 
         "fColors = light_amb + diffuse + specular ; \n"
@@ -234,6 +239,9 @@ Scene_polygon_soup_item::uniform_attrib(void) const
 {
     GLfloat colors[4];
     light_info light;
+    GLint is_both_sides = 0;
+
+    glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
 
     //fills the arraw of colors with the current color
     GLfloat temp[4];
@@ -272,6 +280,7 @@ Scene_polygon_soup_item::uniform_attrib(void) const
     glUniform3fv(location[4], 1, light.specular);
     glUniform3fv(location[5], 1, light.ambient);
     glUniform3fv(location[6], 1, colors);
+    glUniform1i(location[7], is_both_sides);
 }
 
 void
@@ -326,6 +335,7 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
     location[4] = glGetUniformLocation(rendering_program, "light_spec");
     location[5] = glGetUniformLocation(rendering_program, "light_amb");
     location[6] = glGetUniformLocation(rendering_program, "vColors");
+    location[7] = glGetUniformLocation(rendering_program, "is_two_side");
 }
 
 

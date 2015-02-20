@@ -168,7 +168,7 @@ private:
   std::vector<float> normals;
 
   GLuint rendering_program;
-  GLint location[7];
+  GLint location[8];
   GLfloat *mvp_mat;
   GLfloat *mv_mat;
 
