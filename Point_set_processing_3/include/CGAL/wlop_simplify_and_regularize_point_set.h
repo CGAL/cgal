@@ -505,7 +505,7 @@ wlop_simplify_and_regularize_point_set(
                                nb_neighbors);
     radius = average_spacing * 8.0;
 
-#ifdef CGAL_DEBUG_MODE
+#ifdef CGAL_PSP3_VERBOSE
     std::cout << "The estimated radius size is: " << radius << std::endl;
     std::cout << "Be careful! Using this radius estimation may not be able to have good performance/result for different input" << std::endl;
 #endif

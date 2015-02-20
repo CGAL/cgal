@@ -38,7 +38,7 @@
   #include <boost/property_map.hpp>
 #endif
 
-//#define  CGAL_DEBUG_MODE
+//#define  CGAL_PSP3_VERBOSE
 
 namespace CGAL {
 
@@ -76,7 +76,7 @@ base_point_selection(
 
   if (neighbor_points.empty())
   {
-#ifdef CGAL_DEBUG_MODE
+#ifdef CGAL_PSP3_VERBOSE
     std::cout << "empty neighborhood" << std::endl;
 #endif
     output_base_index = query.index;
@@ -369,7 +369,7 @@ edge_aware_upsample_point_set(
   if (neighbor_radius < average_spacing * 1.0)
   {
     neighbor_radius = average_spacing * 3.0;
-#ifdef CGAL_DEBUG_MODE
+#ifdef CGAL_PSP3_VERBOSE
     std::cout << "neighbor radius: " << neighbor_radius << std::endl;
 #endif
   }
@@ -413,7 +413,7 @@ edge_aware_upsample_point_set(
 
   for (unsigned int iter_time = 0; iter_time < max_iter_time; ++iter_time)
   {
-  #ifdef CGAL_DEBUG_MODE
+  #ifdef CGAL_PSP3_VERBOSE
      std::cout << std::endl << "iter_time: " << iter_time + 1  << std::endl;
   #endif
     if (iter_time > 0)
@@ -427,7 +427,7 @@ edge_aware_upsample_point_set(
                                                           bbox,
                                                           current_radius);
     }
- #ifdef CGAL_DEBUG_MODE
+ #ifdef CGAL_PSP3_VERBOSE
     std::cout << "current radius: " << current_radius << std::endl; 
  #endif
 
@@ -474,7 +474,7 @@ edge_aware_upsample_point_set(
 
     FT density_pass_threshold2 = density_pass_threshold * 
                                  density_pass_threshold;
- #ifdef CGAL_DEBUG_MODE
+ #ifdef CGAL_PSP3_VERBOSE
     std::cout << "pass_threshold:  " << density_pass_threshold << std::endl;
  #endif
     // insert new points until all the points' density pass the threshold
@@ -482,7 +482,7 @@ edge_aware_upsample_point_set(
     unsigned int loop = 0;
     while (true)
     {
-   #ifdef CGAL_DEBUG_MODE
+   #ifdef CGAL_PSP3_VERBOSE
       std::cout << "loop_time: " << loop + 1 << std::endl;
    #endif
       unsigned int count_not_pass = 0;
@@ -552,7 +552,7 @@ edge_aware_upsample_point_set(
           break;
         }
       }
-   #ifdef CGAL_DEBUG_MODE
+   #ifdef CGAL_PSP3_VERBOSE
       std::cout << "current size: " << rich_point_set.size() << std::endl;
    #endif
       if (count_not_pass == 0 || 

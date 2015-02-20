@@ -55,7 +55,7 @@
 #endif // CGAL_LINKED_WITH_TBB
 
 
-//#define CGAL_DEBUG_MODE //on-off cout
+//#define CGAL_PSP3_VERBOSE 
 
 namespace CGAL {
 
@@ -453,7 +453,7 @@ bilateral_smooth_point_set(
 
    unsigned int nb_points = pwns.size();
 
-#ifdef CGAL_DEBUG_MODE
+#ifdef CGAL_PSP3_VERBOSE
    std::cout << "Initialization and compute max spacing: " << std::endl;
 #endif
    // initiate a KD-tree search for points
@@ -468,7 +468,7 @@ bilateral_smooth_point_set(
    }
    Tree tree(treeElements.begin(), treeElements.end());
    // Guess spacing
-#ifdef CGAL_DEBUG_MODE
+#ifdef CGAL_PSP3_VERBOSE
    CGAL::Timer task_timer;
    task_timer.start();
 #endif
@@ -481,12 +481,12 @@ bilateral_smooth_point_set(
      guess_neighbor_radius = (CGAL::max)(max_spacing, guess_neighbor_radius); 
    }
    
-#ifdef CGAL_DEBUG_MODE
+#ifdef CGAL_PSP3_VERBOSE
    task_timer.stop();
 #endif
    guess_neighbor_radius *= 0.95;
 
-#ifdef CGAL_DEBUG_MODE
+#ifdef CGAL_PSP3_VERBOSE
    CGAL::Memory_sizer::size_type memory = CGAL::Memory_sizer().virtual_size();
    std::cout << "done: " << task_timer.time() << " seconds, "
              << (memory>>20) << " Mb allocated" << std::endl;
@@ -518,7 +518,7 @@ bilateral_smooth_point_set(
      }
    }
    
-#ifdef CGAL_DEBUG_MODE
+#ifdef CGAL_PSP3_VERBOSE
    task_timer.stop();
    memory = CGAL::Memory_sizer().virtual_size();
    std::cout << "done: " << task_timer.time() << " seconds, "
@@ -561,7 +561,7 @@ bilateral_smooth_point_set(
           sharpness_angle);
      }
    }
-#ifdef CGAL_DEBUG_MODE
+#ifdef CGAL_PSP3_VERBOSE
    task_timer.stop(); 
    memory = CGAL::Memory_sizer().virtual_size();
    std::cout << "done: " << task_timer.time() << " seconds, "
