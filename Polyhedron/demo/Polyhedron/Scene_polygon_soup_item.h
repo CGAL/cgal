@@ -163,6 +163,7 @@ public slots:
 private:
   Polygon_soup* soup;
   bool oriented;
+  void compute_normals_and_vertices();
 }; // end class Scene_polygon_soup_item
 
 #endif // SCENE_POLYGON_SOUP_ITEM_H

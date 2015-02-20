@@ -30,7 +30,6 @@ std::vector<float> normals(0);
 
 GLuint rendering_program;
 GLuint vertex_array_object;
-int isInit = 0;
 GLint location[7];
 GLfloat *mvp_mat;
 GLfloat *mv_mat;
@@ -58,7 +57,50 @@ struct light_info
     GLfloat spec_power;
 
 };
+struct Polyhedron_to_polygon_soup_writer {
+    typedef Kernel::Point_3 Point_3;
+
+    Polygon_soup* soup;
+    Polygon_soup::Polygon_3 polygon;
+
+    Polyhedron_to_polygon_soup_writer(Polygon_soup* soup) : soup(soup), polygon() {
+    }
+
+    void write_header( std::ostream&,
+                       std::size_t /* vertices */,
+                       std::size_t /* halfedges */,
+                       std::size_t /* facets */,
+                       bool /* normals */ = false ) {
+        soup->clear();
+    }
+
+    void write_footer() {
+    }
+
+    void write_vertex( const double& x, const double& y, const double& z) {
+        soup->points.push_back(Point_3(x, y, z));
+    }
+
+    void write_normal( const double& /* x */, const double& /* y */, const double& /* z */) {
+    }
+
+    void write_facet_header() {
+    }
+
+    void write_facet_begin( std::size_t no) {
+        polygon.clear();
+        polygon.reserve(no);
+    }
+    void write_facet_vertex_index( std::size_t index) {
+        polygon.push_back(index);
+    }
+    void write_facet_end() {
+        soup->polygons.push_back(polygon);
+        polygon.clear();
+    }
+}; // end struct Polyhedron_to_soup_writer
 light_info light;
+
 GLuint compile_shaders(void)
 {
 
@@ -203,92 +245,74 @@ GLuint compile_shaders(void)
     glDeleteShader(fragment_shader);
     return program;
 }
+void
+Scene_polygon_soup_item::compute_normals_and_vertices(){
+    //get the vertices and normals
+    typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
+    typedef Polygon_soup::Polygons::size_type size_type;
+    for(Polygons_iterator it = soup->polygons.begin();
+        it != soup->polygons.end(); ++it)
+    {
 
-//The rendering function
-void render()
-{    
-    if(isInit !=1)
-        rendering_program = compile_shaders();
+        const Point_3& pa = soup->points[it->at(0)];
+        const Point_3& pb = soup->points[it->at(1)];
+        const Point_3& pc = soup->points[it->at(2)];
 
-    const GLfloat color[] = { 0.9f, 0.9f, 0.9f, 1.0f };
-    if(isInit !=1)
-        glClearBufferfv(GL_COLOR, 0, color);
+        Kernel::Vector_3 n = CGAL::cross_product(pb-pa, pc -pa);
+        n = n / std::sqrt(n * n);
 
-    // tells the GPU to use the program just created
-    glUseProgram(rendering_program);
+        normals.push_back(n.x());
+        normals.push_back(n.y());
+        normals.push_back(n.z());
 
-    //Allocates a uniform location for the MVP and MV matrices
-    location[0] = glGetUniformLocation(rendering_program, "mvp_matrix");
-    location[1] = glGetUniformLocation(rendering_program, "mv_matrix");
+        normals.push_back(n.x());
+        normals.push_back(n.y());
+        normals.push_back(n.z());
 
-    //Allocates a uniform location for the light values
-    location[2] = glGetUniformLocation(rendering_program, "light_pos");
-    location[3] = glGetUniformLocation(rendering_program, "light_diff");
-    location[4] = glGetUniformLocation(rendering_program, "light_spec");
-    location[5] = glGetUniformLocation(rendering_program, "light_amb");
-    location[6] = glGetUniformLocation(rendering_program, "vColors");
 
-    //Set the ModelViewProjection and ModelView matrices
-    glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
-    glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
+        normals.push_back(n.x());
+        normals.push_back(n.y());
+        normals.push_back(n.z());
 
-    //Set the light infos
-    glUniform3fv(location[2], 1, light.position);
-    glUniform3fv(location[3], 1, light.diffuse);
-    glUniform3fv(location[4], 1, light.specular);
-    glUniform3fv(location[5], 1, light.ambient);
-    glUniform3fv(location[6], 1, colors);
 
-    isInit = 1;
-    //draw the polygons
-    // the third argument is the number of vec4 that will be entered
-    glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
-    //Tells OpenGL not to use the program anymore
-    glUseProgram(0);
+        for(size_type i = 0; i < it->size(); ++i)
+        {
+            const Point_3& p = soup->points[it->at(i)];
+            positions_poly.push_back(p.x());
+            positions_poly.push_back(p.y());
+            positions_poly.push_back(p.z());
+            positions_poly.push_back(1.0);
+        }
+    }
+
+    if(soup->display_non_manifold_edges) {
+        double current_color[4];
+        GLboolean lightning;
+        ::glGetDoublev(GL_CURRENT_COLOR, current_color);
+        //::glColor3d(1., 0., 0.); // red
+        ::glGetBooleanv(GL_LIGHTING, &lightning);
+        ::glDisable(GL_LIGHTING);
+
+        BOOST_FOREACH(const Polygon_soup::Edge& edge,
+                      soup->non_manifold_edges)
+        {
+            const Point_3& a = soup->points[edge[0]];
+            const Point_3& b = soup->points[edge[1]];
+            positions_lines.push_back(a.x());
+            positions_lines.push_back(a.y());
+            positions_lines.push_back(a.y());
+
+            positions_lines.push_back(b.x());
+            positions_lines.push_back(b.y());
+            positions_lines.push_back(b.y());
+
+        }
+        if(lightning) glEnable(GL_LIGHTING);
+        //	::glColor4dv(current_color);
+    }
+
+    rendering_program = compile_shaders();
 }
-
-struct Polyhedron_to_polygon_soup_writer {
-    typedef Kernel::Point_3 Point_3;
-
-    Polygon_soup* soup;
-    Polygon_soup::Polygon_3 polygon;
-
-    Polyhedron_to_polygon_soup_writer(Polygon_soup* soup) : soup(soup), polygon() {
-    }
-
-    void write_header( std::ostream&,
-                       std::size_t /* vertices */,
-                       std::size_t /* halfedges */,
-                       std::size_t /* facets */,
-                       bool /* normals */ = false ) {
-        soup->clear();
-    }
-
-    void write_footer() {
-    }
-
-    void write_vertex( const double& x, const double& y, const double& z) {
-        soup->points.push_back(Point_3(x, y, z));
-    }
-
-    void write_normal( const double& /* x */, const double& /* y */, const double& /* z */) {
-    }
-
-    void write_facet_header() {
-    }
-
-    void write_facet_begin( std::size_t no) {
-        polygon.clear();
-        polygon.reserve(no);
-    }
-    void write_facet_vertex_index( std::size_t index) {
-        polygon.push_back(index);
-    }
-    void write_facet_end() {
-        soup->polygons.push_back(polygon);
-        polygon.clear();
-    }
-}; // end struct Polyhedron_to_soup_writer
 
 
 Scene_polygon_soup_item::Scene_polygon_soup_item()
@@ -325,7 +349,10 @@ Scene_polygon_soup_item::load(std::istream& in)
 {
     if (!soup) soup=new Polygon_soup();
     else soup->clear();
-    return CGAL::read_OFF(in, soup->points, soup->polygons);
+
+    bool result = CGAL::read_OFF(in, soup->points, soup->polygons);
+    compute_normals_and_vertices();
+    return result;
 }
 
 void Scene_polygon_soup_item::init_polygon_soup(std::size_t nb_pts, std::size_t nb_polygons){
@@ -473,73 +500,38 @@ Scene_polygon_soup_item::toolTip() const
 void
 Scene_polygon_soup_item::draw() const {
 
-    typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
-    typedef Polygon_soup::Polygons::size_type size_type;
-    if(isInit!=1)
-    {
-        for(Polygons_iterator it = soup->polygons.begin();
-            it != soup->polygons.end(); ++it)
-        {
-
-            const Point_3& pa = soup->points[it->at(0)];
-            const Point_3& pb = soup->points[it->at(1)];
-            const Point_3& pc = soup->points[it->at(2)];
-
-            Kernel::Vector_3 n = CGAL::cross_product(pb-pa, pc -pa);
-            n = n / std::sqrt(n * n);
-
-            normals.push_back(n.x());
-            normals.push_back(n.y());
-            normals.push_back(n.z());
-
-            normals.push_back(n.x());
-            normals.push_back(n.y());
-            normals.push_back(n.z());
 
 
-            normals.push_back(n.x());
-            normals.push_back(n.y());
-            normals.push_back(n.z());
+    // tells the GPU to use the program just created
+    glUseProgram(rendering_program);
 
+    //Allocates a uniform location for the MVP and MV matrices
+    location[0] = glGetUniformLocation(rendering_program, "mvp_matrix");
+    location[1] = glGetUniformLocation(rendering_program, "mv_matrix");
 
-            for(size_type i = 0; i < it->size(); ++i)
-            {
-                const Point_3& p = soup->points[it->at(i)];
-                positions_poly.push_back(p.x());
-                positions_poly.push_back(p.y());
-                positions_poly.push_back(p.z());
-                positions_poly.push_back(1.0);
-            }
-        }
+    //Allocates a uniform location for the light values
+    location[2] = glGetUniformLocation(rendering_program, "light_pos");
+    location[3] = glGetUniformLocation(rendering_program, "light_diff");
+    location[4] = glGetUniformLocation(rendering_program, "light_spec");
+    location[5] = glGetUniformLocation(rendering_program, "light_amb");
+    location[6] = glGetUniformLocation(rendering_program, "vColors");
 
-        if(soup->display_non_manifold_edges) {
-            double current_color[4];
-            GLboolean lightning;
-            ::glGetDoublev(GL_CURRENT_COLOR, current_color);
-            //::glColor3d(1., 0., 0.); // red
-            ::glGetBooleanv(GL_LIGHTING, &lightning);
-            ::glDisable(GL_LIGHTING);
+    //Set the ModelViewProjection and ModelView matrices
+    glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
+    glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
 
-            BOOST_FOREACH(const Polygon_soup::Edge& edge,
-                          soup->non_manifold_edges)
-            {
-                const Point_3& a = soup->points[edge[0]];
-                const Point_3& b = soup->points[edge[1]];
-                positions_lines.push_back(a.x());
-                positions_lines.push_back(a.y());
-                positions_lines.push_back(a.y());
+    //Set the light infos
+    glUniform3fv(location[2], 1, light.position);
+    glUniform3fv(location[3], 1, light.diffuse);
+    glUniform3fv(location[4], 1, light.specular);
+    glUniform3fv(location[5], 1, light.ambient);
+    glUniform3fv(location[6], 1, colors);
 
-                positions_lines.push_back(b.x());
-                positions_lines.push_back(b.y());
-                positions_lines.push_back(b.y());
-
-            }
-            if(lightning) glEnable(GL_LIGHTING);
-            //	::glColor4dv(current_color);
-        }
-    }
-
-    render();
+    //draw the polygons
+    // the third argument is the number of vec4 that will be entered
+    glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
+    //Tells OpenGL not to use the program anymore
+    glUseProgram(0);
 }
 
 void
@@ -549,9 +541,16 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     typedef Polygon_soup::Polygons::size_type size_type;
 
     //Remplit la matrice MVP
-    GLdouble d_mvp_mat[16];
-    viewer->camera()->getModelViewProjectionMatrix(d_mvp_mat);
-    viewer->camera()->getModelViewMatrix(mv_mat);
+    GLdouble d_mat[16];
+    viewer->camera()->getModelViewProjectionMatrix(d_mat);
+    //Convert the GLdoubles matrix in GLfloats
+    for (int i=0; i<16; ++i)
+        mvp_mat[i] = GLfloat(d_mat[i]);
+
+    viewer->camera()->getModelViewMatrix(d_mat);
+    for (int i=0; i<16; ++i)
+        mv_mat[i] = GLfloat(d_mat[i]);
+
 
     glGetFloatv(GL_CURRENT_COLOR, colors );
     //position
@@ -572,10 +571,6 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     light.diffuse[0]*=colors[0];
     light.diffuse[1]*=colors[1];
     light.diffuse[2]*=colors[2];
-
-    //Convert the GLdoubles matrix in GLfloats
-    for (int i=0; i<16; ++i)
-        mvp_mat[i] = GLfloat(d_mvp_mat[i]);
 
     draw();
 }
