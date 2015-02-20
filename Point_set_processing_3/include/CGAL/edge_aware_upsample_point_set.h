@@ -441,8 +441,8 @@ edge_aware_upsample_point_set(
       {
         Rich_point& v = rich_point_set[i];
 
-				if (v.neighbors.empty())
-					continue;
+        if (v.neighbors.empty())
+          continue;
 
         // extract neighbor rich points by index
         std::vector<Rich_point> neighbor_rich_points(v.neighbors.size());
@@ -496,8 +496,8 @@ edge_aware_upsample_point_set(
 
         Rich_point& v = rich_point_set[i];
 
-				if (v.neighbors.empty())
-					continue;
+        if (v.neighbors.empty())
+          continue;
 
         // extract neighbor rich points by index
         std::vector<Rich_point> neighbor_rich_points(v.neighbors.size());
