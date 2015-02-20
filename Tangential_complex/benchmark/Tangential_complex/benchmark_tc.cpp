@@ -205,14 +205,24 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
     best_num_inconsistent_local_tr, final_num_inconsistent_local_tr,
     time_limit_for_fix);
   double fix_time = t.elapsed(); t.reset();
-  
+
   CGAL_TC_SET_PERFORMANCE_DATA("Initial_num_inconsistent_local_tr", 
                                initial_num_inconsistent_local_tr);
   CGAL_TC_SET_PERFORMANCE_DATA("Best_num_inconsistent_local_tr", 
                                best_num_inconsistent_local_tr);
   CGAL_TC_SET_PERFORMANCE_DATA("Final_num_inconsistent_local_tr", 
                                final_num_inconsistent_local_tr);
+  
+  tc.check_and_solve_inconsistencies_by_adding_higher_dim_simplices();
+  TC::Simplicial_complex complex;
+  int max_dim = tc.export_TC(complex);
+  tc.check_if_all_simplices_are_in_the_ambient_delaunay(&complex);
+  complex.collapse(max_dim);
+  complex.display_stats();
 
+  std::ofstream off_stream("output/test.off"); // CJTODO TEMP TEST
+  tc.export_to_off(complex, off_stream);
+  
   double export_after_time = -1.;
   if (intrinsic_dim <= 3)
   {

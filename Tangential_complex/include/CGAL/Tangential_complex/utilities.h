@@ -153,6 +153,7 @@ namespace Tangential_complex_ {
     return output_basis;
   }
   
+  // CJTODO: use CGAL::Combination_enumerator<int> (cf. Tangential_complex.h)
   // Compute all the k-combinations of elements
   // Output_iterator::value_type must be std::set<std::size_t> >
   template <typename Elements_container, typename Output_iterator>

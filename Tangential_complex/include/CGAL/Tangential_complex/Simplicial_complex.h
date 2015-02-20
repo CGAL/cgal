@@ -28,8 +28,7 @@
 #include <CGAL/basic.h>
 
 namespace CGAL {
-
-using namespace Tangential_complex_;
+namespace Tangential_complex_ {
 
 class Simplicial_complex
 {
@@ -123,7 +122,7 @@ public:
     if (k > 1)
       collapse(max_simplex_dim - 1);
   }
-  
+
   void display_stats() const
   {
     std::cerr << "==========================================================\n";
@@ -160,6 +159,54 @@ public:
     std::cerr << "==========================================================\n";
   }
 
+  // CJTODO: this is only based on the fact that each edge should have two
+  // cofaces
+  bool is_manifold(bool exit_at_the_first_problem = true)
+  {
+    typedef std::set<std::size_t>               Edge;
+    typedef std::map<Edge, std::size_t>         Cofaces_map;
+    
+    // Counts the number of cofaces of each edge
+    
+    // Create a map associating each non-maximal k-faces to the list of its
+    // maximal cofaces
+    Cofaces_map cofaces_map;
+    for (Complex::const_iterator it_simplex = m_complex.begin(), 
+                                 it_simplex_end = m_complex.end() ;
+         it_simplex != it_simplex_end ; 
+         ++it_simplex)
+    {
+      if (it_simplex->size() > 2)
+      {
+        std::vector<Edge> edges;
+        // Get the k-faces composing the simplex
+        combinations(*it_simplex, 2, std::back_inserter(edges));
+        for (const auto &edge : edges) // CJTODO C++1
+        {
+          ++cofaces_map[edge];
+        }
+      }
+    }
+
+    bool manifold = true;
+    for (Cofaces_map::const_iterator it_map_elt = cofaces_map.begin(),
+                                     it_map_end = cofaces_map.end() ;
+         it_map_elt != it_map_end ;
+         ++it_map_elt)
+    {
+      if (it_map_elt->second != 2)
+      {
+        std::cerr << "Found an edge with " << it_map_elt->second << " cofaces\n";
+        if (exit_at_the_first_problem)
+          return false;
+        else
+          manifold = false;
+      }
+    }
+
+    return manifold;
+  }
+
 private:
   typedef Simplex_range Complex;
 
@@ -167,6 +214,7 @@ private:
 
 }; // /class Simplicial_complex
 
-}  // end namespace CGAL
+} // namespace Tangential_complex_
+} //namespace CGAL
 
 #endif // SIMPLICIAL_COMPLEX_H

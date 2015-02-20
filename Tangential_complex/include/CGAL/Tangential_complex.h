@@ -203,6 +203,8 @@ class Tangential_complex
 
 public:
 
+  typedef Tangential_complex_::Simplicial_complex     Simplicial_complex;
+
   /// Constructor for a range of points
   template <typename InputIterator>
   Tangential_complex(InputIterator first, InputIterator last,
@@ -526,15 +528,6 @@ public:
 #ifdef CGAL_TC_VERBOSE
         std::cerr << "Time limit reached." << std::endl;
 #endif
-        check_and_solve_inconsistencies_by_adding_higher_dim_simplices(); // CJTODO: make it optional?
-        Simplicial_complex complex;         // CJTODO: don't do it here
-        int max_dim = export_TC(complex);
-        complex.collapse(max_dim);
-        complex.display_stats();
-
-        std::ofstream off_stream("output/test.off"); // CJTODO TEMP TEST
-        export_to_off(complex, off_stream);
-
         return TIME_LIMIT_REACHED;
       }
     }
@@ -628,7 +621,43 @@ public:
     }
     return max_dim;
   }
-  
+
+  void check_and_solve_inconsistencies_by_adding_higher_dim_simplices()
+  {
+    for (std::size_t idx = 0 ; idx < m_triangulations.size() ; ++idx)
+    {
+      bool inconsistencies_found;
+      do
+      {
+        Star::const_iterator it_inc_simplex = m_stars[idx].begin();
+        Star::const_iterator it_inc_simplex_end = m_stars[idx].end();
+        for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
+        {
+          inconsistencies_found = 
+            check_and_solve_inconsistencies_by_adding_higher_dim_simplices(
+              idx, *it_inc_simplex);
+
+          // m_stars[idx] has been modified, let's start again
+          // CJTODO: optimize?
+          if (inconsistencies_found)
+            break;
+        }     
+      } while (inconsistencies_found);
+    }
+    
+    // CJTODO TEMP
+    std::pair<std::size_t, std::size_t> stats_after =
+      number_of_inconsistent_simplices(false);
+    std::cerr << "AFTER check_and_solve_inconsistencies_by_adding_higher_dim_simplices():\n"
+      << "    - Total number of simplices in stars (incl. duplicates): "
+      << stats_after.first << std::endl
+      << "    - Num inconsistent simplices in stars (incl. duplicates): "
+      << stats_after.second << std::endl
+      << "    - Percentage of inconsistencies: "
+      << 100. * stats_after.second / stats_after.first << "%"
+      << std::endl;
+  }
+
   std::ostream &export_to_off(
     const Simplicial_complex &complex, std::ostream & os)
   {
@@ -693,8 +722,13 @@ public:
   }
 
   bool check_if_all_simplices_are_in_the_ambient_delaunay(
+    const Simplicial_complex *p_complex = NULL,
+    bool check_for_any_dimension_simplices = true,
     std::set<std::set<std::size_t> > * incorrect_simplices = NULL)
   {
+    typedef Simplicial_complex::Simplex                     Simplex;
+    typedef Simplicial_complex::Simplex_range               Simplex_range;
+
     if (m_points.empty())
       return true;
 
@@ -706,7 +740,6 @@ public:
                                    > >                        DT;
     typedef typename DT::Vertex_handle                        DT_VH;
     typedef typename DT::Finite_full_cell_const_iterator      FFC_it;
-    typedef std::set<std::size_t>                             Indexed_simplex;
 
     //-------------------------------------------------------------------------
     // Build the ambient Delaunay triangulation
@@ -721,69 +754,89 @@ public:
       vh->data() = i;
     }
 
-    std::set<Indexed_simplex> amb_dt_simplices;
+    std::set<Simplex> amb_dt_simplices;
 
     for (FFC_it cit = ambient_dt.finite_full_cells_begin() ;
          cit != ambient_dt.finite_full_cells_end() ; ++cit )
     {
-      CGAL::Combination_enumerator<int> combi(
-        m_intrinsic_dimension + 1, 0, ambient_dim + 1);
+      int lowest_dim = 
+        (check_for_any_dimension_simplices ? 1 : m_intrinsic_dimension);
+      int highest_dim = 
+        (check_for_any_dimension_simplices ? ambient_dim : m_intrinsic_dimension);
 
-      for ( ; !combi.finished() ; ++combi)
+      for (int dim = lowest_dim ; dim <= highest_dim ; ++dim)
       {
-        Indexed_simplex simplex;
-        for (int i = 0 ; i < m_intrinsic_dimension + 1 ; ++i)
-          simplex.insert(cit.base()->vertex(combi[i])->data());
+        CGAL::Combination_enumerator<int> combi(
+          dim + 1, 0, ambient_dim + 1);
 
-        amb_dt_simplices.insert(simplex);
-      }
-    }
-
-    //-------------------------------------------------------------------------
-    // Parse the TC and save its simplices into "stars_simplices"
-    //-------------------------------------------------------------------------
-
-    std::set<Indexed_simplex> stars_simplices;
-
-    typename Tr_container::const_iterator it_tr = m_triangulations.begin();
-    typename Tr_container::const_iterator it_tr_end = m_triangulations.end();
-    // For each triangulation
-    for ( ; it_tr != it_tr_end ; ++it_tr)
-    {
-      Triangulation const& tr    = it_tr->tr();
-      Tr_vertex_handle center_vh = it_tr->center_vertex();
-
-      std::vector<Tr_full_cell_handle> incident_cells;
-      tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
-
-      typename std::vector<Tr_full_cell_handle>::const_iterator it_c =
-                                                         incident_cells.begin();
-      typename std::vector<Tr_full_cell_handle>::const_iterator it_c_end =
-                                                           incident_cells.end();
-      // For each cell
-      for ( ; it_c != it_c_end ; ++it_c)
-      {
-        if (tr.is_infinite(*it_c))
+        for ( ; !combi.finished() ; ++combi)
         {
-          std::cerr << "Warning: infinite cell in star" << std::endl;
-          continue;
-        }
-        Indexed_simplex simplex;
-        for (int i = 0 ; i < tr.current_dimension() + 1 ; ++i)
-          simplex.insert((*it_c)->vertex(i)->data());
+          Simplex simplex;
+          for (int i = 0 ; i < dim + 1 ; ++i)
+            simplex.insert(cit.base()->vertex(combi[i])->data());
 
-        stars_simplices.insert(simplex);
+          amb_dt_simplices.insert(simplex);
+        }
       }
     }
 
     //-------------------------------------------------------------------------
-    // Check if simplices of "stars_simplices" are all in "amb_dt_simplices"
+    // If p_complex is NULL, parse the TC and 
+    // save its simplices into "stars_simplices"
     //-------------------------------------------------------------------------
 
-    std::set<Indexed_simplex> diff;
+    Simplex_range const *p_simplices;
+
+    if (!p_complex)
+    {
+      Simplex_range stars_simplices;
+
+      typename Tr_container::const_iterator it_tr = m_triangulations.begin();
+      typename Tr_container::const_iterator it_tr_end = m_triangulations.end();
+      // For each triangulation
+      for ( ; it_tr != it_tr_end ; ++it_tr)
+      {
+        Triangulation const& tr    = it_tr->tr();
+        Tr_vertex_handle center_vh = it_tr->center_vertex();
+
+        std::vector<Tr_full_cell_handle> incident_cells;
+        tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
+
+        typename std::vector<Tr_full_cell_handle>::const_iterator it_c =
+                                                           incident_cells.begin();
+        typename std::vector<Tr_full_cell_handle>::const_iterator it_c_end =
+                                                             incident_cells.end();
+        // For each cell
+        for ( ; it_c != it_c_end ; ++it_c)
+        {
+          if (tr.is_infinite(*it_c))
+          {
+            std::cerr << "Warning: infinite cell in star" << std::endl;
+            continue;
+          }
+          Simplex simplex;
+          for (int i = 0 ; i < tr.current_dimension() + 1 ; ++i)
+            simplex.insert((*it_c)->vertex(i)->data());
+
+          stars_simplices.insert(simplex);
+        }
+      }
+
+      p_simplices = &stars_simplices;
+    }
+    else
+    {
+      p_simplices = &p_complex->simplex_range();
+    }
+
+    //-------------------------------------------------------------------------
+    // Check if simplices of "*p_complex" are all in "amb_dt_simplices"
+    //-------------------------------------------------------------------------
+
+    std::set<Simplex> diff;
     if (!incorrect_simplices)
       incorrect_simplices = &diff;
-    set_difference(stars_simplices.begin(),  stars_simplices.end(),
+    set_difference(p_simplices->begin(),  p_simplices->end(),
                    amb_dt_simplices.begin(), amb_dt_simplices.end(),
                    std::inserter(*incorrect_simplices,
                                  incorrect_simplices->begin()) );
@@ -795,14 +848,27 @@ public:
         << std::endl
         << "  Number of simplices in ambient DT: " << amb_dt_simplices.size()
         << std::endl
-        << "  Number of unique simplices in TC stars: " << stars_simplices.size()
+        << "  Number of unique simplices in TC stars: " << p_simplices->size()
         << std::endl
         << "  Number of wrong simplices: " << incorrect_simplices->size()
         << std::endl;
       return false;
     }
     else
+    {
+#ifdef CGAL_TC_VERBOSE
+      std::cerr
+        << "SUCCESS check_if_all_simplices_are_in_the_ambient_delaunay:"
+        << std::endl
+        << "  Number of simplices in ambient DT: " << amb_dt_simplices.size()
+        << std::endl
+        << "  Number of unique simplices in TC stars: " << p_simplices->size()
+        << std::endl
+        << "  Number of wrong simplices: " << incorrect_simplices->size()
+        << std::endl;
+#endif
       return true;
+    }
   }
 
 private:
@@ -1931,42 +1997,6 @@ private:
     }
 
     return inconsistencies_found;
-  }
-
-  void check_and_solve_inconsistencies_by_adding_higher_dim_simplices()
-  {
-    for (std::size_t idx = 0 ; idx < m_triangulations.size() ; ++idx)
-    {
-      bool inconsistencies_found;
-      do
-      {
-        Star::const_iterator it_inc_simplex = m_stars[idx].begin();
-        Star::const_iterator it_inc_simplex_end = m_stars[idx].end();
-        for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
-        {
-          inconsistencies_found = 
-            check_and_solve_inconsistencies_by_adding_higher_dim_simplices(
-              idx, *it_inc_simplex);
-
-          // m_stars[idx] has been modified, let's start again
-          // CJTODO: optimize?
-          if (inconsistencies_found)
-            break;
-        }     
-      } while (inconsistencies_found);
-    }
-    
-    // CJTODO TEMP
-    std::pair<std::size_t, std::size_t> stats_after =
-      number_of_inconsistent_simplices(false);
-    std::cerr << "AFTER check_and_solve_inconsistencies_by_adding_higher_dim_simplices():\n"
-      << "    - Total number of simplices in stars (incl. duplicates): "
-      << stats_after.first << std::endl
-      << "    - Num inconsistent simplices in stars (incl. duplicates): "
-      << stats_after.second << std::endl
-      << "    - Percentage of inconsistencies: "
-      << 100. * stats_after.second / stats_after.first << "%"
-      << std::endl;
   }
 
   std::ostream &export_simplices_to_off(
