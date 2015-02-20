@@ -248,16 +248,7 @@ GLuint compile_shaders(void)
 
 void uniform_attrib()
 {
-    //Allocates a uniform location for the MVP and MV matrices
-    location[0] = glGetUniformLocation(rendering_program, "mvp_matrix");
-    location[1] = glGetUniformLocation(rendering_program, "mv_matrix");
 
-    //Allocates a uniform location for the light values
-    location[2] = glGetUniformLocation(rendering_program, "light_pos");
-    location[3] = glGetUniformLocation(rendering_program, "light_diff");
-    location[4] = glGetUniformLocation(rendering_program, "light_spec");
-    location[5] = glGetUniformLocation(rendering_program, "light_amb");
-    location[6] = glGetUniformLocation(rendering_program, "vColors");
 
     //Set the ModelViewProjection and ModelView matrices
     glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
@@ -338,6 +329,16 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
     }
 
     rendering_program = compile_shaders();
+    //Allocates a uniform location for the MVP and MV matrices
+    location[0] = glGetUniformLocation(rendering_program, "mvp_matrix");
+    location[1] = glGetUniformLocation(rendering_program, "mv_matrix");
+
+    //Allocates a uniform location for the light values
+    location[2] = glGetUniformLocation(rendering_program, "light_pos");
+    location[3] = glGetUniformLocation(rendering_program, "light_diff");
+    location[4] = glGetUniformLocation(rendering_program, "light_spec");
+    location[5] = glGetUniformLocation(rendering_program, "light_amb");
+    location[6] = glGetUniformLocation(rendering_program, "vColors");
 }
 
 
