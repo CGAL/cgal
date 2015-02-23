@@ -375,18 +375,18 @@ public:
    * - `delta_area()` returns 0.0001
    * - `max_iterations()` returns 500
    * - `is_medially_centered()` returns `true`
-   * - `min_edge_length()` returns  0.002 * the length of the diagonal of the bounding box `pmesh`
+   * - `min_edge_length()` returns  0.002 * the length of the diagonal of the bounding box of `pmesh`
    *
    * @pre `pmesh` is a triangulated surface mesh without borders and has exactly one connected component.
    * @param pmesh 
    *        input surface mesh.
-   * @attention  `pmesh` will be modified (edge collapses and triangle splits) while creating the skeleton.
    * @param vertex_index_map 
    *        property map which associates an id to each vertex, from `0` to `num_vertices(pmesh)-1`.
    * @param halfedge_index_map
    *        property map which associates an id to each halfedge, from `0` to `num_halfedges(pmesh)-1`.
    * @param vertex_point_map 
    *        property map which associates a point to each vertex of the graph.
+   * @attention  `pmesh` will be modified through edge collapse and triangle split operations while creating the skeleton.
    */
   Mean_curvature_flow_skeletonization(HalfedgeGraph& pmesh,
                                       VertexIndexMap vertex_index_map =get(boost::vertex_index, pmesh),
@@ -611,7 +611,7 @@ public:
   /// @} Setter and Getter
 
 
-  /// \name High Level Functions
+  /// \name High Level Function
   /// @{
 
 
@@ -642,9 +642,9 @@ public:
    *         where `size_type` is the value type of `VertexIndexMap`
    */
   template <class Graph, class GraphVertexPointMap, class GraphVertexIndicesMap>
-  void extract_skeleton(Graph& skeleton,
-                        GraphVertexPointMap& skeleton_points,
-                        GraphVertexIndicesMap& skeleton_to_pmesh_vertices)
+  void operator()(Graph& skeleton,
+                  GraphVertexPointMap& skeleton_points,
+                  GraphVertexIndicesMap& skeleton_to_pmesh_vertices)
   {
     contract_until_convergence();
     convert_to_skeleton(skeleton, skeleton_points, skeleton_to_pmesh_vertices);

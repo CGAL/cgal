@@ -112,8 +112,7 @@ void extract_mean_curvature_flow_skeleton(const HalfedgeGraph& pmesh,
                                                     SparseLinearAlgebraTraits_d> Mcfskel;
   Mcfskel mcfs(P);
 
-  mcfs.contract_until_convergence();
-  mcfs.convert_to_skeleton(skeleton, skeleton_points, skeleton_to_pmesh_vertices);
+  mcfs(skeleton, skeleton_points, skeleton_to_pmesh_vertices);
 }
 #endif
 
