@@ -41,13 +41,13 @@ namespace internal {
 * @param hg the mesh containing the given edge
 * @param v0v1 the edge to be collapsed
 */
-template<class HalfedgeGraph>
-bool is_collapse_ok(HalfedgeGraph& hg, 
-                    typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor v0v1)
+template<class TriangleMesh>
+bool is_collapse_ok(TriangleMesh& hg, 
+                    typename boost::graph_traits<TriangleMesh>::halfedge_descriptor v0v1)
 {
-  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor	         vertex_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor	           halfedge_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::in_edge_iterator            in_edge_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor	         vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor	           halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::in_edge_iterator            in_edge_iterator;
 
   halfedge_descriptor v1v0 = opposite(v0v1, hg);
   vertex_descriptor v0 = target(v1v0, hg);
@@ -122,13 +122,13 @@ bool is_collapse_ok(HalfedgeGraph& hg,
 * @param vi one vertex incident to the edge.
 * @param vj the other vertex incident to the edge.
 */
-template<class HalfedgeGraph>
-bool find_halfedge(HalfedgeGraph& hg, 
-                   typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vi,
-                   typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vj)
+template<class TriangleMesh>
+bool find_halfedge(TriangleMesh& hg, 
+                   typename boost::graph_traits<TriangleMesh>::vertex_descriptor vi,
+                   typename boost::graph_traits<TriangleMesh>::vertex_descriptor vj)
 {
-  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor          vertex_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::in_edge_iterator           in_edge_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor          vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::in_edge_iterator           in_edge_iterator;
 
   in_edge_iterator eb, ee;
   for (boost::tie(eb, ee) = in_edges(vj, hg); eb != ee; ++eb)

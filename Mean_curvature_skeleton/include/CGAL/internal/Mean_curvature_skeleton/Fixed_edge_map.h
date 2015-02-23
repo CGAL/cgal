@@ -40,18 +40,18 @@ namespace internal {
 //
 // BGL property map which indicates whether an edge is border OR is marked as non-removable
 //
-template <class HalfedgeGraph>
-class Fixed_edge_map : public boost::put_get_helper<bool, Fixed_edge_map<HalfedgeGraph> >
+template <class TriangleMesh>
+class Fixed_edge_map : public boost::put_get_helper<bool, Fixed_edge_map<TriangleMesh> >
 {
 public:
 
   typedef boost::readable_property_map_tag                                 category;
   typedef bool                                                             value_type;
   typedef bool                                                             reference;
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor     key_type;
-  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor     key_type;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  Fixed_edge_map(const HalfedgeGraph& hg_) : hg(hg_), mFixed(false) {}
+  Fixed_edge_map(const TriangleMesh& hg_) : hg(hg_), mFixed(false) {}
 
   reference operator[](key_type const& e) const
   {
@@ -71,7 +71,7 @@ public:
   }
 
 private:
-  const HalfedgeGraph& hg;
+  const TriangleMesh& hg;
   CGAL::Unique_hash_map<halfedge_descriptor, bool> mFixed;
 };
 

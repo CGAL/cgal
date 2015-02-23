@@ -125,23 +125,23 @@ enum Degeneracy_algorithm_tag
 /// @tparam Traits
 ///         a model of `SurfaceMeshSkeletonizationTraits`
 ///
-/// @tparam HalfedgeGraph
+/// @tparam TriangleMesh
 ///         a model of `HalfedgeGraph`
 /// @tparam VertexIndexMap
 ///         a model of `ReadablePropertyMap`
-///         with `boost::graph_traits<HalfedgeGraph>::%vertex_descriptor` as key and
+///         with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
 ///         `unsigned int` as value type.<br>
-///         <b>%Default:</b> `boost::property_map<HalfedgeGraph, boost::vertex_index_t>::%type`.
+///         <b>%Default:</b> `boost::property_map<TriangleMesh, boost::vertex_index_t>::%type`.
 /// @tparam HalfedgeIndexMap
 ///         a model of `ReadablePropertyMap`</a>
-///         with `boost::graph_traits<HalfedgeGraph>::%halfedge_descriptor` as key and
+///         with `boost::graph_traits<TriangleMesh>::%halfedge_descriptor` as key and
 ///         `unsigned int` as value type.<br>
-///         <b>%Default:</b> `boost::property_map<HalfedgeGraph, boost::halfedge_index_t>::%type`.
+///         <b>%Default:</b> `boost::property_map<TriangleMesh, boost::halfedge_index_t>::%type`.
 /// @tparam VertexPointMap
 ///         a model of `ReadWritePropertyMap`
-///         with `boost::graph_traits<HalfedgeGraph>::%vertex_descriptor` as key and
+///         with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
 ///         `Traits::Point_3` as value type.<br>
-///         <b>%Default:</b> `boost::property_map<HalfedgeGraph, boost::vertex_point_t>::%type`.
+///         <b>%Default:</b> `boost::property_map<TriangleMesh, boost::vertex_point_t>::%type`.
 /// @tparam SparseLinearAlgebraTraits_d
 ///         a model of `SparseLinearAlgebraTraitsWithFactor_d`.
 ///         If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
@@ -161,14 +161,14 @@ enum Degeneracy_algorithm_tag
 /// @endcond
 #ifdef DOXYGEN_RUNNING
 template <class Traits,
-          class HalfedgeGraph,
+          class TriangleMesh,
           class VertexIndexMap = Default,
           class HalfedgeIndexMap = Default,
           class VertexPointMap = Default,
           class SparseLinearAlgebraTraits_d = Default>
 #else
 template <class Traits,
-          class HalfedgeGraph,
+          class TriangleMesh,
           class VertexIndexMap_ = Default,
           class HalfedgeIndexMap_  = Default,
           class VertexPointMap_ = Default,
@@ -186,15 +186,15 @@ public:
   #ifndef DOXYGEN_RUNNING
     typedef typename Default::Get<
       VertexIndexMap_,
-      typename boost::property_map<HalfedgeGraph, boost::vertex_index_t>::type
+      typename boost::property_map<TriangleMesh, boost::vertex_index_t>::type
     >::type VertexIndexMap;
     typedef typename Default::Get<
       HalfedgeIndexMap_,
-      typename boost::property_map<HalfedgeGraph, boost::halfedge_index_t>::type
+      typename boost::property_map<TriangleMesh, boost::halfedge_index_t>::type
     >::type HalfedgeIndexMap;
   typedef typename Default::Get<
     VertexPointMap_,
-    typename boost::property_map<HalfedgeGraph, boost::vertex_point_t>::type
+    typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type
   >::type VertexPointMap;
   #endif
 
@@ -220,29 +220,29 @@ public:
   typedef typename Traits::Vector_3                                             Vector;
 
 
-  // Repeat HalfedgeGraph types
-  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_iterator         vertex_iterator;
-  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_iterator       halfedge_iterator;
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor         edge_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_iterator           edge_iterator;
-  typedef typename boost::graph_traits<HalfedgeGraph>::in_edge_iterator        in_edge_iterator;
-  typedef typename boost::graph_traits<HalfedgeGraph>::out_edge_iterator       out_edge_iterator;
+  // Repeat TriangleMesh types
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator         vertex_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_iterator       halfedge_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor         edge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_iterator           edge_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::in_edge_iterator        in_edge_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::out_edge_iterator       out_edge_iterator;
 
-  typedef typename boost::graph_traits<HalfedgeGraph>::face_iterator           Facet_iterator;
-  typedef Halfedge_around_face_circulator<HalfedgeGraph>            Halfedge_facet_circulator;
+  typedef typename boost::graph_traits<TriangleMesh>::face_iterator           Facet_iterator;
+  typedef Halfedge_around_face_circulator<TriangleMesh>            Halfedge_facet_circulator;
 
   // Cotangent weight calculator
-  typedef typename internal::Cotangent_weight<HalfedgeGraph,
-  internal::Cotangent_value_minimum_zero<HalfedgeGraph,
-  internal::Cotangent_value_Meyer_secure<HalfedgeGraph> > >                    Weight_calculator;
+  typedef typename internal::Cotangent_weight<TriangleMesh,
+  internal::Cotangent_value_minimum_zero<TriangleMesh,
+  internal::Cotangent_value_Meyer_secure<TriangleMesh> > >                    Weight_calculator;
 
-  typedef internal::Curve_skeleton<HalfedgeGraph,
+  typedef internal::Curve_skeleton<TriangleMesh,
                                    VertexIndexMap,
                                    HalfedgeIndexMap,
                                    VertexPointMap>                     Skeleton;
 
   // Mesh simplification types
-  typedef SMS::Edge_profile<HalfedgeGraph>                                     Profile;
+  typedef SMS::Edge_profile<TriangleMesh>                                     Profile;
 
   // Repeat Triangulation types
   typedef CGAL::Exact_predicates_exact_constructions_kernel                    K;
@@ -263,13 +263,13 @@ public:
 private:
 
   /** a reference to the input surface mesh */
-  HalfedgeGraph& m_tmesh;
+  TriangleMesh& m_tmesh;
 
   /** Storing indices of all vertices. */
   VertexIndexMap m_vertex_id_pmap;
   /** Storing indices of all edges. */
   HalfedgeIndexMap m_hedge_id_pmap;
-  /** Storing the point for HalfedgeGraph vertex_descriptor. */
+  /** Storing the point for TriangleMesh vertex_descriptor. */
   VertexPointMap m_tmesh_point_pmap;
 
   /** Controling the velocity of movement and approximation quality. */
@@ -388,12 +388,12 @@ public:
    *        property map which associates a point to each vertex of the graph.
    * @attention  `tmesh` will be modified through edge collapse and triangle split operations while creating the skeleton.
    */
-  Mean_curvature_flow_skeletonization(HalfedgeGraph& tmesh,
+  Mean_curvature_flow_skeletonization(TriangleMesh& tmesh,
                                       VertexIndexMap vertex_index_map =get(boost::vertex_index, tmesh),
                                       HalfedgeIndexMap halfedge_index_map = get(boost::halfedge_index, tmesh),
                                       VertexPointMap vertex_point_map = get(boost::vertex_point, tmesh) );
   #else
-  Mean_curvature_flow_skeletonization(HalfedgeGraph& tmesh,
+  Mean_curvature_flow_skeletonization(TriangleMesh& tmesh,
                                       VertexIndexMap vertex_index_map,
                                       HalfedgeIndexMap halfedge_index_map,
                                       VertexPointMap vertex_point_map)
@@ -406,7 +406,7 @@ public:
     init();
   }
 
-  Mean_curvature_flow_skeletonization(HalfedgeGraph& tmesh,
+  Mean_curvature_flow_skeletonization(TriangleMesh& tmesh,
                                       VertexIndexMap vertex_index_map,
                                       HalfedgeIndexMap halfedge_index_map)
     : m_tmesh(tmesh)
@@ -418,7 +418,7 @@ public:
     init();
   }
 
-  Mean_curvature_flow_skeletonization(HalfedgeGraph& tmesh, VertexIndexMap vertex_index_map)
+  Mean_curvature_flow_skeletonization(TriangleMesh& tmesh, VertexIndexMap vertex_index_map)
     : m_tmesh(tmesh)
     , m_vertex_id_pmap(vertex_index_map)
     , m_hedge_id_pmap(get(boost::halfedge_index, m_tmesh))
@@ -428,7 +428,7 @@ public:
     init();
   }
 
-  Mean_curvature_flow_skeletonization(HalfedgeGraph& tmesh)
+  Mean_curvature_flow_skeletonization(TriangleMesh& tmesh)
     : m_tmesh(tmesh)
     , m_vertex_id_pmap(get(boost::vertex_index, m_tmesh))
     , m_hedge_id_pmap(get(boost::halfedge_index, m_tmesh))
@@ -514,7 +514,7 @@ public:
   }
   
   /// Reference to the input surface mesh.
-  HalfedgeGraph& halfedge_graph()
+  TriangleMesh& halfedge_graph()
   {
     return m_tmesh;
   }
@@ -719,7 +719,7 @@ public:
    */
   int collapse_edges()
   {
-    internal::Fixed_edge_map<HalfedgeGraph> fixed_edge_map(m_tmesh);
+    internal::Fixed_edge_map<TriangleMesh> fixed_edge_map(m_tmesh);
     init_fixed_edge_map(fixed_edge_map);
 
     int num_collapses = 0;
@@ -958,7 +958,7 @@ private:
 
     int nver = num_vertices(m_tmesh);
 
-    Point_inside_polyhedron_3<HalfedgeGraph, Traits> test_inside(m_tmesh);
+    Point_inside_polyhedron_3<TriangleMesh, Traits> test_inside(m_tmesh);
 
     vertex_iterator vb, ve;
     for (boost::tie(vb, ve) = vertices(m_tmesh); vb != ve; ++vb)
@@ -1021,7 +1021,7 @@ private:
   {
     MCFSKEL_DEBUG(std::cerr << "start RHS\n";)
 
-    Point_inside_polyhedron_3<HalfedgeGraph, Traits> test_inside(m_tmesh);
+    Point_inside_polyhedron_3<TriangleMesh, Traits> test_inside(m_tmesh);
 
     // assemble right columns of linear system
     int nver = num_vertices(m_tmesh);
@@ -1095,7 +1095,7 @@ private:
   /// Collapse short edges using simplification package.
   int collapse_edges_simplification()
   {
-    internal::Fixed_edge_map<HalfedgeGraph> fixed_edge_map(m_tmesh);
+    internal::Fixed_edge_map<TriangleMesh> fixed_edge_map(m_tmesh);
 
     init_fixed_edge_map(fixed_edge_map);
 
@@ -1110,27 +1110,27 @@ private:
     // This is a stop predicate (defines when the algorithm terminates).
     // The simplification stops when the length of all edges is greater
     // than the minimum threshold.
-    CGAL::internal::Minimum_length_predicate<HalfedgeGraph> stop(m_min_edge_length);
+    CGAL::internal::Minimum_length_predicate<TriangleMesh> stop(m_min_edge_length);
 
     // midpoint placement without geometric test
-    SMS::Geometric_test_skipper< SMS::Midpoint_placement<HalfedgeGraph> > placement;
+    SMS::Geometric_test_skipper< SMS::Midpoint_placement<TriangleMesh> > placement;
 
-    internal::Track_correspondence_visitor<HalfedgeGraph, VertexPointMap> vis;
+    internal::Track_correspondence_visitor<TriangleMesh, VertexPointMap> vis;
     if (m_is_medially_centered)
     {
-      vis = internal::Track_correspondence_visitor<HalfedgeGraph, VertexPointMap>
+      vis = internal::Track_correspondence_visitor<TriangleMesh, VertexPointMap>
             (&m_tmesh_point_pmap, &m_correspondence, &m_poles, &m_cell_dual, m_max_id);
     }
     else
     {
-      vis = internal::Track_correspondence_visitor<HalfedgeGraph, VertexPointMap>
+      vis = internal::Track_correspondence_visitor<TriangleMesh, VertexPointMap>
             (&m_tmesh_point_pmap, &m_correspondence, m_max_id);
     }
 
     int r = SMS::edge_collapse
                 (m_tmesh
                 ,stop
-                ,CGAL::get_cost(SMS::Edge_length_cost<HalfedgeGraph>())
+                ,CGAL::get_cost(SMS::Edge_length_cost<TriangleMesh>())
                       .get_placement(placement)
                       .visitor(vis)
                       .edge_is_constrained_map(fixed_edge_map)
@@ -1199,7 +1199,7 @@ private:
   }
 
   /// Collapse short edges by iteratively linear search.
-  int collapse_edges_linear(internal::Fixed_edge_map<HalfedgeGraph>& fixed_edge_map)
+  int collapse_edges_linear(internal::Fixed_edge_map<TriangleMesh>& fixed_edge_map)
   {
     std::vector<edge_descriptor> all_edges;
     all_edges.reserve(num_edges(m_tmesh));
@@ -1247,7 +1247,7 @@ private:
   }
 
   /// Fix an edge if both incident vertices are degenerate.
-  void init_fixed_edge_map(internal::Fixed_edge_map<HalfedgeGraph>& fixed_edge_map)
+  void init_fixed_edge_map(internal::Fixed_edge_map<TriangleMesh>& fixed_edge_map)
   {
     edge_iterator eb, ee;
     for (boost::tie(eb, ee) = edges(m_tmesh); eb != ee; ++eb)
@@ -1576,7 +1576,7 @@ private:
     {
       vertex_descriptor v = *vb;
       int vid = get(m_vertex_id_pmap, v);
-      m_normals[vid] = internal::get_vertex_normal<typename HalfedgeGraph::Vertex,Traits>(*v);
+      m_normals[vid] = internal::get_vertex_normal<typename TriangleMesh::Vertex,Traits>(*v);
     }
   }
 

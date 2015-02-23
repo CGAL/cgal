@@ -37,22 +37,22 @@ namespace CGAL{
 /// This function uses the class CGAL::Mean_curvature_flow_skeletonization with the default parameters.
 /// This function is available if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined.
 /// @pre `tmesh` is a triangulated polygonal mesh without borders and has exactly one connected component.
-/// @pre The specialization `boost::property_map<HalfedgeGraph, boost::vertex_point_t>::%type` and `get(vertex_point, tmesh)` are defined.
-/// @pre The value type of `boost::property_map<HalfedgeGraph, boost::vertex_point_t>::%type` is a point type from a \cgal Kernel.
+/// @pre The specialization `boost::property_map<TriangleMesh, boost::vertex_point_t>::%type` and `get(vertex_point, tmesh)` are defined.
+/// @pre The value type of `boost::property_map<TriangleMesh, boost::vertex_point_t>::%type` is a point type from a \cgal Kernel.
 ///
-/// @tparam HalfedgeGraph
+/// @tparam TriangleMesh
 ///         a model of `HalfedgeGraph`
 /// @tparam Graph
 ///         an instantiation of <A href="http://www.boost.org/libs/graph/doc/adjacency_list.html>`boost::adjacency_list`</a> as data structure for the skeleton curve
 /// @tparam GraphVertexPointMap
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with `boost::graph_traits<Graph>::%vertex_descriptor` as key type and
-///         the value type of `boost::property_map<HalfedgeGraph, boost::vertex_point_t>::%type`
+///         the value type of `boost::property_map<TriangleMesh, boost::vertex_point_t>::%type`
 ///         as value type.
 /// @tparam GraphVertexIndicesMap
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with `boost::graph_traits<Graph>::%vertex_descriptor` as key type and
-///         `std::vector< boost::graph_traits<HalfedgeGraph>::%vertex_descriptor>` as value type
+///         `std::vector< boost::graph_traits<TriangleMesh>::%vertex_descriptor>` as value type
 ///
 /// @param tmesh
 ///        input mesh
@@ -62,27 +62,27 @@ namespace CGAL{
 ///        property map containing the location of the vertices of the graph `skeleton`
 /// @param skeleton_to_tmesh_vertices property map associating a vertex `v` of the graph `skeleton`
 ///        to the set of vertices of `tmesh` corresponding to `v`.
-/// \todo add an overload when the HalfedgeGraph is of the same type as the copy
+/// \todo add an overload when the TriangleMesh is of the same type as the copy
 /// \todo I need to tweak GraphVertexIndicesMap to match the documentation
-template <class HalfedgeGraph,
+template <class TriangleMesh,
           class Graph,
           class GraphVertexPointMap,
           class GraphVertexIndicesMap>
-void extract_mean_curvature_flow_skeleton(const HalfedgeGraph& tmesh,
+void extract_mean_curvature_flow_skeleton(const TriangleMesh& tmesh,
                                           Graph& skeleton,
                                           GraphVertexPointMap& skeleton_points,
                                           GraphVertexIndicesMap& skeleton_to_tmesh_vertices)
 {
-  typedef typename boost::property_map<HalfedgeGraph, boost::vertex_point_t>::type PmeshPointPMap;
+  typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type PmeshPointPMap;
   typedef typename boost::property_traits<PmeshPointPMap>::value_type Point;
   typedef typename CGAL::Kernel_traits< Point >::Kernel K;
   typedef CGAL::Polyhedron_3<K,CGAL::Polyhedron_items_with_id_3> Polyhedron;
 
   // copy the input FaceGraph into a Polyhedron
-  CGAL::FaceGraph_to_Polyhedron_3<HalfedgeGraph,
+  CGAL::FaceGraph_to_Polyhedron_3<TriangleMesh,
                                   PmeshPointPMap,
                                   typename Polyhedron::HalfedgeDS,
-                                  false> modifier(tmesh, get(vertex_point, const_cast<HalfedgeGraph&>(tmesh)) );
+                                  false> modifier(tmesh, get(vertex_point, const_cast<TriangleMesh&>(tmesh)) );
   Polyhedron P;
   P.delegate(modifier);
   //init indices

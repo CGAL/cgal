@@ -41,20 +41,20 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 namespace CGAL {
 namespace internal {
 
-template<class HalfedgeGraph, class HalfedgeGraphPointPMap>
-struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<HalfedgeGraph>
+template<class TriangleMesh, class TriangleMeshPointPMap>
+struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<TriangleMesh>
 {
-  // HalfedgeGraph types
-  typedef typename HalfedgeGraph::Traits         Kernel;
+  // TriangleMesh types
+  typedef typename TriangleMesh::Traits         Kernel;
   typedef typename Kernel::Point_3               Point;
-  typedef typename HalfedgeGraph::Vertex_handle  Vertex_handle;
+  typedef typename TriangleMesh::Vertex_handle  Vertex_handle;
 
   // Mesh simplification types
-  typedef SMS::Edge_profile<HalfedgeGraph>       Profile;
+  typedef SMS::Edge_profile<TriangleMesh>       Profile;
 
   Track_correspondence_visitor(){}
 
-  Track_correspondence_visitor(HalfedgeGraphPointPMap* point_pmap,
+  Track_correspondence_visitor(TriangleMeshPointPMap* point_pmap,
                                std::map<int, std::vector<int> >* corr,
                                int max_id) :
     hg_point_pmap(point_pmap),
@@ -63,7 +63,7 @@ struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<HalfedgeGr
     is_medially_centered(false)
   {}
 
-  Track_correspondence_visitor(HalfedgeGraphPointPMap* point_pmap,
+  Track_correspondence_visitor(TriangleMeshPointPMap* point_pmap,
                        std::map<int, std::vector<int> >* corr,
                        std::map<int, int>* poles,
                        std::vector<Point>* cell_dual,
@@ -137,7 +137,7 @@ struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<HalfedgeGr
     }
   }
 
-  HalfedgeGraphPointPMap* hg_point_pmap;
+  TriangleMeshPointPMap* hg_point_pmap;
 
   std::map<int, std::vector<int> >* corr;
   int max_id;

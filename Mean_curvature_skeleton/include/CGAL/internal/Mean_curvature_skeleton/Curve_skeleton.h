@@ -40,26 +40,26 @@
 namespace CGAL {
 namespace internal {
 
-template <class HalfedgeGraph, class VertexIndexMap,
-          class HalfedgeIndexMap, class HalfedgeGraphPointPMap>
+template <class TriangleMesh, class VertexIndexMap,
+          class HalfedgeIndexMap, class TriangleMeshPointPMap>
 class Curve_skeleton
 {
 // Public types
 public:
 
   // Geometric types
-  typedef typename HalfedgeGraph::Traits      Kernel;
+  typedef typename TriangleMesh::Traits      Kernel;
   typedef typename Kernel::Vector_3           Vector;
   typedef typename Kernel::Point_3            Point;
 
-  // Repeat HalfedgeGraph types
-  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor	        vertex_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_iterator            vertex_iterator;
-  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor        halfedge_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_iterator          halfedge_iterator;
-  typedef typename boost::graph_traits<HalfedgeGraph>::in_edge_iterator           in_edge_iterator;
-  typedef typename boost::graph_traits<HalfedgeGraph>::face_iterator              face_iterator;
-  typedef Halfedge_around_face_circulator<HalfedgeGraph>                Halfedge_face_circulator;
+  // Repeat TriangleMesh types
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor	        vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator            vertex_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_iterator          halfedge_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::in_edge_iterator           in_edge_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::face_iterator              face_iterator;
+  typedef Halfedge_around_face_circulator<TriangleMesh>                Halfedge_face_circulator;
 
 // Data members
 private:
@@ -77,11 +77,11 @@ private:
   // vertex id mapped to vertex descriptor
   std::vector<vertex_descriptor> id_to_descriptor;
 
-  HalfedgeGraph& hg;
+  TriangleMesh& hg;
 
   VertexIndexMap vertex_id_pmap;
   HalfedgeIndexMap hedge_id_pmap;
-  HalfedgeGraphPointPMap hg_point_pmap;
+  TriangleMeshPointPMap hg_point_pmap;
 
   std::vector<double> edge_lengths;
 
@@ -108,10 +108,10 @@ private:
 
 // Public methods
 public:
-  Curve_skeleton(HalfedgeGraph& hg,
+  Curve_skeleton(TriangleMesh& hg,
                  VertexIndexMap vertex_id_pmap,
                  HalfedgeIndexMap hedge_id_pmap,
-                 HalfedgeGraphPointPMap hg_point_pmap) :
+                 TriangleMeshPointPMap hg_point_pmap) :
                  hg(hg),
                  vertex_id_pmap(vertex_id_pmap),
                  hedge_id_pmap(hedge_id_pmap),

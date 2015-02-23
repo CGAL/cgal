@@ -46,17 +46,17 @@ namespace internal {
 * @param root the given vertex
 * @param min_edge_length the diameter of the geodesic disk
 */
-template<class HalfedgeGraph, class HalfedgeGraphPointPMap>
-bool is_vertex_degenerate(HalfedgeGraph& hg,
-                          HalfedgeGraphPointPMap& hg_point_pmap,
-                          typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor root,
+template<class TriangleMesh, class TriangleMeshPointPMap>
+bool is_vertex_degenerate(TriangleMesh& hg,
+                          TriangleMeshPointPMap& hg_point_pmap,
+                          typename boost::graph_traits<TriangleMesh>::vertex_descriptor root,
                           double min_edge_length)
 {
-  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor          vertex_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor        halfedge_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::out_edge_iterator          out_edge_iterator;
-  typedef typename boost::graph_traits<HalfedgeGraph>::face_descriptor            face_descriptor;
-  typedef typename Halfedge_around_face_circulator<HalfedgeGraph>                 Halfedge_face_circulator;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor          vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::out_edge_iterator          out_edge_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor            face_descriptor;
+  typedef typename Halfedge_around_face_circulator<TriangleMesh>                 Halfedge_face_circulator;
 
   std::set<vertex_descriptor> vertices_in_disk;
   std::set<halfedge_descriptor> edges_in_disk;
@@ -119,16 +119,16 @@ bool is_vertex_degenerate(HalfedgeGraph& hg,
 * @param vertices_in_disk containing the found vertices within the disk
 * @param min_edge_length the diameter of the geodesic disk
 */
-template<class HalfedgeGraph, class HalfedgeGraphPointPMap>
-void search_vertices_in_disk(HalfedgeGraph& hg,
-                             HalfedgeGraphPointPMap& hg_point_pmap,
-                             typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor root,
-                             std::set<typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor>& vertices_in_disk,
+template<class TriangleMesh, class TriangleMeshPointPMap>
+void search_vertices_in_disk(TriangleMesh& hg,
+                             TriangleMeshPointPMap& hg_point_pmap,
+                             typename boost::graph_traits<TriangleMesh>::vertex_descriptor root,
+                             std::set<typename boost::graph_traits<TriangleMesh>::vertex_descriptor>& vertices_in_disk,
                              double min_edge_length)
 {
-  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor          vertex_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor        halfedge_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::out_edge_iterator	  out_edge_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor          vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::out_edge_iterator	  out_edge_iterator;
 
   std::map<vertex_descriptor, bool> vertex_visited;
 

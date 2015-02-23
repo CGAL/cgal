@@ -40,14 +40,14 @@ namespace internal {
 * @param ei the edge to be split
 * @param pn the position of the new vertex created by the split
 */
-template<class HalfedgeGraph, class HalfedgeGraphPointPMap>
-typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor
-mesh_split(HalfedgeGraph& hg, 
-           HalfedgeGraphPointPMap& hg_point_pmap,
-           typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor ei,
-           typename HalfedgeGraph::Traits::Point_3 pn)
+template<class TriangleMesh, class TriangleMeshPointPMap>
+typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
+mesh_split(TriangleMesh& hg, 
+           TriangleMeshPointPMap& hg_point_pmap,
+           typename boost::graph_traits<TriangleMesh>::halfedge_descriptor ei,
+           typename TriangleMesh::Traits::Point_3 pn)
 {
-  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor            halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor            halfedge_descriptor;
 
   
   // halfedge_descriptor en = Euler::split_edge(ei, hg); // there is an issue in this function for now use the polyhedron version in the meantime
@@ -88,14 +88,14 @@ double get_triangle_area(typename Kernel::Point_3 p1,
   return std::sqrt(cross_product(v12, v13).squared_length()) * 0.5;
 }
 
-template<class HalfedgeGraph, class HalfedgeGraphPointPMap>
-double get_surface_area(HalfedgeGraph& hg, HalfedgeGraphPointPMap& hg_point_pmap)
+template<class TriangleMesh, class TriangleMeshPointPMap>
+double get_surface_area(TriangleMesh& hg, TriangleMeshPointPMap& hg_point_pmap)
 {
-  typedef typename HalfedgeGraph::Traits                                  Kernel;
+  typedef typename TriangleMesh::Traits                                  Kernel;
   typedef typename Kernel::Point_3                                        Point;
-  typedef typename HalfedgeGraph::Facet_iterator                          Facet_iterator;
-  typedef typename HalfedgeGraph::Halfedge_around_facet_circulator        Halfedge_facet_circulator;
-  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor	vertex_descriptor;
+  typedef typename TriangleMesh::Facet_iterator                          Facet_iterator;
+  typedef typename TriangleMesh::Halfedge_around_facet_circulator        Halfedge_facet_circulator;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor	vertex_descriptor;
 
   double total_area = 0;
   for (Facet_iterator i = hg.facets_begin(); i != hg.facets_end(); ++i)
