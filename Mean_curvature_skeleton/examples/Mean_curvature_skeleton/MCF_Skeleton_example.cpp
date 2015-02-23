@@ -37,7 +37,7 @@ typedef boost::associative_property_map<Correspondence_map>            GraphVert
 typedef std::map<vertex_desc, Point>                                   GraphPointMap;
 typedef boost::associative_property_map<GraphPointMap>                 GraphPointPMap;
 
-typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron>       Mean_curvature_skeleton;
+typedef CGAL::Mean_curvature_flow_skeletonization<Kernel,Polyhedron>   Mean_curvature_skeleton;
 
 
 int main()

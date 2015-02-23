@@ -123,7 +123,7 @@ enum Degeneracy_algorithm_tag
 /// \todo index pmap should also be writable :/
 ///
 /// @tparam Traits
-///         a model of `SurfaceMeshSkeletonizationTraits`
+///         a model of `MeanCurvatureSkeletonizationTraits`
 ///
 /// @tparam TriangleMesh
 ///         a model of `HalfedgeGraph`
@@ -217,10 +217,12 @@ public:
  
 /// @}
 
+  typedef typename Traits::Point_3                                             Point;
   typedef typename Traits::Vector_3                                             Vector;
 
 
   // Repeat TriangleMesh types
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator         vertex_iterator;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_iterator       halfedge_iterator;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor         edge_descriptor;
