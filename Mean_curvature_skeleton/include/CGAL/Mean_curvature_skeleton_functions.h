@@ -42,16 +42,16 @@ namespace CGAL{
 ///
 /// @tparam TriangleMesh
 ///         a model of `HalfedgeGraph`
-/// @tparam Graph
+/// @tparam Skeleton
 ///         an instantiation of <A href="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</a> as data structure for the skeleton curve
-/// @tparam GraphVertexPointMap
+/// @tparam SkeletonVertexPointMap
 ///         a model of `ReadWritePropertyMap`</a>
-///         with `boost::graph_traits<Graph>::%vertex_descriptor` as key type and
+///         with `boost::graph_traits<Skeleton>::%vertex_descriptor` as key type and
 ///         the value type of `boost::property_map<TriangleMesh, boost::vertex_point_t>::%type`
 ///         as value type.
-/// @tparam GraphVertexIndicesMap
+/// @tparam SkeletonVertexIndicesMap
 ///         a model of `ReadWritePropertyMap`</a>
-///         with `boost::graph_traits<Graph>::%vertex_descriptor` as key type and
+///         with `boost::graph_traits<Skeleton>::%vertex_descriptor` as key type and
 ///         `std::vector< boost::graph_traits<TriangleMesh>::%vertex_descriptor>` as value type
 ///
 /// @param tmesh
@@ -63,15 +63,15 @@ namespace CGAL{
 /// @param skeleton_to_tmesh_vertices property map associating a vertex `v` of the graph `skeleton`
 ///        to the set of vertices of `tmesh` corresponding to `v`.
 /// \todo add an overload when the TriangleMesh is of the same type as the copy
-/// \todo I need to tweak GraphVertexIndicesMap to match the documentation
+/// \todo I need to tweak SkeletonVertexIndicesMap to match the documentation
 template <class TriangleMesh,
-          class Graph,
-          class GraphVertexPointMap,
-          class GraphVertexIndicesMap>
+          class Skeleton,
+          class SkeletonVertexPointMap,
+          class SkeletonVertexIndicesMap>
 void extract_mean_curvature_flow_skeleton(const TriangleMesh& tmesh,
-                                          Graph& skeleton,
-                                          GraphVertexPointMap& skeleton_points,
-                                          GraphVertexIndicesMap& skeleton_to_tmesh_vertices)
+                                          Skeleton& skeleton,
+                                          SkeletonVertexPointMap& skeleton_points,
+                                          SkeletonVertexIndicesMap& skeleton_to_tmesh_vertices)
 {
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type PmeshPointPMap;
   typedef typename boost::property_traits<PmeshPointPMap>::value_type Point;

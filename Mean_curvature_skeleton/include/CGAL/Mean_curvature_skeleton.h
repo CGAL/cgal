@@ -372,12 +372,13 @@ public:
    * The constructor of a skeletonization object.
    *
    * The algorithm parameters are initialized such that:
-   * - `omega_H()` returns 0.1
-   * - `omega_P()` returns 0.2
-   * - `delta_area()` returns 0.0001
-   * - `max_iterations()` returns 500
-   * - `is_medially_centered()` returns `true`
-   * - `min_edge_length()` returns  0.002 * the length of the diagonal of the bounding box of `tmesh`
+   * - `alpha_TH() == 130`
+   * - `omega_H() == 0.1`
+   * - `omega_P() == 0.2`
+   * - `delta_area() == 0.0001`
+   * - `max_iterations() == 500`
+   * - `is_medially_centered() == true`
+   * - `min_edge_length()` == 0.002 * the length of the diagonal of the bounding box of `tmesh`
    *
    * @pre `tmesh` is a triangulated surface mesh without borders and has exactly one connected component.
    * @param tmesh 
@@ -444,6 +445,17 @@ public:
 
   /// \name Algorithm Parameters
   /// @{
+
+  /// Controls.... 
+  double alpha_TH()
+  {
+    return m_alpha_TH;
+  }
+
+ void set_alpha_TH(double value)
+  {
+    m_alpha_TH = value;
+  }
 
   /// Controls the velocity of movement and approximation quality:
   /// increasing `omega_H` makes the mean curvature flow based contraction converge
@@ -522,17 +534,6 @@ public:
   }
 
   /// \cond SKIP_FROM_MANUAL
-
-  void set_alpha_TH(double value)
-  {
-    m_alpha_TH = value;
-  }
-
-  double alpha_TH()
-  {
-    return m_alpha_TH;
-  }
-
   void set_zero_TH(double value)
   {
     m_zero_TH = value;
@@ -622,6 +623,18 @@ public:
    * contracted until convergence, and then turned into a curve skeleton.
    *
    * This is equivalent to calling `contract_until_convergence()` and `convert_to_skeleton()`.
+   * @tparam Skeleton
+   *         an instantiation of <A href="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</a>
+   *         as data structure for the skeleton curve.
+   * @tparam SkeletonVertexPointMap
+   *         a model of `ReadWritePropertyMap`
+   *         with `boost::graph_traits<Skeleton>::%vertex_descriptor` as key type and
+   *         `Traits::Point_3` as value type  
+   * @tparam SkeletonVertexIndicesMap
+   *         a model of `ReadWritePropertyMap`
+   *         with `boost::graph_traits<Skeleton>::%vertex_descriptor` as key type and
+   *         `std::vector<size_type>` as value type,
+   *         where `size_type` is the value type of `VertexIndexMap`
    *
    * @param skeleton
    *        graph that will contain the skeleton of the input surface mesh
@@ -630,23 +643,11 @@ public:
    * @param skeleton_to_tmesh_vertices property map associating a vertex `v` of the graph `skeleton`
    *         to the indices of the vertices of the input surface mesh corresponding to `v`.
    *         Indices are retrieved using the vertex index property map given in the constructor.
-   * @tparam Graph
-   *         an instantiation of <A href="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</a>
-   *         as data structure for the skeleton curve.
-   * @tparam GraphVertexPointMap
-   *         a model of `ReadWritePropertyMap`
-   *         with `boost::graph_traits<Graph>::%vertex_descriptor` as key type and
-   *         `Traits::Point_3` as value type  
-   * @tparam GraphVertexIndicesMap
-   *         a model of `ReadWritePropertyMap`
-   *         with `boost::graph_traits<Graph>::%vertex_descriptor` as key type and
-   *         `std::vector<size_type>` as value type,
-   *         where `size_type` is the value type of `VertexIndexMap`
    */
-  template <class Graph, class GraphVertexPointMap, class GraphVertexIndicesMap>
-  void operator()(Graph& skeleton,
-                  GraphVertexPointMap& skeleton_points,
-                  GraphVertexIndicesMap& skeleton_to_tmesh_vertices)
+  template <class Skeleton, class SkeletonVertexPointMap, class SkeletonVertexIndicesMap>
+  void operator()(Skeleton& skeleton,
+                  SkeletonVertexPointMap& skeleton_points,
+                  SkeletonVertexIndicesMap& skeleton_to_tmesh_vertices)
   {
     contract_until_convergence();
     convert_to_skeleton(skeleton, skeleton_points, skeleton_to_tmesh_vertices);
@@ -868,30 +869,31 @@ public:
 
   /**
    * Converts the contracted surface mesh to a skeleton curve.
+   * @tparam Skeleton
+   *         an instantiation of <A href="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</a>
+   *         as a data structure for the skeleton curve.
+   * @tparam SkeletonVertexIndicesMap
+   *         a model of `ReadWritePropertyMap`
+   *         with `boost::graph_traits<Skeleton>::%vertex_descriptor as` key type and
+   *         `std::vector<size_type>` as value type,
+   *         where `size_type` is the value type of `VertexIndexMap`
+   * @tparam SkeletonPointMap
+   *         a model of `ReadWritePropertyMap`
+   *         with `boost::graph_traits<Skeleton>::%vertex_descriptor` as key type and
+   *         `Traits::Point_3` as value type
+   *  
    * @param skeleton
    *       graph that will contain the skeleton of `tmesh`
    * @param skeleton_points
    *        property map containing the location of the vertices of the graph `skeleton`
    *@param skeleton_to_tmesh_vertices property map associating a vertex `v` of the graph `skeleton`
    *       to the set of vertices of `tmesh` corresponding to `v`.
-   * @tparam Graph
-   *         an instantiation of <A href="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</a>
-   *         as a data structure for the skeleton curve.
-   * @tparam GraphVertexIndicesMap
-   *         a model of `ReadWritePropertyMap`
-   *         with `boost::graph_traits<Graph>::%vertex_descriptor as` key type and
-   *         `std::vector<size_type>` as value type,
-   *         where `size_type` is the value type of `VertexIndexMap`
-   * @tparam GraphPointMap
-   *         a model of `ReadWritePropertyMap`
-   *         with `boost::graph_traits<Graph>::%vertex_descriptor` as key type and
-   *         `Traits::Point_3` as value type  
    */
-  template <class Graph, class GraphVertexPointMap, class GraphVertexIndicesMap>
-  void convert_to_skeleton(Graph& skeleton, GraphVertexPointMap& skeleton_points, GraphVertexIndicesMap& skeleton_to_tmesh_vertices)
+  template <class Skeleton, class SkeletonVertexPointMap, class SkeletonVertexIndicesMap>
+  void convert_to_skeleton(Skeleton& skeleton, SkeletonVertexPointMap& skeleton_points, SkeletonVertexIndicesMap& skeleton_to_tmesh_vertices)
   {
     Skeleton skeletonization(m_tmesh, m_vertex_id_pmap, m_hedge_id_pmap, m_tmesh_point_pmap);
-    std::map<typename boost::graph_traits<Graph>::vertex_descriptor, std::vector<int> > skeleton_to_surface_map;
+    std::map<typename boost::graph_traits<Skeleton>::vertex_descriptor, std::vector<int> > skeleton_to_surface_map;
     
     skeletonization.extract_skeleton(skeleton, skeleton_points, skeleton_to_surface_map);
     correspondent_vertices(skeleton_to_surface_map, skeleton_to_tmesh_vertices);
@@ -1586,11 +1588,11 @@ private:
   // Vertex info association
   // --------------------------------------------------------------------------
 
-  template <class Skeleton_vertex_descriptor, class GraphVerticesMap>
-  void correspondent_vertices(std::map<Skeleton_vertex_descriptor, std::vector<int> >& skeleton_to_surface_map,
+  template <class SkeletonVertexDescriptor, class GraphVerticesMap>
+  void correspondent_vertices(std::map<SkeletonVertexDescriptor, std::vector<int> >& skeleton_to_surface_map,
                               GraphVerticesMap& skeleton_to_surface)
   {
-    typename std::map<Skeleton_vertex_descriptor, std::vector<int> >::iterator iter;
+    typename std::map<SkeletonVertexDescriptor, std::vector<int> >::iterator iter;
     for (iter = skeleton_to_surface_map.begin();
          iter != skeleton_to_surface_map.end(); ++iter)
     {

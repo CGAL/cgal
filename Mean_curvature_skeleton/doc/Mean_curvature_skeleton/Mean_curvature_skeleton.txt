@@ -5,7 +5,6 @@ namespace CGAL {
 \todo `delta_area` is the wrong name. As we multiply it with the original area it should be `area_ratio`. Or we keep delta, but compute it once as a fraction.
 \todo change the variables wirth `_TH` as postfix. Should become something with min or max
 \todo Find better names than `omega_P` and `omega_H`
-\todo What is `alpha_TH`
 
 \mainpage User Manual 
 \anchor Chapter_3D_Mean_Curvature_Skeleton
@@ -135,7 +134,7 @@ instead:
 \f$ V^{t} \f$ is the vertex embedding in iteration \f$ t \f$. The
 Laplacian operator \f$ L \f$ we use here is the classic cotangent
 Laplacian operator introduced in \cgalCite{desbrun1999implicit}. \f$
-W_{H} \f$ is a diagonal matrix, all diagonal element being equal and
+W_{H} \f$ is a diagonal matrix, all diagonal elements being equal and
 denoted as \f$ w_{H}\f$ which is a user parameter that controls the
 speed of the MCF. Slowing down the MCF is essential since as the mesh
 evolves, the local curvature changes and the Laplacian operator needs
@@ -145,7 +144,7 @@ The effect of \f$ w_{H} \f$ is illustrated in \cgalFigureRef{WHeffect}.
 
 \cgalFigureBegin{WHeffect, WHeffect.png}
 From left to right, the \f$ w_{H} \f$ is 0.1, 0.05, 0.01, 0.005
-respectively.  Note setting \f$ w_{H} \f$ too small results in a low
+respectively.  Note that setting \f$ w_{H} \f$ too small results in a low
 quality of skeleton.  By default, the \f$ w_{H} \f$ is set to 0.1,
 which works well in most cases.
 \cgalFigureEnd
@@ -206,9 +205,6 @@ poles for each vertex.  During the collapse in local remeshing, we
 need to update the pole. In particular, we position the new vertex to
 the middle point of the collapsed edge and choose the closest pole
 from the poles of the two incident vertices of the edge.
-
-\note Solving the sparse linear system requires a model of `SparseLinearAlgebraTraits_d`
-such as the one provided by \ref thirdpartyEigen 3.2 or later.
 
 
 \section MCFSkelSecAPI User Interface Description
