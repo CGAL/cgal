@@ -207,9 +207,8 @@ need to update the pole. In particular, we position the new vertex to
 the middle point of the collapsed edge and choose the closest pole
 from the poles of the two incident vertices of the edge.
 
-\note To solve the sparse linear system, Eigen 3.2 or later is
-recommended. Eigen is an open source library and easy to use. The
-default solver is `Eigen::SparseLU`, since the matrix is SPsD.
+\note Solving the sparse linear system requires a model of `SparseLinearAlgebraTraits_d`
+such as the one provided by \ref thirdpartyEigen 3.2 or later.
 
 
 \section MCFSkelSecAPI User Interface Description
