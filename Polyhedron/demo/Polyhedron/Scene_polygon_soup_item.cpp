@@ -140,7 +140,6 @@ Scene_polygon_soup_item::compile_shaders(void)
         "float spec_power = 0.0; \n"
 
         "out highp vec3 fColors; \n"
-        "out highp vec3 fNormals; \n"
         " \n"
 
         "void main(void) \n"
@@ -165,7 +164,6 @@ Scene_polygon_soup_item::compile_shaders(void)
         "fColors = light_amb + diffuse + specular ; \n"
 
         "gl_Position = mvp_matrix * positions_poly; \n"
-        "fNormals = vNormals; \n"
         "} \n"
     };
     //fill the fragment shader
@@ -174,7 +172,6 @@ Scene_polygon_soup_item::compile_shaders(void)
         "#version 300 es \n"
         " \n"
         "in highp vec3 fColors; \n"
-        "in highp vec3 fNormals; \n"
 
         "out highp vec3 color; \n"
         " \n"

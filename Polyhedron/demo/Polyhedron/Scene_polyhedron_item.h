@@ -1,9 +1,11 @@
 #ifndef SCENE_POLYHEDRON_ITEM_H
 #define SCENE_POLYHEDRON_ITEM_H
 
+#include <GL/glew.h>
 #include "Scene_polyhedron_item_config.h"
-#include "Scene_item_with_display_list.h"
+#include "Scene_item.h" //<- modif ?
 #include "Polyhedron_type_fwd.h"
+#include "Viewer.h"
 #include <iostream>
 
 #include <set>
@@ -15,7 +17,7 @@ class QMenu;
 
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item 
-  : public Scene_item_with_display_list {
+  : public Scene_item{
   Q_OBJECT
 public:  
   Scene_polyhedron_item();
@@ -39,8 +41,10 @@ public:
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals && m!=Splatting); }
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
-  virtual void direct_draw() const;
-  virtual void direct_draw_edges() const;
+  void draw() const {}
+  virtual void draw(Viewer_interface*) const;
+  virtual void draw_edges() const {}
+virtual void draw_edges(Viewer_interface* viewer) const;
 
   // Get wrapped polyhedron
   Polyhedron*       polyhedron();
@@ -85,7 +89,7 @@ private:
   Polyhedron* poly;
 
 private:
-  typedef Scene_item_with_display_list Base;
+  typedef Scene_item Base;
   typedef std::vector<QColor> Color_vector;
     
   Color_vector colors_;
@@ -95,6 +99,24 @@ private:
   bool erase_next_picked_facet_m;
   //the following variable is used to indicate if the color vector must not be automatically updated.
   bool plugin_has_set_color_vector_m;
+
+  std::vector<float> positions_lines;
+  std::vector<float> positions_facets;
+  std::vector<float> normals;
+
+  GLuint rendering_program;
+  GLint location[9];
+
+
+  GLuint vertex_shader;
+  GLuint fragment_shader;
+  GLuint program;
+  GLuint vao;
+  GLuint buffer[3];
+  void initialize_buffers(); // a mettre a jour
+  GLuint compile_shaders(void); //a mettre a jour
+  void compute_normals_and_vertices(void);
+  void uniform_attrib(Viewer_interface*) const;//fini
 }; // end class Scene_polyhedron_item
 
 #endif // SCENE_POLYHEDRON_ITEM_H
