@@ -632,6 +632,7 @@ public:
 
   void check_and_solve_inconsistencies_by_adding_higher_dim_simplices()
   {
+    // CJTODO: parallel_for
     for (std::size_t idx = 0 ; idx < m_triangulations.size() ; ++idx)
     {
       bool inconsistencies_found;
@@ -1915,6 +1916,10 @@ private:
     
     // CJTODO: on prend le point le plus proche pour l'instant, mais il 
     // faudra changer ça (cf 4 5 6, ci dessous)
+    // Et aussi, il faudra utiliser Power_distance dans le cas où on perturbe
+    // avec des poids (on est dans l'espace ambiant, donc ce sont les seuls
+    // poids possibles). Il faut aussi ajouter une marge lors de la recherche
+    // ANN puis restester la distance avec le vrai point perturbée.
     Point global_Cq = unproject_point(Cq, center_pt,
                                       m_tangent_spaces[q_idx], q_tr_traits);
     std::size_t inside_point_idx;
