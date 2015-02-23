@@ -194,7 +194,6 @@ void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert,
   y_side = (unsigned int)ceil((bbox.ymax() - bbox.ymin()) / radius);
   z_side = (unsigned int)ceil((bbox.zmax() - bbox.zmin()) / radius);
 
-
   x_side = (x_side > 0) ? x_side : 1;
   y_side = (y_side > 0) ? y_side : 1;
   z_side = (z_side > 0) ? z_side : 1;

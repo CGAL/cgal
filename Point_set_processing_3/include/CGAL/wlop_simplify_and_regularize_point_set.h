@@ -26,6 +26,7 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
+#include <CGAL/compute_average_spacing.h>
 
 #include <iterator>
 #include <set>
@@ -436,9 +437,10 @@ wlop_simplify_and_regularize_point_set(
                                ///< This is a key parameter that needs to be finely tuned.  
                                ///< The result will be irregular if too small, but a larger
                                ///< value will impact the runtime.
-                               ///< In practice, choosing a radius such that each point has at least 4 neighbors
+                               ///< In practice, choosing a radius such that the neighborhood of each sample point
+                               ///< includes at least two rings of neighboring sample points
                                ///< gives satisfactory result.
-                               ///< The default value is set to 0.05 * the diameter of the bounding box.
+                               ///< The default value is set to 8 times the average spacing of the point set.
   unsigned int iter_number,    ///< number of iterations to solve the optimsation problem. The default value is 35.
                                ///< More iterations give a more regular result but increase the runtime.
   bool require_uniform_sampling,///< an optional preprocessing, which will give better result
@@ -496,24 +498,14 @@ wlop_simplify_and_regularize_point_set(
   //compute default neighbor_radius, if no radius in
   if (radius < 0)
   {
-    CGAL::Bbox_3 bbox(0, 0, 0, 0, 0, 0);
-    for (RandomAccessIterator temp = first; temp != beyond; ++temp)
-    {
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      Point original_p = get(point_pmap, temp);
-#else
-      Point original_p = get(point_pmap, *temp);
-#endif 
-      bbox += original_p.bbox();
-    }
+    const unsigned int nb_neighbors = 6; // 1 ring
+    FT average_spacing = CGAL::compute_average_spacing(
+                               first, beyond,
+                               point_pmap,
+                               nb_neighbors);
+    radius = average_spacing * 8.0;
 
-    Point max_p(bbox.xmax(), bbox.ymax(), bbox.zmax());
-    Point min_p(bbox.xmin(), bbox.ymin(), bbox.zmin());
-    FT bbox_diameter = CGAL::squared_distance(max_p, min_p);
-    radius = std::sqrt(bbox_diameter) * 0.07; // using this estimation may not  
-                                              // be able to generate good result
-
-#ifdef CGAL_DEBUG_MODE
+#ifdef CGAL_PSP3_VERBOSE
     std::cout << "The estimated radius size is: " << radius << std::endl;
     std::cout << "Be careful! Using this radius estimation may not be able to have good performance/result for different input" << std::endl;
 #endif
