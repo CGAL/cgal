@@ -105,7 +105,8 @@ void extract_mean_curvature_flow_skeleton(const TriangleMesh& tmesh,
           Eigen::COLAMDOrdering<int> > > SparseLinearAlgebraTraits_d;
 
   // extract the skeleton
-  typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron,
+  typedef CGAL::Mean_curvature_flow_skeletonization<K,
+                                                    Polyhedron,
                                                     VertexIndexMap,
                                                     HedgeIndexMap,
                                                     PolyVertexPointMap,

@@ -892,10 +892,13 @@ public:
   template <class Skeleton, class SkeletonVertexPointMap, class SkeletonVertexIndicesMap>
   void convert_to_skeleton(Skeleton& skeleton, SkeletonVertexPointMap& skeleton_points, SkeletonVertexIndicesMap& skeleton_to_tmesh_vertices)
   {
-    Skeleton skeletonization(m_tmesh, m_vertex_id_pmap, m_hedge_id_pmap, m_tmesh_point_pmap);
+    // AF: I do not understand  why we do another MCF
+    // Mean_curvature_flow_skeletonization skeletonization(m_tmesh, m_vertex_id_pmap, m_hedge_id_pmap, m_tmesh_point_pmap);
     std::map<typename boost::graph_traits<Skeleton>::vertex_descriptor, std::vector<int> > skeleton_to_surface_map;
     
-    skeletonization.extract_skeleton(skeleton, skeleton_points, skeleton_to_surface_map);
+    // AF: skeletonization(skeleton, skeleton_points, skeleton_to_surface_map);
+    // Note that without this the skeleton_to_surface_map remains empty
+    // and the next call does nothing
     correspondent_vertices(skeleton_to_surface_map, skeleton_to_tmesh_vertices);
   }
 
@@ -1588,15 +1591,15 @@ private:
   // Vertex info association
   // --------------------------------------------------------------------------
 
-  template <class SkeletonVertexDescriptor, class GraphVerticesMap>
+  template <class SkeletonVertexDescriptor, class SkeletonVertexIndicesMap>
   void correspondent_vertices(std::map<SkeletonVertexDescriptor, std::vector<int> >& skeleton_to_surface_map,
-                              GraphVerticesMap& skeleton_to_surface)
+                              SkeletonVertexIndicesMap& skeleton_to_surface)
   {
     typename std::map<SkeletonVertexDescriptor, std::vector<int> >::iterator iter;
     for (iter = skeleton_to_surface_map.begin();
          iter != skeleton_to_surface_map.end(); ++iter)
     {
-      Skeleton_vertex_descriptor i = iter->first;
+      SkeletonVertexDescriptor i = iter->first;
 
       skeleton_to_surface[i] = std::vector<int>();
       for (size_t j = 0; j < skeleton_to_surface_map[i].size(); ++j)
