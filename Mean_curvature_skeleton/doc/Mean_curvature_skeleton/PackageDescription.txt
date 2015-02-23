@@ -1,4 +1,6 @@
 /// \defgroup PkgMeanCurvatureSkeleton3 Triangulated Surface Mesh Skeletonization Reference
+/// \defgroup PkgMeanCurvatureSkeleton3Concepts Concepts
+/// \ingroup PkgMeanCurvatureSkeleton3
 
 /*!
 \addtogroup PkgMeanCurvatureSkeleton3
@@ -19,6 +21,14 @@
 \cgalPkgDescriptionEnd
 
 
+\cgalClassifedRefPages
 
+## Concepts ##
+
+- `MeanCurvatureSkeletonizationTraits`
+
+## Classes ##
+
+ - `CGAL::Mean_curvature_flow_skeletonization`
 */
 

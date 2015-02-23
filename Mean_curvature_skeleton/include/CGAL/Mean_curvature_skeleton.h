@@ -122,23 +122,26 @@ enum Degeneracy_algorithm_tag
 ///
 /// \todo index pmap should also be writable :/
 ///
+/// @tparam Traits
+///         a model of `SurfaceMeshSkeletonizationTraits`
+///
 /// @tparam HalfedgeGraph
 ///         a model of `HalfedgeGraph`
 /// @tparam VertexIndexMap
 ///         a model of `ReadablePropertyMap`
-///         with `Mean_curvature_flow_skeletonization::vertex_descriptor` as key and
-///         `unsigned int` as value type.
-///         The default is `boost::property_map<HalfedgeGraph, boost::vertex_index_t>::%type`.
+///         with `boost::graph_traits<HalfedgeGraph>::vertex_descriptor` as key and
+///         `unsigned int` as value type.<br>
+///         <b>%Default:</b> `boost::property_map<HalfedgeGraph, boost::vertex_index_t>::%type`.
 /// @tparam HalfedgeIndexMap
 ///         a model of `ReadablePropertyMap`</a>
-///         with `Mean_curvature_flow_skeletonization::halfedge_descriptor` as key and
-///         `unsigned int` as value type.
-///         The default is `boost::property_map<HalfedgeGraph, boost::halfedge_index_t>::%type`.
+///         with `boost::graph_traits<HalfedgeGraph>::halfedge_descriptor` as key and
+///         `unsigned int` as value type.<br>
+///         <b>%Default:</b> `boost::property_map<HalfedgeGraph, boost::halfedge_index_t>::%type`.
 /// @tparam VertexPointMap
 ///         a model of `ReadWritePropertyMap`
-///         with `Mean_curvature_flow_skeletonization::vertex_descriptor` as key and
-///         `Mean_curvature_flow_skeletonization::Point` as value type.
-///         The default is `boost::property_map<HalfedgeGraph, boost::vertex_point_t>::%type`.
+///         with `boost::graph_traits<HalfedgeGraph>::vertex_descriptor` as key and
+///         `Traits::Point_3` as value type.<br>
+///         <b>%Default:</b> `boost::property_map<HalfedgeGraph, boost::vertex_point_t>::%type`.
 /// @tparam SparseLinearAlgebraTraits_d
 ///         a model of `SparseLinearAlgebraTraitsWithFactor_d`.
 ///         If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
@@ -157,13 +160,15 @@ enum Degeneracy_algorithm_tag
 ///         tag for selecting the degeneracy detection algorithm
 /// @endcond
 #ifdef DOXYGEN_RUNNING
-template <class HalfedgeGraph,
-          class VertexIndexMap_ = Default,
-          class HalfedgeIndexMap_ = Default,
-          class VertexPointMap_ = Default,
-          class SparseLinearAlgebraTraits_d_ = Default>
+template <class Traits,
+          class HalfedgeGraph,
+          class VertexIndexMap = Default,
+          class HalfedgeIndexMap = Default,
+          class VertexPointMap = Default,
+          class SparseLinearAlgebraTraits_d = Default>
 #else
-template <class HalfedgeGraph,
+template <class Traits,
+          class HalfedgeGraph,
           class VertexIndexMap_ = Default,
           class HalfedgeIndexMap_  = Default,
           class VertexPointMap_ = Default,
@@ -191,13 +196,6 @@ public:
     VertexPointMap_,
     typename boost::property_map<HalfedgeGraph, boost::vertex_point_t>::type
   >::type VertexPointMap;
-  #else
-    ///
-    typedef VertexIndexMap_ Vertex_index_map;
-    ///
-    typedef HalfedgeIndexMap_ Hedge_index_map;
-    ///
-    typedef VertexPointMap_ VertexPointMap;
   #endif
 
   #ifndef DOXYGEN_RUNNING
@@ -216,17 +214,10 @@ public:
   ///
   typedef SparseLinearAlgebraTraits_d_ SparseLinearAlgebraTraits_d;
   #endif
-  /// Point type
-  typedef typename boost::property_traits<VertexPointMap>::value_type    Point;
-  ///
-  typedef typename Kernel_traits<Point>::Kernel                                 Kernel;
-  /// Vertex descriptor type
-  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor       vertex_descriptor;
-  /// Halfedge descriptor type
-  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor     halfedge_descriptor;
+ 
 /// @}
 
-  typedef typename Kernel::Vector_3                                             Vector;
+  typedef typename Traits::Vector_3                                             Vector;
 
 
   // Repeat HalfedgeGraph types
@@ -643,7 +634,7 @@ public:
    * @tparam GraphVertexPointMap
    *         a model of `ReadWritePropertyMap`
    *         with `boost::graph_traits<Graph>::vertex_descriptor` as key type and
-   *         `Mean_curvature_flow_skeletonization::Point` as value type  
+   *         `Traits::Point_3` as value type  
    * @tparam GraphVertexIndicesMap
    *         a model of `ReadWritePropertyMap`
    *         with `boost::graph_traits<Graph>::vertex_descriptor` as key type and
@@ -892,7 +883,7 @@ public:
    * @tparam GraphPointMap
    *         a model of `ReadWritePropertyMap`
    *         with `boost::graph_traits<Graph>::vertex_descriptor` as key type and
-   *         `Mean_curvature_flow_skeletonization::Point` as value type  
+   *         `Traits::Point_3` as value type  
    */
   template <class Graph, class GraphVertexPointMap, class GraphVertexIndicesMap>
   void convert_to_skeleton(Graph& skeleton, GraphVertexPointMap& skeleton_points, GraphVertexIndicesMap& skeleton_to_pmesh_vertices)
@@ -967,7 +958,7 @@ private:
 
     int nver = num_vertices(m_pmesh);
 
-    Point_inside_polyhedron_3<HalfedgeGraph, Kernel> test_inside(m_pmesh);
+    Point_inside_polyhedron_3<HalfedgeGraph, Traits> test_inside(m_pmesh);
 
     vertex_iterator vb, ve;
     for (boost::tie(vb, ve) = vertices(m_pmesh); vb != ve; ++vb)
@@ -1030,7 +1021,7 @@ private:
   {
     MCFSKEL_DEBUG(std::cerr << "start RHS\n";)
 
-    Point_inside_polyhedron_3<HalfedgeGraph, Kernel> test_inside(m_pmesh);
+    Point_inside_polyhedron_3<HalfedgeGraph, Traits> test_inside(m_pmesh);
 
     // assemble right columns of linear system
     int nver = num_vertices(m_pmesh);
@@ -1585,7 +1576,7 @@ private:
     {
       vertex_descriptor v = *vb;
       int vid = get(m_vertex_id_pmap, v);
-      m_normals[vid] = internal::get_vertex_normal<typename HalfedgeGraph::Vertex,Kernel>(*v);
+      m_normals[vid] = internal::get_vertex_normal<typename HalfedgeGraph::Vertex,Traits>(*v);
     }
   }
 
