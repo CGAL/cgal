@@ -129,17 +129,17 @@ enum Degeneracy_algorithm_tag
 ///         a model of `HalfedgeGraph`
 /// @tparam VertexIndexMap
 ///         a model of `ReadablePropertyMap`
-///         with `boost::graph_traits<HalfedgeGraph>::vertex_descriptor` as key and
+///         with `boost::graph_traits<HalfedgeGraph>::%vertex_descriptor` as key and
 ///         `unsigned int` as value type.<br>
 ///         <b>%Default:</b> `boost::property_map<HalfedgeGraph, boost::vertex_index_t>::%type`.
 /// @tparam HalfedgeIndexMap
 ///         a model of `ReadablePropertyMap`</a>
-///         with `boost::graph_traits<HalfedgeGraph>::halfedge_descriptor` as key and
+///         with `boost::graph_traits<HalfedgeGraph>::%halfedge_descriptor` as key and
 ///         `unsigned int` as value type.<br>
 ///         <b>%Default:</b> `boost::property_map<HalfedgeGraph, boost::halfedge_index_t>::%type`.
 /// @tparam VertexPointMap
 ///         a model of `ReadWritePropertyMap`
-///         with `boost::graph_traits<HalfedgeGraph>::vertex_descriptor` as key and
+///         with `boost::graph_traits<HalfedgeGraph>::%vertex_descriptor` as key and
 ///         `Traits::Point_3` as value type.<br>
 ///         <b>%Default:</b> `boost::property_map<HalfedgeGraph, boost::vertex_point_t>::%type`.
 /// @tparam SparseLinearAlgebraTraits_d
@@ -633,11 +633,11 @@ public:
    *         as data structure for the skeleton curve.
    * @tparam GraphVertexPointMap
    *         a model of `ReadWritePropertyMap`
-   *         with `boost::graph_traits<Graph>::vertex_descriptor` as key type and
+   *         with `boost::graph_traits<Graph>::%vertex_descriptor` as key type and
    *         `Traits::Point_3` as value type  
    * @tparam GraphVertexIndicesMap
    *         a model of `ReadWritePropertyMap`
-   *         with `boost::graph_traits<Graph>::vertex_descriptor` as key type and
+   *         with `boost::graph_traits<Graph>::%vertex_descriptor` as key type and
    *         `std::vector<size_type>` as value type,
    *         where `size_type` is the value type of `VertexIndexMap`
    */
@@ -877,12 +877,12 @@ public:
    *         as a data structure for the skeleton curve.
    * @tparam GraphVertexIndicesMap
    *         a model of `ReadWritePropertyMap`
-   *         with `boost::graph_traits<Graph>::vertex_descriptor as` key type and
+   *         with `boost::graph_traits<Graph>::%vertex_descriptor as` key type and
    *         `std::vector<size_type>` as value type,
    *         where `size_type` is the value type of `VertexIndexMap`
    * @tparam GraphPointMap
    *         a model of `ReadWritePropertyMap`
-   *         with `boost::graph_traits<Graph>::vertex_descriptor` as key type and
+   *         with `boost::graph_traits<Graph>::%vertex_descriptor` as key type and
    *         `Traits::Point_3` as value type  
    */
   template <class Graph, class GraphVertexPointMap, class GraphVertexIndicesMap>

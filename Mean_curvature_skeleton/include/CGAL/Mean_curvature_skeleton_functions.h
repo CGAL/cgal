@@ -46,12 +46,12 @@ namespace CGAL{
 ///         an instantiation of <A href="http://www.boost.org/libs/graph/doc/adjacency_list.html>`boost::adjacency_list`</a> as data structure for the skeleton curve
 /// @tparam GraphVertexPointMap
 ///         a model of `ReadWritePropertyMap`</a>
-///         with `boost::graph_traits<Graph>::vertex_descriptor` as key type and
+///         with `boost::graph_traits<Graph>::%vertex_descriptor` as key type and
 ///         the value type of `boost::property_map<HalfedgeGraph, boost::vertex_point_t>::%type`
 ///         as value type.
 /// @tparam GraphVertexIndicesMap
 ///         a model of `ReadWritePropertyMap`</a>
-///         with `boost::graph_traits<Graph>::vertex_descriptor` as key type and
+///         with `boost::graph_traits<Graph>::%vertex_descriptor` as key type and
 ///         `std::vector< boost::graph_traits<HalfedgeGraph>::%vertex_descriptor>` as value type
 ///
 /// @param pmesh
