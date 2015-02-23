@@ -33,11 +33,11 @@ namespace CGAL{
 
 #if defined(DOXYGEN_RUNNING) || defined(CGAL_EIGEN3_ENABLED)
 /// \ingroup PkgMeanCurvatureSkeleton3
-/// @brief extracts a medially centered curve skeleton for the polygonal mesh `pmesh`.
+/// @brief extracts a medially centered curve skeleton for the polygonal mesh `tmesh`.
 /// This function uses the class CGAL::Mean_curvature_flow_skeletonization with the default parameters.
 /// This function is available if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined.
-/// @pre `pmesh` is a triangulated polygonal mesh without borders and has exactly one connected component.
-/// @pre The specialization `boost::property_map<HalfedgeGraph, boost::vertex_point_t>::%type` and `get(vertex_point, pmesh)` are defined.
+/// @pre `tmesh` is a triangulated polygonal mesh without borders and has exactly one connected component.
+/// @pre The specialization `boost::property_map<HalfedgeGraph, boost::vertex_point_t>::%type` and `get(vertex_point, tmesh)` are defined.
 /// @pre The value type of `boost::property_map<HalfedgeGraph, boost::vertex_point_t>::%type` is a point type from a \cgal Kernel.
 ///
 /// @tparam HalfedgeGraph
@@ -54,24 +54,24 @@ namespace CGAL{
 ///         with `boost::graph_traits<Graph>::%vertex_descriptor` as key type and
 ///         `std::vector< boost::graph_traits<HalfedgeGraph>::%vertex_descriptor>` as value type
 ///
-/// @param pmesh
+/// @param tmesh
 ///        input mesh
 /// @param skeleton
-///        graph that will contain the skeleton of `pmesh`
+///        graph that will contain the skeleton of `tmesh`
 /// @param skeleton_points
 ///        property map containing the location of the vertices of the graph `skeleton`
-/// @param skeleton_to_pmesh_vertices property map associating a vertex `v` of the graph `skeleton`
-///        to the set of vertices of `pmesh` corresponding to `v`.
+/// @param skeleton_to_tmesh_vertices property map associating a vertex `v` of the graph `skeleton`
+///        to the set of vertices of `tmesh` corresponding to `v`.
 /// \todo add an overload when the HalfedgeGraph is of the same type as the copy
 /// \todo I need to tweak GraphVertexIndicesMap to match the documentation
 template <class HalfedgeGraph,
           class Graph,
           class GraphVertexPointMap,
           class GraphVertexIndicesMap>
-void extract_mean_curvature_flow_skeleton(const HalfedgeGraph& pmesh,
+void extract_mean_curvature_flow_skeleton(const HalfedgeGraph& tmesh,
                                           Graph& skeleton,
                                           GraphVertexPointMap& skeleton_points,
-                                          GraphVertexIndicesMap& skeleton_to_pmesh_vertices)
+                                          GraphVertexIndicesMap& skeleton_to_tmesh_vertices)
 {
   typedef typename boost::property_map<HalfedgeGraph, boost::vertex_point_t>::type PmeshPointPMap;
   typedef typename boost::property_traits<PmeshPointPMap>::value_type Point;
@@ -82,7 +82,7 @@ void extract_mean_curvature_flow_skeleton(const HalfedgeGraph& pmesh,
   CGAL::FaceGraph_to_Polyhedron_3<HalfedgeGraph,
                                   PmeshPointPMap,
                                   typename Polyhedron::HalfedgeDS,
-                                  false> modifier(pmesh, get(vertex_point, const_cast<HalfedgeGraph&>(pmesh)) );
+                                  false> modifier(tmesh, get(vertex_point, const_cast<HalfedgeGraph&>(tmesh)) );
   Polyhedron P;
   P.delegate(modifier);
   //init indices
@@ -112,7 +112,7 @@ void extract_mean_curvature_flow_skeleton(const HalfedgeGraph& pmesh,
                                                     SparseLinearAlgebraTraits_d> Mcfskel;
   Mcfskel mcfs(P);
 
-  mcfs(skeleton, skeleton_points, skeleton_to_pmesh_vertices);
+  mcfs(skeleton, skeleton_points, skeleton_to_tmesh_vertices);
 }
 #endif
 
