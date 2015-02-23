@@ -5,7 +5,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Mean_curvature_skeleton.h>
-#include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
 
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -16,7 +15,6 @@
 
 typedef CGAL::Simple_cartesian<double>                               Kernel;
 typedef Kernel::Point_3                                              Point;
-typedef Kernel::Vector_3                                             Vector;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_descriptor;
