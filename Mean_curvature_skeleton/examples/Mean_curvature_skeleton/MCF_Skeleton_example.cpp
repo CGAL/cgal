@@ -3,7 +3,6 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Mean_curvature_skeleton.h>
 
 #include <boost/property_map/property_map.hpp>

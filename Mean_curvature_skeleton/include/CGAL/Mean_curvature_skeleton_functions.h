@@ -43,7 +43,7 @@ namespace CGAL{
 /// @tparam TriangleMesh
 ///         a model of `HalfedgeGraph`
 /// @tparam Graph
-///         an instantiation of <A href="http://www.boost.org/libs/graph/doc/adjacency_list.html>`boost::adjacency_list`</a> as data structure for the skeleton curve
+///         an instantiation of <A href="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</a> as data structure for the skeleton curve
 /// @tparam GraphVertexPointMap
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with `boost::graph_traits<Graph>::%vertex_descriptor` as key type and
