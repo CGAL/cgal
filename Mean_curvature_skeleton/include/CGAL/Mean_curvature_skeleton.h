@@ -629,7 +629,7 @@ public:
    *         to the indices of the vertices of the input surface mesh corresponding to `v`.
    *         Indices are retrieved using the vertex index property map given in the constructor.
    * @tparam Graph
-   *         an instantiation of `boost::adjacency_list`
+   *         an instantiation of <A href="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</a>
    *         as data structure for the skeleton curve.
    * @tparam GraphVertexPointMap
    *         a model of `ReadWritePropertyMap`
@@ -873,7 +873,7 @@ public:
    *@param skeleton_to_pmesh_vertices property map associating a vertex `v` of the graph `skeleton`
    *       to the set of vertices of `pmesh` corresponding to `v`.
    * @tparam Graph
-   *         an instantiation of `boost::adjacency_list`
+   *         an instantiation of <A href="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</a>
    *         as a data structure for the skeleton curve.
    * @tparam GraphVertexIndicesMap
    *         a model of `ReadWritePropertyMap`

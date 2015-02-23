@@ -1,22 +1,17 @@
-
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Mean_curvature_skeleton_functions.h>
-#include <CGAL/iterator.h>
-#include <CGAL/Bbox_3.h>
 
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/iterator/transform_iterator.hpp>
 
 #include <fstream>
 #include <map>
 
 typedef CGAL::Simple_cartesian<double>                               Kernel;
 typedef Kernel::Point_3                                              Point;
-typedef Kernel::Vector_3                                             Vector;
 typedef CGAL::Surface_mesh<Point> Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_descriptor;
@@ -42,36 +37,6 @@ typedef boost::associative_property_map<Correspondence_map>            GraphCorr
 typedef std::map<vertex_desc, Point>                                   GraphPointMap;
 typedef boost::associative_property_map<GraphPointMap>                 GraphPointPMap;
 
-// The input of the skeletonization algorithm must be a pure triangular closed
-// mesh and has only one component.
-bool is_mesh_valid(Polyhedron& pMesh)
-{
-  if (! is_closed(pMesh))
-  {
-    std::cerr << "The mesh is not closed.";
-    return false;
-  }
-  if (! is_pure_triangle(pMesh))
-  {
-    std::cerr << "The mesh is not a pure triangle mesh.";
-    return false;
-  }
-  /*
-  // the algorithm is only applicable on a mesh
-  // that has only one connected component
-  std::size_t num_component;
-  CGAL::Counting_output_iterator output_it(&num_component);
-  CGAL::internal::extract_connected_components(pMesh, output_it);
-  ++output_it;
-  if (num_component != 1)
-  {
-    std::cerr << "The mesh is not a single closed mesh. It has " 
-              << num_component << " components.";
-    return false;
-  }
-  */
-  return true;
-}
 
 // This example extracts a medially centered skeleton from a given mesh.
 int main()
@@ -81,9 +46,6 @@ int main()
 
   if ( !input || !(input >> mesh) || mesh.is_empty() ) {
     std::cerr << "Cannot open data/sindorelax.off" << std::endl;
-    return 1;
-  }
-  if (!is_mesh_valid(mesh)) {
     return 1;
   }
 
