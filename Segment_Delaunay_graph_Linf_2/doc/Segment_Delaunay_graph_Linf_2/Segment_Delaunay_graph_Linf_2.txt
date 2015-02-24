@@ -126,7 +126,7 @@ segment are overridden.
 
 As in the case of \f$ L_{2} \f$, the geometric predicates are
 quite elaborate and we do not bother the end user with details.
-Our implementation tries to reuse the \f$ L_{2} \f$ traits,
+Our implementation reuses the \f$ L_{2} \f$ traits,
 wherever possible, but there are
 extensive differences. We support geometric and arithmetic
 filtering, as the \f$ L_{2} \f$ predicates do.
