@@ -576,22 +576,6 @@ public:
 
   /// @} Setter and Getter
 
-  /// \name Access to the Meso-Skeleton
-  /// @{
-  
-  /// When using the low level API it is possible to access the intermediate 
-  /// results of the skeletonization process, called meso-skeleton.
-  /// It is a triangle surface mesh which is model of `FaceListGraph`.
-  typedef unspecified_type Meso_skeleton;
-
-  /// Reference to the collapsed surface mesh.
-  Meso_skeleton& meso_skeleton()
-  {
-    return m_tmesh;
-  }
-
-  /// @}
-
   /// \name High Level Function
   /// @{
 
@@ -613,7 +597,7 @@ public:
   /// @}
   
   /// \name Low Level Functions
-  /// The following functions enable the user to run the mean curvature flow skeleton algorithm step by step.
+  /// The following functions enable the user to run the mean curvature flow skeletonization algorithm step by step.
   /// @{
 
   /**
@@ -846,6 +830,22 @@ public:
 
   /// @} Public Algorithm API
 
+
+  /// \name Access to the Meso-Skeleton
+  /// @{
+  
+  /// When using the low level API it is possible to access the intermediate 
+  /// results of the skeletonization process, called meso-skeleton.
+  /// It is a triangle surface mesh which is model of `FaceListGraph`.
+  typedef unspecified_type Meso_skeleton;
+
+  /// Reference to the collapsed surface mesh.
+  Meso_skeleton& meso_skeleton()
+  {
+    return m_tmesh;
+  }
+
+  /// @}
 
 private:
 
