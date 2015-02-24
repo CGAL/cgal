@@ -162,7 +162,8 @@ public:
       CGAL_precondition(num_seg > 0);
       int last_seg = num_seg-1;
 
-      const Segment_traits_2* seg_traits = m_poly_traits.subcurve_traits_2();
+      const Segment_traits_2* seg_traits =
+        this->m_poly_traits.subcurve_traits_2();
       typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
         seg_traits->compare_endpoints_xy_2_object();
 
@@ -190,7 +191,8 @@ public:
       size_type num_seg = xcv.number_of_subcurves();
       CGAL_precondition(num_seg > 0);
 
-      const Segment_traits_2* seg_traits = m_poly_traits.subcurves_traits_2();
+      const Segment_traits_2* seg_traits =
+        this->m_poly_traits.subcurves_traits_2();
       CGAL_precondition_code
         (
          typename Segment_traits_2::Compare_x_2 comp_x =
@@ -198,7 +200,7 @@ public:
          typename Segment_traits_2::Compare_xy_2 comp_xy =
            seg_traits->compare_xy_2_object();
          typename Base::Is_vertical_2 is_vertical =
-           m_poly_traits.is_vertical_2_object();
+           this->m_poly_traits.is_vertical_2_object();
          );
 
       if (seg_traits->compare_endpoints_xy_2_object()(xcv[0]) == SMALLER) {
