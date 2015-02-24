@@ -178,12 +178,12 @@ public:
   typedef typename Default::Get<
     VertexPointMap_,
     typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type
-  >::type VertexPointMap; 
+  >::type aVertexPointMap; 
 
   typedef typename Default::Get<
     Traits_,
-    typename Kernel_traits<boost::property_traits<boost::property_map<TriangleMesh, boost::vertex_point_t>::type>::value_type>::Kernel
-  >::type VertexPointMap;
+    typename Kernel_traits<typename boost::property_traits<typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type>::value_type>::Kernel
+  >::type Traits;
   #endif
 
   #ifndef DOXYGEN_RUNNING
@@ -206,6 +206,7 @@ public:
 
 
   typedef CGAL::Polyhedron_3<Traits,CGAL::Polyhedron_items_with_id_3> mTriangleMesh;
+  typedef typename boost::property_map<mTriangleMesh, boost::vertex_point_t>::type VertexPointMap;
   typedef typename boost::property_map<mTriangleMesh, boost::vertex_index_t>::type VertexIndexMap;
   typedef typename boost::property_map<mTriangleMesh, boost::halfedge_index_t>::type HalfedgeIndexMap;
 
@@ -215,7 +216,7 @@ public:
     Point point;
     std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor> vertices;
   };
-  @endcond
+  ///@endcond
 
   /// The graph type representing the skeleton. The vertex property 
   /// `Vmap` is a struct with a member `point` of type `Traits::Point_3`
@@ -228,6 +229,7 @@ public:
 
   // Repeat mTriangleMesh types
   typedef typename boost::graph_traits<mTriangleMesh>::vertex_descriptor       vertex_descriptor;
+  typedef typename boost::graph_traits<mTriangleMesh>::halfedge_descriptor       halfedge_descriptor;
   typedef typename boost::graph_traits<mTriangleMesh>::vertex_iterator         vertex_iterator;
   typedef typename boost::graph_traits<mTriangleMesh>::halfedge_iterator       halfedge_iterator;
   typedef typename boost::graph_traits<mTriangleMesh>::edge_descriptor         edge_descriptor;
@@ -325,7 +327,7 @@ private:
 
   /** Record the correspondence between final surface
    *  and original surface points. */
-  std::map<int, std::vector<vertex_descriptor> > m_correspondence;
+  std::map<int, std::vector<int> > m_correspondence;
 
   /** Record the corresponding pole of a point. */
   std::map<int, int> m_poles;
@@ -850,8 +852,11 @@ public:
   /// When using the low level API it is possible to access the intermediate 
   /// results of the skeletonization process, called meso-skeleton.
   /// It is a triangle surface mesh which is model of `FaceListGraph`.
+#ifdef DOXYGEN_RUNNING
   typedef unspecified_type Meso_skeleton;
-
+#else
+  typedef mTriangleMesh Meso_skeleton;
+#endif
   /// Reference to the collapsed surface mesh.
   Meso_skeleton& meso_skeleton()
   {

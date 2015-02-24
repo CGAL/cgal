@@ -44,7 +44,7 @@ int main()
 
   // Perform the above three steps in one iteration.
   mcs.contract();
-
+#if 0
   // Iteratively apply step 1 to 3 until convergence.
   mcs.contract_until_convergence();
 
@@ -81,6 +81,7 @@ int main()
     }
     std::cout << "\n";
   }
+#endif
   
   return 0;
 }
