@@ -29,9 +29,9 @@ CGAL 4.5:
 
   o Surface Mesh (new package)
 
-    The surface mesh class provided by this package is a data structure
-    that can be used as halfedge data structure or polyhedral surface. It
-    is an alternative to the packages CGAL::Polyhedron_3 and
+    The surface mesh class provided by this package is an implementation of
+    the halfedge data structure allowing to represent polyhedral surfaces.
+    It is an alternative to the packages CGAL::Polyhedron_3 and
     CGAL::HalfedgeDS.
 
 
