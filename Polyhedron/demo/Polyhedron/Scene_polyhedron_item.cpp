@@ -84,7 +84,7 @@ Scene_polyhedron_item::initialize_buffers()
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
     glBufferData(GL_ARRAY_BUFFER,
-                 (positions_facets.size())*sizeof(positions_facets.data()),
+                 (positions_facets.size())*sizeof(float),
                  positions_facets.data(),
                  GL_STATIC_DRAW);
     glVertexAttribPointer(0, //number of the buffer
@@ -94,10 +94,11 @@ Scene_polyhedron_item::initialize_buffers()
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
+    glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
     glBufferData(GL_ARRAY_BUFFER,
-                 (positions_lines.size())*sizeof(positions_lines.data()),
+                 (positions_lines.size())*sizeof(float),
                  positions_lines.data(),
                  GL_STATIC_DRAW);
     glVertexAttribPointer(1, //number of the buffer
@@ -107,10 +108,11 @@ Scene_polyhedron_item::initialize_buffers()
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
+    glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
     glBufferData(GL_ARRAY_BUFFER,
-                 (normals.size())*sizeof(normals.data()),
+                 (normals.size())*sizeof(float),
                  normals.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(2,
                           3,
@@ -119,9 +121,11 @@ Scene_polyhedron_item::initialize_buffers()
                           0,
                           NULL
                           );
+    glEnableVertexAttribArray(2);
+
     glBindBuffer(GL_ARRAY_BUFFER, buffer[3]);
     glBufferData(GL_ARRAY_BUFFER,
-                 (color_facets.size())*sizeof(color_facets.data()),
+                 (color_facets.size())*sizeof(float),
                  color_facets.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(3,
                           3,
@@ -130,9 +134,11 @@ Scene_polyhedron_item::initialize_buffers()
                           0,
                           NULL
                           );
+    glEnableVertexAttribArray(3);
+
     glBindBuffer(GL_ARRAY_BUFFER, buffer[4]);
     glBufferData(GL_ARRAY_BUFFER,
-                 (color_lines.size())*sizeof(color_lines.data()),
+                 (color_lines.size())*sizeof(float),
                  color_lines.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(4,
                           3,
@@ -141,9 +147,9 @@ Scene_polyhedron_item::initialize_buffers()
                           0,
                           NULL
                           );
+    glEnableVertexAttribArray(4);
 
     // Clean-up
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
 }
@@ -304,9 +310,8 @@ Scene_polyhedron_item::uniform_attrib(Viewer_interface* viewer) const
     //Convert the GLdoubles matrix in GLfloats
     for (int i=0; i<16; ++i){
         mvp_mat[i] = GLfloat(d_mat[i]);
+    }
 
-
-}
     viewer->camera()->getModelViewMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mv_mat[i] = GLfloat(d_mat[i]);
@@ -322,8 +327,9 @@ Scene_polyhedron_item::uniform_attrib(Viewer_interface* viewer) const
     //position
     glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
 
-        //ligne ne servant a rien mais si on l'enleve plus rien ne marche...
-    std::cout<<viewer->camera()->position().x<<" "<<viewer->camera()->position().y<<" "<<viewer->camera()->position().z<<" "<<std::endl;
+    //ligne ne servant a rien mais si on l'enleve plus rien ne marche...
+    viewer->camera()->position();
+
     //ambient
     glGetLightfv(GL_LIGHT0, GL_AMBIENT, light.ambient);
 
@@ -352,6 +358,8 @@ Scene_polyhedron_item::uniform_attrib(Viewer_interface* viewer) const
 void
 Scene_polyhedron_item::compute_normals_and_vertices(void)
 {
+    GLfloat colors[3];
+
     positions_facets.clear();
     positions_lines.clear();
     normals.clear();
@@ -372,7 +380,11 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
 
     // int patch_id = -1;
 
-    Facet_iterator f;
+    Facet_iterator f = poly->facets_begin();
+    colors[0]=colors_[f->patch_id()].redF();
+    colors[1]=colors_[f->patch_id()].greenF();
+    colors[2]=colors_[f->patch_id()].blueF();
+
     for(f = poly->facets_begin();
         f != poly->facets_end();
         f++)
@@ -427,8 +439,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
     //Lines
     typedef Kernel::Point_3		Point;
     typedef Polyhedron::Edge_iterator	Edge_iterator;
-    //GLfloat colors[4];
-    //glGetFloatv(GL_CURRENT_COLOR, colors);
+
     Edge_iterator he;
     if(!show_only_feature_edges_m) {
         for(he = poly->edges_begin();
@@ -448,13 +459,13 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
             positions_lines.push_back(b.z());
             positions_lines.push_back(1.0);
 
-            color_lines.push_back(1.0);//colors[0]);
-            color_lines.push_back(0.0);//colors[1]);
-            color_lines.push_back(0.0);//colors[2]);
+            color_lines.push_back(colors[0]);
+            color_lines.push_back(colors[1]);
+            color_lines.push_back(colors[2]);
 
-            color_lines.push_back(1.0);//colors[0]);
-            color_lines.push_back(0.0);//colors[1]);
-            color_lines.push_back(0.0);//colors[2]);
+            color_lines.push_back(colors[0]);
+            color_lines.push_back(colors[1]);
+            color_lines.push_back(colors[2]);
 
         }
     }
@@ -712,19 +723,6 @@ void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
 void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
     glBindVertexArray(vao);
 
-    //Binds the buffer used for the flat and gouraud rendering
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-    glEnableVertexAttribArray(0);
-   // glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-  //  glEnableVertexAttribArray(1);
-    //Binds the buffer used for normals
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
-    glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[3]);
-    glEnableVertexAttribArray(3);
-   // glBindBuffer(GL_ARRAY_BUFFER, buffer[4]);
-    //glEnableVertexAttribArray(4);
-
     // tells the GPU to use the program just created
     glUseProgram(rendering_program);
     uniform_attrib(viewer);
@@ -734,16 +732,7 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
 
     glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/4);
 
-    //Tells OpenGL not to use the program anymore
-
-    // Clean-up
     glUseProgram(0);
-   // glDisableVertexAttribArray(4);
-    glDisableVertexAttribArray(3);
-    glDisableVertexAttribArray(2);
-  //  glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
 
@@ -753,21 +742,6 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
 void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     glBindVertexArray(vao);
 
-    //glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-    //glEnableVertexAttribArray(0);
-    //Binds the buffer used for the wireframe rendering
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-    glEnableVertexAttribArray(1);
-
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
-    glEnableVertexAttribArray(2);
-
-
-    //glBindBuffer(GL_ARRAY_BUFFER, buffer[3]);
-   // glEnableVertexAttribArray(3);
-
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[4]);
-    glEnableVertexAttribArray(4);
     // tells the GPU to use the program just created
     glUseProgram(rendering_program);
 
@@ -777,12 +751,6 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
     // Clean-up
     glUseProgram(0);
-    glDisableVertexAttribArray(4);
-   // glDisableVertexAttribArray(3);
-    glDisableVertexAttribArray(2);
-    glDisableVertexAttribArray(1);
-    //glDisableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
 
@@ -790,10 +758,6 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
 
 }
 
-/*void Scene_polyhedron_item::direct_draw_edges(Viewer_interface* viewer) const {
-
-    direct_draw_edges();
-}*/
 
 Polyhedron* 
 Scene_polyhedron_item::polyhedron()       { return poly; }
