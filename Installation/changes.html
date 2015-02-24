@@ -153,6 +153,10 @@ and <code>src/</code> directories).
   </ul>
 
 <!-- Major and breaking changes -->
+  <h3>dD Convex Hulls and Delaunay Triangulations</h3>
+  <ul>
+    <li>This package is deprecated and the new package Triangulation should be used instead.</li>
+  </ul>
 <!-- Arithmetic and Algebra -->
 <!-- Combinatorial Algorithms -->
 <!-- Geometry Kernels -->
@@ -173,6 +177,8 @@ and <code>src/</code> directories).
     <li>Fix a robustness issue in <code>Convex_hull_traits_3</code>.
         This traits is used by default with the kernel
         <code>Exact_predicates_inexact_constructions_kernel</code>.</li>
+    <li>The function <code>CGAL::convex_hull_incremental_3</code> is deprecated and
+        the function <code>convex_hull_3</code> should be used instead.</li>
   </ul>
 <!-- Polygons -->
 <!-- Cell Complexes and Polyhedra -->

@@ -38,6 +38,12 @@ Release date: March 2015
     run-time.
 
 
+* dD Convex Hulls and Delaunay Triangulations
+
+  - This package is deprecated and the new package Triangulation should be used
+    instead.
+
+
 
 
 * dD Geometry Kernel
@@ -58,6 +64,9 @@ Release date: March 2015
 
   - Fix a robustness issue in Convex_hull_traits_3. This traits is used by
     default with the kernel Exact_predicates_inexact_constructions_kernel.
+
+  - The function CGAL::convex_hull_incremental_3 is deprecated and the function
+    convex_hull_3 should be used instead.
 
 
 
@@ -103,7 +112,7 @@ Release date: March 2015
 
 * Spatial Searching
 
-  - Fixed a bug in CGAL::Splitters.h sliding mitdpoint rule, where degenerated
+  - Fixed a bug in CGAL::Splitters.h sliding midpoint rule, where degenerated
     point sets (e.g.,points on segment) caused the kd-tree to get linear.
 
   - Improved performance of Orthogonal_k_neighbor_search. Note that VC 2013
@@ -116,7 +125,7 @@ Release date: March 2015
 
   - Breaking change: The order of the points in the iterator range [tree.begin
     (),tree.end()] is not the order of insertion of the points into the tree.
-    This was not guaranteed before but might have beeen observed and exploited
+    This was not guaranteed before but might have been observed and exploited
     by users.
 
   - Derived kd_tree_leaf_node and kd_tree_internal_node from kd_tree_node to
