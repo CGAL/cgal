@@ -31,8 +31,8 @@ typedef boost::graph_traits<Graph>::vertex_descriptor                  vertex_de
 typedef boost::graph_traits<Graph>::vertex_iterator                    vertex_iter;
 typedef boost::graph_traits<Graph>::edge_iterator                      edge_iter;
 
-typedef std::map<vertex_desc, std::vector<int> >                       Correspondence_map;
-typedef boost::associative_property_map<Correspondence_map>            GraphVerticesPMap;
+typedef std::map<vertex_desc, std::vector<vertex_descriptor> >         Correspondence_map;
+typedef boost::associative_property_map<Correspondence_map>            Correspondence_PMap;
 
 typedef std::map<vertex_desc, Point>                                   GraphPointMap;
 typedef boost::associative_property_map<GraphPointMap>                 GraphPointPMap;
@@ -55,13 +55,10 @@ int main()
   GraphPointPMap points(points_map);
 
   Correspondence_map corr_map;
-  GraphVerticesPMap corr(corr_map);
+  Correspondence_PMap corr(corr_map);
 
-  //make a copy of the polyhedron and init the ids
-  Polyhedron mesh_copy(mesh);
-  CGAL::set_halfedgeds_items_id(mesh_copy);
 
-  Mean_curvature_skeleton mcs(mesh_copy);
+  Mean_curvature_skeleton mcs(mesh);
 
   // 1. Contract the mesh by mean curvature flow.
   mcs.contract_geometry();
@@ -96,15 +93,6 @@ int main()
     std::cout << s << " " << t << "\n";
   }
 
-  std::vector<vertex_descriptor> id_to_vd;
-  id_to_vd.clear();
-  id_to_vd.resize(num_vertices(mesh));
-  std::size_t id=0;
-  for (boost::tie(vb, ve) = vertices(mesh); vb != ve; ++vb)
-  {
-    vertex_descriptor v = *vb;
-    id_to_vd[id++] = v;
-  }
 
   // Output skeletal points and the corresponding surface points.
   vertex_iter gvb, gve;
@@ -116,7 +104,7 @@ int main()
 
     for (size_t j = 0; j < corr[i].size(); ++j)
     {
-      Point surf = id_to_vd[corr[i][j]]->point();
+      Point surf = corr[i][j]->point();
       std::cout << surf << " ";
     }
     std::cout << "\n";

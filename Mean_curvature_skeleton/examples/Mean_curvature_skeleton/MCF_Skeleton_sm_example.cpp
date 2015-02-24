@@ -1,6 +1,6 @@
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Mean_curvature_skeleton_functions.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Mean_curvature_skeleton.h>
 
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -36,8 +36,9 @@ typedef boost::associative_property_map<Correspondence_map>            Correspon
 typedef std::map<vertex_desc, Point>                                   GraphPointMap;
 typedef boost::associative_property_map<GraphPointMap>                 GraphPointPMap;
 
+typedef CGAL::Mean_curvature_flow_skeletonization<Kernel, Polyhedron>  Mean_curvature_skeleton;
 
-// This example extracts a medially centered skeleton from a given mesh.
+
 int main()
 {
   Polyhedron mesh;
@@ -56,17 +57,35 @@ int main()
   Correspondence_map corr_map;
   Correspondence_PMap corr(corr_map);
 
+  Mean_curvature_skeleton mcs(mesh);
 
-  CGAL::extract_mean_curvature_flow_skeleton(mesh, g, points, corr);
-#if 0
+  // 1. Contract the mesh by mean curvature flow.
+  mcs.contract_geometry();
+
+  // 2. Collapse short edges and split bad triangles.
+  mcs.remesh();
+
+  // 3. Fix degenerate vertices.
+  mcs.detect_degeneracies();
+
+  // Perform the above three steps in one iteration.
+  mcs.contract();
+
+  // Iteratively apply step 1 to 3 until convergence.
+  mcs.contract_until_convergence();
+
+  // Convert the contracted mesh into a curve skeleton and 
+  // get the correspondent surface points
+  mcs.convert_to_skeleton(g, points, corr);
+
   vertex_iterator vb, ve;
 
-  std::cout << "vertices: " << boost::num_vertices(g) << "\n";
-  std::cout << "edges: " << boost::num_edges(g) << "\n";
+  std::cout << "vertices: " << num_vertices(g) << "\n";
+  std::cout << "edges: " << num_edges(g) << "\n";
 
   // Output all the edges.
   edge_iter ei, ei_end;
-  for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
+  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
   {
     Point s = points[source(*ei, g)];
     Point t = points[target(*ei, g)];
@@ -74,9 +93,9 @@ int main()
   }
 
 
-  // Output skeletal points and the corresponding surface points
+  // Output skeletal points and the corresponding surface points.
   vertex_iter gvb, gve;
-  for (boost::tie(gvb, gve) = boost::vertices(g); gvb != gve; ++gvb)
+  for (boost::tie(gvb, gve) = vertices(g); gvb != gve; ++gvb)
   {
     vertex_desc i = *gvb;
     Point skel = points[i];
@@ -89,7 +108,7 @@ int main()
     }
     std::cout << "\n";
   }
-#endif
+  
   return 0;
 }
 
