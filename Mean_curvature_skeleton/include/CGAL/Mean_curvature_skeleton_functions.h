@@ -51,9 +51,9 @@ namespace CGAL{
 ///
 /// \todo add an overload when the TriangleMesh is of the same type as the copy
 /// \todo I need to tweak SkeletonVertexVerticesMap to match the documentation
-template <class TriangleMesh>
+  template <class TriangleMesh, class Skeleton>
 void extract_mean_curvature_flow_skeleton(const TriangleMesh& tmesh,
-                                          Mean_curvature_flow_skeletonization<Kernel,TriangleMesh>::Skeleton& skeleton)
+                                          Skeleton& skeleton)
 {
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type PmeshPointPMap;
   typedef typename boost::property_traits<PmeshPointPMap>::value_type Point;
@@ -89,13 +89,11 @@ void extract_mean_curvature_flow_skeleton(const TriangleMesh& tmesh,
   // extract the skeleton
   typedef CGAL::Mean_curvature_flow_skeletonization<K,
                                                     Polyhedron,
-                                                    VertexIndexMap,
-                                                    HedgeIndexMap,
                                                     PolyVertexPointMap,
                                                     SparseLinearAlgebraTraits_d> Mcfskel;
   Mcfskel mcfs(P);
 
-  mcfs(skeleton, skeleton_points, skeleton_to_tmesh_vertices);
+  mcfs(skeleton);
 }
 #endif
 

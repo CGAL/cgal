@@ -24,6 +24,10 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Default.h>
 
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Polyhedron_items_with_id_3.h>
+#include <CGAL/FaceGraph_to_Polyhedron_3.h>
+
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/copy.hpp>
@@ -171,8 +175,9 @@ public:
   typedef typename Traits::Vector_3                                             Vector;
 
 
-  // Repeat TriangleMesh types
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
+  typedef CGAL::Polyhedron_3<Traits,CGAL::Polyhedron_items_with_id_3> mTriangleMesh;
+  typedef typename boost::property_map<mTriangleMesh, boost::vertex_index_t>::type VertexIndexMap;
+  typedef typename boost::property_map<mTriangleMesh, boost::halfedge_index_t>::type HalfedgeIndexMap;
 
 /// \name Types
 /// @{
@@ -199,6 +204,12 @@ public:
   #endif
 
 
+  struct Vmap {
+  std::size_t id;
+    Point point;
+    std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor> vertices;
+  };
+
   /// The graph type representing the skeleton. The vertex property 
   /// `Vmap` is a struct with a member `point` of type `Traits::Point_3`
   /// and a member `vertices` of type 
@@ -208,28 +219,30 @@ public:
  
 /// @}
 
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator         vertex_iterator;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_iterator       halfedge_iterator;
-  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor         edge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::edge_iterator           edge_iterator;
-  typedef typename boost::graph_traits<TriangleMesh>::in_edge_iterator        in_edge_iterator;
-  typedef typename boost::graph_traits<TriangleMesh>::out_edge_iterator       out_edge_iterator;
+  // Repeat mTriangleMesh types
+  typedef typename boost::graph_traits<mTriangleMesh>::vertex_descriptor       vertex_descriptor;
+  typedef typename boost::graph_traits<mTriangleMesh>::vertex_iterator         vertex_iterator;
+  typedef typename boost::graph_traits<mTriangleMesh>::halfedge_iterator       halfedge_iterator;
+  typedef typename boost::graph_traits<mTriangleMesh>::edge_descriptor         edge_descriptor;
+  typedef typename boost::graph_traits<mTriangleMesh>::edge_iterator           edge_iterator;
+  typedef typename boost::graph_traits<mTriangleMesh>::in_edge_iterator        in_edge_iterator;
+  typedef typename boost::graph_traits<mTriangleMesh>::out_edge_iterator       out_edge_iterator;
 
-  typedef typename boost::graph_traits<TriangleMesh>::face_iterator           Facet_iterator;
-  typedef Halfedge_around_face_circulator<TriangleMesh>            Halfedge_facet_circulator;
+  typedef typename boost::graph_traits<mTriangleMesh>::face_iterator           Facet_iterator;
+  typedef Halfedge_around_face_circulator<mTriangleMesh>            Halfedge_facet_circulator;
 
   // Cotangent weight calculator
-  typedef typename internal::Cotangent_weight<TriangleMesh,
-  internal::Cotangent_value_minimum_zero<TriangleMesh,
-  internal::Cotangent_value_Meyer_secure<TriangleMesh> > >                    Weight_calculator;
+  typedef typename internal::Cotangent_weight<mTriangleMesh,
+  internal::Cotangent_value_minimum_zero<mTriangleMesh,
+  internal::Cotangent_value_Meyer_secure<mTriangleMesh> > >                    Weight_calculator;
 
-  typedef internal::Curve_skeleton<TriangleMesh,
+  typedef internal::Curve_skeleton<mTriangleMesh,
                                    VertexIndexMap,
                                    HalfedgeIndexMap,
                                    VertexPointMap>                            Curve_skeleton;
 
   // Mesh simplification types
-  typedef SMS::Edge_profile<TriangleMesh>                                     Profile;
+  typedef SMS::Edge_profile<mTriangleMesh>                                     Profile;
 
   // Repeat Triangulation types
   typedef CGAL::Exact_predicates_exact_constructions_kernel                    K;
@@ -250,13 +263,13 @@ public:
 private:
 
   /** a reference to the input surface mesh */
-  TriangleMesh& m_tmesh;
+  mTriangleMesh m_tmesh;
 
   /** Storing indices of all vertices. */
   VertexIndexMap m_vertex_id_pmap;
   /** Storing indices of all edges. */
   HalfedgeIndexMap m_hedge_id_pmap;
-  /** Storing the point for TriangleMesh vertex_descriptor. */
+  /** Storing the point for mTriangleMesh vertex_descriptor. */
   VertexPointMap m_tmesh_point_pmap;
 
   /** Controling the velocity of movement and approximation quality. */
@@ -379,23 +392,15 @@ public:
 
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       VertexPointMap vertex_point_map)
-    : m_tmesh(tmesh)
-      //, m_vertex_id_pmap(vertex_index_map)
-      //, m_hedge_id_pmap(halfedge_index_map)
-    , m_tmesh_point_pmap(vertex_point_map)
   {
-    init_args();
-    init(tmesh);
+  init_args();
+  init(tmesh, vertex_point_map);
   }
 
   Mean_curvature_flow_skeletonization(TriangleMesh& tmesh)
-    : m_tmesh(tmesh)
-      //, m_vertex_id_pmap(get(boost::vertex_index, m_tmesh))
-      //, m_hedge_id_pmap(get(boost::halfedge_index, m_tmesh))
-    , m_tmesh_point_pmap(get(boost::vertex_point, m_tmesh))
   {
-    init_args();
-    init(tmesh);
+  init_args();
+  init(tmesh, get(vertex_point,const_cast<TriangleMesh&>(tmesh)));
   }
   #endif
   /// @} Constructor
@@ -484,12 +489,6 @@ public:
     m_max_iterations = value;
   }
   
-  /// Reference to the input surface mesh.
-  TriangleMesh& halfedge_graph()
-  {
-    return m_tmesh;
-  }
-
   /// \cond SKIP_FROM_MANUAL
   void set_zero_TH(double value)
   {
@@ -570,6 +569,21 @@ public:
 
   /// @} Setter and Getter
 
+  /// \name Access to the Meso-Skeleton
+  /// @{
+  
+  /// When using the low level API it is possible to access the intermediate 
+  /// results of the skeletonization process, called meso-skeleton.
+  /// It is a triangle surface mesh which is model of `FaceListGraph`.
+  typedef unspecified_type Meso_skeleton;
+
+  /// Reference to the collapsed surface mesh.
+  Meso_skeleton& collapsed_meso_skeleton()
+  {
+    return m_tmesh;
+  }
+
+  /// @}
 
   /// \name High Level Function
   /// @{
@@ -660,7 +674,7 @@ public:
    */
   int collapse_edges()
   {
-    internal::Fixed_edge_map<TriangleMesh> fixed_edge_map(m_tmesh);
+    internal::Fixed_edge_map<mTriangleMesh> fixed_edge_map(m_tmesh);
     init_fixed_edge_map(fixed_edge_map);
 
     int num_collapses = 0;
@@ -846,9 +860,32 @@ private:
   }
 
   /// Initialize some global data structures such as vertex id.
-  void init(const TriangleMesh& tmesh)
+  void init(const TriangleMesh& tmesh,
+            typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type vpm)
   {
+    typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type PmeshPointPMap;
+    typedef mTriangleMesh Polyhedron;
     
+    // copy the input FaceGraph into a Polyhedron
+    CGAL::FaceGraph_to_Polyhedron_3<TriangleMesh,
+                                    PmeshPointPMap,
+                                    typename Polyhedron::HalfedgeDS,
+                                    false> modifier(tmesh, vpm);
+
+    m_tmesh.delegate(modifier);
+    //init indices
+    typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+    typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+    std::size_t i=0;
+    BOOST_FOREACH( vertex_descriptor vd, vertices(m_tmesh) )
+      vd->id()=i++;
+    i=0;
+    BOOST_FOREACH( halfedge_descriptor hd, halfedges(m_tmesh) )
+      hd->id()=i++;
+    m_vertex_id_pmap = get(boost::vertex_index, m_tmesh);
+    m_hedge_id_pmap = get(boost::halfedge_index, m_tmesh);
+    m_vertex_id_pmap = get(boost::vertex_index, m_tmesh);
+      //, m_hedge_id_pmap(get(boost::halfedge_index, m_tmesh))
     m_are_poles_computed = false;
 
     m_alpha_TH *= (CGAL_PI / 180.0);
@@ -887,7 +924,7 @@ private:
 
     int nver = num_vertices(m_tmesh);
 
-    Point_inside_polyhedron_3<TriangleMesh, Traits> test_inside(m_tmesh);
+    Point_inside_polyhedron_3<mTriangleMesh, Traits> test_inside(m_tmesh);
 
     vertex_iterator vb, ve;
     for (boost::tie(vb, ve) = vertices(m_tmesh); vb != ve; ++vb)
@@ -950,7 +987,7 @@ private:
   {
     MCFSKEL_DEBUG(std::cerr << "start RHS\n";)
 
-    Point_inside_polyhedron_3<TriangleMesh, Traits> test_inside(m_tmesh);
+    Point_inside_polyhedron_3<mTriangleMesh, Traits> test_inside(m_tmesh);
 
     // assemble right columns of linear system
     int nver = num_vertices(m_tmesh);
@@ -1024,7 +1061,7 @@ private:
   /// Collapse short edges using simplification package.
   int collapse_edges_simplification()
   {
-    internal::Fixed_edge_map<TriangleMesh> fixed_edge_map(m_tmesh);
+    internal::Fixed_edge_map<mTriangleMesh> fixed_edge_map(m_tmesh);
 
     init_fixed_edge_map(fixed_edge_map);
 
@@ -1039,27 +1076,27 @@ private:
     // This is a stop predicate (defines when the algorithm terminates).
     // The simplification stops when the length of all edges is greater
     // than the minimum threshold.
-    CGAL::internal::Minimum_length_predicate<TriangleMesh> stop(m_min_edge_length);
+    CGAL::internal::Minimum_length_predicate<mTriangleMesh> stop(m_min_edge_length);
 
     // midpoint placement without geometric test
-    SMS::Geometric_test_skipper< SMS::Midpoint_placement<TriangleMesh> > placement;
+    SMS::Geometric_test_skipper< SMS::Midpoint_placement<mTriangleMesh> > placement;
 
-    internal::Track_correspondence_visitor<TriangleMesh, VertexPointMap> vis;
+    internal::Track_correspondence_visitor<mTriangleMesh, VertexPointMap> vis;
     if (m_is_medially_centered)
     {
-      vis = internal::Track_correspondence_visitor<TriangleMesh, VertexPointMap>
+      vis = internal::Track_correspondence_visitor<mTriangleMesh, VertexPointMap>
             (&m_tmesh_point_pmap, &m_correspondence, &m_poles, &m_cell_dual, m_max_id);
     }
     else
     {
-      vis = internal::Track_correspondence_visitor<TriangleMesh, VertexPointMap>
+      vis = internal::Track_correspondence_visitor<mTriangleMesh, VertexPointMap>
             (&m_tmesh_point_pmap, &m_correspondence, m_max_id);
     }
 
     int r = SMS::edge_collapse
                 (m_tmesh
                 ,stop
-                ,CGAL::get_cost(SMS::Edge_length_cost<TriangleMesh>())
+                ,CGAL::get_cost(SMS::Edge_length_cost<mTriangleMesh>())
                       .get_placement(placement)
                       .visitor(vis)
                       .edge_is_constrained_map(fixed_edge_map)
@@ -1128,7 +1165,7 @@ private:
   }
 
   /// Collapse short edges by iteratively linear search.
-  int collapse_edges_linear(internal::Fixed_edge_map<TriangleMesh>& fixed_edge_map)
+  int collapse_edges_linear(internal::Fixed_edge_map<mTriangleMesh>& fixed_edge_map)
   {
     std::vector<edge_descriptor> all_edges;
     all_edges.reserve(num_edges(m_tmesh));
@@ -1176,7 +1213,7 @@ private:
   }
 
   /// Fix an edge if both incident vertices are degenerate.
-  void init_fixed_edge_map(internal::Fixed_edge_map<TriangleMesh>& fixed_edge_map)
+  void init_fixed_edge_map(internal::Fixed_edge_map<mTriangleMesh>& fixed_edge_map)
   {
     edge_iterator eb, ee;
     for (boost::tie(eb, ee) = edges(m_tmesh); eb != ee; ++eb)
@@ -1505,7 +1542,7 @@ private:
     {
       vertex_descriptor v = *vb;
       int vid = get(m_vertex_id_pmap, v);
-      m_normals[vid] = internal::get_vertex_normal<typename TriangleMesh::Vertex,Traits>(*v);
+      m_normals[vid] = internal::get_vertex_normal<typename mTriangleMesh::Vertex,Traits>(*v);
     }
   }
 
