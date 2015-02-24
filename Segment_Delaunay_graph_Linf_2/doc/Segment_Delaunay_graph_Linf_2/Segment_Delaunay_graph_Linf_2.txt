@@ -135,7 +135,7 @@ on these filtering techniques, see the Segment Delaunay graph package manual.
 
 In analogy with the  \f$ L_{2} \f$ setting,
 there are four models of the `SegmentDelaunayGraphLinfTraits_2`
-concept, two of which supporting strongly intersecting sites
+concept, two of which support strongly intersecting sites
 (`Segment_Delaunay_graph_Linf_traits_2`,
 `Segment_Delaunay_graph_Linf_filtered_traits_2`)
 and two of which support sites without intersections
