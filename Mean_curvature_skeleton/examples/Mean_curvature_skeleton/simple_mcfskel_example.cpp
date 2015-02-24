@@ -21,12 +21,8 @@ typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_desc
 typedef boost::graph_traits<Polyhedron>::vertex_iterator             vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::halfedge_descriptor         halfedge_descriptor;
 
-struct Skeleton_vertex_info
-{
-  std::size_t id;
-};
 
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Skeleton_vertex_info> Graph;
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
 
 typedef boost::graph_traits<Graph>::vertex_descriptor                  vertex_desc;
 typedef boost::graph_traits<Graph>::vertex_iterator                    vertex_iter;

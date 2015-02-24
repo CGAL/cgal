@@ -22,19 +22,14 @@ typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_desc
 typedef boost::graph_traits<Polyhedron>::vertex_iterator             vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::halfedge_descriptor         halfedge_descriptor;
 
-struct Skeleton_vertex_info
-{
-  std::size_t id;
-};
-
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Skeleton_vertex_info> SkeletonGraph;
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> SkeletonGraph;
 
 typedef boost::graph_traits<SkeletonGraph>::vertex_descriptor          vertex_desc;
 typedef boost::graph_traits<SkeletonGraph>::vertex_iterator            vertex_iter;
 typedef boost::graph_traits<SkeletonGraph>::edge_iterator              edge_iter;
 
-typedef std::map<vertex_desc, std::vector<int> >                       Correspondence_map;
-typedef boost::associative_property_map<Correspondence_map>            GraphVerticesPMap;
+typedef std::map<vertex_desc, std::vector<vertex_descriptor> >         Correspondence_map;
+typedef boost::associative_property_map<Correspondence_map>            Correspondence_PMap;
 
 typedef std::map<vertex_desc, Point>                                   GraphPointMap;
 typedef boost::associative_property_map<GraphPointMap>                 GraphPointPMap;
@@ -54,22 +49,12 @@ int main()
   GraphPointPMap points(points_map);
 
   Correspondence_map corr_map;
-  GraphVerticesPMap corr(corr_map);
+  Correspondence_PMap corr(corr_map);
   
   CGAL::extract_mean_curvature_flow_skeleton(mesh, g, points, corr);
 
   // add segmentation
   vertex_iterator vb, ve;
-  std::vector<vertex_descriptor> id_to_vd;
-  id_to_vd.clear();
-  id_to_vd.resize(boost::num_vertices(mesh));
-  std::size_t id=0;
-  for (boost::tie(vb, ve) = boost::vertices(mesh); vb != ve; ++vb)
-  {
-    vertex_descriptor v = *vb;
-    v->id()=id++;
-    id_to_vd[v->id()] = v;
-  }
 
   // create a property-map for sdf values (it is an adaptor for this case)
   typedef std::map<Polyhedron::Facet_const_handle, double> Facet_double_map;
@@ -86,7 +71,7 @@ int main()
     Point skel = points[i];
     for (size_t j = 0; j < corr[i].size(); ++j)
     {
-      Point surf = id_to_vd[corr[i][j]]->point();
+      Point surf = corr[i][j]->point();
       distances[corr[i][j]] = sqrt(squared_distance(skel, surf));
     }
   }

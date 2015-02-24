@@ -19,12 +19,8 @@ typedef boost::graph_traits<Polyhedron>::halfedge_descriptor         halfedge_de
 
 typedef boost::property_map<Polyhedron,CGAL::vertex_point_t>::type PPmap;
 
-struct Skeleton_vertex_info
-{
-  std::size_t id;
-};
 
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Skeleton_vertex_info> Graph;
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
 
 typedef boost::graph_traits<Graph>::vertex_descriptor                  vertex_desc;
 typedef boost::graph_traits<Graph>::vertex_iterator                    vertex_iter;
