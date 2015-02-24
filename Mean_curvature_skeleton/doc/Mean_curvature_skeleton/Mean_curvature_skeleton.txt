@@ -270,10 +270,19 @@ given skeleton point might have no corresponding surface point.
 
 \subsection MCFSkelSecExamples Skeletonization Examples
 
+In all examples the graph type representing the skeleton,that is
+`Mean_curvature_flow_skeletonization<Traits,TriangleMesh>::Skeleton`,
+is defined as 
+`boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Vmap>`
+where the vertex property `Vmap` is a struct with a member 
+`point` of type `Traits::Point_3`, and a member `vertices` of type 
+`std::vector<boost::graph_traits<TriangleMesh>::vertex_descriptor>`.
+
 \subsubsection Example_1 Extract Skeleton With Free Function
 
 In this example, we extract the skeleton automatically by using the
 provided free function.
+
 
 \cgalExample{Mean_curvature_skeleton/simple_mcfskel_example.cpp}
 

@@ -127,16 +127,6 @@ enum Degeneracy_algorithm_tag
 ///
 /// @tparam TriangleMesh
 ///         a model of `HalfedgeGraph`
-/// @tparam VertexIndexMap
-///         a model of `ReadablePropertyMap`
-///         with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
-///         `unsigned int` as value type.<br>
-///         <b>%Default:</b> `boost::property_map<TriangleMesh, boost::vertex_index_t>::%type`.
-/// @tparam HalfedgeIndexMap
-///         a model of `ReadablePropertyMap`</a>
-///         with `boost::graph_traits<TriangleMesh>::%halfedge_descriptor` as key and
-///         `unsigned int` as value type.<br>
-///         <b>%Default:</b> `boost::property_map<TriangleMesh, boost::halfedge_index_t>::%type`.
 /// @tparam VertexPointMap
 ///         a model of `ReadWritePropertyMap`
 ///         with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
@@ -162,15 +152,11 @@ enum Degeneracy_algorithm_tag
 #ifdef DOXYGEN_RUNNING
 template <class Traits,
           class TriangleMesh,
-          class VertexIndexMap = Default,
-          class HalfedgeIndexMap = Default,
           class VertexPointMap = Default,
           class SparseLinearAlgebraTraits_d = Default>
 #else
 template <class Traits,
           class TriangleMesh,
-          class VertexIndexMap_ = Default,
-          class HalfedgeIndexMap_  = Default,
           class VertexPointMap_ = Default,
           class SparseLinearAlgebraTraits_d_ = Default,
           Collapse_algorithm_tag Collapse_tag = LINEAR,
@@ -180,18 +166,18 @@ class Mean_curvature_flow_skeletonization
 {
 // Public types
 public:
+
+  typedef typename Traits::Point_3                                             Point;
+  typedef typename Traits::Vector_3                                             Vector;
+
+
+  // Repeat TriangleMesh types
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
+
 /// \name Types
 /// @{
   // Template parameters
   #ifndef DOXYGEN_RUNNING
-    typedef typename Default::Get<
-      VertexIndexMap_,
-      typename boost::property_map<TriangleMesh, boost::vertex_index_t>::type
-    >::type VertexIndexMap;
-    typedef typename Default::Get<
-      HalfedgeIndexMap_,
-      typename boost::property_map<TriangleMesh, boost::halfedge_index_t>::type
-    >::type HalfedgeIndexMap;
   typedef typename Default::Get<
     VertexPointMap_,
     typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type
@@ -214,15 +200,17 @@ public:
   ///
   typedef SparseLinearAlgebraTraits_d_ SparseLinearAlgebraTraits_d;
   #endif
+
+
+  /// The graph type representing the skeleton. The vertex property 
+  /// `Vmap` is a struct with a member `point` of type `Traits::Point_3`
+  /// and a member `vertices` of type 
+  /// `std::vector<boost::graph_traits<TriangleMesh>::vertex_descriptor>`
+  typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Vmap> Skeleton;
+
  
 /// @}
 
-  typedef typename Traits::Point_3                                             Point;
-  typedef typename Traits::Vector_3                                             Vector;
-
-
-  // Repeat TriangleMesh types
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator         vertex_iterator;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_iterator       halfedge_iterator;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor         edge_descriptor;
@@ -241,7 +229,7 @@ public:
   typedef internal::Curve_skeleton<TriangleMesh,
                                    VertexIndexMap,
                                    HalfedgeIndexMap,
-                                   VertexPointMap>                     Skeleton;
+                                   VertexPointMap>                            Curve_skeleton;
 
   // Mesh simplification types
   typedef SMS::Edge_profile<TriangleMesh>                                     Profile;
@@ -320,7 +308,7 @@ private:
 
   /** Record the correspondence between final surface
    *  and original surface points. */
-  std::map<int, std::vector<int> > m_correspondence;
+  std::map<int, std::vector<vertex_descriptor> > m_correspondence;
 
   /** Record the corresponding pole of a point. */
   std::map<int, int> m_poles;
@@ -383,62 +371,34 @@ public:
    * @pre `tmesh` is a triangulated surface mesh without borders and has exactly one connected component.
    * @param tmesh 
    *        input surface mesh.
-   * @param vertex_index_map 
-   *        property map which associates an id to each vertex, from `0` to `num_vertices(tmesh)-1`.
-   * @param halfedge_index_map
-   *        property map which associates an id to each halfedge, from `0` to `num_halfedges(tmesh)-1`.
+
    * @param vertex_point_map 
    *        property map which associates a point to each vertex of the graph.
-   * @attention  `tmesh` will be modified through edge collapse and triangle split operations while creating the skeleton.
    */
-  Mean_curvature_flow_skeletonization(TriangleMesh& tmesh,
-                                      VertexIndexMap vertex_index_map =get(boost::vertex_index, tmesh),
-                                      HalfedgeIndexMap halfedge_index_map = get(boost::halfedge_index, tmesh),
+  Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       VertexPointMap vertex_point_map = get(boost::vertex_point, tmesh) );
+
   #else
-  Mean_curvature_flow_skeletonization(TriangleMesh& tmesh,
-                                      VertexIndexMap vertex_index_map,
-                                      HalfedgeIndexMap halfedge_index_map,
+
+  Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       VertexPointMap vertex_point_map)
     : m_tmesh(tmesh)
-    , m_vertex_id_pmap(vertex_index_map)
-    , m_hedge_id_pmap(halfedge_index_map)
+      //, m_vertex_id_pmap(vertex_index_map)
+      //, m_hedge_id_pmap(halfedge_index_map)
     , m_tmesh_point_pmap(vertex_point_map)
   {
     init_args();
-    init();
-  }
-
-  Mean_curvature_flow_skeletonization(TriangleMesh& tmesh,
-                                      VertexIndexMap vertex_index_map,
-                                      HalfedgeIndexMap halfedge_index_map)
-    : m_tmesh(tmesh)
-    , m_vertex_id_pmap(vertex_index_map)
-    , m_hedge_id_pmap(halfedge_index_map)
-    , m_tmesh_point_pmap(get(boost::vertex_point, m_tmesh))
-  {
-    init_args();
-    init();
-  }
-
-  Mean_curvature_flow_skeletonization(TriangleMesh& tmesh, VertexIndexMap vertex_index_map)
-    : m_tmesh(tmesh)
-    , m_vertex_id_pmap(vertex_index_map)
-    , m_hedge_id_pmap(get(boost::halfedge_index, m_tmesh))
-    , m_tmesh_point_pmap(get(boost::vertex_point, m_tmesh))
-  {
-    init_args();
-    init();
+    init(tmesh);
   }
 
   Mean_curvature_flow_skeletonization(TriangleMesh& tmesh)
     : m_tmesh(tmesh)
-    , m_vertex_id_pmap(get(boost::vertex_index, m_tmesh))
-    , m_hedge_id_pmap(get(boost::halfedge_index, m_tmesh))
+      //, m_vertex_id_pmap(get(boost::vertex_index, m_tmesh))
+      //, m_hedge_id_pmap(get(boost::halfedge_index, m_tmesh))
     , m_tmesh_point_pmap(get(boost::vertex_point, m_tmesh))
   {
     init_args();
-    init();
+    init(tmesh);
   }
   #endif
   /// @} Constructor
@@ -623,31 +583,11 @@ public:
    * contracted until convergence, and then turned into a curve skeleton.
    *
    * This is equivalent to calling `contract_until_convergence()` and `convert_to_skeleton()`.
-   * @tparam Skeleton
-   *         an instantiation of <A href="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</a>
-   *         as data structure for the skeleton curve.
-   * @tparam SkeletonVertexPointMap
-   *         a model of `ReadWritePropertyMap`
-   *         with `boost::graph_traits<Skeleton>::%vertex_descriptor` as key type and
-   *         `Traits::Point_3` as value type  
-   * @tparam SkeletonVertexIndicesMap
-   *         a model of `ReadWritePropertyMap`
-   *         with `boost::graph_traits<Skeleton>::%vertex_descriptor` as key type and
-   *         `std::vector<size_type>` as value type,
-   *         where `size_type` is the value type of `VertexIndexMap`
-   *
+
    * @param skeleton
    *        graph that will contain the skeleton of the input surface mesh
-   * @param skeleton_points
-   *        property map containing the location of the vertices of the graph `skeleton`
-   * @param skeleton_to_tmesh_vertices property map associating a vertex `v` of the graph `skeleton`
-   *         to the indices of the vertices of the input surface mesh corresponding to `v`.
-   *         Indices are retrieved using the vertex index property map given in the constructor.
    */
-  template <class Skeleton, class SkeletonVertexPointMap, class SkeletonVertexIndicesMap>
-  void operator()(Skeleton& skeleton,
-                  SkeletonVertexPointMap& skeleton_points,
-                  SkeletonVertexIndicesMap& skeleton_to_tmesh_vertices)
+  void operator()(Skeleton& skeleton)
   {
     contract_until_convergence();
     convert_to_skeleton(skeleton, skeleton_points, skeleton_to_tmesh_vertices);
@@ -668,7 +608,8 @@ public:
     update_vertex_id();
 
     compute_edge_weight();
-
+ 
+  // AF: attention: num_vertices will not decrease for a Surface_mesh 
     int nver = num_vertices(m_tmesh);
     int nrows;
     if (m_is_medially_centered)
@@ -872,33 +813,16 @@ public:
    * @tparam Skeleton
    *         an instantiation of <A href="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</a>
    *         as a data structure for the skeleton curve.
-   * @tparam SkeletonVertexIndicesMap
-   *         a model of `ReadWritePropertyMap`
-   *         with `boost::graph_traits<Skeleton>::%vertex_descriptor as` key type and
-   *         `std::vector<size_type>` as value type,
-   *         where `size_type` is the value type of `VertexIndexMap`
-   * @tparam SkeletonPointMap
-   *         a model of `ReadWritePropertyMap`
-   *         with `boost::graph_traits<Skeleton>::%vertex_descriptor` as key type and
-   *         `Traits::Point_3` as value type
-   *  
    * @param skeleton
-   *       graph that will contain the skeleton of `tmesh`
-   * @param skeleton_points
-   *        property map containing the location of the vertices of the graph `skeleton`
-   *@param skeleton_to_tmesh_vertices property map associating a vertex `v` of the graph `skeleton`
-   *       to the set of vertices of `tmesh` corresponding to `v`.
+   *        graph that will contain the skeleton of `tmesh`
    */
-  template <class Skeleton, class SkeletonVertexPointMap, class SkeletonVertexIndicesMap>
-  void convert_to_skeleton(Skeleton& skeleton, SkeletonVertexPointMap& skeleton_points, SkeletonVertexIndicesMap& skeleton_to_tmesh_vertices)
+  void convert_to_skeleton(Skeleton& skeleton)
   {
-    // AF: I do not understand  why we do another MCF
-    // Mean_curvature_flow_skeletonization skeletonization(m_tmesh, m_vertex_id_pmap, m_hedge_id_pmap, m_tmesh_point_pmap);
+    Curve_skeleton skeletonization(m_tmesh, m_vertex_id_pmap, m_hedge_id_pmap, m_tmesh_point_pmap);
     std::map<typename boost::graph_traits<Skeleton>::vertex_descriptor, std::vector<int> > skeleton_to_surface_map;
     
-    // AF: skeletonization(skeleton, skeleton_points, skeleton_to_surface_map);
-    // Note that without this the skeleton_to_surface_map remains empty
-    // and the next call does nothing
+    skeletonization.extract_skeleton(skeleton);
+
     correspondent_vertices(skeleton_to_surface_map, skeleton_to_tmesh_vertices);
   }
 
@@ -925,8 +849,9 @@ private:
   }
 
   /// Initialize some global data structures such as vertex id.
-  void init()
+  void init(const TriangleMesh& tmesh)
   {
+    
     m_are_poles_computed = false;
 
     m_alpha_TH *= (CGAL_PI / 180.0);
@@ -1591,9 +1516,9 @@ private:
   // Vertex info association
   // --------------------------------------------------------------------------
 
-  template <class SkeletonVertexDescriptor, class SkeletonVertexIndicesMap>
+  template <class SkeletonVertexDescriptor, class SkeletonVertexVerticesMap>
   void correspondent_vertices(std::map<SkeletonVertexDescriptor, std::vector<int> >& skeleton_to_surface_map,
-                              SkeletonVertexIndicesMap& skeleton_to_surface)
+                              SkeletonVertexVerticesMap& skeleton_to_surface)
   {
     typename std::map<SkeletonVertexDescriptor, std::vector<int> >::iterator iter;
     for (iter = skeleton_to_surface_map.begin();
@@ -1601,7 +1526,7 @@ private:
     {
       SkeletonVertexDescriptor i = iter->first;
 
-      skeleton_to_surface[i] = std::vector<int>();
+      skeleton_to_surface[i] = std::vector<vertex_descriptor>();
       for (size_t j = 0; j < skeleton_to_surface_map[i].size(); ++j)
       {
         int id = skeleton_to_surface_map[i][j];

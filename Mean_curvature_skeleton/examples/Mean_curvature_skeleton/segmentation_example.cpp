@@ -6,10 +6,6 @@
 #include <CGAL/Mean_curvature_skeleton_functions.h>
 #include <CGAL/mesh_segmentation.h>
 
-#include <boost/property_map/property_map.hpp>
-#include <boost/graph/graph_traits.hpp>
-#include <boost/graph/adjacency_list.hpp>
-
 #include <fstream>
 #include <map>
 
@@ -22,17 +18,11 @@ typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_desc
 typedef boost::graph_traits<Polyhedron>::vertex_iterator             vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::halfedge_descriptor         halfedge_descriptor;
 
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> SkeletonGraph;
+typedef CGAL::Mean_curvature_flow_skeletonization<Kernel,Polyhedron> Mean_curvature_skeleton;
+typedef Mean_curvature_skeleton::Skeleton                            Skeleton;
 
-typedef boost::graph_traits<SkeletonGraph>::vertex_descriptor          vertex_desc;
-typedef boost::graph_traits<SkeletonGraph>::vertex_iterator            vertex_iter;
-typedef boost::graph_traits<SkeletonGraph>::edge_iterator              edge_iter;
-
-typedef std::map<vertex_desc, std::vector<vertex_descriptor> >         Correspondence_map;
-typedef boost::associative_property_map<Correspondence_map>            Correspondence_PMap;
-
-typedef std::map<vertex_desc, Point>                                   GraphPointMap;
-typedef boost::associative_property_map<GraphPointMap>                 GraphPointPMap;
+typedef boost::graph_traits<Skeleton>::vertex_descriptor             vertex_desc;
+typedef boost::graph_traits<Skeleton>::vertex_iterator               vertex_iter;
 
 int main()
 {
@@ -44,17 +34,9 @@ int main()
     return 1;
   }
 
-  SkeletonGraph g;
-  GraphPointMap points_map;
-  GraphPointPMap points(points_map);
-
-  Correspondence_map corr_map;
-  Correspondence_PMap corr(corr_map);
-  
-  CGAL::extract_mean_curvature_flow_skeleton(mesh, g, points, corr);
-
-  // add segmentation
-  vertex_iterator vb, ve;
+  Skeleton skeleton;
+ 
+  CGAL::extract_mean_curvature_flow_skeleton(mesh, skeleton);
 
   // create a property-map for sdf values (it is an adaptor for this case)
   typedef std::map<Polyhedron::Facet_const_handle, double> Facet_double_map;
@@ -65,14 +47,14 @@ int main()
   distances.resize(boost::num_vertices(mesh));
 
   vertex_iter gvb, gve;
-  for (boost::tie(gvb, gve) = boost::vertices(g); gvb != gve; ++gvb)
+  for (boost::tie(gvb, gve) = boost::vertices(skeleton); gvb != gve; ++gvb)
   {
-    vertex_desc i = *gvb;
-    Point skel = points[i];
-    for (size_t j = 0; j < corr[i].size(); ++j)
+    vertex_desc gv = *gvb;
+    Point skel = skeleton[gv].point;
+    for (size_t i = 0; i < skeleton[gv].vertices.size(); ++i)
     {
-      Point surf = corr[i][j]->point();
-      distances[corr[i][j]] = sqrt(squared_distance(skel, surf));
+      Point surf = skeleton[gv].vertices[i]->point();
+      distances[skeleton[gv].vertices[i]] = sqrt(squared_distance(skel, surf));
     }
   }
 

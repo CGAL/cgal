@@ -42,36 +42,18 @@ namespace CGAL{
 ///
 /// @tparam TriangleMesh
 ///         a model of `HalfedgeGraph`
-/// @tparam Skeleton
-///         an instantiation of <A href="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</a> as data structure for the skeleton curve
-/// @tparam SkeletonVertexPointMap
-///         a model of `ReadWritePropertyMap`</a>
-///         with `boost::graph_traits<Skeleton>::%vertex_descriptor` as key type and
-///         the value type of `boost::property_map<TriangleMesh, boost::vertex_point_t>::%type`
-///         as value type.
-/// @tparam SkeletonVertexIndicesMap
-///         a model of `ReadWritePropertyMap`</a>
-///         with `boost::graph_traits<Skeleton>::%vertex_descriptor` as key type and
-///         `std::vector< boost::graph_traits<TriangleMesh>::%vertex_descriptor>` as value type
+
 ///
 /// @param tmesh
 ///        input mesh
 /// @param skeleton
 ///        graph that will contain the skeleton of `tmesh`
-/// @param skeleton_points
-///        property map containing the location of the vertices of the graph `skeleton`
-/// @param skeleton_to_tmesh_vertices property map associating a vertex `v` of the graph `skeleton`
-///        to the set of vertices of `tmesh` corresponding to `v`.
+///
 /// \todo add an overload when the TriangleMesh is of the same type as the copy
-/// \todo I need to tweak SkeletonVertexIndicesMap to match the documentation
-template <class TriangleMesh,
-          class Skeleton,
-          class SkeletonVertexPointMap,
-          class SkeletonVertexIndicesMap>
+/// \todo I need to tweak SkeletonVertexVerticesMap to match the documentation
+template <class TriangleMesh>
 void extract_mean_curvature_flow_skeleton(const TriangleMesh& tmesh,
-                                          Skeleton& skeleton,
-                                          SkeletonVertexPointMap& skeleton_points,
-                                          SkeletonVertexIndicesMap& skeleton_to_tmesh_vertices)
+                                          Mean_curvature_flow_skeletonization<Kernel,TriangleMesh>::Skeleton& skeleton)
 {
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type PmeshPointPMap;
   typedef typename boost::property_traits<PmeshPointPMap>::value_type Point;
