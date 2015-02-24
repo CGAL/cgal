@@ -101,6 +101,7 @@ Scene_polygon_soup_item::initialize_buffers()
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
+    glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
     glBufferData(GL_ARRAY_BUFFER,
@@ -113,9 +114,10 @@ Scene_polygon_soup_item::initialize_buffers()
 			  0,
 			  NULL
 			  );
+    glEnableVertexAttribArray(1);
+
     // Clean-up
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+     glBindVertexArray(0);
 }
 
 GLuint
@@ -549,18 +551,13 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
 
     //Calls the buffer info again so that it's the right one used even if
     //there are several objects drawn
-
     glBindVertexArray(vao);
-
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-    glEnableVertexAttribArray(1);
 
     // tells the GPU to use the program just created
     glUseProgram(rendering_program);
+
     uniform_attrib(viewer);
+
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
     glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
@@ -568,9 +565,6 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
 
     // Clean-up
     glUseProgram(0);
-    glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
 
@@ -579,12 +573,6 @@ Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
     if(soup == 0) return;
 
     glBindVertexArray(vao);
-
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-    glEnableVertexAttribArray(0);
-    //Bind the second and initialize it
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-    glEnableVertexAttribArray(1);
 
     // tells the GPU to use the program just created
     glUseProgram(rendering_program);
@@ -595,10 +583,6 @@ Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
     glDrawArrays(GL_POINTS, 0, positions_poly.size()/4);
 
     // Clean-up
-    glUseProgram(0);
-    glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
 
