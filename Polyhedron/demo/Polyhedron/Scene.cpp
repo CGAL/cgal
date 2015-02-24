@@ -297,6 +297,7 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
         else
           ::glShadeModel(GL_FLAT);
 
+        item.shading_mode_changed();
         if(CGAL::check_gl_error(__FILE__, __LINE__)) {
           std::cerr << "GL error was before the drawing of the item \""
                     << qPrintable(item.name()) << "\"\n"

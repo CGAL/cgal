@@ -5,97 +5,101 @@
 const QColor Scene_item::defaultColor = QColor(100, 100, 255);
 
 Scene_item::~Scene_item() {
-  delete defaultContextMenu;
+    delete defaultContextMenu;
 }
 
 void Scene_item::itemAboutToBeDestroyed(Scene_item* item) {
-  if(this == item)
-    emit aboutToBeDestroyed();
+    if(this == item)
+        emit aboutToBeDestroyed();
 }
 
 
 QString modeName(RenderingMode mode) {
-  switch(mode) 
-  {
+    switch(mode)
+    {
     case Points:
-      return QObject::tr("points");
+        return QObject::tr("points");
     case Wireframe:
-      return QObject::tr("wire");
+        return QObject::tr("wire");
     case Flat:
-      return QObject::tr("flat");
+        return QObject::tr("flat");
     case FlatPlusEdges:
-      return QObject::tr("flat+edges");
+        return QObject::tr("flat+edges");
     case Gouraud:
-      return QObject::tr("Gouraud");
+        return QObject::tr("Gouraud");
     case PointsPlusNormals:
-      return QObject::tr("pts+normals");
+        return QObject::tr("pts+normals");
     case Splatting:
-      return QObject::tr("splats");
+        return QObject::tr("splats");
     default:
-      Q_ASSERT(false);
-      return QObject::tr("unknown");
-  }
+        Q_ASSERT(false);
+        return QObject::tr("unknown");
+    }
 }
 
 const char* slotName(RenderingMode mode) {
-  switch(mode) 
-  {
+    switch(mode)
+    {
     case Points:
-      return SLOT(setPointsMode());
+        return SLOT(setPointsMode());
     case Wireframe:
-      return SLOT(setWireframeMode());
+        return SLOT(setWireframeMode());
     case Flat:
-      return SLOT(setFlatMode());
+        return SLOT(setFlatMode());
     case FlatPlusEdges:
-      return SLOT(setFlatPlusEdgesMode());
+        return SLOT(setFlatPlusEdgesMode());
     case Gouraud:
-      return SLOT(setGouraudMode());
+        return SLOT(setGouraudMode());
     case PointsPlusNormals:
-      return SLOT(setPointsPlusNormalsMode());
+        return SLOT(setPointsPlusNormalsMode());
     case Splatting:
-      return SLOT(setSplattingMode());
+        return SLOT(setSplattingMode());
     default:
-      Q_ASSERT(false);
-      return "";
-  }
+        Q_ASSERT(false);
+        return "";
+    }
 }
 
 // Rendering mode as a human readable string
 QString Scene_item::renderingModeName() const
 {
-  return modeName(renderingMode());
+    return modeName(renderingMode());
 } 
 QMenu* Scene_item::contextMenu()
 {
-  if(defaultContextMenu) {
-    defaultContextMenu->setTitle(name());
-    return defaultContextMenu;
-  }
+    if(defaultContextMenu) {
+        defaultContextMenu->setTitle(name());
+        return defaultContextMenu;
+    }
 
-  defaultContextMenu = new QMenu(name());
-  // defaultContextMenu->addAction(name());
-  // defaultContextMenu->addSeparator();
-  // QMenu* modeMenu = new QMenu(QObject::tr("Rendering mode"),
-  //                             defaultContextMenu);
-  for(unsigned int mode = 0; mode < NumberOfRenderingMode;
-      ++mode) 
-  {
-    if(!supportsRenderingMode(RenderingMode(mode))) continue;
-    QString mName = modeName(RenderingMode(mode));
-    QAction* action = 
-      defaultContextMenu->addAction(tr("Set %1 mode")
-                                    .arg(mName),
-                                    this,
-                                    slotName(RenderingMode(mode)));
-    QObject::connect(action, SIGNAL(triggered()),
-                     this, SIGNAL(itemChanged()));
-  }
-  // defaultContextMenu->addAction(modeMenu->menuAction());
-  return defaultContextMenu;
+    defaultContextMenu = new QMenu(name());
+    // defaultContextMenu->addAction(name());
+    // defaultContextMenu->addSeparator();
+    // QMenu* modeMenu = new QMenu(QObject::tr("Rendering mode"),
+    //                             defaultContextMenu);
+    for(unsigned int mode = 0; mode < NumberOfRenderingMode;
+        ++mode)
+    {
+        if(!supportsRenderingMode(RenderingMode(mode))) continue;
+        QString mName = modeName(RenderingMode(mode));
+        QAction* action =
+                defaultContextMenu->addAction(tr("Set %1 mode")
+                                              .arg(mName),
+                                              this,
+                                              slotName(RenderingMode(mode)));
+        QObject::connect(action, SIGNAL(triggered()),
+                         this, SIGNAL(itemChanged()));
+    }
+    // defaultContextMenu->addAction(modeMenu->menuAction());
+    return defaultContextMenu;
 }
 
 void Scene_item::changed() {
-  // emit itemChanged();
+    // emit itemChanged();
+}
+void Scene_item::shading_mode_changed()
+{
+
 }
 
 void Scene_item::select(double /*orig_x*/,

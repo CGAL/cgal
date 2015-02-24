@@ -1,6 +1,5 @@
 #ifndef SCENE_ITEM_H
 #define SCENE_ITEM_H
-
 #include "Scene_item_config.h"
 #include "Scene_interface.h"
 #include <QString>
@@ -85,6 +84,7 @@ public slots:
   // Call that once you have finished changing something in the item
   // (either the properties or internal data)
   virtual void changed();
+  virtual void shading_mode_changed();
 
   // Setters for the four basic properties
   virtual void setColor(QColor c) { color_ = c; }
@@ -149,6 +149,9 @@ protected:
   bool visible_;
   RenderingMode rendering_mode;
   QMenu* defaultContextMenu;
+
+  int prev_shading;
+  int cur_shading;
 
 }; // end class Scene_item
 

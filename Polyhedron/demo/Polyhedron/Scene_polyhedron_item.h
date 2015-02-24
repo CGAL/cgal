@@ -59,6 +59,7 @@ virtual void draw_edges(Viewer_interface* viewer) const;
   
 public slots:
   virtual void changed();
+  virtual void shading_mode_changed();
   void show_only_feature_edges(bool);
   void enable_facets_picking(bool);
   void set_erase_next_picked_facet(bool);
@@ -103,20 +104,22 @@ private:
   std::vector<float> positions_lines;
   std::vector<float> positions_facets;
   std::vector<float> normals;
+  std::vector<float> color_lines;
+  std::vector<float> color_facets;
 
   GLuint rendering_program;
-  GLint location[9];
+  GLint location[8];
 
 
   GLuint vertex_shader;
   GLuint fragment_shader;
   GLuint program;
   GLuint vao;
-  GLuint buffer[3];
-  void initialize_buffers(); // a mettre a jour
-  GLuint compile_shaders(void); //a mettre a jour
+  GLuint buffer[5];
+  void initialize_buffers();
+  GLuint compile_shaders(void);
   void compute_normals_and_vertices(void);
-  void uniform_attrib(Viewer_interface*) const;//fini
+  void uniform_attrib(Viewer_interface*) const;
 }; // end class Scene_polyhedron_item
 
 #endif // SCENE_POLYHEDRON_ITEM_H

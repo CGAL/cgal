@@ -119,6 +119,28 @@ Scene_polyhedron_item::initialize_buffers()
                           0,
                           NULL
                           );
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[3]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (color_facets.size())*sizeof(color_facets.data()),
+                 color_facets.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(3,
+                          3,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          0,
+                          NULL
+                          );
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[4]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (color_lines.size())*sizeof(color_lines.data()),
+                 color_lines.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(4,
+                          3,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          0,
+                          NULL
+                          );
 
     // Clean-up
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -137,18 +159,19 @@ Scene_polyhedron_item::compile_shaders(void)
         "layout (location = 0) in vec4 positions_facets; \n"
         "layout (location = 1) in vec4 positions_lines; \n"
         "layout (location = 2) in vec3 vNormals; \n"
+        "layout (location = 3) in vec3 color_facets; \n"
+        "layout (location = 4) in vec3 color_lines; \n"
 
         "uniform mat4 mvp_matrix; \n"
         "uniform mat4 mv_matrix; \n"
 
         "uniform int is_two_side; \n"
         "uniform int is_wire; \n"
-        "uniform vec3 vColors; \n"
         "uniform vec3 light_pos;  \n"
         "uniform vec3 light_diff; \n"
         "uniform vec3 light_spec; \n"
         "uniform vec3 light_amb;  \n"
-        "float spec_power = 0.0; \n"
+        "float spec_power = 128.0; \n"
 
         "out highp vec3 fColors; \n"
         " \n"
@@ -173,17 +196,19 @@ Scene_polyhedron_item::compile_shaders(void)
         "   R = reflect(-L, N); \n"
         "   vec3 diffuse; \n"
         "   if(is_two_side == 1) \n"
-        "       diffuse = abs(dot(N,L)) * light_diff; \n"
+        "       diffuse = abs(dot(N,L)) * light_diff * color_facets; \n"
         "   else \n"
-        "       diffuse = max(dot(N,L), 0.0) * light_diff; \n"
+        "       diffuse = max(dot(N,L), 0.0) * light_diff * color_facets; \n"
         "   vec3 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
 
-        "   fColors = light_amb + diffuse + specular ; \n"
+        "   fColors = light_amb*color_facets + diffuse + specular ; \n"
 
-        "   gl_Position = mvp_matrix * positions_facets;} \n"
+        "   gl_Position =  mvp_matrix *positions_facets; \n"
+        "} \n"
         "else{ \n"
-        "   fColors = vColors; \n"
-        "   gl_Position = mvp_matrix * positions_lines;} \n"
+        "   fColors = color_lines; \n"
+        "   gl_Position = mvp_matrix * positions_lines; \n"
+        "} \n"
         "} \n"
     };
     //fill the fragment shader
@@ -266,7 +291,6 @@ void
 Scene_polyhedron_item::uniform_attrib(Viewer_interface* viewer) const
 {
 
-    GLfloat colors[4];
     light_info light;
     GLint is_both_sides = 0;
     GLint is_wire = 0;
@@ -278,9 +302,11 @@ Scene_polyhedron_item::uniform_attrib(Viewer_interface* viewer) const
     GLdouble d_mat[16];
     viewer->camera()->getModelViewProjectionMatrix(d_mat);
     //Convert the GLdoubles matrix in GLfloats
-    for (int i=0; i<16; ++i)
+    for (int i=0; i<16; ++i){
         mvp_mat[i] = GLfloat(d_mat[i]);
 
+
+}
     viewer->camera()->getModelViewMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mv_mat[i] = GLfloat(d_mat[i]);
@@ -289,18 +315,18 @@ Scene_polyhedron_item::uniform_attrib(Viewer_interface* viewer) const
     glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
     glGetIntegerv(GL_POLYGON_MODE, &is_wire);
     //fills the arraw of colors with the current color
-    glGetFloatv(GL_CURRENT_COLOR, colors);
+
 
     //Gets lighting info :
 
     //position
     glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
 
+        //ligne ne servant a rien mais si on l'enleve plus rien ne marche...
+    std::cout<<viewer->camera()->position().x<<" "<<viewer->camera()->position().y<<" "<<viewer->camera()->position().z<<" "<<std::endl;
     //ambient
     glGetLightfv(GL_LIGHT0, GL_AMBIENT, light.ambient);
-    light.ambient[0]*=colors[0];
-    light.ambient[1]*=colors[1];
-    light.ambient[2]*=colors[2];
+
 
     //specular
     glGetLightfv(GL_LIGHT0, GL_SPECULAR, light.specular);
@@ -308,9 +334,6 @@ Scene_polyhedron_item::uniform_attrib(Viewer_interface* viewer) const
     //diffuse
     glGetLightfv(GL_LIGHT0, GL_DIFFUSE, light.diffuse);
 
-    light.diffuse[0]*=colors[0];
-    light.diffuse[1]*=colors[1];
-    light.diffuse[2]*=colors[2];
 
     glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
     glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
@@ -318,24 +341,23 @@ Scene_polyhedron_item::uniform_attrib(Viewer_interface* viewer) const
 
     //Set the light infos
     glUniform3fv(location[2], 1, light.position);
-
     glUniform3fv(location[3], 1, light.diffuse);
     glUniform3fv(location[4], 1, light.specular);
     glUniform3fv(location[5], 1, light.ambient);
-    glUniform3fv(location[6], 1, colors);
-    glUniform1i(location[7], is_both_sides);
-    glUniform1i(location[8], is_wire);
+    glUniform1i(location[6], is_both_sides);
+    glUniform1i(location[7], is_wire);
 
 
 }
-
 void
 Scene_polyhedron_item::compute_normals_and_vertices(void)
 {
-
     positions_facets.clear();
     positions_lines.clear();
     normals.clear();
+    color_lines.clear();
+    color_facets.clear();
+
     //Facets
 
 
@@ -346,34 +368,27 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
     typedef typename Polyhedron::Facet_iterator Facet_iterator;
     typedef typename Polyhedron::Halfedge_around_facet_circulator HF_circulator;
 
-    // Get current shading model
-    GLint shading;
-    ::glGetIntegerv(GL_SHADE_MODEL, &shading);
 
-    int patch_id = -1;
+
+    // int patch_id = -1;
 
     Facet_iterator f;
     for(f = poly->facets_begin();
         f != poly->facets_end();
         f++)
     {
-        const int this_patch_id = f->patch_id();
-        if(patch_id != this_patch_id) {
-            CGALglcolor(colors_[this_patch_id]);
-            patch_id = this_patch_id;
-        }
-        //::glBegin(GL_POLYGON);
+
 
         HF_circulator he = f->facet_begin();
         HF_circulator end = he;
         CGAL_For_all(he,end)
         {
             // If Flat shading:1 normal per polygon added once per vertex
-            if (shading == GL_FLAT)
+            if (cur_shading == GL_FLAT)
             {
 
                 Vector n = compute_facet_normal<Facet,Kernel>(*f);
-                normals.push_back(n.x());//::glNormal3d(n.x(),n.y(),n.z());
+                normals.push_back(n.x());
                 normals.push_back(n.y());
                 normals.push_back(n.z());
             }
@@ -383,31 +398,37 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
 
 
             // If Gouraud shading: 1 normal per vertex
-            if (shading == GL_SMOOTH)
+            if (cur_shading == GL_SMOOTH)
             {
 
                 Vector n = compute_vertex_normal<typename Polyhedron::Vertex,Kernel>(*he->vertex());
-                //::glNormal3d(n.x(),n.y(),n.z());
                 normals.push_back(n.x());
                 normals.push_back(n.y());
                 normals.push_back(n.z());
             }
+            const int this_patch_id = f->patch_id();
+            //if(patch_id != this_patch_id) {
+            //CGALglcolor(colors_[this_patch_id]);
 
+            color_facets.push_back(colors_[this_patch_id].redF());
+            color_facets.push_back(colors_[this_patch_id].greenF());
+            color_facets.push_back(colors_[this_patch_id].blueF());
+            // patch_id = this_patch_id;
+            //}
+            //position
             const Point& p = he->vertex()->point();
-            //::glVertex3d(p.x(),p.y(),p.z());
             positions_facets.push_back(p.x());
             positions_facets.push_back(p.y());
             positions_facets.push_back(p.z());
             positions_facets.push_back(1.0);
 
-            // ::glEnd();
         }
     }
     //Lines
     typedef Kernel::Point_3		Point;
     typedef Polyhedron::Edge_iterator	Edge_iterator;
-
-    //::glBegin(GL_LINES);
+    //GLfloat colors[4];
+    //glGetFloatv(GL_CURRENT_COLOR, colors);
     Edge_iterator he;
     if(!show_only_feature_edges_m) {
         for(he = poly->edges_begin();
@@ -426,11 +447,18 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
             positions_lines.push_back(b.y());
             positions_lines.push_back(b.z());
             positions_lines.push_back(1.0);
-            // ::glVertex3d(a.x(),a.y(),a.z());
-            // ::glVertex3d(b.x(),b.y(),b.z());
+
+            color_lines.push_back(1.0);//colors[0]);
+            color_lines.push_back(0.0);//colors[1]);
+            color_lines.push_back(0.0);//colors[2]);
+
+            color_lines.push_back(1.0);//colors[0]);
+            color_lines.push_back(0.0);//colors[1]);
+            color_lines.push_back(0.0);//colors[2]);
+
         }
     }
-    ::glColor3d(1.0, 0.0, 0.0); //<<------ passe les edges en rouge
+    // ::glColor3d(1.0, 0.0, 0.0); //<<------ passe les edges en rouge
     for(he = poly->edges_begin();
         he != poly->edges_end();
         he++)
@@ -438,8 +466,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
         if(!he->is_feature_edge()) continue;
         const Point& a = he->vertex()->point();
         const Point& b = he->opposite()->vertex()->point();
-        // ::glVertex3d(a.x(),a.y(),a.z());
-        // ::glVertex3d(b.x(),b.y(),b.z());
+
         positions_lines.push_back(a.x());
         positions_lines.push_back(a.y());
         positions_lines.push_back(a.z());
@@ -449,8 +476,15 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
         positions_lines.push_back(b.y());
         positions_lines.push_back(b.z());
         positions_lines.push_back(1.0);
+
+        color_lines.push_back(1.0);
+        color_lines.push_back(0.0);
+        color_lines.push_back(0.0);
+
+        color_lines.push_back(1.0);
+        color_lines.push_back(0.0);
+        color_lines.push_back(0.0);
     }
-    //::glEnd();
 
     //Allocates a uniform location for the MVP and MV matrices
     location[0] = glGetUniformLocation(rendering_program, "mvp_matrix");
@@ -461,9 +495,8 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
     location[3] = glGetUniformLocation(rendering_program, "light_diff");
     location[4] = glGetUniformLocation(rendering_program, "light_spec");
     location[5] = glGetUniformLocation(rendering_program, "light_amb");
-    location[6] = glGetUniformLocation(rendering_program, "vColors");
-    location[7] = glGetUniformLocation(rendering_program, "is_two_side");
-    location[8] = glGetUniformLocation(rendering_program, "is_wire");
+    location[6] = glGetUniformLocation(rendering_program, "is_two_side");
+    location[7] = glGetUniformLocation(rendering_program, "is_wire");
 }
 
 
@@ -478,10 +511,11 @@ Scene_polyhedron_item::Scene_polyhedron_item()
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
 {
+    cur_shading=GL_FLAT;
     //init();
     glGenVertexArrays(1, &vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(3, buffer);
+    glGenBuffers(5, buffer);
 
     rendering_program = compile_shaders();
 }
@@ -497,10 +531,11 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
 {
+    cur_shading=GL_FLAT;
     init();
     glGenVertexArrays(1, &vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(3, buffer);
+    glGenBuffers(5, buffer);
 
     rendering_program = compile_shaders();
 }
@@ -516,10 +551,11 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
 {
+    cur_shading=GL_FLAT;
     init();
     glGenVertexArrays(1, &vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(3, buffer);
+    glGenBuffers(5, buffer);
 
     rendering_program = compile_shaders();
 }
@@ -533,7 +569,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
 
 Scene_polyhedron_item::~Scene_polyhedron_item()
 {
-    glDeleteBuffers(3, buffer);
+    glDeleteBuffers(5, buffer);
     glDeleteVertexArrays(1, &vao);
     glDeleteProgram(rendering_program);
 
@@ -574,6 +610,8 @@ Scene_polyhedron_item::clone() const {
 bool
 Scene_polyhedron_item::load(std::istream& in)
 {
+
+
     in >> *poly;
 
     if ( in && !isEmpty() )
@@ -672,15 +710,20 @@ void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
-
     glBindVertexArray(vao);
 
     //Binds the buffer used for the flat and gouraud rendering
     glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
     glEnableVertexAttribArray(0);
+   // glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
+  //  glEnableVertexAttribArray(1);
     //Binds the buffer used for normals
     glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
     glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[3]);
+    glEnableVertexAttribArray(3);
+   // glBindBuffer(GL_ARRAY_BUFFER, buffer[4]);
+    //glEnableVertexAttribArray(4);
 
     // tells the GPU to use the program just created
     glUseProgram(rendering_program);
@@ -695,19 +738,23 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
 
     // Clean-up
     glUseProgram(0);
+   // glDisableVertexAttribArray(4);
+    glDisableVertexAttribArray(3);
     glDisableVertexAttribArray(2);
-    glDisableVertexAttribArray(1);
+  //  glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    //gl_render_facets(*poly,colors_);
+
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     glBindVertexArray(vao);
 
+    //glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+    //glEnableVertexAttribArray(0);
     //Binds the buffer used for the wireframe rendering
     glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
     glEnableVertexAttribArray(1);
@@ -715,6 +762,12 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
     glEnableVertexAttribArray(2);
 
+
+    //glBindBuffer(GL_ARRAY_BUFFER, buffer[3]);
+   // glEnableVertexAttribArray(3);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[4]);
+    glEnableVertexAttribArray(4);
     // tells the GPU to use the program just created
     glUseProgram(rendering_program);
 
@@ -724,10 +777,17 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
     // Clean-up
     glUseProgram(0);
+    glDisableVertexAttribArray(4);
+   // glDisableVertexAttribArray(3);
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
+    //glDisableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+
+
+
 }
 
 /*void Scene_polyhedron_item::direct_draw_edges(Viewer_interface* viewer) const {
@@ -763,13 +823,29 @@ void
 Scene_polyhedron_item::
 changed()
 {
-    std::cout<<"changed"<<std::endl;
     emit item_is_about_to_be_changed();
     delete_aabb_tree(this);
     init();
     Base::changed();
     compute_normals_and_vertices();
     initialize_buffers();
+
+}
+void
+Scene_polyhedron_item::
+shading_mode_changed()
+{
+
+    GLint new_shading;
+    glGetIntegerv(GL_SHADE_MODEL, &new_shading);
+    prev_shading = cur_shading;
+    cur_shading = new_shading;
+    if(prev_shading != cur_shading)
+        if(cur_shading == GL_SMOOTH || cur_shading == GL_FLAT && prev_shading == GL_SMOOTH )
+        {
+            //Change the normals
+            changed();
+        }
 }
 
 void 

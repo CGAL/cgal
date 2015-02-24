@@ -134,7 +134,6 @@ Scene_polygon_soup_item::compile_shaders(void)
         "uniform mat4 mv_matrix; \n"
 
         "uniform int is_two_side; \n"
-        "uniform vec3 vColors; \n"
         "uniform vec3 light_pos;  \n"
         "uniform vec3 light_diff; \n"
         "uniform vec3 light_spec; \n"
@@ -301,7 +300,6 @@ Scene_polygon_soup_item::uniform_attrib(Viewer_interface* viewer) const
     glUniform3fv(location[3], 1, light.diffuse);
     glUniform3fv(location[4], 1, light.specular);
     glUniform3fv(location[5], 1, light.ambient);
-    glUniform3fv(location[6], 1, colors);
     glUniform1i(location[7], is_both_sides);
 }
 
@@ -357,7 +355,7 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
     location[3] = glGetUniformLocation(rendering_program, "light_diff");
     location[4] = glGetUniformLocation(rendering_program, "light_spec");
     location[5] = glGetUniformLocation(rendering_program, "light_amb");
-    location[6] = glGetUniformLocation(rendering_program, "vColors");
+  //  location[6] = glGetUniformLocation(rendering_program, "vColors");
     location[7] = glGetUniformLocation(rendering_program, "is_two_side");
 }
 
