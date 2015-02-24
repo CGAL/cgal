@@ -130,7 +130,7 @@ Our implementation reuses the \f$ L_{2} \f$ traits,
 wherever possible, but there are
 extensive differences. We support geometric and arithmetic
 filtering, as the \f$ L_{2} \f$ predicates do.
-For more details,
+For more details
 on these filtering techniques, see the Segment Delaunay graph package manual.
 
 In analogy with the  \f$ L_{2} \f$ setting,
