@@ -196,9 +196,6 @@ public:
     SparseLinearAlgebraTraits_d_ // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
   >::type SparseLinearAlgebraTraits_d;
-  #else
-  ///
-  typedef SparseLinearAlgebraTraits_d_ SparseLinearAlgebraTraits_d;
   #endif
 
 
