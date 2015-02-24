@@ -98,7 +98,7 @@ one of its endpoints and its 1-dimensionalization.
 \section secsdglinfdesign Software Design
 
 In general, the software design of the algorithms and traits for the
-\f$ L_{\infty} \f$ Segment Delaunay graph are relying on the
+\f$ L_{\infty} \f$ Segment Delaunay graph rely on the
 corresponding algorithms and traits for the \f$ L_{2} \f$ Segment
 Delaunay graph. We implement the \f$ L_{\infty} \f$ classes as
 subclasses of corresponding \f$ L_{2} \f$ classes from the
