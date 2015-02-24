@@ -18,7 +18,7 @@ typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_desc
 typedef boost::graph_traits<Polyhedron>::vertex_iterator             vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::halfedge_descriptor         halfedge_descriptor;
 
-typedef CGAL::Mean_curvature_flow_skeletonization<Kernel,Polyhedron> Mean_curvature_skeleton;
+typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron>        Mean_curvature_skeleton;
 typedef Mean_curvature_skeleton::Skeleton                            Skeleton;
 
 typedef boost::graph_traits<Skeleton>::vertex_descriptor             vertex_desc;

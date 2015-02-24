@@ -42,7 +42,6 @@ namespace CGAL{
 ///
 /// @tparam TriangleMesh
 ///         a model of `HalfedgeGraph`
-
 ///
 /// @param tmesh
 ///        input mesh
@@ -51,9 +50,9 @@ namespace CGAL{
 ///
 /// \todo add an overload when the TriangleMesh is of the same type as the copy
 /// \todo I need to tweak SkeletonVertexVerticesMap to match the documentation
-  template <class TriangleMesh, class Skeleton>
+  template <class TriangleMesh>
 void extract_mean_curvature_flow_skeleton(const TriangleMesh& tmesh,
-                                          Skeleton& skeleton)
+                                          Mean_curvature_flow_skeletonization<TriangleMesh>::Skeleton& skeleton)
 {
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type PmeshPointPMap;
   typedef typename boost::property_traits<PmeshPointPMap>::value_type Point;
@@ -87,8 +86,8 @@ void extract_mean_curvature_flow_skeleton(const TriangleMesh& tmesh,
           Eigen::COLAMDOrdering<int> > > SparseLinearAlgebraTraits_d;
 
   // extract the skeleton
-  typedef CGAL::Mean_curvature_flow_skeletonization<K,
-                                                    Polyhedron,
+  typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron,
+                                                    K,
                                                     PolyVertexPointMap,
                                                     SparseLinearAlgebraTraits_d> Mcfskel;
   Mcfskel mcfs(P);

@@ -6,18 +6,18 @@
 
 #include <fstream>
 
-typedef CGAL::Simple_cartesian<double>                               Kernel;
-typedef Kernel::Point_3                                              Point;
-typedef CGAL::Polyhedron_3<Kernel>                                   Polyhedron;
+typedef CGAL::Simple_cartesian<double>                        Kernel;
+typedef Kernel::Point_3                                       Point;
+typedef CGAL::Polyhedron_3<Kernel>                            Polyhedron;
 
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_descriptor;
+typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
 
-typedef CGAL::Mean_curvature_flow_skeletonization<Kernel,Polyhedron> Mean_curvature_skeleton;
-typedef Mean_curvature_skeleton::Skeleton                            Skeleton;
+typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron> Mean_curvature_skeleton;
+typedef Mean_curvature_skeleton::Skeleton                     Skeleton;
 
-typedef boost::graph_traits<Skeleton>::vertex_descriptor             vertex_desc;
-typedef boost::graph_traits<Skeleton>::vertex_iterator               vertex_iter;
-typedef boost::graph_traits<Skeleton>::edge_iterator                 edge_iter;
+typedef boost::graph_traits<Skeleton>::vertex_descriptor      vertex_desc;
+typedef boost::graph_traits<Skeleton>::vertex_iterator        vertex_iter;
+typedef boost::graph_traits<Skeleton>::edge_iterator          edge_iter;
 
 
 int main()

@@ -124,13 +124,13 @@ enum Degeneracy_algorithm_tag
 /// @brief Class providing the functionalities for extracting
 ///        the skeleton of a triangulated surface mesh.
 ///
-/// \todo index pmap should also be writable :/
-///
-/// @tparam Traits
-///         a model of `MeanCurvatureSkeletonizationTraits`
-///
 /// @tparam TriangleMesh
 ///         a model of `HalfedgeGraph`
+///
+/// @tparam Traits
+///         a model of `MeanCurvatureSkeletonizationTraits`<br>
+///         <b>%Default:</b> `Kernel_traits<boost::property_traits<boost::property_map<TriangleMesh, boost::vertex_point_t>::%type>::value_type>::%Kernel`
+///
 /// @tparam VertexPointMap
 ///         a model of `ReadWritePropertyMap`
 ///         with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
@@ -154,13 +154,13 @@ enum Degeneracy_algorithm_tag
 ///         tag for selecting the degeneracy detection algorithm
 /// @endcond
 #ifdef DOXYGEN_RUNNING
-template <class Traits,
-          class TriangleMesh,
+template <class TriangleMesh,
+          class Traits = Default,
           class VertexPointMap = Default,
           class SparseLinearAlgebraTraits_d = Default>
 #else
-template <class Traits,
-          class TriangleMesh,
+template <class TriangleMesh,
+          class Traits_ = Default,          
           class VertexPointMap_ = Default,
           class SparseLinearAlgebraTraits_d_ = Default,
           Collapse_algorithm_tag Collapse_tag = LINEAR,
@@ -171,14 +171,6 @@ class Mean_curvature_flow_skeletonization
 // Public types
 public:
 
-  typedef typename Traits::Point_3                                             Point;
-  typedef typename Traits::Vector_3                                             Vector;
-
-
-  typedef CGAL::Polyhedron_3<Traits,CGAL::Polyhedron_items_with_id_3> mTriangleMesh;
-  typedef typename boost::property_map<mTriangleMesh, boost::vertex_index_t>::type VertexIndexMap;
-  typedef typename boost::property_map<mTriangleMesh, boost::halfedge_index_t>::type HalfedgeIndexMap;
-
 /// \name Types
 /// @{
   // Template parameters
@@ -186,6 +178,11 @@ public:
   typedef typename Default::Get<
     VertexPointMap_,
     typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type
+  >::type VertexPointMap; 
+
+  typedef typename Default::Get<
+    Traits_,
+    typename Kernel_traits<boost::property_traits<boost::property_map<TriangleMesh, boost::vertex_point_t>::type>::value_type>::Kernel
   >::type VertexPointMap;
   #endif
 
@@ -203,12 +200,22 @@ public:
   >::type SparseLinearAlgebraTraits_d;
   #endif
 
+  /// @cond CGAL_DOCUMENT_INTERNAL
+  typedef typename Traits::Point_3                                             Point;
+  typedef typename Traits::Vector_3                                             Vector;
+
+
+  typedef CGAL::Polyhedron_3<Traits,CGAL::Polyhedron_items_with_id_3> mTriangleMesh;
+  typedef typename boost::property_map<mTriangleMesh, boost::vertex_index_t>::type VertexIndexMap;
+  typedef typename boost::property_map<mTriangleMesh, boost::halfedge_index_t>::type HalfedgeIndexMap;
+
 
   struct Vmap {
   std::size_t id;
     Point point;
     std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor> vertices;
   };
+  @endcond
 
   /// The graph type representing the skeleton. The vertex property 
   /// `Vmap` is a struct with a member `point` of type `Traits::Point_3`
@@ -578,7 +585,7 @@ public:
   typedef unspecified_type Meso_skeleton;
 
   /// Reference to the collapsed surface mesh.
-  Meso_skeleton& collapsed_meso_skeleton()
+  Meso_skeleton& meso_skeleton()
   {
     return m_tmesh;
   }
