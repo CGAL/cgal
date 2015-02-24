@@ -135,6 +135,13 @@ void test2(){
   typedef typename K1::Construct_min_vertex_d CmV;
   typedef typename K1::Construct_max_vertex_d CMV;
   typedef typename K1::Compute_squared_radius_d SR;
+  typedef typename K1::Translated_point_d TP;
+  typedef typename K1::Power_center_d PC;
+  typedef typename CGAL::Get_functor<K1, CGAL::Power_distance_tag>::type PoD;
+  typedef typename K1::Weighted_point_d WP;
+  typedef typename K1::Construct_weighted_point_d CWP;
+  typedef typename K1::Point_drop_weight_d PDW;
+  typedef typename K1::Point_weight_d PW;
 
   CGAL_USE_TYPE(AT);
   CGAL_USE_TYPE(D);
@@ -196,6 +203,12 @@ void test2(){
   CmV cmv Kinit(construct_min_vertex_d_object);
   CMV cMv Kinit(construct_max_vertex_d_object);
   SR sr Kinit(compute_squared_radius_d_object);
+  TP tp Kinit(translated_point_d_object);
+  PC pc Kinit(power_center_d_object);
+  CWP cwp Kinit(construct_weighted_point_d_object);
+  PDW pdw Kinit(point_drop_weight_d_object);
+  PW pw Kinit(point_weight_d_object);
+  PoD pod (k);
 
   CGAL_USE(bc);
   CGAL_USE(pol);
