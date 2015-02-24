@@ -120,8 +120,7 @@ is derived from the class template
 `Segment_Delaunay_graph_2`.
 In the \f$ L_{\infty} \f$ class template, a few methods that
 are used when inserting a point in the interior of an existing
-segment are overridden. The details are not of interest to the end
-user, so we do not elaborate further.
+segment are overridden.
 
 \subsection Segment_Delaunay_graph_Linf_2_Traits Segment Delaunay Graph Traits
 
