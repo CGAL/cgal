@@ -823,15 +823,14 @@ public:
     typedef Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>       Traits;
 
     /*! The traits (in case it has state) */
-    const Traits* m_traits;
+    const Traits& m_traits;
 
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
-    Trim_2(const Traits* traits) : m_traits(traits) {}
+    Trim_2(const Traits& traits) : m_traits(traits) {}
 
   public:
-
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
     /*!\brief
      * Returns a trimmed version of an arc
@@ -845,34 +844,30 @@ public:
      * \pre both points must be interior and must lie on \c cv
      */
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
-                                const Point_2& src,
-                                const Point_2& tgt)const
+                                  const Point_2& src,
+                                  const Point_2& tgt)const
     {
       // make functor objects
-      Compare_y_at_x_2 compare_y_at_x_2 = m_traits->compare_y_at_x_2_object();
-      Compare_x_2 compare_x_2 = m_traits->compare_x_2_object();
-      Equal_2 equal_2 = m_traits->equal_2_object();
-      //check if source and taget are two distinct points and they lie on the line.
-      CGAL_precondition( compare_y_at_x_2(src, xcv) == EQUAL );
-      CGAL_precondition( compare_y_at_x_2(tgt, xcv) == EQUAL );
-      CGAL_precondition( ! equal_2(src, tgt) );
+      CGAL_precondition_code(Compare_y_at_x_2 compare_y_at_x_2 =
+                             m_traits.compare_y_at_x_2_object());
+      CGAL_precondition_code(Equal_2 equal_2 = m_traits.equal_2_object());
+      Compare_x_2 compare_x_2 = m_traits.compare_x_2_object();
+      // Check  whether source and taget are two distinct points and they lie
+      // on the line.
+      CGAL_precondition(compare_y_at_x_2(src, xcv) == EQUAL);
+      CGAL_precondition(compare_y_at_x_2(tgt, xcv) == EQUAL);
+      CGAL_precondition(! equal_2(src, tgt));
 
       //check if the orientation conforms to the src and tgt.
       if( (xcv.is_directed_right() && compare_x_2(src, tgt) == LARGER) ||
           (! xcv.is_directed_right() && compare_x_2(src, tgt) == SMALLER) )
-        return ( xcv.trim(tgt, src) );
-
-      else
-        return (xcv.trim(src, tgt));
+        return (xcv.trim(tgt, src));
+      else return (xcv.trim(src, tgt));
     }
-
   };
 
-  //get a Trim_2 functor object
-  Trim_2 trim_2_object() const
-  {
-    return Trim_2(this);
-  }
+  /*! Obtain a Trim_2 functor object. */
+  Trim_2 trim_2_object() const { return Trim_2(*this); }
   //@}
 };
 

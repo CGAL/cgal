@@ -495,19 +495,29 @@ public:
 
   public:
     /*! Constructor. */
-    Push_back_2(const Polycurve_traits_2& traits) : Base::Push_back_2(traits) {}
+    Push_back_2(const Polycurve_traits_2& traits) :
+      Base::Push_back_2(traits)
+    {}
+
+    // Normally, the moment the compiler finds a name, it stops looking. In
+    // other words, the compiler first finds the operator() in the current
+    // class and stops looking, never finding the one in the base class.
+    // Explicitly bring the base operator() into scope, unnecesitating the
+    // code below.
+    using Base::Push_back_2::operator();
+
+    // /*! Append a subcurve to an existing x-monotone polycurve at the back.
+    //  */
+    // void operator()(X_monotone_curve_2& xcv,
+    //                 const X_monotone_subcurve_2& seg)
+    //   const
+    // { Base::Push_back_2::operator()(xcv, seg); }
 
     /* Append a subcurve to an existing polycurve at the back.
      * If the polycurve is empty, the subcurve will be its only subcurve.
      */
     void operator()(Curve_2& cv, const Subcurve_2& seg) const
     { cv.push_back(seg); }
-
-    /*! Append a subcurve to an existing x-monotone polycurve at the back.
-     */
-    void operator()(X_monotone_curve_2& xcv, const X_monotone_subcurve_2& seg)
-      const
-    { Base::Push_back_2::operator()(xcv, seg); }
   };
 
   /*! Obtain a Push_back_2 functor object. */
@@ -527,16 +537,23 @@ public:
       Base::Push_front_2(traits)
     {}
 
-    /* Append a subcurve to an existing polycurve at the front.
-     */
+    // Normally, the moment the compiler finds a name, it stops looking. In
+    // other words, the compiler first finds the operator() in the current
+    // class and stops looking, never finding the one in the base class.
+    // Explicitly bring the base operator() into scope, unnecesitating the
+    // code below.
+    using Base::Push_front_2::operator();
+
+    // /*! Append a subcurve to an existing x-monotone polycurve at the front.
+    //  */
+    // void operator()(X_monotone_curve_2& xcv,
+    //                 const X_monotone_subcurve_2& seg)
+    //   const
+    // { Base::Push_front_2::operator()(xcv, seg); }
+
+    /* Append a subcurve to an existing polycurve at the front. */
     void operator()(Curve_2& cv, const Subcurve_2& seg) const
     { cv.push_front(seg); }
-
-    /*! Append a subcurve to an existing x-monotone polycurve at the front.
-     */
-    void operator()(X_monotone_curve_2& xcv, const X_monotone_subcurve_2& seg)
-      const
-    { Base::Push_front_2::operator()(xcv, seg); }
   };
 
   /*! Obtain a Push_front_2 functor object. */

@@ -532,7 +532,7 @@ push_front_wrapper(std::istringstream& str_stream)
               << x_segment << "into"
               << base_curve << " ) ? ";
 
-    this->m_geom_traits.push_front_2_object()( base_curve, x_segment );
+    this->m_geom_traits.push_front_2_object()(base_curve, x_segment);
 
     X_monotone_curve_2 exp_curve = this->m_xcurves[expected_curve_id];
 
@@ -594,8 +594,10 @@ compare_x_wrapper(std::istringstream& str_stream)
       this->m_geom_traits.compare_x_2_object()(this->m_xsegments[id1], end1,
                                                this->m_xsegments[id2], end2);
   }
-  std::cout << (expected_answer == CGAL::SMALLER ? "SMALLER":
-               (expected_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
+  std::cout <<
+    ((expected_answer == static_cast<unsigned int>(CGAL::SMALLER)) ? "SMALLER" :
+     ((expected_answer == static_cast<unsigned int>(CGAL::LARGER)) ? "LARGER" :
+      "EQUAL")) << " ";
   return this->compare(expected_answer, real_answer);
 }
 
@@ -640,8 +642,10 @@ compare_xy_wrapper(std::istringstream& str_stream)
                                                 this->m_xsegments[id2], end2);
   }
 
-  std::cout << (expected_answer == CGAL::SMALLER ? "SMALLER":
-               (expected_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
+  std::cout <<
+    ((expected_answer == static_cast<unsigned int>(CGAL::SMALLER)) ? "SMALLER" :
+     ((expected_answer == static_cast<unsigned int>(CGAL::LARGER)) ? "LARGER" :
+      "EQUAL")) << " ";
   return this->compare(expected_answer, real_answer);
 }
 
@@ -650,7 +654,7 @@ bool Traits_test<Geom_traits_T>::
 number_of_points_wrapper(std::istringstream& str_stream)
 {
   typedef Geom_traits_T                         Geom_traits;
-  typedef typename Geom_traits_T::size_type     size_type;
+  typedef typename Geom_traits::size_type       size_type;
 
   unsigned int id;
   size_type expected_result;
@@ -671,9 +675,9 @@ compare_endpoints_xy_wrapper(std::istringstream& str_stream)
   unsigned int expected_answer = this->get_expected_enum(str_stream);
 
   std::cout << "Test: compare_endpoints_xy( " << this->m_xcurves[id]
-            << " ) ? " <<expected_answer << " ";
+            << " ) ? " << expected_answer << " ";
   unsigned int real_answer =
-        this->m_geom_traits.compare_endpoints_xy_2_object()(this->m_xcurves[id]);
+    this->m_geom_traits.compare_endpoints_xy_2_object()(this->m_xcurves[id]);
 
   return this->compare(expected_answer, real_answer);
 }
@@ -689,7 +693,7 @@ construct_opposite_wrapper(std::istringstream& str_stream)
             << "expected_answer: " << this->m_xcurves[id2]<< " ";
 
   X_monotone_curve_2 obtained_curve =
-      this->m_geom_traits.construct_opposite_2_object()(this->m_xcurves[id1]);
+    this->m_geom_traits.construct_opposite_2_object()(this->m_xcurves[id1]);
 
   return this->compare_curves(obtained_curve, this->m_xcurves[id2]);
 }

@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
 //                 Waqar Khan        <wkhan@mpi-inf.mpg.de>
@@ -34,8 +30,6 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arr_enums.h>
 #include <fstream>
-
-
 
 namespace CGAL {
 
@@ -1011,18 +1005,17 @@ public:
   /// \name Functor definitions for the Boolean set-operation traits.
   //@{
 
-  class Trim_2
-  {
+  class Trim_2 {
    protected:
     typedef Arr_segment_traits_2<Kernel>        Traits;
 
     /*! The traits (in case it has state) */
-    const Traits* m_traits;
+    const Traits& m_traits;
 
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
-    Trim_2(const Traits* traits) : m_traits(traits) {}
+    Trim_2(const Traits& traits) : m_traits(traits) {}
 
     friend class Arr_segment_traits_2<Kernel>;
     /*!\brief
@@ -1037,16 +1030,16 @@ public:
      * \ both points must lie on segment
      */
   public:
-
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
-                                const Point_2& src,
-                                const Point_2& tgt)const
+                                  const Point_2& src,
+                                  const Point_2& tgt)const
     {
-      Equal_2 equal = m_traits->equal_2_object();
-      Compare_y_at_x_2 compare_y_at_x = m_traits->compare_y_at_x_2_object();
-      Compare_x_2 compare_x_2 = m_traits->compare_x_2_object();
+      CGAL_precondition_code(Equal_2 equal = m_traits.equal_2_object());
+      Compare_y_at_x_2 compare_y_at_x = m_traits.compare_y_at_x_2_object();
+      Compare_x_2 compare_x_2 = m_traits.compare_x_2_object();
 
-      //check if source and taget are two distinct points and they lie on the line.
+      // check whether source and taget are two distinct points and they lie
+      // on the line.
       CGAL_precondition(!equal(src, tgt));
       CGAL_precondition(compare_y_at_x(src, xcv) == EQUAL);
       CGAL_precondition(compare_y_at_x(tgt, xcv) == EQUAL);
@@ -1054,31 +1047,18 @@ public:
       // exchange src and tgt IF they do not conform with the direction
       X_monotone_curve_2 trimmed_segment;
 
-      if( xcv.is_directed_right() && compare_x_2(src, tgt) == LARGER  )
-      {
+      if (xcv.is_directed_right() && compare_x_2(src, tgt) == LARGER)
         trimmed_segment = X_monotone_curve_2(tgt, src);
-      }
-
-      else if( !xcv.is_directed_right() && compare_x_2(src, tgt) == SMALLER )
-      {
+      else if (!xcv.is_directed_right() && compare_x_2(src, tgt) == SMALLER )
         trimmed_segment = X_monotone_curve_2(tgt, src);
-      }
-
       else
-      {
         trimmed_segment = X_monotone_curve_2(src, tgt);
-      }
-
       return (trimmed_segment);
     }
-
   };
 
   //get a Trim_2 functor object
-  Trim_2 trim_2_object() const
-  {
-    return Trim_2(this);
-  }
+  Trim_2 trim_2_object() const { return Trim_2(*this); }
 
   class Compare_endpoints_xy_2
   {

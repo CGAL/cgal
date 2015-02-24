@@ -1194,8 +1194,8 @@ public:
      * \post By the construction the returned polycurve is well-oriented.
      */
     template <typename ForwardIterator>
-    X_monotone_curve_2 constructor_impl(ForwardIterator begin,
-                                        ForwardIterator end,
+    X_monotone_curve_2 constructor_impl(ForwardIterator /* begin */,
+                                        ForwardIterator /* end */,
                                         boost::true_type) const
     { CGAL_error_msg("Cannot construct a polycurve from a range of points!"); }
 
@@ -1548,9 +1548,6 @@ public:
     unsigned int get_curve_index (const X_monotone_curve_2& xcv,
                                   const Arr_curve_end ce) const
     {
-      Comparison_result orientation =
-        m_poly_traits.compare_endpoints_xy_2_object()(xcv);
-
       //waqar:: dont know why it is opposite in Parameter_space_in_x...
       // I think this is because of the way the subcurves are stored in the
       // curve_vector.
@@ -1559,9 +1556,7 @@ public:
       // and also that min end subcurve is always placed at position 0 of the
       // vector.
       // Comfirm with Eric.
-      unsigned int index =
-        (ce == ARR_MIN_END) ? 0 : xcv.number_of_subcurves() - 1;
-      return index;
+      return (ce == ARR_MIN_END) ? 0 : xcv.number_of_subcurves() - 1;
     }
 
     Comparison_result operator()(const Point_2& p,
@@ -1983,14 +1978,22 @@ public:
          const Arr_parameter_space max_x_seg = ps_x(seg, ARR_MAX_END);
          const Arr_parameter_space max_y_seg = ps_y(seg, ARR_MAX_END);
 
-         const Arr_parameter_space min_x_cv =
-           ((num_seg>0) ? ps_x(xcv[num_seg-1], ARR_MIN_END) : ARR_INTERIOR );
-         const Arr_parameter_space min_y_cv =
-           ((num_seg>0) ? ps_y(xcv[num_seg-1], ARR_MIN_END) : ARR_INTERIOR );
-         const Arr_parameter_space max_x_cv =
-           ((num_seg>0) ? ps_x(xcv[num_seg-1], ARR_MAX_END) : ARR_INTERIOR );
-         const Arr_parameter_space max_y_cv =
-           ((num_seg>0) ? ps_y(xcv[num_seg-1], ARR_MAX_END) : ARR_INTERIOR );
+         CGAL_precondition_code(const Arr_parameter_space min_x_cv =
+                                ((num_seg>0) ?
+                                 ps_x(xcv[num_seg-1], ARR_MIN_END) :
+                                 ARR_INTERIOR));
+         CGAL_precondition_code(const Arr_parameter_space min_y_cv =
+                                ((num_seg>0) ?
+                                 ps_y(xcv[num_seg-1], ARR_MIN_END) :
+                                 ARR_INTERIOR));
+         CGAL_precondition_code(const Arr_parameter_space max_x_cv =
+                                ((num_seg>0) ?
+                                 ps_x(xcv[num_seg-1], ARR_MAX_END) :
+                                 ARR_INTERIOR));
+         CGAL_precondition_code(const Arr_parameter_space max_y_cv =
+                                ((num_seg>0) ?
+                                 ps_y(xcv[num_seg-1], ARR_MAX_END) :
+                                 ARR_INTERIOR));
 
          // A subcurve should not be pushed if the polycurve is directed to
          // the right and reaches the boundary.
@@ -2094,8 +2097,6 @@ public:
            geom_traits->construct_max_vertex_2_object();
          typename Subcurve_traits_2::Construct_min_vertex_2 get_min_v =
            geom_traits->construct_min_vertex_2_object();
-         typename Subcurve_traits_2::Compare_xy_2 comp_xy =
-           geom_traits->compare_xy_2_object();
          typename Subcurve_traits_2::Equal_2 equal =
            geom_traits->equal_2_object();
          typename Subcurve_traits_2::Is_vertical_2 is_vertical =
@@ -2147,8 +2148,6 @@ public:
            geom_traits->construct_max_vertex_2_object();
          typename Subcurve_traits_2::Construct_min_vertex_2 get_min_v =
            geom_traits->construct_min_vertex_2_object();
-         typename Subcurve_traits_2::Compare_xy_2 comp_xy =
-           geom_traits->compare_xy_2_object();
          typename Subcurve_traits_2::Equal_2 equal =
            geom_traits->equal_2_object();
          typename Subcurve_traits_2::Parameter_space_in_x_2 ps_x =
@@ -2171,15 +2170,6 @@ public:
          const Arr_parameter_space min_y_seg = ps_y(seg, ARR_MIN_END);
          const Arr_parameter_space max_x_seg = ps_x(seg, ARR_MAX_END);
          const Arr_parameter_space max_y_seg = ps_y(seg, ARR_MAX_END);
-
-         const Arr_parameter_space min_x_cv =
-           ((num_seg>0) ? ps_x(xcv[num_seg-1], ARR_MIN_END) : ARR_INTERIOR);
-         const Arr_parameter_space min_y_cv =
-           ((num_seg>0) ? ps_y(xcv[num_seg-1], ARR_MIN_END) : ARR_INTERIOR);
-         const Arr_parameter_space max_x_cv =
-           ((num_seg>0) ? ps_x(xcv[num_seg-1], ARR_MAX_END) : ARR_INTERIOR);
-         const Arr_parameter_space max_y_cv =
-           ((num_seg>0) ? ps_y(xcv[num_seg-1], ARR_MAX_END) : ARR_INTERIOR);
 
          // Something like line should not be pushed if there is already a
          // subcurve present in the polycurve.

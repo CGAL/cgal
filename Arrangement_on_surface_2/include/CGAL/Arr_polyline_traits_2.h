@@ -131,18 +131,28 @@ public:
   class Push_back_2 : public Base::Push_back_2 {
   protected:
     typedef Arr_polyline_traits_2<SegmentTraits_2>     Polyline_traits_2;
-    /*! The traits (in case it has state) */
-    const Polyline_traits_2& m_poly_traits;
 
   public:
     /*! Constructor. */
     Push_back_2(const Polyline_traits_2& traits) :
-      Base::Push_back_2(traits),
-      m_poly_traits(traits)
+      Base::Push_back_2(traits)
     {}
 
-    //http://stackoverflow.com/questions/21168635/inheritance-and-overloading-of-the-function-call-operator
+    // Normally, the moment the compiler finds a name, it stops looking. In
+    // other words, the compiler first finds the operator() in the current
+    // class and stops looking, never finding the one in the base class.
+    // Explicitly bring the base operator() into scope, unnecesitating the
+    // code below.
     using Base::Push_back_2::operator();
+
+    // /*! Append a segment `seg` to an existing polyline `cv` at the back. */
+    // void operator()(Curve_2& cv, const Segment_2& seg) const
+    // { Base::Push_back_2::operator() (cv, seg); }
+
+    // /* Append a segment `seg` to an existing polyline `xcv` at the back. */
+    // void operator()(X_monotone_curve_2& xcv,
+    //                 const X_monotone_subcurve_2& seg) const
+    // { Base::Push_back_2::operator()(xcv, seg); }
 
     /* Append a point `p` to an existing polyline `cv` at the back. */
     void operator()(Curve_2& cv, const Point_2& p) const
@@ -172,11 +182,6 @@ public:
         cv.push_back(Subcurve_2(get_min_v(cv[last_seg]), p));
       }
     }
-
-    // Append a segment `seg` to an existing polyline `cv`. If `cv` is
-    // empty, `seg` will be its first segment.
-    // void operator()(Curve_2& cv, const Segment_2& seg) const
-    // { Base::Push_back_2::operator() (cv, seg); }
 
     /* Append a point `p` to an existing polyline `xcv` at the back. */
     void operator()(X_monotone_curve_2& xcv, const Point_2& p) const
@@ -225,13 +230,6 @@ public:
         xcv.push_back(X_monotone_subcurve_2(get_min_v(xcv[num_seg-1]), p));
       }
     }
-
-    // /* Append a segment `seg` to an existing polyline `xcv` at the back. */
-    // void operator()(X_monotone_curve_2& xcv,
-    //                 const X_monotone_subcurve_2& seg) const
-    // {
-    //   Base::Push_back_2::operator()(xcv, seg);
-    // }
   };
 
   /*! Obtain a Push_back_2 functor object. */
@@ -244,17 +242,28 @@ public:
   class Push_front_2 : public Base::Push_front_2 {
   protected:
     typedef Arr_polyline_traits_2<SegmentTraits_2>     Polyline_traits_2;
-    /*! The traits (in case it has state) */
-    const Polyline_traits_2& m_poly_traits;
 
   public:
     /*! Constructor. */
     Push_front_2(const Polyline_traits_2& traits) :
-      m_poly_traits(traits),
       Base::Push_front_2(traits)
     {}
 
+    // Normally, the moment the compiler finds a name, it stops looking. In
+    // other words, the compiler first finds the operator() in the current
+    // class and stops looking, never finding the one in the base class.
+    // Explicitly bring the base operator() into scope, unnecesitating the
+    // code below.
     using Base::Push_front_2::operator();
+
+    /*! Append a segment `seg` to an existing polyline `cv` at the front. */
+    void operator()(Curve_2& cv, const Subcurve_2& seg) const
+    { Base::Push_front_2::operator()(cv, seg); }
+
+    /*! Append a segment `seg` to an existing polyline `xcv` at the front. */
+    void operator()(X_monotone_curve_2& xcv,
+                    const X_monotone_subcurve_2& seg) const
+    { Base::Push_front_2::operator()(xcv, seg); }
 
     /* Append a point `p` to an existing polyline `cv` at the front. */
     void operator()(Curve_2& cv, const Point_2& p) const
@@ -266,7 +275,8 @@ public:
          );
       CGAL_precondition(num_seg > 0);
 
-      const Segment_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
+      const Segment_traits_2* geom_traits =
+        this->m_poly_traits.subcurve_traits_2();
       typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
         geom_traits->compare_endpoints_xy_2_object();
 
@@ -282,14 +292,11 @@ public:
       }
     }
 
-    /*! Append a segment `seg` to an existing polyline `cv` at the front. */
-    void operator()(Curve_2& cv, const Subcurve_2& seg) const
-    { Base::Push_front_2::operator()(cv, seg); }
-
     /*! Append a point `p` to an existing polyline `xcv` at the front. */
     void operator()(const X_monotone_curve_2& xcv, Point_2& p) const
     {
-      const SegmentTraits_2* geom_traits = m_poly_traits.subcurve_traits_2();
+      const SegmentTraits_2* geom_traits =
+        this->m_poly_traits.subcurve_traits_2();
       CGAL_precondition_code
         (
          typedef typename X_monotone_curve_2::size_type size_type;
@@ -299,7 +306,7 @@ public:
          typename Segment_traits_2::Compare_xy_2 comp_xy =
          geom_traits->compare_xy_2_object();
          typename Base::Is_vertical_2 is_vertical =
-           m_poly_traits.is_vertical_2_object();
+           this->m_poly_traits.is_vertical_2_object();
          );
       CGAL_precondition(num_seg > 0);
 
@@ -332,11 +339,6 @@ public:
         xcv.push_front(X_monotone_subcurve_2(p, get_min_v(xcv[0])));
       }
     }
-
-    /* Append a segment `seg` to an existing polyline `xcv` at the front. */
-    void operator()(X_monotone_curve_2& xcv,
-                    const X_monotone_subcurve_2& seg) const
-    { Base::Push_front_2::operator()(xcv, seg); }
   };
 
   /*! Obtain a Push_front_2 functor object. */
@@ -384,7 +386,7 @@ public:
      */
     template <typename ForwardIterator>
     Curve_2 constructor_impl(ForwardIterator begin, ForwardIterator end,
-                             boost::false_type type) const
+                             boost::false_type) const
     { return Base::Construct_curve_2::operator()(begin, end); }
 
     /*! Construction of a polyline from a range of points.
