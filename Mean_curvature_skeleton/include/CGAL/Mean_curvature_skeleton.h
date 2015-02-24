@@ -205,7 +205,7 @@ public:
   /// The graph type representing the skeleton. The vertex property 
   /// `Vmap` is a struct with a member `point` of type `Traits::Point_3`
   /// and a member `vertices` of type 
-  /// `std::vector<boost::graph_traits<TriangleMesh>::vertex_descriptor>`
+  /// `std::vector<boost::graph_traits<TriangleMesh>::%vertex_descriptor>`
   typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Vmap> Skeleton;
 
  
