@@ -123,7 +123,7 @@ void test2(){
   typedef typename K1::Difference_of_vectors_d DV;
   typedef typename K1::Difference_of_points_d DP;
   typedef typename K1::Translated_point_d TP;
-  typedef typename CGAL::Get_functor<K1, CGAL::Power_center_tag>::type PC;
+  typedef typename K1::Power_center_d PC;
   typedef typename CGAL::Get_functor<K1, CGAL::Power_distance_tag>::type PoD;
   typedef typename K1::Weighted_point_d WP;
   typedef typename K1::Construct_weighted_point_d CWP;
@@ -187,7 +187,7 @@ void test2(){
   DV dv Kinit(difference_of_vectors_d_object);
   DP dp Kinit(difference_of_points_d_object);
   TP tp Kinit(translated_point_d_object);
-  PC pc (k);
+  PC pc Kinit(power_center_d_object);
   CWP cwp Kinit(construct_weighted_point_d_object);
   PDW pdw Kinit(point_drop_weight_d_object);
   PW pw Kinit(point_weight_d_object);
