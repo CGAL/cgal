@@ -124,7 +124,7 @@ void test2(){
   typedef typename K1::Difference_of_points_d DP;
   typedef typename K1::Translated_point_d TP;
   typedef typename K1::Power_center_d PC;
-  typedef typename CGAL::Get_functor<K1, CGAL::Power_distance_tag>::type PoD;
+  typedef typename K1::Power_distance_d PoD;
   typedef typename K1::Weighted_point_d WP;
   typedef typename K1::Construct_weighted_point_d CWP;
   typedef typename K1::Point_drop_weight_d PDW;
@@ -191,7 +191,7 @@ void test2(){
   CWP cwp Kinit(construct_weighted_point_d_object);
   PDW pdw Kinit(point_drop_weight_d_object);
   PW pw Kinit(point_weight_d_object);
-  PoD pod (k);
+  PoD pod Kinit(power_distance_d_object);
 
   CGAL_USE(bc);
   CGAL_USE(pol);
