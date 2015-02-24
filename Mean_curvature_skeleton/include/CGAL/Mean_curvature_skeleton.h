@@ -129,7 +129,7 @@ enum Degeneracy_algorithm_tag
 ///
 /// @tparam Traits
 ///         a model of `MeanCurvatureSkeletonizationTraits`<br>
-///         <b>%Default:</b> `Kernel_traits<boost::property_traits<boost::property_map<TriangleMesh, boost::vertex_point_t>::%type>::value_type>::%Kernel`
+///         <b>%Default:</b> `Kernel_traits<boost::property_traits<boost::property_map<TriangleMesh, boost::vertex_point_t>::%type>::%value_type>::%Kernel`
 ///
 /// @tparam VertexPointMap
 ///         a model of `ReadWritePropertyMap`
@@ -377,10 +377,10 @@ public:
    * The constructor of a skeletonization object.
    *
    * The algorithm parameters are initialized such that:
-   * - `alpha_TH() == 130`
-   * - `omega_H() == 0.1`
-   * - `omega_P() == 0.2`
-   * - `delta_area() == 0.0001`
+   * - `max_triangle_angle() == 110`
+   * - `quality_speed_tradeoff() == 0.1`
+   * - `medially_centered_speed_tradeoff() == 0.2`
+   * - `area_variation_factor() == 0.0001`
    * - `max_iterations() == 500`
    * - `is_medially_centered() == true`
    * - `min_edge_length()` == 0.002 * the length of the diagonal of the bounding box of `tmesh`
@@ -412,66 +412,72 @@ public:
   #endif
   /// @} Constructor
 
-  /// \name Algorithm Parameters
+  /// \name Local Remeshing Parameters
   /// @{
 
-  /// Controls.... 
-  double alpha_TH()
+  /// During the local remeshing step, a triangle will be split
+  /// if it has an angle larger than `max_triangle_angle()`.
+  double max_triangle_angle()
   {
     return m_alpha_TH;
   }
 
- void set_alpha_TH(double value)
-  {
-    m_alpha_TH = value;
-  }
-
-  /// Controls the velocity of movement and approximation quality:
-  /// increasing `omega_H` makes the mean curvature flow based contraction converge
-  /// faster, but results in a skeleton of lower quality.
-  double omega_H()
-  {
-    return m_omega_H;
-  }
-
-  void set_omega_H(double value)
-  {
-    m_omega_H = value;
-  }
-
-  /// Controls the smoothness of the medial approximation:
-  /// increasing `omega_P` results in a skeleton closer
-  /// to the medial axis, but slows down the speed of contraction.
-  double omega_P()
-  {
-    return m_omega_P;
-  }
-
-  void set_omega_P(double value) 
-  {
-    m_omega_P = value;
-  }
-  
-  /// Threshold used to select edges collapsed during contraction.
+  /// During the local remeshing step, an edge will be split
+  /// if it is shorter than `min_edge_length()`.
   double min_edge_length()
   {
     return m_min_edge_length;
+  }
+
+ void set_max_triangle_angle(double value)
+  {
+    m_alpha_TH = value;
   }
 
   void set_min_edge_length(double value)
   {
     m_min_edge_length = value;
   }
+  /// @}
 
-  /// Stop criterium used by `contract_until_convergence()` to detect convergence.
-  double delta_area()
+  /// \name Algorithm Termination Parameters
+  /// @{
+
+  /// Maximum number of iterations performed by `contract_until_convergence()`.
+  int max_iterations()
+  {
+    return m_max_iterations;
+  }
+  
+  /// The convergence is considered to be riched if the variation of the area of
+  /// the meso-skeleton between two iterations is smaller than
+  /// `area_variation_factor()*original_area` where `original_area` is the area of the input
+  /// triangle mesh.
+  double area_variation_factor()
   {
     return m_delta_area;
   }
 
-  void set_delta_area(double value)
+  void set_max_iterations(int value)
+  {
+    m_max_iterations = value;
+  }
+
+  void set_area_variation_factor(double value)
   {
     m_delta_area = value;
+  }
+  /// @}
+  
+  /// \name Vertex Motion Parameters
+  /// @{
+  
+  /// Controls the velocity of movement and approximation quality:
+  /// increasing this value makes the mean curvature flow based contraction converge
+  /// faster, but results in a skeleton of lower quality.
+  double quality_speed_tradeoff()
+  {
+    return m_omega_H;
   }
 
   /// If `true`, the result skeleton is medially centered.
@@ -480,22 +486,30 @@ public:
     return m_is_medially_centered;
   }
 
+  /// Controls the smoothness of the medial approximation:
+  /// increasing this value results in a skeleton closer
+  /// to the medial axis, but slows down the speed of contraction.
+  /// It is only used if `is_medially_centered()==true`.
+  double medially_centered_speed_tradeoff()
+  {
+    return m_omega_P;
+  }
+
+  void set_quality_speed_tradeoff(double value)
+  {
+    m_omega_H = value;
+  }
+
   void set_is_medially_centered(bool value)
   {
     m_is_medially_centered = value;
   }
   
-  /// Maximum number of iterations performed by `contract_until_convergence()`.
-  int max_iterations()
+  void set_medially_centered_speed_tradeoff(double value) 
   {
-    return m_max_iterations;
+    m_omega_P = value;
   }
 
-  void set_max_iterations(int value)
-  {
-    m_max_iterations = value;
-  }
-  
   /// \cond SKIP_FROM_MANUAL
   void set_zero_TH(double value)
   {
@@ -694,8 +708,7 @@ public:
   }
 
   /**
-   * Splits faces having one angle greater than `alpha_TH()` and returns the number of faces split.
-   * \todo define alpha_TH.
+   * Splits faces having one angle greater than `max_triangle_angle()` and returns the number of faces split.
    */
   int split_faces()
   {
@@ -774,8 +787,8 @@ public:
 
   /**
    * Iteratively calls the sequence `contract_geometry()`,  `collapse_edges()`, `split_faces()`, and `detect_degeneracies()`
-   * until the change of surface area during one
-   * iteration is less than `delta_area()` * original surface area.
+   * until the change of surface area during one iteration is less than `area_variation_factor()` * original surface area
+   * or if the maximum number of iteration has been reached.
    */
   void contract_until_convergence()
   {
