@@ -45,7 +45,8 @@ public:
     virtual void draw(Viewer_interface*) const;
     virtual void draw_edges() const {}
     virtual void draw_edges(Viewer_interface* viewer) const;
-     void draw_points(Viewer_interface*) const;
+    virtual void draw_points(Viewer_interface*) const;
+
     // Get wrapped polyhedron
     Polyhedron*       polyhedron();
     const Polyhedron* polyhedron() const;
@@ -108,19 +109,16 @@ private:
     std::vector<float> color_lines;
     std::vector<float> color_facets;
 
-    GLuint rendering_program;
+    GLuint rendering_program_facets;
+    GLuint rendering_program_lines;
     GLint location[8];
 
-
-    GLuint vertex_shader;
-    GLuint fragment_shader;
-    GLuint program;
     GLuint vao;
     GLuint buffer[5];
     void initialize_buffers();
-    GLuint compile_shaders(void);
+    void compile_shaders(void);
     void compute_normals_and_vertices(void);
-    void uniform_attrib(Viewer_interface*) const;
+    void uniform_attrib(Viewer_interface*, int) const;
     void compute_colors();
 
 }; // end class Scene_polyhedron_item

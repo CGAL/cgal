@@ -409,7 +409,6 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
             ::glPopName();
         }
     }
-
 #ifdef CGAL_GLEW_ENABLED
     // Splatting
     if(!with_names && ms_splatting->isSupported())
@@ -436,7 +435,6 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
         ms_splatting->finalize();
     }
 #endif
-
 }
 
 // workaround for Qt-4.2 (see above)
