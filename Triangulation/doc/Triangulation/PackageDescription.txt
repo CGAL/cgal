@@ -1,4 +1,4 @@
-/// \defgroup PkgTriangulations Triangulations
+/// \defgroup PkgTriangulations dD Triangulations
 /// \defgroup PkgTriangulationsConcepts Concepts
 /// \ingroup PkgTriangulations
 
@@ -10,11 +10,11 @@
 
 /*!
 \addtogroup PkgTriangulations
-\cgalPkgDescriptionBegin{Triangulations,PkgTriangulationsSummary}
+\cgalPkgDescriptionBegin{dD Triangulations,PkgTriangulationsSummary}
 \cgalPkgPicture{detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Samuel Hornus, Olivier Devillers and Clément Jamin}
-\cgalPkgDesc{The package `Triangulation` provides classes for manipulating 
+\cgalPkgDesc{This package provides classes for manipulating 
 triangulations (pure simplicial complexes) in Euclidean spaces whose dimension 
 can be specified at compile-time or at run-time. Specifically, it provides a 
 data structure to store the triangulations, and two classes to handle
@@ -70,7 +70,7 @@ is opposite to the vertex with the same index.
 
 ## Concepts ##
 
-## Triangulation data structure ##
+## Triangulation Data Structure ##
 
 - `TriangulationDataStructure`
 - `TriangulationDataStructure_2::FullCell`
@@ -91,14 +91,14 @@ The latter two concepts are also abbreviated respectively as `TrVertex` and `TrF
 
 ## Classes ##
 
-## Triangulation data structure ##
+## Triangulation Data Structure ##
 
 - `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
 - `CGAL::Triangulation_ds_vertex<TriangulationDataStructure>`
 - `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure, TriangulationDSFullCellStoragePolicy>`
 - `CGAL::Triangulation_face<TriangulationDataStructure>`
 
-## (Geometric) triangulations ##
+## (Geometric) Triangulations ##
 
 - `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>`
 - `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`
