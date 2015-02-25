@@ -15,8 +15,6 @@ typedef K::Tetrahedron_3 					Tetrahedron_3;
 typedef std::vector<Point_3> 					Container;
 typedef CGAL::Random_points_in_tetrahedron_3<Point_3> 		Point_generator;
 
-const double EPS = 1e-30;
-
 template<class InputIterator>
 bool inside_or_close_to_tetrahedron(const Tetrahedron_3& tet,InputIterator begin, InputIterator end) {
 	while(begin!=end) {

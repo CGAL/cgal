@@ -38,7 +38,6 @@ int main() {
 	Container point_set;
 	const int number_triangles = 10;
 	const int number_points = 1000;
-	const double r = rand.get_double(0.2,0.8);
 	for(int i = 0; i < number_triangles; ++i) {
 		Point_2 pts[3];
 		for(int j = 0; j < 3; ++j) {
