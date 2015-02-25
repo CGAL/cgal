@@ -31,6 +31,16 @@ strongly (right) intersecting sites.
 
 \section secsdglinfdefinitions Definitions
 
+A pair of segment sites is called <I>weakly intersecting</I> if they have
+a single common point and this common point does not lie in the
+interior of any of the two sites. A pair of segment sites is called
+<I>strongly intersecting</I> if they intersect and they either have more
+than one common point or their common point lies in the interior
+of at least one of the two sites. We call a set of segment sites
+weakly (resp. strongly) intersecting if all its pairs are weakly
+(resp. strongly) intersecting or non-intersecting. See figure
+\cgalFigureRef{figsvdlinf}.
+
 Given two points \f$ p=(p_x,p_y) \f$, \f$ q=(q_x,q_y) \f$ in the
 plane, their \f$ L_{\infty} \f$ distance is
 \f[ d_{\infty}(p,q) = \max(|p_x-q_x|,|p_y-q_y|). \f]
