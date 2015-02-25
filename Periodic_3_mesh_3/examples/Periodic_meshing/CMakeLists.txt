@@ -25,7 +25,7 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( "mesh_triply_periodic_minimal_surfaces.cpp" )
   create_single_source_cgal_program( "mesh_implicit_multi_domain.cpp" )
-#  create_single_source_cgal_program( "mesh_implicit_shape.cpp" )
+  create_single_source_cgal_program( "mesh_implicit_shape.cpp" )
 #  create_single_source_cgal_program( "mesh_implicit_shapes_bunch.cpp" )
 #  create_single_source_cgal_program( "mesh_implicit_shape_with_subdomains.cpp" )
 

@@ -67,13 +67,13 @@ int main(int argc, char** argv)
   Periodic_mesh_domain domain(schwarz_p, CGAL::Iso_cuboid_3<K>(0, 0, 0, domain_size, domain_size, domain_size));
   
   Mesh_criteria criteria(domain, facet_angle=30, facet_size=0.05 * domain_size, facet_distance=0.025 * domain_size,
-                                cell_radius_edge_ratio=2, cell_size = 0.05);  
+                                cell_radius_edge_ratio=2, cell_size = 0.05);
   
   // Mesh generation
   C3t3 c3t3 = CGAL::make_periodic_mesh_3<C3t3>(domain, criteria);
   
   // Output
-  std::ofstream medit_file( (std::string("schwarz_p_") + argv[1] + ".mesh").data() );
+  std::ofstream medit_file( (std::string("schwarz_p_.mesh").data()) );
   
   write_complex_to_medit(medit_file, c3t3);
   
