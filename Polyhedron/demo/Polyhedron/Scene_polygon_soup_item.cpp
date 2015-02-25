@@ -91,7 +91,7 @@ Scene_polygon_soup_item::initialize_buffers()
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
     glBufferData(GL_ARRAY_BUFFER,
-		 (positions_poly.size())*sizeof(positions_poly.data()),
+                 (positions_poly.size())*sizeof(float),
 		 positions_poly.data(),
 		 GL_STATIC_DRAW);
     glVertexAttribPointer(0, //number of the buffer
@@ -105,7 +105,7 @@ Scene_polygon_soup_item::initialize_buffers()
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
     glBufferData(GL_ARRAY_BUFFER,
-		 (normals.size())*sizeof(normals.data()),
+                 (normals.size())*sizeof(float),
 		 normals.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(1,
 			  3,
@@ -138,7 +138,7 @@ Scene_polygon_soup_item::compile_shaders(void)
         "uniform vec3 light_diff; \n"
         "uniform vec3 light_spec; \n"
         "uniform vec3 light_amb;  \n"
-        "float spec_power = 0.0; \n"
+        "float spec_power = 128.0; \n"
 
         "out highp vec3 fColors; \n"
         " \n"
@@ -300,7 +300,7 @@ Scene_polygon_soup_item::uniform_attrib(Viewer_interface* viewer) const
     glUniform3fv(location[3], 1, light.diffuse);
     glUniform3fv(location[4], 1, light.specular);
     glUniform3fv(location[5], 1, light.ambient);
-    glUniform1i(location[7], is_both_sides);
+    glUniform1i(location[6], is_both_sides);
 }
 
 void

@@ -52,6 +52,7 @@ public:
   // Splats OpenGL drawing
   virtual void draw_splats() const {}
   virtual void draw_splats(Viewer_interface*) const {draw_splats();}
+  virtual void selection_changed(bool);
 
   // Functions for displaying meta-data of the item
   virtual QString toolTip() const = 0;
@@ -147,6 +148,7 @@ protected:
   QString name_;
   QColor color_;
   bool visible_;
+  bool is_selected;
   RenderingMode rendering_mode;
   QMenu* defaultContextMenu;
 

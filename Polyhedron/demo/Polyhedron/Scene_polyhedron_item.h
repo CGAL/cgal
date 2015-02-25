@@ -60,6 +60,7 @@ virtual void draw_edges(Viewer_interface* viewer) const;
 public slots:
   virtual void changed();
   virtual void shading_mode_changed();
+  virtual void selection_changed(bool);
   void show_only_feature_edges(bool);
   void enable_facets_picking(bool);
   void set_erase_next_picked_facet(bool);
@@ -120,6 +121,8 @@ private:
   GLuint compile_shaders(void);
   void compute_normals_and_vertices(void);
   void uniform_attrib(Viewer_interface*) const;
+  void compute_colors();
+
 }; // end class Scene_polyhedron_item
 
 #endif // SCENE_POLYHEDRON_ITEM_H

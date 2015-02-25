@@ -167,7 +167,7 @@ private:
   std::vector<float> normals;
 
   GLuint rendering_program;
-  GLint location[8];
+  GLint location[7];
 
 
   GLuint vertex_shader;

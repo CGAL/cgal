@@ -97,6 +97,10 @@ QMenu* Scene_item::contextMenu()
 void Scene_item::changed() {
     // emit itemChanged();
 }
+
+void Scene_item::selection_changed(bool) {
+    // emit itemChanged();
+}
 void Scene_item::shading_mode_changed()
 {
 

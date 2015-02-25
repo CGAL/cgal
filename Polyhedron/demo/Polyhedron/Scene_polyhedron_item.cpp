@@ -189,7 +189,7 @@ Scene_polyhedron_item::compile_shaders(void)
         "vec3 L; \n"
         "vec3 V; \n"
         "vec3 R; \n"
-        "if(is_wire !=6913){ \n" //number for the mode wireframe
+        "if(is_wire ==0){ \n" //number for the mode wireframe
         "   P = mv_matrix * positions_facets; \n"
         "   N = mat3(mv_matrix)* vNormals; \n"
         "   L = light_pos - P.xyz; \n"
@@ -299,6 +299,7 @@ Scene_polyhedron_item::uniform_attrib(Viewer_interface* viewer) const
 
     light_info light;
     GLint is_both_sides = 0;
+    GLint poly_mode[2];
     GLint is_wire = 0;
     GLfloat mvp_mat[16];
     GLfloat mv_mat[16];
@@ -318,7 +319,11 @@ Scene_polyhedron_item::uniform_attrib(Viewer_interface* viewer) const
 
 
     glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
-    glGetIntegerv(GL_POLYGON_MODE, &is_wire);
+    glGetIntegerv(GL_POLYGON_MODE, poly_mode);
+    if(poly_mode[1] == GL_LINE)
+        is_wire = 1;
+    else
+        is_wire = 0;
     //fills the arraw of colors with the current color
 
 
@@ -326,9 +331,6 @@ Scene_polyhedron_item::uniform_attrib(Viewer_interface* viewer) const
 
     //position
     glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
-
-    //ligne ne servant a rien mais si on l'enleve plus rien ne marche...
-    viewer->camera()->position();
 
     //ambient
     glGetLightfv(GL_LIGHT0, GL_AMBIENT, light.ambient);
@@ -358,13 +360,10 @@ Scene_polyhedron_item::uniform_attrib(Viewer_interface* viewer) const
 void
 Scene_polyhedron_item::compute_normals_and_vertices(void)
 {
-    GLfloat colors[3];
-
     positions_facets.clear();
     positions_lines.clear();
     normals.clear();
-    color_lines.clear();
-    color_facets.clear();
+
 
     //Facets
 
@@ -381,9 +380,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
     // int patch_id = -1;
 
     Facet_iterator f = poly->facets_begin();
-    colors[0]=colors_[f->patch_id()].redF();
-    colors[1]=colors_[f->patch_id()].greenF();
-    colors[2]=colors_[f->patch_id()].blueF();
+
 
     for(f = poly->facets_begin();
         f != poly->facets_end();
@@ -422,9 +419,9 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
             //if(patch_id != this_patch_id) {
             //CGALglcolor(colors_[this_patch_id]);
 
-            color_facets.push_back(colors_[this_patch_id].redF());
+            /* color_facets.push_back(colors_[this_patch_id].redF());
             color_facets.push_back(colors_[this_patch_id].greenF());
-            color_facets.push_back(colors_[this_patch_id].blueF());
+            color_facets.push_back(colors_[this_patch_id].blueF());*/
             // patch_id = this_patch_id;
             //}
             //position
@@ -459,17 +456,16 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
             positions_lines.push_back(b.z());
             positions_lines.push_back(1.0);
 
-            color_lines.push_back(colors[0]);
+            /* color_lines.push_back(colors[0]);
             color_lines.push_back(colors[1]);
             color_lines.push_back(colors[2]);
 
             color_lines.push_back(colors[0]);
             color_lines.push_back(colors[1]);
-            color_lines.push_back(colors[2]);
+            color_lines.push_back(colors[2]);*/
 
         }
     }
-    // ::glColor3d(1.0, 0.0, 0.0); //<<------ passe les edges en rouge
     for(he = poly->edges_begin();
         he != poly->edges_end();
         he++)
@@ -488,15 +484,17 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
         positions_lines.push_back(b.z());
         positions_lines.push_back(1.0);
 
-        color_lines.push_back(1.0);
+        /*  color_lines.push_back(1.0);
         color_lines.push_back(0.0);
         color_lines.push_back(0.0);
 
         color_lines.push_back(1.0);
         color_lines.push_back(0.0);
-        color_lines.push_back(0.0);
+        color_lines.push_back(0.0);*/
     }
 
+    //set the colors
+    compute_colors();
     //Allocates a uniform location for the MVP and MV matrices
     location[0] = glGetUniformLocation(rendering_program, "mvp_matrix");
     location[1] = glGetUniformLocation(rendering_program, "mv_matrix");
@@ -510,6 +508,99 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
     location[7] = glGetUniformLocation(rendering_program, "is_wire");
 }
 
+void
+Scene_polyhedron_item::compute_colors()
+{
+    std::cout<<"COMPUTE_COLOR"<<std::endl;
+    GLfloat colors[4];
+    color_lines.clear();
+    color_facets.clear();
+    //Facets
+
+
+    typedef typename Polyhedron::Traits	    Kernel;
+    typedef typename Kernel::Point_3	    Point;
+    typedef typename Kernel::Vector_3	    Vector;
+    typedef typename Polyhedron::Facet	    Facet;
+    typedef typename Polyhedron::Facet_iterator Facet_iterator;
+    typedef typename Polyhedron::Halfedge_around_facet_circulator HF_circulator;
+
+
+
+    // int patch_id = -1;
+
+    Facet_iterator f = poly->facets_begin();
+    QColor temp = colors_[f->patch_id()];
+    if(is_selected)
+    {
+        colors[0]=0.0;
+        colors[1]=0.0;
+        colors[2]=0.0;
+    }
+    else
+    {
+        colors[0]=temp.lighter(50).redF();
+        colors[1]=temp.lighter(50).greenF();
+        colors[2]=temp.lighter(50).blueF();
+    }
+    for(f = poly->facets_begin();
+        f != poly->facets_end();
+        f++)
+    {
+        HF_circulator he = f->facet_begin();
+        HF_circulator end = he;
+        CGAL_For_all(he,end)
+        {
+
+            const int this_patch_id = f->patch_id();
+            if(is_selected)
+            {
+                color_facets.push_back(colors_[this_patch_id].lighter(120).redF());
+                color_facets.push_back(colors_[this_patch_id].lighter(120).greenF());
+                color_facets.push_back(colors_[this_patch_id].lighter(120).blueF());
+            }
+            else
+            {
+                color_facets.push_back(colors_[this_patch_id].redF());
+                color_facets.push_back(colors_[this_patch_id].greenF());
+                color_facets.push_back(colors_[this_patch_id].blueF());
+            }
+        }
+    }
+    //Lines
+    typedef Polyhedron::Edge_iterator	Edge_iterator;
+
+    Edge_iterator he;
+    if(!show_only_feature_edges_m) {
+        for(he = poly->edges_begin();
+            he != poly->edges_end();
+            he++)
+        {
+            if(he->is_feature_edge()) continue;
+            color_lines.push_back(colors[0]);
+            color_lines.push_back(colors[1]);
+            color_lines.push_back(colors[2]);
+
+            color_lines.push_back(colors[0]);
+            color_lines.push_back(colors[1]);
+            color_lines.push_back(colors[2]);
+
+        }
+    }
+    for(he = poly->edges_begin();
+        he != poly->edges_end();
+        he++)
+    {
+        if(!he->is_feature_edge()) continue;
+        color_lines.push_back(1.0);
+        color_lines.push_back(0.0);
+        color_lines.push_back(0.0);
+
+        color_lines.push_back(1.0);
+        color_lines.push_back(0.0);
+        color_lines.push_back(0.0);
+    }
+}
 
 Scene_polyhedron_item::Scene_polyhedron_item()
     : Scene_item(),
@@ -523,6 +614,7 @@ Scene_polyhedron_item::Scene_polyhedron_item()
       plugin_has_set_color_vector_m(false)
 {
     cur_shading=GL_FLAT;
+    is_selected = false;
     //init();
     glGenVertexArrays(1, &vao);
     //Generates an integer which will be used as ID for each buffer
@@ -543,6 +635,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
       plugin_has_set_color_vector_m(false)
 {
     cur_shading=GL_FLAT;
+    is_selected = false;
     init();
     glGenVertexArrays(1, &vao);
     //Generates an integer which will be used as ID for each buffer
@@ -563,6 +656,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
       plugin_has_set_color_vector_m(false)
 {
     cur_shading=GL_FLAT;
+    is_selected=false;
     init();
     glGenVertexArrays(1, &vao);
     //Generates an integer which will be used as ID for each buffer
@@ -613,7 +707,7 @@ init()
 }
 
 
-Scene_polyhedron_item* 
+Scene_polyhedron_item*
 Scene_polyhedron_item::clone() const {
     return new Scene_polyhedron_item(*poly);}
 
@@ -634,7 +728,7 @@ Scene_polyhedron_item::load(std::istream& in)
 }
 
 // Write polyhedron to .OFF file
-bool 
+bool
 Scene_polyhedron_item::save(std::ostream& out) const
 {
     out.precision(13);
@@ -642,7 +736,7 @@ Scene_polyhedron_item::save(std::ostream& out) const
     return (bool) out;
 }
 
-QString 
+QString
 Scene_polyhedron_item::toolTip() const
 {
     if(!poly)
@@ -759,9 +853,9 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
 }
 
 
-Polyhedron* 
+Polyhedron*
 Scene_polyhedron_item::polyhedron()       { return poly; }
-const Polyhedron* 
+const Polyhedron*
 Scene_polyhedron_item::polyhedron() const { return poly; }
 
 bool
@@ -811,8 +905,19 @@ shading_mode_changed()
             changed();
         }
 }
+void
+Scene_polyhedron_item::selection_changed(bool p_is_selected)
+{
+    if(p_is_selected != is_selected)
+    {is_selected = p_is_selected;
+        compute_colors();
+        initialize_buffers();
+    }
+    else
+        is_selected = p_is_selected;
+}
 
-void 
+void
 Scene_polyhedron_item::select(double orig_x,
                               double orig_y,
                               double orig_z,
@@ -957,3 +1062,4 @@ void Scene_polyhedron_item::update_halfedge_indices()
 }
 
 #include "Scene_polyhedron_item.moc"
+
