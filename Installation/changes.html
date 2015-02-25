@@ -111,6 +111,32 @@ and <code>src/</code> directories).
 
 <HR>
 
+<h2 id="release4.6">Release 4.7 </h2>
+<div>
+  <p>Release date: XXX 2015 </p>
+  <h3>2D Arrangements</h3>
+  <ul>
+    <li>Introduced a new traits class, called
+      <code>Arr_polycurve_traits_2&lt;SubcurveTraits&gt;</code>, which handles
+      general piece-wise (polycurve) curves. The pieces do not necessarily
+      have to be linear.
+    <li>Introduced two new concepts called
+      <code>ArrangementApproximateTraits_2</code> and
+      <code>ArrangementConstructXMonotoneCurveTraits_2</code>.
+      <ul>
+	<li>The existing <code>ArrangementLandmarkTraits_2</code> concept,
+	  which has two requirements, now refines the two respective concepts
+	  above.</li>
+	<li>The template parameter of the exsting
+	  <code>Arr_polyline_traits_2&lt;SegmentTraits&gt;</code> template must
+	  be substituted with a traits class that is a model of
+	  the <code>ArrangementConstructXMonotoneTraits_2</code> concept among
+	  the other when <code>Arr_polyline_traits_2</code> is
+	  instantiated.</li>
+      </ul>
+  </ul>
+</div>
+</h2>
 
 <h2 id="release4.6">Release 4.6 </h2>
 <div>
