@@ -8,7 +8,7 @@ A model for `Kernel_d` that uses %Cartesian coordinates to represent the
 geometric objects. The parameter `DimensionTag` is a tag representing the dimension of the
 ambient Euclidean space. It may be either `Dimension_tag<d>` where `d` is
 an integer
-or `Dynamic_dimension_tag`. In the later case, the dimension of the space is specified for each point when it is constructed, so it doesn't need to be known at compile-time.
+or `Dynamic_dimension_tag`. In the latter case, the dimension of the space is specified for each point when it is constructed, so it does not need to be known at compile-time.
 This kernel supports construction of points from `double`
 %Cartesian coordinates. It provides exact geometric predicates, but
 the geometric constructions are not guaranteed to be exact. The geometric
