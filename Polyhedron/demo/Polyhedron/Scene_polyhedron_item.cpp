@@ -852,6 +852,22 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
 
 }
 
+void
+Scene_polyhedron_item::draw_points(Viewer_interface* viewer) const {
+
+    glBindVertexArray(vao);
+
+    // tells the GPU to use the program just created
+    glUseProgram(rendering_program);
+
+    uniform_attrib(viewer);
+
+    //draw the points
+    glDrawArrays(GL_POINTS, 0, positions_facets.size()/4);
+
+    // Clean-up
+    glBindVertexArray(0);
+}
 
 Polyhedron*
 Scene_polyhedron_item::polyhedron()       { return poly; }
