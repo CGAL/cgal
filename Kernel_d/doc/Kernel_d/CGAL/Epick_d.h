@@ -42,7 +42,6 @@ public:
 /*!
 represents a point in the Euclidean space
 \cgalModels `DefaultConstructible`
-\cgalModels `Copyable`
 \cgalModels `Assignable`
 */
 class Point_d {
