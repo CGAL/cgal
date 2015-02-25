@@ -1620,9 +1620,6 @@ public:
     unsigned int get_curve_index (const X_monotone_curve_2& xcv,
                                   const Arr_curve_end ce) const
     {
-      Comparison_result orientation =
-        m_poly_traits.compare_endpoints_xy_2_object()(xcv);
-
       //waqar:: dont know why it is opposite in Parameter_space_in_x...
       // I think this is because of the way the subcurves are stored in the
       // curve_vector.

@@ -514,7 +514,7 @@ public:
     template <typename ForwardIterator>
     X_monotone_curve_2 constructor_impl(ForwardIterator begin,
                                         ForwardIterator end,
-                                        boost::false_type type) const
+                                        boost::false_type) const
     { return Base::Construct_x_monotone_curve_2::operator()(begin, end); }
 
     /*! Construction of an x-monotone polyline from a range of points.

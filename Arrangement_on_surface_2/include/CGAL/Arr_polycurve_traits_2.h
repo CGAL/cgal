@@ -1153,7 +1153,8 @@ public:
      *         order.
      */
     template <typename ForwardIterator>
-    Curve_2 constructor_impl(ForwardIterator begin, ForwardIterator end,
+    Curve_2 constructor_impl(ForwardIterator /* begin */,
+                             ForwardIterator /* end */,
                              boost::true_type) const
     {  CGAL_error_msg("Cannot construct a polycurve from a range of points!"); }
 

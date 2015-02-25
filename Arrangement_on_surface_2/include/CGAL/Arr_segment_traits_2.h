@@ -1001,7 +1001,6 @@ public:
   }
   //@}
 
-
   /// \name Functor definitions for the Boolean set-operation traits.
   //@{
 
@@ -1009,7 +1008,7 @@ public:
    protected:
     typedef Arr_segment_traits_2<Kernel>        Traits;
 
-    /*! The traits (in case it has state) */
+    /*! The traits (in case it has state). */
     const Traits& m_traits;
 
     /*! Constructor
@@ -1018,16 +1017,14 @@ public:
     Trim_2(const Traits& traits) : m_traits(traits) {}
 
     friend class Arr_segment_traits_2<Kernel>;
-    /*!\brief
-     * Returns a trimmed version of a line
-     *
-     * \param xseg The x-mnotone segmet
-     * \param src the new start endpoint
-     * \param tgt the new end endpoint
-     * \return The trimmed x-monotone segment
-     *
-     * \ src != tgt
-     * \ both points must lie on segment
+
+    /*! Obtain a trimmed version of a line.
+     * \param xseg The x-mnotone segmet.
+     * \param src the new start endpoint.
+     * \param tgt the new end endpoint.
+     * \return The trimmed x-monotone segment.
+     * \pre src != tgt
+     * \pre both points must lie on segment
      */
   public:
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
@@ -1035,7 +1032,8 @@ public:
                                   const Point_2& tgt)const
     {
       CGAL_precondition_code(Equal_2 equal = m_traits.equal_2_object());
-      Compare_y_at_x_2 compare_y_at_x = m_traits.compare_y_at_x_2_object();
+      CGAL_precondition_code(Compare_y_at_x_2 compare_y_at_x =
+                             m_traits.compare_y_at_x_2_object());
       Compare_x_2 compare_x_2 = m_traits.compare_x_2_object();
 
       // check whether source and taget are two distinct points and they lie
@@ -1051,8 +1049,7 @@ public:
         trimmed_segment = X_monotone_curve_2(tgt, src);
       else if (!xcv.is_directed_right() && compare_x_2(src, tgt) == SMALLER )
         trimmed_segment = X_monotone_curve_2(tgt, src);
-      else
-        trimmed_segment = X_monotone_curve_2(src, tgt);
+      else trimmed_segment = X_monotone_curve_2(src, tgt);
       return (trimmed_segment);
     }
   };
