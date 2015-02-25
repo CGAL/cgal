@@ -8,6 +8,14 @@ of CGAL, the Computational Geometry Algorithms Library.
 Besides fixes to existing packages, the following has changed since
 CGAL 4.5:
 
+  o 2D Polyline Simplification (new package)
+
+    This package enables to simplify polylines with the guarantee
+    that the topology of the polylines does not change. This can be
+    done for a single polyline as well as for a set of polyline
+    constraints in a constrained triangulation. The simplification
+    can be controlled with cost and stop functions.
+
 
   o 2D Generalized Barycentric Coordinates (new package)
 
