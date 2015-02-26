@@ -691,7 +691,7 @@ private:
 
 //private methods
 private:
-  void add_box ()
+  void add_box () const
   {
     std::vector<Point_2> pts;
     pts.reserve( vs.size()+1 );
@@ -727,7 +727,7 @@ private:
     es.back().set_index( es.back().source_index(), edge_base );
   }
 
-  void compute_shifted_source ()
+  void compute_shifted_source () const
   {
     if ( query_type != VERTEX_QUERY ) {
       shifted_source = query_pt;
@@ -746,14 +746,15 @@ private:
     }
   }
 
-  void init_quadrant_each_vertex( int i )
+  void init_quadrant_each_vertex( int i ) const
     { vs[i].init_quadrant( query_pt ); }
-  void init_quadrant_parallel( CGAL::Sequential_tag )
+
+  void init_quadrant_parallel( CGAL::Sequential_tag ) const
   {
     for ( int i = 0; i < vs.size(); i++ )
       init_quadrant_each_vertex( i );
   }
-  void init_quadrant_parallel( CGAL::Parallel_tag )
+  void init_quadrant_parallel( CGAL::Parallel_tag ) const
   {
 #ifdef CGAL_LINKED_WITH_EBB
     Parallel_init_quadrant init( this );
@@ -763,17 +764,19 @@ private:
 #endif
   }
 
-  void init_orientation_each_edge( int i )
+  void init_orientation_each_edge( int i ) const
   { 
     es[i].init_orientation( query_pt, vs[es[i].source_index()].point(),
                             vs[es[i].target_index()].point() );
   }
-  void init_orientation_parallel( CGAL::Sequential_tag )
+
+  void init_orientation_parallel( CGAL::Sequential_tag ) const
   {
     for ( int i = 0; i < es.size(); i++ )
       init_orientation_each_edge( i );
   }
-  void init_orientation_parallel( CGAL::Parallel_tag )
+
+  void init_orientation_parallel( CGAL::Parallel_tag ) const
   {
 #ifdef CGAL_LINKED_WITH_EBB
     Parallel_init_orientation init( this );
@@ -783,13 +786,13 @@ private:
 #endif
   }
 
-  void sort_vertices( CGAL::Sequential_tag )
+  void sort_vertices( CGAL::Sequential_tag ) const
   {
     Is_swept_earlier comp ( query_pt, &vs, shifted_source, shifted_quadrant );
     std::sort( good_vdx.begin(), good_vdx.end(), comp );
   }
 
-  void sort_vertices( CGAL::Parallel_tag )
+  void sort_vertices( CGAL::Parallel_tag ) const
   {
 #ifdef CGAL_LINKED_WITH_TBB
     Is_swept_earlier comp ( query_pt, &vs, shifted_source, shifted_quadrant );
@@ -799,7 +802,7 @@ private:
 #endif
   }
 
-  void remove_duplicated_vertices()
+  void remove_duplicated_vertices() const
   {
     // find duplicated vertices
     int last = 0;
@@ -816,9 +819,9 @@ private:
     good_vdx.erase( good_vdx.begin()+last+1, good_vdx.end() );
   }
 
-  void sort_incident ( CGAL::Sequential_tag )
+  void sort_incident ( CGAL::Sequential_tag ) const
     { std::sort( incident.begin(), incident.end() ); }
-  void sort_incident ( CGAL::Parallel_tag )
+  void sort_incident ( CGAL::Parallel_tag ) const
   {
 #ifdef CGAL_LINKED_WITH_TBB
     tbb::parallel_sort( incident.begin(), incident.end() );
@@ -827,7 +830,7 @@ private:
 #endif
   }
 
-  void construct_incident_map()
+  void construct_incident_map() const
   {
     incident.clear();
     incident.reserve( es.size()*2 );
@@ -847,7 +850,7 @@ private:
     }
   }
 
-  bool funnel_block_right( int v_idx, int e_idx )
+  bool funnel_block_right( int v_idx, int e_idx ) const
   {
     int s_idx = vs[es[e_idx].source_index()].alias_index();
     int t_idx = vs[es[e_idx].target_index()].alias_index();
@@ -865,7 +868,7 @@ private:
     }
   }
 
-  bool funnel_has_precedessor( int v_idx, int e_idx )
+  bool funnel_has_precedessor( int v_idx, int e_idx ) const
   {
     int s_idx = vs[es[e_idx].source_index()].alias_index();
     int t_idx = vs[es[e_idx].target_index()].alias_index();
@@ -876,7 +879,7 @@ private:
       return es[e_idx].outward();
   }
 
-  void funnel ( int first, int last )
+  void funnel ( int first, int last ) const
   {
     std::vector<int> left, right;
     left.reserve( last - first );
@@ -910,7 +913,7 @@ private:
       vs[good_vdx[i]].set_sorted_index( i );
   }
 
-  void process_funnel ()
+  void process_funnel () const
   {
     // TBD: future inmprovement: parallelly compute orientation
     std::vector<CGAL::Orientation> orients( good_vdx.size()-1, CGAL::LEFT_TURN );
@@ -957,7 +960,7 @@ private:
   }
 
 #ifndef NDEBUG
-  void check_consistency_after_init()
+  void check_consistency_after_init() const
   {
     for ( int i = 0; i < vs.size(); i++ ) {
       int alias = vs[i].alias_index();
@@ -993,7 +996,7 @@ private:
   }
 #endif
 
-  void keep_consistency_after_init()
+  void keep_consistency_after_init() const
   {
     for ( int i = 0; i < vs.size(); i++ ) {
       int alias = vs[i].alias_index();
@@ -1010,7 +1013,7 @@ private:
     }
   }
 
-  void init_vertices ( const Face_const_handle& fh )
+  void init_vertices ( const Face_const_handle& fh ) const
   {
     Circulator circ, curr;
     Hole_const_iterator hi;
@@ -1074,7 +1077,7 @@ private:
   }
 
   // Precondtion: dp != any end point of the edge.
-  int do_intersect_edge ( const Point_2& dp, int i )
+  int do_intersect_edge ( const Point_2& dp, int i ) const
   {
     CGAL::Orientation orient1, orient2;
     if ( es[i].pass_query_pt() )    // ignore bad edges
@@ -1089,16 +1092,17 @@ private:
       return 1;
     return 0;
   }
+
   void do_intersect_parallel ( const Point_2& dp,
                                std::vector<int>& results,
-                               CGAL::Sequential_tag )
+                               CGAL::Sequential_tag ) const
   {
     for ( int i = 0; i < es.size(); i++ )
       results[i] = do_intersect_edge( dp, i );
   }
   void do_intersect_parallel ( const Point_2& dp,
                                std::vector<int>& results,
-                               CGAL::Parallel_tag )
+                               CGAL::Parallel_tag ) const
   {
 #ifdef CGAL_LINKED_WITH_TBB
     Parallel_do_intersect_edge obj( this, dp, results );
@@ -1108,12 +1112,12 @@ private:
 #endif
   }
 
-  int default_cone_size ( CGAL::Sequential_tag )
+  int default_cone_size ( CGAL::Sequential_tag ) const
     { return vs.size(); }
-  int default_cone_size ( CGAL::Parallel_tag )
+  int default_cone_size ( CGAL::Parallel_tag ) const
     { return 256; }
 
-  void partition_cones ()
+  void partition_cones () const
   {
     Intersection_edges active_edges( es.size() );
     int curr;
@@ -1194,7 +1198,7 @@ private:
     }
   }
 
-  Point_2 ray_edge_intersection( int v_idx, int e_idx )
+  Point_2 ray_edge_intersection( int v_idx, int e_idx ) const
   {
     const Point_2& dp = vs[v_idx].point();
     const Point_2& s = vs[es[e_idx].source_index()].point();
@@ -1219,7 +1223,7 @@ private:
     return Point_2( ipoint->x(), ipoint->y() );
   }
 
-  void compute_visibility_partition( int cone_idx )
+  void compute_visibility_partition( int cone_idx ) const
   {
     const Cone& cone = cones[cone_idx];
     Sub_region& result = sub_regions[cone_idx];
@@ -1303,13 +1307,13 @@ private:
     }
   }
 
-  void compute_visibility_parallel( CGAL::Sequential_tag )
+  void compute_visibility_parallel( CGAL::Sequential_tag ) const
   {
     for ( int i = 0; i < cones.size(); i++ )
       compute_visibility_partition( i );
   }
 
-  void compute_visibility_parallel( CGAL::Parallel_tag )
+  void compute_visibility_parallel( CGAL::Parallel_tag ) const
   {
 #ifdef CGAL_LINKED_WITH_TBB
     if ( cones.size() == 1 )
@@ -1321,7 +1325,7 @@ private:
 #endif
   }
 
-  void merge_result()
+  void merge_result() const
   {
     polygon.clear();
     cone_end_idx = cone_start_idx = -1;
@@ -1342,7 +1346,7 @@ private:
     assert( polygon.size() > 2 );
   }
 
-  void compute_visibility_impl ( const Face_const_handle& fh )
+  void compute_visibility_impl ( const Face_const_handle& fh ) const
   {
     assert( !fh->is_unbounded() );
 
@@ -1365,15 +1369,15 @@ private:
   }
 
   template <typename VARR>
-  void conditional_regularize( VARR& arr_out, CGAL::Tag_true )
+  void conditional_regularize( VARR& arr_out, CGAL::Tag_true ) const
     { regularize_output( arr_out ); }
 
   template <typename VARR>
-  void conditional_regularize( VARR& arr_out, CGAL::Tag_false )
+  void conditional_regularize( VARR& arr_out, CGAL::Tag_false ) const
     {}  // do nothing
 
   template <typename VARR>
-  void regularize_output( VARR& arr_out )
+  void regularize_output( VARR& arr_out ) const
   {
     typename VARR::Edge_iterator eit;
     for ( eit = arr_out.edges_begin(); eit != arr_out.edges_end(); eit++ ) {
@@ -1387,7 +1391,7 @@ private:
 // private trace mthods
 private:
 #ifndef NDEBUG
-  void trace_all ( ostream& os )
+  void trace_all ( ostream& os ) const
   {
     os << "***********************************" << endl;
     os << "        Trace All" << endl;
@@ -1457,14 +1461,14 @@ public:
   Parallel_rotational_sweep_visibility_2 ( const Arrangement_2& arr )
     : p_arr(&arr)
     { geom_traits = p_arr->geometry_traits(); }
-  const std::string name ()
+  const std::string name () const
     { return std::string("R_visibility_2"); }
   
   // function to compute visibility, query point lies in the interior of a face
   template <typename VARR> 
   typename VARR::Face_handle 
   compute_visibility( const Point_2& q, const Halfedge_const_handle& e,
-                      VARR& arr_out )
+                      VARR& arr_out ) const
   {
     if ( q == e->source()->point() )
       return compute_visibility( q, e->prev(), arr_out );
@@ -1556,7 +1560,7 @@ public:
   template <typename VARR> 
   typename VARR::Face_handle 
   compute_visibility( const Point_2& q, const Face_const_handle f,
-                      VARR& arr_out )
+                      VARR& arr_out ) const
   {
     arr_out.clear();
     query_pt = q;
@@ -1583,34 +1587,35 @@ public:
     { p_arr = &arr; geom_traits = p_arr->geometry_traits(); }
   void detach ()
     { p_arr = NULL; geom_traits = NULL; }
-  const Arrangement_2& arr () const
+  const Arrangement_2& arrangement_2() const
     { return *p_arr; }
+
 
 // Private data members
 private:
   const Geometry_traits_2 * geom_traits;
   const Arrangement_2 * p_arr;
 
-  Point_2 query_pt;
-  Halfedge_const_handle query_edge;
-  enum { VERTEX_QUERY, EDGE_QUERY, FACE_QUERY } query_type;
-  Vertex_vector vs;
-  Edge_vector es;
-  std::vector<int> good_vdx;
-  std::vector< std::pair<int, int> > incident;
-  std::vector<Cone> cones;
-  std::vector<Sub_region> sub_regions;
-  Point_vector polygon;
+  mutable Point_2 query_pt;
+  mutable Halfedge_const_handle query_edge;
+  mutable enum { VERTEX_QUERY, EDGE_QUERY, FACE_QUERY } query_type;
+  mutable Vertex_vector vs;
+  mutable Edge_vector es;
+  mutable std::vector<int> good_vdx;
+  mutable std::vector< std::pair<int, int> > incident;
+  mutable std::vector<Cone> cones;
+  mutable std::vector<Sub_region> sub_regions;
+  mutable Point_vector polygon;
 
-  Vertex_const_handle cone_end;
-  Vertex_const_handle cone_start;
-  int cone_end_idx;
-  int cone_start_idx;
-  Arrangement_2 arr_box;
+  mutable Vertex_const_handle cone_end;
+  mutable Vertex_const_handle cone_start;
+  mutable int cone_end_idx;
+  mutable int cone_start_idx;
+  mutable Arrangement_2 arr_box;
 
-  bool is_small_cone;
-  Point_2 shifted_source;
-  int shifted_quadrant;
+  mutable bool is_small_cone;
+  mutable Point_2 shifted_source;
+  mutable int shifted_quadrant;
 };
 
 } // end namespace CGAL

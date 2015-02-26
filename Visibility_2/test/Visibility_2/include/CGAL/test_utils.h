@@ -333,7 +333,7 @@ bool is_regular_arr(Arrangement_2& arr){
 
 
 template <class Visibility_2, class Visibility_arrangement_2>
-bool run_test_case_from_file(Visibility_2 visibility, std::ifstream &input) {
+bool run_test_case_from_file(Visibility_2& visibility, std::ifstream &input) {
   typedef typename Visibility_2::Arrangement_2          Arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Geometry_traits_2::Point_2                 Point_2; 
@@ -422,8 +422,178 @@ bool run_test_case_from_file(Visibility_2 visibility, std::ifstream &input) {
   return true;
 }
 
+template <class Visibility_2>
+void test_interface() {
+    typedef typename Visibility_2::Arrangement_2              Arrangement_2;
+    typedef typename Arrangement_2::Geometry_traits_2         Geometry_traits_2;
+    typedef typename Arrangement_2::Face_const_handle         Face_const_handle;
+    typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+    typedef typename Geometry_traits_2::Segment_2             Segment_2;
+    typedef typename Geometry_traits_2::Point_2               Point_2;
+
+    Point_2 query(0.1, 0.1);
+
+    std::vector<Point_2> vertices;
+    vertices.push_back(Point_2(0, 0));
+    vertices.push_back(Point_2(1, 0));
+    vertices.push_back(Point_2(1, 1));
+    vertices.push_back(Point_2(0, 1));
+
+
+    Arrangement_2 arr_out;
+    Arrangement_2 square;
+
+    for(unsigned int i = 0; i < vertices.size(); ++i) {
+        CGAL::insert(square, Segment_2(vertices[i],
+                                       vertices[(i+1) % vertices.size()]));
+    }
+
+    Face_const_handle location;
+    CGAL::assign(location, get_location(square, query));
+
+
+
+    const Arrangement_2& arr = square;
+
+    // Constructor and attach method must accept a const arrangement.
+    Visibility_2 visibility(arr);
+
+    visibility.detach();
+    visibility.attach(arr);
+
+
+    const Visibility_2& vis = visibility;
+
+    // compute_visibility must be const
+    vis.compute_visibility(query, location, arr_out);
+
+    Halfedge_const_handle he = arr.edges_begin();
+
+    if(he->face()->is_unbounded())
+        he = he->twin();
+
+    vis.compute_visibility(he->target()->point(), he, arr_out);
+
+    // must have const arrangement_2();
+    const Arrangement_2& a = vis.arrangement_2();
+
+    // must have const is_attached();
+    vis.is_attached();
+
+
+
+
+}
+
+template <class Visibility_2>
+void run_tests_with_changes_to_arr() {
+
+  std::cout << "\tTesting changes to attached arrangement:";
+
+  typedef typename Visibility_2::Arrangement_2                Arrangement_2;
+  typedef typename Arrangement_2::Geometry_traits_2           Geometry_traits_2;
+  typedef typename Arrangement_2::Face_const_handle           Face_const_handle;
+  typedef typename Geometry_traits_2::Segment_2               Segment_2;
+  typedef typename Geometry_traits_2::Point_2                 Point_2;
+  typedef typename Geometry_traits_2::FT                      Number_type;
+
+  bool all_passed = true;
+
+
+  Point_2 query(0.1, 0.1);
+
+  std::vector<Point_2> vertices;
+  vertices.push_back(Point_2(0, 0));
+  vertices.push_back(Point_2(1, 0));
+  vertices.push_back(Point_2(1, 1));
+  vertices.push_back(Point_2(0, 1));
+
+
+  Arrangement_2 square;
+  for(unsigned int i = 0; i < vertices.size(); ++i) {
+      CGAL::insert(square, Segment_2(vertices[i],
+                                     vertices[(i+1) % vertices.size()]));
+  }
+
+  Arrangement_2 lower_tri;
+  CGAL::insert(lower_tri, Segment_2(vertices[0], vertices[1]));
+  CGAL::insert(lower_tri, Segment_2(vertices[1], vertices[3]));
+  CGAL::insert(lower_tri, Segment_2(vertices[3], vertices[0]));
+
+  Visibility_2 visibility;
+  Arrangement_2 arr;
+  Arrangement_2 arr_out;
+
+  // Attach empty arr and fill it afterwards
+  visibility.attach(arr);
+
+
+  for(unsigned int i = 0; i < vertices.size(); ++i) {
+      CGAL::insert(arr, Segment_2(vertices[i],
+                                  vertices[(i+1) % vertices.size()]));
+  }
+
+  Face_const_handle location;
+  CGAL::assign(location, get_location(arr, query));
+
+  visibility.compute_visibility(query, location, arr_out);
+
+  all_passed &= test_are_equal(arr_out, square);
+
+
+  // Change attached arrangement and query again
+
+  arr.clear();
+
+  CGAL::insert(arr, Segment_2(vertices[0], vertices[1]));
+  CGAL::insert(arr, Segment_2(vertices[1], vertices[3]));
+  CGAL::insert(arr, Segment_2(vertices[3], vertices[0]));
+
+  CGAL::assign(location, get_location(arr, query));
+
+  visibility.compute_visibility(query, location, arr_out);
+
+  all_passed &= test_are_equal(arr_out, lower_tri);
+
+
+  // Detach and attach again
+
+  visibility.detach();
+  visibility.attach(arr);
+
+  CGAL::assign(location, get_location(arr, query));
+
+  visibility.compute_visibility(query, location, arr_out);
+
+  all_passed &= test_are_equal(arr_out, lower_tri);
+
+
+  // Attach another arrangement without detaching the old one first.
+
+  visibility.attach(square);
+
+  CGAL::assign(location, get_location(square, query));
+
+  visibility.compute_visibility(query, location, arr_out);
+
+  all_passed &= test_are_equal(arr_out, square);
+
+
+  if (!all_passed) {
+    std::cout << "\tFailed: Modifying attached arrangment causes wrong output.\n";
+    assert(false);
+  } else {
+    std::cout << "\tPassed.\n" ;
+  }
+}
+
+
 template <class Visibility_2, class Visibility_arrangement_2> 
 void run_tests(int case_number_simple, int case_number_non_simple) {
+
+  // Make sure the code only compiles with a conforming interface
+  test_interface<Visibility_2>();
+
   
   Visibility_2 visibility;
   bool one_failed = false; 
@@ -501,7 +671,11 @@ void run_tests(int case_number_simple, int case_number_non_simple) {
   if (one_failed) {
     assert(false);
   }
+
+  run_tests_with_changes_to_arr<Visibility_2>();
+
 }
+
 
 template <class _Arrangement_2>
 void create_arrangement_from_file(_Arrangement_2 &arr, std::ifstream& input) {
@@ -823,8 +997,8 @@ void simple_benchmark_one_unit(
           typename Visibility_2_fst::Arrangement_2 &arr,
           const Query_choice &choice,
           typename Visibility_2_fst::Arrangement_2::Face_const_handle &fit,
-          Visibility_2_fst visibility_fst,
-          Visibility_2_snd visibility_snd,
+          Visibility_2_fst& visibility_fst,
+          Visibility_2_snd& visibility_snd,
           double& qtime1,
           double& qtime2,
           int& query_cnt) {
@@ -1033,7 +1207,7 @@ void pure_benchmark_one_unit(
           typename Visibility_2::Arrangement_2 &arr,
           const Query_choice &choice,
           typename Visibility_2::Arrangement_2::Face_const_handle &fit,
-          Visibility_2 visibility,
+          Visibility_2& visibility,
           double& qtime,
           int& query_cnt) {
 
@@ -1215,7 +1389,7 @@ template<class Visibility_2>
 void test_star_shape_one_face(  typename Visibility_2::Arrangement_2 &arr,
                                 const Query_choice &choice,
                                 typename Visibility_2::Arrangement_2::Face_const_handle &fit,
-                                Visibility_2 visibility)
+                                Visibility_2& visibility)
 {
 
   typedef typename Visibility_2::Arrangement_2          Arrangement_2;
