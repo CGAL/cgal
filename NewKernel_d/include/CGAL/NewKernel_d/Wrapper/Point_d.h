@@ -148,6 +148,11 @@ public:
 	  return CPI()(rep(),End_tag());
   }
 
+  int dimension() const {
+    typedef typename Get_functor<Kbase, Point_dimension_tag>::type PDBase;
+    return PDBase()(rep());
+  }
+
   /*
   Direction_d direction() const
   {
@@ -230,27 +235,6 @@ public:
     return hw();
   }
 
-  int dimension() const // bad idea?
-  {
-      return rep.dimension();
-  }
-
-  typename Qualified_result_of<typename R::Compute_x_3, Vector_3>::type
-  operator[](int i) const
-  {
-      return cartesian(i);
-  }
-
-  Cartesian_const_iterator cartesian_begin() const
-  {
-    return typename R::Construct_cartesian_const_iterator_3()(*this);
-  }
-
-  Cartesian_const_iterator cartesian_end() const
-  {
-    return typename R::Construct_cartesian_const_iterator_3()(*this,3);
-  }
-
   typename Qualified_result_of<typename R::Compute_squared_length_3, Vector_3>::type
   squared_length() const
   {
@@ -267,18 +251,19 @@ template <class R_> Point_d<R_>::Point_d(Point_d &)=default;
 template <class R_>
 std::ostream& operator <<(std::ostream& os, const Point_d<R_>& p)
 {
-  std::vector<double> coords;
-  typename R_::Cartesian_const_iterator_d
+  typedef typename R_::Kernel_base Kbase;
+  typedef typename Get_functor<Kbase, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CPI;
+  // Should just be "auto"...
+  typename CGAL::decay<typename boost::result_of<
+        CPI(typename Point_d<R_>::Rep,Begin_tag)
+      >::type>::type
     b = p.cartesian_begin(),
     e = p.cartesian_end();
+  os << p.dimension();
   for(; b != e; ++b){
-    coords.push_back(*b);
+    os << " " << *b;
   }
-  os << coords.size();
-  for(std::size_t i=0; i < coords.size(); i++){
-    os << " " << coords[i];
-  }
-  return os << std::flush;
+  return os;
 }
 
 //template <class R_>

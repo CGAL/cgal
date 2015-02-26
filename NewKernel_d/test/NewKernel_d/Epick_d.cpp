@@ -12,6 +12,7 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/use.h>
 #include <iostream>
+#include <sstream>
 
 //typedef CGAL::Cartesian_base_d<double,CGAL::Dimension_tag<2> > K0;
 //typedef CGAL::Cartesian_base_d<CGAL::Interval_nt_advanced,CGAL::Dimension_tag<2> > KA;
@@ -554,6 +555,10 @@ void test3(){
   assert(ifsos(fozn, tz+0, tz+3, tz[4]) == CGAL::ON_NEGATIVE_SIDE);
   assert(ifsos(fozp, tz+0, tz+3, tz[5]) == CGAL::ON_NEGATIVE_SIDE);
   assert(ifsos(fozn, tz+0, tz+3, tz[5]) == CGAL::ON_POSITIVE_SIDE);
+  P showit=cp(1,2,4);
+  std::ostringstream output;
+  output << showit;
+  assert(output.str()=="3 1 2 4");
 }
 template struct CGAL::Epick_d<CGAL::Dimension_tag<2> >;
 template struct CGAL::Epick_d<CGAL::Dimension_tag<3> >;
