@@ -6,6 +6,15 @@ Release date: March 2015
 
 
 
+* 2D Polyline Simplification (new package)
+
+  - This package enables to simplify polylines with the guarantee that the
+    topology of the polylines does not change. This can be done for a single
+    polyline as well as for a set of polyline constraints in a constrained
+    triangulation. The simplification can be controlled with cost and stop
+    functions.
+
+
 * 2D Generalized Barycentric Coordinates (new package)
 
   - This package offers an efficient and robust implementation of two-
@@ -26,8 +35,8 @@ Release date: March 2015
 
 * Surface Mesh (new package)
 
-  - The surface mesh class provided by this package is a data structure that
-    can be used as halfedge data structure or polyhedral surface. It is an
+  - The surface mesh class provided by this package is an implementation of the
+    halfedge data structure allowing to represent polyhedral surfaces. It is an
     alternative to the packages CGAL::Polyhedron_3 and CGAL::HalfedgeDS.
 
 
