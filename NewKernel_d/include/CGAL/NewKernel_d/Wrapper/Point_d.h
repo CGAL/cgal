@@ -20,6 +20,7 @@
 #ifndef CGAL_WRAPPER_POINT_D_H
 #define CGAL_WRAPPER_POINT_D_H
 
+#include <ostream>
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/representation_tags.h>
@@ -262,6 +263,23 @@ template <class R_> Point_d<R_>::Point_d(Point_d &)=default;
 #endif
 
 //TODO: IO
+
+template <class R_>
+std::ostream& operator <<(std::ostream& os, const Point_d<R_>& p)
+{
+  std::vector<double> coords;
+  typename R_::Cartesian_const_iterator_d
+    b = p.cartesian_begin(),
+    e = p.cartesian_end();
+  for(; b != e; ++b){
+    coords.push_back(*b);
+  }
+  os << coords.size();
+  for(std::size_t i=0; i < coords.size(); i++){
+    os << " " << coords[i];
+  }
+  return os << std::flush;
+}
 
 //template <class R_>
 //Vector_d<R_> operator+(const Vector_d<R_>& v,const Vector_d<R_>& w) const
