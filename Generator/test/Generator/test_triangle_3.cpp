@@ -17,7 +17,7 @@ typedef K::Plane_3 							Plane_3;
 typedef std::vector<Point_3>						Container;
 typedef CGAL::Random_points_in_triangle_3<Point_3> 			Point_generator;
 	
-const double EPS = 1e-30;
+const double EPS = 1e-20;
 
 template<class InputIterator>
 bool inside_or_close_to_triangle(const Triangle_3& tri,InputIterator begin, InputIterator end) {
