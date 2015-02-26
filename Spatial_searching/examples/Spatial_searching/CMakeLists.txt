@@ -33,7 +33,12 @@ endif()
 
 # include helper file
 include( ${CGAL_USE_FILE} )
- 
+            
+find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
+if (EIGEN3_FOUND)
+  include( ${EIGEN3_USE_FILE} )
+endif()
+
 if (MSVC)
     # Turn off VC++ warning
     SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244")
