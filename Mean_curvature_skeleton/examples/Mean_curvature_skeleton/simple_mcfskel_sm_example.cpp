@@ -1,6 +1,6 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Mean_curvature_skeleton_functions.h>
+#include <CGAL/extract_mean_curvature_flow_skeleton.h>
 
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>

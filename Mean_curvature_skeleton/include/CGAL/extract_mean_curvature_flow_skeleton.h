@@ -48,7 +48,6 @@ namespace CGAL{
 /// @param skeleton
 ///        graph that will contain the skeleton of `tmesh`
 ///
-/// \todo add an overload when the TriangleMesh is of the same type as the copy
 /// \todo I need to tweak SkeletonVertexVerticesMap to match the documentation
   template <class TriangleMesh>
 void extract_mean_curvature_flow_skeleton(const TriangleMesh& tmesh,
