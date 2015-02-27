@@ -16,7 +16,7 @@ namespace CGAL {
 
 namespace SegmentDelaunayGraphLinf_2 {
 
-#if __cplusplus >= 201103L
+#ifndef CGAL_CFG_NO_CPP0X_TUPLE
 #define tuple_maker std::forward_as_tuple
 #else
 #define tuple_maker cpp11::make_tuple
