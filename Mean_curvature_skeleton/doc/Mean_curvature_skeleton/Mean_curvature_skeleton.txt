@@ -33,7 +33,7 @@ The input is a triangulated surface mesh, model of the `HalfedgeGraph`
 concept that has no boundary and that has only one connected component.
 The skeleton is provided as a graph of type
 <a href="http://www.boost.org/doc/libs/release/libs/graph/doc/adjacency_list.html"><code>boost::adjacency_list</code></a>.
-Each vertex of a the skeleton is associated a 3D location point and the
+Each vertex of a the skeleton is associated to a 3D location point and to the
 set of input vertices that contracted to that skeleton vertex.
 Note that due the construction process of the skeleton, a
 skeleton vertex might have no corresponding input vertex.
@@ -46,7 +46,7 @@ The input and output are illustrated in \cgalFigureRef{MCFInputOutput}.
 \cgalFigureBegin{MCFInputOutput, correspondence.png}
 Left: An input triangulated surface mesh model of an octopus;
 Middle: The mean curvature flow skeleton extracted using this package;
-Right: Each vertex of the input surface is associated a skeleton vertex.
+Right: Each vertex of the input surface is associated to a skeleton vertex.
 \cgalFigureEnd
 
 \subsection MCFSkelSecAPI-FF Free Function
@@ -88,8 +88,8 @@ vertices where the surface has locally degenerated to a curvilinear
 structure.
 \cgalFigureEnd
 
-In this example, we show how to use the API from
-`CGAL::Mean_curvature_flow_skeletonization` class.
+In this example, we show how to use the API of the class
+`CGAL::Mean_curvature_flow_skeletonization`.
 
 \cgalExample{Mean_curvature_skeleton/MCF_Skeleton_example.cpp}
 
@@ -142,7 +142,7 @@ Intel(R) Core(TM) i5-3427U CPU @ 1.80GHz
 
 <center>
 Number of vertices  | Runtime in ms |
---------------------| -----------:  |
+-------------------:| -----------:  |
 2,775               |    1,097      |
 11,112              |    3,595      |
 44,460              |   14,841      |

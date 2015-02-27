@@ -126,9 +126,9 @@ enum Degeneracy_algorithm_tag
 ///
 /// This class takes as input a triangulated surface mesh and iteratively contracts the surface mesh
 /// following the mean curvature flow \cgalCite{tagliasacchi2012mean}. The intermediate contracted surface
-/// mesh is called the meso-skeleton.
+/// mesh is called the <em>meso-skeleton</em>.
 /// Between each iteration, the meso-skeleton is locally remeshed using angle split and edge contraction.
-/// The process ends when the modification of meso-skeleton between two iterations is small.
+/// The process ends when the modification of the meso-skeleton between two iterations is small.
 ///
 /// @tparam TriangleMesh
 ///         a model of `HalfedgeGraph`

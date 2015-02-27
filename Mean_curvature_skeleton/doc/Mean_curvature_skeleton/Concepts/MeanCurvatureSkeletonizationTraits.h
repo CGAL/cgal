@@ -3,9 +3,9 @@
  * \ingroup PkgMeanCurvatureSkeleton3Concepts
  * \cgalConcept
  *
- * Traits class concept defining the requirement of the class `Mean_curvature_flow_skeletonization`.
+ * Traits class concept defining the requirement of the class `CGAL::Mean_curvature_flow_skeletonization`.
  *
- * \cgalHasModel any \cgal Kernel
+ * \cgalHasModel Any \cgal `Kernel`
  *
  * \todo finish to fill this concept
  *
