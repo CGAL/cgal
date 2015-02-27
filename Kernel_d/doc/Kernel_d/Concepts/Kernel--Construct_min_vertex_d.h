@@ -16,7 +16,7 @@ public:
 /*!
 returns the lexicographically smallest vertex of `ic`. 
 */ 
-Kernel_d::Point_d operator()(const Kernel_d::Iso_cuboid_d& ic); 
+Kernel_d::Point_d operator()(const Kernel_d::Iso_box_d& ib); 
 
 
 /// @}
