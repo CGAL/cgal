@@ -109,7 +109,7 @@ The result of this segmentation is shown in \cgalFigureRef{Segmentation}.
 
 \cgalFigureBegin{Segmentation, segmentation.png}
 Left: Curve skeleton extracted of a triangulated surface mesh;
-Right: Segmentation using the skeleton to compute a shape diamater function.
+Right: Segmentation using the skeleton to compute a shape diameter function.
 \cgalFigureEnd
 
 \cgalExample{Mean_curvature_skeleton/segmentation_example.cpp}
