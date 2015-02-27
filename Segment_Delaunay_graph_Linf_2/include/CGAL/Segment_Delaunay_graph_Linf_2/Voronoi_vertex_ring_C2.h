@@ -17,9 +17,9 @@ namespace CGAL {
 namespace SegmentDelaunayGraphLinf_2 {
 
 #ifndef CGAL_CFG_NO_CPP0X_TUPLE
-#define tuple_maker std::forward_as_tuple
+#define sdg_tuple_maker std::forward_as_tuple
 #else
-#define tuple_maker cpp11::make_tuple
+#define sdg_tuple_maker cpp11::make_tuple
 #endif
 
 template<class K>
@@ -1853,9 +1853,9 @@ private:
 
       const cpp11::tuple<
         const Site_2 &, const Site_2 &, const Site_2 &> sites =
-         r_.is_segment() ? tuple_maker(p_, q_, r_) :
-        (p_.is_segment() ? tuple_maker(q_, r_, p_) :
-                           tuple_maker(r_, p_, q_) );
+         r_.is_segment() ? sdg_tuple_maker(p_, q_, r_) :
+        (p_.is_segment() ? sdg_tuple_maker(q_, r_, p_) :
+                           sdg_tuple_maker(r_, p_, q_) );
 
       const Site_2 & p1 = cpp11::get<0>(sites);
       const Site_2 & p2 = cpp11::get<1>(sites);
@@ -2002,9 +2002,9 @@ private:
 
       const cpp11::tuple<
         const Site_2 &, const Site_2 &, const Site_2 &> sites =
-         p_.is_point() ? tuple_maker(p_, q_, r_) :
-        (q_.is_point() ? tuple_maker(q_, r_, p_) :
-                         tuple_maker(r_, p_, q_) );
+         p_.is_point() ? sdg_tuple_maker(p_, q_, r_) :
+        (q_.is_point() ? sdg_tuple_maker(q_, r_, p_) :
+                         sdg_tuple_maker(r_, p_, q_) );
 
       const Site_2 & pt_site = cpp11::get<0>(sites);
       const Site_2 & s1 = cpp11::get<1>(sites);
