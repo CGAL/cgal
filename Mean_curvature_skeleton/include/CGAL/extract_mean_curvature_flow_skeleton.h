@@ -52,48 +52,13 @@ namespace CGAL{
 ///        using `skeleton[vd].point` and `skeleton[vd].vertices` respectively.
 ///
 /// \todo I need to tweak SkeletonVertexVerticesMap to match the documentation
-  template <class TriangleMesh>
+template <class TriangleMesh>
 void extract_mean_curvature_flow_skeleton(const TriangleMesh& tmesh,
-                                          Mean_curvature_flow_skeletonization<TriangleMesh>::Skeleton& skeleton)
+                                          typename Mean_curvature_flow_skeletonization<TriangleMesh>::Skeleton& skeleton)
 {
-  typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type PmeshPointPMap;
-  typedef typename boost::property_traits<PmeshPointPMap>::value_type Point;
-  typedef typename CGAL::Kernel_traits< Point >::Kernel K;
-  typedef CGAL::Polyhedron_3<K,CGAL::Polyhedron_items_with_id_3> Polyhedron;
-
-  // copy the input FaceGraph into a Polyhedron
-  CGAL::FaceGraph_to_Polyhedron_3<TriangleMesh,
-                                  PmeshPointPMap,
-                                  typename Polyhedron::HalfedgeDS,
-                                  false> modifier(tmesh, get(vertex_point, const_cast<TriangleMesh&>(tmesh)) );
-  Polyhedron P;
-  P.delegate(modifier);
-  //init indices
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
-  std::size_t i=0;
-  BOOST_FOREACH( vertex_descriptor vd, vertices(P) )
-    vd->id()=i++;
-  i=0;
-  BOOST_FOREACH( halfedge_descriptor hd, halfedges(P) )
-    hd->id()=i++;
-
-  typedef typename boost::property_map<Polyhedron, boost::vertex_index_t>::type VertexIndexMap;
-  typedef typename boost::property_map<Polyhedron, boost::halfedge_index_t>::type HedgeIndexMap;
-  typedef typename boost::property_map<Polyhedron, boost::vertex_point_t>::type PolyVertexPointMap;
-
-  typedef CGAL::Eigen_solver_traits<
-          Eigen::SparseLU<
-          CGAL::Eigen_sparse_matrix<double>::EigenType,
-          Eigen::COLAMDOrdering<int> > > SparseLinearAlgebraTraits_d;
-
   // extract the skeleton
-  typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron,
-                                                    K,
-                                                    PolyVertexPointMap,
-                                                    SparseLinearAlgebraTraits_d> Mcfskel;
-  Mcfskel mcfs(P);
-
+  typedef CGAL::Mean_curvature_flow_skeletonization<TriangleMesh> Mcfskel;
+  Mcfskel mcfs(tmesh);
   mcfs(skeleton);
 }
 #endif

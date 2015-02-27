@@ -1,34 +1,34 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <CGAL/boost/graph/properties_Surface_mesh.h>
 #include <CGAL/Mean_curvature_flow_skeletonization.h>
 
 #include <boost/property_map/property_map.hpp>
-#include <boost/graph/graph_traits.hpp>
-#include <boost/graph/adjacency_list.hpp>
 
 #include <fstream>
 #include <map>
 
-typedef CGAL::Simple_cartesian<double>                               Kernel;
-typedef Kernel::Point_3                                              Point;
-typedef CGAL::Surface_mesh<Point> Polyhedron;
+typedef CGAL::Simple_cartesian<double>                               K;
+typedef K::Point_3                                                   Point;
+typedef CGAL::Surface_mesh<Point>                                    Triangle_mesh;
 
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_iterator             vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::halfedge_descriptor         halfedge_descriptor;
+typedef boost::graph_traits<Triangle_mesh>::vertex_descriptor        vertex_descriptor;
+typedef boost::graph_traits<Triangle_mesh>::vertex_iterator          vertex_iterator;
+typedef boost::graph_traits<Triangle_mesh>::halfedge_descriptor      halfedge_descriptor;
 
-typedef CGAL::Mean_curvature_flow_skeletonization<Kernel, Polyhedron>  Skeletonization;
-typedef Skeletonization::Skeleton                                      Skeleton;
+typedef CGAL::Mean_curvature_flow_skeletonization<K, Triangle_mesh>  Skeletonization;
+typedef Skeletonization::Skeleton                                    Skeleton;
 
-typedef boost::graph_traits<Skeleton>::vertex_descriptor               vertex_desc;
-typedef boost::graph_traits<Skeleton>::vertex_iterator                 vertex_iter;
-typedef boost::graph_traits<Skeleton>::edge_iterator                   edge_iter;
+typedef boost::graph_traits<Skeleton>::vertex_descriptor             vertex_desc;
+typedef boost::graph_traits<Skeleton>::vertex_iterator               vertex_iter;
+typedef boost::graph_traits<Skeleton>::edge_iterator                 edge_iter;
 
 
 int main(int argc, char* argv[])
 {
   std::ifstream input((argc>1)?argv[1]:"data/sindorelax.off");
-  Polyhedron mesh;
+  Triangle_mesh mesh;
   input >> mesh;
 
   Skeleton skeleton;

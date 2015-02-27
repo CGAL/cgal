@@ -1,5 +1,5 @@
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polyhedron_items_with_id_3>
+#include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Simple_cartesian.h>
@@ -56,17 +56,17 @@ int main(int argc, char* argv[])
   CGAL::extract_mean_curvature_flow_skeleton(tmesh, skeleton);
 
   // init the polyhedron simplex indices
-  CGAL::set_halfedgeds_items_id(tmesh)
+  CGAL::set_halfedgeds_items_id(tmesh);
 
   //for each input vertex compute its distance to the skeleton
   std::vector<double> distances(num_vertices(tmesh));
   BOOST_FOREACH(Skeleton_vertex v, vertices(skeleton) )
   {
-    const Point& skel = skeleton[gv].point;
+    const Point& skel_pt = skeleton[v].point;
     BOOST_FOREACH(vertex_descriptor mesh_v, vertices(tmesh))
     {
-      const Point& mesh_point = skeleton[gv].vertices[i]->point();
-      distances[mesh_v->id()] = std::sqrt(CGAL::squared_distance(skel, surf));
+      const Point& mesh_pt = mesh_v->point();
+      distances[mesh_v->id()] = std::sqrt(CGAL::squared_distance(skel_pt, mesh_pt));
     }
   }
 
@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
   BOOST_FOREACH(face_descriptor f, faces(tmesh))
   {
     double dist = 0;
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(f, tmesh))
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(f, tmesh), tmesh))
       dist+=distances[target(hd, tmesh)->id()];
     sdf_property_map[f] = dist / 3.;
   }
@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
 
   // create a property-map for segment-ids (it is an adaptor for this case)
   std::vector<int> segment_ids;
-  Facet_with_id_pmap<double> segment_property_map(segment_ids);
+  Facet_with_id_pmap<int> segment_property_map(segment_ids);
 
   // segment the mesh using default parameters
   std::cout << "Number of segments: "

@@ -29,6 +29,7 @@
  */
 
 #include <boost/graph/graph_traits.hpp>
+#include <CGAL/boost/graph/iterator.h>
 #include <cmath>
 #include <queue>
 
@@ -56,7 +57,7 @@ bool is_vertex_degenerate(TriangleMesh& hg,
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::out_edge_iterator          out_edge_iterator;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor            face_descriptor;
-  typedef typename Halfedge_around_face_circulator<TriangleMesh>                 Halfedge_face_circulator;
+  typedef Halfedge_around_face_circulator<TriangleMesh>                          Halfedge_face_circulator;
 
   std::set<vertex_descriptor> vertices_in_disk;
   std::set<halfedge_descriptor> edges_in_disk;

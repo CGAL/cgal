@@ -120,10 +120,8 @@ public:
   }
 
   // Extracting the skeleton to a boost::graph data structure.
-  template <class Graph, class GraphPointPMap>
-  void extract_skeleton( Graph& curve,
-                         const GraphPointPMap& points,
-                         std::map< typename Graph::vertex_descriptor, std::vector<int> >& corr)
+  template <class Graph>
+  void extract_skeleton(Graph& curve)
   {
     typedef typename boost::graph_traits<Graph>::vertex_descriptor                  vertex_desc;
     typedef typename boost::graph_traits<Graph>::edge_descriptor                    edge_desc;
@@ -155,7 +153,6 @@ public:
     std::vector<vertex_desc> id_to_vd;
     id_to_vd.clear();
     id_to_vd.resize(id);
-    corr.clear();
 
     for (int i = 0; i < id; ++i)
     {
@@ -168,10 +165,10 @@ public:
     {
       int orig_id = orig_vertex_id[i];
       vertex_desc vd = id_to_vd[i];
-      corr[vd] = record[orig_id];
-      for (size_t j = 0; j < corr[vd].size(); ++j)
+      curve[vd].vertices = record[orig_id];
+      for (size_t j = 0; j < curve[vd].vertices.size(); ++j)
       {
-        corr[vd][j] = surface_vertex_id[corr[vd][j]];
+        curve[vd].vertices[j] = surface_vertex_id[curve[vd].vertices[j]];
       }
     }
 
@@ -215,8 +212,7 @@ public:
         pos = Point(pos.x() + pv.x(), pos.y() + pv.y(), pos.z() + pv.z());
       }
       double num = record[id].size();
-      pos = Point(pos.x() / num, pos.y() / num, pos.z() / num);
-      points[new_id] = pos;
+      curve[*vb].point = Point(pos.x() / num, pos.y() / num, pos.z() / num);
     }
   }
 

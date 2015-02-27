@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
   {
     std::cout << skeleton[v].point << ": ";
 
-    BOOST_FOREACH(vertex_descriptor vd, skeleton[gv].vertices)
+    BOOST_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
       std::cout << get(CGAL::vertex_point, tmesh, vd)  << " ";
     std::cout << "\n";
   }

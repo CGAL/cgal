@@ -16,7 +16,7 @@ typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron> Skeletonization;
 typedef Skeletonization::Skeleton                             Skeleton;
 
 typedef Skeleton::vertex_descriptor                           Skeleton_vertex;
-typedef Skeleton::edge_iterator                               Skeleton_edge;
+typedef Skeleton::edge_descriptor                             Skeleton_edge;
 
 
 int main(int argc, char* argv[])
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
   {
     std::cout << skeleton[v].point << ": ";
 
-    BOOST_FOREACH(vertex_descriptor vd, skeleton[gv].vertices)
+    BOOST_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
       std::cout << get(CGAL::vertex_point, tmesh, vd)  << " ";
     std::cout << "\n";
   }
