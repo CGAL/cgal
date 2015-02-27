@@ -36,5 +36,6 @@
  \todo code: expose in polygon mesh processing the function to compute the voronoi pole of a close triangle mesh
  \todo code: expose in polygon mesh processing the function to remesh locally a triangle mesh with the angle and edge length parameters
  \todo code: find the best option and remove collapse and degeneracy tags
+ \todo code: avoid using EPEC for the triangulation
 */
 
