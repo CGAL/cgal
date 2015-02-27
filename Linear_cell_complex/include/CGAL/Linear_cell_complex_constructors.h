@@ -555,14 +555,11 @@ namespace CGAL {
     writer.header().set_polyhedral_surface(true);
     writer.header().set_halfedges( alcc.number_of_darts());
 
-    std::vector<unsigned int> cells; cells.push_back(2);
-    std::vector<unsigned int> res = alcc.count_cells(cells);
-
     // Print header.
     writer.write_header( out,
                          alcc.number_of_vertex_attributes(),
                          alcc.number_of_darts(),
-                         res[2]);
+                         alcc.template one_dart_per_cell<2,2>().size() );
 
     typedef typename LCC::Vertex_attribute_range::iterator VCI;
     VCI vit, vend = alcc.vertex_attributes().end();
@@ -587,18 +584,18 @@ namespace CGAL {
       {
         std::size_t n = 0;
         // First we count the number of vertices of the face.
-        for ( typename LCC::template Dart_of_cell_range<2>::iterator
-                itf=alcc.template darts_of_cell<2>(itall).begin(),
-                itfend=alcc.template darts_of_cell<2>(itall).end();
+        for ( typename LCC::template Dart_of_cell_range<2,2>::iterator
+                itf=alcc.template darts_of_cell<2,2>(itall).begin(),
+                itfend=alcc.template darts_of_cell<2,2>(itall).end();
               itf!=itfend; ++itf, ++n );
 
         CGAL_assertion( n>=3 );
         writer.write_facet_begin(n);
 
         // Second we write the indices of vertices.
-        for ( typename LCC::template Dart_of_cell_range<2>::iterator
-                itf=alcc.template darts_of_cell<2>(itall).begin(),
-                itfend=alcc.template darts_of_cell<2>(itall).end();
+        for ( typename LCC::template Dart_of_cell_range<2,2>::iterator
+                itf=alcc.template darts_of_cell<2,2>(itall).begin(),
+                itfend=alcc.template darts_of_cell<2,2>(itall).end();
               itf!=itfend; ++itf )
         {
           // TODO case with index
