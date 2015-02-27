@@ -46,7 +46,10 @@ namespace CGAL{
 /// @param tmesh
 ///        input mesh
 /// @param skeleton
-///        graph that will contain the skeleton of `tmesh`
+///        graph that will contain the skeleton of `tmesh`.
+///        For each vertex descriptor `vd` of `skeleton`, the corresponding point
+///        and the set of input vertices that contracted to `vd` can be retrieved
+///        using `skeleton[vd].point` and `skeleton[vd].vertices` respectively.
 ///
 /// \todo I need to tweak SkeletonVertexVerticesMap to match the documentation
   template <class TriangleMesh>

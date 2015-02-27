@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_3D_Mean_Curvature_Skeleton
 
 \cgalAutoToc
-\author Xiang Gao, Sébastien Loriot and Andrea Tagliasacchi
+\author Andreas Fabri, Xiang Gao, Sébastien Loriot and Andrea Tagliasacchi
 
 \section MCFSkelSecMot Introduction
 
@@ -347,7 +347,8 @@ Voronoi poles and contracting the meshes.
 
 The initial implementation of this package is the result of the work
 of Xiang Gao during the 2013 season of the Google Summer of Code
-mentored by Andrea Tagliasacchi and Sébastien Loriot.
+mentored by Andrea Tagliasacchi and Sébastien Loriot. It was finalized
+by Andreas Fabri and Sébastien Loriot.
 
 */ 
 } /* namespace CGAL */

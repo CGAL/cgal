@@ -121,8 +121,14 @@ enum Degeneracy_algorithm_tag
 /// @endcond
 
 /// \ingroup PkgMeanCurvatureSkeleton3
-/// @brief Class providing the functionalities for extracting
-///        the skeleton of a triangulated surface mesh.
+/// Class providing the functionalities for extracting the mean curvature
+/// flow skeleton of a triangulated surface mesh.
+///
+/// This class takes as input a triangulated surface mesh and iteratively contracts the surface mesh
+/// following the mean curvature flow \cgalCite{tagliasacchi2012mean}. The intermediate contracted surface
+/// mesh is called the meso-skeleton.
+/// Between each iteration, the meso-skeleton is locally remeshed using angle split and edge contraction.
+/// The process ends when the modification of meso-skeleton between two iterations is small.
 ///
 /// @tparam TriangleMesh
 ///         a model of `HalfedgeGraph`
@@ -139,7 +145,7 @@ enum Degeneracy_algorithm_tag
 /// @tparam SparseLinearAlgebraTraits_d
 ///         a model of `SparseLinearAlgebraTraitsWithFactor_d`.
 ///         If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
-///         and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter.\n
+///         and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter:
 /// \code
 ///     CGAL::Eigen_solver_traits<
 ///         Eigen::SparseLU<
@@ -221,7 +227,8 @@ public:
   /// The graph type representing the skeleton. The vertex property 
   /// `Vmap` is a struct with a member `point` of type `Traits::Point_3`
   /// and a member `vertices` of type 
-  /// `std::vector<boost::graph_traits<TriangleMesh>::%vertex_descriptor>`
+  /// `std::vector<boost::graph_traits<TriangleMesh>::%vertex_descriptor>`.
+  /// See  <a href="http://www.boost.org/doc/libs/release/libs/graph/doc/adjacency_list.html"><tt>the boost documentation</tt></a> page for more details
   typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Vmap> Skeleton;
 
  
@@ -389,18 +396,22 @@ public:
    *
    * @pre `tmesh` is a triangulated surface mesh without borders and has exactly one connected component.
    * @param tmesh 
-   *        input surface mesh.
-
+   *        input triangulated surface mesh.
    * @param vertex_point_map 
    *        property map which associates a point to each vertex of the graph.
+   * @param traits
+   *        an instance of the traits class.
+   * \todo code: use the traits
    */
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
-                                      VertexPointMap vertex_point_map = get(boost::vertex_point, tmesh) );
+                                      VertexPointMap vertex_point_map = get(boost::vertex_point, tmesh),
+                                      Traits traits = Traits());
 
   #else
 
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
-                                      VertexPointMap vertex_point_map)
+                                      VertexPointMap vertex_point_map,
+                                      Traits = Traits())
   {
   init_args();
   init(tmesh, vertex_point_map);
@@ -451,7 +462,7 @@ public:
     return m_max_iterations;
   }
   
-  /// The convergence is considered to be riched if the variation of the area of
+  /// The convergence is considered to be reached if the variation of the area of
   /// the meso-skeleton between two iterations is smaller than
   /// `area_variation_factor()*original_area` where `original_area` is the area of the input
   /// triangle mesh.
@@ -474,24 +485,32 @@ public:
   /// \name Vertex Motion Parameters
   /// @{
   
+  /// \cgalAdvancedBegin
   /// Controls the velocity of movement and approximation quality:
   /// increasing this value makes the mean curvature flow based contraction converge
   /// faster, but results in a skeleton of lower quality.
+  /// This parameter corresponds to \f$ w_L/w_H \f$ in the original publication.
+  /// \cgalAdvancedEnd
   double quality_speed_tradeoff()
   {
     return m_omega_H;
   }
 
-  /// If `true`, the result skeleton is medially centered.
+  /// If `true`, the result skeleton is medially centered (an additional energy
+  /// is used during the contraction using the poles of the input triangulated mesh
+  /// as attractors).
   bool is_medially_centered()
   {
     return m_is_medially_centered;
   }
 
+  /// \cgalAdvancedBegin
   /// Controls the smoothness of the medial approximation:
   /// increasing this value results in a skeleton closer
   /// to the medial axis, but slows down the speed of contraction.
   /// It is only used if `is_medially_centered()==true`.
+  /// This parameter corresponds to \f$ w_L/w_H \f$ in the original publication.
+  /// \cgalAdvancedEnd
   double medially_centered_speed_tradeoff()
   {
     return m_omega_P;
@@ -603,7 +622,10 @@ public:
    * This is equivalent to calling `contract_until_convergence()` and `convert_to_skeleton()`.
 
    * @param skeleton
-   *        graph that will contain the skeleton of the input surface mesh
+   *        graph that will contain the skeleton of the input triangulated surface mesh.
+   *        For each vertex descriptor `vd` of `skeleton`, the corresponding point
+   *        and the set of input vertices that contracted to `vd` can be retrieved
+   *        using `skeleton[vd].point` and `skeleton[vd].vertices` respectively.
    */
   void operator()(Skeleton& skeleton)
   {
@@ -613,11 +635,13 @@ public:
   /// @}
   
   /// \name Low Level Functions
+  /// \cgalAdvancedBegin
   /// The following functions enable the user to run the mean curvature flow skeletonization algorithm step by step.
+  /// \cgalAdvancedEnd
   /// @{
 
   /**
-   * Contract the surface mesh by mean curvature flow.
+   * Run a contraction step following the mean curvature flow.
    */
   void contract_geometry()
   {
@@ -677,7 +701,7 @@ public:
   }
 
   /**
-   * Collapses edges with length less than `min_edge_length()` and returns the number of edges collapsed.
+   * Collapses edges of the meso-skeleton with length less than `min_edge_length()` and returns the number of edges collapsed.
    */
   int collapse_edges()
   {
@@ -710,7 +734,7 @@ public:
   }
 
   /**
-   * Splits faces having one angle greater than `max_triangle_angle()` and returns the number of faces split.
+   * Splits faces of the meso-skeleton having one angle greater than `max_triangle_angle()` and returns the number of faces split.
    */
   int split_faces()
   {
