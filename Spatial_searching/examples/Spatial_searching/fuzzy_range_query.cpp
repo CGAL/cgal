@@ -34,13 +34,13 @@ int main() {
   Fuzzy_sphere fs(p, 700.0, 100.0);
   Fuzzy_iso_box fib(p, q, 100.0);
 
-  std::cout << "points approximately in fuzzy range query" << std::endl;
-  std::cout << "with center (300.0, 300.0, 300.0, 300.0)" << std::endl;
-  std::cout << "and fuzzy radius <200.0,400.0> are:" << std::endl;
+  std::cout << "points approximately in fuzzy spherical range query" << std::endl;
+  std::cout << "with center (300, 300, 300, 300)" << std::endl;
+  std::cout << "and fuzzy radius [600, 800] are:" << std::endl;
   tree.search(std::ostream_iterator<Point_d>(std::cout, "\n"), fs);
 
-  std::cout << "points approximately in fuzzy range query ";
-  std::cout << "[<200,4000>,<800,1000>]]^4 are:" << std::endl;
+  std::cout << "points approximately in fuzzy rectangular range query ";
+  std::cout << "[[200, 400], [800,1000]]^4 are:" << std::endl;
 
   tree.search(std::ostream_iterator<Point_d>(std::cout, "\n"), fib);
   return 0;
