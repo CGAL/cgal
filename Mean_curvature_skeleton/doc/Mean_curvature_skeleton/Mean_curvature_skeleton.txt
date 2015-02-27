@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_3D_Mean_Curvature_Skeleton
 
 \cgalAutoToc
-\author Andreas Fabri, Xiang Gao, Sébastien Loriot and Andrea Tagliasacchi
+\author Xiang Gao, Sébastien Loriot and Andrea Tagliasacchi
 
 \todo clean up the algorithm description section and publish it
 
@@ -123,9 +123,7 @@ Different resolutions of the model obtained by loop subdivision are used.
 
 As can be seen on \cgalFigureRef{MCFBenchComp}, the more sampled is the
 surface, the better the skeleton is inside the model.
-The Voronoi poles computed may contain noise if the sampling is not dense enough.
-As the mesh quality increases, the quality of the poles computed is
-improved and so is the skeleton.
+
 
 \cgalFigureBegin{MCFBenchComp, comparison.png}
 Skeleton of the head of the elephant model.

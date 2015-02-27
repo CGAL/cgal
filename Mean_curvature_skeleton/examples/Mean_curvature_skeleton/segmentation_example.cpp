@@ -17,8 +17,8 @@ typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_desc
 typedef boost::graph_traits<Polyhedron>::halfedge_descriptor         halfedge_descriptor;
 typedef boost::graph_traits<Polyhedron>::face_descriptor             face_descriptor;
 
-typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron>        Mean_curvature_skeleton;
-typedef Mean_curvature_skeleton::Skeleton                            Skeleton;
+typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron>        Skeletonization;
+typedef Skeletonization::Skeleton                                    Skeleton;
 
 typedef Skeleton::vertex_descriptor                                  Skeleton_vertex;
 
@@ -45,15 +45,11 @@ private:
 };
 
 
-int main()
+int main(int argc, char* argv[])
 {
+  std::ifstream input((argc>1)?argv[1]:"data/161.off");
   Polyhedron tmesh;
-  std::ifstream input("data/161.off");
-
-  if ( !input || !(input >> tmesh) || tmesh.empty() ) {
-    std::cerr << "Cannot open data/161.off" << std::endl;
-    return 1;
-  }
+  input >> tmesh;
 
   // extract the skeleton
   Skeleton skeleton;

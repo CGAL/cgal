@@ -497,7 +497,7 @@ public:
   }
 
   /// If `true`, the result skeleton is medially centered (an additional energy
-  /// is used during the contraction using the poles of the input triangulated mesh
+  /// is used during the contraction using the Voronoi poles of the input triangulated mesh
   /// as attractors).
   bool is_medially_centered()
   {

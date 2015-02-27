@@ -12,25 +12,20 @@ typedef CGAL::Polyhedron_3<Kernel>                            Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
 
-typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron> Mean_curvature_skeleton;
-typedef Mean_curvature_skeleton::Skeleton                     Skeleton;
+typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron> Skeletonization;
+typedef Skeletonization::Skeleton                             Skeleton;
 
 typedef Skeleton::vertex_descriptor                           Skeleton_vertex;
 typedef Skeleton::edge_iterator                               Skeleton_edge;
 
 
-int main()
+int main(int argc, char* argv[])
 {
+  std::ifstream input((argc>1)?argv[1]:"data/sindorelax.off");
   Polyhedron tmesh;
-  std::ifstream input("data/sindorelax.off");
-
-  if ( !input || !(input >> tmesh) || tmesh.empty() ) {
-    std::cerr << "Cannot open data/sindorelax.off" << std::endl;
-    return 1;
-  }
 
   Skeleton skeleton;
-  Mean_curvature_skeleton mcs(tmesh);
+  Skeletonization mcs(tmesh);
 
   // 1. Contract the mesh by mean curvature flow.
   mcs.contract_geometry();
