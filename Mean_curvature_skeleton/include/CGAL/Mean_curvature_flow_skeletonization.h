@@ -509,7 +509,7 @@ public:
   /// increasing this value results in a skeleton closer
   /// to the medial axis, but slows down the speed of contraction.
   /// It is only used if `is_medially_centered()==true`.
-  /// This parameter corresponds to \f$ w_L/w_H \f$ in the original publication.
+  /// This parameter corresponds to \f$ w_L/w_M \f$ in the original publication.
   /// \cgalAdvancedEnd
   double medially_centered_speed_tradeoff()
   {
