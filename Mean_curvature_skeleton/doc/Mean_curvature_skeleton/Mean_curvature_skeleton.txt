@@ -128,7 +128,7 @@ As the mesh quality increases, the quality of the poles computed is
 improved and so is the skeleton.
 
 \cgalFigureBegin{MCFBenchComp, comparison.png}
-Skeleton of the elephant model.
+Skeleton of the head of the elephant model.
 Left: Using the original mesh (2,775 vertices);
 Middle: After one loop subdivision step (11,112 vertices);
 Right: After two loop subdivision steps (44,460 vertices).
