@@ -15,74 +15,63 @@ typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
 typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron> Mean_curvature_skeleton;
 typedef Mean_curvature_skeleton::Skeleton                     Skeleton;
 
-typedef boost::graph_traits<Skeleton>::vertex_descriptor      vertex_desc;
-typedef boost::graph_traits<Skeleton>::vertex_iterator        vertex_iter;
-typedef boost::graph_traits<Skeleton>::edge_iterator          edge_iter;
+typedef Skeleton::vertex_descriptor                           Skeleton_vertex;
+typedef Skeleton::edge_iterator                               Skeleton_edge;
 
 
 int main()
 {
-  Polyhedron mesh;
+  Polyhedron tmesh;
   std::ifstream input("data/sindorelax.off");
 
-  if ( !input || !(input >> mesh) || mesh.empty() ) {
+  if ( !input || !(input >> tmesh) || tmesh.empty() ) {
     std::cerr << "Cannot open data/sindorelax.off" << std::endl;
     return 1;
   }
 
   Skeleton skeleton;
-  Mean_curvature_skeleton mcs(mesh);
+  Mean_curvature_skeleton mcs(tmesh);
 
   // 1. Contract the mesh by mean curvature flow.
   mcs.contract_geometry();
 
   // 2. Collapse short edges and split bad triangles.
-  mcs.remesh();
+  mcs.collapse_edges();
+  mcs.split_faces();
 
   // 3. Fix degenerate vertices.
   mcs.detect_degeneracies();
 
   // Perform the above three steps in one iteration.
   mcs.contract();
-#if 0
+
   // Iteratively apply step 1 to 3 until convergence.
   mcs.contract_until_convergence();
 
-  // Convert the contracted mesh into a curve skeleton and 
+  // Convert the contracted mesh into a curve skeleton and
   // get the correspondent surface points
   mcs.convert_to_skeleton(skeleton);
 
-  std::cout << "vertices: " << num_vertices(skeleton) << "\n";
-  std::cout << "edges: " << num_edges(skeleton) << "\n";
+  std::cout << "Number of vertices of the skelton: " << boost::num_vertices(skeleton) << "\n";
+  std::cout << "Number of edges of the skelton: " << boost::num_edges(skeleton) << "\n";
 
-  // Output all the edges.
-  edge_iter ei, ei_end;
-  for (boost::tie(ei, ei_end) = edges(skeleton); ei != ei_end; ++ei)
+  // Output all the edges of the skeleton.
+  BOOST_FOREACH(Skeleton_edge e, edges(skeleton))
   {
-    Point s = skeleton[source(*ei, skeleton)].point;
-    Point t = skeleton[target(*ei, skeleton)].point;
+    const Point& s = skeleton[source(e, skeleton)].point;
+    const Point& t = skeleton[target(e, skeleton)].point;
     std::cout << s << " " << t << "\n";
   }
 
-
-  // Output skeletal points and the corresponding surface points.
-  vertex_iter gvb, gve;
-  for (boost::tie(gvb, gve) = vertices(skeleton); gvb != gve; ++gvb)
+  // Output skeleton points and the corresponding surface points
+  BOOST_FOREACH(Skeleton_vertex v, vertices(skeleton))
   {
-    vertex_desc gv = *gvb;
-    Point skel = skeleton[gv].point;
-    std::cout << skel << ": ";
+    std::cout << skeleton[v].point << ": ";
 
-    for (size_t i = 0; i < skeleton[gv].vertices.size(); ++i)
-    {
-      vertex_descriptor v = skeleton[gv].vertices[i];
-      Point surf = v->point();
-      std::cout << surf << " ";
-    }
+    BOOST_FOREACH(vertex_descriptor vd, skeleton[gv].vertices)
+      std::cout << get(CGAL::vertex_point, tmesh, vd)  << " ";
     std::cout << "\n";
   }
-#endif
-  
   return 0;
 }
 

@@ -1,13 +1,14 @@
 namespace CGAL {
 /*!
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_3D_Mean_Curvature_Skeleton
 
 \cgalAutoToc
 \author Andreas Fabri, Xiang Gao, Sébastien Loriot and Andrea Tagliasacchi
 
-\section MCFSkelSecMot Introduction
+\todo clean up the algorithm description section and publish it
 
+\section MCFSkelSecMot Introduction
 
 \cgalFigureBegin{Main_image_suggestion, main_image_suggestion.png}
 Curve skeleton of a horse model.
@@ -16,25 +17,140 @@ Curve skeleton of a horse model.
 Skeletons are effective shape abstractions used in segmentation, shape
 matching, reconstruction, virtual navigation, etc. As the name
 implies, a curve skeleton is a graph of curvilinear structures (1D),
-that is it is not a <a
-href="http://en.wikipedia.org/wiki/Medial_axis"><em>medial
-axis</em></a> that for 3D geometry is composed of surfaces (2D). As
+that is it is not a medial axis that for 3D geometry is composed of surfaces (2D). As
 illustrated in \cgalFigureRef{Main_image_suggestion}, the curve
 skeleton of a shape captures its essential topology. In this package,
-we implement the "Mean Curvature Skeleton" algorithm described in
+we implement the <i>Mean Curvature Skeleton</i> algorithm described in
 \cgalCite{tagliasacchi2012mean} that extracts a curve skeleton from a
-triangulated polygonal mesh without borders.
+triangulated surface mesh without borders by iteratively contracting the
+input triangulated surface mesh.
 
-\section MCFSkelSecAlgo Algorithm Description
+\section MCFSkelSecAPI User Interface Description
 
-\cgalFigureBegin{Iterations, iterations.png}
-Three iterations of mean curvature flow contraction of the horse in
-figure \cgalFigureRef{Main_image_suggestion}. The red points indicate
+\subsection MCFSkelSecAPI-IO Input and Output
+
+The input is a triangulated surface mesh, model of the `HalfedgeGraph`
+concept that has no boundary and that has only one connected component.
+The skeleton is provided as a graph of type
+<a href="http://www.boost.org/doc/libs/release/libs/graph/doc/adjacency_list.html"><code>boost::adjacency_list</code></a>.
+Each vertex of a the skeleton is associated a 3D location point and the
+set of input vertices that contracted to that skeleton vertex.
+Note that due the construction process of the skeleton, a
+skeleton vertex might have no corresponding input vertex.
+
+This package needs a sparse linear solver and we recommend the use of
+\ref thirdpartyEigen 3.2 or later.
+
+The input and output are illustrated in \cgalFigureRef{MCFInputOutput}.
+
+\cgalFigureBegin{MCFInputOutput, correspondence.png}
+Left: An input triangulated surface mesh model of an octopus;
+Middle: The mean curvature flow skeleton extracted using this package;
+Right: Each vertex of the input surface is associated a skeleton vertex.
+\cgalFigureEnd
+
+\subsection MCFSkelSecAPI-FF Free Function
+If a \cgal model of the `HalfedgeGraph` concept such as
+`CGAL::Surface_mesh` or `CGAL::Polyhedron_3` is used as triangulated
+input surface mesh and \ref thirdpartyEigen 3.2 or later is available
+and `CGAL_EIGEN3_ENABLED` is defined, the function
+`CGAL::extract_mean_curvature_flow_skeleton()` can be used to
+extract a mean curvature flow skeleton from the input surface mesh
+using the default parameters, which work well in most cases.
+
+The following example shows how to extract a skeleton out of a triangulated
+surface mesh and how to access the point of each skeleton vertex and the
+set of input vertices associated.
+
+\cgalExample{Mean_curvature_skeleton/simple_mcfskel_example.cpp}
+
+
+\subsection MCFSkelSecAPI-AUUFO Advanced Usage with the Function Object
+
+
+The class `CGAL::Mean_curvature_flow_skeletonization` enables the
+usage of low level functions such as \link
+CGAL::Mean_curvature_flow_skeletonization::contract_geometry()
+`contract_geometry()`\endlink and \link
+CGAL::Mean_curvature_flow_skeletonization::collapse_edges()
+`collapse_edges()`\endlink. The class further enables to change the
+parameters of the algorithm, for example by calling \link
+CGAL::Mean_curvature_flow_skeletonization::is_medially_centered()
+`set_is_medially_centered()`\endlink.  The class gives the user full
+control over each step of the algorithm as well as the intermediate
+contracted mesh (called <i>meso-skeleton</i>) as illustrated by
+\cgalFigureRef{MCFMesoSkel}.
+
+\cgalFigureBegin{MCFMesoSkel, iterations.png}
+Three iterations of the mean curvature flow contraction of the horse of
+\cgalFigureRef{Main_image_suggestion}. The red points indicate
 vertices where the surface has locally degenerated to a curvilinear
 structure.
 \cgalFigureEnd
 
-<!-- <b>Algorithm Core.</b> -->
+In this example, we show how to use the API from
+`CGAL::Mean_curvature_flow_skeletonization` class.
+
+\cgalExample{Mean_curvature_skeleton/MCF_Skeleton_example.cpp}
+
+
+\subsection Mesh Segmentation through Skeletonization
+As a proof of concept, we show how to use the skeleton and the
+association of input vertices to skeleton to compute a segmentation
+of the input triangulated surface mesh using the package
+\ref PkgSurfaceSegmentationSummary.
+The segmentation algorithm consists in computing a <i>shape diameter function</i>
+for each face of the input mesh, followed by solving a graph cut problem.
+Here we use the skeleton to define a new shape diameter function.
+Specifically, for each face we compute the diameter value as
+the average distance between its three incident vertices and their
+corresponding skeletal point.
+The result of this segmentation is shown in \cgalFigureRef{Segmentation}.
+
+\cgalFigureBegin{Segmentation, segmentation.png}
+Left: Curve skeleton extracted of a triangulated surface mesh;
+Right: Segmentation using the skeleton to compute a shape diamater function.
+\cgalFigureEnd
+
+\cgalExample{Mean_curvature_skeleton/segmentation_example.cpp}
+
+
+\section MCFSkelSecEvaluation Performance
+
+The elephant model is used to illustrate the performance of the
+mean curvature flow skeletonization procedure.
+Different resolutions of the model obtained by loop subdivision are used.
+
+As can be seen on \cgalFigureRef{MCFBenchComp}, the more sampled is the
+surface, the better the skeleton is inside the model.
+The Voronoi poles computed may contain noise if the sampling is not dense enough.
+As the mesh quality increases, the quality of the poles computed is
+improved and so is the skeleton.
+
+\cgalFigureBegin{MCFBenchComp, comparison.png}
+Skeleton of the elephant model.
+Left: Using the original mesh (2,775 vertices);
+Middle: After one loop subdivision step (11,112 vertices);
+Right: After two loop subdivision steps (44,460 vertices).
+\cgalFigureEnd
+
+Runtime in milliseconds of `extract_mean_curvature_flow_skeleton()` using
+`CGAL::Polyhedron_3<Simple_cartesian<double> >`. The code was compiled with
+clang version 4.1 with <code>-O3</code> as compiling flags and was run on a
+Intel(R) Core(TM) i5-3427U CPU @ 1.80GHz
+
+
+<center>
+Number of vertices  | Runtime in ms |
+--------------------| -----------:  |
+2,775               |    1,097      |
+11,112              |    3,595      |
+44,460              |   14,841      |
+</center>
+
+\if SKIP_FOR_SBUMISSION
+
+\section MCFSkelSecAlgo Algorithm Description
 
 <em>Mean Curvature Flow</em> (MCF) is a motion where each point on the
 surface is moved in a direction opposite to its normal with a speed
@@ -43,7 +159,7 @@ connected to its area minimization and anisotropic distortion
 properties; see \cgalCite{tagliasacchi2012mean} for details. In curve
 skeletonization, MCF is employed to iteratively contract (i.e. by
 reducing its area) the mesh geometry until it locally
-<em>degenerates</em> into a curve; see \cgalFigureRef{Iterations}. The
+<em>degenerates</em> into a curve; see \cgalFigureRef{MCFMesoSkel}. The
 contraction process halts when the surface area of the whole mesh has
 vanished by checking if \f$ |\mathrm{area}_{i} - \mathrm{area}_{i-1}|
 \lt \mathrm{delta\_area} \times \mathrm{original\_area}\f$ (\f$
@@ -62,7 +178,7 @@ set to 0.1. There is a tradeoff between speed and accuracy. With
 higher `quality_speed_tradeoff()`, the algorithm converges quickly, however the result
 is less accurate.
 
-<b>Medial Centering.</b> 
+<b>Medial Centering.</b>
 The curve skeletons extracted by MCF only are not guaranteed to
 <em>lie medially</em> within the shape. To overcome this problem, the
 flow can be augmented with an attraction force that pulls the geometry
@@ -73,7 +189,7 @@ the surface is sufficiently densely sampled
 \cgalCite{amenta2001power}. The density of the mesh also affect the
 quality of poles. If the sampling of the mesh is not dense enough, the
 poles tend to contain noise, and would lead to skeletons of bad
-quality as can be seen in \cgalFigureRef{Comparison}. We provide the
+quality as can be seen in \cgalFigureRef{MCFBenchComp}. We provide the
 user a parameter `medially_centered_speed_tradeoff()` to control the degree to which the surface
 is attracted to the medial axis. Some initial experiments suggest
 setting `medially_centered_speed_tradeoff()` to 0.1 or 0.2 is a good choice. The medial criteria
@@ -81,7 +197,7 @@ can also be turned off by calling \link
 CGAL::Mean_curvature_flow_skeletonization::is_medially_centered()
 `CGAL::Mean_curvature_flow_skeletonization::set_is_medially_centered(false)`\endlink.
 
-<b>Local remeshing.</b> 
+<b>Local remeshing.</b>
 While the anisotropic effects of MCF are essential for
 curve-skeletonization, this has the side effect of progressively
 degrading the quality of the triangulation. As a low quality
@@ -92,8 +208,6 @@ shorter than `min_edge_length()` and we split edges whose opposite
 angle is greater than `max_triangle_angle()`. By default `min_edge_length()` is
 set to 0.002 times the length of the diagonal of the bounding box of
 the original mesh while `max_triangle_angle()` is \f$ 110 ^{\circ} \f$.
-
-\section MCFSkelSecAlgoDetailed Detailed Algorithm Description
 
 The flowchart of the algorithm is shown in
 \cgalFigureRef{Flowchart}. In the remaining of this section, we
@@ -115,12 +229,12 @@ instead:
   \left[\begin{array}{c}
   L\\
   W_{H}
-  \end{array}\right] 
-  V^{t+1} = 
+  \end{array}\right]
+  V^{t+1} =
   \left[\begin{array}{c}
   0\\
   W_{H}V^{t}
-  \end{array}\right] 
+  \end{array}\right]
   \label{eq:regularized_equation}
 \end{equation}
 \f]
@@ -182,13 +296,13 @@ to:
   L\\
   W_{H}\\
   W_{P}
-  \end{array}\right] 
-  V^{t+1} = 
+  \end{array}\right]
+  V^{t+1} =
   \left[\begin{array}{c}
   0\\
   W_{H}V^{t}\\
   W_{P}P^{t}
-  \end{array}\right] 
+  \end{array}\right]
   \label{eq:medial_equation}
 \end{equation}
 \f]
@@ -200,148 +314,7 @@ need to update the pole. In particular, we position the new vertex to
 the middle point of the collapsed edge and choose the closest pole
 from the poles of the two incident vertices of the edge.
 
-
-\section MCFSkelSecAPI User Interface Description
-
-\todo maximal curves extracted?
-
-The curve skeleton can be extracted by the free function
-`CGAL::extract_mean_curvature_flow_skeleton()`. This function extracts
-a skeleton from the given mesh using the default parameters, that is
-the skeleton extracted is medially centered and XXX , which works well
-in most cases.
-
-The class `CGAL::Mean_curvature_flow_skeletonization` enables the
-usage of low level functions such as \link
-CGAL::Mean_curvature_flow_skeletonization::contract_geometry()
-`contract_geometry()`\endlink and \link
-CGAL::Mean_curvature_flow_skeletonization::collapse_edges()
-`collapse_edges()`\endlink. The class further enables to change the
-parameters of the algorithm, for example by calling \link
-CGAL::Mean_curvature_flow_skeletonization::is_medially_centered()
-`set_is_medially_centered()`\endlink.  The class gives the user full
-control over each step of the algorithm. The demo of the package \ref
-PkgPolyhedronSummary contains a plugin using the API of
-`CGAL::Mean_curvature_flow_skeletonization`. \cgalFigureRef{Demo}
-shows an example of an interactive demo. In the example code, we show
-how to call those functions.
-
-\cgalFigureBegin{Demo, demo.png}
-A screenshot of the interactive demo.
-\cgalFigureEnd
-
-The algorithm also tracks the correspondence between skeleton points and input vertices.
-
-The corresponding points for a skeletal vertex are original surface
-points that are collapsed onto the skeletal vertex. They are useful
-for tasks such as mesh segmentation. In
-\cgalFigureRef{Correspondence}, we visualize such relationship by
-connecting each skeletal point to its corresponding points.
-
-\cgalFigureBegin{Correspondence, correspondence.png}
-Every skeletal point is connected to its corresponding surface points.
-\cgalFigureEnd
-
-As a proof of concept, we show an example of doing mesh segmentation
-with the skeleton extracted by this package. In the package \ref
-PkgSurfaceSegmentationSummary, the first step is computing a shape
-diameter value, and the second step is solving a graph cut
-problem. Here we use our skeleton to compute the the shape diameter
-value. Specifically, we compute the diameter value for each face as
-the average distance between its three incident vertices and their
-corresponding skeletal point. Then we plug the diameter values into
-the graph cut algorithm of the segmentation package to get a
-continuous mesh segmentation. We show a sample segmentation in
-\cgalFigureRef{Segmentation}.
-
-\cgalFigureBegin{Segmentation, segmentation.png}
-On the left is the curve skeleton extracted from the mesh. On the
-right is the segmentation result utilizing the skeleton.
-\cgalFigureEnd
-
-\note Due to the remeshing step (the edge split) in the algorithm, a
-given skeleton point might have no corresponding surface point.
-
-\subsection MCFSkelSecExamples Skeletonization Examples
-
-In all examples the graph type representing the skeleton,that is
-`Mean_curvature_flow_skeletonization::Skeleton`,
-is defined as 
-`boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Vmap>`
-where the vertex property `Vmap` is a struct with a member 
-`point` of type `Traits::Point_3`, and a member `vertices` of type 
-`std::vector<boost::graph_traits<TriangleMesh>::%vertex_descriptor>`.
-
-\subsubsection Example_1 Extract Skeleton With Free Function
-
-In this example, we extract the skeleton automatically by using the
-provided free function.
-
-
-\cgalExample{Mean_curvature_skeleton/simple_mcfskel_example.cpp}
-
-\subsubsection Example_2 Extract Skeleton With the  MCF Skeletonization Class
-
-In this example, we show how to use the API from
-`CGAL::Mean_curvature_flow_skeletonization` class.
-
-\cgalExample{Mean_curvature_skeleton/MCF_Skeleton_example.cpp}
-
-\subsubsection Example_3 Mesh Segmentation With a Curve Skeleton
-
-In this example, we show how to do mesh segmentation with the extracted skeleton.
-
-\cgalExample{Mean_curvature_skeleton/segmentation_example.cpp}
-
-\section MCFSkelSecEvaluation Performance
-
-We use the elephant model as an example to evaluate the running time
-of different sizes of the models. Loop subdivision is performed on the
-model to increase the number of vertices. \cgalFigureRef{Comparison}
-shows the extracted skeleton for each model. From the result we can
-see the skeleton is not completely inside the mesh if the model is not
-sufficiently sampled. The reason is the Voronoi poles may contain
-noise if the sampling is not dense. As we increase the level of
-sampling, the quality of the poles improves and so does the quality of
-the skeleton.
-
-\cgalFigureBegin{Comparison, comparison.png}
-(a) original mesh  (b) after one loop subdivision step (c) after two loop subdivision steps
-\cgalFigureEnd
-
-We have recorded the running time of the algorithm. The CPU of the
-test machine is Intel(R) Core(TM) i5-3427U CPU @ 1.80GHz. The code is
-compiled with clang version 4.1 in Release mode and '-O3' as compiling
-flags. The sparse solver used in the experiment is
-`Eigen::SparseLU`. The running time includes the time of computing
-Voronoi poles and contracting the meshes.
-
-<center>
-<table border="1">
-<tr>
-	<td align='center'> Model </td>
-	<td align='center'> Number of vertices </td>
-	<td align='center'> Time </td>
-</tr>
-<tr>
-	<td align='center'> a </td>
-	<td align='right'> 2,775 </td>
-	<td align='right'> 1,097ms </td>
-</tr>
-<tr>
-	<td align='center'> b </td>
-	<td align='right'> 11,112 </td>
-	<td align='right'> 3,595ms </td>
-</tr>
-<tr>
-	<td align='center'> c </td>
-	<td align='right'> 44,460 </td>
-	<td align='right'> 14,841ms </td>
-</tr>
-</table>
-</center>
-
-\todo the benchmark should also contains something about `quality_speed_tradeoff()` and `medially_centered_speed_tradeoff()`
+\endif
 
 \section MCFSkelSecDesign Design and Implementation History
 
@@ -350,6 +323,6 @@ of Xiang Gao during the 2013 season of the Google Summer of Code
 mentored by Andrea Tagliasacchi and Sébastien Loriot. It was finalized
 by Andreas Fabri and Sébastien Loriot.
 
-*/ 
+*/
 } /* namespace CGAL */
 

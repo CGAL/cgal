@@ -14,7 +14,7 @@
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
 \cgalPkgDependsOn{Sparse symmetric solver such as those from \ref thirdpartyEigen and
-<a href="http://www.boost.org/doc/libs/release/libs/graph/doc/adjacency_list.html">boost::adjacency_list</a>}
+<a href="http://www.boost.org/doc/libs/release/libs/graph/doc/adjacency_list.html"><code>boost::adjacency_list</code></a>}
 \cgalPkgBib{cgal:glt-tsms}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{See Polyhedral Surface,polyhedron_3.zip}

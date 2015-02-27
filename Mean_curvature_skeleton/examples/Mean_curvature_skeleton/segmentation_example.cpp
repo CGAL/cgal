@@ -1,5 +1,5 @@
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polyhedron_items_with_id_3.h>
+#include <CGAL/Polyhedron_items_with_id_3>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Simple_cartesian.h>
@@ -13,76 +13,90 @@ typedef CGAL::Simple_cartesian<double>                               Kernel;
 typedef Kernel::Point_3                                              Point;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 
-typedef Polyhedron::Facet_iterator                                   Facet_iterator;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_iterator             vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::halfedge_descriptor         halfedge_descriptor;
+typedef boost::graph_traits<Polyhedron>::face_descriptor             face_descriptor;
 
 typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron>        Mean_curvature_skeleton;
 typedef Mean_curvature_skeleton::Skeleton                            Skeleton;
 
-typedef boost::graph_traits<Skeleton>::vertex_descriptor             vertex_desc;
-typedef boost::graph_traits<Skeleton>::vertex_iterator               vertex_iter;
+typedef Skeleton::vertex_descriptor                                  Skeleton_vertex;
+
+// Property map associating a facet with an integer as id to an
+// element in a vector stored internally
+template<class ValueType>
+struct Facet_with_id_pmap
+    : public boost::put_get_helper<ValueType&,
+             Facet_with_id_pmap<ValueType> >
+{
+    typedef face_descriptor key_type;
+    typedef ValueType value_type;
+    typedef value_type& reference;
+    typedef boost::lvalue_property_map_tag category;
+
+    Facet_with_id_pmap(
+      std::vector<ValueType>& internal_vector
+    ) : internal_vector(internal_vector) { }
+
+    reference operator[](key_type key) const
+    { return internal_vector[key->id()]; }
+private:
+    std::vector<ValueType>& internal_vector;
+};
+
 
 int main()
 {
-  Polyhedron mesh;
+  Polyhedron tmesh;
   std::ifstream input("data/161.off");
 
-  if ( !input || !(input >> mesh) || mesh.empty() ) {
+  if ( !input || !(input >> tmesh) || tmesh.empty() ) {
     std::cerr << "Cannot open data/161.off" << std::endl;
     return 1;
   }
 
+  // extract the skeleton
   Skeleton skeleton;
- 
-  CGAL::extract_mean_curvature_flow_skeleton(mesh, skeleton);
+  CGAL::extract_mean_curvature_flow_skeleton(tmesh, skeleton);
 
-  // create a property-map for sdf values (it is an adaptor for this case)
-  typedef std::map<Polyhedron::Facet_const_handle, double> Facet_double_map;
-  Facet_double_map internal_sdf_map;
-  boost::associative_property_map<Facet_double_map> sdf_property_map(internal_sdf_map);
+  // init the polyhedron simplex indices
+  CGAL::set_halfedgeds_items_id(tmesh)
 
-  std::vector<double> distances;
-  distances.resize(boost::num_vertices(mesh));
-
-  vertex_iter gvb, gve;
-  for (boost::tie(gvb, gve) = boost::vertices(skeleton); gvb != gve; ++gvb)
+  //for each input vertex compute its distance to the skeleton
+  std::vector<double> distances(num_vertices(tmesh));
+  BOOST_FOREACH(Skeleton_vertex v, vertices(skeleton) )
   {
-    vertex_desc gv = *gvb;
-    Point skel = skeleton[gv].point;
-    for (size_t i = 0; i < skeleton[gv].vertices.size(); ++i)
+    const Point& skel = skeleton[gv].point;
+    BOOST_FOREACH(vertex_descriptor mesh_v, vertices(tmesh))
     {
-      Point surf = skeleton[gv].vertices[i]->point();
-      distances[skeleton[gv].vertices[i]] = sqrt(squared_distance(skel, surf));
+      const Point& mesh_point = skeleton[gv].vertices[i]->point();
+      distances[mesh_v->id()] = std::sqrt(CGAL::squared_distance(skel, surf));
     }
   }
 
+  // create a property-map for sdf values
+  std::vector<double> sdf_values;
+  Facet_with_id_pmap<double> sdf_property_map(sdf_values);
+
   // compute sdf values with skeleton
-  for (Facet_iterator f = mesh.facets_begin(); f != mesh.facets_end(); ++f)
+  BOOST_FOREACH(face_descriptor f, faces(tmesh))
   {
-    Polyhedron::Halfedge_const_handle he = f->facet_begin();
-    int vid1 = he->vertex()->id();
-    int vid2 = he->next()->vertex()->id();
-    int vid3 = he->next()->next()->vertex()->id();
-    double dis1 = distances[vid1];
-    double dis2 = distances[vid2];
-    double dis3 = distances[vid3];
-    double avg_dis = (dis1 + dis2 + dis3) / 3.0;
-    sdf_property_map[f] = avg_dis;
+    double dist = 0;
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(f, tmesh))
+      dist+=distances[target(hd, tmesh)->id()];
+    sdf_property_map[f] = dist / 3.;
   }
 
-  CGAL::sdf_values_postprocessing(mesh, sdf_property_map);
+  // post-process the sdf values
+  CGAL::sdf_values_postprocessing(tmesh, sdf_property_map);
 
   // create a property-map for segment-ids (it is an adaptor for this case)
-  typedef std::map<Polyhedron::Facet_const_handle, int> Facet_int_map;
-  Facet_int_map internal_segment_map;
-  boost::associative_property_map<Facet_int_map> segment_property_map(internal_segment_map);
+  std::vector<int> segment_ids;
+  Facet_with_id_pmap<double> segment_property_map(segment_ids);
 
-  // segment the mesh using default parameters for number of levels, and smoothing lambda
-  // Note that you can use your own scalar value, instead of using SDF calculation computed using the CGAL function
-  int number_of_segments = CGAL::segmentation_from_sdf_values(mesh, sdf_property_map, segment_property_map);
-  std::cout << "Number of segments: " << number_of_segments << std::endl;
+  // segment the mesh using default parameters
+  std::cout << "Number of segments: "
+            << CGAL::segmentation_from_sdf_values(tmesh, sdf_property_map, segment_property_map) <<"\n";
 
   return 0;
 }
