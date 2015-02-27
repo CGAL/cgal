@@ -17,8 +17,8 @@
 // Author(s)     : Sebastien Loriot
 //
 
-#ifndef CGAL_MEAN_CURVATURE_SKELETON_FUNCTIONS_H
-#define CGAL_MEAN_CURVATURE_SKELETON_FUNCTIONS_H
+#ifndef CGAL_EXTRACT_MEAN_CURVATURE_FLOW_SKELETON_H
+#define CGAL_EXTRACT_MEAN_CURVATURE_FLOW_SKELETON_H
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
@@ -27,7 +27,7 @@
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
 #endif
 
-#include <CGAL/Mean_curvature_skeleton.h>
+#include <CGAL/Mean_curvature_flow_skeletonization.h>
 
 namespace CGAL{
 
@@ -100,4 +100,4 @@ void extract_mean_curvature_flow_skeleton(const TriangleMesh& tmesh,
 
 }// end of namespace CGAL
 
-#endif //CGAL_MEAN_CURVATURE_SKELETON_FUNCTIONS_H
+#endif //CGAL_EXTRACT_MEAN_CURVATURE_FLOW_SKELETON_H

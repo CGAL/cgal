@@ -17,8 +17,8 @@
 // Author(s)     : Xiang Gao <gaox@ethz.ch>
 //
 
-#ifndef CGAL_MEAN_CURVATURE_SKELETON_H
-#define CGAL_MEAN_CURVATURE_SKELETON_H
+#ifndef CGAL_MEAN_CURVATURE_FLOW_SKELETONIZATION_H
+#define CGAL_MEAN_CURVATURE_FLOW_SKELETONIZATION_H
 
 #include <CGAL/trace.h>
 #include <CGAL/Timer.h>
@@ -1658,4 +1658,4 @@ private:
 
 } //namespace CGAL
 
-#endif // CGAL_MEAN_CURVATURE_SKELETON_H
+#endif // CGAL_MEAN_CURVATURE_FLOW_SKELETONIZATION_H
