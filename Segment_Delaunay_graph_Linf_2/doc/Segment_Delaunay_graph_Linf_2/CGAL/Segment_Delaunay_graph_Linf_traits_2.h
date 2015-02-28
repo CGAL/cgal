@@ -8,6 +8,9 @@ The class `Segment_Delaunay_graph_Linf_traits_2` provides a model for the
 `SegmentDelaunayGraphLinfTraits_2` concept.
 The class is derived from class
 `CGAL::Segment_Delaunay_graph_traits_2<K,MTag>`.
+We refer to the documentation of the base class
+`CGAL::Segment_Delaunay_graph_traits_2<K,MTag>`
+for an explanation of the template parameters.
 
 \cgalModels `SegmentDelaunayGraphLinfTraits_2`
 
@@ -34,6 +37,9 @@ provides a model for the
 `SegmentDelaunayGraphLinfTraits_2` concept.
 The class is derived from class
 `CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>`.
+We refer to the documentation of the base class
+`CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>`
+for an explanation of the template parameters.
 
 \cgalModels `SegmentDelaunayGraphLinfTraits_2`
 
