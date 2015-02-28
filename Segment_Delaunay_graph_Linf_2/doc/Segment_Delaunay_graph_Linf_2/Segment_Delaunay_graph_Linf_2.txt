@@ -108,7 +108,7 @@ one of its endpoints and its 1-dimensionalization.
 \section secsdglinfdesign Software Design
 
 In general, the software design of the algorithms and traits for the
-\f$ L_{\infty} \f$ Segment Delaunay graph rely on the
+\f$ L_{\infty} \f$ segment Delaunay graph rely on the
 corresponding algorithms and traits for the \f$ L_{2} \f$ Segment
 Delaunay graph. We implement the \f$ L_{\infty} \f$ classes as
 subclasses of corresponding \f$ L_{2} \f$ classes from the
@@ -119,12 +119,12 @@ For more details, see \cgalCite{cdgp-icms-2014}.
 
 The order of complexity of the construction of the \f$ L_{\infty}
 \f$ diagram is the same as the one of the \f$ L_{2} \f$ diagram
-and thus we refer the end user to the 2D Segment Delaunay graph
-manual for complexity analysis.
+and thus we refer the end user to \cgalCite{cgal:k-reisv-04}
+for complexity analysis.
 
 \subsection Segment_Delaunay_graph_Linf_2_Graph Segment Delaunay Graph
 
-The  \f$ L_{\infty} \f$ Segment Delaunay graph class template
+The  \f$ L_{\infty} \f$ segment Delaunay graph class template
 `Segment_Delaunay_graph_Linf_2<SegmentDelaunayGraphLinfTraits_2,SegmentDelaunayGraphDataStructure_2>`
 is derived from the class template
 `Segment_Delaunay_graph_2`.
@@ -141,7 +141,8 @@ wherever possible, but there are
 extensive differences. We support geometric and arithmetic
 filtering, as the \f$ L_{2} \f$ predicates do.
 For more details
-on these filtering techniques, see the Segment Delaunay graph package manual.
+on these filtering techniques, see Section \ref secsdg2traits
+of the segment Delaunay graph package manual.
 
 In analogy with the  \f$ L_{2} \f$ setting,
 there are four models of the `SegmentDelaunayGraphLinfTraits_2`
@@ -151,8 +152,9 @@ concept, two of which support strongly intersecting sites
 and two of which support sites without intersections
 (`Segment_Delaunay_graph_Linf_traits_without_intersections_2`,
 `Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2`).
-For more details,
-see the Segment Delaunay graph package manual.
+Refer to Subsection \ref Segment_Delaunay_graph_2OptimizingMemory
+of the segment Delaunay graph package manual, which explains when
+to use each of these traits.
 
 
 \subsection Segment_Delaunay_graph_Linf_2_Hierarchy Segment Delaunay Graph Hierarchy
@@ -162,9 +164,11 @@ The
 class is equivalent to the Segment_Delaunay_graph_hierarchy_2,
 but it uses the `Segment_Delaunay_graph_Linf_2` class in each
 level of the hierarchy instead of `Segment_Delaunay_graph_2`.
-We refer the end user to the 
-Segment Delaunay graph package manual for a comparison of the
-performance of the plain graph class and the hierarchy class.
+For a comparison of the
+performance of the plain graph class and the hierarchy class,
+we refer the end user to
+Section \ref secsdg2hierarchy of
+the segment Delaunay graph package manual.
 
 \subsection secsdglinfVD Obtaining the Voronoi Diagram from the Delaunay Graph
 
@@ -177,7 +181,7 @@ from the \f$ L_{\infty} \f$ segment Delaunay graph (or hierarchy).
 The following examples show the usage of the \f$ L_{\infty} \f$
 algorithm and traits.
 They are similar to the examples in the \f$ L_{2} \f$
-Segment Delaunay graph package.
+segment Delaunay graph package.
 
 \subsection Segment_Delaunay_graph_Linf_2FirstExample First Example using the Filtered Traits
 
