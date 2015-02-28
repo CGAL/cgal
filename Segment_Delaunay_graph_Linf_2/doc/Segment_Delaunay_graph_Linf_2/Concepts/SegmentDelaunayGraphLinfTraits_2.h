@@ -7,12 +7,13 @@ for constructing the segment Delaunay graph under the
 \f$ L_{\infty} \f$ distance.
 The segment Delaunay graph is the dual of the segment Voronoi diagram.
 We stress that we consider the 1-dimensionalization of \f$ L_{\infty} \f$
-bisectors between two sites, that is explained in the User Manual,
+bisectors between two sites which is explained in
+Section \ref subsecbis1dim of the User Manual,
 and this reflects on the constructed graph (and
 its dual diagram).
-These traits should be used in the Gt template parameter with the
+These traits should be used in the Gt template parameter of the
 `CGAL::Segment_Delaunay_graph_Linf_2<Gt,DS>` and
-`CGAL::Segment_Delaunay_graph_Linf_hierarchy_2<Gt,STag,DS>` classes.
+`CGAL::Segment_Delaunay_graph_Linf_hierarchy_2<Gt,STag,DS>` class templates.
 The concept is a refinement of `SegmentDelaunayGraphTraits_2`.
 In particular, it provides a type `Site_2`, which must be a model of
 the concept `SegmentDelaunayGraphSite_2`. It also provides
@@ -159,7 +160,7 @@ must be common and equal to `sgn`.
 It must also provide
 `bool operator()(Site_2 s1, Site_2 s2, Site_2 s3, Site_2 q, Sign sgn)`.
 The
-sites `s1`, `s2`, `s3` and the site at infinity
+sites `s1`, `s2`, `s3` and the dummy site at infinity
 \f$ s_\infty\f$ define a Voronoi edge that lies on the \f$L_{\infty}\f$
 bisector of
 `s1` and `s2` and has as endpoints the Voronoi vertices
@@ -182,7 +183,7 @@ must be common and equal to `sgn`.
 It must finally provide
 `bool operator()(Site_2 s1, Site_2 s2, Site_2 q, Sign sgn)`.
 The
-sites `s1`, `s2` and the site at infinity
+sites `s1`, `s2` and the dummy site at infinity
 \f$ s_\infty\f$ define a Voronoi edge that is equal to the
 \f$L_{\infty}\f$ bisector of `s1` and `s2`.
 The endpoints of this edge are the \f$L_{\infty}\f$ Voronoi
@@ -211,6 +212,7 @@ A predicate object type.
 
 It must provide
 `bool operator()(Site_2 s1, Site_2 s2, Site_2 s3, Site_2 q, Sign sgn)`.
+Let \f$s_\infty\f$ be the dummy site at infinity.
 The
 sites \f$ s_\infty\f$, `s1`, `s2` and `s3` define a
 Voronoi edge that lies on the bisector of \f$ s_\infty\f$ and `s1`
@@ -236,21 +238,23 @@ typedef Hidden_type Infinite_edge_interior_conflict_2;
 /*!
 A predicate object type.
 
-We first define the notion of \f$L_{\infty}\f$-perpendicular lines to
-a given non-trivial segment \f$ s \f$.
+First, we define the notion of (non-oriented) \f$L_{\infty}\f$-perpendicular lines to
+a given non-trivial (non-oriented) segment \f$ s \f$.
 If \f$ s \f$ is horizontal, then the perpendicular lines are the
-horizontal lines.
-If \f$ s \f$ is vertical, then the perpendicular lines are the
 vertical lines.
+If \f$ s \f$ is vertical, then the perpendicular lines are the
+horizontal lines.
 If \f$ s \f$ has positive slope, then the perpendicular lines are the
 lines of slope -1.
 If \f$ s \f$ has negative slope, then the perpendicular lines are the
 lines of slope +1.
 
-If segment \f$ s \f$ has an orientation, we also orient its
+Since CGAL segments have also an orientation, we also orient
+\f$L_{\infty}\f$-perpendicular lines, as follows.
+For an <I>oriented</I> segment \f$ s \f$, we orient its
 \f$L_{\infty}\f$-perpendicular lines so that the lines'
 orientation is closest to the following orientation:
-the orientation of \f$ s \f$ rotated counter-clockwise by
+the orientation of \f$ s \f$ rotated <I>counter-clockwise</I> by
 \f$ \pi/2 \f$.
 
 Let `s` be a segment and `p` a point contained in its interior.
