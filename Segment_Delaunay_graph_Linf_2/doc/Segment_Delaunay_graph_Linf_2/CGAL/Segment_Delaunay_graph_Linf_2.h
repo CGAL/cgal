@@ -9,7 +9,7 @@ represents the segment Delaunay graph under the \f$ L_{\infty} \f$ metric (which
 the dual graph of the 2D segment Voronoi diagram under the \f$ L_{\infty} \f$
 metric).
 This class is derived from class `CGAL::Segment_Delaunay_graph_2<Gt,DS>`.
-Currently it supports only insertions of sites.
+Currently, deletion of sites is not supported.
 
 \tparam Gt is the geometric traits
 which must be a model of `SegmentDelaunayGraphLinfTraits_2`
