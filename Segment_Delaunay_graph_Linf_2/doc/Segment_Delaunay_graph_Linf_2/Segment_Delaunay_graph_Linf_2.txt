@@ -18,7 +18,7 @@ Delaunay graph algorithm and traits under the Euclidean (or \f$ L_{2} \f$)
 distance.
 
 Segment Voronoi diagrams in the \f$ L_{\infty} \f$ metric have applications
-in VLSI design \cite pl-svdlinf-2001, \cite cdgp-icms-2014 .
+in VLSI design \cgalCite{pl-svdlinf-2001}, \cgalCite{cdgp-icms-2014}.
 
 In Section \ref secsdglinfdefinitions we give some definitions.
 In Section \ref secsdglinfdesign we explain the design of the
@@ -63,7 +63,7 @@ the input sites are rational, then the coordinates of the vertices of
 the diagram are also rational, which is not true for the
 \f$ L_{2} \f$ diagram.
 For more details on \f$ L_{\infty} \f$ bisectors and the diagram,
-see \cite cdgp-icms-2014 .
+see \cgalCite{cdgp-icms-2014}.
 
 \cgalFigureBegin{figbislinf,bislinf.svg}
 The \f$ L_{\infty} \f$ bisectors between two points and
@@ -81,7 +81,7 @@ problems when drawing the diagram, we resort to a
 two-dimensional regions of a bisector to the two sites of the
 bisector. Moreover, this simplification of the diagram is
 acceptable in the VLSI applications, where the \f$ L_{\infty} \f$
-diagram is employed  \cite pl-svdlinf-2001 .
+diagram is employed  \cgalCite{pl-svdlinf-2001}.
 
 If two different points \f$ p \f$, \f$ q \f$ share one coordinate,
 then their \f$ L_{\infty} \f$ bisector is 2-dimensional as shown
@@ -115,7 +115,7 @@ subclasses of corresponding \f$ L_{2} \f$ classes from the
 package \ref PkgSegmentDelaunayGraph2Summary.
 The names of the \f$ L_{\infty} \f$ classes contain an additional `_Linf` after
 `graph`, in comparison with the corresponding \f$ L_{2} \f$ classes.
-For more details, see \cite cdgp-icms-2014 .
+For more details, see \cgalCite{cdgp-icms-2014}.
 
 The order of complexity of the construction of the \f$ L_{\infty}
 \f$ diagram is the same as the one of the \f$ L_{2} \f$ diagram
