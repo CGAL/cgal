@@ -1,21 +1,30 @@
 #include <CGAL/AABB_intersections.h>
 #include "Scene_polyhedron_item.h"
 #include "Kernel_type.h"
-#include "Polyhedron_type.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
+
+
+#include <CGAL/Triangulation_vertex_base_with_info_2.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Constrained_triangulation_plus_2.h>
+#include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
+
+#include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
+
 #include <QVariant>
 #include <list>
+#include <queue>
 #include <iostream>
 
 typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> Input_facets_AABB_tree;
-
 const char* aabb_property_name = "Scene_polyhedron_item aabb tree";
 
 Input_facets_AABB_tree* get_aabb_tree(Scene_polyhedron_item* item)
@@ -54,6 +63,218 @@ void delete_aabb_tree(Scene_polyhedron_item* item)
     }
 }
 
+typedef typename Polyhedron::Traits Traits;
+typedef typename Polyhedron::Facet Facet;
+typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
+typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
+struct Face_info {
+    typename Polyhedron::Halfedge_handle e[3];
+    bool is_external;
+};
+typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_handle,
+P_traits>        Vb;
+typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
+P_traits>          Fb1;
+typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
+typedef CGAL::No_intersection_tag                                    Itag;
+typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
+TDS,
+Itag>             CDTbase;
+typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
+
+//Make sure all the facets are triangles
+void
+Scene_polyhedron_item::triangulate_facet(Facet_iterator fit)
+{
+    //Computes the normal of the facet
+    typename Traits::Vector_3 normal =
+            compute_facet_normal<Facet,Traits>(*fit);
+
+    P_traits cdt_traits(normal);
+    CDT cdt(cdt_traits);
+
+    typename Facet::Halfedge_around_facet_circulator
+            he_circ = fit->facet_begin(),
+            he_circ_end(he_circ);
+
+    // Iterates on the vector of facet handles
+    typename CDT::Vertex_handle previous, first;
+    do {
+        typename CDT::Vertex_handle vh = cdt.insert(he_circ->vertex()->point());
+        if(first == 0) {
+            first = vh;
+        }
+        vh->info() = he_circ;
+        if(previous != 0 && previous != vh) {
+            cdt.insert_constraint(previous, vh);
+        }
+        previous = vh;
+    } while( ++he_circ != he_circ_end );
+    cdt.insert_constraint(previous, first);
+
+    // sets mark is_external
+    for(typename CDT::All_faces_iterator
+        fit = cdt.all_faces_begin(),
+        end = cdt.all_faces_end();
+        fit != end; ++fit)
+    {
+        fit->info().is_external = false;
+    }
+    //check if the facet is external or internal
+    std::queue<typename CDT::Face_handle> face_queue;
+    face_queue.push(cdt.infinite_vertex()->face());
+    while(! face_queue.empty() ) {
+        typename CDT::Face_handle fh = face_queue.front();
+        face_queue.pop();
+        if(fh->info().is_external) continue;
+        fh->info().is_external = true;
+        for(int i = 0; i <3; ++i) {
+            if(!cdt.is_constrained(std::make_pair(fh, i)))
+            {
+                face_queue.push(fh->neighbor(i));
+            }
+        }
+    }
+
+    //iterates on the internal faces to add the vertices to the positions
+    //and the normals to the appropriate vectors
+    for(typename CDT::Finite_faces_iterator
+        ffit = cdt.finite_faces_begin(),
+        end = cdt.finite_faces_end();
+        ffit != end; ++ffit)
+    {
+        if(ffit->info().is_external)
+            continue;
+
+        positions_facets.push_back(ffit->vertex(0)->point().x());
+        positions_facets.push_back(ffit->vertex(0)->point().y());
+        positions_facets.push_back(ffit->vertex(0)->point().z());
+        positions_facets.push_back(1.0);
+
+        positions_facets.push_back(ffit->vertex(1)->point().x());
+        positions_facets.push_back(ffit->vertex(1)->point().y());
+        positions_facets.push_back(ffit->vertex(1)->point().z());
+        positions_facets.push_back(1.0);
+
+        positions_facets.push_back(ffit->vertex(2)->point().x());
+        positions_facets.push_back(ffit->vertex(2)->point().y());
+        positions_facets.push_back(ffit->vertex(2)->point().z());
+        positions_facets.push_back(1.0);
+
+        if (cur_shading == GL_FLAT || cur_shading == GL_SMOOTH)
+        {
+
+            typedef typename Kernel::Vector_3	    Vector;
+            Vector n = compute_facet_normal<Facet,Traits>(*fit);
+            normals.push_back(n.x());
+            normals.push_back(n.y());
+            normals.push_back(n.z());
+
+            normals.push_back(n.x());
+            normals.push_back(n.y());
+            normals.push_back(n.z());
+
+            normals.push_back(n.x());
+            normals.push_back(n.y());
+            normals.push_back(n.z());
+        }
+
+
+
+
+    }
+}
+
+void
+Scene_polyhedron_item::triangulate_facet_color(Facet_iterator fit)
+{
+    typename Traits::Vector_3 normal =
+            compute_facet_normal<Facet,Traits>(*fit);
+
+    P_traits cdt_traits(normal);
+    CDT cdt(cdt_traits);
+
+    typename Facet::Halfedge_around_facet_circulator
+            he_circ = fit->facet_begin(),
+            he_circ_end(he_circ);
+
+    // Iterates on the vector of facet handles
+    typename CDT::Vertex_handle previous, first;
+    do {
+        typename CDT::Vertex_handle vh = cdt.insert(he_circ->vertex()->point());
+        if(first == 0) {
+            first = vh;
+        }
+        vh->info() = he_circ;
+        if(previous != 0 && previous != vh) {
+            cdt.insert_constraint(previous, vh);
+        }
+        previous = vh;
+    } while( ++he_circ != he_circ_end );
+    cdt.insert_constraint(previous, first);
+
+    // sets mark is_external
+    for(typename CDT::All_faces_iterator
+        fit = cdt.all_faces_begin(),
+        end = cdt.all_faces_end();
+        fit != end; ++fit)
+    {
+        fit->info().is_external = false;
+    }
+    //check if the facet is external or internal
+    std::queue<typename CDT::Face_handle> face_queue;
+    face_queue.push(cdt.infinite_vertex()->face());
+    while(! face_queue.empty() ) {
+        typename CDT::Face_handle fh = face_queue.front();
+        face_queue.pop();
+        if(fh->info().is_external) continue;
+        fh->info().is_external = true;
+        for(int i = 0; i <3; ++i) {
+            if(!cdt.is_constrained(std::make_pair(fh, i)))
+            {
+                face_queue.push(fh->neighbor(i));
+            }
+        }
+    }
+
+    //iterates on the internal faces to add the vertices to the positions vector
+    for(typename CDT::Finite_faces_iterator
+        ffit = cdt.finite_faces_begin(),
+        end = cdt.finite_faces_end();
+        ffit != end; ++ffit)
+    {
+        if(ffit->info().is_external)
+            continue;
+        //Add Colors
+        for(int i = 0; i<3; ++i)
+        {
+            const int this_patch_id = fit->patch_id();
+            if(is_selected)
+            {
+                color_facets.push_back(colors_[this_patch_id].lighter(120).redF());
+                color_facets.push_back(colors_[this_patch_id].lighter(120).greenF());
+                color_facets.push_back(colors_[this_patch_id].lighter(120).blueF());
+
+                color_facets.push_back(colors_[this_patch_id].lighter(120).redF());
+                color_facets.push_back(colors_[this_patch_id].lighter(120).greenF());
+                color_facets.push_back(colors_[this_patch_id].lighter(120).blueF());
+            }
+            else
+            {
+                color_facets.push_back(colors_[this_patch_id].redF());
+                color_facets.push_back(colors_[this_patch_id].greenF());
+                color_facets.push_back(colors_[this_patch_id].blueF());
+
+                color_facets.push_back(colors_[this_patch_id].redF());
+                color_facets.push_back(colors_[this_patch_id].greenF());
+                color_facets.push_back(colors_[this_patch_id].blueF());
+
+            }
+        }
+    }
+}
+
 #include <QObject>
 #include <QMenu>
 #include <QAction>
@@ -77,7 +298,7 @@ struct light_info
 void
 Scene_polyhedron_item::initialize_buffers()
 {
-    glBindVertexArray(vao);
+    glBindVertexArray(vao[0]);
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
     glBufferData(GL_ARRAY_BUFFER,
@@ -211,7 +432,6 @@ Scene_polyhedron_item::compile_shaders(void)
         " \n"
         "void main(void) \n"
         "{ \n"
-        "/* Lighting gestion */ \n"
         " color = fColors; \n" //polygons de couleur rouge
         "} \n"
     };
@@ -221,7 +441,7 @@ Scene_polyhedron_item::compile_shaders(void)
     glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
     glCompileShader(vertex_shader);
 
-    GLint result;
+    /*  GLint result;
     glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&result);
     if(result == GL_TRUE){
         std::cout<<"Vertex compilation OK"<<std::endl;
@@ -232,12 +452,12 @@ Scene_polyhedron_item::compile_shaders(void)
         char* log = new char[maxLength];
         glGetShaderInfoLog(vertex_shader,maxLength,&length,log);
         std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
-    }
+    }*/
     GLuint fragment_shader =	glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
     glCompileShader(fragment_shader);
 
-    glGetShaderiv(fragment_shader,GL_COMPILE_STATUS,&result);
+    /*   glGetShaderiv(fragment_shader,GL_COMPILE_STATUS,&result);
     if(result == GL_TRUE){
         std::cout<<"Fragment compilation OK"<<std::endl;
     } else {
@@ -248,7 +468,7 @@ Scene_polyhedron_item::compile_shaders(void)
         glGetShaderInfoLog(fragment_shader,maxLength,&length,log);
         std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
     }
-
+*/
 
     //creates the program, attaches and links the shaders
     GLuint program= glCreateProgram();
@@ -257,7 +477,7 @@ Scene_polyhedron_item::compile_shaders(void)
     glLinkProgram(program);
 
 
-    glGetProgramiv(program,GL_LINK_STATUS,&result);
+    /*   glGetProgramiv(program,GL_LINK_STATUS,&result);
     if(result == GL_TRUE){
         std::cout<<"Link OK"<<std::endl;
     } else {
@@ -267,7 +487,7 @@ Scene_polyhedron_item::compile_shaders(void)
         char* log = new char[maxLength];
         glGetProgramInfoLog(program,maxLength,&length,log);
         std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
-    }
+    }*/
     //Delete the shaders which are now in the memory
     glDeleteShader(vertex_shader);
 
@@ -300,7 +520,7 @@ Scene_polyhedron_item::compile_shaders(void)
     glCompileShader(vertex_shader);
 
 
-    glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&result);
+    /*  glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&result);
     if(result == GL_TRUE){
         std::cout<<"Vertex compilation OK"<<std::endl;
     } else {
@@ -311,11 +531,11 @@ Scene_polyhedron_item::compile_shaders(void)
         glGetShaderInfoLog(vertex_shader,maxLength,&length,log);
         std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
     }
-
+*/
     glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
     glCompileShader(fragment_shader);
 
-    glGetShaderiv(fragment_shader,GL_COMPILE_STATUS,&result);
+    /*   glGetShaderiv(fragment_shader,GL_COMPILE_STATUS,&result);
     if(result == GL_TRUE){
         std::cout<<"Fragment compilation OK"<<std::endl;
     } else {
@@ -326,7 +546,7 @@ Scene_polyhedron_item::compile_shaders(void)
         glGetShaderInfoLog(fragment_shader,maxLength,&length,log);
         std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
     }
-
+*/
 
     //creates the program, attaches and links the shaders
     program = glCreateProgram();
@@ -335,7 +555,7 @@ Scene_polyhedron_item::compile_shaders(void)
     glLinkProgram(program);
 
 
-    glGetProgramiv(program,GL_LINK_STATUS,&result);
+    /* glGetProgramiv(program,GL_LINK_STATUS,&result);
     if(result == GL_TRUE){
         std::cout<<"Link OK"<<std::endl;
     } else {
@@ -345,7 +565,7 @@ Scene_polyhedron_item::compile_shaders(void)
         char* log = new char[maxLength];
         glGetProgramInfoLog(program,maxLength,&length,log);
         std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
-    }
+    }*/
     //Delete the shaders which are now in the memory
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
@@ -432,8 +652,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
 
 
 
-    // int patch_id = -1;
-
     Facet_iterator f = poly->facets_begin();
 
 
@@ -441,12 +659,12 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
         f != poly->facets_end();
         f++)
     {
-
-
-        HF_circulator he = f->facet_begin();
-        HF_circulator end = he;
-        CGAL_For_all(he,end)
+        triangulate_facet(f);
+        /* HF_circulator he = f->facet_begin();
+         HF_circulator end = he;
+       CGAL_For_all(he,end)
         {
+
             // If Flat shading:1 normal per polygon added once per vertex
             if (cur_shading == GL_FLAT)
             {
@@ -462,7 +680,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
 
 
             // If Gouraud shading: 1 normal per vertex
-            if (cur_shading == GL_SMOOTH)
+            else if (cur_shading == GL_SMOOTH)
             {
 
                 Vector n = compute_vertex_normal<typename Polyhedron::Vertex,Kernel>(*he->vertex());
@@ -471,22 +689,16 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
                 normals.push_back(n.z());
             }
             const int this_patch_id = f->patch_id();
-            //if(patch_id != this_patch_id) {
-            //CGALglcolor(colors_[this_patch_id]);
 
-            /* color_facets.push_back(colors_[this_patch_id].redF());
-            color_facets.push_back(colors_[this_patch_id].greenF());
-            color_facets.push_back(colors_[this_patch_id].blueF());*/
-            // patch_id = this_patch_id;
-            //}
             //position
             const Point& p = he->vertex()->point();
             positions_facets.push_back(p.x());
             positions_facets.push_back(p.y());
             positions_facets.push_back(p.z());
             positions_facets.push_back(1.0);
-
         }
+        */
+        std::cout<<"Nombre de vertices = "<<positions_facets.size()/4<<std::endl;
     }
     //Lines
     typedef Kernel::Point_3		Point;
@@ -604,7 +816,8 @@ Scene_polyhedron_item::compute_colors()
         f != poly->facets_end();
         f++)
     {
-        HF_circulator he = f->facet_begin();
+        triangulate_facet_color(f);
+        /*HF_circulator he = f->facet_begin();
         HF_circulator end = he;
         CGAL_For_all(he,end)
         {
@@ -622,7 +835,7 @@ Scene_polyhedron_item::compute_colors()
                 color_facets.push_back(colors_[this_patch_id].greenF());
                 color_facets.push_back(colors_[this_patch_id].blueF());
             }
-        }
+        }*/
     }
     //Lines
     typedef Polyhedron::Edge_iterator	Edge_iterator;
@@ -673,7 +886,7 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     cur_shading=GL_FLAT;
     is_selected = false;
     //init();
-    glGenVertexArrays(1, &vao);
+    glGenVertexArrays(1, vao);
     //Generates an integer which will be used as ID for each buffer
     glGenBuffers(5, buffer);
     compile_shaders();
@@ -693,7 +906,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     cur_shading=GL_FLAT;
     is_selected = false;
     init();
-    glGenVertexArrays(1, &vao);
+    glGenVertexArrays(1, vao);
     //Generates an integer which will be used as ID for each buffer
     glGenBuffers(5, buffer);
 
@@ -714,7 +927,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     cur_shading=GL_FLAT;
     is_selected=false;
     init();
-    glGenVertexArrays(1, &vao);
+    glGenVertexArrays(1, vao);
     //Generates an integer which will be used as ID for each buffer
     glGenBuffers(5, buffer);
 
@@ -731,7 +944,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
 Scene_polyhedron_item::~Scene_polyhedron_item()
 {
     glDeleteBuffers(5, buffer);
-    glDeleteVertexArrays(1, &vao);
+    glDeleteVertexArrays(1, vao);
     glDeleteProgram(rendering_program_facets);
     glDeleteProgram(rendering_program_lines);
 
@@ -872,14 +1085,14 @@ void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
-    glBindVertexArray(vao);
+    glBindVertexArray(vao[0]);
 
     // tells the GPU to use the program just created
     //  glUseProgram(rendering_program_facets);
     uniform_attrib(viewer,0);
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
-//viewer->displayMessage(tr("TEST"),5000);
+    //viewer->displayMessage(tr("TEST"),5000);
     glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/4);
     glUseProgram(0);
     glBindVertexArray(0);
@@ -888,7 +1101,7 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
-    glBindVertexArray(vao);
+    glBindVertexArray(vao[0]);
 
     // tells the GPU to use the program just created
     // glUseProgram(rendering_program_lines);
@@ -905,7 +1118,7 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
 void
 Scene_polyhedron_item::draw_points(Viewer_interface* viewer) const {
 
-    glBindVertexArray(vao);
+    glBindVertexArray(vao[0]);
 
     // tells the GPU to use the program just created
     //glUseProgram(rendering_program_lines);
@@ -913,7 +1126,7 @@ Scene_polyhedron_item::draw_points(Viewer_interface* viewer) const {
     uniform_attrib(viewer,1);
 
     //draw the points
-    glDrawArrays(GL_POINTS, 0, positions_facets.size()/4);
+    glDrawArrays(GL_POINTS, 0, positions_facets.size());
 
     // Clean-up
     glBindVertexArray(0);

@@ -5,6 +5,7 @@
 #include "Scene_polyhedron_item_config.h"
 #include "Scene_item.h" //<- modif ?
 #include "Polyhedron_type_fwd.h"
+#include "Polyhedron_type.h"
 #include "Viewer.h"
 #include <iostream>
 
@@ -94,6 +95,7 @@ private:
 private:
     typedef Scene_item Base;
     typedef std::vector<QColor> Color_vector;
+    typedef typename Polyhedron::Facet_iterator Facet_iterator;
     
     Color_vector colors_;
 
@@ -111,15 +113,17 @@ private:
 
     GLuint rendering_program_facets;
     GLuint rendering_program_lines;
-    GLint location[8];
+    GLint location[9];
 
-    GLuint vao;
-    GLuint buffer[5];
+    GLuint vao[1];
+    GLuint buffer[6];
     void initialize_buffers();
     void compile_shaders(void);
     void compute_normals_and_vertices(void);
     void uniform_attrib(Viewer_interface*, int) const;
     void compute_colors();
+    void triangulate_facet(Facet_iterator );
+    void triangulate_facet_color(Facet_iterator );
 
 }; // end class Scene_polyhedron_item
 
