@@ -130,6 +130,8 @@ enum Degeneracy_algorithm_tag
 /// Between each iteration, the meso-skeleton is locally remeshed using angle split and edge contraction.
 /// The process ends when the modification of the meso-skeleton between two iterations is small.
 ///
+/// \todo model of HalfedgeGraph -> FaceListGraph
+///
 /// @tparam TriangleMesh
 ///         a model of `HalfedgeGraph`
 ///
@@ -413,13 +415,11 @@ public:
                                       VertexPointMap vertex_point_map,
                                       Traits = Traits())
   {
-    init_args();
     init(tmesh, vertex_point_map);
   }
 
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh)
   {
-    init_args();
     init(tmesh, get(vertex_point, tmesh));
   }
   #endif
@@ -905,7 +905,7 @@ private:
     m_max_iterations = 500;
     m_is_medially_centered = true;
     m_min_edge_length =  init_min_edge_length();
-    m_alpha_TH = 110;
+    m_alpha_TH = 110 * (CGAL_PI / 180.0);
     m_zero_TH = 1e-7;
   }
 
@@ -934,7 +934,6 @@ private:
       //, m_hedge_id_pmap(get(boost::halfedge_index, m_tmesh))
     m_are_poles_computed = false;
 
-    m_alpha_TH *= (CGAL_PI / 180.0);
     m_original_area = internal::get_surface_area(m_tmesh, m_tmesh_point_pmap);
 
     m_vertex_id_count = num_vertices(m_tmesh);
@@ -945,6 +944,8 @@ private:
 
     if (m_is_medially_centered)
       compute_voronoi_pole();
+
+    init_args();
   }
 
   // --------------------------------------------------------------------------
