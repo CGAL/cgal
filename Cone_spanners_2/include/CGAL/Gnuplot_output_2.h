@@ -18,7 +18,7 @@
 //
 // Author(s)     : Quincy Tse, Weisheng Si
 
-/** @file gnuplot_output_2.h
+/** @file Gnuplot_output_2.h
  *
  * This header implements the function that can generate data and script files for plotting  
  * graphs by Gnuplot. This function requires that graphs be represented by boost::adjacency_list 
