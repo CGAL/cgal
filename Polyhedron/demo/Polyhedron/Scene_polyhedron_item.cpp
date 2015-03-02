@@ -85,6 +85,30 @@ typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
 
 //Make sure all the facets are triangles
 void
+Scene_polyhedron_item::is_Triangulated()
+{
+    typedef typename Polyhedron::Halfedge_around_facet_circulator HF_circulator;
+    Facet_iterator f = poly->facets_begin();
+    int nb_points_per_facet =0;
+
+    for(f = poly->facets_begin();
+        f != poly->facets_end();
+        f++)
+    {
+        HF_circulator he = f->facet_begin();
+        HF_circulator end = he;
+        CGAL_For_all(he,end)
+        {
+            nb_points_per_facet++;
+        }
+
+        if(nb_points_per_facet !=3)
+            is_Triangle = false;
+        break;
+        nb_points_per_facet = 0;
+    }
+}
+void
 Scene_polyhedron_item::triangulate_facet(Facet_iterator fit)
 {
     //Computes the normal of the facet
@@ -654,51 +678,55 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
 
     Facet_iterator f = poly->facets_begin();
 
-
     for(f = poly->facets_begin();
         f != poly->facets_end();
         f++)
     {
-        triangulate_facet(f);
-        /* HF_circulator he = f->facet_begin();
-         HF_circulator end = he;
-       CGAL_For_all(he,end)
+
+        if(!is_Triangle)
+            triangulate_facet(f);
+        else
         {
-
-            // If Flat shading:1 normal per polygon added once per vertex
-            if (cur_shading == GL_FLAT)
+            // std::cout<<"Triangles"<<std::endl;
+            HF_circulator he = f->facet_begin();
+            HF_circulator end = he;
+            CGAL_For_all(he,end)
             {
 
-                Vector n = compute_facet_normal<Facet,Kernel>(*f);
-                normals.push_back(n.x());
-                normals.push_back(n.y());
-                normals.push_back(n.z());
+                // If Flat shading:1 normal per polygon added once per vertex
+                if (cur_shading == GL_FLAT)
+                {
+
+                    Vector n = compute_facet_normal<Facet,Kernel>(*f);
+                    normals.push_back(n.x());
+                    normals.push_back(n.y());
+                    normals.push_back(n.z());
+                }
+
+
+                // revolve around current face to get vertices
+
+
+                // If Gouraud shading: 1 normal per vertex
+                else if (cur_shading == GL_SMOOTH)
+                {
+
+                    Vector n = compute_vertex_normal<typename Polyhedron::Vertex,Kernel>(*he->vertex());
+                    normals.push_back(n.x());
+                    normals.push_back(n.y());
+                    normals.push_back(n.z());
+                }
+                const int this_patch_id = f->patch_id();
+
+                //position
+                const Point& p = he->vertex()->point();
+                positions_facets.push_back(p.x());
+                positions_facets.push_back(p.y());
+                positions_facets.push_back(p.z());
+                positions_facets.push_back(1.0);
             }
-
-
-            // revolve around current face to get vertices
-
-
-            // If Gouraud shading: 1 normal per vertex
-            else if (cur_shading == GL_SMOOTH)
-            {
-
-                Vector n = compute_vertex_normal<typename Polyhedron::Vertex,Kernel>(*he->vertex());
-                normals.push_back(n.x());
-                normals.push_back(n.y());
-                normals.push_back(n.z());
-            }
-            const int this_patch_id = f->patch_id();
-
-            //position
-            const Point& p = he->vertex()->point();
-            positions_facets.push_back(p.x());
-            positions_facets.push_back(p.y());
-            positions_facets.push_back(p.z());
-            positions_facets.push_back(1.0);
         }
-        */
-        std::cout<<"Nombre de vertices = "<<positions_facets.size()/4<<std::endl;
+        //  std::cout<<"Nombre de vertices = "<<positions_facets.size()/4<<std::endl;
     }
     //Lines
     typedef Kernel::Point_3		Point;
@@ -797,7 +825,6 @@ Scene_polyhedron_item::compute_colors()
 
 
     // int patch_id = -1;
-
     Facet_iterator f = poly->facets_begin();
     QColor temp = colors_[f->patch_id()];
     if(is_selected)
@@ -816,26 +843,31 @@ Scene_polyhedron_item::compute_colors()
         f != poly->facets_end();
         f++)
     {
-        triangulate_facet_color(f);
-        /*HF_circulator he = f->facet_begin();
-        HF_circulator end = he;
-        CGAL_For_all(he,end)
+        if(!is_Triangle)
+            triangulate_facet_color(f);
+        else
         {
+            HF_circulator he = f->facet_begin();
+            HF_circulator end = he;
+            CGAL_For_all(he,end)
+            {
 
-            const int this_patch_id = f->patch_id();
-            if(is_selected)
-            {
-                color_facets.push_back(colors_[this_patch_id].lighter(120).redF());
-                color_facets.push_back(colors_[this_patch_id].lighter(120).greenF());
-                color_facets.push_back(colors_[this_patch_id].lighter(120).blueF());
+                const int this_patch_id = f->patch_id();
+                if(is_selected)
+                {
+                    color_facets.push_back(colors_[this_patch_id].lighter(120).redF());
+                    color_facets.push_back(colors_[this_patch_id].lighter(120).greenF());
+                    color_facets.push_back(colors_[this_patch_id].lighter(120).blueF());
+                }
+                else
+                {
+                    color_facets.push_back(colors_[this_patch_id].redF());
+                    color_facets.push_back(colors_[this_patch_id].greenF());
+                    color_facets.push_back(colors_[this_patch_id].blueF());
+                }
             }
-            else
-            {
-                color_facets.push_back(colors_[this_patch_id].redF());
-                color_facets.push_back(colors_[this_patch_id].greenF());
-                color_facets.push_back(colors_[this_patch_id].blueF());
-            }
-        }*/
+
+        }
     }
     //Lines
     typedef Polyhedron::Edge_iterator	Edge_iterator;
@@ -878,6 +910,7 @@ Scene_polyhedron_item::Scene_polyhedron_item()
       positions_lines(0),
       normals(0),
       poly(new Polyhedron),
+      is_Triangle(true),
       show_only_feature_edges_m(false),
       facet_picking_m(false),
       erase_next_picked_facet_m(false),
@@ -898,6 +931,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
       positions_lines(0),
       normals(0),
       poly(p),
+      is_Triangle(true),
       show_only_feature_edges_m(false),
       facet_picking_m(false),
       erase_next_picked_facet_m(false),
@@ -919,6 +953,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
       positions_lines(0),
       normals(0),
       poly(new Polyhedron(p)),
+      is_Triangle(true),
       show_only_feature_edges_m(false),
       facet_picking_m(false),
       erase_next_picked_facet_m(false),
@@ -1164,6 +1199,7 @@ changed()
     delete_aabb_tree(this);
     init();
     Base::changed();
+    is_Triangulated();
     compute_normals_and_vertices();
     initialize_buffers();
 
