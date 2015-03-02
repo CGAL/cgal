@@ -23,6 +23,7 @@ int main(int argc, char* argv[])
 {
   std::ifstream input((argc>1)?argv[1]:"data/sindorelax.off");
   Polyhedron tmesh;
+  input >> tmesh;
 
   Skeleton skeleton;
   Skeletonization mcs(tmesh);
