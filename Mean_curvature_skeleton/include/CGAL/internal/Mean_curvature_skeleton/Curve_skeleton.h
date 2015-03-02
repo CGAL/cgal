@@ -165,6 +165,19 @@ public:
     {
       int orig_id = orig_vertex_id[i];
       vertex_desc vd = id_to_vd[i];
+
+      /*
+      /// code that is not working
+      BOOST_FOREACH(int vid, record[orig_id])
+      {
+        vertex_descriptor ovd = id_to_descriptor[vid];
+        curve[vd].vertices.insert(
+          curve[vd].vertices.end(),
+          ovd->vertices.end(),
+          ovd->vertices.begin()
+        );
+      }
+      */
       curve[vd].vertices = record[orig_id];
       for (size_t j = 0; j < curve[vd].vertices.size(); ++j)
       {
@@ -212,7 +225,7 @@ public:
         pos = Point(pos.x() + pv.x(), pos.y() + pv.y(), pos.z() + pv.z());
       }
       double num = record[id].size();
-      curve[*vb].point = Point(pos.x() / num, pos.y() / num, pos.z() / num);
+      curve[id_to_vd[new_id]].point = Point(pos.x() / num, pos.y() / num, pos.z() / num);
     }
   }
 

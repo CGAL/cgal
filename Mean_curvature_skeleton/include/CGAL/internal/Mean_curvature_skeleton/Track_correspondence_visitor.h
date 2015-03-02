@@ -41,7 +41,7 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 namespace CGAL {
 namespace internal {
 
-template<class TriangleMesh, class TriangleMeshPointPMap>
+template<class TriangleMesh, class TriangleMeshPointPMap, class Input_vertex_descriptor>
 struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<TriangleMesh>
 {
   // TriangleMesh types
@@ -55,66 +55,69 @@ struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<TriangleMe
   Track_correspondence_visitor(){}
 
   Track_correspondence_visitor(TriangleMeshPointPMap* point_pmap,
-                               std::map<int, std::vector<int> >* corr,
                                int max_id) :
     hg_point_pmap(point_pmap),
-    corr(corr), 
     max_id(max_id), 
     is_medially_centered(false)
   {}
 
   Track_correspondence_visitor(TriangleMeshPointPMap* point_pmap,
-                       std::map<int, std::vector<int> >* corr,
                        std::map<int, int>* poles,
                        std::vector<Point>* cell_dual,
                        int max_id) :
     hg_point_pmap(point_pmap),
-    corr(corr), 
     max_id(max_id), 
     is_medially_centered(true),
     poles(poles), 
     cell_dual(cell_dual)
     {}
 
+  void OnCollapsing (Profile const &profile, boost::optional< Point >)
+  {
+    // the mesh is closed, v0 is always removed
+    std::vector<Input_vertex_descriptor>& vec_kept = profile.v1()->vertices;
+    std::vector<Input_vertex_descriptor>& vec_removed = profile.v0()->vertices;
+    vec_kept.insert(vec_kept.end(), vec_removed.begin(), vec_removed.end());
+  }
   // Called AFTER each edge has been collapsed
-  void OnCollapsed(Profile const& edge, Vertex_handle v)
+  void OnCollapsed(Profile const& edge, Vertex_handle /* v */)
   {
     Vertex_handle v0 = edge.v0();
     Vertex_handle v1 = edge.v1();
     int id0 = v0->id();
     int id1 = v1->id();
-    int vid = v->id();
-    int from, to;
-    if (id0 == vid)
-    {
-      from = id1;
-      to = id0;
-    }
-    else if (id1 == vid)
-    {
-      from = id0;
-      to = id1;
-    }
+    //~ int vid = v->id();
+    //~ int from, to;
+    //~ if (id0 == vid)
+    //~ {
+      //~ from = id1;
+      //~ to = id0;
+    //~ }
+    //~ else if (id1 == vid)
+    //~ {
+      //~ from = id0;
+      //~ to = id1;
+    //~ }
 
-    if ((*corr).find(to) == (*corr).end())
-    {
-      (*corr)[to] = std::vector<int>();
-    }
-    // only track vertex in the original mesh
-    if (from < max_id)
-    {
-      (*corr)[to].push_back(from);
-    }
-    std::map<int, std::vector<int> >::iterator iter = (*corr).find(from);
-    if (iter != (*corr).end())
-    {
-      for (size_t i = 0; i < (iter->second).size(); ++i)
-      {
-        (*corr)[to].push_back((iter->second)[i]);
-      }
-      (iter->second).clear();
-      (*corr).erase(iter);
-    }
+    //~ if ((*corr).find(to) == (*corr).end())
+    //~ {
+      //~ (*corr)[to] = std::vector<int>();
+    //~ }
+    //~ // only track vertex in the original mesh
+    //~ if (from < max_id)
+    //~ {
+      //~ (*corr)[to].push_back(from);
+    //~ }
+    //~ std::map<int, std::vector<int> >::iterator iter = (*corr).find(from);
+    //~ if (iter != (*corr).end())
+    //~ {
+      //~ for (size_t i = 0; i < (iter->second).size(); ++i)
+      //~ {
+        //~ (*corr)[to].push_back((iter->second)[i]);
+      //~ }
+      //~ (iter->second).clear();
+      //~ (*corr).erase(iter);
+    //~ }
 
     // also track the poles
     if (is_medially_centered)
@@ -139,7 +142,6 @@ struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<TriangleMe
 
   TriangleMeshPointPMap* hg_point_pmap;
 
-  std::map<int, std::vector<int> >* corr;
   int max_id;
 
   bool is_medially_centered;

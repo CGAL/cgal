@@ -102,6 +102,28 @@ namespace CGAL {
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 
+namespace internal{
+
+template < class Refs, class P, class ID, class vertex_descriptor>
+struct Skel_HDS_vertex_type : public HalfedgeDS_vertex_max_base_with_id<Refs, P, ID>
+{
+  typedef HalfedgeDS_vertex_max_base_with_id<Refs, P, ID> Base;
+  Skel_HDS_vertex_type() : Base ()  {}
+  Skel_HDS_vertex_type( P const& p) : Base(p) {}
+  std::vector<vertex_descriptor> vertices;
+};
+
+template <class vertex_descriptor>
+struct Skel_polyhedron_items_3: CGAL::Polyhedron_items_with_id_3 {
+    template < class Refs, class Traits>
+    struct Vertex_wrapper {
+        typedef typename Traits::Point_3 Point;
+        typedef Skel_HDS_vertex_type< Refs, Point, std::size_t, vertex_descriptor> Vertex;
+    };
+};
+
+} //end of namespace internal
+
 /// \ingroup PkgMeanCurvatureSkeleton3
 ///@brief Edge collapse algorithm tag.
 enum Collapse_algorithm_tag
@@ -212,8 +234,8 @@ public:
   typedef typename Traits::Point_3                                             Point;
   typedef typename Traits::Vector_3                                             Vector;
 
-
-  typedef CGAL::Polyhedron_3<Traits,CGAL::Polyhedron_items_with_id_3> mTriangleMesh;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  Input_vertex_descriptor;
+  typedef CGAL::Polyhedron_3<Traits,internal::Skel_polyhedron_items_3<Input_vertex_descriptor> > mTriangleMesh;
   typedef typename boost::property_map<mTriangleMesh, boost::vertex_point_t>::type mVertexPointMap;
   typedef typename boost::property_map<mTriangleMesh, boost::vertex_index_t>::type VertexIndexMap;
   typedef typename boost::property_map<mTriangleMesh, boost::halfedge_index_t>::type HalfedgeIndexMap;
@@ -222,7 +244,7 @@ public:
   struct Vmap {
   std::size_t id;
     Point point;
-    std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor> vertices;
+    std::vector<Input_vertex_descriptor> vertices;
   };
   ///@endcond
 
@@ -333,10 +355,6 @@ private:
 
   /** The incident angle for a halfedge. */
   std::vector<double> m_halfedge_angle;
-
-  /** Record the correspondence between final surface
-   *  and original surface points. */
-  std::map<int, std::vector<int> > m_correspondence;
 
   /** Record the corresponding pole of a point. */
   std::map<int, int> m_poles;
@@ -859,13 +877,8 @@ public:
    */
   void convert_to_skeleton(Skeleton& skeleton)
   {
-    #warning FIXME
     Curve_skeleton skeletonization(m_tmesh, m_vertex_id_pmap, m_hedge_id_pmap, m_tmesh_point_pmap);
-    //~ std::map<typename boost::graph_traits<Skeleton>::vertex_descriptor, std::vector<int> > skeleton_to_surface_map;
-    
     skeletonization.extract_skeleton(skeleton);
-
-    //~ correspondent_vertices(skeleton_to_surface_map, skeleton_to_tmesh_vertices);
   }
 
   /// @} Public Algorithm API
@@ -873,8 +886,8 @@ public:
 
   /// \name Access to the Meso-Skeleton
   /// @{
-  
-  /// When using the low level API it is possible to access the intermediate 
+
+  /// When using the low level API it is possible to access the intermediate
   /// results of the skeletonization process, called meso-skeleton.
   /// It is a triangle surface mesh which is model of `FaceListGraph`.
 #ifdef DOXYGEN_RUNNING
@@ -920,6 +933,12 @@ private:
                                     false> modifier(tmesh, vpm);
 
     m_tmesh.delegate(modifier);
+
+    // copy input vertices to keep correspondance
+    typename boost::graph_traits<mTriangleMesh>::vertex_iterator vit=vertices(m_tmesh).first;
+    BOOST_FOREACH(Input_vertex_descriptor vd, vertices(tmesh) )
+      (*vit++)->vertices.push_back(vd);
+
     //init indices
     typedef typename boost::graph_traits<mTriangleMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::graph_traits<mTriangleMesh>::halfedge_descriptor halfedge_descriptor;
@@ -940,7 +959,6 @@ private:
     m_max_id = m_vertex_id_count;
 
     m_is_vertex_fixed_map.clear();
-    m_correspondence.clear();
 
     if (m_is_medially_centered)
       compute_voronoi_pole();
@@ -1128,16 +1146,16 @@ private:
     // midpoint placement without geometric test
     SMS::Geometric_test_skipper< SMS::Midpoint_placement<mTriangleMesh> > placement;
 
-    internal::Track_correspondence_visitor<mTriangleMesh, mVertexPointMap> vis;
+    internal::Track_correspondence_visitor<mTriangleMesh, mVertexPointMap, Input_vertex_descriptor> vis;
     if (m_is_medially_centered)
     {
-      vis = internal::Track_correspondence_visitor<mTriangleMesh, mVertexPointMap>
-            (&m_tmesh_point_pmap, &m_correspondence, &m_poles, &m_cell_dual, m_max_id);
+      vis = internal::Track_correspondence_visitor<mTriangleMesh, mVertexPointMap, Input_vertex_descriptor>
+            (&m_tmesh_point_pmap, &m_poles, &m_cell_dual, m_max_id);
     }
     else
     {
-      vis = internal::Track_correspondence_visitor<mTriangleMesh, mVertexPointMap>
-            (&m_tmesh_point_pmap, &m_correspondence, m_max_id);
+      vis = internal::Track_correspondence_visitor<mTriangleMesh, mVertexPointMap, Input_vertex_descriptor>
+            (&m_tmesh_point_pmap, m_max_id);
     }
 
     int r = SMS::edge_collapse
@@ -1153,43 +1171,12 @@ private:
   }
 
   /// Track correspondent original surface points during collapse.
+
   void track_correspondence(vertex_descriptor v0, vertex_descriptor v1,
-                            vertex_descriptor v)
+                            vertex_descriptor /* v */)
   {
     int id0 = get(m_vertex_id_pmap, v0);
     int id1 = get(m_vertex_id_pmap, v1);
-    int vid = get(m_vertex_id_pmap, v);
-    int from, to;
-    if (id0 == vid)
-    {
-      from = id1;
-      to = id0;
-    }
-    else if (id1 == vid)
-    {
-      from = id0;
-      to = id1;
-    }
-
-    if (m_correspondence.find(to) == m_correspondence.end())
-    {
-      m_correspondence[to] = std::vector<int>();
-    }
-    // only track vertex in original surface mesh
-    if (from < m_max_id)
-    {
-      m_correspondence[to].push_back(from);
-    }
-    std::map<int, std::vector<int> >::iterator iter = m_correspondence.find(from);
-    if (iter != m_correspondence.end())
-    {
-      for (size_t i = 0; i < (iter->second).size(); ++i)
-      {
-        m_correspondence[to].push_back((iter->second)[i]);
-      }
-      (iter->second).clear();
-      m_correspondence.erase(iter);
-    }
 
     if (m_is_medially_centered)
     {
@@ -1247,6 +1234,10 @@ private:
         fixed_edge_map.set_is_fixed(prev(h, m_tmesh), true);
         fixed_edge_map.set_is_fixed(prev(opposite(h, m_tmesh), m_tmesh), true);
 
+        /// the mesh is closed, the target of h is always the one kept
+        std::vector<Input_vertex_descriptor>& vec_kept = target(h, m_tmesh)->vertices;
+        std::vector<Input_vertex_descriptor>& vec_removed = source(h, m_tmesh)->vertices;
+        vec_kept.insert(vec_kept.end(), vec_removed.begin(), vec_removed.end());
         vertex_descriptor v = Euler::collapse_edge(edge(h, m_tmesh), m_tmesh);
         put(m_tmesh_point_pmap, v, p);
 
@@ -1592,40 +1583,6 @@ private:
       m_normals[vid] = internal::get_vertex_normal<typename mTriangleMesh::Vertex,Traits>(*v);
     }
   }
-
-  // --------------------------------------------------------------------------
-  // Vertex info association
-  // --------------------------------------------------------------------------
-
-  template <class SkeletonVertexDescriptor, class SkeletonVertexVerticesMap>
-  void correspondent_vertices(std::map<SkeletonVertexDescriptor, std::vector<int> >& skeleton_to_surface_map,
-                              SkeletonVertexVerticesMap& skeleton_to_surface)
-  {
-    typename std::map<SkeletonVertexDescriptor, std::vector<int> >::iterator iter;
-    for (iter = skeleton_to_surface_map.begin();
-         iter != skeleton_to_surface_map.end(); ++iter)
-    {
-      SkeletonVertexDescriptor i = iter->first;
-
-      skeleton_to_surface[i] = std::vector<vertex_descriptor>();
-      for (size_t j = 0; j < skeleton_to_surface_map[i].size(); ++j)
-      {
-        int id = skeleton_to_surface_map[i][j];
-        if (m_correspondence.find(id) != m_correspondence.end())
-        {
-          skeleton_to_surface[i].insert(skeleton_to_surface[i].end(),
-                                        m_correspondence[id].begin(),
-                                        m_correspondence[id].end());
-        }
-
-        if (id < m_max_id)
-        {
-          skeleton_to_surface[i].push_back(id);
-        }
-      }
-    }
-  }
-
 
   // --------------------------------------------------------------------------
   // Debug
