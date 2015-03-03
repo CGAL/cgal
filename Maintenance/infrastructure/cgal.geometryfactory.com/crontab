@@ -32,6 +32,9 @@ LC_CTYPE=en_US.UTF-8
 # Dump the crontab to SVN every hour at minute 18
 18 * * * * $HOME/bin/dump_crontab
 
+# cgal->cgal2 with git-multimail
+*/5 * * * * cd $HOME/Git/cgal.git && git fetch -p && git push --all --prune cgal2
+
 
 ####################################
 #             Old stuff
