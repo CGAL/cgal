@@ -112,6 +112,7 @@ class Tangential_complex
 {
   typedef typename Kernel::FT                         FT;
   typedef typename Kernel::Point_d                    Point;
+  typedef typename Kernel::Weighted_point_d           Weighted_point;
   typedef typename Kernel::Vector_d                   Vector;
 
   typedef Tr                                          Triangulation;
@@ -386,14 +387,17 @@ public:
 #endif
   }
 
-  // time_limit in seconds
+  // time_limit in seconds: 0 = no fix to do, < 0 = no time limit
   Fix_inconsistencies_status fix_inconsistencies(
     unsigned int &num_steps, 
     std::size_t &initial_num_inconsistent_local_tr,
     std::size_t &best_num_inconsistent_local_tr, 
     std::size_t &final_num_inconsistent_local_tr, 
-    double time_limit = 0.)
+    double time_limit = -1.)
   {
+    if (time_limit == 0.)
+      return TIME_LIMIT_REACHED;
+
     Wall_clock_timer t;
 
     typename Kernel::Point_drop_weight_d drop_w = 
@@ -525,7 +529,7 @@ public:
 
       ++num_steps;
       done = (num_inconsistent_local_tr == 0);
-      if (!done && time_limit != 0 && t.elapsed() > time_limit)
+      if (!done && time_limit > 0. && t.elapsed() > time_limit)
       {
 #ifdef CGAL_TC_VERBOSE
         std::cerr << "Time limit reached." << std::endl;
@@ -944,8 +948,11 @@ private:
 #endif // CGAL_LINKED_WITH_TBB
 
   void compute_tangent_triangulation(
-    std::size_t i, bool tangent_spaces_are_already_computed = false)
+    std::size_t i, bool tangent_spaces_are_already_computed = false,
+    bool verbose = false)
   {
+    if (verbose)
+      std::cerr << "** Computing tangent tri #" << i << " **" << std::endl;
     //std::cerr << "***********************************************" << std::endl;
     Triangulation &local_tr =
       m_triangulations[i].construct_triangulation(m_intrinsic_dimension);
@@ -953,31 +960,19 @@ private:
     Tr_vertex_handle &center_vertex = m_triangulations[i].center_vertex();
 
     // Kernel functor & objects
-    typename Kernel::Difference_of_points_d k_diff_pts =
-      m_k.difference_of_points_d_object();
     typename Kernel::Squared_distance_d k_sqdist =
       m_k.squared_distance_d_object();
-    typename Kernel::Translated_point_d k_transl =
-      m_k.translated_point_d_object();
 
     // Triangulation's traits functor & objects
-    typename Tr_traits::Squared_distance_d sqdist =
-      local_tr_traits.squared_distance_d_object();
     typename Tr_traits::Point_weight_d point_weight =
       local_tr_traits.point_weight_d_object();
-    typename Tr_traits::Point_drop_weight_d drop_w =
-      local_tr_traits.point_drop_weight_d_object();
     /*typename Tr_traits::Power_center_d power_center =
       local_tr_traits.power_center_d_object();*/ // CJTODO
     typename Get_functor<Tr_traits, Power_center_tag>::type power_center(local_tr_traits);
 
-#ifdef CGAL_TC_PERTURB_POSITION
     // No need to lock the mutex here since this will not be called while
     // other threads are perturbing the positions
-    const Point center_pt = k_transl(m_points[i], m_translations[i]);
-#else
-    const Point &center_pt = m_points[i];
-#endif
+    const Point center_pt = compute_perturbed_point(i);
     
     // Estimate the tangent space
     if (!tangent_spaces_are_already_computed)
@@ -1016,6 +1011,8 @@ private:
     );
     center_vertex = local_tr.insert(wp);
     center_vertex->data() = i;
+    if (verbose)
+      std::cerr << "* Inserted point #" << i << std::endl;
 
     //const int NUM_NEIGHBORS = 150;
     //KNS_range ins_range = m_points_ds.query_ANN(center_pt, NUM_NEIGHBORS);
@@ -1025,7 +1022,7 @@ private:
     // of the sphere "star sphere" centered at "center_vertex"
     // and which contains all the
     // circumspheres of the star of "center_vertex"
-    boost::optional<FT> star_sphere_squared_radius;
+    boost::optional<FT> squared_star_sphere_radius_plus_margin;
 
     // Insert points until we find a point which is outside "star shere"
     for (INS_iterator nn_it = ins_range.begin() ;
@@ -1037,24 +1034,17 @@ private:
       // ith point = p, which is already inserted
       if (neighbor_point_idx != i)
       {
-#ifdef CGAL_TC_PERTURB_POSITION
-        // No need to lock the mutex here since this will not be called while
-        // other threads are perturbing the positions
-        const Point neighbor_pt = k_transl(
-          m_points[neighbor_point_idx], m_translations[neighbor_point_idx]);
-#else
-        const Point &neighbor_pt = m_points[neighbor_point_idx];
-#endif
-#ifdef CGAL_TC_PERTURB_WEIGHT
-        FT neighbor_weight = m_weights[neighbor_point_idx];
-#else
-        FT neighbor_weight = 0;
-#endif
+        // No need to lock the Mutex_for_perturb here since this will not be 
+        // called while other threads are perturbing the positions
+        Point neighbor_pt;
+        FT neighbor_weight;
+        compute_perturbed_weighted_point(
+          neighbor_point_idx, neighbor_pt, neighbor_weight);
 
         // "4*m_sq_half_sparsity" because both points can be perturbed
-        if (star_sphere_squared_radius
+        if (squared_star_sphere_radius_plus_margin
           && k_sqdist(center_pt, neighbor_pt)
-             > *star_sphere_squared_radius + 4*m_sq_half_sparsity)
+             > *squared_star_sphere_radius_plus_margin)
           break;
 
         Tr_point proj_pt = project_point_and_compute_weight(
@@ -1065,18 +1055,15 @@ private:
         //Tr_vertex_handle vh = local_tr.insert(proj_pt);
         if (vh != Tr_vertex_handle())
         {
-          // CJTODO TEMP TEST
-          /*if (star_sphere_squared_radius
-            && k_sqdist(center_pt, neighbor_pt)
-               > *star_sphere_squared_radius + 4*m_sq_half_sparsity)
-            std::cout << "ARGGGGGGGH" << std::endl;*/
+          if (verbose)
+            std::cerr << "* Inserted point #" << neighbor_point_idx << std::endl;
 
           vh->data() = neighbor_point_idx;
 
-          // Let's recompute star_sphere_squared_radius
+          // Let's recompute squared_star_sphere_radius_plus_margin
           if (local_tr.current_dimension() >= m_intrinsic_dimension)
           {
-            star_sphere_squared_radius = 0;
+            squared_star_sphere_radius_plus_margin = boost::none;
             // Get the incident cells and look for the biggest circumsphere
             std::vector<Tr_full_cell_handle> incident_cells;
             local_tr.incident_full_cells(
@@ -1088,7 +1075,7 @@ private:
               Tr_full_cell_handle cell = *cit;
               if (local_tr.is_infinite(cell))
               {
-                star_sphere_squared_radius = boost::none;
+                squared_star_sphere_radius_plus_margin = boost::none;
                 break;
               }
               else
@@ -1101,16 +1088,24 @@ private:
 
                 FT sq_power_sphere_diam = 4*point_weight(c);
 
-                if (!star_sphere_squared_radius
-                  || sq_power_sphere_diam > *star_sphere_squared_radius)
+                if (!squared_star_sphere_radius_plus_margin
+                 || sq_power_sphere_diam > 
+                    *squared_star_sphere_radius_plus_margin)
                 {
-                  star_sphere_squared_radius = sq_power_sphere_diam;
+                  squared_star_sphere_radius_plus_margin = sq_power_sphere_diam;
                 }
               }
             }
+
+            // Let's add the margin, now
+            if (squared_star_sphere_radius_plus_margin)
+            {
+              squared_star_sphere_radius_plus_margin = CGAL::square(
+                CGAL::sqrt(*squared_star_sphere_radius_plus_margin) 
+                + 2*m_half_sparsity);
+            }
           }
         }
-        //std::cerr << star_sphere_squared_radius << std::endl;
       }
     }
 
@@ -1118,8 +1113,8 @@ private:
     // Update the associated star (in m_stars)
     //***************************************************
     Star &star = m_stars[i];
-    int cur_dim_plus_1 = local_tr.current_dimension() + 1;
     star.clear();
+    int cur_dim_plus_1 = local_tr.current_dimension() + 1;
     
     std::vector<Tr_full_cell_handle> incident_cells;
     local_tr.incident_full_cells(
@@ -1270,6 +1265,51 @@ private:
     */
   }
 
+  Point compute_perturbed_point(std::size_t pt_idx)
+  {
+#ifdef CGAL_TC_PERTURB_POSITION
+    return m_k.translated_point_d_object()(
+      m_points[pt_idx], m_translations[pt_idx]);
+#else
+      return m_points[pt_idx];
+#endif
+  }
+
+  void compute_perturbed_weighted_point(std::size_t pt_idx, Point &p, FT &w)
+  {
+#ifdef CGAL_TC_PERTURB_POSITION
+    p = m_k.translated_point_d_object()(
+      m_points[pt_idx], m_translations[pt_idx]);
+#else
+    p = m_points[pt_idx];
+#endif
+#ifdef CGAL_TC_PERTURB_WEIGHT
+    w = m_weights[pt_idx];
+#else
+    w = 0;
+#endif
+  }
+
+  Weighted_point compute_perturbed_weighted_point(std::size_t pt_idx)
+  {
+    typename Kernel::Construct_weighted_point_d k_constr_wp =
+      m_k.construct_weighted_point_d_object();
+    
+    Weighted_point wp = k_constr_wp(
+#ifdef CGAL_TC_PERTURB_POSITION
+      m_k.translated_point_d_object()(m_points[pt_idx], m_translations[pt_idx]),
+#else
+      m_points[pt_idx],
+#endif
+#ifdef CGAL_TC_PERTURB_WEIGHT
+      m_weights[pt_idx]);
+#else
+      0);
+#endif
+
+    return wp;
+  }
+
   Point unproject_point(const Tr_point &p, const Point &origin,
                         const Tangent_space_basis &tsb,
                         const Tr_traits &tr_traits)
@@ -1318,6 +1358,18 @@ private:
 
   // Project the point in the tangent space
   // The weight will be the squared distance between p and the projection of p
+  Tr_point project_point_and_compute_weight(
+    const Weighted_point &wp, const Point &origin, const Tangent_space_basis &ts,
+    const Tr_traits &tr_traits) const
+  {
+    typename Kernel::Point_drop_weight_d k_drop_w =
+      m_k.point_drop_weight_d_object();
+    typename Kernel::Point_weight_d k_point_weight =
+      m_k.point_weight_d_object();
+    return project_point_and_compute_weight(
+      k_drop_w(wp), k_point_weight(wp), origin, ts, tr_traits);
+  }
+
   Tr_point project_point_and_compute_weight(
     const Point &p, FT w, const Point &origin, const Tangent_space_basis &ts,
     const Tr_traits &tr_traits) const
@@ -1392,19 +1444,7 @@ private:
       ic_to_find.erase(point_idx);
 
       // For each cell
-      bool found = false;
-      Star::const_iterator it_inc_simplex = star.begin();
-      Star::const_iterator it_inc_simplex_end = star.end();
-      for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
-      {
-        if (*it_inc_simplex == ic_to_find)
-        {
-          found = true;
-          break;
-        }
-      }
-
-      if (!found)
+      if (std::find(star.begin(), star.end(), ic_to_find) == star.end())
         return false;
     }
 
@@ -1730,7 +1770,8 @@ private:
   }
 
   std::ostream &export_vertices_to_off(
-    std::ostream & os, std::size_t &num_vertices)
+    std::ostream & os, std::size_t &num_vertices,
+    bool use_perturbed_points = false)
   {
     if (m_points.empty())
     {
@@ -1755,13 +1796,14 @@ private:
     typename Points::const_iterator it_p = m_points.begin();
     typename Points::const_iterator it_p_end = m_points.end();
     // For each point p
-    for ( ; it_p != it_p_end ; ++it_p)
+    for (std::size_t i = 0 ; it_p != it_p_end ; ++it_p, ++i)
     {
+      Point p = (use_perturbed_points ? compute_perturbed_point(i) : *it_p);
       for (int ii = 0 ; ii < N ; ++ii)
       {
         int i = 0;
         for ( ; i < num_coords ; ++i)
-          os << CGAL::to_double(coord(*it_p, i)) << " ";
+          os << CGAL::to_double(coord(p, i)) << " ";
         if (i == 2)
           os << "0";
 
@@ -1810,12 +1852,37 @@ private:
   
   // Solves one inconsistency
   // "inconsistent_simplex" must contain p_idx and q_idx
+  // "inconsistent_simplex" must be in star(p) but not in star(q)
   void solve_inconsistency_by_adding_higher_dimensional_simplices(
     std::size_t p_idx, std::size_t q_idx,
     const std::set<std::size_t> &inconsistent_simplex)
   {
+    CGAL_assertion_code(
+      std::set<std::size_t> inc_s_minus_p = inconsistent_simplex;
+      inc_s_minus_p.erase(p_idx);
+      std::set<std::size_t> inc_s_minus_q = inconsistent_simplex;
+      inc_s_minus_q.erase(q_idx);
+    );
+    CGAL_assertion(std::find(m_stars[p_idx].begin(), m_stars[p_idx].end(),
+                             inc_s_minus_p) != m_stars[p_idx].end());
+    CGAL_assertion(std::find(m_stars[q_idx].begin(), m_stars[q_idx].end(),
+                             inc_s_minus_q) == m_stars[q_idx].end());
+
+    typename Kernel::Point_drop_weight_d k_drop_w =
+      m_k.point_drop_weight_d_object();
     typename Kernel::Translated_point_d k_transl =
       m_k.translated_point_d_object();
+    typename Kernel::Squared_distance_d k_sqdist =
+      m_k.squared_distance_d_object();
+    typename Kernel::Difference_of_points_d k_diff_pts =
+      m_k.difference_of_points_d_object();
+    typename Kernel::Scalar_product_d k_inner_pdct =
+      m_k.scalar_product_d_object();
+    typename Kernel::Construct_weighted_point_d k_constr_wp =
+      m_k.construct_weighted_point_d_object();
+    //typename Kernel::Power_distance_d k_power_dist =
+    //  m_k.power_distance_d_object(); // CJTODO
+    typename Get_functor<Kernel, Power_distance_tag>::type k_power_dist(m_k);
 
     const Tr_traits &q_tr_traits = m_triangulations[q_idx].tr().geom_traits();
     /*typename Tr_traits::Power_center_d power_center =
@@ -1825,130 +1892,238 @@ private:
       q_tr_traits.point_weight_d_object();
 
     //-------------------------------------------------------------------------
-    //1. Compute power_center(p'q'r') in Tp => cp
-    //-------------------------------------------------------------------------
-    // CJTODO
-
-    //-------------------------------------------------------------------------
+    //1. Compute power_center(p'q'r1'r2'..ri') in Tp => Cp
     //2. Compute power_center(inconsistent_simplex projected in Tq)
     // => gives Cq and radius Rq
     // Rq is also the radius of the ambient sphere S whose center is Cq and
     // which goes through all the ambient points of "inconsistent_simplex"
-    //-------------------------------------------------------------------------
-    std::vector<Tr_point> simplex_pts_in_Tq;
+    //------------------------------------------------------------------------
+    std::vector<Tr_point> simplex_pts_in_Tp, simplex_pts_in_Tq;
+    simplex_pts_in_Tp.reserve(inconsistent_simplex.size());
     simplex_pts_in_Tq.reserve(inconsistent_simplex.size());
-        
-#ifdef CGAL_TC_PERTURB_POSITION
+
     // No need to lock the mutex here since this will not be called while
     // other threads are perturbing the positions
-    const Point center_pt = k_transl(m_points[q_idx], m_translations[q_idx]);
-#else
-    const Point &center_pt = m_points[q_idx];
-#endif
+    const Point pt_p = compute_perturbed_point(p_idx);
+    const Point pt_q = compute_perturbed_point(q_idx);
 
     std::set<std::size_t>::const_iterator it_point_idx = 
                                                   inconsistent_simplex.begin();
     std::set<std::size_t>::const_iterator it_point_idx_end = 
                                                   inconsistent_simplex.end();
-    // For each point p of the simplex, we reproject it onto the tangent
+    // For each point of the simplex, we reproject it onto the tangent
     // space. Could be optimized since it's already been computed before.
     for ( ; it_point_idx != it_point_idx_end ; ++it_point_idx)
     {
-#ifdef CGAL_TC_PERTURB_POSITION
-      // No need to lock the mutex here since this will not be called while
-      // other threads are perturbing the positions
-      const Point p = k_transl(
-        m_points[*it_point_idx], m_translations[*it_point_idx]);
-#else
-      const Point &p = m_points[*it_point_idx];
-#endif
-#ifdef CGAL_TC_PERTURB_WEIGHT
-      FT w = m_weights[*it_point_idx];
-#else
-      FT w = 0;
-#endif
+      const Weighted_point wp = compute_perturbed_weighted_point(*it_point_idx);
+      // No need to lock the Mutex_for_perturb here since this will not be 
+      // called while other threads are perturbing the positions
+      simplex_pts_in_Tp.push_back(project_point_and_compute_weight(
+        wp, pt_p, m_tangent_spaces[p_idx], q_tr_traits));
       simplex_pts_in_Tq.push_back(project_point_and_compute_weight(
-        p, w, center_pt, m_tangent_spaces[q_idx], q_tr_traits));
+        wp, pt_q, m_tangent_spaces[q_idx], q_tr_traits));
     }
 
+    Tr_point Cp = tr_power_center(
+      simplex_pts_in_Tp.begin(), simplex_pts_in_Tp.end());
     Tr_point Cq = tr_power_center(
       simplex_pts_in_Tq.begin(), simplex_pts_in_Tq.end());
 
-    //std::cerr << "Cq weight: " << tr_point_weight(Cq) << std::endl; // CJTODO TEMP
+    FT circumsphere_sqradius_p = tr_point_weight(Cp);
+    FT circumsphere_sqradius_q = tr_point_weight(Cq);
+    FT squared_circumsphere_radius_q_plus_margin = CGAL::square(
+      CGAL::sqrt(circumsphere_sqradius_q) + 2*m_half_sparsity);
 
-    //-------------------------------------------------------------------------
-    //3. Find points t1, t2... (in ambient space) which are inside S
-    //-------------------------------------------------------------------------
-    
-    // CJTODO: on prend le point le plus proche pour l'instant, mais il 
-    // faudra changer ça (cf 4 5 6, ci dessous)
-    // Et aussi, il faudra utiliser Power_distance dans le cas où on perturbe
-    // avec des poids (on est dans l'espace ambiant, donc ce sont les seuls
-    // poids possibles). Il faut aussi ajouter une marge lors de la recherche
-    // ANN puis restester la distance avec le vrai point perturbée.
-    Point global_Cq = unproject_point(Cq, center_pt,
-                                      m_tangent_spaces[q_idx], q_tr_traits);
-    std::size_t inside_point_idx;
-    INS_range ins_range = m_points_ds.query_incremental_ANN(global_Cq);
+    Weighted_point global_Cp = k_constr_wp(
+      unproject_point(Cp, pt_p, m_tangent_spaces[p_idx], q_tr_traits),
+      circumsphere_sqradius_p);
+
+    Weighted_point global_Cq = k_constr_wp(
+      unproject_point(Cq, pt_q, m_tangent_spaces[q_idx], q_tr_traits),
+      circumsphere_sqradius_q);
+
+
+    // CJTODO TEMP ====================
+    /*{
+    INS_range ins_range = m_points_ds.query_incremental_ANN(k_drop_w(global_Cp));
     for (INS_iterator nn_it = ins_range.begin() ;
          nn_it != ins_range.end() ;
          ++nn_it)
     {
+      FT neighbor_sqdist = nn_it->second;
+
+      //std::cerr << nn_it->first << " : " << neighbor_sqdist << " / "; // CJTODO TEMP
+
+      // When we're sure we got all the potential points, break
+      //if (neighbor_sqdist > circumsphere_sqradius_p + m_sq_half_sparsity)
+      //  break;
+
       std::size_t neighbor_point_idx = nn_it->first;
-      if (inconsistent_simplex.find(neighbor_point_idx) == 
-          inconsistent_simplex.end())
+      FT point_to_Cp_power_sqdist = k_power_dist(
+        global_Cp, compute_perturbed_weighted_point(neighbor_point_idx));
+      //std::cerr << point_to_Cp_power_sqdist << std::endl; // CJTODO TEMP
+      // If the point is ACTUALLY "inside" S
+      if (point_to_Cp_power_sqdist <= FT(0)
+        && inconsistent_simplex.find(neighbor_point_idx) == 
+           inconsistent_simplex.end())
       {
-        inside_point_idx = neighbor_point_idx;
-        
-        { // CJTODO TEMP DEBUG
-        ++nn_it;
-        int count_insiders = 1;
-        for (int count = 0 ; count < inconsistent_simplex.size() ; ++count, ++nn_it)
-        {
-          std::size_t neighbor_point_idx = nn_it->first;
-          if (inconsistent_simplex.find(neighbor_point_idx) == 
-              inconsistent_simplex.end())
-          {
-            //std::cerr << "insider dist: " << nn_it->second << std::endl; // CJTODO TEMP
-            ++count_insiders;
-          }
-          else
-          {
-            //std::cerr << "Simplex point dist: " << nn_it->second << std::endl; // CJTODO TEMP
-            ++count;
-          }
-        }
-        
-        if (count_insiders > 1)
-        {
-          std::cerr << "Warning: " << count_insiders << " insiders in " 
-            << inconsistent_simplex.size() - 1 << " simplex\n";
-        }
-        //else
-        //  std::cerr << "Ok: only one vertex inside the sphere\n";
-
-        } // END CJTODO
-
-        break;
+        std::cerr << "Warning: " << neighbor_point_idx << " is inside Cp with power dist " << point_to_Cp_power_sqdist << "\n";
       }
     }
+    }*/
+    // /CJTODO ====================
 
-    //std::size_t inside_point_idx = kns_range.begin()->first;
-        
     //-------------------------------------------------------------------------
-    //4. S'il n'y a qu'un seul points ti, passer à la dernière étape
+    //3. Find points t1, t2... (in ambient space) which are inside S
     //-------------------------------------------------------------------------
+    std::vector<std::size_t> inside_pt_indices;
+    INS_range ins_range = m_points_ds.query_incremental_ANN(k_drop_w(global_Cq));
+    for (INS_iterator nn_it = ins_range.begin() ;
+         nn_it != ins_range.end() ;
+         ++nn_it)
+    {
+      FT neighbor_sqdist = nn_it->second;
+
+      // When we're sure we got all the potential points, break
+      if (neighbor_sqdist > squared_circumsphere_radius_q_plus_margin)
+        break;
+
+      std::size_t neighbor_point_idx = nn_it->first;
+      FT point_to_Cq_power_sqdist = k_power_dist(
+        global_Cq, compute_perturbed_weighted_point(neighbor_point_idx));
+      // If the point is ACTUALLY "inside" S
+      if (point_to_Cq_power_sqdist <= FT(0)
+        && inconsistent_simplex.find(neighbor_point_idx) == 
+           inconsistent_simplex.end())
+      {
+        inside_pt_indices.push_back(neighbor_point_idx);
+      }
+      // CJTODO TEMP:
+      /*{
+        typename Tr_traits::Power_test_d side = q_tr_traits.power_test_d_object();
+        typename Tr_traits::Orientation_d orient = q_tr_traits.orientation_d_object();
+        Orientation o = orient(simplex_pts_in_Tq.begin(), simplex_pts_in_Tq.end());
+        auto p = project_point_and_compute_weight(
+          compute_perturbed_weighted_point(neighbor_point_idx), 
+          pt_q, m_tangent_spaces[q_idx], q_tr_traits);
+        auto sid = (o == NEGATIVE ?
+          side(simplex_pts_in_Tq.rbegin(), simplex_pts_in_Tq.rend(), p)
+          : side(simplex_pts_in_Tq.begin(), simplex_pts_in_Tq.end(), p));
+        switch(sid)
+        {
+        case ON_NEGATIVE_SIDE:
+          std::cerr << "ON_NEGATIVE_SIDE" << std::endl; // CJTODO TEMP
+          break;
+        case ON_POSITIVE_SIDE:
+          std::cerr << "ON_POSITIVE_SIDE" << std::endl; // CJTODO TEMP
+          break;
+        case ON_ORIENTED_BOUNDARY:
+          std::cerr << "ON_ORIENTED_BOUNDARY" << std::endl; // CJTODO TEMP
+          break;
+        }
+      }*/
+    }
+    CGAL_assertion_msg(!inside_pt_indices.empty(), 
+      "There should be at least one vertex inside the sphere");
     
+    // CJTODO TEMP DEBUG
+    /*if (inside_pt_indices.empty())
+    {
+      //compute_tangent_triangulation(q_idx, true, true);
+      std::cerr << "Error: inside_pt_indices.empty()\n";
+      std::cerr << "Stars:\n";
+      for (auto s : m_stars[q_idx])
+      {
+        std::cerr << q_idx << " ";
+        std::copy(s.begin(), s.end(),
+          std::ostream_iterator<std::size_t>(std::cerr, " "));
+        std::cerr << std::endl;
+      }
+      std::cerr << std::endl;
+    }*/
+    // CJTODO TEMP DEBUG
+    if (inside_pt_indices.size() > 1)
+    {
+      std::cerr << "Warning: " << inside_pt_indices.size() << " insiders in " 
+        << inconsistent_simplex.size() - 1 << " simplex\n";
+    }
+
     //-------------------------------------------------------------------------
-    //5. Pour chaque ti, calculer la sphère qui passe par p, q, r, ti dont le centre est sur la droite (cq, cq)
+    //4. If there's more than one ti... or not
     //-------------------------------------------------------------------------
-    
+    // CJTODO: take weights into account
+    std::size_t inside_point_idx;
+    if (inside_pt_indices.size() > 1)
+    {
+      //-----------------------------------------------------------------------
+      //5. For each ti, compute the sphere that goes through
+      //   p, q, r1, r2..., ri and ti whose center is on (cp, cq)
+      //   We're looking for a point on (Cp, Cq) at equal distance from p and 
+      //   ti.
+      //   The center of the sphere is then: Cp + a(Cq - Cp)
+      //   where a = (sqdist(Cp,ti) - sqdist(Cp,p)) / (2*(Cq-Cp).(ti-p))
+      //6. Keep point ti such as dist(cp, ci) is the smallest
+      //-----------------------------------------------------------------------
+      
+      FT min_a = std::numeric_limits<FT>::max();
+      for (auto idx : inside_pt_indices) // CJTODO: C++11
+      {
+        const Point ti = compute_perturbed_point(idx);
+        const Point &cp = k_drop_w(global_Cp);
+        const Point &cq = k_drop_w(global_Cq);
+        FT a = 
+          (k_sqdist(cp, ti) - k_sqdist(cp, pt_p)) /
+          (FT(2)*k_inner_pdct(k_diff_pts(cq, cp), k_diff_pts(ti, pt_p)));
+
+        if (a < min_a)
+        {
+          min_a = a;
+          inside_point_idx = idx;
+        }
+      }
+      
+      // CJTODO TEMP ====================
+      /*{
+      typename Kernel::Scaled_vector_d scaled_vec = m_k.scaled_vector_d_object();
+      typename Kernel::Point_weight_d k_weight = m_k.point_weight_d_object();
+      Weighted_point C = k_constr_wp(
+        k_transl(k_drop_w(global_Cp), scaled_vec(k_diff_pts(k_drop_w(global_Cq), k_drop_w(global_Cp)), min_a)),
+        k_sqdist(k_transl(k_drop_w(global_Cp), scaled_vec(k_diff_pts(k_drop_w(global_Cq), k_drop_w(global_Cp)), min_a)), pt_p));
+      INS_range ins_range = m_points_ds.query_incremental_ANN(k_drop_w(C));
+      for (INS_iterator nn_it = ins_range.begin() ;
+           nn_it != ins_range.end() ;
+           ++nn_it)
+      {
+        FT neighbor_sqdist = nn_it->second;
+
+        //std::cerr << nn_it->first << " : " << neighbor_sqdist << " / "; // CJTODO TEMP
+
+        // When we're sure we got all the potential points, break
+        if (neighbor_sqdist > k_weight(C) + m_sq_half_sparsity)
+          break;
+
+        std::size_t neighbor_point_idx = nn_it->first;
+        FT point_to_C_power_sqdist =
+          k_power_dist(C, compute_perturbed_weighted_point(neighbor_point_idx));
+        //std::cerr << point_to_Cp_power_sqdist << std::endl; // CJTODO TEMP
+        // If the point is ACTUALLY "inside" S
+        if (point_to_C_power_sqdist <= FT(-0.000001)
+          && inconsistent_simplex.find(neighbor_point_idx) == 
+             inconsistent_simplex.end())
+        {
+          std::cerr << "Warning: " << neighbor_point_idx << " is inside C with power dist " << point_to_C_power_sqdist << "\n";
+        }
+      }
+      }*/
+      // /CJTODO ====================
+    }
+    else
+    {
+      inside_point_idx = *inside_pt_indices.begin();
+    }
+
     //-------------------------------------------------------------------------
-    //6. Conserver le point ti tel que dist(cp, ci) soit la plus petite
-    //-------------------------------------------------------------------------
-    
-    //-------------------------------------------------------------------------
-    //7. Créer un k+1-simplex (inconsistent_simplex, ti)
+    //7. Create a k+1-simplex (inconsistent_simplex, ti)
     //-------------------------------------------------------------------------
     std::set<std::size_t> new_simplex = inconsistent_simplex;
     new_simplex.insert(inside_point_idx);
@@ -1967,6 +2142,7 @@ private:
 
   // Test and solve inconsistencies of a simplex.
   // Returns true if some inconsistencies were found.
+  // Precondition: incident_simplex is in the star of m_points[tr_index]
   bool check_and_solve_inconsistencies_by_adding_higher_dim_simplices(
     std::size_t tr_index, const std::set<std::size_t> &incident_simplex)
   {
@@ -1981,10 +2157,10 @@ private:
     simplex.insert(tr_index);
 
     // Check if the simplex is in the stars of all its vertices
-    std::set<std::size_t>::const_iterator it_point_idx = simplex.begin();
+    std::set<std::size_t>::const_iterator it_point_idx = incident_simplex.begin();
     // For each point p of the simplex, we parse the incidents cells of p
     // and we check if "simplex" is among them
-    for ( ; it_point_idx != simplex.end() ; ++it_point_idx)
+    for ( ; it_point_idx != incident_simplex.end() ; ++it_point_idx)
     {
       std::size_t point_idx = *it_point_idx;
 
@@ -1994,20 +2170,7 @@ private:
       Incident_simplex ic_to_find = simplex;
       ic_to_find.erase(point_idx);
 
-      // For each cell
-      bool found = false;
-      Star::const_iterator it_inc_simplex = star.begin();
-      Star::const_iterator it_inc_simplex_end = star.end();
-      for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
-      {
-        if (*it_inc_simplex == ic_to_find)
-        {
-          found = true;
-          break;
-        }
-      }
-
-      if (!found)
+      if (std::find(star.begin(), star.end(), ic_to_find) == star.end())
       {
         solve_inconsistency_by_adding_higher_dimensional_simplices(
           tr_index, *it_point_idx, simplex);
