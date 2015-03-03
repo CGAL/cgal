@@ -46,6 +46,7 @@ Scene::Scene(QObject* parent)
       item_A(-1),
       item_B(-1)
 {
+
     connect(this, SIGNAL(selectionRay(double, double, double,
                                       double, double, double)),
             this, SLOT(setSelectionRay(double, double, double,

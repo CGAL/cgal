@@ -1,4 +1,5 @@
 #include <vector>
+#include <queue>
 
 #include "Scene_polygon_soup_item.h"
 #include "Scene_polyhedron_item.h"
@@ -21,7 +22,13 @@
 #include <CGAL/polygon_soup_to_polyhedron_3.h>
 #include <CGAL/orient_polyhedron_3.h>
 
+#include <CGAL/Triangulation_vertex_base_with_info_2.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Constrained_triangulation_plus_2.h>
+#include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
 
+#include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
 
 
 
@@ -92,8 +99,8 @@ Scene_polygon_soup_item::initialize_buffers()
     glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
     glBufferData(GL_ARRAY_BUFFER,
                  (positions_poly.size())*sizeof(float),
-		 positions_poly.data(),
-		 GL_STATIC_DRAW);
+                 positions_poly.data(),
+                 GL_STATIC_DRAW);
     glVertexAttribPointer(0, //number of the buffer
                           4, //number of floats to be taken
                           GL_FLOAT, // type of data
@@ -105,22 +112,36 @@ Scene_polygon_soup_item::initialize_buffers()
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
     glBufferData(GL_ARRAY_BUFFER,
-                 (normals.size())*sizeof(float),
-		 normals.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(1,
-			  3,
-			  GL_FLOAT,
-			  GL_FALSE,
-			  0,
-			  NULL
-			  );
+                 (positions_lines.size())*sizeof(float),
+                 positions_lines.data(),
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(1, //number of the buffer
+                          4, //number of floats to be taken
+                          GL_FLOAT, // type of data
+                          GL_FALSE, //not normalized
+                          0, //compact data (not in a struct)
+                          NULL //no offset (seperated in several buffers)
+                          );
     glEnableVertexAttribArray(1);
 
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (normals.size())*sizeof(float),
+                 normals.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(2,
+                          3,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          0,
+                          NULL
+                          );
+    glEnableVertexAttribArray(2);
+
     // Clean-up
-     glBindVertexArray(0);
+    glBindVertexArray(0);
 }
 
-GLuint
+void
 Scene_polygon_soup_item::compile_shaders(void)
 {
     //fill the vertex shader
@@ -129,7 +150,7 @@ Scene_polygon_soup_item::compile_shaders(void)
         "#version 300 es \n"
         " \n"
         "layout (location = 0) in vec4 positions_poly; \n"
-        "layout (location = 1) in vec3 vNormals; \n"
+        "layout (location = 2) in vec3 vNormals; \n"
         "uniform mat4 mvp_matrix; \n"
         "uniform mat4 mv_matrix; \n"
 
@@ -188,7 +209,7 @@ Scene_polygon_soup_item::compile_shaders(void)
     glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
     glCompileShader(vertex_shader);
 
-    GLint result;
+    /*GLint result;
     glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&result);
     if(result == GL_TRUE){
         std::cout<<"Vertex compilation OK"<<std::endl;
@@ -199,11 +220,11 @@ Scene_polygon_soup_item::compile_shaders(void)
         char* log = new char[maxLength];
         glGetShaderInfoLog(vertex_shader,maxLength,&length,log);
         std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
-    }
+    }*/
     fragment_shader =	glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
     glCompileShader(fragment_shader);
-
+    /*
     glGetShaderiv(fragment_shader,GL_COMPILE_STATUS,&result);
     if(result == GL_TRUE){
         std::cout<<"Fragment compilation OK"<<std::endl;
@@ -214,17 +235,17 @@ Scene_polygon_soup_item::compile_shaders(void)
         char* log = new char[maxLength];
         glGetShaderInfoLog(fragment_shader,maxLength,&length,log);
         std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
-    }
+    }*/
 
 
     //creates the program, attaches and links the shaders
-    program = glCreateProgram();
+    GLuint program = glCreateProgram();
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
 
 
-    glGetProgramiv(program,GL_LINK_STATUS,&result);
+    /* glGetProgramiv(program,GL_LINK_STATUS,&result);
     if(result == GL_TRUE){
         std::cout<<"Link OK"<<std::endl;
     } else {
@@ -234,16 +255,63 @@ Scene_polygon_soup_item::compile_shaders(void)
         char* log = new char[maxLength];
         glGetProgramInfoLog(program,maxLength,&length,log);
         std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
-    }
+    }*/
+    //Delete the shaders which are now in the memory
+    glDeleteShader(vertex_shader);
+    rendering_program_poly = program;
+
+    static const GLchar* vertex_shader_source_lines[] =
+    {
+        "#version 300 es \n"
+        " \n"
+        "layout (location = 1) in vec4 positions_lines; \n"
+
+        "uniform mat4 mvp_matrix; \n"
+        "uniform vec4 color; \n"
+        "out highp vec3 fColors; \n"
+        " \n"
+
+        "void main(void) \n"
+        "{ \n"
+        "   fColors = vec3(0,0,0); \n//color[0], color[1], color[2]); \n"
+        "   gl_Position = mvp_matrix * positions_lines; \n"
+        "} \n"
+    };
+
+    //creates and compiles the vertex shader
+    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertex_shader, 1, vertex_shader_source_lines, NULL);
+    glCompileShader(vertex_shader);
+    glDeleteShader(fragment_shader);
+
+    glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+    glCompileShader(fragment_shader);
+
+    //creates the program, attaches and links the shaders
+    program = glCreateProgram();
+    glAttachShader(program, vertex_shader);
+    glAttachShader(program, fragment_shader);
+    glLinkProgram(program);
+
+    GLint result;
+        glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&result);
+        if(result == GL_TRUE){
+            std::cout<<"Vertex compilation OK"<<std::endl;
+        } else {
+            int maxLength;
+            int length;
+            glGetShaderiv(vertex_shader,GL_INFO_LOG_LENGTH,&maxLength);
+            char* log = new char[maxLength];
+            glGetShaderInfoLog(vertex_shader,maxLength,&length,log);
+            std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
+        }
     //Delete the shaders which are now in the memory
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
-
-
-    return program;
+    rendering_program_lines = program;
 }
 void
-Scene_polygon_soup_item::uniform_attrib(Viewer_interface* viewer) const
+Scene_polygon_soup_item::uniform_attrib(Viewer_interface* viewer, int mode) const
 {
     GLfloat colors[4];
     light_info light;
@@ -290,33 +358,138 @@ Scene_polygon_soup_item::uniform_attrib(Viewer_interface* viewer) const
     light.diffuse[1]*=colors[1];
     light.diffuse[2]*=colors[2];
 
-
-    //Set the ModelViewProjection and ModelView matrices
-    glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
-    glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
-
-    //Set the light infos
-    glUniform3fv(location[2], 1, light.position);
-    glUniform3fv(location[3], 1, light.diffuse);
-    glUniform3fv(location[4], 1, light.specular);
-    glUniform3fv(location[5], 1, light.ambient);
-    glUniform1i(location[6], is_both_sides);
+    if(mode ==0)
+    {
+        glUseProgram(rendering_program_poly);
+        glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
+        glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
+        //Set the light infos
+        glUniform3fv(location[2], 1, light.position);
+        glUniform3fv(location[3], 1, light.diffuse);
+        glUniform3fv(location[4], 1, light.specular);
+        glUniform3fv(location[5], 1, light.ambient);
+        glUniform1i(location[6], is_both_sides);
+    }
+    else if(mode ==1)
+    {
+        glUseProgram(rendering_program_lines);
+        glUniformMatrix4fv(location[7], 1, GL_FALSE, mvp_mat);
+        glUniform4fv(location[8],1,colors);
+    }
 }
 
+typedef typename Polyhedron::Traits Traits;
+typedef typename Polygon_soup::Polygon_3 Facet;
+typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
+typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
+struct Face_info {
+    typename Polyhedron::Halfedge_handle e[3];
+    bool is_external;
+};
+typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_handle,
+P_traits>        Vb;
+typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
+P_traits>          Fb1;
+typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
+typedef CGAL::No_intersection_tag                                    Itag;
+typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
+TDS,
+Itag>             CDTbase;
+typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
 void
-Scene_polygon_soup_item::compute_normals_and_vertices(){
-    //get the vertices and normals
-    typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
-    typedef Polygon_soup::Polygons::size_type size_type;
-    positions_poly.clear();
-    normals.clear();
-    for(Polygons_iterator it = soup->polygons.begin();
-        it != soup->polygons.end(); ++it)
-    {
+Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
+{
+    //Computes the normal of the facet
+    const Point_3& pa = soup->points[pit->at(0)];
+    const Point_3& pb = soup->points[pit->at(1)];
+    const Point_3& pc = soup->points[pit->at(2)];
+    typename Traits::Vector_3 normal = CGAL::cross_product(pb-pa, pc -pa);
+    normal = normal / std::sqrt(normal * normal);
 
-        const Point_3& pa = soup->points[it->at(0)];
-        const Point_3& pb = soup->points[it->at(1)];
-        const Point_3& pc = soup->points[it->at(2)];
+    // typename Traits::Vector_3 normal =
+    //       compute_facet_normal<Facet,Traits>(*pit);
+
+    P_traits cdt_traits(normal);
+
+    CDT cdt(cdt_traits);
+
+    int it = 0;
+    int it_end =pit->size();
+
+    // Iterates the vector of facet handles
+    typename CDT::Vertex_handle previous, first;
+    do {
+
+        typename CDT::Vertex_handle vh = cdt.insert(soup->points[pit->at(it)]);
+        if(first == 0) {
+            first = vh;
+        }
+        if(previous != 0 && previous != vh) {
+            cdt.insert_constraint(previous, vh);
+        }
+        previous = vh;
+    } while( ++it != it_end );
+
+    cdt.insert_constraint(previous, first);
+
+    // sets mark is_external
+    for(typename CDT::All_faces_iterator
+        pit = cdt.all_faces_begin(),
+        end = cdt.all_faces_end();
+        pit != end; ++pit)
+    {
+        pit->info().is_external = false;
+    }
+
+    //check if the facet is external or internal
+    std::queue<typename CDT::Face_handle> face_queue;
+    face_queue.push(cdt.infinite_vertex()->face());
+    while(! face_queue.empty() ) {
+        typename CDT::Face_handle fh = face_queue.front();
+        face_queue.pop();
+        if(fh->info().is_external) continue;
+        fh->info().is_external = true;
+        for(int i = 0; i <3; ++i) {
+            if(!cdt.is_constrained(std::make_pair(fh, i)))
+            {
+                face_queue.push(fh->neighbor(i));
+            }
+        }
+    }
+
+
+    //iterates on the internal faces to add the vertices to the positions
+    //and the normals to the appropriate vectors
+    int count =0;
+    for(typename CDT::Finite_faces_iterator
+        ffit = cdt.finite_faces_begin(),
+        end = cdt.finite_faces_end();
+        ffit != end; ++ffit)
+    {
+        count ++;
+        if(ffit->info().is_external)
+            continue;
+
+        positions_poly.push_back(ffit->vertex(0)->point().x());
+        positions_poly.push_back(ffit->vertex(0)->point().y());
+        positions_poly.push_back(ffit->vertex(0)->point().z());
+        positions_poly.push_back(1.0);
+
+        positions_poly.push_back(ffit->vertex(1)->point().x());
+        positions_poly.push_back(ffit->vertex(1)->point().y());
+        positions_poly.push_back(ffit->vertex(1)->point().z());
+        positions_poly.push_back(1.0);
+
+        positions_poly.push_back(ffit->vertex(2)->point().x());
+        positions_poly.push_back(ffit->vertex(2)->point().y());
+        positions_poly.push_back(ffit->vertex(2)->point().z());
+        positions_poly.push_back(1.0);
+
+
+        const Point_3& pa = soup->points[pit->at(0)];
+        const Point_3& pb = soup->points[pit->at(1)];
+        const Point_3& pc = soup->points[pit->at(2)];
 
         Kernel::Vector_3 n = CGAL::cross_product(pb-pa, pc -pa);
         n = n / std::sqrt(n * n);
@@ -335,28 +508,85 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
         normals.push_back(n.z());
 
 
-        for(size_type i = 0; i < it->size(); ++i)
+    }
+    // std::cout<<"count = "<<count<<std::endl;
+}
+void
+Scene_polygon_soup_item::compute_normals_and_vertices(){
+    //get the vertices and normals
+
+    typedef Polygon_soup::Polygons::size_type size_type;
+    positions_poly.clear();
+    normals.clear();
+    for(Polygons_iterator it = soup->polygons.begin();
+        it != soup->polygons.end(); ++it)
+    {
+        if(it->size()!=3)
         {
-            const Point_3& p = soup->points[it->at(i)];
-            positions_poly.push_back(p.x());
-            positions_poly.push_back(p.y());
-            positions_poly.push_back(p.z());
-            positions_poly.push_back(1.0);
+            triangulate_polygon(it);
+        }
+        else{
+
+            const Point_3& pa = soup->points[it->at(0)];
+            const Point_3& pb = soup->points[it->at(1)];
+            const Point_3& pc = soup->points[it->at(2)];
+
+            Kernel::Vector_3 n = CGAL::cross_product(pb-pa, pc -pa);
+            n = n / std::sqrt(n * n);
+
+            normals.push_back(n.x());
+            normals.push_back(n.y());
+            normals.push_back(n.z());
+
+            normals.push_back(n.x());
+            normals.push_back(n.y());
+            normals.push_back(n.z());
+
+
+            normals.push_back(n.x());
+            normals.push_back(n.y());
+            normals.push_back(n.z());
+
+
+            for(size_type i = 0; i < it->size(); ++i)
+            {
+                const Point_3& p = soup->points[it->at(i)];
+                positions_poly.push_back(p.x());
+                positions_poly.push_back(p.y());
+                positions_poly.push_back(p.z());
+                positions_poly.push_back(1.0);
+            }
+        }
+
+        //Lines
+        for(size_type i = 0; i < it->size()-1; i++)
+        {
+            const Point_3& pa = soup->points[it->at(i)];
+            const Point_3& pb = soup->points[it->at(i+1)];
+            positions_lines.push_back(pa.x());
+            positions_lines.push_back(pa.y());
+            positions_lines.push_back(pa.z());
+            positions_lines.push_back(1.0);
+
+            positions_lines.push_back(pb.x());
+            positions_lines.push_back(pb.y());
+            positions_lines.push_back(pb.z());
+            positions_lines.push_back(1.0);
         }
     }
-
-
     //Allocates a uniform location for the MVP and MV matrices
-    location[0] = glGetUniformLocation(rendering_program, "mvp_matrix");
-    location[1] = glGetUniformLocation(rendering_program, "mv_matrix");
+    location[0] = glGetUniformLocation(rendering_program_poly, "mvp_matrix");
+    location[1] = glGetUniformLocation(rendering_program_poly, "mv_matrix");
 
     //Allocates a uniform location for the light values
-    location[2] = glGetUniformLocation(rendering_program, "light_pos");
-    location[3] = glGetUniformLocation(rendering_program, "light_diff");
-    location[4] = glGetUniformLocation(rendering_program, "light_spec");
-    location[5] = glGetUniformLocation(rendering_program, "light_amb");
-  //  location[6] = glGetUniformLocation(rendering_program, "vColors");
-    location[7] = glGetUniformLocation(rendering_program, "is_two_side");
+    location[2] = glGetUniformLocation(rendering_program_poly, "light_pos");
+    location[3] = glGetUniformLocation(rendering_program_poly, "light_diff");
+    location[4] = glGetUniformLocation(rendering_program_poly, "light_spec");
+    location[5] = glGetUniformLocation(rendering_program_poly, "light_amb");
+    location[6] = glGetUniformLocation(rendering_program_poly, "is_two_side");
+
+    location[7] = glGetUniformLocation(rendering_program_lines, "mvp_matrix");
+    location[8] = glGetUniformLocation(rendering_program_lines, "color");
 }
 
 
@@ -367,16 +597,17 @@ Scene_polygon_soup_item::Scene_polygon_soup_item()
 {
     glGenVertexArrays(1, &vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(2, buffer);
+    glGenBuffers(3, buffer);
 
-    rendering_program = compile_shaders();
+    compile_shaders();
 }
 
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
 {
-    glDeleteBuffers(2, buffer);
+    glDeleteBuffers(3, buffer);
     glDeleteVertexArrays(1, &vao);
-    glDeleteProgram(rendering_program);
+    glDeleteProgram(rendering_program_lines);
+    glDeleteProgram(rendering_program_poly);
 
     delete soup;
 }
@@ -398,6 +629,7 @@ Scene_polygon_soup_item::load(std::istream& in)
 
     bool result = CGAL::read_OFF(in, soup->points, soup->polygons);
     emit changed();
+
     return result;
 }
 
@@ -552,9 +784,9 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     glBindVertexArray(vao);
 
     // tells the GPU to use the program just created
-    glUseProgram(rendering_program);
+    glUseProgram(rendering_program_poly);
 
-    uniform_attrib(viewer);
+    uniform_attrib(viewer,0);
 
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
@@ -573,15 +805,33 @@ Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
     glBindVertexArray(vao);
 
     // tells the GPU to use the program just created
-    glUseProgram(rendering_program);
+    glUseProgram(rendering_program_poly);
 
-    uniform_attrib(viewer);
+    uniform_attrib(viewer,0);
 
     //draw the points
     glDrawArrays(GL_POINTS, 0, positions_poly.size()/4);
 
     // Clean-up
     glBindVertexArray(0);
+}
+
+void
+Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
+    if(soup == 0) return;
+
+    glBindVertexArray(vao);
+
+    // tells the GPU to use the program just created
+    glUseProgram(rendering_program_lines);
+
+    uniform_attrib(viewer,1);
+    //draw the edges
+    glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
+    // Clean-up
+    glUseProgram(0);
+    glBindVertexArray(0);
+
 }
 
 bool

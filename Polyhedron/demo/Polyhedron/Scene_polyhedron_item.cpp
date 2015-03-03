@@ -14,7 +14,6 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
-
 #include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
 
 #include <QVariant>
@@ -665,8 +664,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
 
 
     //Facets
-
-
     typedef typename Polyhedron::Traits	    Kernel;
     typedef typename Kernel::Point_3	    Point;
     typedef typename Kernel::Vector_3	    Vector;
@@ -1139,7 +1136,7 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     glBindVertexArray(vao[0]);
 
     // tells the GPU to use the program just created
-    // glUseProgram(rendering_program_lines);
+     glUseProgram(rendering_program_lines);
 
     uniform_attrib(viewer,1);
 
