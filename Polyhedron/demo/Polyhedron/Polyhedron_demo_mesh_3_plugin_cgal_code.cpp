@@ -326,6 +326,7 @@ public:
       connect(actionExportFacetsInComplex,
               SIGNAL(triggered()),this,
               SLOT(export_facets_in_complex()));
+      menu->setProperty(prop_name, true);
     }
     return menu;
   }
