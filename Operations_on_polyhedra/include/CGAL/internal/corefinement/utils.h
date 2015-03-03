@@ -72,6 +72,7 @@ public:
 
   bool operator()(typename Polyhedron::Halfedge_const_handle h) const
   {
+    if (h->is_border_edge()) return false;
     return intersection_hedges_.find(h)==intersection_hedges_.end();
   }
 };
