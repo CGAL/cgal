@@ -749,24 +749,26 @@ public:
       return true;
 
     const int ambient_dim = m_k.point_dimension_d_object()(*m_points.begin());
-    typedef Delaunay_triangulation<Kernel,
-                                   Triangulation_data_structure<
-                                     typename Kernel::Dimension,
-                                     Triangulation_vertex<Kernel, Vertex_data>
-                                   > >                        DT;
-    typedef typename DT::Vertex_handle                        DT_VH;
-    typedef typename DT::Finite_full_cell_const_iterator      FFC_it;
+    typedef Regular_triangulation_euclidean_traits<Kernel>    RT_Traits;
+    typedef Regular_triangulation<
+      RT_Traits,
+      Triangulation_data_structure<
+        typename RT_Traits::Dimension,
+        Triangulation_vertex<RT_Traits, Vertex_data>
+      > >                                                     RT;
+    typedef typename RT::Vertex_handle                        RT_VH;
+    typedef typename RT::Finite_full_cell_const_iterator      FFC_it;
 
     //-------------------------------------------------------------------------
     // Build the ambient Delaunay triangulation
     // Then save its simplices into "amb_dt_simplices"
     //-------------------------------------------------------------------------
 
-    DT ambient_dt(ambient_dim);
+    RT ambient_dt(ambient_dim);
     for (std::size_t i=0; i<m_points.size(); ++i)
     {
-      const Point& p = m_points[i];
-      DT_VH vh = ambient_dt.insert(p);
+      const Weighted_point wp = compute_perturbed_weighted_point(i);
+      RT_VH vh = ambient_dt.insert(wp);
       vh->data() = i;
     }
 
@@ -862,7 +864,7 @@ public:
       std::cerr
         << "ERROR check_if_all_simplices_are_in_the_ambient_delaunay:"
         << std::endl
-        << "  Number of simplices in ambient DT: " << amb_dt_simplices.size()
+        << "  Number of simplices in ambient RT: " << amb_dt_simplices.size()
         << std::endl
         << "  Number of unique simplices in TC stars: " << p_simplices->size()
         << std::endl
@@ -876,7 +878,7 @@ public:
       std::cerr
         << "SUCCESS check_if_all_simplices_are_in_the_ambient_delaunay:"
         << std::endl
-        << "  Number of simplices in ambient DT: " << amb_dt_simplices.size()
+        << "  Number of simplices in ambient RT: " << amb_dt_simplices.size()
         << std::endl
         << "  Number of unique simplices in TC stars: " << p_simplices->size()
         << std::endl
