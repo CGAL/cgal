@@ -909,42 +909,6 @@ private:
     Kernel const& m_k;
   };
 
-  struct Tr_vertex_to_global_point
-  {
-    typedef Tr_vertex_handle argument_type;
-    typedef Point result_type;
-
-    Tr_vertex_to_global_point(Points const& points)
-      : m_points(points) {}
-
-    result_type operator()(argument_type const& vh) const
-    {
-      return m_points[vh->data()];
-    }
-
-  private:
-    Points const& m_points;
-  };
-
-  struct Tr_vertex_to_bare_point
-  {
-    typedef Tr_vertex_handle argument_type;
-    typedef Tr_bare_point result_type;
-
-    Tr_vertex_to_bare_point(Tr_traits const& traits)
-      : m_traits(traits) {}
-
-    result_type operator()(argument_type const& vh) const
-    {
-      typename Tr_traits::Point_drop_weight_d pdw =
-        m_traits.point_drop_weight_d_object();
-      return pdw(vh->point());
-    }
-
-  private:
-    Tr_traits const& m_traits;
-  };
-
 #ifdef CGAL_LINKED_WITH_TBB
   // Functor for compute_tangential_complex function
   class Compute_tangent_triangulation
