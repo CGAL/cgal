@@ -225,16 +225,18 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
     export_after_fix_time = t.elapsed(); t.reset();
   }
   
+  t.reset();
   // Try to solve the remaining inconstencies
   tc.check_and_solve_inconsistencies_by_adding_higher_dim_simplices();
+  double fix2_time = t.elapsed(); t.reset();
   TC::Simplicial_complex complex;
   int max_dim = tc.export_TC(complex, false);
   std::set<std::set<std::size_t> > not_delaunay_simplices;
-  if (ambient_dim <= 4)
+  /*if (ambient_dim <= 4)
   {
     tc.check_if_all_simplices_are_in_the_ambient_delaunay(
       &complex, true, &not_delaunay_simplices);
-  }
+  }*/
 
   double export_after_fix2_time = -1.;
   if (intrinsic_dim <= 3)
@@ -277,6 +279,7 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
     << "  * Fix inconsistencies: " << fix_time 
     <<      " (" << num_fix_steps << " steps) ==> " 
     <<      (fix_ret == CGAL::TC_FIXED ? "FIXED" : "NOT fixed") << std::endl
+    << "  * Fix 2: " << fix2_time << std::endl
     << "  * Export to OFF (after fix): " << export_after_fix_time << std::endl
     << "  * Export to OFF (after fix2): "<< export_after_fix2_time << std::endl
     << "  * Export to OFF (after collapse): "
