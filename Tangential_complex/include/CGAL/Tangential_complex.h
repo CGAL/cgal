@@ -1998,7 +1998,7 @@ private:
       {
         inside_pt_indices.push_back(neighbor_point_idx);
       }
-      // CJTODO TEMP:
+      // CJTODO: use this instead of point_to_Cq_power_sqdist?
       /*{
         typename Tr_traits::Power_test_d side = q_tr_traits.power_test_d_object();
         typename Tr_traits::Orientation_d orient = q_tr_traits.orientation_d_object();
