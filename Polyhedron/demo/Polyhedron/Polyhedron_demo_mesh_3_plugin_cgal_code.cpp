@@ -288,6 +288,7 @@ public slots:
     if(!item->load(off_sstream))
     {
       delete item;
+      off_sstream.clear();
       off_sstream.str(backup);
 
       // Try to read .off in a polygon soup
