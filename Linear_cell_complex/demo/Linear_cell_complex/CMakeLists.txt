@@ -25,7 +25,6 @@ endif()
 
 # Option allowing to profile each operation of the demo (cout times on stdout).
 add_definitions(-DCGAL_PROFILE_LCC_DEMO)
-add_definitions("-Wall")
 
 ##################
 find_package(CGAL COMPONENTS Qt4)
