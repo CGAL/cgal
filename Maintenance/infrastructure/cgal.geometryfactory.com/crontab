@@ -33,8 +33,10 @@ LC_CTYPE=en_US.UTF-8
 18 * * * * $HOME/bin/dump_crontab
 
 # cgal->cgal2 with git-multimail
-*/5 * * * * cd $HOME/Git/cgal.git && git fetch --quiet --prune && git push --prune --quiet cgal2 '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
-*/5 * * * * cd $HOME/Git/cgal-gsoc.git && git fetch --quiet --prune && git push --prune --quiet cgal-gsoc2 '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
+*/5 * * * * cd $HOME/Git/cgal.git && git fetch --quiet --prune cgal-dev 'refs/*:refs/*' && git push --prune --quiet cgal2 '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
+*/5 * * * * cd $HOME/Git/cgal-public.git && git fetch --quiet --prune cgal 'refs/*:refs/*' && git push --prune --quiet cgal-public2 '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
+*/5 * * * * cd $HOME/Git/cgal-gsoc.git && git fetch --quiet --prune cgal-students 'refs/*:refs/*' && git push --prune --quiet cgal-gsoc2 '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
+*/5 * * * * cd $HOME/Git/cgal-web.git && git fetch --quiet --prune cgal-web 'refs/*:refs/*' && git push --prune --quiet cgal-web2 '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
 
 
 ####################################
