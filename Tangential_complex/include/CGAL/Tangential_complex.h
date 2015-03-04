@@ -1933,8 +1933,13 @@ private:
 
     FT circumsphere_sqradius_p = tr_point_weight(Cp);
     FT circumsphere_sqradius_q = tr_point_weight(Cq);
+#ifdef CGAL_TC_PERTURB_WEIGHT
+    FT squared_circumsphere_radius_q_plus_margin = 
+      circumsphere_sqradius_q + 4*m_sq_half_sparsity;
+#else
     FT squared_circumsphere_radius_q_plus_margin = CGAL::square(
       CGAL::sqrt(circumsphere_sqradius_q) + 2*m_half_sparsity);
+#endif
 
     Weighted_point global_Cp = k_constr_wp(
       unproject_point(Cp, pt_p, m_tangent_spaces[p_idx], q_tr_traits),
@@ -2053,7 +2058,6 @@ private:
     //-------------------------------------------------------------------------
     //4. If there's more than one ti... or not
     //-------------------------------------------------------------------------
-    // CJTODO: take weights into account
     std::size_t inside_point_idx;
     if (inside_pt_indices.size() > 1)
     {
@@ -2073,9 +2077,20 @@ private:
         const Point ti = compute_perturbed_point(idx);
         const Point &cp = k_drop_w(global_Cp);
         const Point &cq = k_drop_w(global_Cq);
+
+#ifdef CGAL_TC_PERTURB_WEIGHT
+        const Weighted_point ti_w = compute_perturbed_weighted_point(idx);
+        const Weighted_point p_w = compute_perturbed_weighted_point(p_idx);
+        const Weighted_point cp_w0 = k_constr_wp(k_drop_w(global_Cp), FT(0));
+        const Weighted_point wp_w0 = k_constr_wp(k_drop_w(global_Cq), FT(0));
+        FT a = 
+          (k_power_dist(cp_w0, ti_w) - k_power_dist(cp_w0, p_w)) /
+          (FT(2)*k_inner_pdct(k_diff_pts(cq, cp), k_diff_pts(ti, pt_p)));
+#else
         FT a = 
           (k_sqdist(cp, ti) - k_sqdist(cp, pt_p)) /
           (FT(2)*k_inner_pdct(k_diff_pts(cq, cp), k_diff_pts(ti, pt_p)));
+#endif
 
         if (a < min_a)
         {
