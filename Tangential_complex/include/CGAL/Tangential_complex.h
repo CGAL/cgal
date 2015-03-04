@@ -636,7 +636,7 @@ public:
 
   void check_and_solve_inconsistencies_by_adding_higher_dim_simplices()
   {
-    // CJTODO: parallel_for
+    // CJTODO: parallel_for???
     for (std::size_t idx = 0 ; idx < m_triangulations.size() ; ++idx)
     {
       bool inconsistencies_found;
@@ -966,9 +966,8 @@ private:
     // Triangulation's traits functor & objects
     typename Tr_traits::Point_weight_d point_weight =
       local_tr_traits.point_weight_d_object();
-    /*typename Tr_traits::Power_center_d power_center =
-      local_tr_traits.power_center_d_object();*/ // CJTODO
-    typename Get_functor<Tr_traits, Power_center_tag>::type power_center(local_tr_traits);
+    typename Tr_traits::Power_center_d power_center =
+      local_tr_traits.power_center_d_object();
 
     // No need to lock the mutex here since this will not be called while
     // other threads are perturbing the positions
@@ -1098,11 +1097,17 @@ private:
             }
 
             // Let's add the margin, now
+            // The value depends on whether we perturb weight or position
             if (squared_star_sphere_radius_plus_margin)
             {
+#ifdef CGAL_TC_PERTURB_WEIGHT
+              squared_star_sphere_radius_plus_margin =
+                *squared_star_sphere_radius_plus_margin + 4*m_sq_half_sparsity;
+#else
               squared_star_sphere_radius_plus_margin = CGAL::square(
                 CGAL::sqrt(*squared_star_sphere_radius_plus_margin) 
                 + 2*m_half_sparsity);
+#endif
             }
           }
         }
@@ -1700,9 +1705,8 @@ private:
             local_tr_traits));
         }
 
-        //typename Tr_traits::Power_center_d power_center =
-        //  local_tr_traits.power_center_d_object(); // CJTODO
-        typename Get_functor<Tr_traits, Power_center_tag>::type power_center(local_tr_traits);
+        typename Tr_traits::Power_center_d power_center =
+          local_tr_traits.power_center_d_object();
         typename Tr_traits::Compute_coordinate_d coord =
           local_tr_traits.compute_coordinate_d_object();
 
@@ -1880,14 +1884,12 @@ private:
       m_k.scalar_product_d_object();
     typename Kernel::Construct_weighted_point_d k_constr_wp =
       m_k.construct_weighted_point_d_object();
-    //typename Kernel::Power_distance_d k_power_dist =
-    //  m_k.power_distance_d_object(); // CJTODO
-    typename Get_functor<Kernel, Power_distance_tag>::type k_power_dist(m_k);
+    typename Kernel::Power_distance_d k_power_dist =
+      m_k.power_distance_d_object();
 
     const Tr_traits &q_tr_traits = m_triangulations[q_idx].tr().geom_traits();
-    /*typename Tr_traits::Power_center_d power_center =
-      local_tr_traits.power_center_d_object();*/ // CJTODO
-    typename Get_functor<Tr_traits, Power_center_tag>::type tr_power_center(q_tr_traits);
+    typename Tr_traits::Power_center_d tr_power_center =
+      q_tr_traits.power_center_d_object();
     typename Tr_traits::Point_weight_d tr_point_weight =
       q_tr_traits.point_weight_d_object();
 
