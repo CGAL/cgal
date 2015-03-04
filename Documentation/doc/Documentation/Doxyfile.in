@@ -49,7 +49,7 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Convex_hull_2/doc/Convex_hull_2/fig \
              ${CMAKE_SOURCE_DIR}/Convex_hull_3/doc/Convex_hull_3/fig \
              ${CMAKE_SOURCE_DIR}/Convex_hull_d/doc/Convex_hull_d/fig \
-             ${CMAKE_SOURCE_DIR}/Cone_based_spanners/doc/Cone_based_spanners/fig \
+             ${CMAKE_SOURCE_DIR}/Cone_spanners_2/doc/Cone_spanners_2/fig \
              ${CMAKE_SOURCE_DIR}/Envelope_2/doc/Envelope_2/fig \
              ${CMAKE_SOURCE_DIR}/Envelope_3/doc/Envelope_3/fig \
              ${CMAKE_SOURCE_DIR}/Generator/doc/Generator/fig \
