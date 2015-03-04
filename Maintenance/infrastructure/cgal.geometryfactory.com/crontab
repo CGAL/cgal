@@ -33,7 +33,7 @@ LC_CTYPE=en_US.UTF-8
 18 * * * * $HOME/bin/dump_crontab
 
 # cgal->cgal2 with git-multimail
-*/5 * * * * cd $HOME/Git/cgal.git && git fetch -p && git push --all --prune cgal2
+#*/5 * * * * cd $HOME/Git/cgal.git && git fetch --quiet --prune && git push --prune --quiet cgal2 '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
 
 
 ####################################
