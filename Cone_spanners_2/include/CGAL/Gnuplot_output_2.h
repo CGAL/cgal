@@ -44,13 +44,12 @@ namespace CGAL {
 	// Declarations go first, then implementations follow.
 	
 	/**
-	*  @brief Output a set of files that plots %g using Gnuplot.
-	*  Compiles a set of data and script files that plot %g using Gnuplot.
-	*
-	*  The files that are generated are:
-	*  (1) <prefix>.v (vertex list)
-	*  (2) <prefix>.plt (Gnuplot script), This script will read 
-	*      <prefix>.v as input to plot the vertex list. The edge list is also
+	*  @brief Output a set of files used by Gnuplot to plot %g.
+	*  
+	*  The files that are generated for Gnuplot are:
+	*  (1) prefix.v (vertex list)
+	*  (2) prefix.plt (Gnuplot script), This script will read 
+	*      prefix.v as input to plot the vertex list. The edge list is also
 	*      included in this script.
 	*  	
 	*  Notes: 
@@ -59,7 +58,7 @@ namespace CGAL {
 	*  (2) Parallel and self-edges cannot be plotted.
 	*
 	*  @param g       A boost::adjacency_list graph with Point_2 as the vertex property to be plotted
-	*  @param prefix  The prefix of the output files
+	*  @param prefix  The prefix of the output files names
 	*  @return        The Gnuplot script.
 	*/
 	template <typename Graph>
@@ -69,7 +68,7 @@ namespace CGAL {
 	*  @brief Compiles a multi-lined %string to draw the edges in %g by Gnuplot.
 	*  Compiles an edge list of %g in the following format:
 	*
-	*  set arrow from <start x>, <start y> to <end x>, <end y>
+	*  set arrow from (start x, start y) to (end x, end y)
 	*   ...
 	*
 	*  NOTE: For undirected graphs, use "set style arrow nohead"; for directed graphs,
@@ -82,10 +81,10 @@ namespace CGAL {
 
 	/**
 	*  @brief Compiles a multi-lined %string representing the vertices in %g.
-	*  Compiles a vertex list of %g in the following format:
-	*
-	*  <x>  <y>
-	*  <x>  <y>
+	*  
+	* Compiles a vertex list of %g in the following format:
+	*  x  y
+	*  x  y
 	*  ...
 	*
 	*  @param g  A boost::adjacency_list graph with Point_2 as the vertex property to be plotted
