@@ -1154,3 +1154,4 @@ gmon.*
 /Polygon/test/Polygon/polytest.pretty
 /Stream_support/test/Stream_support/CMakeLists.txt
 /Stream_support/test/Stream_support/cgal_test_with_cmake
+/*.html
