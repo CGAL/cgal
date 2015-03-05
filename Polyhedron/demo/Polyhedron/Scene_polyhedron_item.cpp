@@ -102,8 +102,12 @@ Scene_polyhedron_item::is_Triangulated()
         }
 
         if(nb_points_per_facet !=3)
+        {
+            std::cout<<"NOT TRIANGLE"<<std::endl;
             is_Triangle = false;
-        break;
+            break;
+        }
+
         nb_points_per_facet = 0;
     }
 }
@@ -455,7 +459,7 @@ Scene_polyhedron_item::compile_shaders(void)
         " \n"
         "void main(void) \n"
         "{ \n"
-        " color = fColors; \n" //polygons de couleur rouge
+        " color = fColors; \n"
         "} \n"
     };
 
@@ -1136,7 +1140,7 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     glBindVertexArray(vao[0]);
 
     // tells the GPU to use the program just created
-     glUseProgram(rendering_program_lines);
+    glUseProgram(rendering_program_lines);
 
     uniform_attrib(viewer,1);
 

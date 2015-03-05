@@ -200,7 +200,7 @@ Scene_polygon_soup_item::compile_shaders(void)
         "void main(void) \n"
         "{ \n"
         "/* Lighting gestion */ \n"
-        " color = fColors; \n" //polygons de couleur rouge
+        " color = fColors; \n"
         "} \n"
     };
 
@@ -598,7 +598,6 @@ Scene_polygon_soup_item::Scene_polygon_soup_item()
     glGenVertexArrays(1, &vao);
     //Generates an integer which will be used as ID for each buffer
     glGenBuffers(3, buffer);
-
     compile_shaders();
 }
 
@@ -796,6 +795,9 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     // Clean-up
     glUseProgram(0);
     glBindVertexArray(0);
+
+
+
 }
 
 void
