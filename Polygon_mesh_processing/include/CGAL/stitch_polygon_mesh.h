@@ -74,7 +74,8 @@ detect_duplicated_boundary_edges
 {
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
 
-  pmesh.normalize_border();
+//  pmesh.normalize_border();//only available in Polyhedron_3, and called to 
+                             // speed-up the operation
 
   typedef std::set<halfedge_descriptor, LessHedge> Border_halfedge_set;
   Border_halfedge_set border_halfedge_set(less_hedge);
@@ -162,7 +163,7 @@ struct Naive_border_stitching_modifier
       {
         //we remove h2->opposite()->vertex()
         vertices_to_delete.push_back( h2_src );
-        update_target_vertex(h2->opposite(), v_to_keep, pmesh);
+        update_target_vertex(opposite(h2, pmesh), v_to_keep, pmesh);
       }
       set_halfedge(v_to_keep, h1, pmesh);
 
@@ -184,7 +185,7 @@ struct Naive_border_stitching_modifier
       {
         //we remove h1->opposite()->vertex()
         vertices_to_delete.push_back( h1_src );
-        update_target_vertex(h1->opposite(), v_to_keep, pmesh);
+        update_target_vertex(opposite(h1, pmesh), v_to_keep, pmesh);
       }
       set_halfedge(v_to_keep, opposite(h1,pmesh), pmesh);
     }

@@ -31,24 +31,24 @@ void test_polyhedron(const char* fname)
   std::cout << "OK\n";
 }
 
-//void test_surface_mesh(const char* fname)
-//{
-//  typedef K::Point_3 Point;
-//  typedef CGAL::Surface_mesh<Point> Mesh;
-//
-//  std::cout << "Testing Surface_mesh " << fname << "..." << std::flush;
-//  std::ifstream input(fname);
-//  Mesh m;
-//  if (!input || !(input >> m)){
-//    std::cerr << "Error: can not read file.";
-//    return;
-//  }
-//  
-//  CGAL::Polygon_mesh_processing::stitch_borders(m);
-//  //todo : add a validity test
-//
-//  std::cout << "OK\n";
-//}
+void test_surface_mesh(const char* fname)
+{
+  typedef K::Point_3 Point;
+  typedef CGAL::Surface_mesh<Point> Mesh;
+
+  std::cout << "Testing Surface_mesh " << fname << "..." << std::flush;
+  std::ifstream input(fname);
+  Mesh m;
+  if (!input || !(input >> m)){
+    std::cerr << "Error: can not read file.";
+    return;
+  }
+  
+  CGAL::Polygon_mesh_processing::stitch_borders(m);
+  //todo : add a validity test
+
+  std::cout << "OK\n";
+}
 
 int main()
 {
@@ -58,5 +58,12 @@ int main()
   test_polyhedron("data_stitching/mid_border.off");
   test_polyhedron("data_stitching/multiple_incidence.off");
   test_polyhedron("data_stitching/incidence_3.off");
+
+  test_surface_mesh("data_stitching/full_border.off");
+  test_surface_mesh("data_stitching/full_border_quads.off");
+  test_surface_mesh("data_stitching/half_border.off");
+  test_surface_mesh("data_stitching/mid_border.off");
+  test_surface_mesh("data_stitching/multiple_incidence.off");
+  test_surface_mesh("data_stitching/incidence_3.off");
 }
 
