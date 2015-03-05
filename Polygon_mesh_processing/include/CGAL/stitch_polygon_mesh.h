@@ -300,6 +300,7 @@ void stitch_borders(
 /// using `less_hedge`. Two halfedges `h1` and `h2` are set to be stitched
 /// if `less_hedge(h1,h2)=less_hedge(h2,h1)=true`.
 /// `LessHedge` is a key comparison function that is used to sort halfedges
+/// @todo un-comment internal function that uses get(vertex_point, pmesh) automatically
 template <typename PolygonMesh
         , typename LessHedge
         , typename VertexPointMap>
