@@ -18,21 +18,33 @@ namespace Polygon_mesh_processing {
 
   @tparam SparseLinearSolver a model of `SparseLinearAlgebraTraitsWithPreFactor_d`. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
   and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter.
-  @tparam WeightCalculator a model of `FairWeightCalculator` and can be omitted to use default Cotangent weights
   @tparam PolygonMesh must be a model of `MutableFaceGraph`
   @tparam InputIterator iterator over input vertices
 
   @param pmesh polygon mesh to be faired
   @param vertex_begin first iterator of the range of vertices
   @param vertex_end past-the-end iterator of the range of vertices
-  @param weight_calculator function object to calculate weights, default to Cotangent weights and can be omitted
   @param continuity tangential continuity, default to `FAIRING_C_1` and can be omitted
 
   @return `true` if fairing is successful, otherwise no vertex position is changed
 
   @todo accuracy of solvers are not good, for example when there is no boundary condition pre_factor should fail, but it does not.
-  \todo WeightCalculator should be a property map
   */
+  template<class SparseLinearSolver, class PolygonMesh, class InputIterator>
+  bool fair(PolygonMesh& pmesh,
+    InputIterator vb,
+    InputIterator ve,
+    Fairing_continuity continuity = FAIRING_C_1
+    )
+  {
+    typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh> Weight_calculator;
+    return fair<SparseLinearSolver, Weight_calculator, PolygonMesh, InputIterator>
+      (pmesh, vb, ve, Weight_calculator(pmesh), continuity);
+  }
+
+  // use non-default weight calculator
+  // WeightCalculator a model of `FairWeightCalculator`, can be omitted to use default Cotangent weights
+  // weight_calculator a function object to calculate weights, defaults to Cotangent weights and can be omitted
   template<class SparseLinearSolver, class WeightCalculator, class PolygonMesh, class InputIterator>
   bool fair(PolygonMesh& pmesh,
     InputIterator vertex_begin,
@@ -58,19 +70,6 @@ namespace Polygon_mesh_processing {
     typedef internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
     return fair<Sparse_linear_solver, WeightCalculator, PolygonMesh, InputIterator>
       (pmesh, vb, ve, weight_calculator, continuity);
-  }
-
-  //use default WeightCalculator
-  template<class SparseLinearSolver, class PolygonMesh, class InputIterator>
-  bool fair(PolygonMesh& pmesh,
-    InputIterator vb,
-    InputIterator ve,
-    Fairing_continuity continuity = FAIRING_C_1
-    )
-  {
-    typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh> Weight_calculator;
-    return fair<SparseLinearSolver, Weight_calculator, PolygonMesh, InputIterator>
-      (pmesh, vb, ve, Weight_calculator(pmesh), continuity);
   }
 
   //use default SparseLinearSolver and WeightCalculator

@@ -84,7 +84,7 @@ public slots:
       CGAL::Polygon_mesh_processing::fair(*selection_item->polyhedron(),
         selection_item->selected_vertices.begin(),
         selection_item->selected_vertices.end(),
-        CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(*selection_item->polyhedron()),
+//        CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(*selection_item->polyhedron()),
         continuity);
     selection_item->changed_with_poly_item();
     QApplication::restoreOverrideCursor();
