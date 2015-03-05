@@ -112,8 +112,6 @@ namespace Polygon_mesh_processing {
   Eigen::COLAMDOrdering<int> >  >
   \endcode
   .
-  For using an alternative model of `FairWeightCalculator` with the default solver,
-  one can pass `CGAL::Default()` as `solver`.
 
   @tparam SparseLinearSolver a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
   @tparam PolygonMesh must be model of  `MutableFaceGraph`
