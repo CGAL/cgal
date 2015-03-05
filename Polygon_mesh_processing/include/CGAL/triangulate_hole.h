@@ -111,7 +111,7 @@ namespace Polygon_mesh_processing {
   CGAL::Eigen_sparse_matrix<double>::EigenType,
   Eigen::COLAMDOrdering<int> >  >
   \endcode
-  and `WeightCalculator` being `CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh>`.
+  .
   For using an alternative model of `FairWeightCalculator` with the default solver,
   one can pass `CGAL::Default()` as `solver`.
 
