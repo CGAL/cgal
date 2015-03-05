@@ -35,28 +35,26 @@ namespace Polygon_mesh_processing{
 
 namespace internal{
 
-template <class PM>
+template <typename PM, typename VertexPointMap>
 struct Less_for_halfedge
 {
   typedef typename boost::graph_traits<PM>::halfedge_descriptor
     halfedge_descriptor;
-  typedef typename boost::property_map<PM,
-                             boost::vertex_point_t>::type   Ppmap;
   typedef typename PM::Point Point;
 
   Less_for_halfedge(const PM& pmesh_,
-                    const Ppmap& ppmap_)
+                    const VertexPointMap& vpmap_)
     : pmesh(pmesh_),
-      ppmap(ppmap_)
+      vpmap(vpmap_)
   {}
 
   bool operator()(halfedge_descriptor h1,
                   halfedge_descriptor h2) const
   {
-    const Point& s1 = ppmap[target(opposite(h1, pmesh), pmesh)];
-    const Point& t1 = ppmap[target(h1, pmesh)];
-    const Point& s2 = ppmap[target(opposite(h2, pmesh), pmesh)];
-    const Point& t2 = ppmap[target(h2, pmesh)];
+    const Point& s1 = vpmap[target(opposite(h1, pmesh), pmesh)];
+    const Point& t1 = vpmap[target(h1, pmesh)];
+    const Point& s2 = vpmap[target(opposite(h2, pmesh), pmesh)];
+    const Point& t2 = vpmap[target(h2, pmesh)];
     return
     ( s1 < t1?  std::make_pair(s1,t1) : std::make_pair(t1, s1) )
     <
@@ -64,10 +62,10 @@ struct Less_for_halfedge
   }
 
   const PM& pmesh;
-  const Ppmap& ppmap;
+  const VertexPointMap& vpmap;
 };
 
-template <class LessHedge, class PM, class OutputIterator>
+template <typename PM, typename OutputIterator, typename LessHedge>
 OutputIterator
 detect_duplicated_boundary_edges
 (PM& pmesh, OutputIterator out, LessHedge less_hedge)
@@ -94,7 +92,7 @@ detect_duplicated_boundary_edges
   return out;
 }
 
-template <class PM>
+template <class PM, typename VertexPointMap>
 struct Naive_border_stitching_modifier
   : CGAL::Modifier_base<PM>
 {
@@ -102,12 +100,12 @@ struct Naive_border_stitching_modifier
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
   typedef typename PM::Point Point;
 
-  std::vector<std::pair<halfedge_descriptor, halfedge_descriptor> >& to_stitch;
+  typedef std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> > To_stitch;
 
-  Naive_border_stitching_modifier(PM& /* pmesh_ */,
-    std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> >&
-      to_stitch_)
-      : to_stitch(to_stitch_)
+  Naive_border_stitching_modifier(To_stitch& to_stitch_,
+                                  VertexPointMap vpmap_)
+    : to_stitch(to_stitch_)
+    , vpmap(vpmap_)
   {}
 
   void update_target_vertex(halfedge_descriptor h,
@@ -120,13 +118,10 @@ struct Naive_border_stitching_modifier
       h = opposite(next(h, pmesh), pmesh);
     } while( h != start );
   }
-  
-  void operator() (PM& pmesh)
+
+  void operator()(PM& pmesh)
   {
     std::size_t nb_hedges = to_stitch.size();
-
-    typename boost::property_map<PM, boost::vertex_point_t>::type
-      ppmap = get(boost::vertex_point, pmesh);
 
     /// Merge the vertices
     std::vector<vertex_descriptor> vertices_to_delete;
@@ -151,7 +146,7 @@ struct Naive_border_stitching_modifier
       std::pair<
         typename std::map<Point, vertex_descriptor>::iterator,
         bool > insert_res =
-          vertices_kept.insert( std::make_pair(ppmap[v_to_keep], v_to_keep) );
+          vertices_kept.insert( std::make_pair(vpmap[v_to_keep], v_to_keep) );
       if (!insert_res.second && v_to_keep != insert_res.first->second)
       {
         v_to_keep = insert_res.first->second;
@@ -173,7 +168,7 @@ struct Naive_border_stitching_modifier
       //update vertex pointers: target of h1 vs source of h2
       v_to_keep = h2_tgt;
       insert_res =
-          vertices_kept.insert( std::make_pair(ppmap[v_to_keep], v_to_keep) );
+          vertices_kept.insert( std::make_pair(vpmap[v_to_keep], v_to_keep) );
       if (!insert_res.second && v_to_keep != insert_res.first->second)
       {
         v_to_keep = insert_res.first->second;
@@ -206,13 +201,11 @@ struct Naive_border_stitching_modifier
       halfedge_descriptor pr = prev(h2, pmesh);
       halfedge_descriptor nx = next(h1, pmesh);
       set_next(pr, nx, pmesh);
-//      set_prev(nx, pr, pmesh);
 
       //link h1->prev() to h2->next()
       pr = prev(h1, pmesh);
       nx = next(h2, pmesh);
       set_next(pr, nx, pmesh);
-//      set_prev(nx, pr, pmesh);
     }
 
     /// update HDS connectivity, removing the second halfedge
@@ -229,12 +222,8 @@ struct Naive_border_stitching_modifier
       //update next/prev pointers
       halfedge_descriptor tmp = prev(opposite(h2, pmesh), pmesh);
       set_next(tmp, h1, pmesh);
-//      set_prev(h1, tmp, pmesh);
       tmp = next(opposite(h2, pmesh), pmesh);
       set_next(h1, tmp, pmesh);
-//      set_prev(tmp, h1, pmesh);
-
-      //todo : check set_next does set_prev's job
 
     /// remove the extra halfedges
       remove_edge(edge(h2, pmesh), pmesh);
@@ -249,13 +238,17 @@ struct Naive_border_stitching_modifier
       remove_vertex(*itv, pmesh);
     }
   }
+
+private:
+  To_stitch& to_stitch;
+  VertexPointMap vpmap;
 };
 
 } //end of namespace internal
 
 
 
-/// \ingroup polyhedron_stitching_grp
+/// \ingroup stitching_grp
 /// Stitches together border halfedges in a polyhedron.
 /// The halfedge to be stitched are provided in `hedge_pairs_to_stitch`.
 /// Foreach pair `p` in this vector, p.second and its opposite will be removed
@@ -268,26 +261,55 @@ struct Naive_border_stitching_modifier
 /// If the target of p.second has not been marked for deletion,
 /// then the source of p.first is.
 /// @tparam PolygonMesh a model of `MutableFaceGraph` and `FaceListGraph`
-template <class PolygonMesh>
+template <typename PolygonMesh
+        , typename VertexPointMap>
 void stitch_borders(
   PolygonMesh& pmesh,
   std::vector <std::pair<
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor,
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor> >& 
-     hedge_pairs_to_stitch)
+     hedge_pairs_to_stitch,
+  VertexPointMap vpmap
+#ifdef DOXYGEN_RUNNING
+  = get(vertex_point, pmesh)
+#endif
+  )
 {
-  internal::Naive_border_stitching_modifier<PolygonMesh>
-    modifier(pmesh, hedge_pairs_to_stitch);
+  internal::Naive_border_stitching_modifier<PolygonMesh, VertexPointMap>
+    modifier(hedge_pairs_to_stitch, vpmap);
   modifier(pmesh);
 }
 
-/// \ingroup polyhedron_stitching_grp
+///\cond SKIP_IN_MANUAL
+template <typename PolygonMesh>
+void stitch_borders(
+  PolygonMesh& pmesh,
+  std::vector < std::pair <
+    typename boost::graph_traits<PolygonMesh>::halfedge_descriptor,
+    typename boost::graph_traits<PolygonMesh>::halfedge_descriptor > > &
+      hedge_pairs_to_stitch)
+{
+  typename boost::property_map<PolygonMesh, boost::vertex_point_t>::type
+    vpmap = get(boost::vertex_point, pmesh);
+  stitch_borders(pmesh, hedge_pairs_to_stitch, vpmap);
+}
+///\endcond
+
+/// \ingroup stitching_grp
 /// Same as above but the pair of halfedges to be stitched are found
 /// using `less_hedge`. Two halfedges `h1` and `h2` are set to be stitched
 /// if `less_hedge(h1,h2)=less_hedge(h2,h1)=true`.
 /// `LessHedge` is a key comparison function that is used to sort halfedges
-template <class PolygonMesh, class LessHedge>
-void stitch_borders(PolygonMesh& pmesh, LessHedge less_hedge)
+template <typename PolygonMesh
+        , typename LessHedge
+        , typename VertexPointMap>
+void stitch_borders(PolygonMesh& pmesh
+                  , LessHedge less_hedge
+                  , VertexPointMap vpmap
+#ifdef DOXYGEN_RUNNING
+                  = get(vertex_point, pmesh)
+#endif
+                   )
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
     halfedge_descriptor;
@@ -295,20 +317,47 @@ void stitch_borders(PolygonMesh& pmesh, LessHedge less_hedge)
   
   internal::detect_duplicated_boundary_edges(
     pmesh, std::back_inserter(hedge_pairs_to_stitch), less_hedge);
-  stitch_borders(pmesh, hedge_pairs_to_stitch);
+  stitch_borders(pmesh, hedge_pairs_to_stitch, vpmap);
 }
 
-/// \ingroup polyhedron_stitching_grp
+/////\cond SKIP_IN_MANUAL
+//template <typename PolygonMesh
+//        , typename LessHedge>
+//void stitch_borders(PolygonMesh& pmesh
+//                  , LessHedge less_hedge)
+//{
+//  typename boost::property_map<PolygonMesh, boost::vertex_point_t>::type
+//    vpmap = get(boost::vertex_point, pmesh);
+//  stitch_borders(pmesh, less_hedge, vpmap);
+//}
+/////\endcond
+
+/// \ingroup stitching_grp
 /// Same as above using the source and target points of the halfedges
 /// for comparision
-template <class PolygonMesh>
+template <typename PolygonMesh
+        , typename VertexPointMap>
+void stitch_borders(PolygonMesh& pmesh
+                  , VertexPointMap vpmap
+#ifdef DOXYGEN_RUNNING
+                   = get(vertex_point, pmesh)
+#endif
+                   )
+{
+  internal::Less_for_halfedge<PolygonMesh, VertexPointMap>
+    less_hedge(pmesh, vpmap);
+  stitch_borders(pmesh, less_hedge, vpmap);
+}
+
+///\cond SKIP_IN_MANUAL
+template <typename PolygonMesh>
 void stitch_borders(PolygonMesh& pmesh)
 {
   typename boost::property_map<PolygonMesh, boost::vertex_point_t>::type
-    ppmap = get(boost::vertex_point, pmesh);
-  internal::Less_for_halfedge<PolygonMesh> less_hedge(pmesh, ppmap);
-  stitch_borders(pmesh, less_hedge);
+      vpmap = get(boost::vertex_point, pmesh);
+  stitch_borders(pmesh, vpmap);
 }
+///\endcond
 
 } //end of namespace Polygon_mesh_processing
 

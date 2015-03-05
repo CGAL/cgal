@@ -1,7 +1,7 @@
 /// \defgroup PkgPolygonMeshProcessing Polygon Mesh Processing Reference
 /// \defgroup PkgPolygonMeshProcessingConcepts Concepts
 /// \ingroup PkgPolygonMeshProcessing
-/// \defgroup polyhedron_stitching_grp CGAL::Polygon_mesh_processing::stitch_polyhedron()
+/// \defgroup stitching_grp CGAL::Polygon_mesh_processing::stitch_borders()
 /// \ingroup PkgPolygonMeshProcessing
  
 /*!
@@ -42,7 +42,7 @@
 - `CGAL::Point_inside_polygon_mesh`
 
 ## Combinatorial Repairing Functions and Classes ##
-- \link polyhedron_stitching_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
+- \link stitching_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 
