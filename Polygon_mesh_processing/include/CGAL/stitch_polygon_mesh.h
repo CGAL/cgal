@@ -25,6 +25,7 @@
 #include <CGAL/Modifier_base.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/Default.h>
 
 #include <vector>
 #include <set>
@@ -299,13 +300,19 @@ void stitch_borders(
 /// Same as above but the pair of halfedges to be stitched are found
 /// using `less_hedge`. Two halfedges `h1` and `h2` are set to be stitched
 /// if `less_hedge(h1,h2)=less_hedge(h2,h1)=true`.
-/// `LessHedge` is a key comparison function that is used to sort halfedges
-/// @todo un-comment internal function that uses get(vertex_point, pmesh) automatically
+/// `LessHedge` is a key comparison function that is used to sort halfedges.
+/// To use the default implementation of `less_hedge` (using the source and
+/// target points of the halfedges for comparison), 
+/// and provide a `VertexPointMap` which is not the default one,
+/// `less_hedge` should be set to CGAL::Default().
 template <typename PolygonMesh
         , typename LessHedge
         , typename VertexPointMap>
 void stitch_borders(PolygonMesh& pmesh
                   , LessHedge less_hedge
+#ifdef DOXYGEN_RUNNING
+                  = CGAL::Default()
+#endif
                   , VertexPointMap vpmap
 #ifdef DOXYGEN_RUNNING
                   = get(vertex_point, pmesh)
@@ -321,44 +328,36 @@ void stitch_borders(PolygonMesh& pmesh
   stitch_borders(pmesh, hedge_pairs_to_stitch, vpmap);
 }
 
-/////\cond SKIP_IN_MANUAL
-//template <typename PolygonMesh
-//        , typename LessHedge>
-//void stitch_borders(PolygonMesh& pmesh
-//                  , LessHedge less_hedge)
-//{
-//  typename boost::property_map<PolygonMesh, boost::vertex_point_t>::type
-//    vpmap = get(boost::vertex_point, pmesh);
-//  stitch_borders(pmesh, less_hedge, vpmap);
-//}
-/////\endcond
-
-/// \ingroup stitching_grp
-/// Same as above using the source and target points of the halfedges
-/// for comparision
 template <typename PolygonMesh
         , typename VertexPointMap>
 void stitch_borders(PolygonMesh& pmesh
-                  , VertexPointMap vpmap
-#ifdef DOXYGEN_RUNNING
-                   = get(vertex_point, pmesh)
-#endif
-                   )
+  , CGAL::Default
+  , VertexPointMap vpmap)
 {
   internal::Less_for_halfedge<PolygonMesh, VertexPointMap>
-    less_hedge(pmesh, vpmap);
+    less_hedge(pmesh, vpmap); //default less
+
   stitch_borders(pmesh, less_hedge, vpmap);
 }
 
-///\cond SKIP_IN_MANUAL
+template <typename PolygonMesh>
+void stitch_borders(PolygonMesh& pmesh
+                  , CGAL::Default)
+{
+  typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::type
+    VertexPointMap;
+  VertexPointMap vpmap = get(boost::vertex_point, pmesh);
+  internal::Less_for_halfedge<PolygonMesh, VertexPointMap>
+    less_hedge(pmesh, vpmap);
+
+  stitch_borders(pmesh, less_hedge, vpmap);
+}
+
 template <typename PolygonMesh>
 void stitch_borders(PolygonMesh& pmesh)
 {
-  typename boost::property_map<PolygonMesh, boost::vertex_point_t>::type
-      vpmap = get(boost::vertex_point, pmesh);
-  stitch_borders(pmesh, vpmap);
+  stitch_borders(pmesh, CGAL::Default());
 }
-///\endcond
 
 } //end of namespace Polygon_mesh_processing
 
