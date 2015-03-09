@@ -13,7 +13,6 @@ construct an \f$ x\f$-monotone curve from two points.
 \cgalHasModel `CGAL::Arr_linear_traits_2<Kernel>`
 \cgalHasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>`
 \cgalHasModel `CGAL::Arr_segment_traits_2<Kernel>`
-\cgalHasModel `CGAL::Arr_polycurve_traits_2<GeometryTraits_2>`
 \cgalHasModel `CGAL::Arr_polyline_traits_2<SegmentTraits_2>`
 \cgalHasModel `CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>`
 
