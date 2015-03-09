@@ -34,13 +34,13 @@ namespace CGAL {
 /** 
  * \ingroup PkgPolygonMeshProcessing
  * This class provides an efficient point location functionality with respect to a domain bounded
- * by one or several disjoint triangulated closed polyhedral (manifold) surfaces.
- * In case several polyhedral surface are provided as input, a point is said to be inside the domain
- * if an odd number of surfaces is crossed when walking from infinity to the point.
+ * by one or several disjoint triangulated closed triangulated polyhedral surfaces.
+ * In case several polyhedral surfaces are provided as input, a point is said to be inside the domain
+ * if an odd number of surfaces is crossed when walking from the point to infinity.
  * The implementation depends on the package \ref PkgAABB_treeSummary.
  * @tparam TriangleMesh a triangulated polyhedral surface, a model of `FaceListGraph`
  * @tparam Kernel a \cgal kernel
- * @tparam VertexPointMap is a property map with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+ * @tparam VertexPointMap a property map with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
  *   as key type and a `Kernel::Point_3` as value type.
  *   The default is `typename boost::property_map< FaceGraph,vertex_point_t>::%type`.
  * \todo Code: Use this class as an implementation detail of Mesh_3's Polyhedral_mesh_domain_3.
@@ -67,7 +67,7 @@ class Point_inside_polygon_mesh
 
 public:
    /**
-   * Constructor with one surface polygon mesh.
+   * Constructor with one surface triangle mesh.
    * @pre `mesh` must be closed and triangulated.
    */
   Point_inside_polygon_mesh(const TriangleMesh& mesh,
@@ -128,9 +128,9 @@ public:
   /**
    * Query function to determine point location.
    * @return 
-   *   - CGAL::ON_BOUNDED_SIDE if the point is inside the mesh
-   *   - CGAL::ON_BOUNDARY if the point is on mesh
-   *   - CGAL::ON_UNBOUNDED_SIDE if the point is outside mesh
+   *   - `CGAL::ON_BOUNDED_SIDE` if the point is inside the mesh
+   *   - `CGAL::ON_BOUNDARY` if the point is on mesh
+   *   - `CGAL::ON_UNBOUNDED_SIDE` if the point is outside mesh
    */
   Bounded_side operator()(const Point& point) const
   {

@@ -1,11 +1,12 @@
 /// \ingroup PkgPolygonMeshProcessingConcepts
 /// \cgalConcept
 ///
-/// Geometric traits concept for the functions `self_intersect`
+/// Geometric traits concept for the functions `self_intersections` and `is_self_intersecting`.
 class SelfIntersectionTraits{
 public:
   /// @name Geometric Types
   /// @{
+
   /// 3D point type
   typedef unspecified_type Point_3;
   /// 3D triangle type
@@ -16,11 +17,16 @@ public:
 
   /// @name Functors
   /// @{
-  /// Functor constructing triangles. It provides `Triangle_3 operator() const(const Point_3&, const Point_3&, const Point_3&)
+
+  /// Functor constructing triangles.
+  /// It provides `Triangle_3 operator() const(const Point_3&, const Point_3&, const Point_3&)
   typedef unspecified_type Construct_triangle_3;
-  /// Functor constructing segments. It provides `Segment_3 operator() const(const Point_3&, const Point_3&)
+  /// Functor constructing segments.
+  /// It provides `Segment_3 operator() const(const Point_3&, const Point_3&)
   typedef unspecified_type Construct_segment_3;
-  /// Functor testing intersections between triangles and segment. It provides `bool operator() const (const Triangle_3&, const Segment_3&)` and `bool operator() const (const Triangle_3&, const Triangle_3&)`
+  /// Functor testing intersections between triangles and segments.
+  /// It provides `bool operator() const (const Triangle_3&, const Segment_3&)` 
+  /// and `bool operator() const (const Triangle_3&, const Triangle_3&)`
   typedef unspecified_type Do_intersect_3;
   /// @}
 

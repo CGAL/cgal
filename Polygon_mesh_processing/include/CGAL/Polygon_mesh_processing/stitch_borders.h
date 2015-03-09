@@ -263,7 +263,8 @@ private:
 /// then the source of p.first is.
 
 /// @tparam PolygonMesh a model of `MutableFaceGraph` and `FaceListGraph`
-/// @tparam VertexPointMap property map associating points to vertices of `PolygonMesh`
+/// @tparam VertexPointMap property map with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+///    as key type and a `PolygonMesh::Point` as value type
 
 /// @param vpmap the property map with the points associated to the vertices of `pmesh`.
 /// If not specified, `get(vertex_point, pmesh)` is used as default property map.
