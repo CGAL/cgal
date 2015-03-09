@@ -3,12 +3,12 @@
 \cgalConcept
 
 The concept `ArrangementLandmarkTraits_2` refines the traits concepts
-`ArrangementBasicTraits_2`, `ArrangementApproximateTraits_2`, and
-`ArrangementConstructXMonotoneCurveTraits_2` traits. The type of an arrangement
+`ArrangementApproximateTraits_2` and
+`ArrangementConstructXMonotoneCurveTraits_2`. The type of an arrangement
 associated with the landmark point-location strategy (see
 `CGAL::Arr_landmarks_point_location`) must be an instance of the
-`CGAL::Arrangement_2<Traits,Dcel>` class template, where the Traits parameter
-is substituted with a model of this concept.
+`CGAL::Arrangement_2<Traits,Dcel>` class template, where the Traits
+parameter is substituted with a model of this concept.
 
 \cgalRefines `ArrangementApproximateTraits_2` and
              `ArrangementConstructXMonotoneCurveTraits_2`
