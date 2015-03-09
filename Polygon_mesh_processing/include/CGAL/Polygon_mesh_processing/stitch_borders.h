@@ -250,18 +250,23 @@ private:
 
 
 /// \ingroup stitching_grp
-/// Stitches together border halfedges in a polyhedron.
-/// The halfedge to be stitched are provided in `hedge_pairs_to_stitch`.
-/// Foreach pair `p` in this vector, p.second and its opposite will be removed
-/// from `P`.
-/// The vertices that get removed from `P` are selected as follow:
+/// Stitches together border halfedges in a polygon mesh.
+/// The halfedges to be stitched are provided in `hedge_pairs_to_stitch`.
+/// For each pair `p` in this vector, p.second and its opposite will be removed
+/// from `pmesh`.
+/// The vertices that get removed from `pmesh` are selected as follows:
 /// The pair of halfedges in `hedge_pairs_to_stitch` are processed linearly.
 /// Let `p` be such a pair.
 /// If the target of p.first has not been marked for deletion,
 /// then the source of p.second is.
 /// If the target of p.second has not been marked for deletion,
 /// then the source of p.first is.
+
 /// @tparam PolygonMesh a model of `MutableFaceGraph` and `FaceListGraph`
+/// @tparam VertexPointMap property map associating points to vertices of `PolygonMesh`
+
+/// @param vpmap the property map with the points associated to the vertices of `pmesh`.
+/// If not specified, `get(vertex_point, pmesh)` is used as default property map.
 template <typename PolygonMesh
         , typename VertexPointMap>
 void stitch_borders(
@@ -297,10 +302,12 @@ void stitch_borders(
 ///\endcond
 
 /// \ingroup stitching_grp
-/// Same as above but the pair of halfedges to be stitched are found
+/// Same as above but the pairs of halfedges to be stitched are found
 /// using `less_hedge`. Two halfedges `h1` and `h2` are set to be stitched
 /// if `less_hedge(h1,h2)=less_hedge(h2,h1)=true`.
-/// `LessHedge` is a key comparison function that is used to sort halfedges.
+
+/// @tparam LessHedge a key comparison functor used to sort halfedges.
+
 /// To use the default implementation of `less_hedge` (using the source and
 /// target points of the halfedges for comparison), 
 /// and provide a `VertexPointMap` which is not the default one,
