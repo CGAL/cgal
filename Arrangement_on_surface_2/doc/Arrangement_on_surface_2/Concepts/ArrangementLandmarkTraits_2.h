@@ -10,8 +10,7 @@ associated with the landmark point-location strategy (see
 `CGAL::Arrangement_2<Traits,Dcel>` class template, where the Traits parameter
 is substituted with a model of this concept.
 
-\cgalRefines `ArrangementBasicTraits_2`,
-             `ArrangementApproximateTraits_2`, and
+\cgalRefines `ArrangementApproximateTraits_2` and
              `ArrangementConstructXMonotoneCurveTraits_2`
 
 \cgalHasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>`
