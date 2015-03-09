@@ -795,7 +795,7 @@ public:
         {
           Simplex simplex;
           for (int i = 0 ; i < dim + 1 ; ++i)
-            simplex.insert(cit.base()->vertex(combi[i])->data());
+            simplex.insert(cit->vertex(combi[i])->data());
 
           amb_dt_simplices.insert(simplex);
         }
