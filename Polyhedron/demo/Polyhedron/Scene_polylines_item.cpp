@@ -98,6 +98,7 @@ void Scene_polylines_item::create_Sphere(double R)
     for (int p=rings; p<180-rings; p+=rings)
         for(int t=0; t<360; t+=sectors)
         {
+            //A
             P = p*M_PI/180.0;
             T = t*M_PI/180.0;
             x[0] = sin(P) * cos(T) ;
@@ -113,7 +114,7 @@ void Scene_polylines_item::create_Sphere(double R)
             normals_spheres.push_back(y[0]);
             normals_spheres.push_back(z[0]);
 
-
+               //B
             P = (p+rings)*M_PI/180.0;
             T = t*M_PI/180.0;
             x[1] = sin(P) * cos(T) ;
@@ -128,7 +129,7 @@ void Scene_polylines_item::create_Sphere(double R)
             normals_spheres.push_back(y[1]);
             normals_spheres.push_back(z[1]);
 
-
+            //C
             P = p*M_PI/180.0;
             T = (t+sectors)*M_PI/180.0;
             x[2] = sin(P) * cos(T) ;
@@ -142,7 +143,7 @@ void Scene_polylines_item::create_Sphere(double R)
             normals_spheres.push_back(x[2]);
             normals_spheres.push_back(y[2]);
             normals_spheres.push_back(z[2]);
-
+            //D
             P = (p+rings)*M_PI/180.0;
             T = (t+sectors)*M_PI/180.0;
             x[3] = sin(P) * cos(T) ;
@@ -723,24 +724,81 @@ Scene_polylines_item::compute_elements()
 
         //Convert the ttriangle coordinates to lines coordinates for the
         //Wiremode in the spheres
-        for(int i=0; i< positions_spheres.size(); i+=12)
+        for(int i=0; i< positions_spheres.size(); i=i)
         {
-            //AB
-            for(int j=i; j<i+8; j++)
+            //draw triangles
+            if(i< 120)
             {
-                positions_wire_spheres.push_back(positions_spheres[j]);
+                //AB
+                for(int j=i; j<i+8; j++)
+                {
+                    positions_wire_spheres.push_back(positions_spheres[j]);
+                }
+                //BC
+                for(int j=i+4; j<i+12; j++)
+                {
+                    positions_wire_spheres.push_back(positions_spheres[j]);
+                }
+                //CA
+                for(int j=i+8; j<i+16; j++)
+                {
+                    positions_wire_spheres.push_back(positions_spheres[j%12]);
+                }
+                i+=12;
             }
-            //BC
-            for(int j=i+4; j<i+12; j++)
+            //draw quads
+            else if(120<i<positions_spheres.size()-120)
             {
-                positions_wire_spheres.push_back(positions_spheres[j]);
+                //AB
+                for(int j=i; j<i+8; j++)
+                {
+                    positions_wire_spheres.push_back(positions_spheres[j]);
+                }
+                //BD
+                for(int j=i+4; j<i+8; j++)
+                {
+                    positions_wire_spheres.push_back(positions_spheres[j]);
+                }
+                for(int j=i+12; j<i+16; j++)
+                {
+                    positions_wire_spheres.push_back(positions_spheres[j]);
+                }
+                //DC
+                for(int j=i+12; j<i+16; j++)
+                {
+                    positions_wire_spheres.push_back(positions_spheres[j]);
+                }
+                for(int j=i+8; j<i+12; j++)
+                {
+                    positions_wire_spheres.push_back(positions_spheres[j]);
+                }
+                //CA
+                for(int j=i+8; j<i+16; j++)
+                {
+                    positions_wire_spheres.push_back(positions_spheres[j%12]);
+                }
+                i+=24;
             }
-            //CA
-            for(int j=i+8; j<i+16; j++)
+            //draw triangles
+            else
             {
-                positions_wire_spheres.push_back(positions_spheres[j%12]);
+                //AB
+                for(int j=i; j<i+8; j++)
+                {
+                    positions_wire_spheres.push_back(positions_spheres[j]);
+                }
+                //BC
+                for(int j=i+4; j<i+12; j++)
+                {
+                    positions_wire_spheres.push_back(positions_spheres[j]);
+                }
+                //CA
+                for(int j=i+8; j<i+16; j++)
+                {
+                    positions_wire_spheres.push_back(positions_spheres[j%12]);
+                }
+                i+=12;
             }
-
 
         }
     }
