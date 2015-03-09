@@ -236,19 +236,19 @@ public:
     : pmesh(pmesh), ppmap(get(vertex_point, pmesh))
   {}
 
-  template<class InputIterator, class FacetOutputIterator, class VertexOutputIterator>
-  void refine(InputIterator facet_begin, 
-              InputIterator facet_end, 
+  template<class FacetRange, class FacetOutputIterator, class VertexOutputIterator>
+  void refine(FacetRange faces,
               FacetOutputIterator& facet_out,
               VertexOutputIterator& vertex_out,
               double alpha)
   {
-    std::vector<Facet_handle> facets(facet_begin, facet_end); // do not use just std::set, the order effects the output (for the same input we want to get same output)
-    std::set<Facet_handle> interior_map(facet_begin, facet_end);
+    std::vector<Facet_handle> facets(begin(faces), end(faces));
+      // do not use just std::set, the order effects the output (for the same input we want to get same output)
+    std::set<Facet_handle> interior_map(begin(facets), end(facets));
 
     // store boundary edges - to be used in relax 
     std::set<Halfedge_handle> border_edges;
-    for(typename std::vector<Facet_handle>::const_iterator it = facets.begin(); it!= facets.end(); ++it){
+    for (typename std::vector<Facet_handle>::const_iterator it = facets.begin(); it != facets.end(); ++it){
       Halfedge_around_face_circulator<PolygonMesh>  circ(halfedge(*it,pmesh),pmesh), done(circ);
       do {
         if(interior_map.find(face(opposite(*circ,pmesh),pmesh)) == interior_map.end()) {

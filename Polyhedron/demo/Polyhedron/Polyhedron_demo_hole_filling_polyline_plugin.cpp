@@ -11,6 +11,7 @@
 #include <CGAL/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/refine.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Timer.h>
 
 #include <QAction>
@@ -138,9 +139,7 @@ public slots:
 
       if(also_refine) {
         timer.reset();
-        CGAL::Polygon_mesh_processing::refine(*poly, 
-          boost::make_transform_iterator(poly->facets_begin(), Get_handle()),
-          boost::make_transform_iterator(poly->facets_end(), Get_handle()),
+        CGAL::Polygon_mesh_processing::refine(*poly, faces(*poly),
           Nop_out(), Nop_out(), density_control_factor);
         print_message(QString("Refined in %1 sec.").arg(timer.time()));
       }

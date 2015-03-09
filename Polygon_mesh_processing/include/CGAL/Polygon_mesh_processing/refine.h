@@ -12,13 +12,12 @@ namespace Polygon_mesh_processing {
   @brief Function refining a region on polygon mesh
 
   @tparam Polyhedron must be a model of `MutableFaceGraph`
-  @tparam InputIterator iterator over input facets
+  @tparam FacetRange range of input facets
   @tparam FacetOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch facets
   @tparam VertexOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices
 
   @param pmesh mesh to be refined
-  @param facet_begin first iterator of the range of facets
-  @param facet_end past-the-end iterator of the range of facets
+  @param facets the range of facets to be refined
   @param facet_out iterator over newly created facets
   @param vertex_out iterator over newly created vertices
   @param density_control_factor factor for density where larger values cause denser refinements
@@ -28,20 +27,18 @@ namespace Polygon_mesh_processing {
   @todo current algorithm iterates 10 times at most, since (I guess) there is no termination proof.
   */
   template<class PolygonMesh,
-           class InputIterator,
+           class FacetRange,
            class FacetOutputIterator,
            class VertexOutputIterator>
   std::pair<FacetOutputIterator, VertexOutputIterator>
     refine(PolygonMesh& pmesh,
-           InputIterator facet_begin,
-           InputIterator facet_end,
+           FacetRange facets,
            FacetOutputIterator facet_out,
            VertexOutputIterator vertex_out,
            double density_control_factor = std::sqrt(2.0))
   {
     internal::Refine_Polyhedron_3<PolygonMesh> refine_functor(pmesh);
-    refine_functor.refine(facet_begin,
-                          facet_end,
+    refine_functor.refine(facets,
                           facet_out,
                           vertex_out,
                           density_control_factor);

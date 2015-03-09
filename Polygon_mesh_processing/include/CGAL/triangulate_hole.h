@@ -94,7 +94,7 @@ namespace Polygon_mesh_processing {
     std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor> patch;
     triangulate_hole(pmesh, border_halfedge, std::back_inserter(patch), use_dt3);
     face_out = std::copy(patch.begin(), patch.end(), face_out);
-    return refine(pmesh, patch.begin(), patch.end(), face_out, vertex_out, density_control_factor);
+    return refine(pmesh, patch, face_out, vertex_out, density_control_factor);
   }
 
 

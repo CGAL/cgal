@@ -102,8 +102,7 @@ public slots:
     std::vector<Polyhedron::Facet_handle> new_facets;
 
     CGAL::Polygon_mesh_processing::refine(*selection_item->polyhedron(),
-      selection_item->selected_facets.begin(),
-      selection_item->selected_facets.end(),
+      selection_item->selected_facets,
       std::back_inserter(new_facets),
       CGAL::Emptyset_iterator(),
       alpha);
