@@ -117,7 +117,7 @@ private:
     GLint location[9];
 
     GLuint vao[1];
-    GLuint buffer[6];
+    GLuint buffer[5];
     void initialize_buffers();
     void compile_shaders(void);
     void compute_normals_and_vertices(void);

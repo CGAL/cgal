@@ -889,3 +889,4 @@ Scene_polygon_soup_item::new_triangle(const std::size_t i,
 // Local Variables:
 // c-basic-offset: 4
 // End:
+

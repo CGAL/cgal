@@ -780,13 +780,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
         positions_lines.push_back(b.z());
         positions_lines.push_back(1.0);
 
-        /*  color_lines.push_back(1.0);
-        color_lines.push_back(0.0);
-        color_lines.push_back(0.0);
 
-        color_lines.push_back(1.0);
-        color_lines.push_back(0.0);
-        color_lines.push_back(0.0);*/
     }
 
 
@@ -1124,7 +1118,7 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
     glBindVertexArray(vao[0]);
 
     // tells the GPU to use the program just created
-    //  glUseProgram(rendering_program_facets);
+      glUseProgram(rendering_program_facets);
     uniform_attrib(viewer,0);
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
@@ -1162,7 +1156,7 @@ Scene_polyhedron_item::draw_points(Viewer_interface* viewer) const {
     uniform_attrib(viewer,1);
 
     //draw the points
-    glDrawArrays(GL_POINTS, 0, positions_facets.size());
+    glDrawArrays(GL_POINTS, 0, positions_facets.size()/4);
 
     // Clean-up
     glBindVertexArray(0);
