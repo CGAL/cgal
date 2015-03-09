@@ -3,7 +3,7 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/stitch_borders.h>
+#include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 
 #include <iostream>
 #include <fstream>
