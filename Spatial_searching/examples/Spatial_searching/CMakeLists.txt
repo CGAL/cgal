@@ -41,7 +41,7 @@ endif()
 
 if (MSVC)
     # Turn off VC++ warning
-    #SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244")
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244")
 endif()
 
 
@@ -86,9 +86,9 @@ create_single_source_cgal_program( "weighted_Minkowski_distance.cpp" )
 
 if (EIGEN3_FOUND)
 
-create_single_source_cgal_program( "fuzzy_range_query.cpp" )
+  create_single_source_cgal_program( "fuzzy_range_query.cpp" )
 
-create_single_source_cgal_program( "general_neighbor_searching.cpp" )
+  create_single_source_cgal_program( "general_neighbor_searching.cpp" )
 
 else()
 
