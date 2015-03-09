@@ -62,7 +62,7 @@ include_directories( BEFORE ../../include )
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
-create_single_source_cgal_program( "test_polyhedron_stitching.cpp" )
+create_single_source_cgal_program( "test_stitching.cpp" )
 create_single_source_cgal_program( "orient_polygon_soup_test.cpp" )
 create_single_source_cgal_program( "orient_polygon_mesh_test.cpp" )
 create_single_source_cgal_program( "point_inside_polyhedron_boundary_test.cpp" )
