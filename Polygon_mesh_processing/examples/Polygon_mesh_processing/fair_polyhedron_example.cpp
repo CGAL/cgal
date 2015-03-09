@@ -47,8 +47,7 @@ int main() {
   std::advance(v, 8286);
   const std::vector<Vertex_handle>& region = extract_k_ring(v, 45);
 
-  bool success = CGAL::Polygon_mesh_processing::fair(poly,
-    region.begin(), region.end());
+  bool success = CGAL::Polygon_mesh_processing::fair(poly, region);
   std::cout << "Is fairing successful: " << success << std::endl;
 
   std::ofstream faired_off("data/faired.off");

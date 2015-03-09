@@ -53,8 +53,7 @@ class Fair_Polyhedron_3 {
   // typedefs
   typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
   typedef typename boost::property_traits<Point_property_map>::value_type Point_3;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor Vertex_handle;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor Halfedge_handle;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef  Halfedge_around_target_circulator<PolygonMesh>  Halfedge_around_vertex_circulator;
 
   typedef SparseLinearSolver Sparse_linear_solver;
@@ -72,7 +71,7 @@ public:
   { }
   
 private:
-  double sum_weight(Vertex_handle v) {
+  double sum_weight(vertex_descriptor v) {
   double weight = 0;
   Halfedge_around_vertex_circulator circ(halfedge(v,pmesh),pmesh), done(circ);
   do {
@@ -84,16 +83,16 @@ private:
   // recursively computes a row (use depth parameter to compute L, L^2, L^3)
   // Equation 6 in [On Linear Variational Surface Deformation Methods]
   void compute_row(
-    Vertex_handle v,
+    vertex_descriptor v,
     int row_id,                            // which row to insert in [ frees stay left-hand side ]
     Solver_matrix& matrix, 
     double& x, double& y, double& z,               // constants transfered to right-hand side
     double multiplier,
-    const std::map<Vertex_handle, std::size_t>& vertex_id_map,
+    const std::map<vertex_descriptor, std::size_t>& vertex_id_map,
     unsigned int depth)
   {
     if(depth == 0) {
-      typename std::map<Vertex_handle, std::size_t>::const_iterator vertex_id_it = vertex_id_map.find(v);
+      typename std::map<vertex_descriptor, std::size_t>::const_iterator vertex_id_it = vertex_id_map.find(v);
       if(vertex_id_it != vertex_id_map.end()) {
         int col_id = static_cast<int>(vertex_id_it->second);
         matrix.add_coef(row_id, col_id, multiplier);
@@ -112,7 +111,7 @@ private:
       do {
         double w_i_w_ij = w_i * weight_calculator.w_ij(*circ) ;
 
-        Vertex_handle nv = target(opposite(*circ,pmesh),pmesh);
+        vertex_descriptor nv = target(opposite(*circ,pmesh),pmesh);
         compute_row(nv, row_id, matrix, x, y, z, -w_i_w_ij*multiplier, vertex_id_map, depth-1);
       } while(++circ != done);
 
@@ -122,8 +121,8 @@ private:
   }
 
 public:
-  template<class InputIterator>
-  bool fair(InputIterator vb, InputIterator ve, Fairing_continuity fc)
+  template<class VertexRange>
+  bool fair(VertexRange vertices, Fairing_continuity fc)
   {
     int depth = static_cast<int>(fc) + 1;
     if(depth < 0 || depth > 3) {
@@ -131,7 +130,7 @@ public:
       return false; 
     }
 
-    std::set<Vertex_handle> interior_vertices(vb, ve);
+    std::set<vertex_descriptor> interior_vertices(begin(vertices), end(vertices));
     if(interior_vertices.empty()) { return true; }
 
     CGAL::Timer timer; timer.start();
@@ -141,9 +140,9 @@ public:
     Solver_vector Y(nb_vertices), By(nb_vertices);
     Solver_vector Z(nb_vertices), Bz(nb_vertices);
 
-    std::map<Vertex_handle, std::size_t> vertex_id_map;
+    std::map<vertex_descriptor, std::size_t> vertex_id_map;
     std::size_t id = 0;
-    for(typename std::set<Vertex_handle>::iterator it = interior_vertices.begin(); it != interior_vertices.end(); ++it, ++id) {
+    for(typename std::set<vertex_descriptor>::iterator it = interior_vertices.begin(); it != interior_vertices.end(); ++it, ++id) {
       if( !vertex_id_map.insert(std::make_pair(*it, id)).second ) {
         CGAL_warning(!"Duplicate vertex is found!");
         return false;
@@ -152,7 +151,7 @@ public:
 
     Solver_matrix A(nb_vertices);
 
-    for(typename std::set<Vertex_handle>::iterator vb = interior_vertices.begin();
+    for(typename std::set<vertex_descriptor>::iterator vb = interior_vertices.begin();
         vb != interior_vertices.end();
         ++vb) {
       int v_id = static_cast<int>(vertex_id_map[*vb]);
@@ -191,7 +190,7 @@ public:
 
     // update 
     id = 0;
-    for(typename std::set<Vertex_handle>::iterator it = interior_vertices.begin(); it != interior_vertices.end(); ++it, ++id) {
+    for(typename std::set<vertex_descriptor>::iterator it = interior_vertices.begin(); it != interior_vertices.end(); ++it, ++id) {
       put(ppmap, *it, Point_3(X[id], Y[id], Z[id]));
     }
     return true;

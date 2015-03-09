@@ -76,14 +76,12 @@ public slots:
 
     if(weight_index == 1)
       CGAL::Polygon_mesh_processing::fair(*selection_item->polyhedron(),
-        selection_item->selected_vertices.begin(),
-        selection_item->selected_vertices.end(),
+        selection_item->selected_vertices,
         CGAL::internal::Uniform_weight_fairing<Polyhedron>(*selection_item->polyhedron()),
         continuity);
     if(weight_index == 0)
       CGAL::Polygon_mesh_processing::fair(*selection_item->polyhedron(),
-        selection_item->selected_vertices.begin(),
-        selection_item->selected_vertices.end(),
+        selection_item->selected_vertices,
 //        CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(*selection_item->polyhedron()),
         continuity);
     selection_item->changed_with_poly_item();

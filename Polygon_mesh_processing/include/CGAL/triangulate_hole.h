@@ -169,7 +169,7 @@ namespace Polygon_mesh_processing {
     typedef internal::Fair_default_sparse_linear_solver::Solver Default_solver;
     typedef typename Default::Get<SparseLinearSolver, Default_solver>::type Solver;
 
-    bool fair_success = fair<Solver>(pmesh, patch.begin(), patch.end(), continuity);
+    bool fair_success = fair<Solver>(pmesh, patch, continuity);
 
     vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
     return boost::make_tuple(fair_success, face_out, vertex_out);
@@ -214,7 +214,7 @@ namespace Polygon_mesh_processing {
     typedef internal::Fair_default_sparse_linear_solver::Solver Default_solver;
     typedef typename Default::Get<SparseLinearSolver, Default_solver>::type Solver;
 
-    bool fair_success = fair<Solver>(pmesh, patch.begin(), patch.end(), weight_calculator, continuity);
+    bool fair_success = fair<Solver>(pmesh, patch, weight_calculator, continuity);
 
     vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
     return boost::make_tuple(fair_success, face_out, vertex_out);
