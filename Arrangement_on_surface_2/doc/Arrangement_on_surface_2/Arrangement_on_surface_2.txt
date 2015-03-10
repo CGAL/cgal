@@ -2182,10 +2182,10 @@ If, in addition, the subcurve traits also models the concept
 `ArrangementApproximateTraits_2` then the instantiated
 `Arr_polyline_traits_2<SubcurveTraits>` type models the concept
 `ArrangementApproximateTraits_2` as well. (By definition, modeling the
-concept `ArrangementApproximateTraits_2` implies modeling the
+concepts `ArrangementApproximateTraits_2` and
+`ArrangementConstructXMonotoneCurveTraits_2` implies modeling the
 concept `ArrangementLandmarkTraits_2`.) The same holds for the
 `ArrangementOpenTraits_2` concept as well.
-
 Modeling the `ArrangementConstructXMonotoneCurveTraits_2` concept
 implies that the subcurve traits must support the construction of a
 unique (\f$x\f$-monotone) segment given two input points. Roughly
@@ -2193,19 +2193,19 @@ speaking, it means that each operation defined by the subcurve traits
 must handle linear curves.
 
 An instance of the polyline traits class-template inherits its nested
-point type, i.e., `Point_2` from the subcurve traits, and defines the
+point type, i.e., `Point_2`, from the subcurve traits, and defines the
 nested types `Curve_2` and `X_monotone_curve_2`, which are used to
-represent polylines and \f$x\f$-monotone polylines\, respectively.  A
+represent polylines and \f$x\f$-monotone polylines, respectively.  A
 polyline of the nested type `Curve_2` is stored as a vector of
 `SubcurveTraits_2::Curve_2` objects, and an \f$x\f$-monotone polyline
 of the nested type `X_monotone_curve_2` is stored as a vector of
 `SubcurveTraits_2::X_monotone_curve_2` objects.  The nested
-`X_monotone_curve_2` type inherits from the nested type `Curve_2`.
-By default, `Arr_segment_traits_2` is used to substitute the template
-parameter in case where no such parameter is provided. In this case
+`X_monotone_curve_2` type inherits from the nested type `Curve_2`.  By
+default, `Arr_segment_traits_2` is used as the subcurve traits (in
+case where the `SubcurveTraits_2` parameter is omitted). In this case
 the nested types `SubcurveTraits_2::Curve_2` and
 `SubcurveTraits_2::X_monotone_curve_2` are identical types
-representing linear segments.
+representing bounded linear segments.
 
 A polyline can be constructed given one of the following inputs:
 
@@ -2298,17 +2298,18 @@ polylines:
 The traits class `Arr_polycurve_traits_2<GeometryTraits_2>` handles
 piecewise curves that are not necessarily linear, such as conic arcs,
 circular arcs, Bezier curves, or line segments. We call such a
-compound curve a polycurve. Similar to a polyline, a polycurve is a
-chain of subcurves, where each two neighboring subcurves in the chain
-share a common endpoint; that is, the polycurve is continuous. As a
-matter of fact, most characteristics of the
+compound curve a <em>polycurve</em>. Similar to a polyline, a
+polycurve is a chain of subcurves, where each two neighboring
+subcurves in the chain share a common endpoint; that is, the polycurve
+is continuous. As a matter of fact, most characteristics of the
 `Arr_polyline_traits_2<GeometryTraits_2>` traits class apply also to
 the `Arr_polycurve_traits_2<GeometryTraits_2>` traits class. The only
 difference between the two, is that the latter is not a model of the
 concept `ArrangementConstructXMonotoneCurveTraits_2`, and as such, it
 is not able to construct a subcurve from two points. As a consequence,
-it does not support the operations that push a point at the back or at
-the front of a non-empty polycurve.
+it does not support the operations that (i) construct a polycurve from
+a sequence of point, and (ii) push a point at the back or at the front
+of a non-empty polycurve.
 
 \subsection arr_ssectr_circ_seg A Traits Class for Circular Arcs and Line Segments
 
