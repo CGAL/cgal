@@ -494,6 +494,10 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(const Textured_po
 
 Scene_textured_polyhedron_item::~Scene_textured_polyhedron_item()
 {
+    glDeleteBuffers(5, buffer);
+    glDeleteVertexArrays(1, vao);
+    glDeleteProgram(rendering_program_lines);
+    glDeleteProgram(rendering_program_facets);
     delete poly;
 }
 

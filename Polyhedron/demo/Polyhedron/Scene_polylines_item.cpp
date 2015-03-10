@@ -831,6 +831,11 @@ Scene_polylines_item::Scene_polylines_item()
 Scene_polylines_item::~Scene_polylines_item()
 {
     delete d;
+    glDeleteBuffers(6, buffer);
+    glDeleteVertexArrays(1, vao);
+    glDeleteProgram(rendering_program_spheres);
+    glDeleteProgram(rendering_program_lines);
+    glDeleteProgram(rendering_program_WireSpheres);
 }
 
 bool
