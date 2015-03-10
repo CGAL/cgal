@@ -3,7 +3,7 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Parameterization_polyhedron_adaptor_3.h>
 #include <CGAL/parameterize.h>
-
+#include <CGAL/Timer.h>
 #include <CGAL/Eigen_solver_traits.h>
 
 #include <iostream>
@@ -17,7 +17,7 @@
 
 typedef CGAL::Simple_cartesian<double>             Kernel;
 typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
-
+typedef CGAL::Timer Timer;
 
 // ----------------------------------------------------------------------------
 // main()
@@ -65,7 +65,8 @@ int main(int argc, char * argv[])
 
     typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
                                             Parameterization_polyhedron_adaptor;
-
+    Timer t;
+    t.start();
     Parameterization_polyhedron_adaptor mesh_adaptor(mesh);
 
     //***************************************
@@ -77,16 +78,17 @@ int main(int argc, char * argv[])
     typedef CGAL::Circular_border_arc_length_parameterizer_3<Parameterization_polyhedron_adaptor>
                                                         Border_parameterizer;
     // Eigen solver
-    typedef CGAL::Eigen_solver_traits<>                Solver;
+    typedef CGAL::Eigen_solver_traits<Eigen::BiCGSTAB<CGAL::Eigen_sparse_matrix<double>::EigenType, Eigen::IncompleteLUT< double > > >                Solver;
 
     // Floater Mean Value Coordinates parameterization
     // (circular border) with Eigen solver
     typedef CGAL::Mean_value_coordinates_parameterizer_3<Parameterization_polyhedron_adaptor,
                                                          Border_parameterizer,
-                                                         Solver>
+      Solver>
                                                         Parameterizer;
 
     Parameterizer::Error_code err = CGAL::parameterize(mesh_adaptor, Parameterizer());
+    t.stop();
 
     switch(err) {
     case Parameterizer::OK: // Success
@@ -119,6 +121,6 @@ int main(int argc, char * argv[])
         double v = mesh_adaptor.info(pVertex->halfedge())->uv().y();
         std::cout << "(u,v) = (" << u << "," << v << ")" << std::endl;
     }
-
+    std::cerr << t.time() << "sec." << std::endl; 
     return EXIT_SUCCESS;
 }
