@@ -2205,7 +2205,7 @@ default, `Arr_segment_traits_2` is used as the subcurve traits (in
 case where the `SubcurveTraits_2` parameter is omitted). In this case
 the nested types `SubcurveTraits_2::Curve_2` and
 `SubcurveTraits_2::X_monotone_curve_2` are identical types
-representing bounded linear segments.
+representing line segments.
 
 A polyline can be constructed given one of the following inputs:
 
