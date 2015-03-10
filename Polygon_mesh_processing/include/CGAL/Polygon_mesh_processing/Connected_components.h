@@ -28,7 +28,6 @@
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/connected_components.hpp>
 #include <boost/property_map/vector_property_map.hpp>
-#include <CGAL/boost/graph/named_function_params.h>
 
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -465,12 +464,39 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
 
 
 
-template <class PolygonMesh, class EdgeConstraintMap, class FaceComponentMap, class FaceIndexMap>
+/*!
+ * \ingroup PkgPolygonMeshProcessing
+ *  computes for each face the index of the connected components to which it belongs.
+ *  Two faces are considered to be in the same connected component if they share an edge.
+ *  \tparam PolygonMesh a model of `FaceGraph`
+ *  \tparam FaceComponentMap the property map with the face descriptor as key type, and the index of its connected component as value type
+ * \tparam EdgeConstraintMap a property map with the edge descriptor as key type and `bool` as value type
+ * \tparam FaceIndexMap a property map with the face descriptor as key type and the index as value type
+ *
+ *  \returns the number of connected components.
+ */
+
+template <class PolygonMesh, class FaceComponentMap, class EdgeConstraintMap
+#ifdef DOXYGEN_RUNNING
+          = internal::No_constraint<PolygonMesh>
+#endif
+, class FaceIndexMap
+#ifdef DOXYGEN_RUNNING
+          = typename boost::property_map<PolygonMesh, CGAL::face_index_t>::type
+#endif
+>
 typename boost::property_traits<FaceComponentMap>::value_type
 connected_components(PolygonMesh& pmesh,
                      FaceComponentMap& fcm,
-                     EdgeConstraintMap ecmap,
-                     FaceIndexMap fim)
+                     EdgeConstraintMap ecmap
+#ifdef DOXYGEN_RUNNING
+                     = EdgeConstraintMap()
+#endif
+                     , FaceIndexMap fim
+#ifdef DOXYGEN_RUNNING
+                     = get(CGAL::face_index_t, pmesh)
+#endif
+)
 {
   typedef Dual<PolygonMesh> Dual;
   typedef boost::filtered_graph<Dual, internal::No_border<PolygonMesh,EdgeConstraintMap> > FiniteDual;
@@ -481,36 +507,15 @@ connected_components(PolygonMesh& pmesh,
 }
 
 
-/*!
- * \ingroup PkgPolygonMeshProcessing
- *  computes for each face the index of the connected components to which it belongs.
- *  Two faces are considered to be in the same connected component if they share an edge.
- *  \tparam PolygonMesh a model of `FaceGraph`
- *  \tparam FaceComponentMap the property map with the face descriptor as key type, and the index of its connected component as value type
- *
- *  The function accepts named parameters
- *  - `CGAL::parameters::face_index_map`  which defaults to `get(boost::face_index, pmesh)`
- *  - `CGAL::parameters::edge_is_constrained_map` which defaults to no constraint
- *
- *  \returns the number of connected components.
- */
-template <class PolygonMesh, class FaceComponentMap, class P, class T, class R>
+template <class PolygonMesh, class EdgeConstraintMap, class FaceComponentMap>
 typename boost::property_traits<FaceComponentMap>::value_type
 connected_components(PolygonMesh& pmesh,
                      FaceComponentMap& fcm,
-                     const cgal_bgl_named_params<P,T,R>& params) 
+                     EdgeConstraintMap ecmap)
 {
-  using boost::choose_param;
-  using boost::choose_const_pmap;
-  using boost::get_param;
 
-  return connected_components(pmesh,
-                              fcm,
-                              choose_param(get_param(params,edge_is_constrained),internal::No_constraint<PolygonMesh>(pmesh)),
-                              choose_const_pmap(get_param(params,boost::face_index),pmesh,boost::face_index)
-    );
+  return CGAL::connected_components(pmesh, fcm, ecmap,get(boost::face_index,pmesh));
 }
-
 
 
 template <class PolygonMesh, class FaceComponentMap>
@@ -518,22 +523,57 @@ typename boost::property_traits<FaceComponentMap>::value_type
 connected_components(PolygonMesh& pmesh,
                      FaceComponentMap& fcm)
 {
-  return connected_components(pmesh, 
-                              fcm,
-                              internal::No_constraint<PolygonMesh>(pmesh),
-                              get(boost::face_index,pmesh));
+
+  return CGAL::connected_components(pmesh,
+                                    fcm,
+                                    internal::No_constraint<PolygonMesh>(pmesh),
+                                    get(boost::face_index,pmesh));
 }
 
 
 
 
+/*!
+ * \ingroup PkgPolygonMeshProcessing
+ *  Erases the small connected components and the isolated vertices.
+ *  Keep `nb_components_to_keep` largest connected components. 
+ *  \tparam PolygonMesh a model of `FaceGraph`
+ * \tparam EdgeConstraintMap a property map with the edge descriptor as key type and `bool` as value type
+ * \tparam VertexIndexMap a property map with the vertex descriptor as key type and the index as value type
+ * \tparam FaceIndexMap a property map with the face descriptor as key type and the index as value type
+ *
+ *  \return the number of connected components erased (ignoring isolated vertices).
+ */
 
-template <class PolygonMesh, class EdgeConstraintMap, class VertexIndexMap, class FaceIndexMap>
+template <class PolygonMesh, class EdgeConstraintMap
+#ifdef DOXYGEN_RUNNING
+          = internal::No_constraint<PolygonMesh>
+#endif
+, class VertexIndexMap
+#ifdef DOXYGEN_RUNNING
+          = typename boost::property_map<PolygonMesh, CGAL::vertex_index_t>::type
+#endif
+, class FaceIndexMap
+#ifdef DOXYGEN_RUNNING
+          = typename boost::property_map<PolygonMesh, CGAL::face_index_t>::type
+#endif
+>
 std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
                                               std::size_t nb_components_to_keep,
-                                              EdgeConstraintMap ecmap,
-                                              VertexIndexMap vim,
-                                              FaceIndexMap fim)
+                                              EdgeConstraintMap ecmap
+#ifdef DOXYGEN_RUNNING
+                     = EdgeConstraintMap()
+#endif
+                                              , VertexIndexMap vim
+#ifdef DOXYGEN_RUNNING
+                     = get(CGAL::vertex_index_t, pmesh)
+#endif
+
+                                              ,FaceIndexMap fim
+#ifdef DOXYGEN_RUNNING
+                     = get(CGAL::face_index_t, pmesh)
+#endif
+)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_iterator vertex_iterator;
@@ -684,34 +724,26 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
   }
   return num - nb_components_to_keep;
 }
-/*!
- * \ingroup PkgPolygonMeshProcessing
- *  Erases the small connected components and the isolated vertices.
- *  Keep `nb_components_to_keep` largest connected components.
- *  \return the number of connected components erased (ignoring isolated vertices).
- *  The function accepts named parameters
- *  - `CGAL::parameters::vertex_index_map` which defaults to `get(boost::vertex_index, pmesh)`
- *  - `CGAL::parameters::face_index_map`  which defaults to `get(boost::face_index, pmesh)`
- *  - `CGAL::parameters::edge_is_constrained_map` which defaults to no constraint
- */
-template <class PolygonMesh, class P, class T, class R>
+
+
+
+
+template <class PolygonMesh, class EdgeConstraintMap, class VertexIndexMap>
 std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
                                               std::size_t nb_components_to_keep,
-                                              const cgal_bgl_named_params<P,T,R>& params)
+                                              EdgeConstraintMap ecmap,
+                                              VertexIndexMap vim)
 {
-  
-  using boost::choose_param;
-  using boost::choose_const_pmap;
-  using boost::get_param;
-
-  return keep_largest_connected_components(pmesh,
-                                           nb_components_to_keep,
-                                           choose_param(get_param(params,edge_is_constrained),internal::No_constraint<PolygonMesh>(pmesh)),
-                                           choose_const_pmap(get_param(params,boost::vertex_index),pmesh,boost::vertex_index),
-                                           choose_const_pmap(get_param(params,boost::face_index),pmesh,boost::face_index)
-                                          );
+  return keep_largest_connected_components(pmesh, nb_components_to_keep, ecmap, vim, get(boost::face_index, pmesh));
 }
 
+template <class PolygonMesh, class EdgeConstraintMap>
+std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
+                                              std::size_t nb_components_to_keep,
+                                              EdgeConstraintMap ecmap)
+{
+  return keep_largest_connected_components(pmesh, nb_components_to_keep, ecmap, get(boost::vertex_index, pmesh),, get(boost::face_index, pmesh));
+}
 
 template <class PolygonMesh>
 std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
@@ -723,6 +755,9 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
                                            get(boost::vertex_index, pmesh),
                                            get(boost::face_index, pmesh));
 }
+
+
+
 
 } // namespace Polygon_mesh_processing
 
