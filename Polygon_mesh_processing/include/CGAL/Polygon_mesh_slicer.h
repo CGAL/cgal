@@ -44,16 +44,21 @@ namespace CGAL {
 /// Function object that can compute the intersection of planes with
 /// a triangulated surface mesh.
 ///
-/// \tparam TriangleMesh must be a model of `FaceGraph` and `HalfedgeListGraph`
+/// \tparam TriangleMesh triangulated surface mesh. It must be a model of `FaceGraph` and `HalfedgeListGraph`
 /// \tparam Traits must be a model of `AABBGeomTraits`
 /// \tparam VertexPointMap is a model of `ReadablePropertyMap` with
 ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
-///         `Traits::Point_3` as value type
+///         `Traits::Point_3` as value type.
+///         The default is `typename boost::property_map< TriangleMesh, vertex_point_t>::%type`.
 /// \tparam AABBTree must be an instanciation of `CGAL::AABB_tree` able to handle
 ///         the edges of TriangleMesh, having its `edge_descriptor` as primitive id.
+///         The default is `CGAL::AABB_tree<CGAL::AABB_traits<
+///                  Traits, CGAL::AABB_halfedge_graph_segment_primitive<TriangleMesh> > >`
 /// \tparam UseParallelPlaneOptimization if `true`, the code will use specific
 ///         predicates and constructions in case the functor is called with a plane
 ///         orthogonal to a frame axis, the non-null coefficient being 1 or -1.
+///         The default is `true`.
+///
 /// Depends on \ref PkgAABB_treeSummary
 /// \todo Shall we document more in details what is required?
 ///       `Traits` must provide:
@@ -292,12 +297,12 @@ public:
 
   /**
   * Constructor using all `edges(tmesh)` to initialize the
-  * internal `AABB_tree`.
+  * internal \cgal `AABB_tree`.
   * @param tmesh the triangulated surface mesh to be cut.
-  *              it must be valid and non modified as long
-  *              as the functor is used
-  * @param vpmap an intance of the vertex point property map
-  * @param traits a traits class instance
+  *              It must be valid and non modified as long
+  *              as the functor is used.
+  * @param vpmap an instance of the vertex point property map associated to `tmesh`
+  * @param traits a traits class instance, can be omitted
   */
   Polygon_mesh_slicer(const TriangleMesh& tmesh,
                       VertexPointMap vpmap,
@@ -314,13 +319,13 @@ public:
   }
 
   /**
-  * Constructor using an `AABB_tree` provided by the user.
+  * Constructor using a pre-built `AABB_tree` of edges provided by the user.
   * @param tmesh the triangulated surface mesh to be cut.
-  *              it must be valid and non modified as long
-  *              as the functor is used
-  * @param tree must be initialized with all the edge of `tmesh`
-  * @param vpmap an intance of the vertex point property map
-  * @param traits a traits class instance
+  *              It must be valid and non modified as long
+  *              as the functor is used.
+  * @param tree must be initialized with all the edges of `tmesh`
+  * @param vpmap an instance of the vertex point property map associated to `tmesh`
+  * @param traits a traits class instance, can be omitted
   */
   Polygon_mesh_slicer(const TriangleMesh& tmesh,
                       const AABBTree& tree,
@@ -335,12 +340,12 @@ public:
 
   /**
   * Constructor using all `edges(tmesh)` to initialize the
-  * internal `AABB_tree`. The vertex point property map used
-  * is `get(boost::vertex_point, tmesh)`
+  * internal \cgal `AABB_tree`. The vertex point property map used
+  * is `get(CGAL::vertex_point, tmesh)`
   * @param tmesh the triangulated surface mesh to be cut.
-  *              it must be valid and non modified as long
-  *              as the functor is used
-  * @param traits a traits class instance
+  *              It must be valid and non modified as long
+  *              as the functor is used.
+  * @param traits a traits class instance, can be omitted
   */
   Polygon_mesh_slicer(const TriangleMesh& tmesh,
                       const Traits& traits = Traits())
@@ -356,13 +361,13 @@ public:
   }
 
   /**
-  * Constructor using an `AABB_tree` provided by the user.
-  * The vertex point property map used is `get(boost::vertex_point, tmesh)`
+  * Constructor using a \cgal `AABB_tree` provided by the user.
+  * The vertex point property map used is `get(CGAL::vertex_point, tmesh)`
   * @param tmesh the triangulated surface mesh to be cut.
-  *              it must be valid and non modified as long
-  *              as the functor is used
-  * @param tree must be initialized with all the edge of `tmesh`
-  * @param traits a traits class instance
+  *              It must be valid and non modified as long
+  *              as the functor is used.
+  * @param tree must be initialized with all the edges of `tmesh`
+  * @param traits a traits class instance, can be omitted
   */
   Polygon_mesh_slicer(const TriangleMesh& tmesh,
                       const AABBTree& tree,
@@ -375,9 +380,10 @@ public:
   { }
 
   /**
-   * Construct the intersecting polylines of `plane` with the input triangulated surface mesh.
-   * @tparam OutputIterator an output iterator accepting polylines. A polyline is provided as `std::vector<Kernel::Point_3>`.
-   *                        A polyline is closed if its first and last points are identical.
+   * Constructs the intersecting polylines of `plane` with the input triangulated surface mesh.
+   * @tparam OutputIterator an output iterator accepting polylines.
+   *              A polyline is provided as `std::vector<Traits::Point_3>`.
+   *              A polyline is closed if its first and last points are identical.
    * @param plane the plane to intersect the triangulated surface mesh with
    * @param out output iterator of polylines
    */
@@ -387,12 +393,12 @@ public:
   {
     CGAL_precondition(!plane.is_degenerate());
 
-    /// containers for storing edges wrt their position with the plane
+    // containers for storing edges wrt their position with the plane
     std::set<edge_descriptor> all_coplanar_edges;
     std::vector<edge_descriptor> iedges;
     Vertices_map vertices;
 
-    /// get all edges intersected by the plane and classify them
+    // get all edges intersected by the plane and classify them
 
     std::pair<int, FT> app_info = axis_parallel_plane_info(plane);
     if (!UseParallelPlaneOptimization || app_info.first==-1)
@@ -423,7 +429,7 @@ public:
       m_tree_ptr->traversal(plane, ttraits);
     }
 
-    /// init output graph
+    // init output graph
     AL_graph al_graph;
 
     // add nodes for each vertex in the plane
@@ -436,9 +442,9 @@ public:
     Compare_face less_face(m_tmesh);
     AL_edge_map al_edge_map( less_face );
 
-    /// Filter coplanar edges: we consider only coplanar edges incident to one non-coplanar facet
-    ///   for each such edge, add the corresponding nodes in the adjacency-list graph as well as
-    ///   the edge
+    // Filter coplanar edges: we consider only coplanar edges incident to one non-coplanar facet
+    //   for each such edge, add the corresponding nodes in the adjacency-list graph as well as
+    //   the edge
     BOOST_FOREACH(const edge_descriptor ed, all_coplanar_edges)
     {
       if (  face(halfedge(ed, m_tmesh), m_tmesh)==graph_traits::null_face() ||
@@ -449,7 +455,7 @@ public:
         typename Vertices_map::iterator it_insert1, it_insert2;
         bool is_new;
 
-        /// Each coplanar edge is connecting two nodes
+        // Each coplanar edge is connecting two nodes
         //  handle source
         cpp11::tie(it_insert1, is_new) =
           vertices.insert(
@@ -474,16 +480,16 @@ public:
           it_insert2->second=add_vertex(al_graph);
           al_graph[it_insert2->second]=it_insert2->first;
         }
-        /// add the edge into the adjacency-list graph
+        // add the edge into the adjacency-list graph
         CGAL_assertion( it_insert1->second!=AL_graph::null_vertex() );
         CGAL_assertion( it_insert2->second!=AL_graph::null_vertex() );
         add_edge(it_insert1->second, it_insert2->second, al_graph);
       }
     }
 
-    /// for each edge intersected in its interior, creates a node in
-    /// an adjacency-list graph and put an edge between two such nodes
-    /// when the corresponding edges shares a common face
+    // for each edge intersected in its interior, creates a node in
+    // an adjacency-list graph and put an edge between two such nodes
+    // when the corresponding edges shares a common face
     BOOST_FOREACH(edge_descriptor ed, iedges)
     {
       AL_vertex_descriptor vd=add_vertex(al_graph);
@@ -491,9 +497,9 @@ public:
       update_al_graph_connectivity(ed, vd, al_edge_map, al_graph);
     }
 
-    /// If one of the node above is not connected in its two incident faces
-    /// then it must be connected to a vertex (including those in the set
-    /// of coplanar edges)
+    // If one of the node above is not connected in its two incident faces
+    // then it must be connected to a vertex (including those in the set
+    // of coplanar edges)
     typedef std::pair<halfedge_descriptor, AL_vertex_pair> Halfedge_and_vertices;
     BOOST_FOREACH(Halfedge_and_vertices hnv,al_edge_map)
     {
@@ -509,8 +515,8 @@ public:
 
     CGAL_assertion(num_vertices(al_graph)==iedges.size()+vertices.size());
 
-    /// now assemble the edges of al_graph to define polylines,
-    /// putting them in the output iterator
+    // now assemble the edges of al_graph to define polylines,
+    // putting them in the output iterator
     if (!UseParallelPlaneOptimization || app_info.first==-1)
     {
       Polyline_visitor<OutputIterator, Traits> visitor(m_tmesh, al_graph, plane, m_vpmap, m_traits, out);

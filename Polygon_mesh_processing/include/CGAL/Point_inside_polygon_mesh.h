@@ -41,10 +41,11 @@ namespace CGAL {
 
  * @tparam TriangleMesh a triangulated polyhedral surface, a model of `FaceListGraph`
  * @tparam Kernel a \cgal kernel
- * @tparam VertexPointMap a property map with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
- *   as key type and a `Kernel::Point_3` as value type.
- *   The default is `typename boost::property_map< FaceGraph,vertex_point_t>::%type`.
-
+ * @tparam VertexPointMap  is a model of `ReadablePropertyMap` with
+         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
+         `Kernel::Point_3` as value type.
+ *   The default is `typename boost::property_map< TriangleMesh,vertex_point_t>::%type`.
+ 
  * \todo Code: Use this class as an implementation detail of Mesh_3's Polyhedral_mesh_domain_3.
        Remove `TriangleAccessor_3` as well as the concept in Mesh_3 since making `TriangleMesh`
        a model of `FaceListGraph` will make it useless
