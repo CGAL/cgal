@@ -40,11 +40,11 @@ Release date: March 2015
     alternative to the packages CGAL::Polyhedron_3 and CGAL::HalfedgeDS.
 
 
-* Triangulation (new package)
+* dD Triangulation (new package)
 
   - This new package provides classes for manipulating triangulations in
     Euclidean spaces whose dimension can be specified at compile-time or at
-    run-time.
+    run-time. It also provides a class that represents Delaunay triangulations.
 
 
 * dD Convex Hulls and Delaunay Triangulations
