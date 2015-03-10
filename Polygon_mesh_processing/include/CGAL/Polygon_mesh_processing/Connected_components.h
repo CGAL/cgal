@@ -361,9 +361,20 @@ namespace Polygon_mesh_processing{
  *  Discovers all the faces in the same connected component as `seed_face` and puts them in `out`.
  * `seed_face` will also be added in `out`.
  *  Two faces are considered to be in the same connected component if they share an edge.
+
  *  \tparam PolygonMesh a model of `FaceGraph`
- *  \tparam EdgeConstraintMap a property map with the edge descriptor as key type and `bool` as value type
- *  \tparam FaceOutputIterator an `OutputIterator` that accepts face descriptors.
+ *  \tparam FaceOutputIterator a model of `OutputIterator` that accepts
+        `boost::graph_traits<PolygonMesh>::%face_descriptor`s.
+ *  \tparam EdgeConstraintMap a model of `ReadablePropertyMap` with
+        `boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
+        `bool` as value type
+
+ *  \param seed_face a face of `pmesh` from which exploration starts to detect the connected component
+           that contains it
+ *  \param pmesh the polygon mesh
+ *  \param out the output iterator that collects faces from the same connected component as `seed_face`
+ *  \param ecmap the property map containing information about edges of `pmesh` being constrained or not
+
  *  \returns the output iterator.
  */
 template <class PolygonMesh
@@ -466,12 +477,23 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
 
 /*!
  * \ingroup PkgPolygonMeshProcessing
- *  computes for each face the index of the connected components to which it belongs.
+ *  computes for each face the index of the connected component to which it belongs.
  *  Two faces are considered to be in the same connected component if they share an edge.
  *  \tparam PolygonMesh a model of `FaceGraph`
- *  \tparam FaceComponentMap the property map with the face descriptor as key type, and the index of its connected component as value type
- * \tparam EdgeConstraintMap a property map with the edge descriptor as key type and `bool` as value type
- * \tparam FaceIndexMap a property map with the face descriptor as key type and the index as value type
+ *  \tparam FaceComponentMap a model of `WritablePropertyMap` with
+        `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
+        `boost::face_index` as value type.
+ *  \tparam EdgeConstraintMap a model of `ReadablePropertyMap` with
+        `boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
+        `bool` as value type
+ * \tparam FaceIndexMap a model of `ReadablePropertyMap` with
+       `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
+       ` CGAL::face_index_t` as value type.
+
+ * \param pmesh the polygon mesh
+ * \param fcm the property map with indices of components associated to faces in `pmesh`
+ * \param ecmap the property map containing information about edges of `pmesh` being constrained or not
+ * \param fim the property map containing the index of each face of `pmesh`
  *
  *  \returns the number of connected components.
  */
@@ -530,18 +552,28 @@ connected_components(PolygonMesh& pmesh,
                                     get(boost::face_index,pmesh));
 }
 
-
-
-
 /*!
  * \ingroup PkgPolygonMeshProcessing
  *  Erases the small connected components and the isolated vertices.
  *  Keep `nb_components_to_keep` largest connected components. 
- *  \tparam PolygonMesh a model of `FaceGraph`
- * \tparam EdgeConstraintMap a property map with the edge descriptor as key type and `bool` as value type
- * \tparam VertexIndexMap a property map with the vertex descriptor as key type and the index as value type
- * \tparam FaceIndexMap a property map with the face descriptor as key type and the index as value type
- *
+ 
+ * \tparam PolygonMesh a model of `FaceGraph`
+ * \tparam EdgeConstraintMap a model of `ReadablePropertyMap` with
+       `boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
+       `bool` as value type
+ * \tparam VertexIndexMap a model of `ReadablePropertyMap` with
+       `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
+       `CGAL::vertex_index_t` as value type
+ * \tparam FaceIndexMap a model of `ReadablePropertyMap` with
+       `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
+       `CGAL::face_index_t` as value type.
+
+ * \param pmesh the polygon mesh
+ * \param nb_components_to_keep
+ * \param ecmap the property map containing information about edges of `pmesh` being constrained or not
+ * \param vim the property map containing the index of each vertex of `pmesh`
+ * \param fim the property map containing the index of each face of `pmesh`
+
  *  \return the number of connected components erased (ignoring isolated vertices).
  */
 
