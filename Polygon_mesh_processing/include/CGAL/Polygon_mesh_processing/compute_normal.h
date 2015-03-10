@@ -33,7 +33,8 @@ namespace Polygon_mesh_processing{
 * computes the outward unit vector normal to face `f`.
 * @tparam Kernel Geometric traits class. It can be omitted and deduced automatically from the point type of `PolygonMesh`.
 * @tparam PolygonMesh a model of `FaceGraph`
-*
+* @tparam VertexPointMap the property map with the points associated to the vertices.
+* @tparam Kernel Geometric traits class. It can be omitted and deduced automatically from the point type of `PolygonMesh`.
 * @param f the face on which the normal is computed
 * @param pmesh the polygon mesh to which `f` belongs
 */
@@ -128,9 +129,9 @@ compute_face_normals(const PolygonMesh& pmesh
 /**
 * \ingroup PkgPolygonMeshProcessing
 * computes the unit normal at vertex `v` as the average of the normals of incident faces.
-* @tparam Kernel a %CGAL `Kernel` with `FT` a model of `FieldWithSqrt`
 * @tparam PolygonMesh a model of `FaceGraph`
-*
+* @tparam Kernel a %CGAL `Kernel` with `FT` a model of `FieldWithSqrt`
+* @tparam Kernel Geometric traits class. It can be omitted and deduced automatically from the point type of `PolygonMesh`.
 * @param v the vertex around which the normal is computed
 * @param pmesh the polygon mesh to which `v` belongs
 */
