@@ -56,7 +56,6 @@ void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
   Scene_polylines_item* max_curv = new Scene_polylines_item;
   max_curv->setColor(Qt::red);
   max_curv->setName(tr("%1 (max curvatures)").arg(poly_item->name()));
-    
   Scene_polylines_item* min_curv = new Scene_polylines_item;
   min_curv->setColor(Qt::green);
   min_curv->setName(tr("%1 (min curvatures)").arg(poly_item->name()));
@@ -121,6 +120,8 @@ void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
 
   scene->addItem(max_curv);
   scene->addItem(min_curv);
+  max_curv->changed();
+  min_curv->changed();
   
   // default cursor
   QApplication::restoreOverrideCursor();

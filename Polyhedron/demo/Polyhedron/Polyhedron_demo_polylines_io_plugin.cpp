@@ -74,6 +74,7 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
   item->setColor(Qt::black);
   item->setProperty("polylines metadata", polylines_metadata);
   std::cerr << "Number of polylines in item: " << item->polylines.size() << std::endl;
+  item->changed();
   return item;
 }
 
