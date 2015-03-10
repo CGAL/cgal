@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>978</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -94,6 +94,7 @@
      </property>
      <addaction name="actionMVC"/>
      <addaction name="actionDCP"/>
+     <addaction name="actionLSC"/>
     </widget>
     <widget class="QMenu" name="menuPCA">
      <property name="title">
@@ -294,8 +295,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>545</width>
-            <height>178</height>
+            <width>534</width>
+            <height>174</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -644,6 +645,11 @@
   <action name="actionPreferences">
    <property name="text">
     <string>&amp;Preferences</string>
+   </property>
+  </action>
+  <action name="actionLSC">
+   <property name="text">
+    <string>Least square conformal maps</string>
    </property>
   </action>
  </widget>
