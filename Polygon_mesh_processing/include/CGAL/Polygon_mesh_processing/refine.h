@@ -9,40 +9,42 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup PkgPolygonMeshProcessing
-  @brief Function refining a region on polygon mesh
+  @brief Function refining a region on a polygon mesh
 
-  @tparam PolygonMesh must be a model of `MutableFaceGraph`
-  @tparam FacetRange range of input facets, model of `SinglePassRange`
-  @tparam FacetOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch facets
-  @tparam VertexOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices
+  @tparam PolygonMesh model of `MutableFaceGraph`
+  @tparam FaceRange range of input faces, model of `SinglePassRange`
+  @tparam FaceOutputIterator model of `OutputIterator`
+    holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
+  @tparam VertexOutputIterator model of `OutputIterator`
+    holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices
 
-  @param pmesh mesh to be refined
-  @param facets the range of facets to be refined
-  @param facet_out iterator over newly created facets
-  @param vertex_out iterator over newly created vertices
+  @param pmesh polygon mesh to be refined
+  @param faces the range of faces to be refined
+  @param faces_out iterator over newly created faces
+  @param vertices_out iterator over newly created vertices
   @param density_control_factor factor for density where larger values cause denser refinements
 
-  @return pair of @a facet_out and @a vertex_out
+  @return pair of @a faces_out and @a vertices_out
 
   @todo current algorithm iterates 10 times at most, since (I guess) there is no termination proof.
   */
   template<class PolygonMesh,
-           class FacetRange,
-           class FacetOutputIterator,
+           class FaceRange,
+           class FaceOutputIterator,
            class VertexOutputIterator>
-  std::pair<FacetOutputIterator, VertexOutputIterator>
+  std::pair<FaceOutputIterator, VertexOutputIterator>
     refine(PolygonMesh& pmesh,
-           FacetRange facets,
-           FacetOutputIterator facet_out,
-           VertexOutputIterator vertex_out,
+           FaceRange faces,
+           FaceOutputIterator faces_out,
+           VertexOutputIterator vertices_out,
            double density_control_factor = std::sqrt(2.0))
   {
     internal::Refine_Polyhedron_3<PolygonMesh> refine_functor(pmesh);
-    refine_functor.refine(facets,
-                          facet_out,
-                          vertex_out,
+    refine_functor.refine(faces,
+                          faces_out,
+                          vertices_out,
                           density_control_factor);
-    return std::make_pair(facet_out, vertex_out);
+    return std::make_pair(faces_out, vertices_out);
   }
 
 }//end namespace Polygon_mesh_processing

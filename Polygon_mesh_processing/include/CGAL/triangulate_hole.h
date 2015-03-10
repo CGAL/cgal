@@ -19,12 +19,13 @@ namespace Polygon_mesh_processing {
   The hole should contain no non-manifold vertex. Generated patch is guaranteed to not break edge manifoldness and contain no degenerate triangle.
   If no possible patch is found, @a pmesh is not altered in any way, and no face descriptor is put into @a out.
 
-  @tparam PolygonMesh must be a model of `MutableFaceGraph`
-  @tparam OutputIterator iterator holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
+  @tparam PolygonMesh a model of `MutableFaceGraph`
+  @tparam OutputIterator a model of `OutputIterator`
+    holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
 
   @param pmesh polygon mesh containing the hole
   @param border_halfedge a border halfedge incident to the hole
-  @param out iterator over patch faces.
+  @param out iterator over patch faces
   @param use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
 
   @return @a out
@@ -60,13 +61,15 @@ namespace Polygon_mesh_processing {
   @brief Function triangulating and refining a hole in a polygon mesh.
 
   @tparam PolygonMesh must be model of `MutableFaceGraph`
-  @tparam FacetOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
-  @tparam VertexOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices.
+  @tparam FacetOutputIterator model of `OutputIterator`
+     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
+  @tparam VertexOutputIterator model of `OutputIterator`
+     holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices.
 
   @param pmesh polygon mesh which has the hole
   @param border_halfedge a border halfedge incident to the hole
-  @param face_out iterator over patch facess
-  @param vertex_out iterator over patch vertices without including the boundary
+  @param face_out output iterator over patch faces
+  @param vertex_out output iterator over patch vertices without including the boundary
   @param density_control_factor factor for density where larger values cause denser refinements
   @param use_delaunay_triangulation if `true`, use the Delaunay triangulation face search space
 
@@ -114,25 +117,28 @@ namespace Polygon_mesh_processing {
   .
 
   @tparam SparseLinearSolver a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
-  @tparam PolygonMesh must be model of  `MutableFaceGraph`
-  @tparam FaceOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
-  @tparam VertexOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices.
+  @tparam PolygonMesh a model of `MutableFaceGraph`
+  @tparam FaceOutputIterator model of `OutputIterator`
+      holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
+  @tparam VertexOutputIterator model of `OutputIterator`
+      holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices
 
   @param pmesh a polygon mesh which has the hole
   @param border_halfedge a border halfedge incident to the hole
   @param face_out iterator over patch faces
   @param vertex_out iterator over patch vertices without including the boundary
   @param density_control_factor factor for density where larger values cause denser refinements
-  @param continuity tangential continuity, default to `FAIRING_C_1` and can be omitted
-  @param use_delaunay_triangulation if `true`, use the Delaunay triangulation face search space
-  @param solver An instance of the sparse linear solver to use. Note that the current implementation is
-  not using the value passed but the default constructed one.
+  @param continuity tangential continuity, defaults to `FAIRING_C_1` and can be omitted
+  @param use_delaunay_triangulation if `true`, the Delaunay triangulation face search space is used
+  @param solver an instance of the sparse linear solver to use. Note that the current implementation is
+      not using the value passed but the default constructed one.
 
   @return tuple of
   - bool: `true` if fairing is successful
   - @a face_out
   - @a vertex_out
 
+  \todo check the note about `solver` parameter
   \todo handle islands
   */
   template<typename SparseLinearSolver,
@@ -247,7 +253,8 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup PkgPolygonMeshProcessing
-  Creates triangles to fill the hole defined by points in the range (@a points). Triangles are put into @a out
+  Creates triangles to fill the hole defined by points in the range (@a points).
+  Triangles are put into @a out
   using the indices of the input points in the range (@a points).
   Note that no degenerate triangles are allowed during filling. If no possible patch is found, then no triangle is put into @a out.
 
@@ -256,11 +263,14 @@ namespace Polygon_mesh_processing {
 
   Note that the ranges (@a points) and (@a third_points) may or may not contain duplicated first point at the end of sequence.
 
-  @tparam OutputIteratorValueType value type of OutputIterator having a constructor `OutputIteratorValueType(int p0, int p1, int p2)` available.
-  It defaults to `value_type_traits<OutputIterator>::type`, and can be omitted when the default is fine.
+  @tparam OutputIteratorValueType value type of `OutputIterator`
+    having a constructor `OutputIteratorValueType(int p0, int p1, int p2)` available.
+    It defaults to `value_type_traits<OutputIterator>::type`, and can be omitted when the default is fine.
 
   @tparam PointRange range of points, model of `SinglePassRange`
-  @tparam OutputIterator iterator over patch triangles
+  @tparam OutputIterator model of `OutputIterator`
+     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
+  
   @param points the range of input points
   @param third_points the range of third points, can be omitted
   @param out iterator over output patch triangles

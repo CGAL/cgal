@@ -57,17 +57,21 @@ namespace internal{
  * \ingroup PkgPolygonMeshProcessing
  * Tests whether a closed surface polygon mesh has a positive orientation.
  * A polygon mesh is considered to have positive orientation if the normal vectors
- * of the facets point outside of the polygon mesh. For each facet, its normal vector
+ * of the facets point outside the domain described by the polygon mesh. For each facet, its normal vector
  * is considered to point on the side of the facet where the sequence of vertices of
  * the facet is seen counterclockwise.
  * @pre @a `pmesh` is closed
  * @pre @a `pmesh` is consistently oriented
  *
- * @tparam PolygonMesh a model of `FaceListGraph`, possibly a %CGAL polyhedron
- * @tparam VertexPointMap the property map with the points associated to the vertices.
+ * @tparam PolygonMesh a model of `FaceListGraph`
+ * @tparam VertexPointMap a model of `ReadablePropertyMap` with
+    `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
+    `Kernel::Vector_3` as value type
  * @tparam Kernel Geometric traits class. It can be omitted and deduced automatically from the point type of `PolygonMesh`.
  *
  * @param pmesh a closed polygon mesh to be tested
+ * @param vpmap the property map with the points associated to the vertices of `pmesh`
+ * @param k a traits class instance, can be omitted
  *
  * \todo The following only handles polyhedron with one connected component
  *       the code, the sample example and the plugin must be updated.

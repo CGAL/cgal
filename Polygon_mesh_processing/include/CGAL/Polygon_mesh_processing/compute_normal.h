@@ -257,7 +257,7 @@ compute_vertex_normals(const PolygonMesh& pmesh
     `Kernel::Vector_3` as value type.
 * @tparam VertexPointMap a model of `ReadablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
-    `Kernel::Vector_3` as value type.
+    `Kernel::Point_3` as value type.
 *
 * @param pmesh the polygon mesh
 * @param vnm the property map in which the vertex normals are written

@@ -10,7 +10,7 @@ namespace Polygon_mesh_processing {
   /*!
   \ingroup PkgPolygonMeshProcessing
   @brief Function fairing a region on a polygon mesh.
-  The region denoted by @a vertices might contain multiple disconnected components.
+  The region described by @a vertices might contain multiple disconnected components.
   Note that the structure is not altered in any way, only positions of the vertices get updated.
 
   Fairing might fail if fixed vertices, which are used as boundary conditions, do not suffice to solve constructed linear system.
@@ -19,11 +19,11 @@ namespace Polygon_mesh_processing {
   @tparam SparseLinearSolver a model of `SparseLinearAlgebraTraitsWithFactor_d`. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
   and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter.
   @tparam PolygonMesh a model of `MutableFaceGraph`
-  @tparam VertexRange a range of input vertices, model of `SinglePassRange`
+  @tparam VertexRange a range of vertices of `PolygonMesh`, model of `SinglePassRange`
 
-  @param pmesh polygon mesh to be faired
+  @param pmesh the polygon mesh to be faired
   @param vertices the range of vertices allowed to move
-  @param continuity tangential continuity, default to `FAIRING_C_1` and can be omitted
+  @param continuity tangential continuity, defaults to `FAIRING_C_1` and can be omitted
 
   @return `true` if fairing is successful, otherwise no vertex position is changed
 

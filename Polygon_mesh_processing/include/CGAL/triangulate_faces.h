@@ -225,10 +225,14 @@ public:
 * \ingroup PkgPolygonMeshProcessing
 * Triangulates faces of the polygon mesh `pmesh`. Depends on \ref PkgTriangulation2Summary
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-* @tparam VertexPointMap the property map with the points associated to the vertices.
+* @tparam VertexPointMap a model of `ReadablePropertyMap` with
+    `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
+    `Kernel::Point_3` as value type.
 * @tparam Kernel Geometric traits class.It can be omitted and deduced automatically from the point type of `PolygonMesh`.
-*
-* @param pmesh the polygon mesh
+
+* @param pmesh the polygon mesh to be modified
+* @param vpmap the property map with the points associated to the vertices of `pmesh`.
+* @param k a geometric traits class instance, can be omitted
 */
 template <typename PolygonMesh
         , typename VertexPointMap

@@ -178,14 +178,13 @@ namespace Polygon_mesh_processing {
  * @pre @a CGAL::is_pure_triangle(tmesh)
  *
  * @tparam GeomTraits a model of `SelfIntersectionTraits`
- * @tparam TriangleMesh a model of `FaceListGraph` (possibly a \cgal polyhedron)
- * @tparam OutputIterator Output iterator accepting objects of type 
+ * @tparam TriangleMesh a model of `FaceListGraph` (possibly a \cgal Polyhedron)
+ * @tparam OutputIterator a model of `OutputIterator` holding objects of type 
  *   `std::pair<boost::graph_traits<TriangleMesh>::face_descriptor, boost::graph_traits<TriangleMesh>::face_descriptor>`
- *   if @a polygon mesh is passed by const reference.
  *
  * @param tmesh triangle mesh to be checked, might be passed by const reference or reference
- * @param out all pairs of non-adjacent facets intersecting are put in it
- * @param geom_traits traits class providing intersection test primitives
+ * @param out output iterator to be filled with all pairs of non-adjacent facets that intersect
+ * @param geom_traits geometric traits class providing intersection test primitives
  *
  * @return `out`
  */
@@ -247,8 +246,8 @@ self_intersections(const TriangleMesh& tmesh,
  * @pre @a CGAL::is_pure_triangle(tmesh)
  *
  * @tparam GeomTraits a model of `SelfIntersectionTraits`
- * @tparam TriangleMesh a model of `FaceListGraph` (possibly a %CGAL polyhedron)
- *
+ * @tparam TriangleMesh a model of `FaceListGraph`
+*
  * @param tmesh TriangleMesh to be tested
  * @param geom_traits traits class providing intersection test primitives
  *
