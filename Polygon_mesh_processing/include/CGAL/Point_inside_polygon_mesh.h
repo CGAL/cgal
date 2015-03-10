@@ -34,15 +34,17 @@ namespace CGAL {
 /** 
  * \ingroup PkgPolygonMeshProcessing
  * This class provides an efficient point location functionality with respect to a domain bounded
- * by one or several disjoint triangulated closed triangulated polyhedral surfaces.
+ * by one or several disjoint closed triangulated polyhedral surfaces.
  * In case several polyhedral surfaces are provided as input, a point is said to be inside the domain
  * if an odd number of surfaces is crossed when walking from the point to infinity.
  * The implementation depends on the package \ref PkgAABB_treeSummary.
+
  * @tparam TriangleMesh a triangulated polyhedral surface, a model of `FaceListGraph`
  * @tparam Kernel a \cgal kernel
  * @tparam VertexPointMap a property map with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
  *   as key type and a `Kernel::Point_3` as value type.
  *   The default is `typename boost::property_map< FaceGraph,vertex_point_t>::%type`.
+
  * \todo Code: Use this class as an implementation detail of Mesh_3's Polyhedral_mesh_domain_3.
        Remove `TriangleAccessor_3` as well as the concept in Mesh_3 since making `TriangleMesh`
        a model of `FaceListGraph` will make it useless
@@ -68,6 +70,10 @@ class Point_inside_polygon_mesh
 public:
    /**
    * Constructor with one surface triangle mesh.
+   * @param mesh the triangulated polyhedral surface to be tested
+   * @param vpmap the property map with the points associated to the vertices of `mesh`
+   * @param kernel the geometric traits, can be omitted.
+
    * @pre `mesh` must be closed and triangulated.
    */
   Point_inside_polygon_mesh(const TriangleMesh& mesh,
@@ -86,10 +92,13 @@ public:
   }
 
   /**
-   * Constructor using `get(boost::vertex_point, mesh)` as
-   * vertex point property map.
-   * @pre `mesh` must be closed and triangulated.
-   */
+  * Constructor with one surface triangle mesh, using `get(boost::vertex_point, mesh)` as
+  * vertex point property map.
+  * @param mesh the triangulated polyhedral surface to be tested
+  * @param kernel the geometric traits, can be omitted.
+
+  * @pre `mesh` must be closed and triangulated.
+  */
   Point_inside_polygon_mesh(const TriangleMesh& mesh,
                             const Kernel& kernel=Kernel())
   : ray_functor(kernel.construct_ray_3_object())
@@ -105,9 +114,12 @@ public:
   }
 
   /**
-  * Constructor that takes a \cgal `AABB_tree` with 
-  * `AABB_face_graph_triangle_primitive` as Primitive type.
-  * Note the domain should be closed.
+  * Constructor that takes a pre-built \cgal `AABB_tree`
+  * of the triangle mesh primitives.
+  * Note the domain described by these primitives should be closed.
+
+  * @param tree a \cgal `AABB_tree` with `AABB_face_graph_triangle_primitive` as `Primitive` type.
+  * @param kernel the geometric traits, can be omitted.
   */
   Point_inside_polygon_mesh(const AABB_tree& tree,
     const Kernel& kernel = Kernel())
@@ -127,10 +139,12 @@ public:
 public:
   /**
    * Query function to determine point location.
+   * @param point the query point to be located with respect to the input
+            polyhedral surface
    * @return 
-   *   - `CGAL::ON_BOUNDED_SIDE` if the point is inside the mesh
-   *   - `CGAL::ON_BOUNDARY` if the point is on mesh
-   *   - `CGAL::ON_UNBOUNDED_SIDE` if the point is outside mesh
+   *   - `CGAL::ON_BOUNDED_SIDE` if the point is inside the triangle mesh
+   *   - `CGAL::ON_BOUNDARY` if the point is on triangle mesh
+   *   - `CGAL::ON_UNBOUNDED_SIDE` if the point is outside triangle mesh
    */
   Bounded_side operator()(const Point& point) const
   {
