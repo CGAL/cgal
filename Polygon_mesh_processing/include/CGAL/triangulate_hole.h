@@ -247,34 +247,33 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup PkgPolygonMeshProcessing
-  Creates triangles to fill the hole defined by points in the range (@a pbegin, @a pend). Triangles are put into @a out
-  using the indices of the input points in the range (@a pbegin, @a pend).
-  Note that no degenerate triangle is allowed during filling. If no possible patch is found, then no triangle is put into @a out.
+  Creates triangles to fill the hole defined by points in the range (@a points). Triangles are put into @a out
+  using the indices of the input points in the range (@a points).
+  Note that no degenerate triangles are allowed during filling. If no possible patch is found, then no triangle is put into @a out.
 
-  The optional range (@a qbegin, @a qend) indicate for each pair of consecutive points in the range (@a pbegin, @a pend),
+  The optional range (@a third_points) indicates for each pair of consecutive points in the range (@a points),
   the third point of the facet this segment is incident to.
 
-  Note that the range (@a pbegin, @a pend) and (@a qbegin, @a qend) may or may not contain duplicated first point at the end of sequence.
+  Note that the ranges (@a points) and (@a third_points) may or may not contain duplicated first point at the end of sequence.
 
   @tparam OutputIteratorValueType value type of OutputIterator having a constructor `OutputIteratorValueType(int p0, int p1, int p2)` available.
-  It is default to value_type_traits<OutputIterator>::type, and can be omitted when the default is fine
-  @tparam InputIterator iterator over input points
+  It defaults to `value_type_traits<OutputIterator>::type`, and can be omitted when the default is fine.
+
+  @tparam PointRange range of points, model of `SinglePassRange`
   @tparam OutputIterator iterator over patch triangles
-  @param pbegin first iterator of the range of points
-  @param pend past-the-end iterator of the range of points
-  @param qbegin first iterator of the range of third points, can be omitted
-  @param qend past-the-end iterator of the range of third points, can be omitted
+  @param points the range of input points
+  @param third_points the range of third points, can be omitted
   @param out iterator over output patch triangles
-  @param use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
+  @param use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space, defaults to true if omitted.
 
   \todo handle islands
   */
   template <typename OutputIteratorValueType,
-            typename InputIterator,
+            typename PointRange,
             typename OutputIterator>
   OutputIterator
-    triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
-                              InputIterator qbegin, InputIterator qend,
+    triangulate_hole_polyline(const PointRange& points,
+                              const PointRange& third_points,
                               OutputIterator out,
                               bool use_delaunay_triangulation = true)
   {
@@ -284,32 +283,32 @@ namespace Polygon_mesh_processing {
 #else
       use_delaunay_triangulation;
 #endif
-    typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
+    typedef typename PointRange::iterator InIterator;
+    typedef typename std::iterator_traits<InIterator>::value_type Point_3;
+
     typedef CGAL::internal::Weight_min_max_dihedral_and_area      Weight;
     typedef CGAL::internal::Weight_calculator<Weight,
                   CGAL::internal::Is_not_degenerate_triangle>  WC;
     typedef std::vector<std::pair<int, int> > Holes;
     typedef std::back_insert_iterator<Holes>  Holes_out;
 
-    std::vector<Point_3> P(pbegin, pend);
-    std::vector<Point_3> Q(qbegin, qend);
-    Holes holes;//just to check there is no holes
+    Holes holes;//just to check there is no holes left
 
     CGAL::internal::Tracer_polyline_incomplete<OutputIteratorValueType, OutputIterator, Holes_out>
       tracer(out, Holes_out(holes));
-    triangulate_hole_polyline(P, Q, tracer, WC(), use_dt3);
+    triangulate_hole_polyline(points, third_points, tracer, WC(), use_dt3);
     CGAL_assertion(holes.empty());
     return tracer.out;
   }
 
   // overload for OutputIteratorValueType
-  template <typename InputIterator,
+  template <typename PointRange,
             typename OutputIterator>
   OutputIterator
-    triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
-                              InputIterator qbegin, InputIterator qend,
-                              OutputIterator out,
-                              bool use_delaunay_triangulation = true)
+  triangulate_hole_polyline(const PointRange& points,
+                            const PointRange& third_points,
+                            OutputIterator out,
+                            bool use_delaunay_triangulation = true)
   {
     bool use_dt3 =
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
@@ -318,15 +317,15 @@ namespace Polygon_mesh_processing {
       use_delaunay_triangulation;
 #endif
     return triangulate_hole_polyline<typename value_type_traits<OutputIterator>::type>
-      (pbegin, pend, qbegin, qend, out, use_dt3);
+      (points, third_points, out, use_dt3);
   }
 
   // overload no (qbegin, qend)
   template <typename OutputIteratorValueType,
-            typename InputIterator,
+            typename PointRange,
             typename OutputIterator>
   OutputIterator
-    triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
+    triangulate_hole_polyline(const PointRange& points,
                               OutputIterator out,
                               bool use_delaunay_triangulation = true)
   {
@@ -336,18 +335,16 @@ namespace Polygon_mesh_processing {
 #else
       use_delaunay_triangulation;
 #endif
-    typedef typename std::iterator_traits<InputIterator>::value_type Point;
-    typedef std::vector<Point> Polyline_3;
-    Polyline_3 Q;
+
     return triangulate_hole_polyline<OutputIteratorValueType>
-      (pbegin, pend, Q.begin(), Q.end(), out, use_dt3);
+      (points, PointRange(), out, use_dt3);
   }
 
   // overload for OutputIteratorValueType
-  template <typename InputIterator,
+  template <typename PointRange,
             typename OutputIterator>
   OutputIterator
-    triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
+    triangulate_hole_polyline(const PointRange& points,
                               OutputIterator out,
                               bool use_delaunay_triangulation = true)
   {
@@ -358,7 +355,7 @@ namespace Polygon_mesh_processing {
       use_delaunay_triangulation;
 #endif
     return triangulate_hole_polyline<typename value_type_traits<OutputIterator>::type>
-      (pbegin, pend, out, use_dt3);
+      (points, out, use_dt3);
   }
 
 } //end namespace Polygon_mesh_processing

@@ -107,6 +107,18 @@ See http://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html
 class ReadablePropertyMap {};
 
 /*!
+See http://www.boost.org/libs/range/doc/html/range/concepts/single_pass_range.html
+/// \cgalConcept
+*/
+class SinglePassRange {};
+
+/*!
+See http://www.boost.org/libs/range/doc/html/range/concepts/forward_range.html
+/// \cgalConcept
+*/
+class ForwardRange {};
+
+/*!
 This indicates that the definition of a type nested in a class is not documented.
 */
 class unspecified_type {};

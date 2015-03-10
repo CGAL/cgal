@@ -1153,20 +1153,26 @@ public:
  * Internal entry point for both polyline and Polyhedron_3 triangulation functions
  ***********************************************************************************/
 template <
-  typename Point_3,
+  typename PointRange,
   typename Tracer,
   typename WeightCalculator
 >
 typename WeightCalculator::Weight
-triangulate_hole_polyline(std::vector<Point_3>& P,
-                          std::vector<Point_3>& Q,
+triangulate_hole_polyline(const PointRange& points,
+                          const PointRange& third_points,
                           Tracer& tracer,
                           const WeightCalculator& WC,
                           bool use_delaunay_triangulation) 
 {
-  typedef typename CGAL::Kernel_traits<Point_3>::Kernel Kernel;
-  typedef CGAL::internal::Triangulate_hole_polyline_DT<Kernel, Tracer, WeightCalculator> Fill_DT;
-  typedef CGAL::internal::Triangulate_hole_polyline<Kernel, Tracer, WeightCalculator>    Fill;
+  typedef typename PointRange::iterator InIterator;
+  typedef typename std::iterator_traits<InIterator>::value_type Point_3;
+  typedef typename CGAL::Kernel_traits<Point_3>::Kernel K;
+
+  typedef CGAL::internal::Triangulate_hole_polyline_DT<K, Tracer, WeightCalculator> Fill_DT;
+  typedef CGAL::internal::Triangulate_hole_polyline<K, Tracer, WeightCalculator>    Fill;
+
+  std::vector<Point_3> P(boost::begin(points), boost::end(points));
+  std::vector<Point_3> Q(boost::begin(third_points), boost::end(third_points));
 
   if(P.front() != P.back()){
     P.push_back(P.front());

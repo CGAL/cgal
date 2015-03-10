@@ -28,11 +28,11 @@ int main() {
 
   patch_1.reserve(polyline.size() -2); // there will be exactly n-2 triangles in the patch
   CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
-    polyline.begin(), polyline.end(), back_inserter(patch_1));
+    polyline, back_inserter(patch_1));
   CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
-    polyline.begin(), polyline.end(), back_inserter(patch_2));
+    polyline, back_inserter(patch_2));
   CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
-    polyline.begin(), polyline.end(), back_inserter(patch_3));
+    polyline, back_inserter(patch_3));
 
   for(std::size_t i = 0; i < patch_1.size(); ++i) {
     std::cout << "Triangle " << i << ": " << patch_1[i].get<0>() << " " 
@@ -54,7 +54,7 @@ int main() {
   polyline_collinear.push_back(Point_3(4.,0.,0.));
   std::vector<My_triangle> patch_will_be_empty;
   CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
-    polyline_collinear.begin(), polyline_collinear.end(), 
+    polyline_collinear,
     back_inserter(patch_will_be_empty));
   CGAL_assertion(patch_will_be_empty.empty());
 }
