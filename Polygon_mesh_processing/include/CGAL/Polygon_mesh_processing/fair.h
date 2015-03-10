@@ -16,7 +16,7 @@ namespace Polygon_mesh_processing {
   Fairing might fail if fixed vertices, which are used as boundary conditions, do not suffice to solve constructed linear system.
   The larger @a continuity gets, the more fixed vertices are required.
 
-  @tparam SparseLinearSolver a model of `SparseLinearAlgebraTraitsWithPreFactor_d`. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
+  @tparam SparseLinearSolver a model of `SparseLinearAlgebraTraitsWithFactor_d`. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
   and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter.
   @tparam PolygonMesh a model of `MutableFaceGraph`
   @tparam VertexRange a range of input vertices, model of `SinglePassRange`
