@@ -130,7 +130,8 @@ public:
       return false; 
     }
 
-    std::set<vertex_descriptor> interior_vertices(begin(vertices), end(vertices));
+    std::set<vertex_descriptor> interior_vertices(boost::begin(vertices),
+                                                  boost::end(vertices));
     if(interior_vertices.empty()) { return true; }
 
     CGAL::Timer timer; timer.start();

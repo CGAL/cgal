@@ -242,9 +242,9 @@ public:
               VertexOutputIterator& vertex_out,
               double alpha)
   {
-    std::vector<Facet_handle> facets(begin(faces), end(faces));
+    std::vector<Facet_handle> facets(boost::begin(faces), boost::end(faces));
       // do not use just std::set, the order effects the output (for the same input we want to get same output)
-    std::set<Facet_handle> interior_map(begin(facets), end(facets));
+    std::set<Facet_handle> interior_map(facets.begin(), facets.end());
 
     // store boundary edges - to be used in relax 
     std::set<Halfedge_handle> border_edges;

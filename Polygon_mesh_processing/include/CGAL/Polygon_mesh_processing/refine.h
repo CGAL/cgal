@@ -11,8 +11,8 @@ namespace Polygon_mesh_processing {
   \ingroup PkgPolygonMeshProcessing
   @brief Function refining a region on polygon mesh
 
-  @tparam Polyhedron must be a model of `MutableFaceGraph`
-  @tparam FacetRange range of input facets
+  @tparam PolygonMesh must be a model of `MutableFaceGraph`
+  @tparam FacetRange range of input facets, model of `SinglePassRange`
   @tparam FacetOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch facets
   @tparam VertexOutputIterator iterator holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices
 
