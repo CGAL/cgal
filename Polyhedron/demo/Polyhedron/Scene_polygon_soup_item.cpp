@@ -204,62 +204,23 @@ Scene_polygon_soup_item::compile_shaders(void)
         "} \n"
     };
 
-    //creates and compiles the vertex shader
     vertex_shader =	glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
     glCompileShader(vertex_shader);
 
-    /*GLint result;
-    glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&result);
-    if(result == GL_TRUE){
-        std::cout<<"Vertex compilation OK"<<std::endl;
-    } else {
-        int maxLength;
-        int length;
-        glGetShaderiv(vertex_shader,GL_INFO_LOG_LENGTH,&maxLength);
-        char* log = new char[maxLength];
-        glGetShaderInfoLog(vertex_shader,maxLength,&length,log);
-        std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
-    }*/
     fragment_shader =	glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
     glCompileShader(fragment_shader);
-    /*
-    glGetShaderiv(fragment_shader,GL_COMPILE_STATUS,&result);
-    if(result == GL_TRUE){
-        std::cout<<"Fragment compilation OK"<<std::endl;
-    } else {
-        int maxLength;
-        int length;
-        glGetShaderiv(fragment_shader,GL_INFO_LOG_LENGTH,&maxLength);
-        char* log = new char[maxLength];
-        glGetShaderInfoLog(fragment_shader,maxLength,&length,log);
-        std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
-    }*/
 
-
-    //creates the program, attaches and links the shaders
     GLuint program = glCreateProgram();
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
 
-
-    /* glGetProgramiv(program,GL_LINK_STATUS,&result);
-    if(result == GL_TRUE){
-        std::cout<<"Link OK"<<std::endl;
-    } else {
-        int maxLength;
-        int length;
-        glGetProgramiv(program,GL_INFO_LOG_LENGTH,&maxLength);
-        char* log = new char[maxLength];
-        glGetProgramInfoLog(program,maxLength,&length,log);
-        std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
-    }*/
-    //Delete the shaders which are now in the memory
     glDeleteShader(vertex_shader);
     rendering_program_poly = program;
 
+    //For the edges
     static const GLchar* vertex_shader_source_lines[] =
     {
         "#version 300 es \n"
@@ -278,7 +239,6 @@ Scene_polygon_soup_item::compile_shaders(void)
         "} \n"
     };
 
-    //creates and compiles the vertex shader
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex_shader, 1, vertex_shader_source_lines, NULL);
     glCompileShader(vertex_shader);
@@ -287,25 +247,12 @@ Scene_polygon_soup_item::compile_shaders(void)
     glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
     glCompileShader(fragment_shader);
 
-    //creates the program, attaches and links the shaders
     program = glCreateProgram();
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
 
-    GLint result;
-        glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&result);
-        if(result == GL_TRUE){
-            std::cout<<"Vertex compilation OK"<<std::endl;
-        } else {
-            int maxLength;
-            int length;
-            glGetShaderiv(vertex_shader,GL_INFO_LOG_LENGTH,&maxLength);
-            char* log = new char[maxLength];
-            glGetShaderInfoLog(vertex_shader,maxLength,&length,log);
-            std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
-        }
-    //Delete the shaders which are now in the memory
+    //Clean-up
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
     rendering_program_lines = program;
@@ -323,7 +270,7 @@ Scene_polygon_soup_item::uniform_attrib(Viewer_interface* viewer, int mode) cons
 
     GLdouble d_mat[16];
     viewer->camera()->getModelViewProjectionMatrix(d_mat);
-    //Convert the GLdoubles matrix in GLfloats
+    //Convert the GLdoubles matrices in GLfloats
     for (int i=0; i<16; ++i)
         mvp_mat[i] = GLfloat(d_mat[i]);
 
@@ -358,18 +305,19 @@ Scene_polygon_soup_item::uniform_attrib(Viewer_interface* viewer, int mode) cons
     light.diffuse[1]*=colors[1];
     light.diffuse[2]*=colors[2];
 
+    //For the Flat mode
     if(mode ==0)
     {
         glUseProgram(rendering_program_poly);
         glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
         glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
-        //Set the light infos
         glUniform3fv(location[2], 1, light.position);
         glUniform3fv(location[3], 1, light.diffuse);
         glUniform3fv(location[4], 1, light.specular);
         glUniform3fv(location[5], 1, light.ambient);
         glUniform1i(location[6], is_both_sides);
     }
+    //For the Wire mode
     else if(mode ==1)
     {
         glUseProgram(rendering_program_lines);
@@ -406,9 +354,6 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
     const Point_3& pc = soup->points[pit->at(2)];
     typename Traits::Vector_3 normal = CGAL::cross_product(pb-pa, pc -pa);
     normal = normal / std::sqrt(normal * normal);
-
-    // typename Traits::Vector_3 normal =
-    //       compute_facet_normal<Facet,Traits>(*pit);
 
     P_traits cdt_traits(normal);
 
@@ -509,7 +454,6 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
 
 
     }
-    // std::cout<<"count = "<<count<<std::endl;
 }
 void
 Scene_polygon_soup_item::compute_normals_and_vertices(){
@@ -574,11 +518,8 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
             positions_lines.push_back(1.0);
         }
     }
-    //Allocates a uniform location for the MVP and MV matrices
     location[0] = glGetUniformLocation(rendering_program_poly, "mvp_matrix");
     location[1] = glGetUniformLocation(rendering_program_poly, "mv_matrix");
-
-    //Allocates a uniform location for the light values
     location[2] = glGetUniformLocation(rendering_program_poly, "light_pos");
     location[3] = glGetUniformLocation(rendering_program_poly, "light_diff");
     location[4] = glGetUniformLocation(rendering_program_poly, "light_spec");
@@ -781,17 +722,12 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     //Calls the buffer info again so that it's the right one used even if
     //there are several objects drawn
     glBindVertexArray(vao);
-
+    uniform_attrib(viewer,0);
     // tells the GPU to use the program just created
     glUseProgram(rendering_program_poly);
-
-    uniform_attrib(viewer,0);
-
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
     glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
-    //Tells OpenGL not to use the program anymore
-
     // Clean-up
     glUseProgram(0);
     glBindVertexArray(0);
@@ -802,19 +738,15 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
 
 void
 Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
+
     if(soup == 0) return;
-
     glBindVertexArray(vao);
-
-    // tells the GPU to use the program just created
-    glUseProgram(rendering_program_poly);
-
-    uniform_attrib(viewer,0);
-
+    uniform_attrib(viewer,1);
+    glUseProgram(rendering_program_lines);
     //draw the points
-    glDrawArrays(GL_POINTS, 0, positions_poly.size()/4);
-
+    glDrawArrays(GL_POINTS, 0, positions_lines.size()/4);
     // Clean-up
+    glUseProgram(0);
     glBindVertexArray(0);
 }
 
@@ -823,11 +755,8 @@ Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
     if(soup == 0) return;
 
     glBindVertexArray(vao);
-
-    // tells the GPU to use the program just created
-    glUseProgram(rendering_program_lines);
-
     uniform_attrib(viewer,1);
+    glUseProgram(rendering_program_lines);
     //draw the edges
     glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
     // Clean-up

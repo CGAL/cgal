@@ -38,12 +38,11 @@ struct light_info
 };
 typedef Scene_polylines_item::K K;
 typedef K::Point_3 Point_3;
-
+//Fill the VBO with coordinates of the vertices composing a sphere
 void Scene_polylines_item::create_Sphere(double R)
 {
 
     float T, P;
-    int rings(18), sectors(36);
     float x[4],y[4],z[4];
 
 
@@ -114,7 +113,7 @@ void Scene_polylines_item::create_Sphere(double R)
             normals_spheres.push_back(y[0]);
             normals_spheres.push_back(z[0]);
 
-               //B
+            //B
             P = (p+rings)*M_PI/180.0;
             T = t*M_PI/180.0;
             x[1] = sin(P) * cos(T) ;
@@ -347,6 +346,7 @@ Scene_polylines_item::initialize_buffers()
 
     glVertexAttribDivisor(3, 1);
     glVertexAttribDivisor(4, 1);
+
     // Clean-up
     glBindVertexArray(0);
 
@@ -422,6 +422,7 @@ Scene_polylines_item::compile_shaders()
     glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
     glCompileShader(vertex_shader);
 
+    //creates and compiles the fragment shader
     GLuint fragment_shader =	glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
     glCompileShader(fragment_shader);
@@ -431,12 +432,13 @@ Scene_polylines_item::compile_shaders()
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
+
     //Delete the shaders which are now in the memory
     glDeleteShader(vertex_shader);
 
     rendering_program_spheres = program;
 
-    //For the edges
+    //For the lines
     //fill the vertex shader
     static const GLchar* vertex_shader_source_lines[] =
     {
@@ -457,7 +459,6 @@ Scene_polylines_item::compile_shaders()
         "} \n"
     };
 
-    //creates and compiles the vertex shader
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex_shader, 1, vertex_shader_source_lines, NULL);
     glCompileShader(vertex_shader);
@@ -465,17 +466,15 @@ Scene_polylines_item::compile_shaders()
     glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
     glCompileShader(fragment_shader);
 
-    //creates the program, attaches and links the shaders
     program = glCreateProgram();
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
 
-    //Delete the shaders which are now in the memory
     glDeleteShader(vertex_shader);
     rendering_program_lines = program;
-    //For the edges
-    //fill the vertex shader
+
+    //For the wired spheres
     static const GLchar* vertex_shader_source_wire_sphere[] =
     {
         "#version 300 es \n"
@@ -497,7 +496,6 @@ Scene_polylines_item::compile_shaders()
         "} \n"
     };
 
-    //creates and compiles the vertex shader
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex_shader, 1, vertex_shader_source_wire_sphere, NULL);
     glCompileShader(vertex_shader);
@@ -505,13 +503,11 @@ Scene_polylines_item::compile_shaders()
     glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
     glCompileShader(fragment_shader);
 
-    //creates the program, attaches and links the shaders
     program = glCreateProgram();
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
 
-    //Delete the shaders which are now in the memory
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
     rendering_program_WireSpheres = program;
@@ -530,21 +526,19 @@ void Scene_polylines_item::uniform_attrib(Viewer_interface* viewer, int mode) co
 
     GLdouble d_mat[16];
     viewer->camera()->getModelViewProjectionMatrix(d_mat);
-    //Convert the GLdoubles matrix in GLfloats
+    //Convert the GLdoubles matrices in GLfloats
     for (int i=0; i<16; ++i){
         mvp_mat[i] = GLfloat(d_mat[i]);
     }
-
     viewer->camera()->getModelViewMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mv_mat[i] = GLfloat(d_mat[i]);
 
+    //Program for the Flat mode
     if(mode ==0)
     {
+        //Decides if the light is one or both sides
         glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
-
-        //fills the arraw of colors with the current color
-
 
         //Gets lighting info :
 
@@ -554,24 +548,22 @@ void Scene_polylines_item::uniform_attrib(Viewer_interface* viewer, int mode) co
         //ambient
         glGetLightfv(GL_LIGHT0, GL_AMBIENT, light.ambient);
 
-
         //specular
         glGetLightfv(GL_LIGHT0, GL_SPECULAR, light.specular);
 
         //diffuse
         glGetLightfv(GL_LIGHT0, GL_DIFFUSE, light.diffuse);
 
-
         glUseProgram(rendering_program_spheres);
         glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
         glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
-        //Set the light infos
         glUniform3fv(location[2], 1, light.position);
         glUniform3fv(location[3], 1, light.diffuse);
         glUniform3fv(location[4], 1, light.specular);
         glUniform3fv(location[5], 1, light.ambient);
         glUniform1i(location[6], is_both_sides);
     }
+    //For the wiremode programs
     else if(mode ==1)
     {
         //Lines
@@ -600,6 +592,7 @@ Scene_polylines_item::compute_elements()
     positions_center.clear();
     nbSpheres = 0;
 
+    //Fills the VBO with the lines
     for(std::list<std::vector<Point_3> >::const_iterator it = polylines.begin();
         it != polylines.end();
         ++it){
@@ -622,6 +615,7 @@ Scene_polylines_item::compute_elements()
         }
 
     }
+    //Fills the VBO with the spheres
     if(d->draw_extremities)
     {
 
@@ -677,6 +671,7 @@ Scene_polylines_item::compute_elements()
         }
         // At this point, 'corner_polyline_nb' gives the multiplicity of all
         // corners.
+        //Finds the centers of the spheres and their color
         for(iterator
             p_it = corner_polyline_nb.begin(),
             end = corner_polyline_nb.end();
@@ -722,12 +717,12 @@ Scene_polylines_item::compute_elements()
         }
         create_Sphere(d->spheres_drawn_radius);
 
-        //Convert the ttriangle coordinates to lines coordinates for the
+        //Convert the triangle coordinates to lines coordinates for the
         //Wiremode in the spheres
         for(int i=0; i< positions_spheres.size(); i=i)
         {
             //draw triangles
-            if(i< 120)
+            if(i< (360/sectors)*12)
             {
                 //AB
                 for(int j=i; j<i+8; j++)
@@ -747,7 +742,7 @@ Scene_polylines_item::compute_elements()
                 i+=12;
             }
             //draw quads
-            else if(120<i<positions_spheres.size()-120)
+            else if((360/sectors) * 3 * 4 < i < positions_spheres.size() - (360/sectors) * 3 * 4)
             {
                 //AB
                 for(int j=i; j<i+8; j++)
@@ -803,15 +798,9 @@ Scene_polylines_item::compute_elements()
         }
     }
 
-    //set the colors
-
-    //Allocates a uniform location for the MVP and MV matrices
     location[0] = glGetUniformLocation(rendering_program_spheres, "mvp_matrix");
     location[1] = glGetUniformLocation(rendering_program_spheres, "mv_matrix");
-
-    //Allocates a uniform location for the light values
     location[2] = glGetUniformLocation(rendering_program_spheres, "light_pos");
-
     location[3] = glGetUniformLocation(rendering_program_spheres, "light_diff");
     location[4] = glGetUniformLocation(rendering_program_spheres, "light_spec");
     location[5] = glGetUniformLocation(rendering_program_spheres, "light_amb");
@@ -827,7 +816,8 @@ Scene_polylines_item::compute_elements()
 
 Scene_polylines_item::Scene_polylines_item() 
     : d(new Scene_polylines_item_private()),positions_lines(0), positions_spheres(0),
-      normals_spheres(0), positions_center(0),color_spheres(0), positions_wire_spheres(0),nbSpheres(0)
+      normals_spheres(0), positions_center(0),color_spheres(0), positions_wire_spheres(0),nbSpheres(0),
+      rings(18), sectors(36)
 {
     glGenVertexArrays(1, vao);
     //Generates an integer which will be used as ID for each buffer
@@ -923,12 +913,8 @@ Scene_polylines_item::draw(Viewer_interface* viewer) const {
     if(d->draw_extremities)
     {
         glBindVertexArray(vao[0]);
-
-        // tells the GPU to use the program just created
         glUseProgram(rendering_program_spheres);
         uniform_attrib(viewer,0);
-        //draw the polygons
-        // the third argument is the number of vec4 that will be entered
         glDrawArraysInstanced(GL_TRIANGLES, 0, positions_spheres.size()/4, nbSpheres);
         glUseProgram(0);
         glBindVertexArray(0);
@@ -940,93 +926,28 @@ void
 Scene_polylines_item::draw_edges(Viewer_interface* viewer) const {
 
     glBindVertexArray(vao[0]);
-
     uniform_attrib(viewer,1);
-    // tells the GPU to use the program just created
     glUseProgram(rendering_program_lines);
-
-    //draw the edges
     glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
-
     if(d->draw_extremities)
     {
-
-        // tells the GPU to use the program just created
         uniform_attrib(viewer,0);
         glUseProgram(rendering_program_WireSpheres);
-        //draw the polygons
-
-        // the third argument is the number of vec4 that will be entered
         glDrawArraysInstanced(GL_LINES, 0, positions_wire_spheres.size()/4, nbSpheres);
     }
     // Clean-up
     glUseProgram(0);
     glBindVertexArray(0);
-    /*
-     CGALglcolor(this->color());
- ::glBegin(GL_LINES);
-  for(std::list<std::vector<Point_3> >::const_iterator it = polylines.begin();
-      it != polylines.end();
-      ++it){
-    if(it->empty()) continue;
-    for(size_t i = 0, end = it->size()-1;
-        i < end; ++i)
-    {
-      const Point_3& a = (*it)[i];
-      const Point_3& b = (*it)[i+1];
-      ::glVertex3d(a.x(), a.y(), a.z());
-      ::glVertex3d(b.x(), b.y(), b.z());
-    }
-  }
-  ::glEnd();
-  if(d->draw_extremities)
-  {
-      d->draw_spheres(this);
-  }*/
 }
 
 void 
 Scene_polylines_item::draw_points(Viewer_interface* viewer) const {
-    /* ::glBegin(GL_POINTS);
-    // draw all points but endpoints
-    for(std::list<std::vector<Point_3> >::const_iterator it = polylines.begin();
-        it != polylines.end();
-        ++it)
-    {
-        if(it->empty()) continue;
-        for(size_t i = 1, end = it->size()-1;
-            i < end; ++i)
-        {
-            const Point_3& a = (*it)[i];
-            ::glVertex3d(a.x(), a.y(), a.z());
-        }
-    }
-    ::glEnd();
-
-    ::glColor3d(1., 0., 0.); //red
-    // draw endpoints
-    ::glBegin(GL_POINTS);
-    for(std::list<std::vector<Point_3> >::const_iterator it = polylines.begin();
-        it != polylines.end();
-        ++it){
-        if(it->empty()) continue;
-        const Point_3& a = (*it)[0];
-        const Point_3& b = (*it)[it->size()-1];
-        ::glVertex3d(a.x(), a.y(), a.z());
-        ::glVertex3d(b.x(), b.y(), b.z());
-    }
-    ::glEnd();*/
     glBindVertexArray(vao[0]);
-
-    // tells the GPU to use the program just created
-    //glUseProgram(rendering_program_lines);
-
     uniform_attrib(viewer,1);
-
-    //draw the points
+    glUseProgram(rendering_program_lines);
     glDrawArrays(GL_POINTS, 0, positions_lines.size()/4);
-
     // Clean-up
+    glUseProgram(0);
     glBindVertexArray(0);
 }
 

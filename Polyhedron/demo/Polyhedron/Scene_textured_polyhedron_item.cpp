@@ -174,7 +174,6 @@ void Scene_textured_polyhedron_item::compile_shaders(void)
         "} \n"
     };
 
-    //creates and compiles the vertex shader
     GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
     glCompileShader(vertex_shader);
@@ -191,26 +190,12 @@ void Scene_textured_polyhedron_item::compile_shaders(void)
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
 
-
-    //Delete the shaders which are now in the memory
+    //Clean-up
     glDeleteShader(vertex_shader);
 
     rendering_program_facets = program;
-    GLint result;
-    glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&result);
-    if(result == GL_TRUE){
-        std::cout<<"Vertex compilation OK"<<std::endl;
-    } else {
-        int maxLength;
-        int length;
-        glGetShaderiv(vertex_shader,GL_INFO_LOG_LENGTH,&maxLength);
-        char* log = new char[maxLength];
-        glGetShaderInfoLog(vertex_shader,maxLength,&length,log);
-        std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
-    }
 
     //For the edges
-    //fill the vertex shader
     static const GLchar* vertex_shader_source_lines[] =
     {
         "#version 300 es \n"
@@ -231,7 +216,6 @@ void Scene_textured_polyhedron_item::compile_shaders(void)
         "} \n"
     };
 
-    //creates and compiles the vertex shader
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex_shader, 1, vertex_shader_source_lines, NULL);
     glCompileShader(vertex_shader);
@@ -241,27 +225,16 @@ void Scene_textured_polyhedron_item::compile_shaders(void)
     glCompileShader(fragment_shader);
 
 
-    //creates the program, attaches and links the shaders
     program = glCreateProgram();
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
-
-    glGetShaderiv(fragment_shader,GL_COMPILE_STATUS,&result);
-    if(result == GL_TRUE){
-        std::cout<<"Fragment compilation OK"<<std::endl;
-    } else {
-        int maxLength;
-        int length;
-        glGetShaderiv(fragment_shader,GL_INFO_LOG_LENGTH,&maxLength);
-        char* log = new char[maxLength];
-        glGetShaderInfoLog(fragment_shader,maxLength,&length,log);
-        std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
-    }
-    //Delete the shaders which are now in the memory
+    rendering_program_lines = program;
+    //Clean-up
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
-    rendering_program_lines = program;
+
+
 }
 
 void Scene_textured_polyhedron_item::uniform_attrib(Viewer_interface* viewer, int mode) const
@@ -272,10 +245,9 @@ void Scene_textured_polyhedron_item::uniform_attrib(Viewer_interface* viewer, in
     GLfloat mv_mat[16];
 
     //fills the MVP and MV matrices.
-
     GLdouble d_mat[16];
     viewer->camera()->getModelViewProjectionMatrix(d_mat);
-    //Convert the GLdoubles matrix in GLfloats
+    //Convert the GLdoubles matrices in GLfloats
     for (int i=0; i<16; ++i){
         mvp_mat[i] = GLfloat(d_mat[i]);
     }
@@ -284,10 +256,8 @@ void Scene_textured_polyhedron_item::uniform_attrib(Viewer_interface* viewer, in
     for (int i=0; i<16; ++i)
         mv_mat[i] = GLfloat(d_mat[i]);
 
+
     glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
-
-    //fills the arraw of colors with the current color
-
 
     //Gets lighting info :
 
@@ -331,11 +301,8 @@ void Scene_textured_polyhedron_item::uniform_attrib(Viewer_interface* viewer, in
     if(mode ==0)
     {
         glUseProgram(rendering_program_facets);
-
         glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
-
         glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
-        //Set the light infos
         glUniform3fv(location[2], 1, light.position);
         glUniform3fv(location[3], 1, light.diffuse);
         glUniform3fv(location[4], 1, light.specular);
@@ -373,7 +340,6 @@ Scene_textured_polyhedron_item::compute_normals_and_vertices(void)
     typedef typename Base::Facet_iterator Facet_iterator;
 
     //Facets
-
     Facet_iterator f = poly->facets_begin();
 
     for(f = poly->facets_begin();
@@ -381,8 +347,6 @@ Scene_textured_polyhedron_item::compute_normals_and_vertices(void)
         f++)
     {
 
-
-        // std::cout<<"Triangles"<<std::endl;
         Halfedge_around_facet_circulator he = f->facet_begin();
         Halfedge_around_facet_circulator end = he;
         CGAL_For_all(he,end)
@@ -397,10 +361,6 @@ Scene_textured_polyhedron_item::compute_normals_and_vertices(void)
                 normals.push_back(n[1]);
                 normals.push_back(n[2]);
             }
-
-
-            // revolve around current face to get vertices
-
 
             // If Gouraud shading: 1 normal per vertex
             else if(cur_shading == GL_SMOOTH)
@@ -463,19 +423,18 @@ Scene_textured_polyhedron_item::compute_normals_and_vertices(void)
     }
 
 
-    //Allocates a uniform location for the MVP and MV matrices
     location[0] = glGetUniformLocation(rendering_program_facets, "mvp_matrix");
     location[1] = glGetUniformLocation(rendering_program_facets, "mv_matrix");
-
-    //Allocates a uniform location for the light values
     location[2] = glGetUniformLocation(rendering_program_facets, "light_pos");
     location[3] = glGetUniformLocation(rendering_program_facets, "light_diff");
     location[4] = glGetUniformLocation(rendering_program_facets, "light_spec");
     location[5] = glGetUniformLocation(rendering_program_facets, "light_amb");
     location[6] = glGetUniformLocation(rendering_program_facets, "is_two_side");
-    sampler_location = glGetUniformLocation(rendering_program_facets, "s_texture");
-    location[7] = glGetUniformLocation(rendering_program_lines, "mvp_matrix");
     location[8] = glGetUniformLocation(rendering_program_facets, "color_facets");
+
+    sampler_location = glGetUniformLocation(rendering_program_facets, "s_texture");
+
+    location[7] = glGetUniformLocation(rendering_program_lines, "mvp_matrix");
     location[9] = glGetUniformLocation(rendering_program_lines, "color_lines");
 
 }
@@ -583,46 +542,19 @@ Scene_textured_polyhedron_item::toolTip() const
 void Scene_textured_polyhedron_item::draw(Viewer_interface* viewer) const {
 
     glBindVertexArray(vao[0]);
-
-    // tells the GPU to use the program just created
     glUseProgram(rendering_program_facets);
     uniform_attrib(viewer,0);
-    //draw the polygons
-    // the third argument is the number of vec4 that will be entered
     glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/4);
+    //Clean-up
     glUseProgram(0);
     glBindVertexArray(0);
-
-
-    /* glTexImage2D(GL_TEXTURE_2D,
-            0,
-            GL_RGB,
-            texture.GetWidth(),
-            texture.GetHeight(),
-            0,
-            GL_RGB,
-            GL_UNSIGNED_BYTE,
-            texture.GetData());
-   glEnable(GL_TEXTURE_2D);
-   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-   poly->gl_draw_textured_triangles(true, true, 1.0);
-   glDisable(GL_TEXTURE_2D);*/
-
 
 }
 void Scene_textured_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     glBindVertexArray(vao[0]);
 
-    // tells the GPU to use the program just created
     glUseProgram(rendering_program_lines);
-
     uniform_attrib(viewer,1);
-
-    //draw the edges
     glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
     // Clean-up
     glUseProgram(0);
@@ -666,10 +598,9 @@ shading_mode_changed()
     prev_shading = cur_shading;
     cur_shading = new_shading;
     if(prev_shading != cur_shading)
-        {
-            //Change the normals
-            changed();
-        }
+    {
+        changed();
+    }
 }
 void
 Scene_textured_polyhedron_item::selection_changed(bool p_is_selected)
