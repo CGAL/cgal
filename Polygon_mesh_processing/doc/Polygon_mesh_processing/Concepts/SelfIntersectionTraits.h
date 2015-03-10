@@ -1,7 +1,7 @@
 /// \ingroup PkgPolygonMeshProcessingConcepts
 /// \cgalConcept
 ///
-/// Geometric traits concept for the functions `self_intersections` and `is_self_intersecting`.
+/// Geometric traits concept for the functions `CGAL::self_intersections()` and `CGAL::is_self_intersecting()`.
 class SelfIntersectionTraits{
 public:
   /// @name Geometric Types
