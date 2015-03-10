@@ -248,7 +248,7 @@ self_intersections(const TriangleMesh& tmesh,
  * @tparam GeomTraits a model of `SelfIntersectionTraits`
  * @tparam TriangleMesh a model of `FaceListGraph`
 *
- * @param tmesh TriangleMesh to be tested
+ * @param tmesh triangle mesh to be tested
  * @param geom_traits traits class providing intersection test primitives
  *
  * @return true if `tmesh` is self-intersecting
