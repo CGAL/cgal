@@ -363,11 +363,11 @@ namespace Polygon_mesh_processing{
  *  Two faces are considered to be in the same connected component if they share an edge.
  *  \tparam PolygonMesh a model of `FaceGraph`
  *  \tparam EdgeConstraintMap a property map with the edge descriptor as key type and `bool` as value type
- *  \tparam OutputIterator an output iterator that accepts face descriptors.
+ *  \tparam FaceOutputIterator an `OutputIterator` that accepts face descriptors.
  *  \returns the output iterator.
  */
 template <class PolygonMesh
-          , class OutputIterator
+          , class FaceOutputIterator
           , class EdgeConstraintMap
 #ifdef DOXYGEN_RUNNING
           = No_edge_constraint<PolygonMesh>
