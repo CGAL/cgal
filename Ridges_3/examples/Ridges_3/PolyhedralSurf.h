@@ -13,7 +13,6 @@
 #include <list>
 
 #include <boost/foreach.hpp>
-#include "PolyhedralSurf_operations.h"
 
 //----------------------------------------------------------------
 // A redefined items class for the Polyhedron_3 with
