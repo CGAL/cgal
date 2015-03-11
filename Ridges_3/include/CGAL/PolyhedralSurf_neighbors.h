@@ -84,7 +84,7 @@ template < class TriangularPolyhedralSurface >
 class T_PolyhedralSurf_neighbors
 {
 
-  typedef typename boost::property_map<TriangularPolyhedralSurface,CGAL::vertex_point_t>::type VPM;
+  typedef typename boost::property_map<TriangularPolyhedralSurface,CGAL::vertex_point_t>::const_type VPM;
   typedef typename boost::property_traits<VPM>::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel Kernel;
 

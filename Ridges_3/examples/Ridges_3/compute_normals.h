@@ -46,7 +46,7 @@ void compute_facets_normals(const TriangleMesh& tm,
 {
   typedef boost::property_traits<FaceVectorMap>::value_type Vector_3;
 
-  typedef boost::property_map<TriangleMesh,CGAL::vertex_point_t>::type VPM;
+  typedef boost::property_map<TriangleMesh,CGAL::vertex_point_t>::const_type VPM;
   VPM vpm = get(CGAL::vertex_point,tm);
   BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(tm)){
     typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f,tm);
