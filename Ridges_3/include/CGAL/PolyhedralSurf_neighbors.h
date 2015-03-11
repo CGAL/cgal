@@ -40,7 +40,7 @@ public:
   typedef typename boost::graph_traits<TriangularPolyhedralSurface>::vertex_descriptor    Vertex_const_handle;
   typedef typename boost::graph_traits<TriangularPolyhedralSurface>::halfedge_descriptor  Halfedge_const_handle;
  
-  T_Gate(const Vertex_const_handle v, const Halfedge_const_handle he);
+  T_Gate(FT d, const Halfedge_const_handle he);
   FT& d() { return m_d;}
   const FT d() const { return m_d;}            
   const Halfedge_const_handle he() { return m_he;}
@@ -52,22 +52,10 @@ private:
 
 //////////////IMPLEMENTATION//////////////////////////
 template < class TriangularPolyhedralSurface > 
-T_Gate<TriangularPolyhedralSurface>::T_Gate(const Vertex_const_handle v, 
+T_Gate<TriangularPolyhedralSurface>::T_Gate(FT d, 
 					    const Halfedge_const_handle he)
-  : m_he(he)
-{
-  Point_3 p0 = v->point(),
-    p1 = he->vertex()->point(),
-    p2 = he->next()->vertex()->point(),
-    p3 = he->prev()->vertex()->point();
-  Vector_3 p0p1 = p0 - p1,
-    p0p2 = p0 - p2,
-    p0p3 = p0 - p3;
-  FT d1 = p0p1*p0p1,
-    d2 = p0p2*p0p2,
-    d3 = p0p3*p0p3;
-  m_d = CGAL::sqrt( (std::max)( (std::max)(d1,d2), d3) );
-}
+  : m_d(d), m_he(he)
+{}
 
 //---------------------------------------------------------------------------
 // functor for priority queue
@@ -88,7 +76,8 @@ struct compare_gates
 //class Gate and the functor compare_gates for the definition of a
 //priority queue
 //---------------------------------------------------------------------------
-template < class TriangularPolyhedralSurface > class T_PolyhedralSurf_neighbors
+template < class TriangularPolyhedralSurface >
+class T_PolyhedralSurf_neighbors
 {
   const TriangularPolyhedralSurface& P;
 public:
@@ -122,6 +111,24 @@ public:
 			 const FT size); 
   //vertex tags is_visited are set to false
   void reset_is_visited_map(std::vector<Vertex_const_handle> &vces);
+
+
+  Gate make_gate(const Vertex_const_handle v,
+                 const Halfedge_const_handle he)
+  {
+    Point_3 p0 = v->point(),
+      p1 = target(he,P)->point(),
+      p2 = target(next(he,P),P)->point(),
+      p3 = target(prev(he,P),P)->point();
+    Vector_3 p0p1 = p0 - p1,
+      p0p2 = p0 - p2,
+      p0p3 = p0 - p3;
+    FT d1 = p0p1*p0p1,
+      d2 = p0p2*p0p2,
+      d3 = p0p3*p0p3;
+    FT d = CGAL::sqrt( (std::max)( (std::max)(d1,d2), d3) );
+    return Gate(d,he);
+  }
 
  protected:
   //tag to visit vertices
@@ -157,11 +164,11 @@ compute_one_ring(const Vertex_const_handle v,
   Halfedge_around_vertex_const_circulator he_circ(halfedge(v,P),P),
                                     he_end = he_circ;
   do {
-    if ( (*he_circ)->is_border() )//then he and he->next follow the contour CW
+    if ( is_border(*he_circ,P) )//then he and he->next follow the contour CW
 	{contour.push_back(*he_circ);
-          contour.push_back((*he_circ)->next());}
-    else contour.push_back((*he_circ)->prev()->opposite());//not border, he->prev->opp on contour CW
-    vertex_neigh.push_back((*he_circ)->opposite()->vertex());
+          contour.push_back(next(*he_circ,P));}
+    else contour.push_back(opposite(prev(*he_circ,P),P));//not border, he->prev->opp on contour CW
+    vertex_neigh.push_back(target(opposite(*he_circ,P),P));
       he_circ++;
   } while (he_circ != he_end);
 
@@ -203,7 +210,7 @@ compute_neighbors(const Vertex_const_handle v,
   typename std::list<Halfedge_const_handle>::const_iterator itb = contour.begin(),
                                        ite = contour.end();
   for (; itb != ite; itb++) {
-    if (!( (*itb)->is_border() )) GatePQ.push(Gate(v, *itb));
+    if (!( is_border(*itb,P) )) GatePQ.push(make_gate(v, *itb));
   }
   // init d_current
   Gate firstGate = GatePQ.top();
@@ -245,40 +252,40 @@ compute_neighbors(const Vertex_const_handle v,
     if ( he->next() == *pos_next )
       {  // case 2a
 	//contour
-	he1 = he->prev()->opposite();
+	he1 = opposite(prev(he,P),P);
 	contour.insert(pos_he, he1);
 	contour.erase(pos_he);
 	contour.erase(pos_next);
 	//GatePQ
-	if ( !(he1->is_border()) ) GatePQ.push(Gate(v, he1));
+	if ( !is_border(he1,P) ) GatePQ.push(make_gate(v, he1));
 	continue;
       }
-    else if ( he->prev() == *pos_prev )
+    else if ( prev(he,P) == *pos_prev )
       {  // case 2b
 	//contour
-	he1 = he->next()->opposite();
+	he1 = opposite(next(he,P),P);
 	contour.insert(pos_prev, he1);
 	contour.erase(pos_prev);
 	contour.erase(pos_he);
 	//GatePQ
-	if ( !(he1->is_border()) ) GatePQ.push(Gate(v, he1));
+	if ( ! is_border(he1,P) ) GatePQ.push(make_gate(v, he1));
 	continue;
       }
-    v1 = he->next()->vertex();
+    v1 = target(next(he,P),P);
     if ( !is_visited_map.find(v1)->second )
       {  // case 1
 	//vertex
 	is_visited_map.find(v1)->second = true;
 	vertex_neigh.push_back(v1);
 	//contour
-	he1 = he->prev()->opposite();
-	he2 = he->next()->opposite();
+	he1 = opposite(prev(he,P),P);
+	he2 = opposite(next(he,P),P);
 	contour.insert(pos_he, he1);
 	contour.insert(pos_he, he2);
 	contour.erase(pos_he);
 	//GatePQ
-	if ( !(he1->is_border()) ) GatePQ.push(Gate(v, he1));
-	if ( !(he2->is_border()) ) GatePQ.push(Gate(v, he2));
+	if ( ! is_border(he1,P) ) GatePQ.push(make_gate(v, he1));
+	if ( ! is_border(he2,P) ) GatePQ.push(make_gate(v, he2));
 	continue;
       }
     //else do nothing (keep the he on the contour, and continue) to

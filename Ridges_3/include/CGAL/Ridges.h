@@ -430,7 +430,7 @@ template < class TriangulatedSurfaceMesh,
       *ridge_lines_it++ = cur_ridge_line;
     
       //next triangle adjacent to h1 (push_front)
-      if ( !(h1->is_border_edge()) ) 
+      if ( ! is_border_edge(h1,P) ) 
 	{
 	  f = face(opposite(h1,P),P);
 	  curhe = h1;
@@ -442,8 +442,7 @@ template < class TriangulatedSurfaceMesh,
 	      if (curhe->opposite() == curhe1) curhe = curhe2;
 	      else curhe = curhe1;//curhe stays at the ridge extremity
 	      addfront(cur_ridge_line, curhe, cur_ridge_type);
-	      if ( !(curhe->is_border_edge()) ) f =
-						  curhe->opposite()->facet();
+	      if ( ! is_border_edge(curhe,P) ) f = face(opposite(curhe,P),P);
 	      else break;
 	    }
 	  //exit from the while if
@@ -453,9 +452,9 @@ template < class TriangulatedSurfaceMesh,
 	}
 
       //next triangle adjacent to h2 (push_back)
-      if ( !(h2->is_border_edge()) ) 
+      if ( ! is_border_edge(h2,P) ) 
 	{
-	  f = h2->opposite()->facet();
+	  f = face(opposite(h2,P),P);
 	  curhe = h2;
 	  while (cur_ridge_type ==
 		 facet_ridge_type(f,curhe1,curhe2,r_type))
@@ -463,11 +462,10 @@ template < class TriangulatedSurfaceMesh,
 	      //follow the ridge from curhe
 	      if (is_visited_map.find(f)->second) break;
 	      is_visited_map.find(f)->second = true;
-	      if (curhe->opposite() == curhe1) curhe = curhe2;
+	      if (opposite(curhe,P) == curhe1) curhe = curhe2;
 	      else curhe = curhe1;
 	      addback(cur_ridge_line, curhe, cur_ridge_type);
-	      if ( !(curhe->is_border_edge()) ) f =
-						  curhe->opposite()->facet();
+	      if ( ! is_border_edge(curhe,P) ) f = face(opposite(curhe,P),P);
 	      else break;
 	    }
 	} 
@@ -485,11 +483,11 @@ facet_ridge_type(const Facet_const_handle f, halfedge_descriptor& he1, halfedge_
   //polyhedral data
   //we have v1--h1-->v2--h2-->v3--h3-->v1
   const halfedge_descriptor h1 = halfedge(f,P);
-  const vertex_descriptor v2 = h1->vertex();
-  const halfedge_descriptor h2 = h1->next();
-  const vertex_descriptor v3 = h2->vertex();
-  const halfedge_descriptor h3 = h2->next();
-  const vertex_descriptor v1 = h3->vertex();
+  const vertex_descriptor v2 = target(h1,P);
+  const halfedge_descriptor h2 = next(h1,P);
+  const vertex_descriptor v3 = target(h2,P);
+  const halfedge_descriptor h3 = next(h2,P);
+  const vertex_descriptor v1 = target(h3,P);
 
   //check for regular facet
   //i.e. if there is a coherent orientation of ppal dir at the facet vertices
@@ -576,15 +574,15 @@ xing_on_edge(const halfedge_descriptor he, bool& is_crossed, Ridge_interrogation
   is_crossed = false;
   FT sign = 0;
   FT b_p, b_q; // extremalities at p and q for he: p->q
-  Vector_3  d_p = d1[he->opposite()->vertex()],
-    d_q = d1[he->vertex()]; //ppal dir
+  Vector_3  d_p = d1[target(opposite(he,P),P)],
+    d_q = d1[target(he,P)]; //ppal dir
   if ( color == MAX_RIDGE ) {
-    b_p = b0[he->opposite()->vertex()];
-    b_q = b0[he->vertex()];
+    b_p = b0[target(opposite(he,P),P)];
+    b_q = b0[target(he,P)];
   }
   else {     
-    b_p = b3[he->opposite()->vertex()];
-    b_q = b3[he->vertex()];
+    b_p = b3[target(opposite(he,P),P)];
+    b_q = b3[target(he,P)];
   }
   if ( b_p == 0 && b_q == 0 ) return;
   if ( b_p == 0 && b_q !=0 ) sign = d_p*d_q * b_q;
@@ -601,8 +599,8 @@ bool Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex
 			     const halfedge_descriptor he1, 
 			     const halfedge_descriptor he2)
 {
-  const vertex_descriptor v_p1 = he1->opposite()->vertex(), v_q1 = he1->vertex(),
-    v_p2 = he2->opposite()->vertex(), v_q2 = he2->vertex(); // hei: pi->qi
+  const vertex_descriptor v_p1 = target(opposite(he1,P),P), v_q1 = target(he1,P),
+    v_p2 = target(opposite(he2,P),P), v_q2 = target(he2,P); // hei: pi->qi
 
   FT coord1, coord2;
   if (color == MAX_RIDGE) 
@@ -711,8 +709,8 @@ addback(Ridge_line* ridge_line, const halfedge_descriptor he,
   halfedge_descriptor he_cur = ( --(ridge_line->line()->end()) )->first;
   FT coord_cur = ( --(ridge_line->line()->end()) )->second;//bary_coord(he_cur);
   FT coord = bary_coord(he,r_type);
-  vertex_descriptor v_p = he->opposite()->vertex(), v_q = he->vertex(),
-    v_p_cur = he_cur->opposite()->vertex(), v_q_cur = he_cur->vertex(); // he: p->q
+  vertex_descriptor v_p = target(opposite(he,P),P), v_q = target(he,P),
+    v_p_cur = target(opposite(he_cur,P),P), v_q_cur = target(he_cur,P); // he: p->q
   Vector_3 segment = CGAL::barycenter(v_p->point(), coord, v_q->point()) -
                      CGAL::barycenter(v_p_cur->point(), coord_cur, v_q_cur->point());
 
@@ -754,8 +752,8 @@ addfront(Ridge_line* ridge_line,
   halfedge_descriptor he_cur = ( ridge_line->line()->begin() )->first;
   FT coord_cur = ( ridge_line->line()->begin() )->second;
   FT coord = bary_coord(he,r_type);
-  vertex_descriptor v_p = he->opposite()->vertex(), v_q = he->vertex(),
-    v_p_cur = he_cur->opposite()->vertex(), v_q_cur = he_cur->vertex(); // he: p->q
+  vertex_descriptor v_p = target(opposite(he,P),P), v_q = target(he,P),
+    v_p_cur = target(opposite(he_cur,P),P), v_q_cur = target(he_cur,P); // he: p->q
   Vector_3 segment = CGAL::barycenter(v_p->point(), coord, v_q->point()) -
                      CGAL::barycenter(v_p_cur->point(), coord_cur, v_q_cur->point());
 
@@ -797,14 +795,14 @@ bary_coord(const halfedge_descriptor he, const Ridge_type r_type)
   if ( (r_type == MAX_ELLIPTIC_RIDGE) 
        || (r_type == MAX_HYPERBOLIC_RIDGE) 
        || (r_type == MAX_CREST_RIDGE) ) {
-    b_p = b0[he->opposite()->vertex()];
-    b_q = b0[he->vertex()];    
+    b_p = b0[target(opposite(he,P),P)];
+    b_q = b0[target(he,P)];    
   }
   if ( (r_type == MIN_ELLIPTIC_RIDGE) 
        || (r_type == MIN_HYPERBOLIC_RIDGE) 
        || (r_type == MIN_CREST_RIDGE) ) {
-    b_p = b3[he->opposite()->vertex()];
-    b_q = b3[he->vertex()];    
+    b_p = b3[target(opposite(he,P),P)];
+    b_q = b3[target(he,P)];    
   }
   //denominator cannot be 0 since there is no crossing when both extremalities are 0
   return CGAL::abs(b_q) / ( CGAL::abs(b_q) + CGAL::abs(b_p) );
