@@ -5,13 +5,14 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/helpers.h>
 #include <cstdlib>
 #include <cstdio>
 #include <algorithm>
 #include <vector>
 #include <list>
 
-
+#include <boost/foreach.hpp>
 #include "PolyhedralSurf_operations.h"
 
 //----------------------------------------------------------------
@@ -63,13 +64,7 @@ typedef CGAL::Simple_cartesian<FT>  Kernel;
 typedef CGAL::Polyhedron_3 < Kernel, Wrappers_VFH > Polyhedron;
 typedef Kernel::Vector_3 Vector_3;
 
-class PolyhedralSurf:public Polyhedron {
-public:
-  PolyhedralSurf() {}
-  void compute_facets_normals();
-  const Vector_3 computeFacetsAverageUnitNormal(const Vertex_const_handle v);
-};
-
+class PolyhedralSurf;
 
 namespace boost {
   template<>
@@ -78,4 +73,18 @@ namespace boost {
   struct graph_traits<PolyhedralSurf const> : public boost::graph_traits<Polyhedron>
   {};
 }
+
+class PolyhedralSurf : public Polyhedron {
+public:
+  typedef boost::graph_traits<PolyhedralSurf>::vertex_descriptor vertex_descriptor;
+  typedef boost::graph_traits<PolyhedralSurf>::face_descriptor face_descriptor;
+  typedef boost::graph_traits<PolyhedralSurf>::halfedge_descriptor halfedge_descriptor;
+
+  PolyhedralSurf() {}
+  void compute_facets_normals();
+  const Vector_3 computeFacetsAverageUnitNormal(const vertex_descriptor v);
+
+};
+
+
 #endif

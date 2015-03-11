@@ -2,29 +2,35 @@
 
 void PolyhedralSurf::compute_facets_normals()
 {
-  std::for_each(this->facets_begin(), this->facets_end(),
-		Facet_unit_normal());
+  BOOST_FOREACH(face_descriptor f, faces(*this)){
+    halfedge_descriptor h = halfedge(f,*this);
+      Vector_3 normal =
+	CGAL::cross_product(target(h,*this)->point() -
+			    target(opposite(h,*this),*this)->point(),
+			    target(next(h,*this),*this)->point() -
+			    target(opposite(h,*this),*this)->point());
+      f->setNormal( normal / CGAL::sqrt(normal * normal));
+  }
 }
 
-const Vector_3 PolyhedralSurf::computeFacetsAverageUnitNormal(const Vertex_const_handle v)
+const Vector_3 PolyhedralSurf::computeFacetsAverageUnitNormal(vertex_descriptor v)
 {
-  Halfedge_const_handle h;
-  Facet_const_handle f;
+  halfedge_descriptor h;
+  face_descriptor f;
   Vector_3 sum(0., 0., 0.), n;
 
-  Halfedge_around_vertex_const_circulator
-    hedgeb = v->vertex_begin(), hedgee = hedgeb;
+  CGAL::Halfedge_around_target_circulator<PolyhedralSurf> hedgeb(halfedge(v,*this),*this), hedgee = hedgeb;
 
   do
     {
-      h = hedgeb;
-      if (h->is_border_edge())
+      h = *hedgeb;
+      if (is_border_edge(h,*this))
 	{
 	  hedgeb++;
 	  continue;
 	}
 
-      f =  h->facet();
+      f =  face(h,*this);
       n = f->getUnitNormal();
       sum = (sum + n);
       hedgeb++;
