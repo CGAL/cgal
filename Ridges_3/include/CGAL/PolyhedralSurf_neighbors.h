@@ -37,8 +37,8 @@ public:
   typedef typename TriangularPolyhedralSurface::Traits::FT       FT;
   typedef typename TriangularPolyhedralSurface::Traits::Vector_3 Vector_3;
   typedef typename TriangularPolyhedralSurface::Traits::Point_3  Point_3;
-  typedef typename TriangularPolyhedralSurface::Vertex_const_handle    Vertex_const_handle;
-  typedef typename TriangularPolyhedralSurface::Halfedge_const_handle  Halfedge_const_handle;
+  typedef typename boost::graph_traits<TriangularPolyhedralSurface>::vertex_descriptor    Vertex_const_handle;
+  typedef typename boost::graph_traits<TriangularPolyhedralSurface>::halfedge_descriptor  Halfedge_const_handle;
  
   T_Gate(const Vertex_const_handle v, const Halfedge_const_handle he);
   FT& d() { return m_d;}
@@ -90,15 +90,16 @@ struct compare_gates
 //---------------------------------------------------------------------------
 template < class TriangularPolyhedralSurface > class T_PolyhedralSurf_neighbors
 {
+  const TriangularPolyhedralSurface& P;
 public:
   typedef typename TriangularPolyhedralSurface::Traits::FT        FT;
   typedef typename TriangularPolyhedralSurface::Traits::Vector_3  Vector_3;
   typedef typename TriangularPolyhedralSurface::Traits::Point_3   Point_3;
-  typedef typename TriangularPolyhedralSurface::Vertex_const_handle     Vertex_const_handle;
-  typedef typename TriangularPolyhedralSurface::Halfedge_const_handle   Halfedge_const_handle;
-  typedef typename TriangularPolyhedralSurface::Halfedge_around_vertex_const_circulator
+  typedef typename boost::graph_traits<TriangularPolyhedralSurface>::vertex_descriptor     Vertex_const_handle;
+  typedef typename boost::graph_traits<TriangularPolyhedralSurface>::halfedge_descriptor   Halfedge_const_handle;
+  typedef CGAL::Halfedge_around_target_circulator<TriangularPolyhedralSurface>
   Halfedge_around_vertex_const_circulator;
-  typedef typename TriangularPolyhedralSurface::Vertex_const_iterator   Vertex_const_iterator;
+  typedef typename boost::graph_traits<TriangularPolyhedralSurface>::vertex_iterator   Vertex_const_iterator;
   typedef T_Gate<TriangularPolyhedralSurface> Gate;
 
   T_PolyhedralSurf_neighbors(const TriangularPolyhedralSurface& P);
@@ -137,10 +138,12 @@ public:
 template < class TriangularPolyhedralSurface >
 T_PolyhedralSurf_neighbors < TriangularPolyhedralSurface >::
 T_PolyhedralSurf_neighbors(const TriangularPolyhedralSurface& P)
+  :P(P)
 {
   //init the is_visited_map
-  Vertex_const_iterator itb = P.vertices_begin(), ite = P.vertices_end();
-  for(;itb!=ite;itb++) is_visited_map[itb] = false; 
+  Vertex_const_iterator itb, ite;
+  boost::tie(itb,ite) = vertices(P);
+  for(;itb!=ite;itb++) is_visited_map[*itb] = false; 
 }
 
 template < class TriangularPolyhedralSurface >
@@ -151,14 +154,14 @@ compute_one_ring(const Vertex_const_handle v,
 		 FT &OneRingSize)
 {
   vertex_neigh.push_back(v);
-  Halfedge_around_vertex_const_circulator he_circ = v->vertex_begin(), 
+  Halfedge_around_vertex_const_circulator he_circ(halfedge(v,P),P),
                                     he_end = he_circ;
   do {
-      if ( he_circ->is_border() )//then he and he->next follow the contour CW
-	{contour.push_back(he_circ);
-	contour.push_back(he_circ->next());}
-      else contour.push_back(he_circ->prev()->opposite());//not border, he->prev->opp on contour CW
-      vertex_neigh.push_back(he_circ->opposite()->vertex());
+    if ( (*he_circ)->is_border() )//then he and he->next follow the contour CW
+	{contour.push_back(*he_circ);
+          contour.push_back((*he_circ)->next());}
+    else contour.push_back((*he_circ)->prev()->opposite());//not border, he->prev->opp on contour CW
+    vertex_neigh.push_back((*he_circ)->opposite()->vertex());
       he_circ++;
   } while (he_circ != he_end);
 

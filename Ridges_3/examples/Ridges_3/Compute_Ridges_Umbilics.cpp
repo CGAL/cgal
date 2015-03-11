@@ -22,8 +22,8 @@ typedef Kernel::FT                      FT;
 typedef Kernel::Point_3                 Point_3;
 typedef Kernel::Vector_3                Vector_3;
 
-typedef PolyhedralSurf::Vertex_const_handle   Vertex_const_handle;
-typedef PolyhedralSurf::Vertex_const_iterator Vertex_const_iterator;
+typedef boost::graph_traits<PolyhedralSurf>::vertex_descriptor   Vertex_const_handle;
+typedef boost::graph_traits<PolyhedralSurf>::vertex_iterator Vertex_const_iterator;
 
 typedef T_PolyhedralSurf_rings<PolyhedralSurf> Poly_rings;
 typedef CGAL::Monge_via_jet_fitting<Kernel>    Monge_via_jet_fitting;
@@ -116,7 +116,7 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
   Vertex_const_iterator vitb = P.vertices_begin(), vite = P.vertices_end();
   for (; vitb != vite; vitb++) {
     //initialize
-    Vertex_const_handle v = vitb;
+    Vertex_const_handle v = * vitb;
     in_points.clear();
     Monge_form monge_form;
     Monge_via_jet_fitting monge_fit;

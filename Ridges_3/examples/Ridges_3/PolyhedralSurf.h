@@ -4,7 +4,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <cstdlib>
 #include <cstdio>
 #include <algorithm>
@@ -70,4 +70,12 @@ public:
   const Vector_3 computeFacetsAverageUnitNormal(const Vertex_const_handle v);
 };
 
+
+namespace boost {
+  template<>
+  struct graph_traits<PolyhedralSurf> : public boost::graph_traits<Polyhedron>
+  {};  template<>
+  struct graph_traits<PolyhedralSurf const> : public boost::graph_traits<Polyhedron>
+  {};
+}
 #endif

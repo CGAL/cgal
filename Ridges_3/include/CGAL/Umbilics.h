@@ -23,6 +23,7 @@
 #include <vector>
 #include <math.h>
 #include <CGAL/basic.h>
+#include <CGAL/boost/graph/helpers.h>
 #include <CGAL/PolyhedralSurf_neighbors.h>
 #include <boost/shared_ptr.hpp>
 
@@ -38,8 +39,8 @@ template < class TriangulatedSurfaceMesh >
 class Umbilic
 {
  public:
-  typedef typename TriangulatedSurfaceMesh::Vertex_const_handle    Vertex_const_handle;
-  typedef typename TriangulatedSurfaceMesh::Halfedge_const_handle  Halfedge_const_handle;
+  typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::vertex_descriptor    Vertex_const_handle;
+  typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::halfedge_descriptor  Halfedge_const_handle;
   typedef typename TriangulatedSurfaceMesh::Traits::Vector_3 Vector_3;
   
   //contructor
@@ -92,10 +93,10 @@ template < class TriangulatedSurfaceMesh,
  public:
   typedef typename TriangulatedSurfaceMesh::Traits::FT       FT;
   typedef typename TriangulatedSurfaceMesh::Traits::Vector_3 Vector_3;
-  typedef typename TriangulatedSurfaceMesh::Vertex_const_handle    Vertex_const_handle;
-  typedef typename TriangulatedSurfaceMesh::Halfedge_const_handle  Halfedge_const_handle;
-  typedef typename TriangulatedSurfaceMesh::Facet_const_iterator   Facet_const_iterator;
-  typedef typename TriangulatedSurfaceMesh::Vertex_const_iterator  Vertex_const_iterator;
+  typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::vertex_descriptor    Vertex_const_handle;
+  typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::halfedge_descriptor  Halfedge_const_handle;
+  typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::face_iterator   Facet_const_iterator;
+  typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::vertex_iterator  Vertex_const_iterator;
 
   //requirements for the templates TriangulatedSurfaceMesh and Vertex2FTPropertyMap or Vertex2VectorPropertyMap
   CGAL_static_assertion((boost::is_same<Vertex_const_handle, typename Vertex2FTPropertyMap::key_type>::value));
@@ -150,9 +151,7 @@ Umbilic_approximation(const TriangulatedSurfaceMesh& p,
   : P(p), k1(vertex2k1_pm), k2(vertex2k2_pm), 
     d1(vertex2d1_pm), d2(vertex2d2_pm)
 {
-  //check that the mesh is a triangular one.
-  Facet_const_iterator itb = P.facets_begin(), ite = P.facets_end();
-  for(;itb!=ite;itb++) CGAL_precondition( itb->is_triangle() );
+  CGAL_precondition(is_pure_triangle(P));
 
   poly_neighbors = boost::shared_ptr<Poly_neighbors>(new Poly_neighbors(P));
 }
@@ -171,9 +170,10 @@ template < class TriangulatedSurfaceMesh,  class Vertex2FTPropertyMap, class Ver
   bool is_umbilic = true;
 
   //MAIN loop on P vertices
-  Vertex_const_iterator itb = P.vertices_begin(), ite = P.vertices_end();
+  Vertex_const_iterator itb, ite;
+  boost::tie(itb,ite) = vertices(P);
   for (;itb != ite; itb++) {
-    Vertex_const_handle vh = itb;
+    Vertex_const_handle vh = *itb;
     umbilicEstimatorVertex = cgal_abs(k1[vh]-k2[vh]);
     //reset vector, list and bool
     vces.clear();
@@ -188,7 +188,7 @@ template < class TriangulatedSurfaceMesh,  class Vertex2FTPropertyMap, class Ver
     typename std::list<Halfedge_const_handle>::const_iterator itb_cont = contour.begin(),
       ite_cont = contour.end();
     for (; itb_cont != ite_cont; itb_cont++)
-      if ( (*itb_cont)->is_border() ) {is_umbilic = false; continue;}
+      if ( is_border(*itb_cont, P) ) {is_umbilic = false; continue;}
     if (is_umbilic == false) continue;
     
     //is v an umbilic?
@@ -222,7 +222,7 @@ template < class TriangulatedSurfaceMesh,  class Vertex2FTPropertyMap, class Ver
   Vertex_const_handle v;
   typename std::list<Halfedge_const_handle>::const_iterator itb = umb.contour_list().begin(),
     itlast = --umb.contour_list().end();
-  v = (*itb)->vertex();
+  v = target(*itb, P);
 
   dir = d1[v];
   normal = CGAL::cross_product(d1[v], d2[v]);
@@ -230,7 +230,7 @@ template < class TriangulatedSurfaceMesh,  class Vertex2FTPropertyMap, class Ver
   //sum angles along the contour
   do{
     itb++;
-    v=(*itb)->vertex();
+    v = target(*itb, P);
     dirnext = d1[v];
     cosinus = To_double(dir*dirnext);
     if (cosinus < 0) {dirnext = dirnext*(-1); cosinus *= -1;}
@@ -245,7 +245,7 @@ template < class TriangulatedSurfaceMesh,  class Vertex2FTPropertyMap, class Ver
   while (itb != (itlast));
   
   //angle (v_last, v_0)
-  v=(*umb.contour_list().begin())->vertex();
+  v = target(*umb.contour_list().begin(), P);
    dirnext = d1[v];
    cosinus = To_double(dir*dirnext);
   if (cosinus < 0) {dirnext = dirnext*(-1); cosinus *= -1;}
