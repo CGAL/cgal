@@ -166,22 +166,15 @@ public:
       int orig_id = orig_vertex_id[i];
       vertex_desc vd = id_to_vd[i];
 
-      /*
       /// code that is not working
       BOOST_FOREACH(int vid, record[orig_id])
       {
         vertex_descriptor ovd = id_to_descriptor[vid];
         curve[vd].vertices.insert(
           curve[vd].vertices.end(),
-          ovd->vertices.end(),
-          ovd->vertices.begin()
+          ovd->vertices.begin(),
+          ovd->vertices.end()
         );
-      }
-      */
-      curve[vd].vertices = record[orig_id];
-      for (size_t j = 0; j < curve[vd].vertices.size(); ++j)
-      {
-        curve[vd].vertices[j] = surface_vertex_id[curve[vd].vertices[j]];
       }
     }
 
