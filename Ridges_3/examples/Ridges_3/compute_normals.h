@@ -44,13 +44,17 @@ void compute_facets_normals(const TriangleMesh& tm,
                             FaceVectorMap fvm,
                             const Kernel& k)
 {
+  typedef boost::property_traits<FaceVectorMap>::value_type Vector_3;
+
+  typedef boost::property_map<TriangleMesh,CGAL::vertex_point_t>::type VPM;
+  VPM vpm = get(CGAL::vertex_point,tm);
   BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(tm)){
     typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f,tm);
-    typename Kernel::Vector_3 normal =
-	CGAL::cross_product(target(h,tm)->point() -
-			    target(opposite(h,tm),tm)->point(),
-			    target(next(h,tm),tm)->point() -
-			    target(opposite(h,tm),tm)->point());
+    Vector_3 normal = 
+      CGAL::cross_product(get(vpm, target(h,tm)) -
+			    get(vpm, target(opposite(h,tm),tm)),
+                          get(vpm, target(CGAL::next(h,tm),tm)) -  // AF: arghh CGAL::
+			    get(vpm, target(opposite(h,tm),tm)));
       put(fvm, f, normal / CGAL::sqrt(normal * normal));
   }
 }

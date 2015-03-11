@@ -32,11 +32,15 @@ namespace CGAL {
 //triangle incident to the halfedge.
 //---------------------------------------------------------------------------
 template < class TriangularPolyhedralSurface > class T_Gate
-{  
+{
+  typedef typename boost::property_map<TriangularPolyhedralSurface,CGAL::vertex_point_t>::type VPM;
+  typedef typename boost::property_traits<VPM>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel Kernel;
+
 public:
-  typedef typename TriangularPolyhedralSurface::Traits::FT       FT;
-  typedef typename TriangularPolyhedralSurface::Traits::Vector_3 Vector_3;
-  typedef typename TriangularPolyhedralSurface::Traits::Point_3  Point_3;
+  typedef typename Kernel::FT       FT;
+  typedef typename Kernel::Vector_3 Vector_3;
+
   typedef typename boost::graph_traits<TriangularPolyhedralSurface>::vertex_descriptor    Vertex_const_handle;
   typedef typename boost::graph_traits<TriangularPolyhedralSurface>::halfedge_descriptor  Halfedge_const_handle;
  
@@ -79,11 +83,15 @@ struct compare_gates
 template < class TriangularPolyhedralSurface >
 class T_PolyhedralSurf_neighbors
 {
-  const TriangularPolyhedralSurface& P;
+
+  typedef typename boost::property_map<TriangularPolyhedralSurface,CGAL::vertex_point_t>::type VPM;
+  typedef typename boost::property_traits<VPM>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel Kernel;
+
 public:
-  typedef typename TriangularPolyhedralSurface::Traits::FT        FT;
-  typedef typename TriangularPolyhedralSurface::Traits::Vector_3  Vector_3;
-  typedef typename TriangularPolyhedralSurface::Traits::Point_3   Point_3;
+  typedef typename Kernel::FT        FT;
+  typedef typename Kernel::Vector_3  Vector_3;
+
   typedef typename boost::graph_traits<TriangularPolyhedralSurface>::vertex_descriptor     Vertex_const_handle;
   typedef typename boost::graph_traits<TriangularPolyhedralSurface>::halfedge_descriptor   Halfedge_const_handle;
   typedef CGAL::Halfedge_around_target_circulator<TriangularPolyhedralSurface>
@@ -116,10 +124,10 @@ public:
   Gate make_gate(const Vertex_const_handle v,
                  const Halfedge_const_handle he)
   {
-    Point_3 p0 = v->point(),
-      p1 = target(he,P)->point(),
-      p2 = target(next(he,P),P)->point(),
-      p3 = target(prev(he,P),P)->point();
+    Point_3 p0 = get(vpm, v),
+      p1 = get(vpm, target(he,P)),
+      p2 = get(vpm, target(next(he,P),P)),
+      p3 = get(vpm, target(prev(he,P),P));
     Vector_3 p0p1 = p0 - p1,
       p0p2 = p0 - p2,
       p0p3 = p0 - p3;
@@ -131,13 +139,17 @@ public:
   }
 
  protected:
+  /*
   //tag to visit vertices
   struct Vertex_cmp{//comparison is wrt vertex addresses
     bool operator()(const Vertex_const_handle a, const Vertex_const_handle b) const{
       return &*a < &*b;
     }
   };
-  typedef std::map<Vertex_const_handle, bool, Vertex_cmp> Vertex2bool_map;
+  */
+  const TriangularPolyhedralSurface& P;
+  VPM vpm;
+  typedef std::map<Vertex_const_handle, bool/*, Vertex_cmp*/> Vertex2bool_map;
   Vertex2bool_map is_visited_map;
 };
 
@@ -145,7 +157,7 @@ public:
 template < class TriangularPolyhedralSurface >
 T_PolyhedralSurf_neighbors < TriangularPolyhedralSurface >::
 T_PolyhedralSurf_neighbors(const TriangularPolyhedralSurface& P)
-  :P(P)
+  :P(P), vpm(get(vertex_point,P))
 {
   //init the is_visited_map
   Vertex_const_iterator itb, ite;
@@ -178,12 +190,12 @@ compute_one_ring(const Vertex_const_handle v,
     ite = vertex_neigh.end();
   itb++;//the first vertex v is the center to which distances are
 	//computed from, for other 1ring neighbors
-  Point_3 p0 = v->point(), p;
+  Point_3 p0 = get(vpm, v), p;
   Vector_3 p0p;
   FT d = OneRingSize;
   for (; itb != ite; itb++){
 
-    p = (*itb)->point();
+    p = get(vpm, *itb);
     p0p = p0 - p;
     d =  CGAL::sqrt(p0p*p0p);
     if (d > OneRingSize) OneRingSize = d;
@@ -249,7 +261,7 @@ compute_neighbors(const Vertex_const_handle v,
     if ( iter != contour.begin() ) pos_prev = --iter;
     else pos_prev = --contour.end();
 
-    if ( he->next() == *pos_next )
+    if ( next(he,P) == *pos_next )
       {  // case 2a
 	//contour
 	he1 = opposite(prev(he,P),P);

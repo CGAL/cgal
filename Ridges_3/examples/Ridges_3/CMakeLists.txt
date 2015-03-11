@@ -41,6 +41,7 @@ if ( CGAL_FOUND )
    endif()
 
    create_single_source_cgal_program( Compute_Ridges_Umbilics.cpp)
+   create_single_source_cgal_program( Ridges_Umbilics_SM.cpp)
 
   else(EIGEN3_FOUND OR LAPACK_FOUND)
 

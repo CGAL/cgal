@@ -57,8 +57,12 @@ enum Ridge_order {Ridge_order_3 = 3, Ridge_order_4 = 4};
 //--------------------------------------------------------------------------
 template < class TriangulatedSurfaceMesh > class Ridge_line
 {
+  typedef typename boost::property_map<TriangulatedSurfaceMesh,CGAL::vertex_point_t>::type VPM;
+  typedef typename boost::property_traits<VPM>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel Kernel; 
 public:
-  typedef typename TriangulatedSurfaceMesh::Traits::FT         FT;
+  
+  typedef typename Kernel::FT         FT;
   typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::halfedge_descriptor halfedge_descriptor;
   typedef std::pair< halfedge_descriptor, FT> ridge_halfhedge; 
 
@@ -377,8 +381,8 @@ template < class TriangulatedSurfaceMesh,
   BOOST_FOREACH(vertex_descriptor v, vertices(p)){
     points.push_back(get(vpm,v));
   }
-
-  CGAL::Min_sphere_d<CGAL::Optimisation_d_traits_3<typename TriangulatedSurfaceMesh::Traits> > 
+  
+  CGAL::Min_sphere_d<CGAL::Optimisation_d_traits_3<Kernel> > 
     min_sphere(points.begin(), points.end());
   squared_model_size = min_sphere.squared_radius();
   //maybe better to use CGAL::Min_sphere_of_spheres_d ?? but need to create spheres?
@@ -461,7 +465,7 @@ template < class TriangulatedSurfaceMesh,
 	      //follow the ridge from curhe
 	      if (is_visited_map.find(f)->second) break;
 	      is_visited_map.find(f)->second = true;
-	      if (curhe->opposite() == curhe1) curhe = curhe2;
+	      if (opposite(curhe,P) == curhe1) curhe = curhe2;
 	      else curhe = curhe1;//curhe stays at the ridge extremity
 	      addfront(cur_ridge_line, curhe, cur_ridge_type);
 	      if ( ! is_border_edge(curhe,P) ) f = face(opposite(curhe,P),P);

@@ -41,7 +41,7 @@ class Umbilic
  public:
   typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::vertex_descriptor    Vertex_const_handle;
   typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::halfedge_descriptor  Halfedge_const_handle;
-  typedef typename TriangulatedSurfaceMesh::Traits::Vector_3 Vector_3;
+  //  typedef typename TriangulatedSurfaceMesh::Traits::Vector_3 Vector_3;
   
   //contructor
   Umbilic(const Vertex_const_handle v_init,
