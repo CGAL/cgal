@@ -57,6 +57,7 @@ enum Ridge_order {Ridge_order_3 = 3, Ridge_order_4 = 4};
 //--------------------------------------------------------------------------
 template < class TriangulatedSurfaceMesh > class Ridge_line
 {
+  const TriangulatedSurfaceMesh& P;
 public:
   typedef typename TriangulatedSurfaceMesh::Traits::FT         FT;
   typedef typename TriangulatedSurfaceMesh::Traits::Vector_3   Vector_3;
@@ -77,7 +78,7 @@ public:
   std::list<ridge_halfhedge>* line() { return &m_line;}
 
   //constructor
-  Ridge_line();
+  Ridge_line(const TriangulatedSurfaceMesh& P);
   
   /* The output is : line_type, strength, sharpness, list of points of
      the polyline. An insert operator << is also available.
@@ -105,7 +106,8 @@ protected:
  //constructor
 template < class TriangulatedSurfaceMesh >
 Ridge_line<TriangulatedSurfaceMesh>::
-Ridge_line() : m_strength(0.), m_sharpness(0.)  {}
+Ridge_line(const TriangulatedSurfaceMesh& P) 
+  : P(P), m_strength(0.), m_sharpness(0.)  {}
    
 
 template < class TriangulatedSurfaceMesh >
@@ -121,8 +123,8 @@ dump_4ogl(std::ostream& out_stream) const
     ite =  line()->end();
   for (;iter!=ite;iter++){
     //he: p->q, r is the crossing point
-    Point_3 p = iter->first->opposite()->vertex()->point(),
-            q = iter->first->vertex()->point();
+    Point_3 p = target(opposite(iter->first,P),P)->point(),
+      q = target(iter->first,P)->point();
     Point_3 r = CGAL::barycenter(p, iter->second, q);
     out_stream << " " << r ;	
   }
@@ -144,8 +146,8 @@ dump_verbose(std::ostream& out_stream) const
     ite =  line()->end();
   for (;iter!=ite;iter++){
     //he: p->q, r is the crossing point
-    Point_3 p = iter->first->opposite()->vertex()->point(),
-            q = iter->first->vertex()->point();
+    Point_3 p = target(opposite(iter->first,P),P)->point(),
+      q = target(iter->first,P)->point();
     Point_3 r = CGAL::barycenter(p, iter->second, q);
     out_stream << r << std::endl;	
   }
@@ -425,7 +427,7 @@ template < class TriangulatedSurfaceMesh,
       if ( cur_ridge_type == NO_RIDGE ) continue;
       
       //a ridge_line is begining and stored
-      Ridge_line* cur_ridge_line = new Ridge_line();
+      Ridge_line* cur_ridge_line = new Ridge_line(P);
       init_ridge_line(cur_ridge_line, h1, h2, cur_ridge_type);
       *ridge_lines_it++ = cur_ridge_line;
     

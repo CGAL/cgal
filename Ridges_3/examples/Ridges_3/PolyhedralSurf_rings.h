@@ -10,7 +10,8 @@ using namespace std;
 //---------------------------------------------------------------------------
 //T_PolyhedralSurf_rings
 //---------------------------------------------------------------------------
-template < class TPoly > class T_PolyhedralSurf_rings
+template < class TPoly >
+class T_PolyhedralSurf_rings
 {
 
   const TPoly& P;
@@ -87,7 +88,7 @@ push_neighbours_of(const Vertex_const_handle start, const int ith,
 
  CGAL_For_all(hedgeb, hedgee)
   {
-    v = (*hedgeb)->opposite()->vertex();
+    v = target(opposite(*hedgeb,P),P);
     if (ring_index_map[v] != -1)  continue;//if visited: next
 
     ring_index_map[v] = ith;
