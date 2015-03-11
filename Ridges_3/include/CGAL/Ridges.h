@@ -57,11 +57,8 @@ enum Ridge_order {Ridge_order_3 = 3, Ridge_order_4 = 4};
 //--------------------------------------------------------------------------
 template < class TriangulatedSurfaceMesh > class Ridge_line
 {
-  const TriangulatedSurfaceMesh& P;
 public:
   typedef typename TriangulatedSurfaceMesh::Traits::FT         FT;
-  typedef typename TriangulatedSurfaceMesh::Traits::Vector_3   Vector_3;
-  typedef typename TriangulatedSurfaceMesh::Traits::Point_3    Point_3;
   typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::halfedge_descriptor halfedge_descriptor;
   typedef std::pair< halfedge_descriptor, FT> ridge_halfhedge; 
 
@@ -83,10 +80,14 @@ public:
   /* The output is : line_type, strength, sharpness, list of points of
      the polyline. An insert operator << is also available.
    */
-  void dump_4ogl(std::ostream& out_stream) const ;
-  void dump_verbose(std::ostream& out_stream) const ;
+  template <class VertexPointMap>
+  void dump_4ogl(std::ostream& out_stream, VertexPointMap vpm) const ;
+
+  template <class VertexPointMap>
+  void dump_verbose(std::ostream& out_stream, VertexPointMap vpm) const ;
 
 protected:
+  const TriangulatedSurfaceMesh& P;
   //one of MAX_ELLIPTIC_RIDGE, MAX_HYPERBOLIC_RIDGE, MAX_CREST_RIDGE,
   //MIN_ELLIPTIC_RIDGE, MIN_HYPERBOLIC_RIDGE or MIN_CREST_RIDGE
   Ridge_type m_line_type;  
@@ -107,24 +108,27 @@ protected:
 template < class TriangulatedSurfaceMesh >
 Ridge_line<TriangulatedSurfaceMesh>::
 Ridge_line(const TriangulatedSurfaceMesh& P) 
-  : P(P), m_strength(0.), m_sharpness(0.)  {}
+  : P(P), m_strength(0.), m_sharpness(0.)
+{}
    
 
 template < class TriangulatedSurfaceMesh >
+template <class VertexPointMap>
 void Ridge_line<TriangulatedSurfaceMesh>::
-dump_4ogl(std::ostream& out_stream) const
+dump_4ogl(std::ostream& out_stream,
+          VertexPointMap vpm) const
 {
   out_stream << line_type() << " "
 	     << strength() << " "
 	     << sharpness() << " ";
-
+  typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typename std::list<ridge_halfhedge >::const_iterator
     iter = line()->begin(), 
     ite =  line()->end();
   for (;iter!=ite;iter++){
     //he: p->q, r is the crossing point
-    Point_3 p = target(opposite(iter->first,P),P)->point(),
-      q = target(iter->first,P)->point();
+    Point_3 p = get(vpm, target(opposite(iter->first,P),P)),
+      q = get(vpm,target(iter->first,P));
     Point_3 r = CGAL::barycenter(p, iter->second, q);
     out_stream << " " << r ;	
   }
@@ -133,9 +137,11 @@ dump_4ogl(std::ostream& out_stream) const
 
 //verbose output
 template < class TriangulatedSurfaceMesh >
+template <class VertexPointMap>
 void Ridge_line<TriangulatedSurfaceMesh>::
-dump_verbose(std::ostream& out_stream) const
+dump_verbose(std::ostream& out_stream, VertexPointMap vpm) const
 {
+  typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   out_stream << "Line type is : " << line_type() << std::endl
 	     << "Strength is :  " << strength() << std::endl
 	     << "Sharpness is : " << sharpness() << std::endl
@@ -146,8 +152,8 @@ dump_verbose(std::ostream& out_stream) const
     ite =  line()->end();
   for (;iter!=ite;iter++){
     //he: p->q, r is the crossing point
-    Point_3 p = target(opposite(iter->first,P),P)->point(),
-      q = target(iter->first,P)->point();
+    Point_3 p = get(vpm, target(opposite(iter->first,P),P)),
+      q = get(vpm,target(iter->first,P));
     Point_3 r = CGAL::barycenter(p, iter->second, q);
     out_stream << r << std::endl;	
   }
@@ -172,17 +178,17 @@ class Vertex2Data_Property_Map_with_std_map
   typedef typename TriangulatedSurfaceMesh::Traits::FT        FT;
   typedef typename TriangulatedSurfaceMesh::Traits::Vector_3  Vector_3;
   typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::vertex_descriptor vertex_descriptor;
-
+  /*
   struct Vertex_cmp{
     bool operator()(vertex_descriptor a,  vertex_descriptor b) const{
       return &*a < &*b;
     }
   };
-
-  typedef std::map<vertex_descriptor, FT, Vertex_cmp> Vertex2FT_map;
+  */
+  typedef std::map<vertex_descriptor, FT /* , Vertex_cmp */ > Vertex2FT_map;
   typedef boost::associative_property_map< Vertex2FT_map > Vertex2FT_property_map;
 
-  typedef std::map<vertex_descriptor, Vector_3, Vertex_cmp> Vertex2Vector_map;
+  typedef std::map<vertex_descriptor, Vector_3/* , Vertex_cmp*/ > Vertex2Vector_map;
   typedef boost::associative_property_map< Vertex2Vector_map > Vertex2Vector_property_map;
 };
 
@@ -195,13 +201,17 @@ template < class TriangulatedSurfaceMesh,
            class Vertex2VectorPropertyMap > 
 class Ridge_approximation
 {
+  typedef typename boost::property_map<TriangulatedSurfaceMesh,vertex_point_t>::const_type VPM;
+  typedef typename boost::property_traits<VPM>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel Kernel;
  public:  
-  typedef typename TriangulatedSurfaceMesh::Traits::FT        FT;
-  typedef typename TriangulatedSurfaceMesh::Traits::Vector_3  Vector_3;
+  typedef typename Kernel::FT        FT;
+  typedef typename Kernel::Vector_3  Vector_3;
   typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::vertex_descriptor     vertex_descriptor;
   typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::halfedge_descriptor   halfedge_descriptor;
   typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::face_descriptor      Facet_const_handle;
   typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::face_iterator    Facet_const_iterator;
+
 
   //requirements for the templates TriangulatedSurfaceMesh and Vertex2FTPropertyMap or Vertex2VectorPropertyMap
   CGAL_static_assertion((boost::is_same<vertex_descriptor, typename Vertex2FTPropertyMap::key_type>::value));
@@ -246,18 +256,22 @@ class Ridge_approximation
 		//used to make the sharpness scale independant and iso indep
   Ridge_order tag_order;
 
+  /*
   //tag to visit faces
   struct Facet_cmp{ //comparison is wrt facet addresses
     bool operator()(Facet_const_handle a,  Facet_const_handle b) const{
       return &*a < &*b;
     }
   };
-  typedef std::map<Facet_const_handle, bool, Facet_cmp> Facet2bool_map_type;
+  */
+  typedef std::map<Facet_const_handle, bool/*, Facet_cmp*/> Facet2bool_map_type;
   Facet2bool_map_type is_visited_map;
 
   //Property maps
   const Vertex2FTPropertyMap &k1, &k2, &b0, &b3, &P1, &P2;
   const Vertex2VectorPropertyMap &d1, &d2;
+
+  VPM vpm;
 
   //is a facet crossed by a BLUE, RED or CREST_RIDGE ridge? if so, return
   //the crossed edges and more precise type from MAX_ELLIPTIC_RIDGE,
@@ -348,7 +362,8 @@ template < class TriangulatedSurfaceMesh,
 		      const Vertex2FTPropertyMap& vertex2P1_pm, 
 		      const Vertex2FTPropertyMap& vertex2P2_pm)
     : P(p), k1(vertex2k1_pm), k2(vertex2k2_pm), b0(vertex2b0_pm), b3(vertex2b3_pm), 
-      P1(vertex2P1_pm), P2(vertex2P2_pm), d1(vertex2d1_pm), d2(vertex2d2_pm)
+  P1(vertex2P1_pm), P2(vertex2P2_pm), d1(vertex2d1_pm), d2(vertex2d2_pm),
+  vpm(get(CGAL::vertex_point,p))
 {
   //init the is_visited_map and check that the mesh is a triangular one.
   Facet_const_iterator itb,ite; 
@@ -358,8 +373,13 @@ template < class TriangulatedSurfaceMesh,
   }
   CGAL_precondition( is_pure_triangle(p) );
 
+  std::vector<Point_3> points;
+  BOOST_FOREACH(vertex_descriptor v, vertices(p)){
+    points.push_back(get(vpm,v));
+  }
+
   CGAL::Min_sphere_d<CGAL::Optimisation_d_traits_3<typename TriangulatedSurfaceMesh::Traits> > 
-    min_sphere(P.points_begin(), P.points_end());
+    min_sphere(points.begin(), points.end());
   squared_model_size = min_sphere.squared_radius();
   //maybe better to use CGAL::Min_sphere_of_spheres_d ?? but need to create spheres?
 
@@ -617,8 +637,8 @@ bool Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex
     }
 
   if ( tag_order == Ridge_order_3 ) {
-    Vector_3 r1 = CGAL::barycenter(v_p1->point(), coord1, v_q1->point()) - ORIGIN,
-             r2 = CGAL::barycenter(v_p2->point(), coord2, v_q2->point()) - ORIGIN; 
+    Vector_3 r1 = CGAL::barycenter(get(vpm, v_p1), coord1, get(vpm, v_q1)) - ORIGIN,
+             r2 = CGAL::barycenter(get(vpm,v_p2), coord2, get(vpm,v_q2)) - ORIGIN; 
     //identify the 3 different vertices v_p1, v_q1 and v3 = v_p2 or v_q2
     vertex_descriptor v3;
     if (v_p2 == v_p1 || v_p2 == v_q1) v3 = v_q2;
@@ -675,9 +695,9 @@ int Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2
   }
   if ( r != CGAL::NULL_VECTOR ) r = r/CGAL::sqrt(r*r);
   FT sign1, sign2, sign3;
-  sign1 = bv1*(r1 - (v1->point()-ORIGIN) + (((v1->point()-ORIGIN)-r1)*r)*r )*dv1;
-  sign2 = bv2*(r1 - (v2->point()-ORIGIN) + (((v2->point()-ORIGIN)-r1)*r)*r )*dv2;
-  sign3 = bv3*(r1 - (v3->point()-ORIGIN) + (((v3->point()-ORIGIN)-r1)*r)*r )*dv3;
+  sign1 = bv1*(r1 - (get(vpm, v1)-ORIGIN) + (((get(vpm, v1)-ORIGIN)-r1)*r)*r )*dv1;
+  sign2 = bv2*(r1 - (get(vpm, v2)-ORIGIN) + (((get(vpm, v2)-ORIGIN)-r1)*r)*r )*dv2;
+  sign3 = bv3*(r1 - (get(vpm, v3)-ORIGIN) + (((get(vpm, v3)-ORIGIN)-r1)*r)*r )*dv3;
   
   int compt = 0;
   if ( sign1 > 0 ) compt++; else if (sign1 < 0) compt--;
@@ -713,8 +733,8 @@ addback(Ridge_line* ridge_line, const halfedge_descriptor he,
   FT coord = bary_coord(he,r_type);
   vertex_descriptor v_p = target(opposite(he,P),P), v_q = target(he,P),
     v_p_cur = target(opposite(he_cur,P),P), v_q_cur = target(he_cur,P); // he: p->q
-  Vector_3 segment = CGAL::barycenter(v_p->point(), coord, v_q->point()) -
-                     CGAL::barycenter(v_p_cur->point(), coord_cur, v_q_cur->point());
+  Vector_3 segment = CGAL::barycenter(get(vpm, v_p), coord, get(vpm, v_q)) -
+                     CGAL::barycenter(get(vpm, v_p_cur), coord_cur, get(vpm, v_q_cur));
 
   FT k1x, k2x; //abs value of the ppal curvatures at the Xing point on he.
   FT k_second = 0; // abs value of the second derivative of the curvature
@@ -756,8 +776,8 @@ addfront(Ridge_line* ridge_line,
   FT coord = bary_coord(he,r_type);
   vertex_descriptor v_p = target(opposite(he,P),P), v_q = target(he,P),
     v_p_cur = target(opposite(he_cur,P),P), v_q_cur = target(he_cur,P); // he: p->q
-  Vector_3 segment = CGAL::barycenter(v_p->point(), coord, v_q->point()) -
-                     CGAL::barycenter(v_p_cur->point(), coord_cur, v_q_cur->point());
+  Vector_3 segment = CGAL::barycenter(get(vpm, v_p), coord, get(vpm, v_q)) -
+                     CGAL::barycenter(get(vpm, v_p_cur), coord_cur, get(vpm, v_q_cur));
 
   FT k1x, k2x; //abs value of the ppal curvatures at the Xing point on he.
   FT k_second = 0.; // abs value of the second derivative of the curvature
@@ -789,8 +809,8 @@ addfront(Ridge_line* ridge_line,
 template < class TriangulatedSurfaceMesh,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
-typename TriangulatedSurfaceMesh::Traits::FT 
-Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+typename Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2VectorPropertyMap>::FT 
+Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2VectorPropertyMap>::
 bary_coord(const halfedge_descriptor he, const Ridge_type r_type)
 {
   FT b_p = 0., b_q = 0.; // extremalities at p and q for he: p->q

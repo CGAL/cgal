@@ -70,7 +70,7 @@ template <class TriangulatedSurfaceMesh>
 std::ostream& 
 operator<<(std::ostream& out_stream, const Umbilic<TriangulatedSurfaceMesh>& umbilic)
 {
-  out_stream << "Umbilic at location (" << umbilic.vertex()->point() << ") of type ";
+  out_stream << "Umbilic at location (" << /* umbilic.vertex()->point() <<  */ ") of type ";
   switch (umbilic.umbilic_type())
     {
     case CGAL::NON_GENERIC_UMBILIC: out_stream << "non generic" << std::endl; break;
@@ -90,9 +90,13 @@ template < class TriangulatedSurfaceMesh,
   class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
   class Umbilic_approximation
 {
+  
+  typedef typename boost::property_map<TriangulatedSurfaceMesh,vertex_point_t>::const_type VPM;
+  typedef typename boost::property_traits<VPM>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel Kernel;
  public:
-  typedef typename TriangulatedSurfaceMesh::Traits::FT       FT;
-  typedef typename TriangulatedSurfaceMesh::Traits::Vector_3 Vector_3;
+  typedef typename Kernel::FT       FT;
+  typedef typename Kernel::Vector_3 Vector_3;
   typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::vertex_descriptor    Vertex_const_handle;
   typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::halfedge_descriptor  Halfedge_const_handle;
   typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::face_iterator   Facet_const_iterator;

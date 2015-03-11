@@ -20,17 +20,17 @@ protected:
   //Polyhedron
   typedef typename boost::graph_traits<TPoly>::vertex_descriptor                     Vertex_const_handle;
   typedef typename boost::graph_traits<TPoly>::halfedge_descriptor                   Halfedge_const_handle;
-  typedef typename TPoly::Facet_const_handle                      Facet_const_handle;
-  typedef CGAL::Halfedge_around_target_circulator<TPoly> Halfedge_around_vertex_const_circulator;
   typedef typename boost::graph_traits<TPoly>::vertex_iterator                   Vertex_const_iterator;
-
+  typedef CGAL::Halfedge_around_target_circulator<TPoly> Halfedge_around_vertex_const_circulator;
+  /*
   //tag to visit vertices
   struct Vertex_cmp{//comparison is wrt vertex addresses
     bool operator()(Vertex_const_handle a,  Vertex_const_handle b) const{
       return &*a < &*b;
     }
   };
-  typedef std::map<Vertex_const_handle, int, Vertex_cmp> Vertex2int_map;
+  */
+  typedef std::map<Vertex_const_handle, int/*, Vertex_cmp*/> Vertex2int_map;
   Vertex2int_map ring_index_map;
 
   //vertex indices are initialised to -1
