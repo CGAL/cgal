@@ -1159,6 +1159,12 @@ namespace internal {
     return &*rhs != NULL;
   }
 
+  template <class DSC, bool Const>
+  std::size_t hash_value(const CC_iterator<DSC, Const>&  i)
+  {
+    return reinterpret_cast<std::size_t>(&*i);
+  }
+
 } // namespace internal
 
 } //namespace CGAL

@@ -33,6 +33,7 @@
 #include <functional>
 #include <algorithm>
 #include <CGAL/memory.h>
+#include <boost/functional/hash.hpp>
 
 namespace CGAL {
 
@@ -170,6 +171,24 @@ namespace internal {
       return In_place_list_iterator<T,Alloc>(const_cast<T*>(node));
     }
   };
+
+
+
+template <class T, class Alloc>
+  std::size_t hash_value(const In_place_list_iterator<T,Alloc>&  i)
+  {
+    T* ptr = &*i;
+    return reinterpret_cast<std::size_t>(ptr);
+  }
+
+
+template <class T, class Alloc>
+  std::size_t hash_value(const In_place_list_const_iterator<T,Alloc>&  i)
+  {
+    T* ptr = &*i;
+    return reinterpret_cast<std::size_t>(ptr);
+  }
+
 }
 
 
