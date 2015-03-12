@@ -266,6 +266,8 @@ private:
 /// @tparam VertexPointMap property map with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
 ///    as key type and a `PolygonMesh::Point` as value type
 
+/// @param pmesh the polygon mesh to be modified by stitching
+/// @param hedge_pairs_to_stitch a `std::vector` filled with `std::pair`s of halfedges to be stitched together
 /// @param vpmap the property map with the points associated to the vertices of `pmesh`.
 /// If not specified, `get(vertex_point, pmesh)` is used as default property map.
 template <typename PolygonMesh
@@ -308,6 +310,10 @@ void stitch_borders(
 /// if `less_hedge(h1,h2)=less_hedge(h2,h1)=true`.
 
 /// @tparam LessHedge a key comparison functor used to sort halfedges.
+///   It should be able to compare `boost::graph_traits<PolygonMesh>::halfedge_descriptor`
+
+/// @param pmesh the polygon mesh to be modified by stitching
+/// @param less_hedge an instance of the key comparison functor
 
 /// To use the default implementation of `less_hedge` (using the source and
 /// target points of the halfedges for comparison), 
