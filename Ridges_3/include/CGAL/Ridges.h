@@ -182,17 +182,11 @@ class Vertex2Data_Property_Map_with_std_map
   typedef typename TriangulatedSurfaceMesh::Traits::FT        FT;
   typedef typename TriangulatedSurfaceMesh::Traits::Vector_3  Vector_3;
   typedef typename boost::graph_traits<TriangulatedSurfaceMesh>::vertex_descriptor vertex_descriptor;
-  /*
-  struct Vertex_cmp{
-    bool operator()(vertex_descriptor a,  vertex_descriptor b) const{
-      return &*a < &*b;
-    }
-  };
-  */
-  typedef std::map<vertex_descriptor, FT /* , Vertex_cmp */ > Vertex2FT_map;
+
+  typedef std::map<vertex_descriptor, FT> Vertex2FT_map;
   typedef boost::associative_property_map< Vertex2FT_map > Vertex2FT_property_map;
 
-  typedef std::map<vertex_descriptor, Vector_3/* , Vertex_cmp*/ > Vertex2Vector_map;
+  typedef std::map<vertex_descriptor, Vector_3> Vertex2Vector_map;
   typedef boost::associative_property_map< Vertex2Vector_map > Vertex2Vector_property_map;
 };
 
@@ -260,15 +254,7 @@ class Ridge_approximation
 		//used to make the sharpness scale independant and iso indep
   Ridge_order tag_order;
 
-  /*
-  //tag to visit faces
-  struct Facet_cmp{ //comparison is wrt facet addresses
-    bool operator()(Facet_const_handle a,  Facet_const_handle b) const{
-      return &*a < &*b;
-    }
-  };
-  */
-  typedef std::map<Facet_const_handle, bool/*, Facet_cmp*/> Facet2bool_map_type;
+  typedef std::map<Facet_const_handle, bool> Facet2bool_map_type;
   Facet2bool_map_type is_visited_map;
 
   //Property maps

@@ -25,13 +25,7 @@ typedef Kernel::Vector_3                Vector_3;
 typedef boost::graph_traits<PolyhedralSurf>::vertex_descriptor   Vertex_const_handle;
 typedef boost::graph_traits<PolyhedralSurf>::vertex_iterator Vertex_const_iterator;
 typedef boost::graph_traits<PolyhedralSurf>::face_descriptor face_descriptor;
-/*
-  struct Face_cmp{
-    bool operator()(face_descriptor a,  face_descriptor b) const{
-      return &*a < &*b;
-    }
-  };
-*/
+
 typedef T_PolyhedralSurf_rings<PolyhedralSurf> Poly_rings;
 typedef CGAL::Monge_via_jet_fitting<Kernel>    Monge_via_jet_fitting;
 typedef Monge_via_jet_fitting::Monge_form      Monge_form;
@@ -42,7 +36,7 @@ typedef Vertex2Data_Property_Map_with_std_map::Vertex2Vector_map Vertex2Vector_m
 typedef Vertex2Data_Property_Map_with_std_map::Vertex2FT_property_map Vertex2FT_property_map;
 typedef Vertex2Data_Property_Map_with_std_map::Vertex2Vector_property_map Vertex2Vector_property_map;
 
-typedef std::map<face_descriptor, Vector_3/* , Face_cmp */ > Face2Vector_map;
+typedef std::map<face_descriptor, Vector_3> Face2Vector_map;
 typedef boost::associative_property_map< Face2Vector_map > Face2Vector_property_map;
 
 //RIDGES
@@ -65,7 +59,7 @@ Face2Vector_map face2normal_map;
 
 Vertex2FT_property_map vertex2k1_pm(vertex2k1_map), vertex2k2_pm(vertex2k2_map),
   vertex2b0_pm(vertex2b0_map), vertex2b3_pm(vertex2b3_map),
-  vertex2P1_pm(vertex2P1_map), vertex2P2_pm(vertex2P2_map),vertex2P2_p();
+  vertex2P1_pm(vertex2P1_map), vertex2P2_pm(vertex2P2_map);
 Vertex2Vector_property_map vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_map);
 Face2Vector_property_map  face2normal_pm(face2normal_map);
 

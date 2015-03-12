@@ -1,5 +1,3 @@
-
-//this is an enriched Polyhedron with facet normals
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
@@ -25,27 +23,16 @@ typedef Kernel::Vector_3                Vector_3;
 
 typedef CGAL::Surface_mesh<Point_3> PolyhedralSurf;
 
-typedef boost::graph_traits<PolyhedralSurf>::vertex_descriptor   vertex_descriptor;
-typedef boost::graph_traits<PolyhedralSurf>::vertex_iterator vertex_iterator;
-typedef boost::graph_traits<PolyhedralSurf>::face_descriptor face_descriptor;
-/*
-  struct Face_cmp{
-    bool operator()(face_descriptor a,  face_descriptor b) const{
-      return &*a < &*b;
-    }
-  };
-*/
+typedef boost::graph_traits<PolyhedralSurf>::vertex_descriptor vertex_descriptor;
+typedef boost::graph_traits<PolyhedralSurf>::vertex_iterator   vertex_iterator;
+typedef boost::graph_traits<PolyhedralSurf>::face_descriptor   face_descriptor;
+
 typedef T_PolyhedralSurf_rings<PolyhedralSurf> Poly_rings;
 typedef CGAL::Monge_via_jet_fitting<Kernel>    Monge_via_jet_fitting;
 typedef Monge_via_jet_fitting::Monge_form      Monge_form;
 
 typedef PolyhedralSurf::Property_map<vertex_descriptor,FT> Vertex2FT_property_map;
 typedef PolyhedralSurf::Property_map<vertex_descriptor,Vector_3> Vertex2Vector_property_map;
-
-
-typedef std::map<face_descriptor, Vector_3/* , Face_cmp */ > Face2Vector_map;
-typedef boost::associative_property_map< Face2Vector_map > Face2Vector_property_map;
-
 //RIDGES
 typedef CGAL::Ridge_line<PolyhedralSurf> Ridge_line;
 typedef CGAL::Ridge_approximation < PolyhedralSurf,
@@ -59,11 +46,10 @@ typedef CGAL::Umbilic_approximation < PolyhedralSurf,
 
 //create property maps
 
-
 PolyhedralSurf::Property_map<vertex_descriptor,FT> 
 vertex2k1_pm, vertex2k2_pm,
   vertex2b0_pm, vertex2b3_pm,
-  vertex2P1_pm, vertex2P2_pm, vertex2P2_p;
+  vertex2P1_pm, vertex2P2_pm;
 
 PolyhedralSurf::Property_map<vertex_descriptor,Vector_3> vertex2d1_pm, vertex2d2_pm;
 
@@ -303,7 +289,6 @@ vertex2b0_pm = P.add_property_map<vertex_descriptor,FT>("v:b0",0).first;
 vertex2b3_pm = P.add_property_map<vertex_descriptor,FT>("v:b3",0).first;
 vertex2P1_pm = P.add_property_map<vertex_descriptor,FT>("v:P1",0).first; 
 vertex2P2_pm = P.add_property_map<vertex_descriptor,FT>("v:P2",0).first;
-vertex2P2_p  = P.add_property_map<vertex_descriptor,FT>("v:P2_p",0).first;
 
 vertex2d1_pm = P.add_property_map<vertex_descriptor,Vector_3>("v:d1",Vector_3(0,0,0)).first;
 vertex2d2_pm = P.add_property_map<vertex_descriptor,Vector_3>("v:d2",Vector_3(0,0,0)).first;

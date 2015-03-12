@@ -26,8 +26,8 @@ analysis. Based on the results of the article
 different parts of this singular ridge curve as well as umbilics on a
 surface given as a triangulated surface mesh. Differential quantities
 associated to the mesh vertices are assumed to be given for these
-algorithms; such quantities may be computed by the package <I>Estimation of Local Differential Properties of Sampled Surfaces via
-Polynomial Fitting</I>.
+algorithms; such quantities may be computed by the package \ref PkgJet_fitting_3Summary
+.
 
 Note that this package needs the third party library \ref thirdpartyEigen for linear algebra operations.
 
@@ -38,7 +38,7 @@ umbilics on smooth surfaces. Sections \ref Ridges_3Approximating and
 \ref Ridges_3Approximating_1 present algorithms for approximating the ridges and
 umbilics (of a smooth surface) from a triangle mesh. Section
 \ref Ridges_3Software gives the package specifications, while example calls to
-functions of the package are provided in Section \ref examples.
+functions of the package are provided in Section \ref Ridges_3Examples.
 
 \section smooth Ridges and Umbilics of a Smooth Surface 
 
@@ -416,12 +416,10 @@ using `std::maps` and `boost::associative_property_map`.
 
 \section Ridges_3Examples Examples
 
-\anchor examples
-
 \subsection Ridges_3Exampleprogram Example program
 
 The following program computes ridges and umbilics from an off
-file.\cgalFootnote{Model data may be downloaded via ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges_3_datafiles.tgz . The mechanical part model has been provided courtesy of Dassault System to produce \cgalFigureRef{figmechanical_crest_filteredintro}, due to copyright issues the available model is not the same, it is provided by the AIM\@SHAPE Shape Repository.} It uses the Jet fitting package to estimate the differential
+file.\cgalFootnote{Model data may be downloaded via ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges_3_datafiles.tgz . The mechanical part model has been provided courtesy of Dassault System to produce \cgalFigureRef{figmechanical_crest_filteredintro}, due to copyright issues the available model is not the same, it is provided by the AIM\@SHAPE Shape Repository.} It uses the package \ref PkgJet_fitting_3Summary to estimate the differential
 quantities. 
 The default output file gives rough data for visualization purpose, a
 verbose output file may also be asked for. Parameters are

@@ -44,15 +44,18 @@ class Umbilic
   //  typedef typename TriangulatedSurfaceMesh::Traits::Vector_3 Vector_3;
   
   //contructor
-  Umbilic(const Vertex_const_handle v_init,
+  Umbilic(const TriangulatedSurfaceMesh& P,
+          const Vertex_const_handle v_init,
 	  const std::list<Halfedge_const_handle> contour_init); 
   //access fct
   Vertex_const_handle vertex() const { return v;}
   Umbilic_type umbilic_type() const { return umb_type;}
   Umbilic_type& umbilic_type() { return umb_type;}
+  const TriangulatedSurfaceMesh& mesh()const { return P;}
   const std::list<Halfedge_const_handle>& contour_list() const { return contour;}
 
  protected:
+  const TriangulatedSurfaceMesh& P;
   const Vertex_const_handle v;
   Umbilic_type umb_type;
   const std::list<Halfedge_const_handle> contour;
@@ -61,16 +64,19 @@ class Umbilic
 //constructor
 template <class TriangulatedSurfaceMesh>
 Umbilic<TriangulatedSurfaceMesh>::
-Umbilic(const Vertex_const_handle v_init,
+Umbilic(const TriangulatedSurfaceMesh& P,
+        const Vertex_const_handle v_init,
 	const std::list<Halfedge_const_handle> contour_init) 
-  : v(v_init), contour(contour_init) {} 
+  : P(P), v(v_init), contour(contour_init) {} 
 
 
 template <class TriangulatedSurfaceMesh>
 std::ostream& 
 operator<<(std::ostream& out_stream, const Umbilic<TriangulatedSurfaceMesh>& umbilic)
 {
-  out_stream << "Umbilic at location (" << /* umbilic.vertex()->point() <<  */ ") of type ";
+  typedef typename boost::property_map<TriangulatedSurfaceMesh,vertex_point_t>::const_type VPM;
+  VPM vpm = get(vertex_point, umbilic.mesh()); 
+  out_stream << "Umbilic at location (" << get(vpm, umbilic.vertex()) <<  ") of type ";
   switch (umbilic.umbilic_type())
     {
     case CGAL::NON_GENERIC_UMBILIC: out_stream << "non generic" << std::endl; break;
@@ -210,7 +216,7 @@ template < class TriangulatedSurfaceMesh,  class Vertex2FTPropertyMap, class Ver
     
     //v is an umbilic (wrt the min of k1-k2), compute the index. If
     //the index is not 0 then we have actually an umbilic which is output
-    Umbilic*  cur_umbilic = new Umbilic(vh, contour);
+    Umbilic*  cur_umbilic = new Umbilic(P, vh, contour);
     if (compute_type(*cur_umbilic) != 0)  *umbilics_it++ = cur_umbilic;
   }
   return umbilics_it;
