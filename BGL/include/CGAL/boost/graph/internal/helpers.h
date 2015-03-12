@@ -173,7 +173,7 @@ bool
 is_isolated(typename boost::graph_traits<Graph>::vertex_descriptor v,
             Graph& g)
 {
-  return halfedge(v, g) == typename boost::graph_traits<Graph>::null_halfedge();
+  return halfedge(v, g) == boost::graph_traits<Graph>::null_halfedge();
 }
 
 template<typename Graph>
