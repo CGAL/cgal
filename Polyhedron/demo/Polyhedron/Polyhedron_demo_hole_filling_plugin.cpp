@@ -613,18 +613,18 @@ bool Polyhedron_demo_hole_filling_plugin::fill
 
     bool success;
     if(weight_index == 0) {
-      success = CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
+      success = CGAL::cpp11::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
               it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
               CGAL::internal::Uniform_weight_fairing<Polyhedron>(poly),
               CGAL::Default(),
-              alpha, continuity, use_DT).get<0>();
+              alpha, continuity, use_DT));
     }
     else {
-      success = CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
+      success = CGAL::cpp11::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
               it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
               CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(poly),
               CGAL::Default(),
-              alpha, continuity, use_DT).get<0>();
+              alpha, continuity, use_DT));
     }
 
     if(!success) { print_message("Error: fairing is not successful, only triangulation and refinement are applied!"); }

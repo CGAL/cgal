@@ -57,10 +57,11 @@ int main() {
     if(h->is_border()) {
       std::vector<Facet_handle>  patch_facets;
       std::vector<Vertex_handle> patch_vertices;
-      bool success = CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly_3,
+      bool success = CGAL::cpp11::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(
+                                                            poly_3,
                                                             h,
                                                             back_inserter(patch_facets),
-                                                            back_inserter(patch_vertices)).get<0>();
+                                                            back_inserter(patch_vertices)));
 
       std::cout << "Number of facets in constructed patch: " << patch_facets.size() << std::endl;
       std::cout << "Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;

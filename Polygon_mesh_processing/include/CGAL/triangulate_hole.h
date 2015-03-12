@@ -145,7 +145,7 @@ namespace Polygon_mesh_processing {
            typename PolygonMesh,
            typename FaceOutputIterator,
            typename VertexOutputIterator>
-  boost::tuple<bool, FaceOutputIterator, VertexOutputIterator>
+  CGAL::cpp11::tuple<bool, FaceOutputIterator, VertexOutputIterator>
     triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
     FaceOutputIterator face_out,
@@ -178,7 +178,7 @@ namespace Polygon_mesh_processing {
     bool fair_success = fair<Solver>(pmesh, patch, continuity);
 
     vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
-    return boost::make_tuple(fair_success, face_out, vertex_out);
+    return CGAL::cpp11::make_tuple(fair_success, face_out, vertex_out);
   }
 
   // use non-default weight calculator
@@ -189,7 +189,7 @@ namespace Polygon_mesh_processing {
            class PolygonMesh,
            class FaceOutputIterator,
            class VertexOutputIterator>
-  boost::tuple<bool, FaceOutputIterator, VertexOutputIterator>
+  CGAL::cpp11::tuple<bool, FaceOutputIterator, VertexOutputIterator>
     triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
       typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
       FaceOutputIterator face_out,
@@ -223,14 +223,14 @@ namespace Polygon_mesh_processing {
     bool fair_success = fair<Solver>(pmesh, patch, weight_calculator, continuity);
 
     vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
-    return boost::make_tuple(fair_success, face_out, vertex_out);
+    return CGAL::cpp11::make_tuple(fair_success, face_out, vertex_out);
   }
 
   //use default SparseLinearSolver and WeightCalculator
   template<class PolygonMesh,
            class FaceOutputIterator,
            class VertexOutputIterator>
-  boost::tuple<bool, FaceOutputIterator, VertexOutputIterator>
+  CGAL::cpp11::tuple<bool, FaceOutputIterator, VertexOutputIterator>
     triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
       typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
       FaceOutputIterator face_out,
