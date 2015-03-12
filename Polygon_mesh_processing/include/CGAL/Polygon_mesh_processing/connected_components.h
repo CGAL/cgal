@@ -416,16 +416,6 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
   return out;
 }
 
-template <typename PolygonMesh, typename FaceOutputIterator>
-FaceOutputIterator
-connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face
-                  , PolygonMesh& pmesh
-                  , FaceOutputIterator out
-                  , CGAL::Default)
-{
-  return connected_component(seed_face, pmesh, out, internal::No_constraint<PolygonMesh>(pmesh));
-}
-
 namespace internal {
 
 // A property map 
@@ -444,6 +434,16 @@ struct No_constraint {
 
   G* g;
 };
+
+template <typename PolygonMesh, typename FaceOutputIterator>
+FaceOutputIterator
+connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face
+                  , PolygonMesh& pmesh
+                  , FaceOutputIterator out
+                  , CGAL::Default)
+{
+  return connected_component(seed_face, pmesh, out, internal::No_constraint<PolygonMesh>(pmesh));
+}
 
 // A functor
 template <typename G, typename EdgeConstraintMap = No_constraint<G> >
