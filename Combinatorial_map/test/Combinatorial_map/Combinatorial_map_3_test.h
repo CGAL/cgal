@@ -66,7 +66,7 @@ struct Count_nb_darts
   Count_nb_darts(unsigned int &nb) : m_nb(nb)
   {}
 
-  void operator() (const typename CMap::Dart& d)
+  void operator() (const typename CMap::Dart&)
   { ++m_nb; }
 protected:
   unsigned int& m_nb;
