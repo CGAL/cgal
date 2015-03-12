@@ -606,31 +606,27 @@ connected_components(PolygonMesh& pmesh,
 
  *  \return the number of connected components erased (ignoring isolated vertices).
  */
-
-template <typename PolygonMesh, typename EdgeConstraintMap
-#ifdef DOXYGEN_RUNNING
-          = internal::No_constraint<PolygonMesh>
-#endif
-, typename VertexIndexMap
+template <typename PolygonMesh
+        , typename EdgeConstraintMap
+        , typename VertexIndexMap
 #ifdef DOXYGEN_RUNNING
           = typename boost::property_map<PolygonMesh, CGAL::vertex_index_t>::type
 #endif
-, typename FaceIndexMap
+        , typename FaceIndexMap
 #ifdef DOXYGEN_RUNNING
           = typename boost::property_map<PolygonMesh, CGAL::face_index_t>::type
 #endif
 >
-std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
-                                              std::size_t nb_components_to_keep,
-                                              EdgeConstraintMap ecmap
+std::size_t keep_largest_connected_components(PolygonMesh& pmesh
+                                              , std::size_t nb_components_to_keep
+                                              , EdgeConstraintMap ecmap
 #ifdef DOXYGEN_RUNNING
-                     = EdgeConstraintMap()
+                                              = CGAL::Default()
 #endif
                                               , VertexIndexMap vim
 #ifdef DOXYGEN_RUNNING
                      = get(CGAL::vertex_index_t, pmesh)
 #endif
-
                                               ,FaceIndexMap fim
 #ifdef DOXYGEN_RUNNING
                      = get(CGAL::face_index_t, pmesh)
@@ -787,8 +783,20 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
   return num - nb_components_to_keep;
 }
 
-
-
+template <typename PolygonMesh
+        , typename VertexIndexMap
+        , typename FaceIndexMap>
+std::size_t keep_largest_connected_components(PolygonMesh& pmesh
+                                            , std::size_t nb_components_to_keep
+                                            , CGAL::Default
+                                            , VertexIndexMap vim
+                                            , FaceIndexMap fim)
+{
+  return keep_largest_connected_components(pmesh, nb_components_to_keep,
+                                           internal::No_constraint<PolygonMesh>(pmesh),
+                                           vim,
+                                           fim);
+}
 
 template <typename PolygonMesh, typename EdgeConstraintMap, typename VertexIndexMap>
 std::size_t keep_largest_connected_components(PolygonMesh& pmesh,

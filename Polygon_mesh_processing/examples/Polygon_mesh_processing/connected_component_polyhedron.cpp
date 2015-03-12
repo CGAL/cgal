@@ -118,7 +118,7 @@ void mesh_no_id(char* argv1)
  
  PMP::keep_largest_connected_components(sm
    , 2
-   , PMP::internal::No_constraint<Mesh>()
+   , CGAL::Default()//PMP::internal::No_constraint<Mesh>()
    , vim
    , fim);
 
