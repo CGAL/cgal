@@ -596,7 +596,8 @@ bool Polyhedron_demo_hole_filling_plugin::fill
   int action_index = ui_widget.action_combo_box->currentIndex();
   double alpha = ui_widget.Density_control_factor_spin_box->value();
   bool use_DT = ui_widget.Use_delaunay_triangulation_check_box->isChecked();
-  CGAL::Fairing_continuity continuity = static_cast<CGAL::Fairing_continuity>(ui_widget.Continuity_spin_box->value());
+  CGAL::Polygon_mesh_processing::Fairing_continuity continuity
+    = static_cast<CGAL::Polygon_mesh_processing::Fairing_continuity>(ui_widget.Continuity_spin_box->value());
 
   CGAL::Timer timer; timer.start();
   std::vector<Polyhedron::Facet_handle> patch;
