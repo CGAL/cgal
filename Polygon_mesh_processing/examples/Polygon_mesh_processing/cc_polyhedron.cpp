@@ -107,10 +107,9 @@ void mesh_no_id(char* argv1)
   boost::vector_property_map<int, typename boost::property_map<Mesh, boost::face_external_index_t>::type> fccmap(fim);
 
   std::size_t num = PMP::connected_components(sm,
-                                              fccmap
-                                              , CGAL::parameters::vertex_index_map(vim)
-                                                                 .face_index_map(fim)
-                                      );
+                                              fccmap,
+                                              PMP::internal::No_constraint<Mesh>(),
+                                              fim);
   
  std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
  BOOST_FOREACH(face_descriptor f , faces(sm)){
@@ -118,10 +117,10 @@ void mesh_no_id(char* argv1)
   }
  
  PMP::keep_largest_connected_components(sm
-                                        ,2
-                                        , CGAL::parameters::vertex_index_map(vim)
-                                                           .face_index_map(fim)
-);
+   , 2
+   , PMP::internal::No_constraint<Mesh>()
+   , vim
+   , fim);
 
  std::cout << "mesh:\n" << sm << std::endl;
 }

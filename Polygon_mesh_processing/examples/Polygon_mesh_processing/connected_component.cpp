@@ -61,7 +61,7 @@ int main(int, char* argv[])
   fccmap = sm.add_property_map<face_descriptor,std::size_t>("f:CC").first; 
   std::size_t num = PMP::connected_components(sm,
                                               fccmap,
-                                              CGAL::parameters::edge_is_constrained_map(Constraint<Mesh>(sm,bound))
+                                              Constraint<Mesh>(sm,bound)
                                               );
   
  std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
@@ -70,7 +70,7 @@ int main(int, char* argv[])
   }
  
  std::cerr << "We keep the two largest components" << std::endl; 
- PMP::keep_largest_connected_components(sm,2,CGAL::parameters::edge_is_constrained_map(Constraint<Mesh>(sm,bound)));
+ PMP::keep_largest_connected_components(sm,2,Constraint<Mesh>(sm,bound));
 
  std::cout << "mesh:\n" << sm << std::endl;
   return 0;

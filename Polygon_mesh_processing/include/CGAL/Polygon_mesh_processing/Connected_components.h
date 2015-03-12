@@ -384,10 +384,10 @@ template <class PolygonMesh
           = No_edge_constraint<PolygonMesh>
 #endif
           >
-OutputIterator
+FaceOutputIterator
 connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face,
                     PolygonMesh& pmesh
-                    ,OutputIterator out
+                    , FaceOutputIterator out
                     , EdgeConstraintMap ecmap
 #ifdef DOXYGEN_RUNNING
                     = EdgeConstraintMap(pmesh)
@@ -536,7 +536,7 @@ connected_components(PolygonMesh& pmesh,
                      EdgeConstraintMap ecmap)
 {
 
-  return CGAL::connected_components(pmesh, fcm, ecmap,get(boost::face_index,pmesh));
+  return CGAL::Polygon_mesh_processing::connected_components(pmesh, fcm, ecmap, get(boost::face_index, pmesh));
 }
 
 
@@ -546,7 +546,7 @@ connected_components(PolygonMesh& pmesh,
                      FaceComponentMap& fcm)
 {
 
-  return CGAL::connected_components(pmesh,
+  return CGAL::Polygon_mesh_processing::connected_components(pmesh,
                                     fcm,
                                     internal::No_constraint<PolygonMesh>(pmesh),
                                     get(boost::face_index,pmesh));
@@ -766,7 +766,8 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
                                               EdgeConstraintMap ecmap,
                                               VertexIndexMap vim)
 {
-  return keep_largest_connected_components(pmesh, nb_components_to_keep, ecmap, vim, get(boost::face_index, pmesh));
+  return keep_largest_connected_components(pmesh, nb_components_to_keep, ecmap, vim,
+                                           get(boost::face_index, pmesh));
 }
 
 template <class PolygonMesh, class EdgeConstraintMap>
@@ -774,7 +775,9 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
                                               std::size_t nb_components_to_keep,
                                               EdgeConstraintMap ecmap)
 {
-  return keep_largest_connected_components(pmesh, nb_components_to_keep, ecmap, get(boost::vertex_index, pmesh),, get(boost::face_index, pmesh));
+  return keep_largest_connected_components(pmesh, nb_components_to_keep, ecmap,
+                                           get(boost::vertex_index, pmesh),
+                                           get(boost::face_index, pmesh));
 }
 
 template <class PolygonMesh>
