@@ -41,12 +41,12 @@ class Umbilic
  public:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
-  //  typedef typename TriangleMesh::Traits::Vector_3 Vector_3;
   
-  //contructor
+  //constructor
   Umbilic(const TriangleMesh& P,
           const vertex_descriptor v_init,
 	  const std::list<halfedge_descriptor> contour_init); 
+
   //access fct
   vertex_descriptor vertex() const { return v;}
   Umbilic_type umbilic_type() const { return umb_type;}
@@ -61,13 +61,15 @@ class Umbilic
   const std::list<halfedge_descriptor> contour;
 };
 
+
 //constructor
 template <class TriangleMesh>
 Umbilic<TriangleMesh>::
 Umbilic(const TriangleMesh& P,
         const vertex_descriptor v_init,
 	const std::list<halfedge_descriptor> contour_init) 
-  : P(P), v(v_init), contour(contour_init) {} 
+  : P(P), v(v_init), contour(contour_init)
+{} 
 
 
 template <class TriangleMesh>
@@ -86,15 +88,16 @@ operator<<(std::ostream& out_stream, const Umbilic<TriangleMesh>& umbilic)
     }
   return out_stream;
 }
+
+
 //---------------------------------------------------------------------------
 //Umbilic_approximation : enable computation of umbilics of a
 //TriangleMesh. It uses the class
 //T_PolyhedralSurf_neighbors to compute topological disk patches
 //around vertices
 //--------------------------------------------------------------------------
-template < class TriangleMesh,  
-  class VertexFTMap, class VertexVectorMap >
-  class Umbilic_approximation
+template < class TriangleMesh, class VertexFTMap, class VertexVectorMap >
+class Umbilic_approximation
 {
   
   typedef typename boost::property_map<TriangleMesh,vertex_point_t>::const_type VPM;
@@ -151,8 +154,9 @@ template < class TriangleMesh,
   int compute_type(Umbilic& umb);
 };
 
+
 template < class TriangleMesh,  class VertexFTMap, class VertexVectorMap >
-  Umbilic_approximation< TriangleMesh, VertexFTMap, VertexVectorMap >::
+Umbilic_approximation< TriangleMesh, VertexFTMap, VertexVectorMap >::
 Umbilic_approximation(const TriangleMesh& p, 
 		      const VertexFTMap& vertex2k1_pm, 
 		      const VertexFTMap& vertex2k2_pm,
@@ -166,10 +170,11 @@ Umbilic_approximation(const TriangleMesh& p,
   poly_neighbors = boost::shared_ptr<Poly_neighbors>(new Poly_neighbors(P));
 }
 
+
 template < class TriangleMesh,  class VertexFTMap, class VertexVectorMap >
-  template <class OutputIterator>
-  OutputIterator Umbilic_approximation< TriangleMesh, VertexFTMap, VertexVectorMap >::
-  compute(OutputIterator umbilics_it, FT size)
+template <class OutputIterator>
+OutputIterator Umbilic_approximation< TriangleMesh, VertexFTMap, VertexVectorMap >::
+compute(OutputIterator umbilics_it, FT size)
 {
   CGAL_precondition( size >= 1 );
   
@@ -222,9 +227,10 @@ template < class TriangleMesh,  class VertexFTMap, class VertexVectorMap >
   return umbilics_it;
 }
 
+
 template < class TriangleMesh,  class VertexFTMap, class VertexVectorMap >
-  int Umbilic_approximation< TriangleMesh, VertexFTMap, VertexVectorMap >::
-  compute_type(Umbilic& umb)
+int Umbilic_approximation< TriangleMesh, VertexFTMap, VertexVectorMap >::
+compute_type(Umbilic& umb)
 {
   Vector_3 dir, dirnext, normal;
   double cosinus, angle=0, angleSum=0;
@@ -271,19 +277,20 @@ template < class TriangleMesh,  class VertexFTMap, class VertexVectorMap >
   return 1;
 }
 
+
 //Global function
 
 template < class TriangleMesh,  
-  class VertexFTMap,
-  class VertexVectorMap,
-  class OutputIterator>
-  OutputIterator compute_umbilics(const TriangleMesh &P,
-				  const VertexFTMap& vertex2k1_pm, 
-				  const VertexFTMap& vertex2k2_pm,
-				  const VertexVectorMap& vertex2d1_pm, 
-				  const VertexVectorMap& vertex2d2_pm,
-				  OutputIterator it, 
-				  double size)
+           class VertexFTMap,
+           class VertexVectorMap,
+           class OutputIterator>
+OutputIterator compute_umbilics(const TriangleMesh &P,
+                                const VertexFTMap& vertex2k1_pm, 
+                                const VertexFTMap& vertex2k2_pm,
+                                const VertexVectorMap& vertex2d1_pm, 
+                                const VertexVectorMap& vertex2d2_pm,
+                                OutputIterator it, 
+                                double size)
 {
   typedef Umbilic_approximation < TriangleMesh, 
     VertexFTMap, VertexVectorMap > Umbilic_approximation;

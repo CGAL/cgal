@@ -320,23 +320,23 @@ class Ridge_approximation
 
 // IMPLEMENTATION OF Ridge_approximation members
 /////////////////////////////////////////////////////////////////////////////
- //contructor
+//constructor
 template < class TriangleMesh,  
-  class VertexFTMap,
-  class VertexVectorMap > 
-  Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap >::
-  Ridge_approximation(const TriangleMesh &p,
-		      const VertexFTMap& vertex2k1_pm, 
-		      const VertexFTMap& vertex2k2_pm,
-		      const VertexFTMap& vertex2b0_pm, 
-		      const VertexFTMap& vertex2b3_pm,
-		      const VertexVectorMap& vertex2d1_pm, 
-		      const VertexVectorMap& vertex2d2_pm,
-		      const VertexFTMap& vertex2P1_pm, 
-		      const VertexFTMap& vertex2P2_pm)
-    : P(p), k1(vertex2k1_pm), k2(vertex2k2_pm), b0(vertex2b0_pm), b3(vertex2b3_pm), 
-  P1(vertex2P1_pm), P2(vertex2P2_pm), d1(vertex2d1_pm), d2(vertex2d2_pm),
-  vpm(get(CGAL::vertex_point,p))
+           class VertexFTMap,
+           class VertexVectorMap > 
+Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap >::
+Ridge_approximation(const TriangleMesh &p,
+                    const VertexFTMap& vertex2k1_pm, 
+                    const VertexFTMap& vertex2k2_pm,
+                    const VertexFTMap& vertex2b0_pm, 
+                    const VertexFTMap& vertex2b3_pm,
+                    const VertexVectorMap& vertex2d1_pm, 
+                    const VertexVectorMap& vertex2d2_pm,
+                    const VertexFTMap& vertex2P1_pm, 
+                    const VertexFTMap& vertex2P2_pm)
+  : P(p), k1(vertex2k1_pm), k2(vertex2k2_pm), b0(vertex2b0_pm), b3(vertex2b3_pm), 
+          P1(vertex2P1_pm), P2(vertex2P2_pm), d1(vertex2d1_pm), d2(vertex2d2_pm),
+          vpm(get(CGAL::vertex_point,p))
 {
   //init the is_visited_map and check that the mesh is a triangular one.
   face_iterator itb,ite; 
@@ -359,43 +359,53 @@ template < class TriangleMesh,
   tag_order = Ridge_order_3;
 }
 
+
 template < class TriangleMesh,  
            class VertexFTMap,
            class VertexVectorMap > 
-  template <class OutputIterator>
-  OutputIterator Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap  >::
-  compute_max_ridges(OutputIterator it, Ridge_order ord)
+template <class OutputIterator>
+OutputIterator
+Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap  >::
+compute_max_ridges(OutputIterator it, Ridge_order ord)
 {
   compute_ridges(MAX_RIDGE, it, ord);
   return it;
 }
+
+
 template < class TriangleMesh,  
            class VertexFTMap,
            class VertexVectorMap > 
-  template <class OutputIterator>
-  OutputIterator Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap  >::
-  compute_min_ridges(OutputIterator it, Ridge_order ord)
+template <class OutputIterator>
+OutputIterator
+Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap  >::
+compute_min_ridges(OutputIterator it, Ridge_order ord)
 {
   compute_ridges(MIN_RIDGE, it, ord);
   return it;
 }
+
+
 template < class TriangleMesh,  
            class VertexFTMap,
            class VertexVectorMap > 
-  template <class OutputIterator>
-  OutputIterator Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap  >::
-  compute_crest_ridges(OutputIterator it, Ridge_order ord)
+template <class OutputIterator>
+OutputIterator
+Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap  >::
+compute_crest_ridges(OutputIterator it, Ridge_order ord)
 {
   compute_ridges(CREST_RIDGE, it, ord);
   return it;
 }
 
+
 template < class TriangleMesh,  
            class VertexFTMap,
            class VertexVectorMap > 
-  template <class OutputIterator>
-  OutputIterator Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap  >::
-  compute_ridges(Ridge_interrogation_type r_type, OutputIterator ridge_lines_it, Ridge_order ord)
+template <class OutputIterator>
+OutputIterator
+Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap  >::
+compute_ridges(Ridge_interrogation_type r_type, OutputIterator ridge_lines_it, Ridge_order ord)
 {
   tag_order = ord;
 
@@ -468,10 +478,12 @@ template < class TriangleMesh,
   return ridge_lines_it;
 }
 
+
 template < class TriangleMesh,  
            class VertexFTMap,
            class VertexVectorMap > 
-Ridge_type Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap  >::
+Ridge_type
+Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap  >::
 facet_ridge_type(const face_descriptor f, halfedge_descriptor& he1, halfedge_descriptor&
 		 he2, Ridge_interrogation_type r_type)
 {
@@ -560,10 +572,12 @@ facet_ridge_type(const face_descriptor f, halfedge_descriptor& he1, halfedge_des
   return NO_RIDGE;
 }
 
+
 template < class TriangleMesh,  
            class VertexFTMap,
            class VertexVectorMap > 
-void Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap  >::
+void
+Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap  >::
 xing_on_edge(const halfedge_descriptor he, bool& is_crossed, Ridge_interrogation_type color)
 {
   is_crossed = false;
@@ -586,13 +600,15 @@ xing_on_edge(const halfedge_descriptor he, bool& is_crossed, Ridge_interrogation
   if ( sign < 0 ) is_crossed = true;
 }
 
+
 template < class TriangleMesh,  
            class VertexFTMap,
            class VertexVectorMap > 
-bool Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap  >::
-  tag_as_elliptic_hyperbolic(const Ridge_interrogation_type color,
-			     const halfedge_descriptor he1, 
-			     const halfedge_descriptor he2)
+bool 
+Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap  >::
+tag_as_elliptic_hyperbolic(const Ridge_interrogation_type color,
+                           const halfedge_descriptor he1, 
+                           const halfedge_descriptor he2)
 {
   const vertex_descriptor v_p1 = target(opposite(he1,P),P), v_q1 = target(he1,P),
     v_p2 = target(opposite(he2,P),P), v_q2 = target(he2,P); // hei: pi->qi
@@ -638,15 +654,16 @@ bool Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap  >::
   }
 }
 
+
 template < class TriangleMesh,  
            class VertexFTMap,
            class VertexVectorMap > 
 int Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap  >::
-  b_sign_pointing_to_ridge(const vertex_descriptor v1, 
-			       const vertex_descriptor v2,
-			       const vertex_descriptor v3,
-			       const Vector_3 r1, const Vector_3 r2, 
-			       const Ridge_interrogation_type color)
+b_sign_pointing_to_ridge(const vertex_descriptor v1, 
+                         const vertex_descriptor v2,
+                         const vertex_descriptor v3,
+                         const Vector_3 r1, const Vector_3 r2, 
+                         const Ridge_interrogation_type color)
 {
   Vector_3 r = r2 - r1, dv1, dv2, dv3;
   FT bv1, bv2, bv3;
@@ -680,6 +697,7 @@ int Ridge_approximation< TriangleMesh, VertexFTMap , VertexVectorMap  >::
   if (compt > 0) return 1; else return -1;
 }
 
+
 template < class TriangleMesh,  
            class VertexFTMap,
            class VertexVectorMap > 
@@ -693,6 +711,7 @@ init_ridge_line(Ridge_line* ridge_line,
   ridge_line->line()->push_back(Ridge_halfhedge(h1, bary_coord(h1,r_type)));
   addback(ridge_line, h2, r_type);
 }
+
 
 template < class TriangleMesh,  
            class VertexFTMap,
@@ -735,6 +754,7 @@ addback(Ridge_line* ridge_line, const halfedge_descriptor he,
    } 
   ridge_line->line()->push_back( Ridge_halfhedge(he, coord));
 }
+
 
 template < class TriangleMesh,  
            class VertexFTMap,
@@ -779,6 +799,7 @@ addfront(Ridge_line* ridge_line,
   ridge_line->line()->push_front( Ridge_halfhedge(he, coord));
 }
 
+
 template < class TriangleMesh,  
            class VertexFTMap,
            class VertexVectorMap > 
@@ -808,23 +829,23 @@ bary_coord(const halfedge_descriptor he, const Ridge_type r_type)
 //Global functions
 //--------------------------------------------------------------------------
 template < class TriangleMesh,  
-  class VertexFTMap,
-  class VertexVectorMap,
-  class OutputIterator>
-  OutputIterator compute_max_ridges(const TriangleMesh &P,
-				    const VertexFTMap& vertex2k1_pm, 
-				    const VertexFTMap& vertex2k2_pm,
-				    const VertexFTMap& vertex2b0_pm, 
-				    const VertexFTMap& vertex2b3_pm,
-				    const VertexVectorMap& vertex2d1_pm, 
-				    const VertexVectorMap& vertex2d2_pm,
-				    const VertexFTMap& vertex2P1_pm, 
-				    const VertexFTMap& vertex2P2_pm,
-				    OutputIterator it, 
-				    Ridge_order order = Ridge_order_3)
+           class VertexFTMap,
+           class VertexVectorMap,
+           class OutputIterator>
+OutputIterator compute_max_ridges(const TriangleMesh &P,
+                                  const VertexFTMap& vertex2k1_pm, 
+                                  const VertexFTMap& vertex2k2_pm,
+                                  const VertexFTMap& vertex2b0_pm, 
+                                  const VertexFTMap& vertex2b3_pm,
+                                  const VertexVectorMap& vertex2d1_pm, 
+                                  const VertexVectorMap& vertex2d2_pm,
+                                  const VertexFTMap& vertex2P1_pm, 
+                                  const VertexFTMap& vertex2P2_pm,
+                                  OutputIterator it, 
+                                  Ridge_order order = Ridge_order_3)
 {
   typedef Ridge_approximation < TriangleMesh, 
-    VertexFTMap, VertexVectorMap > Ridge_approximation;
+                                VertexFTMap, VertexVectorMap > Ridge_approximation;
   
   Ridge_approximation ridge_approximation(P, 
 					  vertex2k1_pm, vertex2k2_pm,
@@ -834,24 +855,25 @@ template < class TriangleMesh,
   return ridge_approximation.compute_max_ridges(it, order);  
 }
 
+
 template < class TriangleMesh,  
-  class VertexFTMap,
-  class VertexVectorMap,
-  class OutputIterator>
-  OutputIterator compute_min_ridges(const TriangleMesh &P,
-				    const VertexFTMap& vertex2k1_pm, 
-				    const VertexFTMap& vertex2k2_pm,
-				    const VertexFTMap& vertex2b0_pm, 
-				    const VertexFTMap& vertex2b3_pm,
-				    const VertexVectorMap& vertex2d1_pm, 
-				    const VertexVectorMap& vertex2d2_pm,
-				    const VertexFTMap& vertex2P1_pm, 
-				    const VertexFTMap& vertex2P2_pm,
-				    OutputIterator it, 
-				    Ridge_order order = Ridge_order_3)
+           class VertexFTMap,
+           class VertexVectorMap,
+           class OutputIterator>
+OutputIterator compute_min_ridges(const TriangleMesh &P,
+                                  const VertexFTMap& vertex2k1_pm, 
+                                  const VertexFTMap& vertex2k2_pm,
+                                  const VertexFTMap& vertex2b0_pm, 
+                                  const VertexFTMap& vertex2b3_pm,
+                                  const VertexVectorMap& vertex2d1_pm, 
+                                  const VertexVectorMap& vertex2d2_pm,
+                                  const VertexFTMap& vertex2P1_pm, 
+                                  const VertexFTMap& vertex2P2_pm,
+                                  OutputIterator it, 
+                                  Ridge_order order = Ridge_order_3)
 {
   typedef Ridge_approximation < TriangleMesh, 
-    VertexFTMap, VertexVectorMap > Ridge_approximation;
+                                VertexFTMap, VertexVectorMap > Ridge_approximation;
   
   Ridge_approximation ridge_approximation(P, 
 					  vertex2k1_pm, vertex2k2_pm,
@@ -861,11 +883,12 @@ template < class TriangleMesh,
   return ridge_approximation.compute_min_ridges(it, order);  
 }
 
+
 template < class TriangleMesh,  
-  class VertexFTMap,
-  class VertexVectorMap,
-  class OutputIterator>
-  OutputIterator compute_crest_ridges(const TriangleMesh &P,
+           class VertexFTMap,
+           class VertexVectorMap,
+           class OutputIterator>
+OutputIterator compute_crest_ridges(const TriangleMesh &P,
 				    const VertexFTMap& vertex2k1_pm, 
 				    const VertexFTMap& vertex2k2_pm,
 				    const VertexFTMap& vertex2b0_pm, 
@@ -878,7 +901,7 @@ template < class TriangleMesh,
 				    Ridge_order order = Ridge_order_3)
 {
   typedef Ridge_approximation < TriangleMesh, 
-    VertexFTMap, VertexVectorMap > Ridge_approximation;
+                                VertexFTMap, VertexVectorMap > Ridge_approximation;
   
   Ridge_approximation ridge_approximation(P, 
 					  vertex2k1_pm, vertex2k2_pm,

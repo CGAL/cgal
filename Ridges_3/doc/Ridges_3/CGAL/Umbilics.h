@@ -40,17 +40,18 @@ The class `Umbilic_approximation` computes the approximation of
 umbilics on a triangular polyhedral surface. 
 
 \tparam TriangleMesh is the surface type. 
-\tparam VertexFTMap, VertexVectorMap provide 
+\tparam VertexFTMap
+\tparam VertexVectorMap provide 
 the differential properties of the surface associated to its vertices. 
 
 Requirements (checked at compile time) : 
 - the types `TriangleMesh::Traits::FT` and 
-  `VertexFTMap::value_type` must coincide;
+  `boost::property_traits<VertexFTMap>::value_type` must coincide;
 - the types `TriangleMesh::Traits::Vector_3` and 
-  `VertexVectorMap::value_type` must coincide; 
-- the types `TriangleMesh::Vertex_handle`, 
-  `VertexFTMap::key_type` and 
-  `VertexVectorMap::key_type` must coincide; 
+  `boost::property_traits<VertexVectorMap::value_type` must coincide; 
+- the types `boost::graph_traits<TriangleMesh>::vertex_descriptor`, 
+  `boost::property_traits<VertexFTMap>::key_type` and 
+  `boost::property_traits<VertexVectorMap>::key_type` must coincide; 
 
 \sa `Umbilic` 
 \sa `TriangleMesh` 
@@ -76,13 +77,17 @@ typedef typename TriangleMesh::Traits::FT FT;
 /// @{
 
 /*!
-default constructor. 
+Constructor. 
+\param vertex2k1_pm
+\param vertex2k2_pm
+\param vertex2d1_pm
+\param vertex2d2_pm
 */ 
-Umbilic_approximation(const TriangleMesh& P, 
-                      const VertexFTMap& vertex2k1_pm, 
-                      const VertexFTMap& vertex2k2_pm, 
-                      const VertexVectorMap& vertex2d1_pm, 
-                      const VertexVectorMap& vertex2d2_pm); 
+Umbilic_approximation(const TriangleMesh P, 
+                      VertexFTMap vertex2k1_pm, 
+                      VertexFTMap vertex2k2_pm, 
+                      VertexVectorMap vertex2d1_pm, 
+                      VertexVectorMap vertex2d2_pm); 
   
 /// @} 
 
@@ -92,7 +97,9 @@ Umbilic_approximation(const TriangleMesh& P,
 /*!
 Performs the approximation, `size` determines the size of the 
 patches around vertices, taken as `size` times the size of the 
-1-ring. Umbilics are inserted into the `OutputIterator` `it` with value type `Umbilic*`. 
+1-ring. Umbilics are inserted into `it`.
+
+\tparam OutputIterator an output iterator with value type `Umbilic*`. 
 */ 
 template <class OutputIterator> OutputIterator compute(OutputIterator it, FT size); 
 
@@ -126,12 +133,12 @@ public:
 /*!
 
 */ 
-typedef typename TriangleMesh::Vertex_handle Vertex_handle; 
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor; 
 
 /*!
 
 */ 
-typedef typename TriangleMesh::Halfedge_handle Halfedge_handle; 
+typedef typename TriangleMesh::halfedge_descriptor halfedge_descriptor; 
 
 /// @} 
 
@@ -141,7 +148,7 @@ typedef typename TriangleMesh::Halfedge_handle Halfedge_handle;
 /*!
 
 */ 
-Vertex_handle vertex() const; 
+vertex_descriptor vertex() const; 
 
 /*!
 
@@ -151,7 +158,7 @@ Umbilic_type umbilic_type() const;
 /*!
 
 */ 
-const std::list<Halfedge_handle>& contour_list()const; 
+const std::list<halfedge_descriptor>& contour_list()const; 
 
 /// @}
 
