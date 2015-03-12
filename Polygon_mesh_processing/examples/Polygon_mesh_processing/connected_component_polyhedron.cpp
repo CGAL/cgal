@@ -108,7 +108,7 @@ void mesh_no_id(char* argv1)
 
   std::size_t num = PMP::connected_components(sm,
                                               fccmap,
-                                              PMP::internal::No_constraint<Mesh>(),
+                                              CGAL::Default(),//PMP::internal::No_constraint<Mesh>(),
                                               fim);
   
  std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;

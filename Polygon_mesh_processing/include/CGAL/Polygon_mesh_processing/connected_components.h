@@ -493,7 +493,8 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
 
  * \param pmesh the polygon mesh
  * \param fcm the property map with indices of components associated to faces in `pmesh`
- * \param ecmap the property map containing information about edges of `pmesh` being constrained or not
+ * \param ecmap the property map containing information about edges of `pmesh` being constrained or not.
+          It defaults to a map with all value types being `false`.
  * \param fim the property map containing the index of each face of `pmesh`
  *
  *  \returns the number of connected components.
@@ -502,10 +503,7 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
 template <typename PolygonMesh
         , typename FaceComponentMap
         , typename EdgeConstraintMap
-#ifdef DOXYGEN_RUNNING
-          = internal::No_constraint<PolygonMesh>
-#endif
-, typename FaceIndexMap
+        , typename FaceIndexMap
 #ifdef DOXYGEN_RUNNING
           = typename boost::property_map<PolygonMesh, CGAL::face_index_t>::type
 #endif
@@ -515,7 +513,7 @@ connected_components(PolygonMesh& pmesh,
                      FaceComponentMap& fcm,
                      EdgeConstraintMap ecmap
 #ifdef DOXYGEN_RUNNING
-                     = EdgeConstraintMap()
+                     = CGAL::Default()
 #endif
                      , FaceIndexMap fim
 #ifdef DOXYGEN_RUNNING
@@ -531,6 +529,17 @@ connected_components(PolygonMesh& pmesh,
   return boost::connected_components(finite_dual, fcm, boost::vertex_index_map(fim));
 }
 
+template <typename PolygonMesh
+        , typename FaceComponentMap
+        , typename FaceIndexMap>
+typename boost::property_traits<FaceComponentMap>::value_type
+connected_components(PolygonMesh& pmesh,
+                     FaceComponentMap& fcm,
+                     CGAL::Default,
+                     FaceIndexMap fim)
+{
+  return connected_components(pmesh, fcm, internal::No_constraint<PolygonMesh>(pmesh), fim);
+}
 
 template <typename PolygonMesh, typename EdgeConstraintMap, typename FaceComponentMap>
 typename boost::property_traits<FaceComponentMap>::value_type
