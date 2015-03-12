@@ -50,7 +50,6 @@ struct Polygon_soup
 
     void fill_edges() {
         // Fill edges
-        std::cout<<"FILL_EDGES"<<std::endl;
         edges.clear();
         for(size_type i = 0; i < polygons.size(); ++i)
         {

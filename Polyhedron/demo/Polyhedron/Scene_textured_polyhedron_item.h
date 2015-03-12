@@ -46,7 +46,7 @@ public:
   Bbox bbox() const;
 
   virtual void changed();
-  virtual void shading_mode_changed();
+  virtual void contextual_changed();
   virtual void selection_changed(bool);
 
 private:

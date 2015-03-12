@@ -85,7 +85,7 @@ public slots:
   // Call that once you have finished changing something in the item
   // (either the properties or internal data)
   virtual void changed();
-  virtual void shading_mode_changed();
+  virtual void contextual_changed(){}
 
   // Setters for the four basic properties
   virtual void setColor(QColor c) { color_ = c; }

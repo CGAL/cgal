@@ -62,7 +62,7 @@ public:
 
 public slots:
     virtual void changed();
-    virtual void shading_mode_changed();
+    virtual void contextual_changed();
     virtual void selection_changed(bool);
     void show_only_feature_edges(bool);
     void enable_facets_picking(bool);

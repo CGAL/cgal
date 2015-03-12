@@ -925,7 +925,7 @@ Scene_implicit_function_item::changed()
     initialize_buffers();
 }
 
-void Scene_implicit_function_item::shading_mode_changed()
+void Scene_implicit_function_item::contextual_changed()
 {
     if(!frame_->isManipulated()) {
         if(need_update_) {

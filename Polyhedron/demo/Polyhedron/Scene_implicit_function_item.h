@@ -69,7 +69,7 @@ public:
   virtual void draw_edges(Viewer_interface*) const;
 
   virtual QString toolTip() const;
-  virtual void shading_mode_changed();
+  virtual void contextual_changed();
   virtual void changed();
 public slots:
   void plane_was_moved() { need_update_ = true; }

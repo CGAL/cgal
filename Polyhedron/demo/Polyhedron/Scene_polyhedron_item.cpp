@@ -1090,7 +1090,7 @@ changed()
 }
 void
 Scene_polyhedron_item::
-shading_mode_changed()
+contextual_changed()
 {
     GLint new_shading;
     glGetIntegerv(GL_SHADE_MODEL, &new_shading);

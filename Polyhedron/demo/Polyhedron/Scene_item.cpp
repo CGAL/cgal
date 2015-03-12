@@ -101,10 +101,7 @@ void Scene_item::changed() {
 void Scene_item::selection_changed(bool) {
     // emit itemChanged();
 }
-void Scene_item::shading_mode_changed()
-{
 
-}
 
 void Scene_item::select(double /*orig_x*/,
                         double /*orig_y*/,
