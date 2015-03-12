@@ -91,7 +91,7 @@ public:
   * builds a polygon mesh from a soup of polygons.
   * @pre the input polygon soup is consistently oriented.
   * @tparam PolygonMesh a model of `MutableFaceGraph`
-  * @tparam Point a point type that has the three operators `x()`, `y()`, and `z()`.
+  * @tparam Point a point type that has an operator `[]` to access coordinates
   * @tparam Polygon a `std::vector<std::size_t>` corresponding to the indices
   *         of points in `points`
   */
