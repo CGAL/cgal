@@ -34,21 +34,21 @@ polyline.
 
 
 */
-template < class TriangulatedSurfaceMesh, 
-class Vertex2FTPropertyMap,
-class Vertex2VectorPropertyMap,
-class OutputIterator>
-OutputIterator compute_crest_ridges(const TriangulatedSurfaceMesh &P,
-const Vertex2FTPropertyMap& vertex2k1_pm, const
-Vertex2FTPropertyMap& vertex2k2_pm, const
-Vertex2FTPropertyMap& vertex2b0_pm, const
-Vertex2FTPropertyMap& vertex2b3_pm, const
-Vertex2VectorPropertyMap& vertex2d1_pm, const
-Vertex2VectorPropertyMap& vertex2d2_pm, const
-Vertex2FTPropertyMap& vertex2P1_pm, const
-Vertex2FTPropertyMap& vertex2P2_pm,
-OutputIterator it, 
-CGAL::Ridge_order order = CGAL::Ridge_order_3);
+template < class TriangleMesh, 
+           class VertexFTMap,
+           class VertexVectorMap,
+           class OutputIterator>
+OutputIterator compute_crest_ridges(const TriangleMesh &P,
+                                    const VertexFTMap& vertex2k1_pm,
+                                    const VertexFTMap& vertex2k2_pm,
+                                    const VertexFTMap& vertex2b0_pm,
+                                    const VertexFTMap& vertex2b3_pm,
+                                    const VertexVectorMap& vertex2d1_pm,
+                                    const VertexVectorMap& vertex2d2_pm,
+                                    const VertexFTMap& vertex2P1_pm,
+                                    const VertexFTMap& vertex2P2_pm,
+                                    OutputIterator it, 
+                                    CGAL::Ridge_order order = CGAL::Ridge_order_3);
 
 } /* namespace CGAL */
 
@@ -61,22 +61,22 @@ The function `compute_max_ridges()` is a shortcut to the method of the same name
 of the class `Ridge_approximation`. 
 
 */
-template < class TriangulatedSurfaceMesh, 
-class Vertex2FTPropertyMap,
-class Vertex2VectorPropertyMap,
-class OutputIterator>
-OutputIterator compute_max_ridges(const TriangulatedSurfaceMesh &P,
-const Vertex2FTPropertyMap& vertex2k1_pm, const
-Vertex2FTPropertyMap& vertex2k2_pm, const
-Vertex2FTPropertyMap& vertex2b0_pm, const
-Vertex2FTPropertyMap& vertex2b3_pm, const
-Vertex2VectorPropertyMap& vertex2d1_pm, const
-Vertex2VectorPropertyMap& vertex2d2_pm, const
-Vertex2FTPropertyMap& vertex2P1_pm, const
-Vertex2FTPropertyMap& vertex2P2_pm,
-OutputIterator it, 
-CGAL::Ridge_order order = CGAL::Ridge_order_3);
-
+template < class TriangleMesh, 
+           class VertexFTMap,
+           class VertexVectorMap,
+           class OutputIterator>
+OutputIterator compute_max_ridges(const TriangleMesh &P,
+                                  const VertexFTMap& vertex2k1_pm,
+                                  const VertexFTMap& vertex2k2_pm,
+                                  const VertexFTMap& vertex2b0_pm,
+                                  const VertexFTMap& vertex2b3_pm,
+                                  const VertexVectorMap& vertex2d1_pm,
+                                  const VertexVectorMap& vertex2d2_pm,
+                                  const VertexFTMap& vertex2P1_pm, const
+                                  VertexFTMap& vertex2P2_pm,
+                                  OutputIterator it, 
+                                  CGAL::Ridge_order order = CGAL::Ridge_order_3);
+  
 } /* namespace CGAL */
 
 namespace CGAL {
@@ -89,19 +89,19 @@ of the class `Ridge_approximation`.
 
 
 */
-template < class TriangulatedSurfaceMesh, 
-class Vertex2FTPropertyMap,
-class Vertex2VectorPropertyMap,
+template < class TriangleMesh, 
+class VertexFTMap,
+class VertexVectorMap,
 class OutputIterator>
-OutputIterator compute_min_ridges(const TriangulatedSurfaceMesh &P,
-const Vertex2FTPropertyMap& vertex2k1_pm, const
-Vertex2FTPropertyMap& vertex2k2_pm, const
-Vertex2FTPropertyMap& vertex2b0_pm, const
-Vertex2FTPropertyMap& vertex2b3_pm, const
-Vertex2VectorPropertyMap& vertex2d1_pm, const
-Vertex2VectorPropertyMap& vertex2d2_pm, const
-Vertex2FTPropertyMap& vertex2P1_pm, const
-Vertex2FTPropertyMap& vertex2P2_pm,
+OutputIterator compute_min_ridges(const TriangleMesh &P,
+const VertexFTMap& vertex2k1_pm, const
+VertexFTMap& vertex2k2_pm, const
+VertexFTMap& vertex2b0_pm, const
+VertexFTMap& vertex2b3_pm, const
+VertexVectorMap& vertex2d1_pm, const
+VertexVectorMap& vertex2d2_pm, const
+VertexFTMap& vertex2P1_pm, const
+VertexFTMap& vertex2P2_pm,
 OutputIterator it, 
 CGAL::Ridge_order order = CGAL::Ridge_order_3);
 
@@ -116,23 +116,23 @@ namespace CGAL {
 The class `Ridge_approximation` computes the approximation of 
 ridges of a triangular polyhedral surface. 
 
-\tparam TriangulatedSurfaceMesh is the surface type. 
-\tparam Vertex2FTPropertyMap, Vertex2VectorPropertyMap provide the differential properties of 
+\tparam TriangleMesh is the surface type. 
+\tparam VertexFTMap, VertexVectorMap provide the differential properties of 
 the surface associated to its vertices. 
 
 Requirements (checked at compile time): 
-- the types `TriangulatedSurfaceMesh::Traits::FT` and 
- `Vertex2FTPropertyMap::value_type` must coincide; 
-- the types `TriangulatedSurfaceMesh::Traits::Vector_3` and 
-  `Vertex2VectorPropertyMap::value_type` must coincide; 
-- the types `TriangulatedSurfaceMesh::Vertex_handle`, 
-  `Vertex2FTPropertyMap::key_type` and 
-  `Vertex2VectorPropertyMap::key_type` must coincide; 
+- the types `TriangleMesh::Traits::FT` and 
+ `VertexFTMap::value_type` must coincide; 
+- the types `TriangleMesh::Traits::Vector_3` and 
+  `VertexVectorMap::value_type` must coincide; 
+- the types `TriangleMesh::Vertex_handle`, 
+  `VertexFTMap::key_type` and 
+  `VertexVectorMap::key_type` must coincide; 
 
 \sa `Ridge_line` 
 
 */
-template< typename TriangulatedSurfaceMesh, typename Vertex2FTPropertyMap, typename Vertex2VectorPropertyMap >
+template< typename TriangleMesh, typename VertexFTMap, typename VertexVectorMap >
 class Ridge_approximation {
 public:
 
@@ -159,15 +159,15 @@ the parameter `Tag_3`, in which case these
 property maps shall be initialized with their 
 default constructors. 
 */ 
-Ridge_approximation(const TriangulatedSurfaceMesh &P, 
-const Vertex2FTPropertyMap& vertex2k1_pm, const 
-Vertex2FTPropertyMap& vertex2k2_pm, const 
-Vertex2FTPropertyMap& vertex2b0_pm, const 
-Vertex2FTPropertyMap& vertex2b3_pm, const 
-Vertex2VectorPropertyMap& vertex2d1_pm, const 
-Vertex2VectorPropertyMap& vertex2d2_pm, const 
-Vertex2FTPropertyMap& vertex2P1_pm, const 
-Vertex2FTPropertyMap& vertex2P2_pm); 
+Ridge_approximation(const TriangleMesh &P, 
+const VertexFTMap& vertex2k1_pm, const 
+VertexFTMap& vertex2k2_pm, const 
+VertexFTMap& vertex2b0_pm, const 
+VertexFTMap& vertex2b3_pm, const 
+VertexVectorMap& vertex2d1_pm, const 
+VertexVectorMap& vertex2d2_pm, const 
+VertexFTMap& vertex2P1_pm, const 
+VertexFTMap& vertex2P2_pm); 
 
 /*!
 Outputs ridges of types `MAX_ELLIPTIC_RIDGE` and `MAX_HYPERBOLIC_RIDGE`. 
@@ -209,7 +209,7 @@ barycentric coordinate of the crossing point \f$ r\f$ with the ridge:
 \sa `Ridge_approximation`
 
 */
-template< typename TriangulatedSurfaceMesh >
+template< typename TriangleMesh >
 class Ridge_line {
 public:
 
@@ -219,12 +219,12 @@ public:
 /*!
 
 */ 
-typedef typename TriangulatedSurfaceMesh::Traits::FT FT; 
+typedef typename TriangleMesh::Traits::FT FT; 
 
 /*!
 
 */ 
-typedef typename TriangulatedSurfaceMesh::Halfedge_handle Halfedge_handle; 
+typedef typename TriangleMesh::Halfedge_handle Halfedge_handle; 
 
 /*!
 A halfedge crossed by a ridge is paired with the barycentric 
@@ -271,80 +271,11 @@ const std::list<Ridge_halfhedge>* line() const;
 Writes the line type, strength, sharpness and coordinates of the
 points of the polyline to `o`.
 */
-template< typename TriangulatedSurfaceMesh >
-std::ostream& operator<<(std::ostream& o, const Ridge_line<TriangulatedSurfaceMesh>&);
+template< typename TriangleMesh >
+std::ostream& operator<<(std::ostream& o, const Ridge_line<TriangleMesh>&);
 
 /// @}
 
 }; /* end Ridge_line */
 } /* end namespace CGAL */
 
-namespace CGAL {
-
-/*!
-\ingroup PkgRidges_3
-
-The class `Vertex2Data_Property_Map_with_std_map` is a model of the concepts 
-`Vertex2FTPropertyMap` and `Vertex2VectorPropertyMap` to be used for 
-`Ridge_approximation`. The property maps are 
-created with the `boost::associative_property_map` adaptor from 
-`std::map`. 
-
-\cgalModels `Vertex2FTPropertyMap`
-\cgalModels `Vertex2VectorPropertyMap`
-
-\sa `Ridge_approximation` 
-
-*/
-template< typename TriangulatedSurfaceMesh >
-class Vertex2Data_Property_Map_with_std_map {
-public:
-
-/// \name Types 
-/// @{
-
-/*!
-
-*/ 
-typedef typename TriangulatedSurfaceMesh::Traits::FT FT; 
-
-/*!
-
-*/ 
-typedef typename TriangulatedSurfaceMesh::Traits::Vector_3 Vector_3; 
-
-/*!
-
-*/ 
-typedef typename TriangulatedSurfaceMesh::Vertex_handle Vertex_handle; 
-
-/*!
-  \ingroup PkgRidges_3
-*/
-struct Vertex_cmp{bool operator();}; 
-
-/*!
-
-*/ 
-typedef std::map<Vertex_handle, FT, Vertex_cmp> Vertex2FT_map; 
-
-/*!
-
-*/ 
-typedef boost::associative_property_map< Vertex2FT_map > Vertex2FT_property_map; 
-
-/*!
-
-*/ 
-typedef std::map<Vertex_handle, Vector_3, Vertex_cmp> Vertex2Vector_map; 
-
-/*!
-
-*/ 
-typedef boost::associative_property_map< Vertex2Vector_map > Vertex2Vector_property_map; 
-
-/// @}
-
-}; /* end Vertex2Data_Property_Map_with_std_map */
-
-} /* end namespace CGAL */

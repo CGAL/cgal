@@ -27,9 +27,7 @@
 \cgalClassifedRefPages
 
 ## Concepts ##
-- `TriangulatedSurfaceMesh`
-- `Vertex2FTPropertyMap`
-- `Vertex2VectorPropertyMap`
+- `TriangleMesh`
 
 ## Enums ##
 - `CGAL::Ridge_type`
@@ -37,10 +35,10 @@
 - `CGAL::Umbilic_type`
 
 ## Classes ##
-- `CGAL::Ridge_line<TriangulatedSurfaceMesh>`
-- `CGAL::Umbilic<TriangulatedSurfaceMesh>`
-- `CGAL::Ridge_approximation<TriangulatedSurfaceMesh,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>`
-- `CGAL::Umbilic_approximation<TriangulatedSurfaceMesh,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>`
+- `CGAL::Ridge_line<TriangleMesh>`
+- `CGAL::Umbilic<TriangleMesh>`
+- `CGAL::Ridge_approximation<TriangleMesh,VertexFTMap,VertexVectorMap>`
+- `CGAL::Umbilic_approximation<TriangleMesh,VertexFTMap,VertexVectorMap>`
 
 ## Global Functions ##
 - `CGAL::compute_max_ridges()`

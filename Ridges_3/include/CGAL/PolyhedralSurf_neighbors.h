@@ -31,9 +31,9 @@ namespace CGAL {
 //number giving the max distance from v to the vertices of the
 //triangle incident to the halfedge.
 //---------------------------------------------------------------------------
-template < class TriangularPolyhedralSurface > class T_Gate
+template < class TriangleMesh > class T_Gate
 {
-  typedef typename boost::property_map<TriangularPolyhedralSurface,CGAL::vertex_point_t>::type VPM;
+  typedef typename boost::property_map<TriangleMesh,CGAL::vertex_point_t>::type VPM;
   typedef typename boost::property_traits<VPM>::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel Kernel;
 
@@ -41,23 +41,23 @@ public:
   typedef typename Kernel::FT       FT;
   typedef typename Kernel::Vector_3 Vector_3;
 
-  typedef typename boost::graph_traits<TriangularPolyhedralSurface>::vertex_descriptor    Vertex_const_handle;
-  typedef typename boost::graph_traits<TriangularPolyhedralSurface>::halfedge_descriptor  Halfedge_const_handle;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
  
-  T_Gate(FT d, const Halfedge_const_handle he);
+  T_Gate(FT d, const halfedge_descriptor he);
   FT& d() { return m_d;}
   const FT d() const { return m_d;}            
-  const Halfedge_const_handle he() { return m_he;}
+  const halfedge_descriptor he() { return m_he;}
 
 private:
   FT m_d;
-  Halfedge_const_handle m_he;
+  halfedge_descriptor m_he;
 };
 
 //////////////IMPLEMENTATION//////////////////////////
-template < class TriangularPolyhedralSurface > 
-T_Gate<TriangularPolyhedralSurface>::T_Gate(FT d, 
-					    const Halfedge_const_handle he)
+template < class TriangleMesh > 
+T_Gate<TriangleMesh>::T_Gate(FT d, 
+					    const halfedge_descriptor he)
   : m_d(d), m_he(he)
 {}
 
@@ -80,11 +80,11 @@ struct compare_gates
 //class Gate and the functor compare_gates for the definition of a
 //priority queue
 //---------------------------------------------------------------------------
-template < class TriangularPolyhedralSurface >
+template < class TriangleMesh >
 class T_PolyhedralSurf_neighbors
 {
 
-  typedef typename boost::property_map<TriangularPolyhedralSurface,CGAL::vertex_point_t>::const_type VPM;
+  typedef typename boost::property_map<TriangleMesh,CGAL::vertex_point_t>::const_type VPM;
   typedef typename boost::property_traits<VPM>::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel Kernel;
 
@@ -92,37 +92,37 @@ public:
   typedef typename Kernel::FT        FT;
   typedef typename Kernel::Vector_3  Vector_3;
 
-  typedef typename boost::graph_traits<TriangularPolyhedralSurface>::vertex_descriptor     Vertex_const_handle;
-  typedef typename boost::graph_traits<TriangularPolyhedralSurface>::halfedge_descriptor   Halfedge_const_handle;
-  typedef CGAL::Halfedge_around_target_circulator<TriangularPolyhedralSurface>
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor     vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
+  typedef CGAL::Halfedge_around_target_circulator<TriangleMesh>
   Halfedge_around_vertex_const_circulator;
-  typedef typename boost::graph_traits<TriangularPolyhedralSurface>::vertex_iterator   Vertex_const_iterator;
-  typedef T_Gate<TriangularPolyhedralSurface> Gate;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator   Vertex_const_iterator;
+  typedef T_Gate<TriangleMesh> Gate;
 
-  T_PolyhedralSurf_neighbors(const TriangularPolyhedralSurface& P);
+  T_PolyhedralSurf_neighbors(const TriangleMesh& P);
   // vertex_neigh stores the vertex v and its 1Ring neighbors contour
   // stores halfedges, oriented CW, following the 1Ring disk border
   // OneRingSize is the max distance from v to its OneRing
   // neighbors. (the tag is_visited is not mofified)
-  void compute_one_ring(const Vertex_const_handle v,
-			std::vector<Vertex_const_handle> &vertex_neigh,
-			std::list<Halfedge_const_handle> &contour,
+  void compute_one_ring(const vertex_descriptor v,
+			std::vector<vertex_descriptor> &vertex_neigh,
+			std::list<halfedge_descriptor> &contour,
 			FT &OneRingSize);
   // call compute_one_ring and expand the contour (circle of halfedges
   // CW), vertex_neigh are vertices on and inside the contour (there
   // tag is_visited is set to true, but reset to false at the end),
   // size is such that gates with distance less than size*OneRingSize
   // are processed
-  void compute_neighbors(const Vertex_const_handle v,
-			 std::vector<Vertex_const_handle> &vertex_neigh,
-			 std::list<Halfedge_const_handle> &contour,
+  void compute_neighbors(const vertex_descriptor v,
+			 std::vector<vertex_descriptor> &vertex_neigh,
+			 std::list<halfedge_descriptor> &contour,
 			 const FT size); 
   //vertex tags is_visited are set to false
-  void reset_is_visited_map(std::vector<Vertex_const_handle> &vces);
+  void reset_is_visited_map(std::vector<vertex_descriptor> &vces);
 
 
-  Gate make_gate(const Vertex_const_handle v,
-                 const Halfedge_const_handle he)
+  Gate make_gate(const vertex_descriptor v,
+                 const halfedge_descriptor he)
   {
     Point_3 p0 = get(vpm, v),
       p1 = get(vpm, target(he,P)),
@@ -142,21 +142,21 @@ public:
   /*
   //tag to visit vertices
   struct Vertex_cmp{//comparison is wrt vertex addresses
-    bool operator()(const Vertex_const_handle a, const Vertex_const_handle b) const{
+    bool operator()(const vertex_descriptor a, const vertex_descriptor b) const{
       return &*a < &*b;
     }
   };
   */
-  const TriangularPolyhedralSurface& P;
+  const TriangleMesh& P;
   VPM vpm;
-  typedef std::map<Vertex_const_handle, bool/*, Vertex_cmp*/> Vertex2bool_map;
+  typedef std::map<vertex_descriptor, bool/*, Vertex_cmp*/> Vertex2bool_map;
   Vertex2bool_map is_visited_map;
 };
 
 //////////////IMPLEMENTATION//////////////////////////
-template < class TriangularPolyhedralSurface >
-T_PolyhedralSurf_neighbors < TriangularPolyhedralSurface >::
-T_PolyhedralSurf_neighbors(const TriangularPolyhedralSurface& P)
+template < class TriangleMesh >
+T_PolyhedralSurf_neighbors < TriangleMesh >::
+T_PolyhedralSurf_neighbors(const TriangleMesh& P)
   :P(P), vpm(get(vertex_point,P))
 {
   //init the is_visited_map
@@ -165,11 +165,11 @@ T_PolyhedralSurf_neighbors(const TriangularPolyhedralSurface& P)
   for(;itb!=ite;itb++) is_visited_map[*itb] = false; 
 }
 
-template < class TriangularPolyhedralSurface >
-void T_PolyhedralSurf_neighbors < TriangularPolyhedralSurface >::
-compute_one_ring(const Vertex_const_handle v,
-		 std::vector<Vertex_const_handle> &vertex_neigh,
-		 std::list<Halfedge_const_handle> &contour,
+template < class TriangleMesh >
+void T_PolyhedralSurf_neighbors < TriangleMesh >::
+compute_one_ring(const vertex_descriptor v,
+		 std::vector<vertex_descriptor> &vertex_neigh,
+		 std::list<halfedge_descriptor> &contour,
 		 FT &OneRingSize)
 {
   vertex_neigh.push_back(v);
@@ -186,7 +186,7 @@ compute_one_ring(const Vertex_const_handle v,
 
   //compute OneRingSize = distance(v, 1Ring)
   OneRingSize = 0;
-  typename std::vector<Vertex_const_handle>::const_iterator itb = vertex_neigh.begin(),
+  typename std::vector<vertex_descriptor>::const_iterator itb = vertex_neigh.begin(),
     ite = vertex_neigh.end();
   itb++;//the first vertex v is the center to which distances are
 	//computed from, for other 1ring neighbors
@@ -202,11 +202,11 @@ compute_one_ring(const Vertex_const_handle v,
   }
 }
 
-template < class TriangularPolyhedralSurface >
-void T_PolyhedralSurf_neighbors < TriangularPolyhedralSurface >::
-compute_neighbors(const Vertex_const_handle v,
-		  std::vector<Vertex_const_handle> &vertex_neigh,
-		  std::list<Halfedge_const_handle> &contour,
+template < class TriangleMesh >
+void T_PolyhedralSurf_neighbors < TriangleMesh >::
+compute_neighbors(const vertex_descriptor v,
+		  std::vector<vertex_descriptor> &vertex_neigh,
+		  std::list<halfedge_descriptor> &contour,
 		  const FT size)  
 {
   FT OneRingSize;
@@ -214,12 +214,12 @@ compute_neighbors(const Vertex_const_handle v,
   const FT d_max = OneRingSize*size;
   std::priority_queue< Gate, std::vector< Gate >, compare_gates< Gate > > GatePQ;
   // tag neighbors 
-  typename std::vector<Vertex_const_handle>::const_iterator itbv = vertex_neigh.begin(),
+  typename std::vector<vertex_descriptor>::const_iterator itbv = vertex_neigh.begin(),
     itev = vertex_neigh.end();
   for (; itbv != itev; itbv++) is_visited_map.find(*itbv)->second = true;
 
   // init GatePQ
-  typename std::list<Halfedge_const_handle>::const_iterator itb = contour.begin(),
+  typename std::list<halfedge_descriptor>::const_iterator itb = contour.begin(),
                                        ite = contour.end();
   for (; itb != ite; itb++) {
     if (!( is_border(*itb,P) )) GatePQ.push(make_gate(v, *itb));
@@ -232,10 +232,10 @@ compute_neighbors(const Vertex_const_handle v,
     Gate gate = GatePQ.top();
     GatePQ.pop();
     d_current = gate.d();
-    Halfedge_const_handle he = gate.he(), he1, he2;
-    Vertex_const_handle v1;
+    halfedge_descriptor he = gate.he(), he1, he2;
+    vertex_descriptor v1;
     // find the gate on the contour
-    typename std::list<Halfedge_const_handle>::iterator pos_he, pos_prev, pos_next, iter;
+    typename std::list<halfedge_descriptor>::iterator pos_he, pos_prev, pos_next, iter;
    
     pos_he = find(contour.begin(), contour.end(), he);
     iter = pos_he;
@@ -307,11 +307,11 @@ compute_neighbors(const Vertex_const_handle v,
   reset_is_visited_map(vertex_neigh);
 }
 
-template < class TriangularPolyhedralSurface >
-void T_PolyhedralSurf_neighbors < TriangularPolyhedralSurface >::
-reset_is_visited_map(std::vector<Vertex_const_handle> &vces)
+template < class TriangleMesh >
+void T_PolyhedralSurf_neighbors < TriangleMesh >::
+reset_is_visited_map(std::vector<vertex_descriptor> &vces)
 {
-  typename std::vector<Vertex_const_handle>::const_iterator 
+  typename std::vector<vertex_descriptor>::const_iterator 
     itb = vces.begin(), ite = vces.end();
   for (;itb != ite; itb++) is_visited_map[*itb] = false;
 }

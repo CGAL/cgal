@@ -16,15 +16,15 @@ the class `Umbilic_approximation`.
 
 
 */
-template < class TriangulatedSurfaceMesh, 
-class Vertex2FTPropertyMap,
-class Vertex2VectorPropertyMap,
+template < class TriangleMesh, 
+class VertexFTMap,
+class VertexVectorMap,
 class OutputIterator>
-OutputIterator compute_umbilics(const TriangulatedSurfaceMesh &P,
-const Vertex2FTPropertyMap& vertex2k1_pm, 
-const Vertex2FTPropertyMap& vertex2k2_pm,
-const Vertex2VectorPropertyMap& vertex2d1_pm, 
-const Vertex2VectorPropertyMap& vertex2d2_pm,
+OutputIterator compute_umbilics(const TriangleMesh &P,
+const VertexFTMap& vertex2k1_pm, 
+const VertexFTMap& vertex2k2_pm,
+const VertexVectorMap& vertex2d1_pm, 
+const VertexVectorMap& vertex2d2_pm,
 OutputIterator it, 
 double size);
 
@@ -39,26 +39,26 @@ namespace CGAL {
 The class `Umbilic_approximation` computes the approximation of 
 umbilics on a triangular polyhedral surface. 
 
-\tparam TriangulatedSurfaceMesh is the surface type. 
-\tparam Vertex2FTPropertyMap, Vertex2VectorPropertyMap provide 
+\tparam TriangleMesh is the surface type. 
+\tparam VertexFTMap, VertexVectorMap provide 
 the differential properties of the surface associated to its vertices. 
 
 Requirements (checked at compile time) : 
-- the types `TriangulatedSurfaceMesh::Traits::FT` and 
-  `Vertex2FTPropertyMap::value_type` must coincide;
-- the types `TriangulatedSurfaceMesh::Traits::Vector_3` and 
-  `Vertex2VectorPropertyMap::value_type` must coincide; 
-- the types `TriangulatedSurfaceMesh::Vertex_handle`, 
-  `Vertex2FTPropertyMap::key_type` and 
-  `Vertex2VectorPropertyMap::key_type` must coincide; 
+- the types `TriangleMesh::Traits::FT` and 
+  `VertexFTMap::value_type` must coincide;
+- the types `TriangleMesh::Traits::Vector_3` and 
+  `VertexVectorMap::value_type` must coincide; 
+- the types `TriangleMesh::Vertex_handle`, 
+  `VertexFTMap::key_type` and 
+  `VertexVectorMap::key_type` must coincide; 
 
 \sa `Umbilic` 
-\sa `TriangulatedSurfaceMesh` 
-\sa `Vertex2FTPropertyMap` 
-\sa `Vertex2VectorPropertyMap` 
+\sa `TriangleMesh` 
+\sa `VertexFTMap` 
+\sa `VertexVectorMap` 
 
 */
-template< typename TriangulatedSurfaceMesh, typename Vertex2FTPropertyMap, typename Vertex2VectorPropertyMap >
+template< typename TriangleMesh, typename VertexFTMap, typename VertexVectorMap >
 class Umbilic_approximation {
 public:
 
@@ -68,7 +68,7 @@ public:
 /*!
 
 */ 
-typedef typename TriangulatedSurfaceMesh::Traits::FT FT; 
+typedef typename TriangleMesh::Traits::FT FT; 
 
 /// @} 
 
@@ -78,12 +78,12 @@ typedef typename TriangulatedSurfaceMesh::Traits::FT FT;
 /*!
 default constructor. 
 */ 
-Umbilic_approximation(const TriangulatedSurfaceMesh& P, 
-const Vertex2FTPropertyMap& vertex2k1_pm, 
-const Vertex2FTPropertyMap& vertex2k2_pm, 
-const Vertex2VectorPropertyMap& vertex2d1_pm, 
-const Vertex2VectorPropertyMap& vertex2d2_pm); 
-
+Umbilic_approximation(const TriangleMesh& P, 
+                      const VertexFTMap& vertex2k1_pm, 
+                      const VertexFTMap& vertex2k2_pm, 
+                      const VertexVectorMap& vertex2d1_pm, 
+                      const VertexVectorMap& vertex2d2_pm); 
+  
 /// @} 
 
 /// \name Operations 
@@ -116,7 +116,7 @@ gives the location (3d coordinates of the vertex) and the type.
 \sa `Umbilic_approximation` 
 
 */
-template< typename TriangulatedSurfaceMesh >
+template< typename TriangleMesh >
 class Umbilic {
 public:
 
@@ -126,12 +126,12 @@ public:
 /*!
 
 */ 
-typedef typename TriangulatedSurfaceMesh::Vertex_handle Vertex_handle; 
+typedef typename TriangleMesh::Vertex_handle Vertex_handle; 
 
 /*!
 
 */ 
-typedef typename TriangulatedSurfaceMesh::Halfedge_handle Halfedge_handle; 
+typedef typename TriangleMesh::Halfedge_handle Halfedge_handle; 
 
 /// @} 
 

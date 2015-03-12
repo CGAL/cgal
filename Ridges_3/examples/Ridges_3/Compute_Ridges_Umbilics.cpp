@@ -4,10 +4,13 @@
 #include "PolyhedralSurf_rings.h"
 #include "compute_normals.h"
 #include <CGAL/Ridges.h>
+
 #include <CGAL/Umbilics.h>
 #include <CGAL/Monge_via_jet_fitting.h>
 #include <fstream>
 #include <cassert>
+
+
 
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
@@ -22,45 +25,46 @@ typedef Kernel::FT                      FT;
 typedef Kernel::Point_3                 Point_3;
 typedef Kernel::Vector_3                Vector_3;
 
-typedef boost::graph_traits<PolyhedralSurf>::vertex_descriptor   Vertex_const_handle;
-typedef boost::graph_traits<PolyhedralSurf>::vertex_iterator Vertex_const_iterator;
+typedef boost::graph_traits<PolyhedralSurf>::vertex_descriptor  vertex_descriptor;
+typedef boost::graph_traits<PolyhedralSurf>::vertex_iterator vertex_iterator;
 typedef boost::graph_traits<PolyhedralSurf>::face_descriptor face_descriptor;
 
 typedef T_PolyhedralSurf_rings<PolyhedralSurf> Poly_rings;
 typedef CGAL::Monge_via_jet_fitting<Kernel>    Monge_via_jet_fitting;
 typedef Monge_via_jet_fitting::Monge_form      Monge_form;
 
-typedef CGAL::Vertex2Data_Property_Map_with_std_map<PolyhedralSurf> Vertex2Data_Property_Map_with_std_map;
-typedef Vertex2Data_Property_Map_with_std_map::Vertex2FT_map Vertex2FT_map;
-typedef Vertex2Data_Property_Map_with_std_map::Vertex2Vector_map Vertex2Vector_map;
-typedef Vertex2Data_Property_Map_with_std_map::Vertex2FT_property_map Vertex2FT_property_map;
-typedef Vertex2Data_Property_Map_with_std_map::Vertex2Vector_property_map Vertex2Vector_property_map;
 
-typedef std::map<face_descriptor, Vector_3> Face2Vector_map;
+typedef map<vertex_descriptor, FT> VertexFT_map;
+typedef boost::associative_property_map< VertexFT_map > VertexFT_property_map;
+
+typedef map<vertex_descriptor, Vector_3> VertexVector_map;
+typedef boost::associative_property_map< VertexVector_map > VertexVector_property_map;
+
+typedef map<face_descriptor, Vector_3> Face2Vector_map;
 typedef boost::associative_property_map< Face2Vector_map > Face2Vector_property_map;
 
 //RIDGES
 typedef CGAL::Ridge_line<PolyhedralSurf> Ridge_line;
 typedef CGAL::Ridge_approximation < PolyhedralSurf,
-				    Vertex2FT_property_map,
-				    Vertex2Vector_property_map > Ridge_approximation;
+				    VertexFT_property_map,
+				    VertexVector_property_map > Ridge_approximation;
 //UMBILICS
 typedef CGAL::Umbilic<PolyhedralSurf> Umbilic;
 typedef CGAL::Umbilic_approximation < PolyhedralSurf,
-				      Vertex2FT_property_map,
-				      Vertex2Vector_property_map > Umbilic_approximation;
+				      VertexFT_property_map,
+				      VertexVector_property_map > Umbilic_approximation;
 
 //create property maps
-Vertex2FT_map vertex2k1_map, vertex2k2_map,
+VertexFT_map vertex2k1_map, vertex2k2_map,
   vertex2b0_map, vertex2b3_map,
   vertex2P1_map, vertex2P2_map;
-Vertex2Vector_map vertex2d1_map, vertex2d2_map;
+VertexVector_map vertex2d1_map, vertex2d2_map;
 Face2Vector_map face2normal_map;
 
-Vertex2FT_property_map vertex2k1_pm(vertex2k1_map), vertex2k2_pm(vertex2k2_map),
+VertexFT_property_map vertex2k1_pm(vertex2k1_map), vertex2k2_pm(vertex2k2_map),
   vertex2b0_pm(vertex2b0_map), vertex2b3_pm(vertex2b3_map),
   vertex2P1_pm(vertex2P1_map), vertex2P2_pm(vertex2P2_map);
-Vertex2Vector_property_map vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_map);
+VertexVector_property_map vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_map);
 Face2Vector_property_map  face2normal_pm(face2normal_map);
 
 // default fct parameter values and global variables
@@ -80,13 +84,13 @@ unsigned int min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
    3. nothing is specified
 */
 template <typename VertexPointMap>
-void gather_fitting_points(Vertex_const_handle v,
+void gather_fitting_points(vertex_descriptor v,
 			   std::vector<Point_3> &in_points,
 			   Poly_rings& poly_rings,
                            VertexPointMap vpm)
 {
   //container to collect vertices of v on the PolyhedralSurf
-  std::vector<Vertex_const_handle> gathered;
+  std::vector<vertex_descriptor> gathered;
   //initialize
   in_points.clear();
 
@@ -107,7 +111,7 @@ void gather_fitting_points(Vertex_const_handle v,
   }
 
   //store the gathered points
-  std::vector<Vertex_const_handle>::const_iterator
+  std::vector<vertex_descriptor>::const_iterator
     itb = gathered.begin(), ite = gathered.end();
   CGAL_For_all(itb,ite) in_points.push_back(get(vpm,*itb));
 }
@@ -124,10 +128,10 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
   VPM vpm = get(CGAL::vertex_point,P);
 
   //MAIN LOOP
-  Vertex_const_iterator vitb = P.vertices_begin(), vite = P.vertices_end();
+  vertex_iterator vitb = P.vertices_begin(), vite = P.vertices_end();
   for (; vitb != vite; vitb++) {
     //initialize
-    Vertex_const_handle v = * vitb;
+    vertex_descriptor v = * vitb;
     in_points.clear();
     Monge_form monge_form;
     Monge_via_jet_fitting monge_fit;
@@ -383,3 +387,5 @@ int main()
   }
   return 0;
 }
+
+
