@@ -627,6 +627,22 @@ void remove_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
 }
 
 /**
+* adds and returns the edge `e` connecting `s` and `t`
+* halfedge(e, g) has s as source and t as target
+*/
+template<typename Graph>
+typename boost::graph_traits<Graph>::edge_descriptor
+add_edge(typename boost::graph_traits<Graph>::vertex_descriptor s,
+         typename boost::graph_traits<Graph>::vertex_descriptor t,
+         Graph& g)
+{
+  typename boost::graph_traits<Graph>::edge_descriptor e = add_edge(g);
+  set_target(halfedge(e, g), t, g);
+  set_target(opposite(halfedge(e, g), g), s, g);
+  return e;
+}
+
+/**
 * if possible, adds a new face with vertices from a range with value type
 * `boost::graph_traits<Graph>::vertex_descriptor`.
 * The function adds halfedges between successive vertices if they are not
@@ -799,21 +815,6 @@ add_face(const VertexRange& vr, Graph& g)
   return f;
 }
 
-/**
-* adds and returns the edge `e` connecting `s` and `t`
-* halfedge(e, g) has s as source and t as target
-*/
-template<typename Graph>
-typename boost::graph_traits<Graph>::edge_descriptor
-add_edge(typename boost::graph_traits<Graph>::vertex_descriptor s,
-         typename boost::graph_traits<Graph>::vertex_descriptor t,
-         Graph& g)
-{
-  typename boost::graph_traits<Graph>::edge_descriptor e = add_edge(g);
-  set_target(halfedge(e, g), t, g);
-  set_target(opposite(halfedge(e, g), g), s, g);
-  return e;
-}
 
   /**
    * removes the incident face of `h` and changes all halfedges incident to the face into border halfedges. See `remove_face(g,h)` for a more generalized variant.
