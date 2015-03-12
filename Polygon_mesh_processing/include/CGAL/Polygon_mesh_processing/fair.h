@@ -7,6 +7,21 @@ namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
+  // use non-default weight calculator
+  // WeightCalculator a model of `FairWeightCalculator`, can be omitted to use default Cotangent weights
+  // weight_calculator a function object to calculate weights, defaults to Cotangent weights and can be omitted
+  template<class SparseLinearSolver, class WeightCalculator, class PolygonMesh, class VertexRange>
+  bool fair(PolygonMesh& pmesh,
+    VertexRange vertices,
+    WeightCalculator weight_calculator,
+    Fairing_continuity continuity = FAIRING_C_1
+    )
+  {
+    CGAL::Polygon_mesh_processing::internal::Fair_Polyhedron_3<PolygonMesh,
+      SparseLinearSolver, WeightCalculator> fair_functor(pmesh, weight_calculator);
+    return fair_functor.fair(vertices, continuity);
+  }
+
   /*!
   \ingroup PkgPolygonMeshProcessing
   @brief Function fairing a region on a polygon mesh.
@@ -38,21 +53,6 @@ namespace Polygon_mesh_processing {
     typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh> Weight_calculator;
     return fair<SparseLinearSolver, Weight_calculator, PolygonMesh, VertexRange>
       (pmesh, vertices, Weight_calculator(pmesh), continuity);
-  }
-
-  // use non-default weight calculator
-  // WeightCalculator a model of `FairWeightCalculator`, can be omitted to use default Cotangent weights
-  // weight_calculator a function object to calculate weights, defaults to Cotangent weights and can be omitted
-  template<class SparseLinearSolver, class WeightCalculator, class PolygonMesh, class VertexRange>
-  bool fair(PolygonMesh& pmesh,
-    VertexRange vertices,
-    WeightCalculator weight_calculator,
-    Fairing_continuity continuity = FAIRING_C_1
-    )
-  {
-    CGAL::Polygon_mesh_processing::internal::Fair_Polyhedron_3<PolygonMesh,
-      SparseLinearSolver, WeightCalculator> fair_functor(pmesh, weight_calculator);
-    return fair_functor.fair(vertices, continuity);
   }
 
   //use default SparseLinearSolver
