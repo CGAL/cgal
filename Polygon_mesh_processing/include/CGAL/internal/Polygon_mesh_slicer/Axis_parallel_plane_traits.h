@@ -87,8 +87,8 @@ public:
     result_type
     operator()(const typename Traits::Plane_3&, const Bbox_3& bbox) const
     {
-      return bbox.min(m_cst_coord) <= m_value &&
-             bbox.max(m_cst_coord) >= m_value;
+      return (bbox.min)(m_cst_coord) <= m_value &&
+             (bbox.max)(m_cst_coord) >= m_value;
     }
   };
 
