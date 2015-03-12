@@ -374,16 +374,13 @@ namespace Polygon_mesh_processing{
            that contains it
  *  \param pmesh the polygon mesh
  *  \param out the output iterator that collects faces from the same connected component as `seed_face`
- *  \param ecmap the property map containing information about edges of `pmesh` being constrained or not
-
+ *  \param ecmap the property map containing information about edges of `pmesh` being constrained or not.
+                 It defaults to a map with all value types being `false`.
  *  \returns the output iterator.
  */
 template <typename PolygonMesh
           , typename FaceOutputIterator
           , typename EdgeConstraintMap
-#ifdef DOXYGEN_RUNNING
-          = No_edge_constraint<PolygonMesh>
-#endif
           >
 FaceOutputIterator
 connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face,
@@ -391,7 +388,7 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
                     , FaceOutputIterator out
                     , EdgeConstraintMap ecmap
 #ifdef DOXYGEN_RUNNING
-                    = EdgeConstraintMap(pmesh)
+                    = CGAL::Default()
 #endif
 )
 {
@@ -418,7 +415,17 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
     }
   return out;
 }
-  
+
+template <typename PolygonMesh, typename FaceOutputIterator>
+FaceOutputIterator
+connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face
+                  , PolygonMesh& pmesh
+                  , FaceOutputIterator out
+                  , CGAL::Default)
+{
+  return connected_component(seed_face, pmesh, out, internal::No_constraint<PolygonMesh>(pmesh));
+}
+
 namespace internal {
 
 // A property map 
@@ -471,7 +478,7 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
                     PolygonMesh& pmesh,
                     OutputIterator out)
 {
-  return connected_component(seed_face, pmesh, out,  internal::No_constraint<PolygonMesh>(pmesh));
+  return connected_component(seed_face, pmesh, out, CGAL::Default());
 }
 
 
@@ -592,7 +599,8 @@ connected_components(PolygonMesh& pmesh,
 
  * \param pmesh the polygon mesh
  * \param nb_components_to_keep
- * \param ecmap the property map containing information about edges of `pmesh` being constrained or not
+ * \param ecmap the property map containing information about edges of `pmesh` being constrained or not.
+               It defaults to a map with all value types being `false`.
  * \param vim the property map containing the index of each vertex of `pmesh`
  * \param fim the property map containing the index of each face of `pmesh`
 
