@@ -375,7 +375,7 @@ namespace Polygon_mesh_processing{
  *  \param pmesh the polygon mesh
  *  \param out the output iterator that collects faces from the same connected component as `seed_face`
  *  \param ecmap the property map containing information about edges of `pmesh` being constrained or not.
-                 It defaults to a map with all value types being `false`.
+                 An additional overload without this parameter is available using a property map where no edge is constrained.
  *  \returns the output iterator.
  */
 template <typename PolygonMesh
@@ -386,11 +386,7 @@ FaceOutputIterator
 connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face,
                     PolygonMesh& pmesh
                     , FaceOutputIterator out
-                    , EdgeConstraintMap ecmap
-#ifdef DOXYGEN_RUNNING
-                    = CGAL::Default()
-#endif
-)
+                    , EdgeConstraintMap ecmap)
 {
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
@@ -406,7 +402,7 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
       BOOST_FOREACH(halfedge_descriptor hd,
                     CGAL::halfedges_around_face(halfedge(seed_face, pmesh), pmesh) )
       {
-        if(! ecmap[hd]){
+        if(! get(ecmap, edge(hd, pmesh))){
           face_descriptor neighbor = face( opposite(hd, pmesh), pmesh );
           if ( neighbor != boost::graph_traits<PolygonMesh>::null_face() )
             stack.push_back(neighbor);
@@ -421,18 +417,10 @@ namespace internal {
 // A property map 
 template <typename G>
 struct No_constraint {
-  No_constraint()
-  {}
-
-  No_constraint(G & g)
-    : g(&g) { }
-
-  template <typename T>
-  bool operator[](const T & ) const {
+  friend bool get(No_constraint<G>, typename boost::graph_traits<G>::edge_descriptor)
+  {
     return false;
   }
-
-  G* g;
 };
 
 template <typename PolygonMesh, typename FaceOutputIterator>
@@ -442,7 +430,7 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
                   , FaceOutputIterator out
                   , CGAL::Default)
 {
-  return connected_component(seed_face, pmesh, out, internal::No_constraint<PolygonMesh>(pmesh));
+  return CGAL::Polygon_mesh_processing::connected_component(seed_face, pmesh, out, internal::No_constraint<PolygonMesh>());
 }
 
 // A functor
@@ -457,7 +445,7 @@ struct No_border {
   
   bool operator()(typename boost::graph_traits<G>::edge_descriptor e) const {
     if(! is_border(e,*g)){
-      return ! ecm[e];
+      return ! get(ecm,e);
     }
     return false;
   }
@@ -478,7 +466,7 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
                     PolygonMesh& pmesh,
                     OutputIterator out)
 {
-  return connected_component(seed_face, pmesh, out, CGAL::Default());
+  return internal::connected_component(seed_face, pmesh, out, CGAL::Default());
 }
 
 
@@ -545,7 +533,7 @@ connected_components(PolygonMesh& pmesh,
                      CGAL::Default,
                      FaceIndexMap fim)
 {
-  return connected_components(pmesh, fcm, internal::No_constraint<PolygonMesh>(pmesh), fim);
+  return connected_components(pmesh, fcm, internal::No_constraint<PolygonMesh>(), fim);
 }
 
 template <typename PolygonMesh, typename EdgeConstraintMap, typename FaceComponentMap>
@@ -577,7 +565,7 @@ connected_components(PolygonMesh& pmesh,
 
   return CGAL::Polygon_mesh_processing::connected_components(pmesh,
                                     fcm,
-                                    internal::No_constraint<PolygonMesh>(pmesh),
+                                    internal::No_constraint<PolygonMesh>(),
                                     get(boost::face_index,pmesh));
 }
 
@@ -793,7 +781,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh
                                             , FaceIndexMap fim)
 {
   return keep_largest_connected_components(pmesh, nb_components_to_keep,
-                                           internal::No_constraint<PolygonMesh>(pmesh),
+                                           internal::No_constraint<PolygonMesh>(),
                                            vim,
                                            fim);
 }
@@ -824,7 +812,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
 {
   return keep_largest_connected_components(pmesh,
                                            nb_components_to_keep,
-                                           internal::No_constraint<PolygonMesh>(pmesh),
+                                           internal::No_constraint<PolygonMesh>(),
                                            get(boost::vertex_index, pmesh),
                                            get(boost::face_index, pmesh));
 }

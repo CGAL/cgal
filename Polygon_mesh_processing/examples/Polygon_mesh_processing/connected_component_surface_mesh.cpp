@@ -13,16 +13,20 @@ typedef CGAL::Surface_mesh<Point>          Mesh;
 
 
 template <typename G>
-struct Constraint {
-  typedef typename boost::graph_traits<G>::halfedge_descriptor halfedge_descriptor;
+struct Constraint : public boost::put_get_helper<bool,Constraint<G> >{
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
+  typedef boost::readable_property_map_tag      category;
+  typedef bool                                  value_type;
+  typedef bool                                  reference;
+  typedef edge_descriptor                       key_type;
 
   Constraint()
+    :g(NULL)
   {}
 
   Constraint(G & g, double bound) 
     : g(&g), bound(bound)
-  { }
+  {}
 
   bool operator[](edge_descriptor e) const {
     return compare((*g).point(source(e,*g)),
@@ -37,7 +41,7 @@ struct Constraint {
   double bound;
 };
 
- 
+
 int main(int, char* argv[]) 
 {
   typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;

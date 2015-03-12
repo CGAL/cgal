@@ -16,27 +16,6 @@ typedef Kernel::Point_3                                      Point;
 typedef CGAL::Polyhedron_3<Kernel> Mesh;
 typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> Mesh_with_id;
 
-
-
-
-template <typename G>
-struct Constraint {
-  typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
-
-  Constraint() { }
-
-  Constraint(G & g) : g(&g) { }
-
-  bool operator[](const edge_descriptor&) const {
-    return false; // no constraint
-  }
-
-  G* g;
-};
-
- 
-
-
 void mesh_with_id(char* argv1)
 {
   typedef boost::graph_traits<Mesh_with_id>::vertex_descriptor vertex_descriptor;
@@ -108,7 +87,7 @@ void mesh_no_id(char* argv1)
 
   std::size_t num = PMP::connected_components(sm,
                                               fccmap,
-                                              CGAL::Default(),//PMP::internal::No_constraint<Mesh>(),
+                                              CGAL::Default(),
                                               fim);
   
  std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
@@ -118,7 +97,7 @@ void mesh_no_id(char* argv1)
  
  PMP::keep_largest_connected_components(sm
    , 2
-   , CGAL::Default()//PMP::internal::No_constraint<Mesh>()
+   , CGAL::Default()
    , vim
    , fim);
 
