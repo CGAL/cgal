@@ -64,7 +64,7 @@ public:
     std::vector<vertex_descriptor> vertices(_points.size());
     for (std::size_t i = 0, end = _points.size(); i < end; ++i)
     {
-      Point pi(_points[i].x(), _points[i].y(), _points[i].z());
+      Point_3 pi(_points[i][0], _points[i][1], _points[i][2]);
       vertices[i] = add_vertex(pi, pmesh);
     }
 
