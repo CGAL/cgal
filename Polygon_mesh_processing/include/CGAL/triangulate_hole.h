@@ -293,8 +293,6 @@ namespace Polygon_mesh_processing {
 #else
       use_delaunay_triangulation;
 #endif
-    typedef typename PointRange::iterator InIterator;
-    typedef typename std::iterator_traits<InIterator>::value_type Point_3;
 
     typedef CGAL::internal::Weight_min_max_dihedral_and_area      Weight;
     typedef CGAL::internal::Weight_calculator<Weight,
