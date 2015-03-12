@@ -15,18 +15,18 @@
 
 namespace CGAL {
 
+namespace Polygon_mesh_processing {
+
 /*!
 \ingroup PkgPolygonMeshProcessing
 @brief Fairing continuity type
 */
-enum Fairing_continuity 
-{ 
+enum Fairing_continuity
+{
   FAIRING_C_0 = 0, /**< C0 continuity */
   FAIRING_C_1 = 1,  /**< C1 continuity */
   FAIRING_C_2 = 2   /**< C2 continuity */
 };
-
-namespace Polygon_mesh_processing {
 
 namespace internal {
 
