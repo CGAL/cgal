@@ -133,29 +133,24 @@ void Scene_textured_polyhedron_item::compile_shaders(void)
         "uniform vec3 light_spec; \n"
         "uniform vec3 light_amb;  \n"
         "uniform vec3 color_facets; \n"
-        "uniform sampler2D s_texture; \n"
         "float spec_power = 128.0; \n"
-        "vec3 temp_color; \n"
         "out highp vec3 fColors; \n"
+        "out highp vec2 f_texCoord; \n"
         " \n"
         "void main(void) \n"
         "{ \n"
-        "temp_color = vec3(texture(s_texture, v_texCoord)); \n"
         "   vec4 P = mv_matrix * positions_facets; \n"
         "   vec3 N = mat3(mv_matrix)* vNormals; \n"
         "   vec3 L = light_pos - P.xyz; \n"
-        "   vec3 V = -P.xyz; \n"
         "   N = normalize(N); \n"
         "   L = normalize(L); \n"
-        "   V = normalize(V); \n"
-        "   vec3 R = reflect(-L, N); \n"
         "   vec3 diffuse; \n"
         "   if(is_two_side == 1) \n"
-        "       diffuse = abs(dot(N,L)) * light_diff * temp_color; \n"
+        "       diffuse = abs(dot(N,L)) * light_diff; \n"
         "   else \n"
-        "       diffuse = max(dot(N,L), 0.0) * light_diff * temp_color; \n"
-        "   vec3 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
-        "   fColors =color_facets * (light_amb * temp_color + diffuse + specular); \n"
+        "       diffuse = max(dot(N,L), 0.0) * light_diff; \n"
+        "   f_texCoord = v_texCoord; \n"
+        "   fColors = color_facets * (light_amb + diffuse); \n"
         "   gl_Position =  mvp_matrix *positions_facets; \n"
         "} \n"
     };
@@ -165,12 +160,13 @@ void Scene_textured_polyhedron_item::compile_shaders(void)
         "#version 300 es \n"
         " \n"
         "in highp vec3 fColors; \n"
-
+        "in highp vec2 f_texCoord; \n"
+        "uniform sampler2D s_texture; \n"
         "out highp vec3 color; \n"
         " \n"
         "void main(void) \n"
         "{ \n"
-        " color = fColors; \n"
+        " color = vec3(texture(s_texture, f_texCoord)) * fColors; \n"
         "} \n"
     };
 
@@ -194,7 +190,31 @@ void Scene_textured_polyhedron_item::compile_shaders(void)
     glDeleteShader(vertex_shader);
 
     rendering_program_facets = program;
+    GLint result;
+    glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&result);
+    if(result == GL_TRUE){
+        std::cout<<"Vertex compilation OK"<<std::endl;
+    } else {
+        int maxLength;
+        int length;
+        glGetShaderiv(vertex_shader,GL_INFO_LOG_LENGTH,&maxLength);
+        char* log = new char[maxLength];
+        glGetShaderInfoLog(vertex_shader,maxLength,&length,log);
+        std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
+    }
 
+
+        glGetShaderiv(fragment_shader,GL_COMPILE_STATUS,&result);
+            if(result == GL_TRUE){
+                std::cout<<"Fragment compilation OK"<<std::endl;
+            } else {
+                int maxLength;
+                int length;
+                glGetShaderiv(fragment_shader,GL_INFO_LOG_LENGTH,&maxLength);
+                char* log = new char[maxLength];
+                glGetShaderInfoLog(fragment_shader,maxLength,&length,log);
+                std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
+            }
     //For the edges
     static const GLchar* vertex_shader_source_lines[] =
     {
@@ -204,14 +224,13 @@ void Scene_textured_polyhedron_item::compile_shaders(void)
         "layout (location = 4) in vec2 v_texCoord; \n"
         "uniform vec3 color_lines; \n"
         "uniform mat4 mvp_matrix; \n"
-        "uniform sampler2D s_texture; \n"
         "out highp vec3 fColors; \n"
-        "vec3 temp_color; \n"
+        "out highp vec2 f_texCoord; \n"
         " \n"
         "void main(void) \n"
         "{ \n"
-        "   temp_color = vec3(texture(s_texture, v_texCoord)); \n"
-        "   fColors = temp_color * color_lines; \n"
+        "   f_texCoord = v_texCoord; \n"
+        "   fColors = color_lines; \n"
         "   gl_Position = mvp_matrix * positions_lines; \n"
         "} \n"
     };
@@ -230,6 +249,18 @@ void Scene_textured_polyhedron_item::compile_shaders(void)
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
     rendering_program_lines = program;
+    glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&result);
+    if(result == GL_TRUE){
+        std::cout<<"Vertex compilation OK"<<std::endl;
+    } else {
+        int maxLength;
+        int length;
+        glGetShaderiv(vertex_shader,GL_INFO_LOG_LENGTH,&maxLength);
+        char* log = new char[maxLength];
+        glGetShaderInfoLog(vertex_shader,maxLength,&length,log);
+        std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
+    }
+
     //Clean-up
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
