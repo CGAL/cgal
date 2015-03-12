@@ -39,12 +39,13 @@
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/internal/corefinement/Polyhedron_constness_types.h>
+#include <CGAL/Default.h>
 
 namespace CGAL {
  namespace internal{
    namespace corefinement{
 
-template <class Polyhedron>
+template <typename Polyhedron>
 struct Compare_handle_ptr{
   typedef typename Polyhedron::Facet_const_handle  Facet_const_handle;
   typedef typename Polyhedron::Vertex_const_handle Vertex_const_handle;
@@ -59,11 +60,11 @@ struct Compare_handle_ptr{
 };
 
 struct Dummy_true{
-  template <class T>
+  template <typename T>
   bool operator()(T) const  {return true;}
 };
 
-template <class Polyhedron,class HDS=typename Polyhedron::HalfedgeDS>
+template <typename Polyhedron,typename HDS=typename Polyhedron::HalfedgeDS>
 class Build_polyhedron_subset : public ::CGAL::Modifier_base<HDS> {
   typedef typename Polyhedron::Facet_const_handle Facet_const_handle;
   typedef typename Polyhedron::Vertex_const_handle Vertex_const_handle;
@@ -73,7 +74,7 @@ class Build_polyhedron_subset : public ::CGAL::Modifier_base<HDS> {
   std::list<Vertex_const_handle> points;
   std::list< std::vector<unsigned int> > facets;
     
-  template <class Facet_iterator>
+  template <typename Facet_iterator>
   typename Polyhedron::Halfedge_const_handle get_facet_halfedge(Facet_iterator facet_it) const
   {
     return (*facet_it)->halfedge();
@@ -85,7 +86,7 @@ class Build_polyhedron_subset : public ::CGAL::Modifier_base<HDS> {
   }
   
 public:
-  template <class Facets_const_iterator>
+  template <typename Facets_const_iterator>
   Build_polyhedron_subset(const Polyhedron&,Facets_const_iterator begin,Facets_const_iterator end) 
   {
     typedef std::map<Vertex_const_handle,unsigned int,Compare_handle_ptr<Polyhedron> > Vertices;
@@ -131,7 +132,7 @@ public:
 
 
 
-template <class Polyhedron,class Adjacency_criterium,class Face_to_UF_handle_map,class Result>
+template <typename Polyhedron,typename Adjacency_criterium,typename Face_to_UF_handle_map,typename Result>
 void extract_connected_components(
   Polyhedron& P,
   const Adjacency_criterium& adjacent,
@@ -182,7 +183,7 @@ void extract_connected_components(
   }
 }
 
-template <class Polyhedron,class Adjacency_criterium,class Output_iterator>
+template <typename Polyhedron,typename Adjacency_criterium,typename Output_iterator>
 void extract_connected_components(const Polyhedron& P,const Adjacency_criterium& adjacent,Output_iterator out)
 {
   typedef typename Polyhedron::Facet_const_handle Facet_const_handle;
@@ -208,7 +209,7 @@ void extract_connected_components(const Polyhedron& P,const Adjacency_criterium&
   }
 }
 
-template <class Polyhedron, class Adjacency_criterium, class Face_marker>
+template <typename Polyhedron, typename Adjacency_criterium, typename Face_marker>
 void mark_connected_components(Polyhedron& P, const Adjacency_criterium& adjacent, Face_marker& face_marker)
 {
   typedef typename Polyhedron::Facet_handle Facet_handle;
@@ -232,7 +233,7 @@ void mark_connected_components(Polyhedron& P, const Adjacency_criterium& adjacen
   }
 }
 
-template <class Polyhedron, class Adjacency_criterium, class Face_marker, class OutputIterator>
+template <typename Polyhedron, typename Adjacency_criterium, typename Face_marker, typename OutputIterator>
 OutputIterator
 mark_connected_components(Polyhedron& P, const Adjacency_criterium& adjacent, Face_marker& face_marker, OutputIterator out)
 {
@@ -259,13 +260,13 @@ mark_connected_components(Polyhedron& P, const Adjacency_criterium& adjacent, Fa
   return out;
 }
 
-template <class Polyhedron,class Output_iterator>
+template <typename Polyhedron,typename Output_iterator>
 void extract_connected_components(const Polyhedron& P,Output_iterator out)
 {
   extract_connected_components(P,Dummy_true(),out);
 }
 
-template <class Polyhedron, class Polyhedron_facet_index_map>
+template <typename Polyhedron, typename Polyhedron_facet_index_map>
 std::size_t
 init_facet_indices(
   const Polyhedron& P,
@@ -283,7 +284,7 @@ init_facet_indices(
 }
 
 // alternative method by propagation
-template <class Polyhedron, class Adjacency_criterium, class Polyhedron_facet_index_map>
+template <typename Polyhedron, typename Adjacency_criterium, typename Polyhedron_facet_index_map>
 std::size_t
 mark_connected_components_v2(
   const Polyhedron& P,
@@ -377,9 +378,9 @@ namespace Polygon_mesh_processing{
 
  *  \returns the output iterator.
  */
-template <class PolygonMesh
-          , class FaceOutputIterator
-          , class EdgeConstraintMap
+template <typename PolygonMesh
+          , typename FaceOutputIterator
+          , typename EdgeConstraintMap
 #ifdef DOXYGEN_RUNNING
           = No_edge_constraint<PolygonMesh>
 #endif
@@ -464,7 +465,7 @@ struct No_border {
  
 
 
-template <class PolygonMesh, class OutputIterator>
+template <typename PolygonMesh, typename OutputIterator>
 OutputIterator
 connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face,
                     PolygonMesh& pmesh,
@@ -498,11 +499,13 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
  *  \returns the number of connected components.
  */
 
-template <class PolygonMesh, class FaceComponentMap, class EdgeConstraintMap
+template <typename PolygonMesh
+        , typename FaceComponentMap
+        , typename EdgeConstraintMap
 #ifdef DOXYGEN_RUNNING
           = internal::No_constraint<PolygonMesh>
 #endif
-, class FaceIndexMap
+, typename FaceIndexMap
 #ifdef DOXYGEN_RUNNING
           = typename boost::property_map<PolygonMesh, CGAL::face_index_t>::type
 #endif
@@ -529,7 +532,7 @@ connected_components(PolygonMesh& pmesh,
 }
 
 
-template <class PolygonMesh, class EdgeConstraintMap, class FaceComponentMap>
+template <typename PolygonMesh, typename EdgeConstraintMap, typename FaceComponentMap>
 typename boost::property_traits<FaceComponentMap>::value_type
 connected_components(PolygonMesh& pmesh,
                      FaceComponentMap& fcm,
@@ -540,7 +543,7 @@ connected_components(PolygonMesh& pmesh,
 }
 
 
-template <class PolygonMesh, class FaceComponentMap>
+template <typename PolygonMesh, typename FaceComponentMap>
 typename boost::property_traits<FaceComponentMap>::value_type
 connected_components(PolygonMesh& pmesh,
                      FaceComponentMap& fcm)
@@ -577,15 +580,15 @@ connected_components(PolygonMesh& pmesh,
  *  \return the number of connected components erased (ignoring isolated vertices).
  */
 
-template <class PolygonMesh, class EdgeConstraintMap
+template <typename PolygonMesh, typename EdgeConstraintMap
 #ifdef DOXYGEN_RUNNING
           = internal::No_constraint<PolygonMesh>
 #endif
-, class VertexIndexMap
+, typename VertexIndexMap
 #ifdef DOXYGEN_RUNNING
           = typename boost::property_map<PolygonMesh, CGAL::vertex_index_t>::type
 #endif
-, class FaceIndexMap
+, typename FaceIndexMap
 #ifdef DOXYGEN_RUNNING
           = typename boost::property_map<PolygonMesh, CGAL::face_index_t>::type
 #endif
@@ -760,7 +763,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
 
 
 
-template <class PolygonMesh, class EdgeConstraintMap, class VertexIndexMap>
+template <typename PolygonMesh, typename EdgeConstraintMap, typename VertexIndexMap>
 std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
                                               std::size_t nb_components_to_keep,
                                               EdgeConstraintMap ecmap,
@@ -770,7 +773,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
                                            get(boost::face_index, pmesh));
 }
 
-template <class PolygonMesh, class EdgeConstraintMap>
+template <typename PolygonMesh, typename EdgeConstraintMap>
 std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
                                               std::size_t nb_components_to_keep,
                                               EdgeConstraintMap ecmap)
@@ -780,7 +783,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
                                            get(boost::face_index, pmesh));
 }
 
-template <class PolygonMesh>
+template <typename PolygonMesh>
 std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
                                               std::size_t nb_components_to_keep)
 {
