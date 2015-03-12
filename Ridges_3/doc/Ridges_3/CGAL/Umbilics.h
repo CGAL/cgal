@@ -20,7 +20,7 @@ template < class TriangleMesh,
 class VertexFTMap,
 class VertexVectorMap,
 class OutputIterator>
-OutputIterator compute_umbilics(const TriangleMesh &P,
+OutputIterator compute_umbilics(const TriangleMesh &tm,
 const VertexFTMap& vertex2k1_pm, 
 const VertexFTMap& vertex2k2_pm,
 const VertexVectorMap& vertex2d1_pm, 
@@ -41,7 +41,7 @@ umbilics on a triangular polyhedral surface.
 
 \tparam TriangleMesh is the surface type. 
 \tparam VertexFTMap
-\tparam VertexVectorMap provide 
+bUm\tparam VertexVectorMap provide 
 the differential properties of the surface associated to its vertices. 
 
 Requirements (checked at compile time) : 
@@ -78,12 +78,14 @@ typedef typename TriangleMesh::Traits::FT FT;
 
 /*!
 Constructor. 
+
+\param tm the triangle mesh
 \param vertex2k1_pm
 \param vertex2k2_pm
 \param vertex2d1_pm
 \param vertex2d2_pm
 */ 
-Umbilic_approximation(const TriangleMesh P, 
+Umbilic_approximation(const TriangleMesh& tm, 
                       VertexFTMap vertex2k1_pm, 
                       VertexFTMap vertex2k2_pm, 
                       VertexVectorMap vertex2d1_pm, 

@@ -39,7 +39,7 @@ template < class TriangleMesh,
            class VertexFTMap,
            class VertexVectorMap,
            class OutputIterator>
-OutputIterator compute_crest_ridges(const TriangleMesh &P,
+OutputIterator compute_crest_ridges(const TriangleMesh &tm,
                                     VertexFTMap vertex2k1_pm,
                                     VertexFTMap vertex2k2_pm,
                                     VertexFTMap vertex2b0_pm,
@@ -66,7 +66,7 @@ template < class TriangleMesh,
            class VertexFTMap,
            class VertexVectorMap,
            class OutputIterator>
-OutputIterator compute_max_ridges(const TriangleMesh &P,
+OutputIterator compute_max_ridges(const TriangleMesh &tm,
                                   VertexFTMap vertex2k1_pm,
                                   VertexFTMap vertex2k2_pm,
                                   VertexFTMap vertex2b0_pm,
@@ -94,7 +94,7 @@ template < class TriangleMesh,
 class VertexFTMap,
 class VertexVectorMap,
 class OutputIterator>
-OutputIterator compute_min_ridges(const TriangleMesh &P,
+OutputIterator compute_min_ridges(const TriangleMesh &tm,
                                   VertexFTMap vertex2k1_pm, 
                                   VertexFTMap vertex2k2_pm,
                                   VertexFTMap vertex2b0_pm,
@@ -161,6 +161,7 @@ the parameter `Tag_3`, in which case these
 property maps shall be initialized with their 
 default constructors. 
 
+\param tm the triangle mesh
 \param vertex2k1_pm
 \param vertex2k2_pm
 \param vertex2b0_pm
@@ -170,7 +171,7 @@ default constructors.
 \param vertex2P1_pm
 \param vertex2P2_pm
 */ 
-Ridge_approximation(const TriangleMesh &P, 
+Ridge_approximation(const TriangleMesh &tm, 
                     VertexFTMap vertex2k1_pm,
                     VertexFTMap vertex2k2_pm,
                     VertexFTMap vertex2b0_pm,
@@ -282,7 +283,7 @@ Writes the line type, strength, sharpness and coordinates of the
 points of the polyline to `os`.
 */
 template< typename TriangleMesh >
-std::ostream& operator<<(std::ostream& os, const Ridge_line<TriangleMesh>&);
+std::ostream& operator<<(std::ostream& os, const Ridge_line<TriangleMesh>& r);
 
 /// @}
 
