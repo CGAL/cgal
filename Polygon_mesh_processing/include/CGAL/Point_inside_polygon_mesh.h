@@ -41,7 +41,7 @@ namespace CGAL {
 
  * @tparam TriangleMesh a triangulated polyhedral surface, a model of `FaceListGraph`
  * @tparam Kernel a \cgal kernel
- * @tparam VertexPointMap is a model of `ReadablePropertyMap` with
+ * @tparam VertexPointMap a model of `ReadablePropertyMap` with
          `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
          `Kernel::Point_3` as value type.
  *   The default is `typename boost::property_map< TriangleMesh,vertex_point_t>::%type`.
