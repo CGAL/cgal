@@ -4,6 +4,7 @@
 #include <cmath>
 #include <map>
 #include <set>
+#include <list>
 
 #include <CGAL/assertions.h>
 #include <CGAL/trace.h>
