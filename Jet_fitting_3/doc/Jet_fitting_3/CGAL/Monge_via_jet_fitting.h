@@ -142,9 +142,9 @@ FT fourth_order_coefficients(size_t i) const;
 
 /*!
 change principal basis and Monge coefficients so that the 
-given_normal and the Monge normal make an acute angle. 
+`given_normal` and the Monge normal make an acute angle. 
 If 
-given_normal.monge_normal \f$ < 0\f$ then change the orientation: if 
+`given_normal * normal_direction()  < 0` then change the orientation: if 
 \f$ z=g(x,y)\f$ in the basis (d1,d2,n) then in the basis (d2,d1,-n) 
 \f$ z=h(x,y)=-g(y,x)\f$. 
 */ 
