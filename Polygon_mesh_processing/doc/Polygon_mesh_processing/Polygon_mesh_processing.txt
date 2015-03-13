@@ -15,7 +15,9 @@ namespace CGAL {
 This package implements various methods for polygon mesh processing.
 A "polygon mesh" is a consistent 
 	\cgalCite{botsch2010PMP}
-	
+
+  This package follows the BGL API
+  \todo add link to BGL package
 
 ********************************************
 \section PMPHoleFilling Hole Filling
@@ -59,19 +61,16 @@ Note that refinement and fairing functions can be applied to an arbitrary region
 
 \subsection HFExamples Examples
 
-\subsubsection HFExample_1 Example: Triangulating a Polyline
+\subsubsection HFExample_1 Triangulate a polyline
 \cgalExample{Polygon_mesh_processing/triangulate_polyline_example.cpp}
 
 
-\subsubsection HFExample_2 Example: Refining a Region on a Mesh
-\cgalExample{Polygon_mesh_processing/refine_polyhedron_example.cpp}
+\subsubsection HFExample_2 Refine and fair a region on a polygon mesh
+\cgalExample{Polygon_mesh_processing/refine_fair_example.cpp}
 
 \cgalFigureBegin{Max_refine, max_refine.png}
 Result of refine example. 
 \cgalFigureEnd
-
-\subsubsection HFExample_3 Example: Fairing a Region on a Mesh
-\cgalExample{Polygon_mesh_processing/fair_polyhedron_example.cpp}
 
 \cgalFigureBegin{Max_fair, max_fair.png}
 Result of fairing example. 
@@ -106,6 +105,7 @@ Self intersections can be detected and collected from a triangle mesh, using the
 and `CGAL::Polygon_mesh_processing::self_intersections()`.
 
 \subsubsection Example
+\cgalExample{Polygon_mesh_processing/self_intersections_example.cpp}
 
 
 \subsection InsideTest Inside test
@@ -114,21 +114,26 @@ The class `CGAL::Point_inside_polygon_mesh` provides a functor that tests whethe
 inside, outside, or on the boundary of the domain described by a given closed polygon mesh.
 
 \subsubsection Example
+\cgalExample{Polygon_mesh_processing/point_inside_example.cpp}
 
 
 ****************************************
 \section PMPRepairing Combinatorial Repairing 
 
-\subsection API
-
-\subsubsection Stitching
+\subsection Stitching
 - \link stitching_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
 
-\subsubsection Polygon soups
+\subsubsection Example
+\cgalExample{Polygon_mesh_processing/stitch_borders_example.cpp}
+
+
+\subsection PolygonSoups Polygon soups
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 
-\subsection Examples
+\subsubsection Example
+\cgalExample{Polygon_mesh_processing/polygon_soup_example.cpp}
+
 
 ****************************************
 \section PMPMeshing Meshing
@@ -137,11 +142,11 @@ inside, outside, or on the boundary of the domain described by a given closed po
 - `CGAL::Polygon_mesh_processing::refine()`
 - `CGAL::Polygon_mesh_processing::triangulate_faces()`
 
-\subsection Examples
-
+\subsection Example
+\todo : reorder meshing and hole filling sections
 
 ****************************************
-\section PMPNormalComp Normal Computation
+\section PMPNormalComp Normals Computation
 \subsection API
 - `CGAL::Polygon_mesh_processing::compute_face_normal()`
 - `CGAL::Polygon_mesh_processing::compute_vertex_normal()`
@@ -149,7 +154,8 @@ inside, outside, or on the boundary of the domain described by a given closed po
 - `CGAL::Polygon_mesh_processing::compute_face_normals()`
 - `CGAL::Polygon_mesh_processing::compute_vertex_normals()`
 
-\subsection Examples
+\subsection Example
+\cgalExample{Polygon_mesh_processing/compute_normals_example.cpp}
 
 
 ****************************************
@@ -157,8 +163,8 @@ inside, outside, or on the boundary of the domain described by a given closed po
 \subsection API
 - `CGAL::Polygon_mesh_slicer`
 
-\subsection Examples
-
+\subsection Example
+\cgalExample{Polygon_mesh_processing/mesh_slicer_example.cpp}
 
 ****************************************
 \section PMPConnectedComponents Connected components
@@ -168,7 +174,7 @@ inside, outside, or on the boundary of the domain described by a given closed po
 - `CGAL::Polygon_mesh_processing::connected_components()`
 
 \subsection Examples
-
+\cgalExample{Polygon_mesh_processing/connected_components_example.cpp}
 
 */
 } /* namespace CGAL */
