@@ -12,7 +12,7 @@ enum Umbilic_type { NON_GENERIC_UMBILIC, ELLIPTIC_UMBILIC, HYPERBOLIC_UMBILIC };
 \ingroup PkgRidges_3
 
 The function `compute_umbilics()` is a shortcut to the 
-method `Umbilic_approximation::compute()`. 
+method `Umbilic_approximation::compute()`.  See `Umbilic_approximation::Umbilic_approximation()` for an explanation of the parameters.
 
 
 */
@@ -21,11 +21,11 @@ class VertexFTMap,
 class VertexVectorMap,
 class OutputIterator>
 OutputIterator compute_umbilics(const TriangleMesh &tm,
-const VertexFTMap& vertex_k1_pm, 
-const VertexFTMap& vertex_k2_pm,
-const VertexVectorMap& vertex_d1_pm, 
-const VertexVectorMap& vertex_d2_pm,
-OutputIterator it, 
+                                VertexFTMap vertex_k1_pm, 
+                                VertexFTMap vertex_k2_pm,
+                                VertexVectorMap vertex_d1_pm, 
+                                VertexVectorMap vertex_d2_pm,
+                                OutputIterator it, 
 double size);
 
 } /* namespace CGAL */

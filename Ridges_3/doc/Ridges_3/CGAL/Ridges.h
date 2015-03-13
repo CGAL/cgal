@@ -26,9 +26,9 @@ enum Ridge_type {
 /*!
 \ingroup PkgRidges_3
 
-The function `compute_crest_ridges()` is a shortcut to the 
-method `Ridge_approximation::compute_crest_ridges()`. 
-
+The function `compute_crest_ridges()` is a shortcut to the
+method `Ridge_approximation::compute_crest_ridges()`.
+See `Ridge_approximation::Ridge_approximation()` for an explanation of the parameters.
 
 
 */
@@ -55,9 +55,9 @@ namespace CGAL {
 /*!
 \ingroup PkgRidges_3
 
-The function `compute_max_ridges()` is a shortcut to the 
-method `Ridge_approximation::compute_max_ridges()`. 
-
+The function `compute_max_ridges()` is a shortcut to the
+method `Ridge_approximation::compute_max_ridges()`.
+See `Ridge_approximation::Ridge_approximation()` for an explanation of the parameters.
 */
 template < class TriangleMesh, 
            class VertexFTMap,
@@ -82,8 +82,9 @@ namespace CGAL {
 /*!
 \ingroup PkgRidges_3
 
-The function `compute_min_ridges()` is a shortcut to 
-the method `Ridge_approximation::compute_min_ridges()`. 
+The function `compute_min_ridges()` is a shortcut to
+the method `Ridge_approximation::compute_min_ridges()`.
+See `Ridge_approximation::Ridge_approximation()` for an explanation of the parameters.
 
 
 */
