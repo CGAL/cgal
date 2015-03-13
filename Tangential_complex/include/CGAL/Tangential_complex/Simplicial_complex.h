@@ -74,10 +74,10 @@ public:
     }
 
     // For each non-maximal k-face F, if F has only one maximal coface Cf:
-    // - Look for the other k-faces F2 of Cf in the map and:
+    // - Look for the other k-faces F2, F3... of Cf in the map and:
     //    * if the list contains only Cf, clear the list (we don't remove the
-    //      list since it was create troubles with the iterators) and add f2
-    //      to the complex
+    //      list since it creates troubles with the iterators) and add the F2,
+    //      F3... to the complex
     //    * otherwise, remove Cf from the associated list
     // - Remove Cf from the complex
     for (Cofaces_map::const_iterator it_map_elt = cofaces_map.begin(),
