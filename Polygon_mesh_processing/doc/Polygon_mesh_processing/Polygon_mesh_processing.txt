@@ -87,19 +87,33 @@ Result of fairing example.
 
 This packages provides some predicates to be evaluated with respect to a polygon mesh.
 
-\subsection API
+\subsection Orientation
 
-\subsubsection Orientation
-- `CGAL::Polygon_mesh_processing::is_outward_oriented()`
+The function `CGAL::Polygon_mesh_processing::is_outward_oriented()` checks whether 
+the polygon mesh is oriented such that the normals to faces are oriented towards the
+outside of the domain bounded by the input polygon mesh.
 
-\subsubsection Self intersections
-- `CGAL::Polygon_mesh_processing::is_self_intersecting()`
-- `CGAL::Polygon_mesh_processing::self_intersections()`
+\todo talk about inside_out, from Polyhedron_3
+\todo implement inside_out for PolygonMesh?
 
-\subsubsection InsideTest Inside test
-- `CGAL::Point_inside_polygon_mesh`
+\subsubsection Example
 
-\subsection Examples
+
+\subsection PMPSelIntersections Self intersections
+
+Self intersections can be detected and collected from a triangle mesh, using the two functions
+`CGAL::Polygon_mesh_processing::is_self_intersecting()`
+and `CGAL::Polygon_mesh_processing::self_intersections()`.
+
+\subsubsection Example
+
+
+\subsection InsideTest Inside test
+
+The class `CGAL::Point_inside_polygon_mesh` provides a functor that tests whether a query point is 
+inside, outside, or on the boundary of the domain described by a given closed polygon mesh.
+
+\subsubsection Example
 
 
 ****************************************
