@@ -1,54 +1,77 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/iterator.h>
-#include <CGAL/Polygon_mesh_processing/refine.h>
-
-#include <iostream>
-#include <fstream>
-#include <functional>
-
-#include <boost/iterator/transform_iterator.hpp>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
+
+#include <CGAL/Polygon_mesh_processing/refine.h>
+#include <CGAL/Polygon_mesh_processing/fair.h>
+
+#include <fstream>
+#include <map>
+
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+
 typedef CGAL::Polyhedron_3<Kernel>  Polyhedron;
-typedef Polyhedron::Facet_handle    Facet_handle;
 typedef Polyhedron::Vertex_handle   Vertex_handle;
-typedef Polyhedron::Facet           Facet;
 
-struct Facet_to_facet_handle 
-  : public std::unary_function<Facet&, Facet_handle>
+// extract vertices which are at most k (inclusive) far from vertex v
+std::vector<Vertex_handle> extract_k_ring(Vertex_handle v, int k)
 {
-  result_type operator()(argument_type f) const
-  { return f.halfedge()->facet(); }
-};
+  std::map<Vertex_handle, int>  D;
+  std::vector<Vertex_handle>    Q;
+  Q.push_back(v); D[v] = 0;
+  std::size_t current_index = 0;
 
+  int dist_v;
+  while (current_index < Q.size() && (dist_v = D[Q[current_index]]) < k) {
+    v = Q[current_index++];
 
-int main() {
-  Polyhedron poly_1;
+    Polyhedron::Halfedge_around_vertex_circulator e(v->vertex_begin()), e_end(e);
+    do {
+      Vertex_handle new_v = e->opposite()->vertex();
+      if (D.insert(std::make_pair(new_v, dist_v + 1)).second) {
+        Q.push_back(new_v);
+      }
+    } while (++e != e_end);
+  }
+  return Q;
+}
+
+int main()
+{
+  Polyhedron poly;
   std::ifstream input("data/max.off");
-  if ( !input || !(input >> poly_1) || poly_1.empty() ) {
+  if ( !input || !(input >> poly) || poly.empty() ) {
     std::cerr << "Not a valid off file." << std::endl;
     return 1;
   }
-  Polyhedron poly_2 = poly_1;
 
-  std::vector<Facet_handle>  new_facets;
+  std::vector<Polyhedron::Facet_handle>  new_facets;
   std::vector<Vertex_handle> new_vertices;
-  // `facets_begin()` returns `Facet_iterator` which is an iterator over `Facet`, 
-  // what `refine()` requires is an iterator over `Facet_handle`, hence a transformer is used
-  CGAL::Polygon_mesh_processing::refine(poly_1, faces(poly_1),
-    back_inserter(new_facets), back_inserter(new_vertices), 2.0);
 
-  std::ofstream poly_1_off("data/poly_1.off");
-  poly_1_off << poly_1;
-  poly_1_off.close();
-  
-  CGAL::Polygon_mesh_processing::refine(poly_2, faces(poly_2),
-    CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(), 3.0);
-	
-  std::ofstream poly_2_off("data/poly_2.off");
-  poly_2_off << poly_2;
-  poly_2_off.close();
+  CGAL::Polygon_mesh_processing::refine(poly,
+                                        faces(poly),
+                                        std::back_inserter(new_facets),
+                                        std::back_inserter(new_vertices),
+                                        2.0);
+
+  std::ofstream refined_off("refined.off");
+  refined_off << poly;
+  refined_off.close();
+  std::cout << "Refinement added " << new_vertices.size() << " vertices." << std::endl;
+
+  Polyhedron::Vertex_iterator v = poly.vertices_begin();
+  std::advance(v, 8286);
+  const std::vector<Vertex_handle>& region = extract_k_ring(v, 45);
+
+  bool success = CGAL::Polygon_mesh_processing::fair(poly, region);
+  std::cout << "Is fairing successful: " << success << std::endl;
+
+  std::ofstream faired_off("faired.off");
+  faired_off << poly;
+  faired_off.close();
+
+  return success;
 }

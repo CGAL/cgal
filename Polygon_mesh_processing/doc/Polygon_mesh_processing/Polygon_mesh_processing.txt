@@ -26,8 +26,14 @@ A "polygon mesh" is a consistent
 - `CGAL::Polygon_mesh_processing::refine()`
 - `CGAL::Polygon_mesh_processing::triangulate_faces()`
 
-\subsection Example
-\todo : reorder meshing and hole filling sections
+\subsection Examples
+
+\subsubsection MeshingExample_1 Refine and fair a region on a polygon mesh
+\cgalExample{Polygon_mesh_processing/refine_fair_example.cpp}
+
+\subsubsection MeshingExample_2 Triangulate a polygon mesh
+\cgalExample{Polygon_mesh_processing/triangulate_faces_example.cpp}
+
 
 
 ********************************************
@@ -76,8 +82,6 @@ Note that refinement and fairing functions can be applied to an arbitrary region
 \cgalExample{Polygon_mesh_processing/triangulate_polyline_example.cpp}
 
 
-\subsubsection HFExample_2 Refine and fair a region on a polygon mesh
-\cgalExample{Polygon_mesh_processing/refine_fair_example.cpp}
 
 \cgalFigureBegin{Max_refine, max_refine.png}
 Result of refine example. 
