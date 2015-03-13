@@ -28,6 +28,10 @@
 
 \cgalClassifedRefPages
 
+## Meshing Functions ##
+- `CGAL::Polygon_mesh_processing::fair()`
+- `CGAL::Polygon_mesh_processing::refine()`
+- `CGAL::Polygon_mesh_processing::triangulate_faces()`
 
 ## Hole Filling Functions ##
 - `CGAL::Polygon_mesh_processing::triangulate_hole()`
@@ -45,11 +49,6 @@
 - \link stitching_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
-
-## Meshing Functions ##
-- `CGAL::Polygon_mesh_processing::fair()`
-- `CGAL::Polygon_mesh_processing::refine()`
-- `CGAL::Polygon_mesh_processing::triangulate_faces()`
 
 ## Normal Computation Functions ##
 - `CGAL::Polygon_mesh_processing::compute_face_normal()`

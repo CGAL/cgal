@@ -19,6 +19,17 @@ A "polygon mesh" is a consistent
   This package follows the BGL API
   \todo add link to BGL package
 
+****************************************
+\section PMPMeshing Meshing
+\subsection API
+- `CGAL::Polygon_mesh_processing::fair()`
+- `CGAL::Polygon_mesh_processing::refine()`
+- `CGAL::Polygon_mesh_processing::triangulate_faces()`
+
+\subsection Example
+\todo : reorder meshing and hole filling sections
+
+
 ********************************************
 \section PMPHoleFilling Hole Filling
 
@@ -134,16 +145,6 @@ inside, outside, or on the boundary of the domain described by a given closed po
 \subsubsection Example
 \cgalExample{Polygon_mesh_processing/polygon_soup_example.cpp}
 
-
-****************************************
-\section PMPMeshing Meshing
-\subsection API
-- `CGAL::Polygon_mesh_processing::fair()`
-- `CGAL::Polygon_mesh_processing::refine()`
-- `CGAL::Polygon_mesh_processing::triangulate_faces()`
-
-\subsection Example
-\todo : reorder meshing and hole filling sections
 
 ****************************************
 \section PMPNormalComp Normals Computation
