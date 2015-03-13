@@ -121,7 +121,7 @@ of the algorithm \f$ \alpha_\mathrm{sliver} = 5\pi/6 \f$.
 
 We define the *plausibility* grade \f$ p(t) \f$ as \f$ 1/r_t \f$, if
 \f$ \beta_t < \beta \f$, and \f$ -\beta_t \f$ else.  The parameter \f$
-\beta \f$ can be specified by the user and is set by default \f$ \pi/6\f$.
+\beta \f$ can be specified by the user and is set by default to \f$ \pi/6\f$.
 
 
 \subsection AFSR_Boundaries Dealing with Multiple Components, Boundaries and Sharp Edges
@@ -160,6 +160,15 @@ be sufficiently uniform for our algorithm to work.
 
 \section AFSR_Examples Examples
 
+The first of the following three examples presents a free function for doing surface 
+reconstruction. For a sequence of points he function produces a sequence
+of triplets of indices describing the triangles of the surface.
+The second example presents a class that enables to traverse the
+surface represented in a 2D triangulation data structure where
+the faces are connected with the facets of underlying 3D Delaunay triangulation.
+The third example shows how to get outliers and the boundaries of
+the surface.
+
 \subsection AFSR_Example_function Example for Global Function 
 
 The global function `advancing_front_surface_reconstruction()` 
@@ -175,7 +184,9 @@ in accordance to the OFF format.
 
 The class `Advancing_front_surface_reconstruction` provides 
 access to a 2D triangulation data structure describing the output surface.
-The latter can be explored by hopping from a face to its neighboring faces.
+The latter can be explored by hopping from a face to its neighboring faces,
+and by hopping from faces of the 2D triangulation data structure to
+corresponding facets of the underlying 3D Delaunay triangulation.
 
 The type of the 2D triangulation data structure describing the
 reconstructed surface is the nested type 
@@ -188,7 +199,8 @@ associated 3D vertex.
 
  The type `TDS_2::Face` is model of the concept
 `TriangulationDataStructure_2::Face` and has additionally the method
-`facet()` that returns the associated `Advancing_front_surface_reconstruction::Facet`, and a method `is_on_surface()` for testing if a face is part of the reconstructed
+`facet()` that returns the associated `Advancing_front_surface_reconstruction::Facet`, 
+and a method `is_on_surface()` for testing if a face is part of the reconstructed
 surface.  
 
 In case the surface

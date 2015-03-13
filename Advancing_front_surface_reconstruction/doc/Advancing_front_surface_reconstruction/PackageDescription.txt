@@ -15,7 +15,7 @@ of topological singularities. }
 \cgalPkgManuals{Chapter_Advancing_Front_Surface_Reconstruction,PkgAdvancingFrontSurfaceReconstruction}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.4}
+\cgalPkgSince{4.7}
 \cgalPkgDependsOn{\ref PkgTriangulation3Summary}
 \cgalPkgBib{cgal:dc-afsr}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
