@@ -10,7 +10,7 @@
 * `CGAL/triangulate_faces.h`,
 * `CGAL/triangulate_hole.h`,
 * `CGAL/Polygon_mesh_processing/compute_normal.h`,
-* `CGAL/Polygon_mesh_processing/Connected_components.h`,
+* `CGAL/Polygon_mesh_processing/connected_components.h`,
 * `CGAL/Polygon_mesh_processing/fair.h`,
 * `CGAL/Polygon_mesh_processing/is_oriented.h`,
 * `CGAL/Polygon_mesh_processing/refine.h`, and
@@ -24,7 +24,7 @@
 #include <CGAL/triangulate_faces.h>
 #include <CGAL/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Polygon_mesh_processing/Connected_components.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/fair.h>
 #include <CGAL/Polygon_mesh_processing/is_oriented.h>
 #include <CGAL/Polygon_mesh_processing/refine.h>
