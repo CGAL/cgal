@@ -161,7 +161,7 @@ be sufficiently uniform for our algorithm to work.
 \section AFSR_Examples Examples
 
 The first of the following three examples presents a free function for doing surface 
-reconstruction. For a sequence of points he function produces a sequence
+reconstruction. For a sequence of points the function produces a sequence
 of triplets of indices describing the triangles of the surface.
 The second example presents a class that enables to traverse the
 surface represented in a 2D triangulation data structure where
