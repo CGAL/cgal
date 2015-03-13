@@ -12,7 +12,8 @@ namespace CGAL {
 
 \section PMPIntroduction Introduction
 	
-This package implements methods for polygon mesh processing.
+This package implements various methods for polygon mesh processing.
+A "polygon mesh" is a consistent 
 	\cgalCite{botsch2010PMP}
 	
 
@@ -20,7 +21,7 @@ This package implements methods for polygon mesh processing.
 \section PMPHoleFilling Hole Filling
 
 This package provides algorithms for filling a hole that is either in a triangulated surface mesh (<B>mesh</B> in the following) or defined by a sequence of points
-that describe a polyline. 
+that describe a polyline.
 The main steps of the algorithm are described in \cgalCite{Lipea2003FillingHoles} and can be summarized as follows.
 
 First, a triangular patch for the hole is generated without introducing any new vertex. 
@@ -29,9 +30,9 @@ The quality function first minimizes the worst dihedral angle between patch tria
 Following the suggestions in \cgalCite{Zou2013AnAlgorithm}, the performance of the algorithm is significantly improved 
 by narrowing the search space to faces of a 3D Delaunay triangulation of the border vertices, from all possible patches, while searching for the best patch. 
 
-Then, the generated patch is refined by inserting new vertices to approximate the density of triangles near the boundary, and flipping edges to obtain a valid triangulation.
+Then, the generated patch is refined by inserting new vertices to approximate the density of triangles near the boundary, and flipping edges to get a valid triangulation.
 Using a criterion presented in \cgalCite{Lipea2003FillingHoles}, 
-an edge is only flipped if the opposite edge does not exist in the mesh and if no degenerate triangle is produced.
+an edge is flipped only if the opposite edge does not exist in the mesh and if no degenerate triangles are produced.
 
 Finally, the refined region is faired to obtain a tangentially continuous and smooth patch. 
 The fairing step minimizes a linear bi-Laplacian system with boundary constraints \cgalCite{Botsch2008OnLinearVariational}. 
@@ -42,6 +43,8 @@ Results of the main steps of the algorithm. From left to right: the hole, after 
 \cgalFigureEnd
 
 \subsection HoleFillingAPI API
+
+\todo hole filling only handles triangle meshes? Or it's only the patch that will be made of triangles?
 
 This package provides four functions for hole filling:
 	- `triangulate_hole_polyline()` : given a sequence of points defining the hole, triangulates the hole.
@@ -81,18 +84,33 @@ Result of fairing example.
 
 ***************************************
 \section PMPPredicates Predicates
+
+This packages provides some predicates to be evaluated with respect to a polygon mesh.
+
 \subsection API
+
+\subsubsection Orientation
 - `CGAL::Polygon_mesh_processing::is_outward_oriented()`
+
+\subsubsection Self intersections
 - `CGAL::Polygon_mesh_processing::is_self_intersecting()`
 - `CGAL::Polygon_mesh_processing::self_intersections()`
+
+\subsubsection InsideTest Inside test
 - `CGAL::Point_inside_polygon_mesh`
 
 \subsection Examples
 
+
 ****************************************
 \section PMPRepairing Combinatorial Repairing 
+
 \subsection API
+
+\subsubsection Stitching
 - \link stitching_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
+
+\subsubsection Polygon soups
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 
