@@ -36,6 +36,7 @@
 #include <boost/type_traits/is_const.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/properties.h>
 
 namespace CGAL {
 namespace internal {
