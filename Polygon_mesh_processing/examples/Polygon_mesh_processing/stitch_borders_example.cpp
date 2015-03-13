@@ -1,3 +1,5 @@
+#include <CGAL/Polygon_mesh_processing/stitch_borders.h>
+
 //    CGAL::Polygon_mesh_processing::stitch_borders()
 
 

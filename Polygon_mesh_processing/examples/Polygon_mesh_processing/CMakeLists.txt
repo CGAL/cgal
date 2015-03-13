@@ -73,6 +73,7 @@ create_single_source_cgal_program( "connected_components_example.cpp")
 create_single_source_cgal_program( "polygon_soup_example.cpp")
 create_single_source_cgal_program( "triangulate_polyline_example.cpp")
 create_single_source_cgal_program( "refine_fair_example.cpp")
+create_single_source_cgal_program( "mesh_slicer_example.cpp")
 
 
 
