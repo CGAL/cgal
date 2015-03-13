@@ -62,12 +62,16 @@ class Fair_Polyhedron_3 {
 
 // members
   PolygonMesh& pmesh;
+  Sparse_linear_solver m_solver;
   WeightCalculator weight_calculator;
   Point_property_map ppmap;
 
 public:
-  Fair_Polyhedron_3(PolygonMesh& pmesh, WeightCalculator weight_calculator = WeightCalculator())
-    : pmesh(pmesh), weight_calculator(weight_calculator), ppmap(get(CGAL::vertex_point, pmesh))
+  Fair_Polyhedron_3(PolygonMesh& pmesh,
+      WeightCalculator weight_calculator = WeightCalculator())
+    : pmesh(pmesh)
+    , weight_calculator(weight_calculator)
+    , ppmap(get(CGAL::vertex_point, pmesh))
   { }
   
 private:
@@ -121,8 +125,10 @@ private:
   }
 
 public:
-  template<class VertexRange>
-  bool fair(VertexRange vertices, Fairing_continuity fc)
+  template<class VertexRange, class SparseLinearSolver>
+  bool fair(VertexRange vertices
+    , SparseLinearSolver m_solver
+    , Fairing_continuity fc)
   {
     int depth = static_cast<int>(fc) + 1;
     if(depth < 0 || depth > 3) {
@@ -163,7 +169,7 @@ public:
 
     // factorize
     double D;
-    Sparse_linear_solver m_solver;
+//    Sparse_linear_solver m_solver;
     bool prefactor_ok = m_solver.factor(A, D);
     if(!prefactor_ok) {
       CGAL_warning(!"pre_factor failed!");

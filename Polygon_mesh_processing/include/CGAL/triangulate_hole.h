@@ -116,7 +116,7 @@ namespace Polygon_mesh_processing {
   \endcode
   .
 
-  @tparam SparseLinearSolver a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
+  @tparam SparseLinearSolver a model of `SparseLinearAlgebraTraitsWithFactor_d`
   @tparam PolygonMesh a model of `MutableFaceGraph`
   @tparam FaceOutputIterator model of `OutputIterator`
       holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
@@ -130,32 +130,26 @@ namespace Polygon_mesh_processing {
   @param density_control_factor factor for density where larger values cause denser refinements
   @param continuity tangential continuity, defaults to `FAIRING_C_1` and can be omitted
   @param use_delaunay_triangulation if `true`, the Delaunay triangulation face search space is used
-  @param solver an instance of the sparse linear solver to use. Note that the current implementation is
-      not using the value passed but the default constructed one.
+  @param solver an instance of the sparse linear solver to use. It defaults to the 
+         default construtor of the `SparseLinearSolver` template parameter
 
   @return tuple of
   - bool: `true` if fairing is successful
   - @a face_out
   - @a vertex_out
 
-  \todo check the note about `solver` parameter
   \todo handle islands
   */
-  template<typename SparseLinearSolver,
-           typename PolygonMesh,
+  template<typename PolygonMesh,
+           typename SparseLinearSolver,
            typename FaceOutputIterator,
            typename VertexOutputIterator>
   CGAL::cpp11::tuple<bool, FaceOutputIterator, VertexOutputIterator>
-    triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
+  triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
     FaceOutputIterator face_out,
     VertexOutputIterator vertex_out,
-    SparseLinearSolver
-#ifdef DOXYGEN_RUNNING
-    solver,
-#else
-    /* solver */,
-#endif
+    SparseLinearSolver solver = CGAL::Default(),
     double density_control_factor = std::sqrt(2.0),
     Fairing_continuity continuity = FAIRING_C_1,
     bool use_delaunay_triangulation = true)
@@ -172,10 +166,10 @@ namespace Polygon_mesh_processing {
       (pmesh, border_halfedge, face_out, std::back_inserter(patch),
       density_control_factor, use_dt3).first;
 
-    typedef internal::Fair_default_sparse_linear_solver::Solver Default_solver;
-    typedef typename Default::Get<SparseLinearSolver, Default_solver>::type Solver;
+    //typedef internal::Fair_default_sparse_linear_solver::Solver Default_solver;
+    //typedef typename Default::Get<SparseLinearSolver, Default_solver>::type Solver;
 
-    bool fair_success = fair<Solver>(pmesh, patch, continuity);
+    bool fair_success = fair(pmesh, patch, solver, continuity);
 
     vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
     return CGAL::cpp11::make_tuple(fair_success, face_out, vertex_out);
@@ -195,12 +189,7 @@ namespace Polygon_mesh_processing {
       FaceOutputIterator face_out,
       VertexOutputIterator vertex_out,
       WeightCalculator weight_calculator,
-      SparseLinearSolver
-      #ifdef DOXYGEN_RUNNING
-        solver,
-      #else
-        /* solver */,
-      #endif
+      SparseLinearSolver solver = CGAL::Default(),
       double density_control_factor = std::sqrt(2.0),
       Fairing_continuity continuity = FAIRING_C_1,
       bool use_delaunay_triangulation = true)
@@ -217,10 +206,10 @@ namespace Polygon_mesh_processing {
       (pmesh, border_halfedge, face_out, std::back_inserter(patch),
       density_control_factor, use_dt3).first;
 
-    typedef internal::Fair_default_sparse_linear_solver::Solver Default_solver;
-    typedef typename Default::Get<SparseLinearSolver, Default_solver>::type Solver;
+    //typedef internal::Fair_default_sparse_linear_solver::Solver Default_solver;
+    //typedef typename Default::Get<SparseLinearSolver, Default_solver>::type Solver;
 
-    bool fair_success = fair<Solver>(pmesh, patch, weight_calculator, continuity);
+    bool fair_success = internal::fair(pmesh, patch, solver, weight_calculator, continuity);
 
     vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
     return CGAL::cpp11::make_tuple(fair_success, face_out, vertex_out);

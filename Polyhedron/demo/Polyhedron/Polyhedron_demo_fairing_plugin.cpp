@@ -76,13 +76,15 @@ public slots:
       = static_cast<CGAL::Polygon_mesh_processing::Fairing_continuity>(ui_widget.Continuity_spin_box->value());
 
     if(weight_index == 1)
-      CGAL::Polygon_mesh_processing::fair(*selection_item->polyhedron(),
+      CGAL::Polygon_mesh_processing::internal::fair(*selection_item->polyhedron(),
         selection_item->selected_vertices,
+        CGAL::Default(),
         CGAL::internal::Uniform_weight_fairing<Polyhedron>(*selection_item->polyhedron()),
         continuity);
     if(weight_index == 0)
       CGAL::Polygon_mesh_processing::fair(*selection_item->polyhedron(),
         selection_item->selected_vertices,
+        CGAL::Default(),
 //        CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(*selection_item->polyhedron()),
         continuity);
     selection_item->changed_with_poly_item();
