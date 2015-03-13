@@ -376,6 +376,7 @@ public:
 } // namespace internal
 
 /**
+ * \ingroup PkgPolygonMeshProcessing
  * Tries to consistently orient a soup of polygons in 3D space.
  * If it is not possible to produce a combinatorial manifold surface, some points will be
  * duplicated. These points are either an endpoint of edges incident to more than
@@ -389,7 +390,7 @@ public:
  *                non-manifold or non-orientability issues.
  * @param[in, out] polygons each element in the vector describes a polygon using the index of the points in `points`.
  *
- * @return return false if some points where duplicated, thus producing a self-intersecting polyhedron
+ * @return `false` if some points were duplicated, thus producing a self-intersecting polyhedron
  *
  */
 template <class Point_3, class Polygon_3>
