@@ -90,10 +90,15 @@ public:
   * \ingroup PkgPolygonMeshProcessing
   * builds a polygon mesh from a soup of polygons.
   * @pre the input polygon soup is consistently oriented.
+  *
   * @tparam PolygonMesh a model of `MutableFaceGraph`
   * @tparam Point a point type that has an operator `[]` to access coordinates
   * @tparam Polygon a `std::vector<std::size_t>` corresponding to the indices
   *         of points in `points`
+  *
+  * @param points points of the soup of polygons
+  * @param polygons each element in the vector describes a polygon using the index of the points in `points`.
+  * @param out the polygon mesh to be built
   */
   template<class PolygonMesh, class Point, class Polygon>
   void polygon_soup_to_polygon_mesh(

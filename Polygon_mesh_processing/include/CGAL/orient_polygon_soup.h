@@ -384,7 +384,8 @@ public:
  * (during the re-orientation process), or a point shared by at least two polygons that do not
  * share an edge this point is incident to.
  * @tparam Point the point type
- * @tparam Polygon the polygon type, being a container of indices
+ * @tparam Polygon a `std::vector<std::size_t>` corresponding to the indices
+ *         of points in `points`
  *
  * @param[in,out] points points of the soup of polygons. Some points might be pushed back to resolve
  *                non-manifold or non-orientability issues.
