@@ -22,9 +22,23 @@ A "polygon mesh" is a consistent
 ****************************************
 \section PMPMeshing Meshing
 \subsection API
-- `CGAL::Polygon_mesh_processing::fair()`
-- `CGAL::Polygon_mesh_processing::refine()`
+
+\todo this section has been cut-pasted and needs smoothing
+
+A surface patch can be refined by inserting new vertices to approximate the density of triangles near the boundary of the patch, and flipping edges to get a valid triangulation.
+Using a criterion presented in \cgalCite{Lipea2003FillingHoles},
+an edge is flipped only if the opposite edge does not exist in the original mesh and if no degenerate triangles are produced.
+
+Finally, the refined region is faired to obtain a tangentially continuous and smooth patch.
+The fairing step minimizes a linear bi-Laplacian system with boundary constraints \cgalCite{Botsch2008OnLinearVariational}.
+The visual results of aforementioned steps can be seen in \cgalFigureRef{Mech_steps}.
+
+Refinement and fairing functions can be applied to an arbitrary region on a mesh , using :
+- `CGAL::Polygon_mesh_processing::fair()` : given a set of vertices on a mesh, fairs the region.
+- `CGAL::Polygon_mesh_processing::refine()` : given a set of facets on a mesh, refines the region.
+
 - `CGAL::Polygon_mesh_processing::triangulate_faces()`
+
 
 \subsection Examples
 
@@ -49,13 +63,7 @@ The quality function first minimizes the worst dihedral angle between patch tria
 Following the suggestions in \cgalCite{Zou2013AnAlgorithm}, the performance of the algorithm is significantly improved 
 by narrowing the search space to faces of a 3D Delaunay triangulation of the border vertices, from all possible patches, while searching for the best patch. 
 
-Then, the generated patch is refined by inserting new vertices to approximate the density of triangles near the boundary, and flipping edges to get a valid triangulation.
-Using a criterion presented in \cgalCite{Lipea2003FillingHoles}, 
-an edge is flipped only if the opposite edge does not exist in the mesh and if no degenerate triangles are produced.
-
-Finally, the refined region is faired to obtain a tangentially continuous and smooth patch. 
-The fairing step minimizes a linear bi-Laplacian system with boundary constraints \cgalCite{Botsch2008OnLinearVariational}. 
-The visual results of aforementioned steps can be seen in \cgalFigureRef{Mech_steps}.
+Then, the generated patch can be refined and faired using the functions `refine()` and `fair()` described in Section \ref PMPMeshing.
 
 \cgalFigureBegin{Mech_steps, mech_hole_horz.png}
 Results of the main steps of the algorithm. From left to right: the hole, after triangulation, after triangulation and refinement, after triangulation, refinement and fairing.
@@ -71,9 +79,6 @@ This package provides four functions for hole filling:
 	- `triangulate_and_refine_hole()` : in addition to `triangulate_hole()` the generated patch is refined.
 	- `triangulate_refine_and_fair_hole()` : in addition to `triangulate_and_refine_hole()` the generated patch is also faired.
 
-Note that refinement and fairing functions can be applied to an arbitrary region on a mesh , using :
-	- `refine()` : given a set of facets on a mesh, refines the region.
-	- `fair()` : given a set of vertices on a mesh, fairs the region.
 	
 
 \subsection HFExamples Examples
@@ -81,6 +86,8 @@ Note that refinement and fairing functions can be applied to an arbitrary region
 \subsubsection HFExample_1 Triangulate a polyline
 \cgalExample{Polygon_mesh_processing/triangulate_polyline_example.cpp}
 
+\subsubsection HFExample_2 Hole filling from the border of the hole
+\cgalExample{Polygon_mesh_processing/hole_filling_example.cpp}
 
 
 \cgalFigureBegin{Max_refine, max_refine.png}
