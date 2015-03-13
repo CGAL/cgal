@@ -11,8 +11,8 @@ enum Umbilic_type { NON_GENERIC_UMBILIC, ELLIPTIC_UMBILIC, HYPERBOLIC_UMBILIC };
 /*!
 \ingroup PkgRidges_3
 
-The function `compute_umbilics()` is a shortcut to the method `compute()` of
-the class `Umbilic_approximation`. 
+The function `compute_umbilics()` is a shortcut to the 
+method `Umbilic_approximation::compute()`. 
 
 
 */
@@ -21,10 +21,10 @@ class VertexFTMap,
 class VertexVectorMap,
 class OutputIterator>
 OutputIterator compute_umbilics(const TriangleMesh &tm,
-const VertexFTMap& vertex2k1_pm, 
-const VertexFTMap& vertex2k2_pm,
-const VertexVectorMap& vertex2d1_pm, 
-const VertexVectorMap& vertex2d2_pm,
+const VertexFTMap& vertex_k1_pm, 
+const VertexFTMap& vertex_k2_pm,
+const VertexVectorMap& vertex_d1_pm, 
+const VertexVectorMap& vertex_d2_pm,
 OutputIterator it, 
 double size);
 
@@ -46,12 +46,12 @@ the differential properties of the surface associated to its vertices.
 
 Requirements (checked at compile time) : 
 - the types `TriangleMesh::Traits::FT` and 
-  `boost::property_traits<VertexFTMap>::value_type` must coincide;
+  `boost::property_traits<VertexFTMap>::%value_type` must coincide;
 - the types `TriangleMesh::Traits::Vector_3` and 
-  `boost::property_traits<VertexVectorMap::value_type` must coincide; 
-- the types `boost::graph_traits<TriangleMesh>::vertex_descriptor`, 
-  `boost::property_traits<VertexFTMap>::key_type` and 
-  `boost::property_traits<VertexVectorMap>::key_type` must coincide; 
+  `boost::property_traits<VertexVectorMap::%value_type` must coincide; 
+- the types `boost::graph_traits<TriangleMesh>::%vertex_descriptor`, 
+  `boost::property_traits<VertexFTMap>::%key_type` and 
+  `boost::property_traits<VertexVectorMap>::%key_type` must coincide; 
 
 \sa `Umbilic` 
 \sa `TriangleMesh` 
@@ -80,16 +80,16 @@ typedef typename TriangleMesh::Traits::FT FT;
 Constructor. 
 
 \param tm the triangle mesh
-\param vertex2k1_pm
-\param vertex2k2_pm
-\param vertex2d1_pm
-\param vertex2d2_pm
+\param vertex_k1_pm differential quantities for principal curvatures
+\param vertex_k2_pm differential quantities for principal curvatures
+\param vertex_d1_pm principal directions of curvature
+\param vertex_d2_pm principal directions of curvature
 */ 
 Umbilic_approximation(const TriangleMesh& tm, 
-                      VertexFTMap vertex2k1_pm, 
-                      VertexFTMap vertex2k2_pm, 
-                      VertexVectorMap vertex2d1_pm, 
-                      VertexVectorMap vertex2d2_pm); 
+                      VertexFTMap vertex_k1_pm, 
+                      VertexFTMap vertex_k2_pm, 
+                      VertexVectorMap vertex_d1_pm, 
+                      VertexVectorMap vertex_d2_pm); 
   
 /// @} 
 
@@ -116,11 +116,6 @@ namespace CGAL {
 \ingroup PkgRidges_3
 
 The class `Umbilic` stores the description of an umbilic. 
-
-\cgalHeading{Operations}
-
-The insert operator `<<` is overloaded for `Umbilic`, it 
-gives the location (3d coordinates of the vertex) and the type. 
 
 \sa `Umbilic_approximation` 
 
@@ -165,4 +160,13 @@ const std::list<halfedge_descriptor>& contour_list()const;
 /// @}
 
 }; /* end Umbilic */
+
+/*!
+\relates Umbilic
+
+Writes the location and the umbilic type to `os`.
+*/
+template< typename TriangleMesh >
+std::ostream& operator<<(std::ostream& os, const Umbilic<TriangleMesh>& u);
+
 } /* end namespace CGAL */

@@ -4,7 +4,7 @@ namespace CGAL {
 \ingroup PkgRidges_3Enums
 The enum `Ridge_order` describes the order of differential quantities
 used to distinguish elliptic and hyperbolic ridges. Third or fourth
-order quantities may be used as explained in Section  \ref ridgemesh
+order quantities may be used as explained in Section  \ref Ridges_3Approximating
 of the User Manual.
 
 \sa `Ridge_approximation`
@@ -26,12 +26,9 @@ enum Ridge_type {
 /*!
 \ingroup PkgRidges_3
 
-The function `compute_crest_ridges()` is a shortcut to the method of the same name 
-of the class `Ridge_approximation`. 
+The function `compute_crest_ridges()` is a shortcut to the 
+method `Ridge_approximation::compute_crest_ridges()`. 
 
-The operator `<<` is overloaded for this class and returns the
-line type, strength, sharpness and coordinates of the points of the
-polyline.
 
 
 */
@@ -40,14 +37,14 @@ template < class TriangleMesh,
            class VertexVectorMap,
            class OutputIterator>
 OutputIterator compute_crest_ridges(const TriangleMesh &tm,
-                                    VertexFTMap vertex2k1_pm,
-                                    VertexFTMap vertex2k2_pm,
-                                    VertexFTMap vertex2b0_pm,
-                                    VertexFTMap vertex2b3_pm,
-                                    VertexVectorMap vertex2d1_pm,
-                                    VertexVectorMap vertex2d2_pm,
-                                    VertexFTMap vertex2P1_pm,
-                                    VertexFTMap vertex2P2_pm,
+                                    VertexFTMap vertex_k1_pm,
+                                    VertexFTMap vertex_k2_pm,
+                                    VertexFTMap vertex_b0_pm,
+                                    VertexFTMap vertex_b3_pm,
+                                    VertexVectorMap vertex_d1_pm,
+                                    VertexVectorMap vertex_d2_pm,
+                                    VertexFTMap vertex_P1_pm,
+                                    VertexFTMap vertex_P2_pm,
                                     OutputIterator it, 
                                     CGAL::Ridge_order order = CGAL::Ridge_order_3);
 
@@ -58,8 +55,8 @@ namespace CGAL {
 /*!
 \ingroup PkgRidges_3
 
-The function `compute_max_ridges()` is a shortcut to the method of the same name 
-of the class `Ridge_approximation`. 
+The function `compute_max_ridges()` is a shortcut to the 
+method `Ridge_approximation::compute_max_ridges()`. 
 
 */
 template < class TriangleMesh, 
@@ -67,14 +64,14 @@ template < class TriangleMesh,
            class VertexVectorMap,
            class OutputIterator>
 OutputIterator compute_max_ridges(const TriangleMesh &tm,
-                                  VertexFTMap vertex2k1_pm,
-                                  VertexFTMap vertex2k2_pm,
-                                  VertexFTMap vertex2b0_pm,
-                                  VertexFTMap vertex2b3_pm,
-                                  VertexVectorMap vertex2d1_pm,
-                                  VertexVectorMap vertex2d2_pm,
-                                  VertexFTMap vertex2P1_pm, const
-                                  VertexFTMap vertex2P2_pm,
+                                  VertexFTMap vertex_k1_pm,
+                                  VertexFTMap vertex_k2_pm,
+                                  VertexFTMap vertex_b0_pm,
+                                  VertexFTMap vertex_b3_pm,
+                                  VertexVectorMap vertex_d1_pm,
+                                  VertexVectorMap vertex_d2_pm,
+                                  VertexFTMap vertex_P1_pm, const
+                                  VertexFTMap vertex_P2_pm,
                                   OutputIterator it, 
                                   CGAL::Ridge_order order = CGAL::Ridge_order_3);
   
@@ -85,8 +82,8 @@ namespace CGAL {
 /*!
 \ingroup PkgRidges_3
 
-The function `compute_min_ridges()` is a shortcut to the method of the same name 
-of the class `Ridge_approximation`. 
+The function `compute_min_ridges()` is a shortcut to 
+the method `Ridge_approximation::compute_min_ridges()`. 
 
 
 */
@@ -95,14 +92,14 @@ class VertexFTMap,
 class VertexVectorMap,
 class OutputIterator>
 OutputIterator compute_min_ridges(const TriangleMesh &tm,
-                                  VertexFTMap vertex2k1_pm, 
-                                  VertexFTMap vertex2k2_pm,
-                                  VertexFTMap vertex2b0_pm,
-                                  VertexFTMap vertex2b3_pm,
-                                  VertexVectorMap vertex2d1_pm,
-                                  VertexVectorMap vertex2d2_pm,
-                                  VertexFTMap vertex2P1_pm,
-                                  VertexFTMap vertex2P2_pm,
+                                  VertexFTMap vertex_k1_pm, 
+                                  VertexFTMap vertex_k2_pm,
+                                  VertexFTMap vertex_b0_pm,
+                                  VertexFTMap vertex_b3_pm,
+                                  VertexVectorMap vertex_d1_pm,
+                                  VertexVectorMap vertex_d2_pm,
+                                  VertexFTMap vertex_P1_pm,
+                                  VertexFTMap vertex_P2_pm,
                                   OutputIterator it, 
                                   CGAL::Ridge_order order = CGAL::Ridge_order_3);
 
@@ -124,12 +121,12 @@ the surface associated to its vertices.
 
 Requirements (checked at compile time): 
 - the types `TriangleMesh::Traits::FT` and 
- `boost::property_traits<VertexFTMap>::value_type` must coincide; 
+ `boost::property_traits<VertexFTMap>::%value_type` must coincide; 
 - the types `TriangleMesh::Traits::Vector_3` and 
-  `boost::property_traits<VertexVectorMap>::value_type` must coincide; 
-- the types `boost::graph_traits<TriangleMesh>::vertex_descriptor`, 
-  `boost::property_traits<VertexFTMap>::key_type` and 
-  `boost::property_traits<VertexVectorMap>::key_type` must coincide; 
+  `boost::property_traits<VertexVectorMap>::%value_type` must coincide; 
+- the types `boost::graph_traits<TriangleMesh>::%vertex_descriptor`, 
+  `boost::property_traits<VertexFTMap>::%key_type` and 
+  `boost::property_traits<VertexVectorMap>::%key_type` must coincide; 
 
 \sa `Ridge_line` 
 
@@ -145,7 +142,7 @@ public:
 Order of differential 
 quantities used to distinguish elliptic and hyperbolic ridges. Third 
 (`Tag_3`) or fourth (`Tag_4`) order quantities may be used as 
-explained in Section \ref ridgemesh of the User Manual. 
+explained in Section \ref Ridges_3Approximating of the User Manual. 
 */ 
 enum Tag_order {Tag_3, Tag_4}; 
 
@@ -162,24 +159,24 @@ property maps shall be initialized with their
 default constructors. 
 
 \param tm the triangle mesh
-\param vertex2k1_pm
-\param vertex2k2_pm
-\param vertex2b0_pm
-\param vertex2b3_pm
-\param vertex2d1_pm
-\param vertex2d2_pm
-\param vertex2P1_pm
-\param vertex2P2_pm
+\param vertex_k1_pm differential quantities for principal curvatures
+\param vertex_k2_pm differential quantities for principal curvatures
+\param vertex_b0_pm third order extremalities
+\param vertex_b3_pm third order extremalities
+\param vertex_d1_pm principal directions of curvature
+\param vertex_d2_pm principal directions of curvature
+\param vertex_P1_pm fourth order quantities
+\param vertex_P2_pm fourth order quantities
 */ 
 Ridge_approximation(const TriangleMesh &tm, 
-                    VertexFTMap vertex2k1_pm,
-                    VertexFTMap vertex2k2_pm,
-                    VertexFTMap vertex2b0_pm,
-                    VertexFTMap vertex2b3_pm,
-                    VertexVectorMap vertex2d1_pm,
-                    VertexVectorMap vertex2d2_pm,
-                    VertexFTMap vertex2P1_pm,
-                    VertexFTMap vertex2P2_pm); 
+                    VertexFTMap vertex_k1_pm,
+                    VertexFTMap vertex_k2_pm,
+                    VertexFTMap vertex_b0_pm,
+                    VertexFTMap vertex_b3_pm,
+                    VertexVectorMap vertex_d1_pm,
+                    VertexVectorMap vertex_d2_pm,
+                    VertexFTMap vertex_P1_pm,
+                    VertexFTMap vertex_P2_pm); 
 
 /*!
 Outputs ridges of types `MAX_ELLIPTIC_RIDGE` and `MAX_HYPERBOLIC_RIDGE`. 
@@ -278,15 +275,18 @@ FT sharpness() const;
 */ 
 const std::list<Ridge_halfhedge>* line() const; 
 
+
+/// @}
+
+}; /* end Ridge_line */
+
 /*!
+\relates Ridge_line
 Writes the line type, strength, sharpness and coordinates of the
 points of the polyline to `os`.
 */
 template< typename TriangleMesh >
 std::ostream& operator<<(std::ostream& os, const Ridge_line<TriangleMesh>& r);
 
-/// @}
-
-}; /* end Ridge_line */
 } /* end namespace CGAL */
 
