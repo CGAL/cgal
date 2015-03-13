@@ -95,6 +95,7 @@ public:
         combinations(*it_Cf, k + 1, std::back_inserter(k_faces));
         for (const auto &f2 : k_faces) // CJTODO C++1
         {
+          // Skip F
           if (f2 != it_map_elt->first)
           {
             Cofaces_map::iterator it_comb_in_map = cofaces_map.find(f2);
@@ -119,7 +120,7 @@ public:
     }
 
     // Collapse the lower dimension simplices
-    if (k > 1)
+    if (k > 0)
       collapse(max_simplex_dim - 1);
   }
 
