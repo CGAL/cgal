@@ -143,20 +143,21 @@ public:
 
     std::map<vertex_descriptor, std::size_t> vertex_id_map;
     std::size_t id = 0;
-    for(typename std::set<vertex_descriptor>::iterator it = interior_vertices.begin(); it != interior_vertices.end(); ++it, ++id) {
-      if( !vertex_id_map.insert(std::make_pair(*it, id)).second ) {
+    BOOST_FOREACH(vertex_descriptor vd, interior_vertices)
+    {
+      if( !vertex_id_map.insert(std::make_pair(vd, id)).second ) {
         CGAL_warning(!"Duplicate vertex is found!");
         return false;
       }
+      ++id;
     }
 
     Solver_matrix A(nb_vertices);
 
-    for(typename std::set<vertex_descriptor>::iterator vb = interior_vertices.begin();
-        vb != interior_vertices.end();
-        ++vb) {
-      int v_id = static_cast<int>(vertex_id_map[*vb]);
-      compute_row(*vb, v_id, A, Bx[v_id], By[v_id], Bz[v_id], 1, vertex_id_map, depth);
+    BOOST_FOREACH(vertex_descriptor vd, interior_vertices)
+    {
+      int v_id = static_cast<int>(vertex_id_map[vd]);
+      compute_row(vd, v_id, A, Bx[v_id], By[v_id], Bz[v_id], 1, vertex_id_map, depth);
     }
     CGAL_TRACE_STREAM << "**Timer** System construction: " << timer.time() << std::endl; timer.reset();
 
@@ -191,8 +192,10 @@ public:
 
     // update 
     id = 0;
-    for(typename std::set<vertex_descriptor>::iterator it = interior_vertices.begin(); it != interior_vertices.end(); ++it, ++id) {
-      put(ppmap, *it, Point_3(X[id], Y[id], Z[id]));
+    BOOST_FOREACH(vertex_descriptor vd, interior_vertices)
+    {
+      put(ppmap, vd, Point_3(X[id], Y[id], Z[id]));
+      ++id;
     }
     return true;
   }
