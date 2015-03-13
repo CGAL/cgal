@@ -26,9 +26,6 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
-- `TriangleMesh`
-
 ## Enums ##
 - `CGAL::Ridge_type`
 - `CGAL::Ridge_order`
