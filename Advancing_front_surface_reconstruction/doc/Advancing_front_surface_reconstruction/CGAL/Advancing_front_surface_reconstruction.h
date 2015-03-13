@@ -21,7 +21,7 @@ public:
 /*! 
   The type of the 2D triangulation data structure describing the reconstructed surface.
   The type `TDS_2::Vertex` is model of the concept `TriangulationDataStructure_2::Vertex` and has additionally the 
-  method `vertex_3()` that returns a `Vertex_handle` to the associated 3D vertex
+  method `vertex_3()` that returns a `Vertex_handle` to the associated 3D vertex.
   The type `TDS_2::Face` is model of the concept `TriangulationDataStructure_2::Face` and  has additionally the
   method `facet()` that returns the associated `Facet`, and a method `bool is_on_surface()`
   for testing if a face is part of the reconstructed surface or a face incident to a boundary edge.  
@@ -30,12 +30,18 @@ public:
 */ 
   typedef unspecified_type TDS_2; 
 
+
 /*! 
 The type of the 3D triangulation.
 
 */ 
   typedef Dt Triangulation_3; 
 
+/*! 
+The point type.
+
+*/ 
+  typedef typename Triangulation_3::Point Point;
 /*! 
 The vertex handle type of the 3D triangulation.
 
@@ -56,20 +62,33 @@ The facet type of the 3D triangulation.
 
 
 /*! 
-  A bidirectional iterator which allows to enumerate all points that were removed
+  A bidirectional iterator range which enables to enumerate all points that were removed
   from the 3D Delaunay triangulation during the surface reconstruction. The value type
-  of the iterator is `Triangulation_3::Point_3`. 
+  of the iterator is `Point`. 
 */ 
-typedef unspecified_type Outlier_iterator; 
+typedef unspecified_type Outlier_range; 
 
+#if 0
 /*! 
-  A forward iterator which allows to visit all boundaries. It 
+  A forward iterator which enables to visit all boundaries. It 
   visits the entry point of each boundary twice. This allows to
   detect that the traversal of a boundary is finished. One more increment
   brings us to the vertex on the next boundary. 
-  The value type of the iterator is `Triangulation_3::Vertex_handle`.
+  The value type of the iterator is `Vertex_handle`.
 */ 
-typedef unspecified_type Boundary_iterator; 
+
+#endif
+  /*!
+    A bidirectional iterator range which enables to visit all boundaries.
+     The value type of the iterator is `Vertex_on_boundary_range`.
+   */
+typedef unspecified_type Boundary_range; 
+
+ /*!
+   A bidirectional iterator range which enables to visit all vertices on a boundary.
+     The value type of the iterator is  `Vertex_handle`
+   */
+typedef unspecified_type Vertex_on_boundary_range; 
 
 
 /// @} 
@@ -95,7 +114,7 @@ calls the surface reconstruction function with the default parameters.
 \param beta described in Section \ref AFSR_Selection
 
 */ 
-  void operator()(double k=5, double beta= 0.18);
+  void run(double k=5, double beta= 0.18);
 
 /*! 
 returns the reconstructed surface.
@@ -113,24 +132,16 @@ triangulation_3();
 
 
 /*! 
-An iterator over the outliers.
+returns an iterator range over the outliers.
 */ 
-Outlier_iterator outliers_begin(); 
+Outlier_range outliers(); 
+
 
 /*! 
-Past-the-end iterator. 
+returns an iterator range over the boundaries. 
 */ 
-Outlier_iterator outliers_end(); 
+Boundary_range boundaries(); 
 
-/*! 
-An iterator over the boundary vertices. 
-*/ 
-Boundary_iterator boundaries_begin(); 
-
-/*! 
-Past-the-end iterator. 
-*/ 
-Boundary_iterator boundaries_end(); 
 
 /// @} 
 

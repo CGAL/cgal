@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
-#include <CGAL/tuple.h>
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Advancing_front_surface_reconstruction<K> Reconstruction;
 typedef Reconstruction::Triangulation_3 Triangulation_3;
@@ -19,14 +18,14 @@ int main()
   
   Reconstruction reconstruction(dt);
 
-  reconstruction();
+  reconstruction.run();
                 
   const TDS_2& tds = reconstruction.tds_2();
 
-  if(! reconstruction.has_boundaries()){
-    for(TDS_2::Face_iterator fit = tds.faces_begin();
-        fit != tds.faces_end();
-        ++fit){
+  for(TDS_2::Face_iterator fit = tds.faces_begin();
+      fit != tds.faces_end();
+      ++fit){
+    if(fit->is_on_surface()){
       Triangulation_3::Facet f = fit->facet();
       Triangulation_3::Cell_handle ch = f.first;
       int ci = f.second;
@@ -38,6 +37,6 @@ int main()
       std::cout << std::endl;
     }
   }
-
+  
   return 0;
 }

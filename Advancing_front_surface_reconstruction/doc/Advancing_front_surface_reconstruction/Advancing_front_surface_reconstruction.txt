@@ -8,98 +8,105 @@ namespace CGAL {
 \cgalAutoToc
 \author Tran Kai Frank Da and David Cohen-Steiner
 
+Surface reconstruction from an unstructured point cloud amounts to
+generate a plausible surface that approximates well the input
+points. This problem is ill-posed as many surfaces can be generated. A
+wide range of approaches have been proposed to tackle this
+problem. Among them are variational methods
+\cgalCite{s-lsm-96}\cgalCite{zomk-insru-00}, tensor voting
+\cgalCite{cgal:ml-cfsg-00}, implicit surface
+\cgalCite{hddhjmss-pssr-94}\cgalCite{bc-ssrnn-00}, and Delaunay
+triangulations.
 
-Surface reconstruction from an unstructured point set is to find
-a surface that approximates these points. Several techniques have
-been applied to this problem.  Among them are variational
-methods \cgalCite{s-lsm-96}\cgalCite{zomk-insru-00}, tensor voting \cgalCite{cgal:ml-cfsg-00}, implicit surface \cgalCite{hddhjmss-pssr-94}\cgalCite{bc-ssrnn-00},
-and Delaunay triangulations. 
+For Delaunay based algorithms the output surface is commonly generated
+as the union of some triangles selected in the 3D Delaunay
+triangulation of the input points. Such algorithms are either
+volume-based by generating as output the boundary of selected
+tetrahedra \cgalCite{abe-cbscc-97}\cgalCite{ack-pcubm-01}, 
+or surface-based by selecting a set of triangles.
 
-For Delaunay based algorithms the output surface
-usually is the union of some triangles selected in the Delaunay
-triangulation of the input points.  Such algorithms can be volume oriented
-which output the boundary of selected tetrahedra \cgalCite{abe-cbscc-97}\cgalCite{ack-pcubm-01}, or surface
-oriented, that is they explicitely select triangles.
 
-In most surface oriented Delaunay-based algorithms triangles are
+In most surface based Delaunay algorithms the triangles are
 selected independently, that is in parallel \cgalCite{agj-lcsr-00}\cgalCite{ab-srvf-98}.
 
-The surface oriented Delaunay-based surface reconstruction algorithm
-presented in this chapter selects triangles sequentially, that is by
-using previous selected triangles to select a new one. It adds the
-most *plausible* triangle first, and only adds triangles in a way
-that the surface remains an orientable manifold.
- 
-Two other examples of this greedy approach are the ball pivoting
-algorithm and Boyer and Petitjean's algorithm \cgalCite{bmrst-bpasr-99}\cgalCite{pb-rnrps-01}. In both
-algorithms a triangulated surface is incrementally grown starting from
-a seed triangle. Ball pivoting is fast, but the quality of the
-reconstruction depends on user defined parameters corresponding to the
-sampling density. The Boyer Petitjean approach can handle non-uniform
-sampling, but fails when near cocircular points are encountered, and
-it does not provide any guarantee on the topology of the surface.  
+This chapter presents a surface-based Delaunay surface
+reconstruction algorithm by selecting the triangles sequentially, that
+is by using previous selected triangles to select a new triangle for
+advancing the front. At each advancing step the most plausible
+triangle is selected, and the triangles are selected in a way that
+generates an orientable manifold triangulated surface.
 
-In the next sections we describe the algorithm, and give
-examples.
+Two other examples of this greedy approach are the ball pivoting
+algorithm and Boyer-Petitjean's algorithm \cgalCite{bmrst-bpasr-99}\cgalCite{pb-rnrps-01}. In both algorithms
+a triangulated surface is incrementally grown starting from a seed
+triangle. Ball pivoting is fast, but the quality of the reconstruction
+depends on user defined parameters corresponding to the sampling
+density. The Boyer-Petitjean approach can handle non-uniform sampling,
+but fails when near co-circular points are encountered, and it does
+not provide any guarantee on the topology of the surface.
+
+We describe next the algorithm and provide examples.
 
 
 \section AFSR_Definitions Definitions and the Algorithm
 
-A detailed description of the algorithm and the underlying theory can be found
+A detailed description of the algorithm and the underlying theory are provided
 in \cgalCite{cgal:csd-gdbsra-04}.
 
 
+The first step of the algorithm is the construction of a 3D Delaunay
+triangulation of the point set. The Delaunay triangle with the
+smallest radius is the starting point for the greedy algorithm. The
+radius of a triangle \f$ t \f$ is the radius of the smallest sphere
+passing through the vertices of \f$ t\f$ and enclosing no sample
+point. In other words, the radius \f$ r_t\f$ is the distance from any
+vertex of \f$ t\f$ to the Voronoi edge dual to \f$ t\f$. This triangle with
+three boundary edges is the initial triangulated surface, and its
+boundary is the advancing front.
 
-The first step of the algorithm is the construction of a 3D Delaunay 
-triangulation of the point set.
-The Delaunay triangle with the smallest radius is the starting point
-for the greedy algorithm. It is the initial surface and it has three
-boundary edges.
-
-The algorithm maintains a priority queue of
-candidate triangles, that is of triangles incident to the boundary
-edges of the current surface.  The priority is the \em plausibility.  
-While this priority queue
-is not empty, the algorithm selects the most plausible candidate triangle and adds into the
-surface, and inserts new candidate triangles into the priority queue in case
-there are new boundary edges. As the algorithm creates a two-manifold surface
-some candidate triangles can not be selected due to <em>topological constraints</em> which are explained next.
+The algorithm maintains a priority queue of candidate triangles, that
+is of valid triangles incident to the boundary edges of the current
+surface. The priority is the plausibility. While the priority queue is
+not empty, the algorithm pops from the queue the most plausible
+candidate triangle and adds it to the surface. New candidate triangles
+are pushed to the priority queue when new boundary edges appear on the
+advancing front. As the algorithm creates a two-manifold surface some
+candidate triangles can not be selected due to topological constraints
+which are explained next.
 
 
 \subsection AFSR_Topology Topological Constraints
 
-Any triangle \f$t\f$ considered as next potential candidate has to share an
-edge \f$e\f$ with the boundary of the current reconstruction. Let \f$b\f$
+Any triangle \f$t\f$ considered as next potential candidate shares an
+edge \f$e\f$ with the front of the current reconstruction. Let \f$b\f$
 be the vertex of \f$t\f$ opposite to \f$e\f$. There are four
-possible situations where \f$t\f$ may be added to the surface.
+configurations where \f$t\f$ is added to the surface.
+
 - extension,  if \f$b\f$ is not yet on the surface.
-- hole filling, if \f$b\f$ is on the boundary and both neighbors of \f$b\f$ on the boundary are on edge \f$e\f$.
-- ear filling, if \f$b\f$ is on the boundary and one neighbor of \f$b\f$ on the boundary is on edge \f$e\f$.
-- glueing, if \f$b\f$ is on the boundary and no neighbor of \f$b\f$ on the boundary is on edge \f$e\f$.
+- hole filling, if \f$b\f$ is on the front and both neighbors of \f$b\f$ on the front are on edge \f$e\f$.
+- ear filling, if \f$b\f$ is on the front and one neighbor of \f$b\f$ on the front is on edge \f$e\f$.
+- glueing, if \f$b\f$ is on the front and no neighbor of \f$b\f$ on the front is on edge \f$e\f$.
 
 \cgalFigureBegin{figAFSRvalid,valid.png}
 Valid candidates.
 \cgalFigureEnd
 
-While the first three operations would never induce a non-manifold edge or vertex,
-we only can perform glueing, if triangle \f$t\f$ has a *twin* facet, that is a 
-triangle with an edge on the boundary and incident to \f$b\f$, and the
+While the first three operations never induce a non-manifold edge or vertex,
+we only can perform gluing, if triangle \f$t\f$ has a *twin* facet, that is a 
+triangle with an edge on the front and incident to \f$b\f$, and the
 third vertex on edge \f$e\f$.
 
-We call a triangle on which the above operations can be applied *valid*.
+A triangle is said  *valid* when the above operations can be applied.
 
 \subsection AFSR_Selection Plausibility of a Candidate Triangle
 
-Valid triangles for an edge on the boundary are compared through what
-we call their *radius*.  The radius of a triangle \f$t\f$ is the radius of
-the smallest sphere passing through the vertices of \f$t\f$ and enclosing no
-sample point. In other words, the radius \f$r_t\f$ is the distance
-from any vertex of \f$t\f$ to the Voronoi edge dual to \f$t\f$.
+Valid triangles for an edge on the front are compared through their
+radius. While the radius is a good criterion in the case of 2D smooth
+curve reconstruction \cgalCite{b-cccda-94}, we need another criterion
+for 3D surface reconstruction, namely the dihedral angle between
+triangles on the surface, that is the angle between the normals of the
+triangles.
 
-While the radius is a good criterion in the case of 2D smooth curve 
-reconstruction \cgalCite{b-cccda-94}, we need another criterion for 3D surface
-reconstruction, namely the dihedral angle between triangles on the
-surface, that is the angle between the normals of the triangles.
 
 We denote by \f$ \beta_t\f$ the angle between the normal of a triangle
 \f$ t\f$ incident on a boundary edge \f$ e \f$ and the normal of the
@@ -114,7 +121,7 @@ of the algorithm \f$ \alpha_\mathrm{sliver} = 5\pi/6 \f$.
 
 We define the *plausibility* grade \f$ p(t) \f$ as \f$ 1/r_t \f$, if
 \f$ \beta_t < \beta \f$, and \f$ -\beta_t \f$ else.  The parameter \f$
-\beta \f$ can be chosen by the user and is by default \f$ \pi/6\f$.
+\beta \f$ can be specified by the user and is set by default \f$ \pi/6\f$.
 
 
 \subsection AFSR_Boundaries Dealing with Multiple Components, Boundaries and Sharp Edges
@@ -122,11 +129,11 @@ We define the *plausibility* grade \f$ p(t) \f$ as \f$ 1/r_t \f$, if
 By construction the output of the algorithm is a connected orientable
 manifold with or without boundary. To cope with multiple components we
 merely look for a new seed facet among facets disjoint from the
-surface. In case of noisy data or outliers, the user has to filter out
+surface. In case of noisy data or outliers, the user must filter out
 small surface components.
 
 It is impossible to handle all kinds of boundaries and non uniform sampling
-at the same time. A void can either be an undersampled zone of the surface, 
+at the same time, as a void can either be an undersampled area of the surface, 
 or a hole.
 
 As we do not want the algorithm to rely on a uniformity condition on
@@ -140,10 +147,10 @@ sampled, the radii of the two triangles incident on a boundary edge
 would be very different.  These heuristic facts can be used for
 boundary detection.
 
-We discard any candidate triangle \f$ t \f$, for an edge \f$ e \f$
+More specifically, we discard any candidate triangle \f$ t \f$, for an edge \f$ e \f$
 such that \f$ p(t) < 0\f$, and \f$ r_t > k r_{t'}\f$ where \f$ t'\f$ is 
 the triangle on the surface incident on \f$ e \f$. The parameter \f$ k \f$ 
-can be chosen by the user and is by default 5.
+is specified by the user and is set by default to 5.
 
 
 Note that this heuristic implies that 
@@ -157,23 +164,60 @@ be sufficiently uniform for our algorithm to work.
 
 The global function `advancing_front_surface_reconstruction()` 
 takes an iterator range of points as input and writes for each face of the 
-reconstructed surface a triple of point indices into an output iterator. 
-In the example we write the surface in the OFF format to `std::cout`. 
+reconstructed surface a triplet of point indices into an output iterator. 
+The following example writes the output triangulated surface to `std::cout`
+in accordance to the OFF format. 
 
 \cgalExample{Advancing_front_surface_reconstruction/reconstruction_fct.cpp}
 
 
 \subsection AFSR_Example_class Example for the Reconstruction Class
 
-When using the class `Advancing_front_surface_reconstruction`
-you can access a 2D triangulation data structure describing the surface.
-You can explore the surface by going from faces to neighboring faces, 
-and you can also go to the underlying 3D Delaunay triangulation.
+The class `Advancing_front_surface_reconstruction` provides 
+access to a 2D triangulation data structure describing the output surface.
+The latter can be explored by hopping from a face to its neighboring faces.
 
-In the example we write the surface in the STL (Stereo Lithography) format
-to `std::cout`.
+The type of the 2D triangulation data structure describing the
+reconstructed surface is the nested type 
+\link Advancing_front_surface_reconstruction::TDS_2 `TDS_2`\endlink.  
+
+The type `TDS_2::Vertex` is model of the
+concept `TriangulationDataStructure_2::Vertex` and has additionally
+the method `vertex_3()` that returns an `Advancing_front_surface_reconstruction::Vertex_handle` to the
+associated 3D vertex.
+
+ The type `TDS_2::Face` is model of the concept
+`TriangulationDataStructure_2::Face` and has additionally the method
+`facet()` that returns the associated `Advancing_front_surface_reconstruction::Facet`, and a method `is_on_surface()` for testing if a face is part of the reconstructed
+surface.  
+
+In case the surface
+has boundaries, the 2D surface has one vertex which is associated to
+the infinite vertex of the 3D triangulation.
+
+
+The underlying 3D Delaunay triangulation can be accessed as well,
+using the API of the class `Delaunay_triangulation_3`.
+
+The following example writes the surface to `std::cout` in accordance
+to the STL (Stereo Lithography) format.
 
 \cgalExample{Advancing_front_surface_reconstruction/reconstruction_class.cpp}
+
+
+\subsection AFSR_Example_boundaries Example for Outliers and Boundaries
+
+Input points which are not on
+a surface are outliers. The member function \link Advancing_front_surface_reconstruction::outliers() `outliers()`\endlink
+returns an iterator range of those points.
+
+Boundary edges can be traversed with the member function \link Advancing_front_surface_reconstruction::boundaries() `boundaries()`\endlink
+It returns an iterator range type \link Advancing_front_surface_reconstruction::Boundary_range `Boundary_range`\endlink whose iterators have the value type 
+\link Advancing_front_surface_reconstruction::Vertex_on_boundary_range `Vertex_on_boundary_range`\endlink.  This is again an iterator range whose iterators have the value type 
+\link Advancing_front_surface_reconstruction::Vertex_handle `Vertex_handle`\endlink.
+
+\cgalExample{Advancing_front_surface_reconstruction/boundaries.cpp}
+
 
 */ 
 } /* namespace CGAL */

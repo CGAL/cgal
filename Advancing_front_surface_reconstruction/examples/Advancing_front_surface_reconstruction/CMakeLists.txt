@@ -27,6 +27,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "reconstruction_fct.cpp" )
   create_single_source_cgal_program( "reconstruction_class.cpp" )
   create_single_source_cgal_program( "reconstruction_polyhedron.cpp" )
+  create_single_source_cgal_program( "boundaries.cpp" )
 
 else()
   
