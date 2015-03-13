@@ -1,5 +1,14 @@
 /*!
+
+\example Polygon_mesh_processing/self_intersections_example.cpp
+\example Polygon_mesh_processing/hole_filling_example.cpp
+\example Polygon_mesh_processing/stitch_borders_example.cpp
+\example Polygon_mesh_processing/compute_normals_example.cpp
+\example Polygon_mesh_processing/point_inside_example.cpp
+\example Polygon_mesh_processing/triangulate_faces_example.cpp
+\example Polygon_mesh_processing/connected_components_example.cpp
+\example Polygon_mesh_processing/polygon_soup_example.cpp
 \example Polygon_mesh_processing/triangulate_polyline_example.cpp
-\example Polygon_mesh_processing/fair_polyhedron_example.cpp
-\example Polygon_mesh_processing/refine_polyhedron_example.cpp
+\example Polygon_mesh_processing/refine_fair_example.cpp
+
 */
