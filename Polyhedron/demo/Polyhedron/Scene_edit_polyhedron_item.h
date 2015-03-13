@@ -21,6 +21,9 @@
 #include "ui_Deform_mesh.h"
 #include <CGAL/Surface_mesh_deformation.h>
 #include <boost/function_output_iterator.hpp>
+#include <QGLBuffer>
+#include <QGLShader>
+#include <QGLShaderProgram>
 
 
 typedef Polyhedron::Vertex_handle Vertex_handle;
@@ -195,9 +198,11 @@ public:
     return m == Gouraud; 
   }
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
-  void draw() const;
-  void draw_edges() const;
-  void draw_bbox(const Scene_interface::Bbox& bb ) const;
+  void draw() const{}
+  void draw(Viewer_interface*) const;
+  void draw_edges() const{};
+  void draw_edges(Viewer_interface*) const;
+  void draw_bbox(const Scene_interface::Bbox&) const;
   void gl_draw_edge(double px, double py, double pz,
                           double qx, double qy, double qz) const;
   void gl_draw_point(const Point& p) const;
@@ -225,7 +230,7 @@ public:
   
 protected:
   void timerEvent(QTimerEvent *event);
-  void draw_ROI_and_control_vertices() const;
+  void draw_ROI_and_control_vertices(Viewer_interface *viewer) const;
 
 public slots:
   void changed();
@@ -262,10 +267,35 @@ private:
   Ui::DeformMesh* ui_widget;
   Scene_polyhedron_item* poly_item;
   // For drawing
-  std::vector<double> positions;
+  std::vector<GLdouble> positions;
   std::vector<unsigned int> tris;
   std::vector<unsigned int> edges;
-  std::vector<double> normals;
+  std::vector<GLdouble> color_lines;
+  std::vector<GLdouble> color_bbox;
+  std::vector<GLdouble> color_edges;
+  std::vector<GLdouble> ROI_points;
+  std::vector<GLdouble> control_points;
+  std::vector<GLdouble> ROI_color;
+  std::vector<GLdouble> control_color;
+  std::vector<GLdouble> normals;
+  std::vector<GLdouble> pos_bbox;
+  std::vector<GLdouble> pos_axis;
+  GLuint rendering_program_facets;
+  GLuint rendering_program_lines;
+  GLuint rendering_program_points;
+  GLint location[20];
+  GLuint vao[3];
+  GLuint buffer[20];
+
+  void initialize_buffers();
+  void compile_shaders(void);
+  void compute_normals_and_vertices(void);
+  void uniform_attrib(Viewer_interface*, int) const;
+  void compute_bbox(const Scene_interface::Bbox&);
+  void drawSphere(float);
+
+
+
 
   Deform_mesh deform_mesh;
   typedef std::list<Control_vertices_data> Ctrl_vertices_group_data_list;

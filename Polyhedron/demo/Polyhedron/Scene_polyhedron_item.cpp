@@ -453,9 +453,10 @@ Scene_polyhedron_item::compile_shaders(void)
     {
         "#version 300 es \n"
         " \n"
-        "in highp vec3 fColors; \n"
+        "precision mediump float; \n"
+        "in vec3 fColors; \n"
 
-        "out highp vec3 color; \n"
+        "out vec3 color; \n"
         " \n"
         "void main(void) \n"
         "{ \n"
