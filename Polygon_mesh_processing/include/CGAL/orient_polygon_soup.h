@@ -378,27 +378,28 @@ public:
 /**
  * \ingroup PkgPolygonMeshProcessing
  * Tries to consistently orient a soup of polygons in 3D space.
- * If it is not possible to produce a combinatorial manifold surface, some points will be
- * duplicated. These points are either an endpoint of edges incident to more than
- * two polygons, or an endpoint of an edge between two polygons with incompatible orientations
+ * If it is not possible to produce a combinatorial manifold surface, some points are
+ * duplicated. These points are either an endpoint of an edge incident to more than
+ * two polygons, an endpoint of an edge between two polygons with incompatible orientations
  * (during the re-orientation process), or a point shared by at least two polygons that do not
  * share an edge this point is incident to.
- * @tparam Point_3 the point type
- * @tparam Polygon_3 the Polygon type, being a container of indices
+ * @tparam Point the point type
+ * @tparam Polygon the polygon type, being a container of indices
  *
  * @param[in,out] points points of the soup of polygons. Some points might be pushed back to resolve
  *                non-manifold or non-orientability issues.
  * @param[in, out] polygons each element in the vector describes a polygon using the index of the points in `points`.
  *
- * @return `false` if some points were duplicated, thus producing a self-intersecting polyhedron
+ * @return `true`  if the orientation operation succeded.
+ * @return `false` if some points were duplicated, thus producing a self-intersecting polyhedron.
  *
  */
-template <class Point_3, class Polygon_3>
-bool orient_polygon_soup(std::vector<Point_3>& points,
-                         std::vector< Polygon_3 >& polygons)
+template <class Point, class Polygon>
+bool orient_polygon_soup(std::vector<Point>& points,
+                         std::vector<Polygon>& polygons)
 {
   std::size_t inital_nb_pts = points.size();
-  internal::Polygon_soup_orienter<Point_3, Polygon_3> orienter(points, polygons);
+  internal::Polygon_soup_orienter<Point, Polygon> orienter(points, polygons);
   orienter.orient();
   orienter.duplicate_singular_vertices();
 
