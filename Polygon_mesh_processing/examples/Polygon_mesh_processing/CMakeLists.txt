@@ -63,12 +63,17 @@ find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
-create_single_source_cgal_program( "fair_polyhedron_example.cpp" )
-create_single_source_cgal_program( "fill_polyhedron_example.cpp" )
-create_single_source_cgal_program( "refine_polyhedron_example.cpp" )
-create_single_source_cgal_program( "triangulate_polyline_example.cpp" )
-create_single_source_cgal_program( "connected_component_surface_mesh.cpp" )
-create_single_source_cgal_program( "connected_component_polyhedron.cpp" )
+create_single_source_cgal_program( "self_intersections_example.cpp" )
+create_single_source_cgal_program( "hole_filling_example.cpp" )
+create_single_source_cgal_program( "stitch_borders_example.cpp" )
+create_single_source_cgal_program( "compute_normals_example.cpp" )
+create_single_source_cgal_program( "point_inside_example.cpp")
+create_single_source_cgal_program( "triangulate_faces_example.cpp")
+create_single_source_cgal_program( "connected_components_example.cpp")
+create_single_source_cgal_program( "polygon_soup_example.cpp")
+create_single_source_cgal_program( "triangulate_polyline_example.cpp")
+create_single_source_cgal_program( "refine_fair_example.cpp")
+
 
 
 else(EIGEN3_FOUND)
