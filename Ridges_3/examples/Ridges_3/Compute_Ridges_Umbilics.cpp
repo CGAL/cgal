@@ -53,16 +53,16 @@ typedef CGAL::Umbilic_approximation < PolyhedralSurf,
 				      VertexVector_property_map > Umbilic_approximation;
 
 //create property maps
-VertexFT_map vertex2k1_map, vertex2k2_map,
-  vertex2b0_map, vertex2b3_map,
-  vertex2P1_map, vertex2P2_map;
-VertexVector_map vertex2d1_map, vertex2d2_map;
+VertexFT_map vertex_k1_map, vertex_k2_map,
+  vertex_b0_map, vertex_b3_map,
+  vertex_P1_map, vertex_P2_map;
+VertexVector_map vertex_d1_map, vertex_d2_map;
 Face2Vector_map face2normal_map;
 
-VertexFT_property_map vertex2k1_pm(vertex2k1_map), vertex2k2_pm(vertex2k2_map),
-  vertex2b0_pm(vertex2b0_map), vertex2b3_pm(vertex2b3_map),
-  vertex2P1_pm(vertex2P1_map), vertex2P2_pm(vertex2P2_map);
-VertexVector_property_map vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_map);
+VertexFT_property_map vertex_k1_pm(vertex_k1_map), vertex_k2_pm(vertex_k2_map),
+  vertex_b0_pm(vertex_b0_map), vertex_b3_pm(vertex_b3_map),
+  vertex_P1_pm(vertex_P1_map), vertex_P2_pm(vertex_P2_map);
+VertexVector_property_map vertex_d1_pm(vertex_d1_map), vertex_d2_pm(vertex_d2_map);
 Face2Vector_property_map  face2normal_pm(face2normal_map);
 
 // default fct parameter values and global variables
@@ -152,22 +152,22 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
     monge_form.comply_wrt_given_normal(normal_mesh);
 
     //Store monge data needed for ridge computations in property maps
-    vertex2d1_map[v] = monge_form.maximal_principal_direction();
-    vertex2d2_map[v] = monge_form.minimal_principal_direction();
-    vertex2k1_map[v] = monge_form.coefficients()[0];
-    vertex2k2_map[v] = monge_form.coefficients()[1];
-    vertex2b0_map[v] = monge_form.coefficients()[2];
-    vertex2b3_map[v] = monge_form.coefficients()[5];
+    vertex_d1_map[v] = monge_form.maximal_principal_direction();
+    vertex_d2_map[v] = monge_form.minimal_principal_direction();
+    vertex_k1_map[v] = monge_form.coefficients()[0];
+    vertex_k2_map[v] = monge_form.coefficients()[1];
+    vertex_b0_map[v] = monge_form.coefficients()[2];
+    vertex_b3_map[v] = monge_form.coefficients()[5];
     if ( d_monge >= 4) {
       //= 3*b1^2+(k1-k2)(c0-3k1^3)
-      vertex2P1_map[v] =
+      vertex_P1_map[v] =
 	3*monge_form.coefficients()[3]*monge_form.coefficients()[3]
 	+(monge_form.coefficients()[0]-monge_form.coefficients()[1])
 	*(monge_form.coefficients()[6]
 	  -3*monge_form.coefficients()[0]*monge_form.coefficients()[0]
 	  *monge_form.coefficients()[0]);
       //= 3*b2^2+(k2-k1)(c4-3k2^3)
-      vertex2P2_map[v] =
+      vertex_P2_map[v] =
 	3*monge_form.coefficients()[4]*monge_form.coefficients()[4]
 	+(-monge_form.coefficients()[0]+monge_form.coefficients()[1])
 	*(monge_form.coefficients()[10]
@@ -311,10 +311,10 @@ int main()
   //--------------------------------------------------------------------------
   std::cout << "Compute ridges..." << std::endl;
   Ridge_approximation ridge_approximation(P,
-					  vertex2k1_pm, vertex2k2_pm,
-					  vertex2b0_pm, vertex2b3_pm,
-					  vertex2d1_pm, vertex2d2_pm,
-					  vertex2P1_pm, vertex2P2_pm );
+					  vertex_k1_pm, vertex_k2_pm,
+					  vertex_b0_pm, vertex_b3_pm,
+					  vertex_d1_pm, vertex_d2_pm,
+					  vertex_P1_pm, vertex_P2_pm );
   std::vector<Ridge_line*> ridge_lines;
   back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
 
@@ -325,10 +325,10 @@ int main()
 
   // or with the global function
   CGAL::compute_max_ridges(P,
-			   vertex2k1_pm, vertex2k2_pm,
-			   vertex2b0_pm, vertex2b3_pm,
-			   vertex2d1_pm, vertex2d2_pm,
-			   vertex2P1_pm, vertex2P2_pm,
+			   vertex_k1_pm, vertex_k2_pm,
+			   vertex_b0_pm, vertex_b3_pm,
+			   vertex_d1_pm, vertex_d2_pm,
+			   vertex_P1_pm, vertex_P2_pm,
 			   ii, tag_order);
 
   std::vector<Ridge_line*>::iterator iter_lines = ridge_lines.begin(),
@@ -358,13 +358,13 @@ int main()
 
   //explicit construction of the class
  //  Umbilic_approximation umbilic_approximation(P,
-// 					      vertex2k1_pm, vertex2k2_pm,
-// 					      vertex2d1_pm, vertex2d2_pm);
+// 					      vertex_k1_pm, vertex_k2_pm,
+// 					      vertex_d1_pm, vertex_d2_pm);
 //   umbilic_approximation.compute(umb_it, umb_size);
   //or global function call
   CGAL::compute_umbilics(P,
-			 vertex2k1_pm, vertex2k2_pm,
-			 vertex2d1_pm, vertex2d2_pm,
+			 vertex_k1_pm, vertex_k2_pm,
+			 vertex_d1_pm, vertex_d2_pm,
 			 umb_it, umb_size);
 
   std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(),
