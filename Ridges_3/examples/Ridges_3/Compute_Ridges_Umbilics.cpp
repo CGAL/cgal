@@ -17,8 +17,6 @@
 namespace po = boost::program_options;
 #endif
 
-using namespace std;
-
 
 typedef PolyhedralSurf::Traits          Kernel;
 typedef Kernel::FT                      FT;
@@ -218,7 +216,7 @@ int main()
     po::notify(vm);
 
     if (vm.count("help")) {
-      cout << desc << "\n";
+      std::cerr << desc << "\n";
       return 1;
     }
 
@@ -227,7 +225,7 @@ int main()
       if ( int_tag == 3 ) tag_order = CGAL::Ridge_order_3;
       if ( int_tag == 4 ) tag_order = CGAL::Ridge_order_4;
       if ( int_tag != 3 && int_tag != 4 )
-	{cerr << "ridge_order must be CGAL::Ridge_order_3 or CGAL::Ridge_order_4";
+	{std::cerr << "ridge_order must be CGAL::Ridge_order_3 or CGAL::Ridge_order_4";
 	  return 1;}
     }
 #else 
@@ -242,7 +240,7 @@ int main()
 #endif
   }
 
-    catch(exception& e) {
+  catch(std::exception& e) {
     cerr << "error: " << e.what() << "\n";
     return 1;
     }
