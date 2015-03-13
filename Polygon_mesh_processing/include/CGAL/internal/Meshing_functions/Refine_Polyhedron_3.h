@@ -74,22 +74,25 @@ private:
     return false;
   }
 
-  template<class VertexOutputIterator, class FacetOutputIterator>
-  bool subdivide(std::vector<face_descriptor>& facets, 
+  template<class VertexOutputIterator,
+           class FaceOutputIterator,
+           class FaceRange>
+  bool subdivide(FaceRange faces,
                  const std::set<halfedge_descriptor>& border_edges,
                  std::map<vertex_descriptor, double>& scale_attribute, 
                  VertexOutputIterator& vertex_out,
-                 FacetOutputIterator& facet_out,
+                 FaceOutputIterator& facet_out,
+                 std::vector<face_descriptor>& new_faces,
                  double alpha)
   {
-    std::size_t facet_size = facets.size();
-    for(std::size_t i = 0; i < facet_size; ++i){
-      CGAL_assertion(facets[i]  != boost::graph_traits<PolygonMesh>::null_face());
+    BOOST_FOREACH(face_descriptor fd, faces)
+    {
+      CGAL_assertion(fd  != boost::graph_traits<PolygonMesh>::null_face());
 
-      halfedge_descriptor hh =  halfedge(facets[i],pmesh);
-      vertex_descriptor vi = target(halfedge(facets[i],pmesh),pmesh);
-      vertex_descriptor vj = target(next(halfedge(facets[i],pmesh),pmesh),pmesh);
-      vertex_descriptor vk = target(prev(halfedge(facets[i],pmesh),pmesh),pmesh);
+      halfedge_descriptor hh =  halfedge(fd,pmesh);
+      vertex_descriptor vi = target(halfedge(fd,pmesh),pmesh);
+      vertex_descriptor vj = target(next(halfedge(fd,pmesh),pmesh),pmesh);
+      vertex_descriptor vk = target(prev(halfedge(fd,pmesh),pmesh),pmesh);
       Point_3 c = CGAL::centroid(ppmap[vi], ppmap[vj], ppmap[vk]);
       double sac  = (scale_attribute[vi] + scale_attribute[vj] + scale_attribute[vk])/3.0;
       double dist_c_vi = std::sqrt(CGAL::squared_distance(c,ppmap[vi]));
@@ -100,8 +103,9 @@ private:
          (alpha * dist_c_vk > sac) &&
          (alpha * dist_c_vi > scale_attribute[vi]) &&
          (alpha * dist_c_vj > scale_attribute[vj]) &&
-         (alpha * dist_c_vk > scale_attribute[vk])){
-        halfedge_descriptor h = Euler::add_center_vertex(halfedge(facets[i],pmesh),pmesh);
+         (alpha * dist_c_vk > scale_attribute[vk]))
+      {
+        halfedge_descriptor h = Euler::add_center_vertex(halfedge(fd,pmesh),pmesh);
         put(ppmap, target(h,pmesh), c);
           scale_attribute[target(h,pmesh)] = sac;
           *vertex_out++ = target(h,pmesh);
@@ -109,7 +113,7 @@ private:
           // collect 2 new facets for next round 
           face_descriptor h1 = face(opposite(next(h,pmesh),pmesh),pmesh);
           face_descriptor h2 = face(opposite(h,pmesh),pmesh);
-          facets.push_back(h1); facets.push_back(h2);
+          new_faces.push_back(h1); new_faces.push_back(h2);
           *facet_out++ = h1;    *facet_out++ = h2;
           // relax edges of the  patching mesh 
           halfedge_descriptor e_ij = prev(h,pmesh);
@@ -127,42 +131,56 @@ private:
           }
       }
     }
-    return facets.size() != facet_size;
+    return !new_faces.empty();
   }
 
-  bool relax(const std::vector<face_descriptor>& facets, 
+  template<typename FaceRange>
+  bool relax(FaceRange faces,
+             const std::vector<face_descriptor>& new_faces,
              const std::set<halfedge_descriptor>& border_edges)
   {
     int flips = 0;
     std::list<halfedge_descriptor> interior_edges;
     std::set<halfedge_descriptor> included_map; 
 
-    for(typename std::vector<face_descriptor>::const_iterator it = facets.begin(); it!= facets.end(); ++it) {
-      Halfedge_around_face_circulator<PolygonMesh>  circ(halfedge(*it,pmesh),pmesh), done(circ);
-      do {
-        halfedge_descriptor h = *circ;        
-        if(border_edges.find(h) == border_edges.end()){
-          // do not remove included_map and use if(&*h < &*oh) { interior_edges.push_back(h) } 
-          // which will change the order of edges from run to run
-          halfedge_descriptor oh = opposite(h,pmesh);
-          halfedge_descriptor h_rep = (h < oh) ? h : oh; // AF: was &*h < &*oh
-          if(included_map.insert(h_rep).second) {
-            interior_edges.push_back(h_rep);
-          }
-        }
-      } while(++circ != done);
-    }
+    collect_interior_edges(faces, border_edges, interior_edges, included_map);
+    collect_interior_edges(new_faces, border_edges, interior_edges, included_map);
 
     CGAL_TRACE_STREAM << "Test " << interior_edges.size() << " edges " << std::endl;
     //do not just use std::set (included_map) for iteration, the order effects the output (we like to make it deterministic)
-    for(typename std::list<halfedge_descriptor>::iterator it = interior_edges.begin(); it != interior_edges.end();++it) {
-      if(relax(*it)) {
+    BOOST_FOREACH(halfedge_descriptor h, interior_edges)
+    {
+      if( relax(h) ) {
         ++flips;
       }
     }
 
     CGAL_TRACE_STREAM << "|flips| = " << flips << std::endl;
     return flips > 0;
+  }
+
+  template<typename FaceRange>
+  void collect_interior_edges(FaceRange faces,
+        const std::set<halfedge_descriptor>& border_edges,
+        std::list<halfedge_descriptor>& interior_edges,
+        std::set<halfedge_descriptor>& included_map)
+  {
+    BOOST_FOREACH(face_descriptor fd, faces)
+    {
+      Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(fd, pmesh), pmesh), done(circ);
+      do {
+        halfedge_descriptor h = *circ;
+        if (border_edges.find(h) == border_edges.end()){
+          // do not remove included_map and use if(&*h < &*oh) { interior_edges.push_back(h) } 
+          // which will change the order of edges from run to run
+          halfedge_descriptor oh = opposite(h, pmesh);
+          halfedge_descriptor h_rep = (h < oh) ? h : oh; // AF: was &*h < &*oh
+          if (included_map.insert(h_rep).second) {
+            interior_edges.push_back(h_rep);
+          }
+        }
+      } while (++circ != done);
+    }
   }
 
   double average_length(vertex_descriptor vh,
@@ -190,13 +208,15 @@ private:
     return sum/deg;
   }
 
-  void calculate_scale_attribute(const std::vector<face_descriptor>& facets, 
+  template<typename FaceRange>
+  void calculate_scale_attribute(const FaceRange& faces,
                                  const std::set<face_descriptor>& interior_map,
                                  std::map<vertex_descriptor, double>& scale_attribute,
                                  bool accept_internal_facets) 
   {
-    for(typename std::vector<face_descriptor>::const_iterator f_it = facets.begin(); f_it != facets.end(); ++f_it) {
-      Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(*f_it,pmesh),pmesh), done(circ);
+    BOOST_FOREACH(face_descriptor fd, faces)
+    {
+      Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(fd,pmesh),pmesh), done(circ);
       do {
         vertex_descriptor v = target(*circ,pmesh);
         std::pair<typename std::map<vertex_descriptor, double>::iterator, bool> v_insert 
@@ -207,11 +227,13 @@ private:
     }
   }
 
-  bool contain_internal_facets(const std::vector<face_descriptor>& facets,
+  template<typename FaceRange>
+  bool contain_internal_facets(const FaceRange& faces,
                                const std::set<face_descriptor>& interior_map) const
   {
-    for(typename std::vector<face_descriptor>::const_iterator f_it = facets.begin(); f_it != facets.end(); ++f_it) {
-      Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(*f_it,pmesh),pmesh), done(circ);
+    BOOST_FOREACH(face_descriptor fd, faces)
+    {
+      Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(fd,pmesh),pmesh), done(circ);
       do {
         vertex_descriptor v = target(*circ,pmesh);
         Halfedge_around_target_circulator<PolygonMesh> circ_v(*circ,pmesh), done_v(circ_v);
@@ -236,20 +258,20 @@ public:
     : pmesh(pmesh), ppmap(get(vertex_point, pmesh))
   {}
 
-  template<class FacetRange, class FacetOutputIterator, class VertexOutputIterator>
-  void refine(FacetRange faces,
+  template<class FaceRange, class FacetOutputIterator, class VertexOutputIterator>
+  void refine(FaceRange faces,
               FacetOutputIterator& facet_out,
               VertexOutputIterator& vertex_out,
               double alpha)
   {
-    std::vector<face_descriptor> facets(boost::begin(faces), boost::end(faces));
       // do not use just std::set, the order effects the output (for the same input we want to get same output)
-    std::set<face_descriptor> interior_map(facets.begin(), facets.end());
+    std::set<face_descriptor> interior_map(boost::begin(faces), boost::end(faces));
 
     // store boundary edges - to be used in relax 
     std::set<halfedge_descriptor> border_edges;
-    for (typename std::vector<face_descriptor>::const_iterator it = facets.begin(); it != facets.end(); ++it){
-      Halfedge_around_face_circulator<PolygonMesh>  circ(halfedge(*it,pmesh),pmesh), done(circ);
+    BOOST_FOREACH(face_descriptor f, faces)
+    {
+      Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(f,pmesh),pmesh), done(circ);
       do {
         if(interior_map.find(face(opposite(*circ,pmesh),pmesh)) == interior_map.end()) {
           border_edges.insert(*circ);
@@ -258,18 +280,20 @@ public:
     }
 
     // check whether there is any need to accept internal facets
-    bool accept_internal_facets = contain_internal_facets(facets, interior_map);
+    bool accept_internal_facets = contain_internal_facets(faces, interior_map);
     std::map<vertex_descriptor, double> scale_attribute;
-    calculate_scale_attribute(facets, interior_map, scale_attribute, accept_internal_facets);
+    calculate_scale_attribute(faces, interior_map, scale_attribute, accept_internal_facets);
 
+    std::vector<face_descriptor> new_faces;
     CGAL::Timer total_timer; total_timer.start();
-    for(int i = 0; i < 10; ++i) {
+    for(int i = 0; i < 10; ++i)
+    {
       CGAL::Timer timer; timer.start();
-      bool is_subdivided = subdivide(facets, border_edges, scale_attribute, vertex_out, facet_out, alpha);
+      bool is_subdivided = subdivide(faces, border_edges, scale_attribute, vertex_out, facet_out, new_faces, alpha);
       CGAL_TRACE_STREAM << "**Timer** subdivide() :" << timer.time() << std::endl; timer.reset();
       if(!is_subdivided) { break; }
 
-      bool is_relaxed = relax(facets, border_edges);
+      bool is_relaxed = relax(faces, new_faces, border_edges);
       CGAL_TRACE_STREAM << "**Timer** relax() :" << timer.time() << std::endl;
       if(!is_relaxed) { break; }
     }
