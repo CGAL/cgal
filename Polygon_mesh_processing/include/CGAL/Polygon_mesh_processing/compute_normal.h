@@ -26,6 +26,8 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
 #include <boost/graph/graph_traits.hpp>
+#include <CGAL/Origin.h>
+#include <CGAL/Kernel/global_functions_3.h>
 
 namespace CGAL{
 
