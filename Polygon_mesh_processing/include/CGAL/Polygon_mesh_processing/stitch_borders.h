@@ -26,6 +26,7 @@
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Default.h>
+#include <CGAL/boost/graph/properties.h>
 
 #include <vector>
 #include <set>
