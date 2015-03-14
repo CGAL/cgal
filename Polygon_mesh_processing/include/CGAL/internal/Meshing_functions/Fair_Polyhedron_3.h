@@ -125,7 +125,7 @@ private:
   }
 
 public:
-  template<class VertexRange, class SparseLinearSolver>
+  template<class VertexRange>
   bool fair(VertexRange vertices
     , SparseLinearSolver m_solver
     , Fairing_continuity fc)
