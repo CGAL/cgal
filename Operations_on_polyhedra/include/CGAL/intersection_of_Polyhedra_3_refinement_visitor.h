@@ -22,7 +22,7 @@
 #define CGAL_INTERSECTION_OF_POLYHEDRA_3_REFINEMENT_VISITOR_H
 
 #include <CGAL/intersection_of_Polyhedra_3.h>
-#include <CGAL/Polygon_mesh_processing/Connected_components.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
