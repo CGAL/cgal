@@ -63,13 +63,13 @@ bool check_number_of_cells_3(CMap& cmap, unsigned int nbv, unsigned int nbe,
 template<typename CMap>
 struct Count_nb_darts
 {
-  Count_nb_darts(unsigned int &nb) : m_nb(nb)
+  Count_nb_darts(std::size_t &nb) : m_nb(nb)
   {}
 
   void operator() (const typename CMap::Dart&)
   { ++m_nb; }
 protected:
-  unsigned int& m_nb;
+  std::size_t& m_nb;
 };
 
 template<class Map, class Functor>
@@ -560,7 +560,7 @@ bool test3D()
   }
 
   {
-    unsigned int nbtest=0;
+    std::size_t nbtest=0;
     cout<<"std::for_each iterators : ";
     std::for_each(map.darts().begin(), map.darts().end(),
                   Count_nb_darts<Map>(nbtest));
@@ -582,7 +582,7 @@ bool test3D()
                   Count_nb_darts<Map>(nbtest));
     std::cout<<nbtest<<", comparison using size(): ";
 
-    unsigned int nbtest2 = map.darts().size()+
+    std::size_t nbtest2 = map.darts().size()+
       map.template darts_of_orbit<1,2>(it1).size()+
       map.template darts_of_cell<3>(it1).size()+
       map.template darts_of_involution<2>(it1).size()+
