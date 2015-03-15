@@ -34,26 +34,26 @@ namespace CGAL {
     /*!
      \ingroup PkgPointSetShapeDetection3
      \brief Torus_shape implements Shape_base. The torus is represented by the symmetry axis, its center on the axis and the major and minor radii.     */
-  template <class Sd_traits>
-  class Torus_shape : public Shape_base<Sd_traits> {
+  template <class ERTraits>
+  class Torus_shape : public Shape_base<ERTraits> {
   public:
     /// \cond SKIP_IN_MANUAL
-    typedef typename Sd_traits::Input_iterator Input_iterator;
+    typedef typename ERTraits::Input_iterator Input_iterator;
      ///< random access iterator for input data.
-    typedef typename Sd_traits::Point_pmap Point_pmap;
+    typedef typename ERTraits::Point_pmap Point_pmap;
      ///< property map to access the location of an input point.
-    typedef typename Sd_traits::Normal_pmap Normal_pmap;
+    typedef typename ERTraits::Normal_pmap Normal_pmap;
      ///< property map to access the unoriented normal of an input point.
-    typedef typename Sd_traits::Geom_traits::FT FT; ///< number type.
-    typedef typename Sd_traits::Geom_traits::Point_3 Point; ///< point type.
-    typedef typename Sd_traits::Geom_traits::Vector_3 Vector; ///< vector type.
-    typedef typename Sd_traits::Geom_traits::Point_2 Point_2;
+    typedef typename ERTraits::Geom_traits::FT FT; ///< number type.
+    typedef typename ERTraits::Geom_traits::Point_3 Point; ///< point type.
+    typedef typename ERTraits::Geom_traits::Vector_3 Vector; ///< vector type.
+    typedef typename ERTraits::Geom_traits::Point_2 Point_2;
      ///< 2D point type used during construction.
-    typedef typename Sd_traits::Geom_traits::Circle_2 Circle;
+    typedef typename ERTraits::Geom_traits::Circle_2 Circle;
      ///< cricle type used during construction.
     /// \endcond
 
-    Torus_shape() : Shape_base<Sd_traits>() {}
+    Torus_shape() : Shape_base<ERTraits>() {}
       
     /*!
       Direction of symmetry axis.

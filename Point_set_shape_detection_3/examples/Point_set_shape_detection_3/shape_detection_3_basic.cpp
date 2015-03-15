@@ -3,7 +3,7 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
 
-#include <CGAL/Shape_detection_3.h>
+#include <CGAL/Efficient_RANSAC_3.h>
 #include <CGAL/Plane_shape.h>
 
 #include <iostream>
@@ -16,11 +16,11 @@ typedef std::vector<Point_with_normal>                      Pwn_vector;
 typedef CGAL::Identity_property_map<Point_with_normal>      Point_pmap;
 typedef CGAL::Normal_of_point_with_normal_pmap<Kernel>      Normal_pmap;
 
-// In Shape_detection_traits_3 the basic types, i.e., Point and Vector types
+// In Efficient_RANSAC_traits_3 the basic types, i.e., Point and Vector types
 // as well as iterator type and property maps, are defined.
-typedef CGAL::Shape_detection_traits_3<Kernel,
+typedef CGAL::Efficient_RANSAC_traits_3<Kernel,
   Pwn_vector::iterator, Point_pmap, Normal_pmap>            Traits;
-typedef CGAL::Shape_detection_3<Traits>                     Shape_detection;
+typedef CGAL::Efficient_RANSAC_3<Traits>                     Efficient_RANSAC;
 
 int main() 
 {
@@ -42,12 +42,11 @@ int main()
   }
 
   // Instantiates shape detection engine and provides input data.
-  Shape_detection sd(points.begin(), points.end(),
+  Efficient_RANSAC sd(points.begin(), points.end(),
 	                 Point_pmap(), Normal_pmap());
 
-  // Registers planar shapes via the template Shape_factory
-  sd.add_shape_factory(new 
-    CGAL::Shape_factory<CGAL::Plane_shape<Traits> >);
+  // Registers planar shapes via template method.
+  sd.add_shape_factory<CGAL::Plane_shape<Traits> >();
 
   // Detects registered shapes with default parameters.
   sd.detect();

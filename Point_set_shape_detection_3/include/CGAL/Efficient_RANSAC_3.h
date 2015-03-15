@@ -19,8 +19,8 @@
 // Author(s)     : Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez
 //
 
-#ifndef CGAL_SHAPE_DETECTION_3_H
-#define CGAL_SHAPE_DETECTION_3_H
+#ifndef CGAL_EFFICIENT_RANSAC_3_H
+#define CGAL_EFFICIENT_RANSAC_3_H
 
 #include "Octree.h"
 #include "Shape_base.h"
@@ -54,7 +54,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 /*! 
-  \file Shape_detection_3.h
+  \file Efficient_RANSAC_3.h
 */
 
 namespace CGAL {
@@ -64,14 +64,14 @@ namespace CGAL {
      */
 
   template <class Gt,
-            class Input_it,
-            class P_pmap,
-            class N_pmap>
-  struct Shape_detection_traits_3 {
+            class InputIt,
+            class Ppmap,
+            class Npmap>
+  struct Efficient_RANSAC_traits_3 {
     typedef Gt Geom_traits;     ///< Geometric types for definition of point, vector types, etc.
-    typedef Input_it Input_iterator;  ///< Random access iterator type used for providing input data to the method.
-    typedef P_pmap Point_pmap;    ///< Property map to access point location from input data.
-    typedef N_pmap Normal_pmap;   ///< Property map to access normal vector from input data.
+    typedef InputIt Input_iterator;  ///< Random access iterator type used for providing input data to the method.
+    typedef Ppmap Point_pmap;    ///< Property map to access point location from input data.
+    typedef Npmap Normal_pmap;   ///< Property map to access normal vector from input data.
   };
 
   /*!
@@ -87,35 +87,35 @@ et al. in 2007 \cgalCite{Schnabel07}.
 \tparam Sd_traits Shape detection traits class.
 
 */
-  template <class Sd_traits>
-  class Shape_detection_3 {
+  template <class ERTraits>
+  class Efficient_RANSAC_3 {
   public:
 
     /// \cond SKIP_IN_MANUAL
     struct Filter_unassigned_points {
-      Filter_unassigned_points() : m_shapeIndex() {}
+      Filter_unassigned_points() : m_shape_index() {}
       Filter_unassigned_points(const std::vector<int> &shapeIndex)
-        : m_shapeIndex(shapeIndex) {}
+        : m_shape_index(shapeIndex) {}
 
       bool operator()(std::size_t x) {
-        if (x < m_shapeIndex.size())
-          return m_shapeIndex[x] == -1;
+        if (x < m_shape_index.size())
+          return m_shape_index[x] == -1;
         else return true; // to prevent infinite incrementing
       }
-      std::vector<int> m_shapeIndex;
+      std::vector<int> m_shape_index;
     };
     /// \endcond
 
     /// \name Types 
     /// @{
-    typedef typename Sd_traits::Input_iterator Input_iterator; ///< random access iterator for input data.
-    typedef typename Sd_traits::Geom_traits::FT FT; ///< number type.
-    typedef typename Sd_traits::Geom_traits::Point_3 Point; ///< point type.
-    typedef typename Sd_traits::Geom_traits::Vector_3 Vector; ///< vector type.
-    typedef typename Sd_traits::Point_pmap Point_pmap; ///< property map to access the location of an input point.
-    typedef typename Sd_traits::Normal_pmap Normal_pmap; ///< property map to access the unoriented normal of an input point.
+    typedef typename ERTraits::Input_iterator Input_iterator; ///< random access iterator for input data.
+    typedef typename ERTraits::Geom_traits::FT FT; ///< number type.
+    typedef typename ERTraits::Geom_traits::Point_3 Point; ///< point type.
+    typedef typename ERTraits::Geom_traits::Vector_3 Vector; ///< vector type.
+    typedef typename ERTraits::Point_pmap Point_pmap; ///< property map to access the location of an input point.
+    typedef typename ERTraits::Normal_pmap Normal_pmap; ///< property map to access the unoriented normal of an input point.
 
-    typedef Shape_base<Sd_traits> Shape; ///< shape type.
+    typedef Shape_base<ERTraits> Shape; ///< shape type.
     typedef typename std::vector<Shape *>::const_iterator Shape_iterator; ///< iterator for extracted shapes.
     typedef boost::filter_iterator<Filter_unassigned_points, boost::counting_iterator<std::size_t> > Point_index_iterator; ///< iterator for indices of points.
     /// @}
@@ -136,11 +136,16 @@ et al. in 2007 \cgalCite{Schnabel07}.
     /// @}
 
   private:
-    typedef internal::Octree<internal::DirectPointAccessor<Sd_traits> >
+    typedef internal::Octree<internal::DirectPointAccessor<ERTraits> >
       Direct_octree;
-    typedef internal::Octree<internal::IndexedPointAccessor<Sd_traits> >
+    typedef internal::Octree<internal::IndexedPointAccessor<ERTraits> >
       Indexed_octree;
     //--------------------------------------------typedef
+
+    template <class ShapeT>
+    static Shape *factory() {
+      return new ShapeT;
+    }
 
   public:
 
@@ -153,11 +158,11 @@ et al. in 2007 \cgalCite{Schnabel07}.
     property maps to access point locations and unoriented normals.
     Internal data structures depending on the input data are constructed.
   */ 
-    Shape_detection_3(Input_iterator first, ///< iterator over the first input point.
+    Efficient_RANSAC_3(Input_iterator first, ///< iterator over the first input point.
       Input_iterator beyond, ///< past-the-end iterator over the input points.
       Point_pmap point_pmap, ///< property map to access the position of an input point.
       Normal_pmap normal_pmap ///< property map to access the unoriented normal of an input point.
-      ) : m_rng(std::random_device()()), m_num_subsets(0), m_numAvailablePoints(0), m_global_octree(NULL), m_direct_octrees(NULL) {
+      ) : m_rng(std::random_device()()), m_num_subsets(0), m_num_available_points(0), m_global_octree(NULL), m_direct_octrees(NULL) {
 
       m_point_pmap = point_pmap;
       m_normal_pmap = normal_pmap;
@@ -165,21 +170,21 @@ et al. in 2007 \cgalCite{Schnabel07}.
       m_inputIterator_first = first;
       m_inputIterator_beyond = beyond;
       
-      m_numAvailablePoints = beyond - first;
+      m_num_available_points = beyond - first;
 
-      if (m_numAvailablePoints == 0)
+      if (m_num_available_points == 0)
         return;
 
       // Generation of subsets
       m_num_subsets = (std::max<std::size_t>)((std::size_t)
-        std::floor(std::log(double(m_numAvailablePoints))/std::log(2.))-9, 2);
+        std::floor(std::log(double(m_num_available_points))/std::log(2.))-9, 2);
 
       // SUBSET GENERATION ->
       // approach with increasing subset sizes -> replace with octree later on
       Input_iterator last = beyond - 1;
-      std::size_t remainingPoints = m_numAvailablePoints;
+      std::size_t remainingPoints = m_num_available_points;
 
-      m_availableOctreeSizes.resize(m_num_subsets);
+      m_available_octree_sizes.resize(m_num_subsets);
       m_direct_octrees = new Direct_octree *[m_num_subsets];
       for (int s = m_num_subsets - 1;s >= 0;--s) {
         std::size_t subsetSize = remainingPoints;
@@ -210,7 +215,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
                                                   first + (subsetSize), 
                                                   0);
         
-        m_availableOctreeSizes[s] = subsetSize;
+        m_available_octree_sizes[s] = subsetSize;
         m_direct_octrees[s]->createTree();
 
         remainingPoints -= subsetSize;
@@ -221,7 +226,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
     }	 
 
     /// \cond SKIP_IN_MANUAL
-    ~Shape_detection_3() {
+    ~Efficient_RANSAC_3() {
       if (m_global_octree)
         delete m_global_octree;
 
@@ -233,23 +238,23 @@ et al. in 2007 \cgalCite{Schnabel07}.
         delete [] m_direct_octrees;
       }
 
-      if (m_extractedShapes.size()) {
-        for (std::size_t i = 0;i<m_extractedShapes.size();i++)
-          delete m_extractedShapes[i];
+      if (m_extracted_shapes.size()) {
+        for (std::size_t i = 0;i<m_extracted_shapes.size();i++)
+          delete m_extracted_shapes[i];
       }
-
-      for (std::size_t i = 0;i<m_shapeFactories.size();i++)
-        delete m_shapeFactories[i];
     }
     /// \endcond
 
-  /*!
-    This function registers a shape type for detection.
-  */ 
-    template <class Shape_factory>
-    void add_shape_factory(Shape_factory *factory///< Factory for shape type defined by `Shape_factory`
-      ) {
-      m_shapeFactories.push_back(factory);
+    /*!
+      This function registers a shape type for detection.
+    */ 
+    template <class ShapeT>
+    void add_shape_factory() {
+      m_shape_factories.push_back(factory<ShapeT>);
+    }
+
+    void clear_shape_factories() {
+      m_shape_factories.clear();
     }
 
     /// @}
@@ -264,19 +269,19 @@ et al. in 2007 \cgalCite{Schnabel07}.
       const Parameters &options = Parameters()///< Parameters for shape detection.
                 ) {
       // no shape types for detection or no points provided, exit
-      if (m_shapeFactories.size() == 0 || (m_inputIterator_beyond - m_inputIterator_first) == 0)
+      if (m_shape_factories.size() == 0 || (m_inputIterator_beyond - m_inputIterator_first) == 0)
         return false;
 
       // Reset data structures possibly used by former search
-      if (m_extractedShapes.size()) {
-      for (std::size_t i = 0;i<m_extractedShapes.size();i++)
-        delete m_extractedShapes[i];
+      if (m_extracted_shapes.size()) {
+      for (std::size_t i = 0;i<m_extracted_shapes.size();i++)
+        delete m_extracted_shapes[i];
       }
-      m_extractedShapes.clear();
-      m_numAvailablePoints = m_inputIterator_beyond - m_inputIterator_first;
+      m_extracted_shapes.clear();
+      m_num_available_points = m_inputIterator_beyond - m_inputIterator_first;
 
       for (std::size_t i = 0;i<m_num_subsets;i++) {
-        m_availableOctreeSizes[i] = m_direct_octrees[i]->size();
+        m_available_octree_sizes[i] = m_direct_octrees[i]->size();
       }
 
       // use bounding box diagonal as reference for default values
@@ -290,10 +295,10 @@ et al. in 2007 \cgalCite{Schnabel07}.
       m_options.cluster_epsilon = (m_options.cluster_epsilon < 0) ? bboxDiagonal * 0.01 : m_options.cluster_epsilon;
 
       // minimum number of points has been set?
-      m_options.min_points = (m_options.min_points >= m_numAvailablePoints) ? (std::size_t)((FT)0.001 * m_numAvailablePoints) : m_options.min_points;
+      m_options.min_points = (m_options.min_points >= m_num_available_points) ? (std::size_t)((FT)0.001 * m_num_available_points) : m_options.min_points;
       
       // initializing the shape index
-      m_shapeIndex.assign(m_numAvailablePoints, -1);
+      m_shape_index.assign(m_num_available_points, -1);
 
       // list of all randomly drawn candidates
       // with the minimum number of points
@@ -301,8 +306,8 @@ et al. in 2007 \cgalCite{Schnabel07}.
 
       // Identifying minimum number of samples
       std::size_t requiredSamples = 0;
-      for (size_t i = 0;i<m_shapeFactories.size();i++) {
-        Shape *tmp = (Shape *) m_shapeFactories[i]->create();
+      for (size_t i = 0;i<m_shape_factories.size();i++) {
+        Shape *tmp = (Shape *) m_shape_factories[i]();
         requiredSamples = (std::max<std::size_t>)(requiredSamples, tmp->required_samples());
         delete tmp;
       }
@@ -327,25 +332,25 @@ et al. in 2007 \cgalCite{Schnabel07}.
           bool done = false;
           do {
             do 
-              firstSample = m_rng() % m_numAvailablePoints;
-              while (m_shapeIndex[firstSample] != -1);
+              firstSample = m_rng() % m_num_available_points;
+              while (m_shape_index[firstSample] != -1);
               
             done = m_global_octree->drawSamplesFromCellContainingPoint(
               get(m_point_pmap, 
                   *(m_inputIterator_first + firstSample)),
               selectRandomOctreeLevel(),
               indices,
-              m_shapeIndex,
+              m_shape_index,
               requiredSamples);
 
-          } while (m_shapeIndex[firstSample] != -1 || !done);
+          } while (m_shape_index[firstSample] != -1 || !done);
 
           nbNewCandidates++;
 
           //add candidate for each type of primitives
-          for(std::vector<internal::Shape_factory_base *>::iterator it =
-            m_shapeFactories.begin(); it != m_shapeFactories.end(); it++)	{
-            Shape *p = (Shape *) (*it)->create();
+          for(std::vector<Shape *(*)()>::iterator it =
+            m_shape_factories.begin(); it != m_shape_factories.end(); it++)	{
+            Shape *p = (Shape *) (*it)();
             //compute the primitive and says if the candidate is valid
             p->compute(indices,
                        m_inputIterator_first,
@@ -355,7 +360,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
                        m_options.normal_threshold);
 
             if (p->is_valid()) {
-              improveBound(p, m_numAvailablePoints - numInvalid, 1, 500);
+              improveBound(p, m_num_available_points - numInvalid, 1, 500);
 
               //evaluate the candidate
               if(p->max_bound() >= m_options.min_points) {
@@ -379,13 +384,13 @@ et al. in 2007 \cgalCite{Schnabel07}.
             forceExit = true;
 
         } while( !forceExit
-          && StopProbability(bestExp,
-                             m_numAvailablePoints - numInvalid, 
+          && stop_probability(bestExp,
+                             m_num_available_points - numInvalid, 
                              nbNewCandidates,
                              m_global_octree->maxLevel()) 
                 > m_options.probability
-          && StopProbability(m_options.min_points,
-                             m_numAvailablePoints - numInvalid, 
+          && stop_probability(m_options.min_points,
+                             m_num_available_points - numInvalid, 
                              nbNewCandidates,
                              m_global_octree->maxLevel())
                 > m_options.probability);
@@ -403,7 +408,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
         //  the best candidate is always the last element of the vector
 
         Shape *best_Candidate = 
-          getBestCandidate(candidates, m_numAvailablePoints - numInvalid);
+          getBestCandidate(candidates, m_num_available_points - numInvalid);
 
         if (!best_Candidate)
           continue;
@@ -412,14 +417,14 @@ et al. in 2007 \cgalCite{Schnabel07}.
 
         best_Candidate->m_score = 
           m_global_octree->score(best_Candidate,
-                                 m_shapeIndex,
+                                 m_shape_index,
                                  3 * m_options.epsilon,
                                  m_options.normal_threshold);
 
         best_Candidate->connected_component(m_options.cluster_epsilon);
 
-        if (StopProbability(best_Candidate->expected_value(),
-                            (m_numAvailablePoints - numInvalid),
+        if (stop_probability(best_Candidate->expected_value(),
+                            (m_num_available_points - numInvalid),
                             nbNewCandidates,
                             m_global_octree->maxLevel())
                 <= m_options.probability) {
@@ -429,7 +434,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
             candidates.back() = NULL;
 
             //1. add best candidate to final result.
-            m_extractedShapes.push_back(best_Candidate);
+            m_extracted_shapes.push_back(best_Candidate);
 
             //2. remove the points
             //2.1 update boolean
@@ -437,8 +442,8 @@ et al. in 2007 \cgalCite{Schnabel07}.
               best_Candidate->assigned_points();
 
             for (std::size_t i = 0;i<indices_points_best_candidate.size();i++) {
-              m_shapeIndex[indices_points_best_candidate.at(i)] =
-                m_extractedShapes.size() - 1;
+              m_shape_index[indices_points_best_candidate.at(i)] =
+                m_extracted_shapes.size() - 1;
 
               numInvalid++;
 
@@ -452,7 +457,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
                       (indices_points_best_candidate.at(i) - offset) 
                       < m_direct_octrees[j]->size()) {
                     exactlyOnce = false;
-                    m_availableOctreeSizes[j]--;
+                    m_available_octree_sizes[j]--;
                   }
                 }
               }
@@ -466,9 +471,9 @@ et al. in 2007 \cgalCite{Schnabel07}.
           }
 
           std::vector<std::size_t> subsetSizes(m_num_subsets);
-          subsetSizes[0] = m_availableOctreeSizes[0];
+          subsetSizes[0] = m_available_octree_sizes[0];
           for (std::size_t i = 1;i<m_num_subsets;i++) {
-            subsetSizes[i] = subsetSizes[i-1] + m_availableOctreeSizes[i];
+            subsetSizes[i] = subsetSizes[i-1] + m_available_octree_sizes[i];
           }
 
 
@@ -477,7 +482,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
           bestExp = 0;
           for (std::size_t i=0;i< candidates.size()-1;i++) {
             if (candidates[i]) {
-              candidates[i]->update_points(m_shapeIndex);
+              candidates[i]->update_points(m_shape_index);
 
               if (candidates[i]->max_bound() < m_options.min_points) {
                 delete candidates[i];
@@ -486,7 +491,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
               else {
                 candidates[i]->compute_bound(
                    subsetSizes[candidates[i]->m_nb_subset_used - 1],
-                   m_numAvailablePoints - numInvalid);
+                   m_num_available_points - numInvalid);
                 bestExp = (candidates[i]->expected_value() > bestExp) ?
                   candidates[i]->expected_value() : bestExp;
               }
@@ -509,15 +514,15 @@ et al. in 2007 \cgalCite{Schnabel07}.
         }
 
       }
-      while((StopProbability(m_options.min_points,
-                            m_numAvailablePoints - numInvalid,
+      while((stop_probability(m_options.min_points,
+                            m_num_available_points - numInvalid,
                             nbNewCandidates, 
                             m_global_octree->maxLevel())
                > m_options.probability
-        && FT(m_numAvailablePoints - numInvalid) >= m_options.min_points)
+        && FT(m_num_available_points - numInvalid) >= m_options.min_points)
         || bestExp >= m_options.min_points);
 
-      m_numAvailablePoints -= numInvalid;
+      m_num_available_points -= numInvalid;
 
       return true;
     }
@@ -530,7 +535,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
        Number of detected shapes.
        */
     std::size_t number_of_shapes() const {
-      return m_extractedShapes.size();
+      return m_extracted_shapes.size();
     }
       
     /*!
@@ -541,21 +546,21 @@ et al. in 2007 \cgalCite{Schnabel07}.
     */
 
     Shape_iterator shapes_begin() const {
-      return m_extractedShapes.begin();
+      return m_extracted_shapes.begin();
     }
       
     /*!
       Past-the-end shape iterator.
     */
     Shape_iterator shapes_end() const {
-      return m_extractedShapes.end();
+      return m_extracted_shapes.end();
     }
       
     /*! 
       Number of points not assigned to a shape.
     */ 
     std::size_t number_of_unassigned_points() {
-      return m_numAvailablePoints;
+      return m_num_available_points;
     }
     
     /*! 
@@ -563,12 +568,12 @@ et al. in 2007 \cgalCite{Schnabel07}.
       the input data that has not been assigned to a shape.
     */ 
     Point_index_iterator unassigned_points_begin() {
-      Filter_unassigned_points fup(m_shapeIndex);
+      Filter_unassigned_points fup(m_shape_index);
 
       return boost::make_filter_iterator<Filter_unassigned_points>(
         fup,
         boost::counting_iterator<std::size_t>(0),
-        boost::counting_iterator<std::size_t>(m_shapeIndex.size()));
+        boost::counting_iterator<std::size_t>(m_shape_index.size()));
     }
        
     /*! 
@@ -576,12 +581,12 @@ et al. in 2007 \cgalCite{Schnabel07}.
       for the indices of the unassigned points.
     */ 
     Point_index_iterator unassigned_points_end() {
-      Filter_unassigned_points fup(m_shapeIndex);
+      Filter_unassigned_points fup(m_shape_index);
 
       return boost::make_filter_iterator<Filter_unassigned_points>(
         fup,
         boost::counting_iterator<std::size_t>(0),
-        boost::counting_iterator<std::size_t>(m_shapeIndex.size())).end();
+        boost::counting_iterator<std::size_t>(m_shape_index.size())).end();
     }
     /// @}
 
@@ -669,7 +674,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
 
       std::size_t numPointsEvaluated = 0;
       for (std::size_t i=0;i<candidate->m_nb_subset_used;i++)
-        numPointsEvaluated += m_availableOctreeSizes[i];
+        numPointsEvaluated += m_available_octree_sizes[i];
 
       // need score of new subset as well as sum of
       // the score of the previous considered subset
@@ -679,17 +684,17 @@ et al. in 2007 \cgalCite{Schnabel07}.
       do {
         newScore = m_direct_octrees[candidate->m_nb_subset_used]->score(
           candidate, 
-          m_shapeIndex, 
+          m_shape_index, 
           m_options.epsilon,
           m_options.normal_threshold);
 
         candidate->m_score += newScore;
         
         numPointsEvaluated += 
-          m_availableOctreeSizes[candidate->m_nb_subset_used];
+          m_available_octree_sizes[candidate->m_nb_subset_used];
 
         newSampledPoints +=
-          m_availableOctreeSizes[candidate->m_nb_subset_used];
+          m_available_octree_sizes[candidate->m_nb_subset_used];
 
         candidate->m_nb_subset_used++;
       } while (newSampledPoints < min_points &&
@@ -702,12 +707,8 @@ et al. in 2007 \cgalCite{Schnabel07}.
       return true;
     }
 
-    inline FT StopProbability(FT _sizeC, FT _np, FT _dC, FT _l) const {
+    inline FT stop_probability(FT _sizeC, FT _np, FT _dC, FT _l) const {
       return (std::min<FT>)(std::pow(1.f - _sizeC / (_np * _l * 3), _dC), 1.);
-    }
-
-    static bool candComp(const Shape* a, const Shape* b) {
-      return a->expectedValue() < b->expected_value();
     }
     
   private:
@@ -717,19 +718,19 @@ et al. in 2007 \cgalCite{Schnabel07}.
 
     Direct_octree **m_direct_octrees;
     Indexed_octree *m_global_octree;
-    std::vector<int> m_availableOctreeSizes;
+    std::vector<int> m_available_octree_sizes;
     std::size_t m_num_subsets;
 
     // maps index into points to assigned extracted primitive
-    std::vector<int> m_shapeIndex;
-    std::size_t m_numAvailablePoints; 
+    std::vector<int> m_shape_index;
+    std::size_t m_num_available_points; 
 
     //give the index of the subset of point i
     std::vector<int> m_index_subsets;
 
-    std::vector<Shape *> m_extractedShapes;
+    std::vector<Shape *> m_extracted_shapes;
 
-    std::vector<internal::Shape_factory_base *> m_shapeFactories;
+    std::vector<Shape *(*)()> m_shape_factories;
 
     // iterators of input data
     Input_iterator m_inputIterator_first, m_inputIterator_beyond; 

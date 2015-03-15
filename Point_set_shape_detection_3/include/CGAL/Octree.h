@@ -38,8 +38,8 @@ extern int scoreTime;
 
 namespace CGAL {
   
-    template<class Sd_traits> 
-    class Shape_detection_3;
+    template<class ERTraits> 
+    class Efficient_RANSAC_3;
     
   namespace internal {
   
@@ -173,7 +173,7 @@ namespace CGAL {
       typedef typename Sd_traits::Normal_pmap Normal_pmap;
 
       template<class Sd_traits>
-        friend class ::CGAL::Shape_detection_3;
+        friend class ::CGAL::Efficient_RANSAC_3;
 
       struct Cell {
         std::size_t first, last;

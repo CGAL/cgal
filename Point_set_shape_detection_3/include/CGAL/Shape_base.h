@@ -51,30 +51,30 @@ namespace CGAL {
      \ingroup PkgPointSetShapeDetection3
      \brief Base class of shape types. Provides access to assigned points.
      */
-  template <class Sd_traits>
+  template <class ERTraits>
   class Shape_base {
     /// \cond SKIP_IN_MANUAL
     template <class T>
-    friend class Shape_detection_3;
+    friend class Efficient_RANSAC_3;
     template<class PointAccessor>
     friend class internal::Octree;
     /// \endcond
 
   public:
     /// \cond SKIP_IN_MANUAL
-    typedef typename Sd_traits::Input_iterator Input_iterator;
+    typedef typename ERTraits::Input_iterator Input_iterator;
       ///< random access iterator for input data.
-    typedef typename Sd_traits::Point_pmap Point_pmap;
+    typedef typename ERTraits::Point_pmap Point_pmap;
       ///< property map to access the location of an input point.
-    typedef typename Sd_traits::Normal_pmap Normal_pmap;
+    typedef typename ERTraits::Normal_pmap Normal_pmap;
       ///< property map to access the unoriented normal of an input point.
-    typedef Shape_base<Sd_traits> Shape;
+    typedef Shape_base<ERTraits> Shape;
       ///< own type.
     /// \endcond
 
-    typedef typename Sd_traits::Geom_traits::FT FT; ///< number type.
-    typedef typename Sd_traits::Geom_traits::Point_3 Point; ///< point type.
-    typedef typename Sd_traits::Geom_traits::Vector_3 Vector; ///< vector type.
+    typedef typename ERTraits::Geom_traits::FT FT; ///< number type.
+    typedef typename ERTraits::Geom_traits::Point_3 Point; ///< point type.
+    typedef typename ERTraits::Geom_traits::Vector_3 Vector; ///< vector type.
 
 
     Shape_base() :
@@ -271,7 +271,7 @@ namespace CGAL {
       a region growing within the supporting points using a kd tree.
      */
     std::size_t connected_component_kdTree(FT cluster_epsilon) {
-      typedef typename CGAL::Search_traits_3<typename Sd_traits::Geom_traits> Traits_base;
+      typedef typename CGAL::Search_traits_3<typename ERTraits::Geom_traits> Traits_base;
       typedef typename boost::tuple<Point,int> Point_and_int;
       typedef typename CGAL::Search_traits_adapter<Point_and_int, CGAL::Nth_of_tuple_property_map<0, Point_and_int>, Traits_base> Traits;
       typedef typename CGAL::Kd_tree<Traits> Kd_Tree;
@@ -569,36 +569,6 @@ namespace CGAL {
     Point_pmap m_point_pmap;
     Normal_pmap m_normal_pmap;
     /// \endcond
-  };
-
-  namespace internal {
-    class Shape_factory_base {
-    public:
-    virtual ~Shape_factory_base() {}
-      virtual void *create() = 0;
-    };
-  }
-    
-    /*!
-     \ingroup PkgPointSetShapeDetection3
-     \brief Template class for creating a factory for a shape type.
-     */
-  template < class Shape >
-  class Shape_factory
-#ifndef DOXYGEN_RUNNING
-  : public internal::Shape_factory_base
-#endif
-  {
-  public:
-      /*!
-       Returns a new instance of the shape type.
-       */
-	  virtual void *create()
-	  { 
-		  return new Shape;
-	  }
-    
-  };
-  
+  };  
 }
 #endif

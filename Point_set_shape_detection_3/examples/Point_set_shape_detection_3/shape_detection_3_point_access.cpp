@@ -5,7 +5,7 @@
 #include <CGAL/Timer.h>
 #include <CGAL/number_utils.h>
 
-#include <CGAL/Shape_detection_3.h>
+#include <CGAL/Efficient_RANSAC_3.h>
 #include <CGAL/Plane_shape.h>
 #include <CGAL/Cylinder_shape.h>
 #include <CGAL/Cone_shape.h>
@@ -23,11 +23,11 @@ typedef std::vector<Point_with_normal>                      Pwn_vector;
 typedef CGAL::Identity_property_map<Point_with_normal>      Point_pmap;
 typedef CGAL::Normal_of_point_with_normal_pmap<Kernel>      Normal_pmap;
 
-// In Shape_detection_traits_3 the basic types, i.e., Point and Vector types
+// In Efficient_RANSAC_traits_3 the basic types, i.e., Point and Vector types
 // as well as iterator type and property maps, are defined.
-typedef CGAL::Shape_detection_traits_3<Kernel,
+typedef CGAL::Efficient_RANSAC_traits_3<Kernel,
   Pwn_vector::iterator, Point_pmap, Normal_pmap>            Traits;
-typedef CGAL::Shape_detection_3<Traits>                     Shape_detection;
+typedef CGAL::Efficient_RANSAC_3<Traits>                     Efficient_RANSAC;
 
 
 int main() 
@@ -54,13 +54,11 @@ int main()
   time.start();
 
   // Instantiates shape detection engine and provides input data.
-  Shape_detection sd(points.begin(),
+  Efficient_RANSAC sd(points.begin(),
     points.end(), Point_pmap(), Normal_pmap());
 
   // Registers detection of planes
-
-  sd.add_shape_factory(new 
-    CGAL::Shape_factory<CGAL::Plane_shape<Traits> >);
+  sd.add_shape_factory<CGAL::Plane_shape<Traits> >();
 
   // Detects shapes.
   sd.detect();
@@ -76,10 +74,10 @@ int main()
 
   // Shape_detection_3::shapes_begin() provides
   // an iterator to the detected shapes.
-  Shape_detection::Shape_iterator it = sd.shapes_begin();
+  Efficient_RANSAC::Shape_iterator it = sd.shapes_begin();
   while (it != sd.shapes_end()) {
 
-    const Shape_detection::Shape *shape = *it;
+    const Efficient_RANSAC::Shape *shape = *it;
     // Using Shape_base::info() for printing 
     // the parameters of the detected shape.
     std::cout << (*it)->info();
