@@ -22,19 +22,20 @@
 #ifndef CGAL_SHAPE_DETECTION_3_SPHERE_SHAPE_H
 #define CGAL_SHAPE_DETECTION_3_SPHERE_SHAPE_H
 
-#include "Shape_base.h"
+#include "Shape_detection_3/Shape_base.h"
 
 /*!
- \file Sphere_shape.h
+ \file Sphere.h
  */
 
 namespace CGAL {
+  namespace Shape_detection_3 {
     /*!
      \ingroup PkgPointSetShapeDetection3
      \brief Sphere_shape implements Shape_base. The sphere is represented by its center and the radius.
      */
   template <class ERTraits>
-  class Sphere_shape : public Shape_base<ERTraits> {
+  class Sphere : public Shape_base<ERTraits> {
   public:    
     /// \cond SKIP_IN_MANUAL
     typedef typename ERTraits::Input_iterator Input_iterator;
@@ -45,7 +46,7 @@ namespace CGAL {
       ///< property map to access the unoriented normal of an input point.
     typedef typename ERTraits::Geom_traits::Vector_3 Vector;
       ///< vector type.
-    typedef typename ERTraits::Geom_traits::Sphere_3 Sphere;
+    typedef typename ERTraits::Geom_traits::Sphere_3 Sphere_3;
       ///< sphere type.
     typedef typename ERTraits::Geom_traits::FT FT;
       ///< number type.
@@ -54,12 +55,12 @@ namespace CGAL {
     /// \endcond
 
   public:
-    Sphere_shape() :  Shape_base<ERTraits>() {}
+    Sphere() : Shape_base<ERTraits>() {}
 
     /*!
       Conversion operator to convert to common Sphere_3 type.
      */
-    operator Sphere() const {
+    operator Sphere_3() const {
       return m_sphere;
     }
 
@@ -169,7 +170,7 @@ namespace CGAL {
         return;
       }
 
-      m_sphere = Sphere(center, radius * radius);
+      m_sphere = Sphere_3(center, radius * radius);
     }
 
     virtual void squared_distance(const std::vector<std::size_t> &indices,
@@ -221,8 +222,9 @@ namespace CGAL {
     }
 
   private:
-    Sphere m_sphere;
+    Sphere_3 m_sphere;
 /// \endcond
   };
+}
 }
 #endif

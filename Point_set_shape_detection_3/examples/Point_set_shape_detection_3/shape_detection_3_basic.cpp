@@ -4,10 +4,11 @@
 #include <CGAL/property_map.h>
 
 #include <CGAL/Efficient_RANSAC_3.h>
-#include <CGAL/Plane_shape.h>
 
 #include <iostream>
 #include <fstream>
+
+using namespace CGAL::Shape_detection_3;
 
 // Type declarations
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -18,9 +19,9 @@ typedef CGAL::Normal_of_point_with_normal_pmap<Kernel>      Normal_pmap;
 
 // In Efficient_RANSAC_traits_3 the basic types, i.e., Point and Vector types
 // as well as iterator type and property maps, are defined.
-typedef CGAL::Efficient_RANSAC_traits_3<Kernel,
+typedef Efficient_RANSAC_traits_3<Kernel,
   Pwn_vector::iterator, Point_pmap, Normal_pmap>            Traits;
-typedef CGAL::Efficient_RANSAC_3<Traits>                     Efficient_RANSAC;
+typedef Efficient_RANSAC_3<Traits>                     Efficient_RANSAC;
 
 int main() 
 {
@@ -46,7 +47,7 @@ int main()
 	                 Point_pmap(), Normal_pmap());
 
   // Registers planar shapes via template method.
-  sd.add_shape_factory<CGAL::Plane_shape<Traits> >();
+  sd.add_shape_factory<Plane<Traits> >();
 
   // Detects registered shapes with default parameters.
   sd.detect();

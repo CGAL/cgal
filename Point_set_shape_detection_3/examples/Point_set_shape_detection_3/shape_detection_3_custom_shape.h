@@ -10,7 +10,7 @@ namespace CGAL {
 	 its normal vector and distance to the origin.
      */
   template <class ERTraits>
-  class My_Plane : public Shape_base<ERTraits> {
+  class My_Plane : public Shape_detection_3::Shape_base<ERTraits> {
   public:
     typedef typename ERTraits::Geom_traits::FT FT;///< number type.
     typedef typename ERTraits::Geom_traits::Point_3 Point;///< point type.

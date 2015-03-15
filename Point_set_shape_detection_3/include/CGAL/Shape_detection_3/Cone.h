@@ -19,11 +19,11 @@
 // Author(s)     : Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez
 //
 
-#ifndef CGAL_SHAPE_DETECTION_3_CONE_SHAPE_H
-#define CGAL_SHAPE_DETECTION_3_CONE_SHAPE_H
+#ifndef CGAL_SHAPE_DETECTION_3_CONE_H
+#define CGAL_SHAPE_DETECTION_3_CONE_H
 
-#include "Shape_base.h"
-#include <math.h>
+#include "Shape_detection_3/Shape_base.h"
+#include <cmath>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -33,26 +33,26 @@
 #endif
 
 /*!
- \file Cone_shape.h
+ \file Cone.h
  */
 
 // CODE REVIEW
 // fix naming
 // check degenerate cases, eg every time a division occurs
-// is m_pointOnPrimitive used?
 // 
 
 
 namespace CGAL {
-    /*!
-     \brief Cone_shape implements Shape_base.
-      The cone is represented by its apex, the axis and the opening angle.
-      This representation models an open infinite single-cone.
-     \ingroup PkgPointSetShapeDetection3
-     */
+  namespace Shape_detection_3 {
+  /*!
+   \brief Cone_shape implements Shape_base.
+    The cone is represented by its apex, the axis and the opening angle.
+    This representation models an open infinite single-cone.
+   \ingroup PkgPointSetShapeDetection3
+   */
 
   template <class ERTraits>
-  class Cone_shape : public Shape_base<ERTraits> {
+  class Cone : public Shape_base<ERTraits> {
   public:
     /// \cond SKIP_IN_MANUAL
     typedef typename ERTraits::Input_iterator Input_iterator;
@@ -67,62 +67,62 @@ namespace CGAL {
     /// \endcond
 
 	
-    Cone_shape() : Shape_base<ERTraits>() {}
+    Cone() : Shape_base<ERTraits>() {}
       
-      /*!
-       Opening angle between the axis and the surface of the cone.
-       */
-      FT angle() const {
-          return m_angle;
-      }
-      
-      /*!
-         The apex of the cone.
-              */
-      Point apex() const {
-          return m_apex;
-      }
-      
-      /*!
-       The axis points from the apex into the cone.
-       */
-      Vector axis() const {
-          return m_axis;
-      }
-      
-      /*!
-       Helper function to write apex, axis and angle of the cone and
-       number of assigned points into a string.
-       */
-      std::string info() const {
-          std::stringstream sstr;
-          
-          sstr << "Type: cone apex: (" << m_apex.x() << ", " << m_apex.y();
-          sstr << ", " << m_apex.z() << ") axis: (" << m_axis.x() << ", ";
-          sstr << m_axis.y() << ", " << m_axis.z() << ") angle:" << m_angle;
-          sstr << " #Pts: " << this->m_indices.size();
-          
-          return sstr.str();
-      }
+    /*!
+     Opening angle between the axis and the surface of the cone.
+     */
+    FT angle() const {
+        return m_angle;
+    }
+    
+    /*!
+       The apex of the cone.
+            */
+    Point apex() const {
+        return m_apex;
+    }
+    
+    /*!
+     The axis points from the apex into the cone.
+     */
+    Vector axis() const {
+        return m_axis;
+    }
+    
+    /*!
+     Helper function to write apex, axis and angle of the cone and
+     number of assigned points into a string.
+     */
+    std::string info() const {
+        std::stringstream sstr;
+        
+        sstr << "Type: cone apex: (" << m_apex.x() << ", " << m_apex.y();
+        sstr << ", " << m_apex.z() << ") axis: (" << m_axis.x() << ", ";
+        sstr << m_axis.y() << ", " << m_axis.z() << ") angle:" << m_angle;
+        sstr << " #Pts: " << this->m_indices.size();
+        
+        return sstr.str();
+    }
 
-      /*!
-      Computes squared Euclidean distance from query point to the shape.
-      */ 
-      FT squared_distance(const Point &_p) const {
-        Vector toApex = _p - m_apex;
-        FT a = toApex.squared_length();
+    /*!
+    Computes squared Euclidean distance from query point to the shape.
+    */ 
+    FT squared_distance(const Point &_p) const {
+      Vector toApex = _p - m_apex;
+      FT a = toApex.squared_length();
 
-        // projection on axis
-        FT b = toApex * m_axis;
+      // projection on axis
+      FT b = toApex * m_axis;
 
-        // distance to axis
-        FT l = sqrt(a - b * b);
-        FT c = m_cosAng * l;
-        FT d = m_nSinAng * b;
+      // distance to axis
+      FT l = sqrt(a - b * b);
+      FT c = m_cosAng * l;
+      FT d = m_nSinAng * b;
 
-        // far on other side?
-        return (b < 0 && c - d < 0) ? a : abs(c + d) * abs(c + d);
-      }
+      // far on other side?
+      return (b < 0 && c - d < 0) ? a : abs(c + d) * abs(c + d);
+    }
 
   protected:
       /// \cond SKIP_IN_MANUAL
@@ -271,5 +271,6 @@ namespace CGAL {
     FT m_nSinAng, m_cosAng;
       /// \endcond
   };
+}
 }
 #endif

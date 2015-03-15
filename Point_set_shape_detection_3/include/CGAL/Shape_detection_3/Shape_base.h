@@ -42,6 +42,7 @@
 
 
 namespace CGAL {
+  namespace Shape_detection_3 {
   namespace internal {
     template<class PointAccessor>
     class Octree;
@@ -570,5 +571,6 @@ namespace CGAL {
     Normal_pmap m_normal_pmap;
     /// \endcond
   };  
+}
 }
 #endif

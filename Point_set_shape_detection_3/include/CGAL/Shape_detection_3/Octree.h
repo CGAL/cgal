@@ -27,7 +27,7 @@
 #include <stack>
 
 #include <CGAL/Bbox_3.h>
-#include "Shape_base.h"
+#include "Shape_detection_3/Shape_base.h"
 
 
 // CODE REVIEW
@@ -37,6 +37,7 @@
 extern int scoreTime;
 
 namespace CGAL {
+  namespace Shape_detection_3 {
   
     template<class ERTraits> 
     class Efficient_RANSAC_3;
@@ -173,7 +174,7 @@ namespace CGAL {
       typedef typename Sd_traits::Normal_pmap Normal_pmap;
 
       template<class Sd_traits>
-        friend class ::CGAL::Efficient_RANSAC_3;
+        friend class ::CGAL::Shape_detection_3::Efficient_RANSAC_3;
 
       struct Cell {
         std::size_t first, last;
@@ -202,7 +203,7 @@ namespace CGAL {
       };
         
     public:
-      Octree() : m_bucketSize(20), m_setMaxLevel(10), m_root(NULL) {}
+      Octree() : m_bucket_size(20), m_set_max_level(10), m_root(NULL) {}
       Octree(const Input_iterator &first,
              const Input_iterator &beyond,
              std::size_t offset = 0,
@@ -210,8 +211,8 @@ namespace CGAL {
              std::size_t maxLevel = 10)
              : PointAccessor(first, beyond, offset),
                m_root(NULL),
-               m_bucketSize(bucketSize),
-               m_setMaxLevel(maxLevel) {}
+               m_bucket_size(bucketSize),
+               m_set_max_level(maxLevel) {}
 
       ~Octree() {
         if (!m_root)
@@ -242,7 +243,7 @@ namespace CGAL {
       void createTree() {
         buildBoundingCube();
         int count = 0;
-        m_maxLevel = 0;
+        m_max_level = 0;
 
         std::stack<Cell *> stack;
         m_root = new Cell(0, this->size() - 1, m_center, 0);
@@ -251,8 +252,8 @@ namespace CGAL {
           Cell *cell= stack.top();
           stack.pop();
 
-          m_maxLevel = std::max<std::size_t>(m_maxLevel, cell->level);
-          if (cell->level == m_setMaxLevel)
+          m_max_level = std::max<std::size_t>(m_max_level, cell->level);
+          if (cell->level == m_set_max_level)
             continue;
           
           int zLowYHighXSplit, zLowYLowXSplit, zLowYSplit;
@@ -333,7 +334,7 @@ namespace CGAL {
                                               + Vector(-width,-width,-width),
                                             cell->level + 1);
 
-                  if (cell->child[7]->size() > m_bucketSize)
+                  if (cell->child[7]->size() > m_bucket_size)
                     stack.push(cell->child[7]);
                 }
               }
@@ -347,7 +348,7 @@ namespace CGAL {
                                             + Vector(width,-width,-width),
                                           cell->level + 1);
 
-                if (cell->child[6]->size() > m_bucketSize)
+                if (cell->child[6]->size() > m_bucket_size)
                   stack.push(cell->child[6]);
               }
             }
@@ -363,7 +364,7 @@ namespace CGAL {
                                             + Vector(-width, width,-width), 
                                           cell->level + 1);
 
-                if (cell->child[5]->size() > m_bucketSize)
+                if (cell->child[5]->size() > m_bucket_size)
                   stack.push(cell->child[5]);
               }
             }
@@ -377,7 +378,7 @@ namespace CGAL {
                                           + Vector(width, width,-width),
                                         cell->level + 1);
 
-              if (cell->child[4]->size() > m_bucketSize)
+              if (cell->child[4]->size() > m_bucket_size)
                 stack.push(cell->child[4]);
             }
           }
@@ -394,7 +395,7 @@ namespace CGAL {
                                             + Vector(-width,-width, width),
                                           cell->level + 1);
 
-                if (cell->child[3]->size() > m_bucketSize)
+                if (cell->child[3]->size() > m_bucket_size)
                   stack.push(cell->child[3]);
               }
             }
@@ -408,7 +409,7 @@ namespace CGAL {
                                           Vector(width,-width, width),
                                         cell->level + 1);
 
-              if (cell->child[2]->size() > m_bucketSize)
+              if (cell->child[2]->size() > m_bucket_size)
                 stack.push(cell->child[2]);
             }
 
@@ -425,7 +426,7 @@ namespace CGAL {
                                           Vector(-width, width, width), 
                                         cell->level + 1);
 
-              if (cell->child[1]->size() > m_bucketSize)
+              if (cell->child[1]->size() > m_bucket_size)
                 stack.push(cell->child[1]);
             }
           }
@@ -440,7 +441,7 @@ namespace CGAL {
                                           Vector(width, width, width),
                                         cell->level + 1);
 
-              if (cell->child[0]->size() > m_bucketSize)
+              if (cell->child[0]->size() > m_bucket_size)
                 stack.push(cell->child[0]);
             }
           }
@@ -508,7 +509,7 @@ namespace CGAL {
       }
 
       std::size_t maxLevel() {
-        return m_maxLevel;
+        return m_max_level;
       }
 
       std::size_t fullScore(Shape *candidate,
@@ -579,7 +580,7 @@ namespace CGAL {
       }
 
       void setBucketSize(std::size_t bucketSize) {
-        m_bucketSize = bucketSize;
+        m_bucket_size = bucketSize;
       }
 
       const Bbox_3 &boundingBox() {
@@ -677,12 +678,13 @@ namespace CGAL {
       Cell *m_root;
       Point m_center;
       FT m_width;
-      std::size_t m_bucketSize;
-      std::size_t m_setMaxLevel;
-      std::size_t m_maxLevel;
+      std::size_t m_bucket_size;
+      std::size_t m_set_max_level;
+      std::size_t m_max_level;
       Point_pmap m_point_pmap;
       Normal_pmap m_normal_pmap;
     };
+  }
   }
 }
 

@@ -19,10 +19,10 @@
 // Author(s)     : Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez
 //
 
-#ifndef CGAL_SHAPE_DETECTION_3_CYLINDER_SHAPE_H
-#define CGAL_SHAPE_DETECTION_3_CYLINDER_SHAPE_H
+#ifndef CGAL_SHAPE_DETECTION_3_CYLINDER_H
+#define CGAL_SHAPE_DETECTION_3_CYLINDER_H
 
-#include "Shape_base.h"
+#include "Shape_detection_3/Shape_base.h"
 #include <cmath>
 
 #ifndef M_PI
@@ -39,18 +39,19 @@
 // remove commented lines
 
 /*!
- \file Cylinder_shape.h
+ \file Cylinder.h
  */
 
 namespace CGAL {
+  namespace Shape_detection_3 {
     /*!
-     \brief Cylinder_shape implements Shape_base. The cylinder is represented
+     \brief Cylinder implements Shape_base. The cylinder is represented
      by the axis, i.e. a point and direction, and the radius. The cylinder is
      unbounded, thus caps are not modelled.
      \ingroup PkgPointSetShapeDetection3
      */
   template <class ERTraits>
-  class Cylinder_shape : public Shape_base<ERTraits> {
+  class Cylinder : public Shape_base<ERTraits> {
   public:
     /// \cond SKIP_IN_MANUAL
     typedef typename ERTraits::Input_iterator Input_iterator;
@@ -67,7 +68,7 @@ namespace CGAL {
     typedef typename ERTraits::Geom_traits::Line_3 Line; ///< line type.
 
   public:
-    Cylinder_shape() : Shape_base<ERTraits>() {}
+    Cylinder() : Shape_base<ERTraits>() {}
 
     /*!
       Axis of the cylinder.
@@ -278,5 +279,6 @@ namespace CGAL {
       
     /// \endcond
   };
+}
 }
 #endif

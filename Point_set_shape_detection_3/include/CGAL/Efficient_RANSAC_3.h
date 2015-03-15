@@ -22,8 +22,13 @@
 #ifndef CGAL_EFFICIENT_RANSAC_3_H
 #define CGAL_EFFICIENT_RANSAC_3_H
 
-#include "Octree.h"
-#include "Shape_base.h"
+#include "Shape_detection_3/Octree.h"
+#include "Shape_detection_3/Shape_base.h"
+#include "Shape_detection_3/Cone.h"
+#include "Shape_detection_3/Cylinder.h"
+#include "Shape_detection_3/Plane.h"
+#include "Shape_detection_3/Sphere.h"
+#include "Shape_detection_3/Torus.h"
 
 //for octree ------------------------------
 #include <CGAL/Fuzzy_iso_box.h>
@@ -58,6 +63,7 @@
 */
 
 namespace CGAL {
+  namespace Shape_detection_3 {
     /*!
      \ingroup PkgPointSetShapeDetection3
      \brief Traits class for definition of types.
@@ -151,7 +157,6 @@ et al. in 2007 \cgalCite{Schnabel07}.
 
   /// \name Initialization
   /// @{
-
 
   /*! 
     Constructor to provide random access iterators over the input data and
@@ -741,6 +746,6 @@ et al. in 2007 \cgalCite{Schnabel07}.
     std::vector<FT> m_level_weighting;  // sum must be 1
   };
 }
-
+}
 
 #endif

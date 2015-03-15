@@ -22,20 +22,21 @@
 #ifndef CGAL_SHAPE_DETECTION_3_TORUS_SHAPE_H
 #define CGAL_SHAPE_DETECTION_3_TORUS_SHAPE_H
 
-#include "Shape_base.h"
+#include "Shape_detection_3/Shape_base.h"
 #include <cmath>
 #include <CGAL/Circle_2.h>
 
 /*!
- \file Torus_shape.h
+ \file Torus.h
  */
 
 namespace CGAL {
+  namespace Shape_detection_3 {
     /*!
      \ingroup PkgPointSetShapeDetection3
      \brief Torus_shape implements Shape_base. The torus is represented by the symmetry axis, its center on the axis and the major and minor radii.     */
   template <class ERTraits>
-  class Torus_shape : public Shape_base<ERTraits> {
+  class Torus : public Shape_base<ERTraits> {
   public:
     /// \cond SKIP_IN_MANUAL
     typedef typename ERTraits::Input_iterator Input_iterator;
@@ -53,7 +54,7 @@ namespace CGAL {
      ///< cricle type used during construction.
     /// \endcond
 
-    Torus_shape() : Shape_base<ERTraits>() {}
+    Torus() : Shape_base<ERTraits>() {}
       
     /*!
       Direction of symmetry axis.
@@ -334,5 +335,6 @@ namespace CGAL {
     FT m_minorRad;
     /// \endcond
   };
+}
 }
 #endif
