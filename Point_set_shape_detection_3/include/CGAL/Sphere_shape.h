@@ -31,44 +31,65 @@
 namespace CGAL {
     /*!
      \ingroup PkgPointSetShapeDetection3
-     \brief Sphere_shape implements Shape_base. The sphere is parameterized by its center and the radius.
+     \brief Sphere_shape implements Shape_base. The sphere is represented by its center and the radius.
      */
   template <class Sd_traits>
   class Sphere_shape : public Shape_base<Sd_traits> {
   public:    
     /// \cond SKIP_IN_MANUAL
-    typedef typename Sd_traits::Input_iterator Input_iterator; ///< random access iterator for input data.
-    typedef typename Sd_traits::Point_pmap Point_pmap;  ///< property map to access the location of an input point.
-    typedef typename Sd_traits::Normal_pmap Normal_pmap;  ///< property map to access the unoriented normal of an input point.
-    typedef typename Sd_traits::Geom_traits::Vector_3 Vector;///< vector type.
-    typedef typename Sd_traits::Geom_traits::Sphere_3 Sphere;///< sphere type.
+    typedef typename Sd_traits::Input_iterator Input_iterator;
+      ///< random access iterator for input data.
+    typedef typename Sd_traits::Point_pmap Point_pmap;
+      ///< property map to access the location of an input point.
+    typedef typename Sd_traits::Normal_pmap Normal_pmap;
+      ///< property map to access the unoriented normal of an input point.
+    typedef typename Sd_traits::Geom_traits::Vector_3 Vector;
+      ///< vector type.
+    typedef typename Sd_traits::Geom_traits::Sphere_3 Sphere;
+      ///< sphere type.
+    typedef typename Sd_traits::Geom_traits::FT FT;
+      ///< number type.
+    typedef typename Sd_traits::Geom_traits::Point_3 Point;
+      ///< point type.
     /// \endcond
-
-    typedef typename Sd_traits::Geom_traits::FT FT; ///< number type.
-    typedef typename Sd_traits::Geom_traits::Point_3 Point;///< point type.
 
   public:
     Sphere_shape() :  Shape_base<Sd_traits>() {}
 
-     
-      /*!
-       Conversion operator to convert to common Sphere_3 type.
-       */
+    /*!
+      Conversion operator to convert to common Sphere_3 type.
+     */
     operator Sphere() const {
       return m_sphere;
     }
 
-      
-      /*!
-       Access to the center.
-       */
+    /*!
+      Access to the center.
+     */
     Point center() const {
       return m_sphere.center();
     }
-      /*!
-       Helper function to write center, 
-       radius of the sphere and number of assigned points into a string.
-       */
+      
+    /*!
+      Access to the radius of the sphere.
+     */
+    FT radius() const {
+      return sqrt(m_sphere.squared_radius());
+    }
+
+    /// \cond SKIP_IN_MANUAL
+    /*!
+      Computes the squared Euclidean distance from query point to the shape.
+      */
+    FT squared_distance(const Point &p) const {
+      const FT d = sqrt((m_sphere.center() - p).squared_length()) - sqrt(m_sphere.squared_radius());
+      return d * d;
+    }
+    
+    /*!
+      Helper function to write center, 
+      radius of the sphere and number of assigned points into a string.
+     */
     std::string info() const {
       std::stringstream sstr;
       Point c = m_sphere.center();
@@ -80,37 +101,21 @@ namespace CGAL {
 
       return sstr.str();
     }
-      
-      /*!
-       Access to the radius of the sphere.
-       */
-    FT radius() const {
-      return sqrt(m_sphere.squared_radius());
-    }
-
-    /*!
-      Computes the squared Euclidean distance from query point to the shape.
-      */
-    FT squared_distance(const Point &p) const {
-      const FT d = sqrt((m_sphere.center() - p).squared_length()) - sqrt(m_sphere.squared_radius());
-      return d * d;
-    }
-
+    /// \endcond
   protected:
       /// \cond SKIP_IN_MANUAL
-      void create_shape(const std::vector<size_t> &indices) {
-      Point p1 = get(this->m_point_pmap, *(this->m_first + indices[0]));
-      Point p2 = get(this->m_point_pmap, *(this->m_first + indices[1]));
-      Point p3 = get(this->m_point_pmap, *(this->m_first + indices[2]));
+    void create_shape(const std::vector<std::size_t> &indices) {
+      Point p1 = this->point(indices[0]);
+      Point p2 = this->point(indices[1]);
+      Point p3 = this->point(indices[2]);
 
-      Vector n1 = get(this->m_normal_pmap, *(this->m_first + indices[0]));
-      Vector n2 = get(this->m_normal_pmap, *(this->m_first + indices[1]));
-      Vector n3 = get(this->m_normal_pmap, *(this->m_first + indices[2]));
+      Vector n1 = this->normal(indices[0]);
+      Vector n2 = this->normal(indices[1]);
+      Vector n3 = this->normal(indices[2]);
 
 
       // Determine center: select midpoint of shortest line segment
       // between p1 and p2. Implemented from "3D game engine design" by Eberly 2001
-
       Vector diff = p1 - p2;
       FT a = n1 * n1;
       FT b = -(n1 * n2);
@@ -167,53 +172,39 @@ namespace CGAL {
       m_sphere = Sphere(center, radius * radius);
     }
 
-    void parameters(std::vector<std::pair<FT, FT> > &parameterSpace,
-                    const std::vector<size_t> &indices, FT min[2], 
-                    FT max[2]) const {
-    }
-
-    void squared_distance(std::vector<FT> &dists,
-      const std::vector<int> &shapeIndex,
-      const std::vector<size_t> &indices) {
+    virtual void squared_distance(const std::vector<std::size_t> &indices,
+                                  std::vector<FT> &dists) {
 
       FT radius = sqrt(m_sphere.squared_radius());
 
-      for (size_t i = 0;i<indices.size();i++) {
-        if (shapeIndex[indices[i]] == -1) {
-          dists[i] = sqrt((m_sphere.center()
-            - get(this->m_point_pmap,
-                  *(this->m_first + indices[i]))).squared_length())
-            - radius;
+      for (std::size_t i = 0;i<indices.size();i++) {
+        dists[i] = sqrt((m_sphere.center()
+          - this->point(indices[i])).squared_length())
+          - radius;
 
-          dists[i] = dists[i] * dists[i];
-        }
+        dists[i] = dists[i] * dists[i];
       }
     }
 
-    void cos_to_normal(std::vector<FT> &angles,
-                       const std::vector<int> &shapeIndex, 
-                       const std::vector<size_t> &indices) const {
-      for (size_t i = 0;i<indices.size();i++) {
-        if (shapeIndex[indices[i]] == -1) {
-          Vector n = m_sphere.center()
-            - get(this->m_point_pmap, *(this->m_first + indices[i]));
+    virtual void cos_to_normal(const std::vector<std::size_t> &indices, 
+                               std::vector<FT> &angles) const {
+      for (std::size_t i = 0;i<indices.size();i++) {
+        Vector n = m_sphere.center() - this->point(indices[i]);
 
-          n = n * (1.0 / (sqrt(n.squared_length())));
-          angles[i] = abs(get(this->m_normal_pmap,
-                              *(this->m_first + indices[i])) * n);
-        }
+        n = n * (1.0 / (sqrt(n.squared_length())));
+        angles[i] = abs(this->normal(indices[i]) * n);
       }
     }
 
-    FT cos_to_normal(const Point &_p, const Vector &_n) const {
-      Vector n = m_sphere.center() - _p;
-      n = n * (1.0 / (sqrt(n.squared_length())));
-      return abs(_n * n);
+    virtual FT cos_to_normal(const Point &p, const Vector &n) const {
+      Vector sphere_normal = m_sphere.center() - p;
+      sphere_normal = sphere_normal * ((FT)1.0 / (CGAL::sqrt(n.squared_length())));
+      return abs(sphere_normal * n);
     }
       
-      virtual size_t required_samples() const {
-          return 3;
-      }
+    virtual std::size_t required_samples() const {
+      return 3;
+    }
 
     virtual bool supports_connected_component() const {
       return false;

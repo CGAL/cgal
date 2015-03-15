@@ -25,7 +25,6 @@
 #include <limits>
 #include <random>
 #include <stack>
-#include <set>
 
 #include <CGAL/Bbox_3.h>
 #include "Shape_base.h"
@@ -53,23 +52,23 @@ namespace CGAL {
       DirectPointAccessor() {}
       DirectPointAccessor(const Input_iterator &begin,
                           const Input_iterator &beyond, 
-                          size_t offset) : m_first(begin), m_offset(offset) {
+                          std::size_t offset) : m_first(begin), m_offset(offset) {
         m_beyond = (beyond == begin) ? begin : beyond - 1;
       }
 
-      Input_iterator at(size_t i) {
+      Input_iterator at(std::size_t i) {
         return m_first + i;
       }
 
-      size_t index(size_t i) {
+      std::size_t index(std::size_t i) {
         return i + m_offset;
       }
 
-      size_t offset() {
+      std::size_t offset() {
         return m_offset;
       }
 
-      size_t size() {
+      std::size_t size() {
         return m_beyond - m_first + 1;
       }
 
@@ -85,7 +84,7 @@ namespace CGAL {
         m_beyond = (beyond == begin) ? begin : beyond - 1;
       }
 
-      void swap(size_t a, size_t b) {
+      void swap(std::size_t a, std::size_t b) {
         typename std::iterator_traits<Input_iterator>::value_type tmp;
         tmp = m_first[a];
         m_first[a] = m_first[b];
@@ -97,7 +96,7 @@ namespace CGAL {
 
     private:
       Input_iterator m_beyond;
-      size_t m_offset;
+      std::size_t m_offset;
     };
 
     template<class Sdt>
@@ -108,23 +107,23 @@ namespace CGAL {
 
       IndexedPointAccessor() {}
       IndexedPointAccessor(const Input_iterator &begin,
-                           const Input_iterator &beyond, size_t)
+                           const Input_iterator &beyond, std::size_t)
                            : m_first(begin) {
         m_beyond = (beyond == begin) ? begin : beyond - 1;
         m_indices.resize(size());
-        for (size_t i = 0;i<size();i++)
+        for (std::size_t i = 0;i<size();i++)
           m_indices[i] = i;
       }
 
-      Input_iterator at(size_t i) {
+      Input_iterator at(std::size_t i) {
         return m_first + m_indices[i];
       }
 
-      size_t index(size_t i) {
+      std::size_t index(std::size_t i) {
         return m_indices[i];
       }
 
-      size_t offset() {
+      std::size_t offset() {
         return 0;
       }
 
@@ -139,16 +138,16 @@ namespace CGAL {
       void setData(Input_iterator &begin, Input_iterator &beyond) {
         m_beyond = (beyond == begin) ? begin : beyond - 1;
         m_indices.resize(size());
-        for (size_t i = 0;i<size();i++)
+        for (std::size_t i = 0;i<size();i++)
           m_indices[i] = i;
       }
 
-      size_t size() {
+      std::size_t size() {
         return m_beyond - m_first + 1;
       }
 
-      void swap(size_t a, size_t b) {
-        size_t tmp = m_indices[a];
+      void swap(std::size_t a, std::size_t b) {
+        std::size_t tmp = m_indices[a];
         m_indices[a] = m_indices[b];
         m_indices[b] = tmp;
       }
@@ -157,7 +156,7 @@ namespace CGAL {
       Input_iterator m_first;
 
     private:
-      std::vector<size_t> m_indices;
+      std::vector<std::size_t> m_indices;
       Input_iterator m_beyond;
     };
 
@@ -166,7 +165,7 @@ namespace CGAL {
 
       typedef typename PointAccessor::Sd_traits Sd_traits;
       typedef typename Sd_traits::Input_iterator Input_iterator;
-      typedef Shape_base<Sd_traits> Primitive;
+      typedef Shape_base<Sd_traits> Shape;
       typedef typename Sd_traits::Geom_traits::Point_3 Point;
       typedef typename Sd_traits::Geom_traits::Vector_3 Vector;
       typedef typename Sd_traits::Geom_traits::FT FT;
@@ -177,28 +176,25 @@ namespace CGAL {
         friend class ::CGAL::Shape_detection_3;
 
       struct Cell {
-        int first, last;
+        std::size_t first, last;
         Cell *child[8];
         Point center;
-        size_t level;
+        std::size_t level;
 
-        Cell(int first, int last, Point center, size_t level)
+        Cell(std::size_t first, std::size_t last, Point center, std::size_t level)
           : first(first), last(last), center(center), level(level) {
             memset(child, 0, sizeof(Cell *) * 8);
         }
 
         bool isLeaf() const {
-          for (size_t i = 0;i<8;i++) {
+          for (std::size_t i = 0;i<8;i++) {
             if (child[i])
               return false;
           }
           return true;
         }
 
-        size_t size() const {
-          if (last < first) {
-            std::cout << "first > last!" << std::endl;
-          }
+        std::size_t size() const {
           if (first == -1 || last == -1)
             return -1;
           else return (last - first + 1);
@@ -209,9 +205,9 @@ namespace CGAL {
       Octree() : m_bucketSize(20), m_setMaxLevel(10), m_root(NULL) {}
       Octree(const Input_iterator &first,
              const Input_iterator &beyond,
-             size_t offset = 0,
-             size_t bucketSize = 20, 
-             size_t maxLevel = 10)
+             std::size_t offset = 0,
+             std::size_t bucketSize = 20, 
+             std::size_t maxLevel = 10)
              : PointAccessor(first, beyond, offset),
                m_root(NULL),
                m_bucketSize(bucketSize),
@@ -227,7 +223,7 @@ namespace CGAL {
           Cell *cell = stack.top();
           stack.pop();
 
-          for (size_t i = 0;i<8;i++)
+          for (std::size_t i = 0;i<8;i++)
             if (cell->child[i])
               stack.push(cell->child[i]);
 
@@ -255,7 +251,7 @@ namespace CGAL {
           Cell *cell= stack.top();
           stack.pop();
 
-          m_maxLevel = std::max<size_t>(m_maxLevel, cell->level);
+          m_maxLevel = std::max<std::size_t>(m_maxLevel, cell->level);
           if (cell->level == m_setMaxLevel)
             continue;
           
@@ -329,7 +325,7 @@ namespace CGAL {
             if (zLowYSplit != -1) {
               if (zLowYLowXSplit != -1) {
 
-                if (cell->first <= zLowYLowXSplit) {
+                if ((int)cell->first <= zLowYLowXSplit) {
                   //---
                   cell->child[7] = new Cell(cell->first,
                                             zLowYLowXSplit, 
@@ -435,8 +431,8 @@ namespace CGAL {
           }
           else zHighYHighXSplit = zHighYSplit;
 
-          if (zHighYHighXSplit <= cell->last) {
-            if (zHighYHighXSplit < cell->last) {
+          if (zHighYHighXSplit <= (int)cell->last) {
+            if (zHighYHighXSplit < (int)cell->last) {
               //+++
               cell->child[0] = new Cell(zHighYHighXSplit + 1, 
                                         cell->last,
@@ -449,23 +445,19 @@ namespace CGAL {
             }
           }
 
-          size_t sum = 0;
-          for (size_t i = 0;i<8;i++)
+          int sum = 0;
+          for (std::size_t i = 0;i<8;i++)
             sum += (cell->child[i]) ? cell->child[i]->size() : 0;
-
-          if (sum != cell->size()) {
-            std::cout << "sum of size of childs wrong!" << std::endl;
-          }
 
           count++;
         }
       }
 
       bool drawSamplesFromCellContainingPoint(const Point &p,
-                                              size_t level,
-                                              std::set<size_t>& indices,
+                                              std::size_t level,
+                                              std::set<std::size_t>& indices,
                                               const std::vector<int>& shapeIndex,
-                                              int requiredSamples) {
+                                              std::size_t requiredSamples) {
         static std::random_device rd;
         static std::mt19937 rng(rd());
         static std::uniform_int_distribution<> dis(0, this->size() - 1);
@@ -491,9 +483,9 @@ namespace CGAL {
         }
 
         if (cur) {
-          int enough = 0;
-          for (int i = cur->first;i<=cur->last;i++) {
-            int j = this->index(i);
+          std::size_t enough = 0;
+          for (std::size_t i = cur->first;i<=cur->last;i++) {
+            std::size_t j = this->index(i);
             if (shapeIndex[j] == -1) {
               enough++;
               if (enough >= requiredSamples)
@@ -502,11 +494,11 @@ namespace CGAL {
           }
           if (enough >= requiredSamples) {
             do {
-              int p = dis(rng) % cur->size();
-              int j = this->index(cur->first + p);
+              std::size_t p = dis(rng) % cur->size();
+              std::size_t j = this->index(cur->first + p);
               if (shapeIndex[j] == -1)
-                indices.insert((size_t)j);
-            } while ((int)indices.size() < requiredSamples);
+                indices.insert(j);
+            } while (indices.size() < requiredSamples);
 
             return true;
           }
@@ -515,17 +507,17 @@ namespace CGAL {
         else return false;
       }
 
-      size_t maxLevel() {
+      std::size_t maxLevel() {
         return m_maxLevel;
       }
 
-      size_t fullScore(Primitive *candidate,
+      std::size_t fullScore(Shape *candidate,
                        std::vector<int> &shapeIndex,
                        FT epsilon, 
                        FT normal_threshold) {
 
-        std::vector<size_t> indices(m_root->size());
-        for (size_t i = 0;i<m_root->size();i++) {
+        std::vector<std::size_t> indices(m_root->size());
+        for (std::size_t i = 0;i<m_root->size();i++) {
           indices[i] = index(m_root->first + i);
         }
         
@@ -539,7 +531,7 @@ namespace CGAL {
         return candidate->m_indices.size();
       }
 
-      size_t score(Primitive *candidate, 
+      std::size_t score(Shape *candidate, 
                    std::vector<int> &shapeIndex,
                    FT epsilon,
                    FT normal_threshold) {
@@ -563,21 +555,20 @@ namespace CGAL {
           // differ between full or partial overlap?
           // if full overlap further traversal of this branch is not necessary
           if (cell->isLeaf()) {
-            std::vector<size_t> indices;
+            std::vector<std::size_t> indices;
             indices.reserve(cell->size());
-            for (size_t i = 0;i<cell->size();i++) {
+            for (std::size_t i = 0;i<cell->size();i++) {
               if (shapeIndex[this->index(cell->first + i)] == -1) {
                 indices.push_back(this->index(cell->first + i));
               }
             }
 
-            candidate->cost_function(shapeIndex,
-                                     epsilon, 
+            candidate->cost_function(epsilon, 
                                      normal_threshold, 
                                      indices);
           }
           else {
-            for (size_t i = 0;i<8;i++)
+            for (std::size_t i = 0;i<8;i++)
               if (cell->child[i])
                 stack.push(cell->child[i]);
           }
@@ -587,7 +578,7 @@ namespace CGAL {
         return candidate->m_indices.size();
       }
 
-      void setBucketSize(size_t bucketSize) {
+      void setBucketSize(std::size_t bucketSize) {
         m_bucketSize = bucketSize;
       }
 
@@ -603,7 +594,7 @@ namespace CGAL {
                     (std::numeric_limits<FT>::min)(),
                     (std::numeric_limits<FT>::min)()};
 
-        for (size_t i = 0;i<this->size();i++) {
+        for (std::size_t i = 0;i<this->size();i++) {
             Point p = get(m_point_pmap, *this->at(i));
           min[0] = (std::min<FT>)(min[0], p.x());
           min[1] = (std::min<FT>)(min[1], p.y());
@@ -625,7 +616,7 @@ namespace CGAL {
       }
 
       // returns index of last point below threshold
-      int split(int first, int last, size_t dimension, FT threshold) {
+      int split(int first, int last, std::size_t dimension, FT threshold) {
         if (last == -1 || first == -1)
           return -1;
 
@@ -668,13 +659,6 @@ namespace CGAL {
                     first : (first == origFirst) ? -1 : first - 1;
           }
 
-          // swap entries
-          if (first < origFirst ||
-              first > origLast || 
-              last < origFirst ||
-              last > origLast) {
-            std::cout << "split: swap out of bounds!" << std::endl;
-          }
           this->swap(first, last);
           p1 = get(m_point_pmap, *this->at(first));
           v1 = p1[dimension];
@@ -693,9 +677,9 @@ namespace CGAL {
       Cell *m_root;
       Point m_center;
       FT m_width;
-      size_t m_bucketSize;
-      size_t m_setMaxLevel;
-      size_t m_maxLevel;
+      std::size_t m_bucketSize;
+      std::size_t m_setMaxLevel;
+      std::size_t m_maxLevel;
       Point_pmap m_point_pmap;
       Normal_pmap m_normal_pmap;
     };

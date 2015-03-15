@@ -30,63 +30,72 @@
 namespace CGAL {
     /*!
      \ingroup PkgPointSetShapeDetection3
-     \brief Plane_shape implements Shape_base. The plane is parameterized by the normal vector and the distance to the origin.
+     \brief Plane_shape implements Shape_base. The plane is represented by the normal vector and the distance to the origin.
      */
   template <class Sd_traits>
   class Plane_shape : public Shape_base<Sd_traits> {
   public:
     /// \cond SKIP_IN_MANUAL
-    typedef typename Sd_traits::Input_iterator Input_iterator; ///< random access iterator for input data.
-    typedef typename Sd_traits::Point_pmap Point_pmap;  ///< property map to access the location of an input point.
-    typedef typename Sd_traits::Normal_pmap Normal_pmap;  ///< property map to access the unoriented normal of an input point.
+    typedef typename Sd_traits::Input_iterator Input_iterator;
+     ///< random access iterator for input data.
+    typedef typename Sd_traits::Point_pmap Point_pmap;
+     ///< property map to access the location of an input point.
+    typedef typename Sd_traits::Normal_pmap Normal_pmap;
+     ///< property map to access the unoriented normal of an input point.
+    typedef typename Sd_traits::Geom_traits::FT FT; ///< number type.
+    typedef typename Sd_traits::Geom_traits::Point_3 Point; ///< point type.
+    typedef typename Sd_traits::Geom_traits::Vector_3 Vector;
     /// \endcond
 
-    typedef typename Sd_traits::Geom_traits::FT FT;///< number type.
-    typedef typename Sd_traits::Geom_traits::Point_3 Point;///< point type.
     typedef typename Sd_traits::Geom_traits::Plane_3 Plane;///< plane type for conversion operator.
-    typedef typename Sd_traits::Geom_traits::Vector_3 Vector;
 
   public:
     Plane_shape() : Shape_base<Sd_traits>() {}
 
-      /*!
-       Helper function to write the plane equation and number of assigned points into a string.
-       */
-    std::string info() const {
-      std::stringstream sstr;
-      sstr << "Type: plane (" << m_normal.x() << ", " << m_normal.y() << ", " << m_normal.z() << ")x - " << m_d << "= 0" << " #Pts: " << this->m_indices.size();
-
-      return sstr.str();
-    }
-      /*!
-       Conversion operator to Plane_3 type.
-       */
-
+    /*!
+      Conversion operator to Plane_3 type.
+     */
     operator Plane() const {
       return Plane(m_normal.x(), m_normal.y(), m_normal.z(), m_d);
     }
             
-      /*!
-       Normal vector of the plane.
-       */
-    Vector normal() const {
+    /*!
+      Normal vector of the plane.
+     */
+    Vector plane_normal() const {
       return m_normal;
     }
-
+    
+    /// \cond SKIP_IN_MANUAL
     /*!
       Computes squared Euclidean distance from query point to the shape.
-      */
+     */
     FT squared_distance(const Point &_p) const {
       FT d = (_p - m_point_on_primitive) * m_normal;
       return d * d;
     }
 
+    
+    /*!
+      Helper function to write the plane equation and
+      number of assigned points into a string.
+     */
+    std::string info() const {
+      std::stringstream sstr;
+      sstr << "Type: plane (" << m_normal.x() << ", " << m_normal.y() 
+        << ", " << m_normal.z() << ")x - " << m_d << "= 0"
+        << " #Pts: " << this->m_indices.size();
+
+      return sstr.str();
+    }
+    /// \endcond
+
   protected:
       /// \cond SKIP_IN_MANUAL
-    virtual void create_shape(const std::vector<size_t> &indices) {
-      Point p1 = get(this->m_point_pmap, *(this->m_first + indices[0]));
-      Point p2 = get(this->m_point_pmap, *(this->m_first + indices[1]));
-      Point p3 = get(this->m_point_pmap, *(this->m_first + indices[2]));
+    virtual void create_shape(const std::vector<std::size_t> &indices) {
+      Point p1 = this->point(indices[0]);
+      Point p2 = this->point(indices[1]);
+      Point p3 = this->point(indices[2]);
 
       m_normal = CGAL::cross_product(p1 - p2, p1 - p3);
 
@@ -95,10 +104,11 @@ namespace CGAL {
 
       //check deviation of the 3 normal
       Vector l_v;
-      for (size_t i = 0;i<3;i++) {
-        l_v = get(this->m_normal_pmap, *(this->m_first + indices[i]));
+      for (std::size_t i = 0;i<3;i++) {
+        l_v = this->normal(indices[i]);
 
-        if (abs(l_v * m_normal) < this->m_normal_threshold * sqrt(l_v.squared_length())) {
+        if (abs(l_v * m_normal)
+            < this->m_normal_threshold * sqrt(l_v.squared_length())) {
           this->m_isValid = false;
           return;
         }
@@ -112,18 +122,22 @@ namespace CGAL {
       }
     }
 
-    void parameters(std::vector<std::pair<FT, FT> > &parameterSpace, const std::vector<size_t> &indices, FT min[2], FT max[2]) const {
-      Vector p = (get(this->m_point_pmap, *(this->m_first + indices[0])) - m_point_on_primitive);
+    virtual void parameters(const std::vector<std::size_t>& indices,
+                            std::vector<std::pair<FT, FT> >& parameterSpace,
+                            FT min[2],
+                            FT max[2]) const {
+      // Transform first point before to initialize min/max
+      Vector p = (this->point(indices[0]) - m_point_on_primitive);
       FT u = p * m_base1;
       FT v = p * m_base2;
       parameterSpace[0] = std::pair<FT, FT>(u, v);
       min[0] = max[0] = u;
       min[1] = max[1] = v;
 
-      for (size_t i = 1;i<indices.size();i++) {
-        Vector p = (get(this->m_point_pmap, *(this->m_first + indices[i])) - m_point_on_primitive);
-        FT u = p * m_base1;
-        FT v = p * m_base2;
+      for (std::size_t i = 1;i<indices.size();i++) {
+        p = (this->point(indices[i]) - m_point_on_primitive);
+        u = p * m_base1;
+        v = p * m_base2;
         min[0] = (std::min<FT>)(min[0], u);
         max[0] = (std::max<FT>)(max[0], u);
         min[1] = (std::min<FT>)(min[1], v);
@@ -132,19 +146,18 @@ namespace CGAL {
       }
     }
     
-    void squared_distance(std::vector<FT> &dists, const std::vector<int> &shapeIndex, const std::vector<size_t> &indices) {
-      for (size_t i = 0;i<indices.size();i++) {
-        if (shapeIndex[indices[i]] == -1) {
-          FT d = (get(this->m_point_pmap, *(this->m_first + indices[i])) - m_point_on_primitive) * m_normal;
-          dists[i] = d * d;
-        }
+    virtual void squared_distance(const std::vector<std::size_t> &indices,
+                                  std::vector<FT> &dists) {
+      for (std::size_t i = 0;i<indices.size();i++) {
+        const FT d = (this->point(indices[i]) - m_point_on_primitive) * m_normal;
+        dists[i] = d * d;
       }
     }
 
-    void cos_to_normal(std::vector<FT> &angles, const std::vector<int> &shapeIndex, const std::vector<size_t> &indices) const {
-      for (size_t i = 0;i<indices.size();i++) {
-        if (shapeIndex[indices[i]] == -1)
-          angles[i] = abs(get(this->m_normal_pmap, *(this->m_first + indices[i])) * m_normal);
+    virtual void cos_to_normal(const std::vector<std::size_t> &indices, 
+                               std::vector<FT> &angles) const {
+      for (std::size_t i = 0;i<indices.size();i++) {
+        angles[i] = abs(this->normal(indices[i]) * m_normal);
       }
     }
 
@@ -152,7 +165,7 @@ namespace CGAL {
       return abs(_n * m_normal);
     } 
     
-    virtual size_t required_samples() const {
+    virtual std::size_t required_samples() const {
       return 3;
     }
 

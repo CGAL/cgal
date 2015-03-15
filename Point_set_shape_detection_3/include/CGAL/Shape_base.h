@@ -36,7 +36,6 @@
  */
 
 // CODE REVIEW
-// fix hypergeometrical_dist() 
 // make code more modular: connected_component()
 // use const where relevant, eg wrapU
 // initialize all variables including max
@@ -54,25 +53,29 @@ namespace CGAL {
      */
   template <class Sd_traits>
   class Shape_base {
-      /// \cond SKIP_IN_MANUAL
+    /// \cond SKIP_IN_MANUAL
     template <class T>
     friend class Shape_detection_3;
     template<class PointAccessor>
     friend class internal::Octree;
-      /// \endcond
+    /// \endcond
 
   public:
     /// \cond SKIP_IN_MANUAL
-    typedef typename Sd_traits::Input_iterator Input_iterator; ///< random access iterator for input data.
+    typedef typename Sd_traits::Input_iterator Input_iterator;
+      ///< random access iterator for input data.
+    typedef typename Sd_traits::Point_pmap Point_pmap;
+      ///< property map to access the location of an input point.
+    typedef typename Sd_traits::Normal_pmap Normal_pmap;
+      ///< property map to access the unoriented normal of an input point.
+    typedef Shape_base<Sd_traits> Shape;
+      ///< own type.
     /// \endcond
 
     typedef typename Sd_traits::Geom_traits::FT FT; ///< number type.
     typedef typename Sd_traits::Geom_traits::Point_3 Point; ///< point type.
     typedef typename Sd_traits::Geom_traits::Vector_3 Vector; ///< vector type.
-    typedef typename Sd_traits::Point_pmap Point_pmap;  ///< property map to access the location of an input point.
-    typedef typename Sd_traits::Normal_pmap Normal_pmap; ///< property map to access the unoriented normal of an input point.
 
-    typedef Shape_base<Sd_traits> Shape; ///< own type.
 
     Shape_base() :
     m_isValid(true),
@@ -90,12 +93,13 @@ namespace CGAL {
       Indices into the input data of all points assigned to this shape.
     */
 
-    const std::vector<size_t> &assigned_points() const {
+    const std::vector<std::size_t> &assigned_points() const {
       return m_indices;
     }
       
     /*!
-      Helper function writing shape type and numerical parameters into a string.
+      Helper function writing shape type
+      and numerical parameters into a string.
      */
 
     virtual std::string info() const {
@@ -111,39 +115,40 @@ namespace CGAL {
   protected:
       
     /*!
-      Constructs the shape based on a minimal set of samples from the input data.
+      Constructs the shape based on a
+      minimal set of samples from the input data.
      */
-    virtual void create_shape(const std::vector<size_t> &indices) = 0;
+    virtual void create_shape(const std::vector<std::size_t> &indices) = 0;
     
     /*!
-      Determines the largest cluster with a point-to-point distance not larger than cluster_epsilon.
+      Determines the largest cluster with a point-to-point
+      distance not larger than cluster_epsilon.
      */
-    size_t connected_component(FT cluster_epsilon) {
-
+    std::size_t connected_component(FT cluster_epsilon) {
       if (m_indices.size() == 0)
         return 0;
 
-      //       if (m_hasconnected_component)
-      //         return m_score;
+      if (m_has_connected_component)
+        return m_score;
 
       m_has_connected_component = true;
-      if (!supports_connected_component())
-        return m_indices.size();
+      if (!this->supports_connected_component())
+        return connected_component_kdTree(cluster_epsilon);
 
       FT min[2], max[2];
-      //parameterExtend(center, width, min, max);
+
       std::vector<std::pair<FT, FT> > parameterSpace;
       parameterSpace.resize(m_indices.size());
 
-      parameters(parameterSpace, m_indices, min, max);
+      parameters(m_indices, parameterSpace, min, max);
       int iMin[2], iMax[2];
       iMin[0] = (int) (min[0] / cluster_epsilon);
       iMin[1] = (int) (min[1] / cluster_epsilon);
       iMax[0] = (int) (max[0] / cluster_epsilon);
       iMax[1] = (int) (max[1] / cluster_epsilon);
 
-      size_t uExtent = abs(iMax[0] - iMin[0]) + 2;
-      size_t vExtent = abs(iMax[1] - iMin[1]) + 2;
+      std::size_t uExtent = abs(iMax[0] - iMin[0]) + 2;
+      std::size_t vExtent = abs(iMax[1] - iMin[1]) + 2;
 
       std::vector<std::vector<int> > bitmap;
       std::vector<bool> visited;
@@ -153,44 +158,42 @@ namespace CGAL {
       bool wrapU = wraps_u();
       bool wrapV = wraps_v();
 
-      for (size_t i = 0;i<parameterSpace.size();i++) {
+      for (std::size_t i = 0;i<parameterSpace.size();i++) {
         int u = (int)((parameterSpace[i].first - min[0]) / cluster_epsilon);
         int v = (int)((parameterSpace[i].second - min[1]) / cluster_epsilon);
-        if (u < 0 || (size_t)u >= uExtent) {
+        if (u < 0 || (std::size_t)u >= uExtent) {
           if (wrapU) {
             while (u < 0) u += uExtent;
-            while ((size_t)u >= uExtent) u-= uExtent;
+            while ((std::size_t)u >= uExtent) u-= uExtent;
           }
           else {
-            std::cout << "cc: u out of bounds: " << u << std::endl;
-            u = (u < 0) ? 0 : ((size_t)u >= uExtent) ? (int)uExtent - 1 : u;
+            u = (u < 0) ? 0 : ((std::size_t)u >= uExtent) ? (int)uExtent - 1 : u;
           }
         }
-        if (v < 0 || (size_t)v >= vExtent) {
+        if (v < 0 || (std::size_t)v >= vExtent) {
           if (wrapV) {
             while (v < 0) v += vExtent;
-            while ((size_t)v >= vExtent) v-= vExtent;
+            while ((std::size_t)v >= vExtent) v-= vExtent;
           }
           else {
-            std::cout << "cc: v out of bounds: " << u << std::endl;
-            v = (v < 0) ? 0 : ((size_t)v >= vExtent) ? (int)vExtent - 1 : v;
+            v = (v < 0) ? 0 : ((std::size_t)v >= vExtent) ? (int)vExtent - 1 : v;
           }
         }
         bitmap[v * uExtent + u].push_back(m_indices[i]);
       }
 
-      std::vector<std::vector<size_t> > cluster;
-      for (size_t i = 0;i<(uExtent * vExtent);i++) {
-        cluster.push_back(std::vector<size_t>());
+      std::vector<std::vector<std::size_t> > cluster;
+      for (std::size_t i = 0;i<(uExtent * vExtent);i++) {
+        cluster.push_back(std::vector<std::size_t>());
         if (bitmap[i].empty())
           continue;
         if (visited[i])
           continue;
 
-        std::stack<size_t> fields;
+        std::stack<std::size_t> fields;
         fields.push(i);
         while (!fields.empty()) {
-          size_t f = fields.top();
+          std::size_t f = fields.top();
           fields.pop();
           if (visited[f])
             continue;
@@ -251,7 +254,7 @@ namespace CGAL {
       }
 
       int maxCluster = 0;
-      for (size_t i = 1;i<cluster.size();i++) {
+      for (std::size_t i = 1;i<cluster.size();i++) {
         if (cluster[i].size() > cluster[maxCluster].size()) {
           maxCluster = i;
         }
@@ -261,43 +264,130 @@ namespace CGAL {
 
       return m_score = m_indices.size();
     }
+    
+    /*!
+      Determines the largest cluster with a point-to-point
+      distance not larger than cluster_epsilon. This general version performs
+      a region growing within the supporting points using a kd tree.
+     */
+    std::size_t connected_component_kdTree(FT cluster_epsilon) {
+      typedef typename CGAL::Search_traits_3<typename Sd_traits::Geom_traits> Traits_base;
+      typedef typename boost::tuple<Point,int> Point_and_int;
+      typedef typename CGAL::Search_traits_adapter<Point_and_int, CGAL::Nth_of_tuple_property_map<0, Point_and_int>, Traits_base> Traits;
+      typedef typename CGAL::Kd_tree<Traits> Kd_Tree;
+      typedef typename CGAL::Fuzzy_sphere<Traits> Fuzzy_sphere;
 
-    #ifdef DOXYGEN_RUNNING
+      m_has_connected_component = true;
+      
+      std::vector<Point_and_int> pts;
+      std::vector<int> numLabeled;
+      std::vector<int> labelMap;
+      pts.resize(m_indices.size());
+      labelMap.resize(m_indices.size(), 0);
+
+      for (std::size_t i = 0;i < m_indices.size();i++) {
+        pts[i] = Point_and_int(point(m_indices[i]), i);
+      }
+
+      // construct kd tree
+      Kd_Tree tree(pts.begin(), pts.end());
+      
+      std::stack<int> stack;
+      std::size_t unlabeled = pts.size();
+      std::size_t label = 1;
+      std::size_t best = 0;
+      std::size_t bestSize = 0;
+
+      for (std::size_t i = 0;i<pts.size();i++) {
+        if (labelMap[i] != 0)
+          continue;
+
+        std::size_t assigned = 0;
+
+        stack.push(i);
+        while(!stack.empty()) {
+          std::vector<Point_and_int> nearPoints;
+
+          std::size_t p = stack.top();
+          stack.pop();
+
+          Fuzzy_sphere fs(pts[p], cluster_epsilon, 0);
+          tree.search(std::back_inserter(nearPoints), fs);
+
+          for (std::size_t j = 0;j<nearPoints.size();j++) {
+            std::size_t index = boost::get<1>(nearPoints[j]);
+            if (index == p)
+              continue;
+
+            if (labelMap[index] != label) {
+              labelMap[index] = label;
+              assigned++;
+              stack.push(index);
+            }
+          }
+        }
+        
+        // Track most prominent label and remaining points
+        unlabeled -= assigned;
+        if (assigned > bestSize) {
+          best = label;
+          bestSize = assigned;
+        }
+
+        label++;
+
+        // Can we stop already?
+        if (unlabeled <= bestSize)
+          break;
+      }
+
+      std::vector<std::size_t> indices;
+      indices.reserve(bestSize);
+      for (std::size_t i = 0;i<pts.size();i++) {
+        if (labelMap[i] == best)
+          indices.push_back(m_indices[i]);
+      }
+
+      m_indices = indices;
+      
+      return m_indices.size();
+    }
+
     /*!
       Computes squared Euclidean distance from a set of points to the shape.
      */
-    virtual void squared_distance(std::vector<FT> &dists,
-      const std::vector<size_t> &indices) = 0;   
+    virtual void squared_distance(const std::vector<std::size_t> &indices,
+                                  std::vector<FT> &dists) = 0;
 
     /*!
-      Computes the deviation of the point normal from the surface normal at the projected point in form of the dot product.
+      Computes the deviation of the point normal from the surface normal
+      at the projected point in form of the dot product.
      */
-    virtual void cos_to_normal(std::vector<FT> &angles,
-      const std::vector<size_t> &indices) const = 0;
-    #endif
+    virtual void cos_to_normal(const std::vector<std::size_t> &indices,
+                               std::vector<FT> &angles) const = 0;
 
     /*!
       Returns minimal number of samples required for construction.
      */
-    virtual size_t required_samples() const = 0;
+    virtual std::size_t required_samples() const = 0;
 
     /*!
       Retrieves the point for an index.
      */
-    const Point& get_point(size_t i) const {
+    const Point& point(std::size_t i) const {
       return get(this->m_point_pmap, *(this->m_first + i));
     }
     
     /*!
       Retrieves the normal vector for an index.
      */
-    const Vector& get_normal(size_t i) const {
+    const Vector& normal(std::size_t i) const {
       return get(this->m_normal_pmap, *(this->m_first + i));
     }
     
     /// \cond SKIP_IN_MANUAL
     struct Compare_by_max_bound {
-        bool operator() (Shape *a, Shape *b) {
+        bool operator() (const Shape *a, const Shape *b) {
             return a->max_bound() < b->max_bound();
         }
     };
@@ -331,7 +421,7 @@ namespace CGAL {
     void update_points(const std::vector<int> &shapeIndex) {
       if (!m_indices.size())
         return;
-      size_t start = 0, end = m_indices.size() - 1;
+      std::size_t start = 0, end = m_indices.size() - 1;
       while (start < end) {
         while (shapeIndex[m_indices[start]] == -1
           && start < end) start++;
@@ -342,7 +432,7 @@ namespace CGAL {
         if (shapeIndex[m_indices[start]] != -1
           && shapeIndex[m_indices[end]] == -1
           && start < end) {
-          size_t tmp = m_indices[start];
+          std::size_t tmp = m_indices[start];
           m_indices[start] = m_indices[end];
           m_indices[end] = tmp;
         }
@@ -355,23 +445,13 @@ namespace CGAL {
       return m_isValid;
     }
 
-    virtual void squared_distance(std::vector<FT> &dists,
-                                  const std::vector<int> &shapeIndex,
-                                  const std::vector<size_t> &indices) = 0;
-
-    //virtual FT cos_to_normal(const Point &p, const Vector &n) const = 0;
-
-    virtual void cos_to_normal(std::vector<FT>& angles,
-                               const std::vector<int>& shapeIndex,
-                               const std::vector<size_t>& indices) const = 0;
-
-    virtual void parameters(std::vector<std::pair<FT, FT> >& parameterSpace,
-                            const std::vector<size_t>& indices,
+    virtual void parameters(const std::vector<std::size_t>& indices,
+                            std::vector<std::pair<FT, FT> >& parameterSpace,
                             FT min[2],
                             FT max[2]) const {
     }
 
-    void compute(const std::set<size_t>& indices,
+    void compute(const std::set<std::size_t>& indices,
                  Input_iterator first,
                  Point_pmap point_pmap,
                  Normal_pmap normal_pmap,
@@ -386,7 +466,7 @@ namespace CGAL {
       m_epsilon = epsilon;
       m_normal_threshold = normal_threshold;
 
-      std::vector<size_t> output(indices.begin(), indices.end());
+      std::vector<std::size_t> output(indices.begin(), indices.end());
 
       create_shape(output);
     }
@@ -395,25 +475,22 @@ namespace CGAL {
       return expected_value() < c.expected_value();
     }
 
-    size_t cost_function(const std::vector<int> &shapeIndex,
-                         FT epsilon,
+    std::size_t cost_function(FT epsilon,
                          FT normal_threshold,
-                         const std::vector<size_t> &indices) {
+                         const std::vector<std::size_t> &indices) {
       std::vector<FT> dists, angles;
       dists.resize(indices.size());
-      squared_distance(dists, shapeIndex, indices);
+      squared_distance(indices, dists);
       angles.resize(indices.size());
-      cos_to_normal(angles, shapeIndex, indices);
+      cos_to_normal(indices, angles);
 
-      size_t scoreBefore = m_indices.size();
+      std::size_t scoreBefore = m_indices.size();
 
       FT eps = epsilon * epsilon;
-      for (size_t i = 0;i<indices.size();i++) {
-        if (shapeIndex[indices[i]] == -1) {
+      for (std::size_t i = 0;i<indices.size();i++) {
           if (dists[i] <= eps && angles[i] > normal_threshold)
             m_indices.push_back(indices[i]);
         }
-      }
 
       return m_indices.size() - scoreBefore;
     }
@@ -438,14 +515,8 @@ namespace CGAL {
                                const int x,
                                const FT n, 
                                FT &low,
-                               FT &high) {
-      if (UN == 1 || UN == 0)
-        printf("something wrong here, \
-               denominator is zero (UN %d)!! \n", UN);
-      if (x > UN)
-        printf("SizeP1 smaller than sizeP, something wrong \
-               (and sqrt may be negative !!!!");
-      FT sq = sqrt(x * n * (UN- x) * (UN - n) / (UN - 1));
+                               FT &high) {                           
+      const FT sq = sqrt(x * n * (UN- x) * (UN - n) / (UN - 1));
       low  = (x * n - sq) / UN;
       high = (x * n + sq)/UN;
 
@@ -455,7 +526,7 @@ namespace CGAL {
     }
 
 
-    virtual bool supports_connected_component() {
+    virtual bool supports_connected_component() const {
       return false;
     };
 
@@ -473,7 +544,7 @@ namespace CGAL {
     /*!
       Contains indices of the points supporting the candidate, access to the point and normal data is provided via property maps.
      */
-    std::vector<size_t> m_indices;
+    std::vector<std::size_t> m_indices;
     /// \cond SKIP_IN_MANUAL
 
     FT m_epsilon;
@@ -485,16 +556,15 @@ namespace CGAL {
     FT m_lower_bound;
     FT m_upper_bound;
 
-    size_t m_score;
+    std::size_t m_score;
 
     FT m_sum_expected_value;
 
     //count the number of subset used so far for the score,
     //and thus indicate the next one to use
-    size_t m_nb_subset_used;
+    std::size_t m_nb_subset_used;
     bool m_has_connected_component;
 
-    //indices of the points fitting to the candidate
     Input_iterator m_first;
     Point_pmap m_point_pmap;
     Normal_pmap m_normal_pmap;
@@ -513,7 +583,6 @@ namespace CGAL {
      \ingroup PkgPointSetShapeDetection3
      \brief Template class for creating a factory for a shape type.
      */
-  
   template < class Shape >
   class Shape_factory
 #ifndef DOXYGEN_RUNNING
