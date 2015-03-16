@@ -232,12 +232,9 @@ struct Naive_border_stitching_modifier
     }
 
     //remove the extra vertices
-    for(typename std::vector<vertex_descriptor>::iterator
-          itv = vertices_to_delete.begin(),
-          itv_end = vertices_to_delete.end();
-          itv!=itv_end; ++itv)
+    BOOST_FOREACH(vertex_descriptor vd, vertices_to_delete)
     {
-      remove_vertex(*itv, pmesh);
+      remove_vertex(vd, pmesh);
     }
   }
 
