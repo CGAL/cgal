@@ -57,10 +57,10 @@ CGAL_Core:
 CGAL_ImageIO:
 
 DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/analyze.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/bmpread.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/recline.cpp" // 1 global variable 
 
-#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/bmpread.cpp"
 #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/mincio.cpp"
-#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/recline.cpp"
 #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/convert.cpp"
 #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/recbuffer.cpp"
 #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/gif.cpp"
