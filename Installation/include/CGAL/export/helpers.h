@@ -20,13 +20,12 @@
 #ifndef CGAL_EXPORT_HELPERS_H
 #define CGAL_EXPORT_HELPERS_H
 
-// CJTODO: uncomment this when everything is ready
-/*#ifdef CGAL_HEADER_ONLY
+#ifdef CGAL_HEADER_ONLY
 #  define CGAL_DLL_IMPORT
 #  define CGAL_DLL_EXPORT
-#  define CGAL_DLL_LOCA
+#  define CGAL_DLL_LOCAL
 
-#else // !CGAL_HEADER_ONLY*/
+#else // !CGAL_HEADER_ONLY
 #  if defined(_WIN32) || defined(__CYGWIN__)
 #    define CGAL_DLL_IMPORT __declspec(dllimport)
 #    define CGAL_DLL_EXPORT __declspec(dllexport)
@@ -43,6 +42,6 @@
     #endif
 #  endif
 
-//#endif // CGAL_HEADER_ONLY
+#endif // CGAL_HEADER_ONLY
 
 #endif // CGAL_EXPORT_HELPERS_H

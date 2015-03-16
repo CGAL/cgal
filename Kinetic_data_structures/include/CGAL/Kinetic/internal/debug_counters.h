@@ -23,11 +23,6 @@
 
 #include <CGAL/Kinetic/basic.h>
 
-#ifdef CGAL_HEADER_ONLY
-#undef CGAL_EXPORT // CJTODO: TEMPORARY
-#define CGAL_EXPORT
-#endif
-
 namespace CGAL { namespace Kinetic {
 namespace internal {
   

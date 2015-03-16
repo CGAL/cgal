@@ -28,11 +28,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_HEADER_ONLY
-#undef CGAL_EXPORT // CJTODO: TEMPORARY
-#define CGAL_EXPORT
-#endif
-
 namespace CGAL {
 
 // SECTION: A Timer for User-Process Time

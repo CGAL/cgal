@@ -39,13 +39,6 @@
 #define _CORE_REAL_H_
 #include "RealRep.h"
 
-#ifdef CGAL_HEADER_ONLY
-#undef CGAL_EXPORT // CJTODO: TEMPORARY
-#undef CGAL_CORE_EXPORT
-#define CGAL_EXPORT
-#define CGAL_CORE_EXPORT
-#endif
-
 namespace CORE { 
 // class Real
 typedef RCImpl<RealRep> RCReal;

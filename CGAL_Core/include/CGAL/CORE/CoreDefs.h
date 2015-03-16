@@ -41,13 +41,6 @@
 #include <CGAL/CORE/extLong.h>
 
 #ifdef CGAL_HEADER_ONLY
-#undef CGAL_EXPORT // CJTODO: TEMPORARY
-#undef CGAL_CORE_EXPORT
-#define CGAL_EXPORT
-#define CGAL_CORE_EXPORT
-#endif
-
-#ifdef CGAL_HEADER_ONLY
   
   #define CGAL_GLOBAL_STATE_VAR(TYPE, NAME, VALUE)  \
     inline TYPE & get_static_##NAME()               \

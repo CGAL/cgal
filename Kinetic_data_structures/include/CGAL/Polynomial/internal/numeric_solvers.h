@@ -23,11 +23,6 @@
 #include <CGAL/Polynomial/basic.h>
 #include <vector>
 
-#ifdef CGAL_HEADER_ONLY
-#undef CGAL_EXPORT // CJTODO: TEMPORARY
-#define CGAL_EXPORT
-#endif
-
 namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 // JAMA

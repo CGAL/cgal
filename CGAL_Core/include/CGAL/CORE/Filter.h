@@ -42,13 +42,6 @@
 #include <CGAL/CORE/Real.h>
 #include <cmath>
 
-#ifdef CGAL_HEADER_ONLY
-#undef CGAL_EXPORT // CJTODO: TEMPORARY
-#undef CGAL_CORE_EXPORT
-#define CGAL_EXPORT
-#define CGAL_CORE_EXPORT
-#endif
-
 #if !defined CGAL_CFG_NO_CPP0X_ISFINITE
   #define CGAL_CORE_finite(x)	std::isfinite(x)
 #elif defined (_MSC_VER) || defined (__MINGW32__) // add support for MinGW

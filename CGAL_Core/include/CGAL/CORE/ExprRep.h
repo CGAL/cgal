@@ -43,13 +43,6 @@
 #include <CGAL/CORE/Filter.h>
 #include <CGAL/CORE/poly/Sturm.h>
 
-#ifdef CGAL_HEADER_ONLY
-#undef CGAL_EXPORT // CJTODO: TEMPORARY
-#undef CGAL_CORE_EXPORT
-#define CGAL_EXPORT
-#define CGAL_CORE_EXPORT
-#endif
-
 namespace CORE { 
 
 #if defined(CORE_DEBUG_BOUND) && !defined(CGAL_HEADER_ONLY)

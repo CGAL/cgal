@@ -33,11 +33,6 @@
 #  pragma warning(disable:4251)
 #endif
 
-#ifdef CGAL_HEADER_ONLY
-#undef CGAL_EXPORT // CJTODO: TEMPORARY
-#define CGAL_EXPORT
-#endif
-
 namespace CGAL {
 
 class Log
