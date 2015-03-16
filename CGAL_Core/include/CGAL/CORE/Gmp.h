@@ -27,6 +27,13 @@
 #include <CGAL/CORE/Impl.h>
 #include <gmp.h>
 
+#ifdef CGAL_HEADER_ONLY
+#undef CGAL_EXPORT // CJTODO: TEMPORARY
+#undef CGAL_CORE_EXPORT
+#define CGAL_EXPORT
+#define CGAL_CORE_EXPORT
+#endif
+
 namespace CORE { 
 
 CGAL_CORE_EXPORT std::ostream& io_write (std::ostream &, mpz_srcptr);
@@ -39,4 +46,9 @@ CGAL_CORE_EXPORT std::istream& io_read (std::istream &, mpq_ptr);
 //std::istream& operator>> (std::istream &, mpq_ptr);
 
 } //namespace CORE
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/CORE/Gmp_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // _CORE_GMP_H_

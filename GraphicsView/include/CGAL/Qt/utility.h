@@ -39,4 +39,8 @@ CGAL_QT4_EXPORT QRectF viewportsBbox(const QGraphicsScene*);
 } // namespace Qt
 } // namespace CGAL
 
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/Qt/utility_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // CGAL_QT_UTILITY_H

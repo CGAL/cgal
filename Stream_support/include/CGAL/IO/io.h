@@ -40,7 +40,9 @@ namespace CGAL {
 
 class IO {
 public:
+#ifndef CGAL_HEADER_ONLY
     CGAL_EXPORT static int mode;
+#endif // CGAL_HEADER_ONLY
     enum Mode {ASCII = 0, PRETTY, BINARY};
 };
 
@@ -91,7 +93,6 @@ public:
     //! perform the input, calls \c operator\>\> by default.
     std::istream& operator()( std::istream& in) const { return (in >> t); }
 };
-
 
 #if CGAL_FORCE_IFORMAT_DOUBLE || \
   ( ( _MSC_VER > 1600 ) && (! defined( CGAL_NO_IFORMAT_DOUBLE )) )
@@ -226,7 +227,6 @@ bool
 is_binary(std::ios& i);
 
 
-
 template < class T >
 inline
 void
@@ -351,8 +351,11 @@ void swallow(std::istream &is, char d);
 CGAL_EXPORT
 void swallow(std::istream &is, const std::string& s );
 
-
-
 } //namespace CGAL
+
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/IO/io_impl.h>
+#endif // CGAL_HEADER_ONLY
 
 #endif // CGAL_IO_H

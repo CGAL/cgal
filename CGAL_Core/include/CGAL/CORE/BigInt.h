@@ -39,6 +39,13 @@
 #include <CGAL/CORE/MemoryPool.h>
 #include <string>
 
+#ifdef CGAL_HEADER_ONLY
+#undef CGAL_EXPORT // CJTODO: TEMPORARY
+#undef CGAL_CORE_EXPORT
+#define CGAL_EXPORT
+#define CGAL_CORE_EXPORT
+#endif
+
 namespace CORE { 
 
 
@@ -559,4 +566,9 @@ inline BigInt randomize(const BigInt& a) {
 //@}
 
 } //namespace CORE
+
+#ifdef CGAL_HEADER_ONLY
+//#include <CGAL/CORE/CoreIO_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // _CORE_BIGINT_H_

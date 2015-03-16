@@ -17,8 +17,10 @@
 //
 // Author(s)     : Michael Hemmer
 
+#ifndef CGAL_HEADER_ONLY
 
 #include <CGAL/Residue.h>
+#include <CGAL/Modular_arithmetic/Residue_type.h>
 
 namespace CGAL{
 #ifdef CGAL_HAS_THREADS
@@ -35,3 +37,5 @@ double Residue::prime_inv =1/67111067.0;
 const double Residue::CST_CUT = std::ldexp( 3., 51 );
 
 }
+
+#endif

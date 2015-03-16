@@ -125,4 +125,8 @@ protected:
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(CGAL::Qt::DemosMainWindow::Options)
 
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/Qt/DemosMainWindow_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // CGAL_QT_DEMOS_MAIN_WINDOW_H

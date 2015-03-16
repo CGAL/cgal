@@ -97,7 +97,7 @@ void test_point_generators_2() {
     perturb_points_2( i1, i2, 10.0);
 
     // Create a random permutation.
-    std::random_shuffle( points.begin(), points.end(), default_random);
+    std::random_shuffle( points.begin(), points.end(), get_default_random());
 
     assert( points.size() == 1000);
     for ( std::vector<Point_2>::iterator i = points.begin();

@@ -1,9 +1,9 @@
-// Copyright (c) 1998-2008  
+// Copyright (c) 1998-2008
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -66,7 +66,11 @@ extern "C" {
 #  if defined CGAL_CFG_DENORMALS_COMPILE_BUG
      // For compilers crashing when dealing with denormalized values.
      // So we have to generate it at run time instead.
+#ifdef CGAL_HEADER_ONLY
+#    define CGAL_IA_MIN_DOUBLE (CGAL::internal::get_static_minimin())
+#else
 #    define CGAL_IA_MIN_DOUBLE (CGAL::internal::minimin)
+#endif // CGAL_HEADER_ONLY
 #  else
 #    define CGAL_IA_MIN_DOUBLE (5e-324)
 #  endif
@@ -115,14 +119,22 @@ extern "C" {
 #  define CGAL_USE_SSE2 1
 #endif
 
-namespace CGAL {
-
-namespace internal {
-
 #ifdef CGAL_CFG_DENORMALS_COMPILE_BUG
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/Interval_arithmetic_impl.h> // To define get_static_minimin();
+#else // CGAL_HEADER_ONLY
+namespace CGAL {
+namespace internal {
 CGAL_EXPORT extern double minimin;
+}
+}
+#endif // CGAL_HEADER_ONLY
+
 #endif
 
+namespace CGAL {
+namespace internal {
 #ifdef __INTEL_COMPILER
 const double infinity = std::numeric_limits<double>::infinity();
 #else
@@ -410,11 +422,27 @@ FPU_get_cw (void)
     return cw;
 }
 
+} // namespace CGAL
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/test_FPU_rounding_mode_impl.h>
+#endif // CGAL_HEADER_ONLY
+
+namespace CGAL {
+
+// User interface (cont):
+
 inline
 void
 FPU_set_cw (FPU_CW_t cw)
 {
-    CGAL_IA_SETFPCW(cw);
+#ifndef CGAL_NDEBUG
+#ifdef CGAL_HEADER_ONLY
+  const Check_FPU_rounding_mode_is_restored & tmp = get_static_check_fpu_rounding_mode_is_restored();
+#endif
+#endif
+
+  CGAL_IA_SETFPCW(cw);
 }
 
 inline

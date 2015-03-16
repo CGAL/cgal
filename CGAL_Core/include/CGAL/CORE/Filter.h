@@ -42,6 +42,13 @@
 #include <CGAL/CORE/Real.h>
 #include <cmath>
 
+#ifdef CGAL_HEADER_ONLY
+#undef CGAL_EXPORT // CJTODO: TEMPORARY
+#undef CGAL_CORE_EXPORT
+#define CGAL_EXPORT
+#define CGAL_CORE_EXPORT
+#endif
+
 #if !defined CGAL_CFG_NO_CPP0X_ISFINITE
   #define CGAL_CORE_finite(x)	std::isfinite(x)
 #elif defined (_MSC_VER) || defined (__MINGW32__) // add support for MinGW
@@ -102,7 +109,7 @@ public:
   }
   /// check whether the sign (!) of the filtered value is OK
   bool isOK() const {
-    return (fpFilterFlag  && // To disable filter
+    return (get_static_fpFilterFlag()  && // To disable filter
             CGAL_CORE_finite(fpVal) && // Test for infinite and NaNs
             (core_abs(fpVal) >= maxAbs*ind*CORE_EPS));
   }

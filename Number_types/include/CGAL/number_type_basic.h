@@ -55,7 +55,6 @@
 #include <CGAL/utils_classes.h>
 #include <CGAL/utils.h>
 #include <CGAL/FPU.h>
-
 #include <CGAL/float.h>
 #include <CGAL/double.h>
 #include <CGAL/long_double.h>

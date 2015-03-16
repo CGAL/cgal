@@ -1,9 +1,9 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -32,9 +32,9 @@ namespace CGAL {
 class Color {
 public:
   Color() {}
-  Color(unsigned char red, 
-	unsigned char green, 
-	unsigned char blue, 
+  Color(unsigned char red,
+	unsigned char green,
+	unsigned char blue,
 	unsigned char alpha = 120)
     : _red(red), _green(green), _blue(blue), _alpha(alpha)
   {}
@@ -76,15 +76,16 @@ private:
   unsigned char _alpha;
 };
 
+#ifndef CGAL_HEADER_ONLY
 
 CGAL_EXPORT extern const Color BLACK  ;
 CGAL_EXPORT extern const Color WHITE  ;
-CGAL_EXPORT extern const Color GRAY  ;
+CGAL_EXPORT extern const Color GRAY   ;
 
 CGAL_EXPORT extern const Color RED    ;
 CGAL_EXPORT extern const Color GREEN  ;
 
-CGAL_EXPORT extern const Color DEEPBLUE  ;
+CGAL_EXPORT extern const Color DEEPBLUE;
 CGAL_EXPORT extern const Color BLUE   ;
 CGAL_EXPORT extern const Color PURPLE ;
 CGAL_EXPORT extern const Color VIOLET ;
@@ -92,7 +93,12 @@ CGAL_EXPORT extern const Color VIOLET ;
 CGAL_EXPORT extern const Color ORANGE ;
 CGAL_EXPORT extern const Color YELLOW ;
 
+#endif // CGAL_HEADER_ONLY
 
 } //namespace CGAL
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/IO/Color_impl.h>
+#endif // CGAL_HEADER_ONLY
 
 #endif  // CGAL_COLOR_H

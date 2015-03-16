@@ -52,5 +52,10 @@ public:
 };
 
 } //namespace CGAL
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/IO/File_writer_inventor_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // CGAL_IO_FILE_WRITER_INVENTOR_H //
 // EOF //

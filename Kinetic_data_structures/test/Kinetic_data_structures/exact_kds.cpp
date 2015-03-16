@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
 #endif
   
  
-  if (error || CGAL::Kinetic::internal::audit_failures__ != 0) {
+  if (error || CGAL::Kinetic::internal::get_static_audit_failures() != 0) {
     return EXIT_FAILURE;
   }
   else {

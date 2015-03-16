@@ -37,6 +37,11 @@
 #endif
 #endif
 
+#ifdef CGAL_HEADER_ONLY
+#undef CGAL_EXPORT // CJTODO: TEMPORARY
+#define CGAL_EXPORT
+#endif
+
 namespace CGAL {
 
 // function declarations
@@ -342,5 +347,9 @@ inline bool possibly(Uncertain<bool> c);
 // This comes last as it is dependant on the macros to be defined.
 // But the macros need CGAL::possibly().
 #include <CGAL/Uncertain.h>
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/assertions_impl.h>
+#endif // CGAL_HEADER_ONLY
 
 #endif // CGAL_ASSERTIONS_H

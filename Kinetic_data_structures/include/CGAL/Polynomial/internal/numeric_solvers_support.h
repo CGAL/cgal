@@ -57,4 +57,9 @@ void filter_solver_roots(const double *begin, const double *end,
 			 std::vector<double> &roots);
 
 } } } //namespace CGAL::POLYNOMIAL::internal
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/Polynomial/internal/numeric_solvers_support_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif

@@ -39,6 +39,13 @@
 #include <fstream>
 #include "CGAL/CORE/Impl.h"
 
+#ifdef CGAL_HEADER_ONLY
+#undef CGAL_EXPORT // CJTODO: TEMPORARY
+#undef CGAL_CORE_EXPORT
+#define CGAL_EXPORT
+#define CGAL_CORE_EXPORT
+#endif
+
 namespace CORE { 
 
 #ifndef LONG_BIT // such as in Linux
@@ -181,4 +188,9 @@ inline void core_debug(std::string msg){
 
 
 } //namespace CORE
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/CORE/CoreAux_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // _CORE_COREAUX_H_

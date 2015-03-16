@@ -50,7 +50,6 @@ using CGAL::Creator_uniform_2;
 using CGAL::Random_points_in_square_2;
 using CGAL::Random;
 using CGAL::Timer;
-using CGAL::default_random;
 using CGAL::rectangular_p_center_2;
 #ifndef CGAL_PCENTER_NO_OUTPUT
 using std::ostream;
@@ -110,7 +109,7 @@ public:
   Random_p_clusters_2(int n_,
                       double c_size_,
                       double r = 1,
-                      Random& rnd = default_random)
+                      Random& rnd = CGAL::get_default_random())
   : Base(r - c_size_, rnd),
     n(n_),
     c_size(c_size_),
@@ -165,7 +164,7 @@ main(int argc, char* argv[])
 #endif // CGAL_PCENTER_NO_OUTPUT
 
     // generate random seed
-    random_seed = default_random.get_int(0, (1 << 30));
+    random_seed = CGAL::get_default_random().get_int(0, (1 << 30));
   }
   else
     random_seed = std::atoi(argv[2]);
