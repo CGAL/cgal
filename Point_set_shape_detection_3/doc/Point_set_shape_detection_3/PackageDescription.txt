@@ -24,17 +24,17 @@
 \cgalClassifedRefPages
 
 ## Main Classes ##
-- `CGAL::Efficient_RANSAC<Sd_traits>`
+- `CGAL::Efficient_RANSAC<ERTraits>`
 - `CGAL::Efficient_RANSAC_traits_3`
 
 ## Shape Interface ##
-- `CGAL::Shape_base<Sd_traits>`
+- `CGAL::Shape_base<ERTraits>`
 
 ## Shape Classes ##
-- `CGAL::Plane_3<Sd_traits>`
-- `CGAL::Sphere_3<Sd_traits>`
-- `CGAL::Cylinder_3<Sd_traits>`
-- `CGAL::Cone_3<Sd_traits>`
-- `CGAL::Torus_3<Sd_traits>`
+- `CGAL::Plane_3<ERTraits>`
+- `CGAL::Sphere_3<ERTraits>`
+- `CGAL::Cylinder_3<ERTraits>`
+- `CGAL::Cone_3<ERTraits>`
+- `CGAL::Torus_3<ERTraits>`
 */
 
