@@ -45,7 +45,7 @@ public:
   static int& get_static_mode()
   { return IO::mode; }
 #else // CGAL_HEADER_ONLY
-  inline int& get_static_mode()
+  static int& get_static_mode()
   {
     static int mode = std::ios::xalloc();
     return mode;
