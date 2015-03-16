@@ -24,15 +24,15 @@
 
 #include <string.h>
 
-#include "gis.h" 
-#include "inr.h"
+#include <CGAL/gis.h>
+#include <CGAL/inr.h>
 
 /* get a string from a file and discard the ending newline character
    if any */
 char *fgetns(char *str, int n,  _image *im );
 
 #ifdef CGAL_HEADER_ONLY
-#include "fgetns_impl.h"
+#include <CGAL/fgetns_impl.h>
 #endif // CGAL_HEADER_ONLY
 
 #endif // FGETNS_H

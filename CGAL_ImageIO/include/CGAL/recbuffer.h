@@ -49,8 +49,8 @@
 #define _recbuffer_h_
 
 
-#include "typedefs.h"
-#include "recline.h"
+#include <CGAL/typedefs.h>
+#include <CGAL/recline.h>
 
 
 
