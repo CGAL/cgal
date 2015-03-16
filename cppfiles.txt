@@ -45,14 +45,14 @@ DONE #include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/Turk
 
 CGAL_Core:
 
-#include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/CoreIO.cpp"
-#include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/CoreAux.cpp"
-#include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/CoreDefs.cpp"
-#include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/Expr.cpp"
-#include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/GmpIO.cpp"
-#include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/BigFloat.cpp"
-#include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/Real.cpp"
-#include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/extLong.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/CoreIO.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/CoreAux.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/CoreDefs.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/Expr.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/GmpIO.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/BigFloat.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/Real.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/extLong.cpp"
 
 CGAL_ImageIO:
 
