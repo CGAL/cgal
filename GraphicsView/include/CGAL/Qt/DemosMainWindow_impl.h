@@ -29,6 +29,7 @@
 #include <QApplication>
 #include <QLabel>
 #include <QFile>
+#include <QFileDialog>
 #include <QFileInfo>
 #include <QMenu>
 #include <QMenuBar>
@@ -42,6 +43,7 @@
 #include <QUrl>
 #include <QDesktopWidget>
 #include <QRegExp>
+#include <QSvgGenerator>
 
 #include <CGAL/config.h> // needed to get CGAL_VERSION_STR
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -154,6 +156,37 @@ DemosMainWindow::setupOptionsMenu(QMenu* menuOptions)
   connect(actionUse_OpenGL, SIGNAL(toggled(bool)),
           this, SLOT(setUseOpenGL(bool)));
   actionUse_Antialiasing->setChecked(true);
+}
+
+CGAL_INLINE_FUNCTION
+void
+DemosMainWindow::setupExportSVG(QAction* action, QGraphicsView* view)
+{
+  this->view = view;
+  connect(action, SIGNAL(triggered(bool)),
+	  this, SLOT(exportSVG()));
+}
+
+CGAL_INLINE_FUNCTION
+void DemosMainWindow::exportSVG()
+{
+  QString fileName = QFileDialog::getSaveFileName(this,
+						  tr("Export to SVG"),
+						  ".",
+						  tr("SVG (*.svg)\n"));
+
+  QSvgGenerator svg;
+  svg.setFileName(fileName);
+
+  svg.setSize(this->view->size());
+  svg.setViewBox(this->view->sceneRect());
+  svg.setTitle(tr("%1 drawing").arg(qApp->applicationName()));
+  svg.setDescription(tr("Generated using %1").arg(qApp->applicationName()));
+
+  QPainter painter;
+  painter.begin(&svg);
+  this->view->render(&painter);
+  painter.end();
 }
 
 CGAL_INLINE_FUNCTION
