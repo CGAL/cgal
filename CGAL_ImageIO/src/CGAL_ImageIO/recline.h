@@ -228,5 +228,8 @@ extern void Recline_verbose ( );
  */
 extern void Recline_noverbose ( );
 
+#ifdef CGAL_HEADER_ONLY
+#include "recline_impl.h"
+#endif // CGAL_HEADER_ONLY
 
 #endif /* _recline_h_ */

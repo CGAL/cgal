@@ -9,7 +9,7 @@ else()
   cmake_minimum_required(VERSION 2.6.2)
 endif()
 
-# add_definitions(-DCGAL_HEADER_ONLY)
+add_definitions(-DCGAL_HEADER_ONLY)
 
 # option for branch build
 
