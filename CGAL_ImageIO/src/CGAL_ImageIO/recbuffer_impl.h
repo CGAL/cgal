@@ -59,7 +59,6 @@
 #include <math.h>
 
 #include "convert.h"
-#include "recbuffer.h"
 
 #ifdef CGAL_HEADER_ONLY
 
