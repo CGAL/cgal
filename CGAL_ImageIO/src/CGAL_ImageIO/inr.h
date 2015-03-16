@@ -57,5 +57,9 @@ int writeInrimage(char *basename,_image *im);
 /** creates an return the file format structure associated with the Inrimage file format */
 PTRIMAGE_FORMAT createInrimageFormat();
 
+#ifdef CGAL_HEADER_ONLY
+#include "inr_impl.h"
+#endif // CGAL_HEADER_ONLY
+
 
 #endif
