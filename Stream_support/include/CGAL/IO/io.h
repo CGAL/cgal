@@ -302,7 +302,7 @@ read(std::istream& is, T& t)
 inline
 std::ostream& operator<<( std::ostream& out, const Color& col)
 {
-    switch(out.iword(IO::mode)) {
+    switch(get_mode(out)) {
     case IO::ASCII :
         return out << static_cast<int>(col.red())   << ' '
 		   << static_cast<int>(col.green()) << ' '
@@ -323,7 +323,7 @@ inline
 std::istream &operator>>(std::istream &is, Color& col)
 {
     int r = 0, g = 0, b = 0;
-    switch(is.iword(IO::mode)) {
+    switch(get_mode(is)) {
     case IO::ASCII :
         is >> r >> g >> b;
         break;
