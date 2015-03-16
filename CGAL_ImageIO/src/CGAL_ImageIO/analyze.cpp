@@ -21,7 +21,7 @@
 
 #ifndef CGAL_HEADER_ONLY
 
-#include "analyze.h"
-#include "analyze_impl.h"
+#include <CGAL/analyze.h>
+#include <CGAL/analyze_impl.h>
 
 #endif // CGAL_HEADER_ONLY

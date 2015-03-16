@@ -19,6 +19,9 @@
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
 
+#ifndef FGETNS_H
+#define FGETNS_H
+
 #include <string.h>
 
 #include "gis.h" 
@@ -27,3 +30,9 @@
 /* get a string from a file and discard the ending newline character
    if any */
 char *fgetns(char *str, int n,  _image *im );
+
+#ifdef CGAL_HEADER_ONLY
+#include "fgetns_impl.h"
+#endif // CGAL_HEADER_ONLY
+
+#endif // FGETNS_H

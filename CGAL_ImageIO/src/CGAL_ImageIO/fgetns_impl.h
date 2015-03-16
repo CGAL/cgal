@@ -19,9 +19,30 @@
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
 
-#ifndef CGAL_HEADER_ONLY
+#ifdef CGAL_HEADER_ONLY
+#define CGAL_INLINE_FUNCTION inline
+#else
+#define CGAL_INLINE_FUNCTION
+#endif
 
-#include <CGAL/bmpendian.h>
-#include <CGAL/bmpendian_impl.h>
+#include <string.h>
 
-#endif // CGAL_HEADER_ONLY
+#include "gis.h" 
+#include "inr.h"
+
+/* get a string from a file and discard the ending newline character
+   if any */
+CGAL_INLINE_FUNCTION
+char *fgetns(char *str, int n,  _image *im ) {
+  char *ret;
+  int l;
+
+  memset( str, 0, n );
+  ret = ImageIO_gets( im, str, n );
+
+  if(!ret) return NULL;
+
+  l = strlen(str);
+  if(l > 0 && str[l-1] == '\n') str[l-1] = '\0';
+  return ret;
+}
