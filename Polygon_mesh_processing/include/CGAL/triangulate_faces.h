@@ -177,9 +177,8 @@ public:
         {
           // strictly internal edge
           edge_descriptor e = add_edge(pmesh);
-          //ici
           fh->info().e[index] = h;
-          opposite_fh->info().e[opposite_index] = h->opposite();
+          opposite_fh->info().e[opposite_index] = opposite(h, pmesh);
 
           set_target(h, target(va->info(), pmesh), pmesh);
           set_target(opposite(h, pmesh), target(vb->info(), pmesh), pmesh);
