@@ -64,9 +64,9 @@ DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/convert
 DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/recbuffer.cpp"
 DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/gif.cpp" // several global variables
 DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/gis.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/bmp.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/reech4x4.cpp"
 
-#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/reech4x4.cpp"
-#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/bmp.cpp"
 #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/bmpendian.cpp"
 #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/iris.cpp"
 #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/fgetns.cpp"
