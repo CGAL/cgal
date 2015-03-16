@@ -21,7 +21,7 @@
 
 #ifndef CGAL_HEADER_ONLY
 
-#include "inr.h"
-#include "inr_impl.h"
+#include <CGAL/inr.h>
+#include <CGAL/inr_impl.h>
 
 #endif // CGAL_HEADER_ONLY

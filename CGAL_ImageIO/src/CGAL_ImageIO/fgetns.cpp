@@ -21,7 +21,7 @@
 
 #ifndef CGAL_HEADER_ONLY
 
-#include <CGAL/fgets.h>
-#include <CGAL/fgets_impl.h>
+#include <CGAL/fgetns.h>
+#include <CGAL/fgetns_impl.h>
 
 #endif // CGAL_HEADER_ONLY
