@@ -30,8 +30,6 @@
 #define CGAL_INLINE_FUNCTION
 #endif
 
-#include <CGAL/basic.h>
-
 #include <sstream>
 #include <csignal>
 #include <cerrno>

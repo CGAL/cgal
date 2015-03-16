@@ -25,9 +25,10 @@
 #ifndef CGAL_GEOMVIEW_STREAM_H
 #define CGAL_GEOMVIEW_STREAM_H
 
+#include <CGAL/basic.h>
+
 #ifdef CGAL_USE_GEOMVIEW
 
-#include <CGAL/basic.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/IO/Color.h>
