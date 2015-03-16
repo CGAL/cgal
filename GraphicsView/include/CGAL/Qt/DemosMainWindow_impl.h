@@ -43,7 +43,7 @@
 #include <QUrl>
 #include <QDesktopWidget>
 #include <QRegExp>
-#include <QSvgGenerator>
+#include <QtSvg/QSvgGenerator>
 
 #include <CGAL/config.h> // needed to get CGAL_VERSION_STR
 #include <CGAL/Qt/DemosMainWindow.h>

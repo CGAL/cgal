@@ -73,8 +73,8 @@ typedef unsigned char byte;
 
 //FILE *fp;
 //int   gif89 = 0;
-const char *id87 = "GIF87a";
-const char *id89 = "GIF89a";
+static const char *id87 = "GIF87a";
+static const char *id89 = "GIF89a";
 
 static int EGApalette[16][3] = {
   {0,0,0},       {0,0,128},     {0,128,0},     {0,128,128}, 
@@ -122,6 +122,7 @@ PTRIMAGE_FORMAT createGifFormat() {
   return f;
 }
 
+CGAL_INLINE_FUNCTION
 void use(int) {} // warning killer
 
 /*****************************/
