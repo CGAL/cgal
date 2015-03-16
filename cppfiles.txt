@@ -66,11 +66,11 @@ DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/gif.cpp
 DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/gis.cpp"
 DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/bmp.cpp"
 DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/reech4x4.cpp"
-
-#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/bmpendian.cpp"
-#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/iris.cpp"
-#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/fgetns.cpp"
-#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/Image_3.cpp"
-#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/pnm.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/bmpendian.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/fgetns.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/Image_3.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/iris.cpp"
 #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/ImageIO.cpp"
+
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/pnm.cpp"
 #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/inr.cpp"

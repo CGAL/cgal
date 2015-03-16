@@ -19,8 +19,11 @@
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
 
-#ifndef FGETNS_H
-#define FGETNS_H
+#ifdef CGAL_HEADER_ONLY
+#define CGAL_INLINE_FUNCTION inline
+#else
+#define CGAL_INLINE_FUNCTION
+#endif
 
 #include <string.h>
 
@@ -29,10 +32,17 @@
 
 /* get a string from a file and discard the ending newline character
    if any */
-char *fgetns(char *str, int n,  _image *im );
+CGAL_INLINE_FUNCTION
+char *fgetns(char *str, int n,  _image *im ) {
+  char *ret;
+  int l;
 
-#ifdef CGAL_HEADER_ONLY
-#include "fgetns_impl.h"
-#endif // CGAL_HEADER_ONLY
+  memset( str, 0, n );
+  ret = ImageIO_gets( im, str, n );
 
-#endif // FGETNS_H
+  if(!ret) return NULL;
+
+  l = strlen(str);
+  if(l > 0 && str[l-1] == '\n') str[l-1] = '\0';
+  return ret;
+}

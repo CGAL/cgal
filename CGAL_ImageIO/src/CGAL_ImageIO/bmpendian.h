@@ -54,6 +54,10 @@ int writeUINT8little(FILE *f, CGAL_UINT8 i);
 int writeUINT16little(FILE *f, CGAL_UINT16 i);
 int writeUINT32little(FILE *f, CGAL_UINT32 i);
 
+#ifdef CGAL_HEADER_ONLY
+#include "bmpendian_impl.h"
+#endif // CGAL_HEADER_ONLY
+
 #endif  /* __ENDIAN_H_INCLUDED__ */
 
 
