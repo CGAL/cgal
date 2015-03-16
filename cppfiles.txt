@@ -61,11 +61,11 @@ DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/bmpread
 DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/recline.cpp" // 1 global variable 
 DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/mincio.cpp"
 DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/convert.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/recbuffer.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/gif.cpp" // several global variables
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/gis.cpp"
 
-#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/recbuffer.cpp"
-#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/gif.cpp"
 #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/reech4x4.cpp"
-#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/gis.cpp"
 #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/bmp.cpp"
 #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/bmpendian.cpp"
 #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/iris.cpp"

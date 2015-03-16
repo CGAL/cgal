@@ -10,6 +10,8 @@ else()
 endif()
 
 add_definitions(-DCGAL_HEADER_ONLY)
+message("CGAL WITH HEADER ONLY")
+# message("CGAL with libraries")
 
 # option for branch build
 
