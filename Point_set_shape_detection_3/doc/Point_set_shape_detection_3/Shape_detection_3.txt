@@ -63,19 +63,19 @@ Typical usage consists in five steps:
 
 The following minimal example reads a point set from a file and detects only planar shapes. The default parameters are used for detection.
 
-\cgalExample{Point_set_shape_detection_3/shape_detection_3_basic.cpp}
+\cgalExample{Point_set_shape_detection_3/efficient_RANSAC_3_basic.cpp}
 
 \subsection Point_set_shape_detection_3Usage_parameters Setting parameters and using different types of shape
 
 This example illustrates the user selection of parameters using the `Shape_detection::Parameters` struct. Shape detection is performed on five types of shapes (plane, cylinder, sphere, cone, torus). Basic information of the detected shapes is output to the standard output. The input point set is sampled on a surface mostly composed of piece-wise planar and cylindrical parts, in addition to free-form parts.
 
-\cgalExample{Point_set_shape_detection_3/shape_detection_3_parameters.cpp}
+\cgalExample{Point_set_shape_detection_3/efficient_RANSAC_3_parameters.cpp}
 
 \subsection Point_set_shape_detection_3Usage_point_access Retrieving points assigned to shapes
 
 This example illustrates how to access the points assigned to each shape and compute the mean error. A timer measures the running performance.
 
-\cgalExample{Point_set_shape_detection_3/shape_detection_3_point_access.cpp}
+\cgalExample{Point_set_shape_detection_3/efficient_RANSAC_3_point_access.cpp}
 
 \section Point_set_shape_detection_3Arbitrary_shapes Other shapes
 
@@ -94,13 +94,13 @@ More specifically, the functions to be implemented are defined in the interface 
 These functions are used to determine the number of inlier points to the shape. They compute respectively the squared distance from a set of points to the shape, and the dot product between the point's normals and the normals at the shape for the closest points on the shape. The access to the actual point and normal data is carried out via `Shape_base::get_point``(size_t i)` and `Shape_base::get_normal``(size_t i)` (see example below). The resulting squared distance/dot product is stored in the vector provided as the first argument.
 
 By default the connected component is detected via the neighbor graph as mentioned above. However, for shapes that admit a faster approach to detect a connected component, the user can provide his/her own implementation to extract the connected component via:
-- `Shape_base::connected_component``(FT cluster_epsilon)`: The indices of all supporting points are stored in the vector `m_indices`. All points not belonging to the largest cluster of points are removed from the vector `m_indices`. 
+- `Shape_base::connected_component``(std::vector<std::size_t> indices, FT cluster_epsilon)`: The indices of all supporting points are stored in the vector `indices`. All points not belonging to the largest cluster of points are removed from the vector `indices`. 
 
 Another optional method can be implemented to provide a helper function providing the shape parameters written to a string:
 - `Shape_base::info``()`: This function returns a string suitable for printing the shape parameters into a log/console. The default solution provides an empty string.
 
 The property maps are used to map the indices to the corresponding points and normals. The following example shows an example implementation of a planar shape primitive.
-\cgalExample{Point_set_shape_detection_3/shape_detection_3_custom_shape.h}
+\cgalExample{Point_set_shape_detection_3/efficient_RANSAC_3_custom_shape.h}
 
 \section Point_set_shape_detection_3Performance Performance
  
