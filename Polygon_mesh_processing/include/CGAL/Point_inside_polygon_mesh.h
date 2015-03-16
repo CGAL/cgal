@@ -22,7 +22,7 @@
 #ifndef CGAL_POINT_INSIDE_POLYGON_MESH_H
 #define CGAL_POINT_INSIDE_POLYGON_MESH_H
 
-#include <CGAL/internal/Point_inside_polygon_mesh/Point_inside_vertical_ray_cast.h>
+#include <CGAL/Polygon_mesh_processing/internal/Point_inside_polygon_mesh/Point_inside_vertical_ray_cast.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
 #include <CGAL/AABB_tree.h>

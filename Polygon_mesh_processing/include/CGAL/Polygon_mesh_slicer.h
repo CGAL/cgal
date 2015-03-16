@@ -31,8 +31,8 @@
 
 #include <boost/foreach.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <CGAL/internal/Polygon_mesh_slicer/Traversal_traits.h>
-#include <CGAL/internal/Polygon_mesh_slicer/Axis_parallel_plane_traits.h>
+#include <CGAL/Polygon_mesh_processing/internal/Polygon_mesh_slicer/Traversal_traits.h>
+#include <CGAL/Polygon_mesh_processing/internal/Polygon_mesh_slicer/Axis_parallel_plane_traits.h>
 
 #include <boost/variant.hpp>
 

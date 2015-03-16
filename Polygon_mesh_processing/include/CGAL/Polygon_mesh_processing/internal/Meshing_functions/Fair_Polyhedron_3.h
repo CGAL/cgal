@@ -4,7 +4,7 @@
 #include <map>
 #include <set>
 #include <CGAL/assertions.h>
-#include <CGAL/internal/Hole_filling/Weights.h>
+#include <CGAL/Polygon_mesh_processing/internal/Hole_filling/Weights.h>
 #include <CGAL/Timer.h>
 #include <CGAL/trace.h>
 

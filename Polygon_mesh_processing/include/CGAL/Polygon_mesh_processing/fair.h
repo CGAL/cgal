@@ -1,7 +1,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_FAIR_H
 #define CGAL_POLYGON_MESH_PROCESSING_FAIR_H
 
-#include <CGAL/internal/Meshing_functions/Fair_Polyhedron_3.h>
+#include <CGAL/Polygon_mesh_processing/internal/Meshing_functions/Fair_Polyhedron_3.h>
 
 namespace CGAL {
 

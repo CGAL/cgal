@@ -1,7 +1,7 @@
 #ifndef CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYHEDRON_3_H
 #define CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYHEDRON_3_H
 
-#include <CGAL/internal/Hole_filling/Triangulate_hole_polyline.h>
+#include <CGAL/Polygon_mesh_processing/internal/Hole_filling/Triangulate_hole_polyline.h>
 #include <CGAL/Timer.h>
 #include <CGAL/trace.h>
 #include <CGAL/boost/graph/iterator.h>

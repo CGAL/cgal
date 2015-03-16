@@ -1,8 +1,8 @@
 #ifndef CGAL_TRIANGULATE_HOLE_H
 #define CGAL_TRIANGULATE_HOLE_H
 
-#include <CGAL/internal/Hole_filling/Triangulate_hole_polygon_mesh.h>
-#include <CGAL/internal/Hole_filling/Triangulate_hole_polyline.h>
+#include <CGAL/Polygon_mesh_processing/internal/Hole_filling/Triangulate_hole_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/internal/Hole_filling/Triangulate_hole_polyline.h>
 #include <CGAL/Polygon_mesh_processing/refine.h>
 #include <CGAL/Polygon_mesh_processing/fair.h>
 #include <CGAL/Default.h>
