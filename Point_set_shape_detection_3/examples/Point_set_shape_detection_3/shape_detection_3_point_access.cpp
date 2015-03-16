@@ -50,12 +50,14 @@ int main()
   CGAL::Timer time;
   time.start();
 
-  // Instantiates shape detection engine and provides input data.
-  Efficient_RANSAC sd(points.begin(),
-    points.end(), Point_pmap(), Normal_pmap());
+  // Instantiates shape detection engine.
+  Efficient_RANSAC sd = Efficient_RANSAC();
+
+  // Provides the input data.
+  sd.set_input_data(points.begin(), points.end(), Point_pmap(), Normal_pmap());
 
   // Registers detection of planes
-  sd.add_shape_factory<Plane<Traits> >();
+  sd.add_shape_factory<Plane_3<Traits> >();
 
   // Detects shapes.
   sd.detect();
@@ -83,10 +85,10 @@ int main()
     FT sum_distances = 0;
 
     // Iterates through point indices assigned to each detected shape.
-    std::vector<size_t>::const_iterator
-      index_it = (*it)->assigned_points().begin();
+    std::vector<std::size_t>::const_iterator
+      index_it = (*it)->assigned_point_indices().begin();
 
-    while (index_it != (*it)->assigned_points().end()) {
+    while (index_it != (*it)->assigned_point_indices().end()) {
       
       // Retrieves point
       const Point_with_normal &p = *(points.begin() + (*index_it));
@@ -99,7 +101,7 @@ int main()
     }
 
     // Computes and prints average distance.
-    FT average_distance = sum_distances / shape->assigned_points().size();
+    FT average_distance = sum_distances / shape->assigned_point_indices().size();
     std::cout << " average distance: " << average_distance << std::endl;
 
     // Proceeds with next detected shape.

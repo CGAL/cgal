@@ -45,7 +45,7 @@ namespace CGAL {
   namespace Shape_detection_3 {
   namespace internal {
     template<class PointAccessor>
-    class Octree;
+    class Octree_3;
   }
     
     /*!
@@ -58,7 +58,7 @@ namespace CGAL {
     template <class T>
     friend class Efficient_RANSAC_3;
     template<class PointAccessor>
-    friend class internal::Octree;
+    friend class internal::Octree_3;
     /// \endcond
 
   public:
@@ -94,7 +94,7 @@ namespace CGAL {
       Indices into the input data of all points assigned to this shape.
     */
 
-    const std::vector<std::size_t> &assigned_points() const {
+    const std::vector<std::size_t> &assigned_point_indices() const {
       return m_indices;
     }
       
@@ -125,8 +125,8 @@ namespace CGAL {
       Determines the largest cluster with a point-to-point
       distance not larger than cluster_epsilon.
      */
-    std::size_t connected_component(FT cluster_epsilon) {
-      if (m_indices.size() == 0)
+    std::size_t connected_component(std::vector<std::size_t> &indices, FT cluster_epsilon) {
+      if (indices.size() == 0)
         return 0;
 
       if (m_has_connected_component)
@@ -134,12 +134,12 @@ namespace CGAL {
 
       m_has_connected_component = true;
       if (!this->supports_connected_component())
-        return connected_component_kdTree(cluster_epsilon);
+        return connected_component_kdTree(indices, cluster_epsilon);
 
       FT min[2], max[2];
 
       std::vector<std::pair<FT, FT> > parameterSpace;
-      parameterSpace.resize(m_indices.size());
+      parameterSpace.resize(indices.size());
 
       parameters(m_indices, parameterSpace, min, max);
       int iMin[2], iMax[2];
@@ -261,9 +261,9 @@ namespace CGAL {
         }
       }
 
-      m_indices = cluster[maxCluster];
+      indices = cluster[maxCluster];
 
-      return m_score = m_indices.size();
+      return m_score = indices.size();
     }
     
     /*!
@@ -271,7 +271,7 @@ namespace CGAL {
       distance not larger than cluster_epsilon. This general version performs
       a region growing within the supporting points using a kd tree.
      */
-    std::size_t connected_component_kdTree(FT cluster_epsilon) {
+    std::size_t connected_component_kdTree(std::vector<std::size_t> &indices, FT cluster_epsilon) {
       typedef typename CGAL::Search_traits_3<typename ERTraits::Geom_traits> Traits_base;
       typedef typename boost::tuple<Point,int> Point_and_int;
       typedef typename CGAL::Search_traits_adapter<Point_and_int, CGAL::Nth_of_tuple_property_map<0, Point_and_int>, Traits_base> Traits;
@@ -283,11 +283,11 @@ namespace CGAL {
       std::vector<Point_and_int> pts;
       std::vector<int> numLabeled;
       std::vector<int> labelMap;
-      pts.resize(m_indices.size());
-      labelMap.resize(m_indices.size(), 0);
+      pts.resize(indices.size());
+      labelMap.resize(indices.size(), 0);
 
-      for (std::size_t i = 0;i < m_indices.size();i++) {
-        pts[i] = Point_and_int(point(m_indices[i]), i);
+      for (std::size_t i = 0;i < indices.size();i++) {
+        pts[i] = Point_and_int(point(indices[i]), i);
       }
 
       // construct kd tree
@@ -342,16 +342,16 @@ namespace CGAL {
           break;
       }
 
-      std::vector<std::size_t> indices;
-      indices.reserve(bestSize);
+      std::vector<std::size_t> tmpIndices;
+      tmpIndices.reserve(bestSize);
       for (std::size_t i = 0;i<pts.size();i++) {
         if (labelMap[i] == best)
-          indices.push_back(m_indices[i]);
+          tmpIndices.push_back(indices[i]);
       }
 
-      m_indices = indices;
+      indices = tmpIndices;
       
-      return m_indices.size();
+      return indices.size();
     }
 
     /*!
@@ -370,7 +370,7 @@ namespace CGAL {
     /*!
       Returns minimal number of samples required for construction.
      */
-    virtual std::size_t required_samples() const = 0;
+    virtual std::size_t minimum_sample_size() const = 0;
 
     /*!
       Retrieves the point for an index.
@@ -458,7 +458,7 @@ namespace CGAL {
                  Normal_pmap normal_pmap,
                  FT epsilon,
                  FT normal_threshold) {
-      if (indices.size() < required_samples())
+      if (indices.size() < minimum_sample_size())
         return;
 
       m_first = first;
@@ -542,11 +542,11 @@ namespace CGAL {
   protected:
     /// \endcond
     // 
+    /// \cond SKIP_IN_MANUAL
     /*!
-      Contains indices of the points supporting the candidate, access to the point and normal data is provided via property maps.
+      Contains indices of the inliers of the candidate, access to the point and normal data is provided via property maps.
      */
     std::vector<std::size_t> m_indices;
-    /// \cond SKIP_IN_MANUAL
 
     FT m_epsilon;
 

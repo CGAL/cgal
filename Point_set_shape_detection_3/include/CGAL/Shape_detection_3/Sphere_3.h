@@ -35,7 +35,7 @@ namespace CGAL {
      \brief Sphere_shape implements Shape_base. The sphere is represented by its center and the radius.
      */
   template <class ERTraits>
-  class Sphere : public Shape_base<ERTraits> {
+  class Sphere_3 : public Shape_base<ERTraits> {
   public:    
     /// \cond SKIP_IN_MANUAL
     typedef typename ERTraits::Input_iterator Input_iterator;
@@ -46,7 +46,7 @@ namespace CGAL {
       ///< property map to access the unoriented normal of an input point.
     typedef typename ERTraits::Geom_traits::Vector_3 Vector;
       ///< vector type.
-    typedef typename ERTraits::Geom_traits::Sphere_3 Sphere_3;
+    typedef typename ERTraits::Geom_traits::Sphere_3 Sphere;
       ///< sphere type.
     typedef typename ERTraits::Geom_traits::FT FT;
       ///< number type.
@@ -55,12 +55,12 @@ namespace CGAL {
     /// \endcond
 
   public:
-    Sphere() : Shape_base<ERTraits>() {}
+    Sphere_3() : Shape_base<ERTraits>() {}
 
     /*!
       Conversion operator to convert to common Sphere_3 type.
      */
-    operator Sphere_3() const {
+    operator Sphere() const {
       return m_sphere;
     }
 
@@ -170,7 +170,7 @@ namespace CGAL {
         return;
       }
 
-      m_sphere = Sphere_3(center, radius * radius);
+      m_sphere = Sphere(center, radius * radius);
     }
 
     virtual void squared_distance(const std::vector<std::size_t> &indices,
@@ -203,7 +203,7 @@ namespace CGAL {
       return abs(sphere_normal * n);
     }
       
-    virtual std::size_t required_samples() const {
+    virtual std::size_t minimum_sample_size() const {
       return 3;
     }
 
@@ -222,7 +222,7 @@ namespace CGAL {
     }
 
   private:
-    Sphere_3 m_sphere;
+    Sphere m_sphere;
 /// \endcond
   };
 }

@@ -42,9 +42,11 @@ int main()
       return EXIT_FAILURE;
   }
 
-  // Instantiates shape detection engine and provides input data.
-  Efficient_RANSAC sd(points.begin(), points.end(),
-	                 Point_pmap(), Normal_pmap());
+  // Instantiates shape detection engine.
+  Efficient_RANSAC sd();
+
+  // Provides the input data.
+  sd.set_input_data(points.begin(), points.end());
 
   // Registers planar shapes via template method.
   sd.add_shape_factory<Plane<Traits> >();

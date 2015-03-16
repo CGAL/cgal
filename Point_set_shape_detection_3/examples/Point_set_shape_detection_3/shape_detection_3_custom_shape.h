@@ -26,7 +26,7 @@ namespace CGAL {
 
   protected:
     // Constructs shape based on minimal set of samples from the input data.    
-    virtual void create_shape(const std::vector<size_t> &indices) {
+    virtual void create_shape(const std::vector<std::size_t> &indices) {
       const Point p1 = this->get_point(indices[0]);
       const Point p2 = this->get_point(indices[1]);
       const Point p3 = this->get_point(indices[2]);
@@ -41,8 +41,8 @@ namespace CGAL {
 
     // Computes squared Euclidean distance from a set of points.
 	virtual void squared_distance(std::vector<FT> &dists,
-                          const std::vector<size_t> &indices) {
-      for (size_t i = 0; i < indices.size(); i++) {
+                          const std::vector<std::size_t> &indices) {
+      for (std::size_t i = 0; i < indices.size(); i++) {
         const FT sd = (this->get_point(indices[i])
                        - m_point_on_primitive) * m_normal;
         dists[i] = sd * sd;
@@ -54,13 +54,13 @@ namespace CGAL {
 	  a set of points with normals.
      */
     virtual void cos_to_normal(std::vector<FT> &angles,
-                       const std::vector<size_t> &indices) const {
-      for (size_t i = 0; i < indices.size(); i++)
+                       const std::vector<std::size_t> &indices) const {
+      for (std::std::size_t i = 0; i < indices.size(); i++)
         angles[i] = abs(this->get_normal(indices[i]) * m_normal);
     }
     
     // Returns the number of required samples for construction.
-    virtual size_t required_samples() const {
+    virtual std::size_t required_samples() const {
       return 3;
     }
 

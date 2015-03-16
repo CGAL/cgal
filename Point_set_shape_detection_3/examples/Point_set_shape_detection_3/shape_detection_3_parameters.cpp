@@ -9,7 +9,6 @@
 #include <iostream>
 #include <fstream>
 
-using namespace CGAL::Shape_detection_3;
 
 // Type declarations
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -21,9 +20,10 @@ typedef CGAL::Normal_of_point_with_normal_pmap<Kernel>      Normal_pmap;
 
 // In Efficient_RANSAC_traits_3 the basic types, i.e., Point and Vector types
 // as well as iterator type and property maps, are defined.
-typedef Efficient_RANSAC_traits_3<Kernel,
+typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits_3<Kernel,
   Pwn_vector::iterator, Point_pmap, Normal_pmap>            Traits;
-typedef Efficient_RANSAC_3<Traits>                          Efficient_RANSAC;
+typedef CGAL::Shape_detection_3::Efficient_RANSAC_3<Traits> Efficient_RANSAC;
+typedef CGAL::Shape_detection_3::Plane_3<Traits>            Plane;
 
 
 int main() 
@@ -45,20 +45,22 @@ int main()
     return EXIT_FAILURE;
   }
 
-  // Instantiates shape detection engine and provides input data.
-  Efficient_RANSAC sd(points.begin(),
-    points.end(), Point_pmap(), Normal_pmap());
+  // Instantiates shape detection engine.
+  Efficient_RANSAC sd = Efficient_RANSAC();
+
+  // Provides the input data.
+  sd.set_input_data(points.begin(), points.end(), Point_pmap(), Normal_pmap());
     
   // Register shapes for detection
   sd.add_shape_factory<Plane<Traits> >();
 
-  sd.add_shape_factory<Sphere<Traits> >();
+  sd.add_shape_factory<Sphere_3<Traits> >();
 
-  sd.add_shape_factory<Cylinder<Traits> >();
+  sd.add_shape_factory<Cylinder_3<Traits> >();
 
-  sd.add_shape_factory<Cone<Traits> >();
+  sd.add_shape_factory<Cone_3<Traits> >();
 
-  sd.add_shape_factory<Torus<Traits> >();		
+  sd.add_shape_factory<Torus_3<Traits> >();		
 
   // Sets parameters for shape detection.
   Efficient_RANSAC::Parameters parameters;

@@ -34,7 +34,7 @@ namespace CGAL {
      \brief Plane_shape implements Shape_base. The plane is represented by the normal vector and the distance to the origin.
      */
   template <class ERTraits>
-  class Plane : public Shape_base<ERTraits> {
+  class Plane_3 : public Shape_base<ERTraits> {
   public:
     /// \cond SKIP_IN_MANUAL
     typedef typename ERTraits::Input_iterator Input_iterator;
@@ -48,16 +48,16 @@ namespace CGAL {
     typedef typename ERTraits::Geom_traits::Vector_3 Vector;
     /// \endcond
 
-    typedef typename ERTraits::Geom_traits::Plane_3 Plane_3;///< plane type for conversion operator.
+    typedef typename ERTraits::Geom_traits::Plane_3 Plane;///< plane type for conversion operator.
 
   public:
-    Plane() : Shape_base<ERTraits>() {}
+    Plane_3() : Shape_base<ERTraits>() {}
 
     /*!
       Conversion operator to Plane_3 type.
      */
-    operator Plane_3() const {
-      return Plane_3(m_normal.x(), m_normal.y(), m_normal.z(), m_d);
+    operator Plane() const {
+      return Plane(m_normal.x(), m_normal.y(), m_normal.z(), m_d);
     }
             
     /*!
@@ -166,7 +166,7 @@ namespace CGAL {
       return abs(_n * m_normal);
     } 
     
-    virtual std::size_t required_samples() const {
+    virtual std::size_t minimum_sample_size() const {
       return 3;
     }
 

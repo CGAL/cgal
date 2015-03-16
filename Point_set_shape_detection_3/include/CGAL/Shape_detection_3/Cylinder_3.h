@@ -51,7 +51,7 @@ namespace CGAL {
      \ingroup PkgPointSetShapeDetection3
      */
   template <class ERTraits>
-  class Cylinder : public Shape_base<ERTraits> {
+  class Cylinder_3 : public Shape_base<ERTraits> {
   public:
     /// \cond SKIP_IN_MANUAL
     typedef typename ERTraits::Input_iterator Input_iterator;
@@ -68,7 +68,7 @@ namespace CGAL {
     typedef typename ERTraits::Geom_traits::Line_3 Line; ///< line type.
 
   public:
-    Cylinder() : Shape_base<ERTraits>() {}
+    Cylinder_3() : Shape_base<ERTraits>() {}
 
     /*!
       Axis of the cylinder.
@@ -254,7 +254,7 @@ namespace CGAL {
       return abs(v * _n);
     }
 
-    virtual std::size_t required_samples() const {
+    virtual std::size_t minimum_sample_size() const {
       return 2;
     }
 

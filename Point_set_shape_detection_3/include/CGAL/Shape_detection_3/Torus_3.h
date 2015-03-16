@@ -36,7 +36,7 @@ namespace CGAL {
      \ingroup PkgPointSetShapeDetection3
      \brief Torus_shape implements Shape_base. The torus is represented by the symmetry axis, its center on the axis and the major and minor radii.     */
   template <class ERTraits>
-  class Torus : public Shape_base<ERTraits> {
+  class Torus_3 : public Shape_base<ERTraits> {
   public:
     /// \cond SKIP_IN_MANUAL
     typedef typename ERTraits::Input_iterator Input_iterator;
@@ -54,7 +54,7 @@ namespace CGAL {
      ///< cricle type used during construction.
     /// \endcond
 
-    Torus() : Shape_base<ERTraits>() {}
+    Torus_3() : Shape_base<ERTraits>() {}
       
     /*!
       Direction of symmetry axis.
@@ -286,7 +286,7 @@ namespace CGAL {
       return abs(d * n);
     }
       
-    virtual std::size_t required_samples() const {
+    virtual std::size_t minimum_sample_size() const {
         return 4;
     }
 

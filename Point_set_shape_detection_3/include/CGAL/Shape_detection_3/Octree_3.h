@@ -162,7 +162,7 @@ namespace CGAL {
     };
 
     template<class PointAccessor>
-    class Octree : public PointAccessor {
+    class Octree_3 : public PointAccessor {
 
       typedef typename PointAccessor::Sd_traits Sd_traits;
       typedef typename Sd_traits::Input_iterator Input_iterator;
@@ -203,8 +203,8 @@ namespace CGAL {
       };
         
     public:
-      Octree() : m_bucket_size(20), m_set_max_level(10), m_root(NULL) {}
-      Octree(const Input_iterator &first,
+      Octree_3() : m_bucket_size(20), m_set_max_level(10), m_root(NULL) {}
+      Octree_3(const Input_iterator &first,
              const Input_iterator &beyond,
              std::size_t offset = 0,
              std::size_t bucketSize = 20, 
@@ -214,7 +214,7 @@ namespace CGAL {
                m_bucket_size(bucketSize),
                m_set_max_level(maxLevel) {}
 
-      ~Octree() {
+      ~Octree_3() {
         if (!m_root)
           return;
 

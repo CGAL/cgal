@@ -52,7 +52,7 @@ namespace CGAL {
    */
 
   template <class ERTraits>
-  class Cone : public Shape_base<ERTraits> {
+  class Cone_3 : public Shape_base<ERTraits> {
   public:
     /// \cond SKIP_IN_MANUAL
     typedef typename ERTraits::Input_iterator Input_iterator;
@@ -67,7 +67,7 @@ namespace CGAL {
     /// \endcond
 
 	
-    Cone() : Shape_base<ERTraits>() {}
+    Cone_3() : Shape_base<ERTraits>() {}
       
     /*!
      Opening angle between the axis and the surface of the cone.
@@ -245,7 +245,7 @@ namespace CGAL {
       return abs(n * b);
     }
       
-    virtual std::size_t required_samples() const {
+    virtual std::size_t minimum_sample_size() const {
           return 3;
       }
 
