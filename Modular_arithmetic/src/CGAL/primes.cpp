@@ -18,6 +18,7 @@
 // Author(s)     : Michael Hemmer
 
 #ifndef CGAL_HEADER_ONLY
+
 #include <CGAL/primes.h>
 #include <CGAL/primes_impl.h>
 

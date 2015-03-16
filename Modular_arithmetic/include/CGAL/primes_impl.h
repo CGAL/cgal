@@ -22,10 +22,6 @@
 namespace CGAL {
 namespace internal {
 
-#ifdef CGAL_HEADER_ONLY
-const
-#endif // CGAL_HEADER_ONLY
-
 const int primes [2000] = {
   /*
    * Generated in SAGE with:

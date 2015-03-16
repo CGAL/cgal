@@ -7,7 +7,7 @@ DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/io.cpp" // va
 DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/Color.cpp" // constantes globales
 DONE #include "/home/gdamiand/sources/CGAL/Kernel_23/src/CGAL/kernel.cpp" // constantes globales
 DONE #include "/home/gdamiand/sources/CGAL/Number_types/src/CGAL/Interval_arithmetic.cpp" // constante globale
-DONE #include "/home/gdamiand/sources/CGAL/Number_types/src/CGAL/test_FPU_rounding_mode.cpp" // static const (ok car utilisé que pour debug)
+DONE #include "/home/gdamiand/sources/CGAL/Number_types/src/CGAL/test_FPU_rounding_mode.cpp" // variable static de classe const
 DONE #include "/home/gdamiand/sources/CGAL/Profiling_tools/src/CGAL/Timer.cpp" // variable statique de classe
 DONE #include "/home/gdamiand/sources/CGAL/Profiling_tools/src/CGAL/Real_timer.cpp" // variable statique de classe
 DONE #include "/home/gdamiand/sources/CGAL/Random_numbers/src/CGAL/Random.cpp" // variable globale; utilisée directement (donc pb pour header only) -> we need to replace the use of CGAL::default_random by CGAL::get_default_random().
