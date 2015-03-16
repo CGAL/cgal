@@ -29,11 +29,6 @@
 
 #include <CGAL/export/CGAL.h>
 
-#ifdef CGAL_HEADER_ONLY
-#undef CGAL_EXPORT // CJTODO: TEMPORARY
-#define CGAL_EXPORT
-#endif
-
 // #include <CGAL/assertions_behaviour.h> // for backward compatibility
 
 #ifndef CGAL_NO_ASSERTIONS 
