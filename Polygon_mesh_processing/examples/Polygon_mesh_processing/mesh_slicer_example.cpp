@@ -7,17 +7,17 @@
 
 #include <CGAL/Polygon_mesh_slicer.h>
 
-#include <boost/foreach.hpp>
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 
+typedef std::vector<K::Point_3> Polyline;
+typedef std::list< Polyline > Polylines;
+
 typedef CGAL::AABB_halfedge_graph_segment_primitive<Mesh> HGSP;
 typedef CGAL::AABB_traits<K, HGSP>    AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits>  AABB_tree;
-typedef std::vector<K::Point_3> Polyline;
-typedef std::list< Polyline > Polylines;
 
 int main()
 {
