@@ -46,6 +46,7 @@ Refinement and fairing functions can be applied to an arbitrary region on a mesh
 \cgalExample{Polygon_mesh_processing/refine_fair_example.cpp}
 
 \subsubsection MeshingExample_2 Triangulate a polygon mesh
+\todo code : this example does not terminate
 \cgalExample{Polygon_mesh_processing/triangulate_faces_example.cpp}
 
 
@@ -78,8 +79,6 @@ This package provides four functions for hole filling:
 	- `triangulate_hole()` : given a border halfedge defining the hole on a mesh, triangulates the hole.
 	- `triangulate_and_refine_hole()` : in addition to `triangulate_hole()` the generated patch is refined.
 	- `triangulate_refine_and_fair_hole()` : in addition to `triangulate_and_refine_hole()` the generated patch is also faired.
-
-	
 
 \subsection HFExamples Examples
 

@@ -25,5 +25,9 @@ int main()
 
   CGAL_assertion(is_pure_triangle(mesh));
 
+  std::ofstream cube_off("cube_tri.off");
+  cube_off << mesh;
+  cube_off.close();
+
   return 0;
 }
