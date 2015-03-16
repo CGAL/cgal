@@ -32,6 +32,8 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
       control_points(0),
       control_color(0),
       ROI_color(0),
+      pos_sphere(0),
+      normals_sphere(0),
       k_ring_selector(poly_item, mw, Scene_polyhedron_item_k_ring_selection::Active_handle::VERTEX, true),
       quadric(gluNewQuadric())
 {
@@ -90,8 +92,11 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
     }
     glGenVertexArrays(3, vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(20, buffer);
+    glGenBuffers(19, buffer);
+
     compile_shaders();
+    //the spheres :
+    create_Sphere(length_of_axis/15.0);
     changed();
 }
 
@@ -184,7 +189,66 @@ void Scene_edit_polyhedron_item::initialize_buffers()
                           );
     glEnableVertexAttribArray(4);
 
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[11]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (pos_sphere.size())*sizeof(double),
+                 pos_sphere.data(),
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(5,
+                          3,
+                          GL_DOUBLE,
+                          GL_FALSE,
+                          0,
+                          NULL
+                          );
+    glEnableVertexAttribArray(5);
 
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[13]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (normals_sphere.size())*sizeof(double),
+                 normals_sphere.data(),
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(6,
+                          3,
+                          GL_DOUBLE,
+                          GL_FALSE,
+                          0,
+                          NULL
+                          );
+    glEnableVertexAttribArray(6);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[15]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (centers_ROI.size())*sizeof(double),
+                 centers_ROI.data(),
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(7,
+                          3,
+                          GL_DOUBLE,
+                          GL_FALSE,
+                          0,
+                          NULL
+                          );
+    glEnableVertexAttribArray(7);
+    glVertexAttribDivisor(7, 1);
+
+
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[17]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (color_sphere_ROI.size())*sizeof(double),
+                  color_sphere_ROI.data(),
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(8,
+                          3,
+                          GL_DOUBLE,
+                          GL_FALSE,
+                          0,
+                          NULL
+                          );
+    glEnableVertexAttribArray(8);
+    glVertexAttribDivisor(8, 1);
 
     // Clean-up
     glBindVertexArray(0);
@@ -247,6 +311,64 @@ void Scene_edit_polyhedron_item::initialize_buffers()
                           NULL
                           );
     glEnableVertexAttribArray(4);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[12]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (pos_sphere.size())*sizeof(double),
+                 pos_sphere.data(),
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(5,
+                          3,
+                          GL_DOUBLE,
+                          GL_FALSE,
+                          0,
+                          NULL
+                          );
+    glEnableVertexAttribArray(5);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[14]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (normals_sphere.size())*sizeof(double),
+                 normals_sphere.data(),
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(6,
+                          3,
+                          GL_DOUBLE,
+                          GL_FALSE,
+                          0,
+                          NULL
+                          );
+    glEnableVertexAttribArray(6);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[16]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (centers_control.size())*sizeof(double),
+                 centers_control.data(),
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(7,
+                          3,
+                          GL_DOUBLE,
+                          GL_FALSE,
+                          0,
+                          NULL
+                          );
+    glEnableVertexAttribArray(7);
+    glVertexAttribDivisor(7, 1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[18]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (color_sphere_control.size())*sizeof(double),
+                  color_sphere_control.data(),
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(8,
+                          3,
+                          GL_DOUBLE,
+                          GL_FALSE,
+                          0,
+                          NULL
+                          );
+    glEnableVertexAttribArray(8);
+    glVertexAttribDivisor(8, 1);
     glBindVertexArray(0);
 
 
@@ -280,11 +402,8 @@ void Scene_edit_polyhedron_item::initialize_buffers()
                           NULL
                           );
     glEnableVertexAttribArray(4);
+
     glBindVertexArray(0);
-
-
-
-
 }
 
 void Scene_edit_polyhedron_item::compile_shaders(void)
@@ -405,6 +524,8 @@ void Scene_edit_polyhedron_item::compile_shaders(void)
     glDeleteShader(vertex_shader);
     rendering_program_lines = program;
 
+
+
     //For the points
     static const GLchar* vertex_shader_source_points[] =
     {
@@ -436,10 +557,73 @@ void Scene_edit_polyhedron_item::compile_shaders(void)
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
+
     //Clean-up
     glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
     rendering_program_points = program;
+
+    //For the Spheres
+    static const GLchar* vertex_shader_source_sphere[] =
+    {
+        "#version 300 es \n"
+        " \n"
+        "layout (location = 5) in vec4 positions_spheres; \n"
+        "layout (location = 6) in vec3 vNormals; \n"
+        "layout (location = 8) in vec3 color_spheres; \n"
+        "layout (location = 7) in vec3 center; \n"
+        " \n"
+        "uniform mat4 mvp_matrix; \n"
+        "uniform mat4 mv_matrix; \n"
+        " \n"
+        "uniform int is_two_side; \n"
+        "uniform vec3 light_pos;  \n"
+        "uniform vec3 light_diff; \n"
+        "uniform vec3 light_spec; \n"
+        "uniform vec3 light_amb;  \n"
+        "float spec_power = 128.0; \n"
+        " \n"
+        "out highp vec3 fColors; \n"
+        " \n"
+        " \n"
+        "void main(void) \n"
+        "{ \n"
+        "   vec4 P = mv_matrix * positions_spheres; \n"
+        "   vec3 N = mat3(mv_matrix)* vNormals; \n"
+        "   vec3 L = light_pos - P.xyz; \n"
+        "   vec3 V = -P.xyz; \n"
+        " \n"
+        "   N = normalize(N); \n"
+        "   L = normalize(L); \n"
+        "   V = normalize(V); \n"
+        " \n"
+        "   vec3 R = reflect(-L, N); \n"
+        "   vec3 diffuse; \n"
+        "   if(is_two_side == 1) \n"
+        "       diffuse = abs(dot(N,L)) * light_diff * color_spheres; \n"
+        "   else \n"
+        "       diffuse = max(dot(N,L), 0.0) * light_diff * color_spheres; \n"
+        "   vec3 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+        " \n"
+        "   fColors = light_amb*color_spheres + diffuse + specular ; \n"
+        "   gl_Position =  mvp_matrix * vec4(positions_spheres.x + center.x, positions_spheres.y + center.y, positions_spheres.z + center.z, 1.0) ; \n"
+        "} \n"
+    };
+    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertex_shader, 1, vertex_shader_source_sphere, NULL);
+    glCompileShader(vertex_shader);
+
+    glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+    glCompileShader(fragment_shader);
+
+    program = glCreateProgram();
+    glAttachShader(program, vertex_shader);
+    glAttachShader(program, fragment_shader);
+    glLinkProgram(program);
+    //Clean-up
+    glDeleteShader(vertex_shader);
+
+    glDeleteShader(fragment_shader);
+    rendering_program_spheres = program;
 
 }
 
@@ -454,11 +638,30 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
             ROI_points.push_back(vd->point().x());
             ROI_points.push_back(vd->point().y());
             ROI_points.push_back(vd->point().z());
-            ROI_color.push_back(0.0);
-            ROI_color.push_back(1.0);
-            ROI_color.push_back(0);
         }
     }
+    centers_ROI.resize(ROI_points.size());
+    ROI_color.resize(ROI_points.size());
+    color_sphere_ROI.resize(ROI_points.size());
+    for(int i=0; i<centers_ROI.size(); i++)
+    {
+        centers_ROI[i] = ROI_points[i];
+    }
+    for(int i=0; i<ROI_color.size(); i++)
+    {
+        if(i%3==1)
+        {
+        ROI_color[i]=1.0;
+        color_sphere_ROI[i]=1.0;
+
+        }
+        else
+        {
+        ROI_color[i]=0.0;
+        color_sphere_ROI[i]=0.0;
+        }
+    }
+
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     for(Ctrl_vertices_group_data_list::const_iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
     {
@@ -494,6 +697,16 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
             control_points.push_back((*hb)->point().z());
 
         }
+        centers_control.resize(control_points.size());
+        for(int i=0; i<centers_control.size(); i++)
+        {
+            centers_control[i]=control_points[i];
+        }
+    }
+    color_sphere_control.resize(control_color.size());
+    for(int i=0; i<color_sphere_control.size(); i++)
+    {
+        color_sphere_control[i] = control_color[i];
     }
 
     //The edges color
@@ -523,6 +736,7 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
     color_lines[6] = 1.0; color_lines[9] = 1.0;
     color_lines[13] = 1.0; color_lines[16] = 1.0;
 
+
     location[0] = glGetUniformLocation(rendering_program_facets, "mvp_matrix");
     location[1] = glGetUniformLocation(rendering_program_facets, "mv_matrix");
     location[2] = glGetUniformLocation(rendering_program_facets, "light_pos");
@@ -539,6 +753,13 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
 
     location[10] = glGetUniformLocation(rendering_program_points, "mvp_matrix");
 
+    location[15] = glGetUniformLocation(rendering_program_spheres, "mvp_matrix");
+    location[16] = glGetUniformLocation(rendering_program_spheres, "mv_matrix");
+    location[17] = glGetUniformLocation(rendering_program_spheres, "light_pos");
+    location[18] = glGetUniformLocation(rendering_program_spheres, "light_diff");
+    location[19] = glGetUniformLocation(rendering_program_spheres, "light_spec");
+    location[20] = glGetUniformLocation(rendering_program_spheres, "light_amb");
+    location[21] = glGetUniformLocation(rendering_program_spheres, "is_two_side");
 
 
 }
@@ -581,8 +802,6 @@ void Scene_edit_polyhedron_item::uniform_attrib(Viewer_interface* viewer, int mo
 
     //diffuse
     glGetLightfv(GL_LIGHT0, GL_DIFFUSE, light.diffuse);
-
-
     if(mode ==0)
     {
         GLfloat color[3];
@@ -614,6 +833,18 @@ void Scene_edit_polyhedron_item::uniform_attrib(Viewer_interface* viewer, int mo
         glUniformMatrix4fv(location[10], 1, GL_FALSE, mvp_mat);
     }
 
+    else if(mode ==3)
+    {
+        glUseProgram(rendering_program_spheres);
+        glUniformMatrix4fv(location[15], 1, GL_FALSE, mvp_mat);
+        glUniformMatrix4fv(location[16], 1, GL_FALSE, mv_mat);
+
+        glUniform3fv(location[17], 1, light.position);
+        glUniform3fv(location[18], 1, light.diffuse);
+        glUniform3fv(location[19], 1, light.specular);
+        glUniform3fv(location[20], 1, light.ambient);
+        glUniform1i(location[21], is_both_sides);
+    }
 }
 
 
@@ -702,6 +933,7 @@ void Scene_edit_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     glUniform3fv(location[13],1,vec);
     glUniform3fv(location[14],1,vec);
     glUniformMatrix4fv(location[11], 1, GL_FALSE, f_matrix);
+
     uniform_attrib(viewer,1);
     glDrawElements(GL_LINES, (GLsizei) edges.size(), GL_UNSIGNED_INT, edges.data());
     glUseProgram(0);
@@ -734,23 +966,37 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface*
     CGAL::GL::Point_size point_size; point_size.set_point_size(5);
 
     color.set_rgb_color(0, 1.f, 0);
-    if(!ui_widget->ShowROICheckBox->isChecked()) {
+    if(ui_widget->ShowROICheckBox->isChecked()) {
 
-
-        glBindVertexArray(vao[0]);
-        glUseProgram(rendering_program_points);
-        uniform_attrib(viewer,2);
-        glDrawArrays(GL_POINTS, 0, ROI_points.size()/3);
-        glUseProgram(0);
-
+        if(!ui_widget->ShowAsSphereCheckBox->isChecked()) {
+            glBindVertexArray(vao[0]);
+            glUseProgram(rendering_program_points);
+            uniform_attrib(viewer,2);
+            glDrawArrays(GL_POINTS, 0, ROI_points.size()/3);
+            glUseProgram(0);
+        }
+        else{
+            glBindVertexArray(vao[0]);
+            glUseProgram(rendering_program_spheres);
+            uniform_attrib(viewer,3);
+            glDrawArraysInstanced(GL_TRIANGLES, 0, pos_sphere.size()/3, ROI_points.size()/3);
+            glUseProgram(0);
+        }
         glBindVertexArray(0);
     }
 
-
-    glBindVertexArray(vao[1]);
-    glUseProgram(rendering_program_points);
-    uniform_attrib(viewer,2);
-    glDrawArrays(GL_POINTS, 0, control_points.size()/3);
+    if(!ui_widget->ShowAsSphereCheckBox->isChecked()) {
+        glBindVertexArray(vao[1]);
+        glUseProgram(rendering_program_points);
+        uniform_attrib(viewer,2);
+        glDrawArrays(GL_POINTS, 0, control_points.size()/3);
+    }
+    else{
+        glBindVertexArray(vao[1]);
+        glUseProgram(rendering_program_spheres);
+        uniform_attrib(viewer,3);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, pos_sphere.size()/3, control_points.size()/3);
+    }
     glUseProgram(0);
     glBindVertexArray(0);
 
@@ -813,48 +1059,6 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface*
         }
     }
 
-    /* // draw ROI
-
-     if(ui_widget->ShowROICheckBox->isChecked()) {
-        BOOST_FOREACH(vertex_descriptor vd, deform_mesh.roi_vertices())
-        {
-            if(!deform_mesh.is_control_vertex(vd))
-                gl_draw_point( vd->point() );
-        }
-    }
-    // draw control vertices related things
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-
-    for(Ctrl_vertices_group_data_list::const_iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
-    {
-        if(hgb_data->frame == viewer->manipulatedFrame())
-        {
-            // draw axis
-            ::glPushMatrix();
-            ::glMultMatrixd(hgb_data->frame->matrix());
-            QGLViewer::drawAxis(length_of_axis);
-            ::glPopMatrix();
-            // draw bbox
-            if(!ui_widget->ActivatePivotingCheckBox->isChecked())
-            {
-                color.set_rgb_color(1.0f, 0, 0);
-                ::glPushMatrix();
-                ::glTranslated(hgb_data->frame->position().x, hgb_data->frame->position().y, hgb_data->frame->position().z);
-                ::glMultMatrixd(hgb_data->frame->orientation().matrix());
-                ::glTranslated(-hgb_data->frame_initial_center.x, -hgb_data->frame_initial_center.y, -hgb_data->frame_initial_center.z);
-                draw_bbox(hgb_data->bbox);
-                ::glPopMatrix();
-            }
-        }
-        // draw control vertices
-        if(hgb_data == active_group) { color.set_rgb_color(1.0f, 0, 0); }
-        else                    { color.set_rgb_color(0, 0, 1.0f); }
-        for(std::vector<vertex_descriptor>::const_iterator hb = hgb_data->ctrl_vertices_group.begin(); hb != hgb_data->ctrl_vertices_group.end(); ++hb)
-        {  gl_draw_point( (*hb)->point() );
-        }
-    }
-
-    if(enable_back_lighting) { glEnable(GL_LIGHTING); }*/
 }
 void Scene_edit_polyhedron_item::gl_draw_point(const Point& p) const
 {
@@ -1055,7 +1259,183 @@ bool Scene_edit_polyhedron_item::keyPressEvent(QKeyEvent* e)
                                                       qglviewer::AxisPlaneConstraint::AXIS);
         return true;
     }
+
     return false;
+}
+
+void Scene_edit_polyhedron_item::create_Sphere(double R)
+{
+
+    float T, P;
+    float x[4],y[4],z[4];
+    int rings = 22, sectors = 45;
+
+
+    //Top of the sphere
+    for(int t=0; t<360; t+=sectors)
+    {
+
+        pos_sphere.push_back(0);
+        pos_sphere.push_back(0);
+        pos_sphere.push_back(R);
+
+
+        normals_sphere.push_back(0);
+        normals_sphere.push_back(0);
+        normals_sphere.push_back(1);
+
+
+
+        P = rings*M_PI/180.0;
+        T = t*M_PI/180.0;
+        x[1] = sin(P) * cos(T) ;
+        y[1] = sin(P) * sin(T) ;
+        z[1] = cos(P);
+        pos_sphere.push_back(R * x[1]);
+        pos_sphere.push_back(R * y[1]);
+        pos_sphere.push_back(R * z[1]);
+
+        normals_sphere.push_back(x[1]);
+        normals_sphere.push_back(y[1]);
+        normals_sphere.push_back(z[1]);
+
+        //
+        P = rings*M_PI/180.0;
+        T = (t+sectors)*M_PI/180.0;
+        x[2] = sin(P) * cos(T) ;
+        y[2] = sin(P) * sin(T) ;
+        z[2] = cos(P);
+        pos_sphere.push_back(R * x[2]);
+        pos_sphere.push_back(R * y[2]);
+        pos_sphere.push_back(R * z[2]);
+
+        normals_sphere.push_back(x[2]);
+        normals_sphere.push_back(y[2]);
+        normals_sphere.push_back(z[2]);
+
+    }
+
+    //Body of the sphere
+    for (int p=rings; p<180-rings; p+=rings)
+        for(int t=0; t<360; t+=sectors)
+        {
+            //A
+            P = p*M_PI/180.0;
+            T = t*M_PI/180.0;
+            x[0] = sin(P) * cos(T) ;
+            y[0] = sin(P) * sin(T) ;
+            z[0] = cos(P);
+
+            pos_sphere.push_back(R * x[0]);
+            pos_sphere.push_back(R * y[0]);
+            pos_sphere.push_back(R * z[0]);
+
+            normals_sphere.push_back(x[0]);
+            normals_sphere.push_back(y[0]);
+            normals_sphere.push_back(z[0]);
+
+            //B
+            P = (p+rings)*M_PI/180.0;
+            T = t*M_PI/180.0;
+            x[1] = sin(P) * cos(T) ;
+            y[1] = sin(P) * sin(T) ;
+            z[1] = cos(P);
+            pos_sphere.push_back(R * x[1]);
+            pos_sphere.push_back(R * y[1]);
+            pos_sphere.push_back(R * z[1]);
+
+            normals_sphere.push_back(x[1]);
+            normals_sphere.push_back(y[1]);
+            normals_sphere.push_back(z[1]);
+
+            //C
+            P = p*M_PI/180.0;
+            T = (t+sectors)*M_PI/180.0;
+            x[2] = sin(P) * cos(T) ;
+            y[2] = sin(P) * sin(T) ;
+            z[2] = cos(P);
+            pos_sphere.push_back(R * x[2]);
+            pos_sphere.push_back(R * y[2]);
+            pos_sphere.push_back(R * z[2]);
+
+            normals_sphere.push_back(x[2]);
+            normals_sphere.push_back(y[2]);
+            normals_sphere.push_back(z[2]);
+            //D
+            P = (p+rings)*M_PI/180.0;
+            T = (t+sectors)*M_PI/180.0;
+            x[3] = sin(P) * cos(T) ;
+            y[3] = sin(P) * sin(T) ;
+            z[3] = cos(P);
+            pos_sphere.push_back(R * x[3]);
+            pos_sphere.push_back(R * y[3]);
+            pos_sphere.push_back(R * z[3]);
+
+            normals_sphere.push_back(x[3]);
+            normals_sphere.push_back(y[3]);
+            normals_sphere.push_back(z[3]);
+
+
+
+            pos_sphere.push_back(R * x[1]);
+            pos_sphere.push_back(R * y[1]);
+            pos_sphere.push_back(R * z[1]);
+
+            normals_sphere.push_back(x[1]);
+            normals_sphere.push_back(y[1]);
+            normals_sphere.push_back(z[1]);
+
+            pos_sphere.push_back(R * x[2]);
+            pos_sphere.push_back(R * y[2]);
+            pos_sphere.push_back(R * z[2]);
+
+            normals_sphere.push_back(x[2]);
+            normals_sphere.push_back(y[2]);
+            normals_sphere.push_back(z[2]);
+
+        }
+    //Bottom of the sphere
+    for(int t=0; t<360; t+=sectors)
+    {
+
+
+        pos_sphere.push_back(0);
+        pos_sphere.push_back(0);
+        pos_sphere.push_back(-R);
+
+        normals_sphere.push_back(0);
+        normals_sphere.push_back(0);
+        normals_sphere.push_back(-1);
+
+
+        P = (180-rings)*M_PI/180.0;
+        T = t*M_PI/180.0;
+        x[1] = sin(P) * cos(T) ;
+        y[1] = sin(P) * sin(T) ;
+        z[1] = cos(P);
+        pos_sphere.push_back(R * x[1]);
+        pos_sphere.push_back(R * y[1]);
+        pos_sphere.push_back(R * z[1]);
+
+        normals_sphere.push_back(x[1]);
+        normals_sphere.push_back(y[1]);
+        normals_sphere.push_back(z[1]);
+
+
+        P = (180-rings)*M_PI/180.0;
+        T = (t+sectors)*M_PI/180.0;
+        x[2] = sin(P) * cos(T) ;
+        y[2] = sin(P) * sin(T) ;
+        z[2] = cos(P);
+        pos_sphere.push_back(R * x[2]);
+        pos_sphere.push_back(R * y[2]);
+        pos_sphere.push_back(R * z[2]);
+
+        normals_sphere.push_back(x[2]);
+        normals_sphere.push_back(y[2]);
+        normals_sphere.push_back(z[2]);
+
+    }
 }
 
 #include "Scene_edit_polyhedron_item.moc"

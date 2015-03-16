@@ -280,19 +280,26 @@ private:
   std::vector<GLdouble> normals;
   std::vector<GLdouble> pos_bbox;
   std::vector<GLdouble> pos_axis;
+  std::vector<GLdouble> pos_sphere;
+  std::vector<GLdouble> normals_sphere;
+  std::vector<GLdouble> centers_control;
+  std::vector<GLdouble> centers_ROI;
+  std::vector<GLdouble> color_sphere_ROI;
+  std::vector<GLdouble> color_sphere_control;
   GLuint rendering_program_facets;
   GLuint rendering_program_lines;
   GLuint rendering_program_points;
-  GLint location[20];
+  GLuint rendering_program_spheres;
+  GLint location[22];
   GLuint vao[3];
-  GLuint buffer[20];
+  GLuint buffer[19];
 
   void initialize_buffers();
   void compile_shaders(void);
   void compute_normals_and_vertices(void);
   void uniform_attrib(Viewer_interface*, int) const;
   void compute_bbox(const Scene_interface::Bbox&);
-  void drawSphere(float);
+  void create_Sphere(double);
 
 
 
@@ -692,6 +699,7 @@ protected:
       normals[id*3] = n.x();
       normals[id*3+1] = n.y(); 
       normals[id*3+2] = n.z(); 
+
     }
   }
 protected:
