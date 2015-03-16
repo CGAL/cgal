@@ -21,7 +21,7 @@
 
 #ifndef CGAL_HEADER_ONLY
 
-#include "convert.h"
-#include "convert_impl.h"
+#include <CGAL/convert.h>
+#include <CGAL/convert_impl.h>
 
 #endif // CGAL_HEADER_ONLY

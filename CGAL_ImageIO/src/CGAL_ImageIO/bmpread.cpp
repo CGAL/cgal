@@ -19,19 +19,9 @@
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
 
-/*
- * from bmp.zip, see the url http://www.ddj.com/ftp/1995/1995.03/
- * author Dr. Dobb's
- */
-
-/*
- * This file contains mid-level functions for reading bitmap structures and
- * high-level functions that read bitmap files.
- */
-
 #ifndef CGAL_HEADER_ONLY
 
-#include "bmpread.h"
-#include "bmpread_impl.h"
+#include <CGAL/bmpread.h>
+#include <CGAL/bmpread_impl.h>
 
 #endif // CGAL_HEADER_ONLY

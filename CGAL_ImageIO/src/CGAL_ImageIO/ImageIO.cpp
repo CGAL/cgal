@@ -21,7 +21,7 @@
 
 #ifndef CGAL_HEADER_ONLY
 
-#include "ImageIO.h"
-#include "ImageIO_impl.h"
+#include <CGAL/ImageIO.h>
+#include <CGAL/ImageIO_impl.h>
 
 #endif // CGAL_HEADER_ONLY

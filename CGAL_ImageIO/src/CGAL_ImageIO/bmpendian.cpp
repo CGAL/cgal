@@ -21,7 +21,7 @@
 
 #ifndef CGAL_HEADER_ONLY
 
-#include "bmpendian.h"
-#include "bmpendian_impl.h"
+#include <CGAL/bmpendian.h>
+#include <CGAL/bmpendian_impl.h>
 
 #endif // CGAL_HEADER_ONLY
