@@ -51,15 +51,15 @@
    GIF        |  .gif            |     X     |     
    BMP        |  .gif            |     X     |     
 */
-#include "inr.h"
-#include "gif.h"
-#include "gis.h"
-#include "pnm.h"
-#include "bmp.h"
-#include "iris.h"
-#include "analyze.h"
+#include <CGAL/inr.h>
+#include <CGAL/gif.h>
+#include <CGAL/gis.h>
+#include <CGAL/pnm.h>
+#include <CGAL/bmp.h>
+#include <CGAL/iris.h>
+#include <CGAL/analyze.h>
 #ifdef MINC_FILES
-#  include "mincio.h"
+#  include <CGAL/mincio.h>
 #endif
 
 

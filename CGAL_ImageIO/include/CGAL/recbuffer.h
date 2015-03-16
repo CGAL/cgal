@@ -196,7 +196,7 @@ extern void Recbuffer_noverbose ( );
 
 
 #ifdef CGAL_HEADER_ONLY
-#include "recbuffer_impl.h"
+#include <CGAL/recbuffer_impl.h>
 #endif // CGAL_HEADER_ONLY
 
 

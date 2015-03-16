@@ -40,7 +40,7 @@ PTRIMAGE_FORMAT createPgmAscIIFormat();
 PTRIMAGE_FORMAT createPpmFormat();
 
 #ifdef CGAL_HEADER_ONLY
-#include "pnm_impl.h"
+#include <CGAL/pnm_impl.h>
 #endif // CGAL_HEADER_ONLY
 
 #endif

@@ -701,7 +701,7 @@ CGAL_IMAGEIO_EXPORT float evaluate(const _image* image,const std::size_t i,const
 CGAL_IMAGEIO_EXPORT void convertImageTypeToFloat(_image* image);
 
 #ifdef CGAL_HEADER_ONLY
-#include "ImageIO_impl.h"
+#include <CGAL/ImageIO_impl.h>
 #endif // CGAL_HEADER_ONLY
 
 #endif // end IMAGEIO_H
