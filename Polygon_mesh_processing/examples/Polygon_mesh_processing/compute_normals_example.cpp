@@ -17,7 +17,7 @@ typedef boost::graph_traits<Surface_mesh>::face_descriptor face_descriptor;
 int main()
 {
   Surface_mesh mesh;
-  std::ifstream input("data/elephant.off");
+  std::ifstream input("data/eight.off");
   if (!input || !(input >> mesh) || mesh.is_empty()) {
     std::cerr << "Not a valid off file." << std::endl;
     return 1;
