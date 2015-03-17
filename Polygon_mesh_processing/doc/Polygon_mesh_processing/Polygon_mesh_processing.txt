@@ -246,6 +246,7 @@ it can be useful to avoid doing those computations again and again.
 Functions that compute all the normals to faces, or at vertices, are also available :
 - `CGAL::Polygon_mesh_processing::compute_face_normals()`
 - `CGAL::Polygon_mesh_processing::compute_vertex_normals()`
+
 Property maps are used to collect the computed normals.
 
 Finally, a function that computes and collects all normals
@@ -264,6 +265,12 @@ and vertices in property maps.
 \section PMPSlicer Slicer
 \subsection API
 - `CGAL::Polygon_mesh_slicer`
+
+\cgalFigureBegin{SlicerFig, slicer.png}
+Slicing process. A triangle mesh (left) and the polylines
+computed by the mesh slicer by intersecting the yellow plane
+and translations of it with the mesh (right).
+\cgalFigureEnd
 
 \subsection SlicerExample Slicer example
 \cgalExample{Polygon_mesh_processing/mesh_slicer_example.cpp}
