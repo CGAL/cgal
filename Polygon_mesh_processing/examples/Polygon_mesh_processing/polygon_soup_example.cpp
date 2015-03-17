@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
   if (!CGAL::Polygon_mesh_processing::is_outward_oriented(mesh))
     CGAL::Polygon_mesh_processing::reverse_face_orientations(mesh);
 
-  std::ofstream out("elephant-oriented.off");
+  std::ofstream out("mesh-oriented.off");
   out << mesh;
   out.close();
 
