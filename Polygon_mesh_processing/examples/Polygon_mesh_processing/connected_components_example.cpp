@@ -33,10 +33,11 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<G> >
   {}
 
   bool operator[](edge_descriptor e) const {
-    return compare_((*g_).point(source(e,*g_)),
-                   (*g_).point(target(e,*g_)),
-                   (*g_).point(target(next(halfedge(e,*g_),*g_),*g_)),
-                   (*g_).point(target(next(opposite(halfedge(e,*g_),*g_),*g_),*g_)),
+    const G& g = *g_;
+    return compare_(g.point(source(e,g)),
+                    g.point(target(e, g)),
+                    g.point(target(next(halfedge(e,g),g),g)),
+                    g.point(target(next(opposite(halfedge(e,g),g),g),g)),
                    bound_) == CGAL::SMALLER;
   }
 
