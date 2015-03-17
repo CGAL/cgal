@@ -204,11 +204,31 @@ has duplicated border edges.
 
 
 \subsection PolygonSoups Polygon soups
-- `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
-- `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
+
+When the faces of a mesh are given but the connectivity is not known,
+we talk of a \e polygon \e soup.
+
+Before being able to run any of this package algorithms on the so-called 
+polygon soup, one should make sure that the polygons are consistently oriented.
+To do so, this package provides the function
+`CGAL::Polygon_mesh_processing::orient_polygon_soup()`.
+
+Once the polygon soup is consistently oriented, the connectivity can be
+brought together again, to build a polygon mesh.
+The function `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
+performs this mesh construction step.
+
 
 \subsubsection PolygonSoupExample Polygon soup example
+
+This example shows how to build a mesh from a polygon soup.
+The first step is to get a soup of consistently oriented faces, before
+reconstituting the connectivity.
+In this example, some orientation tests are run on the output mesh to illustrate
+Section \ref PMPOrientation.
+
 \cgalExample{Polygon_mesh_processing/polygon_soup_example.cpp}
+
 
 
 ****************************************
