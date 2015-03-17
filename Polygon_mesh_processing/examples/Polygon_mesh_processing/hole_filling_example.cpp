@@ -19,7 +19,7 @@ typedef Polyhedron::Vertex_handle      Vertex_handle;
 
 int main(int argc, char* argv[])
 {
-  char* filename = (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
   std::ifstream input(filename);
 
   Polyhedron poly_1;

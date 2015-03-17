@@ -16,7 +16,7 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 
 int main(int argc, char* argv[])
 {
-  char* filename = (argc > 1) ? argv[1] : "data/elephant-shuffled.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/elephant-shuffled.off";
   std::ifstream input(filename);
 
   if (!input)

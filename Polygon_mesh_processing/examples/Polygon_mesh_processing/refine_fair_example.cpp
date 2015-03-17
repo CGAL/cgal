@@ -41,7 +41,7 @@ std::vector<Vertex_handle> extract_k_ring(Vertex_handle v, int k)
 
 int main(int argc, char* argv[])
 {
-  char* filename = (argc > 1) ? argv[1] : "data/blobby.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/blobby.off";
   std::ifstream input(filename);
 
   Polyhedron poly;

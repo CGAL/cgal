@@ -12,7 +12,7 @@ typedef CGAL::Surface_mesh<Point>          Surface_mesh;
 
 int main(int argc, char* argv[])
 {
-  char* filename = (argc > 1) ? argv[1] : "data/cube_quad.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/cube_quad.off";
   std::ifstream input(filename);
 
   Surface_mesh mesh;

@@ -12,7 +12,7 @@ typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
 int main(int argc, char* argv[])
 {
-  char* filename = (argc > 1) ? argv[1] : "data/pig.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/pig.off";
   std::ifstream input(filename);
 
   Mesh mesh;

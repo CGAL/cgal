@@ -16,7 +16,7 @@ typedef boost::graph_traits<Surface_mesh>::face_descriptor face_descriptor;
 
 int main(int argc, char* argv[])
 {
-  char* filename = (argc > 1) ? argv[1] : "data/eight.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/eight.off";
   std::ifstream input(filename);
 
   Surface_mesh mesh;

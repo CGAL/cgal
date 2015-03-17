@@ -30,7 +30,7 @@ double max_coordinate(const Polyhedron& poly)
 
 int main(int argc, char* argv[])
 {
-  char* filename = (argc > 1) ? argv[1] : "data/eight.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/eight.off";
   std::ifstream input(filename);
 
   Polyhedron poly;

@@ -13,7 +13,7 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 
 int main(int argc, char* argv[])
 {
-  char* filename = (argc > 1) ? argv[1] : "data/full_border_quads.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/full_border_quads.off";
   std::ifstream input(filename);
 
   Polyhedron mesh;

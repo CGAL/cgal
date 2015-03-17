@@ -21,7 +21,7 @@ typedef CGAL::AABB_tree<AABB_traits>  AABB_tree;
 
 int main(int argc, char* argv[])
 {
-  char* filename = (argc > 1) ? argv[1] : "data/eight.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/eight.off";
   std::ifstream input(filename);
 
   Mesh mesh;
