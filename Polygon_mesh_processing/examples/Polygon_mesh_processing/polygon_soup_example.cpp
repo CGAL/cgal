@@ -33,8 +33,6 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  std::size_t initial_nb_points = points.size();
-
   CGAL::Polygon_mesh_processing::orient_polygon_soup(points, polygons);
 
   Polyhedron mesh;
