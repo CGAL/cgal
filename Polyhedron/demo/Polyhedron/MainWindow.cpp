@@ -1276,6 +1276,11 @@ void MainWindow::save(QString filename, Scene_item* item) {
   }
 }
 
+void MainWindow::on_actionSaveSnapshot_triggered()
+{
+  viewer->saveSnapshot(false);
+}
+
 bool MainWindow::on_actionErase_triggered()
 {
   int next_index = scene->erase(scene->selectionIndices());

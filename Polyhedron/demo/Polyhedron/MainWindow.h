@@ -136,6 +136,7 @@ protected slots:
   // save as...
   void on_actionSaveAs_triggered(); 
   void save(QString filename, Scene_item* item);
+  void on_actionSaveSnapshot_triggered();
 
   void on_actionSetBackgroundColor_triggered();
 
