@@ -19,37 +19,60 @@ A "polygon mesh" is a consistent
   This package follows the BGL API
   \todo add link to BGL package
 
+\cgalFigureBegin{Mech_steps, mech_hole_horz.png}
+Results of the main steps of the algorithm.
+From left to right: the hole, after triangulation,
+                              after triangulation and refinement,
+                              after triangulation, refinement and fairing.
+\cgalFigureEnd
+
 ****************************************
 \section PMPMeshing Meshing
 \subsection API
 
-\todo this section has been cut-pasted and needs smoothing
-
-A surface patch can be refined by inserting new vertices to approximate the density of triangles near the boundary of the patch, and flipping edges to get a valid triangulation.
+A surface patch can be refined by inserting new vertices and flipping edges to get a valid triangulation.
 Using a criterion presented in \cgalCite{Lipea2003FillingHoles},
-an edge is flipped only if the opposite edge does not exist in the original mesh and if no degenerate triangles are produced.
+the density of triangles near the boundary of the patch is approximated by the refinement function.
+The validity of the mesh is kept by flipping edges.
+An edge is flipped only if the opposite edge does not exist in the original mesh
+and if no degenerate triangles are produced.
 
-Finally, the refined region is faired to obtain a tangentially continuous and smooth patch.
-The fairing step minimizes a linear bi-Laplacian system with boundary constraints \cgalCite{Botsch2008OnLinearVariational}.
-The visual results of aforementioned steps can be seen in \cgalFigureRef{Mech_steps}.
+A region of the surface mesh (e.g. the refined region) can be faired to obtain a tangentially continuous and smooth patch.
+The fairing step minimizes a linear bi-Laplacian system with boundary constraints,
+described in \cgalCite{Botsch2008OnLinearVariational}.
+The visual results of aforementioned steps can be seen in \cgalFigureRef{Mech_steps} (c and d).
 
 Refinement and fairing functions can be applied to an arbitrary region on a mesh , using :
-- `CGAL::Polygon_mesh_processing::fair()` : given a set of vertices on a mesh, fairs the region.
 - `CGAL::Polygon_mesh_processing::refine()` : given a set of facets on a mesh, refines the region.
+- `CGAL::Polygon_mesh_processing::fair()` : given a set of vertices on a mesh, fairs the region.
 
-- `CGAL::Polygon_mesh_processing::triangulate_faces()`
+
+Many algorithms only work for meshes in which all the faces have the same number of vertices,
+or even only for triangle meshes. Hence, one may want to triangulate a polygon mesh
+with any types of polygons as faces.
+This package provides the function `CGAL::Polygon_mesh_processing::triangulate_faces()`
+that triangulates all faces of the input polygon mesh.
 
 
 \subsection Examples
 
 \subsubsection MeshingExample_1 Refine and fair a region on a polygon mesh
+
+The following example shows how to use the functions `CGAL::Polygon_mesh_processing::refine()`
+and `CGAL::Polygon_mesh_processing::fair()` for some selected regions on the input polygon mesh.
+
 \cgalExample{Polygon_mesh_processing/refine_fair_example.cpp}
 
+
 \subsubsection MeshingExample_2 Triangulate a polygon mesh
-\todo code : this example does not terminate
+
+Triangulating a polygon mesh can be done with the function
+`CGAL::Polygon_mesh_processing::triangulate_faces()`
+as shown in the example below.
+
 \cgalExample{Polygon_mesh_processing/triangulate_faces_example.cpp}
 
-
+\todo code : this example does not terminate
 
 ********************************************
 \section PMPHoleFilling Hole Filling
@@ -66,9 +89,6 @@ by narrowing the search space to faces of a 3D Delaunay triangulation of the bor
 
 Then, the generated patch can be refined and faired using the functions `refine()` and `fair()` described in Section \ref PMPMeshing.
 
-\cgalFigureBegin{Mech_steps, mech_hole_horz.png}
-Results of the main steps of the algorithm. From left to right: the hole, after triangulation, after triangulation and refinement, after triangulation, refinement and fairing.
-\cgalFigureEnd
 
 \subsection HoleFillingAPI API
 
