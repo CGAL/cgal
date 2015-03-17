@@ -114,7 +114,7 @@ get(boost::edge_weight_t, const CGAL::Surface_mesh<Point>& sm)
 }
 
 template <typename Point>
-typename CGAL::Kernel_traits<Point>::type::FT
+typename CGAL::SM_edge_weight_pmap<Point>::value_type
 get(boost::edge_weight_t, const CGAL::Surface_mesh<Point>& sm, 
     const typename boost::graph_traits<CGAL::Surface_mesh<Point> >::edge_descriptor& e)
 {
