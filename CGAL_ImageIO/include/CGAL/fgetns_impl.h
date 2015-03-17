@@ -27,9 +27,6 @@
 
 #include <string.h>
 
-// #include <CGAL/gis.h>
-// #include <CGAL/inr.h>
-
 /* get a string from a file and discard the ending newline character
    if any */
 CGAL_INLINE_FUNCTION

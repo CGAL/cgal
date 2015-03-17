@@ -22,10 +22,6 @@
 #ifndef FGETNS_H
 #define FGETNS_H
 
-// #include <string.h>
-
-// #include <CGAL/gis.h>
-// #include <CGAL/inr.h>
 #include <CGAL/ImageIO.h>
 
 /* get a string from a file and discard the ending newline character
