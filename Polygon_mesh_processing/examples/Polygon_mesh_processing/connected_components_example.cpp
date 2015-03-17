@@ -50,7 +50,7 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<G> >
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/eight.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
   std::ifstream input(filename);
 
   Mesh mesh;
