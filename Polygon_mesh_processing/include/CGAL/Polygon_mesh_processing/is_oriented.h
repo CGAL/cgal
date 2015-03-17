@@ -76,9 +76,8 @@ namespace internal{
  * \todo The following only handles polyhedron with one connected component
  *       the code, the sample example and the plugin must be updated.
  * @code
- * // use inside_out operator to reverse orientation
  * if(!is_outward_oriented(pmesh)) {
- *   pmesh.inside_out();
+ *   reverse_face_orientations(pmesh);
  * }
  * @endcode
  */
@@ -148,6 +147,27 @@ bool is_outward_oriented(const PolygonMesh& pmesh)
 
 /// \endcond
 
+/**
+* \ingroup PkgPolygonMeshProcessing
+* reverses faces orientations.
+
+* @pre @a `pmesh` is closed
+* @pre @a `pmesh` is consistently oriented
+*
+* @tparam PolygonMesh a model of `FaceListGraph`
+*
+* @param pmesh a closed polygon mesh to be tested
+* @param vpmap the property map with the points associated to the vertices of `pmesh`
+* @param k a traits class instance, can be omitted
+*
+* \todo write the code. Can be copy-pasted and BGLized from function
+* inside_out in Polyhedron_3
+*/
+template<typename PolygonMesh>
+void reverse_face_orientations(PolygonMesh& pmesh)
+{
+  ;
+}
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
