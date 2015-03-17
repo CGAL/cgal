@@ -263,8 +263,15 @@ and vertices in property maps.
 
 ****************************************
 \section PMPSlicer Slicer
-\subsection API
-- `CGAL::Polygon_mesh_slicer`
+
+The `CGAL::Polygon_mesh_slicer` is an operator that intersects a given triangulated surface
+mesh with a plane. It computes the intersection as a polyline or a set of polylines since the intersection
+can be made of more than one connected components.
+
+Figure \ref SlicerFig shows
+the polylines returned by the slicing operation for a triangle mesh
+and a plane for which a translation following the normal to the plane 
+is performed.
 
 \cgalFigureBegin{SlicerFig, slicer.png}
 Slicing process. A triangle mesh (left) and the polylines
@@ -273,6 +280,11 @@ and translations of it with the mesh (right).
 \cgalFigureEnd
 
 \subsection SlicerExample Slicer example
+
+The example below illustrates how to use the mesh slicer for a given
+triangle mesh and a plane. Two constructors are used in the example
+for pedagogical purposes.
+
 \cgalExample{Polygon_mesh_processing/mesh_slicer_example.cpp}
 
 ****************************************
