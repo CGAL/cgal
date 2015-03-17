@@ -5,7 +5,7 @@
 
 #include <CGAL/orient_polygon_soup.h>
 #include <CGAL/polygon_soup_to_polygon_mesh.h>
-#include <CGAL/Polygon_mesh_processing/is_oriented.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 #include <vector>
 #include <fstream>
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, mesh);
 
   if (!CGAL::Polygon_mesh_processing::is_outward_oriented(mesh))
-    mesh.inside_out();
+    CGAL::Polygon_mesh_processing::reverse_face_orientations(mesh);
 
   std::ofstream out("elephant-oriented.off");
   out << mesh;

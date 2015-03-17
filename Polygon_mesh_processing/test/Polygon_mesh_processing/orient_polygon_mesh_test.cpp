@@ -3,7 +3,7 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
-#include <CGAL/Polygon_mesh_processing/is_oriented.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Timer.h>
