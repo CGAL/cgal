@@ -156,9 +156,7 @@ bool is_outward_oriented(const PolygonMesh& pmesh)
 *
 * @tparam PolygonMesh a model of `FaceListGraph`
 *
-* @param pmesh a closed polygon mesh to be tested
-* @param vpmap the property map with the points associated to the vertices of `pmesh`
-* @param k a traits class instance, can be omitted
+* @param pmesh a closed polygon mesh
 *
 * \todo write the code. Can be copy-pasted and BGLized from function
 * inside_out in Polyhedron_3
