@@ -160,12 +160,12 @@ property maps shall be initialized with their
 default constructors. 
 
 \param tm the triangle mesh
-\param vertex_k1_pm differential quantities for principal curvatures
-\param vertex_k2_pm differential quantities for principal curvatures
+\param vertex_k1_pm maximal principal curvatures
+\param vertex_k2_pm minimal principal curvatures
 \param vertex_b0_pm third order extremalities
 \param vertex_b3_pm third order extremalities
-\param vertex_d1_pm principal directions of curvature
-\param vertex_d2_pm principal directions of curvature
+\param vertex_d1_pm maximal principal directions of curvature
+\param vertex_d2_pm minimal principal directions of curvature
 \param vertex_P1_pm fourth order quantities
 \param vertex_P2_pm fourth order quantities
 */ 
