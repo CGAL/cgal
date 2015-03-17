@@ -116,9 +116,8 @@ The class `Ridge_approximation` computes the approximation of
 ridges of a triangular polyhedral surface. 
 
 \tparam TriangleMesh is the surface type. 
-\tparam VertexFTMap property map with...
-\tparam VertexVectorMap provide the differential properties of 
-the surface associated to its vertices. 
+\tparam VertexFTMap A property map with `boost::graph_traits<TriangleMesh>::vertex_descriptor as key type and `FT` as value type.
+\tparam VertexVectorMap A property map with `boost::graph_traits<TriangleMesh>::vertex_descriptor as key type and `Vector_3` as value type. 
 
 Requirements (checked at compile time): 
 - the types `TriangleMesh::Traits::FT` and 
@@ -136,18 +135,6 @@ template< typename TriangleMesh, typename VertexFTMap, typename VertexVectorMap 
 class Ridge_approximation {
 public:
 
-/// \name Types 
-/// @{
-
-/*!
-Order of differential 
-quantities used to distinguish elliptic and hyperbolic ridges. Third 
-(`Tag_3`) or fourth (`Tag_4`) order quantities may be used as 
-explained in Section \ref Ridges_3Approximating of the User Manual. 
-*/ 
-enum Tag_order {Tag_3, Tag_4}; 
-
-/// @} 
 
 /// \name Creation 
 /// @{
@@ -155,7 +142,7 @@ enum Tag_order {Tag_3, Tag_4};
 /*!
 The two last property maps may 
 not be used if computations are performed with 
-the parameter `Tag_3`, in which case these 
+the parameter `Ridges_order_3`, in which case these 
 property maps shall be initialized with their 
 default constructors. 
 
@@ -183,21 +170,21 @@ Ridge_approximation(const TriangleMesh &tm,
 Outputs ridges of types `MAX_ELLIPTIC_RIDGE` and `MAX_HYPERBOLIC_RIDGE`. 
 \tparam OutputIterator an output iterator wìth value type `Ridge_line*`. 
 */ 
-template <class OutputIterator> OutputIterator compute_max_ridges(OutputIterator it, Tag_order ord = Tag_3); 
+template <class OutputIterator> OutputIterator compute_max_ridges(OutputIterator it, Rdge_order ord = Ridge_order_3); 
 
 /*!
 Outputs ridges of types `MIN_ELLIPTIC_RIDGE` and `MIN_HYPERBOLIC_RIDGE`. 
 \tparam OutputIterator an output iterator with 
 value type `Ridge_line*`. 
 */ 
-template <class OutputIterator> OutputIterator compute_min_ridges(OutputIterator it, Tag_order ord = Tag_3); 
+template <class OutputIterator> OutputIterator compute_min_ridges(OutputIterator it, Rdge_order ord = Ridge_order_3); 
 
 /*!
 Outputs ridges of types `MAX_CREST_RIDGE` and `MIN_CREST_RIDGE`. 
 \tparam OutputIterator is an output iterator with 
 value type `Ridge_line*`. 
 */ 
-template <class OutputIterator> OutputIterator compute_crest_ridges(OutputIterator it, Tag_order ord = Tag_3); 
+template <class OutputIterator> OutputIterator compute_crest_ridges(OutputIterator it, Rdge_order ord = Ridge_order_3); 
 
 /// @}
 
@@ -228,7 +215,7 @@ public:
 /*!
 
 */ 
-typedef typename TriangleMesh::Traits::FT FT; 
+typedef typename TriangleMesh::Traits::FT FT;
 
 /*!
 
