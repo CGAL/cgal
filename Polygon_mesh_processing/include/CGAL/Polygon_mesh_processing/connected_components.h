@@ -384,7 +384,7 @@ template <typename PolygonMesh
           >
 FaceOutputIterator
 connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face,
-                    PolygonMesh& pmesh
+                    const PolygonMesh& pmesh
                     , FaceOutputIterator out
                     , EdgeConstraintMap ecmap)
 {
@@ -426,7 +426,7 @@ struct No_constraint {
 template <typename PolygonMesh, typename FaceOutputIterator>
 FaceOutputIterator
 connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face
-                  , PolygonMesh& pmesh
+                  , const PolygonMesh& pmesh
                   , FaceOutputIterator out
                   , CGAL::Default)
 {
@@ -439,7 +439,7 @@ struct No_border {
   No_border() 
   {}
   
-  No_border(G & g, EdgeConstraintMap ecm = EdgeConstraintMap())
+  No_border(const G & g, EdgeConstraintMap ecm = EdgeConstraintMap())
     : g(&g), ecm(ecm)
   {}
   
@@ -450,7 +450,7 @@ struct No_border {
     return false;
   }
 
-  G* g;
+  const G* g;
   EdgeConstraintMap ecm;
 };
 
@@ -463,7 +463,7 @@ struct No_border {
 template <typename PolygonMesh, typename OutputIterator>
 OutputIterator
 connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face,
-                    PolygonMesh& pmesh,
+                    const PolygonMesh& pmesh,
                     OutputIterator out)
 {
   return internal::connected_component(seed_face, pmesh, out, CGAL::Default());
@@ -504,7 +504,7 @@ template <typename PolygonMesh
 #endif
 >
 typename boost::property_traits<FaceComponentMap>::value_type
-connected_components(PolygonMesh& pmesh,
+connected_components(const PolygonMesh& pmesh,
                      FaceComponentMap& fcm,
                      EdgeConstraintMap ecmap
 #ifdef DOXYGEN_RUNNING
@@ -528,7 +528,7 @@ template <typename PolygonMesh
         , typename FaceComponentMap
         , typename FaceIndexMap>
 typename boost::property_traits<FaceComponentMap>::value_type
-connected_components(PolygonMesh& pmesh,
+connected_components(const PolygonMesh& pmesh,
                      FaceComponentMap& fcm,
                      CGAL::Default,
                      FaceIndexMap fim)
@@ -538,7 +538,7 @@ connected_components(PolygonMesh& pmesh,
 
 template <typename PolygonMesh, typename EdgeConstraintMap, typename FaceComponentMap>
 typename boost::property_traits<FaceComponentMap>::value_type
-connected_components(PolygonMesh& pmesh,
+connected_components(const PolygonMesh& pmesh,
                      FaceComponentMap& fcm,
                      EdgeConstraintMap ecmap)
 {
@@ -548,7 +548,7 @@ connected_components(PolygonMesh& pmesh,
 
 template <typename PolygonMesh, typename FaceComponentMap>
 typename boost::property_traits<FaceComponentMap>::value_type
-connected_components(PolygonMesh& pmesh,
+connected_components(const PolygonMesh& pmesh,
                      FaceComponentMap& fcm,
                      CGAL::Default d)
 {
@@ -559,7 +559,7 @@ connected_components(PolygonMesh& pmesh,
 
 template <typename PolygonMesh, typename FaceComponentMap>
 typename boost::property_traits<FaceComponentMap>::value_type
-connected_components(PolygonMesh& pmesh,
+connected_components(const PolygonMesh& pmesh,
                      FaceComponentMap& fcm)
 {
 
