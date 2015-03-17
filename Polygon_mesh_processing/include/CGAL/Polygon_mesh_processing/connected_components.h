@@ -368,7 +368,7 @@ namespace Polygon_mesh_processing{
         `boost::graph_traits<PolygonMesh>::%face_descriptor`s.
  *  \tparam EdgeConstraintMap a model of `ReadablePropertyMap` with
         `boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
-        `bool` as value type
+        `bool` as value type. It should be default-constructible.
 
  *  \param seed_face a face of `pmesh` from which exploration starts to detect the connected component
            that contains it
@@ -481,7 +481,7 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
         `boost::face_index` as value type.
  *  \tparam EdgeConstraintMap a model of `ReadablePropertyMap` with
         `boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
-        `bool` as value type
+        `bool` as value type. It should be default-constructible.
  * \tparam FaceIndexMap a model of `ReadablePropertyMap` with
        `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
        ` CGAL::face_index_t` as value type.
@@ -577,7 +577,7 @@ connected_components(const PolygonMesh& pmesh,
  * \tparam PolygonMesh a model of `FaceGraph`
  * \tparam EdgeConstraintMap a model of `ReadablePropertyMap` with
        `boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
-       `bool` as value type
+       `bool` as value type. It should be default-constructible.
  * \tparam VertexIndexMap a model of `ReadablePropertyMap` with
        `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
        `CGAL::vertex_index_t` as value type
