@@ -5,8 +5,6 @@
 
 #include <boost/foreach.hpp>
 
-
-
 template <typename TriangleMesh, typename FaceVectorMap, typename Kernel>
 const typename Kernel::Vector_3 
 computeFacetsAverageUnitNormal(const TriangleMesh& tm,
@@ -18,7 +16,7 @@ computeFacetsAverageUnitNormal(const TriangleMesh& tm,
   typename boost::graph_traits<TriangleMesh>::face_descriptor f;
   typename Kernel::Vector_3 sum(0., 0., 0.), n;
 
-  CGAL::Halfedge_around_target_circulator<PolyhedralSurf> hedgeb(halfedge(v,tm),tm), hedgee = hedgeb;
+  CGAL::Halfedge_around_target_circulator<TriangleMesh> hedgeb(halfedge(v,tm),tm), hedgee = hedgeb;
 
   do
     {
@@ -44,9 +42,9 @@ void compute_facets_normals(const TriangleMesh& tm,
                             FaceVectorMap fvm,
                             const Kernel& k)
 {
-  typedef boost::property_traits<FaceVectorMap>::value_type Vector_3;
+  typedef typename boost::property_traits<FaceVectorMap>::value_type Vector_3;
 
-  typedef boost::property_map<TriangleMesh,CGAL::vertex_point_t>::const_type VPM;
+  typedef typename boost::property_map<TriangleMesh,CGAL::vertex_point_t>::const_type VPM;
   VPM vpm = get(CGAL::vertex_point,tm);
   BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(tm)){
     typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f,tm);
