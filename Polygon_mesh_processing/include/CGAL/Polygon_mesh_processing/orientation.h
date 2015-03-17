@@ -147,24 +147,60 @@ bool is_outward_oriented(const PolygonMesh& pmesh)
 
 /// \endcond
 
+template<typename PolygonMesh>
+void reverse_orientation(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor first, PolygonMesh& pmesh)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+    if ( first == halfedge_descriptor())
+        return;
+    halfedge_descriptor last  = first;
+    halfedge_descriptor prev  = first;
+    halfedge_descriptor start = first;
+    first = next(first, pmesh);
+    vertex_descriptor  new_v = target( start, pmesh);
+    while (first != last) {
+      vertex_descriptor  tmp_v = target( first, pmesh);
+      set_target( first, new_v, pmesh);
+      set_halfedge(new_v, first, pmesh);
+        new_v = tmp_v;
+        halfedge_descriptor n = next(first, pmesh);
+        set_next(first, prev, pmesh);
+        prev  = first;
+        first = n;
+    }
+    set_target( start, new_v, pmesh);
+    set_halfedge( new_v, start, pmesh);
+    set_next(start, prev,pmesh);
+}
+
 /**
 * \ingroup PkgPolygonMeshProcessing
 * reverses faces orientations.
-
-* @pre @a `pmesh` is closed
+*
 * @pre @a `pmesh` is consistently oriented
 *
 * @tparam PolygonMesh a model of `FaceListGraph`
-*
-* @param pmesh a closed polygon mesh
-*
-* \todo write the code. Can be copy-pasted and BGLized from function
-* inside_out in Polyhedron_3
 */
 template<typename PolygonMesh>
 void reverse_face_orientations(PolygonMesh& pmesh)
 {
-  ;
+  typedef boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  BOOST_FOREACH(face_descriptor fd, faces(pmesh)){
+    reverse_orientation(halfedge(fd,pmesh),pmesh);
+  } 
+  // Note: A border edge is now parallel to its opposite edge.
+  // We scan all border edges for this property. If it holds, we
+  // reorient the associated hole and search again until no border
+  // edge with that property exists any longer. Then, all holes are
+  // reoriented.
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh)){
+    if ( is_border(h,pmesh) &&
+         target(h,pmesh) == target(opposite(h,pmesh),pmesh)){
+      reverse_orientation(h, pmesh);
+    }
+  }
 }
 
 } // namespace Polygon_mesh_processing

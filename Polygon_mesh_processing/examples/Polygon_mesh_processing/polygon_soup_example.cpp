@@ -45,5 +45,11 @@ int main(int argc, char* argv[])
   out << mesh;
   out.close();
 
+ CGAL::Polygon_mesh_processing::reverse_face_orientations(mesh);
+ {
+  std::ofstream out("elephant-oriented2.off");
+  out << mesh;
+  out.close();
+ }
   return 0;
 }

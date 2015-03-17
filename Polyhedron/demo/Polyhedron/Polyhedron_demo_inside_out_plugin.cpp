@@ -8,6 +8,7 @@
 
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 class Polyhedron_demo_inside_out_plugin : 
   public QObject,
@@ -52,7 +53,7 @@ void Polyhedron_demo_inside_out_plugin::on_actionInsideOut_triggered()
       if(!pMesh) return;
   
       // inside out
-      pMesh->inside_out();
+      CGAL::Polygon_mesh_processing::reverse_face_orientations(*pMesh);
     }
     else {
       soup_item->inside_out();
