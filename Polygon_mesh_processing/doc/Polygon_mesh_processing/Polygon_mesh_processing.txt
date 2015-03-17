@@ -289,12 +289,34 @@ for pedagogical purposes.
 
 ****************************************
 \section PMPConnectedComponents Connected components
-\subsection API
-- `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
-- `CGAL::Polygon_mesh_processing::connected_component()`
-- `CGAL::Polygon_mesh_processing::connected_components()`
+
+This package provides functions to study the connected components of a
+polygon mesh. The connected components can be either separated by border edges, or by
+\e constraint edges.
+
+First, the function `CGAL::Polygon_mesh_processing::connected_component()`
+collects all the faces that belong to the same connected component as
+the face that is given as a parameter.
+
+Then, `CGAL::Polygon_mesh_processing::connected_components()`
+collects all the connected components, and fills a property map
+with the indices of the different connected components.
+
+Finally, `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
+allows the user to keep only the biggest connected components. This feature can
+for example be useful for noisy data were small connected components
+should be discarded in favour of major connected components.
+
 
 \subsection CCExample Connected components example
+
+The following example shows how to use the functions dealing with connected
+components of a polygon mesh.
+In particular, we provide an example for the optional parameter \c EdgeConstraintMap,
+a property map that returns information about an edge being a \e constraint or not.
+A \e constraint demarcates the border of a connected component, and prevents
+the propagation of a connected component index to cross it.
+
 \cgalExample{Polygon_mesh_processing/connected_components_example.cpp}
 
 */
