@@ -4,6 +4,7 @@ PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - CGAL a
 INPUT                      =  ${CMAKE_SOURCE_DIR}/BGL/doc/BGL/ \
                               ${CMAKE_SOURCE_DIR}/BGL/include/CGAL/boost/graph/Euler_operations.h \
                               ${CMAKE_SOURCE_DIR}/BGL/include/CGAL/boost/graph/iterator.h \
-                              ${CMAKE_SOURCE_DIR}/BGL/include/CGAL/boost/graph/Graph_geometry.h
+                              ${CMAKE_SOURCE_DIR}/BGL/include/CGAL/boost/graph/Graph_geometry.h \
+                              ${CMAKE_SOURCE_DIR}/BGL/include/CGAL/boost/graph/helpers.h
 
 ALIASES +=  "bgllink{1}=<a href=\"http://www.boost.org/libs/graph/doc/\1.html\"><code>\1</code></a>"

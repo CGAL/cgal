@@ -37,6 +37,9 @@
 /// \defgroup PkgBGLHelper Helper Classes
 /// \ingroup PkgBGL
 
+/// \defgroup PkgBGLHelperFct Helper Functions
+/// \ingroup PkgBGL
+
 /// \defgroup PkgBGLIterators Iterators and Circulators
 /// \ingroup PkgBGL
 
@@ -119,6 +122,9 @@ user might encounter.
 - `CGAL::HalfedgeDS_halfedge_max_base_with_id`
 - `CGAL::HalfedgeDS_face_max_base_with_id`
 - `CGAL::Polyhedron_items_with_id_3`
+
+## Helper Fnuctions ##
+- `CGAL::is_border()`
 
 ## Iterators ##
 - `CGAL::Halfedge_around_source_iterator`

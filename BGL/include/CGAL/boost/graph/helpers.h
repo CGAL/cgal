@@ -27,45 +27,60 @@
 namespace CGAL {
 
 
-
+/*!
+   \ingroup PkgBGLHelperFct
+    returns `true` if the halfedge `hd` is on a border. 
+  */
 template <typename FaceGraph>
 bool is_border(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
 {
   return face(hd,g) == boost::graph_traits<FaceGraph>::null_face();
 }
 
+ /*!
+   \ingroup PkgBGLHelperFct
+    returns `true` if the halfedge `hd` or the opposite halfedge is on a border. 
+  */
 template <typename FaceGraph>
 bool is_border_edge(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
 {
   return is_border(hd, g) || is_border(opposite(hd,g), g);
 }
 
+ /*!
+   \ingroup PkgBGLHelperFct
+    returns `true` if the edge `e` is on a border. 
+  */
 template <typename FaceGraph>
 bool is_border(typename boost::graph_traits<FaceGraph>::edge_descriptor ed, const FaceGraph& g)
 {
   return is_border_edge(halfedge(ed,g), g);
 }
 
-template <typename Graph>
-boost::optional<typename boost::graph_traits<Graph>::halfedge_descriptor>
-is_border(typename boost::graph_traits<Graph>::vertex_descriptor v,
-          const Graph& g)
+ /*!
+   \ingroup PkgBGLHelperFct
+    returns a halfedge which is on a border and whose target vertex is `vd`, if such a halfedge exists. 
+  */
+template <typename FaceGraph>
+boost::optional<typename boost::graph_traits<FaceGraph>::halfedge_descriptor>
+is_border(typename boost::graph_traits<FaceGraph>::vertex_descriptor vd,
+          const FaceGraph& g)
 {
-  CGAL::Halfedge_around_target_iterator<Graph> havib, havie;
-  for(boost::tie(havib, havie) = halfedges_around_target(halfedge(v, g), g); havib != havie; ++havib) {
+  CGAL::Halfedge_around_target_iterator<FaceGraph> havib, havie;
+  for(boost::tie(havib, havie) = halfedges_around_target(halfedge(vd, g), g); havib != havie; ++havib) {
     if(is_border(*havib,g)) {
-      typename boost::graph_traits<Graph>::halfedge_descriptor h = *havib;
+      typename boost::graph_traits<FaceGraph>::halfedge_descriptor h = *havib;
       return h;
     }
   }
   // empty
-  return boost::optional<typename boost::graph_traits<Graph>::halfedge_descriptor>();
+  return boost::optional<typename boost::graph_traits<FaceGraph>::halfedge_descriptor>();
 }
 
 
  /*!
-    returns `true` if there are no 
-    border edges. 
+   \ingroup PkgBGLHelperFct
+    returns `true` if there are no border edges. 
   */
 template <typename FaceGraph>
 bool is_closed(const FaceGraph& g)
@@ -87,8 +102,8 @@ bool is_bivalent(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd
 }
 
   /*!
-    returns `true` if all 
-    vertices have exactly two incident edges. 
+   \ingroup PkgBGLHelperFct
+    returns `true` if all vertices have exactly two incident edges. 
   */ 
 template <typename FaceGraph>
   bool is_pure_bivalent(const FaceGraph& g)  
@@ -112,6 +127,7 @@ bool is_trivalent(typename boost::graph_traits<FaceGraph>::halfedge_descriptor h
 }
 	
   /*!
+   \ingroup PkgBGLHelperFct
     returns `true` if all 
     vertices have exactly three incident edges. 
   */ 
@@ -131,6 +147,7 @@ template <typename FaceGraph>
 }
 
  /*!
+   \ingroup PkgBGLHelperFct
     returns `true` iff the connected component denoted by `h` is a triangle. 
     \pre `g` must be valid.
   */ 
@@ -148,6 +165,7 @@ template <typename FaceGraph>
 }
 
  /*!
+   \ingroup PkgBGLHelperFct
     returns `true` iff the face is a triangle, that is it has three incident halfedges. 
  */
 template <typename FaceGraph>
@@ -159,6 +177,7 @@ bool is_triangle(typename boost::graph_traits<FaceGraph>::face_descriptor fd, co
 }
 
   /*!
+   \ingroup PkgBGLHelperFct
     returns `true` if all faces are triangles. 
   */ 
 template <typename FaceGraph>
@@ -175,6 +194,7 @@ template <typename FaceGraph>
 
 
 /*!
+   \ingroup PkgBGLHelperFct
     returns `true` iff the connected component denoted by `h` is a quadrilateral. 
   */
 template <typename FaceGraph>
@@ -203,6 +223,7 @@ bool is_quad(typename boost::graph_traits<FaceGraph>::face_descriptor fd, const 
 }
 
   /*!
+   \ingroup PkgBGLHelperFct
     returns `true` if all faces are quadrilaterals. 
   */ 
 template <typename FaceGraph>
@@ -218,6 +239,7 @@ template <typename FaceGraph>
 }
  
   /*!
+   \ingroup PkgBGLHelperFct
     returns `true` iff the connected component denoted by `h` is a tetrahedron. 
   */ 
 template <typename FaceGraph>
