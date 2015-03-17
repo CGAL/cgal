@@ -22,60 +22,36 @@ int main(int argc, char* argv[])
   const char* filename = (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
   std::ifstream input(filename);
 
-  Polyhedron poly_1;
-  if ( !input || !(input >> poly_1) || poly_1.empty() ) {
+  Polyhedron poly;
+  if ( !input || !(input >> poly) || poly.empty() ) {
     std::cerr << "Not a valid off file." << std::endl;
     return 1;
   }
-  Polyhedron poly_2(poly_1), poly_3(poly_1);
 
-  // in poly_1, incrementally fill the holes
-  BOOST_FOREACH(Halfedge_handle h, halfedges(poly_1))
-  {
-    if(h->is_border())
-    {
-      std::vector<Facet_handle> patch;
-      CGAL::Polygon_mesh_processing::triangulate_hole(poly_1,
-                                        h,
-                                        std::back_inserter(patch));
-      std::cout << "Number of facets in constructed patch: " << patch.size() << std::endl;
-    }
-  }
-
-  // in poly_2, incrementally fill and refine the holes
-  BOOST_FOREACH(Halfedge_handle h, halfedges(poly_2))
+  // Incrementally fill the holes
+  unsigned int nb_holes = 0;
+  BOOST_FOREACH(Halfedge_handle h, halfedges(poly))
   {
     if(h->is_border())
     {
       std::vector<Facet_handle>  patch_facets;
       std::vector<Vertex_handle> patch_vertices;
-      CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly_2,
-                                        h,
-                                        std::back_inserter(patch_facets),
-                                        std::back_inserter(patch_vertices));
-      std::cout << "Number of facets in constructed patch: " << patch_facets.size() << std::endl;
-      std::cout << "Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;
+      bool success = CGAL::cpp11::get<0>(
+        CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(
+                  poly,
+                  h,
+                  std::back_inserter(patch_facets),
+                  std::back_inserter(patch_vertices)));
+
+      std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;
+      std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;
+      std::cout << "  Is fairing successful: " << success << std::endl;
+      nb_holes++;
     }
   }
 
-  // in poly_3, incrementally fill, refine and fair the holes
-  BOOST_FOREACH(Halfedge_handle h, halfedges(poly_3))
-  {
-    if (h->is_border())
-    {
-      std::vector<Facet_handle>  patch_facets;
-      std::vector<Vertex_handle> patch_vertices;
-      bool success = CGAL::cpp11::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(
-                                        poly_3,
-                                        h,
-                                        std::back_inserter(patch_facets),
-                                        std::back_inserter(patch_vertices)));
-
-      std::cout << "Number of facets in constructed patch: " << patch_facets.size() << std::endl;
-      std::cout << "Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;
-      std::cout << "Is fairing successful: " << success << std::endl;
-    }
-  }
-
+  std::cout << std::endl;
+  std::cout << nb_holes << " holes have been filled" << std::endl;
+  
   return 0;
 }

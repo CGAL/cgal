@@ -63,6 +63,7 @@ and `CGAL::Polygon_mesh_processing::fair()` for some selected regions on the inp
 
 \cgalExample{Polygon_mesh_processing/refine_fair_example.cpp}
 
+\todo code : fair() makes the mesh disappear in this example
 
 \subsubsection MeshingExample_2 Triangulate a polygon mesh
 
@@ -77,22 +78,23 @@ as shown in the example below.
 ********************************************
 \section PMPHoleFilling Hole Filling
 
-This package provides algorithms for filling a hole that is either in a triangulated surface mesh (<B>mesh</B> in the following) or defined by a sequence of points
-that describe a polyline.
+This package provides algorithms for filling a hole that is either in a triangulated surface mesh
+or defined by a sequence of points that describe a polyline.
 The main steps of the algorithm are described in \cgalCite{Lipea2003FillingHoles} and can be summarized as follows.
 
 First, a triangular patch for the hole is generated without introducing any new vertex. 
-The patch minimizes a quality function for all possible triangular patches.
+The patch minimizes a quality function evaluated for all possible triangular patches.
 The quality function first minimizes the worst dihedral angle between patch triangles, then the total surface area as a tiebreaker.
-Following the suggestions in \cgalCite{Zou2013AnAlgorithm}, the performance of the algorithm is significantly improved 
-by narrowing the search space to faces of a 3D Delaunay triangulation of the border vertices, from all possible patches, while searching for the best patch. 
+Following the suggestions in \cgalCite{Zou2013AnAlgorithm}, the performance of the algorithm is significantly improved
+by narrowing the search space to faces of a 3D Delaunay triangulation of the border vertices,
+from all possible patches, while searching for the best patch. 
 
-Then, the generated patch can be refined and faired using the functions `refine()` and `fair()` described in Section \ref PMPMeshing.
+Then, the generated patch can be refined and faired using the meshing functions
+`CGAL::Polygon_mesh_processing::refine()` and `CGAL::Polygon_mesh_processing::fair()`
+described in Section \ref PMPMeshing.
 
 
 \subsection HoleFillingAPI API
-
-\todo hole filling only handles triangle meshes? Or it's only the patch that will be made of triangles?
 
 This package provides four functions for hole filling:
 	- `triangulate_hole_polyline()` : given a sequence of points defining the hole, triangulates the hole.
@@ -103,9 +105,24 @@ This package provides four functions for hole filling:
 \subsection HFExamples Examples
 
 \subsubsection HFExample_1 Triangulate a polyline
+
+The following example shows how to triangulate a hole described by an input polyline.
+
 \cgalExample{Polygon_mesh_processing/triangulate_polyline_example.cpp}
 
+
 \subsubsection HFExample_2 Hole filling from the border of the hole
+
+If the input polygon mesh has a hole or more than one hole, it is possible
+to iteratively fill them by detecting border edges (i.e. with only
+one incident face) along the evolution of the mesh.
+
+Holes are filled one after the other, and the process stops when there is no border edge left.
+
+This process is illustrated by the example below, where holes are
+iteratively filled, refined and faired to get a nicely smooth mesh with no hole.
+
+
 \cgalExample{Polygon_mesh_processing/hole_filling_example.cpp}
 
 
