@@ -11,7 +11,7 @@
 #include "Polyhedron_demo_plugin_interface.h"
 
 #include <CGAL/Polyhedron_copy_3.h>
-#include <CGAL/Polygon_mesh_processing/Connected_components.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
