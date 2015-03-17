@@ -40,15 +40,19 @@
 - `CGAL::Polygon_mesh_processing::triangulate_hole_polyline()`
 
 ## Predicate Functions and Classes ##
-- `CGAL::Polygon_mesh_processing::is_outward_oriented()`
 - `CGAL::Polygon_mesh_processing::is_self_intersecting()`
 - `CGAL::Polygon_mesh_processing::self_intersections()`
 - `CGAL::Point_inside_polygon_mesh`
 
+## Orientation Functions ##
+- `CGAL::Polygon_mesh_processing::is_outward_oriented()`
+- `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
+
 ## Combinatorial Repairing Functions ##
 - \link stitching_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
-- `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
+- `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
+- `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
 
 ## Normal Computation Functions ##
 - `CGAL::Polygon_mesh_processing::compute_face_normal()`

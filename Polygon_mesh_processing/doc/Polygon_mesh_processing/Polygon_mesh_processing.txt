@@ -54,7 +54,7 @@ This package provides the function `CGAL::Polygon_mesh_processing::triangulate_f
 that triangulates all faces of the input polygon mesh.
 
 
-\subsection Examples
+\subsection MeshingExamples Meshing Examples
 
 \subsubsection MeshingExample_1 Refine and fair a region on a polygon mesh
 
@@ -144,25 +144,13 @@ Result of fairing example.
 
 This packages provides some predicates to be evaluated with respect to a polygon mesh.
 
-\subsection Orientation
-
-The function `CGAL::Polygon_mesh_processing::is_outward_oriented()` checks whether 
-the polygon mesh is oriented such that the normals to faces are oriented towards the
-outside of the domain bounded by the input polygon mesh.
-
-\todo talk about inside_out, from Polyhedron_3
-\todo implement inside_out for PolygonMesh?
-
-\subsubsection Example
-
-
 \subsection PMPSelIntersections Self intersections
 
 Self intersections can be detected and collected from a triangle mesh, using the two functions
 `CGAL::Polygon_mesh_processing::is_self_intersecting()`
 and `CGAL::Polygon_mesh_processing::self_intersections()`.
 
-\subsubsection Example
+\subsubsection SIExample Self intersections example
 \cgalExample{Polygon_mesh_processing/self_intersections_example.cpp}
 
 
@@ -171,8 +159,24 @@ and `CGAL::Polygon_mesh_processing::self_intersections()`.
 The class `CGAL::Point_inside_polygon_mesh` provides a functor that tests whether a query point is 
 inside, outside, or on the boundary of the domain described by a given closed polygon mesh.
 
-\subsubsection Example
+\subsubsection InsideExample Inside test example
 \cgalExample{Polygon_mesh_processing/point_inside_example.cpp}
+
+
+****************************************
+\section PMPOrientation Orientation
+
+This package provides functions dealing with the orientation of faces in a closed polygon mesh.
+
+The function `CGAL::Polygon_mesh_processing::is_outward_oriented()` checks whether
+the polygon mesh is oriented such that the normals to faces are oriented towards the
+outside of the domain bounded by the input polygon mesh.
+
+In case the orientation is not satisfactory to the user, the function
+`CGAL::Polygon_mesh_processing::reverse_face_orientations()` reverses the orientation
+of halfedges around faces, and consequently of normals associated to faces.
+
+See \ref PolygonSoupExample for an example of how these functions can be used.
 
 
 ****************************************
@@ -181,7 +185,7 @@ inside, outside, or on the boundary of the domain described by a given closed po
 \subsection Stitching
 - \link stitching_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
 
-\subsubsection Example
+\subsubsection StitchingExample Stitching example
 \cgalExample{Polygon_mesh_processing/stitch_borders_example.cpp}
 
 
@@ -189,7 +193,7 @@ inside, outside, or on the boundary of the domain described by a given closed po
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 
-\subsubsection Example
+\subsubsection PolygonSoupExample Polygon soup example
 \cgalExample{Polygon_mesh_processing/polygon_soup_example.cpp}
 
 
@@ -202,7 +206,7 @@ inside, outside, or on the boundary of the domain described by a given closed po
 - `CGAL::Polygon_mesh_processing::compute_face_normals()`
 - `CGAL::Polygon_mesh_processing::compute_vertex_normals()`
 
-\subsection Example
+\subsection NormalsExample Normals computation example
 \cgalExample{Polygon_mesh_processing/compute_normals_example.cpp}
 
 
@@ -211,7 +215,7 @@ inside, outside, or on the boundary of the domain described by a given closed po
 \subsection API
 - `CGAL::Polygon_mesh_slicer`
 
-\subsection Example
+\subsection SlicerExample Slicer example
 \cgalExample{Polygon_mesh_processing/mesh_slicer_example.cpp}
 
 ****************************************
@@ -221,7 +225,7 @@ inside, outside, or on the boundary of the domain described by a given closed po
 - `CGAL::Polygon_mesh_processing::connected_component()`
 - `CGAL::Polygon_mesh_processing::connected_components()`
 
-\subsection Examples
+\subsection CCExample Connected components example
 \cgalExample{Polygon_mesh_processing/connected_components_example.cpp}
 
 */
