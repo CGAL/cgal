@@ -1,3 +1,22 @@
+// Copyright (c) 2015  GeometryFactory (France).  All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+//
+// Author(s)     : Andreas Fabri
+
 #ifndef CGAL_BGL_DUAL_H
 #define CGAL_BGL_DUAL_H
 
@@ -71,18 +90,60 @@ struct graph_traits< const CGAL::Dual<P> >
   : public graph_traits< CGAL::Dual<P> >
 {}; 
 
+namespace internal{
+
+template <class G>
+struct Dual_vertex_index_pmap{
+  typedef typename boost::property_map<G, boost::face_index_t>::type  Property_map;
+  Property_map m_pmap;
+
+  typedef typename boost::graph_traits<G>::face_descriptor key_type;
+  typedef typename Property_map::value_type value_type;
+  typedef typename Property_map::reference reference;
+  typedef typename Property_map::category category;
+
+  Dual_vertex_index_pmap(const G& g)
+    : m_pmap( get(boost::face_index, g) )
+  {}
+
+  friend reference get(const Dual_vertex_index_pmap<G>& pmap, key_type fd) {
+    return get(pmap.m_pmap, fd);
+  }
+};
+
+template <class G>
+struct Dual_face_index_pmap{
+  typedef typename boost::property_map<G, boost::vertex_index_t>::type  Property_map;
+  Property_map m_pmap;
+
+  typedef typename boost::graph_traits<G>::vertex_descriptor key_type;
+  typedef typename Property_map::value_type value_type;
+  typedef typename Property_map::reference reference;
+  typedef typename Property_map::category category;
+
+  Dual_face_index_pmap(const G& g)
+    : m_pmap( get(boost::vertex_index, g) )
+  {}
+
+  friend reference get(const Dual_face_index_pmap<G>& pmap, key_type vd) {
+    return get(pmap.m_pmap, vd);
+  }
+};
+
+} //end of namespace internal
+
 template <typename P>
 struct property_map<CGAL::Dual<P>, boost::vertex_index_t>
 {
-  typedef typename property_map<P, CGAL::face_index_t>::type type; 
-  typedef typename property_map<P, CGAL::face_index_t>::const_type const_type; 
+  typedef internal::Dual_vertex_index_pmap<P> type;
+  typedef internal::Dual_vertex_index_pmap<P> const_type;
 };
 
 template <typename P>
 struct property_map<CGAL::Dual<P>, boost::face_index_t>
 {
-  typedef typename property_map<P, boost::vertex_index_t>::type type;
-  typedef typename property_map<P, boost::vertex_index_t>::const_type const_type;
+  typedef internal::Dual_face_index_pmap<P> type;
+  typedef internal::Dual_face_index_pmap<P> const_type;
 };
 
 } // namespace boost
@@ -91,19 +152,18 @@ struct property_map<CGAL::Dual<P>, boost::face_index_t>
 namespace CGAL {
 
 template <typename P>
-typename boost::property_map<P, boost::face_index_t>::type
+typename boost::internal::Dual_vertex_index_pmap<P>
 get(boost::vertex_index_t, const Dual<P>& dual)
 {
-  return get(CGAL::face_index, dual.primal());
+  return typename boost::internal::Dual_vertex_index_pmap<P>(dual.primal());
 }
 
 template <typename P>
-typename boost::property_map<P, boost::vertex_index_t>::type
+typename boost::internal::Dual_face_index_pmap<P>
 get(boost::face_index_t, const Dual<P>& dual)
 {
-  return get(boost::vertex_index, dual.primal());
+  return typename boost::internal::Dual_face_index_pmap<P>(dual.primal());
 }
-
 
 template <typename P>
 typename boost::graph_traits<CGAL::Dual<P> >::vertices_size_type

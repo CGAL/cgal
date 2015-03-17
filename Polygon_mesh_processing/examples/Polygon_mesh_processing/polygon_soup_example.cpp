@@ -33,8 +33,6 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  std::size_t initial_nb_points = points.size();
-
   CGAL::Polygon_mesh_processing::orient_polygon_soup(points, polygons);
 
   Polyhedron mesh;
@@ -43,7 +41,7 @@ int main(int argc, char* argv[])
   if (!CGAL::Polygon_mesh_processing::is_outward_oriented(mesh))
     CGAL::Polygon_mesh_processing::reverse_face_orientations(mesh);
 
-  std::ofstream out("elephant-oriented.off");
+  std::ofstream out("mesh-oriented.off");
   out << mesh;
   out.close();
 
