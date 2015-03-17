@@ -183,9 +183,23 @@ See \ref PolygonSoupExample for an example of how these functions can be used.
 \section PMPRepairing Combinatorial Repairing 
 
 \subsection Stitching
-- \link stitching_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
+
+It happens that a polygon mesh has several edges and vertices that are duplicated.
+For those edges and vertices, the connectivity of the mesh is incomplete, if not considered incorrect.
+
+Stitching the borders of such a polygon mesh consists in two main steps.
+First, border edges that are the same but duplicated are detected and associated together.
+Then, they are "stitched" together so that the edges and vertices duplicates are removed
+from the mesh, and each of these remaining edges is incident to exactly two faces.
+
+The function \link stitching_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
+is available to perform this repairing operation.
 
 \subsubsection StitchingExample Stitching example
+
+The following example shows how to apply the stitching operation to a simple quad mesh that
+has duplicated border edges.
+
 \cgalExample{Polygon_mesh_processing/stitch_borders_example.cpp}
 
 
