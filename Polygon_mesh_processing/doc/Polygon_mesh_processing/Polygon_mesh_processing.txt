@@ -233,14 +233,30 @@ Section \ref PMPOrientation.
 
 ****************************************
 \section PMPNormalComp Normals Computation
-\subsection API
+
+This package provides methods to compute normals to the polygon mesh.
+The normal can be computed on a single face,
+or estimated at a vertex, as the average of its incident faces normals.
+These computations are done with :
 - `CGAL::Polygon_mesh_processing::compute_face_normal()`
 - `CGAL::Polygon_mesh_processing::compute_vertex_normal()`
-- `CGAL::Polygon_mesh_processing::compute_normals()`
+
+When the normal to each simplex is intended to be used more than once,
+it can be useful to avoid doing those computations again and again.
+Functions that compute all the normals to faces, or at vertices, are also available :
 - `CGAL::Polygon_mesh_processing::compute_face_normals()`
 - `CGAL::Polygon_mesh_processing::compute_vertex_normals()`
+Property maps are used to collect the computed normals.
+
+Finally, a function that computes and collects all normals
+to both faces and vertices is provided :
+- `CGAL::Polygon_mesh_processing::compute_normals()`.
 
 \subsection NormalsExample Normals computation example
+
+The following example illustrates how to collect normals to faces
+and vertices in property maps.
+
 \cgalExample{Polygon_mesh_processing/compute_normals_example.cpp}
 
 
