@@ -32,13 +32,13 @@ typedef CGAL::Monge_via_jet_fitting<Kernel>    Monge_via_jet_fitting;
 typedef Monge_via_jet_fitting::Monge_form      Monge_form;
 
 
-typedef map<vertex_descriptor, FT> VertexFT_map;
+typedef std::map<vertex_descriptor, FT> VertexFT_map;
 typedef boost::associative_property_map< VertexFT_map > VertexFT_property_map;
 
-typedef map<vertex_descriptor, Vector_3> VertexVector_map;
+typedef std::map<vertex_descriptor, Vector_3> VertexVector_map;
 typedef boost::associative_property_map< VertexVector_map > VertexVector_property_map;
 
-typedef map<face_descriptor, Vector_3> Face2Vector_map;
+typedef std::map<face_descriptor, Vector_3> Face2Vector_map;
 typedef boost::associative_property_map< Face2Vector_map > Face2Vector_property_map;
 
 //RIDGES
@@ -193,7 +193,7 @@ int main()
    po::options_description desc("Allowed options");
     desc.add_options()
       ("help,h", "produce help message.")
-      ("input-file,f", po::value<string>(&if_name)->default_value("data/poly2x^2+y^2-0.062500.off"),
+      ("input-file,f", po::value<std::string>(&if_name)->default_value("data/poly2x^2+y^2-0.062500.off"),
        "name of the input off file")
       ("degree-jet,d", po::value<unsigned int>(&d_fitting)->default_value(3),
        "degree of the jet,  3 <= degre-jet <= 4")
@@ -241,11 +241,11 @@ int main()
   }
 
   catch(std::exception& e) {
-    cerr << "error: " << e.what() << "\n";
+    std::cerr << "error: " << e.what() << "\n";
     return 1;
     }
     catch(...) {
-      cerr << "Exception of unknown type!\n";
+      std::cerr << "Exception of unknown type!\n";
     }
 
   //modify global variables
@@ -316,7 +316,7 @@ int main()
 					  vertex_d1_pm, vertex_d2_pm,
 					  vertex_P1_pm, vertex_P2_pm );
   std::vector<Ridge_line*> ridge_lines;
-  back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
+  std::back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
 
   //Find MAX_RIDGE, MIN_RIDGE, CREST_RIDGES
   //   ridge_approximation.compute_max_ridges(ii, tag_order);
@@ -354,7 +354,7 @@ int main()
   //--------------------------------------------------------------------------
   std::cout << "Compute umbilics..." << std::endl;
   std::vector<Umbilic*> umbilics;
-  back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
+  std::back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
 
   //explicit construction of the class
  //  Umbilic_approximation umbilic_approximation(P,

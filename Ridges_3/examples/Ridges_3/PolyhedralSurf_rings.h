@@ -5,7 +5,6 @@
 #include <vector>
 #include <map>
 
-using namespace std;
 
 //---------------------------------------------------------------------------
 //T_PolyhedralSurf_rings

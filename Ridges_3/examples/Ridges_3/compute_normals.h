@@ -53,7 +53,7 @@ void compute_facets_normals(const TriangleMesh& tm,
     Vector_3 normal = 
       CGAL::cross_product(get(vpm, target(h,tm)) -
 			    get(vpm, target(opposite(h,tm),tm)),
-                          get(vpm, target(next(h,tm),tm)) -  // AF: arghh CGAL::
+                          get(vpm, target(next(h,tm),tm)) -
 			    get(vpm, target(opposite(h,tm),tm)));
       put(fvm, f, normal / CGAL::sqrt(normal * normal));
   }
