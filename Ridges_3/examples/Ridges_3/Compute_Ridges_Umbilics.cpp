@@ -96,7 +96,7 @@ void gather_fitting_points(vertex_descriptor v,
   //enough rings and discard some points of the last collected ring to
   //get the exact "nb_points_to_use"
   if ( nb_points_to_use != 0 ) {
-    poly_rings.collect_enough_rings(v, nb_points_to_use, gathered);//, vpm);
+    poly_rings.collect_enough_rings(v, nb_points_to_use, gathered);
     if ( gathered.size() > nb_points_to_use ) gathered.resize(nb_points_to_use);
   }
   else { // nb_points_to_use=0, this is the default and the option -p is not considered;
@@ -104,8 +104,8 @@ void gather_fitting_points(vertex_descriptor v,
     // enough rings to get the min_nb_points required for the fitting
     // else collect the nb_rings required
     if ( nb_rings == 0 )
-      poly_rings.collect_enough_rings(v, min_nb_points, gathered);//, vpm);
-    else poly_rings.collect_i_rings(v, nb_rings, gathered);//, vpm);
+      poly_rings.collect_enough_rings(v, min_nb_points, gathered);
+    else poly_rings.collect_i_rings(v, nb_rings, gathered);
   }
 
   //store the gathered points
