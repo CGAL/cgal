@@ -46,17 +46,19 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<G> >
 };
 
 
-int main(int, char* argv[]) 
+int main(int argc, char* argv[])
 {
-  typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
-  const double bound = std::cos(0.7* CGAL_PI);
+  char* filename = (argc > 1) ? argv[1] : "data/eight.off";
+  std::ifstream input(filename);
 
   Mesh mesh;
-  std::ifstream input("data/eight.off");
   if (!input || !(input >> mesh) || mesh.is_empty()) {
     std::cerr << "Not a valid off file." << std::endl;
     return 1;
   }
+
+  typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
+  const double bound = std::cos(0.7* CGAL_PI);
 
   std::vector<face_descriptor> cc;
   face_descriptor fd = *faces(mesh).first;

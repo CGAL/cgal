@@ -14,9 +14,11 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
 
-int main()
+int main(int argc, char* argv[])
 {
-  std::ifstream input("data/elephant-shuffled.off");
+  char* filename = (argc > 1) ? argv[1] : "data/elephant-shuffled.off";
+  std::ifstream input(filename);
+
   if (!input)
   {
     std::cerr << "Cannot open file " << std::endl;

@@ -11,10 +11,12 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
 
-int main()
+int main(int argc, char* argv[])
 {
+  char* filename = (argc > 1) ? argv[1] : "data/full_border_quads.off";
+  std::ifstream input(filename);
+
   Polyhedron mesh;
-  std::ifstream input("data/full_border_quads.off");
   if (!input || !(input >> mesh) || mesh.is_empty()) {
     std::cerr << "Not a valid off file." << std::endl;
     return 1;

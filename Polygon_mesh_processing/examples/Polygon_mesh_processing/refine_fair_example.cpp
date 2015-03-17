@@ -39,10 +39,12 @@ std::vector<Vertex_handle> extract_k_ring(Vertex_handle v, int k)
   return Q;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+  char* filename = (argc > 1) ? argv[1] : "data/blobby.off";
+  std::ifstream input(filename);
+
   Polyhedron poly;
-  std::ifstream input("data/max.off");
   if ( !input || !(input >> poly) || poly.empty() ) {
     std::cerr << "Not a valid off file." << std::endl;
     return 1;

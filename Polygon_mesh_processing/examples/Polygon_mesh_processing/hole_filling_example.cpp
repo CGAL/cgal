@@ -17,10 +17,12 @@ typedef Polyhedron::Halfedge_handle    Halfedge_handle;
 typedef Polyhedron::Facet_handle       Facet_handle;
 typedef Polyhedron::Vertex_handle      Vertex_handle;
 
-int main()
+int main(int argc, char* argv[])
 {
+  char* filename = (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
+  std::ifstream input(filename);
+
   Polyhedron poly_1;
-  std::ifstream input("data/mech-holes-shark.off");
   if ( !input || !(input >> poly_1) || poly_1.empty() ) {
     std::cerr << "Not a valid off file." << std::endl;
     return 1;

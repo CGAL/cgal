@@ -10,9 +10,10 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                    Point;
 typedef CGAL::Surface_mesh<Point>          Surface_mesh;
 
-int main()
+int main(int argc, char* argv[])
 {
-  std::ifstream input("data/cube_quad.off");
+  char* filename = (argc > 1) ? argv[1] : "data/cube_quad.off";
+  std::ifstream input(filename);
 
   Surface_mesh mesh;
   if (!input || !(input >> mesh) || mesh.is_empty())

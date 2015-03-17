@@ -10,11 +10,12 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
-int main(int, char** argv)
+int main(int argc, char* argv[])
 {
-  std::ifstream input(argv[1]);
-  Mesh mesh;
+  char* filename = (argc > 1) ? argv[1] : "data/pig.off";
+  std::ifstream input(filename);
 
+  Mesh mesh;
   if (!input || !(input >> mesh))
   {
     std::cerr << "Not a valid off file." << std::endl;
@@ -25,7 +26,7 @@ int main(int, char** argv)
     CGAL::Polygon_mesh_processing::is_self_intersecting<K>(mesh);
 
   std::cout
-    << (intersecting ? "There is a self-intersection." : "There is no self-intersection.")
+    << (intersecting ? "There are self-intersections." : "There is no self-intersection.")
     << std::endl;
 
   std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;

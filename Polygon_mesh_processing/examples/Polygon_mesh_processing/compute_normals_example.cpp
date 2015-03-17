@@ -14,10 +14,12 @@ typedef CGAL::Surface_mesh<Point> Surface_mesh;
 typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Surface_mesh>::face_descriptor face_descriptor;
 
-int main()
+int main(int argc, char* argv[])
 {
+  char* filename = (argc > 1) ? argv[1] : "data/eight.off";
+  std::ifstream input(filename);
+
   Surface_mesh mesh;
-  std::ifstream input("data/eight.off");
   if (!input || !(input >> mesh) || mesh.is_empty()) {
     std::cerr << "Not a valid off file." << std::endl;
     return 1;

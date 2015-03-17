@@ -19,10 +19,12 @@ typedef CGAL::AABB_halfedge_graph_segment_primitive<Mesh> HGSP;
 typedef CGAL::AABB_traits<K, HGSP>    AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits>  AABB_tree;
 
-int main()
+int main(int argc, char* argv[])
 {
+  char* filename = (argc > 1) ? argv[1] : "data/eight.off";
+  std::ifstream input(filename);
+
   Mesh mesh;
-  std::ifstream input("data/eight.off");
   if (!input || !(input >> mesh) || mesh.is_empty()) {
     std::cerr << "Not a valid off file." << std::endl;
     return 1;
