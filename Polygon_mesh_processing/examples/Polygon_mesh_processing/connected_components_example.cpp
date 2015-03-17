@@ -7,6 +7,7 @@
 #include <boost/foreach.hpp>
 #include <iostream>
 #include <fstream>
+#include <utility>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                                     Point;
@@ -59,7 +60,7 @@ int main(int argc, char* argv[])
   }
 
   typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
-  const double bound = std::cos(0.7* CGAL_PI);
+  const double bound = std::cos(0.75 * CGAL_PI);
 
   std::vector<face_descriptor> cc;
   face_descriptor fd = *faces(mesh).first;
@@ -67,23 +68,29 @@ int main(int argc, char* argv[])
                                         mesh,
                                         std::back_inserter(cc));
 
-  std::cerr << "connected components without edge constraints" << std::endl;
+  std::cerr << "Connected components without edge constraints" << std::endl;
   std::cerr << cc.size() << " faces in the CC of " << fd << std::endl;
 
 
-  std::cerr << "\nconnected components with edge constraints (dihedral angle < 3/4 pi)" << std::endl;
+  std::cerr << "\nConnected components with edge constraints (dihedral angle < 3/4 pi)" << std::endl;
   Mesh::Property_map<face_descriptor, std::size_t> fccmap;
   fccmap = mesh.add_property_map<face_descriptor, std::size_t>("f:CC").first;
   std::size_t num = CGAL::Polygon_mesh_processing::connected_components(mesh,
                                         fccmap,
                                         Constraint<Mesh>(mesh, bound));
   
-  std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
+  std::cerr << "- The graph has " << num << " connected components (face connectivity)" << std::endl;
+  typedef std::map<std::size_t/*index of CC*/, unsigned int/*nb*/> Components_size;
+  Components_size nb_per_cc;
   BOOST_FOREACH(face_descriptor f , faces(mesh)){
-    std::cout  << f << " in connected component " << fccmap[f] << std::endl;
+    nb_per_cc[ fccmap[f] ]++;
   }
- 
-  std::cerr << "We keep the two largest components" << std::endl; 
+  BOOST_FOREACH(const Components_size::value_type& cc, nb_per_cc){
+    std::cout << "\t CC #" << cc.first
+              << " is made of " << cc.second << " faces" << std::endl;
+  }
+
+  std::cerr << "- We keep the two largest components" << std::endl; 
   CGAL::Polygon_mesh_processing::keep_largest_connected_components(mesh,
                                         2,
                                         Constraint<Mesh>(mesh, bound));
