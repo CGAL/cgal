@@ -41,7 +41,7 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<G> >
                    bound_) == CGAL::SMALLER;
   }
 
-  G* g_;
+  const G* g_;
   Compare_dihedral_angle_3 compare_;
   double bound_;
 };
