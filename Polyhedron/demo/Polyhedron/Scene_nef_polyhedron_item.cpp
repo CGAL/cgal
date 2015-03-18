@@ -805,14 +805,15 @@ void Scene_nef_polyhedron_item::draw_edges(Viewer_interface* viewer) const
     glUseProgram(rendering_program_lines);
     uniform_attrib(viewer ,1);
     glDrawArrays(GL_LINES,0,positions_lines.size()/3);
-
+if(renderingMode() == PointsPlusNormals)
+{
     GLfloat point_size;
     glGetFloatv(GL_POINT_SIZE, &point_size);
     glPointSize(10.f);
 
     draw_points(viewer);
     glPointSize(point_size);
-
+}
     glUseProgram(0);
     glBindVertexArray(0);
 }
