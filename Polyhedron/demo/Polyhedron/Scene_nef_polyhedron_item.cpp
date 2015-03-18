@@ -1002,8 +1002,11 @@ convex_decomposition(std::list< Scene_polyhedron_item*>& convex_parts)
             N.convert_inner_shell_to_polyhedron(ci->shells_begin(), P);
             Polyhedron* poly = new Polyhedron;
             from_exact(P, *poly);
-            convex_parts.push_back(new Scene_polyhedron_item(poly));
+            Scene_polyhedron_item *spoly = new Scene_polyhedron_item(poly);
+            convex_parts.push_back(spoly);
+            spoly->changed();
         }
+
     }
 }
 
