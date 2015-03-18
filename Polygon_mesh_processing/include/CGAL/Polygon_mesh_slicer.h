@@ -59,7 +59,7 @@ namespace CGAL {
 ///         orthogonal to a frame axis, the non-null coefficient being 1 or -1.
 ///         The default is `true`.
 ///
-/// Depends on \ref PkgAABB_treeSummary
+/// The implemenation of this class depends on the package \ref PkgAABB_treeSummary.
 /// \todo Shall we document more in details what is required?
 ///       `Traits` must provide:
 ///        - `Plane_3`
@@ -296,8 +296,8 @@ class Polygon_mesh_slicer
 public:
 
   /**
-  * Constructor using all `edges(tmesh)` to initialize the
-  * internal \cgal `AABB_tree`.
+  * Constructor using `edges(tmesh)` to initialize the
+  * internal `AABB_tree`.
   * @param tmesh the triangulated surface mesh to be cut.
   *              It must be valid and non modified as long
   *              as the functor is used.
@@ -339,8 +339,8 @@ public:
   { }
 
   /**
-  * Constructor using all `edges(tmesh)` to initialize the
-  * internal \cgal `AABB_tree`. The vertex point property map used
+  * Constructor using `edges(tmesh)` to initialize the
+  * internal `AABB_tree`. The vertex point property map used
   * is `get(CGAL::vertex_point, tmesh)`
   * @param tmesh the triangulated surface mesh to be cut.
   *              It must be valid and non modified as long
@@ -361,7 +361,7 @@ public:
   }
 
   /**
-  * Constructor using a \cgal `AABB_tree` provided by the user.
+  * Constructor using a `AABB_tree` provided by the user.
   * The vertex point property map used is `get(CGAL::vertex_point, tmesh)`
   * @param tmesh the triangulated surface mesh to be cut.
   *              It must be valid and non modified as long
