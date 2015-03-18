@@ -185,8 +185,8 @@ void reverse_orientation(typename boost::graph_traits<PolygonMesh>::halfedge_des
 template<typename PolygonMesh>
 void reverse_face_orientations(PolygonMesh& pmesh)
 {
-  typedef boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-  typedef boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   BOOST_FOREACH(face_descriptor fd, faces(pmesh)){
     reverse_orientation(halfedge(fd,pmesh),pmesh);
   } 
