@@ -1,5 +1,5 @@
-#ifndef CGAL_TRIANGULATE_HOLE_H
-#define CGAL_TRIANGULATE_HOLE_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_HOLE_H
+#define CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_HOLE_H
 
 #include <CGAL/Polygon_mesh_processing/internal/Hole_filling/Triangulate_hole_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/internal/Hole_filling/Triangulate_hole_polyline.h>
@@ -353,4 +353,4 @@ namespace Polygon_mesh_processing {
 
 } //end namespace CGAL
 
-#endif //CGAL_TRIANGULATE_HOLE_H
+#endif //CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_HOLE_H

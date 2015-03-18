@@ -18,7 +18,8 @@
 //
 // Author(s)     : Laurent Rineau
 
-#ifndef CGAL_TRIANGULATE_POLYHEDRON_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_FACES_H
+#define CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_FACES_H
 
 #include <CGAL/Modifier_base.h>
 #include <CGAL/HalfedgeDS_decorator.h>
@@ -281,4 +282,4 @@ void triangulate_faces(PolygonMesh& pmesh)
 
 } // end namespace CGAL
 
-#endif // CGAL_TRIANGULATE_POLYHEDRON_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_FACES_H
