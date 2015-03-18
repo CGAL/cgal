@@ -12,16 +12,16 @@ namespace Polygon_mesh_processing {
   @brief Function refining a region on a polygon mesh
 
   @tparam PolygonMesh model of `MutableFaceGraph`
-  @tparam FaceRange range of input faces, model of `SinglePassRange`
+  @tparam FaceRange range of face descriptors, model of `SinglePassRange`
   @tparam FaceOutputIterator model of `OutputIterator`
     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
   @tparam VertexOutputIterator model of `OutputIterator`
     holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices
 
-  @param pmesh polygon mesh to be refined
-  @param faces the range of faces to be refined
-  @param faces_out iterator over newly created faces
-  @param vertices_out iterator over newly created vertices
+  @param pmesh polygon mesh with patches to be refined
+  @param faces the range of faces defining the patches to refine
+  @param faces_out output iterator into which descriptors of new faces are put
+  @param vertices_out output iterator into which descriptors of new vertices are put
   @param density_control_factor factor for density where larger values cause denser refinements
 
   @return pair of @a faces_out and @a vertices_out
