@@ -1,7 +1,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_FAIR_H
 #define CGAL_POLYGON_MESH_PROCESSING_FAIR_H
 
-#include <CGAL/Polygon_mesh_processing/internal/Meshing_functions/Fair_Polyhedron_3.h>
+#include <CGAL/Polygon_mesh_processing/internal/fair_impl.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver

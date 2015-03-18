@@ -1,7 +1,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REFINE_H
 #define CGAL_POLYGON_MESH_PROCESSING_REFINE_H
 
-#include <CGAL/Polygon_mesh_processing/internal/Meshing_functions/Refine_Polyhedron_3.h>
+#include <CGAL/Polygon_mesh_processing/internal/refine_impl.h>
 
 namespace CGAL {
 
@@ -26,6 +26,7 @@ namespace Polygon_mesh_processing {
 
   @return pair of @a faces_out and @a vertices_out
 
+  \todo SUBMISSION: missing VertexPointMap
   @todo current algorithm iterates 10 times at most, since (I guess) there is no termination proof.
   */
   template<class PolygonMesh,
