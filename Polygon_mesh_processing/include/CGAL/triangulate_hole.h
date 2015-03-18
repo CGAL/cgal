@@ -166,9 +166,6 @@ namespace Polygon_mesh_processing {
       (pmesh, border_halfedge, face_out, std::back_inserter(patch),
       density_control_factor, use_dt3).first;
 
-    //typedef internal::Fair_default_sparse_linear_solver::Solver Default_solver;
-    //typedef typename Default::Get<SparseLinearSolver, Default_solver>::type Solver;
-
     bool fair_success = fair(pmesh, patch, solver, continuity);
 
     vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
@@ -205,9 +202,6 @@ namespace Polygon_mesh_processing {
     face_out = triangulate_and_refine_hole
       (pmesh, border_halfedge, face_out, std::back_inserter(patch),
       density_control_factor, use_dt3).first;
-
-    //typedef internal::Fair_default_sparse_linear_solver::Solver Default_solver;
-    //typedef typename Default::Get<SparseLinearSolver, Default_solver>::type Solver;
 
     bool fair_success = internal::fair(pmesh, patch, solver, weight_calculator, continuity);
 
