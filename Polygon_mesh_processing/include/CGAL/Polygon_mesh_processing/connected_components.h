@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     : Sebastien Loriot
+// Author(s)     : Sebastien Loriot and Andreas Fabri
 
 #ifndef CGAL_INTERNAL_POLYHEDRON_SUBSET_EXTRACTION_H
 #define CGAL_INTERNAL_POLYHEDRON_SUBSET_EXTRACTION_H

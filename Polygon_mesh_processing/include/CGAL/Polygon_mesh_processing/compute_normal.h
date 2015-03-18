@@ -1,4 +1,4 @@
-// Copyright (c) 2013 INRIA Sophia-Anitpolis (France).
+// Copyright (c) 2015 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,9 +14,9 @@
 //
 // $URL$
 // $Id$
+// 
 //
-//
-// Author(s)     : Pierre Alliez
+// Author(s)     : Jane Tournois
 
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_COMPUTE_NORMAL_H
