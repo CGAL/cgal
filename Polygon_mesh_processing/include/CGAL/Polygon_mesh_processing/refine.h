@@ -24,9 +24,10 @@ namespace Polygon_mesh_processing {
   @param vertices_out output iterator into which descriptors of new vertices are put
   @param density_control_factor factor for density where larger values cause denser refinements
 
-  @return pair of @a faces_out and @a vertices_out
+  @return pair of `faces_out` and `vertices_out`
 
   \todo SUBMISSION: missing VertexPointMap
+  \todo SUBMISSION: better document density_control_factor 
   @todo current algorithm iterates 10 times at most, since (I guess) there is no termination proof.
   */
   template<class PolygonMesh,

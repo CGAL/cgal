@@ -16,8 +16,9 @@ namespace Polygon_mesh_processing {
   /*!
   \ingroup PkgPolygonMeshProcessing
   triangulates a hole in a polygon mesh.
-  The hole should contain no non-manifold vertex. Generated patch is guaranteed to not break edge manifoldness and contain no degenerate triangle.
-  If no possible patch is found, @a pmesh is not altered in any way, and no face descriptor is put into @a out.
+  The hole must not contain any non-manifold vertex.
+  The patch generated does not introduce non-manifold edges nor degenerate triangles.
+  If a hole cannot be triangulated, `pmesh` is not modified and nothing is put in `out`.
 
   @tparam PolygonMesh a model of `MutableFaceGraph`
   @tparam OutputIterator a model of `OutputIterator`
@@ -28,7 +29,7 @@ namespace Polygon_mesh_processing {
   @param out iterator over patch faces
   @param use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
 
-  @return @a out
+  @return `out`
 
   \todo handle islands
   @todo Replace border_halfedge by a range of border halfedges.
@@ -36,7 +37,8 @@ namespace Polygon_mesh_processing {
         the other ones would describe the islands.
   @todo Then, insert the holes vertices in the set of possibilities
         for connecting vertices together
-  @todo Handle the case where an island is reduced to a point
+  @todo handle the case where an island is reduced to a point
+  \todo SUBMISSION: VertexPointMap
   */
   template<class PolygonMesh, class OutputIterator>
   OutputIterator
@@ -73,8 +75,13 @@ namespace Polygon_mesh_processing {
   @param density_control_factor factor for density where larger values cause denser refinements
   @param use_delaunay_triangulation if `true`, use the Delaunay triangulation face search space
 
-  @return pair of @a face_out and @a vertex_out
+  @return pair of `face_out` and `vertex_out`
 
+  \sa CGAL::Polygon_mesh_processing::triangulate_hole()
+  \sa CGAL::Polygon_mesh_processing::refine()
+
+  \todo SUBMISSION: VertexPointMap
+  \todo SUBMISSION: better document density_control_factor (ideally we should refer to the doc of refine)
   \todo handle islands
   */
   template<class PolygonMesh,
@@ -135,10 +142,15 @@ namespace Polygon_mesh_processing {
 
   @return tuple of
   - bool: `true` if fairing is successful
-  - @a face_out
-  - @a vertex_out
+  - `face_out`
+  - `vertex_out`
+
+  \sa CGAL::Polygon_mesh_processing::triangulate_hole()
+  \sa CGAL::Polygon_mesh_processing::refine()
+  \sa CGAL::Polygon_mesh_processing::fair()
 
   \todo handle islands
+  \todo SUBMISSION: VertexPointMap
   */
   template<typename PolygonMesh,
            typename SparseLinearSolver,
@@ -236,15 +248,16 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup PkgPolygonMeshProcessing
-  creates triangles to fill the hole defined by points in the range (@a points).
-  Triangles are put into @a out
-  using the indices of the input points in the range (@a points).
-  Note that no degenerate triangles are allowed during filling. If no possible patch is found, then no triangle is put into @a out.
+  creates triangles to fill the hole defined by points in the range (`points`).
+  Triangles are put into `out`
+  using the indices of the input points in the range (`points`).
+  Note that no degenerate triangles will be produced.
+  If no triangulation can be found, then nothing is put in `out`.
 
-  The optional range (@a third_points) indicates for each pair of consecutive points in the range (@a points),
+  The optional range (`third_points`) indicates for each pair of consecutive points in the range (`points`),
   the third point of the facet this segment is incident to.
 
-  Note that the ranges (@a points) and (@a third_points) may or may not contain duplicated first point at the end of sequence.
+  Note that the ranges (`points`) and (`third_points`) may or may not contain duplicated first point at the end of sequence.
 
   @tparam OutputIteratorValueType value type of `OutputIterator`
     having a constructor `OutputIteratorValueType(int p0, int p1, int p2)` available.
