@@ -12,17 +12,6 @@ namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
-/*!
-\ingroup PkgPolygonMeshProcessing
-@brief Fairing continuity type
-*/
-enum Fairing_continuity
-{
-  FAIRING_C_0 = 0, /**< C0 continuity */
-  FAIRING_C_1 = 1,  /**< C1 continuity */
-  FAIRING_C_2 = 2   /**< C2 continuity */
-};
-
 namespace internal {
   // use non-default weight calculator and non-default solver
   // WeightCalculator a model of `FairWeightCalculator`, can be omitted to use default Cotangent weights
@@ -32,7 +21,7 @@ namespace internal {
     VertexRange vertices,
     SparseLinearSolver solver,
     WeightCalculator weight_calculator,
-    Fairing_continuity continuity = FAIRING_C_1)
+    unsigned int continuity = 1)
   {
     CGAL::Polygon_mesh_processing::internal::Fair_Polyhedron_3<PolygonMesh,
       SparseLinearSolver, WeightCalculator> fair_functor(pmesh, weight_calculator);
@@ -46,7 +35,7 @@ namespace internal {
     VertexRange vertices,
     CGAL::Default,
     WeightCalculator weight_calculator,
-    Fairing_continuity continuity = FAIRING_C_1)
+    unsigned int continuity = 1)
   {
     typedef   CGAL::Eigen_solver_traits<
                 Eigen::SparseLU< CGAL::Eigen_sparse_matrix<double>::EigenType,
@@ -83,12 +72,11 @@ namespace internal {
   @param pmesh the polygon mesh with patches to be faired
   @param vertices the vertices of the patches to be faired (the positions of only those vertices will be changed)
   @param solver an instance of the sparse linear solver to use.
-  @param continuity continuity at the patch boundary
+  @param continuity continuity at the patch boundary (0, 1 and 2 are the possible values)
 
   @return `true` if fairing is successful, otherwise no vertex position is changed
 
   \todo SUBMISSION: missing VertexPointMap
-  \todo SUBMISSION: do we really need an enum for the continuity rather than an unsigned int?
   @todo accuracy of solvers are not good, for example when there is no boundary condition pre_factor should fail, but it does not.
   */
   template<class SparseLinearSolver, class PolygonMesh, class VertexRange>
@@ -98,7 +86,7 @@ namespace internal {
 #ifdef DOXYGEN_RUNNING
     = CGAL::Default()
 #endif
-    , CGAL::Polygon_mesh_processing::Fairing_continuity continuity = FAIRING_C_1)
+    , unsigned int continuity = 1)
   {
     typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh> Weight_calculator;
     return internal::fair<SparseLinearSolver, Weight_calculator, PolygonMesh, VertexRange>
@@ -112,7 +100,7 @@ namespace internal {
   bool fair(PolygonMesh& pmesh,
     VertexRange vertices,
     CGAL::Default,
-    Fairing_continuity continuity = FAIRING_C_1)
+    unsigned int continuity = 1)
   {
     typedef   CGAL::Eigen_solver_traits<
                 Eigen::SparseLU< CGAL::Eigen_sparse_matrix<double>::EigenType,

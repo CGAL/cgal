@@ -151,7 +151,7 @@ namespace Polygon_mesh_processing {
     VertexOutputIterator vertex_out,
     SparseLinearSolver solver = CGAL::Default(),
     double density_control_factor = std::sqrt(2.0),
-    Fairing_continuity continuity = FAIRING_C_1,
+    unsigned int continuity = 1,
     bool use_delaunay_triangulation = true)
   {
     bool use_dt3 =
@@ -188,7 +188,7 @@ namespace Polygon_mesh_processing {
       WeightCalculator weight_calculator,
       SparseLinearSolver solver = CGAL::Default(),
       double density_control_factor = std::sqrt(2.0),
-      Fairing_continuity continuity = FAIRING_C_1,
+      unsigned int continuity = 1,
       bool use_delaunay_triangulation = true)
   {
     bool use_dt3 =
@@ -219,7 +219,7 @@ namespace Polygon_mesh_processing {
       FaceOutputIterator face_out,
       VertexOutputIterator vertex_out,
       double density_control_factor = std::sqrt(2.0),
-      Fairing_continuity continuity = FAIRING_C_1,
+      unsigned int continuity = 1,
       bool use_delaunay_triangulation = true)
   {
     bool use_dt3 =

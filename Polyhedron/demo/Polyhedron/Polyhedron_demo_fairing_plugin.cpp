@@ -72,8 +72,7 @@ public slots:
     }
     QApplication::setOverrideCursor(Qt::WaitCursor);
     int weight_index = ui_widget.Weight_combo_box->currentIndex();
-    CGAL::Polygon_mesh_processing::Fairing_continuity continuity
-      = static_cast<CGAL::Polygon_mesh_processing::Fairing_continuity>(ui_widget.Continuity_spin_box->value());
+    unsigned int continuity = ui_widget.Continuity_spin_box->value();
 
     if(weight_index == 1)
       CGAL::Polygon_mesh_processing::internal::fair(*selection_item->polyhedron(),
