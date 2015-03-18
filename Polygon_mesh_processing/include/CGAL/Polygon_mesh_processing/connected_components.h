@@ -361,7 +361,7 @@ namespace Polygon_mesh_processing{
  * \ingroup PkgPolygonMeshProcessing
  *  discovers all the faces in the same connected component as `seed_face` and puts them in `out`.
  * `seed_face` will also be added in `out`.
- *  Two faces are considered to be in the same connected component if they share an edge.
+ *  Two faces are put in the same connected component if they share an edge that is not marked as constrained.
 
  *  \tparam PolygonMesh a model of `FaceGraph`
  *  \tparam FaceOutputIterator a model of `OutputIterator` that accepts
@@ -474,8 +474,8 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
 /*!
  * \ingroup PkgPolygonMeshProcessing
  *  computes for each face the index of the connected component to which it belongs.
- *  Two faces are considered to be in the same connected component if they share an edge.
- *  \tparam PolygonMesh a model of `FaceGraph`
+ *  Two faces are put in the same connected component if they share an edge that is not marked as constrained.
+ *  \tparam PolygonMesh a model of `FaceListGraph`
  *  \tparam FaceComponentMap a model of `WritablePropertyMap` with
         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
         `boost::face_index` as value type.
@@ -573,8 +573,9 @@ connected_components(const PolygonMesh& pmesh,
  * \ingroup PkgPolygonMeshProcessing
  *  erases the small connected components and the isolated vertices.
  *  Keep `nb_components_to_keep` largest connected components. 
- 
- * \tparam PolygonMesh a model of `FaceGraph`
+ *  Two faces are put in the same connected component if they share an edge that is not marked as constrained.
+ *
+ * \tparam PolygonMesh a model of `FaceListGraph`
  * \tparam EdgeConstraintMap a model of `ReadablePropertyMap` with
        `boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
        `bool` as value type. It should be default-constructible.
