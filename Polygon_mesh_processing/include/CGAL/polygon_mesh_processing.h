@@ -4,9 +4,9 @@
 * Convenience header file only including the headers for all
 * functions of this package that are part of
 * the namespace `Polygon_mesh_processing` :
-* `CGAL/orient_polygon_soup.h`,
+* `CGAL/Polygon_mesh_processing/orient_polygon_soup.h`,
 * `CGAL/Polygon_mesh_processing/self_intersections.h`,
-* `CGAL/polygon_soup_to_polygon_mesh.h`,
+* `CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h`,
 * `CGAL/Polygon_mesh_processing/triangulate_faces.h`,
 * `CGAL/Polygon_mesh_processing/triangulate_hole.h`,
 * `CGAL/Polygon_mesh_processing/compute_normal.h`,
@@ -18,7 +18,7 @@
 
 */
 
-#include <CGAL/orient_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>

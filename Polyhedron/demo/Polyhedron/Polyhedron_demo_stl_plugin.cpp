@@ -7,7 +7,7 @@
 #include <fstream>
 
 #include <CGAL/IO/Polyhedron_builder_from_STL.h>
-#include <CGAL/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <QColor>
 

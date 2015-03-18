@@ -3,8 +3,8 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/orient_polygon_soup.h>
-#include <CGAL/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Timer.h>

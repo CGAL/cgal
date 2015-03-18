@@ -18,8 +18,8 @@
 //
 // Author(s)     : Laurent Rineau and Ilker O. Yaz
 
-#ifndef CGAL_POLYGON_SOUP_TO_POLYHEDRON
-#define CGAL_POLYGON_SOUP_TO_POLYHEDRON
+#ifndef CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH
+#define CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH
 
 #include <CGAL/Modifier_base.h>
 #include <CGAL/IO/generic_print_polyhedron.h>
@@ -118,4 +118,4 @@ public:
 
 }// end namespace CGAL
 
-#endif
+#endif // CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH

@@ -19,8 +19,8 @@
 // Author(s)     : Laurent Rineau and Sebastien Loriot
 
 
-#ifndef CGAL_ORIENT_POLYGON_SOUP
-#define CGAL_ORIENT_POLYGON_SOUP
+#ifndef CGAL_POLYGON_MESH_PROCESSING_ORIENT_POLYGON_SOUP
+#define CGAL_POLYGON_MESH_PROCESSING_ORIENT_POLYGON_SOUP
 
 #include <CGAL/tuple.h>
 #include <CGAL/array.h>
@@ -411,4 +411,4 @@ bool orient_polygon_soup(std::vector<Point>& points,
 
 } }//end namespace CGAL::Polygon_mesh_processing
 
-#endif // CGAL_ORIENT_POLYGON_SOUP
+#endif // CGAL_POLYGON_MESH_PROCESSING_ORIENT_POLYGON_SOUP
