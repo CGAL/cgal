@@ -14,7 +14,7 @@
 #include <CGAL/boost/graph/helpers.h>
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
-#include <CGAL/Hole_filling/do_not_use_DT3.h>
+#include <CGAL/Polygon_mesh_processing/internal/Hole_filling/do_not_use_DT3.h>
 
 #include <CGAL/assertions.h>
 
