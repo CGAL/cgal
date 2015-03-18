@@ -67,12 +67,11 @@ namespace internal {
              Eigen::COLAMDOrdering<int> >  >
   \endcode
   @tparam PolygonMesh a model of `FaceGraph`
-  @tparam VertexRange a range of vertices of `PolygonMesh`, model of `SinglePassRange`
+  @tparam VertexRange a range of vertex descriptors of `PolygonMesh`, model of `SinglePassRange`
 
-  @param pmesh the polygon mesh to be faired
-  @param vertices the range of vertices allowed to move
-  @param solver an instance of the sparse linear solver to use. It defaults to the 
-         default construtor of the `SparseLinearSolver` template parameter.
+  @param pmesh the polygon mesh with patches to be faired
+  @param vertices the vertices of the patches to be faired (the positions of only those vertices will be changed)
+  @param solver an instance of the sparse linear solver to use.
   @param continuity continuity at the patch boundary
 
   @return `true` if fairing is successful, otherwise no vertex position is changed
