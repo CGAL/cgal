@@ -382,16 +382,17 @@ public:
  * If it is not possible to produce a combinatorial manifold surface, some points are
  * duplicated. These points are either an endpoint of an edge incident to more than
  * two polygons, an endpoint of an edge between two polygons with incompatible orientations
- * (during the re-orientation process), or a point shared by at least two polygons that do not
- * share an edge this point is incident to.
+ * (during the re-orientation process), or more generally if the intersection of the union of
+ * the polygon incident to a point with a infinitesimally small ball centered at the point
+ * is not a topological disk.
  * @tparam Point the point type
- * @tparam Polygon a `std::vector<std::size_t>` corresponding to the indices
- *         of points in `points`
+ * @tparam Polygon a `std::vector<std::size_t>` containing the indices
+ *         of the points of the face
  *
- * @param[in,out] points points of the soup of polygons. Some points might be pushed back to resolve
- *                non-manifold or non-orientability issues.
- * @param[in, out] polygons each element in the vector describes a polygon using the index of the points in `points`.
- *
+ * @param points points of the soup of polygons. Some points might be pushed back to resolve
+ *               non-manifold or non-orientability issues.
+ * @param polygons each element in the vector describes a polygon using the index of the points in `points`.
+ *                 If needed the order of the indices of a polygon might be reversed.
  * @return `true`  if the orientation operation succeded.
  * @return `false` if some points were duplicated, thus producing a self-intersecting polyhedron.
  *
