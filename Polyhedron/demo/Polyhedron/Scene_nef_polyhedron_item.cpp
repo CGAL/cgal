@@ -126,7 +126,7 @@ Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(const Nef_polyhedron& p)
 
 Scene_nef_polyhedron_item::~Scene_nef_polyhedron_item()
 {
-    glDeleteBuffers(6, buffer);
+    glDeleteBuffers(7, buffer);
     glDeleteVertexArrays(1, vao);
     glDeleteProgram(rendering_program_facets);
     glDeleteProgram(rendering_program_lines);

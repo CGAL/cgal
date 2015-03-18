@@ -115,6 +115,7 @@ void Polyhedron_demo_poisson_plugin::on_actionPoissonReconstruction_triggered()
       new_item->setColor(Qt::lightGray);
       scene->addItem(new_item);
 
+
       // Hide point set
       point_set_item->setVisible(false);
       scene->itemChanged(index);

@@ -98,6 +98,7 @@ void Polyhedron_demo_normal_estimation_plugin::on_actionNormalInversion_triggere
     for(Point_set::iterator it = points->begin(); it != points->end(); ++it){
       it->normal() = -1 * it->normal();
     }
+    item->changed();
   }
 }
 

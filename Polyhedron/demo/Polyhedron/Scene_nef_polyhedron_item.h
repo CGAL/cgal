@@ -95,7 +95,7 @@ private:
   void compile_shaders(void);
   void compute_normals_and_vertices(void);
   void uniform_attrib(Viewer_interface*, int) const;
-  void compute_colors();
+
   void triangulate_facet();
   void triangulate_facet_color();
 }; // end class Scene_nef_polyhedron_item

@@ -56,12 +56,14 @@ Scene::Scene(QObject* parent)
         ms_splatting  = new GlSplat::SplatRenderer();
     ms_splattingCounter++;
 #endif
+
 }
 
 Scene::Item_id
 Scene::addItem(Scene_item* item)
 {
     Bbox bbox_before = bbox();
+    item->changed();
     m_entries.push_back(item);
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
@@ -285,17 +287,19 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
         {
             if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
             {
+                item.selection_changed(false);
                 ::glEnable(GL_LIGHTING);
                 ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
                 ::glPointSize(2.f);
                 ::glLineWidth(1.0f);
                 if(index == selected_item)
-                {item.selection_changed(true);
+                {
+                    item.selection_changed(true);
                     CGALglcolor(item.color().lighter(120));
                 }
                 else
 
-                {item.selection_changed(false);
+                {
                     CGALglcolor(item.color());
                 }
 
@@ -363,11 +367,13 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
                     ::glLineWidth(1.0f);
                     if(index == selected_item)
                     {
+
                         item.selection_changed(true);
                         CGALglcolor(item.color().lighter(120));
                     }
                     else
                     {
+
                         item.selection_changed(false);
                         CGALglcolor(item.color());
                     }
