@@ -38,27 +38,30 @@ namespace internal {
 
   /*!
   \ingroup PkgPolygonMeshProcessing
-  @brief Function fairing a region on a polygon mesh.
-  The region described by @a vertices might contain multiple disconnected components.
+  @brief Fairs a region on a polygon mesh.
+  The points of the selected vertices are moved to get an as-smooth-as-possible surface patch.
+  
+  The region described by `vertices` might contain multiple disconnected components.
   Note that the structure is not altered in any way, only positions of the vertices get updated.
 
   Fairing might fail if fixed vertices, which are used as boundary conditions, do not suffice to solve constructed linear system.
-  The larger @a continuity gets, the more fixed vertices are required.
+  The larger `continuity` gets, the more fixed vertices are required.
 
   @tparam SparseLinearSolver a model of `SparseLinearAlgebraTraitsWithFactor_d`. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
   and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter.
-  @tparam PolygonMesh a model of `MutableFaceGraph`
+  @tparam PolygonMesh a model of `FaceGraph`
   @tparam VertexRange a range of vertices of `PolygonMesh`, model of `SinglePassRange`
 
   @param pmesh the polygon mesh to be faired
   @param vertices the range of vertices allowed to move
   @param solver an instance of the sparse linear solver to use. It defaults to the 
          default construtor of the `SparseLinearSolver` template parameter.
-  @param continuity tangential continuity, defaults to `FAIRING_C_1` and can be omitted
+  @param continuity continuity at the patch boundary
 
   @return `true` if fairing is successful, otherwise no vertex position is changed
 
-  @todo document solver parameter
+  \todo SUBMISSION: missing VertexPointMap
+  \todo SUBMISSION: do we really need an enum for the continuity rather than an unsigned int?
   @todo accuracy of solvers are not good, for example when there is no boundary condition pre_factor should fail, but it does not.
   */
   template<class SparseLinearSolver, class PolygonMesh, class VertexRange>
@@ -68,7 +71,7 @@ namespace internal {
 #ifdef DOXYGEN_RUNNING
     = CGAL::Default()
 #endif
-    , Fairing_continuity continuity = FAIRING_C_1)
+    , CGAL::Polygon_mesh_processing::Fairing_continuity continuity = FAIRING_C_1)
   {
     typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh> Weight_calculator;
     return internal::fair<SparseLinearSolver, Weight_calculator, PolygonMesh, VertexRange>
