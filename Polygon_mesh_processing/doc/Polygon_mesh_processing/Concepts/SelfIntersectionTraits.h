@@ -19,10 +19,10 @@ public:
   /// @{
 
   /// Functor constructing triangles.
-  /// It provides `Triangle_3 operator() const(const Point_3&, const Point_3&, const Point_3&)
+  /// It provides `Triangle_3 operator() const(const Point_3&, const Point_3&, const Point_3&)`
   typedef unspecified_type Construct_triangle_3;
   /// Functor constructing segments.
-  /// It provides `Segment_3 operator() const(const Point_3&, const Point_3&)
+  /// It provides `Segment_3 operator() const(const Point_3&, const Point_3&)`
   typedef unspecified_type Construct_segment_3;
   /// Functor testing intersections between triangles and segments.
   /// It provides `bool operator() const (const Triangle_3&, const Segment_3&)` 
