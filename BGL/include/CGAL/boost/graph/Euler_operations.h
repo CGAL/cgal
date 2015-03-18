@@ -124,9 +124,9 @@ make_triangle(const P& p0, const P& p1, const P& p2, Graph& g)
   set_target(h0, v0, g);
   set_target(h1, v1, g);
   set_target(h2, v2, g);
-  set_face(h0, boost::graph_traits<Graph>::null_face());
-  set_face(h1, boost::graph_traits<Graph>::null_face());
-  set_face(h2, boost::graph_traits<Graph>::null_face());
+  set_face(h0, boost::graph_traits<Graph>::null_face(),g);
+  set_face(h1, boost::graph_traits<Graph>::null_face(),g);
+  set_face(h2, boost::graph_traits<Graph>::null_face(),g);
   return opposite(h2,g);
 }
 
@@ -136,8 +136,13 @@ make_triangle(const P& p0, const P& p1, const P& p2, Graph& g)
  **/ 
 template<typename Graph, typename P>
 typename boost::graph_traits<Graph>::halfedge_descriptor
-make_quadrangle(const P& p0, const P& p1, const P& p2, const P& p3, const P& p4, Graph& g)
+make_quadrangle(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
 {
+  typedef typename boost::graph_traits<Graph>              Traits;
+  typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
+  typedef typename Traits::vertex_descriptor               vertex_descriptor;
+  typedef typename Traits::face_descriptor               face_descriptor;
+  typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
   Point_property_map ppmap = get(CGAL::vertex_point, g);
   vertex_descriptor v0, v1, v2, v3;
   v0 = add_vertex(g);
@@ -179,10 +184,10 @@ make_quadrangle(const P& p0, const P& p1, const P& p2, const P& p3, const P& p4,
   set_target(h1, v1, g);
   set_target(h2, v2, g);
   set_target(h3, v3, g);
-  set_face(h0, boost::graph_traits<Graph>::null_face());
-  set_face(h1, boost::graph_traits<Graph>::null_face());
-  set_face(h2, boost::graph_traits<Graph>::null_face());
-  set_face(h3, boost::graph_traits<Graph>::null_face());
+  set_face(h0, boost::graph_traits<Graph>::null_face(),g);
+  set_face(h1, boost::graph_traits<Graph>::null_face(),g);
+  set_face(h2, boost::graph_traits<Graph>::null_face(),g);
+  set_face(h3, boost::graph_traits<Graph>::null_face(),g);
   return opposite(h3,g);
 }
 
@@ -195,6 +200,35 @@ typename boost::graph_traits<Graph>::halfedge_descriptor
 make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
                 const P& p4, const P& p5, const P& p6, const P& p7, Graph& g)
 {
+  std::cerr << "A"<< std::endl;
+  typedef typename boost::graph_traits<Graph>              Traits;
+  typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
+  typedef typename Traits::vertex_descriptor               vertex_descriptor;
+  typedef typename Traits::face_descriptor               face_descriptor;
+
+  halfedge_descriptor hb = make_quadrangle(p0, p1, p2, p3, g);
+  std::cerr << "B"<< std::endl;
+  halfedge_descriptor ht = prev(make_quadrangle(p4, p7, p6, p5, g),g);
+  std::cerr << "C"<< std::endl;
+  for(int i=0; i <4; i++){
+    halfedge_descriptor h = halfedge(add_edge(g),g);
+    set_target(h,target(hb,g),g);
+    set_next(h,opposite(hb,g),g);
+    set_next(opposite(next(ht,g),g),h,g);
+    h = opposite(h,g);
+    set_target(h,target(ht,g),g);
+    set_next(h,opposite(ht,g),g);
+    set_next(opposite(next(hb,g),g),h,g);
+    hb = next(hb,g);
+    ht = prev(ht,g);
+  }
+  std::cerr << "D"<< std::endl;
+  for(int i=0; i <4; i++){
+    fill_hole(opposite(hb,g),g);
+    hb = next(hb,g);
+  }
+  std::cerr << "E"<< std::endl;
+  return hb;
 }
 /** 
  * Creates an isolated tetrahedron in `g` having `p0`, `p1`, `p2`, and `p3` as points.
@@ -202,7 +236,7 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
  **/ 
 template<typename Graph, typename P>
 typename boost::graph_traits<Graph>::halfedge_descriptor
-make_tetrahedron(Graph& g, const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
+make_tetrahedron(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
 {
   typedef typename boost::graph_traits<Graph>              Traits;
   typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
@@ -776,7 +810,7 @@ void make_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
 
 
     /** fills the hole incident to `h`.
-     * \pre `h`must be a border halfedge
+     * \pre `h` must be a border halfedge
      */
 template< typename Graph>
 void fill_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,

@@ -154,12 +154,17 @@ user might encounter.
 - `CGAL::Euler::split_loop()`
 - `CGAL::Euler::remove_face()`
 - `CGAL::Euler::make_hole()`
+- `CGAL::Euler::fill_hole()`
 - `CGAL::Euler::add_center_vertex()`
 - `CGAL::Euler::remove_center_vertex()`
 - `CGAL::Euler::add_vertex_and_face_to_border()` 
 - `CGAL::Euler::add_face_to_border()` 
 - `CGAL::Euler::collapse_edge()` 
 - `CGAL::Euler::satisfies_link_condition()` 
+- `CGAL::Euler::make_triangle()`
+- `CGAL::Euler::make_tetrahedron()`
+- `CGAL::Euler::make_quadrangle()`
+- `CGAL::Euler::make_hexahedron()`
 
 
 */
