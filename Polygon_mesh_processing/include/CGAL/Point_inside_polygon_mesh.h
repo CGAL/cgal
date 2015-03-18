@@ -34,10 +34,11 @@ namespace CGAL {
 /** 
  * \ingroup PkgPolygonMeshProcessing
  * This class provides an efficient point location functionality with respect to a domain bounded
- * by one or several disjoint closed triangulated polyhedral surfaces.
- * In case several polyhedral surfaces are provided as input, a point is said to be inside the domain
+ * by one or several disjoint closed triangle mesh.
+ * In case the triangle mesh as several connected components, a point is said to be inside the domain
  * if an odd number of surfaces is crossed when walking from the point to infinity.
- * The implementation depends on the package \ref PkgAABB_treeSummary.
+ *
+ * This class depends on the package \ref PkgAABB_treeSummary.
 
  * @tparam TriangleMesh a triangulated polyhedral surface, a model of `FaceListGraph`
  * @tparam Kernel a \cgal kernel
@@ -71,11 +72,11 @@ class Point_inside_polygon_mesh
 public:
    /**
    * Constructor with one surface triangle mesh.
-   * @param mesh the triangulated polyhedral surface to be tested
+   * @param mesh the triangle mesh bounding the domain to be tested
    * @param vpmap the property map with the points associated to the vertices of `mesh`
-   * @param kernel the geometric traits, can be omitted.
+   * @param kernel the geometric traits
 
-   * @pre `mesh` must be closed and triangulated.
+   * @pre `CGAL::is_closed(mesh) && CGAL::is_pure_triangle(mesh)`
    */
   Point_inside_polygon_mesh(const TriangleMesh& mesh,
                             VertexPointMap vpmap,
@@ -95,7 +96,7 @@ public:
   /**
   * Constructor with one surface triangle mesh, using `get(boost::vertex_point, mesh)` as
   * vertex point property map.
-  * @param mesh the triangulated polyhedral surface to be tested
+  * @param mesh the triangle mesh bounding the domain to be tested
   * @param kernel the geometric traits, can be omitted.
 
   * @pre `mesh` must be closed and triangulated.
@@ -119,8 +120,8 @@ public:
   * of the triangle mesh primitives.
   * Note the domain described by these primitives should be closed.
 
-  * @param tree a \cgal `AABB_tree` with `AABB_face_graph_triangle_primitive` as `Primitive` type.
-  * @param kernel the geometric traits, can be omitted.
+  * @param tree a \cgal `AABB_tree` with `AABB_face_graph_triangle_primitive` as `Primitive` type
+  * @param kernel the geometric traits
   */
   Point_inside_polygon_mesh(const AABB_tree& tree,
     const Kernel& kernel = Kernel())
@@ -139,7 +140,7 @@ public:
 
 public:
   /**
-   * Query function to determine point location.
+   * returns the location of a query point
    * @param point the query point to be located with respect to the input
             polyhedral surface
    * @return 
