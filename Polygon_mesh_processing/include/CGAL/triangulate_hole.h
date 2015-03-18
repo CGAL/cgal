@@ -114,7 +114,7 @@ namespace Polygon_mesh_processing {
   CGAL::Eigen_sparse_matrix<double>::EigenType,
   Eigen::COLAMDOrdering<int> >  >
   \endcode
-  .
+
 
   @tparam SparseLinearSolver a model of `SparseLinearAlgebraTraitsWithFactor_d`
   @tparam PolygonMesh a model of `MutableFaceGraph`
@@ -254,7 +254,7 @@ namespace Polygon_mesh_processing {
 
   @tparam OutputIteratorValueType value type of `OutputIterator`
     having a constructor `OutputIteratorValueType(int p0, int p1, int p2)` available.
-    It defaults to `value_type_traits<OutputIterator>::type`, and can be omitted when the default is fine.
+    It defaults to `value_type_traits<OutputIterator>::%type`, and can be omitted when the default is fine.
 
   @tparam PointRange range of points, model of `SinglePassRange`
   @tparam OutputIterator model of `OutputIterator`

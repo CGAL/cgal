@@ -307,10 +307,11 @@ void stitch_borders(
 /// if `less_hedge(h1,h2)=less_hedge(h2,h1)=true`.
 
 /// @tparam LessHedge a key comparison functor used to sort halfedges.
-///   It should be able to compare `boost::graph_traits<PolygonMesh>::halfedge_descriptor`
+///   It should be able to compare `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
 
 /// @param pmesh the polygon mesh to be modified by stitching
 /// @param less_hedge an instance of the key comparison functor
+/// @param vpmap the property map with the points associated to the vertices of `pmesh`
 
 /// To use the default implementation of `less_hedge` (using the source and
 /// target points of the halfedges for comparison), 

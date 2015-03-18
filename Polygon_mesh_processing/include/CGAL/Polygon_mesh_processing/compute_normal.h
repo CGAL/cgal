@@ -268,6 +268,7 @@ compute_vertex_normals(const PolygonMesh& pmesh
 * @param vnm the property map in which the vertex normals are written
 * @param fnm the property map in which the face normals are written
 * @param vpmap the property map with the points associated to the vertices of `pmesh`
+* @param k an instance of a \cgal %Kernel
 */
 template <typename PolygonMesh
           , typename VertexNormalMap

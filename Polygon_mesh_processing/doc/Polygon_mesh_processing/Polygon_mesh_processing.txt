@@ -268,7 +268,7 @@ The `CGAL::Polygon_mesh_slicer` is an operator that intersects a given triangula
 mesh with a plane. It computes the intersection as a polyline or a set of polylines since the intersection
 can be made of more than one connected components.
 
-Figure \ref SlicerFig shows
+\cgalFigureRef{SlicerFig} shows
 the polylines returned by the slicing operation for a triangle mesh
 and a plane for which a translation following the normal to the plane 
 is performed.

@@ -181,7 +181,7 @@ namespace Polygon_mesh_processing {
  * @tparam GeomTraits a model of `SelfIntersectionTraits`
  * @tparam TriangleMesh a model of `FaceListGraph` (possibly a \cgal Polyhedron)
  * @tparam OutputIterator a model of `OutputIterator` holding objects of type 
- *   `std::pair<boost::graph_traits<TriangleMesh>::face_descriptor, boost::graph_traits<TriangleMesh>::face_descriptor>`
+ *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
  *
  * @param tmesh triangle mesh to be checked, might be passed by const reference or reference
  * @param out output iterator to be filled with all pairs of non-adjacent facets that intersect
