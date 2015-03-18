@@ -8,7 +8,7 @@
 #include "Polyhedron_demo_plugin_interface.h"
 #include "Polyhedron_type.h"
 
-#include <CGAL/triangulate_hole.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/refine.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>

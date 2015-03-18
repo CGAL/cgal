@@ -11,7 +11,7 @@
 #include "ui_Hole_filling_widget.h"
 #include "Polyhedron_type.h"
 
-#include <CGAL/triangulate_hole.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Timer.h>
 #include <CGAL/iterator.h>
 

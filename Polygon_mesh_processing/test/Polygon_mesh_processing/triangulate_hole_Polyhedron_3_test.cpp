@@ -13,7 +13,7 @@
 #endif
 #include <CGAL/boost/graph/helpers.h>
 
-#include <CGAL/triangulate_hole.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
 #include <CGAL/assertions.h>
 

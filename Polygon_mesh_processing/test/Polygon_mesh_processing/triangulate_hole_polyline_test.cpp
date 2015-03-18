@@ -12,7 +12,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 
-#include <CGAL/triangulate_hole.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
 typedef Kernel::Point_3                  Point_3;

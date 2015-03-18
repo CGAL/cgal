@@ -2,7 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
-#include <CGAL/triangulate_faces.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
 #include <fstream>
 
