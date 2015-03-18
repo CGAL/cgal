@@ -91,9 +91,12 @@ protected:
     subelements.push_back("Final_num_inconsistent_local_tr");
     subelements.push_back("Init_time");
     subelements.push_back("Comput_time");
-    subelements.push_back("Fix_successful");
-    subelements.push_back("Fix_time");
-    subelements.push_back("Fix_steps");
+    subelements.push_back("Fix1_successful");
+    subelements.push_back("Fix1_time");
+    subelements.push_back("Fix1_steps");
+    subelements.push_back("Fix2_pure_manifold");
+    subelements.push_back("Fix2_num_wrong_number_of_cofaces");
+    subelements.push_back("Fix2_time");
     subelements.push_back("Info");
 
     return subelements;
@@ -264,22 +267,26 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
     tc.export_to_off(complex, off_stream);
     export_after_collapse_time = t.elapsed(); t.reset();
   }
-
+  std::size_t num_wrong_dim_simplices, num_wrong_number_of_cofaces;
+  bool pure_manifold = complex.is_pure_manifold(
+    intrinsic_dim, false, 0,
+    &num_wrong_dim_simplices, &num_wrong_number_of_cofaces);
   complex.display_stats();
 
   std::cerr << std::endl
     << "================================================" << std::endl
     << "Number of vertices: " << tc.number_of_vertices() << std::endl
+    << "Pure manifold: " << (pure_manifold ? "YES" : "NO") << std::endl
     << "Computation times (seconds): " << std::endl
     << "  * Tangential complex: " << init_time + computation_time
     << std::endl
     << "    - Init + kd-tree = " << init_time << std::endl
     << "    - TC computation = " << computation_time << std::endl
     << "  * Export to OFF (before fix): " << export_before_time << std::endl
-    << "  * Fix inconsistencies: " << fix_time 
+    << "  * Fix inconsistencies 1: " << fix_time 
     <<      " (" << num_fix_steps << " steps) ==> " 
     <<      (fix_ret == CGAL::TC_FIXED ? "FIXED" : "NOT fixed") << std::endl
-    << "  * Fix 2: " << fix2_time << std::endl
+    << "  * Fix inconsistencies 2: " << fix2_time << std::endl
     << "  * Export to OFF (after fix): " << export_after_fix_time << std::endl
     << "  * Export to OFF (after fix2): "<< export_after_fix2_time << std::endl
     << "  * Export to OFF (after collapse): "
@@ -289,10 +296,15 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
 
     CGAL_TC_SET_PERFORMANCE_DATA("Init_time",     init_time);
     CGAL_TC_SET_PERFORMANCE_DATA("Comput_time",   computation_time);
-    CGAL_TC_SET_PERFORMANCE_DATA("Fix_successful",
-                                 (fix_ret == CGAL::TC_FIXED ? "Y" : "N"));
-    CGAL_TC_SET_PERFORMANCE_DATA("Fix_time",      fix_time);
-    CGAL_TC_SET_PERFORMANCE_DATA("Fix_steps",     num_fix_steps);
+    CGAL_TC_SET_PERFORMANCE_DATA("Fix1_successful",
+                                      (fix_ret == CGAL::TC_FIXED ? "Y" : "N"));
+    CGAL_TC_SET_PERFORMANCE_DATA("Fix1_time",     fix_time);
+    CGAL_TC_SET_PERFORMANCE_DATA("Fix1_steps",    num_fix_steps);
+    CGAL_TC_SET_PERFORMANCE_DATA("Fix2_pure_manifold",
+                                                  (pure_manifold ? "Y" : "N"));
+    CGAL_TC_SET_PERFORMANCE_DATA("Fix2_num_wrong_number_of_cofaces", 
+                                                  num_wrong_number_of_cofaces);
+    CGAL_TC_SET_PERFORMANCE_DATA("Fix2_time",     fix2_time);
     CGAL_TC_SET_PERFORMANCE_DATA("Info", "");
 }
 

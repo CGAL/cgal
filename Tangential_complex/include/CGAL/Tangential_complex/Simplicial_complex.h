@@ -160,14 +160,19 @@ public:
     std::cerr << "==========================================================\n";
   }
 
-  // CJTODO: this is only based on the fact that each edge should have two
-  // cofaces
-  bool is_manifold(bool exit_at_the_first_problem = true)
+  // verbose_level = 0, 1 or 2
+  bool is_pure_manifold(int simplex_dim,
+                        bool exit_at_the_first_problem = false, 
+                        int verbose_level = 0,
+                        std::size_t *p_num_wrong_dim_simplices = NULL, 
+                        std::size_t *p_num_wrong_number_of_cofaces = NULL)
   {
-    typedef std::set<std::size_t>               Edge;
-    typedef std::map<Edge, std::size_t>         Cofaces_map;
+    typedef std::set<std::size_t>               K_1_face;
+    typedef std::map<K_1_face, std::size_t>     Cofaces_map;
     
-    // Counts the number of cofaces of each edge
+    std::size_t num_wrong_dim_simplices = 0, num_wrong_number_of_cofaces = 0;
+
+    // Counts the number of cofaces of each K_1_face
     
     // Create a map associating each non-maximal k-faces to the list of its
     // maximal cofaces
@@ -177,19 +182,26 @@ public:
          it_simplex != it_simplex_end ; 
          ++it_simplex)
     {
-      if (it_simplex->size() > 2)
+      if (it_simplex->size() != simplex_dim + 1)
       {
-        std::vector<Edge> edges;
-        // Get the k-faces composing the simplex
-        combinations(*it_simplex, 2, std::back_inserter(edges));
-        for (const auto &edge : edges) // CJTODO C++1
+        if (verbose_level >= 2)
+          std::cerr << "Found a simplex with dim = " 
+                    << it_simplex->size() - 1 << std::endl;
+        ++num_wrong_dim_simplices;
+      }
+      else
+      {
+        std::vector<K_1_face> k_1_faces;
+        // Get the facets composing the simplex
+        combinations(
+          *it_simplex, simplex_dim, std::back_inserter(k_1_faces));
+        for (const auto &k_1_face : k_1_faces) // CJTODO C++1
         {
-          ++cofaces_map[edge];
+          ++cofaces_map[k_1_face];
         }
       }
     }
 
-    bool manifold = true;
     for (Cofaces_map::const_iterator it_map_elt = cofaces_map.begin(),
                                      it_map_end = cofaces_map.end() ;
          it_map_elt != it_map_end ;
@@ -197,15 +209,37 @@ public:
     {
       if (it_map_elt->second != 2)
       {
-        std::cerr << "Found an edge with " << it_map_elt->second << " cofaces\n";
+        if (verbose_level >= 2)
+          std::cerr << "Found a k-1-face with " 
+                    << it_map_elt->second << " cofaces\n";
+
         if (exit_at_the_first_problem)
           return false;
         else
-          manifold = false;
+          ++num_wrong_number_of_cofaces;
       }
     }
 
-    return manifold;
+    bool ret = num_wrong_dim_simplices == 0 && num_wrong_number_of_cofaces == 0;
+
+    if (verbose_level >= 1)
+    {
+      std::cerr << "is_pure_manifold: " << (ret ? "YES" : "NO") << std::endl;
+      if (!ret)
+      {
+        std::cerr << "  * Number of wrong dimension simplices: " 
+                  << num_wrong_dim_simplices << std::endl
+                  << "  * Number of wrong number of cofaces: " 
+                  << num_wrong_number_of_cofaces << std::endl;
+      }
+    }
+
+    if (p_num_wrong_dim_simplices)
+      *p_num_wrong_dim_simplices = num_wrong_dim_simplices;
+    if (p_num_wrong_number_of_cofaces)
+      *p_num_wrong_number_of_cofaces = num_wrong_number_of_cofaces;
+
+    return ret;
   }
 
 private:
