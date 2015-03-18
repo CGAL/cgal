@@ -55,31 +55,31 @@ namespace internal{
 
 /**
  * \ingroup PkgPolygonMeshProcessing
- * tests whether a closed surface polygon mesh has a positive orientation.
- * A polygon mesh is considered to have positive orientation if the normal vectors
- * of the facets point outside the domain described by the polygon mesh. For each facet, its normal vector
- * is considered to point on the side of the facet where the sequence of vertices of
+ * tests whether a closed polygon mesh has a positive orientation.
+ * A closed polygon mesh is considered to have a positive orientation if the normal vectors
+ * of its faces point outside the domain bounded by the polygon mesh. For each face, its normal vector
+ * is considered to point on the side of the face where the sequence of vertices of
  * the facet is seen counterclockwise.
- * @pre @a `pmesh` is closed
- * @pre @a `pmesh` is consistently oriented
+ * @pre `CGAL::is_closed(pmesh)`
+ * @pre If `pmesh` contains several connected components they are oriented consistentl,
+ *      that is the answer to this predicate would be the same if called on each
+ *       connected component isolated.
  *
  * @tparam PolygonMesh a model of `FaceListGraph`
  * @tparam VertexPointMap a model of `ReadablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
     `Kernel::Vector_3` as value type
- * @tparam Kernel Geometric traits class. It can be omitted and deduced automatically from the point type of `PolygonMesh`.
+ * @tparam Kernel Geometric traits class.
  *
- * @param pmesh a closed polygon mesh to be tested
+ * @param pmesh the closed polygon mesh to be tested
  * @param vpmap the property map with the points associated to the vertices of `pmesh`
- * @param k a traits class instance, can be omitted
+ * @param k a traits class instance
  *
  * \todo The following only handles polyhedron with one connected component
  *       the code, the sample example and the plugin must be updated.
- * @code
- * if(!is_outward_oriented(pmesh)) {
- *   reverse_face_orientations(pmesh);
- * }
- * @endcode
+ *
+ *  \sa `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
+ *
  */
 template<typename PolygonMesh
        , typename VertexPointMap
@@ -89,7 +89,7 @@ template<typename PolygonMesh
        , typename Kernel
 #ifdef DOXYGEN_RUNNING
        = typename Kernel_traits<
-           typename boost::property_traits<VertexPointMap>::value_type>::Kernel
+           typename boost::property_traits<VertexPointMap>::value_type>::type
 #endif
          >
 bool is_outward_oriented(const PolygonMesh& pmesh
@@ -176,9 +176,7 @@ void reverse_orientation(typename boost::graph_traits<PolygonMesh>::halfedge_des
 
 /**
 * \ingroup PkgPolygonMeshProcessing
-* reverses faces orientations.
-*
-* @pre @a `pmesh` is consistently oriented
+* reverses for each face the order of the vertices along the face boundary.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`
 */

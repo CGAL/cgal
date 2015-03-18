@@ -251,6 +251,7 @@ private:
 /// The halfedges to be stitched are provided in `hedge_pairs_to_stitch`.
 /// For each pair `p` in this vector, p.second and its opposite will be removed
 /// from `pmesh`.
+///
 /// The vertices that get removed from `pmesh` are selected as follows:
 /// The pair of halfedges in `hedge_pairs_to_stitch` are processed linearly.
 /// Let `p` be such a pair.
@@ -258,11 +259,11 @@ private:
 /// then the source of p.second is.
 /// If the target of p.second has not been marked for deletion,
 /// then the source of p.first is.
-
+///
 /// @tparam PolygonMesh a model of `MutableFaceGraph` and `FaceListGraph`
 /// @tparam VertexPointMap property map with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
 ///    as key type and a `PolygonMesh::Point` as value type
-
+///
 /// @param pmesh the polygon mesh to be modified by stitching
 /// @param hedge_pairs_to_stitch a `std::vector` filled with `std::pair`s of halfedges to be stitched together
 /// @param vpmap the property map with the points associated to the vertices of `pmesh`.
@@ -302,9 +303,9 @@ void stitch_borders(
 ///\endcond
 
 /// \ingroup stitching_grp
-/// Same as above but the pairs of halfedges to be stitched are found
+/// Same as the other overload but the pairs of halfedges to be stitched are found
 /// using `less_hedge`. Two halfedges `h1` and `h2` are set to be stitched
-/// if `less_hedge(h1,h2)=less_hedge(h2,h1)=true`.
+/// if `less_hedge(h1,h2)==less_hedge(h2,h1)==true`.
 
 /// @tparam LessHedge a key comparison functor used to sort halfedges.
 ///   It should be able to compare `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
