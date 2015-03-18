@@ -40,12 +40,12 @@ namespace Polygon_mesh_processing{
 * @tparam VertexPointMap a model of `ReadablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
     `Kernel::Point_3` as value type.
-* @tparam Kernel a Geometric traits class. It can be omitted and deduced automatically from the point type of `PolygonMesh`.
+* @tparam Kernel a Geometric traits class.
 *
 * @param f the face on which the normal is computed
-* @param pmesh the polygon mesh to which `f` belongs
+* @param pmesh the polygon mesh containing `f`
 * @param vpmap the property map with the points associated to the vertices of `pmesh`
-* @param k a geometric traits class instance, can be omitted
+* @param k a geometric traits class instance
 */
 template <typename PolygonMesh
           , typename VertexPointMap
@@ -95,8 +95,8 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 /**
 * \ingroup PkgPolygonMeshProcessing
 * computes the outward unit vector normal for all faces of the polygon mesh.
-* @tparam Kernel Geometric traits class. It can be omitted and deduced automatically from the point type of `PolygonMesh`.
-* @tparam PolygonMesh a model of `FaceGraph`
+* @tparam Kernel Geometric traits class.
+* @tparam PolygonMesh a model of `FaceListGraph`
 * @tparam FaceNormalMap a model of `WritablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
     `Kernel::Vector_3` as value type.
@@ -107,7 +107,7 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 * @param pmesh the polygon mesh
 * @param fnm the property map in which the normals are written
 * @param vpmap the property map with the points associated to the vertices of `pmesh`
-* @param k a geometric traits class instance, can be omitted
+* @param k a geometric traits class instance
 */
 template <typename PolygonMesh
           , typename FaceNormalMap
@@ -148,13 +148,12 @@ compute_face_normals(const PolygonMesh& pmesh
 * @tparam VertexPointMap a model of `ReadablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
     `Kernel::Point_3` as value type.
-* @tparam Kernel a Geometric traits class. It can be omitted and deduced automatically
-          from the point type of `PolygonMesh`.
+* @tparam Kernel a Geometric traits class.
 
-* @param v the vertex around which the normal is computed
-* @param pmesh the polygon mesh to which `v` belongs
+* @param v the vertex at which the normal is computed
+* @param pmesh the polygon mesh containing `v`
 * @param vpmap the property map with the points associated to the vertices of `pmesh`
-* @param k a geometric traits class instance, can be omitted
+* @param k a geometric traits class instance
 */
 template<typename PolygonMesh
           , typename VertexPointMap
@@ -202,8 +201,8 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 /**
 * \ingroup PkgPolygonMeshProcessing
 * computes the outward unit vector normal for all vertices of the polygon mesh.
-* @tparam Kernel a Geometric traits class. It can be omitted and deduced automatically from the point type of `PolygonMesh`.
-* @tparam PolygonMesh a model of `FaceGraph`
+* @tparam Kernel a Geometric traits class.
+* @tparam PolygonMesh a model of `FaceListGraph`
 * @tparam VertexNormalMap a model of `WritablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
     `Kernel::Vector_3` as value type.
@@ -214,7 +213,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 * @param pmesh the polygon mesh
 * @param vnm the property map in which the normals are written
 * @param vpmap the property map with the points associated to the vertices of `pmesh`
-* @param k a geometric traits class instance, can be omitted
+* @param k a geometric traits class instance
 */
 template <typename PolygonMesh
           , typename VertexNormalMap
@@ -251,8 +250,8 @@ compute_vertex_normals(const PolygonMesh& pmesh
 /**
 * \ingroup PkgPolygonMeshProcessing
 * computes the outward unit vector normal for all vertices and faces of the polygon mesh.
-* @tparam Kernel Geometric traits class. It can be omitted and deduced automatically from the point type of `PolygonMesh`.
-* @tparam PolygonMesh a model of `FaceGraph`
+* @tparam Kernel Geometric traits class.
+* @tparam PolygonMesh a model of `FaceListGraph`
 
 * @tparam VertexNormalMap a model of `WritablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
