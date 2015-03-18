@@ -238,7 +238,7 @@ template <typename PolygonMesh
         , typename VertexPointMap
         , typename Kernel
 #ifdef DOXYGEN_RUNNING
-= CGAL::Kernel_traits< typename  boost::property_traits<VertexPointMap>::value_type >::type
+= CGAL::Kernel_traits< typename  boost::property_traits<VertexPointMap>::value_type >::Kernel
 #endif
 >
 void triangulate_faces(PolygonMesh& pmesh

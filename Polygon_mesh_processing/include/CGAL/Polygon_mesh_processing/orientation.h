@@ -89,7 +89,7 @@ template<typename PolygonMesh
        , typename Kernel
 #ifdef DOXYGEN_RUNNING
        = typename Kernel_traits<
-           typename boost::property_traits<VertexPointMap>::value_type>::type
+           typename boost::property_traits<VertexPointMap>::value_type>::Kernel
 #endif
          >
 bool is_outward_oriented(const PolygonMesh& pmesh
