@@ -22,8 +22,8 @@
 // compute self-intersection of a CGAL triangle polyhedron mesh
 // original code from Lutz Kettner
 
-#ifndef CGAL_POLYGON_MESH_SELF_INTERSECTIONS
-#define CGAL_POLYGON_MESH_SELF_INTERSECTIONS
+#ifndef CGAL_POLYGON_MESH_PROCESSING_SELF_INTERSECTIONS
+#define CGAL_POLYGON_MESH_PROCESSING_SELF_INTERSECTIONS
 
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/intersections.h>
@@ -280,4 +280,4 @@ bool is_self_intersecting(const TriangleMesh& tmesh,
 
 }// namespace CGAL
 
-#endif // CGAL_SELF_INTERSECTION_POLYHEDRON_3
+#endif // CGAL_POLYGON_MESH_PROCESSING_SELF_INTERSECTIONS

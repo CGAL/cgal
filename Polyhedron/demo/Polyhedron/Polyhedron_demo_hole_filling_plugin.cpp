@@ -31,7 +31,7 @@
 #include <QGLViewer/qglviewer.h>
 #include <CGAL/gl_render.h>
 
-#include <CGAL/polygon_mesh_self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include "Kernel_type.h"
 
 #include <boost/function_output_iterator.hpp>

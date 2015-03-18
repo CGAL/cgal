@@ -14,7 +14,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/box_intersection_d.h>
 
-#include <CGAL/polygon_mesh_self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Make_triangle_soup.h>
 
 typedef Kernel::Triangle_3 Triangle;

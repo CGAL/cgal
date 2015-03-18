@@ -5,7 +5,7 @@
 * functions of this package that are part of
 * the namespace `Polygon_mesh_processing` :
 * `CGAL/orient_polygon_soup.h`,
-* `CGAL/polygon_mesh_self_intersections.h`,
+* `CGAL/Polygon_mesh_processing/self_intersections.h`,
 * `CGAL/polygon_soup_to_polygon_mesh.h`,
 * `CGAL/Polygon_mesh_processing/triangulate_faces.h`,
 * `CGAL/Polygon_mesh_processing/triangulate_hole.h`,
@@ -19,7 +19,7 @@
 */
 
 #include <CGAL/orient_polygon_soup.h>
-#include <CGAL/polygon_mesh_self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
