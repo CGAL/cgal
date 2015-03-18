@@ -8,11 +8,6 @@
 #include <CGAL/Timer.h>
 #include <CGAL/trace.h>
 
-// for default parameters
-#if defined(CGAL_EIGEN3_ENABLED)
-#include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
-#endif
-
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
@@ -29,23 +24,6 @@ enum Fairing_continuity
 };
 
 namespace internal {
-
-struct Fair_default_sparse_linear_solver {
-  typedef
-#if defined(CGAL_EIGEN3_ENABLED)
-  #if EIGEN_VERSION_AT_LEAST(3,2,0)
-  CGAL::Eigen_solver_traits<
-    Eigen::SparseLU<
-      CGAL::Eigen_sparse_matrix<double>::EigenType,
-      Eigen::COLAMDOrdering<int> >  >
-  #else
-    Fair_default_sparse_linear_solver // dummy type to make it compile
-  #endif
-#else
-    Fair_default_sparse_linear_solver // dummy type to make it compile
-#endif
-  Solver;
-};
 
 // [On Linear Variational Surface Deformation Methods-2008]
 template<class PolygonMesh, class SparseLinearSolver, class WeightCalculator>

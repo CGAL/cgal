@@ -3,6 +3,11 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Meshing_functions/Fair_Polyhedron_3.h>
 
+#if defined(CGAL_EIGEN3_ENABLED)
+#include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
+#endif
+
+
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
@@ -23,7 +28,8 @@ namespace internal {
     return fair_functor.fair(vertices, solver, continuity);
   }
 
-  //use default SparseLinearSolver
+#if defined(CGAL_EIGEN3_ENABLED) && EIGEN_VERSION_AT_LEAST(3,2,0)
+  //use default SparseLinearSolver (used in triangulate_hole.h)
   template<class WeightCalculator, class PolygonMesh, class VertexRange>
   bool fair(PolygonMesh& pmesh,
     VertexRange vertices,
@@ -31,9 +37,13 @@ namespace internal {
     WeightCalculator weight_calculator,
     Fairing_continuity continuity = FAIRING_C_1)
   {
-    typedef typename internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
+    typedef   CGAL::Eigen_solver_traits<
+                Eigen::SparseLU< CGAL::Eigen_sparse_matrix<double>::EigenType,
+                                 Eigen::COLAMDOrdering<int> >  >
+                                    Sparse_linear_solver;
     return internal::fair(pmesh, vertices, Sparse_linear_solver(), weight_calculator, continuity);
   }
+#endif
 } //end namespace internal
 
   /*!
@@ -47,8 +57,15 @@ namespace internal {
   Fairing might fail if fixed vertices, which are used as boundary conditions, do not suffice to solve constructed linear system.
   The larger `continuity` gets, the more fixed vertices are required.
 
-  @tparam SparseLinearSolver a model of `SparseLinearAlgebraTraitsWithFactor_d`. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
-  and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter.
+
+  @tparam SparseLinearSolver a model of SparseLinearAlgebraTraitsWithFactor_d. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
+  and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter:\n
+   \code
+      CGAL::Eigen_solver_traits<
+          Eigen::SparseLU<
+             CGAL::Eigen_sparse_matrix<double>::EigenType,
+             Eigen::COLAMDOrdering<int> >  >
+  \endcode
   @tparam PolygonMesh a model of `FaceGraph`
   @tparam VertexRange a range of vertices of `PolygonMesh`, model of `SinglePassRange`
 
@@ -78,24 +95,29 @@ namespace internal {
       (pmesh, vertices, solver, Weight_calculator(pmesh), continuity);
   }
 
-  //use default SparseLinearSolver and WeightCalculator
+#if defined(CGAL_EIGEN3_ENABLED) && EIGEN_VERSION_AT_LEAST(3,2,0)
+  // use default SparseLinearSolver and continuity
+
   template<class PolygonMesh, class VertexRange>
   bool fair(PolygonMesh& pmesh,
     VertexRange vertices,
     CGAL::Default,
     Fairing_continuity continuity = FAIRING_C_1)
   {
-    typedef internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
+    typedef   CGAL::Eigen_solver_traits<
+                Eigen::SparseLU< CGAL::Eigen_sparse_matrix<double>::EigenType,
+                                 Eigen::COLAMDOrdering<int> >  >
+                                    Sparse_linear_solver;
     return fair(pmesh, vertices, Sparse_linear_solver(), continuity);
   }
 
-  //use default SparseLinearSolver and WeightCalculator
   template<class PolygonMesh, class VertexRange>
   bool fair(PolygonMesh& pmesh,
             VertexRange vertices)
   {
     return fair(pmesh, vertices, CGAL::Default());
   }
+#endif
 
 } //end namespace Polygon_mesh_processing
 
