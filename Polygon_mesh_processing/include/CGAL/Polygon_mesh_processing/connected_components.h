@@ -359,7 +359,7 @@ namespace Polygon_mesh_processing{
 
 /*!
  * \ingroup PkgPolygonMeshProcessing
- *  Discovers all the faces in the same connected component as `seed_face` and puts them in `out`.
+ *  discovers all the faces in the same connected component as `seed_face` and puts them in `out`.
  * `seed_face` will also be added in `out`.
  *  Two faces are considered to be in the same connected component if they share an edge.
 
@@ -571,7 +571,7 @@ connected_components(const PolygonMesh& pmesh,
 
 /*!
  * \ingroup PkgPolygonMeshProcessing
- *  Erases the small connected components and the isolated vertices.
+ *  erases the small connected components and the isolated vertices.
  *  Keep `nb_components_to_keep` largest connected components. 
  
  * \tparam PolygonMesh a model of `FaceGraph`

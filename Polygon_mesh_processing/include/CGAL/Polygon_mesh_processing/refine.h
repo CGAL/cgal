@@ -9,7 +9,7 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup PkgPolygonMeshProcessing
-  @brief Function refining a region on a polygon mesh
+  @brief refines a region of a polygon mesh
 
   @tparam PolygonMesh model of `MutableFaceGraph`
   @tparam FaceRange range of face descriptors, model of `SinglePassRange`

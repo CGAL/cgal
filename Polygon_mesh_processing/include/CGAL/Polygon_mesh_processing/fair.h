@@ -48,7 +48,7 @@ namespace internal {
 
   /*!
   \ingroup PkgPolygonMeshProcessing
-  @brief Fairs a region on a polygon mesh.
+  @brief fairs a region on a polygon mesh.
   The points of the selected vertices are moved to get an as-smooth-as-possible surface patch.
   
   The region described by `vertices` might contain multiple disconnected components.

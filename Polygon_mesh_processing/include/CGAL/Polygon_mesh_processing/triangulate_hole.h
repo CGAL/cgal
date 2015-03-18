@@ -15,7 +15,7 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup PkgPolygonMeshProcessing
-  Function triangulating a hole in a polygon mesh.
+  triangulates a hole in a polygon mesh.
   The hole should contain no non-manifold vertex. Generated patch is guaranteed to not break edge manifoldness and contain no degenerate triangle.
   If no possible patch is found, @a pmesh is not altered in any way, and no face descriptor is put into @a out.
 
@@ -58,7 +58,7 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup PkgPolygonMeshProcessing
-  @brief Function triangulating and refining a hole in a polygon mesh.
+  @brief triangulates and refines a hole in a polygon mesh.
 
   @tparam PolygonMesh must be model of `MutableFaceGraph`
   @tparam FacetOutputIterator model of `OutputIterator`
@@ -103,7 +103,7 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup PkgPolygonMeshProcessing
-  @brief Function triangulating, refining and fairing a hole in a polygon mesh.
+  @brief triangulates, refines and fairs a hole in a polygon mesh.
 
   If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
   and `CGAL_EIGEN3_ENABLED` is defined, an overload of this function is available
@@ -236,7 +236,7 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup PkgPolygonMeshProcessing
-  Creates triangles to fill the hole defined by points in the range (@a points).
+  creates triangles to fill the hole defined by points in the range (@a points).
   Triangles are put into @a out
   using the indices of the input points in the range (@a points).
   Note that no degenerate triangles are allowed during filling. If no possible patch is found, then no triangle is put into @a out.

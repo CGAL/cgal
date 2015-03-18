@@ -223,7 +223,7 @@ public:
 
 /**
 * \ingroup PkgPolygonMeshProcessing
-* Triangulates faces of the polygon mesh `pmesh`. This function depends on the package \ref PkgTriangulation2Summary
+* triangulates faces of the polygon mesh `pmesh`. This function depends on the package \ref PkgTriangulation2Summary
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam VertexPointMap a model of `ReadablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and

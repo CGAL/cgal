@@ -55,7 +55,7 @@ namespace internal{
 
 /**
  * \ingroup PkgPolygonMeshProcessing
- * Tests whether a closed surface polygon mesh has a positive orientation.
+ * tests whether a closed surface polygon mesh has a positive orientation.
  * A polygon mesh is considered to have positive orientation if the normal vectors
  * of the facets point outside the domain described by the polygon mesh. For each facet, its normal vector
  * is considered to point on the side of the facet where the sequence of vertices of

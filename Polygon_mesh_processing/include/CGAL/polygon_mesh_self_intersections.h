@@ -174,7 +174,7 @@ namespace Polygon_mesh_processing {
 
 /** 
  * \ingroup PkgPolygonMeshProcessing
- * Detects and reports self-intersections of a triangulated polyhedral surface.
+ * detects and reports self-intersections of a triangulated polyhedral surface.
  * Depends on \ref PkgBoxIntersectionDSummary
  * @pre @a CGAL::is_pure_triangle(tmesh)
  *
@@ -242,7 +242,7 @@ self_intersections(const TriangleMesh& tmesh,
 
 /**
  * \ingroup PkgPolygonMeshProcessing
- * Checks if a polygon mesh is self-intersecting.
+ * checks if a polygon mesh is self-intersecting.
  * Depends on \ref PkgBoxIntersectionDSummary
  * @pre @a CGAL::is_pure_triangle(tmesh)
  *
