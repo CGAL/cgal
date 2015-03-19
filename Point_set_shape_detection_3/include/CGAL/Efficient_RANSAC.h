@@ -19,16 +19,16 @@
 // Author(s)     : Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez
 //
 
-#ifndef CGAL_EFFICIENT_RANSAC_3_H
-#define CGAL_EFFICIENT_RANSAC_3_H
+#ifndef CGAL_EFFICIENT_RANSAC_H
+#define CGAL_EFFICIENT_RANSAC_H
 
-#include "Shape_detection_3/Octree_3.h"
+#include "Shape_detection_3/Octree.h"
 #include "Shape_detection_3/Shape_base.h"
-#include "Shape_detection_3/Cone_3.h"
-#include "Shape_detection_3/Cylinder_3.h"
-#include "Shape_detection_3/Plane_3.h"
-#include "Shape_detection_3/Sphere_3.h"
-#include "Shape_detection_3/Torus_3.h"
+#include "Shape_detection_3/Cone.h"
+#include "Shape_detection_3/Cylinder.h"
+#include "Shape_detection_3/Plane.h"
+#include "Shape_detection_3/Sphere.h"
+#include "Shape_detection_3/Torus.h"
 
 //for octree ------------------------------
 #include <boost/iterator/filter_iterator.hpp>
@@ -44,43 +44,54 @@
 
 //boost --------------
 #include <boost/iterator/counting_iterator.hpp>
+#include <boost/range/iterator_range.hpp>
 //---------------------
 
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 /*! 
-  \file Efficient_RANSAC_3.h
+  \file Efficient_RANSAC.h
 */
 
 namespace CGAL {
   namespace Shape_detection_3 {
     /*!
-     \ingroup PkgPointSetShapeDetection3
-     \brief Traits class for definition of types. The method requires Point_3
-     with Vector_3 containing normal information. To avoid copying of
-     potentially large input data, the detection will performed on the input
-     data directly and no internal copy will be created. For this reason the
-     input data has to be provided in form of an random access iterator given
-     by the InputIt template parameter. Point and normal property maps have to
-     be provided to map the input iterator to a Point_3 and Vector_3
-     respectively.
+      \ingroup PkgPointSetShapeDetection3
+      \brief Traits class for definition of types. The method requires Point_3
+      with Vector_3 containing normal information. To avoid copying of
+      potentially large input data, the detection will performed on the input
+      data directly and no internal copy will be created. For this reason the
+      input data has to be provided in form of an random access iterator given
+      by the InputIt template parameter. Point and normal property maps have to
+      be provided to map the input iterator to a Point_3 and Vector_3
+      respectively.
+ 
+      \tparam Gt Geometric traits class. Exact construction kernels are not
+              supported
+ 
+      \tparam InputIt is a model of RandomAccessIterator
+ 
+      \tparam Ppmap is a model of `ReadablePropertyMap`
+              `key_type = InputIt` and `value_type = Gt::Point_3`.
+ 
+      \tparam Npmap is a model of `ReadablePropertyMap`
+              `key_type = InputIt` and `value_type = Gt::Vector_3`.
      */
 
   template <class Gt,
             class InputIt,
             class Ppmap,
             class Npmap>
-  struct Efficient_RANSAC_traits_3 {
+  struct Efficient_ransac_traits {
     typedef Gt Geom_traits; 
     ///< Geometric types. FT, Point_3 and Vector_3 are used.
     typedef InputIt Input_iterator;
-    ///< Random access iterator type used for providing input data to the method.
+    ///< Random access iterator type used for providing input data, points (Point_3) with associated normals (Vector_3) to the method.
     typedef Ppmap Point_pmap;
-    ///< Property map to access point location from input data.
+    ///< property map: `InputIt` -> `Point_3` (the position of an input point).
     typedef Npmap Normal_pmap;
-    ///< Property map to access normal vector from input data.
+    ///< property map: `InputIt` -> `Vector_3` (the normal of an input point).
   };
+
 
   /*!
 \ingroup PkgPointSetShapeDetection3
@@ -88,15 +99,15 @@ namespace CGAL {
 
 Given a point set in 3D space with unoriented normals, sampled on surfaces,
 the method detects sets of connected points on the surface of primitive shapes.
-Each input point is assigned to either none or at most one detected primitive shape.
-This implementation follows the algorithm published by Schnabel
-et al. in 2007 \cgalCite{Schnabel07}.
+Each input point is assigned to either none or at most one detected primitive
+shape. This implementation follows the algorithm published by Schnabel et al.
+in 2007 \cgalCite{Schnabel07}.
 
-\tparam Sd_traits Shape detection traits class.
+\tparam ERTraits Efficient_RANSAC_traits
 
 */
   template <class ERTraits>
-  class Efficient_RANSAC_3 {
+  class Efficient_ransac {
   public:
 
     /// \cond SKIP_IN_MANUAL
@@ -112,20 +123,42 @@ et al. in 2007 \cgalCite{Schnabel07}.
       }
       std::vector<int> m_shape_index;
     };
+
+    typedef boost::filter_iterator<Filter_unassigned_points,
+      boost::counting_iterator<std::size_t> > Point_index_iterator;
+    ///< iterator for indices of points.
     /// \endcond
 
     /// \name Types 
-    /// @{
-    typedef typename ERTraits::Input_iterator Input_iterator; ///< random access iterator for input data.
+    /// @{    
+    typedef typename ERTraits::Input_iterator Input_iterator;
+    ///< random access iterator for input data.
     typedef typename ERTraits::Geom_traits::FT FT; ///< number type.
     typedef typename ERTraits::Geom_traits::Point_3 Point; ///< point type.
     typedef typename ERTraits::Geom_traits::Vector_3 Vector; ///< vector type.
-    typedef typename ERTraits::Point_pmap Point_pmap; ///< property map to access the location of an input point.
-    typedef typename ERTraits::Normal_pmap Normal_pmap; ///< property map to access the unoriented normal of an input point
-
+    typedef typename ERTraits::Point_pmap Point_pmap;
+    ///< property map to access the location of an input point.
+    typedef typename ERTraits::Normal_pmap Normal_pmap;
+    ///< property map to access the unoriented normal of an input point
     typedef Shape_base<ERTraits> Shape; ///< shape type.
-    typedef typename std::vector<Shape *>::const_iterator Shape_iterator; ///< iterator for extracted shapes.
-    typedef boost::filter_iterator<Filter_unassigned_points, boost::counting_iterator<std::size_t> > Point_index_iterator; ///< iterator for indices of points.
+
+#ifdef DOXYGEN_RUNNING
+    typedef unspecified_type Shape_range;
+#else
+    typedef typename
+    boost::iterator_range<typename std::vector<Shape *>::const_iterator>
+      Shape_range;
+#endif
+    ///< Range of extracted shapes with typ `Shape *`. Model of the `ConstRange` concept.
+
+#ifdef DOXYGEN_RUNNING
+    typedef unspecified_type Point_index_range;    ///< Range of indices of points of type `std::size_t` into the provided Input_iterator. Model of the `boost::BidirectionalRange` concept.
+
+#else 
+    typedef typename boost::iterator_range<Point_index_iterator>
+      Point_index_range;
+#endif     
+
     /// @}
     
     /// \name Parameters 
@@ -136,7 +169,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
     struct Parameters {
       Parameters() : probability(0.01), min_points(SIZE_MAX), normal_threshold(0.9), epsilon(-1), cluster_epsilon(-1) {}
       FT probability;         ///< Probability to control search endurance. Default value 0.05.
-      std::size_t min_points;      ///< Minimum number of points of a shape. Default value 1% of total number of input points.
+      std::size_t min_points; ///< Minimum number of points of a shape. Default value 1% of total number of input points.
       FT epsilon;             ///< Maximum tolerance Euclidian distance from a point and a shape. Default value 1% of bounding box diagonal.
       FT normal_threshold;	  ///< Maximum tolerance normal deviation from a point's normal to the normal on shape at projected point. Default value 0.9 (around 25 degrees).
       FT cluster_epsilon;	    ///< Maximum distance between points to be considered connected. Default value 1% of bounding box diagonal.
@@ -144,12 +177,13 @@ et al. in 2007 \cgalCite{Schnabel07}.
     /// @}
 
   private:
-    typedef internal::Octree_3<internal::DirectPointAccessor<ERTraits> >
+    typedef internal::Octree<internal::DirectPointAccessor<ERTraits> >
       Direct_octree;
-    typedef internal::Octree_3<internal::IndexedPointAccessor<ERTraits> >
+    typedef internal::Octree<internal::IndexedPointAccessor<ERTraits> >
       Indexed_octree;
     //--------------------------------------------typedef
 
+    // Creates a function pointer for instancing shape instances.
     template <class ShapeT>
     static Shape *factory() {
       return new ShapeT;
@@ -163,48 +197,54 @@ et al. in 2007 \cgalCite{Schnabel07}.
     /*! 
       Constructs an empty shape detection engine.
     */ 
-    Efficient_RANSAC_3() : m_rng(std::random_device()()), m_num_subsets(0),
-      m_num_available_points(0), m_global_octree(NULL), m_direct_octrees(NULL) {
+    Efficient_ransac() : m_rng(std::random_device()()), m_num_subsets(0),
+      m_num_available_points(0), m_global_octree(NULL), m_direct_octrees(NULL),
+      m_valid_iterators(false) {
     }	 
 
     /*! 
       Releases all memory allocated by this instances including shapes.
     */ 
-    ~Efficient_RANSAC_3() {
+    ~Efficient_ransac() {
       clear();
     }
 
     /*!
-      Sets the input data by providing range iterators. Frees former used
-      internal structures if present, including formerly found shapes. Thus
-      iterators retrieved through shapes_begin() or unassigned_points_begin()
-      are invalidated.
+      Sets the input data by providing an iterator range modeling the
+      'boost:RandomAccessRange'. The range of input points need to stay valid
+      until the detection has been performed and no longer access to the
+      results is required. The data in the input range is reordered during
+      detect() and build_octrees(). Frees former used internal structures if
+      present, including formerly found shapes. Thus iterators and ranges
+      retrieved through shapes() and unassigned_points() are invalidated.
     */
+    template <class RandomAccessInputRange>
     void set_input_data(
-      ///< property map to access the unoriented normal of an input point.
-      Input_iterator first, 
-      ///< random access iterator over the first input point.
-      Input_iterator beyond,
+      ///< Range of input data providing 'Input_iterator' for random access. Model of the 'boost:RandomAccessRange'.
+      RandomAccessInputRange &input_range,
       ///< past-the-end random access iterator over the input points.
       Point_pmap point_pmap = Point_pmap(),
       ///< property map to access the position of an input point.
       Normal_pmap normal_pmap = Normal_pmap()
+      ///< property map to access the normal of an input point.
       ) {
-      clear();
+        clear();
 
-      if (m_extracted_shapes.size()) {
-        for (std::size_t i = 0;i<m_extracted_shapes.size();i++)
-          delete m_extracted_shapes[i];
-      }
+        if (m_extracted_shapes.size()) {
+          for (std::size_t i = 0;i<m_extracted_shapes.size();i++)
+            delete m_extracted_shapes[i];
+        }
 
-      m_point_pmap = point_pmap;
-      m_normal_pmap = normal_pmap;
+        m_point_pmap = point_pmap;
+        m_normal_pmap = normal_pmap;
 
-      m_inputIterator_first = first;
-      m_inputIterator_beyond = beyond;
-      m_num_available_points = beyond - first;
+        m_inputIterator_first = input_range.begin();
+        m_inputIterator_beyond = input_range.end();
+
+        m_num_available_points = m_inputIterator_beyond - m_inputIterator_first;
+
+        m_valid_iterators = true;
     }
-
     /*!
       Registers a shape type for detection.
     */ 
@@ -213,6 +253,11 @@ et al. in 2007 \cgalCite{Schnabel07}.
       m_shape_factories.push_back(factory<ShapeT>);
     }
 
+    /*!
+      Constructs internal data structures required for the shape detection.
+      These structures only depend on the input data, i.e. the points and
+      normal vectors.
+    */ 
     bool build_octrees() {
       if (m_num_available_points == 0)
         return false;
@@ -269,9 +314,13 @@ et al. in 2007 \cgalCite{Schnabel07}.
       return true;
     }
 
+    /// @}
+
+    /// \name Memory Management
+    /// @{
     /*!
       Removes all shape types registered for detection.
-    */ 
+     */ 
     void clear_shape_factories() {
       m_shape_factories.clear();
     }
@@ -279,8 +328,12 @@ et al. in 2007 \cgalCite{Schnabel07}.
     /*!
       Frees memory allocated for interal search structures. Invalidates the
       iterator retrieved through unassigned_points_begin().
-    */ 
+     */ 
     void clear_octrees() {
+      // If there is no data yet, there are no data structures.
+      if (!m_valid_iterators)
+        return;
+
       if (m_global_octree) {
         delete m_global_octree;
         m_global_octree = NULL;
@@ -298,10 +351,17 @@ et al. in 2007 \cgalCite{Schnabel07}.
     }
 
     /*!
-      Frees all internally allocated memory including detected shapes. Invalidates the
-      iterators retrieved through shapes_begin() and unassigned_points_begin().
+      Frees all internally allocated memory including detected shapes.
+      Invalidates the iterators and ranges retrieved through `shapes()`
+      `and unassigned_points()`.
     */ 
     void clear() {
+      clear_shape_factories();
+
+      // If there is no data yet, there are no data structures.
+      if (!m_valid_iterators)
+        return;
+
       std::vector<int>().swap(m_shape_index);
       for (std::size_t i = 0;i<m_extracted_shapes.size();i++) {
         delete m_extracted_shapes[i];
@@ -312,22 +372,25 @@ et al. in 2007 \cgalCite{Schnabel07}.
       m_num_available_points = m_inputIterator_beyond - m_inputIterator_first;
 
       clear_octrees();
-      clear_shape_factories();
     }
-
     /// @}
 
     /// \name Detection 
     /// @{
     /*! 
-      This function initiates the shape detection. Shape types to be detected
+      This function performs the shape detection. Shape types to be detected
       must be registered before with `add_shape_factory()`.
+
+      \return The return value is true if shape types have been registered and 
+              input data has been set. Otherwise, false is returned.
     */ 
     bool detect(
-      const Parameters &options = Parameters()///< Parameters for shape detection.
+      const Parameters &options = Parameters()
+      ///< Parameters for shape detection.
                 ) {
       // no shape types for detection or no points provided, exit
-      if (m_shape_factories.size() == 0 || (m_inputIterator_beyond - m_inputIterator_first) == 0)
+      if (m_shape_factories.size() == 0 ||
+          (m_inputIterator_beyond - m_inputIterator_first) == 0)
         return false;
 
       if (m_num_subsets == 0 || m_global_octree == 0) {
@@ -401,7 +464,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
             done = m_global_octree->drawSamplesFromCellContainingPoint(
               get(m_point_pmap, 
                   *(m_inputIterator_first + firstSample)),
-              selectRandomOctreeLevel(),
+              select_random_octree_level(),
               indices,
               m_shape_index,
               requiredSamples);
@@ -423,7 +486,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
                        m_options.normal_threshold);
 
             if (p->is_valid()) {
-              improveBound(p, m_num_available_points - numInvalid, 1, 500);
+              improve_bound(p, m_num_available_points - numInvalid, 1, 500);
 
               //evaluate the candidate
               if(p->max_bound() >= m_options.min_points) {
@@ -471,7 +534,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
         //  the best candidate is always the last element of the vector
 
         Shape *best_Candidate = 
-          getBestCandidate(candidates, m_num_available_points - numInvalid);
+          get_best_candidate(candidates, m_num_available_points - numInvalid);
 
         if (!best_Candidate)
           continue;
@@ -593,30 +656,16 @@ et al. in 2007 \cgalCite{Schnabel07}.
     /// @}
 
     /// \name Access
-    /// @{
-      /*!
-       Number of detected shapes.
-       */
-    std::size_t number_of_shapes() const {
-      return m_extracted_shapes.size();
-    }
-      
+    /// @{            
     /*!
-      Iterator to the first detected shape.
-      The order of the shapes is the order of the detection.
-      Depending on the chosen probability for the detection
-      the shapes are ordered with decreasing size.
+      Returns a range over the detected shapes in order of detection.
+      The memory allocated for the shapes are released by clear() or finally
+      by the destructor of this instance. Depending on the chosen probability
+      for the detection the shapes are ordered with decreasing size.
     */
-
-    Shape_iterator shapes_begin() const {
-      return m_extracted_shapes.begin();
-    }
-      
-    /*!
-      Past-the-end shape iterator.
-    */
-    Shape_iterator shapes_end() const {
-      return m_extracted_shapes.end();
+    Shape_range shapes() const {
+      return boost::make_iterator_range(m_extracted_shapes.begin(),
+        m_extracted_shapes.end());
     }
       
     /*! 
@@ -627,38 +676,30 @@ et al. in 2007 \cgalCite{Schnabel07}.
     }
     
     /*! 
-      Provides iterator to the index of the first point in
-      the input data that has not been assigned to a shape.
+      Provides a boost::iterator_range to indices into the input data that has
+      not been assigned to a shape. A boost::iterator_range does not provide
+      the size of the range. Instead the method number_of_unassigned_points is
+      provided.
     */ 
-    Point_index_iterator unassigned_points_begin() {
+    Point_index_range unassigned_points() {
       Filter_unassigned_points fup(m_shape_index);
 
-      return boost::make_filter_iterator<Filter_unassigned_points>(
+      Point_index_iterator p1 =
+        boost::make_filter_iterator<Filter_unassigned_points>(
         fup,
         boost::counting_iterator<std::size_t>(0),
         boost::counting_iterator<std::size_t>(m_shape_index.size()));
-    }
-       
-    /*! 
-      Provides the past-the-end iterator
-      for the indices of the unassigned points.
-    */ 
-    Point_index_iterator unassigned_points_end() {
-      Filter_unassigned_points fup(m_shape_index);
 
-      return boost::make_filter_iterator<Filter_unassigned_points>(
-        fup,
-        boost::counting_iterator<std::size_t>(0),
-        boost::counting_iterator<std::size_t>(m_shape_index.size())).end();
+      return boost::make_iterator_range(p1, Point_index_iterator(p1.end()));
     }
     /// @}
 
   private:
-    int selectRandomOctreeLevel() {
+    int select_random_octree_level() {
       return m_rng() % (m_global_octree->maxLevel() + 1);
     }
 
-    Shape* getBestCandidate(std::vector<Shape* >& candidates,
+    Shape* get_best_candidate(std::vector<Shape* >& candidates,
                             const int _SizeP) {
       if (candidates.size() == 1)
         return candidates.back();
@@ -676,7 +717,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
                   comp);
 
         //refine the best one 
-        improveBound(candidates.back(),
+        improve_bound(candidates.back(),
                      _SizeP, m_num_subsets,
                      m_options.min_points);
 
@@ -697,7 +738,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
           //if we reach this point, there is an overlap
           //  between best one and position_stop
           //so request refining bound on position_stop
-          improved |= improveBound(candidates.at(position_stop),
+          improved |= improve_bound(candidates.at(position_stop),
                                    _SizeP,
                                    m_num_subsets,
                                    m_options.min_points);
@@ -714,11 +755,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
       return candidates.back();
     }
 
-    inline FT getRadiusSphere_from_level(int l_level_octree) {
-      return m_max_radiusSphere_Octree/powf(2, l_level_octree);
-    }
-
-    bool improveBound(Shape *candidate,
+    bool improve_bound(Shape *candidate,
                       const int _SizeP,
                       std::size_t max_subset,
                       std::size_t min_points) {
@@ -769,7 +806,7 @@ et al. in 2007 \cgalCite{Schnabel07}.
 
       return true;
     }
-
+    
     inline FT stop_probability(FT _sizeC, FT _np, FT _dC, FT _l) const {
       return (std::min<FT>)(std::pow(1.f - _sizeC / (_np * _l * 3), _dC), 1.);
     }
@@ -796,11 +833,11 @@ et al. in 2007 \cgalCite{Schnabel07}.
     std::vector<Shape *(*)()> m_shape_factories;
 
     // iterators of input data
+    bool m_valid_iterators;
     Input_iterator m_inputIterator_first, m_inputIterator_beyond; 
     Point_pmap m_point_pmap;
     Normal_pmap m_normal_pmap;
 
-    FT m_max_radiusSphere_Octree;
     std::vector<FT> m_level_weighting;  // sum must be 1
   };
 }

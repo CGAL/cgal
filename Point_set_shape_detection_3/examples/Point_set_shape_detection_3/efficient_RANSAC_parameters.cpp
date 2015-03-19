@@ -4,7 +4,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Timer.h> 
 
-#include <CGAL/Efficient_RANSAC_3.h>
+#include <CGAL/Efficient_RANSAC.h>
 
 #include <iostream>
 #include <fstream>
@@ -18,12 +18,16 @@ typedef std::vector<Point_with_normal>                      Pwn_vector;
 typedef CGAL::Identity_property_map<Point_with_normal>      Point_pmap;
 typedef CGAL::Normal_of_point_with_normal_pmap<Kernel>      Normal_pmap;
 
-// In Efficient_RANSAC_traits_3 the basic types, i.e., Point and Vector types
+// In Efficient_RANSAC_traits the basic types, i.e., Point and Vector types
 // as well as iterator type and property maps, are defined.
-typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits_3<Kernel,
+typedef CGAL::Shape_detection_3::Efficient_ransac_traits<Kernel,
   Pwn_vector::iterator, Point_pmap, Normal_pmap>            Traits;
-typedef CGAL::Shape_detection_3::Efficient_RANSAC_3<Traits> Efficient_RANSAC;
-typedef CGAL::Shape_detection_3::Plane_3<Traits>            Plane;
+typedef CGAL::Shape_detection_3::Efficient_ransac<Traits> Efficient_ransac;
+typedef CGAL::Shape_detection_3::Cone<Traits>             Cone;
+typedef CGAL::Shape_detection_3::Cylinder<Traits>         Cylinder;
+typedef CGAL::Shape_detection_3::Plane<Traits>            Plane;
+typedef CGAL::Shape_detection_3::Sphere<Traits>           Sphere;
+typedef CGAL::Shape_detection_3::Torus<Traits>            Torus;
 
 
 int main() 
@@ -45,25 +49,27 @@ int main()
     return EXIT_FAILURE;
   }
 
+  std::cout << points.size() << " points" << std::endl;
+
   // Instantiates shape detection engine.
-  Efficient_RANSAC sd = Efficient_RANSAC();
+  Efficient_ransac ransac;
 
   // Provides the input data.
-  sd.set_input_data(points.begin(), points.end(), Point_pmap(), Normal_pmap());
+  ransac.set_input_data(points);
     
   // Register shapes for detection
-  sd.add_shape_factory<Plane<Traits> >();
+  ransac.add_shape_factory<Plane>();
 
-  sd.add_shape_factory<Sphere_3<Traits> >();
+  ransac.add_shape_factory<Sphere>();
 
-  sd.add_shape_factory<Cylinder_3<Traits> >();
+  ransac.add_shape_factory<Cylinder>();
 
-  sd.add_shape_factory<Cone_3<Traits> >();
+  ransac.add_shape_factory<Cone>();
 
-  sd.add_shape_factory<Torus_3<Traits> >();		
+  ransac.add_shape_factory<Torus>();
 
   // Sets parameters for shape detection.
-  Efficient_RANSAC::Parameters parameters;
+  Efficient_ransac::Parameters parameters;
 
   // Sets probability to miss the largest primitive at each iteration.
   parameters.probability = 0.05;
@@ -82,18 +88,19 @@ int main()
   parameters.normal_threshold = 0.9;   
   
   // Detects shapes
-  sd.detect(parameters);
+  ransac.detect(parameters);
 
   // Prints number of detected shapes and unassigned points.
-   std::cout << sd.number_of_shapes() << " detected shapes, "
-     << sd.number_of_unassigned_points()
+   std::cout << ransac.shapes().size() << " detected shapes, "
+     << ransac.number_of_unassigned_points()
      << " unassigned points." << std::endl;
   
-  // Shape_detection_3::shapes_begin() provides
-  // an iterator to the detected shapes.
-  Efficient_RANSAC::Shape_iterator it = sd.shapes_begin();
-  while (it != sd.shapes_end()) {
-    const Efficient_RANSAC::Shape *shape = *it;
+  // Efficient_ransac::shapes() provides
+  // an iterator range to the detected shapes.
+  Efficient_ransac::Shape_range shapes = ransac.shapes();
+  Efficient_ransac::Shape_range::iterator it = shapes.begin();
+
+  while (it != shapes.end()) {
     // Prints the parameters of the detected shape.
     std::cout << (*it)->info() << std::endl;
 

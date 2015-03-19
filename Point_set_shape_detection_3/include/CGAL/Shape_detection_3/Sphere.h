@@ -19,8 +19,8 @@
 // Author(s)     : Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez
 //
 
-#ifndef CGAL_SHAPE_DETECTION_3_SPHERE_SHAPE_H
-#define CGAL_SHAPE_DETECTION_3_SPHERE_SHAPE_H
+#ifndef CGAL_SHAPE_DETECTION_3_SPHERE_H
+#define CGAL_SHAPE_DETECTION_3_SPHERE_H
 
 #include "Shape_detection_3/Shape_base.h"
 
@@ -32,10 +32,10 @@ namespace CGAL {
   namespace Shape_detection_3 {
     /*!
      \ingroup PkgPointSetShapeDetection3
-     \brief Sphere_shape implements Shape_base. The sphere is represented by its center and the radius.
+     \brief Sphere implements Shape_base. The sphere is represented by its center and the radius.
      */
   template <class ERTraits>
-  class Sphere_3 : public Shape_base<ERTraits> {
+  class Sphere : public Shape_base<ERTraits> {
   public:    
     /// \cond SKIP_IN_MANUAL
     typedef typename ERTraits::Input_iterator Input_iterator;
@@ -46,7 +46,7 @@ namespace CGAL {
       ///< property map to access the unoriented normal of an input point.
     typedef typename ERTraits::Geom_traits::Vector_3 Vector;
       ///< vector type.
-    typedef typename ERTraits::Geom_traits::Sphere_3 Sphere;
+    typedef typename ERTraits::Geom_traits::Sphere_3 Sphere_3;
       ///< sphere type.
     typedef typename ERTraits::Geom_traits::FT FT;
       ///< number type.
@@ -55,12 +55,12 @@ namespace CGAL {
     /// \endcond
 
   public:
-    Sphere_3() : Shape_base<ERTraits>() {}
+    Sphere() : Shape_base<ERTraits>() {}
 
     /*!
       Conversion operator to convert to common Sphere_3 type.
      */
-    operator Sphere() const {
+    operator Sphere_3() const {
       return m_sphere;
     }
 
@@ -127,7 +127,7 @@ namespace CGAL {
 
       // degenerated when nearly parallel
       if (det < (FT)0.00001) {
-        this->m_isValid = false;
+        this->m_is_valid = false;
         return;
       }
 
@@ -136,7 +136,7 @@ namespace CGAL {
       FT s = (b * e - c * d) * invDet;
       FT t = (d * b - a * e) * invDet;
 
-      Point center = CGAL::ORIGIN + 0.5 * (((p1 + s * n1) - CGAL::ORIGIN)
+      Point center = CGAL::ORIGIN + (FT)0.5 * (((p1 + s * n1) - CGAL::ORIGIN)
                      + ((p2 + t * n2) - CGAL::ORIGIN));
 
       Vector v1 = (p1 - center);
@@ -145,32 +145,34 @@ namespace CGAL {
       FT d2 = sqrt(v2.squared_length());
 
       if (abs(d1 - d2) > (FT)2.0 * this->m_epsilon) {
-        this->m_isValid = false;
+        this->m_is_valid = false;
         return;
       }
 
-      v1 = v1 * (1.0 / d1);
-      v2 = v2 * (1.0 / d2);
+      v1 = v1 * ((FT)1.0 / d1);
+      v2 = v2 * ((FT)1.0 / d2);
 
       if (n1 * v1 < this->m_normal_threshold ||
           n2 * v2 < this->m_normal_threshold) {
-        this->m_isValid = false;
+        this->m_is_valid = false;
         return;
       }
 
       Vector v3 = (p3 - center);
       FT d3 = sqrt(v3.squared_length());
-      v3 = v3 * (1.0 / d3);
+      v3 = v3 * ((FT)1.0 / d3);
 
-      FT radius = (d1 + d2) * 0.5;
+      FT radius = (d1 + d2) * (FT)0.5;
 
       if (abs(d3 - radius) > this->m_epsilon ||
           n3 * v3 < this->m_normal_threshold) {
-        this->m_isValid = false;
+        this->m_is_valid = false;
         return;
       }
 
-      m_sphere = Sphere(center, radius * radius);
+      this->m_is_valid = true;
+
+      m_sphere = Sphere_3(center, radius * radius);
     }
 
     virtual void squared_distance(const std::vector<std::size_t> &indices,
@@ -192,14 +194,24 @@ namespace CGAL {
       for (std::size_t i = 0;i<indices.size();i++) {
         Vector n = m_sphere.center() - this->point(indices[i]);
 
-        n = n * (1.0 / (sqrt(n.squared_length())));
+        FT length = sqrt(n.squared_length());
+        if (length == 0) {
+          angles[i] = (FT)1.0;
+          continue;
+        }
+
+        n = n * (FT)1.0 / length;
         angles[i] = abs(this->normal(indices[i]) * n);
       }
     }
 
     virtual FT cos_to_normal(const Point &p, const Vector &n) const {
       Vector sphere_normal = m_sphere.center() - p;
-      sphere_normal = sphere_normal * ((FT)1.0 / (CGAL::sqrt(n.squared_length())));
+      FT length = (FT)(CGAL::sqrt(n.squared_length()));
+      if (length == 0)
+        return 1;
+
+      sphere_normal = sphere_normal * ((FT)1.0 / length);
       return abs(sphere_normal * n);
     }
       
@@ -222,7 +234,7 @@ namespace CGAL {
     }
 
   private:
-    Sphere m_sphere;
+    Sphere_3 m_sphere;
 /// \endcond
   };
 }

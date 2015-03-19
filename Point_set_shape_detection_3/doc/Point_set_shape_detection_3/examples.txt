@@ -1,6 +1,6 @@
 /*!
-\example Point_set_shape_detection_3/efficient_RANSAC_3_basic.cpp
-\example Point_set_shape_detection_3/efficient_RANSAC_3_parameters.cpp
-\example Point_set_shape_detection_3/efficient_RANSAC_3_point_access.cpp
-\example Point_set_shape_detection_3/efficient_RANSAC_3_custom_shape.h
+\example Point_set_shape_detection_3/efficient_ransac_basic.cpp
+\example Point_set_shape_detection_3/efficient_ransac_parameters.cpp
+\example Point_set_shape_detection_3/efficient_ransac_point_access.cpp
+\example Point_set_shape_detection_3/efficient_ransac_custom_shape.h
 */

@@ -45,20 +45,25 @@ namespace CGAL {
   namespace Shape_detection_3 {
   namespace internal {
     template<class PointAccessor>
-    class Octree_3;
+    class Octree;
   }
     
     /*!
      \ingroup PkgPointSetShapeDetection3
-     \brief Base class of shape types. Provides access to assigned points.
+     \brief Base class for shape types defining an interface to constuct a
+            shape from few points and calculate the point distance and normal
+            deviation from the surface normal. It is used during detection to
+            identify the inliers in the input data and to extract the largest
+            cluster of spatially neighbored points. The indices of the
+            associated input points can be 
      */
   template <class ERTraits>
   class Shape_base {
     /// \cond SKIP_IN_MANUAL
     template <class T>
-    friend class Efficient_RANSAC_3;
+    friend class Efficient_ransac;
     template<class PointAccessor>
-    friend class internal::Octree_3;
+    friend class internal::Octree;
     /// \endcond
 
   public:
@@ -77,9 +82,8 @@ namespace CGAL {
     typedef typename ERTraits::Geom_traits::Point_3 Point; ///< point type.
     typedef typename ERTraits::Geom_traits::Vector_3 Vector; ///< vector type.
 
-
     Shape_base() :
-    m_isValid(true),
+    m_is_valid(false),
       m_lower_bound((std::numeric_limits<FT>::min)()),
       m_upper_bound((std::numeric_limits<FT>::min)()),
       m_score(0),
@@ -92,9 +96,8 @@ namespace CGAL {
       
     /*!
       Indices into the input data of all points assigned to this shape.
-    */
-
-    const std::vector<std::size_t> &assigned_point_indices() const {
+     */
+    const std::vector<size_t> &assigned_point_indices() const {
       return m_indices;
     }
       
@@ -102,7 +105,6 @@ namespace CGAL {
       Helper function writing shape type
       and numerical parameters into a string.
      */
-
     virtual std::string info() const {
       return std::string();
     }
@@ -110,20 +112,19 @@ namespace CGAL {
     /*!
       Computes squared Euclidean distance from query point to the shape.
      */
-
     virtual FT squared_distance(const Point &p) const = 0;
 
   protected:
       
     /*!
-      Constructs the shape based on a
-      minimal set of samples from the input data.
+      Constructs the shape based on a minimal set of samples from the
+      input data.
      */
     virtual void create_shape(const std::vector<std::size_t> &indices) = 0;
     
     /*!
-      Determines the largest cluster with a point-to-point
-      distance not larger than cluster_epsilon.
+      Determines the largest cluster of inliers. A point belongs to a cluster
+      if there is a point in the cluster closer than cluster_epsilon distance.
      */
     std::size_t connected_component(std::vector<std::size_t> &indices, FT cluster_epsilon) {
       if (indices.size() == 0)
@@ -137,6 +138,7 @@ namespace CGAL {
         return connected_component_kdTree(indices, cluster_epsilon);
 
       FT min[2], max[2];
+      min[0] = min[1] = max[0] = min[1] = 0;
 
       std::vector<std::pair<FT, FT> > parameterSpace;
       parameterSpace.resize(indices.size());
@@ -269,20 +271,22 @@ namespace CGAL {
     /*!
       Determines the largest cluster with a point-to-point
       distance not larger than cluster_epsilon. This general version performs
-      a region growing within the supporting points using a kd tree.
+      a region growing within the inliers using a kd tree.
      */
-    std::size_t connected_component_kdTree(std::vector<std::size_t> &indices, FT cluster_epsilon) {
-      typedef typename CGAL::Search_traits_3<typename ERTraits::Geom_traits> Traits_base;
+    std::size_t connected_component_kdTree(std::vector<std::size_t> &indices,
+                                           FT cluster_epsilon) {
+      typedef typename CGAL::Search_traits_3<
+        typename ERTraits::Geom_traits> Traits_base;
       typedef typename boost::tuple<Point,int> Point_and_int;
-      typedef typename CGAL::Search_traits_adapter<Point_and_int, CGAL::Nth_of_tuple_property_map<0, Point_and_int>, Traits_base> Traits;
+      typedef typename CGAL::Search_traits_adapter<Point_and_int,
+        CGAL::Nth_of_tuple_property_map<0, Point_and_int>, Traits_base> Traits;
       typedef typename CGAL::Kd_tree<Traits> Kd_Tree;
       typedef typename CGAL::Fuzzy_sphere<Traits> Fuzzy_sphere;
 
       m_has_connected_component = true;
       
       std::vector<Point_and_int> pts;
-      std::vector<int> numLabeled;
-      std::vector<int> labelMap;
+      std::vector<std::size_t> labelMap;
       pts.resize(indices.size());
       labelMap.resize(indices.size(), 0);
 
@@ -356,13 +360,15 @@ namespace CGAL {
 
     /*!
       Computes squared Euclidean distance from a set of points to the shape.
+      The distances will be stored in the so called parameter.
      */
     virtual void squared_distance(const std::vector<std::size_t> &indices,
-                                  std::vector<FT> &dists) = 0;
+                                  std::vector<FT> &distances) = 0;
 
     /*!
-      Computes the deviation of the point normal from the surface normal
-      at the projected point in form of the dot product.
+      Computes the deviation of the point normal from the surface normal at the
+      projected point in form of the dot product and writes the result into the
+      provided 'angles' vector.
      */
     virtual void cos_to_normal(const std::vector<std::size_t> &indices,
                                std::vector<FT> &angles) const = 0;
@@ -443,13 +449,18 @@ namespace CGAL {
     }
 
     bool is_valid() const {
-      return m_isValid;
+      return m_is_valid;
     }
 
     virtual void parameters(const std::vector<std::size_t>& indices,
                             std::vector<std::pair<FT, FT> >& parameterSpace,
                             FT min[2],
                             FT max[2]) const {
+      // Avoid compiler warnings about unused parameters.
+      (void)indices;
+      (void)parameterSpace;
+      (void)min;
+      (void)max;
     }
 
     void compute(const std::set<std::size_t>& indices,
@@ -553,7 +564,7 @@ namespace CGAL {
     //deviation of normal, used during first check of the 3 normal
     FT m_normal_threshold;
 
-    bool m_isValid;
+    bool m_is_valid;
     FT m_lower_bound;
     FT m_upper_bound;
 

@@ -19,8 +19,8 @@
 // Author(s)     : Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez
 //
 
-#ifndef CGAL_SHAPE_DETECTION_3_PLANE_SHAPE_H
-#define CGAL_SHAPE_DETECTION_3_PLANE_SHAPE_H
+#ifndef CGAL_SHAPE_DETECTION_3_PLANE_H
+#define CGAL_SHAPE_DETECTION_3_PLANE_H
 
 #include "Shape_detection_3/Shape_base.h"
 
@@ -31,10 +31,10 @@ namespace CGAL {
   namespace Shape_detection_3 {
     /*!
      \ingroup PkgPointSetShapeDetection3
-     \brief Plane_shape implements Shape_base. The plane is represented by the normal vector and the distance to the origin.
+     \brief Plane implements Shape_base. The plane is represented by the normal vector and the distance to the origin.
      */
   template <class ERTraits>
-  class Plane_3 : public Shape_base<ERTraits> {
+  class Plane : public Shape_base<ERTraits> {
   public:
     /// \cond SKIP_IN_MANUAL
     typedef typename ERTraits::Input_iterator Input_iterator;
@@ -48,16 +48,16 @@ namespace CGAL {
     typedef typename ERTraits::Geom_traits::Vector_3 Vector;
     /// \endcond
 
-    typedef typename ERTraits::Geom_traits::Plane_3 Plane;///< plane type for conversion operator.
+    typedef typename ERTraits::Geom_traits::Plane_3 Plane_3;///< plane type for conversion operator.
 
   public:
-    Plane_3() : Shape_base<ERTraits>() {}
+    Plane() : Shape_base<ERTraits>() {}
 
     /*!
       Conversion operator to Plane_3 type.
      */
-    operator Plane() const {
-      return Plane(m_normal.x(), m_normal.y(), m_normal.z(), m_d);
+    operator Plane_3() const {
+      return Plane_3(m_normal.x(), m_normal.y(), m_normal.z(), m_d);
     }
             
     /*!
@@ -71,8 +71,8 @@ namespace CGAL {
     /*!
       Computes squared Euclidean distance from query point to the shape.
      */
-    FT squared_distance(const Point &_p) const {
-      FT d = (_p - m_point_on_primitive) * m_normal;
+    FT squared_distance(const Point &p) const {
+      FT d = (p - m_point_on_primitive) * m_normal;
       return d * d;
     }
 
@@ -100,7 +100,14 @@ namespace CGAL {
 
       m_normal = CGAL::cross_product(p1 - p2, p1 - p3);
 
-      m_normal = m_normal * (1.0 / sqrt(m_normal.squared_length()));
+      FT length = sqrt(m_normal.squared_length());
+
+      // Are the points almost singular?
+      if (length < (FT)0.0001) {
+        return;
+      }
+
+      m_normal = m_normal * ((FT)1.0 / length);
       m_d = -(p1[0] * m_normal[0] + p1[1] * m_normal[1] + p1[2] * m_normal[2]);
 
       //check deviation of the 3 normal
@@ -110,17 +117,19 @@ namespace CGAL {
 
         if (abs(l_v * m_normal)
             < this->m_normal_threshold * sqrt(l_v.squared_length())) {
-          this->m_isValid = false;
+          this->m_is_valid = false;
           return;
         }
 
         m_point_on_primitive = p1;
         m_base1 = CGAL::cross_product(p1 - p2, m_normal);
-        m_base1 = m_base1 * (1.0 / sqrt(m_base1.squared_length()));
+        m_base1 = m_base1 * ((FT)1.0 / sqrt(m_base1.squared_length()));
 
         m_base2 = CGAL::cross_product(m_base1, m_normal);
-        m_base2 = m_base2 * (1.0 / sqrt(m_base2.squared_length()));
+        m_base2 = m_base2 * ((FT)1.0 / sqrt(m_base2.squared_length()));
       }
+
+      this->m_is_valid = true;
     }
 
     virtual void parameters(const std::vector<std::size_t>& indices,
@@ -162,8 +171,8 @@ namespace CGAL {
       }
     }
 
-    FT cos_to_normal(const Point &_p, const Vector &_n) const{
-      return abs(_n * m_normal);
+    FT cos_to_normal(const Point &p, const Vector &n) const{
+      return abs(n * m_normal);
     } 
     
     virtual std::size_t minimum_sample_size() const {

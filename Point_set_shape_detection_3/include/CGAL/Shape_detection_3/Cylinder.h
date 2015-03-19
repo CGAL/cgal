@@ -32,12 +32,6 @@
 #define M_PI_2 1.57079632679489661923
 #endif
 
-// CODE REVIEW
-// fix naming, eg _p
-// check all degenerate cases
-// use (FT) in front of const such as (FT)1.0
-// remove commented lines
-
 /*!
  \file Cylinder.h
  */
@@ -51,7 +45,7 @@ namespace CGAL {
      \ingroup PkgPointSetShapeDetection3
      */
   template <class ERTraits>
-  class Cylinder_3 : public Shape_base<ERTraits> {
+  class Cylinder : public Shape_base<ERTraits> {
   public:
     /// \cond SKIP_IN_MANUAL
     typedef typename ERTraits::Input_iterator Input_iterator;
@@ -68,7 +62,7 @@ namespace CGAL {
     typedef typename ERTraits::Geom_traits::Line_3 Line; ///< line type.
 
   public:
-    Cylinder_3() : Shape_base<ERTraits>() {}
+    Cylinder() : Shape_base<ERTraits>() {}
 
     /*!
       Axis of the cylinder.
@@ -105,10 +99,12 @@ namespace CGAL {
       */ 
     FT squared_distance(const Point &p) const {
       Vector a = m_axis.to_vector();
-      a = a * (1.0 / sqrt(a.squared_length()));
+      a = a * ((FT)1.0 / CGAL::sqrt(a.squared_length()));
+
       Vector v = p - m_point_on_axis;
       v = v - ((v * a) * a);
       FT d = sqrt(v.squared_length()) - m_radius;
+
       return d * d;
     }
     /// \endcond
@@ -124,8 +120,7 @@ namespace CGAL {
 
       Vector axis = CGAL::cross_product(n1, n2);
       FT axisL = sqrt(axis.squared_length());
-      if (axisL < 0.001) {
-        this->m_isValid = false;
+      if (axisL < (FT)0.0001) {
         return;
       }
       axis = axis * (1.0 / axisL);
@@ -133,9 +128,9 @@ namespace CGAL {
       // establish two directions in the plane axis * x = 0, 
       // whereas xDir is the projected n1
       Vector xDir = n1 - (n1 * axis) * axis;
-      xDir = xDir * (1.0 / sqrt(xDir.squared_length()));
+      xDir = xDir * ((FT)1.0 / sqrt(xDir.squared_length()));
       Vector yDir = CGAL::cross_product(axis, xDir);
-      yDir = yDir * (1.0 / sqrt(yDir.squared_length()));
+      yDir = yDir * ((FT)1.0 / sqrt(yDir.squared_length()));
 
       FT n2x = n2 * yDir;
       FT n2y = -n2 * xDir;
@@ -154,10 +149,10 @@ namespace CGAL {
       m_axis = Line(m_point_on_axis, axis);
 
       if (squared_distance(p1) > this->m_epsilon ||
-          (cos_to_normal(p1, n1) < this->m_normal_threshold)) {
-        this->m_isValid = false;
+          (cos_to_normal(p1, n1) < this->m_normal_threshold))
         return;
-      }
+
+      this->m_is_valid = true;
     }
 
     void parameters(std::vector<std::pair<FT, FT> > &parameterSpace,
@@ -166,11 +161,11 @@ namespace CGAL {
                     FT max[2]) const {
       Vector d1 = Vector(0, 0, 1);
       Vector a = m_axis.to_vector();
-      a = a * (1.0 / sqrt(a.squared_length()));
+      a = a * ((FT)1.0 / sqrt(a.squared_length()));
 
       Vector d2 = CGAL::cross_product(a, d1);
       FT l = d2.squared_length();
-      if (l < 0.0001) {
+      if (l < (FT)0.0001) {
         d1 = Vector(1, 0, 0);
         d2 = CGAL::cross_product(m_axis.to_vector(), d1);
         l = d2.squared_length();
@@ -178,16 +173,21 @@ namespace CGAL {
       d2 = d2 / sqrt(l);
 
       d1 = CGAL::cross_product(m_axis.to_vector(), d2);
-      d1 = d1 * (1.0 / sqrt(d1.squared_length()));
+      FT length = CGAL::sqrt(d1.squared_length());
+      if (length == 0)
+        return;
+
+      d1 = d1 * (FT)1.0 / length;
 
       // 1.0 / circumfence
-      FT c = 1.0 / 2 * M_PI * m_radius;
+      FT c = (FT)1.0 / 2 * M_PI * m_radius;
 
       // first one separate for initializing min/max
       Vector vec = this->point(indices[0]) - m_point_on_axis;
       FT v = vec * a;
       vec = vec - ((vec * a) * a);
-      vec = vec * (1.0 / sqrt(vec.squared_length()));
+      length = CGAL::sqrt(vec.squared_length());
+      vec = vec * (FT)1.0 / length;
 
       FT a1 = acos(vec * d1);
       FT a2 = acos(vec * d2);
@@ -203,7 +203,8 @@ namespace CGAL {
         Vector vec = this->point(indices[i]) - m_point_on_axis;
         FT v = vec * a;
         vec = vec - ((vec * a) * a);
-        vec = vec * (1.0 / sqrt(vec.squared_length()));
+        length = CGAL::sqrt(vec.squared_length());
+        vec = vec * (FT)1.0 / length;
 
         FT a1 = acos(vec * d1);
         FT a2 = acos(vec * d2);
@@ -222,12 +223,12 @@ namespace CGAL {
     virtual void squared_distance(const std::vector<std::size_t> &indices,
                                   std::vector<FT> &dists) {
       Vector a = m_axis.to_vector();
-      a = a * (1.0 / sqrt(a.squared_length()));
+      a = a * ((FT)1.0 / CGAL::sqrt(a.squared_length()));
       for (std::size_t i = 0;i<indices.size();i++) {
           Vector v = this->point(indices[i]) - m_point_on_axis;
 
           v = v - ((v * a) * a);
-          dists[i] = sqrt(v.squared_length()) - m_radius;
+          dists[i] = CGAL::sqrt(v.squared_length()) - m_radius;
           dists[i] = dists[i] * dists[i];
         }
       }
@@ -235,23 +236,34 @@ namespace CGAL {
     virtual void cos_to_normal(const std::vector<std::size_t> &indices, 
                               std::vector<FT> &angles) const {
       Vector a = m_axis.to_vector();
-      a = a * (1.0 / sqrt(a.squared_length()));
+      a = a * ((FT)1.0 / CGAL::sqrt(a.squared_length()));
       for (std::size_t i = 0;i<indices.size();i++) {
           Vector v = this->point(indices[i]) - m_point_on_axis;
 
           v = v - ((v * a) * a);
-          v = v * (1.0 / sqrt(v.squared_length()));
+          FT length = CGAL::sqrt(v.squared_length());
+          if (length == 0) {
+            angles[i] = (FT)1.0;
+            continue;
+          }
+          v = v * (FT)1.0 / length;
           angles[i] = abs(v * this->normal(indices[i]));
       }
     }
 
-    FT cos_to_normal(const Point &_p, const Vector &_n) const {
+    FT cos_to_normal(const Point &p, const Vector &n) const {
       Vector a = m_axis.to_vector();
-      a = a * (1.0 / sqrt(a.squared_length()));
-      Vector v = _p - m_point_on_axis;
+      a = a * (FT)1.0 / CGAL::sqrt(a.squared_length());
+
+      Vector v = p - m_point_on_axis;
       v = v - ((v * a) * a);
-      v = v * (1.0 / sqrt(v.squared_length()));
-      return abs(v * _n);
+
+      FT length = CGAL::sqrt(v.squared_length());
+      if (length == 0)
+       return (FT)1.0;
+
+      v = v * (FT)1.0 / length;
+      return abs(v * n);
     }
 
     virtual std::size_t minimum_sample_size() const {

@@ -19,8 +19,8 @@
 // Author(s)     : Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez
 //
 
-#ifndef CGAL_SHAPE_DETECTION_3_TORUS_SHAPE_H
-#define CGAL_SHAPE_DETECTION_3_TORUS_SHAPE_H
+#ifndef CGAL_SHAPE_DETECTION_3_TORUS_H
+#define CGAL_SHAPE_DETECTION_3_TORUS_H
 
 #include "Shape_detection_3/Shape_base.h"
 #include <cmath>
@@ -33,10 +33,12 @@
 namespace CGAL {
   namespace Shape_detection_3 {
     /*!
-     \ingroup PkgPointSetShapeDetection3
-     \brief Torus_shape implements Shape_base. The torus is represented by the symmetry axis, its center on the axis and the major and minor radii.     */
+      \ingroup PkgPointSetShapeDetection3
+      \brief Torus implements Shape_base. The torus is represented by the
+      symmetry axis, its center on the axis and the major and minor radii.
+     */
   template <class ERTraits>
-  class Torus_3 : public Shape_base<ERTraits> {
+  class Torus : public Shape_base<ERTraits> {
   public:
     /// \cond SKIP_IN_MANUAL
     typedef typename ERTraits::Input_iterator Input_iterator;
@@ -54,7 +56,7 @@ namespace CGAL {
      ///< cricle type used during construction.
     /// \endcond
 
-    Torus_3() : Shape_base<ERTraits>() {}
+    Torus() : Shape_base<ERTraits>() {}
       
     /*!
       Direction of symmetry axis.
@@ -147,8 +149,12 @@ namespace CGAL {
       double a = CGAL::cross_product(p[0] - p[2], p[1] - p[0]) * n[2];
       double b = CGAL::cross_product(p[0] - p[3], p[1] - p[0]) * n[3];
 
-      double div = 1.0 / (b1 * a01 - b01 * a1);
-      double r = ((a01 * b + b1 * a0 - b0 * a1 - b01 * a)) * div * 0.5;
+      double div = (b1 * a01 - b01 * a1);
+      if (div == 0)
+        return;
+
+      div = (FT)1.0 / div;
+      double r = ((a01 * b + b1 * a0 - b0 * a1 - b01 * a)) * div * (FT)0.5;
       double q = (b * a0 - b0 * a) * div;
 
       FT root = r * r - q;
@@ -157,11 +163,17 @@ namespace CGAL {
 
       double y1 = -r - sqrt(root);
       double y2 = -r + sqrt(root);
-      double x1 = -(a1 * y1 + a) / (a01 * y1 + a0);
-      double x2 = -(a1 * y2 + a) / (a01 * y2 + a0);
+      double x1 = (a01 * y1 + a0);
+      double x2 =  (a01 * y2 + a0);
+
+      if (x1 == 0 || x2 == 0)
+        return;
+
+      x1 = -(a1 * y1 + a) / x1;
+      x2 = -(a1 * y2 + a) / x2;
 
       // 1. center + axis
-      FT majorRad1, minorRad1, dist1 = FLT_MAX;
+      FT majorRad1 = FLT_MAX, minorRad1 = FLT_MAX, dist1 = FLT_MAX;
       Point c1;
       Vector axis1;
       if (is_finite(x1) && is_finite(y1)) {
@@ -169,7 +181,7 @@ namespace CGAL {
         axis1 = c1 - (p[1] + n[1] * y1);
 
         FT l = axis1.squared_length();
-        if (l > 0.00001 && l == l) {
+        if (l > (FT)0.00001 && l == l) {
           axis1 = axis1 / sqrt(l);
           dist1 = getCircle(c1, axis1, p, majorRad1, minorRad1);
         }
@@ -184,7 +196,7 @@ namespace CGAL {
         axis2 = c2 - (p[1] + n[1] * y2);
 
         FT l = axis2.squared_length();
-        if (l > 0.00001 && l == l) {
+        if (l > (FT)0.00001 && l == l) {
           axis2 = axis2 / sqrt(l);
           dist2 = getCircle(c2, axis2, p, majorRad2, minorRad2);
         }
@@ -207,7 +219,7 @@ namespace CGAL {
       for (std::size_t i = 0;i<indices.size();i++) {
         // check distance
         if (squared_distance(p[i]) > this->m_epsilon) {
-          this->m_isValid = false;
+          this->m_is_valid = false;
           return;
         }
 
@@ -222,18 +234,27 @@ namespace CGAL {
           CGAL::cross_product(m_axis, d));
         if (in_plane * d < 0)
           in_plane = -in_plane;
-        in_plane = in_plane / sqrt(in_plane.squared_length());
 
-        d = p[i]
-          - (m_center + in_plane * m_majorRad);
-        d = d / sqrt(d.squared_length());
+        FT length = sqrt(in_plane.squared_length());
+        if (length == 0)
+          return;
+
+        in_plane = in_plane / length;
+
+        d = p[i] - (m_center + in_plane * m_majorRad);
+
+        length = sqrt(d.squared_length());
+        if (length == 0)
+          return;
+
+        d = d / length;
         if (abs(d * n[i]) < this->m_normal_threshold) {
-          this->m_isValid = false;
+          this->m_is_valid = false;
           return;
         }
       }
 
-      this->m_isValid = true;
+      this->m_is_valid = true;
     }
 
     virtual void squared_distance(const std::vector<std::size_t> &indices,
@@ -264,6 +285,16 @@ namespace CGAL {
                                               CGAL::cross_product(m_axis, d));
         if (in_plane * d < 0)
           in_plane = -in_plane;
+
+        FT length = (FT)sqrt(in_plane.squared_length());
+
+        // If length is 0 the point is on the axis, maybe in the apex. We
+        // accept any normal for that position.
+        if (length == 0) {
+          angles[i] = (FT)1.0;
+          continue;
+        }
+
         in_plane = in_plane / sqrt(in_plane.squared_length());
 
         d = this->point(indices[i]) - (m_center + in_plane * m_majorRad);
@@ -279,10 +310,20 @@ namespace CGAL {
                                            CGAL::cross_product(m_axis, d));
       if (in_plane * d < 0)
         in_plane = -in_plane;
+      
+      float length = sqrt(in_plane.squared_length());
+
+      // If length is 0 the point is on the axis, maybe in the apex. We
+      // accept any normal for that position.
+      if (length == 0) {
+        return (FT)1.0;
+      }
+
       in_plane = in_plane / sqrt(in_plane.squared_length());
 
       d = p - (m_center + in_plane * m_majorRad);
       d = d / sqrt(d.squared_length());
+
       return abs(d * n);
     }
       

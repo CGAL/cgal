@@ -36,23 +36,18 @@
  \file Cone.h
  */
 
-// CODE REVIEW
-// fix naming
-// check degenerate cases, eg every time a division occurs
-// 
-
 
 namespace CGAL {
   namespace Shape_detection_3 {
   /*!
-   \brief Cone_shape implements Shape_base.
+   \brief Cone implements Shape_base.
     The cone is represented by its apex, the axis and the opening angle.
     This representation models an open infinite single-cone.
    \ingroup PkgPointSetShapeDetection3
    */
 
   template <class ERTraits>
-  class Cone_3 : public Shape_base<ERTraits> {
+  class Cone : public Shape_base<ERTraits> {
   public:
     /// \cond SKIP_IN_MANUAL
     typedef typename ERTraits::Input_iterator Input_iterator;
@@ -67,33 +62,34 @@ namespace CGAL {
     /// \endcond
 
 	
-    Cone_3() : Shape_base<ERTraits>() {}
+    Cone() : Shape_base<ERTraits>() {}
       
     /*!
-     Opening angle between the axis and the surface of the cone.
+      The opening angle between the axis and the surface of the cone.
      */
     FT angle() const {
         return m_angle;
     }
     
     /*!
-       The apex of the cone.
-            */
+      The apex of the cone.
+     */
     Point apex() const {
         return m_apex;
     }
     
     /*!
-     The axis points from the apex into the cone.
+      The axis points from the apex into the cone.
      */
     Vector axis() const {
         return m_axis;
     }
     
     /*!
-     Helper function to write apex, axis and angle of the cone and
-     number of assigned points into a string.
+      Helper function to write apex, axis and angle of the cone and
+      number of assigned points into a string.
      */
+    /// \cond SKIP_IN_MANUAL
     std::string info() const {
         std::stringstream sstr;
         
@@ -108,21 +104,25 @@ namespace CGAL {
     /*!
     Computes squared Euclidean distance from query point to the shape.
     */ 
-    FT squared_distance(const Point &_p) const {
-      Vector toApex = _p - m_apex;
+    FT squared_distance(const Point &p) const {
+      Vector toApex = p - m_apex;
       FT a = toApex.squared_length();
 
       // projection on axis
       FT b = toApex * m_axis;
 
       // distance to axis
-      FT l = sqrt(a - b * b);
-      FT c = m_cosAng * l;
-      FT d = m_nSinAng * b;
+      if (a - b * b <= 0)
+        return 0;
+
+      FT l = CGAL::sqrt(a - b * b);
+      FT c = m_cos_ang * l;
+      FT d = m_neg_sin_ang * b;
 
       // far on other side?
-      return (b < 0 && c - d < 0) ? a : abs(c + d) * abs(c + d);
+      return (b < 0 && c - d < 0) ? a : CGAL::abs(c + d) * CGAL::abs(c + d);
     }
+    /// \endcond
 
   protected:
       /// \cond SKIP_IN_MANUAL
@@ -138,80 +138,93 @@ namespace CGAL {
       // first calculate intersection of three planes -> apex
 
       Vector lineDir = CGAL::cross_product(n1, n2);
-      lineDir = lineDir * 1.0 / (sqrt(lineDir.squared_length()));
+      FT length = sqrt(lineDir.squared_length());
+      if (length == 0)
+        return;
+
+      lineDir = lineDir * (FT)1.0 / length;
 
       // lineDir not normalized direction of intersection lines
       //  of two planes (p1, n1) and (p2, n2)
       // get point on line by moving point p1 onto line
       Vector orthLineInPlane = CGAL::cross_product(n1, lineDir);
-      orthLineInPlane = orthLineInPlane * 
-                        1.0 / (sqrt(orthLineInPlane.squared_length()));
+      length = sqrt(orthLineInPlane.squared_length());
+      if (length == 0)
+        return;
+
+      orthLineInPlane = orthLineInPlane * (FT)1.0 / length;
 
       // distance of p1 to (p2, n2)
       FT d = (p1 - CGAL::ORIGIN) * n2 - (p2 - CGAL::ORIGIN) * n2;
       // projection of orthLineInPlane onto p2
       FT l = orthLineInPlane * n2;
+      if (l == 0)
+        return;
+
       Point pointOnLine = p1 - (d/l) * orthLineInPlane;
 
       // distance of pLineDir to (p3, n3)
       d = (pointOnLine - CGAL::ORIGIN) * n3 - (p3 - CGAL::ORIGIN) * n3;
       l = lineDir * n3;
+      if (l == 0)
+        return;
+
       m_apex = pointOnLine - (d/l) * lineDir;
 
       // 2. find axis
       Vector v1 = p1 - m_apex;
-      v1 = v1 * 1.0 / (sqrt(v1.squared_length()));
+      length = sqrt(v1.squared_length());
+      if (length == 0)
+        return;
+      v1 = v1 * (FT)1.0 / length;
       Point c1 = m_apex + v1;
 
       Vector v2 = p2 - m_apex;
-      v2 = v2 * 1.0 / (sqrt(v2.squared_length()));
+      length = sqrt(v2.squared_length());
+      if (length == 0)
+        return;
+      v2 = v2 * (FT)1.0 / length;
       Point c2 = m_apex + v2;
 
       Vector v3 = p3 - m_apex;
-      v3 = v3 * 1.0 / (sqrt(v3.squared_length()));
+      length = sqrt(v3.squared_length());
+      if (length == 0)
+        return;
+      v3 = v3 * (FT)1.0 / length;
       Point c3 = m_apex + v3;
 
       m_axis = CGAL::cross_product(c1 - c2, c1 - c3);
       m_axis = (orthLineInPlane * m_axis < 0) ? -m_axis : m_axis;
-      m_axis = m_axis * 1.0 / sqrt(m_axis.squared_length());
+      length = CGAL::sqrt(m_axis.squared_length());
+      if (length == 0)
+        return;
+      m_axis = m_axis * (FT)1.0 / length;
 
       m_angle = acos(v1 * m_axis) + acos(v2 * m_axis) + acos(v3 * m_axis);
-      m_angle /= 3;
-      if (m_angle < 0 || m_angle > M_PI / 2.12)
+      m_angle /= (FT)3.0;
+      if (m_angle < 0 || m_angle > M_PI / (FT)2.12)
         return;
 
-      m_nSinAng = -sin(m_angle);
-      m_cosAng = cos(m_angle);
+      m_neg_sin_ang = -sin(m_angle);
+      m_cos_ang = cos(m_angle);
 
-      this->m_isValid = true;
-    }
-
-    virtual void parameters(const std::vector<std::size_t>& indices,
-                            std::vector<std::pair<FT, FT> >& parameterSpace,
-                    FT min[2],
-                    FT max[2]) const {
-        Vector a = CGAL::cross_product(Vector(0, 1, 0), m_axis);
-        if (a.squared_length() < 0.01)
-          a = CGAL::cross_product(Vector(0, 0, 1), m_axis);
-        a = a * 1.0 / sqrt(a.squared_length());
-        Vector b = CGAL::cross_product(m_axis, a);
-        b = b * 1.0 / sqrt(b.squared_length());
+      this->m_is_valid = true;
     }
 
     virtual void squared_distance(const std::vector<std::size_t> &indices,
                                   std::vector<FT> &dists) {
       for (std::size_t i = 0;i<indices.size();i++) {
-          Vector toApex = this->point(indices[i]) - m_apex;
+          Vector to_apex = this->point(indices[i]) - m_apex;
 
-          FT a = toApex.squared_length();
+          FT a = to_apex.squared_length();
 
           // projection on axis
-          FT b = toApex * m_axis;
+          FT b = to_apex * m_axis;
 
           // distance to axis
-          FT l = sqrt(a - b * b);
-          FT c = m_cosAng * l;
-          FT d = m_nSinAng * b;
+          FT l = CGAL::sqrt(a - b * b);
+          FT c = m_cos_ang * l;
+          FT d = m_neg_sin_ang * b;
 
           // far on other side?
           dists[i] = (b < 0 && c - d < 0) ? a : abs(c + d) * abs(c + d);
@@ -227,10 +240,17 @@ namespace CGAL {
           Vector b = CGAL::cross_product(m_axis, 
                                          CGAL::cross_product(m_axis, a));
           b = (a * b < 0) ? -b : b;
-          b = b * 1.0 / sqrt(b.squared_length());
-          b = m_cosAng * b + m_nSinAng * m_axis;
+          FT length = CGAL::sqrt(b.squared_length());
 
-        angles[i] = abs(this->normal(indices[i]) * b);
+          if (length == 0) {
+            angles[i] = (FT)1.0;
+            continue;
+          }
+
+          b = b * (FT)1.0 / length;
+          b = m_cos_ang * b + m_neg_sin_ang * m_axis;
+
+          angles[i] = CGAL::abs(this->normal(indices[i]) * b);
         }
       }
 
@@ -239,8 +259,13 @@ namespace CGAL {
       Vector a = p - m_apex;
       Vector b = CGAL::cross_product(m_axis, CGAL::cross_product(m_axis, a));
       b = (a * b < 0) ? -b : b;
-      b = b * 1.0 / sqrt(b.squared_length());
-      b = m_cosAng * b + m_nSinAng * m_axis;
+      FT length = sqrt(b.squared_length());
+      if (length == 0) {
+        return (FT)1.0;
+      }
+
+      b = b * (FT)1.0 / length;
+      b = m_cos_ang * b + m_neg_sin_ang * m_axis;
 
       return abs(n * b);
     }
@@ -267,8 +292,7 @@ namespace CGAL {
     FT m_angle;
     Point m_apex;
     Vector m_axis;
-    Point m_pointOnPrimitive;
-    FT m_nSinAng, m_cosAng;
+    FT m_neg_sin_ang, m_cos_ang;
       /// \endcond
   };
 }

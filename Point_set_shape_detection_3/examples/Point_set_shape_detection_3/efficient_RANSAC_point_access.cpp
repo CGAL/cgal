@@ -5,12 +5,10 @@
 #include <CGAL/Timer.h>
 #include <CGAL/number_utils.h>
 
-#include <CGAL/Efficient_RANSAC_3.h>
+#include <CGAL/Efficient_RANSAC.h>
 
 #include <iostream>
 #include <fstream>
-
-using namespace CGAL::Shape_detection_3;
 
 // Type declarations
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -20,14 +18,15 @@ typedef std::vector<Point_with_normal>                      Pwn_vector;
 typedef CGAL::Identity_property_map<Point_with_normal>      Point_pmap;
 typedef CGAL::Normal_of_point_with_normal_pmap<Kernel>      Normal_pmap;
 
-// In Efficient_RANSAC_traits_3 the basic types, i.e., Point and Vector types
+// In Efficient_RANSAC_traits the basic types, i.e., Point and Vector types
 // as well as iterator type and property maps, are defined.
-typedef Efficient_RANSAC_traits_3<Kernel,
+typedef CGAL::Shape_detection_3::Efficient_ransac_traits<Kernel,
   Pwn_vector::iterator, Point_pmap, Normal_pmap>            Traits;
-typedef Efficient_RANSAC_3<Traits>                          Efficient_RANSAC;
+typedef CGAL::Shape_detection_3::Efficient_ransac<Traits>   Efficient_ransac;
+typedef CGAL::Shape_detection_3::Plane<Traits>              Plane;
 
 
-int main() 
+int main()
 {
   // Points with normals.
   Pwn_vector points;
@@ -51,32 +50,33 @@ int main()
   time.start();
 
   // Instantiates shape detection engine.
-  Efficient_RANSAC sd = Efficient_RANSAC();
+  Efficient_ransac ransac;
 
   // Provides the input data.
-  sd.set_input_data(points.begin(), points.end(), Point_pmap(), Normal_pmap());
+  ransac.set_input_data(points);
 
   // Registers detection of planes
-  sd.add_shape_factory<Plane_3<Traits> >();
+  ransac.add_shape_factory<Plane>();
 
   // Detects shapes.
-  sd.detect();
+  ransac.detect();
 
   // Measures time after detection.
   time.stop();
 
   // Prints number of assigned shapes and unsassigned points.
   std::cout << "time: " << time.time() * 1000 << "ms" << std::endl;
-  std::cout << sd.number_of_shapes() << " primitives, "
-    << sd.number_of_unassigned_points()
+  std::cout << ransac.shapes().size() << " primitives, "
+    << ransac.number_of_unassigned_points()
     << " unassigned points" << std::endl;
 
-  // Shape_detection_3::shapes_begin() provides
-  // an iterator to the detected shapes.
-  Efficient_RANSAC::Shape_iterator it = sd.shapes_begin();
-  while (it != sd.shapes_end()) {
+  // Efficient_ransac::shapes() provides
+  // an iterator range to the detected shapes.
+  Efficient_ransac::Shape_range shapes = ransac.shapes();
+  Efficient_ransac::Shape_range::iterator it = shapes.begin();
 
-    const Efficient_RANSAC::Shape *shape = *it;
+  while (it != shapes.end()) {
+    const Efficient_ransac::Shape *shape = *it;
     // Using Shape_base::info() for printing 
     // the parameters of the detected shape.
     std::cout << (*it)->info();
