@@ -519,6 +519,8 @@ Scene_polyhedron_item::compile_shaders(void)
 void
 Scene_polyhedron_item::uniform_attrib(Viewer_interface* viewer, int mode) const
 {
+
+
     light_info light;
     GLint is_both_sides = 0;
     GLfloat mvp_mat[16];
@@ -556,6 +558,7 @@ Scene_polyhedron_item::uniform_attrib(Viewer_interface* viewer, int mode) const
     glGetLightfv(GL_LIGHT0, GL_DIFFUSE, light.diffuse);
     if(mode ==0)
     {
+
         glUseProgram(rendering_program_facets);
         glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
         glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
@@ -569,7 +572,10 @@ Scene_polyhedron_item::uniform_attrib(Viewer_interface* viewer, int mode) const
     {
         glUseProgram(rendering_program_lines);
         glUniformMatrix4fv(location[7], 1, GL_FALSE, mvp_mat);
+
     }
+
+
 
 }
 void
@@ -833,7 +839,6 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     glGenVertexArrays(1, vao);
     //Generates an integer which will be used as ID for each buffer
     glGenBuffers(5, buffer);
-
     compile_shaders();
 }
 
@@ -855,7 +860,6 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     glGenVertexArrays(1, vao);
     //Generates an integer which will be used as ID for each buffer
     glGenBuffers(5, buffer);
-
     compile_shaders();
 }
 
@@ -1020,8 +1024,6 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
     glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/4);
     glUseProgram(0);
     glBindVertexArray(0);
-
-
 
 }
 

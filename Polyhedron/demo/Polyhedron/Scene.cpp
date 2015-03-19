@@ -79,6 +79,7 @@ Scene::addItem(Scene_item* item)
 Scene_item*
 Scene::replaceItem(Scene::Item_id index, Scene_item* item, bool emit_item_about_to_be_destroyed)
 {
+    item->changed();
     if(index < 0 || index >= m_entries.size())
         return 0;
 
@@ -89,7 +90,6 @@ Scene::replaceItem(Scene::Item_id index, Scene_item* item, bool emit_item_about_
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
     std::swap(m_entries[index], item);
-
     if ( item->isFinite() && !item->isEmpty() &&
          m_entries[index]->isFinite() && !m_entries[index]->isEmpty() &&
          item->bbox()!=m_entries[index]->bbox() )
