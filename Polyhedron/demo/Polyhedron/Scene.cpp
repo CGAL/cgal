@@ -420,23 +420,34 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
     // Splatting
     if(!with_names && ms_splatting->isSupported())
     {
+
         ms_splatting->beginVisibilityPass();
         for(int index = 0; index < m_entries.size(); ++index)
         {
             Scene_item& item = *m_entries[index];
             if(item.visible() && item.renderingMode() == Splatting)
             {
-                item.draw_splats();
+
+                if(viewer)
+                {
+                    item.draw_splats(viewer);
+                }
+                else
+                    item.draw_splats();
             }
+
         }
         ms_splatting->beginAttributePass();
         for(int index = 0; index < m_entries.size(); ++index)
-        {
-            Scene_item& item = *m_entries[index];
+        {  Scene_item& item = *m_entries[index];
             if(item.visible() && item.renderingMode() == Splatting)
             {
+
                 CGALglcolor(item.color());
-                item.draw_splats();
+                if(viewer)
+                    item.draw_splats(viewer);
+                else
+                    item.draw_splats();
             }
         }
         ms_splatting->finalize();
@@ -711,8 +722,8 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
                 QColor color =
                         QColorDialog::getColor(model->data(index).value<QColor>(),
                                                0/*,
-                                                                   tr("Select color"),
-                                                                   QColorDialog::ShowAlphaChannel*/);
+                                                                                                                                 tr("Select color"),
+                                                                                                                                 QColorDialog::ShowAlphaChannel*/);
                 if (color.isValid()) {
                     model->setData(index, color );
                 }

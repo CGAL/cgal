@@ -103,7 +103,6 @@ Scene_polyhedron_item::is_Triangulated()
 
         if(nb_points_per_facet !=3)
         {
-            std::cout<<"NOT TRIANGLE"<<std::endl;
             is_Triangle = false;
             break;
         }
@@ -206,9 +205,6 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit)
             normals.push_back(n.y());
             normals.push_back(n.z());
         }
-
-
-
 
     }
 }
@@ -697,7 +693,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
     location[4] = glGetUniformLocation(rendering_program_facets, "light_spec");
     location[5] = glGetUniformLocation(rendering_program_facets, "light_amb");
     location[6] = glGetUniformLocation(rendering_program_facets, "is_two_side");
-
     location[7] = glGetUniformLocation(rendering_program_lines, "mvp_matrix");
 
 }
@@ -1018,12 +1013,15 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
 
     // tells the GPU to use the program just created
     glUseProgram(rendering_program_facets);
+
     uniform_attrib(viewer,0);
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
     glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/4);
     glUseProgram(0);
     glBindVertexArray(0);
+
+
 
 }
 

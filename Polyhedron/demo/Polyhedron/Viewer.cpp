@@ -139,13 +139,17 @@ void Viewer::keyPressEvent(QKeyEvent* e)
     }
     else if(e->key() == Qt::Key_M) {
       d->macro_mode = ! d->macro_mode;
+
       if(d->macro_mode) {
-        camera()->setZNearCoefficient(0.0005f);
+          camera()->setZNearCoefficient(0.0005f);
       } else {
         camera()->setZNearCoefficient(0.005f);
       }
       this->displayMessage(tr("Macro mode: %1").
                            arg(d->macro_mode ? tr("on") : tr("off")));
+
+
+
       return;
     }
   }

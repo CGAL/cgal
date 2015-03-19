@@ -462,9 +462,7 @@ Scene_textured_polyhedron_item::compute_normals_and_vertices(void)
     location[5] = glGetUniformLocation(rendering_program_facets, "light_amb");
     location[6] = glGetUniformLocation(rendering_program_facets, "is_two_side");
     location[8] = glGetUniformLocation(rendering_program_facets, "color_facets");
-
     sampler_location = glGetUniformLocation(rendering_program_facets, "s_texture");
-
     location[7] = glGetUniformLocation(rendering_program_lines, "mvp_matrix");
     location[9] = glGetUniformLocation(rendering_program_lines, "color_lines");
 
@@ -482,7 +480,6 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item()
     glGenBuffers(5, buffer);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glGenTextures(1, &textureId);
-
     compile_shaders();
     changed();
 }

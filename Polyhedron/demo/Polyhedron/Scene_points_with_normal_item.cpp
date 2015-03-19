@@ -21,6 +21,20 @@
 #include <algorithm>
 #include <boost/array.hpp>
 
+struct light_info
+{
+    //position
+    GLfloat position[4];
+
+    //ambient
+    GLfloat ambient[4];
+
+    //diffuse
+    GLfloat diffuse[4];
+
+    //specular
+    GLfloat specular[4];
+};
 
 Scene_points_with_normal_item::Scene_points_with_normal_item()
     : Scene_item_with_display_list(),
@@ -29,13 +43,20 @@ Scene_points_with_normal_item::Scene_points_with_normal_item()
       color_lines(0),
       color_points(0),
       positions_points(0),
+      normals(0),
+      positions_splats(0),
+      positions_selected_points(0),
+      color_selected_points(0),
+      tex_coords(0),
       m_has_normals(false)
 {
     setRenderingMode(Points);
     is_selected = true;
-    glGenVertexArrays(1, vao);
+    glGenVertexArrays(2, vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(7, buffer);
+    glGenBuffers(9, buffer);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glGenTextures(1, &textureId);
     compile_shaders();
 }
 
@@ -47,24 +68,33 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
       color_lines(0),
       color_points(0),
       positions_points(0),
+      normals(0),
+      positions_splats(0),
+      positions_selected_points(0),
+      color_selected_points(0),
+      tex_coords(0),
       m_has_normals(toCopy.m_has_normals)
 {
     if (m_has_normals)
     {
         setRenderingMode(PointsPlusNormals);
         is_selected = true;
-        glGenVertexArrays(1, vao);
+        glGenVertexArrays(2, vao);
         //Generates an integer which will be used as ID for each buffer
-        glGenBuffers(7, buffer);
+        glGenBuffers(9, buffer);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glGenTextures(1, &textureId);
         compile_shaders();
     }
     else
     {
         setRenderingMode(Points);
         is_selected = true;
-        glGenVertexArrays(1, vao);
+        glGenVertexArrays(2, vao);
         //Generates an integer which will be used as ID for each buffer
-        glGenBuffers(7, buffer);
+        glGenBuffers(9, buffer);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glGenTextures(1, &textureId);
         compile_shaders();
     }
 }
@@ -77,6 +107,11 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& i
       color_lines(0),
       color_points(0),
       positions_points(0),
+      normals(0),
+      positions_splats(0),
+      positions_selected_points(0),
+      color_selected_points(0),
+      tex_coords(0),
       m_has_normals(true)
 {
     // Converts Polyhedron vertices to point set.
@@ -91,19 +126,22 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& i
 
     setRenderingMode(PointsPlusNormals);
     is_selected = true;
-    glGenVertexArrays(1, vao);
+    glGenVertexArrays(2, vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(7, buffer);
+    glGenBuffers(9, buffer);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glGenTextures(1, &textureId);
     compile_shaders();
 }
 
 Scene_points_with_normal_item::~Scene_points_with_normal_item()
 {
     Q_ASSERT(m_points != NULL);
-    glDeleteBuffers(7, buffer);
-    glDeleteVertexArrays(1, vao);
+    glDeleteBuffers(9, buffer);
+    glDeleteVertexArrays(2, vao);
     glDeleteProgram(rendering_program_lines);
     glDeleteProgram(rendering_program_points);
+    glDeleteProgram(rendering_program_splats);
     delete m_points; m_points = NULL;
 }
 
@@ -167,6 +205,62 @@ void Scene_points_with_normal_item::initialize_buffers()
                           );
     glEnableVertexAttribArray(3);
 
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[6]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (positions_splats.size())*sizeof(double),
+                 positions_splats.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(4,
+                          3,
+                          GL_DOUBLE,
+                          GL_FALSE,
+                          0,
+                          NULL
+                          );
+    glEnableVertexAttribArray(4);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[7]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (tex_coords.size())*sizeof(double),
+                 tex_coords.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(5,
+                          2,
+                          GL_DOUBLE,
+                          GL_FALSE,
+                          0,
+                          NULL
+                          );
+    glEnableVertexAttribArray(5);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[8]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (normals.size())*sizeof(double),
+                 normals.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(6,
+                          3,
+                          GL_DOUBLE,
+                          GL_FALSE,
+                          0,
+                          NULL
+                          );
+    glEnableVertexAttribArray(6);
+
+    // glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_RGB,
+                 1,
+                 1,
+                 0,
+                 GL_RGB,
+                 GL_UNSIGNED_BYTE,
+                 texture);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
     glBindVertexArray(vao[1]);
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer[4]);
@@ -196,7 +290,6 @@ void Scene_points_with_normal_item::initialize_buffers()
                           NULL
                           );
     glEnableVertexAttribArray(3);
-
 
     // Clean-up
     glBindVertexArray(0);
@@ -239,26 +332,20 @@ void Scene_points_with_normal_item::compile_shaders(void)
         " color = fColors; \n"
         "} \n"
     };
-
     GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex_shader, 1, vertex_shader_source_lines, NULL);
     glCompileShader(vertex_shader);
     GLuint fragment_shader =	glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
     glCompileShader(fragment_shader);
-
     //creates the program, attaches and links the shaders
     GLuint program= glCreateProgram();
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
-
     //Clean-up
     glDeleteShader(vertex_shader);
-
     rendering_program_lines = program;
-
-
     //For the points
     static const GLchar* vertex_shader_source_points[] =
     {
@@ -281,25 +368,82 @@ void Scene_points_with_normal_item::compile_shaders(void)
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex_shader, 1, vertex_shader_source_points, NULL);
     glCompileShader(vertex_shader);
-
     glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
     glCompileShader(fragment_shader);
-
     program = glCreateProgram();
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
     //Clean-up
     glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
     rendering_program_points = program;
+
+    //For the splats
+    static const GLchar* vertex_shader_source_splats[] =
+    {
+        "#version 300 es \n"
+        " \n"
+        "layout (location = 4) in vec3 positions; \n"
+        "layout (location = 6) in vec3 normals; \n"
+        "layout (location = 5) in vec2 v_texCoord; \n"
+
+        "uniform mat4 mvp_matrix; \n"
+        "uniform mat4 mv_matrix; \n"
+        "uniform int is_two_side; \n"
+        "uniform vec3 light_pos;  \n"
+        "uniform vec3 light_diff; \n"
+        "uniform vec3 light_spec; \n"
+        "uniform vec3 light_amb;  \n"
+        "uniform sampler2D s_texture; \n"
+
+        "vec4 positions_splats = vec4(positions, 1.0); \n"
+        "float spec_power = 128.0; \n"
+
+        "out highp vec3 fColors; \n"
+        " \n"
+        "void main(void) \n"
+        "{ \n"
+        "   vec4 P = mv_matrix * positions_splats; \n"
+        "   vec3 N = mat3(mv_matrix)* normals; \n"
+        "   vec3 L = light_pos - P.xyz; \n"
+        "   N = normalize(N); \n"
+        "   L = normalize(L); \n"
+        "   vec3 diffuse; \n"
+        "   if(is_two_side == 1) \n"
+        "       diffuse = abs(dot(N,L)) * light_diff; \n"
+        "   else \n"
+        "       diffuse = max(dot(N,L), 0.0) * light_diff; \n"
+        "   fColors = vec3(1.0,0.0,0.0); \n" /*vec3(texture(s_texture, v_texCoord)) * (light_amb + diffuse);*/
+        "   gl_Position = mvp_matrix * positions_splats; \n"
+        "} \n"
+    };
+    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertex_shader, 1, vertex_shader_source_splats, NULL);
+    glCompileShader(vertex_shader);
+    glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+    glCompileShader(fragment_shader);
+    program = glCreateProgram();
+    glAttachShader(program, vertex_shader);
+    glAttachShader(program, fragment_shader);
+    glLinkProgram(program);
+
+    //Clean-up
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader);
+    rendering_program_splats = program;
+
+
 }
 void Scene_points_with_normal_item::compute_normals_and_vertices(void)
 {
     positions_points.clear();
     positions_lines.clear();
+    positions_splats.clear();
+    positions_selected_points.clear();
     color_points.clear();
     color_lines.clear();
+    normals.clear();
+    tex_coords.clear();
 
     //The points
     {
@@ -324,9 +468,9 @@ void Scene_points_with_normal_item::compute_normals_and_vertices(void)
                     }
                     else
                     {
-                    color_points.push_back(this->color().redF());
-                    color_points.push_back(this->color().greenF());
-                    color_points.push_back(this->color().blueF());
+                        color_points.push_back(this->color().redF());
+                        color_points.push_back(this->color().greenF());
+                        color_points.push_back(this->color().blueF());
                     }
 
                 }
@@ -366,90 +510,151 @@ void Scene_points_with_normal_item::compute_normals_and_vertices(void)
         // Stock normals of *non-selected* points
         if (m_points->nb_selected_points() < m_points->size())
         {
-          // Stock normals
-          for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
-          {
-            const UI_point& p = *it;
-            const Point_set_3<Kernel>::Vector& n = p.normal();
-            if (!p.is_selected())
+            // Stock normals
+            for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
             {
-              Point_set_3<Kernel>::Point q = p + normal_length * n;
-              positions_lines.push_back(p.x());
-              positions_lines.push_back(p.y());
-              positions_lines.push_back(p.z());
+                const UI_point& p = *it;
+                const Point_set_3<Kernel>::Vector& n = p.normal();
+                if (!p.is_selected())
+                {
+                    Point_set_3<Kernel>::Point q = p + normal_length * n;
+                    positions_lines.push_back(p.x());
+                    positions_lines.push_back(p.y());
+                    positions_lines.push_back(p.z());
 
-              positions_lines.push_back(q.x());
-              positions_lines.push_back(q.y());
-              positions_lines.push_back(q.z());
+                    positions_lines.push_back(q.x());
+                    positions_lines.push_back(q.y());
+                    positions_lines.push_back(q.z());
 
-              if(is_selected)
-              {
-              color_lines.push_back(this->color().lighter(120).redF());
-              color_lines.push_back(this->color().lighter(120).greenF());
-              color_lines.push_back(this->color().lighter(120).blueF());
+                    if(is_selected)
+                    {
+                        color_lines.push_back(this->color().lighter(120).redF());
+                        color_lines.push_back(this->color().lighter(120).greenF());
+                        color_lines.push_back(this->color().lighter(120).blueF());
 
-              color_lines.push_back(this->color().lighter(120).redF());
-              color_lines.push_back(this->color().lighter(120).greenF());
-              color_lines.push_back(this->color().lighter(120).blueF());
-              }
-              else
-              {
-                  color_lines.push_back(this->color().redF());
-                  color_lines.push_back(this->color().greenF());
-                  color_lines.push_back(this->color().blueF());
+                        color_lines.push_back(this->color().lighter(120).redF());
+                        color_lines.push_back(this->color().lighter(120).greenF());
+                        color_lines.push_back(this->color().lighter(120).blueF());
+                    }
+                    else
+                    {
+                        color_lines.push_back(this->color().redF());
+                        color_lines.push_back(this->color().greenF());
+                        color_lines.push_back(this->color().blueF());
 
-                  color_lines.push_back(this->color().redF());
-                  color_lines.push_back(this->color().greenF());
-                  color_lines.push_back(this->color().blueF());
-              }
+                        color_lines.push_back(this->color().redF());
+                        color_lines.push_back(this->color().greenF());
+                        color_lines.push_back(this->color().blueF());
+                    }
+                }
             }
-          }
         }
 
         // Stock normals of *selected* points
         if (m_points->nb_selected_points() > 0)
         {
-          for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
-          {
-            const UI_point& p = *it;
-            const Point_set_3<Kernel>::Vector& n = p.normal();
-            if (p.is_selected())
+            for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
             {
-              Point_set_3<Kernel>::Point q = p + normal_length * n;
-              positions_lines.push_back(p.x());
-              positions_lines.push_back(p.y());
-              positions_lines.push_back(p.z());
+                const UI_point& p = *it;
+                const Point_set_3<Kernel>::Vector& n = p.normal();
+                if (p.is_selected())
+                {
+                    Point_set_3<Kernel>::Point q = p + normal_length * n;
+                    positions_lines.push_back(p.x());
+                    positions_lines.push_back(p.y());
+                    positions_lines.push_back(p.z());
 
-              positions_lines.push_back(q.x());
-              positions_lines.push_back(q.y());
-              positions_lines.push_back(q.z());
+                    positions_lines.push_back(q.x());
+                    positions_lines.push_back(q.y());
+                    positions_lines.push_back(q.z());
 
-              color_lines.push_back(1.0);
-              color_lines.push_back(0.0);
-              color_lines.push_back(0.0);
+                    color_lines.push_back(1.0);
+                    color_lines.push_back(0.0);
+                    color_lines.push_back(0.0);
 
-              color_lines.push_back(1.0);
-              color_lines.push_back(0.0);
-              color_lines.push_back(0.0);
+                    color_lines.push_back(1.0);
+                    color_lines.push_back(0.0);
+                    color_lines.push_back(0.0);
+                }
             }
-          }
+        }
+    }
+
+    //The splats
+    {
+        // TODO add support for selection
+        texture[0] = this->color().redF();
+        texture[1] = this->color().greenF();
+        texture[2] = this->color().blueF();
+
+        // Draw splats
+        bool points_have_normals = (m_points->begin() != m_points->end() &&
+                m_points->begin()->normal() != CGAL::NULL_VECTOR);
+        bool points_have_radii =   (m_points->begin() != m_points->end() &&
+                m_points->begin()->radius() != 0);
+        if(points_have_normals && points_have_radii)
+        {
+            for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
+            {
+                const UI_point& p = *it;
+                normals.push_back(p.normal().x());
+                normals.push_back(p.normal().y());
+                normals.push_back(p.normal().z());
+#ifdef CGAL_GLEW_ENABLED
+                tex_coords.push_back(p.radius());
+#endif
+                positions_splats.push_back(p.x());
+                positions_splats.push_back(p.y());
+                positions_splats.push_back(p.z());
+            }
         }
     }
     location[0] = glGetUniformLocation(rendering_program_lines, "mvp_matrix");
     location[1] = glGetUniformLocation(rendering_program_points, "mvp_matrix");
+
+    location[2] = glGetUniformLocation(rendering_program_splats, "mvp_matrix");
+    location[3] = glGetUniformLocation(rendering_program_splats, "mv_matrix");
+    location[4] = glGetUniformLocation(rendering_program_splats, "light_pos");
+    location[5] = glGetUniformLocation(rendering_program_splats, "light_diff");
+    location[6] = glGetUniformLocation(rendering_program_splats, "light_spec");
+    location[7] = glGetUniformLocation(rendering_program_splats, "light_amb");
+    location[8] = glGetUniformLocation(rendering_program_splats, "is_two_side");
+    sampler_location = glGetUniformLocation(rendering_program_splats, "s_texture");
+
 }
 void Scene_points_with_normal_item::uniform_attrib(Viewer_interface* viewer, int mode) const
 {
     GLfloat mvp_mat[16];
-
-    //fills the MVP matrix.
+    light_info light;
+    GLint is_both_sides = 0;
+    GLfloat mv_mat[16];
 
     GLdouble d_mat[16];
     viewer->camera()->getModelViewProjectionMatrix(d_mat);
-    //Convert the GLdoubles matrix in GLfloats
+
     for (int i=0; i<16; ++i){
         mvp_mat[i] = GLfloat(d_mat[i]);
     }
+    viewer->camera()->getModelViewMatrix(d_mat);
+    for (int i=0; i<16; ++i)
+        mv_mat[i] = GLfloat(d_mat[i]);
+
+    glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
+
+    //Gets lighting info :
+
+    //position
+    glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
+
+    //ambient
+    glGetLightfv(GL_LIGHT0, GL_AMBIENT, light.ambient);
+
+
+    //specular
+    glGetLightfv(GL_LIGHT0, GL_SPECULAR, light.specular);
+
+    //diffuse
+    glGetLightfv(GL_LIGHT0, GL_DIFFUSE, light.diffuse);
 
     if(mode ==0)
     {
@@ -461,6 +666,20 @@ void Scene_points_with_normal_item::uniform_attrib(Viewer_interface* viewer, int
         glUseProgram(rendering_program_points);
         glUniformMatrix4fv(location[1], 1, GL_FALSE, mvp_mat);
     }
+
+    else if(mode ==2)
+    {
+        glUseProgram(rendering_program_splats);
+        glUniformMatrix4fv(location[2], 1, GL_FALSE, mvp_mat);
+        glUniformMatrix4fv(location[3], 1, GL_FALSE, mv_mat);
+        glUniform3fv(location[4], 1, light.position);
+        glUniform3fv(location[5], 1, light.diffuse);
+        glUniform3fv(location[6], 1, light.specular);
+        glUniform3fv(location[7], 1, light.ambient);
+        glUniform1i(location[8], is_both_sides);
+        glUniform1i(sampler_location, 0);
+    }
+
 }
 
 
@@ -629,6 +848,12 @@ void Scene_points_with_normal_item::draw_splats() const
     {
         m_points->gl_draw_splats();
     }
+}
+
+void Scene_points_with_normal_item::draw_splats(Viewer_interface* viewer) const
+{
+    //Needs to be re-thinked because the GlSplat Renderer is deprecated and is a big part of the scene class.
+   draw_splats();
 }
 
 void Scene_points_with_normal_item::draw_edges(Viewer_interface* viewer) const
