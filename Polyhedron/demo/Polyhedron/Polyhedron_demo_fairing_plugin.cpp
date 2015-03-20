@@ -75,17 +75,14 @@ public slots:
     unsigned int continuity = ui_widget.Continuity_spin_box->value();
 
     if(weight_index == 1)
-      CGAL::Polygon_mesh_processing::internal::fair(*selection_item->polyhedron(),
+      CGAL::Polygon_mesh_processing::fair(*selection_item->polyhedron(),
         selection_item->selected_vertices,
-        CGAL::Default(),
-        CGAL::internal::Uniform_weight_fairing<Polyhedron>(*selection_item->polyhedron()),
-        continuity);
+        CGAL::parameters::weight_calculator(CGAL::internal::Uniform_weight_fairing<Polyhedron>(*selection_item->polyhedron())).
+        fairing_continuity(continuity));
     if(weight_index == 0)
       CGAL::Polygon_mesh_processing::fair(*selection_item->polyhedron(),
         selection_item->selected_vertices,
-        CGAL::Default(),
-//        CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(*selection_item->polyhedron()),
-        continuity);
+        CGAL::parameters::fairing_continuity(continuity));
     selection_item->changed_with_poly_item();
     QApplication::restoreOverrideCursor();
   }
@@ -105,7 +102,7 @@ public slots:
       selection_item->selected_facets,
       std::back_inserter(new_facets),
       CGAL::Emptyset_iterator(),
-      alpha);
+      CGAL::parameters::density_control_factor(alpha));
     // add new facets to selection
     for(std::vector<Polyhedron::Facet_handle>::iterator it = new_facets.begin(); it != new_facets.end(); ++it) {
       selection_item->selected_facets.insert(*it);

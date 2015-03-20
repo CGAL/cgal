@@ -22,6 +22,7 @@
 #define CGAL_POLYGON_MESH_PROCESSING_FAIR_H
 
 #include <CGAL/Polygon_mesh_processing/internal/fair_impl.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
@@ -41,29 +42,13 @@ namespace internal {
     VertexRange vertices,
     SparseLinearSolver solver,
     WeightCalculator weight_calculator,
-    unsigned int continuity = 1)
+    unsigned int continuity)
   {
     CGAL::Polygon_mesh_processing::internal::Fair_Polyhedron_3<PolygonMesh,
       SparseLinearSolver, WeightCalculator> fair_functor(pmesh, weight_calculator);
     return fair_functor.fair(vertices, solver, continuity);
   }
 
-#if defined(CGAL_EIGEN3_ENABLED) && EIGEN_VERSION_AT_LEAST(3,2,0)
-  //use default SparseLinearSolver (used in triangulate_hole.h)
-  template<class WeightCalculator, class PolygonMesh, class VertexRange>
-  bool fair(PolygonMesh& pmesh,
-    VertexRange vertices,
-    CGAL::Default,
-    WeightCalculator weight_calculator,
-    unsigned int continuity = 1)
-  {
-    typedef   CGAL::Eigen_solver_traits<
-                Eigen::SparseLU< CGAL::Eigen_sparse_matrix<double>::EigenType,
-                                 Eigen::COLAMDOrdering<int> >  >
-                                    Sparse_linear_solver;
-    return internal::fair(pmesh, vertices, Sparse_linear_solver(), weight_calculator, continuity);
-  }
-#endif
 } //end namespace internal
 
   /*!
@@ -99,44 +84,41 @@ namespace internal {
   \todo SUBMISSION: missing VertexPointMap
   @todo accuracy of solvers are not good, for example when there is no boundary condition pre_factor should fail, but it does not.
   */
-  template<class SparseLinearSolver, class PolygonMesh, class VertexRange>
+  template<typename PolygonMesh,
+           typename VertexRange,
+           class P, class T, class R>
   bool fair(PolygonMesh& pmesh,
-    VertexRange vertices,
-    SparseLinearSolver solver
-#ifdef DOXYGEN_RUNNING
-    = CGAL::Default()
-#endif
-    , unsigned int continuity = 1)
+            VertexRange vertices,
+            const pmp_bgl_named_params<P, T, R>& p)
   {
-    typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh> Weight_calculator;
-    return internal::fair<SparseLinearSolver, Weight_calculator, PolygonMesh, VertexRange>
-      (pmesh, vertices, solver, Weight_calculator(pmesh), continuity);
-  }
+    using boost::get_param;
+    using boost::choose_param;
+
+    typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh>
+      Default_Weight_calculator;
 
 #if defined(CGAL_EIGEN3_ENABLED) && EIGEN_VERSION_AT_LEAST(3,2,0)
-  // use default SparseLinearSolver and continuity
-
-  template<class PolygonMesh, class VertexRange>
-  bool fair(PolygonMesh& pmesh,
-    VertexRange vertices,
-    CGAL::Default,
-    unsigned int continuity = 1)
-  {
-    typedef   CGAL::Eigen_solver_traits<
-                Eigen::SparseLU< CGAL::Eigen_sparse_matrix<double>::EigenType,
-                                 Eigen::COLAMDOrdering<int> >  >
-                                    Sparse_linear_solver;
-    return fair(pmesh, vertices, Sparse_linear_solver(), continuity);
-  }
-
-  template<class PolygonMesh, class VertexRange>
-  bool fair(PolygonMesh& pmesh,
-            VertexRange vertices)
-  {
-    return fair(pmesh, vertices, CGAL::Default());
-  }
+    typedef CGAL::Eigen_solver_traits<Eigen::SparseLU<
+      CGAL::Eigen_sparse_matrix<double>::EigenType, Eigen::COLAMDOrdering<int> >  >
+      Default_solver;
+#else
+    typedef bool Default_solver;//compilation should crash
+      //if no solver is provided and Eigen version < 3.2
 #endif
 
+    return internal::fair(pmesh, vertices,
+      choose_param(get_param(p, sparse_linear_solver), Default_solver()),
+      choose_param(get_param(p, weight_calculator), Default_Weight_calculator(pmesh)),
+      choose_param(get_param(p, fairing_continuity), 1)
+      );
+  }
+
+  template<typename PolygonMesh, typename VertexRange>
+  bool fair(PolygonMesh& pmesh, VertexRange vertices)
+  {
+    return fair(pmesh, vertices, CGAL::parameters::all_default());
+  }
+  
 } //end namespace Polygon_mesh_processing
 
 } //end namespace CGAL

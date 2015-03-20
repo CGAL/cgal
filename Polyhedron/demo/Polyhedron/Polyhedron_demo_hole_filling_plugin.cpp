@@ -602,11 +602,14 @@ bool Polyhedron_demo_hole_filling_plugin::fill
   std::vector<Polyhedron::Facet_handle> patch;
   if(action_index == 0) {
     CGAL::Polygon_mesh_processing::triangulate_hole(poly,
-             it, std::back_inserter(patch), use_DT);
+             it, std::back_inserter(patch),
+             CGAL::parameters::use_delaunay_triangulation(use_DT));
   }
   else if(action_index == 1) {
     CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly,
-             it, std::back_inserter(patch), CGAL::Emptyset_iterator(), alpha, use_DT);
+             it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
+             CGAL::parameters::density_control_factor(alpha).
+             use_delaunay_triangulation(use_DT));
   }
   else {
     int weight_index = ui_widget.weight_combo_box->currentIndex();
@@ -615,16 +618,18 @@ bool Polyhedron_demo_hole_filling_plugin::fill
     if(weight_index == 0) {
       success = CGAL::cpp11::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
               it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
-              CGAL::internal::Uniform_weight_fairing<Polyhedron>(poly),
-              CGAL::Default(),
-              alpha, continuity, use_DT));
+              CGAL::parameters::weight_calculator(CGAL::internal::Uniform_weight_fairing<Polyhedron>(poly)).
+              density_control_factor(alpha).
+              fairing_continuity(continuity).
+              use_delaunay_triangulation(use_DT)));
     }
     else {
       success = CGAL::cpp11::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
               it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
-              CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(poly),
-              CGAL::Default(),
-              alpha, continuity, use_DT));
+              CGAL::parameters::weight_calculator(CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(poly)).
+              density_control_factor(alpha).
+              fairing_continuity(continuity).
+              use_delaunay_triangulation(use_DT)));
     }
 
     if(!success) { print_message("Error: fairing is not successful, only triangulation and refinement are applied!"); }

@@ -54,10 +54,10 @@ int main(int argc, char* argv[])
   std::vector<Vertex_handle> new_vertices;
 
   CGAL::Polygon_mesh_processing::refine(poly,
-                                        faces(poly),
-                                        std::back_inserter(new_facets),
-                                        std::back_inserter(new_vertices),
-                                        2.0);
+                  faces(poly),
+                  std::back_inserter(new_facets),
+                  std::back_inserter(new_vertices),
+                  CGAL::parameters::density_control_factor(2.));
 
   std::ofstream refined_off("refined.off");
   refined_off << poly;

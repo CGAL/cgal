@@ -139,7 +139,8 @@ public slots:
       if(also_refine) {
         timer.reset();
         CGAL::Polygon_mesh_processing::refine(*poly, faces(*poly),
-          Nop_out(), Nop_out(), density_control_factor);
+          Nop_out(), Nop_out(),
+          CGAL::parameters::density_control_factor(density_control_factor));
         print_message(QString("Refined in %1 sec.").arg(timer.time()));
       }
 

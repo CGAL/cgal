@@ -26,6 +26,7 @@
 #include <CGAL/Polygon_mesh_processing/refine.h>
 #include <CGAL/Polygon_mesh_processing/fair.h>
 #include <CGAL/Default.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 
 #include <boost/tuple/tuple.hpp>
 
@@ -60,22 +61,37 @@ namespace Polygon_mesh_processing {
   @todo handle the case where an island is reduced to a point
   \todo SUBMISSION: VertexPointMap
   */
-  template<class PolygonMesh, class OutputIterator>
+  template<typename PolygonMesh,
+           typename OutputIterator,
+           class P, class T, class R>
   OutputIterator
     triangulate_hole(PolygonMesh& pmesh,
       typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
       OutputIterator out,
-      bool use_delaunay_triangulation = true)
+      const pmp_bgl_named_params<P, T, R>& p)
   {
+    using boost::choose_param;
+    using boost::get_param;
+
     bool use_dt3 =
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
       false;
 #else
-      use_delaunay_triangulation;
+      choose_param(get_param(p, use_delaunay_triangulation), true);
 #endif
+
     CGAL_precondition(face(border_halfedge, pmesh) == boost::graph_traits<PolygonMesh>::null_face());
-    return internal::triangulate_hole_polygon_mesh
-      (pmesh, border_halfedge, out, use_dt3).first;
+
+    return internal::triangulate_hole_polygon_mesh(pmesh, border_halfedge, out, use_dt3).first;
+  }
+
+  template<typename PolygonMesh, typename OutputIterator>
+  OutputIterator
+    triangulate_hole(PolygonMesh& pmesh,
+      typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
+      OutputIterator out)
+  {
+    return triangulate_hole(pmesh, border_halfedge, out, CGAL::parameters::all_default());
   }
 
   /*!
@@ -106,25 +122,37 @@ namespace Polygon_mesh_processing {
   */
   template<class PolygonMesh,
            class FaceOutputIterator,
-           class VertexOutputIterator>
+           class VertexOutputIterator,
+           class P, class T, class R>
   std::pair<FaceOutputIterator, VertexOutputIterator>
     triangulate_and_refine_hole(PolygonMesh& pmesh,
       typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
       FaceOutputIterator face_out,
       VertexOutputIterator vertex_out,
-      double density_control_factor = std::sqrt(2.0),
-      bool use_delaunay_triangulation = true)
+      const pmp_bgl_named_params<P, T, R>& p)
   {
-    bool use_dt3 =
-#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
-      false;
-#else
-      use_delaunay_triangulation;
-#endif
+    using boost::choose_param;
+    using boost::get_param;
+
     std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor> patch;
-    triangulate_hole(pmesh, border_halfedge, std::back_inserter(patch), use_dt3);
+    triangulate_hole(pmesh, border_halfedge, std::back_inserter(patch), p);
     face_out = std::copy(patch.begin(), patch.end(), face_out);
-    return refine(pmesh, patch, face_out, vertex_out, density_control_factor);
+
+    return refine(pmesh, patch, face_out, vertex_out, p);
+  }
+
+  template<class PolygonMesh,
+           class FaceOutputIterator,
+           class VertexOutputIterator>
+  std::pair<FaceOutputIterator, VertexOutputIterator>
+    triangulate_and_refine_hole(PolygonMesh& pmesh,
+       typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
+       FaceOutputIterator face_out,
+       VertexOutputIterator vertex_out)
+  {
+    return triangulate_and_refine_hole(pmesh, border_halfedge,
+      face_out, vertex_out,
+      CGAL::parameters::all_default());
   }
 
 
@@ -173,97 +201,39 @@ namespace Polygon_mesh_processing {
   \todo SUBMISSION: VertexPointMap
   */
   template<typename PolygonMesh,
-           typename SparseLinearSolver,
            typename FaceOutputIterator,
-           typename VertexOutputIterator>
+           typename VertexOutputIterator,
+           class P, class T, class R>
   CGAL::cpp11::tuple<bool, FaceOutputIterator, VertexOutputIterator>
   triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
     FaceOutputIterator face_out,
     VertexOutputIterator vertex_out,
-    SparseLinearSolver solver = CGAL::Default(),
-    double density_control_factor = std::sqrt(2.0),
-    unsigned int continuity = 1,
-    bool use_delaunay_triangulation = true)
+    const pmp_bgl_named_params<P, T, R>& p)
   {
-    bool use_dt3 =
-#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
-      false;
-#else
-      use_delaunay_triangulation;
-#endif
     std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor> patch;
 
     face_out = triangulate_and_refine_hole
-      (pmesh, border_halfedge, face_out, std::back_inserter(patch),
-      density_control_factor, use_dt3).first;
+      (pmesh, border_halfedge, face_out, std::back_inserter(patch), p).first;
 
-    bool fair_success = fair(pmesh, patch, solver, continuity);
+    bool fair_success = fair(pmesh, patch, p);
 
     vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
     return CGAL::cpp11::make_tuple(fair_success, face_out, vertex_out);
   }
 
-  // use non-default weight calculator
-  // WeightCalculator a model of `FairWeightCalculator`
-  // weight_calculator function object to calculate weights, default to Cotangent weights and can be omitted
-  template<class WeightCalculator,
-           class SparseLinearSolver,
-           class PolygonMesh,
-           class FaceOutputIterator,
-           class VertexOutputIterator>
+  template<typename PolygonMesh,
+           typename FaceOutputIterator,
+           typename VertexOutputIterator>
   CGAL::cpp11::tuple<bool, FaceOutputIterator, VertexOutputIterator>
-    triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
-      typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
-      FaceOutputIterator face_out,
-      VertexOutputIterator vertex_out,
-      WeightCalculator weight_calculator,
-      SparseLinearSolver solver = CGAL::Default(),
-      double density_control_factor = std::sqrt(2.0),
-      unsigned int continuity = 1,
-      bool use_delaunay_triangulation = true)
+  triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
+        typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
+        FaceOutputIterator face_out,
+        VertexOutputIterator vertex_out)
   {
-    bool use_dt3 =
-#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
-      false;
-#else
-      use_delaunay_triangulation;
-#endif
-    std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor> patch;
-
-    face_out = triangulate_and_refine_hole
-      (pmesh, border_halfedge, face_out, std::back_inserter(patch),
-      density_control_factor, use_dt3).first;
-
-    bool fair_success = internal::fair(pmesh, patch, solver, weight_calculator, continuity);
-
-    vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
-    return CGAL::cpp11::make_tuple(fair_success, face_out, vertex_out);
-  }
-
-  //use default SparseLinearSolver and WeightCalculator
-  template<class PolygonMesh,
-           class FaceOutputIterator,
-           class VertexOutputIterator>
-  CGAL::cpp11::tuple<bool, FaceOutputIterator, VertexOutputIterator>
-    triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
-      typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
-      FaceOutputIterator face_out,
-      VertexOutputIterator vertex_out,
-      double density_control_factor = std::sqrt(2.0),
-      unsigned int continuity = 1,
-      bool use_delaunay_triangulation = true)
-  {
-    bool use_dt3 =
-#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
-      false;
-#else
-      use_delaunay_triangulation;
-#endif
-
-    return triangulate_refine_and_fair_hole
-      (pmesh, border_halfedge, face_out, vertex_out, Default(),
-        density_control_factor, continuity, use_dt3);
+    return triangulate_refine_and_fair_hole(pmesh, border_halfedge,
+      face_out, vertex_out,
+      CGAL::parameters::all_default());
   }
 
   /*!
