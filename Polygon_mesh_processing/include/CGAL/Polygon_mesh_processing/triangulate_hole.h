@@ -44,11 +44,18 @@ namespace Polygon_mesh_processing {
   @tparam PolygonMesh a model of `MutableFaceGraph`
   @tparam OutputIterator a model of `OutputIterator`
     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
+  @tparam NamedParameters a sequence of \ref namedparameters
 
   @param pmesh polygon mesh containing the hole
   @param border_halfedge a border halfedge incident to the hole
   @param out iterator over patch faces
-  @param use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
+  @param np optional sequence of \ref namedparameters among the ones listed below
+
+  \b Named \b parameters
+  <ul>
+  <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
+  <li>\b use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
+  </ul>
 
   @return `out`
 
@@ -59,16 +66,16 @@ namespace Polygon_mesh_processing {
   @todo Then, insert the holes vertices in the set of possibilities
         for connecting vertices together
   @todo handle the case where an island is reduced to a point
-  \todo SUBMISSION: VertexPointMap
-  */
+  @todo code: VertexPointMap
+  */  
   template<typename PolygonMesh,
            typename OutputIterator,
-           class P, class T, class R>
+           typename NamedParameters>
   OutputIterator
-    triangulate_hole(PolygonMesh& pmesh,
-      typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
-      OutputIterator out,
-      const pmp_bgl_named_params<P, T, R>& p)
+  triangulate_hole(PolygonMesh& pmesh,
+              typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
+              OutputIterator out,
+              const NamedParameters& np)
   {
     using boost::choose_param;
     using boost::get_param;
@@ -77,7 +84,7 @@ namespace Polygon_mesh_processing {
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
       false;
 #else
-      choose_param(get_param(p, use_delaunay_triangulation), true);
+      choose_param(get_param(np, use_delaunay_triangulation), true);
 #endif
 
     CGAL_precondition(face(border_halfedge, pmesh) == boost::graph_traits<PolygonMesh>::null_face());

@@ -1,0 +1,27 @@
+/*!
+
+\page namedparameters Named Parameters
+
+\section howto How to use BGL named parameters
+
+The sequence should start with `CGAL::parameters::`
+
+\section list List of available named parameters
+
+Given a `PolygonMesh` type of BGL graph,
+and a `Kernel` in which constructions are performed and predicates evaluated.
+
+<ul>
+<li> `vertex_point_map`. An instance of a class model of `ReadablePropertyMap` with
+`boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
+`Kernel::Point_3` as value type.
+
+<li> `use_delaunay_triangulation`. A boolean. If `true`, use the Delaunay triangulation facet search space.
+
+<li>
+
+</ul>
+
+
+
+*/
