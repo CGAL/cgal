@@ -73,23 +73,30 @@ namespace internal {
   \endcode
   @tparam PolygonMesh a model of `FaceGraph`
   @tparam VertexRange a range of vertex descriptors of `PolygonMesh`, model of `SinglePassRange`
+  @tparam NamedParameters a sequence of \ref namedparameters
 
   @param pmesh the polygon mesh with patches to be faired
   @param vertices the vertices of the patches to be faired (the positions of only those vertices will be changed)
-  @param solver an instance of the sparse linear solver to use.
-  @param continuity continuity at the patch boundary (0, 1 and 2 are the possible values)
+  @param np optional sequence of \ref namedparameters among the ones listed below
+
+  \b Named \b parameters
+  <ul>
+  <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
+  <li>\b fairing_continuity tangential continuity of the output surface patch
+  <li>\b sparse_linear_solver an instance of the sparse linear solver used for fairing
+  </ul>
 
   @return `true` if fairing is successful, otherwise no vertex position is changed
 
-  \todo SUBMISSION: missing VertexPointMap
+  \todo code: missing VertexPointMap
   @todo accuracy of solvers are not good, for example when there is no boundary condition pre_factor should fail, but it does not.
   */
   template<typename PolygonMesh,
            typename VertexRange,
-           class P, class T, class R>
+           typename NamedParameters>
   bool fair(PolygonMesh& pmesh,
             VertexRange vertices,
-            const pmp_bgl_named_params<P, T, R>& p)
+            const NamedParameters& np)
   {
     using boost::get_param;
     using boost::choose_param;
@@ -107,9 +114,9 @@ namespace internal {
 #endif
 
     return internal::fair(pmesh, vertices,
-      choose_param(get_param(p, sparse_linear_solver), Default_solver()),
-      choose_param(get_param(p, weight_calculator), Default_Weight_calculator(pmesh)),
-      choose_param(get_param(p, fairing_continuity), 1)
+      choose_param(get_param(np, sparse_linear_solver), Default_solver()),
+      choose_param(get_param(np, weight_calculator), Default_Weight_calculator(pmesh)),
+      choose_param(get_param(np, fairing_continuity), 1)
       );
   }
 

@@ -110,47 +110,54 @@ namespace Polygon_mesh_processing {
      holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
   @tparam VertexOutputIterator model of `OutputIterator`
      holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices.
+  @tparam NamedParameters a sequence of \ref namedparameters
 
   @param pmesh polygon mesh which has the hole
   @param border_halfedge a border halfedge incident to the hole
   @param face_out output iterator over patch faces
   @param vertex_out output iterator over patch vertices without including the boundary
-  @param density_control_factor factor for density where larger values cause denser refinements
-  @param use_delaunay_triangulation if `true`, use the Delaunay triangulation face search space
+  @param np optional sequence of \ref namedparameters among the ones listed below
+
+  \b Named \b parameters 
+  <ul>
+  <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
+  <li>\b density_control_factor factor for density where larger values cause denser refinements
+  <li>\b use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
+  </ul>
 
   @return pair of `face_out` and `vertex_out`
 
   \sa CGAL::Polygon_mesh_processing::triangulate_hole()
   \sa CGAL::Polygon_mesh_processing::refine()
 
-  \todo SUBMISSION: VertexPointMap
+  \todo code: VertexPointMap
   \todo SUBMISSION: better document density_control_factor (ideally we should refer to the doc of refine)
   \todo handle islands
   */
-  template<class PolygonMesh,
-           class FaceOutputIterator,
-           class VertexOutputIterator,
-           class P, class T, class R>
+  template<typename PolygonMesh,
+           typename FaceOutputIterator,
+           typename VertexOutputIterator,
+           typename NamedParameters>
   std::pair<FaceOutputIterator, VertexOutputIterator>
     triangulate_and_refine_hole(PolygonMesh& pmesh,
       typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
       FaceOutputIterator face_out,
       VertexOutputIterator vertex_out,
-      const pmp_bgl_named_params<P, T, R>& p)
+      const NamedParameters& np)
   {
     using boost::choose_param;
     using boost::get_param;
 
     std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor> patch;
-    triangulate_hole(pmesh, border_halfedge, std::back_inserter(patch), p);
+    triangulate_hole(pmesh, border_halfedge, std::back_inserter(patch), np);
     face_out = std::copy(patch.begin(), patch.end(), face_out);
 
-    return refine(pmesh, patch, face_out, vertex_out, p);
+    return refine(pmesh, patch, face_out, vertex_out, np);
   }
 
-  template<class PolygonMesh,
-           class FaceOutputIterator,
-           class VertexOutputIterator>
+  template<typename PolygonMesh,
+           typename FaceOutputIterator,
+           typename VertexOutputIterator>
   std::pair<FaceOutputIterator, VertexOutputIterator>
     triangulate_and_refine_hole(PolygonMesh& pmesh,
        typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
@@ -184,16 +191,22 @@ namespace Polygon_mesh_processing {
       holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
   @tparam VertexOutputIterator model of `OutputIterator`
       holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices
+  @tparam NamedParameters a sequence of \ref namedparameters
 
-  @param pmesh a polygon mesh which has the hole
+  @param pmesh polygon mesh which has the hole
   @param border_halfedge a border halfedge incident to the hole
-  @param face_out iterator over patch faces
-  @param vertex_out iterator over patch vertices without including the boundary
-  @param density_control_factor factor for density where larger values cause denser refinements
-  @param continuity tangential continuity, defaults to `FAIRING_C_1` and can be omitted
-  @param use_delaunay_triangulation if `true`, the Delaunay triangulation face search space is used
-  @param solver an instance of the sparse linear solver to use. It defaults to the 
-         default construtor of the `SparseLinearSolver` template parameter
+  @param face_out output iterator over patch faces
+  @param vertex_out output iterator over patch vertices without including the boundary
+  @param np optional sequence of \ref namedparameters among the ones listed below
+
+  \b Named \b parameters
+  <ul>
+  <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
+  <li>\b use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
+  <li>\b density_control_factor factor for density where larger values cause denser refinements
+  <li>\b fairing_continuity tangential continuity of the output surface patch
+  <li>\b sparse_linear_solver an instance of the sparse linear solver used for fairing
+  </ul>
 
   @return tuple of
   - bool: `true` if fairing is successful
@@ -205,25 +218,25 @@ namespace Polygon_mesh_processing {
   \sa CGAL::Polygon_mesh_processing::fair()
 
   \todo handle islands
-  \todo SUBMISSION: VertexPointMap
+  \todo code: VertexPointMap
   */
   template<typename PolygonMesh,
            typename FaceOutputIterator,
            typename VertexOutputIterator,
-           class P, class T, class R>
+           typename NamedParameters>
   CGAL::cpp11::tuple<bool, FaceOutputIterator, VertexOutputIterator>
   triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
     FaceOutputIterator face_out,
     VertexOutputIterator vertex_out,
-    const pmp_bgl_named_params<P, T, R>& p)
+    const NamedParameters& np)
   {
     std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor> patch;
 
     face_out = triangulate_and_refine_hole
-      (pmesh, border_halfedge, face_out, std::back_inserter(patch), p).first;
+      (pmesh, border_halfedge, face_out, std::back_inserter(patch), np).first;
 
-    bool fair_success = fair(pmesh, patch, p);
+    bool fair_success = fair(pmesh, patch, np);
 
     vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
     return CGAL::cpp11::make_tuple(fair_success, face_out, vertex_out);

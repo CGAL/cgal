@@ -39,34 +39,37 @@ namespace Polygon_mesh_processing {
     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
   @tparam VertexOutputIterator model of `OutputIterator`
     holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices
+  @tparam NamedParameters a sequence of \ref namedparameters
 
   @param pmesh polygon mesh with patches to be refined
   @param faces the range of faces defining the patches to refine
   @param faces_out output iterator into which descriptors of new faces are put
   @param vertices_out output iterator into which descriptors of new vertices are put
+  @param np optional sequence of \ref namedparameters among the ones listed below
 
-  The function accepts named parameters
-   - `CGAL::parameters::density_control_factor`  which defaults to `CGAL::sqrt(2.)`
-
-  @param density_control_factor factor for density where larger values cause denser refinements
+  \b Named \b parameters
+  <ul>
+  <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
+  <li>\b density_control_factor factor for density where larger values cause denser refinements
+  </ul>
 
   @return pair of `faces_out` and `vertices_out`
 
-  \todo SUBMISSION: missing VertexPointMap
+  \todo code: missing VertexPointMap
   \todo SUBMISSION: better document density_control_factor 
   @todo current algorithm iterates 10 times at most, since (I guess) there is no termination proof.
   */
-  template<class PolygonMesh,
-           class FaceRange,
-           class FaceOutputIterator,
-           class VertexOutputIterator,
-           class P, class T, class R>
+  template<typename PolygonMesh,
+           typename FaceRange,
+           typename FaceOutputIterator,
+           typename VertexOutputIterator,
+           typename NamedParameters>
   std::pair<FaceOutputIterator, VertexOutputIterator>
     refine(PolygonMesh& pmesh,
            FaceRange faces,
            FaceOutputIterator faces_out,
            VertexOutputIterator vertices_out,
-           const pmp_bgl_named_params<P, T, R>& p)
+           const NamedParameters& np)
   {
     using boost::choose_param;
     using boost::get_param;
@@ -75,7 +78,7 @@ namespace Polygon_mesh_processing {
     refine_functor.refine(faces,
       faces_out,
       vertices_out,
-      choose_param(get_param(p, density_control_factor), CGAL::sqrt(2.)));
+      choose_param(get_param(np, density_control_factor), CGAL::sqrt(2.)));
     return std::make_pair(faces_out, vertices_out);
   }
 
