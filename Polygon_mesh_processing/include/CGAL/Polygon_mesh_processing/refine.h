@@ -50,13 +50,14 @@ namespace Polygon_mesh_processing {
   \b Named \b parameters
   <ul>
   <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
-  <li>\b density_control_factor factor for density where larger values cause denser refinements
+  <li>\b density_control_factor factor to control density of the ouput mesh, where larger values cause denser refinements. The density of vertices of `faces_out` is this factor times higher than the vertices of `faces.`
   </ul>
 
   @return pair of `faces_out` and `vertices_out`
 
   \todo code: missing VertexPointMap
-  \todo SUBMISSION: better document density_control_factor 
+  \todo code: in refine_impl, is density_control_factor used? it seems that scale_attribute
+               is filled with zeros
   @todo current algorithm iterates 10 times at most, since (I guess) there is no termination proof.
   */
   template<typename PolygonMesh,

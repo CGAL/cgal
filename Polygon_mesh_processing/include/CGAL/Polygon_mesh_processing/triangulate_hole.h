@@ -121,7 +121,7 @@ namespace Polygon_mesh_processing {
   \b Named \b parameters 
   <ul>
   <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
-  <li>\b density_control_factor factor for density where larger values cause denser refinements
+  <li>\b density_control_factor factor to control density of the ouput mesh, where larger values cause denser refinements, as in `refine()`
   <li>\b use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
   </ul>
 
@@ -131,7 +131,6 @@ namespace Polygon_mesh_processing {
   \sa CGAL::Polygon_mesh_processing::refine()
 
   \todo code: VertexPointMap
-  \todo SUBMISSION: better document density_control_factor (ideally we should refer to the doc of refine)
   \todo handle islands
   */
   template<typename PolygonMesh,
@@ -203,7 +202,7 @@ namespace Polygon_mesh_processing {
   <ul>
   <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
   <li>\b use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
-  <li>\b density_control_factor factor for density where larger values cause denser refinements
+  <li>\b density_control_factor factor to control density of the ouput mesh, where larger values cause denser refinements, as in `refine()`
   <li>\b fairing_continuity tangential continuity of the output surface patch
   <li>\b sparse_linear_solver an instance of the sparse linear solver used for fairing
   </ul>
