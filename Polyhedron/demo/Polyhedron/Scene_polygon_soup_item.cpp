@@ -234,7 +234,7 @@ Scene_polygon_soup_item::compile_shaders(void)
 
         "void main(void) \n"
         "{ \n"
-        "   fColors = vec3(0,0,0); \n//color[0], color[1], color[2]); \n"
+        "   fColors = vec3(color); \n"
         "   gl_Position = mvp_matrix * positions_lines; \n"
         "} \n"
     };

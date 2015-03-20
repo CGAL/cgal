@@ -46,6 +46,7 @@ void Scene_polyhedron_transform_item::initialize_buffers()
                           NULL //no offset (seperated in several buffers)
                           );
     glEnableVertexAttribArray(0);
+    glBindVertexArray(0);
 }
 void Scene_polyhedron_transform_item::compile_shaders()
 {
