@@ -2,9 +2,44 @@
 
 \page namedparameters Named Parameters
 
-\section howto How to use BGL named parameters
+\section howto How to use BGL Named Parameters
 
-The sequence should start with `CGAL::parameters::`
+\subsection ONP Optional Named Parameters
+
+The notion of named parameters was introduced in the BGL. You can read about it the following site: http://www.boost.org/libs/graph/doc/bgl_named_params.html. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
+
+Say there is a function f() that takes 3 parameters called name, age and gender, and you have variables n, a and g to pass as parameters to that function. Without named parameters, you would call it like this: f(n,a,g), but with named parameters, you call it like this: f(name(n).age(a).gender(g)).
+
+That is, you give each parameter a name by wrapping it into a function whose name matches that of the parameter. The entire list of named parameters is really a composition of function calls separated by a dot ( .). Thus, if the function takes a mix of mandatory and named parameters, you use a comma to separate the last non-named parameter from the first named parameters, like this:
+
+f(non_named_par0, non_named_pa1, name(n).age(a).gender(g))
+
+When you use named parameters, the ordering is irrelevant, so this: f(name(n).age(a).gender(g)) is equivalent to this: f(age(a).gender(g).name(n)), and you can just omit any named parameter that has a default value.
+
+The sequence of named parameters should start with `CGAL::parameters::`.
+
+
+\subsection PMP_ONP Example
+
+See below a sample call of a function that uses the optional BGL named parameters.
+
+\code
+/* pmesh : polygon mesh with patches to be refined
+   faces : the range of faces defining the patches to refine
+   faces_out : output iterator into which descriptors of new faces are put
+   vertices_out : output iterator into which descriptors of new vertices are put
+   vertex_point_map : the property map with the points associated to the vertices of `pmesh`
+   density_control_factor : factor to control density of the output mesh
+*/
+refine(pmesh
+       , faces
+       , faces_out
+       , vertices_out
+       , CGAL::parameters::vertex_point_map(vpmap).density_control_factor(d));
+\endcode
+
+
+
 
 \section list List of available named parameters
 
