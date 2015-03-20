@@ -182,20 +182,35 @@ namespace Polygon_mesh_processing {
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam OutputIterator a model of `OutputIterator` holding objects of type 
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
+ * @tparam VertexPointMap a model of `ReadablePropertyMap` with
+ `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
+ `Kernel::Point_3` as value type.
  *
  * @param tmesh triangle mesh to be checked
  * @param out output iterator to be filled with all pairs of non-adjacent faces that intersect
+ * @param vpmap the property map with the points associated to the vertices of `pmesh`
  * @param geom_traits geometric traits class providing intersection test primitives
  *
- * \todo SUBMISSION: VertexPointMap
+ * \todo code: VertexPointMap
  *
  * @return `out`
  */
-template <class GeomTraits, class TriangleMesh, class OutputIterator>
+template <class GeomTraits
+        , class TriangleMesh
+        , class OutputIterator
+#ifdef DOXYGEN_RUNNING
+        , class VertexPointMap
+        = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type
+#endif
+>
 OutputIterator
 self_intersections(const TriangleMesh& tmesh,
-               OutputIterator out,
-               const GeomTraits& geom_traits = GeomTraits())
+                 , OutputIterator out
+#ifdef DOXYGEN_RUNNING
+                 , VertexPointMap vpmap
+                 = get(vertex_point_t, pmesh)
+#endif
+                 , const GeomTraits& geom_traits = GeomTraits())
 {
   CGAL_precondition(CGAL::is_pure_triangle(tmesh));
 
@@ -250,18 +265,31 @@ self_intersections(const TriangleMesh& tmesh,
  *
  * @tparam GeomTraits a model of `SelfIntersectionTraits`
  * @tparam TriangleMesh a model of `FaceListGraph`
-*
+ * @tparam VertexPointMap a model of `ReadablePropertyMap` with
+ `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
+ `Kernel::Point_3` as value type.
+ *
  * @param tmesh triangle mesh to be tested
  * @param geom_traits traits class providing intersection test primitives
+ * @param vpmap the property map with the points associated to the vertices of `pmesh`
  *
- *
- * \todo SUBMISSION: VertexPointMap
+ * \todo code: VertexPointMap
  *
  * @return true if `tmesh` is self-intersecting
  */
-template <class GeomTraits, class TriangleMesh>
-bool is_self_intersecting(const TriangleMesh& tmesh,
-                          const GeomTraits& geom_traits = GeomTraits())
+template <class GeomTraits
+        , class TriangleMesh
+#ifdef DOXYGEN_RUNNING
+        , class VertexPointMap
+         = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type
+#endif
+          >
+bool is_self_intersecting(const TriangleMesh& tmesh
+#ifdef DOXYGEN_RUNNING
+                        , VertexPointMap vpmap
+                        = get(vertex_point_t, pmesh)
+#endif
+                        , const GeomTraits& geom_traits = GeomTraits())
 {
   CGAL_precondition(CGAL::is_pure_triangle(tmesh));
 
