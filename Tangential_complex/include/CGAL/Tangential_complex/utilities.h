@@ -210,7 +210,7 @@ namespace Tangential_complex_ {
     do
     {
       std::set<std::size_t> combination;
-      Elements_container::const_iterator it_elt = elements.begin();
+      typename Elements_container::const_iterator it_elt = elements.begin();
       for (std::size_t i = 0 ; i < n ; ++i, ++it_elt)
       {
         if (booleans[i])

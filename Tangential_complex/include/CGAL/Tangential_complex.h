@@ -371,8 +371,8 @@ public:
 
     std::vector<FT> sum_eigen_values(m_ambient_dim, FT(0));
 
-    Points::const_iterator it_p = m_points.begin();
-    Points::const_iterator it_p_end = m_points.end();
+    typename Points::const_iterator it_p = m_points.begin();
+    typename Points::const_iterator it_p_end = m_points.end();
     // For each point p
     for ( ; it_p != it_p_end ; ++it_p)
     {

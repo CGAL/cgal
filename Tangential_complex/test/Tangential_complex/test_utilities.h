@@ -33,6 +33,8 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Tangential_complex/Point_cloud.h>
 
+#include <fstream>
+
 // Actually, this is very slow because the "m_points_ds->insert"
 // cleans the tree, which is thus built at each query_ANN call
 #ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
