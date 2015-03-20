@@ -411,7 +411,6 @@ void Scene_polyhedron_selection_item::compute_elements()
 
 void Scene_polyhedron_selection_item::draw(Viewer_interface* viewer) const
 {
-    draw();
 
     draw_points(viewer);
     GLfloat offset_factor;
