@@ -173,18 +173,6 @@ namespace Polygon_mesh_processing {
   \ingroup PkgPolygonMeshProcessing
   @brief triangulates, refines and fairs a hole in a polygon mesh.
 
-  If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
-  and `CGAL_EIGEN3_ENABLED` is defined, an overload of this function is available
-  with `SparseLinearSolver` being:
-  \code
-  CGAL::Eigen_solver_traits<
-  Eigen::SparseLU<
-  CGAL::Eigen_sparse_matrix<double>::EigenType,
-  Eigen::COLAMDOrdering<int> >  >
-  \endcode
-
-
-  @tparam SparseLinearSolver a model of `SparseLinearAlgebraTraitsWithFactor_d`
   @tparam PolygonMesh a model of `MutableFaceGraph`
   @tparam FaceOutputIterator model of `OutputIterator`
       holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces

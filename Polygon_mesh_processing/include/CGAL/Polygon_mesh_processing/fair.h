@@ -60,17 +60,7 @@ namespace internal {
   Note that the structure is not altered in any way, only positions of the vertices get updated.
 
   Fairing might fail if fixed vertices, which are used as boundary conditions, do not suffice to solve constructed linear system.
-  The larger `continuity` gets, the more fixed vertices are required.
 
-
-  @tparam SparseLinearSolver a model of SparseLinearAlgebraTraitsWithFactor_d. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
-  and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter:\n
-   \code
-      CGAL::Eigen_solver_traits<
-          Eigen::SparseLU<
-             CGAL::Eigen_sparse_matrix<double>::EigenType,
-             Eigen::COLAMDOrdering<int> >  >
-  \endcode
   @tparam PolygonMesh a model of `FaceGraph`
   @tparam VertexRange a range of vertex descriptors of `PolygonMesh`, model of `SinglePassRange`
   @tparam NamedParameters a sequence of \ref namedparameters
@@ -82,7 +72,7 @@ namespace internal {
   \b Named \b parameters
   <ul>
   <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
-  <li>\b fairing_continuity tangential continuity of the output surface patch
+  <li>\b fairing_continuity tangential continuity of the output surface patch. The larger `fairing_continuity` gets, the more fixed vertices are required.
   <li>\b sparse_linear_solver an instance of the sparse linear solver used for fairing
   </ul>
 
