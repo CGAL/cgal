@@ -31,6 +31,8 @@ namespace CGAL{
   enum use_delaunay_triangulation_t { use_delaunay_triangulation  };
   enum fairing_continuity_t         { fairing_continuity };
   enum sparse_linear_solver_t       { sparse_linear_solver };
+  enum vertex_point_map_t           { vertex_point_map };
+  enum less_halfedge_t              { less_halfedge };
 
   //internal
   enum weight_calculator_t          { weight_calculator };
@@ -93,6 +95,22 @@ namespace CGAL{
       return Params(w, *this);
     }
 
+    template<typename VPMap>
+    pmp_bgl_named_params<VPMap, vertex_point_map_t, self>
+    vertex_point_map(const VPMap& vpmap) const
+    {
+      typedef pmp_bgl_named_params<VPMap, vertex_point_map_t, self> Params;
+      return Params(vpmap, *this);
+    }
+
+    template<typename Less>
+    pmp_bgl_named_params<Less, less_halfedge_t, self>
+    less_halfedge(const Less& less) const
+    {
+      typedef pmp_bgl_named_params<Less, less_halfedge_t, self> Params;
+      return Params(less, *this);
+    }
+
   };
 
 
@@ -144,6 +162,23 @@ namespace parameters{
     typedef pmp_bgl_named_params<WeightCalc, weight_calculator_t> Params;
     return Params(w);
   }
+
+  template<typename VPMap>
+  pmp_bgl_named_params<VPMap, vertex_point_map_t>
+  vertex_point_map(const VPMap& vpmap)
+  {
+    typedef pmp_bgl_named_params<VPMap, vertex_point_map_t> Params;
+    return Params(vpmap);
+  }
+
+  template<typename Less>
+  pmp_bgl_named_params<Less, less_halfedge_t>
+  less_halfedge(const Less& less)
+  {
+    typedef pmp_bgl_named_params<Less, less_halfedge_t> Params;
+    return Params(less);
+  }
+
 
 } //namespace parameters
 //} //namespace Polygon_mesh_processing
