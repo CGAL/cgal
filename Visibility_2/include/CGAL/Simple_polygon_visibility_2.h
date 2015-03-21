@@ -23,11 +23,11 @@
 #ifndef CGAL_SIMPLE_POLYGON_VISIBILITY_2_H
 #define CGAL_SIMPLE_POLYGON_VISIBILITY_2_H
 
-#include <CGAL/Arrangement_2.h>
 #include <CGAL/tags.h>
 #include <CGAL/enum.h>
 #include <CGAL/Visibility_2/visibility_utils.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/assertions.h>
 #include <stack>
 #include <map>
 
@@ -37,7 +37,6 @@ template<class Arrangement_2_, class RegularizationCategory = CGAL::Tag_true>
 class Simple_polygon_visibility_2 {
 
 public:
-  // Currently only consider with same type for both
   typedef Arrangement_2_                                Arrangement_2;
   typedef typename Arrangement_2::Traits_2              Traits_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
@@ -66,18 +65,18 @@ public:
   typedef CGAL::Tag_false                     Supports_general_polygon_category;
   typedef CGAL::Tag_true                      Supports_simple_polygon_category;
 
-  Simple_polygon_visibility_2() : p_arr(NULL), geom_traits(NULL) {}
+  Simple_polygon_visibility_2() : p_arr(NULL), traits(NULL) {}
 
   /*! Constructor given an arrangement and the Regularization tag. */
   Simple_polygon_visibility_2(const Arrangement_2& arr): 
     p_arr(&arr) {
-    geom_traits = p_arr->geometry_traits();
+    traits = p_arr->geometry_traits();
     query_pt_is_vertex = false;
     query_pt_is_on_halfedge = false;
   }
 
   
-  const std::string name(){return std::string("S_visibility_2");}
+  std::string name() const { return std::string("S_visibility_2"); }
 
   /*! Method to check if the visibility object is attached or not to
       an arrangement*/
@@ -90,7 +89,7 @@ public:
     if(p_arr != &arr){
         detach();
         p_arr = &arr;
-        geom_traits = p_arr->geometry_traits();
+        traits = p_arr->geometry_traits();
     }
   }
 
@@ -98,7 +97,7 @@ public:
       attached to*/
   void detach() {
     p_arr = NULL;
-    geom_traits = NULL;
+    traits = NULL;
     vertices.clear();
     query_pt_is_vertex = false;
     query_pt_is_on_halfedge = false;
@@ -114,26 +113,24 @@ public:
       'face' and constructs the output in 'out_arr'*/
   template <typename VARR> 
   typename VARR::Face_handle 
-  compute_visibility(const Point_2& q, Face_const_handle face,
-                     VARR& out_arr) const {
+  compute_visibility(const Point_2& q,
+                     const Face_const_handle face,
+                     VARR& out_arr) const
+  {
 
-    CGAL_precondition_msg(p_arr->number_of_faces() == 2,
-                          "Only simple polygons are supported.");
+    CGAL_precondition(!face->is_unbounded());
 
     out_arr.clear();
     
     query_pt_is_vertex = false;
     query_pt_is_on_halfedge = false;
 
-
     // Now retrieve the circulator to first visible vertex from triangulation
     Ccb_halfedge_const_circulator circ = find_visible_start(face, q);
     Ccb_halfedge_const_circulator curr = circ;
-    Halfedge_const_handle he;
 
     do {
-      he = curr;
-      vertices.push_back(he->source()->point());
+      vertices.push_back(curr->source()->point());
     } while(++curr != circ);
 
     vertices.push_back(vertices[0]);
@@ -152,9 +149,6 @@ public:
       const Halfedge_const_handle he,
       VARR& out_arr ) const
   {
-
-    CGAL_precondition_msg(p_arr->number_of_faces() == 2,
-                          "Only simple polygons are supported.");
 
     out_arr.clear();
 
@@ -177,12 +171,11 @@ public:
     }
 
     Ccb_halfedge_const_circulator circ = he;
-    circ++;
+    ++circ;
     Ccb_halfedge_const_circulator curr = circ;
 
     do {
-      Halfedge_const_handle he_handle = curr;
-      Point_2 curr_vertex = he_handle->target()->point();
+      const Point_2& curr_vertex = curr->target()->point();
       vertices.push_back(curr_vertex);
     } while (++curr != circ);
 
@@ -193,31 +186,6 @@ public:
     visibility_region_impl(q);
 
     return output(q, out_arr);
-    
-//    std::vector<Point_2> points;
-
-//    if (!s.empty()) {
-//      Point_2 prev_pt = s.top();
-//      if (prev_pt != q) {
-//        points.push_back(prev_pt);
-//      }
-//      else if (query_pt_is_vertex) {
-//        points.push_back(prev_pt);
-//      }
-//      if (!s.empty()) {
-//        s.pop();
-//      }
-//      while(!s.empty()) {
-//        Point_2 curr_pt = s.top();
-//        if (curr_pt != q) {
-//          points.push_back(curr_pt);
-//        }
-//        else if (query_pt_is_vertex) {
-//          points.push_back(curr_pt);
-//        }
-//        s.pop();
-//      }
-//    }
 
   }
 
@@ -230,7 +198,7 @@ private:
 
 private:
   const Arrangement_2 *p_arr;
-  const Geometry_traits_2 *geom_traits;
+  const Geometry_traits_2 *traits;
 
   /*! Boost pointer to the constrained Delaunay triangulation object*/
   mutable boost::shared_ptr<CDT> p_cdt;
@@ -253,27 +221,27 @@ private:
   void conditional_regularize(VARR& out_arr, CGAL::Tag_true) const {
     regularize_output(out_arr);
   }
+
   /*! No need to regularize output if flag is set to false*/
   template <typename VARR> 
   void conditional_regularize(VARR& out_arr, CGAL::Tag_false) const {
     //do nothing
   }
 
+
   /*! Regularizes the output - removes edges that have the same face on both
       sides */
   template <typename VARR> 
   void regularize_output(VARR& out_arr) const {
     typename VARR::Edge_iterator e_itr;
-    for (e_itr = out_arr.edges_begin() ; 
-         e_itr != out_arr.edges_end() ; e_itr++) {
+    for (e_itr = out_arr.edges_begin(); e_itr != out_arr.edges_end(); ++e_itr) {
 
-      typename VARR::Halfedge_handle he = e_itr;
-      typename VARR::Halfedge_handle he_twin = he->twin();
-      if (he->face() == he_twin->face()) {
-        out_arr.remove_edge(he);
+      if (e_itr->face() == e_itr->twin()->face()) {
+        out_arr.remove_edge(e_itr);
       }
     }
   }
+
 
   /*! Initialized the constrained Delaunay triangulation using the edges of
       the outer boundary of 'face' */
@@ -286,8 +254,8 @@ private:
     Ccb_halfedge_const_circulator curr = circ;
 
     do {
-      Point_2 source = curr->source()->point();
-      Point_2 target = curr->target()->point();
+      const Point_2& source = curr->source()->point();
+      const Point_2& target = curr->target()->point();
       point_itr_map.insert(std::make_pair(source, curr));
       constraints.push_back(std::make_pair(source, target));
     } while(++curr != circ);
@@ -295,6 +263,7 @@ private:
     p_cdt = boost::shared_ptr<CDT>(new CDT(constraints.begin(),
                                            constraints.end()));
   }
+
 
   template <typename VARR>
   typename VARR::Face_handle
@@ -306,19 +275,15 @@ private:
         s.pop();
       }
 
-//      std::reverse(points.begin(), points.end());
-
-      CGAL::Visibility_2::report_while_handling_needles
-                                <Simple_polygon_visibility_2>(geom_traits,
-                                                              q,
-                                                              points,
-                                                              out_arr);
+      Visibility_2::report_while_handling_needles<Simple_polygon_visibility_2>(
+                  traits, q, points, out_arr);
 
       CGAL_postcondition(out_arr.number_of_isolated_vertices() == 0);
       CGAL_postcondition(s.empty());
 
       conditional_regularize(out_arr, Regularization_category());
       vertices.clear();
+
       if (out_arr.faces_begin()->is_unbounded()) {
         return ++out_arr.faces_begin();
       }
@@ -334,39 +299,36 @@ private:
                                                    const Point_2 &q) const {
     init_cdt(face);
     typename CDT::Face_handle fh = p_cdt->locate(q);
-    Point_2 start_point = fh->vertex(0)->point();
+    const Point_2& start_point = fh->vertex(0)->point();
 
     // Now retrieve the circulator to first visible vertex from triangulation
     Ccb_halfedge_const_circulator circ = point_itr_map[start_point];
-    Halfedge_const_handle he_curr = circ;
 
     Halfedge_around_vertex_const_circulator incident_circ =
-            he_curr->source()->incident_halfedges();
+            circ->source()->incident_halfedges();
     Halfedge_around_vertex_const_circulator incident_curr = incident_circ;
 
     do {
-      Ccb_halfedge_const_circulator curr_inc = incident_curr;
-      Halfedge_const_handle he_curr_inc = curr_inc;
 
-      if (he_curr_inc->face() == face) {
+      if (incident_curr->face() == face) {
         Ccb_halfedge_const_circulator incident_next = incident_curr;
-        incident_next++;
-        Halfedge_const_handle he_next_inc = incident_next;
+        ++incident_next;
 
-        if (CGAL::Visibility_2::orientation_2(geom_traits,
-                                          he_curr_inc->source()->point(),
-                                          he_curr_inc->target()->point(),
-                                          q) == CGAL::LEFT_TURN
-         || CGAL::Visibility_2::orientation_2(geom_traits,
-                                          he_next_inc->source()->point(),
-                                          he_next_inc->target()->point(),
-                                          q) == CGAL::LEFT_TURN)
+        if (Visibility_2::orientation_2(traits,
+                                        incident_curr->source()->point(),
+                                        incident_curr->target()->point(),
+                                        q) == LEFT_TURN
+         || Visibility_2::orientation_2(traits,
+                                        incident_next->source()->point(),
+                                        incident_next->target()->point(),
+                                        q) == LEFT_TURN)
         {
           return incident_next;
         }
       }
     } while (++incident_curr != incident_circ);
   }
+
 
   /*! Main method of the algorithm - initializes the stack and variables
       and calles the corresponding methods acc. to the algorithm's state;
@@ -376,11 +338,10 @@ private:
   void visibility_region_impl(const Point_2& q) const {
     int i = 0;
     Point_2 w;
-    CGAL::Orientation orient = CGAL::Visibility_2::orientation_2(geom_traits, 
-                                                                 q, 
-                                                                 vertices[0], 
-                                                                 vertices[1]);
-    if ( orient != CGAL::RIGHT_TURN ) {
+    Orientation orient =
+            Visibility_2::orientation_2(traits, q, vertices[0], vertices[1]);
+
+    if ( orient != RIGHT_TURN ) {
       upcase = LEFT;
       i = 1;
       w = vertices[1];
@@ -419,16 +380,17 @@ private:
       if ( upcase == LEFT ) {
         Point_2 s_t = s.top();
         s.pop();
-        if ( ( CGAL::Visibility_2::orientation_2 <Geometry_traits_2>
-               ( geom_traits, q, vertices[0], s.top() ) == CGAL::RIGHT_TURN ) &&
-             ( CGAL::Visibility_2::orientation_2 <Geometry_traits_2>
-               ( geom_traits, q, vertices[0],s_t ) == CGAL::LEFT_TURN ) ) {
+        if ( Visibility_2::orientation_2(traits, q, vertices[0], s.top() )
+             == RIGHT_TURN
+             &&
+             Visibility_2::orientation_2(traits, q, vertices[0], s_t)
+             == LEFT_TURN )
+        {
           Segment_2 seg( s.top(), s_t );
-          if (Visibility_2::do_intersect_2(geom_traits, seg, ray_origin ) )
+          if ( Visibility_2::do_intersect_2(traits, seg, ray_origin) )
           {
-            Object_2 result = Visibility_2::intersect_2(geom_traits,
-                                                        seg, ray_origin);
-            const Point_2 * ipoint = CGAL::object_cast<Point_2>(&result);
+            Object_2 result = Visibility_2::intersect_2(traits, seg,ray_origin);
+            const Point_2 * ipoint = object_cast<Point_2>(&result);
             assert( ipoint != NULL );
             s_t = *ipoint;
             upcase = SCANB;
@@ -440,7 +402,7 @@ private:
   }
 
   /*! Method that handles the left turns in the vertex algorithm */
-  void left(int& i, Point_2& w, const Point_2& query_pt) const {
+  void left(int& i, Point_2& w, const Point_2& q) const {
     if (i >= vertices.size() - 1) {
       upcase = FINISH;
     }
@@ -449,24 +411,26 @@ private:
        s.pop();
        Point_2 s_t_prev = s.top();
        s.push( s_t );
-       CGAL::Orientation orient1 = Visibility_2::orientation_2
-                                   ( geom_traits,
-                                     query_pt,
+       Orientation orient1 = Visibility_2::orientation_2
+                                   ( traits,
+                                     q,
                                      vertices[i],
                                      vertices[i+1] );
-       if ( orient1 != CGAL::RIGHT_TURN ) {
+
+       if ( orient1 != RIGHT_TURN ) {
          // Case L2
          upcase = LEFT;
          s.push( vertices[i+1] );
          w = vertices[i+1];
          i++;
        } else {
-         CGAL::Orientation orient2 = Visibility_2::orientation_2
-                                     ( geom_traits,
+         Orientation orient2 = Visibility_2::orientation_2
+                                     ( traits,
                                        s_t_prev,
                                        vertices[i],
                                        vertices[i+1] );
-         if ( orient2 == CGAL::RIGHT_TURN ) {
+
+         if ( orient2 == RIGHT_TURN ) {
            // Case L3
            upcase = SCANA;
            w = vertices[i+1];
@@ -483,25 +447,24 @@ private:
 
   /*! Scans the stack such that all vertices that were pushed before to the 
       stack and are now not visible anymore. */
-  void right(int& i, Point_2& w, const Point_2& query_pt) const {
+  void right(int& i, Point_2& w, const Point_2& q) const {
      Point_2 s_j;
      Point_2 s_j_prev;
      Point_2 u;
      int mode = 0;
-     CGAL::Orientation orient1, orient2;
+     Orientation orient1, orient2;
 
      s_j_prev = s.top();
-     orient2 = CGAL::Visibility_2::orientation_2 <Geometry_traits_2>
-               ( geom_traits, query_pt, s_j_prev, vertices[i] );
+     orient2 = Visibility_2::orientation_2( traits, q, s_j_prev, vertices[i] );
+
      while ( s.size() > 1 ) {
        s_j = s_j_prev;
        orient1 = orient2;
        s.pop();
        s_j_prev = s.top();
 
-       orient2 = CGAL::Visibility_2::orientation_2 <Geometry_traits_2>
-                 ( geom_traits, query_pt, s_j_prev, vertices[i] );
-       if ( orient1 != CGAL::LEFT_TURN && orient2 != CGAL::RIGHT_TURN ) {
+       orient2 = Visibility_2::orientation_2( traits, q, s_j_prev, vertices[i]);
+       if ( orient1 != LEFT_TURN && orient2 != RIGHT_TURN ) {
          mode = 1;
          break;
        }
@@ -509,10 +472,10 @@ private:
        Segment_2 seg2( vertices[i-1], vertices[i] );
        Segment_2 seg( s_j_prev, s_j );
        if ( vertices[i-1] != s_j &&
-            Visibility_2::do_intersect_2(geom_traits, seg, seg2) )
+            Visibility_2::do_intersect_2(traits, seg, seg2) )
        {
-         Object_2 result = Visibility_2::intersect_2(geom_traits, seg, seg2);
-         const Point_2 * ipoint = CGAL::object_cast<Point_2>(&result);
+         Object_2 result = Visibility_2::intersect_2(traits, seg, seg2);
+         const Point_2 * ipoint = object_cast<Point_2>(&result);
          assert( ipoint != NULL );
          u = *ipoint;
          mode = 2;
@@ -522,11 +485,12 @@ private:
 
      assert( mode != 0 );
      if ( mode == 1 ) {
-       orient1 = CGAL::Visibility_2::orientation_2 <Geometry_traits_2>
-                 ( geom_traits, query_pt, vertices[i], vertices[i+1] );
-       orient2 = CGAL::Visibility_2::orientation_2 <Geometry_traits_2>
-                 ( geom_traits, vertices[i-1], vertices[i], vertices[i+1] );
-       if ( orient1 == CGAL::RIGHT_TURN ) {
+       orient1 = Visibility_2::orientation_2
+                 ( traits, q, vertices[i], vertices[i+1] );
+       orient2 = Visibility_2::orientation_2
+                 ( traits, vertices[i-1], vertices[i], vertices[i+1] );
+
+       if ( orient1 == RIGHT_TURN ) {
          // Case R1
          // Since the next action is RIGHT, we do not compute the intersection
          // of (s_j,s_j_prev) and the ray (query_pt, vertices[i]),
@@ -535,15 +499,16 @@ private:
          s.push( s_j );
          w = vertices[i];
          i++;
-       } else if ( orient2 == CGAL::RIGHT_TURN ) {
+       } else if ( orient2 == RIGHT_TURN ) {
          // Case R2
-         Ray_2 ray( query_pt, vertices[i] );
+         Ray_2 ray( q, vertices[i] );
          Segment_2 seg( s_j_prev, s_j );
-         Object_2 result = CGAL::Visibility_2::intersect_2
-                           <Geometry_traits_2, Segment_2, Ray_2>
-                           ( geom_traits, seg, ray );
-         const Point_2 * ipoint = CGAL::object_cast<Point_2>(&result);
+
+         Object_2 result = Visibility_2::intersect_2( traits, seg, ray );
+         const Point_2 * ipoint = object_cast<Point_2>(&result);
+
          assert( ipoint != NULL );
+
          u = *ipoint;
          if ( s.top() != u ) {
            s.push( u );
@@ -555,13 +520,14 @@ private:
          i++;
        } else {
          // Case R3
-         Ray_2 ray( query_pt, vertices[i] );
+         Ray_2 ray( q, vertices[i] );
          Segment_2 seg( s_j_prev, s_j );
-         Object_2 result = CGAL::Visibility_2::intersect_2
-                           <Geometry_traits_2, Segment_2, Ray_2>
-                           ( geom_traits, seg, ray );
-         const Point_2 * ipoint = CGAL::object_cast<Point_2>(&result);
+
+         Object_2 result = Visibility_2::intersect_2( traits, seg, ray );
+         const Point_2 * ipoint = object_cast<Point_2>(&result);
+
          assert( ipoint != NULL );
+
          u = *ipoint;
          if ( s.top() != u ) {
            s.push( u );
@@ -579,21 +545,18 @@ private:
 
   /*! Scans the vertices starting from index 'i' for the first visible vertex
       out of the back hidden window */
-  void scana(int& i, Point_2& w, const Point_2& query_pt) const {
+  void scana(int& i, Point_2& w, const Point_2& q) const {
     // Scan v_i, v_i+1, ..., v_n for the first edge to intersect (z, s_t)
     Point_2 u;
-    int k = scan_edges( i, query_pt, s.top(), u, true );
+    int k = scan_edges( i, q, s.top(), u, true );
 
-    CGAL::Orientation orient1 = CGAL::Visibility_2::orientation_2
-                                <Geometry_traits_2>
-                                ( geom_traits,
-                                  query_pt,
-                                  vertices[k],
-                                  vertices[k+1] );
-    if ( orient1 == CGAL::RIGHT_TURN ) {
-      bool fwd = CGAL::Visibility_2::collinear_are_ordered_along_line_2
-                 <Geometry_traits_2>
-                 ( geom_traits, query_pt, s.top(), u );
+    Orientation orient1 =
+            Visibility_2::orientation_2(traits, q, vertices[k], vertices[k+1] );
+
+    if ( orient1 == RIGHT_TURN ) {
+      bool fwd = Visibility_2::collinear_are_ordered_along_line_2
+                 ( traits, q, s.top(), u );
+
       if ( !fwd ) {
         // Case A1
         upcase = RIGHT;
@@ -618,7 +581,7 @@ private:
   }
 
   /*! Find the first edge interecting the segment (v_0, s_t) */
-  void scanb(int& i, Point_2& w, const Point_2& query_pt) const {
+  void scanb(int& i, Point_2& w, const Point_2& q) const {
     if ( i == vertices.size() - 1 ) {
       upcase = FINISH;
       return;
@@ -639,7 +602,7 @@ private:
 
   /*! Finds the exit from a general front hidden window by finding the first
       vertex to the right of the ray defined by the query_point and w*/
-  void scanc(int& i, Point_2& w, const Point_2& query_pt) const {
+  void scanc(int& i, Point_2& w, const Point_2& q) const {
     Point_2 u;
     int k = scan_edges( i, s.top(), w, u, false );
     upcase = RIGHT;
@@ -648,7 +611,7 @@ private:
   }
 
   /*! find the first edge intersecting the given window (s_t, w) */
-  void scand(int& i, Point_2& w, const Point_2& query_pt) const {
+  void scand(int& i, Point_2& w, const Point_2& q) const {
     Point_2 u;
     int k = scan_edges( i, s.top(), w, u, false );
     upcase = LEFT;
@@ -669,14 +632,14 @@ private:
                   Point_2& u,
                   bool is_ray ) const
   {
-    CGAL::Orientation old_orient = CGAL::RIGHT_TURN;
+    Orientation old_orient = RIGHT_TURN;
     Ray_2 ray( ray_begin, ray_end );
     Segment_2 s2( ray_begin, ray_end );
     int k;
     Object_2 result;
     for ( k = i; k+1 < vertices.size(); k++ ) {
-      CGAL::Orientation curr_orient = CGAL::Visibility_2::orientation_2
-                                      ( geom_traits,
+      Orientation curr_orient = Visibility_2::orientation_2
+                                      ( traits,
                                         ray_begin,
                                         ray_end,
                                         vertices[k+1] );
@@ -684,15 +647,15 @@ private:
         // Orientation switch, an intersection may occur
         Segment_2 seg( vertices[k], vertices[k+1] );
         if ( is_ray ) {
-          if (CGAL::Visibility_2::do_intersect_2(geom_traits, seg, ray) )
+          if (Visibility_2::do_intersect_2(traits, seg, ray) )
           {
-            result = CGAL::Visibility_2::intersect_2( geom_traits, seg, ray );
+            result = Visibility_2::intersect_2( traits, seg, ray );
             break;
           }
         } else {
-          if (Visibility_2::do_intersect_2(geom_traits, seg, s2) )
+          if (Visibility_2::do_intersect_2(traits, seg, s2) )
           {
-            result = Visibility_2::intersect_2( geom_traits, seg, s2 );
+            result = Visibility_2::intersect_2( traits, seg, s2 );
             break;
           }
         }
@@ -700,7 +663,7 @@ private:
       old_orient = curr_orient;
 	}
     assert( k+1<vertices.size() );
-    const Point_2 * ipoint = CGAL::object_cast<Point_2>( &result );
+    const Point_2 * ipoint = object_cast<Point_2>( &result );
     if ( ipoint ) {
        u = *ipoint;
     } else {

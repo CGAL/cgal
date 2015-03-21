@@ -488,7 +488,7 @@ void test_interface() {
 template <class Visibility_2>
 void run_tests_with_changes_to_arr() {
 
-  std::cout << "\tTesting changes to attached arrangement:";
+  std::cout << "    Testing changes to attached arrangement:";
 
   typedef typename Visibility_2::Arrangement_2                Arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2           Geometry_traits_2;
@@ -543,11 +543,11 @@ void run_tests_with_changes_to_arr() {
 
   // Change attached arrangement and query again
 
-  arr.clear();
+  //arr.clear();
 
-  CGAL::insert(arr, Segment_2(vertices[0], vertices[1]));
+  //CGAL::insert(arr, Segment_2(vertices[0], vertices[1]));
   CGAL::insert(arr, Segment_2(vertices[1], vertices[3]));
-  CGAL::insert(arr, Segment_2(vertices[3], vertices[0]));
+  //CGAL::insert(arr, Segment_2(vertices[3], vertices[0]));
 
   CGAL::assign(location, get_location(arr, query));
 
