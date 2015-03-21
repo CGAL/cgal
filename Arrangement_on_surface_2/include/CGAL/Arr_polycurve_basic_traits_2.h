@@ -1884,11 +1884,10 @@ public:
                           const X_monotone_subcurve_2& seg,
                           Arr_all_sides_oblivious_tag) const
     {
-      typedef typename X_monotone_curve_2::size_type size_type;
-      size_type num_seg = xcv.number_of_subcurves();
-
       CGAL_precondition_code
         (
+         typedef typename X_monotone_curve_2::size_type size_type;
+         size_type num_seg = xcv.number_of_subcurves();
          const Subcurve_traits_2* geom_traits =
            m_poly_traits.subcurve_traits_2();
          typename Subcurve_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
@@ -1938,11 +1937,10 @@ public:
                           const X_monotone_subcurve_2& seg,
                           Arr_not_all_sides_oblivious_tag) const
     {
-      typedef typename X_monotone_curve_2::size_type size_type;
-      size_type num_seg = xcv.number_of_subcurves();
-
       CGAL_precondition_code
         (
+         typedef typename X_monotone_curve_2::size_type size_type;
+         size_type num_seg = xcv.number_of_subcurves();
          const Subcurve_traits_2* geom_traits =
            m_poly_traits.subcurve_traits_2();
          typename Subcurve_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
@@ -2084,7 +2082,7 @@ public:
       CGAL_precondition_code
         (
          typedef typename X_monotone_curve_2::size_type size_type;
-           size_type num_seg = xcv.number_of_subcurves();
+         size_type num_seg = xcv.number_of_subcurves();
          const Subcurve_traits_2* geom_traits =
            m_poly_traits.subcurve_traits_2();
          typename Subcurve_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
@@ -2135,7 +2133,7 @@ public:
       CGAL_precondition_code
         (
          typedef typename X_monotone_curve_2::size_type size_type;
-           size_type num_seg = xcv.number_of_subcurves();
+         size_type num_seg = xcv.number_of_subcurves();
          const Subcurve_traits_2* geom_traits =
            m_poly_traits.subcurve_traits_2();
          typename Subcurve_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
