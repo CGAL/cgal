@@ -12,9 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
-//
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
 #ifndef CGAL_QT_ARRANGEMENT_GRAPHICS_ITEM_H
@@ -417,6 +414,7 @@ protected:
     }
   }
 
+#ifdef CGAL_USE_CORE
   template < typename RatKernel, typename AlgKernel, typename NtTraits >
   void paintFace( Face_handle f, QPainter* painter,
                   CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > )
@@ -532,6 +530,7 @@ protected:
       painter->fillRect( rect, color );
     }
   }
+#endif
 
   template < typename CircularKernel >
   void paintFace(Face_handle f, QPainter* painter,
