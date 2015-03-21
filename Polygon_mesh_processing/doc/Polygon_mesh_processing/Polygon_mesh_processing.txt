@@ -56,7 +56,7 @@ that triangulates all faces of the input polygon mesh.
 
 \subsection MeshingExamples Meshing Examples
 
-\subsubsection MeshingExample_1 Refine and fair a region on a polygon mesh
+\subsubsection MeshingExample_1 Refine and Fair a Region on a Polygon Mesh
 
 The following example shows how to use the functions `CGAL::Polygon_mesh_processing::refine()`
 and `CGAL::Polygon_mesh_processing::fair()` for some selected regions on the input polygon mesh.
@@ -65,7 +65,7 @@ and `CGAL::Polygon_mesh_processing::fair()` for some selected regions on the inp
 
 \todo code : fair() makes the mesh disappear in this example
 
-\subsubsection MeshingExample_2 Triangulate a polygon mesh
+\subsubsection MeshingExample_2 Triangulate a Polygon Mesh
 
 Triangulating a polygon mesh can be done with the function
 `CGAL::Polygon_mesh_processing::triangulate_faces()`
@@ -104,14 +104,14 @@ This package provides four functions for hole filling:
 
 \subsection HFExamples Examples
 
-\subsubsection HFExample_1 Triangulate a polyline
+\subsubsection HFExample_1 Triangulate a Polyline
 
 The following example shows how to triangulate a hole described by an input polyline.
 
 \cgalExample{Polygon_mesh_processing/triangulate_polyline_example.cpp}
 
 
-\subsubsection HFExample_2 Hole filling from the border of the hole
+\subsubsection HFExample_2 Hole Filling From the Border of the Hole
 
 If the input polygon mesh has a hole or more than one hole, it is possible
 to iteratively fill them by detecting border edges (i.e. with only
@@ -144,22 +144,22 @@ Result of fairing example.
 
 This packages provides some predicates to be evaluated with respect to a polygon mesh.
 
-\subsection PMPSelIntersections Self intersections
+\subsection PMPSelIntersections Self Intersections
 
 Self intersections can be detected and collected from a triangle mesh, using the two functions
 `CGAL::Polygon_mesh_processing::is_self_intersecting()`
 and `CGAL::Polygon_mesh_processing::self_intersections()`.
 
-\subsubsection SIExample Self intersections example
+\subsubsection SIExample Self Intersections Example
 \cgalExample{Polygon_mesh_processing/self_intersections_example.cpp}
 
 
-\subsection InsideTest Inside test
+\subsection InsideTest Inside Test
 
 The class `CGAL::Point_inside_polygon_mesh` provides a functor that tests whether a query point is 
 inside, outside, or on the boundary of the domain described by a given closed polygon mesh.
 
-\subsubsection InsideExample Inside test example
+\subsubsection InsideExample Inside Test Example
 \cgalExample{Polygon_mesh_processing/point_inside_example.cpp}
 
 
@@ -195,7 +195,7 @@ from the mesh, and each of these remaining edges is incident to exactly two face
 The function \link stitching_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
 is available to perform this repairing operation.
 
-\subsubsection StitchingExample Stitching example
+\subsubsection StitchingExample Stitching Example
 
 The following example shows how to apply the stitching operation to a simple quad mesh that
 has duplicated border edges.
@@ -203,7 +203,7 @@ has duplicated border edges.
 \cgalExample{Polygon_mesh_processing/stitch_borders_example.cpp}
 
 
-\subsection PolygonSoups Polygon soups
+\subsection PolygonSoups Polygon Soups
 
 When the faces of a mesh are given but the connectivity is not known,
 we talk of a \e polygon \e soup.
@@ -219,7 +219,7 @@ The function `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 performs this mesh construction step.
 
 
-\subsubsection PolygonSoupExample Polygon soup example
+\subsubsection PolygonSoupExample Polygon Soup Example
 
 This example shows how to build a mesh from a polygon soup.
 The first step is to get a soup of consistently oriented faces, before
@@ -253,7 +253,7 @@ Finally, a function that computes and collects all normals
 to both faces and vertices is provided :
 - `CGAL::Polygon_mesh_processing::compute_normals()`.
 
-\subsection NormalsExample Normals computation example
+\subsection NormalsExample Normals Computation Example
 
 The following example illustrates how to collect normals to faces
 and vertices in property maps.
@@ -279,7 +279,7 @@ computed by the mesh slicer by intersecting the yellow plane
 and translations of it with the mesh (right).
 \cgalFigureEnd
 
-\subsection SlicerExample Slicer example
+\subsection SlicerExample Slicer Example
 
 The example below illustrates how to use the mesh slicer for a given
 triangle mesh and a plane. Two constructors are used in the example
@@ -288,7 +288,7 @@ for pedagogical purposes.
 \cgalExample{Polygon_mesh_processing/mesh_slicer_example.cpp}
 
 ****************************************
-\section PMPConnectedComponents Connected components
+\section PMPConnectedComponents Connected Components
 
 This package provides functions to study the connected components of a
 polygon mesh. The connected components can be either separated by border edges, or by
@@ -308,7 +308,7 @@ for example be useful for noisy data were small connected components
 should be discarded in favour of major connected components.
 
 
-\subsection CCExample Connected components example
+\subsection CCExample Connected Components Example
 
 The following example shows how to use the functions dealing with connected
 components of a polygon mesh.

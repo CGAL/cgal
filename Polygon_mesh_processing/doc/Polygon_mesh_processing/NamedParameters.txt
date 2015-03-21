@@ -8,13 +8,13 @@
 
 The notion of named parameters was introduced in the BGL. You can read about it the following site: http://www.boost.org/libs/graph/doc/bgl_named_params.html. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
 
-Say there is a function f() that takes 3 parameters called name, age and gender, and you have variables n, a and g to pass as parameters to that function. Without named parameters, you would call it like this: f(n,a,g), but with named parameters, you call it like this: f(name(n).age(a).gender(g)).
+Say there is a function `f()` that takes 3 parameters called name, age and gender, and you have variables `n`, `a` and `g` to pass as parameters to that function. Without named parameters, you would call it like this: `f(n,a,g)`, whereas with named parameters, you call it like this: `f(name(n).age(a).gender(g))`.
 
 That is, you give each parameter a name by wrapping it into a function whose name matches that of the parameter. The entire list of named parameters is really a composition of function calls separated by a dot ( .). Thus, if the function takes a mix of mandatory and named parameters, you use a comma to separate the last non-named parameter from the first named parameters, like this:
 
-f(non_named_par0, non_named_pa1, name(n).age(a).gender(g))
+`f(non_named_par0, non_named_pa1, name(n).age(a).gender(g))`
 
-When you use named parameters, the ordering is irrelevant, so this: f(name(n).age(a).gender(g)) is equivalent to this: f(age(a).gender(g).name(n)), and you can just omit any named parameter that has a default value.
+When you use named parameters, the ordering is irrelevant, so `f(name(n).age(a).gender(g))` is equivalent to `f(age(a).gender(g).name(n))`, and you can just omit any named parameter that has a default value.
 
 The sequence of named parameters should start with `CGAL::parameters::`.
 
@@ -41,14 +41,14 @@ refine(pmesh
 
 
 
-\section list List of available named parameters
+\section list List of Available Named Parameters
 
 In this package, all functions optional parameters are implemented as \ref ONP.
 
 Since the parameters of the various polygon mesh processing functions defined in this
 package are redundant, their long descriptions are centralized below.
 
-\par Template parameters
+\par Template Parameters
 
 In the following, we assume that the following types are provided as template parameters of polygon mesh processing functions and classes. For some of these functions, the type is more specific.
 
@@ -57,7 +57,7 @@ In the following, we assume that the following types are provided as template pa
 <li>`Kernel` a geometric traits class in which constructions are performed and predicates evaluated
 </ul>
 
-\par Named parameters
+\par Named Parameters
 
 \todo for each parameter, give info on the type and the default value
 
