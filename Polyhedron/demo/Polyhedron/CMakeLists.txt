@@ -86,6 +86,16 @@ if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
 endif(EIGEN3_FOUND)
 
+###################################
+# moc and resources from GraphicsView
+qt4_wrap_cpp(mocfiles ./Qt/GraphicsViewNavigation.h 
+  ./Qt/DemosMainWindow.h
+  ./Qt/GraphicsItem.h
+  ./Qt/GraphicsViewInput.h)
+qt4_add_resources ( RESOURCE_FILES ./resources/CGAL.qrc ./icons/Input.qrc ./icons/File.qrc ./icons/Triangulation_2.qrc)
+# qt4_automoc(MainWindow.cpp Viewer.cpp)
+###################################
+
 if(QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(Boost_USE_MULTITHREADED      ON)
