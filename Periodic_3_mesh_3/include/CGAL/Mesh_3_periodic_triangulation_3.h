@@ -211,7 +211,11 @@ public:
     
     find_conflicts( const Point &p,
     Cell_handle c, OutputIteratorBoundaryFacets bfit,
-    OutputIteratorCells cit, OutputIteratorInternalFacets ifit) const /**/ {
+    OutputIteratorCells cit, OutputIteratorInternalFacets ifit
+    , bool *could_lock_zone = NULL
+    , const Facet *this_facet_must_be_in_the_cz = NULL
+    , bool *the_facet_is_in_its_cz = NULL
+    ) const /**/ {
       clear_v_offsets();
 
       CGAL_triangulation_precondition( this->number_of_vertices() != 0);
