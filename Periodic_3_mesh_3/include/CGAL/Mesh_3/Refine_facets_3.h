@@ -25,7 +25,7 @@
 #ifndef CGAL_MESH_3_REFINE_FACETS_3_H
 #define CGAL_MESH_3_REFINE_FACETS_3_H
 
-#include <CGAL/Mesher_level.h>
+#include <CGAL/Mesh_3/Mesher_level.h>
 #include <CGAL/Mesher_level_default_implementations.h>
 #include <CGAL/Meshes/Double_map_container.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
@@ -34,6 +34,7 @@
 #include <boost/optional.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <CGAL/tuple.h>
+#include <CGAL/tags.h>
 #include <sstream>
 
 namespace CGAL {
@@ -97,7 +98,8 @@ class Refine_facets_3
                                       Previous_level_>,
                       typename Tr::Facet,
                       Previous_level_,
-                      Triangulation_mesher_level_traits_3<Tr> >
+                      Triangulation_mesher_level_traits_3<Tr>,
+                      Sequential_tag >
 , public Container_
 , public No_after_no_insertion
 , public No_before_conflicts
@@ -162,7 +164,7 @@ public:
   }
 
   /// Returns the conflicts zone
-  Zone conflicts_zone_impl(const Point& point, const Facet& facet) const;
+  Zone conflicts_zone_impl(const Point& point, const Facet& facet, bool &facet_is_in_its_cz) const;
 
   /// Job to do before insertion
   void before_insertion_impl(const Facet& facet,
@@ -404,7 +406,7 @@ Refine_facets_3(Tr& triangulation,
                 P_& previous,
                 C3T3& c3t3)
   : Mesher_level<Tr, Self, Facet, P_,
-                               Triangulation_mesher_level_traits_3<Tr> >(previous)
+                               Triangulation_mesher_level_traits_3<Tr>, Sequential_tag >(previous)
   , C_()
   , No_after_no_insertion()
   , No_before_conflicts()
@@ -489,9 +491,10 @@ template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::Zone
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
 conflicts_zone_impl(const Point& point,
-                    const Facet& facet) const
+                    const Facet& facet, bool &facet_is_in_its_cz) const
 {
   Zone zone;
+  facet_is_in_its_cz = false;
 
   // TODO may be avoid the locate here
   zone.cell = r_tr_.locate(point,

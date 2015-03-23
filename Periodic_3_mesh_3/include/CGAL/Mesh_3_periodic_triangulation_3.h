@@ -42,6 +42,7 @@
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 #include <CGAL/Periodic_mesh_3/config.h>
+#include <CGAL/tags.h>
 
 namespace CGAL {
 
@@ -49,6 +50,18 @@ template<class Gt, class Tds>
 class Periodic_3_Delaunay_triangulation_3_Mesher_3 :
   public Periodic_3_Delaunay_triangulation_3<Gt, Tds> {
 public:
+
+  typedef Sequential_tag   Concurrency_tag;
+  typedef void             Lock_data_structure;
+
+  void *get_lock_data_structure() const
+  {
+    return 0;
+  }
+
+  void set_lock_data_structure(void *) const
+  {
+  }
 
   typedef Periodic_3_Delaunay_triangulation_3<Gt, Tds>  Base;
   typedef typename Base::Base Base_Base;
@@ -247,7 +260,7 @@ public:
   std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells>
   find_conflicts(const Point &p, Cell_handle c,
 	         OutputIteratorBoundaryFacets bfit,
-                 OutputIteratorCells cit) const
+                 OutputIteratorCells cit, bool*) const
   {
       Triple<OutputIteratorBoundaryFacets,
              OutputIteratorCells,
@@ -350,10 +363,16 @@ public:
   }
   
   using Base::locate;
+
+  Cell_handle locate(const Point& p, Locate_type& l, int& i, int& j, Cell_handle start = Cell_handle(), bool* could_lock_zone = NULL)
+  {
+    assert(could_lock_zone == NULL);
+    return Base::locate(p,l,i,j,start);
+  }
     
   Cell_handle locate(const Point & p, Vertex_handle hint) const
   {
-    return locate(p, hint == Vertex_handle() ? infinite_cell() : hint->cell());
+    return Base::locate(p, hint == Vertex_handle() ? infinite_cell() : hint->cell());
 
     assert(false); // not yet supported
   }
