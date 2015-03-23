@@ -186,6 +186,49 @@ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
 }
 
 /*!
+ * Compute the Minkowski sum of two polygons with holes using the convolution
+ * method. This function defaults to calling the reduced convolution method,
+ * as it is more efficient in most cases.
+ * Note that the result may not be a simple polygon. The result is therefore
+ * represented as a polygon with holes.
+ * \param pgn1 (in) The first polygon with holes.
+ * \param pgn2 (in) The second polygon with holes.
+ * \return The resulting polygon with holes, representing the sum.
+ *
+ * \sa `CGAL::minkowski_sum_reduced_convolution_2()`
+ * \sa `CGAL::minkowski_sum_full_convolution_2()`
+ */
+template <typename Kernel_, typename Container_>
+Polygon_with_holes_2<Kernel_, Container_>
+minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
+                const Polygon_with_holes_2<Kernel_, Container_>& pgn2)
+{
+  return minkowski_sum_reduced_convolution_2(pgn1, pgn2);
+}
+
+/*!
+ * Compute the Minkowski sum of a simple polygons and a polygon-with-holes
+ * using the convolution method. This function defaults to calling the reduced
+ * convolution method, as it is more efficient in most cases.
+ * Note that the result may not be a simple polygon. The result is therefore
+ * represented as a polygon with holes.
+ * \param pgn1 (in) The polygon.
+ * \param pgn2 (in) The polygon with holes.
+ * \return The resulting polygon with holes, representing the sum.
+ *
+ * \sa `CGAL::minkowski_sum_reduced_convolution_2()`
+ * \sa `CGAL::minkowski_sum_full_convolution_2()`
+ */
+template <typename Kernel_, typename Container_>
+Polygon_with_holes_2<Kernel_, Container_>
+minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
+                const Polygon_with_holes_2<Kernel_, Container_>& pgn2)
+{
+  Polygon_with_holes_2<Kernel_, Container_> pgnwh1(pgn1);
+  return minkowski_sum_reduced_convolution_2(pgnwh1, pgn2);
+}
+
+/*!
  * Compute the Minkowski sum of two simple polygons by decomposing each
  * polygon to convex sub-polygons and computing the union of the pairwise
  * Minkowski sums of the sub-polygons.

@@ -6,6 +6,11 @@
 
 namespace CGAL {
 
+/*! \class
+ * This class applies filter to a polygon with holes,
+ * by removing all of its holes that cannot possibly contribute
+ * to the Minkowski sum boundary.
+ */
 template <class Kernel_, class Container_>
 class Hole_filter_2
 {
