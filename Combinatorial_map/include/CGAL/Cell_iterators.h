@@ -343,7 +343,7 @@ namespace CGAL {
     { this->mmap->share_a_mark(mmark_number); }
 
     /// Assignment operator.
-    Self& operator=(Self& aiterator)
+    Self& operator=(const Self& aiterator)
     {
       if (this != &aiterator)
       {

@@ -504,7 +504,7 @@ namespace CGAL {
     typename Map_::size_type size() const
     {
       if (msize==0)
-        for ( const_iterator it=begin(), itend=end(); it!=end(); ++it)
+        for ( const_iterator it=begin(), itend=end(); it!=itend; ++it)
           ++msize;
       return msize;
     }
@@ -559,7 +559,7 @@ namespace CGAL {
     typename Map_::size_type size() const
     {
       if (msize==0)
-        for ( const_iterator it=begin(), itend=end(); it!=end(); ++it)
+        for ( const_iterator it=begin(), itend=end(); it!=itend; ++it)
           ++msize;
       return msize;
     }
