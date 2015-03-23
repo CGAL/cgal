@@ -58,8 +58,7 @@ and `Q` are convex or non-convex.
 template<class Kernel, class Container>
 Polygon_with_holes_2<Kernel,Container>
 minkowski_sum_full_convolution_2(const PolygonType1<Kernel,Container>& P,
-                                 const PolygonType2<Kernel,Container>& Q,
-                                 const Kernel& kernel = Kernel());
+                                 const PolygonType2<Kernel,Container>& Q);
 
 /*!
 \ingroup PkgMinkowskiSum2
