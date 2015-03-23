@@ -22,7 +22,8 @@ add_definitions(-DCGAL_HEADER_ONLY)
 
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../include ./CGAL_demo ${PROJECT_SOURCE_DIR} /home/gdamiand/sources/cgal/Installation/include/ /home/gdamiand/sources/cgal/builds/debug/demo/Polyhedron
-/home/gdamiand/sources/cgal/builds/debug/include/)
+/home/gdamiand/sources/cgal/builds/debug/include/
+/home/gdamiand/sources/cgal/builds/include/)
 
 # Let plugins be compiled in the same directory as the executable.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
@@ -53,7 +54,7 @@ set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT TRUE )
 set( QT_USE_QTOPENGL TRUE )
-set( QT_USE_SVG      TRUE )
+set( QT_USE_QTSVG      TRUE )
 if( POLYHEDRON_QTSCRIPT_DEBUGGER)
   set( QT_USE_QTSCRIPTTOOLS  TRUE )
 endif()
@@ -275,6 +276,9 @@ if(QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     add_definitions( -DQT_SCRIPTTOOLS_LIB )
     target_link_libraries( Polyhedron_3 QtScriptTools )
   endif()
+
+  message("QT : ${QT_LIBRARIES}")
+
   target_link_libraries( Polyhedron_3 ${QT_LIBRARIES} )
   target_link_libraries( Polyhedron_3 demo_framework )
   target_link_libraries( Polyhedron_3 point_dialog )
