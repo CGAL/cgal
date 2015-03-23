@@ -94,3 +94,5 @@ if(OpenMesh_FOUND)
   target_link_libraries( test_Properties ${OPENMESH_LIBRARIES})
 endif()
 
+create_single_source_cgal_program( "graph_concept_Surface_mesh.cpp" )
+create_single_source_cgal_program( "graph_concept_Combinatorial_map.cpp" )
