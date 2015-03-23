@@ -256,7 +256,7 @@ if(QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       MainWindow_moc.cpp
       File_loader_dialog_moc.cpp
 #      Viewer_moc.cpp
-       ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} )
+       ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} ${uis} ${mocfiles})
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
     if(EIGEN3_FOUND)
 #      add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp )
