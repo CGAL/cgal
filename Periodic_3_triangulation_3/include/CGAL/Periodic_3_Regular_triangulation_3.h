@@ -113,6 +113,46 @@ using Base::locate;
 using Base::periodic_point;
 using Base::segment;
 
+private:
+  std::vector<Cell_handle> cells_with_too_big_orthoball;
+
+  class Cover_manager
+  {
+    Periodic_3_Regular_triangulation_3& tr;
+
+  public:
+    Cover_manager (Periodic_3_Regular_triangulation_3& tr)
+  : tr(tr)
+  {}
+
+    void create_initial_triangulation()
+    {
+      tr.create_initial_triangulation();
+    }
+
+    template <class CellIt>
+    void delete_too_long_edges(const CellIt begin, const CellIt end)
+    {
+      tr.delete_too_long_edges(begin, end);
+    }
+
+    template <class CellIt>
+    void insert_too_long_edges(Vertex_handle v, const CellIt begin, const CellIt end)
+    {
+      tr.insert_too_long_edges(v, begin, end);
+    }
+
+    bool can_be_converted_to_1_sheet () const
+    {
+      return tr.can_be_converted_to_1_sheet();
+    }
+
+    void update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells)
+    {
+      tr.update_cover_data_during_management(new_ch, new_cells);
+    }
+  };
+
 public:
 	/** @name Creation */ //@{
 	Periodic_3_Regular_triangulation_3 (const Iso_cuboid& domain = Iso_cuboid(0, 0, 0, 1, 1, 1),
@@ -128,18 +168,112 @@ public:
     CGAL_triangulation_expensive_postcondition( is_valid() );
   }
 
+  void create_initial_triangulation()
+  {
+    CGAL_triangulation_assertion( cells_with_too_big_orthoball.empty() );
+
+    cells_with_too_big_orthoball.reserve(1000000);
+
+    for (Cell_iterator iter = cells_begin(), end_iter = cells_end(); iter != end_iter; ++iter)
+      cells_with_too_big_orthoball.push_back(iter);
+  }
+
+  template <class CellIt>
+  void delete_too_long_edges(CellIt begin, const CellIt end)
+  {
+    for (; begin != end; ++begin)
+    {
+      typename std::vector<Cell_handle>::iterator iter = std::find(cells_with_too_big_orthoball.begin(), cells_with_too_big_orthoball.end(), *begin);
+      if (iter != cells_with_too_big_orthoball.end())
+      {
+        std::swap(*iter, cells_with_too_big_orthoball.back());
+        cells_with_too_big_orthoball.pop_back();
+      }
+    }
+    std::cout << "DEL  " << cells_with_too_big_orthoball.size() << std::endl;
+  }
+
+  FT squared_orthoball_radius (Cell_handle cell)
+  {
+    Periodic_point p0 = this->periodic_point(cell, 0);
+    Periodic_point p1 = this->periodic_point(cell, 1);
+    Periodic_point p2 = this->periodic_point(cell, 2);
+    Periodic_point p3 = this->periodic_point(cell, 3);
+
+    typename Geometric_traits::Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3
+                                          = geom_traits().construct_weighted_circumcenter_3_object();
+
+    Bare_point weighted_circumcenter = construct_weighted_circumcenter_3(
+        p0.first, p1.first, p2.first, p3.first,  p0.second, p1.second, p2.second, p3.second);
+    Weighted_point point = this->construct_point(cell->vertex(0)->point(), get_offset(cell, 0));
+    FT ao_2 = squared_distance(static_cast<const Bare_point&>(point), weighted_circumcenter);
+    FT io_2 = ao_2 - point.weight();
+    return io_2;
+  }
+
+  template <class CellIt>
+  void insert_too_long_edges(Vertex_handle /*v*/, CellIt begin, const CellIt end)
+  {
+    FT threshold = FT(1)/FT(64) * (domain().xmax()-domain().xmin());
+    for (; begin != end; ++begin)
+    {
+      if (squared_orthoball_radius(*begin) >= threshold)
+      {
+        cells_with_too_big_orthoball.push_back(*begin);
+      }
+    }
+    std::cout << "INS  " << cells_with_too_big_orthoball.size() << std::endl;
+  }
+
+  bool can_be_converted_to_1_sheet () const
+  {
+    return cells_with_too_big_orthoball.empty();
+  }
+
+  void update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells)
+  {
+    if (is_1_cover())
+    {
+      tds().delete_cells(new_cells.begin(), new_cells.end());
+      this->convert_to_27_sheeted_covering();
+      return;
+    }
+
+    FT threshold = FT(1)/FT(64) * (domain().xmax() - domain().xmin());
+    if (squared_orthoball_radius(new_ch) < threshold)
+    {
+      cells_with_too_big_orthoball.push_back(new_ch);
+    }
+  }
+
+  virtual void update_cover_data_after_converting_to_27_sheeted_covering ()
+  {
+    FT threshold = FT(1)/FT(64) * (domain().xmax()-domain().xmin());
+    for (Cell_handle iter = cells_begin(), end_iter = cells_end(); iter != end_iter; ++iter)
+    {
+      if (squared_orthoball_radius(iter) >= threshold)
+      {
+        cells_with_too_big_orthoball.push_back(iter);
+      }
+    }
+  }
+
+  virtual void update_cover_data_after_setting_domain () {}
+
   /** @name Insertion */ //@{
    Vertex_handle insert(const Weighted_point& p, Cell_handle start = Cell_handle()) {
      Conflict_tester tester(p, this);
      Point_hider hider(this);
-     return Base::insert_in_conflict(p, start, tester, hider);
+     Cover_manager cover_manager(*this);
+     return Base::insert_in_conflict(p, start, tester, hider, cover_manager);
    }
 
    Vertex_handle insert(const Weighted_point& p, Locate_type lt, Cell_handle c,
         int li, int lj) {
       Conflict_tester tester(p, this);
       Point_hider hider(this);
-      return Base::insert_in_conflict(p,lt,c,li,lj, tester,hider);
+      Cover_manager cover_manager(*this);
+      return Base::insert_in_conflict(p,lt,c,li,lj, tester,hider,cover_manager);
     }
    //@}
 
@@ -153,8 +287,9 @@ public:
      Euclidean_triangulation tmp(remove_traits);
      Remover remover(this, tmp);
      Conflict_tester ct(this);
+     Cover_manager cover_manager(*this);
 
-     Base::remove(v, remover, ct);
+     Base::remove(v, remover, ct, cover_manager);
 
      // Re-insert the points that v was hiding.
      for (typename Remover::Hidden_points_iterator hi = remover.hidden_points_begin();

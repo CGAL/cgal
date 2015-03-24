@@ -484,6 +484,7 @@ void test_insert_rnd_then_remove_all (unsigned pt_count, unsigned seed)
     assert(p.weight() < 0.015625);
     stream << p << std::endl;
     Vertex_handle vh = p3rt3.insert(p);
+    std::cout << cnt << " - p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
     if (vh == Vertex_handle() && hidden_point_set.find(p) != hidden_point_set.end())
       hidden_point_set.insert(p);
   }
@@ -491,8 +492,6 @@ void test_insert_rnd_then_remove_all (unsigned pt_count, unsigned seed)
   stream.close();
 
   assert(p3rt3.is_valid());
-
-//  std::cout << "REMOVE" << std::endl;
 
   for (unsigned cnt = 1; pt_count; --pt_count, ++cnt)
   {
@@ -503,7 +502,7 @@ void test_insert_rnd_then_remove_all (unsigned pt_count, unsigned seed)
 //    std::cout << cnt << " : " << iter->point() << std::endl;
     p3rt3.remove(iter);
     hidden_point_set.erase(iter->point());
-//    std::cout << "p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
+    std::cout << cnt << " - p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
     unsigned hidden_point_count = 0;
     for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
       hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
@@ -511,6 +510,7 @@ void test_insert_rnd_then_remove_all (unsigned pt_count, unsigned seed)
 
   assert(hidden_point_set.empty());
   assert(p3rt3.is_valid());
+  assert(p3rt3.number_of_stored_vertices() == 0);
 }
 
 void test_insert_from_file (const char* filename)
@@ -552,10 +552,46 @@ void test_insert_rt3_pointset ()
   assert(p3rt3.is_valid());
 }
 
+void test_27_to_1_sheeted_covering ()
+{
+  std::cout << "--- test_27_to_1_sheeted_covering" << std::endl;
+
+  P3RT3 p3rt3(P3RT3::Iso_cuboid(0, 0, 0, 1, 1, 1));
+
+  unsigned count = 1;
+  for (unsigned i = 0; i < 6; ++i)
+    for (unsigned j = 0; j < 6; ++j)
+      for (unsigned k = 0; k < 8; ++k)
+      {
+        std::cout << count++ << " : " << i << ", " << j << ", " << k << std::endl;
+        FT x = FT(i) / FT(6);
+        if (i % 2)
+          x += FT(1) / FT(12);
+        FT y = FT(j) / FT(6);
+        if (j % 2)
+          y += FT(1) / FT(12);
+        FT z = FT(k) / FT(8);
+        Weighted_point point(Bare_point(x, y, z), 0);
+        p3rt3.insert(point);
+        std::cout << ".number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
+      }
+
+  assert(p3rt3.number_of_sheets() == CGAL::make_array(1,1,1));
+  assert(p3rt3.number_of_vertices() == 6*6*8);
+  assert(p3rt3.is_valid());
+
+  unsigned hidden_point_count = 0;
+  for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+    hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+
+  assert(hidden_point_count == 0);
+}
+
 int main (int argc, char** argv)
 {
   std::cout << "TESTING ..." << std::endl;
 
+  test_27_to_1_sheeted_covering();
   test_construction();
   test_insert_1();
   test_insert_point();
