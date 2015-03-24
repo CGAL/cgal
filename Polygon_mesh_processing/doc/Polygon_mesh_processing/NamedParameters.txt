@@ -1,10 +1,8 @@
 /*!
+\defgroup namedparameters Named Parameters
+\ingroup PkgPolygonMeshProcessing
 
-\page namedparameters Named Parameters
-
-\subsection ONP BGL Optional Named Parameters
-
-\section howto How to use BGL Optional Named Parameters
+\cgalHeading{How to use BGL Optional Named Parameters}
 
 The notion of named parameters was introduced in the BGL. You can read about it the following site: http://www.boost.org/libs/graph/doc/bgl_named_params.html. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
 
@@ -19,7 +17,7 @@ When you use named parameters, the ordering is irrelevant, so `f(name(n).age(a).
 The sequence of named parameters should start with `CGAL::parameters::`.
 
 
-\subsection PMP_ONP Example
+\cgalHeading{Example}
 
 See below a sample call of a function that uses the optional BGL named parameters.
 
@@ -41,23 +39,25 @@ refine(pmesh
 
 
 
-\section list List of Available Named Parameters
+\cgalHeading{List of Available Named Parameters}
 
-In this package, all functions optional parameters are implemented as \ref ONP.
+In this package, all functions optional parameters are implemented as BGL optional named parameters.
 
 Since the parameters of the various polygon mesh processing functions defined in this
 package are redundant, their long descriptions are centralized below.
 
-\par Template Parameters
 
-In the following, we assume that the following types are provided as template parameters of polygon mesh processing functions and classes. For some of these functions, the type is more specific.
+\b Template \b Parameters
+
+In the following, we assume that the following types are provided as template parameters of polygon mesh processing functions and classes. Note that, for some of these functions, the type is more specific.
 
 <ul>
 <li>`PolygonMesh` implements a `FaceGraph`
-<li>`Kernel` a geometric traits class in which constructions are performed and predicates evaluated
+<li>`Kernel` a geometric traits class in which constructions are performed and predicates evaluated. Everywhere in this package, a \cgal `Kernel` fulfills the requirements.
 </ul>
 
-\par Named Parameters
+
+\b Named \b Parameters
 
 \todo for each parameter, give info on the type and the default value
 
