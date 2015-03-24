@@ -30,7 +30,7 @@ CGAL packages, some are only needed for demos.
      Required for building CGAL
      On Windows, CMake >= 2.8.6 is required.
 
-   * Boost (>= 1.39)
+   * Boost (>= 1.48)
      Required for building CGAL and for applications using CGAL
      Required compiled Boost library: Boost.Thread, Boost.System
      Optional compiled Boost library: Boost.Program_options
