@@ -151,15 +151,6 @@ iteratively filled, refined and faired to get a nicely smooth mesh with no hole.
 
 \cgalExample{Polygon_mesh_processing/hole_filling_example.cpp}
 
-
-\cgalFigureBegin{Max_refine, max_refine.png}
-Result of refine example. 
-\cgalFigureEnd
-
-\cgalFigureBegin{Max_fair, max_fair.png}
-Result of fairing example. 
-\cgalFigureEnd
-
  \cgalFigureBegin{Triangulated_fork, fork.gif}
  Holes in fork model are filled with only triangulating.
  \cgalFigureEnd
