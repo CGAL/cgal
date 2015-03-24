@@ -1,0 +1,55 @@
+/// \defgroup PkgSolver CGAL and Solvers Reference
+
+/// \defgroup PkgSolverConcepts Concepts
+/// \ingroup PkgSolver
+///
+/// We 
+
+/// \defgroup PkgSolverHelper Helper Classes
+/// \ingroup PkgSolver
+
+
+
+
+/*!
+\addtogroup PkgSolver
+\cgalPkgDescriptionBegin{CGAL and Solvers,PkgSolverSummary}
+\cgalPkgPicture{solver-detail.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{CGAL Editorial Board }
+\cgalPkgDesc{This package provides }
+\cgalPkgManuals{Chapter_CGAL_and_Solvers,PkgSolver}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.7}
+\cgalPkgBib{cgal:eb-solver }
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `HalfedgeGraph`
+
+
+
+## %CGAL Classes Adapted for the Graph API ##
+
+Different \cgal types have 
+- \link BGLSMGT  `boost::graph_traits< CGAL::Surface_mesh<P> >` \endlink
+- \link BGLPolyGT  `boost::graph_traits< CGAL::Polyhedron_3<T> >` \endlink
+- \link BGLT2GT `boost::graph_traits< CGAL::Triangulation_2<GT, TDS> >` \endlink
+- \link BGLArgtGT `boost::graph_traits< CGAL::Arrangement_2<T,DC> >` \endlink
+
+
+## Euler Operations ##
+
+- `CGAL::Euler::join_vertex()`
+
+
+*/
+
+
+
+

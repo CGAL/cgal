@@ -1,0 +1,36 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual 
+\anchor Chapter_CGAL_and_Solvers
+\anchor chapterBGL
+\cgalAutoToc
+\authors NN
+
+
+
+The scope of \cgal is geometry and not solving linear systems. Nevertheless, this package
+provides the necessary classes and functions that enable using the
+algorithms of the 
+
+
+\section SolverConcepts Solver  Concepts
+
+
+See also the Chapter \ref PkgProperty_mapSummary.
+
+See also Section <A HREF="http://www.boost.org/libs/graph/doc/visitor_concepts.html">Visitor Concepts</A>
+in the \sc{Bgl} manual.
+
+
+\subsection SolverExamplel Example: 
+
+The following example program computes 
+
+\cgalExample{Solver_interface/eigen.cpp}
+
+
+
+*/ 
+} /* namespace CGAL */
+

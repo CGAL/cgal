@@ -58,6 +58,7 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/GraphicsView/doc/GraphicsView/fig \
              ${CMAKE_SOURCE_DIR}/HalfedgeDS/doc/HalfedgeDS/fig \
              ${CMAKE_SOURCE_DIR}/BGL/doc/BGL/fig \
+             ${CMAKE_SOURCE_DIR}/BGL/doc/Solver_interface/fig \
              ${CMAKE_SOURCE_DIR}/Combinatorial_map/doc/Combinatorial_map/fig \
              ${CMAKE_SOURCE_DIR}/Linear_cell_complex/doc/Linear_cell_complex/fig \
              ${CMAKE_SOURCE_DIR}/Interval_skip_list/doc/Interval_skip_list/fig \
