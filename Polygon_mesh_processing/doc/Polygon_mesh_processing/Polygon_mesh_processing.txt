@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_PolygonMeshProcessing
 
 \cgalAutoToc
-\author ... Ilker %O. Yaz ...
+\author Ilker %O. Yaz, Sébastien Loriot, Jane Tournois
 
 \image html neptun_head.png
 \image latex neptun_head.png
