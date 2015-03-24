@@ -12,12 +12,39 @@ namespace CGAL {
 
 \section PMPIntroduction Introduction
 	
-This package implements various methods for polygon mesh processing.
-A "polygon mesh" is a consistent 
-	\cgalCite{botsch2010PMP}
+This package implements a collection of methods and classes for polygon mesh processing,
+ranging from basic operations on simplices, to complex geometry processing algorithms.
+The implementation of this package mainly follows algorithms and references
+given in Botsch et al.'s book on polygon mesh processing \cgalCite{botsch2010PMP}.
 
-  This package follows the BGL API
-  \todo add link to BGL package
+\subsection PMPDef Polygon Mesh
+A \a polygon \a mesh is a consistent and orientable surface mesh, that can have a boundary.
+The \a faces are simple polygons.
+The \a edges are segments. Each edge is shared by two faces, and connects two \a vertices.
+A polygon mesh can have any number of connected components, and also some self-intersections.
+
+\subsection PMPAPI API
+This package follows the BGL API described in \ref chapterBGL.
+It can thus be used either with \cgal `Polyhedron_3`, \cgal `Surface_mesh`, or
+any graph following the BGL requirements. Each function or class of this package
+gives precisions on the requirements on the polygon mesh.
+
+BGL \ref namedparameters are used to deal with optional parameters.
+
+\subsection PMPOutline Outline
+The first type of algorithms described in this manual is about \ref PMPMeshing algorithms, including triangulation of non triangulated
+meshes, refinement and optimization by fairing of triangulated surface meshes.
+The second section lists the available, \ref PMPHoleFilling algorithms, which can possibly be combined with refinement and fairing.
+Section \ref PMPPredicates gives a list of predicates that can be evaluated on the processed polygon
+mesh, including point location and self intersection tests.
+The following section deals with \ref PMPRepairing of polygon meshes and polygon soups.
+\ref PMPNormalComp at vertices and on faces of a polygon mesh are then listed.
+Section \ref PMPSlicer describes a class that provides an operator able to compute intersections
+of the same polygon mesh with arbitrary planes.
+The last section of this manual deals with methods to compute \ref PMPConnectedComponents
+of a polygon mesh, and discard the smallest ones.
+
+
 
 \cgalFigureBegin{Mech_steps, mech_hole_horz.png}
 Results of the main steps of the algorithm.
@@ -154,7 +181,7 @@ and `CGAL::Polygon_mesh_processing::self_intersections()`.
 \cgalExample{Polygon_mesh_processing/self_intersections_example.cpp}
 
 
-\subsection InsideTest Inside Test
+\subsection PMPInsideTest Inside Test
 
 The class `CGAL::Point_inside_polygon_mesh` provides a functor that tests whether a query point is 
 inside, outside, or on the boundary of the domain described by a given closed polygon mesh.
