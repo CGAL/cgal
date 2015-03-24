@@ -33,7 +33,7 @@
 
 Optional parameters of the functions of this package
 are implemented as BGL named parameters.
-The page \subpage namedparameters describes how they should be used
+The page \ref namedparameters describes how they should be used
 and gives a list of the parameters that are used in this package.
 
 ## Meshing Functions ##
