@@ -11,7 +11,7 @@ namespace CGAL {
 <BR>
 
 \section PMPIntroduction Introduction
-	
+
 This package implements a collection of methods and classes for polygon mesh processing,
 ranging from basic operations on simplices, to complex geometry processing algorithms.
 The implementation of this package mainly follows algorithms and references
@@ -44,14 +44,6 @@ of the same polygon mesh with arbitrary planes.
 The last section of this manual deals with methods to compute \ref PMPConnectedComponents
 of a polygon mesh, and discard the smallest ones.
 
-
-
-\cgalFigureBegin{Mech_steps, mech_hole_horz.png}
-Results of the main steps of the algorithm.
-From left to right: the hole, after triangulation,
-                              after triangulation and refinement,
-                              after triangulation, refinement and fairing.
-\cgalFigureEnd
 
 ****************************************
 \section PMPMeshing Meshing
@@ -119,6 +111,13 @@ from all possible patches, while searching for the best patch.
 Then, the generated patch can be refined and faired using the meshing functions
 `CGAL::Polygon_mesh_processing::refine()` and `CGAL::Polygon_mesh_processing::fair()`
 described in Section \ref PMPMeshing.
+
+\cgalFigureBegin{Mech_steps, mech_hole_horz.png}
+Results of the main steps of the algorithm.
+From left to right: the hole, after triangulation,
+after triangulation and refinement,
+after triangulation, refinement and fairing.
+\cgalFigureEnd
 
 
 \subsection HoleFillingAPI API
