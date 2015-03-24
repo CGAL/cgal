@@ -37,6 +37,7 @@ meshes, refinement and optimization by fairing of triangulated surface meshes.
 The second section lists the available, \ref PMPHoleFilling algorithms, which can possibly be combined with refinement and fairing.
 Section \ref PMPPredicates gives a list of predicates that can be evaluated on the processed polygon
 mesh, including point location and self intersection tests.
+Tools for checking or fixing the \ref PMPOrientation are then described.
 The following section deals with \ref PMPRepairing of polygon meshes and polygon soups.
 \ref PMPNormalComp at vertices and on faces of a polygon mesh are then listed.
 Section \ref PMPSlicer describes a class that provides an operator able to compute intersections
