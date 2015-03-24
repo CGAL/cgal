@@ -168,6 +168,10 @@ Self intersections can be detected and collected from a triangle mesh, using the
 `CGAL::Polygon_mesh_processing::is_self_intersecting()`
 and `CGAL::Polygon_mesh_processing::self_intersections()`.
 
+\cgalFigureBegin{SelfIntersections, selfintersections.png}
+Results of detection of self intersections (right) on a triangle mesh (left).
+\cgalFigureEnd
+
 \subsubsection SIExample Self Intersections Example
 \cgalExample{Polygon_mesh_processing/self_intersections_example.cpp}
 
