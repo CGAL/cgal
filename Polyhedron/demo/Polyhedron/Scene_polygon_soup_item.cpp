@@ -458,7 +458,7 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
 void
 Scene_polygon_soup_item::compute_normals_and_vertices(){
     //get the vertices and normals
-
+/*
     typedef Polygon_soup::Polygons::size_type size_type;
     positions_poly.clear();
     normals.clear();
@@ -517,7 +517,20 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
             positions_lines.push_back(pb.z());
             positions_lines.push_back(1.0);
         }
+    }*/
+    positions_poly.clear();
+    positions_poly.push_back(0.0);
+    positions_poly.push_back(0.0);
+    positions_poly.push_back(0.0);
+    positions_poly.push_back(1.0);
+    for(int i = 0; i < 360; i+=2)
+    {
+           positions_poly.push_back(cos(i));
+           positions_poly.push_back(sin(i));
+           positions_poly.push_back(0.0);
+           positions_poly.push_back(1.0);
     }
+
     location[0] = glGetUniformLocation(rendering_program_poly, "mvp_matrix");
     location[1] = glGetUniformLocation(rendering_program_poly, "mv_matrix");
     location[2] = glGetUniformLocation(rendering_program_poly, "light_pos");
@@ -727,7 +740,7 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     glUseProgram(rendering_program_poly);
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
-    glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, positions_poly.size()/4);
     // Clean-up
     glUseProgram(0);
     glBindVertexArray(0);
@@ -754,7 +767,7 @@ void
 Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
     if(soup == 0) return;
 
-    glBindVertexArray(vao);
+  /*  glBindVertexArray(vao);
     uniform_attrib(viewer,1);
     glUseProgram(rendering_program_lines);
     //draw the edges
@@ -762,7 +775,7 @@ Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
     // Clean-up
     glUseProgram(0);
     glBindVertexArray(0);
-
+*/
 }
 
 bool

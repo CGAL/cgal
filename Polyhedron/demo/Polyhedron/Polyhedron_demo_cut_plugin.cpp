@@ -11,10 +11,10 @@
 #include "Polyhedron_demo_io_plugin_interface.h"
 #include <CGAL/gl.h>
 
-#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_tree_opengl3.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/internal/AABB_tree/AABB_drawing_traits.h>
+#include <CGAL/internal/AABB_tree/AABB_Tree_drawing_traits_opengl3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/bounding_box.h>
@@ -38,7 +38,21 @@ class Q_DECL_EXPORT Scene_aabb_item : public Scene_item_with_display_list
 {
   Q_OBJECT
 public:
-  Scene_aabb_item(const AABB_tree& tree_) : tree(tree_) {}
+  Scene_aabb_item(const AABB_tree& tree_) : tree(tree_)
+  {
+      positions_lines.resize(0);
+      glGenVertexArrays(1, vao);
+      //Generates an integer which will be used as ID for each buffer
+      glGenBuffers(1, buffer);
+      compile_shaders();
+  }
+
+    ~Scene_aabb_item()
+    {
+      glDeleteBuffers(1, buffer);
+      glDeleteVertexArrays(1, vao);
+      glDeleteProgram(rendering_program_lines);
+    }
 
   bool isFinite() const { return true; }
   bool isEmpty() const { return tree.empty(); }
@@ -76,18 +90,161 @@ public:
   // Wireframe OpenGL drawing in a display list
   void direct_draw() const {
     CGAL::AABB_drawing_traits<AABB_primitive, CGAL::AABB_node<AABB_traits> > traits;
-    tree.traversal(0, traits);
+    tree.traversal(0, traits, new std::vector<float>(0));
   }
 
+  void changed()
+  {
+      compute_elements();
+      initialize_buffers();
+  }
 public:
   const AABB_tree& tree;
+private:
+    std::vector<float> positions_lines;
+
+    GLint location[2];
+    GLuint vao[1];
+    GLuint buffer[1];
+    GLuint rendering_program_lines;
+
+    void initialize_buffers()
+    {
+        glBindVertexArray(vao[0]);
+
+        glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+        glBufferData(GL_ARRAY_BUFFER,
+                     (positions_lines.size())*sizeof(float),
+                     positions_lines.data(),
+                     GL_STATIC_DRAW);
+        glVertexAttribPointer(0, //number of the buffer
+                              3, //number of floats to be taken
+                              GL_FLOAT, // type of data
+                              GL_FALSE, //not normalized
+                              0, //compact data (not in a struct)
+                              NULL //no offset (seperated in several buffers)
+                              );
+        glEnableVertexAttribArray(0);
+
+        glBindVertexArray(0);
+    }
+    void compile_shaders()
+    {
+        //fill the vertex shader
+        static const GLchar* vertex_shader_source[] =
+        {
+            "#version 300 es \n"
+            " \n"
+            "layout (location = 0) in vec3 positions; \n"
+
+            "uniform mat4 mvp_matrix; \n"
+            "uniform vec3 color; \n"
+            "out highp vec3 fColors; \n"
+            "vec4 positions_lines = vec4(positions, 1.0); \n"
+            " \n"
+
+            "void main(void) \n"
+            "{ \n"
+            "   fColors = color; \n"
+            "   gl_Position = mvp_matrix * positions_lines; \n"
+            "} \n"
+        };
+
+        //fill the fragment shader
+        static const GLchar* fragment_shader_source[]=
+        {
+            "#version 300 es \n"
+            " \n"
+            "in highp vec3 fColors; \n"
+
+            "out highp vec3 color; \n"
+            " \n"
+            "void main(void) \n"
+            "{ \n"
+            " color = fColors; \n"
+            "} \n"
+        };
+
+        GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
+        glCompileShader(vertex_shader);
+        GLuint fragment_shader =	glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+        glCompileShader(fragment_shader);
+
+        GLuint program = glCreateProgram();
+        glAttachShader(program, vertex_shader);
+        glAttachShader(program, fragment_shader);
+        glLinkProgram(program);
+
+        glDeleteShader(vertex_shader);
+        glDeleteShader(fragment_shader);
+        rendering_program_lines = program;
+    }
+    void uniform_attrib(Viewer_interface* viewer) const
+    {
+        GLfloat colors[3];
+        GLfloat mvp_mat[16];
+
+        //fills the MVP and MV matrices.
+
+        GLdouble d_mat[16];
+        viewer->camera()->getModelViewProjectionMatrix(d_mat);
+        for (int i=0; i<16; ++i)
+            mvp_mat[i] = GLfloat(d_mat[i]);
+
+
+        //fills the arraw of colors with the current color
+        colors[0] = this->color().redF();
+        colors[1] = this->color().greenF();
+        colors[2] = this->color().blueF();
+
+
+            glUseProgram(rendering_program_lines);
+            glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
+            glUniform3fv(location[1],1,colors);  
+    }
+    void compute_elements()
+    {
+       positions_lines.clear();
+
+       CGAL::AABB_drawing_traits<AABB_primitive, CGAL::AABB_node<AABB_traits> > traits;
+       tree.traversal(0, traits, &positions_lines);
+
+        location[0] = glGetUniformLocation(rendering_program_lines, "mvp_matrix");
+        location[1] = glGetUniformLocation(rendering_program_lines, "color");    
+    }
+    void draw_edges(Viewer_interface* viewer) const
+    {
+        glBindVertexArray(vao[0]);
+        glUseProgram(rendering_program_lines);
+        uniform_attrib(viewer);
+        glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
+        glUseProgram(0);
+        glBindVertexArray(0);
+
+    }
 }; // end class Scene_aabb_item
 
 class Q_DECL_EXPORT Scene_edges_item : public Scene_item
 {
   Q_OBJECT
 public:
-  bool isFinite() const { return true; }
+    Scene_edges_item()
+    {
+        positions_lines.resize(0);
+        glGenVertexArrays(1, vao);
+        //Generates an integer which will be used as ID for each buffer
+        glGenBuffers(1, buffer);
+        compile_shaders();
+    }
+  ~Scene_edges_item()
+  {
+    glDeleteBuffers(1, buffer);
+    glDeleteVertexArrays(1, vao);
+    glDeleteProgram(rendering_program_lines);
+  }
+    bool isFinite() const { return true; }
   bool isEmpty() const { return edges.empty(); }
   Bbox bbox() const {
     if(isEmpty())
@@ -103,9 +260,14 @@ public:
                 bbox.ymax(),
                 bbox.zmax());
   }
+  void changed()
+  {
+      compute_elements();
+      initialize_buffers();
+  }
 
   Scene_edges_item* clone() const {
-    Scene_edges_item* item = new Scene_edges_item;
+    Scene_edges_item* item = new Scene_edges_item();
     item->edges = edges;
     return item;
   }
@@ -127,11 +289,12 @@ public:
   }
 
   // Flat/Gouraud OpenGL drawing
-  void draw() const {}
+  void draw() const {
+  }
 
   // Wireframe OpenGL drawing
   void draw_edges() const {
-    ::glBegin(GL_LINES);
+    /*::glBegin(GL_LINES);
     for(size_t i = 0, end = edges.size();
         i < end; ++i)
     {
@@ -140,7 +303,7 @@ public:
       ::glVertex3d(a.x(), a.y(), a.z());
       ::glVertex3d(b.x(), b.y(), b.z());
     }
-    ::glEnd();
+    ::glEnd();*/
   }
 
   bool save(std::ostream& os) const
@@ -154,6 +317,138 @@ public:
 
 public:
   std::vector<Epic_kernel::Segment_3> edges;
+
+private:
+    std::vector<float> positions_lines;
+
+    GLint location[2];
+    GLuint vao[1];
+    GLuint buffer[1];
+    GLuint rendering_program_lines;
+
+    void initialize_buffers()
+    {
+        glBindVertexArray(vao[0]);
+
+        glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+        glBufferData(GL_ARRAY_BUFFER,
+                     (positions_lines.size())*sizeof(float),
+                     positions_lines.data(),
+                     GL_STATIC_DRAW);
+        glVertexAttribPointer(0, //number of the buffer
+                              3, //number of floats to be taken
+                              GL_FLOAT, // type of data
+                              GL_FALSE, //not normalized
+                              0, //compact data (not in a struct)
+                              NULL //no offset (seperated in several buffers)
+                              );
+        glEnableVertexAttribArray(0);
+
+        glBindVertexArray(0);
+    }
+    void compile_shaders()
+    {
+        //fill the vertex shader
+        static const GLchar* vertex_shader_source[] =
+        {
+            "#version 300 es \n"
+            " \n"
+            "layout (location = 0) in vec3 positions; \n"
+
+            "uniform mat4 mvp_matrix; \n"
+            "uniform vec3 color; \n"
+            "out highp vec3 fColors; \n"
+            "vec4 positions_lines = vec4(positions, 1.0); \n"
+            " \n"
+
+            "void main(void) \n"
+            "{ \n"
+            "   fColors = color; \n"
+            "   gl_Position = mvp_matrix * positions_lines; \n"
+            "} \n"
+        };
+
+        //fill the fragment shader
+        static const GLchar* fragment_shader_source[]=
+        {
+            "#version 300 es \n"
+            " \n"
+            "in highp vec3 fColors; \n"
+
+            "out highp vec3 color; \n"
+            " \n"
+            "void main(void) \n"
+            "{ \n"
+            " color = fColors; \n"
+            "} \n"
+        };
+
+        GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
+        glCompileShader(vertex_shader);
+        GLuint fragment_shader =	glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+        glCompileShader(fragment_shader);
+
+        GLuint program = glCreateProgram();
+        glAttachShader(program, vertex_shader);
+        glAttachShader(program, fragment_shader);
+        glLinkProgram(program);
+
+        glDeleteShader(vertex_shader);
+        glDeleteShader(fragment_shader);
+        rendering_program_lines = program;
+    }
+    void uniform_attrib(Viewer_interface* viewer) const
+    {
+        GLfloat colors[3];
+        GLfloat mvp_mat[16];
+
+        //fills the MVP and MV matrices.
+
+        GLdouble d_mat[16];
+        viewer->camera()->getModelViewProjectionMatrix(d_mat);
+        for (int i=0; i<16; ++i)
+            mvp_mat[i] = GLfloat(d_mat[i]);
+
+
+        //fills the arraw of colors with the current color
+        colors[0] = this->color().redF();
+        colors[1] = this->color().greenF();
+        colors[2] = this->color().blueF();
+
+
+            glUseProgram(rendering_program_lines);
+            glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
+            glUniform3fv(location[1],1,colors);
+    }
+    void compute_elements()
+    {
+       positions_lines.clear();
+
+       for(size_t i = 0, end = edges.size();
+           i < end; ++i)
+       {
+         const Epic_kernel::Point_3& a = edges[i].source();
+         const Epic_kernel::Point_3& b = edges[i].target();
+         positions_lines.push_back(a.x()); positions_lines.push_back(a.y()); positions_lines.push_back(a.z());
+         positions_lines.push_back(b.x()); positions_lines.push_back(b.y()); positions_lines.push_back(b.z());
+       }
+
+        location[0] = glGetUniformLocation(rendering_program_lines, "mvp_matrix");
+        location[1] = glGetUniformLocation(rendering_program_lines, "color");
+    }
+    void draw_edges(Viewer_interface* viewer) const
+    {
+        glBindVertexArray(vao[0]);
+        glUseProgram(rendering_program_lines);
+        uniform_attrib(viewer);
+        glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
+        glUseProgram(0);
+        glBindVertexArray(0);
+
+    }
+
 }; // end class Scene_edges_item
 
 

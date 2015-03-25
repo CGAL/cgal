@@ -104,7 +104,6 @@ private:
                             const Tr::Point& pc) {
     Tr::Geom_traits::Vector_3 n = cross_product(pb - pa, pc -pa);
     n = n / CGAL::sqrt(n*n);
-
     ::glNormal3d(n.x(),n.y(),n.z());
 
     ::glVertex3d(pa.x(),pa.y(),pa.z());

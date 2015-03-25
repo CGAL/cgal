@@ -602,6 +602,7 @@ void Scene_points_with_normal_item::compute_normals_and_vertices(void)
                 normals.push_back(p.normal().z());
 #ifdef CGAL_GLEW_ENABLED
                 tex_coords.push_back(p.radius());
+                ::glMultiTexCoord1d(GL_TEXTURE2, p.radius());
 #endif
                 positions_splats.push_back(p.x());
                 positions_splats.push_back(p.y());
@@ -853,7 +854,20 @@ void Scene_points_with_normal_item::draw_splats() const
 void Scene_points_with_normal_item::draw_splats(Viewer_interface* viewer) const
 {
     //Needs to be re-thinked because the GlSplat Renderer is deprecated and is a big part of the scene class.
-   draw_splats();
+
+   // TODO add support for selection
+   ::glBegin(GL_POINTS);
+   for ( Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
+   {
+     const UI_point& p = *it;
+     ::glNormal3dv(&p.normal().x());
+#ifdef CGAL_GLEW_ENABLED
+     ::glMultiTexCoord1d(GL_TEXTURE2, p.radius());
+#endif
+     ::glVertex3dv(&p.x());
+   }
+   ::glEnd();
+
 }
 
 void Scene_points_with_normal_item::draw_edges(Viewer_interface* viewer) const

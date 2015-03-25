@@ -275,7 +275,6 @@ Scene::drawWithNames(Viewer_interface* viewer)
 void 
 Scene::draw_aux(bool with_names, Viewer_interface* viewer)
 {
-
     // Flat/Gouraud OpenGL drawing
     for(int index = 0; index < m_entries.size(); ++index)
     {
@@ -437,8 +436,8 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
             }
 
         }
-        ms_splatting->beginAttributePass();
-        for(int index = 0; index < m_entries.size(); ++index)
+       ms_splatting->beginAttributePass();
+         for(int index = 0; index < m_entries.size(); ++index)
         {  Scene_item& item = *m_entries[index];
             if(item.visible() && item.renderingMode() == Splatting)
             {
