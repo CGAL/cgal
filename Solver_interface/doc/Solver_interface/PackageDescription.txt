@@ -30,8 +30,9 @@
 \cgalClassifedRefPages
 
 ## Concepts ##
-- `HalfedgeGraph`
 
+- `SparseLinearAlgebraTraits_d`
+- `SparseLinearAlgebraTraitsWithFactor_d`
 
 
 ## %CGAL Classes Adapted for the Graph API ##

@@ -31,7 +31,6 @@
 - `BorderParameterizer_3`
 - `ParameterizationMesh_3`
 - `ParameterizationPatchableMesh_3`
-- `SparseLinearAlgebraTraits_d`
 - `PolyhedronTraitsWithKernel_3`
 
 ## Surface Parameterization Methods ##

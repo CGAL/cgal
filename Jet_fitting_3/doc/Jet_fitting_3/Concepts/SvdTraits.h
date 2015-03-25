@@ -39,7 +39,7 @@ public:
   /*!
     The matrix type,  model of the concept `SvdTraits::Matrix`. 
   */ 
-  typedef unspecified_type matrix;
+  typedef unspecified_type Matrix;
   
   /// @} 
 

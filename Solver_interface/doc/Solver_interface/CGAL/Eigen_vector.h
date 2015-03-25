@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceParameterizationAlgebra
+\ingroup PkgSolver
 
 The class `Eigen_vector` is a C++ wrapper around \ref thirdpartyEigen "Eigen" vector, which is a simple array of numbers. 
 The version 3.1 (or greater) of \ref thirdpartyEigen "Eigen" must be available on the system. 

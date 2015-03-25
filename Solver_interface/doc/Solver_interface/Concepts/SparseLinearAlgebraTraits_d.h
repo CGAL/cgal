@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSurfaceParameterizationConcepts
+\ingroup PkgSolverConcepts
 \cgalConcept
 
 The concept `SparseLinearAlgebraTraits_d` is used to solve sparse linear systems <I>A\f$ \times \f$ X = B</I>. 

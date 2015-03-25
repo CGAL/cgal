@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceParameterizationAlgebra
+\ingroup PkgSolver
 
 The class `Eigen_sparse_matrix` is a C++ wrapper around \ref thirdpartyEigen "Eigen" matrix type `Eigen::SparseMatrix` 
 that represents general matrices, be they symmetric or not. 
