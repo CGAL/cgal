@@ -383,6 +383,7 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
                 }
             }
         }
+         item.contextual_changed();
         if(with_names) {
             ::glPopName();
         }
@@ -411,6 +412,7 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
                     item.draw_points();
             }
         }
+         item.contextual_changed();
         if(with_names) {
             ::glPopName();
         }

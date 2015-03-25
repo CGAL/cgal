@@ -304,7 +304,22 @@ public:
         glBindVertexArray(0);
 
     }
+    void draw_points(Viewer_interface * viewer) const
+    {
+        glBindVertexArray(vao[0]);
+        glUseProgram(rendering_program_lines);
+        uniform_attrib(viewer,1);
+        glDrawArrays(GL_POINTS, 0, positions_lines.size()/3);
+        glUseProgram(0);
+        glBindVertexArray(0);
 
+        glBindVertexArray(vao[1]);
+        glUseProgram(rendering_program_lines);
+        uniform_attrib(viewer,2);
+        glDrawArrays(GL_LINES, 0, positions_grid.size()/3);
+        glUseProgram(0);
+        glBindVertexArray(0);
+    }
 private:
     void draw_triangle(const Kernel::Point_3& pa,
                        const Kernel::Point_3& pb,
@@ -929,6 +944,7 @@ private:
                     draw_triangle_edges(pa,pb,pd);
                     draw_triangle_edges(pa,pc,pd);
                     draw_triangle_edges(pb,pc,pd);
+
 
                 }
 
