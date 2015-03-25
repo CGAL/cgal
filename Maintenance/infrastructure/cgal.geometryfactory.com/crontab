@@ -35,7 +35,7 @@ LC_CTYPE=en_US.UTF-8
 # cgal->cgal2 with git-multimail
 */5 * * * * cd $HOME/Git/cgal-dev-pusher.git && git fetch -f --quiet --prune cgal-dev 'refs/*:refs/*' && git push --prune --quiet cgal-dev-receiver '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
 */5 * * * * cd $HOME/Git/cgal-pusher.git && git fetch -f --quiet --prune cgal 'refs/*:refs/*' && git push --prune --quiet cgal-receiver '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
-*/5 * * * * cd $HOME/Git/cgal-students-pusher.git && git fetch -f --quiet --prune cgal-students 'refs/*:refs/*' && git push --prune --quiet cgal-students-receiver '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
+*/5 * * * * cd $HOME/Git/cgal-students-pusher.git && git fetch -f --quiet --prune cgal-public-dev 'refs/*:refs/*' && git push --prune --quiet cgal-students-receiver '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
 */5 * * * * cd $HOME/Git/cgal-web-pusher.git && git fetch --quiet -f --prune cgal-web 'refs/*:refs/*' && git push --prune --quiet cgal-web-receiver '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
 
 
