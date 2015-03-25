@@ -16,8 +16,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 include_directories( BEFORE ${Mesh_3_implicit_functions_BINARY_DIR} ../include )
 
 # Find CGAL and CGAL Qt4
-find_package(CGAL COMPONENTS Qt4)
-include( ${CGAL_USE_FILE} )
+# find_package(CGAL COMPONENTS Qt4)
+# include( ${CGAL_USE_FILE} )
 
 # Find Qt4 itself
 set( QT_USE_QTXML    TRUE )
@@ -27,7 +27,7 @@ set( QT_USE_QTOPENGL  TRUE )
 find_package(Qt4)
 
 
-if(CGAL_Qt4_FOUND AND QT4_FOUND)
+if(QT4_FOUND)
   include(${QT_USE_FILE})
 
   # put plugins (which are shared libraries) at the same location as
@@ -57,20 +57,16 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND)
     # Link with Qt
     target_link_libraries( ${plugin_name} ${QT_LIBRARIES} )
     # Link with CGAL
-    target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+    target_link_libraries( ${plugin_name} ${CGAL_3RD_PARTY_LIBRARIES} )
   endmacro(polyhedron_demo_plugin)
 
   polyhedron_demo_plugin(p_sphere_function_plugin Sphere_implicit_function)
   polyhedron_demo_plugin(p_tanglecube_function_plugin Tanglecube_implicit_function)
   polyhedron_demo_plugin(p_klein_function_plugin Klein_implicit_function)
 
-else (CGAL_Qt4_FOUND AND QT4_FOUND)
+else (QT4_FOUND)
 
   set(MESH_3_MISSING_DEPS "")
-
-  if(NOT CGAL_Qt4_FOUND)
-    set(MESH_3_MISSING_DEPS "the CGAL Qt4 library, ${MESH_3_MISSING_DEPS}")
-  endif()
 
   if(NOT QT4_FOUND)
     set(MESH_3_MISSING_DEPS "Qt4, ${MESH_3_MISSING_DEPS}")
@@ -78,4 +74,4 @@ else (CGAL_Qt4_FOUND AND QT4_FOUND)
 
   message(STATUS "NOTICE: This demo requires ${MESH_3_MISSING_DEPS}and will not be compiled.")
 
-endif (CGAL_Qt4_FOUND AND QT4_FOUND)
+endif (QT4_FOUND)
