@@ -286,7 +286,6 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
         {
             if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
             {
-                item.selection_changed(false);
                 ::glEnable(GL_LIGHTING);
                 ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
                 ::glPointSize(2.f);
@@ -299,6 +298,7 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
                 else
 
                 {
+                    item.selection_changed(false);
                     CGALglcolor(item.color());
                 }
 

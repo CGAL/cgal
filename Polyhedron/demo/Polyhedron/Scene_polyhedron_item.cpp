@@ -574,9 +574,6 @@ Scene_polyhedron_item::uniform_attrib(Viewer_interface* viewer, int mode) const
         glUniformMatrix4fv(location[7], 1, GL_FALSE, mvp_mat);
 
     }
-
-
-
 }
 void
 Scene_polyhedron_item::compute_normals_and_vertices(void)
@@ -1014,13 +1011,8 @@ void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
 
 void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
     glBindVertexArray(vao[0]);
-
-    // tells the GPU to use the program just created
     glUseProgram(rendering_program_facets);
-
     uniform_attrib(viewer,0);
-    //draw the polygons
-    // the third argument is the number of vec4 that will be entered
     glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/4);
     glUseProgram(0);
     glBindVertexArray(0);
@@ -1108,12 +1100,13 @@ void
 Scene_polyhedron_item::selection_changed(bool p_is_selected)
 {
     if(p_is_selected != is_selected)
-    {is_selected = p_is_selected;
+    {
+        is_selected = p_is_selected;
         compute_colors();
+          std::cout<<"coucou"<<std::endl;
         initialize_buffers();
     }
-    else
-        is_selected = p_is_selected;
+
 }
 
 void

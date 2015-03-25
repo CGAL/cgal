@@ -722,7 +722,6 @@ Scene_polygon_soup_item::toolTip() const
 void
 Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     if(soup == 0) return;
-
     //Calls the buffer info again so that it's the right one used even if
     //there are several objects drawn
     glBindVertexArray(vao);
