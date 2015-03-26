@@ -204,7 +204,7 @@ template <class GeomTraits
 #endif
 >
 OutputIterator
-self_intersections(const TriangleMesh& tmesh,
+self_intersections(const TriangleMesh& tmesh
                  , OutputIterator out
 #ifdef DOXYGEN_RUNNING
                  , VertexPointMap vpmap

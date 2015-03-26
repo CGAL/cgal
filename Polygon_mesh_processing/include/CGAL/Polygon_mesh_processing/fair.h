@@ -37,15 +37,21 @@ namespace internal {
   // use non-default weight calculator and non-default solver
   // WeightCalculator a model of `FairWeightCalculator`, can be omitted to use default Cotangent weights
   // weight_calculator a function object to calculate weights, defaults to Cotangent weights and can be omitted
-  template<class SparseLinearSolver, class WeightCalculator, class PolygonMesh, class VertexRange>
+  template<typename SparseLinearSolver,
+           typename WeightCalculator,
+           typename PolygonMesh,
+           typename VertexRange,
+           typename VertexPointMap>
   bool fair(PolygonMesh& pmesh,
     VertexRange vertices,
     SparseLinearSolver solver,
     WeightCalculator weight_calculator,
-    unsigned int continuity)
+    unsigned int continuity,
+    VertexPointMap vpmap)
   {
-    CGAL::Polygon_mesh_processing::internal::Fair_Polyhedron_3<PolygonMesh,
-      SparseLinearSolver, WeightCalculator> fair_functor(pmesh, weight_calculator);
+    CGAL::Polygon_mesh_processing::internal::Fair_Polyhedron_3
+       <PolygonMesh, SparseLinearSolver, WeightCalculator, VertexPointMap>
+       fair_functor(pmesh, vpmap, weight_calculator);
     return fair_functor.fair(vertices, solver, continuity);
   }
 
@@ -78,7 +84,6 @@ namespace internal {
 
   @return `true` if fairing is successful, otherwise no vertex position is changed
 
-  \todo code: missing VertexPointMap
   @todo accuracy of solvers are not good, for example when there is no boundary condition pre_factor should fail, but it does not.
   */
   template<typename PolygonMesh,
@@ -106,14 +111,16 @@ namespace internal {
     return internal::fair(pmesh, vertices,
       choose_param(get_param(np, sparse_linear_solver), Default_solver()),
       choose_param(get_param(np, weight_calculator), Default_Weight_calculator(pmesh)),
-      choose_param(get_param(np, fairing_continuity), 1)
+      choose_param(get_param(np, fairing_continuity), 1),
+      choose_param(get_param(np, vertex_point_map), get(CGAL::vertex_point, pmesh))
       );
   }
 
   template<typename PolygonMesh, typename VertexRange>
   bool fair(PolygonMesh& pmesh, VertexRange vertices)
   {
-    return fair(pmesh, vertices, CGAL::parameters::all_default());
+    return fair(pmesh, vertices,
+      CGAL::Polygon_mesh_processing::parameters::all_default());
   }
   
 } //end namespace Polygon_mesh_processing

@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
                   faces(poly),
                   std::back_inserter(new_facets),
                   std::back_inserter(new_vertices),
-                  CGAL::parameters::density_control_factor(2.));
+                  CGAL::Polygon_mesh_processing::parameters::density_control_factor(2.));
 
   std::ofstream refined_off("refined.off");
   refined_off << poly;

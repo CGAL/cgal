@@ -15,11 +15,13 @@ namespace Polygon_mesh_processing {
 namespace internal {
 
 // [On Linear Variational Surface Deformation Methods-2008]
-template<class PolygonMesh, class SparseLinearSolver, class WeightCalculator>
+template<class PolygonMesh,
+         class SparseLinearSolver,
+         class WeightCalculator,
+         class VertexPointMap>
 class Fair_Polyhedron_3 {
   // typedefs
-  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
-  typedef typename boost::property_traits<Point_property_map>::value_type Point_3;
+  typedef typename VertexPointMap::value_type Point_3;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef  Halfedge_around_target_circulator<PolygonMesh>  Halfedge_around_vertex_circulator;
 
@@ -31,14 +33,15 @@ class Fair_Polyhedron_3 {
   PolygonMesh& pmesh;
   Sparse_linear_solver m_solver;
   WeightCalculator weight_calculator;
-  Point_property_map ppmap;
+  VertexPointMap ppmap;
 
 public:
-  Fair_Polyhedron_3(PolygonMesh& pmesh,
-      WeightCalculator weight_calculator = WeightCalculator())
+  Fair_Polyhedron_3(PolygonMesh& pmesh
+      , VertexPointMap vpmap = get(CGAL::vertex_point, pmesh)
+      , WeightCalculator weight_calculator = WeightCalculator())
     : pmesh(pmesh)
     , weight_calculator(weight_calculator)
-    , ppmap(get(CGAL::vertex_point, pmesh))
+    , ppmap(vpmap)
   { }
   
 private:

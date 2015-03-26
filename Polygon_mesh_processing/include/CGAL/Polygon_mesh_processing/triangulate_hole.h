@@ -98,7 +98,8 @@ namespace Polygon_mesh_processing {
       typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
       OutputIterator out)
   {
-    return triangulate_hole(pmesh, border_halfedge, out, CGAL::parameters::all_default());
+    return triangulate_hole(pmesh, border_halfedge, out,
+      CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
   /*!
@@ -165,7 +166,7 @@ namespace Polygon_mesh_processing {
   {
     return triangulate_and_refine_hole(pmesh, border_halfedge,
       face_out, vertex_out,
-      CGAL::parameters::all_default());
+      CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
 
@@ -240,7 +241,7 @@ namespace Polygon_mesh_processing {
   {
     return triangulate_refine_and_fair_hole(pmesh, border_halfedge,
       face_out, vertex_out,
-      CGAL::parameters::all_default());
+      CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
   /*!
