@@ -58,15 +58,14 @@ namespace CGAL {
       \ingroup PkgPointSetShapeDetection3
       \brief Traits class for definition of types. The method requires Point_3
       with Vector_3 containing normal information. To avoid copying of
-      potentially large input data, the detection will performed on the input
+      potentially large input data, the detection will be performed on the input
       data directly and no internal copy will be created. For this reason the
-      input data has to be provided in form of an random access iterator given
-      by the InputIt template parameter. Point and normal property maps have to
-      be provided to map the input iterator to a Point_3 and Vector_3
-      respectively.
+      input data has to be provided in form of a random access iterator given
+      by the `Input_iterator` template parameter. Point and normal property maps have to
+      be provided to extract from the input the points and the normals respectively.
  
-      \tparam Gt Geometric traits class. Exact construction kernels are not
-              supported
+      \tparam Gt Geometric traits class. It must provide `Gt::FT`, `Gt::Point_3` and `Gt::Vector_3`.
+             `Gt::FT` must be a floating point number type like `double` or `float`.
  
       \tparam InputIt is a model of RandomAccessIterator
  
@@ -83,9 +82,9 @@ namespace CGAL {
             class Npmap>
   struct Efficient_ransac_traits {
     typedef Gt Geom_traits; 
-    ///< Geometric types. FT, Point_3 and Vector_3 are used.
+    ///< Geometric traits.
     typedef InputIt Input_iterator;
-    ///< Random access iterator type used for providing input data, points (Point_3) with associated normals (Vector_3) to the method.
+    ///< Random access iterator used to get the input points and normals.
     typedef Ppmap Point_pmap;
     ///< property map: `InputIt` -> `Point_3` (the position of an input point).
     typedef Npmap Normal_pmap;
@@ -95,12 +94,12 @@ namespace CGAL {
 
   /*!
 \ingroup PkgPointSetShapeDetection3
-\brief Implementation of a RANSAC method for shape detection.
+\brief A shape detection algorithm using a RANSAC method.
 
 Given a point set in 3D space with unoriented normals, sampled on surfaces,
-the method detects sets of connected points on the surface of primitive shapes.
+this classes enables to detect subset of connected points lying on the surface of primitive shapes.
 Each input point is assigned to either none or at most one detected primitive
-shape. This implementation follows the algorithm published by Schnabel et al.
+shape. The implementation follows the algorithm published by Schnabel et al.
 in 2007 \cgalCite{Schnabel07}.
 
 \tparam ERTraits Efficient_RANSAC_traits
@@ -164,15 +163,15 @@ in 2007 \cgalCite{Schnabel07}.
     /// \name Parameters 
     /// @{
       /*!
-       \brief parameters for Shape_detection_3.
+       Parameters for the shape detection algorithm.
        */
     struct Parameters {
       Parameters() : probability(0.01), min_points(SIZE_MAX), normal_threshold(0.9), epsilon(-1), cluster_epsilon(-1) {}
-      FT probability;         ///< Probability to control search endurance. Default value 0.05.
-      std::size_t min_points; ///< Minimum number of points of a shape. Default value 1% of total number of input points.
-      FT epsilon;             ///< Maximum tolerance Euclidian distance from a point and a shape. Default value 1% of bounding box diagonal.
-      FT normal_threshold;	  ///< Maximum tolerance normal deviation from a point's normal to the normal on shape at projected point. Default value 0.9 (around 25 degrees).
-      FT cluster_epsilon;	    ///< Maximum distance between points to be considered connected. Default value 1% of bounding box diagonal.
+      FT probability;         ///< Probability to control search endurance. %Default value 0.05.
+      std::size_t min_points; ///< Minimum number of points of a shape. %Default value 1% of total number of input points.
+      FT epsilon;             ///< Maximum tolerance Euclidian distance from a point and a shape. %Default value 1% of bounding box diagonal.
+      FT normal_threshold;	  ///< Maximum tolerance normal deviation from a point's normal to the normal on shape at projected point. %Default value 0.9 (around 25 degrees).
+      FT cluster_epsilon;	    ///< Maximum distance between points to be considered connected. %Default value 1% of bounding box diagonal.
     };
     /// @}
 
@@ -210,13 +209,11 @@ in 2007 \cgalCite{Schnabel07}.
     }
 
     /*!
-      Sets the input data by providing an iterator range modeling the
-      'boost:RandomAccessRange'. The range of input points need to stay valid
+      Sets the input data by providing an iterator range modeling the concept
+      `boost:RandomAccessRange`. The range of input points need to stay valid
       until the detection has been performed and no longer access to the
       results is required. The data in the input range is reordered during
-      detect() and build_octrees(). Frees former used internal structures if
-      present, including formerly found shapes. Thus iterators and ranges
-      retrieved through shapes() and unassigned_points() are invalidated.
+      `detect()` and `build_octrees()`. `clear()` is first called by this function.
     */
     template <class RandomAccessInputRange>
     void set_input_data(
@@ -246,11 +243,11 @@ in 2007 \cgalCite{Schnabel07}.
         m_valid_iterators = true;
     }
     /*!
-      Registers a shape type for detection.
+      Registers in the detection engine the shape type `ShapeType` that must inherits from `Shape_base`.
     */ 
-    template <class ShapeT>
+    template <class ShapeType>
     void add_shape_factory() {
-      m_shape_factories.push_back(factory<ShapeT>);
+      m_shape_factories.push_back(factory<ShapeType>);
     }
 
     /*!
@@ -326,8 +323,8 @@ in 2007 \cgalCite{Schnabel07}.
     }
 
     /*!
-      Frees memory allocated for interal search structures. Invalidates the
-      iterator retrieved through unassigned_points_begin().
+      Frees memory allocated for the internal search structures but keep the detected shapes.
+      It invalidates the range retrieved using `unassigned_points()`.
      */ 
     void clear_octrees() {
       // If there is no data yet, there are no data structures.
@@ -351,9 +348,9 @@ in 2007 \cgalCite{Schnabel07}.
     }
 
     /*!
-      Frees all internally allocated memory including detected shapes.
-      Invalidates the iterators and ranges retrieved through `shapes()`
-      `and unassigned_points()`.
+      Calls `clear_shape_factories()`, `clear_octrees()` and removes all detected shapes.
+      All internal structures are cleaned, including any formerly detected shapes.
+      Thus iterators and ranges retrieved through `shapes()` and `unassigned_points()` are invalidated.
     */ 
     void clear() {
       clear_shape_factories();
@@ -378,11 +375,11 @@ in 2007 \cgalCite{Schnabel07}.
     /// \name Detection 
     /// @{
     /*! 
-      This function performs the shape detection. Shape types to be detected
-      must be registered before with `add_shape_factory()`.
+      Performs the shape detection. Shape types considered during the detection
+      are those registered using `add_shape_factory()`.
 
-      \return The return value is true if shape types have been registered and 
-              input data has been set. Otherwise, false is returned.
+      \return `true` if shape types have been registered and
+              input data has been set. Otherwise, `false` is returned.
     */ 
     bool detect(
       const Parameters &options = Parameters()
@@ -658,10 +655,10 @@ in 2007 \cgalCite{Schnabel07}.
     /// \name Access
     /// @{            
     /*!
-      Returns a range over the detected shapes in order of detection.
-      The memory allocated for the shapes are released by clear() or finally
-      by the destructor of this instance. Depending on the chosen probability
-      for the detection the shapes are ordered with decreasing size.
+      Returns a range over the detected shapes in the order of detection.
+      The memory allocated for the shapes is released by `clear()` or the
+      the destructor of the class. Depending on the chosen probability
+      for the detection, the shapes are ordered with decreasing size.
     */
     Shape_range shapes() const {
       return boost::make_iterator_range(m_extracted_shapes.begin(),

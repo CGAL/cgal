@@ -50,12 +50,11 @@ namespace CGAL {
     
     /*!
      \ingroup PkgPointSetShapeDetection3
-     \brief Base class for shape types defining an interface to constuct a
-            shape from few points and calculate the point distance and normal
+     \brief Base class for shape types defining an interface to construct a
+            shape from a set of points and to calculate the point distance and normal
             deviation from the surface normal. It is used during detection to
-            identify the inliers in the input data and to extract the largest
-            cluster of spatially neighbored points. The indices of the
-            associated input points can be 
+            identify the inliers from the input data and to extract the largest
+            cluster of spatially neighbored points.
      */
   template <class ERTraits>
   class Shape_base {
@@ -95,22 +94,22 @@ namespace CGAL {
     virtual ~Shape_base() {}
       
     /*!
-      Indices into the input data of all points assigned to this shape.
+      returns the indices of the points in the input range assigned to this shape.
      */
     const std::vector<size_t> &assigned_point_indices() const {
       return m_indices;
     }
       
     /*!
-      Helper function writing shape type
-      and numerical parameters into a string.
+      returns a string containing the shape type
+      and the numerical parameters.
      */
     virtual std::string info() const {
       return std::string();
     }
 
     /*!
-      Computes squared Euclidean distance from query point to the shape.
+      Computes the squared Euclidean distance from the query point `p` to the shape.
      */
     virtual FT squared_distance(const Point &p) const = 0;
 
@@ -123,8 +122,8 @@ namespace CGAL {
     virtual void create_shape(const std::vector<std::size_t> &indices) = 0;
     
     /*!
-      Determines the largest cluster of inliers. A point belongs to a cluster
-      if there is a point in the cluster closer than cluster_epsilon distance.
+      Determines the largest cluster of inliers points. A point belongs to a cluster
+      if there is a point in the cluster closer than `cluster_epsilon distance`.
      */
     std::size_t connected_component(std::vector<std::size_t> &indices, FT cluster_epsilon) {
       if (indices.size() == 0)
@@ -270,8 +269,8 @@ namespace CGAL {
     
     /*!
       Determines the largest cluster with a point-to-point
-      distance not larger than cluster_epsilon. This general version performs
-      a region growing within the inliers using a kd tree.
+      distance not larger than `cluster_epsilon`. This general version performs
+      a region growing within the inliers using a kd-tree.
      */
     std::size_t connected_component_kdTree(std::vector<std::size_t> &indices,
                                            FT cluster_epsilon) {
@@ -359,7 +358,7 @@ namespace CGAL {
     }
 
     /*!
-      Computes squared Euclidean distance from a set of points to the shape.
+      Computes the squared Euclidean distance from a set of points to the shape.
       The distances will be stored in the so called parameter.
      */
     virtual void squared_distance(const std::vector<std::size_t> &indices,
@@ -368,25 +367,25 @@ namespace CGAL {
     /*!
       Computes the deviation of the point normal from the surface normal at the
       projected point in form of the dot product and writes the result into the
-      provided 'angles' vector.
+      provided `angles` vector.
      */
     virtual void cos_to_normal(const std::vector<std::size_t> &indices,
                                std::vector<FT> &angles) const = 0;
 
     /*!
-      Returns minimal number of samples required for construction.
+      Returns minimal number of samples points required for construction.
      */
     virtual std::size_t minimum_sample_size() const = 0;
 
     /*!
-      Retrieves the point for an index.
+      Retrieves the point location from its index.
      */
     const Point& point(std::size_t i) const {
       return get(this->m_point_pmap, *(this->m_first + i));
     }
     
     /*!
-      Retrieves the normal vector for an index.
+      Retrieves the normal vector from its index.
      */
     const Vector& normal(std::size_t i) const {
       return get(this->m_normal_pmap, *(this->m_first + i));
