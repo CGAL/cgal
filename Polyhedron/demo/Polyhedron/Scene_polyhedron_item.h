@@ -112,12 +112,15 @@ private:
     std::vector<float> color_lines;
     std::vector<float> color_facets;
 
+    std::vector<float> color_lines_selected;
+    std::vector<float> color_facets_selected;
+
     GLuint rendering_program_facets;
     GLuint rendering_program_lines;
     GLint location[9];
 
-    GLuint vao[1];
-    GLuint buffer[5];
+    GLuint vao[2];
+    GLuint buffer[10];
     void initialize_buffers();
     void compile_shaders(void);
     void compute_normals_and_vertices(void);

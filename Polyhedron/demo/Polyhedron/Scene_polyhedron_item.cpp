@@ -273,27 +273,24 @@ Scene_polyhedron_item::triangulate_facet_color(Facet_iterator fit)
         for(int i = 0; i<3; ++i)
         {
             const int this_patch_id = fit->patch_id();
-            if(is_selected)
-            {
-                color_facets.push_back(colors_[this_patch_id].lighter(120).redF());
-                color_facets.push_back(colors_[this_patch_id].lighter(120).greenF());
-                color_facets.push_back(colors_[this_patch_id].lighter(120).blueF());
 
-                color_facets.push_back(colors_[this_patch_id].lighter(120).redF());
-                color_facets.push_back(colors_[this_patch_id].lighter(120).greenF());
-                color_facets.push_back(colors_[this_patch_id].lighter(120).blueF());
-            }
-            else
-            {
-                color_facets.push_back(colors_[this_patch_id].redF());
-                color_facets.push_back(colors_[this_patch_id].greenF());
-                color_facets.push_back(colors_[this_patch_id].blueF());
+                color_facets_selected.push_back(colors_[this_patch_id].lighter(120).redF());
+                color_facets_selected.push_back(colors_[this_patch_id].lighter(120).greenF());
+                color_facets_selected.push_back(colors_[this_patch_id].lighter(120).blueF());
+
+                color_facets_selected.push_back(colors_[this_patch_id].lighter(120).redF());
+                color_facets_selected.push_back(colors_[this_patch_id].lighter(120).greenF());
+                color_facets_selected.push_back(colors_[this_patch_id].lighter(120).blueF());
 
                 color_facets.push_back(colors_[this_patch_id].redF());
                 color_facets.push_back(colors_[this_patch_id].greenF());
                 color_facets.push_back(colors_[this_patch_id].blueF());
 
-            }
+                color_facets.push_back(colors_[this_patch_id].redF());
+                color_facets.push_back(colors_[this_patch_id].greenF());
+                color_facets.push_back(colors_[this_patch_id].blueF());
+
+
         }
     }
 }
@@ -390,8 +387,78 @@ Scene_polyhedron_item::initialize_buffers()
                           );
     glEnableVertexAttribArray(4);
 
+
+    glBindVertexArray(vao[1]);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[5]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (positions_facets.size())*sizeof(float),
+                 positions_facets.data(),
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(0, //number of the buffer
+                          4, //number of floats to be taken
+                          GL_FLOAT, // type of data
+                          GL_FALSE, //not normalized
+                          0, //compact data (not in a struct)
+                          NULL //no offset (seperated in several buffers)
+                          );
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[6]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (positions_lines.size())*sizeof(float),
+                 positions_lines.data(),
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(1, //number of the buffer
+                          4, //number of floats to be taken
+                          GL_FLOAT, // type of data
+                          GL_FALSE, //not normalized
+                          0, //compact data (not in a struct)
+                          NULL //no offset (seperated in several buffers)
+                          );
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[7]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (normals.size())*sizeof(float),
+                 normals.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(2,
+                          3,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          0,
+                          NULL
+                          );
+    glEnableVertexAttribArray(2);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[8]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (color_facets_selected.size())*sizeof(float),
+                 color_facets_selected.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(3,
+                          3,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          0,
+                          NULL
+                          );
+    glEnableVertexAttribArray(3);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[9]);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (color_lines_selected.size())*sizeof(float),
+                 color_lines_selected.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(4,
+                          3,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          0,
+                          NULL
+                          );
+    glEnableVertexAttribArray(4);
     // Clean-up
     glBindVertexArray(0);
+
 
 }
 
@@ -703,10 +770,10 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
 void
 Scene_polyhedron_item::compute_colors()
 {
-    GLfloat colors[4];
     color_lines.clear();
     color_facets.clear();
-
+    color_lines_selected.clear();
+    color_facets_selected.clear();
     //Facets
     typedef typename Polyhedron::Traits	    Kernel;
     typedef typename Kernel::Point_3	    Point;
@@ -719,19 +786,7 @@ Scene_polyhedron_item::compute_colors()
 
     // int patch_id = -1;
     Facet_iterator f = poly->facets_begin();
-    QColor temp = colors_[f->patch_id()];
-    if(is_selected)
-    {
-        colors[0]=0.0;
-        colors[1]=0.0;
-        colors[2]=0.0;
-    }
-    else
-    {
-        colors[0]=temp.lighter(50).redF();
-        colors[1]=temp.lighter(50).greenF();
-        colors[2]=temp.lighter(50).blueF();
-    }
+
     for(f = poly->facets_begin();
         f != poly->facets_end();
         f++)
@@ -746,18 +801,15 @@ Scene_polyhedron_item::compute_colors()
             {
 
                 const int this_patch_id = f->patch_id();
-                if(is_selected)
-                {
-                    color_facets.push_back(colors_[this_patch_id].lighter(120).redF());
-                    color_facets.push_back(colors_[this_patch_id].lighter(120).greenF());
-                    color_facets.push_back(colors_[this_patch_id].lighter(120).blueF());
-                }
-                else
-                {
+
+                    color_facets_selected.push_back(colors_[this_patch_id].lighter(120).redF());
+                    color_facets_selected.push_back(colors_[this_patch_id].lighter(120).greenF());
+                    color_facets_selected.push_back(colors_[this_patch_id].lighter(120).blueF());
+
                     color_facets.push_back(colors_[this_patch_id].redF());
                     color_facets.push_back(colors_[this_patch_id].greenF());
                     color_facets.push_back(colors_[this_patch_id].blueF());
-                }
+
             }
 
         }
@@ -772,13 +824,20 @@ Scene_polyhedron_item::compute_colors()
             he++)
         {
             if(he->is_feature_edge()) continue;
-            color_lines.push_back(colors[0]);
-            color_lines.push_back(colors[1]);
-            color_lines.push_back(colors[2]);
 
-            color_lines.push_back(colors[0]);
-            color_lines.push_back(colors[1]);
-            color_lines.push_back(colors[2]);
+                color_lines_selected.push_back(0.0);
+                color_lines_selected.push_back(0.0);
+                color_lines_selected.push_back(0.0);
+
+                color_lines_selected.push_back(0.0);
+                color_lines_selected.push_back(0.0);
+                color_lines_selected.push_back(0.0);
+
+                color_lines.push_back(this->color().lighter(50).redF());
+                color_lines.push_back(this->color().lighter(50).greenF());
+                color_lines.push_back(this->color().lighter(50).blueF());
+
+
 
         }
     }
@@ -794,6 +853,14 @@ Scene_polyhedron_item::compute_colors()
         color_lines.push_back(1.0);
         color_lines.push_back(0.0);
         color_lines.push_back(0.0);
+
+        color_lines_selected.push_back(1.0);
+        color_lines_selected.push_back(0.0);
+        color_lines_selected.push_back(0.0);
+
+        color_lines_selected.push_back(1.0);
+        color_lines_selected.push_back(0.0);
+        color_lines_selected.push_back(0.0);
     }
 }
 
@@ -801,6 +868,10 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     : Scene_item(),
       positions_facets(0),
       positions_lines(0),
+      color_facets(0),
+      color_facets_selected(0),
+      color_lines(0),
+      color_lines_selected(0),
       normals(0),
       poly(new Polyhedron),
       is_Triangle(true),
@@ -812,9 +883,9 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     cur_shading=GL_FLAT;
     is_selected = false;
     //init();
-    glGenVertexArrays(1, vao);
+    glGenVertexArrays(2, vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(5, buffer);
+    glGenBuffers(10, buffer);
     compile_shaders();
 }
 
@@ -822,6 +893,10 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     : Scene_item(),
       positions_facets(0),
       positions_lines(0),
+      color_facets(0),
+      color_facets_selected(0),
+      color_lines(0),
+      color_lines_selected(0),
       normals(0),
       poly(p),
       is_Triangle(true),
@@ -833,9 +908,9 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     cur_shading=GL_FLAT;
     is_selected = false;
     init();
-    glGenVertexArrays(1, vao);
+    glGenVertexArrays(2, vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(5, buffer);
+    glGenBuffers(10, buffer);
     compile_shaders();
 }
 
@@ -843,6 +918,10 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     : Scene_item(),
       positions_facets(0),
       positions_lines(0),
+      color_facets(0),
+      color_facets_selected(0),
+      color_lines(0),
+      color_lines_selected(0),
       normals(0),
       poly(new Polyhedron(p)),
       is_Triangle(true),
@@ -854,9 +933,9 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     cur_shading=GL_FLAT;
     is_selected=false;
     init();
-    glGenVertexArrays(1, vao);
+    glGenVertexArrays(2, vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(5, buffer);
+    glGenBuffers(10, buffer);
     compile_shaders();
 }
 
@@ -869,8 +948,8 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
 
 Scene_polyhedron_item::~Scene_polyhedron_item()
 {
-    glDeleteBuffers(5, buffer);
-    glDeleteVertexArrays(1, vao);
+    glDeleteBuffers(10, buffer);
+    glDeleteVertexArrays(2, vao);
     glDeleteProgram(rendering_program_facets);
     glDeleteProgram(rendering_program_lines);
 
@@ -1010,19 +1089,29 @@ void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
 }
 
 void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
-    glBindVertexArray(vao[0]);
+    std::cout<<color_facets.size()<<", "<<color_facets_selected.size()<<", "<<color_lines.size()<<", "<<color_lines_selected.size()<<std::endl;
+    if(!is_selected)
+        glBindVertexArray(vao[0]);
+    else
+        glBindVertexArray(vao[1]);
     glUseProgram(rendering_program_facets);
     uniform_attrib(viewer,0);
     glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/4);
     glUseProgram(0);
     glBindVertexArray(0);
 
+
+
+
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
 
-    glBindVertexArray(vao[0]);
+    if(!is_selected)
+        glBindVertexArray(vao[0]);
+    else
+        glBindVertexArray(vao[1]);
     glUseProgram(rendering_program_lines);
     uniform_attrib(viewer,1);
     //draw the edges
@@ -1102,8 +1191,6 @@ Scene_polyhedron_item::selection_changed(bool p_is_selected)
     if(p_is_selected != is_selected)
     {
         is_selected = p_is_selected;
-        compute_colors();
-          std::cout<<"coucou"<<std::endl;
         initialize_buffers();
     }
 
