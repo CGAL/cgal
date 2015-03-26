@@ -40,7 +40,7 @@ namespace CGAL {
   namespace Shape_detection_3 {
   
     template<class ERTraits> 
-    class Efficient_ransac;
+    class Efficient_RANSAC;
     
   namespace internal {
   
@@ -174,7 +174,7 @@ namespace CGAL {
       typedef typename Sd_traits::Normal_pmap Normal_pmap;
 
       template<class Sd_traits>
-        friend class ::CGAL::Shape_detection_3::Efficient_ransac;
+        friend class ::CGAL::Shape_detection_3::Efficient_RANSAC;
 
       struct Cell {
         std::size_t first, last;

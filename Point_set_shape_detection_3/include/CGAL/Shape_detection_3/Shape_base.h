@@ -60,7 +60,7 @@ namespace CGAL {
   class Shape_base {
     /// \cond SKIP_IN_MANUAL
     template <class T>
-    friend class Efficient_ransac;
+    friend class Efficient_RANSAC;
     template<class PointAccessor>
     friend class internal::Octree;
     /// \endcond

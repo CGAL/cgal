@@ -80,7 +80,7 @@ namespace CGAL {
             class InputIt,
             class Ppmap,
             class Npmap>
-  struct Efficient_ransac_traits {
+  struct Efficient_RANSAC_traits {
     typedef Gt Geom_traits; 
     ///< Geometric traits.
     typedef InputIt Input_iterator;
@@ -106,7 +106,7 @@ in 2007 \cgalCite{Schnabel07}.
 
 */
   template <class ERTraits>
-  class Efficient_ransac {
+  class Efficient_RANSAC {
   public:
 
     /// \cond SKIP_IN_MANUAL
@@ -203,7 +203,7 @@ in 2007 \cgalCite{Schnabel07}.
     /*! 
       Constructs an empty shape detection engine.
     */ 
-    Efficient_ransac()
+    Efficient_RANSAC()
       : m_rng(std::random_device()())
       , m_direct_octrees(NULL)
       , m_global_octree(NULL)
@@ -215,7 +215,7 @@ in 2007 \cgalCite{Schnabel07}.
     /*! 
       Releases all memory allocated by this instances including shapes.
     */ 
-    ~Efficient_ransac() {
+    ~Efficient_RANSAC() {
       clear();
     }
 

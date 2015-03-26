@@ -20,9 +20,9 @@ typedef CGAL::Normal_of_point_with_normal_pmap<Kernel>      Normal_pmap;
 
 // In Efficient_RANSAC_traits the basic types, i.e., Point and Vector types
 // as well as iterator type and property maps, are defined.
-typedef CGAL::Shape_detection_3::Efficient_ransac_traits<Kernel,
+typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Kernel,
   Pwn_vector::iterator, Point_pmap, Normal_pmap>            Traits;
-typedef CGAL::Shape_detection_3::Efficient_ransac<Traits>   Efficient_ransac;
+typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>   Efficient_ransac;
 typedef CGAL::Shape_detection_3::Plane<Traits>              Plane;
 
 
