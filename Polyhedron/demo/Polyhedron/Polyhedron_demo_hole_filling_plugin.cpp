@@ -603,12 +603,12 @@ bool Polyhedron_demo_hole_filling_plugin::fill
   if(action_index == 0) {
     CGAL::Polygon_mesh_processing::triangulate_hole(poly,
              it, std::back_inserter(patch),
-             CGAL::parameters::use_delaunay_triangulation(use_DT));
+             CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(use_DT));
   }
   else if(action_index == 1) {
     CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly,
              it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
-             CGAL::parameters::density_control_factor(alpha).
+             CGAL::Polygon_mesh_processing::parameters::density_control_factor(alpha).
              use_delaunay_triangulation(use_DT));
   }
   else {
@@ -618,7 +618,7 @@ bool Polyhedron_demo_hole_filling_plugin::fill
     if(weight_index == 0) {
       success = CGAL::cpp11::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
               it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
-              CGAL::parameters::weight_calculator(CGAL::internal::Uniform_weight_fairing<Polyhedron>(poly)).
+              CGAL::Polygon_mesh_processing::parameters::weight_calculator(CGAL::internal::Uniform_weight_fairing<Polyhedron>(poly)).
               density_control_factor(alpha).
               fairing_continuity(continuity).
               use_delaunay_triangulation(use_DT)));
@@ -626,7 +626,7 @@ bool Polyhedron_demo_hole_filling_plugin::fill
     else {
       success = CGAL::cpp11::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
               it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
-              CGAL::parameters::weight_calculator(CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(poly)).
+              CGAL::Polygon_mesh_processing::parameters::weight_calculator(CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(poly)).
               density_control_factor(alpha).
               fairing_continuity(continuity).
               use_delaunay_triangulation(use_DT)));
@@ -649,7 +649,8 @@ bool Polyhedron_demo_hole_filling_plugin::fill
     typedef std::vector<std::pair<Polyhedron::Facet_const_handle, Polyhedron::Facet_const_handle> > Intersected_facets;
     Intersected_facets intersected_facets;
     CGAL::Polygon_mesh_processing::self_intersections<Polyhedron::Traits>(poly,
-                                       std::back_inserter(intersected_facets));
+                                       std::back_inserter(intersected_facets),
+                                       get(CGAL::vertex_point, poly));
     print_message(QString("Self intersecting test: finding intersecting triangles in %1 sec.").arg(timer.time()));
     timer.reset();
     // this part might need speed-up
