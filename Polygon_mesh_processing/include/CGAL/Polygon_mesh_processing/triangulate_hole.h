@@ -131,7 +131,6 @@ namespace Polygon_mesh_processing {
   \sa CGAL::Polygon_mesh_processing::triangulate_hole()
   \sa CGAL::Polygon_mesh_processing::refine()
 
-  \todo code: VertexPointMap
   \todo handle islands
   */
   template<typename PolygonMesh,
@@ -145,9 +144,6 @@ namespace Polygon_mesh_processing {
       VertexOutputIterator vertex_out,
       const NamedParameters& np)
   {
-    using boost::choose_param;
-    using boost::get_param;
-
     std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor> patch;
     triangulate_hole(pmesh, border_halfedge, std::back_inserter(patch), np);
     face_out = std::copy(patch.begin(), patch.end(), face_out);
