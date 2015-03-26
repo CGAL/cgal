@@ -745,7 +745,7 @@ namespace CGAL {
     bool is_reserved(int amark) const
     {
       CGAL_assertion(amark>=0 && (size_type)amark<NB_MARKS);
-      CGAL_assume( (size_type)amark<NB_MARKS );
+      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       return (mnb_times_reserved_marks[(size_type)amark]!=0);
     }
@@ -757,7 +757,7 @@ namespace CGAL {
     size_type number_of_marked_darts(int amark) const
     {
       CGAL_assertion( is_reserved(amark) );
-      CGAL_assume( (size_type)amark<NB_MARKS );
+      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       return mnb_marked_darts[(size_type)amark];
     }
@@ -792,7 +792,7 @@ namespace CGAL {
      * @return the index of the new mark.
      * @pre mnb_used_marks < NB_MARKS
      */
-    int get_new_mark() const
+    unsigned int get_new_mark() const
     {
       if (mnb_used_marks == NB_MARKS)
       {
@@ -819,7 +819,7 @@ namespace CGAL {
     void share_a_mark(int amark) const
     {
       CGAL_assertion( is_reserved(amark) );
-      CGAL_assume( (size_type)amark<NB_MARKS );
+      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       ++mnb_times_reserved_marks[(size_type)amark];
     }
@@ -830,7 +830,7 @@ namespace CGAL {
     size_type get_number_of_times_mark_reserved(int amark) const
     {
       CGAL_assertion( (size_type)amark<NB_MARKS );
-      CGAL_assume( (size_type)amark<NB_MARKS );
+      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       return mnb_times_reserved_marks[amark];
     }
@@ -843,7 +843,7 @@ namespace CGAL {
     void negate_mark(int amark) const
     {
       CGAL_assertion( is_reserved(amark) );
-      CGAL_assume( (size_type)amark<NB_MARKS );
+      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       mnb_marked_darts[amark] = number_of_darts() - mnb_marked_darts[amark];
 
@@ -859,7 +859,7 @@ namespace CGAL {
     {
       // CGAL_assertion( adart != null_dart_handle );
       CGAL_assertion( is_reserved(amark) );
-      CGAL_assume( (size_type)amark<NB_MARKS );
+      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       return get_dart_mark(adart, amark)!=mmask_marks[(size_type)amark];
     }
@@ -874,7 +874,7 @@ namespace CGAL {
     {
       CGAL_assertion( adart != null_dart_handle );
       CGAL_assertion( is_reserved(amark) );
-      CGAL_assume( (size_type)amark<NB_MARKS );
+      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       if (is_marked(adart, amark) != astate)
       {
@@ -893,7 +893,7 @@ namespace CGAL {
     {
       CGAL_assertion( adart != null_dart_handle );
       CGAL_assertion( is_reserved(amark) );
-      CGAL_assume( (size_type)amark<NB_MARKS );
+      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       if (is_marked(adart, amark)) return;
 
@@ -909,7 +909,7 @@ namespace CGAL {
     {
       CGAL_assertion( adart != null_dart_handle );
       CGAL_assertion( is_reserved(amark) );
-      CGAL_assume( (size_type)amark<NB_MARKS );
+      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       if (!is_marked(adart, amark)) return;
 
@@ -925,7 +925,7 @@ namespace CGAL {
     void mark_null_dart(int amark) const
     {
       CGAL_assertion( is_reserved(amark) );
-      CGAL_assume( (size_type)amark<NB_MARKS );
+      // CGAL_assume( (size_type)amark<NB_MARKS );
 
 #ifdef CGAL_CMAP_DEPRECATED
       if ( null_dart_handle!=NULL ) // Pb with static null_dart_handle for windows
@@ -939,7 +939,7 @@ namespace CGAL {
     void unmark_null_dart(int amark) const
     {
       CGAL_assertion( is_reserved(amark) );
-      CGAL_assume( (size_type)amark<NB_MARKS );
+      // CGAL_assume( (size_type)amark<NB_MARKS );
 
 #ifdef CGAL_CMAP_DEPRECATED
       if ( null_dart_handle!=NULL ) // Pb with static null_dart_handle for windows
@@ -976,7 +976,7 @@ namespace CGAL {
     void free_mark(int amark) const
     {
       CGAL_assertion( is_reserved(amark) );
-      CGAL_assume( (size_type)amark<NB_MARKS );
+      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       if ( mnb_times_reserved_marks[amark]>1 )
       {
