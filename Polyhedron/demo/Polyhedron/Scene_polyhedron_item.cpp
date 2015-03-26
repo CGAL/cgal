@@ -1089,7 +1089,6 @@ void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
 }
 
 void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
-    std::cout<<color_facets.size()<<", "<<color_facets_selected.size()<<", "<<color_lines.size()<<", "<<color_lines_selected.size()<<std::endl;
     if(!is_selected)
         glBindVertexArray(vao[0]);
     else
