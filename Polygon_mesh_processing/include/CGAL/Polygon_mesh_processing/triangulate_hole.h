@@ -205,7 +205,6 @@ namespace Polygon_mesh_processing {
   \sa CGAL::Polygon_mesh_processing::fair()
 
   \todo handle islands
-  \todo code: VertexPointMap
   */
   template<typename PolygonMesh,
            typename FaceOutputIterator,
