@@ -172,8 +172,6 @@ public:
   {
     CGAL_triangulation_assertion( cells_with_too_big_orthoball.empty() );
 
-//    cells_with_too_big_orthoball.reserve(1000000);
-
     for (Cell_iterator iter = cells_begin(), end_iter = cells_end(); iter != end_iter; ++iter)
       cells_with_too_big_orthoball.insert(iter);
   }
@@ -181,18 +179,14 @@ public:
   template <class CellIt>
   void delete_too_long_edges(CellIt begin, const CellIt end)
   {
-//    unsigned count = cells_with_too_big_orthoball.size();
     for (; begin != end; ++begin)
     {
       typename std::set<Cell_handle>::iterator iter = cells_with_too_big_orthoball.find(*begin);
       if (iter != cells_with_too_big_orthoball.end())
       {
         cells_with_too_big_orthoball.erase(iter);
-//        std::swap(*iter, cells_with_too_big_orthoball.back());
-//        cells_with_too_big_orthoball.pop_back();
       }
     }
-//    std::cout << count << "  " << cells_with_too_big_orthoball.size() << std::endl;
   }
 
   FT squared_orthoball_radius (Cell_handle cell)
