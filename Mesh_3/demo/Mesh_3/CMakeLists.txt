@@ -16,8 +16,6 @@ if(POLICY CMP0042)
   cmake_policy(SET CMP0042 OLD)
 endif()
 
-add_definitions(-DCGAL_HEADER_ONLY)
-
 # Creates a new CMake option, turned ON by default
 option(ACTIVATE_MSVC_PRECOMPILED_HEADERS
   "Activate precompiled headers in MSVC"

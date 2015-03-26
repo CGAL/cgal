@@ -18,33 +18,30 @@ endif()
 
 #option(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL "In the Polyhedron demo, enable " OFF)
 #mark_as_advanced(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
-add_definitions(-DCGAL_HEADER_ONLY)
-
-# Include this package's headers first
-include_directories( BEFORE ./ ./include ../../include ./CGAL_demo ${PROJECT_SOURCE_DIR} /home/gdamiand/sources/cgal/Installation/include/ /home/gdamiand/sources/cgal/builds/debug/demo/Polyhedron
-/home/gdamiand/sources/cgal/builds/debug/include/
-/home/gdamiand/sources/cgal/builds/include/)
 
 # Let plugins be compiled in the same directory as the executable.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 # Use packages improved since CGAL 3.4
-# foreach(DEP_PKG AABB_tree STL_Extension GraphicsView Surface_mesher Filtered_kernel Profiling_tools Mesh_3 Triangulation_3 )
-#   foreach(CGAL_SVN_TRUNK ../../../ ../../trunk ..)
-#     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
-#       include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
-#       if(COMMAND break)
-#         break()
-#       endif()
-#     endif()
-#   endforeach()
-# endforeach()
+foreach(DEP_PKG AABB_tree STL_Extension GraphicsView Surface_mesher Filtered_kernel Profiling_tools Mesh_3 Triangulation_3 )
+  foreach(CGAL_SVN_TRUNK ../../../ ../../trunk ..)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
+      include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
+      if(COMMAND break)
+        break()
+      endif()
+    endif()
+  endforeach()
+endforeach()
+
+# Include this package's headers first
+include_directories( BEFORE ./ ./include ../../include ./CGAL_demo)
 
 add_subdirectory( implicit_functions )
 
 # Find CGAL and CGAL Qt4
-#find_package(CGAL COMPONENTS Qt4)
-#include( ${CGAL_USE_FILE} )
+find_package(CGAL COMPONENTS Qt4)
+include( ${CGAL_USE_FILE} )
 
 option( POLYHEDRON_QTSCRIPT_DEBUGGER 
   "Activate the use of Qt Script Debugger in Polyhedron_3 demo" OFF)
@@ -52,23 +49,21 @@ option( POLYHEDRON_QTSCRIPT_DEBUGGER
 # Find Qt4 itself
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
-set( QT_USE_QTSCRIPT TRUE )
-set( QT_USE_QTOPENGL TRUE )
-set( QT_USE_QTSVG      TRUE )
+set( QT_USE_QTSCRIPT  TRUE )
+set( QT_USE_QTOPENGL  TRUE )
 if( POLYHEDRON_QTSCRIPT_DEBUGGER)
   set( QT_USE_QTSCRIPTTOOLS  TRUE )
 endif()
 find_package(Qt4)
 
-LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/GlSplat/cmake)
-
 # Find Glew (optional), for splatting
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/GlSplat/cmake)
 find_package(GLEW)
 
 # Find OpenGL
 find_package(OpenGL)
 
+# Find QGLViewer
 if(QT4_FOUND)
   include(${QT_USE_FILE})
   include_directories( ${QT_INCLUDE_DIR}/QtScriptTools )
@@ -87,17 +82,7 @@ if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
 endif(EIGEN3_FOUND)
 
-###################################
-# moc and resources from GraphicsView
-qt4_wrap_cpp(mocfiles ./Qt/GraphicsViewNavigation.h 
-  ./Qt/DemosMainWindow.h
-  ./Qt/GraphicsItem.h
-  ./Qt/GraphicsViewInput.h)
-qt4_add_resources ( RESOURCE_FILES ./resources/CGAL.qrc ./icons/Input.qrc ./icons/File.qrc ./icons/Triangulation_2.qrc)
-# qt4_automoc(MainWindow.cpp Viewer.cpp)
-###################################
-
-if(QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(Boost_USE_MULTITHREADED      ON)
   find_package(Boost COMPONENTS thread system)
@@ -178,6 +163,7 @@ if(QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_plane_item.cpp Scene_plane_item.moc)
   target_link_libraries(scene_basic_objects 
     demo_framework
+    ${CGAL_LIBRARIES}
     ${QGLVIEWER_LIBRARIES}
     ${QT_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
@@ -189,7 +175,7 @@ if(QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   macro(add_item item_name)
     add_library(${item_name} SHARED ${ARGN})
-    target_link_libraries(${item_name} demo_framework ${QT_LIBRARIES} ${Boost_LIBRARIES})
+    target_link_libraries(${item_name} demo_framework ${QT_LIBRARIES} ${CGAL_LIBRARIES} ${Boost_LIBRARIES})
   endmacro(add_item)
 
   add_item(scene_c2t3_item Scene_c2t3_item.cpp Scene_c2t3_item.moc)
@@ -257,7 +243,7 @@ if(QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       MainWindow_moc.cpp
       File_loader_dialog_moc.cpp
 #      Viewer_moc.cpp
-       ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} ${uis} ${mocfiles})
+       ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
     if(EIGEN3_FOUND)
 #      add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp )
@@ -276,9 +262,6 @@ if(QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     add_definitions( -DQT_SCRIPTTOOLS_LIB )
     target_link_libraries( Polyhedron_3 QtScriptTools )
   endif()
-
-  message("QT : ${QT_LIBRARIES}")
-
   target_link_libraries( Polyhedron_3 ${QT_LIBRARIES} )
   target_link_libraries( Polyhedron_3 demo_framework )
   target_link_libraries( Polyhedron_3 point_dialog )
@@ -288,7 +271,7 @@ if(QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endif(GLEW_FOUND)
 
   # Link with CGAL
-  target_link_libraries( Polyhedron_3 ${CGAL_3RD_PARTY_LIBRARIES} )
+  target_link_libraries( Polyhedron_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
   # Link with libQGLViewer, OpenGL
   target_link_libraries( Polyhedron_3 ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
@@ -499,9 +482,13 @@ if(QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)
 
-else (QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(POLYHEDRON_MISSING_DEPS "")
+
+  if(NOT CGAL_Qt4_FOUND)
+    set(POLYHEDRON_MISSING_DEPS "the CGAL Qt4 library, ${POLYHEDRON_MISSING_DEPS}")
+  endif()
 
   if(NOT QT4_FOUND)
     set(POLYHEDRON_MISSING_DEPS "Qt4, ${POLYHEDRON_MISSING_DEPS}")
@@ -517,4 +504,4 @@ else (QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   message(STATUS "NOTICE: This demo requires ${POLYHEDRON_MISSING_DEPS}and will not be compiled.")
 
-endif (QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+endif (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
