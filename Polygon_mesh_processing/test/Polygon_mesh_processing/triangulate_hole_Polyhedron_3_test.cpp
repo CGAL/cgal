@@ -103,7 +103,7 @@ void test_triangulate_hole_weight(const char* file_name, bool use_DT) {
   for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
     std::vector<Facet_handle> patch;
     Weight w_algo = CGAL::Polygon_mesh_processing::internal::triangulate_hole_polygon_mesh(
-      poly, *it, back_inserter(patch), use_DT).second;
+      poly, *it, back_inserter(patch), get(CGAL::vertex_point, poly), use_DT).second;
     if(patch.empty()) { continue; }
     Weight w_test = calculate_weight_for_patch(poly, patch.begin(), patch.end());
 

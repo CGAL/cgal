@@ -91,17 +91,17 @@ struct Tracer_polyhedron
 };
 
 // This function is used in test cases (since it returns not just OutputIterator but also Weight)
-template<class PolygonMesh, class OutputIterator>
+template<class PolygonMesh, class OutputIterator, class VertexPointMap>
 std::pair<OutputIterator, CGAL::internal::Weight_min_max_dihedral_and_area> 
 triangulate_hole_polygon_mesh(PolygonMesh& pmesh, 
             typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
             OutputIterator out,
+            VertexPointMap vpmap,
             bool use_delaunay_triangulation)
 {
   typedef Halfedge_around_face_circulator<PolygonMesh>   Hedge_around_face_circulator;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type VertexPointMap;
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   
   typedef std::map<vertex_descriptor, int>    Vertex_map;
@@ -112,13 +112,12 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
   std::vector<Point_3>         P, Q;
   std::vector<halfedge_descriptor> P_edges;
   Vertex_map vertex_map;
-  VertexPointMap ppmap = get(vertex_point,pmesh);
 
   int id = 0;
   Hedge_around_face_circulator circ(border_halfedge,pmesh), done(circ);
   do{
-    P.push_back(ppmap[target(*circ, pmesh)]);
-    Q.push_back(ppmap[target(next(opposite(next(*circ,pmesh),pmesh),pmesh),pmesh)]);
+    P.push_back(vpmap[target(*circ, pmesh)]);
+    Q.push_back(vpmap[target(next(opposite(next(*circ,pmesh),pmesh),pmesh),pmesh)]);
     P_edges.push_back(*circ);
     if(!vertex_map.insert(std::make_pair(target(*circ,pmesh), id++)).second) {
       CGAL_warning(!"Returning no output. Non-manifold vertex is found on boundary!");

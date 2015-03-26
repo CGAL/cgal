@@ -66,7 +66,6 @@ namespace Polygon_mesh_processing {
   @todo Then, insert the holes vertices in the set of possibilities
         for connecting vertices together
   @todo handle the case where an island is reduced to a point
-  @todo code: VertexPointMap
   */  
   template<typename PolygonMesh,
            typename OutputIterator,
@@ -89,7 +88,11 @@ namespace Polygon_mesh_processing {
 
     CGAL_precondition(face(border_halfedge, pmesh) == boost::graph_traits<PolygonMesh>::null_face());
 
-    return internal::triangulate_hole_polygon_mesh(pmesh, border_halfedge, out, use_dt3).first;
+    return internal::triangulate_hole_polygon_mesh(pmesh,
+      border_halfedge,
+      out,
+      choose_param(get_param(np, vertex_point_map), get(CGAL::vertex_point, pmesh)),
+      use_dt3).first;
   }
 
   template<typename PolygonMesh, typename OutputIterator>
