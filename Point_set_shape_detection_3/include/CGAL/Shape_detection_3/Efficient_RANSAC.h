@@ -24,6 +24,7 @@
 
 #include <CGAL/Shape_detection_3/Octree.h>
 #include <CGAL/Shape_detection_3/Shape_base.h>
+#include <CGAL/Shape_detection_3/Efficient_RANSAC_traits.h>
 #include <CGAL/Shape_detection_3/Cone.h>
 #include <CGAL/Shape_detection_3/Cylinder.h>
 #include <CGAL/Shape_detection_3/Plane.h>
@@ -55,39 +56,8 @@
 
 namespace CGAL {
   namespace Shape_detection_3 {
-    /*!
-      \ingroup PkgPointSetShapeDetection3
-      \brief %Default traits class to use the shape detection class `Efficient_RANSAC`.
-      \cgalModels `EfficientRANSACTraits`
 
-      \tparam Gt Geometric traits class. It must provide `Gt::FT`, `Gt::Point_3` and `Gt::Vector_3`.
-             `Gt::FT` must be a floating point number type like `double` or `float`.
- 
-      \tparam InputIt is a model of RandomAccessIterator
- 
-      \tparam Ppmap is a model of `ReadablePropertyMap`
-              `key_type = InputIt` and `value_type = Gt::Point_3`.
- 
-      \tparam Npmap is a model of `ReadablePropertyMap`
-              `key_type = InputIt` and `value_type = Gt::Vector_3`.
-    */
-  template <class Gt,
-            class InputIt,
-            class Ppmap,
-            class Npmap>
-  struct Efficient_RANSAC_traits {
-    ///
-    typedef Gt Geom_traits; 
-    ///
-    typedef InputIt Input_iterator;
-    ///
-    typedef Ppmap Point_pmap;
-    ///
-    typedef Npmap Normal_pmap;
-  };
-
-
-  /*!
+/*!
 \ingroup PkgPointSetShapeDetection3
 \brief A shape detection algorithm using a RANSAC method.
 
