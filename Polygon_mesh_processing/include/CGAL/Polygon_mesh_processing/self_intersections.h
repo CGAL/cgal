@@ -71,7 +71,7 @@ struct Intersect_facets
 
 // members
   const TM& m_tmesh;
-  const VertexPointMap m_point;
+  const VertexPointMap m_vpmap;
   mutable OutputIterator  m_iterator;
   mutable bool            m_intersected;
   mutable boost::function_output_iterator<Output_iterator_with_bool> m_iterator_wrapper;
@@ -84,7 +84,7 @@ struct Intersect_facets
   Intersect_facets(const TM& tmesh, OutputIterator it, VertexPointMap vpmap, const Kernel& kernel)
     : 
     m_tmesh(tmesh),
-    m_point(vpmap),
+    m_vpmap(vpmap),
     m_iterator(it),
     m_intersected(false),
     m_iterator_wrapper(Output_iterator_with_bool(&m_iterator, &m_intersected)),
@@ -138,11 +138,17 @@ struct Intersect_facets
       // found shared vertex: 
       CGAL_assertion(target(h,m_tmesh) == target(v,m_tmesh));
       // geometric check if the opposite segments intersect the triangles
-      Triangle t1 = triangle_functor( m_point[target(h,m_tmesh)], m_point[target(next(h,m_tmesh),m_tmesh)], m_point[target(next(next(h,m_tmesh),m_tmesh),m_tmesh)]);
-      Triangle t2 = triangle_functor( m_point[target(v,m_tmesh)], m_point[target(next(v,m_tmesh),m_tmesh)], m_point[target(next(next(v,m_tmesh),m_tmesh),m_tmesh)]);
+      Triangle t1 = triangle_functor( m_vpmap[target(h,m_tmesh)],
+                                      m_vpmap[target(next(h,m_tmesh),m_tmesh)],
+                                      m_vpmap[target(next(next(h,m_tmesh),m_tmesh),m_tmesh)]);
+      Triangle t2 = triangle_functor( m_vpmap[target(v,m_tmesh)],
+                                      m_vpmap[target(next(v,m_tmesh),m_tmesh)],
+                                      m_vpmap[target(next(next(v,m_tmesh),m_tmesh),m_tmesh)]);
       
-      Segment s1 = segment_functor( m_point[target(next(h,m_tmesh),m_tmesh)], m_point[target(next(next(h,m_tmesh),m_tmesh),m_tmesh)]);
-      Segment s2 = segment_functor( m_point[target(next(v,m_tmesh),m_tmesh)], m_point[target(next(next(v,m_tmesh),m_tmesh),m_tmesh)]);
+      Segment s1 = segment_functor( m_vpmap[target(next(h,m_tmesh),m_tmesh)],
+                                    m_vpmap[target(next(next(h,m_tmesh),m_tmesh),m_tmesh)]);
+      Segment s2 = segment_functor( m_vpmap[target(next(v,m_tmesh),m_tmesh)],
+                                    m_vpmap[target(next(next(v,m_tmesh),m_tmesh),m_tmesh)]);
       
       if(do_intersect_3_functor(t1,s2)){
         *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
@@ -153,8 +159,12 @@ struct Intersect_facets
     }
     
     // check for geometric intersection
-    Triangle t1 = triangle_functor( m_point[target(h,m_tmesh)], m_point[target(next(h,m_tmesh),m_tmesh)], m_point[target(next(next(h,m_tmesh),m_tmesh),m_tmesh)]);
-    Triangle t2 = triangle_functor( m_point[target(g,m_tmesh)], m_point[target(next(g,m_tmesh),m_tmesh)], m_point[target(next(next(g,m_tmesh),m_tmesh),m_tmesh)]);
+    Triangle t1 = triangle_functor( m_vpmap[target(h,m_tmesh)],
+                                    m_vpmap[target(next(h,m_tmesh),m_tmesh)],
+                                    m_vpmap[target(next(next(h,m_tmesh),m_tmesh),m_tmesh)]);
+    Triangle t2 = triangle_functor( m_vpmap[target(g,m_tmesh)],
+                                    m_vpmap[target(next(g,m_tmesh),m_tmesh)],
+                                    m_vpmap[target(next(next(g,m_tmesh),m_tmesh),m_tmesh)]);
     if(do_intersect_3_functor(t1, t2)){
       *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
     }
@@ -267,7 +277,7 @@ template <class GeomTraits
 //         = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type
           >
 bool is_self_intersecting(const TriangleMesh& tmesh
-                        , VertexPointMap vpmap = get(vertex_point_t, pmesh)
+                        , VertexPointMap vpmap = get(vertex_point, pmesh)
                         , const GeomTraits& geom_traits = GeomTraits())
 {
   CGAL_precondition(CGAL::is_pure_triangle(tmesh));
