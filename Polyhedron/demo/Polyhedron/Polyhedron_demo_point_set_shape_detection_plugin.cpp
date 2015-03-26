@@ -9,12 +9,12 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 
-#include <CGAL/Shape_detection_3.h>
-#include <CGAL/Plane_shape.h>
-#include <CGAL/Cylinder_shape.h>
-#include <CGAL/Cone_shape.h>
-#include <CGAL/Torus_shape.h>
-#include <CGAL/Sphere_shape.h>
+#include <CGAL/Efficient_RANSAC.h>
+#include <CGAL/Shape_detection_3/Plane.h>
+#include <CGAL/Shape_detection_3/Cylinder.h>
+#include <CGAL/Shape_detection_3/Cone.h>
+#include <CGAL/Shape_detection_3/Torus.h>
+#include <CGAL/Shape_detection_3/Sphere.h>
 
 #include <QObject>
 #include <QAction>
@@ -22,6 +22,8 @@
 #include <QApplication>
 #include <QtPlugin>
 #include <QMessageBox>
+
+#include <boost/foreach.hpp>
 
 #include "ui_Polyhedron_demo_point_set_shape_detection_plugin.h"
 
@@ -115,20 +117,21 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     typedef CGAL::Identity_property_map<Point_set::Point_with_normal> PointPMap;
     typedef CGAL::Normal_of_point_with_normal_pmap<Point_set::Geom_traits> NormalPMap;
 
-    typedef CGAL::Shape_detection_traits_3<Epic_kernel, Point_set::iterator, PointPMap, NormalPMap> ShapeDetectionTraits;
-    typedef CGAL::Shape_detection_3<ShapeDetectionTraits> ShapeDetection;
+    typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Epic_kernel, Point_set::iterator, PointPMap, NormalPMap> Traits;
+    typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
 
-    ShapeDetection shape_detection(points->begin(), points->end(), PointPMap(), NormalPMap());
+    Shape_detection shape_detection;
+    shape_detection.set_input_data(*points);
 
     // Shapes to be searched for are registered by using the template Shape_factory
-    shape_detection.add_shape_factory(new CGAL::Shape_factory<CGAL::Plane_shape<ShapeDetectionTraits> >);
-    shape_detection.add_shape_factory(new CGAL::Shape_factory<CGAL::Cylinder_shape<ShapeDetectionTraits> >);
-    //   shape_detection.add_shape_factory(new CGAL::Shape_factory<CGAL::Torus_shape<ShapeDetectionTraits> >);
-    //   shape_detection.add_shape_factory(new CGAL::Shape_factory<CGAL::Cone_shape<ShapeDetectionTraits> >);
-    //   shape_detection.add_shape_factory(new CGAL::Shape_factory<CGAL::Sphere_shape<ShapeDetectionTraits> >);
+    shape_detection.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
+    shape_detection.add_shape_factory<CGAL::Shape_detection_3::Cylinder<Traits> >();
+    //   shape_detection.add_shape_factory< CGAL::Shape_detection_3::Torus<Traits> >();
+    //   shape_detection.add_shape_factory< CGAL::Shape_detection_3::Cone<Traits> >();
+    //   shape_detection.add_shape_factory< CGAL::Shape_detection_3::Sphere<Traits> >();
 
     // Parameterization of the shape detection using the Parameters structure.
-    ShapeDetection::Parameters op;
+    Shape_detection::Parameters op;
     op.probability = dialog.search_probability();       // probability to miss the largest primitive on each iteration.
     op.min_points = dialog.min_points();          // Only extract shapes with a minimum number of points.
     op.epsilon = dialog.epsilon();          // maximum euclidean distance between point and shape.
@@ -138,18 +141,15 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     // The actual shape detection.
     shape_detection.detect(op);
 
-    std::cout << shape_detection.number_of_shapes() << " shapes found" << std::endl;
+    std::cout << shape_detection.shapes().size() << " shapes found" << std::endl;
     //print_message(QString("%1 shapes found.").arg(shape_detection.number_of_shapes()));
-
-    auto it = shape_detection.shapes_begin();
     int index = 0;
-    while (it != shape_detection.shapes_end()) {
+    BOOST_FOREACH(Shape_detection::Shape* shape, shape_detection.shapes())
+    {
       Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
-      auto it2 = (*it)->assigned_points().begin();
-      while (it2 != (*it)->assigned_points().end()) {
-        point_item->point_set()->push_back((*points)[*it2]);
-        it2++;
-      }
+      BOOST_FOREACH(std::size_t i, shape->assigned_point_indices())
+        point_item->point_set()->push_back((*points)[i]);
+
       unsigned char r, g, b;
       r = 64 + rng()%192;
       g = 64 + rng()%192;
@@ -158,12 +158,12 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
       // Providing a useful name consisting of the order of detection, name of type and number of inliers
       std::stringstream ss;
-      if (dynamic_cast<CGAL::Cylinder_shape<ShapeDetectionTraits> *>(*it))
+      if (dynamic_cast<CGAL::Shape_detection_3::Cylinder<Traits> *>(shape))
         ss << item->name().toStdString() << "_cylinder_";
-      else if (dynamic_cast<CGAL::Plane_shape<ShapeDetectionTraits> *>(*it))
+      else if (dynamic_cast<CGAL::Shape_detection_3::Plane<Traits> *>(shape))
         ss << item->name().toStdString() << "_plane_";
 
-      ss << (*it)->assigned_points().size();
+      ss << shape->assigned_point_indices().size();
 
       //names[i] = ss.str(		
       point_item->setName(QString::fromStdString(ss.str()));
@@ -171,8 +171,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       point_item->setRenderingMode(item->renderingMode());
       scene->addItem(point_item);
 
-      index++;
-      it++;
+      ++index;
     }
 
     // Updates scene
