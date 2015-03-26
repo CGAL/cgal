@@ -114,7 +114,7 @@ using Base::periodic_point;
 using Base::segment;
 
 private:
-  std::vector<Cell_handle> cells_with_too_big_orthoball;
+  std::set<Cell_handle> cells_with_too_big_orthoball;
 
   class Cover_manager
   {
@@ -172,24 +172,27 @@ public:
   {
     CGAL_triangulation_assertion( cells_with_too_big_orthoball.empty() );
 
-    cells_with_too_big_orthoball.reserve(1000000);
+//    cells_with_too_big_orthoball.reserve(1000000);
 
     for (Cell_iterator iter = cells_begin(), end_iter = cells_end(); iter != end_iter; ++iter)
-      cells_with_too_big_orthoball.push_back(iter);
+      cells_with_too_big_orthoball.insert(iter);
   }
 
   template <class CellIt>
   void delete_too_long_edges(CellIt begin, const CellIt end)
   {
+//    unsigned count = cells_with_too_big_orthoball.size();
     for (; begin != end; ++begin)
     {
-      typename std::vector<Cell_handle>::iterator iter = std::find(cells_with_too_big_orthoball.begin(), cells_with_too_big_orthoball.end(), *begin);
+      typename std::set<Cell_handle>::iterator iter = cells_with_too_big_orthoball.find(*begin);
       if (iter != cells_with_too_big_orthoball.end())
       {
-        std::swap(*iter, cells_with_too_big_orthoball.back());
-        cells_with_too_big_orthoball.pop_back();
+        cells_with_too_big_orthoball.erase(iter);
+//        std::swap(*iter, cells_with_too_big_orthoball.back());
+//        cells_with_too_big_orthoball.pop_back();
       }
     }
+//    std::cout << count << "  " << cells_with_too_big_orthoball.size() << std::endl;
   }
 
   FT squared_orthoball_radius (Cell_handle cell)
@@ -219,7 +222,7 @@ public:
     {
       if (squared_orthoball_radius(*begin) >= threshold)
       {
-        cells_with_too_big_orthoball.push_back(*begin);
+        cells_with_too_big_orthoball.insert(*begin);
       }
     }
   }
@@ -241,7 +244,7 @@ public:
     FT threshold = FT(1)/FT(64) * (domain().xmax() - domain().xmin());
     if (squared_orthoball_radius(new_ch) < threshold)
     {
-      cells_with_too_big_orthoball.push_back(new_ch);
+      cells_with_too_big_orthoball.insert(new_ch);
     }
     return false;
   }
@@ -253,7 +256,7 @@ public:
     {
       if (squared_orthoball_radius(iter) >= threshold)
       {
-        cells_with_too_big_orthoball.push_back(iter);
+        cells_with_too_big_orthoball.insert(iter);
       }
     }
   }
