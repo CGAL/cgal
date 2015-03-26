@@ -832,7 +832,7 @@ public:
   /**
    * Iteratively calls the sequence `contract_geometry()`,  `collapse_edges()`, `split_faces()`, and `detect_degeneracies()`
    * until the change of surface area during one iteration is less than `area_variation_factor()` * original surface area
-   * or if the maximum number of iteration has been reached.
+   * or if the maximum number of iterations has been reached.
    */
   void contract_until_convergence()
   {
