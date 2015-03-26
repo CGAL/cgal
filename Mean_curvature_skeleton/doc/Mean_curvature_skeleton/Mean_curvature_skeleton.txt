@@ -35,7 +35,7 @@ The skeleton is provided as a graph of type
 <a href="http://www.boost.org/doc/libs/release/libs/graph/doc/adjacency_list.html"><code>boost::adjacency_list</code></a>.
 Each vertex of a the skeleton is associated to a 3D location point and to the
 set of input vertices that contracted to that skeleton vertex.
-Note that due the construction process of the skeleton, a
+Note that due to the construction process of the skeleton, a
 skeleton vertex might have no corresponding input vertex.
 
 This package needs a sparse linear solver and we recommend the use of
@@ -52,7 +52,7 @@ Right: Each vertex of the input surface is associated to a skeleton vertex.
 \subsection MCFSkelSecAPI-FF Free Function
 If a \cgal model of the `HalfedgeGraph` concept such as
 `CGAL::Surface_mesh` or `CGAL::Polyhedron_3` is used as triangulated
-input surface mesh and \ref thirdpartyEigen 3.2 or later is available
+input surface mesh, \ref thirdpartyEigen 3.2 or later is available
 and `CGAL_EIGEN3_ENABLED` is defined, the function
 `CGAL::extract_mean_curvature_flow_skeleton()` can be used to
 extract a mean curvature flow skeleton from the input surface mesh
@@ -129,7 +129,7 @@ surface, the better the skeleton is inside the model.
 Skeleton of the head of the elephant model.
 Left: Using the original mesh (2,775 vertices);
 Middle: After one loop subdivision step (11,112 vertices);
-Right: After two loop subdivision steps (44,460 vertices).
+Right: After two loops subdivision steps (44,460 vertices).
 \cgalFigureEnd
 
 Runtime in milliseconds of `extract_mean_curvature_flow_skeleton()` using
