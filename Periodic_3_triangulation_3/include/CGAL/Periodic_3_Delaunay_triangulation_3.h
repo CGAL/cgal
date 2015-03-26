@@ -108,9 +108,8 @@ public:
   typedef typename Base::Offset                 Offset;
   typedef typename Base::Iso_cuboid             Iso_cuboid;
   typedef typename Base::Covering_sheets        Covering_sheets;
-
-  typedef typename Base::Periodic_tetrahedron_iterator        Periodic_tetrahedron_iterator;
-  typedef typename Base::Periodic_segment_iterator            Periodic_segment_iterator;
+  typedef typename Base::Periodic_segment_iterator  Periodic_segment_iterator;
+  typedef typename Base::Periodic_tetrahedron_iterator  Periodic_tetrahedron_iterator;
   //@}
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
@@ -158,11 +157,14 @@ public:
   using Base::locate;
   using Base::periodic_point;
   using Base::segment;
+  using Base::construct_point;
+  using Base::convert_to_27_sheeted_covering;
 
 private:
   /// This threshold should be chosen such that if all edges are shorter,
   /// we can be sure that there are no self-edges anymore.
   FT edge_length_threshold;
+
   /// This adjacency list stores all edges that are longer than
   /// edge_length_threshold.
   std::map< Vertex_handle, std::list<Vertex_handle> > too_long_edges;
@@ -199,52 +201,43 @@ private:
       return tr.can_be_converted_to_1_sheet();
     }
 
-    void update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells)
+    bool update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells)
     {
-      tr.update_cover_data_during_management(new_ch, new_cells);
+      return tr.update_cover_data_during_management(new_ch, new_cells);
     }
   };
-
-  void copy_multiple_covering(const Periodic_3_Delaunay_triangulation_3& tr);
 
 public:
   /** @name Creation */ //@{
   Periodic_3_Delaunay_triangulation_3(
       const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
       const Geometric_traits& gt = Geometric_traits())
-    : Base(domain, gt), too_long_edge_counter(0)
+    : Base(domain, gt),
+      too_long_edge_counter(0)
   {
     edge_length_threshold = FT(0.166) * (domain.xmax()-domain.xmin())
-                                    * (domain.xmax()-domain.xmin());
+                                      * (domain.xmax()-domain.xmin());
   }
 
   // copy constructor duplicates vertices and cells
   Periodic_3_Delaunay_triangulation_3(
-      const Periodic_3_Delaunay_triangulation_3& tr)
-  : Base(tr),
-    edge_length_threshold(tr.edge_length_threshold)
+      const Periodic_3_Delaunay_triangulation_3& tr) : Base(tr),
+          edge_length_threshold(tr.edge_length_threshold)
   {
     if (is_1_cover()) {
       tds() = tr.tds();
     } else {
-      copy_multiple_covering(tr);
+      this->copy_multiple_covering(tr);
     }
-    CGAL_triangulation_expensive_postcondition( is_valid() );
     CGAL_triangulation_expensive_postcondition(*this == tr);
+    CGAL_triangulation_expensive_postcondition( is_valid() );  
   }
 
-  template < typename InputIterator >
-  Periodic_3_Delaunay_triangulation_3(InputIterator first, InputIterator last,
-      const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
-      const Geometric_traits& gt = Geometric_traits() )
-    : Base(domain, gt) {
-    insert(first, last);
-  }
-  //@}
+  void copy_multiple_covering(const Periodic_3_Delaunay_triangulation_3 & tr);
 
-  /** @name Assignment */ //@{
-  Periodic_3_Delaunay_triangulation_3 & operator=(Periodic_3_Delaunay_triangulation_3 tr) {
-    swap(tr);
+  Periodic_3_Delaunay_triangulation_3 operator= (Periodic_3_Delaunay_triangulation_3 tr)
+  {
+    tr.swap(*this);
     return *this;
   }
 
@@ -260,7 +253,6 @@ public:
     too_long_edges.clear();
     too_long_edge_counter = 0;
   }
-  //@}
 
   virtual void update_cover_data_after_setting_domain ()
   {
@@ -282,12 +274,49 @@ public:
   bool is_extensible_triangulation_in_1_sheet_h1() const;
   bool is_extensible_triangulation_in_1_sheet_h2() const;
 
-protected:
-  // Auxiliary functions
-  int find_too_long_edges(std::map<Vertex_handle,
-      std::list<Vertex_handle> >& edges) const;
+  // iterate over all edges and store the ones that are longer than
+  // edge_length_threshold in edges. Return the number of too long edges.
+  int find_too_long_edges(
+      std::map<Vertex_handle, std::list<Vertex_handle> >& edges)
+  const {
+    Point p1, p2;
+    int counter = 0;
+    Vertex_handle v_no,vh;
+    for (Edge_iterator eit = edges_begin();
+         eit != edges_end() ; eit++) {
+      p1 = construct_point(eit->first->vertex(eit->second)->point(),
+    get_offset(eit->first, eit->second));
+      p2 = construct_point(eit->first->vertex(eit->third)->point(),
+    get_offset(eit->first, eit->third));
+      if (squared_distance(p1,p2) > edge_length_threshold) {
+        if (&*(eit->first->vertex(eit->second)) <
+      &*(eit->first->vertex(eit->third))) {
+    v_no = eit->first->vertex(eit->second);
+    vh = eit->first->vertex(eit->third);
+        } else {
+    v_no = eit->first->vertex(eit->third);
+    vh = eit->first->vertex(eit->second);
+        }
+        edges[v_no].push_back(vh);
+        counter++;
+      }
+    }
+    return counter;
+  }
 
-public:
+  template < typename InputIterator >
+  Periodic_3_Delaunay_triangulation_3(InputIterator first, InputIterator last,
+      const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
+      const Geometric_traits& gt = Geometric_traits() )
+    : Base(domain, gt),
+      too_long_edge_counter(0)
+  {
+    edge_length_threshold = FT(0.166) * (domain.xmax()-domain.xmin())
+                                      * (domain.xmax()-domain.xmin());
+    insert(first, last);
+  }
+  //@}
+
   void create_initial_triangulation()
   {
     // create the base for too_long_edges;
@@ -338,7 +367,7 @@ public:
             edge_to_delete = std::make_pair((*it)->vertex(k),(*it)->vertex(j));
           }
           Vertex_handle v_no = edge_to_delete.first;
-          sit = find(too_long_edges[v_no].begin(),
+          sit = std::find(too_long_edges[v_no].begin(),
               too_long_edges[v_no].end(),
               edge_to_delete.second);
           if (sit != too_long_edges[v_no].end()) {
@@ -365,29 +394,29 @@ public:
     for (CellIt it = begin ; it != end ; ++it) {
       // Consider all possible vertex pairs.
       for (int k=0; k<4 ; k++) {
-      for (int j=0; j<4 ; j++) {
-        if (j==k) continue;
-        if (&*((*it)->vertex(j)) > &*((*it)->vertex(k))) continue;
-        // make the offsets canonical (wrt. to some notion)
-        // add to too_long_edges, if not yet added and if "too long"
-        CGAL_triangulation_precondition(
-      &*((*it)->vertex(j))< &*((*it)->vertex(k)));
+        for (int j=0; j<4 ; j++) {
+          if (j==k) continue;
+          if (&*((*it)->vertex(j)) > &*((*it)->vertex(k))) continue;
+          // make the offsets canonical (wrt. to some notion)
+          // add to too_long_edges, if not yet added and if "too long"
+          CGAL_triangulation_precondition(
+              &*((*it)->vertex(j))< &*((*it)->vertex(k)));
 
-        edge_to_add = std::make_pair((*it)->vertex(j), (*it)->vertex(k));
+          edge_to_add = std::make_pair((*it)->vertex(j), (*it)->vertex(k));
 
-        p1 = this->construct_point((*it)->vertex(j)->point(), get_offset(*it, j));
-        p2 = this->construct_point((*it)->vertex(k)->point(), get_offset(*it, k));
+          p1 = construct_point((*it)->vertex(j)->point(), get_offset(*it, j));
+          p2 = construct_point((*it)->vertex(k)->point(), get_offset(*it, k));
 
-        if ((squared_distance(p1,p2) > edge_length_threshold)
-            && (find(too_long_edges[(*it)->vertex(j)].begin(),
-        too_long_edges[(*it)->vertex(j)].end(),
-        edge_to_add.second)
-          == too_long_edges[(*it)->vertex(j)].end())
-        ){
-          too_long_edges[(*it)->vertex(j)].push_back(edge_to_add.second);
-          too_long_edge_counter++;
-        }
-      } }
+          if ((squared_distance(p1,p2) > edge_length_threshold)
+              && (find(too_long_edges[(*it)->vertex(j)].begin(),
+                  too_long_edges[(*it)->vertex(j)].end(),
+                  edge_to_add.second)
+                  == too_long_edges[(*it)->vertex(j)].end())
+          ){
+            too_long_edges[(*it)->vertex(j)].push_back(edge_to_add.second);
+            too_long_edge_counter++;
+          }
+        } }
     }
   }
 
@@ -396,16 +425,16 @@ public:
     return too_long_edge_counter == 0;
   }
 
-  void update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells)
+  bool update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells)
   {
     for( int i=0 ; i < 4 ; i++ ) {
       for (int j=0 ; j < 4 ; j++) {
         if (j==i) continue;
         if (&*(new_ch->vertex(i)) > &*(new_ch->vertex(j))) continue;
 
-        Point p1 = this->construct_point(new_ch->vertex(i)->point(),
+        Point p1 = construct_point(new_ch->vertex(i)->point(),
             get_offset(new_ch, i));
-        Point p2 = this->construct_point(new_ch->vertex(j)->point(),
+        Point p2 = construct_point(new_ch->vertex(j)->point(),
             get_offset(new_ch, j));
         Vertex_handle v_no = new_ch->vertex(i);
 
@@ -415,8 +444,8 @@ public:
           // to a triangulation in the needed covering space.
           if (is_1_cover()) {
             tds().delete_cells(new_cells.begin(), new_cells.end());
-            this->convert_to_27_sheeted_covering();
-            return;
+            convert_to_27_sheeted_covering();
+            return true;
           }
           else if (find(too_long_edges[v_no].begin(),
               too_long_edges[v_no].end(),
@@ -428,9 +457,9 @@ public:
         }
       }
     }
+    return false;
   }
 
-public:
   /** @name Insertion */ //@{
   Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle()) {
     Conflict_tester tester(p, this);
@@ -488,7 +517,6 @@ public:
       DT dt(remove_traits);
       Remover remover(this,dt);
       Conflict_tester t(this);
-      Cover_manager cover_manager(*this);
       for (unsigned int i=0; i<dummy_points.size(); i++) {
 	if (std::find(double_vertices.begin(), double_vertices.end(),
 		dummy_points[i]) == double_vertices.end())
@@ -1506,10 +1534,53 @@ struct Periodic_3_Delaunay_triangulation_3<GT,Tds>::Vertex_remover
 #endif //CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
 
 template < class GT, class TDS >
+inline bool
+Periodic_3_Delaunay_triangulation_3<GT,TDS>::
+is_extensible_triangulation_in_1_sheet_h1() const {
+  if (!is_1_cover()) {
+    if (too_long_edge_counter == 0) return true;
+    else return false;
+  } else {
+    typename Geometric_traits::FT longest_edge_squared_length(0);
+    Segment s;
+    for (Periodic_segment_iterator psit = this->periodic_segments_begin(Base::UNIQUE);
+   psit != this->periodic_segments_end(Base::UNIQUE) ; ++psit) {
+      s = this->construct_segment(*psit);
+      longest_edge_squared_length = (std::max)(longest_edge_squared_length,
+    s.squared_length());
+    }
+    return (longest_edge_squared_length < edge_length_threshold);
+  }
+}
+
+template < class GT, class TDS >
+inline bool
+Periodic_3_Delaunay_triangulation_3<GT,TDS>::
+is_extensible_triangulation_in_1_sheet_h2() const {
+  typedef typename Geometric_traits::Construct_circumcenter_3
+    Construct_circumcenter;
+  typedef typename Geometric_traits::FT FT;
+  Construct_circumcenter construct_circumcenter
+    = geom_traits().construct_circumcenter_3_object();
+  for (Periodic_tetrahedron_iterator tit = this->periodic_tetrahedra_begin(Base::UNIQUE) ;
+       tit != this->periodic_tetrahedra_end(Base::UNIQUE) ; ++tit) {
+    Point cc = construct_circumcenter(
+  tit->at(0).first, tit->at(1).first,
+  tit->at(2).first, tit->at(3).first,
+  tit->at(0).second, tit->at(1).second,
+  tit->at(2).second, tit->at(3).second);
+
+    if ( !(FT(16)*squared_distance(cc,point(tit->at(0)))
+      < (domain().xmax()-domain().xmin())*(domain().xmax()-domain().xmin())) )
+      return false;
+  }
+  return true;
+}
+
+template < class GT, class TDS >
 inline void
 Periodic_3_Delaunay_triangulation_3<GT,TDS>::
-copy_multiple_covering(const Periodic_3_Delaunay_triangulation_3& tr)
-{
+copy_multiple_covering(const Periodic_3_Delaunay_triangulation_3<GT,TDS> & tr) {
   // Write the respective offsets in the vertices to make them
   // automatically copy with the tds.
   for (Vertex_iterator vit = tr.vertices_begin() ;
@@ -1557,82 +1628,39 @@ copy_multiple_covering(const Periodic_3_Delaunay_triangulation_3& tr)
   for (Vertex_iterator vit = tr.vertices_begin() ;
        vit != tr.vertices_end() ; ++vit)
     vit->clear_offset();
-}
-
-template < class GT, class TDS >
-inline bool
-Periodic_3_Delaunay_triangulation_3<GT,TDS>::
-is_extensible_triangulation_in_1_sheet_h1() const {
-  if (!is_1_cover()) {
-    if (too_long_edge_counter == 0) return true;
-    else return false;
-  } else {
-    typename Geometric_traits::FT longest_edge_squared_length(0);
-    Segment s;
-    for (Periodic_segment_iterator psit = this->periodic_segments_begin(Base::UNIQUE);
-   psit != this->periodic_segments_end(Base::UNIQUE) ; ++psit) {
-      s = this->construct_segment(*psit);
-      longest_edge_squared_length = (std::max)(longest_edge_squared_length,
-    s.squared_length());
+  // Build up the too_long_edges container
+  too_long_edge_counter = 0;
+  too_long_edges.clear();
+  for (Vertex_iterator vit = vertices_begin() ;
+       vit != vertices_end() ; ++vit)
+    too_long_edges[vit] = std::list<Vertex_handle>();
+  std::pair<Vertex_handle, Vertex_handle> edge_to_add;
+  Point p1,p2;
+  int i,j;
+  for (Edge_iterator eit = edges_begin() ;
+       eit != edges_end() ; ++eit) {
+    if (&*(eit->first->vertex(eit->second))
+  < &*(eit->first->vertex(eit->third))) {
+      i = eit->second; j = eit->third;
+    } else {
+      i = eit->third; j = eit->second;
     }
-    return (longest_edge_squared_length < edge_length_threshold);
-  }
-}
-
-template < class GT, class TDS >
-inline bool
-Periodic_3_Delaunay_triangulation_3<GT,TDS>::
-is_extensible_triangulation_in_1_sheet_h2() const {
-  typedef typename Geometric_traits::Construct_circumcenter_3
-    Construct_circumcenter;
-  typedef typename Geometric_traits::FT FT;
-  Construct_circumcenter construct_circumcenter
-    = geom_traits().construct_circumcenter_3_object();
-  for (Periodic_tetrahedron_iterator tit = this->periodic_tetrahedra_begin(Base::UNIQUE) ;
-       tit != this->periodic_tetrahedra_end(Base::UNIQUE) ; ++tit) {
-    Point cc = construct_circumcenter(
-  tit->at(0).first, tit->at(1).first,
-  tit->at(2).first, tit->at(3).first,
-  tit->at(0).second, tit->at(1).second,
-  tit->at(2).second, tit->at(3).second);
-
-    if ( !(FT(16)*squared_distance(cc,point(tit->at(0)))
-      < (domain().xmax()-domain().xmin())*(domain().xmax()-domain().xmin())) )
-      return false;
-  }
-  return true;
-}
-
-// iterate over all edges and store the ones that are longer than
-// edge_length_threshold in edges. Return the number of too long edges.
-template < class GT, class TDS >
-inline int
-Periodic_3_Delaunay_triangulation_3<GT,TDS>::find_too_long_edges(
-    std::map<Vertex_handle, std::list<Vertex_handle> >& edges)
-const {
-  Point p1, p2;
-  int counter = 0;
-  Vertex_handle v_no,vh;
-  for (Edge_iterator eit = edges_begin();
-       eit != edges_end() ; eit++) {
-    p1 = this->construct_point(eit->first->vertex(eit->second)->point(),
-  get_offset(eit->first, eit->second));
-    p2 = this->construct_point(eit->first->vertex(eit->third)->point(),
-  get_offset(eit->first, eit->third));
+    edge_to_add = std::make_pair(eit->first->vertex(i),
+         eit->first->vertex(j));
+    p1 = construct_point(eit->first->vertex(i)->point(),
+  get_offset(eit->first, i));
+    p2 = construct_point(eit->first->vertex(j)->point(),
+  get_offset(eit->first, j));
+    Vertex_handle v_no = eit->first->vertex(i);
     if (squared_distance(p1,p2) > edge_length_threshold) {
-      if (&*(eit->first->vertex(eit->second)) <
-    &*(eit->first->vertex(eit->third))) {
-  v_no = eit->first->vertex(eit->second);
-  vh = eit->first->vertex(eit->third);
-      } else {
-  v_no = eit->first->vertex(eit->third);
-  vh = eit->first->vertex(eit->second);
-      }
-      edges[v_no].push_back(vh);
-      counter++;
+      CGAL_triangulation_assertion(
+    find(too_long_edges[v_no].begin(),
+         too_long_edges[v_no].end(),
+         edge_to_add.second) == too_long_edges[v_no].end());
+      too_long_edges[v_no].push_back(edge_to_add.second);
+      too_long_edge_counter++;
     }
   }
-  return counter;
 }
 
 template < class GT, class TDS >

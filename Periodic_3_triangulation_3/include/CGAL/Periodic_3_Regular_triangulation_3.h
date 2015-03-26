@@ -147,9 +147,9 @@ private:
       return tr.can_be_converted_to_1_sheet();
     }
 
-    void update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells)
+    bool update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells)
     {
-      tr.update_cover_data_during_management(new_ch, new_cells);
+      return tr.update_cover_data_during_management(new_ch, new_cells);
     }
   };
 
@@ -190,7 +190,6 @@ public:
         cells_with_too_big_orthoball.pop_back();
       }
     }
-    std::cout << "DEL  " << cells_with_too_big_orthoball.size() << std::endl;
   }
 
   FT squared_orthoball_radius (Cell_handle cell)
@@ -222,7 +221,6 @@ public:
         cells_with_too_big_orthoball.push_back(*begin);
       }
     }
-    std::cout << "INS  " << cells_with_too_big_orthoball.size() << std::endl;
   }
 
   bool can_be_converted_to_1_sheet () const
@@ -230,13 +228,13 @@ public:
     return cells_with_too_big_orthoball.empty();
   }
 
-  void update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells)
+  bool update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells)
   {
     if (is_1_cover())
     {
       tds().delete_cells(new_cells.begin(), new_cells.end());
       this->convert_to_27_sheeted_covering();
-      return;
+      return true;
     }
 
     FT threshold = FT(1)/FT(64) * (domain().xmax() - domain().xmin());
@@ -244,6 +242,7 @@ public:
     {
       cells_with_too_big_orthoball.push_back(new_ch);
     }
+    return false;
   }
 
   virtual void update_cover_data_after_converting_to_27_sheeted_covering ()
