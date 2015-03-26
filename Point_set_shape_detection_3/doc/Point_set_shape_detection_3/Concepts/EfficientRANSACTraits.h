@@ -20,10 +20,10 @@ public:
   /// It must provide `Geom_traits::FT`, `Geom_traits::Point_3` and `Geom_traits::Vector_3`.
   /// `Geom_traits::FT` must be a floating point number type like `double` or `float`.
   typedef unspecified_type Geom_traits;
-  /// Random access iterator used to get the input points and normals.
-  typedef InputIt Input_iterator;
-  /// a model of `ReadablePropertyMap` with `Input_iterator` as key type and `Geom_traits::Point_3` as value type
-  typedef Ppmap Point_map;
-  /// a model of `ReadablePropertyMap` with `Input_iterator` as key type and `Geom_traits::Vector_3` as value type
-  typedef Npmap Normal_map;
+  /// Model of the concept `boost:RandomAccessRange` providing input points and normals.
+  typedef unspecified_type Input_range;
+  /// a model of `ReadablePropertyMap` with `Input_range::iterator` as key type and `Geom_traits::Point_3` as value type.
+  typedef unspecified_type Point_map;
+  /// a model of `ReadablePropertyMap` with `Input_range::iterator` as key type and `Geom_traits::Vector_3` as value type.
+  typedef unspecified_type Normal_map;
 };

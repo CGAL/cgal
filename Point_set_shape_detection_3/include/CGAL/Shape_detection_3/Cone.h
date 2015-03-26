@@ -51,8 +51,6 @@ namespace CGAL {
   class Cone : public Shape_base<Traits> {
   public:
     /// \cond SKIP_IN_MANUAL
-    typedef typename Traits::Input_iterator Input_iterator;
-     ///< random access iterator for input data.
     typedef typename Traits::Point_map Point_map;
      ///< property map to access the location of an input point.
     typedef typename Traits::Normal_map Normal_map;

@@ -88,8 +88,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
 
     /// \name Types 
     /// @{    
-    typedef typename Traits::Input_iterator Input_iterator;
-    ///< random access iterator for input data.
+    typedef typename Traits::Input_range::iterator Input_iterator;
     typedef typename Traits::Geom_traits::FT FT; ///< number type.
     typedef typename Traits::Geom_traits::Point_3 Point; ///< point type.
     typedef typename Traits::Geom_traits::Vector_3 Vector; ///< vector type.
@@ -109,7 +108,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     ///< Range of extracted shapes with typ `Shape *`. Model of the `ConstRange` concept.
 
 #ifdef DOXYGEN_RUNNING
-    typedef unspecified_type Point_index_range;    ///< Range of indices of points of type `std::size_t` into the provided Input_iterator. Model of the `boost::BidirectionalRange` concept.
+    typedef unspecified_type Point_index_range;    ///< Range of indices of points of type `std::size_t` into the provided input point range. Model of the `boost::BidirectionalRange` concept.
 
 #else 
     typedef typename boost::iterator_range<Point_index_iterator>
@@ -184,10 +183,9 @@ shape. The implementation follows \cgalCite{Schnabel07}.
       results is required. The data in the input range is reordered during
       `detect()` and `build_octrees()`. `clear()` is first called by this function.
     */
-    template <class RandomAccessInputRange>
     void set_input_data(
-      ///< Range of input data providing 'Input_iterator' for random access. Model of the 'boost:RandomAccessRange'.
-      RandomAccessInputRange &input_range,
+      ///< Range of input data points.
+      typename Traits::Input_range& input_range,
       ///< past-the-end random access iterator over the input points.
       Point_map point_pmap = Point_map(),
       ///< property map to access the position of an input point.

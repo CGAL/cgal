@@ -67,7 +67,7 @@ namespace CGAL {
 
   public:
     /// \cond SKIP_IN_MANUAL
-    typedef typename Traits::Input_iterator Input_iterator;
+    typedef typename Traits::Input_range::iterator Input_iterator;
       ///< random access iterator for input data.
     typedef typename Traits::Point_map Point_map;
       ///< property map to access the location of an input point.

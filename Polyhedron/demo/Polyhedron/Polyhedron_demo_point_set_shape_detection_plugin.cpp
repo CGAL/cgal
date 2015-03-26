@@ -112,7 +112,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     typedef CGAL::Identity_property_map<Point_set::Point_with_normal> PointPMap;
     typedef CGAL::Normal_of_point_with_normal_pmap<Point_set::Geom_traits> NormalPMap;
 
-    typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Epic_kernel, Point_set::iterator, PointPMap, NormalPMap> Traits;
+    typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
     typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
 
     Shape_detection shape_detection;

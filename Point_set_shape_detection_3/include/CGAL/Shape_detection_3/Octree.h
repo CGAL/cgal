@@ -48,7 +48,7 @@ namespace CGAL {
     class DirectPointAccessor {
     public:
       typedef Sdt Sd_traits;
-      typedef typename Sd_traits::Input_iterator Input_iterator;
+      typedef typename Sd_traits::Input_range::iterator Input_iterator;
 
       DirectPointAccessor() {}
       DirectPointAccessor(const Input_iterator &begin,
@@ -104,7 +104,7 @@ namespace CGAL {
     class IndexedPointAccessor {
     public:
       typedef Sdt Sd_traits;
-      typedef typename Sd_traits::Input_iterator Input_iterator;
+      typedef typename Sd_traits::Input_range::iterator Input_iterator;
 
       IndexedPointAccessor() {}
       IndexedPointAccessor(const Input_iterator &begin,
@@ -165,7 +165,7 @@ namespace CGAL {
     class Octree : public PointAccessor {
 
       typedef typename PointAccessor::Sd_traits Sd_traits;
-      typedef typename Sd_traits::Input_iterator Input_iterator;
+      typedef typename Sd_traits::Input_range::iterator Input_iterator;
       typedef Shape_base<Sd_traits> Shape;
       typedef typename Sd_traits::Geom_traits::Point_3 Point;
       typedef typename Sd_traits::Geom_traits::Vector_3 Vector;

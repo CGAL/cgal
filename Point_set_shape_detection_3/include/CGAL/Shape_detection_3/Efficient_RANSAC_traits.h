@@ -42,14 +42,14 @@ namespace CGAL {
               `key_type = InputIterator` and `value_type = Gt::Vector_3`.
     */
   template <class Gt,
-            class InputIterator,
+            class InputRange,
             class Ppmap,
             class Npmap>
   struct Efficient_RANSAC_traits {
     ///
     typedef Gt Geom_traits;
     ///
-    typedef InputIterator Input_iterator;
+    typedef InputRange Input_range;
     ///
     typedef Ppmap Point_map;
     ///
