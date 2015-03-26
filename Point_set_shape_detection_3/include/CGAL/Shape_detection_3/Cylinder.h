@@ -42,7 +42,8 @@ namespace CGAL {
      \brief Cylinder implements Shape_base. The cylinder is represented
      by the axis, i.e. a point and direction, and the radius. The cylinder is
      unbounded, thus caps are not modelled.
-     \ingroup PkgPointSetShapeDetection3
+     \tparam ERTraits a model of `EfficientRANSACTraits`
+     \ingroup PkgPointSetShapeDetection3Shapes
      */
   template <class ERTraits>
   class Cylinder : public Shape_base<ERTraits> {

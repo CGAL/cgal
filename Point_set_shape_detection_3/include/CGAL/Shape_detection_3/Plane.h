@@ -30,8 +30,9 @@
 namespace CGAL {
   namespace Shape_detection_3 {
     /*!
-     \ingroup PkgPointSetShapeDetection3
+     \ingroup PkgPointSetShapeDetection3Shapes
      \brief Plane implements Shape_base. The plane is represented by the normal vector and the distance to the origin.
+     \tparam ERTraits a model of `EfficientRANSACTraits`
      */
   template <class ERTraits>
   class Plane : public Shape_base<ERTraits> {

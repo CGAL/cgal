@@ -31,8 +31,9 @@
 namespace CGAL {
   namespace Shape_detection_3 {
     /*!
-     \ingroup PkgPointSetShapeDetection3
+     \ingroup PkgPointSetShapeDetection3Shapes
      \brief Sphere implements Shape_base. The sphere is represented by its center and the radius.
+     \tparam ERTraits a model of `EfficientRANSACTraits`
      */
   template <class ERTraits>
   class Sphere : public Shape_base<ERTraits> {

@@ -57,14 +57,9 @@ namespace CGAL {
   namespace Shape_detection_3 {
     /*!
       \ingroup PkgPointSetShapeDetection3
-      \brief Traits class for definition of types. The method requires Point_3
-      with Vector_3 containing normal information. To avoid copying of
-      potentially large input data, the detection will be performed on the input
-      data directly and no internal copy will be created. For this reason the
-      input data has to be provided in form of a random access iterator given
-      by the `Input_iterator` template parameter. Point and normal property maps have to
-      be provided to extract from the input the points and the normals respectively.
- 
+      \brief %Default traits class to use the shape detection class `Efficient_RANSAC`.
+      \cgalModels `EfficientRANSACTraits`
+
       \tparam Gt Geometric traits class. It must provide `Gt::FT`, `Gt::Point_3` and `Gt::Vector_3`.
              `Gt::FT` must be a floating point number type like `double` or `float`.
  
@@ -75,21 +70,20 @@ namespace CGAL {
  
       \tparam Npmap is a model of `ReadablePropertyMap`
               `key_type = InputIt` and `value_type = Gt::Vector_3`.
-     */
-
+    */
   template <class Gt,
             class InputIt,
             class Ppmap,
             class Npmap>
   struct Efficient_RANSAC_traits {
+    ///
     typedef Gt Geom_traits; 
-    ///< Geometric traits.
+    ///
     typedef InputIt Input_iterator;
-    ///< Random access iterator used to get the input points and normals.
+    ///
     typedef Ppmap Point_pmap;
-    ///< property map: `InputIt` -> `Point_3` (the position of an input point).
+    ///
     typedef Npmap Normal_pmap;
-    ///< property map: `InputIt` -> `Vector_3` (the normal of an input point).
   };
 
 
@@ -102,7 +96,7 @@ this classes enables to detect subset of connected points lying on the surface o
 Each input point is assigned to either none or at most one detected primitive
 shape. The implementation follows \cgalCite{Schnabel07}.
 
-\tparam ERTraits Efficient_RANSAC_traits
+\tparam ERTraits a model of `EfficientRANSACTraits`
 
 */
   template <class ERTraits>

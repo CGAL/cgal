@@ -43,7 +43,8 @@ namespace CGAL {
    \brief Cone implements Shape_base.
     The cone is represented by its apex, the axis and the opening angle.
     This representation models an open infinite single-cone.
-   \ingroup PkgPointSetShapeDetection3
+    \tparam ERTraits a model of `EfficientRANSACTraits`
+   \ingroup PkgPointSetShapeDetection3Shapes
    */
 
   template <class ERTraits>

@@ -33,9 +33,10 @@
 namespace CGAL {
   namespace Shape_detection_3 {
     /*!
-      \ingroup PkgPointSetShapeDetection3
+      \ingroup PkgPointSetShapeDetection3Shapes
       \brief Torus implements Shape_base. The torus is represented by the
       symmetry axis, its center on the axis and the major and minor radii.
+      \tparam ERTraits a model of `EfficientRANSACTraits`
      */
   template <class ERTraits>
   class Torus : public Shape_base<ERTraits> {

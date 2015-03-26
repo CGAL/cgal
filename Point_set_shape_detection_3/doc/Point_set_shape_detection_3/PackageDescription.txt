@@ -1,6 +1,14 @@
-﻿/// \defgroup PkgPointSetShapeDetection3 Point Set Shape Detection Reference
-/// \defgroup PkgPointSetShapeDetection3Shapes
 /*!
+\defgroup PkgPointSetShapeDetection3 Point Set Shape Detection Reference
+
+\defgroup PkgPointSetShapeDetection3Concepts Concepts
+\ingroup PkgPointSetShapeDetection3
+
+\defgroup PkgPointSetShapeDetection3Shapes Shapes
+\ingroup PkgPointSetShapeDetection3
+
+
+
 \addtogroup PkgPointSetShapeDetection3
 
 \cgalPkgDescriptionBegin{Point Set Shape Detection, PkgPointSetShapeDetection3Summary}
@@ -22,6 +30,9 @@
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
+
+## Concept ##
+- `EfficientRANSACTraits`
 
 ## Main Classes ##
 - `CGAL::Shape_detection_3::Efficient_RANSAC<ERTraits>`
