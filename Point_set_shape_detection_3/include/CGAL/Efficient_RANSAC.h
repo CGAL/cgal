@@ -471,7 +471,7 @@ in 2007 \cgalCite{Schnabel07}.
           nbNewCandidates++;
 
           //add candidate for each type of primitives
-          for(std::vector<Shape *(*)()>::iterator it =
+          for(typename std::vector<Shape *(*)()>::iterator it =
             m_shape_factories.begin(); it != m_shape_factories.end(); it++)	{
             Shape *p = (Shape *) (*it)();
             //compute the primitive and says if the candidate is valid
