@@ -214,17 +214,13 @@ private:
   Geometric_traits  _gt;
   Triangulation_data_structure _tds; 
   Iso_cuboid _domain;
-  /// This threshold should be chosen such that if all edges are shorter,
-  /// we can be sure that there are no self-edges anymore.
-  
-  /// This adjacency list stores all edges that are longer than
-  /// edge_length_threshold.
   
 protected:
   /// map of offsets for periodic copies of vertices
   Virtual_vertex_map virtual_vertices;
   Virtual_vertex_reverse_map  virtual_vertices_reverse;
 
+protected:
   /// v_offsets temporarily stores all the vertices on the border of a
   /// conflict region.
   mutable std::vector<Vertex_handle> v_offsets;
@@ -233,12 +229,13 @@ private:
   /// Determines if we currently compute in 3-cover or 1-cover.
   Covering_sheets _cover;
 
-protected:
+public:
   /** @name Creation */ //@{
   Periodic_3_triangulation_3(
-      const Iso_cuboid & domain = Iso_cuboid(0,0,0,1,1,1),
-      const Geometric_traits & gt = Geometric_traits())
-    : _gt(gt), _tds(), _domain(domain) {
+      const Iso_cuboid & domain,
+      const Geometric_traits & gt)
+    : _gt(gt), _tds(), _domain(domain)
+  {
     _gt.set_domain(_domain);
     typedef typename internal::Exact_field_selector<FT>::Type EFT;
     typedef NT_converter<FT,EFT> NTC;
@@ -254,23 +251,24 @@ protected:
     init_tds();
   }
 
-  // Copy constructor helper
+protected:
+  // Copy constructor helpers
   class Finder;
-
+public:
   // Copy constructor duplicates vertices and cells
   Periodic_3_triangulation_3(const Periodic_3_triangulation_3 & tr)
     : _gt(tr.geom_traits()),
       _domain(tr._domain),
-      _cover(tr._cover) {
+      _cover(tr._cover)
+  {
   }
-
+  
   /** @name Assignment */ //@{
   Periodic_3_triangulation_3 & operator=(Periodic_3_triangulation_3& tr) {
     swap(tr);
     return *this;
   }
   
-public:
   void swap(Periodic_3_triangulation_3 &tr) {
     std::swap(tr._gt, _gt);
     _tds.swap(tr._tds);
@@ -966,6 +964,7 @@ protected:
   //@}
   
 protected:
+
   // COMMON INSERTION for DELAUNAY and REGULAR TRIANGULATION
   template < class Conflict_tester, class Point_hider, class CoverManager >
   Vertex_handle insert_in_conflict(const Point & p, Cell_handle start,
@@ -982,10 +981,10 @@ protected:
     Point_hider &hider, CoverManager& cover_manager);
 
   template < class InputIterator, class Conflict_tester,
-      class Point_hider, class CoverManager >
+      class Point_hider, class CoverManager>
   std::vector<Vertex_handle> insert_in_conflict(
       InputIterator begin, InputIterator end, Cell_handle start,
-      Conflict_tester &tester, Point_hider &hider, CoverManager& cover_manager ) {
+      Conflict_tester &tester, Point_hider &hider, CoverManager& cover_manager) {
     Vertex_handle new_vertex;
     std::vector<Vertex_handle> double_vertices;
     Locate_type lt = Locate_type();
@@ -2554,14 +2553,14 @@ inline void Periodic_3_triangulation_3<GT,TDS>::remove(Vertex_handle v,
     virtual_vertices_reverse.erase(v);
     CGAL_triangulation_assertion(vhrem.size()==26);
     for (int i=0 ; i<26 ; i++) {
-      periodic_remove(vhrem[i],r,cover_manager);
+      periodic_remove(vhrem[i],r, cover_manager);
       virtual_vertices.erase(vhrem[i]);
       CGAL_triangulation_expensive_assertion(is_valid());
     }
     periodic_remove(v,r, cover_manager);
   } else {
     periodic_remove(v,r, cover_manager);
-    if (!is_1_cover()) remove(v,r,t, cover_manager);
+    if (!is_1_cover()) remove(v,r, t, cover_manager);
   }
   
 }
@@ -2722,7 +2721,9 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(Vertex_handle v,
                         vh_off_map[vmap[i_ch->vertex(2)]],
                         vh_off_map[vmap[i_ch->vertex(3)]]);
     
-    cover_manager.update_cover_data_during_management(new_ch, new_cells);
+    // Update the edge length management
+    if (cover_manager.update_cover_data_during_management(new_ch, new_cells))
+        return;
 
     // The neighboring relation needs to be stored temporarily in
     // nr_vec. It cannot be applied directly because then we could not
