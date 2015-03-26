@@ -1,0 +1,29 @@
+# Test case 1 for non-simple polygons. See https://cgal.geometryfactory.com/CGAL/Members/wiki/Visibility/TestCases
+2 2
+2 2
+
+0
+10
+0 0 13 0
+13 0 13 4
+13 4 11 2
+11 2 9 4
+9 4 7 2
+7 2 4 2
+4 2 0 5
+0 5 0 0
+4 0 9 2
+9 2 11 0
+
+0
+8
+0 0 4 0
+4 0 9 2
+9 2 11 2
+11 2 13 2
+7 2 9 2
+7 2 4 2
+4 2 0 5
+0 5 0 0
+
+
