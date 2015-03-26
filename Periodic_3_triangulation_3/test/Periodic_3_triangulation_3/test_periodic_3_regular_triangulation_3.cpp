@@ -204,7 +204,7 @@ void test_insert_1 ()
 
   P3RT3 p3rt3;
 
-  Weighted_point p(Bare_point(0,0,0), 0.1);
+  Weighted_point p(Bare_point(0,0,0), 0.01);
   p3rt3.insert(p);
 
   assert(p3rt3.is_valid());
@@ -370,7 +370,7 @@ void test_insert_two_points_with_the_same_position ()
   assert(p3rt3.number_of_vertices() == 1);
   assert(p3rt3.number_of_stored_vertices() == 27);
 
-  Vertex_handle vh2 = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.02));
+  Vertex_handle vh2 = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.015));
   assert(vh2 != Vertex_handle());
   assert(vh2 != vh);
   assert(p3rt3.is_valid());
@@ -477,6 +477,8 @@ void test_insert_rnd_then_remove_all (unsigned pt_count, unsigned seed)
   assert(stream);
 
   std::set<Weighted_point> hidden_point_set;
+
+  std::cout << "-- insert" << std::endl;
   for (unsigned cnt = 1; cnt <= pt_count; ++cnt)
   {
     Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
@@ -493,6 +495,7 @@ void test_insert_rnd_then_remove_all (unsigned pt_count, unsigned seed)
 
   assert(p3rt3.is_valid());
 
+  std::cout << "-- remove" << std::endl;
   for (unsigned cnt = 1; pt_count; --pt_count, ++cnt)
   {
     P3RT3::Vertex_iterator iter = p3rt3.vertices_begin();
@@ -570,10 +573,8 @@ void test_27_to_1_sheeted_covering ()
         if (k % 2)
           y += FT(1) / FT(12);
         FT z = FT(k) / FT(8);
-//        std::cout << count++ << " : " << x << ", " << y << ", " << z << std::endl;
         Weighted_point point(Bare_point(x, y, z), 0);
         p3rt3.insert(point);
-//        std::cout << ".number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
       }
 
   assert(p3rt3.number_of_sheets() == CGAL::make_array(1,1,1));
