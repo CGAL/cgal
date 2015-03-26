@@ -69,9 +69,9 @@ namespace CGAL {
     /// \cond SKIP_IN_MANUAL
     typedef typename Traits::Input_iterator Input_iterator;
       ///< random access iterator for input data.
-    typedef typename Traits::Point_pmap Point_pmap;
+    typedef typename Traits::Point_map Point_map;
       ///< property map to access the location of an input point.
-    typedef typename Traits::Normal_pmap Normal_pmap;
+    typedef typename Traits::Normal_map Normal_map;
       ///< property map to access the unoriented normal of an input point.
     typedef Shape_base<Traits> Shape;
       ///< own type.
@@ -463,8 +463,8 @@ namespace CGAL {
 
     void compute(const std::set<std::size_t>& indices,
                  Input_iterator first,
-                 Point_pmap point_pmap,
-                 Normal_pmap normal_pmap,
+                 Point_map point_pmap,
+                 Normal_map normal_pmap,
                  FT epsilon,
                  FT normal_threshold) {
       if (indices.size() < minimum_sample_size())
@@ -576,8 +576,8 @@ namespace CGAL {
     bool m_has_connected_component;
 
     Input_iterator m_first;
-    Point_pmap m_point_pmap;
-    Normal_pmap m_normal_pmap;
+    Point_map m_point_pmap;
+    Normal_map m_normal_pmap;
     /// \endcond
   };  
 }

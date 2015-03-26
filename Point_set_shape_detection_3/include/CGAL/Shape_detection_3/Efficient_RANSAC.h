@@ -93,9 +93,9 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     typedef typename Traits::Geom_traits::FT FT; ///< number type.
     typedef typename Traits::Geom_traits::Point_3 Point; ///< point type.
     typedef typename Traits::Geom_traits::Vector_3 Vector; ///< vector type.
-    typedef typename Traits::Point_pmap Point_pmap;
+    typedef typename Traits::Point_map Point_map;
     ///< property map to access the location of an input point.
-    typedef typename Traits::Normal_pmap Normal_pmap;
+    typedef typename Traits::Normal_map Normal_map;
     ///< property map to access the unoriented normal of an input point
     typedef Shape_base<Traits> Shape; ///< shape type.
 
@@ -189,9 +189,9 @@ shape. The implementation follows \cgalCite{Schnabel07}.
       ///< Range of input data providing 'Input_iterator' for random access. Model of the 'boost:RandomAccessRange'.
       RandomAccessInputRange &input_range,
       ///< past-the-end random access iterator over the input points.
-      Point_pmap point_pmap = Point_pmap(),
+      Point_map point_pmap = Point_map(),
       ///< property map to access the position of an input point.
-      Normal_pmap normal_pmap = Normal_pmap()
+      Normal_map normal_pmap = Normal_map()
       ///< property map to access the normal of an input point.
       ) {
         clear();
@@ -802,8 +802,8 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     // iterators of input data
     bool m_valid_iterators;
     Input_iterator m_inputIterator_first, m_inputIterator_beyond; 
-    Point_pmap m_point_pmap;
-    Normal_pmap m_normal_pmap;
+    Point_map m_point_pmap;
+    Normal_map m_normal_pmap;
 
     std::vector<FT> m_level_weighting;  // sum must be 1
   };

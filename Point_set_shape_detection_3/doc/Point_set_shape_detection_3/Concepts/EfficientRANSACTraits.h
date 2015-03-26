@@ -22,8 +22,8 @@ public:
   typedef unspecified_type Geom_traits;
   /// Random access iterator used to get the input points and normals.
   typedef InputIt Input_iterator;
-  /// property map: a model of `ReadablePropertyMap` with `Input_iterator` as key type and `Geom_traits::Point_3` as value type
-  typedef Ppmap Point_pmap;
-  /// property map: a model of `ReadablePropertyMap` with `Input_iterator` as key type and `Geom_traits::Vector_3` as value type
-  typedef Npmap Normal_pmap;
+  /// a model of `ReadablePropertyMap` with `Input_iterator` as key type and `Geom_traits::Point_3` as value type
+  typedef Ppmap Point_map;
+  /// a model of `ReadablePropertyMap` with `Input_iterator` as key type and `Geom_traits::Vector_3` as value type
+  typedef Npmap Normal_map;
 };

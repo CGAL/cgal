@@ -170,8 +170,8 @@ namespace CGAL {
       typedef typename Sd_traits::Geom_traits::Point_3 Point;
       typedef typename Sd_traits::Geom_traits::Vector_3 Vector;
       typedef typename Sd_traits::Geom_traits::FT FT;
-      typedef typename Sd_traits::Point_pmap Point_pmap;
-      typedef typename Sd_traits::Normal_pmap Normal_pmap;
+      typedef typename Sd_traits::Point_map Point_map;
+      typedef typename Sd_traits::Normal_map Normal_map;
 
       template<class Sd_traits>
         friend class ::CGAL::Shape_detection_3::Efficient_RANSAC;
@@ -680,8 +680,8 @@ namespace CGAL {
       std::size_t m_bucket_size;
       std::size_t m_set_max_level;
       std::size_t m_max_level;
-      Point_pmap m_point_pmap;
-      Normal_pmap m_normal_pmap;
+      Point_map m_point_pmap;
+      Normal_map m_normal_pmap;
     };
   }
   }

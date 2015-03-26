@@ -51,9 +51,9 @@ namespace CGAL {
     ///
     typedef InputIterator Input_iterator;
     ///
-    typedef Ppmap Point_pmap;
+    typedef Ppmap Point_map;
     ///
-    typedef Npmap Normal_pmap;
+    typedef Npmap Normal_map;
   };
 
 } } // end of namespace CGAL::Shape_detection_3
