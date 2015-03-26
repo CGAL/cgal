@@ -30,6 +30,7 @@
 #define CGAL_SHAPE_DETECTION_3_H
 
 #include <CGAL/Shape_detection_3/Efficient_RANSAC.h>
+#include <CGAL/Shape_detection_3/Efficient_RANSAC_traits.h>
 #include <CGAL/Shape_detection_3/Plane.h>
 #include <CGAL/Shape_detection_3/Cylinder.h>
 #include <CGAL/Shape_detection_3/Cone.h>

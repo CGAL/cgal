@@ -24,12 +24,6 @@
 
 #include <CGAL/Shape_detection_3/Octree.h>
 #include <CGAL/Shape_detection_3/Shape_base.h>
-#include <CGAL/Shape_detection_3/Efficient_RANSAC_traits.h>
-#include <CGAL/Shape_detection_3/Cone.h>
-#include <CGAL/Shape_detection_3/Cylinder.h>
-#include <CGAL/Shape_detection_3/Plane.h>
-#include <CGAL/Shape_detection_3/Sphere.h>
-#include <CGAL/Shape_detection_3/Torus.h>
 
 //for octree ------------------------------
 #include <boost/iterator/filter_iterator.hpp>

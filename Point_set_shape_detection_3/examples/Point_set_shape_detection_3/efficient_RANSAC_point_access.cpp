@@ -5,7 +5,7 @@
 #include <CGAL/Timer.h>
 #include <CGAL/number_utils.h>
 
-#include <CGAL/Shape_detection_3/Efficient_RANSAC.h>
+#include <CGAL/Shape_detection_3.h>
 
 #include <iostream>
 #include <fstream>
