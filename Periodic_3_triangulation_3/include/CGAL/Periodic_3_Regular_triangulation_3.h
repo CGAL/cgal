@@ -246,7 +246,7 @@ public:
   virtual void update_cover_data_after_converting_to_27_sheeted_covering ()
   {
     FT threshold = FT(1)/FT(64) * (domain().xmax()-domain().xmin());
-    for (Cell_handle iter = cells_begin(), end_iter = cells_end(); iter != end_iter; ++iter)
+    for (Cell_iterator iter = cells_begin(), end_iter = cells_end(); iter != end_iter; ++iter)
     {
       if (squared_orthoball_radius(iter) >= threshold)
       {
@@ -262,6 +262,7 @@ public:
      Conflict_tester tester(p, this);
      Point_hider hider(this);
      Cover_manager cover_manager(*this);
+     assert(p.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ));
      return Base::insert_in_conflict(p, start, tester, hider, cover_manager);
    }
 
@@ -270,6 +271,7 @@ public:
       Conflict_tester tester(p, this);
       Point_hider hider(this);
       Cover_manager cover_manager(*this);
+      assert(p.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ));
       return Base::insert_in_conflict(p,lt,c,li,lj, tester,hider,cover_manager);
     }
    //@}
