@@ -194,19 +194,20 @@ public:
 
   FT squared_orthoball_radius (Cell_handle cell)
   {
-    Periodic_point p0 = this->periodic_point(cell, 0);
-    Periodic_point p1 = this->periodic_point(cell, 1);
-    Periodic_point p2 = this->periodic_point(cell, 2);
-    Periodic_point p3 = this->periodic_point(cell, 3);
+    Periodic_point p0 = periodic_point(cell, 0);
+    Periodic_point p1 = periodic_point(cell, 1);
+    Periodic_point p2 = periodic_point(cell, 2);
+    Periodic_point p3 = periodic_point(cell, 3);
 
     typename Geometric_traits::Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3
                                           = geom_traits().construct_weighted_circumcenter_3_object();
 
     Bare_point weighted_circumcenter = construct_weighted_circumcenter_3(
-        p0.first, p1.first, p2.first, p3.first,  p0.second, p1.second, p2.second, p3.second);
-    Weighted_point point = this->construct_point(cell->vertex(0)->point(), get_offset(cell, 0));
-    FT ao_2 = squared_distance(static_cast<const Bare_point&>(point), weighted_circumcenter);
-    FT io_2 = ao_2 - point.weight();
+        p0.first,  p1.first,  p2.first,  p3.first,
+        p0.second, p1.second, p2.second, p3.second);
+    Weighted_point pt = point(p0);
+    FT ao_2 = squared_distance(static_cast<const Bare_point&>(pt), weighted_circumcenter);
+    FT io_2 = ao_2 - pt.weight();
     return io_2;
   }
 
