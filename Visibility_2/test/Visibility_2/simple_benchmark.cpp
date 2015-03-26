@@ -30,7 +30,6 @@
 #include <CGAL/Simple_polygon_visibility_2.h>
 #include <CGAL/Triangular_expansion_visibility_2.h>
 #include <CGAL/Rotational_sweep_visibility_2.h>
-#include <CGAL/Parallel_rotational_sweep_visibility_2.h>
 #include <CGAL/test_model_methods.h>
 #include <CGAL/test_utils.h>
 
@@ -63,9 +62,6 @@ void define_snd_class(std::string name2, CGAL::Query_choice& qchoice, std::ifstr
   if (name2 == "R")
     deploy_benchmark<Visibility_fst, CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_category> >
         (qchoice, input);
-  if (name2 == "PR")
-    deploy_benchmark<Visibility_fst, CGAL::Parallel_rotational_sweep_visibility_2<Arrangement_2, Regularization_category, CGAL::Parallel_tag> >
-        (qchoice, input);
 }
 
 template <class Regularization_category>
@@ -76,13 +72,11 @@ void benchmark_two_classes(std::string name1, std::string name2, CGAL::Query_cho
     define_snd_class<CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_category>, Regularization_category> (name2, qchoice, input);
   if (name1 == "R")
     define_snd_class<CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_category>, Regularization_category> (name2, qchoice, input);
-  if (name1 == "PR")
-    define_snd_class<CGAL::Parallel_rotational_sweep_visibility_2<Arrangement_2, Regularization_category, CGAL::Parallel_tag>, Regularization_category> (name2, qchoice, input);
 }
 
 void print_usage() {
   std::cout << "Usage: ./simple_benchmark [filename] [Class type 1] [Class type 2] [Query type] [Regularize]\n";
-  std::cout << "where [Class type] could be S(simple), R(rotational sweep), T(triangular), and PR(parallel rotational sweep), indicating which classes you want to test.\n";
+  std::cout << "where [Class type] could be S(simple), R(rotational sweep) and T(triangular), indicating which classes you want to test.\n";
   std::cout << "[Query type] can be: {vertex, edge, face}.\n";
   std::cout << "[Regularize] can be: {true, false}.\n";
 }

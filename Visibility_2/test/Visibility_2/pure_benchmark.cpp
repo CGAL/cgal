@@ -29,7 +29,6 @@
 #include <CGAL/Simple_polygon_visibility_2.h>
 #include <CGAL/Triangular_expansion_visibility_2.h>
 #include <CGAL/Rotational_sweep_visibility_2.h>
-#include <CGAL/Parallel_rotational_sweep_visibility_2.h>
 #include <CGAL/test_model_methods.h>
 #include <CGAL/test_utils.h>
 
@@ -60,13 +59,11 @@ void benchmark_one_class(std::string name, const CGAL::Query_choice& qchoice, st
     deploy_pure_benchmark<CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_category> > (qchoice, input);
   if (name == "R")
     deploy_pure_benchmark<CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_category> > (qchoice, input);
-  if (name == "PR")
-    deploy_pure_benchmark<CGAL::Parallel_rotational_sweep_visibility_2<Arrangement_2, Regularization_category, CGAL::Parallel_tag> > (qchoice, input);
 }
 
 void print_usage() {
   std::cout << "Usage: ./pure_benchmark [filename] [Class type] [Query type] [Regularize]\n";
-  std::cout << "where [Class type] could be S(simple), R(rotational sweep), PR(parallel rotational sweep), and T(triangular), indicating which class you want to test.\n";
+  std::cout << "where [Class type] could be S(simple), R(rotational sweep), and T(triangular), indicating which class you want to test.\n";
   std::cout << "[Query type] can be: {vertex, edge, face}.\n";
   std::cout << "[Regularize] can be: {true, false}.\n";
 }
