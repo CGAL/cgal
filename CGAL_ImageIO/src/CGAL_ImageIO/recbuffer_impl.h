@@ -58,7 +58,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include <CGAL/convert.h>
+#include "convert.h"
 
 #ifdef CGAL_HEADER_ONLY
 

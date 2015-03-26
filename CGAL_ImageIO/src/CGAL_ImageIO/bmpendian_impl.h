@@ -33,7 +33,7 @@
  */
 
 #include <stdio.h>
-#include <CGAL/bmptypes.h>
+#include "bmptypes.h"
 
 /*****************************************************************************
 *

@@ -27,9 +27,10 @@
 
 #include <string>
 #include <sstream>
+#include <cstring>
 
-#include <CGAL/inr.h>
-#include <CGAL/fgetns.h>
+#include "inr.h"
+#include "fgetns.h"
 
 #define _LGTH_STRING_ 1024
 

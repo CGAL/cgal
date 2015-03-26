@@ -25,7 +25,7 @@
 #define CGAL_INLINE_FUNCTION
 #endif
 
-#include <CGAL/fgetns.h>
+#include "fgetns.h"
 
 #include <string>
 #include <sstream>

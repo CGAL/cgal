@@ -29,7 +29,7 @@
 char *fgetns(char *str, int n,  _image *im );
 
 #ifdef CGAL_HEADER_ONLY
-#include <CGAL/fgetns_impl.h>
+#include "fgetns_impl.h"
 #endif // CGAL_HEADER_ONLY
 
 #endif // FGETNS_H

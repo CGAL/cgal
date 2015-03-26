@@ -31,7 +31,9 @@
 
 #ifndef __ENDIAN_H_INCLUDED__
 #define __ENDIAN_H_INCLUDED__
- 
+
+#include "bmptypes.h"
+
 /*
  * Read the basic types as little-endian values.  The return value will be
  * zero if successful, EOF, otherwise.
@@ -55,7 +57,7 @@ int writeUINT16little(FILE *f, CGAL_UINT16 i);
 int writeUINT32little(FILE *f, CGAL_UINT32 i);
 
 #ifdef CGAL_HEADER_ONLY
-#include <CGAL/bmpendian_impl.h>
+#include "bmpendian_impl.h"
 #endif // CGAL_HEADER_ONLY
 
 #endif  /* __ENDIAN_H_INCLUDED__ */

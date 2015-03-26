@@ -38,8 +38,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <CGAL/bmptypes.h>
-#include <CGAL/bmpendian.h>
+#include "bmptypes.h"
+#include "bmpendian.h"
 
 /*****************************************************************************
  *

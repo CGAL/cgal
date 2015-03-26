@@ -59,7 +59,7 @@ extern void IoBmp_verbose ( );
 extern void IoBmp_noverbose ( );
 
 #ifdef CGAL_HEADER_ONLY
-#include <CGAL/bmp_impl.h>
+#include "bmp_impl.h"
 #endif // CGAL_HEADER_ONLY
 
 #endif /* _bmp_h_ */
