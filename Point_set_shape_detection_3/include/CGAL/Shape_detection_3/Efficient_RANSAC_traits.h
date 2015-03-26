@@ -33,23 +33,23 @@ namespace CGAL {
       \tparam Gt Geometric traits class. It must provide `Gt::FT`, `Gt::Point_3` and `Gt::Vector_3`.
              `Gt::FT` must be a floating point number type like `double` or `float`.
 
-      \tparam InputIt is a model of RandomAccessIterator
+      \tparam InputIterator is a model of RandomAccessIterator
 
       \tparam Ppmap is a model of `ReadablePropertyMap`
-              `key_type = InputIt` and `value_type = Gt::Point_3`.
+              `key_type = InputIterator` and `value_type = Gt::Point_3`.
 
       \tparam Npmap is a model of `ReadablePropertyMap`
-              `key_type = InputIt` and `value_type = Gt::Vector_3`.
+              `key_type = InputIterator` and `value_type = Gt::Vector_3`.
     */
   template <class Gt,
-            class InputIt,
+            class InputIterator,
             class Ppmap,
             class Npmap>
   struct Efficient_RANSAC_traits {
     ///
     typedef Gt Geom_traits;
     ///
-    typedef InputIt Input_iterator;
+    typedef InputIterator Input_iterator;
     ///
     typedef Ppmap Point_pmap;
     ///
