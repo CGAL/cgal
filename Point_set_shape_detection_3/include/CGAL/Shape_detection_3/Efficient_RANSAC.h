@@ -87,11 +87,13 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     /// \endcond
 
     /// \name Types 
-    /// @{    
+    /// @{
+    /// \cond SKIP_IN_MANUAL
     typedef typename Traits::Input_range::iterator Input_iterator;
     typedef typename Traits::Geom_traits::FT FT; ///< number type.
     typedef typename Traits::Geom_traits::Point_3 Point; ///< point type.
     typedef typename Traits::Geom_traits::Vector_3 Vector; ///< vector type.
+    /// \endcond
     typedef typename Traits::Point_map Point_map;
     ///< property map to access the location of an input point.
     typedef typename Traits::Normal_map Normal_map;
