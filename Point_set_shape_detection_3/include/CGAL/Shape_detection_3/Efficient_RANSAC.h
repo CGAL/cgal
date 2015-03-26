@@ -107,7 +107,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     boost::iterator_range<typename std::vector<Shape *>::const_iterator>
       Shape_range;
 #endif
-    ///< Range of extracted shapes with typ `Shape *`. Model of the `ConstRange` concept.
+    ///< Range of extracted shapes with `Shape*` as value type. Model of the `ConstRange` concept.
 
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type Point_index_range;    ///< Range of indices of points of type `std::size_t` into the provided input point range. Model of the `boost::BidirectionalRange` concept.
