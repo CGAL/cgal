@@ -136,8 +136,7 @@ namespace CGAL {
       if (!this->supports_connected_component())
         return connected_component_kdTree(indices, cluster_epsilon);
 
-      FT min[2], max[2];
-      min[0] = min[1] = max[0] = min[1] = 0;
+      FT min[] = {0,0}, max[] = {0,0};
 
       std::vector<std::pair<FT, FT> > parameterSpace;
       parameterSpace.resize(indices.size());

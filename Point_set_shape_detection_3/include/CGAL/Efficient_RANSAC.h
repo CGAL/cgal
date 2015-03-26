@@ -166,7 +166,14 @@ in 2007 \cgalCite{Schnabel07}.
        Parameters for the shape detection algorithm.
        */
     struct Parameters {
-      Parameters() : probability(0.01), min_points(SIZE_MAX), normal_threshold(0.9), epsilon(-1), cluster_epsilon(-1) {}
+      Parameters()
+        : probability(0.01)
+        , min_points(SIZE_MAX)
+        , epsilon(-1)
+        , normal_threshold(0.9)
+        , cluster_epsilon(-1)
+      {}
+
       FT probability;         ///< Probability to control search endurance. %Default value 0.05.
       std::size_t min_points; ///< Minimum number of points of a shape. %Default value 1% of total number of input points.
       FT epsilon;             ///< Maximum tolerance Euclidian distance from a point and a shape. %Default value 1% of bounding box diagonal.
@@ -196,10 +203,14 @@ in 2007 \cgalCite{Schnabel07}.
     /*! 
       Constructs an empty shape detection engine.
     */ 
-    Efficient_ransac() : m_rng(std::random_device()()), m_num_subsets(0),
-      m_num_available_points(0), m_global_octree(NULL), m_direct_octrees(NULL),
-      m_valid_iterators(false) {
-    }	 
+    Efficient_ransac()
+      : m_rng(std::random_device()())
+      , m_direct_octrees(NULL)
+      , m_global_octree(NULL)
+      , m_num_subsets(0)
+      , m_num_available_points(0)
+      , m_valid_iterators(false)
+    {}
 
     /*! 
       Releases all memory allocated by this instances including shapes.
@@ -570,6 +581,7 @@ in 2007 \cgalCite{Schnabel07}.
 
               numInvalid++;
 
+              /// \todo check why this variable is not used
               bool exactlyOnce = true;
 
               for (std::size_t j = 0;j<m_num_subsets;j++) {
