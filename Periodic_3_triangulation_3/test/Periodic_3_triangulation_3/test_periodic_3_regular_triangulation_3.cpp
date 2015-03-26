@@ -444,7 +444,7 @@ void test_insert_rnd_as_delaunay (unsigned pt_count, double weight)
   for (unsigned cnt = 1; cnt <= pt_count; ++cnt)
   {
     Weighted_point p(*in_cube++, weight);
-    std::cout << cnt << " : " << p << std::endl;
+//    std::cout << cnt << " : " << p << std::endl;
     assert(iso_cuboid.has_on_bounded_side(p));
     assert(p.weight() < 0.015625);
     p3rt3.insert(p);
@@ -563,17 +563,17 @@ void test_27_to_1_sheeted_covering ()
     for (unsigned j = 0; j < 6; ++j)
       for (unsigned k = 0; k < 8; ++k)
       {
-        std::cout << count++ << " : " << i << ", " << j << ", " << k << std::endl;
         FT x = FT(i) / FT(6);
-        if (i % 2)
+        if (k % 2)
           x += FT(1) / FT(12);
         FT y = FT(j) / FT(6);
-        if (j % 2)
+        if (k % 2)
           y += FT(1) / FT(12);
         FT z = FT(k) / FT(8);
+//        std::cout << count++ << " : " << x << ", " << y << ", " << z << std::endl;
         Weighted_point point(Bare_point(x, y, z), 0);
         p3rt3.insert(point);
-        std::cout << ".number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
+//        std::cout << ".number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
       }
 
   assert(p3rt3.number_of_sheets() == CGAL::make_array(1,1,1));
@@ -591,7 +591,6 @@ int main (int argc, char** argv)
 {
   std::cout << "TESTING ..." << std::endl;
 
-  test_27_to_1_sheeted_covering();
   test_construction();
   test_insert_1();
   test_insert_point();
@@ -600,6 +599,7 @@ int main (int argc, char** argv)
   test_insert_a_point_twice();
   test_insert_two_points_with_the_same_position();
   test_remove();
+  test_27_to_1_sheeted_covering();
 //    Iso_cuboid unitaire ->  0 <= weight < 0.015625
   test_insert_rnd_as_delaunay(100, 0.);
   test_insert_rnd_as_delaunay(100, 0.01);
