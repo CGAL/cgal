@@ -99,8 +99,7 @@ namespace CGAL {
 Given a point set in 3D space with unoriented normals, sampled on surfaces,
 this classes enables to detect subset of connected points lying on the surface of primitive shapes.
 Each input point is assigned to either none or at most one detected primitive
-shape. The implementation follows the algorithm published by Schnabel et al.
-in 2007 \cgalCite{Schnabel07}.
+shape. The implementation follows \cgalCite{Schnabel07}.
 
 \tparam ERTraits Efficient_RANSAC_traits
 
