@@ -27,7 +27,7 @@
 #include <stack>
 
 #include <CGAL/Bbox_3.h>
-#include "Shape_detection_3/Shape_base.h"
+#include <CGAL/Shape_detection_3/Shape_base.h>
 
 
 // CODE REVIEW

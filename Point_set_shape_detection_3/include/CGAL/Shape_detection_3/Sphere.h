@@ -22,7 +22,7 @@
 #ifndef CGAL_SHAPE_DETECTION_3_SPHERE_H
 #define CGAL_SHAPE_DETECTION_3_SPHERE_H
 
-#include "Shape_detection_3/Shape_base.h"
+#include <CGAL/Shape_detection_3/Shape_base.h>
 
 /*!
  \file Sphere.h
