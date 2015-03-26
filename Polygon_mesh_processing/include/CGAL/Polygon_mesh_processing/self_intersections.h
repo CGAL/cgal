@@ -31,6 +31,7 @@
 
 #include <vector>
 #include <exception>
+#include <boost/foreach.hpp>
 
 #include <boost/function_output_iterator.hpp>
 #include <boost/type_traits/is_const.hpp>
@@ -42,7 +43,9 @@ namespace CGAL {
 namespace internal {
 template <class TM,//TriangleMesh
           class Kernel,
-          class Box, class OutputIterator>
+          class Box,
+          class OutputIterator,
+          class VertexPointMap>
 struct Intersect_facets
 {
   // wrapper to check whether anything is inserted to output iterator
@@ -68,7 +71,7 @@ struct Intersect_facets
 
 // members
   const TM& m_tmesh;
-  const Ppmap m_point;
+  const VertexPointMap m_point;
   mutable OutputIterator  m_iterator;
   mutable bool            m_intersected;
   mutable boost::function_output_iterator<Output_iterator_with_bool> m_iterator_wrapper;
@@ -78,10 +81,10 @@ struct Intersect_facets
   typename Kernel::Do_intersect_3       do_intersect_3_functor;
 
   
-  Intersect_facets(const TM& tmesh, OutputIterator it, const Kernel& kernel)
+  Intersect_facets(const TM& tmesh, OutputIterator it, VertexPointMap vpmap, const Kernel& kernel)
     : 
     m_tmesh(tmesh),
-    m_point(get(vertex_point, m_tmesh)),
+    m_point(vpmap),
     m_iterator(it),
     m_intersected(false),
     m_iterator_wrapper(Output_iterator_with_bool(&m_iterator, &m_intersected)),
@@ -191,67 +194,49 @@ namespace Polygon_mesh_processing {
  * @param vpmap the property map with the points associated to the vertices of `pmesh`
  * @param geom_traits geometric traits class providing intersection test primitives
  *
- * \todo code: VertexPointMap
+ * \todo code : named parameters
  *
  * @return `out`
  */
 template <class GeomTraits
         , class TriangleMesh
         , class OutputIterator
-#ifdef DOXYGEN_RUNNING
         , class VertexPointMap
-        = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type
-#endif
 >
 OutputIterator
 self_intersections(const TriangleMesh& tmesh
                  , OutputIterator out
-#ifdef DOXYGEN_RUNNING
-                 , VertexPointMap vpmap
-                 = get(vertex_point_t, pmesh)
-#endif
+                 , VertexPointMap vpmap = get(CGAL::vertex_point, tmesh)
                  , const GeomTraits& geom_traits = GeomTraits())
 {
   CGAL_precondition(CGAL::is_pure_triangle(tmesh));
 
   typedef TriangleMesh TM;
-
-  typedef typename boost::graph_traits<TM>::face_iterator Facet_it;
-
-  typedef typename boost::graph_traits<TM>::face_descriptor Facet_hdl;
-
-  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, Facet_hdl> Box;
-
-  typedef typename boost::property_map<TM, CGAL::vertex_point_t>::const_type Ppmap;
-
-  Ppmap m_point = get(CGAL::vertex_point, tmesh);
+  typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
+  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, face_descriptor> Box;
 
   // make one box per facet
   std::vector<Box> boxes;
   boxes.reserve(num_faces(tmesh));
 
-  Facet_it fi,e;
-
-  for(boost::tie(fi,e)= faces(tmesh);
-    fi != e;
-      ++fi){
-    Facet_hdl f = *fi;
-    boxes.push_back(Box( m_point[target(halfedge(f,tmesh),tmesh)].bbox() +
-                         m_point[target(next(halfedge(f,tmesh),tmesh),tmesh)].bbox() +
-                         m_point[target(next(next(halfedge(f,tmesh),tmesh),tmesh),tmesh)].bbox(),
+  BOOST_FOREACH(face_descriptor f, faces(tmesh))
+  {
+    boxes.push_back(Box( vpmap[target(halfedge(f,tmesh),tmesh)].bbox() +
+                         vpmap[target(next(halfedge(f, tmesh), tmesh), tmesh)].bbox() +
+                         vpmap[target(next(next(halfedge(f, tmesh), tmesh), tmesh), tmesh)].bbox(),
     f));
   }
   // generate box pointers
   std::vector<const Box*> box_ptr;
   box_ptr.reserve(num_faces(tmesh));
-  typename std::vector<Box>::iterator b;
-  for(b = boxes.begin();
-    b != boxes.end();
-    b++)
-    box_ptr.push_back(&*b);
+
+  BOOST_FOREACH(Box b, boxes)
+    box_ptr.push_back(&b);
 
   // compute self-intersections filtered out by boxes
-  CGAL::internal::Intersect_facets<TM,GeomTraits,Box,OutputIterator> intersect_facets(tmesh, out, geom_traits);
+  CGAL::internal::Intersect_facets<TM,GeomTraits,Box,OutputIterator,VertexPointMap>
+    intersect_facets(tmesh, out, vpmap, geom_traits);
+
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets,cutoff);
   return intersect_facets.m_iterator;
@@ -273,22 +258,16 @@ self_intersections(const TriangleMesh& tmesh
  * @param geom_traits traits class providing intersection test primitives
  * @param vpmap the property map with the points associated to the vertices of `pmesh`
  *
- * \todo code: VertexPointMap
- *
  * @return true if `tmesh` is self-intersecting
+ * \todo code : named parameters
  */
 template <class GeomTraits
         , class TriangleMesh
-#ifdef DOXYGEN_RUNNING
         , class VertexPointMap
-         = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type
-#endif
+//         = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type
           >
 bool is_self_intersecting(const TriangleMesh& tmesh
-#ifdef DOXYGEN_RUNNING
-                        , VertexPointMap vpmap
-                        = get(vertex_point_t, pmesh)
-#endif
+                        , VertexPointMap vpmap = get(vertex_point_t, pmesh)
                         , const GeomTraits& geom_traits = GeomTraits())
 {
   CGAL_precondition(CGAL::is_pure_triangle(tmesh));
@@ -296,7 +275,7 @@ bool is_self_intersecting(const TriangleMesh& tmesh
   try
   {
     typedef boost::function_output_iterator<CGAL::internal::Throw_at_output> OutputIterator;
-    self_intersections<GeomTraits>(tmesh, OutputIterator(), geom_traits); 
+    self_intersections<GeomTraits>(tmesh, OutputIterator(), vpmap, geom_traits);
   }
   catch( CGAL::internal::Throw_at_output::Throw_at_output_exception& ) 
   { return true; }
