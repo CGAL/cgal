@@ -20,6 +20,8 @@ Note that it requires CORE or LEDA installed.
 \cgalModels `Kernel`
 
 \sa `CGAL::Exact_predicates_exact_constructions_kernel` 
+\sa `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt` 
+\sa `CGAL::Exact_predicates_exact_constructions_kernel_with_kth_root` 
 \sa `CGAL::Exact_predicates_inexact_constructions_kernel` 
 \sa `CGAL::Cartesian` 
 
