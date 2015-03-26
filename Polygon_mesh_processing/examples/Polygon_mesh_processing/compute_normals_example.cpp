@@ -34,10 +34,10 @@ int main(int argc, char* argv[])
     = mesh.add_property_map<vertex_descriptor, Vector>("v:normals", Vector(0, 0, 0));
 
   CGAL::Polygon_mesh_processing::compute_normals(mesh,
-                                                 vnormals,
-                                                 fnormals,
-                                                 mesh.points(),//optional
-                                                 K());         //optional
+        vnormals,
+        fnormals,
+        CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points()).
+        kernel(K()));
 
   std::cout << "Face normals :" << std::endl;
   BOOST_FOREACH(face_descriptor fd, faces(mesh)){

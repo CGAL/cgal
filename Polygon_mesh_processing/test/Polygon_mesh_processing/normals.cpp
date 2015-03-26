@@ -29,24 +29,29 @@ void test(const char* file_name)
     CGAL_assertion(false);
   }
 
-  Surface_mesh::Property_map<face_descriptor,Vector> fnormals;
+  Surface_mesh::Property_map<face_descriptor, Vector> fnormals;
   bool created;
   boost::tie(fnormals, created) = mesh.add_property_map<face_descriptor,Vector>("f:normals",Vector(0,0,0));
   CGAL::Polygon_mesh_processing::compute_face_normals(mesh, fnormals);
-  CGAL::Polygon_mesh_processing::compute_face_normals(mesh, fnormals, mesh.points());
-  CGAL::Polygon_mesh_processing::compute_face_normals(mesh, fnormals, mesh.points(), K());
+  CGAL::Polygon_mesh_processing::compute_face_normals(mesh, fnormals,
+    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points()));
+  CGAL::Polygon_mesh_processing::compute_face_normals(mesh, fnormals,
+    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points()).kernel(K()));
 
  Surface_mesh::Property_map<vertex_descriptor,Vector> vnormals;
 
   boost::tie(vnormals, created) = mesh.add_property_map<vertex_descriptor,Vector>("v:normals",Vector(0,0,0));
   CGAL::Polygon_mesh_processing::compute_vertex_normals(mesh, vnormals);
-  CGAL::Polygon_mesh_processing::compute_vertex_normals(mesh, vnormals, mesh.points());
-  CGAL::Polygon_mesh_processing::compute_vertex_normals(mesh, vnormals, mesh.points(), K());
-
+  CGAL::Polygon_mesh_processing::compute_vertex_normals(mesh, vnormals,
+    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points())); 
+  CGAL::Polygon_mesh_processing::compute_vertex_normals(mesh, vnormals,
+    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points()).kernel(K()));
 
   CGAL::Polygon_mesh_processing::compute_normals(mesh, vnormals, fnormals);
-  CGAL::Polygon_mesh_processing::compute_normals(mesh, vnormals, fnormals, mesh.points());
-  CGAL::Polygon_mesh_processing::compute_normals(mesh, vnormals, fnormals, mesh.points(), K());
+  CGAL::Polygon_mesh_processing::compute_normals(mesh, vnormals, fnormals,
+    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points()));
+  CGAL::Polygon_mesh_processing::compute_normals(mesh, vnormals, fnormals,
+    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points()).kernel(K()));
 
   BOOST_FOREACH(face_descriptor fd , faces(mesh)){
     std::cout << fnormals[fd] << std::endl;

@@ -115,7 +115,8 @@ bool is_outward_oriented(const PolygonMesh& pmesh
     = std::min_element(vbegin, vend, less_xyz);
 
   const typename Kernel::Vector_3&
-    normal_v_min = compute_vertex_normal(*v_min, pmesh, vpmap, k);
+    normal_v_min = compute_vertex_normal(*v_min, pmesh,
+      CGAL::Polygon_mesh_processing::parameters::vertex_point_map(vpmap).kernel(k));
 
   return normal_v_min[0] < 0 || (
             normal_v_min[0] == 0 && (
