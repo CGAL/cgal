@@ -55,7 +55,7 @@ namespace Polygon_mesh_processing {
 
   @return pair of `faces_out` and `vertices_out`
 
-  \todo code: missing VertexPointMap
+  \todo code : get the property map type, from NamedParameters
   \todo code: in refine_impl, is density_control_factor used? it seems that scale_attribute
                is filled with zeros
   @todo current algorithm iterates 10 times at most, since (I guess) there is no termination proof.
@@ -75,7 +75,12 @@ namespace Polygon_mesh_processing {
     using boost::choose_param;
     using boost::get_param;
 
-    internal::Refine_Polyhedron_3<PolygonMesh> refine_functor(pmesh);
+    //temporary typedef
+    typedef typename boost::property_map<PolygonMesh,
+      boost::vertex_point_t>::type Vertex_point_map;
+
+    internal::Refine_Polyhedron_3<PolygonMesh, Vertex_point_map> refine_functor(pmesh,
+      choose_param(get_param(np, vertex_point_map), get(CGAL::vertex_point, pmesh)));
     refine_functor.refine(faces,
       faces_out,
       vertices_out,

@@ -22,22 +22,20 @@ namespace Polygon_mesh_processing {
 
 namespace internal {
 
-template<class PolygonMesh>
+template<class PolygonMesh, class VertexPointMap>
 class Refine_Polyhedron_3 {
 //// typedefs
-  typedef typename boost::property_map<PolygonMesh,
-                                       boost::vertex_point_t>::type Point_property_map;
-  typedef typename boost::property_traits<Point_property_map>::value_type Point_3;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef typename boost::property_traits<VertexPointMap>::value_type     Point_3;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor      face_descriptor;
 
-  typedef Halfedge_around_face_circulator<PolygonMesh>   Halfedge_around_facet_circulator;
+  typedef Halfedge_around_face_circulator<PolygonMesh>    Halfedge_around_facet_circulator;
   typedef Halfedge_around_target_circulator<PolygonMesh>  Halfedge_around_vertex_circulator;
 
 private:
   PolygonMesh& pmesh;
-  Point_property_map ppmap;
+  VertexPointMap vpmap;
   
   bool flippable(halfedge_descriptor h) {
     // this check is added so that edge flip does not break manifoldness
@@ -50,8 +48,8 @@ private:
     } while(++v_cir != v_end);
     
     // also eliminate collinear triangle generation
-    if( CGAL::collinear(ppmap[v_tip_0], ppmap[v_tip_1], ppmap[target(h, pmesh)]) ||
-        CGAL::collinear(ppmap[v_tip_0], ppmap[v_tip_1], ppmap[target(opposite(h, pmesh),pmesh)]) ) {
+    if( CGAL::collinear(vpmap[v_tip_0], vpmap[v_tip_1], vpmap[target(h, pmesh)]) ||
+        CGAL::collinear(vpmap[v_tip_0], vpmap[v_tip_1], vpmap[target(opposite(h, pmesh),pmesh)]) ) {
       return false;
     }
 
@@ -60,10 +58,10 @@ private:
 
   bool relax(halfedge_descriptor h)
   {
-    const Point_3& p = ppmap[target(h,pmesh)];
-    const Point_3& q = ppmap[target(opposite(h,pmesh),pmesh)];
-    const Point_3& r = ppmap[target(next(h,pmesh),pmesh)];
-    const Point_3& s = ppmap[target(next(opposite(h,pmesh),pmesh),pmesh)];
+    const Point_3& p = vpmap[target(h,pmesh)];
+    const Point_3& q = vpmap[target(opposite(h,pmesh),pmesh)];
+    const Point_3& r = vpmap[target(next(h,pmesh),pmesh)];
+    const Point_3& s = vpmap[target(next(opposite(h,pmesh),pmesh),pmesh)];
     if( (CGAL::ON_UNBOUNDED_SIDE  != CGAL::side_of_bounded_sphere(p,q,r,s)) ||
         (CGAL::ON_UNBOUNDED_SIDE  != CGAL::side_of_bounded_sphere(p,q,s,r)) )
     {
@@ -94,11 +92,11 @@ private:
       vertex_descriptor vi = target(halfedge(fd,pmesh),pmesh);
       vertex_descriptor vj = target(next(halfedge(fd,pmesh),pmesh),pmesh);
       vertex_descriptor vk = target(prev(halfedge(fd,pmesh),pmesh),pmesh);
-      Point_3 c = CGAL::centroid(ppmap[vi], ppmap[vj], ppmap[vk]);
+      Point_3 c = CGAL::centroid(vpmap[vi], vpmap[vj], vpmap[vk]);
       double sac  = (scale_attribute[vi] + scale_attribute[vj] + scale_attribute[vk])/3.0;
-      double dist_c_vi = std::sqrt(CGAL::squared_distance(c,ppmap[vi]));
-      double dist_c_vj = std::sqrt(CGAL::squared_distance(c,ppmap[vj]));
-      double dist_c_vk = std::sqrt(CGAL::squared_distance(c,ppmap[vk]));
+      double dist_c_vi = std::sqrt(CGAL::squared_distance(c,vpmap[vi]));
+      double dist_c_vj = std::sqrt(CGAL::squared_distance(c,vpmap[vj]));
+      double dist_c_vk = std::sqrt(CGAL::squared_distance(c,vpmap[vk]));
       if((alpha * dist_c_vi > sac) &&
          (alpha * dist_c_vj > sac) &&
          (alpha * dist_c_vk > sac) &&
@@ -107,7 +105,7 @@ private:
          (alpha * dist_c_vk > scale_attribute[vk]))
       {
         halfedge_descriptor h = Euler::add_center_vertex(halfedge(fd,pmesh),pmesh);
-        put(ppmap, target(h,pmesh), c);
+        put(vpmap, target(h,pmesh), c);
           scale_attribute[target(h,pmesh)] = sac;
           *vertex_out++ = target(h,pmesh);
 
@@ -188,7 +186,7 @@ private:
                         const std::set<face_descriptor>& interior_map, 
                         bool accept_internal_facets)
   {
-    const Point_3& vp = ppmap[vh]; 
+    const Point_3& vp = vpmap[vh]; 
     Halfedge_around_target_circulator<PolygonMesh> circ(halfedge(vh,pmesh),pmesh), done(circ);
     int deg = 0;
     double sum = 0;
@@ -200,7 +198,7 @@ private:
         { continue; } // which means current edge is an interior edge and should not be included in scale attribute calculation
       }
 
-      const Point_3& vq = ppmap[target(opposite(*circ,pmesh),pmesh)];
+      const Point_3& vq = vpmap[target(opposite(*circ,pmesh),pmesh)];
       sum += std::sqrt(CGAL::squared_distance(vp, vq));
       ++deg;
     } while(++circ != done);
@@ -255,8 +253,10 @@ private:
   }
 
 public:
-  Refine_Polyhedron_3(PolygonMesh& pmesh)
-    : pmesh(pmesh), ppmap(get(vertex_point, pmesh))
+  Refine_Polyhedron_3(PolygonMesh& pmesh
+                    , VertexPointMap vpmap_ = get(CGAL::vertex_point, pmesh))
+    : pmesh(pmesh)
+    , vpmap(vpmap_)
   {}
 
   template<class FaceRange, class FacetOutputIterator, class VertexOutputIterator>
