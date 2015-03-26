@@ -19,8 +19,8 @@
 // Author(s)     : Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez
 //
 
-#ifndef CGAL_EFFICIENT_RANSAC_H
-#define CGAL_EFFICIENT_RANSAC_H
+#ifndef CGAL_SHAPE_DETECTION_3_EFFICIENT_RANSAC_H
+#define CGAL_SHAPE_DETECTION_3_EFFICIENT_RANSAC_H
 
 #include <CGAL/Shape_detection_3/Octree.h>
 #include <CGAL/Shape_detection_3/Shape_base.h>
@@ -852,4 +852,4 @@ in 2007 \cgalCite{Schnabel07}.
 }
 }
 
-#endif
+#endif // CGAL_SHAPE_DETECTION_3_EFFICIENT_RANSAC_H

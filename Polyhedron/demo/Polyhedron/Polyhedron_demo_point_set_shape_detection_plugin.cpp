@@ -9,12 +9,7 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 
-#include <CGAL/Efficient_RANSAC.h>
-#include <CGAL/Shape_detection_3/Plane.h>
-#include <CGAL/Shape_detection_3/Cylinder.h>
-#include <CGAL/Shape_detection_3/Cone.h>
-#include <CGAL/Shape_detection_3/Torus.h>
-#include <CGAL/Shape_detection_3/Sphere.h>
+#include <CGAL/Shape_detection_3.h>
 
 #include <QObject>
 #include <QAction>

@@ -4,7 +4,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Timer.h> 
 
-#include <CGAL/Efficient_RANSAC.h>
+#include <CGAL/Shape_detection_3/Efficient_RANSAC.h>
 
 #include <iostream>
 #include <fstream>
