@@ -95,6 +95,16 @@ CGAL::Eigen_sparse_matrix<double>::EigenType,
 Eigen::COLAMDOrdering<int> >  >
 \endcode
 
+<li> `kernel` the geometric traits instance in which the mesh processing operation should be performed.\n
+\b Type : a Geometric traits class
+\b Default type is
+\code
+typename CGAL::Kernel_traits<
+typename boost::property_traits<
+typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel
+\endcode
+
+
 
 </ul>
 

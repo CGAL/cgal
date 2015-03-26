@@ -25,14 +25,13 @@
 
 namespace CGAL{
 
-//namespace Polygon_mesh_processing{
-
   enum density_control_factor_t     { density_control_factor      };
   enum use_delaunay_triangulation_t { use_delaunay_triangulation  };
   enum fairing_continuity_t         { fairing_continuity };
   enum sparse_linear_solver_t       { sparse_linear_solver };
   enum vertex_point_map_t           { vertex_point_map };
   enum less_halfedge_t              { less_halfedge };
+  enum geom_traits_t                { geom_traits };
 
   //internal
   enum weight_calculator_t          { weight_calculator };
@@ -95,6 +94,7 @@ namespace CGAL{
       return Params(w, *this);
     }
 
+    //overload
     template<typename VPMap>
     pmp_bgl_named_params<VPMap, vertex_point_map_t, self>
     vertex_point_map(const VPMap& vpmap) const
@@ -111,8 +111,17 @@ namespace CGAL{
       return Params(less, *this);
     }
 
+    template<typename K>
+    pmp_bgl_named_params<K, geom_traits_t, self>
+      kernel(const K& k) const
+    {
+      typedef pmp_bgl_named_params<K, geom_traits_t, self> Params;
+      return Params(k, *this);
+    }
+
   };
 
+namespace Polygon_mesh_processing{
 
 namespace parameters{
 
@@ -179,9 +188,17 @@ namespace parameters{
     return Params(less);
   }
 
+  template<typename K>
+  pmp_bgl_named_params<K, geom_traits_t>
+  kernel(const K& k)
+  {
+    typedef pmp_bgl_named_params<K, geom_traits_t> Params;
+    return Params(k);
+  }
+
 
 } //namespace parameters
-//} //namespace Polygon_mesh_processing
+} //namespace Polygon_mesh_processing
 } //namespace CGAL
 
 #endif //CGAL_PMP_BGL_NAMED_FUNCTION_PARAMS_H
