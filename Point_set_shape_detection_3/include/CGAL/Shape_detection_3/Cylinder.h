@@ -42,28 +42,28 @@ namespace CGAL {
      \brief Cylinder implements Shape_base. The cylinder is represented
      by the axis, i.e. a point and direction, and the radius. The cylinder is
      unbounded, thus caps are not modelled.
-     \tparam ERTraits a model of `EfficientRANSACTraits`
+     \tparam Traits a model of `EfficientRANSACTraits`
      \ingroup PkgPointSetShapeDetection3Shapes
      */
-  template <class ERTraits>
-  class Cylinder : public Shape_base<ERTraits> {
+  template <class Traits>
+  class Cylinder : public Shape_base<Traits> {
   public:
     /// \cond SKIP_IN_MANUAL
-    typedef typename ERTraits::Input_iterator Input_iterator;
+    typedef typename Traits::Input_iterator Input_iterator;
      ///< random access iterator for input data.
-    typedef typename ERTraits::Point_pmap Point_pmap;
+    typedef typename Traits::Point_pmap Point_pmap;
      ///< property map to access the location of an input point.
-    typedef typename ERTraits::Normal_pmap Normal_pmap;
+    typedef typename Traits::Normal_pmap Normal_pmap;
      ///< property map to access the unoriented normal of an input point.
-    typedef typename ERTraits::Geom_traits::Vector_3 Vector; ///< vector type.
-    typedef typename ERTraits::Geom_traits::Point_3 Point; ///< point type.
-    typedef typename ERTraits::Geom_traits::FT FT; ///< number type.
+    typedef typename Traits::Geom_traits::Vector_3 Vector; ///< vector type.
+    typedef typename Traits::Geom_traits::Point_3 Point; ///< point type.
+    typedef typename Traits::Geom_traits::FT FT; ///< number type.
     /// \endcond
 
-    typedef typename ERTraits::Geom_traits::Line_3 Line; ///< line type.
+    typedef typename Traits::Geom_traits::Line_3 Line; ///< line type.
 
   public:
-    Cylinder() : Shape_base<ERTraits>() {}
+    Cylinder() : Shape_base<Traits>() {}
 
     /*!
       Axis of the cylinder.

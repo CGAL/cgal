@@ -39,7 +39,7 @@ extern int scoreTime;
 namespace CGAL {
   namespace Shape_detection_3 {
   
-    template<class ERTraits> 
+    template<class Traits> 
     class Efficient_RANSAC;
     
   namespace internal {

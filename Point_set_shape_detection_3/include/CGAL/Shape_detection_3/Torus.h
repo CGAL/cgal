@@ -36,28 +36,28 @@ namespace CGAL {
       \ingroup PkgPointSetShapeDetection3Shapes
       \brief Torus implements Shape_base. The torus is represented by the
       symmetry axis, its center on the axis and the major and minor radii.
-      \tparam ERTraits a model of `EfficientRANSACTraits`
+      \tparam Traits a model of `EfficientRANSACTraits`
      */
-  template <class ERTraits>
-  class Torus : public Shape_base<ERTraits> {
+  template <class Traits>
+  class Torus : public Shape_base<Traits> {
   public:
     /// \cond SKIP_IN_MANUAL
-    typedef typename ERTraits::Input_iterator Input_iterator;
+    typedef typename Traits::Input_iterator Input_iterator;
      ///< random access iterator for input data.
-    typedef typename ERTraits::Point_pmap Point_pmap;
+    typedef typename Traits::Point_pmap Point_pmap;
      ///< property map to access the location of an input point.
-    typedef typename ERTraits::Normal_pmap Normal_pmap;
+    typedef typename Traits::Normal_pmap Normal_pmap;
      ///< property map to access the unoriented normal of an input point.
-    typedef typename ERTraits::Geom_traits::FT FT; ///< number type.
-    typedef typename ERTraits::Geom_traits::Point_3 Point; ///< point type.
-    typedef typename ERTraits::Geom_traits::Vector_3 Vector; ///< vector type.
-    typedef typename ERTraits::Geom_traits::Point_2 Point_2;
+    typedef typename Traits::Geom_traits::FT FT; ///< number type.
+    typedef typename Traits::Geom_traits::Point_3 Point; ///< point type.
+    typedef typename Traits::Geom_traits::Vector_3 Vector; ///< vector type.
+    typedef typename Traits::Geom_traits::Point_2 Point_2;
      ///< 2D point type used during construction.
-    typedef typename ERTraits::Geom_traits::Circle_2 Circle;
+    typedef typename Traits::Geom_traits::Circle_2 Circle;
      ///< cricle type used during construction.
     /// \endcond
 
-    Torus() : Shape_base<ERTraits>() {}
+    Torus() : Shape_base<Traits>() {}
       
     /*!
       Direction of symmetry axis.

@@ -33,30 +33,30 @@ namespace CGAL {
     /*!
      \ingroup PkgPointSetShapeDetection3Shapes
      \brief Sphere implements Shape_base. The sphere is represented by its center and the radius.
-     \tparam ERTraits a model of `EfficientRANSACTraits`
+     \tparam Traits a model of `EfficientRANSACTraits`
      */
-  template <class ERTraits>
-  class Sphere : public Shape_base<ERTraits> {
+  template <class Traits>
+  class Sphere : public Shape_base<Traits> {
   public:    
     /// \cond SKIP_IN_MANUAL
-    typedef typename ERTraits::Input_iterator Input_iterator;
+    typedef typename Traits::Input_iterator Input_iterator;
       ///< random access iterator for input data.
-    typedef typename ERTraits::Point_pmap Point_pmap;
+    typedef typename Traits::Point_pmap Point_pmap;
       ///< property map to access the location of an input point.
-    typedef typename ERTraits::Normal_pmap Normal_pmap;
+    typedef typename Traits::Normal_pmap Normal_pmap;
       ///< property map to access the unoriented normal of an input point.
-    typedef typename ERTraits::Geom_traits::Vector_3 Vector;
+    typedef typename Traits::Geom_traits::Vector_3 Vector;
       ///< vector type.
-    typedef typename ERTraits::Geom_traits::Sphere_3 Sphere_3;
+    typedef typename Traits::Geom_traits::Sphere_3 Sphere_3;
       ///< sphere type.
-    typedef typename ERTraits::Geom_traits::FT FT;
+    typedef typename Traits::Geom_traits::FT FT;
       ///< number type.
-    typedef typename ERTraits::Geom_traits::Point_3 Point;
+    typedef typename Traits::Geom_traits::Point_3 Point;
       ///< point type.
     /// \endcond
 
   public:
-    Sphere() : Shape_base<ERTraits>() {}
+    Sphere() : Shape_base<Traits>() {}
 
     /*!
       Conversion operator to convert to common Sphere_3 type.

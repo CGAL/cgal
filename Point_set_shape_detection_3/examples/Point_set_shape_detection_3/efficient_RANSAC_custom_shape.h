@@ -7,14 +7,14 @@
 My_Plane derives from Shape_base. The plane is represented by
 its normal vector and distance to the origin.
 */
-template <class ERTraits>
-class My_Plane : public CGAL::Shape_detection_3::Shape_base<ERTraits> {
+template <class Traits>
+class My_Plane : public CGAL::Shape_detection_3::Shape_base<Traits> {
 public:
-  typedef typename ERTraits::Geom_traits::FT FT;///< number type.
-  typedef typename ERTraits::Geom_traits::Point_3 Point;///< point type.
+  typedef typename Traits::Geom_traits::FT FT;///< number type.
+  typedef typename Traits::Geom_traits::Point_3 Point;///< point type.
 
 public:
-  My_Plane() : Shape_base<ERTraits>() {}
+  My_Plane() : Shape_base<Traits>() {}
 
   //  Computes squared Euclidean distance from query point to the shape.
   virtual FT squared_distance(const Point &p) const {

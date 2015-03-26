@@ -60,10 +60,10 @@ this classes enables to detect subset of connected points lying on the surface o
 Each input point is assigned to either none or at most one detected primitive
 shape. The implementation follows \cgalCite{Schnabel07}.
 
-\tparam ERTraits a model of `EfficientRANSACTraits`
+\tparam Traits a model of `EfficientRANSACTraits`
 
 */
-  template <class ERTraits>
+  template <class Traits>
   class Efficient_RANSAC {
   public:
 
@@ -88,16 +88,16 @@ shape. The implementation follows \cgalCite{Schnabel07}.
 
     /// \name Types 
     /// @{    
-    typedef typename ERTraits::Input_iterator Input_iterator;
+    typedef typename Traits::Input_iterator Input_iterator;
     ///< random access iterator for input data.
-    typedef typename ERTraits::Geom_traits::FT FT; ///< number type.
-    typedef typename ERTraits::Geom_traits::Point_3 Point; ///< point type.
-    typedef typename ERTraits::Geom_traits::Vector_3 Vector; ///< vector type.
-    typedef typename ERTraits::Point_pmap Point_pmap;
+    typedef typename Traits::Geom_traits::FT FT; ///< number type.
+    typedef typename Traits::Geom_traits::Point_3 Point; ///< point type.
+    typedef typename Traits::Geom_traits::Vector_3 Vector; ///< vector type.
+    typedef typename Traits::Point_pmap Point_pmap;
     ///< property map to access the location of an input point.
-    typedef typename ERTraits::Normal_pmap Normal_pmap;
+    typedef typename Traits::Normal_pmap Normal_pmap;
     ///< property map to access the unoriented normal of an input point
-    typedef Shape_base<ERTraits> Shape; ///< shape type.
+    typedef Shape_base<Traits> Shape; ///< shape type.
 
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type Shape_range;
@@ -141,9 +141,9 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     /// @}
 
   private:
-    typedef internal::Octree<internal::DirectPointAccessor<ERTraits> >
+    typedef internal::Octree<internal::DirectPointAccessor<Traits> >
       Direct_octree;
-    typedef internal::Octree<internal::IndexedPointAccessor<ERTraits> >
+    typedef internal::Octree<internal::IndexedPointAccessor<Traits> >
       Indexed_octree;
     //--------------------------------------------typedef
 
