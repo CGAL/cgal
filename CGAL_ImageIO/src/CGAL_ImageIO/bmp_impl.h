@@ -27,9 +27,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <CGAL/bmptypes.h>
-#include <CGAL/bmpendian.h>
-#include <CGAL/bmpread.h>
+#include "bmptypes.h"
+#include "bmpendian.h"
+#include "bmpread.h"
 
 
 

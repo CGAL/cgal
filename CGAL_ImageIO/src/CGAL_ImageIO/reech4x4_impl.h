@@ -51,7 +51,7 @@
  */
 
 #include <stdio.h>
-#include <CGAL/typedefs.h>
+#include "typedefs.h"
 
 #define _CONVERTR_(R) ( R )
 #define _CONVERTI_(R) ( (R) >= 0.0 ? ((int)((R)+0.5)) : ((int)((R)-0.5)) )

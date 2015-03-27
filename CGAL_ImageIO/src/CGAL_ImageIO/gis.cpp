@@ -21,7 +21,7 @@
 
 #ifndef CGAL_HEADER_ONLY
 
-#include <CGAL/gis.h>
-#include <CGAL/gis_impl.h>
+#include "gis.h"
+#include "gis_impl.h"
 
 #endif // CGAL_HEADER_ONLY

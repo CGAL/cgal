@@ -21,7 +21,7 @@
 
 #ifndef CGAL_HEADER_ONLY
 
-#include <CGAL/gif.h>
-#include <CGAL/gif_impl.h>
+#include "gif.h"
+#include "gif_impl.h"
 
 #endif // CGAL_HEADER_ONLY

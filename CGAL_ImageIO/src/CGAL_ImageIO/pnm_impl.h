@@ -32,7 +32,7 @@
 #include <string.h>
 #include <sstream>
 
-#include <CGAL/fgetns.h>
+#include "fgetns.h"
 
 
 

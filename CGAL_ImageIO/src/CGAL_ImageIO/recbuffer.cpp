@@ -21,7 +21,7 @@
 
 #ifndef CGAL_HEADER_ONLY
 
-#include <CGAL/recbuffer.h>
-#include <CGAL/recbuffer_impl.h>
+#include "recbuffer.h"
+#include "recbuffer_impl.h"
 
 #endif // CGAL_HEADER_ONLY

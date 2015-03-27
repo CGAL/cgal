@@ -9,8 +9,8 @@ else()
   cmake_minimum_required(VERSION 2.6.2)
 endif()
 
-add_definitions(-DCGAL_HEADER_ONLY)
-message("CGAL WITH HEADER ONLY")
+# add_definitions(-DCGAL_HEADER_ONLY)
+# message("CGAL WITH HEADER ONLY")
 # message("CGAL with libraries")
 
 # option for branch build

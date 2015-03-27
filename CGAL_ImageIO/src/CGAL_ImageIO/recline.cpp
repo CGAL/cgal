@@ -21,7 +21,7 @@
 
 #ifndef CGAL_HEADER_ONLY
 
-#include <CGAL/recline.h>
-#include <CGAL/recline_impl.h>
+#include "recline.h"
+#include "recline_impl.h"
 
 #endif // CGAL_HEADER_ONLY
