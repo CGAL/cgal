@@ -204,7 +204,7 @@ degrading the quality of the triangulation. As a low quality
 triangulation hinders the finite element discretization, we perform
 local remeshing to remove these degeneracies. After each contraction
 iteration we perform two local remeshing operations. We collapse edges
-shorter than `min_edge_length()` and we split edges whose opposite
+longer than `min_edge_length()` and we split edges whose opposite
 angle is greater than `max_triangle_angle()`. By default `min_edge_length()` is
 set to 0.002 times the length of the diagonal of the bounding box of
 the original mesh while `max_triangle_angle()` is \f$ 110 ^{\circ} \f$.

@@ -33,15 +33,15 @@ namespace CGAL{
 
 #if defined(DOXYGEN_RUNNING) || defined(CGAL_EIGEN3_ENABLED)
 /// \ingroup PkgMeanCurvatureSkeleton3
-/// @brief extracts a medially centered curve skeleton for the polygonal mesh `tmesh`.
+/// @brief extracts a medially centered curve skeleton for the triangle mesh `tmesh`.
 /// This function uses the class CGAL::Mean_curvature_flow_skeletonization with the default parameters.
 /// This function is available if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined.
-/// @pre `tmesh` is a triangulated polygonal mesh without borders and using exactly one connected component.
+/// @pre `tmesh` is a triangle mesh without borders and having exactly one connected component.
 /// @pre The specialization `boost::property_map<TriangleMesh, CGAL::vertex_point_t>::%type` and `get(vertex_point, tmesh)` are defined.
 /// @pre The value type of `boost::property_map<TriangleMesh, CGAL::vertex_point_t>::%type` is a point type from a \cgal Kernel.
 ///
 /// @tparam TriangleMesh
-///         a model of `HalfedgeGraph`
+///         a model of `FaceListGraph`
 ///
 /// @param tmesh
 ///        input mesh

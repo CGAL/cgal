@@ -149,13 +149,11 @@ enum Degeneracy_algorithm_tag
 /// The algorithm used takes as input a triangulated surface mesh and iteratively contracts the surface mesh
 /// following the mean curvature flow \cgalCite{tagliasacchi2012mean}. The intermediate contracted surface
 /// mesh is called the <em>meso-skeleton</em>.
-/// Between each iteration, the meso-skeleton is locally remeshed using angle split and edge contraction.
+/// After each iteration, the meso-skeleton is locally remeshed using angle split and edge contraction.
 /// The process ends when the modification of the meso-skeleton between two iterations is small.
 ///
-/// \todo model of HalfedgeGraph -> FaceListGraph
-///
 /// @tparam TriangleMesh
-///         a model of `HalfedgeGraph`
+///         a model of `FaceListGraph`
 ///
 /// @tparam Traits
 ///         a model of `MeanCurvatureSkeletonizationTraits`<br>
@@ -454,7 +452,7 @@ public:
   }
 
   /// During the local remeshing step, an edge will be split
-  /// if it is shorter than `min_edge_length()`.
+  /// if it is longer than `min_edge_length()`.
   double min_edge_length()
   {
     return m_min_edge_length;
@@ -481,7 +479,7 @@ public:
   }
   
   /// The convergence is considered to be reached if the variation of the area of
-  /// the meso-skeleton between two iterations is smaller than
+  /// the meso-skeleton after one iteration is smaller than
   /// `area_variation_factor()*original_area` where `original_area` is the area of the input
   /// triangle mesh.
   double area_variation_factor()
@@ -833,7 +831,7 @@ public:
 
   /**
    * Iteratively calls the sequence `contract_geometry()`,  `collapse_edges()`, `split_faces()`, and `detect_degeneracies()`
-   * until the change of surface area during one iteration is less than `area_variation_factor()` * original surface area
+   * until the change of surface area of the meso-skeleton after one iteration is less than `area_variation_factor()` * original surface area
    * or if the maximum number of iterations has been reached.
    */
   void contract_until_convergence()
