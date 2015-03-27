@@ -56,7 +56,7 @@ namespace CGAL {
 \brief A shape detection algorithm using a RANSAC method.
 
 Given a point set in 3D space with unoriented normals, sampled on surfaces,
-this classes enables to detect subset of connected points lying on the surface of primitive shapes.
+this classes enables to detect subsets of connected points lying on the surface of primitive shapes.
 Each input point is assigned to either none or at most one detected primitive
 shape. The implementation follows \cgalCite{Schnabel07}.
 
@@ -179,8 +179,8 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     }
 
     /*!
-      Sets the input data by providing an iterator range modeling the concept
-      `boost:RandomAccessRange`. The range of input points need to stay valid
+      Sets the input data by providing an iterator range modeling the
+      `boost:RandomAccessRange` concept. The range of input points need to stay valid
       until the detection has been performed and no longer access to the
       results is required. The data in the input range is reordered during
       `detect()` and `build_octrees()`. `clear()` is first called by this function.
@@ -292,7 +292,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     }
 
     /*!
-      Frees memory allocated for the internal search structures but keep the detected shapes.
+      Frees memory allocated for the internal search structures but keeps the detected shapes.
       It invalidates the range retrieved using `unassigned_points()`.
      */ 
     void clear_octrees() {
@@ -318,7 +318,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
 
     /*!
       Calls `clear_shape_factories()`, `clear_octrees()` and removes all detected shapes.
-      All internal structures are cleaned, including any formerly detected shapes.
+      All internal structures are cleaned, including formerly detected shapes.
       Thus iterators and ranges retrieved through `shapes()` and `unassigned_points()` are invalidated.
     */ 
     void clear() {

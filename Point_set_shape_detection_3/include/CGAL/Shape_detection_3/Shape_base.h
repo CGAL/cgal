@@ -51,7 +51,7 @@ namespace CGAL {
     /*!
      \ingroup PkgPointSetShapeDetection3Shapes
      \brief Base class for shape types defining an interface to construct a
-            shape from a set of points and to calculate the point distance and normal
+            shape from a set of points and to compute the point distance and normal
             deviation from the surface normal. It is used during detection to
             identify the inliers from the input data and to extract the largest
             cluster of spatially neighbored points.
@@ -122,8 +122,8 @@ namespace CGAL {
     virtual void create_shape(const std::vector<std::size_t> &indices) = 0;
     
     /*!
-      Determines the largest cluster of inliers points. A point belongs to a cluster
-      if there is a point in the cluster closer than `cluster_epsilon distance`.
+      Determines the largest cluster of inlier points. A point belongs to a cluster
+      if there is a point in the cluster closer than `cluster_epsilon` distance.
      */
     std::size_t connected_component(std::vector<std::size_t> &indices, FT cluster_epsilon) {
       if (indices.size() == 0)
@@ -372,7 +372,7 @@ namespace CGAL {
                                std::vector<FT> &angles) const = 0;
 
     /*!
-      Returns minimal number of samples points required for construction.
+      Returns minimal number of sample points required for construction.
      */
     virtual std::size_t minimum_sample_size() const = 0;
 
