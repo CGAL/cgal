@@ -9,8 +9,8 @@
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Xiang Gao, Sébastien Loriot and Andrea Tagliasacchi}
 \cgalPkgDesc{This package provides a (1D) curve skeleton extraction algorithm for a triangulated polygonal mesh without borders based on the mean curvature flow.
-        The particularity of this skeleton is that it has the same topology
-        as the input mesh. For each skeleton vertex one can obtain its location and its corresponding vertices from the input mesh.
+        The particularity of this skeleton is that it capture the topology of the input.
+        For each skeleton vertex one can obtain its location and its corresponding vertices from the input mesh.
         The code is generic and works with any model of the `HalfedgeGraph`
         concept.
 }

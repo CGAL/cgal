@@ -16,9 +16,9 @@ Curve skeleton of a horse model.
 
 Skeletons are effective shape abstractions used in segmentation, shape
 matching, reconstruction, virtual navigation, etc. As the name
-implies, a curve skeleton is a graph of curvilinear structures (1D),
-that is it is not a medial axis that for 3D geometry is composed of surfaces (2D). As
-illustrated in \cgalFigureRef{Main_image_suggestion}, the curve
+implies, a curve skeleton is a graph of curvilinear structures (1D).
+It is not a medial axis that for a 3D geometry is composed of surfaces (2D).
+As illustrated in \cgalFigureRef{Main_image_suggestion}, the curve
 skeleton of a shape captures its essential topology. In this package,
 we implement the <i>Mean Curvature Skeleton</i> algorithm described in
 \cgalCite{tagliasacchi2012mean} that extracts a curve skeleton from a
@@ -33,7 +33,7 @@ The input is a triangulated surface mesh, model of the `HalfedgeGraph`
 concept that has no boundary and that has only one connected component.
 The skeleton is provided as a graph of type
 <a href="http://www.boost.org/doc/libs/release/libs/graph/doc/adjacency_list.html"><code>boost::adjacency_list</code></a>.
-Each vertex of a the skeleton is associated to a 3D location point and to the
+Each vertex of the skeleton is associated to a 3D location point and to the
 set of input vertices that contracted to that skeleton vertex.
 Note that due to the construction process of the skeleton, a
 skeleton vertex might have no corresponding input vertex.
@@ -90,7 +90,7 @@ structure.
 
 In this example, we show how to use the API of the class
 `CGAL::Mean_curvature_flow_skeletonization`.
-
+\todo use Surface_mesh in the following example
 \cgalExample{Mean_curvature_skeleton/MCF_Skeleton_example.cpp}
 
 
@@ -124,7 +124,7 @@ Different resolutions of the model obtained by loop subdivision are used.
 As can be seen on \cgalFigureRef{MCFBenchComp}, the more sampled is the
 surface, the better the skeleton is inside the model.
 
-
+\todo depending on the screen the transparency is not seen
 \cgalFigureBegin{MCFBenchComp, comparison.png}
 Skeleton of the head of the elephant model.
 Left: Using the original mesh (2,775 vertices);
@@ -145,6 +145,8 @@ Number of vertices  | Runtime in ms |
 11,112              |    3,595      |
 44,460              |   14,841      |
 </center>
+
+\todo add Surface_mesh in the benchmark and make it more complete
 
 \if SKIP_FOR_SBUMISSION
 

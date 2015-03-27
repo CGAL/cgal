@@ -143,10 +143,10 @@ enum Degeneracy_algorithm_tag
 /// @endcond
 
 /// \ingroup PkgMeanCurvatureSkeleton3
-/// Class providing the functionalities for extracting the mean curvature
+/// Function object that enables to extract the mean curvature
 /// flow skeleton of a triangulated surface mesh.
 ///
-/// This class takes as input a triangulated surface mesh and iteratively contracts the surface mesh
+/// The algorithm used takes as input a triangulated surface mesh and iteratively contracts the surface mesh
 /// following the mean curvature flow \cgalCite{tagliasacchi2012mean}. The intermediate contracted surface
 /// mesh is called the <em>meso-skeleton</em>.
 /// Between each iteration, the meso-skeleton is locally remeshed using angle split and edge contraction.
@@ -517,6 +517,8 @@ public:
   /// If `true`, the result skeleton is medially centered (an additional energy
   /// is used during the contraction using the Voronoi poles of the input triangulated mesh
   /// as attractors).
+  /// \todo mentionning the Voronoi pole is confusing here. Either refer to the ref manual
+  ///       or add something in the documentation of the class
   bool is_medially_centered()
   {
     return m_is_medially_centered;
@@ -659,7 +661,7 @@ public:
   /// @{
 
   /**
-   * Run a contraction step following the mean curvature flow.
+   * Run one contraction step following the mean curvature flow.
    */
   void contract_geometry()
   {
@@ -800,7 +802,7 @@ public:
 #endif
 
   /**
-   * Fixes the position of degenerate vertices and returns the number of newly fixed vertices.
+   * Prevents degenerate vertices to move during the following contraction steps and returns the number of newly fixed vertices.
    * \todo int -> size_t
    */
   int detect_degeneracies()
@@ -815,7 +817,7 @@ public:
     }
   }
 
-#ifndef DOXYGEN_RUNNING
+  /// Performs subsequent calls to `contract_geometry()`, `collapse_edges()`, `split_faces()` and `detect_degeneracies()`
   void contract()
   {
     contract_geometry();
@@ -827,7 +829,7 @@ public:
     MCFSKEL_INFO(double area = internal::get_surface_area(m_tmesh, m_tmesh_point_pmap);)
     MCFSKEL_INFO(std::cout << "area " << area << "\n";)
   }
-#endif
+
 
   /**
    * Iteratively calls the sequence `contract_geometry()`,  `collapse_edges()`, `split_faces()`, and `detect_degeneracies()`
@@ -873,7 +875,7 @@ public:
    *         an instantiation of <A href="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</a>
    *         as a data structure for the skeleton curve.
    * @param skeleton
-   *        graph that will contain the skeleton of `tmesh`
+   *        graph that will contain the skeleton of `tmesh`. It should be empty before passed to the function.
    */
   void convert_to_skeleton(Skeleton& skeleton)
   {
