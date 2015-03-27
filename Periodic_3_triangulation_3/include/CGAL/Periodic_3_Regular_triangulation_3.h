@@ -8,6 +8,8 @@
 #include <CGAL/Periodic_3_regular_triangulation_remove_traits_3.h>
 #include <CGAL/Regular_triangulation_3.h>
 
+#include <boost/unordered_set.hpp>
+
 
 namespace CGAL
 {
@@ -114,7 +116,11 @@ using Base::periodic_point;
 using Base::segment;
 
 private:
-  std::set<Cell_handle> cells_with_too_big_orthoball;
+  struct Cell_handle_hash : public std::unary_function<Cell_handle, std::size_t>
+  {
+    std::size_t operator()(const Cell_handle& ch) const { return boost::hash<typename Cell_handle::pointer>()(&*ch); }
+  };
+  boost::unordered_set<Cell_handle, Cell_handle_hash> cells_with_too_big_orthoball;
 
   class Cover_manager
   {
@@ -181,7 +187,7 @@ public:
   {
     for (; begin != end; ++begin)
     {
-      typename std::set<Cell_handle>::iterator iter = cells_with_too_big_orthoball.find(*begin);
+      typename boost::unordered_set<Cell_handle>::iterator iter = cells_with_too_big_orthoball.find(*begin);
       if (iter != cells_with_too_big_orthoball.end())
       {
         cells_with_too_big_orthoball.erase(iter);
@@ -228,19 +234,22 @@ public:
 
   bool update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells)
   {
-    if (is_1_cover())
+    bool result = false;
+    FT threshold = FT(1)/FT(64) * (domain().xmax() - domain().xmin());
+
+    if (squared_orthoball_radius(new_ch) >= threshold)
     {
-      tds().delete_cells(new_cells.begin(), new_cells.end());
-      this->convert_to_27_sheeted_covering();
-      return true;
+      if (is_1_cover())
+      {
+        tds().delete_cells(new_cells.begin(), new_cells.end());
+        this->convert_to_27_sheeted_covering();
+        result = true;
+      }
+      else
+        cells_with_too_big_orthoball.insert(new_ch);
     }
 
-    FT threshold = FT(1)/FT(64) * (domain().xmax() - domain().xmin());
-    if (squared_orthoball_radius(new_ch) < threshold)
-    {
-      cells_with_too_big_orthoball.insert(new_ch);
-    }
-    return false;
+    return result;
   }
 
   virtual void update_cover_data_after_converting_to_27_sheeted_covering ()
