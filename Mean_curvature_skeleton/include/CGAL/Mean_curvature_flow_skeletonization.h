@@ -159,13 +159,13 @@ enum Degeneracy_algorithm_tag
 ///
 /// @tparam Traits
 ///         a model of `MeanCurvatureSkeletonizationTraits`<br>
-///         <b>%Default:</b> `Kernel_traits<boost::property_traits<boost::property_map<TriangleMesh, boost::vertex_point_t>::%type>::%value_type>::%Kernel`
+///         <b>%Default:</b> `Kernel_traits<boost::property_traits<boost::property_map<TriangleMesh, CGAL::vertex_point_t>::%type>::%value_type>::%Kernel`
 ///
 /// @tparam VertexPointMap
 ///         a model of `ReadWritePropertyMap`
 ///         with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
 ///         `Traits::Point_3` as value type.<br>
-///         <b>%Default:</b> `boost::property_map<TriangleMesh, boost::vertex_point_t>::%const_type`.
+///         <b>%Default:</b> `boost::property_map<TriangleMesh, CGAL::vertex_point_t>::%const_type`.
 /// @tparam SparseLinearAlgebraTraits_d
 ///         a model of `SparseLinearAlgebraTraitsWithFactor_d`.
 ///         If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
@@ -207,12 +207,12 @@ public:
   #ifndef DOXYGEN_RUNNING
   typedef typename Default::Get<
     VertexPointMap_,
-    typename boost::property_map<TriangleMesh, boost::vertex_point_t>::const_type
+    typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type
   >::type VertexPointMap; 
 
   typedef typename Default::Get<
     Traits_,
-    typename Kernel_traits<typename boost::property_traits<typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type>::value_type>::Kernel
+    typename Kernel_traits<typename boost::property_traits<typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel
   >::type Traits;
   #endif
 
@@ -236,7 +236,7 @@ public:
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  Input_vertex_descriptor;
   typedef CGAL::Polyhedron_3<Traits,internal::Skel_polyhedron_items_3<Input_vertex_descriptor> > mTriangleMesh;
-  typedef typename boost::property_map<mTriangleMesh, boost::vertex_point_t>::type mVertexPointMap;
+  typedef typename boost::property_map<mTriangleMesh, CGAL::vertex_point_t>::type mVertexPointMap;
   typedef typename boost::property_map<mTriangleMesh, boost::vertex_index_t>::type VertexIndexMap;
   typedef typename boost::property_map<mTriangleMesh, boost::halfedge_index_t>::type HalfedgeIndexMap;
 
@@ -424,7 +424,7 @@ public:
    * \todo code: use the traits
    */
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
-                                      VertexPointMap vertex_point_map = get(boost::vertex_point, tmesh),
+                                      VertexPointMap vertex_point_map = get(CGAL::vertex_point, tmesh),
                                       Traits traits = Traits());
 
   #else
