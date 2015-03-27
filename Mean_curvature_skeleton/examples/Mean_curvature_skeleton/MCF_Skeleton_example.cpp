@@ -52,22 +52,21 @@ int main(int argc, char* argv[])
   std::cout << "Number of edges of the skelton: " << boost::num_edges(skeleton) << "\n";
 
   // Output all the edges of the skeleton.
+  std::ofstream output("/tmp/skel.cgal");
   BOOST_FOREACH(Skeleton_edge e, edges(skeleton))
   {
     const Point& s = skeleton[source(e, skeleton)].point;
     const Point& t = skeleton[target(e, skeleton)].point;
-    std::cout << s << " " << t << "\n";
+    output << "2 "<< s << " " << t << "\n";
   }
+  output.close();
 
   // Output skeleton points and the corresponding surface points
+  output.open("/tmp/correspondance.cgal");
   BOOST_FOREACH(Skeleton_vertex v, vertices(skeleton))
-  {
-    std::cout << skeleton[v].point << ": ";
-
     BOOST_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
-      std::cout << get(CGAL::vertex_point, tmesh, vd)  << " ";
-    std::cout << "\n";
-  }
+      output << "2 " << skeleton[v].point << "  " << get(CGAL::vertex_point, tmesh, vd)  << "\n";
+
   return 0;
 }
 
