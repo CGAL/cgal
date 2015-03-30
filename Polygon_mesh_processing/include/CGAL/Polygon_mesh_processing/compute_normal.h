@@ -58,7 +58,12 @@ namespace Polygon_mesh_processing{
 <ul>
 <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
 <li>\b kernel a geometric traits class instance
-</ul> 
+</ul>
+*
+* @return the computed normal. The return type is a 3D vector type. It is
+* deduced either from the `kernel` \ref namedparameters,
+* or the geometric traits class deduced from the point property map
+* of `pmesh`.
 */
 template <typename PolygonMesh, typename NamedParameters>
 #ifdef DOXYGEN_RUNNING
@@ -168,6 +173,11 @@ compute_face_normals(const PolygonMesh& pmesh
 <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
 <li>\b kernel a geometric traits class instance
 </ul>
+*
+* @return the computed normal. The return type is a 3D vector type. It is
+* deduced either from the `kernel` \ref namedparameters,
+* or the geometric traits class deduced from the point property map
+* of `pmesh`.
 */
 template<typename PolygonMesh, typename NamedParameters>
 #ifdef DOXYGEN_RUNNING
