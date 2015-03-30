@@ -1,5 +1,5 @@
 /*!
-  \ingroup PkgJet_fitting_3Concepts
+  \ingroup PkgSolverConcepts
   \cgalConcept
 
   The concept `SvdTraits` describes the set of requirements to be 

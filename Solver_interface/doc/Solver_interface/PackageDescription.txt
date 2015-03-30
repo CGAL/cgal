@@ -5,11 +5,6 @@
 ///
 /// We 
 
-/// \defgroup PkgSolverHelper Helper Classes
-/// \ingroup PkgSolver
-
-
-
 
 /*!
 \addtogroup PkgSolver
@@ -33,21 +28,14 @@
 
 - `SparseLinearAlgebraTraits_d`
 - `SparseLinearAlgebraTraitsWithFactor_d`
+- `SvdTraits`
 
+## Classes ##
 
-## %CGAL Classes Adapted for the Graph API ##
-
-Different \cgal types have 
-- \link BGLSMGT  `boost::graph_traits< CGAL::Surface_mesh<P> >` \endlink
-- \link BGLPolyGT  `boost::graph_traits< CGAL::Polyhedron_3<T> >` \endlink
-- \link BGLT2GT `boost::graph_traits< CGAL::Triangulation_2<GT, TDS> >` \endlink
-- \link BGLArgtGT `boost::graph_traits< CGAL::Arrangement_2<T,DC> >` \endlink
-
-
-## Euler Operations ##
-
-- `CGAL::Euler::join_vertex()`
-
+- `Eigen_solver_traits`
+- `Eigen_svd`
+- `Eigen_matrix`
+- `Eigen_vector`
 
 */
 
