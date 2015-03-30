@@ -60,6 +60,7 @@ and gives a list of the parameters that are used in this package.
 - \link stitching_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
+- `CGAL::Polygon_mesh_processing::remove_degenerate_faces()`
 
 ## Normal Computation Functions ##
 - `CGAL::Polygon_mesh_processing::compute_face_normal()`
