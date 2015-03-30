@@ -99,10 +99,15 @@ namespace internal {
     typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh>
       Default_Weight_calculator;
 
-#if defined(CGAL_EIGEN3_ENABLED) && EIGEN_VERSION_AT_LEAST(3,2,0)
+#if defined(CGAL_EIGEN3_ENABLED)
+  #if EIGEN_VERSION_AT_LEAST(3,2,0)
     typedef CGAL::Eigen_solver_traits<Eigen::SparseLU<
       CGAL::Eigen_sparse_matrix<double>::EigenType, Eigen::COLAMDOrdering<int> >  >
       Default_solver;
+  #else
+    typedef bool Default_solver;//compilation should crash
+      //if no solver is provided and Eigen version < 3.2
+  #endif
 #else
     typedef bool Default_solver;//compilation should crash
       //if no solver is provided and Eigen version < 3.2
