@@ -369,24 +369,31 @@ namespace Polygon_mesh_processing{
  *  \tparam EdgeConstraintMap a model of `ReadablePropertyMap` with
         `boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
         `bool` as value type. It should be default-constructible.
-
+ *
  *  \param seed_face a face of `pmesh` from which exploration starts to detect the connected component
            that contains it
  *  \param pmesh the polygon mesh
  *  \param out the output iterator that collects faces from the same connected component as `seed_face`
  *  \param ecmap the property map containing information about edges of `pmesh` being constrained or not.
-                 An additional overload without this parameter is available using a property map where no edge is constrained.
+      If this parameter is omitted,
+      a default property map where no edge is constrained is provided.
  *  \returns the output iterator.
+ *
+ * \todo : add named parameters for ecmap?
  */
 template <typename PolygonMesh
           , typename FaceOutputIterator
           , typename EdgeConstraintMap
           >
 FaceOutputIterator
-connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face,
-                    const PolygonMesh& pmesh
+connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face
+                    , const PolygonMesh& pmesh
                     , FaceOutputIterator out
-                    , EdgeConstraintMap ecmap)
+                    , EdgeConstraintMap ecmap
+#ifdef DOXYGEN_RUNNING
+                    = CGAL::Default()
+#endif
+                    )
 {
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
