@@ -430,16 +430,6 @@ struct No_constraint {
   }
 };
 
-template <typename PolygonMesh, typename FaceOutputIterator>
-FaceOutputIterator
-connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face
-                  , const PolygonMesh& pmesh
-                  , FaceOutputIterator out
-                  , CGAL::Default)
-{
-  return CGAL::Polygon_mesh_processing::connected_component(seed_face, pmesh, out, internal::No_constraint<PolygonMesh>());
-}
-
 // A functor
 template <typename G, typename EdgeConstraintMap = No_constraint<G> >
 struct No_border {
@@ -461,8 +451,6 @@ struct No_border {
   EdgeConstraintMap ecm;
 };
 
-
-
 }// namespace internal
  
 
@@ -473,7 +461,8 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
                     const PolygonMesh& pmesh,
                     OutputIterator out)
 {
-  return internal::connected_component(seed_face, pmesh, out, CGAL::Default());
+  return connected_component(seed_face, pmesh, out,
+              internal::No_constraint<PolygonMesh>());
 }
 
 
