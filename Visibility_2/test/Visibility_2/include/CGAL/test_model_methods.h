@@ -33,15 +33,11 @@ template <class Visibility_2, class Visibility_arrangement_2>
 void test_model_methods_for_arr(
               typename Visibility_2::Arrangement_2 &arr) {
 
-  typedef typename Visibility_2::Arrangement_2       
-    Arrangement_2;  
-  typedef typename Visibility_2::Traits_2 Traits_2; 
-  typedef typename Arrangement_2::Point_2            
-    Point_2;
-  typedef typename Arrangement_2::Geometry_traits_2::Segment_2 
-    Segment_2;
+  typedef typename Visibility_2::Arrangement_2              Arrangement_2;
+  typedef typename Arrangement_2::Point_2                   Point_2;
 
-  typedef typename Visibility_arrangement_2::Face_handle  VFH;
+
+  typedef typename Visibility_arrangement_2::Face_handle    VFH;
 
 
   Visibility_2 visibility;
@@ -139,19 +135,10 @@ void test_model_methods_for_arr(
 template <class Visibility_2, class Visibility_arrangement_2>
 void test_model_methods() {
 
-  // Check concept obediance
-  typedef typename Visibility_2::Arrangement_2       
-    Arrangement_2;
-  typedef typename Arrangement_2::Point_2            Point_2;
-  typedef typename Arrangement_2::Face_handle        Face_handle;
-  typedef typename Arrangement_2::Halfedge_handle    Halfedge_handle;
-  typedef typename Visibility_2::Regularization_category  Regularization_category;
-  typedef typename Visibility_2::Supports_general_polygon_category
-    Supports_general_polygon_category;
-  typedef typename Visibility_2::Supports_simple_polygon_category 
-    Supports_simple_polygon_category;
-  typedef typename Arrangement_2::Geometry_traits_2::Segment_2 
-    Segment_2;
+  typedef typename Visibility_2::Arrangement_2                  Arrangement_2;
+  typedef typename Arrangement_2::Point_2                       Point_2;
+  typedef typename Arrangement_2::Geometry_traits_2::Segment_2  Segment_2;
+
 
   Point_2 p1(0, 0), p2(8, 0), p3(8, 8), p4(0, 8);
   std::vector<Segment_2> seg_sq;

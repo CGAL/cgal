@@ -49,9 +49,7 @@ template <class Arrangement_2>
 typename Arrangement_2::Halfedge_handle get_initial_halfedge(const Arrangement_2 &arr) {
   
   typedef typename Arrangement_2::Vertex Vertex;
-  typedef typename Arrangement_2::Vertex_handle Vertex_handle;
   typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
-  typedef typename Arrangement_2::Halfedge Halfedge; 
   typedef typename Arrangement_2::Halfedge_handle Halfedge_handle; 
   
   // find the min vertex 
@@ -90,11 +88,6 @@ typename Arrangement_2::Halfedge_handle get_initial_halfedge(const Arrangement_2
  */
 template <class ARR1, class ARR2> 
 bool test_are_equal(const ARR1 &arr1, const ARR2 &arr2) {
- 
-  typedef typename ARR1::Geometry_traits_2	  Geometry_traits_2;
-  typedef typename Geometry_traits_2::Segment_2         Segment_2;
-  typedef typename Geometry_traits_2::Point_2	          Point_2;
-  
   typedef typename ARR1::Halfedge_handle       HE1;
   typedef typename ARR2::Halfedge_handle       HE2;
   
@@ -160,7 +153,7 @@ bool test_are_equal(const ARR1 &arr1, const ARR2 &arr2) {
 
 template<class Number_type>
 Number_type string2num(const std::string& s) {
-  int i;
+  typename std::string::size_type i;
   if (s.find("/") != std::string::npos) {
     i = s.find("/");
     std::string p = s.substr(0, i);
@@ -477,6 +470,8 @@ void test_interface() {
     // must have const arrangement_2();
     const Arrangement_2& a = vis.arrangement_2();
 
+    visibility.attach(a);
+
     // must have const is_attached();
     vis.is_attached();
 
@@ -495,7 +490,6 @@ void run_tests_with_changes_to_arr() {
   typedef typename Arrangement_2::Face_const_handle           Face_const_handle;
   typedef typename Geometry_traits_2::Segment_2               Segment_2;
   typedef typename Geometry_traits_2::Point_2                 Point_2;
-  typedef typename Geometry_traits_2::FT                      Number_type;
 
   bool all_passed = true;
 
@@ -861,11 +855,6 @@ bool is_star_shape(
     const Arrangement_2& arr) {
   
   typedef typename Arrangement_2::Face_const_handle   Face_const_handle;
-  typedef typename Arrangement_2::Halfedge_handle     Halfedge_handle;
-  typedef typename Arrangement_2::Geometry_traits_2   Geometry_traits_2;
-  typedef typename Arrangement_2::Edge_iterator       Edge_iterator;
-  typedef typename Geometry_traits_2::Point_2               Point_2;
-  typedef typename Geometry_traits_2::Segment_2             Segment_2;
   
   // this test is written for an arr that contains on star shaped polygon 
   if (arr.number_of_faces()!=2){
@@ -1112,20 +1101,10 @@ void simple_benchmark(Visibility_2_fst &visibility_fst,
                       const Query_choice &choice,
                       std::ifstream &input) {
 
-  typedef typename Visibility_2_fst::Arrangement_2
-                                                            Arrangement_2;
-  typedef typename Arrangement_2::Halfedge_const_handle
-                                                          Halfedge_const_handle;
-  typedef typename Arrangement_2::Geometry_traits_2   Geometry_traits_2;
+  typedef typename Visibility_2_fst::Arrangement_2    Arrangement_2;
+
   typedef typename Arrangement_2::Face_const_iterator Face_const_iterator;
   typedef typename Arrangement_2::Face_const_handle   Face_const_handle;
-  typedef typename Arrangement_2::Hole_const_iterator Hole_const_iterator;
-  typedef typename Arrangement_2::Halfedge_const_handle
-                                                          Halfedge_const_handle;
-  typedef typename Arrangement_2::Ccb_halfedge_const_circulator
-                                                  Ccb_halfedge_const_circulator;
-  typedef typename Geometry_traits_2::Point_2               Point_2;
-  typedef typename Geometry_traits_2::Segment_2             Segment_2;
 
   assert(Visibility_2_fst::Regularization_category::value 
       == Visibility_2_snd::Regularization_category::value);
@@ -1211,18 +1190,17 @@ void pure_benchmark_one_unit(
           double& qtime,
           int& query_cnt) {
 
-  typedef typename Visibility_2::Arrangement_2    Arrangement_2;
-  typedef typename Arrangement_2::Face_const_handle   Face_const_handle;
-  typedef typename Visibility_2::Arrangement_2   Visibility_arrangement_2;
+  typedef typename Visibility_2::Arrangement_2                    Arrangement_2;
+  typedef typename Visibility_2::Arrangement_2         Visibility_arrangement_2;
   typedef typename Arrangement_2::Halfedge_const_handle
-                                                            Halfedge_const_handle;
-  typedef typename Arrangement_2::Geometry_traits_2   Geometry_traits_2;
+                                                          Halfedge_const_handle;
+  typedef typename Arrangement_2::Geometry_traits_2           Geometry_traits_2;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator
                                                   Ccb_halfedge_const_circulator;
 
-  typedef typename Visibility_arrangement_2::Face_handle        Face_handle;
-  typedef typename Geometry_traits_2::Point_2               Point_2;
-  typedef typename Geometry_traits_2::FT                    Number_type;
+  typedef typename Visibility_arrangement_2::Face_handle            Face_handle;
+  typedef typename Geometry_traits_2::Point_2                       Point_2;
+  typedef typename Geometry_traits_2::FT                            Number_type;
   typedef Timer Benchmark_timer;
 
   Benchmark_timer timer;
@@ -1290,20 +1268,10 @@ void pure_benchmark(  Visibility_2 &visibility,
                       const Query_choice &choice,
                       std::ifstream &input) {
 
-  typedef typename Visibility_2::Arrangement_2
-                                                            Arrangement_2;
-  typedef typename Arrangement_2::Halfedge_const_handle
-                                                          Halfedge_const_handle;
-  typedef typename Arrangement_2::Geometry_traits_2   Geometry_traits_2;
+  typedef typename Visibility_2::Arrangement_2        Arrangement_2;
+
   typedef typename Arrangement_2::Face_const_iterator Face_const_iterator;
   typedef typename Arrangement_2::Face_const_handle   Face_const_handle;
-  typedef typename Arrangement_2::Hole_const_iterator Hole_const_iterator;
-  typedef typename Arrangement_2::Halfedge_const_handle
-                                                          Halfedge_const_handle;
-  typedef typename Arrangement_2::Ccb_halfedge_const_circulator
-                                                  Ccb_halfedge_const_circulator;
-  typedef typename Geometry_traits_2::Point_2               Point_2;
-  typedef typename Geometry_traits_2::Segment_2             Segment_2;
 
   Arrangement_2 arr;
   create_arrangement_from_env_file<Arrangement_2>(arr, input);
@@ -1396,7 +1364,6 @@ void test_star_shape_one_face(  typename Visibility_2::Arrangement_2 &arr,
   typedef typename Visibility_2::Arrangement_2          Visibility_arrangement_2;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
-  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
 
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator
@@ -1405,7 +1372,6 @@ void test_star_shape_one_face(  typename Visibility_2::Arrangement_2 &arr,
   typedef typename Visibility_arrangement_2::Face_handle        Face_handle;
   typedef typename Geometry_traits_2::Point_2               Point_2;
   typedef typename Geometry_traits_2::FT                    Number_type;
-  typedef Timer Benchmark_timer;
 
   visibility.attach(arr);
 
@@ -1478,7 +1444,6 @@ void test_star_shape(Visibility_2 &visibility,
                                                           Halfedge_const_handle;
   typedef typename Visibility_arrangement_2::Ccb_halfedge_const_circulator
                                                   Ccb_halfedge_const_circulator;
-  typedef typename Geometry_traits_2::Point_2               Point_2;
   typedef typename Geometry_traits_2::Segment_2             Segment_2;
 
   Arrangement_2 arr;

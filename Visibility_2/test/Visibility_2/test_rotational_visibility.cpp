@@ -38,8 +38,6 @@ int main() {
 {
   typedef CGAL::Cartesian<CGAL::Gmpq>                               Kernel;
     typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
-    typedef Traits_2::Point_2                                       Point_2;
-    typedef Traits_2::X_monotone_curve_2                            Segment_2;
     typedef CGAL::Arrangement_2<Traits_2>                           Arrangement_2;
     {
       typedef CGAL::Rotational_sweep_visibility_2<Arrangement_2, CGAL::Tag_false>
@@ -58,8 +56,6 @@ int main() {
 }{
     typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
     typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
-    typedef Traits_2::Point_2                                       Point_2;
-    typedef Traits_2::X_monotone_curve_2                            Segment_2;
     typedef CGAL::Arrangement_2<Traits_2>                           Arrangement_2;
     {
       typedef CGAL::Rotational_sweep_visibility_2<Arrangement_2, CGAL::Tag_false>
