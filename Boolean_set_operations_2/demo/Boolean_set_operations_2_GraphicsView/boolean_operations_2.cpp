@@ -52,6 +52,11 @@ void trace( std::string s )
 #include <QSlider>
 #include <QProgressBar>
 
+//New for Qt5 version !
+#if QT_VERSION >= 0x050000
+#include <QMessageBox>
+#endif
+
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Timer.h> 
@@ -80,6 +85,7 @@ void trace( std::string s )
   #include <CGAL/MP_Float.h>
   #include <CGAL/Quotient.h>
 #endif
+
 
 #include <CGAL/Qt/BezierCurves.h>
 #include <CGAL/Qt/CircularPolygons.h>
@@ -1631,7 +1637,9 @@ int main(int argc, char **argv)
 
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+
+  //New for Qt5 version !
+  CGAL_QT_INIT_RESOURCES;
   
   MainWindow mainWindow;
   mainWindow.show();

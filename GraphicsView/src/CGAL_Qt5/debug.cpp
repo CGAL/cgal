@@ -19,30 +19,35 @@
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
 
-#ifndef CGAL_QT_DEBUG_H
-#define CGAL_QT_DEBUG_H
+#include <CGAL/Qt/debug.h>
+#include <QDir>
 
-#include <CGAL/auto_link/Qt.h>
-#include <CGAL/export/Qt.h>
-
-#include <QString>
+#include <iostream>
 
 namespace CGAL {
 namespace Qt {
 
-/**
- *  Must be used like that:
- *     CGAL::Qt:traverse_resources(":/cgal"); // view CGAL resources
- *  or
- *     CGAL::Qt:traverse_resources(":"); // view all resources
- *  and displays the resources tree on std::cerr.
- */
-CGAL_QT_EXPORT void traverse_resources(const QString& name,
-                                        const QString& dirname = QString(),
-                                        int indent = 0);
 
-} // namespace Qt
+void traverse_resources(const QString& name, const QString& dirname, int indent)
+{
+  std::cerr << qPrintable(QString(indent, ' '))
+            << qPrintable(name);
+  QString fullname = 
+    dirname.isEmpty() ?
+    name :
+    dirname + "/" + name;
+  QDir dir(fullname);
+  if(dir.exists()) {
+    std::cerr << "/\n";
+    Q_FOREACH(QString path, dir.entryList())
+    {
+      traverse_resources(path, fullname, indent + 2);
+    }
+  }
+  else {
+    std::cerr << "\n";
+  }
+}
+
+} // namesapce Qt
 } // namespace CGAL
-
-
-#endif // CGAL_QT_DEBUG_H

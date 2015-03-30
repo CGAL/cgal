@@ -17,6 +17,10 @@ class Io_image_plugin :
   Q_OBJECT
   Q_INTERFACES(Io_plugin_interface)
 
+  #if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")//New for Qt5 version !
+  #endif
+
 public:
   Io_image_plugin() {
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
@@ -31,6 +35,7 @@ public:
   bool canSave(const Scene_item*);
   bool save(const Scene_item*, QFileInfo, QString) { return false; }
 };
+
 
 QStringList Io_image_plugin::nameFilters() const {
   return QStringList() << "Inrimage files (*.inr *.inr.gz)"
@@ -89,6 +94,8 @@ bool Io_image_plugin::canSave(const Scene_item*)
   return false;
 }
 
+#if QT_VERSION < 0x050000
 #include <QtPlugin>
 Q_EXPORT_PLUGIN2(Io_image_plugin, Io_image_plugin)
+#endif
 #include "Io_image_plugin.moc"

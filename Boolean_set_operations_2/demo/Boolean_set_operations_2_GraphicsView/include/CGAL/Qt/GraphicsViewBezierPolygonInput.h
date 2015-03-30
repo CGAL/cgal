@@ -22,11 +22,17 @@
 #ifndef CGAL_QT_GRAPHICS_VIEW_BEZIER_POLYGON_INPUT_H
 #define CGAL_QT_GRAPHICS_VIEW_BEZIER_POLYGON_INPUT_H
 
-#include <CGAL/auto_link/Qt4.h>
+#include <CGAL/auto_link/Qt.h>
 
 #include <QPolygonF>
 #include <QPointF>
 #include <QGraphicsLineItem> 
+
+//New for Qt5 version !
+#if QT_VERSION >= 0x050000
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
+#endif
 
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
@@ -132,7 +138,7 @@ namespace Qt {
       bool rHandled = false ;
       
       Point lP = cvt(aEvent->scenePos());
-      
+
       if ( aEvent->button() == ::Qt::LeftButton )
       {
         switch (mState)

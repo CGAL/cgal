@@ -106,7 +106,14 @@ Values_list::Values_list(QWidget* parent):
   Q_ASSERT_X(treeWidget, "Values_list constructor", "cannot find widget \"treeWidget\"");
 
   treeWidget->sortByColumn(Value, Qt::AscendingOrder);
-  treeWidget->header()->setClickable(false);
+   
+  //New for Qt5 version !
+  #if QT_VERSION >= 0x050000
+ 	treeWidget->header()->setSectionsClickable(false);
+  #else
+ 	treeWidget->header()->setClickable(false);
+  #endif
+
 
   Values_delegate* values_delegate = new Values_delegate(parent);
 

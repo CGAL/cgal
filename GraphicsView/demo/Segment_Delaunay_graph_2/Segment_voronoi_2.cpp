@@ -18,6 +18,11 @@
 #include <QDragEnterEvent>
 #include <QDropEvent>
 
+#if QT_VERSION >= 0x050000
+#include <QMessageBox>
+#include <QGraphicsLineItem>
+#endif
+
 // GraphicsView items and event filters (input classes)
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/SegmentDelaunayGraphGraphicsItem.h>
@@ -375,9 +380,9 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Segment Voronoi 2 demo");
 
-  // Import resources from libCGALQt4.
+  // Import resources from libCGAL (Qt4 or Qt5).
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+  CGAL_QT_INIT_RESOURCES;//New for Qt5 version !
 
   MainWindow mainWindow;
   mainWindow.show();

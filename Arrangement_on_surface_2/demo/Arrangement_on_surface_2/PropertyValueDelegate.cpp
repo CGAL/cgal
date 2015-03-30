@@ -24,6 +24,11 @@
 
 #include <iostream>
 
+//New for Qt5 version !
+#if QT_VERSION >= 0x050000
+#include <QItemEditorFactory>
+#endif
+
 PropertyValueDelegate::PropertyValueDelegate( QObject* parent ):
   QItemDelegate( parent )
 { 
@@ -42,6 +47,7 @@ createEditor( QWidget* parent, const QStyleOptionViewItem& option,
   QVariant myData = index.data( Qt::UserRole );
 
   // check for data types we need to handle ourselves
+ /*
   if ( qVariantCanConvert< QColor >( myData ) )
   {
     ColorItemEditor* colorEditor = new ColorItemEditor( parent );
@@ -54,6 +60,29 @@ createEditor( QWidget* parent, const QStyleOptionViewItem& option,
     DeleteCurveModeItemEditor* modeEditor =
       new DeleteCurveModeItemEditor( parent );
     modeEditor->setMode( qVariantValue< DeleteCurveMode >( myData ) );
+    editor = modeEditor;
+
+    QObject::connect( modeEditor, SIGNAL( currentIndexChanged( int ) ), this,
+                      SLOT( commit( ) ) );
+  }
+  else
+  { // default handler
+    editor = QItemDelegate::createEditor( parent, option, index );
+  }*/
+
+ //New for Qt5 version
+ if ( myData.canConvert< QColor >() )
+  {
+    ColorItemEditor* colorEditor = new ColorItemEditor( parent );
+    editor = colorEditor;
+
+    QObject::connect( colorEditor, SIGNAL(confirmed()), this, SLOT(commit()));
+  }
+  else if ( myData.canConvert< DeleteCurveMode >() )
+  {
+    DeleteCurveModeItemEditor* modeEditor =
+      new DeleteCurveModeItemEditor( parent );
+    modeEditor->setMode( myData.value< DeleteCurveMode >() );
     editor = modeEditor;
 
     QObject::connect( modeEditor, SIGNAL( currentIndexChanged( int ) ), this,

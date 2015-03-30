@@ -17,20 +17,20 @@
 //
 // Author(s)     : Laurent Rineau
 
-#ifndef CGAL_QT4_CONFIG_H
-#define CGAL_QT4_CONFIG_H
+#ifndef CGAL_QT_CONFIG_H
+#define CGAL_QT_CONFIG_H
 
 #include <QtCore/qglobal.h>
 
-#ifdef CGAL_Qt4_DLL
-#  ifdef CGAL_Qt4_EXPORTS
-#    define CGAL_QT4_EXPORT Q_DECL_EXPORT
+#if (defined(CGAL_Qt4_DLL) || defined(CGAL_Qt5_DLL))
+#  if (defined(CGAL_Qt4_EXPORTS) || defined(CGAL_Qt5_EXPORTS))
+#    define CGAL_QT_EXPORT Q_DECL_EXPORT
 #  else
-#    define CGAL_QT4_EXPORT Q_DECL_IMPORT
+#    define CGAL_QT_EXPORT Q_DECL_IMPORT
 #  endif
 #else
 // empty definition
-#  define CGAL_QT4_EXPORT
+#  define CGAL_QT_EXPORT
 #endif
 
-#endif // CGAL_QT4_CONFIG_H
+#endif // CGAL_QT_CONFIG_H

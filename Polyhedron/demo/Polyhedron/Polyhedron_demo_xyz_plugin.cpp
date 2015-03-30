@@ -14,6 +14,10 @@ class Polyhedron_demo_xyz_plugin :
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
 
+  #if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")//New for Qt5 version !
+  #endif
+
 public:
   QString name() const { return "xyz_plugin"; }
 
@@ -75,6 +79,9 @@ bool Polyhedron_demo_xyz_plugin::save(const Scene_item* item, QFileInfo fileinfo
   return point_set_item->write_xyz_point_set(out);
 }
 
+#if QT_VERSION < 0x050000
 #include <QtPlugin>
 Q_EXPORT_PLUGIN2(Polyhedron_demo_xyz_plugin, Polyhedron_demo_xyz_plugin)
+#endif
+
 #include "Polyhedron_demo_xyz_plugin.moc"

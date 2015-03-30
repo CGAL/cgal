@@ -176,15 +176,29 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   
   CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)());
   bool ok = false;
+
+  //New for Qt5 version !
+  #if QT_VERSION >= 0x050000
   const int number_of_points = 
-    QInputDialog::getInteger(this, 
+    QInputDialog::getInt(this, 
                              tr("Number of random points"),
                              tr("Enter number of random points"),
-			     100,
-			     0,
-			     (std::numeric_limits<int>::max)(),
-			     1,
-			     &ok);
+							 100,
+							 0,
+							(std::numeric_limits<int>::max)(),
+							1,
+							&ok);
+  #else
+  const int number_of_points =
+	 QInputDialog::getInteger(this,
+							  tr("Number of random points"),
+							  tr("Enter number of random points"),
+							  100,
+							  0,
+							 (std::numeric_limits<int>::max)(),
+							 1,
+							 &ok);
+  #endif
 
   if(!ok) {
     return;
@@ -282,9 +296,9 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Apollonius_graph_2 demo");
 
-  // Import resources from libCGALQt4.
+  // Import resources from libCGAL (Qt4 or Qt5).
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+  CGAL_QT_INIT_RESOURCES;   //New for Qt5 version !
   Q_INIT_RESOURCE(Apollonius_graph_2);
 
   MainWindow mainWindow;

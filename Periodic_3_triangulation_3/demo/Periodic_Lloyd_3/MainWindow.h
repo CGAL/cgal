@@ -7,6 +7,7 @@
 #include <QInputDialog>
 #include <QSlider>
 #include <QTimer>
+#include <QMessageBox>
 
 #include <QtGui>
 #include <QProcess>

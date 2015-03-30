@@ -3,6 +3,23 @@
 
 #include <QDialog>
 
+//New for Qt5 version !
+#if QT_VERSION >= 0x050000
+#include <QColorDialog>
+
+#include <QGridLayout>
+#include <QGroupBox> 
+
+#include <QLabel>
+#include <QLineEdit>
+
+#include <QMessageBox>
+
+#include <QPushButton>
+
+#include <QSpinBox>
+#endif
+
 class QLabel;
 class QSpinBox;
 class QLineEdit;

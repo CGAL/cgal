@@ -42,6 +42,10 @@
 #include <QtGui>
 #include <iostream>
 
+#if QT_VERSION >= 0x050000 
+#include <QColorDialog>
+#endif 
+
 #include "ColorItemEditor.h"
 
 ColorItemEditor::ColorItemEditor( QWidget* widget ) : QPushButton( widget )

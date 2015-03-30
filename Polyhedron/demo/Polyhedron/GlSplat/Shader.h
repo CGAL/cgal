@@ -18,6 +18,8 @@
 #define _GLSPLAT_Shader_h_
 
 #include <GL/glew.h>
+#define QT_NO_OPENGL_ES_2
+
 #include <CGAL/glu.h>
 
 #ifndef NDEBUG

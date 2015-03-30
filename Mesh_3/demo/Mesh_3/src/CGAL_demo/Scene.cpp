@@ -32,9 +32,17 @@ Scene::addItem(Scene_item* item)
   connect(this, SIGNAL(itemAboutToBeDestroyed(Scene_item*)),
           item, SLOT(itemAboutToBeDestroyed(Scene_item*)));
 
+ #if QT_VERSION >= 0x050000
+  QAbstractListModel::beginResetModel();
+  emit updated_bbox();
+  emit updated();
+  QAbstractListModel::endResetModel();
+ #else
   emit updated_bbox();
   emit updated();
   QAbstractListModel::reset();
+ #endif
+
   return entries.size() - 1;
 }
 
@@ -45,6 +53,18 @@ Scene::erase(int index)
     return -1;
 
   Scene_item* item = entries[index];
+
+ #if QT_VERSION >= 0x050000
+  QAbstractListModel::beginResetModel();
+  emit itemAboutToBeDestroyed(item);
+  delete item;
+  entries.removeAt(index);
+
+  selected_item = -1;
+  emit updated();
+  QAbstractListModel::endResetModel();
+ #else
+
   emit itemAboutToBeDestroyed(item);
   delete item;
   entries.removeAt(index);
@@ -52,6 +72,7 @@ Scene::erase(int index)
   selected_item = -1;
   emit updated();
   QAbstractListModel::reset();
+ #endif
 
   if(--index >= 0)
     return index;

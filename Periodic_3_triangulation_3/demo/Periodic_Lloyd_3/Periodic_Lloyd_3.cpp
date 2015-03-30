@@ -10,9 +10,9 @@ int main(int argc, char** argv)
   application.setOrganizationName("INRIA");
   application.setApplicationName("3D Periodic Lloyd");
 
-  // Import resources from libCGALQt4.
+  // Import resources from libCGAL (Qt4 or QT5).
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+  CGAL_QT_INIT_RESOURCES;//New for Qt5 version !
   Q_INIT_RESOURCE(Periodic_Lloyd_3);
 
   MainWindow mw;

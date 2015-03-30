@@ -82,5 +82,4 @@ protected:
   void drawAllEdges();
   void drawAllVertices();
 };
-
 #endif

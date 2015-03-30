@@ -7,6 +7,7 @@
 #include <CGAL_demo/Io_plugin_interface.h>
 #include <fstream>
 
+
 class Io_off_plugin :
   public QObject,
   public Io_plugin_interface
@@ -14,6 +15,9 @@ class Io_off_plugin :
   Q_OBJECT
   Q_INTERFACES(Io_plugin_interface)
 
+  #if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")//New for Qt5 version !
+  #endif
 public:
   QStringList nameFilters() const;
   bool canLoad() const;
@@ -88,7 +92,8 @@ bool Io_off_plugin::save(const Scene_item* item, QFileInfo fileinfo,
   return (poly_item && poly_item->save(out)) || 
     (soup_item && soup_item->save(out));
 }
-
+#if QT_VERSION < 0x050000
 #include <QtPlugin>
 Q_EXPORT_PLUGIN2(Io_off_plugin, Io_off_plugin)
+#endif
 #include "Io_off_plugin.moc"

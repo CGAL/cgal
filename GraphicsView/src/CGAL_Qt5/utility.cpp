@@ -19,30 +19,36 @@
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
 
-#ifndef CGAL_QT_DEBUG_H
-#define CGAL_QT_DEBUG_H
-
-#include <CGAL/auto_link/Qt.h>
-#include <CGAL/export/Qt.h>
-
-#include <QString>
+#include <CGAL/Qt/utility.h>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QList>
+#include <QPoint>
+#include <QPointF>
 
 namespace CGAL {
 namespace Qt {
 
-/**
- *  Must be used like that:
- *     CGAL::Qt:traverse_resources(":/cgal"); // view CGAL resources
- *  or
- *     CGAL::Qt:traverse_resources(":"); // view all resources
- *  and displays the resources tree on std::cerr.
- */
-CGAL_QT_EXPORT void traverse_resources(const QString& name,
-                                        const QString& dirname = QString(),
-                                        int indent = 0);
+QRectF mapToScene(const QGraphicsView* v, const QRect rect)
+{
+  QPointF top_left = v->mapToScene(rect.topLeft());
+  QPointF size = v->mapToScene(rect.bottomRight());
+  size -= top_left;
+  return QRectF(top_left.x(),
+		top_left.y(),
+		size.x(),
+		size.y());
+}
+
+QRectF viewportsBbox(const QGraphicsScene* scene) {
+   QRectF rect;
+   Q_FOREACH(QGraphicsView* view, scene->views())
+   {
+     rect |= mapToScene(view, view->viewport()->rect());
+   }
+   rect = rect.normalized();
+   return rect;
+}
 
 } // namespace Qt
 } // namespace CGAL
-
-
-#endif // CGAL_QT_DEBUG_H

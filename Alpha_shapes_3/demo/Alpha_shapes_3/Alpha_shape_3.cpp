@@ -14,9 +14,10 @@ int main(int argc, char** argv)
   application.setOrganizationName("GeometryFactory");
   application.setApplicationName("Alpha Shape Reconstruction");
 
-  // Import resources from libCGALQt4.
+  // Import resources from libCGALQt (Qt4 or Qt5).
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+
+  CGAL_QT_INIT_RESOURCES; //New for Qt5 version !
   Q_INIT_RESOURCE(Alpha_shape_3);
   
   MainWindow mw;

@@ -22,8 +22,10 @@
 
 #ifndef CGAL_QT_GRAPHICS_VIEW_INPUT_H
 #define CGAL_QT_GRAPHICS_VIEW_INPUT_H
-#include <CGAL/export/Qt4.h>
-#include <CGAL/auto_link/Qt4.h>
+
+#include <CGAL/export/Qt.h>
+#include <CGAL/auto_link/Qt.h>
+
 #ifndef Q_MOC_RUN
 #  include <CGAL/Object.h>
 #endif
@@ -31,7 +33,7 @@
 
 namespace CGAL {
 namespace Qt {
-class CGAL_QT4_EXPORT GraphicsViewInput  : public QObject
+class CGAL_QT_EXPORT GraphicsViewInput  : public QObject
 {
   Q_OBJECT
 

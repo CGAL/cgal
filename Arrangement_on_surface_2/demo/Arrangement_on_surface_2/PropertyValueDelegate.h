@@ -22,6 +22,11 @@
 
 #include <QtGui>
 
+#if QT_VERSION >= 0x050000
+#include <QItemDelegate>
+#include <QSpinBox>
+#endif
+
 class PropertyValueDelegate : public QItemDelegate
 {
   Q_OBJECT

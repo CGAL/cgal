@@ -35,6 +35,10 @@ class Tanglecube_implicit_function :
   Q_OBJECT
   Q_INTERFACES(Implicit_function_interface)
   
+  #if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.Mesh3Demo.Implicit_function_interface/1.0")//New for Qt5 version !
+  #endif
+
 public:
   virtual QString name() const { return "Tanglecube function"; }
   
@@ -52,8 +56,9 @@ public:
   }
 };
 
-
-
+#if QT_VERSION < 0x050000
 #include <QtPlugin>
 Q_EXPORT_PLUGIN2(Tanglecube_implicit_function, Tanglecube_implicit_function)
+#endif
+
 #include "Tanglecube_implicit_function.moc"

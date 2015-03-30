@@ -166,6 +166,10 @@ class Polyhedron_demo_cut_plugin :
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
   Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
 
+  #if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
+  #endif
+
 public:
   Polyhedron_demo_cut_plugin() : QObject(), edges_item(0) {
   }
@@ -370,6 +374,8 @@ void Polyhedron_demo_cut_plugin::enableAction() {
   actionCreateCutPlane->setEnabled(true);
 }
 
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(Polyhedron_demo_cut_plugin, Polyhedron_demo_cut_plugin)
+#endif
 
 #include "Polyhedron_demo_cut_plugin.moc"
