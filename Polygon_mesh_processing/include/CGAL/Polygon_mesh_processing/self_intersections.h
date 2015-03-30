@@ -216,7 +216,7 @@ template <class GeomTraits
 OutputIterator
 self_intersections(const TriangleMesh& tmesh
                  , OutputIterator out
-                 , VertexPointMap vpmap = get(CGAL::vertex_point, tmesh)
+                 , VertexPointMap vpmap = VertexPointMap()
                  , const GeomTraits& geom_traits = GeomTraits())
 {
   CGAL_precondition(CGAL::is_pure_triangle(tmesh));
@@ -277,7 +277,7 @@ template <class GeomTraits
 //         = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type
           >
 bool is_self_intersecting(const TriangleMesh& tmesh
-                        , VertexPointMap vpmap = get(vertex_point, pmesh)
+                        , VertexPointMap vpmap = VertexPointMap()
                         , const GeomTraits& geom_traits = GeomTraits())
 {
   CGAL_precondition(CGAL::is_pure_triangle(tmesh));
