@@ -17,7 +17,7 @@ include(AddFileDependencies)
       set(moc_file_name "")
     else()
       set(moc_file_name ${plugin_implementation_base_name}.moc )
-      qt4_generate_moc( ${plugin_implementation_base_name}.cpp "${CMAKE_CURRENT_BINARY_DIR}/${moc_file_name}" )
+      qt5_generate_moc( ${plugin_implementation_base_name}.cpp "${CMAKE_CURRENT_BINARY_DIR}/${moc_file_name}" )
       add_file_dependencies( ${moc_file_name} "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
     endif()
 

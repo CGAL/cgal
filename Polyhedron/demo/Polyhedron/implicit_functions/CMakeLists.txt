@@ -15,19 +15,19 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 # Include directory of demo includes
 include_directories( BEFORE ${Mesh_3_implicit_functions_BINARY_DIR} ../include )
 
-# Find CGAL and CGAL Qt4
-find_package(CGAL COMPONENTS Qt4)
+# Find CGAL and CGAL Qt5
+find_package(CGAL COMPONENTS Qt5)
 include( ${CGAL_USE_FILE} )
 
-# Find Qt4 itself
+# Find Qt5 itself
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
-find_package(Qt4)
+find_package(Qt5 COMPONENTS Xml Script OpenGL ScriptTools )
 
 
-if(CGAL_Qt4_FOUND AND QT4_FOUND)
+if(CGAL_Qt5_FOUND AND QT5_FOUND)
   include(${QT_USE_FILE})
 
   # put plugins (which are shared libraries) at the same location as
@@ -49,7 +49,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND)
     else()
       set(other_sources ${ARGN_TAIL})
     endif()
-    qt4_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" ${plugin_implementation_base_name}.moc )
+    qt5_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" ${plugin_implementation_base_name}.moc )
     add_file_dependencies( ${plugin_implementation_base_name}.moc "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
 
     add_library(${plugin_name} MODULE ${option} ${plugin_implementation_base_name}.moc ${plugin_implementation_base_name}.cpp ${other_sources})
@@ -64,18 +64,18 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND)
   polyhedron_demo_plugin(p_tanglecube_function_plugin Tanglecube_implicit_function)
   polyhedron_demo_plugin(p_klein_function_plugin Klein_implicit_function)
 
-else (CGAL_Qt4_FOUND AND QT4_FOUND)
+else (CGAL_Qt5_FOUND AND QT5_FOUND)
 
   set(MESH_3_MISSING_DEPS "")
 
-  if(NOT CGAL_Qt4_FOUND)
-    set(MESH_3_MISSING_DEPS "the CGAL Qt4 library, ${MESH_3_MISSING_DEPS}")
+  if(NOT CGAL_Qt5_FOUND)
+    set(MESH_3_MISSING_DEPS "the CGAL Qt5 library, ${MESH_3_MISSING_DEPS}")
   endif()
 
-  if(NOT QT4_FOUND)
-    set(MESH_3_MISSING_DEPS "Qt4, ${MESH_3_MISSING_DEPS}")
+  if(NOT QT5_FOUND)
+    set(MESH_3_MISSING_DEPS "Qt5, ${MESH_3_MISSING_DEPS}")
   endif()
 
   message(STATUS "NOTICE: This demo requires ${MESH_3_MISSING_DEPS}and will not be compiled.")
 
-endif (CGAL_Qt4_FOUND AND QT4_FOUND)
+endif (CGAL_Qt5_FOUND AND QT5_FOUND)

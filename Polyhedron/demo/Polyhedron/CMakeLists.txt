@@ -39,14 +39,14 @@ include_directories( BEFORE ./ ./include ../../include ./CGAL_demo)
 
 add_subdirectory( implicit_functions )
 
-# Find CGAL and CGAL Qt4
-find_package(CGAL COMPONENTS Qt4)
-include( ${CGAL_USE_FILE} )
+# Find CGAL
+
+
 
 option( POLYHEDRON_QTSCRIPT_DEBUGGER 
   "Activate the use of Qt Script Debugger in Polyhedron_3 demo" OFF)
 
-# Find Qt4 itself
+# Find Qt5 itself
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
@@ -54,7 +54,9 @@ set( QT_USE_QTOPENGL  TRUE )
 if( POLYHEDRON_QTSCRIPT_DEBUGGER)
   set( QT_USE_QTSCRIPTTOOLS  TRUE )
 endif()
-find_package(Qt4)
+find_package(CGAL REQUIRED COMPONENTS Qt5)
+include( ${CGAL_USE_FILE} )
+find_package(Qt5 COMPONENTS OpenGL Script Xml ScriptTools)
 
 # Find Glew (optional), for splatting
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/GlSplat/cmake)
@@ -64,11 +66,11 @@ find_package(GLEW)
 find_package(OpenGL)
 
 # Find QGLViewer
-if(QT4_FOUND)
+if(QT5_FOUND)
   include(${QT_USE_FILE})
   include_directories( ${QT_INCLUDE_DIR}/QtScriptTools )
   find_package(QGLViewer )
-endif(QT4_FOUND)
+endif(QT5_FOUND)
 
 if(GLEW_FOUND)
   include_directories ( ${GLEW_INCLUDE_DIR} )
@@ -82,41 +84,41 @@ if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
 endif(EIGEN3_FOUND)
 
-if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+if(CGAL_Qt5_FOUND AND QT5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(Boost_USE_MULTITHREADED      ON)
   find_package(Boost COMPONENTS thread system)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
-  qt4_wrap_ui( MainWindowUI_files MainWindow.ui )
-  qt4_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
-  qt4_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
-  qt4_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
-  qt4_wrap_ui( meshingUI_FILES  Meshing_dialog.ui )
-  qt4_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
-  qt4_wrap_ui( PreferencesUI_FILES   Preferences.ui )
-  qt4_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
-  qt4_wrap_ui( polyhedron_slicerUI_FILES Polyhedron_slicer_widget.ui)
-  qt4_wrap_ui( segmentationUI_FILES Mesh_segmentation_widget.ui)
-  qt4_wrap_ui( selectionUI_FILES Selection_widget.ui)
-  qt4_wrap_ui( funcUI_FILES Function_dialog.ui )
+  qt5_wrap_ui( MainWindowUI_files MainWindow.ui )
+  qt5_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
+  qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
+  qt5_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
+  qt5_wrap_ui( meshingUI_FILES  Meshing_dialog.ui )
+  qt5_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
+  qt5_wrap_ui( PreferencesUI_FILES   Preferences.ui )
+  qt5_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
+  qt5_wrap_ui( polyhedron_slicerUI_FILES Polyhedron_slicer_widget.ui)
+  qt5_wrap_ui( segmentationUI_FILES Mesh_segmentation_widget.ui)
+  qt5_wrap_ui( selectionUI_FILES Selection_widget.ui)
+  qt5_wrap_ui( funcUI_FILES Function_dialog.ui )
 
-  qt4_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
-  qt4_generate_moc( "File_loader_dialog.h" "${CMAKE_CURRENT_BINARY_DIR}/File_loader_dialog_moc.cpp" )
+  qt5_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
+  qt5_generate_moc( "File_loader_dialog.h" "${CMAKE_CURRENT_BINARY_DIR}/File_loader_dialog_moc.cpp" )
   add_file_dependencies( MainWindow_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h" )
   add_file_dependencies( File_loader_dialog_moc_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/File_loader_dialog.h" )
 
-  qt4_generate_moc( "Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
+  qt5_generate_moc( "Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
   add_file_dependencies( Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" )
 
   include( ${CMAKE_CURRENT_SOURCE_DIR}/polyhedron_demo_macros.cmake )
 
-  qt4_add_resources ( RESOURCE_FILES Polyhedron_3.qrc )
+  qt5_add_resources ( RESOURCE_FILES Polyhedron_3.qrc )
 
-  qt4_generate_moc( "CGAL_demo/Viewer_interface.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
+  qt5_generate_moc( "CGAL_demo/Viewer_interface.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
 
-  qt4_automoc(Scene.cpp
+  qt5_automoc(Scene.cpp
               Scene_item.cpp
               Scene_plane_item.cpp
               Scene_combinatorial_map_item.cpp
@@ -135,7 +137,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 			  Scene_polyhedron_selection_item.cpp
 			  Scene_polyhedron_item_k_ring_selection.cpp
               )
-  qt4_automoc( Scene_implicit_function_item.cpp )
+  qt5_automoc( Scene_implicit_function_item.cpp )
 
 
   # AUXILIARY LIBRARIES
@@ -185,7 +187,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)
 
   if(GLEW_FOUND)
-    qt4_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
+    qt5_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
     add_library(gl_splat SHARED
       GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
     target_link_libraries(gl_splat ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES})
@@ -296,7 +298,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries( camera_positions_plugin ${QGLVIEWER_LIBRARIES} demo_framework)
 
   if ( Boost_VERSION GREATER 103400 )
-    qt4_generate_moc( "Polyhedron_demo_mesh_3_plugin_cgal_code.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Scene_c3t3_item.moc" )
+    qt5_generate_moc( "Polyhedron_demo_mesh_3_plugin_cgal_code.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Scene_c3t3_item.moc" )
 
     polyhedron_demo_plugin(mesh_3_plugin Polyhedron_demo_mesh_3_plugin 
       Polyhedron_demo_mesh_3_plugin_cgal_code.cpp Scene_c3t3_item.moc
@@ -355,18 +357,18 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(pca_plugin scene_polyhedron_item scene_basic_objects)
 
   if(EIGEN3_FOUND)
-    qt4_wrap_ui( scale_spaceUI_FILES Polyhedron_demo_scale_space_reconstruction_plugin.ui)
+    qt5_wrap_ui( scale_spaceUI_FILES Polyhedron_demo_scale_space_reconstruction_plugin.ui)
     polyhedron_demo_plugin(scale_space_reconstruction_plugin Polyhedron_demo_scale_space_reconstruction_plugin ${scale_spaceUI_FILES})
     target_link_libraries(scale_space_reconstruction_plugin scene_polygon_soup_item scene_polyhedron_item scene_points_with_normal_item)
 
     polyhedron_demo_plugin(parameterization_plugin Polyhedron_demo_parameterization_plugin)
     target_link_libraries(parameterization_plugin scene_polyhedron_item scene_textured_polyhedron_item )
 
-    qt4_wrap_ui( poissonUI_FILES Polyhedron_demo_poisson_plugin.ui)
+    qt5_wrap_ui( poissonUI_FILES Polyhedron_demo_poisson_plugin.ui)
     polyhedron_demo_plugin(poisson_plugin Polyhedron_demo_poisson_plugin Polyhedron_demo_poisson_plugin_impl.cpp ${poissonUI_FILES})
     target_link_libraries(poisson_plugin scene_polyhedron_item scene_points_with_normal_item)
 
-    qt4_wrap_ui( normal_estimationUI_FILES Polyhedron_demo_normal_estimation_plugin.ui)
+    qt5_wrap_ui( normal_estimationUI_FILES Polyhedron_demo_normal_estimation_plugin.ui)
     polyhedron_demo_plugin(normal_estimation_plugin Polyhedron_demo_normal_estimation_plugin ${normal_estimationUI_FILES})
     target_link_libraries(normal_estimation_plugin scene_points_with_normal_item)
     
@@ -425,8 +427,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   # Edit polyhedron scene item and plugin
   if ( EIGEN3_FOUND AND "${EIGEN3_VERSION}" VERSION_GREATER "3.1.90" )
-    qt4_wrap_ui( editionUI_FILES Deform_mesh.ui )
-    qt4_automoc( Scene_edit_polyhedron_item.cpp )
+    qt5_wrap_ui( editionUI_FILES Deform_mesh.ui )
+    qt5_automoc( Scene_edit_polyhedron_item.cpp )
     add_item(scene_edit_polyhedron_item Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc ${editionUI_FILES})
 
     target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item scene_polyhedron_item_k_ring_selection)
@@ -443,11 +445,11 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(point_inside_polyhedron_plugin Polyhedron_demo_point_inside_polyhedron_plugin ${point_inside_polyhedronUI_FILES})
   target_link_libraries(point_inside_polyhedron_plugin scene_polyhedron_item scene_points_with_normal_item)
   
-  qt4_wrap_ui(point_set_simplificationUI_FILES Polyhedron_demo_point_set_simplification_plugin.ui)
+  qt5_wrap_ui(point_set_simplificationUI_FILES Polyhedron_demo_point_set_simplification_plugin.ui)
   polyhedron_demo_plugin(point_set_simplification_plugin Polyhedron_demo_point_set_simplification_plugin ${point_set_simplificationUI_FILES})
   target_link_libraries(point_set_simplification_plugin scene_points_with_normal_item)
 
-  qt4_wrap_ui( ps_outliers_removal_UI_FILES Polyhedron_demo_point_set_outliers_removal_plugin.ui)
+  qt5_wrap_ui( ps_outliers_removal_UI_FILES Polyhedron_demo_point_set_outliers_removal_plugin.ui)
   polyhedron_demo_plugin(point_set_outliers_removal_plugin Polyhedron_demo_point_set_outliers_removal_plugin ${ps_outliers_removal_UI_FILES}) 
   target_link_libraries(point_set_outliers_removal_plugin scene_points_with_normal_item)
 
@@ -456,9 +458,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 #
 # Exporting
 #
-  if(TARGET CGAL_Qt4)
-    export(TARGETS CGAL_Qt4 FILE polyhedron_demo_targets.cmake NAMESPACE Polyhedron_)
-    export(TARGETS CGAL CGAL_Qt4 FILE polyhedron_demo_targets.cmake NAMESPACE Polyhedron_)
+  if(TARGET CGAL_Qt5)
+    export(TARGETS CGAL_Qt5 FILE polyhedron_demo_targets.cmake NAMESPACE Polyhedron_)
+    export(TARGETS CGAL CGAL_Qt5 FILE polyhedron_demo_targets.cmake NAMESPACE Polyhedron_)
   else()
     export(TARGETS FILE polyhedron_demo_targets.cmake)
   endif()
@@ -482,16 +484,16 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)
 
-else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+else (CGAL_Qt5_FOUND AND QT5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(POLYHEDRON_MISSING_DEPS "")
 
-  if(NOT CGAL_Qt4_FOUND)
-    set(POLYHEDRON_MISSING_DEPS "the CGAL Qt4 library, ${POLYHEDRON_MISSING_DEPS}")
+  if(NOT CGAL_Qt5_FOUND)
+    set(POLYHEDRON_MISSING_DEPS "the CGAL Qt5 library, ${POLYHEDRON_MISSING_DEPS}")
   endif()
 
-  if(NOT QT4_FOUND)
-    set(POLYHEDRON_MISSING_DEPS "Qt4, ${POLYHEDRON_MISSING_DEPS}")
+  if(NOT QT5_FOUND)
+    set(POLYHEDRON_MISSING_DEPS "Qt5, ${POLYHEDRON_MISSING_DEPS}")
   endif()
 
   if(NOT OPENGL_FOUND)
@@ -504,4 +506,4 @@ else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   message(STATUS "NOTICE: This demo requires ${POLYHEDRON_MISSING_DEPS}and will not be compiled.")
 
-endif (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+endif (CGAL_Qt5_FOUND AND QT5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)

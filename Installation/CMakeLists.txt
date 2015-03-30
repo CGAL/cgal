@@ -525,7 +525,7 @@ endmacro()
  
 # this is the place to tell which external libs are supporting
 # Remarks: 
-#  External libs Qt3 and Qt34are configured when Qt3 or Qt4 as lib of cgal are required
+#  External libs Qt3 and Qt34are configured when Qt3 or Qt5 as lib of cgal are required
 #  Coin is used in KDS, but no FindCoin or FindCOIN exists
 #  There exists FindF2C, FindIPE, FindMKL, but they are only used to support supporting libs
 list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR ZLIB OpenGL LEDA MPFI RS RS3 OpenNL Eigen3 BLAS LAPACK QGLViewer ESBTL Coin3D NTL IPE)
@@ -544,7 +544,7 @@ set(SPECIAL_PREFIXES "${SPECIAL_PREFIXES}set(CGAL_EXT_LIB_${library}_PREFIX \"${
 set(CGAL_EXT_LIB_${library}_PREFIX ${prefix})
 endmacro()
 
-set_special_prefix(Qt4 QT)
+set_special_prefix(Qt5 QT)
 set_special_prefix(Eigen3 EIGEN3)
 set_special_prefix(QGLViewer QGLVIEWER)
 set_special_prefix(Coin3D COIN3D)

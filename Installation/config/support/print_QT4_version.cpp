@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 
-// Tests if QT4 is available and prints its version string.
+// Tests if QT5 is available and prints its version string.
 
 #include <iostream>
 #include <QtCore/QtGlobal>
