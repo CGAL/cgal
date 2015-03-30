@@ -47,7 +47,8 @@ namespace Polygon_mesh_processing{
 /**
 * \ingroup PkgPolygonMeshProcessing
 * computes the outward unit vector normal to face `f`.
-* @tparam PolygonMesh a model of `FaceGraph`
+* @tparam PolygonMesh a model of `FaceGraph` that has a property map
+*         for `CGAL::vertex_point_t`
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param f the face on which the normal is computed
@@ -61,7 +62,7 @@ namespace Polygon_mesh_processing{
 </ul>
 *
 * @return the computed normal. The return type is a 3D vector type. It is
-* deduced either from the `kernel` \ref namedparameters,
+* either deduced from the `kernel` \ref namedparameters if provided,
 * or the geometric traits class deduced from the point property map
 * of `pmesh`.
 */
@@ -124,7 +125,8 @@ void sum_normals(const PM& pmesh,
 /**
 * \ingroup PkgPolygonMeshProcessing
 * computes the outward unit vector normal for all faces of the polygon mesh.
-* @tparam PolygonMesh a model of `FaceListGraph`
+* @tparam PolygonMesh a model of `FaceGraph` that has a property map
+*         for `CGAL::vertex_point_t`
 * @tparam FaceNormalMap a model of `WritablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
     `Kernel::Vector_3` as value type.
@@ -162,7 +164,8 @@ compute_face_normals(const PolygonMesh& pmesh
 /**
 * \ingroup PkgPolygonMeshProcessing
 * computes the unit normal at vertex `v` as the average of the normals of incident faces.
-* @tparam PolygonMesh a model of `FaceGraph`
+* @tparam PolygonMesh a model of `FaceGraph` that has a property map
+*         for `CGAL::vertex_point_t`
 *
 * @param v the vertex at which the normal is computed
 * @param pmesh the polygon mesh containing `v`
@@ -175,7 +178,7 @@ compute_face_normals(const PolygonMesh& pmesh
 </ul>
 *
 * @return the computed normal. The return type is a 3D vector type. It is
-* deduced either from the `kernel` \ref namedparameters,
+* either deduced from the `kernel` \ref namedparameters if provided,
 * or the geometric traits class deduced from the point property map
 * of `pmesh`.
 */
@@ -224,7 +227,8 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 /**
 * \ingroup PkgPolygonMeshProcessing
 * computes the outward unit vector normal for all vertices of the polygon mesh.
-* @tparam PolygonMesh a model of `FaceListGraph`
+* @tparam PolygonMesh a model of `FaceListGraph` that has a property map
+*         for `CGAL::vertex_point_t`
 * @tparam VertexNormalMap a model of `WritablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
     `Kernel::Vector_3` as value type.
@@ -263,8 +267,8 @@ compute_vertex_normals(const PolygonMesh& pmesh
 /**
 * \ingroup PkgPolygonMeshProcessing
 * computes the outward unit vector normal for all vertices and faces of the polygon mesh.
-* @tparam PolygonMesh a model of `FaceListGraph`
-
+* @tparam PolygonMesh a model of `FaceListGraph` that has a property map
+*         for `CGAL::vertex_point_t`
 * @tparam VertexNormalMap a model of `WritablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
     `Kernel::Vector_3` as value type.
