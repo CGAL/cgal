@@ -254,7 +254,7 @@ private:
 
 public:
   Refine_Polyhedron_3(PolygonMesh& pmesh
-                    , VertexPointMap vpmap_ = get(CGAL::vertex_point, pmesh))
+                    , VertexPointMap vpmap_)
     : pmesh(pmesh)
     , vpmap(vpmap_)
   {}

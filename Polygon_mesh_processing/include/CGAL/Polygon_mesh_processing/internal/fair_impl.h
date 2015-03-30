@@ -37,8 +37,8 @@ class Fair_Polyhedron_3 {
 
 public:
   Fair_Polyhedron_3(PolygonMesh& pmesh
-      , VertexPointMap vpmap = get(CGAL::vertex_point, pmesh)
-      , WeightCalculator weight_calculator = WeightCalculator())
+      , VertexPointMap vpmap
+      , WeightCalculator weight_calculator)
     : pmesh(pmesh)
     , weight_calculator(weight_calculator)
     , ppmap(vpmap)

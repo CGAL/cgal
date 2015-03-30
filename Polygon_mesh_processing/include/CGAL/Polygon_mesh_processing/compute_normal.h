@@ -44,6 +44,27 @@ namespace CGAL{
 
 namespace Polygon_mesh_processing{
 
+template<typename Point, typename PM, typename VertexPointMap, typename Vector>
+void sum_normals(const PM& pmesh,
+                 typename boost::graph_traits<PM>::face_descriptor f,
+                 VertexPointMap vpmap,
+                 Vector& sum)
+{
+  typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
+  halfedge_descriptor he = halfedge(f, pmesh);
+  halfedge_descriptor end = he;
+  do
+  {
+    const Point& prv = vpmap[target(prev(he, pmesh), pmesh)];
+    const Point& curr = vpmap[target(he, pmesh)];
+    const Point& nxt = vpmap[target(next(he, pmesh), pmesh)];
+    Vector n = CGAL::cross_product(nxt - curr, prv - curr);
+    sum = sum + n;
+
+    he = next(he, pmesh);
+  } while (he != end);
+}
+
 /**
 * \ingroup PkgPolygonMeshProcessing
 * computes the outward unit vector normal to face `f`.
@@ -99,27 +120,6 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
     , normal);
  
   return normal / std::sqrt(normal * normal);
-}
-
-template<typename Point, typename PM, typename VertexPointMap, typename Vector>
-void sum_normals(const PM& pmesh,
-                 typename boost::graph_traits<PM>::face_descriptor f,
-                 VertexPointMap vpmap,
-                 Vector& sum)
-{
-  typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
-  halfedge_descriptor he = halfedge(f, pmesh);
-  halfedge_descriptor end = he;
-  do
-  {
-    const Point& prv = vpmap[target(prev(he, pmesh), pmesh)];
-    const Point& curr = vpmap[target(he, pmesh)];
-    const Point& nxt = vpmap[target(next(he, pmesh), pmesh)];
-    Vector n = CGAL::cross_product(nxt - curr, prv - curr);
-    sum = sum + n;
-
-    he = next(he, pmesh);
-  } while (he != end);
 }
 
 /**
