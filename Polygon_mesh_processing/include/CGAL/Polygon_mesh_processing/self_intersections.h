@@ -185,6 +185,21 @@ struct Throw_at_output {
 
 namespace Polygon_mesh_processing {
 
+#ifndef DOXYGEN_RUNNING
+template <class GeomTraits
+        , class TriangleMesh
+        , class FaceRange
+        , class OutputIterator
+        , class VertexPointMap
+>
+OutputIterator
+self_intersections( const FaceRange& face_range,
+                    const TriangleMesh& tmesh,
+                    OutputIterator out,
+                    VertexPointMap vpmap,
+                    const GeomTraits& geom_traits);
+#endif
+
 /** 
  * \ingroup PkgPolygonMeshProcessing
  * detects and reports self-intersections of a triangle mesh.
@@ -219,6 +234,31 @@ self_intersections(const TriangleMesh& tmesh
                  , VertexPointMap vpmap = VertexPointMap()
                  , const GeomTraits& geom_traits = GeomTraits())
 {
+  return self_intersections(faces(tmesh), tmesh, out, vpmap, geom_traits);
+}
+
+/*!
+ * \ingroup PkgPolygonMeshProcessing
+ * Same as the previous overload but the self-intersection reported
+ * are only limited to the faces in `face_range`.
+ *  \tparam FaceRange a range of face descriptors (nested type `iterator`,
+ *  `const_iterator` and functions `begin()`, `end()` must be available.
+ *  \param face_range the set of faces to check for self-intersection.
+ * \todo code: is it a bad idea to use std::distance?
+ */
+template <class GeomTraits
+        , class TriangleMesh
+        , class FaceRange
+        , class OutputIterator
+        , class VertexPointMap
+>
+OutputIterator
+self_intersections( const FaceRange& face_range,
+                    const TriangleMesh& tmesh,
+                    OutputIterator out,
+                    VertexPointMap vpmap,
+                    const GeomTraits& geom_traits)
+{
   CGAL_precondition(CGAL::is_pure_triangle(tmesh));
 
   typedef TriangleMesh TM;
@@ -227,9 +267,11 @@ self_intersections(const TriangleMesh& tmesh
 
   // make one box per facet
   std::vector<Box> boxes;
-  boxes.reserve(num_faces(tmesh));
+  boxes.reserve(
+    std::distance(face_range.begin(), face_range.end())
+  );
 
-  BOOST_FOREACH(face_descriptor f, faces(tmesh))
+  BOOST_FOREACH(face_descriptor f, face_range)
   {
     boxes.push_back(Box( vpmap[target(halfedge(f,tmesh),tmesh)].bbox() +
                          vpmap[target(next(halfedge(f, tmesh), tmesh), tmesh)].bbox() +
