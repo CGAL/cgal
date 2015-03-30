@@ -53,7 +53,7 @@ namespace Polygon_mesh_processing{
 * @param f the face on which the normal is computed
 * @param pmesh the polygon mesh containing `f`
 * @param np optional sequence of \ref namedparameters among the ones listed below
-
+*
 \b Named \b parameters
 <ul>
 <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
@@ -124,13 +124,17 @@ void sum_normals(const PM& pmesh,
 * @tparam FaceNormalMap a model of `WritablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
     `Kernel::Vector_3` as value type.
-
+*
 * @param pmesh the polygon mesh
 * @param fnm the property map in which the normals are written
-* @param vpmap the property map with the points associated to the vertices of `pmesh`
-* @param k a geometric traits class instance
-* @todo document named parameters
-
+* @param np optional sequence of \ref namedparameters among the ones listed below
+*
+\b Named \b parameters
+<ul>
+<li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
+<li>\b kernel a geometric traits class instance
+</ul>
+*
 */
 template <typename PolygonMesh
           , typename FaceNormalMap
@@ -162,9 +166,13 @@ compute_face_normals(const PolygonMesh& pmesh
 
 * @param v the vertex at which the normal is computed
 * @param pmesh the polygon mesh containing `v`
-* @param vpmap the property map with the points associated to the vertices of `pmesh`
-* @param k a geometric traits class instance
-* @todo document named parameters
+* @param np optional sequence of \ref namedparameters among the ones listed below
+*
+\b Named \b parameters
+<ul>
+<li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
+<li>\b kernel a geometric traits class instance
+</ul>
 */
 template<typename PolygonMesh, typename NamedParameters>
 #ifdef DOXYGEN_RUNNING
@@ -222,10 +230,13 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 *
 * @param pmesh the polygon mesh
 * @param vnm the property map in which the normals are written
-* @param vpmap the property map with the points associated to the vertices of `pmesh`
-* @param k a geometric traits class instance
-* @todo document named parameters
-
+* @param np optional sequence of \ref namedparameters among the ones listed below
+*
+\b Named \b parameters
+<ul>
+<li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
+<li>\b kernel a geometric traits class instance
+</ul>
 */
 template <typename PolygonMesh
           , typename VertexNormalMap
@@ -267,10 +278,13 @@ compute_vertex_normals(const PolygonMesh& pmesh
 * @param pmesh the polygon mesh
 * @param vnm the property map in which the vertex normals are written
 * @param fnm the property map in which the face normals are written
-* @param vpmap the property map with the points associated to the vertices of `pmesh`
-* @param k an instance of a \cgal %Kernel
-* @todo document named parameters
-
+* @param np optional sequence of \ref namedparameters among the ones listed below
+*
+\b Named \b parameters
+<ul>
+<li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
+<li>\b kernel a geometric traits class instance
+</ul>
 */
 template <typename PolygonMesh
           , typename VertexNormalMap
