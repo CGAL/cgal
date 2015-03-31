@@ -266,6 +266,15 @@ public:
 
   virtual void update_cover_data_after_setting_domain () {}
 
+  virtual void reinsert_hidden_points_after_converting_to_1_sheeted (std::vector<Weighted_point>& hidden_points)
+  {
+    while (hidden_points.size())
+    {
+      insert(hidden_points.back());
+      hidden_points.pop_back();
+    }
+  }
+
   /** @name Insertion */ //@{
    Vertex_handle insert(const Weighted_point& p, Cell_handle start = Cell_handle()) {
      Conflict_tester tester(p, this);
