@@ -64,7 +64,7 @@ find_package(Qt5 COMPONENTS OpenGL Script Xml ScriptTools)
 # Find Glew (optional), for splatting
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/GlSplat/cmake)
 find_package(GLEW)
-set(GLEW_FOUND FALSE) # temp
+set(GLEW_FOUND FALSE)#TEMP to be removed once GlSplat has been redone
 # Find OpenGL
 find_package(OpenGL)
 
@@ -73,7 +73,6 @@ if(Qt5_FOUND)
   include_directories( ${QT_INCLUDE_DIR}/QtScriptTools )
   find_package(QGLViewer )
 endif(Qt5_FOUND)
-
 if(GLEW_FOUND)
   include_directories ( ${GLEW_INCLUDE_DIR} )
   add_definitions(-DCGAL_GLEW_ENABLED)
@@ -105,12 +104,11 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt5_wrap_ui( segmentationUI_FILES Mesh_segmentation_widget.ui)
   qt5_wrap_ui( selectionUI_FILES Selection_widget.ui)
   qt5_wrap_ui( funcUI_FILES Function_dialog.ui )
-#set(CMAKE_AUTOMOC OFF)
- qt5_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
- qt5_generate_moc( "File_loader_dialog.h" "${CMAKE_CURRENT_BINARY_DIR}/File_loader_dialog_moc.cpp" )
- add_file_dependencies( MainWindow_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h" )
- add_file_dependencies( File_loader_dialog_moc_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/File_loader_dialog.h" )
-#set(CMAKE_AUTOMOC ON)
+  qt5_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
+  qt5_generate_moc( "File_loader_dialog.h" "${CMAKE_CURRENT_BINARY_DIR}/File_loader_dialog_moc.cpp" )
+  add_file_dependencies( MainWindow_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h" )
+  add_file_dependencies( File_loader_dialog_moc_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/File_loader_dialog.h" )
+
   qt5_generate_moc( "Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
   add_file_dependencies( Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" )
 
@@ -156,7 +154,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_item.cpp #Scene_item.moc
     Scene_item_with_display_list.cpp
     Polyhedron_demo_plugin_helper.cpp)
-  qt5_use_modules(demo_framework OpenGL Gui Widgets Script Xml)
+    qt5_use_modules(demo_framework OpenGL Gui Widgets Script Xml)
 
   target_link_libraries(demo_framework
     ${QGLVIEWER_LIBRARIES}
@@ -240,7 +238,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       scene_polyhedron_item
       scene_polygon_soup_item
       scene_nef_polyhedron_item )
-    add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${lib} )
+      add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${lib} )
   endforeach()
 
   add_definitions(-DQT_STATICPLUGIN)
@@ -255,7 +253,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     #MainWindow_moc.cpp
       File_loader_dialog_moc.cpp
     # Viewer_moc.cpp
-       ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} )
+      ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
     qt5_use_modules(Polyhedron_3 Gui OpenGL Xml Widgets Script )
     if(EIGEN3_FOUND)
@@ -435,13 +433,13 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(corefinement_plugin  scene_polyhedron_item scene_combinatorial_map_item scene_polylines_item)
 
   polyhedron_demo_plugin(trivial_plugin Polyhedron_demo_trivial_plugin)
-
+    Set(CMAKE_AUTOMOC OFF)
   # Edit polyhedron scene item and plugin
   if ( EIGEN3_FOUND AND "${EIGEN3_VERSION}" VERSION_GREATER "3.1.90" )
     qt5_wrap_ui( editionUI_FILES Deform_mesh.ui )
     #qt5_automoc( Scene_edit_polyhedron_item.cpp )
     add_item(scene_edit_polyhedron_item Scene_edit_polyhedron_item.cpp #Scene_edit_polyhedron_item.moc
-${editionUI_FILES})
+      ${editionUI_FILES})
 
     target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item scene_polyhedron_item_k_ring_selection)
 
@@ -450,7 +448,7 @@ ${editionUI_FILES})
   else()
     message(STATUS "NOTICE: The polyhedron edit plugin require Eigen 3.2 (or higher) and will not be available.")
   endif()
-  
+  Set(CMAKE_AUTOMOC ON)
   polyhedron_demo_plugin(cut_plugin Polyhedron_demo_cut_plugin)
   target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)
   

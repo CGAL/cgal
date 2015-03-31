@@ -14,13 +14,12 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with GlSplat. If not, see <http://www.gnu.org/licenses/>.
 
+#include <GL/glew.h>
 #include <QtGui>
-
 #include <math.h>
 #include <stdlib.h>
 #include <iostream>
 
-#include <GL/glew.h>
 
 #include "GlSplat.h"
 #include "Shader.h"
