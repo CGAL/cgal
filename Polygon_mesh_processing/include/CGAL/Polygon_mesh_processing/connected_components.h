@@ -357,7 +357,38 @@ namespace Polygon_mesh_processing{
         return a.second > b.second;
       }
     };
-  } // namespace internal
+
+    // A property map 
+    template <typename G>
+    struct No_constraint {
+      friend bool get(No_constraint<G>, typename boost::graph_traits<G>::edge_descriptor)
+      {
+        return false;
+      }
+    };
+
+    // A functor
+    template <typename G, typename EdgeConstraintMap = No_constraint<G> >
+    struct No_border {
+      No_border()
+      {}
+
+      No_border(const G & g, EdgeConstraintMap ecm = EdgeConstraintMap())
+        : g(&g), ecm(ecm)
+      {}
+
+      bool operator()(typename boost::graph_traits<G>::edge_descriptor e) const {
+        if (!is_border(e, *g)){
+          return !get(ecm, e);
+        }
+        return false;
+      }
+
+      const G* g;
+      EdgeConstraintMap ecm;
+    };
+
+}// namespace internal
 
 /*!
  * \ingroup PkgPolygonMeshProcessing
@@ -381,22 +412,29 @@ namespace Polygon_mesh_processing{
       a default property map where no edge is constrained is provided.
  *  \returns the output iterator.
  *
- * \todo : add named parameters for ecmap?
  */
 template <typename PolygonMesh
           , typename FaceOutputIterator
-          , typename EdgeConstraintMap
+          , typename NamedParameters
           >
 FaceOutputIterator
 connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face
                     , const PolygonMesh& pmesh
                     , FaceOutputIterator out
-                    , EdgeConstraintMap ecmap
-#ifdef DOXYGEN_RUNNING
-                    = CGAL::Default()
-#endif
-                    )
+                    , const NamedParameters& np)
 {
+  using boost::choose_param;
+  using boost::choose_const_pmap;
+  using boost::get_param;
+
+  typedef typename boost::lookup_named_param_def <
+    CGAL::edge_is_constrained_t,
+    NamedParameters,
+    internal::No_constraint<PolygonMesh>//default
+  > ::type                                               EdgeConstraintMap;
+  EdgeConstraintMap ecmap
+    = choose_param(get_param(np, edge_is_constrained), EdgeConstraintMap());
+
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   std::set<face_descriptor> already_processed;
@@ -421,40 +459,6 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
   return out;
 }
 
-namespace internal {
-
-// A property map 
-template <typename G>
-struct No_constraint {
-  friend bool get(No_constraint<G>, typename boost::graph_traits<G>::edge_descriptor)
-  {
-    return false;
-  }
-};
-
-// A functor
-template <typename G, typename EdgeConstraintMap = No_constraint<G> >
-struct No_border {
-  No_border() 
-  {}
-  
-  No_border(const G & g, EdgeConstraintMap ecm = EdgeConstraintMap())
-    : g(&g), ecm(ecm)
-  {}
-  
-  bool operator()(typename boost::graph_traits<G>::edge_descriptor e) const {
-    if(! is_border(e,*g)){
-      return ! get(ecm,e);
-    }
-    return false;
-  }
-
-  const G* g;
-  EdgeConstraintMap ecm;
-};
-
-}// namespace internal
-
 template <typename PolygonMesh, typename OutputIterator>
 OutputIterator
 connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face,
@@ -462,7 +466,7 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
                     OutputIterator out)
 {
   return connected_component(seed_face, pmesh, out,
-              internal::No_constraint<PolygonMesh>());
+          CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
 /*!
