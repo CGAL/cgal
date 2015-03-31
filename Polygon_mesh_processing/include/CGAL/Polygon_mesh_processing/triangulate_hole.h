@@ -56,6 +56,7 @@ namespace Polygon_mesh_processing {
   <ul>
   <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
   <li>\b use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
+  <li>\b kernel a geometric traits class instance
   </ul>
 
   @return `out`
@@ -130,6 +131,7 @@ namespace Polygon_mesh_processing {
   <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
   <li>\b density_control_factor factor to control density of the ouput mesh, where larger values cause denser refinements, as in `refine()`
   <li>\b use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
+  <li>\b kernel a geometric traits class instance
   </ul>
 
   @return pair of `face_out` and `vertex_out`
@@ -196,6 +198,7 @@ namespace Polygon_mesh_processing {
   <li>\b density_control_factor factor to control density of the ouput mesh, where larger values cause denser refinements, as in `refine()`
   <li>\b fairing_continuity tangential continuity of the output surface patch
   <li>\b sparse_linear_solver an instance of the sparse linear solver used for fairing
+  <li>\b kernel a geometric traits class instance
   </ul>
 
   @return tuple of
