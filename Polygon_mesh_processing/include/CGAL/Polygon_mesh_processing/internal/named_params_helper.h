@@ -38,7 +38,7 @@ template<typename PolygonMesh>
 class GetK
 {
   typedef typename property_map_value<PolygonMesh,
-    CGAL::vertex_point_t>::type
+    boost::vertex_point_t>::type
     Point;
 public:
   typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;

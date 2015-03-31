@@ -67,7 +67,7 @@ namespace internal{
  *      isolated connected component.
  *
  * @tparam PolygonMesh a model of `FaceListGraph` that has a property map
-*         for `CGAL::vertex_point_t`
+*         for `boost::vertex_point_t`
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param pmesh the closed polygon mesh to be tested
@@ -105,7 +105,7 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
                                   boost::vertex_point);
   //Kernel
   typedef typename CGAL::Kernel_traits <
-    typename property_map_value<PolygonMesh, CGAL::vertex_point_t>::type
+    typename property_map_value<PolygonMesh, boost::vertex_point_t>::type
   > ::Kernel DefaultKernel;
   typedef typename boost::lookup_named_param_def <
     CGAL::geom_traits_t,

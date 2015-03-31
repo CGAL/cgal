@@ -91,18 +91,19 @@ struct Tracer_polyhedron
 };
 
 // This function is used in test cases (since it returns not just OutputIterator but also Weight)
-template<class PolygonMesh, class OutputIterator, class VertexPointMap>
+template<class PolygonMesh, class OutputIterator, class VertexPointMap, class Kernel>
 std::pair<OutputIterator, CGAL::internal::Weight_min_max_dihedral_and_area> 
 triangulate_hole_polygon_mesh(PolygonMesh& pmesh, 
             typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
             OutputIterator out,
             VertexPointMap vpmap,
-            bool use_delaunay_triangulation)
+            bool use_delaunay_triangulation,
+            const Kernel& k)
 {
   typedef Halfedge_around_face_circulator<PolygonMesh>   Hedge_around_face_circulator;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
+  typedef typename Kernel::Point_3 Point_3;
   
   typedef std::map<vertex_descriptor, int>    Vertex_map;
   typedef typename Vertex_map::iterator       Vertex_map_it;
@@ -171,7 +172,8 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
   Tracer_polyhedron<PolygonMesh, OutputIterator>
     tracer(out, pmesh, P_edges);
   CGAL::internal::Weight_min_max_dihedral_and_area weight = 
-        triangulate_hole_polyline(P, Q, tracer, WC(is_valid), use_delaunay_triangulation)
+    triangulate_hole_polyline(P, Q, tracer, WC(is_valid),
+      use_delaunay_triangulation, k)
 #ifdef CGAL_USE_WEIGHT_INCOMPLETE
               .weight // get actual weight in Weight_incomplete
 #endif

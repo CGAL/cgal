@@ -25,7 +25,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/Hole_filling/Triangulate_hole_polyline.h>
 #include <CGAL/Polygon_mesh_processing/refine.h>
 #include <CGAL/Polygon_mesh_processing/fair.h>
-#include <CGAL/Default.h>
+
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
@@ -93,7 +93,9 @@ namespace Polygon_mesh_processing {
       border_halfedge,
       out,
       choose_param(get_param(np, vertex_point), get(CGAL::vertex_point, pmesh)),
-      use_dt3).first;
+      use_dt3,
+      choose_param(get_param(np, geom_traits), GetKernel<PolygonMesh,NamedParameters>::Kernel()))
+      .first;
   }
 
   template<typename PolygonMesh, typename OutputIterator>
@@ -255,6 +257,9 @@ namespace Polygon_mesh_processing {
 
   Note that the ranges `points` and `third_points` may or may not contain duplicated first point at the end of sequence.
 
+  @tparam OutputIteratorValueType value type of `OutputIterator`
+    having a constructor `OutputIteratorValueType(int p0, int p1, int p2)` available.
+    It defaults to `value_type_traits<OutputIterator>::%type`, and can be omitted when the default is fine.
   @tparam PointRange range of points, model of `SinglePassRange`
   @tparam OutputIterator model of `OutputIterator`
      holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
@@ -273,7 +278,8 @@ namespace Polygon_mesh_processing {
 
   \todo handle islands
   */
-  template <typename PointRange,
+  template </*typename OutputIteratorValueType,*/
+            typename PointRange,
             typename OutputIterator,
             typename NamedParameters>
   OutputIterator
@@ -303,7 +309,15 @@ namespace Polygon_mesh_processing {
     typedef typename value_type_traits<OutputIterator>::type OutputIteratorValueType;
     CGAL::internal::Tracer_polyline_incomplete<OutputIteratorValueType, OutputIterator, Holes_out>
       tracer(out, Holes_out(holes));
-    triangulate_hole_polyline(points, third_points, tracer, WC(), use_dt3);
+    
+    typedef typename PointRange::iterator InIterator;
+    typedef typename std::iterator_traits<InIterator>::value_type Point;
+
+    triangulate_hole_polyline(points, third_points, tracer, WC(),
+      use_dt3,
+      choose_param(get_param(np, CGAL::geom_traits),
+        typename CGAL::Kernel_traits<Point>::Kernel()));
+
     CGAL_assertion(holes.empty());
     return tracer.out;
   }
@@ -321,10 +335,9 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup PkgPolygonMeshProcessing
-  same as above but the range of third points is omitted.
-  They are not taken into account in the cost computation that leads the hole filling
-  combinatorial decisions.
-  */
+  same as above but the range of third points is omitted. They are not
+  taken into account in the cost computation that leads the hole filling. 
+*/
   template <typename PointRange,
             typename OutputIterator,
             typename NamedParameters>

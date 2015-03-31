@@ -95,10 +95,10 @@ namespace CGAL{
 
     //overload
     template <typename PointMap>
-    pmp_bgl_named_params<PointMap, vertex_point_t, self>
+    pmp_bgl_named_params<PointMap, boost::vertex_point_t, self>
     vertex_point_map(const PointMap& p) const
     {
-      typedef pmp_bgl_named_params<PointMap, vertex_point_t, self> Params;
+      typedef pmp_bgl_named_params<PointMap, boost::vertex_point_t, self> Params;
       return Params(p, *this);
     }
 
@@ -209,10 +209,10 @@ namespace parameters{
 
   //overload
   template <typename PointMap>
-  pmp_bgl_named_params<PointMap, vertex_point_t>
+  pmp_bgl_named_params<PointMap, boost::vertex_point_t>
   vertex_point_map(const PointMap& p)
   {
-    typedef pmp_bgl_named_params<PointMap, vertex_point_t> Params;
+    typedef pmp_bgl_named_params<PointMap, boost::vertex_point_t> Params;
     return Params(p);
   }
 

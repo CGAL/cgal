@@ -1175,19 +1175,19 @@ public:
 template <
   typename PointRange,
   typename Tracer,
-  typename WeightCalculator
+  typename WeightCalculator,
+  typename Kernel
 >
 typename WeightCalculator::Weight
 triangulate_hole_polyline(const PointRange& points,
                           const PointRange& third_points,
                           Tracer& tracer,
                           const WeightCalculator& WC,
-                          bool use_delaunay_triangulation) 
+                          bool use_delaunay_triangulation,
+                          const Kernel&)
 {
-  typedef typename PointRange::iterator InIterator;
-  typedef typename std::iterator_traits<InIterator>::value_type Point_3;
-  typedef typename CGAL::Kernel_traits<Point_3>::Kernel K;
-
+  typedef Kernel        K;
+  typedef K::Point_3    Point_3;
   typedef CGAL::internal::Triangulate_hole_polyline_DT<K, Tracer, WeightCalculator> Fill_DT;
   typedef CGAL::internal::Triangulate_hole_polyline<K, Tracer, WeightCalculator>    Fill;
 
