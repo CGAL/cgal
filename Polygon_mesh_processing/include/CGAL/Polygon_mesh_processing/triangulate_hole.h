@@ -254,9 +254,6 @@ namespace Polygon_mesh_processing {
 
   Note that the ranges `points` and `third_points` may or may not contain duplicated first point at the end of sequence.
 
-  @tparam OutputIteratorValueType value type of `OutputIterator`
-    having a constructor `OutputIteratorValueType(int p0, int p1, int p2)` available.
-    It defaults to `value_type_traits<OutputIterator>::%type`, and can be omitted when the default is fine.
   @tparam PointRange range of points, model of `SinglePassRange`
   @tparam OutputIterator model of `OutputIterator`
      holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
@@ -275,8 +272,7 @@ namespace Polygon_mesh_processing {
 
   \todo handle islands
   */
-  template </*typename OutputIteratorValueType,*/
-            typename PointRange,
+  template <typename PointRange,
             typename OutputIterator,
             typename NamedParameters>
   OutputIterator
@@ -311,22 +307,7 @@ namespace Polygon_mesh_processing {
     return tracer.out;
   }
 
-  //// overload for OutputIteratorValueType
-  //template <typename PointRange,
-  //          typename OutputIterator,
-  //          typename NamedParameters>
-  //OutputIterator
-  //triangulate_hole_polyline(const PointRange& points,
-  //                          const PointRange& third_points,
-  //                          OutputIterator out,
-  //                          const NamedParameters& np)
-  //{
-  //  return triangulate_hole_polyline<typename value_type_traits<OutputIterator>::type>
-  //    (points, third_points, out, np);
-  //}
-
-  template </*typename OutputIteratorValueType,*/
-            typename PointRange,
+  template <typename PointRange,
             typename OutputIterator>
   OutputIterator
   triangulate_hole_polyline(const PointRange& points,
@@ -340,9 +321,8 @@ namespace Polygon_mesh_processing {
   /*!
   \ingroup PkgPolygonMeshProcessing
   same as above but the range of third points is omitted.
-*/
-  template </*typename OutputIteratorValueType,*/
-            typename PointRange,
+  */
+  template <typename PointRange,
             typename OutputIterator,
             typename NamedParameters>
   OutputIterator
@@ -350,25 +330,10 @@ namespace Polygon_mesh_processing {
                             OutputIterator out,
                             const NamedParameters& np)
   {
-    return triangulate_hole_polyline//<OutputIteratorValueType>
-      (points, PointRange(), out, np);
+    return triangulate_hole_polyline(points, PointRange(), out, np);
   }
 
-  //// overload for OutputIteratorValueType
-  //template <typename PointRange,
-  //          typename OutputIterator,
-  //          typename NamedParameters>
-  //OutputIterator
-  //triangulate_hole_polyline(const PointRange& points,
-  //                          OutputIterator out,
-  //                          const NamedParameters& np)
-  //{
-  //  return triangulate_hole_polyline<typename value_type_traits<OutputIterator>::type>
-  //    (points, out, np);
-  //}
-
-  template </*typename OutputIteratorValueType,*/
-            typename PointRange,
+  template <typename PointRange,
             typename OutputIterator>
   OutputIterator
   triangulate_hole_polyline(const PointRange& points,
@@ -377,7 +342,6 @@ namespace Polygon_mesh_processing {
     return triangulate_hole_polyline(points, out,
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
-
 
 } //end namespace Polygon_mesh_processing
 
