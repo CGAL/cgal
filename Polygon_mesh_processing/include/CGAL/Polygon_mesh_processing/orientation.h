@@ -24,6 +24,7 @@
 
 #include <algorithm>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Kernel_traits.h>
@@ -40,7 +41,7 @@ namespace internal{
     Less_xyz less;
     VPmap vpmap;
 
-   Compare_vertex_points_xyz_3(VPmap vpmap)
+   Compare_vertex_points_xyz_3(VPmap const& vpmap)
 	: vpmap(vpmap){}
 
     typedef bool result_type;
@@ -53,6 +54,10 @@ namespace internal{
   };
 } // end of namespace internal
 
+void toto(int i)
+{
+  int j = i;
+}
 /**
  * \ingroup PkgPolygonMeshProcessing
  * tests whether a closed polygon mesh has a positive orientation.
@@ -65,49 +70,55 @@ namespace internal{
  *      that is the answer to this predicate would be the same if called on each
  *       connected component isolated.
  *
- * @tparam PolygonMesh a model of `FaceListGraph`
- * @tparam VertexPointMap a model of `ReadablePropertyMap` with
-    `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
-    `Kernel::Vector_3` as value type
- * @tparam Kernel Geometric traits class.
+ * @tparam PolygonMesh a model of `FaceListGraph` that has a property map
+*         for `CGAL::vertex_point_t`
+ * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param pmesh the closed polygon mesh to be tested
- * @param vpmap the property map with the points associated to the vertices of `pmesh`
- * @param k a traits class instance
+ * @param np optional sequence of \ref namedparameters among the ones listed below
  *
- * \todo The following only handles polyhedron with one connected component
+ \b Named \b parameters
+ <ul>
+ <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
+ <li>\b kernel a geometric traits class instance
+ </ul>
+ *
+ * \todo code : The following only handles polyhedron with one connected component
  *       the code, the sample example and the plugin must be updated.
  *
- *  \sa `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
- *
+ * \sa `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
  */
-template<typename PolygonMesh
-       , typename VertexPointMap
-#ifdef DOXYGEN_RUNNING
-       = typename boost::property_map<PolygonMesh, vertex_point_t>::type
-#endif
-       , typename Kernel
-#ifdef DOXYGEN_RUNNING
-       = typename Kernel_traits<
-           typename boost::property_traits<VertexPointMap>::value_type>::Kernel
-#endif
-         >
-bool is_outward_oriented(const PolygonMesh& pmesh
-                       , VertexPointMap vpmap
-#ifdef DOXYGEN_RUNNING
-                       = get(vertex_point, pmesh)
-#endif
-                       , const Kernel& k
-#ifdef DOXYGEN_RUNNING
-                       = Kernel()
-#endif
-                       )
+template<typename PolygonMesh, typename NamedParameters>
+bool is_outward_oriented(const PolygonMesh& pmesh,
+                         const NamedParameters& np)
 {
   CGAL_warning(CGAL::is_closed(pmesh));
   CGAL_precondition(CGAL::is_valid(pmesh));
 
-  internal::Compare_vertex_points_xyz_3<typename Kernel::Less_xyz_3,
-                                        VertexPointMap > less_xyz(vpmap);
+  using boost::choose_const_pmap;
+  using boost::get_param;
+
+  //VertexPointMap
+  typedef typename boost::lookup_named_param_def <
+    boost::vertex_point_t,
+    NamedParameters,
+    boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type//default
+  > ::type  VPMap;
+  VPMap vpmap = choose_const_pmap(get_param(np, boost::vertex_point),
+                                  pmesh,
+                                  boost::vertex_point);
+  //Kernel
+  typedef typename CGAL::Kernel_traits <
+    typename property_map_value<PolygonMesh, CGAL::vertex_point_t>::type
+  > ::Kernel DefaultKernel;
+  typedef typename boost::lookup_named_param_def <
+    CGAL::geom_traits_t,
+    NamedParameters,
+    DefaultKernel //default
+  > ::type  Kernel;
+
+  internal::Compare_vertex_points_xyz_3<typename Kernel::Less_xyz_3, VPMap >
+    less_xyz(vpmap);
 
   typename boost::graph_traits<PolygonMesh>::vertex_iterator vbegin, vend;
   cpp11::tie(vbegin, vend) = vertices(pmesh);
@@ -115,8 +126,7 @@ bool is_outward_oriented(const PolygonMesh& pmesh
     = std::min_element(vbegin, vend, less_xyz);
 
   const typename Kernel::Vector_3&
-    normal_v_min = compute_vertex_normal(*v_min, pmesh,
-      CGAL::Polygon_mesh_processing::parameters::vertex_point_map(vpmap).kernel(k));
+    normal_v_min = compute_vertex_normal(*v_min, pmesh, np);
 
   return normal_v_min[0] < 0 || (
             normal_v_min[0] == 0 && (
@@ -128,22 +138,11 @@ bool is_outward_oriented(const PolygonMesh& pmesh
 
 ///\cond SKIP_IN_MANUAL
 
-template<typename PolygonMesh
-       , typename VertexPointMap>
-bool is_outward_oriented(const PolygonMesh& pmesh
-                       , VertexPointMap vpmap)
-{
-  typedef typename Kernel_traits<
-      typename boost::property_traits<
-        typename boost::property_map<PolygonMesh, 
-          CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
-  return is_outward_oriented(pmesh, vpmap, Kernel());
-}
-
 template<typename PolygonMesh>
 bool is_outward_oriented(const PolygonMesh& pmesh)
 {
-  return is_outward_oriented(pmesh, get(boost::vertex_point, pmesh));
+  return is_outward_oriented(pmesh,
+    CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
 /// \endcond
