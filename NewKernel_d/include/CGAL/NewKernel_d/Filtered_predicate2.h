@@ -18,8 +18,8 @@
 //
 // Author(s)     : Sylvain Pion
 
-#ifndef CGAL_FILTERED_PREDICATE_H
-#define CGAL_FILTERED_PREDICATE_H
+#ifndef CGAL_FILTERED_PREDICATE2_H
+#define CGAL_FILTERED_PREDICATE2_H
 
 #include <string>
 #include <CGAL/config.h>
@@ -134,4 +134,4 @@ public:
 
 } //namespace CGAL
 
-#endif // CGAL_FILTERED_PREDICATE_H
+#endif // CGAL_FILTERED_PREDICATE2_H
