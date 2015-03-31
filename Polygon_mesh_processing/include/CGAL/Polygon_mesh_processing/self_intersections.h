@@ -282,7 +282,7 @@ self_intersections( const FaceRange& face_range,
   std::vector<const Box*> box_ptr;
   box_ptr.reserve(num_faces(tmesh));
 
-  BOOST_FOREACH(Box b, boxes)
+  BOOST_FOREACH(Box& b, boxes)
     box_ptr.push_back(&b);
 
   // compute self-intersections filtered out by boxes
