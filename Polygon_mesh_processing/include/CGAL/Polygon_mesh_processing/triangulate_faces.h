@@ -239,7 +239,8 @@ public:
 </ul>
 */
 template <typename PolygonMesh, typename NamedParameters>
-void triangulate_faces(PolygonMesh& pmesh)
+void triangulate_faces(PolygonMesh& pmesh,
+                       const NamedParameters& np)
 {
   using boost::choose_const_pmap;
   using boost::get_param;
@@ -261,8 +262,15 @@ void triangulate_faces(PolygonMesh& pmesh)
     DefaultKernel //default
   > ::type  Kernel;
 
-  internal::Triangulate_modifier<PolygonMesh, VertexPointMap, Kernel> modifier(vpmap);
+  internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel> modifier(vpmap);
   modifier(pmesh);
+}
+
+template <typename PolygonMesh>
+void triangulate_faces(PolygonMesh& pmesh)
+{
+  return triangulate_faces(pmesh,
+    CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
 } // end namespace Polygon_mesh_processing
