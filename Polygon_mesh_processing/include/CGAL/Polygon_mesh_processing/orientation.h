@@ -62,9 +62,9 @@ namespace internal{
  * is considered to point on the side of the face where the sequence of vertices of
  * the facet is seen counterclockwise.
  * @pre `CGAL::is_closed(pmesh)`
- * @pre If `pmesh` contains several connected components they are oriented consistentl,
+ * @pre If `pmesh` contains several connected components they are oriented consistently,
  *      that is the answer to this predicate would be the same if called on each
- *       connected component isolated.
+ *      isolated connected component.
  *
  * @tparam PolygonMesh a model of `FaceListGraph` that has a property map
 *         for `CGAL::vertex_point_t`
