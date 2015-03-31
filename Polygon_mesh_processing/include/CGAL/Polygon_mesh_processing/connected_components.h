@@ -398,18 +398,21 @@ namespace Polygon_mesh_processing{
 
  *  \tparam PolygonMesh a model of `FaceGraph`
  *  \tparam FaceOutputIterator a model of `OutputIterator` that accepts
-        `boost::graph_traits<PolygonMesh>::%face_descriptor`s.
- *  \tparam EdgeConstraintMap a model of `ReadablePropertyMap` with
-        `boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
-        `bool` as value type. It should be default-constructible.
+        faces of type
+        `boost::graph_traits<PolygonMesh>::%face_descriptor`.
+ *  \tparam NamedParameters a sequence of \ref namedparameters
  *
  *  \param seed_face a face of `pmesh` from which exploration starts to detect the connected component
            that contains it
  *  \param pmesh the polygon mesh
  *  \param out the output iterator that collects faces from the same connected component as `seed_face`
- *  \param ecmap the property map containing information about edges of `pmesh` being constrained or not.
-      If this parameter is omitted,
-      a default property map where no edge is constrained is provided.
+ *  \param np optional \ref namedparameters described below
+ *
+ * \b Named \b parameters
+ * <ul>
+ * <li>\b edge_is_constrained_map a property map containing the constrained-or-not status of each edge of `pmesh`
+ * </ul>
+ *
  *  \returns the output iterator.
  *
  */
@@ -477,18 +480,17 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
  *  \tparam FaceComponentMap a model of `WritablePropertyMap` with
         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
         `boost::face_index` as value type.
- *  \tparam EdgeConstraintMap a model of `ReadablePropertyMap` with
-        `boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
-        `bool` as value type. It should be default-constructible.
- * \tparam FaceIndexMap a model of `ReadablePropertyMap` with
-       `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
-       ` CGAL::face_index_t` as value type.
+ *  \tparam NamedParameters a sequence of \ref namedparameters
 
  * \param pmesh the polygon mesh
  * \param fcm the property map with indices of components associated to faces in `pmesh`
- * \param ecmap the property map containing information about edges of `pmesh` being constrained or not.
-          It defaults to a map with all value types being `false`.
- * \param fim the property map containing the index of each face of `pmesh`
+ * \param np optional \ref namedparameters described below
+ *
+ * \b Named \b parameters
+ * <ul>
+ * <li>\b edge_is_constrained_map a property map containing the constrained-or-not status of each edge of `pmesh`
+ * <li>\b face_index_map a property map containing the index of each face of `pmesh`
+ * </ul>
  *
  *  \returns the number of connected components.
  */
@@ -549,23 +551,19 @@ connected_components(const PolygonMesh& pmesh,
  *  Two faces are put in the same connected component if they share an edge that is not marked as constrained.
  *
  * \tparam PolygonMesh a model of `FaceListGraph`
- * \tparam EdgeConstraintMap a model of `ReadablePropertyMap` with
-       `boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
-       `bool` as value type. It should be default-constructible.
- * \tparam VertexIndexMap a model of `ReadablePropertyMap` with
-       `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
-       `CGAL::vertex_index_t` as value type
- * \tparam FaceIndexMap a model of `ReadablePropertyMap` with
-       `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
-       `CGAL::face_index_t` as value type.
-
+ * \tparam NamedParameters a sequence of \ref namedparameters
+ *
  * \param pmesh the polygon mesh
- * \param nb_components_to_keep
- * \param ecmap the property map containing information about edges of `pmesh` being constrained or not.
-               It defaults to a map with all value types being `false`.
- * \param vim the property map containing the index of each vertex of `pmesh`
- * \param fim the property map containing the index of each face of `pmesh`
-
+ * \param nb_components_to_keep the number of components to be kept
+ * \param np optional \ref namedparameters described below
+ *
+ * \b Named \b parameters
+ * <ul>
+ * <li>\b edge_is_constrained_map a property map containing the constrained-or-not status of each edge of `pmesh`
+ * <li>\b face_index_map a property map containing the index of each face of `pmesh`
+ * <li>\b vertex_index_map a property map containing the index of each vertex of `pmesh`
+ * </ul>
+ *
  *  \return the number of connected components erased (ignoring isolated vertices).
  */
 template <typename PolygonMesh
