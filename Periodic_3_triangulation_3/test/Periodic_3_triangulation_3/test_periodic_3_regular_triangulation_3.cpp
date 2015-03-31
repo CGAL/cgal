@@ -486,7 +486,18 @@ void test_insert_rnd_then_remove_all (unsigned pt_count, unsigned seed)
 //    std::cout << cnt << " : " << p << std::endl;
     assert(p.weight() < 0.015625);
     stream << p << std::endl;
+
+    unsigned hidden_point_count = 0;
+    for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+      hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+
     Vertex_handle vh = p3rt3.insert(p);
+
+    unsigned hidden_point_count_2 = 0;
+    for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+      hidden_point_count_2 += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+    assert(hidden_point_count <= hidden_point_count_2);
+
     std::cout << cnt << " - p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
     if (vh == Vertex_handle())
     {
@@ -517,9 +528,10 @@ void test_insert_rnd_then_remove_all (unsigned pt_count, unsigned seed)
     p3rt3.remove(iter);
     hidden_point_set.erase(iter->point());
     std::cout << cnt << " - p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
-//    unsigned hidden_point_count = 0;
-//    for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
-//      hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+    unsigned hidden_point_count = 0;
+    for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+      hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+    assert(hidden_point_count + cnt + p3rt3.number_of_vertices() == real_pt_count);
   }
 
   assert(cnt == real_pt_count+1);
@@ -609,18 +621,18 @@ int main (int argc, char** argv)
 {
   std::cout << "TESTING ..." << std::endl;
 
-  test_construction();
-  test_insert_1();
-  test_insert_point();
-  test_insert_hidden_point();
-  test_insert_hiding_point();
-  test_insert_a_point_twice();
-  test_insert_two_points_with_the_same_position();
-  test_remove();
-  test_27_to_1_sheeted_covering();
+//  test_construction();
+//  test_insert_1();
+//  test_insert_point();
+//  test_insert_hidden_point();
+//  test_insert_hiding_point();
+//  test_insert_a_point_twice();
+//  test_insert_two_points_with_the_same_position();
+//  test_remove();
+//  test_27_to_1_sheeted_covering();
 //    Iso_cuboid unitaire ->  0 <= weight < 0.015625
-  test_insert_rnd_as_delaunay(100, 0.);
-  test_insert_rnd_as_delaunay(100, 0.01);
+//  test_insert_rnd_as_delaunay(100, 0.);
+//  test_insert_rnd_as_delaunay(100, 0.01);
   test_insert_rnd_then_remove_all(5000, 7);
   test_insert_rnd_then_remove_all(5000, 12);
 
