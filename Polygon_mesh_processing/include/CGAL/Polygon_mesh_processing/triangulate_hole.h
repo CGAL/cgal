@@ -91,7 +91,7 @@ namespace Polygon_mesh_processing {
     return internal::triangulate_hole_polygon_mesh(pmesh,
       border_halfedge,
       out,
-      choose_param(get_param(np, vertex_point_map), get(CGAL::vertex_point, pmesh)),
+      choose_param(get_param(np, vertex_point), get(CGAL::vertex_point, pmesh)),
       use_dt3).first;
   }
 

@@ -32,14 +32,6 @@
 #include <CGAL/boost/graph/properties.h> 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 
-// shortcut for accessing the value type of the property map
-template <class Graph, class Property>
-class property_map_value {
-  typedef typename boost::property_map<Graph, Property>::const_type PMap;
-public:
-  typedef typename boost::property_traits<PMap>::value_type type;
-};
-
 namespace CGAL{
 
 namespace Polygon_mesh_processing{
@@ -116,7 +108,7 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 
   Vector normal = CGAL::NULL_VECTOR;
   sum_normals<Point>(pmesh, f
-    , choose_param(get_param(np, vertex_point_map), get(CGAL::vertex_point, pmesh))
+    , choose_param(get_param(np, vertex_point), get(CGAL::vertex_point, pmesh))
     , normal);
  
   return normal / std::sqrt(normal * normal);

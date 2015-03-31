@@ -23,13 +23,20 @@
 
 #include <CGAL/boost/graph/named_function_params.h>
 
+// shortcut for accessing the value type of the property map
+template <class Graph, class Property>
+class property_map_value {
+  typedef typename boost::property_map<Graph, Property>::const_type PMap;
+public:
+  typedef typename boost::property_traits<PMap>::value_type type;
+};
+
 namespace CGAL{
 
   enum density_control_factor_t     { density_control_factor      };
   enum use_delaunay_triangulation_t { use_delaunay_triangulation  };
   enum fairing_continuity_t         { fairing_continuity };
   enum sparse_linear_solver_t       { sparse_linear_solver };
-  enum vertex_point_map_t           { vertex_point_map };
   enum less_halfedge_t              { less_halfedge };
   enum geom_traits_t                { geom_traits };
 
@@ -95,12 +102,12 @@ namespace CGAL{
     }
 
     //overload
-    template<typename VPMap>
-    pmp_bgl_named_params<VPMap, vertex_point_map_t, self>
-    vertex_point_map(const VPMap& vpmap) const
+    template <typename PointMap>
+    pmp_bgl_named_params<PointMap, vertex_point_t, self>
+    vertex_point_map(const PointMap& p) const
     {
-      typedef pmp_bgl_named_params<VPMap, vertex_point_map_t, self> Params;
-      return Params(vpmap, *this);
+      typedef pmp_bgl_named_params<PointMap, vertex_point_t, self> Params;
+      return Params(p, *this);
     }
 
     template<typename Less>
@@ -208,12 +215,13 @@ namespace parameters{
     return Params(w);
   }
 
-  template<typename VPMap>
-  pmp_bgl_named_params<VPMap, vertex_point_map_t>
-  vertex_point_map(const VPMap& vpmap)
+  //overload
+  template <typename PointMap>
+  pmp_bgl_named_params<PointMap, vertex_point_t>
+  vertex_point_map(const PointMap& p)
   {
-    typedef pmp_bgl_named_params<VPMap, vertex_point_map_t> Params;
-    return Params(vpmap);
+    typedef pmp_bgl_named_params<PointMap, vertex_point_t> Params;
+    return Params(p);
   }
 
   template<typename Less>

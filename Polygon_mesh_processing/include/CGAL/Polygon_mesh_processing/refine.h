@@ -80,7 +80,7 @@ namespace Polygon_mesh_processing {
       boost::vertex_point_t>::type Vertex_point_map;
 
     internal::Refine_Polyhedron_3<PolygonMesh, Vertex_point_map> refine_functor(pmesh,
-      choose_param(get_param(np, vertex_point_map), get(CGAL::vertex_point, pmesh)));
+      choose_param(get_param(np, vertex_point), get(CGAL::vertex_point, pmesh)));
     refine_functor.refine(faces,
       faces_out,
       vertices_out,

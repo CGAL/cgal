@@ -117,7 +117,7 @@ namespace internal {
       choose_param(get_param(np, sparse_linear_solver), Default_solver()),
       choose_param(get_param(np, weight_calculator), Default_Weight_calculator(pmesh)),
       choose_param(get_param(np, fairing_continuity), 1),
-      choose_param(get_param(np, vertex_point_map), get(CGAL::vertex_point, pmesh))
+      choose_param(get_param(np, vertex_point), get(CGAL::vertex_point, pmesh))
       );
   }
 
