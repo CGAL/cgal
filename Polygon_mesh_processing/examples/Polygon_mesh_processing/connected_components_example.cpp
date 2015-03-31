@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
   std::size_t num = CGAL::Polygon_mesh_processing::connected_components(mesh,
     fccmap,
     CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(Constraint<Mesh>(mesh, bound)));
-  
+
   std::cerr << "- The graph has " << num << " connected components (face connectivity)" << std::endl;
   typedef std::map<std::size_t/*index of CC*/, unsigned int/*nb*/> Components_size;
   Components_size nb_per_cc;
@@ -92,8 +92,8 @@ int main(int argc, char* argv[])
 
   std::cerr << "- We keep the two largest components" << std::endl; 
   CGAL::Polygon_mesh_processing::keep_largest_connected_components(mesh,
-                                        2,
-                                        Constraint<Mesh>(mesh, bound));
+    2,
+    CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(Constraint<Mesh>(mesh, bound)));
 
   return 0;
 }

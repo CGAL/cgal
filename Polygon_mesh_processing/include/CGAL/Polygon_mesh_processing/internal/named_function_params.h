@@ -140,9 +140,18 @@ namespace CGAL{
     //overload
     template <typename IndexMap>
     pmp_bgl_named_params<IndexMap, boost::face_index_t, self>
-      face_index_map(const IndexMap& p) const
+    face_index_map(const IndexMap& p) const
     {
       typedef pmp_bgl_named_params<IndexMap, boost::face_index_t, self> Params;
+      return Params(p, *this);
+    }
+
+    //overload
+    template <typename IndexMap>
+    pmp_bgl_named_params<IndexMap, boost::vertex_index_t, self>
+    vertex_index_map(const IndexMap& p) const
+    {
+      typedef pmp_bgl_named_params<IndexMap, boost::vertex_index_t, self> Params;
       return Params(p, *this);
     }
 
@@ -232,6 +241,7 @@ namespace parameters{
     return Params(em);
   }
 
+  //overload
   template <typename EdgeIsConstrainedParams>
   pmp_bgl_named_params<EdgeIsConstrainedParams, edge_is_constrained_params_t>
   edge_is_constrained_map_params(const EdgeIsConstrainedParams& em)
@@ -241,6 +251,7 @@ namespace parameters{
     return Params(em);
   }
 
+  //overload
   template <typename IndexMap>
   pmp_bgl_named_params<IndexMap, boost::face_index_t>
   face_index_map(IndexMap const& p)
@@ -249,7 +260,14 @@ namespace parameters{
     return Params(p);
   }
 
-
+  //overload
+  template <typename IndexMap>
+  pmp_bgl_named_params<IndexMap, boost::vertex_index_t>
+  vertex_index_map(const IndexMap& p)
+  {
+    typedef pmp_bgl_named_params<IndexMap, boost::vertex_index_t> Params;
+    return Params(p);
+  }
 
 } //namespace parameters
 } //namespace Polygon_mesh_processing

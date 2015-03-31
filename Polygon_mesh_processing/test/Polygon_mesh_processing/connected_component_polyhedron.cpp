@@ -95,11 +95,10 @@ void mesh_no_id(char* argv1)
     std::cout  << &*f << " in connected component " << fccmap[f] << std::endl;
   }
  
- PMP::keep_largest_connected_components(sm
-   , 2
-   , CGAL::Default()
-   , vim
-   , fim);
+  PMP::keep_largest_connected_components(sm
+    , 2
+    , PMP::parameters::vertex_index_map(vim).
+      face_index_map(fim));
 
  std::cout << "mesh:\n" << sm << std::endl;
 }
