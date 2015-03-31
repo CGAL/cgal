@@ -304,6 +304,8 @@ public:
   const TDS & tds() const { return _tds; }
   TDS & tds() { return _tds; }
 
+  virtual void reinsert_hidden_points_after_converting_to_1_sheeted (std::vector<Point>& hidden_points) {}
+
   const Iso_cuboid & domain() const { return _domain; }
   // TODO: Documentation and tests
   virtual void update_cover_data_after_setting_domain () {}
@@ -2977,13 +2979,17 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering() {
   // ###################################################################
   // ### Fourth cell iteration #########################################
   // ###################################################################
+  std::vector<Point> hidden_points;
   {
     // Delete the marked cells.
     std::vector<Cell_handle> cells_to_delete;
     for ( Cell_iterator cit = all_cells_begin() ;
     cit != all_cells_end() ; ++cit ) {
       if ( cit->get_additional_flag() == 1 )
+      {
+        std::copy(cit->hidden_points_begin(), cit->hidden_points_end(), std::back_inserter(hidden_points));
         cells_to_delete.push_back( cit );
+      }
     }
     _tds.delete_cells(cells_to_delete.begin(), cells_to_delete.end());
   }
@@ -3007,6 +3013,7 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering() {
   _cover = make_array(1,1,1);
   virtual_vertices.clear();
   virtual_vertices_reverse.clear();
+  reinsert_hidden_points_after_converting_to_1_sheeted(hidden_points);
 }
 
 template < class GT, class TDS >
