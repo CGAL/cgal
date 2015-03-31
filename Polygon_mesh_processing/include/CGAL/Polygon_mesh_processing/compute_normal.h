@@ -31,6 +31,7 @@
 
 #include <CGAL/boost/graph/properties.h> 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 namespace CGAL{
 
@@ -83,23 +84,13 @@ template <typename PolygonMesh, typename NamedParameters>
 #ifdef DOXYGEN_RUNNING
 Vector_3
 #else
-typename boost::lookup_named_param_def < CGAL::geom_traits_t,
-  typename NamedParameters::base,
-  typename CGAL::Kernel_traits <
-  typename property_map_value<PolygonMesh, CGAL::vertex_point_t>::type
-  > ::Kernel
-> ::type::Vector_3
+typename GetKernel<PolygonMesh, NamedParameters>::Kernel::Vector_3
 #endif
 compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
                     , const PolygonMesh& pmesh
                     , const NamedParameters& np)
 {
-  typedef typename boost::lookup_named_param_def < CGAL::geom_traits_t,
-    typename NamedParameters::base,
-    typename CGAL::Kernel_traits <
-      typename property_map_value<PolygonMesh, CGAL::vertex_point_t>::type
-    >::Kernel
-  >::type Kernel;
+  typedef typename GetKernel<PolygonMesh, NamedParameters>::Kernel Kernel;
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
 

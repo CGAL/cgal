@@ -23,14 +23,6 @@
 
 #include <CGAL/boost/graph/named_function_params.h>
 
-// shortcut for accessing the value type of the property map
-template <class Graph, class Property>
-class property_map_value {
-  typedef typename boost::property_map<Graph, Property>::const_type PMap;
-public:
-  typedef typename boost::property_traits<PMap>::value_type type;
-};
-
 namespace CGAL{
 
   enum density_control_factor_t     { density_control_factor      };

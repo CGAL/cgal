@@ -34,6 +34,7 @@
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <boost/foreach.hpp>
 
@@ -254,13 +255,7 @@ void triangulate_faces(PolygonMesh& pmesh,
                                   pmesh,
                                   boost::vertex_point);
   //Kernel
-  typedef typename CGAL::Kernel_traits <
-    typename property_map_value<PolygonMesh, CGAL::vertex_point_t>::type
-  > ::Kernel DefaultKernel;
-  typedef typename boost::lookup_named_param_def <CGAL::geom_traits_t,
-    NamedParameters,
-    DefaultKernel //default
-  > ::type  Kernel;
+  typedef typename GetKernel<PolygonMesh, NamedParameters>::Kernel Kernel;
 
   internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel> modifier(vpmap);
   modifier(pmesh);
