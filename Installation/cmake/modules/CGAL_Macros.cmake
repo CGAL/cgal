@@ -293,7 +293,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
       if (${component} STREQUAL "Qt5")
         find_package( OpenGL )
-        find_package( Qt5 COMPONENTS OpenGL )
+        find_package( Qt5 COMPONENTS OpenGL Svg)
       endif()
 
     else(WITH_CGAL_${component})

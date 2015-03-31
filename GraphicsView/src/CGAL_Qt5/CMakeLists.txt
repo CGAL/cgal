@@ -1,9 +1,6 @@
 message("Configuring libCGAL_Qt5")
 
-set( QT_USE_QTMAIN   TRUE )
-set( QT_USE_QTOPENGL TRUE )
-set( QT_USE_QTSVG    TRUE )
-find_package(Qt5 COMPONENTS OpenGL QUIET)
+find_package(Qt5 COMPONENTS OpenGL Svg QUIET)
 
 find_package(OpenGL QUIET )
 
@@ -64,7 +61,7 @@ if( Qt5_FOUND )
 
     collect_cgal_library( CGAL_Qt5 "${additional_files}")
 
-    qt5_use_modules(CGAL_Qt5 OpenGL)
+    qt5_use_modules(CGAL_Qt5 OpenGL Svg)
 
     add_dependencies( CGAL_Qt5 CGAL )
 
