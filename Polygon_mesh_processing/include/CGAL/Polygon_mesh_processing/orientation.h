@@ -54,10 +54,6 @@ namespace internal{
   };
 } // end of namespace internal
 
-void toto(int i)
-{
-  int j = i;
-}
 /**
  * \ingroup PkgPolygonMeshProcessing
  * tests whether a closed polygon mesh has a positive orientation.
