@@ -87,6 +87,9 @@ DemosMainWindow::DemosMainWindow(QWidget * parent, ::Qt::WindowFlags flags)
   setAcceptDrops(true);
 }
 
+DemosMainWindow::~DemosMainWindow()
+{
+}
 
 void 
 DemosMainWindow::dragEnterEvent(QDragEnterEvent *event)

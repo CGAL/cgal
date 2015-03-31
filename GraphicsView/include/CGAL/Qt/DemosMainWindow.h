@@ -76,7 +76,7 @@ private:
 
 protected:
   DemosMainWindow (QWidget * parent = 0, ::Qt::WindowFlags flags = 0 );
-  ~DemosMainWindow(){}
+  ~DemosMainWindow();
   void setupStatusBar();
   void addNavigation(QGraphicsView*);
   void setupOptionsMenu(QMenu* menu  = 0);
