@@ -41,12 +41,14 @@ public:
 };
 
 
+inline
 Array_based_vertex_point_map::value_type
 get(Array_based_vertex_point_map,
   Array_based_vertex_point_map::key_type key) {
     return key->point();
 }
 
+inline
 void
 put(Array_based_vertex_point_map pmap,
   Array_based_vertex_point_map::key_type key,
