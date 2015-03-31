@@ -76,8 +76,8 @@ int main(int argc, char* argv[])
   Mesh::Property_map<face_descriptor, std::size_t> fccmap;
   fccmap = mesh.add_property_map<face_descriptor, std::size_t>("f:CC").first;
   std::size_t num = CGAL::Polygon_mesh_processing::connected_components(mesh,
-                                        fccmap,
-                                        Constraint<Mesh>(mesh, bound));
+    fccmap,
+    CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(Constraint<Mesh>(mesh, bound)));
   
   std::cerr << "- The graph has " << num << " connected components (face connectivity)" << std::endl;
   typedef std::map<std::size_t/*index of CC*/, unsigned int/*nb*/> Components_size;

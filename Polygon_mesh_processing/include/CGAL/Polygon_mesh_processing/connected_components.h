@@ -41,6 +41,8 @@
 #include <CGAL/internal/corefinement/Polyhedron_constness_types.h>
 #include <CGAL/Default.h>
 
+#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+
 namespace CGAL {
  namespace internal{
    namespace corefinement{
@@ -452,8 +454,6 @@ struct No_border {
 };
 
 }// namespace internal
- 
-
 
 template <typename PolygonMesh, typename OutputIterator>
 OutputIterator
@@ -464,8 +464,6 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
   return connected_component(seed_face, pmesh, out,
               internal::No_constraint<PolygonMesh>());
 }
-
-
 
 /*!
  * \ingroup PkgPolygonMeshProcessing
@@ -493,65 +491,42 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
 
 template <typename PolygonMesh
         , typename FaceComponentMap
-        , typename EdgeConstraintMap
-        , typename FaceIndexMap
-#ifdef DOXYGEN_RUNNING
-          = typename boost::property_map<PolygonMesh, CGAL::face_index_t>::type
-#endif
+        , typename NamedParameters
 >
 typename boost::property_traits<FaceComponentMap>::value_type
 connected_components(const PolygonMesh& pmesh,
                      FaceComponentMap& fcm,
-                     EdgeConstraintMap ecmap
-#ifdef DOXYGEN_RUNNING
-                     = CGAL::Default()
-#endif
-                     , FaceIndexMap fim
-#ifdef DOXYGEN_RUNNING
-                     = get(CGAL::face_index_t, pmesh)
-#endif
-)
+                     const NamedParameters& np)
 {
-  typedef Dual<PolygonMesh> Dual;
-  typedef boost::filtered_graph<Dual, internal::No_border<PolygonMesh,EdgeConstraintMap> > FiniteDual;
-  
+  using boost::choose_param;
+  using boost::choose_const_pmap;
+  using boost::get_param;
+
+  typedef typename boost::lookup_named_param_def <
+    CGAL::edge_is_constrained_t,
+    NamedParameters,
+    internal::No_constraint<PolygonMesh>//default
+  > ::type                                               EdgeConstraintMap;
+  EdgeConstraintMap ecmap
+    = choose_param(get_param(np, edge_is_constrained), EdgeConstraintMap());
+
+  typedef Dual<PolygonMesh>                              Dual;
+  typedef boost::filtered_graph<Dual,
+    internal::No_border<PolygonMesh,EdgeConstraintMap> > FiniteDual;
   Dual dual(pmesh);
-  FiniteDual finite_dual(dual,internal::No_border<PolygonMesh,EdgeConstraintMap>(pmesh,ecmap));
-  return boost::connected_components(finite_dual, fcm, boost::vertex_index_map(fim));
+
+  FiniteDual finite_dual(dual,
+    internal::No_border<PolygonMesh, EdgeConstraintMap>(pmesh, ecmap));
+
+  return boost::connected_components(finite_dual,
+    fcm,
+    boost::vertex_index_map(
+      choose_const_pmap(get_param(np, boost::face_index),
+      pmesh,
+      boost::face_index)
+    )
+  );
 }
-
-template <typename PolygonMesh
-        , typename FaceComponentMap
-        , typename FaceIndexMap>
-typename boost::property_traits<FaceComponentMap>::value_type
-connected_components(const PolygonMesh& pmesh,
-                     FaceComponentMap& fcm,
-                     CGAL::Default,
-                     FaceIndexMap fim)
-{
-  return connected_components(pmesh, fcm, internal::No_constraint<PolygonMesh>(), fim);
-}
-
-template <typename PolygonMesh, typename EdgeConstraintMap, typename FaceComponentMap>
-typename boost::property_traits<FaceComponentMap>::value_type
-connected_components(const PolygonMesh& pmesh,
-                     FaceComponentMap& fcm,
-                     EdgeConstraintMap ecmap)
-{
-
-  return CGAL::Polygon_mesh_processing::connected_components(pmesh, fcm, ecmap, get(boost::face_index, pmesh));
-}
-
-template <typename PolygonMesh, typename FaceComponentMap>
-typename boost::property_traits<FaceComponentMap>::value_type
-connected_components(const PolygonMesh& pmesh,
-                     FaceComponentMap& fcm,
-                     CGAL::Default d)
-{
-
-  return CGAL::Polygon_mesh_processing::connected_components(pmesh, fcm, d, get(boost::face_index, pmesh));
-}
-
 
 template <typename PolygonMesh, typename FaceComponentMap>
 typename boost::property_traits<FaceComponentMap>::value_type
@@ -559,10 +534,8 @@ connected_components(const PolygonMesh& pmesh,
                      FaceComponentMap& fcm)
 {
 
-  return CGAL::Polygon_mesh_processing::connected_components(pmesh,
-                                    fcm,
-                                    internal::No_constraint<PolygonMesh>(),
-                                    get(boost::face_index,pmesh));
+  return CGAL::Polygon_mesh_processing::connected_components(pmesh, fcm,
+    CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
 /*!
@@ -627,10 +600,10 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh
   typedef typename boost::graph_traits<PolygonMesh>::edge_iterator edge_iterator;
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
   
-  std::size_t num = connected_components(pmesh,
-                                         face_cc,
-                                         ecmap,
-                                         fim);
+  std::size_t num = connected_components(pmesh, face_cc,
+    CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(ecmap).
+    face_index_map(fim));
+
   if((num == 1)|| (nb_components_to_keep > num) ){
     return 0;
   }

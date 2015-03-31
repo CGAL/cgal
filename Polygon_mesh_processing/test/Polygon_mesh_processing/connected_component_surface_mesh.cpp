@@ -63,18 +63,19 @@ int main(int, char* argv[])
   std::cerr << "\nconnected components with edge constraints (dihedral angle < 3/4 pi)" << std::endl;
   Mesh::Property_map<face_descriptor,std::size_t> fccmap;
   fccmap = sm.add_property_map<face_descriptor,std::size_t>("f:CC").first; 
-  std::size_t num = PMP::connected_components(sm,
-                                              fccmap,
-                                              Constraint<Mesh>(sm,bound)
-                                              );
-  
+  std::size_t num = PMP::connected_components(sm, fccmap,
+    CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
+      Constraint<Mesh>(sm,bound))
+  );
+
  std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
  BOOST_FOREACH(face_descriptor f , faces(sm)){
    std::cout  << f << " in connected component " << fccmap[f] << std::endl;
   }
  
  std::cerr << "We keep the two largest components" << std::endl; 
- PMP::keep_largest_connected_components(sm,2,Constraint<Mesh>(sm,bound));
+ PMP::keep_largest_connected_components(sm,2,
+   Constraint<Mesh>(sm,bound));
 
  std::cout << "mesh:\n" << sm << std::endl;
   return 0;

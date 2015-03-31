@@ -42,14 +42,16 @@ void mesh_with_id(char* argv1)
 
   std::cerr << cc.size() << " faces in the CC of " << &*fd << std::endl;
 
-  boost::vector_property_map<int, typename boost::property_map<Mesh_with_id, boost::face_index_t>::type> fccmap(get(boost::face_index,sm));
+  boost::vector_property_map<int,
+    typename boost::property_map<Mesh_with_id, boost::face_index_t>::type>
+    fccmap(get(boost::face_index,sm));
 
   std::size_t num = PMP::connected_components(sm,
                                               fccmap);
   
- std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
- BOOST_FOREACH(face_descriptor f , faces(sm)){
-   std::cout  << &*f << " in connected component " << fccmap[f] << std::endl;
+  std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
+  BOOST_FOREACH(face_descriptor f , faces(sm)){
+    std::cout  << &*f << " in connected component " << fccmap[f] << std::endl;
   }
  
  PMP::keep_largest_connected_components(sm,2);
@@ -57,11 +59,8 @@ void mesh_with_id(char* argv1)
  std::cout << "mesh:\n" << sm << std::endl;
 }
 
-
-
 void mesh_no_id(char* argv1)
 {
-
   typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
   Mesh sm;
@@ -83,16 +82,17 @@ void mesh_no_id(char* argv1)
   boost::property_map<Mesh,boost::face_external_index_t>::type fim 
     = get(boost::face_external_index,sm);
 
-  boost::vector_property_map<int, typename boost::property_map<Mesh, boost::face_external_index_t>::type> fccmap(fim);
+  boost::vector_property_map<int,
+    typename boost::property_map<Mesh, boost::face_external_index_t>::type>
+      fccmap(fim);
 
   std::size_t num = PMP::connected_components(sm,
-                                              fccmap,
-                                              CGAL::Default(),
-                                              fim);
+    fccmap,
+    PMP::parameters::face_index_map(fim));
   
  std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
- BOOST_FOREACH(face_descriptor f , faces(sm)){
-   std::cout  << &*f << " in connected component " << fccmap[f] << std::endl;
+  BOOST_FOREACH(face_descriptor f , faces(sm)){
+    std::cout  << &*f << " in connected component " << fccmap[f] << std::endl;
   }
  
  PMP::keep_largest_connected_components(sm

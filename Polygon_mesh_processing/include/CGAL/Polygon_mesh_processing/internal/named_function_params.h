@@ -119,6 +119,33 @@ namespace CGAL{
       return Params(k, *this);
     }
 
+    //overload
+    template <typename EdgeIsConstrained>
+    pmp_bgl_named_params<EdgeIsConstrained, edge_is_constrained_t, self>
+    edge_is_constrained_map(const EdgeIsConstrained& em) const
+    {
+      typedef pmp_bgl_named_params<EdgeIsConstrained, edge_is_constrained_t, self> Params;
+      return Params(em, *this);
+    }
+
+    template <typename EdgeIsConstrainedParams>
+    pmp_bgl_named_params<EdgeIsConstrainedParams, edge_is_constrained_params_t, self>
+    edge_is_constrained_map_params(const EdgeIsConstrainedParams& em) const
+    {
+      typedef pmp_bgl_named_params<EdgeIsConstrainedParams,
+                                   edge_is_constrained_params_t, self> Params;
+      return Params(em, *this);
+    }
+
+    //overload
+    template <typename IndexMap>
+    pmp_bgl_named_params<IndexMap, boost::face_index_t, self>
+      face_index_map(const IndexMap& p) const
+    {
+      typedef pmp_bgl_named_params<IndexMap, boost::face_index_t, self> Params;
+      return Params(p, *this);
+    }
+
   };
 
 namespace Polygon_mesh_processing{
@@ -196,9 +223,59 @@ namespace parameters{
     return Params(k);
   }
 
+  //overload
+  template <typename EdgeIsConstrained>
+  pmp_bgl_named_params<EdgeIsConstrained, edge_is_constrained_t>
+  edge_is_constrained_map(const EdgeIsConstrained& em)
+  {
+    typedef pmp_bgl_named_params<EdgeIsConstrained, edge_is_constrained_t> Params;
+    return Params(em);
+  }
+
+  template <typename EdgeIsConstrainedParams>
+  pmp_bgl_named_params<EdgeIsConstrainedParams, edge_is_constrained_params_t>
+  edge_is_constrained_map_params(const EdgeIsConstrainedParams& em)
+  {
+    typedef pmp_bgl_named_params<EdgeIsConstrainedParams,
+                                 edge_is_constrained_params_t> Params;
+    return Params(em);
+  }
+
+  template <typename IndexMap>
+  pmp_bgl_named_params<IndexMap, boost::face_index_t>
+  face_index_map(IndexMap const& p)
+  {
+    typedef pmp_bgl_named_params<IndexMap, boost::face_index_t> Params;
+    return Params(p);
+  }
+
+
 
 } //namespace parameters
 } //namespace Polygon_mesh_processing
 } //namespace CGAL
+
+#if BOOST_VERSION >= 105100
+// partial specializations hate inheritance and we need to repeat
+// those here. this is rather fragile.
+namespace boost {
+  template <typename T, typename Tag, typename Base, typename Def>
+  struct lookup_named_param_def<Tag, CGAL::pmp_bgl_named_params<T, Tag, Base>, Def> {
+    typedef T type;
+    static const type& get(const bgl_named_params<T, Tag, Base>& p, const Def&) {
+      return p.m_value;
+    }
+  };
+
+  template <typename Tag1, typename T, typename Tag, typename Base, typename Def>
+  struct lookup_named_param_def<Tag1, CGAL::pmp_bgl_named_params<T, Tag, Base>, Def> {
+    typedef typename lookup_named_param_def<Tag1, Base, Def>::type type;
+    static const type& get(const bgl_named_params<T, Tag, Base>& p, const Def& def) {
+      return lookup_named_param_def<Tag1, Base, Def>::get(p.m_base, def);
+    }
+  };
+} // boost
+#endif
+
 
 #endif //CGAL_PMP_BGL_NAMED_FUNCTION_PARAMS_H
