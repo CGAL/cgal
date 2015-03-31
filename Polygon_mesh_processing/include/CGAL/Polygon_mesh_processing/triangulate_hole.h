@@ -321,6 +321,8 @@ namespace Polygon_mesh_processing {
   /*!
   \ingroup PkgPolygonMeshProcessing
   same as above but the range of third points is omitted.
+  They are not taken into account in the cost computation that leads the hole filling
+  combinatorial decisions.
   */
   template <typename PointRange,
             typename OutputIterator,
