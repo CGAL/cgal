@@ -7,14 +7,12 @@ find_package(Qt5 COMPONENTS OpenGL QUIET)
 
 find_package(OpenGL QUIET )
 
-if( QT5_FOUND )
+if( Qt5_FOUND )
 
   if( OPENGL_FOUND )
     
     include_directories (BEFORE ../../include)
     
-    include(${QT_USE_FILE})
-
     get_dependency_version(OPENGL)
     
     get_dependency_version(QT5 QT)
@@ -65,6 +63,8 @@ if( QT5_FOUND )
     link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
 
     collect_cgal_library( CGAL_Qt5 "${additional_files}")
+
+    qt5_use_modules(CGAL_Qt5 OpenGL)
 
     add_dependencies( CGAL_Qt5 CGAL )
 

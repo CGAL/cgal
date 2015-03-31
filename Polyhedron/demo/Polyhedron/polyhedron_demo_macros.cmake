@@ -22,6 +22,7 @@ include(AddFileDependencies)
     endif()
 
     add_library(${plugin_name} MODULE ${option} ${moc_file_name} ${plugin_implementation_base_name}.cpp ${other_sources})
+    qt5_use_modules(${plugin_name} Widgets Script OpenGL Gui Xml )
     set_property(TARGET ${plugin_name}
       PROPERTY LIBRARY_OUTPUT_DIRECTORY
       "${CGAL_POLYHEDRON_DEMO_PLUGINS_DIR}")

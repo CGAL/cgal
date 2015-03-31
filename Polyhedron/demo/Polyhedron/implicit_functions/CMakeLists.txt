@@ -27,9 +27,7 @@ set( QT_USE_QTOPENGL  TRUE )
 find_package(Qt5 COMPONENTS Xml Script OpenGL ScriptTools )
 
 
-if(CGAL_Qt5_FOUND AND QT5_FOUND)
-  include(${QT_USE_FILE})
-
+if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   # put plugins (which are shared libraries) at the same location as
   # executable files
   set(LIBRARY_OUTPUT_PATH ${RUNTIME_OUTPUT_PATH})
@@ -53,6 +51,7 @@ if(CGAL_Qt5_FOUND AND QT5_FOUND)
     add_file_dependencies( ${plugin_implementation_base_name}.moc "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
 
     add_library(${plugin_name} MODULE ${option} ${plugin_implementation_base_name}.moc ${plugin_implementation_base_name}.cpp ${other_sources})
+    qt5_use_modules(${plugin_name} Widgets Script OpenGL Gui Xml)
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${plugin_name} )
     # Link with Qt
     target_link_libraries( ${plugin_name} ${QT_LIBRARIES} )
@@ -64,7 +63,7 @@ if(CGAL_Qt5_FOUND AND QT5_FOUND)
   polyhedron_demo_plugin(p_tanglecube_function_plugin Tanglecube_implicit_function)
   polyhedron_demo_plugin(p_klein_function_plugin Klein_implicit_function)
 
-else (CGAL_Qt5_FOUND AND QT5_FOUND)
+else (CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   set(MESH_3_MISSING_DEPS "")
 
@@ -72,10 +71,10 @@ else (CGAL_Qt5_FOUND AND QT5_FOUND)
     set(MESH_3_MISSING_DEPS "the CGAL Qt5 library, ${MESH_3_MISSING_DEPS}")
   endif()
 
-  if(NOT QT5_FOUND)
+  if(NOT Qt5_FOUND)
     set(MESH_3_MISSING_DEPS "Qt5, ${MESH_3_MISSING_DEPS}")
   endif()
 
   message(STATUS "NOTICE: This demo requires ${MESH_3_MISSING_DEPS}and will not be compiled.")
 
-endif (CGAL_Qt5_FOUND AND QT5_FOUND)
+endif (CGAL_Qt5_FOUND AND Qt5_FOUND)
