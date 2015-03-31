@@ -33,6 +33,7 @@
 #include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 
 #include <boost/foreach.hpp>
 
@@ -225,58 +226,44 @@ public:
 * \ingroup PkgPolygonMeshProcessing
 * triangulates faces of the polygon mesh `pmesh`. This function depends on the package \ref PkgTriangulation2Summary
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-* @tparam VertexPointMap a model of `ReadablePropertyMap` with
-    `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
-    `Kernel::Point_3` as value type.
-* @tparam Kernel a model of \cgal Kernel.
-
+*         that has a property map for `CGAL::vertex_point_t`
+* @tparam NamedParameters a sequence of \ref namedparameters
+*
 * @param pmesh the polygon mesh to be triangulated
-* @param vpmap the property map with the points associated to the vertices of `pmesh`
-* @param k an instance of the kernel
+* @param np optional sequence of \ref namedparameters among the ones listed below
+*
+\b Named \b parameters
+<ul>
+<li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
+<li>\b kernel a geometric traits class instance
+</ul>
 */
-template <typename PolygonMesh
-        , typename VertexPointMap
-        , typename Kernel
-#ifdef DOXYGEN_RUNNING
-= CGAL::Kernel_traits< typename  boost::property_traits<VertexPointMap>::value_type >::Kernel
-#endif
->
-void triangulate_faces(PolygonMesh& pmesh
-                     , VertexPointMap vpmap
-#ifdef DOXYGEN_RUNNING
-                     = get(vertex_point, pmesh)
-#endif
-                     , const Kernel&
-#ifdef DOXYGEN_RUNNING
-                     k = Kernel()
-#endif
-                    )
+template <typename PolygonMesh, typename NamedParameters>
+void triangulate_faces(PolygonMesh& pmesh)
 {
+  using boost::choose_const_pmap;
+  using boost::get_param;
+
+  //VertexPointMap
+  typedef typename boost::lookup_named_param_def <boost::vertex_point_t,
+    NamedParameters,
+    boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type//default
+  > ::type  VPMap;
+  VPMap vpmap = choose_const_pmap(get_param(np, boost::vertex_point),
+                                  pmesh,
+                                  boost::vertex_point);
+  //Kernel
+  typedef typename CGAL::Kernel_traits <
+    typename property_map_value<PolygonMesh, CGAL::vertex_point_t>::type
+  > ::Kernel DefaultKernel;
+  typedef typename boost::lookup_named_param_def <CGAL::geom_traits_t,
+    NamedParameters,
+    DefaultKernel //default
+  > ::type  Kernel;
+
   internal::Triangulate_modifier<PolygonMesh, VertexPointMap, Kernel> modifier(vpmap);
   modifier(pmesh);
 }
-
-///\cond SKIP_IN_MANUAL
-template <typename PolygonMesh
-        , typename VertexPointMap>
-void triangulate_faces(PolygonMesh& pmesh
-                     , VertexPointMap vpmap)
-{
-  typedef typename Kernel_traits<
-    typename boost::property_traits<
-    typename boost::property_map<
-    PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel Kernel;
-  return triangulate_faces(pmesh, vpmap, Kernel());
-}
-
-template <typename PolygonMesh>
-void triangulate_faces(PolygonMesh& pmesh)
-{
-  return triangulate_faces(pmesh, get(boost::vertex_point, pmesh));
-}
-///\endcond
-
-
 
 } // end namespace Polygon_mesh_processing
 
