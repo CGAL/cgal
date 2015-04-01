@@ -23,7 +23,7 @@ if [ -d "$1/.git" ]; then
     branch=`git rev-parse --abbrev-ref HEAD`
     remote=`git config branch.${branch}.remote`
 #    echo "Git repository, in branch '$branch'"
-    git fetch $DRY_RUN $QUIET
+    git fetch $DRY_RUN $QUIET cgal cgal-dev
     [ -z "$DRY_RUN" ] && git reset $QUIET --hard "$remote/$branch"
     git clean $DRY_RUN $QUIET -f
 
