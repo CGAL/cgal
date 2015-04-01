@@ -26,6 +26,9 @@
 #include <boost/algorithm/minmax_element.hpp>
 #include <CGAL/boost/graph/Euler_operations.h>
 
+#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+
 namespace CGAL{
 namespace Polygon_mesh_processing {
 
@@ -230,26 +233,47 @@ namespace internal {
 } // end of namespace internal
 
 /// \ingroup PkgPolygonMeshProcessing
+/// removes the degenerate faces from a triangle mesh.
+///
+/// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
+///        that has a property map for `boost::vertex_point_t`
+/// @tparam NamedParameters a sequence of \ref namedparameters
+///
+/// @param np optional \ref namedparameters described below
+///
+/// \b Named \b parameters
+/// <ul>
+/// <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`. The type of this mad is model of `ReadWritePropertyMap`.
+/// <li>\b kernel a geometric traits class instance. 
+/// The traits class must provide the nested types :
+///     - `Point_3`,
+///     - `Compare_distance_3` to compute the distance between 2 points
+///     - `Collinear_are_ordered_along_line_3` to check whether 3 collinear points are ordered
+///     - `Collinear_3` to check whether 3 points are collinear
+///     - `Less_xyz_3` to compare lexicographically two points
+///     - `Equal_3` to check whether 2 points are identical
+///     -  for each functor Foo, a function `Foo foo_object()`
+/// </ul>
+
 /// \return number of degenerate faces found
-/// \tparam Traits must provide the nested types:
-///         - `Point_3`,
-///         - `Compare_distance_3` to compute the distance between 2 points
-///         - `Collinear_are_ordered_along_line_3` to check whether 3 collinear points are ordered
-///         - `Collinear_3` to check whether 3 points are collinear
-///         - `Less_xyz_3` to compare lexicographically two points
-///         - `Equal_3` to check whether 2 points are identical
-///         -  for each functor Foo, a function `Foo foo_object()`
-/// \tparam VertexPointMap model of `ReadWritePropertyMap` with
-///         `boost::graph_traits<TriangleMesh>::vertex_descriptor` as key
-///         and `Traits::Point_3` as value type.
-template <class Traits, class TriangleMesh, class VertexPointMap>
-std::size_t remove_degenerate_faces(TriangleMesh& tmesh, const VertexPointMap& vpmap, const Traits& traits)
+///
+template <class TriangleMesh, class NamedParameters>
+std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
+                                    const NamedParameters& np)
 {
+  typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::edge_descriptor edge_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
   typedef typename GT::face_descriptor face_descriptor;
   typedef typename GT::vertex_descriptor vertex_descriptor;
+
+  typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
+  VertexPointMap vpmap = choose_const_pmap(get_param(np, boost::vertex_point),
+                                           tmesh,
+                                           boost::vertex_point);
+  typedef typename GetKernel<TM, NamedParameters>::Kernel Traits;
+  Traits traits = choose_param(get_param(np, geom_traits), Traits());
 
   std::size_t nb_deg_faces = 0;
 
@@ -641,10 +665,11 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh, const VertexPointMap& v
 }
 
 /// \cond SKIP_IN_MANUAL
-template <class Traits, class TriangleMesh>
-std::size_t remove_degenerate_faces(TriangleMesh& tmesh, const Traits& traits = Traits())
+template<class TriangleMesh>
+std::size_t remove_degenerate_faces(TriangleMesh& tmesh)
 {
-  return remove_degenerate_faces<Traits>(tmesh, get(vertex_point, tmesh), traits);
+  return remove_degenerate_faces(tmesh,
+    CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 /// \endcond
 
