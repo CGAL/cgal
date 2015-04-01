@@ -108,7 +108,7 @@ typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>::value_ty
 \b Type : a class model of `ReadablePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
 `bool` as value type. It should be default - constructible.\n
-\ Default : if this parameter is omitted,
+\b Default : if this parameter is omitted,
 a default property map where no edge is constrained is provided.
 
 <li> `face_index_map` the property map containing the index of each face of the input polygon mesh.\n
@@ -122,6 +122,14 @@ a default property map where no edge is constrained is provided.
 `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
 `CGAL::vertex_index_t` as value type.\n
 \b Default value is \code boost::get(CGAL::vertex_index, pmesh)\endcode
+
+<li> `less_hedge` a comparison functor used to sort halfedges of `PolygonMesh`.\n
+\b Type : A functor with an `operator()` that compares halfedge descriptors from `PolygonMesh`. The operator should have the folliwing signature :
+\code
+typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+bool operator()(halfedge_descriptor h1, halfedge_descriptor h2);
+\endcode
+\b Default : a default functor comparing lexicographically the halfedges endpoints coordinates is provided.
 
 
 </ul>

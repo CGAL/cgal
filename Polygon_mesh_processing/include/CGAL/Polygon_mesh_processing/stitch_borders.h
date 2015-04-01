@@ -28,6 +28,9 @@
 #include <CGAL/Default.h>
 #include <CGAL/boost/graph/properties.h>
 
+#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+
 #include <vector>
 #include <set>
 
@@ -260,30 +263,39 @@ private:
 /// If the target of p.second has not been marked for deletion,
 /// then the source of p.first is.
 ///
-/// @tparam PolygonMesh a model of `MutableFaceGraph` and `FaceListGraph`
-/// @tparam VertexPointMap property map with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
-///    as key type and a `PolygonMesh::Point` as value type
+/// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+///        that has a property map for `boost::vertex_point_t`
+/// @tparam NamedParameters a sequence of \ref namedparameters
 ///
 /// @param pmesh the polygon mesh to be modified by stitching
 /// @param hedge_pairs_to_stitch a `std::vector` filled with `std::pair`s of halfedges to be stitched together
-/// @param vpmap the property map with the points associated to the vertices of `pmesh`.
-/// If not specified, `get(vertex_point, pmesh)` is used as default property map.
-template <typename PolygonMesh
-        , typename VertexPointMap>
+/// @param np optional \ref namedparameters described below
+///
+/// \b Named \b parameters
+/// <ul>
+/// <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
+/// </ul>
+///
+template <typename PolygonMesh, class NamedParameters>
 void stitch_borders(
   PolygonMesh& pmesh,
   std::vector <std::pair<
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor,
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor> >& 
      hedge_pairs_to_stitch,
-  VertexPointMap vpmap
-#ifdef DOXYGEN_RUNNING
-  = get(vertex_point, pmesh)
-#endif
-  )
+  const NamedParameters& np)
 {
-  internal::Naive_border_stitching_modifier<PolygonMesh, VertexPointMap>
-    modifier(hedge_pairs_to_stitch, vpmap);
+  using boost::choose_param;
+  using boost::get_param;
+
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
+  VPMap vpm = choose_const_pmap(get_param(np, boost::vertex_point),
+                                pmesh,
+                                boost::vertex_point);
+
+  internal::Naive_border_stitching_modifier<PolygonMesh, VPMap>
+    modifier(hedge_pairs_to_stitch, vpm);
+
   modifier(pmesh);
 }
 
@@ -296,9 +308,8 @@ void stitch_borders(
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor > > &
       hedge_pairs_to_stitch)
 {
-  typename boost::property_map<PolygonMesh, boost::vertex_point_t>::type
-    vpmap = get(boost::vertex_point, pmesh);
-  stitch_borders(pmesh, hedge_pairs_to_stitch, vpmap);
+  stitch_borders(pmesh, hedge_pairs_to_stitch,
+    CGAL::Polygon_mesh_processing::parameter::all_default());
 }
 ///\endcond
 
@@ -306,71 +317,53 @@ void stitch_borders(
 /// Same as the other overload but the pairs of halfedges to be stitched are found
 /// using `less_hedge`. Two halfedges `h1` and `h2` are set to be stitched
 /// if `less_hedge(h1,h2)==less_hedge(h2,h1)==true`.
-
-/// @tparam LessHedge a key comparison functor used to sort halfedges.
-///   It should be able to compare `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
-
+///
+/// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+///        that has a property map for `boost::vertex_point_t`
+/// @tparam a sequence of \ref namedparameters
+///
 /// @param pmesh the polygon mesh to be modified by stitching
-/// @param less_hedge an instance of the key comparison functor
-/// @param vpmap the property map with the points associated to the vertices of `pmesh`
-
-/// To use the default implementation of `less_hedge` (using the source and
-/// target points of the halfedges for comparison), 
-/// and provide a `VertexPointMap` which is not the default one,
-/// `less_hedge` should be set to CGAL::Default().
-template <typename PolygonMesh
-        , typename LessHedge
-        , typename VertexPointMap>
-void stitch_borders(PolygonMesh& pmesh
-                  , LessHedge less_hedge
-#ifdef DOXYGEN_RUNNING
-                  = CGAL::Default()
-#endif
-                  , VertexPointMap vpmap
-#ifdef DOXYGEN_RUNNING
-                  = get(vertex_point, pmesh)
-#endif
-                   )
+/// @param np optional sequence of \ref namedparameters among the ones listed below
+///
+/// \b Named \b parameters
+/// <ul>
+/// <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
+/// <li>\b less_halfedge a comparison functor on halfedges of `pmesh`
+/// </ul>
+///
+template <typename PolygonMesh, class NamedParameters>
+void stitch_borders(PolygonMesh& pmesh, const NamedParameters& np)
 {
+  using boost::choose_param;
+  using boost::choose_const_pmap;
+  using boost::get_param;
+
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
     halfedge_descriptor;
-  std::vector <std::pair<halfedge_descriptor, halfedge_descriptor> > hedge_pairs_to_stitch;
-  
-  internal::detect_duplicated_boundary_edges(
-    pmesh, std::back_inserter(hedge_pairs_to_stitch), less_hedge);
-  stitch_borders(pmesh, hedge_pairs_to_stitch, vpmap);
+  std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> > hedge_pairs_to_stitch;
+
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
+  VPMap vpm = choose_const_pmap(get_param(np, boost::vertex_point),
+                                pmesh,
+                                boost::vertex_point);
+
+  internal::detect_duplicated_boundary_edges(pmesh,
+    std::back_inserter(hedge_pairs_to_stitch),
+    choose_param(get_param(np, less_halfedge),
+                 internal::Less_for_halfedge<PolygonMesh, VPMap>(pmesh, vpm)));
+
+  stitch_borders(pmesh, hedge_pairs_to_stitch, np);
 }
 
-template <typename PolygonMesh
-        , typename VertexPointMap>
-void stitch_borders(PolygonMesh& pmesh
-  , CGAL::Default
-  , VertexPointMap vpmap)
-{
-  internal::Less_for_halfedge<PolygonMesh, VertexPointMap>
-    less_hedge(pmesh, vpmap); //default less
 
-  stitch_borders(pmesh, less_hedge, vpmap);
-}
-
-template <typename PolygonMesh>
-void stitch_borders(PolygonMesh& pmesh
-                  , CGAL::Default)
-{
-  typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::type
-    VertexPointMap;
-  VertexPointMap vpmap = get(boost::vertex_point, pmesh);
-  internal::Less_for_halfedge<PolygonMesh, VertexPointMap>
-    less_hedge(pmesh, vpmap);
-
-  stitch_borders(pmesh, less_hedge, vpmap);
-}
-
+///\cond SKIP_IN_MANUAL
 template <typename PolygonMesh>
 void stitch_borders(PolygonMesh& pmesh)
 {
-  stitch_borders(pmesh, CGAL::Default());
+  stitch_borders(pmesh,
+    CGAL::Polygon_mesh_processing::parameters::all_default());
 }
+///\endcond
 
 } //end of namespace Polygon_mesh_processing
 
