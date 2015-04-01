@@ -218,11 +218,10 @@ self_intersections( const FaceRange& face_range,
  * @param out output iterator to be filled with all pairs of non-adjacent faces that intersect
  * @param np optional sequence of \ref namedparameters among the ones listed below
  *
- \b Named \b parameters
- <ul>
- <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
- <li>\b geom_traits an instance of a geometric traits class, model of `SelfIntersectionTraits`
- </ul>
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+ *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `SelfIntersectionTraits` \cgalParamEnd
+ * \cgalNamedParamsEnd
  *
  * @return `out`
  */
@@ -346,11 +345,10 @@ OutputIterator self_intersections(const FaceRange& face_range,
  * @param tmesh triangle mesh to be tested
  * @param np optional sequence of \ref namedparameters among the ones listed below
  *
- \b Named \b parameters
- <ul>
- <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
- <li>\b geom_traits an instance of a geometric traits class, model of `SelfIntersectionTraits`
- </ul>
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+ *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `SelfIntersectionTraits` \cgalParamEnd
+ * \cgalNamedParamsEnd
  *
  * @return true if `tmesh` is self-intersecting
  */

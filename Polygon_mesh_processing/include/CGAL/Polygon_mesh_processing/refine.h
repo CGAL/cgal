@@ -49,12 +49,12 @@ namespace Polygon_mesh_processing {
   @param vertices_out output iterator into which descriptors of new vertices are put
   @param np optional sequence of \ref namedparameters among the ones listed below
 
-  \b Named \b parameters
-  <ul>
-  <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`.
-  Instance of a class model of `ReadWritePropertyMap`
-  <li>\b density_control_factor factor to control density of the ouput mesh, where larger values cause denser refinements. The density of vertices of `faces_out` is this factor times higher than the vertices of `faces.`
-  </ul>
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`
+      Instance of a class model of `ReadWritePropertyMap` \cgalParamEnd
+    \cgalParamBegin{density_control_factor} factor to control density of the ouput mesh, where larger values cause denser refinements. The density of vertices of `faces_out` is this factor times higher than the vertices of `faces.` \cgalParamEnd
+  \cgalNamedParamsEnd
+
 
   @return pair of `faces_out` and `vertices_out`
 

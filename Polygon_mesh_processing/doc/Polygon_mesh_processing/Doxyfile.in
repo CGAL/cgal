@@ -8,3 +8,8 @@ INPUT =  ${CMAKE_SOURCE_DIR}/Polygon_mesh_processing/doc/Polygon_mesh_processing
 EXTRACT_ALL                =  false
 HIDE_UNDOC_CLASSES         =  true
 WARN_IF_UNDOCUMENTED       =  false
+
+ALIASES += "cgalNamedParamsBegin=<dl class=\"params\"><dt>Named Parameters</dt><dd> <table class=\"params\">"
+ALIASES += "cgalNamedParamsEnd=</table> </dd> </dl>"
+ALIASES += "cgalParamBegin{1}=<tr><td class=\"paramname\">\1</td><td>"
+ALIASES += "cgalParamEnd=</td></tr>"

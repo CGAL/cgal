@@ -76,13 +76,12 @@ namespace internal {
   @param vertices the vertices of the patches to be faired (the positions of only those vertices will be changed)
   @param np optional sequence of \ref namedparameters among the ones listed below
 
-  \b Named \b parameters
-  <ul>
-  <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
-  <li>\b fairing_continuity tangential continuity of the output surface patch. The larger `fairing_continuity` gets, the more fixed vertices are required.
-  <li>\b sparse_linear_solver an instance of the sparse linear solver used for fairing
-  </ul>
-
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+    \cgalParamBegin{fairing_continuity} tangential continuity of the output surface patch. The larger `fairing_continuity` gets, the more fixed vertices are required \cgalParamEnd
+    \cgalParamBegin{sparse_linear_solver} an instance of the sparse linear solver used for fairing \cgalParamEnd
+  \cgalNamedParamsEnd
+  
   @return `true` if fairing is successful, otherwise no vertex position is changed
 
   @todo accuracy of solvers are not good, for example when there is no boundary condition pre_factor should fail, but it does not.

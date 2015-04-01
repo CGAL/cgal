@@ -409,10 +409,9 @@ namespace Polygon_mesh_processing{
  *  \param out the output iterator that collects faces from the same connected component as `seed_face`
  *  \param np optional \ref namedparameters described below
  *
- * \b Named \b parameters
- * <ul>
- * <li>\b edge_is_constrained_map a property map containing the constrained-or-not status of each edge of `pmesh`
- * </ul>
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{edge_is_constrained_map}  a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
+ * \cgalNamedParamsEnd
  *
  *  \returns the output iterator.
  *
@@ -487,11 +486,10 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
  * \param fcm the property map with indices of components associated to faces in `pmesh`
  * \param np optional \ref namedparameters described below
  *
- * \b Named \b parameters
- * <ul>
- * <li>\b edge_is_constrained_map a property map containing the constrained-or-not status of each edge of `pmesh`
- * <li>\b face_index_map a property map containing the index of each face of `pmesh`
- * </ul>
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
+ *    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
+ * \cgalNamedParamsEnd
  *
  *  \returns the number of connected components.
  */
@@ -558,12 +556,11 @@ connected_components(const PolygonMesh& pmesh,
  * \param nb_components_to_keep the number of components to be kept
  * \param np optional \ref namedparameters described below
  *
- * \b Named \b parameters
- * <ul>
- * <li>\b edge_is_constrained_map a property map containing the constrained-or-not status of each edge of `pmesh`
- * <li>\b face_index_map a property map containing the index of each face of `pmesh`
- * <li>\b vertex_index_map a property map containing the index of each vertex of `pmesh`
- * </ul>
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
+ *    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
+ *    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
+ * \cgalNamedParamsEnd
  *
  *  \return the number of connected components erased (ignoring isolated vertices).
  */

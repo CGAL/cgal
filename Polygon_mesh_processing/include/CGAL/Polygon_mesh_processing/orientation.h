@@ -74,11 +74,10 @@ namespace internal{
  * @param pmesh the closed polygon mesh to be tested
  * @param np optional sequence of \ref namedparameters among the ones listed below
  *
- \b Named \b parameters
- <ul>
- <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
- <li>\b kernel a geometric traits class instance
- </ul>
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+ *    \cgalParamBegin{kernel} a geometric traits class instance \cgalParamEnd
+ * \cgalNamedParamsEnd
  *
  * \todo code : The following only handles polyhedron with one connected component
  *       the code, the sample example and the plugin must be updated.
