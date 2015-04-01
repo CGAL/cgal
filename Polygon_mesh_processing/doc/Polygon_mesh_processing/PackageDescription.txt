@@ -11,7 +11,7 @@
 \cgalPkgPicture{hole_filling_ico.png}
  
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Ilker O. Yaz}
+\cgalPkgAuthor{Sébastien Loriot, Jane Tournois, Ilker %O. Yaz}
 \cgalPkgDesc{This package provides functionality to fill holes, refine and fair triangulated regions on surface mesh.}
 \cgalPkgManuals{Chapter_PolygonMeshProcessing,PkgPolygonMeshProcessing}
 \cgalPkgSummaryEnd
