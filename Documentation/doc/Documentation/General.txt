@@ -113,6 +113,12 @@ See http://www.boost.org/libs/range/doc/html/range/concepts/single_pass_range.ht
 class SinglePassRange {};
 
 /*!
+See http://www.boost.org/libs/range/doc/html/range/concepts/random_access_range.html
+/// \cgalConcept
+*/
+class RandomAccessRange {};
+
+/*!
 See http://www.boost.org/libs/range/doc/html/range/concepts/forward_range.html
 /// \cgalConcept
 */

@@ -32,6 +32,7 @@
 #include <vector>
 #include <exception>
 #include <boost/foreach.hpp>
+#include <boost/range.hpp>
 
 #include <boost/function_output_iterator.hpp>
 #include <boost/type_traits/is_const.hpp>
@@ -261,11 +262,9 @@ self_intersections(const TriangleMesh& tmesh, OutputIterator out)
  * are only limited to the faces in `face_range`.
  
  * \tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
- *  model of `SinglePassRange`
+ *  model of `RandomAccessRange`
  
  * \param face_range the range of faces to check for self-intersection.
- *
- * \todo code: is it a bad idea to use std::distance?
  */
 template <class TriangleMesh
         , class FaceRange
@@ -286,9 +285,7 @@ self_intersections( const FaceRange& face_range,
 
   // make one box per facet
   std::vector<Box> boxes;
-  boxes.reserve(
-    std::distance(face_range.begin(), face_range.end())
-  );
+  boxes.reserve(boost::size(face_range));
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vpmap = choose_const_pmap(get_param(np, boost::vertex_point),
