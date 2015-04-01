@@ -288,7 +288,7 @@ void stitch_borders(
   using boost::choose_param;
   using boost::get_param;
 
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
   VPMap vpm = choose_const_pmap(get_param(np, boost::vertex_point),
                                 pmesh,
                                 boost::vertex_point);
@@ -342,7 +342,7 @@ void stitch_borders(PolygonMesh& pmesh, const NamedParameters& np)
     halfedge_descriptor;
   std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> > hedge_pairs_to_stitch;
 
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
   VPMap vpm = choose_const_pmap(get_param(np, boost::vertex_point),
                                 pmesh,
                                 boost::vertex_point);

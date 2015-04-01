@@ -290,7 +290,7 @@ self_intersections( const FaceRange& face_range,
     std::distance(face_range.begin(), face_range.end())
   );
 
-  typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
+  typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vpmap = choose_const_pmap(get_param(np, boost::vertex_point),
                                            tmesh,
                                            boost::vertex_point);

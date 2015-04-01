@@ -22,6 +22,7 @@
 #define CGAL_POLYGON_MESH_PROCESSING_REFINE_H
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/refine_impl.h>
 
@@ -49,13 +50,13 @@ namespace Polygon_mesh_processing {
 
   \b Named \b parameters
   <ul>
-  <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
+  <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`.
+  Instance of a class model of `ReadWritePropertyMap`
   <li>\b density_control_factor factor to control density of the ouput mesh, where larger values cause denser refinements. The density of vertices of `faces_out` is this factor times higher than the vertices of `faces.`
   </ul>
 
   @return pair of `faces_out` and `vertices_out`
 
-  \todo code : get the property map type, from NamedParameters
   \todo code: in refine_impl, is density_control_factor used? it seems that scale_attribute
                is filled with zeros
   @todo current algorithm iterates 10 times at most, since (I guess) there is no termination proof.
@@ -72,15 +73,16 @@ namespace Polygon_mesh_processing {
            VertexOutputIterator vertices_out,
            const NamedParameters& np)
   {
+    using boost::choose_pmap;
     using boost::choose_param;
     using boost::get_param;
 
-    //temporary typedef
-    typedef typename boost::property_map<PolygonMesh,
-      boost::vertex_point_t>::type Vertex_point_map;
+    typedef typename GetVertexPointMap<PolygonMesh,NamedParameters>::type VPmap;
+    VPmap vpm = choose_pmap(get_param(np, boost::vertex_point),
+                            pmesh,
+                            boost::vertex_point);
 
-    internal::Refine_Polyhedron_3<PolygonMesh, Vertex_point_map> refine_functor(pmesh,
-      choose_param(get_param(np, vertex_point), get(CGAL::vertex_point, pmesh)));
+    internal::Refine_Polyhedron_3<PolygonMesh, VPmap> refine_functor(pmesh, vpm);
     refine_functor.refine(faces,
       faces_out,
       vertices_out,
