@@ -14,7 +14,7 @@ That is, you give each parameter a name by wrapping it into a function whose nam
 
 When you use named parameters, the ordering is irrelevant, so `f(name(n).age(a).gender(g))` is equivalent to `f(age(a).gender(g).name(n))`, and you can just omit any named parameter that has a default value.
 
-The sequence of named parameters should start with `CGAL::parameters::`.
+The sequence of named parameters should start with `CGAL::Polygon_mesh_processing::parameters::`.
 
 
 \cgalHeading{Example}
@@ -33,7 +33,8 @@ refine(pmesh
        , faces
        , faces_out
        , vertices_out
-       , CGAL::parameters::vertex_point_map(vpmap).density_control_factor(d));
+       , CGAL::Polygon_mesh_processing::parameters::vertex_point_map(vpmap)
+       .density_control_factor(d));
 \endcode
 
 
@@ -46,8 +47,8 @@ In this package, all functions optional parameters are implemented as BGL option
 Since the parameters of the various polygon mesh processing functions defined in this
 package are redundant, their long descriptions are centralized below.
 
-
-\b Template \b Parameters
+<ol type = "1">
+<li> \b Template \b Parameters </li>
 
 In the following, we assume that the following types are provided as template parameters of polygon mesh processing functions and classes. Note that, for some of these functions, the type is more specific.
 
@@ -57,7 +58,7 @@ In the following, we assume that the following types are provided as template pa
 </ul>
 
 
-\b Named \b Parameters
+<li> \b Named \b Parameters </li>
 
 \todo for each parameter, give info on the type and the default value
 
@@ -133,5 +134,6 @@ bool operator()(halfedge_descriptor h1, halfedge_descriptor h2);
 
 
 </ul>
+</ol>
 
 */
