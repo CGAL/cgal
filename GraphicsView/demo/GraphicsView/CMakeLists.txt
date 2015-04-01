@@ -9,24 +9,20 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-find_package(CGAL COMPONENTS Qt4)
+find_package(CGAL REQUIRED COMPONENTS Qt5)
 
 include(${CGAL_USE_FILE})
 
 
-set( QT_USE_QTXML    TRUE )
-set( QT_USE_QTMAIN   TRUE )
-set( QT_USE_QTSCRIPT  TRUE )
-set( QT_USE_QTOPENGL  TRUE )
 
-find_package(Qt4)
+find_package(Qt5 COMPONENTS Xml Script OpenGL)
 
-if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
-
-  include(${QT_USE_FILE})
+if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
 
   add_executable  ( min min.cpp )
+
+  qt5_use_modules(min Xml Script OpenGL)
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS min )
 
@@ -37,6 +33,6 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
 
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL and Qt4, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
 
 endif()

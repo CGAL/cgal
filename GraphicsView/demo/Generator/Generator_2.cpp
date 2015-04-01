@@ -298,7 +298,7 @@ MainWindow::on_actionGeneratePolytopeInDisc_triggered()
     //G pg(radius);
     bool ok = false;
     const int number_of_points =
-    QInputDialog::getInteger(this,
+    QInputDialog::getInt(this,
                              tr("Number of random points in the disc"),
                              tr("Enter number of random points.\nThe polytope will be the convex hull of these points."),
                              100,
