@@ -60,7 +60,7 @@ In the following, we assume that the following types are provided as template pa
 
 <li> \b Named \b Parameters </li>
 
-\todo for each parameter, give info on the type and the default value
+\todo reorder this list, maybe
 
 <ul>
 <li> `vertex_point_map`
