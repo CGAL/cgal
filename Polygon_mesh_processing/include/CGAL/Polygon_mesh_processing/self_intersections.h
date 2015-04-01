@@ -207,7 +207,7 @@ self_intersections( const FaceRange& face_range,
  * This function depends on the package \ref PkgBoxIntersectionDSummary
  * @pre `CGAL::is_pure_triangle(tmesh)`
  *
- * @tparam TriangleMesh a model of `FaceListGraph` that has a property map
+ * @tparam TriangleMesh a model of `FaceListGraph` that has an internal property map
 *         for `CGAL::vertex_point_t`
  * @tparam OutputIterator a model of `OutputIterator` holding objects of type 
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
@@ -340,7 +340,7 @@ OutputIterator self_intersections(const FaceRange& face_range,
  * This function depends on the package \ref PkgBoxIntersectionDSummary
  * @pre `CGAL::is_pure_triangle(tmesh)`
  *
- * @tparam TriangleMesh a model of `FaceListGraph` that has a property map
+ * @tparam TriangleMesh a model of `FaceListGraph` that has an internal property map
  *         for `CGAL::vertex_point_t`
  * @tparam OutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`

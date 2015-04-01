@@ -43,6 +43,7 @@ namespace Polygon_mesh_processing {
   If a hole cannot be triangulated, `pmesh` is not modified and nothing is put in `out`.
 
   @tparam PolygonMesh a model of `MutableFaceGraph`
+          that has an internal property map for `CGAL::vertex_point_t`
   @tparam OutputIterator a model of `OutputIterator`
     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
   @tparam NamedParameters a sequence of \ref namedparameters
@@ -114,6 +115,7 @@ namespace Polygon_mesh_processing {
   @brief triangulates and refines a hole in a polygon mesh.
 
   @tparam PolygonMesh must be model of `MutableFaceGraph`
+          that has an internal property map for `CGAL::vertex_point_t`
   @tparam FacetOutputIterator model of `OutputIterator`
      holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
   @tparam VertexOutputIterator model of `OutputIterator`
@@ -179,6 +181,7 @@ namespace Polygon_mesh_processing {
   @brief triangulates, refines and fairs a hole in a polygon mesh.
 
   @tparam PolygonMesh a model of `MutableFaceGraph`
+          that has an internal property map for `CGAL::vertex_point_t`
   @tparam FaceOutputIterator model of `OutputIterator`
       holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
   @tparam VertexOutputIterator model of `OutputIterator`

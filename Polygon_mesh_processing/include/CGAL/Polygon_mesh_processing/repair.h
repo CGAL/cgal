@@ -238,7 +238,7 @@ namespace internal {
 /// @pre `CGAL::is_pure_triangle(tmesh)`
 ///
 /// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
-///        that has a property map for `boost::vertex_point_t`
+///        that has an internal property map for `boost::vertex_point_t`
 /// @tparam NamedParameters a sequence of \ref namedparameters
 ///
 /// @param tmesh the triangle mesh to be repaired

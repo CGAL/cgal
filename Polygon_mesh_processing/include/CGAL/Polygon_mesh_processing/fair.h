@@ -68,6 +68,7 @@ namespace internal {
   Fairing might fail if fixed vertices, which are used as boundary conditions, do not suffice to solve constructed linear system.
 
   @tparam PolygonMesh a model of `FaceGraph`
+          that has an internal property map for `CGAL::vertex_point_t`
   @tparam VertexRange a range of vertex descriptors of `PolygonMesh`, model of `SinglePassRange`
   @tparam NamedParameters a sequence of \ref namedparameters
 

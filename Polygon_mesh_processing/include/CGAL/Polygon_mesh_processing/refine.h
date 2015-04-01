@@ -35,6 +35,7 @@ namespace Polygon_mesh_processing {
   @brief refines a region of a polygon mesh
 
   @tparam PolygonMesh model of `MutableFaceGraph`
+          that has an internal property map for `CGAL::vertex_point_t`
   @tparam FaceRange range of face descriptors, model of `SinglePassRange`
   @tparam FaceOutputIterator model of `OutputIterator`
     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
