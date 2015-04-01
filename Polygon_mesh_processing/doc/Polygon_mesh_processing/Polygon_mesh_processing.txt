@@ -203,7 +203,7 @@ See \ref PolygonSoupExample for an example of how these functions can be used.
 
 ****************************************
 \section PMPRepairing Combinatorial Repairing 
-
+*******************
 \subsection Stitching
 
 It happens that a polygon mesh has several edges and vertices that are duplicated.
@@ -224,7 +224,11 @@ has duplicated border edges.
 
 \cgalExample{Polygon_mesh_processing/stitch_borders_example.cpp}
 
+*******************
+\subsection DegenerateFaces Remove degenerate faces
 
+
+*******************
 \subsection PolygonSoups Polygon Soups
 
 When the faces of a mesh are given but the connectivity is not known,
