@@ -266,6 +266,10 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 {
   CGAL_assertion(CGAL::is_pure_triangle(tmesh));
 
+  using boost::choose_const_pmap;
+  using boost::get_param;
+  using boost::choose_param;
+
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::edge_descriptor edge_descriptor;

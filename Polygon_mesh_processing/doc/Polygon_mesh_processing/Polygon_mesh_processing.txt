@@ -225,7 +225,22 @@ has duplicated border edges.
 \cgalExample{Polygon_mesh_processing/stitch_borders_example.cpp}
 
 *******************
-\subsection DegenerateFaces Remove degenerate faces
+\subsection DegenerateFaces Degenerate faces removal
+
+Some degenerate faces may be part of a given triangle mesh.
+A face is considered \e degenerate if two of its vertices are the same,
+or if its three vertices are collinear.
+The function
+`CGAL::Polygon_mesh_processing::remove_degenerate_faces()` is able
+to remove those faces and to fix the connectivity of the newly cleaned up mesh.
+
+\subsubsection RemoveDegenerateExample Example
+
+In the following example, the degenerate faces of a simple mesh containing
+ some are removed, the connectivity is fixed, and the number of removed faces
+ is displayed.
+
+ \cgalExample{Polygon_mesh_processing/remove_degeneracies_example.cpp}
 
 
 *******************
