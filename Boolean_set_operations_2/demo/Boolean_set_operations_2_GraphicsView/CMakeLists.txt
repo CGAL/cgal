@@ -10,34 +10,32 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-find_package(CGAL COMPONENTS Qt4 Core )
+find_package(CGAL COMPONENTS Qt5 Core )
 
 include(${CGAL_USE_FILE})
 
 set( QT_USE_QTMAIN   TRUE )
 
-find_package(Qt4)
+find_package(Qt5 COMPONENTS Widgets Script)
 
 include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/../../include )
 include_directories (BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/include )
 
-if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND CGAL_Core_FOUND )
-
-  include(${QT_USE_FILE})
+if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND )
 
   # UI files (Qt Designer files)
-  qt4_wrap_ui( CDT_UI_FILES boolean_operations_2.ui )
+  qt5_wrap_ui( CDT_UI_FILES boolean_operations_2.ui )
 
   # qrc files (resources files, that contain icons, at least)
-  qt4_add_resources ( CDT_RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/boolean_operations_2.qrc )
+  qt5_add_resources ( CDT_RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/boolean_operations_2.qrc )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
-  qt4_generate_moc( "boolean_operations_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/boolean_operations_2.moc" )
+  qt5_generate_moc( "boolean_operations_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/boolean_operations_2.moc" )
 
   # The executable itself.
   add_executable  ( boolean_operations_2 ${CMAKE_CURRENT_SOURCE_DIR}/boolean_operations_2.cpp boolean_operations_2.moc ${CDT_UI_FILES} ${CDT_RESOURCE_FILES} )
-
+  qt5_use_modules(boolean_operations_2 Widgets Script)
   # Link with Qt libraries
   target_link_libraries( boolean_operations_2 ${QT_LIBRARIES} )
 
@@ -46,6 +44,6 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND CGAL_Core_FOUND )
 
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL and Qt4, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
 
 endif()
