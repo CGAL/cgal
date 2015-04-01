@@ -362,5 +362,12 @@ the propagation of a connected component index to cross it.
 
 \cgalExample{Polygon_mesh_processing/connected_components_example.cpp}
 
+****************************************
+\section{Implementation History}
+
+Work on this package was started during the Google Summer of Code 2013 internship of
+Ilker %O. Yaz.
+Sébastien Loriot and Jane Tournois worked on the finalization of the API, code, and documentation.
+
 */
 } /* namespace CGAL */
