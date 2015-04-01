@@ -356,7 +356,6 @@ OutputIterator self_intersections(const FaceRange& face_range,
  </ul>
  *
  * @return true if `tmesh` is self-intersecting
- * \todo code : named parameters
  */
 template <class TriangleMesh
         , class NamedParameters
