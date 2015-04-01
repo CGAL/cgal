@@ -22,7 +22,6 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_COMPUTE_NORMAL_H
 #define CGAL_POLYGON_MESH_PROCESSING_COMPUTE_NORMAL_H
 
-#include <CGAL/Kernel_traits.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
 #include <boost/graph/graph_traits.hpp>
@@ -224,9 +223,7 @@ compute_vertex_normals(const PolygonMesh& pmesh
                       , const NamedParameters& np
                       )
 {
-  typedef typename CGAL::Kernel_traits <
-    typename property_map_value<PolygonMesh, CGAL::vertex_point_t>::type
-  >::Kernel Kernel;
+  typedef typename GetKernel<PolygonMesh,NamedParameters>::type Kernel;
 
   typename boost::graph_traits<PolygonMesh>::vertex_descriptor v;
   BOOST_FOREACH(v, vertices(pmesh)){
