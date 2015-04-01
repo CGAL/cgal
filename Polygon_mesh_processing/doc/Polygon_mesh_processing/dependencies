@@ -7,5 +7,6 @@ Stream_support
 Polyhedron
 BGL
 Surface_mesh_parameterization
+Surface_mesh
 Surface_modeling
 AABB_tree
