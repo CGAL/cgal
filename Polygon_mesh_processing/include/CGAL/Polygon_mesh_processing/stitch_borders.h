@@ -271,10 +271,9 @@ private:
 /// @param hedge_pairs_to_stitch a `std::vector` filled with `std::pair`s of halfedges to be stitched together
 /// @param np optional \ref namedparameters described below
 ///
-/// \b Named \b parameters
-/// <ul>
-/// <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
-/// </ul>
+/// \cgalNamedParamsBegin
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+/// \cgalNamedParamsEnd
 ///
 template <typename PolygonMesh, class NamedParameters>
 void stitch_borders(
@@ -325,11 +324,10 @@ void stitch_borders(
 /// @param pmesh the polygon mesh to be modified by stitching
 /// @param np optional sequence of \ref namedparameters among the ones listed below
 ///
-/// \b Named \b parameters
-/// <ul>
-/// <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
-/// <li>\b less_halfedge a comparison functor on halfedges of `pmesh`
-/// </ul>
+/// \cgalNamedParamsBegin
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+///    \cgalParamBegin{less_halfedge} a comparison functor on halfedges of `pmesh` \cgalParamEnd
+/// \cgalNamedParamsEnd
 ///
 template <typename PolygonMesh, class NamedParameters>
 void stitch_borders(PolygonMesh& pmesh, const NamedParameters& np)

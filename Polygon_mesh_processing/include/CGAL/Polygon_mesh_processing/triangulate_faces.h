@@ -233,11 +233,11 @@ public:
 * @param pmesh the polygon mesh to be triangulated
 * @param np optional sequence of \ref namedparameters among the ones listed below
 *
-\b Named \b parameters
-<ul>
-<li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
-<li>\b kernel a geometric traits class instance
-</ul>
+* \cgalNamedParamsBegin
+*    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+*    \cgalParamBegin{kernel} a geometric traits class instance \cgalParamEnd
+* \cgalNamedParamsEnd
+*
 */
 template <typename PolygonMesh, typename NamedParameters>
 void triangulate_faces(PolygonMesh& pmesh,

@@ -244,20 +244,20 @@ namespace internal {
 /// @param tmesh the triangle mesh to be repaired
 /// @param np optional \ref namedparameters described below
 ///
-/// \b Named \b parameters
-/// <ul>
-/// <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`. The type of this mad is model of `ReadWritePropertyMap`.
-/// <li>\b kernel a geometric traits class instance. 
-/// The traits class must provide the nested types :
-///     - `Point_3`,
-///     - `Compare_distance_3` to compute the distance between 2 points
-///     - `Collinear_are_ordered_along_line_3` to check whether 3 collinear points are ordered
-///     - `Collinear_3` to check whether 3 points are collinear
-///     - `Less_xyz_3` to compare lexicographically two points
-///     - `Equal_3` to check whether 2 points are identical
-///     -  for each functor Foo, a function `Foo foo_object()`
-/// </ul>
-
+/// \cgalNamedParamsBegin
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this mad is model of `ReadWritePropertyMap` \cgalParamEnd
+///    \cgalParamBegin{kernel} a geometric traits class instance.
+///       The traits class must provide the nested types :
+///         - `Point_3`,
+///         - `Compare_distance_3` to compute the distance between 2 points
+///         - `Collinear_are_ordered_along_line_3` to check whether 3 collinear points are ordered
+///         - `Collinear_3` to check whether 3 points are collinear
+///         - `Less_xyz_3` to compare lexicographically two points
+///         - `Equal_3` to check whether 2 points are identical
+///         -  for each functor Foo, a function `Foo foo_object()`
+///   \cgalParamEnd
+/// \cgalNamedParamsEnd
+///
 /// \return number of degenerate faces found
 ///
 template <class TriangleMesh, class NamedParameters>

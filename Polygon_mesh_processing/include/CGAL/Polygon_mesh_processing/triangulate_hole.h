@@ -53,12 +53,11 @@ namespace Polygon_mesh_processing {
   @param out iterator over patch faces
   @param np optional sequence of \ref namedparameters among the ones listed below
 
-  \b Named \b parameters
-  <ul>
-  <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
-  <li>\b use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
-  <li>\b kernel a geometric traits class instance
-  </ul>
+  \cgalNamedParamsBegin
+     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+     \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space \cgalParamEnd
+     \cgalParamBegin{kernel} a geometric traits class instance \cgalParamEnd
+  \cgalNamedParamsEnd
 
   @return `out`
 
@@ -128,13 +127,12 @@ namespace Polygon_mesh_processing {
   @param vertex_out output iterator over patch vertices without including the boundary
   @param np optional sequence of \ref namedparameters among the ones listed below
 
-  \b Named \b parameters 
-  <ul>
-  <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
-  <li>\b density_control_factor factor to control density of the ouput mesh, where larger values cause denser refinements, as in `refine()`
-  <li>\b use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
-  <li>\b kernel a geometric traits class instance
-  </ul>
+  \cgalNamedParamsBegin
+     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+     \cgalParamBegin{density_control_factor} factor to control density of the ouput mesh, where larger values cause denser refinements, as in `refine()` \cgalParamEnd
+     \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space \cgalParamEnd
+     \cgalParamBegin{kernel} a geometric traits class instance \cgalParamEnd
+  \cgalNamedParamsEnd
 
   @return pair of `face_out` and `vertex_out`
 
@@ -194,15 +192,14 @@ namespace Polygon_mesh_processing {
   @param vertex_out output iterator over patch vertices without including the boundary
   @param np optional sequence of \ref namedparameters among the ones listed below
 
-  \b Named \b parameters
-  <ul>
-  <li>\b vertex_point_map the property map with the points associated to the vertices of `pmesh`
-  <li>\b use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
-  <li>\b density_control_factor factor to control density of the ouput mesh, where larger values cause denser refinements, as in `refine()`
-  <li>\b fairing_continuity tangential continuity of the output surface patch
-  <li>\b sparse_linear_solver an instance of the sparse linear solver used for fairing
-  <li>\b kernel a geometric traits class instance
-  </ul>
+  \cgalNamedParamsBegin
+     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+     \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space \cgalParamEnd
+     \cgalParamBegin{density_control_factor} factor to control density of the ouput mesh, where larger values cause denser refinements, as in `refine()` \cgalParamEnd
+     \cgalParamBegin{fairing_continuity} tangential continuity of the output surface patch \cgalParamEnd
+     \cgalParamBegin{sparse_linear_solver} an instance of the sparse linear solver used for fairing \cgalParamEnd
+     \cgalParamBegin{kernel} a geometric traits class instance \cgalParamEnd
+  \cgalNamedParamsEnd
 
   @return tuple of
   - bool: `true` if fairing is successful
@@ -276,11 +273,10 @@ namespace Polygon_mesh_processing {
   @param out iterator over output patch triangles
   @param np optional sequence of \ref namedparameters among the ones listed below
 
-  \b Named \b parameters
-  <ul>
-  <li>\b use_delaunay_triangulation if `true`, use the Delaunay triangulation facet search space
-  <li>\b kernel a geometric traits class instance
-  </ul>
+  \cgalNamedParamsBegin
+     \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space \cgalParamEnd
+     \cgalParamBegin{kernel} a geometric traits class instance \cgalParamEnd
+  \cgalNamedParamsEnd
 
   \todo handle islands
   */
