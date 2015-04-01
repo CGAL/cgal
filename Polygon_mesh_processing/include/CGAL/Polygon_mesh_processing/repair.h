@@ -235,6 +235,8 @@ namespace internal {
 /// \ingroup PkgPolygonMeshProcessing
 /// removes the degenerate faces from a triangle mesh.
 ///
+/// @pre `CGAL::is_pure_triangle(tmesh)`
+///
 /// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
 ///        that has a property map for `boost::vertex_point_t`
 /// @tparam NamedParameters a sequence of \ref namedparameters
@@ -262,6 +264,8 @@ template <class TriangleMesh, class NamedParameters>
 std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
                                     const NamedParameters& np)
 {
+  CGAL_assertion(CGAL::is_pure_triangle(tmesh));
+
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::edge_descriptor edge_descriptor;
