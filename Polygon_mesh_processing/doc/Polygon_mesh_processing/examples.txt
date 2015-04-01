@@ -11,5 +11,6 @@
 \example Polygon_mesh_processing/triangulate_polyline_example.cpp
 \example Polygon_mesh_processing/refine_fair_example.cpp
 \example Polygon_mesh_processing/mesh_slicer_example.cpp
+\example Polygon_mesh_processing/remove_degeneracies_example.cpp
 
 */
