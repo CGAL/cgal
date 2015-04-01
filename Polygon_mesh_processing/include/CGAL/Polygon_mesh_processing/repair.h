@@ -239,6 +239,7 @@ namespace internal {
 ///        that has a property map for `boost::vertex_point_t`
 /// @tparam NamedParameters a sequence of \ref namedparameters
 ///
+/// @param tmesh the triangle mesh to be repaired
 /// @param np optional \ref namedparameters described below
 ///
 /// \b Named \b parameters
