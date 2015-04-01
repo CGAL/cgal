@@ -12,6 +12,7 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/use.h>
 #include <iostream>
+#include <sstream>
 
 //typedef CGAL::Cartesian_base_d<double,CGAL::Dimension_tag<2> > K0;
 //typedef CGAL::Cartesian_base_d<CGAL::Interval_nt_advanced,CGAL::Dimension_tag<2> > KA;
@@ -119,6 +120,8 @@ void test2(){
   typedef typename K1::Scalar_product_d SP;
   typedef typename K1::Difference_of_vectors_d DV;
   typedef typename K1::Difference_of_points_d DP;
+  typedef typename K1::Construct_min_vertex_d CmV;
+  typedef typename K1::Construct_max_vertex_d CMV;
 
   CGAL_USE_TYPE(AT);
   CGAL_USE_TYPE(D);
@@ -176,6 +179,8 @@ void test2(){
   SP spr Kinit(scalar_product_d_object);
   DV dv Kinit(difference_of_vectors_d_object);
   DP dp Kinit(difference_of_points_d_object);
+  CmV cmv Kinit(construct_min_vertex_d_object);
+  CMV cMv Kinit(construct_max_vertex_d_object);
 
   CGAL_USE(bc);
   CGAL_USE(pol);
@@ -183,7 +188,6 @@ void test2(){
   CGAL_USE(cd);
   CGAL_USE(cli);
   CGAL_USE(cr);
-  CGAL_USE(cib);
   P a=cp(3,4);
   assert(pd(a)==2);
   assert(pv(a)[1]==4);
@@ -325,6 +329,17 @@ void test2(){
   assert(fabs(sd(cent0,psp0)-25)<.0001);
   assert(fabs(sd(cent0,psp1)-25)<.0001);
   assert(fabs(sd(cent0,psp2)-25)<.0001);
+
+  P tl=cp(2,5);
+  P br=cp(4,-1);
+  IB ib=cib(tl,br);
+  P bl=cmv(ib);
+  P tr=cMv(ib);
+  assert(cc(bl,0)==2);
+  assert(cc(bl,1)==-1);
+  assert(cc(tr,0)==4);
+  assert(cc(tr,1)==5);
+
   Sp un1; CGAL_USE(un1);
   H un2; CGAL_USE(un2);
   S un3; CGAL_USE(un3);
@@ -540,6 +555,10 @@ void test3(){
   assert(ifsos(fozn, tz+0, tz+3, tz[4]) == CGAL::ON_NEGATIVE_SIDE);
   assert(ifsos(fozp, tz+0, tz+3, tz[5]) == CGAL::ON_NEGATIVE_SIDE);
   assert(ifsos(fozn, tz+0, tz+3, tz[5]) == CGAL::ON_POSITIVE_SIDE);
+  P showit=cp(1,2,4);
+  std::ostringstream output;
+  output << showit;
+  assert(output.str()=="3 1 2 4");
 }
 template struct CGAL::Epick_d<CGAL::Dimension_tag<2> >;
 template struct CGAL::Epick_d<CGAL::Dimension_tag<3> >;

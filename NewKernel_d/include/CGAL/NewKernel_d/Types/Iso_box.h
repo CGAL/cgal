@@ -59,10 +59,30 @@ namespace CartesianDKernelFunctors {
 	  make_transforming_pair_iterator(ci(a,End_tag()), ci(b,End_tag()), Max<RT>())));
     }
   };
+
+  template <class R_> struct Construct_min_vertex {
+    CGAL_FUNCTOR_INIT_IGNORE(Construct_min_vertex)
+    typedef typename Get_type<R_, Iso_box_tag>::type argument_type;
+    //TODO: make result_type a reference
+    typedef typename Get_type<R_, Point_tag>::type result_type;
+    result_type operator()(argument_type const&b)const{
+      return b.min BOOST_PREVENT_MACRO_SUBSTITUTION ();
+    }
+  };
+  template <class R_> struct Construct_max_vertex {
+    CGAL_FUNCTOR_INIT_IGNORE(Construct_max_vertex)
+    typedef typename Get_type<R_, Iso_box_tag>::type argument_type;
+    typedef typename Get_type<R_, Point_tag>::type result_type;
+    result_type operator()(argument_type const&b)const{
+      return b.max BOOST_PREVENT_MACRO_SUBSTITUTION ();
+    }
+  };
 }
+//TODO (other types as well) only enable these functors if the Iso_box type is the one defined in this file...
 CGAL_KD_DEFAULT_TYPE(Iso_box_tag,(CGAL::Iso_box<K>),(Point_tag),());
 CGAL_KD_DEFAULT_FUNCTOR(Construct_ttag<Iso_box_tag>,(CartesianDKernelFunctors::Construct_iso_box<K>),(Iso_box_tag,Point_tag),(Construct_ttag<Point_cartesian_const_iterator_tag>,Construct_ttag<Point_tag>));
-
+CGAL_KD_DEFAULT_FUNCTOR(Construct_min_vertex_tag,(CartesianDKernelFunctors::Construct_min_vertex<K>),(Iso_box_tag),());
+CGAL_KD_DEFAULT_FUNCTOR(Construct_max_vertex_tag,(CartesianDKernelFunctors::Construct_max_vertex<K>),(Iso_box_tag),());
 } // namespace CGAL
 
 #endif // CGAL_KERNELD_TYPES_ISO_BOX_H

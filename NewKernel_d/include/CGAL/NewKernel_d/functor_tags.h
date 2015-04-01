@@ -262,6 +262,8 @@ namespace CGAL {
 	CGAL_DECL_CONSTRUCT(Translated_point,Point);
 	CGAL_DECL_CONSTRUCT(Point_to_vector,Vector);
 	CGAL_DECL_CONSTRUCT(Vector_to_point,Point);
+	CGAL_DECL_CONSTRUCT(Construct_min_vertex,Point);
+	CGAL_DECL_CONSTRUCT(Construct_max_vertex,Point);
 #undef CGAL_DECL_CONSTRUCT
 #if 0
 #define CGAL_DECL_ITER_CONSTRUCT(X,Y) struct X##_tag {}; \

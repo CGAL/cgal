@@ -149,6 +149,8 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, Point_of_sphere_tag>::type Point_of_sphere_d;
 	typedef typename Get_functor<Base, Orthogonal_vector_tag>::type Orthogonal_vector_d;
 	typedef typename Get_functor<Base, Linear_base_tag>::type Linear_base_d;
+	typedef typename Get_functor<Base, Construct_min_vertex_tag>::type Construct_min_vertex_d;
+	typedef typename Get_functor<Base, Construct_max_vertex_tag>::type Construct_max_vertex_d;
 
 	//TODO:
 	//typedef ??? Intersect_d;
@@ -203,6 +205,8 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Construct_ray_d construct_ray_d_object()const{ return Construct_ray_d(*this); }
 	Construct_iso_box_d construct_iso_box_d_object()const{ return Construct_iso_box_d(*this); }
 	Construct_aff_transformation_d construct_aff_transformation_d_object()const{ return Construct_aff_transformation_d(*this); }
+	Construct_min_vertex_d construct_min_vertex_d_object()const{ return Construct_min_vertex_d(*this); }
+	Construct_max_vertex_d construct_max_vertex_d_object()const{ return Construct_max_vertex_d(*this); }
 
 	// Dummies for those required functors missing a concept.
 	typedef Null_functor Position_on_line_d;
