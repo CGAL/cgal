@@ -56,5 +56,18 @@ public:
   > ::type  Kernel;
 };
 
+template<typename PolygonMesh, typename NamedParameters>
+class GetVertexPointMap
+{
+  typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type DefaultVPMap;
+public:
+  typedef typename boost::lookup_named_param_def<
+    boost::vertex_point_t,
+    NamedParameters,
+    DefaultVPMap
+  > ::type  type;
+
+};
+
 #endif //CGAL_NAMED_PARAMETERS_HELPERS_H
 

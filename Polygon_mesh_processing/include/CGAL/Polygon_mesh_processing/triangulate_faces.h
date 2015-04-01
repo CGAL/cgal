@@ -247,10 +247,7 @@ void triangulate_faces(PolygonMesh& pmesh,
   using boost::get_param;
 
   //VertexPointMap
-  typedef typename boost::lookup_named_param_def <boost::vertex_point_t,
-    NamedParameters,
-    boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type//default
-  > ::type  VPMap;
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
   VPMap vpmap = choose_const_pmap(get_param(np, boost::vertex_point),
                                   pmesh,
                                   boost::vertex_point);
