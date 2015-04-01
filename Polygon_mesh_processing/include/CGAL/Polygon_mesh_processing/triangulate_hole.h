@@ -95,7 +95,7 @@ namespace Polygon_mesh_processing {
       out,
       choose_param(get_param(np, vertex_point), get(CGAL::vertex_point, pmesh)),
       use_dt3,
-      choose_param(get_param(np, geom_traits), GetKernel<PolygonMesh,NamedParameters>::Kernel()))
+      choose_param(get_param(np, geom_traits), GetKernel<PolygonMesh,NamedParameters>::type()))
       .first;
   }
 

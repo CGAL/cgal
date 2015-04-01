@@ -84,13 +84,13 @@ template <typename PolygonMesh, typename NamedParameters>
 #ifdef DOXYGEN_RUNNING
 Vector_3
 #else
-typename GetKernel<PolygonMesh, NamedParameters>::Kernel::Vector_3
+typename GetKernel<PolygonMesh, NamedParameters>::type::Vector_3
 #endif
 compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
                     , const PolygonMesh& pmesh
                     , const NamedParameters& np)
 {
-  typedef typename GetKernel<PolygonMesh, NamedParameters>::Kernel Kernel;
+  typedef typename GetKernel<PolygonMesh, NamedParameters>::type Kernel;
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
 
@@ -133,9 +133,7 @@ compute_face_normals(const PolygonMesh& pmesh
                    , FaceNormalMap fnm
                    , const NamedParameters& np)
 {
-  typedef typename CGAL::Kernel_traits <
-    typename property_map_value<PolygonMesh, CGAL::vertex_point_t>::type
-  >::Kernel Kernel;
+  typedef typename GetKernel<PolygonMesh,NamedParameters>::type Kernel;
 
   typename boost::graph_traits<PolygonMesh>::face_descriptor f;
   BOOST_FOREACH(f, faces(pmesh)){
@@ -169,24 +167,14 @@ template<typename PolygonMesh, typename NamedParameters>
 #ifdef DOXYGEN_RUNNING
 Vector_3
 #else
-typename boost::lookup_named_param_def < CGAL::geom_traits_t,
-  typename NamedParameters::base,
-  typename CGAL::Kernel_traits <
-  typename property_map_value<PolygonMesh, CGAL::vertex_point_t>::type
-  > ::Kernel
-> ::type::Vector_3
+typename GetKernel<PolygonMesh, NamedParameters>::type::Vector_3
 #endif
 compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
                       const PolygonMesh& pmesh,
                       const NamedParameters& np
                       )
 {
-  typedef typename boost::lookup_named_param_def < CGAL::geom_traits_t,
-    typename NamedParameters::base,
-    typename CGAL::Kernel_traits <
-    typename property_map_value<PolygonMesh, CGAL::vertex_point_t>::type
-    > ::Kernel
-  > ::type Kernel;
+  typedef typename GetKernel<PolygonMesh, NamedParameters>::type Kernel;
 
   typedef typename Kernel::Vector_3 Vector;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;

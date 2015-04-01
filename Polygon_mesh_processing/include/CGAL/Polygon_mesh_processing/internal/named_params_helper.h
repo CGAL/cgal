@@ -53,7 +53,7 @@ public:
     CGAL::geom_traits_t,
     NamedParameters,
     DefaultKernel
-  > ::type  Kernel;
+  > ::type  type;
 };
 
 template<typename PolygonMesh, typename NamedParameters>
@@ -66,8 +66,33 @@ public:
     NamedParameters,
     DefaultVPMap
   > ::type  type;
-
 };
+
+template<typename PolygonMesh, typename NamedParameters>
+class GetFaceIndexMap
+{
+  typedef typename boost::property_map < PolygonMesh, boost::face_index_t>::type DefaultMap;
+public:
+  typedef typename boost::lookup_named_param_def <
+    boost::face_index_t,
+    NamedParameters,
+    DefaultMap
+  > ::type  type;
+};
+
+template<typename PolygonMesh, typename NamedParameters>
+class GetVertexIndexMap
+{
+  typedef typename boost::property_map < PolygonMesh, boost::vertex_index_t>::type DefaultMap;
+public:
+  typedef typename boost::lookup_named_param_def <
+    boost::vertex_index_t,
+    NamedParameters,
+    DefaultMap
+  > ::type  type;
+};
+
+
 
 #endif //CGAL_NAMED_PARAMETERS_HELPERS_H
 

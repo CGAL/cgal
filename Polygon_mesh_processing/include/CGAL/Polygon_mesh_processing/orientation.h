@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Kernel_traits.h>
@@ -95,23 +96,12 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
   using boost::get_param;
 
   //VertexPointMap
-  typedef typename boost::lookup_named_param_def <
-    boost::vertex_point_t,
-    NamedParameters,
-    boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type//default
-  > ::type  VPMap;
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
   VPMap vpmap = choose_const_pmap(get_param(np, boost::vertex_point),
                                   pmesh,
                                   boost::vertex_point);
   //Kernel
-  typedef typename CGAL::Kernel_traits <
-    typename property_map_value<PolygonMesh, boost::vertex_point_t>::type
-  > ::Kernel DefaultKernel;
-  typedef typename boost::lookup_named_param_def <
-    CGAL::geom_traits_t,
-    NamedParameters,
-    DefaultKernel //default
-  > ::type  Kernel;
+  typedef typename GetKernel<PolygonMesh, NamedParameters>::type Kernel;
 
   internal::Compare_vertex_points_xyz_3<typename Kernel::Less_xyz_3, VPMap >
     less_xyz(vpmap);

@@ -272,7 +272,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   VertexPointMap vpmap = choose_const_pmap(get_param(np, boost::vertex_point),
                                            tmesh,
                                            boost::vertex_point);
-  typedef typename GetKernel<TM, NamedParameters>::Kernel Traits;
+  typedef typename GetKernel<TM, NamedParameters>::type Traits;
   Traits traits = choose_param(get_param(np, geom_traits), Traits());
 
   std::size_t nb_deg_faces = 0;
@@ -282,7 +282,8 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 
   BOOST_FOREACH(edge_descriptor ed, edges(tmesh))
   {
-    if ( traits.equal_3_object()(get(vpmap, target(ed, tmesh)), get(vpmap, source(ed, tmesh))) )
+    if ( traits.equal_3_object()(get(vpmap, target(ed, tmesh)),
+                                 get(vpmap, source(ed, tmesh))) )
       edges_to_remove.insert(ed);
   }
 

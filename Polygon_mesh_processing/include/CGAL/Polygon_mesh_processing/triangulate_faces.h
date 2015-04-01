@@ -252,7 +252,7 @@ void triangulate_faces(PolygonMesh& pmesh,
                                   pmesh,
                                   boost::vertex_point);
   //Kernel
-  typedef typename GetKernel<PolygonMesh, NamedParameters>::Kernel Kernel;
+  typedef typename GetKernel<PolygonMesh, NamedParameters>::type Kernel;
 
   internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel> modifier(vpmap);
   modifier(pmesh);

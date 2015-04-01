@@ -310,7 +310,7 @@ self_intersections( const FaceRange& face_range,
     box_ptr.push_back(&b);
 
   // compute self-intersections filtered out by boxes
-  typedef typename GetKernel<TM, NamedParameters>::Kernel GeomTraits;
+  typedef typename GetKernel<TM, NamedParameters>::type GeomTraits;
   CGAL::internal::Intersect_facets<TM,GeomTraits,Box,OutputIterator,VertexPointMap>
     intersect_facets(tmesh, out, vpmap,
       choose_param(get_param(np, geom_traits), GeomTraits()));

@@ -42,6 +42,7 @@
 #include <CGAL/Default.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 namespace CGAL {
  namespace internal{
@@ -572,6 +573,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh
                                             , std::size_t nb_components_to_keep
                                             , const NamedParameters& np)
 {
+  typedef PolygonMesh PM;
   using boost::choose_param;
   using boost::get_param;
   using boost::choose_const_pmap;
@@ -594,11 +596,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh
                                          EdgeConstraintMap());
 
   //FaceIndexMap
-  typedef typename boost::lookup_named_param_def <
-    boost::face_index_t,
-    NamedParameters,
-    boost::property_map < PolygonMesh, boost::face_index_t>::type //default
-  > ::type                                               FaceIndexMap;
+  typedef typename GetFaceIndexMap<PM, NamedParameters>::type FaceIndexMap;
   FaceIndexMap fim = choose_const_pmap(get_param(np, boost::face_index),
                                        pmesh,
                                        boost::face_index);
@@ -607,11 +605,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
 
   //VertexIndexMap
-  typedef typename boost::lookup_named_param_def <
-    boost::vertex_index_t,
-    NamedParameters,
-    boost::property_map < PolygonMesh, boost::vertex_index_t>::type //default
-  > ::type                                               VertexIndexMap;
+  typedef typename GetVertexIndexMap<PM, NamedParameters>::type VertexIndexMap;
   VertexIndexMap vim = choose_const_pmap(get_param(np, boost::vertex_index),
                                          pmesh,
                                          boost::vertex_index);
