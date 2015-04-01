@@ -25,7 +25,7 @@ A polygon mesh can have any number of connected components, and also some self-i
 
 \subsection PMPAPI API
 This package follows the BGL API described in \ref chapterBGL.
-It can thus be used either with \cgal `Polyhedron_3`, \cgal `Surface_mesh`, or
+It can thus be used either with `Polyhedron_3`, `Surface_mesh`, or
 any graph following the BGL requirements. Each function or class of this package
 gives precisions on the requirements on the polygon mesh.
 
