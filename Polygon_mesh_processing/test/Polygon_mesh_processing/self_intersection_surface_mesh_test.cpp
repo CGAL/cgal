@@ -25,16 +25,18 @@ int main(int, char** argv) {
   timer.start();
 
   std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
-  CGAL::Polygon_mesh_processing::self_intersections<K>
-    (m, std::back_inserter(intersected_tris), get(CGAL::vertex_point,m));
+  CGAL::Polygon_mesh_processing::self_intersections(m,
+    std::back_inserter(intersected_tris),
+    CGAL::Polygon_mesh_processing::parameters::vertex_index_map(get(CGAL::vertex_point, m)));
   bool intersecting_1 = !intersected_tris.empty();
 
   std::cerr << "self_intersections test took " << timer.time() << " sec." << std::endl;
   std::cerr << intersected_tris.size() << " pairs of triangles are intersecting." << std::endl;
 
   timer.reset();
-  bool intersecting_2
-    = CGAL::Polygon_mesh_processing::is_self_intersecting<K>(m, get(CGAL::vertex_point, m));
+  bool intersecting_2 = CGAL::Polygon_mesh_processing::is_self_intersecting(m,
+    CGAL::Polygon_mesh_processing::parameters::vertex_index_map(get(CGAL::vertex_point, m)));
+  
   CGAL_assertion(intersecting_1 == intersecting_2);
 
   std::cerr << "is_self_intersecting test took " << timer.time() << " sec." << std::endl;

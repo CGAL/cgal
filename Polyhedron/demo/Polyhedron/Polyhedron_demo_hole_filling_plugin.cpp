@@ -648,9 +648,10 @@ bool Polyhedron_demo_hole_filling_plugin::fill
 
     typedef std::vector<std::pair<Polyhedron::Facet_const_handle, Polyhedron::Facet_const_handle> > Intersected_facets;
     Intersected_facets intersected_facets;
-    CGAL::Polygon_mesh_processing::self_intersections<Polyhedron::Traits>(poly,
-                                       std::back_inserter(intersected_facets),
-                                       get(CGAL::vertex_point, poly));
+    CGAL::Polygon_mesh_processing::self_intersections(poly,
+      std::back_inserter(intersected_facets),
+      CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, poly)));
+
     print_message(QString("Self intersecting test: finding intersecting triangles in %1 sec.").arg(timer.time()));
     timer.reset();
     // this part might need speed-up

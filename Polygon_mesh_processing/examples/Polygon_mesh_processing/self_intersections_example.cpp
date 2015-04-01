@@ -22,17 +22,17 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  bool intersecting =
-    CGAL::Polygon_mesh_processing::is_self_intersecting<K>(mesh,
-      get(CGAL::vertex_point, mesh));
+  bool intersecting = CGAL::Polygon_mesh_processing::is_self_intersecting(mesh,
+      CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, mesh)));
 
   std::cout
     << (intersecting ? "There are self-intersections." : "There is no self-intersection.")
     << std::endl;
 
   std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
-  CGAL::Polygon_mesh_processing::self_intersections<K>
-    (mesh, std::back_inserter(intersected_tris), get(CGAL::vertex_point, mesh));
+  CGAL::Polygon_mesh_processing::self_intersections(mesh,
+    std::back_inserter(intersected_tris),
+    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, mesh)));
 
   std::cout << intersected_tris.size() << " pairs of triangles are intersecting." << std::endl;
   

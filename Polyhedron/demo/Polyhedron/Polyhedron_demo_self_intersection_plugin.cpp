@@ -56,8 +56,9 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
 
     typedef Polyhedron::Facet_handle Facet_handle;
     std::vector<std::pair<Facet_handle, Facet_handle> > facets;
-    CGAL::Polygon_mesh_processing::self_intersections<Kernel>
-      (*pMesh, std::back_inserter(facets), get(CGAL::vertex_point, *pMesh));
+    CGAL::Polygon_mesh_processing::self_intersections
+      (*pMesh, std::back_inserter(facets),
+      CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, *pMesh)));
 
     std::cout << "ok (" << facets.size() << " triangle pair(s))" << std::endl;
 
