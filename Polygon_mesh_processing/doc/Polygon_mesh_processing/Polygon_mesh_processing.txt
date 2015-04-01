@@ -48,7 +48,6 @@ of a polygon mesh, and discard the smallest ones.
 
 ****************************************
 \section PMPMeshing Meshing
-\subsection API
 
 A surface patch can be refined by inserting new vertices and flipping edges to get a valid triangulation.
 Using a criterion presented in \cgalCite{Lipea2003FillingHoles},
@@ -62,10 +61,11 @@ The fairing step minimizes a linear bi-Laplacian system with boundary constraint
 described in \cgalCite{Botsch2008OnLinearVariational}.
 The visual results of aforementioned steps can be seen in \cgalFigureRef{Mech_steps} (c and d).
 
+\subsection MeshingAPI API
+
 Refinement and fairing functions can be applied to an arbitrary region on a mesh , using :
 - `CGAL::Polygon_mesh_processing::refine()` : given a set of facets on a mesh, refines the region.
 - `CGAL::Polygon_mesh_processing::fair()` : given a set of vertices on a mesh, fairs the region.
-
 
 Many algorithms only work for meshes in which all the faces have the same number of vertices,
 or even only for triangle meshes. Hence, one may want to triangulate a polygon mesh
@@ -73,6 +73,8 @@ with any types of polygons as faces.
 This package provides the function `CGAL::Polygon_mesh_processing::triangulate_faces()`
 that triangulates all faces of the input polygon mesh.
 
+
+Fairing needs a sparse linear solver and we recommend the use of \ref thirdpartyEigen 3.2 or later.
 
 \subsection MeshingExamples Meshing Examples
 
