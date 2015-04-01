@@ -341,7 +341,7 @@ namespace CGAL {
           else if ( it->vertex(2) == atr.infinite_vertex() )
             dart = alcc.beta(res, 1, 1);
           else if ( it->vertex(3) == atr.infinite_vertex() )
-            dart = alcc.beta(res, 2, 1, 1);
+            dart = alcc.beta(res, 2, 0);
         }
         
         for (unsigned int i = 0; i < 4; ++i)
