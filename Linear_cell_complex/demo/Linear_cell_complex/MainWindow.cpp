@@ -162,7 +162,7 @@ void MainWindow::onSceneChanged ()
 {
   QApplication::setOverrideCursor( Qt::WaitCursor );
 
-  int mark = scene.lcc->get_new_mark ();
+  LCC::size_type mark = scene.lcc->get_new_mark ();
   scene.lcc->negate_mark (mark);
 
   std::vector<unsigned int> cells;
@@ -571,7 +571,7 @@ void MainWindow::on_actionCompute_Voronoi_3D_triggered ()
   // We remove the infinite volume and all its adjacent volumes.
   {
     std::stack<Dart_handle> toremove;
-    int mark_toremove=scene.lcc->get_new_mark();
+    LCC::size_type mark_toremove=scene.lcc->get_new_mark();
     toremove.push(ddh);
     CGAL::mark_cell<LCC,3>(*scene.lcc, ddh, mark_toremove);
     for (LCC::Dart_of_cell_range<3>::iterator
@@ -676,7 +676,7 @@ void MainWindow::on_actionClose_volume_triggered()
 
 void MainWindow::on_actionSew3_same_facets_triggered()
 {
-  int mymark = scene.lcc->get_new_mark();
+  LCC::size_type mymark = scene.lcc->get_new_mark();
   mark_all_filled_and_visible_volumes(mymark);
 
   QApplication::setOverrideCursor (Qt::WaitCursor);
@@ -1060,7 +1060,7 @@ void MainWindow::onHeaderClicked(int col)
   }
 }
 
-void MainWindow::mark_all_filled_and_visible_volumes(int amark)
+void MainWindow::mark_all_filled_and_visible_volumes(LCC::size_type amark)
 {
   for (LCC::Attribute_range<3>::type::iterator
        it=scene.lcc->attributes<3>().begin(),
@@ -1079,7 +1079,7 @@ void MainWindow::on_actionExtend_filled_volumes_triggered()
 
   std::vector<LCC::Attribute_handle<3>::type> tofill;
 
-  int mark_volume = scene.lcc->get_new_mark();
+  LCC::size_type mark_volume = scene.lcc->get_new_mark();
   bool already_tofill;
 
   for (LCC::Attribute_range<3>::type::iterator
@@ -1134,7 +1134,7 @@ void MainWindow::on_actionExtend_hidden_volumes_triggered()
 
   std::vector<LCC::Attribute_handle<3>::type> tohide;
 
-  int mark_volume = scene.lcc->get_new_mark();
+  LCC::size_type mark_volume = scene.lcc->get_new_mark();
   bool already_tohide;
 
   for (LCC::Attribute_range<3>::type::iterator
@@ -1254,9 +1254,9 @@ void MainWindow::onMengerInc()
   std::vector<Dart_handle> faces;
   std::size_t nbvolinit = mengerVolumes.size();
 
-  int markEdges = (scene.lcc)->get_new_mark();
-  int markFaces = (scene.lcc)->get_new_mark();
-  int markVols  = (scene.lcc)->get_new_mark();
+  LCC::size_type markEdges = (scene.lcc)->get_new_mark();
+  LCC::size_type markFaces = (scene.lcc)->get_new_mark();
+  LCC::size_type markVols  = (scene.lcc)->get_new_mark();
 
   for(std::vector<Dart_handle>::iterator itvol=mengerVolumes.begin();
         itvol!=mengerVolumes.end(); ++itvol)
@@ -1569,7 +1569,7 @@ void MainWindow::split_vol_in_twentyseven(Dart_handle dh)
 
 void MainWindow::process_full_slice(Dart_handle init,
                                   std::vector<Dart_handle>& faces,
-                                  int markVols)
+                                  LCC::size_type markVols)
 {
   Dart_handle d[12];
   d[0]=scene.lcc->beta(init,1,2);
@@ -1600,7 +1600,7 @@ void MainWindow::process_full_slice(Dart_handle init,
 
 void MainWindow::process_inter_slice(Dart_handle init,
                                    std::vector<Dart_handle>& faces,
-                                   int markVols)
+                                   LCC::size_type markVols)
 {
   Dart_handle d[24];
   d[0]=init;
@@ -1660,8 +1660,8 @@ void MainWindow::onMengerDec()
   // thus we can directly "cut" the std::vector to the correct size.
   mengerVolumes.resize(CGAL::ipower(20,mengerLevel));
 
-  int markVols     = (scene.lcc)->get_new_mark();
-  int markVertices = (scene.lcc)->get_new_mark();
+  LCC::size_type markVols     = (scene.lcc)->get_new_mark();
+  LCC::size_type markVertices = (scene.lcc)->get_new_mark();
 
   std::vector<Dart_handle> faces;
   std::vector<Dart_handle> edges;
@@ -1955,8 +1955,8 @@ void MainWindow::onSierpinskiCarpetInc()
   std::vector<Dart_handle> edges;
   nbfacesinit = sierpinskiCarpetSurfaces.size();
 
-  int markEdges = (scene.lcc)->get_new_mark();
-  int markFaces = (scene.lcc)->get_new_mark();
+  LCC::size_type markEdges = (scene.lcc)->get_new_mark();
+  LCC::size_type markFaces = (scene.lcc)->get_new_mark();
 
   for(std::vector<Dart_handle>::iterator itfaces=sierpinskiCarpetSurfaces.begin();
         itfaces!=sierpinskiCarpetSurfaces.end(); ++itfaces)
@@ -2079,7 +2079,7 @@ void MainWindow::sierpinski_carpet_update_geometry()
 
   if (updateAttributesMethodTraversal)*/
   {
-    int markVertices = (scene.lcc)->get_new_mark();
+    LCC::size_type markVertices = (scene.lcc)->get_new_mark();
 
     for(std::size_t i = 0; i < nbfacesinit; i++)
     {
@@ -2179,7 +2179,7 @@ void MainWindow::sierpinski_carpet_update_geometry()
 
 void MainWindow::sierpinski_carpet_compute_geometry()
 {
-  int markVertices = (scene.lcc)->get_new_mark();
+  LCC::size_type markVertices = (scene.lcc)->get_new_mark();
 
   for(std::size_t i = 0; i < nbfacesinit; i++)
   {
@@ -2493,8 +2493,8 @@ void MainWindow::onSierpinskiCarpetDec()
   // thus we can directly "cut" the std::vector to the correct size.
   sierpinskiCarpetSurfaces.resize(CGAL::ipower(8,sierpinskiCarpetLevel));
 
-  int markSurfaces = (scene.lcc)->get_new_mark();
-  int markVertices = (scene.lcc)->get_new_mark();
+  LCC::size_type markSurfaces = (scene.lcc)->get_new_mark();
+  LCC::size_type markVertices = (scene.lcc)->get_new_mark();
 
   std::vector<Dart_handle> edges;
   std::vector<Dart_handle> vertices;
@@ -2693,8 +2693,8 @@ void MainWindow::onSierpinskiTriangleInc()
   std::vector<Dart_handle> edges;
   nbfacesinit = sierpinskiTriangleSurfaces.size();
 
-  int markEdges = (scene.lcc)->get_new_mark();
-  int markFaces = (scene.lcc)->get_new_mark();
+  LCC::size_type markEdges = (scene.lcc)->get_new_mark();
+  LCC::size_type markFaces = (scene.lcc)->get_new_mark();
 
   for(std::vector<Dart_handle>::iterator itfaces=sierpinskiTriangleSurfaces.begin();
         itfaces!=sierpinskiTriangleSurfaces.end(); ++itfaces)
@@ -2880,8 +2880,8 @@ void MainWindow::onSierpinskiTriangleDec()
   // thus we can directly "cut" the std::vector to the correct size.
   sierpinskiTriangleSurfaces.resize(CGAL::ipower(3,sierpinskiTriangleLevel));
 
-  int markSurfaces = (scene.lcc)->get_new_mark();
-  int markVertices = (scene.lcc)->get_new_mark();
+  LCC::size_type markSurfaces = (scene.lcc)->get_new_mark();
+  LCC::size_type markVertices = (scene.lcc)->get_new_mark();
 
   std::vector<Dart_handle> edges;
   std::vector<Dart_handle> vertices;

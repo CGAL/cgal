@@ -45,7 +45,7 @@ bool test2D()
 
     Map map;
     Dart_handle dh, dh2, d1, d2, d3;
-    int mark;
+    typename Map::size_type mark;
     unsigned int nbc, nb2;
 
     cout<<"Size of dart:"<<sizeof(typename Map::Dart)<<std::endl;

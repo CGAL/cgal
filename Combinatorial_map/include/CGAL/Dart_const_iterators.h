@@ -47,6 +47,7 @@ namespace CGAL {
     typedef CMap_dart_iterator_basic_of_orbit_generic<Map_,true,Beta...> Base;
 
     typedef typename Map_::Dart_const_handle Dart_const_handle;
+    typedef typename Map_::size_type size_type;
 
     /// Main constructor.
     CMap_dart_const_iterator_basic_of_orbit(const Map_& amap,
@@ -56,7 +57,7 @@ namespace CGAL {
     /// Main constructor.
     CMap_dart_const_iterator_basic_of_orbit(const Map_& amap,
                                             Dart_const_handle adart,
-                                            int amark):
+                                            size_type amark):
       Base(amap,adart,amark)
     {}
     /// Constructor from non const version.
@@ -105,6 +106,7 @@ namespace CGAL {
                                                       B5,B6,B7,B8,B9> Base;
 
     typedef typename Map_::Dart_const_handle Dart_const_handle;
+    typedef typename Map_::size_type size_type;
 
     /// Main constructor.
     CMap_dart_const_iterator_basic_of_orbit(const Map_& amap,
@@ -114,7 +116,7 @@ namespace CGAL {
     /// Main constructor.
     CMap_dart_const_iterator_basic_of_orbit(const Map_& amap,
                                             Dart_const_handle adart,
-                                            int amark):
+                                            size_type amark):
       Base(amap,adart,amark)
     {}
     /// Constructor from non const version.
@@ -162,6 +164,7 @@ namespace CGAL {
   public:
     typedef CMap_dart_iterator_basic_of_all<Map_,true> Base;
     typedef typename Map_::Dart_const_handle Dart_const_handle;
+    typedef typename Map_::size_type size_type;
 
     /* Main constructor. */                                       
     CMap_dart_const_iterator_basic_of_all(const Map_& amap, 
@@ -171,7 +174,7 @@ namespace CGAL {
     /* Main constructor. */                                       
     CMap_dart_const_iterator_basic_of_all(const Map_& amap,
                                           Dart_const_handle adart,
-                                          int /*amark*/):
+                                          size_type /*amark*/):
       Base(amap,adart)
     {}                                                         
     /// Constructor from non const version.
@@ -189,6 +192,7 @@ namespace CGAL {
   public:
     typedef CMap_dart_iterator_basic_of_cell<Map_,i,d,true> Base;
     typedef typename Map_::Dart_const_handle Dart_const_handle;
+    typedef typename Map_::size_type size_type;
 
     /* Main constructor. */                                       
     CMap_dart_const_iterator_basic_of_cell(const Map_& amap, 
@@ -197,7 +201,8 @@ namespace CGAL {
     {}                                                         
     /* Main constructor. */                                       
     CMap_dart_const_iterator_basic_of_cell(const Map_& amap, 
-                                           Dart_const_handle adart, int amark):
+                                           Dart_const_handle adart,
+                                           size_type amark):
       Base(amap,adart,amark)                               
     {}                                                         
     /// Constructor from non const version.
@@ -236,6 +241,7 @@ namespace CGAL {
   public:
     typedef CMap_dart_iterator_basic_of_involution<Map_,i,d,true> Base;
     typedef typename Map_::Dart_const_handle Dart_const_handle;
+    typedef typename Map_::size_type size_type;
 
     /* Main constructor. */                                       
     CMap_dart_const_iterator_basic_of_involution(const Map_& amap,
@@ -245,7 +251,7 @@ namespace CGAL {
     /* Main constructor. */
     CMap_dart_const_iterator_basic_of_involution(const Map_& amap,
                                                  Dart_const_handle adart,
-                                                 int amark):
+                                                 size_type amark):
       Base(amap,adart,amark)
     {}
     /// Constructor from non const version.
@@ -284,6 +290,7 @@ namespace CGAL {
   public:
     typedef CMap_dart_iterator_basic_of_involution_inv<Map_,i,d,true> Base;
     typedef typename Map_::Dart_const_handle Dart_const_handle;
+    typedef typename Map_::size_type size_type;
 
     /* Main constructor. */
     CMap_dart_const_iterator_basic_of_involution_inv(const Map_& amap, 
@@ -293,7 +300,7 @@ namespace CGAL {
     /* Main constructor. */                                       
     CMap_dart_const_iterator_basic_of_involution_inv(const Map_& amap, 
                                                      Dart_const_handle adart,
-                                                     int amark):
+                                                     size_type amark):
       Base(amap,adart,amark)
     {}                                                         
     /// Constructor from non const version.

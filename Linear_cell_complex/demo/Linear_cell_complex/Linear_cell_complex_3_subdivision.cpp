@@ -30,7 +30,7 @@ public:
    * @param amark is a mark designing old darts (i.e. darts not created during
    *        the triangulation step)
    */
-  Smooth_old_vertex (LCC & alcc, unsigned int /* TODO amark*/):mlcc (alcc)
+  Smooth_old_vertex (LCC & alcc, LCC::size_type /* TODO amark*/):mlcc (alcc)
   {
   }
 
@@ -128,8 +128,8 @@ subdivide_lcc_3 (LCC & m)
   if (m.number_of_darts () == 0)
     return;
 
-  unsigned int mark = m.get_new_mark ();
-  unsigned int treated = m.get_new_mark ();
+  LCC::size_type mark = m.get_new_mark ();
+  LCC::size_type treated = m.get_new_mark ();
   m.negate_mark (mark);  // All the old darts are marked in O(1).
 
   // 1) We smoth the old vertices.

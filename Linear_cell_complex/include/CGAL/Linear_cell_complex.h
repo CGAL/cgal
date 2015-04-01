@@ -361,9 +361,9 @@ namespace CGAL {
       // Copy of the code in CMap::correct_invalid_attributes() to avoid
       // 2 iterations through the darts of the map.
 
-      std::vector<int> marks(dimension+1);
+      std::vector<size_type> marks(dimension+1);
       for ( unsigned int i=0; i<=dimension; ++i)
-        marks[i] = -1;
+        marks[i] = Base::MARK_ERROR;
 
       Helper::template
         Foreach_enabled_attributes<Reserve_mark_functor<Self> >::
@@ -384,7 +384,7 @@ namespace CGAL {
       }
 
       for ( unsigned int i=0; i<=dimension; ++i)
-        if ( marks[i]!=-1 )
+        if ( marks[i]!=Base::MARK_ERROR )
         {
           CGAL_assertion( this->is_whole_map_marked(marks[i]) );
           free_mark(marks[i]);
@@ -414,13 +414,22 @@ namespace CGAL {
 
     /// Sew3 the marked facets having same geometry
     /// (a facet is considered marked if one of its dart is marked).
-    unsigned int sew3_same_facets(int AMark)
+    unsigned int sew3_same_facets(size_type AMark)
     {
       unsigned int res = 0;
 
       std::map<Point, std::vector<Dart_handle> > one_dart_per_facet;
-      int mymark = this->get_new_mark();
-      CGAL_assertion( mymark!=-1 );
+      size_type mymark;
+      // CGAL_assertion( mymark!=-1 );
+      try
+      {
+        mymark = this->get_new_mark();
+      }
+      catch (typename Base::Exception_mark_is_out_of_border e)
+      {
+        std::cerr<<"No more free mark, exit."<<std::endl;
+        exit(-1);
+      }
 
       // First we fill the std::map by one dart per facet, and by using
       // the minimal point as index.
@@ -486,7 +495,7 @@ namespace CGAL {
     /// (all the facets of the map are considered)
     unsigned int sew3_same_facets()
     {
-      int mark = this->get_new_mark();
+      size_type mark = this->get_new_mark();
       this->negate_mark(mark);
       unsigned int res=sew3_same_facets(mark);
       this->free_mark(mark);

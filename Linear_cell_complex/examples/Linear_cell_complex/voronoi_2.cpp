@@ -34,7 +34,7 @@ void display_voronoi(LCC_2& alcc, Dart_handle adart)
   // Indeed, we cannot view these faces since they do not have
   // a "correct geometry". 
   std::stack<Dart_handle> toremove;
-  int mark_toremove=alcc.get_new_mark();
+  LCC_2::size_type mark_toremove=alcc.get_new_mark();
 
   // adart belongs to the infinite face.
   toremove.push(adart);
