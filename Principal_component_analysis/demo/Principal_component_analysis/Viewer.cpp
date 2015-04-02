@@ -5,7 +5,6 @@ Viewer::Viewer(QWidget* parent)
   : QGLViewer(parent),
     m_pScene(NULL)
 {
-  setBackgroundColor(::Qt::white);
 }
 
 void Viewer::setScene(Scene* pScene)
@@ -26,5 +25,6 @@ void Viewer::draw()
 void Viewer::initializeGL()
 {
   QGLViewer::initializeGL();
+  setBackgroundColor(::Qt::white);
 }
 
