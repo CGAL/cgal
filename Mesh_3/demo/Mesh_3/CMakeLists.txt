@@ -192,7 +192,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
 
   set(SCENE_SEGMENTED_IMAGE_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_segmented_image_item")
   add_library(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} SHARED
-    Scene_segmented_image_item.cpp Scene_segmented_image_item.moc)
+    Scene_segmented_image_item.cpp)# Scene_segmented_image_item.moc)
   qt5_use_modules(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} Xml Script OpenGL)
   target_link_libraries(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} ${SCENE_ITEM_LIB} ${CGAL_LIBRARIES} ${TBB_LIBRARIES})
   set_target_properties(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_segmented_image_item_EXPORTS)
@@ -203,14 +203,14 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
 
   set(SCENE_POLYHEDRON_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_polyhedron_item")
   add_library(${SCENE_POLYHEDRON_ITEM_LIB} SHARED
-    Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
+    Scene_polyhedron_item.cpp )#Scene_polyhedron_item.moc)
   qt5_use_modules(${SCENE_POLYHEDRON_ITEM_LIB} Xml Script OpenGL)
   target_link_libraries(${SCENE_POLYHEDRON_ITEM_LIB} ${SCENE_ITEM_LIB} ${CGAL_LIBRARIES} ${TBB_LIBRARIES})
   set_target_properties(${SCENE_POLYHEDRON_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_polyhedron_item_EXPORTS)
 
   set(POLYGON_SOUP_LIB "${MESH_3_LIB_PREFIX}polygon_soup")
   add_library(${POLYGON_SOUP_LIB} SHARED
-    Scene_polygon_soup.cpp Scene_polygon_soup.moc)
+    Scene_polygon_soup.cpp )#Scene_polygon_soup.moc)
   qt5_use_modules(${POLYGON_SOUP_LIB} Xml Script OpenGL)
   target_link_libraries(${POLYGON_SOUP_LIB} ${SCENE_ITEM_LIB} ${CGAL_LIBRARIES} ${TBB_LIBRARIES})
   set_target_properties(${POLYGON_SOUP_LIB} PROPERTIES DEFINE_SYMBOL polygon_soup_EXPORTS)
@@ -218,7 +218,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
   set(SCENE_C3T3_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_c3t3_item")
   set (SCENE_C3T3_ITEM_LIB_SOURCE_FILES Scene_c3t3_item.cpp)
   ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" SCENE_C3T3_ITEM_LIB_SOURCE_FILES)
-  LIST(APPEND SCENE_C3T3_ITEM_LIB_SOURCE_FILES Scene_c3t3_item.moc)
+ # LIST(APPEND SCENE_C3T3_ITEM_LIB_SOURCE_FILES Scene_c3t3_item.moc)
   add_library(${SCENE_C3T3_ITEM_LIB} SHARED
     ${SCENE_C3T3_ITEM_LIB_SOURCE_FILES})
   qt5_use_modules(${SCENE_C3T3_ITEM_LIB} Xml Script OpenGL)
@@ -227,7 +227,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
 
   set(SCENE_IMPLICIT_FUNCTION_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_implicit_function_item")
   add_library(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} SHARED
-    Scene_implicit_function_item.cpp Scene_implicit_function_item.moc Color_ramp.cpp)
+    Scene_implicit_function_item.cpp Color_ramp.cpp)#Scene_implicit_function_item.moc)
   qt5_use_modules(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} Xml Script OpenGL)
   target_link_libraries(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} ${SCENE_ITEM_LIB} ${QGLVIEWER_LIBRARIES} ${QT_LIBRARIES} ${TBB_LIBRARIES})
   set_target_properties(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_implicit_function_item_EXPORTS)
@@ -239,7 +239,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
       MainWindow.cpp
       Mesh_3.cpp
       ${DEMO_SRC_DIR}/Scene.cpp
-      MainWindow_moc.cpp
+    #  MainWindow_moc.cpp
       Scene_moc.cpp)
     #ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" MESH_3_SOURCE_FILES)
     LIST(APPEND MESH_3_SOURCE_FILES ${UI_FILES} ${RESOURCE_FILES})
@@ -338,7 +338,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
     Meshing_thread.cpp)
   ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" MESH_3_PLUGIN_SOURCE_FILES)
   LIST(REMOVE_AT MESH_3_PLUGIN_SOURCE_FILES 0) # Remove Mesh_3_plugin.cpp since it's added by polyhedron_demo_plugin
-  LIST(APPEND MESH_3_PLUGIN_SOURCE_FILES "Scene_c3t3_item.moc" ${meshingUI_FILES})
+  LIST(APPEND MESH_3_PLUGIN_SOURCE_FILES "Scene_c3t3_item.cpp" ${meshingUI_FILES})
   polyhedron_demo_plugin(${MESH_3_PLUGIN_LIB} Mesh_3_plugin ${MESH_3_PLUGIN_SOURCE_FILES})
 
 #  set(MESH_3_PLUGIN_LIB "${MESH_3_LIB_PREFIX}mesh_3_plugin") 
@@ -367,7 +367,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
     Optimizer_thread.cpp)
   ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" MESH_3_OPTIMIZATION_PLUGIN_SOURCE_FILES)
   LIST(REMOVE_AT MESH_3_OPTIMIZATION_PLUGIN_SOURCE_FILES 0) # Remove Mesh_3_optimization_plugin.cpp since it's added by polyhedron_demo_plugin
-  LIST(APPEND MESH_3_OPTIMIZATION_PLUGIN_SOURCE_FILES "Scene_c3t3_item.moc" ${optimUI_FILES})
+  LIST(APPEND MESH_3_OPTIMIZATION_PLUGIN_SOURCE_FILES "Scene_c3t3_item.cpp" ${optimUI_FILES})
   polyhedron_demo_plugin(${MESH_3_OPTIMIZATION_PLUGIN_LIB} Mesh_3_optimization_plugin ${MESH_3_OPTIMIZATION_PLUGIN_SOURCE_FILES})
 
   target_link_libraries(${MESH_3_OPTIMIZATION_PLUGIN_LIB}
