@@ -7,7 +7,7 @@ namespace CGAL {
 
 \authors Fernando de Goes, Pierre Alliez, Ivo Vigan and Clément Jamin
 
-
+%test
 
 \section Reconstruction_simplification_2Introduction Introduction
 
