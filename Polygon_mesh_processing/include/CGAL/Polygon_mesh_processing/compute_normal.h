@@ -220,7 +220,7 @@ compute_vertex_normals(const PolygonMesh& pmesh
                       , const NamedParameters& np
                       )
 {
-  typedef typename GetKernel<PolygonMesh,NamedParameters>::type Kernel;
+  typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type Kernel;
 
   typename boost::graph_traits<PolygonMesh>::vertex_descriptor v;
   BOOST_FOREACH(v, vertices(pmesh)){
