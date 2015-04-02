@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgJet_fitting_3
+\ingroup PkgSolver
 
 The class `Eigen_svd` provides an algorithm to solve in the least 
 square sense a linear system with a singular value decomposition using 
@@ -15,7 +15,7 @@ square sense a linear system with a singular value decomposition using
 class Eigen_svd {
 public:
 
-/// @}
+
 
 }; /* end Eigen_svd */
 } /* end namespace CGAL */

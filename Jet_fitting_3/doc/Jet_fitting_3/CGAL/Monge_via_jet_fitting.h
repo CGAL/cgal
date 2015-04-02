@@ -24,7 +24,7 @@ the geometric classes and tools required by local
 computations. 
 
 \tparam SvdTraits features the linear 
-algebra algorithm required by the fitting method. 
+algebra algorithm required by the fitting method.  The scalar type, `SvdTraits::FT`, must be the same as that of   the `LocalKernel` concept : `LocalKernel::FT`. 
 
 \sa `Eigen_svd`
 \sa `Monge_form`

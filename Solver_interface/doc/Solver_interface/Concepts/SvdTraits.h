@@ -2,22 +2,12 @@
   \ingroup PkgSolverConcepts
   \cgalConcept
 
-  The concept `SvdTraits` describes the set of requirements to be 
-  fulfilled by any class used to instantiate the third template 
-  parameter of the class 
-  `CGAL::Monge_via_jet_fitting<DataKernel,LocalKernel,SvdTraits>`. 
-
-  It describes the linear algebra types and algorithms needed by the 
-  class `CGAL::Monge_via_jet_fitting`. 
-
-  \cgalHeading{Requirements}
-
-  The scalar type, `SvdTraits::FT`, must be the same as that of 
-  the `LocalKernel` concept : `LocalKernel::FT`. 
+  The concept `SvdTraits` describes the linear algebra types and algorithms needed 
+  to solve in the least square sense a linear system with a singular value decomposition
 
   \cgalHasModel `CGAL::Eigen_svd`
 
-  \sa `LocalKernel` 
+  \sa `CGAL::Monge_via_jet_fitting<DataKernel,LocalKernel,SvdTraits>` 
 
 */
 class SvdTraits {
@@ -60,7 +50,7 @@ public:
 }; /* end SvdTraits */
 
 /*!
-\ingroup PkgJet_fitting_3Concepts
+\ingroup PkgSolverConcepts
 \cgalConcept
 Concept of vector type used by the concept SvdTraits.
 */
@@ -93,7 +83,7 @@ public:
 
 
 /*!
-\ingroup PkgJet_fitting_3Concepts
+\ingroup PkgSolverConcepts
 \cgalConcept
 Concept of matrix type used by the concept SvdTraits.
 */

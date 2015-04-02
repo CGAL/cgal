@@ -3,13 +3,12 @@
 /// \defgroup PkgSolverConcepts Concepts
 /// \ingroup PkgSolver
 ///
-/// We 
 
 
 /*!
 \addtogroup PkgSolver
 \cgalPkgDescriptionBegin{CGAL and Solvers,PkgSolverSummary}
-\cgalPkgPicture{solver-detail.png}
+\cgalPkgPicture{solver.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{CGAL Editorial Board }
 \cgalPkgDesc{This package provides }
@@ -32,10 +31,10 @@
 
 ## Classes ##
 
-- `Eigen_solver_traits`
-- `Eigen_svd`
-- `Eigen_matrix`
-- `Eigen_vector`
+- `CGAL::Eigen_solver_traits`
+- `CGAL::Eigen_svd`
+- `CGAL::Eigen_matrix`
+- `CGAL::Eigen_vector`
 
 */
 

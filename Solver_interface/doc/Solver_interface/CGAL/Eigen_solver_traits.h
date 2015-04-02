@@ -9,16 +9,13 @@ The version 3.1 (or greater) of \ref thirdpartyEigen "Eigen" must be available o
 
 \cgalModels `SparseLinearAlgebraTraitsWithFactor_d`
 
-Parameters 
--------------- 
 
-`T`: a sparse solver of \ref thirdpartyEigen "Eigen". The default solver is the iterative bi-congugate gradient stabilized solver 
+\tparam T a sparse solver of \ref thirdpartyEigen "Eigen". The default solver is the iterative bi-congugate gradient stabilized solver 
 `Eigen::BiCGSTAB` for `double`. 
 
 \sa `CGAL::Eigen_sparse_matrix<T>`
 \sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
 \sa `CGAL::Eigen_vector<T>`
-\sa http://eigen.tuxfamily.org
 
 Example 
 -------------- 

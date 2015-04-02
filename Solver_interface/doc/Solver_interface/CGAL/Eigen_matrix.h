@@ -41,7 +41,7 @@ typedef unspecified_type EigenType;
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceParameterizationAlgebra
+\ingroup PkgSolver
 
 The class `Eigen_sparse_symmetric_matrix` is a C++ wrapper around \ref thirdpartyEigen "Eigen" matrix type `Eigen::SparseMatrix`. 
 
