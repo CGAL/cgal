@@ -11,37 +11,33 @@ else()
 endif()
 
 # Find CGAL
-find_package(CGAL)
+find_package(CGAL REQUIRED COMPONENTS Qt5)
 include( ${CGAL_USE_FILE} )
 
-# Find Qt4 itself
-set ( QT_USE_QTXML    TRUE )
-set ( QT_USE_QTMAIN   TRUE )
-set ( QT_USE_QTOPENGL TRUE )
-find_package(Qt4)
+# Find Qt5 itself
+find_package(Qt5 COMPONENTS Xml OpenGL Core)
 
 # Find OpenGL
 find_package(OpenGL)
 
 # Find QGLViewer
-if(QT4_FOUND)
-  include( ${QT_USE_FILE} )
+if(Qt5_FOUND)
   find_package(QGLViewer)
-endif(QT4_FOUND)
+endif(Qt5_FOUND)
 
-if (CGAL_FOUND AND OPENGL_FOUND AND QT4_FOUND AND QGLVIEWER_FOUND AND QT_QCOLLECTIONGENERATOR_EXECUTABLE)
+if (CGAL_FOUND AND OPENGL_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND QT_QCOLLECTIONGENERATOR_EXECUTABLE)
 
    include_directories( ${QGLVIEWER_INCLUDE_DIR} )
 
   # UI files (Qt Designer files)
-  qt4_wrap_ui ( UI_FILES MainWindow.ui )
+  qt5_wrap_ui ( UI_FILES MainWindow.ui )
 
   # qrc files (resource files)
-  qt4_add_resources( RESOURCE_FILES ./Periodic_3_triangulation_3.qrc )
+  qt5_add_resources( RESOURCE_FILES ./Periodic_3_triangulation_3.qrc )
 
   # use the Qt MOC preprocessor on classes that derive from QObject
-  qt4_generate_moc( "Scene.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_Scene.cpp" )
-  qt4_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_MainWindow.cpp" )
+  qt5_generate_moc( "Scene.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_Scene.cpp" )
+  qt5_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_MainWindow.cpp" )
 
   if(DEFINED QT_QCOLLECTIONGENERATOR_EXECUTABLE)
   else()
@@ -68,21 +64,23 @@ if (CGAL_FOUND AND OPENGL_FOUND AND QT4_FOUND AND QGLVIEWER_FOUND AND QT_QCOLLEC
   		    MainWindow.ui moc_MainWindow.cpp 
 		    ${UI_FILES} ${RESOURCE_FILES} Periodic_3_triangulation_3.qhc)
 
+  qt5_use_modules(periodic_3_triangulation_3_demo Xml OpenGL)
+
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS periodic_3_triangulation_3_demo)
 
   # Link the executable to CGAL and third-party libraries
   target_link_libraries(periodic_3_triangulation_3_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 
-else (CGAL_FOUND AND OPENGL_FOUND AND QT4_FOUND AND QGLVIEWER_FOUND AND QT_QCOLLECTIONGENERATOR_EXECUTABLE)
+else (CGAL_FOUND AND OPENGL_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND QT_QCOLLECTIONGENERATOR_EXECUTABLE)
 
   set(PERIODIC_TRIANGULATION_MISSING_DEPS "")
 
   if(NOT CGAL_FOUND)
-    set(PERIODIC_TRIANGULATION_MISSING_DEPS "the CGAL Qt4 library, ${PERIODIC_TRIANGULATION_MISSING_DEPS}")
+    set(PERIODIC_TRIANGULATION_MISSING_DEPS "the CGAL Qt5 library, ${PERIODIC_TRIANGULATION_MISSING_DEPS}")
   endif()
 
-  if(NOT QT4_FOUND)
-    set(PERIODIC_TRIANGULATION_MISSING_DEPS "Qt4, ${PERIODIC_TRIANGULATION_MISSING_DEPS}")
+  if(NOT Qt5_FOUND)
+    set(PERIODIC_TRIANGULATION_MISSING_DEPS "Qt5, ${PERIODIC_TRIANGULATION_MISSING_DEPS}")
   endif()
 
   if(NOT OPENGL_FOUND)
@@ -99,4 +97,4 @@ else (CGAL_FOUND AND OPENGL_FOUND AND QT4_FOUND AND QGLVIEWER_FOUND AND QT_QCOLL
 
   message(STATUS "NOTICE: This demo requires ${PERIODIC_TRIANGULATION_MISSING_DEPS}and will not be compiled.")
 
-endif (CGAL_FOUND AND OPENGL_FOUND AND QT4_FOUND AND QGLVIEWER_FOUND AND QT_QCOLLECTIONGENERATOR_EXECUTABLE)
+endif (CGAL_FOUND AND OPENGL_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND QT_QCOLLECTIONGENERATOR_EXECUTABLE)
