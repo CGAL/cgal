@@ -259,12 +259,11 @@ self_intersections(const TriangleMesh& tmesh, OutputIterator out)
  * \ingroup PkgPolygonMeshProcessing
  * Same as above but the self-intersections reported
  * are only limited to the faces in `face_range`.
- 
+ *
  * \tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
  *  model of `RandomAccessRange`
  
  * \param face_range the range of faces to check for self-intersection.
- * \todo code: see why boost::size cannot be used instead of std::distance
  */
 template <class TriangleMesh
         , class FaceRange
@@ -285,7 +284,9 @@ self_intersections( const FaceRange& face_range,
 
   // make one box per facet
   std::vector<Box> boxes;
-  boxes.reserve(std::distance(face_range.first, face_range.second));
+  boxes.reserve(
+    std::distance( boost::begin(face_range), boost::end(face_range) )
+  );
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vpmap = choose_const_pmap(get_param(np, boost::vertex_point),
