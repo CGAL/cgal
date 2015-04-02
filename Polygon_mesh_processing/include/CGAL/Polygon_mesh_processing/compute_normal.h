@@ -70,11 +70,11 @@ void sum_normals(const PM& pmesh,
 *
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-*    \cgalParamBegin{kernel} a geometric traits class instance \cgalParamEnd
+*    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
 * \cgalNamedParamsEnd
 *
 * @return the computed normal. The return type is a 3D vector type. It is
-* either deduced from the `kernel` \ref namedparameters if provided,
+* either deduced from the `geom_traits` \ref namedparameters if provided,
 * or the geometric traits class deduced from the point property map
 * of `pmesh`.
 */
@@ -82,13 +82,13 @@ template <typename PolygonMesh, typename NamedParameters>
 #ifdef DOXYGEN_RUNNING
 Vector_3
 #else
-typename GetKernel<PolygonMesh, NamedParameters>::type::Vector_3
+typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Vector_3
 #endif
 compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
                     , const PolygonMesh& pmesh
                     , const NamedParameters& np)
 {
-  typedef typename GetKernel<PolygonMesh, NamedParameters>::type Kernel;
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
 
@@ -118,7 +118,7 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 *
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-*    \cgalParamBegin{kernel} a geometric traits class instance \cgalParamEnd
+*    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
 * \cgalNamedParamsEnd
 *
 */
@@ -130,7 +130,7 @@ compute_face_normals(const PolygonMesh& pmesh
                    , FaceNormalMap fnm
                    , const NamedParameters& np)
 {
-  typedef typename GetKernel<PolygonMesh,NamedParameters>::type Kernel;
+  typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type Kernel;
 
   typename boost::graph_traits<PolygonMesh>::face_descriptor f;
   BOOST_FOREACH(f, faces(pmesh)){
@@ -151,11 +151,11 @@ compute_face_normals(const PolygonMesh& pmesh
 *
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-*    \cgalParamBegin{kernel} a geometric traits class instance \cgalParamEnd
+*    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
 * \cgalNamedParamsEnd
 *
 * @return the computed normal. The return type is a 3D vector type. It is
-* either deduced from the `kernel` \ref namedparameters if provided,
+* either deduced from the `geom_traits` \ref namedparameters if provided,
 * or the geometric traits class deduced from the point property map
 * of `pmesh`.
 */
@@ -163,14 +163,14 @@ template<typename PolygonMesh, typename NamedParameters>
 #ifdef DOXYGEN_RUNNING
 Vector_3
 #else
-typename GetKernel<PolygonMesh, NamedParameters>::type::Vector_3
+typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Vector_3
 #endif
 compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
                       const PolygonMesh& pmesh,
                       const NamedParameters& np
                       )
 {
-  typedef typename GetKernel<PolygonMesh, NamedParameters>::type Kernel;
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
 
   typedef typename Kernel::Vector_3 Vector;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
@@ -206,7 +206,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 *
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-*    \cgalParamBegin{kernel} a geometric traits class instance \cgalParamEnd
+*    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
 * \cgalNamedParamsEnd
 *
 */
@@ -248,7 +248,7 @@ compute_vertex_normals(const PolygonMesh& pmesh
 *
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-*    \cgalParamBegin{kernel} a geometric traits class instance \cgalParamEnd
+*    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
 * \cgalNamedParamsEnd
 *
 */

@@ -36,7 +36,7 @@ void test(const char* file_name)
   CGAL::Polygon_mesh_processing::compute_face_normals(mesh, fnormals,
     CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points()));
   CGAL::Polygon_mesh_processing::compute_face_normals(mesh, fnormals,
-    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points()).kernel(K()));
+    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points()).geom_traits(K()));
 
  Surface_mesh::Property_map<vertex_descriptor,Vector> vnormals;
 
@@ -45,13 +45,13 @@ void test(const char* file_name)
   CGAL::Polygon_mesh_processing::compute_vertex_normals(mesh, vnormals,
     CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points())); 
   CGAL::Polygon_mesh_processing::compute_vertex_normals(mesh, vnormals,
-    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points()).kernel(K()));
+    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points()).geom_traits(K()));
 
   CGAL::Polygon_mesh_processing::compute_normals(mesh, vnormals, fnormals);
   CGAL::Polygon_mesh_processing::compute_normals(mesh, vnormals, fnormals,
     CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points()));
   CGAL::Polygon_mesh_processing::compute_normals(mesh, vnormals, fnormals,
-    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points()).kernel(K()));
+    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points()).geom_traits(K()));
 
   BOOST_FOREACH(face_descriptor fd , faces(mesh)){
     std::cout << fnormals[fd] << std::endl;

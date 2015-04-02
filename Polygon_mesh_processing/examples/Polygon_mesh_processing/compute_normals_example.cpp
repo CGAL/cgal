@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
         vnormals,
         fnormals,
         CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points()).
-        kernel(K()));
+        geom_traits(K()));
 
   std::cout << "Face normals :" << std::endl;
   BOOST_FOREACH(face_descriptor fd, faces(mesh)){

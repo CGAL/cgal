@@ -264,6 +264,7 @@ self_intersections(const TriangleMesh& tmesh, OutputIterator out)
  *  model of `RandomAccessRange`
  
  * \param face_range the range of faces to check for self-intersection.
+ * \todo code: see why boost::size cannot be used instead of std::distance
  */
 template <class TriangleMesh
         , class FaceRange
@@ -284,7 +285,7 @@ self_intersections( const FaceRange& face_range,
 
   // make one box per facet
   std::vector<Box> boxes;
-  boxes.reserve(boost::size(face_range));
+  boxes.reserve(std::distance(face_range.first, face_range.second));
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vpmap = choose_const_pmap(get_param(np, boost::vertex_point),
@@ -306,7 +307,7 @@ self_intersections( const FaceRange& face_range,
     box_ptr.push_back(&b);
 
   // compute self-intersections filtered out by boxes
-  typedef typename GetKernel<TM, NamedParameters>::type GeomTraits;
+  typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
   CGAL::internal::Intersect_facets<TM,GeomTraits,Box,OutputIterator,VertexPointMap>
     intersect_facets(tmesh, out, vpmap,
       choose_param(get_param(np, geom_traits), GeomTraits()));

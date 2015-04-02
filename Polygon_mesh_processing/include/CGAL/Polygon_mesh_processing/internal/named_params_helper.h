@@ -45,7 +45,7 @@ public:
 };
 
 template<typename PolygonMesh, typename NamedParameters>
-class GetKernel
+class GetGeomTraits
 {
   typedef typename GetK<PolygonMesh>::Kernel DefaultKernel;
 public:

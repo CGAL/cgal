@@ -76,7 +76,7 @@ namespace internal{
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
- *    \cgalParamBegin{kernel} a geometric traits class instance \cgalParamEnd
+ *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * \todo code : The following only handles polyhedron with one connected component
@@ -100,7 +100,7 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
                                   pmesh,
                                   boost::vertex_point);
   //Kernel
-  typedef typename GetKernel<PolygonMesh, NamedParameters>::type Kernel;
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
 
   internal::Compare_vertex_points_xyz_3<typename Kernel::Less_xyz_3, VPMap >
     less_xyz(vpmap);

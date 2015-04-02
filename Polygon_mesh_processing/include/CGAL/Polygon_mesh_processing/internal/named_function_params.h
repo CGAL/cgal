@@ -112,7 +112,7 @@ namespace CGAL{
 
     template<typename K>
     pmp_bgl_named_params<K, geom_traits_t, self>
-    kernel(const K& k) const
+    geom_traits(const K& k) const
     {
       typedef pmp_bgl_named_params<K, geom_traits_t, self> Params;
       return Params(k, *this);
@@ -226,7 +226,7 @@ namespace parameters{
 
   template<typename K>
   pmp_bgl_named_params<K, geom_traits_t>
-  kernel(const K& k)
+  geom_traits(const K& k)
   {
     typedef pmp_bgl_named_params<K, geom_traits_t> Params;
     return Params(k);

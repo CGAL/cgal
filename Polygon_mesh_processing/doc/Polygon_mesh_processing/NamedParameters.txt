@@ -96,7 +96,7 @@ CGAL::Eigen_sparse_matrix<double>::EigenType,
 Eigen::COLAMDOrdering<int> >  >
 \endcode
 
-<li> `kernel` the geometric traits instance in which the mesh processing operation should be performed.\n
+<li> `geom_traits` the geometric traits instance in which the mesh processing operation should be performed.\n
 \b Type : a Geometric traits class.\n
 \b Default type is
 \code

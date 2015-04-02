@@ -246,7 +246,7 @@ namespace internal {
 ///
 /// \cgalNamedParamsBegin
 ///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this mad is model of `ReadWritePropertyMap` \cgalParamEnd
-///    \cgalParamBegin{kernel} a geometric traits class instance.
+///    \cgalParamBegin{geom_traits} a geometric traits class instance.
 ///       The traits class must provide the nested types :
 ///         - `Point_3`,
 ///         - `Compare_distance_3` to compute the distance between 2 points
@@ -281,7 +281,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   VertexPointMap vpmap = choose_const_pmap(get_param(np, boost::vertex_point),
                                            tmesh,
                                            boost::vertex_point);
-  typedef typename GetKernel<TM, NamedParameters>::type Traits;
+  typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
   Traits traits = choose_param(get_param(np, geom_traits), Traits());
 
   std::size_t nb_deg_faces = 0;

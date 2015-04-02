@@ -308,7 +308,7 @@ void stitch_borders(
       hedge_pairs_to_stitch)
 {
   stitch_borders(pmesh, hedge_pairs_to_stitch,
-    CGAL::Polygon_mesh_processing::parameter::all_default());
+    CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 ///\endcond
 

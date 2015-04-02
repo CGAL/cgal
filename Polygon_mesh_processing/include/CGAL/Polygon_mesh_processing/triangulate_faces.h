@@ -235,7 +235,7 @@ public:
 *
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-*    \cgalParamBegin{kernel} a geometric traits class instance \cgalParamEnd
+*    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
 * \cgalNamedParamsEnd
 *
 */
@@ -248,11 +248,11 @@ void triangulate_faces(PolygonMesh& pmesh,
 
   //VertexPointMap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
-  VPMap vpmap = choose_const_pmap(get_param(np, boost::vertex_point),
-                                  pmesh,
-                                  boost::vertex_point);
+  VPMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
+                            pmesh,
+                            boost::vertex_point);
   //Kernel
-  typedef typename GetKernel<PolygonMesh, NamedParameters>::type Kernel;
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
 
   internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel> modifier(vpmap);
   modifier(pmesh);

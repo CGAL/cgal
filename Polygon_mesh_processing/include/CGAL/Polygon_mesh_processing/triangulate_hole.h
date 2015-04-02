@@ -56,7 +56,7 @@ namespace Polygon_mesh_processing {
   \cgalNamedParamsBegin
      \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
      \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space \cgalParamEnd
-     \cgalParamBegin{kernel} a geometric traits class instance \cgalParamEnd
+     \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
   \cgalNamedParamsEnd
 
   @return `out`
@@ -95,7 +95,7 @@ namespace Polygon_mesh_processing {
       out,
       choose_param(get_param(np, vertex_point), get(CGAL::vertex_point, pmesh)),
       use_dt3,
-      choose_param(get_param(np, geom_traits), GetKernel<PolygonMesh,NamedParameters>::type()))
+      choose_param(get_param(np, geom_traits), typename GetGeomTraits<PolygonMesh,NamedParameters>::type()))
       .first;
   }
 
@@ -131,7 +131,7 @@ namespace Polygon_mesh_processing {
      \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
      \cgalParamBegin{density_control_factor} factor to control density of the ouput mesh, where larger values cause denser refinements, as in `refine()` \cgalParamEnd
      \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space \cgalParamEnd
-     \cgalParamBegin{kernel} a geometric traits class instance \cgalParamEnd
+     \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
   \cgalNamedParamsEnd
 
   @return pair of `face_out` and `vertex_out`
@@ -198,7 +198,7 @@ namespace Polygon_mesh_processing {
      \cgalParamBegin{density_control_factor} factor to control density of the ouput mesh, where larger values cause denser refinements, as in `refine()` \cgalParamEnd
      \cgalParamBegin{fairing_continuity} tangential continuity of the output surface patch \cgalParamEnd
      \cgalParamBegin{sparse_linear_solver} an instance of the sparse linear solver used for fairing \cgalParamEnd
-     \cgalParamBegin{kernel} a geometric traits class instance \cgalParamEnd
+     \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
   \cgalNamedParamsEnd
 
   @return tuple of
@@ -275,7 +275,7 @@ namespace Polygon_mesh_processing {
 
   \cgalNamedParamsBegin
      \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space \cgalParamEnd
-     \cgalParamBegin{kernel} a geometric traits class instance \cgalParamEnd
+     \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
   \cgalNamedParamsEnd
 
   \todo handle islands
