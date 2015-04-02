@@ -15,7 +15,7 @@ Shortest paths on a terrain using one source point represented by a green square
 
 \section Surface_mesh_shortest_pathIntroduction Introduction
 
-The motion planning of a robot across the surface of a 3-dimensional terrain is a typical application of the shortest path computation
+The motion planning of a robot across the surface of a 3-dimensional terrain is a typical application of the shortest path computation.
 Using a 2-dimensional approximation would fail to capture anything interesting about the terrain we are trying to cross, and would give a poor solution.  The problem is often called the <em>Discrete Geodesic Problem</em>.  Although the more general version of this problem, shortest paths in 3D in the presence of obstacles, is NP-Hard, when the motion is constrained to the 2D surface of an object it can be solved efficiently.
 
 The algorithm implemented in this package builds a data structure to efficiently answer queries of the following form:
@@ -130,9 +130,7 @@ This example shows how to implement a model of the `SurfaceMeshShortestPathVisit
 These benchmarks were run using randomly generated source and destination points over multiple trials. 
 The measurements were executed using \cgal 4.5, under Cygwin 1.7.32, using the Gnu
 C++ compiler version 4.8.3 with options `-O3 -DNDEBUG`. The system used
-The measurements were executed using CGAL 4.5, under Cygwin 1.7.32, using the GNU
-C++ compiler version 4.8.3 with options "-O3 -Wall -DCGAL_NDEBUG". The system used
-was had a 64bit Intel Core i3 2.20GHz processor with 6GB of RAM
+was a 64bit Intel Core i3 2.20GHz processor with 6GB of RAM
 
 <!--
 They can be re-generated using
@@ -195,7 +193,7 @@ man.off | 17495 | 1.75936 | 185194 | 122.541
 
 \subsection Surface_mesh_shortest_pathQueryComparison Comparison of Construction and Query Times with multiple source points
 
-The following figures track the construction time, query time, and peak memory usage for the various test models as the number of source points increases.  Notice that none of the values increase significantly as the number of source points increases.  In fact, in most cases, the running time and memory go down.  This is because a larger number of source points tends to result in a more flat sequence tree, which translates to reduced runtime and memory costs.
+The following figures track the construction time, query time, and peak memory usage for the various test models as the number of source points increases.  Notice that none of the values increases significantly as the number of source points increases.  In fact, in most cases, the running time and memory go down.  This is because a larger number of source points tends to result in a more flat sequence tree, which translates to reduced runtime and memory costs.
 
 \cgalFigureBegin{Benchmark_construction,benchmark_plot_construction.png}
   Plot of construction times against different numbers of source points.
@@ -225,7 +223,7 @@ The following figures track the construction time, query time, and peak memory u
   \cgalFigureEnd
 
 \subsubsection Surface_mesh_shortest_pathVisibilityWindow Visibility Window
-  A <em>visibility window</em> (or <em>visibility cone</em>) is a pair of geodesic curves which enclose a <em>locally flat</em> region of the surface mesh. Locally flat means that between every pair of points inside the window, there is exactly one geodesic path between them which also stays inside the bounds of the window. Thus, operations, such as distance calculations, can be done with normal 2D %Euclidean operations while inside the window.  When a visibility window encounters a vertex (which are <em>not</em> flat), a <em>branch</em> occurs, forming a sub-window to either side.
+  A <em>visibility window</em> (or <em>visibility cone</em>) is a pair of geodesic curves which enclose a <em>locally flat</em> region of the surface mesh. Locally flat means that between every pair of points inside the window, there is exactly one geodesic path between them which also stays inside the bounds of the window. Thus, operations, such as distance calculations, can be done with normal 2D %Euclidean operations while inside the window.  When a visibility window encounters a vertex (which is <em>not</em> flat), a <em>branch</em> occurs, forming a sub-window to either side.
   
   \cgalFigureBegin{Visibility_window_1,visibilityCone-1.png}
   A single visibility window, before it encounters a vertex.
