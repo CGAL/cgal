@@ -512,9 +512,10 @@ public:
     return m_omega_H;
   }
 
-  /// If `true`, the result skeleton is medially centered (an additional energy
-  /// is used during the contraction using the Voronoi poles of the input triangulated mesh
-  /// as attractors).
+  /// If `true`, the meso-skeleton placement will be attracted by an approximation
+  /// of the medial axis of the mesh during the contraction steps, so will be the result skeleton.
+  // (an additional energy is used during the contraction using the Voronoi poles of the input triangulated mesh
+  // as attractors).
   /// \todo mentionning the Voronoi pole is confusing here. Either refer to the ref manual
   ///       or add something in the documentation of the class
   bool is_medially_centered()
