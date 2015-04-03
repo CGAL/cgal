@@ -25,14 +25,16 @@
 #include <CGAL/Modifier_base.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/Default.h>
 #include <CGAL/boost/graph/properties.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
-#include <vector>
 #include <set>
+#include <vector>
+#include <utility>
+#include <boost/range.hpp>
+#include <boost/foreach.hpp>
 
 namespace CGAL{
 
@@ -96,15 +98,16 @@ detect_duplicated_boundary_edges
   return out;
 }
 
-template <class PM, typename VertexPointMap>
+template <class PM, typename VertexPointMap, typename HalfedgePairsRange>
 struct Naive_border_stitching_modifier
   : CGAL::Modifier_base<PM>
 {
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
+  typedef typename std::pair<halfedge_descriptor, halfedge_descriptor> halfedges_pair;
   typedef typename PM::Point Point;
 
-  typedef std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> > To_stitch;
+  typedef HalfedgePairsRange To_stitch;
 
   Naive_border_stitching_modifier(To_stitch& to_stitch_,
                                   VertexPointMap vpmap_)
@@ -125,17 +128,16 @@ struct Naive_border_stitching_modifier
 
   void operator()(PM& pmesh)
   {
-    std::size_t nb_hedges = to_stitch.size();
-
     /// Merge the vertices
     std::vector<vertex_descriptor> vertices_to_delete;
     // since there might be several vertices with identical point
     // we use the following map to choose one vertex per point
     std::map<Point, vertex_descriptor> vertices_kept;
-    for (std::size_t k = 0; k < nb_hedges; ++k)
+
+    BOOST_FOREACH(halfedges_pair hk, to_stitch)
     {
-      halfedge_descriptor h1 = to_stitch[k].first;
-      halfedge_descriptor h2 = to_stitch[k].second;
+      halfedge_descriptor h1 = hk.first;
+      halfedge_descriptor h2 = hk.second;
 
       CGAL_assertion(CGAL::is_border(h1, pmesh));
       CGAL_assertion(CGAL::is_border(h2, pmesh));
@@ -147,10 +149,10 @@ struct Naive_border_stitching_modifier
 
       //update vertex pointers: target of h1 vs source of h2
       vertex_descriptor v_to_keep = h1_tgt;
-      std::pair<
-        typename std::map<Point, vertex_descriptor>::iterator,
-        bool > insert_res =
+      std::pair<typename std::map<Point, vertex_descriptor>::iterator, bool >
+        insert_res =
           vertices_kept.insert( std::make_pair(vpmap[v_to_keep], v_to_keep) );
+
       if (!insert_res.second && v_to_keep != insert_res.first->second)
       {
         v_to_keep = insert_res.first->second;
@@ -196,10 +198,10 @@ struct Naive_border_stitching_modifier
     /// In order to avoid having to maintain a set with halfedges to stitch
     /// we do on purpose next-prev linking that might not be useful but that
     /// is harmless and still less expensive than doing queries in a set
-    for (std::size_t k=0; k < nb_hedges; ++k)
+    BOOST_FOREACH(halfedges_pair hk, to_stitch)
     {
-      halfedge_descriptor h1 = to_stitch[k].first;
-      halfedge_descriptor h2 = to_stitch[k].second;
+      halfedge_descriptor h1 = hk.first;
+      halfedge_descriptor h2 = hk.second;
 
       //link h2->prev() to h1->next()
       halfedge_descriptor pr = prev(h2, pmesh);
@@ -214,10 +216,10 @@ struct Naive_border_stitching_modifier
 
     /// update HDS connectivity, removing the second halfedge
     /// of each the pair and its opposite
-    for (std::size_t k=0; k<nb_hedges; ++k)
+    BOOST_FOREACH(halfedges_pair hk, to_stitch)
     {
-      halfedge_descriptor h1 = to_stitch[k].first;
-      halfedge_descriptor h2 = to_stitch[k].second;
+      halfedge_descriptor h1 = hk.first;
+      halfedge_descriptor h2 = hk.second;
 
     ///Set face-halfedge relationship
       //h2 and its opposite will be removed
@@ -249,40 +251,42 @@ private:
 
 
 
-/// \ingroup stitching_grp
-/// Stitches together border halfedges in a polygon mesh.
-/// The halfedges to be stitched are provided in `hedge_pairs_to_stitch`.
-/// For each pair `p` in this vector, p.second and its opposite will be removed
-/// from `pmesh`.
-///
-/// The vertices that get removed from `pmesh` are selected as follows:
-/// The pair of halfedges in `hedge_pairs_to_stitch` are processed linearly.
-/// Let `p` be such a pair.
-/// If the target of `p.first` has not been marked for deletion,
-/// then the source of `p.second` is.
-/// If the target of `p.second` has not been marked for deletion,
-/// then the source of `p.first` is.
-///
-/// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-///        that has a property map for `boost::vertex_point_t`
-/// @tparam NamedParameters a sequence of \ref namedparameters
-///
-/// @param pmesh the polygon mesh to be modified by stitching
-/// @param hedge_pairs_to_stitch a `std::vector` filled with `std::pair`s of halfedges to be stitched together
-/// @param np optional \ref namedparameters described below
-///
-/// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-/// \cgalNamedParamsEnd
-///
-template <typename PolygonMesh, class NamedParameters>
-void stitch_borders(
-  PolygonMesh& pmesh,
-  std::vector <std::pair<
-    typename boost::graph_traits<PolygonMesh>::halfedge_descriptor,
-    typename boost::graph_traits<PolygonMesh>::halfedge_descriptor> >& 
-     hedge_pairs_to_stitch,
-  const NamedParameters& np)
+/*!
+* \ingroup stitching_grp
+* Stitches together border halfedges in a polygon mesh.
+* The halfedges to be stitched are provided in `hedge_pairs_to_stitch`.
+* For each pair `p` in this vector, p.second and its opposite will be removed
+* from `pmesh`.
+*
+* The vertices that get removed from `pmesh` are selected as follows:
+* The pair of halfedges in `hedge_pairs_to_stitch` are processed linearly.
+* Let `p` be such a pair.
+* If the target of `p.first` has not been marked for deletion,
+* then the source of `p.second` is.
+* If the target of `p.second` has not been marked for deletion,
+* then the source of `p.first` is.
+*
+* @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+*        that has a property map for `boost::vertex_point_t`
+* @tparam HalfedgePairsRange a model of `SinglePassRange`
+*         holding objects of type
+*  `std::pair<boost::graph_traits<PolygonMesh>::%halfedge_descriptor, boost::graph_traits<PolygonMesh>::%halfedge_descriptor>`
+* @tparam NamedParameters a sequence of \ref namedparameters
+*
+* @param pmesh the polygon mesh to be modified by stitching
+* @param hedge_pairs_to_stitch a `std::vector` filled with `std::pair`s of halfedges to be stitched together
+* @param np optional \ref namedparameters described below
+*
+* \cgalNamedParamsBegin
+*    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+* \cgalNamedParamsEnd
+*/
+template <typename PolygonMesh,
+          typename HalfedgePairsRange,
+          typename NamedParameters>
+void stitch_borders(PolygonMesh& pmesh,
+                    HalfedgePairsRange& hedge_pairs_to_stitch,
+                    const NamedParameters& np)
 {
   using boost::choose_param;
   using boost::get_param;
@@ -292,20 +296,16 @@ void stitch_borders(
                                 pmesh,
                                 boost::vertex_point);
 
-  internal::Naive_border_stitching_modifier<PolygonMesh, VPMap>
+  internal::Naive_border_stitching_modifier<PolygonMesh, VPMap, HalfedgePairsRange>
     modifier(hedge_pairs_to_stitch, vpm);
 
   modifier(pmesh);
 }
 
 ///\cond SKIP_IN_MANUAL
-template <typename PolygonMesh>
-void stitch_borders(
-  PolygonMesh& pmesh,
-  std::vector < std::pair <
-    typename boost::graph_traits<PolygonMesh>::halfedge_descriptor,
-    typename boost::graph_traits<PolygonMesh>::halfedge_descriptor > > &
-      hedge_pairs_to_stitch)
+template <typename PolygonMesh, typename HalfedgePairsRange>
+void stitch_borders(PolygonMesh& pmesh,
+                    HalfedgePairsRange& hedge_pairs_to_stitch)
 {
   stitch_borders(pmesh, hedge_pairs_to_stitch,
     CGAL::Polygon_mesh_processing::parameters::all_default());
