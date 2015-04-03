@@ -41,10 +41,10 @@ namespace CGAL {
  * This class depends on the package \ref PkgAABB_treeSummary.
 
  * @tparam TriangleMesh a triangulated polyhedral surface, a model of `FaceListGraph`
- * @tparam Kernel a \cgal kernel
+ * @tparam GeomTraits a geometric traits class, model of `Kernel`
  * @tparam VertexPointMap a model of `ReadablePropertyMap` with
          `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
-         `Kernel::Point_3` as value type.
+         `GeomTraits::Point_3` as value type.
  *   The default is `typename boost::property_map<TriangleMesh,vertex_point_t>::%type`.
  
  * \todo Code: Use this class as an implementation detail of Mesh_3's Polyhedral_mesh_domain_3.
@@ -53,19 +53,19 @@ namespace CGAL {
  * \todo check the implementation
  */
 template <class TriangleMesh,
-          class Kernel,
+          class GeomTraits,
           class VertexPointMap = Default >
 class Point_inside_polygon_mesh
 {
   // typedefs
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VertexPointMap> Primitive;
-  typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+  typedef CGAL::AABB_traits<GeomTraits, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> AABB_tree;
-  typedef typename Kernel::Point_3 Point;
+  typedef typename GeomTraits::Point_3 Point;
 
   //members
-  typename Kernel::Construct_ray_3     ray_functor;
-  typename Kernel::Construct_vector_3  vector_functor;
+  typename GeomTraits::Construct_ray_3     ray_functor;
+  typename GeomTraits::Construct_vector_3  vector_functor;
   const AABB_tree* tree_ptr;
   bool own_tree;
 
@@ -74,15 +74,15 @@ public:
    * Constructor with one surface triangle mesh.
    * @param mesh the triangle mesh bounding the domain to be tested
    * @param vpmap the property map with the points associated to the vertices of `mesh`
-   * @param kernel the geometric traits
-
+   * @param gt an instance of the geometric traits class
+   *
    * @pre `CGAL::is_closed(mesh) && CGAL::is_pure_triangle(mesh)`
    */
   Point_inside_polygon_mesh(const TriangleMesh& mesh,
                             VertexPointMap vpmap,
-                            const Kernel& kernel=Kernel())
-  : ray_functor(kernel.construct_ray_3_object())
-  , vector_functor(kernel.construct_vector_3_object())
+                            const GeomTraits& gt=GeomTraits())
+  : ray_functor(gt.construct_ray_3_object())
+  , vector_functor(gt.construct_vector_3_object())
   , own_tree(true)
   {
     CGAL_assertion(CGAL::is_pure_triangle(mesh));
@@ -97,14 +97,14 @@ public:
   * Constructor with one surface triangle mesh, using `get(boost::vertex_point, mesh)` as
   * vertex point property map.
   * @param mesh the triangle mesh bounding the domain to be tested
-  * @param kernel the geometric traits, can be omitted.
-
+  * @param gt an instance of the geometric traits class
+  *
   * @pre `mesh` must be closed and triangulated.
   */
   Point_inside_polygon_mesh(const TriangleMesh& mesh,
-                            const Kernel& kernel=Kernel())
-  : ray_functor(kernel.construct_ray_3_object())
-  , vector_functor(kernel.construct_vector_3_object())
+                            const GeomTraits& gt=GeomTraits())
+  : ray_functor(gt.construct_ray_3_object())
+  , vector_functor(gt.construct_vector_3_object())
   , own_tree(true)
   {
     CGAL_assertion(CGAL::is_pure_triangle(mesh));
@@ -121,12 +121,12 @@ public:
   * Note the domain described by these primitives should be closed.
 
   * @param tree a \cgal `AABB_tree` with `AABB_face_graph_triangle_primitive` as `Primitive` type
-  * @param kernel the geometric traits
+  * @param gt an instance of the geometric traits class
   */
   Point_inside_polygon_mesh(const AABB_tree& tree,
-    const Kernel& kernel = Kernel())
-  : ray_functor(kernel.construct_ray_3_object())
-  , vector_functor(kernel.construct_vector_3_object())
+    const GeomTraits& gt = GeomTraits())
+  : ray_functor(gt.construct_ray_3_object())
+  , vector_functor(gt.construct_vector_3_object())
   , tree_ptr(&tree)
   , own_tree(false)
   {
@@ -150,7 +150,7 @@ public:
    */
   Bounded_side operator()(const Point& point) const
   {
-    return internal::Point_inside_vertical_ray_cast<Kernel, AABB_tree>()(
+    return internal::Point_inside_vertical_ray_cast<GeomTraits, AABB_tree>()(
       point, *tree_ptr, ray_functor, vector_functor);
   }
 
