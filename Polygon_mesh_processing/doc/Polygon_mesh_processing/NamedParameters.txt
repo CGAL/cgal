@@ -135,7 +135,7 @@ a default property map where no edge is constrained is provided.
 \b Default value is \code boost::get(CGAL::vertex_index, pmesh)\endcode
 \cgalNPEnd
 
-\cgalNPBegin{less_hedge} \anchor PMP_less_hedge
+\cgalNPBegin{less_halfedge} \anchor PMP_less_halfedge
  a comparison functor used to sort halfedges of `PolygonMesh`.\n
 \b Type: A functor with an `operator()` that compares halfedge descriptors from `PolygonMesh`. The operator must have the following signature :
 \code

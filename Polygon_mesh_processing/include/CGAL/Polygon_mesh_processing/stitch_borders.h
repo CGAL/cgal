@@ -314,8 +314,8 @@ void stitch_borders(PolygonMesh& pmesh,
 
 /// \ingroup stitching_grp
 /// Same as the other overload but the pairs of halfedges to be stitched are found
-/// using `less_hedge`. Two halfedges `h1` and `h2` are set to be stitched
-/// if `less_hedge(h1,h2)==less_hedge(h2,h1)==true`.
+/// using `less_halfedge`. Two halfedges `h1` and `h2` are set to be stitched
+/// if `less_halfedge(h1,h2)==less_halfedge(h2,h1)==true`.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 ///        that has a property map for `boost::vertex_point_t`
