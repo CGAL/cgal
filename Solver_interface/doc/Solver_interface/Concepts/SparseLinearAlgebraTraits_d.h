@@ -1,6 +1,7 @@
 
 /*!
 \ingroup PkgSolverConcepts
+
 \cgalConcept
 
 The concept `SparseLinearAlgebraTraits_d` is used to solve sparse linear systems <I>A\f$ \times \f$ X = B</I>. 
@@ -63,23 +64,21 @@ bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D);
 
 /// @}
 
+}; /* end SparseLinearAlgebraTraits_d */
+
+
 /*!
-\ingroup PkgSolverConcepts
 \cgalConcept
 
 `SparseLinearAlgebraTraits_d::Vector` is a concept of a vector that can be multiplied by a sparse matrix. 
 
-\cgalRefines `LinearAlgebraTraits_d::Vector` 
-
 \cgalHasModel `CGAL::Eigen_vector<T>`
-\cgalHasModel `OpenNL::FullVector<T>` in `OpenNL` package 
+\cgalHasModel `OpenNL::FullVector<T>` in the `OpenNL` package 
 
 \sa `SparseLinearAlgebraTraits_d`
 \sa `SparseLinearAlgebraTraits_d::Matrix`
 
 */
-
-}; /* end SparseLinearAlgebraTraits_d */
 
 
 class SparseLinearAlgebraTraits_d::Vector {
@@ -142,12 +141,10 @@ NT& operator[](int row);
 }; /* end Vector */
 
 /*!
-\ingroup PkgSolverConcepts
+
 \cgalConcept
 
 `SparseLinearAlgebraTraits_d::Matrix` is a concept of a sparse matrix class. 
-
-\cgalRefines `LinearAlgebraTraits_d::Matrix` 
 
 \cgalHasModel `CGAL::Eigen_sparse_matrix<T>`
 \cgalHasModel `CGAL::Eigen_sparse_symmetric_matrix<T>`

@@ -11,7 +11,7 @@
 \cgalPkgPicture{solver.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{CGAL Editorial Board }
-\cgalPkgDesc{This package provides }
+\cgalPkgDesc{This package provides concepts and models for solving linear systems with dense or sparse matrices.}
 \cgalPkgManuals{Chapter_CGAL_and_Solvers,PkgSolver}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -35,6 +35,8 @@
 - `CGAL::Eigen_svd`
 - `CGAL::Eigen_matrix`
 - `CGAL::Eigen_vector`
+- `CGAL::Eigen_sparse_matrix`
+- `CGAL::Eigen_sparse_symmetric_matrix`
 
 */
 

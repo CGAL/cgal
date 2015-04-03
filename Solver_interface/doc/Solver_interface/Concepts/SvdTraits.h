@@ -50,7 +50,6 @@ public:
 }; /* end SvdTraits */
 
 /*!
-\ingroup PkgSolverConcepts
 \cgalConcept
 Concept of vector type used by the concept SvdTraits.
 */
@@ -83,7 +82,6 @@ public:
 
 
 /*!
-\ingroup PkgSolverConcepts
 \cgalConcept
 Concept of matrix type used by the concept SvdTraits.
 */
