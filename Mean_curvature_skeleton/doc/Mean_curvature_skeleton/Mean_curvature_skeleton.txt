@@ -91,6 +91,7 @@ structure.
 In this example, we show how to use the API of the class
 `CGAL::Mean_curvature_flow_skeletonization`.
 \todo use Surface_mesh in the following example
+
 \cgalExample{Mean_curvature_skeleton/MCF_Skeleton_example.cpp}
 
 
