@@ -53,32 +53,34 @@ Scene::~Scene()
     delete m_pPolyhedron;
     delete m_frame;
     buffers[0].destroy();
+    buffers[1].destroy();
+    buffers[2].destroy();
     vao[0].destroy();
+    vao[1].destroy();
+    vao[2].destroy();
 
 }
 
 void Scene::compile_shaders()
 {
     initializeGLFunctions();
-    if(! buffers[0].create())
+    if(! buffers[0].create() || !buffers[1].create() || !buffers[2].create())
     {
-        std::cout<<"VBO Creation FAILED"<<std::endl;
-        return;
+        std::cerr<<"VBO Creation FAILED"<<std::endl;
     }
 
-    if(!vao[0].create())
+    if(!vao[0].create() || !vao[1].create() || !vao[2].create())
     {
-        std::cout<<"VAO Creation FAILED"<<std::endl;
-        return;
+        std::cerr<<"VAO Creation FAILED"<<std::endl;
     }
 
 
     //Vertex source code
     const char vertex_source[] =
     {
-        // "#version 200 es \n"
+        // "#version 330 \n"
         "attribute highp vec4 vertex;\n"
-      //  "uniform highp mat4 ortho_matrix;\n"
+        //  "uniform highp mat4 ortho_matrix;\n"
         "uniform highp mat4 mvp_matrix;\n"
         "void main(void)\n"
         "{\n"
@@ -88,11 +90,10 @@ void Scene::compile_shaders()
     //Vertex source code
     const char fragment_source[] =
     {
-        //"#version 200 es \n"
-        //"in highp vec3 fColor; \n"
-        //"varying out highp vec4 color; \n"
+        //"#version 330 \n"
+        "uniform highp vec4 color; \n"
         "void main(void) { \n"
-        "gl_FragColor = vec4(1.0,0.0,0.0,0.0); \n"
+        "gl_FragColor = color; \n"
         "} \n"
         "\n"
     };
@@ -121,47 +122,109 @@ void Scene::compile_shaders()
         std::cerr<<"linking Program FAILED"<<std::endl;
     }
     rendering_program.bind();
-    changed();
+    // changed();
 }
 
 void Scene::initialize_buffers()
 {
+    //Points
     vao[0].bind();
     buffers[0].bind();
-    buffers[0].allocate(pos_points.data(), pos_points.size()*sizeof(double));
-    vertexLocation = rendering_program.attributeLocation("vertex");
+    buffers[0].allocate(pos_points.data(), pos_points.size()*sizeof(float));
+    points_vertexLocation = rendering_program.attributeLocation("vertex");
     rendering_program.bind();
-    rendering_program.enableAttributeArray(vertexLocation);
-    rendering_program.setAttributeBuffer(vertexLocation,GL_FLOAT,0,3);
+    rendering_program.enableAttributeArray(points_vertexLocation);
+    rendering_program.setAttributeBuffer(points_vertexLocation,GL_FLOAT,0,3);
     buffers[0].release();
     rendering_program.release();
     vao[0].release();
+
+    //Lines
+    vao[1].bind();
+    buffers[1].bind();
+    buffers[1].allocate(pos_lines.data(), pos_lines.size()*sizeof(float));
+    lines_vertexLocation = rendering_program.attributeLocation("vertex");
+    rendering_program.bind();
+    rendering_program.setAttributeBuffer(lines_vertexLocation,GL_FLOAT,0,3);
+    buffers[1].release();
+    rendering_program.enableAttributeArray(lines_vertexLocation);
+    rendering_program.release();
+    vao[1].release();
+
+    //Polyhedron's edges
+    vao[2].bind();
+    buffers[2].bind();
+    buffers[2].allocate(pos_poly.data(), pos_poly.size()*sizeof(float));
+    poly_vertexLocation = rendering_program.attributeLocation("vertex");
+    rendering_program.bind();
+    rendering_program.setAttributeBuffer(poly_vertexLocation,GL_FLOAT,0,3);
+    rendering_program.enableAttributeArray(poly_vertexLocation);
+    buffers[2].release();
+    rendering_program.release();
+    vao[2].release();
 
 }
 
 void Scene::compute_elements()
 {
-    pos_points.resize(9);
-    pos_points[0] = -1.0; pos_points[3] = 0.0; pos_points[6] =  1.0 ;
-    pos_points[1] = -1.0; pos_points[4] = 1.0; pos_points[7] = -1.0 ;
-    pos_points[2] =  0.0; pos_points[5] = 0.0; pos_points[8] =  0.0 ;
+    pos_points.resize(0);
+    pos_lines.resize(0);
+    pos_poly.resize(0);
+
+    std::list<Point>::iterator pit;
+    for(pit = m_points.begin(); pit != m_points.end(); pit++)
+    {
+        const Point& p = *pit;
+        pos_points.push_back(p.x());
+        pos_points.push_back(p.y());
+        pos_points.push_back(p.z());
+    }
+    std::list<Segment>::iterator sit;
+    for(sit = m_segments.begin(); sit != m_segments.end(); sit++)
+    {
+        const Segment& s = *sit;
+        const Point& p = s.source();
+        const Point& q = s.target();
+
+        pos_lines.push_back(p.x());
+        pos_lines.push_back(p.y());
+        pos_lines.push_back(p.z());
+
+        pos_lines.push_back(q.x());
+        pos_lines.push_back(q.y());
+        pos_lines.push_back(q.z());
+    }
+    typename Polyhedron::Edge_iterator he;
+    for(he = m_pPolyhedron->edges_begin();
+        he != m_pPolyhedron->edges_end();
+        he++)
+    {
+        const Point& a = he->vertex()->point();
+        const Point& b = he->opposite()->vertex()->point();
+        pos_poly.push_back(a.x());
+        pos_poly.push_back(a.y());
+        pos_poly.push_back(a.z());
+
+        pos_poly.push_back(b.x());
+        pos_poly.push_back(b.y());
+        pos_poly.push_back(b.z());
+    }
 
 
 }
 
 void Scene::attrib_buffers(QGLViewer* viewer)
 {
+    QMatrix4x4 mvpMatrix;
     double mat[16];
     viewer->camera()->getModelViewProjectionMatrix(mat);
     for(int i=0; i < 16; i++)
     {
         mvpMatrix.data()[i] = (float)mat[i];
     }
-    orthoMatrix.ortho(-1,1,-1,1,-1,1);
     rendering_program.bind();
-   // orthoLocation = rendering_program.uniformLocation("ortho_matrix");
     mvpLocation = rendering_program.uniformLocation("mvp_matrix");
-//    rendering_program.setUniformValue(orthoLocation, orthoMatrix);
+    colorLocation = rendering_program.uniformLocation("color");
     rendering_program.setUniformValue(mvpLocation, mvpMatrix);
     rendering_program.release();
 }
@@ -276,13 +339,44 @@ void Scene::draw()
 
 void Scene::draw(QGLViewer* viewer)
 {
-    vao[0].bind();
-    attrib_buffers(viewer);
-    rendering_program.bind();
+QColor color;
+    if(m_view_polyhedron)
+    {
+        vao[2].bind();
+        attrib_buffers(viewer);
+        rendering_program.bind();
+        color.setRgbF(0.0,0.0,0.0);
+        rendering_program.setUniformValue(colorLocation, color);
+        glDrawArrays(GL_LINES, 0, pos_poly.size()/3);
+        rendering_program.release();
+        vao[2].release();
+    }
+    if(m_view_points)
+    {
+       ::glPointSize(2.0f);
+       vao[0].bind();
+       attrib_buffers(viewer);
+       rendering_program.bind();
+       color.setRgbF(0.7,0.0,0.0);
+       rendering_program.setUniformValue(colorLocation, color);
+       glDrawArrays(GL_POINTS, 0, pos_points.size()/3);
+       rendering_program.release();
+       vao[0].release();
+    }
 
-    glDrawArrays(GL_TRIANGLES, 0, pos_points.size()/3);
-    rendering_program.release();
-    vao[0].release();
+    if(m_view_segments)
+    {
+       vao[1].bind();
+       attrib_buffers(viewer);
+       rendering_program.bind();
+       color.setRgbF(0.0,0.7,0.0);
+       rendering_program.setUniformValue(colorLocation, color);
+       glDrawArrays(GL_LINES, 0, pos_lines.size()/3);
+       rendering_program.release();
+       vao[1].release();
+    }
+
+
 }
 
 void Scene::draw_polyhedron()
@@ -580,6 +674,7 @@ void Scene::clear_cutting_plane()
     m_cut_plane = NONE;
 
     deactivate_cutting_plane();
+    changed();
 }
 
 void Scene::update_grid_size()
@@ -639,6 +734,7 @@ void Scene::generate_points_in(const unsigned int nb_points,
     std::cout << "done (" << nb_trials << " trials, "
               << timer.time() << " s, "
               << speed << " queries/s)" << std::endl;
+    changed();
 }
 
 
@@ -681,6 +777,7 @@ void Scene::generate_inside_points(const unsigned int nb_points)
     std::cout << "done (" << nb_trials << " trials, "
               << timer.time() << " s, "
               << speed << " queries/s)" << std::endl;
+    changed();
 }
 
 void Scene::generate_boundary_segments(const unsigned int nb_slices)
@@ -730,6 +827,7 @@ void Scene::generate_boundary_segments(const unsigned int nb_slices)
         }
     }
     std::cout << m_segments.size() << " segments, " << timer.time() << " s." << std::endl;
+    changed();
 }
 
 void Scene::generate_boundary_points(const unsigned int nb_points)
@@ -779,6 +877,7 @@ void Scene::generate_boundary_points(const unsigned int nb_points)
         }
     }
     std::cout << nb_lines << " line queries, " << timer.time() << " s." << std::endl;
+    changed();
 }
 
 void Scene::generate_edge_points(const unsigned int nb_points)
@@ -830,6 +929,7 @@ void Scene::generate_edge_points(const unsigned int nb_points)
         }
     }
     std::cout << nb_planes << " plane queries, " << timer.time() << " s." << std::endl;
+    changed();
 }
 
 
@@ -951,6 +1051,7 @@ void Scene::cut_segment_plane()
     }
     
     m_cut_plane = CUT_SEGMENTS;
+    changed();
 }
 
 void Scene::cutting_plane()

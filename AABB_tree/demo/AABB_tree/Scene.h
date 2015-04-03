@@ -115,19 +115,21 @@ private:
 
 
 
-    int vertexLocation;
-    int orthoLocation;
+    int poly_vertexLocation;
+    int points_vertexLocation;
+    int lines_vertexLocation;
     int mvpLocation;
+    int colorLocation;
 
 
-    QMatrix4x4 orthoMatrix;
-    QMatrix4x4 mvpMatrix;
 
     std::vector<float> pos_points;
+    std::vector<float> pos_lines;
+    std::vector<float> pos_poly;
+    std::vector<float> pos_plans;
 
     QGLBuffer buffers[10];
-    QOpenGLVertexArrayObject vao[2];
-    GLuint location[10];
+    QOpenGLVertexArrayObject vao[5];
     QOpenGLShaderProgram program;
     QOpenGLShaderProgram rendering_program;
     void initialize_buffers();
@@ -139,8 +141,8 @@ public:
     int open(QString filename);
 
     // edit menu
-    void clear_points() { m_points.clear(); }
-    void clear_segments() { m_segments.clear(); }
+    void clear_points() { m_points.clear(); changed(); }
+    void clear_segments() { m_segments.clear(); changed(); }
     void clear_cutting_plane();
     
     // fast distance setter

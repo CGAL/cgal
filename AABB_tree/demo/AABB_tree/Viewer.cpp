@@ -21,8 +21,8 @@ void Viewer::draw()
   QGLViewer::draw();
   if(m_pScene != NULL)
   {
-        //::glClearColor(1.0f,1.0f,1.0f,0.0f);
-/*	m_pScene->draw();*/
+      //::glClearColor(1.0f,1.0f,1.0f,0.0f);
+      //m_pScene->draw();
       m_pScene->draw(this);
 
   }
