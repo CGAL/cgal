@@ -47,18 +47,16 @@ In this package, all functions optional parameters are implemented as BGL option
 Since the parameters of the various polygon mesh processing functions defined in this
 package are redundant, their long descriptions are centralized below.
 
-<ol type = "1">
-<li> \b Template \b Parameters </li>
 
 In the following, we assume that the following types are provided as template parameters of polygon mesh processing functions and classes. Note that, for some of these functions, the type is more specific.
 
 <ul>
 <li>`PolygonMesh` implements a `FaceGraph`
-<li>`Kernel` a geometric traits class in which constructions are performed and predicates evaluated. Everywhere in this package, a \cgal `Kernel` fulfills the requirements.
+<li>`GeomTraits` a geometric traits class in which constructions are performed and predicates evaluated. Everywhere in this package, a \cgal `Kernel` fulfills the requirements.
 </ul>
 
 
-<li> \b Named \b Parameters </li>
+Here is the list of the named parameters available in this package:
 
 \todo reorder this list, maybe
 
@@ -67,7 +65,7 @@ In the following, we assume that the following types are provided as template pa
  is the property map with the points associated to the vertices of the polygon mesh `pmesh`.\n
 \b Type: a class model of `ReadablePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
-`Kernel::Point_3` as value type. \n
+`GeomTraits::Point_3` as value type. \n
 \b Default value is \code boost::get(CGAL::vertex_point, pmesh)\endcode
 \cgalNPEnd
 
