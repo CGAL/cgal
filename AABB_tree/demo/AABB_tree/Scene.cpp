@@ -16,16 +16,22 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Subdivision_method_3.h>
 
+#include <QOpenGLFunctions_3_3_Core>
+#include <QGLFunctions>
+#include <QOpenGLVertexArrayObject>
+#include <QGLBuffer>
+#include <QOpenGLShader>
+
 
 // constants
 const int slow_distance_grid_size = 100;
 const int fast_distance_grid_size = 20;
 
 Scene::Scene()
-  : m_frame (new ManipulatedFrame())
-  , m_view_plane(false)
-  , m_grid_size(slow_distance_grid_size)
-  , m_cut_plane(NONE)
+    : m_frame (new ManipulatedFrame())
+    , m_view_plane(false)
+    , m_grid_size(slow_distance_grid_size)
+    , m_cut_plane(NONE)
 {
     m_pPolyhedron = NULL;
 
@@ -38,12 +44,132 @@ Scene::Scene()
     m_red_ramp.build_red();
     m_blue_ramp.build_blue();
     m_max_distance_function = (FT)0.0;
+
+
 }
 
 Scene::~Scene()
 {
     delete m_pPolyhedron;
     delete m_frame;
+    buffers[0].destroy();
+    vao[0].destroy();
+
+}
+
+void Scene::compile_shaders()
+{
+    initializeGLFunctions();
+    if(! buffers[0].create())
+    {
+        std::cout<<"VBO Creation FAILED"<<std::endl;
+        return;
+    }
+
+    if(!vao[0].create())
+    {
+        std::cout<<"VAO Creation FAILED"<<std::endl;
+        return;
+    }
+
+
+    //Vertex source code
+    const char vertex_source[] =
+    {
+        // "#version 200 es \n"
+        "attribute highp vec4 vertex;\n"
+      //  "uniform highp mat4 ortho_matrix;\n"
+        "uniform highp mat4 mvp_matrix;\n"
+        "void main(void)\n"
+        "{\n"
+        "   gl_Position = mvp_matrix * vertex;\n"
+        "}"
+    };
+    //Vertex source code
+    const char fragment_source[] =
+    {
+        //"#version 200 es \n"
+        //"in highp vec3 fColor; \n"
+        //"varying out highp vec4 color; \n"
+        "void main(void) { \n"
+        "gl_FragColor = vec4(1.0,0.0,0.0,0.0); \n"
+        "} \n"
+        "\n"
+    };
+    QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
+    if(!vertex_shader->compileSourceCode(vertex_source))
+    {
+        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+    }
+
+    QOpenGLShader *fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
+    if(!fragment_shader->compileSourceCode(fragment_source))
+    {
+        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+    }
+
+    if(!rendering_program.addShader(vertex_shader))
+    {
+        std::cerr<<"adding vertex shader FAILED"<<std::endl;
+    }
+    if(!rendering_program.addShader(fragment_shader))
+    {
+        std::cerr<<"adding fragment shader FAILED"<<std::endl;
+    }
+    if(!rendering_program.link())
+    {
+        std::cerr<<"linking Program FAILED"<<std::endl;
+    }
+    rendering_program.bind();
+    changed();
+}
+
+void Scene::initialize_buffers()
+{
+    vao[0].bind();
+    buffers[0].bind();
+    buffers[0].allocate(pos_points.data(), pos_points.size()*sizeof(double));
+    vertexLocation = rendering_program.attributeLocation("vertex");
+    rendering_program.bind();
+    rendering_program.enableAttributeArray(vertexLocation);
+    rendering_program.setAttributeBuffer(vertexLocation,GL_FLOAT,0,3);
+    buffers[0].release();
+    rendering_program.release();
+    vao[0].release();
+
+}
+
+void Scene::compute_elements()
+{
+    pos_points.resize(9);
+    pos_points[0] = -1.0; pos_points[3] = 0.0; pos_points[6] =  1.0 ;
+    pos_points[1] = -1.0; pos_points[4] = 1.0; pos_points[7] = -1.0 ;
+    pos_points[2] =  0.0; pos_points[5] = 0.0; pos_points[8] =  0.0 ;
+
+
+}
+
+void Scene::attrib_buffers(QGLViewer* viewer)
+{
+    double mat[16];
+    viewer->camera()->getModelViewProjectionMatrix(mat);
+    for(int i=0; i < 16; i++)
+    {
+        mvpMatrix.data()[i] = (float)mat[i];
+    }
+    orthoMatrix.ortho(-1,1,-1,1,-1,1);
+    rendering_program.bind();
+   // orthoLocation = rendering_program.uniformLocation("ortho_matrix");
+    mvpLocation = rendering_program.uniformLocation("mvp_matrix");
+//    rendering_program.setUniformValue(orthoLocation, orthoMatrix);
+    rendering_program.setUniformValue(mvpLocation, mvpMatrix);
+    rendering_program.release();
+}
+
+void Scene::changed()
+{
+    compute_elements();
+    initialize_buffers();
 }
 
 int Scene::open(QString filename)
@@ -83,6 +209,7 @@ int Scene::open(QString filename)
     clear_internal_data();
 
     QApplication::restoreOverrideCursor();
+    changed();
     return 0;
 }
 
@@ -108,7 +235,7 @@ void Scene::update_bbox()
     for(; it != m_pPolyhedron->points_end();it++)
         m_bbox = m_bbox + (*it).bbox();
     std::cout << "done (" << m_pPolyhedron->size_of_facets()
-        << " facets)" << std::endl;
+              << " facets)" << std::endl;
 }
 
 void Scene::draw()
@@ -117,7 +244,7 @@ void Scene::draw()
         ::glEnable(GL_DEPTH_TEST);
     else
         ::glDisable(GL_DEPTH_TEST);
-  
+
     if(m_view_polyhedron)
         draw_polyhedron();
 
@@ -131,20 +258,31 @@ void Scene::draw()
     {
         switch( m_cut_plane )
         {
-          case UNSIGNED_EDGES:
-          case UNSIGNED_FACETS:
-              draw_distance_function(m_thermal_ramp, m_thermal_ramp);
-              break;
-          case SIGNED_FACETS:
-              draw_distance_function(m_red_ramp, m_blue_ramp);
-              break;
-          case CUT_SEGMENTS:
-              draw_cut_segment_plane();
-              break;
-          case NONE: // do nothing
-              break;
+        case UNSIGNED_EDGES:
+        case UNSIGNED_FACETS:
+            draw_distance_function(m_thermal_ramp, m_thermal_ramp);
+            break;
+        case SIGNED_FACETS:
+            draw_distance_function(m_red_ramp, m_blue_ramp);
+            break;
+        case CUT_SEGMENTS:
+            draw_cut_segment_plane();
+            break;
+        case NONE: // do nothing
+            break;
         }
     }
+}
+
+void Scene::draw(QGLViewer* viewer)
+{
+    vao[0].bind();
+    attrib_buffers(viewer);
+    rendering_program.bind();
+
+    glDrawArrays(GL_TRIANGLES, 0, pos_points.size()/3);
+    rendering_program.release();
+    vao[0].release();
 }
 
 void Scene::draw_polyhedron()
@@ -279,23 +417,23 @@ void Scene::draw_cut_segment_plane() const
     ::glLineWidth(2.0f);
     ::glColor3f(1.f, 0.f, 0.f);
     ::glBegin(GL_LINES);
-    for ( std::vector<Segment>::const_iterator it = m_cut_segments.begin(), 
+    for ( std::vector<Segment>::const_iterator it = m_cut_segments.begin(),
           end = m_cut_segments.end() ; it != end ; ++it )
     {
         const Point& a = it->source();
         const Point& b = it->target();
-      
+
         ::glVertex3d(a.x(), a.y(), a.z());
         ::glVertex3d(b.x(), b.y(), b.z());
     }
     ::glEnd();
-  
+
     // fill grid with transparent blue
     ::glPushMatrix();
     ::glMultMatrixd(m_frame->matrix());
     ::glColor4f(.6f, .85f, 1.f, .65f);
 
-    ::glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA); 
+    ::glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     ::glEnable(GL_BLEND);
     ::glBegin(GL_QUADS);
     ::glVertex3d(-diag, -diag, 0.);
@@ -304,7 +442,7 @@ void Scene::draw_cut_segment_plane() const
     ::glVertex3d( diag, -diag, 0.);
     ::glEnd();
     ::glDisable(GL_BLEND);
-  
+
     ::glPopMatrix();
 }
 
@@ -370,20 +508,20 @@ Plane Scene::frame_plane() const
 Aff_transformation Scene::frame_transformation() const
 {
     const ::GLdouble* m = m_frame->matrix();
-  
+
     // OpenGL matrices are row-major matrices
     return Aff_transformation (m[0], m[4], m[8], m[12],
-                               m[1], m[5], m[9], m[13],
-                               m[2], m[6], m[10], m[14]);
+            m[1], m[5], m[9], m[13],
+            m[2], m[6], m[10], m[14]);
 }
 
 FT Scene::bbox_diag() const
 {
-  double dx = m_bbox.xmax()-m_bbox.xmin();
-  double dy = m_bbox.ymax()-m_bbox.ymin();
-  double dz = m_bbox.zmax()-m_bbox.zmin();
-  
-  return FT(std::sqrt(dx*dx + dy*dy + dz*dz));
+    double dx = m_bbox.xmax()-m_bbox.xmin();
+    double dy = m_bbox.ymax()-m_bbox.ymin();
+    double dz = m_bbox.zmax()-m_bbox.zmin();
+
+    return FT(std::sqrt(dx*dx + dy*dy + dz*dz));
 }
 
 void Scene::build_facet_tree()
@@ -396,7 +534,7 @@ void Scene::build_facet_tree()
 
     // Don't rebuild tree if it is already built
     if ( !m_facet_tree.empty() ) { return; }
-  
+
     // build tree
     CGAL::Timer timer;
     timer.start();
@@ -413,7 +551,7 @@ void Scene::build_edge_tree()
         std::cerr << "Build edge tree failed: load polyhedron first." << std::endl;
         return;
     }
-  
+
     // Don't rebuild tree if it is already built
     if ( !m_edge_tree.empty() ) { return; }
     
@@ -440,7 +578,7 @@ void Scene::clear_cutting_plane()
 {
     m_cut_segments.clear();
     m_cut_plane = NONE;
-  
+
     deactivate_cutting_plane();
 }
 
@@ -471,7 +609,7 @@ void Scene::generate_points_in(const unsigned int nb_points,
     CGAL::Timer timer;
     timer.start();
     std::cout << "Generate " << nb_points << " points in interval ["
-        << min << ";" << max << "]";
+              << min << ";" << max << "]";
 
     unsigned int nb_trials = 0;
     Vector vec = random_vector();
@@ -489,7 +627,7 @@ void Scene::generate_points_in(const unsigned int nb_points,
             signed_distance *= -1.0;
 
         if(signed_distance >= min &&
-            signed_distance <= max)
+                signed_distance <= max)
         {
             m_points.push_back(p);
             if(m_points.size()%(nb_points/10) == 0)
@@ -499,8 +637,8 @@ void Scene::generate_points_in(const unsigned int nb_points,
     }
     double speed = (double)nb_trials / timer.time();
     std::cout << "done (" << nb_trials << " trials, "
-        << timer.time() << " s, "
-        << speed << " queries/s)" << std::endl;
+              << timer.time() << " s, "
+              << speed << " queries/s)" << std::endl;
 }
 
 
@@ -541,8 +679,8 @@ void Scene::generate_inside_points(const unsigned int nb_points)
     }
     double speed = (double)nb_trials / timer.time();
     std::cout << "done (" << nb_trials << " trials, "
-        << timer.time() << " s, "
-        << speed << " queries/s)" << std::endl;
+              << timer.time() << " s, "
+              << speed << " queries/s)" << std::endl;
 }
 
 void Scene::generate_boundary_segments(const unsigned int nb_slices)
@@ -754,7 +892,7 @@ void Scene::unsigned_distance_function()
     // Build tree (if build fail, exit)
     build_facet_tree();
     if ( m_facet_tree.empty() ) { return; }
-  
+
     compute_distance_function(m_facet_tree);
     
     m_cut_plane = UNSIGNED_FACETS;
@@ -802,7 +940,7 @@ void Scene::cut_segment_plane()
     // Fill data structure
     m_cut_segments.clear();
     for ( Intersections::iterator it = intersections.begin(),
-         end = intersections.end() ; it != end ; ++it )
+          end = intersections.end() ; it != end ; ++it )
     {
         const Segment* inter_seg = CGAL::object_cast<Segment>(&(it->first));
         
@@ -819,16 +957,16 @@ void Scene::cutting_plane()
 {
     switch( m_cut_plane )
     {
-      case UNSIGNED_FACETS:
-          return unsigned_distance_function();
-      case SIGNED_FACETS:
-          return signed_distance_function();
-      case UNSIGNED_EDGES:
-          return unsigned_distance_function_to_edges();
-      case CUT_SEGMENTS:
-          return cut_segment_plane();
-      case NONE: // do nothing 
-          return;
+    case UNSIGNED_FACETS:
+        return unsigned_distance_function();
+    case SIGNED_FACETS:
+        return signed_distance_function();
+    case UNSIGNED_EDGES:
+        return unsigned_distance_function_to_edges();
+    case CUT_SEGMENTS:
+        return cut_segment_plane();
+    case NONE: // do nothing
+        return;
     }
     
     // Should not be here
@@ -867,7 +1005,7 @@ void Scene::refine_bisection(const FT max_sqlen)
     Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
     refiner(max_sqlen);
     std::cout << "done (" << m_pPolyhedron->size_of_facets() << " facets)" << std::endl;
-  
+
     clear_internal_data();
 }
 
@@ -881,7 +1019,7 @@ void Scene::refine_loop()
     std::cout << "Loop subdivision...";
     CGAL::Subdivision_method_3::Loop_subdivision(*m_pPolyhedron, 1);
     std::cout << "done (" << m_pPolyhedron->size_of_facets() << " facets)" << std::endl;
-  
+
     clear_internal_data();
 }
 

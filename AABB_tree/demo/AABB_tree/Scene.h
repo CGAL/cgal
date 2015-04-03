@@ -18,8 +18,16 @@
 #include <QtCore/qglobal.h>
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
+#include <QOpenGLFunctions_3_3_Core>
+#include <QGLFunctions>
+#include <QOpenGLVertexArrayObject>
+#include <QGLBuffer>
+#include <QGLShaderProgram>
+#include <QOpenGLShaderProgram>
 
-class Scene : public QObject
+
+
+class Scene : public QObject, protected QGLFunctions
 {
     Q_OBJECT
 public:
@@ -45,7 +53,9 @@ private:
     };
   
 public:
+    QGLContext* context;
     void draw(); 
+    void draw(QGLViewer*);
     void update_bbox();
     Bbox bbox() { return m_bbox; }
     ManipulatedFrame* manipulatedFrame() const { return m_frame; }
@@ -94,12 +104,35 @@ private:
     void build_edge_tree();
     void clear_internal_data();
     void update_grid_size();
-    
+
     template <typename Tree>
     void compute_distance_function(const Tree& tree);
     
     template <typename Tree>
     void sign_distance_function(const Tree& tree);
+
+    //Shaders elements
+
+
+
+    int vertexLocation;
+    int orthoLocation;
+    int mvpLocation;
+
+
+    QMatrix4x4 orthoMatrix;
+    QMatrix4x4 mvpMatrix;
+
+    std::vector<float> pos_points;
+
+    QGLBuffer buffers[10];
+    QOpenGLVertexArrayObject vao[2];
+    GLuint location[10];
+    QOpenGLShaderProgram program;
+    QOpenGLShaderProgram rendering_program;
+    void initialize_buffers();
+    void compute_elements();
+    void attrib_buffers(QGLViewer*);
 
 public:
     // file menu
@@ -189,7 +222,8 @@ public:
 public slots:
     // cutting plane
     void cutting_plane();
-  
+    void changed();
+    void compile_shaders();
 }; // end class Scene
 
 #endif // SCENE_H

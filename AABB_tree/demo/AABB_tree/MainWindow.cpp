@@ -27,11 +27,10 @@ MainWindow::MainWindow(QWidget* parent)
 
 	// accepts drop events
 	setAcceptDrops(true);
-
 	// setups scene
-	m_pScene = new Scene;
+        m_pScene = new Scene();
 	m_pViewer->setScene(m_pScene);
-  m_pViewer->setManipulatedFrame(m_pScene->manipulatedFrame());
+        m_pViewer->setManipulatedFrame(m_pScene->manipulatedFrame());
 
 	// connects actionQuit (Ctrl+Q) and qApp->quit()
 	connect(ui->actionQuit, SIGNAL(triggered()),
