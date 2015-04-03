@@ -50,8 +50,8 @@ namespace CGAL {
 ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
 ///         `Traits::Point_3` as value type.
 ///         The default is `typename boost::property_map< TriangleMesh, vertex_point_t>::%type`.
-/// \tparam AABBTree must be an instanciation of `CGAL::AABB_tree` able to handle
-///         the edges of TriangleMesh, having its `edge_descriptor` as primitive id.
+/// \tparam AABBTree must be an instantiation of `CGAL::AABB_tree` able to handle
+///         the edges of `TriangleMesh`, having its `edge_descriptor` as primitive id.
 ///         The default is `CGAL::AABB_tree<CGAL::AABB_traits<
 ///                  Traits, CGAL::AABB_halfedge_graph_segment_primitive<TriangleMesh> > >`
 /// \tparam UseParallelPlaneOptimization if `true`, the code will use specific
@@ -66,8 +66,8 @@ namespace CGAL {
 ///        - `Point_3`
 ///        - `Segment_3`
 ///        - `Oriented_side_3` with `Oriented_side operator()(Plane_3, Point_3)`
-///        - `Do_intersect_3` with` boost::optional<variant<Point_3,Segment_3> operator()(Plane_3,Segment_3)`
-///        - `Do_intersect_3` with bool operator()(Plane_3, Bbox_3)`
+///        - `Do_intersect_3` with `boost::optional<variant<Point_3,Segment_3> operator()(Plane_3,Segment_3)`
+///        - `Do_intersect_3` with `bool operator()(Plane_3, Bbox_3)`
 ///
 /// \todo If we keep the traits for plane orthogonal to a frame axis, `Traits` must also provide:
 ///       - `FT`
@@ -383,7 +383,7 @@ public:
    * Constructs the intersecting polylines of `plane` with the input triangulated surface mesh.
    * @tparam OutputIterator an output iterator accepting polylines.
    *              A polyline is provided as `std::vector<Traits::Point_3>`.
-   *              A polyline is closed if its first and last points are identical.
+   *              A polyline is closed if its first and last point are identical.
    * @param plane the plane to intersect the triangulated surface mesh with
    * @param out output iterator of polylines
    */

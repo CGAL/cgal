@@ -63,7 +63,7 @@ The visual results of aforementioned steps can be seen in \cgalFigureRef{Mech_st
 
 \subsection MeshingAPI API
 
-Refinement and fairing functions can be applied to an arbitrary region on a mesh , using :
+Refinement and fairing functions can be applied to an arbitrary region on a mesh, using :
 - `CGAL::Polygon_mesh_processing::refine()` : given a set of facets on a mesh, refines the region.
 - `CGAL::Polygon_mesh_processing::fair()` : given a set of vertices on a mesh, fairs the region.
 
@@ -227,7 +227,7 @@ has duplicated border edges.
 \cgalExample{Polygon_mesh_processing/stitch_borders_example.cpp}
 
 *******************
-\subsection DegenerateFaces Degenerate faces removal
+\subsection DegenerateFaces Degenerate Faces Removal
 
 Some degenerate faces may be part of a given triangle mesh.
 A face is considered \e degenerate if two of its vertices are the same,

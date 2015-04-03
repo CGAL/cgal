@@ -348,7 +348,7 @@ OutputIterator self_intersections(const FaceRange& face_range,
  * @param np optional sequence of \ref namedparameters among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh` \cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `SelfIntersectionTraits` \cgalParamEnd
  * \cgalNamedParamsEnd
  *

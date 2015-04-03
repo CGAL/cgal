@@ -258,10 +258,10 @@ private:
 /// The vertices that get removed from `pmesh` are selected as follows:
 /// The pair of halfedges in `hedge_pairs_to_stitch` are processed linearly.
 /// Let `p` be such a pair.
-/// If the target of p.first has not been marked for deletion,
-/// then the source of p.second is.
-/// If the target of p.second has not been marked for deletion,
-/// then the source of p.first is.
+/// If the target of `p.first` has not been marked for deletion,
+/// then the source of `p.second` is.
+/// If the target of `p.second` has not been marked for deletion,
+/// then the source of `p.first` is.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 ///        that has a property map for `boost::vertex_point_t`
