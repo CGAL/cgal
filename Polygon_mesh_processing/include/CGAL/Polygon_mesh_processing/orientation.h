@@ -76,7 +76,7 @@ namespace internal{
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
- *    \cgalParamBegin{kernel} a geometric traits class instance \cgalParamEnd
+ *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * \todo code : The following only handles polyhedron with one connected component
