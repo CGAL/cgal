@@ -9,7 +9,6 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
     mask_(false),
     ratio_(1.)
 {
-  setBackgroundColor(::Qt::white);
   setMouseTracking(true);
 }
 
@@ -46,6 +45,7 @@ void Viewer::initializeGL()
 {
   QGLViewer::initializeGL();
   scene->initializeGL();
+   setBackgroundColor(::Qt::white);
 }
 
 void Viewer::draw_aux(bool with_names)

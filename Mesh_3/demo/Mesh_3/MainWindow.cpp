@@ -180,7 +180,7 @@ MainWindow::MainWindow(QWidget* parent)
 #endif
   
   setWindowTitle(QApplication::translate(
-    "MainWindow", windowTitle, 0, QApplication::UnicodeUTF8));
+    "MainWindow", windowTitle, 0));//UnicodeUTF8));
 
   this->dumpObjectTree();
 }
