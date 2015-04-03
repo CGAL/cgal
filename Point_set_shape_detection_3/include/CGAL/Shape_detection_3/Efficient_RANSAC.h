@@ -31,8 +31,6 @@
 
 #include <vector>
 #include <random>
-/// \todo what is this define???
-#define  _USE_MATH_DEFINES
 #include <cmath>
 
 #include <fstream>
@@ -189,9 +187,9 @@ shape. The implementation follows \cgalCite{Schnabel07}.
       ///< Range of input data points.
       typename Traits::Input_range& input_range,
       ///< past-the-end random access iterator over the input points.
-      Point_map point_pmap = Point_map(),
+      Point_map point_map = Point_map(),
       ///< property map to access the position of an input point.
-      Normal_map normal_pmap = Normal_map()
+      Normal_map normal_map = Normal_map()
       ///< property map to access the normal of an input point.
       ) {
         clear();
@@ -201,8 +199,8 @@ shape. The implementation follows \cgalCite{Schnabel07}.
             delete m_extracted_shapes[i];
         }
 
-        m_point_pmap = point_pmap;
-        m_normal_pmap = normal_pmap;
+        m_point_pmap = point_map;
+        m_normal_pmap = normal_map;
 
         m_inputIterator_first = input_range.begin();
         m_inputIterator_beyond = input_range.end();
@@ -538,10 +536,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
                 m_extracted_shapes.size() - 1;
 
               numInvalid++;
-
-              /// \todo check why this variable is not used
-              bool exactlyOnce = true;
-
+              
               for (std::size_t j = 0;j<m_num_subsets;j++) {
                 if (m_direct_octrees[j] && m_direct_octrees[j]->m_root) {
                   std::size_t offset = m_direct_octrees[j]->offset();
@@ -549,7 +544,6 @@ shape. The implementation follows \cgalCite{Schnabel07}.
                   if (offset <= indices_points_best_candidate.at(i) &&
                       (indices_points_best_candidate.at(i) - offset) 
                       < m_direct_octrees[j]->size()) {
-                    exactlyOnce = false;
                     m_available_octree_sizes[j]--;
                   }
                 }
