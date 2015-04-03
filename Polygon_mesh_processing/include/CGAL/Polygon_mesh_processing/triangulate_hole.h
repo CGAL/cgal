@@ -202,7 +202,7 @@ namespace Polygon_mesh_processing {
   \cgalNamedParamsEnd
 
   @return tuple of
-  - bool: `true` if fairing is successful
+  - `bool`: `true` if fairing is successful
   - `face_out`
   - `vertex_out`
 
