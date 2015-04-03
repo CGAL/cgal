@@ -198,7 +198,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 *         for `CGAL::vertex_point_t`
 * @tparam VertexNormalMap a model of `WritablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
-    `Kernel::Vector_3` as value type.
+    the return type of `compute_vertex_normal()` as value type.
 *
 * @param pmesh the polygon mesh
 * @param vnm the property map in which the normals are written

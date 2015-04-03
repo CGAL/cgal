@@ -72,47 +72,47 @@ class Point_inside_polygon_mesh
 public:
    /**
    * Constructor with one surface triangle mesh.
-   * @param mesh the triangle mesh bounding the domain to be tested
-   * @param vpmap the property map with the points associated to the vertices of `mesh`
+   * @param tmesh the triangle mesh bounding the domain to be tested
+   * @param vpmap the property map with the points associated to the vertices of `tmesh`
    * @param gt an instance of the geometric traits class
    *
-   * @pre `CGAL::is_closed(mesh) && CGAL::is_pure_triangle(mesh)`
+   * @pre `CGAL::is_closed(tmesh) && CGAL::is_pure_triangle(tmesh)`
    */
-  Point_inside_polygon_mesh(const TriangleMesh& mesh,
+  Point_inside_polygon_mesh(const TriangleMesh& tmesh,
                             VertexPointMap vpmap,
                             const GeomTraits& gt=GeomTraits())
   : ray_functor(gt.construct_ray_3_object())
   , vector_functor(gt.construct_vector_3_object())
   , own_tree(true)
   {
-    CGAL_assertion(CGAL::is_pure_triangle(mesh));
-    CGAL_assertion(CGAL::is_closed(mesh));
+    CGAL_assertion(CGAL::is_pure_triangle(tmesh));
+    CGAL_assertion(CGAL::is_closed(tmesh));
 
-    tree_ptr = new AABB_tree(faces(mesh).first,
-                             faces(mesh).second,
-                             mesh, vpmap);
+    tree_ptr = new AABB_tree(faces(tmesh).first,
+                             faces(tmesh).second,
+                             tmesh, vpmap);
   }
 
   /**
-  * Constructor with one surface triangle mesh, using `get(boost::vertex_point, mesh)` as
+  * Constructor with one surface triangle mesh, using `get(boost::vertex_point, tmesh)` as
   * vertex point property map.
-  * @param mesh the triangle mesh bounding the domain to be tested
+  * @param tmesh the triangle mesh bounding the domain to be tested
   * @param gt an instance of the geometric traits class
   *
-  * @pre `CGAL::is_closed(mesh) && CGAL::is_pure_triangle(mesh)`
+  * @pre `CGAL::is_closed(tmesh) && CGAL::is_pure_triangle(tmesh)`
   */
-  Point_inside_polygon_mesh(const TriangleMesh& mesh,
+  Point_inside_polygon_mesh(const TriangleMesh& tmesh,
                             const GeomTraits& gt=GeomTraits())
   : ray_functor(gt.construct_ray_3_object())
   , vector_functor(gt.construct_vector_3_object())
   , own_tree(true)
   {
-    CGAL_assertion(CGAL::is_pure_triangle(mesh));
-    CGAL_assertion(CGAL::is_closed(mesh));
+    CGAL_assertion(CGAL::is_pure_triangle(tmesh));
+    CGAL_assertion(CGAL::is_closed(tmesh));
 
-    tree_ptr = new AABB_tree(faces(mesh).first,
-                             faces(mesh).second,
-                             mesh);
+    tree_ptr = new AABB_tree(faces(tmesh).first,
+                             faces(tmesh).second,
+                             tmesh);
   }
 
   /**
@@ -122,7 +122,7 @@ public:
   * @param tree a \cgal `AABB_tree` with `AABB_face_graph_triangle_primitive` as `Primitive` type
   * @param gt an instance of the geometric traits class
   *
-  * @pre `CGAL::is_closed(mesh) && CGAL::is_pure_triangle(mesh)`
+  * @pre `CGAL::is_closed(tmesh) && CGAL::is_pure_triangle(tmesh)`
   */
   Point_inside_polygon_mesh(const AABB_tree& tree,
     const GeomTraits& gt = GeomTraits())

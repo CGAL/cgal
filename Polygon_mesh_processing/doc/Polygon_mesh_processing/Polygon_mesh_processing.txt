@@ -26,7 +26,7 @@ A polygon mesh can have any number of connected components, and also some self-i
 \subsection PMPAPI API
 This package follows the BGL API described in \ref chapterBGL.
 It can thus be used either with `Polyhedron_3`, `Surface_mesh`, or
-any graph following the BGL requirements. Each function or class of this package
+any class model of the concept `FaceGraph`. Each function or class of this package
 gives precisions on the requirements on the polygon mesh.
 
 BGL \ref namedparameters are used to deal with optional parameters.
@@ -56,7 +56,9 @@ The validity of the mesh is kept by flipping edges.
 An edge is flipped only if the opposite edge does not exist in the original mesh
 and if no degenerate triangles are produced.
 
-A region of the surface mesh (e.g. the refined region) can be faired to obtain a tangentially continuous and smooth patch.
+A region of the surface mesh (\e e.\e g. the refined region), can be faired
+to obtain a tangentially continuous and smooth surface patch.
+The region to be faired is given as a range of vertices that are allowed to be relocated.
 The fairing step minimizes a linear bi-Laplacian system with boundary constraints,
 described in \cgalCite{Botsch2008OnLinearVariational}.
 The visual results of aforementioned steps can be seen in \cgalFigureRef{Mech_steps} (c and d).
@@ -67,14 +69,15 @@ Refinement and fairing functions can be applied to an arbitrary region on a mesh
 - `CGAL::Polygon_mesh_processing::refine()` : given a set of facets on a mesh, refines the region.
 - `CGAL::Polygon_mesh_processing::fair()` : given a set of vertices on a mesh, fairs the region.
 
+Fairing needs a sparse linear solver and we recommend the use of \ref thirdpartyEigen 3.2 or later.
+
 Many algorithms only work for meshes in which all the faces have the same number of vertices,
-or even only for triangle meshes. Hence, one may want to triangulate a polygon mesh
-with any types of polygons as faces.
+or even only for triangle meshes. Hence, one may want to triangulate polygonal faces of a mesh.
+
 This package provides the function `CGAL::Polygon_mesh_processing::triangulate_faces()`
 that triangulates all faces of the input polygon mesh.
-
-
-Fairing needs a sparse linear solver and we recommend the use of \ref thirdpartyEigen 3.2 or later.
+The triangulation of each face is the one obtained by building a
+`Constrained_Delaunay_triangulation_2` in the support plane of the face.
 
 \subsection MeshingExamples Meshing Examples
 
@@ -198,7 +201,9 @@ outside of the domain bounded by the input polygon mesh.
 
 In case the orientation is not satisfactory to the user, the function
 `CGAL::Polygon_mesh_processing::reverse_face_orientations()` reverses the orientation
-of halfedges around faces, and consequently of normals associated to faces.
+of halfedges around faces.
+As a consequence, the normal that would be computed at each face (see Section
+\ref PMPNormalComp) is also reversed.
 
 See \ref PolygonSoupExample for an example of how these functions can be used.
 
@@ -256,8 +261,9 @@ polygon soup, one should make sure that the polygons are consistently oriented.
 To do so, this package provides the function
 `CGAL::Polygon_mesh_processing::orient_polygon_soup()`.
 
-Once the polygon soup is consistently oriented, the connectivity can be
-brought together again, to build a polygon mesh.
+Once the polygon soup is consistently oriented,
+the connectivity can be reset and made consistent,
+to build a valid polygon mesh.
 The function `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 performs this mesh construction step.
 
@@ -298,8 +304,8 @@ to both faces and vertices is provided :
 
 \subsection NormalsExample Normals Computation Example
 
-The following example illustrates how to collect normals to faces
-and vertices in property maps.
+The following example illustrates how to
+get the normals to faces and vertices in property maps.
 
 \cgalExample{Polygon_mesh_processing/compute_normals_example.cpp}
 
@@ -333,7 +339,7 @@ for pedagogical purposes.
 ****************************************
 \section PMPConnectedComponents Connected Components
 
-This package provides functions to study the connected components of a
+This package provides functions to separate the connected components of a
 polygon mesh. The connected components can be either separated by border edges, or by
 \e constraint edges.
 
@@ -346,7 +352,7 @@ collects all the connected components, and fills a property map
 with the indices of the different connected components.
 
 Finally, `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
-allows the user to keep only the biggest connected components. This feature can
+enables the user to keep only the largest connected components. This feature can
 for example be useful for noisy data were small connected components
 should be discarded in favour of major connected components.
 

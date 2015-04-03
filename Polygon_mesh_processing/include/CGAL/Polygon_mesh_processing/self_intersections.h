@@ -334,7 +334,7 @@ OutputIterator self_intersections(const FaceRange& face_range,
 
 /**
  * \ingroup PkgPolygonMeshProcessing
- * checks if a triangle mesh is self-intersecting.
+ * tests if a triangle mesh is self-intersecting.
  * This function depends on the package \ref PkgBoxIntersectionDSummary
  * @pre `CGAL::is_pure_triangle(tmesh)`
  *

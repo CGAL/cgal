@@ -19,7 +19,7 @@
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
 \cgalPkgDependsOn{\ref PkgTriangulation3Summary, Sparse square solver such as those from  \ref thirdpartyEigen}
-\cgalPkgBib{cgal-tmp}
+\cgalPkgBib{cgal:lty-pmp}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
@@ -64,10 +64,10 @@ and gives a list of the parameters that are used in this package.
 
 ## Normal Computation Functions ##
 - `CGAL::Polygon_mesh_processing::compute_face_normal()`
-- `CGAL::Polygon_mesh_processing::compute_vertex_normal()`
-- `CGAL::Polygon_mesh_processing::compute_normals()`
 - `CGAL::Polygon_mesh_processing::compute_face_normals()`
+- `CGAL::Polygon_mesh_processing::compute_vertex_normal()`
 - `CGAL::Polygon_mesh_processing::compute_vertex_normals()`
+- `CGAL::Polygon_mesh_processing::compute_normals()`
 
 ## Other Classes and Functions ##
 - `CGAL::Polygon_mesh_slicer`
