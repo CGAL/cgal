@@ -99,7 +99,7 @@ public:
   * @param mesh the triangle mesh bounding the domain to be tested
   * @param gt an instance of the geometric traits class
   *
-  * @pre `mesh` must be closed and triangulated.
+  * @pre `CGAL::is_closed(mesh) && CGAL::is_pure_triangle(mesh)`
   */
   Point_inside_polygon_mesh(const TriangleMesh& mesh,
                             const GeomTraits& gt=GeomTraits())
@@ -118,10 +118,11 @@ public:
   /**
   * Constructor that takes a pre-built \cgal `AABB_tree`
   * of the triangle mesh primitives.
-  * Note the domain described by these primitives should be closed.
-
+  *
   * @param tree a \cgal `AABB_tree` with `AABB_face_graph_triangle_primitive` as `Primitive` type
   * @param gt an instance of the geometric traits class
+  *
+  * @pre `CGAL::is_closed(mesh) && CGAL::is_pure_triangle(mesh)`
   */
   Point_inside_polygon_mesh(const AABB_tree& tree,
     const GeomTraits& gt = GeomTraits())
