@@ -30,6 +30,7 @@
 
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
+#include <QGraphicsLineItem>
 
 class QGraphicsScene;
 class QGraphicsSceneMouseEvent;
