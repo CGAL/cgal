@@ -43,6 +43,8 @@ target_link_libraries( Polyline_simplification_2 ${QT_LIBRARIES} )
 # Link with CGAL
 target_link_libraries( Polyline_simplification_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
 
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyline_simplification_2 )
+
 else()
 
   message(STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
