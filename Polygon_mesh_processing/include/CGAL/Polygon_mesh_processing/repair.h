@@ -233,7 +233,7 @@ namespace internal {
 } // end of namespace internal
 
 /// \ingroup PkgPolygonMeshProcessing
-/// removes the degenerate faces from a triangle mesh.
+/// removes the degenerate faces from a triangulated surface mesh.
 ///
 /// @pre `CGAL::is_pure_triangle(tmesh)`
 ///
@@ -241,7 +241,7 @@ namespace internal {
 ///        that has an internal property map for `boost::vertex_point_t`
 /// @tparam NamedParameters a sequence of \ref namedparameters
 ///
-/// @param tmesh the triangle mesh to be repaired
+/// @param tmesh the  triangulated surface mesh to be repaired
 /// @param np optional \ref namedparameters described below
 ///
 /// \cgalNamedParamsBegin

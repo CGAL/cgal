@@ -39,8 +39,8 @@ namespace CGAL {
  * if an odd number of surfaces is crossed when walking from the point to infinity.
  *
  * This class depends on the package \ref PkgAABB_treeSummary.
-
- * @tparam TriangleMesh a triangulated polyhedral surface, a model of `FaceListGraph`
+ *
+ * @tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph`
  * @tparam GeomTraits a geometric traits class, model of `Kernel`
  * @tparam VertexPointMap a model of `ReadablePropertyMap` with
          `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
@@ -71,8 +71,8 @@ class Point_inside_polygon_mesh
 
 public:
    /**
-   * Constructor with one surface triangle mesh.
-   * @param tmesh the triangle mesh bounding the domain to be tested
+   * Constructor with one triangulated surface mesh.
+   * @param tmesh the triangulated surface mesh bounding the domain to be tested
    * @param vpmap the property map with the points associated to the vertices of `tmesh`
    * @param gt an instance of the geometric traits class
    *
@@ -96,7 +96,7 @@ public:
   /**
   * Constructor with one surface triangle mesh, using `get(boost::vertex_point, tmesh)` as
   * vertex point property map.
-  * @param tmesh the triangle mesh bounding the domain to be tested
+  * @param tmesh the triangulated surface mesh bounding the domain to be tested
   * @param gt an instance of the geometric traits class
   *
   * @pre `CGAL::is_closed(tmesh) && CGAL::is_pure_triangle(tmesh)`
@@ -117,7 +117,7 @@ public:
 
   /**
   * Constructor that takes a pre-built \cgal `AABB_tree`
-  * of the triangle mesh primitives.
+  * of the triangulated surface mesh primitives.
   *
   * @param tree a \cgal `AABB_tree` with `AABB_face_graph_triangle_primitive` as `Primitive` type
   * @param gt an instance of the geometric traits class

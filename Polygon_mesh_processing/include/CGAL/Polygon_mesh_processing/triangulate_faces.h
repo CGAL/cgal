@@ -225,7 +225,7 @@ public:
 
 /**
 * \ingroup PkgPolygonMeshProcessing
-* triangulates faces of the polygon mesh `pmesh`. This function depends on the package \ref PkgTriangulation2Summary
+* triangulates faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2Summary
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 *         that has an internal property map for `boost::vertex_point_t`
 * @tparam NamedParameters a sequence of \ref namedparameters

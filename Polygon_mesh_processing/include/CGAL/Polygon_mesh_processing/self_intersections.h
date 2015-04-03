@@ -214,7 +214,7 @@ self_intersections( const FaceRange& face_range,
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
- * @param tmesh triangle mesh to be checked
+ * @param tmesh the triangulated surface mesh to be checked
  * @param out output iterator to be filled with all pairs of non-adjacent faces that intersect
  * @param np optional sequence of \ref namedparameters among the ones listed below
  *
@@ -344,7 +344,7 @@ OutputIterator self_intersections(const FaceRange& face_range,
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
- * @param tmesh triangle mesh to be tested
+ * @param tmesh the triangulated surface mesh to be tested
  * @param np optional sequence of \ref namedparameters among the ones listed below
  *
  * \cgalNamedParamsBegin

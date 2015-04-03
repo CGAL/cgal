@@ -44,9 +44,9 @@ namespace CGAL {
 /// Function object that can compute the intersection of planes with
 /// a triangulated surface mesh.
 ///
-/// \tparam TriangleMesh triangulated surface mesh. It must be a model of `FaceGraph` and `HalfedgeListGraph`
-/// \tparam Traits must be a model of `AABBGeomTraits`
-/// \tparam VertexPointMap is a model of `ReadablePropertyMap` with
+/// \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
+/// \tparam Traits a model of `AABBGeomTraits`
+/// \tparam VertexPointMap a model of `ReadablePropertyMap` with
 ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
 ///         `Traits::Point_3` as value type.
 ///         The default is `typename boost::property_map< TriangleMesh, vertex_point_t>::%type`.
