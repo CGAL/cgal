@@ -125,7 +125,6 @@ Different resolutions of the model obtained by loop subdivision are used.
 As can be seen on \cgalFigureRef{MCFBenchComp}, the more sampled is the
 surface, the better the skeleton is inside the model.
 
-\todo depending on the screen the transparency is not seen
 \cgalFigureBegin{MCFBenchComp, comparison.png}
 Skeleton of the head of the elephant model.
 Left: Using the original mesh (2,775 vertices);
