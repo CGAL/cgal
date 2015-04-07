@@ -53,7 +53,7 @@ public:
   typedef typename Kernel::Point_3            Point;
 
   // Repeat TriangleMesh types
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor	        vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor           face_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor           edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;

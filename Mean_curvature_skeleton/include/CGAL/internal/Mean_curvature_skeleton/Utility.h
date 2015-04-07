@@ -94,7 +94,7 @@ double get_surface_area(TriangleMesh& hg, TriangleMeshPointPMap& hg_point_pmap)
 {
   typedef typename TriangleMesh::Traits                                  Kernel;
   typedef typename Kernel::Point_3                                       Point;
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor	 vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor    face_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 

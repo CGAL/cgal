@@ -46,8 +46,8 @@ template<class TriangleMesh>
 bool is_collapse_ok(TriangleMesh& hg,
                     typename boost::graph_traits<TriangleMesh>::halfedge_descriptor v0v1)
 {
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor	         vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor	 halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor          vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor            edge_descriptor;
 
   halfedge_descriptor v1v0 = opposite(v0v1, hg);
