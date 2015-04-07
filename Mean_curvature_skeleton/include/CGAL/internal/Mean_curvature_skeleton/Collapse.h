@@ -30,6 +30,7 @@
  */
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/foreach.hpp>
 
 namespace CGAL {
 namespace internal {
@@ -46,8 +47,8 @@ bool is_collapse_ok(TriangleMesh& hg,
                     typename boost::graph_traits<TriangleMesh>::halfedge_descriptor v0v1)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor	         vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor	           halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::in_edge_iterator            in_edge_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor	 halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor            edge_descriptor;
 
   halfedge_descriptor v1v0 = opposite(v0v1, hg);
   vertex_descriptor v0 = target(v1v0, hg);
@@ -98,10 +99,9 @@ bool is_collapse_ok(TriangleMesh& hg,
   }
 
   // test intersection of the one-rings of v0 and v1
-  in_edge_iterator eb, ee;
-  for (boost::tie(eb, ee) = in_edges(v0, hg); eb != ee; ++eb)
+  BOOST_FOREACH(edge_descriptor ed, in_edges(v0, hg))
   {
-    vv = source(*eb, hg);
+    vv = source(ed, hg);
     if (vv != v1 && vv != vl && vv != vr)
     {
       if (find_halfedge(hg, vv, v1))
@@ -128,12 +128,11 @@ bool find_halfedge(TriangleMesh& hg,
                    typename boost::graph_traits<TriangleMesh>::vertex_descriptor vj)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor          vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::in_edge_iterator           in_edge_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor            edge_descriptor;
 
-  in_edge_iterator eb, ee;
-  for (boost::tie(eb, ee) = in_edges(vj, hg); eb != ee; ++eb)
+  BOOST_FOREACH(edge_descriptor ed, in_edges(vj, hg))
   {
-    vertex_descriptor vv = source(*eb, hg);
+    vertex_descriptor vv = source(ed, hg);
     if (vv == vi)
     {
       return true;

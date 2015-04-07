@@ -29,6 +29,7 @@
  */
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/foreach.hpp>
 #include <cmath>
 
 namespace CGAL {
@@ -92,20 +93,21 @@ template<class TriangleMesh, class TriangleMeshPointPMap>
 double get_surface_area(TriangleMesh& hg, TriangleMeshPointPMap& hg_point_pmap)
 {
   typedef typename TriangleMesh::Traits                                  Kernel;
-  typedef typename Kernel::Point_3                                        Point;
-  typedef typename TriangleMesh::Facet_iterator                          Facet_iterator;
-  typedef typename TriangleMesh::Halfedge_around_facet_circulator        Halfedge_facet_circulator;
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor	vertex_descriptor;
+  typedef typename Kernel::Point_3                                       Point;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor	 vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor    face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
   double total_area = 0;
-  for (Facet_iterator i = hg.facets_begin(); i != hg.facets_end(); ++i)
+  BOOST_FOREACH(face_descriptor fd, faces(hg))
   {
-    Halfedge_facet_circulator j = i->facet_begin();
-    vertex_descriptor v1 = j->vertex();
-    ++j;
-    vertex_descriptor v2 = j->vertex();
-    ++j;
-    vertex_descriptor v3 = j->vertex();
+    halfedge_descriptor hd = halfedge(fd, hg);
+    
+    vertex_descriptor v1 = target(hd, hg);
+    hd = next(hd, hg);
+    vertex_descriptor v2 = target(hd, hg);
+    hd = next(hd, hg);
+    vertex_descriptor v3 = target(hd, hg);
     Point p1 = boost::get(hg_point_pmap, v1);
     Point p2 = boost::get(hg_point_pmap, v2);
     Point p3 = boost::get(hg_point_pmap, v3);

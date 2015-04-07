@@ -54,12 +54,9 @@ public:
 
   // Repeat TriangleMesh types
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor	        vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator            vertex_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor           face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor           edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_iterator          halfedge_iterator;
-  typedef typename boost::graph_traits<TriangleMesh>::in_edge_iterator           in_edge_iterator;
-  typedef typename boost::graph_traits<TriangleMesh>::face_iterator              face_iterator;
-  typedef Halfedge_around_face_circulator<TriangleMesh>                Halfedge_face_circulator;
 
 // Data members
 private:
@@ -199,10 +196,9 @@ public:
       }
     }
 
-    vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = vertices(hg); vb != ve; ++vb)
+    BOOST_FOREACH(vertex_descriptor vd, vertices(hg))
     {
-      int id = get(vertex_id_pmap, *vb);
+      int id = get(vertex_id_pmap, vd);
       int new_id = new_vertex_id[id];
       if (new_id == -1)
       {
@@ -262,35 +258,32 @@ private:
 
     // assign vertex id
     surface_vertex_id.resize(nb_vertices);
-    vertex_iterator vb, ve;
     int idx = 0;
-    for (boost::tie(vb, ve) = vertices(hg); vb != ve; ++vb)
+    BOOST_FOREACH(vertex_descriptor vd, vertices(hg))
     {
-      surface_vertex_id[idx] = get(vertex_id_pmap, *vb);
-      put(vertex_id_pmap, *vb, idx++);
+      surface_vertex_id[idx] = get(vertex_id_pmap, vd);
+      put(vertex_id_pmap, vd, idx++);
     }
 
     // assign edge id
     // the two halfedges representing the same edge get the same id
-    halfedge_iterator eb, ee;
     idx = 0;
-    for (boost::tie(eb, ee) = halfedges(hg); eb != ee; ++eb)
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(hg))
     {
-      put(hedge_id_pmap, *eb, -1);
+      put(hedge_id_pmap, hd, -1);
     }
-    for (boost::tie(eb, ee) = halfedges(hg); eb != ee; ++eb)
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(hg))
     {
-      halfedge_descriptor ed = *eb;
-      int id = get(hedge_id_pmap, ed);
+      int id = get(hedge_id_pmap, hd);
       if (id == -1)
       {
-        put(hedge_id_pmap, ed, idx);
-        halfedge_descriptor ed_opposite = opposite(ed,hg);
-        put(hedge_id_pmap, ed_opposite, idx);
+        put(hedge_id_pmap, hd, idx);
+        halfedge_descriptor hd_opposite = opposite(hd,hg);
+        put(hedge_id_pmap, hd_opposite, idx);
 
         // also cache the length of the edge
-        vertex_descriptor v1 = target(ed,hg);
-        vertex_descriptor v2 = source(ed,hg);
+        vertex_descriptor v1 = target(hd,hg);
+        vertex_descriptor v2 = source(hd,hg);
         Point source = get(hg_point_pmap, v1);
         Point target = get(hg_point_pmap, v2);
         edge_lengths[idx] = std::sqrt(squared_distance(source, target));
@@ -301,31 +294,25 @@ private:
 
     // assign face id and compute edge-face connectivity
     int face_id = 0;
-    for(face_iterator i = faces(hg).first; i != faces(hg).end(); ++i)
+    BOOST_FOREACH(face_descriptor fd, faces(hg))
     {
-      Halfedge_face_circulator j(halfedge(*i,hg),hg), done(j);
-      // Facets in polyhedral surfaces are at least triangles.
-      CGAL_assertion(CGAL::circulator_size(j) >= 3);
-      do
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd,hg), hg))
       {
-        halfedge_descriptor hd = *j;
         int id = get(hedge_id_pmap, hd);
         face_to_edge[face_id].push_back(id);
         edge_to_face[id].push_back(face_id);
-      } while (++j != done);
+      }
       face_id++;
     }
 
     // compute vertex-edge connectivity
-    for (boost::tie(vb, ve) = vertices(hg); vb != ve; ++vb)
+    BOOST_FOREACH(vertex_descriptor vd, vertices(hg))
     {
-      vertex_descriptor vd = *vb;
       int vid = get(vertex_id_pmap, vd);
-      in_edge_iterator e, e_end;
-      for (boost::tie(e, e_end) = in_edges(*vb, hg); e != e_end; ++e)
+      BOOST_FOREACH(edge_descriptor ed, in_edges(vd, hg))
       {
-        halfedge_descriptor ed = halfedge(*e, hg);
-        int eid = get(hedge_id_pmap, ed);
+        halfedge_descriptor hd = halfedge(ed, hg);
+        int eid = get(hedge_id_pmap, hd);
         vertex_to_edge[vid].push_back(eid);
         edge_to_vertex[eid].push_back(vid);
       }
@@ -339,19 +326,14 @@ private:
   {
     // put all the edges into a priority queue
     // shorter edge has higher priority
-    halfedge_iterator eb, ee;
     std::vector<bool> is_edge_inserted;
     is_edge_inserted.clear();
     is_edge_inserted.resize(edge_to_face.size(), false);
-    for (boost::tie(eb, ee) = halfedges(hg); eb != ee; ++eb)
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(hg))
     {
-      halfedge_descriptor ed = *eb;
-      int id = get(hedge_id_pmap, ed);
+      int id = get(hedge_id_pmap, hd);
 
-      if (is_edge_inserted[id])
-      {
-        continue;
-      }
+      if (is_edge_inserted[id]) continue;
 
       queue.insert(id);
       is_edge_inserted[id] = true;
@@ -618,11 +600,9 @@ private:
 
   void check_edge()
   {
-    halfedge_iterator eb, ee;
-    for (boost::tie(eb, ee) = halfedges(hg); eb != ee; ++eb)
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(hg))
     {
-      halfedge_descriptor ed = *eb;
-      int id = get(hedge_id_pmap, ed);
+      int id = get(hedge_id_pmap, hd);
       if (!is_edge_deleted[id])
       {
         if (edge_to_face[id].size() > 0)

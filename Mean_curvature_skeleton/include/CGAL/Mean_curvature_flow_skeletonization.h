@@ -33,6 +33,7 @@
 #include <boost/graph/copy.hpp>
 
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/foreach.hpp>
 
 #include <CGAL/boost/graph/iterator.h>
 
@@ -260,14 +261,8 @@ public:
   typedef typename boost::graph_traits<mTriangleMesh>::vertex_descriptor       vertex_descriptor;
   typedef typename boost::graph_traits<mTriangleMesh>::halfedge_descriptor     halfedge_descriptor;
   typedef typename boost::graph_traits<mTriangleMesh>::vertex_iterator         vertex_iterator;
-  typedef typename boost::graph_traits<mTriangleMesh>::halfedge_iterator       halfedge_iterator;
   typedef typename boost::graph_traits<mTriangleMesh>::edge_descriptor         edge_descriptor;
   typedef typename boost::graph_traits<mTriangleMesh>::edge_iterator           edge_iterator;
-  typedef typename boost::graph_traits<mTriangleMesh>::in_edge_iterator        in_edge_iterator;
-  typedef typename boost::graph_traits<mTriangleMesh>::out_edge_iterator       out_edge_iterator;
-
-  typedef typename boost::graph_traits<mTriangleMesh>::face_iterator           Facet_iterator;
-  typedef Halfedge_around_face_circulator<mTriangleMesh>            Halfedge_facet_circulator;
 
   // Cotangent weight calculator
   typedef typename internal::Cotangent_weight<mTriangleMesh,
@@ -574,15 +569,11 @@ public:
   void fixed_points(std::vector<Point>& fixed_points)
   {
     fixed_points.clear();
-    vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = vertices(m_tmesh); vb != ve; ++vb)
+    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
     {
-      int id = get(m_vertex_id_pmap, *vb);
+      int id = get(m_vertex_id_pmap, vd);
       if (m_is_vertex_fixed_map.find(id) != m_is_vertex_fixed_map.end())
-      {
-        vertex_descriptor vd = *vb;
         fixed_points.push_back(get(m_tmesh_point_pmap, vd));
-      }
     }
   }
 
@@ -595,15 +586,11 @@ public:
   void non_fixed_points(std::vector<Point>& non_fixed_points)
   {
     non_fixed_points.clear();
-    vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = vertices(m_tmesh); vb != ve; ++vb)
+    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
     {
-      int id = get(m_vertex_id_pmap, *vb);
+      int id = get(m_vertex_id_pmap, vd);
       if (m_is_vertex_fixed_map.find(id) == m_is_vertex_fixed_map.end())
-      {
-          vertex_descriptor vd = *vb;
-          non_fixed_points.push_back(get(m_tmesh_point_pmap, vd));
-      }
+        non_fixed_points.push_back(get(m_tmesh_point_pmap, vd));
     }
   }
 
@@ -616,11 +603,9 @@ public:
   void poles(std::vector<Point>& max_poles)
   {
     max_poles.resize(num_vertices(m_tmesh));
-    vertex_iterator vb, ve;
     int cnt = 0;
-    for (boost::tie(vb, ve) = vertices(m_tmesh); vb != ve; ++vb)
+    BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
     {
-      vertex_descriptor v = *vb;
       int vid = get(m_vertex_id_pmap, v);
       max_poles[cnt++] = m_cell_dual[m_poles[vid]];
     }
@@ -706,14 +691,12 @@ public:
     MCFSKEL_DEBUG(std::cerr << "after solve\n";)
 
     // copy to surface mesh
-    vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = vertices(m_tmesh); vb != ve; ++vb)
+    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
     {
-      vertex_descriptor vi = *vb;
-      int id = get(m_vertex_id_pmap, vi);
+      int id = get(m_vertex_id_pmap, vd);
       int i = m_new_id[id];
       Point p(X[i], Y[i], Z[i]);
-      put(m_tmesh_point_pmap, vi, p);
+      put(m_tmesh_point_pmap, vd, p);
     }
 
     MCFSKEL_DEBUG(std::cerr << "leave contract geometry\n";)
@@ -977,10 +960,9 @@ private:
   {
     m_edge_weight.clear();
     m_edge_weight.reserve(2 * num_edges(m_tmesh));
-    halfedge_iterator eb, ee;
-    for(boost::tie(eb, ee) = halfedges(m_tmesh); eb != ee; ++eb)
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
     {
-      m_edge_weight.push_back(this->m_weight_calculator(*eb, m_tmesh));
+      m_edge_weight.push_back(this->m_weight_calculator(hd, m_tmesh));
     }
   }
 
@@ -993,10 +975,9 @@ private:
 
     Point_inside_polyhedron_3<mTriangleMesh, Traits> test_inside(m_tmesh);
 
-    vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = vertices(m_tmesh); vb != ve; ++vb)
+    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
     {
-      int id = get(m_vertex_id_pmap, *vb);
+      int id = get(m_vertex_id_pmap, vd);
 
       int i = m_new_id[id];
       // if the vertex is fixed
@@ -1020,9 +1001,9 @@ private:
       }
     }
 
-    for (boost::tie(vb, ve) = vertices(m_tmesh); vb != ve; ++vb)
+    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
     {
-      int id = get(m_vertex_id_pmap, *vb);
+      int id = get(m_vertex_id_pmap, vd);
       int i = m_new_id[id];
       double L = 1.0;
       // if the vertex is fixed
@@ -1031,11 +1012,10 @@ private:
         L = 0;
       }
       double diagonal = 0;
-      in_edge_iterator e, e_end;
-      for (boost::tie(e, e_end) = in_edges(*vb, m_tmesh); e != e_end; ++e)
+      BOOST_FOREACH(edge_descriptor ed, in_edges(vd, m_tmesh))
       {
-        vertex_descriptor vj = source(*e, m_tmesh);
-        double wij = m_edge_weight[get(m_hedge_id_pmap, halfedge(*e, m_tmesh))] * 2.0;
+        vertex_descriptor vj = source(ed, m_tmesh);
+        double wij = m_edge_weight[get(m_hedge_id_pmap, halfedge(ed, m_tmesh))] * 2.0;
         int jd = get(m_vertex_id_pmap, vj);
         int j = m_new_id[jd];
         A.set_coef(i, j, wij * L, true);
@@ -1058,7 +1038,6 @@ private:
 
     // assemble right columns of linear system
     int nver = num_vertices(m_tmesh);
-    vertex_iterator vb, ve;
     for (int i = 0; i < nver; ++i)
     {
       Bx[i] = 0;
@@ -1066,10 +1045,9 @@ private:
       Bz[i] = 0;
     }
 
-    for (boost::tie(vb, ve) = vertices(m_tmesh); vb != ve; ++vb)
+    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
     {
-      vertex_descriptor vi = *vb;
-      int id = get(m_vertex_id_pmap, vi);
+      int id = get(m_vertex_id_pmap, vd);
       int i = m_new_id[id];
 
       double oh, op = 0.0;
@@ -1091,9 +1069,9 @@ private:
           }
         }
       }
-      Bx[i + nver] = get(m_tmesh_point_pmap, vi).x() * oh;
-      By[i + nver] = get(m_tmesh_point_pmap, vi).y() * oh;
-      Bz[i + nver] = get(m_tmesh_point_pmap, vi).z() * oh;
+      Bx[i + nver] = get(m_tmesh_point_pmap, vd).x() * oh;
+      By[i + nver] = get(m_tmesh_point_pmap, vd).y() * oh;
+      Bz[i + nver] = get(m_tmesh_point_pmap, vd).z() * oh;
       if (m_is_medially_centered)
       {
         double x = to_double(m_cell_dual[m_poles[id]].x());
@@ -1113,10 +1091,10 @@ private:
   {
     m_new_id.clear();
     int cnt = 0;
-    vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = vertices(m_tmesh); vb != ve; ++vb)
+    
+    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
     {
-      int id = get(m_vertex_id_pmap, *vb);
+      int id = get(m_vertex_id_pmap, vd);
       m_new_id[id] = cnt++;
     }
   }
@@ -1134,10 +1112,9 @@ private:
 
 
     int edge_id = -1;
-    halfedge_iterator hb, he;
-    for (boost::tie(hb, he) = halfedges(m_tmesh); hb != he; ++hb)
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
     {
-      put(m_hedge_id_pmap, *hb, ++edge_id);
+      put(m_hedge_id_pmap, hd, ++edge_id);
     }
 
     // This is a stop predicate (defines when the algorithm terminates).
@@ -1255,10 +1232,9 @@ private:
   /// Fix an edge if both incident vertices are degenerate.
   void init_fixed_edge_map(internal::Fixed_edge_map<mTriangleMesh>& fixed_edge_map)
   {
-    edge_iterator eb, ee;
-    for (boost::tie(eb, ee) = edges(m_tmesh); eb != ee; ++eb)
+    BOOST_FOREACH(edge_descriptor ed, edges(m_tmesh))
     {
-      halfedge_descriptor h = halfedge(*eb, m_tmesh);
+      halfedge_descriptor h = halfedge(ed, m_tmesh);
       vertex_descriptor vi = source(h, m_tmesh);
       vertex_descriptor vj = target(h, m_tmesh);
       size_t vi_idx = get(m_vertex_id_pmap, vi);
@@ -1283,28 +1259,26 @@ private:
     int ne = 2 * num_edges(m_tmesh);
     m_halfedge_angle.resize(ne, 0);
 
-    halfedge_iterator eb, ee;
     int idx = 0;
-    for (boost::tie(eb, ee) = halfedges(m_tmesh); eb != ee; ++eb)
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
     {
-      put(m_hedge_id_pmap, *eb, idx++);
+      put(m_hedge_id_pmap, hd, idx++);
     }
 
-    for (boost::tie(eb, ee) = halfedges(m_tmesh); eb != ee; ++eb)
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
     {
-      int e_id = get(m_hedge_id_pmap, *eb);
-      halfedge_descriptor ed = *eb;
+      int e_id = get(m_hedge_id_pmap, hd);
 
-      if (is_border(ed, m_tmesh))
+      if (is_border(hd, m_tmesh))
       {
         m_halfedge_angle[e_id] = -1;
       }
       else
       {
-        vertex_descriptor vi = source(ed, m_tmesh);
-        vertex_descriptor vj = target(ed, m_tmesh);
-        halfedge_descriptor ed_next = next(ed, m_tmesh);
-        vertex_descriptor vk = target(ed_next, m_tmesh);
+        vertex_descriptor vi = source(hd, m_tmesh);
+        vertex_descriptor vj = target(hd, m_tmesh);
+        halfedge_descriptor hd_next = next(hd, m_tmesh);
+        vertex_descriptor vk = target(hd_next, m_tmesh);
         Point pi = get(m_tmesh_point_pmap, vi);
         Point pj = get(m_tmesh_point_pmap, vj);
         Point pk = get(m_tmesh_point_pmap, vk);
@@ -1369,11 +1343,10 @@ private:
     compute_incident_angle();
 
     int cnt = 0;
-    halfedge_iterator eb, ee;
     /// \todo this is unsafe, we loop over a sequence that we modify!!!
-    for (boost::tie(eb, ee) = halfedges(m_tmesh); eb != ee; ++eb)
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
     {
-      halfedge_descriptor ei = *eb;
+      halfedge_descriptor ei = hd;
       halfedge_descriptor ej = opposite(ei, m_tmesh);
       int ei_id = get(m_hedge_id_pmap, ei);
       int ej_id = get(m_hedge_id_pmap, ej);
@@ -1421,10 +1394,8 @@ private:
   int detect_degeneracies_in_disk()
   {
     int num_fixed = 0;
-    vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = vertices(m_tmesh); vb != ve; ++vb)
+    BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
     {
-      vertex_descriptor v = *vb;
       int idx = get(m_vertex_id_pmap, v);
 
       if (m_is_vertex_fixed_map.find(idx) == m_is_vertex_fixed_map.end())
@@ -1450,20 +1421,18 @@ private:
   {
     int num_fixed = 0;
     double elength_fixed = m_min_edge_length;
-    vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = vertices(m_tmesh); vb != ve; ++vb)
+
+    BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
     {
-      vertex_descriptor v = *vb;
       int idx = boost::get(m_vertex_id_pmap, v);
       if (m_is_vertex_fixed_map.find(idx) == m_is_vertex_fixed_map.end())
       {
         bool willbefixed = false;
         int bad_counter = 0;
 
-        in_edge_iterator eb, ee;
-        for (boost::tie(eb, ee) = in_edges(v, m_tmesh); eb != ee; ++eb)
+        BOOST_FOREACH(edge_descriptor ed, in_edges(v, m_tmesh))
         {
-          halfedge_descriptor edge = halfedge(*eb, m_tmesh);
+          halfedge_descriptor edge = halfedge(ed, m_tmesh);
           vertex_descriptor v0 = source(edge, m_tmesh);
           vertex_descriptor v1 = target(edge, m_tmesh);
           double length = sqrt(squared_distance(get(m_tmesh_point_pmap, v0),
@@ -1509,10 +1478,8 @@ private:
     point_to_pole.clear();
     point_to_pole.resize(num_vertices(m_tmesh));
 
-    vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = vertices(m_tmesh); vb != ve; ++vb)
+    BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
     {
-      vertex_descriptor v = *vb;
       int vid = get(m_vertex_id_pmap, v);
       Exact_point tp((get(m_tmesh_point_pmap, v)).x(),
                      (get(m_tmesh_point_pmap, v)).y(),
@@ -1537,7 +1504,7 @@ private:
         int id = vt->info();
         point_to_pole[id].push_back(cell_id);
       }
-      cell_id++;
+      ++cell_id;
     }
 
     m_poles.clear();
@@ -1577,10 +1544,8 @@ private:
   {
     m_normals.resize(num_vertices(m_tmesh));
 
-    vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = vertices(m_tmesh); vb != ve; ++vb)
+    BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
     {
-      vertex_descriptor v = *vb;
       int vid = get(m_vertex_id_pmap, v);
       m_normals[vid] = internal::get_vertex_normal<typename mTriangleMesh::Vertex,Traits>(*v);
     }
@@ -1592,22 +1557,20 @@ private:
 
   void print_edges()
   {
-    halfedge_iterator eb, ee;
-
     std::map<halfedge_descriptor, bool> visited;
 
-    for (boost::tie(eb, ee) = halfedges(m_tmesh); eb != ee; ++eb)
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
     {
-      if (!visited[*eb])
+      if (!visited[hd])
       {
-        vertex_descriptor vi = source(*eb, m_tmesh);
-        vertex_descriptor vj = target(*eb, m_tmesh);
+        vertex_descriptor vi = source(hd, m_tmesh);
+        vertex_descriptor vj = target(hd, m_tmesh);
         size_t vi_idx = get(m_vertex_id_pmap, vi);
         size_t vj_idx = get(m_vertex_id_pmap, vj);
         std::cout << vi_idx << " " << vj_idx << "\n";
 
-        visited[*eb] = true;
-        visited[opposite(*eb,m_tmesh)] = true;
+        visited[hd] = true;
+        visited[opposite(hd,m_tmesh)] = true;
       }
     }
   }

@@ -29,6 +29,7 @@
  */
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/foreach.hpp>
 #include <CGAL/boost/graph/iterator.h>
 #include <cmath>
 #include <queue>
@@ -55,9 +56,8 @@ bool is_vertex_degenerate(TriangleMesh& hg,
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor          vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::out_edge_iterator          out_edge_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor            edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor            face_descriptor;
-  typedef Halfedge_around_face_circulator<TriangleMesh>                          Halfedge_face_circulator;
 
   std::set<vertex_descriptor> vertices_in_disk;
   std::set<halfedge_descriptor> edges_in_disk;
@@ -66,37 +66,33 @@ bool is_vertex_degenerate(TriangleMesh& hg,
   vertices_in_disk.clear();
   search_vertices_in_disk(hg, hg_point_pmap, root, vertices_in_disk, min_edge_length);
 
-  typename std::set<vertex_descriptor>::iterator v_iter;
-  for (v_iter = vertices_in_disk.begin(); v_iter != vertices_in_disk.end(); ++v_iter)
+  BOOST_FOREACH(vertex_descriptor vd, vertices_in_disk)
   {
-    vertex_descriptor vd = *v_iter;
-    out_edge_iterator e, e_end;
-    for (boost::tie(e, e_end) = out_edges(vd, hg); e != e_end; ++e)
+    BOOST_FOREACH(edge_descriptor ed, out_edges(vd, hg))
     {
-      halfedge_descriptor ed = halfedge(*e, hg);
-      halfedge_descriptor ed_op = opposite(ed, hg);
-      vertex_descriptor tgt = target(ed, hg);
+      halfedge_descriptor hd = halfedge(ed, hg);
+      halfedge_descriptor hd_op = opposite(hd, hg);
+      vertex_descriptor tgt = target(hd, hg);
       if (vertices_in_disk.find(tgt) != vertices_in_disk.end())
       {
-        edges_in_disk.insert(ed);
-        edges_in_disk.insert(ed_op);
+        edges_in_disk.insert(hd);
+        edges_in_disk.insert(hd_op);
       }
 
-      Halfedge_face_circulator j(ed,hg), done(j);
       bool in = true;
-      do
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(hd, hg))
       {
-        vertex_descriptor v = target(*j,hg);
+        vertex_descriptor v = target(hd,hg);
         if (vertices_in_disk.find(v) == vertices_in_disk.end())
         {
           in = false;
           break;
         }
-      } while (++j != done);
+      }
 
       if (in)
       {
-        faces_in_disk.insert(face(ed,hg));
+        faces_in_disk.insert(face(hd,hg));
       }
     }
   }
@@ -129,7 +125,7 @@ void search_vertices_in_disk(TriangleMesh& hg,
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor          vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::out_edge_iterator	  out_edge_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor            edge_descriptor;
 
   std::map<vertex_descriptor, bool> vertex_visited;
 
@@ -144,10 +140,9 @@ void search_vertices_in_disk(TriangleMesh& hg,
     vertex_descriptor v = Q.front();
     Q.pop();
 
-    out_edge_iterator e, e_end;
-    for(boost::tie(e, e_end) = out_edges(v, hg); e != e_end; ++e)
+    BOOST_FOREACH(edge_descriptor ed, out_edges(v, hg))
     {
-      halfedge_descriptor ed = halfedge(*e, hg);
+      halfedge_descriptor hd = halfedge(ed, hg);
 
       vertex_descriptor new_v = target(ed, hg);
       if (vertex_visited.find(new_v) == vertex_visited.end())
