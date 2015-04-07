@@ -25,6 +25,7 @@
 #include <vector>
 #include <boost/algorithm/minmax_element.hpp>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/Union_find.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -84,6 +85,7 @@ bool is_degenerated(
   return is_degenerated(halfedge(fd,tmesh), tmesh, vpmap, traits);
 }
 
+#if 0
 namespace internal {
 
   // hbase is an edge of length 0 we cannot contract because
@@ -231,6 +233,7 @@ namespace internal {
       remove_face(fd, tmesh);
   }
 } // end of namespace internal
+#endif
 
 /// \ingroup PkgPolygonMeshProcessing
 /// removes the degenerate faces from a triangulated surface mesh.
@@ -287,22 +290,21 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   std::size_t nb_deg_faces = 0;
 
 // First remove edges of length 0
-  std::set<edge_descriptor> edges_to_remove;
+  std::set<edge_descriptor> null_edges_to_remove;
 
   BOOST_FOREACH(edge_descriptor ed, edges(tmesh))
   {
-    if ( traits.equal_3_object()(get(vpmap, target(ed, tmesh)),
-                                 get(vpmap, source(ed, tmesh))) )
-      edges_to_remove.insert(ed);
+    if ( traits.equal_3_object()(get(vpmap, target(ed, tmesh)), get(vpmap, source(ed, tmesh))) )
+      null_edges_to_remove.insert(ed);
   }
 
   std::size_t nb_edges_previously_skipped = 0;
   do{
     std::set<edge_descriptor> edges_to_remove_skipped;
-    while (!edges_to_remove.empty())
+    while (!null_edges_to_remove.empty())
     {
-      edge_descriptor ed = *edges_to_remove.begin();
-      edges_to_remove.erase(edges_to_remove.begin());
+      edge_descriptor ed = *null_edges_to_remove.begin();
+      null_edges_to_remove.erase(null_edges_to_remove.begin());
 
       halfedge_descriptor h = halfedge(ed, tmesh);
 
@@ -312,19 +314,213 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
         if ( face(h, tmesh)!=GT::null_face() )
         {
           ++nb_deg_faces;
-          edges_to_remove.erase(edge(prev(h, tmesh), tmesh));
+          null_edges_to_remove.erase(edge(prev(h, tmesh), tmesh));
           edges_to_remove_skipped.erase(edge(prev(h, tmesh), tmesh));
         }
         if (face(opposite(h, tmesh), tmesh)!=GT::null_face())
         {
           ++nb_deg_faces;
-          edges_to_remove.erase(edge(prev(opposite(h, tmesh), tmesh), tmesh));
+          null_edges_to_remove.erase(edge(prev(opposite(h, tmesh), tmesh), tmesh));
           edges_to_remove_skipped.erase(edge(prev(opposite(h, tmesh), tmesh), tmesh));
         }
         //now remove the edge
         CGAL::Euler::collapse_edge(ed, tmesh);
       }
       else{
+        //backup central point
+        typename Traits::Point_3 pt = get(vpmap, source(ed, tmesh));
+
+        // mark faces of the link of each endpoints of the edge which collapse is not topologically valid
+        std::set<face_descriptor> marked_faces;
+        std::vector<halfedge_descriptor> candidate_border;
+        //   first endpoint
+        BOOST_FOREACH( halfedge_descriptor hd, CGAL::halfedges_around_target(halfedge(ed,tmesh), tmesh) )
+        {
+          marked_faces.insert( face(hd, tmesh) );
+          candidate_border.push_back( prev(hd, tmesh) );
+        }
+        //   second endpoint
+        BOOST_FOREACH( halfedge_descriptor hd, CGAL::halfedges_around_target(opposite(halfedge(ed, tmesh), tmesh), tmesh) )
+        {
+          marked_faces.insert( face(hd, tmesh) );
+          candidate_border.push_back( prev(hd, tmesh) );
+        }
+
+        // extract the halfedge on the boundary of the marked region
+        std::vector<halfedge_descriptor> border;
+        BOOST_FOREACH(halfedge_descriptor hd, candidate_border)
+        {
+          if ( marked_faces.count( face(hd, tmesh) )!=
+               marked_faces.count( face(opposite(hd, tmesh), tmesh) ) )
+          {
+            border.push_back( hd );
+          }
+        }
+
+        // define cc of border halfedges: two halfedges are in the same cc
+        // if they are on the border of a set of non-marked faces sharing
+        // a common vertex
+        typedef CGAL::Union_find<halfedge_descriptor> UF_ds;
+        UF_ds uf;
+        std::map<halfedge_descriptor, typename UF_ds::handle> handles;
+        // one cc per border halfedge
+        BOOST_FOREACH(halfedge_descriptor hd, border)
+          handles.insert( std::make_pair(hd, uf.make_set(hd)) );
+
+        // join cc's
+        BOOST_FOREACH(halfedge_descriptor hd, border)
+        {
+          CGAL_assertion( marked_faces.count( face( hd, tmesh) ) );
+          CGAL_assertion( !marked_faces.count( face( opposite(hd, tmesh), tmesh) ) );
+          halfedge_descriptor candidate = hd;
+
+          do{
+            candidate = prev( opposite(candidate, tmesh), tmesh );
+          } while( !marked_faces.count( face( opposite(candidate, tmesh), tmesh) ) );
+          uf.unify_sets( handles[hd], handles[opposite(candidate, tmesh)] );
+        }
+
+        std::size_t nb_cc = uf.number_of_sets();
+        if ( nb_cc != 1 )
+        {
+          // if more than one connected component is found then the patch
+          // made of marked faces contains "non-manifold" vertices.
+          // The smallest components need to be marked so that the patch
+          // made of marked faces is a topological disk
+
+          // extract one border halfedge per cc
+          std::set< halfedge_descriptor > ccs;
+          BOOST_FOREACH(halfedge_descriptor hd, border)
+            ccs.insert( *uf.find( handles[hd] ) );
+
+          // we will explore in parallel the connected components and will stop
+          // when all but one connected component have been entirely explored.
+          // We have one face at a time for each cc in order to not explore a
+          // potentially very large cc.
+          std::vector< std::vector<halfedge_descriptor> > stacks_per_cc(nb_cc);
+          std::vector< std::set<face_descriptor> > faces_per_cc(nb_cc);
+          std::vector< bool > exploration_finished(nb_cc, false);
+
+          // init stacks
+          std::size_t index=0;
+          BOOST_FOREACH( halfedge_descriptor hd, ccs)
+          {
+            halfedge_descriptor opp_hedge = opposite(hd, tmesh);
+            stacks_per_cc[ index ].push_back( prev(opp_hedge, tmesh) );
+            stacks_per_cc[ index ].push_back( next(opp_hedge, tmesh) );
+            faces_per_cc[ index ].insert( face(opp_hedge, tmesh) );
+            ++index;
+          }
+
+          std::size_t nb_ccs_to_be_explored = nb_cc;
+          index=0;
+          //explore the cc's
+          do{
+            // try to extract one more face for a given cc
+            do{
+              CGAL_assertion( !exploration_finished[index] );
+              halfedge_descriptor hd = stacks_per_cc[index].back();
+              stacks_per_cc[index].pop_back();
+              hd = opposite(hd, tmesh);
+              if ( !marked_faces.count(face(hd, tmesh) ) )
+              {
+                if ( faces_per_cc[index].insert( face(hd, tmesh) ).second )
+                {
+                  stacks_per_cc[index].push_back( next(hd, tmesh) );
+                  stacks_per_cc[index].push_back( prev(hd, tmesh) );
+                  break;
+                }
+              }
+              if (stacks_per_cc[index].empty()) break;
+            }
+            while(true);
+            // the exploration of a cc is finished when its stack is empty
+            exploration_finished[index]=stacks_per_cc[index].empty();
+            if ( exploration_finished[index] ) --nb_ccs_to_be_explored;
+            if ( nb_ccs_to_be_explored==1 ) break;
+            while ( exploration_finished[(++index)%nb_cc] );
+            index=index%nb_cc;
+          }while(true);
+
+          /// \todo use the area criteria? this means maybe continue exploration of larger cc
+          // mark faces of completetly explored cc
+          for (index=0; index< nb_cc; ++index)
+            if( exploration_finished[index] )
+            {
+              BOOST_FOREACH(face_descriptor fd, faces_per_cc[index])
+                marked_faces.insert(fd);
+            }
+        }
+
+        // collect simplices to be removed
+        std::set<vertex_descriptor> vertices_to_keep;
+        std::set<halfedge_descriptor> halfedges_to_keep;
+        BOOST_FOREACH(halfedge_descriptor hd, border)
+          if (  !marked_faces.count(face(opposite(hd, tmesh), tmesh)) )
+          {
+            halfedges_to_keep.insert( hd );
+            vertices_to_keep.insert( target(hd, tmesh) );
+          }
+
+        // backup next,prev relationships to set after patch removal
+        std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> > next_prev_halfedge_pairs;
+        halfedge_descriptor first_border_hd=*( halfedges_to_keep.begin() );
+        halfedge_descriptor current_border_hd=first_border_hd;
+        do{
+          halfedge_descriptor prev_border_hd=current_border_hd;
+          current_border_hd=next(current_border_hd, tmesh);
+          while( marked_faces.count( face( opposite(current_border_hd, tmesh), tmesh) ) )
+            current_border_hd=next(opposite(current_border_hd, tmesh), tmesh);
+          next_prev_halfedge_pairs.push_back( std::make_pair(prev_border_hd, current_border_hd) );
+        }while(current_border_hd!=first_border_hd);
+
+        // collect vertices and edges to remove and do remove faces
+        std::set<edge_descriptor> edges_to_remove;
+        std::set<vertex_descriptor> vertices_to_remove;
+        BOOST_FOREACH(face_descriptor fd, marked_faces)
+        {
+          halfedge_descriptor hd=halfedge(fd, tmesh);
+          for(int i=0; i<3; ++i)
+          {
+            if ( !halfedges_to_keep.count(hd) )
+              edges_to_remove.insert( edge(hd, tmesh) );
+            if ( !vertices_to_keep.count(target(hd,tmesh)) )
+              vertices_to_remove.insert( target(hd,tmesh) );
+            hd=next(hd, tmesh);
+          }
+          remove_face(fd, tmesh);
+        }
+
+        // remove vertices
+        BOOST_FOREACH(vertex_descriptor vd, vertices_to_remove)
+          remove_vertex(vd, tmesh);
+        // remove edges
+        BOOST_FOREACH(edge_descriptor ed, edges_to_remove)
+        {
+          null_edges_to_remove.erase(ed);
+          remove_edge(ed, tmesh);
+        }
+
+        // add a new face, set all border edges pointing to it
+        // and update halfedge vertex of patch boundary vertices
+        face_descriptor new_face = add_face(tmesh);
+        typedef std::pair<halfedge_descriptor, halfedge_descriptor> Pair_type;
+        BOOST_FOREACH(const Pair_type& p, next_prev_halfedge_pairs)
+        {
+          set_face(p.first, new_face, tmesh);
+          set_next(p.first, p.second, tmesh);
+          set_halfedge(target(p.first, tmesh), p.first, tmesh);
+        }
+        set_halfedge(new_face, first_border_hd, tmesh);
+        // triangulate the new face and update the coordinate of the central vertex
+        halfedge_descriptor new_hd=Euler::add_center_vertex(first_border_hd, tmesh);
+        put(vpmap, target(new_hd, tmesh), pt);
+
+        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(new_hd, tmesh))
+          if ( traits.equal_3_object()(get(vpmap, target(hd, tmesh)), get(vpmap, source(hd, tmesh))) )
+            null_edges_to_remove.insert(edge(hd, tmesh));
+
+        #if 0
         // the following test filters in particular cases where the
         // detection of the vertex that breaks the link condition
         // is not correctly detected by find_larger_triangle
@@ -345,19 +541,20 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
           boost::optional< std::pair<halfedge_descriptor, halfedge_descriptor> >
             res = internal::find_larger_triangle(h, tmesh, vpmap, traits);
           if (res)
-            internal::remove_faces_inside_triangle(res->first, h, res->second, tmesh, edges_to_remove, edges_to_remove_skipped);
+            internal::remove_faces_inside_triangle(res->first, h, res->second, tmesh, null_edges_to_remove, edges_to_remove_skipped);
 
           // improve the link condition on opposite(h)'s side
           h=opposite(h, tmesh);
           res = internal::find_larger_triangle(h, tmesh, vpmap, traits);
           if (res)
-            internal::remove_faces_inside_triangle(res->first, h, res->second, tmesh, edges_to_remove, edges_to_remove_skipped);
+            internal::remove_faces_inside_triangle(res->first, h, res->second, tmesh, null_edges_to_remove, edges_to_remove_skipped);
           h=opposite(h, tmesh);
           ed=edge(h, tmesh);
 
         } while(!CGAL::Euler::satisfies_link_condition(ed,tmesh));
 
-        edges_to_remove.insert( ed );
+        null_edges_to_remove.insert( ed );
+        #endif
       }
     }
 
@@ -365,8 +562,8 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
     // that could now be satisfied
     if (edges_to_remove_skipped.empty() ||
         edges_to_remove_skipped.size()==nb_edges_previously_skipped) break;
-    edges_to_remove.swap(edges_to_remove_skipped);
-    nb_edges_previously_skipped = edges_to_remove.size();
+    null_edges_to_remove.swap(edges_to_remove_skipped);
+    nb_edges_previously_skipped = null_edges_to_remove.size();
   } while(true);
 
 // remove triangles made of 3 collinear points
