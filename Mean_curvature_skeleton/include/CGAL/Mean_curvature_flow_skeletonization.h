@@ -295,7 +295,7 @@ public:
 // Data members
 private:
 
-  /** a reference to the input surface mesh */
+  /** The meso-skeleton */
   mTriangleMesh m_tmesh;
 
   /** Storing indices of all vertices. */
@@ -1141,7 +1141,7 @@ private:
   }
 
   /// Track correspondent original surface points during collapse.
-
+  /// \todo remove this function and use a data member of the vertex instead for the poles
   void track_correspondence(vertex_descriptor v0, vertex_descriptor v1,
                             vertex_descriptor /* v */)
   {
