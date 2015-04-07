@@ -77,13 +77,8 @@ int main ()
  	std::vector<Point> isolated_points;
 	std::vector<Segment> edges;
 
-	typedef std::back_insert_iterator<std::vector<Point> > Point_it;
-	typedef std::back_insert_iterator<std::vector<Segment> >  Edge_it;
 
-	Point_it point_it(isolated_points);
-	Edge_it  edge_it(edges);
-
-	rs2.extract_list_output(point_it, edge_it);
+	rs2.extract_list_output(std::back_inserter(isolated_points), std::back_inserter(edges));
 
     std::cerr << "Isolated Vertices" << std::endl;
     for (std::vector<Point>::iterator it = isolated_points.begin();

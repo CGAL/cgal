@@ -340,13 +340,11 @@ protected:
 	void extract_index_output(std::ostream& os) {
 
 		typedef typename Kernel::Segment_2 Segment;
-		typedef std::back_insert_iterator<std::vector<Point> >   Point_it;
-		typedef std::back_insert_iterator<std::vector<Segment> > Edge_it;
-
-				std::vector<Point> isolated_points;
+		std::vector<Point> isolated_points;
 		std::vector<Segment> edges;
 
-		extract_list_output(Point_it(isolated_points), Edge_it(edges));
+		extract_list_output(std::back_inserter(isolated_points), std::back_inserter(edges));
+
 
 		//vertices_of_edges
 		std::set<Point> edge_vertices;
