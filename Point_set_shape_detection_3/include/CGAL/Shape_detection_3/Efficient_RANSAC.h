@@ -54,7 +54,7 @@ namespace CGAL {
 \brief A shape detection algorithm using a RANSAC method.
 
 Given a point set in 3D space with unoriented normals, sampled on surfaces,
-this classes enables to detect subsets of connected points lying on the surface of primitive shapes.
+this class enables to detect subsets of connected points lying on the surface of primitive shapes.
 Each input point is assigned to either none or at most one detected primitive
 shape. The implementation follows \cgalCite{Schnabel07}.
 
