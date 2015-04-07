@@ -59,25 +59,25 @@ Typical usage consists in five steps:
 -# Detect
 -# Retrieve detected shapes
 
-\subsection Point_set_shape_detection_3Usage_minimal Basic planar shape detection
+\subsection Point_set_shape_detection_3Usage_minimal Basic Planar Shape Detection
 
 The following minimal example reads a point set from a file and detects only planar shapes. The default parameters are used for detection.
 
 \cgalExample{Point_set_shape_detection_3/efficient_RANSAC_basic.cpp}
 
-\subsection Point_set_shape_detection_3Usage_parameters Setting parameters and using different types of shape
+\subsection Point_set_shape_detection_3Usage_parameters Setting Parameters and Using Different Types of Shape
 
 This example illustrates the user selection of parameters using the `Shape_detection::Parameters` struct. Shape detection is performed on five types of shapes (plane, cylinder, sphere, cone, torus). Basic information of the detected shapes is output to the standard output. The input point set is sampled on a surface mostly composed of piece-wise planar and cylindrical parts, in addition to free-form parts.
 
 \cgalExample{Point_set_shape_detection_3/efficient_RANSAC_parameters.cpp}
 
-\subsection Point_set_shape_detection_3Usage_point_access Retrieving points assigned to shapes
+\subsection Point_set_shape_detection_3Usage_point_access Retrieving Points Assigned to Shapes
 
 This example illustrates how to access the points assigned to each shape and compute the mean error. A timer measures the running performance.
 
 \cgalExample{Point_set_shape_detection_3/efficient_RANSAC_point_access.cpp}
 
-\section Point_set_shape_detection_3Arbitrary_shapes Other shapes
+\section Point_set_shape_detection_3Arbitrary_shapes Other Shapes
 
 Other types of shapes can be detected by implementing a shape class derived from the class `Shape_base` and registering it to the shape detection factory. This class must provide the following functions: construct a shape from a small set of given points, compute the squared distance from a query point and the shape and compute the normal deviation between a query point with normal and the normal to the shape at the closest point from the query. The used shape parameters are added as members to the derived class.
 
