@@ -347,7 +347,7 @@ installed as binaries.
 
 \cgal requires the \sc{Boost} libraries. In particular the header files
 and the threading library (`Boost.Thread` and
-`Boost.System` binaries). Version 1.39 (or higher) are needed.
+`Boost.System` binaries). Version 1.48 (or higher) are needed.
 
 On Windows, as auto-linking is used, you also need the binaries of
 `Boost.Serialization` and `Boost.DateTime`, but the
@@ -724,13 +724,13 @@ cmake -DWITH_examples=OFF -DWITH_demos=OFF -DCMAKE_BUILD_TYPE=Release
 -- MPFR libraries: /usr/lib/libmpfr.so
 -- MPFR definitions: 
 -- USING MPFR_VERSION = '3.0.0'
--- Boost version: 1.39.0
+-- Boost version: 1.48.0
 -- Found the following Boost libraries:
 -- thread
--- Boost include: /usr/include/boost_1_39_0/include/boost-1_39
+-- Boost include: /usr/include/boost_1_48_0/include/boost-1_48
 -- Boost libraries: /usr/lib/libboost_thread-mt.so;pthread
 -- Boost definitions: 
--- USING BOOST_VERSION = '1.39.0'
+-- USING BOOST_VERSION = '1.48.0'
 == Detect external libraries (DONE) ==
 
 == Write compiler_config.h ==

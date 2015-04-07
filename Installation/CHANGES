@@ -1,9 +1,12 @@
 
 -------------------------------- Release 4.6 --------------------------------
 
-Release date: March 2015
+Release date: April 2015
 
 
+* Installation
+
+  - The required version of Boost is now 1.48 or higher.
 
 
 * 2D Polyline Simplification (new package)
