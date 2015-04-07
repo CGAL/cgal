@@ -715,22 +715,13 @@ public:
     {
       int cnt;
       if (Collapse_tag == SIMPLIFICATION)
-      {
         cnt = collapse_edges_simplification();
-      }
-      else if (Collapse_tag == LINEAR)
-      {
-        cnt = collapse_edges_linear(fixed_edge_map);
-      }
-
-      if (cnt == 0)
-      {
-        break;
-      }
       else
-      {
-        num_collapses += cnt;
-      }
+        if (Collapse_tag == LINEAR)
+          cnt = collapse_edges_linear(fixed_edge_map);
+
+      if (cnt == 0) break;
+      num_collapses += cnt;
     }
     return num_collapses;
   }
@@ -1198,6 +1189,7 @@ private:
 
       vertex_descriptor vi = source(h, m_tmesh);
       vertex_descriptor vj = target(h, m_tmesh);
+      /// \todo do not use sqrt but square m_min_edge_length
       double edge_length = sqrt(squared_distance(get(m_tmesh_point_pmap, vi),
                                                  get(m_tmesh_point_pmap, vj)));
       if (internal::is_collapse_ok(m_tmesh, h) && edge_length < m_min_edge_length)
@@ -1209,6 +1201,7 @@ private:
         // invalidate the edges that will be collapsed
         // since the surface mesh is closed, 6 halfedges will be collapsed
         // (opposite is automatically added)
+        /// \todo edge should be removed from the queue rather than abusing the fixed_edge_map
         fixed_edge_map.set_is_fixed(h, true);
         fixed_edge_map.set_is_fixed(prev(h, m_tmesh), true);
         fixed_edge_map.set_is_fixed(prev(opposite(h, m_tmesh), m_tmesh), true);
@@ -1222,7 +1215,7 @@ private:
 
         track_correspondence(vi, vj, v);
 
-        cnt++;
+        ++cnt;
       }
     }
 

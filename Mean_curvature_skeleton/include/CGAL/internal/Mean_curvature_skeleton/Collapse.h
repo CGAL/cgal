@@ -42,6 +42,7 @@ namespace internal {
 * @param hg the mesh containing the given edge
 * @param v0v1 the edge to be collapsed
 */
+/// \todo see the difference with is_collapse_topologically_valid
 template<class TriangleMesh>
 bool is_collapse_ok(TriangleMesh& hg,
                     typename boost::graph_traits<TriangleMesh>::halfedge_descriptor v0v1)

@@ -108,13 +108,12 @@ public:
   Curve_skeleton(TriangleMesh& hg,
                  VertexIndexMap vertex_id_pmap,
                  HalfedgeIndexMap hedge_id_pmap,
-                 TriangleMeshPointPMap hg_point_pmap) :
-                 hg(hg),
-                 vertex_id_pmap(vertex_id_pmap),
-                 hedge_id_pmap(hedge_id_pmap),
-                 hg_point_pmap(hg_point_pmap)
-  {
-  }
+                 TriangleMeshPointPMap hg_point_pmap)
+    : hg(hg)
+    , vertex_id_pmap(vertex_id_pmap)
+    , hedge_id_pmap(hedge_id_pmap)
+    , hg_point_pmap(hg_point_pmap)
+  {}
 
   // Extracting the skeleton to a boost::graph data structure.
   template <class Graph>
@@ -122,7 +121,6 @@ public:
   {
     typedef typename boost::graph_traits<Graph>::vertex_descriptor                  vertex_desc;
     typedef typename boost::graph_traits<Graph>::edge_descriptor                    edge_desc;
-
 
     init();
     collapse();
