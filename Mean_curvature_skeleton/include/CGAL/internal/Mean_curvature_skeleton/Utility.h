@@ -53,6 +53,7 @@ mesh_split(TriangleMesh& hg,
 
   // halfedge_descriptor en = Euler::split_edge(ei, hg); // there is an issue in this function for now use the polyhedron version in the meantime
   halfedge_descriptor en = hg.split_edge(ei);
+  en->vertex()->vertices.clear();
   boost::put(hg_point_pmap, target(en,hg), pn);
   Euler::split_face(en, next(ei,hg), hg);
 
