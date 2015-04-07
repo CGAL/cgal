@@ -23,7 +23,7 @@ In our context, the error between a point and a shape is defined by its distance
 
 For very large point sets the basic RANSAC method is not practical when testing all possible shape candidates against the input data in order to find the largest shape. The main idea behind the efficient RANSAC method consists in testing shape candidates against \a subsets of the input data. Shape candidates are constructed until the probability to miss the largest candidate is lower than a user-specified parameter. The largest shape is repeatedly extracted until no more shapes, restricted to cover a minimum number of points, can be extracted. An additional gain in efficiency is achieved through exploiting the normal attributes during initial shape construction and enumeration of inliers.
 
-The \a support of a shape refers to the footprint of the points covered by the primitive. To avoid generating shapes with fragmented support we enforce a connectivity constraint by considering only one connected component, referred to as cluster, selected as the one covering the largest number of inliers. See section \ref Point_set_shape_detection_3Parameters for more details.
+The \a support of a shape refers to the footprint of the points covered by the primitive. To avoid generating shapes with fragmented support we enforce a connectivity constraint by considering only one connected component, referred to as cluster, selected as the one covering the largest number of inliers. See Section \ref Point_set_shape_detection_3Parameters for more details.
 
 The output of the shape detection algorithm is a set of detected shapes with assigned points, and all remaining points not covered by shapes. Each input point can be assigned to at most one detected shape. 
 
