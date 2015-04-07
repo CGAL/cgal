@@ -22,11 +22,11 @@
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 
-/** 
+/**
  * @file Curve_skeleton.h
- * @brief This file contains the class used to turn a contracted mesh to a 
+ * @brief This file contains the class used to turn a contracted mesh to a
  * curve skeleton.
- * 
+ *
  */
 #include <cmath>
 #include <boost/graph/graph_traits.hpp>
@@ -123,7 +123,7 @@ public:
     typedef typename boost::graph_traits<Graph>::vertex_descriptor                  vertex_desc;
     typedef typename boost::graph_traits<Graph>::edge_descriptor                    edge_desc;
 
-    
+
     init();
     collapse();
 
@@ -223,7 +223,7 @@ private:
   void init()
   {
     std::cerr <<"init" << std::endl;
-        
+
     int nb_edges = num_edges(hg);
     int num_faces = hg.size_of_facets();
     int nb_vertices = num_vertices(hg);

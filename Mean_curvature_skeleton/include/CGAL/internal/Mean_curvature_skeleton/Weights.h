@@ -56,7 +56,7 @@ public:
     double e0_square = vec0.squared_length();
     double e1_square = vec1.squared_length();
     double e2_square = vec2.squared_length();
-    double e0 = std::sqrt(e0_square); 
+    double e0 = std::sqrt(e0_square);
     double e2 = std::sqrt(e2_square);
     double cos_angle = ( e0_square + e2_square - e1_square ) / 2.0 / e0 / e2;
     double sin_angle = std::sqrt(1-cos_angle*cos_angle);
@@ -141,7 +141,7 @@ public:
 
 // Returns the cotangent value of half angle v0 v1 v2 by dividing the triangle area
 // as suggested by -[Mullen08] Spectral Conformal Parameterization-
-template<class TriangleMesh, 
+template<class TriangleMesh,
          class CotangentValue = Cotangent_value_Meyer<TriangleMesh> >
 class Cotangent_value_area_weighted : CotangentValue
 {
@@ -157,10 +157,10 @@ public:
 /////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////// Edge Weight Calculators ///////////////////////////////////
-// Cotangent weight calculator 
+// Cotangent weight calculator
 // Cotangent_value:               as suggested by -[Sorkine07] ARAP Surface Modeling-
 // Cotangent_value_area_weighted: as suggested by -[Mullen08] Spectral Conformal Parameterization-
-template<class TriangleMesh, 
+template<class TriangleMesh,
          class CotangentValue = Cotangent_value_minimum_zero<TriangleMesh> >
 class Cotangent_weight : CotangentValue
 {
@@ -179,7 +179,7 @@ public:
      // Only one triangle for border edges
      if ( is_border(e, hg) ||
           is_border( opposite(e, hg), hg) )
-     {       
+     {
        halfedge_descriptor e_cw = opposite(next(e, hg), hg);
        vertex_descriptor v2 = source(e_cw, hg);
        if ( is_border(e_cw, hg) ||
@@ -193,7 +193,7 @@ public:
      else
      {
         halfedge_descriptor e_cw = opposite(next(e, hg), hg);
-        vertex_descriptor v2 = source(e_cw, hg);     
+        vertex_descriptor v2 = source(e_cw, hg);
         halfedge_descriptor e_ccw = prev(opposite(e, hg), hg);
         vertex_descriptor v3 = source(e_ccw, hg);
 
@@ -203,7 +203,7 @@ public:
 };
 
 // Single cotangent from -[Chao10] Simple Geometric Model for Elastic Deformation
-template<class TriangleMesh, 
+template<class TriangleMesh,
          class CotangentValue = Cotangent_value_Meyer<TriangleMesh> >
 class Single_cotangent_weight : CotangentValue
 {
@@ -218,7 +218,7 @@ public:
   double operator()(halfedge_descriptor e, TriangleMesh& hg)
   {
      if( is_border(e, hg) ) { return 0.0;}
-     
+
      vertex_descriptor v0 = target(e, hg);
      vertex_descriptor v1 = source(e, hg);
 
@@ -264,7 +264,7 @@ public:
     else
     {
       halfedge_descriptor e_cw = opposite(next(e, hg), hg);
-      vertex_descriptor v2 = source(e_cw, hg);     
+      vertex_descriptor v2 = source(e_cw, hg);
       halfedge_descriptor e_ccw = prev(opposite(e, hg), hg);
       vertex_descriptor v3 = source(e_ccw, hg);
 
@@ -282,12 +282,12 @@ private:
     double e0_square = vec0.squared_length();
     double e1_square = vec1.squared_length();
     double e2_square = vec2.squared_length();
-    double e0 = std::sqrt(e0_square); 
+    double e0 = std::sqrt(e0_square);
     double e2 = std::sqrt(e2_square);
     double cos_angle = ( e0_square + e2_square - e1_square ) / 2.0 / e0 / e2;
     cos_angle = (std::max)(-1.0, (std::min)(1.0, cos_angle)); // clamp into [-1, 1]
     double angle = acos(cos_angle);
-    
+
     return ( tan(angle/2.0) );
   }
 
@@ -310,7 +310,7 @@ private:
   }
 };
 
-template< class TriangleMesh, 
+template< class TriangleMesh,
           class PrimaryWeight = Cotangent_weight<TriangleMesh>,
           class SecondaryWeight = Mean_value_weight<TriangleMesh> >
 class Hybrid_weight : public PrimaryWeight, SecondaryWeight

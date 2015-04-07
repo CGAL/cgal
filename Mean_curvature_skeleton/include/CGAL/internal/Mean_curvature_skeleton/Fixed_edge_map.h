@@ -22,7 +22,7 @@
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 
-/** 
+/**
  * @file Fixed_edge_map.h
  * @brief This file contains the class to record if an edge is fixed.
  *

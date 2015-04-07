@@ -22,9 +22,9 @@
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 
-/** 
+/**
  * @file Utility.h
- * @brief This file contains some helper functions like splitting an edge at a 
+ * @brief This file contains some helper functions like splitting an edge at a
  * given point.
  */
 
@@ -34,7 +34,7 @@
 
 namespace CGAL {
 namespace internal {
-  
+
 /**
 * Split the edge
 * @param hg the mesh containing the given edge
@@ -43,14 +43,14 @@ namespace internal {
 */
 template<class TriangleMesh, class TriangleMeshPointPMap>
 typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
-mesh_split(TriangleMesh& hg, 
+mesh_split(TriangleMesh& hg,
            TriangleMeshPointPMap& hg_point_pmap,
            typename boost::graph_traits<TriangleMesh>::halfedge_descriptor ei,
            typename TriangleMesh::Traits::Point_3 pn)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor            halfedge_descriptor;
 
-  
+
   // halfedge_descriptor en = Euler::split_edge(ei, hg); // there is an issue in this function for now use the polyhedron version in the meantime
   halfedge_descriptor en = hg.split_edge(ei);
   boost::put(hg_point_pmap, target(en,hg), pn);
@@ -102,7 +102,7 @@ double get_surface_area(TriangleMesh& hg, TriangleMeshPointPMap& hg_point_pmap)
   BOOST_FOREACH(face_descriptor fd, faces(hg))
   {
     halfedge_descriptor hd = halfedge(fd, hg);
-    
+
     vertex_descriptor v1 = target(hd, hg);
     hd = next(hd, hg);
     vertex_descriptor v2 = target(hd, hg);

@@ -22,14 +22,14 @@
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 
-/** 
+/**
  * @file Track_correspondence_visitor.h
  * @brief This file contains the visitor class to track the correspondent vertices
  * during edge collapse.
  *
  * The visitor class track vertices that are collapsed onto the given vertex.
  * It is needed when using simplification package to do the edge collapse.
- * 
+ *
  */
 
 // Visitor base
@@ -57,7 +57,7 @@ struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<TriangleMe
   Track_correspondence_visitor(TriangleMeshPointPMap* point_pmap,
                                int max_id) :
     hg_point_pmap(point_pmap),
-    max_id(max_id), 
+    max_id(max_id),
     is_medially_centered(false)
   {}
 
@@ -66,9 +66,9 @@ struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<TriangleMe
                        std::vector<Point>* cell_dual,
                        int max_id) :
     hg_point_pmap(point_pmap),
-    max_id(max_id), 
+    max_id(max_id),
     is_medially_centered(true),
-    poles(poles), 
+    poles(poles),
     cell_dual(cell_dual)
     {}
 

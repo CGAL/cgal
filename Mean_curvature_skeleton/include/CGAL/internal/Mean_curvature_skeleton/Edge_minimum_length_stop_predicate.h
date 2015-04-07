@@ -39,10 +39,10 @@ namespace internal {
 //
 //*******************************************************************************************************************
 
-// 
-// Stops when all the edges have length greater than the minimum required edge length 
 //
-template<class ECM_>    
+// Stops when all the edges have length greater than the minimum required edge length
+//
+template<class ECM_>
 class Minimum_length_predicate
 {
 public:
@@ -50,36 +50,36 @@ public:
   typedef ECM_ ECM ;
 
   typedef SMS::Edge_profile<ECM> Profile ;
-  
+
 private :
 
   typedef typename ECM::Traits::Point_3 Point ; //temporary it should be a point property map
   typedef typename Kernel_traits<Point>::Kernel      Kernel ;
 
 public :
-  
+
   typedef typename boost::graph_traits<ECM>::halfedge_descriptor halfedge_descriptor ;
   typedef typename boost::graph_traits<ECM>::edges_size_type size_type ;
-  
+
   typedef typename Kernel::FT FT ;
 
 public :
-  
+
   Minimum_length_predicate( FT aThres ) : mThres(aThres * aThres) {}
-  
+
   bool operator()( FT const&      aCurrentCost
                  , Profile const& //aEdgeProfile
                  , size_type      //aInitialCount
                  , size_type      //aCurrentCount
-                 ) const 
+                 ) const
   {
     return aCurrentCost > mThres ;
   }
-  
+
 private:
-  
+
   FT mThres ;
-};    
+};
 
 } //namespace internal
 
@@ -89,4 +89,4 @@ private:
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MINIMUM_LENGTH_PREDICATE_H //
 // EOF //
- 
+

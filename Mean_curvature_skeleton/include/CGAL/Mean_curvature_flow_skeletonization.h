@@ -189,7 +189,7 @@ template <class TriangleMesh,
           class SparseLinearAlgebraTraits_d = Default>
 #else
 template <class TriangleMesh,
-          class Traits_ = Default,          
+          class Traits_ = Default,
           class VertexPointMap_ = Default,
           class SparseLinearAlgebraTraits_d_ = Default,
           Collapse_algorithm_tag Collapse_tag = LINEAR,
@@ -207,7 +207,7 @@ public:
   typedef typename Default::Get<
     VertexPointMap_,
     typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type
-  >::type VertexPointMap; 
+  >::type VertexPointMap;
 
   typedef typename Default::Get<
     Traits_,
@@ -247,14 +247,14 @@ public:
   };
   ///@endcond
 
-  /// The graph type representing the skeleton. The vertex property 
+  /// The graph type representing the skeleton. The vertex property
   /// `Vmap` is a struct with a member `point` of type `Traits::Point_3`
-  /// and a member `vertices` of type 
+  /// and a member `vertices` of type
   /// `std::vector<boost::graph_traits<TriangleMesh>::%vertex_descriptor>`.
   /// See  <a href="http://www.boost.org/doc/libs/release/libs/graph/doc/adjacency_list.html"><tt>the boost documentation</tt></a> page for more details
   typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Vmap> Skeleton;
 
- 
+
 /// @}
 
   // Repeat mTriangleMesh types
@@ -408,9 +408,9 @@ public:
    * - `min_edge_length()` == 0.002 * the length of the diagonal of the bounding box of `tmesh`
    *
    * @pre `tmesh` is a triangulated surface mesh without borders and has exactly one connected component.
-   * @param tmesh 
+   * @param tmesh
    *        input triangulated surface mesh.
-   * @param vertex_point_map 
+   * @param vertex_point_map
    *        property map which associates a point to each vertex of the graph.
    * @param traits
    *        an instance of the traits class.
@@ -472,7 +472,7 @@ public:
   {
     return m_max_iterations;
   }
-  
+
   /// The convergence is considered to be reached if the variation of the area of
   /// the meso-skeleton after one iteration is smaller than
   /// `area_variation_factor()*original_area` where `original_area` is the area of the input
@@ -492,10 +492,10 @@ public:
     m_delta_area = value;
   }
   /// @}
-  
+
   /// \name Vertex Motion Parameters
   /// @{
-  
+
   /// \cgalAdvancedBegin
   /// Controls the velocity of movement and approximation quality:
   /// increasing this value makes the mean curvature flow based contraction converge
@@ -539,8 +539,8 @@ public:
   {
     m_is_medially_centered = value;
   }
-  
-  void set_medially_centered_speed_tradeoff(double value) 
+
+  void set_medially_centered_speed_tradeoff(double value)
   {
     m_omega_P = value;
   }
@@ -637,7 +637,7 @@ public:
     convert_to_skeleton(skeleton);
   }
   /// @}
-  
+
   /// \name Low Level Functions
   /// \cgalAdvancedBegin
   /// The following functions enable the user to run the mean curvature flow skeletonization algorithm step by step.
@@ -654,8 +654,8 @@ public:
     update_vertex_id();
 
     compute_edge_weight();
- 
-  // AF: attention: num_vertices will not decrease for a Surface_mesh 
+
+  // AF: attention: num_vertices will not decrease for a Surface_mesh
     int nver = num_vertices(m_tmesh);
     int nrows;
     if (m_is_medially_centered)
@@ -1091,7 +1091,7 @@ private:
   {
     m_new_id.clear();
     int cnt = 0;
-    
+
     BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
     {
       int id = get(m_vertex_id_pmap, vd);

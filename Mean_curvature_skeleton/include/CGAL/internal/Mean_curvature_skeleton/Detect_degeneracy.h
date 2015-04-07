@@ -22,7 +22,7 @@
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 
-/** 
+/**
  * @file Detect_degeneracy.h
  * @brief This file contains functions to detect degeneracy at a given vertex.
  *
@@ -40,7 +40,7 @@ namespace internal {
 /**
 * Test if a given vertex is degenerate.
 *
-* The approach is to count the Euler characteristics within a small geodesic 
+* The approach is to count the Euler characteristics within a small geodesic
 * distance at the given vertex. If it is not equal to one, which is the case
 * for disk topology, the vertex is considered to be degenerate.
 

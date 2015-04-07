@@ -22,10 +22,10 @@
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 
-/** 
+/**
  * @file Collapse.h
  * @brief This file contains the helper functions for collapsing short edges.
- * 
+ *
  * The approach is based on the functions from surface_mesh.
  */
 
@@ -43,7 +43,7 @@ namespace internal {
 * @param v0v1 the edge to be collapsed
 */
 template<class TriangleMesh>
-bool is_collapse_ok(TriangleMesh& hg, 
+bool is_collapse_ok(TriangleMesh& hg,
                     typename boost::graph_traits<TriangleMesh>::halfedge_descriptor v0v1)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor	         vertex_descriptor;
@@ -90,7 +90,7 @@ bool is_collapse_ok(TriangleMesh& hg,
   }
 
   // edge between two boundary vertices should be a boundary edge
-  if (is_border(v0, hg) 
+  if (is_border(v0, hg)
    && is_border(v1, hg)
    && !(is_border(v0v1, hg))
    && !(is_border(v1v0,hg)))
@@ -123,7 +123,7 @@ bool is_collapse_ok(TriangleMesh& hg,
 * @param vj the other vertex incident to the edge.
 */
 template<class TriangleMesh>
-bool find_halfedge(TriangleMesh& hg, 
+bool find_halfedge(TriangleMesh& hg,
                    typename boost::graph_traits<TriangleMesh>::vertex_descriptor vi,
                    typename boost::graph_traits<TriangleMesh>::vertex_descriptor vj)
 {
