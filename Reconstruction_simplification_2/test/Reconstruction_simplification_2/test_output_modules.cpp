@@ -16,8 +16,6 @@
 
 
 #include <CGAL/property_map.h>
-#include <CGAL/value_type_traits.h>
-
 #include "testing_tools.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;

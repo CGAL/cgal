@@ -15,7 +15,6 @@
 #include <cassert>
 
 #include <CGAL/property_map.h>
-#include <CGAL/value_type_traits.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                                          Point;

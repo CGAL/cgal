@@ -16,7 +16,6 @@
 #include <cassert>
 
 #include <CGAL/property_map.h>
-#include <CGAL/value_type_traits.h>
 
 
 
