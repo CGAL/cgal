@@ -34,29 +34,11 @@ typedef CGAL::Second_of_pair_property_map <PointMassPair> Mass_property_map;
 
 typedef CGAL::Reconstruction_simplification_2<K, Point_property_map, Mass_property_map> Rs_2;
 
-typedef Rs_2::Vertex Vertex;
-
-typedef Rs_2::Reconstruction_edge_2 R_edge_2;
-
-typedef CGAL::Reconstruction_triangulation_2<K> Rt_2;
-
-typedef Rt_2::Finite_edges_iterator Finite_edges_iterator;
-typedef Rt_2::Vertex_iterator Vertex_iterator;
-
-typedef Rt_2::Edge Edge;
-
 
 void list_output(Rs_2& rs2);
 void index_output(Rs_2& rs2);
 
 
-void print_edge(Edge edge) {
-	int i = edge.second;
-	const Point& a = edge.first->vertex((i+1)%3)->point();
-	const Point& b = edge.first->vertex((i+2)%3)->point();
-	std::cout << a << " , " << b  << std::endl;
-
-}
 
 void load_xy_file(const std::string& filename, PointMassList& points)
 {

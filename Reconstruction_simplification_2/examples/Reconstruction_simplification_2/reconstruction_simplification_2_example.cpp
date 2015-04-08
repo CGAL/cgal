@@ -29,19 +29,8 @@ typedef std::list<PointMassPair> PointMassList;
 typedef CGAL::First_of_pair_property_map <PointMassPair>  Point_property_map;
 typedef CGAL::Second_of_pair_property_map <PointMassPair> Mass_property_map;
 
-
 typedef CGAL::Reconstruction_simplification_2<K, Point_property_map, Mass_property_map> Rs_2;
 
-typedef Rs_2::Reconstruction_edge_2 R_edge_2;
-
-typedef Rs_2::Vertex Vertex;
-
-typedef CGAL::Reconstruction_triangulation_2<K> Rt_2;
-
-typedef Rt_2::Finite_edges_iterator Finite_edges_iterator;
-typedef Rt_2::Vertex_iterator Vertex_iterator;
-
-typedef Rt_2::Edge Edge;
 
 
 

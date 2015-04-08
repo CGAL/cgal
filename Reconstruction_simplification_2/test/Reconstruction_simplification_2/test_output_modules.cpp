@@ -48,7 +48,6 @@ typedef Rt_2::Edge Edge;
 
 void test_list_output(Rs_2& rs2);
 void test_index_output(Rs_2& rs2);
-void test_tds_output(Rs_2& rs2);
 
 
 
@@ -75,7 +74,6 @@ int main ()
 
 	test_list_output(rs2);
 	test_index_output(rs2);
-	test_tds_output(rs2);
 
 }
 
