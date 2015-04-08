@@ -89,9 +89,6 @@
 
 #include <queue>
 
-#include <Eigen/Sparse>
-#include <Eigen/SparseLU>
-
 // for default parameters
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
@@ -278,18 +275,13 @@ public:
   typedef SMS::Edge_profile<mTriangleMesh>                                     Profile;
 
   // Repeat Triangulation types
-  typedef CGAL::Exact_predicates_exact_constructions_kernel                    K;
-  typedef K::Vector_3                                                          Exact_vector;
-  typedef CGAL::Triangulation_vertex_base_with_info_3<unsigned, K>             Vb;
+  typedef CGAL::Exact_predicates_exact_constructions_kernel                    Exact_kernel;
+  typedef CGAL::Triangulation_vertex_base_with_info_3<unsigned, Exact_kernel>  Vb;
   typedef CGAL::Triangulation_data_structure_3<Vb>                             Tds;
-  typedef CGAL::Delaunay_triangulation_3<K, Tds>                               Delaunay;
+  typedef CGAL::Delaunay_triangulation_3<Exact_kernel, Tds>                    Delaunay;
   typedef Delaunay::Point                                                      Exact_point;
   typedef Delaunay::Cell_handle                                                Cell_handle;
   typedef Delaunay::Vertex_handle                                              TriVertex_handle;
-  typedef Delaunay::Locate_type                                                Locate_type;
-  typedef Delaunay::Finite_vertices_iterator                                   Finite_vertices_iterator;
-  typedef Delaunay::Finite_edges_iterator                                      Finite_edges_iterator;
-  typedef Delaunay::Finite_facets_iterator                                     Finite_facets_iterator;
   typedef Delaunay::Finite_cells_iterator                                      Finite_cells_iterator;
 
 // Data members
@@ -1458,25 +1450,21 @@ private:
 
   /// Compute the Voronoi pole for surface vertices. The pole is the furthest
   /// vertex in the Voronoi cell containing the given vertex.
+  /// \todo only use exact points for the call to dual?
   void compute_voronoi_pole()
   {
     MCFSKEL_DEBUG(std::cout << "start compute_voronoi_pole\n";)
     compute_vertex_normal();
 
     std::vector<std::pair<Exact_point, unsigned> > points;
-    std::vector<std::vector<int> > point_to_pole;
+    std::vector<std::vector<int> > point_to_pole(num_vertices(m_tmesh));
 
-    points.clear();
     m_cell_dual.clear();
-    point_to_pole.clear();
-    point_to_pole.resize(num_vertices(m_tmesh));
-
+    CGAL::Cartesian_converter<Traits, Exact_kernel> to_exact;
     BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
     {
       int vid = get(m_vertex_id_pmap, v);
-      Exact_point tp((get(m_tmesh_point_pmap, v)).x(),
-                     (get(m_tmesh_point_pmap, v)).y(),
-                     (get(m_tmesh_point_pmap, v)).z());
+      Exact_point tp = to_exact( get(m_tmesh_point_pmap, v) );
       points.push_back(std::make_pair(tp, vid));
     }
 
@@ -1501,11 +1489,10 @@ private:
     }
 
     m_poles.clear();
+    Cartesian_converter<Exact_kernel, Traits> to_input;
     for (size_t i = 0; i < point_to_pole.size(); ++i)
     {
-      Point surface_point = Point(to_double(points[i].first.x()),
-                                  to_double(points[i].first.y()),
-                                  to_double(points[i].first.z()));
+      Point surface_point = to_input(points[i].first);
 
       double max_neg_t = 1;
       int max_neg_i = -1;
