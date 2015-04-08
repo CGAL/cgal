@@ -78,7 +78,6 @@ exposed to the user is the <I> Reconstruction_simplification_2</I>  class.
 \subsection Reconstruction_simplification_2Sample Sample Call
 
 \code{.cpp}
-
 /*
 K            	 : a geometric kernel, used for the reconstruction and simplification task.
 
@@ -92,9 +91,6 @@ Reconstruction_simplification_2<K, PointPMap, MassPMap>
     	rs2(points.begin(), points.end(), point_pmap, mass_pmap);
 
     rs2.reconstruct(100); // perform 100 contraction steps
-
-
-
 \endcode
 
 Alternatively to calling the reconstruction module using
@@ -103,12 +99,10 @@ Alternatively to calling the reconstruction module using
 \endcode
 
 one can use the reconstruct_until function
-
 \code{.cpp}
   rs2.reconstruct_until(20); // perform edge contractions until only 20 vertices are left.
 \endcode
-
- and specify the number of output vertices one wants to keep as illustrated in the following picture.
+and specify the number of output vertices one wants to keep as illustrated in the following picture.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_20vertices,20vertices.png}
 Examples of \f$20 \f$ vertex reconstructions from images consisting of  \f$2000, 400 \f$ and  \f$200 \f$ input points respectively. The example shows nicely 
