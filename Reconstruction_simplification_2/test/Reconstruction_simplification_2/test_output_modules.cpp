@@ -142,37 +142,3 @@ void test_list_output(Rs_2& rs2) {
 
 
 }
-
-void test_tds_output(Rs_2& rs2) {
-
-	std::cout <<"(-------------Tds OUTPUT---------- )" << std::endl;
-
-	Rt_2 rt2;
-	rs2.extract_tds_output(rt2);
-
-	int vertex_count = 0;
-	for (Vertex_iterator vi = rt2.vertices_begin();
-					  vi != rt2.vertices_end(); ++vi) {
-
-		FT relevance = (*vi).get_relevance();
-		if (relevance > 0) {
-			std::cout  <<  *vi << std::endl;
-			vertex_count++;
-		}
-	}
-	std::cout <<"vertex_count " << vertex_count << std::endl;
-	assert(vertex_count == 18);
-
-	int edge_count = 0;
-	for (Finite_edges_iterator ei = rt2.finite_edges_begin(); ei != rt2.finite_edges_end(); ++ei) {
-		FT relevance = (*ei).first->relevance((*ei).second);
-		if (relevance > 0) {
-			print_edge(*ei);
-
-			edge_count++;
-		}
-	}
-	std::cout <<"edge_count " << edge_count << std::endl;
-	assert(edge_count == 31);
-
-}

@@ -47,7 +47,6 @@ typedef Rt_2::Edge Edge;
 
 
 void list_output(Rs_2& rs2);
-void tds_output(Rs_2& rs2);
 void index_output(Rs_2& rs2);
 
 
@@ -83,7 +82,6 @@ int main ()
 	rs2.reconstruct(100); //100 steps
 
 	list_output(rs2);
-	tds_output(rs2);
 	index_output(rs2);
 }
 
@@ -107,29 +105,6 @@ void list_output(Rs_2& rs2) {
     }
 }
 
-void tds_output(Rs_2& rs2) {
-
-	std::cout << "(-------------Tds output---------- )" << std::endl;
-
-	Rt_2 rt2;
-	rs2.extract_tds_output(rt2);
-
-	for (Vertex_iterator vi = rt2.vertices_begin();
-					  vi != rt2.vertices_end(); ++vi) {
-
-		FT relevance = (*vi).get_relevance();
-		if (relevance > 0) {
-			std::cout  <<  *vi << std::endl;
-		}
-	}
-
-	for (Finite_edges_iterator ei = rt2.finite_edges_begin(); ei != rt2.finite_edges_end(); ++ei) {
-		FT relevance = (*ei).first->relevance((*ei).second);
-		if (relevance > 0) {
-			print_edge(*ei);
-		}
-	}
-}
 
 void index_output(Rs_2& rs2) {
 
