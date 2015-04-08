@@ -274,9 +274,9 @@ protected:
 	\tparam Kernel is the geometric kernel, used for the reconstruction and
 						simplification task.
 
-	\tparam Output_Vertex_Iterator The `Output-Iterator` type for storing the points
+	\tparam OutputVertexIterator The `Output-Iterator` type for storing the points
 
-	\tparam Output_Edge_Iterator The `Output-Iterator` type for storing the
+	\tparam OutputEdgeIterator The `Output-Iterator` type for storing the
 											edges (as Segments).
 	 */
 	template<class OutputVertexIterator, class OutputEdgeIterator>
