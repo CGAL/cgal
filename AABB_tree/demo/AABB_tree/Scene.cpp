@@ -26,6 +26,8 @@
 // constants
 const int slow_distance_grid_size = 100;
 const int fast_distance_grid_size = 20;
+#define _SIGNED 0
+#define _UNSIGNED 1
 
 Scene::Scene()
     : m_frame (new ManipulatedFrame())
@@ -44,6 +46,7 @@ Scene::Scene()
     m_red_ramp.build_red();
     m_blue_ramp.build_blue();
     m_max_distance_function = (FT)0.0;
+    texture = new Texture(m_grid_size,m_grid_size);
 
 
 }
@@ -55,21 +58,31 @@ Scene::~Scene()
     buffers[0].destroy();
     buffers[1].destroy();
     buffers[2].destroy();
+    buffers[3].destroy();
+    buffers[4].destroy();
+    buffers[5].destroy();
+    buffers[6].destroy();
+    buffers[7].destroy();
     vao[0].destroy();
     vao[1].destroy();
     vao[2].destroy();
+    vao[3].destroy();
+    vao[4].destroy();
+    vao[5].destroy();
+    vao[6].destroy();
+
 
 }
 
 void Scene::compile_shaders()
 {
     initializeGLFunctions();
-    if(! buffers[0].create() || !buffers[1].create() || !buffers[2].create())
+    if(! buffers[0].create() || !buffers[1].create() || !buffers[2].create() || !buffers[3].create() || !buffers[4].create() || !buffers[5].create() || !buffers[6].create() || !buffers[7].create())
     {
         std::cerr<<"VBO Creation FAILED"<<std::endl;
     }
 
-    if(!vao[0].create() || !vao[1].create() || !vao[2].create())
+    if(!vao[0].create() || !vao[1].create() || !vao[2].create() || !vao[3].create() || !vao[4].create() || !vao[5].create() || !vao[6].create())
     {
         std::cerr<<"VAO Creation FAILED"<<std::endl;
     }
@@ -82,9 +95,10 @@ void Scene::compile_shaders()
         "attribute highp vec4 vertex;\n"
         //  "uniform highp mat4 ortho_matrix;\n"
         "uniform highp mat4 mvp_matrix;\n"
+        "uniform highp mat4 f_matrix;\n"
         "void main(void)\n"
         "{\n"
-        "   gl_Position = mvp_matrix * vertex;\n"
+        "   gl_Position = mvp_matrix * f_matrix * vertex;\n"
         "}"
     };
     //Vertex source code
@@ -122,7 +136,59 @@ void Scene::compile_shaders()
         std::cerr<<"linking Program FAILED"<<std::endl;
     }
     rendering_program.bind();
-    // changed();
+
+    //Vertex source code
+    const char tex_vertex_source[] =
+    {
+        // "#version 330 \n"
+        "attribute highp vec4 vertex;\n"
+        "attribute highp vec2 tex_coord; \n"
+        "uniform highp mat4 mvp_matrix;\n"
+        "uniform highp mat4 f_matrix;\n"
+        "varying highp vec2 texc;\n"
+        "void main(void)\n"
+        "{\n"
+        "   gl_Position = mvp_matrix * f_matrix * vertex;\n"
+        "    texc = tex_coord;\n"
+        "}"
+    };
+    //Vertex source code
+    const char tex_fragment_source[] =
+    {
+        //"#version 330 \n"
+        "uniform sampler2D texture;\n"
+        "varying highp vec2 texc;\n"
+        "void main(void) { \n"
+        "gl_FragColor = texture2D(texture, texc.st);\n"
+        "} \n"
+        "\n"
+    };
+    QOpenGLShader *tex_vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
+    if(!tex_vertex_shader->compileSourceCode(tex_vertex_source))
+    {
+        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+    }
+
+    QOpenGLShader *tex_fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
+    if(!tex_fragment_shader->compileSourceCode(tex_fragment_source))
+    {
+        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+    }
+
+    if(!tex_rendering_program.addShader(tex_vertex_shader))
+    {
+        std::cerr<<"adding vertex shader FAILED"<<std::endl;
+    }
+    if(!tex_rendering_program.addShader(tex_fragment_shader))
+    {
+        std::cerr<<"adding fragment shader FAILED"<<std::endl;
+    }
+    if(!tex_rendering_program.link())
+    {
+        std::cerr<<"linking Program FAILED"<<std::endl;
+    }
+    tex_rendering_program.bind();
+
 }
 
 void Scene::initialize_buffers()
@@ -163,52 +229,257 @@ void Scene::initialize_buffers()
     rendering_program.release();
     vao[2].release();
 
+    //cutting segments
+    vao[3].bind();
+    buffers[3].bind();
+    buffers[3].allocate(pos_cut_segments.data(), pos_cut_segments.size()*sizeof(float));
+    poly_vertexLocation = rendering_program.attributeLocation("vertex");
+    rendering_program.bind();
+    rendering_program.setAttributeBuffer(poly_vertexLocation,GL_FLOAT,0,3);
+    rendering_program.enableAttributeArray(poly_vertexLocation);
+    buffers[3].release();
+    rendering_program.release();
+    vao[3].release();
+
+    //cutting plane
+    vao[4].bind();
+    buffers[4].bind();
+    buffers[4].allocate(pos_plane.data(), pos_plane.size()*sizeof(float));
+    poly_vertexLocation = rendering_program.attributeLocation("vertex");
+    rendering_program.bind();
+    rendering_program.setAttributeBuffer(poly_vertexLocation,GL_FLOAT,0,3);
+    rendering_program.enableAttributeArray(poly_vertexLocation);
+    buffers[4].release();
+    rendering_program.release();
+
+    vao[4].release();
+
+    //grid
+    vao[5].bind();
+    buffers[5].bind();
+    buffers[5].allocate(pos_grid.data(), pos_grid.size()*sizeof(float));
+    poly_vertexLocation = rendering_program.attributeLocation("vertex");
+    rendering_program.bind();
+    rendering_program.setAttributeBuffer(poly_vertexLocation,GL_FLOAT,0,3);
+    rendering_program.enableAttributeArray(poly_vertexLocation);
+    buffers[5].release();
+    rendering_program.release();
+    vao[5].release();
+
+    //cutting plane
+    vao[6].bind();
+    buffers[6].bind();
+    buffers[6].allocate(pos_plane.data(), pos_plane.size()*sizeof(float));
+    poly_vertexLocation = tex_rendering_program.attributeLocation("vertex");
+    tex_rendering_program.bind();
+    tex_rendering_program.setAttributeBuffer(poly_vertexLocation,GL_FLOAT,0,3);
+    tex_rendering_program.enableAttributeArray(poly_vertexLocation);
+    buffers[6].release();
+    tex_rendering_program.release();
+
+    buffers[7].bind();
+    buffers[7].allocate(tex_map.data(), tex_map.size()*sizeof(float));
+    tex_Location = tex_rendering_program.attributeLocation("tex_coord");
+    tex_rendering_program.bind();
+    tex_rendering_program.setAttributeBuffer(tex_Location,GL_FLOAT,0,2);
+    tex_rendering_program.enableAttributeArray(tex_Location);
+    buffers[7].release();
+    tex_rendering_program.release();
+
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_RGB,
+                 texture->getWidth(),
+                 texture->getHeight(),
+                 0,
+                 GL_RGB,
+                 GL_UNSIGNED_BYTE,
+                 texture->getData());
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
+    vao[6].release();
+
+
+
 }
 
-void Scene::compute_elements()
+void Scene::compute_elements(int mode)
 {
     pos_points.resize(0);
     pos_lines.resize(0);
     pos_poly.resize(0);
-
-    std::list<Point>::iterator pit;
-    for(pit = m_points.begin(); pit != m_points.end(); pit++)
+    pos_cut_segments.resize(0);
+    tex_map.resize(0);
+    pos_grid.resize(66);
+    pos_plane.resize(18);
+    float diag = .6f * float(bbox_diag());
+    //The Points
     {
-        const Point& p = *pit;
-        pos_points.push_back(p.x());
-        pos_points.push_back(p.y());
-        pos_points.push_back(p.z());
+        std::list<Point>::iterator pit;
+        for(pit = m_points.begin(); pit != m_points.end(); pit++)
+        {
+            const Point& p = *pit;
+            pos_points.push_back(p.x());
+            pos_points.push_back(p.y());
+            pos_points.push_back(p.z());
+        }
     }
-    std::list<Segment>::iterator sit;
-    for(sit = m_segments.begin(); sit != m_segments.end(); sit++)
+    //The Segements
     {
-        const Segment& s = *sit;
-        const Point& p = s.source();
-        const Point& q = s.target();
+        std::list<Segment>::iterator sit;
+        for(sit = m_segments.begin(); sit != m_segments.end(); sit++)
+        {
+            const Segment& s = *sit;
+            const Point& p = s.source();
+            const Point& q = s.target();
 
-        pos_lines.push_back(p.x());
-        pos_lines.push_back(p.y());
-        pos_lines.push_back(p.z());
+            pos_lines.push_back(p.x());
+            pos_lines.push_back(p.y());
+            pos_lines.push_back(p.z());
 
-        pos_lines.push_back(q.x());
-        pos_lines.push_back(q.y());
-        pos_lines.push_back(q.z());
+            pos_lines.push_back(q.x());
+            pos_lines.push_back(q.y());
+            pos_lines.push_back(q.z());
+        }
     }
-    typename Polyhedron::Edge_iterator he;
-    for(he = m_pPolyhedron->edges_begin();
-        he != m_pPolyhedron->edges_end();
-        he++)
+    //The Polygon's edges
     {
-        const Point& a = he->vertex()->point();
-        const Point& b = he->opposite()->vertex()->point();
-        pos_poly.push_back(a.x());
-        pos_poly.push_back(a.y());
-        pos_poly.push_back(a.z());
+        typename Polyhedron::Edge_iterator he;
+        for(he = m_pPolyhedron->edges_begin();
+            he != m_pPolyhedron->edges_end();
+            he++)
+        {
+            const Point& a = he->vertex()->point();
+            const Point& b = he->opposite()->vertex()->point();
+            pos_poly.push_back(a.x());
+            pos_poly.push_back(a.y());
+            pos_poly.push_back(a.z());
 
-        pos_poly.push_back(b.x());
-        pos_poly.push_back(b.y());
-        pos_poly.push_back(b.z());
+            pos_poly.push_back(b.x());
+            pos_poly.push_back(b.y());
+            pos_poly.push_back(b.z());
+        }
     }
+    //The cutting segments
+    {
+        for ( std::vector<Segment>::const_iterator csit = m_cut_segments.begin(),
+              end = m_cut_segments.end() ; csit != end ; ++csit )
+        {
+            const Point& a = csit->source();
+            const Point& b = csit->target();
+
+            pos_cut_segments.push_back(a.x());
+            pos_cut_segments.push_back(a.y());
+            pos_cut_segments.push_back(a.z());
+
+            pos_cut_segments.push_back(b.x());
+            pos_cut_segments.push_back(b.y());
+            pos_cut_segments.push_back(b.z());
+        }
+    }
+    //The cutting plane
+    {
+
+        pos_plane[0]= -diag; pos_plane[1]=-diag; pos_plane[2]=0.0;
+        pos_plane[3]= -diag; pos_plane[4]= diag; pos_plane[5]=0.;
+        pos_plane[6]=  diag; pos_plane[7]= diag; pos_plane[8]=0.;
+        pos_plane[9]= -diag; pos_plane[10]= -diag; pos_plane[11]=0.;
+        pos_plane[12]= diag;    pos_plane[13]= diag; pos_plane[14]= 0.;
+        pos_plane[15]= diag;    pos_plane[16]= -diag; pos_plane[17]= 0.;
+
+        //UV Mapping
+        tex_map.push_back(-0.11);
+        tex_map.push_back(-0.11);
+
+        tex_map.push_back(-0.11);
+        tex_map.push_back(1.11);
+
+        tex_map.push_back(1.11);
+        tex_map.push_back(1.11);
+
+        tex_map.push_back(-0.11);
+        tex_map.push_back(-0.11);
+
+        tex_map.push_back(1.11);
+        tex_map.push_back(1.11);
+
+        tex_map.push_back(1.11);
+        tex_map.push_back(-0.11);
+
+
+
+
+
+    }
+    //The grid
+    {
+        float z = 0;
+        float x = (2 * diag)/10.0;
+        float y = (2 * diag)/10.0;
+        for(int u = 0; u < 11; u++)
+        {
+
+            pos_grid.push_back(-diag + x* u);
+            pos_grid.push_back(-diag);
+            pos_grid.push_back(z);
+
+            pos_grid.push_back(-diag + x* u);
+            pos_grid.push_back(diag);
+            pos_grid.push_back(z);
+        }
+        for(int v=0; v<11; v++)
+        {
+
+            pos_grid.push_back(-diag);
+            pos_grid.push_back(-diag + v * y);
+            pos_grid.push_back(z);
+
+            pos_grid.push_back(diag);
+            pos_grid.push_back(-diag + v * y);
+            pos_grid.push_back(z);
+
+        }
+
+    }
+    //The texture
+    switch(mode)
+    {
+    case _SIGNED:
+        for( int i=0 ; i < texture->getWidth(); i++ )
+        {
+            for( int j=0 ; j < texture->getHeight() ; j++)
+            {
+                compute_texture(i,j,m_red_ramp,m_blue_ramp);
+            }
+        }
+        break;
+    case _UNSIGNED:
+        for( int i=0 ; i < texture->getWidth(); i++ )
+        {
+            for( int j=0 ; j < texture->getHeight() ; j++)
+            {
+                compute_texture(i,j,m_thermal_ramp,m_thermal_ramp);
+            }
+        }
+        break;}
+    sampler_location = tex_rendering_program.attributeLocation("texture");
+}
+
+void Scene::compute_texture(int i, int j,Color_ramp pos_ramp ,Color_ramp neg_ramp)
+{
+
+
+    const FT& d00 = m_distance_function[i][j].second;
+    // determines grey level
+    unsigned int i00 = 255-(unsigned)(255.0 * (double)std::fabs(d00) / m_max_distance_function);
+
+    if(d00 > 0.0)
+        texture->setData(i,j,pos_ramp.r(i00),pos_ramp.g(i00),pos_ramp.b(i00));
+    else
+        texture->setData(i,j,neg_ramp.r(i00),neg_ramp.g(i00),neg_ramp.b(i00));
 
 
 }
@@ -224,14 +495,24 @@ void Scene::attrib_buffers(QGLViewer* viewer)
     }
     rendering_program.bind();
     mvpLocation = rendering_program.uniformLocation("mvp_matrix");
+    fLocation = rendering_program.uniformLocation("f_matrix");
     colorLocation = rendering_program.uniformLocation("color");
     rendering_program.setUniformValue(mvpLocation, mvpMatrix);
     rendering_program.release();
+
+    tex_rendering_program.bind();
+    tex_mvpLocation = tex_rendering_program.uniformLocation("mvp_matrix");
+    tex_fLocation = tex_rendering_program.uniformLocation("f_matrix");
+    tex_rendering_program.setUniformValue(tex_mvpLocation, mvpMatrix);
+    tex_rendering_program.release();
 }
 
 void Scene::changed()
 {
-    compute_elements();
+    if(m_cut_plane == UNSIGNED_FACETS || m_cut_plane == UNSIGNED_EDGES)
+        compute_elements(_UNSIGNED);
+    else
+        compute_elements(_SIGNED);
     initialize_buffers();
 }
 
@@ -267,7 +548,7 @@ int Scene::open(QString filename)
 
         return -1;
     }
-    
+
     // clear tree
     clear_internal_data();
 
@@ -339,7 +620,9 @@ void Scene::draw()
 
 void Scene::draw(QGLViewer* viewer)
 {
-QColor color;
+    QColor color;
+    QMatrix4x4 fMatrix;
+    fMatrix.setToIdentity();
     if(m_view_polyhedron)
     {
         vao[2].bind();
@@ -347,33 +630,108 @@ QColor color;
         rendering_program.bind();
         color.setRgbF(0.0,0.0,0.0);
         rendering_program.setUniformValue(colorLocation, color);
+        rendering_program.setUniformValue(fLocation, fMatrix);
         glDrawArrays(GL_LINES, 0, pos_poly.size()/3);
         rendering_program.release();
         vao[2].release();
     }
     if(m_view_points)
     {
-       ::glPointSize(2.0f);
-       vao[0].bind();
-       attrib_buffers(viewer);
-       rendering_program.bind();
-       color.setRgbF(0.7,0.0,0.0);
-       rendering_program.setUniformValue(colorLocation, color);
-       glDrawArrays(GL_POINTS, 0, pos_points.size()/3);
-       rendering_program.release();
-       vao[0].release();
+        ::glPointSize(2.0f);
+        vao[0].bind();
+        attrib_buffers(viewer);
+        rendering_program.bind();
+        color.setRgbF(0.7,0.0,0.0);
+        rendering_program.setUniformValue(colorLocation, color);
+        rendering_program.setUniformValue(fLocation, fMatrix);
+        glDrawArrays(GL_POINTS, 0, pos_points.size()/3);
+        rendering_program.release();
+        vao[0].release();
     }
 
     if(m_view_segments)
     {
-       vao[1].bind();
-       attrib_buffers(viewer);
-       rendering_program.bind();
-       color.setRgbF(0.0,0.7,0.0);
-       rendering_program.setUniformValue(colorLocation, color);
-       glDrawArrays(GL_LINES, 0, pos_lines.size()/3);
-       rendering_program.release();
-       vao[1].release();
+        vao[1].bind();
+        attrib_buffers(viewer);
+        rendering_program.bind();
+        color.setRgbF(0.0,0.7,0.0);
+        rendering_program.setUniformValue(colorLocation, color);
+        rendering_program.setUniformValue(fLocation, fMatrix);
+        glDrawArrays(GL_LINES, 0, pos_lines.size()/3);
+        rendering_program.release();
+        vao[1].release();
+    }
+    if (m_view_plane)
+    {
+        switch( m_cut_plane )
+        {
+        case UNSIGNED_EDGES:
+        case UNSIGNED_FACETS:
+        case SIGNED_FACETS:
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, textureId);
+
+            for(int i=0; i< 16 ; i++)
+                fMatrix.data()[i] =  m_frame->matrix()[i];
+            vao[6].bind();
+            attrib_buffers(viewer);
+            tex_rendering_program.bind();
+            tex_rendering_program.setUniformValue(tex_fLocation, fMatrix);
+
+            glDrawArrays(GL_TRIANGLES, 0, pos_plane.size()/3);
+            tex_rendering_program.release();
+            vao[6].release();
+            break;
+
+        case CUT_SEGMENTS:
+
+            //cutting_segments
+            fMatrix.setToIdentity();
+            ::glLineWidth(2.0f);
+            vao[3].bind();
+            attrib_buffers(viewer);
+            rendering_program.bind();
+            color.setRgbF(1.0,0.0,0.0);
+            rendering_program.setUniformValue(colorLocation, color);
+            rendering_program.setUniformValue(fLocation, fMatrix);
+            glDrawArrays(GL_LINES, 0, pos_cut_segments.size()/3);
+            ::glLineWidth(1.0f);
+            rendering_program.release();
+            vao[3].release();
+            //grid
+            for(int i=0; i< 16 ; i++)
+                fMatrix.data()[i] =  m_frame->matrix()[i];
+            vao[5].bind();
+            attrib_buffers(viewer);
+            rendering_program.bind();
+            color.setRgbF(.6f, .6f, .6f);
+            rendering_program.setUniformValue(colorLocation, color);
+            rendering_program.setUniformValue(fLocation, fMatrix);
+            glDrawArrays(GL_LINES, 0, pos_grid.size()/3);
+            rendering_program.release();
+            vao[5].release();
+
+            //cutting_plane
+            // for(int i=0; i< 16 ; i++)
+            //     fMatrix.data()[i] =  m_frame->matrix()[i];
+            ::glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+            ::glEnable(GL_BLEND);
+            vao[4].bind();
+            attrib_buffers(viewer);
+            rendering_program.bind();
+            color.setRgbF(.6f, .85f, 1.f, .65f);
+            rendering_program.setUniformValue(colorLocation, color);
+            rendering_program.setUniformValue(fLocation, fMatrix);
+            glDrawArrays(GL_TRIANGLES, 0, pos_plane.size()/3);
+            ::glDisable(GL_BLEND);
+            rendering_program.release();
+            vao[4].release();
+
+            break;
+        case NONE: // do nothing
+            break;
+        }
     }
 
 
@@ -437,7 +795,7 @@ void Scene::draw_distance_function(const Color_ramp& ramp_pos,
     ::glDisable(GL_LIGHTING);
     if ( m_fast_distance ) { ::glShadeModel(GL_FLAT); }
     else { ::glShadeModel(GL_SMOOTH); }
-    
+
     ::glBegin(GL_QUADS);
     int i,j;
     const int nb_quads = m_grid_size-1;
@@ -457,32 +815,32 @@ void Scene::draw_distance_function(const Color_ramp& ramp_pos,
             const FT& d01 = pd01.second;
             const FT& d11 = pd11.second;
             const FT& d10 = pd10.second;
-            
+
             // determines grey level
             unsigned int i00 = 255-(unsigned)(255.0 * (double)std::fabs(d00) / m_max_distance_function);
             unsigned int i01 = 255-(unsigned)(255.0 * (double)std::fabs(d01) / m_max_distance_function);
             unsigned int i11 = 255-(unsigned)(255.0 * (double)std::fabs(d11) / m_max_distance_function);
             unsigned int i10 = 255-(unsigned)(255.0 * (double)std::fabs(d10) / m_max_distance_function);
-            
+
             // assembles one quad
             if(d00 > 0.0)
                 ::glColor3ub(ramp_pos.r(i00),ramp_pos.g(i00),ramp_pos.b(i00));
             else
                 ::glColor3ub(ramp_neg.r(i00),ramp_neg.g(i00),ramp_neg.b(i00));
             ::glVertex3d(p00.x(),p00.y(),p00.z());
-            
+
             if(d01 > 0.0)
                 ::glColor3ub(ramp_pos.r(i01),ramp_pos.g(i01),ramp_pos.b(i01));
             else
                 ::glColor3ub(ramp_neg.r(i01),ramp_neg.g(i01),ramp_neg.b(i01));
             ::glVertex3d(p01.x(),p01.y(),p01.z());
-            
+
             if(d11 > 0)
                 ::glColor3ub(ramp_pos.r(i11),ramp_pos.g(i11),ramp_pos.b(i11));
             else
                 ::glColor3ub(ramp_neg.r(i11),ramp_neg.g(i11),ramp_neg.b(i11));
             ::glVertex3d(p11.x(),p11.y(),p11.z());
-            
+
             if(d10 > 0)
                 ::glColor3ub(ramp_pos.r(i10),ramp_pos.g(i10),ramp_pos.b(i10));
             else
@@ -648,7 +1006,7 @@ void Scene::build_edge_tree()
 
     // Don't rebuild tree if it is already built
     if ( !m_edge_tree.empty() ) { return; }
-    
+
     // build tree
     CGAL::Timer timer;
     timer.start();
@@ -681,6 +1039,7 @@ void Scene::update_grid_size()
 {
     m_grid_size = m_fast_distance ? fast_distance_grid_size
                                   : slow_distance_grid_size;
+    texture = new Texture(m_grid_size,m_grid_size);
 }
 
 void Scene::generate_points_in(const unsigned int nb_points,
@@ -938,25 +1297,25 @@ void Scene::compute_distance_function(const Tree& tree)
 {
     // Get transformation
     Aff_transformation t = frame_transformation();
-    
+
     m_max_distance_function = FT(0);
     FT diag = bbox_diag();
-    
+
     const FT dx = diag;
     const FT dy = diag;
     const FT z (0);
-    
+    const FT fd =  FT(2);
     for(int i=0 ; i<m_grid_size ; ++i)
     {
-        FT x = -diag/FT(2) + FT(i)/FT(m_grid_size) * dx;
-        
+        FT x = -diag/fd + FT(i)/FT(m_grid_size) * dx;
+
         for(int j=0 ; j<m_grid_size ; ++j)
         {
-            FT y = -diag/FT(2) + FT(j)/FT(m_grid_size) * dy;
-            
+            FT y = -diag/fd + FT(j)/FT(m_grid_size) * dy;
+
             Point query = t( Point(x,y,z) );
             FT dist = CGAL::sqrt( tree.squared_distance(query) );
-            
+
             m_distance_function[i][j] = Point_distance(query,dist);
             m_max_distance_function = (std::max)(dist, m_max_distance_function);
         }
@@ -968,22 +1327,23 @@ void Scene::sign_distance_function(const Tree& tree)
 {
     typedef typename Tree::size_type size_type;
     Vector random_vec = random_vector();
-    
+
     for(int i=0 ; i<m_grid_size ; ++i)
     {
         for(int j=0 ; j<m_grid_size ; ++j)
         {
             const Point& p = m_distance_function[i][j].first;
             const FT unsigned_distance = m_distance_function[i][j].second;
-            
+
             // get sign through ray casting (random vector)
             Ray ray(p, random_vec);
             size_type nbi = tree.number_of_intersected_primitives(ray);
-            
+
             FT sign ( (nbi&1) == 0 ? 1 : -1);
             m_distance_function[i][j].second = sign * unsigned_distance;
         }
     }
+    changed();
 }
 
 
@@ -994,8 +1354,9 @@ void Scene::unsigned_distance_function()
     if ( m_facet_tree.empty() ) { return; }
 
     compute_distance_function(m_facet_tree);
-    
+
     m_cut_plane = UNSIGNED_FACETS;
+    changed();
 }
 
 
@@ -1004,10 +1365,11 @@ void Scene::unsigned_distance_function_to_edges()
     // Build tree (if build fail, exit)
     build_edge_tree();
     if ( m_edge_tree.empty() ) { return; }
-    
+
     compute_distance_function(m_edge_tree);
-    
+
     m_cut_plane = UNSIGNED_EDGES;
+    changed();
 }
 
 
@@ -1016,11 +1378,12 @@ void Scene::signed_distance_function()
     // Build tree (if build fail, exit)
     build_facet_tree();
     if ( m_facet_tree.empty() ) { return; }
-    
+
     compute_distance_function(m_facet_tree);
     sign_distance_function(m_facet_tree);
 
     m_cut_plane = SIGNED_FACETS;
+    changed();
 }
 
 
@@ -1029,27 +1392,27 @@ void Scene::cut_segment_plane()
     // Build tree (if build fail, exit)
     build_facet_tree();
     if ( m_facet_tree.empty() ) { return; }
-    
+
     Plane plane = frame_plane();
-    
+
     // Compute intersections
     typedef std::vector<Facet_tree::Object_and_primitive_id> Intersections;
     Intersections intersections;
     m_facet_tree.all_intersections(plane, std::back_inserter(intersections));
-    
+
     // Fill data structure
     m_cut_segments.clear();
     for ( Intersections::iterator it = intersections.begin(),
           end = intersections.end() ; it != end ; ++it )
     {
         const Segment* inter_seg = CGAL::object_cast<Segment>(&(it->first));
-        
+
         if ( NULL != inter_seg )
         {
             m_cut_segments.push_back(*inter_seg);
         }
     }
-    
+
     m_cut_plane = CUT_SEGMENTS;
     changed();
 }
@@ -1069,7 +1432,7 @@ void Scene::cutting_plane()
     case NONE: // do nothing
         return;
     }
-    
+
     // Should not be here
     std::cerr << "Unknown cut_plane type" << std::endl;
     CGAL_assertion(false);

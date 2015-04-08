@@ -24,9 +24,34 @@
 #include <QGLBuffer>
 #include <QGLShaderProgram>
 #include <QOpenGLShaderProgram>
+#include <QOpenGLTexture>
 
+class Texture{
+private:
+     int Width;
+     int Height;
+     int size;
+    GLubyte *data;
+public:
+    Texture(int w, int h)
+    {
+        Width = w;
+        Height = h;
+        size = 3*Height*Width;
+        data = new GLubyte[Height*Width*3];
+    }
+    int getWidth() const {return Width;}
+    int getHeight() const {return Height;}
+    int getSize() const {return size;}
+    void setData(int i, int j, int r, int g, int b){
+        data[3*(Width*j+i) + 0] = r;
+        data[3*(Width*j+i) + 1] = g;
+        data[3*(Width*j+i) + 2] = b;
+    }
 
+    GLubyte* getData(){return data; }
 
+};
 class Scene : public QObject, protected QGLFunctions
 {
     Q_OBJECT
@@ -113,28 +138,37 @@ private:
 
     //Shaders elements
 
-
-
     int poly_vertexLocation;
+    int tex_Location;
     int points_vertexLocation;
     int lines_vertexLocation;
     int mvpLocation;
+    int tex_mvpLocation;
+    int fLocation;
+    int tex_fLocation;
     int colorLocation;
 
 
 
     std::vector<float> pos_points;
+    std::vector<float> pos_grid;
     std::vector<float> pos_lines;
     std::vector<float> pos_poly;
-    std::vector<float> pos_plans;
+    std::vector<float> pos_plane;
+    std::vector<float> pos_cut_segments;
+    std::vector<float> tex_map;
+    GLuint textureId;
 
+    Texture *texture;
+    GLint sampler_location;
     QGLBuffer buffers[10];
-    QOpenGLVertexArrayObject vao[5];
-    QOpenGLShaderProgram program;
+    QOpenGLVertexArrayObject vao[10];
+    QOpenGLShaderProgram tex_rendering_program;
     QOpenGLShaderProgram rendering_program;
     void initialize_buffers();
-    void compute_elements();
+    void compute_elements(int mode);
     void attrib_buffers(QGLViewer*);
+    void compute_texture(int, int, Color_ramp, Color_ramp);
 
 public:
     // file menu
