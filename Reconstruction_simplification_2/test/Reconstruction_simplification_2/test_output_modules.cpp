@@ -37,26 +37,9 @@ typedef Rs_2::Vertex Vertex;
 
 typedef Rs_2::Reconstruction_edge_2 R_edge_2;
 
-typedef CGAL::Reconstruction_triangulation_2<K> Rt_2;
-
-typedef Rt_2::Finite_edges_iterator Finite_edges_iterator;
-typedef Rt_2::Vertex_iterator Vertex_iterator;
-
-typedef Rt_2::Edge Edge;
-
-
-
 void test_list_output(Rs_2& rs2);
 void test_index_output(Rs_2& rs2);
 
-
-
-void print_edge(Edge edge) {
-	int i = edge.second;
-	Point a = edge.first->vertex((i+1)%3)->point();
-	Point b = edge.first->vertex((i+2)%3)->point();
-	std::cout << a << " , " << b <<  std::endl;
-}
 
 int main ()
 {
