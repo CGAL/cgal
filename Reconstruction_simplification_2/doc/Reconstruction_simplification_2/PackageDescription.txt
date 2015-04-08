@@ -40,7 +40,7 @@
 
 
 ## Classes ##
-- `CGAL::Reconstruction_simplification_2<Kernel, PointPMap, MassPMap>`
+- `CGAL::Reconstruction_simplification_2<Kernel, Point_property_map, Mass_property_map>`
 
 
 */

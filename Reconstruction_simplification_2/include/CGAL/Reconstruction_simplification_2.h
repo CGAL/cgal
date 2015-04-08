@@ -49,18 +49,18 @@ namespace CGAL {
 for executing the reconstruction and simplification tasks.
 Its constructor takes an InputIterator, used to traverse a collection
 of point-mass pairs, where the points and their masses are accessed
-via the PointPMap and MassPMap `PropertyMaps` respectively.
+via the Point_property_map and Mass_property_map `PropertyMaps` respectively.
 
 
 \tparam Kernel a geometric kernel, used throughout the reconstruction and
 					simplification task.
 
-\tparam PointPMap a model of `ReadablePropertyMap` with a value_type = `Point_2`
+\tparam Point_property_map a model of `ReadablePropertyMap` with a value_type = `Point_2`
 
-\tparam MassPMap   a model of `ReadablePropertyMap` with a value_type = `Kernel::FT`
+\tparam Mass_property_map   a model of `ReadablePropertyMap` with a value_type = `Kernel::FT`
 
  */
-template<class Kernel, class PointPMap, class MassPMap>
+template<class Kernel, class Point_property_map, class Mass_property_map>
 class Reconstruction_simplification_2 {
 public:
 
@@ -146,8 +146,8 @@ protected:
     double m_bbox_y;
     double m_bbox_size;
 
-    PointPMap point_pmap;
-	MassPMap  mass_pmap;
+    Point_property_map point_pmap;
+	Mass_property_map  mass_pmap;
 
 	  /// \endcond
 
@@ -179,8 +179,8 @@ protected:
 	template <class InputIterator>
 	Reconstruction_simplification_2(InputIterator start_itr,
 									InputIterator beyond_itr,
-									PointPMap in_point_pmap,
-									MassPMap  in_mass_pmap) {
+									Point_property_map in_point_pmap,
+									Mass_property_map  in_mass_pmap) {
 
 
 		point_pmap = in_point_pmap;
@@ -229,8 +229,8 @@ protected:
 	template <class InputIterator>
 	void initialize(InputIterator start_itr,
 									InputIterator beyond_itr,
-									PointPMap in_point_pmap,
-									MassPMap  in_mass_pmap) {
+									Point_property_map in_point_pmap,
+									Mass_property_map  in_mass_pmap) {
 
 		point_pmap = in_point_pmap;
 		mass_pmap  = in_mass_pmap;

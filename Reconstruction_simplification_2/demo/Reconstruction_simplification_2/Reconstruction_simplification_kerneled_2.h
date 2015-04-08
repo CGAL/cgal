@@ -24,11 +24,11 @@ typedef PointMassList::const_iterator InputIterator;
 
 typedef CGAL::value_type_traits<InputIterator>::type MassPoint;
 
-typedef CGAL::First_of_pair_property_map<PointMassPair> PointPMap;
-typedef CGAL::Second_of_pair_property_map<PointMassPair> MassPMap;
+typedef CGAL::First_of_pair_property_map<PointMassPair> Point_property_map;
+typedef CGAL::Second_of_pair_property_map<PointMassPair> Mass_property_map;
 
-typedef CGAL::Reconstruction_simplification_2<K, PointPMap,
-		MassPMap> Reconstruction_simplification_2;
+typedef CGAL::Reconstruction_simplification_2<K, Point_property_map,
+		Mass_property_map> Reconstruction_simplification_2;
 
 class Reconstruction_simplification_kerneled_2:
 		public Reconstruction_simplification_2 {
@@ -36,7 +36,7 @@ class Reconstruction_simplification_kerneled_2:
 public:
 
 	Reconstruction_simplification_kerneled_2(InputIterator start,
-			InputIterator beyond, PointPMap point_pmap, MassPMap mass_pmap) :
+			InputIterator beyond, Point_property_map point_pmap, Mass_property_map mass_pmap) :
 			Reconstruction_simplification_2(start, beyond, point_pmap,
 					mass_pmap) {
 	}

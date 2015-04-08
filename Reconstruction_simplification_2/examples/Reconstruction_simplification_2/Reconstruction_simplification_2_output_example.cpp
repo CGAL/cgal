@@ -28,11 +28,11 @@ typedef K::FT                                         		FT;
 typedef std::pair<Point, FT> PointMassPair;
 typedef std::list<PointMassPair> PointMassList;
 
-typedef CGAL::First_of_pair_property_map <PointMassPair>  PointPMap;
-typedef CGAL::Second_of_pair_property_map <PointMassPair> MassPMap;
+typedef CGAL::First_of_pair_property_map <PointMassPair>  Point_property_map;
+typedef CGAL::Second_of_pair_property_map <PointMassPair> Mass_property_map;
 
 
-typedef CGAL::Reconstruction_simplification_2<K, PointPMap, MassPMap> Rs_2;
+typedef CGAL::Reconstruction_simplification_2<K, Point_property_map, Mass_property_map> Rs_2;
 
 typedef Rs_2::Vertex Vertex;
 
@@ -74,8 +74,8 @@ int main ()
 	PointMassList points;
 	load_xy_file("data/stair-noise00.xy", points);
 
-	PointPMap point_pmap;
-	MassPMap  mass_pmap;
+	Point_property_map point_pmap;
+	Mass_property_map  mass_pmap;
 
 	Rs_2 rs2(points.begin(), points.end(), point_pmap, mass_pmap);
 

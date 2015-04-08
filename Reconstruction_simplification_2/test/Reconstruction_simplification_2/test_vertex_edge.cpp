@@ -27,8 +27,8 @@ typedef K::FT                                         		FT;
 typedef std::pair<Point, FT> PointMassPair;
 typedef std::list<PointMassPair> PointMassList;
 
-typedef CGAL::First_of_pair_property_map <PointMassPair> PointPMap;
-typedef CGAL::Second_of_pair_property_map <PointMassPair> MassPMap;
+typedef CGAL::First_of_pair_property_map <PointMassPair> Point_property_map;
+typedef CGAL::Second_of_pair_property_map <PointMassPair> Mass_property_map;
 
 typedef CGAL::Reconstruction_triangulation_2<K> Rt_2;
 typedef Rt_2::Finite_edges_iterator Finite_edges_iterator;
@@ -65,10 +65,10 @@ void test_edge_collapse() {
 	//use the stair example for testing
 	load_xy_file<PointMassList, Point>("data/stair-noise00.xy", points);
 
-	PointPMap point_pmap;
-    MassPMap  mass_pmap;
+	Point_property_map point_pmap;
+    Mass_property_map  mass_pmap;
 
-    CGAL::Reconstruction_simplification_2<K, PointPMap, MassPMap>
+    CGAL::Reconstruction_simplification_2<K, Point_property_map, Mass_property_map>
     	rs2(points.begin(), points.end(), point_pmap, mass_pmap);
 
 
@@ -125,7 +125,7 @@ void test_num_of_vertices_in_triangulation() {
 
 	PointMassList points = *(simple_point_set());
 
-	CGAL::Reconstruction_simplification_2<K, PointPMap, MassPMap> rs2;
+	CGAL::Reconstruction_simplification_2<K, Point_property_map, Mass_property_map> rs2;
   	int nb = 0;
     for (PointMassList::iterator it = points.begin(); it != points.end(); it++) {
     	PointMassPair pmp = *it;

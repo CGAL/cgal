@@ -30,11 +30,11 @@ public:
 
 	typedef CGAL::value_type_traits<InputIterator>::type MassPoint;
 
-	typedef CGAL::First_of_pair_property_map<PointMassPair> PointPMap;
-	typedef CGAL::Second_of_pair_property_map<PointMassPair> MassPMap;
+	typedef CGAL::First_of_pair_property_map<PointMassPair> Point_property_map;
+	typedef CGAL::Second_of_pair_property_map<PointMassPair> Mass_property_map;
 
-	typedef CGAL::Reconstruction_simplification_2<K, PointPMap,
-			MassPMap> R_s_2;
+	typedef CGAL::Reconstruction_simplification_2<K, Point_property_map,
+			Mass_property_map> R_s_2;
 
 	typedef K::Segment_2 Segment;
 
@@ -580,8 +580,8 @@ public:
 					std::make_pair((*it)->point(), (*it)->mass()));
 		}
 
-		PointPMap point_pmap;
-		MassPMap mass_pmap;
+		Point_property_map point_pmap;
+		Mass_property_map mass_pmap;
 		MassPoint mp;
 
 		m_pwsrec->initialize(point_mass_list.begin(), point_mass_list.end(),
