@@ -279,8 +279,8 @@ protected:
 	\tparam Output_Edge_Iterator The `Output-Iterator` type for storing the
 											edges (as Segments).
 	 */
-	template<class Output_Vertex_Iterator, class Output_Edge_Iterator>
-	void extract_list_output(Output_Vertex_Iterator v_it, Output_Edge_Iterator e_it) {
+	template<class OutputVertexIterator, class OutputEdgeIterator>
+	void extract_list_output(OutputVertexIterator v_it, OutputEdgeIterator e_it) {
 
 		for (Vertex_iterator vi = m_dt.vertices_begin();
 						vi != m_dt.vertices_end(); ++vi)
