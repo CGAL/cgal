@@ -689,17 +689,17 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh
 #ifdef CGAL_CC_DEBUG
         std::cerr << "null_face on both sides of " << e << " is kept\n";
 #endif
-      } else if( (face_cc[fh] && is_border(oh,pmesh)) ||
-                 (face_cc[ofh] && is_border(h,pmesh)) ||
-                 (face_cc[fh] && face_cc[ofh]) ){
+      } else if( (is_border(oh,pmesh) && face_cc[fh]) ||
+                 (is_border(h,pmesh) && face_cc[ofh]) ||
+                 (! is_border(oh,pmesh) && ! is_border(h,pmesh) &&face_cc[fh] && face_cc[ofh]) ){
         // do nothing
-      } else if(face_cc[fh] && ! face_cc[ofh]){
+      } else if(! is_border(h,pmesh) && face_cc[fh] && ! is_border(oh,pmesh) &&! face_cc[ofh]){
         set_face(oh, boost::graph_traits<PolygonMesh>::null_face(), pmesh);
-      } else if(! face_cc[fh] && face_cc[ofh]){
+      } else if(! is_border(h,pmesh) && ! face_cc[fh]  && ! is_border(oh,pmesh) && face_cc[ofh]){
         set_face(h, boost::graph_traits<PolygonMesh>::null_face(), pmesh);
       } else {
         // no face kept
-        assert( ! face_cc[fh] && ! face_cc[ofh]);
+        assert( (is_border(h,pmesh) || ! face_cc[fh]) && (is_border(oh,pmesh) ||! face_cc[ofh]));
         // vertices pointing to e must change their halfedge
         if(halfedge(v,pmesh) == oh){
           set_halfedge(v,prev(h,pmesh),pmesh);
