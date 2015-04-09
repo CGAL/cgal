@@ -689,8 +689,8 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh
 #ifdef CGAL_CC_DEBUG
         std::cerr << "null_face on both sides of " << e << " is kept\n";
 #endif
-      } else if( (face_cc[fh] && is_border(oh,pmesh)) ||
-                 (face_cc[ofh] && is_border(h,pmesh)) ||
+      } else if( (is_border(oh,pmesh) && face_cc[fh]) ||
+                 (is_border(h,pmesh) && face_cc[ofh]) ||
                  (face_cc[fh] && face_cc[ofh]) ){
         // do nothing
       } else if(face_cc[fh] && ! face_cc[ofh]){
