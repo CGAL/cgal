@@ -59,12 +59,11 @@ private:
 
 
       std::vector<float> pos_points;
-      std::vector<float> pos_lines;
       std::vector<float> pos_poly;
       std::vector<float> normals;
 
-      QGLBuffer buffers[10];
-      QOpenGLVertexArrayObject vao[10];
+      QGLBuffer buffers[3];
+      QOpenGLVertexArrayObject vao[2];
       QOpenGLShaderProgram rendering_program;
       QOpenGLShaderProgram rendering_program_points;
       void initialize_buffers();
