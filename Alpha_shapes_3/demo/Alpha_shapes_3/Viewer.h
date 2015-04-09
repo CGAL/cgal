@@ -47,7 +47,6 @@ private:
   //Shaders elements
 
       int poly_vertexLocation;
-      int tex_Location;
       int points_vertexLocation;
       int normalsLocation;
       int mvpLocation;
