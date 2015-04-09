@@ -102,13 +102,14 @@ namespace CGAL {
 
 namespace internal{
 
-template < class Refs, class P, class ID, class vertex_descriptor>
-struct Skel_HDS_vertex_type : public HalfedgeDS_vertex_max_base_with_id<Refs, P, ID>
+template < class Refs, class Point, class ID, class vertex_descriptor>
+struct Skel_HDS_vertex_type : public HalfedgeDS_vertex_max_base_with_id<Refs, Point, ID>
 {
-  typedef HalfedgeDS_vertex_max_base_with_id<Refs, P, ID> Base;
+  typedef HalfedgeDS_vertex_max_base_with_id<Refs, Point, ID> Base;
   Skel_HDS_vertex_type() : Base ()  {}
-  Skel_HDS_vertex_type( P const& p) : Base(p) {}
+  Skel_HDS_vertex_type( Point const& p) : Base(p) {}
   std::vector<vertex_descriptor> vertices;
+  Point pole;
 };
 
 template <class vertex_descriptor>
@@ -276,13 +277,14 @@ public:
 
   // Repeat Triangulation types
   typedef CGAL::Exact_predicates_exact_constructions_kernel                    Exact_kernel;
-  typedef CGAL::Triangulation_vertex_base_with_info_3<unsigned, Exact_kernel>  Vb;
+  typedef CGAL::Triangulation_vertex_base_with_info_3
+                                            <vertex_descriptor, Exact_kernel>  Vb;
   typedef CGAL::Triangulation_data_structure_3<Vb>                             Tds;
   typedef CGAL::Delaunay_triangulation_3<Exact_kernel, Tds>                    Delaunay;
-  typedef Delaunay::Point                                                      Exact_point;
-  typedef Delaunay::Cell_handle                                                Cell_handle;
-  typedef Delaunay::Vertex_handle                                              TriVertex_handle;
-  typedef Delaunay::Finite_cells_iterator                                      Finite_cells_iterator;
+  typedef typename Delaunay::Point                                             Exact_point;
+  typedef typename Delaunay::Cell_handle                                       Cell_handle;
+  typedef typename Delaunay::Vertex_handle                                     TriVertex_handle;
+  typedef typename Delaunay::Finite_cells_iterator                             Finite_cells_iterator;
 
 // Data members
 private:
@@ -341,12 +343,9 @@ private:
   /** The incident angle for a halfedge. */
   std::vector<double> m_halfedge_angle;
 
-  /** Record the corresponding pole of a point. */
-  std::map<int, int> m_poles;
   /** The normal of surface points. */
   std::vector<Vector> m_normals;
-  /** The dual of a cell in Triangulation(a Voronoi point). */
-  std::vector<Point> m_cell_dual;
+
 
 // Private functions and classes
 
@@ -598,8 +597,7 @@ public:
     int cnt = 0;
     BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
     {
-      int vid = get(m_vertex_id_pmap, v);
-      max_poles[cnt++] = m_cell_dual[m_poles[vid]];
+      max_poles[cnt++] = v->pole;
     }
   }
 
@@ -732,7 +730,7 @@ public:
       {
         break;
       }
-      int cnt = split_flat_triangle();
+      int cnt = split_flat_triangles();
       if (cnt == 0)
       {
         break;
@@ -975,7 +973,7 @@ private:
         {
           if (id < m_max_id)
           {
-            if (test_inside(m_cell_dual[m_poles[id]]) == CGAL::ON_BOUNDED_SIDE)
+            if (test_inside(vd->pole) == CGAL::ON_BOUNDED_SIDE)
             {
               A.set_coef(i + nver * 2, i, m_omega_P, true);
             }
@@ -1045,7 +1043,7 @@ private:
         {
           if (id < m_max_id)
           {
-            if (test_inside(m_cell_dual[m_poles[id]]) == CGAL::ON_BOUNDED_SIDE)
+            if (test_inside(vd->pole) == CGAL::ON_BOUNDED_SIDE)
             {
               op = m_omega_P;
             }
@@ -1057,9 +1055,9 @@ private:
       Bz[i + nver] = get(m_tmesh_point_pmap, vd).z() * oh;
       if (m_is_medially_centered)
       {
-        double x = to_double(m_cell_dual[m_poles[id]].x());
-        double y = to_double(m_cell_dual[m_poles[id]].y());
-        double z = to_double(m_cell_dual[m_poles[id]].z());
+        double x = to_double(vd->pole.x());
+        double y = to_double(vd->pole.y());
+        double z = to_double(vd->pole.z());
         Bx[i + nver * 2] = x * op;
         By[i + nver * 2] = y * op;
         Bz[i + nver * 2] = z * op;
@@ -1108,17 +1106,8 @@ private:
     // midpoint placement without geometric test
     SMS::Geometric_test_skipper< SMS::Midpoint_placement<mTriangleMesh> > placement;
 
-    internal::Track_correspondence_visitor<mTriangleMesh, mVertexPointMap, Input_vertex_descriptor> vis;
-    if (m_is_medially_centered)
-    {
-      vis = internal::Track_correspondence_visitor<mTriangleMesh, mVertexPointMap, Input_vertex_descriptor>
-            (&m_tmesh_point_pmap, &m_poles, &m_cell_dual, m_max_id);
-    }
-    else
-    {
-      vis = internal::Track_correspondence_visitor<mTriangleMesh, mVertexPointMap, Input_vertex_descriptor>
-            (&m_tmesh_point_pmap, m_max_id);
-    }
+    internal::Track_correspondence_visitor<mTriangleMesh, mVertexPointMap, Input_vertex_descriptor> vis
+      (&m_tmesh_point_pmap, m_max_id, m_is_medially_centered);
 
     int r = SMS::edge_collapse
                 (m_tmesh
@@ -1137,26 +1126,16 @@ private:
   void track_correspondence(vertex_descriptor v0, vertex_descriptor v1,
                             vertex_descriptor /* v */)
   {
-    int id0 = get(m_vertex_id_pmap, v0);
-    int id1 = get(m_vertex_id_pmap, v1);
-
     if (m_is_medially_centered)
     {
-      Point pole0 = Point(to_double(m_cell_dual[m_poles[id0]].x()),
-                          to_double(m_cell_dual[m_poles[id0]].y()),
-                          to_double(m_cell_dual[m_poles[id0]].z()));
-      Point pole1 = Point(to_double(m_cell_dual[m_poles[id1]].x()),
-                          to_double(m_cell_dual[m_poles[id1]].y()),
-                          to_double(m_cell_dual[m_poles[id1]].z()));
+      const Point& pole0 = v0->pole;
+      const Point& pole1 = v1->pole;
+
       Point p1 = get(m_tmesh_point_pmap, v1);
       double dis_to_pole0 = sqrt(squared_distance(pole0, p1));
       double dis_to_pole1 = sqrt(squared_distance(pole1, p1));
       if (dis_to_pole0 < dis_to_pole1)
-      {
-        m_poles[id1] = m_poles[id0];
-      }
-      std::map<int, int>::iterator pole_iter = m_poles.find(id0);
-      m_poles.erase(pole_iter);
+        v1->pole = v0->pole;
     }
   }
 
@@ -1205,6 +1184,7 @@ private:
         vertex_descriptor v = Euler::collapse_edge(edge(h, m_tmesh), m_tmesh);
         put(m_tmesh_point_pmap, v, p);
 
+        CGAL_assertion(vj==v);
         track_correspondence(vi, vj, v);
 
         ++cnt;
@@ -1292,7 +1272,8 @@ private:
   /// Project the vertex `vk` to the line of `vs` and `vt`.
   Point project_vertex(const vertex_descriptor vs,
                        const vertex_descriptor vt,
-                       const vertex_descriptor vk)
+                       const vertex_descriptor vk,
+                       const vertex_descriptor vnew)
   {
     Point ps = get(m_tmesh_point_pmap, vs);
     Point pt = get(m_tmesh_point_pmap, vt);
@@ -1308,21 +1289,18 @@ private:
     // project the pole
     if (m_is_medially_centered)
     {
-      int sid = get(m_vertex_id_pmap, vs);
-      int tid = get(m_vertex_id_pmap, vt);
-      Point pole_s = m_cell_dual[m_poles[sid]];
-      Point pole_t = m_cell_dual[m_poles[tid]];
+      Point pole_s = vs->pole;
+      Point pole_t = vt->pole;
       Vector pole_st = pole_t - pole_s;
       Vector p_projector = pole_st / sqrt(pole_st.squared_length());
       Point pole_n = pole_s + p_projector * t;
-      m_poles[m_vertex_id_count] = m_cell_dual.size();
-      m_cell_dual.push_back(pole_n);
+      vnew->pole = pole_n;
     }
     return pn;
   }
 
   /// Split triangles with an angle greater than `alpha_TH`.
-  int split_flat_triangle()
+  int split_flat_triangles()
   {
     int ne = 2 * num_edges(m_tmesh);
     compute_incident_angle();
@@ -1361,10 +1339,12 @@ private:
         ek = next(ej, m_tmesh);
       }
       vertex_descriptor vk = target(ek, m_tmesh);
-      Point pn = project_vertex(vs, vt, vk);
-      halfedge_descriptor en = internal::mesh_split(m_tmesh, m_tmesh_point_pmap, ei, pn);
+      halfedge_descriptor en = internal::mesh_split(m_tmesh, ei);
       // set id for new vertex
       put(m_vertex_id_pmap, target(en,m_tmesh), m_vertex_id_count++);
+      Point pn = project_vertex(vs, vt, vk, target(en, m_tmesh));
+      // set point of new vertex
+      put(m_tmesh_point_pmap, target(en,m_tmesh), pn);
       cnt++;
     }
     return cnt;
@@ -1456,53 +1436,53 @@ private:
     MCFSKEL_DEBUG(std::cout << "start compute_voronoi_pole\n";)
     compute_vertex_normal();
 
-    std::vector<std::pair<Exact_point, unsigned> > points;
+    std::vector<std::pair<Exact_point, vertex_descriptor> > points;
     std::vector<std::vector<int> > point_to_pole(num_vertices(m_tmesh));
 
-    m_cell_dual.clear();
     CGAL::Cartesian_converter<Traits, Exact_kernel> to_exact;
     BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
     {
-      int vid = get(m_vertex_id_pmap, v);
       Exact_point tp = to_exact( get(m_tmesh_point_pmap, v) );
-      points.push_back(std::make_pair(tp, vid));
+      points.push_back(std::make_pair(tp, v));
     }
 
     Delaunay T(points.begin(), points.end());
 
     Finite_cells_iterator cit;
     int cell_id = 0;
+    std::vector<Point> cell_dual;
+    cell_dual.reserve(T.number_of_cells());
+    Cartesian_converter<Exact_kernel, Traits> to_input;
     for (cit = T.finite_cells_begin(); cit != T.finite_cells_end(); ++cit)
     {
       Cell_handle cell = cit;
       Exact_point point = T.dual(cell);
-      Point pt(to_double(point.x()), to_double(point.y()), to_double(point.z()));
-      m_cell_dual.push_back(pt);
+      cell_dual.push_back( to_input(point) );
       // each cell has 4 incident vertices
       for (int i = 0; i < 4; ++i)
       {
         TriVertex_handle vt = cell->vertex(i);
-        int id = vt->info();
+        std::size_t id = get(m_vertex_id_pmap, vt->info());
         point_to_pole[id].push_back(cell_id);
       }
       ++cell_id;
     }
 
-    m_poles.clear();
-    Cartesian_converter<Exact_kernel, Traits> to_input;
-    for (size_t i = 0; i < point_to_pole.size(); ++i)
+    typedef std::pair<Exact_point, vertex_descriptor> Pair_type;
+    BOOST_FOREACH(const Pair_type& p, points)
     {
-      Point surface_point = to_input(points[i].first);
+      std::size_t vid = get(m_vertex_id_pmap, p.second);
+      Point surface_point = get(m_tmesh_point_pmap, p.second);
 
       double max_neg_t = 1;
       int max_neg_i = -1;
 
-      for (size_t j = 0; j < point_to_pole[i].size(); ++j)
+      for (size_t j = 0; j < point_to_pole[vid].size(); ++j)
       {
-        int pole_id = point_to_pole[i][j];
-        Point cell_point = m_cell_dual[pole_id];
+        int pole_id = point_to_pole[vid][j];
+        Point cell_point = cell_dual[pole_id];
         Vector vt = cell_point - surface_point;
-        Vector n = m_normals[i];
+        Vector n = m_normals[vid];
 
         double t = vt * n;
 
@@ -1514,7 +1494,7 @@ private:
         }
       }
 
-      m_poles[i] = max_neg_i;
+      p.second->pole = cell_dual[max_neg_i];
     }
     m_are_poles_computed = true;
   }

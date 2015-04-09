@@ -39,14 +39,11 @@ namespace internal {
 * Split the edge
 * @param hg the mesh containing the given edge
 * @param ei the edge to be split
-* @param pn the position of the new vertex created by the split
 */
-template<class TriangleMesh, class TriangleMeshPointPMap>
+template<class TriangleMesh>
 typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
 mesh_split(TriangleMesh& hg,
-           TriangleMeshPointPMap& hg_point_pmap,
-           typename boost::graph_traits<TriangleMesh>::halfedge_descriptor ei,
-           typename TriangleMesh::Traits::Point_3 pn)
+           typename boost::graph_traits<TriangleMesh>::halfedge_descriptor ei)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor            halfedge_descriptor;
 
@@ -54,7 +51,6 @@ mesh_split(TriangleMesh& hg,
   // halfedge_descriptor en = Euler::split_edge(ei, hg); // there is an issue in this function for now use the polyhedron version in the meantime
   halfedge_descriptor en = hg.split_edge(ei);
   en->vertex()->vertices.clear();
-  boost::put(hg_point_pmap, target(en,hg), pn);
   Euler::split_face(en, next(ei,hg), hg);
 
   en->id() = -1;

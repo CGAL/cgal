@@ -55,22 +55,12 @@ struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<TriangleMe
   Track_correspondence_visitor(){}
 
   Track_correspondence_visitor(TriangleMeshPointPMap* point_pmap,
-                               int max_id) :
+                               int max_id,
+                               bool is_medially_centered) :
     hg_point_pmap(point_pmap),
     max_id(max_id),
-    is_medially_centered(false)
+    is_medially_centered(is_medially_centered)
   {}
-
-  Track_correspondence_visitor(TriangleMeshPointPMap* point_pmap,
-                       std::map<int, int>* poles,
-                       std::vector<Point>* cell_dual,
-                       int max_id) :
-    hg_point_pmap(point_pmap),
-    max_id(max_id),
-    is_medially_centered(true),
-    poles(poles),
-    cell_dual(cell_dual)
-    {}
 
   void OnCollapsing (Profile const &profile, boost::optional< Point >)
   {
@@ -84,8 +74,8 @@ struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<TriangleMe
   {
     Vertex_handle v0 = edge.v0();
     Vertex_handle v1 = edge.v1();
-    int id0 = v0->id();
-    int id1 = v1->id();
+    //~ int id0 = v0->id();
+    //~ int id1 = v1->id();
     //~ int vid = v->id();
     //~ int from, to;
     //~ if (id0 == vid)
@@ -122,21 +112,13 @@ struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<TriangleMe
     // also track the poles
     if (is_medially_centered)
     {
-      Point pole0 = Point(to_double((*cell_dual)[(*poles)[id0]].x()),
-                          to_double((*cell_dual)[(*poles)[id0]].y()),
-                          to_double((*cell_dual)[(*poles)[id0]].z()));
-      Point pole1 = Point(to_double((*cell_dual)[(*poles)[id1]].x()),
-                          to_double((*cell_dual)[(*poles)[id1]].y()),
-                          to_double((*cell_dual)[(*poles)[id1]].z()));
+      Point pole0 = v0->pole;
+      Point pole1 = v1->pole;
       Point p1 = boost::get(*hg_point_pmap, v1);
       double dis_to_pole0 = std::sqrt(squared_distance(pole0, p1));
       double dis_to_pole1 = std::sqrt(squared_distance(pole1, p1));
       if (dis_to_pole0 < dis_to_pole1)
-      {
-        (*poles)[id1] = (*poles)[id0];
-      }
-      std::map<int, int>::iterator pole_iter = (*poles).find(id0);
-      (*poles).erase(pole_iter);
+        v1->pole=v0->pole;
     }
   }
 
@@ -145,8 +127,6 @@ struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<TriangleMe
   int max_id;
 
   bool is_medially_centered;
-  std::map<int, int>* poles;
-  std::vector<Point>* cell_dual;
 };
 
 } //namespace internal
