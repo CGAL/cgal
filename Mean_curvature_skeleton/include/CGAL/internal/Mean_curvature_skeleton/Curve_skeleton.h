@@ -327,14 +327,9 @@ private:
       int eid = *(queue.begin());
       queue.erase(queue.begin());
 
-      if (is_edge_deleted[eid])
-      {
-        continue;
-      }
-      if (edge_to_face[eid].size() == 0)
-      {
-        continue;
-      }
+      // skip already deleted edges and edges with no face
+      if (is_edge_deleted[eid]) continue;
+      if (edge_to_face[eid].size() == 0) continue;
 
       // mark the incident faces as deleted
       remove_incident_faces(eid);
@@ -417,12 +412,10 @@ private:
 
   void remove_incident_faces(int eid)
   {
-    std::vector<int> faces(edge_to_face[eid]);
-    for (size_t i = 0; i < faces.size(); ++i)
+    BOOST_FOREACH(int fid, edge_to_face[eid])
     {
-      int fid = faces[i];
       is_face_deleted[fid] = true;
-      // remove face from the incident edges
+      // remove the face from the container of the other incident edges
       for (size_t j = 0; j < face_to_edge[fid].size(); ++j)
       {
         int e = face_to_edge[fid][j];
