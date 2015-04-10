@@ -56,7 +56,7 @@ public:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor           face_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor           edge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
 
 // Data members
 private:
@@ -80,22 +80,22 @@ private:
   HalfedgeIndexMap hedge_id_pmap;
   TriangleMeshPointPMap hg_point_pmap;
 
-  std::vector<double> edge_lengths;
+  std::vector<double> edge_squared_lengths;
 
   class EdgeCompareFunctor
   {
   public:
-      std::vector<double> edge_lengths;
+      std::vector<double> edge_squared_lengths;
 
-      EdgeCompareFunctor(std::vector<double>& lengths)
+      EdgeCompareFunctor(std::vector<double>& squared_lengths)
       {
-          edge_lengths = lengths;
+          edge_squared_lengths = squared_lengths;
       }
 
       bool operator() (const int& e0, const int& e1) const
       {
-          double p0 = edge_lengths[e0];
-          double p1 = edge_lengths[e1];
+          double p0 = edge_squared_lengths[e0];
+          double p1 = edge_squared_lengths[e1];
           return (p0 == p1) ? (e0 < e1) : (p0 < p1);
       }
   };
@@ -220,39 +220,28 @@ public:
 private:
   void init()
   {
-    std::cerr <<"init" << std::endl;
+    MCFSKEL_DEBUG( std::cerr <<"init" << std::endl; )
 
     int nb_edges = num_edges(hg);
     int num_faces = hg.size_of_facets();
     int nb_vertices = num_vertices(hg);
-    edge_to_face.clear();
     edge_to_face.resize(nb_edges);
-    edge_to_vertex.clear();
     edge_to_vertex.resize(nb_edges);
-    vertex_to_edge.clear();
     vertex_to_edge.resize(nb_vertices);
-    face_to_edge.clear();
     face_to_edge.resize(num_faces);
 
-    is_vertex_deleted.clear();
     is_vertex_deleted.resize(nb_vertices, false);
-    is_edge_deleted.clear();
     is_edge_deleted.resize(nb_edges, false);
-    is_face_deleted.clear();
     is_face_deleted.resize(num_faces, false);
 
-    record.clear();
     record.resize(nb_vertices);
     for (size_t i = 0; i < record.size(); ++i)
     {
       record[i].push_back(i);
     }
 
-    id_to_descriptor.clear();
     id_to_descriptor.resize(nb_vertices);
-
-    edge_lengths.clear();
-    edge_lengths.resize(nb_edges);
+    edge_squared_lengths.resize(nb_edges);
 
     // assign vertex id
     surface_vertex_id.resize(nb_vertices);
@@ -284,7 +273,7 @@ private:
         vertex_descriptor v2 = source(hd,hg);
         Point source = get(hg_point_pmap, v1);
         Point target = get(hg_point_pmap, v2);
-        edge_lengths[idx] = std::sqrt(squared_distance(source, target));
+        edge_squared_lengths[idx] = squared_distance(source, target);
 
         idx++;
       }
@@ -300,7 +289,7 @@ private:
         face_to_edge[face_id].push_back(id);
         edge_to_face[id].push_back(face_id);
       }
-      face_id++;
+      ++face_id;
     }
 
     // compute vertex-edge connectivity
@@ -341,10 +330,8 @@ private:
   // iteratively collapse short edges until no edges have incident faces
   void collapse()
   {
-    EdgeCompareFunctor edge_comparator(edge_lengths);
+    EdgeCompareFunctor edge_comparator(edge_squared_lengths);
     Edge_queue queue(edge_comparator);
-
-    queue.clear();
 
     init_queue(queue);
 
@@ -582,16 +569,16 @@ private:
     {
       vid2 = p2;
     }
-    vertex_descriptor v1 = id_to_descriptor[vid1];
-    vertex_descriptor v2 = id_to_descriptor[vid2];
-
-    Point source = get(hg_point_pmap, v1);
-    Point target = get(hg_point_pmap, v2);
-    double new_len = std::sqrt(squared_distance(source, target));
-
     if (queue.find(eid) != queue.end())
     {
-      edge_lengths[eid] = new_len;
+      vertex_descriptor v1 = id_to_descriptor[vid1];
+      vertex_descriptor v2 = id_to_descriptor[vid2];
+
+      Point source = get(hg_point_pmap, v1);
+      Point target = get(hg_point_pmap, v2);
+      double new_len = squared_distance(source, target);
+
+      edge_squared_lengths[eid] = new_len;
       queue.insert(eid);
     }
   }
@@ -618,7 +605,7 @@ private:
     {
       if (!is_vertex_deleted[i])
       {
-        cnt++;
+        ++cnt;
       }
     }
     std::cerr << "num of vertices " << cnt << "\n";
@@ -628,7 +615,7 @@ private:
     {
       if (!is_edge_deleted[i])
       {
-        cnt++;
+        ++cnt;
       }
     }
     std::cerr << "num of edges " << cnt << "\n";
@@ -638,7 +625,7 @@ private:
     {
       if (!is_face_deleted[i])
       {
-        cnt++;
+        ++cnt;
       }
     }
     std::cerr << "num of faces " << cnt << "\n";
