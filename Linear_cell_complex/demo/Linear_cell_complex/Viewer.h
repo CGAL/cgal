@@ -62,7 +62,22 @@ public:
     newFormat.setSamples(16);
     this->setFormat(newFormat);
   }
+  ~Viewer()
+  {
+      buffers[0].destroy();
+      buffers[1].destroy();
+      buffers[2].destroy();
+      buffers[3].destroy();
+      buffers[4].destroy();
+      buffers[5].destroy();
+      buffers[6].destroy();
+      buffers[7].destroy();
+      vao[0].destroy();
+      vao[1].destroy();
+      vao[2].destroy();
+      vao[3].destroy();
 
+  }
   void setScene(Scene* scene_)
   {
     scene = scene_;
@@ -81,11 +96,7 @@ public slots :
 
   void sceneChanged();
 
-protected:
-  void initDraw();
-  void drawAllFaces(bool flat);
-  void drawAllEdges();
-  void drawAllVertices();
+
 private:
   //Shaders elements
 
@@ -114,5 +125,7 @@ private:
   void compute_elements();
   void attrib_buffers(QGLViewer*);
   void compile_shaders();
+  void triangulate_facet();
+  bool is_Triangulated();
 };
 #endif
