@@ -27,6 +27,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Triangle_3_Ray_3_do_intersect.h>
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/internal/AABB_tree/AABB_node.h>
 
 namespace CGAL {
 namespace internal {
@@ -40,6 +41,7 @@ protected:
   bool m_stop;
   const AABBTraits& m_aabb_traits;
   typedef typename AABBTraits::Primitive Primitive;
+  typedef CGAL::AABB_node<AABBTraits> Node;
 
 public:
   Ray_3_Triangle_3_traversal_traits(std::pair<boost::logic::tribool,std::size_t>& status,
@@ -74,7 +76,7 @@ public:
     }
   }
   
-  template<class Query,class Node>
+  template<class Query>
   bool do_intersect(const Query& query, const Node& node) const
   {
     return m_aabb_traits.do_intersect_object()(query, node.bbox());
@@ -90,6 +92,8 @@ class Ray_3_Triangle_3_traversal_traits<AABBTraits,Kernel,Tag_true>:
   typedef Ray_3_Triangle_3_traversal_traits<AABBTraits,Kernel,Tag_false> Base;
   typedef typename Kernel::Point_3 Point;
   typedef typename Base::Primitive Primitive;
+  typedef CGAL::AABB_node<AABBTraits> Node;
+
 public:
   Ray_3_Triangle_3_traversal_traits(std::pair<boost::logic::tribool,std::size_t>& status, const AABBTraits& aabb_traits)
     :Base(status, aabb_traits){}
@@ -111,7 +115,7 @@ public:
     return source.y() <= bbox.ymax() && source.y()>=bbox.ymin();
   }
 
-  template <class Query,class Node>
+  template <class Query>
   bool do_intersect(const Query& query, const Node& node) const
   {
     return do_intersect(query,node.bbox());
