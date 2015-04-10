@@ -45,7 +45,7 @@ public:
   Ray_3_Triangle_3_traversal_traits(std::pair<boost::logic::tribool,std::size_t>& status,
                                     const AABBTraits& aabb_traits)
     :m_status(status),m_stop(false), m_aabb_traits(aabb_traits)
-  {m_status.first=true;}
+  {}
 
   bool go_further() const { return !m_stop; }
 
@@ -61,6 +61,7 @@ public:
     if (res.first){
       switch (res.second){
         case internal::R3T3_intersection::CROSS_FACET:
+          m_status.first = true;
           ++m_status.second;
         break;
         case internal::R3T3_intersection::ENDPOINT_IN_TRIANGLE:
