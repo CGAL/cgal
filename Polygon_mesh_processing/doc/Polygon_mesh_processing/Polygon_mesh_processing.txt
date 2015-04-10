@@ -88,8 +88,6 @@ and `CGAL::Polygon_mesh_processing::fair()` for some selected regions on the inp
 
 \cgalExample{Polygon_mesh_processing/refine_fair_example.cpp}
 
-\todo code : fair() makes the mesh disappear in this example
-
 \subsubsection MeshingExample_2 Triangulate a Polygon Mesh
 
 Triangulating a polygon mesh can be done with the function
