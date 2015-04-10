@@ -181,7 +181,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
       `boost:RandomAccessRange` concept. The range of input points need to stay valid
       until the detection has been performed and no longer access to the
       results is required. The data in the input range is reordered during
-      `detect()` and `build_octrees()`. `clear()` is first called by this function.
+      `detect()` and `build_octrees()`. The function `clear()` is first called by this function.
     */
     void set_input_data(
       ///< Range of input data points.
