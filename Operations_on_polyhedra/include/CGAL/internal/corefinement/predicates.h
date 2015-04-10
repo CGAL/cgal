@@ -90,7 +90,9 @@ bool sorted_around_edge_filtered( int O_prime_index,
                                   const Nodes_vector& nodes,
                                   PolyhedronPointPMap ppmap)
 {
+  typename Nodes_vector::Protector p;
   try {
+    CGAL_USE(p);
     return sorted_around_edge<typename Nodes_vector::Ikernel>(
              nodes.interval_node(O_prime_index),
              nodes.interval_node(O_index),

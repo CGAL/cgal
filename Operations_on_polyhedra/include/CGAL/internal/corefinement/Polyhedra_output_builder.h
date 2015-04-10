@@ -1003,7 +1003,9 @@ private:
                                                  Vertex_handle Q,
                                                  const Nodes_vector& nodes)
   {
+    typename Nodes_vector::Protector p;
     try{
+      CGAL_USE(p);
       return are_triangles_coplanar_same_side<typename Nodes_vector::Ikernel>(
         nodes.interval_node(O_prime_index),
         nodes.interval_node(O_index),
@@ -1581,7 +1583,19 @@ public:
           #warning At some point we should have a check if a patch status is already set, what we do is consistant otherwise --> ambiguous
 #endif //CGAL_COREFINEMENT_POLYHEDRA_DEBUG
 
-          CGAL_assertion(get(ppmap,P1) !=get(ppmap,Q1) && get(ppmap,P1)!=get(ppmap,Q2) && get(ppmap,P2) !=get(ppmap,Q1) && get(ppmap,P2)!=get(ppmap,Q2));
+          CGAL_assertion(
+              ( index_p1 == -1 ? nodes.to_exact(get(ppmap,P1)): nodes.exact_node(index_p1) ) !=
+              ( index_q1 == -1 ? nodes.to_exact(get(ppmap,Q1)): nodes.exact_node(index_q1) )
+          &&
+              ( index_p2 == -1 ? nodes.to_exact(get(ppmap,P2)): nodes.exact_node(index_p2) ) !=
+              ( index_q1 == -1 ? nodes.to_exact(get(ppmap,Q1)): nodes.exact_node(index_q1) )
+          &&
+              ( index_p1 == -1 ? nodes.to_exact(get(ppmap,P1)): nodes.exact_node(index_p1) ) !=
+              ( index_q2 == -1 ? nodes.to_exact(get(ppmap,Q2)): nodes.exact_node(index_q2) )
+          &&
+              ( index_p2 == -1 ? nodes.to_exact(get(ppmap,P2)): nodes.exact_node(index_p2) ) !=
+              ( index_q2 == -1 ? nodes.to_exact(get(ppmap,Q2)): nodes.exact_node(index_q2) )
+          );
 
           bool Q1_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q1,P1,P2,Q1,nodes,ppmap);
           bool Q2_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q2,P1,P2,Q2,nodes,ppmap);
