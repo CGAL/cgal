@@ -643,14 +643,14 @@ add_edge(typename boost::graph_traits<Graph>::vertex_descriptor s,
 }
 
 /**
-* if possible, adds a new face with vertices from a range with value type
-* `boost::graph_traits<Graph>::%vertex_descriptor`.
-* The function adds halfedges between successive vertices if they are not
-* yet indicent to halfedges, or updates the connectivity of halfedges already in place.
+* adds a new face defined by a range of vertices (identified by their descriptors,
+* `boost::graph_traits<Graph>::%vertex_descriptor`).
+* For each pair of consecutive vertices, the corresponding halfedge
+* is added in `g` if new, and its connectivity is updated otherwise.
 * The face can be added only at the boundary of `g`, or as a new connected component.
 *
 * @pre `vr` contains at least 3 vertices
-* @returns the added face, or `boost::graph_traits<Graph>::%null_face()` if the face could not be added.
+* @returns the added face descriptor, or `boost::graph_traits<Graph>::%null_face()` if the face could not be added.
 */
 template< typename Graph, typename VertexRange >
 typename boost::graph_traits<Graph>::face_descriptor
