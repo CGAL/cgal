@@ -100,7 +100,7 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
                                   pmesh,
                                   boost::vertex_point);
   //Kernel
-  typedef typename GetKernel<PolygonMesh, NamedParameters>::type Kernel;
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
 
   internal::Compare_vertex_points_xyz_3<typename Kernel::Less_xyz_3, VPMap >
     less_xyz(vpmap);
