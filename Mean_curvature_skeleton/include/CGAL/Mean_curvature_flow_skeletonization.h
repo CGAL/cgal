@@ -239,7 +239,6 @@ public:
 
 
   struct Vmap {
-  std::size_t id;
     Point point;
     std::vector<Input_vertex_descriptor> vertices;
   };
