@@ -23,7 +23,7 @@ In our context, the error between a point and a shape is defined by its distance
 
 For very large point sets the basic RANSAC method is not practical when testing all possible shape candidates against the input data in order to find the largest shape. The main idea behind the efficient RANSAC method consists in testing shape candidates against \a subsets of the input data. Shape candidates are constructed until the probability to miss the largest candidate is lower than a user-specified parameter. The largest shape is repeatedly extracted until no more shapes, restricted to cover a minimum number of points, can be extracted. An additional gain in efficiency is achieved through exploiting the normal attributes during initial shape construction and enumeration of inliers.
 
-The \a support of a shape refers to the footprint of the points covered by the primitive. To avoid generating shapes with fragmented support we enforce a connectivity constraint by considering only one connected component, referred to as cluster, selected as the one covering the largest number of inliers. See section \ref Point_set_shape_detection_3Parameters for more details.
+The \a support of a shape refers to the footprint of the points covered by the primitive. To avoid generating shapes with fragmented support we enforce a connectivity constraint by considering only one connected component, referred to as cluster, selected as the one covering the largest number of inliers. See Section \ref Point_set_shape_detection_3Parameters for more details.
 
 The output of the shape detection algorithm is a set of detected shapes with assigned points, and all remaining points not covered by shapes. Each input point can be assigned to at most one detected shape. 
 
@@ -49,7 +49,7 @@ This parameter defines the probability to miss the largest candidate shape. A lo
 This minimum number of points controls the termination of the algorithm. The shape search is iterated until no further shapes can be found with a higher support. Note that this parameter is not strict: depending on the chosen probability, shapes may be extracted with a number of points lower than the specified parameter.
 
 \section Point_set_shape_detection_3Usage Usage
-The main class `Efficient_RANSAC` takes a template parameter `Efficient_RANSAC_traits_3` that defines the geometric types and input format. Property maps provide a means to interface with user-specific data structures. The first parameter of the `Efficient_RANSAC_traits_3` class is the common Kernel. In order to match the constraints of property maps, an iterator type and two maps that map an iterator to a point and a normal are specified in the `Efficient_RANSAC_traits_3` class. The concept behind property maps is detailed in Chapter \ref chapterProperty_map.
+The main class `Shape_detection_3::Efficient_RANSAC` takes a template parameter `Efficient_RANSAC_traits_3` that defines the geometric types and input format. Property maps provide a means to interface with user-specific data structures. The first parameter of the `Efficient_RANSAC_traits_3` class is the common Kernel. In order to match the constraints of property maps, an iterator type and two maps that map an iterator to a point and a normal are specified in the `Efficient_RANSAC_traits_3` class. The concept behind property maps is detailed in Chapter \ref chapterProperty_map.
 
 Typical usage consists in five steps:
 
@@ -59,25 +59,25 @@ Typical usage consists in five steps:
 -# Detect
 -# Retrieve detected shapes
 
-\subsection Point_set_shape_detection_3Usage_minimal Basic planar shape detection
+\subsection Point_set_shape_detection_3Usage_minimal Basic Planar Shape Detection
 
 The following minimal example reads a point set from a file and detects only planar shapes. The default parameters are used for detection.
 
 \cgalExample{Point_set_shape_detection_3/efficient_RANSAC_basic.cpp}
 
-\subsection Point_set_shape_detection_3Usage_parameters Setting parameters and using different types of shape
+\subsection Point_set_shape_detection_3Usage_parameters Setting Parameters and Using Different Types of Shape
 
-This example illustrates the user selection of parameters using the `Shape_detection::Parameters` struct. Shape detection is performed on five types of shapes (plane, cylinder, sphere, cone, torus). Basic information of the detected shapes is output to the standard output. The input point set is sampled on a surface mostly composed of piece-wise planar and cylindrical parts, in addition to free-form parts.
+This example illustrates the user selection of parameters using the `Shape_detection_3::Efficient_RANSAC_3::Parameters` struct. Shape detection is performed on five types of shapes (plane, cylinder, sphere, cone, torus). Basic information of the detected shapes is output to the standard output. The input point set is sampled on a surface mostly composed of piece-wise planar and cylindrical parts, in addition to free-form parts.
 
 \cgalExample{Point_set_shape_detection_3/efficient_RANSAC_parameters.cpp}
 
-\subsection Point_set_shape_detection_3Usage_point_access Retrieving points assigned to shapes
+\subsection Point_set_shape_detection_3Usage_point_access Retrieving Points Assigned to Shapes
 
 This example illustrates how to access the points assigned to each shape and compute the mean error. A timer measures the running performance.
 
 \cgalExample{Point_set_shape_detection_3/efficient_RANSAC_point_access.cpp}
 
-\section Point_set_shape_detection_3Arbitrary_shapes Other shapes
+\section Point_set_shape_detection_3Arbitrary_shapes Other Shapes
 
 Other types of shapes can be detected by implementing a shape class derived from the class `Shape_base` and registering it to the shape detection factory. This class must provide the following functions: construct a shape from a small set of given points, compute the squared distance from a query point and the shape and compute the normal deviation between a query point with normal and the normal to the shape at the closest point from the query. The used shape parameters are added as members to the derived class.
 

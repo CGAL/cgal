@@ -54,7 +54,7 @@ namespace CGAL {
 \brief A shape detection algorithm using a RANSAC method.
 
 Given a point set in 3D space with unoriented normals, sampled on surfaces,
-this classes enables to detect subsets of connected points lying on the surface of primitive shapes.
+this class enables to detect subsets of connected points lying on the surface of primitive shapes.
 Each input point is assigned to either none or at most one detected primitive
 shape. The implementation follows \cgalCite{Schnabel07}.
 
@@ -181,7 +181,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
       `boost:RandomAccessRange` concept. The range of input points need to stay valid
       until the detection has been performed and no longer access to the
       results is required. The data in the input range is reordered during
-      `detect()` and `build_octrees()`. `clear()` is first called by this function.
+      `detect()` and `build_octrees()`. The function `clear()` is first called by this function.
     */
     void set_input_data(
       ///< Range of input data points.
