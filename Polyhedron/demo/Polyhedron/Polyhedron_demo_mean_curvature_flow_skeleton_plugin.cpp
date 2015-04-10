@@ -228,11 +228,11 @@ public:
       CGAL::set_halfedgeds_items_id(*contracted_mesh_ptr);
       mcs = new Mean_curvature_skeleton(*contracted_mesh_ptr);
       //set algorithm parameters
-      mcs->set_omega_H(omega_H);
-      mcs->set_omega_P(omega_P);
+      mcs->set_quality_speed_tradeoff(omega_H);
+      mcs->set_medially_centered_speed_tradeoff(omega_P);
       mcs->set_min_edge_length(min_edge_length);
       mcs->set_is_medially_centered(is_medially_centered);
-      mcs->set_delta_area(delta_area);
+      mcs->set_area_variation_factor(delta_area);
 
       Scene_polyhedron_item* contracted_item = new Scene_polyhedron_item(contracted_mesh_ptr);
       contracted_item->setName(QString("contracted mesh of %1").arg(item->name()));
@@ -264,11 +264,11 @@ public:
         CGAL::set_halfedgeds_items_id(*contracted_mesh_ptr);
         mcs = new Mean_curvature_skeleton(*pMesh);
         //set algorithm parameters
-        mcs->set_omega_H(omega_H);
-        mcs->set_omega_P(omega_P);
+        mcs->set_quality_speed_tradeoff(omega_H);
+        mcs->set_medially_centered_speed_tradeoff(omega_P);
         mcs->set_min_edge_length(min_edge_length);
         mcs->set_is_medially_centered(is_medially_centered);
-        mcs->set_delta_area(delta_area);
+        mcs->set_area_variation_factor(delta_area);
 
         Scene_polyhedron_item* contracted_item = new Scene_polyhedron_item(contracted_mesh_ptr);
         contracted_item->setName(QString("contracted mesh of %1").arg(item->name()));
@@ -286,10 +286,10 @@ public:
       }
       else
       {
-        mcs->set_omega_H(omega_H);
-        mcs->set_omega_P(omega_P);
+        mcs->set_quality_speed_tradeoff(omega_H);
+        mcs->set_medially_centered_speed_tradeoff(omega_P);
         mcs->set_min_edge_length(min_edge_length);
-        mcs->set_delta_area(delta_area);
+        mcs->set_area_variation_factor(delta_area);
         mcs->set_is_medially_centered(is_medially_centered);
       }
     }
@@ -304,10 +304,10 @@ public:
     double delta_area = ui->delta_area->value();
     bool is_medially_centered = ui->is_medially_centered->isChecked();
 
-    mcs->set_omega_H(omega_H);
-    mcs->set_omega_P(omega_P);
+    mcs->set_quality_speed_tradeoff(omega_H);
+    mcs->set_medially_centered_speed_tradeoff(omega_P);
     mcs->set_min_edge_length(min_edge_length);
-    mcs->set_delta_area(delta_area);
+    mcs->set_area_variation_factor(delta_area);
     mcs->set_is_medially_centered(is_medially_centered);
   }
 
