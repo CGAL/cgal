@@ -255,28 +255,21 @@ private:
     // assign edge id
     // the two halfedges representing the same edge get the same id
     idx = 0;
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(hg))
+    BOOST_FOREACH(edge_descriptor ed, edges(hg))
     {
-      put(hedge_id_pmap, hd, -1);
-    }
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(hg))
-    {
-      int id = get(hedge_id_pmap, hd);
-      if (id == -1)
-      {
-        put(hedge_id_pmap, hd, idx);
-        halfedge_descriptor hd_opposite = opposite(hd,hg);
-        put(hedge_id_pmap, hd_opposite, idx);
+      halfedge_descriptor hd = halfedge(ed, hg);
+      put(hedge_id_pmap, hd, idx);
+      halfedge_descriptor hd_opposite = opposite(hd,hg);
+      put(hedge_id_pmap, hd_opposite, idx);
 
-        // also cache the length of the edge
-        vertex_descriptor v1 = target(hd,hg);
-        vertex_descriptor v2 = source(hd,hg);
-        Point source = get(hg_point_pmap, v1);
-        Point target = get(hg_point_pmap, v2);
-        edge_squared_lengths[idx] = squared_distance(source, target);
+      // also cache the length of the edge
+      vertex_descriptor v1 = target(hd,hg);
+      vertex_descriptor v2 = source(hd,hg);
+      Point source = get(hg_point_pmap, v1);
+      Point target = get(hg_point_pmap, v2);
+      edge_squared_lengths[idx] = squared_distance(source, target);
 
-        idx++;
-      }
+      ++idx;
     }
 
     // assign face id and compute edge-face connectivity
@@ -313,17 +306,10 @@ private:
   {
     // put all the edges into a priority queue
     // shorter edge has higher priority
-    std::vector<bool> is_edge_inserted;
-    is_edge_inserted.clear();
-    is_edge_inserted.resize(edge_to_face.size(), false);
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(hg))
+    BOOST_FOREACH(edge_descriptor ed, edges(hg))
     {
-      int id = get(hedge_id_pmap, hd);
-
-      if (is_edge_inserted[id]) continue;
-
+      int id = get(hedge_id_pmap, halfedge(ed, hg));
       queue.insert(id);
-      is_edge_inserted[id] = true;
     }
   }
 
