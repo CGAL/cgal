@@ -25,7 +25,6 @@
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_XY_COORDINATE_2_H
 
 #include <CGAL/basic.h>
-#include <boost/pool/pool_alloc.hpp>
 #include <boost/numeric/interval.hpp>
 
 #include <CGAL/Bbox_2.h>
