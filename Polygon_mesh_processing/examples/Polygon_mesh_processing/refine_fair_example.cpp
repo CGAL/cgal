@@ -36,6 +36,7 @@ std::vector<Vertex_handle> extract_k_ring(Vertex_handle v, int k)
       }
     } while (++e != e_end);
   }
+
   return Q;
 }
 
@@ -65,8 +66,8 @@ int main(int argc, char* argv[])
   std::cout << "Refinement added " << new_vertices.size() << " vertices." << std::endl;
 
   Polyhedron::Vertex_iterator v = poly.vertices_begin();
-  std::advance(v, 8286);
-  const std::vector<Vertex_handle>& region = extract_k_ring(v, 45);
+  std::advance(v, 82);
+  const std::vector<Vertex_handle>& region = extract_k_ring(v, 12);
 
   bool success = CGAL::Polygon_mesh_processing::fair(poly, region);
   std::cout << "Is fairing successful: " << success << std::endl;
