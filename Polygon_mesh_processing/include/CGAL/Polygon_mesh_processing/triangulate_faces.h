@@ -101,15 +101,16 @@ public:
     // that invalidates the range [facets_begin(), facets_end()[.
     std::vector<face_descriptor> facets;
     facets.reserve(num_faces(pmesh));
-    BOOST_FOREACH(face_descriptor fit, faces(pmesh))
-      //only consider non-triangular faces
-      if ( next( next( halfedge(fit, pmesh), pmesh), pmesh) !=
-           prev( halfedge(fit, pmesh), pmesh) ) facets.push_back(fit);
 
-    // Iterates on the vector of facet handles
-    for (unsigned int i = 0; i < facets.size(); ++i)
+    //only consider non-triangular faces
+    BOOST_FOREACH(face_descriptor fit, faces(pmesh))
+      if ( next( next( halfedge(fit, pmesh), pmesh), pmesh)
+        !=       prev( halfedge(fit, pmesh), pmesh) )
+        facets.push_back(fit);
+
+    // Iterates on the vector of face descriptors
+    BOOST_FOREACH(face_descriptor f, facets)
     {
-      face_descriptor f = facets[i];
       typename Traits::Vector_3 normal =
         Polygon_mesh_processing::compute_face_normal(f, pmesh);
 
@@ -124,7 +125,7 @@ public:
       do
       {
         Tr_Vertex_handle vh = cdt.insert(_vpmap[target(h, pmesh)]);
-        if(first == 0) {
+        if (first == Tr_Vertex_handle()) {
           first = vh;
         }
         vh->info() = h;
@@ -150,10 +151,14 @@ public:
       {
         typename CDT::Face_handle fh = face_queue.front();
         face_queue.pop();
-        if(fh->info().is_external) continue;
+
+        if(fh->info().is_external)
+          continue;
+
         fh->info().is_external = true;
-        for(int i = 0; i <3; ++i) {
-          if(!cdt.is_constrained(std::make_pair(fh, i)))
+        for(int i = 0; i <3; ++i)
+        {
+          if(!cdt.is_constrained(typename CDT::Edge(fh, i)))
           {
             face_queue.push(fh->neighbor(i));
           }
@@ -172,21 +177,24 @@ public:
         const int index = eit->second;
         typename CDT::Face_handle opposite_fh = fh->neighbor(eit->second);
         const int opposite_index = opposite_fh->index(fh);
+
         const Tr_Vertex_handle va = fh->vertex(cdt. cw(index));
         const Tr_Vertex_handle vb = fh->vertex(cdt.ccw(index));
 
-        if( ! (is_external(fh) && is_external(opposite_fh))
-          && ! cdt.is_constrained(*eit) ) 
+        if( ! (is_external(fh) && is_external(opposite_fh))//not both fh are external
+          && ! cdt.is_constrained(*eit) )                  //and edge is not constrained
         {
           // strictly internal edge
-          edge_descriptor e = add_edge(pmesh);
-          fh->info().e[index] = h;
-          opposite_fh->info().e[opposite_index] = opposite(h, pmesh);
+          halfedge_descriptor hnew = halfedge(add_edge(pmesh), pmesh),
+                              hnewopp = opposite(hnew, pmesh);
 
-          set_target(h, target(va->info(), pmesh), pmesh);
-          set_target(opposite(h, pmesh), target(vb->info(), pmesh), pmesh);
+          fh->info().e[index] = hnew;
+          opposite_fh->info().e[opposite_index] = hnewopp;
+
+          set_target(hnew,    target(va->info(), pmesh), pmesh);
+          set_target(hnewopp, target(vb->info(), pmesh), pmesh);
         }
-        if( cdt.is_constrained(*eit) )
+        if( cdt.is_constrained(*eit) ) //edge is constrained
         {
           if(!is_external(fh)) {
             fh->info().e[index] = va->info();
