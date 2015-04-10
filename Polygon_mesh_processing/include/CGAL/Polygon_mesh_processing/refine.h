@@ -58,8 +58,6 @@ namespace Polygon_mesh_processing {
 
   @return pair of `faces_out` and `vertices_out`
 
-  \todo code: in refine_impl, is density_control_factor used? it seems that scale_attribute
-               is filled with zeros
   @todo current algorithm iterates 10 times at most, since (I guess) there is no termination proof.
   */
   template<typename PolygonMesh,
