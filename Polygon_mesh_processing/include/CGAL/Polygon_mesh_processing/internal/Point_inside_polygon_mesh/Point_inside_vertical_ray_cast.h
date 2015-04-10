@@ -27,6 +27,7 @@
 #include <CGAL/Origin.h>
 
 #include <boost/optional.hpp>
+#include <boost/none.hpp>
 
 namespace CGAL {
 namespace internal {
@@ -62,14 +63,15 @@ public:
     Ray query = ray_functor(point, vector_functor(0,0,(2*point.z() <  tree.bbox().zmax()+tree.bbox().zmin()?-1:1)));
     boost::optional<Bounded_side> res = is_inside_ray_tree_traversal<true>(query, tree);
 
-    if(!res) {
+    if(res == boost::none)
+    {
       CGAL::Random rg(seed); // seed some value for make it easy to debug
       Random_points_on_sphere_3<Point> random_point(1.,rg);
 
       do { //retry with a random ray
         query = ray_functor(point, vector_functor(CGAL::ORIGIN,*random_point++));
         res = is_inside_ray_tree_traversal<false>(query, tree);
-      } while (!res);
+      } while (res == boost::none);
     }
     return *res;
   }
@@ -79,9 +81,12 @@ private:
   boost::optional<Bounded_side>
   is_inside_ray_tree_traversal(const Ray& ray, const AABBTree& tree) const
   {
-    std::pair<boost::logic::tribool,std::size_t> status( boost::logic::tribool(boost::logic::indeterminate), 0);
+    std::pair<boost::logic::tribool,std::size_t>
+      status( boost::logic::tribool(boost::logic::indeterminate), 0);
 
-    Ray_3_Triangle_3_traversal_traits<Traits, Kernel, Boolean_tag<ray_is_vertical> > traversal_traits(status, tree.traits());
+    Ray_3_Triangle_3_traversal_traits<Traits, Kernel, Boolean_tag<ray_is_vertical> >
+      traversal_traits(status, tree.traits());
+
     tree.traversal(ray, traversal_traits);
 
     if ( !boost::logic::indeterminate(status.first) )
