@@ -50,7 +50,6 @@ namespace CGAL {
  * \todo Code: Use this class as an implementation detail of Mesh_3's Polyhedral_mesh_domain_3.
        Remove `TriangleAccessor_3` as well as the concept in Mesh_3 since making `TriangleMesh`
        a model of `FaceListGraph` will make it useless
- * \todo check the implementation
  */
 template <class TriangleMesh,
           class GeomTraits,
