@@ -98,8 +98,6 @@ as shown in the example below.
 
 \cgalExample{Polygon_mesh_processing/triangulate_faces_example.cpp}
 
-\todo code : this example does not terminate
-
 ********************************************
 \section PMPHoleFilling Hole Filling
 
