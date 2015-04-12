@@ -1635,7 +1635,8 @@ compute_facet_properties(const Facet& facet,
       // the later does not work.
       Surface_patch surface =
         (CGAL::cpp11::get<2>(intersect) == 0) ? Surface_patch() :
-        r_oracle_.surface_patch_index(CGAL::cpp11::get<1>(intersect));
+        Surface_patch(
+          r_oracle_.surface_patch_index(CGAL::cpp11::get<1>(intersect)));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       fp =  Facet_properties(CGAL::cpp11::make_tuple(*surface,
@@ -1667,7 +1668,8 @@ compute_facet_properties(const Facet& facet,
 #ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       Surface_patch surface =
         (CGAL::cpp11::get<2>(intersect) == 0) ? Surface_patch() :
-        r_oracle_.surface_patch_index(CGAL::cpp11::get<1>(intersect));
+        Surface_patch(
+          r_oracle_.surface_patch_index(CGAL::cpp11::get<1>(intersect)));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
         {
