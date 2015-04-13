@@ -213,10 +213,11 @@ void report_while_handling_needles(
   typedef typename Visibility_2::Arrangement_2              Arrangement_2;
   typedef typename Arrangement_2::Point_2                   Point_2;
   typedef typename Arrangement_2::Geometry_traits_2         Geometry_traits_2;
-  typedef typename Arrangement_2::Halfedge_handle           Halfedge_handle;
-  typedef typename Arrangement_2::Vertex_handle             Vertex_handle;
   typedef typename Geometry_traits_2::Segment_2             Segment_2;
-  typedef typename Geometry_traits_2::Direction_2           Direction_2;
+
+  typedef typename Visibility_arrangement_2::Halfedge_handle    Halfedge_handle;
+  typedef typename Visibility_arrangement_2::Vertex_handle      Vertex_handle;
+
 
 
   typename std::vector<Segment_2>::size_type i = 0;
@@ -232,16 +233,16 @@ void report_while_handling_needles(
 
   points.push_back(points[i]);
 
-  typename Visibility_arrangement_2::Halfedge_handle he_handle;
+  Halfedge_handle he_handle;
 
   //the handle of vertex where the next segment is inserted
-  typename Visibility_arrangement_2::Vertex_handle v_trg;
+  Vertex_handle v_trg;
 
   //the handle of vertex inserted first
-  typename Visibility_arrangement_2::Vertex_handle v_fst;
+  Vertex_handle v_fst;
 
   //the handle of vertex of the end of a needle
-  typename Visibility_arrangement_2::Vertex_handle v_needle_end;
+  Vertex_handle v_needle_end;
 
 
   v_trg = v_fst = arr_out.insert_in_face_interior(points[i],
@@ -250,7 +251,7 @@ void report_while_handling_needles(
   //find a point that is right after a needle
   while (i+1 < points.size()) {
     if ( collinear(traits, points[i], points[i+1], q)) {
-      typename Visibility_arrangement_2::Vertex_handle v_needle_begin = v_trg;
+      Vertex_handle v_needle_begin = v_trg;
 
       std::vector<Point_2> forward_needle; //vertices of the needle that are not
                                            //between q and v_needle_begin;

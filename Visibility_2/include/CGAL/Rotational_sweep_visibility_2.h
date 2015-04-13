@@ -123,7 +123,10 @@ private:
       case LEFT_TURN:
         return 2;
       }
+
+      return -1;
     }
+
     bool operator() (const EH& e1, const EH& e2) const {
       if (e1 == e2)
         return false;
@@ -232,13 +235,15 @@ private:
             return true;
         }
       }
+
+      return false;
     }
 
   };
   
-  
-  const Geometry_traits_2 *geom_traits;
   const Arrangement_2 *p_arr;
+  const Geometry_traits_2 *geom_traits;
+
 
   mutable Point_2 q;                               //query point
   mutable Points polygon;                          //visibility polygon
@@ -257,10 +262,12 @@ private:
   mutable VH  cone_end1;                    //an end of visibility cone
   mutable VH  cone_end2;                    //another end of visibility cone
 
-  mutable int cone_end1_idx;                //index of cone_end1->point() in
+  mutable typename Points::size_type cone_end1_idx;
+                                            //index of cone_end1->point() in
                                             //visibility polygon
 
-  mutable int cone_end2_idx;                //index of cone_end2->point() in
+  mutable typename Points::size_type cone_end2_idx;
+                                            //index of cone_end2->point() in
                                             //visibility polygon
 
   mutable bool is_vertex_query;
@@ -317,7 +324,7 @@ public:
     visibility_region_impl(e->face(), q);
 
     //decide which inside of the visibility butterfly is needed.
-    int small_idx, big_idx;
+    typename Points::size_type small_idx, big_idx;
     if ( cone_end1_idx < cone_end2_idx ) {
       small_idx = cone_end1_idx;
       big_idx = cone_end2_idx;
@@ -326,7 +333,7 @@ public:
       small_idx = cone_end2_idx;
       big_idx = cone_end1_idx;
     }
-    int next_idx = small_idx + 1;
+    typename Points::size_type next_idx = small_idx + 1;
     bool is_between;
     //indicate whether the shape between small_idx and big_idx is the visibility
     //region required.
@@ -367,7 +374,7 @@ public:
     else {
       Points polygon_out(polygon.begin(), first+1);
       if (is_vertex_query) polygon_out.push_back(q);
-      for (int i = big_idx; i != polygon.size(); i++) {
+      for (typename Points::size_type i = big_idx; i != polygon.size(); i++) {
         polygon_out.push_back(polygon[i]);
       }
       Visibility_2::report_while_handling_needles<Rotational_sweep_visibility_2>
@@ -566,17 +573,17 @@ private:
         else
           remove_ehs.push_back(e);
       }
-      int insert_cnt = insert_ehs.size();
-      int remove_cnt = remove_ehs.size();
+      typename EHs::size_type insert_cnt = insert_ehs.size();
+      typename EHs::size_type remove_cnt = remove_ehs.size();
       if (insert_cnt == 1 && remove_cnt == 1) {
         const EH& ctemp_eh = *active_edges.find(remove_ehs.front());
         EH& temp_eh = const_cast<EH&>(ctemp_eh);
         temp_eh = insert_ehs.front();
       }
       else {
-        for (int j=0; j!=remove_cnt; j++)
+        for (typename EHs::size_type j=0; j!=remove_cnt; j++)
           active_edges.erase(remove_ehs[j]);
-        for (int j=0; j!=insert_cnt; j++)
+        for (typename EHs::size_type j=0; j!=insert_cnt; j++)
           active_edges.insert(insert_ehs[j]);
       }
 
@@ -919,7 +926,7 @@ private:
   }
 
   template <typename VARR> 
-  void conditional_regularize(VARR& arr_out, CGAL::Tag_false) const {
+  void conditional_regularize(VARR&, CGAL::Tag_false) const {
     //do nothing
   }
 

@@ -224,7 +224,7 @@ private:
 
   /*! No need to regularize output if flag is set to false*/
   template <typename VARR> 
-  void conditional_regularize(VARR& out_arr, CGAL::Tag_false) const {
+  void conditional_regularize(VARR&, CGAL::Tag_false) const {
     //do nothing
   }
 
@@ -308,10 +308,12 @@ private:
             circ->source()->incident_halfedges();
     Halfedge_around_vertex_const_circulator incident_curr = incident_circ;
 
+    Ccb_halfedge_const_circulator incident_next;
+
     do {
 
       if (incident_curr->face() == face) {
-        Ccb_halfedge_const_circulator incident_next = incident_curr;
+        incident_next = incident_curr;
         ++incident_next;
 
         if (Visibility_2::orientation_2(traits,
@@ -323,10 +325,12 @@ private:
                                         incident_next->target()->point(),
                                         q) == LEFT_TURN)
         {
-          return incident_next;
+          break;
         }
       }
     } while (++incident_curr != incident_circ);
+
+    return incident_next;
   }
 
 
@@ -368,13 +372,15 @@ private:
           scana(i, w, q);
           break;
         case SCANB:
-          scanb(i, w, q);
+          scanb(i, w);
           break;
         case SCANC:
-          scanc(i, w, q);
+          scanc(i, w);
           break;
         case SCAND:
-          scand(i, w, q);
+          scand(i, w);
+          break;
+        case FINISH:
           break;
       }
       if ( upcase == LEFT ) {
@@ -581,7 +587,7 @@ private:
   }
 
   /*! Find the first edge interecting the segment (v_0, s_t) */
-  void scanb(int& i, Point_2& w, const Point_2& q) const {
+  void scanb(int& i, Point_2& w) const {
     if ( i == vertices.size() - 1 ) {
       upcase = FINISH;
       return;
@@ -602,7 +608,7 @@ private:
 
   /*! Finds the exit from a general front hidden window by finding the first
       vertex to the right of the ray defined by the query_point and w*/
-  void scanc(int& i, Point_2& w, const Point_2& q) const {
+  void scanc(int& i, Point_2& w) const {
     Point_2 u;
     int k = scan_edges( i, s.top(), w, u, false );
     upcase = RIGHT;
@@ -611,7 +617,7 @@ private:
   }
 
   /*! find the first edge intersecting the given window (s_t, w) */
-  void scand(int& i, Point_2& w, const Point_2& q) const {
+  void scand(int& i, Point_2& w) const {
     Point_2 u;
     int k = scan_edges( i, s.top(), w, u, false );
     upcase = LEFT;
