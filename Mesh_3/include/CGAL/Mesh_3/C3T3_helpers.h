@@ -44,8 +44,6 @@
 #include <boost/optional.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/function_output_iterator.hpp>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/unordered_set.hpp>
@@ -939,9 +937,9 @@ public:
    */
   void reset_cache() const
   {
-    namespace bl = boost::lambda;
-    std::for_each(c3t3_.cells_in_complex_begin(),c3t3_.cells_in_complex_end(),
-                  bl::bind(&Cell::reset_cache_validity, bl::_1) );
+    for(typename C3T3::Cells_in_complex_iterator it = c3t3_.cells_in_complex_begin();
+        it != c3t3_.cells_in_complex_end(); ++it)
+      it->reset_cache_validity();
   }
 
 private:
@@ -2110,10 +2108,10 @@ private:
   void reset_sliver_cache(CellForwardIterator cells_begin,
                             CellForwardIterator cells_end) const
   {
-    // std::cerr << "reset_sliver_cache\n";
-    namespace bl = boost::lambda;
-    std::for_each(cells_begin, cells_end,
-                  bl::bind(&Cell::reset_cache_validity, *bl::_1) );
+    while(cells_begin != cells_end) {
+      (*cells_begin)->reset_cache_validity();
+      ++cells_begin;
+    }
   }
 
   template <typename CellRange>
@@ -2127,9 +2125,10 @@ private:
   void reset_circumcenter_cache(CellForwardIterator cells_begin,
                             CellForwardIterator cells_end) const
   {
-    namespace bl = boost::lambda;
-    std::for_each(cells_begin, cells_end,
-                  bl::bind(&Cell::invalidate_circumcenter, *bl::_1) );
+    while(cells_begin != cells_end) {
+      (*cells_begin)->invalidate_circumcenter();
+      ++cells_begin;
+    }
   }
 
 
