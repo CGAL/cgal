@@ -7,18 +7,29 @@ namespace CGAL {
 
 \authors Fernando de Goes, Pierre Alliez, Ivo Vigan and Clément Jamin
 
-%test
-
 \section Reconstruction_simplification_2Introduction Introduction
 
+
+This package implements methods to reconstruct and simplify 2D point sets. The input is a noisy 2D point set and the output is an arrangement of line segments and points which approximate the original shape, where the input points were sampled from as illustrated in Figure \cgalFigureRef{2D_Reconstruction_Simplification_overview}. 
+
+
+\cgalFigureBegin{2D_Reconstruction_Simplification_overview,summary.png}
+Left: A noisy set of input points. Right: The corresponding reconstructed shape consisting of line segments.
+\cgalFigureEnd
+
+
+
+
+\section Reconstruction_simplification_2Overview Theory of the Reconstruction Process
+
+
+More formally, the task addressed here is to reconstruct a shape from a noisy point set \f$ S \f$ in  \f$ \mathbb{R}^2 \f$, i.e. given a set of points in the plane, find a <I>0-1 simplex </I>which best approximates the original shape where the points were sampled from. The related task of simplifying a shape finds an approximation of the original shape using a <I>0-1 simplex </I>.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_process,process.png}
 From left to right: input point set; Delaunay triangulation of input; after simplification, with ghost edges in grey, relevant solid edges in green, discarded solid edges in red; final reconstruction.
 \cgalFigureEnd
 
-The task addressed here is to reconstruct a shape from a noisy point set \f$ S \f$ in  \f$ \mathbb{R}^2 \f$, i.e. given a set of points in the plane, find a <I>0-1 simplex </I>which best approximates the original shape where the points were sampled from. The related task of simplifying a shape finds an approximation of the original shape using a <I>0-1 simplex </I>.
-
-The algorithm of \cgalCite{degoes:hal-00758019} which is implemented here, performs the reconstruction and simplification task jointly, using a unified framework based on optimal transportations of measures. This method provides benefits such as robustness to noise, preservation of sharp features and boundaries. An optimal transportation plan is an assignment of the input-points to vertices and edges of an output simplex such that the 2-Wasserstein distance is minimized.
+The algorithm of \cgalCite{degoes:hal-00758019} which is implemented here, performs the reconstruction and simplification task jointly, using a framework based on optimal transportations of measures. This method provides benefits such as robustness to noise, preservation of sharp features and boundaries. An optimal transportation plan is an assignment of the input-points to vertices and edges of an output simplex such that the 2-Wasserstein distance is minimized.
 
 The algorithm can be summarized as: Considering \f$S\f$ as a measure  \f$ \mu \f$ consisting of Dirac masses, find a coarse simplicial complex \f$T\f$ such that  \f$ \mu \f$ is well approximated by a piecewise combination of uniform measure on the edges and vertices of  \f$ T \f$.
 
@@ -33,13 +44,9 @@ Illustration of an edge flip. In the left image, the blue edge creates fold-over
 
 The transportation plan is approximated by assigning each input point temporarily to the closest simplex edge. After this partitioning of the input points w.r.t. the edges, all the points temporarily assigned to a given edge are being assigned to it permanently if and only if the corresponding transportation costs are less than the transportation cost for each of the two vertices of the edge. Otherwise each of the points is assigned to the cheaper of the two vertices. This process of edge contraction and transportation plan update is repeated until the desired number of vertices, specified by the users, has been reached. After that, edges which carry little mass can be filtered out and the remaining edges are reported as reconstructing the input shape. 
 
-\cgalFigureBegin{2D_Reconstruction_Simplification_edgecontraction,edgecontraction.png}
-Illustration of an edge contraction, indicated by the blue arrow. The resulting reassignment of the input points to vertices and edges is depicted in green and red respectively.
-\cgalFigureEnd
 
 
-\section Reconstruction_simplification_2Overview Theory of the Reconstruction Process
-While previous work address the reconstruction and simplification tasks sequentially, here they are performed jointly using a unified framework based on optimal transport of measures. This method provides benefits such as robustness to noise, preservation of sharp features and boundaries. It furthermore guarantees that the output is a simplicial complex. Transportation theory studies optimal transportations between a set \f$M\f$ of \f$n\f$ sources and a set  \f$F \f$ of \f$n\f$ targets (both can be primitives in various dimensions.). Given a cost function  \f$c : \mathbb{R}^2 \times \mathbb{R}^2 \rightarrow \mathbb{R}^+ \f$, the goal is to find a mapping between \f$M\f$ and \f$F\f$ such that the sum of the costs \f$c\f$ gets minimized. The optimal transport problem can also be defined between measures, and here we view the reconstruction and simplification tasks as such a transportation problem, where the input points are Dirac measure and the reconstructed simplicial complex is the support of a piecewise uniform measure. The algorithm then performs edge contractions in a greedy fashion w.r.t. the transportation cost, until the desired number of vertices are reached or a predefined iteration threshold has been exceeded.
+While previous work address the reconstruction and simplification tasks sequentially, here they are performed jointly using a framework based on optimal transport of measures. This method provides benefits such as robustness to noise, preservation of sharp features and boundaries. It furthermore guarantees that the output is a simplicial complex. Transportation theory studies optimal transportations between a set \f$M\f$ of \f$n\f$ sources and a set  \f$F \f$ of \f$n\f$ targets (both can be primitives in various dimensions.). Given a cost function  \f$c : \mathbb{R}^2 \times \mathbb{R}^2 \rightarrow \mathbb{R}^+ \f$, the goal is to find a mapping between \f$M\f$ and \f$F\f$ such that the sum of the costs \f$c\f$ gets minimized. The optimal transport problem can also be defined between measures, and here we view the reconstruction and simplification tasks as such a transportation problem, where the input points are Dirac measure and the reconstructed simplicial complex is the support of a piecewise uniform measure. The algorithm then performs edge contractions in a greedy fashion w.r.t. the transportation cost, until the desired number of vertices are reached or a predefined iteration threshold has been exceeded.
 
 
 \section Reconstruction_simplification_2Trans Optimal Transport Formulation
