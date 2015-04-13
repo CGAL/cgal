@@ -25,7 +25,6 @@ int main(int argc, char * argv[])
     std::cerr << "PARAMETERIZATION" << std::endl;
     std::cerr << "  Floater parameterization" << std::endl;
     std::cerr << "  Circle border" << std::endl;
-    std::cerr << "  OpenNL solver" << std::endl;
 
     //***************************************
     // decode parameters
@@ -66,7 +65,7 @@ int main(int argc, char * argv[])
 
     //***************************************
     // Floater Mean Value Coordinates parameterization
-    // (defaults are circular border and OpenNL solver)
+    // (defaults are circular border and Eigen solver)
     //***************************************
 
     typedef CGAL::Parameterizer_traits_3<Parameterization_polyhedron_adaptor>

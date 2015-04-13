@@ -27,7 +27,6 @@ int main(int argc, char * argv[])
     std::cerr << "PARAMETERIZATION" << std::endl;
     std::cerr << "  Discrete Authalic Parameterization" << std::endl;
     std::cerr << "  circle border" << std::endl;
-    std::cerr << "  OpenNL solver" << std::endl;
 
     //***************************************
     // decode parameters
@@ -68,7 +67,7 @@ int main(int argc, char * argv[])
 
     //***************************************
     // Discrete Authalic Parameterization
-    // (defaults are circular border and OpenNL solver)
+    // (defaults are circular border and Eigen solver)
     //***************************************
 
     typedef CGAL::Discrete_authalic_parameterizer_3<Parameterization_polyhedron_adaptor>

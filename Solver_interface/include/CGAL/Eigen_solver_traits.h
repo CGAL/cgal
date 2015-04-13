@@ -79,6 +79,7 @@ class Eigen_solver_traits
   typedef typename EigenSolverT::Scalar Scalar;
 // Public types
 public:
+   typedef EigenSolverT Solver;
    typedef Scalar                                                       NT;
    typedef typename internal::Get_eigen_matrix<EigenSolverT,NT>::type   Matrix;
    typedef Eigen_vector<Scalar>                                         Vector;
@@ -143,6 +144,7 @@ class Eigen_solver_traits< Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenTyp
   typedef EigenSolverT::Scalar Scalar;
 // Public types
 public:
+   typedef EigenSolverT Solver;
    typedef Scalar                                                       NT;
    typedef internal::Get_eigen_matrix<EigenSolverT,NT>::type   Matrix;
    typedef Eigen_vector<Scalar>                                         Vector;

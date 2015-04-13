@@ -26,7 +26,6 @@ int main(int argc, char * argv[])
     std::cerr << "PARAMETERIZATION" << std::endl;
     std::cerr << "  Floater parameterization" << std::endl;
     std::cerr << "  square border" << std::endl;
-    std::cerr << "  OpenNL solver" << std::endl;
 
     //***************************************
     // decode parameters

@@ -17,25 +17,6 @@ The version 3.1 (or greater) of \ref thirdpartyEigen "Eigen" must be available o
 \sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
 \sa `CGAL::Eigen_vector<T>`
 
-Example 
--------------- 
-
-The instantiation of this class assumes an \ref thirdpartyEigen "Eigen" sparse solver is provided. Here are few examples: 
-
-\code{.cpp} 
-
-typedef CGAL::Eigen_sparse_matrix<double>::EigenType EigenMatrix; 
-
-//iterative general solver 
-typedef CGAL::Eigen_solver_traits< Eigen::BiCGSTAB<EigenMatrix> > Iterative_general_solver; 
-
-//iterative symmetric solver 
-typedef CGAL::Eigen_solver_traits< Eigen::ConjugateGradient<EigenMatrix> > Iterative_symmetric_solver; 
-
-//direct symmetric solver 
-typedef CGAL::Eigen_solver_traits< Eigen::SimplicialCholesky<EigenMatrix> > Direct_symmetric_solver; 
-
-\endcode 
 
 */
 template< typename T >

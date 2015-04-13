@@ -248,14 +248,10 @@ int main(int argc, char * argv[])
     // Border parameterizer
     typedef CGAL::Square_border_arc_length_parameterizer_3<Mesh_patch_polyhedron>
                                                             Border_parameterizer;
-    // Eigen solver
-    typedef CGAL::Eigen_solver_traits<>                Solver;
-
     // Discrete Authalic Parameterization (square border)
     // with Eigen solver
     typedef CGAL::Discrete_authalic_parameterizer_3<Mesh_patch_polyhedron,
-                                                    Border_parameterizer,
-                                                    Solver> Parameterizer;
+                                                    Border_parameterizer> Parameterizer;
 
     Parameterizer::Error_code err = CGAL::parameterize(mesh_patch, Parameterizer());
     switch(err) {
