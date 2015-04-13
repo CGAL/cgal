@@ -113,22 +113,33 @@ namespace Tangential_complex_ {
     }
   };*/
 
+  
+
+  template <typename K>
+  std::vector<typename K::Vector_d>
+  normalize_vector(
+    std::vector<typename K::Vector_d> &v,
+    K const& k)
+  {
+    v = k.scaled_vector_d_object()(
+      v, FT(1)/CGAL::sqrt(k.squared_length_d_object()(v)));
+  }
 
   template <typename K>
   std::vector<typename K::Vector_d>
   compute_gram_schmidt_basis(
     std::vector<typename K::Vector_d> const& input_basis,
-    K const& kernel)
+    K const& k)
   {
     typedef typename K::FT            FT;
     typedef typename K::Vector_d      Vector;
     typedef std::vector<Vector>       Basis;
 
     // Kernel functors
-    typename K::Squared_length_d        sqlen      = kernel.squared_length_d_object();
-    typename K::Scaled_vector_d         scaled_vec = kernel.scaled_vector_d_object();
-    typename K::Scalar_product_d        inner_pdct = kernel.scalar_product_d_object();
-    typename K::Difference_of_vectors_d diff_vec   = kernel.difference_of_vectors_d_object();
+    typename K::Squared_length_d        sqlen      = k.squared_length_d_object();
+    typename K::Scaled_vector_d         scaled_vec = k.scaled_vector_d_object();
+    typename K::Scalar_product_d        inner_pdct = k.scalar_product_d_object();
+    typename K::Difference_of_vectors_d diff_vec   = k.difference_of_vectors_d_object();
 
     Basis output_basis;
 
@@ -146,8 +157,7 @@ namespace Tangential_complex_ {
         u = diff_vec(u, u_proj);
       }
 
-      output_basis.push_back(
-        scaled_vec(u, FT(1)/CGAL::sqrt(sqlen(u))));
+      output_basis.push_back(normalize_vector(u, k));
     }
 
     return output_basis;
