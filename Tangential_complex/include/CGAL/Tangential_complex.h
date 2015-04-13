@@ -68,6 +68,7 @@
 
 //#define CGAL_TC_EXPORT_NORMALS // Only for 3D surfaces (k=2, d=3)
 
+
 namespace CGAL {
 
 using namespace Tangential_complex_;
@@ -124,6 +125,7 @@ class Tangential_complex
   typedef typename Tr_traits::Vector_d                Tr_vector;
 
   typedef std::vector<Vector>                         Tangent_space_basis;
+  typedef std::vector<Vector>                         Orthogonal_space_basis;
 
   typedef std::vector<Point>                          Points;
   typedef std::vector<FT>                             Weights;
@@ -180,20 +182,21 @@ class Tangential_complex
     Tr_vertex_handle m_center_vertex;
   };
 
-  typedef typename std::vector<Tangent_space_basis>   TS_container;
-  typedef typename std::vector<Tr_and_VH>             Tr_container;
-  typedef typename std::vector<Vector>                Vectors;
+  typedef typename std::vector<Tangent_space_basis>     TS_container;
+  typedef typename std::vector<Orthogonal_space_basis>  OS_container;
+  typedef typename std::vector<Tr_and_VH>               Tr_container;
+  typedef typename std::vector<Vector>                  Vectors;
 
   // An Incident_simplex is the list of the verter indices 
   // except the center vertex
-  typedef std::set<std::size_t>                       Incident_simplex;
-  typedef std::vector<Incident_simplex>               Star;
-  typedef std::vector<Star>                           Stars_container;
+  typedef std::set<std::size_t>                         Incident_simplex;
+  typedef std::vector<Incident_simplex>                 Star;
+  typedef std::vector<Star>                             Stars_container;
 
 #ifdef CGAL_LINKED_WITH_TBB
   // CJTODO: test other mutexes
   // http://www.threadingbuildingblocks.org/docs/help/reference/synchronization/mutexes/mutex_concept.htm
-  //typedef tbb::queuing_mutex                          Tr_mutex;
+  //typedef tbb::queuing_mutex                            Tr_mutex;
 #endif
 
   // For transform_iterator
@@ -261,6 +264,9 @@ public:
     //m_tr_mutexes.resize(m_points.size());
 #endif
     m_tangent_spaces.resize(m_points.size());
+#if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+    m_orth_spaces.resize(m_points.size());
+#endif
 #ifdef CGAL_TC_PERTURB_WEIGHT
     m_weights.resize(m_points.size(), FT(0));
 #endif
@@ -274,10 +280,6 @@ public:
 #endif
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
     m_perturb_tangent_space.resize(m_points.size(), false);
-#endif
-#ifdef CGAL_TC_EXPORT_NORMALS
-    m_normals.resize(m_points.size(),
-                     m_k.construct_vector_d_object()(m_ambiant_dim));
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -976,8 +978,9 @@ private:
     // Estimate the tangent space
     if (!tangent_spaces_are_already_computed)
     {
-#ifdef CGAL_TC_EXPORT_NORMALS
-      m_tangent_spaces[i] = compute_tangent_space(center_pt, &m_normals[i]);
+#if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+      m_tangent_spaces[i] = 
+        compute_tangent_space(center_pt, true, &m_orth_spaces[i]);
 #else
       m_tangent_spaces[i] = compute_tangent_space(center_pt);
 #endif
@@ -985,10 +988,11 @@ private:
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
     else if (m_perturb_tangent_space[i])
     {
-#ifdef CGAL_TC_EXPORT_NORMALS
-      m_tangent_spaces[i] = compute_tangent_space(center_pt,&m_normals[i],true);
+#if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+      m_tangent_spaces[i] = 
+        compute_tangent_space(center_pt, true, &m_orth_spaces[i], true);
 #else
-      m_tangent_spaces[i] = compute_tangent_space(center_pt, true);
+      m_tangent_spaces[i] = compute_tangent_space(center_pt, true, NULL, true);
 #endif
       m_perturb_tangent_space[i] = false;
     }
@@ -1151,14 +1155,14 @@ private:
     //CGAL::export_triangulation_to_off(off_stream_tr, local_tr);
   }
 
-  Tangent_space_basis compute_tangent_space(const Point &p
-#ifdef CGAL_TC_EXPORT_NORMALS
-                                            , Vector *p_normal
-#endif
+  Tangent_space_basis compute_tangent_space(
+      const Point &p
+    , bool normalize_basis = true
+    , Orthogonal_space_basis *p_orth_space_basis = NULL
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
-                                            , bool perturb = false
+    , bool perturb = false
 #endif
-                                            ) const
+    ) const
   {
     //******************************* PCA *************************************
 
@@ -1216,17 +1220,44 @@ private:
          i >= m_ambiant_dim - m_intrinsic_dimension ; 
          --i)
     {
-      ts.push_back(constr_vec(
-        m_ambiant_dim,
-        eig.eigenvectors().col(i).data(),
-        eig.eigenvectors().col(i).data() + m_ambiant_dim));
+      if (normalize_basis)
+      {
+        ts.push_back(normalize_vector(constr_vec(
+          m_ambiant_dim,
+          eig.eigenvectors().col(i).data(),
+          eig.eigenvectors().col(i).data() + m_ambiant_dim)));
+      }
+      else
+      {
+        ts.push_back(constr_vec(
+          m_ambiant_dim,
+          eig.eigenvectors().col(i).data(),
+          eig.eigenvectors().col(i).data() + m_ambiant_dim));
+      }
     }
-#ifdef CGAL_TC_EXPORT_NORMALS
-    *p_normal = constr_vec(
-        m_ambiant_dim,
-        eig.eigenvectors().col(m_ambiant_dim - m_intrinsic_dimension - 1).data(),
-        eig.eigenvectors().col(m_ambiant_dim - m_intrinsic_dimension - 1).data() + m_ambiant_dim);
-#endif
+
+    if (p_orth_space_basis)
+    {
+      for (int i = m_ambiant_dim - m_intrinsic_dimension - 1 ; 
+           i >= 0 ; 
+           --i)
+      {
+        if (normalize_basis)
+        {
+          p_orth_space_basis->push_back(normalize_vector(constr_vec(
+            m_ambiant_dim,
+            eig.eigenvectors().col(i).data(),
+            eig.eigenvectors().col(i).data() + m_ambiant_dim)));
+        }
+        else
+        {
+          p_orth_space_basis->push_back(constr_vec(
+            m_ambiant_dim,
+            eig.eigenvectors().col(i).data(),
+            eig.eigenvectors().col(i).data() + m_ambiant_dim));
+        }
+      }
+    }
 
     //*************************************************************************
 
@@ -1234,7 +1265,9 @@ private:
     //n = scaled_vec(n, FT(1)/sqrt(sqlen(n)));
     //std::cerr << "IP = " << inner_pdct(n, ts[0]) << " & " << inner_pdct(n, ts[1]) << std::endl;
 
-    return compute_gram_schmidt_basis(ts, m_k);
+    // CJTODO: les vecteurs sont déjà orthogonaux, a priori ! A VERIFIER au cas où
+    //return compute_gram_schmidt_basis(ts, m_k);
+    return ts;
 
     
     // CJTODO: this is only for a sphere in R^3
@@ -1795,7 +1828,7 @@ private:
 
     int num_coords = min(ambient_dim, 3);
 #ifdef CGAL_TC_EXPORT_NORMALS
-    Vectors::const_iterator it_n = m_normals.begin();
+    OS_container::const_iterator it_os = m_orth_spaces.begin();
 #endif
     typename Points::const_iterator it_p = m_points.begin();
     typename Points::const_iterator it_p_end = m_points.end();
@@ -1813,12 +1846,12 @@ private:
 
 #ifdef CGAL_TC_EXPORT_NORMALS
         for (i = 0 ; i < num_coords ; ++i)
-          os << " " << CGAL::to_double(coord(*it_n, i));
+          os << " " << CGAL::to_double(coord(*it_os->begin(), i));
 #endif
         os << std::endl;
       }
 #ifdef CGAL_TC_EXPORT_NORMALS
-      ++it_n;
+      ++it_os;
 #endif
     }
 
@@ -2219,7 +2252,7 @@ private:
       Triangulation const& tr    = it_tr->tr();
       Tr_vertex_handle center_vh = it_tr->center_vertex();
 
-      if (tr.current_dimension() < m_intrinsic_dimension)
+      if (&tr == NULL || tr.current_dimension() < m_intrinsic_dimension)
         continue;
 
       // Color for this star
@@ -2502,14 +2535,14 @@ private:
 
   Points_ds                 m_points_ds;
   TS_container              m_tangent_spaces;
+#if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+  OS_container              m_orth_spaces;
+#endif
   Tr_container              m_triangulations; // Contains the triangulations
                                               // and their center vertex
   Stars_container           m_stars;
 #ifdef CGAL_LINKED_WITH_TBB
   //std::vector<Tr_mutex>     m_tr_mutexes;
-#endif
-#ifdef CGAL_TC_EXPORT_NORMALS
-  Vectors                   m_normals;
 #endif
 
 #ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
