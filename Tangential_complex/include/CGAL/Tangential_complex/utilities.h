@@ -113,16 +113,16 @@ namespace Tangential_complex_ {
     }
   };*/
 
-  
-
+  // Modifies v in-place
   template <typename K>
-  std::vector<typename K::Vector_d>
+  typename K::Vector_d &
   normalize_vector(
-    std::vector<typename K::Vector_d> &v,
+    typename K::Vector_d &v,
     K const& k)
   {
     v = k.scaled_vector_d_object()(
       v, FT(1)/CGAL::sqrt(k.squared_length_d_object()(v)));
+    return v;
   }
 
   template <typename K>
