@@ -3,11 +3,6 @@
 /// \defgroup PkgReconstructionSimplification2Classes Classes
 /// \ingroup PkgReconstructionSimplification2
 
-/// \defgroup PkgReconstructionSimplification2Concepts Concepts
-/// \ingroup PkgReconstructionSimplification2
-
-/// \defgroup PkgReconstructionSimplification2Models Models
-/// \ingroup PkgReconstructionSimplification2
 
 /*!
 \addtogroup PkgReconstructionSimplification2
@@ -29,18 +24,9 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
-- `ReconstructionSimplificationOutput_2`
-
-
-## Models ##
-- `CGAL::List_output<Kernel, OutputVertexIterator, OutputEdgeIterator>`
-- `CGAL::Index_output<Kernel>`
-- `CGAL::Tds_output<Kernel>`
-
 
 ## Classes ##
-- `CGAL::Reconstruction_simplification_2<Kernel, Point_property_map, Mass_property_map>`
+- `CGAL::Reconstruction_simplification_2<Kernel, PointPMap, MassPMap>`
 
 
 */

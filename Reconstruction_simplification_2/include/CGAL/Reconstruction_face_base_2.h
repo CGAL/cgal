@@ -1,4 +1,4 @@
-// Copyright (c) 2014  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
+    // Copyright (c) 2014  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
 // All rights reserved.
 //
 
@@ -27,6 +27,9 @@
 
 #include <list>
 
+/// \cond SKIP_IN_MANUAL
+
+
 
 /// The Reconstruction_face_base_2 class is the default
 /// vertex class of the Reconstruction_face_base_2 class.
@@ -41,7 +44,6 @@ class Reconstruction_face_base_2 : public Fb
 {
 public:
 
-	 /// \cond SKIP_IN_MANUAL
 
     typedef Fb Base;
     typedef typename Base::Vertex_handle Vertex_handle;

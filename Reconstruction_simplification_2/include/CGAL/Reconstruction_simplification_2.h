@@ -55,9 +55,9 @@ via the Point_property_map and Mass_property_map `PropertyMaps` respectively.
 \tparam Kernel a geometric kernel, used throughout the reconstruction and
 					simplification task.
 
-\tparam Point_property_map a model of `ReadablePropertyMap` with a value_type = `Point_2`
+\tparam PointPMap a model of `ReadablePropertyMap` with a value_type = `Point_2`
 
-\tparam Mass_property_map   a model of `ReadablePropertyMap` with a value_type = `Kernel::FT`
+\tparam MassPMap   a model of `ReadablePropertyMap` with a value_type = `Kernel::FT`
 
  */
 template<class Kernel, class Point_property_map, class Mass_property_map>
