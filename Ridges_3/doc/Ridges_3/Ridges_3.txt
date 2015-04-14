@@ -26,8 +26,8 @@ analysis. Based on the results of the article
 different parts of this singular ridge curve as well as umbilics on a
 surface given as a triangulated surface mesh. Differential quantities
 associated to the mesh vertices are assumed to be given for these
-algorithms; such quantities may be computed by the package \ref PkgJet_fitting_3Summary
-.
+algorithms; such quantities may be computed by the package \ref PkgJet_fitting_3Summary.
+
 
 Note that this package needs the third party library \ref thirdpartyEigen for linear algebra operations.
 
