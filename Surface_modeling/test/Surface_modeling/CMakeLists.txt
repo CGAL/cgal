@@ -28,7 +28,6 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "Cactus_deformation_session.cpp" )
     create_single_source_cgal_program( "Cactus_performance_test.cpp" )
     create_single_source_cgal_program( "Symmetry_test.cpp" )
-    create_single_source_cgal_program( "Deform_mesh_deprecation_test.cpp" )
 
     find_package( OpenMesh QUIET )
     if ( OpenMesh_FOUND )
