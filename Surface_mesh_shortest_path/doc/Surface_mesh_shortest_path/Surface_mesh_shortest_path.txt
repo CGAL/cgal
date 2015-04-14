@@ -274,7 +274,7 @@ In order to deal with this, we must create a new set of child visibility windows
   
 \subsection Surface_mesh_shortest_pathDistanceFiltering Distance Filtering
 
-  An additional distance filter proposed by Xin and Wang helps prune the search tree even further by comparing the current node's distance to the closest distance so far of the three vertices on the current face. Details on this method can be found in their paper \cgalCite{XinWang2009improvingchenandhan} .
+  An additional distance filter proposed by Xin and Wang helps prune the search tree even further by comparing the current node's distance to the closest distance so far of the three vertices on the current face. Details on this method can be found in their paper \cgalCite{XinWang2009improvingchenandhan}.
 
 \subsection Surface_mesh_shortest_pathLocatingShortestPaths Locating Shortest Paths
 
@@ -395,9 +395,9 @@ method ShortestPathTree:
     return T[1..n]
 \endcode
 
-To perform shortest path distance queries to each vertex, we can simply use the value left in \f$S\f$ after the completion of ShortestPathTree. Performing arbitrary face shortest path location is slightly more complex. We traverse each sequence tree, for each face \f$f\f$ and collect all windows which cross \f$f\f$. Then, among those windows we select the one which has the shortest path back to the origin.
+To perform shortest path distance queries to each vertex, we can simply use the results stored in \f$S\f$ after the completion of ShortestPathTree, as it contains a map from each vertex to the VisibilityWindow which has the shortest path to that vertex. Performing shortest path computations to any arbitrary face location is slightly more complex. As eluded to above, after completion of the algorithm, we traverse each of the sequence trees, and for each face \f$f\f$ we store all the VisibilityWindows which cross \f$f\f$ in a look-up structure. Then, to find the shortest path to a point on the surface of face \f$f\f$, we look up that pre-stored set of VisibilityWindows associated with it, and among those windows we select the one which contains the query point, and has the shortest path back to the origin. Though it may seem slow since it involves a linear search, it is efficient in practice since the number of faces crossing any single face is typically limited (this is due to the additional filtering method given by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}.
 
-Actual paths can be reconstructed by backtracking through the branch in the tree up to the root, and keeping track of each face that was crossed.
+The actual surface paths can be reconstructed by backtracking from the VisibilityWindow, through its parents in the tree up to the root, and keeping track of each face that was crossed.
   
 \section Surface_mesh_shortest_pathImplementationhistory Design and Implementation History
 The initial implementation of this package is the result of the work of Stephen Kiazyk during the 2014 season
