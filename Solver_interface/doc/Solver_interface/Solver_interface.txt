@@ -3,7 +3,7 @@ namespace CGAL {
 
 \mainpage User Manual 
 \anchor Chapter_CGAL_and_Solvers
-\anchor chapterBGL
+\anchor chapterSolvers
 \cgalAutoToc
 \authors %CGAL Editorial Board
 

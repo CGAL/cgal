@@ -69,7 +69,7 @@ Parameterizer_traits_3<ParameterizationMesh_3>::Error_code parameterize (Paramet
 The function `parameterize()` applies a default surface parameterization
 method, namely Floater Mean Value Coordinates \cgalCite{cgal:f-mvc-03}, with an
 arc-length circular border parameterization, and using a sparse
-linear solver from the \thirdpartyEigen library. The `ParameterizationMesh_3` concept defines the input meshes handled by `parameterize()`. See Section \ref secInputMeshforparameterize. The result is stored into the `(u,v)` fields of the mesh halfedges.
+linear solver from the \ref thirdpartyEigen library. The `ParameterizationMesh_3` concept defines the input meshes handled by `parameterize()`. See Section \ref secInputMeshforparameterize. The result is stored into the `(u,v)` fields of the mesh halfedges.
 The mesh must be a triangle mesh surface with one connected component.
 
 Note: `Parameterizer_traits_3<ParameterizationMesh_3>` is the (pure virtual) superclass of all surface parameterizations and defines the error codes.

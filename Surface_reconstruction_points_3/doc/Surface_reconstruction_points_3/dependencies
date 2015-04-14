@@ -7,3 +7,4 @@ Stream_support
 Surface_mesher
 Point_set_processing_3
 Surface_mesh_parameterization
+Solver_interface

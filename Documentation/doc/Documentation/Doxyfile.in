@@ -58,7 +58,6 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/GraphicsView/doc/GraphicsView/fig \
              ${CMAKE_SOURCE_DIR}/HalfedgeDS/doc/HalfedgeDS/fig \
              ${CMAKE_SOURCE_DIR}/BGL/doc/BGL/fig \
-             ${CMAKE_SOURCE_DIR}/BGL/doc/Solver_interface/fig \
              ${CMAKE_SOURCE_DIR}/Combinatorial_map/doc/Combinatorial_map/fig \
              ${CMAKE_SOURCE_DIR}/Linear_cell_complex/doc/Linear_cell_complex/fig \
              ${CMAKE_SOURCE_DIR}/Interval_skip_list/doc/Interval_skip_list/fig \
@@ -90,6 +89,7 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/STL_Extension/doc/STL_Extension/fig \
              ${CMAKE_SOURCE_DIR}/Skin_surface_3/doc/Skin_surface_3/fig \
              ${CMAKE_SOURCE_DIR}/Snap_rounding_2/doc/Snap_rounding_2/fig \
+             ${CMAKE_SOURCE_DIR}/Solver_interface/doc/Solver_interface/fig \
              ${CMAKE_SOURCE_DIR}/Arrangement_on_surface_2/doc/Sweep_line_2/fig \
              ${CMAKE_SOURCE_DIR}/Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig \
              ${CMAKE_SOURCE_DIR}/Boolean_set_operations_2/doc/Boolean_set_operations_2/fig \
