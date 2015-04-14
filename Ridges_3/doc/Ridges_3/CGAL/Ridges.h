@@ -116,8 +116,8 @@ The class `Ridge_approximation` computes the approximation of
 ridges of a triangular polyhedral surface. 
 
 \tparam TriangleMesh is the surface type. 
-\tparam VertexFTMap A property map with `boost::graph_traits<TriangleMesh>::vertex_descriptor as key type and `FT` as value type.
-\tparam VertexVectorMap A property map with `boost::graph_traits<TriangleMesh>::vertex_descriptor as key type and `Vector_3` as value type. 
+\tparam VertexFTMap A property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `FT` as value type.
+\tparam VertexVectorMap A property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor as key type and `Vector_3` as value type. 
 
 Requirements (checked at compile time): 
 - the types `TriangleMesh::Traits::FT` and 
