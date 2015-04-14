@@ -553,5 +553,3 @@ two passes for dealing with holes.
 
 */ 
 } /* namespace CGAL */
-
-/// \example Surface_reconstruction_points_3/poisson_reconstruction_example.cpp
