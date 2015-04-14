@@ -11,7 +11,7 @@ The version 3.1 (or greater) of \ref thirdpartyEigen "Eigen" must be available o
 
 
 \tparam T a sparse solver of \ref thirdpartyEigen "Eigen". The default solver is the iterative bi-congugate gradient stabilized solver 
-`Eigen::BiCGSTAB` for `double`. 
+<a href="http://eigen.tuxfamily.org/dox/classEigen_1_1BiCGSTAB.html">`Eigen::BiCGSTAB`</a> for `double`. 
 
 \sa `CGAL::Eigen_sparse_matrix<T>`
 \sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
@@ -37,7 +37,7 @@ typedef typename T::Scalar NT;
 typedef CGAL::Eigen_vector<NT> Vector; 
 
 /*!
-If `T` is `Eigen::ConjugateGradient<M>` or `Eigen::SimplicialCholesky<M>`, `Matrix` is `CGAL::Eigen_sparse_symmetric_matrix<T>` 
+If `T` is <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1ConjugateGradient.html">`Eigen::ConjugateGradient<M>`</a> or <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1SimplicialCholesky.html">`Eigen::SimplicialCholesky<M>`</a>, `Matrix` is `CGAL::Eigen_sparse_symmetric_matrix<T>` 
 and `CGAL::Eigen_sparse_matrix<T>` otherwise. 
 
 */ 

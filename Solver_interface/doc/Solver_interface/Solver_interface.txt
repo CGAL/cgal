@@ -11,7 +11,9 @@ namespace CGAL {
 
 Several \cgal packages have to solve linear systems with dense or sparse matrices.
 This package provides concepts and models for that purpose. The models we provide
-all use the \ref thirdpartyEigen library.
+all use the \ref thirdpartyEigen library. It is straightforward to develop
+equivalent models for other solvers, for example those found in the
+<a href="https://software.intel.com/en-us/intel-mkl">Intel Math Kernel Library (MKL)</a>.
 
 
 
@@ -23,6 +25,9 @@ library is provided through the class
 iterative or a direct, symmetric or general sparse solvers. The 
 specific solver to be used must be given as template
 parameter.
+
+Each \cgal package using a sparse solver specifies which type of matrix
+and solver is required.
 
 Here are few examples: 
 

@@ -13,7 +13,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
-\cgalPkgDependsOn{Solvers from \ref thirdpartyEigen.} 
+\cgalPkgDependsOn{\ref PkgSolverSummary} 
 \cgalPkgBib{cgal:pc-eldp}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}

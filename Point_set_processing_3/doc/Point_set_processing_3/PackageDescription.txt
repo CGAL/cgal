@@ -11,7 +11,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}
-\cgalPkgDependsOn{\ref thirdpartyEigen "Eigen"}
+\cgalPkgDependsOn{\ref PkgSolverSummary} 
 \cgalPkgBib{cgal:ass-psp}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{See Polyhedral Surface,polyhedron_3.zip}
