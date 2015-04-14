@@ -39,18 +39,18 @@ namespace CGAL {
 The class `Umbilic_approximation` computes the approximation of 
 umbilics on a triangular polyhedral surface. 
 
-\tparam TriangleMesh is the surface type. 
-\tparam VertexFTMap A property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `FT` as value type.
-\tparam VertexVectorMap A property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `Vector_3` as value type.
+\tparam TriangleMesh is the surface type. In the following let `K` be `Kernel_traits<boost::property_traits<TriangleMesh,CGAL::vertex_point_t>::%value_type>::%Kernel`
+\tparam VertexFTMap A property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `K::FT` as value type.
+\tparam VertexVectorMap A property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `K::Vector_3` as value type.
 
-Requirements (checked at compile time) : 
-- the types `TriangleMesh::Traits::FT` and 
-  `boost::property_traits<VertexFTMap>::%value_type` must coincide;
-- the types `TriangleMesh::Traits::Vector_3` and 
-  `boost::property_traits<VertexVectorMap::%value_type` must coincide; 
-- the types `boost::graph_traits<TriangleMesh>::%vertex_descriptor`, 
-  `boost::property_traits<VertexFTMap>::%key_type` and 
-  `boost::property_traits<VertexVectorMap>::%key_type` must coincide; 
+\pre (checked at compile time)
+\pre The types `K::FT` and 
+  `boost::property_traits<VertexFTMap>::%value_type` must coincide.
+\pre  The types `K::Vector_3` and
+  `boost::property_traits<VertexVectorMap>::%value_type` must coincide.
+\pre The types `boost::graph_traits<TriangleMesh>::%vertex_descriptor`,
+  and `boost::property_traits<VertexFTMap>::%key_type`, and
+  `boost::property_traits<VertexVectorMap>::%key_type` must coincide.
 
 \sa `Umbilic` 
 \sa `TriangleMesh` 
@@ -96,7 +96,7 @@ Umbilic_approximation(const TriangleMesh& tm,
 /// @{
 
 /*!
-Performs the approximation, `size` determines the size of the 
+Performs the approximation. The value of `size` determines the size of the 
 patches around vertices, taken as `size` times the size of the 
 1-ring. Umbilics are inserted into `it`.
 

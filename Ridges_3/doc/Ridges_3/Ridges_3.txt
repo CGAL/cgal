@@ -428,19 +428,21 @@ hyperbolic ridges, \f$ t\f$ is 3 (default) or 4;
 
 \code{.cpp}
 
+//this is an enriched Polyhedron with facets' normal
+#include "PolyhedralSurf.h"
+
 #include <CGAL/Ridges.h> 
 #include <CGAL/Umbilics.h>
 
-//this is an enriched Polyhedron with facets' normal
-#include "PolyhedralSurf.h"
 
 typedef PolyhedralSurf::Traits Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point_3;
 typedef Kernel::Vector_3 Vector_3;
 
-typedef PolyhedralSurf::Vertex_const_handle Vertex_const_handle;
-typedef PolyhedralSurf::Vertex_const_iterator Vertex_const_iterator;
+typedef boost::graph_traits<PolyhedralSurf>::vertex_descriptor  vertex_descriptor;
+typedef boost::graph_traits<PolyhedralSurf>::vertex_iterator vertex_iterator;
+typedef boost::graph_traits<PolyhedralSurf>::face_descriptor face_descriptor;
 
 typedef map<vertex_descriptor, FT> VertexFT_map;
 typedef boost::associative_property_map< VertexFT_map > VertexFT_property_map;
@@ -453,27 +455,25 @@ typedef boost::associative_property_map< Face2Vector_map > Face2Vector_property_
 
 //RIDGES
 typedef CGAL::Ridge_line<PolyhedralSurf> Ridge_line;
-typedef CGAL::Ridge_approximation < PolyhedralSurf,
-back_insert_iterator< std::vector<Ridge_line*> >,
-VertexFT_property_map,
-VertexVector_property_map > Ridge_approximation;
+typedef CGAL::Ridge_approximation <PolyhedralSurf,
+                                   VertexFT_property_map,
+                                   VertexVector_property_map > Ridge_approximation;
 //UMBILICS
 typedef CGAL::Umbilic<PolyhedralSurf> Umbilic;
 typedef CGAL::Umbilic_approximation < PolyhedralSurf,
-back_insert_iterator< std::vector<Umbilic*> >, 
-VertexFT_property_map, 
-VertexVector_property_map > Umbilic_approximation;
+                                      VertexFT_property_map, 
+                                      VertexVector_property_map > Umbilic_approximation;
 
 //create property maps
 VertexFT_map vertex2k1_map, vertex2k2_map, 
-vertex2b0_map, vertex2b3_map, 
-vertex2P1_map, vertex2P2_map;
-VertexVector_map vertex2d1_map, vertex2d2_map;
+  vertex2b0_map, vertex2b3_map, 
+  vertex2P1_map, vertex2P2_map;
+  VertexVector_map vertex2d1_map, vertex2d2_map;
 
 VertexFT_property_map vertex2k1_pm(vertex2k1_map), vertex2k2_pm(vertex2k2_map), 
-vertex2b0_pm(vertex2b0_map), vertex2b3_pm(vertex2b3_map), 
-vertex2P1_pm(vertex2P1_map), vertex2P2_pm(vertex2P2_map);
-VertexVector_property_map vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_map);
+  vertex2b0_pm(vertex2b0_map), vertex2b3_pm(vertex2b3_map), 
+  vertex2P1_pm(vertex2P1_map), vertex2P2_pm(vertex2P2_map);
+  VertexVector_property_map vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_map);
 
 int main(int argc, char *argv[])
 { 
@@ -481,7 +481,7 @@ int main(int argc, char *argv[])
   ...
   //initialize the property maps
   ...
-  //---------------------------------------------------------------------------
+
   //Ridges
   //--------------------------------------------------------------------------
   Ridge_approximation ridge_approximation(P, 
@@ -490,21 +490,21 @@ int main(int argc, char *argv[])
                                           vertex2P1_pm, vertex2P2_pm,
                                           vertex2d1_pm, vertex2d2_pm);
   std::vector<Ridge_line*> ridge_lines;
-  back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
+  std::back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
 
   //Find MAX_RIDGE, MIN_RIDGE, CREST or all ridges
   ridge_approximation.compute_max_ridges(ii, tag_order); 
   ridge_approximation.compute_min_ridges(ii, tag_order); 
   ridge_approximation.compute_crest_ridges(ii, tag_order); 
 
-  //---------------------------------------------------------------------------
+
   // UMBILICS
   //--------------------------------------------------------------------------
   Umbilic_approximation umbilic_approximation(P, 
                                               vertex2k1_pm, vertex2k2_pm,
                                               vertex2d1_pm, vertex2d2_pm);
   std::vector<Umbilic*> umbilics;
-  back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
+  std::back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
   umbilic_approximation.compute(umb_it, umb_size);
 }
 

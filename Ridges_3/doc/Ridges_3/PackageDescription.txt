@@ -15,7 +15,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
-\cgalPkgDependsOn{ \ref PkgJet_fitting_3Summary; Solvers from \ref thirdpartyEigen.} 
+\cgalPkgDependsOn{ \ref PkgJet_fitting_3Summary and solvers from \ref thirdpartyEigen.} 
 \cgalPkgBib{cgal:cp-arutsm}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
