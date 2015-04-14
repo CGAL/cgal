@@ -29,7 +29,6 @@
 #include <CGAL/barycenter.h>
 #include <CGAL/property_map.h>
 #include <CGAL/assertions.h>
-#include <CGAL/Vertex2Data_Property_Map_with_std_map.h>
 #include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
