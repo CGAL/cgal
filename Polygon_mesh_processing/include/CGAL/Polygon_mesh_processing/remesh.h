@@ -23,6 +23,9 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/remesh_impl.h>
 
+#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
@@ -30,16 +33,35 @@ namespace Polygon_mesh_processing {
 /**
 * \ingroup PkgPolygonMeshProcessing
 * implements section 6.5.3 "Incremental remeshing" from the PMP book
+* named parameters :
+* vertex_point_map
+* nb_iterations
+* geom_traits, that needs Point_3
 */
-template<typename PolygonMesh>
-void incremental_triangle_based_remeshing(PolygonMesh& pmesh,
-                                          const double& target_edge_length,
-                                          const unsigned int& nb_iterations = 10)
+template<typename PolygonMesh, typename NamedParameters>
+void incremental_triangle_based_remeshing(PolygonMesh& pmesh
+                                        , const double& target_edge_length
+                                        , const NamedParameters& np)
 {
-  double low  = 4./5. * target_edge_length;
-  double high = 4./3. * target_edge_length;
+  typedef PolygonMesh PM;
+  using boost::choose_pmap;
+  using boost::get_param;
+  using boost::choose_param;
 
-  typename internal::Incremental_remesher<PolygonMesh> remesher(pmesh);
+  typedef typename GetGeomTraits<PM, NamedParameters>::type GeomTraits;
+
+  typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
+  VPMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
+                            pmesh,
+                            boost::vertex_point);
+  typename internal::Incremental_remesher<PM, VPMap, GeomTraits>
+    remesher(pmesh, vpmap);
+
+  unsigned int nb_iterations = choose_param(get_param(np, number_of_iterations), 10);
+
+  double low = 4. / 5. * target_edge_length;
+  double high = 4. / 3. * target_edge_length;
+
   for (unsigned int i = 0; i < nb_iterations; ++i)
   {
     remesher.split_long_edges(high);

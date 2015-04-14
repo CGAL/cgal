@@ -34,6 +34,7 @@ namespace CGAL{
   enum sparse_linear_solver_t       { sparse_linear_solver };
   enum less_halfedge_t              { less_halfedge };
   enum geom_traits_t                { geom_traits };
+  enum number_of_iterations_t       { number_of_iterations };
 
   //internal
   enum weight_calculator_t          { weight_calculator };
@@ -119,6 +120,14 @@ namespace CGAL{
     {
       typedef pmp_bgl_named_params<K, geom_traits_t, self> Params;
       return Params(k, *this);
+    }
+
+    template<typename NT>
+    pmp_bgl_named_params<NT, number_of_iterations_t, self>
+    number_of_iterations(const NT& n) const
+    {
+      typedef pmp_bgl_named_params<NT, number_of_iterations_t, self> Params;
+      return Params(n, *this);
     }
 
     //overload
@@ -233,6 +242,14 @@ namespace parameters{
   {
     typedef pmp_bgl_named_params<K, geom_traits_t> Params;
     return Params(k);
+  }
+
+  template<typename NT>
+  pmp_bgl_named_params<NT, number_of_iterations_t>
+    number_of_iterations(const NT& n)
+  {
+    typedef pmp_bgl_named_params<NT, number_of_iterations_t> Params;
+    return Params(n);
   }
 
   //overload
