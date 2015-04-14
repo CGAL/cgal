@@ -247,8 +247,6 @@ vcm_estimate_edges (ForwardIterator first, ///< iterator over the first input po
     typedef CGAL::Voronoi_covariance_3::Voronoi_covariance_3<FT> Covariance;
 
     typedef typename Kernel::Point_3 Point;
-    typedef typename Kernel::Vector_3 Vector;
-    typedef typename Kernel::Segment_3 Segment;
     typedef typename Kernel::FT FT;
 
     // Compute the VCM and convolve it
@@ -306,10 +304,7 @@ construct_mst (std::vector<typename Kernel::Point_3> points_on_edges, ///< estim
                                   boost::undirectedS,
                                   boost::no_property,
                                   EdgeWeightProperty > Undirected_Graph;
-    typedef typename boost::graph_traits<Undirected_Graph>::vertex_iterator Vertex_iterator;
-    typedef boost::graph_traits<Undirected_Graph>::vertex_descriptor Vertex_descriptor;
     typedef boost::graph_traits<Undirected_Graph>::edge_descriptor Edge_descriptor;
-    typedef boost::graph_traits<Undirected_Graph>::edge_iterator Edge_iterator;
     Undirected_Graph g;
     compute_rips_graph(g, points_on_edges, indices, rips_radius, exponent, k);
 

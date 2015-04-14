@@ -118,7 +118,7 @@ namespace CGAL {
                     dt.incident_vertices(v,std::back_inserter(vertices));
 
                     // construct intersection of half-planes using the convex hull function
-                    std::vector<Plane> planes;
+                    std::list<Plane> planes;
                     for(typename std::list<Vertex_handle>::iterator it = vertices.begin();
                         it != vertices.end(); ++it)
                     {
