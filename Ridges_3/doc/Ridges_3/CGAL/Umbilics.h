@@ -53,9 +53,6 @@ umbilics on a triangular polyhedral surface.
   `boost::property_traits<VertexVectorMap>::%key_type` must coincide.
 
 \sa `Umbilic` 
-\sa `TriangleMesh` 
-\sa `VertexFTMap` 
-\sa `VertexVectorMap` 
 
 */
 template< typename TriangleMesh, typename VertexFTMap, typename VertexVectorMap >

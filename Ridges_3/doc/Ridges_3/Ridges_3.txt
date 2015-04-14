@@ -401,7 +401,7 @@ neighborhood.
 
 \section Ridges_3Examples Examples
 
-\subsection Ridges_3Exampleprogram Example program
+\subsection Ridges_3Exampleprogram Example Program
 
 The following program computes ridges and umbilics from an off
 file.\cgalFootnote{Model data may be downloaded via ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges_3_datafiles.tgz . The mechanical part model has been provided courtesy of Dassault System to produce \cgalFigureRef{figmechanical_crest_filteredintro}, due to copyright issues the available model is not the same, it is provided by the AIM\@SHAPE Shape Repository.} It uses the package \ref PkgJet_fitting_3Summary to estimate the differential
