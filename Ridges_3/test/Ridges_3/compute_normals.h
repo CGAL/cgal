@@ -40,7 +40,7 @@ computeFacetsAverageUnitNormal(const TriangleMesh& tm,
 template <typename TriangleMesh, typename FaceVectorMap,typename Kernel>
 void compute_facets_normals(const TriangleMesh& tm,
                             FaceVectorMap fvm,
-                            const Kernel& k)
+                            const Kernel& )
 {
   typedef typename boost::property_traits<FaceVectorMap>::value_type Vector_3;
 
