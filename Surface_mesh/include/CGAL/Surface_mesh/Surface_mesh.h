@@ -49,76 +49,6 @@
 
 namespace CGAL {
 
-   /// Base class for vertex, halfedge, edge, and face index. 
-    ///
-    /// \attention Note that `Index` is not a model of the concept `Handle`,
-    /// because it cannot be dereferenced.
-    /// \sa `Vertex_index`, `Halfedge_index`, `Edge_index`, `Face_index`.
-    template<typename T>
-    class Index
-    {
-    public:
-      typedef boost::uint32_t size_type;
-        /// Constructor. %Default construction creates an invalid index.
-        /// We write -1, which is <a href="http://en.cppreference.com/w/cpp/concept/numeric_limits">
-        /// <tt>std::numeric_limits<size_type>::max()</tt></a>
-        /// as `size_type` is an unsigned type. 
-        explicit Index(size_type _idx=-1) : idx_(_idx) {}
-
-        /// Get the underlying index of this index
-        operator size_type() const { return idx_; }
-
-        /// reset index to be invalid (index=-1)
-        void reset() { idx_=-1; }
-
-        /// return whether the index is valid, i.e., the index is not equal to -1.
-        bool is_valid() const { 
-          size_type inf = -1;
-          return idx_ != inf;
-        }
-
-        /// are two indices equal?
-        bool operator==(const T& _rhs) const {
-            return idx_ == _rhs.idx_;
-        }
-
-        /// are two indices different?
-        bool operator!=(const T& _rhs) const {
-            return idx_ != _rhs.idx_;
-        }
-
-        /// Comparison by index.
-        bool operator<(const T& _rhs) const {
-            return idx_ < _rhs.idx_;
-        }
-
-        /// increments the internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// increment.
-        Index& operator++() { ++idx_; return *this; }
-        /// decrements the internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// decrement.
-        Index& operator--() { --idx_; return *this; }
-
-        /// increments the internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// increment.
-        Index operator++(int) { Index tmp(*this); ++idx_; return tmp; }
-        /// decrements the internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// decrement.
-        Index operator--(int) { Index tmp(*this); --idx_; return tmp; }
-    private:
-        size_type idx_;
-    };
-
-  template <class T>
-  std::size_t hash_value(const CGAL::Index<T>&  i)
-  {
-    return i;
-  }
-
   /// \ingroup PkgSurface_mesh
   /// This class is a data structure that can be used as halfedge data structure or polyhedral
   /// surface. It is an alternative to the classes `HalfedgeDS` and `Polyhedron_3`
@@ -611,7 +541,7 @@ private:
     ///
     ///@{
 
-#if 0
+
 #ifndef DOXYGEN_RUNNING
     /// Base class for vertex, halfedge, edge, and face index. 
     ///
@@ -672,10 +602,18 @@ private:
         /// guarantee that the index is valid or undeleted after the
         /// decrement.
         Index operator--(int) { Index tmp(*this); --idx_; return tmp; }
+
+
+      
+      friend  std::size_t hash_value(const Index&  i)
+      {
+        return i;
+      }
+      
     private:
         size_type idx_;
     };
-#endif
+
 #endif
 
     /// This class represents a vertex.
@@ -2858,6 +2796,17 @@ collect_garbage()
     garbage_ = false;
 }
 
+#ifdef DOXYGEN_RUNNING
+/*!
+returns `i` as hash value for the index types `Vertex_index`, `Halfedge_index`, 
+`Edge_index`, and `Face_index`. 
+\relates Surface_mesh
+*/ 
+  template <class P>
+  std::size_t hash_value(Surface_mesh<P>::Index i);  
+
+
+#endif
 
 } // CGAL
 
