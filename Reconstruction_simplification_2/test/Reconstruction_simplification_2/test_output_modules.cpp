@@ -53,7 +53,7 @@ int main ()
 
 	Rs_2 rs2(points.begin(), points.end(), point_pmap, mass_pmap);
 
-	rs2.reconstruct(100); //100 steps
+	rs2.run(100); //100 steps
 
 	test_list_output(rs2);
 	test_index_output(rs2);

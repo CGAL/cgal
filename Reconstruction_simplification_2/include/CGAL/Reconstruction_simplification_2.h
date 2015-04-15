@@ -1540,7 +1540,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 
 		    \param nv The number of vertices which will be present in the output.
 		  */
-		void reconstruct_until(const unsigned nv) {
+		void run_until(const unsigned nv) {
 			double timer = clock();
 			std::cerr << yellow << "reconstruct until " << white << nv << " V";
 
@@ -1565,7 +1565,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 
 			\param steps The number of edge contractions performed by the algorithm.
 		  */
-		void reconstruct(const unsigned steps) {
+		void run(const unsigned steps) {
 			double timer = clock();
 			std::cerr << yellow << "reconstruct " << steps << white;
 
@@ -1582,7 +1582,6 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 					<< " V, " << yellow << time_duration(timer) << white << " s)"
 					<< std::endl;
 		}
-
 
 };
 }

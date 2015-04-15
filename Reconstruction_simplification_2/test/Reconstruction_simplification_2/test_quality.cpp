@@ -39,7 +39,7 @@ int main ()
     CGAL::Reconstruction_simplification_2<K, Point_property_map, Mass_property_map>
     	rs2(points.begin(), points.end(), point_pmap, mass_pmap);
 
-    rs2.reconstruct_until(9);
+    rs2.run_until(9);
 
 
 

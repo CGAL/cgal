@@ -61,7 +61,7 @@ int main ()
 
 	Rs_2 rs2(points.begin(), points.end(), point_pmap, mass_pmap);
 
-	rs2.reconstruct(100); //100 steps
+	rs2.run(100); //100 steps
 
 	list_output(rs2);
 	index_output(rs2);

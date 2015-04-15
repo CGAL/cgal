@@ -641,12 +641,12 @@ public:
 
 	void reconstruct_until(const unsigned nv) {
 		std::cout << "reconstruct_until" << std::endl;
-		m_pwsrec->reconstruct_until(nv);
+		m_pwsrec->run_until(nv);
 	}
 
 	void reconstruct(const unsigned steps) {
 		std::cout << "reconstruct" << std::endl;
-		m_pwsrec->reconstruct(steps);
+		m_pwsrec->run(steps);
 	}
 
 	void relocate_all_vertices() {
