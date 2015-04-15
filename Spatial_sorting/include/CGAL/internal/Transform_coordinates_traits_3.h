@@ -247,18 +247,18 @@ struct Transform_coordinates_traits_3 {
 		typedef Transform_coordinates_traits_3<R,x,y,z,ord>  	  		Traits;
 		typedef R                                               		Rp;
 		typedef typename Rp::Point_3                            		Point_2;
-		typedef Less_x_2<R,opt>        									Less_x_2;
-		typedef Less_y_2<R,opt>       									Less_y_2;
-		typedef Compute_x_2<R,opt>     									Compute_x_2;
-		typedef Compute_y_2<R,opt>     									Compute_y_2;
+		typedef Less_x_2<R,opt>        									Less_x;
+		typedef Less_y_2<R,opt>       									Less_y;
+		typedef Compute_x_2<R,opt>     									Compute_x;
+		typedef Compute_y_2<R,opt>     									Compute_y;
 		
 		Transform_coordinates_traits_3(){}
 		Transform_coordinates_traits_3(const Transform_coordinates_traits_3&){}
 				
-		Less_x_2 less_x_2_object() const { return Less_x_2(); }
-		Less_y_2 less_y_2_object() const { return Less_y_2(); }
-		Compute_x_2 compute_x_2_object() const { return Compute_x_2(); }
-		Compute_y_2 compute_y_2_object() const { return Compute_y_2(); }
+		Less_x less_x_2_object() const { return Less_x(); }
+		Less_y less_y_2_object() const { return Less_y(); }
+		Compute_x compute_x_2_object() const { return Compute_x(); }
+		Compute_y compute_y_2_object() const { return Compute_y(); }
 };
   
 

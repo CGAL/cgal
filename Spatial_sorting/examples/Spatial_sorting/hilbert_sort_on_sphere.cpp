@@ -22,7 +22,7 @@ int main ()
   v.reserve(size);
                                                                     
   CGAL::Random_points_on_sphere_3<Point> unit_sphere(1.0, random);  // generate points
-  for (int i = 0; i < size; ++i) v.push_back(*unit_sphere++);
+  for (std::size_t i = 0; i < size; ++i) v.push_back(*unit_sphere++);
 
   CGAL::hilbert_sort_on_sphere(v.begin(), v.end());                 // sort
 
@@ -38,7 +38,7 @@ int main ()
   Vector trans = Vector(3,4,5);
   Sphere sphere = Sphere(CGAL::ORIGIN + trans, 4);
   CGAL::Random_points_on_sphere_3<Point> given_sphere(2.0, random);  // generate points
-  for (int i = 0; i < size; ++i) v.push_back(*given_sphere++ + trans);
+  for (std::size_t i = 0; i < size; ++i) v.push_back(*given_sphere++ + trans);
 
   CGAL::hilbert_sort_on_sphere(v.begin(), v.end(),                   // sort
     sphere.squared_radius(), sphere.center());  

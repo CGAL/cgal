@@ -63,13 +63,14 @@ public:
 	                          double sq_r = 1.0,
 							  const Point_3 &p = Point_3(0,0,0),
 							  std::ptrdiff_t limit=1)
-	: _k(k), _p(p), _sq_r(sq_r),
-	  _hs_1_object(Face_1_traits_3(),limit), 
+	: _hs_1_object(Face_1_traits_3(),limit),
 	  _hs_2_object(Face_2_traits_3(),limit),
 	  _hs_3_object(Face_3_traits_3(),limit),
 	  _hs_4_object(Face_4_traits_3(),limit),
 	  _hs_5_object(Face_5_traits_3(),limit),
-	  _hs_6_object(Face_6_traits_3(),limit) {
+	  _hs_6_object(Face_6_traits_3(),limit),
+          _k(k), _p(p), _sq_r(sq_r)
+        {
 		CGAL_precondition( sq_r > 0 );
 	}
 	
