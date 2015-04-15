@@ -1,7 +1,8 @@
+
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project( Periodic_3_triangulation_3_demo ) 
+project( Periodic_3_triangulation_3_demo )
 
 cmake_minimum_required(VERSION 2.6.2)
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
@@ -15,7 +16,7 @@ find_package(CGAL REQUIRED COMPONENTS Qt5)
 include( ${CGAL_USE_FILE} )
 
 # Find Qt5 itself
-find_package(Qt5 COMPONENTS Xml OpenGL Core)
+find_package(Qt5 COMPONENTS Xml OpenGL Help Core)
 
 # Find OpenGL
 find_package(OpenGL)
@@ -25,7 +26,7 @@ if(Qt5_FOUND)
   find_package(QGLViewer)
 endif(Qt5_FOUND)
 
-if (CGAL_FOUND AND OPENGL_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND QT_QCOLLECTIONGENERATOR_EXECUTABLE)
+if (CGAL_FOUND AND OPENGL_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND TARGET Qt5::qcollectiongenerator)
 
    include_directories( ${QGLVIEWER_INCLUDE_DIR} )
 
@@ -47,7 +48,7 @@ if (CGAL_FOUND AND OPENGL_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND QT_QCOLLEC
   # generate QtAssistant collection file
   add_custom_command ( OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/Periodic_3_triangulation_3.qhc
       DEPENDS Periodic_3_triangulation_3.qhp Periodic_3_triangulation_3.qhcp
-      COMMAND ${QT_QCOLLECTIONGENERATOR_EXECUTABLE}
+      COMMAND Qt5::qcollectiongenerator
                  ${CMAKE_CURRENT_SOURCE_DIR}/Periodic_3_triangulation_3.qhcp
                  -o ${CMAKE_CURRENT_BINARY_DIR}/Periodic_3_triangulation_3.qhc
   )
@@ -59,19 +60,19 @@ if (CGAL_FOUND AND OPENGL_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND QT_QCOLLEC
 
   # The executable itself
   add_executable  ( periodic_3_triangulation_3_demo
-  		    Scene.cpp moc_Scene.cpp
-  		    periodic_3_triangulation_3_demo.cpp
-  		    MainWindow.ui moc_MainWindow.cpp 
-		    ${UI_FILES} ${RESOURCE_FILES} Periodic_3_triangulation_3.qhc)
+                    Scene.cpp moc_Scene.cpp
+                    periodic_3_triangulation_3_demo.cpp
+                    MainWindow.ui moc_MainWindow.cpp
+                    ${UI_FILES} ${RESOURCE_FILES} Periodic_3_triangulation_3.qhc)
 
-  qt5_use_modules(periodic_3_triangulation_3_demo Xml OpenGL)
+  qt5_use_modules(periodic_3_triangulation_3_demo Xml Help OpenGL)
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS periodic_3_triangulation_3_demo)
 
   # Link the executable to CGAL and third-party libraries
   target_link_libraries(periodic_3_triangulation_3_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 
-else (CGAL_FOUND AND OPENGL_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND QT_QCOLLECTIONGENERATOR_EXECUTABLE)
+else ()
 
   set(PERIODIC_TRIANGULATION_MISSING_DEPS "")
 
@@ -91,10 +92,10 @@ else (CGAL_FOUND AND OPENGL_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND QT_QCOLL
     set(PERIODIC_TRIANGULATION_MISSING_DEPS "QGLViewer, ${PERIODIC_TRIANGULATION_MISSING_DEPS}")
   endif()
 
-  if (NOT QT_QCOLLECTIONGENERATOR_EXECUTABLE)
+  if (NOT TARGET Qt5::qcollectiongenerator)
     set(PERIODIC_TRIANGULATION_MISSING_DEPS "qcollectiongenerator, ${PERIODIC_TRIANGULATION_MISSING_DEPS}")
   endif()
 
   message(STATUS "NOTICE: This demo requires ${PERIODIC_TRIANGULATION_MISSING_DEPS}and will not be compiled.")
 
-endif (CGAL_FOUND AND OPENGL_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND QT_QCOLLECTIONGENERATOR_EXECUTABLE)
+endif ()
