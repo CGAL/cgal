@@ -258,14 +258,14 @@ public:
     // code below.
     using Base::Push_front_2::operator();
 
-    /*! Append a segment `seg` to an existing polyline `cv` at the front. */
-    void operator()(Curve_2& cv, const Subcurve_2& seg) const
-    { Base::Push_front_2::operator()(cv, seg); }
+    // /*! Append a segment `seg` to an existing polyline `cv` at the front. */
+    // void operator()(Curve_2& cv, const Subcurve_2& seg) const
+    // { Base::Push_front_2::operator()(cv, seg); }
 
-    /*! Append a segment `seg` to an existing polyline `xcv` at the front. */
-    void operator()(X_monotone_curve_2& xcv,
-                    const X_monotone_subcurve_2& seg) const
-    { Base::Push_front_2::operator()(xcv, seg); }
+    // /*! Append a segment `seg` to an existing polyline `xcv` at the front. */
+    // void operator()(X_monotone_curve_2& xcv,
+    //                 const X_monotone_subcurve_2& seg) const
+    // { Base::Push_front_2::operator()(xcv, seg); }
 
     /* Append a point `p` to an existing polyline `cv` at the front. */
     void operator()(Curve_2& cv, const Point_2& p) const
