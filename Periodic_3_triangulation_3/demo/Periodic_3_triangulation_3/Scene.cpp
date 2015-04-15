@@ -911,8 +911,6 @@ void Scene::load_points(const QString& fileName) {
     std::random_shuffle(points.begin(), points.end());
     p3dt.insert(points.begin(), points.end());
 
-    //make_draw_list();
-
     QString snv;
     int nv = static_cast<int>(p3dt.number_of_vertices());
     snv.setNum(nv);
@@ -978,7 +976,6 @@ void Scene::init_scene(Init ID) {
     dlocate = false;
     dconflict = false;
     p3dt.clear();
-    // make_draw_list();
     RandPts rp(0.5);
     Point pt2;
     switch (ID) {
@@ -1006,7 +1003,6 @@ void Scene::init_scene(Init ID) {
     }
     dlocate = temp_flags[0];
     dconflict = temp_flags[1];
-    // make_draw_list();
     changed();
 }
 

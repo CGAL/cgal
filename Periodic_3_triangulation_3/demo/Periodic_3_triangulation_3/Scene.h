@@ -127,11 +127,9 @@ public slots:
   void insert_point(Point p) {
     bool temp_flags[] = {dlocate, dconflict};
     dlocate = dconflict = false;
-    make_draw_list();
     p3dt.insert(p);
     dlocate = temp_flags[0];
     dconflict = temp_flags[1];
-    make_draw_list();
     changed();
   }
   void grab_image() {
@@ -163,7 +161,6 @@ public slots:
       it_type = ( on ? P3DT::UNIQUE_COVER_DOMAIN : P3DT::STORED_COVER_DOMAIN );
     else
       it_type = ( on ? P3DT::UNIQUE : P3DT::STORED);
-    make_draw_list();
     changed();
   }
   void toggle_multiple_cells(bool on) {
@@ -171,7 +168,6 @@ public slots:
       it_type = ( on ? P3DT::UNIQUE_COVER_DOMAIN : P3DT::UNIQUE );
     else
       it_type = ( on ? P3DT::STORED_COVER_DOMAIN : P3DT::STORED );
-    make_draw_list();
     changed();
   }
   void trigger_draw_type_segment() {
@@ -179,7 +175,6 @@ public slots:
     ui->actionDraw_triangles->setChecked(false);
     ui->actionDraw_tetrahedra->setChecked(false);
     draw_type = SEGMENT;
-    make_draw_list();
     changed();
   }
   void trigger_draw_type_triangle() {
@@ -187,7 +182,6 @@ public slots:
     ui->actionDraw_triangles->setChecked(true);
     ui->actionDraw_tetrahedra->setChecked(false);
     draw_type = TRIANGLE;
-    make_draw_list();
     changed();
   }
   void trigger_draw_type_tetrahedron() {
@@ -195,7 +189,6 @@ public slots:
     ui->actionDraw_triangles->setChecked(false);
     ui->actionDraw_tetrahedra->setChecked(true);
     draw_type = TETRAHEDRON;
-    make_draw_list();
     changed();
   }
   void toggle_ddomain(bool on) { ddomain = on; changed(); }
@@ -207,12 +200,10 @@ public slots:
     if (on && ui->action2_color_clipping->isChecked())
       toggle_two_color_clipping(true);
     else
-      make_draw_list();
     changed();
   }
   void toggle_two_color_clipping(bool on) {
     two_color_clipping = on;
-    make_draw_list();
     changed();
   }
   bool load_points() {
@@ -231,7 +222,6 @@ signals:
 
 private:
   // Scene management helpers
-  void make_draw_list();
   void init_scene(Init sceneID);
 
 
