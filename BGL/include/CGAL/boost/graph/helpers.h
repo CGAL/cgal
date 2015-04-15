@@ -161,7 +161,7 @@ template <typename FaceGraph>
     if(! is_border(opposite(hd,g),g)) return false;
     hd = next(hd,g);
   }
-  return next(hd,g)== beg;
+  return hd == beg;
 }
 
  /*!
@@ -207,7 +207,7 @@ bool is_quad(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, co
     if(! is_border(opposite(hd,g),g)) return false;
     hd = next(hd,g);
   }
-  return next(hd,g)== beg;
+  return hd == beg;
 }
 
 
@@ -245,6 +245,7 @@ template <typename FaceGraph>
 template <typename FaceGraph>
 bool is_tetrahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor h1, const FaceGraph& g)   
 {
+  if(is_border(h1,g)) return false;
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
   halfedge_descriptor h2 = next(h1,g);
   halfedge_descriptor h3 = next(h2,g);
@@ -258,6 +259,7 @@ bool is_tetrahedron( typename boost::graph_traits<FaceGraph>::halfedge_descripto
   if ( h6 == opposite(h2,g) ) return false;
   // exact three edges at vertices 1, 2, 3.
   if ( next(opposite(h4,g),g) != opposite(h3,g) ) return false;
+  std::cerr << "B1"<< std::endl;
   if ( next(opposite(h5,g),g) != opposite(h1,g) ) return false;
   if ( next(opposite(h6,g),g) != opposite(h2,g) ) return false;
   // three edges at v4.
@@ -277,6 +279,44 @@ bool is_tetrahedron( typename boost::graph_traits<FaceGraph>::halfedge_descripto
   return true;
   }
 
+
+  /*!
+   \ingroup PkgBGLHelperFct
+    returns `true` iff the connected component denoted by `h` is a hexahedron. 
+  */ 
+template <typename FaceGraph>
+bool is_hexahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor h1, const FaceGraph& g)   
+{
+  if(is_border(h1,g)) return false;
+  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+  halfedge_descriptor h2 = next(h1,g);
+  halfedge_descriptor h3 = next(h2,g);
+  halfedge_descriptor h4 = next(h3,g);
+  halfedge_descriptor h1o = opposite(h1,g);
+  halfedge_descriptor h2o = opposite(h2,g);
+  halfedge_descriptor h3o = opposite(h3,g);
+  halfedge_descriptor h4o = opposite(h4,g);
+  if(opposite(next(h2o,g),g) != prev(h1o,g)) return false;
+  if(opposite(next(h3o,g),g) != prev(h2o,g)) return false;
+  if(opposite(next(h4o,g),g) != prev(h3o,g)) return false;
+  if(opposite(next(h1o,g),g) != prev(h4o,g)) return false;
+  if(! is_quad(face(h1,g),g)) return false;
+  if(! is_quad(face(h1o,g),g)) return false;
+  if(! is_quad(face(h2o,g),g)) return false;
+  if(! is_quad(face(h3o,g),g)) return false;
+  if(! is_quad(face(h4o,g),g)) return false;
+  h1o =next(next(h1o,g),g);
+  h2o =next(next(h2o,g),g);
+  h3o =next(next(h3o,g),g);
+  h4o =next(next(h4o,g),g);
+  if(next(opposite(h2o,g),g) != opposite(h1o,g)) return false;
+  if(next(opposite(h3o,g),g) != opposite(h2o,g)) return false;
+  if(next(opposite(h4o,g),g) != opposite(h3o,g)) return false;
+  if(next(opposite(h1o,g),g) != opposite(h4o,g)) return false;
+
+  if(! is_quad(face(opposite(h4o,g),g),g)) return false;
+  return true;
+}
 
 
 } // namespace CGAL

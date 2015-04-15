@@ -200,16 +200,13 @@ typename boost::graph_traits<Graph>::halfedge_descriptor
 make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
                 const P& p4, const P& p5, const P& p6, const P& p7, Graph& g)
 {
-  std::cerr << "A"<< std::endl;
   typedef typename boost::graph_traits<Graph>              Traits;
   typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
   typedef typename Traits::vertex_descriptor               vertex_descriptor;
   typedef typename Traits::face_descriptor               face_descriptor;
 
   halfedge_descriptor hb = make_quadrangle(p0, p1, p2, p3, g);
-  std::cerr << "B"<< std::endl;
   halfedge_descriptor ht = prev(make_quadrangle(p4, p7, p6, p5, g),g);
-  std::cerr << "C"<< std::endl;
   for(int i=0; i <4; i++){
     halfedge_descriptor h = halfedge(add_edge(g),g);
     set_target(h,target(hb,g),g);
@@ -222,12 +219,10 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
     hb = next(hb,g);
     ht = prev(ht,g);
   }
-  std::cerr << "D"<< std::endl;
   for(int i=0; i <4; i++){
     fill_hole(opposite(hb,g),g);
     hb = next(hb,g);
   }
-  std::cerr << "E"<< std::endl;
   return hb;
 }
 /** 
