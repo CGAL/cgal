@@ -13,4 +13,6 @@
 \example Generator/combination_enumerator.cpp
 \example Generator/name_pairs.cpp
 \example Generator/random_convex_hull_2.cpp
+\example Generator/random_points_triangle_2.cpp
+\example Generator/random_points_tetrahedron_and_triangle_3.cpp
 */
