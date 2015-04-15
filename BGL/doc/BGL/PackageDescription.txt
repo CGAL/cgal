@@ -123,7 +123,7 @@ user might encounter.
 - `CGAL::HalfedgeDS_face_max_base_with_id`
 - `CGAL::Polyhedron_items_with_id_3`
 
-## Helper Fnuctions ##
+## Helper Functions ##
 - `CGAL::is_border()`
 
 ## Iterators ##

@@ -192,7 +192,7 @@ make_quadrangle(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
 }
 
 /** 
- * Creates an isolated hexahedron in `g` having `p0`, `p1`, ... , and `p7` as points.
+ * Creates an isolated hexahedron in `g` having `p0`, `p1`, ...\ , and `p7` as points.
  * \returns the halfedge which has the target vertex associated with `p0`, in the face with the vertices with the points `p0`, `p1`, `p2`, and `p3`.
  **/ 
 template<typename Graph, typename P>
