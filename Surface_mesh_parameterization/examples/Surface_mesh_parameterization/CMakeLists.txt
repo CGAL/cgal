@@ -78,7 +78,6 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "Square_border_parameterization.cpp" )
 
     create_single_source_cgal_program( "Complete_parameterization_example.cpp" )
-    create_single_source_cgal_program( "Eigen_parameterization.cpp" )
 
   create_single_source_cgal_program( "polyhedron_ex_parameterization.cpp" )
 
