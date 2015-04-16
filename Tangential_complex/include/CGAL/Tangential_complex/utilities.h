@@ -36,13 +36,9 @@
                   // or tbb::atomic (works for doubles, but not officially)
 
 // choose exact integral type for QP solver
-#ifdef CGAL_USE_GMP
-# include <CGAL/Gmpzf.h>
-  typedef CGAL::Gmpzf ET;
-#else
-# include <CGAL/MP_Float.h>
-  typedef CGAL::MP_Float ET;
-#endif
+// (Gmpzf is not thread-safe)
+#include <CGAL/MP_Float.h>
+typedef CGAL::MP_Float ET;
 //#define CGAL_QP_NO_ASSERTIONS // CJTODO: NECESSARY? http://doc.cgal.org/latest/QP_solver/group__PkgQPSolverFunctions.html#ga1fefbd0436aca0e281f88e8e6cd8eb74
 
 
@@ -207,11 +203,13 @@ namespace Tangential_complex_ {
 
   // P: dual face in Delaunay triangulation (p0, p1,… pn)
   // Q: vertices which are common neighbors of all vertices of P
-  template <typename K, typename Point, typename Point_range, typename Vector_range>
+  template <typename K, typename Point_range, typename Indexed_point_range, 
+            typename Indexed_point_range_2, typename Vector_range>
   bool does_voronoi_face_and_alpha_tangent_subspace_intersect(
-    Point const& center_pt,
-    Point_range  const& P,
-    Point_range  const& Q,
+    Point_range const& all_points,
+    std::size_t center_pt_index,
+    Indexed_point_range const& P,
+    Indexed_point_range_2 const& Q,
     Vector_range const& orthogonal_subspace_basis,
     typename K::FT alpha,
     K const& k)
@@ -227,6 +225,7 @@ namespace Tangential_complex_ {
     typename K::Scalar_product_d scalar_pdct = k.scalar_product_d_object();
     typename K::Point_to_vector_d pt_to_vec  = k.point_to_vector_d_object();
 
+    Point const& center_pt = all_points[center_pt_index];
     const int ambient_dim = k.point_dimension_d_object()(center_pt);
 
     std::size_t card_P = P.size();
@@ -248,10 +247,11 @@ namespace Tangential_complex_ {
     //   2(p0 - pi).x = p0² - pi² 
     Point const& p0 = center_pt;
     FT p0_dot_p0 = scalar_pdct(pt_to_vec(p0), pt_to_vec(p0));
-    for (Point_range::const_iterator it_p = P.begin(), it_p_end = P.end() ; 
+    for (Indexed_point_range::const_iterator it_p = P.begin(), 
+                                             it_p_end = P.end() ; 
          it_p != it_p_end ; ++it_p)
     {
-      Point const& pi = *it_p;
+      Point const& pi = all_points[*it_p];
 
       for (int k = 0 ; k < ambient_dim ; ++k)
         lp.set_a(k, current_row, 2*(p0[k] - pi[k]));
@@ -287,10 +287,11 @@ namespace Tangential_complex_ {
     //=========== Second set of equations ===========
     // For each point qi in Q
     //  2(qi - p0).x <= qi² - p0²
-    for (Point_range::const_iterator it_q = Q.begin(), it_q_end = Q.end() ; 
+    for (Indexed_point_range_2::const_iterator it_q = Q.begin(), 
+                                               it_q_end = Q.end() ; 
          it_q != it_q_end ; ++it_q)
     {
-      Point const& qi = *it_q;
+      Point const& qi = all_points[*it_q];
 
       for (int k = 0 ; k < ambient_dim ; ++k)
         lp.set_a(k, current_row, 2*(qi[k] - p0[k]));
@@ -330,12 +331,9 @@ namespace Tangential_complex_ {
 
     //=========== Solve =========================
     LP_solution solution = CGAL::solve_linear_program(lp, ET());
-    if (solution.solves_linear_program(lp))
-      std::cout << solution;
-    else
-      std::cout << "ERROR\n";
+    bool ret = (solution.status() == CGAL::QP_OPTIMAL);
 
-    return solution.solves_linear_program(lp);
+    return ret;
   }
 
 } // namespace Tangential_complex_
