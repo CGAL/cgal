@@ -559,7 +559,7 @@ public:
   bool is_facet_on_surface(const int facet) const
   {
     CGAL_precondition(facet>=0 && facet<4);
-    return ( Surface_patch_index() != surface_index_table_[facet]);
+    return ( !( Surface_patch_index() == surface_index_table_[facet] ));
   }
 
   // -----------------------------------
