@@ -161,6 +161,25 @@ namespace CGAL {
         }
     };
 
+    /// This class represents a face
+    /// \cgalModels `Index`
+    /// \sa `Vertex_index`, `Halfedge_index`, `Edge_index`
+    class SM_Face_index
+      : public SM_Index<SM_Face_index>
+    {
+    public:
+        /// %Default constructor
+        SM_Face_index() : SM_Index<SM_Face_index>(-1) {}
+
+        explicit SM_Face_index(size_type _idx) : SM_Index<SM_Face_index>(_idx) {}
+
+        /// prints the index and a short identification string to an ostream.
+        friend std::ostream& operator<<(std::ostream& os, SM_Face_index const& f)
+        {
+          return (os << 'f' << (size_type)f );
+        }
+    };
+
 #endif
 
   /// \ingroup PkgSurface_mesh
@@ -708,7 +727,7 @@ private:
   typedef SM_Halfedge_index Halfedge_index;
 #endif
 
-
+#ifdef DOXYGEN_RUNNING
     /// This class represents a face
     /// \cgalModels `Index`
     /// \sa `Vertex_index`, `Halfedge_index`, `Edge_index`
@@ -729,6 +748,9 @@ private:
           return (os << 'f' << (size_type)f );
         }
     };
+#else
+  typedef SM_Face_index Face_index;
+#endif
 
     /// This class represents an edge.
     /// \cgalModels `Index`
