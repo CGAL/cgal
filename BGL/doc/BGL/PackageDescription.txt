@@ -125,6 +125,25 @@ user might encounter.
 
 ## Helper Functions ##
 - `CGAL::is_border()`
+- `CGAL::is_border_edge()`
+- `CGAL::is_bivalent()`
+- `CGAL::is_pure_bivalent()`
+- `CGAL::is_trivalent()`
+- `CGAL::is_pure_trivalent()`
+- `CGAL::is_closed()`
+
+- `CGAL::is_triangle()`
+- `CGAL::is_pure_triangle()`
+- `CGAL::is_quad()`
+- `CGAL::is_pure_quad()`
+
+- `CGAL::is_tetrahedron()`
+- `CGAL::is_quadrangle()`
+- `CGAL::is_hexahedron()`
+- `CGAL::make_triangle()`
+- `CGAL::make_tetrahedron()`
+- `CGAL::make_quad()`
+- `CGAL::make_hexahedron()`
 
 ## Iterators ##
 - `CGAL::Halfedge_around_source_iterator`
@@ -161,10 +180,6 @@ user might encounter.
 - `CGAL::Euler::add_face_to_border()` 
 - `CGAL::Euler::collapse_edge()` 
 - `CGAL::Euler::satisfies_link_condition()` 
-- `CGAL::Euler::make_triangle()`
-- `CGAL::Euler::make_tetrahedron()`
-- `CGAL::Euler::make_quadrangle()`
-- `CGAL::Euler::make_hexahedron()`
 
 
 */

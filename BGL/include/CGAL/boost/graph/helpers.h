@@ -23,7 +23,7 @@
 
 #include <boost/foreach.hpp>
 #include <CGAL/boost/graph/iterator.h>
-
+#include <CGAL/boost/graph/Euler_operations.h>
 namespace CGAL {
 
 
@@ -94,7 +94,10 @@ bool is_closed(const FaceGraph& g)
   return true;
 }
 
-
+  /*!
+   \ingroup PkgBGLHelperFct
+    returns `true` if the target of `hd` has exactly two incident edges. 
+  */ 
 template <typename FaceGraph>
 bool is_bivalent(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
 {
@@ -106,7 +109,7 @@ bool is_bivalent(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd
     returns `true` if all vertices have exactly two incident edges. 
   */ 
 template <typename FaceGraph>
-  bool is_pure_bivalent(const FaceGraph& g)  
+  bool is_bivalent_mesh(const FaceGraph& g)  
 {
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
@@ -120,6 +123,10 @@ template <typename FaceGraph>
   return true;
 }
 
+  /*!
+   \ingroup PkgBGLHelperFct
+    returns `true` if the target of `hd` has exactly three incident edges. 
+  */ 
 template <typename FaceGraph>
 bool is_trivalent(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
 {
@@ -132,14 +139,14 @@ bool is_trivalent(typename boost::graph_traits<FaceGraph>::halfedge_descriptor h
     vertices have exactly three incident edges. 
   */ 
 template <typename FaceGraph>
-  bool is_pure_trivalent(const FaceGraph& g)  
+  bool is_trivalent_mesh(const FaceGraph& g)  
 {
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
   BOOST_FOREACH(vertex_descriptor vd, vertices(g)){
     halfedge_descriptor hd = halfedge(vd,g);
     if((hd == boost::graph_traits<FaceGraph>::null_halfedge()) ||
-       (! is_trivalent(hd,g))){
+       (! is_trivalent(halfedge(hd,g),g))){
       return false;
     }
   }
@@ -148,11 +155,11 @@ template <typename FaceGraph>
 
  /*!
    \ingroup PkgBGLHelperFct
-    returns `true` iff the connected component denoted by `h` is a triangle. 
+    returns `true` iff the connected component denoted by `hd` is a triangle. 
     \pre `g` must be valid.
   */ 
 template <typename FaceGraph>
-  bool is_triangle(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)  
+  bool is_isolated_triangle(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)  
 { 
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
   halfedge_descriptor beg = hd;
@@ -166,13 +173,11 @@ template <typename FaceGraph>
 
  /*!
    \ingroup PkgBGLHelperFct
-    returns `true` iff the face is a triangle, that is it has three incident halfedges. 
+    returns `true` iff the face denoted by `hd` is a triangle, that is it has three incident halfedges. 
  */
 template <typename FaceGraph>
-bool is_triangle(typename boost::graph_traits<FaceGraph>::face_descriptor fd, const FaceGraph& g)
+bool is_triangle(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
 {
-  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  halfedge_descriptor hd = halfedge(fd,g);
   return hd == next(next(next(hd,g),g),g);
 }
 
@@ -181,11 +186,11 @@ bool is_triangle(typename boost::graph_traits<FaceGraph>::face_descriptor fd, co
     returns `true` if all faces are triangles. 
   */ 
 template <typename FaceGraph>
-  bool is_pure_triangle(const FaceGraph& g)  
+  bool is_triangle_mesh(const FaceGraph& g)  
 {
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
   BOOST_FOREACH(face_descriptor fd, faces(g)){
-    if(! is_triangle(fd,g)){
+    if(! is_triangle(halfedge(fd,g),g)){
       return false;
     }
   }
@@ -195,10 +200,10 @@ template <typename FaceGraph>
 
 /*!
    \ingroup PkgBGLHelperFct
-    returns `true` iff the connected component denoted by `h` is a quadrilateral. 
+    returns `true` iff the connected component denoted by `hd` is a quadrilateral. 
   */
 template <typename FaceGraph>
-bool is_quad(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
+bool is_isolated_quad(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
 {
  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
   halfedge_descriptor beg = hd;
@@ -212,13 +217,12 @@ bool is_quad(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, co
 
 
  /*!
-    returns `true` iff the face is a quad, that is it has four incident halfedges. 
+   \ingroup PkgBGLHelperFct
+    returns `true` iff the face denoted by `hd` is a quad, that is it has four incident halfedges. 
  */
 template <typename FaceGraph>
-bool is_quad(typename boost::graph_traits<FaceGraph>::face_descriptor fd, const FaceGraph& g)
+bool is_quad(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
 {
- typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  halfedge_descriptor hd = halfedge(fd,g);
   return hd == next(next(next(next(hd,g),g),g),g);
 }
 
@@ -227,11 +231,11 @@ bool is_quad(typename boost::graph_traits<FaceGraph>::face_descriptor fd, const 
     returns `true` if all faces are quadrilaterals. 
   */ 
 template <typename FaceGraph>
-  bool is_pure_quad(const FaceGraph& g)  
+  bool is_quad_mesh(const FaceGraph& g)  
 {
     typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
   BOOST_FOREACH(face_descriptor fd, faces(g)){
-    if(! is_quad(fd,g)){
+    if(! is_quad(halfedge(fd,g),g)){
       return false;
     }
   }
@@ -240,11 +244,14 @@ template <typename FaceGraph>
  
   /*!
    \ingroup PkgBGLHelperFct
-    returns `true` iff the connected component denoted by `h` is a tetrahedron. 
+    returns `true` iff the connected component denoted by `hd` is a tetrahedron. 
   */ 
 template <typename FaceGraph>
-bool is_tetrahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor h1, const FaceGraph& g)   
+bool is_tetrahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)   
 {
+  typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+
+  halfedge_descriptor h1 = hd;
   if(is_border(h1,g)) return false;
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
   halfedge_descriptor h2 = next(h1,g);
@@ -259,7 +266,6 @@ bool is_tetrahedron( typename boost::graph_traits<FaceGraph>::halfedge_descripto
   if ( h6 == opposite(h2,g) ) return false;
   // exact three edges at vertices 1, 2, 3.
   if ( next(opposite(h4,g),g) != opposite(h3,g) ) return false;
-  std::cerr << "B1"<< std::endl;
   if ( next(opposite(h5,g),g) != opposite(h1,g) ) return false;
   if ( next(opposite(h6,g),g) != opposite(h2,g) ) return false;
   // three edges at v4.
@@ -285,8 +291,11 @@ bool is_tetrahedron( typename boost::graph_traits<FaceGraph>::halfedge_descripto
     returns `true` iff the connected component denoted by `h` is a hexahedron. 
   */ 
 template <typename FaceGraph>
-bool is_hexahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor h1, const FaceGraph& g)   
+bool is_hexahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)   
 {
+  typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+
+  halfedge_descriptor h1 = hd;
   if(is_border(h1,g)) return false;
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
   halfedge_descriptor h2 = next(h1,g);
@@ -300,11 +309,11 @@ bool is_hexahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor
   if(opposite(next(h3o,g),g) != prev(h2o,g)) return false;
   if(opposite(next(h4o,g),g) != prev(h3o,g)) return false;
   if(opposite(next(h1o,g),g) != prev(h4o,g)) return false;
-  if(! is_quad(face(h1,g),g)) return false;
-  if(! is_quad(face(h1o,g),g)) return false;
-  if(! is_quad(face(h2o,g),g)) return false;
-  if(! is_quad(face(h3o,g),g)) return false;
-  if(! is_quad(face(h4o,g),g)) return false;
+  if(! is_quad(h1,g)) return false;
+  if(! is_quad(h1o,g)) return false;
+  if(! is_quad(h2o,g)) return false;
+  if(! is_quad(h3o,g)) return false;
+  if(! is_quad(h4o,g)) return false;
   h1o =next(next(h1o,g),g);
   h2o =next(next(h2o,g),g);
   h3o =next(next(h3o,g),g);
@@ -314,8 +323,250 @@ bool is_hexahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor
   if(next(opposite(h4o,g),g) != opposite(h3o,g)) return false;
   if(next(opposite(h1o,g),g) != opposite(h4o,g)) return false;
 
-  if(! is_quad(face(opposite(h4o,g),g),g)) return false;
+  if(! is_quad(opposite(h4o,g),g)) return false;
   return true;
+}
+
+
+
+/** 
+ * \ingroup PkgBGLHelperFct
+ * Creates an isolated triangle with border edges in `g` having `p0`, `p1`, and `p2` as points and adds it to the graph `g`.
+ * \returns the non-border halfedge which has the target vertex associated with `p0`.
+ **/ 
+template<typename Graph, typename P>
+typename boost::graph_traits<Graph>::halfedge_descriptor
+make_triangle(const P& p0, const P& p1, const P& p2, Graph& g)
+{
+  typedef typename boost::graph_traits<Graph>              Traits;
+  typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
+  typedef typename Traits::vertex_descriptor               vertex_descriptor;
+  typedef typename Traits::face_descriptor                 face_descriptor;
+  typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
+  Point_property_map ppmap = get(CGAL::vertex_point, g);
+  vertex_descriptor v0, v1, v2;
+  v0 = add_vertex(g);
+  v1 = add_vertex(g);
+  v2 = add_vertex(g);
+
+  ppmap[v0] = p0;
+  ppmap[v1] = p1;
+  ppmap[v2] = p2;
+  halfedge_descriptor h0 = halfedge(add_edge(g),g);
+  halfedge_descriptor h1 = halfedge(add_edge(g),g);
+  halfedge_descriptor h2 = halfedge(add_edge(g),g);
+  set_next(h0, h1, g);
+  set_next(h1, h2, g);
+  set_next(h2, h0, g);
+  set_target(h0, v1, g);
+  set_target(h1, v2, g);
+  set_target(h2, v0, g);
+  set_halfedge(v1, h0, g);
+  set_halfedge(v2, h1, g);
+  set_halfedge(v0, h2, g);
+  face_descriptor f = add_face(g);
+  set_face(h0,f,g);
+  set_face(h1,f,g);
+  set_face(h2,f,g);
+  set_halfedge(f,h0,g);
+  h0 = opposite(h0,g);
+  h1 = opposite(h1,g);
+  h2 = opposite(h2,g);
+  set_target(h0, v0, g);
+  set_target(h1, v1, g);
+  set_target(h2, v2, g);
+  set_face(h0, boost::graph_traits<Graph>::null_face(),g);
+  set_face(h1, boost::graph_traits<Graph>::null_face(),g);
+  set_face(h2, boost::graph_traits<Graph>::null_face(),g);
+  return opposite(h2,g);
+}
+
+/** 
+ * \ingroup PkgBGLHelperFct
+ * Creates an isolated quad with border edges in `g` having `p0`, `p1`, `p2`, and `p3` as points and adds it to the graph `g`.
+ * \returns the non-border halfedge which has the target vertex associated with `p0`.
+ **/ 
+template<typename Graph, typename P>
+typename boost::graph_traits<Graph>::halfedge_descriptor
+make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
+{
+  typedef typename boost::graph_traits<Graph>              Traits;
+  typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
+  typedef typename Traits::vertex_descriptor               vertex_descriptor;
+  typedef typename Traits::face_descriptor                 face_descriptor;
+  typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
+  Point_property_map ppmap = get(CGAL::vertex_point, g);
+  vertex_descriptor v0, v1, v2, v3;
+  v0 = add_vertex(g);
+  v1 = add_vertex(g);
+  v2 = add_vertex(g);
+  v3 = add_vertex(g);
+
+  ppmap[v0] = p0;
+  ppmap[v1] = p1;
+  ppmap[v2] = p2;
+  ppmap[v3] = p3;
+  halfedge_descriptor h0 = halfedge(add_edge(g),g);
+  halfedge_descriptor h1 = halfedge(add_edge(g),g);
+  halfedge_descriptor h2 = halfedge(add_edge(g),g);
+  halfedge_descriptor h3 = halfedge(add_edge(g),g);
+  set_next(h0, h1, g);
+  set_next(h1, h2, g);
+  set_next(h2, h3, g);
+  set_next(h3, h0, g);
+  set_target(h0, v1, g);
+  set_target(h1, v2, g);
+  set_target(h2, v3, g);
+  set_target(h3, v0, g);
+  set_halfedge(v1, h0, g);
+  set_halfedge(v2, h1, g);
+  set_halfedge(v3, h2, g);
+  set_halfedge(v0, h3, g);
+  face_descriptor f = add_face(g);
+  set_face(h0,f,g);
+  set_face(h1,f,g);
+  set_face(h2,f,g);
+  set_face(h3,f,g);
+  set_halfedge(f,h0,g);
+  h0 = opposite(h0,g);
+  h1 = opposite(h1,g);
+  h2 = opposite(h2,g);
+  h3 = opposite(h3,g);
+  set_target(h0, v0, g);
+  set_target(h1, v1, g);
+  set_target(h2, v2, g);
+  set_target(h3, v3, g);
+  set_face(h0, boost::graph_traits<Graph>::null_face(),g);
+  set_face(h1, boost::graph_traits<Graph>::null_face(),g);
+  set_face(h2, boost::graph_traits<Graph>::null_face(),g);
+  set_face(h3, boost::graph_traits<Graph>::null_face(),g);
+  return opposite(h3,g);
+}
+
+/** 
+ * \ingroup PkgBGLHelperFct
+ * Creates an isolated hexahedron in `g` having `p0`, `p1`, ...\ , and `p7` as points and adds it to the graph `g`.
+ * \returns the halfedge which has the target vertex associated with `p0`, in the face with the vertices with the points `p0`, `p1`, `p2`, and `p3`.
+ **/ 
+template<typename Graph, typename P>
+typename boost::graph_traits<Graph>::halfedge_descriptor
+make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
+                const P& p4, const P& p5, const P& p6, const P& p7, Graph& g)
+{
+  typedef typename boost::graph_traits<Graph>              Traits;
+  typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
+  typedef typename Traits::vertex_descriptor               vertex_descriptor;
+  typedef typename Traits::face_descriptor                 face_descriptor;
+
+  halfedge_descriptor hb = make_quad(p0, p1, p2, p3, g);
+  halfedge_descriptor ht = prev(make_quad(p4, p7, p6, p5, g),g);
+  for(int i=0; i <4; i++){
+    halfedge_descriptor h = halfedge(add_edge(g),g);
+    set_target(h,target(hb,g),g);
+    set_next(h,opposite(hb,g),g);
+    set_next(opposite(next(ht,g),g),h,g);
+    h = opposite(h,g);
+    set_target(h,target(ht,g),g);
+    set_next(h,opposite(ht,g),g);
+    set_next(opposite(next(hb,g),g),h,g);
+    hb = next(hb,g);
+    ht = prev(ht,g);
+  }
+  for(int i=0; i <4; i++){
+    Euler::fill_hole(opposite(hb,g),g);
+    hb = next(hb,g);
+  }
+  return hb;
+}
+/** 
+ * \ingroup PkgBGLHelperFct
+ * Creates an isolated tetrahedron in `g` having `p0`, `p1`, `p2`, and `p3` as points and adds it to the graph `g`.
+ * \returns the halfedge which has the target vertex associated with `p0`, in the face with the vertices with the points `p0`, `p1`, and `p2`.
+ **/ 
+template<typename Graph, typename P>
+typename boost::graph_traits<Graph>::halfedge_descriptor
+make_tetrahedron(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
+{
+  typedef typename boost::graph_traits<Graph>              Traits;
+  typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
+  typedef typename Traits::vertex_descriptor               vertex_descriptor;
+  typedef typename Traits::face_descriptor                 face_descriptor;
+  typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
+
+  Point_property_map ppmap = get(CGAL::vertex_point, g);
+  vertex_descriptor v0, v1, v2, v3;
+  v0 = add_vertex(g);
+  v1 = add_vertex(g);
+  v2 = add_vertex(g);
+  v3 = add_vertex(g);
+
+  ppmap[v0] = p0;
+  ppmap[v1] = p1;
+  ppmap[v2] = p2;
+  ppmap[v3] = p3;
+  halfedge_descriptor h0 = halfedge(add_edge(g),g);
+  halfedge_descriptor h1 = halfedge(add_edge(g),g);
+  halfedge_descriptor h2 = halfedge(add_edge(g),g);
+  set_next(h0, h1, g);
+  set_next(h1, h2, g);
+  set_next(h2, h0, g);
+  set_target(h0, v1, g);
+  set_target(h1, v2, g);
+  set_target(h2, v0, g);
+  set_halfedge(v1, h0, g);
+  set_halfedge(v2, h1, g);
+  set_halfedge(v0, h2, g);
+  face_descriptor f = add_face(g);
+  set_face(h0,f,g);
+  set_face(h1,f,g);
+  set_face(h2,f,g);
+  set_halfedge(f,h0,g);
+  h0 = opposite(h0,g);
+  h1 = opposite(h1,g);
+  h2 = opposite(h2,g);
+  set_target(h0, v0, g);
+  set_target(h1, v1, g);
+  set_target(h2, v2, g);
+  halfedge_descriptor h3 = halfedge(add_edge(g),g);
+  halfedge_descriptor h4 = halfedge(add_edge(g),g);
+  halfedge_descriptor h5 = halfedge(add_edge(g),g);
+  set_target(h3, v3, g);
+  set_target(h4, v3, g);
+  set_target(h5, v3, g);
+  set_halfedge(v3, h3, g);
+  
+  set_next(h0, h3, g);
+  set_next(h1, h4, g);
+  set_next(h2, h5, g);
+
+  set_next(h3, opposite(h4,g), g);
+  set_next(h4, opposite(h5,g), g);
+  set_next(h5, opposite(h3,g), g);
+  set_next(opposite(h4,g), h0, g);
+  set_next(opposite(h5,g), h1, g);
+  set_next(opposite(h3,g), h2, g);
+
+  set_target(opposite(h3,g), v0, g);
+  set_target(opposite(h4,g), v1, g);
+  set_target(opposite(h5,g), v2, g);
+
+  f = add_face(g);
+  set_halfedge(f,h0,g);
+  set_face(h0, f, g);
+  set_face(h3, f, g);
+  set_face(opposite(h4,g), f, g);
+  f = add_face(g);
+  set_halfedge(f,h1,g);
+  set_face(h1, f, g);
+  set_face(h4, f, g);
+  set_face(opposite(h5,g), f, g);
+  f = add_face(g);
+  set_halfedge(f,h2,g);
+  set_face(h2, f, g);
+  set_face(h5, f, g);
+  set_face(opposite(h3,g), f, g);
+  
+  return opposite(h2,g);
 }
 
 

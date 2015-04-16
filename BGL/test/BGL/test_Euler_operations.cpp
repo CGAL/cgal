@@ -356,17 +356,6 @@ satisfies_link_condition()
   assert(CGAL::Euler::satisfies_link_condition(*edges(f.m).first,f.m));
 }
 
-template <typename T> 
-void
-make_functions()
-{
-  T g;
-  Iso_cuboid_3 ic(Point_3(0,0,0),Point_3(1,1,1));
-  CGAL::Euler::make_hexahedron(ic[0], ic[1], ic[2], ic[3], 
-                               ic[4], ic[5], ic[6], ic[7], g);
-  std::cout << "isocuboid:\n" << std::flush << g << std::endl;
-}
-
 
 
 template <typename Graph>
@@ -387,7 +376,6 @@ test_Euler_operations()
   remove_center_vertex_test<Graph>();
   join_split_inverse<Graph>();
   satisfies_link_condition<Graph>();
-  make_functions<Graph>();
 }
 
 int main()
