@@ -156,16 +156,27 @@ enum Degeneracy_algorithm_tag
 ///
 /// @tparam Traits
 ///         a model of `MeanCurvatureSkeletonizationTraits`<br>
-///         <b>%Default:</b> `Kernel_traits<boost::property_traits<boost::property_map<TriangleMesh, CGAL::vertex_point_t>::%type>::%value_type>::%Kernel`
+///         <b>%Default:</b>
+/// \code
+///     CGAL::Kernel_traits<
+///       boost::property_traits<
+///          boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type
+///        >::value_type
+///      >::Kernel
+/// \endcode
 ///
 /// @tparam VertexPointMap
 ///         a model of `ReadWritePropertyMap`
 ///         with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
 ///         `Traits::Point_3` as value type.<br>
-///         <b>%Default:</b> `boost::property_map<TriangleMesh, CGAL::vertex_point_t>::%const_type`.
+///         <b>%Default:</b>
+/// \code
+///   boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type.
+/// \endcode
+///
 /// @tparam SparseLinearAlgebraTraits_d
-///         a model of `SparseLinearAlgebraTraitsWithFactor_d`.
-///         If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
+///         a model of `SparseLinearAlgebraTraitsWithFactor_d`.<br>
+///         <b>%Default:</b> If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
 ///         and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter:
 /// \code
 ///     CGAL::Eigen_solver_traits<
