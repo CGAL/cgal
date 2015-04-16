@@ -21,6 +21,8 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REMESH_H
 #define CGAL_POLYGON_MESH_PROCESSING_REMESH_H
 
+#define CGAL_DUMP_REMESHING_STEPS
+
 #include <CGAL/Polygon_mesh_processing/internal/remesh_impl.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
@@ -57,7 +59,7 @@ void incremental_triangle_based_remeshing(PolygonMesh& pmesh
   typename internal::Incremental_remesher<PM, VPMap, GeomTraits>
     remesher(pmesh, vpmap);
 
-  unsigned int nb_iterations = choose_param(get_param(np, number_of_iterations), 10);
+  unsigned int nb_iterations = choose_param(get_param(np, number_of_iterations), 1);
 
   double low = 4. / 5. * target_edge_length;
   double high = 4. / 3. * target_edge_length;
