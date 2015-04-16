@@ -794,7 +794,7 @@ public:
 
 
   /**
-   * Iteratively calls the sequence `contract_geometry()`,  `collapse_edges()`, `split_faces()`, and `detect_degeneracies()`
+   * Iteratively calls `contract()`
    * until the change of surface area of the meso-skeleton after one iteration is smaller than
    * `area_variation_factor()*original_area` where `original_area` is the area of the input triangle mesh,
    * or if the maximum number of iterations has been reached.
