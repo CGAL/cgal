@@ -32,7 +32,7 @@ template <class K,  class Hilbert_policy >
 class Hilbert_sort_on_sphere_3 {
 	typedef typename K::Point_3  Point_3;
 	
-	static const double _sqrt_of_one_over_three = 0.57735026919;
+	static const double _sqrt_of_one_over_three;
 	
 	// Face 1, x > sqrt(1/3)
 	// Face 2, y > sqrt(1/3)
@@ -111,7 +111,8 @@ public:
 				*begin++ = vec[i][j];
 	}
 };
-
+template <class K,  class Hilbert_policy >
+const double Hilbert_sort_on_sphere_3<K,Hilbert_policy>::_sqrt_of_one_over_three = 0.57735026919;
 
 } // namespace CGAL
 
