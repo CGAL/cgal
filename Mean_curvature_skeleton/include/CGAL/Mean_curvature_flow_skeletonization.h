@@ -314,7 +314,7 @@ private:
   /** Surface area of original surface mesh. */
   double m_original_area;
   /** Maximum number of iterations. */
-  int m_max_iterations;
+  std::size_t m_max_iterations;
   /** Should the skeleton be medially centered? */
   bool m_is_medially_centered;
   /** Are poles computed? */
@@ -458,7 +458,7 @@ public:
   /// @{
 
   /// Maximum number of iterations performed by `contract_until_convergence()`.
-  int max_iterations()
+  std::size_t max_iterations()
   {
     return m_max_iterations;
   }
@@ -472,7 +472,7 @@ public:
     return m_delta_area;
   }
 
-  void set_max_iterations(int value)
+  void set_max_iterations(std::size_t value)
   {
     m_max_iterations = value;
   }
@@ -694,15 +694,15 @@ public:
   /**
    * Collapses edges of the meso-skeleton with length less than `min_edge_length()` and returns the number of edges collapsed.
    */
-  int collapse_edges()
+  std::size_t collapse_edges()
   {
     internal::Fixed_edge_map<mTriangleMesh> fixed_edge_map(m_tmesh);
     init_fixed_edge_map(fixed_edge_map);
 
-    int num_collapses = 0;
+    std::size_t num_collapses = 0;
     while (true)
     {
-      int cnt;
+      std::size_t cnt;
       if (Collapse_tag == SIMPLIFICATION)
         cnt = collapse_edges_simplification();
       else
@@ -718,18 +718,18 @@ public:
   /**
    * Splits faces of the meso-skeleton having one angle greater than `max_triangle_angle()` and returns the number of faces split.
    */
-  int split_faces()
+  std::size_t split_faces()
   {
     MCFSKEL_DEBUG(std::cerr << "before split\n";)
 
-    int num_splits = 0;
+    std::size_t num_splits = 0;
     while (true)
     {
       if (num_vertices(m_tmesh) <= 3)
       {
         break;
       }
-      int cnt = split_flat_triangles();
+      std::size_t cnt = split_flat_triangles();
       if (cnt == 0)
       {
         break;
@@ -749,14 +749,14 @@ public:
   /**
    * Sequentially calls `collapse_edges()` and `split_faces()` and returns the number of edges collapsed and faces split.
    */
-  int remesh()
+  std::size_t remesh()
   {
     MCFSKEL_DEBUG(std::cerr << "before collapse edges\n";)
 
-    int num_collapses = collapse_edges();
+    std::size_t num_collapses = collapse_edges();
     MCFSKEL_INFO(std::cerr << "collapse " << num_collapses << " edges.\n";)
 
-    int num_splits = split_faces();
+    std::size_t num_splits = split_faces();
     MCFSKEL_INFO(std::cerr << "split " << num_splits << " edges.\n";)
 
     return num_collapses + num_splits;
@@ -765,9 +765,8 @@ public:
 
   /**
    * Prevents degenerate vertices to move during the following contraction steps and returns the number of newly fixed vertices.
-   * \todo int -> size_t
    */
-  int detect_degeneracies()
+  std::size_t detect_degeneracies()
   {
     if (Degeneracy_tag == HEURISTIC)
     {
@@ -802,7 +801,7 @@ public:
   void contract_until_convergence()
   {
     double last_area = 0;
-    int num_iteration = 0;
+    std::size_t num_iteration = 0;
     while (true)
     {
       MCFSKEL_INFO(std::cout << "iteration " << num_iteration + 1 << "\n";)
@@ -951,7 +950,7 @@ private:
   {
     MCFSKEL_DEBUG(std::cerr << "start LHS\n";)
 
-    int nver = num_vertices(m_tmesh);
+    std::size_t nver = num_vertices(m_tmesh);
 
     Point_inside_polyhedron_3<mTriangleMesh, Traits> test_inside(m_tmesh);
 
@@ -1084,7 +1083,7 @@ private:
   // --------------------------------------------------------------------------
 
   /// Collapse short edges using simplification package.
-  int collapse_edges_simplification()
+  std::size_t collapse_edges_simplification()
   {
     internal::Fixed_edge_map<mTriangleMesh> fixed_edge_map(m_tmesh);
 
@@ -1108,14 +1107,14 @@ private:
     internal::Track_correspondence_visitor<mTriangleMesh, mVertexPointMap, Input_vertex_descriptor> vis
       (&m_tmesh_point_pmap, m_max_id, m_is_medially_centered);
 
-    int r = SMS::edge_collapse
-                (m_tmesh
-                ,stop
-                ,CGAL::get_cost(SMS::Edge_length_cost<mTriangleMesh>())
-                      .get_placement(placement)
-                      .visitor(vis)
-                      .edge_is_constrained_map(fixed_edge_map)
-                );
+    std::size_t r = SMS::edge_collapse
+                    (m_tmesh
+                    ,stop
+                    ,CGAL::get_cost(SMS::Edge_length_cost<mTriangleMesh>())
+                          .get_placement(placement)
+                          .visitor(vis)
+                          .edge_is_constrained_map(fixed_edge_map)
+                    );
 
     return r;
   }
@@ -1139,7 +1138,7 @@ private:
   }
 
   /// Collapse short edges by iteratively linear search.
-  int collapse_edges_linear(internal::Fixed_edge_map<mTriangleMesh>& fixed_edge_map)
+  std::size_t collapse_edges_linear(internal::Fixed_edge_map<mTriangleMesh>& fixed_edge_map)
   {
     std::vector<edge_descriptor> all_edges;
     all_edges.reserve(num_edges(m_tmesh));
@@ -1148,7 +1147,7 @@ private:
     boost::tie(eb, ee) = edges(m_tmesh);
     std::copy(eb, ee, std::back_inserter(all_edges));
 
-    int cnt = 0;
+    std::size_t cnt = 0;
     for (size_t i = 0; i < all_edges.size(); ++i)
     {
       halfedge_descriptor h = halfedge(all_edges[i], m_tmesh);
@@ -1299,12 +1298,12 @@ private:
   }
 
   /// Split triangles with an angle greater than `alpha_TH`.
-  int split_flat_triangles()
+  std::size_t split_flat_triangles()
   {
     int ne = 2 * num_edges(m_tmesh);
     compute_incident_angle();
 
-    int cnt = 0;
+    std::size_t cnt = 0;
     /// \todo this is unsafe, we loop over a sequence that we modify!!!
     BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
     {
@@ -1355,9 +1354,9 @@ private:
 
   /// Test degeneracy of a vertex by counting the euler characteristic of
   /// its local neighborhood disk.
-  int detect_degeneracies_in_disk()
+  std::size_t detect_degeneracies_in_disk()
   {
-    int num_fixed = 0;
+    std::size_t num_fixed = 0;
     BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
     {
       int idx = get(m_vertex_id_pmap, v);
@@ -1381,9 +1380,9 @@ private:
 
   /// Test degeneracy of a vertex by a simple heuristic looking for a
   /// triangular cross section.
-  int detect_degeneracies_heuristic()
+  std::size_t detect_degeneracies_heuristic()
   {
-    int num_fixed = 0;
+    std::size_t num_fixed = 0;
     double elength_fixed = m_min_edge_length;
 
     BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
@@ -1413,7 +1412,7 @@ private:
         if (willbefixed)
         {
           m_is_vertex_fixed_map[idx] = willbefixed;
-          num_fixed++;
+          ++num_fixed;
         }
       }
     }
