@@ -32,6 +32,7 @@
 #include <iostream>
 #include <list>
 #include <algorithm>
+#include <utility>      // std::pair
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/mem_fun.hpp>
@@ -39,6 +40,7 @@
 #include <boost/multi_index/identity.hpp>
 
 namespace CGAL {
+
 
 /*!
 \ingroup PkgReconstructionSimplification2Classes
@@ -60,24 +62,29 @@ via the Point_property_map and Mass_property_map `PropertyMaps` respectively.
 \tparam MassPMap   a model of `ReadablePropertyMap` with a value_type = `Kernel::FT`
 
  */
-template<class Kernel, class Point_property_map, class Mass_property_map>
+template<class Kernel,
+        class Point_property_map = First_of_pair_property_map  <std::pair<typename Kernel::Point_2 , typename Kernel::FT > >,
+        class Mass_property_map  = Second_of_pair_property_map <std::pair<typename Kernel::Point_2 , typename Kernel::FT > > >
 class Reconstruction_simplification_2 {
 public:
 
+    /*!
+        Number type.
+    */
+    typedef typename Kernel::FT FT;
 
-	/*!
-		Number type.
-	*/
-	typedef typename Kernel::FT FT;
+    /*!
+        Point type.
+    */
+    typedef typename Kernel::Point_2 Point;
 
-	/*!
-		Point type.
-	*/
-	typedef typename Kernel::Point_2 Point;
 	/*!
 		Vector type.
 	*/
 	typedef typename Kernel::Vector_2 Vector;
+
+	typedef typename std::pair<Point, FT> PointMassPair;
+	typedef typename std::list<PointMassPair> PointMassList;
 
 	/*!
 	The Output simplex.
@@ -127,6 +134,7 @@ public:
 	typedef typename Triangulation::Reconstruction_edge_2 Reconstruction_edge_2;
 
 	typedef typename Triangulation::MultiIndex MultiIndex;
+
 
 protected:
 	Triangulation m_dt;
@@ -191,6 +199,46 @@ protected:
 		initialize(start_itr, beyond_itr);
 	}
 
+
+    /*!
+         Instantiates a new Reconstruction_simplification_2.
+         Computes a bounding box around the input points and creates a first
+         (dense) output simplex as well as an initial transportation plan. This
+        first output simplex is then made coarser during subsequent iterations.
+
+         \details Instantiates a new Reconstruction_simplification_2 object
+                  for a given collection of points.
+
+         \tparam InputIterator is the iterator type of the algorithm input.
+
+         \param start_itr An InputIterator pointing the the first point
+                              in a collection.
+         \param beyond_itr An InputIterator pointing beyond the last point
+                              in a collection.
+    */
+    template <class InputIterator>
+    Reconstruction_simplification_2(InputIterator start_point_itr,
+                                    InputIterator beyond_point_itr) {
+
+
+        PointMassList point_mass_list;
+        for (InputIterator it = start_point_itr; it != beyond_point_itr; it++) {
+            point_mass_list.push_back(std::make_pair(*it, 1));
+        }
+
+        Point_property_map in_point_pmap;
+        Mass_property_map  in_mass_pmap;
+
+        point_pmap = in_point_pmap;
+        mass_pmap  = in_mass_pmap;
+
+        initialize_parameters();
+
+        initialize(point_mass_list.begin(), point_mass_list.end());
+    }
+
+
+
 	  /// @}
 
 
@@ -225,7 +273,7 @@ protected:
 	}
 
 	//Function if one wants to create a Reconstruction_simplification_2
-	//without specifying the input yet in the constructor.
+	//without yet specifying the input in the constructor.
 	template <class InputIterator>
 	void initialize(InputIterator start_itr,
 									InputIterator beyond_itr,

@@ -23,6 +23,7 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( "reconstruction_simplification_2_output_example.cpp" )
   create_single_source_cgal_program( "reconstruction_simplification_2_example.cpp" )
+  create_single_source_cgal_program( "reconstruction_simplification_2_no_mass_example.cpp" )
 
 else()
   
