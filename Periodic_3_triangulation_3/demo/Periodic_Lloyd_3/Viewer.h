@@ -24,6 +24,14 @@ public:
   Viewer(QWidget* parent)
     : QGLViewer(parent)
   {}
+  ~Viewer()
+  {
+   for(int i=0; i<4; i++)
+   {
+    buffers[i].destroy();
+    vao[i].destroy();
+   }
+  }
 
   void setScene(Scene* scene_)
   {
