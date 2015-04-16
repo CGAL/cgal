@@ -1527,12 +1527,7 @@ void Scene::change_material(const QString &string) {
         shininess = 51.2f;
     }
 
-    else
-
-
-
-        // Change
-        if(string == "Gold")
+    else if(string == "Gold")
         {
             // Ambient
             ambient[0] = 0.24725f;
@@ -1554,11 +1549,7 @@ void Scene::change_material(const QString &string) {
         }
 
 
-        else
-
-
-            // Change
-            if(string == "Red")
+    else if(string == "Red")
             {
                 // Ambient
                 ambient[0] = 0.75f;
@@ -1579,10 +1570,7 @@ void Scene::change_material(const QString &string) {
                 shininess = 64.0f;
             }
 
-            else
-
-                // Change
-                if(string == "Green")
+    else if(string == "Green")
                 {
                     // Ambient
                     ambient[0] = 0.0225f;
@@ -1603,11 +1591,7 @@ void Scene::change_material(const QString &string) {
                     shininess = 12.8f;
                 }
 
-                else
-
-
-                    // Change
-                    if(string == "Black plastic")
+    else if(string == "Black plastic")
                     {
                         // Ambient
                         ambient[0] = 0.0f;
@@ -1627,7 +1611,6 @@ void Scene::change_material(const QString &string) {
                         // Shininess
                         shininess = 32.0f;
                     }
-
 
     color.setRgbF(diffuse[0],diffuse[1],diffuse[2],diffuse[3]);
 

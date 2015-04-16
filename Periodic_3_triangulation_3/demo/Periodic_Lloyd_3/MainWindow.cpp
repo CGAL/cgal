@@ -156,6 +156,7 @@ MainWindow::savePoints()
 void MainWindow::lloydStep() {
   scene.lloyd_step();
   viewer->updateGL();
+  viewer->changed();
   }
 
 void 
