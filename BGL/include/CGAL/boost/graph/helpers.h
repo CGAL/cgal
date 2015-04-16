@@ -288,7 +288,7 @@ bool is_tetrahedron( typename boost::graph_traits<FaceGraph>::halfedge_descripto
 
   /*!
    \ingroup PkgBGLHelperFct
-    returns `true` iff the connected component denoted by `h` is a hexahedron. 
+    returns `true` iff the connected component denoted by `hd` is a hexahedron. 
   */ 
 template <typename FaceGraph>
 bool is_hexahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)   
