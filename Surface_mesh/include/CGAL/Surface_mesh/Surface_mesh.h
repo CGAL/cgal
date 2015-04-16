@@ -49,6 +49,82 @@
 
 namespace CGAL {
 
+
+#ifndef DOXYGEN_RUNNING
+    /// Base class for vertex, halfedge, edge, and face index. 
+    ///
+    /// \attention Note that `Index` is not a model of the concept `Handle`,
+    /// because it cannot be dereferenced.
+    /// \sa `Vertex_index`, `Halfedge_index`, `Edge_index`, `Face_index`.
+    template<typename T>
+    class SM_Index
+    {
+    public:
+    typedef boost::uint32_t size_type;
+        /// Constructor. %Default construction creates an invalid index.
+        /// We write -1, which is <a href="http://en.cppreference.com/w/cpp/concept/numeric_limits">
+        /// <tt>std::numeric_limits<size_type>::max()</tt></a>
+        /// as `size_type` is an unsigned type. 
+        explicit SM_Index(size_type _idx=-1) : idx_(_idx) {}
+
+        /// Get the underlying index of this index
+        operator size_type() const { return idx_; }
+
+        /// reset index to be invalid (index=-1)
+        void reset() { idx_=-1; }
+
+        /// return whether the index is valid, i.e., the index is not equal to -1.
+        bool is_valid() const { 
+          size_type inf = -1;
+          return idx_ != inf;
+        }
+
+        /// are two indices equal?
+        bool operator==(const T& _rhs) const {
+            return idx_ == _rhs.idx_;
+        }
+
+        /// are two indices different?
+        bool operator!=(const T& _rhs) const {
+            return idx_ != _rhs.idx_;
+        }
+
+        /// Comparison by index.
+        bool operator<(const T& _rhs) const {
+            return idx_ < _rhs.idx_;
+        }
+
+        /// increments the internal index. This operation does not
+        /// guarantee that the index is valid or undeleted after the
+        /// increment.
+        SM_Index& operator++() { ++idx_; return *this; }
+        /// decrements the internal index. This operation does not
+        /// guarantee that the index is valid or undeleted after the
+        /// decrement.
+        SM_Index& operator--() { --idx_; return *this; }
+
+        /// increments the internal index. This operation does not
+        /// guarantee that the index is valid or undeleted after the
+        /// increment.
+        SM_Index operator++(int) { SM_Index tmp(*this); ++idx_; return tmp; }
+        /// decrements the internal index. This operation does not
+        /// guarantee that the index is valid or undeleted after the
+        /// decrement.
+        SM_Index operator--(int) { SM_Index tmp(*this); --idx_; return tmp; }
+
+
+      
+      friend  std::size_t hash_value(const SM_Index&  i)
+      {
+        return i;
+      }
+      
+    private:
+        size_type idx_;
+    };
+
+#endif
+
   /// \ingroup PkgSurface_mesh
   /// This class is a data structure that can be used as halfedge data structure or polyhedral
   /// surface. It is an alternative to the classes `HalfedgeDS` and `Polyhedron_3`
@@ -542,93 +618,20 @@ private:
     ///@{
 
 
-#ifndef DOXYGEN_RUNNING
-    /// Base class for vertex, halfedge, edge, and face index. 
-    ///
-    /// \attention Note that `Index` is not a model of the concept `Handle`,
-    /// because it cannot be dereferenced.
-    /// \sa `Vertex_index`, `Halfedge_index`, `Edge_index`, `Face_index`.
-    template<typename T>
-    class Index
-    {
-    public:
-        /// Constructor. %Default construction creates an invalid index.
-        /// We write -1, which is <a href="http://en.cppreference.com/w/cpp/concept/numeric_limits">
-        /// <tt>std::numeric_limits<size_type>::max()</tt></a>
-        /// as `size_type` is an unsigned type. 
-        explicit Index(size_type _idx=-1) : idx_(_idx) {}
-
-        /// Get the underlying index of this index
-        operator size_type() const { return idx_; }
-
-        /// reset index to be invalid (index=-1)
-        void reset() { idx_=-1; }
-
-        /// return whether the index is valid, i.e., the index is not equal to -1.
-        bool is_valid() const { 
-          size_type inf = -1;
-          return idx_ != inf;
-        }
-
-        /// are two indices equal?
-        bool operator==(const T& _rhs) const {
-            return idx_ == _rhs.idx_;
-        }
-
-        /// are two indices different?
-        bool operator!=(const T& _rhs) const {
-            return idx_ != _rhs.idx_;
-        }
-
-        /// Comparison by index.
-        bool operator<(const T& _rhs) const {
-            return idx_ < _rhs.idx_;
-        }
-
-        /// increments the internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// increment.
-        Index& operator++() { ++idx_; return *this; }
-        /// decrements the internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// decrement.
-        Index& operator--() { --idx_; return *this; }
-
-        /// increments the internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// increment.
-        Index operator++(int) { Index tmp(*this); ++idx_; return tmp; }
-        /// decrements the internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// decrement.
-        Index operator--(int) { Index tmp(*this); --idx_; return tmp; }
-
-
-      
-      friend  std::size_t hash_value(const Index&  i)
-      {
-        return i;
-      }
-      
-    private:
-        size_type idx_;
-    };
-
-#endif
 
     /// This class represents a vertex.
     /// \cgalModels `Index`
     /// \sa `Halfedge_index`, `Edge_index`, `Face_index`
     class Vertex_index
 #ifndef DOXYGEN_RUNNING
- : public Index<Vertex_index>
+ : public SM_Index<Vertex_index>
 #endif
     {
     public:
         /// %Default constructor.
-        Vertex_index() : Index<Vertex_index>(-1) {}
+        Vertex_index() : SM_Index<Vertex_index>(-1) {}
 
-        explicit Vertex_index(size_type _idx) : Index<Vertex_index>(_idx) {}
+        explicit Vertex_index(size_type _idx) : SM_Index<Vertex_index>(_idx) {}
 
         /// prints the index and a short identification string to an ostream.
         friend std::ostream& operator<<(std::ostream& os, typename Surface_mesh::Vertex_index const& v)
@@ -642,14 +645,14 @@ private:
     /// \sa `Vertex_index`, `Edge_index`, `Face_index`
     class Halfedge_index
 #ifndef DOXYGEN_RUNNING
-      : public Index<Halfedge_index>
+      : public SM_Index<Halfedge_index>
 #endif
     {
     public:
         /// %Default constructor
-        Halfedge_index() : Index<Halfedge_index>(-1) {}
+        Halfedge_index() : SM_Index<Halfedge_index>(-1) {}
 
-        explicit Halfedge_index(size_type _idx) : Index<Halfedge_index>(_idx) {}
+        explicit Halfedge_index(size_type _idx) : SM_Index<Halfedge_index>(_idx) {}
 
         /// prints the index and a short identification string to an ostream.
         friend std::ostream& operator<<(std::ostream& os, typename Surface_mesh::Halfedge_index const& h)
@@ -663,14 +666,14 @@ private:
     /// \sa `Vertex_index`, `Halfedge_index`, `Edge_index`
     class Face_index
 #ifndef DOXYGEN_RUNNING
-      : public Index<Face_index>
+      : public SM_Index<Face_index>
 #endif
     {
     public:
         /// %Default constructor
-        Face_index() : Index<Face_index>(-1) {}
+        Face_index() : SM_Index<Face_index>(-1) {}
 
-        explicit Face_index(size_type _idx) : Index<Face_index>(_idx) {}
+        explicit Face_index(size_type _idx) : SM_Index<Face_index>(_idx) {}
 
         /// prints the index and a short identification string to an ostream.
         friend std::ostream& operator<<(std::ostream& os, typename Surface_mesh::Face_index const& f)
