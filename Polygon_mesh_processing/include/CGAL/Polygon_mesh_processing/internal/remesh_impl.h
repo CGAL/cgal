@@ -481,7 +481,7 @@ namespace internal {
 
   };//end class Incremenal_remesher
 }//end namespace internal
-}//end namesapce Polygon_mesh_processing
-}//end namesapce CGAL
+}//end namespace Polygon_mesh_processing
+}//end namespace CGAL
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_REMESH_IMPL_H
