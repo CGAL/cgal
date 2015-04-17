@@ -130,29 +130,28 @@ namespace internal {
       unsigned int nb_collapses = 0;
       while (!short_edges.empty())
       {
+        //the edge with shortest length
         typename Boost_bimap::right_map::iterator eit = short_edges.right.begin();
         halfedge_descriptor he = eit->second;
         double sqlen = eit->first;
         short_edges.right.erase(eit);
 
+        //let's try to collapse he into vb
         vertex_descriptor va = target(he, mesh_);
         vertex_descriptor vb = source(he, mesh_);
 
-        //avoid collapsing away from boundary a halfedge incident to boundary
-        if (is_border(vb, mesh_) || is_border(va, mesh_))
-          continue; //temporary
-
-        if (is_border(vb, mesh_))
+        //handle the boundary case : an edge incident to boundary can be collapsed,
+        //but only if the boundary vertex is kept, so re-insert opposite(he)
+        //to collapse it
+        if (is_border(va, mesh_))
         {
-          if (is_border(va, mesh_))
-            continue; //happens when he crosses the surface
-          he = opposite(he, mesh_);
-          std::swap(va, vb);
+          if (!is_border(vb, mesh_))
+            short_edges.insert(short_edge(opposite(he, mesh_), sqlen));
+          continue;
         }
 
         if (degree(va, mesh_) < 3
           || degree(vb, mesh_) < 3
-          || is_border_edge(he, mesh_) //other collapses could have changed that
           || !CGAL::Euler::satisfies_link_condition(he, mesh_))//necessary to collapse
           continue;
 
