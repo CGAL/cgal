@@ -476,10 +476,12 @@ void test_insert_rnd_then_remove_all (unsigned pt_count, unsigned seed)
   std::ofstream stream("out_p3rt3_test");
   assert(stream);
 
-  std::set<Weighted_point> hidden_point_set;
+  std::vector<Weighted_point> insert_set;
+  insert_set.reserve(pt_count);
+  std::vector<Weighted_point> remove_set;
+  remove_set.reserve(pt_count);
 
   std::cout << "-- insert" << std::endl;
-  unsigned real_pt_count = 0;
   for (unsigned cnt = 1; cnt <= pt_count; ++cnt)
   {
     Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
@@ -501,21 +503,17 @@ void test_insert_rnd_then_remove_all (unsigned pt_count, unsigned seed)
     std::cout << cnt << " - p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
     if (vh == Vertex_handle())
     {
-      if (hidden_point_set.find(p) == hidden_point_set.end())
-      {
-        hidden_point_set.insert(p);
-        ++real_pt_count;
-      }
+      if (find(insert_set.begin(), insert_set.end(), p) == insert_set.end())
+        insert_set.push_back(p);
     }
     else
-      ++real_pt_count;
+      insert_set.push_back(p);
   }
 
   stream.close();
 
   assert(p3rt3.is_valid());
 
-  std::cout << "-- real_pt_count : " << real_pt_count <<std::endl;
   std::cout << "-- remove" << std::endl;
   unsigned cnt = 1;
   for (; p3rt3.number_of_vertices() != 0; ++cnt)
@@ -524,18 +522,24 @@ void test_insert_rnd_then_remove_all (unsigned pt_count, unsigned seed)
     for (unsigned j = random.get_int(0, p3rt3.number_of_vertices()); j; --j)
       ++iter;
 
-//    std::cout << cnt << " : " << iter->point() << std::endl;
+    std::cout << cnt << " : " << iter->point() << std::endl;
+
+    remove_set.push_back(iter->point());
     p3rt3.remove(iter);
-    hidden_point_set.erase(iter->point());
-    std::cout << cnt << " - p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
+
+    std::cout << "    p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
+
     unsigned hidden_point_count = 0;
     for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
       hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
-    assert(hidden_point_count + cnt + p3rt3.number_of_vertices() == real_pt_count);
+
+    assert(hidden_point_count + cnt + p3rt3.number_of_vertices() == insert_set.size());
   }
 
-  assert(cnt == real_pt_count+1);
-  assert(hidden_point_set.empty());
+  std::sort(insert_set.begin(), insert_set.end());
+  std::sort(remove_set.begin(), remove_set.end());
+  assert(insert_set == remove_set);
+
   assert(p3rt3.is_valid());
   assert(p3rt3.number_of_stored_vertices() == 0);
 }
@@ -633,7 +637,7 @@ int main (int argc, char** argv)
 //    Iso_cuboid unitaire ->  0 <= weight < 0.015625
 //  test_insert_rnd_as_delaunay(100, 0.);
 //  test_insert_rnd_as_delaunay(100, 0.01);
-  test_insert_rnd_then_remove_all(5000, 7);
+  test_insert_rnd_then_remove_all(800, 7);
   test_insert_rnd_then_remove_all(5000, 12);
 
   std::cout << "EXIT SUCCESS" << std::endl;

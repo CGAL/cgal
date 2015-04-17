@@ -2545,6 +2545,9 @@ inline void Periodic_3_triangulation_3<GT,TDS>::remove(Vertex_handle v,
   if (!is_1_cover()) {
     if (number_of_vertices() == 1) {
       clear();
+      // Output the hidden points.
+      for (Cell_iterator hi = cells_begin(), hend = cells_end(); hi != hend; ++hi)
+        r.add_hidden_points(hi);
       return;
     }
     Virtual_vertex_map_it vvmit = virtual_vertices.find(v);
@@ -2611,13 +2614,6 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(Vertex_handle v,
 
   if (!is_1_cover()) {
     cover_manager.delete_too_long_edges(hole.begin(), hole.end());
-  }
-  
-  // Output the hidden points.
-  for (typename std::vector<Cell_handle>::iterator
-      hi = hole.begin(), hend = hole.end(); hi != hend; ++hi)
-  {
-    remover.add_hidden_points(*hi);
   }
 
   // Build up the map between Vertices on the boundary and offsets
@@ -2763,7 +2759,14 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(Vertex_handle v,
   for (unsigned int i=0 ; i<nr_vec.size() ; i++) {
     nr_vec[i].template get<0>()->set_neighbor(nr_vec[i].template get<1>(),nr_vec[i].template get<2>());
   }
-  
+
+  // Output the hidden points.
+  for (typename std::vector<Cell_handle>::iterator
+      hi = hole.begin(), hend = hole.end(); hi != hend; ++hi)
+  {
+    remover.add_hidden_points(*hi);
+  }
+
   _tds.delete_vertex(v);
   _tds.delete_cells(hole.begin(), hole.end());
   CGAL_triangulation_expensive_assertion(is_valid());
