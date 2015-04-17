@@ -35,6 +35,10 @@ namespace internal {
       , vpmap_(vpmap)
     {}
 
+    // PMP book :
+    // "visits all edges of the mesh
+    //if an edge is longer than the given threshold `high`, the edge
+    //is split at its midpoint and the two adjacent triangles are bisected (2-4 split)"
     void split_long_edges(const double& high)
     {
       typedef boost::bimap<
@@ -55,6 +59,7 @@ namespace internal {
       }
 
       //split long edges
+      unsigned int nb_splits = 0;
       while (!long_edges.empty())
       {
         //the edge with longest length
@@ -102,13 +107,20 @@ namespace internal {
           if (sql > sq_high)
             long_edges.insert(long_edge(hnew2, sql));
         }
+
+        ++nb_splits;
       }
-      std::cout << " done." << std::endl;
+      std::cout << " done ("<< nb_splits << " splits)." << std::endl;
+
 #ifdef CGAL_DUMP_REMESHING_STEPS
       dump("1-edge_split.off");
 #endif
     }
 
+    // PMP book :
+    // "collapses and thus removes all edges that are shorter than a
+    // threshold `low`. [...] testing before each collapse whether the collapse
+    // would produce an edge that is longer than `high`"
     void collapse_short_edges(const double& low, const double& high)
     {
       typedef boost::bimap<
@@ -205,12 +217,10 @@ namespace internal {
             if (sqlen < sq_low)
               short_edges.insert(short_edge(ht, sqlen));
           }
-
-          std::cout << ".";
-          std::cout.flush();
         }
       }
       std::cout << " done (" << nb_collapses << " collapses)." << std::endl;
+
 #ifdef CGAL_DUMP_REMESHING_STEPS
       dump("2-edge_collapse.off");
 #endif
