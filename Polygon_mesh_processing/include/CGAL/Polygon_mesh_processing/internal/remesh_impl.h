@@ -15,6 +15,7 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/bimap/set_of.hpp>
+#include <boost/property_map/property_map.hpp>
 
 #include <map>
 #include <list>
@@ -332,10 +333,19 @@ namespace internal {
     void tangential_relaxation()
     {
       //todo : move border vertices along 1-dimensional features
-      //todo : use compute_normals
       namespace PMP = CGAL::Polygon_mesh_processing;
 
       std::cout << "Tangential relaxation...";
+
+      //todo : use boost::vector_property_map to improve computing time
+      typedef std::map<vertex_descriptor, Vector_3> VNormalsMap;
+      VNormalsMap vnormals;
+      boost::associative_property_map<VNormalsMap> propmap_normals(vnormals);
+
+      PMP::compute_vertex_normals(mesh_,
+                                  propmap_normals,
+                                  PMP::parameters::vertex_point_map(vpmap_).
+                                  geom_traits(GeomTraits()));
 
       // at each vertex, compute barycenter of neighbors
       std::map<vertex_descriptor, Point> barycenters;
@@ -354,20 +364,22 @@ namespace internal {
         barycenters[v] = vpmap_[v] + move;
       }
 
-      // compute and perform moves
+      // compute moves
+      std::map<vertex_descriptor, Point> new_locations;
       BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
       {
         if (is_border(v, mesh_))
           continue;
-        Vector_3 nv = PMP::compute_vertex_normal(v
-          , mesh_
-          , PMP::parameters::vertex_point_map(vpmap_)
-          .geom_traits(GeomTraits()));
-
+        Vector_3 nv = boost::get(propmap_normals, v);
         Point qv = barycenters[v];
-        Point newp = qv + (nv * Vector_3(qv, vpmap_[v])) * nv;
-        //move v
-        vpmap_[v] = newp;
+        new_locations[v] = qv + (nv * Vector_3(qv, vpmap_[v])) * nv;
+      }
+
+      // perform moves
+      typedef typename std::map<vertex_descriptor, Point>::value_type VP_pair;
+      BOOST_FOREACH(const VP_pair& vp, new_locations)
+      {
+        vpmap_[vp.first] = new_locations[vp.first];
       }
 
       CGAL_assertion(is_valid(mesh_));
