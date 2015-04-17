@@ -7,7 +7,7 @@
 #endif
 
 #include "Viewer.h"
-#include <CGAL/glu.h>
+
 
 
 
@@ -151,13 +151,13 @@ QString Viewer::helpString() const
 void Viewer::compile_shaders()
 {
 
-   for(int i=0; i< vboSize; i++)
-       buffers[i].create();
-   for(int i=0; i< vaoSize; i++)
-       vao[i].create();
+    for(int i=0; i< vboSize; i++)
+        buffers[i].create();
+    for(int i=0; i< vaoSize; i++)
+        vao[i].create();
 
-draw_cylinder(m_fSizeDEdge,25,points_cylinder,normals_cylinder);
-draw_sphere(m_fSizeVertex, 15, points_sphere, normals_sphere);
+    draw_cylinder(m_fSizeDEdge,25,points_cylinder,normals_cylinder);
+    draw_sphere(m_fSizeVertex, 15, points_sphere, normals_sphere);
     //Vertex source code
     const char vertex_source[] =
     {
@@ -302,7 +302,8 @@ draw_sphere(m_fSizeVertex, 15, points_sphere, normals_sphere);
         "void main(void)\n"
         "{\n"
         "   fP = mv_matrix * vertex; \n"
-        "   fN = mat3(mv_matrix)* normal; \n"
+        "   vec4 TN = mvp_matrix*transfo*vec4(normal,1.0); \n"
+        "   fN = mat3(mv_matrix)* TN.xyz; \n"
         "   gl_Position =  mvp_matrix * transfo* vertex; \n"
         "}"
     };
@@ -472,8 +473,6 @@ void Viewer::compute_elements()
         drawVertex( m_pScene->m_vhArray.at(*vit)->point(), ::Qt::red, m_fSizeVertex, pos_selectedVertex );
     }//end-for-seledpts
     if( m_isMoving ) {
-        // Draw the trackball
-        // drawSphere( m_fRadius, m_colorTrackball );
         // Highlight the moving point
         drawVertex( m_pScene->m_vhArray.at( m_vidMoving )->point(), ::Qt::red, m_fSizeVertex, pos_movingPoint );
     }//end-if-v
@@ -496,48 +495,47 @@ void Viewer::compute_elements()
         pos_emptySphere->push_back(m_centerPt.z());
 
         draw_sphere(m_fREmptyS, 35, points_emptySphere, normals_sphere);
-        // drawSphere( m_fREmptyS, m_colorEmptySphere, m_centerPt );
     }
 
 
 
-  // Draw all points during incremental mode
-  if( !m_incrementalPts.isEmpty() ) {
-    // draw the rest to-be-inserted vertices
-    for(QList<Point_3>::iterator pit=m_incrementalPts.begin();
-        pit < m_incrementalPts.end(); ++pit) {
-      drawVertex( (*pit), ::Qt::gray, m_fSizeVertex, incremental_points);
-    }
+    // Draw all points during incremental mode
+    if( !m_incrementalPts.isEmpty() ) {
+        // draw the rest to-be-inserted vertices
+        for(QList<Point_3>::iterator pit=m_incrementalPts.begin();
+            pit < m_incrementalPts.end(); ++pit) {
+            drawVertex( (*pit), ::Qt::gray, m_fSizeVertex, incremental_points);
+        }
 
-    switch( m_curStep ) {
-    case NEWPT:
+        switch( m_curStep ) {
+        case NEWPT:
 
-      // Highlight the next-to-insert point
-      drawVertex( m_curIncPt, ::Qt::red, m_fSizeVertex, incremental_next_point );
-      break;
-    case CELL:  // show the tetrahedron that contains the point
-      // Highlight the next-to-insert vertex
-      drawVertex( m_curIncPt, ::Qt::red, m_fSizeVertex, incremental_next_point );
-      // Draw the cell containing that point
-      for(int i=0; i<4; ++i) {
-        if( m_pScene->m_dt.is_infinite(m_cellContain, i) )  continue;
-        drawFacet( m_pScene->m_dt.triangle( m_cellContain, i ), m_colorFacet, incremental_facet );
-      }//end-for-facets
-      break;
-    case CONFLICT:  // show the conflict region
-      // Highlight the next-to-insert vertex
-      drawVertex( m_curIncPt, ::Qt::red, m_fSizeVertex, incremental_next_point );
-      // Draw conflict region
-      for(QList<Facet>::iterator fit = m_boundaryFacets.begin();
-          fit < m_boundaryFacets.end(); ++fit) {
-        if( m_pScene->m_dt.is_infinite(*fit) )  continue;
-        drawFacet( m_pScene->m_dt.triangle(*fit), QColor(215, 80, 0, 96), incremental_conflict ); //semi-transparent purple
-      }//end-for-facets
-      break;
-    default:
-      break;
-    }//end-of=switch
-  }//end-if-incpts
+            // Highlight the next-to-insert point
+            drawVertex( m_curIncPt, ::Qt::red, m_fSizeVertex, incremental_next_point );
+            break;
+        case CELL:  // show the tetrahedron that contains the point
+            // Highlight the next-to-insert vertex
+            drawVertex( m_curIncPt, ::Qt::red, m_fSizeVertex, incremental_next_point );
+            // Draw the cell containing that point
+            for(int i=0; i<4; ++i) {
+                if( m_pScene->m_dt.is_infinite(m_cellContain, i) )  continue;
+                drawFacet( m_pScene->m_dt.triangle( m_cellContain, i ), m_colorFacet, incremental_facet );
+            }//end-for-facets
+            break;
+        case CONFLICT:  // show the conflict region
+            // Highlight the next-to-insert vertex
+            drawVertex( m_curIncPt, ::Qt::red, m_fSizeVertex, incremental_next_point );
+            // Draw conflict region
+            for(QList<Facet>::iterator fit = m_boundaryFacets.begin();
+                fit < m_boundaryFacets.end(); ++fit) {
+                if( m_pScene->m_dt.is_infinite(*fit) )  continue;
+                drawFacet( m_pScene->m_dt.triangle(*fit), QColor(215, 80, 0, 96), incremental_conflict ); //semi-transparent purple
+            }//end-for-facets
+            break;
+        default:
+            break;
+        }//end-of=switch
+    }//end-if-incpts
 
 
 
@@ -1049,7 +1047,7 @@ void Viewer::initialize_buffers()
         vao[20].release();
     }
     rendering_program_cylinders.release();
-    }
+}
 
 void Viewer::attrib_buffers(QGLViewer* viewer)
 {
@@ -1174,7 +1172,7 @@ void Viewer::draw()
             vao[2].release();
             rendering_program.release();
         }
- // Insert point mode
+        // Insert point mode
         if( m_curMode == INSERT_PT) {
             // Show prompt messages
             qglColor( ::Qt::black );
@@ -1268,78 +1266,78 @@ void Viewer::draw()
         }
         // Draw all points during incremental mode
         if( !m_incrementalPts.isEmpty() ) {
-          // draw the rest to-be-inserted vertices
-          rendering_program.bind();
-          glPointSize(8.0);
-          vao[24].bind();
-          color.setRgbF(0.7,0.7,0.7);
-          rendering_program.setUniformValue(colorLocation[0],color);
-          glDrawArrays(GL_POINTS, 0, incremental_points->size()/3);
-          vao[24].release();
-          rendering_program.release();
-          switch( m_curStep ) {
-          case NEWPT:
-            // Show prompt messages
-            qglColor( ::Qt::black );
-            drawText( 10, 20, tr("Highlight the next-to-insert point"), fontPrompt );
-            // Highlight the next-to-insert point
+            // draw the rest to-be-inserted vertices
             rendering_program.bind();
             glPointSize(8.0);
-            vao[21].bind();
-            color.setRgbF(1.0,0.0,0.0);
-            rendering_program.setUniformValue(colorLocation[0], color);
-            glDrawArrays(GL_POINTS, 0, incremental_next_point->size()/3);
-            vao[21].release();
+            vao[24].bind();
+            color.setRgbF(0.7,0.7,0.7);
+            rendering_program.setUniformValue(colorLocation[0],color);
+            glDrawArrays(GL_POINTS, 0, incremental_points->size()/3);
+            vao[24].release();
             rendering_program.release();
-            break;
-          case CELL:  // show the tetrahedron that contains the point
-            // Show prompt messages
-            qglColor( ::Qt::black );
-            drawText( 10, 20, tr("Show the tetrahedron containing the point"), fontPrompt );
-            drawText( 10, 40, tr("(Only finite facets are drawn)"), fontPrompt );
-            // Highlight the next-to-insert vertex
-            rendering_program.bind();
-            glPointSize(8.0);
-            vao[21].bind();
-            color.setRgbF(1.0,0.0,0.0);
-            rendering_program.setUniformValue(colorLocation[0],  color);
-            glDrawArrays(GL_POINTS, 0, incremental_next_point->size()/3);
-            vao[21].release();
-            rendering_program.release();
-            // Draw the cell containing that point
-            rendering_program.bind();
-            vao[22].bind();
-            rendering_program.setUniformValue(colorLocation[0], m_colorFacet);
-            glDrawArrays(GL_TRIANGLES, 0, incremental_facet->size()/3);
-            vao[22].release();
-            rendering_program.release();
-            break;
-          case CONFLICT:  // show the conflict region
-            // Show prompt messages
-            qglColor( ::Qt::black );
-            drawText( 10, 20, tr("Show the conflict region"), fontPrompt );
-            // Highlight the next-to-insert vertex
-            rendering_program.bind();
-            glPointSize(8.0);
-            vao[21].bind();
-            color.setRgbF(1.0,0.0,0.0);
-            rendering_program.setUniformValue(colorLocation[0], color);
-            glDrawArrays(GL_POINTS, 0, incremental_next_point->size()/3);
-            vao[21].release();
-            rendering_program.release();
-            // Draw conflict region
-            rendering_program.bind();
-            vao[23].bind();
-            color.setRgb(215, 80, 0, 96);
-            rendering_program.setUniformValue(colorLocation[0], color);
-            glDrawArrays(GL_TRIANGLES, 0, incremental_facet->size()/3);
-            vao[23].release();
-            rendering_program.release();
+            switch( m_curStep ) {
+            case NEWPT:
+                // Show prompt messages
+                qglColor( ::Qt::black );
+                drawText( 10, 20, tr("Highlight the next-to-insert point"), fontPrompt );
+                // Highlight the next-to-insert point
+                rendering_program.bind();
+                glPointSize(8.0);
+                vao[21].bind();
+                color.setRgbF(1.0,0.0,0.0);
+                rendering_program.setUniformValue(colorLocation[0], color);
+                glDrawArrays(GL_POINTS, 0, incremental_next_point->size()/3);
+                vao[21].release();
+                rendering_program.release();
+                break;
+            case CELL:  // show the tetrahedron that contains the point
+                // Show prompt messages
+                qglColor( ::Qt::black );
+                drawText( 10, 20, tr("Show the tetrahedron containing the point"), fontPrompt );
+                drawText( 10, 40, tr("(Only finite facets are drawn)"), fontPrompt );
+                // Highlight the next-to-insert vertex
+                rendering_program.bind();
+                glPointSize(8.0);
+                vao[21].bind();
+                color.setRgbF(1.0,0.0,0.0);
+                rendering_program.setUniformValue(colorLocation[0],  color);
+                glDrawArrays(GL_POINTS, 0, incremental_next_point->size()/3);
+                vao[21].release();
+                rendering_program.release();
+                // Draw the cell containing that point
+                rendering_program.bind();
+                vao[22].bind();
+                rendering_program.setUniformValue(colorLocation[0], m_colorFacet);
+                glDrawArrays(GL_TRIANGLES, 0, incremental_facet->size()/3);
+                vao[22].release();
+                rendering_program.release();
+                break;
+            case CONFLICT:  // show the conflict region
+                // Show prompt messages
+                qglColor( ::Qt::black );
+                drawText( 10, 20, tr("Show the conflict region"), fontPrompt );
+                // Highlight the next-to-insert vertex
+                rendering_program.bind();
+                glPointSize(8.0);
+                vao[21].bind();
+                color.setRgbF(1.0,0.0,0.0);
+                rendering_program.setUniformValue(colorLocation[0], color);
+                glDrawArrays(GL_POINTS, 0, incremental_next_point->size()/3);
+                vao[21].release();
+                rendering_program.release();
+                // Draw conflict region
+                rendering_program.bind();
+                vao[23].bind();
+                color.setRgb(215, 80, 0, 96);
+                rendering_program.setUniformValue(colorLocation[0], color);
+                glDrawArrays(GL_TRIANGLES, 0, incremental_facet->size()/3);
+                vao[23].release();
+                rendering_program.release();
 
-            break;
-          default:
-            break;
-          }//end-of=switch
+                break;
+            default:
+                break;
+            }//end-of=switch
         }//end-if-incpts
 
     }
@@ -1469,76 +1467,76 @@ void Viewer::draw()
             rendering_program.release();
         }
         // Draw all points during incremental mode
-                if( !m_incrementalPts.isEmpty() ) {
-                  // draw the rest to-be-inserted vertices
-                  rendering_program_spheres.bind();
-                  vao[25].bind();
-                  color.setRgbF(0.7,0.7,0.7);
-                  rendering_program_spheres.setUniformValue(colorLocation[1],color);
-                  glDrawArraysInstanced(GL_TRIANGLES, 0, points_sphere->size()/3, incremental_points->size()/3);
-                  vao[25].release();
-                  rendering_program_spheres.release();
-                  switch( m_curStep ) {
-                  case NEWPT:
-                    // Show prompt messages
-                    qglColor( ::Qt::black );
-                    drawText( 10, 20, tr("Highlight the next-to-insert point"), fontPrompt );
-                    // Highlight the next-to-insert point
-                    rendering_program_spheres.bind();
-                    vao[26].bind();
-                    color.setRgbF(1.0,0.0,0.0);
-                    rendering_program_spheres.setUniformValue(colorLocation[1],color);
-                    glDrawArraysInstanced(GL_TRIANGLES, 0, points_sphere->size()/3, incremental_next_point->size()/3);
-                    vao[26].release();
-                    rendering_program_spheres.release();
-                    break;
-                  case CELL:  // show the tetrahedron that contains the point
-                    // Show prompt messages
-                    qglColor( ::Qt::black );
-                    drawText( 10, 20, tr("Show the tetrahedron containing the point"), fontPrompt );
-                    drawText( 10, 40, tr("(Only finite facets are drawn)"), fontPrompt );
-                    // Highlight the next-to-insert vertex
-                    rendering_program_spheres.bind();
-                    vao[26].bind();
-                    color.setRgbF(1.0,0.0,0.0);
-                    rendering_program_spheres.setUniformValue(colorLocation[1],  color);
-                    glDrawArraysInstanced(GL_TRIANGLES, 0, points_sphere->size()/3, incremental_next_point->size()/3);
-                    vao[26].release();
-                    rendering_program_spheres.release();
-                    // Draw the cell containing that point
-                    rendering_program.bind();
-                    vao[22].bind();
-                    rendering_program.setUniformValue(colorLocation[0], m_colorFacet);
-                    glDrawArrays(GL_TRIANGLES, 0, incremental_facet->size()/3);
-                    vao[22].release();
-                    rendering_program.release();
-                    break;
-                  case CONFLICT:  // show the conflict region
-                    // Show prompt messages
-                    qglColor( ::Qt::black );
-                    drawText( 10, 20, tr("Show the conflict region"), fontPrompt );
-                    // Highlight the next-to-insert vertex
-                    rendering_program_spheres.bind();
-                    vao[26].bind();
-                    color.setRgbF(1.0,0.0,0.0);
-                    rendering_program_spheres.setUniformValue(colorLocation[1],  color);
-                    glDrawArraysInstanced(GL_TRIANGLES, 0, points_sphere->size()/3, incremental_next_point->size()/3);
-                    vao[26].release();
-                    rendering_program_spheres.release();
-                    // Draw conflict region
-                    rendering_program.bind();
-                    vao[23].bind();
-                    color.setRgb(215, 80, 0, 96);
-                    rendering_program.setUniformValue(colorLocation[0], color);
-                    glDrawArrays(GL_TRIANGLES, 0, incremental_facet->size()/3);
-                    vao[23].release();
-                    rendering_program.release();
+        if( !m_incrementalPts.isEmpty() ) {
+            // draw the rest to-be-inserted vertices
+            rendering_program_spheres.bind();
+            vao[25].bind();
+            color.setRgbF(0.7,0.7,0.7);
+            rendering_program_spheres.setUniformValue(colorLocation[1],color);
+            glDrawArraysInstanced(GL_TRIANGLES, 0, points_sphere->size()/3, incremental_points->size()/3);
+            vao[25].release();
+            rendering_program_spheres.release();
+            switch( m_curStep ) {
+            case NEWPT:
+                // Show prompt messages
+                qglColor( ::Qt::black );
+                drawText( 10, 20, tr("Highlight the next-to-insert point"), fontPrompt );
+                // Highlight the next-to-insert point
+                rendering_program_spheres.bind();
+                vao[26].bind();
+                color.setRgbF(1.0,0.0,0.0);
+                rendering_program_spheres.setUniformValue(colorLocation[1],color);
+                glDrawArraysInstanced(GL_TRIANGLES, 0, points_sphere->size()/3, incremental_next_point->size()/3);
+                vao[26].release();
+                rendering_program_spheres.release();
+                break;
+            case CELL:  // show the tetrahedron that contains the point
+                // Show prompt messages
+                qglColor( ::Qt::black );
+                drawText( 10, 20, tr("Show the tetrahedron containing the point"), fontPrompt );
+                drawText( 10, 40, tr("(Only finite facets are drawn)"), fontPrompt );
+                // Highlight the next-to-insert vertex
+                rendering_program_spheres.bind();
+                vao[26].bind();
+                color.setRgbF(1.0,0.0,0.0);
+                rendering_program_spheres.setUniformValue(colorLocation[1],  color);
+                glDrawArraysInstanced(GL_TRIANGLES, 0, points_sphere->size()/3, incremental_next_point->size()/3);
+                vao[26].release();
+                rendering_program_spheres.release();
+                // Draw the cell containing that point
+                rendering_program.bind();
+                vao[22].bind();
+                rendering_program.setUniformValue(colorLocation[0], m_colorFacet);
+                glDrawArrays(GL_TRIANGLES, 0, incremental_facet->size()/3);
+                vao[22].release();
+                rendering_program.release();
+                break;
+            case CONFLICT:  // show the conflict region
+                // Show prompt messages
+                qglColor( ::Qt::black );
+                drawText( 10, 20, tr("Show the conflict region"), fontPrompt );
+                // Highlight the next-to-insert vertex
+                rendering_program_spheres.bind();
+                vao[26].bind();
+                color.setRgbF(1.0,0.0,0.0);
+                rendering_program_spheres.setUniformValue(colorLocation[1],  color);
+                glDrawArraysInstanced(GL_TRIANGLES, 0, points_sphere->size()/3, incremental_next_point->size()/3);
+                vao[26].release();
+                rendering_program_spheres.release();
+                // Draw conflict region
+                rendering_program.bind();
+                vao[23].bind();
+                color.setRgb(215, 80, 0, 96);
+                rendering_program.setUniformValue(colorLocation[0], color);
+                glDrawArrays(GL_TRIANGLES, 0, incremental_facet->size()/3);
+                vao[23].release();
+                rendering_program.release();
 
-                    break;
-                  default:
-                    break;
-                  }//end-of=switch
-                }//end-if-incpts
+                break;
+            default:
+                break;
+            }//end-of=switch
+        }//end-if-incpts
     }
 
     if(m_showFacet)
@@ -1635,127 +1633,13 @@ void Viewer::drawVertex(const Point_3& p, const QColor& clr, float r, std::vecto
 
     vertices->push_back(p.x()); vertices->push_back(p.y()); vertices->push_back(p.z());
 
-    /* Draw regular points */
-    /*  if( m_isFlat ) {
-    // disable lighting
-    ::glDisable( GL_LIGHTING );
 
-    ::glPointSize(8.0);
-    qglColor( clr );
-
-    ::glBegin(GL_POINTS);
-    ::glVertex3f( p.x(), p.y(), p.z() );
-    ::glEnd();
-
-    // resume lighting
-    ::glEnable( GL_LIGHTING );
-
-    return;
-  }
-
-  /* Draw vertices as 3D balls */
-    /* GLboolean lighting, colorMaterial;
-  ::glGetBooleanv( GL_LIGHTING, &lighting );
-  ::glGetBooleanv( GL_COLOR_MATERIAL, &colorMaterial );
-  ::glEnable( GL_LIGHTING );
-  ::glDisable(GL_COLOR_MATERIAL);
-
-  float color[4];
-  color[0] = clr.redF();
-  color[1] = clr.greenF();
-  color[2] = clr.blueF();
-  color[3] = clr.alphaF();
-
-  // move to the point
-  ::glPushMatrix();
-  ::glTranslatef( p.x(), p.y(), p.z() );
-
-  // draw
-  GLUquadricObj* quadratic = ::gluNewQuadric();	// Create A Pointer To The Quadric Object
-  ::gluQuadricNormals( quadratic, GLU_SMOOTH );	// Create Smooth Normals
-  ::glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color );
-  ::gluSphere( quadratic, r, 16, 16 );
-
-  // move back to origin
-  ::glPopMatrix();
-
-  if ( colorMaterial )
-    ::glEnable( GL_COLOR_MATERIAL );
-  if ( !lighting )
-    ::glDisable( GL_LIGHTING );*/
 }
 
 void Viewer::drawEdge(const Point_3& from, const Point_3& to, const QColor& clr, float r, std::vector<float> *vertices)
 {
     vertices->push_back( from.x()); vertices->push_back(from.y()); vertices->push_back(from.z());
     vertices->push_back( to.x()); vertices->push_back(to.y()); vertices->push_back(to.z());
-
-    /* //Draw regular lines
-  if( m_isFlat ) {
-    // disable lighting
-    ::glDisable( GL_LIGHTING );
-
-    ::glLineWidth(1.0);
-    qglColor( clr );
-
-    ::glBegin(GL_LINES);
-    ::glVertex3f( from.x(), from.y(), from.z() );
-    ::glVertex3f( to.x(), to.y(), to.z() );
-    ::glEnd();
-
-    // resume lighting
-    ::glEnable( GL_LIGHTING );
-
-    return;
-  }
-
-  // Draw edges as 3D cylinders
-  GLboolean lighting, colorMaterial;
-  ::glGetBooleanv( GL_LIGHTING, &lighting );
-  ::glGetBooleanv( GL_COLOR_MATERIAL, &colorMaterial );
-  ::glEnable( GL_LIGHTING );
-  ::glDisable(GL_COLOR_MATERIAL);
-
-  float color[4];
-  color[0] = clr.redF();
-  color[1] = clr.greenF();
-  color[2] = clr.blueF();
-  color[3] = clr.alphaF();
-
-  Vector_3 v = to - from;
-
-  // compute the length of the edge
-  // method 1:
-//  float length = sqrt( CGAL::squared_distance( from, to ) );
-  // method 2:
-  float length = sqrt( v.squared_length() );
-
-  // normalize
-  v = v / length;
-  // compute the angle: cos theta = v.z/1.0
-  GLfloat angle = acos( v.z() ) / 3.1415927 * 180;
-
-  ::glPushMatrix();
-
-  // move to "from" point
-  ::glTranslatef( from.x(), from.y(), from.z() );
-  // rotate from z-axis to from-->to
-  //  axis: cross product of z-axis and from-->to
-  ::glRotatef( angle, -v.y(), v.x(), 0.0f );
-  // draw
-  GLUquadricObj* quadratic = ::gluNewQuadric();	// Create A Pointer To The Quadric Object
-  ::gluQuadricNormals( quadratic, GLU_SMOOTH );	// Create Smooth Normals
-  ::glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color );
-  // gluCylinder draws a cylinder oriented along the z-axis
-  ::gluCylinder( quadratic, r, r, length, 16, 4 );
-
-  // move back to origin
-  ::glPopMatrix();
-
-  if ( colorMaterial )
-    ::glEnable( GL_COLOR_MATERIAL );
-  if ( !lighting )
-    ::glDisable( GL_LIGHTING );*/
 }
 
 void Viewer::drawFacet(const Triangle_3& t, const QColor&/*clr*/, std::vector<float> *vertices)
@@ -1790,43 +1674,6 @@ void Viewer::drawFacet(const Triangle_3& t, const QColor&/*clr*/, std::vector<fl
   ::glEnable( GL_LIGHTING );*/
 }
 
-void Viewer::drawSphere(float r, const QColor& clr, const Point_3& center)
-{
-    GLboolean lighting, colorMaterial;
-    ::glGetBooleanv( GL_LIGHTING, &lighting );
-    ::glGetBooleanv( GL_COLOR_MATERIAL, &colorMaterial );
-    ::glEnable( GL_LIGHTING );
-    ::glDisable(GL_COLOR_MATERIAL);
-
-    float color[4];
-    color[0] = clr.redF();
-    color[1] = clr.greenF();
-    color[2] = clr.blueF();
-    color[3] = clr.alphaF();
-
-    ::glPushMatrix();
-
-    // move to the point
-    if( center != CGAL::ORIGIN )  ::glTranslatef( center.x(), center.y(), center.z() );
-
-    // disable depth buffer writing
-    ::glDepthMask( GL_FALSE );
-    // draw
-    GLUquadricObj* quadratic = ::gluNewQuadric();	// Create A Pointer To The Quadric Object
-    ::gluQuadricNormals( quadratic, GLU_SMOOTH );	// Create Smooth Normals
-    ::glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color );
-    ::gluSphere( quadratic, r, 32, 32 );
-    // resume depth buffer writing
-    ::glDepthMask( GL_TRUE );
-
-    // move back to origin
-    ::glPopMatrix();
-
-    if ( colorMaterial )
-        ::glEnable( GL_COLOR_MATERIAL );
-    if ( !lighting )
-        ::glDisable( GL_LIGHTING );
-}
 
 /*************************************************************/
 /*  Select functions */
@@ -2069,7 +1916,7 @@ void Viewer::mouseMoveEvent(QMouseEvent *event)
         }//end-if-compute
 
         // redraw
-      //  changed(); updateGL();
+        //  changed(); updateGL();
     }//end-if-move
 
     else

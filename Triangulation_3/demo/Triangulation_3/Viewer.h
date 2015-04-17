@@ -272,9 +272,6 @@ private:
   void drawEdge(const Point_3& from, const Point_3& to, const QColor& clr, float r, std::vector<float> *vertices);
   // draw a facet
   void drawFacet(const Triangle_3& t, const QColor& clr, std::vector<float> *vertices);
-  // draw a sphere with/without Axis
-  void drawSphere(float r, const QColor& clr, const Point_3& center=CGAL::ORIGIN);
-
   // test whether the give 3D point is on the sphere
   inline bool isOnSphere( const Point_3 & pt ) {
     return ( (pt.x()*pt.x() + pt.y()*pt.y() + pt.z()*pt.z()) == (m_fRadius*m_fRadius) );
@@ -344,8 +341,8 @@ private:
 
 
   QColor color;
-  static const int vaoSize = 45;
-  static const int vboSize = 45;
+  static const int vaoSize = 29;
+  static const int vboSize = 32;
   // define material
    QVector4D	ambient;
    QVector4D	diffuse;
