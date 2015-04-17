@@ -3,6 +3,7 @@
 #define CGAL_POLYGON_MESH_PROCESSING_REMESH_IMPL_H
 
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
@@ -10,6 +11,8 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/bimap/set_of.hpp>
+
+#include <map>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -281,10 +284,61 @@ namespace internal {
 #endif
     }
 
+    // PMP book :
+    // "applies an iterative smoothing filter to the mesh.
+    // The vertex movement has to be constrained to the vertex tangent plane [...]
+    // smoothing algorithm with uniform Laplacian weights"
     void tangential_relaxation()
     {
-      ;
+      //todo : move border vertices along 1-dimensional features
+      //todo : use compute_normals
+      namespace PMP = CGAL::Polygon_mesh_processing;
+
+      std::cout << "Tangential relaxation...";
+
+      // at each vertex, compute barycenter of neighbors
+      std::map<vertex_descriptor, Point> barycenters;
+      BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
+      {
+        if (is_border(v, mesh_))
+          continue;
+        Vector_3 move = CGAL::NULL_VECTOR;
+        unsigned int star_size = 0;
+        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, mesh_))
+        {
+          move = move + Vector_3(vpmap_[v], vpmap_[source(h, mesh_)]);
+          ++star_size;
+        }
+        move = (1. / (double)star_size) * move;
+        barycenters[v] = vpmap_[v] + move;
+      }
+
+      // compute and perform moves
+      BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
+      {
+        if (is_border(v, mesh_))
+          continue;
+        Vector_3 nv = PMP::compute_vertex_normal(v
+          , mesh_
+          , PMP::parameters::vertex_point_map(vpmap_)
+          .geom_traits(GeomTraits()));
+
+        Point qv = barycenters[v];
+        Point newp = qv + (nv * Vector_3(qv, vpmap_[v])) * nv;
+        //move v
+        vpmap_[v] = newp;
+      }
+
+      CGAL_assertion(is_valid(mesh_));
+      CGAL_assertion(is_triangle_mesh(mesh_));
+
+      std::cout << "done." << std::endl;
+
+#ifdef CGAL_DUMP_REMESHING_STEPS
+      dump("4-relaxation.off");
+#endif
     }
+
     void project_to_surface()
     {
       ;
