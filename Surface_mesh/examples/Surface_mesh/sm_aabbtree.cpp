@@ -29,7 +29,7 @@ int main()
     Point r(0.0, 0.0, 1.0);
     Point s(0.0, 0.0, 0.0);
     Mesh m;
-    CGAL::Euler::make_tetrahedron(m, p, q, r, s);
+    CGAL::make_tetrahedron(p, q, r, s, m);
 
     // constructs AABB tree
     Tree tree(faces(m).first, faces(m).second, m);
