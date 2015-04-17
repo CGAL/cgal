@@ -114,14 +114,18 @@ namespace CGAL {
 
 
       
-      friend  std::size_t hash_value(const SM_Index&  i)
-      {
-        return i;
-      }
+     
       
     private:
         size_type idx_;
     };
+
+  template <class T>
+  std::size_t hash_value(const SM_Index<T>&  i)
+  {
+    std::size_t ret = i;
+    return ret;
+  }
 
     /// This class represents a vertex.
     /// \cgalModels `Index`
@@ -243,6 +247,12 @@ namespace CGAL {
         {
           return (os << 'e' << (size_type)e << " on " << e.halfedge());
         }
+
+        friend  std::size_t hash_value(const SM_Edge_index&  i)
+        {
+          return i;
+        }
+
     private:
         SM_Halfedge_index halfedge_;
     };

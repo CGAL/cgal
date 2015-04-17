@@ -67,10 +67,9 @@ public:
     return *this;
   }
 
-  std::size_t hash() const
+  friend std::size_t hash_value(const Edge& e)
   {
-    std::hash<Face_handle> fct;
-    return fct(this->first);
+    return hash_value(e.first);
   }
 
   bool operator==(const Edge& other) const
@@ -274,10 +273,9 @@ public:
         : first(fd), second(i)
       {}
       
-      std::size_t hash() const
+      friend std::size_t hash_value(const T2_halfedge_descriptor& h)
       {
-        std::hash<face_descriptor> fct;
-        return fct(first);
+        return hash_value(h.first);
       } 
       
       bool operator==(const T2_halfedge_descriptor& other) const
@@ -837,7 +835,7 @@ namespace std {
     std::size_t operator()(const CGAL::detail::Edge<T,EdgeBase>& e)
     {
       std::cerr << "Triangulation_2::Edge HashFct" << std::endl;
-      return e.hash();
+      return hash_value(e);
     }
   }; 
 
@@ -846,7 +844,7 @@ namespace std {
     std::size_t operator()(const CGAL::detail::T2_halfedge_descriptor<Tr>& e)
     {
       std::cerr << "Triangulation_2::halfedge_descriptor HashFct" << std::endl;
-      return e.hash();
+      return hash_value(e);
     }
   };
 } // namespace std

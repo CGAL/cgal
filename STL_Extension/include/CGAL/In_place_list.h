@@ -779,8 +779,7 @@ namespace std {
     std::size_t operator()(const CGAL::internal::In_place_list_iterator<T, Alloc>& i)
     {
       std::cerr << "In_place_list::iterator HashFct" << std::endl;
-      T* ptr = &*i;
-      return reinterpret_cast<std::size_t>(ptr);
+      return hash_value(i);
     }
   };
 
@@ -789,8 +788,7 @@ namespace std {
     std::size_t operator()(const CGAL::internal::In_place_list_const_iterator<T, Alloc>& i)
     {
       std::cerr << "In_place_list::const_iterator HashFct" << std::endl;
-      T* ptr = &*i;
-      return reinterpret_cast<std::size_t>(ptr);
+      return hash_value(i);
     }
   };
 }
