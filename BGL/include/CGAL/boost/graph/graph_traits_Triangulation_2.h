@@ -40,8 +40,9 @@ namespace CGAL {
 
 template < class T, class EdgeBase >
 class Edge : public EdgeBase {
+
+public:
   typedef typename T::Face_handle Face_handle ;
-  public:
   
   Edge()
   {}
@@ -64,7 +65,12 @@ class Edge : public EdgeBase {
     this->first = e.first;
     this->second = e.second;
     return *this;
-}
+  }
+
+  Face_handle face_handle() const
+  {
+    return this->first;
+  }
 
   bool operator==(const Edge& other) const
   {
@@ -810,6 +816,21 @@ namespace boost {
     typedef void type;
   };
 } // namespace boost
+
+
+namespace std {
+  template <typename T> struct hash;
+
+  template < class T, class EdgeBase>
+  struct hash<CGAL::detail::Edge<T,EdgeBase> > {
+    std::size_t operator()(const CGAL::detail::Edge<T,EdgeBase>& e)
+    {
+      std::cerr << "Triangulation_2::Edge HashFct" << std::endl;
+      std::hash<typename CGAL::detail::Edge<T,EdgeBase>::Face_handle> fct;
+      return fct(e.face_handle());
+    }
+  };
+} // namespace std
 
 //#include <CGAL/graph_traits_Delaunay_triangulation_2.h>
 

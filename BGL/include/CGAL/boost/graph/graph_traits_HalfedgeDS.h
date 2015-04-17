@@ -217,4 +217,18 @@ public:
 
 } //namespace CGAL
 
+
+namespace std {
+  template <typename T> struct hash;
+
+  template <typename H>
+  struct hash<CGAL::internal::HDS_edge<H> > {
+    std::size_t operator()(const CGAL::internal::HDS_edge<H>& e)
+    {
+      std::cerr << "HDS_edge HashFct" << std::endl;
+      std::hash<H> fct;
+      return fct(e.halfedge());
+    }
+  };
+}
 #endif // CGAL_BOOST_GRAPH_GRAPH_TRAITS_HALFEDGEDS_H

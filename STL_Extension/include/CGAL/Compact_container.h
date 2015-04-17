@@ -1169,4 +1169,17 @@ namespace internal {
 
 } //namespace CGAL
 
+namespace std {
+  template <typename T> struct hash;
+
+  template < class DSC, bool Const >
+  struct hash<CGAL::internal::CC_iterator<DSC, Const> > {
+    std::size_t operator()(const CGAL::internal::CC_iterator<DSC, Const>& i)
+    {
+      std::cerr << "CC::iterator HashFct" << std::endl;
+      return reinterpret_cast<std::size_t>(&*i);
+    }
+  };
+}
+
 #endif // CGAL_COMPACT_CONTAINER_H

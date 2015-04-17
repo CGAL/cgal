@@ -180,6 +180,72 @@ namespace CGAL {
         }
     };
 
+    /// This class represents an edge.
+    /// \cgalModels `Index`
+    /// \sa `Vertex_index`, `Halfedge_index`, `Face_index`
+    class SM_Edge_index
+    {
+    public:
+        typedef boost::uint32_t size_type;
+        /// %Default constructor
+        SM_Edge_index() : halfedge_(-1) { }
+
+        SM_Edge_index(size_type idx) : halfedge_(idx * 2) { }
+
+        /// constructs an `SM_Edge_index` from a halfedge.
+        SM_Edge_index(SM_Halfedge_index he) : halfedge_(he) { }
+        /// @cond CGAL_DOCUMENT_INTERNALS
+        /// returns the internal halfedge.
+        SM_Halfedge_index halfedge() const { return halfedge_; }
+
+        /// returns the underlying index of this index.
+        operator size_type() const { return (size_type)halfedge_ / 2; }
+
+        /// resets index to be invalid (index=-1)
+        void reset() { halfedge_.reset(); }
+
+        /// returns whether the index is valid, i.e., the index is not equal to -1.
+        bool is_valid() const { return halfedge_.is_valid(); }
+
+        /// Are two indices equal?
+        bool operator==(const SM_Edge_index& other) const { return (size_type)(*this) == (size_type)other; }
+
+        /// Are two indices different?
+        bool operator!=(const SM_Edge_index& other) const { return (size_type)(*this) != (size_type)other; }
+
+        /// compares by index.
+        bool operator<(const SM_Edge_index& other) const { return (size_type)(*this) < (size_type)other;}
+
+        /// decrements the internal index. This operation does not
+        /// guarantee that the index is valid or undeleted after the
+        /// decrement.
+        SM_Edge_index& operator--() { halfedge_ = SM_Halfedge_index((size_type)halfedge_ - 2); return *this; }
+
+        /// increments the internal index. This operation does not
+        /// guarantee that the index is valid or undeleted after the
+        /// increment.
+        SM_Edge_index& operator++() { halfedge_ = SM_Halfedge_index((size_type)halfedge_ + 2); return *this; }
+
+        /// decrements internal index. This operation does not
+        /// guarantee that the index is valid or undeleted after the
+        /// decrement.
+        SM_Edge_index operator--(int) { SM_Edge_index tmp(*this); halfedge_ = SM_Halfedge_index((size_type)halfedge_ - 2); return tmp; }
+
+        /// increments internal index. This operation does not
+        /// guarantee that the index is valid or undeleted after the
+        /// increment.
+        SM_Edge_index operator++(int) { SM_Edge_index tmp(*this); halfedge_ = SM_Halfedge_index((size_type)halfedge_ + 2); return tmp; }
+
+        /// @endcond 
+
+        /// prints the index and a short identification string to an ostream.
+        friend std::ostream& operator<<(std::ostream& os, SM_Edge_index const& e)
+        {
+          return (os << 'e' << (size_type)e << " on " << e.halfedge());
+        }
+    private:
+        SM_Halfedge_index halfedge_;
+    };
 #endif
 
   /// \ingroup PkgSurface_mesh
@@ -752,6 +818,7 @@ private:
   typedef SM_Face_index Face_index;
 #endif
 
+#ifdef DOXYGEN_RUNNING
     /// This class represents an edge.
     /// \cgalModels `Index`
     /// \sa `Vertex_index`, `Halfedge_index`, `Face_index`
@@ -817,7 +884,9 @@ private:
     private:
         Halfedge_index halfedge_;
     };
-
+#else
+  typedef SM_Edge_index Edge_index;
+#endif
 
  
     ///@}
@@ -2882,6 +2951,47 @@ returns `i` as hash value for the index types `Vertex_index`, `Halfedge_index`,
 #endif
 
 } // CGAL
+
+
+namespace std {
+  template <typename T> struct hash;
+
+  template <>
+  struct hash<CGAL::SM_Halfedge_index > {
+    std::size_t operator()(const CGAL::SM_Halfedge_index& i)
+    {
+      std::cerr << "SM_Halfege_index HashFct" << std::endl;
+      return i;
+    }
+  };
+
+  template <>
+  struct hash<CGAL::SM_Vertex_index > {
+    std::size_t operator()(const CGAL::SM_Vertex_index& i)
+    {
+      std::cerr << "SM_Vertex_index HashFct" << std::endl;
+      return i;
+    }
+  };
+
+  template <>
+  struct hash<CGAL::SM_Face_index > {
+    std::size_t operator()(const CGAL::SM_Face_index& i)
+    {
+      std::cerr << "SM_Face_index HashFct" << std::endl;
+      return i;
+    }
+  };
+
+  template <>
+  struct hash<CGAL::SM_Edge_index > {
+    std::size_t operator()(const CGAL::SM_Edge_index& i)
+    {
+      std::cerr << "SM_Edge_index HashFct" << std::endl;
+      return i;
+    }
+  };
+}
 
 #endif /* CGAL_SURFACE_MESH_H */
 

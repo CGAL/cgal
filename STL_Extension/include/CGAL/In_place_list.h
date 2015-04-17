@@ -771,4 +771,27 @@ void In_place_list<T,managed,Alloc>::sort() {
 
 } //namespace CGAL
 
+namespace std {
+  template <typename T> struct hash;
+
+  template < class T, class Alloc >
+  struct hash<CGAL::internal::In_place_list_iterator<T, Alloc> > {
+    std::size_t operator()(const CGAL::internal::In_place_list_iterator<T, Alloc>& i)
+    {
+      std::cerr << "In_place_list::iterator HashFct" << std::endl;
+      T* ptr = &*i;
+      return reinterpret_cast<std::size_t>(ptr);
+    }
+  };
+
+  template < class T, class Alloc >
+  struct hash<CGAL::internal::In_place_list_const_iterator<T, Alloc> > {
+    std::size_t operator()(const CGAL::internal::In_place_list_const_iterator<T, Alloc>& i)
+    {
+      std::cerr << "In_place_list::const_iterator HashFct" << std::endl;
+      T* ptr = &*i;
+      return reinterpret_cast<std::size_t>(ptr);
+    }
+  };
+}
 #endif // CGAL_IN_PLACE_LIST_H
