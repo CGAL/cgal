@@ -217,6 +217,7 @@ void MainWindow::on_actionGenerate_Points_triggered()
 
     // update viewer
     emit( sceneChanged() );
+    viewer->changed();
   }// if(isOk)
 }
 
