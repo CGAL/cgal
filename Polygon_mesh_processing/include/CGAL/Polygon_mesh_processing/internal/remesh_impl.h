@@ -26,7 +26,9 @@ namespace internal {
     typedef typename boost::graph_traits<PM>::edge_descriptor     edge_descriptor;
     typedef typename boost::graph_traits<PM>::vertex_descriptor   vertex_descriptor;
 
-    typedef typename GeomTraits::Point_3 Point;
+    typedef typename GeomTraits::Point_3    Point;
+    typedef typename GeomTraits::Vector_3   Vector_3;
+    typedef typename GeomTraits::Plane_3    Plane_3;
 
   public:
     Incremental_remesher(PolygonMesh& pmesh
@@ -226,10 +228,59 @@ namespace internal {
 #endif
     }
 
+    // PMP book :
+    // "equalizes the vertex valences by flipping edges.
+    // The target valence is 6 and 4 for interior and boundary vertices, resp.
+    // The algo. tentatively flips each edge `e` and checks whether the deviation
+    // to the target valences decreases. If not, the edge is flipped back"
     void equalize_valences()
     {
-      ;
+      std::cout << "Equalize valences...";
+      unsigned int nb_flips = 0;
+      BOOST_FOREACH(edge_descriptor e, edges(mesh_))
+      {
+        if (!is_flip_allowed(e))
+          continue;
+
+        halfedge_descriptor he = halfedge(e, mesh_);
+        vertex_descriptor va = source(he, mesh_);
+        vertex_descriptor vb = target(he, mesh_);
+        vertex_descriptor vc = target(next(he, mesh_), mesh_);
+        vertex_descriptor vd = target(next(opposite(he, mesh_), mesh_), mesh_);
+
+        int deviation_pre = CGAL::abs(valence(va) - target_valence(va))
+                          + CGAL::abs(valence(vb) - target_valence(vb))
+                          + CGAL::abs(valence(vc) - target_valence(vc))
+                          + CGAL::abs(valence(vd) - target_valence(vd));
+
+        CGAL::Euler::flip_edge(he, mesh_);
+        ++nb_flips;
+
+        CGAL_assertion(
+             (vc == target(he, mesh_) && vd == source(he, mesh_))
+          || (vd == target(he, mesh_) && vc == source(he, mesh_)));
+
+        int deviation_post = CGAL::abs(valence(va) - target_valence(va))
+                          + CGAL::abs(valence(vb) - target_valence(vb))
+                          + CGAL::abs(valence(vc) - target_valence(vc))
+                          + CGAL::abs(valence(vd) - target_valence(vd));
+
+        if (deviation_pre < deviation_post)
+        {
+          CGAL::Euler::flip_edge(he, mesh_);
+          --nb_flips;
+          CGAL_assertion(
+               (va == source(he, mesh_) && vb == target(he, mesh_))
+            || (vb == source(he, mesh_) && va == target(he, mesh_)));
+        }
+      }
+      std::cout << "done. ("<< nb_flips << " flips)" << std::endl;
+
+#ifdef CGAL_DUMP_REMESHING_STEPS
+      dump("3-edge_flips.off");
+#endif
     }
+
     void tangential_relaxation()
     {
       ;
@@ -270,6 +321,43 @@ namespace internal {
       std::ofstream out(filename);
       out << mesh_;
       out.close();
+    }
+
+    int valence(const vertex_descriptor& v) const
+    {
+      return degree(v, mesh_);
+    }
+
+    int target_valence(const vertex_descriptor& v) const
+    {
+      return (is_border(v, mesh_)) ? 4 : 6;
+    }
+
+    bool is_flip_allowed(const edge_descriptor& e) const
+    {
+      if (is_border(e, mesh_))
+        return false;//we can't flip border edges
+
+      halfedge_descriptor he = halfedge(e, mesh_);
+      Point p1 = vpmap_[target(he, mesh_)];
+      Point p2 = vpmap_[source(he, mesh_)];
+      Vector_3 normal(p1, p2);
+
+      //construct planes passing through p1 and p2,
+      // and orthogonal to e
+      Plane_3 plane1(p1, normal);
+      Plane_3 plane2(p2, normal);
+
+      CGAL_assertion(//check orientation is consistent
+        plane1.orthogonal_vector() * plane2.orthogonal_vector() > 0.);
+
+      //get third points of triangles shared by e
+      Point p3 = vpmap_[target(next(he, mesh_), mesh_)];
+      Point p4 = vpmap_[target(next(opposite(he, mesh_), mesh_), mesh_)];
+
+      //check whether p3 and p4 are between plane1 and plane2
+      return (plane1.oriented_side(p3) != plane2.oriented_side(p3))
+         &&  (plane1.oriented_side(p4) != plane2.oriented_side(p4));
     }
 
   private:

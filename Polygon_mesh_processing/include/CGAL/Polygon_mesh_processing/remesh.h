@@ -38,7 +38,7 @@ namespace Polygon_mesh_processing {
 * named parameters :
 * vertex_point_map
 * nb_iterations
-* geom_traits, that needs Point_3
+* geom_traits, that needs Point_3, Vector_3, Plane_3
 */
 template<typename PolygonMesh, typename NamedParameters>
 void incremental_triangle_based_remeshing(PolygonMesh& pmesh
@@ -71,6 +71,7 @@ void incremental_triangle_based_remeshing(PolygonMesh& pmesh
     remesher.equalize_valences();
     remesher.tangential_relaxation();
     remesher.project_to_surface();
+    std::cout << std::endl;
   }
 }
 
