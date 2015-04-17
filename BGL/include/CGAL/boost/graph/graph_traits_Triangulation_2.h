@@ -253,6 +253,44 @@ public:
   }
 };
 
+    
+    template <typename Tr>
+    struct T2_halfedge_descriptor
+    {
+      typedef typename Tr::Face_handle face_descriptor;
+      face_descriptor first;
+      int second;
+      operator std::pair<face_descriptor, int>() { return std::make_pair(first,second); }
+      
+      T2_halfedge_descriptor()
+      {}
+      
+      T2_halfedge_descriptor(const typename Tr::Edge& e)
+        : first(e.first), second(e.second)
+      {}
+      
+      T2_halfedge_descriptor(face_descriptor fd, int i)
+        : first(fd), second(i)
+      {}
+      
+      bool operator==(const T2_halfedge_descriptor& other) const
+      {
+        return (first == other.first) && (second == other.second);
+      }
+      
+      bool operator!=(const T2_halfedge_descriptor& other) const
+      {
+        return (first != other.first) || (second != other.second);
+      }
+
+      bool operator<(const T2_halfedge_descriptor& other) const
+      {
+        if(first < other.first) return true;
+        if(first > other.first) return false;
+        return second  < other.second;
+      }
+    };
+
 
   } // namespace detail
 } // namespace CGAL
@@ -276,41 +314,7 @@ namespace boost {
     typedef typename CGAL::Triangulation_2<GT,TDS>::All_edges_iterator  edge_iterator;
 
 
-    // with just a typedef to Edge VC++ has ambiguities for function `next()`
-    struct halfedge_descriptor
-    {
-      face_descriptor first;
-      int second;
-      operator std::pair<face_descriptor, int>() { return std::make_pair(first,second); }
-      
-      halfedge_descriptor()
-      {}
-      
-      halfedge_descriptor(const typename Triangulation::Edge& e)
-        : first(e.first), second(e.second)
-      {}
-      
-      halfedge_descriptor(face_descriptor fd, int i)
-        : first(fd), second(i)
-      {}
-      
-      bool operator==(const halfedge_descriptor& other) const
-      {
-        return (first == other.first) && (second == other.second);
-      }
-      
-      bool operator!=(const halfedge_descriptor& other) const
-      {
-        return (first != other.first) || (second != other.second);
-      }
-
-      bool operator<(const halfedge_descriptor& other) const
-      {
-        if(first < other.first) return true;
-        if(first > other.first) return false;
-        return second  < other.second;
-      }
-    };
+    typedef CGAL::detail::T2_halfedge_descriptor<Triangulation> halfedge_descriptor;
 
     typedef typename CGAL::Triangulation_2<GT,TDS>::All_halfedges_iterator  halfedge_iterator;
 
