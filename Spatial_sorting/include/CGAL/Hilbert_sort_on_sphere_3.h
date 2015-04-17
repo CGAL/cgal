@@ -107,7 +107,7 @@ public:
 		// this is the order that set of points in a face should appear 
 		// after sorting points wrt each face
 		for(int i=0; i<6; i++)
-			for(int j=0; j<vec[i].size(); j++) 
+			for(std::size_t j=0; j<vec[i].size(); j++) 
 				*begin++ = vec[i][j];
 	}
 };
