@@ -242,7 +242,7 @@ The following figures track the construction time, query time, and peak memory u
   A visibility window (shaded blue) encounters a saddle vertex; the shaded red region behind the vertex is not reachable with by a geodesic curve from the source point (assuming the geodesic must stay inside the initial window).
   \cgalFigureEnd
   
-In order to deal with this, we must create a new set of child visibility windows which branch out around the saddle vertex. The paths through these child windows would first arrive at the saddle vertex, and then follow a new visibility window (forming a kind of poly-line on the surface). Note that similar behaviour is required when we reach a boundary vertex of a non-closed surface mesh.
+In order to deal with this, we must create a new set of child visibility windows which branch out around the saddle vertex. The paths through these child windows would first arrive at the saddle vertex, and then follow a new visibility window (forming a kind of poly-line on the surface). Note that similar behavior is required when we reach a boundary vertex of a non-closed surface mesh.
 
   \cgalFigureBegin{Saddle_vertex_expand,saddleVertexExpand.png}
   In order to see past the <em>blind spot</em> created by the saddle vertex, we create a branching set of visibility windows emanating from the saddle vertex. Note that only the branches which cover the <em>blind spot</em> for the parent visibility window are needed for our algorithm.
@@ -347,7 +347,7 @@ method CreateFaceWindow:
 method CreatePseudoSource:
   Input:
     w : the parent window
-    v : a sadde vertex of V
+    v : a saddle vertex of V
   Begin:
     For each face f incident to v:
       w' = CreateFaceWindow(f, v, w)
@@ -399,7 +399,7 @@ method ShortestPathTree:
     return T[1..n]
 \endverbatim
 
-To perform shortest path distance queries to each vertex, we can simply use the results stored in \f$S\f$ after the completion of ShortestPathTree, as it contains a map from each vertex to the VisibilityWindow which has the shortest path to that vertex. Performing shortest path computations to any arbitrary face location is slightly more complex. As eluded to above, after completion of the algorithm, we traverse each of the sequence trees, and for each face \f$f\f$ we store all the VisibilityWindows which cross \f$f\f$ in a look-up structure. Then, to find the shortest path to a point on the surface of face \f$f\f$, we look up that pre-stored set of VisibilityWindows associated with it, and among those windows we select the one which contains the query point, and has the shortest path back to the origin. Though it may seem slow since it involves a linear search, it is efficient in practice since the number of faces crossing any single face is typically limited (this is due to the additional filtering method given by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}.
+To perform shortest path distance queries to each vertex, we can simply use the results stored in `S` after the completion of ShortestPathTree, as it contains a map from each vertex to the `VisibilityWindow` which has the shortest path to that vertex. Performing shortest path computations to any arbitrary face location is slightly more complex. As eluded to above, after completion of the algorithm, we traverse each of the sequence trees, and for each face `f` we store all the VisibilityWindows which cross `f` in a look-up structure. Then, to find the shortest path to a point on the surface of face `f`, we look up that pre-stored set of VisibilityWindows associated with it, and among those windows we select the one which contains the query point, and has the shortest path back to the origin. Though it may seem slow since it involves a linear search, it is efficient in practice since the number of faces crossing any single face is typically limited (this is due to the additional filtering method given by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}.
 
 The actual surface paths can be reconstructed by backtracking from the VisibilityWindow, through its parents in the tree up to the root, and keeping track of each face that was crossed.
   
