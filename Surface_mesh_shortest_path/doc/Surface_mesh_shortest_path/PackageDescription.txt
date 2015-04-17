@@ -23,7 +23,7 @@
 \cgalPkgManuals{Chapter_Surface_mesh_shortest_path,PkgSurfaceMeshShortestPath}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgDependsOn{\ref PkgBGLSummary}
+\cgalPkgDependsOn{\ref PkgBGLSummary and \ref PkgAABB_treeSummary for some convenience functions}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
