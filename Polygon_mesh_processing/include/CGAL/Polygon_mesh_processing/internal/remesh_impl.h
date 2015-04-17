@@ -128,6 +128,8 @@ namespace internal {
     // would produce an edge that is longer than `high`"
     void collapse_short_edges(const double& low, const double& high)
     {
+      //todo : allow boundary edges to be collapsed under some conditions
+
       typedef boost::bimap<
         boost::bimaps::set_of<halfedge_descriptor>,
         boost::bimaps::multiset_of<double, std::less<double> > >  Boost_bimap;
