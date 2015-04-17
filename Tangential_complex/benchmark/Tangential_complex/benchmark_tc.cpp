@@ -183,6 +183,37 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
   tc.compute_tangential_complex();
   double computation_time = t.elapsed(); t.reset();
     
+  // CJTODO TEMP ===========================
+  {
+  TC::Simplicial_complex complex;
+  int max_dim = tc.export_TC(complex, false);
+  complex.display_stats();
+
+  std::stringstream output_filename;
+  output_filename << "output/" << input_name_stripped << "_" << intrinsic_dim
+    << "_in_R" << ambient_dim << "_ALPHA_COMPLEX.off";
+  std::ofstream off_stream(output_filename.str().c_str());
+  tc.export_to_off(complex, off_stream);
+
+  // Collapse
+  complex.collapse(max_dim);
+  {
+  std::stringstream output_filename;
+  output_filename << "output/" << input_name_stripped << "_" << intrinsic_dim
+    << "_in_R" << ambient_dim << "_AFTER_COLLAPSE.off";
+  std::ofstream off_stream(output_filename.str().c_str());
+  tc.export_to_off(complex, off_stream);
+  }
+  std::size_t num_wrong_dim_simplices, num_wrong_number_of_cofaces;
+  bool pure_manifold = complex.is_pure_manifold(
+    intrinsic_dim, false, 1,
+    &num_wrong_dim_simplices, &num_wrong_number_of_cofaces);
+  complex.display_stats();
+  }
+
+  return;
+  // CJTODO TEMP ===========================
+
   //tc.check_if_all_simplices_are_in_the_ambient_delaunay();
 
   double export_before_time = -1.;
@@ -196,6 +227,7 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
     tc.export_to_off(off_stream, true);
     export_before_time = t.elapsed(); t.reset();
   }
+
 
 
   t.reset();
@@ -254,7 +286,7 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
   }
 
   // Collapse
-  complex.collapse(max_dim);
+  //complex.collapse(max_dim);
   
   double export_after_collapse_time = -1.;
   if (intrinsic_dim <= 3)
@@ -271,6 +303,7 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
   bool pure_manifold = complex.is_pure_manifold(
     intrinsic_dim, false, 0,
     &num_wrong_dim_simplices, &num_wrong_number_of_cofaces);
+
   complex.display_stats();
 
   std::cerr << std::endl
