@@ -2,9 +2,13 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REMESH_IMPL_H
 #define CGAL_POLYGON_MESH_PROCESSING_REMESH_IMPL_H
 
-#include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_triangle_primitive.h>
+
+#include <CGAL/boost/graph/Euler_operations.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 
@@ -13,6 +17,7 @@
 #include <boost/bimap/set_of.hpp>
 
 #include <map>
+#include <list>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -28,18 +33,49 @@ namespace internal {
     typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<PM>::edge_descriptor     edge_descriptor;
     typedef typename boost::graph_traits<PM>::vertex_descriptor   vertex_descriptor;
+    typedef typename boost::graph_traits<PM>::face_descriptor     face_descriptor;
 
     typedef typename GeomTraits::Point_3    Point;
     typedef typename GeomTraits::Vector_3   Vector_3;
     typedef typename GeomTraits::Plane_3    Plane_3;
+    typedef typename GeomTraits::Triangle_3 Triangle_3;
+
+    typedef std::list<Triangle_3>                                  Triangle_list;
+    typedef typename Triangle_list::iterator                       Tr_iterator;
+    typedef CGAL::AABB_triangle_primitive<GeomTraits, Tr_iterator> Primitive;
+    typedef CGAL::AABB_traits<GeomTraits, Primitive>               Traits;
+    typedef CGAL::AABB_tree<Traits>                                AABB_tree;
 
   public:
     Incremental_remesher(PolygonMesh& pmesh
                        , VertexPointMap& vpmap)
       : mesh_(pmesh)
       , vpmap_(vpmap)
-    {}
+      , own_tree_(true)
+      , input_triangles_()
+    {
+      CGAL_assertion(CGAL::is_triangle_mesh(pmesh));
 
+      BOOST_FOREACH(face_descriptor f, faces(pmesh))
+      {
+        halfedge_descriptor h = halfedge(f, mesh_);
+        vertex_descriptor v1 = target(h, mesh_);
+        vertex_descriptor v2 = target(next(h, mesh_), mesh_);
+        vertex_descriptor v3 = target(next(next(h, mesh_), mesh_), mesh_);
+
+        input_triangles_.push_back(Triangle_3(vpmap[v1], vpmap[v2], vpmap[v3]));
+      }
+      tree_ptr_ = new AABB_tree(input_triangles_.begin(), input_triangles_.end());
+      //todo : add a constructor with aabb_tree as parameter
+      //todo : do we really need to keep this copy of the input surface?
+    }
+
+    ~Incremental_remesher()
+    {
+      if (own_tree_)
+        delete tree_ptr_;
+    }
+    
     // PMP book :
     // "visits all edges of the mesh
     //if an edge is longer than the given threshold `high`, the edge
@@ -341,9 +377,29 @@ namespace internal {
 #endif
     }
 
+
+    // PMP book :
+    // "maps the vertices back to the surface"
     void project_to_surface()
     {
-      ;
+      //todo : handle the case of boundary vertices
+      std::cout << "Project to surface...";
+
+      BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
+      {
+        if (is_border(v, mesh_))
+          continue;
+        vpmap_[v] = tree_ptr_->closest_point(vpmap_[v]);
+      }
+
+      CGAL_assertion(is_valid(mesh_));
+      CGAL_assertion(is_triangle_mesh(mesh_));
+
+      std::cout << "done." << std::endl;
+
+#ifdef CGAL_DUMP_REMESHING_STEPS
+      dump("5-project.off");
+#endif
     }
 
   private:
@@ -419,6 +475,9 @@ namespace internal {
   private:
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
+    const AABB_tree* tree_ptr_;
+    bool own_tree_;
+    Triangle_list input_triangles_;
 
   };//end class Incremenal_remesher
 }//end namespace internal
