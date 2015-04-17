@@ -249,7 +249,7 @@ template <typename FaceGraph>
 template <typename FaceGraph>
 bool is_tetrahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)   
 {
-  typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
 
   halfedge_descriptor h1 = hd;
   if(is_border(h1,g)) return false;
@@ -293,7 +293,7 @@ bool is_tetrahedron( typename boost::graph_traits<FaceGraph>::halfedge_descripto
 template <typename FaceGraph>
 bool is_hexahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)   
 {
-  typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
 
   halfedge_descriptor h1 = hd;
   if(is_border(h1,g)) return false;
