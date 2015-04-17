@@ -57,6 +57,7 @@ namespace internal {
       //split long edges
       while (!long_edges.empty())
       {
+        //the edge with longest length
         typename Boost_bimap::right_map::iterator eit = long_edges.right.begin();
         halfedge_descriptor he = eit->second;
         double sqlen = eit->first;
