@@ -28,12 +28,12 @@ template <typename G>
 void
 run(char* fname)
 {
-  typedef boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
   G g;
   std::ifstream input(fname);
   input >> g;
 
-  typedef boost::property_map<G,CGAL::vertex_point_t>::type  VPM;
+  typedef typename boost::property_map<G,CGAL::vertex_point_t>::type  VPM;
   VPM vpm = get(CGAL::vertex_point,g);
 
 
@@ -70,7 +70,7 @@ run(char* fname)
   t.start();
   for(int i= 0; i < 1; i++){
   BOOST_FOREACH(vertex_descriptor vd, vertices(g)){
-    boost::unordered_map<vertex_descriptor,Point_3>::iterator it = vum.find(vd);
+    typename boost::unordered_map<vertex_descriptor,Point_3>::iterator it = vum.find(vd);
     P2.push_back((*it).second);
     /*
     if(vum[vd] != get(vpm,vd)){
