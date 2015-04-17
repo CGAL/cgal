@@ -164,8 +164,6 @@ namespace internal {
     // would produce an edge that is longer than `high`"
     void collapse_short_edges(const double& low, const double& high)
     {
-      //todo : allow boundary edges to be collapsed under some conditions
-
       typedef boost::bimap<
         boost::bimaps::set_of<halfedge_descriptor>,
         boost::bimaps::multiset_of<double, std::less<double> > >  Boost_bimap;
@@ -196,14 +194,19 @@ namespace internal {
         vertex_descriptor va = target(he, mesh_);
         vertex_descriptor vb = source(he, mesh_);
 
-        //handle the boundary case : an edge incident to boundary can be collapsed,
+        //handle the boundary case :
+        //a boundary edge can be collapsed,
+        //and an edge incident to boundary can be collapsed,
         //but only if the boundary vertex is kept, so re-insert opposite(he)
         //to collapse it
-        if (is_border(va, mesh_))
+        if (!is_border_edge(he, mesh_))
         {
-          if (!is_border(vb, mesh_))
-            short_edges.insert(short_edge(opposite(he, mesh_), sqlen));
-          continue;
+          if (is_border(va, mesh_))
+          {
+            if (!is_border(vb, mesh_))
+              short_edges.insert(short_edge(opposite(he, mesh_), sqlen));
+            continue;
+          }
         }
 
         if (degree(va, mesh_) < 3
