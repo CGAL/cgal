@@ -49,7 +49,7 @@ int main()
 
     std::cout << "\ngraph_traits<Triangulation_2>::_descriptor"<< std::endl;
     Unordered<boost::graph_traits<Triangulation_2>::vertex_descriptor> U3;
-    //    Unordered<boost::graph_traits<Triangulation_2>::halfedge_descriptor> U4;
+    Unordered<boost::graph_traits<Triangulation_2>::halfedge_descriptor> U4;
     Unordered<boost::graph_traits<Triangulation_2>::edge_descriptor> U5;
     Unordered<boost::graph_traits<Triangulation_2>::face_descriptor> U6;
   }
