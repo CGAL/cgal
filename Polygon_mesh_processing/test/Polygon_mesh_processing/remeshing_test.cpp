@@ -47,7 +47,7 @@ int main()
 
   CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(m,
     target_edge_length,
-    CGAL::Polygon_mesh_processing::parameters::number_of_iterations(1));
+    CGAL::Polygon_mesh_processing::parameters::number_of_iterations(5));
 
   boost::property_map<Mesh, boost::vertex_point_t>::const_type vpmap
     = boost::get(CGAL::vertex_point, m);
