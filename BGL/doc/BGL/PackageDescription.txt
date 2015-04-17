@@ -118,6 +118,7 @@ user might encounter.
 - `CGAL::HalfedgeDS_halfedge_max_base_with_id`
 - `CGAL::HalfedgeDS_face_max_base_with_id`
 - `CGAL::Polyhedron_items_with_id_3`
+- `CGAL::set_halfedgeds_items_id()`
 
 ## Iterators and Circulators ##
 - `CGAL::Halfedge_around_source_iterator`
