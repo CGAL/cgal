@@ -1174,7 +1174,7 @@ namespace std {
 
   template < class DSC, bool Const >
   struct hash<CGAL::internal::CC_iterator<DSC, Const> > {
-    std::size_t operator()(const CGAL::internal::CC_iterator<DSC, Const>& i)
+    std::size_t operator()(const CGAL::internal::CC_iterator<DSC, Const>& i) const
     {
       std::cerr << "CC::iterator HashFct" << std::endl;
       return reinterpret_cast<std::size_t>(&*i);

@@ -223,7 +223,7 @@ namespace std {
 
   template <typename H>
   struct hash<CGAL::internal::HDS_edge<H> > {
-    std::size_t operator()(const CGAL::internal::HDS_edge<H>& e)
+    std::size_t operator()(const CGAL::internal::HDS_edge<H>& e) const
     {
       std::cerr << "HDS_edge HashFct" << std::endl;
       std::hash<H> fct;

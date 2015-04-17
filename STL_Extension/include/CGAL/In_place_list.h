@@ -776,18 +776,16 @@ namespace std {
 
   template < class T, class Alloc >
   struct hash<CGAL::internal::In_place_list_iterator<T, Alloc> > {
-    std::size_t operator()(const CGAL::internal::In_place_list_iterator<T, Alloc>& i)
+    std::size_t operator()(const CGAL::internal::In_place_list_iterator<T, Alloc>& i) const
     {
-      std::cerr << "In_place_list::iterator HashFct" << std::endl;
       return hash_value(i);
     }
   };
 
   template < class T, class Alloc >
   struct hash<CGAL::internal::In_place_list_const_iterator<T, Alloc> > {
-    std::size_t operator()(const CGAL::internal::In_place_list_const_iterator<T, Alloc>& i)
+    std::size_t operator()(const CGAL::internal::In_place_list_const_iterator<T, Alloc>& i) const
     {
-      std::cerr << "In_place_list::const_iterator HashFct" << std::endl;
       return hash_value(i);
     }
   };

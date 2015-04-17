@@ -2968,7 +2968,7 @@ namespace std {
 
   template <>
   struct hash<CGAL::SM_Halfedge_index > {
-    std::size_t operator()(const CGAL::SM_Halfedge_index& i)
+    std::size_t operator()(const CGAL::SM_Halfedge_index& i) const
     {
       std::cerr << "SM_Halfege_index HashFct" << std::endl;
       return i;
@@ -2977,27 +2977,24 @@ namespace std {
 
   template <>
   struct hash<CGAL::SM_Vertex_index > {
-    std::size_t operator()(const CGAL::SM_Vertex_index& i)
+    std::size_t operator()(const CGAL::SM_Vertex_index& i) const
     {
-      std::cerr << "SM_Vertex_index HashFct" << std::endl;
       return i;
     }
   };
 
   template <>
   struct hash<CGAL::SM_Face_index > {
-    std::size_t operator()(const CGAL::SM_Face_index& i)
+    std::size_t operator()(const CGAL::SM_Face_index& i) const
     {
-      std::cerr << "SM_Face_index HashFct" << std::endl;
       return i;
     }
   };
 
   template <>
   struct hash<CGAL::SM_Edge_index > {
-    std::size_t operator()(const CGAL::SM_Edge_index& i)
+    std::size_t operator()(const CGAL::SM_Edge_index& i) const
     {
-      std::cerr << "SM_Edge_index HashFct" << std::endl;
       return i;
     }
   };
