@@ -314,6 +314,7 @@ namespace CGAL {
     typedef OnMerge                          On_merge;
     typedef OnSplit                          On_split;
     typedef void                             Info;
+    typedef void                             Point;
 
     //  protected:
     /// Default contructor.
@@ -348,7 +349,8 @@ namespace CGAL {
     typedef OnMerge                          On_merge;
     typedef OnSplit                          On_split;
     typedef Info_                            Info;
-
+    typedef void                             Point;
+    
     bool operator==(const Self& other) const
     { return this->info()==other.info(); }
 
