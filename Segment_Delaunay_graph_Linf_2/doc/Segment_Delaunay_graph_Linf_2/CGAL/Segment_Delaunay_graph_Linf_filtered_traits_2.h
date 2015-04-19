@@ -8,6 +8,13 @@ The class `Segment_Delaunay_graph_Linf_filtered_traits_2` provides a model for t
 `SegmentDelaunayGraphLinfTraits_2` concept.
 The class is derived from class
 `CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`.
+We refer to the documentation of the base class
+`CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
+for an explanation of the template parameters.
+It usually enough to only specify the CK template argument and a typical
+value for CK is CGAL::Simple_cartesian<double> (see also the examples
+in the user manual).
+
 
 \cgalModels `SegmentDelaunayGraphLinfTraits_2`
 
@@ -34,6 +41,12 @@ provides a model for the
 `SegmentDelaunayGraphLinfTraits_2` concept.
 The class is derived from class
 `CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`.
+We refer to the documentation of the base class
+`CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
+for an explanation of the template parameters.
+It usually enough to only specify the CK template argument and a typical
+value for CK is CGAL::Simple_cartesian<double> (see also the examples
+in the user manual).
 
 
 \cgalModels `SegmentDelaunayGraphLinfTraits_2`

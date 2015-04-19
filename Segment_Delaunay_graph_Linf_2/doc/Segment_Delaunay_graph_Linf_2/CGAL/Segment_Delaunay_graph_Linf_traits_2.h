@@ -11,6 +11,12 @@ The class is derived from class
 We refer to the documentation of the base class
 `CGAL::Segment_Delaunay_graph_traits_2<K,MTag>`
 for an explanation of the template parameters.
+Our experience has shown that the
+`CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
+class is more efficient for all
+reasonable and valid values of the template parameters
+and should be preferred over
+`Segment_Delaunay_graph_Linf_traits_2`.
 
 \cgalModels `SegmentDelaunayGraphLinfTraits_2`
 
@@ -40,6 +46,12 @@ The class is derived from class
 We refer to the documentation of the base class
 `CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>`
 for an explanation of the template parameters.
+Our experience has shown that the
+`CGAL::Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
+class is more efficient for all
+reasonable and valid values of the template parameters
+and should be preferred over
+`Segment_Delaunay_graph_Linf_traits_without_intersections_2`.
 
 \cgalModels `SegmentDelaunayGraphLinfTraits_2`
 
