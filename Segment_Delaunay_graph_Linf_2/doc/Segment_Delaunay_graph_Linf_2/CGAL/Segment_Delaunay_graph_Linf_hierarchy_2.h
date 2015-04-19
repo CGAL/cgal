@@ -25,7 +25,7 @@ segment Delaunay graph when the size of the input exceeds 1000 sites.
 If the whole input is known in advance, another option is to use
 the plain segment Delaunay graph but only after
 spatial sorting of the sites.
-See also \ref secsdglinfexamples for different uses of the hierarchy
+See also the examples in the User Manual for different uses of the hierarchy
 and spatial sorting.
 
 \sa `SegmentDelaunayGraphLinfTraits_2`
