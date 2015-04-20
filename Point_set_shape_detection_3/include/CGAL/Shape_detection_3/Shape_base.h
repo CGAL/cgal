@@ -54,7 +54,7 @@ namespace CGAL {
             shape from a set of points and to compute the point distance and normal
             deviation from the surface normal. It is used during detection to
             identify the inliers from the input data and to extract the largest
-            cluster of spatially neighbored points.
+            connected component in inlier points.
      */
   template <class Traits>
   class Shape_base {
