@@ -218,13 +218,22 @@ vcm_convolve (ForwardIterator first,
 /// For example, if the point cloud is a uniform and noiseless sampling of a smooth surface,
 /// `R` should be set to the minimum local feature size of the surface while `r` can be set to zero.
 ///
+/// The Voronoi covariance matrix of each vertex is stored in a array `a` of length 6 and is as follow:
+/// \verbatim
+/// a[0] a[1] a[2]
+/// a[1] a[3] a[4]
+/// a[2] a[4] a[5]
+/// \endverbatim
+///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
+/// @tparam CovariancePMap is a model of `ReadWritePropertyMap` with a value_type = `cpp11::array<Kernel::FT,6>`.
 /// @tparam Kernel Geometric traits class.
 ///
 /// \sa `CGAL::is_on_edge()`
 /// \sa `CGAL::vcm_estimate_normals()`
 ///
+/// \todo replace ccov by a property map.
 template < class ForwardIterator,
            class PointPMap,
            class Kernel
