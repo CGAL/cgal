@@ -132,7 +132,7 @@ public:
 	break;
       }
       c = static_cast<char_type>(i);
-      if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='-')){
+      if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='+') || (c =='-')){
         buffer += c;
       }else{
 	is.unget();
