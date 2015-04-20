@@ -3,6 +3,7 @@
 #define CGAL_POLYGON_MESH_PROCESSING_REMESH_IMPL_H
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/get_border.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -16,15 +17,29 @@
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/bimap/set_of.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/range.hpp>
 
 #include <map>
 #include <list>
+#include <vector>
+#include <iterator>
+
+namespace PMP = CGAL::Polygon_mesh_processing;
+
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
+  enum Halfedge_status {
+    PATCH,       //h and hopp belong to the patch to be remeshed
+    PATCH_BORDER,//h belongs to the patch, hopp is MESH
+    MESH,        //h and hopp belong to the mesh, not the patch
+    MESH_BORDER  //h belongs to the mesh, face(hopp, pmesh) == null_face()
+  };
+
   template<typename PolygonMesh
+         , typename FaceRange
          , typename VertexPointMap
          , typename GeomTraits
   >
@@ -49,26 +64,31 @@ namespace internal {
 
   public:
     Incremental_remesher(PolygonMesh& pmesh
+                       , FaceRange face_range
                        , VertexPointMap& vpmap)
       : mesh_(pmesh)
       , vpmap_(vpmap)
       , own_tree_(true)
       , input_triangles_()
+      , patch_(boost::begin(face_range), boost::end(face_range))
+      , halfedge_status_map_()
     {
-      CGAL_assertion(CGAL::is_triangle_mesh(pmesh));
+      CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
 
-      BOOST_FOREACH(face_descriptor f, faces(pmesh))
+      //build AABB tree of input surface
+      //todo : add a constructor with aabb_tree as parameter
+      //todo : do we really need to keep this copy of the input surface?
+      BOOST_FOREACH(face_descriptor f, faces(mesh_))
       {
         halfedge_descriptor h = halfedge(f, mesh_);
         vertex_descriptor v1 = target(h, mesh_);
         vertex_descriptor v2 = target(next(h, mesh_), mesh_);
         vertex_descriptor v3 = target(next(next(h, mesh_), mesh_), mesh_);
-
         input_triangles_.push_back(Triangle_3(vpmap[v1], vpmap[v2], vpmap[v3]));
       }
       tree_ptr_ = new AABB_tree(input_triangles_.begin(), input_triangles_.end());
-      //todo : add a constructor with aabb_tree as parameter
-      //todo : do we really need to keep this copy of the input surface?
+
+      tag_halfedges_status(face_range);
     }
 
     ~Incremental_remesher()
@@ -333,8 +353,6 @@ namespace internal {
     void tangential_relaxation()
     {
       //todo : move border vertices along 1-dimensional features
-      namespace PMP = CGAL::Polygon_mesh_processing;
-
       std::cout << "Tangential relaxation...";
 
       //todo : use boost::vector_property_map to improve computing time
@@ -487,14 +505,79 @@ namespace internal {
          &&  (plane1.oriented_side(p4) != plane2.oriented_side(p4));
     }
 
+    template<typename FaceRange>
+    void tag_halfedges_status(FaceRange face_range)
+    {
+      //tag PATCH,       //h and hopp belong to the patch to be remeshed
+      BOOST_FOREACH(face_descriptor f, face_range)
+      {
+        BOOST_FOREACH(halfedge_descriptor h,
+                      halfedges_around_face(halfedge(f, mesh_), mesh_))
+        {
+          halfedge_status_map_[h] = PATCH;
+        }
+      }
+
+      //tag PATCH_BORDER,//h belongs to the patch, hopp doesn't
+      std::vector<halfedge_descriptor> border_halfedges;
+      PMP::get_border(mesh_, face_range, std::back_inserter(border_halfedges));
+      BOOST_FOREACH(halfedge_descriptor h, border_halfedges)
+      {
+        halfedge_status_map_[h] = PATCH_BORDER;
+      }
+
+      //tag MESH,        //h and hopp belong to the mesh, not the patch
+      //tag MESH_BORDER  //h belongs to the mesh, face(hopp, pmesh) == null_face()
+      BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh_))
+      {
+        //being part of the border of the mesh is predominant
+        if (is_border(h, mesh_))
+          halfedge_status_map_[h] = MESH_BORDER; //erase previous value if exists
+        else
+        {
+          //h is not border, does not belong to patch, nor to patch border
+          if (halfedge_status_map_.find(h) == halfedge_status_map_.end())
+            halfedge_status_map_[h] = MESH;
+        }
+      }
+    }
+
+    bool is_on_patch(const halfedge_descriptor& h) const
+    {
+      return halfedge_status_map_[h] == PATCH;
+    }
+
+    bool is_on_patch_border(const halfedge_descriptor& h) const
+    {
+      return halfedge_status_map_[h] == PATCH_BORDER;
+    }
+    bool is_on_patch_border(const edge_descriptor& e) const
+    {
+      return is_on_patch_border(halfedge(e,mesh_))
+          || is_on_patch_border(opposite(halfedge(e, mesh_), mesh_));
+    }
+
+    bool is_on_border(const halfedge_descriptor& h) const
+    {
+      CGAL_assertion(is_border(h, mesh_) == halfedge_status_map_[h]);
+      return halfedge_status_map_[h] == MESH_BORDER;
+    }
+    bool is_on_border(const edge_descriptor& e) const
+    {
+      return is_on_border(halfedge(e, mesh_))
+          || is_on_border(opposite(halfedge(e, mesh_), mesh_));
+    }
+
   private:
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
     const AABB_tree* tree_ptr_;
     bool own_tree_;
     Triangle_list input_triangles_;
+    std::vector<face_descriptor> patch_;
+    std::map<halfedge_descriptor, Halfedge_status> halfedge_status_map_;
 
-  };//end class Incremenal_remesher
+  };//end class Incremental_remesher
 }//end namespace internal
 }//end namespace Polygon_mesh_processing
 }//end namespace CGAL

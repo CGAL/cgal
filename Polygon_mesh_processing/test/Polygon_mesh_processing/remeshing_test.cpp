@@ -46,6 +46,7 @@ int main()
   double high = 4. / 3. * target_edge_length;
 
   CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(m,
+    faces(m),
     target_edge_length,
     CGAL::Polygon_mesh_processing::parameters::number_of_iterations(5));
 

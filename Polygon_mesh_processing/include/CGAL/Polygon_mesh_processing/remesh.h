@@ -35,13 +35,25 @@ namespace Polygon_mesh_processing {
 /**
 * \ingroup PkgPolygonMeshProcessing
 * implements section 6.5.3 "Incremental remeshing" from the PMP book
+* @tparam PolygonMesh model of `MutableFaceGraph` that 
+*         has an internal property map for `CGAL::vertex_point_t`
+* @tparam FaceRange range of face descriptors, model of `SinglePassRange`
+*
+* @param pmesh polygon mesh with patches to be refined 
+* @param faces the range of faces defining one patch to remesh
+*
 * named parameters :
 * vertex_point_map
 * nb_iterations
 * geom_traits, that needs Point_3, Vector_3, Plane_3
+*
+*@todo we suppose `faces` describe only one patch. Handle several patches
 */
-template<typename PolygonMesh, typename NamedParameters>
+template<typename PolygonMesh
+       , typename FaceRange
+       , typename NamedParameters>
 void incremental_triangle_based_remeshing(PolygonMesh& pmesh
+                                        , FaceRange faces
                                         , const double& target_edge_length
                                         , const NamedParameters& np)
 {
@@ -56,8 +68,8 @@ void incremental_triangle_based_remeshing(PolygonMesh& pmesh
   VPMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
                             pmesh,
                             boost::vertex_point);
-  typename internal::Incremental_remesher<PM, VPMap, GeomTraits>
-    remesher(pmesh, vpmap);
+  typename internal::Incremental_remesher<PM, FaceRange, VPMap, GeomTraits>
+    remesher(pmesh, faces, vpmap);
 
   unsigned int nb_iterations = choose_param(get_param(np, number_of_iterations), 1);
 
