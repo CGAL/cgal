@@ -6,7 +6,7 @@
 #include <CGAL/gl.h>
 
 
-void Volume_plane_intersection::draw() const {
+void Volume_plane_intersection::draw(QGLViewer *viewer) const {
   glDisable(GL_LIGHTING);
   glLineWidth(4.0f);
 

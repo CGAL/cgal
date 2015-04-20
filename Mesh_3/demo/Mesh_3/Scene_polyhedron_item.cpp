@@ -8,19 +8,19 @@
 #include <CGAL/gl_render.h>
 
 Scene_polyhedron_item::Scene_polyhedron_item()
-  : Scene_item_with_display_list(),
+  : Scene_item(),
     poly(new Polyhedron)
 {
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
-  : Scene_item_with_display_list(),
+  : Scene_item(),
     poly(p)
 {
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
-  : Scene_item_with_display_list(),
+  : Scene_item(),
     poly(new Polyhedron(p))
 {
 }
@@ -76,7 +76,7 @@ Scene_polyhedron_item::toolTip() const
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
-void Scene_polyhedron_item::direct_draw() const {
+void Scene_polyhedron_item::draw(QGLViewer *viewer) const {
   gl_render_facets(*poly);
 }
 

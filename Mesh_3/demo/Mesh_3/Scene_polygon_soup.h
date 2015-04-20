@@ -2,13 +2,18 @@
 #define SCENE_POLYGON_SOUP_H
 
 #include "Scene_polygon_soup_config.h"
-#include <CGAL_demo/Scene_item_with_display_list.h>
+#include <CGAL_demo/Scene_item.h>
 #include <iostream>
+#include <QGLViewer/qglviewer.h>
+#include <QGLFunctions>
+#include <QOpenGLVertexArrayObject>
+#include <QGLBuffer>
+#include <QOpenGLShaderProgram>
 
 struct Polygon_soup;
 
 class SCENE_POLYGON_SOUP_EXPORT Scene_polygon_soup 
-  : public Scene_item_with_display_list 
+  : public Scene_item
 {
   Q_OBJECT
 public:  
@@ -24,7 +29,9 @@ public:
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const { return m != Gouraud; } // CHECK THIS!
   // OpenGL drawing in a display list
-  void direct_draw() const;
+  void draw(QGLViewer*) const;
+  void draw_edges(QGLViewer*) const;
+  void draw_points(QGLViewer*) const;
 
   bool isFinite() const { return true; }
   bool isEmpty() const;
@@ -39,6 +46,37 @@ public:
 private:
   Polygon_soup* soup;
   bool oriented;
+
+
+  static const int vaoSize = 3;
+  static const int vboSize = 6;
+
+     mutable int poly_vertexLocation[1];
+     mutable int normalsLocation[1];
+     mutable int mvpLocation[1];
+     mutable int mvLocation[1];
+     mutable int colorLocation[1];
+     mutable int lightLocation[5];
+     mutable int twosideLocation;
+
+      std::vector<float> v_poly;
+      std::vector<float> v_edge;
+      std::vector<float> v_points;
+      std::vector<float> normal;
+      std::vector<float> vertex_nm;
+
+
+      mutable QGLBuffer buffers[vboSize];
+      mutable QOpenGLVertexArrayObject vao[vaoSize];
+      mutable QOpenGLShaderProgram rendering_program;
+      void initialize_buffers();
+      void compute_elements();
+      void attrib_buffers(QGLViewer*) const;
+      void compile_shaders();
+
+public slots:
+      void changed();
+
 }; // end class Scene_polygon_soup
 
 #endif // SCENE_POLYGON_SOUP_H

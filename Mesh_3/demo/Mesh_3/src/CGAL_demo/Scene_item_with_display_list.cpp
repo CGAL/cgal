@@ -27,15 +27,15 @@ Scene_item_with_display_list::~Scene_item_with_display_list()
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 
-void Scene_item_with_display_list::draw() const {
-  draw(DRAW);
+void Scene_item_with_display_list::draw(QGLViewer *viewer)  {
+  draw(viewer, DRAW);
 }
 
-void Scene_item_with_display_list::draw_edges() const {
-  draw(DRAW_EDGES);
+void Scene_item_with_display_list::draw_edges(QGLViewer *viewer)  {
+  draw(viewer, DRAW_EDGES);
 }
 
-void Scene_item_with_display_list::draw(int i) const
+void Scene_item_with_display_list::draw(QGLViewer *viewer, int i)
 {
   if(!display_list_built[i])
   {
@@ -50,10 +50,10 @@ void Scene_item_with_display_list::draw(int i) const
     // draw the item in a display list
     ::glNewList(display_list[i],GL_COMPILE_AND_EXECUTE);
     if(i == 0) {
-      direct_draw();
+      direct_draw(viewer);
     }
     else {
-      direct_draw_edges();
+      direct_draw_edges(viewer);
     }
     ::glEndList();
     display_list_built[i] = true;
@@ -69,4 +69,6 @@ void Scene_item_with_display_list::changed()
   for(int i = 0; i < NB_OF_DISPLAY_LISTS; ++i) {
     display_list_built[i] = false;
   }
+
+
 }

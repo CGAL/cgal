@@ -163,17 +163,17 @@ Scene_c3t3_item::toolTip() const {
 }
 
 void
-Scene_c3t3_item::direct_draw() const {
-  direct_draw(DRAW);
+Scene_c3t3_item::draw(QGLViewer *viewer)const {
+  draw(viewer,DRAW);
 }
 
 void
-Scene_c3t3_item::direct_draw_edges() const {
-  direct_draw(DRAW_EDGES);
+Scene_c3t3_item::draw_edges(QGLViewer* viewer) const {
+  draw(viewer, DRAW_EDGES);
 }
 
 void
-Scene_c3t3_item::direct_draw(int mode) const {
+Scene_c3t3_item::draw(QGLViewer *viewer, int mode) const {
   ::glPushMatrix();
   ::glMultMatrixd(frame->matrix());
   QGLViewer::drawGrid((float)complex_diag(this));

@@ -515,12 +515,12 @@ Scene_segmented_image_item::bbox() const
 
 
 void
-Scene_segmented_image_item::draw() const
+Scene_segmented_image_item::draw(QGLViewer* viewer) const
 {
   if(m_image)
   {
     m_image->gl_draw_bbox(3.0f,0,0,0);
-    draw_gl();
+    draw_gl(viewer);
   }
 }
 
@@ -605,7 +605,7 @@ Scene_segmented_image_item::initialize_buffers()
 
 
 void
-Scene_segmented_image_item::draw_gl() const
+Scene_segmented_image_item::draw_gl(QGLViewer *viewer) const
 {
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
   if(!gl_vbo_available()) return;
@@ -642,7 +642,7 @@ Scene_segmented_image_item::draw_gl() const
 
 
 void
-Scene_segmented_image_item::draw_gl_edges() const
+Scene_segmented_image_item::draw_gl_edges(QGLViewer * viewer) const
 {
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
   if(!gl_vbo_available()) return;

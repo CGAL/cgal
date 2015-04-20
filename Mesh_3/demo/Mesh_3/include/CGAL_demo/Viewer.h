@@ -5,6 +5,7 @@
 #include <QGLViewer/qglviewer.h>
 #include <QPoint>
 
+
 // forward declarations
 class QWidget;
 class Scene_draw_interface;

@@ -5,6 +5,7 @@
 
 #include <QColor>
 #include <QString>
+#include<QGLViewer/qglviewer.h>
 
 class Volume_plane_interface;
 
@@ -26,7 +27,7 @@ public:
   bool supportsRenderingMode(RenderingMode) const { return true; }
   QString toolTip() const { return "Tooling"; }
 
-  void draw() const;
+  void draw(QGLViewer*)const;
 
   void setX(Volume_plane_interface* x) { a = x; }
   void setY(Volume_plane_interface* x) { b = x; }

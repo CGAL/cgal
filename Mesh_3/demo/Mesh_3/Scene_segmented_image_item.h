@@ -6,7 +6,7 @@
 #include "Image_type_fwd.h"
 #include "Scene_segmented_image_item_config.h"
 #include <CGAL/gl.h>
-
+#include<QGLViewer/qglviewer.h>
 typedef CGAL::Image_3 Image;
 
 class SCENE_SEGMENTED_IMAGE_ITEM_EXPORT Scene_segmented_image_item 
@@ -28,18 +28,18 @@ public:
   virtual bool supportsRenderingMode(RenderingMode m) const;
 
   // draw
-  virtual void direct_draw() const { draw(); }
-  virtual void direct_draw_edges() const { draw_edges(); }
-  virtual void draw() const;
-  virtual void draw_edges() const { draw_gl_edges(); }
+  virtual void direct_draw(QGLViewer* viewer) const { draw(viewer); }
+  virtual void direct_draw_edges(QGLViewer* viewer) const { draw_edges(viewer); }
+  virtual void draw(QGLViewer*) const;
+  virtual void draw_edges(QGLViewer* viewer) const { draw_gl_edges(viewer); }
   
   virtual QString toolTip() const;
   
   const Image* image() const { return m_image; }
 
 private:
-  void draw_gl() const;
-  void draw_gl_edges() const;
+  void draw_gl(QGLViewer* viewer) const;
+  void draw_gl_edges(QGLViewer*) const;
   
   void initialize_buffers();
   GLint ibo_size() const;

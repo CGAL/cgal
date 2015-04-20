@@ -76,7 +76,7 @@ public:
 
   unsigned int cube() {return currentCube; }
 
-  void draw() const;
+  void draw(QGLViewer*)const;
 
   unsigned int aDim() const { return adim_; }
   unsigned int bDim() const { return bdim_; }
@@ -228,7 +228,7 @@ Volume_plane<T>::~Volume_plane() {
 }
 
 template<typename T>
-void Volume_plane<T>::draw() const {
+void Volume_plane<T>::draw(QGLViewer * viewer) const {
   updateCurrentCube();
 
   glDisable(GL_LIGHTING);

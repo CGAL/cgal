@@ -9,7 +9,7 @@
 #include <QColorDialog>
 #include <QApplication>
 #include <QPointer>
-
+#include <QGLViewer/qglviewer.h>
 namespace {
   void CGALglcolor(QColor c)
   {
@@ -125,6 +125,7 @@ Scene::duplicate(Item_id index)
 
 void Scene::initializeGL()
 {
+initializeOpenGLFunctions();
 }
 
 // workaround for Qt-4.2.
@@ -133,18 +134,18 @@ void Scene::initializeGL()
 #endif
 
 void 
-Scene::draw()
+Scene::draw(QGLViewer* viewer)
 {
-  draw_aux(false);
+  draw_aux(false, viewer);
 }
 void 
-Scene::drawWithNames()
+Scene::drawWithNames(QGLViewer *viewer)
 {
-  draw_aux(true);
+  draw_aux(true,viewer);
 }
 
 void 
-Scene::draw_aux(bool with_names)
+Scene::draw_aux(bool with_names, QGLViewer *viewer)
 {
   // Flat/Gouraud OpenGL drawing
   for(int index = 0; index < entries.size(); ++index)
@@ -156,21 +157,19 @@ Scene::draw_aux(bool with_names)
     if(item.visible())
     {
       if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
-      {
-	::glEnable(GL_LIGHTING);
-	::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+      {  
         ::glPointSize(2.f);
         ::glLineWidth(1.0f);
-	if(index == selected_item)
-	  CGALglcolor(item.color().lighter(120));
-	else
-	  CGALglcolor(item.color());
-	if(item.renderingMode() == Gouraud)
-	  ::glShadeModel(GL_SMOOTH);
-	else
-	  ::glShadeModel(GL_FLAT);
+    if(index == selected_item)
+      CGALglcolor(item.color().lighter(120));
+    else
+      CGALglcolor(item.color());
+    if(item.renderingMode() == Gouraud)
+      ::glShadeModel(GL_SMOOTH);
+    else
+      ::glShadeModel(GL_FLAT);
 
-        item.draw();
+        item.draw(viewer);
       }
     }
     if(with_names) {
@@ -189,16 +188,15 @@ Scene::draw_aux(bool with_names)
     {
       if(item.renderingMode() == FlatPlusEdges || item.renderingMode() == Wireframe)
       {
-        ::glDisable(GL_LIGHTING);
-        ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+
         ::glPointSize(2.f);
         ::glLineWidth(1.0f);
         if(index == selected_item)
           CGALglcolor(Qt::black);
         else
           CGALglcolor(item.color().lighter(50));
-        
-        item.draw_edges();
+
+        item.draw_edges(viewer);
       }
       if(with_names) {
         ::glPopName();
@@ -217,8 +215,7 @@ Scene::draw_aux(bool with_names)
     {
       if(item.renderingMode() == Points)
       {
-        ::glDisable(GL_LIGHTING);
-        ::glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
+        ::glEnable(GL_POINT_SMOOTH);
         ::glPointSize(2.f);
         ::glLineWidth(1.0f);
         if(index == selected_item)
@@ -226,7 +223,8 @@ Scene::draw_aux(bool with_names)
         else
           CGALglcolor(item.color().lighter(50));
         
-        item.draw_points();
+        item.draw_points(viewer);
+        ::glDisable(GL_POINT_SMOOTH);
       }
       if(with_names) {
         ::glPopName();

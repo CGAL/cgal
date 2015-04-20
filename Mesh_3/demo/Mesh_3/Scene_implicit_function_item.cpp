@@ -44,7 +44,7 @@ Scene_implicit_function_item::bbox() const
 }
 
 void
-Scene_implicit_function_item::direct_draw() const
+Scene_implicit_function_item::draw(QGLViewer* viewer) const
 {
   
   draw_function_grid(red_color_ramp_, blue_color_ramp_);

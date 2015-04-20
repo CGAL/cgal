@@ -1,7 +1,7 @@
 #ifndef SCENE_IMPLICIT_FUNCTION_ITEM_H
 #define SCENE_IMPLICIT_FUNCTION_ITEM_H
 
-#include <CGAL_demo/Scene_item_with_display_list.h>
+#include <CGAL_demo/Scene_item.h>
 #include <CGAL_demo/Scene_interface.h>
 #include "Scene_implicit_function_item_config.h"
 #include "implicit_functions/Implicit_function_interface.h"
@@ -14,7 +14,7 @@
 
 
 class SCENE_IMPLICIT_FUNCTION_ITEM_EXPORT Scene_implicit_function_item 
-  : public Scene_item_with_display_list
+  : public Scene_item
 {
   Q_OBJECT
   
@@ -38,7 +38,7 @@ public:
   virtual ManipulatedFrame* manipulatedFrame() { return frame_; }
   
   // draw (overload only direct_draw() to use display list of base class)
-  virtual void direct_draw() const;
+  virtual void draw(QGLViewer* viewer) const;
   
   virtual QString toolTip() const;
 

@@ -3,7 +3,7 @@
 
 #include "Scene_c3t3_item_config.h"
 #include "C3t3_type.h"
-#include <CGAL_demo/Scene_item_with_display_list.h>
+#include <CGAL_demo/Scene_item.h>
 
 #include <QVector>
 #include <QColor>
@@ -17,7 +17,7 @@
 struct Scene_c3t3_item_priv;
 
 class SCENE_C3T3_ITEM_EXPORT Scene_c3t3_item
-  : public Scene_item_with_display_list
+  : public Scene_item
 {
   Q_OBJECT
 public:
@@ -67,8 +67,8 @@ public:
     return (m != Gouraud); // CHECK THIS!
   }
 
-  void direct_draw() const;
-  void direct_draw_edges() const;
+  void draw(QGLViewer* viewer) const;
+  void draw_edges(QGLViewer* viewer) const;
   
   // data item
   inline const Scene_item* data_item() const;
@@ -90,7 +90,7 @@ private:
   QColor get_histogram_color(const double v) const;
   
 protected:
-  void direct_draw(int) const;
+  void draw(QGLViewer* viewer,int) const ;
   Scene_c3t3_item_priv* d;
 
   qglviewer::ManipulatedFrame* frame;

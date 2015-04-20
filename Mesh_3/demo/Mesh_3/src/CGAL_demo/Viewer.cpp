@@ -82,9 +82,9 @@ void Viewer::draw_aux(bool with_names)
     ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
   }
   if(with_names)
-    scene->drawWithNames();
+    scene->drawWithNames(this);
   else
-    scene->draw();
+    scene->draw(this);
 }
 
 void Viewer::drawWithNames()
