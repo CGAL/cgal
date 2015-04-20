@@ -18,8 +18,8 @@
 // Author(s) : Jocelyn Meyron and Quentin Mérigot
 //
 
-#ifndef CGAL_VCM_UTILITIES_H
-#define CGAL_VCM_UTILITIES_H
+#ifndef CGAL_INTERNAL_VCM_VCM_UTILITIES_H
+#define CGAL_INTERNAL_VCM_VCM_UTILITIES_H
 
 #include <Eigen/Dense>
 #include <Eigen/Eigenvalues>
@@ -85,4 +85,4 @@ extract_greater_eigenvector (Covariance &cov,
 
 } // namespace CGAL
 
-#endif // CGAL_VCM_UTILITIES_H
+#endif // CGAL_INTERNAL_VCM_VCM_UTILITIES_H

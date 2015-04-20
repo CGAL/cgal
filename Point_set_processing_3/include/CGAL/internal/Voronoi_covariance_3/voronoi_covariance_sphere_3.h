@@ -18,8 +18,8 @@
 // Author(s) : Jocelyn Meyron and Quentin Mérigot
 //
 
-#ifndef CGAL_VORONOI_COVARIANCE_SPHERE_3_HPP
-#define CGAL_VORONOI_COVARIANCE_SPHERE_3_HPP
+#ifndef CGAL_INTERNAL_VCM_VORONOI_COVARIANCE_SPHERE_3_HPP
+#define CGAL_INTERNAL_VCM_VORONOI_COVARIANCE_SPHERE_3_HPP
 
 #include <CGAL/point_generators_3.h>
 
@@ -102,5 +102,5 @@ namespace CGAL {
     }; // namespace Voronoi_covariance_3
 }; // namespace CGAL
 
-#endif // CGAL_VORONOI_COVARIANCE_SPHERE_3_HPP
+#endif // CGAL_INTERNAL_VCM_VORONOI_COVARIANCE_SPHERE_3_HPP
 
