@@ -455,8 +455,6 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
 {
   typedef typename boost::graph_traits<Graph>              Traits;
   typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
-  typedef typename Traits::vertex_descriptor               vertex_descriptor;
-  typedef typename Traits::face_descriptor                 face_descriptor;
 
   halfedge_descriptor hb = make_quad(p0, p1, p2, p3, g);
   halfedge_descriptor ht = prev(make_quad(p4, p7, p6, p5, g),g);

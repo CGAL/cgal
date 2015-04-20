@@ -13,7 +13,7 @@ template <typename Mesh>
 void
 test(char *fname, bool triangle, bool quad, bool tetrahedron, bool hexahedron)
 {
-  typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
   std::cerr << "test(" << fname << ")"<< std::endl;
   Mesh m;
   std::ifstream in(fname);
