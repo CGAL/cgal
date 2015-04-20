@@ -41,40 +41,33 @@
 
 namespace CGAL {
 
-// ----------------------------------------------------------------------------
-// Private section
-// ----------------------------------------------------------------------------
-namespace internal {
 
-/// @cond SKIP_IN_MANUAL
-// Determine if a point is on an edge using the VCM of the point.
-// A point will be considered as an edge point iff it satisfies a criteria
-// relating the eigenvalues of its VCM.
+/// Determine if a point is on an edge using the VCM of the point.
+/// A point will be considered as an edge point iff it satisfies a criteria
+/// relating the eigenvalues of its VCM.
 template <class Covariance>
 bool
 is_on_edge (Covariance &cov,
-            double threshold,
-            Eigen::Vector3f &dir) {
+            double threshold) {
     // Construct covariance matrix
-    Eigen::Matrix3f m = construct_covariance_matrix(cov);
+    Eigen::Matrix3f m = internal::construct_covariance_matrix(cov);
 
     // Diagonalizing the matrix
     Eigen::Vector3f eigenvalues;
     Eigen::Matrix3f eigenvectors;
-    if (! diagonalize_selfadjoint_matrix(m, eigenvectors, eigenvalues)) {
+    if (! internal::diagonalize_selfadjoint_matrix(m, eigenvectors, eigenvalues)) {
         return false;
     }
 
     // Compute the ratio
     float r = eigenvalues(1) / (eigenvalues(0) + eigenvalues(1) + eigenvalues(2));
-    if (r >= threshold) {
-        dir = eigenvectors.col(1);
+    if (r >= threshold)
         return true;
-    }
 
     return false;
 }
-/// @endcond
+
+namespace internal {
 
 /// @cond SKIP_IN_MANUAL
 // Computes the Rips graph of a set of points.
@@ -230,10 +223,7 @@ compute_delaunay_graph (Undirected_Graph& g, ///< constructed graph.
 
 } // namespace internal
 
-// ----------------------------------------------------------------------------
-// Public section
-// ----------------------------------------------------------------------------
-
+/// \cond SKIP_IN_MANUAL
 /// \ingroup PkgPointSetProcessing
 /// Estimates the feature edges of the `[first, beyond)` range of points
 /// using the Voronoi Covariance Measure.
@@ -281,8 +271,7 @@ vcm_estimate_edges (ForwardIterator first, ///< iterator over the first input po
     std::vector<Point> points_on_edges;
     int i = 0;
     for (ForwardIterator it = first; it != beyond; ++it) {
-        Eigen::Vector3f dir;
-        if (internal::is_on_edge(cov[i], threshold, dir)) {
+        if (is_on_edge(cov[i], threshold)) {
             points_on_edges.push_back(get(point_pmap, *it));
         }
         i++;
@@ -345,7 +334,7 @@ construct_mst (std::vector<typename Kernel::Point_3> points_on_edges, ///< estim
 
     return polylines;
 }
-
+/// \endcond
 } // namespace CGAL
 
 #endif // CGAL_VCM_ESTIMATE_EDGES_H

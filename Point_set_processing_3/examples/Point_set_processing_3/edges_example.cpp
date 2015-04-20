@@ -7,17 +7,20 @@
 #include <vector>
 #include <fstream>
 
+#include <boost/foreach.hpp>
+
 // Types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
-typedef Kernel::Segment_3 Segment;
 
 // Point with normal vector stored in a std::pair.
 typedef std::pair<Point, Vector> PointVectorPair;
 typedef std::vector<PointVectorPair> PointList;
 
-int main (int argc, char *argv[]) {
+typedef CGAL::Voronoi_covariance_3::Voronoi_covariance_3<double> Covariance;
+
+int main (int , char**) {
     // Reads a .xyz point set file in points[].
     std::list<PointVectorPair> points;
     std::ifstream stream("data/fandisk.off");
@@ -30,21 +33,25 @@ int main (int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    // Estimates edges points.
+    // Estimates covariance matrices per points.
     double R = 0.2,
-           r = 0.1,
-           threshold = 0.16;
-    std::vector<Point> edges_points;
-    edges_points = vcm_estimate_edges(points.begin(), points.end(),
-                                      CGAL::First_of_pair_property_map<PointVectorPair>(),
-                                      R, r, threshold,
-                                      Kernel());
+           r = 0.1;
+    std::vector<Covariance> cov;
+    CGAL::First_of_pair_property_map<PointVectorPair> point_pmap;
 
-    // Computes a graph (MST) between the edges.
-    std::vector<Segment> polylines;
-    polylines = construct_mst(edges_points,
-                              Kernel());
+    CGAL::vcm_compute(points.begin(), points.end(), point_pmap, cov, R, r, Kernel());
 
+    // Find the points on the edges.
+    // Note that this step is not expensive and can be done several time to get better results
+    double threshold = 0.16;
+    std::vector<PointVectorPair> points_on_edges;
+    int i = 0;
+    BOOST_FOREACH(const PointVectorPair& p, points)
+    {
+      if (CGAL::is_on_edge(cov[i], threshold))
+          points_on_edges.push_back(p);
+      ++i;
+    }
 
     return 0;
 }

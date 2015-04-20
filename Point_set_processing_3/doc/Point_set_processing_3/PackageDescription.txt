@@ -32,12 +32,10 @@
 - `CGAL::jet_smooth_point_set()`
 - `CGAL::jet_estimate_normals()`
 - `CGAL::pca_estimate_normals()`
+- `CGAL::vcm_compute()`
 - `CGAL::vcm_estimate_normals()`
-- `CGAL::vcm_estimate_edges()`
-- `CGAL::mst_orient_normals()`
+- `CGAL::is_on_edge()`
 - `CGAL::write_off_points()`
 - `CGAL::write_xyz_points()`
-- `CGAL::construct_mst()`
-
 */
 
