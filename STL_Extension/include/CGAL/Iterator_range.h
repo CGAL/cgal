@@ -22,7 +22,7 @@
 
 #include <CGAL/tuple.h>
 #include <utility>
-
+#include <boost/foreach.hpp>
 
 namespace CGAL {
 
@@ -92,4 +92,13 @@ namespace CGAL {
   }  
 } // namespace CGAL
 
+
+namespace boost { namespace foreach
+{
+    template<typename T>
+    struct is_lightweight_proxy< CGAL::Iterator_range<T> >
+      : mpl::true_
+    {
+    };
+}}
 #endif // CGAL_ITERATOR_RANGE_H

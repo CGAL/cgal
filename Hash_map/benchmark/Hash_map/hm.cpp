@@ -13,82 +13,140 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/Timer.h>
-
+#include<boost/range/iterator_range.hpp> 
 #include <boost/unordered_map.hpp>
+#include <unordered_map>
 
+#include <boost/random/random_number_generator.hpp>
+#include <boost/random/linear_congruential.hpp>
 
 typedef CGAL::Simple_cartesian<double>  Kernel;
 typedef Kernel::Point_3                 Point_3;
+typedef Kernel::Vector_3                Vector_3;
 
-typedef CGAL::Surface_mesh<Point_3>     Surface_mesh;
-typedef CGAL::Polyhedron_3<Kernel>      Polyhedron_3;
 typedef CGAL::Timer                     Timer;
 
-template <typename G>
+template <typename G, typename Map>
 void
-run(char* fname)
+run(const G& g)
 {
   typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
-  G g;
-  std::ifstream input(fname);
-  input >> g;
 
-  typedef typename boost::property_map<G,CGAL::vertex_point_t>::type  VPM;
+  typedef typename boost::property_map<G,CGAL::vertex_point_t>::const_type  VPM;
   VPM vpm = get(CGAL::vertex_point,g);
 
 
-  std::vector<vertex_descriptor> V;
+  std::vector<vertex_descriptor> V, V2;
   std::vector<Point_3> P1, P2;
   BOOST_FOREACH(vertex_descriptor vd, vertices(g)){
     V.push_back(vd);
+    V2.push_back(vd);
   }
-  std::random_shuffle(V.begin(), V.end());
 
-  std::map<vertex_descriptor,Point_3> vm;
-  boost::unordered_map<vertex_descriptor,Point_3> vum;
-  BOOST_FOREACH(vertex_descriptor vd, V){
-    vm[vd] = get(vpm,vd);
-    vum[vd] = get(vpm,vd);
-
-  }
+  boost::rand48 random;
+  boost::random_number_generator<boost::rand48> rng(random);
+  std::random_shuffle(V.begin(), V.end(), rng);
 
   Timer t;
   t.start();
-  for(int i= 0; i < 1; i++){
-  BOOST_FOREACH(vertex_descriptor vd, vertices(g)){
-    P1.push_back(vm[vd]);
-    /*
-      if(vm[vd] != get(vpm,vd)){
-      std::cerr << "error1" << std::endl;
-    }
-    */
+  Map vm;
+  BOOST_FOREACH(vertex_descriptor vd, V){
+    vm[vd] = get(vpm,vd);
   }
+  t.stop();  std::cerr << "Insertion:  " << t.time() << " sec.     " << std::endl;
+
+  Vector_3 v(0,0,0);
+
+  std::cerr << "BOOST_FOREACH std::vector<vertex_descriptor)\n";
+  t.reset(); t.start();
+  BOOST_FOREACH(vertex_descriptor vd, V2){  
+    typename Map::iterator it = vm.find(vd);
+    v = v + ((*it).second - CGAL::ORIGIN);
   }
-  t.stop();
-  std::cerr << t.time() << " sec."<< std::endl; 
-  t.reset();
-  t.start();
-  for(int i= 0; i < 1; i++){
-  BOOST_FOREACH(vertex_descriptor vd, vertices(g)){
-    typename boost::unordered_map<vertex_descriptor,Point_3>::iterator it = vum.find(vd);
-    P2.push_back((*it).second);
-    /*
-    if(vum[vd] != get(vpm,vd)){
-      std::cerr << "error2" << std::endl;
-    }
-    */
+
+  t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
+
+  std::cerr << "BOOST_FOREACH boost::iterator_range r = vertices(g))\n";
+  t.reset(); t.start();
+  boost::iterator_range<typename boost::graph_traits<G>::vertex_iterator> r = vertices(g);
+  BOOST_FOREACH(vertex_descriptor& vd, r) {
+    typename Map::iterator it = vm.find(vd);
+    v = v + ((*it).second - CGAL::ORIGIN);
   }
+  t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
+
+  std::cerr << "BOOST_FOREACH CGAL::Iterator_range r = vertices(g))\n";
+  t.reset(); t.start();
+  CGAL::Iterator_range<typename boost::graph_traits<G>::vertex_iterator> ir = vertices(g);
+  BOOST_FOREACH(vertex_descriptor& vd, ir) {
+    typename Map::iterator it = vm.find(vd);
+    v = v + ((*it).second - CGAL::ORIGIN);
   }
-  t.stop();
-  std::cerr << t.time() << " sec."<< std::endl;
-  if(P1.size() != P2.size()){
-    std::cerr << "error3" << std::endl;
-  } 
+  t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
+
+  std::cerr << "BOOST_FOREACH vertices(g))\n";
+  t.reset(); t.start();
+  BOOST_FOREACH(vertex_descriptor vd, vertices(g)) {
+    typename Map::iterator it = vm.find(vd);
+    v = v + ((*it).second - CGAL::ORIGIN);
+  }
+  t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
+  
+  std::cerr << "boost::tie(vb,ve) = vertices(g);\n";
+  t.reset(); t.start();
+  
+  typename boost::graph_traits<G>::vertex_iterator vb, ve;
+  boost::tie(vb,ve) = vertices(g);
+  for(; vb != ve; ++vb) {
+    vertex_descriptor vd = *vb;
+    typename Map::iterator it = vm.find(vd);
+    v = v + ((*it).second - CGAL::ORIGIN);
+  }
+  t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
+
+  std::cerr << "v = " << v << std::endl;
 }
 
 int main(int , char* argv[])
 {
-  run<Surface_mesh>(argv[1]);
-  run<Polyhedron_3>(argv[1]);
-  return 0;
+
+  {
+    typedef CGAL::Surface_mesh<Point_3>     Mesh;
+    typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+    typedef std::map<vertex_descriptor,Point_3> SM;
+    typedef std::unordered_map<vertex_descriptor,Point_3> SUM;
+    typedef boost::unordered_map<vertex_descriptor,Point_3> BUM;
+
+    Mesh m;
+    std::ifstream input(argv[1]);
+    input >> m;
+
+    std::cerr << "\nSurface_mesh  std::map"<< std::endl;
+    run<Mesh,SM>(m);
+    std::cerr << "\nSurface_mesh  std::unordered_map"<< std::endl;
+    run<Mesh,SUM>(m);
+    std::cerr << "\nSurface_mesh  boost::unordered_map"<< std::endl;
+    run<Mesh,BUM>(m);
+  }
+
+  {
+    typedef CGAL::Polyhedron_3<Kernel>      Mesh;
+    typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+    typedef std::map<vertex_descriptor,Point_3> SM;
+    typedef std::unordered_map<vertex_descriptor,Point_3> SUM;
+    typedef boost::unordered_map<vertex_descriptor,Point_3> BUM;
+
+    Mesh m;
+    std::ifstream input(argv[1]);
+    input >> m;
+
+    std::cerr << "\nPolyhedron_3  std::map" << std::endl;
+    run<Mesh,SM>(m);
+    std::cerr << "\nPolyhedron_3 std::unordered_map"<< std::endl;
+    run<Mesh,SUM>(m);
+    std::cerr << "\nPolyhedron_3 boost::unordered_map"<< std::endl;
+    run<Mesh,BUM>(m);
+  }
+
+    return 0;
 }

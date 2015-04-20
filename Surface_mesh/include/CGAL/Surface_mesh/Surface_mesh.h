@@ -123,6 +123,7 @@ namespace CGAL {
   template <class T>
   std::size_t hash_value(const SM_Index<T>&  i)
   {
+    std::cerr << "hash_value" << std::endl;
     std::size_t ret = i;
     return ret;
   }
@@ -3000,5 +3001,15 @@ namespace std {
   };
 }
 
+namespace boost {
+  template <>
+  struct hash<CGAL::SM_Vertex_index > {
+    std::size_t operator()(const CGAL::SM_Vertex_index& i) const
+    {
+      //      std::cerr <<"hash"<<std::endl;
+      return i;
+    }
+  };
+}
 #endif /* CGAL_SURFACE_MESH_H */
 
