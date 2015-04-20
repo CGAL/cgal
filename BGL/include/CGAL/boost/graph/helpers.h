@@ -23,9 +23,17 @@
 
 #include <boost/foreach.hpp>
 #include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/Euler_operations.h>
+
+
+
 namespace CGAL {
 
+  namespace Euler {
+
+    template< typename Graph>
+    void fill_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
+                   Graph& g);
+  }
 
 /*!
    \ingroup PkgBGLHelperFct
@@ -196,7 +204,6 @@ template <typename FaceGraph>
   }
   return true;
 }
-
 
 /*!
    \ingroup PkgBGLHelperFct
