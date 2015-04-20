@@ -219,11 +219,11 @@ vcm_convolve (ForwardIterator first,
 /// `R` should be set to the minimum local feature size of the surface while `r` can be set to zero.
 ///
 /// The Voronoi covariance matrix of each vertex is stored in a array `a` of length 6 and is as follow:
-/// \verbatim
-/// a[0] a[1] a[2]
-/// a[1] a[3] a[4]
-/// a[2] a[4] a[5]
-/// \endverbatim
+/// \f$ \begin{bmatrix}
+/// a[0] & a[1] & a[2] \\
+/// a[1] & a[3] & a[4] \\
+/// a[2] & a[4] & a[5] \\
+/// \end{bmatrix}\f$
 ///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
