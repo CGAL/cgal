@@ -48,7 +48,7 @@ int main (int , char**) {
     int i = 0;
     BOOST_FOREACH(const PointVectorPair& p, points)
     {
-      if (CGAL::is_on_edge(cov[i], threshold))
+      if (CGAL::vcm_is_on_feature_edge(cov[i], threshold))
           points_on_edges.push_back(p);
       ++i;
     }

@@ -219,7 +219,7 @@ normals:
 
 \section Point_set_processing_3FeaturesEstimation Feature Edges Estimation
 
-Function `is_on_edge()` indicates if a points belong to a feature edges of the
+Function `vcm_is_on_feature_edge()` indicates if a points belong to a feature edges of the
 point set using its Voronoi Covariance Measure.
 It is based on the article \cgalCite{cgal:mog-vbcfe-11}.
 

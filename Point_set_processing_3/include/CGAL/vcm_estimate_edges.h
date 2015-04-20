@@ -59,8 +59,8 @@ namespace CGAL {
 ///
 template <class FT>
 bool
-is_on_edge (cpp11::array<FT,6> &cov,
-            double threshold) {
+vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
+                        double threshold) {
     // Construct covariance matrix
     Eigen::Matrix3f m = internal::construct_covariance_matrix(cov);
 
@@ -283,7 +283,7 @@ vcm_estimate_edges (ForwardIterator first, ///< iterator over the first input po
     std::vector<Point> points_on_edges;
     int i = 0;
     for (ForwardIterator it = first; it != beyond; ++it) {
-        if (is_on_edge(cov[i], threshold)) {
+        if (vcm_is_on_feature_edge(cov[i], threshold)) {
             points_on_edges.push_back(get(point_pmap, *it));
         }
         i++;
