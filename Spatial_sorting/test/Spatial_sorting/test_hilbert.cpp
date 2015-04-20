@@ -2,6 +2,7 @@
 #include <cassert>
 
 #include <CGAL/hilbert_sort.h>
+#include <CGAL/hilbert_sort_on_sphere.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Cartesian_d.h>
