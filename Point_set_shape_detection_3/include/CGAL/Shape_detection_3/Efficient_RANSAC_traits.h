@@ -30,8 +30,12 @@ namespace CGAL {
       \brief %Default traits class to use the shape detection class `Efficient_RANSAC`.
       \cgalModels `EfficientRANSACTraits`
 
-      \tparam Gt Geometric traits class. It must provide `Gt::FT`, `Gt::Point_3` and `Gt::Vector_3`.
-             `Gt::FT` must be a floating point number type like `double` or `float`.
+      \tparam Gt Geometric traits class. It must provide `Gt::FT`,
+	         `Gt::Point_3` and `Gt::Vector_3`. `Gt::FT` must be a floating
+			 point number type like `double` or `float`. Additionally,
+             `Gt::Line_3`, `Gt::Plane_3`, `Gt::Sphere_3`, `Gt::Circle_2`,
+			 `Gt::Point_2` are required depending on the shapes registered
+			 for detection.
 
       \tparam InputIterator is a model of RandomAccessIterator
 
@@ -47,13 +51,29 @@ namespace CGAL {
             class Npmap>
   struct Efficient_RANSAC_traits {
     ///
-    typedef Gt Geom_traits;
+    typedef typename Gt::FT FT;
+    ///
+    typedef typename Gt::Vector_3 Vector_3;
+    ///
+    typedef typename Gt::Point_3 Point_3;
+    ///
+    typedef typename Gt::Sphere_3 Sphere_3;
+    ///
+    typedef typename Gt::Line_3 Line_3;
+    ///
+    typedef typename Gt::Circle_2 Circle_2;
+    ///
+    typedef typename Gt::Plane_3 Plane_3;
+    ///
+    typedef typename Gt::Point_2 Point_2;
     ///
     typedef InputRange Input_range;
     ///
     typedef Ppmap Point_map;
     ///
     typedef Npmap Normal_map;
+    ///
+    typedef typename CGAL::Search_traits_3<typename Gt> Search_traits;
   };
 
 } } // end of namespace CGAL::Shape_detection_3

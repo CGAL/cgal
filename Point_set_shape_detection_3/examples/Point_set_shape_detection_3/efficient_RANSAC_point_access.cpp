@@ -53,7 +53,7 @@ int main()
   Efficient_ransac ransac;
 
   // Provides the input data.
-  ransac.set_input_data(points);
+  ransac.set_input(points);
 
   // Registers detection of planes
   ransac.add_shape_factory<Plane>();

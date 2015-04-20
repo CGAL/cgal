@@ -167,9 +167,9 @@ namespace CGAL {
       typedef typename PointAccessor::Sd_traits Sd_traits;
       typedef typename Sd_traits::Input_range::iterator Input_iterator;
       typedef Shape_base<Sd_traits> Shape;
-      typedef typename Sd_traits::Geom_traits::Point_3 Point;
-      typedef typename Sd_traits::Geom_traits::Vector_3 Vector;
-      typedef typename Sd_traits::Geom_traits::FT FT;
+      typedef typename Sd_traits::Point_3 Point;
+      typedef typename Sd_traits::Vector_3 Vector;
+      typedef typename Sd_traits::FT FT;
       typedef typename Sd_traits::Point_map Point_map;
       typedef typename Sd_traits::Normal_map Normal_map;
 

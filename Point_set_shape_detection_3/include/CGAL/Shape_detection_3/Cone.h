@@ -55,9 +55,9 @@ namespace CGAL {
      ///< property map to access the location of an input point.
     typedef typename Traits::Normal_map Normal_map;
      ///< property map to access the unoriented normal of an input point.
-    typedef typename Traits::Geom_traits::FT FT; ///< number type.
-    typedef typename Traits::Geom_traits::Point_3 Point;///< point type.
-    typedef typename Traits::Geom_traits::Vector_3 Vector;///< vector type.
+    typedef typename Traits::FT FT; ///< number type.
+    typedef typename Traits::Point_3 Point;///< point type.
+    typedef typename Traits::Vector_3 Vector;///< vector type.
     /// \endcond
 
 	

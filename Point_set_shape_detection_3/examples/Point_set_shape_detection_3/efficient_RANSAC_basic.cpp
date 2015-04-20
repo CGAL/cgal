@@ -45,7 +45,7 @@ int main()
   Efficient_ransac ransac;
 
   // Provides the input data.
-  ransac.set_input_data(points);
+  ransac.set_input(points);
 
   // Registers planar shapes via template method.
   ransac.add_shape_factory<Plane>();

@@ -77,9 +77,9 @@ namespace CGAL {
       ///< own type.
     /// \endcond
 
-    typedef typename Traits::Geom_traits::FT FT; ///< number type.
-    typedef typename Traits::Geom_traits::Point_3 Point; ///< point type.
-    typedef typename Traits::Geom_traits::Vector_3 Vector; ///< vector type.
+    typedef typename Traits::FT FT; ///< number type.
+    typedef typename Traits::Point_3 Point; ///< point type.
+    typedef typename Traits::Vector_3 Vector; ///< vector type.
 
     Shape_base() :
     m_is_valid(false),
@@ -273,13 +273,13 @@ namespace CGAL {
      */
     std::size_t connected_component_kdTree(std::vector<std::size_t> &indices,
                                            FT cluster_epsilon) {
-      typedef typename CGAL::Search_traits_3<
-        typename Traits::Geom_traits> Traits_base;
       typedef typename boost::tuple<Point,int> Point_and_int;
       typedef typename CGAL::Search_traits_adapter<Point_and_int,
-        CGAL::Nth_of_tuple_property_map<0, Point_and_int>, Traits_base> Search_traits;
-      typedef typename CGAL::Kd_tree<Search_traits> Kd_Tree;
-      typedef typename CGAL::Fuzzy_sphere<Search_traits> Fuzzy_sphere;
+        CGAL::Nth_of_tuple_property_map<0, Point_and_int>,
+        Traits::Search_traits> Search_traits_adapter;
+
+      typedef typename CGAL::Kd_tree<Search_traits_adapter> Kd_Tree;
+      typedef typename CGAL::Fuzzy_sphere<Search_traits_adapter> Fuzzy_sphere;
 
       m_has_connected_component = true;
       

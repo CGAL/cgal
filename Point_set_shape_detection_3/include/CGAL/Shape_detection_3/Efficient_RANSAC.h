@@ -27,7 +27,8 @@
 
 //for octree ------------------------------
 #include <boost/iterator/filter_iterator.hpp>
-#include <CGAL/bounding_box.h> //----------
+#include <CGAL/bounding_box.h>
+//----------
 
 #include <vector>
 #include <random>
@@ -39,6 +40,7 @@
 //boost --------------
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/range/iterator_range.hpp>
+#include <boost/shared_ptr.hpp>
 //---------------------
 
 
@@ -88,9 +90,9 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     /// @{
     /// \cond SKIP_IN_MANUAL
     typedef typename Traits::Input_range::iterator Input_iterator;
-    typedef typename Traits::Geom_traits::FT FT; ///< number type.
-    typedef typename Traits::Geom_traits::Point_3 Point; ///< point type.
-    typedef typename Traits::Geom_traits::Vector_3 Vector; ///< vector type.
+    typedef typename Traits::FT FT; ///< number type.
+    typedef typename Traits::Point_3 Point; ///< point type.
+    typedef typename Traits::Vector_3 Vector; ///< vector type.
     /// \endcond
     typedef typename Traits::Point_map Point_map;
     ///< property map to access the location of an input point.
@@ -102,7 +104,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     typedef unspecified_type Shape_range;
 #else
     typedef typename
-    boost::iterator_range<typename std::vector<Shape *>::const_iterator>
+    boost::iterator_range<typename std::vector<boost::shared_ptr<Shape> >::const_iterator>
       Shape_range;
 #endif
     ///< Range of extracted shapes with `Shape*` as value type. Model of the `ConstRange` concept.
@@ -120,7 +122,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     /// \name Parameters 
     /// @{
       /*!
-       Parameters for the shape detection algorithm.
+       %Parameters for the shape detection algorithm.
        */
     struct Parameters {
       Parameters()
@@ -183,7 +185,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
       results is required. The data in the input range is reordered during
       `detect()` and `build_octrees()`. The function `clear()` is first called by this function.
     */
-    void set_input_data(
+    void set_input(
       ///< Range of input data points.
       typename Traits::Input_range& input_range,
       ///< past-the-end random access iterator over the input points.
@@ -194,10 +196,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
       ) {
         clear();
 
-        if (m_extracted_shapes.size()) {
-          for (std::size_t i = 0;i<m_extracted_shapes.size();i++)
-            delete m_extracted_shapes[i];
-        }
+        m_extracted_shapes.clear();
 
         m_point_pmap = point_map;
         m_normal_pmap = normal_map;
@@ -222,7 +221,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
       These structures only depend on the input data, i.e. the points and
       normal vectors.
     */ 
-    bool build_octrees() {
+    bool preprocess() {
       if (m_num_available_points == 0)
         return false;
 
@@ -327,9 +326,6 @@ shape. The implementation follows \cgalCite{Schnabel07}.
         return;
 
       std::vector<int>().swap(m_shape_index);
-      for (std::size_t i = 0;i<m_extracted_shapes.size();i++) {
-        delete m_extracted_shapes[i];
-      }
 
       m_extracted_shapes.clear();
 
@@ -358,15 +354,11 @@ shape. The implementation follows \cgalCite{Schnabel07}.
         return false;
 
       if (m_num_subsets == 0 || m_global_octree == 0) {
-        if (!build_octrees())
+        if (!preprocess())
           return false;
       }
 
       // Reset data structures possibly used by former search
-      if (m_extracted_shapes.size()) {
-      for (std::size_t i = 0;i<m_extracted_shapes.size();i++)
-        delete m_extracted_shapes[i];
-      }
       m_extracted_shapes.clear();
       m_num_available_points = m_inputIterator_beyond - m_inputIterator_first;
 
@@ -524,7 +516,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
             candidates.back() = NULL;
 
             //1. add best candidate to final result.
-            m_extracted_shapes.push_back(best_Candidate);
+            m_extracted_shapes.push_back(boost::shared_ptr<Shape>(best_Candidate));
 
             //2. remove the points
             //2.1 update boolean
@@ -789,7 +781,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     //give the index of the subset of point i
     std::vector<int> m_index_subsets;
 
-    std::vector<Shape *> m_extracted_shapes;
+    std::vector<boost::shared_ptr<Shape> > m_extracted_shapes;
 
     std::vector<Shape *(*)()> m_shape_factories;
 

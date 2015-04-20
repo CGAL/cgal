@@ -42,12 +42,12 @@ namespace CGAL {
      ///< property map to access the location of an input point.
     typedef typename Traits::Normal_map Normal_map;
      ///< property map to access the unoriented normal of an input point.
-    typedef typename Traits::Geom_traits::FT FT; ///< number type.
-    typedef typename Traits::Geom_traits::Point_3 Point; ///< point type.
-    typedef typename Traits::Geom_traits::Vector_3 Vector;
+    typedef typename Traits::FT FT; ///< number type.
+    typedef typename Traits::Point_3 Point; ///< point type.
+    typedef typename Traits::Vector_3 Vector;
     /// \endcond
 
-    typedef typename Traits::Geom_traits::Plane_3 Plane_3;///< plane type for conversion operator.
+    typedef typename Traits::Plane_3 Plane_3;///< plane type for conversion operator.
 
   public:
     Plane() : Shape_base<Traits>() {}
