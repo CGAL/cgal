@@ -87,6 +87,18 @@ void incremental_triangle_based_remeshing(PolygonMesh& pmesh
   }
 }
 
+template<typename PolygonMesh
+       , typename FaceRange>
+void incremental_triangle_based_remeshing(PolygonMesh& pmesh
+  , FaceRange faces
+  , const double& target_edge_length)
+{
+  incremental_triangle_based_remeshing(pmesh,
+    faces,
+    target_edge_length,
+    parameters::all_default());
+}
+
 } //end namespace Polygon_mesh_processing
 } //end namespace CGAL
 
