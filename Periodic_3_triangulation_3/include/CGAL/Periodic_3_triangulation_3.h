@@ -2545,9 +2545,6 @@ inline void Periodic_3_triangulation_3<GT,TDS>::remove(Vertex_handle v,
   if (!is_1_cover()) {
     if (number_of_vertices() == 1) {
       clear();
-      // Output the hidden points.
-      for (Cell_iterator hi = cells_begin(), hend = cells_end(); hi != hend; ++hi)
-        r.add_hidden_points(hi);
       return;
     }
     Virtual_vertex_map_it vvmit = virtual_vertices.find(v);
