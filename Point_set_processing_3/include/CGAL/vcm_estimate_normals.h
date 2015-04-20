@@ -203,22 +203,27 @@ vcm_convolve (ForwardIterator first,
 // ----------------------------------------------------------------------------
 
 /// \ingroup PkgPointSetProcessing
-/// Computes the VCM and makes the convolution using a radius.
+/// computes the Voronoi Covariance Measure (VCM) of a point cloud,
+/// a construction that can be used for normal estimation and sharp feature detection.
 ///
-/// VCM consists in first computing the Voronoi diagram of the points.
-/// Then, it intersects each of the Voronoi cells with a sphere of a given radius: `R`.
-/// This parameter is related to the dimensions of the point set. It has to be chosen
-/// as the largest possible lower bound on the one-sided reach of the underlying surface.
-/// Finally, it computes the covariance matrices of the Voronoi cells.
-/// Additionally, if the convolution radius `r` is non zero then
-/// it can convolve (sum) the matrices of the points contained in a sphere of radius `r`.
-/// This parameter is useful if the point set is noised as the convolution will reduce
-/// its influence.
+/// The VCM associates to each point the covariance matrix of its Voronoi
+/// cell intersected with the the ball of radius `R`.
+/// In addition, if the second radius `r` is positive, the covariance matrices are smoothed
+/// by a simple convolution procedure. More precisely, each covariance matrix is replaced with
+/// the average of the matrices of points at distance at most `r`.
+/// The choice of the parameter `R` is related to the geometry of the underlying surface while
+/// the choice of `r` is related to the noise level in the point cloud.
+/// For example, if the point cloud is a uniform and noiseless sampling of a smooth surface,
+/// `R` should be set to the minimum local feature size of the surface while `r` can be set to zero.
 ///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
 /// @tparam Kernel Geometric traits class.
 /// @tparam Covariance Covariance matrix type. It is similar to an array with a length of 6.
+///
+/// \sa `CGAL::is_on_edge()`
+/// \sa `CGAL::vcm_estimate_normals()`
+///
 template < class ForwardIterator,
            class PointPMap,
            class Kernel,
