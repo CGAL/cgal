@@ -13,9 +13,7 @@
 #include<iostream>
 #include <string>
 #include <iterator>
-#include <utility>      // std::pair
-
-#include <CGAL/property_map.h>
+#include <list>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                     	                    Point;
@@ -32,7 +30,6 @@ void load_xy_file(const std::string& fileName, std::list<Point>& points)
 {
    std::ifstream ifs(fileName);
    Point point;
-   unsigned int nb = 0;
    while (ifs >> point)
    {
 	   points.push_back(point);

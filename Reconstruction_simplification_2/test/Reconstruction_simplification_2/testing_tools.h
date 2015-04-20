@@ -11,3 +11,15 @@ void load_xy_file(const std::string& filename, PointMassList& points)
 
    ifs.close();
 }
+
+template <class Point>
+void load_xy_file_points(const std::string& fileName, std::list<Point>& points)
+{
+   std::ifstream ifs(fileName);
+   Point point;
+   while (ifs >> point)
+   {
+       points.push_back(point);
+   }
+   ifs.close();
+}

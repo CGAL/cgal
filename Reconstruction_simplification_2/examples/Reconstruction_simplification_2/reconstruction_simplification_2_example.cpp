@@ -14,6 +14,7 @@
 #include <string>
 #include <iterator>
 #include <utility>      // std::pair
+#include <list>
 
 #include <CGAL/property_map.h>
 

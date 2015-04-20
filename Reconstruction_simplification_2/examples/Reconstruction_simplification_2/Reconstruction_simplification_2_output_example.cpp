@@ -13,10 +13,7 @@
 #include<iostream>
 #include <string>
 #include <iterator>
-#include <utility>      // std::pair
-
-
-#include <CGAL/property_map.h>
+#include <list>
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -25,14 +22,7 @@ typedef K::Segment_2                 						Segment;
 
 typedef K::FT                                         		FT;
 
-typedef std::pair<Point, FT> PointMassPair;
-typedef std::list<PointMassPair> PointMassList;
-
-typedef CGAL::First_of_pair_property_map <PointMassPair>  Point_property_map;
-typedef CGAL::Second_of_pair_property_map <PointMassPair> Mass_property_map;
-
-
-typedef CGAL::Reconstruction_simplification_2<K, Point_property_map, Mass_property_map> Rs_2;
+typedef CGAL::Reconstruction_simplification_2<K> Rs_2;
 
 
 void list_output(Rs_2& rs2);
@@ -40,28 +30,27 @@ void index_output(Rs_2& rs2);
 
 
 
-void load_xy_file(const std::string& filename, PointMassList& points)
+void load_xy_file(const std::string& filename, std::list<Point>& points)
 {
    std::ifstream ifs(filename);
    Point point;
    while (ifs >> point)
-	   points.push_back(std::make_pair(point, 1));
-
+   {
+       points.push_back(point);
+   }
    ifs.close();
 }
 
 int main ()
 {
 
-	PointMassList points;
-	load_xy_file("data/stair-noise00.xy", points);
+    std::list<Point> points;
 
-	Point_property_map point_pmap;
-	Mass_property_map  mass_pmap;
+    load_xy_file("data/stair-noise00.xy", points);
 
-	Rs_2 rs2(points.begin(), points.end(), point_pmap, mass_pmap);
+    Rs_2 rs2(points.begin(), points.end());
 
-	rs2.run(100); //100 steps
+    rs2.run(100); //100 steps
 
 	list_output(rs2);
 	index_output(rs2);

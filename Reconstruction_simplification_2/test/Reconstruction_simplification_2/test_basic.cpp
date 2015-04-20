@@ -8,35 +8,21 @@
 #include <CGAL/Reconstruction_simplification_2.h>
 #include "testing_tools.h"
 
-#include<iostream>
-#include <string>
-#include <iterator>
-#include <utility>      // std::pair
-
-#include <CGAL/property_map.h>
+#include<list>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                                          Point;
 typedef K::FT                                         		FT;
 
-typedef std::pair<Point, FT> PointMassPair;
-typedef std::list<PointMassPair> PointMassList;
-
-typedef CGAL::First_of_pair_property_map <PointMassPair> Point_property_map;
-typedef CGAL::Second_of_pair_property_map <PointMassPair> Mass_property_map;
 
 
 int main ()
 {
-	PointMassList points;
+    std::list<Point> points;
 	//use the stair example for testing
-	load_xy_file<PointMassList, Point>("data/stair-noise00.xy", points);
+	load_xy_file_points<Point>("data/stair-noise00.xy", points);
 
-    Point_property_map point_pmap;
-    Mass_property_map  mass_pmap;
-
-    CGAL::Reconstruction_simplification_2<K, Point_property_map, Mass_property_map>
-    	rs2(points.begin(), points.end(), point_pmap, mass_pmap);
+    CGAL::Reconstruction_simplification_2<K> rs2(points.begin(), points.end());
 
     rs2.run(100); //100 steps
 
