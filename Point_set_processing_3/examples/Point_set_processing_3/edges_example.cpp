@@ -18,7 +18,7 @@ typedef Kernel::Vector_3 Vector;
 typedef std::pair<Point, Vector> PointVectorPair;
 typedef std::vector<PointVectorPair> PointList;
 
-typedef CGAL::Voronoi_covariance_3::Voronoi_covariance_3<double> Covariance;
+typedef CGAL::cpp11::array<double,6> Covariance;
 
 int main (int , char**) {
     // Reads a .xyz point set file in points[].

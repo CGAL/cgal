@@ -29,12 +29,12 @@
 namespace CGAL {
     namespace Voronoi_covariance_3 {
         namespace internal {
-            template <class FT, class Array>
+            template <class FT>
                 inline void
                 covariance_matrix_tetrahedron (FT ax, FT ay, FT az,
                                                FT bx, FT by, FT bz,
                                                FT cx, FT cy, FT cz,
-                                               Array &R)
+                                               cpp11::array<FT,6> &R)
                 {
                     const FT det = (ax*cz*by - ax*bz*cy - ay*bx*cz +
                                     ay*cx*bz + az*bx*cy - az*cx*by) / 60.0;
@@ -62,7 +62,7 @@ namespace CGAL {
                 class Covariance_accumulator_3
                 {
                     public:
-                        typedef array<FT, 6> Result_type;
+                        typedef cpp11::array<FT, 6> Result_type;
 
                     private:
                         Result_type _result;
@@ -185,35 +185,6 @@ namespace CGAL {
                 std::copy (ca.result().begin(), ca.result().end(), covariance);
             }
 
-        template<class FT>
-            class Voronoi_covariance_3 : public CGAL::array<FT,6>
-        {
-            typedef typename CGAL::array<FT,6> Parent;
-            typedef typename Parent::iterator iterator;
-            typedef typename Parent::const_iterator const_iterator;
-
-            public:
-            Voronoi_covariance_3 (const Parent &p) : Parent(p)
-            {}
-
-            Voronoi_covariance_3 (FT m[6])
-            {
-                std::copy (m, m + 6, Parent::begin());
-            }
-
-            Voronoi_covariance_3 ()
-            {
-                std::fill(Parent::begin(), Parent::end(), FT(0));
-            }
-
-            void
-                operator += (const Voronoi_covariance_3<FT>& c)
-                {
-                    for (size_t i = 0; i < 6; ++i)
-                        Parent::operator[] (i) += c[i];
-                }
-        };
-
         template <class DT, class Sphere>
             array<typename DT::Geom_traits::FT, 6>
             voronoi_covariance_3 (const DT &dt,
@@ -238,24 +209,6 @@ namespace CGAL {
                 return internal::tessellate_and_intersect(dt, v, sphere, va).result();
             }
 
-
-        template <class FT>
-            std::ostream &
-            operator << (std::ostream &os, const Voronoi_covariance_3<FT> &cov)
-            {
-                return os << cov[0] << " " << cov[1] << " " << cov[2] << " "
-                    << cov[3] << " " << cov[4] << " "
-                    << cov[5] << "\n";
-            }
-
-        template <class FT>
-            std::istream &
-            operator >> (std::istream &is, Voronoi_covariance_3<FT> &cov)
-            {
-                return  is >> cov[0] >> cov[1] >> cov[2]
-                    >> cov[3] >> cov[4]
-                    >> cov[5];
-            }
     }; // namespace Voronoi_covariance_3
 }; // namespace CGAL
 

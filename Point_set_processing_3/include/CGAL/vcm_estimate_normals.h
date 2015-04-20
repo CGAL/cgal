@@ -135,7 +135,8 @@ vcm_convolve (ForwardIterator first,
 
         Covariance m;
         for (size_t k = 0; k < nn.size(); ++k)
-            m += cov[indices [nn[k]]];
+          for (int i=0; i<6; ++i)
+            m[i] += cov[indices [nn[k]]][i];
         ncov.push_back(m);
     }
 }
@@ -190,7 +191,8 @@ vcm_convolve (ForwardIterator first,
 
         Covariance m;
         for (size_t k = 0; k < nn.size(); ++k)
-            m += cov[indices [nn[k]]];
+          for (int i=0; i<6; ++i)
+            m[i] += cov[indices [nn[k]]][i];
         ncov.push_back(m);
     }
 }
@@ -219,27 +221,25 @@ vcm_convolve (ForwardIterator first,
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
 /// @tparam Kernel Geometric traits class.
-/// @tparam Covariance Covariance matrix type. It is similar to an array with a length of 6.
 ///
 /// \sa `CGAL::is_on_edge()`
 /// \sa `CGAL::vcm_estimate_normals()`
 ///
 template < class ForwardIterator,
            class PointPMap,
-           class Kernel,
-           class Covariance
+           class Kernel
 >
 void
 compute_vcm (ForwardIterator first,
              ForwardIterator beyond,
              PointPMap point_pmap,
-             std::vector<Covariance> &ccov,
+             std::vector< cpp11::array<typename Kernel::FT, 6> > &ccov,
              double R,
              double r,
              const Kernel & k)
 {
     // First, compute the VCM for each point
-    std::vector<Covariance> cov;
+    std::vector< cpp11::array<typename Kernel::FT, 6> > cov;
     size_t N = 20;
     internal::vcm_offset (first, beyond,
                           point_pmap,
@@ -369,7 +369,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
     typedef typename Kernel::FT FT;
-    typedef CGAL::Voronoi_covariance_3::Voronoi_covariance_3<FT> Covariance;
+    typedef cpp11::array<FT,6> Covariance;
 
     vcm_estimate_normals(first, beyond,
                          point_pmap, normal_pmap,
@@ -408,7 +408,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
     typedef typename Kernel::FT FT;
-    typedef CGAL::Voronoi_covariance_3::Voronoi_covariance_3<FT> Covariance;
+    typedef cpp11::array<FT,6> Covariance;
 
     vcm_estimate_normals(first, beyond,
                          point_pmap, normal_pmap,

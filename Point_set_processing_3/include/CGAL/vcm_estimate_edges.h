@@ -57,9 +57,9 @@ namespace CGAL {
 ///
 /// \sa CGAL::compute_vcm()`
 ///
-template <class Covariance>
+template <class FT>
 bool
-is_on_edge (Covariance &cov,
+is_on_edge (cpp11::array<FT,6> &cov,
             double threshold) {
     // Construct covariance matrix
     Eigen::Matrix3f m = internal::construct_covariance_matrix(cov);
@@ -265,7 +265,7 @@ vcm_estimate_edges (ForwardIterator first, ///< iterator over the first input po
 )
 {
     typedef typename Kernel::FT FT;
-    typedef CGAL::Voronoi_covariance_3::Voronoi_covariance_3<FT> Covariance;
+    typedef cpp11::array<FT,6>Covariance;
 
     typedef typename Kernel::Point_3 Point;
     typedef typename Kernel::FT FT;
