@@ -11,7 +11,7 @@ typedef K::Point_3 Point_3;
 
 template <typename Mesh>
 void
-test(char *fname, bool triangle, bool quad, bool tetrahedron, bool hexahedron)
+test(const char *fname, bool triangle, bool quad, bool tetrahedron, bool hexahedron)
 {
   typedef typename boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
   std::cerr << "test(" << fname << ")"<< std::endl;
