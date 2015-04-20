@@ -45,6 +45,11 @@ namespace CGAL {
       : Base(b,e)
     {}
 
+
+    // Iterator_range(const Iterator_range& ip)
+    //   : Base(ip)
+    // {}
+
     Iterator_range(const std::pair<I,I>& ip)
       : Base(ip)
     {}
@@ -90,9 +95,19 @@ namespace CGAL {
   {
     return x.second;
   }  
+
+
+
 } // namespace CGAL
 
+// At global scope...
 
+  template<typename T>
+inline boost::mpl::true_ *
+  boost_foreach_is_lightweight_proxy( CGAL::Iterator_range<T> *&, boost::foreach::tag )
+{
+    return 0;
+}
 namespace boost { namespace foreach
 {
     template<typename T>
