@@ -3,7 +3,6 @@
 
 #include <Eigen/Dense>
 
-#include <CGAL/vcm_utilities.h>
 #include <CGAL/vcm_estimate_normals.h>
 
 #include <CGAL/Kd_tree.h>
