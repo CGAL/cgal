@@ -232,7 +232,7 @@ namespace internal {
 
         if (degree(va, mesh_) < 3
           || degree(vb, mesh_) < 3
-          || !CGAL::Euler::satisfies_link_condition(he, mesh_))//necessary to collapse
+          || !CGAL::Euler::satisfies_link_condition(edge(he, mesh_), mesh_))//necessary to collapse
           continue;
 
         //check that collapse would not create an edge with length > high
@@ -454,17 +454,17 @@ namespace internal {
       return sqlength(halfedge(e, mesh_));
     }
 
-    Point midpoint(const edge_descriptor& e) const
+    Point midpoint(const halfedge_descriptor& he) const
     {
-      Point p1 = vpmap_[target(halfedge(e, mesh_), mesh_)];
-      Point p2 = vpmap_[source(halfedge(e, mesh_), mesh_)];
+      Point p1 = vpmap_[target(he, mesh_)];
+      Point p2 = vpmap_[source(he, mesh_)];
       return CGAL::midpoint(p1, p2);
     }
 
     void dump(const char* filename) const
     {
       std::ofstream out(filename);
-      out << mesh_;
+//      out << mesh_;
       out.close();
     }
 
