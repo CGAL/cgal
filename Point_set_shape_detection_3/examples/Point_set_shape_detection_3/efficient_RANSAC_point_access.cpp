@@ -67,7 +67,7 @@ int main()
   std::cout << "preprocessing took: " << time.time() * 1000 << "ms" << std::endl;
 
   // Perform detection several times and choose result with highest coverage.
-  Efficient_ransac::Shape_range shapes;
+  Efficient_ransac::Shape_range shapes = ransac.shapes();
   FT best_coverage = 0;
 
   for (size_t i = 0;i<3;i++) {
@@ -87,7 +87,7 @@ int main()
 
     // Prints number of assigned shapes and unsassigned points.
     std::cout << "time: " << time.time() * 1000 << "ms" << std::endl;
-    std::cout << ransac.shapes().size() << " primitives, "
+    std::cout << ransac.shapes().end() - ransac.shapes().begin() << " primitives, "
       << coverage << " coverage" << std::endl;
     
     // Choose result with highest coverage.

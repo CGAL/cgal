@@ -91,7 +91,7 @@ int main()
   ransac.detect(parameters);
 
   // Prints number of detected shapes and unassigned points.
-   std::cout << ransac.shapes().size() << " detected shapes, "
+   std::cout << ransac.shapes().end() - ransac.shapes().begin() << " detected shapes, "
      << ransac.number_of_unassigned_points()
      << " unassigned points." << std::endl;
   

@@ -54,7 +54,7 @@ int main()
   ransac.detect();
 
   // Prints number of detected shapes.
-  std::cout << ransac.shapes().size() << " shapes detected." << std::endl;
+  std::cout << ransac.shapes().end() - ransac.shapes().begin() << " shapes detected." << std::endl;
 
   return EXIT_SUCCESS;
 }

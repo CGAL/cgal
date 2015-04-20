@@ -28,6 +28,7 @@
 //for octree ------------------------------
 #include <boost/iterator/filter_iterator.hpp>
 #include <CGAL/bounding_box.h>
+#include <CGAL/Iterator_range.h>
 //----------
 
 #include <vector>
@@ -39,7 +40,6 @@
 
 //boost --------------
 #include <boost/iterator/counting_iterator.hpp>
-#include <boost/range/iterator_range.hpp>
 #include <boost/shared_ptr.hpp>
 //---------------------
 
@@ -104,7 +104,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     typedef unspecified_type Shape_range;
 #else
     typedef typename
-    boost::iterator_range<typename std::vector<boost::shared_ptr<Shape> >::const_iterator>
+    Iterator_range<typename std::vector<boost::shared_ptr<Shape> >::const_iterator>
       Shape_range;
 #endif
     ///< Range of extracted shapes with `Shape*` as value type. Model of the `ConstRange` concept.
@@ -113,7 +113,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     typedef unspecified_type Point_index_range;    ///< Range of indices of points of type `std::size_t` into the provided input point range. Model of the `boost::BidirectionalRange` concept.
 
 #else 
-    typedef typename boost::iterator_range<Point_index_iterator>
+    typedef typename Iterator_range<Point_index_iterator>
       Point_index_range;
 #endif     
 
@@ -617,7 +617,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
       for the detection, the shapes are ordered with decreasing size.
     */
     Shape_range shapes() const {
-      return boost::make_iterator_range(m_extracted_shapes.begin(),
+      return make_range(m_extracted_shapes.begin(),
         m_extracted_shapes.end());
     }
       
@@ -643,7 +643,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
         boost::counting_iterator<std::size_t>(0),
         boost::counting_iterator<std::size_t>(m_shape_index.size()));
 
-      return boost::make_iterator_range(p1, Point_index_iterator(p1.end()));
+      return make_range(p1, Point_index_iterator(p1.end()));
     }
     /// @}
 
