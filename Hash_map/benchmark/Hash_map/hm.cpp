@@ -107,6 +107,11 @@ run(const G& g)
   std::cerr << "v = " << v << std::endl;
 }
 
+struct blob {
+  int a, b, c, d, e, f, g;
+};
+
+
 int main(int , char* argv[])
 {
 
@@ -120,7 +125,7 @@ int main(int , char* argv[])
     Mesh m;
     std::ifstream input(argv[1]);
     input >> m;
-
+    std::cerr << num_vertices(m) << " items\n";
     std::cerr << "\nSurface_mesh  std::map"<< std::endl;
     run<Mesh,SM>(m);
     std::cerr << "\nSurface_mesh  std::unordered_map"<< std::endl;
@@ -145,8 +150,43 @@ int main(int , char* argv[])
     std::cerr << "\nPolyhedron_3 std::unordered_map"<< std::endl;
     run<Mesh,SUM>(m);
     std::cerr << "\nPolyhedron_3 boost::unordered_map"<< std::endl;
-    run<Mesh,BUM>(m);
+    run<Mesh,BUM>(m);    
   }
+  
+  {
+    const int N = 3165798;
+    std::cerr << "\nHashing "<< N << " pointers\n";
+    std::vector<int> ints(N);
 
-    return 0;
+    std::vector<blob> data(N);
+    for(int i =0; i <N ; i++){
+      ints[i]=i;
+    }
+    std::random_shuffle(ints.begin(), ints.end());
+    
+    
+    {
+      boost::unordered_map<blob*,int> um;
+      Timer t;
+      t.start();
+      for(int i= 0; i < N; i++){
+        um[& (data[ints[i]])] = i;
+      }
+      t.stop();
+      std::cerr << " boost::unordered_map: " <<  t.time() << " sec.\n";
+    }
+    
+    {
+      std::unordered_map<blob*,int> um;
+      Timer t;
+      t.start();
+      for(int i= 0; i < N; i++){
+        um[& (data[ints[i]])] = i;
+      }
+      t.stop();
+      std::cerr  << " std::unordered_map: " << t.time() << " sec.\n";
+    }
+  }
+      
+  return 0;
 }
