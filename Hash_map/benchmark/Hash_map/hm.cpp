@@ -1,3 +1,4 @@
+#define NOHASH 1
 
 #include <iostream>
 #include <fstream>
@@ -37,15 +38,18 @@ run(const G& g)
 
   std::vector<vertex_descriptor> V, V2;
   std::vector<Point_3> P1, P2;
+
   BOOST_FOREACH(vertex_descriptor vd, vertices(g)){
     V.push_back(vd);
     V2.push_back(vd);
   }
-
+  
   boost::rand48 random;
   boost::random_number_generator<boost::rand48> rng(random);
   std::random_shuffle(V.begin(), V.end(), rng);
-
+  for(int i=0; i < 10; i++){
+    std::cerr << get(vpm,V[i]) << std::endl;
+  }
   Timer t;
   t.start();
   Map vm;
@@ -58,50 +62,79 @@ run(const G& g)
 
   std::cerr << "BOOST_FOREACH std::vector<vertex_descriptor)\n";
   t.reset(); t.start();
-  BOOST_FOREACH(vertex_descriptor vd, V2){  
+  for(int i=0; i<100; i++){
+  BOOST_FOREACH(vertex_descriptor vd, V2){ 
+#ifdef NOHASH    
+    v = v + (get(vpm,vd) - CGAL::ORIGIN);
+#else 
     typename Map::iterator it = vm.find(vd);
     v = v + ((*it).second - CGAL::ORIGIN);
+#endif
+  }
   }
 
   t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
 
   std::cerr << "BOOST_FOREACH boost::iterator_range r = vertices(g))\n";
   t.reset(); t.start();
+  for(int i=0; i<100; i++){
   boost::iterator_range<typename boost::graph_traits<G>::vertex_iterator> r = vertices(g);
   BOOST_FOREACH(vertex_descriptor vd, r) {
+#ifdef NOHASH    
+    v = v + (get(vpm,vd) - CGAL::ORIGIN);
+#else
     typename Map::iterator it = vm.find(vd);
     v = v + ((*it).second - CGAL::ORIGIN);
+#endif
+  }
   }
   t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
 
 
    std::cerr << "BOOST_FOREACH CGAL::Iterator_range r = vertices(g))\n";
   t.reset(); t.start();
+  for(int i=0; i<100; i++){
   CGAL::Iterator_range<typename boost::graph_traits<G>::vertex_iterator> ir = vertices(g);
   BOOST_FOREACH(vertex_descriptor vd, ir) {
+#ifdef NOHASH    
+    v = v + (get(vpm,vd) - CGAL::ORIGIN);
+#else
     typename Map::iterator it = vm.find(vd);
     v = v + ((*it).second - CGAL::ORIGIN);
+#endif
+  }
   }
   t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
 
   std::cerr << "BOOST_FOREACH vertices(g))\n";
   t.reset(); t.start();
+  for(int i=0; i<100; i++){
   BOOST_FOREACH(vertex_descriptor vd, vertices(g)) {
+#ifdef NOHASH    
+    v = v + (get(vpm,vd) - CGAL::ORIGIN);
+#else
     typename Map::iterator it = vm.find(vd);
     v = v + ((*it).second - CGAL::ORIGIN);
+#endif
+  }
   }
   t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
    
   std::cerr << "boost::tie(vb,ve) = vertices(g);\n";
   t.reset(); t.start();
-  
+    for(int i=0; i<100; i++){
   typename boost::graph_traits<G>::vertex_iterator vb, ve;
   boost::tie(vb,ve) = vertices(g);
   for(; vb != ve; ++vb) {
     vertex_descriptor vd = *vb;
+#ifdef NOHASH    
+    v = v + (get(vpm,vd) - CGAL::ORIGIN);
+#else
     typename Map::iterator it = vm.find(vd);
     v = v + ((*it).second - CGAL::ORIGIN);
+#endif
   }
+    }
   t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
 
   std::cerr << "v = " << v << std::endl;
@@ -126,15 +159,15 @@ int main(int , char* argv[])
     Mesh m;
     std::ifstream input(argv[1]);
     input >> m;
-    //std::cerr << num_vertices(m) << " items\n";
-    //std::cerr << "\nSurface_mesh  std::map"<< std::endl;
-    //run<Mesh,SM>(m);
+    std::cerr << num_vertices(m) << " items\n";
+    std::cerr << "\nSurface_mesh  std::map"<< std::endl;
+    run<Mesh,SM>(m);
     std::cerr << "\nSurface_mesh  std::unordered_map"<< std::endl;
     run<Mesh,SUM>(m);
     std::cerr << "\nSurface_mesh  boost::unordered_map"<< std::endl;
     run<Mesh,BUM>(m);
   }
-#if 0
+#if 1
   {
     typedef CGAL::Polyhedron_3<Kernel>      Mesh;
     typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;

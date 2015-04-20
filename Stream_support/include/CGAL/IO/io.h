@@ -140,6 +140,7 @@ public:
       }
     }while(true);
 
+    std::cerr << "|" << buffer.c_str() << "|" << std::endl;
     if(sscanf(buffer.c_str(), "%lf", &t) != 1) {
       // if a 'buffer' does not contain a double, set the fail bit.
       is.setstate(std::ios_base::failbit);
