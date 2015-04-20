@@ -39,7 +39,7 @@ int main (int , char**) {
     std::vector<Covariance> cov;
     CGAL::First_of_pair_property_map<PointVectorPair> point_pmap;
 
-    CGAL::vcm_compute(points.begin(), points.end(), point_pmap, cov, R, r, Kernel());
+    CGAL::compute_vcm(points.begin(), points.end(), point_pmap, cov, R, r, Kernel());
 
     // Find the points on the edges.
     // Note that this step is not expensive and can be done several time to get better results

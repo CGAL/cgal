@@ -230,7 +230,7 @@ template < class ForwardIterator,
            class Covariance
 >
 void
-vcm_compute (ForwardIterator first,
+compute_vcm (ForwardIterator first,
              ForwardIterator beyond,
              PointPMap point_pmap,
              std::vector<Covariance> &ccov,
@@ -263,7 +263,7 @@ vcm_compute (ForwardIterator first,
 
 /// @cond SKIP_IN_MANUAL
 /// Estimates normal directions of the `[first, beyond)` range of points
-/// using the Voronoi Covariance Measure (see `vcm_compute` for more details on the VCM).
+/// using the Voronoi Covariance Measure (see `compute_vcm` for more details on the VCM).
 /// The output normals are randomly oriented.
 ///
 /// @tparam ForwardIterator iterator over input points.
@@ -297,7 +297,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
     // Compute the VCM and convolve it
     std::vector<Covariance> cov;
     if (nb_neighbors_convolve == -1) {
-        vcm_compute(first, beyond,
+        compute_vcm(first, beyond,
                     point_pmap,
                     cov,
                     R,
@@ -340,11 +340,12 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 /// @endcond
 
 /// \ingroup PkgPointSetProcessing
-/// Estimates normal directions of the `[first, beyond)` range of points
+/// Estimates normal directions of the points in the range `[first, beyond)`
 /// using the Voronoi Covariance Measure with a radius for the convolution.
 /// The output normals are randomly oriented.
 ///
-/// See `vcm_compute()` for more details on the VCM.
+/// See `compute_vcm()` for a detailed description of the parameters `R` and `r`
+/// and of the Voronoi Covariance Measure.
 ///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
@@ -361,8 +362,8 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                       ForwardIterator beyond, ///< past-the-end iterator over the input points.
                       PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
                       NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
-                      double R, ///< offset radius: radius of the sphere to intersect the Voronoi cell with.
-                      double r ///< convolution radius: all points in a sphere with this radius will be convolved.
+                      double R, ///< offset radius.
+                      double r ///< convolution radius.
 )
 {
     typedef typename boost::property_traits<PointPMap>::value_type Point;
@@ -378,11 +379,12 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 }
 
 /// \ingroup PkgPointSetProcessing
-/// Estimates normal directions of the `[first, beyond)` range of points
+/// Estimates normal directions of the points in the range `[first, beyond)`
 /// using the Voronoi Covariance Measure with a number of neighbors for the convolution.
 /// The output normals are randomly oriented.
 ///
-/// See `vcm_compute()` for more details on the VCM.
+/// See `compute_vcm()` for a detailed description of the parameter `R`
+/// and of the Voronoi Covariance Measure.
 ///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
@@ -399,7 +401,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                       ForwardIterator beyond, ///< past-the-end iterator over the input points.
                       PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
                       NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
-                      double R, ///< offset radius: radius of the sphere to intersect the Voronoi cell with.
+                      double R, ///< offset radius.
                       unsigned int nb_neighbors_convolve ///< number of neighbor points used for the convolution.
 )
 {

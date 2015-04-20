@@ -42,9 +42,21 @@
 namespace CGAL {
 
 
-/// Determine if a point is on an edge using the VCM of the point.
-/// A point will be considered as an edge point iff it satisfies a criteria
-/// relating the eigenvalues of its VCM.
+/// determines if a point is on a sharp feature edge from point set
+/// for which the Voronoi covariance Measures have been computed.
+///
+/// The sharpness of the edge is defined by the parameter `threshold`.
+/// is used to filtered points according to the external angle around a sharp feature.
+///
+/// A point is considered to be on a sharp feature if the external angle `alpha` at the edge is such that
+/// `alpha >> 2 / sqrt(3) * sqrt(threshold)`.
+/// In particular this means that is the input contains sharp features
+/// with different external angles, the one with the smallest external angle should be considered
+/// which however will result in selecting more points in sharper regions.
+/// More details are given in \cgalCite{cgal:mog-vbcfe-11}.
+///
+/// \sa CGAL::compute_vcm()`
+///
 template <class Covariance>
 bool
 is_on_edge (Covariance &cov,
@@ -228,11 +240,11 @@ compute_delaunay_graph (Undirected_Graph& g, ///< constructed graph.
 /// Estimates the feature edges of the `[first, beyond)` range of points
 /// using the Voronoi Covariance Measure.
 /// It returns a vector of all the points that have been estimated as edge points.
-/// It mainly consists in computing the VCM using `vcm_compute` and then
+/// It mainly consists in computing the VCM using `compute_vcm` and then
 /// determining which point must be considered as an edge one or not (using a criterion
 /// based on the eigenvalues of the covariance matrices).
 ///
-/// See `vcm_compute()` for more details on the VCM.
+/// See `compute_vcm()` for more details on the VCM.
 ///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
@@ -260,7 +272,7 @@ vcm_estimate_edges (ForwardIterator first, ///< iterator over the first input po
 
     // Compute the VCM and convolve it
     std::vector<Covariance> cov;
-    vcm_compute(first, beyond,
+    compute_vcm(first, beyond,
                 point_pmap,
                 cov,
                 R,

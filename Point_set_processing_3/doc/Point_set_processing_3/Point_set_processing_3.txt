@@ -223,7 +223,7 @@ Function `is_on_edge()` indicates if a points belong to a feature edges of the
 point set using its Voronoi Covariance Measure.
 It is based on the article \cgalCite{cgal:mog-vbcfe-11}.
 
-It first computes the VCM of the points set using `vcm_compute()`. Then, it estimates
+It first computes the VCM of the points set using `compute_vcm()`. Then, it estimates
 which points belong to a sharp edge by testing if a ratio of eigenvalues
 is greater than a given threshold.
 

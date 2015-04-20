@@ -32,7 +32,7 @@
 - `CGAL::jet_smooth_point_set()`
 - `CGAL::jet_estimate_normals()`
 - `CGAL::pca_estimate_normals()`
-- `CGAL::vcm_compute()`
+- `CGAL::compute_vcm()`
 - `CGAL::vcm_estimate_normals()`
 - `CGAL::is_on_edge()`
 - `CGAL::write_off_points()`
