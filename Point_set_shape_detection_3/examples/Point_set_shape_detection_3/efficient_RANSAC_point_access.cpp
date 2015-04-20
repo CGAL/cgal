@@ -45,10 +45,6 @@ int main()
       return EXIT_FAILURE;
   }
 
-  // Measures time before setting up the shape detection.
-  CGAL::Timer time;
-  time.start();
-
   // Instantiates shape detection engine.
   Efficient_ransac ransac;
 
@@ -58,21 +54,51 @@ int main()
   // Registers detection of planes
   ransac.add_shape_factory<Plane>();
 
-  // Detects shapes.
-  ransac.detect();
+  // Measures time before setting up the shape detection.
+  CGAL::Timer time;
+  time.start();
 
-  // Measures time after detection.
+  // Build internal data structures.
+  ransac.preprocess();
+
+  // Measures time after preprocessing.
   time.stop();
 
-  // Prints number of assigned shapes and unsassigned points.
-  std::cout << "time: " << time.time() * 1000 << "ms" << std::endl;
-  std::cout << ransac.shapes().size() << " primitives, "
-    << ransac.number_of_unassigned_points()
-    << " unassigned points" << std::endl;
+  std::cout << "preprocessing took: " << time.time() * 1000 << "ms" << std::endl;
 
-  // Efficient_ransac::shapes() provides
-  // an iterator range to the detected shapes.
-  Efficient_ransac::Shape_range shapes = ransac.shapes();
+  // Perform detection several times and choose result with highest coverage.
+  Efficient_ransac::Shape_range shapes;
+  FT best_coverage = 0;
+
+  for (size_t i = 0;i<3;i++) {
+    // Reset timer.
+    time.reset();
+    time.start();
+
+    // Detects shapes.
+    ransac.detect();
+
+    // Measures time after detection.
+    time.stop();
+
+    // Compute coverage, i.e. ratio of the points assigned to a shape.
+    FT coverage = FT(points.size() - ransac.number_of_unassigned_points())
+                  / FT(points.size());
+
+    // Prints number of assigned shapes and unsassigned points.
+    std::cout << "time: " << time.time() * 1000 << "ms" << std::endl;
+    std::cout << ransac.shapes().size() << " primitives, "
+      << coverage << " coverage" << std::endl;
+    
+    // Choose result with highest coverage.
+    if (coverage > best_coverage) {
+      best_coverage = coverage;
+      // Efficient_ransac::shapes() provides
+      // an iterator range to the detected shapes. 
+      shapes = ransac.shapes();
+    }
+  }
+
   Efficient_ransac::Shape_range::iterator it = shapes.begin();
 
   while (it != shapes.end()) {
