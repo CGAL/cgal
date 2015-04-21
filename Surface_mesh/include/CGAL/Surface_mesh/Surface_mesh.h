@@ -961,11 +961,11 @@ private: //------------------------------------------------------ iterator types
         {
             ++hnd_;
             CGAL_assertion(mesh_ != NULL);
-            bool hg = mesh_->has_garbage();
-            if(hg)
+
+            if(mesh_->has_garbage())
               while ( mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) ++hnd_;
         }
-
+  
         void decrement()
         {
             --hnd_;
