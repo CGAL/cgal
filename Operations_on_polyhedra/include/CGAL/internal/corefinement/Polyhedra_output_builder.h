@@ -34,6 +34,7 @@
 #include <boost/optional.hpp>
 
 #include <sstream>
+#include <fstream>
 
 namespace CGAL{
 
@@ -905,6 +906,49 @@ struct Patch_container{
     }
     return patches[i];
   }
+
+  /// debug
+  std::ostream& dump_patch(std::size_t i, std::ostream& out)
+  {
+    Patch_description<Polyhedron>& patch=this->operator[](i);
+    out << "OFF\n" << patch.interior_vertices.size()+patch.patch_border_halfedges.size();
+    out << " " << patch.facets.size() << " 0\n";
+    std::map<typename Polyhedron::Vertex_handle, int> vertexid;
+    int id=0;
+    BOOST_FOREACH(typename Polyhedron::Vertex_handle vh, patch.interior_vertices)
+    {
+      vertexid[vh]=id++;
+      out << vh->point() << "\n";
+    }
+
+    BOOST_FOREACH(typename Polyhedron::Halfedge_handle hh, patch.patch_border_halfedges)
+    {
+      vertexid[hh->vertex()]=id++;
+      out << hh->vertex()->point() << "\n";
+    }
+
+    BOOST_FOREACH(typename Polyhedron::Facet_handle fh, patch.facets)
+    {
+      out << "3 " << vertexid[fh->halfedge()->vertex()] <<
+             " "  << vertexid[fh->halfedge()->next()->vertex()] <<
+             " "  << vertexid[fh->halfedge()->next()->next()->vertex()] << "\n";
+    }
+
+    return out;
+  }
+
+  void dump_patches(const boost::dynamic_bitset<>& selection, std::string prefix)
+  {
+    for (std::size_t i=selection.find_first();
+                     i < selection.npos; i = selection.find_next(i))
+    {
+      std::stringstream ss;
+      ss << prefix << "-" << i << ".off";
+      std::ofstream output(ss.str().c_str());
+      dump_patch(i, output);
+    }
+  }
+
 };
 
 } //end of namespace internal_IOP
