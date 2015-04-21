@@ -1314,6 +1314,8 @@ private:
       is_patch_inside_P-=coplanar_patches_of_Q;
       append_Q_patches_to_P<true>(P_ptr, is_patch_inside_P, patches_of_Q, Qhedge_to_Phedge);
 
+      /// \todo this comment is stupid since nothing was removed from P_ptr.
+      ///       either it should be done at the beginning or it's a copy-paste error.
       /// in case the result is empty, there will be no facets in the polyhedron
       /// but maybe marked halfedges
       if ( P_ptr->facets_begin()==P_ptr->facets_end() )
@@ -1477,6 +1479,9 @@ public:
     boost::dynamic_bitset<> coplanar_patches_of_P_for_union_and_intersection(P_nb_cc,false);
     boost::dynamic_bitset<> coplanar_patches_of_Q_for_difference(Q_nb_cc,false);
 
+    /// \todo handle the case when an_edge_per_polyline is empty or similarly there is an isolated cc without intersecting edges
+    ///       Note that could be the case of a cc that is identical (coplanar patch) in P and Q
+
     for (typename An_edge_per_polyline_map::const_iterator it=an_edge_per_polyline.begin();it!=an_edge_per_polyline.end();++it)
     {
       CGAL_assertion(it->second.first.size()==2);
@@ -1579,6 +1584,8 @@ public:
             coplanar_patches_of_P.set(patch_id_p1);
             coplanar_patches_of_Q.set(patch_id_q1);
             coplanar_patches_of_P_for_union_and_intersection.set(patch_id_p1);
+
+            CGAL_assertion( !are_triangles_coplanar_same_side_filtered(indices.first,indices.second,index_p2,index_q2,P2,Q2,nodes) );
 
             bool Q2_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q2,P1,P2,Q2,nodes,ppmap);
             if ( Q2_is_between_P1P2 ) is_patch_inside_P.set(patch_id_q2); //case 1
