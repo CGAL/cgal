@@ -79,12 +79,12 @@ run(const G& g)
   t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
 #endif 
 
-
+#if 1
   std::cerr << "BOOST_FOREACH boost::iterator_range r = vertices(g))\n";
 
   t.reset(); t.start();
-  boost::iterator_range<typename boost::graph_traits<G>::vertex_iterator> r = vertices(g);
   for(int i=0; i<100; i++){
+  boost::iterator_range<typename boost::graph_traits<G>::vertex_iterator> r = vertices(g);
 
   BOOST_FOREACH(vertex_descriptor vd, r) {
 #ifdef NOHASH    
@@ -97,12 +97,14 @@ run(const G& g)
   }
   }
   t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
+#endif
 
 
+#if 1
    std::cerr << "BOOST_FOREACH CGAL::Iterator_range r = vertices(g))\n";
   t.reset(); t.start();
-  CGAL::Iterator_range<typename boost::graph_traits<G>::vertex_iterator> ir = vertices(g);
   for(int i=0; i<100; i++){
+  CGAL::Iterator_range<typename boost::graph_traits<G>::vertex_iterator> ir = vertices(g);
   BOOST_FOREACH(vertex_descriptor vd, ir) {
 #ifdef NOHASH
     st += std::size_t(vd);
@@ -115,6 +117,10 @@ run(const G& g)
   }
   t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
 
+#endif 
+
+
+#if 1 
   std::cerr << "BOOST_FOREACH vertices(g))\n";
   t.reset(); t.start();
   for(int i=0; i<100; i++){
@@ -129,9 +135,10 @@ run(const G& g)
   }
   }
   t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
- 
+#endif 
 
 
+#if 1
   std::cerr << "for vertices(g))\n";
   t.reset(); t.start();
   for(int i=0; i<100; i++){
@@ -147,7 +154,7 @@ run(const G& g)
   }
   t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
    
-
+#endif
 
   
 #if 0
@@ -168,7 +175,6 @@ run(const G& g)
   }
     }
   t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
-
 #endif
 
   std::cerr << "v = " << v << "  " << st << std::endl;
@@ -193,16 +199,6 @@ int main(int , char* argv[])
     Mesh m;
     std::ifstream input(argv[1]);
     input >> m;
-
-    Timer t;
-    t.start();
-    if(is_pure_triangle(m))
-      {
-        std::cerr << "is pure triangle" << std::endl;
-      }
-    t.stop();
-    std::cerr << t.time() << std::endl;
-    return 0;
 
     std::cerr << num_vertices(m) << " items\n";
     std::cerr << "\nSurface_mesh  std::map"<< std::endl;

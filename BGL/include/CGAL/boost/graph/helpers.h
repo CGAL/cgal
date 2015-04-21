@@ -165,8 +165,7 @@ template <typename FaceGraph>
   bool is_pure_triangle(const FaceGraph& g)  
 {
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
-  //  BOOST_FOREACH(face_descriptor fd, faces(g)){
-  for(face_descriptor fd : faces(g)){
+  BOOST_FOREACH(face_descriptor fd, faces(g)){
     if(! is_triangle(fd,g)){
       return false;
     }

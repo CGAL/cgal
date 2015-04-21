@@ -951,8 +951,9 @@ private: //------------------------------------------------------ iterator types
         Index_iterator() : hnd_(), mesh_(NULL) {}
         Index_iterator(const Index_& h, const Surface_mesh* m)
           : hnd_(h), mesh_(m) {
-            if (mesh_ && mesh_->has_garbage())
+          if (mesh_ && mesh_->has_garbage()){
               while (mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) ++hnd_;
+          }
         }
     private:
         friend class boost::iterator_core_access;
@@ -960,14 +961,17 @@ private: //------------------------------------------------------ iterator types
         {
             ++hnd_;
             CGAL_assertion(mesh_ != NULL);
-            while (mesh_->has_garbage() && mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) ++hnd_;
+            bool hg = mesh_->has_garbage();
+            if(hg)
+              while ( mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) ++hnd_;
         }
 
         void decrement()
         {
             --hnd_;
             CGAL_assertion(mesh_ != NULL);
-            while (mesh_->has_garbage() && mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) --hnd_;
+            if(mesh_->has_garbage())
+               while ( mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) --hnd_;
         }
 
         bool equal(const Index_iterator& other) const
@@ -979,6 +983,7 @@ private: //------------------------------------------------------ iterator types
 
         Index_ hnd_;
         const Surface_mesh* mesh_;
+
     };
 public:
     /// \name Range Types
@@ -1644,7 +1649,8 @@ public:
     bool has_valid_index(Vertex_index v) const
     {
       return ((size_type)v < num_vertices());
-    }
+    } 
+
     /// returns whether the index of halfedge `h` is valid, that is within the current array bounds.
     bool has_valid_index(Halfedge_index h) const
     {
