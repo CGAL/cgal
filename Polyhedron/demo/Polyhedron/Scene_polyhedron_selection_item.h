@@ -217,6 +217,11 @@ public:
   typedef boost::unordered_set<Facet_handle, CGAL::Handle_hash_function>      Selection_set_facet;
   typedef boost::unordered_set<edge_descriptor, CGAL::Handle_hash_function>    Selection_set_edge;
 
+  Polyhedron* polyhedron()
+  {
+    return this->poly_item->polyhedron();
+  }
+
 // drawing
   void draw() const {
     draw_selected_vertices();

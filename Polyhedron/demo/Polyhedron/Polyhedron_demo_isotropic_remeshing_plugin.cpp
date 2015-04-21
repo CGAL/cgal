@@ -14,11 +14,12 @@
 #include <QMainWindow>
 #include <QApplication>
 #include <QInputDialog>
+#include <QString>
 
 #include <vector>
 #include <algorithm>
 #include <queue>
-
+#include <sstream>
 
 class Polyhedron_demo_isotropic_remeshing_plugin :
   public QObject,
@@ -68,28 +69,40 @@ public Q_SLOTS:
       QTime time;
       time.start();
 
+      double diago_length = (poly_item != NULL)
+        ? poly_item->bbox().diagonal_length()
+        : selection_item->bbox().diagonal_length();
+
+      std::ostringstream oss;
+      oss << "Target edge length?" << std::endl;
+      oss << "  Diagonal length of the Bbox of the selection to remesh is ";
+      oss << diago_length << std::endl;
+      oss << "  (default is 5% of it)" << std::endl;
+
       bool ok;
       double target_length = QInputDialog::getDouble(this->mw,
         QString("Isotropic remeshing : Edge length"),
-        QString("Target edge length : "),
-        0.1, //value
-        0.0001,//min
-        2147483647,//max
-        3, //decimals
+        QString::fromStdString(oss.str()),//question
+        0.05 * diago_length,              //value
+        1e-6 * diago_length,              //min
+        2.   * diago_length,              //max
+        3,                                //decimals
         &ok); //Qt::WindowFlags flags = 0);
       if (!ok)
         std::cout << "Remeshing aborted" << std::endl;
 
       Polyhedron *pRemeshed = new Polyhedron;
       if (selection_item) {
-        std::cout << "TODO : Remesh selection item" << std::endl;
-        //use poly_item->selected_facets()
+        Polyhedron* pMesh = selection_item->polyhedron();
+        CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(*pMesh
+        , selection_item->selected_facets
+        , target_length);
       }
       else if (poly_item){
         Polyhedron* pMesh = poly_item->polyhedron();
-        CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(*pMesh,
-          faces(*pMesh),
-          target_length);
+        CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(*pMesh
+        , faces(*pMesh)
+        , target_length);
       }
       else{
         std::cout << "Can't remesh that type of thing" << std::endl;
