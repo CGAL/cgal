@@ -2,12 +2,11 @@
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/convex_hull_3.h>
+#include <CGAL/Timer.h>
+#include <CGAL/point_generators_3.h>
 
 #include <vector>
 #include <fstream>
-
-// Chrono
-#include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point;
@@ -20,10 +19,7 @@ typedef Traits::Polyhedron_3 Polyhedron;
 typedef CGAL::Delaunay_triangulation_3<K> DT;
 typedef DT::Vertex_handle Vertex_handle;
 
-#include <CGAL/point_generators_3.h>
-
-// Function object that compute the volume
-// and the centroid of a polyhedron
+// Function object that computes the volume and the centroid of a polyhedron.
 template <class K>
 class Centroid_volume_accumulator {
     public:
@@ -98,7 +94,7 @@ class Centroid_volume_accumulator {
         float cx, cy, cz;
 };
 
-// Aplply a function object to all the faces of a polyhedron
+// Apply a function object to all the triangles composing the faces of a polyhedron.
 template <typename Polyhedron, class F>
 F& apply_function_object_polyhedron (Polyhedron &P,
                                      F &f) {
@@ -131,10 +127,13 @@ F& apply_function_object_polyhedron (Polyhedron &P,
     return f;
 }
 
+// Lloyd algorithm
+// Generate points uniformly sampled inside a polyhedron.
+// An initial set of points needs to be given.
 template <class PolyIterator>
 void lloyd_algorithm (PolyIterator poly_begin,
                       PolyIterator poly_end,
-                      std::vector<Point> & points) {
+                      std::vector<Point>& points) {
     std::list<Plane> planes;
     std::list<Point> centroids;
     Centroid_volume_accumulator<K> centroid_acc;
@@ -216,14 +215,15 @@ int main (int argc, char *argv[]) {
         points.push_back(p);
     }
 
-    std::ofstream bos("before.xyz");
+    std::ofstream bos("before_lloyd.xyz");
     std::copy(points.begin(), points.end(),
               std::ostream_iterator<Point>(bos, "\n"));
 
-    // Apply Lloyd algorithm
-
+    // Apply Lloyd algorithm: will generate points
+    // uniformly sampled inside a cube.
     for (int i = 0; i < steps; i++) {
-        std::cout << "iteration " << i << std::endl;
+        std::cout << "iteration " << i + 1 << std::endl;
+
         CGAL::Timer timer;
         timer.start();
         lloyd_algorithm(planes.begin(),
@@ -234,7 +234,7 @@ int main (int argc, char *argv[]) {
         std::cout << "Execution time : " << timer.time() << "s\n";
     }
 
-    std::ofstream aos("after.xyz");
+    std::ofstream aos("after_lloyd.xyz");
     std::copy(points.begin(), points.end(),
               std::ostream_iterator<Point>(aos, "\n"));
 
