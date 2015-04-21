@@ -156,6 +156,7 @@ Scene::draw_aux(bool with_names, QGLViewer *viewer)
     Scene_item& item = *entries[index];
     if(item.visible())
     {
+      item.contextual_changed();
       if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
       {  
         ::glPointSize(2.f);

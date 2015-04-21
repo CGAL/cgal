@@ -13,6 +13,10 @@
 #include <CGAL/gl.h>
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
+#include <QGLFunctions>
+#include <QOpenGLVertexArrayObject>
+#include <QGLBuffer>
+#include <QOpenGLShaderProgram>
 
 struct Scene_c3t3_item_priv;
 
@@ -79,6 +83,7 @@ public:
   
   // Call this if c3t3 has been modified
   void c3t3_changed();
+  void contextual_changed();
 
 public slots:
   inline void data_item_destroyed();
@@ -90,7 +95,6 @@ private:
   QColor get_histogram_color(const double v) const;
   
 protected:
-  void draw(QGLViewer* viewer,int) const ;
   Scene_c3t3_item_priv* d;
 
   qglviewer::ManipulatedFrame* frame;
@@ -101,6 +105,35 @@ private:
   
   typedef std::set<int> Indices;
   Indices indices_;
+
+  static const int vaoSize = 2;
+  static const int vboSize = 4;
+
+  mutable int poly_vertexLocation[2];
+  mutable int normalsLocation[2];
+  mutable int mvpLocation[2];
+  mutable int mvLocation[2];
+  mutable int fmatLocation;
+  mutable int colorLocation[2];
+  mutable int lightLocation[5*2];
+  mutable int twosideLocation;
+
+  std::vector<float> v_poly;
+  std::vector<float> normal;
+  std::vector<float> color_triangles;
+  std::vector<float> *v_grid;
+
+
+
+  mutable QGLBuffer buffers[vboSize];
+  mutable QOpenGLVertexArrayObject vao[vaoSize];
+  mutable QOpenGLShaderProgram rendering_program;
+  mutable QOpenGLShaderProgram rendering_program_grid;
+  void initialize_buffers();
+  void compute_elements();
+  void attrib_buffers(QGLViewer*) const;
+  void compile_shaders();
+  void draw_grid(float diag, std::vector<float> *positions_grid);
 };
 
 inline
@@ -136,5 +169,7 @@ Scene_c3t3_item::data_item_destroyed()
 {
   set_data_item(NULL);
 }
+
+
 
 #endif // SCENE_C3T3_ITEM_H
