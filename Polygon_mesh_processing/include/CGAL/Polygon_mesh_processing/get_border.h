@@ -37,6 +37,8 @@ namespace Polygon_mesh_processing {
   *            of `faces`, seen from inside the surface patch
   *
   * @todo code : what shall we do for more than one connected components
+  * @todo code : make sure the halfedges returned actually belong to a face
+  * from `faces`. It's not the case yet
   */
   template<typename PolygonMesh
          , typename FaceRange
