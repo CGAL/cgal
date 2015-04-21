@@ -72,31 +72,6 @@ namespace CGAL {
     return Iterator_range<T>(b,e);
   }
 
-  template<typename T>
-  inline T range_begin( Iterator_range<T> & x )
-  {
-    return x.first;
-  }
-  
-  template<typename T>
-  inline T range_end( Iterator_range<T> & x )
-  {
-    return x.second;
-  }
-  
-  template<typename T>
-  inline T range_begin(const Iterator_range<T>& x )
-  {
-    return x.first;
-  }
-  
-  template<typename T>
-  inline T range_end(const Iterator_range<T>& x )
-  {
-    return x.second;
-  }  
-
-
 
 } // namespace CGAL
 
