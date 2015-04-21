@@ -1945,11 +1945,15 @@ public:
       );
     }
 
-    //clean isolated patch no longer needed
-    //  OK because we don't use it after...
-    if ( coplanar_patches_of_P.any() )
-      is_patch_inside_Q|=(coplanar_patches_of_P & coplanar_patches_of_P_for_union_and_intersection);
-    remove_isolated_patches(*P_ptr, patches_of_P, is_patch_inside_Q);
+    // tmp P-Q is inplace in P
+    if ( !impossible_operation.test(P_MINUS_Q) )
+    {
+      //clean isolated patch no longer needed
+      //  OK because we don't use it after...
+      if ( coplanar_patches_of_P.any() )
+        is_patch_inside_Q|=(coplanar_patches_of_P & coplanar_patches_of_P_for_union_and_intersection);
+      remove_isolated_patches(*P_ptr, patches_of_P, is_patch_inside_Q);
+    }
   }
 };
 
