@@ -63,12 +63,6 @@ public Q_SLOTS:
 
     if (poly_item || selection_item)
     {
-      // wait cursor
-      QApplication::setOverrideCursor(Qt::WaitCursor);
-
-      QTime time;
-      time.start();
-
       double diago_length = (poly_item != NULL)
         ? poly_item->bbox().diagonal_length()
         : selection_item->bbox().diagonal_length();
@@ -89,31 +83,36 @@ public Q_SLOTS:
         3,                                //decimals
         &ok); //Qt::WindowFlags flags = 0);
       if (!ok)
+      {
         std::cout << "Remeshing aborted" << std::endl;
+        return;
+      }
+      // wait cursor
+      QApplication::setOverrideCursor(Qt::WaitCursor);
 
-      Polyhedron *pRemeshed = new Polyhedron;
+      QTime time;
+      time.start();
+
       if (selection_item) {
-        Polyhedron* pMesh = selection_item->polyhedron();
-        CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(*pMesh
-        , selection_item->selected_facets
-        , target_length);
+        CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(
+         *selection_item->polyhedron()
+         , selection_item->selected_facets
+         , target_length);
+
+        selection_item->changed_with_poly_item();
       }
       else if (poly_item){
-        Polyhedron* pMesh = poly_item->polyhedron();
-        CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(*pMesh
-        , faces(*pMesh)
-        , target_length);
+        CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(
+         *poly_item->polyhedron()
+         , faces(*poly_item->polyhedron())
+         , target_length);
+
+        poly_item->changed();
       }
       else{
         std::cout << "Can't remesh that type of thing" << std::endl;
       }
       std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
-
-      Scene_polyhedron_item* new_item = new Scene_polyhedron_item(pRemeshed);
-      new_item->setName(tr("%1 (iso remeshing)").arg(scene->item(index)->name()));
-      new_item->setColor(Qt::magenta);
-      new_item->setRenderingMode(FlatPlusEdges);
-      scene->addItem(new_item);
 
       // default cursor
       QApplication::restoreOverrideCursor();
