@@ -13,6 +13,7 @@
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
+#include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Timer.h>
 #include<boost/range/iterator_range.hpp> 
 #include <boost/unordered_map.hpp>
@@ -192,6 +193,17 @@ int main(int , char* argv[])
     Mesh m;
     std::ifstream input(argv[1]);
     input >> m;
+
+    Timer t;
+    t.start();
+    if(is_pure_triangle(m))
+      {
+        std::cerr << "is pure triangle" << std::endl;
+      }
+    t.stop();
+    std::cerr << t.time() << std::endl;
+    return 0;
+
     std::cerr << num_vertices(m) << " items\n";
     std::cerr << "\nSurface_mesh  std::map"<< std::endl;
     run<Mesh,SM>(m);
