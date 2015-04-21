@@ -634,7 +634,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
       the size of the range. Instead the method number_of_unassigned_points is
       provided.
     */ 
-    Point_index_range unassigned_points() {
+    Point_index_range unassigned_points_indices() {
       Filter_unassigned_points fup(m_shape_index);
 
       Point_index_iterator p1 =
