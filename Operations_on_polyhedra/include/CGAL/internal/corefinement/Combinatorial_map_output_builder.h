@@ -824,7 +824,6 @@ private:
   }
 
 public:
-  static const bool do_compute_intersection_of_coplanar_facets = true;
 
   Combinatorial_map_3&                 final_map() {
     return *final_map_ptr;

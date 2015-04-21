@@ -303,9 +303,7 @@ struct Default_node_vertex_visitor{
   void new_vertex_added(int /* node_id */, typename Polyhedron::Vertex_handle /* vh */){}
 };
 
-template <bool b=true>
 struct Default_output_builder{
-  static const bool do_compute_intersection_of_coplanar_facets = b;
   template <class T1, class T2, class T3, class T4>
   void operator()(const T1&, const T2&, const T3&, const T4&){}
 };
@@ -320,7 +318,7 @@ template< class Polyhedron,
         >
 class Node_visitor_refine_polyhedra{
 //Default typedefs  
-  typedef typename Default::Get<OutputBuilder_, Default_output_builder<> >::type OutputBuilder;
+  typedef typename Default::Get<OutputBuilder_, Default_output_builder >::type OutputBuilder;
   typedef typename Default::Get<EdgeMarkPropertyMap_, Dummy_edge_mark_property_map<Polyhedron> >::type EdgeMarkPropertyMap;
   typedef typename Default::Get<NestedFacetConstruct_, Default_facet_construct<Polyhedron > >::type NestedFacetConstruct;
   typedef typename Default::Get<NewNodeVertexVisitor_, Default_node_vertex_visitor<Polyhedron> >::type NewNodeVertexVisitor;
@@ -537,7 +535,6 @@ public:
   typedef internal_IOP::Predicates_on_constructions Node_storage_type;
   typedef Tag_false Is_polyhedron_const;
   static const bool do_need_vertex_graph = true;  //because we need to know which edges are constrained
-  static const bool do_compute_intersection_of_coplanar_facets=OutputBuilder::do_compute_intersection_of_coplanar_facets;
   
   void set_number_of_intersection_points_from_coplanar_facets(int n){
     number_coplanar_vertices=n;

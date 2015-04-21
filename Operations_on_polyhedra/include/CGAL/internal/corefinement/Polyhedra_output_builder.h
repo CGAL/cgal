@@ -1377,7 +1377,6 @@ private:
   }
 
 public:
-  static const bool do_compute_intersection_of_coplanar_facets = false;
 
   Polyhedra_output_builder(
     Polyhedron& P,
@@ -1419,12 +1418,58 @@ public:
 
   template <class Nodes_vector>
   void operator()(
-    const std::map<Halfedge_const_handle,
-                   std::pair<int,int>,Cmp_unik_ad >& border_halfedges,
+    std::map<Halfedge_const_handle,
+             std::pair<int,int>,Cmp_unik_ad >& border_halfedges,
     const Nodes_vector& nodes,
-    const An_edge_per_polyline_map& an_edge_per_polyline,
+    An_edge_per_polyline_map& an_edge_per_polyline,
     const Poly_to_map_node& /* polyhedron_to_map_node_to_polyhedron_vertex */)
   {
+    // In the following loop we filter intersection edge that are strictly inside a patch
+    // of coplanar facets so that we keep only the edges on the border of the patch.
+    // This is not optimal and in an ideal world being able to find the outside edges
+    // directly would avoid to compute the intersection of edge/facets inside the patch
+    #ifdef CGAL_COREFINEMENT_DEBUG
+    #warning Only do this loop if at least one pair of coplanar triangles has been seen in intersection_of_Polyhedra_3.h
+    #endif
+    typename An_edge_per_polyline_map::iterator epp_it=an_edge_per_polyline.begin(),
+                                                epp_it_end=an_edge_per_polyline.end();
+    for (;epp_it!=epp_it_end;)
+    {
+      Halfedge_handle first_hedge  = epp_it->second.first[P_ptr];
+      Halfedge_handle second_hedge = epp_it->second.first[Q_ptr];
+
+      if (first_hedge->is_border_edge() || second_hedge->is_border_edge()) continue;
+
+      //vertices from P
+      Vertex_handle P1=first_hedge->opposite()->next()->vertex();
+      Vertex_handle P2=first_hedge->next()->vertex();
+      //vertices from Q
+      Vertex_handle Q1=second_hedge->opposite()->next()->vertex();
+      Vertex_handle Q2=second_hedge->next()->vertex();
+      int index_p1=node_index_of_incident_vertex(first_hedge->opposite()->next(),border_halfedges);
+      int index_p2=node_index_of_incident_vertex(first_hedge->next(),border_halfedges);
+      int index_q1=node_index_of_incident_vertex(second_hedge->opposite()->next(),border_halfedges);
+      int index_q2=node_index_of_incident_vertex(second_hedge->next(),border_halfedges);
+
+      bool P1_on_Q1_or_Q2 = index_p1==-1? ( (index_q1==-1 && P1->point()==Q1->point()) || (index_q2==-1 && P1->point()==Q2->point()) )
+                                        : (index_p1==index_q1 || index_p1==index_q2);
+      bool P2_on_Q1_or_Q2 = index_p2==-1? ( (index_q1==-1 && P2->point()==Q1->point()) || (index_q2==-1 && P2->point()==Q2->point()) )
+                                        : (index_p2==index_q1 || index_p2==index_q2);
+
+      if (P1_on_Q1_or_Q2 && P2_on_Q1_or_Q2)
+      {
+        typename An_edge_per_polyline_map::iterator it_to_rm=epp_it;
+        ++epp_it;
+        an_edge_per_polyline.erase(it_to_rm);
+        border_halfedges.erase(first_hedge);
+        border_halfedges.erase(second_hedge);
+        #ifdef CGAL_COREFINEMENT_DEBUG
+        #warning we need to have the EdgeMarkPropertyMap to unmark intersection hedge
+        #endif
+      }
+      else
+        ++epp_it;
+    }
 
     cpp11::array< boost::optional<Polyhedron*>, 4 > results;
     // if (results[0]), it will hold P + Q
