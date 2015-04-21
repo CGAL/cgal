@@ -128,7 +128,27 @@ run(const G& g)
   }
   }
   t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
+ 
+
+
+  std::cerr << "for vertices(g))\n";
+  t.reset(); t.start();
+  for(int i=0; i<100; i++){
+    for(vertex_descriptor vd : vertices(g)) {
+#ifdef NOHASH
+    st += std::size_t(vd);
+    //v = v + (get(vpm,vd) - CGAL::ORIGIN);
+#else
+    typename Map::iterator it = vm.find(vd);
+    v = v + ((*it).second - CGAL::ORIGIN);
+#endif
+  }
+  }
+  t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
    
+
+
+  
 #if 0
   std::cerr << "boost::tie(vb,ve) = vertices(g);\n";
   t.reset(); t.start();
