@@ -37,7 +37,8 @@ namespace CGAL {
 			 `Gt::Point_2` are required depending on the shapes registered
 			 for detection.
 
-      \tparam InputRange is a model of `Range` with random access iterators, providing input points and normals.
+      \tparam InputRange is a model of `Range` with random access iterators, 
+              providing input points and normals through the following two property maps.
 
       \tparam InputPointMap is a model of `ReadablePropertyMap` with `std::iterator_traits<Input_range::iterator>::%value_type` as key type and `Geom_traits::Point_3` as value type.
 
