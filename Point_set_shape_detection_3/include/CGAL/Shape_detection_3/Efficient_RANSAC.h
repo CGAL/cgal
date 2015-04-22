@@ -94,6 +94,11 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     typedef typename Traits::Point_3 Point; ///< point type.
     typedef typename Traits::Vector_3 Vector; ///< vector type.
     /// \endcond
+
+    typedef typename Traits::Input_range Input_range;
+    ///< Model of the concept `Range` with random access iterators, providing input points and normals
+    /// through the following two property maps.
+
     typedef typename Traits::Point_map Point_map;
     ///< property map to access the location of an input point.
     typedef typename Traits::Normal_map Normal_map;
@@ -184,14 +189,13 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     }
 
     /*!
-      Sets the input data by providing a range which is model of the
-      concept `Range`  with random access iterators. The range of input data must stay valid
+      Sets the input data. The range must stay valid
       until the detection has been performed and the access to the
-      results is no longer required. The data in the input range is reordered by the methods
-      `detect()` and `preprocess()`. This function  first calls `clear()`.
+      results is no longer required. The data in the input is reordered by the methods
+      `detect()` and `preprocess()`. This function first calls `clear()`.
     */
     void set_input(
-      typename Traits::Input_range& input_range,
+      Input_range& input_range,
       ///< Range of input data.
       Point_map point_map = Point_map(),
       ///< property map to access the position of an input point.
@@ -320,7 +324,8 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     /*!
       Calls `clear_shape_factories()`, `clear_octrees()` and removes all detected shapes.
       All internal structures are cleaned, including formerly detected shapes.
-      Thus iterators and ranges retrieved through `shapes()` and `unassigned_points()` are invalidated.
+      Thus iterators and ranges retrieved through `shapes()` and `indices_of_unassigned_points()` 
+      are invalidated.
     */ 
     void clear() {
       clear_shape_factories();
@@ -636,7 +641,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
       Returns an `Iterator_range` with a bidirectional iterator with value type `std::size_t`
       as indices into the input data that has not been assigned to a shape. 
     */ 
-    Point_index_range unassigned_points_indices() {
+    Point_index_range indices_of_unassigned_points() {
       Filter_unassigned_points fup(m_shape_index);
 
       Point_index_iterator p1 =
