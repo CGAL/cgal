@@ -216,7 +216,7 @@ vcm_convolve (ForwardIterator first,
 /// For example, if the point cloud is a uniform and noiseless sampling of a smooth surface,
 /// `R` should be set to the minimum local feature size of the surface while `r` can be set to zero.
 ///
-/// The Voronoi covariance matrix of each vertex is stored in a array `a` of length 6 and is as follow:
+/// The Voronoi covariance matrix of each vertex is stored in an array `a` of length 6 and is as follow:
 /*!
 <center>
 \f$ \begin{bmatrix}
