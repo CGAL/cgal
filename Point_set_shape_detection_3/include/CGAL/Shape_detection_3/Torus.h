@@ -48,8 +48,8 @@ namespace CGAL {
     typedef typename Traits::Normal_map Normal_map;
      ///< property map to access the unoriented normal of an input point.
     typedef typename Traits::FT FT; ///< number type.
-    typedef typename Traits::Point_3 Point; ///< point type.
-    typedef typename Traits::Vector_3 Vector; ///< vector type.
+    typedef typename Traits::Point_3 Point_3; ///< point type.
+    typedef typename Traits::Vector_3 Vector_3; ///< vector type.
     typedef typename Traits::Point_2 Point_2;
      ///< 2D point type used during construction.
     typedef typename Traits::Circle_2 Circle;
@@ -61,14 +61,14 @@ namespace CGAL {
     /*!
       Direction of symmetry axis.
      */
-    Vector axis() const {
+    Vector_3 axis() const {
       return m_axis;
     }
 
     /*!
       Center point on symmetry axis.
      */
-    Point center() const {
+    Point_3 center() const {
       return m_center;
     }
       
@@ -106,8 +106,8 @@ namespace CGAL {
     /*!
       Computes squared Euclidean distance from query point to the shape.
       */
-    FT squared_distance(const Point &p) const {
-      const Vector d = p - m_center;
+    FT squared_distance(const Point_3 &p) const {
+      const Vector_3 d = p - m_center;
       
 	    // height over symmetry plane
       const FT height = d * m_axis;
@@ -128,8 +128,8 @@ namespace CGAL {
   protected:
     /// \cond SKIP_IN_MANUAL
     void create_shape(const std::vector<std::size_t> &indices) {
-      std::vector<Point> p;
-      std::vector<Vector> n;
+      std::vector<Point_3> p;
+      std::vector<Vector_3> n;
 
       p.resize(indices.size());
       n.resize(indices.size());
@@ -174,8 +174,8 @@ namespace CGAL {
 
       // 1. center + axis
       FT majorRad1 = FLT_MAX, minorRad1 = FLT_MAX, dist1 = FLT_MAX;
-      Point c1;
-      Vector axis1;
+      Point_3 c1;
+      Vector_3 axis1;
       if (is_finite(x1) && is_finite(y1)) {
         c1 = p[0] + n[0] * x1;
         axis1 = c1 - (p[1] + n[1] * y1);
@@ -189,8 +189,8 @@ namespace CGAL {
 
       // 2. center + axis
       FT majorRad2 = 0, minorRad2 = 0, dist2 = FLT_MAX;
-      Point c2;
-      Vector axis2;
+      Point_3 c2;
+      Vector_3 axis2;
       if (is_finite(x2) && is_finite(y2)) {
         c2 = p[0] + n[0] * x2;
         axis2 = c2 - (p[1] + n[1] * y2);
@@ -224,13 +224,13 @@ namespace CGAL {
         }
 
         // check normal deviation
-        Vector d = p[i] - m_center;
+        Vector_3 d = p[i] - m_center;
         // height over symmetry plane
         //FT p = d * m_axis;
         // distance from axis in plane
         //FT l = sqrt(d * d - p * p);
 
-        Vector in_plane = CGAL::cross_product(m_axis,
+        Vector_3 in_plane = CGAL::cross_product(m_axis,
           CGAL::cross_product(m_axis, d));
         if (in_plane * d < 0)
           in_plane = -in_plane;
@@ -260,8 +260,8 @@ namespace CGAL {
     virtual void squared_distance(const std::vector<std::size_t> &indices,
                                   std::vector<FT> &dists) {
       for (std::size_t i = 0;i<indices.size();i++) {
-        Point po = this->point(indices[i]);
-        Vector d = po - m_center;
+        Point_3 po = this->point(indices[i]);
+        Vector_3 d = po - m_center;
         // height over symmetry plane
         const FT p = d * m_axis;
         // distance from axis in plane
@@ -279,9 +279,9 @@ namespace CGAL {
     virtual void cos_to_normal(const std::vector<std::size_t> &indices, 
                                std::vector<FT> &angles) const {
       for (std::size_t i = 0;i<indices.size();i++) {
-        Vector d = this->point(indices[i]) - m_center;
+        Vector_3 d = this->point(indices[i]) - m_center;
 
-        Vector in_plane = CGAL::cross_product(m_axis,
+        Vector_3 in_plane = CGAL::cross_product(m_axis,
                                               CGAL::cross_product(m_axis, d));
         if (in_plane * d < 0)
           in_plane = -in_plane;
@@ -303,10 +303,10 @@ namespace CGAL {
       }
     }
 
-    FT cos_to_normal(const Point &p, const Vector &n) const {
-      Vector d = p - m_center;
+    FT cos_to_normal(const Point_3 &p, const Vector_3 &n) const {
+      Vector_3 d = p - m_center;
 
-      Vector in_plane = CGAL::cross_product(m_axis,
+      Vector_3 in_plane = CGAL::cross_product(m_axis,
                                            CGAL::cross_product(m_axis, d));
       if (in_plane * d < 0)
         in_plane = -in_plane;
@@ -344,12 +344,12 @@ namespace CGAL {
     }
 
   private:
-    FT getCircle(Point &center, const Vector &axis, std::vector<Point> p, FT &majorRad, FT &minorRad) const {
+    FT getCircle(Point_3 &center, const Vector_3 &axis, std::vector<Point_3> p, FT &majorRad, FT &minorRad) const {
       // create spin image
       std::vector<Point_2> pts;
       pts.resize(p.size());
       for (unsigned int i = 0;i<p.size();i++) {
-        Vector d = p[i] - center;
+        Vector_3 d = p[i] - center;
         FT e = d * axis;
         FT f = d * d - e * e;
         if (f <= 0)
@@ -370,8 +370,8 @@ namespace CGAL {
       return abs((pts[3] - c.center()).squared_length() - c.squared_radius());
     }
 
-    Point m_center;
-    Vector m_axis;
+    Point_3 m_center;
+    Vector_3 m_axis;
     FT m_majorRad;
     FT m_minorRad;
     /// \endcond

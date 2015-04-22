@@ -104,8 +104,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     typedef unspecified_type Shape_range;
 #else
     typedef typename
-    Iterator_range<typename std::vector<boost::shared_ptr<Shape> >::const_iterator>
-      Shape_range;
+    std::vector<boost::shared_ptr<Shape> > Shape_range;
 #endif
     ///< Range of extracted shapes with `boost::shared_ptr<Shape>` as value type. Model of the `ConstRange` concept.
 
@@ -617,9 +616,8 @@ shape. The implementation follows \cgalCite{Schnabel07}.
       the destructor of the class. Depending on the chosen probability
       for the detection, the shapes are ordered with decreasing size.
     */
-    Shape_range shapes() const {
-      return make_range(m_extracted_shapes.begin(),
-        m_extracted_shapes.end());
+    const Shape_range& shapes() const {
+      return m_extracted_shapes;
     }
       
     /*! 

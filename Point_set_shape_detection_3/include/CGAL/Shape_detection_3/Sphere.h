@@ -44,13 +44,13 @@ namespace CGAL {
       ///< property map to access the location of an input point.
     typedef typename Traits::Normal_map Normal_map;
       ///< property map to access the unoriented normal of an input point.
-    typedef typename Traits::Vector_3 Vector;
+    typedef typename Traits::Vector_3 Vector_3;
       ///< vector type.
     typedef typename Traits::Sphere_3 Sphere_3;
       ///< sphere type.
     typedef typename Traits::FT FT;
       ///< number type.
-    typedef typename Traits::Point_3 Point;
+    typedef typename Traits::Point_3 Point_3;
       ///< point type.
     /// \endcond
 
@@ -67,7 +67,7 @@ namespace CGAL {
     /*!
       Access to the center.
      */
-    Point center() const {
+    Point_3 center() const {
       return m_sphere.center();
     }
       
@@ -82,7 +82,7 @@ namespace CGAL {
     /*!
       Computes the squared Euclidean distance from query point to the shape.
       */
-    FT squared_distance(const Point &p) const {
+    FT squared_distance(const Point_3 &p) const {
       const FT d = sqrt((m_sphere.center() - p).squared_length()) - sqrt(m_sphere.squared_radius());
       return d * d;
     }
@@ -93,7 +93,7 @@ namespace CGAL {
      */
     std::string info() const {
       std::stringstream sstr;
-      Point c = m_sphere.center();
+      Point_3 c = m_sphere.center();
       FT r = sqrt(m_sphere.squared_radius());
 
       sstr << "Type: sphere center: (" << c.x() << ", " << c.y();
@@ -106,18 +106,18 @@ namespace CGAL {
   protected:
       /// \cond SKIP_IN_MANUAL
     void create_shape(const std::vector<std::size_t> &indices) {
-      Point p1 = this->point(indices[0]);
-      Point p2 = this->point(indices[1]);
-      Point p3 = this->point(indices[2]);
+      Point_3 p1 = this->point(indices[0]);
+      Point_3 p2 = this->point(indices[1]);
+      Point_3 p3 = this->point(indices[2]);
 
-      Vector n1 = this->normal(indices[0]);
-      Vector n2 = this->normal(indices[1]);
-      Vector n3 = this->normal(indices[2]);
+      Vector_3 n1 = this->normal(indices[0]);
+      Vector_3 n2 = this->normal(indices[1]);
+      Vector_3 n3 = this->normal(indices[2]);
 
 
       // Determine center: select midpoint of shortest line segment
       // between p1 and p2. Implemented from "3D game engine design" by Eberly 2001
-      Vector diff = p1 - p2;
+      Vector_3 diff = p1 - p2;
       FT a = n1 * n1;
       FT b = -(n1 * n2);
       FT c = n2 * n2;
@@ -136,11 +136,11 @@ namespace CGAL {
       FT s = (b * e - c * d) * invDet;
       FT t = (d * b - a * e) * invDet;
 
-      Point center = CGAL::ORIGIN + (FT)0.5 * (((p1 + s * n1) - CGAL::ORIGIN)
+      Point_3 center = CGAL::ORIGIN + (FT)0.5 * (((p1 + s * n1) - CGAL::ORIGIN)
                      + ((p2 + t * n2) - CGAL::ORIGIN));
 
-      Vector v1 = (p1 - center);
-      Vector v2 = (p2 - center);
+      Vector_3 v1 = (p1 - center);
+      Vector_3 v2 = (p2 - center);
       FT d1 = sqrt(v1.squared_length());
       FT d2 = sqrt(v2.squared_length());
 
@@ -158,7 +158,7 @@ namespace CGAL {
         return;
       }
 
-      Vector v3 = (p3 - center);
+      Vector_3 v3 = (p3 - center);
       FT d3 = sqrt(v3.squared_length());
       v3 = v3 * ((FT)1.0 / d3);
 
@@ -205,8 +205,8 @@ namespace CGAL {
       }
     }
 
-    virtual FT cos_to_normal(const Point &p, const Vector &n) const {
-      Vector sphere_normal = m_sphere.center() - p;
+    virtual FT cos_to_normal(const Point_3 &p, const Vector_3 &n) const {
+      Vector_3 sphere_normal = m_sphere.center() - p;
       FT length = (FT)(CGAL::sqrt(n.squared_length()));
       if (length == 0)
         return 1;

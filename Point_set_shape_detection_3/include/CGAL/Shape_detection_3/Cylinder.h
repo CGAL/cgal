@@ -54,12 +54,12 @@ namespace CGAL {
      ///< property map to access the location of an input point.
     typedef typename Traits::Normal_map Normal_map;
      ///< property map to access the unoriented normal of an input point.
-    typedef typename Traits::Vector_3 Vector; ///< vector type.
-    typedef typename Traits::Point_3 Point; ///< point type.
+    typedef typename Traits::Vector_3 Vector_3; ///< vector type.
+    typedef typename Traits::Point_3 Point_3; ///< point type.
     typedef typename Traits::FT FT; ///< number type.
     /// \endcond
 
-    typedef typename Traits::Line_3 Line; ///< line type.
+    typedef typename Traits::Line_3 Line_3; ///< line type.
 
   public:
     Cylinder() : Shape_base<Traits>() {}
@@ -67,7 +67,7 @@ namespace CGAL {
     /*!
       Axis of the cylinder.
      */
-    Line axis() const {
+    Line_3 axis() const {
       return m_axis;
     }
 
@@ -85,8 +85,8 @@ namespace CGAL {
      */
     std::string info() const {
       std::stringstream sstr;
-      Point c = m_axis.point();
-      Vector a = m_axis.to_vector();
+      Point_3 c = m_axis.point();
+      Vector_3 a = m_axis.to_vector();
 
       sstr << "Type: cylinder center: (" << c.x() << ", " << c.y() << ", " << c.z() << ") axis: (" << a.x() << ", " << a.y() << ", " << a.z() << ") radius:" << m_radius
         << " #Pts: " <<  this->m_indices.size();
@@ -97,11 +97,11 @@ namespace CGAL {
     /*!
       Computes squared Euclidean distance from query point to the shape.
       */ 
-    FT squared_distance(const Point &p) const {
-      Vector a = m_axis.to_vector();
+    FT squared_distance(const Point_3 &p) const {
+      Vector_3 a = m_axis.to_vector();
       a = a * ((FT)1.0 / CGAL::sqrt(a.squared_length()));
 
-      Vector v = p - m_point_on_axis;
+      Vector_3 v = p - m_point_on_axis;
       v = v - ((v * a) * a);
       FT d = sqrt(v.squared_length()) - m_radius;
 
@@ -112,13 +112,13 @@ namespace CGAL {
   protected:
       /// \cond SKIP_IN_MANUAL
     virtual void create_shape(const std::vector<std::size_t> &indices) {
-      Point p1 = this->point(indices[0]);
-      Point p2 = this->point(indices[1]);
+      Point_3 p1 = this->point(indices[0]);
+      Point_3 p2 = this->point(indices[1]);
 
-      Vector n1 = this->normal(indices[0]);
-      Vector n2 = this->normal(indices[1]);
+      Vector_3 n1 = this->normal(indices[0]);
+      Vector_3 n2 = this->normal(indices[1]);
 
-      Vector axis = CGAL::cross_product(n1, n2);
+      Vector_3 axis = CGAL::cross_product(n1, n2);
       FT axisL = sqrt(axis.squared_length());
       if (axisL < (FT)0.0001) {
         return;
@@ -127,15 +127,15 @@ namespace CGAL {
 
       // establish two directions in the plane axis * x = 0, 
       // whereas xDir is the projected n1
-      Vector xDir = n1 - (n1 * axis) * axis;
+      Vector_3 xDir = n1 - (n1 * axis) * axis;
       xDir = xDir * ((FT)1.0 / sqrt(xDir.squared_length()));
-      Vector yDir = CGAL::cross_product(axis, xDir);
+      Vector_3 yDir = CGAL::cross_product(axis, xDir);
       yDir = yDir * ((FT)1.0 / sqrt(yDir.squared_length()));
 
       FT n2x = n2 * yDir;
       FT n2y = -n2 * xDir;
 
-      Vector dist = p2 - p1;
+      Vector_3 dist = p2 - p1;
 
       FT Ox = xDir * dist;
       FT Oy = yDir * dist;
@@ -146,7 +146,7 @@ namespace CGAL {
       m_point_on_axis = p1 + m_radius * xDir;
       m_radius = abs(m_radius);
 
-      m_axis = Line(m_point_on_axis, axis);
+      m_axis = Line_3(m_point_on_axis, axis);
 
       if (squared_distance(p1) > this->m_epsilon ||
           (cos_to_normal(p1, n1) < this->m_normal_threshold))
@@ -159,14 +159,14 @@ namespace CGAL {
                     const std::vector<std::size_t> &indices,
                     FT min[2],
                     FT max[2]) const {
-      Vector d1 = Vector(0, 0, 1);
-      Vector a = m_axis.to_vector();
+      Vector_3 d1 = Vector_3(0, 0, 1);
+      Vector_3 a = m_axis.to_vector();
       a = a * ((FT)1.0 / sqrt(a.squared_length()));
 
-      Vector d2 = CGAL::cross_product(a, d1);
+      Vector_3 d2 = CGAL::cross_product(a, d1);
       FT l = d2.squared_length();
       if (l < (FT)0.0001) {
-        d1 = Vector(1, 0, 0);
+        d1 = Vector_3(1, 0, 0);
         d2 = CGAL::cross_product(m_axis.to_vector(), d1);
         l = d2.squared_length();
       }
@@ -183,7 +183,7 @@ namespace CGAL {
       FT c = (FT)1.0 / 2 * M_PI * m_radius;
 
       // first one separate for initializing min/max
-      Vector vec = this->point(indices[0]) - m_point_on_axis;
+      Vector_3 vec = this->point(indices[0]) - m_point_on_axis;
       FT v = vec * a;
       vec = vec - ((vec * a) * a);
       length = CGAL::sqrt(vec.squared_length());
@@ -200,7 +200,7 @@ namespace CGAL {
       min[1] = max[1] = v;
 
       for (std::size_t i = 0;i<indices.size();i++) {
-        Vector vec = this->point(indices[i]) - m_point_on_axis;
+        Vector_3 vec = this->point(indices[i]) - m_point_on_axis;
         FT v = vec * a;
         vec = vec - ((vec * a) * a);
         length = CGAL::sqrt(vec.squared_length());
@@ -222,10 +222,10 @@ namespace CGAL {
 
     virtual void squared_distance(const std::vector<std::size_t> &indices,
                                   std::vector<FT> &dists) {
-      Vector a = m_axis.to_vector();
+      Vector_3 a = m_axis.to_vector();
       a = a * ((FT)1.0 / CGAL::sqrt(a.squared_length()));
       for (std::size_t i = 0;i<indices.size();i++) {
-          Vector v = this->point(indices[i]) - m_point_on_axis;
+          Vector_3 v = this->point(indices[i]) - m_point_on_axis;
 
           v = v - ((v * a) * a);
           dists[i] = CGAL::sqrt(v.squared_length()) - m_radius;
@@ -235,10 +235,10 @@ namespace CGAL {
 
     virtual void cos_to_normal(const std::vector<std::size_t> &indices, 
                               std::vector<FT> &angles) const {
-      Vector a = m_axis.to_vector();
+      Vector_3 a = m_axis.to_vector();
       a = a * ((FT)1.0 / CGAL::sqrt(a.squared_length()));
       for (std::size_t i = 0;i<indices.size();i++) {
-          Vector v = this->point(indices[i]) - m_point_on_axis;
+          Vector_3 v = this->point(indices[i]) - m_point_on_axis;
 
           v = v - ((v * a) * a);
           FT length = CGAL::sqrt(v.squared_length());
@@ -251,11 +251,11 @@ namespace CGAL {
       }
     }
 
-    FT cos_to_normal(const Point &p, const Vector &n) const {
-      Vector a = m_axis.to_vector();
+    FT cos_to_normal(const Point_3 &p, const Vector_3 &n) const {
+      Vector_3 a = m_axis.to_vector();
       a = a * (FT)1.0 / CGAL::sqrt(a.squared_length());
 
-      Vector v = p - m_point_on_axis;
+      Vector_3 v = p - m_point_on_axis;
       v = v - ((v * a) * a);
 
       FT length = CGAL::sqrt(v.squared_length());
@@ -286,8 +286,8 @@ namespace CGAL {
 
   private:
     FT m_radius;
-    Line m_axis;
-    Point m_point_on_axis;
+    Line_3 m_axis;
+    Point_3 m_point_on_axis;
       
     /// \endcond
   };

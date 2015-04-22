@@ -44,8 +44,8 @@ namespace CGAL {
     typedef typename Traits::Normal_map Normal_map;
      ///< property map to access the unoriented normal of an input point.
     typedef typename Traits::FT FT; ///< number type.
-    typedef typename Traits::Point_3 Point; ///< point type.
-    typedef typename Traits::Vector_3 Vector;
+    typedef typename Traits::Point_3 Point_3; ///< point type.
+    typedef typename Traits::Vector_3 Vector_3;
     /// \endcond
 
     typedef typename Traits::Plane_3 Plane_3;///< plane type for conversion operator.
@@ -63,7 +63,7 @@ namespace CGAL {
     /*!
       Normal vector of the plane.
      */
-    Vector plane_normal() const {
+    Vector_3 plane_normal() const {
       return m_normal;
     }
     
@@ -71,7 +71,7 @@ namespace CGAL {
     /*!
       Computes squared Euclidean distance from query point to the shape.
      */
-    FT squared_distance(const Point &p) const {
+    FT squared_distance(const Point_3 &p) const {
       FT d = (p - m_point_on_primitive) * m_normal;
       return d * d;
     }
@@ -94,9 +94,9 @@ namespace CGAL {
   protected:
       /// \cond SKIP_IN_MANUAL
     virtual void create_shape(const std::vector<std::size_t> &indices) {
-      Point p1 = this->point(indices[0]);
-      Point p2 = this->point(indices[1]);
-      Point p3 = this->point(indices[2]);
+      Point_3 p1 = this->point(indices[0]);
+      Point_3 p2 = this->point(indices[1]);
+      Point_3 p3 = this->point(indices[2]);
 
       m_normal = CGAL::cross_product(p1 - p2, p1 - p3);
 
@@ -111,7 +111,7 @@ namespace CGAL {
       m_d = -(p1[0] * m_normal[0] + p1[1] * m_normal[1] + p1[2] * m_normal[2]);
 
       //check deviation of the 3 normal
-      Vector l_v;
+      Vector_3 l_v;
       for (std::size_t i = 0;i<3;i++) {
         l_v = this->normal(indices[i]);
 
@@ -137,7 +137,7 @@ namespace CGAL {
                             FT min[2],
                             FT max[2]) const {
       // Transform first point before to initialize min/max
-      Vector p = (this->point(indices[0]) - m_point_on_primitive);
+      Vector_3 p = (this->point(indices[0]) - m_point_on_primitive);
       FT u = p * m_base1;
       FT v = p * m_base2;
       parameterSpace[0] = std::pair<FT, FT>(u, v);
@@ -171,7 +171,7 @@ namespace CGAL {
       }
     }
 
-    FT cos_to_normal(const Point &p, const Vector &n) const{
+    FT cos_to_normal(const Point_3 &p, const Vector_3 &n) const{
       return abs(n * m_normal);
     } 
     
@@ -192,8 +192,8 @@ namespace CGAL {
     }
 
   private:
-    Point m_point_on_primitive;
-    Vector m_base1, m_base2, m_normal;
+    Point_3 m_point_on_primitive;
+    Vector_3 m_base1, m_base2, m_normal;
     FT m_d;
     /// \endcond
   };
