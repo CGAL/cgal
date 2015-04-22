@@ -192,7 +192,7 @@ namespace CGAL {
     virtual void cos_to_normal(const std::vector<std::size_t> &indices, 
                                std::vector<FT> &angles) const {
       for (std::size_t i = 0;i<indices.size();i++) {
-        Vector n = m_sphere.center() - this->point(indices[i]);
+        Vector_3 n = m_sphere.center() - this->point(indices[i]);
 
         FT length = sqrt(n.squared_length());
         if (length == 0) {

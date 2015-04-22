@@ -78,7 +78,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
           return m_shape_index[x] == -1;
         else return true; // to prevent infinite incrementing
       }
-      std::vector<int> m_shape_index;
+      const std::vector<int>&  m_shape_index;
     };
 
     typedef boost::filter_iterator<Filter_unassigned_points,
@@ -103,14 +103,19 @@ shape. The implementation follows \cgalCite{Schnabel07}.
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type Shape_range;
 #else
-    typedef typename
-    std::vector<boost::shared_ptr<Shape> > Shape_range;
+    typedef
+    Iterator_range<typename std::vector<boost::shared_ptr<Shape> >::const_iterator>  Shape_range;
 #endif
-    ///< Range of extracted shapes with `boost::shared_ptr<Shape>` as value type. Model of the `ConstRange` concept.
+    ///< An `Iterator_range` with a bidirectional constant iterator type with 
+    ///  value type `boost::shared_ptr<Shape>`. 
+
 
 #ifdef DOXYGEN_RUNNING
-    typedef unspecified_type Point_index_range;    ///< Range of indices of points of type `std::size_t` into the provided input range. Model of the concept `Range` .
-
+    typedef unspecified_type Point_index_range;
+    ///< An `Iterator_range` with a bidirectional iterator with value type `std::size_t`
+    ///  as indices into the input data that has not been assigned to a shape.
+    ///  As this range class has no `size()` method, the method 
+    ///  `Efficient_RANSAC::number_of_unassigned_points()` is provided.
 #else 
     typedef typename Iterator_range<Point_index_iterator>
       Point_index_range;
@@ -179,16 +184,15 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     }
 
     /*!
-      Sets the input data by providing an iterator range modeling the
-      `boost:RandomAccessRange` concept. The range of input points need to stay valid
-      until the detection has been performed and no longer access to the
-      results is required. The data in the input range is reordered during
-      `detect()` and `preprocess()`. The function `clear()` is first called by this function.
+      Sets the input data by providing a range which is model of the
+      concept `Range`  with random access iterators. The range of input data must stay valid
+      until the detection has been performed and the access to the
+      results is no longer required. The data in the input range is reordered by the methods
+      `detect()` and `preprocess()`. This function  first calls `clear()`.
     */
     void set_input(
-      ///< Range of input data points.
       typename Traits::Input_range& input_range,
-      ///< past-the-end random access iterator over the input points.
+      ///< Range of input data.
       Point_map point_map = Point_map(),
       ///< property map to access the position of an input point.
       Normal_map normal_map = Normal_map()
@@ -611,13 +615,14 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     /// \name Access
     /// @{            
     /*!
-      Returns a range over the detected shapes in the order of detection.
-      The memory allocated for the shapes is released by `clear()` or the
-      the destructor of the class. Depending on the chosen probability
+      Returns an `Iterator_range` with a bidirectional iterator with value type
+      `boost::shared_ptr<Shape>` over the detected shapes in the order of detection.
+      Depending on the chosen probability
       for the detection, the shapes are ordered with decreasing size.
     */
-    const Shape_range& shapes() const {
-      return m_extracted_shapes;
+    Shape_range shapes() const {
+      return make_range(m_extracted_shapes.begin(),
+                        m_extracted_shapes.end());
     }
       
     /*! 
@@ -628,11 +633,8 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     }
     
     /*! 
-      Provides an `Iterator_range` with a bidirectional iterator with value type `std::size_t`
-      as indices into the input data that has
-      not been assigned to a shape. As this range class has no
-      `size()` method, the method `Efficient_RANSAC::number_of_unassigned_points()` is
-      provided.
+      Returns an `Iterator_range` with a bidirectional iterator with value type `std::size_t`
+      as indices into the input data that has not been assigned to a shape. 
     */ 
     Point_index_range unassigned_points_indices() {
       Filter_unassigned_points fup(m_shape_index);

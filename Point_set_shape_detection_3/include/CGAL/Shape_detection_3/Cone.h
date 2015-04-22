@@ -253,7 +253,7 @@ namespace CGAL {
         }
       }
 
-    virtual FT cos_to_normal(const Point &p, const Vector_3 &n) const {
+    virtual FT cos_to_normal(const Point_3 &p, const Vector_3 &n) const {
       // construct vector orthogonal to axis in direction of the point
       Vector_3 a = p - m_apex;
       Vector_3 b = CGAL::cross_product(m_axis, CGAL::cross_product(m_axis, a));
