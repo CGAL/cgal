@@ -4,7 +4,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Arr_geometry_traits/Polyline_2.h>
+#include <CGAL/Arr_geometry_traits/Polycurve_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 
 typedef CGAL::Quotient<int>                           Number_type;
