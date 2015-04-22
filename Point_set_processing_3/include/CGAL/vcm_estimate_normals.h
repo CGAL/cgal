@@ -230,7 +230,7 @@ vcm_convolve (ForwardIterator first,
 /// @tparam CovariancePMap is a model of `ReadWritePropertyMap` with a value_type = `cpp11::array<Kernel::FT,6>`.
 /// @tparam Kernel Geometric traits class.
 ///
-/// \sa `CGAL::is_on_edge()`
+/// \sa `CGAL::vcm_is_on_feature_edge()`
 /// \sa `CGAL::vcm_estimate_normals()`
 ///
 /// \todo replace ccov by a property map.
