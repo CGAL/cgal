@@ -18,8 +18,8 @@
 // Author(s) : Jocelyn Meyron and Quentin Mérigot
 //
 
-#ifndef CGAL_INTERNAL_VCM_VCM_UTILITIES_H
-#define CGAL_INTERNAL_VCM_VCM_UTILITIES_H
+#ifndef CGAL_EIGEN_VCM_TRAITS_H
+#define CGAL_EIGEN_VCM_TRAITS_H
 
 #include <Eigen/Dense>
 #include <Eigen/Eigenvalues>
@@ -110,4 +110,4 @@ public:
 
 } // namespace CGAL
 
-#endif // CGAL_INTERNAL_VCM_VCM_UTILITIES_H
+#endif // CGAL_EIGEN_VCM_TRAITS_H

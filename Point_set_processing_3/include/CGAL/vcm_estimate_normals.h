@@ -21,15 +21,16 @@
 #ifndef CGAL_VCM_ESTIMATE_NORMALS_H
 #define CGAL_VCM_ESTIMATE_NORMALS_H
 
-#include <CGAL/property_map.h>
-
-#include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/internal/Voronoi_covariance_3/voronoi_covariance_3.h>
-#include <CGAL/internal/Voronoi_covariance_3/vcm_utilities.h>
+
+#include <CGAL/property_map.h>
+#include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Fuzzy_sphere.h>
+
+#include <CGAL/Eigen_vcm_traits.h>
 
 #include <iterator>
 #include <vector>
