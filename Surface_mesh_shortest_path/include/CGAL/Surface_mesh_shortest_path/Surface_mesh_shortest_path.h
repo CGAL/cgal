@@ -153,7 +153,7 @@ private:
 public:
   
   /*!
-  \brief A `bidirectional_iterator` to access the source points
+  \brief A model of `BidirectionalIterator` to access the source points
 
   \details An iterator becomes invalid if:
    - the corresponding point is removed (either with `Surface_mesh_shortest_path::remove_source_point()` or `Surface_mesh_shortest_path::remove_all_source_points()`).

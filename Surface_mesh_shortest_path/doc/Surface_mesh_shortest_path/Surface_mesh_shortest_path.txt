@@ -191,7 +191,7 @@ turbine.off | 9210 | 1.35703 | 157301 | 90.7139
 man.off | 17495 | 1.75936 | 185194 | 122.541
 </center>
 
-\subsection Surface_mesh_shortest_pathQueryComparison Comparison of Construction and Query Times with multiple source points
+\subsection Surface_mesh_shortest_pathQueryComparison Comparison of Construction and Query Times with Multiple Source Points
 
 The following figures track the construction time, query time, and peak memory usage for the various test models as the number of source points increases.  Notice that none of the values increases significantly as the number of source points increases.  In fact, in most cases, the running time and memory go down.  This is because a larger number of source points tends to result in a more flat sequence tree, which translates to reduced runtime and memory costs.
 
@@ -214,7 +214,7 @@ The following figures track the construction time, query time, and peak memory u
 \subsubsection Surface_mesh_shortest_pathGeodesics Geodesic Paths
   A <em>geodesic</em> curve is a <em>locally shortest</em> path on the surface of some manifold, that is, it cannot be made shorter by some local perturbations. On a surface mesh, this translates to a curve where, when the faces crossed by the curve are unfolded into the plane, the curve forms a straight line. Another way of describing it is that there is exactly \f$\pi\f$ surface angle to both sides at every point along the curve (except possibly at the curve's endpoints). 
   
-  A geodesic curve between two points is not necessarily a shortest path, but all shortest paths on surface meshes are formed by sequences of one or more geodesic paths, whose junction points are either vertices on the boundary of the mesh, or \link Surface_mesh_shortest_pathSaddleVertex <em>saddle vertices</em> \endlink. We call such a curve on the surface of the mesh a <em>potential shortest path</em> between its two endpoints.
+  A geodesic curve between two points is not necessarily a shortest path, but all shortest paths on surface meshes are formed by sequences of one or more geodesic paths, whose junction points are either vertices on the boundary of the mesh, or \link Surface_mesh_shortest_pathSaddleVertex <em>saddle vertices</em>\endlink. We call such a curve on the surface of the mesh a <em>potential shortest path</em> between its two endpoints.
   
   \cgalFigureBegin{Geodesic_perspective,perspectiveGeodesic.png}
   A geodesic on the surface of a simple surface mesh.
@@ -280,7 +280,7 @@ In order to deal with this, we must create a new set of child visibility windows
 
   In order to locate the shortest path from a target point to a source point, we must select the correct visibility window. A simple method is to keep track for each face \f$f\f$ of all windows which cross \f$f\f$. In practice, at most a constant number of windows will cross any given face, so for simplicity this is the method we employ. An alternative is to construct a Voronoi-like structure on each face, where each cell represents a visibility window. We do did not attempt this method, however it would seem likely that it would be of no computational benefit.
   
-\subsection Pseudo-code
+\subsection Pseudo-Code
 
 In this section we give a brief outline of the pseudo-code for this algorithm. More details can be found in \cgalCite{ch-spp-96}  and \cgalCite{XinWang2009improvingchenandhan}.
 

@@ -52,7 +52,7 @@ public:
   /// Kernel type
   typedef K Kernel;
   
-  /// FaceListGraph Type
+  /// FaceListGraph type
   typedef G FaceListGraph;
 
   typedef typename Kernel::FT FT;
