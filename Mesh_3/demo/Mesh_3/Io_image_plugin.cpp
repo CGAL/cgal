@@ -1,7 +1,7 @@
 #include "config.h"
 
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-#  include <GL/glew.h>
+//#  include <GL/glew.h>
 #endif
 #include "Scene_segmented_image_item.h"
 #include "Image_type.h"
@@ -24,7 +24,7 @@ class Io_image_plugin :
 public:
   Io_image_plugin() {
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-    glewInit();
+  //  glewInit();
 #endif
   }
 
