@@ -336,8 +336,9 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
     // And finally, compute the normals
     int i = 0;
     for (ForwardIterator it = first; it != beyond; ++it) {
-        Eigen::Vector3f enormal;
-        internal::extract_greater_eigenvector(cov[i], enormal);
+        cpp11::array<double, 3> enormal;
+        Eigen_vcm_traits::extract_greater_eigenvector_of_covariance_matrix
+          (cov[i], enormal);
 
         typename Kernel::Vector_3 normal(enormal[0],
                                          enormal[1],

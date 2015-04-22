@@ -21,8 +21,6 @@
 #ifndef CGAL_VCM_ESTIMATE_EDGES_H
 #define CGAL_VCM_ESTIMATE_EDGES_H
 
-#include <Eigen/Dense>
-
 #include <CGAL/vcm_estimate_normals.h>
 
 #include <CGAL/Kd_tree.h>
@@ -60,19 +58,17 @@ namespace CGAL {
 template <class FT>
 bool
 vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
-                        double threshold) {
-    // Construct covariance matrix
-    Eigen::Matrix3f m = internal::construct_covariance_matrix(cov);
-
-    // Diagonalizing the matrix
-    Eigen::Vector3f eigenvalues;
-    Eigen::Matrix3f eigenvectors;
-    if (! internal::diagonalize_selfadjoint_matrix(m, eigenvectors, eigenvalues)) {
+                        double threshold)
+{
+    cpp11::array<double,3> eigenvalues;
+    if (!Eigen_vcm_traits::
+          diagonalize_selfadjoint_covariance_matrix(cov, eigenvalues) )
+    {
         return false;
     }
 
     // Compute the ratio
-    float r = eigenvalues(1) / (eigenvalues(0) + eigenvalues(1) + eigenvalues(2));
+    double r = eigenvalues[1] / (eigenvalues[0] + eigenvalues[1] + eigenvalues[2]);
     if (r >= threshold)
         return true;
 

@@ -24,14 +24,14 @@
 #include <Eigen/Dense>
 #include <Eigen/Eigenvalues>
 
+#include <CGAL/array.h>
+
 namespace CGAL {
 
-namespace internal {
-
-// Construct the covariance matrix
-template <class Covariance>
-Eigen::Matrix3f
-construct_covariance_matrix (Covariance &cov) {
+class Eigen_vcm_traits{
+  // Construct the covariance matrix
+  static Eigen::Matrix3f
+  construct_covariance_matrix (const cpp11::array<double,6>& cov) {
     Eigen::Matrix3f m;
 
     m(0,0) = cov[0]; m(0,1) = cov[1]; m(0,2) = cov[2];
@@ -41,47 +41,72 @@ construct_covariance_matrix (Covariance &cov) {
     m(1, 0) = m(0,1); m(2, 0) = m(0, 2); m(2, 1) = m(1, 2);
 
     return m;
-}
+  }
 
-// Diagonalize a selfadjoint matrix
-bool
-diagonalize_selfadjoint_matrix (Eigen::Matrix3f &m,
-                                Eigen::Matrix3f &eigenvectors,
-                                Eigen::Vector3f &eigenvalues) {
-    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> eigensolver(m);
+  // Diagonalize a selfadjoint matrix
+  static bool
+  diagonalize_selfadjoint_matrix (Eigen::Matrix3f &m,
+                                  Eigen::Matrix3f &eigenvectors,
+                                  Eigen::Vector3f &eigenvalues) {
+      Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> eigensolver(m);
 
-    if (eigensolver.info() != Eigen::Success) {
-        return false;
-    }
+      if (eigensolver.info() != Eigen::Success) {
+          return false;
+      }
 
-    eigenvalues = eigensolver.eigenvalues();
-    eigenvectors = eigensolver.eigenvectors();
+      eigenvalues = eigensolver.eigenvalues();
+      eigenvectors = eigensolver.eigenvectors();
 
-    return true;
-}
+      return true;
+  }
 
-// Extract the eigenvector associated to the greatest eigenvalue
-template <class Covariance>
-bool
-extract_greater_eigenvector (Covariance &cov,
-                             Eigen::Vector3f &normal) {
-    // Construct covariance matrix
+public:
+  static bool
+  diagonalize_selfadjoint_covariance_matrix(
+    const cpp11::array<double,6>& cov,
+    cpp11::array<double, 3>& eigen_values)
+  {
     Eigen::Matrix3f m = construct_covariance_matrix(cov);
 
     // Diagonalizing the matrix
     Eigen::Vector3f eigenvalues;
     Eigen::Matrix3f eigenvectors;
-    if (! diagonalize_selfadjoint_matrix(m, eigenvectors, eigenvalues)) {
-        return false;
+    bool res = diagonalize_selfadjoint_matrix(m, eigenvectors, eigenvalues);
+
+    if (res)
+    {
+      eigen_values[0]=eigenvalues[0];
+      eigen_values[1]=eigenvalues[1];
+      eigen_values[2]=eigenvalues[2];
     }
 
-    // Eigenvalues are already sorted by increasing order
-    normal = eigenvectors.col(0);
+    return res;
+  }
 
-    return true;
-}
+  // Extract the eigenvector associated to the greatest eigenvalue
+  static bool
+  extract_greater_eigenvector_of_covariance_matrix (
+    const cpp11::array<double,6>& cov,
+    cpp11::array<double,3> &normal)
+  {
+      // Construct covariance matrix
+      Eigen::Matrix3f m = construct_covariance_matrix(cov);
 
-} // namespace internal
+      // Diagonalizing the matrix
+      Eigen::Vector3f eigenvalues;
+      Eigen::Matrix3f eigenvectors;
+      if (! diagonalize_selfadjoint_matrix(m, eigenvectors, eigenvalues)) {
+          return false;
+      }
+
+      // Eigenvalues are already sorted by increasing order
+      normal[0]=eigenvectors(0,0);
+      normal[1]=eigenvectors(1,0);
+      normal[2]=eigenvectors(2,0);
+
+      return true;
+  }
+};
 
 } // namespace CGAL
 
