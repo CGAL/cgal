@@ -28,6 +28,8 @@
 
 namespace CGAL {
 
+/// A model of the concept `VCMTraits` using \ref thirdpartyEigen.
+/// \cgalModels `VCMTraits`
 class Eigen_vcm_traits{
   // Construct the covariance matrix
   static Eigen::Matrix3f

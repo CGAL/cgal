@@ -39,7 +39,7 @@
 
 namespace CGAL {
 
-
+/// \ingroup PkgPointSetProcessing
 /// determines if a point is on a sharp feature edge from point set
 /// for which the Voronoi covariance Measures have been computed.
 ///
@@ -53,15 +53,18 @@ namespace CGAL {
 /// which however will result in selecting more points in sharper regions.
 /// More details are given in \cgalCite{cgal:mog-vbcfe-11}.
 ///
+/// \tparam VCM_traits is a model of `VCMTraits`. If Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined
+///         then an overlay using `Eigen_vcm_traits` is provided and this template parameter can be omitted.
 /// \sa CGAL::compute_vcm()`
 ///
-template <class FT>
+template <class FT, class VCM_traits>
 bool
 vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
-                        double threshold)
+                        double threshold,
+                        VCM_traits)
 {
     cpp11::array<double,3> eigenvalues;
-    if (!Eigen_vcm_traits::
+    if (!VCM_traits::
           diagonalize_selfadjoint_covariance_matrix(cov, eigenvalues) )
     {
         return false;
@@ -74,6 +77,18 @@ vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
 
     return false;
 }
+
+
+
+#ifdef CGAL_EIGEN3_ENABLED
+template <class FT>
+bool
+vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
+                        double threshold)
+{
+  return vcm_is_on_feature_edge(cov, threshold, Eigen_vcm_traits());
+}
+#endif
 
 namespace internal {
 

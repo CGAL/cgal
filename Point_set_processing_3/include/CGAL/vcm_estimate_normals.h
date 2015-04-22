@@ -30,7 +30,9 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Fuzzy_sphere.h>
 
+#ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_vcm_traits.h>
+#endif
 
 #include <iterator>
 #include <vector>
@@ -291,7 +293,8 @@ template < typename ForwardIterator,
            typename PointPMap,
            typename NormalPMap,
            typename Kernel,
-           typename Covariance
+           typename Covariance,
+           typename VCM_traits
 >
 void
 vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input point.
@@ -338,7 +341,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
     int i = 0;
     for (ForwardIterator it = first; it != beyond; ++it) {
         cpp11::array<double, 3> enormal;
-        Eigen_vcm_traits::extract_greater_eigenvector_of_covariance_matrix
+        VCM_traits::extract_greater_eigenvector_of_covariance_matrix
           (cov[i], enormal);
 
         typename Kernel::Vector_3 normal(enormal[0],
@@ -361,12 +364,15 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
 /// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
+/// \tparam VCM_traits is a model of `VCMTraits`. If Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined
+///         then an overlay using `Eigen_vcm_traits` is provided and this template parameter can be omitted.
 
 // This variant deduces the kernel from the point property map
 // and uses a radius for the convolution.
 template < typename ForwardIterator,
            typename PointPMap,
-           typename NormalPMap
+           typename NormalPMap,
+           typename VCM_traits
 >
 void
 vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input point.
@@ -374,7 +380,8 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                       PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
                       NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
                       double R, ///< offset radius.
-                      double r ///< convolution radius.
+                      double r, ///< convolution radius.
+                      VCM_traits
 )
 {
     typedef typename boost::property_traits<PointPMap>::value_type Point;
@@ -389,6 +396,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                          Covariance());
 }
 
+
 /// \ingroup PkgPointSetProcessing
 /// Estimates normal directions of the points in the range `[first, beyond)`
 /// using the Voronoi Covariance Measure with a number of neighbors for the convolution.
@@ -400,12 +408,15 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
 /// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
+/// \tparam VCM_traits is a model of `VCMTraits`. If Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined
+///         then an overlay using `Eigen_vcm_traits` is provided and this template parameter can be omitted.
 
 // This variant deduces the kernel from the point property map
 // and uses a number of neighbors for the convolution.
 template < typename ForwardIterator,
            typename PointPMap,
-           typename NormalPMap
+           typename NormalPMap,
+           typename VCM_traits
 >
 void
 vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input point.
@@ -413,7 +424,8 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                       PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
                       NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
                       double R, ///< offset radius.
-                      unsigned int nb_neighbors_convolve ///< number of neighbor points used for the convolution.
+                      unsigned int nb_neighbors_convolve, ///< number of neighbor points used for the convolution.
+                      VCM_traits
 )
 {
     typedef typename boost::property_traits<PointPMap>::value_type Point;
@@ -428,6 +440,39 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                          Covariance(),
                          nb_neighbors_convolve);
 }
+
+
+#ifdef CGAL_EIGEN3_ENABLED
+template < typename ForwardIterator,
+           typename PointPMap,
+           typename NormalPMap
+>
+void
+vcm_estimate_normals (ForwardIterator first,
+                      ForwardIterator beyond,
+                      PointPMap point_pmap,
+                      NormalPMap normal_pmap,
+                      double R,
+                      double r)
+{
+  vcm_estimate_normals(first, beyond, point_pmap, normal_pmap, R, r, Eigen_vcm_traits());
+}
+
+template < typename ForwardIterator,
+           typename PointPMap,
+           typename NormalPMap
+>
+void
+vcm_estimate_normals (ForwardIterator first,
+                      ForwardIterator beyond,
+                      PointPMap point_pmap,
+                      NormalPMap normal_pmap,
+                      double R,
+                      unsigned int nb_neighbors_convolve)
+{
+  vcm_estimate_normals(first, beyond, point_pmap, normal_pmap, R, nb_neighbors_convolve, Eigen_vcm_traits());
+}
+#endif
 
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Identity_property_map
