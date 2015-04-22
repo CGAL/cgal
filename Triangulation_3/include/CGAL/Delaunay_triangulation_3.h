@@ -1009,7 +1009,7 @@ protected:
     {
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
       static Profile_branch_counter_3 bcounter(
-        "early withdrawals / late withdrawals / successes [Delaunay_tri_3::insert]");
+        "early withdrawals / late withdrawals / successes [Delaunay_tri_3::insert_with_info]");
 #endif
 
       Vertex_handle &hint = m_tls_hint.local();
