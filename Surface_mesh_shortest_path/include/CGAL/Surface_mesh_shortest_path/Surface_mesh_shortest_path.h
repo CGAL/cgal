@@ -76,41 +76,41 @@ public:
 /// \name Types
 /// @{
 
-  /// The `FaceListGraph` type which this algorithm acts on.
-  typedef typename Traits::FaceListGraph FaceListGraph;
+  /// The triangle mesh type which this algorithm acts on.
+  typedef typename Traits::Triangle_mesh Triangle_mesh;
 
-  /// The BGL graph traits for this `FaceListGraph`
-  typedef typename boost::graph_traits<FaceListGraph> Graph_traits;
+  /// The BGL graph traits for this triangle mesh
+  typedef typename boost::graph_traits<Triangle_mesh> Graph_traits;
 
-  /// Handle to vertices of `FaceListGraph`
+  /// Descriptors for the vertices of `Triangle_mesh`
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
   
-  /// Handle to halfedges of `FaceListGraph`
+  /// Descriptors for the halfedges of `Triangle_mesh`
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
   
-  /// Handle to faces of `FaceListGraph`
+  /// Descriptors of the faces of `Triangle_mesh`
   typedef typename Graph_traits::face_descriptor face_descriptor;
   
 #ifndef DOXYGEN_RUNNING
 
   typedef typename Default::Get<
     VIM,
-    typename boost::property_map<FaceListGraph, boost::vertex_index_t>::type
+    typename boost::property_map<Triangle_mesh, boost::vertex_index_t>::type
       >::type Vertex_index_map;
   
   typedef typename Default::Get<
     HIM,
-    typename boost::property_map<FaceListGraph, boost::halfedge_index_t>::type
+    typename boost::property_map<Triangle_mesh, boost::halfedge_index_t>::type
       >::type Halfedge_index_map;
       
   typedef typename Default::Get<
     FIM,
-    typename boost::property_map<FaceListGraph, boost::face_index_t>::type
+    typename boost::property_map<Triangle_mesh, boost::face_index_t>::type
       >::type Face_index_map;
       
   typedef typename Default::Get<
     VPM,
-    typename boost::property_map<FaceListGraph, CGAL::vertex_point_t>::type
+    typename boost::property_map<Triangle_mesh, CGAL::vertex_point_t>::type
       >::type Vertex_point_map;
 
 #else
@@ -130,14 +130,14 @@ public:
   /// The numeric type used by this algorithm.
   typedef typename Traits::FT FT;
   
-  /// The 3-dimensional point type of the `FaceListGraph`.
+  /// The 3-dimensional point type, which must coincide with the value type of `Vertex_point_map`.
   typedef typename Traits::Point_3 Point_3;
   
   /// An ordered triple which specifies a location inside a triangle as
   /// a convex combination of its three vertices.
   typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
 
-  /// \brief An ordered pair specifying a location on the surface of the `FaceListGraph`.
+  /// \brief An ordered pair specifying a location on the surface of the `Triangle_mesh`.
   /// \details If `g` is the input graph and given the pair (`f`, `bc`) such that `bc` is `(w0, w1, w2)`,
   ///  the correspondance with the weights in `bc` and the vertices of the face `f` is the following:
   /// - `w0 = source(halfedge(f,g),g)`
@@ -318,7 +318,7 @@ private:
 
 private:
   Traits m_traits;
-  FaceListGraph& m_graph;
+  Triangle_mesh& m_graph;
   Vertex_index_map m_vertexIndexMap;
   Halfedge_index_map m_halfedgeIndexMap;
   Face_index_map m_faceIndexMap;
@@ -472,14 +472,14 @@ private:
     return triangle_from_halfedge(edge, m_graph, m_vertexPointMap);
   }
   
-  static Triangle_3 triangle_from_halfedge(halfedge_descriptor edge, const FaceListGraph& g)
+  static Triangle_3 triangle_from_halfedge(halfedge_descriptor edge, const Triangle_mesh& g)
   {
     return triangle_from_halfedge(edge, g, get(vertex_point, g));
   }
   
-  static Triangle_3 triangle_from_halfedge(halfedge_descriptor edge, const FaceListGraph& g, Vertex_point_map vertexPointMap)
+  static Triangle_3 triangle_from_halfedge(halfedge_descriptor edge, const Triangle_mesh& g, Vertex_point_map vertexPointMap)
   {
-    return CGAL::internal::triangle_from_halfedge<Triangle_3, FaceListGraph, Vertex_point_map>(edge, g, vertexPointMap);
+    return CGAL::internal::triangle_from_halfedge<Triangle_3, Triangle_mesh, Vertex_point_map>(edge, g, vertexPointMap);
   }
   
   Triangle_3 triangle_from_face(face_descriptor f) const
@@ -487,12 +487,12 @@ private:
     return triangle_from_face(f, m_graph, m_vertexPointMap);
   }
   
-  static Triangle_3 triangle_from_face(face_descriptor f, const FaceListGraph& g)
+  static Triangle_3 triangle_from_face(face_descriptor f, const Triangle_mesh& g)
   {
     return triangle_from_halfedge(halfedge(f, g), g, get(vertex_point, g));
   }
   
-  static Triangle_3 triangle_from_face(face_descriptor f, const FaceListGraph& g, Vertex_point_map vertexPointMap)
+  static Triangle_3 triangle_from_face(face_descriptor f, const Triangle_mesh& g, Vertex_point_map vertexPointMap)
   {
     return triangle_from_halfedge(halfedge(f, g), g, vertexPointMap);
   }
@@ -1430,8 +1430,8 @@ private:
         delete_node(node->pop_middle_child(), destruction);
       }
       
-      // At the point of destruction, the `FaceListGraph` referenced may have gone out of scope, we wish to distinguish between deletion with an assumed reference
-      // to the original `FaceListGraph`, and deletion without
+      // At the point of destruction, the `Triangle_mesh` referenced may have gone out of scope, we wish to distinguish between deletion with an assumed reference
+      // to the original `Triangle_mesh`, and deletion without
       if (!node->is_root_node() && !destruction)
       {
         std::size_t entryEdgeIndex = get(m_halfedgeIndexMap, node->entry_edge());
@@ -1999,7 +1999,7 @@ public:
   
   Equivalent to `Surface_mesh_shortest_path(g, get(boost::vertex_index, g), get(boost::halfedge_index, g), get(boost::face_index, g), get(CGAL::vertex_point, g), traits)`.
   */
-  Surface_mesh_shortest_path(FaceListGraph& g, const Traits& traits = Traits())
+  Surface_mesh_shortest_path(Triangle_mesh& g, const Traits& traits = Traits())
     : m_traits(traits)
     , m_graph(g)
     , m_vertexIndexMap(get(boost::vertex_index, g))
@@ -2014,7 +2014,7 @@ public:
   /*!
   \brief Creates a shortest paths object using `g` as input.
   
-  \details No copy of the `FaceListGraph` is made, only a reference to the `g` is held.
+  \details No copy of the `Triangle_mesh` is made, only a reference to the `g` is held.
   
   \param g The surface mesh to compute shortest paths on.  Note that it must be triangulated.
   
@@ -2028,7 +2028,7 @@ public:
   
   \param traits Optional instance of the traits class to use.
   */
-  Surface_mesh_shortest_path(FaceListGraph& g, Vertex_index_map vertexIndexMap, Halfedge_index_map halfedgeIndexMap, Face_index_map faceIndexMap, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  Surface_mesh_shortest_path(Triangle_mesh& g, Vertex_index_map vertexIndexMap, Halfedge_index_map halfedgeIndexMap, Face_index_map faceIndexMap, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
     : m_traits(traits)
     , m_graph(g)
     , m_vertexIndexMap(vertexIndexMap)
@@ -2446,8 +2446,8 @@ public:
     of the given face.
   
   \details The following static overloads are also available:
-    - `static Point_3 point(face_descriptor f, Barycentric_coordinate location, const FaceListGraph& g, const Traits& traits = Traits())`
-    - `static Point_3 point(face_descriptor f, Barycentric_coordinate location, const FaceListGraph& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
+    - `static Point_3 point(face_descriptor f, Barycentric_coordinate location, const Triangle_mesh& g, const Traits& traits = Traits())`
+    - `static Point_3 point(face_descriptor f, Barycentric_coordinate location, const Triangle_mesh& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
   
   \param f A face of on the input face graph
   \param location The barycentric coordinate of the query point on face `f` 
@@ -2459,12 +2459,12 @@ public:
   
   /// \cond
   
-  static Point_3 point(face_descriptor f, Barycentric_coordinate location, const FaceListGraph& g, const Traits& traits = Traits()) 
+  static Point_3 point(face_descriptor f, Barycentric_coordinate location, const Triangle_mesh& g, const Traits& traits = Traits()) 
   {
     return point(f, location, g, CGAL::get(CGAL::vertex_point, g), traits);
   }
   
-  static Point_3 point(face_descriptor f, Barycentric_coordinate location, const FaceListGraph& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits()) 
+  static Point_3 point(face_descriptor f, Barycentric_coordinate location, const Triangle_mesh& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits()) 
   {
     return construct_barycenter_in_triangle_3(triangle_from_face(f, g, vertexPointMap), location, traits);
   }
@@ -2476,8 +2476,8 @@ public:
     along the given edge.
   
   \details The following static overloads are also available:
-    - `static Point_3 point(halfedge_descriptor edge, FT t, const FaceListGraph& g, const Traits& traits = Traits())`
-    - `static Point_3 point(halfedge_descriptor edge, FT t, const FaceListGraph& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
+    - `static Point_3 point(halfedge_descriptor edge, FT t, const Triangle_mesh& g, const Traits& traits = Traits())`
+    - `static Point_3 point(halfedge_descriptor edge, FT t, const Triangle_mesh& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
 
   \param edge An edge of the input face graph
   \param t The parametric distance along edge of the desired point
@@ -2489,12 +2489,12 @@ public:
   
   /// \cond
 
-  static Point_3 point(halfedge_descriptor edge, FT t, const FaceListGraph& g, const Traits& traits = Traits())
+  static Point_3 point(halfedge_descriptor edge, FT t, const Triangle_mesh& g, const Traits& traits = Traits())
   {
     return point(edge, t, g, CGAL::get(CGAL::vertex_point, g), traits);
   }
 
-  static Point_3 point(halfedge_descriptor edge, FT t, const FaceListGraph& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  static Point_3 point(halfedge_descriptor edge, FT t, const Triangle_mesh& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
   {
     typename Traits::Construct_barycenter_3 construct_barycenter_3(traits.construct_barycenter_3_object());
     
@@ -2523,7 +2523,7 @@ public:
   \brief Returns the location of the given vertex as a `Face_location`
   
   \details The following static overload is also available:
-    - `static Face_location face_location(vertex_descriptor vertex, const FaceListGraph& g, const Traits& traits = Traits())`
+    - `static Face_location face_location(vertex_descriptor vertex, const Triangle_mesh& g, const Traits& traits = Traits())`
   
   \param vertex A vertex of the input face graph
   */
@@ -2534,7 +2534,7 @@ public:
   
   /// \cond
 
-  static Face_location face_location(vertex_descriptor vertex, const FaceListGraph& g, const Traits& traits = Traits())
+  static Face_location face_location(vertex_descriptor vertex, const Triangle_mesh& g, const Traits& traits = Traits())
   {
     typename Traits::Construct_barycentric_coordinate construct_barycentric_coordinate(traits.construct_barycentric_coordinate_object());
     halfedge_descriptor he = next(halfedge(vertex, g), g);
@@ -2554,7 +2554,7 @@ public:
   \brief Returns a location along the given edge as a `Face_location`.
   
   \details The following static overload is also available:
-    - `static Face_location face_location(halfedge_descriptor he, FT t, const FaceListGraph& g, const Traits& traits = Traits())`
+    - `static Face_location face_location(halfedge_descriptor he, FT t, const Triangle_mesh& g, const Traits& traits = Traits())`
   
   \param he A halfedge of the input face graph
   \param t Parametric distance of the desired point along `he`
@@ -2566,7 +2566,7 @@ public:
 
   /// \cond
   
-  static Face_location face_location(halfedge_descriptor he, FT t, const FaceListGraph& g, const Traits& traits = Traits())
+  static Face_location face_location(halfedge_descriptor he, FT t, const Triangle_mesh& g, const Traits& traits = Traits())
   {
     typename Traits::Construct_barycentric_coordinate cbc(traits.construct_barycentric_coordinate_object());
     face_descriptor locationFace = face(he, g);
@@ -2597,7 +2597,7 @@ public:
     that accept a reference to an `AABB_tree` as input.
     
   \details The following static overload is also available:
-    - `static Face_location locate(const Point_3& p, const FaceListGraph& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
+    - `static Face_location locate(const Point_3& p, const Triangle_mesh& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
   
   \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
   
@@ -2612,7 +2612,7 @@ public:
   /// \cond
   
   template <class AABBTraits>
-  static Face_location locate(const Point_3& location, const FaceListGraph& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  static Face_location locate(const Point_3& location, const Triangle_mesh& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
   {
     AABB_tree<AABBTraits> tree;
     build_aabb_tree(g, tree);
@@ -2625,7 +2625,7 @@ public:
   \brief Returns the face location nearest to the given point.
   
   \details The following static overload is also available:
-    - static Face_location locate(const Point_3& p, const AABB_tree<AABBTraits>& tree, const FaceListGraph& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+    - static Face_location locate(const Point_3& p, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
   
   \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
   
@@ -2641,7 +2641,7 @@ public:
   /// \cond
   
   template <class AABBTraits>
-  static Face_location locate(const Point_3& location, const AABB_tree<AABBTraits>& tree, const FaceListGraph& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  static Face_location locate(const Point_3& location, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
   {
     typename Traits::Construct_barycentric_coordinate_in_triangle_3 cbcit3(traits.construct_barycentric_coordinate_in_triangle_3_object());
     typename AABB_tree<AABBTraits>::Point_and_primitive_id result = tree.closest_point_and_primitive(location);
@@ -2661,7 +2661,7 @@ public:
     that accept a reference to an `AABB_tree` as input.
   
   \details The following static overload is also available:
-    - `static Face_location locate(const Ray_3& ray, const FaceListGraph& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
+    - `static Face_location locate(const Ray_3& ray, const Triangle_mesh& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
   
   \tparam AABBTraits A model of `AABBTraits` used to define an `AABB_tree`.
   
@@ -2676,7 +2676,7 @@ public:
   /// \cond
   
   template <class AABBTraits>
-  static Face_location locate(const Ray_3& ray, const FaceListGraph& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  static Face_location locate(const Ray_3& ray, const Triangle_mesh& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
   {
     AABB_tree<AABBTraits> tree;
     build_aabb_tree(g, tree);
@@ -2690,7 +2690,7 @@ public:
     its source point.
     
   \details The following static overload is also available:
-    - static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const FaceListGraph& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+    - static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
     
   \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
   
@@ -2706,7 +2706,7 @@ public:
   /// \cond
   
   template <class AABBTraits>
-  static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const FaceListGraph& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+  static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& g, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
   {
     typedef AABB_tree<AABBTraits> AABB_face_graph_tree;
     typename Traits::Construct_barycentric_coordinate_in_triangle_3 cbcit3(traits.construct_barycentric_coordinate_in_triangle_3_object());
@@ -2764,7 +2764,7 @@ public:
   \brief Creates an `AABB_tree` suitable for use with `locate`.
   
   \details The following static overload is also available:
-    - `static void build_aabb_tree(const FaceListGraph& g, AABB_tree<AABBTraits>& outTree)`
+    - `static void build_aabb_tree(const Triangle_mesh& g, AABB_tree<AABBTraits>& outTree)`
 
   \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
   
@@ -2779,7 +2779,7 @@ public:
   /// \cond
 
   template <class AABBTraits>
-  static void build_aabb_tree(const FaceListGraph& g, AABB_tree<AABBTraits>& outTree)
+  static void build_aabb_tree(const Triangle_mesh& g, AABB_tree<AABBTraits>& outTree)
   {
     face_iterator facesStart, facesEnd;
     boost::tie(facesStart, facesEnd) = faces(g);

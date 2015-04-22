@@ -29,10 +29,10 @@ namespace CGAL {
 
 namespace internal {
 
-template <class Triangle_3, class FaceListGraph, class VertexPointMap>
-Triangle_3 triangle_from_halfedge(typename boost::graph_traits<FaceListGraph>::halfedge_descriptor edge, const FaceListGraph& g, VertexPointMap vertexPointMap)
+template <class Triangle_3, class Triangle_mesh, class VertexPointMap>
+Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor edge, const Triangle_mesh& g, VertexPointMap vertexPointMap)
 {
-  typedef typename boost::graph_traits<FaceListGraph>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor halfedge_descriptor;
   
   halfedge_descriptor e0 = edge;
   halfedge_descriptor e1 = next(edge, g);
@@ -40,17 +40,17 @@ Triangle_3 triangle_from_halfedge(typename boost::graph_traits<FaceListGraph>::h
   return Triangle_3(get(vertexPointMap, boost::source(e0, g)), get(vertexPointMap, boost::target(e0, g)), get(vertexPointMap, boost::target(e1, g)));
 }
 
-template <class Triangle_3, class FaceListGraph>
-Triangle_3 triangle_from_halfedge(typename boost::graph_traits<FaceListGraph>::halfedge_descriptor edge, const FaceListGraph& g)
+template <class Triangle_3, class Triangle_mesh>
+Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor edge, const Triangle_mesh& g)
 {
-  return triangle_from_halfedge<Triangle_3, FaceListGraph, typename boost::property_map<FaceListGraph, boost::vertex_point_t>::type>(edge, g, get(boost::vertex_point, g));
+  return triangle_from_halfedge<Triangle_3, Triangle_mesh, typename boost::property_map<Triangle_mesh, boost::vertex_point_t>::type>(edge, g, get(boost::vertex_point, g));
 }
 
 
-template <class FaceListGraph>
-size_t edge_index(typename boost::graph_traits<FaceListGraph>::halfedge_descriptor he, FaceListGraph& p)
+template <class Triangle_mesh>
+size_t edge_index(typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor he, Triangle_mesh& p)
 {
-  typedef typename boost::graph_traits<FaceListGraph> Graph_traits;
+  typedef typename boost::graph_traits<Triangle_mesh> Graph_traits;
   typedef typename Graph_traits::face_descriptor face_descriptor;
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
   

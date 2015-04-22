@@ -50,13 +50,13 @@ public:
   };
 
 private:
-  typedef typename Traits::FaceListGraph FaceListGraph;
+  typedef typename Traits::Triangle_mesh Triangle_mesh;
   typedef typename Traits::FT FT;
   typedef typename Traits::Point_2 Point_2;
   typedef typename Traits::Triangle_2 Triangle_2;
   typedef typename Traits::Segment_2 Segment_2;
   typedef typename Traits::Ray_2 Ray_2;
-  typedef typename boost::graph_traits<FaceListGraph> Graph_traits;
+  typedef typename boost::graph_traits<Triangle_mesh> Graph_traits;
   typedef typename Graph_traits::face_descriptor face_descriptor;
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
@@ -65,7 +65,7 @@ private:
 private:
   // These could be pulled back into a 'context' class to save space
   Traits& m_traits;
-  FaceListGraph& m_graph;
+  Triangle_mesh& m_graph;
   
   halfedge_descriptor m_entryEdge;
   
@@ -96,7 +96,7 @@ private:
   }
   
 public:
-  Cone_tree_node(Traits& traits, FaceListGraph& g, size_t treeId)
+  Cone_tree_node(Traits& traits, Triangle_mesh& g, size_t treeId)
     : m_traits(traits)
     , m_graph(g)
     , m_sourceImage(Point_2(CGAL::ORIGIN))
@@ -113,7 +113,7 @@ public:
   {
   }
   
-  Cone_tree_node(Traits& traits, FaceListGraph& g, size_t treeId, halfedge_descriptor entryEdge)
+  Cone_tree_node(Traits& traits, Triangle_mesh& g, size_t treeId, halfedge_descriptor entryEdge)
     : m_traits(traits)
     , m_graph(g)
     , m_entryEdge(entryEdge)
@@ -131,7 +131,7 @@ public:
   {
   }
 
-  Cone_tree_node(Traits& traits, FaceListGraph& g, halfedge_descriptor entryEdge, const Triangle_2& layoutFace, const Point_2& sourceImage, const FT& pseudoSourceDistance, const Point_2& windowLeft, const Point_2& windowRight, Node_type nodeType = INTERVAL)
+  Cone_tree_node(Traits& traits, Triangle_mesh& g, halfedge_descriptor entryEdge, const Triangle_2& layoutFace, const Point_2& sourceImage, const FT& pseudoSourceDistance, const Point_2& windowLeft, const Point_2& windowRight, Node_type nodeType = INTERVAL)
     : m_traits(traits)
     , m_graph(g)
     , m_entryEdge(entryEdge)

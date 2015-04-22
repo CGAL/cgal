@@ -38,7 +38,7 @@ as required by the `Surface_mesh_shortest_path` class.
 
 \tparam K A \cgal Kernel
 
-\tparam G A model of FaceListGraph
+\tparam G A model of `FaceListGraph`
 
 \cgalModels `SurfaceMeshShortestPathTraits`
 */
@@ -52,8 +52,8 @@ public:
   /// Kernel type
   typedef K Kernel;
   
-  /// FaceListGraph type
-  typedef G FaceListGraph;
+  /// Triangle mesh type
+  typedef G Triangle_mesh;
 
   typedef typename Kernel::FT FT;
   
@@ -63,7 +63,7 @@ public:
   // Predicates
 public:
   typedef typename Surface_mesh_shortest_paths_3::Compare_relative_intersection_along_segment_2<Kernel> Compare_relative_intersection_along_segment_2;
-  typedef typename Surface_mesh_shortest_paths_3::Is_saddle_vertex<Kernel, FaceListGraph> Is_saddle_vertex;
+  typedef typename Surface_mesh_shortest_paths_3::Is_saddle_vertex<Kernel, Triangle_mesh> Is_saddle_vertex;
   
   // Constructions
 public:
@@ -145,8 +145,8 @@ public:
   Compute_parametric_distance_along_segment_2 compute_parametric_distance_along_segment_2_object() const { return m_compute_parametric_distance_along_segment_2_object; }
 };
 
-template <class Kernel, class FaceListGraph>
-std::ostream& operator<<(std::ostream& os, typename Surface_mesh_shortest_path_traits<Kernel, FaceListGraph>::Barycentric_coordinate b)
+template <class Kernel, class Triangle_mesh>
+std::ostream& operator<<(std::ostream& os, typename Surface_mesh_shortest_path_traits<Kernel, Triangle_mesh>::Barycentric_coordinate b)
 {
   return os << b[0] << " " << b[1] << " " << b[2];
 }
@@ -162,7 +162,7 @@ model which uses an exact Kernel during the unfolding operations to achieve bett
 
 \tparam K Kernel Type
 
-\tparam G FaceListGraph type
+\tparam G triangle mesh type
 
 \cgalModels `SurfaceMeshShortestPathTraits`
 */
