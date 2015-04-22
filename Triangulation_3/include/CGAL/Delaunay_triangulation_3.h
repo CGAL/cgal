@@ -263,6 +263,69 @@ public:
       insert(first, last);
   }
 
+private:
+  std::vector<Vertex_handle> add_temporary_points_on_far_sphere(const size_t num_points){
+      std::vector<Vertex_handle> far_sphere_vertices;
+
+      const size_t MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS = 1000000;
+      if (num_points >= MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS)
+      {
+          // Add temporary vertices on a "far sphere" to reduce contention on
+          // the infinite vertex
+
+          // Get bbox
+          const Bbox_3 &bbox = *this->get_bbox();
+          // Compute radius for far sphere
+          const double& xdelta = bbox.xmax() - bbox.xmin();
+          const double& ydelta = bbox.ymax() - bbox.ymin();
+          const double& zdelta = bbox.zmax() - bbox.zmin();
+          const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
+                                                      ydelta*ydelta +
+                                                      zdelta*zdelta);
+          // WARNING - TODO: this code has to be fixed because Vector_3 is not
+          // required by the traits concept
+          const typename Gt::Vector_3 center(
+                  bbox.xmin() + 0.5*xdelta,
+                  bbox.ymin() + 0.5*ydelta,
+                  bbox.zmin() + 0.5*zdelta);
+          Random_points_on_sphere_3<Point> random_point(radius);
+          const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
+                  tbb::task_scheduler_init::default_num_threads() * 3.5);
+          std::vector<Point> points_on_far_sphere;
+
+          points_on_far_sphere.reserve(NUM_PSEUDO_INFINITE_VERTICES);
+          far_sphere_vertices.reserve(NUM_PSEUDO_INFINITE_VERTICES);
+
+          for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
+              points_on_far_sphere.push_back(*random_point + center);
+
+          spatial_sort(points_on_far_sphere.begin(),
+                       points_on_far_sphere.end(),
+                       geom_traits());
+
+          typename std::vector<Point>::const_iterator it_p = points_on_far_sphere.begin();
+          typename std::vector<Point>::const_iterator it_p_end = points_on_far_sphere.end();
+
+          Vertex_handle hint;
+          for ( ; it_p != it_p_end ; ++it_p)
+          {
+              hint = insert(*it_p, hint);
+              far_sphere_vertices.push_back(hint);
+          }
+      }
+
+      return far_sphere_vertices;
+  }
+
+  void remove_temporary_points_on_far_sphere(const std::vector<Vertex_handle> & far_sphere_vertices){
+      if(!far_sphere_vertices.empty()){
+          // Remove the temporary vertices on far sphere
+          remove(far_sphere_vertices.begin(), far_sphere_vertices.end());
+      }
+  }
+
+public:
+
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   template < class InputIterator >
   std::ptrdiff_t
@@ -295,49 +358,9 @@ public:
       size_t num_points = points.size();
 
       Vertex_handle hint;
-      std::vector<Vertex_handle> far_sphere_vertices;
       
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
-      const size_t MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS = 1000000;
-      if (num_points >= MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS)
-      {
-        // Add temporary vertices on a "far sphere" to reduce contention on
-        // the infinite vertex
-
-        // Get bbox
-        const Bbox_3 &bbox = *this->get_bbox();
-        // Compute radius for far sphere
-        const double& xdelta = bbox.xmax() - bbox.xmin();
-        const double& ydelta = bbox.ymax() - bbox.ymin();
-        const double& zdelta = bbox.zmax() - bbox.zmin();
-        const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
-                                                    ydelta*ydelta +
-                                                    zdelta*zdelta);
-        // WARNING - TODO: this code has to be fixed because Vector_3 is not 
-        // required by the traits concept
-        const typename Gt::Vector_3 center(
-          bbox.xmin() + 0.5*xdelta,
-          bbox.ymin() + 0.5*ydelta,
-          bbox.zmin() + 0.5*zdelta);
-        Random_points_on_sphere_3<Point> random_point(radius);
-        const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
-          tbb::task_scheduler_init::default_num_threads() * 3.5);
-        std::vector<Point> points_on_far_sphere;
-        for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
-          points_on_far_sphere.push_back(*random_point + center);
-
-        spatial_sort(points_on_far_sphere.begin(), 
-                     points_on_far_sphere.end(), 
-                     geom_traits());
-
-        std::vector<Point>::const_iterator it_p = points_on_far_sphere.begin();
-        std::vector<Point>::const_iterator it_p_end = points_on_far_sphere.end();
-        for ( ; it_p != it_p_end ; ++it_p)
-        {
-          hint = insert(*it_p, hint);
-          far_sphere_vertices.push_back(hint);
-        }
-      }
+      std::vector<Vertex_handle> far_sphere_vertices = add_temporary_points_on_far_sphere(num_points);
 #endif // CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
       
       size_t i = 0;
@@ -357,11 +380,7 @@ public:
       );
       
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
-      if (num_points >= MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS)
-      {
-        // Remove the temporary vertices on far sphere
-        remove(far_sphere_vertices.begin(), far_sphere_vertices.end());
-      }
+      remove_temporary_points_on_far_sphere(far_sphere_vertices);
 #endif // CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
     }
     // Sequential
@@ -418,49 +437,9 @@ private:
 
         size_t num_points = points.size();
         Vertex_handle hint;
-        std::vector<Vertex_handle> far_sphere_vertices;
 
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
-      const size_t MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS = 1000000;
-      if (num_points >= MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS)
-      {
-        // Add temporary vertices on a "far sphere" to reduce contention on
-        // the infinite vertex
-
-        // Get bbox
-        const Bbox_3 &bbox = *this->get_bbox();
-        // Compute radius for far sphere
-        const double& xdelta = bbox.xmax() - bbox.xmin();
-        const double& ydelta = bbox.ymax() - bbox.ymin();
-        const double& zdelta = bbox.zmax() - bbox.zmin();
-        const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
-                                                    ydelta*ydelta +
-                                                    zdelta*zdelta);
-        // WARNING - TODO: this code has to be fixed because Vector_3 is not
-        // required by the traits concept
-        const typename Gt::Vector_3 center(
-          bbox.xmin() + 0.5*xdelta,
-          bbox.ymin() + 0.5*ydelta,
-          bbox.zmin() + 0.5*zdelta);
-        Random_points_on_sphere_3<Point> random_point(radius);
-        const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
-          tbb::task_scheduler_init::default_num_threads() * 3.5);
-        std::vector<Point> points_on_far_sphere;
-        for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
-          points_on_far_sphere.push_back(*random_point + center);
-
-        spatial_sort(points_on_far_sphere.begin(),
-                     points_on_far_sphere.end(),
-                     geom_traits());
-
-        std::vector<Point>::const_iterator it_p = points_on_far_sphere.begin();
-        std::vector<Point>::const_iterator it_p_end = points_on_far_sphere.end();
-        for ( ; it_p != it_p_end ; ++it_p)
-        {
-          hint = insert(*it_p, hint);
-          far_sphere_vertices.push_back(hint);
-        }
-      }
+        std::vector<Vertex_handle> far_sphere_vertices = add_temporary_points_on_far_sphere(num_points);
 #endif // CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
 
         size_t i = 0;
@@ -481,11 +460,7 @@ private:
         );
 
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
-      if (num_points >= MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS)
-      {
-        // Remove the temporary vertices on far sphere
-        remove(far_sphere_vertices.begin(), far_sphere_vertices.end());
-      }
+      remove_temporary_points_on_far_sphere(far_sphere_vertices);
 #endif // CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
 
       }
