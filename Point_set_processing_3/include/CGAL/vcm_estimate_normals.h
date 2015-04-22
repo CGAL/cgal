@@ -31,9 +31,6 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Fuzzy_sphere.h>
 
-#include <Eigen/Dense>
-#include <Eigen/Eigenvalues>
-
 #include <iterator>
 #include <vector>
 
@@ -219,11 +216,15 @@ vcm_convolve (ForwardIterator first,
 /// `R` should be set to the minimum local feature size of the surface while `r` can be set to zero.
 ///
 /// The Voronoi covariance matrix of each vertex is stored in a array `a` of length 6 and is as follow:
-/// \f$ \begin{bmatrix}
-/// a[0] & a[1] & a[2] \\
-/// a[1] & a[3] & a[4] \\
-/// a[2] & a[4] & a[5] \\
-/// \end{bmatrix}\f$
+/*!
+<center>
+\f$ \begin{bmatrix}
+  a[0] & a[1] & a[2] \\
+  a[1] & a[3] & a[4] \\
+  a[2] & a[4] & a[5] \\
+ \end{bmatrix}\f$
+</center>
+*/
 ///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
@@ -336,7 +337,6 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
     int i = 0;
     for (ForwardIterator it = first; it != beyond; ++it) {
         Eigen::Vector3f enormal;
-        Eigen::Vector3f dir;
         internal::extract_greater_eigenvector(cov[i], enormal);
 
         typename Kernel::Vector_3 normal(enormal[0],
