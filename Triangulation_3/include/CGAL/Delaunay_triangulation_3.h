@@ -975,7 +975,7 @@ protected:
     }
   };
 
-  // Functor for parallel insert(begin, end) function with info
+  // Functor for parallel insert_with_info(begin, end) function
   template <typename DT>
   class Insert_point_with_info
   {
