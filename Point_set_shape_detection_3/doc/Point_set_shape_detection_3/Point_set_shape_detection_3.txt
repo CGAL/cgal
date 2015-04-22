@@ -77,7 +77,7 @@ This example illustrates how to access the points assigned to each shape and com
 
 \cgalExample{Point_set_shape_detection_3/efficient_RANSAC_point_access.cpp}
 
-\section Point_set_shape_detection_3Arbitrary_shapes Other Shapes
+\section Point_set_shape_detection_3Arbitrary_shapes Adding More Shapes
 
 Other types of shapes can be detected by implementing a shape class derived from the class `Shape_base` and registering it to the shape detection factory. This class must provide the following functions: construct a shape from a small set of given points, compute the squared distance from a query point and the shape and compute the normal deviation between a query point with normal and the normal to the shape at the closest point from the query. The used shape parameters are added as members to the derived class.
 
@@ -86,12 +86,12 @@ Note that the RANSAC approach is efficient for shapes that are uniquely defined 
 More specifically, the functions to be implemented are defined in the interface `Shape_base`:
 - `Shape_base::required_samples``()` const: Returns the minimal number of required samples.
 
-- `Shape_base::create_shape``(const std::vector<size_t> &indices)`: The randomly generated samples are provided via a vector of indices. `Shape_base::get_point``(size_t i)` and `Shape_base::get_normal``(size_t i)` are used to retrieve the actual points and normals (see example below). The provided number of samples might actually be larger than the set minimal number of required samples, depending on the other types of shape types. If the provided samples are not sufficient for define a unique shape, e.g., in a degenerated case the shape is considered invalid.
+- `Shape_base::create_shape``(const std::vector<size_t> &indices)`: The randomly generated samples are provided via a vector of indices. `Shape_base::point``(size_t i)` and `Shape_base::normal``(size_t i)` are used to retrieve the actual points and normals (see example below). The provided number of samples might actually be larger than the set minimal number of required samples, depending on the other types of shape types. If the provided samples are not sufficient for define a unique shape, e.g., in a degenerated case the shape is considered invalid.
 
 - `Shape_base::squared_distance``(const Point &p)` const: This function computes the squared distance from a query point to the shape. It is used for traversing the hierarchical spatial data structure.
 - `Shape_base::squared_distance``(std::vector<FT> &dists, const std::vector<size_t> &indices)` 
 - `Shape_base::cos_to_normal``(std::vector<FT> &angles, const std::vector<size_t> &indices)` const: 
-These functions are used to determine the number of inlier points to the shape. They compute respectively the squared distance from a set of points to the shape, and the dot product between the point's normals and the normals at the shape for the closest points on the shape. The access to the actual point and normal data is carried out via `Shape_base::get_point``(size_t i)` and `Shape_base::get_normal``(size_t i)` (see example below). The resulting squared distance/dot product is stored in the vector provided as the first argument.
+These functions are used to determine the number of inlier points to the shape. They compute respectively the squared distance from a set of points to the shape, and the dot product between the point's normals and the normals at the shape for the closest points on the shape. The access to the actual point and normal data is carried out via `Shape_base::point``(size_t i)` and `Shape_base::normal``(size_t i)` (see example below). The resulting squared distance/dot product is stored in the vector provided as the first argument.
 
 By default the connected component is detected via the neighbor graph as mentioned above. However, for shapes that admit a faster approach to detect a connected component, the user can provide his/her own implementation to extract the connected component via:
 - `Shape_base::connected_component``(std::vector<std::size_t>& indices, FT cluster_epsilon)`: The indices of all supporting points are stored in the vector `indices`. All points not belonging to the largest cluster of points are removed from the vector `indices`. 

@@ -54,7 +54,7 @@ namespace CGAL {
     Plane() : Shape_base<Traits>() {}
 
     /*!
-      Conversion operator to Plane_3 type.
+      Conversion operator to `Plane_3` type.
      */
     operator Plane_3() const {
       return Plane_3(m_normal.x(), m_normal.y(), m_normal.z(), m_d);

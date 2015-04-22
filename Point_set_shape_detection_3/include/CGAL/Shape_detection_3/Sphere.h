@@ -58,7 +58,7 @@ namespace CGAL {
     Sphere() : Shape_base<Traits>() {}
 
     /*!
-      Conversion operator to convert to common Sphere_3 type.
+      Conversion operator to convert to `Sphere_3` type.
      */
     operator Sphere_3() const {
       return m_sphere;

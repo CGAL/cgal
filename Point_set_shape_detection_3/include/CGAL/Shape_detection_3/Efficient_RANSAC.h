@@ -628,9 +628,10 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     }
     
     /*! 
-      Provides a boost::iterator_range to indices into the input data that has
-      not been assigned to a shape. A boost::iterator_range does not provide
-      the size of the range. Instead the method number_of_unassigned_points is
+      Provides an `Iterator_range` with a bidirectional iterator with value type `std::size_t`
+      as indices into the input data that has
+      not been assigned to a shape. As this range class has no
+      `size()` method, the method `Efficient_RANSAC::number_of_unassigned_points()` is
       provided.
     */ 
     Point_index_range unassigned_points_indices() {

@@ -78,8 +78,8 @@ namespace CGAL {
     /// \endcond
 
     typedef typename Traits::FT FT; ///< number type.
-    typedef typename Traits::Point_3 Point; ///< point type.
-    typedef typename Traits::Vector_3 Vector; ///< vector type.
+    typedef typename Traits::Point_3 Point_3; ///< point type.
+    typedef typename Traits::Vector_3 Vector_3; ///< vector type.
 
     Shape_base() :
     m_is_valid(false),
@@ -111,7 +111,7 @@ namespace CGAL {
     /*!
       Computes the squared Euclidean distance from the query point `p` to the shape.
      */
-    virtual FT squared_distance(const Point &p) const = 0;
+    virtual FT squared_distance(const Point_3 &p) const = 0;
 
   protected:
       
@@ -273,7 +273,7 @@ namespace CGAL {
      */
     std::size_t connected_component_kdTree(std::vector<std::size_t> &indices,
                                            FT cluster_epsilon) {
-      typedef typename boost::tuple<Point,int> Point_and_int;
+      typedef typename boost::tuple<Point_3,int> Point_and_int;
       typedef typename CGAL::Search_traits_adapter<Point_and_int,
         CGAL::Nth_of_tuple_property_map<0, Point_and_int>,
         Traits::Search_traits> Search_traits_adapter;
@@ -379,14 +379,14 @@ namespace CGAL {
     /*!
       Retrieves the point location from its index.
      */
-    const Point& point(std::size_t i) const {
+    const Point_3& point(std::size_t i) const {
       return get(this->m_point_pmap, *(this->m_first + i));
     }
     
     /*!
       Retrieves the normal vector from its index.
      */
-    const Vector& normal(std::size_t i) const {
+    const Vector_3& normal(std::size_t i) const {
       return get(this->m_normal_pmap, *(this->m_first + i));
     }
     
