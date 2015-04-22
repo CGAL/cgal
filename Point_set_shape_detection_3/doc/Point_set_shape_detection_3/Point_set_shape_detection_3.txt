@@ -28,28 +28,28 @@ The \a support of a shape refers to the footprint of the points covered by the p
 The output of the shape detection algorithm is a set of detected shapes with assigned points, and all remaining points not covered by shapes. Each input point can be assigned to at most one detected shape. 
 
 \section Point_set_shape_detection_3Parameters Parameters
-The algorithm requires five parameters:
-- \f$epsilon\f$ and \f$normal\, deviation\f$:
-The error between a point-with-normal \f$p\f$ and a shape \f$S\f$ is defined by its Euclidean distance and normal deviation to \f$S\f$. The normal deviation is computed between the normal at \f$p\f$ and the normal of \f$S\f$ at the closest projection of \f$p\f$ onto \f$S\f$. Parameter \f$epsilon\f$ defines the absolute maximum tolerance Euclidean distance between a point and a shape. A high value for \f$epsilon\f$ leads to the detection of fewer large shapes and hence a less detailed detection. A low value for \f$epsilon\f$ yields a more detailed detection, but may lead to either lower coverage or over-segmentation. Over-segmentation translates into detection of fragmented shapes when \f$epsilon\f$ is within or below the noise level. When the input point set is made of free-form parts, a higher tolerance \f$epsilon\f$ allows for detecting more primitive shapes that approximate some of the free-form surfaces. The impact of this parameter is depicted by Figure \cgalFigureRef{Point_set_shape_detection_3_parameter_epsilon_variation}. Its impact on performance is evaluated in Section \ref Point_set_shape_detection_3Performance.
+The algorithm has five parameters:
+- `epsilon` and `normal_threshold`:
+The error between a point-with-normal \f$p\f$ and a shape \f$S\f$ is defined by its Euclidean distance and normal deviation to \f$S\f$. The normal deviation is computed between the normal at \f$p\f$ and the normal of \f$S\f$ at the closest projection of \f$p\f$ onto \f$S\f$. Parameter `epsilon` defines the absolute maximum tolerance Euclidean distance between a point and a shape. A high value for `epsilon` leads to the detection of fewer large shapes and hence a less detailed detection. A low value for `epsilon` yields a more detailed detection, but may lead to either lower coverage or over-segmentation. Over-segmentation translates into detection of fragmented shapes when `epsilon` is within or below the noise level. When the input point set is made of free-form parts, a higher tolerance `epsilon` allows for detecting more primitive shapes that approximate some of the free-form surfaces. The impact of this parameter is depicted by Figure \cgalFigureRef{Point_set_shape_detection_3_parameter_epsilon_variation}. Its impact on performance is evaluated in Section \ref Point_set_shape_detection_3Performance.
 \cgalFigureBegin{Point_set_shape_detection_3_parameter_epsilon_variation,epsilon_variation2.png}
 Impact of epsilon over level of details of the detection. (a) Input point set. (b) Detection of planar shapes with epsilon set to 2.0 (one color per detected shape). Most details such as chimneys on the roof are not distinguished. (c) Detection with epsilon set to 0.5. The facades are correctly detected and some details of the roof are detected. (d) Setting epsilon to 0.25 yields a more detailed but slightly over-segmented detection.
 \cgalFigureEnd
 
-- \f$cluster\_epsilon\f$:
-Clustering of the points into connected components covered by a detected shape is controlled via parameter \f$cluster\_epsilon\f$. For developable shapes that admit a trivial planar parameterization (plane, cylinder, cone) the points covered by a shape are mapped to a 2D parameter space chosen to minimize distortion and best preserve arc-length distances. This 2D parameter space is discretized using a regular grid, and a connected component search is performed to identify the largest cluster. Parameter \f$cluster\_epsilon\f$ defines the spacing between two cells of the regular grid, so that two points separated by a distance of at most \f$2\sqrt{2}\, cluster\_epsilon\f$ are considered adjacent. For non-developable shapes 
+- `cluster_epsilon`:
+Clustering of the points into connected components covered by a detected shape is controlled via parameter `cluster_epsilon`. For developable shapes that admit a trivial planar parameterization (plane, cylinder, cone) the points covered by a shape are mapped to a 2D parameter space chosen to minimize distortion and best preserve arc-length distances. This 2D parameter space is discretized using a regular grid, and a connected component search is performed to identify the largest cluster. Parameter `cluster_epsilon` defines the spacing between two cells of the regular grid, so that two points separated by a distance of at most \f$2\sqrt{2}\f$, `cluster_epsilon` are considered adjacent. For non-developable shapes 
 the connected components are identified by computing a neighboring graph in 3D and walking in the graph. The impact of parameter cluster_epsilon is depicted by Figure \cgalFigureRef{Point_set_shape_detection_3_parameter_connectivity}. 
 \cgalFigureBegin{Point_set_shape_detection_3_parameter_connectivity,varying_connectivity.png}
 Parameter cluster_epsilon controls the connectivity of the points covered by a detected shape. The input point set is sampled on four coplanar squares. (a) A large value for cluster_epsilon leads to detecting a single planar shape. (b) A moderate value for cluster_epsilon yields the detection of four squares. Notice that few points within the squares are not detected as not connected. (c) A small value for cluster_epsilon leads to over-segmentation.
 \cgalFigureEnd
 
-- \f$probability\f$:
+- `probability`:
 This parameter defines the probability to miss the largest candidate shape. A lower probability provides a higher reliability and determinism at the cost of longer running times due to higher search endurance. 
 
-- \f$minimum\, number\, of\, points\f$:
+- `min_points`:
 This minimum number of points controls the termination of the algorithm. The shape search is iterated until no further shapes can be found with a higher support. Note that this parameter is not strict: depending on the chosen probability, shapes may be extracted with a number of points lower than the specified parameter.
 
-\section Point_set_shape_detection_3Usage Usage
-The main class `Shape_detection_3::Efficient_RANSAC` takes a template parameter `Efficient_RANSAC_traits_3` that defines the geometric types and input format. Property maps provide a means to interface with user-specific data structures. The first parameter of the `Efficient_RANSAC_traits_3` class is the common Kernel. In order to match the constraints of property maps, an iterator type and two maps that map an iterator to a point and a normal are specified in the `Efficient_RANSAC_traits_3` class. The concept behind property maps is detailed in Chapter \ref chapterProperty_map.
+\section Point_set_shape_detection_3Usage Examples
+The main class `Shape_detection_3::Efficient_RANSAC` takes a template parameter `Shape_detection_3::Efficient_RANSAC_traits` that defines the geometric types and input format. Property maps provide a means to interface with user-specific data structures. The first parameter of the `Shape_detection_3::Efficient_RANSAC_traits` class is the common Kernel. In order to match the constraints of property maps, an iterator type and two maps that map an iterator to a point and a normal are specified in the `Shape_detection_3::Efficient_RANSAC_traits` class. The concept behind property maps is detailed in Chapter \ref chapterProperty_map.
 
 Typical usage consists in five steps:
 
@@ -67,7 +67,7 @@ The following minimal example reads a point set from a file and detects only pla
 
 \subsection Point_set_shape_detection_3Usage_parameters Setting Parameters and Using Different Types of Shape
 
-This example illustrates the user selection of parameters using the `Shape_detection_3::Efficient_RANSAC_3::Parameters` struct. Shape detection is performed on five types of shapes (plane, cylinder, sphere, cone, torus). Basic information of the detected shapes is output to the standard output. The input point set is sampled on a surface mostly composed of piece-wise planar and cylindrical parts, in addition to free-form parts.
+This example illustrates the user selection of parameters using the `Shape_detection_3::Efficient_RANSAC::Parameters` struct. Shape detection is performed on five types of shapes (plane, cylinder, sphere, cone, torus). Basic information of the detected shapes is written to the standard output. The input point set is sampled on a surface mostly composed of piece-wise planar and cylindrical parts, in addition to free-form parts.
 
 \cgalExample{Point_set_shape_detection_3/efficient_RANSAC_parameters.cpp}
 
@@ -94,7 +94,7 @@ More specifically, the functions to be implemented are defined in the interface 
 These functions are used to determine the number of inlier points to the shape. They compute respectively the squared distance from a set of points to the shape, and the dot product between the point's normals and the normals at the shape for the closest points on the shape. The access to the actual point and normal data is carried out via `Shape_base::get_point``(size_t i)` and `Shape_base::get_normal``(size_t i)` (see example below). The resulting squared distance/dot product is stored in the vector provided as the first argument.
 
 By default the connected component is detected via the neighbor graph as mentioned above. However, for shapes that admit a faster approach to detect a connected component, the user can provide his/her own implementation to extract the connected component via:
-- `Shape_base::connected_component``(std::vector<std::size_t> indices, FT cluster_epsilon)`: The indices of all supporting points are stored in the vector `indices`. All points not belonging to the largest cluster of points are removed from the vector `indices`. 
+- `Shape_base::connected_component``(std::vector<std::size_t>& indices, FT cluster_epsilon)`: The indices of all supporting points are stored in the vector `indices`. All points not belonging to the largest cluster of points are removed from the vector `indices`. 
 
 Another optional method can be implemented to provide a helper function providing the shape parameters written to a string:
 - `Shape_base::info``()`: This function returns a string suitable for printing the shape parameters into a log/console. The default solution provides an empty string.

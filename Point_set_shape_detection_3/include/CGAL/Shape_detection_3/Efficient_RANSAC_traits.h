@@ -30,25 +30,24 @@ namespace CGAL {
       \brief %Default traits class to use the shape detection class `Efficient_RANSAC`.
       \cgalModels `EfficientRANSACTraits`
 
-      \tparam Gt Geometric traits class. It must provide `Gt::FT`,
-	         `Gt::Point_3` and `Gt::Vector_3`. `Gt::FT` must be a floating
+      \tparam Gt A \cgal Kernel. Geometric traits class. It must provide `Gt::FT`,
+	         `Gt::Point_3` and `Gt::Vector_3`. The type `Gt::FT` must be a floating
 			 point number type like `double` or `float`. Additionally,
              `Gt::Line_3`, `Gt::Plane_3`, `Gt::Sphere_3`, `Gt::Circle_2`,
 			 `Gt::Point_2` are required depending on the shapes registered
 			 for detection.
 
-      \tparam InputIterator is a model of RandomAccessIterator
+      \tparam InputRange is a model of `Range` with random access iterators, providing input points and normals.
 
-      \tparam Ppmap is a model of `ReadablePropertyMap`
-              `key_type = InputIterator` and `value_type = Gt::Point_3`.
+      \tparam InputPointMap is a model of `ReadablePropertyMap` with `std::iterator_traits<Input_range::iterator>::%value_type` as key type and `Geom_traits::Point_3` as value type.
 
-      \tparam Npmap is a model of `ReadablePropertyMap`
-              `key_type = InputIterator` and `value_type = Gt::Vector_3`.
+
+      \tparam InputNormalMap is a model of `ReadablePropertyMap` with `std::iterator_traits<Input_range::iterator>::%value_type` as key type and `Geom_traits::Vector_3` as value type.
     */
   template <class Gt,
             class InputRange,
-            class Ppmap,
-            class Npmap>
+            class InputPointMap,
+            class InputNormalMap>
   struct Efficient_RANSAC_traits {
     ///
     typedef typename Gt::FT FT;
@@ -69,9 +68,9 @@ namespace CGAL {
     ///
     typedef InputRange Input_range;
     ///
-    typedef Ppmap Point_map;
+    typedef InputPointMap Point_map;
     ///
-    typedef Npmap Normal_map;
+    typedef InputNormalMap Normal_map;
     ///
     typedef typename CGAL::Search_traits_3<typename Gt> Search_traits;
   };

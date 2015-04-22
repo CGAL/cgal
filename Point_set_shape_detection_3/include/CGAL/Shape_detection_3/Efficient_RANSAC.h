@@ -107,10 +107,10 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     Iterator_range<typename std::vector<boost::shared_ptr<Shape> >::const_iterator>
       Shape_range;
 #endif
-    ///< Range of extracted shapes with `Shape*` as value type. Model of the `ConstRange` concept.
+    ///< Range of extracted shapes with `boost::shared_ptr<Shape>` as value type. Model of the `ConstRange` concept.
 
 #ifdef DOXYGEN_RUNNING
-    typedef unspecified_type Point_index_range;    ///< Range of indices of points of type `std::size_t` into the provided input point range. Model of the `boost::BidirectionalRange` concept.
+    typedef unspecified_type Point_index_range;    ///< Range of indices of points of type `std::size_t` into the provided input range. Model of the concept `Range` .
 
 #else 
     typedef typename Iterator_range<Point_index_iterator>
@@ -122,7 +122,8 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     /// \name Parameters 
     /// @{
       /*!
-       %Parameters for the shape detection algorithm.
+       %Parameters for the shape detection algorithm. They are explained in detail 
+       in Section \ref Point_set_shape_detection_3Parameters  of the User Manual.
        */
     struct Parameters {
       Parameters()
@@ -133,11 +134,11 @@ shape. The implementation follows \cgalCite{Schnabel07}.
         , cluster_epsilon(-1)
       {}
 
-      FT probability;         ///< Probability to control search endurance. %Default value 0.05.
-      std::size_t min_points; ///< Minimum number of points of a shape. %Default value 1% of total number of input points.
-      FT epsilon;             ///< Maximum tolerance Euclidian distance from a point and a shape. %Default value 1% of bounding box diagonal.
-      FT normal_threshold;	  ///< Maximum tolerance normal deviation from a point's normal to the normal on shape at projected point. %Default value 0.9 (around 25 degrees).
-      FT cluster_epsilon;	    ///< Maximum distance between points to be considered connected. %Default value 1% of bounding box diagonal.
+      FT probability;         ///< Probability to control search endurance. %Default value: 0.05.
+      std::size_t min_points; ///< Minimum number of points of a shape. %Default value: 1% of total number of input points.
+      FT epsilon;             ///< Maximum tolerance Euclidian distance from a point and a shape. %Default value: 1% of bounding box diagonal.
+      FT normal_threshold;	  ///< Maximum tolerance normal deviation from a point's normal to the normal on shape at projected point. %Default value: 0.9 (around 25 degrees).
+      FT cluster_epsilon;	    ///< Maximum distance between points to be considered connected. %Default value: 1% of bounding box diagonal.
     };
     /// @}
 

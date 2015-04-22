@@ -42,7 +42,8 @@ namespace CGAL {
      \brief Cylinder implements Shape_base. The cylinder is represented
      by the axis, i.e. a point and direction, and the radius. The cylinder is
      unbounded, thus caps are not modelled.
-     \tparam Traits a model of `EfficientRANSACTraits`
+     \tparam Traits a model of `EfficientRANSACTraits` with the additional 
+             requirement of the type `Traits::Line_3`.
      \ingroup PkgPointSetShapeDetection3Shapes
      */
   template <class Traits>
