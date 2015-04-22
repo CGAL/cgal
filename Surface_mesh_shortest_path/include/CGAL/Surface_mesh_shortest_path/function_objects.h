@@ -519,9 +519,9 @@ public:
   typedef typename Kernel::Vector_2 Vector_2;
   typedef typename Kernel::Point_2 Point_2;
   
-  typedef typename boost::graph_traits<FaceListGraph> GraphTraits;
-  typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
-  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<FaceListGraph> Graph_traits;
+  typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
+  typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
   
   typedef typename CGAL::Surface_mesh_shortest_paths_3::Construct_triangle_3_to_triangle_2_projection<Kernel> Construct_triangle_3_to_triangle_2_projection;
   typedef typename CGAL::Surface_mesh_shortest_paths_3::Construct_triangle_3_along_segment_2_flattening<Kernel> Construct_triangle_3_along_segment_2_flattening;

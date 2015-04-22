@@ -56,10 +56,10 @@ private:
   typedef typename Traits::Triangle_2 Triangle_2;
   typedef typename Traits::Segment_2 Segment_2;
   typedef typename Traits::Ray_2 Ray_2;
-  typedef typename boost::graph_traits<FaceListGraph> GraphTraits;
-  typedef typename GraphTraits::face_descriptor face_descriptor;
-  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
-  typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<FaceListGraph> Graph_traits;
+  typedef typename Graph_traits::face_descriptor face_descriptor;
+  typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
+  typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename CGAL::internal::Cone_expansion_event<Traits> Cone_expansion_event;
 
 private:
@@ -186,7 +186,7 @@ public:
   
   bool is_null_face() const
   {
-    return current_face() == GraphTraits::null_face();
+    return current_face() == Graph_traits::null_face();
   }
   
   size_t edge_face_index() const

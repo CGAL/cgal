@@ -33,10 +33,10 @@ BOOST_AUTO_TEST_CASE( shortest_path_regular_tetrahedron )
   typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron_3> Traits;
   typedef Traits::Barycentric_coordinate Barycentric_coordinate;
   typedef Traits::FT FT;
-  typedef boost::graph_traits<Polyhedron_3> GraphTraits;
-  typedef GraphTraits::vertex_iterator vertex_iterator;
-  typedef GraphTraits::face_descriptor face_descriptor;
-  typedef GraphTraits::face_iterator face_iterator;
+  typedef boost::graph_traits<Polyhedron_3> Graph_traits;
+  typedef Graph_traits::vertex_iterator vertex_iterator;
+  typedef Graph_traits::face_descriptor face_descriptor;
+  typedef Graph_traits::face_iterator face_iterator;
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
   
   Traits traits;
@@ -99,11 +99,11 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
   typedef Traits::Triangle_3 Triangle_3;
   typedef Traits::Triangle_2 Triangle_2;
   typedef Traits::Segment_2 Segment_2;
-  typedef boost::graph_traits<Polyhedron_3> GraphTraits;
-  typedef GraphTraits::vertex_descriptor vertex_descriptor;
-  typedef GraphTraits::vertex_iterator vertex_iterator;
-  typedef GraphTraits::halfedge_descriptor halfedge_descriptor;
-  typedef GraphTraits::face_descriptor face_descriptor;
+  typedef boost::graph_traits<Polyhedron_3> Graph_traits;
+  typedef Graph_traits::vertex_descriptor vertex_descriptor;
+  typedef Graph_traits::vertex_iterator vertex_iterator;
+  typedef Graph_traits::halfedge_descriptor halfedge_descriptor;
+  typedef Graph_traits::face_descriptor face_descriptor;
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
   typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
 
@@ -329,11 +329,11 @@ BOOST_AUTO_TEST_CASE( test_boundary_mesh )
   typedef Traits::FT FT;
   typedef Traits::Point_3 Point_3;
   typedef Traits::Triangle_3 Triangle_3;
-  typedef boost::graph_traits<Polyhedron_3> GraphTraits;
-  typedef GraphTraits::vertex_descriptor vertex_descriptor;
-  typedef GraphTraits::vertex_iterator vertex_iterator;
-  typedef GraphTraits::face_descriptor face_descriptor;
-  typedef GraphTraits::face_iterator face_iterator;
+  typedef boost::graph_traits<Polyhedron_3> Graph_traits;
+  typedef Graph_traits::vertex_descriptor vertex_descriptor;
+  typedef Graph_traits::vertex_iterator vertex_iterator;
+  typedef Graph_traits::face_descriptor face_descriptor;
+  typedef Graph_traits::face_iterator face_iterator;
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
   typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
 

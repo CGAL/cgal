@@ -50,13 +50,13 @@ struct TestMeshProgramInstance
   typedef typename Traits::Triangle_3 Triangle_3;
   typedef typename Traits::Triangle_2 Triangle_2;
   typedef typename Traits::Segment_2 Segment_2;
-  typedef boost::graph_traits<Polyhedron_3> GraphTraits;
-  typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
-  typedef typename GraphTraits::vertex_iterator vertex_iterator;
-  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
-  typedef typename GraphTraits::halfedge_iterator halfedge_iterator;
-  typedef typename GraphTraits::face_descriptor face_descriptor;
-  typedef typename GraphTraits::face_iterator face_iterator;
+  typedef boost::graph_traits<Polyhedron_3> Graph_traits;
+  typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
+  typedef typename Graph_traits::vertex_iterator vertex_iterator;
+  typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
+  typedef typename Graph_traits::halfedge_iterator halfedge_iterator;
+  typedef typename Graph_traits::face_descriptor face_descriptor;
+  typedef typename Graph_traits::face_iterator face_iterator;
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
   typedef typename Surface_mesh_shortest_path::Face_location Face_location;
   typedef typename boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
@@ -121,7 +121,7 @@ struct TestMeshProgramInstance
         return Face_location(CGAL::face(he.first, polyhedron), construct_barycentric_coordinate(FT(alpha0), FT(alpha1), FT(alpha2)));
       }
       
-      return Face_location(GraphTraits::null_face(), construct_barycentric_coordinate(FT(0.0), FT(0.0), FT(0.0)));
+      return Face_location(Graph_traits::null_face(), construct_barycentric_coordinate(FT(0.0), FT(0.0), FT(0.0)));
     }
   }
 

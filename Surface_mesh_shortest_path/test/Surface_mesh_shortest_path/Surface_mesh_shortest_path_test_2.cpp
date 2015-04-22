@@ -35,11 +35,11 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
   typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron_3> Traits;
   typedef Traits::Barycentric_coordinate Barycentric_coordinate;
   typedef Traits::FT FT;
-  typedef boost::graph_traits<Polyhedron_3> GraphTraits;
-  typedef GraphTraits::vertex_descriptor vertex_descriptor;
-  typedef GraphTraits::vertex_iterator vertex_iterator;
-  typedef GraphTraits::face_descriptor face_descriptor;
-  typedef GraphTraits::face_iterator face_iterator;
+  typedef boost::graph_traits<Polyhedron_3> Graph_traits;
+  typedef Graph_traits::vertex_descriptor vertex_descriptor;
+  typedef Graph_traits::vertex_iterator vertex_iterator;
+  typedef Graph_traits::face_descriptor face_descriptor;
+  typedef Graph_traits::face_iterator face_iterator;
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
   typedef boost::property_map<Polyhedron_3, boost::vertex_index_t>::type VIM;
   typedef boost::property_map<Polyhedron_3, boost::halfedge_index_t>::type HIM;

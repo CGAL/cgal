@@ -36,10 +36,10 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
   typedef Traits::Vector_3 Vector_3;
   typedef Traits::Triangle_3 Triangle_3;
   typedef Traits::Ray_3 Ray_3;
-  typedef boost::graph_traits<Polyhedron_3> GraphTraits;
-  typedef GraphTraits::vertex_iterator vertex_iterator;
-  typedef GraphTraits::face_descriptor face_descriptor;
-  typedef GraphTraits::face_iterator face_iterator;
+  typedef boost::graph_traits<Polyhedron_3> Graph_traits;
+  typedef Graph_traits::vertex_iterator vertex_iterator;
+  typedef Graph_traits::face_descriptor face_descriptor;
+  typedef Graph_traits::face_iterator face_iterator;
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
   typedef boost::property_map<Polyhedron_3, boost::vertex_point_t>::type VPM;
   typedef boost::property_map<Polyhedron_3, boost::face_index_t>::type FIM;
@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
   
   Surface_mesh_shortest_path::Face_location emptyFaceLocation = shortestPaths.locate<AABB_face_graph_traits>(outsideRay);
     
-  BOOST_CHECK(GraphTraits::null_face() == emptyFaceLocation.first);
+  BOOST_CHECK(Graph_traits::null_face() == emptyFaceLocation.first);
 }
 
 // Hack to trick cgal_create_CMakeLists into using this file even without a main

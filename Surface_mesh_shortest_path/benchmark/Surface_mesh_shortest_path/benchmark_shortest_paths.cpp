@@ -166,9 +166,9 @@ void run_benchmarks(CGAL::Random& rand, size_t numTrials, size_t numSources, siz
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
   typedef typename Surface_mesh_shortest_path::Face_location Face_location;
   typedef typename Surface_mesh_shortest_path::FT FT;
-  typedef boost::graph_traits<Polyhedron_3> GraphTraits;
-  typedef typename GraphTraits::face_descriptor face_descriptor;
-  typedef typename GraphTraits::face_iterator face_iterator;
+  typedef boost::graph_traits<Polyhedron_3> Graph_traits;
+  typedef typename Graph_traits::face_descriptor face_descriptor;
+  typedef typename Graph_traits::face_iterator face_iterator;
   
   std::ifstream inFile(polyhedronFile.c_str());
   

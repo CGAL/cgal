@@ -34,9 +34,9 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_on_surface )
   typedef Traits::FT FT;
   typedef Traits::Point_3 Point_3;
   typedef Traits::Triangle_3 Triangle_3;
-  typedef boost::graph_traits<Polyhedron_3> GraphTraits;
-  typedef GraphTraits::face_descriptor face_descriptor;
-  typedef GraphTraits::face_iterator face_iterator;
+  typedef boost::graph_traits<Polyhedron_3> Graph_traits;
+  typedef Graph_traits::face_descriptor face_descriptor;
+  typedef Graph_traits::face_iterator face_iterator;
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
   typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
   typedef boost::property_map<Polyhedron_3, CGAL::face_index_t>::type FIM;

@@ -50,9 +50,9 @@ Triangle_3 triangle_from_halfedge(typename boost::graph_traits<FaceListGraph>::h
 template <class FaceListGraph>
 size_t edge_index(typename boost::graph_traits<FaceListGraph>::halfedge_descriptor he, FaceListGraph& p)
 {
-  typedef typename boost::graph_traits<FaceListGraph> GraphTraits;
-  typedef typename GraphTraits::face_descriptor face_descriptor;
-  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<FaceListGraph> Graph_traits;
+  typedef typename Graph_traits::face_descriptor face_descriptor;
+  typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
   
   face_descriptor f = face(he, p);
   

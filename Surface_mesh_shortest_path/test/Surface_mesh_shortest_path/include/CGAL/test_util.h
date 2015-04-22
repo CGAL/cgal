@@ -25,10 +25,10 @@ struct Sequence_item
   typedef typename Traits::FaceListGraph FaceListGraph;
   typedef typename Traits::FT FT;
   typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
-  typedef typename boost::graph_traits<FaceListGraph> GraphTraits;
-  typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
-  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
-  typedef typename GraphTraits::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<FaceListGraph> Graph_traits;
+  typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
+  typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
+  typedef typename Graph_traits::face_descriptor face_descriptor;
   
   Sequence_item_type type;
   size_t index;
@@ -52,10 +52,10 @@ struct Edge_sequence_collector
   typedef VIM VertexIndexMap;
   typedef HIM HalfedgeIndexMap;
   typedef FIM FaceIndexMap;
-  typedef typename boost::graph_traits<FaceListGraph> GraphTraits;
-  typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
-  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
-  typedef typename GraphTraits::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<FaceListGraph> Graph_traits;
+  typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
+  typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
+  typedef typename Graph_traits::face_descriptor face_descriptor;
 
   VertexIndexMap m_vertexIndexMap;
   HalfedgeIndexMap m_halfedgeIndexMap;

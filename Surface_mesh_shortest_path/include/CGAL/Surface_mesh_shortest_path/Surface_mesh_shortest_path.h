@@ -80,16 +80,16 @@ public:
   typedef typename Traits::FaceListGraph FaceListGraph;
 
   /// The BGL graph traits for this `FaceListGraph`
-  typedef typename boost::graph_traits<FaceListGraph> GraphTraits;
+  typedef typename boost::graph_traits<FaceListGraph> Graph_traits;
 
   /// Handle to vertices of `FaceListGraph`
-  typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
+  typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
   
   /// Handle to halfedges of `FaceListGraph`
-  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
+  typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
   
   /// Handle to faces of `FaceListGraph`
-  typedef typename GraphTraits::face_descriptor face_descriptor;
+  typedef typename Graph_traits::face_descriptor face_descriptor;
   
 #ifndef DOXYGEN_RUNNING
 
@@ -264,9 +264,9 @@ public:
 /// @}
   
 private:
-  typedef typename GraphTraits::vertex_iterator vertex_iterator;
-  typedef typename GraphTraits::halfedge_iterator halfedge_iterator;
-  typedef typename GraphTraits::face_iterator face_iterator;
+  typedef typename Graph_traits::vertex_iterator vertex_iterator;
+  typedef typename Graph_traits::halfedge_iterator halfedge_iterator;
+  typedef typename Graph_traits::face_iterator face_iterator;
 
   typedef typename Traits::Triangle_3 Triangle_3;
   typedef typename Traits::Triangle_2 Triangle_2;
@@ -854,7 +854,7 @@ private:
       if (m_debugOutput)
       {
         std::cout << "Expanding PsuedoSource: id = ";
-        if (face(currentEdge, m_graph) != GraphTraits::null_face())
+        if (face(currentEdge, m_graph) != Graph_traits::null_face())
         {
           std::cout << get(m_faceIndexMap, face(currentEdge, m_graph));
         }
@@ -1287,7 +1287,7 @@ private:
   {
     typename Traits::Compute_squared_distance_2 csd2(m_traits.compute_squared_distance_2_object());
   
-    if (face(parent->left_child_edge(), m_graph) != GraphTraits::null_face())
+    if (face(parent->left_child_edge(), m_graph) != Graph_traits::null_face())
     {
       Segment_2 leftWindow;
       
@@ -1328,7 +1328,7 @@ private:
   {
     typename Traits::Compute_squared_distance_2 csd2(m_traits.compute_squared_distance_2_object());
     
-    if (face(parent->right_child_edge(), m_graph) != GraphTraits::null_face())
+    if (face(parent->right_child_edge(), m_graph) != Graph_traits::null_face())
     {
       Segment_2 rightWindow;
       bool result = clip_to_bounds(parent->right_child_base_segment(), parent->left_boundary(), parent->right_boundary(), rightWindow);
@@ -1486,7 +1486,7 @@ private:
     
     do
     {
-      if (face(h, m_graph) == GraphTraits::null_face() || face(opposite(h, m_graph), m_graph) == GraphTraits::null_face())
+      if (face(h, m_graph) == Graph_traits::null_face() || face(opposite(h, m_graph), m_graph) == Graph_traits::null_face())
       {
         return true;
       }
@@ -2752,7 +2752,7 @@ public:
     }
     else
     {
-      return Face_location(GraphTraits::null_face(), cbc(FT(0.0), FT(0.0), FT(0.0)));
+      return Face_location(Graph_traits::null_face(), cbc(FT(0.0), FT(0.0), FT(0.0)));
     }
   }
   
