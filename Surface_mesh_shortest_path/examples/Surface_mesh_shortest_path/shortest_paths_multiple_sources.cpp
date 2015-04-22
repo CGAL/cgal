@@ -57,7 +57,7 @@ int main(int argc, char** argv)
   // construct a shortest path query object and add a range of source points
   Surface_mesh_shortest_path shortest_paths(polyhedron);
   shortest_paths.add_source_points(faceLocations.begin(), faceLocations.end());
-  
+
   // For all vertices in the polyhedron, compute the points of
   // the shortest path to the source point and write them
   // into a file readable using the CGAL Polyhedron demo

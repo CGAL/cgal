@@ -43,7 +43,7 @@ as required by the `Surface_mesh_shortest_path` class.
 \cgalModels `SurfaceMeshShortestPathTraits`
 */
 template <
-  class K, 
+  class K,
   class G>
 class Surface_mesh_shortest_path_traits : public K
 {
@@ -51,27 +51,27 @@ public:
 
   /// Kernel type
   typedef K Kernel;
-  
+
   /// Triangle mesh type
   typedef G Triangle_mesh;
 
   typedef typename Kernel::FT FT;
-  
+
   /// Barycentric coordinate type
   typedef typename CGAL::cpp11::array<FT,3> Barycentric_coordinate;
-  
+
   // Predicates
 public:
   typedef typename Surface_mesh_shortest_paths_3::Compare_relative_intersection_along_segment_2<Kernel> Compare_relative_intersection_along_segment_2;
   typedef typename Surface_mesh_shortest_paths_3::Is_saddle_vertex<Kernel, Triangle_mesh> Is_saddle_vertex;
-  
+
   // Constructions
 public:
   class Construct_barycentric_coordinate
   {
   public:
     typedef Barycentric_coordinate result_type;
-    
+
     result_type operator() (const FT& a, const FT& b, const FT& c) const
     {
       Barycentric_coordinate output;
@@ -81,12 +81,12 @@ public:
       return output;
     }
   };
-  
+
   class Construct_barycentric_coordinate_weight
   {
   public:
     typedef FT result_type;
-    
+
     result_type operator() (const Barycentric_coordinate b, std::size_t i) const
     {
       return b[i % 3];
@@ -99,7 +99,7 @@ public:
   typedef typename Surface_mesh_shortest_paths_3::Construct_barycentric_coordinate_in_triangle_2<K, Barycentric_coordinate, Construct_barycentric_coordinate> Construct_barycentric_coordinate_in_triangle_2;
   typedef typename Surface_mesh_shortest_paths_3::Construct_barycentric_coordinate_in_triangle_3<K, Barycentric_coordinate, Construct_barycentric_coordinate> Construct_barycentric_coordinate_in_triangle_3;
   typedef typename Surface_mesh_shortest_paths_3::Classify_barycentric_coordinate<Barycentric_coordinate, Construct_barycentric_coordinate_weight> Classify_barycentric_coordinate;
-  
+
 private:
   Kernel m_kernel;
   Construct_barycentric_coordinate m_construct_barycentric_coordinate_object;
@@ -118,7 +118,7 @@ public:
   Surface_mesh_shortest_path_traits()
   {
   }
-  
+
   Surface_mesh_shortest_path_traits(const Kernel& kernel)
     : m_kernel(kernel)
     , m_classify_barycentric_coordinate_object(m_construct_barycentric_coordinate_weight_object)
@@ -134,9 +134,9 @@ public:
   Construct_barycentric_coordinate construct_barycentric_coordinate_object() const { return m_construct_barycentric_coordinate_object; }
   Construct_barycentric_coordinate_weight construct_barycentric_coordinate_weight_object() const { return m_construct_barycentric_coordinate_weight_object; }
   Classify_barycentric_coordinate classify_barycentric_coordinate_object() const { return m_classify_barycentric_coordinate_object; }
-  
+
   Is_saddle_vertex is_saddle_vertex_object() const { return m_is_saddle_vertex_object; }
-  
+
   Compare_relative_intersection_along_segment_2 compare_relative_intersection_along_segment_2_object() const { return m_compare_relative_intersection_along_segment_2_object; }
   Construct_triangle_3_to_triangle_2_projection construct_triangle_3_to_triangle_2_projection_object() const { return m_construct_triangle_3_to_triangle_2_projection_object; }
   Construct_triangle_3_along_segment_2_flattening construct_triangle_3_along_segment_2_flattening_object() const { return m_construct_triangle_3_along_segment_2_flattening_object; }
@@ -157,7 +157,7 @@ std::ostream& operator<<(std::ostream& os, typename Surface_mesh_shortest_path_t
 
 \internal
 
-\brief Provides an implementation of the SurfaceMeshShortestPathTraits 
+\brief Provides an implementation of the SurfaceMeshShortestPathTraits
 model which uses an exact Kernel during the unfolding operations to achieve better overall precision
 
 \tparam K Kernel Type
@@ -167,7 +167,7 @@ model which uses an exact Kernel during the unfolding operations to achieve bett
 \cgalModels `SurfaceMeshShortestPathTraits`
 */
 template <
-  class K, 
+  class K,
   class G>
 class Surface_mesh_shortest_path_traits_with_robust_unfolding : public Surface_mesh_shortest_path_traits<K,G>
 {
@@ -175,25 +175,25 @@ public:
   typedef K Kernel;
   typedef typename Surface_mesh_shortest_paths_3::Robust_project_triangle_3_to_triangle_2<K> Construct_triangle_3_to_triangle_2_projection;
   typedef typename Surface_mesh_shortest_paths_3::Robust_flatten_triangle_3_along_segment_2<K> Construct_triangle_3_along_segment_2_flattening;
-  
+
 private:
 
   Construct_triangle_3_to_triangle_2_projection m_robust_construct_triangle_3_to_triangle_2_projection_object;
   Construct_triangle_3_along_segment_2_flattening m_robust_flatten_triangle_3_along_segment_2;
-  
+
 public:
 
   Surface_mesh_shortest_path_traits_with_robust_unfolding()
   {
   }
-  
+
   Surface_mesh_shortest_path_traits_with_robust_unfolding(const Kernel& kernel)
     : Surface_mesh_shortest_path_traits<K,G>(kernel)
     , m_robust_construct_triangle_3_to_triangle_2_projection_object(kernel)
     , m_robust_flatten_triangle_3_along_segment_2(kernel)
   {
   }
-  
+
   Construct_triangle_3_to_triangle_2_projection construct_triangle_3_to_triangle_2_projection_object() const { return m_robust_construct_triangle_3_to_triangle_2_projection_object; }
   Construct_triangle_3_along_segment_2_flattening construct_triangle_3_along_segment_2_flattening_object() const { return m_robust_flatten_triangle_3_along_segment_2; }
 };

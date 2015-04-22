@@ -40,65 +40,65 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_on_surface )
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
   typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
   typedef boost::property_map<Polyhedron_3, CGAL::face_index_t>::type FIM;
-  
+
   typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron_3, VPM> AABB_face_graph_primitive;
   typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
-  
+
   Traits traits;
-  
+
   Traits::Construct_barycenter_3 construct_barycenter_3(traits.construct_barycenter_3_object());
-  
+
   std::string mesh = boost::unit_test::framework::master_test_suite().argv[1];
 
   int randSeed = 6008991;
-  
+
   if (boost::unit_test::framework::master_test_suite().argc > 2)
   {
     randSeed = std::atoi(boost::unit_test::framework::master_test_suite().argv[2]);
   }
-  
+
   CGAL::Random random(randSeed);
-  
+
   Polyhedron_3 polyhedron;
-  
+
   std::ifstream in(mesh.c_str());
-    
+
   in >> polyhedron;
-  
+
   in.close();
-  
+
   CGAL::set_halfedgeds_items_id(polyhedron);
 
   Surface_mesh_shortest_path shortestPaths(polyhedron, traits);
-  
+
   face_iterator facesBegin, facesEnd;
   boost::tie(facesBegin, facesEnd) = CGAL::faces(polyhedron);
-  
+
   std::vector<face_descriptor> facesList;
-  
+
   for (face_iterator facesCurrent = facesBegin; facesCurrent != facesEnd; ++facesCurrent)
   {
     facesList.push_back(*facesCurrent);
   }
-  
+
   size_t numTrials = 30;
 
   FIM faceIndexMap(get(boost::face_index, polyhedron));
   VPM vertexPointMap(get(CGAL::vertex_point, polyhedron));
- 
+
   for (size_t i = 0; i < numTrials; ++i)
   {
     size_t faceIndex = random.get_int(0, facesList.size());
     face_descriptor face = facesList[faceIndex];
 
     Triangle_3 faceTriangle = CGAL::internal::triangle_from_halfedge<Triangle_3, Polyhedron_3, VPM>(CGAL::halfedge(face, polyhedron), polyhedron, vertexPointMap);
-    
+
     Barycentric_coordinate location = CGAL::test::random_coordinate<Traits>(random);
-    
+
     Point_3 location3d = construct_barycenter_3(faceTriangle[0], location[0], faceTriangle[1], location[1], faceTriangle[2], location[2]);
-    
+
     Surface_mesh_shortest_path::Face_location faceLocation = shortestPaths.locate<AABB_face_graph_traits>(location3d);
-    
+
     BOOST_CHECK_EQUAL(faceIndexMap[face], faceIndexMap[faceLocation.first]);
     BOOST_CHECK_CLOSE(location[0], faceLocation.second[0], FT(0.0001));
     BOOST_CHECK_CLOSE(location[1], faceLocation.second[1], FT(0.0001));

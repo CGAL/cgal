@@ -50,7 +50,7 @@
 
 /*!
  \namespace CGAL::Surface_mesh_shortest_paths_3
- 
+
  \brief Namespace containing support members specific to this package.
  */
 

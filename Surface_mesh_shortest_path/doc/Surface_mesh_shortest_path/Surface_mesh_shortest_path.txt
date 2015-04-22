@@ -127,7 +127,7 @@ This example shows how to implement a model of the `SurfaceMeshShortestPathVisit
 
 \section Surface_mesh_shortest_pathBenchmarks Benchmarks
 
-These benchmarks were run using randomly generated source and destination points over multiple trials. 
+These benchmarks were run using randomly generated source and destination points over multiple trials.
 The measurements were executed using \cgal 4.5, under Cygwin 1.7.32, using the Gnu
 C++ compiler version 4.8.3 with options `-O3 -DNDEBUG`. The system used
 was a 64bit Intel Core i3 2.20GHz processor with 6GB of RAM
@@ -212,66 +212,66 @@ The following figures track the construction time, query time, and peak memory u
 \subsection Surface_mesh_shortest_pathDefinitions Definitions
 
 \subsubsection Surface_mesh_shortest_pathGeodesics Geodesic Paths
-  A <em>geodesic</em> curve is a <em>locally shortest</em> path on the surface of some manifold, that is, it cannot be made shorter by some local perturbations. On a surface mesh, this translates to a curve where, when the faces crossed by the curve are unfolded into the plane, the curve forms a straight line. Another way of describing it is that there is exactly \f$\pi\f$ surface angle to both sides at every point along the curve (except possibly at the curve's endpoints). 
-  
+  A <em>geodesic</em> curve is a <em>locally shortest</em> path on the surface of some manifold, that is, it cannot be made shorter by some local perturbations. On a surface mesh, this translates to a curve where, when the faces crossed by the curve are unfolded into the plane, the curve forms a straight line. Another way of describing it is that there is exactly \f$\pi\f$ surface angle to both sides at every point along the curve (except possibly at the curve's endpoints).
+
   A geodesic curve between two points is not necessarily a shortest path, but all shortest paths on surface meshes are formed by sequences of one or more geodesic paths, whose junction points are either vertices on the boundary of the mesh, or \link Surface_mesh_shortest_pathSaddleVertex <em>saddle vertices</em>\endlink. We call such a curve on the surface of the mesh a <em>potential shortest path</em> between its two endpoints.
-  
+
   \cgalFigureBegin{Geodesic_perspective,perspectiveGeodesic.png}
   A geodesic on the surface of a simple surface mesh.
   \cgalFigureEnd
-  
+
   \cgalFigureBegin{Geodesic_unrolled,unrolledGeodesic.png}
   The same geodesic, with its faces unfolded into the plane. Note in the unfolding, the geodesic forms a straight line.
   \cgalFigureEnd
 
 \subsubsection Surface_mesh_shortest_pathVisibilityWindow Visibility Window
   A <em>visibility window</em> (or <em>visibility cone</em>) is a pair of geodesic curves which share a common <em>source point</em> and enclose a <em>locally flat</em> region of the surface mesh. Locally flat means that between every pair of points inside the window, there is exactly one geodesic path between them which also stays inside the bounds of the window. Thus, operations, such as distance calculations, can be done with normal 2D %Euclidean operations while inside the window.  When a visibility window encounters a vertex (a non-flat part of the surface), a <em>branch</em> occurs, forming a sub-window to either side.
-  
+
   \cgalFigureBegin{Visibility_window_1,visibilityCone-1.png}
   A single visibility window, before it encounters a vertex.
   \cgalFigureEnd
-  
+
   \cgalFigureBegin{Visibility_window_2,visibilityCone-2.png}
   After encountering a convex vertex, the visibility window branches to either side (blue on the left, red on the right).  Note that the two new windows immediately overlap on the other side of the vertex, since the surrounding surface area is less than \f$2 \pi\f$. Points inside this region of overlap might have two possible shortest paths from the origin point.
   \cgalFigureEnd
 
 \subsubsection Surface_mesh_shortest_pathSaddleVertex Saddle Vertices
   A <em>saddle vertex</em> on a surface mesh is a vertex \f$v\f$ where the sum of surface angles of all faces incident at \f$v\f$ is greater than \f$2 \pi\f$, or, in simpler terms, one cannot flatten all the faces incident to \f$v\f$ into the plane without overlap.  Identifying and dealing with saddle vertices are important in shortest path algorithms because they form <em>blind spots</em> which cannot be reached by a single geodesic curve.
-  
+
   \cgalFigureBegin{Saddle_vertex,saddleVertex.png}
   A visibility window (shaded blue) encounters a saddle vertex; the shaded red region behind the vertex is not reachable with by a geodesic curve from the source point (assuming the geodesic must stay inside the initial window).
   \cgalFigureEnd
-  
+
 In order to deal with this, we must create a new set of child visibility windows which branch out around the saddle vertex. The paths through these child windows would first arrive at the saddle vertex, and then follow a new visibility window (forming a kind of poly-line on the surface). Note that similar behavior is required when we reach a boundary vertex of a non-closed surface mesh.
 
   \cgalFigureBegin{Saddle_vertex_expand,saddleVertexExpand.png}
   In order to see past the <em>blind spot</em> created by the saddle vertex, we create a branching set of visibility windows emanating from the saddle vertex. Note that only the branches which cover the <em>blind spot</em> for the parent visibility window are needed for our algorithm.
   \cgalFigureEnd
-  
+
 \subsubsection Surface_mesh_shortest_pathSequenceTree The Sequence Tree
 
-  In order to compute shortest paths, we build a <em>sequence tree</em> (or <em>cone tree</em>) from each source point.  The sequence tree describes the combinatoric structure of all <em>potential shortest paths</em> which originate from a single source point, by organizing them into a hierarchy of visibility windows. 
-  
+  In order to compute shortest paths, we build a <em>sequence tree</em> (or <em>cone tree</em>) from each source point.  The sequence tree describes the combinatoric structure of all <em>potential shortest paths</em> which originate from a single source point, by organizing them into a hierarchy of visibility windows.
+
   Whenever a vertex of the surface mesh is encountered, a branch occurs in the sequence tree. If the vertex is a non-saddle vertex, then only two children are created, one for each edge incident to that vertex on the current face. If the vertex is a saddle vertex, in addition to the two children mentioned above, a special type of node, called a <em>pseudo-source</em>, is created which branches out from that vertex.
-  
+
   Once a sequence tree is built, the <em>potential shortest paths</em> from the source to every point inside a given visibility window can be computed. The sequence of faces along each branch of the tree are laid out edge to edge, into a common plane, such that the geodesic distance from any point on the surface to its nearest source point can be obtained using a single 2D %Euclidean distance computation. Note that if the window belongs to a pseudo-source, the distance is measure from the target to the pseudo-source, and then the distance from the pseudo-source back to its parent is measured, and so on back to the original source.
-  
+
 \subsection Surface_mesh_shortest_pathAlgorithmOverview Algorithm Overview
   The size of the sequence tree from any source point is theoretically infinite, however we only ever care about trees which are of depth at most N, where N is the number of faces in the surface mesh (since no shortest path can cross the same face twice). Even then, the size of this truncated sequence tree is potentially exponential in the size of the surface mesh, thus a simple breadth-first search is not feasible.  Rather, we apply techniques to eliminate entire branches which are provably unable to contain shortest paths from the source point(s).  The techniques used are given in greater detail in a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, which itself expands on earlier work by Chen and Han \cgalCite{ch-spp-96} and Mitchell, Mount, and Papadimitriou \cgalCite{mmp-dgp-87} .
-  
+
   Handling multiple source points is simply a matter of constructing multiple sequence trees concurrently, using a method similar to the multi-source Dijsktra's algorithm.
-  
-\subsection Surface_mesh_shortest_pathContinuousDijkstra Continuous Dijkstra 
+
+\subsection Surface_mesh_shortest_pathContinuousDijkstra Continuous Dijkstra
   Continuous Dijkstra is simply the application of the graph-search algorithm to a non-discrete setting.  As we build the search tree, newly created nodes are tagged with a distance metric, and inserted into a priority queue, such that the shortest distance nodes are always first.
 
 \subsection Surface_mesh_shortest_pathOneAngleOneSplit One Angle, One Split
   This observation by Chen and Han states that out of all the branches that occur at any given vertex of the surface mesh, only a limited number have more than one child which can define shortest paths.  This is accomplished by maintaining, for each vertex, all nodes of the sequence tree which can contain that vertex inside their visibility window.
-  
+
 - For each vertex, only <em>one</em> two-way branch may occur per face incident to that vertex, specifically, that of the nearest node to that vertex which crosses that face.  We call that closest node the <em>occupier</em> of that vertex.
 - If the vertex is a saddle vertex, only one pseudo-source may be established at that vertex, this time by the absolute nearest node to that vertex.
 
   This method alone can decrease the running time for construction of the sequence tree construction to polynomial time.
-  
+
 \subsection Surface_mesh_shortest_pathDistanceFiltering Distance Filtering
 
   An additional distance filter proposed by Xin and Wang helps prune the search tree even further by comparing the current node's distance to the closest distance so far of the three vertices on the current face. Details on this method can be found in their paper \cgalCite{XinWang2009improvingchenandhan}.
@@ -279,7 +279,7 @@ In order to deal with this, we must create a new set of child visibility windows
 \subsection Surface_mesh_shortest_pathLocatingShortestPaths Locating Shortest Paths
 
   In order to locate the shortest path from a target point to a source point, we must select the correct visibility window. A simple method is to keep track for each face \f$f\f$ of all windows which cross \f$f\f$. In practice, at most a constant number of windows will cross any given face, so for simplicity this is the method we employ. An alternative is to construct a Voronoi-like structure on each face, where each cell represents a visibility window. We do did not attempt this method, however it would seem likely that it would be of no computational benefit.
-  
+
 \subsection Pseudo-Code
 
 In this section we give a brief outline of the pseudo-code for this algorithm. More details can be found in \cgalCite{ch-spp-96}  and \cgalCite{XinWang2009improvingchenandhan}.
@@ -292,10 +292,10 @@ G : FaceGraph(V,E,F)
   -- V - the set of vertices
   -- E - the set of edges
   -- F - the set of planar faces
-  
+
 Q : PriorityQueue
   -- A priority queue ordered using the metric given by Xin and Wang
-  
+
 --
 -- Types
 --
@@ -306,7 +306,7 @@ type VisbilityWindow:
   l : the left-side bounding ray of this window, with its origin at s
   r : the right-side bounding ray of this window, with its origin at s
   p : its parent VisibilityWindow
-    
+
 --
 -- Methods
 --
@@ -325,9 +325,9 @@ method PropagateWindow:
   Begin:
     Let f' be the face on the opposite side of e as w.f
     Lay out face f' along e, such that it shares a common plane with w.f
-    Create a new VisibilityWindow w', with 
+    Create a new VisibilityWindow w', with
     - w its parent
-    - the same source point and base distance as w 
+    - the same source point and base distance as w
     - its boundary rays clipped to the sub-segment of e covered by w
     return w'
 
@@ -337,10 +337,10 @@ method CreateFaceWindow:
     v : a vertex of f
     w : a VisibilityWindow which intersects f and contains v
   Output:
-    w' : a new VisibilityWindow, with 
+    w' : a new VisibilityWindow, with
     -- w its parent
     -- its source point s = v
-    -- its two bounding rays along the edges incident to v 
+    -- its two bounding rays along the edges incident to v
     -- face f as its crossed face
     -- its base distance being the distance of window w to v
 
@@ -358,7 +358,7 @@ method TreeDepth:
     w : a VisibilityWindow in some sequence tree T
   Output:
     The depth of node w in its current sequence tree (this would typically be cached in w itself)
-      
+
 method ShortestPathTree:
   Input:
     s[1..n] : a set of source points on the surface of G.
@@ -402,7 +402,7 @@ method ShortestPathTree:
 To perform shortest path distance queries to each vertex, we can simply use the results stored in `S` after the completion of ShortestPathTree, as it contains a map from each vertex to the `VisibilityWindow` which has the shortest path to that vertex. Performing shortest path computations to any arbitrary face location is slightly more complex. As eluded to above, after completion of the algorithm, we traverse each of the sequence trees, and for each face `f` we store all the VisibilityWindows which cross `f` in a look-up structure. Then, to find the shortest path to a point on the surface of face `f`, we look up that pre-stored set of VisibilityWindows associated with it, and among those windows we select the one which contains the query point, and has the shortest path back to the origin. Though it may seem slow since it involves a linear search, it is efficient in practice since the number of faces crossing any single face is typically limited (this is due to the additional filtering method given by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}.
 
 The actual surface paths can be reconstructed by backtracking from the VisibilityWindow, through its parents in the tree up to the root, and keeping track of each face that was crossed.
-  
+
 \section Surface_mesh_shortest_pathImplementationhistory Design and Implementation History
 The initial implementation of this package is the result of the work of Stephen Kiazyk during the 2014 season
 of the Google Summer of Code. He has been mentored by Sébastien Loriot and Éric Colin de Verdière
