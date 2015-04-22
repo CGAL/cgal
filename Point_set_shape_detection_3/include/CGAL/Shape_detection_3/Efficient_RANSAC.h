@@ -520,7 +520,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
                             m_global_octree->maxLevel())
                 <= m_options.probability) {
           //we keep it
-          if (best_Candidate->assigned_point_indices().size() >=
+          if (best_Candidate->indices_of_assigned_points().size() >=
                        m_options.min_points) {
             candidates.back() = NULL;
 
@@ -530,7 +530,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
             //2. remove the points
             //2.1 update boolean
             const std::vector<std::size_t> &indices_points_best_candidate =
-              best_Candidate->assigned_point_indices();
+              best_Candidate->indices_of_assigned_points();
 
             for (std::size_t i = 0;i<indices_points_best_candidate.size();i++) {
               m_shape_index[indices_points_best_candidate.at(i)] =

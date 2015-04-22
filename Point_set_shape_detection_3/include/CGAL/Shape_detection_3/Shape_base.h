@@ -96,7 +96,7 @@ namespace CGAL {
     /*!
       returns the indices of the points in the input range assigned to this shape.
      */
-    const std::vector<std::size_t> &assigned_point_indices() const {
+    const std::vector<std::size_t> & indices_of_assigned_points() const {
       return m_indices;
     }
       

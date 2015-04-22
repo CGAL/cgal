@@ -112,9 +112,9 @@ int main()
 
     // Iterates through point indices assigned to each detected shape.
     std::vector<std::size_t>::const_iterator
-      index_it = (*it)->assigned_point_indices().begin();
+      index_it = (*it)->indices_of_assigned_points().begin();
 
-    while (index_it != (*it)->assigned_point_indices().end()) {
+    while (index_it != (*it)->indices_of_assigned_points().end()) {
       
       // Retrieves point
       const Point_with_normal &p = *(points.begin() + (*index_it));
@@ -127,7 +127,7 @@ int main()
     }
 
     // Computes and prints average distance.
-    FT average_distance = sum_distances / shape->assigned_point_indices().size();
+    FT average_distance = sum_distances / shape->indices_of_assigned_points().size();
     std::cout << " average distance: " << average_distance << std::endl;
 
     // Proceeds with next detected shape.
