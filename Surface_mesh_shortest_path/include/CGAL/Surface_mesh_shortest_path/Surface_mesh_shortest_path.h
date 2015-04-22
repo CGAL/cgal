@@ -669,7 +669,7 @@ private:
     
     switch (type)
     {
-      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_INTERNAL:
+      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_INSIDE:
         expand_face_root(f, location, sourcePointIt);
         break;
       case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_EDGE:
@@ -1728,7 +1728,7 @@ private:
     
     switch (type)
     {
-      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_INTERNAL:
+      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_INSIDE:
         return nearest_on_face(f, location);
       case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_EDGE:
         {

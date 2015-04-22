@@ -143,9 +143,9 @@ enum Barycentric_coordinate_type
   ///if the coordinate has exactly one zero weight, and the rest sum to 1
   BARYCENTRIC_COORDINATE_EDGE, 
   /// if the coordinate has no non-zero weight, and they all sum to 1
-  BARYCENTRIC_COORDINATE_INTERNAL, 
+  BARYCENTRIC_COORDINATE_INSIDE, 
   /// if the weights of the coordinate do not sum to 1
-  BARYCENTRIC_COORDINATE_EXTERNAL, 
+  BARYCENTRIC_COORDINATE_OUTSIDE, 
 };
 
 template <class B, class Construct_barycentric_coordinate_weight>
@@ -178,7 +178,7 @@ public:
     
     if (cbcw(baryCoords, 0) + cbcw(baryCoords, 1) + cbcw(baryCoords, 2) > 1.00001 || cbcw(baryCoords, 0) + cbcw(baryCoords, 1) + cbcw(baryCoords, 2) < 0.99999)
     {
-      return std::make_pair(BARYCENTRIC_COORDINATE_EXTERNAL, 0);
+      return std::make_pair(BARYCENTRIC_COORDINATE_OUTSIDE, 0);
     }
     
     for (std::size_t i = 0; i < 3; ++i)
@@ -193,7 +193,7 @@ public:
 
     if (numNonZero == 3)
     {
-      return std::make_pair(BARYCENTRIC_COORDINATE_INTERNAL, 0);
+      return std::make_pair(BARYCENTRIC_COORDINATE_INSIDE, 0);
     }
     else if (numNonZero == 2)
     {

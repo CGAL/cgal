@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE( test_simple_2D_barycentric_coordinates )
   CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type bLocationType;
   boost::tie(bLocationType, dummyOut) = classify_barycentric_coordinate(bLocation);
   
-  BOOST_CHECK_EQUAL(bLocationType, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_INTERNAL);
+  BOOST_CHECK_EQUAL(bLocationType, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_INSIDE);
   
   BOOST_CHECK_CLOSE(Kernel::FT(1.0) - location[0] - location[1], bLocation[0], Kernel::FT(0.000001));
   BOOST_CHECK_CLOSE(location[0], bLocation[1], Kernel::FT(0.000001));
