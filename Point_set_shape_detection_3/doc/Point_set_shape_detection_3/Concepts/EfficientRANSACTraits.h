@@ -6,7 +6,7 @@ Concept describing the set of types required by the class `CGAL::Shape_detection
 
 To avoid copying potentially large input data, the shape detection class
 `CGAL::Efficient_RANSAC` will work on the input
-data directly and no internal copy will be done. For this reason, the
+data directly and no internal copy will be made. For this reason, the
 input data has to be provided in form of a random access iterator.
 Point and normal property maps have to
 be provided to extract the points and the normals from the input.

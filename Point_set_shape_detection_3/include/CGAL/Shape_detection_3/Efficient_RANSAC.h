@@ -183,7 +183,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
       `boost:RandomAccessRange` concept. The range of input points need to stay valid
       until the detection has been performed and no longer access to the
       results is required. The data in the input range is reordered during
-      `detect()` and `build_octrees()`. The function `clear()` is first called by this function.
+      `detect()` and `preprocess()`. The function `clear()` is first called by this function.
     */
     void set_input(
       ///< Range of input data points.
@@ -209,7 +209,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
         m_valid_iterators = true;
     }
     /*!
-      Registers in the detection engine the shape type `ShapeType` that must inherits from `Shape_base`.
+      Registers in the detection engine the shape type `ShapeType` that must inherit from `Shape_base`.
     */ 
     template <class ShapeType>
     void add_shape_factory() {
@@ -346,7 +346,7 @@ shape. The implementation follows \cgalCite{Schnabel07}.
     */ 
     bool detect(
       const Parameters &options = Parameters()
-      ///< Parameters for shape detection.
+      ///< %Parameters for shape detection.
                 ) {
       // no shape types for detection or no points provided, exit
       if (m_shape_factories.size() == 0 ||
