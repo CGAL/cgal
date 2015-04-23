@@ -289,12 +289,11 @@ compute_vcm (ForwardIterator first,
 /// this number of neighbors.
 
 // This variant requires all of the parameters.
-template < typename ForwardIterator,
+template < typename VCM_traits,
+           typename ForwardIterator,
            typename PointPMap,
            typename NormalPMap,
-           typename Kernel,
-           typename Covariance,
-           typename VCM_traits
+           typename Kernel
 >
 void
 vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input point.
@@ -304,10 +303,10 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                       double R, ///< offset radius.
                       double r, ///< convolution radius.
                       const Kernel & k, ///< geometric traits.
-                      const Covariance &, ///< covariance matrix type.
                       int nb_neighbors_convolve = -1 ///< number of neighbors used during the convolution.
 )
 {
+    typedef cpp11::array<double, 6> Covariance;
     // Compute the VCM and convolve it
     std::vector<Covariance> cov;
     if (nb_neighbors_convolve == -1) {
@@ -386,14 +385,11 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 {
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
-    typedef typename Kernel::FT FT;
-    typedef cpp11::array<FT,6> Covariance;
 
-    vcm_estimate_normals(first, beyond,
-                         point_pmap, normal_pmap,
-                         R, r,
-                         Kernel(),
-                         Covariance());
+    vcm_estimate_normals<VCM_traits>(first, beyond,
+                                     point_pmap, normal_pmap,
+                                     R, r,
+                                     Kernel());
 }
 
 
@@ -430,15 +426,12 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 {
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
-    typedef typename Kernel::FT FT;
-    typedef cpp11::array<FT,6> Covariance;
 
-    vcm_estimate_normals(first, beyond,
-                         point_pmap, normal_pmap,
-                         R, 0,
-                         Kernel(),
-                         Covariance(),
-                         nb_neighbors_convolve);
+    vcm_estimate_normals<VCM_traits>(first, beyond,
+                                     point_pmap, normal_pmap,
+                                     R, 0,
+                                     Kernel(),
+                                     nb_neighbors_convolve);
 }
 
 
