@@ -48,7 +48,7 @@ namespace internal {
 /// @cond SKIP_IN_MANUAL
 /// Computes the VCM for each point in the property map.
 /// The matrix is computed by intersecting the Voronoi cell
-/// of a point and a sphere whose radius is `R` and discretized
+/// of a point and a sphere whose radius is `offset_radius` and discretized
 /// by `N` planes.
 ///
 /// @tparam ForwardIterator iterator over input points.
@@ -65,12 +65,12 @@ vcm_offset (ForwardIterator first, ///< iterator over the first input point.
             ForwardIterator beyond, ///< past-the-end iterator over the input points.
             PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
             std::vector<Covariance> &cov, ///< vector of covariance matrices.
-            double R, ///< radius of the sphere.
+            double offset_radius, ///< radius of the sphere.
             size_t N, ///< number of planes used to discretize the sphere.
             const K & /*kernel*/) ///< geometric traits.
 {
     // Sphere discretization
-    typename CGAL::Voronoi_covariance_3::Sphere_discretization<K> sphere(R, N);
+    typename CGAL::Voronoi_covariance_3::Sphere_discretization<K> sphere(offset_radius, N);
 
     // Compute the Delaunay Triangulation
     typedef CGAL::Delaunay_triangulation_3<K> DT;
@@ -103,7 +103,7 @@ vcm_convolve (ForwardIterator first,
               PointPMap point_pmap,
               const std::vector<Covariance> &cov,
               std::vector<Covariance> &ncov,
-              double r,
+              double convolution_radius,
               const K &)
 {
     typedef typename K::Point_3 Point;
@@ -131,7 +131,7 @@ vcm_convolve (ForwardIterator first,
     for (it = first; it != beyond; ++it) {
         std::vector<Point> nn;
         tree.search(std::back_inserter(nn),
-                    Fuzzy_sphere (get(point_pmap, *it), r));
+                    Fuzzy_sphere (get(point_pmap, *it), convolution_radius));
 
         Covariance m;
         for (size_t k = 0; k < nn.size(); ++k)
@@ -209,14 +209,14 @@ vcm_convolve (ForwardIterator first,
 /// a construction that can be used for normal estimation and sharp feature detection.
 ///
 /// The VCM associates to each point the covariance matrix of its Voronoi
-/// cell intersected with the the ball of radius `R`.
-/// In addition, if the second radius `r` is positive, the covariance matrices are smoothed
+/// cell intersected with the the ball of radius `offset_radius`.
+/// In addition, if the second radius `convolution_radius` is positive, the covariance matrices are smoothed
 /// by a simple convolution procedure. More precisely, each covariance matrix is replaced with
-/// the average of the matrices of points at distance at most `r`.
-/// The choice of the parameter `R` is related to the geometry of the underlying surface while
-/// the choice of `r` is related to the noise level in the point cloud.
+/// the average of the matrices of points at distance at most `convolution_radius`.
+/// The choice of the parameter `offset_radius` is related to the geometry of the underlying surface while
+/// the choice of `convolution_radius` is related to the noise level in the point cloud.
 /// For example, if the point cloud is a uniform and noiseless sampling of a smooth surface,
-/// `R` should be set to the minimum local feature size of the surface while `r` can be set to zero.
+/// `offset_radius` should be set to the minimum local feature size of the surface while `convolution_radius` can be set to zero.
 ///
 /// The Voronoi covariance matrix of each vertex is stored in an array `a` of length 6 and is as follow:
 /*!
@@ -247,9 +247,9 @@ compute_vcm (ForwardIterator first,
              ForwardIterator beyond,
              PointPMap point_pmap,
              std::vector< cpp11::array<typename Kernel::FT, 6> > &ccov,
-             double R,
-             double r,
-             const Kernel & k)
+             double offset_radius,
+             double convolution_radius,
+             const Kernel & kernel)
 {
     // First, compute the VCM for each point
     std::vector< cpp11::array<typename Kernel::FT, 6> > cov;
@@ -257,20 +257,20 @@ compute_vcm (ForwardIterator first,
     internal::vcm_offset (first, beyond,
                           point_pmap,
                           cov,
-                          R,
+                          offset_radius,
                           N,
-                          k);
+                          kernel);
 
-    // Then, convolve it (only when r != 0)
-    if (r == 0) {
+    // Then, convolve it (only when convolution_radius != 0)
+    if (convolution_radius == 0) {
         std::copy(cov.begin(), cov.end(), std::back_inserter(ccov));
     } else {
         internal::vcm_convolve(first, beyond,
                                point_pmap,
                                cov,
                                ccov,
-                               r,
-                               k);
+                               convolution_radius,
+                               kernel);
     }
 }
 
@@ -300,9 +300,9 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                       ForwardIterator beyond, ///< past-the-end iterator over the input points.
                       PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
                       NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
-                      double R, ///< offset radius.
-                      double r, ///< convolution radius.
-                      const Kernel & k, ///< geometric traits.
+                      double offset_radius, ///< offset radius.
+                      double convolution_radius, ///< convolution radius.
+                      const Kernel & kernel, ///< geometric traits.
                       int nb_neighbors_convolve = -1 ///< number of neighbors used during the convolution.
 )
 {
@@ -313,16 +313,16 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
         compute_vcm(first, beyond,
                     point_pmap,
                     cov,
-                    R,
-                    r,
-                    k);
+                    offset_radius,
+                    convolution_radius,
+                    kernel);
     } else {
         internal::vcm_offset(first, beyond,
                              point_pmap,
                              cov,
-                             R,
+                             offset_radius,
                              20,
-                             k);
+                             kernel);
 
         std::vector<Covariance> ccov;
         internal::vcm_convolve(first, beyond,
@@ -330,7 +330,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                                cov,
                                ccov,
                                (unsigned int) nb_neighbors_convolve,
-                               k);
+                               kernel);
 
         cov.clear();
         std::copy(ccov.begin(), ccov.end(), std::back_inserter(cov));
@@ -340,7 +340,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
     int i = 0;
     for (ForwardIterator it = first; it != beyond; ++it) {
         cpp11::array<double, 3> enormal;
-        VCM_traits::extract_greater_eigenvector_of_covariance_matrix
+        VCM_traits::extract_greatest_eigenvector_of_covariance_matrix
           (cov[i], enormal);
 
         typename Kernel::Vector_3 normal(enormal[0],
@@ -357,7 +357,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 /// using the Voronoi Covariance Measure with a radius for the convolution.
 /// The output normals are randomly oriented.
 ///
-/// See `compute_vcm()` for a detailed description of the parameters `R` and `r`
+/// See `compute_vcm()` for a detailed description of the parameters `offset_radius` and `convolution_radius`
 /// and of the Voronoi Covariance Measure.
 ///
 /// @tparam ForwardIterator iterator over input points.
@@ -378,8 +378,8 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                       ForwardIterator beyond, ///< past-the-end iterator over the input points.
                       PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
                       NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
-                      double R, ///< offset radius.
-                      double r, ///< convolution radius.
+                      double offset_radius, ///< offset radius.
+                      double convolution_radius, ///< convolution radius.
                       VCM_traits
 )
 {
@@ -388,7 +388,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 
     vcm_estimate_normals<VCM_traits>(first, beyond,
                                      point_pmap, normal_pmap,
-                                     R, r,
+                                     offset_radius, convolution_radius,
                                      Kernel());
 }
 
@@ -398,7 +398,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 /// using the Voronoi Covariance Measure with a number of neighbors for the convolution.
 /// The output normals are randomly oriented.
 ///
-/// See `compute_vcm()` for a detailed description of the parameter `R`
+/// See `compute_vcm()` for a detailed description of the parameter `offset_radius`
 /// and of the Voronoi Covariance Measure.
 ///
 /// @tparam ForwardIterator iterator over input points.
@@ -419,8 +419,8 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                       ForwardIterator beyond, ///< past-the-end iterator over the input points.
                       PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
                       NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
-                      double R, ///< offset radius.
-                      unsigned int nb_neighbors_convolve, ///< number of neighbor points used for the convolution.
+                      double offset_radius, ///< offset radius.
+                      unsigned int k, ///< number of neighbor points used for the convolution.
                       VCM_traits
 )
 {
@@ -429,9 +429,9 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 
     vcm_estimate_normals<VCM_traits>(first, beyond,
                                      point_pmap, normal_pmap,
-                                     R, 0,
+                                     offset_radius, 0,
                                      Kernel(),
-                                     nb_neighbors_convolve);
+                                     k);
 }
 
 
@@ -445,10 +445,10 @@ vcm_estimate_normals (ForwardIterator first,
                       ForwardIterator beyond,
                       PointPMap point_pmap,
                       NormalPMap normal_pmap,
-                      double R,
-                      double r)
+                      double offset_radius,
+                      double convolution_radius)
 {
-  vcm_estimate_normals(first, beyond, point_pmap, normal_pmap, R, r, Eigen_vcm_traits());
+  vcm_estimate_normals(first, beyond, point_pmap, normal_pmap, offset_radius, convolution_radius, Eigen_vcm_traits());
 }
 
 template < typename ForwardIterator,
@@ -460,10 +460,10 @@ vcm_estimate_normals (ForwardIterator first,
                       ForwardIterator beyond,
                       PointPMap point_pmap,
                       NormalPMap normal_pmap,
-                      double R,
+                      double offset_radius,
                       unsigned int nb_neighbors_convolve)
 {
-  vcm_estimate_normals(first, beyond, point_pmap, normal_pmap, R, nb_neighbors_convolve, Eigen_vcm_traits());
+  vcm_estimate_normals(first, beyond, point_pmap, normal_pmap, offset_radius, nb_neighbors_convolve, Eigen_vcm_traits());
 }
 #endif
 
@@ -477,12 +477,12 @@ void
 vcm_estimate_normals (ForwardIterator first,
                       ForwardIterator beyond,
                       NormalPMap normal_pmap,
-                      double R,
-                      double r) {
+                      double offset_radius,
+                      double convolution_radius) {
     vcm_estimate_normals(first, beyond,
                          make_identity_property_map(typename std::iterator_traits<ForwardIterator>::value_type()),
                          normal_pmap,
-                         R, r);
+                         offset_radius, convolution_radius);
 }
 /// @endcond
 
@@ -496,12 +496,12 @@ void
 vcm_estimate_normals (ForwardIterator first,
                       ForwardIterator beyond,
                       NormalPMap normal_pmap,
-                      double R,
+                      double offset_radius,
                       unsigned int nb_neighbors_convolve) {
     vcm_estimate_normals(first, beyond,
                          make_identity_property_map(typename std::iterator_traits<ForwardIterator>::value_type()),
                          normal_pmap,
-                         R, nb_neighbors_convolve);
+                         offset_radius, nb_neighbors_convolve);
 }
 /// @endcond
 
