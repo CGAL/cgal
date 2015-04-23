@@ -364,7 +364,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
 /// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
 /// \tparam VCM_traits is a model of `VCMTraits`. If Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined
-///         then an overlay using `Eigen_vcm_traits` is provided and this template parameter can be omitted.
+///         then an overload using `Eigen_vcm_traits` is provided and this template parameter can be omitted.
 
 // This variant deduces the kernel from the point property map
 // and uses a radius for the convolution.
@@ -405,7 +405,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
 /// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
 /// \tparam VCM_traits is a model of `VCMTraits`. If Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined
-///         then an overlay using `Eigen_vcm_traits` is provided and this template parameter can be omitted.
+///         then an overload using `Eigen_vcm_traits` is provided and this template parameter can be omitted.
 
 // This variant deduces the kernel from the point property map
 // and uses a number of neighbors for the convolution.
