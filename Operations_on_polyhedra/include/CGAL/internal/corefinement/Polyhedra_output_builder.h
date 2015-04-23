@@ -313,15 +313,17 @@ struct Import_polyline
     }
 
     //update next/prev relationships at the polyline endpoints
-    if ( P_first_halfedge == next_marked_halfedge_around_target_vertex(P_previous, border_halfedges) )
+    if ( P_first_halfedge == next_marked_halfedge_around_target_vertex(P_previous, border_halfedges)
+         || P_first_halfedge->opposite()->vertex() == P_previous->vertex() )
     {
       decorator.set_prev(O_first_halfedge, O_previous);
       O_previous->HBase::set_next(O_first_halfedge);
       decorator.set_prev(O_previous->opposite(), O_first_halfedge->opposite());
       O_first_halfedge->opposite()->HBase::set_next(O_previous->opposite());
     }
-    else{
-      CGAL_assertion("!OUCH see OUCHTAG");
+    else
+    {
+        CGAL_assertion(!"OUCH see OUCHTAG");
     }
   }
 };
