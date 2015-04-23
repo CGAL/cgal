@@ -38,7 +38,7 @@ namespace CGAL {
       symmetry axis, its center on the axis and the major and minor radii.
       \tparam Traits a model of `EfficientRANSACTraits` with the additional
               requirement that the types `Traits::Point_2` and `Traits::Circle_2`
-              are available.
+              are provided.
      */
   template <class Traits>
   class Torus : public Shape_base<Traits> {
