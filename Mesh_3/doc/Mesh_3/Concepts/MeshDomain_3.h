@@ -111,7 +111,7 @@ typedef unspecified_type Index;
 Return type of `Construct_intersection` queries.
 `int` represents the
 dimension of the lower dimensional face of the input complex on which the intersection
-point lies and `Index` is the index of this face.
+point lies and `%Index` is the index of this face.
 */
 typedef CGAL::cpp11::tuple<Point_3, Index, int> Intersection;
 
@@ -130,7 +130,7 @@ following operators:
 
 Those two operators output a set of (`n`) surface points to the
 output iterator `pts`, as objects of type `std::pair<Point_3,
-Index>`. If `n` is not given, the functor must provide enough
+%Index>`. If `n` is not given, the functor must provide enough
 points to initialize the mesh generation process.
 */
 typedef unspecified_type Construct_initial_points;

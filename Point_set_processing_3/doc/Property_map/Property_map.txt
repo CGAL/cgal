@@ -52,7 +52,7 @@ The following example reads a point set from an input file and writes it to a fi
 
 \subsection Property_mapExamplewithTuples Example with Tuples
 
-The following example reads a point set in the `xyz` format and computes the average spacing. Index, position and color are stored in a tuple and accessed through property maps.
+The following example reads a point set in the `xyz` format and computes the average spacing. %Index, position and color are stored in a tuple and accessed through property maps.
 \cgalExample{Point_set_processing_3/average_spacing_example.cpp}
 
 */ 

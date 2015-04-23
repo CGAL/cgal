@@ -45,7 +45,7 @@ public:
 /// @{
 
 /*!
-Index type. 
+%Index type. 
 */ 
 typedef Tr::Vertex::Index Index; 
 
@@ -60,12 +60,12 @@ Subdomain index type.
 typedef Tr::Cell::Subdomain_index Subdomain_index; 
 
 /*!
-`Corner_index` type. 
+ Corner index type. 
 */ 
 typedef CornerIndex Corner_index; 
 
 /*!
-`Curve_segment_index` type. 
+Curve segment index type. 
 */ 
 typedef CurveSegmentIndex Curve_segment_index; 
 

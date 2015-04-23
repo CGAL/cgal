@@ -88,7 +88,7 @@ related to the template parameters of some models of the main concepts:
 - `CGAL::Mesh_cell_criteria_3<Tr>`
 - `CGAL::Mesh_facet_criteria_3<Tr>`
 - `CGAL::Mesh_edge_criteria_3<Tr>`
-- `CGAL::Mesh_constant_domain_field_3<Gt,Index>`
+- `CGAL::Mesh_constant_domain_field_3<Gt,%Index>`
 
 The following classes are models of domain concepts
 and their associated classes:
