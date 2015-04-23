@@ -24,7 +24,7 @@ public:
   typedef unspecified_type Vector_3;
 
   /// Model of the concept `Range` with random access iterators, providing input points and normals
-  /// through the following two property maps.
+  /// through the two property maps `Point_map` and `Normal_map`.
   typedef unspecified_type Input_range;
   /// a model of `ReadablePropertyMap` with `std::iterator_traits<Input_range::iterator>::%value_type` as key type and `Point_3` as value type.
   typedef unspecified_type Point_map;
