@@ -24,6 +24,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgDependsOn{\ref PkgBGLSummary and \ref PkgAABB_treeSummary for some convenience functions}
+\cgalPkgBib{cgal:klcdv-tsmsp}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
