@@ -89,7 +89,7 @@ public:
   {}
   operator std::size_t() { return m_data; }
   operator std::size_t() const { return m_data; }
-    
+
 private:
   std::size_t m_data;
 };
@@ -193,7 +193,7 @@ class Tangential_complex
   typedef typename std::vector<Tr_and_VH>               Tr_container;
   typedef typename std::vector<Vector>                  Vectors;
 
-  // An Incident_simplex is the list of the vertex indices 
+  // An Incident_simplex is the list of the vertex indices
   // except the center vertex
   typedef std::set<std::size_t>                         Incident_simplex;
   typedef std::vector<Incident_simplex>                 Star;
@@ -241,7 +241,7 @@ public:
   {}
 
   /// Destructor
-  ~Tangential_complex() 
+  ~Tangential_complex()
   {
 #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_PERTURB_POSITION) \
  && defined(CGAL_TC_GLOBAL_REFRESH)
@@ -325,7 +325,7 @@ public:
               << "Star: " << ((double)ttt_star)/1000000 << " s\n";
 #endif
   }
-  
+
   void estimate_intrinsic_dimension()
   {
     // Kernel functors
@@ -389,8 +389,8 @@ public:
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
       tbb::parallel_for(tbb::blocked_range<size_t>(0, m_points.size()),
-        Compute_tangent_triangulation(*this, 
-          true) //tangent_spaces_are_already_computed 
+        Compute_tangent_triangulation(*this,
+          true) //tangent_spaces_are_already_computed
       );
     }
     // Sequential
@@ -403,12 +403,12 @@ public:
         compute_alpha_tangent_triangulation(i, ALPHA,
           true); // tangent_spaces_are_already_computed
 #else
-        compute_tangent_triangulation(i, 
+        compute_tangent_triangulation(i,
           true); // tangent_spaces_are_already_computed
 #endif
       }
     }
-    
+
 
 #ifdef CGAL_TC_PROFILING
     std::cerr << "Tangential complex refreshed in " << t.elapsed()
@@ -418,10 +418,10 @@ public:
 
   // time_limit in seconds: 0 = no fix to do, < 0 = no time limit
   Fix_inconsistencies_status fix_inconsistencies(
-    unsigned int &num_steps, 
+    unsigned int &num_steps,
     std::size_t &initial_num_inconsistent_local_tr,
-    std::size_t &best_num_inconsistent_local_tr, 
-    std::size_t &final_num_inconsistent_local_tr, 
+    std::size_t &best_num_inconsistent_local_tr,
+    std::size_t &final_num_inconsistent_local_tr,
     double time_limit = -1.)
   {
     if (time_limit == 0.)
@@ -429,7 +429,7 @@ public:
 
     Wall_clock_timer t;
 
-    typename Kernel::Point_drop_weight_d drop_w = 
+    typename Kernel::Point_drop_weight_d drop_w =
       m_k.point_drop_weight_d_object();
 
 #ifdef CGAL_TC_VERBOSE
@@ -460,7 +460,7 @@ public:
     while (!done)
     {
       std::size_t num_inconsistent_local_tr = 0;
-      
+
 #ifdef CGAL_TC_PROFILING
       Wall_clock_timer t_fix_step;
 #endif
@@ -484,7 +484,7 @@ public:
       {
         for (std::size_t i = 0 ; i < m_triangulations.size() ; ++i)
         {
-          num_inconsistent_local_tr += 
+          num_inconsistent_local_tr +=
             (try_to_solve_inconsistencies_in_a_local_triangulation(i) ? 1 : 0);
         }
       }
@@ -503,7 +503,7 @@ public:
         number_of_inconsistent_simplices(false);
 
       std::cerr << std::endl
-        << "==========================================================" 
+        << "=========================================================="
         << std::endl
         << "Inconsistencies (detailed stats):\n"
         << "  * Number of vertices: " << m_points.size() << std::endl
@@ -512,12 +512,12 @@ public:
         << "    - Total number of simplices in stars (incl. duplicates): "
         << stats_before.first << std::endl
         << "    - Num inconsistent simplices in stars (incl. duplicates): "
-        << stats_before.second 
+        << stats_before.second
         << " (" << 100. * stats_before.second / stats_before.first << "%)"
         << std::endl
         << "  * Num inconsistent local triangulations: "
-        << num_inconsistent_local_tr 
-        << " (" << 100. * num_inconsistent_local_tr / m_points.size() << "%)" 
+        << num_inconsistent_local_tr
+        << " (" << 100. * num_inconsistent_local_tr / m_points.size() << "%)"
         << std::endl
         << std::endl
         << "  * AFTER fix_inconsistencies:" << std::endl
@@ -540,7 +540,7 @@ public:
         << std::endl
         << "fix_inconsistencies():\n"
         << "  * " << m_points.size() << " vertices" << std::endl
-        << "  * " << num_inconsistent_local_tr 
+        << "  * " << num_inconsistent_local_tr
         << " (" << 100. * num_inconsistent_local_tr / m_points.size() << "%)"
         << " inconsistent triangulations encountered" << std::endl
         << "=========================================================="
@@ -598,7 +598,7 @@ public:
         // Don't export infinite cells
         if (*it_inc_simplex->rbegin() == std::numeric_limits<std::size_t>::max())
           continue;
-        
+
         std::set<std::size_t> c = *it_inc_simplex;
         c.insert(idx); // Add the missing index
 
@@ -675,7 +675,7 @@ public:
         Star::const_iterator it_inc_simplex_end = m_stars[idx].end();
         for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
         {
-          inconsistencies_found = 
+          inconsistencies_found =
             check_and_solve_inconsistencies_by_adding_higher_dim_simplices(
               idx, *it_inc_simplex);
 
@@ -683,10 +683,10 @@ public:
           // CJTODO: optimize?
           if (inconsistencies_found)
             break;
-        }     
+        }
       } while (inconsistencies_found);
     }
-    
+
     // CJTODO TEMP
     std::pair<std::size_t, std::size_t> stats_after =
       number_of_inconsistent_simplices(false);
@@ -699,7 +699,7 @@ public:
       << 100. * stats_after.second / stats_after.first << "%"
       << std::endl;
   }
-  
+
   std::ostream &export_to_off(
     const Simplicial_complex &complex, std::ostream & os,
     std::set<std::set<std::size_t> > const *p_simpl_to_color_in_red = NULL,
@@ -711,7 +711,7 @@ public:
       os, false, p_simpl_to_color_in_red, p_simpl_to_color_in_green, 
       p_simpl_to_color_in_blue, &complex);
   }
-  
+
   std::ostream &export_to_off(
     std::ostream & os, bool color_inconsistencies = false,
     std::set<std::set<std::size_t> > const *p_simpl_to_color_in_red = NULL,
@@ -816,9 +816,9 @@ public:
     for (FFC_it cit = ambient_dt.finite_full_cells_begin() ;
          cit != ambient_dt.finite_full_cells_end() ; ++cit )
     {
-      int lowest_dim = 
+      int lowest_dim =
         (check_for_any_dimension_simplices ? 1 : m_intrinsic_dimension);
-      int highest_dim = 
+      int highest_dim =
         (check_for_any_dimension_simplices ? m_ambient_dim : m_intrinsic_dimension);
 
       for (int dim = lowest_dim ; dim <= highest_dim ; ++dim)
@@ -838,7 +838,7 @@ public:
     }
 
     //-------------------------------------------------------------------------
-    // If p_complex is NULL, parse the TC and 
+    // If p_complex is NULL, parse the TC and
     // save its simplices into "stars_simplices"
     //-------------------------------------------------------------------------
 
@@ -1012,12 +1012,12 @@ private:
     // No need to lock the mutex here since this will not be called while
     // other threads are perturbing the positions
     const Point center_pt = compute_perturbed_point(i);
-    
+
     // Estimate the tangent space
     if (!tangent_spaces_are_already_computed)
     {
 #if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
-      m_tangent_spaces[i] = 
+      m_tangent_spaces[i] =
         compute_tangent_space(center_pt, true, &m_orth_spaces[i]);
 #else
       m_tangent_spaces[i] = compute_tangent_space(center_pt);
@@ -1027,7 +1027,7 @@ private:
     else if (m_perturb_tangent_space[i])
     {
 #if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
-      m_tangent_spaces[i] = 
+      m_tangent_spaces[i] =
         compute_tangent_space(center_pt, true, &m_orth_spaces[i], true);
 #else
       m_tangent_spaces[i] = compute_tangent_space(center_pt, true, NULL, true);
@@ -1075,7 +1075,7 @@ private:
       // ith point = p, which is already inserted
       if (neighbor_point_idx != i)
       {
-        // No need to lock the Mutex_for_perturb here since this will not be 
+        // No need to lock the Mutex_for_perturb here since this will not be
         // called while other threads are perturbing the positions
         Point neighbor_pt;
         FT neighbor_weight;
@@ -1089,7 +1089,7 @@ private:
           break;
 
         Tr_point proj_pt = project_point_and_compute_weight(
-          neighbor_pt, neighbor_weight, center_pt, m_tangent_spaces[i], 
+          neighbor_pt, neighbor_weight, center_pt, m_tangent_spaces[i],
           local_tr_traits);
 
         Tr_vertex_handle vh = local_tr.insert_if_in_star(proj_pt, center_vertex);
@@ -1130,7 +1130,7 @@ private:
                 FT sq_power_sphere_diam = 4*point_weight(c);
 
                 if (!squared_star_sphere_radius_plus_margin
-                 || sq_power_sphere_diam > 
+                 || sq_power_sphere_diam >
                     *squared_star_sphere_radius_plus_margin)
                 {
                   squared_star_sphere_radius_plus_margin = sq_power_sphere_diam;
@@ -1147,7 +1147,7 @@ private:
                 *squared_star_sphere_radius_plus_margin + 4*m_sq_half_sparsity;
 #else
               squared_star_sphere_radius_plus_margin = CGAL::square(
-                CGAL::sqrt(*squared_star_sphere_radius_plus_margin) 
+                CGAL::sqrt(*squared_star_sphere_radius_plus_margin)
                 + 2*m_half_sparsity);
 #endif
             }
@@ -1162,7 +1162,7 @@ private:
     Star &star = m_stars[i];
     star.clear();
     int cur_dim_plus_1 = local_tr.current_dimension() + 1;
-    
+
     std::vector<Tr_full_cell_handle> incident_cells;
     local_tr.incident_full_cells(
       center_vertex, std::back_inserter(incident_cells));
@@ -1199,7 +1199,7 @@ private:
     bool verbose = false)
   {
     if (verbose)
-      std::cerr << "** Computing alpha tangent tri #" 
+      std::cerr << "** Computing alpha tangent tri #"
                 << i << " **" << std::endl;
 
     typedef Regular_triangulation_euclidean_traits<Kernel>    Amb_RT_Traits;
@@ -1222,7 +1222,7 @@ private:
       m_k.point_weight_d_object();
     typename Kernel::Power_center_d k_power_center =
       m_k.power_center_d_object();
-    
+
     // No need to lock the mutex here since this will not be called while
     // other threads are perturbing the positions
     const Point &center_pt = m_points[i];
@@ -1231,7 +1231,7 @@ private:
     if (!tangent_spaces_are_already_computed)
     {
 #if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
-      m_tangent_spaces[i] = 
+      m_tangent_spaces[i] =
         compute_tangent_space(center_pt, true, &m_orth_spaces[i]);
 #else
       m_tangent_spaces[i] = compute_tangent_space(center_pt);
@@ -1241,7 +1241,7 @@ private:
     else if (m_perturb_tangent_space[i])
     {
 #if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
-      m_tangent_spaces[i] = 
+      m_tangent_spaces[i] =
         compute_tangent_space(center_pt, true, &m_orth_spaces[i], true);
 #else
       m_tangent_spaces[i] = compute_tangent_space(center_pt, true, NULL, true);
@@ -1254,13 +1254,13 @@ private:
     // Build a minimal triangulation in the tangent space
     // (we only need the star of p in the AMBIENT triangulation)
     //***************************************************
-    
+
 #ifdef CGAL_TC_PROFILING
         Wall_clock_timer t_star;
 #endif
 
     Amb_RT local_amb_tr(m_ambient_dim);
-    
+
     // Insert p
     Weighted_point wp = m_k.construct_weighted_point_d_object()(
       center_pt,
@@ -1293,7 +1293,7 @@ private:
       // ith point = p, which is already inserted
       if (neighbor_point_idx != i)
       {
-        // No need to lock the Mutex_for_perturb here since this will not be 
+        // No need to lock the Mutex_for_perturb here since this will not be
         // called while other threads are perturbing the positions
         Weighted_point neighbor_wp =
           compute_perturbed_weighted_point(neighbor_point_idx);
@@ -1344,7 +1344,7 @@ private:
                 FT sq_power_sphere_diam = 4*k_point_weight(c);
 
                 if (!squared_star_sphere_radius_plus_margin
-                 || sq_power_sphere_diam > 
+                 || sq_power_sphere_diam >
                     *squared_star_sphere_radius_plus_margin)
                 {
                   squared_star_sphere_radius_plus_margin = sq_power_sphere_diam;
@@ -1361,7 +1361,7 @@ private:
                 *squared_star_sphere_radius_plus_margin + 4*m_sq_half_sparsity;
 #else
               squared_star_sphere_radius_plus_margin = CGAL::square(
-                CGAL::sqrt(*squared_star_sphere_radius_plus_margin) 
+                CGAL::sqrt(*squared_star_sphere_radius_plus_margin)
                 + 2*m_half_sparsity);
 #endif
             }
@@ -1382,7 +1382,7 @@ private:
     Star &star = m_stars[i];
     star.clear();
     int cur_dim_plus_1 = m_ambient_dim + 1;
-    
+
     std::vector<Amb_RT_FCH> incident_cells;
     local_amb_tr.incident_full_cells(
       center_vertex, std::back_inserter(incident_cells));
@@ -1423,7 +1423,7 @@ next_face:
     int current_dim = m_ambient_dim - 1;
     while (current_dim > 0)
     {
-      // Let's fill faces_and_neighbors[current_dim-1] 
+      // Let's fill faces_and_neighbors[current_dim-1]
       // (stores the current_dim-faces)
       DT_faces_and_neighbors& cur_faces_and_nghb =
         faces_and_neighbors[current_dim-1];
@@ -1435,7 +1435,7 @@ next_face:
            it_k_p1_face != it_k_p1_face_end ; ++it_k_p1_face)
       {
         DT_face const& k_p1_face = it_k_p1_face->first;
-        
+
         // Add each k faces to cur_faces_and_nghb
         std::size_t n = current_dim + 1; // Not +2 since 'i' is not stored
         std::vector<bool> booleans(n, false);
@@ -1465,7 +1465,7 @@ next_face:
     current_dim = m_ambient_dim;
     while (current_dim > 0)
     {
-      // Remember: faces_and_neighbors[current_dim-1] stores 
+      // Remember: faces_and_neighbors[current_dim-1] stores
       // the current_dim-faces
       DT_faces_and_neighbors const& cur_faces_and_nghb =
         faces_and_neighbors[current_dim-1];
@@ -1478,7 +1478,7 @@ next_face:
         Neighbor_vertices const& curr_neighbors = it_f->second;
 
         DT_face const& current_DT_face = it_f->first;
-        CGAL_assertion(static_cast<int>(current_DT_face.size()) 
+        CGAL_assertion(static_cast<int>(current_DT_face.size())
                        == current_dim);
 
         // P: list of current_DT_face points (including 'i')
@@ -1498,7 +1498,7 @@ next_face:
         if (does_intersect)
         {
           star.push_back(current_DT_face);
-      
+
           // Clear all subfaces of current_DT_face from the maps
           for (int dim = current_dim - 1 ; dim > 0 ; --dim)
           {
@@ -1561,7 +1561,7 @@ next_face:
       m_k.difference_of_vectors_d_object();
     //typename Kernel::Translated_point_d      transl =
     //  m_k.translated_point_d_object();
-    
+
 #ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
     KNS_range kns_range = m_points_ds_for_tse.query_ANN(
       p, NUM_POINTS_FOR_PCA, false);
@@ -1596,8 +1596,8 @@ next_face:
     // The eigenvectors are sorted in increasing order of their corresponding
     // eigenvalues
     Tangent_space_basis ts;
-    for (int i = m_ambient_dim - 1 ; 
-         i >= m_ambient_dim - m_intrinsic_dimension ; 
+    for (int i = m_ambient_dim - 1 ;
+         i >= m_ambient_dim - m_intrinsic_dimension ;
          --i)
     {
       if (normalize_basis)
@@ -1618,8 +1618,8 @@ next_face:
 
     if (p_orth_space_basis)
     {
-      for (int i = m_ambient_dim - m_intrinsic_dimension - 1 ; 
-           i >= 0 ; 
+      for (int i = m_ambient_dim - m_intrinsic_dimension - 1 ;
+           i >= 0 ;
            --i)
       {
         if (normalize_basis)
@@ -1647,7 +1647,7 @@ next_face:
 
     return ts;
 
-    
+
     // CJTODO: this is only for a sphere in R^3
     /*double tt1[3] = {-p[1] - p[2], p[0], p[0]};
     double tt2[3] = {p[1] * tt1[2] - p[2] * tt1[1],
@@ -1710,7 +1710,7 @@ next_face:
   {
     typename Kernel::Construct_weighted_point_d k_constr_wp =
       m_k.construct_weighted_point_d_object();
-    
+
     Weighted_point wp = k_constr_wp(
 #ifdef CGAL_TC_PERTURB_POSITION
       m_k.translated_point_d_object()(m_points[pt_idx], m_translations[pt_idx]),
@@ -1741,7 +1741,7 @@ next_face:
     for (int i = 0 ; i < m_intrinsic_dimension ; ++i)
     {
       global_point = k_transl(
-        global_point, 
+        global_point,
         k_scaled_vec(tsb[i], coord(p, i)));
     }
 
@@ -1905,7 +1905,7 @@ next_face:
 #ifdef CGAL_TC_PERTURB_WEIGHT
     m_weights[point_idx] = m_random_generator.get_double(0., m_sq_half_sparsity);
 #endif
-    
+
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
     m_perturb_tangent_space[point_idx] = true;
 #endif
@@ -1915,7 +1915,7 @@ next_face:
 # ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
     typename Kernel::Point_to_vector_d k_pt_to_vec =
       m_k.point_to_vector_d_object();
-    CGAL::Random_points_on_sphere_d<Point> 
+    CGAL::Random_points_on_sphere_d<Point>
       tr_point_on_sphere_generator(m_ambient_dim, 1);
     // Parallel
 #   if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
@@ -1931,7 +1931,7 @@ next_face:
 #   endif
 
 # else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
-    const Tr_traits &local_tr_traits = 
+    const Tr_traits &local_tr_traits =
       m_triangulations[point_idx].tr().geom_traits();
     typename Tr_traits::Compute_coordinate_d coord =
       local_tr_traits.compute_coordinate_d_object();
@@ -1941,8 +1941,8 @@ next_face:
       m_k.construct_vector_d_object();
     typename Kernel::Scaled_vector_d k_scaled_vec =
       m_k.scaled_vector_d_object();
-    
-    CGAL::Random_points_on_sphere_d<Tr_bare_point> 
+
+    CGAL::Random_points_on_sphere_d<Tr_bare_point>
       tr_point_on_sphere_generator(m_intrinsic_dimension, 1);
 
     Tr_point local_random_transl =
@@ -1953,7 +1953,7 @@ next_face:
     for (int i = 0 ; i < m_intrinsic_dimension ; ++i)
     {
       global_transl = k_transl(
-        global_transl, 
+        global_transl,
         k_scaled_vec(tsb[i], m_half_sparsity*coord(local_random_transl, i))
       );
     }
@@ -1979,7 +1979,7 @@ next_face:
 #ifdef CGAL_LINKED_WITH_TBB
     //Tr_mutex::scoped_lock lock(m_tr_mutexes[tr_index]);
 #endif
-    
+
     Star const& star = m_stars[tr_index];
     Triangulation const& tr    = m_triangulations[tr_index].tr();
     Tr_vertex_handle center_vh = m_triangulations[tr_index].center_vertex();
@@ -2009,12 +2009,12 @@ next_face:
       {
         is_inconsistent = true;
 
-        for (std::set<std::size_t>::const_iterator it = c.begin(); 
+        for (std::set<std::size_t>::const_iterator it = c.begin();
              it != c.end() ; ++it)
         {
           perturb(*it);
         }
-        
+
 # if !defined(CGAL_TC_GLOBAL_REFRESH)
         refresh_tangential_complex();
 # endif
@@ -2030,7 +2030,7 @@ next_face:
       if (!is_simplex_consistent(c))
       {
         is_inconsistent = true;
-        
+
         std::size_t idx = tr_index;
         /*int k;
         do
@@ -2048,7 +2048,7 @@ next_face:
         // We will try the other cells next time
         break;
       }
-      
+
 //*****************************************************************************
 // STRATEGY 3: perturb all the points of the 1-star
 //*****************************************************************************
@@ -2058,22 +2058,22 @@ next_face:
       if (!is_simplex_consistent(c))
       {
         is_inconsistent = true;
-        
+
         std::set<std::size_t> the_1_star;
-      
+
         Star::const_iterator it_inc_simplex = star.begin();
         Star::const_iterator it_inc_simplex_end = star.end();
         for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
         {
           the_1_star.insert(it_inc_simplex->begin(), it_inc_simplex ->end());
         }
-        
-        for (std::set<std::size_t>::iterator it = the_1_star.begin() ; 
+
+        for (std::set<std::size_t>::iterator it = the_1_star.begin() ;
              it != the_1_star.end() ; ++it)
         {
           perturb(*it);
         }
-        
+
 # if !defined(CGAL_TC_GLOBAL_REFRESH)
         refresh_tangential_complex();
 # endif
@@ -2087,7 +2087,7 @@ next_face:
 // closest points (to the power center of first the inconsistent cell)
 //*****************************************************************************
 #elif defined(CGAL_TC_PERTURB_N_CLOSEST_POINTS)
-      
+
       // Inconsistent?
       if (!is_simplex_consistent(c))
       {
@@ -2098,7 +2098,7 @@ next_face:
 
         std::vector<Tr_point> simplex_pts;
         simplex_pts.reserve(c.size());
-        
+
         Incident_simplex::const_iterator it_point_idx = c.begin();
         Incident_simplex::const_iterator it_point_idx_end = c.end();
         // For each point p of the simplex, we reproject it onto the tangent
@@ -2126,9 +2126,9 @@ next_face:
           m_points[tr_index],
           m_tangent_spaces[tr_index],
           local_tr_traits);
-        
+
         KNS_range kns_range = m_points_ds.query_ANN(
-          global_center, 
+          global_center,
           CGAL_TC_NUMBER_OF_PERTURBED_POINTS(m_intrinsic_dimension));
         std::vector<std::size_t> neighbors;
         for (KNS_iterator nn_it = kns_range.begin() ;
@@ -2138,8 +2138,8 @@ next_face:
           neighbors.push_back(nn_it->first);
         }
 
-        for (std::vector<std::size_t>::iterator it = neighbors.begin(); 
-             it != neighbors.end() ; 
+        for (std::vector<std::size_t>::iterator it = neighbors.begin();
+             it != neighbors.end() ;
              ++it)
         {
           perturb(*it);
@@ -2244,7 +2244,7 @@ next_face:
     incident_simplex.erase(index); // Remove the center index
 
     Star &star = m_stars[index];
-    
+
     std::set<std::size_t>::const_iterator it_point_idx = simplex.begin();
     std::set<std::size_t>::const_iterator it_point_idx_end = simplex.end();
     for ( ; it_point_idx != it_point_idx_end ; ++it_point_idx)
@@ -2256,14 +2256,14 @@ next_face:
       // Temporarily remove this index
       incident_simplex.erase(*it_point_idx);
       // Erase incident_simplex from star
-      star.erase(std::remove(star.begin(), star.end(), incident_simplex), 
+      star.erase(std::remove(star.begin(), star.end(), incident_simplex),
                  star.end());
       incident_simplex.insert(*it_point_idx);
     }
 
     star.push_back(incident_simplex);
   }
-  
+
   // Solves one inconsistency
   // "inconsistent_simplex" must contain p_idx and q_idx
   // "inconsistent_simplex" must be in star(p) but not in star(q)
@@ -2319,16 +2319,16 @@ next_face:
     const Point pt_p = compute_perturbed_point(p_idx);
     const Point pt_q = compute_perturbed_point(q_idx);
 
-    std::set<std::size_t>::const_iterator it_point_idx = 
+    std::set<std::size_t>::const_iterator it_point_idx =
                                                   inconsistent_simplex.begin();
-    std::set<std::size_t>::const_iterator it_point_idx_end = 
+    std::set<std::size_t>::const_iterator it_point_idx_end =
                                                   inconsistent_simplex.end();
     // For each point of the simplex, we reproject it onto the tangent
     // space. Could be optimized since it's already been computed before.
     for ( ; it_point_idx != it_point_idx_end ; ++it_point_idx)
     {
       const Weighted_point wp = compute_perturbed_weighted_point(*it_point_idx);
-      // No need to lock the Mutex_for_perturb here since this will not be 
+      // No need to lock the Mutex_for_perturb here since this will not be
       // called while other threads are perturbing the positions
       simplex_pts_in_Tp.push_back(project_point_and_compute_weight(
         wp, pt_p, m_tangent_spaces[p_idx], q_tr_traits));
@@ -2344,7 +2344,7 @@ next_face:
     FT circumsphere_sqradius_p = tr_point_weight(Cp);
     FT circumsphere_sqradius_q = tr_point_weight(Cq);
 #ifdef CGAL_TC_PERTURB_WEIGHT
-    FT squared_circumsphere_radius_q_plus_margin = 
+    FT squared_circumsphere_radius_q_plus_margin =
       circumsphere_sqradius_q + 4*m_sq_half_sparsity;
 #else
     FT squared_circumsphere_radius_q_plus_margin = CGAL::square(
@@ -2381,7 +2381,7 @@ next_face:
       //std::cerr << point_to_Cp_power_sqdist << std::endl; // CJTODO TEMP
       // If the point is ACTUALLY "inside" S
       if (point_to_Cp_power_sqdist <= FT(0)
-        && inconsistent_simplex.find(neighbor_point_idx) == 
+        && inconsistent_simplex.find(neighbor_point_idx) ==
            inconsistent_simplex.end())
       {
         std::cerr << "Warning: " << neighbor_point_idx << " is inside Cp with power dist " << point_to_Cp_power_sqdist << "\n";
@@ -2410,7 +2410,7 @@ next_face:
         global_Cq, compute_perturbed_weighted_point(neighbor_point_idx));
       // If the point is ACTUALLY "inside" S
       if (point_to_Cq_power_sqdist <= FT(0)
-        && inconsistent_simplex.find(neighbor_point_idx) == 
+        && inconsistent_simplex.find(neighbor_point_idx) ==
            inconsistent_simplex.end())
       {
         inside_pt_indices.push_back(neighbor_point_idx);
@@ -2421,7 +2421,7 @@ next_face:
         typename Tr_traits::Orientation_d orient = q_tr_traits.orientation_d_object();
         Orientation o = orient(simplex_pts_in_Tq.begin(), simplex_pts_in_Tq.end());
         auto p = project_point_and_compute_weight(
-          compute_perturbed_weighted_point(neighbor_point_idx), 
+          compute_perturbed_weighted_point(neighbor_point_idx),
           pt_q, m_tangent_spaces[q_idx], q_tr_traits);
         auto sid = (o == NEGATIVE ?
           side(simplex_pts_in_Tq.rbegin(), simplex_pts_in_Tq.rend(), p)
@@ -2440,9 +2440,9 @@ next_face:
         }
       }*/
     }
-    CGAL_assertion_msg(!inside_pt_indices.empty(), 
+    CGAL_assertion_msg(!inside_pt_indices.empty(),
       "There should be at least one vertex inside the sphere");
-    
+
     // CJTODO TEMP DEBUG
     /*if (inside_pt_indices.empty())
     {
@@ -2461,7 +2461,7 @@ next_face:
     // CJTODO TEMP DEBUG
     if (inside_pt_indices.size() > 1)
     {
-      std::cerr << "Warning: " << inside_pt_indices.size() << " insiders in " 
+      std::cerr << "Warning: " << inside_pt_indices.size() << " insiders in "
         << inconsistent_simplex.size() - 1 << " simplex\n";
     }
 
@@ -2474,13 +2474,13 @@ next_face:
       //-----------------------------------------------------------------------
       //5. For each ti, compute the sphere that goes through
       //   p, q, r1, r2..., ri and ti whose center is on (cp, cq)
-      //   We're looking for a point on (Cp, Cq) at equal distance from p and 
+      //   We're looking for a point on (Cp, Cq) at equal distance from p and
       //   ti.
       //   The center of the sphere is then: Cp + a(Cq - Cp)
       //   where a = (sqdist(Cp,ti) - sqdist(Cp,p)) / (2*(Cq-Cp).(ti-p))
       //6. Keep point ti such as dist(cp, ci) is the smallest
       //-----------------------------------------------------------------------
-      
+
       FT min_a = std::numeric_limits<FT>::max();
       for (auto idx : inside_pt_indices) // CJTODO: C++11
       {
@@ -2493,11 +2493,11 @@ next_face:
         const Weighted_point p_w = compute_perturbed_weighted_point(p_idx);
         const Weighted_point cp_w0 = k_constr_wp(k_drop_w(global_Cp), FT(0));
         const Weighted_point wp_w0 = k_constr_wp(k_drop_w(global_Cq), FT(0));
-        FT a = 
+        FT a =
           (k_power_dist(cp_w0, ti_w) - k_power_dist(cp_w0, p_w)) /
           (FT(2)*k_inner_pdct(k_diff_pts(cq, cp), k_diff_pts(ti, pt_p)));
 #else
-        FT a = 
+        FT a =
           (k_sqdist(cp, ti) - k_sqdist(cp, pt_p)) /
           (FT(2)*k_inner_pdct(k_diff_pts(cq, cp), k_diff_pts(ti, pt_p)));
 #endif
@@ -2508,7 +2508,7 @@ next_face:
           inside_point_idx = idx;
         }
       }
-      
+
       // CJTODO TEMP ====================
       /*{
       typename Kernel::Scaled_vector_d scaled_vec = m_k.scaled_vector_d_object();
@@ -2535,7 +2535,7 @@ next_face:
         //std::cerr << point_to_Cp_power_sqdist << std::endl; // CJTODO TEMP
         // If the point is ACTUALLY "inside" S
         if (point_to_C_power_sqdist <= FT(-0.000001)
-          && inconsistent_simplex.find(neighbor_point_idx) == 
+          && inconsistent_simplex.find(neighbor_point_idx) ==
              inconsistent_simplex.end())
         {
           std::cerr << "Warning: " << neighbor_point_idx << " is inside C with power dist " << point_to_C_power_sqdist << "\n";
@@ -2554,14 +2554,14 @@ next_face:
     //-------------------------------------------------------------------------
     std::set<std::size_t> new_simplex = inconsistent_simplex;
     new_simplex.insert(inside_point_idx);
-    
+
     it_point_idx = new_simplex.begin();
     it_point_idx_end = new_simplex.end();
     for ( ; it_point_idx != it_point_idx_end ; ++it_point_idx)
     {
       insert_higher_dim_simplex_into_star(*it_point_idx, new_simplex);
     }
-    // CJTODO: call 
+    // CJTODO: call
     // check_and_solve_inconsistencies_by_adding_higher_dim_simplices
     // recursively? Not sure, since the star will be parsed again from
     // the beginning
@@ -2576,7 +2576,7 @@ next_face:
     bool inconsistencies_found = false;
 
     // Don't check infinite simplices
-    if (*incident_simplex.rbegin() 
+    if (*incident_simplex.rbegin()
         == std::numeric_limits<std::size_t>::max())
       return false;
 
@@ -2639,9 +2639,9 @@ next_face:
       std::stringstream color;
       //color << rand()%256 << " " << 100+rand()%156 << " " << 100+rand()%156;
       color << 128 << " " << 128 << " " << 128;
-      
+
       // Gather the triangles here, with an int telling its color
-      typedef std::vector<std::pair<std::set<std::size_t>, int> > 
+      typedef std::vector<std::pair<std::set<std::size_t>, int> >
                                                            Star_using_triangles;
       Star_using_triangles star_using_triangles;
 
@@ -2688,7 +2688,7 @@ next_face:
             color_simplex = 3;
           }
         }
-        
+
         // If m_intrinsic_dimension = 1, each point is output two times,
         // so we need to multiply each index by 2
         // And if only 2 vertices, add a third one (each vertex is duplicated in
@@ -2718,7 +2718,7 @@ next_face:
           {
             std::set<std::size_t> triangle;
             std::set<std::size_t>::iterator it = c.begin();
-            for (int i = 0; it != c.end() ; ++i, ++it) 
+            for (int i = 0; it != c.end() ; ++i, ++it)
             {
               if (booleans[i])
                 triangle.insert(*it);
@@ -2730,17 +2730,17 @@ next_face:
       }
 
       // For each cell
-      Star_using_triangles::const_iterator it_simplex = 
+      Star_using_triangles::const_iterator it_simplex =
                                                   star_using_triangles.begin();
-      Star_using_triangles::const_iterator it_simplex_end = 
+      Star_using_triangles::const_iterator it_simplex_end =
                                                   star_using_triangles.end();
       for ( ; it_simplex != it_simplex_end ; ++it_simplex)
       {
         // Don't export infinite cells
-        if (*it_simplex->first.rbegin() 
+        if (*it_simplex->first.rbegin()
             == std::numeric_limits<std::size_t>::max())
           continue;
-        
+
         const std::set<std::size_t> &c = it_simplex->first;
         int color_simplex = it_simplex->second;
 
@@ -2858,7 +2858,7 @@ next_face:
       // Do not export smaller dimension simplices
       if (num_vertices < m_intrinsic_dimension + 1)
         continue;
-      
+
       // If m_intrinsic_dimension = 1, each point is output two times,
       // so we need to multiply each index by 2
       // And if only 2 vertices, add a third one (each vertex is duplicated in
@@ -2888,13 +2888,13 @@ next_face:
         {
           std::set<std::size_t> triangle;
           std::set<std::size_t>::iterator it = c.begin();
-          for (int i = 0; it != c.end() ; ++i, ++it) 
+          for (int i = 0; it != c.end() ; ++i, ++it)
           {
             if (booleans[i])
               triangle.insert(*it);
           }
           triangles.push_back(triangle);
-        } 
+        }
         while (std::next_permutation(booleans.begin(), booleans.end()));
       }
 
@@ -2906,7 +2906,7 @@ next_face:
         // Don't export infinite cells
         if (*it_tri->rbegin() == std::numeric_limits<std::size_t>::max())
           continue;
-        
+
         os << 3 << " ";
         std::set<std::size_t>::const_iterator it_point_idx = it_tri->begin();
         for ( ; it_point_idx != it_tri->end() ; ++it_point_idx)
@@ -2952,7 +2952,7 @@ private:
   const double              m_half_sparsity;
   const double              m_sq_half_sparsity;
   const int                 m_ambient_dim;
-  
+
   Points                    m_points;
 #ifdef CGAL_TC_PERTURB_WEIGHT
   Weights_for_perturb       m_weights;

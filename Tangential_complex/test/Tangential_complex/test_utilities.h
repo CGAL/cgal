@@ -48,7 +48,7 @@ public:
 
   // We can't instantiate m_points_ds right now since it requires that
   // points is not empty (which be the case here)
-  Point_sparsifier(Point_container &points, 
+  Point_sparsifier(Point_container &points,
                    FT sparsity = FT(0.05*0.05))
     : m_points(points), m_sparsity(sparsity), m_points_ds(NULL)
   {}
@@ -72,7 +72,7 @@ public:
         return true;
       }
     }
-    
+
     return false;
   }
 
@@ -141,14 +141,14 @@ sparsify_point_set(
   typedef typename Points_ds::INS_range         INS_range;
 
   typename Kernel::Squared_distance_d sqdist = k.squared_distance_d_object();
-  
+
 #ifdef CGAL_TC_PROFILING
     Wall_clock_timer t;
 #endif
 
   // Create the output container
   std::vector<typename Point_container::value_type> output;
-  
+
   Points_ds points_ds(input_pts);
 
   std::vector<bool> dropped_points(input_pts.size(), false);
@@ -162,7 +162,7 @@ sparsify_point_set(
   {
     if (dropped_points[pt_idx])
       continue;
-    
+
     output.push_back(*it_pt);
 
     INS_range ins_range = points_ds.query_incremental_ANN(*it_pt);
@@ -183,7 +183,7 @@ sparsify_point_set(
         break;
     }
   }
-  
+
 #ifdef CGAL_TC_PROFILING
     std::cerr << "Point set sparsified in " << t.elapsed()
               << " seconds." << std::endl;
@@ -277,7 +277,7 @@ std::vector<typename Kernel::Point_d> generate_points_on_moment_curve(
     if (sparsifier.try_to_insert_point(p))
       ++i;
 #else
-    points.push_back(p);    
+    points.push_back(p);
     ++i;
 #endif
   }
@@ -467,7 +467,7 @@ generate_points_on_klein_bottle_variant_5D(
     FT x3 = b*sin(v)*cos(u/2);
     FT x4 = b*sin(v)*sin(u/2);
     FT x5 = x1 + x2 + x3 + x4;
-    
+
     Point p = construct_point(k, x1, x2, x3, x4, x5);
 #ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
     if (sparsifier.try_to_insert_point(p))

@@ -32,7 +32,7 @@
 
 #include <set>
 #include <vector>
-#include <atomic> // CJTODO: this is C++11 => use boost.Atomic (but it's too recent) 
+#include <atomic> // CJTODO: this is C++11 => use boost.Atomic (but it's too recent)
                   // or tbb::atomic (works for doubles, but not officially)
 
 // choose exact integral type for QP solver
@@ -49,7 +49,7 @@ namespace Tangential_complex_ {
   // Provides copy constructors to std::atomic so that
   // it can be used in a vector
   template <typename T>
-  struct Atomic_wrapper 
+  struct Atomic_wrapper
     : public std::atomic<T>
   {
     typedef std::atomic<T> Base;
@@ -59,7 +59,7 @@ namespace Tangential_complex_ {
     Atomic_wrapper(const std::atomic<T> &a) : Base(a.load()) {}
     Atomic_wrapper(const Atomic_wrapper &other) : Base(other.load())
     {}
-    
+
     Atomic_wrapper &operator=(const T &other)
     {
       Base::store(other);
@@ -173,7 +173,7 @@ namespace Tangential_complex_ {
 
     return output_basis;
   }
-  
+
   // CJTODO: use CGAL::Combination_enumerator<int> (cf. Tangential_complex.h)
   // Compute all the k-combinations of elements
   // Output_iterator::value_type must be std::set<std::size_t> >
@@ -200,7 +200,7 @@ namespace Tangential_complex_ {
 
   // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
   // Q: vertices which are common neighbors of all vertices of P
-  template <typename K, typename Point_range, typename Indexed_point_range, 
+  template <typename K, typename Point_range, typename Indexed_point_range,
             typename Indexed_point_range_2, typename Vector_range>
   bool does_voronoi_face_and_alpha_tangent_subspace_intersect(
     Point_range const& all_points,
@@ -218,7 +218,7 @@ namespace Tangential_complex_ {
     typedef typename K::FT                      FT;
     typedef typename K::Point_d                 Point;
     typedef typename K::Vector_d                Vector;
-    
+
     typename K::Scalar_product_d scalar_pdct = k.scalar_product_d_object();
     typename K::Point_to_vector_d pt_to_vec  = k.point_to_vector_d_object();
 
@@ -229,9 +229,9 @@ namespace Tangential_complex_ {
     std::size_t card_Q = Q.size();
     std::size_t card_OSB = orthogonal_subspace_basis.size();
     std::size_t num_couples_among_P = card_P*(card_P-1)/2;
-    std::size_t num_equations = 
+    std::size_t num_equations =
       2*num_couples_among_P + card_P*card_Q + 2*card_OSB;
-    
+
     // Linear solver
     typedef CGAL::Quadratic_program<FT> Linear_program;
     typedef CGAL::Quadratic_program_solution<ET> LP_solution;
@@ -266,7 +266,7 @@ namespace Tangential_complex_ {
     {
       Point const& pi = P[pi_pj[0]];
       Point const& pj = P[pi_pj[1]];
-      
+
       for (int k = 0 ; k < ambient_dim ; ++k)
       {
         FT a = 2*(pi[k] + pj[k]);
@@ -293,7 +293,7 @@ namespace Tangential_complex_ {
       for (int k = 0 ; k < ambient_dim ; ++k)
         lp.set_a(k, current_row, 2*(qi[k] - p0[k]));
 
-      lp.set_b(current_row, 
+      lp.set_b(current_row,
                scalar_pdct(pt_to_vec(qi), pt_to_vec(qi)) - p0_dot_p0);
 
       ++current_row;
