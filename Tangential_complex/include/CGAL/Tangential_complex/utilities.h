@@ -129,13 +129,11 @@ namespace Tangential_complex_ {
 
   // Modifies v in-place
   template <typename K>
-  typename K::Vector_d &
-  normalize_vector(
-    typename K::Vector_d &v,
-    K const& k)
+  typename K::Vector_d& normalize_vector(typename K::Vector_d& v,
+                                         K const& k)
   {
     v = k.scaled_vector_d_object()(
-      v, FT(1)/CGAL::sqrt(k.squared_length_d_object()(v)));
+      v, typename K::FT(1)/CGAL::sqrt(k.squared_length_d_object()(v)));
     return v;
   }
 
@@ -145,7 +143,6 @@ namespace Tangential_complex_ {
     std::vector<typename K::Vector_d> const& input_basis,
     K const& k)
   {
-    typedef typename K::FT            FT;
     typedef typename K::Vector_d      Vector;
     typedef std::vector<Vector>       Basis;
 
@@ -201,7 +198,7 @@ namespace Tangential_complex_ {
     } while (std::next_permutation(booleans.begin(), booleans.end()));
   }
 
-  // P: dual face in Delaunay triangulation (p0, p1,… pn)
+  // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
   // Q: vertices which are common neighbors of all vertices of P
   template <typename K, typename Point_range, typename Indexed_point_range, 
             typename Indexed_point_range_2, typename Vector_range>
@@ -216,7 +213,7 @@ namespace Tangential_complex_ {
   {
     // Notations:
     // Fv: Voronoi k-face
-    // Fd: dual, (D-k)-face of Delaunay (p0, p1,… pn)
+    // Fd: dual, (D-k)-face of Delaunay (p0, p1, ..., pn)
 
     typedef typename K::FT                      FT;
     typedef typename K::Point_d                 Point;
@@ -244,11 +241,11 @@ namespace Tangential_complex_ {
 
     //=========== First set of equations ===========
     // For point pi in P
-    //   2(p0 - pi).x = p0² - pi² 
+    //   2(p0 - pi).x = p0^2 - pi^2
     Point const& p0 = center_pt;
     FT p0_dot_p0 = scalar_pdct(pt_to_vec(p0), pt_to_vec(p0));
-    for (Indexed_point_range::const_iterator it_p = P.begin(), 
-                                             it_p_end = P.end() ; 
+    for (typename Indexed_point_range::const_iterator it_p = P.begin(),
+                                                      it_p_end = P.end() ;
          it_p != it_p_end ; ++it_p)
     {
       Point const& pi = all_points[*it_p];
@@ -286,9 +283,9 @@ namespace Tangential_complex_ {
 
     //=========== Second set of equations ===========
     // For each point qi in Q
-    //  2(qi - p0).x <= qi² - p0²
-    for (Indexed_point_range_2::const_iterator it_q = Q.begin(), 
-                                               it_q_end = Q.end() ; 
+    //  2(qi - p0).x <= qi^2 - p0^2
+    for (typename Indexed_point_range_2::const_iterator it_q = Q.begin(),
+                                                        it_q_end = Q.end() ;
          it_q != it_q_end ; ++it_q)
     {
       Point const& qi = all_points[*it_q];
@@ -306,9 +303,9 @@ namespace Tangential_complex_ {
     // For each vector of OSB
     //     bi.x <=  bi.p + alpha
     //    -bi.x <= -bi.p + alpha
-    for (Vector_range::const_iterator it_osb = 
-           orthogonal_subspace_basis.begin(), 
-         it_osb_end = orthogonal_subspace_basis.end() ; 
+    for (typename Vector_range::const_iterator it_osb =
+         orthogonal_subspace_basis.begin(),
+         it_osb_end = orthogonal_subspace_basis.end() ;
          it_osb != it_osb_end ; ++it_osb)
     {
       Vector const& bi = *it_osb;

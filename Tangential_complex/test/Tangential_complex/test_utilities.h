@@ -135,7 +135,6 @@ sparsify_point_set(
   const Kernel &k, Point_container const& input_pts,
   typename Kernel::FT min_squared_dist)
 {
-  typedef typename Point_container::value_type  Point;
   typedef typename CGAL::Tangential_complex_::Point_cloud_data_structure<
     Kernel, Point_container>                    Points_ds;
   typedef typename Points_ds::INS_iterator      INS_iterator;

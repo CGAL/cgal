@@ -69,8 +69,10 @@
 //#define CGAL_TC_EXPORT_NORMALS // Only for 3D surfaces (k=2, d=3)
 #define CGAL_ALPHA_TC
 const double ALPHA = 0.3;
+#ifdef CGAL_LINKED_WITH_TBB
 tbb::atomic<unsigned int> ttt_star; // CJTODO TEMP
 tbb::atomic<unsigned int> ttt_intersect;
+#endif
 
 namespace CGAL {
 
@@ -263,7 +265,7 @@ public:
 
   void compute_tangential_complex()
   {
-#ifdef CGAL_TC_PROFILING
+#if defined(CGAL_TC_PROFILING) && defined(CGAL_LINKED_WITH_TBB)
     Wall_clock_timer t;
     ttt_intersect = 0;
     ttt_star = 0;
@@ -316,7 +318,7 @@ public:
 #endif
     }
 
-#ifdef CGAL_TC_PROFILING
+#if defined(CGAL_TC_PROFILING) && defined(CGAL_LINKED_WITH_TBB)
     std::cerr << "Tangential complex computed in " << t.elapsed()
               << " seconds." << std::endl;
     std::cerr << "Intersect: " << ((double)ttt_intersect)/1000000 << " s\n"
@@ -1207,10 +1209,11 @@ private:
         typename Amb_RT_Traits::Dimension,
         Triangulation_vertex<Amb_RT_Traits, Vertex_data>
       > >                                                     Amb_RT;
+    typedef typename Amb_RT::Weighted_point                   Amb_RT_Point;
     typedef typename Amb_RT::Vertex_handle                    Amb_RT_VH;
     typedef typename Amb_RT::Full_cell_handle                 Amb_RT_FCH;
     //typedef typename Amb_RT::Finite_full_cell_const_iterator  Amb_FFC_it;
-    
+
     typename Kernel::Point_drop_weight_d k_drop_w =
       m_k.point_drop_weight_d_object();
     typename Kernel::Squared_distance_d k_sqdist =
@@ -1330,7 +1333,7 @@ private:
               }
               else
               {
-                Tr_point c = k_power_center(
+                Amb_RT_Point c = k_power_center(
                   boost::make_transform_iterator(
                     cell->vertices_begin(),
                     vertex_handle_to_point<Weighted_point, Amb_RT_VH>),
@@ -1367,10 +1370,10 @@ private:
       }
     }
 
-#ifdef CGAL_TC_PROFILING
+#if defined(CGAL_TC_PROFILING) && defined(CGAL_LINKED_WITH_TBB)
     ttt_star += 1000000*t_star.elapsed();
 #endif
-    
+
     //***************************************************
     // Parse the faces of the star and add the ones that are in the
     // restriction to alpha-Tp
@@ -1488,8 +1491,8 @@ next_face:
 #endif
         bool does_intersect =
           does_voronoi_face_and_alpha_tangent_subspace_intersect(
-            m_points, i, P, curr_neighbors, m_orth_spaces[i], alpha, m_k);  
-#ifdef CGAL_TC_PROFILING
+            m_points, i, P, curr_neighbors, m_orth_spaces[i], alpha, m_k);
+#if defined(CGAL_TC_PROFILING) && defined(CGAL_LINKED_WITH_TBB)
         ttt_intersect += 1000000*t_inters.elapsed();
 #endif
         if (does_intersect)
@@ -1599,12 +1602,10 @@ next_face:
     {
       if (normalize_basis)
       {
-        ts.push_back(normalize_vector(
-          constr_vec(
-            m_ambient_dim,
-            eig.eigenvectors().col(i).data(),
-            eig.eigenvectors().col(i).data() + m_ambient_dim),
-          m_k));
+        Vector v = constr_vec(m_ambient_dim,
+                              eig.eigenvectors().col(i).data(),
+                              eig.eigenvectors().col(i).data() + m_ambient_dim);
+        ts.push_back(normalize_vector(v, m_k));
       }
       else
       {
@@ -1623,12 +1624,10 @@ next_face:
       {
         if (normalize_basis)
         {
-          p_orth_space_basis->push_back(normalize_vector(
-            constr_vec(
-              m_ambient_dim,
-              eig.eigenvectors().col(i).data(),
-              eig.eigenvectors().col(i).data() + m_ambient_dim),
-            m_k));
+          Vector v = constr_vec(m_ambient_dim,
+                                eig.eigenvectors().col(i).data(),
+                                eig.eigenvectors().col(i).data() + m_ambient_dim);
+          p_orth_space_basis->push_back(normalize_vector(v, m_k));
         }
         else
         {
