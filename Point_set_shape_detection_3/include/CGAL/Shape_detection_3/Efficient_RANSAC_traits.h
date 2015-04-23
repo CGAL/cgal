@@ -30,12 +30,7 @@ namespace CGAL {
       \brief %Default traits class to use the shape detection class `Efficient_RANSAC`.
       \cgalModels `EfficientRANSACTraits`
 
-      \tparam Gt A \cgal Kernel. Geometric traits class. It must provide `Gt::FT`,
-	         `Gt::Point_3` and `Gt::Vector_3`. The type `Gt::FT` must be a floating
-			 point number type like `double` or `float`. Additionally,
-             `Gt::Line_3`, `Gt::Plane_3`, `Gt::Sphere_3`, `Gt::Circle_2`,
-			 `Gt::Point_2` are required depending on the shapes registered
-			 for detection.
+      \tparam Gt a model of the concept `#Kernel` with `Gt::FT` being `float` or `double`.
 
       \tparam InputRange is a model of `Range` with random access iterators, 
               providing input points and normals through the following two property maps.
