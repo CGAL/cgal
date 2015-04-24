@@ -143,7 +143,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
         , cluster_epsilon(-1)
       {}
 
-      FT probability;         ///< Probability to control search endurance. %Default value: 0.05.
+      FT probability;         ///< Probability to control search endurance. %Default value: 5%.
       std::size_t min_points; ///< Minimum number of points of a shape. %Default value: 1% of total number of input points.
       FT epsilon;             ///< Maximum tolerance Euclidian distance from a point and a shape. %Default value: 1% of bounding box diagonal.
       FT normal_threshold;	  ///< Maximum tolerance normal deviation from a point's normal to the normal on shape at projected point. %Default value: 0.9 (around 25 degrees).
