@@ -1,7 +1,7 @@
 #ifndef MY_PLANE_SHAPE_H
 #define MY_PLANE_SHAPE_H
 
-#include <CGAL/Efficient_RANSAC.h>
+#include <CGAL/Shape_detection_3.h>
 
 /*
 My_Plane derives from Shape_base. The plane is represented by
@@ -10,11 +10,14 @@ its normal vector and distance to the origin.
 template <class Traits>
 class My_Plane : public CGAL::Shape_detection_3::Shape_base<Traits> {
 public:
-  typedef typename Traits::Geom_traits::FT FT;///< number type.
-  typedef typename Traits::Geom_traits::Point_3 Point;///< point type.
+  typedef typename Traits::FT FT;///< number type.
+  typedef typename Traits::Point_3 Point;///< point type.
+  typedef typename Traits::Vector_3 Vector;///< point type.
 
 public:
-  My_Plane() : Shape_base<Traits>() {}
+  My_Plane()
+    : CGAL::Shape_detection_3::Shape_base<Traits>()
+  {}
 
   //  Computes squared Euclidean distance from query point to the shape.
   virtual FT squared_distance(const Point &p) const {

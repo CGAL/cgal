@@ -99,7 +99,9 @@ By default the connected component is detected via the neighbor graph as mention
 Another optional method can be implemented to provide a helper function providing the shape parameters written to a string:
 - `Shape_base::info``()`: This function returns a string suitable for printing the shape parameters into a log/console. The default solution provides an empty string.
 
-The property maps are used to map the indices to the corresponding points and normals. The following example shows an example implementation of a planar shape primitive.
+The property maps are used to map the indices to the corresponding points and normals. The following example shows an implementation of a planar shape primitive,
+which is used by this \ref efficient_RANSAC_custom_shape.cpp example.
+
 \cgalExample{Point_set_shape_detection_3/efficient_RANSAC_custom_shape.h}
 
 \section Point_set_shape_detection_3Performance Performance
