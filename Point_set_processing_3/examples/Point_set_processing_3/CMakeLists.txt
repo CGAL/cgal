@@ -57,9 +57,11 @@ if ( CGAL_FOUND )
   endif()
 
   # Executables that do *not* require EIGEN or LAPACK
+  create_single_source_cgal_program( "get.cpp" )
   create_single_source_cgal_program( "average_spacing_example.cpp" )
   create_single_source_cgal_program( "bilateral_smooth_point_set_example.cpp" )
   create_single_source_cgal_program( "grid_simplification_example.cpp" )
+  create_single_source_cgal_program( "grid_simplify_indices.cpp" )
   create_single_source_cgal_program( "normals_example.cpp" )
   create_single_source_cgal_program( "property_map.cpp" )
   create_single_source_cgal_program( "random_simplification_example.cpp" )
