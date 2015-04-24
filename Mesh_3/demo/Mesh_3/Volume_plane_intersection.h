@@ -6,6 +6,10 @@
 #include <QColor>
 #include <QString>
 #include<QGLViewer/qglviewer.h>
+#include <QGLFunctions>
+#include <QOpenGLVertexArrayObject>
+#include <QGLBuffer>
+#include <QOpenGLShaderProgram>
 
 class Volume_plane_interface;
 
@@ -18,6 +22,9 @@ public:
     : a(NULL), b(NULL), c(NULL), x(x), y(y), z(z) {
     setColor(QColor(255, 0, 0));
     setName("Volume plane intersection");
+    compile_shaders();
+    compute_elements();
+    init_buffers();
   }
 
   bool isFinite() const { return true; }
@@ -47,6 +54,24 @@ public slots:
 private:
   Volume_plane_interface *a, *b, *c;
   float x, y, z;
+
+  static const int vaoSize = 3;
+  static const int vboSize = 3;
+
+  mutable int vertexLocation[1];
+  mutable int mvpLocation[1];
+
+  std::vector<float> a_vertex;
+  std::vector<float> b_vertex;
+  std::vector<float> c_vertex;
+
+  mutable QGLBuffer buffers[vboSize];
+  mutable QOpenGLVertexArrayObject vao[vaoSize];
+  mutable QOpenGLShaderProgram rendering_program;
+  void compute_elements();
+  void init_buffers();
+  void attrib_buffers(QGLViewer*) const;
+  void compile_shaders();
 };
 
 #endif /* CGAL_VOLUME_PLANE_INTERSECTION_H_ */
