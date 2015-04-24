@@ -621,10 +621,55 @@ void test_27_to_1_sheeted_covering ()
   assert(hidden_point_count == 0);
 }
 
+void test_dummy_points ()
+{
+  std::cout << "--- test_dummy_points" << std::endl;
+
+  P3RT3 p3rt3(P3RT3::Iso_cuboid(0, 0, 0, 1, 1, 1));
+
+  std::vector<Vertex_handle> vertices;
+  vertices.reserve(p3rt3.number_of_vertices());
+
+  unsigned count = 1;
+  for (unsigned i = 0; i < 6; ++i)
+    for (unsigned j = 0; j < 6; ++j)
+      for (unsigned k = 0; k < 8; ++k)
+      {
+        FT x = FT(i) / FT(6);
+        if (k % 2)
+          x += FT(1) / FT(12);
+        FT y = FT(j) / FT(6);
+        if (k % 2)
+          y += FT(1) / FT(12);
+        FT z = FT(k) / FT(8);
+        std::cout << count++ << " - " << i << " " << j << " " << k << std::endl;
+        Weighted_point point(Bare_point(x, y, z), 0);
+        vertices.push_back(p3rt3.insert(point));
+        if (CGAL::make_array(i,j,k) != CGAL::make_array<unsigned>(5,5,7))
+        {
+          assert(p3rt3.number_of_sheets() == CGAL::make_array(3,3,3));
+        }
+      }
+
+  assert(p3rt3.number_of_sheets() == CGAL::make_array(1,1,1));
+  assert(p3rt3.number_of_vertices() == 6*6*8);
+  assert(p3rt3.is_valid());
+
+  P3RT3 p3rt3_b(P3RT3::Iso_cuboid(0, 0, 0, 1, 1, 1));
+  p3rt3_b.insert_dummy_points();
+
+  assert(p3rt3_b.number_of_sheets() == CGAL::make_array(1,1,1));
+  assert(p3rt3_b.number_of_vertices() == 6*6*8);
+  assert(p3rt3_b.is_valid());
+
+  assert(p3rt3 == p3rt3_b);
+}
+
 int main (int argc, char** argv)
 {
   std::cout << "TESTING ..." << std::endl;
 
+  test_dummy_points();
 //  test_construction();
 //  test_insert_1();
 //  test_insert_point();
@@ -637,8 +682,8 @@ int main (int argc, char** argv)
 //    Iso_cuboid unitaire ->  0 <= weight < 0.015625
 //  test_insert_rnd_as_delaunay(100, 0.);
 //  test_insert_rnd_as_delaunay(100, 0.01);
-  test_insert_rnd_then_remove_all(800, 7);
-  test_insert_rnd_then_remove_all(5000, 12);
+//  test_insert_rnd_then_remove_all(5000, 7);
+//  test_insert_rnd_then_remove_all(5000, 12);
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return EXIT_SUCCESS;
