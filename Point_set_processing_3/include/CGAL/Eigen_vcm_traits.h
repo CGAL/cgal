@@ -85,9 +85,9 @@ public:
     return res;
   }
 
-  // Extract the eigenvector associated to the greatest eigenvalue
+  // Extract the eigenvector associated to the largest eigenvalue
   static bool
-  extract_greatest_eigenvector_of_covariance_matrix (
+  extract_largest_eigenvector_of_covariance_matrix (
     const cpp11::array<double,6>& cov,
     cpp11::array<double,3> &normal)
   {

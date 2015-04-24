@@ -23,11 +23,11 @@ public:
     const cpp11::array<double,6>& cov,
     cpp11::array<double, 3>& eigen_values);
 
-  /// Extract the eigenvector associated to the greatest eigen value
+  /// Extract the eigenvector associated to the largest eigen value
   /// of the covariance matrix represented by `cov`.
   /// \return `true` if the operation was successful and `false` otherwise.
   static bool
-  extract_greatest_eigenvector_of_covariance_matrix (
+  extract_largest_eigenvector_of_covariance_matrix (
     const cpp11::array<double,6>& cov,
     cpp11::array<double,3> &normal);
 };
