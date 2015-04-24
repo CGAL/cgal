@@ -125,7 +125,6 @@ Scene::duplicate(Item_id index)
 
 void Scene::initializeGL()
 {
-initializeOpenGLFunctions();
 }
 
 // workaround for Qt-4.2.

@@ -3,9 +3,9 @@
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
-
+#include <CGAL/compute_normal.h>
 #include <QObject>
-#include <CGAL/gl_render.h>
+
 
 Scene_polyhedron_item::Scene_polyhedron_item()
   : Scene_item(),

@@ -18,13 +18,13 @@
 #include <boost/variant.hpp>
 #include<QGLViewer/qglviewer.h>
 
-#include <QOpenGLFunctions_3_3_Core>
+
 
 class QEvent;
 class QMouseEvent;
 
 class Scene  :
-  public QAbstractListModel, public Scene_interface, public Scene_draw_interface, QOpenGLFunctions_3_3_Core
+  public QAbstractListModel, public Scene_interface, public Scene_draw_interface
 {
   Q_OBJECT
 
