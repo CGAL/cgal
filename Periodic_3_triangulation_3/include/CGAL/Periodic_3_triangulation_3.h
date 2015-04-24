@@ -375,6 +375,11 @@ protected:
     return flag;
   }
 
+  void set_cover (const Covering_sheets& cover)
+  {
+    _cover = cover;
+  }
+
 public:
   bool is_virtual(Vertex_handle v) {
     if (is_1_cover()) return false;
