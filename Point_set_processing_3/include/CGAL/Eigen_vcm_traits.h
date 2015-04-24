@@ -66,20 +66,20 @@ public:
   static bool
   diagonalize_selfadjoint_covariance_matrix(
     const cpp11::array<double,6>& cov,
-    cpp11::array<double, 3>& eigen_values)
+    cpp11::array<double, 3>& eigenvalues)
   {
     Eigen::Matrix3f m = construct_covariance_matrix(cov);
 
     // Diagonalizing the matrix
-    Eigen::Vector3f eigenvalues;
-    Eigen::Matrix3f eigenvectors;
-    bool res = diagonalize_selfadjoint_matrix(m, eigenvectors, eigenvalues);
+    Eigen::Vector3f eigenvalues_;
+    Eigen::Matrix3f eigenvectors_;
+    bool res = diagonalize_selfadjoint_matrix(m, eigenvectors_, eigenvalues_);
 
     if (res)
     {
-      eigen_values[0]=eigenvalues[0];
-      eigen_values[1]=eigenvalues[1];
-      eigen_values[2]=eigenvalues[2];
+      eigenvalues[0]=eigenvalues_[0];
+      eigenvalues[1]=eigenvalues_[1];
+      eigenvalues[2]=eigenvalues_[2];
     }
 
     return res;
