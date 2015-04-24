@@ -227,7 +227,8 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     /*!
       Constructs internal data structures required for the shape detection.
       These structures only depend on the input data, i.e. the points and
-      normal vectors.
+      normal vectors. This method is called by `detect()`, if it was not called
+      before by the user.
     */ 
     bool preprocess() {
       if (m_num_available_points == 0)

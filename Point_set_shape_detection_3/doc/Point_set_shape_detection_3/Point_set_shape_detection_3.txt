@@ -10,7 +10,7 @@ namespace CGAL {
 
 \section Point_set_shape_detection_3Introduction Introduction
 
-This \cgal component implements the efficient RANSAC method for shape detection, contributed by Schnabel et al. \cgalCite{schnabel2007efficient}. From an unstructured point set with unoriented normals, the algorithm detects a set of shapes (see \cgalFigureRef{Point_set_shape_detection_3_overview}). Five types of primitive shapes are detected: plane, sphere, cylinder, cone and torus. Detecting other types of shapes requires implementing a class derived from a base shape.
+This \cgal component implements the efficient RANSAC method for shape detection, contributed by Schnabel et al. \cgalCite{schnabel2007efficient}. From an unstructured point set with unoriented normals, the algorithm detects a set of shapes (see \cgalFigureRef{Point_set_shape_detection_3_overview}). Five types of primitive shapes are provided by this package: plane, sphere, cylinder, cone and torus. Detecting other types of shapes requires implementing a class derived from a base shape.
 
 \cgalFigureBegin{Point_set_shape_detection_3_overview,overview2.png}
 (a) Input point set. (b) Point set depicted with one color per detected shape. 
