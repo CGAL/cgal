@@ -196,7 +196,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     */
     void set_input(
       Input_range& input_range,
-      ///< Range of input data.
+      ///< range of input data.
       Point_map point_map = Point_map(),
       ///< property map to access the position of an input point.
       Normal_map normal_map = Normal_map()
