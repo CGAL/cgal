@@ -19,9 +19,8 @@
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
 #include <QOpenGLFunctions_3_3_Core>
-#include <QGLFunctions>
 #include <QOpenGLVertexArrayObject>
-#include <QGLBuffer>
+#include <QOpenGLBuffer>
 #include <QGLShaderProgram>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
@@ -52,7 +51,7 @@ public:
     GLubyte* getData(){return data; }
 
 };
-class Scene : public QObject, protected QGLFunctions
+class Scene : public QObject, protected QOpenGLFunctions_3_3_Core
 {
     Q_OBJECT
 public:
@@ -79,7 +78,6 @@ private:
   
 public:
     QGLContext* context;
-    void draw(); 
     void draw(QGLViewer*);
     void update_bbox();
     Bbox bbox() { return m_bbox; }
@@ -161,7 +159,7 @@ private:
 
     Texture *texture;
     GLint sampler_location;
-    QGLBuffer buffers[10];
+    QOpenGLBuffer buffers[10];
     QOpenGLVertexArrayObject vao[10];
     QOpenGLShaderProgram tex_rendering_program;
     QOpenGLShaderProgram rendering_program;
@@ -243,14 +241,6 @@ public:
     void bench_closest_point_and_primitive(Facet_tree& tree,const double duration);
     void bench_distance(Facet_tree& tree,const int function,const double duration);
 
-    // drawing
-    void draw_points();
-    void draw_segments();
-    void draw_polyhedron();
-    void draw_distance_function(const Color_ramp& ramp_pos,
-                                const Color_ramp& ramp_neg) const;
-    void draw_cut_segment_plane() const;
-  
     // cutting plane activation/deactivation
     void activate_cutting_plane();
     void deactivate_cutting_plane();

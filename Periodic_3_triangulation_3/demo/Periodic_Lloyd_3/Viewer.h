@@ -4,9 +4,8 @@
 #include "Scene.h"
 #include <QGLViewer/qglviewer.h>
 #include <QOpenGLFunctions_3_3_Core>
-#include <QGLFunctions>
 #include <QOpenGLVertexArrayObject>
-#include <QGLBuffer>
+#include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 
 
@@ -67,7 +66,7 @@ private:
       std::vector<float> pos_8lines;
 
 
-      QGLBuffer buffers[4];
+      QOpenGLBuffer buffers[4];
       QOpenGLVertexArrayObject vao[4];
       QOpenGLShaderProgram rendering_program;
       void initialize_buffers();

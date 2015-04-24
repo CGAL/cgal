@@ -9,9 +9,8 @@
 #include "PreferenceDlg.h"
 
 #include <QOpenGLFunctions_3_3_Core>
-#include <QGLFunctions>
 #include <QOpenGLVertexArrayObject>
-#include <QGLBuffer>
+#include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 
 #include <iostream>
@@ -390,7 +389,7 @@ private:
       std::vector<float> *incremental_facet;
       std::vector<float> *incremental_conflict;
 
-      QGLBuffer buffers[vboSize];
+      QOpenGLBuffer buffers[vboSize];
       QOpenGLVertexArrayObject vao[vaoSize];
       QOpenGLShaderProgram rendering_program;
       QOpenGLShaderProgram rendering_program_spheres;

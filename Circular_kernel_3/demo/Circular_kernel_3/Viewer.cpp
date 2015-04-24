@@ -626,10 +626,6 @@ void Viewer::compute_elements()
         //draw points as small spheres
         for (std::vector<EPIC::Point_3>::const_iterator it=intersections.begin();it!=intersections.end();++it){
             pos_points.push_back(it->x()); pos_points.push_back(it->y()); pos_points.push_back(it->z());
-            // glPushMatrix();
-            // glTranslatef(it->x(),it->y(),it->z());
-            //    gluSphere(qsphere,0.005,10,10);
-            //  glPopMatrix();
         }
 
     }

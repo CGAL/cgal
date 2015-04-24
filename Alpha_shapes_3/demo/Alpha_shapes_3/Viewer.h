@@ -4,14 +4,13 @@
 #include "typedefs.h"
 #include <QGLViewer/qglviewer.h>
 #include <QOpenGLFunctions_3_3_Core>
-#include <QGLFunctions>
 #include <QOpenGLVertexArrayObject>
-#include <QGLBuffer>
+#include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 
 
 
-class Viewer : public QGLViewer, protected QGLFunctions {
+class Viewer : public QGLViewer, protected QOpenGLFunctions_3_3_Core{
   Q_OBJECT
 
   CGAL::Timer timer;
@@ -27,6 +26,7 @@ public:
   {
     buffers[0].destroy();
     buffers[1].destroy();
+    buffers[2].destroy();
     vao[0].destroy();
     vao[1].destroy();
   }
@@ -39,9 +39,6 @@ public:
 
 public:
   void draw();
-
-  void 
-  gl_draw_surface();
 
 private:
   //Shaders elements
@@ -61,7 +58,7 @@ private:
       std::vector<float> pos_poly;
       std::vector<float> normals;
 
-      QGLBuffer buffers[3];
+      QOpenGLBuffer buffers[3];
       QOpenGLVertexArrayObject vao[2];
       QOpenGLShaderProgram rendering_program;
       QOpenGLShaderProgram rendering_program_points;

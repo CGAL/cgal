@@ -6,11 +6,9 @@
 #include <fstream>
 #include <QObject>
 #include <QFileDialog>
-#include <CGAL/glu.h>
 #include <QOpenGLFunctions_3_3_Core>
-#include <QGLFunctions>
 #include <QOpenGLVertexArrayObject>
-#include <QGLBuffer>
+#include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 
 class Scene : public QObject, QOpenGLFunctions_3_3_Core
@@ -289,7 +287,7 @@ private:
       std::vector<float> transfo3_square;
       std::vector<float> transfo4_square;
 
-      QGLBuffer buffers[24];
+      QOpenGLBuffer buffers[24];
       QOpenGLVertexArrayObject vao[12];
       QOpenGLShaderProgram rendering_program;
       QOpenGLShaderProgram rendering_program_spheres;

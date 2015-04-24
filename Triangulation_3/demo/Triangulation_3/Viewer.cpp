@@ -302,7 +302,7 @@ void Viewer::compile_shaders()
         "void main(void)\n"
         "{\n"
         "   fP = mv_matrix * vertex; \n"
-        "   vec4 TN = mvp_matrix*transfo*vec4(normal,1.0); \n"
+        "   vec4 TN = transfo*vec4(normal,1.0); \n"
         "   fN = mat3(mv_matrix)* TN.xyz; \n"
         "   gl_Position =  mvp_matrix * transfo* vertex; \n"
         "}"
@@ -1650,28 +1650,7 @@ void Viewer::drawFacet(const Triangle_3& t, const QColor&/*clr*/, std::vector<fl
     vertices->push_back( p0.x()); vertices->push_back(p0.y()); vertices->push_back(p0.z());
     vertices->push_back( p1.x()); vertices->push_back(p1.y()); vertices->push_back(p1.z());
     vertices->push_back( p2.x()); vertices->push_back(p2.y()); vertices->push_back(p2.z());
-    /* // disable lighting
-  ::glDisable( GL_LIGHTING );
 
-  // disable depth buffer writing
-  ::glDepthMask( GL_FALSE );
-
-  qglColor( m_colorFacet );
-
-  ::glBegin(GL_TRIANGLES);
-  Point_3 p0 = t.vertex(0);
-  Point_3 p1 = t.vertex(1);
-  Point_3 p2 = t.vertex(2);
-  ::glVertex3f( p0.x(), p0.y(), p0.z() );
-  ::glVertex3f( p1.x(), p1.y(), p1.z() );
-  ::glVertex3f( p2.x(), p2.y(), p2.z() );
-  ::glEnd();
-
-  // resume depth buffer writing
-  ::glDepthMask( GL_TRUE );
-
-  // resume lighting
-  ::glEnable( GL_LIGHTING );*/
 }
 
 

@@ -9,9 +9,8 @@
 
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
-#include <QGLFunctions>
 #include <QOpenGLVertexArrayObject>
-#include <QGLBuffer>
+#include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 
 #define SCENE_IMPLICIT_GRID_SIZE 120
@@ -108,7 +107,7 @@ private:
    GLuint textureId;
    GLint sampler_location;
 
-  mutable QGLBuffer buffers[vboSize];
+  mutable QOpenGLBuffer buffers[vboSize];
   mutable QOpenGLVertexArrayObject vao[vaoSize];
   mutable QOpenGLShaderProgram rendering_program;
   mutable QOpenGLShaderProgram tex_rendering_program;

@@ -6,9 +6,8 @@
 #include <QColor>
 #include <QString>
 #include<QGLViewer/qglviewer.h>
-#include <QGLFunctions>
 #include <QOpenGLVertexArrayObject>
-#include <QGLBuffer>
+#include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 
 class Volume_plane_interface;
@@ -65,7 +64,7 @@ private:
   std::vector<float> b_vertex;
   std::vector<float> c_vertex;
 
-  mutable QGLBuffer buffers[vboSize];
+  mutable QOpenGLBuffer buffers[vboSize];
   mutable QOpenGLVertexArrayObject vao[vaoSize];
   mutable QOpenGLShaderProgram rendering_program;
   void compute_elements();

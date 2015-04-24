@@ -7,9 +7,8 @@
 #include "Scene_segmented_image_item_config.h"
 #include <CGAL/gl.h>
 #include<QGLViewer/qglviewer.h>
-#include <QGLFunctions>
 #include <QOpenGLVertexArrayObject>
-#include <QGLBuffer>
+#include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 typedef CGAL::Image_3 Image;
 
@@ -71,8 +70,8 @@ private:
    std::vector<float> color;
 
 
-  mutable QGLBuffer m_vbo[vboSize];
-  mutable QGLBuffer *m_ibo;
+  mutable QOpenGLBuffer m_vbo[vboSize];
+  mutable QOpenGLBuffer *m_ibo;
   mutable QOpenGLVertexArrayObject vao[vaoSize];
   mutable QOpenGLShaderProgram rendering_program;
   void draw_bbox();

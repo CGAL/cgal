@@ -392,4 +392,4 @@ bool Scene_edit_polyhedron_item::keyPressEvent(QKeyEvent* e)
   return false;
 }
 
-#include "Scene_edit_polyhedron_item.moc"
+//#include "Scene_edit_polyhedron_item.moc"

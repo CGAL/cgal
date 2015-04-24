@@ -492,7 +492,7 @@ void Scene_segmented_image_item::compile_shaders()
         m_vbo[i].create();
     for(int i=0; i< vaoSize; i++)
         vao[i].create();
-    m_ibo = new QGLBuffer(QGLBuffer::IndexBuffer);
+    m_ibo = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
     m_ibo->create();
     //Vertex source code
     const char vertex_source[] =

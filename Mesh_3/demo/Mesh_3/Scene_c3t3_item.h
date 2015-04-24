@@ -13,9 +13,9 @@
 #include <CGAL/gl.h>
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
-#include <QGLFunctions>
+#include <QOpenGLFunctions_3_2_Core>
 #include <QOpenGLVertexArrayObject>
-#include <QGLBuffer>
+#include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 
 struct Scene_c3t3_item_priv;
@@ -125,7 +125,7 @@ private:
 
 
 
-  mutable QGLBuffer buffers[vboSize];
+  mutable QOpenGLBuffer buffers[vboSize];
   mutable QOpenGLVertexArrayObject vao[vaoSize];
   mutable QOpenGLShaderProgram rendering_program;
   mutable QOpenGLShaderProgram rendering_program_grid;

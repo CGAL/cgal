@@ -8,7 +8,7 @@
 
 void Viewer::compile_shaders()
 {
-    initializeGLFunctions();
+    initializeOpenGLFunctions();
     if(! buffers[0].create() || !buffers[1].create() || !buffers[2].create()  )
     {
         std::cerr<<"VBO Creation FAILED"<<std::endl;
@@ -374,55 +374,4 @@ void Viewer::alphaChanged()
     initialize_buffers();
 
 }
-
-void //not used anymore
-Viewer::gl_draw_surface()
-{
-  ::glColor3f(1.0f, 0.0f, 0.0f);
-  ::glDisable(GL_LIGHTING);
-  ::glEnable(GL_POINT_SMOOTH);
-  ::glPointSize(5);
-  ::glBegin(GL_POINTS);
-  for(std::list<Point_3>::iterator it = scene->points.begin();
-      it != scene->points.end();
-      ++it){
-    ::glVertex3d(it->x(), it->y(), it->z());
-  }
-  ::glEnd();
-  ::glDisable(GL_POINT_SMOOTH);
-
-  ::glEnable(GL_LIGHTING);
-  ::glBegin(GL_TRIANGLES);
-
-  ::glColor3f(0.2f, 1.0f, 0.2f);
-
-  std::list<Facet> facets;
-  scene->alpha_shape.get_alpha_shape_facets(std::back_inserter(facets), Alpha_shape_3::REGULAR);
-  
-  for(std::list<Facet>::iterator fit = facets.begin();
-      fit != facets.end();
-      ++fit) {
-    const Cell_handle& ch = fit->first;
-    const int index = fit->second;
-    
-    //const Vector_3& n = ch->normal(index); // must be unit vector
-    
-    const Point_3& a = ch->vertex((index+1)&3)->point();
-    const Point_3& b = ch->vertex((index+2)&3)->point();
-    const Point_3& c = ch->vertex((index+3)&3)->point();
-   
-    Vector_3 v = CGAL::unit_normal(a,b,c);
-
-
-    ::glNormal3d(v.x(),v.y(),v.z());
-    ::glVertex3d(a.x(),a.y(),a.z());
-    ::glVertex3d(b.x(),b.y(),b.z());
-    ::glVertex3d(c.x(),c.y(),c.z());
-  }
-
-  
-  ::glEnd();
-
-}
-
 #include "Viewer.moc"

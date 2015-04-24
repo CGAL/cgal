@@ -15,9 +15,8 @@
 #include <QGLViewer/qglviewer.h>
 
 #include "Volume_plane_interface.h"
-#include <QGLFunctions>
 #include <QOpenGLVertexArrayObject>
-#include <QGLBuffer>
+#include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 
 #if !defined(NDEBUG)
@@ -142,13 +141,13 @@ private:
   const double xscale_, yscale_, zscale_;
   mutable int currentCube;
 
-  mutable QGLBuffer vVBO;
-  mutable QGLBuffer cbuffer;
-  mutable QGLBuffer rectBuffer;
+  mutable QOpenGLBuffer vVBO;
+  mutable QOpenGLBuffer cbuffer;
+  mutable QOpenGLBuffer rectBuffer;
   mutable std::vector<float> v_rec;
   mutable QOpenGLShaderProgram program_bordures;
   mutable QOpenGLShaderProgram program;
-  mutable std::vector< std::pair<QGLBuffer, unsigned int> > ebos;
+  mutable std::vector< std::pair<QOpenGLBuffer, unsigned int> > ebos;
   std::vector< float > colors_;
 
   QString name(x_tag) const { return tr("X Slice for %1").arg(name_); }
@@ -259,7 +258,7 @@ Volume_plane<T>::Volume_plane(unsigned int adim, unsigned int bdim, unsigned int
 
 template<typename T>
 Volume_plane<T>::~Volume_plane() {
-  for(std::vector< std::pair< QGLBuffer, unsigned int> >::iterator it = ebos.begin();
+  for(std::vector< std::pair< QOpenGLBuffer, unsigned int> >::iterator it = ebos.begin();
       it != ebos.end(); ++it) { 
       it->first.destroy();
   }
@@ -410,7 +409,7 @@ void Volume_plane<T>::init() {
   const unsigned int slice = 63399;
   for(unsigned int i = 0; i < indices.size(); i+=slice)
   {
-    QGLBuffer ebo = QGLBuffer(QGLBuffer::IndexBuffer);
+    QOpenGLBuffer ebo = QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
     unsigned int left_over = (i + slice) > indices.size()  ? std::distance(indices.begin() + i, indices.end()) : slice;
     ebo.create();
     ebo.bind();

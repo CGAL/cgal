@@ -6,9 +6,8 @@
 #include "Polyhedron_type_fwd.h"
 #include <iostream>
 #include <QGLViewer/qglviewer.h>
-#include <QGLFunctions>
 #include <QOpenGLVertexArrayObject>
-#include <QGLBuffer>
+#include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 
 // This class represents a polyhedron in the OpenGL scene
@@ -68,7 +67,7 @@ private:
    std::vector<float> vertex_nm;
 
 
-  mutable QGLBuffer buffers[vboSize];
+  mutable QOpenGLBuffer buffers[vboSize];
   mutable QOpenGLVertexArrayObject vao[vaoSize];
   mutable QOpenGLShaderProgram rendering_program;
   void initialize_buffers();

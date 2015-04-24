@@ -10,16 +10,13 @@
 #include <QInputDialog>
 
 #include "Refiner.h"
-#include "render_edges.h"
+//#include "render_edges.h"
 
 #include <CGAL/Timer.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Subdivision_method_3.h>
 
 #include <QOpenGLFunctions_3_3_Core>
-#include <QGLFunctions>
-#include <QOpenGLVertexArrayObject>
-#include <QGLBuffer>
 #include <QOpenGLShader>
 
 
@@ -76,7 +73,7 @@ Scene::~Scene()
 
 void Scene::compile_shaders()
 {
-    initializeGLFunctions();
+    initializeOpenGLFunctions();
     if(! buffers[0].create() || !buffers[1].create() || !buffers[2].create() || !buffers[3].create() || !buffers[4].create() || !buffers[5].create() || !buffers[6].create() || !buffers[7].create())
     {
         std::cerr<<"VBO Creation FAILED"<<std::endl;
@@ -582,42 +579,6 @@ void Scene::update_bbox()
               << " facets)" << std::endl;
 }
 
-void Scene::draw()
-{
-    if(m_view_plane)
-        ::glEnable(GL_DEPTH_TEST);
-    else
-        ::glDisable(GL_DEPTH_TEST);
-
-    if(m_view_polyhedron)
-        draw_polyhedron();
-
-    if(m_view_points)
-        draw_points();
-
-    if(m_view_segments)
-        draw_segments();
-
-    if (m_view_plane)
-    {
-        switch( m_cut_plane )
-        {
-        case UNSIGNED_EDGES:
-        case UNSIGNED_FACETS:
-            draw_distance_function(m_thermal_ramp, m_thermal_ramp);
-            break;
-        case SIGNED_FACETS:
-            draw_distance_function(m_red_ramp, m_blue_ramp);
-            break;
-        case CUT_SEGMENTS:
-            draw_cut_segment_plane();
-            break;
-        case NONE: // do nothing
-            break;
-        }
-    }
-}
-
 void Scene::draw(QGLViewer* viewer)
 {
     QColor color;
@@ -735,167 +696,6 @@ void Scene::draw(QGLViewer* viewer)
     }
 
 
-}
-
-void Scene::draw_polyhedron()
-{
-    // draw black edges
-    if(m_pPolyhedron != NULL)
-    {
-        ::glDisable(GL_LIGHTING);
-        ::glColor3ub(0,0,0);
-        ::glLineWidth(1.0f);
-        gl_render_edges(*m_pPolyhedron);
-    }
-}
-
-void Scene::draw_segments()
-{
-    if(m_segments.size() != 0)
-    {
-        ::glDisable(GL_LIGHTING);
-        ::glColor3ub(0,100,0);
-        ::glLineWidth(2.0f);
-        ::glBegin(GL_LINES);
-        std::list<Segment>::iterator it;
-        for(it = m_segments.begin(); it != m_segments.end(); it++)
-        {
-            const Segment& s = *it;
-            const Point& p = s.source();
-            const Point& q = s.target();
-            ::glVertex3d(p.x(),p.y(),p.z());
-            ::glVertex3d(q.x(),q.y(),q.z());
-        }
-        ::glEnd();
-    }
-}
-
-void Scene::draw_points()
-{
-    // draw red points
-    if(m_points.size() != 0)
-    {
-        ::glDisable(GL_LIGHTING);
-        ::glColor3ub(180,0,0);
-        ::glPointSize(2.0f);
-        ::glBegin(GL_POINTS);
-        std::list<Point>::iterator it;
-        for(it = m_points.begin(); it != m_points.end(); it++)
-        {
-            const Point& p = *it;
-            ::glVertex3d(p.x(),p.y(),p.z());
-        }
-        ::glEnd();
-    }
-}
-
-void Scene::draw_distance_function(const Color_ramp& ramp_pos,
-                                   const Color_ramp& ramp_neg) const
-{
-    ::glDisable(GL_LIGHTING);
-    if ( m_fast_distance ) { ::glShadeModel(GL_FLAT); }
-    else { ::glShadeModel(GL_SMOOTH); }
-
-    ::glBegin(GL_QUADS);
-    int i,j;
-    const int nb_quads = m_grid_size-1;
-    for(i=0;i<nb_quads;i++)
-    {
-        for(j=0;j<nb_quads;j++)
-        {
-            const Point_distance& pd00 = m_distance_function[i][j];
-            const Point_distance& pd01 = m_distance_function[i][j+1];
-            const Point_distance& pd11 = m_distance_function[i+1][j+1];
-            const Point_distance& pd10 = m_distance_function[i+1][j];
-            const Point& p00 = pd00.first;
-            const Point& p01 = pd01.first;
-            const Point& p11 = pd11.first;
-            const Point& p10 = pd10.first;
-            const FT& d00 = pd00.second;
-            const FT& d01 = pd01.second;
-            const FT& d11 = pd11.second;
-            const FT& d10 = pd10.second;
-
-            // determines grey level
-            unsigned int i00 = 255-(unsigned)(255.0 * (double)std::fabs(d00) / m_max_distance_function);
-            unsigned int i01 = 255-(unsigned)(255.0 * (double)std::fabs(d01) / m_max_distance_function);
-            unsigned int i11 = 255-(unsigned)(255.0 * (double)std::fabs(d11) / m_max_distance_function);
-            unsigned int i10 = 255-(unsigned)(255.0 * (double)std::fabs(d10) / m_max_distance_function);
-
-            // assembles one quad
-            if(d00 > 0.0)
-                ::glColor3ub(ramp_pos.r(i00),ramp_pos.g(i00),ramp_pos.b(i00));
-            else
-                ::glColor3ub(ramp_neg.r(i00),ramp_neg.g(i00),ramp_neg.b(i00));
-            ::glVertex3d(p00.x(),p00.y(),p00.z());
-
-            if(d01 > 0.0)
-                ::glColor3ub(ramp_pos.r(i01),ramp_pos.g(i01),ramp_pos.b(i01));
-            else
-                ::glColor3ub(ramp_neg.r(i01),ramp_neg.g(i01),ramp_neg.b(i01));
-            ::glVertex3d(p01.x(),p01.y(),p01.z());
-
-            if(d11 > 0)
-                ::glColor3ub(ramp_pos.r(i11),ramp_pos.g(i11),ramp_pos.b(i11));
-            else
-                ::glColor3ub(ramp_neg.r(i11),ramp_neg.g(i11),ramp_neg.b(i11));
-            ::glVertex3d(p11.x(),p11.y(),p11.z());
-
-            if(d10 > 0)
-                ::glColor3ub(ramp_pos.r(i10),ramp_pos.g(i10),ramp_pos.b(i10));
-            else
-                ::glColor3ub(ramp_neg.r(i10),ramp_neg.g(i10),ramp_neg.b(i10));
-            ::glVertex3d(p10.x(),p10.y(),p10.z());
-        }
-    }
-    ::glEnd();
-}
-
-void Scene::draw_cut_segment_plane() const
-{
-    float diag = .6f * float(bbox_diag());
-
-    ::glDisable(GL_LIGHTING);
-    ::glLineWidth(1.0f);
-    ::glColor3f(.6f, .6f, .6f);
-
-    // draw grid
-    ::glPushMatrix();
-    ::glMultMatrixd(m_frame->matrix());
-    QGLViewer::drawGrid(diag);
-    ::glPopMatrix();
-
-    // draw cut segments
-    ::glLineWidth(2.0f);
-    ::glColor3f(1.f, 0.f, 0.f);
-    ::glBegin(GL_LINES);
-    for ( std::vector<Segment>::const_iterator it = m_cut_segments.begin(),
-          end = m_cut_segments.end() ; it != end ; ++it )
-    {
-        const Point& a = it->source();
-        const Point& b = it->target();
-
-        ::glVertex3d(a.x(), a.y(), a.z());
-        ::glVertex3d(b.x(), b.y(), b.z());
-    }
-    ::glEnd();
-
-    // fill grid with transparent blue
-    ::glPushMatrix();
-    ::glMultMatrixd(m_frame->matrix());
-    ::glColor4f(.6f, .85f, 1.f, .65f);
-
-    ::glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    ::glEnable(GL_BLEND);
-    ::glBegin(GL_QUADS);
-    ::glVertex3d(-diag, -diag, 0.);
-    ::glVertex3d(-diag,  diag, 0.);
-    ::glVertex3d( diag,  diag, 0.);
-    ::glVertex3d( diag, -diag, 0.);
-    ::glEnd();
-    ::glDisable(GL_BLEND);
-
-    ::glPopMatrix();
 }
 
 FT Scene::random_in(const double a,

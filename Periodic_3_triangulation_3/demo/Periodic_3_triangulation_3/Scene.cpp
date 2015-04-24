@@ -174,7 +174,8 @@ void Scene::compile_shaders()
         "void main(void)\n"
         "{\n"
         "   fP = mv_matrix * vertex; \n"
-        "   fN = mat3(mv_matrix)* normal; \n"
+        "   vec4 TN = transfo*vec4(normal,1.0); \n"
+        "   fN = mat3(mv_matrix)* TN.xyz; \n"
         "   gl_Position =  mvp_matrix * transfo * vertex; \n"
         "}"
     };

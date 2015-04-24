@@ -3,14 +3,13 @@
 
 #include <QOpenGLFunctions_3_3_Core>
 #include <QOpenGLVertexArrayObject>
-#include <QGLBuffer>
+#include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel EPIC;
 
 class Viewer : public QGLViewer, QOpenGLFunctions_3_3_Core
 {
-  GLUquadricObj *qsphere;
   GLuint dl_nb;
 protected :
   virtual void draw();
@@ -39,7 +38,7 @@ private:
   std::vector<float> trivial_center;
   std::vector<float> normals_lines;
 
-  QGLBuffer buffers[9];
+  QOpenGLBuffer buffers[9];
   QOpenGLVertexArrayObject vao[3];
   QOpenGLShaderProgram rendering_program;
 
