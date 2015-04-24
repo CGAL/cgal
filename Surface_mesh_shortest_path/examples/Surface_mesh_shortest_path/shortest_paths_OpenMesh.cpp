@@ -34,7 +34,7 @@ int main(int argc, char** argv)
 {
   // read the input surface mesh
   Mesh polyhedron;
-  OpenMesh::IO::read_mesh(polyhedron, argv[1]);
+  OpenMesh::IO::read_mesh(polyhedron, (argc>1)?argv[1]:"data/elephant.off");
 
   // pick up a random face
   const size_t randSeed = argc > 2 ? std::atoi(argv[2]) : 7915421;

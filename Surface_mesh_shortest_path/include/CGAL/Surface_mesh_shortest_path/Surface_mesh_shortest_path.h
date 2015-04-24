@@ -1545,7 +1545,6 @@ private:
   {
     typename Traits::Compute_parametric_distance_along_segment_2 parametric_distance_along_segment_2(m_traits.compute_parametric_distance_along_segment_2_object());
     typename Traits::Construct_ray_2 construct_ray_2(m_traits.construct_ray_2_object());
-    typename Traits::Construct_segment_2 construct_segment_2(m_traits.construct_segment_2_object());
     typename Traits::Construct_line_2 construct_line_2(m_traits.construct_line_2_object());
     typename Traits::Construct_source_2 construct_source_2(m_traits.construct_source_2_object());
     typename Traits::Construct_target_2 construct_target_2(m_traits.construct_target_2_object());
