@@ -56,8 +56,7 @@ if( POLYHEDRON_QTSCRIPT_DEBUGGER)
 endif()
 find_package(Qt4)
 
-# Find Glew (optional), for splatting
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/GlSplat/cmake)
+# Find Glew (required)
 find_package(GLEW)
 
 # Find OpenGL
@@ -70,24 +69,19 @@ if(QT4_FOUND)
   find_package(QGLViewer )
 endif(QT4_FOUND)
 
-if(GLEW_FOUND)
-  include_directories ( ${GLEW_INCLUDE_DIR} )
-  add_definitions(-DCGAL_GLEW_ENABLED)
-else(GLEW_FOUND)
-  message(STATUS "NOTICE: GLEW library is not found. Splat rendering will not be available.")
-endif(GLEW_FOUND)
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
 endif(EIGEN3_FOUND)
 
-if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
-
+if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND GLEW_FOUND)
+  add_definitions(-DCGAL_GLEW_ENABLED)
   set(Boost_USE_MULTITHREADED      ON)
   find_package(Boost COMPONENTS thread system)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
+  include_directories ( ${GLEW_INCLUDE_DIR} )
 
   qt4_wrap_ui( MainWindowUI_files MainWindow.ui )
   qt4_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
@@ -504,4 +498,4 @@ else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   message(STATUS "NOTICE: This demo requires ${POLYHEDRON_MISSING_DEPS}and will not be compiled.")
 
-endif (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+endif (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND GLEW_FOUND)

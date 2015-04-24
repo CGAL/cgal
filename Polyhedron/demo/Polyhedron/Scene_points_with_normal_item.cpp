@@ -600,10 +600,9 @@ void Scene_points_with_normal_item::compute_normals_and_vertices(void)
                 normals.push_back(p.normal().x());
                 normals.push_back(p.normal().y());
                 normals.push_back(p.normal().z());
-#ifdef CGAL_GLEW_ENABLED
                 tex_coords.push_back(p.radius());
-                ::glMultiTexCoord1d(GL_TEXTURE2, p.radius());
-#endif
+                tex_coords.push_back(0);
+                //::glMultiTexCoord1d(GL_TEXTURE2, p.radius());
                 positions_splats.push_back(p.x());
                 positions_splats.push_back(p.y());
                 positions_splats.push_back(p.z());
@@ -861,12 +860,14 @@ void Scene_points_with_normal_item::draw_splats(Viewer_interface* viewer) const
    {
      const UI_point& p = *it;
      ::glNormal3dv(&p.normal().x());
-#ifdef CGAL_GLEW_ENABLED
      ::glMultiTexCoord1d(GL_TEXTURE2, p.radius());
-#endif
      ::glVertex3dv(&p.x());
+
    }
    ::glEnd();
+
+
+
 
 }
 

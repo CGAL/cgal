@@ -1,7 +1,6 @@
 
-#ifdef CGAL_GLEW_ENABLED
-# include "GlSplat/GlSplat.h"
-#endif
+#include "GlSplat/GlSplat.h"
+
 
 
 #include <CGAL/check_gl_error.h>
@@ -30,7 +29,7 @@ void CGALglcolor(QColor c)
 }
 }
 
-#ifdef CGAL_GLEW_ENABLED
+
 GlSplat::SplatRenderer* Scene::ms_splatting = 0;
 int Scene::ms_splattingCounter = 0;
 GlSplat::SplatRenderer* Scene::splatting()
@@ -38,7 +37,7 @@ GlSplat::SplatRenderer* Scene::splatting()
     assert(ms_splatting!=0 && "A Scene object must be created before requesting the splatting object");
     return ms_splatting;
 }
-#endif
+
 
 Scene::Scene(QObject* parent)
     : QAbstractListModel(parent),
@@ -51,11 +50,10 @@ Scene::Scene(QObject* parent)
                                       double, double, double)),
             this, SLOT(setSelectionRay(double, double, double,
                                        double, double, double)));
-#ifdef CGAL_GLEW_ENABLED
+
     if(ms_splatting==0)
         ms_splatting  = new GlSplat::SplatRenderer();
     ms_splattingCounter++;
-#endif
 
 }
 
@@ -167,10 +165,8 @@ Scene::~Scene()
     }
     m_entries.clear();
 
-#ifdef CGAL_GLEW_ENABLED
     if((--ms_splattingCounter)==0)
         delete ms_splatting;
-#endif
 }
 
 Scene_item*
@@ -214,7 +210,6 @@ Scene::duplicate(Item_id index)
 
 void Scene::initializeGL()
 {
-#ifdef CGAL_GLEW_ENABLED
     ms_splatting->init();
 
     //Setting the light options
@@ -231,7 +226,6 @@ void Scene::initializeGL()
     glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
     glLightfv(GL_LIGHT0, GL_POSITION, position);
 
-#endif
 }
 
 // workaround for Qt-4.2.
@@ -417,7 +411,6 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
             ::glPopName();
         }
     }
-#ifdef CGAL_GLEW_ENABLED
     // Splatting
     if(!with_names && ms_splatting->isSupported())
     {
@@ -452,8 +445,8 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
             }
         }
         ms_splatting->finalize();
+
     }
-#endif
 }
 
 // workaround for Qt-4.2 (see above)
@@ -617,9 +610,7 @@ Scene::setData(const QModelIndex &index,
         RenderingMode rendering_mode = static_cast<RenderingMode>(value.toInt());
         // Find next supported rendering mode
         while ( ! item->supportsRenderingMode(rendering_mode)
-        #ifdef CGAL_GLEW_ENABLED
                 || (rendering_mode==Splatting && !Scene::splatting()->isSupported())
-        #endif
                 )
         {
             rendering_mode = static_cast<RenderingMode>( (rendering_mode+1) % NumberOfRenderingMode );

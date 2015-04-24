@@ -11,10 +11,10 @@
 #include "Polyhedron_demo_io_plugin_interface.h"
 #include <CGAL/gl.h>
 
-#include <CGAL/AABB_tree_opengl3.h>
+#include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/internal/AABB_tree/AABB_Tree_drawing_traits_opengl3.h>
+#include <CGAL/internal/AABB_tree/AABB_drawing_traits.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/bounding_box.h>
@@ -89,8 +89,8 @@ public:
 
   // Wireframe OpenGL drawing in a display list
   void direct_draw() const {
-    CGAL::AABB_drawing_traits<AABB_primitive, CGAL::AABB_node<AABB_traits> > traits;
-    tree.traversal(0, traits, new std::vector<float>(0));
+  //  CGAL::AABB_drawing_traits<AABB_primitive, CGAL::AABB_node<AABB_traits> > traits;
+  //  tree.traversal(0, traits, new std::vector<float>(0));
   }
 
   void changed()
@@ -209,7 +209,9 @@ private:
        positions_lines.clear();
 
        CGAL::AABB_drawing_traits<AABB_primitive, CGAL::AABB_node<AABB_traits> > traits;
-       tree.traversal(0, traits, &positions_lines);
+       traits.v_edges = &positions_lines;
+
+       tree.traversal(0, traits);
 
         location[0] = glGetUniformLocation(rendering_program_lines, "mvp_matrix");
         location[1] = glGetUniformLocation(rendering_program_lines, "color");    
@@ -240,9 +242,9 @@ public:
     }
   ~Scene_edges_item()
   {
-    glDeleteBuffers(1, buffer);
-    glDeleteVertexArrays(1, vao);
-    glDeleteProgram(rendering_program_lines);
+        glDeleteBuffers(1, buffer);
+        glDeleteVertexArrays(1, vao);
+        glDeleteProgram(rendering_program_lines);
   }
     bool isFinite() const { return true; }
   bool isEmpty() const { return edges.empty(); }
