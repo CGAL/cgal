@@ -319,7 +319,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
   polyhedron_demo_plugin(${IO_C3T3_PLUGIN_LIB} Io_c3t3_plugin)
   target_link_libraries(${IO_C3T3_PLUGIN_LIB} ${SCENE_C3T3_ITEM_LIB})
 
-  if ( EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/c3t3_rib_exporter_plugin.cpp" )
+  if ( EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/C3t3_rib_exporter_plugin.cpp" )
     set(C3T3_RIB_EXPORTER_PLUGIN_LIB "${MESH_3_LIB_PREFIX}c3t3_rib_exporter_plugin")
     polyhedron_demo_plugin(${C3T3_RIB_EXPORTER_PLUGIN_LIB} C3t3_rib_exporter_plugin ${ribUI_FILES})
     target_link_libraries(${C3T3_RIB_EXPORTER_PLUGIN_LIB} ${SCENE_C3T3_ITEM_LIB} ${VIEWER_LIB})

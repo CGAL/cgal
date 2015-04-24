@@ -212,8 +212,8 @@ C3t3_rib_exporter_plugin::create_rib()
   // Get Scene_c3t3_item
   Scene_interface::Item_id index = scene->mainSelectionIndex();
   
-  const Scene_c3t3_item* c3t3_item =
-    qobject_cast<const Scene_c3t3_item*>(scene->item(index));
+  Scene_c3t3_item* c3t3_item =
+    qobject_cast<Scene_c3t3_item*>(scene->item(index));
   
   if ( NULL == c3t3_item )
   {
@@ -335,6 +335,7 @@ get_parameters_from_dialog()
   ui.isPreview->setChecked(parameters_.is_preview);
   
   // Update mask
+
   update_mask();
   
   // -----------------------------------
