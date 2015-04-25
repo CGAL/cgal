@@ -145,7 +145,7 @@ enum Barycentric_coordinate_type
   /// if the coordinate has no non-zero weight, and they all sum to 1
   BARYCENTRIC_COORDINATE_INSIDE,
   /// if the weights of the coordinate do not sum to 1
-  BARYCENTRIC_COORDINATE_OUTSIDE,
+  BARYCENTRIC_COORDINATE_OUTSIDE
 };
 
 template <class B, class Construct_barycentric_coordinate_weight>
