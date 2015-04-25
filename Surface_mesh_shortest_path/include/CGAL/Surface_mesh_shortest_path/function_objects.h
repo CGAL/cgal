@@ -269,7 +269,7 @@ public:
   {
   }
 
-  Robust_project_triangle_3_to_triangle_2(const K& kernel)
+  Robust_project_triangle_3_to_triangle_2(const K& )
   {
   }
 
@@ -394,7 +394,7 @@ public:
   {
   }
 
-  Robust_flatten_triangle_3_along_segment_2(const K& kernel)
+  Robust_flatten_triangle_3_along_segment_2(const K&)
   {
   }
 

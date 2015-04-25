@@ -22,11 +22,11 @@
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
 #include <CGAL/test_util.h>
+#include "check.h"
 
-#define BOOST_TEST_MODULE Surface_mesh_shortest_path_test
-#include <boost/test/included/unit_test.hpp>
 
-BOOST_AUTO_TEST_CASE( test_incremental_construction_removal )
+
+int main(int argc, char* argv[])
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
@@ -46,14 +46,14 @@ BOOST_AUTO_TEST_CASE( test_incremental_construction_removal )
 
   Traits traits;
 
-  std::string mesh = boost::unit_test::framework::master_test_suite().argv[1];
+  std::string mesh(argv[1]);
 
   int randSeed = 4983304;
   const size_t numTests = 15;
 
-  if (boost::unit_test::framework::master_test_suite().argc > 2)
+  if (argc > 2)
   {
-    randSeed = std::atoi(boost::unit_test::framework::master_test_suite().argv[2]);
+    randSeed = std::atoi(argv[2]);
   }
 
   CGAL::Random rand(randSeed);
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE( test_incremental_construction_removal )
     Surface_mesh_shortest_path::Shortest_path_result result = shortestPaths.shortest_distance_to_source_points(it->first, it->second);
 
     BOOST_CHECK_CLOSE(FT(0.0), result.first, FT(0.000001));
-    BOOST_CHECK(result.second == it);
+    assert(result.second == it);
   }
 
   size_t currentCounter = 0;
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE( test_incremental_construction_removal )
     if (i % 2 != 0)
     {
       BOOST_CHECK_CLOSE(FT(0.0), result.first, FT(0.000001));
-      BOOST_CHECK(handles[i] == result.second);
+      assert(handles[i] == result.second);
     }
     else
     {
@@ -175,17 +175,15 @@ BOOST_AUTO_TEST_CASE( test_incremental_construction_removal )
     if (i % 3 != 0)
     {
       BOOST_CHECK_CLOSE(FT(0.0), result.first, FT(0.000001));
-      BOOST_CHECK(handles[i] == result.second);
+      assert(handles[i] == result.second);
     }
     else
     {
       BOOST_CHECK_MESSAGE(result.first < FT(0.0) || result.first > FT(0.00001), "Resulted distance: " << result.first);
     }
   }
+   return 0;
 }
 
-// Hack to trick cgal_create_CMakeLists into using this file even without a main
-// int main(int argc, char** argv)
-// {
-//   return 0;
-// }
+
+

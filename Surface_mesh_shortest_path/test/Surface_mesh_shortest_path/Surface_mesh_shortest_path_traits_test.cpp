@@ -18,10 +18,9 @@
 #include <fstream>
 #include <utility>
 
-#define BOOST_TEST_MODULE Surface_mesh_shortest_path_traits_test
-#include <boost/test/included/unit_test.hpp>
+#include "check.h"
 
-BOOST_AUTO_TEST_CASE( project_triangle3D_to_triangle2D )
+void project_triangle3D_to_triangle2D()
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
@@ -37,13 +36,13 @@ BOOST_AUTO_TEST_CASE( project_triangle3D_to_triangle2D )
     Traits::Point_3(Kernel::FT(4), Kernel::FT(9), Kernel::FT(16)));
 
   Traits::Triangle_2 transformedTriangle = project_triangle_3_to_triangle_2(sourceTriangle);
-  BOOST_CHECK_CLOSE(compute_squared_distance_2(sourceTriangle[1], sourceTriangle[0]), compute_squared_distance_2(transformedTriangle[1], transformedTriangle[0]), Kernel::FT(0.0000001));
-  BOOST_CHECK_CLOSE(compute_squared_distance_2(sourceTriangle[2], sourceTriangle[0]), compute_squared_distance_2(transformedTriangle[2], transformedTriangle[0]), Kernel::FT(0.0000001));
-  BOOST_CHECK_CLOSE(compute_squared_distance_2(sourceTriangle[2], sourceTriangle[1]), compute_squared_distance_2(transformedTriangle[2], transformedTriangle[1]), Kernel::FT(0.0000001));
+  CHECK_CLOSE(compute_squared_distance_2(sourceTriangle[1], sourceTriangle[0]), compute_squared_distance_2(transformedTriangle[1], transformedTriangle[0]), Kernel::FT(0.0000001));
+  CHECK_CLOSE(compute_squared_distance_2(sourceTriangle[2], sourceTriangle[0]), compute_squared_distance_2(transformedTriangle[2], transformedTriangle[0]), Kernel::FT(0.0000001));
+  CHECK_CLOSE(compute_squared_distance_2(sourceTriangle[2], sourceTriangle[1]), compute_squared_distance_2(transformedTriangle[2], transformedTriangle[1]), Kernel::FT(0.0000001));
 
 }
 
-BOOST_AUTO_TEST_CASE( test_simple_2D_barycentric_coordinates )
+void test_simple_2D_barycentric_coordinates()
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
@@ -63,42 +62,42 @@ BOOST_AUTO_TEST_CASE( test_simple_2D_barycentric_coordinates )
 
   Traits::Barycentric_coordinate b0 = construct_barycentric_coordinate_in_triangle_2(simpleTriangle, simpleTriangle[0]);
 
-  BOOST_CHECK_CLOSE(Kernel::FT(1.0), b0[0], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(0.0), b0[1], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(0.0), b0[2], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(1.0), b0[0], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.0), b0[1], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.0), b0[2], Kernel::FT(0.000001));
 
   size_t outVertex0;
   CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type b0Type;
   boost::tie(b0Type, outVertex0) = classify_barycentric_coordinate(b0);
 
-  BOOST_CHECK_EQUAL(b0Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX);
-  BOOST_CHECK_EQUAL(outVertex0, 0);
+  CHECK_EQUAL(b0Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX);
+  CHECK_EQUAL(outVertex0, 0);
 
   Traits::Barycentric_coordinate b1 = construct_barycentric_coordinate_in_triangle_2(simpleTriangle, simpleTriangle[1]);
 
-  BOOST_CHECK_CLOSE(Kernel::FT(0.0), b1[0], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(1.0), b1[1], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(0.0), b1[2], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.0), b1[0], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(1.0), b1[1], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.0), b1[2], Kernel::FT(0.000001));
 
   size_t outVertex1;
   CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type b1Type;
   boost::tie(b1Type, outVertex1) = classify_barycentric_coordinate(b1);
 
-  BOOST_CHECK_EQUAL(b1Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX);
-  BOOST_CHECK_EQUAL(outVertex1, 1);
+  CHECK_EQUAL(b1Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX);
+  CHECK_EQUAL(outVertex1, 1);
 
   Traits::Barycentric_coordinate b2 = construct_barycentric_coordinate_in_triangle_2(simpleTriangle, simpleTriangle[2]);
 
-  BOOST_CHECK_CLOSE(Kernel::FT(0.0), b2[0], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(0.0), b2[1], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(1.0), b2[2], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.0), b2[0], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.0), b2[1], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(1.0), b2[2], Kernel::FT(0.000001));
 
   size_t outVertex2;
   CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type b2Type;
   boost::tie(b2Type, outVertex2) = classify_barycentric_coordinate(b2);
 
-  BOOST_CHECK_EQUAL(b2Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX);
-  BOOST_CHECK_EQUAL(outVertex2, 2);
+  CHECK_EQUAL(b2Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX);
+  CHECK_EQUAL(outVertex2, 2);
 
   Traits::Point_2 location(Kernel::FT(0.3), Kernel::FT(0.2));
   Traits::Barycentric_coordinate bLocation = construct_barycentric_coordinate_in_triangle_2(simpleTriangle, location);
@@ -107,18 +106,18 @@ BOOST_AUTO_TEST_CASE( test_simple_2D_barycentric_coordinates )
   CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type bLocationType;
   boost::tie(bLocationType, dummyOut) = classify_barycentric_coordinate(bLocation);
 
-  BOOST_CHECK_EQUAL(bLocationType, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_INSIDE);
+  CHECK_EQUAL(bLocationType, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_INSIDE);
 
-  BOOST_CHECK_CLOSE(Kernel::FT(1.0) - location[0] - location[1], bLocation[0], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(location[0], bLocation[1], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(location[1], bLocation[2], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(1.0) - location[0] - location[1], bLocation[0], Kernel::FT(0.000001));
+  CHECK_CLOSE(location[0], bLocation[1], Kernel::FT(0.000001));
+  CHECK_CLOSE(location[1], bLocation[2], Kernel::FT(0.000001));
 
   Traits::Point_2 outLocation = construct_barycenter_2(simpleTriangle[0], bLocation[0], simpleTriangle[1], bLocation[1], simpleTriangle[2], bLocation[2]);
-  BOOST_CHECK_CLOSE(location[0], outLocation[0], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(location[1], outLocation[1], Kernel::FT(0.000001));
+  CHECK_CLOSE(location[0], outLocation[0], Kernel::FT(0.000001));
+  CHECK_CLOSE(location[1], outLocation[1], Kernel::FT(0.000001));
 }
 
-BOOST_AUTO_TEST_CASE( barycentric_coords_3D )
+void barycentric_coords_3D()
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
@@ -136,49 +135,49 @@ BOOST_AUTO_TEST_CASE( barycentric_coords_3D )
 
   Traits::Barycentric_coordinate b0 = construct_barycentric_coordinate_in_triangle_3(quadrantTriangle, quadrantTriangle[0]);
 
-  BOOST_CHECK_CLOSE(Kernel::FT(1.0), b0[0], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(0.0), b0[1], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(0.0), b0[2], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(1.0), b0[0], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.0), b0[1], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.0), b0[2], Kernel::FT(0.000001));
 
   Traits::Barycentric_coordinate b1 = construct_barycentric_coordinate_in_triangle_3(quadrantTriangle, quadrantTriangle[1]);
 
-  BOOST_CHECK_CLOSE(Kernel::FT(0.0), b1[0], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(1.0), b1[1], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(0.0), b1[2], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.0), b1[0], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(1.0), b1[1], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.0), b1[2], Kernel::FT(0.000001));
 
   Traits::Barycentric_coordinate b2 = construct_barycentric_coordinate_in_triangle_3(quadrantTriangle, quadrantTriangle[2]);
 
-  BOOST_CHECK_CLOSE(Kernel::FT(0.0), b2[0], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(0.0), b2[1], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(1.0), b2[2], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.0), b2[0], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.0), b2[1], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(1.0), b2[2], Kernel::FT(0.000001));
 
   Traits::Barycentric_coordinate bOrigin = construct_barycentric_coordinate_in_triangle_3(quadrantTriangle, Traits::Point_3(CGAL::ORIGIN));
 
-  BOOST_CHECK_CLOSE(Kernel::FT(0.5), bOrigin[0], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(0.25), bOrigin[1], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(0.25), bOrigin[2], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.5), bOrigin[0], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.25), bOrigin[1], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.25), bOrigin[2], Kernel::FT(0.000001));
 
   Traits::Point_3 originOutAgain = construct_barycenter_3(quadrantTriangle[0], bOrigin[0], quadrantTriangle[1], bOrigin[1], quadrantTriangle[2], bOrigin[2]);
 
-  BOOST_CHECK_CLOSE(Kernel::FT(0.0), originOutAgain[0], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(0.0), originOutAgain[1], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(0.0), originOutAgain[2], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.0), originOutAgain[0], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.0), originOutAgain[1], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.0), originOutAgain[2], Kernel::FT(0.000001));
 
   Traits::Point_3 pNegative(Kernel::FT(-0.5), Kernel::FT(-0.5), Kernel::FT(-0.5));
   Traits::Barycentric_coordinate bNegative = construct_barycentric_coordinate_in_triangle_3(quadrantTriangle, pNegative);
 
-  BOOST_CHECK_CLOSE(Kernel::FT(0.25), bNegative[0], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(0.625), bNegative[1], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(0.125), bNegative[2], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.25), bNegative[0], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.625), bNegative[1], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(0.125), bNegative[2], Kernel::FT(0.000001));
 
   Traits::Point_3 negativeOutAgain = construct_barycenter_3(quadrantTriangle[0], bNegative[0], quadrantTriangle[1], bNegative[1], quadrantTriangle[2], bNegative[2]);
 
-  BOOST_CHECK_CLOSE(Kernel::FT(-0.5), negativeOutAgain[0], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(-0.5), negativeOutAgain[1], Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(-0.5), negativeOutAgain[2], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(-0.5), negativeOutAgain[0], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(-0.5), negativeOutAgain[1], Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(-0.5), negativeOutAgain[2], Kernel::FT(0.000001));
 }
 
-BOOST_AUTO_TEST_CASE( simple_flattening_triangle_along_edge )
+void simple_flattening_triangle_along_edge()
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
@@ -203,24 +202,24 @@ BOOST_AUTO_TEST_CASE( simple_flattening_triangle_along_edge )
 
   Traits::Triangle_2 flattened = flatten_triangle_3_along_segment_2(sourceTriangle, 0, layoutEdge);
 
-  BOOST_CHECK_CLOSE(compute_squared_distance_3(sourceTriangle[0], sourceTriangle[1]), Kernel::FT(100.0), Kernel::FT(0.000001));
-  BOOST_CHECK_EQUAL(orientation_2(flattened[0], flattened[1], flattened[2]), CGAL::LEFT_TURN);
+  CHECK_CLOSE(compute_squared_distance_3(sourceTriangle[0], sourceTriangle[1]), Kernel::FT(100.0), Kernel::FT(0.000001));
+  CHECK_EQUAL(orientation_2(flattened[0], flattened[1], flattened[2]), CGAL::LEFT_TURN);
 
-  BOOST_CHECK_CLOSE(Kernel::FT(flattened[0].x()), layoutEdge[0].x(), Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(flattened[0].y()), layoutEdge[0].y(), Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(flattened[0].x()), layoutEdge[0].x(), Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(flattened[0].y()), layoutEdge[0].y(), Kernel::FT(0.000001));
 
-  BOOST_CHECK_CLOSE(Kernel::FT(flattened[1].x()), layoutEdge[1].x(), Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(flattened[1].y()), layoutEdge[1].y(), Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(flattened[1].x()), layoutEdge[1].x(), Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(flattened[1].y()), layoutEdge[1].y(), Kernel::FT(0.000001));
 
-  BOOST_CHECK_CLOSE(Kernel::FT(flattened[2].x()), baseDistance * (-sourceTriangle[0].x() / (sourceTriangle[1].x() - sourceTriangle[0].x())), Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(Kernel::FT(flattened[2].y()), height, Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(flattened[2].x()), baseDistance * (-sourceTriangle[0].x() / (sourceTriangle[1].x() - sourceTriangle[0].x())), Kernel::FT(0.000001));
+  CHECK_CLOSE(Kernel::FT(flattened[2].y()), height, Kernel::FT(0.000001));
 
-  BOOST_CHECK_CLOSE(compute_squared_distance_3(sourceTriangle[0], sourceTriangle[1]), compute_squared_distance_2(flattened[0], flattened[1]), Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(compute_squared_distance_3(sourceTriangle[0], sourceTriangle[2]), compute_squared_distance_2(flattened[0], flattened[2]), Kernel::FT(0.000001));
-  BOOST_CHECK_CLOSE(compute_squared_distance_3(sourceTriangle[1], sourceTriangle[2]), compute_squared_distance_2(flattened[1], flattened[2]), Kernel::FT(0.000001));
+  CHECK_CLOSE(compute_squared_distance_3(sourceTriangle[0], sourceTriangle[1]), compute_squared_distance_2(flattened[0], flattened[1]), Kernel::FT(0.000001));
+  CHECK_CLOSE(compute_squared_distance_3(sourceTriangle[0], sourceTriangle[2]), compute_squared_distance_2(flattened[0], flattened[2]), Kernel::FT(0.000001));
+  CHECK_CLOSE(compute_squared_distance_3(sourceTriangle[1], sourceTriangle[2]), compute_squared_distance_2(flattened[1], flattened[2]), Kernel::FT(0.000001));
 }
 
-BOOST_AUTO_TEST_CASE( nonsimple_flattening_triangle_along_edge )
+void nonsimple_flattening_triangle_along_edge()
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
@@ -247,21 +246,21 @@ BOOST_AUTO_TEST_CASE( nonsimple_flattening_triangle_along_edge )
 
     Traits::Triangle_2 flattened = flatten_triangle_3_along_segment_2(sourceTriangle, edgeIndex, layoutEdge);
 
-    BOOST_CHECK_EQUAL(orientation_2(flattened.vertex(edgeIndex), flattened.vertex(edgeIndex + 1), flattened.vertex(edgeIndex + 2)), CGAL::LEFT_TURN);
+    CHECK_EQUAL(orientation_2(flattened.vertex(edgeIndex), flattened.vertex(edgeIndex + 1), flattened.vertex(edgeIndex + 2)), CGAL::LEFT_TURN);
 
-    BOOST_CHECK_CLOSE(Kernel::FT(flattened.vertex(edgeIndex).x()), layoutEdge[0].x(), Kernel::FT(0.000001));
-    BOOST_CHECK_CLOSE(Kernel::FT(flattened.vertex(edgeIndex).y()), layoutEdge[0].y(), Kernel::FT(0.000001));
+    CHECK_CLOSE(Kernel::FT(flattened.vertex(edgeIndex).x()), layoutEdge[0].x(), Kernel::FT(0.000001));
+    CHECK_CLOSE(Kernel::FT(flattened.vertex(edgeIndex).y()), layoutEdge[0].y(), Kernel::FT(0.000001));
 
-    BOOST_CHECK_CLOSE(Kernel::FT(flattened.vertex(edgeIndex + 1).x()), layoutEdge[1].x(), Kernel::FT(0.000001));
-    BOOST_CHECK_CLOSE(Kernel::FT(flattened.vertex(edgeIndex + 1).y()), layoutEdge[1].y(), Kernel::FT(0.000001));
+    CHECK_CLOSE(Kernel::FT(flattened.vertex(edgeIndex + 1).x()), layoutEdge[1].x(), Kernel::FT(0.000001));
+    CHECK_CLOSE(Kernel::FT(flattened.vertex(edgeIndex + 1).y()), layoutEdge[1].y(), Kernel::FT(0.000001));
 
-    BOOST_CHECK_CLOSE(compute_squared_distance_3(sourceTriangle[0], sourceTriangle[1]), compute_squared_distance_2(flattened[0], flattened[1]), Kernel::FT(0.000001));
-    BOOST_CHECK_CLOSE(compute_squared_distance_3(sourceTriangle[0], sourceTriangle[2]), compute_squared_distance_2(flattened[0], flattened[2]), Kernel::FT(0.000001));
-    BOOST_CHECK_CLOSE(compute_squared_distance_3(sourceTriangle[1], sourceTriangle[2]), compute_squared_distance_2(flattened[1], flattened[2]), Kernel::FT(0.000001));
+    CHECK_CLOSE(compute_squared_distance_3(sourceTriangle[0], sourceTriangle[1]), compute_squared_distance_2(flattened[0], flattened[1]), Kernel::FT(0.000001));
+    CHECK_CLOSE(compute_squared_distance_3(sourceTriangle[0], sourceTriangle[2]), compute_squared_distance_2(flattened[0], flattened[2]), Kernel::FT(0.000001));
+    CHECK_CLOSE(compute_squared_distance_3(sourceTriangle[1], sourceTriangle[2]), compute_squared_distance_2(flattened[1], flattened[2]), Kernel::FT(0.000001));
   }
 }
 
-BOOST_AUTO_TEST_CASE( detect_is_saddle_vertex )
+void detect_is_saddle_vertex()
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
@@ -290,19 +289,25 @@ BOOST_AUTO_TEST_CASE( detect_is_saddle_vertex )
   {
     if (currentVertexIndex <= 3 || currentVertexIndex == 7)
     {
-      BOOST_CHECK(!is_saddle_vertex(*currentVertex, P));
+      assert(!is_saddle_vertex(*currentVertex, P));
     }
     else
     {
-      BOOST_CHECK(is_saddle_vertex(*currentVertex, P));
+      assert(is_saddle_vertex(*currentVertex, P));
     }
 
     ++currentVertexIndex;
   }
 }
 
-// Hack to trick cgal_test_with_cmake into using this file even without a main
-// int main(int argc, char** argv)
-// {
-//   return 0;
-// }
+int main(int argc, char** argv)
+{
+  project_triangle3D_to_triangle2D();
+  test_simple_2D_barycentric_coordinates();
+  barycentric_coords_3D();
+  simple_flattening_triangle_along_edge();
+  nonsimple_flattening_triangle_along_edge();
+  detect_is_saddle_vertex();
+  
+  return 0;
+}

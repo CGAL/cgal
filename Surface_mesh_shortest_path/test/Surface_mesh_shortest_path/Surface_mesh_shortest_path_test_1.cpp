@@ -21,12 +21,9 @@
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
 #include <CGAL/test_util.h>
+#include "check.h"
 
-#define BOOST_TEST_MODULE Surface_mesh_shortest_path_test
-#include <boost/test/included/unit_test.hpp>
-
-
-BOOST_AUTO_TEST_CASE( shortest_path_regular_tetrahedron )
+void shortest_path_regular_tetrahedron()
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
@@ -76,18 +73,18 @@ BOOST_AUTO_TEST_CASE( shortest_path_regular_tetrahedron )
   {
     if (vertexIndex == 0)
     {
-      BOOST_CHECK_CLOSE(shortestPaths.shortest_distance_to_source_points(*currentVertex).first, Kernel::FT((triangleHeight * Kernel::FT(4.0)) / Kernel::FT(3.0)), Kernel::FT(0.000001));
+      CHECK_CLOSE(shortestPaths.shortest_distance_to_source_points(*currentVertex).first, Kernel::FT((triangleHeight * Kernel::FT(4.0)) / Kernel::FT(3.0)), Kernel::FT(0.000001));
     }
     else
     {
-      BOOST_CHECK_CLOSE(shortestPaths.shortest_distance_to_source_points(*currentVertex).first, Kernel::FT((triangleHeight * Kernel::FT(2.0)) / Kernel::FT(3.0)), Kernel::FT(0.000001));
+      CHECK_CLOSE(shortestPaths.shortest_distance_to_source_points(*currentVertex).first, Kernel::FT((triangleHeight * Kernel::FT(2.0)) / Kernel::FT(3.0)), Kernel::FT(0.000001));
     }
 
     ++vertexIndex;
   }
 }
 
-BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
+void test_simple_saddle_vertex_mesh()
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
@@ -187,7 +184,7 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
 
   for (size_t i = 0; i < 8; ++i)
   {
-    BOOST_CHECK_CLOSE(shortestPaths.shortest_distance_to_source_points(*currentVertex).first, expectedDistances[i], Kernel::FT(0.0001));
+    CHECK_CLOSE(shortestPaths.shortest_distance_to_source_points(*currentVertex).first, expectedDistances[i], Kernel::FT(0.0001));
     ++currentVertex;
   }
 
@@ -196,11 +193,11 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
 
   shortestPaths.shortest_path_sequence_to_source_points(vertexHandles[5], collector);
 
-  BOOST_CHECK_EQUAL(collector.m_sequence.size(), 3);
-  BOOST_CHECK_EQUAL(collector.m_sequence[1].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
-  BOOST_CHECK(collector.m_sequence[1].index == 4 || collector.m_sequence[1].index == 6);
-  BOOST_CHECK_EQUAL(collector.m_sequence[2].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
-  BOOST_CHECK_EQUAL(collector.m_sequence[2].index, 1);
+  CHECK_EQUAL(collector.m_sequence.size(), 3);
+  CHECK_EQUAL(collector.m_sequence[1].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
+  assert(collector.m_sequence[1].index == 4 || collector.m_sequence[1].index == 6);
+  CHECK_EQUAL(collector.m_sequence[2].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
+  CHECK_EQUAL(collector.m_sequence[2].index, 1);
 
   collector.m_sequence.clear();
 
@@ -210,12 +207,12 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
 
   shortestPaths.shortest_path_sequence_to_source_points(vertexHandles[7], collector);
 
-  BOOST_CHECK_EQUAL(collector.m_sequence.size(), 3);
-  BOOST_CHECK_EQUAL(collector.m_sequence[1].type, CGAL::test::SEQUENCE_ITEM_EDGE);
-  BOOST_CHECK_EQUAL(collector.m_sequence[1].index, halfedgeIndexMap[CGAL::halfedge(vertexHandles[4], vertexHandles[6], P).first]);
-  BOOST_CHECK_CLOSE(collector.m_sequence[1].edgeAlpha, FT(0.5), FT(0.0001));
-  BOOST_CHECK_EQUAL(collector.m_sequence[2].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
-  BOOST_CHECK_EQUAL(collector.m_sequence[2].index, 1);
+  CHECK_EQUAL(collector.m_sequence.size(), 3);
+  CHECK_EQUAL(collector.m_sequence[1].type, CGAL::test::SEQUENCE_ITEM_EDGE);
+  CHECK_EQUAL(collector.m_sequence[1].index, halfedgeIndexMap[CGAL::halfedge(vertexHandles[4], vertexHandles[6], P).first]);
+  CHECK_CLOSE(collector.m_sequence[1].edgeAlpha, FT(0.5), FT(0.0001));
+  CHECK_EQUAL(collector.m_sequence[2].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
+  CHECK_EQUAL(collector.m_sequence[2].index, 1);
 
   // Now test an internal face location sequence
   halfedge_descriptor firstCrossing = CGAL::halfedge(vertexHandles[4], vertexHandles[7], P).first;
@@ -227,13 +224,13 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
   collector.m_sequence.clear();
   shortestPaths.shortest_path_sequence_to_source_points(CGAL::face(firstCrossing, P), construct_barycentric_coordinate(location[edgeIndex], location[(edgeIndex + 1) % 3], location[(edgeIndex + 2) % 3]), collector);
 
-  BOOST_CHECK_EQUAL(collector.m_sequence.size(), 4);
-  BOOST_CHECK_EQUAL(collector.m_sequence[1].type, CGAL::test::SEQUENCE_ITEM_EDGE);
-  BOOST_CHECK_EQUAL(collector.m_sequence[1].index, halfedgeIndexMap[firstCrossing]);
-  BOOST_CHECK_EQUAL(collector.m_sequence[2].type, CGAL::test::SEQUENCE_ITEM_EDGE);
-  BOOST_CHECK_EQUAL(collector.m_sequence[2].index, halfedgeIndexMap[CGAL::halfedge(vertexHandles[4], vertexHandles[6], P).first]);
-  BOOST_CHECK_EQUAL(collector.m_sequence[3].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
-  BOOST_CHECK_EQUAL(collector.m_sequence[3].index, 1);
+  CHECK_EQUAL(collector.m_sequence.size(), 4);
+  CHECK_EQUAL(collector.m_sequence[1].type, CGAL::test::SEQUENCE_ITEM_EDGE);
+  CHECK_EQUAL(collector.m_sequence[1].index, halfedgeIndexMap[firstCrossing]);
+  CHECK_EQUAL(collector.m_sequence[2].type, CGAL::test::SEQUENCE_ITEM_EDGE);
+  CHECK_EQUAL(collector.m_sequence[2].index, halfedgeIndexMap[CGAL::halfedge(vertexHandles[4], vertexHandles[6], P).first]);
+  CHECK_EQUAL(collector.m_sequence[3].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
+  CHECK_EQUAL(collector.m_sequence[3].index, 1);
 
   // Now test with 2 source vertices
   currentVertex = startVertex;
@@ -294,8 +291,8 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
   {
     Surface_mesh_shortest_path::Shortest_path_result result = shortestPaths.shortest_distance_to_source_points(*currentVertex);
 
-    BOOST_CHECK_CLOSE(result.first, expectedDistances2[i], Kernel::FT(0.0001));
-    BOOST_CHECK(result.second == expectedSources2[i]);
+    CHECK_CLOSE(result.first, expectedDistances2[i], Kernel::FT(0.0001));
+    assert(result.second == expectedSources2[i]);
     ++currentVertex;
   }
 
@@ -313,14 +310,14 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
   {
     Surface_mesh_shortest_path::Shortest_path_result result = shortestPaths.shortest_distance_to_source_points(*currentVertex);
 
-    BOOST_CHECK_CLOSE(result.first, expectedDistances2[i], Kernel::FT(0.0001));
-    BOOST_CHECK(result.second == secondSourcePoint);
+    CHECK_CLOSE(result.first, expectedDistances2[i], Kernel::FT(0.0001));
+    assert(result.second == secondSourcePoint);
     ++currentVertex;
   }
 
 }
 
-BOOST_AUTO_TEST_CASE( test_boundary_mesh )
+void test_boundary_mesh()
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
@@ -341,7 +338,6 @@ BOOST_AUTO_TEST_CASE( test_boundary_mesh )
 
   Traits::Construct_triangle_3_to_triangle_2_projection project_triangle_3_to_triangle_2(traits.construct_triangle_3_to_triangle_2_projection_object());
   Traits::Compute_squared_distance_3 compute_squared_distance_3(traits.compute_squared_distance_3_object());
-  Traits::Compute_squared_distance_2 compute_squared_distance_2(traits.compute_squared_distance_2_object());
   Traits::Construct_barycenter_3 construct_barycenter_3(traits.construct_barycenter_3_object());
   Traits::Construct_triangle_3_along_segment_2_flattening flatten_triangle_3_along_segment_2(traits.construct_triangle_3_along_segment_2_flattening_object());
   Traits::Construct_barycentric_coordinate construct_barycentric_coordinate(traits.construct_barycentric_coordinate_object());
@@ -417,27 +413,27 @@ BOOST_AUTO_TEST_CASE( test_boundary_mesh )
   Point_3 locationInTriangle(construct_barycenter_in_triangle_3(firstTriangle, startLocation));
 
   FT dist0 = shortestPaths.shortest_distance_to_source_points(vertexHandles[0]).first;
-  BOOST_CHECK_CLOSE(dist0, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[0])), FT(0.000001));
+  CHECK_CLOSE(dist0, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[0])), FT(0.000001));
 
   FT dist1 = shortestPaths.shortest_distance_to_source_points(vertexHandles[1]).first;
-  BOOST_CHECK_CLOSE(dist1, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[1])), FT(0.000001));
+  CHECK_CLOSE(dist1, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[1])), FT(0.000001));
 
   FT dist2 = shortestPaths.shortest_distance_to_source_points(vertexHandles[2]).first;
-  BOOST_CHECK_CLOSE(dist2, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[2])), FT(0.000001));
+  CHECK_CLOSE(dist2, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[2])), FT(0.000001));
 
   FT dist3 = shortestPaths.shortest_distance_to_source_points(vertexHandles[3]).first;
-  BOOST_CHECK_CLOSE(dist3, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[3])), FT(0.000001));
+  CHECK_CLOSE(dist3, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[3])), FT(0.000001));
 
   FT dist4 = shortestPaths.shortest_distance_to_source_points(vertexHandles[4]).first;
-  BOOST_CHECK_CLOSE(dist4, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[1])) + CGAL::sqrt(compute_squared_distance_3(vertexLocations[1], vertexLocations[4])), FT(0.000001));
+  CHECK_CLOSE(dist4, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[1])) + CGAL::sqrt(compute_squared_distance_3(vertexLocations[1], vertexLocations[4])), FT(0.000001));
 
   FT dist5 = shortestPaths.shortest_distance_to_source_points(vertexHandles[5]).first;
-  BOOST_CHECK_CLOSE(dist5, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[3])) + CGAL::sqrt(compute_squared_distance_3(vertexLocations[3], vertexLocations[5])), FT(0.000001));
+  CHECK_CLOSE(dist5, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[3])) + CGAL::sqrt(compute_squared_distance_3(vertexLocations[3], vertexLocations[5])), FT(0.000001));
 
   Barycentric_coordinate somewhereElseInFirstTriangle = construct_barycentric_coordinate(0.8, 0.05, 0.15);
 
   FT distT0 = shortestPaths.shortest_distance_to_source_points(faceHandles[0], somewhereElseInFirstTriangle).first;
-  BOOST_CHECK_CLOSE(distT0, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, construct_barycenter_in_triangle_3(firstTriangle, somewhereElseInFirstTriangle))), FT(0.000001));
+  CHECK_CLOSE(distT0, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, construct_barycenter_in_triangle_3(firstTriangle, somewhereElseInFirstTriangle))), FT(0.000001));
 
   Triangle_3 oneStepTriangle(vertexLocations[4], vertexLocations[1], vertexLocations[3]);
   Barycentric_coordinate locationInOneStepTriangle = construct_barycentric_coordinate(0.1, 0.8, 0.1);
@@ -446,24 +442,27 @@ BOOST_AUTO_TEST_CASE( test_boundary_mesh )
   shortestPaths.shortest_path_sequence_to_source_points(faceHandles[2], locationInOneStepTriangle, collector);
 
   FT distT2 = shortestPaths.shortest_distance_to_source_points(faceHandles[2], locationInOneStepTriangle).first;
-  BOOST_CHECK_CLOSE(distT2, dist1 + CGAL::sqrt(compute_squared_distance_3(vertexLocations[1], construct_barycenter_in_triangle_3(oneStepTriangle, locationInOneStepTriangle))), FT(0.00001));
+  CHECK_CLOSE(distT2, dist1 + CGAL::sqrt(compute_squared_distance_3(vertexLocations[1], construct_barycenter_in_triangle_3(oneStepTriangle, locationInOneStepTriangle))), FT(0.00001));
 
   Triangle_3 twoStepTriangle(vertexLocations[6], vertexLocations[5], vertexLocations[7]);
   Barycentric_coordinate locationInTwoStepTriangle = construct_barycentric_coordinate(0.8, 0.1, 0.1);
 
   FT distT5 = shortestPaths.shortest_distance_to_source_points(faceHandles[5], locationInTwoStepTriangle).first;
-  BOOST_CHECK_CLOSE(distT5, dist3 + CGAL::sqrt(compute_squared_distance_3(vertexLocations[3], construct_barycenter_in_triangle_3(twoStepTriangle, locationInTwoStepTriangle))), FT(0.00001));
+  CHECK_CLOSE(distT5, dist3 + CGAL::sqrt(compute_squared_distance_3(vertexLocations[3], construct_barycenter_in_triangle_3(twoStepTriangle, locationInTwoStepTriangle))), FT(0.00001));
 
   Triangle_3 threeStepTriangle(vertexLocations[7], vertexLocations[5], vertexLocations[8]);
   Barycentric_coordinate locationInThreeStepTriangle = construct_barycentric_coordinate(0.2, 0.6, 0.2);
 
   FT distT6 = shortestPaths.shortest_distance_to_source_points(faceHandles[6], locationInThreeStepTriangle).first;
-  BOOST_CHECK_CLOSE(distT6, dist5 + CGAL::sqrt(compute_squared_distance_3(vertexLocations[5], construct_barycenter_in_triangle_3(threeStepTriangle, locationInThreeStepTriangle))), FT(0.00001));
+  CHECK_CLOSE(distT6, dist5 + CGAL::sqrt(compute_squared_distance_3(vertexLocations[5], construct_barycenter_in_triangle_3(threeStepTriangle, locationInThreeStepTriangle))), FT(0.00001));
 }
 
 
-// Hack to trick cgal_create_CMakeLists into using this file even without a main
-// int main(int argc, char** argv)
-// {
-//   return 0;
-// }
+int main(int argc, char* argv[])
+{
+  shortest_path_regular_tetrahedron();
+  test_simple_saddle_vertex_mesh();
+  test_boundary_mesh();
+  
+   return 0;
+}

@@ -22,10 +22,9 @@
 #include <utility>
 #include <cmath>
 
-#define BOOST_TEST_MODULE Surface_mesh_shortest_path_test_3
-#include <boost/test/included/unit_test.hpp>
+#include "check.h"
 
-BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_on_surface )
+int main(int argc, char* argv[])
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
@@ -48,13 +47,13 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_on_surface )
 
   Traits::Construct_barycenter_3 construct_barycenter_3(traits.construct_barycenter_3_object());
 
-  std::string mesh = boost::unit_test::framework::master_test_suite().argv[1];
+  std::string mesh(argv[1]);
 
   int randSeed = 6008991;
 
-  if (boost::unit_test::framework::master_test_suite().argc > 2)
+  if (argc > 2)
   {
-    randSeed = std::atoi(boost::unit_test::framework::master_test_suite().argv[2]);
+    randSeed = std::atoi(argv[2]);
   }
 
   CGAL::Random random(randSeed);
@@ -99,15 +98,14 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_on_surface )
 
     Surface_mesh_shortest_path::Face_location faceLocation = shortestPaths.locate<AABB_face_graph_traits>(location3d);
 
-    BOOST_CHECK_EQUAL(faceIndexMap[face], faceIndexMap[faceLocation.first]);
-    BOOST_CHECK_CLOSE(location[0], faceLocation.second[0], FT(0.0001));
-    BOOST_CHECK_CLOSE(location[1], faceLocation.second[1], FT(0.0001));
-    BOOST_CHECK_CLOSE(location[2], faceLocation.second[2], FT(0.0001));
+    CHECK_EQUAL(faceIndexMap[face], faceIndexMap[faceLocation.first]);
+    CHECK_CLOSE(location[0], faceLocation.second[0], FT(0.0001));
+    CHECK_CLOSE(location[1], faceLocation.second[1], FT(0.0001));
+    CHECK_CLOSE(location[2], faceLocation.second[2], FT(0.0001));
   }
+
+  return 0;
 }
 
-// Hack to trick cgal_create_CMakeLists into using this file even without a main
-// int main(int argc, char** argv)
-// {
-//   return 0;
-// }
+
+

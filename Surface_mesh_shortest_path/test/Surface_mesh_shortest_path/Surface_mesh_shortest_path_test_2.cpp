@@ -24,11 +24,9 @@
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
 #include <CGAL/test_util.h>
+#include "check.h"
 
-#define BOOST_TEST_MODULE Surface_mesh_shortest_path_test_2
-#include <boost/test/included/unit_test.hpp>
-
-BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
+int main(int argc, char* argv[])
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
@@ -47,13 +45,13 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
 
   Traits traits;
 
-  std::string mesh = boost::unit_test::framework::master_test_suite().argv[1];
+  std::string mesh(argv[1]);
 
   int randSeed = 2681972;
 
-  if (boost::unit_test::framework::master_test_suite().argc > 2)
+  if (argc > 2)
   {
-    randSeed = std::atoi(boost::unit_test::framework::master_test_suite().argv[2]);
+    randSeed = std::atoi(argv[2]);
   }
 
   CGAL::Random rand(randSeed);
@@ -133,9 +131,9 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
 
     FT endToStart = endToStartShortestPaths.shortest_distance_to_source_points(startVertex).first;
 
-    BOOST_CHECK_CLOSE(startToEnd, endToStart, FT(0.0000001));
+    CHECK_CLOSE(startToEnd, endToStart, FT(0.0000001));
 
-    BOOST_CHECK_EQUAL(startToEndCollector.m_sequence.size(), endToStartCollector.m_sequence.size());
+    CHECK_EQUAL(startToEndCollector.m_sequence.size(), endToStartCollector.m_sequence.size());
 
     if (startToEndCollector.m_sequence.size() == endToStartCollector.m_sequence.size())
     {
@@ -145,7 +143,7 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
 
         for (size_t j = 0; j < endToStartCollector.m_sequence.size(); ++j)
         {
-          BOOST_CHECK_EQUAL(endToStartCollector.m_sequence[j].type, startToEndCollector.m_sequence[k].type);
+          CHECK_EQUAL(endToStartCollector.m_sequence[j].type, startToEndCollector.m_sequence[k].type);
 
           if (endToStartCollector.m_sequence[j].type == startToEndCollector.m_sequence[k].type)
           {
@@ -153,10 +151,10 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
             {
             case CGAL::test::SEQUENCE_ITEM_VERTEX:
             case CGAL::test::SEQUENCE_ITEM_FACE:
-              BOOST_CHECK_EQUAL(endToStartCollector.m_sequence[j].index, startToEndCollector.m_sequence[k].index);
+              CHECK_EQUAL(endToStartCollector.m_sequence[j].index, startToEndCollector.m_sequence[k].index);
               break;
             case CGAL::test::SEQUENCE_ITEM_EDGE:
-              BOOST_CHECK_EQUAL(halfedgeIndexMap[endToStartCollector.m_sequence[j].halfedge], halfedgeIndexMap[CGAL::opposite(startToEndCollector.m_sequence[k].halfedge, polyhedron)]);
+              CHECK_EQUAL(halfedgeIndexMap[endToStartCollector.m_sequence[j].halfedge], halfedgeIndexMap[CGAL::opposite(startToEndCollector.m_sequence[k].halfedge, polyhedron)]);
               break;
             }
           }
@@ -222,9 +220,9 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
 
     //std::cout << std::setprecision(15) << std::endl;
 
-    BOOST_CHECK_CLOSE(startToEnd, endToStart, FT(0.0000001));
+    CHECK_CLOSE(startToEnd, endToStart, FT(0.0000001));
 
-    BOOST_CHECK_EQUAL(startToEndCollector.m_sequence.size(), endToStartCollector.m_sequence.size());
+    CHECK_EQUAL(startToEndCollector.m_sequence.size(), endToStartCollector.m_sequence.size());
 
     if (startToEndCollector.m_sequence.size() > 3 && startToEndCollector.m_sequence.size() == endToStartCollector.m_sequence.size())
     {
@@ -233,7 +231,7 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
       {
         size_t k = endToStartCollector.m_sequence.size() - j - 1;
 
-        BOOST_CHECK_EQUAL(endToStartCollector.m_sequence[j].type, startToEndCollector.m_sequence[k].type);
+        CHECK_EQUAL(endToStartCollector.m_sequence[j].type, startToEndCollector.m_sequence[k].type);
 
         if (endToStartCollector.m_sequence[j].type == startToEndCollector.m_sequence[k].type)
         {
@@ -241,10 +239,10 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
           {
           case CGAL::test::SEQUENCE_ITEM_VERTEX:
           case CGAL::test::SEQUENCE_ITEM_FACE:
-            BOOST_CHECK_EQUAL(endToStartCollector.m_sequence[j].index, startToEndCollector.m_sequence[k].index);
+            CHECK_EQUAL(endToStartCollector.m_sequence[j].index, startToEndCollector.m_sequence[k].index);
             break;
           case CGAL::test::SEQUENCE_ITEM_EDGE:
-            BOOST_CHECK_EQUAL(halfedgeIndexMap[endToStartCollector.m_sequence[j].halfedge], halfedgeIndexMap[CGAL::opposite(startToEndCollector.m_sequence[k].halfedge, polyhedron)]);
+            CHECK_EQUAL(halfedgeIndexMap[endToStartCollector.m_sequence[j].halfedge], halfedgeIndexMap[CGAL::opposite(startToEndCollector.m_sequence[k].halfedge, polyhedron)]);
             break;
           }
         }
@@ -268,11 +266,7 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
       }
     }
   }
-
+  return 0;
 }
 
-// Hack to trick cgal_create_CMakeLists into using this file even without a main
-// int main(int argc, char** argv)
-// {
-//   return 0;
-// }
+
