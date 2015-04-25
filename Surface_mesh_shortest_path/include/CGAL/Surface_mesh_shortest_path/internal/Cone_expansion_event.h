@@ -39,7 +39,7 @@ public:
   {
     LEFT_CHILD,
     RIGHT_CHILD,
-    PSEUDO_SOURCE,
+    PSEUDO_SOURCE
   };
 
 public:

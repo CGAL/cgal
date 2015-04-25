@@ -46,7 +46,7 @@ public:
     FACE_SOURCE = 1,
     EDGE_SOURCE = 2,
     VERTEX_SOURCE = 3,
-    INTERVAL = 4,
+    INTERVAL = 4
   };
 
 private:
