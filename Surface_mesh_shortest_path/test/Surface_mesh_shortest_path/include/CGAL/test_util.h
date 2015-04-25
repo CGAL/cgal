@@ -16,7 +16,7 @@ enum Sequence_item_type
 {
   SEQUENCE_ITEM_VERTEX,
   SEQUENCE_ITEM_EDGE,
-  SEQUENCE_ITEM_FACE,
+  SEQUENCE_ITEM_FACE
 };
 
 template <class Traits>
