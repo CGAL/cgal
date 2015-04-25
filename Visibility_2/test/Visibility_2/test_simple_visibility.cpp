@@ -47,7 +47,7 @@ int main() {
   std::cout << GREEN << "Done!" << RESET << std::endl;
   std::cout << "Running test suite with " << GREEN 
             << "Cartesian" << RESET << " Kernel..." << std::endl;
-  CGAL::run_tests<Simple_polygon_visibility_2,Arrangement_2>(21, 0);
+  CGAL::run_tests<Simple_polygon_visibility_2,Arrangement_2>(22, 0);
 }
 {
   typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
@@ -60,7 +60,7 @@ int main() {
   std::cout << GREEN << "Done!" << RESET << std::endl;
   std::cout << "Running test suite with " << GREEN 
             << "EPECK" << RESET << " Kernel..." << std::endl;
-  CGAL::run_tests<Simple_polygon_visibility_2,Arrangement_2>(21, 0);
+  CGAL::run_tests<Simple_polygon_visibility_2,Arrangement_2>(22, 0);
 }
 {
   // test Visibility_arrangement_type with extended DCEL     
@@ -72,11 +72,11 @@ int main() {
   {
     typedef CGAL::Simple_polygon_visibility_2<ARR,CGAL::Tag_true> Visibility_2;
     CGAL::test_model_methods<Visibility_2,EARR>();
-    CGAL::run_tests<Visibility_2,EARR>(21, 2);
+    CGAL::run_tests<Visibility_2,EARR>(22, 2);
   }{
     typedef CGAL::Simple_polygon_visibility_2<ARR,CGAL::Tag_false> Visibility_2;
     CGAL::test_model_methods<Visibility_2,EARR>();
-    CGAL::run_tests<Visibility_2,EARR>(21, 2);
+    CGAL::run_tests<Visibility_2,EARR>(22, 2);
   }
 }
 

@@ -44,14 +44,14 @@ int main() {
         RSV;
       CGAL::test_model_methods<RSV,Arrangement_2>();
       std::cout << "Running test suite with " << GREEN << "Cartesian" << RESET << " Kernel..." << std::endl;
-      CGAL::run_tests<RSV,Arrangement_2>(21, 2);
+      CGAL::run_tests<RSV,Arrangement_2>(22, 2);
     }
     {
       typedef CGAL::Rotational_sweep_visibility_2<Arrangement_2, CGAL::Tag_true>
         RSV;
       CGAL::test_model_methods<RSV,Arrangement_2>();
       std::cout << "Running test suite with " << GREEN << "Cartesian" << RESET << " Kernel..." << std::endl;
-      CGAL::run_tests<RSV,Arrangement_2>(21, 2);
+      CGAL::run_tests<RSV,Arrangement_2>(22, 2);
     }
 }{
     typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
@@ -62,14 +62,14 @@ int main() {
         RSV;
       CGAL::test_model_methods<RSV,Arrangement_2>();
       std::cout << "Running test suite with " << GREEN << "EPECK" << RESET << " Kernel..." << std::endl;
-      CGAL::run_tests<RSV,Arrangement_2>(21, 2);
+      CGAL::run_tests<RSV,Arrangement_2>(22, 2);
     }
     {
       typedef CGAL::Rotational_sweep_visibility_2<Arrangement_2, CGAL::Tag_true>
         RSV;
       CGAL::test_model_methods<RSV,Arrangement_2>();
       std::cout << "Running test suite with " << GREEN << "EPECK" << RESET << " Kernel..." << std::endl;
-      CGAL::run_tests<RSV,Arrangement_2>(21, 2);
+      CGAL::run_tests<RSV,Arrangement_2>(22, 2);
     }
 }
 {
@@ -82,11 +82,11 @@ int main() {
   {
     typedef CGAL::Rotational_sweep_visibility_2<ARR,CGAL::Tag_true> Visibility_2;
     CGAL::test_model_methods<Visibility_2,EARR>();
-    CGAL::run_tests<Visibility_2,EARR>(21, 2);
+    CGAL::run_tests<Visibility_2,EARR>(22, 2);
   }{
     typedef CGAL::Rotational_sweep_visibility_2<ARR,CGAL::Tag_false> Visibility_2;
     CGAL::test_model_methods<Visibility_2,EARR>();
-    CGAL::run_tests<Visibility_2,EARR>(21, 2);
+    CGAL::run_tests<Visibility_2,EARR>(22, 2);
   }
 }
 return 0;

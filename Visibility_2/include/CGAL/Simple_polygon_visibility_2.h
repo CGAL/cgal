@@ -27,6 +27,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/Visibility_2/visibility_utils.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Arrangement_2.h>
 #include <CGAL/assertions.h>
 #include <stack>
 #include <map>
@@ -270,13 +271,32 @@ private:
   output(const Point_2& q, VARR& out_arr) const {
 
       std::vector<Point_2> points;
-      while (!s.empty()) {
-        points.push_back(s.top());
+      while(!s.empty()) {
+        const Point_2& top = s.top();
+        if (top != q) {
+          points.push_back(top);
+        }
+        else if (query_pt_is_vertex) {
+          points.push_back(top);
+        }
         s.pop();
       }
 
-      Visibility_2::report_while_handling_needles<Simple_polygon_visibility_2>(
-                  traits, q, points, out_arr);
+
+      // Quick fix for now. Can be done faster.
+      std::vector<Segment_2> segments;
+
+      for(typename std::vector<Point_2>::size_type i = 0;
+          i < points.size() - 1; ++i)
+      {
+          segments.push_back(Segment_2(points[i], points[i+1]));
+      }
+
+      CGAL::insert(out_arr, segments.begin(), segments.end());
+
+
+//    Visibility_2::report_while_handling_needles<Simple_polygon_visibility_2>(
+//                traits, q, points, out_arr);
 
       CGAL_postcondition(out_arr.number_of_isolated_vertices() == 0);
       CGAL_postcondition(s.empty());
