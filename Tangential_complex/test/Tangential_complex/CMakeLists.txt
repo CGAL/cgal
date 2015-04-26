@@ -62,11 +62,13 @@ if ( CGAL_FOUND )
     include( ${EIGEN3_USE_FILE} ) 
     include_directories (BEFORE "../../include")
     include_directories (BEFORE "include")
+    include_directories(../../../Anisotropic_mesh_TC/include)
     
     set (SOURCE_FILES "test_tangential_complex.cpp")
     ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" SOURCE_FILES)
     create_single_source_cgal_program( ${SOURCE_FILES} )
 
+    create_single_source_cgal_program( "aniso_TC.cpp" )
     create_single_source_cgal_program( "test_utilities.cpp" )
 
   else()
