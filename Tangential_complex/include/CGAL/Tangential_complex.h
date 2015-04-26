@@ -1283,6 +1283,12 @@ private:
         // called while other threads are perturbing the positions
         Weighted_point neighbor_wp =
           compute_perturbed_weighted_point(neighbor_point_idx);
+// fixme ?
+// Above seems incorrect since we later pass m_points[] to
+// "does_voronoi_face_and_alpha_tangent_subspace_intersect()" and we lose
+// the possible position pertubation of wp.
+// Either we ignore the translations and it's neighbor_wp = points[idx]+weight
+// or need to give m_translations to the voronoi intersections computations
 
         // "4*m_sq_half_sparsity" because both points can be perturbed
         if (squared_star_sphere_radius_plus_margin
