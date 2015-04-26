@@ -65,7 +65,7 @@ public:
       return QList<QAction*>() << actionMakeShortestPaths;
   }
 
-  bool applicable() const
+  bool applicable(QAction*) const
   {
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
