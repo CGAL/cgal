@@ -137,22 +137,46 @@ namespace Tangential_complex_ {
     return v;
   }
 
-  template <typename K>
-  std::vector<typename K::Vector_d>
-  compute_gram_schmidt_basis(
-    std::vector<typename K::Vector_d> const& input_basis,
-    K const& k)
+  template<typename Kernel>
+  struct Basis
   {
+    typedef typename Kernel::Point_d                           Point;
+    typedef typename Kernel::Vector_d                          Vector;
+    typedef typename std::vector<Vector>::const_iterator       const_iterator;
+
+    Point m_origin; //fixme should probably be (const?) ref ?
+    std::vector<Vector> m_vectors;
+
+    Point& origin() { return m_origin; }
+    const Point& origin() const { return m_origin; }
+    const_iterator begin() const { return m_vectors.begin(); }
+    const_iterator end() const { return m_vectors.end(); }
+    std::size_t size() const { return m_vectors.size(); }
+
+    Vector& operator[](const std::size_t i) { return m_vectors[i]; }
+    const Vector& operator[](const std::size_t i) const { return m_vectors[i]; }
+    void push_back(const Vector& v) { m_vectors.push_back(v); }
+    void reserve(const std::size_t s) { m_vectors.reserve(s); }
+
+    Basis() { }
+    Basis(const Point& p) : m_origin(p) { }
+    Basis(const Point& p, const std::vector<Vector>& vectors)
+      : m_origin(p), m_vectors(vectors)
+    { }
+  };
+
+  template <typename K>
+  Basis<K> compute_gram_schmidt_basis(Basis<K> const& input_basis, K const& k)
+  {
+    typedef Basis<K>                  Basis;
     typedef typename K::Vector_d      Vector;
-    typedef std::vector<Vector>       Basis;
 
     // Kernel functors
-    typename K::Squared_length_d        sqlen      = k.squared_length_d_object();
     typename K::Scaled_vector_d         scaled_vec = k.scaled_vector_d_object();
     typename K::Scalar_product_d        inner_pdct = k.scalar_product_d_object();
     typename K::Difference_of_vectors_d diff_vec   = k.difference_of_vectors_d_object();
 
-    Basis output_basis;
+    Basis output_basis(input_basis.origin());
 
     typename Basis::const_iterator inb_it = input_basis.begin();
     typename Basis::const_iterator inb_it_end = input_basis.end();
@@ -199,16 +223,18 @@ namespace Tangential_complex_ {
 
   // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
   // Q: vertices which are common neighbors of all vertices of P
-  template <typename K, typename Point_range, typename Indexed_point_range,
-            typename Indexed_point_range_2, typename Vector_range>
+  template <typename K, typename Point_range, typename Weight_range,
+            typename Indexed_point_range, typename Indexed_point_range_2,
+            typename Basis>
   bool does_voronoi_face_and_alpha_tangent_subspace_intersect(
-    Point_range const& all_points,
-    std::size_t center_pt_index,
-    Indexed_point_range const& P,
-    Indexed_point_range_2 const& Q,
-    Vector_range const& orthogonal_subspace_basis,
-    typename K::FT alpha,
-    K const& k)
+      Point_range const& all_points,
+      Weight_range const& all_weights,
+      std::size_t center_pt_index,
+      Indexed_point_range const& P,
+      Indexed_point_range_2 const& Q,
+      Basis const& orthogonal_subspace_basis,
+      typename K::FT alpha,
+      K const& k)
   {
     // Notations:
     // Fv: Voronoi k-face
@@ -220,9 +246,10 @@ namespace Tangential_complex_ {
 
     typename K::Scalar_product_d scalar_pdct = k.scalar_product_d_object();
     typename K::Point_to_vector_d pt_to_vec  = k.point_to_vector_d_object();
+    typename K::Compute_coordinate_d coord = k.compute_coordinate_d_object();
 
     Point const& center_pt = all_points[center_pt_index];
-    const int ambient_dim = k.point_dimension_d_object()(center_pt);
+    int const ambient_dim = k.point_dimension_d_object()(center_pt);
 
     std::size_t card_P = P.size();
     std::size_t card_Q = Q.size();
@@ -239,21 +266,24 @@ namespace Tangential_complex_ {
     int current_row = 0;
 
     //=========== First set of equations ===========
-    // For point pi in P
-    //   2(p0 - pi).x = p0^2 - pi^2
+    // For points pi in P
+    //   2(p0 - pi).x = p0^2 - w0 - pi^2 + wi
     Point const& p0 = center_pt;
+    FT const w0 = all_weights[center_pt_index];
     FT p0_dot_p0 = scalar_pdct(pt_to_vec(p0), pt_to_vec(p0));
+
     for (typename Indexed_point_range::const_iterator it_p = P.begin(),
                                                       it_p_end = P.end() ;
          it_p != it_p_end ; ++it_p)
     {
       Point const& pi = all_points[*it_p];
+      FT const wi = all_weights[*it_p];
 
       for (int k = 0 ; k < ambient_dim ; ++k)
-        lp.set_a(k, current_row, 2*(p0[k] - pi[k]));
+        lp.set_a(k, current_row, 2*(coord(p0, k) - coord(pi, k)));
 
-      lp.set_b(current_row,
-               p0_dot_p0 - scalar_pdct(pt_to_vec(pi), pt_to_vec(pi)));
+      FT pi_dot_pi = scalar_pdct(pt_to_vec(pi), pt_to_vec(pi));
+      lp.set_b(current_row, p0_dot_p0 - pi_dot_pi - w0 + wi);
       lp.set_r(current_row, CGAL::EQUAL);
 
       ++current_row;
@@ -264,16 +294,18 @@ namespace Tangential_complex_ {
     for ( ; !pi_pj.finished() ; ++pi_pj)
     {
       Point const& pi = P[pi_pj[0]];
+      FT wi = all_weights[pi_pj[0]];
       Point const& pj = P[pi_pj[1]];
+      FT wj = all_weights[pi_pj[1]];
 
       for (int k = 0 ; k < ambient_dim ; ++k)
       {
-        FT a = 2*(pi[k] + pj[k]);
+        FT a = 2*(coord(pi, k) + coord(pj, k));
         lp.set_a(k, current_row    , -a);
         lp.set_a(k, current_row + 1,  a);
       }
 
-      FT b = scalar_pdct(pi, pi) - scalar_pdct(pj, pj);
+      FT b = scalar_pdct(pi, pi) - wi - scalar_pdct(pj, pj) + wj;
       lp.set_b(current_row    , -b);
       lp.set_b(current_row + 1,  b);
 
@@ -282,27 +314,29 @@ namespace Tangential_complex_ {
 
     //=========== Second set of equations ===========
     // For each point qi in Q
-    //  2(qi - p0).x <= qi^2 - p0^2
+    //  2(qi - p0).x <= qi^2 - wi - p0^2 + w0
     for (typename Indexed_point_range_2::const_iterator it_q = Q.begin(),
                                                         it_q_end = Q.end() ;
          it_q != it_q_end ; ++it_q)
     {
       Point const& qi = all_points[*it_q];
+      FT const wi = all_weights[*it_q];
 
       for (int k = 0 ; k < ambient_dim ; ++k)
-        lp.set_a(k, current_row, 2*(qi[k] - p0[k]));
+        lp.set_a(k, current_row, 2*(coord(qi, k) - coord(p0, k)));
 
-      lp.set_b(current_row,
-               scalar_pdct(pt_to_vec(qi), pt_to_vec(qi)) - p0_dot_p0);
+      FT qi_dot_qi = scalar_pdct(pt_to_vec(qi), pt_to_vec(qi));
+      lp.set_b(current_row, qi_dot_qi - wi - p0_dot_p0 + w0);
 
       ++current_row;
     }
 
     //=========== Third set of equations ===========
-    // For each vector of OSB
+    // For each vector bi of OSB, (x-p).bi <= alpha and >= -alpha
+    // p is the origin of the basis
     //     bi.x <=  bi.p + alpha
     //    -bi.x <= -bi.p + alpha
-    for (typename Vector_range::const_iterator it_osb =
+    for (typename Basis::const_iterator it_osb =
          orthogonal_subspace_basis.begin(),
          it_osb_end = orthogonal_subspace_basis.end() ;
          it_osb != it_osb_end ; ++it_osb)
@@ -315,7 +349,8 @@ namespace Tangential_complex_ {
         lp.set_a(k, current_row + 1, -bi[k]);
       }
 
-      FT bi_dot_p = scalar_pdct(bi, pt_to_vec(center_pt));
+      Point const& basis_origin = orthogonal_subspace_basis.origin();
+      FT bi_dot_p = scalar_pdct(bi, pt_to_vec(basis_origin));
       lp.set_b(current_row    ,  bi_dot_p + alpha);
       lp.set_b(current_row + 1, -bi_dot_p + alpha);
 

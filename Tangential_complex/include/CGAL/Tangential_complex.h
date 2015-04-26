@@ -128,19 +128,17 @@ class Tangential_complex
   typedef typename Triangulation::Full_cell_handle    Tr_full_cell_handle;
   typedef typename Tr_traits::Vector_d                Tr_vector;
 
-  typedef std::vector<Vector>                         Tangent_space_basis;
-  typedef std::vector<Vector>                         Orthogonal_space_basis;
+  typedef Basis<Kernel>                               Tangent_space_basis;
+  typedef Basis<Kernel>                               Orthogonal_space_basis;
 
   typedef std::vector<Point>                          Points;
-  typedef std::vector<FT>                             Weights;
-
 #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
   typedef tbb::mutex                                  Mutex_for_perturb;
   typedef Vector                                      Translation_for_perturb;
-  typedef std::vector<Atomic_wrapper<FT> >            Weights_for_perturb;
+  typedef std::vector<Atomic_wrapper<FT> >            Weights;
 #else
   typedef Vector                                      Translation_for_perturb;
-  typedef std::vector<FT>                             Weights_for_perturb;
+  typedef std::vector<FT>                             Weights;
 #endif
   typedef std::vector<Translation_for_perturb>        Translations_for_perturb;
 
@@ -186,8 +184,10 @@ class Tangential_complex
     Tr_vertex_handle m_center_vertex;
   };
 
+public:
   typedef typename std::vector<Tangent_space_basis>     TS_container;
   typedef typename std::vector<Orthogonal_space_basis>  OS_container;
+private:
   typedef typename std::vector<Tr_and_VH>               Tr_container;
   typedef typename std::vector<Vector>                  Vectors;
 
@@ -226,17 +226,23 @@ public:
     m_half_sparsity(0.5*sparsity),
     m_sq_half_sparsity(m_half_sparsity*m_half_sparsity),
     m_ambient_dim(k.point_dimension_d_object()(*first)),
-    m_points(first, last)
+    m_points(first, last),
+    m_weights(m_points.size(), FT(0))
 # if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_PERTURB_POSITION) \
   && defined(CGAL_TC_GLOBAL_REFRESH)
     , m_p_perturb_mutexes(NULL)
 # endif
     , m_points_ds(m_points)
+    , m_are_tangent_spaces_computed(m_points.size(), false)
+    , m_tangent_spaces(m_points.size(), Tangent_space_basis())
+#if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+    , m_orth_spaces(m_points.size(), Orthogonal_space_basis())
+#endif
 #ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
     , m_points_for_tse(first_for_tse, last_for_tse)
     , m_points_ds_for_tse(m_points_for_tse)
 #endif
-  {}
+  { }
 
   /// Destructor
   ~Tangential_complex()
@@ -261,6 +267,35 @@ public:
     return m_points.size();
   }
 
+  void set_weights(std::vector<FT> const& weights)
+  {
+    m_weights = weights;
+  }
+
+  void set_tangent_planes(const TS_container& tangent_spaces
+#if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+                        , const OS_container& orthogonal_spaces
+#endif
+                         )
+  {
+#ifdef CGAL_TC_PERTURB_TANGENT_SPACE
+    std::cerr << "Cannot use CGAL_TC_PERTURB_TANGENT_SPACE and set "
+              << " tangent spaces manually at the same time" << std::endl;
+    std::exit(EXIT_FAILURE);
+#endif
+    CGAL_assertion(m_points.size() == tangent_spaces.size()
+#if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+                   && m_points.size() == orthogonal_spaces.size()
+#endif
+                   );
+    m_tangent_spaces = tangent_spaces;
+#if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+    m_orth_spaces = orthogonal_spaces;
+#endif
+    for(std::size_t i=0; i<m_points.size(); ++i)
+      m_are_tangent_spaces_computed[i] = true;
+  }
+
   void compute_tangential_complex()
   {
 #if defined(CGAL_TC_PROFILING) && defined(CGAL_LINKED_WITH_TBB)
@@ -276,13 +311,6 @@ public:
     m_stars.resize(m_points.size());
 #ifdef CGAL_LINKED_WITH_TBB
     //m_tr_mutexes.resize(m_points.size());
-#endif
-    m_tangent_spaces.resize(m_points.size());
-#if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
-    m_orth_spaces.resize(m_points.size());
-#endif
-#ifdef CGAL_TC_PERTURB_WEIGHT
-    m_weights.resize(m_points.size(), FT(0));
 #endif
 #ifdef CGAL_TC_PERTURB_POSITION
     m_translations.resize(m_points.size(),
@@ -375,20 +403,17 @@ public:
     std::cout << "\n";
   }
 
-
   void refresh_tangential_complex()
   {
 #ifdef CGAL_TC_PROFILING
     Wall_clock_timer t;
 #endif
-
 #ifdef CGAL_LINKED_WITH_TBB
     // Parallel
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
       tbb::parallel_for(tbb::blocked_range<size_t>(0, m_points.size()),
-        Compute_tangent_triangulation(*this,
-          true) //tangent_spaces_are_already_computed
+        Compute_tangent_triangulation(*this)
       );
     }
     // Sequential
@@ -398,15 +423,12 @@ public:
       for (std::size_t i = 0 ; i < m_points.size() ; ++i)
       {
 #ifdef CGAL_ALPHA_TC
-        compute_alpha_tangent_triangulation(i, ALPHA,
-          true); // tangent_spaces_are_already_computed
+        compute_alpha_tangent_triangulation(i, ALPHA);
 #else
-        compute_tangent_triangulation(i,
-          true); // tangent_spaces_are_already_computed
+        compute_tangent_triangulation(i);
 #endif
       }
     }
-
 
 #ifdef CGAL_TC_PROFILING
     std::cerr << "Tangential complex refreshed in " << t.elapsed()
@@ -951,22 +973,18 @@ private:
   class Compute_tangent_triangulation
   {
     Tangential_complex & m_tc;
-    bool m_tangent_spaces_are_already_computed;
 
   public:
     // Constructor
     Compute_tangent_triangulation(
-      Tangential_complex &tc, bool tangent_spaces_are_already_computed = false)
-    : m_tc(tc),
-      m_tangent_spaces_are_already_computed(tangent_spaces_are_already_computed)
-    {}
+      Tangential_complex &tc)
+    : m_tc(tc)
+    { }
 
     // Constructor
     Compute_tangent_triangulation(const Compute_tangent_triangulation &ctt)
-    : m_tc(ctt.m_tc),
-      m_tangent_spaces_are_already_computed(
-        ctt.m_tangent_spaces_are_already_computed)
-    {}
+    : m_tc(ctt.m_tc)
+    { }
 
     // operator()
     void operator()( const tbb::blocked_range<size_t>& r ) const
@@ -974,20 +992,16 @@ private:
       for( size_t i = r.begin() ; i != r.end() ; ++i)
       {
 #ifdef CGAL_ALPHA_TC
-        m_tc.compute_alpha_tangent_triangulation(
-          i, ALPHA, m_tangent_spaces_are_already_computed);
+        m_tc.compute_alpha_tangent_triangulation(i, ALPHA);
 #else
-        m_tc.compute_tangent_triangulation(
-          i, m_tangent_spaces_are_already_computed);
+        m_tc.compute_tangent_triangulation(i);
 #endif
       }
     }
   };
 #endif // CGAL_LINKED_WITH_TBB
 
-  void compute_tangent_triangulation(
-    std::size_t i, bool tangent_spaces_are_already_computed = false,
-    bool verbose = false)
+  void compute_tangent_triangulation(std::size_t i, bool verbose = false)
   {
     if (verbose)
       std::cerr << "** Computing tangent tri #" << i << " **" << std::endl;
@@ -1012,23 +1026,28 @@ private:
     const Point center_pt = compute_perturbed_point(i);
 
     // Estimate the tangent space
-    if (!tangent_spaces_are_already_computed)
+    if (!m_are_tangent_spaces_computed[i])
     {
 #if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
       m_tangent_spaces[i] =
-        compute_tangent_space(center_pt, true, &m_orth_spaces[i]);
+        compute_tangent_space(center_pt, i, true/*normalize*/, &m_orth_spaces[i]);
 #else
-      m_tangent_spaces[i] = compute_tangent_space(center_pt);
+      m_tangent_spaces[i] = compute_tangent_space(center_pt, i);
 #endif
     }
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
     else if (m_perturb_tangent_space[i])
     {
 #if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
-      m_tangent_spaces[i] =
-        compute_tangent_space(center_pt, true, &m_orth_spaces[i], true);
+      m_tangent_spaces[i] = compute_tangent_space(center_pt, i,
+                                                  true /*normalize_basis*/,
+                                                  &m_orth_spaces[i],
+                                                  true /*perturb*/);
 #else
-      m_tangent_spaces[i] = compute_tangent_space(center_pt, true, NULL, true);
+      m_tangent_spaces[i] = compute_tangent_space(center_pt, i,
+                                                  true /*normalize_basis*/,
+                                                  NULL /*ortho basis*/,
+                                                  true /*perturb*/);
 #endif
       m_perturb_tangent_space[i] = false;
     }
@@ -1040,15 +1059,11 @@ private:
     //***************************************************
 
     // Insert p
-    Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
-      local_tr_traits.construct_point_d_object()(m_intrinsic_dimension, ORIGIN),
-#ifdef CGAL_TC_PERTURB_WEIGHT
-      m_weights[i]
-#else
-      0
-#endif
-    );
-    center_vertex = local_tr.insert(wp);
+    const Weighted_point wp = compute_perturbed_weighted_point(i);
+    Tr_point proj_wp = project_point_and_compute_weight(wp, m_tangent_spaces[i],
+                                                        local_tr_traits);
+
+    center_vertex = local_tr.insert(proj_wp);
     center_vertex->data() = i;
     if (verbose)
       std::cerr << "* Inserted point #" << i << std::endl;
@@ -1087,7 +1102,7 @@ private:
           break;
 
         Tr_point proj_pt = project_point_and_compute_weight(
-          neighbor_pt, neighbor_weight, center_pt, m_tangent_spaces[i],
+          neighbor_pt, neighbor_weight, m_tangent_spaces[i],
           local_tr_traits);
 
         Tr_vertex_handle vh = local_tr.insert_if_in_star(proj_pt, center_vertex);
@@ -1193,10 +1208,9 @@ private:
     //CGAL::export_triangulation_to_off(off_stream_tr, local_tr);
   }
 
-
-  void compute_alpha_tangent_triangulation(
-    std::size_t i, FT alpha, bool tangent_spaces_are_already_computed = false,
-    bool verbose = false)
+#ifdef CGAL_ALPHA_TC
+  void compute_alpha_tangent_triangulation(std::size_t i, FT alpha,
+                                           bool verbose = false)
   {
     if (verbose)
       std::cerr << "** Computing alpha tangent tri #"
@@ -1228,24 +1242,16 @@ private:
     const Point &center_pt = m_points[i];
 
     // Estimate the tangent space
-    if (!tangent_spaces_are_already_computed)
+    if (!m_are_tangent_spaces_computed[i])
     {
-#if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
       m_tangent_spaces[i] =
-        compute_tangent_space(center_pt, true, &m_orth_spaces[i]);
-#else
-      m_tangent_spaces[i] = compute_tangent_space(center_pt);
-#endif
+        compute_tangent_space(center_pt, i, true /*normalize*/, &m_orth_spaces[i]);
     }
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
     else if (m_perturb_tangent_space[i])
     {
-#if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
       m_tangent_spaces[i] =
-        compute_tangent_space(center_pt, true, &m_orth_spaces[i], true);
-#else
-      m_tangent_spaces[i] = compute_tangent_space(center_pt, true, NULL, true);
-#endif
+        compute_tangent_space(center_pt, i, true, &m_orth_spaces[i], true);
       m_perturb_tangent_space[i] = false;
     }
 #endif
@@ -1262,14 +1268,8 @@ private:
     Amb_RT local_amb_tr(m_ambient_dim);
 
     // Insert p
-    Weighted_point wp = m_k.construct_weighted_point_d_object()(
-      center_pt,
-#ifdef CGAL_TC_PERTURB_WEIGHT
-      m_weights[i]
-#else
-      0
-#endif
-    );
+    Weighted_point wp = m_k.construct_weighted_point_d_object()(center_pt,
+                                                                m_weights[i]);
     Amb_RT_VH center_vertex = local_amb_tr.insert(wp);
     center_vertex->data() = i;
     if (verbose)
@@ -1491,7 +1491,8 @@ next_face:
 #endif
         bool does_intersect =
           does_voronoi_face_and_alpha_tangent_subspace_intersect(
-            m_points, i, P, curr_neighbors, m_orth_spaces[i], alpha, m_k);
+              m_points, m_weights, i, P, curr_neighbors,
+              m_orth_spaces[i], alpha, m_k);
 #if defined(CGAL_TC_PROFILING) && defined(CGAL_LINKED_WITH_TBB)
         ttt_intersect += 1000000*t_inters.elapsed();
 #endif
@@ -1534,9 +1535,11 @@ next_face:
     //std::ofstream off_stream_tr(sstr.str());
     //CGAL::export_triangulation_to_off(off_stream_tr, local_amb_tr);
   }
+#endif // CGAL_ALPHA_TC
 
   Tangent_space_basis compute_tangent_space(
       const Point &p
+    , const std::size_t i
     , bool normalize_basis = true
     , Orthogonal_space_basis *p_orth_space_basis = NULL
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
@@ -1593,9 +1596,10 @@ next_face:
     Eigen::MatrixXd cov = centered.adjoint() * centered;
     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(cov);
 
+    Tangent_space_basis tsb(p); // p = compute_perturbed_point(i) here
+
     // The eigenvectors are sorted in increasing order of their corresponding
     // eigenvalues
-    Tangent_space_basis ts;
     for (int i = m_ambient_dim - 1 ;
          i >= m_ambient_dim - m_intrinsic_dimension ;
          --i)
@@ -1605,11 +1609,11 @@ next_face:
         Vector v = constr_vec(m_ambient_dim,
                               eig.eigenvectors().col(i).data(),
                               eig.eigenvectors().col(i).data() + m_ambient_dim);
-        ts.push_back(normalize_vector(v, m_k));
+        tsb.push_back(normalize_vector(v, m_k));
       }
       else
       {
-        ts.push_back(constr_vec(
+        tsb.push_back(constr_vec(
           m_ambient_dim,
           eig.eigenvectors().col(i).data(),
           eig.eigenvectors().col(i).data() + m_ambient_dim));
@@ -1618,6 +1622,7 @@ next_face:
 
     if (p_orth_space_basis)
     {
+      p_orth_space_basis->origin() = p;
       for (int i = m_ambient_dim - m_intrinsic_dimension - 1 ;
            i >= 0 ;
            --i)
@@ -1639,14 +1644,15 @@ next_face:
       }
     }
 
+    m_are_tangent_spaces_computed[i] = true;
+
     //*************************************************************************
 
     //Vector n = m_k.point_to_vector_d_object()(p);
     //n = scaled_vec(n, FT(1)/sqrt(sqlen(n)));
     //std::cerr << "IP = " << inner_pdct(n, ts[0]) << " & " << inner_pdct(n, ts[1]) << std::endl;
 
-    return ts;
-
+    return tsb;
 
     // CJTODO: this is only for a sphere in R^3
     /*double tt1[3] = {-p[1] - p[2], p[0], p[0]};
@@ -1677,7 +1683,8 @@ next_face:
     //ts.reserve(m_intrinsic_dimension);
     //ts.push_back(diff_vec(t1, scaled_vec(n, inner_pdct(t1, n))));
     //ts.push_back(diff_vec(t2, scaled_vec(n, inner_pdct(t2, n))));
-    //return compute_gram_schmidt_basis(ts, m_k);
+    //ts = compute_gram_schmidt_basis(ts, m_k);
+    //return ts;
     */
   }
 
@@ -1699,11 +1706,7 @@ next_face:
 #else
     p = m_points[pt_idx];
 #endif
-#ifdef CGAL_TC_PERTURB_WEIGHT
     w = m_weights[pt_idx];
-#else
-    w = 0;
-#endif
   }
 
   Weighted_point compute_perturbed_weighted_point(std::size_t pt_idx)
@@ -1717,16 +1720,12 @@ next_face:
 #else
       m_points[pt_idx],
 #endif
-#ifdef CGAL_TC_PERTURB_WEIGHT
       m_weights[pt_idx]);
-#else
-      0);
-#endif
 
     return wp;
   }
 
-  Point unproject_point(const Tr_point &p, const Point &origin,
+  Point unproject_point(const Tr_point &p,
                         const Tangent_space_basis &tsb,
                         const Tr_traits &tr_traits)
   {
@@ -1737,21 +1736,18 @@ next_face:
     typename Tr_traits::Compute_coordinate_d coord =
       tr_traits.compute_coordinate_d_object();
 
-    Point global_point = origin;
+    Point global_point = tsb.origin();
     for (int i = 0 ; i < m_intrinsic_dimension ; ++i)
-    {
-      global_point = k_transl(
-        global_point,
-        k_scaled_vec(tsb[i], coord(p, i)));
-    }
+      global_point = k_transl(global_point,
+                              k_scaled_vec(tsb[i], coord(p, i)));
 
     return global_point;
   }
 
   // Project the point in the tangent space
   // The weight will be the squared distance between p and the projection of p
-  Tr_bare_point project_point(const Point &p, const Point &origin,
-                         const Tangent_space_basis &ts) const
+  Tr_bare_point project_point(const Point &p,
+                              const Tangent_space_basis &tsb) const
   {
     typename Kernel::Scalar_product_d inner_pdct =
       m_k.scalar_product_d_object();
@@ -1763,9 +1759,9 @@ next_face:
     coords.reserve(m_intrinsic_dimension);
     for (std::size_t i = 0 ; i < m_intrinsic_dimension ; ++i)
     {
-      // Compute the inner product p * ts[i]
-      Vector v = diff_points(p, origin);
-      FT coord = inner_pdct(v, ts[i]);
+      // Local coords are given by the inner product with the vectors of tsb
+      Vector v = diff_points(p, tsb.origin());
+      FT coord = inner_pdct(v, tsb[i]);
       coords.push_back(coord);
     }
 
@@ -1774,21 +1770,21 @@ next_face:
 
   // Project the point in the tangent space
   // The weight will be the squared distance between p and the projection of p
-  Tr_point project_point_and_compute_weight(
-    const Weighted_point &wp, const Point &origin, const Tangent_space_basis &ts,
-    const Tr_traits &tr_traits) const
+  Tr_point project_point_and_compute_weight(const Weighted_point &wp,
+                                            const Tangent_space_basis &tsb,
+                                            const Tr_traits &tr_traits) const
   {
     typename Kernel::Point_drop_weight_d k_drop_w =
       m_k.point_drop_weight_d_object();
     typename Kernel::Point_weight_d k_point_weight =
       m_k.point_weight_d_object();
     return project_point_and_compute_weight(
-      k_drop_w(wp), k_point_weight(wp), origin, ts, tr_traits);
+      k_drop_w(wp), k_point_weight(wp), tsb, tr_traits);
   }
 
-  Tr_point project_point_and_compute_weight(
-    const Point &p, FT w, const Point &origin, const Tangent_space_basis &ts,
-    const Tr_traits &tr_traits) const
+  Tr_point project_point_and_compute_weight(const Point &p, const FT w,
+                                            const Tangent_space_basis &tsb,
+                                            const Tr_traits &tr_traits) const
   {
     const int point_dim = m_k.point_dimension_d_object()(p);
     typename Kernel::Scalar_product_d inner_pdct =
@@ -1798,21 +1794,21 @@ next_face:
     typename Kernel::Construct_cartesian_const_iterator_d ccci =
       m_k.construct_cartesian_const_iterator_d_object();
 
-    Vector v = diff_points(p, origin);
+    Vector v = diff_points(p, tsb.origin());
 
     std::vector<FT> coords;
     // Ambiant-space coords of the projected point
-    std::vector<FT> p_proj(ccci(origin), ccci(origin, 0));
+    std::vector<FT> p_proj(ccci(tsb.origin()), ccci(tsb.origin(), 0));
     coords.reserve(m_intrinsic_dimension);
     for (std::size_t i = 0 ; i < m_intrinsic_dimension ; ++i)
     {
-      // Compute the inner product p * ts[i]
-      FT coord = inner_pdct(v, ts[i]);
+      // Local coords are given by the inner product with the vectors of tsb
+      FT coord = inner_pdct(v, tsb[i]);
       coords.push_back(coord);
 
       // p_proj += coord * v;
       for (int j = 0 ; j < point_dim ; ++j)
-        p_proj[j] += coord * ts[i][j];
+        p_proj[j] += coord * tsb[i][j];
     }
 
     Point projected_pt(point_dim, p_proj.begin(), p_proj.end());
@@ -1903,7 +1899,7 @@ next_face:
   {
     // Perturb the weight?
 #ifdef CGAL_TC_PERTURB_WEIGHT
-    m_weights[point_idx] = m_random_generator.get_double(0., m_sq_half_sparsity);
+    m_weights[point_idx] += m_random_generator.get_double(0., m_sq_half_sparsity);
 #endif
 
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
@@ -2105,15 +2101,9 @@ next_face:
         // space. Could be optimized since it's already been computed before.
         for ( ; it_point_idx != it_point_idx_end ; ++it_point_idx)
         {
-#ifdef CGAL_TC_PERTURB_WEIGHT
-          FT w = m_weights[*it_point_idx];
-#else
-          FT w = 0;
-#endif
           simplex_pts.push_back(project_point_and_compute_weight(
-            m_points[*it_point_idx], w,
-            m_points[tr_index], m_tangent_spaces[tr_index],
-            local_tr_traits));
+            m_points[*it_point_idx], m_weights[*it_point_idx],
+              m_tangent_spaces[tr_index], local_tr_traits));
         }
 
         typename Tr_traits::Power_center_d power_center =
@@ -2123,7 +2113,6 @@ next_face:
 
         Point global_center = unproject_point(
           power_center(simplex_pts.begin(), simplex_pts.end()),
-          m_points[tr_index],
           m_tangent_spaces[tr_index],
           local_tr_traits);
 
@@ -2317,7 +2306,6 @@ next_face:
     // No need to lock the mutex here since this will not be called while
     // other threads are perturbing the positions
     const Point pt_p = compute_perturbed_point(p_idx);
-    const Point pt_q = compute_perturbed_point(q_idx);
 
     std::set<std::size_t>::const_iterator it_point_idx =
                                                   inconsistent_simplex.begin();
@@ -2331,9 +2319,9 @@ next_face:
       // No need to lock the Mutex_for_perturb here since this will not be
       // called while other threads are perturbing the positions
       simplex_pts_in_Tp.push_back(project_point_and_compute_weight(
-        wp, pt_p, m_tangent_spaces[p_idx], q_tr_traits));
+        wp, m_tangent_spaces[p_idx], q_tr_traits));
       simplex_pts_in_Tq.push_back(project_point_and_compute_weight(
-        wp, pt_q, m_tangent_spaces[q_idx], q_tr_traits));
+        wp, m_tangent_spaces[q_idx], q_tr_traits));
     }
 
     Tr_point Cp = tr_power_center(
@@ -2352,13 +2340,12 @@ next_face:
 #endif
 
     Weighted_point global_Cp = k_constr_wp(
-      unproject_point(Cp, pt_p, m_tangent_spaces[p_idx], q_tr_traits),
+      unproject_point(Cp, m_tangent_spaces[p_idx], q_tr_traits),
       circumsphere_sqradius_p);
 
     Weighted_point global_Cq = k_constr_wp(
-      unproject_point(Cq, pt_q, m_tangent_spaces[q_idx], q_tr_traits),
+      unproject_point(Cq, m_tangent_spaces[q_idx], q_tr_traits),
       circumsphere_sqradius_q);
-
 
     // CJTODO TEMP ====================
     /*{
@@ -2422,7 +2409,7 @@ next_face:
         Orientation o = orient(simplex_pts_in_Tq.begin(), simplex_pts_in_Tq.end());
         auto p = project_point_and_compute_weight(
           compute_perturbed_weighted_point(neighbor_point_idx),
-          pt_q, m_tangent_spaces[q_idx], q_tr_traits);
+          m_tangent_spaces[q_idx], q_tr_traits);
         auto sid = (o == NEGATIVE ?
           side(simplex_pts_in_Tq.rbegin(), simplex_pts_in_Tq.rend(), p)
           : side(simplex_pts_in_Tq.begin(), simplex_pts_in_Tq.end(), p));
@@ -2446,7 +2433,7 @@ next_face:
     // CJTODO TEMP DEBUG
     /*if (inside_pt_indices.empty())
     {
-      //compute_tangent_triangulation(q_idx, true, true);
+      //compute_tangent_triangulation(q_idx, true);
       std::cerr << "Error: inside_pt_indices.empty()\n";
       std::cerr << "Stars:\n";
       for (auto s : m_stars[q_idx])
@@ -2955,9 +2942,7 @@ private:
   const int                 m_ambient_dim;
 
   Points                    m_points;
-#ifdef CGAL_TC_PERTURB_WEIGHT
-  Weights_for_perturb       m_weights;
-#endif
+  Weights                   m_weights;
 #ifdef CGAL_TC_PERTURB_POSITION
   Translations_for_perturb  m_translations;
 # if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
@@ -2969,6 +2954,7 @@ private:
 #endif
 
   Points_ds                 m_points_ds;
+  mutable std::vector<bool> m_are_tangent_spaces_computed;
   TS_container              m_tangent_spaces;
 #if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
   OS_container              m_orth_spaces;
