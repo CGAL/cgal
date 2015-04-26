@@ -35,7 +35,7 @@ typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag>              Kernel;
 typedef Kernel::FT                                              FT;
 typedef Kernel::Point_d                                         Point;
 typedef CGAL::Tangential_complex<
-  Kernel, CGAL::Dynamic_dimension_tag, 
+  Kernel, CGAL::Dynamic_dimension_tag,
   CGAL::Parallel_tag>                                           TC;
 
 class XML_perf_data
@@ -248,18 +248,18 @@ void make_tc(std::vector<Point> &points,
     slash_index, input_name_stripped.find_last_of('.') - slash_index);
 
   int ambient_dim = k.point_dimension_d_object()(*points.begin());
-    
+
 #ifdef CGAL_TC_PROFILING
   Wall_clock_timer t_gen;
 #endif
-  
+
 #ifdef CGAL_TC_PROFILING
   std::cerr << "Point set generated in " << t_gen.elapsed()
             << " seconds." << std::endl;
 #endif
-  
+
   CGAL_TC_SET_PERFORMANCE_DATA("Num_points_in_input", points.size());
-  
+
 #ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
   std::vector<Point> points_not_sparse = points;
 #endif
@@ -277,7 +277,7 @@ void make_tc(std::vector<Point> &points,
 
   CGAL_TC_SET_PERFORMANCE_DATA("Sparsity", sparsity);
   CGAL_TC_SET_PERFORMANCE_DATA("Num_points", points.size());
-  
+
   //===========================================================================
   // Compute Tangential Complex
   //===========================================================================
@@ -293,7 +293,7 @@ void make_tc(std::vector<Point> &points,
 
   tc.compute_tangential_complex();
   double computation_time = t.elapsed(); t.reset();
-    
+
   //===========================================================================
   // CJTODO TEMP
   //===========================================================================
@@ -364,7 +364,7 @@ void make_tc(std::vector<Point> &points,
                                  best_num_inconsistent_local_tr);
     CGAL_TC_SET_PERFORMANCE_DATA("Final_num_inconsistent_local_tr", 
                                  final_num_inconsistent_local_tr);
-  
+
     //=========================================================================
     // Export to OFF
     //=========================================================================
@@ -379,7 +379,7 @@ void make_tc(std::vector<Point> &points,
     CGAL_TC_SET_PERFORMANCE_DATA("Best_num_inconsistent_local_tr", "N/A");
     CGAL_TC_SET_PERFORMANCE_DATA("Final_num_inconsistent_local_tr", "N/A");
   }
-  
+
   int max_dim = -1;
   double fix2_time = -1;
   double export_after_fix2_time = -1.;
@@ -431,7 +431,7 @@ void make_tc(std::vector<Point> &points,
   //===========================================================================
   if (collapse)
     complex.collapse(max_dim);
-  
+
   //===========================================================================
   // Is the result a pure pseudomanifold?
   //===========================================================================
@@ -480,8 +480,8 @@ void make_tc(std::vector<Point> &points,
     << "    - Init + kd-tree = " << init_time << std::endl
     << "    - TC computation = " << computation_time << std::endl
     << "  * Export to OFF (before perturb): " << export_before_time << std::endl
-    << "  * Fix inconsistencies 1: " << perturb_time 
-    <<      " (" << num_perturb_steps << " steps) ==> " 
+    << "  * Fix inconsistencies 1: " << perturb_time
+    <<      " (" << num_perturb_steps << " steps) ==> "
     <<      (perturb_ret == CGAL::TC_FIXED ? "FIXED" : "NOT fixed") << std::endl
     << "  * Fix inconsistencies 2: " << fix2_time << std::endl
     << "  * Export to OFF (after perturb): " << export_after_perturb_time << std::endl
@@ -525,7 +525,7 @@ int main()
   int seed = CGAL::default_random.get_int(0, 1<<30);
   CGAL::default_random = CGAL::Random();
   std::cerr << "Random seed = " << seed << std::endl;
-  
+
   std::ifstream script_file;
   script_file.open(BENCHMARK_SCRIPT_FILENAME);
   // Script?
@@ -619,13 +619,13 @@ int main()
 #endif
 
             std::cerr << std::endl << "TC #" << i << "..." << std::endl;
-            
+
             std::vector<Point> points;
 
             if (input == "generate_moment_curve")
             {
               points = generate_points_on_moment_curve<Kernel>(
-                num_points, ambient_dim, 
+                num_points, ambient_dim,
                 std::atof(param1.c_str()), std::atof(param2.c_str()));
             }
             else if (input == "generate_plane")
@@ -635,7 +635,7 @@ int main()
             else if (input == "generate_sphere_d")
             {
               points = generate_points_on_sphere_d<Kernel>(
-                num_points, ambient_dim, 
+                num_points, ambient_dim,
                 std::atof(param1.c_str()),
                 std::atof(param2.c_str()));
             }
@@ -665,12 +665,12 @@ int main()
 
             if (!points.empty())
             {
-              make_tc(points, intrinsic_dim, sparsity, 
+              make_tc(points, intrinsic_dim, sparsity,
                       perturb=='Y', add_high_dim_simpl=='Y', collapse=='Y',
                       time_limit_for_perturb, input.c_str());
 
               std::cerr << "TC #" << i++ << " done." << std::endl;
-              std::cerr << std::endl << "---------------------------------" 
+              std::cerr << std::endl << "---------------------------------"
                         << std::endl << std::endl;
             }
             else

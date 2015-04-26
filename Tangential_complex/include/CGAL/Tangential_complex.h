@@ -94,8 +94,8 @@ private:
 
 /// The class Tangential_complex represents a tangential complex
 template <
-  typename Kernel,
-  typename DimensionTag,
+  typename Kernel, // ambiant dimension
+  typename DimensionTag, // intrinsic dimension
   typename Concurrency_tag = CGAL::Parallel_tag,
   typename Tr = Regular_triangulation
   <
@@ -209,7 +209,6 @@ private:
   }
 
 public:
-
   typedef Tangential_complex_::Simplicial_complex     Simplicial_complex;
 
   /// Constructor for a range of points
@@ -366,10 +365,8 @@ public:
     for ( ; it_p != it_p_end ; ++it_p)
     {
       const Point &p = *it_p;
-  
-      KNS_range kns_range = m_points_ds.query_ANN(
-        p, NUM_POINTS_FOR_PCA, false);
 
+      KNS_range kns_range = m_points_ds.query_ANN(p, NUM_POINTS_FOR_PCA, false);
       //******************************* PCA *************************************
 
       // One row = one point
@@ -388,7 +385,6 @@ public:
 
       // The eigenvectors are sorted in increasing order of their corresponding
       // eigenvalues
-      Tangent_space_basis ts;
       for (int i = 0 ; i < m_ambient_dim ; ++i)
         sum_eigen_values[i] += eig.eigenvalues()[i];
 
@@ -448,9 +444,6 @@ public:
       return TIME_LIMIT_REACHED;
 
     Wall_clock_timer t;
-
-    typename Kernel::Point_drop_weight_d drop_w =
-      m_k.point_drop_weight_d_object();
 
 #ifdef CGAL_TC_VERBOSE
     std::cerr << "Fixing inconsistencies..." << std::endl;
@@ -590,7 +583,6 @@ public:
     return TC_FIXED;
   }
 
-
   // Return a pair<num_simplices, num_inconsistent_simplices>
   std::pair<std::size_t, std::size_t> number_of_inconsistent_simplices(
 #ifdef CGAL_TC_VERBOSE
@@ -607,9 +599,6 @@ public:
     // For each triangulation
     for (std::size_t idx = 0 ; it_tr != it_tr_end ; ++it_tr, ++idx)
     {
-      Triangulation const& tr    = it_tr->tr();
-      Tr_vertex_handle center_vh = it_tr->center_vertex();
-
       // For each cell
       Star::const_iterator it_inc_simplex = m_stars[idx].begin();
       Star::const_iterator it_inc_simplex_end = m_stars[idx].end();
@@ -660,8 +649,6 @@ public:
     // For each triangulation
     for (std::size_t idx = 0 ; it_tr != it_tr_end ; ++it_tr, ++idx)
     {
-      Triangulation const& tr    = it_tr->tr();
-
       // For each cell of the star
       Star::const_iterator it_inc_simplex = m_stars[idx].begin();
       Star::const_iterator it_inc_simplex_end = m_stars[idx].end();
@@ -843,8 +830,7 @@ public:
 
       for (int dim = lowest_dim ; dim <= highest_dim ; ++dim)
       {
-        CGAL::Combination_enumerator<int> combi(
-          dim + 1, 0, m_ambient_dim + 1);
+        CGAL::Combination_enumerator<int> combi(dim + 1, 0, m_ambient_dim + 1);
 
         for ( ; !combi.finished() ; ++combi)
         {
@@ -1401,7 +1387,7 @@ private:
     // Fill faces_and_neighbors
     // Let's first take care of the D-faces
     typename std::vector<Amb_RT_FCH>::const_iterator it_c = incident_cells.begin();
-    typename std::vector<Amb_RT_FCH>::const_iterator it_c_end= incident_cells.end();
+    typename std::vector<Amb_RT_FCH>::const_iterator it_c_end = incident_cells.end();
     // For each cell
     for ( ; it_c != it_c_end ; ++it_c)
     {
@@ -1694,7 +1680,7 @@ next_face:
     return m_k.translated_point_d_object()(
       m_points[pt_idx], m_translations[pt_idx]);
 #else
-      return m_points[pt_idx];
+    return m_points[pt_idx];
 #endif
   }
 
@@ -1914,17 +1900,17 @@ next_face:
     CGAL::Random_points_on_sphere_d<Point>
       tr_point_on_sphere_generator(m_ambient_dim, 1);
     // Parallel
-#   if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
-    Vector transl = k_scaled_vec(k_pt_to_vec(
-      *tr_point_on_sphere_generator++), m_half_sparsity);
+#  if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
+    Vector transl = k_scaled_vec(k_pt_to_vec(*tr_point_on_sphere_generator++),
+                                 m_half_sparsity);
     m_p_perturb_mutexes[point_idx].lock();
     m_translations[point_idx] = transl;
     m_p_perturb_mutexes[point_idx].unlock();
     // Sequential
-#   else
+#  else
     m_translations[point_idx] = k_scaled_vec(k_pt_to_vec(
       *tr_point_on_sphere_generator++), m_half_sparsity);
-#   endif
+#  endif
 
 # else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
     const Tr_traits &local_tr_traits =
@@ -1954,14 +1940,14 @@ next_face:
       );
     }
     // Parallel
-#   if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
+#  if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
     m_p_perturb_mutexes[point_idx].lock();
     m_translations[point_idx] = global_transl;
     m_p_perturb_mutexes[point_idx].unlock();
     // Sequential
-#   else
+#  else
     m_translations[point_idx] = global_transl;
-#   endif
+#  endif
 
 # endif // CGAL_TC_PERTURB_POSITION_TANGENTIAL
 #endif // CGAL_TC_PERTURB_POSITION

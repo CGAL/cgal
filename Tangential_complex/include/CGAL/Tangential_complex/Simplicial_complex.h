@@ -119,7 +119,7 @@ public:
 #endif
     // We note k = max_simplex_dim - 1
     int k = max_simplex_dim - 1;
-    
+
     typedef Complex::iterator                         Simplex_iterator;
     typedef std::vector<Simplex_iterator>             Simplex_iterator_list;
     typedef std::map<Simplex, Simplex_iterator_list>  Cofaces_map;
@@ -127,9 +127,9 @@ public:
     // Create a map associating each non-maximal k-faces to the list of its
     // maximal cofaces
     Cofaces_map cofaces_map;
-    for (Complex::const_iterator it_simplex = m_complex.begin(), 
+    for (Complex::const_iterator it_simplex = m_complex.begin(),
                                  it_simplex_end = m_complex.end() ;
-         it_simplex != it_simplex_end ; 
+         it_simplex != it_simplex_end ;
          ++it_simplex)
     {
       if (it_simplex->size() > k + 1)
@@ -157,7 +157,7 @@ public:
       if (it_map_elt->second.size() == 1)
       {
         std::vector<Simplex> k_faces;
-        const Simplex_iterator_list::value_type &it_Cf = 
+        const Simplex_iterator_list::value_type &it_Cf =
           *it_map_elt->second.begin();
         CGAL_assertion(it_Cf->size() == max_simplex_dim + 1);
         // Get the k-faces composing the simplex
@@ -177,10 +177,10 @@ public:
             {
               Simplex_iterator_list::iterator it = std::find(
                 it_comb_in_map->second.begin(),
-                it_comb_in_map->second.end(), 
+                it_comb_in_map->second.end(),
                 it_Cf);
               CGAL_assertion(it != it_comb_in_map->second.end());
-              it_comb_in_map->second.erase(it);                
+              it_comb_in_map->second.erase(it);
             }
           }
         }
@@ -201,8 +201,8 @@ public:
   void display_stats() const
   {
     std::cerr << "==========================================================\n";
-    std::cerr << "Complex stats:\n";      
-    
+    std::cerr << "Complex stats:\n";
+
     if (m_complex.empty())
     {
       std::cerr << "No simplices.\n";
@@ -212,18 +212,18 @@ public:
       // Number of simplex for each dimension
       std::map<int, std::size_t> simplex_stats;
 
-      for (Complex::const_iterator it_simplex = m_complex.begin(), 
+      for (Complex::const_iterator it_simplex = m_complex.begin(),
                                    it_simplex_end = m_complex.end() ;
-           it_simplex != it_simplex_end ; 
+           it_simplex != it_simplex_end ;
            ++it_simplex)
       {
         ++simplex_stats[static_cast<int>(it_simplex->size()) - 1];
       }
-   
+
       for (std::map<int, std::size_t>::const_iterator it_map = simplex_stats.begin() ;
            it_map != simplex_stats.end() ; ++it_map)
       {
-        std::cerr << "  * " << it_map->first << "-simplices: " 
+        std::cerr << "  * " << it_map->first << "-simplices: "
                   << it_map->second << std::endl;
       }
     }
@@ -234,31 +234,31 @@ public:
   // verbose_level = 0, 1 or 2
   bool is_pure_pseudomanifold__do_not_check_if_stars_are_connected(
     int simplex_dim,
-    bool exit_at_the_first_problem = false, 
+    bool exit_at_the_first_problem = false,
     int verbose_level = 0,
     std::size_t *p_num_wrong_dim_simplices = NULL, 
     std::size_t *p_num_wrong_number_of_cofaces = NULL)
   {
     typedef std::set<std::size_t>               K_1_face;
     typedef std::map<K_1_face, std::size_t>     Cofaces_map;
-    
+
     std::size_t num_wrong_dim_simplices = 0;
     std::size_t num_wrong_number_of_cofaces = 0;
 
     // Counts the number of cofaces of each K_1_face
-    
+
     // Create a map associating each non-maximal k-faces to the list of its
     // maximal cofaces
     Cofaces_map cofaces_map;
-    for (Complex::const_iterator it_simplex = m_complex.begin(), 
+    for (Complex::const_iterator it_simplex = m_complex.begin(),
                                  it_simplex_end = m_complex.end() ;
-         it_simplex != it_simplex_end ; 
+         it_simplex != it_simplex_end ;
          ++it_simplex)
     {
       if (it_simplex->size() != simplex_dim + 1)
       {
         if (verbose_level >= 2)
-          std::cerr << "Found a simplex with dim = " 
+          std::cerr << "Found a simplex with dim = "
                     << it_simplex->size() - 1 << std::endl;
         ++num_wrong_dim_simplices;
       }
@@ -283,7 +283,7 @@ public:
       if (it_map_elt->second != 2)
       {
         if (verbose_level >= 2)
-          std::cerr << "Found a k-1-face with " 
+          std::cerr << "Found a k-1-face with "
                     << it_map_elt->second << " cofaces\n";
 
         if (exit_at_the_first_problem)
@@ -300,9 +300,9 @@ public:
       std::cerr << "is_pure_manifold: " << (ret ? "YES" : "NO") << std::endl;
       if (!ret)
       {
-        std::cerr << "  * Number of wrong dimension simplices: " 
+        std::cerr << "  * Number of wrong dimension simplices: "
                   << num_wrong_dim_simplices << std::endl
-                  << "  * Number of wrong number of cofaces: " 
+                  << "  * Number of wrong number of cofaces: "
                   << num_wrong_number_of_cofaces << std::endl;
       }
     }

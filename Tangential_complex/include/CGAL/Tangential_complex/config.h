@@ -23,7 +23,7 @@
 
 #include <CGAL/config.h>
 
-// Without TBB_USE_THREADING_TOOL Intel Inspector XE will report false 
+// Without TBB_USE_THREADING_TOOL Intel Inspector XE will report false
 // positives in Intel TBB
 // (http://software.intel.com/en-us/articles/compiler-settings-for-threading-error-analysis-in-intel-inspector-xe/)
 #ifdef _DEBUG

@@ -52,9 +52,9 @@ int main()
   typedef Kernel::FT                                              FT;
   typedef Kernel::Point_d                                         Point;
   typedef CGAL::Tangential_complex<
-    Kernel, CGAL::Dimension_tag<INTRINSIC_DIMENSION>, 
+    Kernel, CGAL::Dimension_tag<INTRINSIC_DIMENSION>,
     CGAL::Parallel_tag>                                           TC;
- 
+
   int i = 0;
   bool stop = false;
   //for ( ; !stop ; ++i)
@@ -149,8 +149,8 @@ int main()
       << "    - Init + kd-tree = " << init_time << std::endl
       << "    - TC computation = " << computation_time << std::endl
       << "  * Export to OFF (before fix): " << export_before_time << std::endl
-      << "  * Fix inconsistencies: " << fix_time 
-      <<      " (" << num_fix_steps << " steps) ==> " 
+      << "  * Fix inconsistencies: " << fix_time
+      <<      " (" << num_fix_steps << " steps) ==> "
       <<      (fix_ret == CGAL::TC_FIXED ? "FIXED" : "NOT fixed") << std::endl
       << "  * Export to OFF (after fix): " << export_after_time << std::endl
       << "================================================" << std::endl
