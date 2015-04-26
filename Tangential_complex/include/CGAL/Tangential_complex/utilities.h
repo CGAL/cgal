@@ -160,11 +160,10 @@ namespace Tangential_complex_ {
     {
       Vector u = *inb_it;
 
-      typename Basis::iterator outb_it = output_basis.begin();
       for (int j = 0 ; j < i ; ++j)
       {
-        Vector const& ej = *outb_it;
-        Vector u_proj = scaled_vec(ej, inner_pdct(u, ej));
+        Vector const& ej = input_basis[j];
+        Vector u_proj = scaled_vec(ej, inner_pdct(u, ej) / inner_pdct(ej, ej));
         u = diff_vec(u, u_proj);
       }
 

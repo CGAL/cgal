@@ -38,9 +38,7 @@
 #include <CGAL/Combination_enumerator.h>
 #include <CGAL/point_generators_d.h>
 
-#ifdef CGAL_TC_PROFILING
 # include <CGAL/Mesh_3/Profiling_tools.h>
-#endif
 
 #include <CGAL/IO/Triangulation_off_ostream.h> // CJTODO TEMP
 
@@ -258,7 +256,7 @@ public:
     return m_ambient_dim;
   }
 
-  std::size_t number_of_vertices()
+  std::size_t number_of_vertices() const
   {
     return m_points.size();
   }
@@ -668,7 +666,7 @@ public:
     // CJTODO: parallel_for???
     for (std::size_t idx = 0 ; idx < m_triangulations.size() ; ++idx)
     {
-      bool inconsistencies_found;
+      bool inconsistencies_found = false;
       do
       {
         Star::const_iterator it_inc_simplex = m_stars[idx].begin();
@@ -1123,9 +1121,11 @@ private:
               {
                 Tr_point c = power_center(
                   boost::make_transform_iterator(
-                    cell->vertices_begin(), vertex_handle_to_point),
+                    cell->vertices_begin(),
+                    vertex_handle_to_point<Tr_point, Tr_vertex_handle>),
                   boost::make_transform_iterator(
-                    cell->vertices_end(), vertex_handle_to_point));
+                    cell->vertices_end(),
+                    vertex_handle_to_point<Tr_point, Tr_vertex_handle>));
 
                 FT sq_power_sphere_diam = 4*point_weight(c);
 
@@ -2482,8 +2482,9 @@ next_face:
       //-----------------------------------------------------------------------
 
       FT min_a = std::numeric_limits<FT>::max();
-      for (auto idx : inside_pt_indices) // CJTODO: C++11
+      for (std::size_t i = 0 ; i < inside_pt_indices.size() ; ++i)
       {
+        std::size_t idx = inside_pt_indices[i];
         const Point ti = compute_perturbed_point(idx);
         const Point &cp = k_drop_w(global_Cp);
         const Point &cq = k_drop_w(global_Cq);
