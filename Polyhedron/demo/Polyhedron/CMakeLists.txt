@@ -61,8 +61,7 @@ find_package(CGAL REQUIRED COMPONENTS Qt5)
 include( ${CGAL_USE_FILE} )
 find_package(Qt5 COMPONENTS OpenGL Script Xml ScriptTools)
 
-# Find Glew (optional), for splatting
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/GlSplat/cmake)
+# Find Glew (required)
 find_package(GLEW)
 set(GLEW_FOUND FALSE)#TEMP to be removed once GlSplat has been redone
 # Find OpenGL
@@ -72,6 +71,7 @@ find_package(OpenGL)
 if(Qt5_FOUND)
   include_directories( ${QT_INCLUDE_DIR}/QtScriptTools )
   find_package(QGLViewer )
+
 endif(Qt5_FOUND)
 if(GLEW_FOUND)
   include_directories ( ${GLEW_INCLUDE_DIR} )
@@ -80,10 +80,12 @@ else(GLEW_FOUND)
   message(STATUS "NOTICE: GLEW library is not found. Splat rendering will not be available.")
 endif(GLEW_FOUND)
 
+
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
 endif(EIGEN3_FOUND)
+
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
@@ -91,6 +93,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   find_package(Boost COMPONENTS thread system)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
+  include_directories ( ${GLEW_INCLUDE_DIR} )
 
   qt5_wrap_ui( MainWindowUI_files MainWindow.ui )
   qt5_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
@@ -224,6 +227,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_polygon_soup_item Scene_polygon_soup_item.cpp)# Scene_polygon_soup_item.moc)
   target_link_libraries(scene_polygon_soup_item scene_polyhedron_item)
   add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp# Scene_nef_polyhedron_item.moc
+
     Scene_nef_rendering.cpp)
   target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item)
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)# Scene_points_with_normal_item.moc)
@@ -515,5 +519,6 @@ else (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endif()
 
   message(STATUS "NOTICE: This demo requires ${POLYHEDRON_MISSING_DEPS}and will not be compiled.")
+
 
 endif (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)

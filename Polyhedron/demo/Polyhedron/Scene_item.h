@@ -1,6 +1,5 @@
 #ifndef SCENE_ITEM_H
 #define SCENE_ITEM_H
-
 #include "Scene_item_config.h"
 #include "Scene_interface.h"
 #include <QString>
@@ -43,16 +42,17 @@ public:
   virtual bool supportsRenderingMode(RenderingMode m) const = 0;
   // Flat/Gouraud OpenGL drawing
   virtual void draw() const = 0;
-  virtual void draw(Viewer_interface*) const { draw(); }
+  virtual void draw(Viewer_interface*) const  { draw(); }
   // Wireframe OpenGL drawing
   virtual void draw_edges() const { draw(); }
-  virtual void draw_edges(Viewer_interface*) const { draw_edges(); }
+  virtual void draw_edges(Viewer_interface* viewer) const { draw(viewer); }
   // Points OpenGL drawing
   virtual void draw_points() const { draw(); }
   virtual void draw_points(Viewer_interface*) const { draw_points(); }
   // Splats OpenGL drawing
   virtual void draw_splats() const {}
   virtual void draw_splats(Viewer_interface*) const {draw_splats();}
+  virtual void selection_changed(bool);
 
   // Functions for displaying meta-data of the item
   virtual QString toolTip() const = 0;
@@ -85,6 +85,7 @@ public slots:
   // Call that once you have finished changing something in the item
   // (either the properties or internal data)
   virtual void changed();
+  virtual void contextual_changed(){}
 
   // Setters for the four basic properties
   virtual void setColor(QColor c) { color_ = c; }
@@ -147,8 +148,12 @@ protected:
   QString name_;
   QColor color_;
   bool visible_;
+  bool is_selected;
   RenderingMode rendering_mode;
   QMenu* defaultContextMenu;
+
+  int prev_shading;
+  int cur_shading;
 
 }; // end class Scene_item
 

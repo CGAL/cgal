@@ -35,10 +35,11 @@ interpolate(const double v) const
   {
     return prev->second;
   }
-  
+
   const double& a = prev->first;
   const double& b = next->first;
   return (b-v)/(b-a) * prev->second + (v-a)/(b-a) * next->second;
+
 }
 
 void

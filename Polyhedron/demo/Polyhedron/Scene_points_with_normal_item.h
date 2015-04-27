@@ -45,16 +45,22 @@ public:
   // Function for displaying meta-data of the item
   virtual QString toolTip() const;
 
+  virtual void changed();
+  virtual void selection_changed(bool);
+
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const;
   // Points OpenGL drawing in a display list
   virtual void direct_draw() const;
+  virtual void draw_edges(Viewer_interface* viewer) const;
+  virtual void draw_points(Viewer_interface*) const;
   // Normals OpenGL drawing
   void draw_normals() const;
   virtual void draw_edges() const { draw_normals(); }//to tweak scene
 
   // Splat OpenGL drawing
   virtual void draw_splats() const;
+  virtual void draw_splats(Viewer_interface*) const;
   
   // Gets wrapped point set
   Point_set*       point_set();
@@ -88,6 +94,34 @@ private:
   QAction* actionDeleteSelection;
   QAction* actionResetSelection;
   QAction* actionSelectDuplicatedPoints;
+
+
+  std::vector<double> positions_lines;
+  std::vector<double> positions_points;
+  std::vector<double> positions_splats;
+  std::vector<double> positions_selected_points;
+  std::vector<double> color_lines;
+  std::vector<double> color_points;
+  std::vector<double> color_selected_points;
+  std::vector<double> normals;
+  std::vector<double> tex_coords;
+
+  int texture[3];
+
+  GLuint rendering_program_lines;
+  GLuint rendering_program_points;
+  GLuint rendering_program_splats;
+  GLint location[9];
+  GLuint textureId;
+  GLint sampler_location;
+
+  GLuint vao[2];
+  GLuint buffer[9];
+  void initialize_buffers();
+  void compile_shaders(void);
+  void compute_normals_and_vertices(void);
+  void uniform_attrib(Viewer_interface*, int) const;
+
 }; // end class Scene_points_with_normal_item
 
 

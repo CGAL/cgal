@@ -35,7 +35,6 @@ public:
         mw = mainWindow;
         scene = scene_interface;
         messages = m;
-
         actionSelection = new QAction(tr("Selection"), mw);
         connect(actionSelection, SIGNAL(triggered()), this, SLOT(selection_action()));
 
