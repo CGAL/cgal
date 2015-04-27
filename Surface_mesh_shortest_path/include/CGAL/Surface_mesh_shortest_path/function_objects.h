@@ -264,7 +264,7 @@ public:
   {
   }
 
-  Robust_project_triangle_3_to_triangle_2(const K& )
+  Robust_project_triangle_3_to_triangle_2(const K& /* kernel */)
   {
   }
 
@@ -357,7 +357,6 @@ public:
     FT triangleHeight = CGAL::internal::select_sqrt(m_compute_squared_distance_3(projectedLocation3d, m_construct_vertex_3(t3, edgeIndex + 2)));
 
     Vector_2 edgeVector(m_construct_vector_2(segment));
-    Point_2 projectionPoint(m_construct_translated_point_2(m_construct_source_2(segment), m_construct_scaled_vector_2(edgeVector, scalePoint)));
 
     Vector_2 perpendicularEdgeVector(m_construct_perpendicular_vector_2(edgeVector, CGAL::COUNTERCLOCKWISE));
     perpendicularEdgeVector = m_construct_scaled_vector_2(perpendicularEdgeVector, FT(1.0) / CGAL::internal::select_sqrt(m_compute_squared_length_2(perpendicularEdgeVector)));
@@ -389,7 +388,7 @@ public:
   {
   }
 
-  Robust_flatten_triangle_3_along_segment_2(const K&)
+  Robust_flatten_triangle_3_along_segment_2(const K& /* kernel */)
   {
   }
 

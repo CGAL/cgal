@@ -20,6 +20,8 @@
 #include <CGAL/Surface_mesh_shortest_path/barycentric.h>
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
+#include <CGAL/use.h>
+
 #include <CGAL/test_util.h>
 #include "check.h"
 
@@ -193,11 +195,11 @@ void test_simple_saddle_vertex_mesh()
 
   shortestPaths.shortest_path_sequence_to_source_points(vertexHandles[5], collector);
 
-  CHECK_EQUAL(collector.m_sequence.size(), 3);
+  CHECK_EQUAL(collector.m_sequence.size(), 3u);
   CHECK_EQUAL(collector.m_sequence[1].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
   assert(collector.m_sequence[1].index == 4 || collector.m_sequence[1].index == 6);
   CHECK_EQUAL(collector.m_sequence[2].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
-  CHECK_EQUAL(collector.m_sequence[2].index, 1);
+  CHECK_EQUAL(collector.m_sequence[2].index, 1u);
 
   collector.m_sequence.clear();
 
@@ -207,12 +209,12 @@ void test_simple_saddle_vertex_mesh()
 
   shortestPaths.shortest_path_sequence_to_source_points(vertexHandles[7], collector);
 
-  CHECK_EQUAL(collector.m_sequence.size(), 3);
+  CHECK_EQUAL(collector.m_sequence.size(), 3u);
   CHECK_EQUAL(collector.m_sequence[1].type, CGAL::test::SEQUENCE_ITEM_EDGE);
   CHECK_EQUAL(collector.m_sequence[1].index, halfedgeIndexMap[CGAL::halfedge(vertexHandles[4], vertexHandles[6], P).first]);
   CHECK_CLOSE(collector.m_sequence[1].edgeAlpha, FT(0.5), FT(0.0001));
   CHECK_EQUAL(collector.m_sequence[2].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
-  CHECK_EQUAL(collector.m_sequence[2].index, 1);
+  CHECK_EQUAL(collector.m_sequence[2].index, 1u);
 
   // Now test an internal face location sequence
   halfedge_descriptor firstCrossing = CGAL::halfedge(vertexHandles[4], vertexHandles[7], P).first;
@@ -224,13 +226,13 @@ void test_simple_saddle_vertex_mesh()
   collector.m_sequence.clear();
   shortestPaths.shortest_path_sequence_to_source_points(CGAL::face(firstCrossing, P), construct_barycentric_coordinate(location[edgeIndex], location[(edgeIndex + 1) % 3], location[(edgeIndex + 2) % 3]), collector);
 
-  CHECK_EQUAL(collector.m_sequence.size(), 4);
+  CHECK_EQUAL(collector.m_sequence.size(), 4u);
   CHECK_EQUAL(collector.m_sequence[1].type, CGAL::test::SEQUENCE_ITEM_EDGE);
   CHECK_EQUAL(collector.m_sequence[1].index, halfedgeIndexMap[firstCrossing]);
   CHECK_EQUAL(collector.m_sequence[2].type, CGAL::test::SEQUENCE_ITEM_EDGE);
   CHECK_EQUAL(collector.m_sequence[2].index, halfedgeIndexMap[CGAL::halfedge(vertexHandles[4], vertexHandles[6], P).first]);
   CHECK_EQUAL(collector.m_sequence[3].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
-  CHECK_EQUAL(collector.m_sequence[3].index, 1);
+  CHECK_EQUAL(collector.m_sequence[3].index, 1u);
 
   // Now test with 2 source vertices
   currentVertex = startVertex;
@@ -337,9 +339,11 @@ void test_boundary_mesh()
   Traits traits;
 
   Traits::Construct_triangle_3_to_triangle_2_projection project_triangle_3_to_triangle_2(traits.construct_triangle_3_to_triangle_2_projection_object());
+  CGAL_USE(project_triangle_3_to_triangle_2);
   Traits::Compute_squared_distance_3 compute_squared_distance_3(traits.compute_squared_distance_3_object());
   Traits::Construct_barycenter_3 construct_barycenter_3(traits.construct_barycenter_3_object());
   Traits::Construct_triangle_3_along_segment_2_flattening flatten_triangle_3_along_segment_2(traits.construct_triangle_3_along_segment_2_flattening_object());
+  CGAL_USE(flatten_triangle_3_along_segment_2);
   Traits::Construct_barycentric_coordinate construct_barycentric_coordinate(traits.construct_barycentric_coordinate_object());
 
   struct Construct_barycenter_in_triangle_3
