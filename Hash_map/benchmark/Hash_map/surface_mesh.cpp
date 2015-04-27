@@ -4,9 +4,12 @@
 #include <map>
 #include <algorithm>
 
-#include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/point_generators_2.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <CGAL/boost/graph/properties_Surface_mesh.h>
+
 
 #include <CGAL/Timer.h>
 #include<boost/range/iterator_range.hpp> 
@@ -17,43 +20,41 @@
 #include <boost/random/linear_congruential.hpp>
 
 typedef CGAL::Simple_cartesian<double>  Kernel;
-typedef Kernel::Point_2                 Point_2;
-typedef Kernel::Vector_2                Vector_2;
-typedef CGAL::Creator_uniform_2<double,Point_2>  Pt_creator;
-typedef CGAL::Random_points_in_disc_2<Point_2,Pt_creator>  Random_points;;
-typedef CGAL::Delaunay_triangulation_2<Kernel> Dt;
-typedef Dt::Vertex_handle Vertex_handle;
-typedef Dt::Finite_vertices_iterator Finite_vertices_iterator;
+typedef Kernel::Point_3                 Point_3;
+typedef Kernel::Vector_3                Vector_3;
+
+
+typedef CGAL::Surface_mesh<Point_3>      Mesh;
+typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
 typedef CGAL::Timer                     Timer;
 
 
 
-
-
 void  fct(int ii, int jj)
 {
-  typedef std::map<Vertex_handle,Point_2> SM;
-  typedef std::unordered_map<Vertex_handle,Point_2> SUM;
-  typedef boost::unordered_map<Vertex_handle,Point_2> BUM;
+  typedef std::map<vertex_descriptor,Point_3> SM;
+  typedef std::unordered_map<vertex_descriptor,Point_3> SUM;
+  typedef boost::unordered_map<vertex_descriptor,Point_3> BUM;
   
-  Dt dt;
-  Vector_2 v(0,0,0);
-  Random_points rp( 250);
-  std::vector<Point_2> points;
+  Mesh mesh;
+  typedef boost::property_map<Mesh,CGAL::vertex_point_t>::type  VPM;
+  VPM vpm = get(CGAL::vertex_point,mesh);
+  
+  
+  Vector_3 v(0,0,0);
+  
   for(int i =0; i < ii; i++){
-    Point_2 p = *rp++;
-    points.push_back(p); 
+    vertex_descriptor vd = add_vertex(mesh);
+    put(vpm,vd, Point_3(i,0,0));
   }
-
-  dt.insert(points.begin(), points.end());
-
-  std::vector<Vertex_handle> vertices;
-  Finite_vertices_iterator b = dt.finite_vertices_begin(), e = dt.finite_vertices_end();
-  for(; b!=e; ++b){
-    vertices.push_back(b);
+  
+  std::vector<vertex_descriptor> V;
+  for(vertex_descriptor vd : vertices(mesh)){
+    V.push_back(vd);
   }
-  random_shuffle(vertices.begin(), vertices.end());
+  random_shuffle(V.begin(), V.end());
+  
 
   Timer tsmc, tsumc, tbumc;
   Timer tsmq, tsumq, tbumq;
@@ -62,14 +63,14 @@ void  fct(int ii, int jj)
     {
       tsmc.start();
       SM sm;
-      for(Vertex_handle vh : vertices){
-        sm[vh] = vh->point();
+      for(vertex_descriptor vh : V){
+        sm[vh] = get(vpm,vh);
       }
       tsmc.stop();
       
       
       tsmq.start();
-      for(Vertex_handle vh : vertices){
+      for(vertex_descriptor vh : V){
         v = v + (sm[vh] - CGAL::ORIGIN);
       }
       tsmq.stop();
@@ -77,14 +78,14 @@ void  fct(int ii, int jj)
     {
       tsumc.start();
       SUM sm;
-      for(Vertex_handle vh : vertices){
-        sm[vh] = vh->point();
+      for(vertex_descriptor vh : V){
+        sm[vh] = get(vpm,vh);
       }
       tsumc.stop();
       
       
       tsumq.start();
-      for(Vertex_handle vh : vertices){
+      for(vertex_descriptor vh : V){
         v = v + (sm[vh] - CGAL::ORIGIN);
       }
       tsumq.stop();
@@ -92,14 +93,14 @@ void  fct(int ii, int jj)
     {
       tbumc.start();
       BUM sm;
-      for(Vertex_handle vh : vertices){
-        sm[vh] = vh->point();
+      for(vertex_descriptor vh : V){
+        sm[vh] = get(vpm,vh);
       }
       tbumc.stop();
       
       
       tbumq.start();
-      for(Vertex_handle vh : vertices){
+      for(vertex_descriptor vh : V){
         v = v + (sm[vh] - CGAL::ORIGIN);
       }
       tbumq.stop();
@@ -114,6 +115,7 @@ void  fct(int ii, int jj)
   
   std::cerr << "boost::unordered_map construction : "<< tbumc.time() << " sec." << std::endl;
   std::cerr << "boost::unordered_map queries      : "<< tbumq.time() << " sec.\n" << std::endl;
+
 }
 
 int main(int , char* argv[])

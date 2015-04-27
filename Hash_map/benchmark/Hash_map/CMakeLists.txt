@@ -60,5 +60,7 @@ include( CGAL_CreateSingleSourceCGALProgram )
 create_single_source_cgal_program( "hm.cpp" )
 create_single_source_cgal_program( "foreach.cpp" )
 create_single_source_cgal_program( "triangulation.cpp" )
+create_single_source_cgal_program( "polyhedron.cpp" )
+create_single_source_cgal_program( "surface_mesh.cpp" )
 
 
