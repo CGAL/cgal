@@ -4,7 +4,6 @@
 #include <CGAL/gl.h>
 #include <CGAL/Simple_cartesian.h>
 #include <QGLViewer/manipulatedFrame.h>
-#include <QGLViewer/qglviewer.h>
 
 #include "Color_ramp.h"
 #include <Viewer_interface.h>
@@ -19,67 +18,68 @@ bool is_nan(double d)
 
 void Scene_implicit_function_item::initialize_buffers()
 {
-    glBindVertexArray(vao);
+    qFunc.initializeOpenGLFunctions();
+    qFunc.glBindVertexArray(vao);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (positions_tex_quad.size())*sizeof(float),
                  positions_tex_quad.data(),
                  GL_STATIC_DRAW);
-    glVertexAttribPointer(0, //number of the buffer
+    qFunc.glVertexAttribPointer(0, //number of the buffer
                           4, //number of floats to be taken
                           GL_FLOAT, // type of data
                           GL_FALSE, //not normalized
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
-    glEnableVertexAttribArray(0);
+    qFunc.glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (positions_cube.size())*sizeof(float),
                  positions_cube.data(),
                  GL_STATIC_DRAW);
-    glVertexAttribPointer(1, //number of the buffer
+    qFunc.glVertexAttribPointer(1, //number of the buffer
                           4, //number of floats to be taken
                           GL_FLOAT, // type of data
                           GL_FALSE, //not normalized
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
-    glEnableVertexAttribArray(1);
+    qFunc.glEnableVertexAttribArray(1);
 
 
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (texture_map.size())*sizeof(float),
                  texture_map.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(2,
+    qFunc.glVertexAttribPointer(2,
                           2,
                           GL_DOUBLE,
                           GL_FALSE,
                           0,
                           NULL
                           );
-    glEnableVertexAttribArray(2);
+    qFunc.glEnableVertexAttribArray(2);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[3]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[3]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (positions_grid.size())*sizeof(float),
                  positions_grid.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(3,
+    qFunc.glVertexAttribPointer(3,
                           4,
                           GL_FLOAT,
                           GL_FALSE,
                           0,
                           NULL
                           );
-    glEnableVertexAttribArray(3);
+    qFunc.glEnableVertexAttribArray(3);
 
 
-    glBindTexture(GL_TEXTURE_2D, textureId);
-    glTexImage2D(GL_TEXTURE_2D,
+    qFunc.glBindTexture(GL_TEXTURE_2D, textureId);
+    qFunc.glTexImage2D(GL_TEXTURE_2D,
                  0,
                  GL_RGB,
                  texture->getWidth(),
@@ -88,11 +88,11 @@ void Scene_implicit_function_item::initialize_buffers()
                  GL_RGB,
                  GL_UNSIGNED_BYTE,
                  texture->getData());
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     // Clean-up
-    glBindVertexArray(0);
+    qFunc.glBindVertexArray(0);
 }
 
 void Scene_implicit_function_item::compile_shaders(void)
@@ -131,46 +131,46 @@ void Scene_implicit_function_item::compile_shaders(void)
         "} \n"
     };
 
-    GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
-    glCompileShader(vertex_shader);
+    GLuint vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
+    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
+    qFunc.glCompileShader(vertex_shader);
 
 
-    GLuint fragment_shader =	glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    glCompileShader(fragment_shader);
+    GLuint fragment_shader =	qFunc.glCreateShader(GL_FRAGMENT_SHADER);
+    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+    qFunc.glCompileShader(fragment_shader);
 
 
     //creates the program, attaches and links the shaders
-    GLuint program= glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
+    GLuint program= qFunc.glCreateProgram();
+    qFunc.glAttachShader(program, vertex_shader);
+    qFunc.glAttachShader(program, fragment_shader);
+    qFunc.glLinkProgram(program);
     GLint result;
-    glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&result);
+    qFunc.glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&result);
     if(result == GL_TRUE){
         std::cout<<"Vertex compilation OK"<<std::endl;
     } else {
         int maxLength;
         int length;
-        glGetShaderiv(vertex_shader,GL_INFO_LOG_LENGTH,&maxLength);
+        qFunc.glGetShaderiv(vertex_shader,GL_INFO_LOG_LENGTH,&maxLength);
         char* log = new char[maxLength];
-        glGetShaderInfoLog(vertex_shader,maxLength,&length,log);
+        qFunc.glGetShaderInfoLog(vertex_shader,maxLength,&length,log);
         std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
     }
-    glGetShaderiv(fragment_shader,GL_COMPILE_STATUS,&result);
+    qFunc.glGetShaderiv(fragment_shader,GL_COMPILE_STATUS,&result);
     if(result == GL_TRUE){
         std::cout<<"Fragment compilation OK"<<std::endl;
     } else {
         int maxLength;
         int length;
-        glGetShaderiv(fragment_shader,GL_INFO_LOG_LENGTH,&maxLength);
+        qFunc.glGetShaderiv(fragment_shader,GL_INFO_LOG_LENGTH,&maxLength);
         char* log = new char[maxLength];
-        glGetShaderInfoLog(fragment_shader,maxLength,&length,log);
+        qFunc.glGetShaderInfoLog(fragment_shader,maxLength,&length,log);
         std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
     }
     //Clean-up
-    glDeleteShader(vertex_shader);
+    qFunc.glDeleteShader(vertex_shader);
 
     rendering_program_tex_quad = program;
 
@@ -201,23 +201,23 @@ void Scene_implicit_function_item::compile_shaders(void)
         " color = fColors; \n"
         "} \n"
     };
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, vertex_shader_source_cube, NULL);
-    glCompileShader(vertex_shader);
+    vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
+    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source_cube, NULL);
+    qFunc.glCompileShader(vertex_shader);
 
 
-    glShaderSource(fragment_shader, 1, fragment_shader_source_lines, NULL);
-    glCompileShader(fragment_shader);
+    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source_lines, NULL);
+    qFunc.glCompileShader(fragment_shader);
 
-    program = glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
+    program = qFunc.glCreateProgram();
+    qFunc.glAttachShader(program, vertex_shader);
+    qFunc.glAttachShader(program, fragment_shader);
+    qFunc.glLinkProgram(program);
     rendering_program_cube = program;
 
 
     //Clean-up
-    glDeleteShader(vertex_shader);
+    qFunc.glDeleteShader(vertex_shader);
 
     //For the grid
     static const GLchar* vertex_shader_source_grid[] =
@@ -236,22 +236,22 @@ void Scene_implicit_function_item::compile_shaders(void)
         "} \n"
     };
 
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, vertex_shader_source_grid, NULL);
-    glCompileShader(vertex_shader);
+    vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
+    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source_grid, NULL);
+    qFunc.glCompileShader(vertex_shader);
 
 
-    glShaderSource(fragment_shader, 1, fragment_shader_source_lines, NULL);
-    glCompileShader(fragment_shader);
+    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source_lines, NULL);
+    qFunc.glCompileShader(fragment_shader);
 
-    program = glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
+    program = qFunc.glCreateProgram();
+    qFunc.glAttachShader(program, vertex_shader);
+    qFunc.glAttachShader(program, fragment_shader);
+    qFunc.glLinkProgram(program);
     rendering_program_grid = program;
     //Clean-up
-    glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
+    qFunc.glDeleteShader(vertex_shader);
+    qFunc.glDeleteShader(fragment_shader);
 
 }
 
@@ -274,21 +274,21 @@ void Scene_implicit_function_item::uniform_attrib(Viewer_interface* viewer, int 
     }
     if(mode ==0)
     {
-        glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
-        glUniformMatrix4fv(location[2], 1, GL_FALSE, m_mat);
-        glUniform1i(sampler_location, 0);
+        qFunc.glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
+        qFunc.glUniformMatrix4fv(location[2], 1, GL_FALSE, m_mat);
+        qFunc.glUniform1i(sampler_location, 0);
 
     }
     else if(mode ==1)
     {
 
-        glUniformMatrix4fv(location[1], 1, GL_FALSE, mvp_mat);
+        qFunc.glUniformMatrix4fv(location[1], 1, GL_FALSE, mvp_mat);
 
     }
     else if (mode ==2)
     {
-        glUniformMatrix4fv(location[3], 1, GL_FALSE, mvp_mat);
-        glUniformMatrix4fv(location[4], 1, GL_FALSE, m_mat);
+        qFunc.glUniformMatrix4fv(location[3], 1, GL_FALSE, mvp_mat);
+        qFunc.glUniformMatrix4fv(location[4], 1, GL_FALSE, m_mat);
     }
 
 }
@@ -546,14 +546,14 @@ void Scene_implicit_function_item::compute_vertices_and_texmap(void)
         }
     }
 
-    location[0] = glGetUniformLocation(rendering_program_tex_quad, "mvp_matrix");
-    location[2] = glGetUniformLocation(rendering_program_tex_quad, "m_matrix");
+    location[0] = qFunc.glGetUniformLocation(rendering_program_tex_quad, "mvp_matrix");
+    location[2] = qFunc.glGetUniformLocation(rendering_program_tex_quad, "m_matrix");
 
-    sampler_location = glGetUniformLocation(rendering_program_tex_quad, "s_texture");
+    sampler_location = qFunc.glGetUniformLocation(rendering_program_tex_quad, "s_texture");
 
-    location[1] = glGetUniformLocation(rendering_program_cube, "mvp_matrix");
-    location[3] = glGetUniformLocation(rendering_program_grid, "mvp_matrix");
-    location[4] = glGetUniformLocation(rendering_program_grid, "m_matrix");
+    location[1] = qFunc.glGetUniformLocation(rendering_program_cube, "mvp_matrix");
+    location[3] = qFunc.glGetUniformLocation(rendering_program_grid, "mvp_matrix");
+    location[4] = qFunc.glGetUniformLocation(rendering_program_grid, "m_matrix");
 
 }
 
@@ -576,11 +576,12 @@ Scene_implicit_function_item(Implicit_function_interface* f)
     texture = new Texture(grid_size_-1,grid_size_-1);
     blue_color_ramp_.build_blue();
     red_color_ramp_.build_red();
-    glGenVertexArrays(1, &vao);
+    qFunc.initializeOpenGLFunctions();
+    qFunc.glGenVertexArrays(1, &vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(4, buffer);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glGenTextures(1, &textureId);
+    qFunc.glGenBuffers(4, buffer);
+    qFunc.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    qFunc.glGenTextures(1, &textureId);
     compile_shaders();
     compute_min_max();
     compute_function_grid();
@@ -597,11 +598,11 @@ Scene_implicit_function_item(Implicit_function_interface* f)
 
 Scene_implicit_function_item::~Scene_implicit_function_item()
 {
-    glDeleteBuffers(4, buffer);
-    glDeleteVertexArrays(1, &vao);
-    glDeleteProgram(rendering_program_tex_quad);
-    glDeleteProgram(rendering_program_cube);
-    glDeleteProgram(rendering_program_grid);
+    qFunc.glDeleteBuffers(4, buffer);
+    qFunc.glDeleteVertexArrays(1, &vao);
+    qFunc.glDeleteProgram(rendering_program_tex_quad);
+    qFunc.glDeleteProgram(rendering_program_cube);
+    qFunc.glDeleteProgram(rendering_program_grid);
     delete frame_;
 
 }
@@ -618,18 +619,18 @@ Scene_implicit_function_item::draw(Viewer_interface* viewer) const
 {
 
     //draw_aux(viewer, false);
-    glBindVertexArray(vao);
-    glUseProgram(rendering_program_tex_quad);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureId);
+    qFunc.glBindVertexArray(vao);
+    qFunc.glUseProgram(rendering_program_tex_quad);
+    qFunc.glActiveTexture(GL_TEXTURE0);
+    qFunc.glBindTexture(GL_TEXTURE_2D, textureId);
     uniform_attrib(viewer,0);
-    glDrawArrays(GL_TRIANGLES, 0, positions_tex_quad.size()/4);
+    qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_tex_quad.size()/4);
 
 
 
     // Clean-up
-    glUseProgram(0);
-    glBindVertexArray(0);
+    qFunc.glUseProgram(0);
+    qFunc.glBindVertexArray(0);
 
 }
 
@@ -637,18 +638,18 @@ void
 Scene_implicit_function_item::draw_edges(Viewer_interface* viewer) const
 {
     //  draw_aux(viewer, true);
-    glBindVertexArray(vao);
-    glUseProgram(rendering_program_cube);
+    qFunc.glBindVertexArray(vao);
+    qFunc.glUseProgram(rendering_program_cube);
     uniform_attrib(viewer,1);
-    glDrawArrays(GL_LINES, 0, positions_cube.size()/4);
+    qFunc.glDrawArrays(GL_LINES, 0, positions_cube.size()/4);
 
-    glUseProgram(rendering_program_grid);
+    qFunc.glUseProgram(rendering_program_grid);
     uniform_attrib(viewer,2);
-    glDrawArrays(GL_LINES, 0, positions_grid.size()/4);
+    qFunc.glDrawArrays(GL_LINES, 0, positions_grid.size()/4);
 
     // Clean-up
-    glUseProgram(0);
-    glBindVertexArray(0);
+    qFunc.glUseProgram(0);
+    qFunc.glBindVertexArray(0);
 }
 
 void

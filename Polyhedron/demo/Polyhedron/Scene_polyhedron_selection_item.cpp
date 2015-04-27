@@ -19,65 +19,65 @@ struct light_info
 
 void Scene_polyhedron_selection_item::initialize_buffers()
 {
-    glBindVertexArray(vao[0]);
+    qFunc.glBindVertexArray(vao[0]);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (positions_facets.size())*sizeof(float),
                  positions_facets.data(),
                  GL_STATIC_DRAW);
-    glVertexAttribPointer(0, //number of the buffer
+    qFunc.glVertexAttribPointer(0, //number of the buffer
                           3, //number of floats to be taken
                           GL_FLOAT, // type of data
                           GL_FALSE, //not normalized
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
-    glEnableVertexAttribArray(0);
+    qFunc.glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (normals.size())*sizeof(float),
                  normals.data(),
                  GL_STATIC_DRAW);
-    glVertexAttribPointer(1, //number of the buffer
+    qFunc.glVertexAttribPointer(1, //number of the buffer
                           3, //number of floats to be taken
                           GL_FLOAT, // type of data
                           GL_FALSE, //not normalized
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
-    glEnableVertexAttribArray(1);
+    qFunc.glEnableVertexAttribArray(1);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (positions_lines.size())*sizeof(float),
                  positions_lines.data(),
                  GL_STATIC_DRAW);
-    glVertexAttribPointer(2, //number of the buffer
+    qFunc.glVertexAttribPointer(2, //number of the buffer
                           3, //number of floats to be taken
                           GL_FLOAT, // type of data
                           GL_FALSE, //not normalized
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
-    glEnableVertexAttribArray(2);
+    qFunc.glEnableVertexAttribArray(2);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[3]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[3]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (positions_points.size())*sizeof(float),
                  positions_points.data(),
                  GL_STATIC_DRAW);
-    glVertexAttribPointer(3, //number of the buffer
+    qFunc.glVertexAttribPointer(3, //number of the buffer
                           3, //number of floats to be taken
                           GL_FLOAT, // type of data
                           GL_FALSE, //not normalized
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
-    glEnableVertexAttribArray(3);
+    qFunc.glEnableVertexAttribArray(3);
 
-    glBindVertexArray(0);
+    qFunc.glBindVertexArray(0);
 
 }
 void Scene_polyhedron_selection_item::compile_shaders()
@@ -142,19 +142,19 @@ void Scene_polyhedron_selection_item::compile_shaders()
         "} \n"
     };
 
-    GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, vertex_shader_source_facets, NULL);
-    glCompileShader(vertex_shader);
-    GLuint fragment_shader =	glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    glCompileShader(fragment_shader);
+    GLuint vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
+    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source_facets, NULL);
+    qFunc.glCompileShader(vertex_shader);
+    GLuint fragment_shader =	qFunc.glCreateShader(GL_FRAGMENT_SHADER);
+    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+    qFunc.glCompileShader(fragment_shader);
 
-    GLuint program = glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
+    GLuint program = qFunc.glCreateProgram();
+    qFunc.glAttachShader(program, vertex_shader);
+    qFunc.glAttachShader(program, fragment_shader);
+    qFunc.glLinkProgram(program);
 
-    glDeleteShader(vertex_shader);
+    qFunc.glDeleteShader(vertex_shader);
     rendering_program_facets = program;
 
     //The lines
@@ -180,18 +180,18 @@ void Scene_polyhedron_selection_item::compile_shaders()
 
 
 
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, vertex_shader_source_lines, NULL);
-    glCompileShader(vertex_shader);
-    glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    glCompileShader(fragment_shader);
+    vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
+    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source_lines, NULL);
+    qFunc.glCompileShader(vertex_shader);
+    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+    qFunc.glCompileShader(fragment_shader);
 
-    program = glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
+    program = qFunc.glCreateProgram();
+    qFunc.glAttachShader(program, vertex_shader);
+    qFunc.glAttachShader(program, fragment_shader);
+    qFunc.glLinkProgram(program);
 
-    glDeleteShader(vertex_shader);
+    qFunc.glDeleteShader(vertex_shader);
     rendering_program_lines = program;
 
     //The points
@@ -217,22 +217,22 @@ void Scene_polyhedron_selection_item::compile_shaders()
 
 
 
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, vertex_shader_source_points, NULL);
-    glCompileShader(vertex_shader);
-    glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    glCompileShader(fragment_shader);
+    vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
+    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source_points, NULL);
+    qFunc.glCompileShader(vertex_shader);
+    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+    qFunc.glCompileShader(fragment_shader);
 
-    program = glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
+    program = qFunc.glCreateProgram();
+    qFunc.glAttachShader(program, vertex_shader);
+    qFunc.glAttachShader(program, fragment_shader);
+    qFunc.glLinkProgram(program);
 
-    glDeleteShader(vertex_shader);
+    qFunc.glDeleteShader(vertex_shader);
     rendering_program_points = program;
 
 
-    glDeleteShader(fragment_shader);
+    qFunc.glDeleteShader(fragment_shader);
 
 }
 void Scene_polyhedron_selection_item::uniform_attrib(Viewer_interface* viewer, int mode) const
@@ -256,7 +256,7 @@ void Scene_polyhedron_selection_item::uniform_attrib(Viewer_interface* viewer, i
         mv_mat[i] = GLfloat(d_mat[i]);
 
 
-    glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
+    qFunc.glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
 
     //fills the arraw of colors with the current color
     colors[0] = facet_color.redF();
@@ -286,36 +286,36 @@ void Scene_polyhedron_selection_item::uniform_attrib(Viewer_interface* viewer, i
     //For the Flat mode
     if(mode ==0)
     {
-        glUseProgram(rendering_program_facets);
-        glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
-        glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
-        glUniform3fv(location[2], 1, light.position);
-        glUniform3fv(location[3], 1, light.diffuse);
-        glUniform3fv(location[4], 1, light.specular);
-        glUniform3fv(location[5], 1, light.ambient);
-        glUniform1i(location[6], is_both_sides);
+        qFunc.glUseProgram(rendering_program_facets);
+        qFunc.glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
+        qFunc.glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
+        qFunc.glUniform3fv(location[2], 1, light.position);
+        qFunc.glUniform3fv(location[3], 1, light.diffuse);
+        qFunc.glUniform3fv(location[4], 1, light.specular);
+        qFunc.glUniform3fv(location[5], 1, light.ambient);
+        qFunc.glUniform1i(location[6], is_both_sides);
 
 
     }
     //For the Wire mode
     else if(mode ==1)
     {
-        glUseProgram(rendering_program_lines);
-        glUniformMatrix4fv(location[7], 1, GL_FALSE, mvp_mat);
+        qFunc.glUseProgram(rendering_program_lines);
+        qFunc.glUniformMatrix4fv(location[7], 1, GL_FALSE, mvp_mat);
         colors[0] = edge_color.redF();
         colors[1] = edge_color.greenF();
         colors[2] = edge_color.blueF();
-        glUniform3fv(location[8],1,colors);
+        qFunc.glUniform3fv(location[8],1,colors);
     }
     //For the points mode
     else if(mode ==2)
     {
-        glUseProgram(rendering_program_points);
-        glUniformMatrix4fv(location[9], 1, GL_FALSE, mvp_mat);
+        qFunc.glUseProgram(rendering_program_points);
+        qFunc.glUniformMatrix4fv(location[9], 1, GL_FALSE, mvp_mat);
         colors[0] = vertex_color.redF();
         colors[1] = vertex_color.greenF();
         colors[2] = vertex_color.blueF();
-        glUniform3fv(location[10],1,colors);
+        qFunc.glUniform3fv(location[10],1,colors);
     }
 }
 void Scene_polyhedron_selection_item::compute_elements()
@@ -394,19 +394,19 @@ void Scene_polyhedron_selection_item::compute_elements()
         }
     }
 
-    location[0] = glGetUniformLocation(rendering_program_facets, "mvp_matrix");
-    location[1] = glGetUniformLocation(rendering_program_facets, "mv_matrix");
-    location[2] = glGetUniformLocation(rendering_program_facets, "light_pos");
-    location[3] = glGetUniformLocation(rendering_program_facets, "light_diff");
-    location[4] = glGetUniformLocation(rendering_program_facets, "light_spec");
-    location[5] = glGetUniformLocation(rendering_program_facets, "light_amb");
-    location[6] = glGetUniformLocation(rendering_program_facets, "is_two_side");
+    location[0] = qFunc.glGetUniformLocation(rendering_program_facets, "mvp_matrix");
+    location[1] = qFunc.glGetUniformLocation(rendering_program_facets, "mv_matrix");
+    location[2] = qFunc.glGetUniformLocation(rendering_program_facets, "light_pos");
+    location[3] = qFunc.glGetUniformLocation(rendering_program_facets, "light_diff");
+    location[4] = qFunc.glGetUniformLocation(rendering_program_facets, "light_spec");
+    location[5] = qFunc.glGetUniformLocation(rendering_program_facets, "light_amb");
+    location[6] = qFunc.glGetUniformLocation(rendering_program_facets, "is_two_side");
 
-    location[7] = glGetUniformLocation(rendering_program_lines, "mvp_matrix");
-    location[8] = glGetUniformLocation(rendering_program_lines, "color");
+    location[7] = qFunc.glGetUniformLocation(rendering_program_lines, "mvp_matrix");
+    location[8] = qFunc.glGetUniformLocation(rendering_program_lines, "color");
 
-    location[9] = glGetUniformLocation(rendering_program_points, "mvp_matrix");
-    location[10] = glGetUniformLocation(rendering_program_points, "color");
+    location[9] = qFunc.glGetUniformLocation(rendering_program_points, "mvp_matrix");
+    location[10] = qFunc.glGetUniformLocation(rendering_program_points, "color");
 }
 
 void Scene_polyhedron_selection_item::draw(Viewer_interface* viewer) const
@@ -415,15 +415,15 @@ void Scene_polyhedron_selection_item::draw(Viewer_interface* viewer) const
     draw_points(viewer);
     GLfloat offset_factor;
     GLfloat offset_units;
-    glGetFloatv( GL_POLYGON_OFFSET_FACTOR, &offset_factor);
-    glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
+    qFunc.glGetFloatv( GL_POLYGON_OFFSET_FACTOR, &offset_factor);
+    qFunc.glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
     glPolygonOffset(-1.f, 1.f);
-    glBindVertexArray(vao[0]);
+    qFunc.glBindVertexArray(vao[0]);
     uniform_attrib(viewer,0);
-    glUseProgram(rendering_program_facets);
-    glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/3);
-    glUseProgram(0);
-    glBindVertexArray(0);
+    qFunc.glUseProgram(rendering_program_facets);
+    qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/3);
+    qFunc.glUseProgram(0);
+    qFunc.glBindVertexArray(0);
     glPolygonOffset(offset_factor, offset_units);
     draw_edges(viewer);
 
@@ -433,26 +433,26 @@ void Scene_polyhedron_selection_item::draw(Viewer_interface* viewer) const
 void Scene_polyhedron_selection_item::draw_edges(Viewer_interface* viewer) const
 {
 
-    glLineWidth(3.f);
-    glBindVertexArray(vao[0]);
+    qFunc.glLineWidth(3.f);
+    qFunc.glBindVertexArray(vao[0]);
     uniform_attrib(viewer,1);
-    glUseProgram(rendering_program_lines);
-    glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
-    glUseProgram(0);
-    glBindVertexArray(0);
-    glLineWidth(1.f);
+    qFunc.glUseProgram(rendering_program_lines);
+    qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
+    qFunc.glUseProgram(0);
+    qFunc.glBindVertexArray(0);
+    qFunc.glLineWidth(1.f);
 }
 
 void Scene_polyhedron_selection_item::draw_points(Viewer_interface* viewer) const
 {
     std::cout<<"draw_points"<<std::endl;
-    glPointSize(5.f);
-    glBindVertexArray(vao[0]);
+    qFunc.glPointSize(5.f);
+    qFunc.glBindVertexArray(vao[0]);
     uniform_attrib(viewer,2);
-    glUseProgram(rendering_program_points);
-    glDrawArrays(GL_POINTS, 0, positions_points.size()/3);
-    glUseProgram(0);
-    glBindVertexArray(0);
-    glPointSize(1.f);
+    qFunc.glUseProgram(rendering_program_points);
+    qFunc.glDrawArrays(GL_POINTS, 0, positions_points.size()/3);
+    qFunc.glUseProgram(0);
+    qFunc.glBindVertexArray(0);
+    qFunc.glPointSize(1.f);
 
 }

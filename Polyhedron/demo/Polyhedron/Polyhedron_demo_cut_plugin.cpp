@@ -41,17 +41,18 @@ public:
   Scene_aabb_item(const AABB_tree& tree_) : tree(tree_)
   {
       positions_lines.resize(0);
-      glGenVertexArrays(1, vao);
+      qFunc.initializeOpenGLFunctions();
+      qFunc.glGenVertexArrays(1, vao);
       //Generates an integer which will be used as ID for each buffer
-      glGenBuffers(1, buffer);
+      qFunc.glGenBuffers(1, buffer);
       compile_shaders();
   }
 
     ~Scene_aabb_item()
     {
-      glDeleteBuffers(1, buffer);
-      glDeleteVertexArrays(1, vao);
-      glDeleteProgram(rendering_program_lines);
+      qFunc.glDeleteBuffers(1, buffer);
+      qFunc.glDeleteVertexArrays(1, vao);
+      qFunc.glDeleteProgram(rendering_program_lines);
     }
 
   bool isFinite() const { return true; }
@@ -110,23 +111,23 @@ private:
 
     void initialize_buffers()
     {
-        glBindVertexArray(vao[0]);
+        qFunc.glBindVertexArray(vao[0]);
 
-        glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-        glBufferData(GL_ARRAY_BUFFER,
+        qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+        qFunc.glBufferData(GL_ARRAY_BUFFER,
                      (positions_lines.size())*sizeof(float),
                      positions_lines.data(),
                      GL_STATIC_DRAW);
-        glVertexAttribPointer(0, //number of the buffer
+        qFunc.glVertexAttribPointer(0, //number of the buffer
                               3, //number of floats to be taken
                               GL_FLOAT, // type of data
                               GL_FALSE, //not normalized
                               0, //compact data (not in a struct)
                               NULL //no offset (seperated in several buffers)
                               );
-        glEnableVertexAttribArray(0);
+        qFunc.glEnableVertexAttribArray(0);
 
-        glBindVertexArray(0);
+        qFunc.glBindVertexArray(0);
     }
     void compile_shaders()
     {
@@ -165,20 +166,20 @@ private:
             "} \n"
         };
 
-        GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
-        glCompileShader(vertex_shader);
-        GLuint fragment_shader =	glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-        glCompileShader(fragment_shader);
+        GLuint vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
+        qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
+        qFunc.glCompileShader(vertex_shader);
+        GLuint fragment_shader =	qFunc.glCreateShader(GL_FRAGMENT_SHADER);
+        qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+        qFunc.glCompileShader(fragment_shader);
 
-        GLuint program = glCreateProgram();
-        glAttachShader(program, vertex_shader);
-        glAttachShader(program, fragment_shader);
-        glLinkProgram(program);
+        GLuint program = qFunc.glCreateProgram();
+        qFunc.glAttachShader(program, vertex_shader);
+        qFunc.glAttachShader(program, fragment_shader);
+        qFunc.glLinkProgram(program);
 
-        glDeleteShader(vertex_shader);
-        glDeleteShader(fragment_shader);
+        qFunc.glDeleteShader(vertex_shader);
+        qFunc.glDeleteShader(fragment_shader);
         rendering_program_lines = program;
     }
     void uniform_attrib(Viewer_interface* viewer) const
@@ -200,9 +201,9 @@ private:
         colors[2] = this->color().blueF();
 
 
-            glUseProgram(rendering_program_lines);
-            glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
-            glUniform3fv(location[1],1,colors);  
+            qFunc.glUseProgram(rendering_program_lines);
+            qFunc.glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
+            qFunc.glUniform3fv(location[1],1,colors);
     }
     void compute_elements()
     {
@@ -213,17 +214,17 @@ private:
 
        tree.traversal(0, traits);
 
-        location[0] = glGetUniformLocation(rendering_program_lines, "mvp_matrix");
-        location[1] = glGetUniformLocation(rendering_program_lines, "color");    
+        location[0] = qFunc.glGetUniformLocation(rendering_program_lines, "mvp_matrix");
+        location[1] = qFunc.glGetUniformLocation(rendering_program_lines, "color");
     }
     void draw_edges(Viewer_interface* viewer) const
     {
-        glBindVertexArray(vao[0]);
-        glUseProgram(rendering_program_lines);
+        qFunc.glBindVertexArray(vao[0]);
+        qFunc.glUseProgram(rendering_program_lines);
         uniform_attrib(viewer);
-        glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
-        glUseProgram(0);
-        glBindVertexArray(0);
+        qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
+        qFunc.glUseProgram(0);
+        qFunc.glBindVertexArray(0);
 
     }
 }; // end class Scene_aabb_item
@@ -235,16 +236,17 @@ public:
     Scene_edges_item()
     {
         positions_lines.resize(0);
-        glGenVertexArrays(1, vao);
+        qFunc.initializeOpenGLFunctions();
+        qFunc.glGenVertexArrays(1, vao);
         //Generates an integer which will be used as ID for each buffer
-        glGenBuffers(1, buffer);
+        qFunc.glGenBuffers(1, buffer);
         compile_shaders();
     }
   ~Scene_edges_item()
   {
-        glDeleteBuffers(1, buffer);
-        glDeleteVertexArrays(1, vao);
-        glDeleteProgram(rendering_program_lines);
+        qFunc.glDeleteBuffers(1, buffer);
+        qFunc.glDeleteVertexArrays(1, vao);
+        qFunc.glDeleteProgram(rendering_program_lines);
   }
     bool isFinite() const { return true; }
   bool isEmpty() const { return edges.empty(); }
@@ -330,23 +332,23 @@ private:
 
     void initialize_buffers()
     {
-        glBindVertexArray(vao[0]);
+        qFunc.glBindVertexArray(vao[0]);
 
-        glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-        glBufferData(GL_ARRAY_BUFFER,
+        qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+        qFunc.glBufferData(GL_ARRAY_BUFFER,
                      (positions_lines.size())*sizeof(float),
                      positions_lines.data(),
                      GL_STATIC_DRAW);
-        glVertexAttribPointer(0, //number of the buffer
+        qFunc.glVertexAttribPointer(0, //number of the buffer
                               3, //number of floats to be taken
                               GL_FLOAT, // type of data
                               GL_FALSE, //not normalized
                               0, //compact data (not in a struct)
                               NULL //no offset (seperated in several buffers)
                               );
-        glEnableVertexAttribArray(0);
+        qFunc.glEnableVertexAttribArray(0);
 
-        glBindVertexArray(0);
+        qFunc.glBindVertexArray(0);
     }
     void compile_shaders()
     {
@@ -385,20 +387,20 @@ private:
             "} \n"
         };
 
-        GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
-        glCompileShader(vertex_shader);
-        GLuint fragment_shader =	glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-        glCompileShader(fragment_shader);
+        GLuint vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
+        qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
+        qFunc.glCompileShader(vertex_shader);
+        GLuint fragment_shader =	qFunc.glCreateShader(GL_FRAGMENT_SHADER);
+        qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+        qFunc.glCompileShader(fragment_shader);
 
-        GLuint program = glCreateProgram();
-        glAttachShader(program, vertex_shader);
-        glAttachShader(program, fragment_shader);
-        glLinkProgram(program);
+        GLuint program = qFunc.glCreateProgram();
+        qFunc.glAttachShader(program, vertex_shader);
+        qFunc.glAttachShader(program, fragment_shader);
+        qFunc.glLinkProgram(program);
 
-        glDeleteShader(vertex_shader);
-        glDeleteShader(fragment_shader);
+        qFunc.glDeleteShader(vertex_shader);
+        qFunc.glDeleteShader(fragment_shader);
         rendering_program_lines = program;
     }
     void uniform_attrib(Viewer_interface* viewer) const
@@ -420,9 +422,9 @@ private:
         colors[2] = this->color().blueF();
 
 
-            glUseProgram(rendering_program_lines);
-            glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
-            glUniform3fv(location[1],1,colors);
+            qFunc.glUseProgram(rendering_program_lines);
+            qFunc.glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
+            qFunc.glUniform3fv(location[1],1,colors);
     }
     void compute_elements()
     {
@@ -437,17 +439,17 @@ private:
          positions_lines.push_back(b.x()); positions_lines.push_back(b.y()); positions_lines.push_back(b.z());
        }
 
-        location[0] = glGetUniformLocation(rendering_program_lines, "mvp_matrix");
-        location[1] = glGetUniformLocation(rendering_program_lines, "color");
+        location[0] = qFunc.glGetUniformLocation(rendering_program_lines, "mvp_matrix");
+        location[1] = qFunc.glGetUniformLocation(rendering_program_lines, "color");
     }
     void draw_edges(Viewer_interface* viewer) const
     {
-        glBindVertexArray(vao[0]);
-        glUseProgram(rendering_program_lines);
+        qFunc.glBindVertexArray(vao[0]);
+        qFunc.glUseProgram(rendering_program_lines);
         uniform_attrib(viewer);
-        glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
-        glUseProgram(0);
-        glBindVertexArray(0);
+        qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
+        qFunc.glUseProgram(0);
+        qFunc.glBindVertexArray(0);
 
     }
 

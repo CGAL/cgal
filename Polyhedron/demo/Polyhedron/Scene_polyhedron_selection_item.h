@@ -169,20 +169,20 @@ public:
     Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw)
         : Scene_polyhedron_item_decorator(NULL, false)
     { init(poly_item, mw);
-        glGenVertexArrays(1, vao);
+        qFunc.glGenVertexArrays(1, vao);
         //Generates an integer which will be used as ID for each buffer
-        glGenBuffers(4, buffer);
+        qFunc.glGenBuffers(4, buffer);
         compile_shaders();
         changed();
     }
 
    ~Scene_polyhedron_selection_item()
     {
-        glDeleteBuffers(4, buffer);
-        glDeleteVertexArrays(1, vao);
-        glDeleteProgram(rendering_program_facets);
-        glDeleteProgram(rendering_program_lines);
-        glDeleteProgram(rendering_program_points);
+        qFunc.glDeleteBuffers(4, buffer);
+        qFunc.glDeleteVertexArrays(1, vao);
+        qFunc.glDeleteProgram(rendering_program_facets);
+        qFunc.glDeleteProgram(rendering_program_lines);
+        qFunc.glDeleteProgram(rendering_program_points);
     }
 
 protected: 
@@ -206,6 +206,7 @@ protected:
         facet_color = QColor(87,87,87);
         edge_color = QColor(173,35,35);
         vertex_color = QColor(255,205,243);
+        qFunc.initializeOpenGLFunctions();
     }
 
     Active_handle::Type get_active_handle_type()

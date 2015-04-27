@@ -10,10 +10,10 @@ Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer
     poly(poly_item->polyhedron()),
     center_(pos) {
     frame->setPosition(pos);
-
-    glGenVertexArrays(1, vao);
+    qFunc.initializeOpenGLFunctions();
+    qFunc.glGenVertexArrays(1, vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(1, buffer);
+    qFunc.glGenBuffers(1, buffer);
     compile_shaders();
 
 }
@@ -21,9 +21,9 @@ Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer
 Scene_polyhedron_transform_item::~Scene_polyhedron_transform_item()
 {
 
-    glDeleteBuffers(1, buffer);
-    glDeleteVertexArrays(1, vao);
-    glDeleteProgram(rendering_program);
+    qFunc.glDeleteBuffers(1, buffer);
+    qFunc.glDeleteVertexArrays(1, vao);
+    qFunc.glDeleteProgram(rendering_program);
     delete frame;
     emit killed();
 }
@@ -31,22 +31,22 @@ Scene_polyhedron_transform_item::~Scene_polyhedron_transform_item()
 void Scene_polyhedron_transform_item::initialize_buffers()
 {
 
-    glBindVertexArray(vao[0]);
+    qFunc.glBindVertexArray(vao[0]);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (positions_lines.size())*sizeof(float),
                  positions_lines.data(),
                  GL_STATIC_DRAW);
-    glVertexAttribPointer(0, //number of the buffer
+    qFunc.glVertexAttribPointer(0, //number of the buffer
                           3, //number of floats to be taken
                           GL_FLOAT, // type of data
                           GL_FALSE, //not normalized
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
-    glEnableVertexAttribArray(0);
-    glBindVertexArray(0);
+    qFunc.glEnableVertexAttribArray(0);
+    qFunc.glBindVertexArray(0);
 }
 void Scene_polyhedron_transform_item::compile_shaders()
 {
@@ -86,20 +86,20 @@ void Scene_polyhedron_transform_item::compile_shaders()
         "} \n"
     };
 
-    GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, vertex_shader_source_lines, NULL);
-    glCompileShader(vertex_shader);
-    GLuint fragment_shader =	glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    glCompileShader(fragment_shader);
+    GLuint vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
+    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source_lines, NULL);
+    qFunc.glCompileShader(vertex_shader);
+    GLuint fragment_shader =	qFunc.glCreateShader(GL_FRAGMENT_SHADER);
+    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+    qFunc.glCompileShader(fragment_shader);
 
-    GLuint program = glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
+    GLuint program = qFunc.glCreateProgram();
+    qFunc.glAttachShader(program, vertex_shader);
+    qFunc.glAttachShader(program, fragment_shader);
+    qFunc.glLinkProgram(program);
 
-    glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
+    qFunc.glDeleteShader(vertex_shader);
+    qFunc.glDeleteShader(fragment_shader);
     rendering_program = program;
 
 }
@@ -118,10 +118,10 @@ void Scene_polyhedron_transform_item::uniform_attrib(Viewer_interface* viewer) c
     colors[0] = this->color().redF();
     colors[1] = this->color().greenF();
     colors[2] = this->color().blueF();
-    glUseProgram(rendering_program);
-    glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
-    glUniform3fv(location[1], 1, colors);
-    glUniformMatrix4fv(location[2], 1, GL_FALSE, f_mat);
+    qFunc.glUseProgram(rendering_program);
+    qFunc.glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
+    qFunc.glUniform3fv(location[1], 1, colors);
+    qFunc.glUniformMatrix4fv(location[2], 1, GL_FALSE, f_mat);
 }
 void Scene_polyhedron_transform_item::compute_elements()
 {
@@ -146,9 +146,9 @@ void Scene_polyhedron_transform_item::compute_elements()
 
     }
 
-    location[0] = glGetUniformLocation(rendering_program, "mvp_matrix");
-    location[1] = glGetUniformLocation(rendering_program, "color_lines");
-    location[2] = glGetUniformLocation(rendering_program, "f_matrix");
+    location[0] = qFunc.glGetUniformLocation(rendering_program, "mvp_matrix");
+    location[1] = qFunc.glGetUniformLocation(rendering_program, "color_lines");
+    location[2] = qFunc.glGetUniformLocation(rendering_program, "f_matrix");
 }
 
 
@@ -161,12 +161,12 @@ void Scene_polyhedron_transform_item::draw() const{
 }
 void Scene_polyhedron_transform_item::draw_edges(Viewer_interface* viewer) const
 {
-    glBindVertexArray(vao[0]);
-    glUseProgram(rendering_program);
+    qFunc.glBindVertexArray(vao[0]);
+    qFunc.glUseProgram(rendering_program);
     uniform_attrib(viewer);
-    glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
-    glUseProgram(0);
-    glBindVertexArray(0);
+    qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
+    qFunc.glUseProgram(0);
+    qFunc.glBindVertexArray(0);
 
 }
 void Scene_polyhedron_transform_item::direct_draw_edges() const {

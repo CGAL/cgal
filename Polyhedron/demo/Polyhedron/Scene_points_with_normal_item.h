@@ -106,17 +106,17 @@ private:
   std::vector<double> normals;
   std::vector<double> tex_coords;
 
-  int texture[3];
+  mutable int texture[3];
 
-  GLuint rendering_program_lines;
-  GLuint rendering_program_points;
-  GLuint rendering_program_splats;
-  GLint location[9];
-  GLuint textureId;
-  GLint sampler_location;
+  mutable GLuint rendering_program_lines;
+  mutable GLuint rendering_program_points;
+  mutable GLuint rendering_program_splats;
+  mutable GLint location[9];
+  mutable GLuint textureId;
+  mutable GLint sampler_location;
 
-  GLuint vao[2];
-  GLuint buffer[9];
+  mutable GLuint vao[2];
+  mutable GLuint buffer[9];
   void initialize_buffers();
   void compile_shaders(void);
   void compute_normals_and_vertices(void);

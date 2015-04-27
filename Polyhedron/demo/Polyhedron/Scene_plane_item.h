@@ -1,7 +1,7 @@
 #ifndef SCENE_PLANE_ITEM_H
 #define SCENE_PLANE_ITEM_H
 
-#include <GL/glew.h>
+
 #include "Scene_item.h"
 #include "Scene_interface.h"
 
@@ -33,18 +33,19 @@ public:
       frame(new ManipulatedFrame())
   {
     setNormal(0., 0., 1.);
-    glGenVertexArrays(1, vao);
+    qFunc.initializeOpenGLFunctions();
+    qFunc.glGenVertexArrays(1, vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(2, buffer);
+    qFunc.glGenBuffers(2, buffer);
     compile_shaders();
     changed();
   }
 
   ~Scene_plane_item() {
-      glDeleteBuffers(2, buffer);
-      glDeleteVertexArrays(1, vao);
-      glDeleteProgram(rendering_program_lines);
-      glDeleteProgram(rendering_program_quad);
+      qFunc.glDeleteBuffers(2, buffer);
+      qFunc.glDeleteVertexArrays(1, vao);
+      qFunc.glDeleteProgram(rendering_program_lines);
+      qFunc.glDeleteProgram(rendering_program_quad);
     delete frame;
   }
 
@@ -184,20 +185,17 @@ private:
   bool manipulable;
   bool can_clone;
   qglviewer::ManipulatedFrame* frame;
-  std::vector<float> positions_lines;
-  std::vector<float> positions_quad;
 
+  mutable std::vector<float> positions_lines;
+  mutable std::vector<float> positions_quad;
+  mutable GLuint rendering_program_quad;
+  mutable GLuint rendering_program_lines;
+  mutable GLint location[10];
+  mutable GLint sampler_location;
+  mutable GLuint vao[1];
+  mutable GLuint buffer[2];
+  mutable bool smooth_shading;
 
-
-
-  GLuint rendering_program_quad;
-  GLuint rendering_program_lines;
-  GLint location[10];
-  GLint sampler_location;
-
-  GLuint vao[1];
-  GLuint buffer[2];
-  bool smooth_shading;
   void initialize_buffers();
   void compile_shaders(void);
   void uniform_attrib(Viewer_interface*, int) const;

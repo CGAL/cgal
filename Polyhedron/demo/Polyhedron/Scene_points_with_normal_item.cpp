@@ -21,6 +21,8 @@
 #include <algorithm>
 #include <boost/array.hpp>
 
+#include <QOpenGLFunctions_3_1>
+
 struct light_info
 {
     //position
@@ -52,11 +54,12 @@ Scene_points_with_normal_item::Scene_points_with_normal_item()
 {
     setRenderingMode(Points);
     is_selected = true;
-    glGenVertexArrays(2, vao);
+    qFunc.initializeOpenGLFunctions();
+    qFunc.glGenVertexArrays(2, vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(9, buffer);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glGenTextures(1, &textureId);
+    qFunc.glGenBuffers(9, buffer);
+    qFunc.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    qFunc.glGenTextures(1, &textureId);
     compile_shaders();
 }
 
@@ -79,22 +82,24 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
     {
         setRenderingMode(PointsPlusNormals);
         is_selected = true;
-        glGenVertexArrays(2, vao);
+        qFunc.initializeOpenGLFunctions();
+        qFunc.glGenVertexArrays(2, vao);
         //Generates an integer which will be used as ID for each buffer
-        glGenBuffers(9, buffer);
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glGenTextures(1, &textureId);
+        qFunc.glGenBuffers(9, buffer);
+        qFunc.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        qFunc.glGenTextures(1, &textureId);
         compile_shaders();
     }
     else
     {
         setRenderingMode(Points);
         is_selected = true;
-        glGenVertexArrays(2, vao);
+        qFunc.initializeOpenGLFunctions();
+        qFunc.glGenVertexArrays(2, vao);
         //Generates an integer which will be used as ID for each buffer
-        glGenBuffers(9, buffer);
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glGenTextures(1, &textureId);
+        qFunc.glGenBuffers(9, buffer);
+        qFunc.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        qFunc.glGenTextures(1, &textureId);
         compile_shaders();
     }
 }
@@ -126,22 +131,23 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& i
 
     setRenderingMode(PointsPlusNormals);
     is_selected = true;
-    glGenVertexArrays(2, vao);
+    qFunc.initializeOpenGLFunctions();
+    qFunc.glGenVertexArrays(2, vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(9, buffer);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glGenTextures(1, &textureId);
+    qFunc.glGenBuffers(9, buffer);
+    qFunc.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    qFunc.glGenTextures(1, &textureId);
     compile_shaders();
 }
 
 Scene_points_with_normal_item::~Scene_points_with_normal_item()
 {
     Q_ASSERT(m_points != NULL);
-    glDeleteBuffers(9, buffer);
-    glDeleteVertexArrays(2, vao);
-    glDeleteProgram(rendering_program_lines);
-    glDeleteProgram(rendering_program_points);
-    glDeleteProgram(rendering_program_splats);
+    qFunc.glDeleteBuffers(9, buffer);
+    qFunc.glDeleteVertexArrays(2, vao);
+    qFunc.glDeleteProgram(rendering_program_lines);
+    qFunc.glDeleteProgram(rendering_program_points);
+    qFunc.glDeleteProgram(rendering_program_splats);
     delete m_points; m_points = NULL;
 }
 
@@ -149,104 +155,104 @@ Scene_points_with_normal_item::~Scene_points_with_normal_item()
 
 void Scene_points_with_normal_item::initialize_buffers()
 {
-    glBindVertexArray(vao[0]);
+    qFunc.glBindVertexArray(vao[0]);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (positions_lines.size())*sizeof(double),
                  positions_lines.data(),
                  GL_STATIC_DRAW);
-    glVertexAttribPointer(0, //number of the buffer
+    qFunc.glVertexAttribPointer(0, //number of the buffer
                           3, //number of floats to be taken
                           GL_DOUBLE, // type of data
                           GL_FALSE, //not normalized
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
-    glEnableVertexAttribArray(0);
+    qFunc.glEnableVertexAttribArray(0);
 
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (color_lines.size())*sizeof(double),
                  color_lines.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(1,
+    qFunc.glVertexAttribPointer(1,
                           3,
                           GL_DOUBLE,
                           GL_FALSE,
                           0,
                           NULL
                           );
-    glEnableVertexAttribArray(1);
+    qFunc.glEnableVertexAttribArray(1);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (positions_points.size())*sizeof(double),
                  positions_points.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(2,
+    qFunc.glVertexAttribPointer(2,
                           3,
                           GL_DOUBLE,
                           GL_FALSE,
                           0,
                           NULL
                           );
-    glEnableVertexAttribArray(2);
+    qFunc.glEnableVertexAttribArray(2);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[3]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[3]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (color_points.size())*sizeof(double),
                  color_points.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(3,
+    qFunc.glVertexAttribPointer(3,
                           3,
                           GL_DOUBLE,
                           GL_FALSE,
                           0,
                           NULL
                           );
-    glEnableVertexAttribArray(3);
+    qFunc.glEnableVertexAttribArray(3);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[6]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[6]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (positions_splats.size())*sizeof(double),
                  positions_splats.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(4,
+    qFunc.glVertexAttribPointer(4,
                           3,
                           GL_DOUBLE,
                           GL_FALSE,
                           0,
                           NULL
                           );
-    glEnableVertexAttribArray(4);
+    qFunc.glEnableVertexAttribArray(4);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[7]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[7]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (tex_coords.size())*sizeof(double),
                  tex_coords.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(5,
+    qFunc.glVertexAttribPointer(5,
                           2,
                           GL_DOUBLE,
                           GL_FALSE,
                           0,
                           NULL
                           );
-    glEnableVertexAttribArray(5);
+    qFunc.glEnableVertexAttribArray(5);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[8]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[8]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (normals.size())*sizeof(double),
                  normals.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(6,
+    qFunc.glVertexAttribPointer(6,
                           3,
                           GL_DOUBLE,
                           GL_FALSE,
                           0,
                           NULL
                           );
-    glEnableVertexAttribArray(6);
+    qFunc.glEnableVertexAttribArray(6);
 
-    // glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, textureId);
-    glTexImage2D(GL_TEXTURE_2D,
+    // qFunc.glActiveTexture(GL_TEXTURE2);
+    qFunc.glBindTexture(GL_TEXTURE_2D, textureId);
+    qFunc.glTexImage2D(GL_TEXTURE_2D,
                  0,
                  GL_RGB,
                  1,
@@ -255,44 +261,44 @@ void Scene_points_with_normal_item::initialize_buffers()
                  GL_RGB,
                  GL_UNSIGNED_BYTE,
                  texture);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-    glBindVertexArray(vao[1]);
+    qFunc.glBindVertexArray(vao[1]);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[4]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[4]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (positions_selected_points.size())*sizeof(double),
                  positions_selected_points.data(),
                  GL_STATIC_DRAW);
-    glVertexAttribPointer(2, //number of the buffer
+    qFunc.glVertexAttribPointer(2, //number of the buffer
                           3, //number of floats to be taken
                           GL_DOUBLE, // type of data
                           GL_FALSE, //not normalized
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
-    glEnableVertexAttribArray(2);
+    qFunc.glEnableVertexAttribArray(2);
 
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[5]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[5]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (color_selected_points.size())*sizeof(double),
                  color_selected_points.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(3,
+    qFunc.glVertexAttribPointer(3,
                           3,
                           GL_DOUBLE,
                           GL_FALSE,
                           0,
                           NULL
                           );
-    glEnableVertexAttribArray(3);
+    qFunc.glEnableVertexAttribArray(3);
 
     // Clean-up
-    glBindVertexArray(0);
+    qFunc.glBindVertexArray(0);
 }
 void Scene_points_with_normal_item::compile_shaders(void)
 {
@@ -332,19 +338,19 @@ void Scene_points_with_normal_item::compile_shaders(void)
         " color = fColors; \n"
         "} \n"
     };
-    GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, vertex_shader_source_lines, NULL);
-    glCompileShader(vertex_shader);
-    GLuint fragment_shader =	glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    glCompileShader(fragment_shader);
+    GLuint vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
+    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source_lines, NULL);
+    qFunc.glCompileShader(vertex_shader);
+    GLuint fragment_shader =	qFunc.glCreateShader(GL_FRAGMENT_SHADER);
+    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+    qFunc.glCompileShader(fragment_shader);
     //creates the program, attaches and links the shaders
-    GLuint program= glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
+    GLuint program= qFunc.glCreateProgram();
+    qFunc.glAttachShader(program, vertex_shader);
+    qFunc.glAttachShader(program, fragment_shader);
+    qFunc.glLinkProgram(program);
     //Clean-up
-    glDeleteShader(vertex_shader);
+    qFunc.glDeleteShader(vertex_shader);
     rendering_program_lines = program;
     //For the points
     static const GLchar* vertex_shader_source_points[] =
@@ -365,17 +371,17 @@ void Scene_points_with_normal_item::compile_shaders(void)
         "} \n"
     };
 
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, vertex_shader_source_points, NULL);
-    glCompileShader(vertex_shader);
-    glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    glCompileShader(fragment_shader);
-    program = glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
+    vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
+    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source_points, NULL);
+    qFunc.glCompileShader(vertex_shader);
+    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+    qFunc.glCompileShader(fragment_shader);
+    program = qFunc.glCreateProgram();
+    qFunc.glAttachShader(program, vertex_shader);
+    qFunc.glAttachShader(program, fragment_shader);
+    qFunc.glLinkProgram(program);
     //Clean-up
-    glDeleteShader(vertex_shader);
+    qFunc.glDeleteShader(vertex_shader);
     rendering_program_points = program;
 
     //For the splats
@@ -417,19 +423,19 @@ void Scene_points_with_normal_item::compile_shaders(void)
         "   gl_Position = mvp_matrix * positions_splats; \n"
         "} \n"
     };
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, vertex_shader_source_splats, NULL);
-    glCompileShader(vertex_shader);
-    glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    glCompileShader(fragment_shader);
-    program = glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
+    vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
+    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source_splats, NULL);
+    qFunc.glCompileShader(vertex_shader);
+    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+    qFunc.glCompileShader(fragment_shader);
+    program = qFunc.glCreateProgram();
+    qFunc.glAttachShader(program, vertex_shader);
+    qFunc.glAttachShader(program, fragment_shader);
+    qFunc.glLinkProgram(program);
 
     //Clean-up
-    glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
+    qFunc.glDeleteShader(vertex_shader);
+    qFunc.glDeleteShader(fragment_shader);
     rendering_program_splats = program;
 
 
@@ -609,17 +615,17 @@ void Scene_points_with_normal_item::compute_normals_and_vertices(void)
             }
         }
     }
-    location[0] = glGetUniformLocation(rendering_program_lines, "mvp_matrix");
-    location[1] = glGetUniformLocation(rendering_program_points, "mvp_matrix");
+    location[0] = qFunc.glGetUniformLocation(rendering_program_lines, "mvp_matrix");
+    location[1] = qFunc.glGetUniformLocation(rendering_program_points, "mvp_matrix");
 
-    location[2] = glGetUniformLocation(rendering_program_splats, "mvp_matrix");
-    location[3] = glGetUniformLocation(rendering_program_splats, "mv_matrix");
-    location[4] = glGetUniformLocation(rendering_program_splats, "light_pos");
-    location[5] = glGetUniformLocation(rendering_program_splats, "light_diff");
-    location[6] = glGetUniformLocation(rendering_program_splats, "light_spec");
-    location[7] = glGetUniformLocation(rendering_program_splats, "light_amb");
-    location[8] = glGetUniformLocation(rendering_program_splats, "is_two_side");
-    sampler_location = glGetUniformLocation(rendering_program_splats, "s_texture");
+    location[2] = qFunc.glGetUniformLocation(rendering_program_splats, "mvp_matrix");
+    location[3] = qFunc.glGetUniformLocation(rendering_program_splats, "mv_matrix");
+    location[4] = qFunc.glGetUniformLocation(rendering_program_splats, "light_pos");
+    location[5] = qFunc.glGetUniformLocation(rendering_program_splats, "light_diff");
+    location[6] = qFunc.glGetUniformLocation(rendering_program_splats, "light_spec");
+    location[7] = qFunc.glGetUniformLocation(rendering_program_splats, "light_amb");
+    location[8] = qFunc.glGetUniformLocation(rendering_program_splats, "is_two_side");
+    sampler_location = qFunc.glGetUniformLocation(rendering_program_splats, "s_texture");
 
 }
 void Scene_points_with_normal_item::uniform_attrib(Viewer_interface* viewer, int mode) const
@@ -639,7 +645,7 @@ void Scene_points_with_normal_item::uniform_attrib(Viewer_interface* viewer, int
     for (int i=0; i<16; ++i)
         mv_mat[i] = GLfloat(d_mat[i]);
 
-    glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
+    qFunc.glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
 
     //Gets lighting info :
 
@@ -658,26 +664,26 @@ void Scene_points_with_normal_item::uniform_attrib(Viewer_interface* viewer, int
 
     if(mode ==0)
     {
-        glUseProgram(rendering_program_lines);
-        glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
+        qFunc.glUseProgram(rendering_program_lines);
+        qFunc.glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
     }
     else if(mode ==1)
     {
-        glUseProgram(rendering_program_points);
-        glUniformMatrix4fv(location[1], 1, GL_FALSE, mvp_mat);
+        qFunc.glUseProgram(rendering_program_points);
+        qFunc.glUniformMatrix4fv(location[1], 1, GL_FALSE, mvp_mat);
     }
 
     else if(mode ==2)
     {
-        glUseProgram(rendering_program_splats);
-        glUniformMatrix4fv(location[2], 1, GL_FALSE, mvp_mat);
-        glUniformMatrix4fv(location[3], 1, GL_FALSE, mv_mat);
-        glUniform3fv(location[4], 1, light.position);
-        glUniform3fv(location[5], 1, light.diffuse);
-        glUniform3fv(location[6], 1, light.specular);
-        glUniform3fv(location[7], 1, light.ambient);
-        glUniform1i(location[8], is_both_sides);
-        glUniform1i(sampler_location, 0);
+        qFunc.glUseProgram(rendering_program_splats);
+        qFunc.glUniformMatrix4fv(location[2], 1, GL_FALSE, mvp_mat);
+        qFunc.glUniformMatrix4fv(location[3], 1, GL_FALSE, mv_mat);
+        qFunc.glUniform3fv(location[4], 1, light.position);
+        qFunc.glUniform3fv(location[5], 1, light.diffuse);
+        qFunc.glUniform3fv(location[6], 1, light.specular);
+        qFunc.glUniform3fv(location[7], 1, light.ambient);
+        qFunc.glUniform1i(location[8], is_both_sides);
+        qFunc.glUniform1i(sampler_location, 0);
     }
 
 }
@@ -873,32 +879,32 @@ void Scene_points_with_normal_item::draw_splats(Viewer_interface* viewer) const
 
 void Scene_points_with_normal_item::draw_edges(Viewer_interface* viewer) const
 {
-    glBindVertexArray(vao[0]);
-    glUseProgram(rendering_program_lines);
+    qFunc.glBindVertexArray(vao[0]);
+    qFunc.glUseProgram(rendering_program_lines);
     uniform_attrib(viewer,0);
-    glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
-    glUseProgram(0);
-    glBindVertexArray(0);
+    qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
+    qFunc.glUseProgram(0);
+    qFunc.glBindVertexArray(0);
 }
 void Scene_points_with_normal_item::draw_points(Viewer_interface* viewer) const
 {
-    glBindVertexArray(vao[0]);
-    glUseProgram(rendering_program_points);
+    qFunc.glBindVertexArray(vao[0]);
+    qFunc.glUseProgram(rendering_program_points);
     uniform_attrib(viewer,1);
-    glDrawArrays(GL_POINTS, 0, positions_points.size()/3);
-    glUseProgram(0);
-    glBindVertexArray(0);
+    qFunc.glDrawArrays(GL_POINTS, 0, positions_points.size()/3);
+    qFunc.glUseProgram(0);
+    qFunc.glBindVertexArray(0);
 
     GLfloat point_size;
-    glGetFloatv(GL_POINT_SIZE, &point_size);
-    glPointSize(4.f);
-    glBindVertexArray(vao[1]);
-    glUseProgram(rendering_program_points);
+    qFunc.glGetFloatv(GL_POINT_SIZE, &point_size);
+    qFunc.glPointSize(4.f);
+    qFunc.glBindVertexArray(vao[1]);
+    qFunc.glUseProgram(rendering_program_points);
     uniform_attrib(viewer,1);
-    glDrawArrays(GL_POINTS, 0, positions_selected_points.size()/3);
-    glUseProgram(0);
-    glBindVertexArray(0);
-    glPointSize(point_size);
+    qFunc.glDrawArrays(GL_POINTS, 0, positions_selected_points.size()/3);
+    qFunc.glUseProgram(0);
+    qFunc.glBindVertexArray(0);
+    qFunc.glPointSize(point_size);
 }
 // Gets wrapped point set
 Point_set* Scene_points_with_normal_item::point_set()

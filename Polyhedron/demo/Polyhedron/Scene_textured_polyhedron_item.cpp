@@ -23,79 +23,79 @@ struct light_info
 
 void Scene_textured_polyhedron_item::initialize_buffers()
 {
-    glBindVertexArray(vao[0]);
+    qFunc.glBindVertexArray(vao[0]);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (positions_facets.size())*sizeof(float),
                  positions_facets.data(),
                  GL_STATIC_DRAW);
-    glVertexAttribPointer(0, //number of the buffer
+    qFunc.glVertexAttribPointer(0, //number of the buffer
                           4, //number of floats to be taken
                           GL_FLOAT, // type of data
                           GL_FALSE, //not normalized
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
-    glEnableVertexAttribArray(0);
+    qFunc.glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (positions_lines.size())*sizeof(float),
                  positions_lines.data(),
                  GL_STATIC_DRAW);
-    glVertexAttribPointer(1, //number of the buffer
+    qFunc.glVertexAttribPointer(1, //number of the buffer
                           4, //number of floats to be taken
                           GL_FLOAT, // type of data
                           GL_FALSE, //not normalized
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
-    glEnableVertexAttribArray(1);
+    qFunc.glEnableVertexAttribArray(1);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (normals.size())*sizeof(float),
                  normals.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(2,
+    qFunc.glVertexAttribPointer(2,
                           3,
                           GL_FLOAT,
                           GL_FALSE,
                           0,
                           NULL
                           );
-    glEnableVertexAttribArray(2);
+    qFunc.glEnableVertexAttribArray(2);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[3]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[3]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (textures_map_facets.size())*sizeof(float),
                  textures_map_facets.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(3,
+    qFunc.glVertexAttribPointer(3,
                           2,
                           GL_FLOAT,
                           GL_FALSE,
                           0,
                           NULL
                           );
-    glEnableVertexAttribArray(3);
+    qFunc.glEnableVertexAttribArray(3);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[4]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[4]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (textures_map_lines.size())*sizeof(float),
                  textures_map_lines.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(4,
+    qFunc.glVertexAttribPointer(4,
                           2,
                           GL_FLOAT,
                           GL_FALSE,
                           0,
                           NULL
                           );
-    glEnableVertexAttribArray(4);
+    qFunc.glEnableVertexAttribArray(4);
 
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureId);
-    glTexImage2D(GL_TEXTURE_2D,
+    qFunc.glActiveTexture(GL_TEXTURE0);
+    qFunc.glBindTexture(GL_TEXTURE_2D, textureId);
+    qFunc.glTexImage2D(GL_TEXTURE_2D,
                  0,
                  GL_RGB,
                  texture.GetWidth(),
@@ -104,14 +104,14 @@ void Scene_textured_polyhedron_item::initialize_buffers()
                  GL_RGB,
                  GL_UNSIGNED_BYTE,
                  texture.GetData());
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
     // Clean-up
-    glBindVertexArray(0);
+    qFunc.glBindVertexArray(0);
 }
 
 void Scene_textured_polyhedron_item::compile_shaders(void)
@@ -170,49 +170,49 @@ void Scene_textured_polyhedron_item::compile_shaders(void)
         "} \n"
     };
 
-    GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
-    glCompileShader(vertex_shader);
+    GLuint vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
+    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
+    qFunc.glCompileShader(vertex_shader);
 
 
-    GLuint fragment_shader =	glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    glCompileShader(fragment_shader);
+    GLuint fragment_shader =	qFunc.glCreateShader(GL_FRAGMENT_SHADER);
+    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+    qFunc.glCompileShader(fragment_shader);
 
 
     //creates the program, attaches and links the shaders
-    GLuint program= glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
+    GLuint program= qFunc.glCreateProgram();
+    qFunc.glAttachShader(program, vertex_shader);
+    qFunc.glAttachShader(program, fragment_shader);
+    qFunc.glLinkProgram(program);
 
     //Clean-up
-    glDeleteShader(vertex_shader);
+    qFunc.glDeleteShader(vertex_shader);
 
     rendering_program_facets = program;
     GLint result;
-    glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&result);
+    qFunc.glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&result);
     if(result == GL_TRUE){
         std::cout<<"Vertex compilation OK"<<std::endl;
     } else {
         int maxLength;
         int length;
-        glGetShaderiv(vertex_shader,GL_INFO_LOG_LENGTH,&maxLength);
+        qFunc.glGetShaderiv(vertex_shader,GL_INFO_LOG_LENGTH,&maxLength);
         char* log = new char[maxLength];
-        glGetShaderInfoLog(vertex_shader,maxLength,&length,log);
+        qFunc.glGetShaderInfoLog(vertex_shader,maxLength,&length,log);
         std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
     }
 
 
-        glGetShaderiv(fragment_shader,GL_COMPILE_STATUS,&result);
+        qFunc.glGetShaderiv(fragment_shader,GL_COMPILE_STATUS,&result);
             if(result == GL_TRUE){
                 std::cout<<"Fragment compilation OK"<<std::endl;
             } else {
                 int maxLength;
                 int length;
-                glGetShaderiv(fragment_shader,GL_INFO_LOG_LENGTH,&maxLength);
+                qFunc.glGetShaderiv(fragment_shader,GL_INFO_LOG_LENGTH,&maxLength);
                 char* log = new char[maxLength];
-                glGetShaderInfoLog(fragment_shader,maxLength,&length,log);
+                qFunc.glGetShaderInfoLog(fragment_shader,maxLength,&length,log);
                 std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
             }
     //For the edges
@@ -235,35 +235,35 @@ void Scene_textured_polyhedron_item::compile_shaders(void)
         "} \n"
     };
 
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, vertex_shader_source_lines, NULL);
-    glCompileShader(vertex_shader);
+    vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
+    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source_lines, NULL);
+    qFunc.glCompileShader(vertex_shader);
 
 
-    glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    glCompileShader(fragment_shader);
+    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+    qFunc.glCompileShader(fragment_shader);
 
 
-    program = glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
+    program = qFunc.glCreateProgram();
+    qFunc.glAttachShader(program, vertex_shader);
+    qFunc.glAttachShader(program, fragment_shader);
+    qFunc.glLinkProgram(program);
     rendering_program_lines = program;
-    glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&result);
+    qFunc.glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&result);
     if(result == GL_TRUE){
         std::cout<<"Vertex compilation OK"<<std::endl;
     } else {
         int maxLength;
         int length;
-        glGetShaderiv(vertex_shader,GL_INFO_LOG_LENGTH,&maxLength);
+        qFunc.glGetShaderiv(vertex_shader,GL_INFO_LOG_LENGTH,&maxLength);
         char* log = new char[maxLength];
-        glGetShaderInfoLog(vertex_shader,maxLength,&length,log);
+        qFunc.glGetShaderInfoLog(vertex_shader,maxLength,&length,log);
         std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
     }
 
     //Clean-up
-    glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
+    qFunc.glDeleteShader(vertex_shader);
+    qFunc.glDeleteShader(fragment_shader);
 
 
 }
@@ -288,7 +288,7 @@ void Scene_textured_polyhedron_item::uniform_attrib(Viewer_interface* viewer, in
         mv_mat[i] = GLfloat(d_mat[i]);
 
 
-    glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
+    qFunc.glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
 
     //Gets lighting info :
 
@@ -331,23 +331,23 @@ void Scene_textured_polyhedron_item::uniform_attrib(Viewer_interface* viewer, in
     }
     if(mode ==0)
     {
-        glUseProgram(rendering_program_facets);
-        glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
-        glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
-        glUniform3fv(location[2], 1, light.position);
-        glUniform3fv(location[3], 1, light.diffuse);
-        glUniform3fv(location[4], 1, light.specular);
-        glUniform3fv(location[5], 1, light.ambient);
-        glUniform1i(location[6], is_both_sides);
-        glUniform3fv(location[8], 1, colors_facet);
-        glUniform1i(sampler_location, 0);
+        qFunc.glUseProgram(rendering_program_facets);
+        qFunc.glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
+        qFunc.glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
+        qFunc.glUniform3fv(location[2], 1, light.position);
+        qFunc.glUniform3fv(location[3], 1, light.diffuse);
+        qFunc.glUniform3fv(location[4], 1, light.specular);
+        qFunc.glUniform3fv(location[5], 1, light.ambient);
+        qFunc.glUniform1i(location[6], is_both_sides);
+        qFunc.glUniform3fv(location[8], 1, colors_facet);
+        qFunc.glUniform1i(sampler_location, 0);
 
     }
     else if(mode ==1)
     {
-        glUseProgram(rendering_program_lines);
-        glUniformMatrix4fv(location[7], 1, GL_FALSE, mvp_mat);
-        glUniform3fv(location[9], 1, colors_lines);
+        qFunc.glUseProgram(rendering_program_lines);
+        qFunc.glUniformMatrix4fv(location[7], 1, GL_FALSE, mvp_mat);
+        qFunc.glUniform3fv(location[9], 1, colors_lines);
     }
 }
 void
@@ -454,17 +454,17 @@ Scene_textured_polyhedron_item::compute_normals_and_vertices(void)
     }
 
 
-    location[0] = glGetUniformLocation(rendering_program_facets, "mvp_matrix");
-    location[1] = glGetUniformLocation(rendering_program_facets, "mv_matrix");
-    location[2] = glGetUniformLocation(rendering_program_facets, "light_pos");
-    location[3] = glGetUniformLocation(rendering_program_facets, "light_diff");
-    location[4] = glGetUniformLocation(rendering_program_facets, "light_spec");
-    location[5] = glGetUniformLocation(rendering_program_facets, "light_amb");
-    location[6] = glGetUniformLocation(rendering_program_facets, "is_two_side");
-    location[8] = glGetUniformLocation(rendering_program_facets, "color_facets");
-    sampler_location = glGetUniformLocation(rendering_program_facets, "s_texture");
-    location[7] = glGetUniformLocation(rendering_program_lines, "mvp_matrix");
-    location[9] = glGetUniformLocation(rendering_program_lines, "color_lines");
+    location[0] = qFunc.glGetUniformLocation(rendering_program_facets, "mvp_matrix");
+    location[1] = qFunc.glGetUniformLocation(rendering_program_facets, "mv_matrix");
+    location[2] = qFunc.glGetUniformLocation(rendering_program_facets, "light_pos");
+    location[3] = qFunc.glGetUniformLocation(rendering_program_facets, "light_diff");
+    location[4] = qFunc.glGetUniformLocation(rendering_program_facets, "light_spec");
+    location[5] = qFunc.glGetUniformLocation(rendering_program_facets, "light_amb");
+    location[6] = qFunc.glGetUniformLocation(rendering_program_facets, "is_two_side");
+    location[8] = qFunc.glGetUniformLocation(rendering_program_facets, "color_facets");
+    sampler_location = qFunc.glGetUniformLocation(rendering_program_facets, "s_texture");
+    location[7] = qFunc.glGetUniformLocation(rendering_program_lines, "mvp_matrix");
+    location[9] = qFunc.glGetUniformLocation(rendering_program_lines, "color_lines");
 
 }
 
@@ -475,11 +475,12 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item()
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
     cur_shading=GL_FLAT;
     is_selected=false;
-    glGenVertexArrays(1, vao);
+    qFunc.initializeOpenGLFunctions();
+    qFunc.glGenVertexArrays(1, vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(5, buffer);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glGenTextures(1, &textureId);
+    qFunc.glGenBuffers(5, buffer);
+    qFunc.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    qFunc.glGenTextures(1, &textureId);
     compile_shaders();
     changed();
 }
@@ -491,9 +492,10 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(Textured_polyhedr
     cur_shading=GL_FLAT;
     is_selected=false;
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
-    glGenVertexArrays(1, vao);
+    qFunc.initializeOpenGLFunctions();
+    qFunc.glGenVertexArrays(1, vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(5, buffer);
+    qFunc.glGenBuffers(5, buffer);
 
     compile_shaders();
     changed();
@@ -506,9 +508,10 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(const Textured_po
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
     cur_shading=GL_FLAT;
     is_selected=false;
-    glGenVertexArrays(1, vao);
+    qFunc.initializeOpenGLFunctions();
+    qFunc.glGenVertexArrays(1, vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(5, buffer);
+    qFunc.glGenBuffers(5, buffer);
 
     compile_shaders();
     changed();
@@ -522,10 +525,10 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(const Textured_po
 
 Scene_textured_polyhedron_item::~Scene_textured_polyhedron_item()
 {
-    glDeleteBuffers(5, buffer);
-    glDeleteVertexArrays(1, vao);
-    glDeleteProgram(rendering_program_lines);
-    glDeleteProgram(rendering_program_facets);
+    qFunc.glDeleteBuffers(5, buffer);
+    qFunc.glDeleteVertexArrays(1, vao);
+    qFunc.glDeleteProgram(rendering_program_lines);
+    qFunc.glDeleteProgram(rendering_program_facets);
     delete poly;
 }
 
@@ -573,24 +576,24 @@ Scene_textured_polyhedron_item::toolTip() const
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 void Scene_textured_polyhedron_item::draw(Viewer_interface* viewer) const {
 
-    glBindVertexArray(vao[0]);
-    glUseProgram(rendering_program_facets);
+    qFunc.glBindVertexArray(vao[0]);
+    qFunc.glUseProgram(rendering_program_facets);
     uniform_attrib(viewer,0);
-    glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/4);
+    qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/4);
     //Clean-up
-    glUseProgram(0);
-    glBindVertexArray(0);
+    qFunc.glUseProgram(0);
+    qFunc.glBindVertexArray(0);
 
 }
 void Scene_textured_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
-    glBindVertexArray(vao[0]);
+    qFunc.glBindVertexArray(vao[0]);
 
-    glUseProgram(rendering_program_lines);
+    qFunc.glUseProgram(rendering_program_lines);
     uniform_attrib(viewer,1);
-    glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
+    qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
     // Clean-up
-    glUseProgram(0);
-    glBindVertexArray(0);
+    qFunc.glUseProgram(0);
+    qFunc.glBindVertexArray(0);
 }
 
 Textured_polyhedron* 
@@ -626,7 +629,7 @@ Scene_textured_polyhedron_item::
 contextual_changed()
 {
     GLint new_shading;
-    glGetIntegerv(GL_SHADE_MODEL, &new_shading);
+    qFunc.glGetIntegerv(GL_SHADE_MODEL, &new_shading);
     prev_shading = cur_shading;
     cur_shading = new_shading;
     if(prev_shading != cur_shading)

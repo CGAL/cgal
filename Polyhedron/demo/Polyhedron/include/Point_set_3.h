@@ -12,11 +12,11 @@
 #include <algorithm>
 #include <deque>
 
-#ifdef CGAL_GLEW_ENABLED
-# include <GL/glew.h>
-#else
+//#ifdef CGAL_GLEW_ENABLED
+//# include <GL/glew.h>
+//#else
 # include <CGAL/gl.h>
-#endif
+//#endif
 
 
 /// The Point_set_3 class is array of points + normals of type

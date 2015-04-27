@@ -30,13 +30,13 @@ void CGALglcolor(QColor c)
 }
 
 
-GlSplat::SplatRenderer* Scene::ms_splatting = 0;
-int Scene::ms_splattingCounter = 0;
-GlSplat::SplatRenderer* Scene::splatting()
-{
-    assert(ms_splatting!=0 && "A Scene object must be created before requesting the splatting object");
-    return ms_splatting;
-}
+//GlSplat::SplatRenderer* Scene::ms_splatting = 0;
+//int Scene::ms_splattingCounter = 0;
+//GlSplat::SplatRenderer* Scene::splatting()
+//{
+//    assert(ms_splatting!=0 && "A Scene object must be created before requesting the splatting object");
+//    return ms_splatting;
+//}
 
 
 Scene::Scene(QObject* parent)
@@ -51,9 +51,10 @@ Scene::Scene(QObject* parent)
             this, SLOT(setSelectionRay(double, double, double,
                                        double, double, double)));
 
-    if(ms_splatting==0)
+  /*  if(ms_splatting==0)
         ms_splatting  = new GlSplat::SplatRenderer();
     ms_splattingCounter++;
+    */
 
 }
 Scene::Item_id
@@ -61,17 +62,26 @@ Scene::addItem(Scene_item* item)
 {
 
     Bbox bbox_before = bbox();
-    item->changed();
-    m_entries.push_back(item);
-    connect(item, SIGNAL(itemChanged()),
-            this, SLOT(itemChanged()));
-    if(bbox_before + item->bbox() != bbox_before)
-    { emit updated_bbox(); }
-    emit updated();
-    QAbstractListModel::reset();
-    Item_id id = m_entries.size() - 1;
-    emit newItem(id);
-    return id;
+     m_entries.push_back(item);
+     connect(item, SIGNAL(itemChanged()),
+             this, SLOT(itemChanged()));
+     if(bbox_before + item->bbox() != bbox_before)
+     {
+   #if QT_VERSION >= 0x050000
+       QAbstractListModel::beginResetModel();
+       emit updated_bbox();
+       emit updated();
+       QAbstractListModel::endResetModel();
+    #else
+       emit updated_bbox();
+       emit updated();
+       QAbstractListModel::reset();
+    #endif
+     }
+
+     Item_id id = m_entries.size() - 1;
+     emit newItem(id);
+     return id;
 }
 
 Scene_item*
@@ -146,16 +156,7 @@ Scene::erase(QList<int> indices)
         delete item;
     }
 
-  int max_index = -1;
-  Q_FOREACH(int index, indices) {
-    if(index < 0 || index >= m_entries.size())
-      continue;
-    max_index = (std::max)(max_index, index);
-    Scene_item* item = m_entries[index];
-    to_be_removed.push_back(item);
-    emit itemAboutToBeDestroyed(item);
-    delete item;
-  }
+
 
   Q_FOREACH(Scene_item* item, to_be_removed) {
     m_entries.removeAll(item);
@@ -191,8 +192,8 @@ Scene::~Scene()
     }
     m_entries.clear();
 
-    if((--ms_splattingCounter)==0)
-        delete ms_splatting;
+   // if((--ms_splattingCounter)==0)
+   //     delete ms_splatting;
 }
 
 Scene_item*
@@ -236,7 +237,7 @@ Scene::duplicate(Item_id index)
 
 void Scene::initializeGL()
 {
-    ms_splatting->init();
+  //  ms_splatting->init();
 
     //Setting the light options
 
@@ -438,7 +439,7 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
         }
     }
     // Splatting
-    if(!with_names && ms_splatting->isSupported())
+   /* if(!with_names && ms_splatting->isSupported())
     {
 
         ms_splatting->beginVisibilityPass();
@@ -472,7 +473,7 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
         }
         ms_splatting->finalize();
 
-    }
+    }*/
 }
 
 // workaround for Qt-4.2 (see above)
@@ -636,7 +637,7 @@ Scene::setData(const QModelIndex &index,
         RenderingMode rendering_mode = static_cast<RenderingMode>(value.toInt());
         // Find next supported rendering mode
         while ( ! item->supportsRenderingMode(rendering_mode)
-                || (rendering_mode==Splatting && !Scene::splatting()->isSupported())
+      //          || (rendering_mode==Splatting && !Scene::splatting()->isSupported())
                 )
         {
             rendering_mode = static_cast<RenderingMode>( (rendering_mode+1) % NumberOfRenderingMode );

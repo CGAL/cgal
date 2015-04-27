@@ -1,6 +1,6 @@
 #ifndef SCENE_POLYLINES_ITEM_H
 #define SCENE_POLYLINES_ITEM_H
-#include <GL/glew.h>
+//#include <GL/glew.h>
 #include "Scene_polylines_item_config.h"
 #include "Viewer_interface.h"
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -102,13 +102,13 @@ private:
 
 
 
-    GLint location[11];
-    GLuint vao[1];
-    GLuint buffer[6];
-    GLuint rendering_program_spheres;
-    GLuint rendering_program_lines;
-    GLuint rendering_program_WireSpheres;
-    GLuint nbSpheres;
+  mutable   GLint location[11];
+  mutable   GLuint vao[1];
+  mutable   GLuint buffer[6];
+  mutable   GLuint rendering_program_spheres;
+  mutable   GLuint rendering_program_lines;
+  mutable   GLuint rendering_program_WireSpheres;
+  mutable   GLuint nbSpheres;
     //The more small they are, the more precise the Sphere will be.
     // Must be a multiple of 360 and 180.
     int rings;

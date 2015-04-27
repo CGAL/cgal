@@ -10,7 +10,7 @@
 #include <CGAL/corefinement_operations.h>
 void Scene_combinatorial_map_item::initialize_buffers()
 {
-    glBindVertexArray(vao);
+    qFunc.glBindVertexArray(vao);
     buffer[0] = QGLBuffer(QGLBuffer::VertexBuffer);
     if(!(buffer[0].create()))
         std::cout<<"ERROR lors de la creation"<<std::endl;
@@ -18,17 +18,17 @@ void Scene_combinatorial_map_item::initialize_buffers()
     buffer[0].setUsagePattern(QGLBuffer::StaticDraw);
     buffer[0].allocate(positions.data(),positions.size()*sizeof(float));
     /*
-    glVertexAttribPointer(0, //number of the buffer
+    qFunc.glVertexAttribPointer(0, //number of the buffer
                           4, //number of floats to be taken
                           GL_FLOAT, // type of data
                           GL_FALSE, //not normalized
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
-    glEnableVertexAttribArray(0);*/
+    qFunc.glEnableVertexAttribArray(0);*/
 
     // Clean-up
-    glBindVertexArray(0);
+    qFunc.glBindVertexArray(0);
 
 }
 

@@ -7,7 +7,7 @@
 #include "implicit_functions/Implicit_function_interface.h"
 #include "Color_ramp.h"
 #include <QGLViewer/manipulatedFrame.h>
-#include <QGLViewer/qglviewer.h>
+#include <Viewer.h>
 
 #define SCENE_IMPLICIT_GRID_SIZE 120
 

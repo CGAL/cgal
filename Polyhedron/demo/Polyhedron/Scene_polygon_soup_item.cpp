@@ -94,51 +94,51 @@ struct Polyhedron_to_polygon_soup_writer {
 void
 Scene_polygon_soup_item::initialize_buffers()
 {
-    glBindVertexArray(vao);
+    qFunc.glBindVertexArray(vao);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (positions_poly.size())*sizeof(float),
                  positions_poly.data(),
                  GL_STATIC_DRAW);
-    glVertexAttribPointer(0, //number of the buffer
+    qFunc.glVertexAttribPointer(0, //number of the buffer
                           4, //number of floats to be taken
                           GL_FLOAT, // type of data
                           GL_FALSE, //not normalized
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
-    glEnableVertexAttribArray(0);
+    qFunc.glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (positions_lines.size())*sizeof(float),
                  positions_lines.data(),
                  GL_STATIC_DRAW);
-    glVertexAttribPointer(1, //number of the buffer
+    qFunc.glVertexAttribPointer(1, //number of the buffer
                           4, //number of floats to be taken
                           GL_FLOAT, // type of data
                           GL_FALSE, //not normalized
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
-    glEnableVertexAttribArray(1);
+    qFunc.glEnableVertexAttribArray(1);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
-    glBufferData(GL_ARRAY_BUFFER,
+    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
+    qFunc.glBufferData(GL_ARRAY_BUFFER,
                  (normals.size())*sizeof(float),
                  normals.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(2,
+    qFunc.glVertexAttribPointer(2,
                           3,
                           GL_FLOAT,
                           GL_FALSE,
                           0,
                           NULL
                           );
-    glEnableVertexAttribArray(2);
+    qFunc.glEnableVertexAttribArray(2);
 
     // Clean-up
-    glBindVertexArray(0);
+    qFunc.glBindVertexArray(0);
 }
 
 void
@@ -204,20 +204,20 @@ Scene_polygon_soup_item::compile_shaders(void)
         "} \n"
     };
 
-    vertex_shader =	glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
-    glCompileShader(vertex_shader);
+    vertex_shader =	qFunc.glCreateShader(GL_VERTEX_SHADER);
+    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
+    qFunc.glCompileShader(vertex_shader);
 
-    fragment_shader =	glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    glCompileShader(fragment_shader);
+    fragment_shader =	qFunc.glCreateShader(GL_FRAGMENT_SHADER);
+    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+    qFunc.glCompileShader(fragment_shader);
 
-    GLuint program = glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
+    GLuint program = qFunc.glCreateProgram();
+    qFunc.glAttachShader(program, vertex_shader);
+    qFunc.glAttachShader(program, fragment_shader);
+    qFunc.glLinkProgram(program);
 
-    glDeleteShader(vertex_shader);
+    qFunc.glDeleteShader(vertex_shader);
     rendering_program_poly = program;
 
     //For the edges
@@ -239,22 +239,22 @@ Scene_polygon_soup_item::compile_shaders(void)
         "} \n"
     };
 
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, vertex_shader_source_lines, NULL);
-    glCompileShader(vertex_shader);
-    glDeleteShader(fragment_shader);
+    vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
+    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source_lines, NULL);
+    qFunc.glCompileShader(vertex_shader);
+    qFunc.glDeleteShader(fragment_shader);
 
-    glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    glCompileShader(fragment_shader);
+    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+    qFunc.glCompileShader(fragment_shader);
 
-    program = glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
+    program = qFunc.glCreateProgram();
+    qFunc.glAttachShader(program, vertex_shader);
+    qFunc.glAttachShader(program, fragment_shader);
+    qFunc.glLinkProgram(program);
 
     //Clean-up
-    glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
+    qFunc.glDeleteShader(vertex_shader);
+    qFunc.glDeleteShader(fragment_shader);
     rendering_program_lines = program;
 }
 void
@@ -279,10 +279,10 @@ Scene_polygon_soup_item::uniform_attrib(Viewer_interface* viewer, int mode) cons
         mv_mat[i] = GLfloat(d_mat[i]);
 
 
-    glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
+    qFunc.glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
 
     //fills the arraw of colors with the current color
-    glGetFloatv(GL_CURRENT_COLOR, colors);
+    qFunc.glGetFloatv(GL_CURRENT_COLOR, colors);
 
     //Gets lighting info :
 
@@ -308,21 +308,21 @@ Scene_polygon_soup_item::uniform_attrib(Viewer_interface* viewer, int mode) cons
     //For the Flat mode
     if(mode ==0)
     {
-        glUseProgram(rendering_program_poly);
-        glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
-        glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
-        glUniform3fv(location[2], 1, light.position);
-        glUniform3fv(location[3], 1, light.diffuse);
-        glUniform3fv(location[4], 1, light.specular);
-        glUniform3fv(location[5], 1, light.ambient);
-        glUniform1i(location[6], is_both_sides);
+        qFunc.glUseProgram(rendering_program_poly);
+        qFunc.glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
+        qFunc.glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
+        qFunc.glUniform3fv(location[2], 1, light.position);
+        qFunc.glUniform3fv(location[3], 1, light.diffuse);
+        qFunc.glUniform3fv(location[4], 1, light.specular);
+        qFunc.glUniform3fv(location[5], 1, light.ambient);
+        qFunc.glUniform1i(location[6], is_both_sides);
     }
     //For the Wire mode
     else if(mode ==1)
     {
-        glUseProgram(rendering_program_lines);
-        glUniformMatrix4fv(location[7], 1, GL_FALSE, mvp_mat);
-        glUniform4fv(location[8],1,colors);
+        qFunc.glUseProgram(rendering_program_lines);
+        qFunc.glUniformMatrix4fv(location[7], 1, GL_FALSE, mvp_mat);
+        qFunc.glUniform4fv(location[8],1,colors);
     }
 }
 
@@ -380,11 +380,11 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
 
     // sets mark is_external
     for(typename CDT::All_faces_iterator
-        pit = cdt.all_faces_begin(),
+        pitt = cdt.all_faces_begin(),
         end = cdt.all_faces_end();
-        pit != end; ++pit)
+        pitt != end; ++pitt)
     {
-        pit->info().is_external = false;
+        pitt->info().is_external = false;
     }
 
     //check if the facet is external or internal
@@ -522,16 +522,16 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
 
 
 
-    location[0] = glGetUniformLocation(rendering_program_poly, "mvp_matrix");
-    location[1] = glGetUniformLocation(rendering_program_poly, "mv_matrix");
-    location[2] = glGetUniformLocation(rendering_program_poly, "light_pos");
-    location[3] = glGetUniformLocation(rendering_program_poly, "light_diff");
-    location[4] = glGetUniformLocation(rendering_program_poly, "light_spec");
-    location[5] = glGetUniformLocation(rendering_program_poly, "light_amb");
-    location[6] = glGetUniformLocation(rendering_program_poly, "is_two_side");
+    location[0] = qFunc.glGetUniformLocation(rendering_program_poly, "mvp_matrix");
+    location[1] = qFunc.glGetUniformLocation(rendering_program_poly, "mv_matrix");
+    location[2] = qFunc.glGetUniformLocation(rendering_program_poly, "light_pos");
+    location[3] = qFunc.glGetUniformLocation(rendering_program_poly, "light_diff");
+    location[4] = qFunc.glGetUniformLocation(rendering_program_poly, "light_spec");
+    location[5] = qFunc.glGetUniformLocation(rendering_program_poly, "light_amb");
+    location[6] = qFunc.glGetUniformLocation(rendering_program_poly, "is_two_side");
 
-    location[7] = glGetUniformLocation(rendering_program_lines, "mvp_matrix");
-    location[8] = glGetUniformLocation(rendering_program_lines, "color");
+    location[7] = qFunc.glGetUniformLocation(rendering_program_lines, "mvp_matrix");
+    location[8] = qFunc.glGetUniformLocation(rendering_program_lines, "color");
 }
 
 
@@ -540,18 +540,19 @@ Scene_polygon_soup_item::Scene_polygon_soup_item()
       soup(0),positions_poly(0),positions_lines(0), normals(0),
       oriented(false)
 {
-    glGenVertexArrays(1, &vao);
+    qFunc.initializeOpenGLFunctions();
+    qFunc.glGenVertexArrays(1, &vao);
     //Generates an integer which will be used as ID for each buffer
-    glGenBuffers(3, buffer);
+    qFunc.glGenBuffers(3, buffer);
     compile_shaders();
 }
 
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
 {
-    glDeleteBuffers(3, buffer);
-    glDeleteVertexArrays(1, &vao);
-    glDeleteProgram(rendering_program_lines);
-    glDeleteProgram(rendering_program_poly);
+    qFunc.glDeleteBuffers(3, buffer);
+    qFunc.glDeleteVertexArrays(1, &vao);
+    qFunc.glDeleteProgram(rendering_program_lines);
+    qFunc.glDeleteProgram(rendering_program_poly);
 
     delete soup;
 }
@@ -724,16 +725,16 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     if(soup == 0) return;
     //Calls the buffer info again so that it's the right one used even if
     //there are several objects drawn
-    glBindVertexArray(vao);
+    qFunc.glBindVertexArray(vao);
     uniform_attrib(viewer,0);
     // tells the GPU to use the program just created
-    glUseProgram(rendering_program_poly);
+    qFunc.glUseProgram(rendering_program_poly);
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
-    glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
+    qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
     // Clean-up
-    glUseProgram(0);
-    glBindVertexArray(0);
+    qFunc.glUseProgram(0);
+    qFunc.glBindVertexArray(0);
 
 
 
@@ -743,28 +744,28 @@ void
 Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
 
     if(soup == 0) return;
-    glBindVertexArray(vao);
+    qFunc.glBindVertexArray(vao);
     uniform_attrib(viewer,1);
-    glUseProgram(rendering_program_lines);
+    qFunc.glUseProgram(rendering_program_lines);
     //draw the points
-    glDrawArrays(GL_POINTS, 0, positions_lines.size()/4);
+    qFunc.glDrawArrays(GL_POINTS, 0, positions_lines.size()/4);
     // Clean-up
-    glUseProgram(0);
-    glBindVertexArray(0);
+    qFunc.glUseProgram(0);
+    qFunc.glBindVertexArray(0);
 }
 
 void
 Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
     if(soup == 0) return;
 
-    glBindVertexArray(vao);
+    qFunc.glBindVertexArray(vao);
     uniform_attrib(viewer,1);
-    glUseProgram(rendering_program_lines);
+    qFunc.glUseProgram(rendering_program_lines);
     //draw the edges
-    glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
+    qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
     // Clean-up
-    glUseProgram(0);
-    glBindVertexArray(0);
+    qFunc.glUseProgram(0);
+    qFunc.glBindVertexArray(0);
 
 }
 

@@ -5,7 +5,6 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QGLViewer/manipulatedCameraFrame.h>
-
 class Viewer_impl {
 public:
   Scene_draw_interface* scene;
@@ -104,6 +103,7 @@ void Viewer::fastDraw()
 void Viewer::initializeGL()
 {
   QGLViewer::initializeGL();
+  initializeOpenGLFunctions();
   setBackgroundColor(::Qt::white);
   d->scene->initializeGL();
 
