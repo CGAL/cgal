@@ -212,7 +212,7 @@ private:
   Construct_line_3 m_construct_line_3;
   Construct_projected_point_3 m_construct_projected_point_3;
   mutable Construct_vertex_3 m_construct_vertex_3;
-  Construct_vector_3 m_construct_vector_3;
+  //~ Construct_vector_3 m_construct_vector_3;
   Construct_point_2 m_construct_point_2;
   Construct_triangle_2 m_construct_triangle_2;
 
@@ -226,7 +226,6 @@ public:
     , m_construct_line_3(kernel.construct_line_3_object())
     , m_construct_vertex_3(kernel.construct_vertex_3_object())
     , m_construct_projected_point_3(kernel.construct_projected_point_3_object())
-    , m_construct_vector_3(kernel.construct_vector_3_object())
     , m_construct_point_2(kernel.construct_point_2_object())
     , m_construct_triangle_2(kernel.construct_triangle_2_object())
   {
@@ -234,12 +233,8 @@ public:
 
   Triangle_2 operator() (const Triangle_3& t3) const
   {
-    Vector_3 v01(m_construct_vector_3(m_construct_vertex_3(t3, 0), m_construct_vertex_3(t3, 1)));
-    Vector_3 v02(m_construct_vector_3(m_construct_vertex_3(t3, 0), m_construct_vertex_3(t3, 2)));
-
     Line_3 baseSegment(m_construct_line_3(m_construct_vertex_3(t3, 0), m_construct_vertex_3(t3, 1)));
 
-    //FT scalePoint = (v01 * v02) / (v01 * v01);
     Point_3 projectedLocation3d(m_construct_projected_point_3(baseSegment, m_construct_vertex_3(t3, 2)));
     FT scalePoint = m_parametric_distance_along_segment_3(m_construct_vertex_3(t3, 0), m_construct_vertex_3(t3, 1), projectedLocation3d);
     FT triangleHeight = CGAL::internal::select_sqrt(m_compute_squared_distance_3(projectedLocation3d, t3[2]));
