@@ -659,16 +659,16 @@ namespace internal {
       PMP::get_border(mesh_, face_range, std::back_inserter(border_halfedges));
       BOOST_FOREACH(halfedge_descriptor h, border_halfedges)
       {
-        typename std::map<halfedge_descriptor, Halfedge_status>::iterator it
-          = halfedge_status_map_.find(h);
+        typedef typename std::map<halfedge_descriptor, Halfedge_status>::iterator IT;
+        CGAL_assertion_code(IT it = halfedge_status_map_.find(h));
         CGAL_assertion(it != halfedge_status_map_.end());
         CGAL_assertion(it->second == PATCH);
 
         halfedge_status_map_[h] = PATCH_BORDER;
       }
-      CGAL_assertion(halfedge_status_map_.size() == nb_valid_halfedges());
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
+      CGAL_assertion(halfedge_status_map_.size() == nb_valid_halfedges());
       debug_patch_border();
 #endif
     }
