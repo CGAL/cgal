@@ -3,14 +3,12 @@
 #include <QMainWindow>
 #include "config.h"
 #include "Scene_points_with_normal_item.h"
-#include "Scene_polylines_item.h"
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
 
 #include <CGAL/vcm_estimate_edges.h>
 
 #include <CGAL/Timer.h>
-#include <CGAL/Memory_sizer.h>
 
 #include "ui_Polyhedron_demo_features_detection_plugin.h"
 
@@ -52,7 +50,6 @@ class Polyhedron_demo_features_detection_dialog : public QDialog, private Ui::VC
     float offsetRadius() const { return m_inputOffsetRadius->value(); }
     float convolveRadius() const { return m_inputConvolveRadius->value(); }
     float threshold() const { return m_inputFeaturesThreshold->value(); }
-    float edgeRadius() const { return m_inputEdgeRadius->value(); }
 };
 
 void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggered()
@@ -64,8 +61,6 @@ void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggere
 
   if(item)
   {
-    Scene_polylines_item* new_item = new Scene_polylines_item();
-
     // Gets point set
     Point_set* points = item->point_set();
     if(points == NULL)
@@ -76,49 +71,42 @@ void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggere
     if(!dialog.exec())
       return;
 
-    // Compute poylines
-    typedef Kernel::Segment_3 Segment;
-    typedef Kernel::Point_3 Point;
-    std::vector<Point> edges_points;
+    typedef CGAL::cpp11::array<double,6> Covariance;
+    std::vector<Covariance> cov;
+
+    std::cerr << "Compute VCM (offset_radius="
+        << dialog.offsetRadius() << " and convolution radius=" << dialog.convolveRadius() << ")...\n";
+
     CGAL::Timer task_timer; task_timer.start();
-    std::cerr << "Estimates Features using VCM (R="
-        << dialog.offsetRadius() << " and r=" << dialog.convolveRadius()
-        << " and threshold=" << dialog.threshold() << " and radius=" << dialog.edgeRadius() << ")...\n";
-    edges_points = CGAL::vcm_estimate_edges(points->begin(), points->end(),
-                                            CGAL::make_identity_property_map(Point_set::value_type()),
-                                            dialog.offsetRadius(), dialog.convolveRadius(), dialog.threshold(),
-                                            Kernel());
-
-    std::vector<Segment> polylines;
-    polylines = construct_mst(edges_points,
-                              Kernel(),
-                              dialog.edgeRadius());
-
-    std::size_t memory = CGAL::Memory_sizer().virtual_size();
+    CGAL::compute_vcm(points->begin(), points->end(),
+                      CGAL::make_identity_property_map(Point_set::value_type()),
+                      cov, dialog.offsetRadius(), dialog.convolveRadius(),
+                      Kernel());
     task_timer.stop();
-    std::cerr << "Estimates features: " << task_timer.time() << " seconds, "
-        << (memory>>20) << " Mb allocated"
-        << std::endl;
+    std::cerr << "done: " << task_timer.time() << " seconds\n";
 
-
-    // Add the polylines to the item item
-    for (unsigned int i = 0; i < polylines.size(); i++) {
-        Segment s = polylines[i];
-        new_item->polylines.push_back(Scene_polylines_item::Polyline());
-        new_item->polylines.back().push_back(s.source());
-        new_item->polylines.back().push_back(s.target());
-    }
-
-    if (new_item->polylines.empty())
+    Scene_points_with_normal_item* new_item = new Scene_points_with_normal_item();
+    task_timer.reset(); task_timer.start();
+    std::size_t i=0;
+    std::cerr << "Select feature points (threshold=" << dialog.threshold() << ")...\n";
+    BOOST_FOREACH(const Point_set::value_type& p, *points)
     {
-      delete new_item;
+      if (CGAL::vcm_is_on_feature_edge(cov[i], dialog.threshold()))
+          new_item->point_set()->push_back(p);
+      ++i;
     }
-    else
+    task_timer.stop();
+    std::cerr << "done: " << task_timer.time() << " seconds\n";
+
+    if ( !new_item->point_set()->empty() )
     {
       new_item->setName(tr("Features of %1").arg(item->name()));
       new_item->setColor(Qt::red);
       scene->addItem(new_item);
+      item->setVisible(false);
     }
+    else
+      delete new_item;
   }
 
 }
