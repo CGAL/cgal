@@ -1162,7 +1162,7 @@ namespace internal {
   template <class DSC, bool Const>
   std::size_t hash_value(const CC_iterator<DSC, Const>&  i)
   {
-    return reinterpret_cast<std::size_t>(&*i);
+    return reinterpret_cast<std::size_t>(&*i) / sizeof(typename DSC::value_type);
   }
 
 } // namespace internal
@@ -1176,8 +1176,7 @@ namespace std {
   struct hash<CGAL::internal::CC_iterator<DSC, Const> > {
     std::size_t operator()(const CGAL::internal::CC_iterator<DSC, Const>& i) const
     {
-      std::cerr << "CC::iterator HashFct" << std::endl;
-      return reinterpret_cast<std::size_t>(&*i);
+      return reinterpret_cast<std::size_t>(&*i) / sizeof(typename DSC::value_type);
     }
   };
 }
