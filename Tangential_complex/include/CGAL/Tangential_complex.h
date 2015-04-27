@@ -351,7 +351,7 @@ public:
 #endif
   }
 
-  void estimate_intrinsic_dimension()
+  void estimate_intrinsic_dimension() const
   {
     // Kernel functors
     typename Kernel::Compute_coordinate_d coord =
@@ -590,7 +590,7 @@ public:
 #else
     bool verbose = false
 #endif
-    )
+    ) const
   {
     std::size_t num_simplices = 0;
     std::size_t num_inconsistent_simplices = 0;
@@ -787,7 +787,7 @@ public:
   bool check_if_all_simplices_are_in_the_ambient_delaunay(
     const Simplicial_complex *p_complex = NULL,
     bool check_for_any_dimension_simplices = true,
-    std::set<std::set<std::size_t> > * incorrect_simplices = NULL)
+    std::set<std::set<std::size_t> > * incorrect_simplices = NULL) const
   {
     typedef Simplicial_complex::Simplex                     Simplex;
     typedef Simplicial_complex::Simplex_range               Simplex_range;
@@ -1537,7 +1537,7 @@ next_face:
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
     , bool perturb = false
 #endif
-    ) const
+    )
   {
     //******************************* PCA *************************************
 
@@ -1690,7 +1690,7 @@ next_face:
 #endif
   }
 
-  void compute_perturbed_weighted_point(std::size_t pt_idx, Point &p, FT &w)
+  void compute_perturbed_weighted_point(std::size_t pt_idx, Point &p, FT &w) const
   {
 #ifdef CGAL_TC_PERTURB_POSITION
     p = m_k.translated_point_d_object()(
@@ -1701,7 +1701,7 @@ next_face:
     w = m_weights[pt_idx];
   }
 
-  Weighted_point compute_perturbed_weighted_point(std::size_t pt_idx)
+  Weighted_point compute_perturbed_weighted_point(std::size_t pt_idx) const
   {
     typename Kernel::Construct_weighted_point_d k_constr_wp =
       m_k.construct_weighted_point_d_object();
@@ -1719,7 +1719,7 @@ next_face:
 
   Point unproject_point(const Tr_point &p,
                         const Tangent_space_basis &tsb,
-                        const Tr_traits &tr_traits)
+                        const Tr_traits &tr_traits) const
   {
     typename Kernel::Translated_point_d k_transl =
       m_k.translated_point_d_object();
@@ -2781,6 +2781,7 @@ next_face:
     return os;
   }
 
+public:
   std::ostream &export_simplices_to_off(
     const Simplicial_complex &complex,
     std::ostream & os, std::size_t &num_simplices,
@@ -2946,7 +2947,7 @@ private:
 #endif
 
   Points_ds                 m_points_ds;
-  mutable std::vector<bool> m_are_tangent_spaces_computed;
+  std::vector<bool>         m_are_tangent_spaces_computed;
   TS_container              m_tangent_spaces;
 #if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
   OS_container              m_orth_spaces;
