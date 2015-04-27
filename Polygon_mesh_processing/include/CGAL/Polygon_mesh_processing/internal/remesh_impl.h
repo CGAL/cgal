@@ -337,14 +337,14 @@ namespace internal {
 
           std::cout << " status "<< hs << "   opp = " << hso << std::endl;
 
-          halfedge_descriptor ep_p = prev(opposite(he, mesh_), mesh_);
+          halfedge_descriptor ep_p  = prev(opposite(he, mesh_), mesh_);
           halfedge_descriptor epo_p = opposite(prev(opposite(he, mesh_), mesh_), mesh_);
 
-          Halfedge_status s_ep_p  = status(         prev(opposite(he, mesh_), mesh_));
-          Halfedge_status s_epo_p = status(opposite(prev(opposite(he, mesh_), mesh_), mesh_));
+          Halfedge_status s_ep_p  = status(ep_p);
+          Halfedge_status s_epo_p = status(epo_p);
           CGAL_assertion_code(halfedge_descriptor en = next(he, mesh_));
-          halfedge_descriptor enp = next(opposite(he, mesh_), mesh_);
-          halfedge_descriptor enop = opposite(enp, mesh_);
+          halfedge_descriptor en_p = next(opposite(he, mesh_), mesh_);
+          halfedge_descriptor eno_p = opposite(en_p, mesh_);
 
           bool mesh_border_case = is_on_border(opposite(he, mesh_));
           if (!mesh_border_case)
@@ -363,8 +363,8 @@ namespace internal {
 
           if (!mesh_border_case)
           {
-            update_status(enp, s_ep_p);
-            update_status(enop, s_epo_p);
+            update_status(en_p, s_ep_p);
+            update_status(eno_p, s_epo_p);
           }
           std::vector<std::pair<halfedge_descriptor, Halfedge_status> > vkv;
           BOOST_FOREACH(halfedge_descriptor ht, halfedges_around_target(vkept, mesh_))
@@ -375,7 +375,7 @@ namespace internal {
 
           unsigned int nbb = nb_valid_halfedges();
           CGAL_assertion(nbb == halfedge_status_map_.size());
-          CGAL_assertion(source(en, mesh_) == source(enp, mesh_));
+          CGAL_assertion(source(en, mesh_) == source(en_p, mesh_));
           debug_status_map();
 
           //insert new/remaining short edges
