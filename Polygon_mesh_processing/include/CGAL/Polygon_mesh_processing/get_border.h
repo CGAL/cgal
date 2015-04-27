@@ -37,8 +37,6 @@ namespace Polygon_mesh_processing {
   *            of `faces`, seen from inside the surface patch
   *
   * @todo code : what shall we do for more than one connected components
-  * @todo code : make sure the halfedges returned actually belong to a face
-  * from `faces`. It's not the case yet
   */
   template<typename PolygonMesh
          , typename FaceRange
@@ -49,31 +47,37 @@ namespace Polygon_mesh_processing {
   {
     typedef PolygonMesh PM;
     typedef typename boost::graph_traits<PM>::edge_descriptor     edge_descriptor;
-    typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
-    
+    typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;    
     typedef typename boost::graph_traits<PM>::face_descriptor     face_descriptor;
 
     //collect halfedges that appear only once
-    std::set<halfedge_descriptor> border;
+    // the bool is true if the halfedge stored is the one of the face,
+    // false if it is its opposite
+    std::map<halfedge_descriptor, bool> border;
     BOOST_FOREACH(face_descriptor f, faces)
     {
       BOOST_FOREACH(halfedge_descriptor h,
                     halfedges_around_face(halfedge(f, pmesh), pmesh))
       {
         //halfedge_descriptor is model of `LessThanComparable`
-        halfedge_descriptor he = (h < opposite(h, pmesh))
+        bool from_face = (h < opposite(h, pmesh));
+        halfedge_descriptor he = from_face
           ? h
           : opposite(h, pmesh);
         if (border.find(he) != border.end())
           border.erase(he); //even number of appearances
         else
-          border.insert(he);//odd number of appearances
+          border.insert(std::make_pair(he, from_face));//odd number of appearances
       }
     }
     //copy them in out
-    BOOST_FOREACH(halfedge_descriptor h, border)
+    typedef typename std::map<halfedge_descriptor, bool>::value_type HD_bool;
+    BOOST_FOREACH(const HD_bool& hd, border)
     {
-      *out++ = h;
+      if (hd.second)
+        *out++ = hd.first;
+      else
+        *out++ = opposite(hd.first, pmesh);
     }
   }
 

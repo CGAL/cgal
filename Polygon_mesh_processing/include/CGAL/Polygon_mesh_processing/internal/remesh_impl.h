@@ -70,7 +70,6 @@ namespace internal {
       , vpmap_(vpmap)
       , own_tree_(true)
       , input_triangles_()
-      , patch_(boost::begin(face_range), boost::end(face_range))
       , halfedge_status_map_()
     {
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
@@ -115,12 +114,14 @@ namespace internal {
       Boost_bimap long_edges;
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
       {
-        if (!is_split_or_collapse_allowed(e))
+        if (!is_split_allowed(e))
           continue;
         double sqlen = sqlength(e);
         if(sqlen > sq_high)
           long_edges.insert(long_edge(halfedge(e, mesh_), sqlen));
       }
+
+      std::cout << "Halfedges : " << nb_valid_halfedges() << std::endl;
 
       //split long edges
       unsigned int nb_splits = 0;
@@ -136,7 +137,8 @@ namespace internal {
         //split edge
         halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
         CGAL_assertion(he == next(hnew, mesh_));
-        
+        ++nb_splits;
+
         //move refinement point
         vertex_descriptor vnew = target(hnew, mesh_);
         vpmap_[vnew] = refinement_point;
@@ -146,58 +148,66 @@ namespace internal {
         if (sqlen_new > sq_high)
         {
           //if it was more than twice the "long" threshold, insert them
-          long_edges.insert(long_edge(hnew, sqlen_new));
+          long_edges.insert(long_edge(hnew,              sqlen_new));
           long_edges.insert(long_edge(next(hnew, mesh_), sqlen_new));
-          std::cout << "H " << sqlen_new << std::endl;
         }
 
         //after splitting
-        Halfedge_status s1 = status(he);
-        halfedge_added(hnew, s1);
-        Halfedge_status s2 = status(opposite(he, mesh_));
-        halfedge_added(opposite(hnew, mesh_), s2);
-        CGAL_assertion((s1 == s2 && s1 == PATCH)
-          || (s1 != s2 && (s1 == PATCH_BORDER && s2 == MESH_BORDER))
-          || (s1 != s2 && (s2 == PATCH_BORDER && s1 == MESH_BORDER))
-          );
+        halfedge_added(hnew,                  status(he));
+        halfedge_added(opposite(hnew, mesh_), status(opposite(he, mesh_)));
 
         //insert new edges to keep triangular faces, and update long_edges
-        if (!is_border(hnew, mesh_))
+        halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
+        if (!is_on_border(hnew))
         {
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(hnew,
                                                               next(next(hnew, mesh_), mesh_),
                                                               mesh_);
-          halfedge_added(hnew2, PATCH/*only possible scenario*/);
-          halfedge_added(opposite(hnew2, mesh_), PATCH);
+          Halfedge_status snew = (is_on_patch(hnew)
+            || (is_on_patch_border(hnew) && is_on_mesh(hnew_opp))
+            || (is_on_patch_border(hnew) && is_on_border(hnew_opp)))
+            ? PATCH
+            : MESH;
+          halfedge_added(hnew2, snew);
+          halfedge_added(opposite(hnew2, mesh_), snew);
 
-          double sql = sqlength(hnew2);
-          if (sql > sq_high)
+          if (snew == PATCH)
           {
-            long_edges.insert(long_edge(hnew2, sql));
-            std::cout << "A " << sql << std::endl;
+            double sql = sqlength(hnew2);
+            if (sql > sq_high)
+              long_edges.insert(long_edge(hnew2, sql));
           }
         }
+
         //do it again on the other side if we're not on boundary
-        halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
-        if (!is_border(hnew_opp, mesh_))
+        if (!is_on_border(hnew_opp))
         {
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(prev(hnew_opp, mesh_),
                                                               next(hnew_opp, mesh_),
                                                               mesh_);
-          halfedge_added(hnew2, PATCH/*only possible scenario*/);
-          halfedge_added(opposite(hnew2, mesh_), PATCH);
+          Halfedge_status snew = (is_on_patch(hnew_opp)
+            || (is_on_patch_border(hnew_opp) && is_on_mesh(hnew))
+            || (is_on_patch_border(hnew_opp) && is_on_border(hnew)))
+            ? PATCH
+            : MESH;
+          halfedge_added(hnew2, snew);
+          halfedge_added(opposite(hnew2, mesh_), snew);
 
-          double sql = sqlength(hnew2);
-          if (sql > sq_high)
+          if (snew == PATCH)
           {
-            long_edges.insert(long_edge(hnew2, sql));
-            std::cout << "B " << sql << std::endl;
+            double sql = sqlength(hnew2);
+            if (sql > sq_high)
+              long_edges.insert(long_edge(hnew2, sql));
           }
         }
-
-        ++nb_splits;
+        CGAL_assertion(halfedge_status_map_.size() == nb_valid_halfedges());
       }
       std::cout << " done ("<< nb_splits << " splits)." << std::endl;
+
+      CGAL_expensive_assertion(is_triangle_mesh(mesh_));
+      debug_status_map();
+      debug_patch_border();
+      debug_mesh_border();
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
       dump("1-edge_split.off");
@@ -222,7 +232,7 @@ namespace internal {
       Boost_bimap short_edges;
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
       {
-        if (!is_split_or_collapse_allowed(e))
+        if (!is_collapse_allowed(e))
           continue;
         double sqlen = sqlength(e);
         if (sqlen < sq_low)
@@ -238,25 +248,53 @@ namespace internal {
         double sqlen = eit->first;
         short_edges.right.erase(eit);
 
-        //let's try to collapse he into vb
-        vertex_descriptor va = target(he, mesh_);
-        vertex_descriptor vb = source(he, mesh_);
-
         //handle the boundary case :
-        //a boundary edge can be collapsed,
-        //and an edge incident to boundary can be collapsed,
-        //but only if the boundary vertex is kept, so re-insert opposite(he)
-        //to collapse it
-        //todo : handle this border case using the status map
-        if (!is_border_edge(he, mesh_))
+        //a PATCH_BORDER edge can be collapsed,
+        //and an edge incident to PATCH_BORDER can be collapsed,
+        //but only if the boundary vertex is kept,
+        //so re-insert opposite(he) to collapse it
+        if (is_on_border(he))
         {
-          if (is_border(va, mesh_))
-          {
-            if (!is_border(vb, mesh_))
-              short_edges.insert(short_edge(opposite(he, mesh_), sqlen));
-            continue;
-          }
+          he = opposite(he, mesh_); //he now is PATCH_BORDER
+          CGAL_assertion(is_on_patch_border(he));
         }
+        else if (is_on_patch_border(opposite(he, mesh_)))
+        {
+          CGAL_assertion(is_on_mesh(he));
+          he = opposite(he, mesh_); //he now is PATCH_BORDER
+          CGAL_assertion(is_on_patch_border(he));
+        }
+
+        //let's try to collapse he into vb
+        vertex_descriptor va = source(he, mesh_);
+        vertex_descriptor vb = target(he, mesh_);
+
+        //todo : this test can be restricted to avoid some tests
+        if (is_on_patch_border(va) && !is_on_patch_border(vb))
+        {
+          std::cout << "*";
+          he = opposite(he, mesh_);
+          va = source(he, mesh_);
+          vb = target(he, mesh_);
+
+          CGAL_assertion(is_on_patch_border(vb) && !is_on_patch_border(va));
+        }
+        else std::cout << "!";
+
+        std::vector<std::pair<halfedge_descriptor, Halfedge_status> > vav;
+        BOOST_FOREACH(halfedge_descriptor ht, halfedges_around_target(va, mesh_))
+        {
+          vav.push_back(std::make_pair(ht, status(ht)));
+          vav.push_back(std::make_pair(opposite(ht, mesh_), status(opposite(ht, mesh_))));
+        }
+        std::vector<std::pair<halfedge_descriptor, Halfedge_status> > vbv;
+        BOOST_FOREACH(halfedge_descriptor ht, halfedges_around_target(vb, mesh_))
+        {
+          vbv.push_back(std::make_pair(ht, status(ht)));
+          vbv.push_back(std::make_pair(opposite(ht, mesh_), status(opposite(ht, mesh_))));
+        }
+
+        CGAL_assertion(is_collapse_allowed(he));
 
         if (degree(va, mesh_) < 3
           || degree(vb, mesh_) < 3
@@ -291,13 +329,28 @@ namespace internal {
             short_edges.left.erase(opposite(hb, mesh_));
           }
 
-          CGAL_assertion_code(
-            halfedge_descriptor en = next(he, mesh_);
-            halfedge_descriptor enp = next(opposite(he, mesh_), mesh_);
-            );
-
           //before collapse
+          unsigned int nb = nb_valid_halfedges();
+          CGAL_assertion(nb == halfedge_status_map_.size());
+          Halfedge_status hs = status(he);
+          Halfedge_status hso = status(opposite(he, mesh_));
+
+          std::cout << " status "<< hs << "   opp = " << hso << std::endl;
+
+          halfedge_descriptor ep_p = prev(opposite(he, mesh_), mesh_);
+          halfedge_descriptor epo_p = opposite(prev(opposite(he, mesh_), mesh_), mesh_);
+
+          Halfedge_status s_ep_p  = status(         prev(opposite(he, mesh_), mesh_));
+          Halfedge_status s_epo_p = status(opposite(prev(opposite(he, mesh_), mesh_), mesh_));
+          CGAL_assertion_code(halfedge_descriptor en = next(he, mesh_));
+          halfedge_descriptor enp = next(opposite(he, mesh_), mesh_);
+          halfedge_descriptor enop = opposite(enp, mesh_);
+
+          bool mesh_border_case = is_on_border(opposite(he, mesh_));
+          if (!mesh_border_case)
+            halfedge_and_opp_removed(prev(opposite(he, mesh_), mesh_));
           halfedge_and_opp_removed(he);
+          halfedge_and_opp_removed(prev(he, mesh_));
 
           //perform collapse
           Point target_point = vpmap_[vb];
@@ -305,19 +358,44 @@ namespace internal {
           vpmap_[vkept] = target_point;
           ++nb_collapses;
 
+          bool kepta = (va == vkept);
+          bool keptb = (vb == vkept);
+
+          if (!mesh_border_case)
+          {
+            update_status(enp, s_ep_p);
+            update_status(enop, s_epo_p);
+          }
+          std::vector<std::pair<halfedge_descriptor, Halfedge_status> > vkv;
+          BOOST_FOREACH(halfedge_descriptor ht, halfedges_around_target(vkept, mesh_))
+          {
+            vkv.push_back(std::make_pair(ht, status(ht)));
+            vkv.push_back(std::make_pair(opposite(ht, mesh_), status(opposite(ht, mesh_))));
+          }
+
+          unsigned int nbb = nb_valid_halfedges();
+          CGAL_assertion(nbb == halfedge_status_map_.size());
           CGAL_assertion(source(en, mesh_) == source(enp, mesh_));
-          CGAL_expensive_assertion(is_triangle_mesh(mesh_));
+          debug_status_map();
 
           //insert new/remaining short edges
           BOOST_FOREACH(halfedge_descriptor ht, halfedges_around_target(vkept, mesh_))
           {
+            if (!is_collapse_allowed(ht))
+              continue;
             double sqlen = sqlength(ht);
             if (sqlen < sq_low)
               short_edges.insert(short_edge(ht, sqlen));
           }
-        }
+        }//end if(collapse_ok)
       }
       std::cout << " done (" << nb_collapses << " collapses)." << std::endl;
+
+      CGAL_assertion(nb_valid_halfedges() == halfedge_status_map_.size());
+      CGAL_expensive_assertion(is_triangle_mesh(mesh_));
+      debug_status_map();
+      debug_patch_border();
+      debug_mesh_border();
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
       dump("2-edge_collapse.off");
@@ -349,8 +427,18 @@ namespace internal {
                           + CGAL::abs(valence(vc) - target_valence(vc))
                           + CGAL::abs(valence(vd) - target_valence(vd));
 
+        Halfedge_status s1 = status(he);
+        Halfedge_status s1o = status(opposite(he, mesh_));
+
         CGAL::Euler::flip_edge(he, mesh_);
         ++nb_flips;
+
+        Halfedge_status s2 = status(he);
+        Halfedge_status s2o = status(opposite(he, mesh_));
+        CGAL_assertion(s1 == s2   && s1 == PATCH);
+        CGAL_assertion(s1o == s2o && s1o == PATCH);
+        CGAL_assertion(nb_valid_halfedges() == halfedge_status_map_.size());
+        CGAL_assertion(!is_border(he, mesh_));
 
         CGAL_assertion(
              (vc == target(he, mesh_) && vd == source(he, mesh_))
@@ -365,12 +453,18 @@ namespace internal {
         {
           CGAL::Euler::flip_edge(he, mesh_);
           --nb_flips;
+
+          Halfedge_status s3 = status(he);
+          CGAL_assertion(s1 == s3);
+          CGAL_assertion(!is_border(he, mesh_));
           CGAL_assertion(
                (va == source(he, mesh_) && vb == target(he, mesh_))
             || (vb == source(he, mesh_) && va == target(he, mesh_)));
         }
       }
       std::cout << "done. ("<< nb_flips << " flips)" << std::endl;
+      CGAL_assertion(nb_valid_halfedges() == halfedge_status_map_.size());
+      debug_status_map();
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
       dump("3-edge_flips.off");
@@ -539,16 +633,28 @@ namespace internal {
          &&  (plane1.oriented_side(p4) != plane2.oriented_side(p4));
     }
 
-    bool is_split_or_collapse_allowed(const edge_descriptor& e) const
+    //todo : simplify the list of cases
+    bool is_split_allowed(const edge_descriptor& e) const
     {
       halfedge_descriptor he = halfedge(e, mesh_);
-      return is_on_patch(he)
+      return is_on_patch(he) //opp is also on patch
+          || (is_on_border(he) && is_on_patch_border(opposite(he, mesh_)))
+          || (is_on_border(opposite(he, mesh_)) && is_on_patch_border(he))
+          || is_on_patch_border(he)
+          || is_on_patch_border(opposite(he, mesh_));
+    }
+
+    //todo : allow to collapse edges on patch boundary (or not?)
+    bool is_collapse_allowed(const edge_descriptor& e) const
+    {
+      halfedge_descriptor he = halfedge(e, mesh_);
+      return is_on_patch(he) //opp is also on patch
         || (is_on_border(he) && is_on_patch_border(opposite(he, mesh_)))
         || (is_on_border(opposite(he, mesh_)) && is_on_patch_border(he));
     }
 
     template<typename FaceRange>
-    void tag_halfedges_status(FaceRange face_range)
+    void tag_halfedges_status(const FaceRange& face_range)
     {
       //tag MESH,        //h and hopp belong to the mesh, not the patch
       //tag MESH_BORDER  //h belongs to the mesh, face(hopp, pmesh) == null_face()
@@ -580,23 +686,33 @@ namespace internal {
         typename std::map<halfedge_descriptor, Halfedge_status>::iterator it
           = halfedge_status_map_.find(h);
         CGAL_assertion(it != halfedge_status_map_.end());
+        CGAL_assertion(it->second == PATCH);
 
-        if (it->second == PATCH)
-          halfedge_status_map_[h] = PATCH_BORDER;
-        else
-        {
-          //todo : this is a workaround because get_border does not always provide
-          // halfedges from the right side
-          CGAL_assertion(status(opposite(h, mesh_)) == PATCH);
-          halfedge_status_map_[opposite(h, mesh_)] = PATCH_BORDER;
-        }
+        halfedge_status_map_[h] = PATCH_BORDER;
       }
-      CGAL_assertion(halfedge_status_map_.size() == num_halfedges(mesh_));
+      CGAL_assertion(halfedge_status_map_.size() == nb_valid_halfedges());
+      debug_patch_border();
+    }
+
+    Halfedge_status status(const halfedge_descriptor& h) const
+    {
+      typename std::map < halfedge_descriptor, Halfedge_status >::const_iterator
+        it = halfedge_status_map_.find(h);
+      CGAL_assertion(it != halfedge_status_map_.end());
+      return it->second;
+    }
+
+    void update_status(const halfedge_descriptor& h, const Halfedge_status& s)
+    {
+      CGAL_assertion(halfedge_status_map_.find(h) != halfedge_status_map_.end());
+      halfedge_status_map_[h] = s;
     }
 
     bool is_on_patch(const halfedge_descriptor& h) const
     {
-      return status(h) == PATCH;
+      bool res =(status(h) == PATCH);
+      CGAL_assertion(res == (status(opposite(h, mesh_)) == PATCH));
+      return res;
     }
 
     bool is_on_patch(const vertex_descriptor& v) const
@@ -612,36 +728,58 @@ namespace internal {
 
     bool is_on_patch_border(const halfedge_descriptor& h) const
     {
-      return status(h) == PATCH_BORDER;
+      bool res = (status(h) == PATCH_BORDER);
+      if (res)
+      {
+        CGAL_assertion_code(Halfedge_status hs = status(opposite(h, mesh_)));
+        CGAL_assertion(hs == MESH_BORDER || hs == MESH);
+      }
+      return res;
     }
     bool is_on_patch_border(const edge_descriptor& e) const
     {
       return is_on_patch_border(halfedge(e,mesh_))
           || is_on_patch_border(opposite(halfedge(e, mesh_), mesh_));
     }
+    bool is_on_patch_border(const vertex_descriptor& v) const
+    {
+      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, mesh_))
+      {
+        if (is_on_patch_border(h) || is_on_patch_border(opposite(h, mesh_)))
+          return true;
+      }
+      return false;
+    }
 
     bool is_on_border(const halfedge_descriptor& h) const
     {
-      return status(h) == MESH_BORDER;
+      Halfedge_status s = status(h);
+      bool res = (s == MESH_BORDER);
+      CGAL_assertion(res == is_border(h, mesh_));
+      CGAL_assertion(res == is_border(next(h, mesh_), mesh_));
+
+      CGAL_assertion_code(Halfedge_status s1 = status(opposite(h, mesh_)));
+      CGAL_assertion_code(Halfedge_status s2 = status(opposite(next(h, mesh_), mesh_)));
+      if (res && s1 != s2)
+        CGAL_assertion(is_on_patch_border(target(h, mesh_)));
+      return res;
     }
+
     bool is_on_border(const edge_descriptor& e) const
     {
       return is_on_border(halfedge(e, mesh_))
           || is_on_border(opposite(halfedge(e, mesh_), mesh_));
     }
 
-    Halfedge_status status(const halfedge_descriptor& h) const
+    bool is_on_mesh(const halfedge_descriptor& h) const
     {
-      typename std::map < halfedge_descriptor, Halfedge_status >::const_iterator
-        it = halfedge_status_map_.find(h);
-      CGAL_assertion(it != halfedge_status_map_.end());
-      return it->second;
+      return status(h) == MESH;
     }
 
     void halfedge_added(const halfedge_descriptor& h,
                         const Halfedge_status& s)
     {
-      halfedge_status_map_[h] = s;
+      halfedge_status_map_.insert(std::make_pair(h, s));
     }
 
     void halfedge_and_opp_removed(const halfedge_descriptor& h)
@@ -650,13 +788,89 @@ namespace internal {
       halfedge_status_map_.erase(opposite(h, mesh_));
     }
 
+    unsigned int nb_valid_halfedges() const
+    {
+      unsigned int nb = 0;
+      BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh_))
+        ++nb;
+      return nb;
+    }
+
+    void debug_status_map() const
+    {
+      typedef typename std::map<halfedge_descriptor, Halfedge_status>::value_type
+        HD_pair;
+      BOOST_FOREACH(const HD_pair& hs, halfedge_status_map_)
+      {
+        bool b1 = is_on_patch(hs.first);
+        bool b2 = is_on_patch_border(hs.first);
+        bool b3 = is_on_mesh(hs.first);
+        bool b4 = is_on_border(hs.first);
+        //std::cout << hs.first << "\t" << hs.second << "\t ";
+        //std::cout << b1 << " " << b2 << " " << b3 << " " << b4 << std::endl;
+      }
+    }
+
+    void debug_patch_border() const
+    {
+      std::map<vertex_descriptor, unsigned int> patch_border;
+      typedef typename std::map<halfedge_descriptor, Halfedge_status>::value_type
+        HD_pair;
+      BOOST_FOREACH(const HD_pair& hs, halfedge_status_map_)
+      {
+        if (is_on_patch_border(hs.first))
+        {
+          if (patch_border.find(target(hs.first, mesh_)) != patch_border.end())
+            patch_border[target(hs.first, mesh_)]++;
+          else
+            patch_border[target(hs.first, mesh_)] = 1;
+
+          if (patch_border.find(source(hs.first, mesh_)) != patch_border.end())
+            patch_border[source(hs.first, mesh_)]++;
+          else
+            patch_border[source(hs.first, mesh_)] = 1;
+        }
+      }
+      //check we found each vertex exactly twice
+      typedef typename std::map<vertex_descriptor, unsigned int>::value_type
+        V_pair;
+      BOOST_FOREACH(const V_pair& v, patch_border)
+        CGAL_assertion(v.second == 2);
+    }
+
+    void debug_mesh_border() const
+    {
+      std::map<vertex_descriptor, unsigned int> mesh_border;
+      typedef typename std::map<halfedge_descriptor, Halfedge_status>::value_type
+        HD_pair;
+      BOOST_FOREACH(const HD_pair& hs, halfedge_status_map_)
+      {
+        if (is_on_border(hs.first))
+        {
+          if (mesh_border.find(target(hs.first, mesh_)) != mesh_border.end())
+            mesh_border[target(hs.first, mesh_)]++;
+          else
+            mesh_border[target(hs.first, mesh_)] = 1;
+
+          if (mesh_border.find(source(hs.first, mesh_)) != mesh_border.end())
+            mesh_border[source(hs.first, mesh_)]++;
+          else
+            mesh_border[source(hs.first, mesh_)] = 1;
+        }
+      }
+      //check we found each vertex exactly twice
+      typedef typename std::map<vertex_descriptor, unsigned int>::value_type
+        V_pair;
+      BOOST_FOREACH(const V_pair& v, mesh_border)
+        CGAL_assertion(v.second == 2);
+    }
+
   private:
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
     const AABB_tree* tree_ptr_;
     bool own_tree_;
     Triangle_list input_triangles_;
-    std::vector<face_descriptor> patch_;
     std::map<halfedge_descriptor, Halfedge_status> halfedge_status_map_;
 
   };//end class Incremental_remesher
