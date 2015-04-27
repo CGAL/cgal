@@ -300,7 +300,7 @@ void detect_is_saddle_vertex()
   }
 }
 
-int main(int argc, char** argv)
+int main()
 {
   project_triangle3D_to_triangle2D();
   test_simple_2D_barycentric_coordinates();

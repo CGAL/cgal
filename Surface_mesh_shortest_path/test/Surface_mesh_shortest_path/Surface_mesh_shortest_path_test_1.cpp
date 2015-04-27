@@ -458,7 +458,7 @@ void test_boundary_mesh()
 }
 
 
-int main(int argc, char* argv[])
+int main()
 {
   shortest_path_regular_tetrahedron();
   test_simple_saddle_vertex_mesh();
