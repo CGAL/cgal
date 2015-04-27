@@ -2150,6 +2150,7 @@ private: //------------------------------------------------------- private data
     return os;
   }
 
+/// @cond CGAL_DOCUMENT_INTERNALS
   inline std::istream& sm_skip_comments( std::istream& in) {
       char c;
       in >> c;
@@ -2159,6 +2160,8 @@ private: //------------------------------------------------------- private data
         in.putback(c);
       return in;
   }
+/// @endcond
+
 
   /// \relates Surface_mesh
   /// Extracts the surface mesh from an input stream in Ascii OFF format.
