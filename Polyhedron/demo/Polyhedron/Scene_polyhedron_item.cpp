@@ -141,11 +141,11 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit)
 
     // sets mark is_external
     for(typename CDT::All_faces_iterator
-        fit = cdt.all_faces_begin(),
+        fit2 = cdt.all_faces_begin(),
         end = cdt.all_faces_end();
-        fit != end; ++fit)
+        fit2 != end; ++fit2)
     {
-        fit->info().is_external = false;
+        fit2->info().is_external = false;
     }
     //check if the facet is external or internal
     std::queue<typename CDT::Face_handle> face_queue;
