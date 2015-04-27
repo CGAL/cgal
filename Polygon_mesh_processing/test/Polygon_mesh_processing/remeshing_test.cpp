@@ -1,4 +1,5 @@
 
+#define CGAL_PMP_REMESHING_DEBUG
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
@@ -71,6 +72,7 @@ std::set<face_descriptor> k_ring(vertex_descriptor v,
 
 int main()
 {
+  std::cout.precision(17);
   std::ifstream input("data/U.off");
   Mesh m;
 
