@@ -6,6 +6,8 @@
 #include "../../test/Tangential_complex/test_utilities.h"
 
 #include <CGAL/Metric_field.h> // Anisotropic metrics
+#include <Metric_field/Euclidean_metric_field.h>
+#include <Metric_field/Custom_metric_field.h>
 
 #include <cstdlib>
 #include <fstream>
@@ -33,6 +35,9 @@ typedef typename Metric::E_Matrix                               E_Matrix_k;
 typedef typename Metric::E_Vector                               E_Vector_k;
 typedef Eigen::Matrix<FT, d, 1>                                 E_Vector_d;
 typedef Eigen::Matrix<FT, d, k>                                 E_Matrix_dk;
+
+typedef CGAL::Anisotropic_mesh_TC::Euclidean_metric_field<Kk>   Euclidean_mf;
+typedef CGAL::Anisotropic_mesh_TC::Custom_metric_field<Kk>      Custom_mf;
 
 void read_points(std::vector<Point_k>& points,
                  const Kk kerk = Kk())
@@ -169,12 +174,13 @@ void compute_and_set_tangent_planes(TC& tc,
     E_Matrix_dk ts_m = E_Matrix_dk::Zero();
     // 'first' part: x y z etc. derivates
     for(int i=0; i<k; ++i)
-    {
       for(int j=0; j<k; ++j)
         ts_m(i,j) = (i==j);
 
-      // 'second' part: x² xy xz y² yz z² etc. derivatives
-      int pos = k;
+    // 'second' part: x² xy xz y² yz z² etc. derivatives
+    int pos = k;
+    for(int i=0; i<k; ++i)
+    {
       for(int j=i; j<k; ++j)
       {
         if(i == j)
@@ -212,9 +218,28 @@ void compute_and_set_tangent_planes(TC& tc,
 }
 
 // translate the connectivity of the stars back to the original points
-void translate_connectivity_to_original_point_set()
+void export_complex_in_origin_space(const TC& tc,
+                                    const TC::Simplicial_complex& complex,
+                                    const std::vector<Point_k>& points_k)
 {
+  std::ofstream out("aniso.off");
+  std::stringstream output;
+  std::size_t num_simplices;
 
+  typename Kk::Compute_coordinate_d k_coord = Kk().compute_coordinate_d_object();
+
+
+  for(std::size_t i=0; i<points_k.size(); ++i)
+  {
+    const Point_k& p = points_k[i];
+    output << k_coord(p, 0) << " " << k_coord(p, 1) << " 0" << std::endl;
+  }
+
+  tc.export_simplices_to_off(complex, output, num_simplices);
+
+  out << "OFF" << std::endl;
+  out << points_k.size() << " " << num_simplices << " 0" << std::endl;
+  out << output.str();
 }
 
 void make_tc(std::vector<Point_k>& points_k,
@@ -253,7 +278,7 @@ void make_tc(std::vector<Point_k>& points_k,
                                                 &num_wrong_number_of_cofaces);
   complex.display_stats();
 
-  translate_connectivity_to_original_point_set();
+  export_complex_in_origin_space(tc, complex, points_k);
   return;
 }
 
@@ -262,7 +287,8 @@ int main()
   CGAL::default_random = CGAL::Random();
   std::vector<Point_k> points_k;
 
-  Metric_field* mf = NULL;
+  //Custom_mf* mf = new Custom_mf();
+  Euclidean_mf* mf = new Euclidean_mf();
 
   read_points(points_k);
   make_tc(points_k, mf);
