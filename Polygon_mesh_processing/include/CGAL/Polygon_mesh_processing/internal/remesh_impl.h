@@ -64,7 +64,7 @@ namespace internal {
 
   public:
     Incremental_remesher(PolygonMesh& pmesh
-                       , FaceRange face_range
+                       , const FaceRange& face_range
                        , VertexPointMap& vpmap)
       : mesh_(pmesh)
       , vpmap_(vpmap)

@@ -53,7 +53,7 @@ template<typename PolygonMesh
        , typename FaceRange
        , typename NamedParameters>
 void incremental_triangle_based_remeshing(PolygonMesh& pmesh
-                                        , FaceRange faces
+                                        , const FaceRange& faces
                                         , const double& target_edge_length
                                         , const NamedParameters& np)
 {
@@ -90,7 +90,7 @@ void incremental_triangle_based_remeshing(PolygonMesh& pmesh
 template<typename PolygonMesh
        , typename FaceRange>
 void incremental_triangle_based_remeshing(PolygonMesh& pmesh
-  , FaceRange faces
+  , const FaceRange& faces
   , const double& target_edge_length)
 {
   incremental_triangle_based_remeshing(pmesh,
