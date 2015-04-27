@@ -630,7 +630,6 @@ namespace internal {
         || (is_on_border(opposite(he, mesh_)) && is_on_patch_border(he));
     }
 
-    template<typename FaceRange>
     void tag_halfedges_status(const FaceRange& face_range)
     {
       //tag MESH,        //h and hopp belong to the mesh, not the patch
