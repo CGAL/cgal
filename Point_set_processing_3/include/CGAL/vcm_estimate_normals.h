@@ -209,14 +209,14 @@ vcm_convolve (ForwardIterator first,
 /// a construction that can be used for normal estimation and sharp feature detection.
 ///
 /// The VCM associates to each point the covariance matrix of its Voronoi
-/// cell intersected with the the ball of radius `offset_radius`.
+/// cell intersected with the ball of radius `offset_radius`.
 /// In addition, if the second radius `convolution_radius` is positive, the covariance matrices are smoothed
-/// by a simple convolution procedure. More precisely, each covariance matrix is replaced with
-/// the average of the matrices of points at distance at most `convolution_radius`.
-/// The choice of the parameter `offset_radius` is related to the geometry of the underlying surface while
-/// the choice of `convolution_radius` is related to the noise level in the point cloud.
-/// For example, if the point cloud is a uniform and noiseless sampling of a smooth surface,
-/// `offset_radius` should be set to the minimum local feature size of the surface while `convolution_radius` can be set to zero.
+/// via a convolution process. More specifically, each covariance matrix is replaced by
+/// the average of the matrices of the points located at a distance at most `convolution_radius`.
+/// The choice for parameter `offset_radius` should refer to the geometry of the underlying surface while
+/// the choice for parameter `convolution_radius` should refer to the noise level in the point cloud.
+/// For example, if the point cloud is a uniform and noise-free sampling of a smooth surface,
+/// `offset_radius` should be set to the minimum local feature size of the surface, while `convolution_radius` can be set to zero.
 ///
 /// The Voronoi covariance matrix of each vertex is stored in an array `a` of length 6 and is as follow:
 /*!

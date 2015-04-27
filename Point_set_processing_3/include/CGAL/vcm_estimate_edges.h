@@ -40,18 +40,18 @@
 namespace CGAL {
 
 /// \ingroup PkgPointSetProcessing
-/// determines if a point is on a sharp feature edge from point set
+/// determines if a point is on a sharp feature edge from a point set
 /// for which the Voronoi covariance Measures have been computed.
 ///
-/// The sharpness of the edge is defined by the parameter `threshold`.
+/// The sharpness of the edge, specified by parameter `threshold`, 
 /// is used to filtered points according to the external angle around a sharp feature.
 ///
 /// A point is considered to be on a sharp feature if the external angle `alpha` at the edge is such that
 /// `alpha >> 2 / sqrt(3) * sqrt(threshold)`.
-/// In particular this means that is the input contains sharp features
-/// with different external angles, the one with the smallest external angle should be considered
-/// which however will result in selecting more points in sharper regions.
-/// More details are given in \cgalCite{cgal:mog-vbcfe-11}.
+/// In particular this means that if the input contains sharp features
+/// with different external angles, the one with the smallest external angle should be considered,
+/// which however would result in selecting more points on sharper regions.
+/// More details are provided in \cgalCite{cgal:mog-vbcfe-11}.
 ///
 /// \tparam VCM_traits is a model of `VCMTraits`. If Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined
 ///         then an overload using `Eigen_vcm_traits` is provided and this template parameter can be omitted.
