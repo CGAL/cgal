@@ -621,7 +621,6 @@ namespace internal {
           || is_on_patch_border(opposite(he, mesh_));
     }
 
-    //todo : allow to collapse edges on patch boundary (or not?)
     bool is_collapse_allowed(const edge_descriptor& e) const
     {
       halfedge_descriptor he = halfedge(e, mesh_);
