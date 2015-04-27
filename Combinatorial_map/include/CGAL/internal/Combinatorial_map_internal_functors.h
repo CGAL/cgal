@@ -25,7 +25,6 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Kernel_traits.h>
 #include <vector>
-#include <boost/mpl/has_xxx.hpp>
 
 /* Definition of functors used internally to manage attributes (we need
  * functors as attributes are stored in tuple, thus all the access must be
@@ -638,8 +637,6 @@ struct Is_same_attribute_point_functor<Map1, Map2, T1, T2, false, false, i>
   { return true; }
 };
 // ****************************************************************************
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_point,Point,false)
-
 template<typename Attr, typename Info=typename Attr::Info>
 struct Is_nonvoid_attribute_has_non_void_info
 {
@@ -662,9 +659,20 @@ struct Is_attribute_has_non_void_info<CGAL::Void>
   static const bool value=false;
 };
 // ****************************************************************************
+template<typename Attr, typename Point=typename Attr::Point>
+struct Is_nonvoid_attribute_has_point
+{ static const bool value=true; };
+
+template<typename Attr>
+struct Is_nonvoid_attribute_has_point<Attr, void>
+{ static const bool value=false; };
+
 template<typename Attr>
 struct Is_attribute_has_point
-{ static const bool value=Has_point<Attr>::value; };
+{ static const bool value=Is_nonvoid_attribute_has_point<Attr>::value; };
+template<>
+struct Is_attribute_has_point<CGAL::Void>
+{ static const bool value=false; };
 // ****************************************************************************
 /// Test if the two darts are associated with the same attribute.
 template<typename Map1, typename Map2>
