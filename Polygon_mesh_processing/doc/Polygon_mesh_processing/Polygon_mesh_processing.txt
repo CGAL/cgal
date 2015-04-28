@@ -77,7 +77,7 @@ or even only for triangle meshes. Hence, one may want to triangulate polygonal f
 This package provides the function `CGAL::Polygon_mesh_processing::triangulate_faces()`
 that triangulates all faces of the input polygon mesh.
 The triangulation of each face is the one obtained by building a
-`Constrained_Delaunay_triangulation_2` in the support plane of the face.
+`CGAL::Constrained_Delaunay_triangulation_2` in the support plane of the face.
 
 \subsection MeshingExamples Meshing Examples
 
