@@ -76,7 +76,7 @@ private:
   template<class VertexOutputIterator,
            class FaceOutputIterator,
            class FaceRange>
-  bool subdivide(FaceRange faces,
+  bool subdivide(const FaceRange& faces,
                  const std::set<halfedge_descriptor>& border_edges,
                  std::map<vertex_descriptor, double>& scale_attribute, 
                  VertexOutputIterator& vertex_out,
@@ -134,7 +134,7 @@ private:
   }
 
   template<typename FaceRange>
-  bool relax(FaceRange faces,
+  bool relax(const FaceRange& faces,
              const std::vector<face_descriptor>& new_faces,
              const std::set<halfedge_descriptor>& border_edges)
   {
@@ -159,7 +159,7 @@ private:
   }
 
   template<typename FaceRange>
-  void collect_interior_edges(FaceRange faces,
+  void collect_interior_edges(const FaceRange& faces,
         const std::set<halfedge_descriptor>& border_edges,
         std::list<halfedge_descriptor>& interior_edges,
         std::set<halfedge_descriptor>& included_map)
@@ -260,7 +260,7 @@ public:
   {}
 
   template<class FaceRange, class FacetOutputIterator, class VertexOutputIterator>
-  void refine(FaceRange faces,
+  void refine(const FaceRange& faces,
               FacetOutputIterator& facet_out,
               VertexOutputIterator& vertex_out,
               double alpha)
