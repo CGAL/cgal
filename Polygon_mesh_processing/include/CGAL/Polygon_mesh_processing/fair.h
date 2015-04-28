@@ -43,7 +43,7 @@ namespace internal {
            typename VertexRange,
            typename VertexPointMap>
   bool fair(PolygonMesh& pmesh,
-    VertexRange vertices,
+    const VertexRange& vertices,
     SparseLinearSolver solver,
     WeightCalculator weight_calculator,
     unsigned int continuity,
