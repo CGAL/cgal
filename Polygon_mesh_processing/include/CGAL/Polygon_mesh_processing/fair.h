@@ -90,7 +90,7 @@ namespace internal {
            typename VertexRange,
            typename NamedParameters>
   bool fair(PolygonMesh& pmesh,
-            VertexRange vertices,
+            const VertexRange& vertices,
             const NamedParameters& np)
   {
     using boost::get_param;
@@ -122,7 +122,7 @@ namespace internal {
   }
 
   template<typename PolygonMesh, typename VertexRange>
-  bool fair(PolygonMesh& pmesh, VertexRange vertices)
+  bool fair(PolygonMesh& pmesh, const VertexRange& vertices)
   {
     return fair(pmesh, vertices,
       CGAL::Polygon_mesh_processing::parameters::all_default());

@@ -96,7 +96,7 @@ private:
 
 public:
   template<class VertexRange>
-  bool fair(VertexRange vertices
+  bool fair(const VertexRange& vertices
     , SparseLinearSolver m_solver
     , unsigned int fc)
   {
