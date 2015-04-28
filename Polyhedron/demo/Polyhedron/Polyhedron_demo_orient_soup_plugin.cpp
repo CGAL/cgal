@@ -142,12 +142,12 @@ void Polyhedron_demo_orient_soup_plugin::shuffle()
     if(poly_item) {
       item = new Scene_polygon_soup_item();
       item->setName(poly_item->name());
-      item->setColor(poly_item->color());
       item->setRenderingMode(poly_item->renderingMode());
       item->setVisible(poly_item->visible());
       item->setProperty("source filename", poly_item->property("source filename"));
       item->load(poly_item);
       item->shuffle_orientations();
+      item->setColor(poly_item->color());
       scene->replaceItem(index, item);
       delete poly_item;
     }

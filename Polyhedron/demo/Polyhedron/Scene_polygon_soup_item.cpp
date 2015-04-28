@@ -574,7 +574,6 @@ Scene_polygon_soup_item::load(std::istream& in)
 
     bool result = CGAL::read_OFF(in, soup->points, soup->polygons);
     emit changed();
-
     return result;
 }
 
@@ -735,9 +734,6 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     // Clean-up
     qFunc.glUseProgram(0);
     qFunc.glBindVertexArray(0);
-
-
-
 }
 
 void
