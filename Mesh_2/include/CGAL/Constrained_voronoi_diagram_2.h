@@ -385,7 +385,7 @@ private:
   }
 
   template <typename OutputIterator>
-  OutputIterator infinite_cvd_cell(Vertex_handle v,
+  OutputIterator infinite_cvd_cell(Vertex_handle ,
                                    OutputIterator oit) const
   {
     //TODO
