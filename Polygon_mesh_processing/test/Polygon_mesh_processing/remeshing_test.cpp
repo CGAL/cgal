@@ -1,5 +1,5 @@
 
-#define CGAL_PMP_REMESHING_DEBUG
+//#define CGAL_PMP_REMESHING_DEBUG
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
@@ -7,9 +7,11 @@
 
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 
+#include <CGAL/Timer.h>
 #include <boost/foreach.hpp>
 #include <fstream>
 #include <vector>
+#include <cstdlib>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
@@ -70,20 +72,23 @@ std::set<face_descriptor> k_ring(vertex_descriptor v,
   return kring;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
   std::cout.precision(17);
-  std::ifstream input("data/U.off");
-  Mesh m;
+  const char* filename = (argc > 1) ? argv[1] : "data/U.off";
+  std::ifstream input(filename);
 
+  Mesh m;
   if (!input || !(input >> m)){
     std::cerr << "Error: can not read file.\n";
     return 1;
   }
 
-  double target_edge_length = 0.01;
+  double target_edge_length = (argc > 2) ? atof(argv[2]) : 0.01;
   double low = 4. / 5. * target_edge_length;
   double high = 4. / 3. * target_edge_length;
+
+  unsigned int nb_iter = (argc > 3) ? atoi(argv[3]) : 5;
 
   unsigned int center_id = 26;
   unsigned int i = 0;
@@ -98,16 +103,21 @@ int main()
   }
   const std::set<face_descriptor>& patch = k_ring(patch_center, 3, m);
 
+  CGAL::Timer t;
+  t.start();
+
   CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(m,
-    patch,
+    faces(m),//patch,
     target_edge_length,
-    CGAL::Polygon_mesh_processing::parameters::number_of_iterations(5));
+    CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter));
 
-  boost::property_map<Mesh, boost::vertex_point_t>::const_type vpmap
-    = boost::get(CGAL::vertex_point, m);
+  t.stop();
+  std::cout << "Remeshing took " << t.time() << std::endl;
 
+  //boost::property_map<Mesh, boost::vertex_point_t>::const_type vpmap
+  //  = boost::get(CGAL::vertex_point, m);
 
-  std::ofstream out("U_remeshed.off");
+  std::ofstream out("remeshed.off");
   out << m;
   out.close();
 
