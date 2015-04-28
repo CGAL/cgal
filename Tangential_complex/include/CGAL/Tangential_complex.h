@@ -234,7 +234,7 @@ public:
     m_points(first, last),
     m_weights(m_points.size(), FT(0))
 #ifdef CGAL_TC_PERTURB_WEIGHT
-    m_weights_memory(m_points.size(), FT(0))
+    m_weights_memory()
 #endif
 # if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_PERTURB_POSITION) \
   && defined(CGAL_TC_GLOBAL_REFRESH)
@@ -1903,8 +1903,9 @@ next_face:
   {
     // Perturb the weight?
 #ifdef CGAL_TC_PERTURB_WEIGHT
-    m_weights[point_idx] = m_weights_memory[point_idx] +
-                           m_random_generator.get_double(0., m_sq_half_sparsity);
+    m_weights[point_idx] = m_random_generator.get_double(0., m_sq_half_sparsity);
+    if(m_weights_memory.size() > 0) // external weights were initially set
+      m_weights[point_idx] += m_weights_memory[point_idx]
 #endif
 
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
