@@ -301,7 +301,7 @@ private:
 
     // Get first face sq_circumradius_length 
     // Initialize min
-    FT min_sqr = std::numeric_limits<double>::max();
+    FT min_sqr = (std::numeric_limits<double>::max)();
     // Find the minimum value
     do
     {
