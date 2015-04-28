@@ -4,7 +4,9 @@
 
 \cgalHeading{How to use BGL Optional Named Parameters}
 
-The notion of named parameters was introduced in the BGL. You can read about it the following site: http://www.boost.org/libs/graph/doc/bgl_named_params.html. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
+The notion of named parameters was introduced in the BGL.
+You can read about it in the following site: http://www.boost.org/libs/graph/doc/bgl_named_params.html.
+Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
 
 Say there is a function `f()` that takes 3 parameters called name, age and gender, and you have variables `n`, `a` and `g` to pass as parameters to that function. Without named parameters, you would call it like this: `f(n,a,g)`, whereas with named parameters, you call it like this: `f(name(n).age(a).gender(g))`.
 
@@ -93,9 +95,9 @@ Here is the list of the named parameters available in this package:
 \b Default: if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined, then the following overload of `Eigen_solver_traits` is provided as default value\n
 \code
 CGAL::Eigen_solver_traits<
-Eigen::SparseLU<
-CGAL::Eigen_sparse_matrix<double>::EigenType,
-Eigen::COLAMDOrdering<int> >  >
+  Eigen::SparseLU<
+    CGAL::Eigen_sparse_matrix<double>::EigenType,
+      Eigen::COLAMDOrdering<int> >  >
 \endcode
 \cgalNPEnd
 
@@ -105,8 +107,8 @@ Eigen::COLAMDOrdering<int> >  >
 \b Default type is
 \code
 typename CGAL::Kernel_traits<
-typename boost::property_traits<
-typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel
+  typename boost::property_traits<
+    typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel
 \endcode
 \cgalNPEnd
 
@@ -137,7 +139,7 @@ a default property map where no edge is constrained is provided.
 
 \cgalNPBegin{less_halfedge} \anchor PMP_less_halfedge
  a comparison functor used to sort halfedges of `PolygonMesh`.\n
-\b Type: A functor with an `operator()` that compares halfedge descriptors from `PolygonMesh`. The operator must have the following signature :
+\b Type: a functor with an `operator()` that compares halfedge descriptors from `PolygonMesh`. The operator must have the following signature :
 \code
 typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 bool operator()(halfedge_descriptor h1, halfedge_descriptor h2);
