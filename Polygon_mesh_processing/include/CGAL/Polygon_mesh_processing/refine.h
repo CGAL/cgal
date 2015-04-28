@@ -36,7 +36,8 @@ namespace Polygon_mesh_processing {
 
   @tparam PolygonMesh model of `MutableFaceGraph`
           that has an internal property map for `CGAL::vertex_point_t`
-  @tparam FaceRange range of face descriptors, model of `SinglePassRange`
+  @tparam FaceRange range of face descriptors, model of `Range`.
+          Its iterator type is `InputIterator`.
   @tparam FaceOutputIterator model of `OutputIterator`
     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
   @tparam VertexOutputIterator model of `OutputIterator`
