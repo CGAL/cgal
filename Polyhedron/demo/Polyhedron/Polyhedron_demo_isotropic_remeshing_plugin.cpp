@@ -87,6 +87,20 @@ public Q_SLOTS:
         std::cout << "Remeshing aborted" << std::endl;
         return;
       }
+      double nb_iter = QInputDialog::getInt(this->mw,
+        QString("Isotropic remeshing : Number of iterations"),
+        QString("Enter number of iterations"),//question
+        1,              //value
+        1,              //min
+        1000,           //max
+        1,              //step
+        &ok); //Qt::WindowFlags flags = 0);
+      if (!ok)
+      {
+        std::cout << "Remeshing aborted" << std::endl;
+        return;
+      }
+
       // wait cursor
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -97,7 +111,8 @@ public Q_SLOTS:
         CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(
          *selection_item->polyhedron()
          , selection_item->selected_facets
-         , target_length);
+         , target_length
+         , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter));
 
         selection_item->changed_with_poly_item();
       }
@@ -105,7 +120,8 @@ public Q_SLOTS:
         CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(
          *poly_item->polyhedron()
          , faces(*poly_item->polyhedron())
-         , target_length);
+         , target_length
+         , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter));
 
         poly_item->changed();
       }
