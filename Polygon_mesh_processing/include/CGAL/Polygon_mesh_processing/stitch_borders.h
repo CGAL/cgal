@@ -268,9 +268,11 @@ private:
 *
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 *        that has a property map for `boost::vertex_point_t`
-* @tparam HalfedgePairsRange a model of `SinglePassRange`
-*         holding objects of type
-*  `std::pair<boost::graph_traits<PolygonMesh>::%halfedge_descriptor, boost::graph_traits<PolygonMesh>::%halfedge_descriptor>`
+* @tparam HalfedgePairsRange a model of `Range`.
+*         Its iterator type is `InputIterator`,
+*         and value type
+*         `std::pair<boost::graph_traits<PolygonMesh>::%halfedge_descriptor,
+*         boost::graph_traits<PolygonMesh>::%halfedge_descriptor>`.
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param pmesh the polygon mesh to be modified by stitching
