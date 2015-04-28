@@ -261,8 +261,8 @@ self_intersections(const TriangleMesh& tmesh, OutputIterator out)
  * are only limited to the faces in `face_range`.
  *
  * \tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
- *  model of `RandomAccessRange`
- 
+ *  model of `Range`.
+ * Its iterator type is `RandomAccessIterator`.
  * \param face_range the range of faces to check for self-intersection.
  */
 template <class TriangleMesh
