@@ -1057,9 +1057,21 @@ private:
     //***************************************************
 
     // Insert p
-    const Weighted_point wp = compute_perturbed_weighted_point(i);
-    Tr_point proj_wp = project_point_and_compute_weight(wp, m_tangent_spaces[i],
-                                                        local_tr_traits);
+    typename Kernel::Equal_d eq = m_k.equal_d_object();
+
+    Tr_point proj_wp;
+    if(eq(compute_perturbed_point(i), m_tangent_spaces[i].origin()))
+    {
+      proj_wp = local_tr_traits.construct_weighted_point_d_object()(
+      local_tr_traits.construct_point_d_object()(m_intrinsic_dimension, ORIGIN),
+      m_weights[i]);
+    }
+    else
+    {
+      const Weighted_point& wp = compute_perturbed_weighted_point(i);
+      proj_wp = project_point_and_compute_weight(wp, m_tangent_spaces[i],
+                                                 local_tr_traits);
+    }
 
     center_vertex = local_tr.insert(proj_wp);
     center_vertex->data() = i;
