@@ -114,8 +114,11 @@ private:
    * Returns size at point \c p, by interpolation inside edge
    * (\c e f is assumed to be an infinite face)
    */
-  FT interpolate_on_edge_vertices(const Point_2& p,
-                                  const Face_handle& f) const
+  FT interpolate_on_edge_vertices(const Point_2&
+#ifdef CGAL_MESH_2_SIZING_FIELD_USE_BARYCENTRIC_COORDINATES
+                                  p
+#endif
+                                  , const Face_handle& f) const
   {
     CGAL_precondition(tr_.is_infinite(f));
     int finite_i = -1;
@@ -128,7 +131,19 @@ private:
 
     const FT& sa = f->vertex(tr_.cw(finite_i))->sizing_info();
     const FT& sb = f->vertex(tr_.ccw(finite_i))->sizing_info();
+
+#ifdef CGAL_MESH_2_SIZING_FIELD_USE_BARYCENTRIC_COORDINATES
+    const Point_2& pa = f->vertex(tr_.cw(finite_i))->point();
+    const Point_2& pb = f->vertex(tr_.ccw(finite_i))->point();
+
+    FT t = CGAL::sqrt(
+      CGAL::squared_distance(pb, pb) / CGAL::squared_distance(pa, pb));
+    CGAL_assertion(t <= 1.);
+
+    return t * sa + (1. - t) * sb;
+#else
     return 0.5 * (sa + sb);
+#endif
   }
 
   FT average_incident_edge_length(const Vertex_handle& v) const
