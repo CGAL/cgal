@@ -445,7 +445,6 @@ void Scene_polyhedron_selection_item::draw_edges(Viewer_interface* viewer) const
 
 void Scene_polyhedron_selection_item::draw_points(Viewer_interface* viewer) const
 {
-    std::cout<<"draw_points"<<std::endl;
     qFunc.glPointSize(5.f);
     qFunc.glBindVertexArray(vao[0]);
     uniform_attrib(viewer,2);

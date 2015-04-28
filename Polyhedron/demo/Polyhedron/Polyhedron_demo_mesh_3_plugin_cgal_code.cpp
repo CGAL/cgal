@@ -167,129 +167,29 @@ public:
         return (m != Gouraud && m!=PointsPlusNormals && m!=Splatting); // CHECK THIS!
     }
 
-    void draw() const {
-        ::glPushMatrix();
-        ::glMultMatrixd(frame->matrix());
-        QGLViewer::drawGrid((float)complex_diag());
-        ::glPopMatrix();
-
-        if(isEmpty())
-            return;
-
-        GLboolean two_side;
-        ::glGetBooleanv(GL_LIGHT_MODEL_TWO_SIDE, &two_side);
-        ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-
-        const Kernel::Plane_3& plane = this->plane();
-        GLdouble clip_plane[4];
-        clip_plane[0] = -plane.a();
-        clip_plane[1] = -plane.b();
-        clip_plane[2] = -plane.c();
-        clip_plane[3] = -plane.d();
-
-        ::glClipPlane(GL_CLIP_PLANE0, clip_plane);
-        ::glEnable(GL_CLIP_PLANE0);
-        ::glBegin(GL_TRIANGLES);
-        for(C3t3::Facet_iterator
-            fit = c3t3().facets_begin(),
-            end = c3t3().facets_end();
-            fit != end; ++fit)
-        {
-            const Tr::Cell_handle& cell = fit->first;
-            const int& index = fit->second;
-            const Kernel::Point_3& pa = cell->vertex((index+1)&3)->point();
-            const Kernel::Point_3& pb = cell->vertex((index+2)&3)->point();
-            const Kernel::Point_3& pc = cell->vertex((index+3)&3)->point();
-            typedef Kernel::Oriented_side Side;
-            using CGAL::ON_ORIENTED_BOUNDARY;
-            const Side sa = plane.oriented_side(pa);
-            const Side sb = plane.oriented_side(pb);
-            const Side sc = plane.oriented_side(pc);
-            if( sa != ON_ORIENTED_BOUNDARY &&
-                    sb != ON_ORIENTED_BOUNDARY &&
-                    sc != ON_ORIENTED_BOUNDARY &&
-                    sb == sa && sc == sa )
-            {
-                // draw_triangle(pa, pb, pc);
-            }
-        }
-        ::glEnd();
-        ::glDisable(GL_CLIP_PLANE0);
-
-        ::glBegin(GL_TRIANGLES);
-        // workaround for Qt-4.2.
-#if QT_VERSION < 0x040300
-#  define darker dark
-#endif
-        CGALglcolor(this->color().darker(150));
-#undef darker
-        for(Tr::Finite_cells_iterator
-            cit = c3t3().triangulation().finite_cells_begin(),
-            end = c3t3().triangulation().finite_cells_end();
-            cit != end; ++cit)
-        {
-            if(! c3t3().is_in_complex(cit) )
-                continue;
-
-            const Kernel::Point_3& pa = cit->vertex(0)->point();
-            const Kernel::Point_3& pb = cit->vertex(1)->point();
-            const Kernel::Point_3& pc = cit->vertex(2)->point();
-            const Kernel::Point_3& pd = cit->vertex(3)->point();
-            typedef Kernel::Oriented_side Side;
-            using CGAL::ON_ORIENTED_BOUNDARY;
-            const Side sa = plane.oriented_side(pa);
-            const Side sb = plane.oriented_side(pb);
-            const Side sc = plane.oriented_side(pc);
-            const Side sd = plane.oriented_side(pd);
-
-            if( sa == ON_ORIENTED_BOUNDARY ||
-                    sb == ON_ORIENTED_BOUNDARY ||
-                    sc == ON_ORIENTED_BOUNDARY ||
-                    sd == ON_ORIENTED_BOUNDARY ||
-                    sb != sa || sc != sa || sd != sa)
-            {
-                // draw_triangle(pa, pb, pc);
-                // draw_triangle(pa, pb, pd);
-                // draw_triangle(pa, pc, pd);
-                // draw_triangle(pb, pc, pd);
-            }
-
-            //       for(int i = 0; i < 4; ++i) {
-            //         if(c3t3().is_in_complex(cit, i)) continue;
-            //         const Point_3& pa = cit->vertex((i+1)&3)->point();
-            //         const Point_3& pb = cit->vertex((i+2)&3)->point();
-            //         const Point_3& pc= cit->vertex((i+3)&3)->point();
-            //         typedef Kernel::Oriented_side Side;
-            //         using CGAL::ON_ORIENTED_BOUNDARY;
-            //         const Side sa = plane.oriented_side(pa);
-            //         const Side sb = plane.oriented_side(pb);
-            //         const Side sc = plane.oriented_side(pc);
-
-            //         if( sa == ON_ORIENTED_BOUNDARY ||
-            //             sb == ON_ORIENTED_BOUNDARY ||
-            //             sc == ON_ORIENTED_BOUNDARY ||
-            //             sb != sa || sc != sa )
-            //         {
-            //           draw_triangle(pa, pb, pc);
-            //         }
-            //       }
-        }
-        ::glEnd();
-        if(!two_side)
-            ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
-    };
+    void draw() const { }
     void draw(Viewer_interface* viewer) const {
+
+        int err = glGetError();
+        if(err !=0)
+        std::cout<<"ERROR c3t3 1"<<std::endl;
 
         qFunc.glBindVertexArray(vao[0]);
         qFunc.glUseProgram(rendering_program_poly);
         uniform_attrib(viewer,0);
         qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/3);
+        err = glGetError();
+        if(err !=0)
+            std::cout<<"ERROR c3t3 2 "<<std::endl;
         qFunc.glUseProgram(0);
         qFunc.glBindVertexArray(0);
 
 
     }
     void draw_edges(Viewer_interface* viewer) const {
+        int err = glGetError();
+        if(err !=0)
+        std::cout<<"ERROR c3t33"<<std::endl;
         qFunc.glBindVertexArray(vao[1]);
         qFunc.glUseProgram(rendering_program_lines);
         uniform_attrib(viewer,2);
@@ -307,6 +207,9 @@ public:
     }
     void draw_points(Viewer_interface * viewer) const
     {
+        int err = glGetError();
+        if(err !=0)
+        std::cout<<"ERROR c3t3 4"<<std::endl;
         qFunc.glBindVertexArray(vao[0]);
         qFunc.glUseProgram(rendering_program_lines);
         uniform_attrib(viewer,1);
@@ -867,7 +770,6 @@ private:
             if(isEmpty())
                 return;
 
-
             const Kernel::Plane_3& plane = this->plane();
             GLdouble clip_plane[4];
             clip_plane[0] = -plane.a();
@@ -944,17 +846,9 @@ private:
                     draw_triangle_edges(pa,pb,pd);
                     draw_triangle_edges(pa,pc,pd);
                     draw_triangle_edges(pb,pc,pd);
-
-
                 }
-
-
             }
-
         }
-
-
-
         location[0] = qFunc.glGetUniformLocation(rendering_program_poly, "mvp_matrix");
         location[1] = qFunc.glGetUniformLocation(rendering_program_poly, "mv_matrix");
         location[2] = qFunc.glGetUniformLocation(rendering_program_poly, "light_pos");
@@ -968,67 +862,54 @@ private:
 };
 
 Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
-                             QString filename,
+                             const QString filename,
                              const double angle,
-                             const double facet_sizing,
+                             const double sizing,
                              const double approx,
-                             const double tet_sizing,
-                             const double tet_shape,
-                             const bool protect_features,
-                             Scene_interface* scene)
+                             const double tets_sizing)
 {
-    if(!pMesh) return 0;
+  if(!pMesh) return 0;
 
-    // remesh
+  // remesh
 
-    // Set mesh criteria
-    Edge_criteria edge_criteria(facet_sizing);
-    Facet_criteria facet_criteria(angle, facet_sizing, approx); // angle, size, approximation
-    Cell_criteria cell_criteria(tet_shape, tet_sizing); // radius-edge ratio, size
-    Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
+  // Set mesh criteria
+  Facet_criteria facet_criteria(angle, sizing, approx); // angle, size, approximation
+  Cell_criteria cell_criteria(4, tets_sizing); // radius-edge ratio, size
+  Mesh_criteria criteria(facet_criteria, cell_criteria);
 
-    CGAL::Timer timer;
-    timer.start();
-    std::cerr << "Meshing file \"" << qPrintable(filename) << "\"\n";
-    std::cerr << "  angle: " << angle << std::endl
-              << "  facets size bound: " << facet_sizing << std::endl
-              << "  approximation bound: " << approx << std::endl
-              << "  tetrahedra size bound: " << tet_sizing << std::endl;
-    std::cerr << "Build AABB tree...";
-    // Create domain
-    Mesh_domain domain(*pMesh);
-    if(protect_features) {
-        domain.detect_features();
-    }
-    std::cerr << "done (" << timer.time() << " ms)" << std::endl;
+  CGAL::Timer timer;
+  timer.start();
+  std::cerr << "Meshing file \"" << qPrintable(filename) << "\"\n";
+  std::cerr << "  angle: " << angle << std::endl
+            << "  facets size bound: " << sizing << std::endl
+            << "  approximation bound: " << approx << std::endl
+            << "  tetrahedra size bound: " << tets_sizing << std::endl;
+  std::cerr << "Build AABB tree...";
+  // Create domain
+  Mesh_domain domain(*pMesh);
+  std::cerr << "done (" << timer.time() << " ms)" << std::endl;
 
-    // Meshing
-    std::cerr << "Mesh...";
-    CGAL::parameters::internal::Features_options features =
-            protect_features ?
-                CGAL::parameters::features(domain) :
-                CGAL::parameters::no_features();
+  // Meshing
+  std::cerr << "Mesh...";
+  Scene_c3t3_item* new_item =
+    new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria));
 
-    Scene_c3t3_item* new_item =
-            new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria, features));
-    new_item->set_scene(scene);
-    std::cerr << "done (" << timer.time() << " ms, " << new_item->c3t3().triangulation().number_of_vertices() << " vertices)" << std::endl;
+  std::cerr << "done (" << timer.time() << " ms, " << new_item->c3t3().triangulation().number_of_vertices() << " vertices)" << std::endl;
 
-    if(new_item->c3t3().triangulation().number_of_vertices() > 0)
-    {
-        std::ofstream medit_out("out.mesh");
-        new_item->c3t3().output_to_medit(medit_out);
-
-        const Scene_item::Bbox& bbox = new_item->bbox();
-        new_item->setPosition((float)(bbox.xmin + bbox.xmax)/2.f,
-                              (float)(bbox.ymin + bbox.ymax)/2.f,
-                              (float)(bbox.zmin + bbox.zmax)/2.f);
-        return new_item;
-    }
-    else {
-        delete new_item;
-        return 0;
-    }
+  if(new_item->c3t3().triangulation().number_of_vertices() > 0)
+  {
+    std::ofstream medit_out("out.mesh");
+    new_item->c3t3().output_to_medit(medit_out);
+    const Scene_item::Bbox& bbox = new_item->bbox();
+    new_item->setPosition((float)(bbox.xmin + bbox.xmax)/2.f,
+                          (float)(bbox.ymin + bbox.ymax)/2.f,
+                          (float)(bbox.zmin + bbox.zmax)/2.f);
+    return new_item;
+  }
+  else {
+    delete new_item;
+    return 0;
+  }
 }
 
 #include "Polyhedron_demo_mesh_3_plugin_cgal_code.moc"

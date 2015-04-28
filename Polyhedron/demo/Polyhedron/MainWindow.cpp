@@ -193,7 +193,7 @@ MainWindow::MainWindow(QWidget* parent)
           viewer, SLOT(updateGL()));
 
   connect(scene, SIGNAL(updated()),
-          viewer, SLOT(update()));
+          viewer, SLOT(updateGL()));
 
   connect(scene, SIGNAL(updated()),
           this, SLOT(selectionChanged()));

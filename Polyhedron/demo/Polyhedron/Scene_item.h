@@ -88,8 +88,8 @@ public slots:
   virtual void contextual_changed(){}
 
   // Setters for the four basic properties
-  virtual void setColor(QColor c) { color_ = c; }
-  void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
+  virtual void setColor(QColor c) { color_ = c; changed(); }
+  void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); changed(); }
   virtual void setName(QString n) { name_ = n; }
   virtual void setVisible(bool b) { visible_ = b; }
   virtual void setRenderingMode(RenderingMode m) { 

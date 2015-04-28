@@ -239,11 +239,11 @@ Scene_polyhedron_item::triangulate_facet_color(Facet_iterator fit)
 
     // sets mark is_external
     for(typename CDT::All_faces_iterator
-        fit = cdt.all_faces_begin(),
+        afit = cdt.all_faces_begin(),
         end = cdt.all_faces_end();
-        fit != end; ++fit)
+        afit != end; ++afit)
     {
-        fit->info().is_external = false;
+        afit->info().is_external = false;
     }
     //check if the facet is external or internal
     std::queue<typename CDT::Face_handle> face_queue;
@@ -695,7 +695,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
                     normals.push_back(n.y());
                     normals.push_back(n.z());
                 }
-                const int this_patch_id = f->patch_id();
 
                 //position
                 const Point& p = he->vertex()->point();
@@ -785,9 +784,9 @@ Scene_polyhedron_item::compute_colors()
 
 
     // int patch_id = -1;
-    Facet_iterator f = poly->facets_begin();
+   // Facet_iterator f = poly->facets_begin();
 
-    for(f = poly->facets_begin();
+    for(Facet_iterator f = poly->facets_begin();
         f != poly->facets_end();
         f++)
     {
@@ -912,6 +911,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     //Generates an integer which will be used as ID for each buffer
     qFunc.glGenBuffers(10, buffer);
     compile_shaders();
+    changed();
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
@@ -937,14 +937,15 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     //Generates an integer which will be used as ID for each buffer
     qFunc.glGenBuffers(10, buffer);
     compile_shaders();
+    changed();
 }
 
-// Scene_polyhedron_item::Scene_polyhedron_item(const Scene_polyhedron_item& item)
-//   : Scene_item(item),
-//     poly(new Polyhedron(*item.poly)),
-//     show_only_feature_edges_m(false)
-// {
-// }
+ /*Scene_polyhedron_item::Scene_polyhedron_item(const Scene_polyhedron_item& item)
+   : Scene_item(item),
+     poly(new Polyhedron(*item.poly)),
+     show_only_feature_edges_m(false)
+ {
+ }*/
 
 Scene_polyhedron_item::~Scene_polyhedron_item()
 {
@@ -1103,7 +1104,6 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
 
 
 
-
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
@@ -1185,6 +1185,7 @@ contextual_changed()
             //Change the normals
             changed();
         }
+
 }
 void
 Scene_polyhedron_item::selection_changed(bool p_is_selected)

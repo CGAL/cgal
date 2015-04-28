@@ -62,26 +62,24 @@ Scene::addItem(Scene_item* item)
 {
 
     Bbox bbox_before = bbox();
-     m_entries.push_back(item);
-     connect(item, SIGNAL(itemChanged()),
-             this, SLOT(itemChanged()));
-     if(bbox_before + item->bbox() != bbox_before)
-     {
-   #if QT_VERSION >= 0x050000
-       QAbstractListModel::beginResetModel();
-       emit updated_bbox();
-       emit updated();
-       QAbstractListModel::endResetModel();
-    #else
-       emit updated_bbox();
-       emit updated();
-       QAbstractListModel::reset();
-    #endif
-     }
-
-     Item_id id = m_entries.size() - 1;
-     emit newItem(id);
-     return id;
+    m_entries.push_back(item);
+    connect(item, SIGNAL(itemChanged()),
+            this, SLOT(itemChanged()));
+    if(bbox_before + item->bbox() != bbox_before)
+    {
+        emit updated_bbox();
+    }
+#if QT_VERSION >= 0x050000
+    QAbstractListModel::beginResetModel();
+    emit updated();
+    QAbstractListModel::endResetModel();
+#else
+    emit updated();
+    QAbstractListModel::reset();
+#endif
+    Item_id id = m_entries.size() - 1;
+    emit newItem(id);
+    return id;
 }
 
 Scene_item*

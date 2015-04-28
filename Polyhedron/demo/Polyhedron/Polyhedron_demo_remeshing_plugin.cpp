@@ -61,8 +61,8 @@ private:
 void Polyhedron_demo_remeshing_plugin::remesh()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polyhedron_item* item = 
+
+  Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
   if(item)
@@ -71,8 +71,8 @@ void Polyhedron_demo_remeshing_plugin::remesh()
 
     if(!pMesh) return;
 
-    // TODO: 
-    // sizing and approximation parameters should be expressed as ratio of 
+    // TODO:
+    // sizing and approximation parameters should be expressed as ratio of
     // scene bbox diagonal.
 
     QDialog dialog(mw);
@@ -114,7 +114,7 @@ void Polyhedron_demo_remeshing_plugin::remesh()
               << "\n  tag=" << tag_index
               << std::boolalpha
               << std::endl;
-    Scene_item* new_item = cgal_code_remesh(mw, 
+    Scene_item* new_item = cgal_code_remesh(mw,
                                             pMesh,
                                             angle,
                                             sizing,
@@ -138,6 +138,7 @@ void Polyhedron_demo_remeshing_plugin::remesh()
     QApplication::restoreOverrideCursor();
   }
 }
+
 
 #if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(Polyhedron_demo_remeshing_plugin, Polyhedron_demo_remeshing_plugin)
