@@ -263,7 +263,8 @@ namespace Polygon_mesh_processing {
   @tparam OutputIteratorValueType value type of `OutputIterator`
     having a constructor `OutputIteratorValueType(int p0, int p1, int p2)` available.
     It defaults to `value_type_traits<OutputIterator>::%type`, and can be omitted when the default is fine.
-  @tparam PointRange range of points, model of `SinglePassRange`
+  @tparam PointRange range of points, model of `Range`.
+    Its iterator type is `InputIterator`.
   @tparam OutputIterator model of `OutputIterator`
      holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
   @tparam NamedParameters a sequence of \ref namedparameters
