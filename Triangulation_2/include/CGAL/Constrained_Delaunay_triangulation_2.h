@@ -23,7 +23,6 @@
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Constrained_triangulation_2.h>
-#include <CGAL/Constrained_voronoi_diagram_2.h>
 #include <CGAL/Triangulation_2/insert_constraints.h>
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
