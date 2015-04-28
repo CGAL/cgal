@@ -669,10 +669,10 @@ private:
 
     switch (type)
     {
-      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_INSIDE:
+      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_BOUNDED_SIDE:
         expand_face_root(f, location, sourcePointIt);
         break;
-      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_EDGE:
+      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_BOUNDARY:
         {
           halfedge_descriptor he = halfedge(f, m_graph);
           for (std::size_t i = 0; i < associatedEdge; ++i)
@@ -682,7 +682,7 @@ private:
           expand_edge_root(he, cbcw(location, associatedEdge), cbcw(location, (associatedEdge + 1) % 3), sourcePointIt);
         }
         break;
-      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX:
+      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_VERTEX:
         {
           halfedge_descriptor he = halfedge(f, m_graph);
           for (std::size_t i = 0; i < associatedEdge; ++i)
@@ -1727,9 +1727,9 @@ private:
 
     switch (type)
     {
-      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_INSIDE:
+      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_BOUNDED_SIDE:
         return nearest_on_face(f, location);
-      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_EDGE:
+      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_BOUNDARY:
         {
           halfedge_descriptor he = halfedge(f, m_graph);
           for (std::size_t i = 0; i < associatedEdge; ++i)
@@ -1764,7 +1764,7 @@ private:
           }
         }
         break;
-      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX:
+      case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_VERTEX:
         {
           halfedge_descriptor he = halfedge(f, m_graph);
 

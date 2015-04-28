@@ -139,13 +139,13 @@ enum Barycentric_coordinate_type
   /// If the coordinate is invalid
   BARYCENTRIC_COORDINATE_INVALID = 0,
   /// if the coordinate has exactly one non-zero weight equal to 1, and the rest are zero
-  BARYCENTRIC_COORDINATE_VERTEX,
+  BARYCENTRIC_COORDINATE_ON_VERTEX,
   ///if the coordinate has exactly one zero weight, and the rest sum to 1
-  BARYCENTRIC_COORDINATE_EDGE,
+  BARYCENTRIC_COORDINATE_ON_BOUNDARY,
   /// if the coordinate has no non-zero weight, and they all sum to 1
-  BARYCENTRIC_COORDINATE_INSIDE,
+  BARYCENTRIC_COORDINATE_ON_BOUNDED_SIDE,
   /// if the weights of the coordinate do not sum to 1
-  BARYCENTRIC_COORDINATE_OUTSIDE
+  BARYCENTRIC_COORDINATE_ON_UNBOUNDED_SIDE
 };
 
 template <class B, class Construct_barycentric_coordinate_weight>
@@ -178,7 +178,7 @@ public:
 
     if (cbcw(baryCoords, 0) + cbcw(baryCoords, 1) + cbcw(baryCoords, 2) > 1.00001 || cbcw(baryCoords, 0) + cbcw(baryCoords, 1) + cbcw(baryCoords, 2) < 0.99999)
     {
-      return std::make_pair(BARYCENTRIC_COORDINATE_OUTSIDE, 0);
+      return std::make_pair(BARYCENTRIC_COORDINATE_ON_UNBOUNDED_SIDE, 0);
     }
 
     for (std::size_t i = 0; i < 3; ++i)
@@ -193,7 +193,7 @@ public:
 
     if (numNonZero == 3)
     {
-      return std::make_pair(BARYCENTRIC_COORDINATE_INSIDE, 0);
+      return std::make_pair(BARYCENTRIC_COORDINATE_ON_BOUNDED_SIDE, 0);
     }
     else if (numNonZero == 2)
     {
@@ -212,7 +212,7 @@ public:
         associatedEdge = 0;
       }
 
-      return std::make_pair(BARYCENTRIC_COORDINATE_EDGE, associatedEdge);
+      return std::make_pair(BARYCENTRIC_COORDINATE_ON_BOUNDARY, associatedEdge);
     }
     else if (numNonZero == 1)
     {
@@ -231,7 +231,7 @@ public:
         associatedEdge = 2;
       }
 
-      return std::make_pair(BARYCENTRIC_COORDINATE_VERTEX, associatedEdge);
+      return std::make_pair(BARYCENTRIC_COORDINATE_ON_VERTEX, associatedEdge);
     }
     else
     {

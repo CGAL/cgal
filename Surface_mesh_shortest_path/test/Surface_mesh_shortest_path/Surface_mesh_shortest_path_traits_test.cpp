@@ -70,7 +70,7 @@ void test_simple_2D_barycentric_coordinates()
   CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type b0Type;
   boost::tie(b0Type, outVertex0) = classify_barycentric_coordinate(b0);
 
-  CHECK_EQUAL(b0Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX);
+  CHECK_EQUAL(b0Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_VERTEX);
   CHECK_EQUAL(outVertex0, 0);
 
   Traits::Barycentric_coordinate b1 = construct_barycentric_coordinate_in_triangle_2(simpleTriangle, simpleTriangle[1]);
@@ -83,7 +83,7 @@ void test_simple_2D_barycentric_coordinates()
   CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type b1Type;
   boost::tie(b1Type, outVertex1) = classify_barycentric_coordinate(b1);
 
-  CHECK_EQUAL(b1Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX);
+  CHECK_EQUAL(b1Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_VERTEX);
   CHECK_EQUAL(outVertex1, 1);
 
   Traits::Barycentric_coordinate b2 = construct_barycentric_coordinate_in_triangle_2(simpleTriangle, simpleTriangle[2]);
@@ -96,7 +96,7 @@ void test_simple_2D_barycentric_coordinates()
   CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type b2Type;
   boost::tie(b2Type, outVertex2) = classify_barycentric_coordinate(b2);
 
-  CHECK_EQUAL(b2Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX);
+  CHECK_EQUAL(b2Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_VERTEX);
   CHECK_EQUAL(outVertex2, 2);
 
   Traits::Point_2 location(Kernel::FT(0.3), Kernel::FT(0.2));
@@ -106,7 +106,7 @@ void test_simple_2D_barycentric_coordinates()
   CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type bLocationType;
   boost::tie(bLocationType, dummyOut) = classify_barycentric_coordinate(bLocation);
 
-  CHECK_EQUAL(bLocationType, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_INSIDE);
+  CHECK_EQUAL(bLocationType, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_BOUNDED_SIDE);
 
   CHECK_CLOSE(Kernel::FT(1.0) - location[0] - location[1], bLocation[0], Kernel::FT(0.000001));
   CHECK_CLOSE(location[0], bLocation[1], Kernel::FT(0.000001));

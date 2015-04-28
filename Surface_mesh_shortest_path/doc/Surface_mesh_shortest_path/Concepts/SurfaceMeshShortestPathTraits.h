@@ -283,8 +283,8 @@ public:
   `std::pair<CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type,std::size_t> operator()(Barycentric_coordinate b)`,
   which computes the classification and the associated edge (if applicable) of the coordinate `b`
   \details Returns the pair (`type`, `i`), such that `type` is one of the values of `CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type`
-  - If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX`, `i` is the index of that vertex
-  - If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_EDGE`, `i` is the index of the non-zero edge
+  - If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_VERTEX`, `i` is the index of that vertex
+  - If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_BOUNDARY`, `i` is the index of the non-zero edge
     - 0 if (0,1) are the non-zero coordinates
     - 1 if (1,2) are the non-zero coordinates
     - 2 if (2,0) are the non-zero coordinates
