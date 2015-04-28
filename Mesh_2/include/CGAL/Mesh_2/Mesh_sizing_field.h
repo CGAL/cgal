@@ -84,16 +84,18 @@ private:
   /**
    * Returns size at point \c p, by interpolation inside facet
    */
-  FT interpolate_on_face_vertices(const Point_2& p,
-                                  const Face_handle& f) const
+  FT interpolate_on_face_vertices(const Point_2&
+#ifdef CGAL_MESH_2_SIZING_FIELD_USE_BARYCENTRIC_COORDINATES
+                                  p
+#endif
+                                  , const Face_handle& f) const
   {
     // Interpolate value using tet vertices values
     const FT& sa = f->vertex(0)->sizing_info();
     const FT& sb = f->vertex(1)->sizing_info();
     const FT& sc = f->vertex(2)->sizing_info();
-#ifndef CGAL_MESH_2_SIZING_FIELD_USE_BARYCENTRIC_COORDINATES
-    return ( (sa + sb + sc) / 3. );
-#else
+
+#ifdef CGAL_MESH_2_SIZING_FIELD_USE_BARYCENTRIC_COORDINATES
     const Point_2& a = f->vertex(0)->point();
     const Point_2& b = f->vertex(1)->point();
     const Point_2& c = f->vertex(2)->point();
@@ -103,6 +105,8 @@ private:
     double gamma = CGAL::area(a, b, p) * abc_inv;
 
     return alpha * sa + beta * sb + gamma * sc;
+#else
+    return ((sa + sb + sc) / 3.); 
 #endif
   }
 

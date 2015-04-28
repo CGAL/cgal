@@ -172,7 +172,7 @@ public:
         break;
 
       // Update mesh with those moves
-      update_mesh(moves, moving_vertices);
+      update_mesh(moves);
       nb_vertices_moved = moving_vertices.size();
 
       this->after_move();
@@ -364,8 +364,7 @@ private:
     return ( sum/FT(big_moves_.size()) < convergence_ratio_ );
   }
 
-  void update_mesh(const Moves_vector& moves,
-                   Vertex_set& moving_vertices)
+  void update_mesh(const Moves_vector& moves)
   {
     // Apply moves in triangulation
     for(typename Moves_vector::const_iterator it = moves.begin() ;

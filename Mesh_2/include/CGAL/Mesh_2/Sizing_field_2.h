@@ -19,7 +19,7 @@ public:
   Sizing_field_2()
   {
   }
-  Sizing_field_2(Tr& tr)
+  Sizing_field_2(Tr& )
   {
   }
 

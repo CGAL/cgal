@@ -43,7 +43,7 @@ public:
   static const bool is_vertex_update_needed = false;
 
 public:
-  Uniform_sizing_field_2(Tr& tr) {}
+  Uniform_sizing_field_2(Tr& ) {}
 
 public:
   FT operator()(const Point_2&) const { return FT(1); }
