@@ -123,6 +123,20 @@ We define the *plausibility* grade \f$ p(t) \f$ as \f$ 1/r_t \f$, if
 \f$ \beta_t < \beta \f$, and \f$ -\beta_t \f$ else.  The parameter \f$
 \beta \f$ can be specified by the user and is set by default to \f$ \pi/6\f$.
 
+Let's have a look at the figure below.
+\cgalFigureBegin{figAFSRplausible,wedges.png}
+Plausibility. Triangle `t'` and incidident triangles sharing edge `e` seen from the side. 
+\cgalFigureEnd
+
+ \f$ \alpha_\mathrm{sliver}\f$ corresponds to the red wedge. The algorithm will never select triangle `t1`
+even if it is the only candidate triangle. 
+ 
+\f$\beta\f$ corresponds to the green wedge. If there is a candidate triangle in this zone,
+the one with the smallest radius is the most plausible.
+
+If there is no candidate triangle in the green wedge, the triangle with the smallest
+angle between its normal and the normal of `t'` is chosen.  In the figure above
+this would be triangle `t4`.
 
 \subsection AFSR_Boundaries Dealing with Multiple Components, Boundaries and Sharp Edges
 
@@ -151,6 +165,12 @@ More specifically, we discard any candidate triangle \f$ t \f$, for an edge \f$ 
 such that \f$ p(t) < 0\f$, and \f$ r_t > k r_{t'}\f$ where \f$ t'\f$ is 
 the triangle on the surface incident on \f$ e \f$. The parameter \f$ k \f$ 
 is specified by the user and is set by default to 5.
+
+For the example given in  \cgalFigureRef{figAFSRplausible}, we said that if there 
+was no triangle `t3` in the green wedge, triangle `t4` would be chosen as it has
+the smallest angle between its normal and the normal of triangle `t'`. 
+However, in case its radius was \f$ k \f$ times larger than the radius of triangle `t'`,
+triangle `t2` would be chosen, assuming that its radius is not  \f$ k \f$ times larger.
 
 
 Note that this heuristic implies that 
