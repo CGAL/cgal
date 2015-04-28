@@ -114,7 +114,7 @@ calls the surface reconstruction function with the default parameters.
 \param beta described in Section \ref AFSR_Selection
 
 */ 
-  void run(double k=5, double beta= 0.18);
+  void run(double k=5, double beta= 0.52);
 
 /*! 
 returns the reconstructed surface.
