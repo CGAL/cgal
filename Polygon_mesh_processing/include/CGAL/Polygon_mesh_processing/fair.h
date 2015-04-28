@@ -69,7 +69,8 @@ namespace internal {
 
   @tparam PolygonMesh a model of `FaceGraph`
           that has an internal property map for `CGAL::vertex_point_t`
-  @tparam VertexRange a range of vertex descriptors of `PolygonMesh`, model of `SinglePassRange`
+  @tparam VertexRange a range of vertex descriptors of `PolygonMesh`, model of `Range`.
+          Its iterator type is `InputIterator`.
   @tparam NamedParameters a sequence of \ref namedparameters
 
   @param pmesh the polygon mesh with patches to be faired
