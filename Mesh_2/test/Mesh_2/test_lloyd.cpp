@@ -68,10 +68,10 @@ struct Lloyd_tester
               seeds_end = seeds.end());
     const size_type number_of_vertices2 = cdt.number_of_vertices();
     std::cerr << " done (return code = "<< rc <<").\n";
-    std::cerr << "Number of vertices: " << cdt.number_of_vertices() << "\n\n";
+    std::cerr << "Number of vertices: " << number_of_vertices2 << "\n\n";
 
     assert( cdt.is_valid() );
-    assert( number_of_vertices1 == cdt.number_of_vertices());
+    assert( number_of_vertices1 == number_of_vertices2 );
     assert( number_of_constraints == number_of_constrained_edges(cdt));
   }
 };
