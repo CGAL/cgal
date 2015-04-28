@@ -133,8 +133,8 @@ int main(int argc, char* argv[])
       }
       else
       {
-        minimum[i] = std::min(minimum[i], currentPoint[i]);
-        maximum[i] = std::max(maximum[i], currentPoint[i]);
+        minimum[i] = (std::min)(minimum[i], currentPoint[i]);
+        maximum[i] = (std::max)(maximum[i], currentPoint[i]);
       }
     }
 
