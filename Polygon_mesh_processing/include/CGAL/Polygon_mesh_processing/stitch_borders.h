@@ -268,15 +268,15 @@ private:
 *
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 *        that has a property map for `boost::vertex_point_t`
-* @tparam HalfedgePairsRange a model of `Range`.
-*         Its iterator type is `InputIterator`,
-*         and value type
+* @tparam HalfedgePairsRange a range of
 *         `std::pair<boost::graph_traits<PolygonMesh>::%halfedge_descriptor,
-*         boost::graph_traits<PolygonMesh>::%halfedge_descriptor>`.
+*         boost::graph_traits<PolygonMesh>::%halfedge_descriptor>`,
+*         model of `Range`.
+*         Its iterator type is `InputIterator`.
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param pmesh the polygon mesh to be modified by stitching
-* @param hedge_pairs_to_stitch a `std::vector` filled with `std::pair`s of halfedges to be stitched together
+* @param hedge_pairs_to_stitch a range of `std::pair` of halfedges to be stitched together
 * @param np optional \ref namedparameters described below
 *
 * \cgalNamedParamsBegin
