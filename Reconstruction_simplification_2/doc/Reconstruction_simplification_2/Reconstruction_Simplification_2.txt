@@ -112,7 +112,7 @@ one can use the run_until function
 and specify the number of output vertices one wants to keep as illustrated in the following picture.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_20vertices,20vertices.png}
-Examples of \f$20 \f$ vertex reconstructions from images consisting of  \f$2000, 400 \f$ and  \f$200 \f$ input points respectively. The example shows nicely 
+Examples of 20 vertex reconstructions from images consisting of  2000, 400  and  200 input points respectively. The example shows nicely 
 how the algorithm is sensitiv to the input density in that it gracefully degrades the reconstruction as the density decreases. 
 \cgalFigureEnd
 
