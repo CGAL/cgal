@@ -69,6 +69,12 @@ namespace CGAL {
     typedef InputNormalMap Normal_map;
     ///
     typedef CGAL::Search_traits_3<Gt> Search_traits;
+    ///
+    Efficient_RANSAC_traits(const Gt& gt =  Gt())
+      : m_gt(gt) {}
+
+  private:
+    Gt m_gt;
   };
 
 } } // end of namespace CGAL::Shape_detection_3
