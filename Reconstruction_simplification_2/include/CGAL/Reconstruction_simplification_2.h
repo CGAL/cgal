@@ -78,12 +78,13 @@ public:
     */
     typedef typename Kernel::Point_2 Point;
 
+	 /// \cond SKIP_IN_MANUAL
 	/*!
 		Vector type.
 	*/
 	typedef typename Kernel::Vector_2 Vector;
 
-#ifndef DOXYGEN_RUNNING
+
 	typedef typename std::pair<Point, FT> PointMassPair;
 	typedef typename std::list<PointMassPair> PointMassList;
 
@@ -92,8 +93,8 @@ public:
 	The Output simplex.
 	*/
 	typedef Reconstruction_triangulation_2<Kernel> Triangulation;
-#endif
-	 /// \cond SKIP_IN_MANUAL
+
+
 	typedef typename Triangulation::Vertex Vertex;
 	typedef typename Triangulation::Vertex_handle Vertex_handle;
 	typedef typename Triangulation::Vertex_iterator Vertex_iterator;
@@ -317,20 +318,19 @@ protected:
 	 Returns the solid edges and vertices present after the reconstruction
 	 process finished.
 
-	\details It takes two `Output-Iterators`, one for storing the
+	\details It takes two output iterators, one for storing the
 	isolated points and one for storing the edges of the reconstructed shape.
 
 
 	\tparam Kernel is the geometric kernel, used for the reconstruction and
 						simplification task.
 
-	\tparam OutputVertexIterator The `Output-Iterator` type for storing the points
+	\tparam PointOutputIterator The output iterator type for storing the points
 
-	\tparam OutputEdgeIterator The `Output-Iterator` type for storing the
-											edges (as Segments).
+	\tparam SegmentOutputIterator The output iterator type for storing the edges (as segments).
 	 */
-	template<class OutputVertexIterator, class OutputEdgeIterator>
-	void extract_list_output(OutputVertexIterator v_it, OutputEdgeIterator e_it) {
+	template<class PointOutputIterator, class SegmentOutputIterator>
+	void extract_list_output(PointOutputIterator v_it, SegmentOutputIterator e_it) {
 
 		for (Vertex_iterator vi = m_dt.vertices_begin();
 						vi != m_dt.vertices_end(); ++vi)
@@ -523,7 +523,7 @@ protected:
 	/*!
 		Determines how much console output the algorithm generates.
 		By default verbose is set to 0. If set to a value larger than 0
-		details about the reconstruction process are writen to std::err.
+		details about the reconstruction process are writen to `std::err`.
 
 		\param verbose The verbosity level.
 	*/
@@ -541,7 +541,7 @@ protected:
 
 	/*!
 		The use_flip parameter determines whether the flipping procedure
-		is used for the half-edge collapse. By default use_flip is set to true.
+		is used for the half-edge collapse. By default use_flip is set to `true`.
 	 */
 	void set_use_flip(const bool use_flip) {
 		m_use_flip = use_flip;
