@@ -111,8 +111,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     typedef
     Iterator_range<typename std::vector<boost::shared_ptr<Shape> >::const_iterator>  Shape_range;
 #endif
-    ///< An `Iterator_range` with a bidirectional constant iterator type with 
-    ///  value type `boost::shared_ptr<Shape>`. 
+    ///< An `Iterator_range` with a bidirectional constant iterator type with value type `boost::shared_ptr<Shape>`.
 
 
 #ifdef DOXYGEN_RUNNING
