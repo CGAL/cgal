@@ -45,7 +45,7 @@ public:
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
 
-  bool applicable() const {
+  bool applicable(QAction*) const {
     Scene_points_with_normal_item* item =
       qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
     if (item && item->has_normals())
@@ -116,7 +116,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
 
     Shape_detection shape_detection;
-    shape_detection.set_input_data(*points);
+    shape_detection.set_input(*points);
 
     // Shapes to be searched for are registered by using the template Shape_factory
     shape_detection.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
@@ -139,10 +139,10 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     std::cout << shape_detection.shapes().size() << " shapes found" << std::endl;
     //print_message(QString("%1 shapes found.").arg(shape_detection.number_of_shapes()));
     int index = 0;
-    BOOST_FOREACH(Shape_detection::Shape* shape, shape_detection.shapes())
+    BOOST_FOREACH(boost::shared_ptr<Shape_detection::Shape> shape, shape_detection.shapes())
     {
       Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
-      BOOST_FOREACH(std::size_t i, shape->assigned_point_indices())
+      BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
         point_item->point_set()->push_back((*points)[i]);
 
       unsigned char r, g, b;
@@ -153,12 +153,12 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
       // Providing a useful name consisting of the order of detection, name of type and number of inliers
       std::stringstream ss;
-      if (dynamic_cast<CGAL::Shape_detection_3::Cylinder<Traits> *>(shape))
+      if (dynamic_cast<CGAL::Shape_detection_3::Cylinder<Traits> *>(shape.get()))
         ss << item->name().toStdString() << "_cylinder_";
-      else if (dynamic_cast<CGAL::Shape_detection_3::Plane<Traits> *>(shape))
+      else if (dynamic_cast<CGAL::Shape_detection_3::Plane<Traits> *>(shape.get()))
         ss << item->name().toStdString() << "_plane_";
 
-      ss << shape->assigned_point_indices().size();
+      ss << shape->indices_of_assigned_points().size();
 
       //names[i] = ss.str(		
       point_item->setName(QString::fromStdString(ss.str()));
