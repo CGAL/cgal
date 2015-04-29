@@ -43,11 +43,11 @@ int main ()
 
 
 
-    std::cout << " total_edge_cost "<< rs2.get_total_edge_cost() << std::endl;
+    std::cout << " total_edge_cost "<< rs2.total_edge_cost() << std::endl;
 
 
-    assert(rs2.get_total_edge_cost() < 0.3);
-    assert(0 < rs2.get_total_edge_cost());
+    assert(rs2.total_edge_cost() < 0.3);
+    assert(0 < rs2.total_edge_cost());
 
 
     rs2.print_stats_debug();

@@ -51,15 +51,15 @@ namespace CGAL {
 for executing the reconstruction and simplification tasks.
 Its constructor takes an InputIterator, used to traverse a collection
 of point-mass pairs, where the points and their masses are accessed
-via the Point_property_map and Mass_property_map `PropertyMaps` respectively.
+via the property maps  `PointMap` and `MassMap` respectively.
 
 
 \tparam Kernel a geometric kernel, used throughout the reconstruction and
 					simplification task.
 
-\tparam PointPMap a model of `ReadablePropertyMap` with a value_type = `Point_2`
+\tparam PointMap a model of `ReadablePropertyMap` with value type `Point_2`
 
-\tparam MassPMap   a model of `ReadablePropertyMap` with a value_type = `Kernel::FT`
+\tparam MassMap a model of `ReadablePropertyMap` with value type `Kernel::FT`
 
  */
 template<class Kernel,
@@ -83,14 +83,16 @@ public:
 	*/
 	typedef typename Kernel::Vector_2 Vector;
 
+#ifndef DOXYGEN_RUNNING
 	typedef typename std::pair<Point, FT> PointMassPair;
 	typedef typename std::list<PointMassPair> PointMassList;
+
 
 	/*!
 	The Output simplex.
 	*/
 	typedef Reconstruction_triangulation_2<Kernel> Triangulation;
-
+#endif
 	 /// \cond SKIP_IN_MANUAL
 	typedef typename Triangulation::Vertex Vertex;
 	typedef typename Triangulation::Vertex_handle Vertex_handle;
@@ -180,19 +182,19 @@ protected:
 	     	 	 	 	 	 pair in a collection.
    	   	 \param beyond_itr An InputIterator pointing beyond the last point-mass
 	     	 	 	 	 	 pair in a collection.
-	     \param in_point_pmap A `ReadablePropertyMap` used to access the input points
+	     \param point_map A `ReadablePropertyMap` used to access the input points
 
-	     \param in_mass_pmap A `ReadablePropertyMap` used to access the input points' mass.
+	     \param mass_map A `ReadablePropertyMap` used to access the input points' mass.
 	*/
 	template <class InputIterator>
 	Reconstruction_simplification_2(InputIterator start_itr,
 									InputIterator beyond_itr,
-									PointMap in_point_pmap,
-									MassMap  in_mass_pmap) {
+									PointMap point_map,
+									MassMap  mass_map) {
 
 
-		point_pmap = in_point_pmap;
-		mass_pmap  = in_mass_pmap;
+		point_pmap = point_map;
+		mass_pmap  = mass_map;
 
 		initialize_parameters();
 
@@ -226,11 +228,11 @@ protected:
             point_mass_list.push_back(std::make_pair(*it, 1));
         }
 
-        PointMap in_point_pmap;
-        MassMap  in_mass_pmap;
+        PointMap point_map;
+        MassMap  mass_map;
 
-        point_pmap = in_point_pmap;
-        mass_pmap  = in_mass_pmap;
+        point_pmap = point_map;
+        mass_pmap  = mass_map;
 
         initialize_parameters();
 
@@ -277,11 +279,11 @@ protected:
 	template <class InputIterator>
 	void initialize(InputIterator start_itr,
 									InputIterator beyond_itr,
-									PointMap in_point_pmap,
-									MassMap  in_mass_pmap) {
+									PointMap point_map,
+									MassMap  mass_map) {
 
-		point_pmap = in_point_pmap;
-		mass_pmap  = in_mass_pmap;
+		point_pmap = point_map;
+		mass_pmap  = mass_map;
 
 		initialize(start_itr, beyond_itr);
 
@@ -312,7 +314,7 @@ protected:
 
 
 	/*!
-	 Returns the solid edges and vertics present after the reconstruction
+	 Returns the solid edges and vertices present after the reconstruction
 	 process finished.
 
 	\details It takes two `Output-Iterators`, one for storing the
@@ -377,7 +379,7 @@ protected:
 	/*!
 
 
-	 Returns the solid edges and vertics present after the reconstruction
+	 Returns the solid edges and vertices present after the reconstruction
 	 process finished.
 
 	Writes the edges and vertices of the output simplex into an `std::ostream`
@@ -1568,7 +1570,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 	 /*!
 	    Returns the cost of the (solid) edges present in the reconstructed triangulation.
 	  */
-	FT get_total_edge_cost() {
+	FT total_edge_cost() {
 		FT total_cost = 0;
 		for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
 				ei != m_dt.finite_edges_end(); ++ei) {
