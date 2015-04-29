@@ -122,7 +122,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     ///  As this range class has no `size()` method, the method 
     ///  `Efficient_RANSAC::number_of_unassigned_points()` is provided.
 #else 
-    typedef typename Iterator_range<Point_index_iterator>
+    typedef Iterator_range<Point_index_iterator>
       Point_index_range;
 #endif     
 
@@ -777,10 +777,10 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
   private:
     Parameters m_options;
 
-    std::mt19937 m_rng;
-
     // Traits class.
     Traits m_traits;
+
+    std::mt19937 m_rng;
 
     // Octrees build on input data for quick shape evaluation and
     // sample selection within an octree cell.

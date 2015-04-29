@@ -273,13 +273,13 @@ namespace CGAL {
      */
     std::size_t connected_component_kdTree(std::vector<std::size_t> &indices,
                                            FT cluster_epsilon) {
-      typedef typename boost::tuple<Point_3,int> Point_and_int;
-      typedef typename CGAL::Search_traits_adapter<Point_and_int,
+      typedef boost::tuple<Point_3,int> Point_and_int;
+      typedef CGAL::Search_traits_adapter<Point_and_int,
         CGAL::Nth_of_tuple_property_map<0, Point_and_int>,
-        Traits::Search_traits> Search_traits_adapter;
+        typename Traits::Search_traits> Search_traits_adapter;
 
-      typedef typename CGAL::Kd_tree<Search_traits_adapter> Kd_Tree;
-      typedef typename CGAL::Fuzzy_sphere<Search_traits_adapter> Fuzzy_sphere;
+      typedef CGAL::Kd_tree<Search_traits_adapter> Kd_Tree;
+      typedef CGAL::Fuzzy_sphere<Search_traits_adapter> Fuzzy_sphere;
 
       m_has_connected_component = true;
       

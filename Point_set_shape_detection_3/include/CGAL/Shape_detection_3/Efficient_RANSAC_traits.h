@@ -68,7 +68,7 @@ namespace CGAL {
     ///
     typedef InputNormalMap Normal_map;
     ///
-    typedef typename CGAL::Search_traits_3<typename Gt> Search_traits;
+    typedef CGAL::Search_traits_3<Gt> Search_traits;
   };
 
 } } // end of namespace CGAL::Shape_detection_3
