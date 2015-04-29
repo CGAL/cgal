@@ -103,7 +103,7 @@ discoverComponents(const CDT & ct,
     return;
 
   // tag all faces inside
-  for(CDT::All_faces_iterator fit = ct.all_faces_begin();
+  for(typename CDT::All_faces_iterator fit = ct.all_faces_begin();
       fit != ct.all_faces_end();
       ++fit)
       fit->set_in_domain(true);
@@ -112,28 +112,28 @@ discoverComponents(const CDT & ct,
   discoverInfiniteComponent(ct);
 
   // mark "outside" components with a seed
-  for(SeedList::const_iterator sit = seeds.begin();
+  for(typename SeedList::const_iterator sit = seeds.begin();
       sit != seeds.end();
       ++sit)
   {
-    CDT::Face_handle fh_loc = ct.locate(*sit);
+    typename CDT::Face_handle fh_loc = ct.locate(*sit);
 
     if(fh_loc == NULL || !fh_loc->is_in_domain())
       continue;
 
-    std::list<CDT::Face_handle> queue;
+    std::list<typename CDT::Face_handle> queue;
     queue.push_back(fh_loc);
     while(!queue.empty())
     {
-      CDT::Face_handle f = queue.front();
+      typename CDT::Face_handle f = queue.front();
       queue.pop_front();
       f->set_in_domain(false);
 
       for(int i = 0; i < 3; ++i)
       {
-        CDT::Face_handle ni = f->neighbor(i);
+        typename CDT::Face_handle ni = f->neighbor(i);
         if(ni->is_in_domain()
-          && !ct.is_constrained(CDT::Edge(f,i))) //same component
+          && !ct.is_constrained(typename CDT::Edge(f,i))) //same component
         {
           queue.push_back(ni);
         }
@@ -171,7 +171,7 @@ private:
   void insert_polyline(Iterator b, Iterator e)
   {
     Point_2 p, q;
-    CDT::Vertex_handle vh, wh;
+    typename CDT::Vertex_handle vh, wh;
     Iterator it = b;
     vh = cdt.insert(*it);
     p = *it;

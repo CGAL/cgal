@@ -41,16 +41,16 @@ class DelaunayMeshTriangulationGraphicsItem
 
 public:
   DelaunayMeshTriangulationGraphicsItem(T  * t_)
-    : Base(t_),
-      visible_in_domain(true),
-      visible_blind_faces(false),
-      in_domain_brush(::Qt::blue)
-      , blind_brush(::Qt::gray)
-      , visible_voronoi(false)
-      , seeds_begin()
-      , seeds_end()
-      , visible_seeds(false)
-      , visible_inside_edges(false)
+    : Base(t_)
+    , visible_in_domain(true)
+    , visible_blind_faces(false)
+    , visible_voronoi(false)
+    , visible_seeds(false)
+    , visible_inside_edges(false)
+    , seeds_begin()
+    , seeds_end()
+    , in_domain_brush(::Qt::blue)
+    , blind_brush(::Qt::gray)
   {
     setSeedsPen(QPen(::Qt::black, 10.));
   }
@@ -153,7 +153,7 @@ public:
   void setVisibleInsideEdges(const bool b)
   {
     visible_inside_edges = b;
-    update();
+    this->update();
   }
 
 
