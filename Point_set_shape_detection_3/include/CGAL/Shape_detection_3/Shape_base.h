@@ -463,6 +463,7 @@ namespace CGAL {
 
     void compute(const std::set<std::size_t>& indices,
                  Input_iterator first,
+                 Traits traits,
                  Point_map point_pmap,
                  Normal_map normal_pmap,
                  FT epsilon,
@@ -471,6 +472,7 @@ namespace CGAL {
         return;
 
       m_first = first;
+      m_traits = traits;
       m_point_pmap = point_pmap;
       m_normal_pmap = normal_pmap;
       m_epsilon = epsilon;
@@ -576,6 +578,8 @@ namespace CGAL {
     bool m_has_connected_component;
 
     Input_iterator m_first;
+
+    Traits m_traits;
     Point_map m_point_pmap;
     Normal_map m_normal_pmap;
     /// \endcond

@@ -172,8 +172,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     /*! 
       Constructs an empty shape detection engine.
     */ 
-    Efficient_RANSAC()
-      : m_rng(std::random_device()())
+    Efficient_RANSAC(Traits t = Traits())
+      : m_traits(t)
+      , m_rng(std::random_device()())
       , m_direct_octrees(NULL)
       , m_global_octree(NULL)
       , m_num_subsets(0)
@@ -331,8 +332,6 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       are invalidated.
     */ 
     void clear() {
-      clear_shape_factories();
-
       // If there is no data yet, there are no data structures.
       if (!m_valid_iterators)
         return;
@@ -448,6 +447,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
             //compute the primitive and says if the candidate is valid
             p->compute(indices,
                        m_inputIterator_first,
+                       m_traits,
                        m_point_pmap,
                        m_normal_pmap,
                        m_options.epsilon, 
@@ -779,6 +779,11 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
     std::mt19937 m_rng;
 
+    // Traits class.
+    Traits m_traits;
+
+    // Octrees build on input data for quick shape evaluation and
+    // sample selection within an octree cell.
     Direct_octree **m_direct_octrees;
     Indexed_octree *m_global_octree;
     std::vector<int> m_available_octree_sizes;
@@ -800,8 +805,6 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     Input_iterator m_inputIterator_first, m_inputIterator_beyond; 
     Point_map m_point_pmap;
     Normal_map m_normal_pmap;
-
-    std::vector<FT> m_level_weighting;  // sum must be 1
   };
 }
 }
