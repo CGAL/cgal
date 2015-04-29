@@ -10,26 +10,25 @@ namespace CGAL {
 \section Reconstruction_simplification_2Introduction Introduction
 
 
-This package implements methods to reconstruct and simplify 2D point sets. The input is a noisy 2D point set and the output is an arrangement of line segments and points which approximate the original shape, where the input points were sampled from as illustrated in Figure \cgalFigureRef{2D_Reconstruction_Simplification_overview}. 
+This package implements methods to reconstruct and simplify 2D point sets. The input is a noisy 2D point set and the output is a set of line segments and points which approximate the input shape, where the input points were sampled from as illustrated in Figure \cgalFigureRef{2D_Reconstruction_Simplification_overview}. 
 
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_overview,summary.png}
-Left: A noisy set of input points. Right: The corresponding reconstructed shape consisting of line segments.
+Left: input point set hampered by noise. Right: The corresponding reconstructed shape consisting of line segments.
 \cgalFigureEnd
 
 
 
 
-\section Reconstruction_simplification_2Overview Theory of the Reconstruction Process
+\section Reconstruction_simplification_2Overview Reconstruction Process
 
-
-More formally, the task addressed here is to reconstruct a shape from a noisy point set \f$ S \f$ in  \f$ \mathbb{R}^2 \f$, i.e. given a set of points in the plane, find a <I>0-1 simplex </I>which best approximates the original shape where the points were sampled from. The related task of simplifying a shape finds an approximation of the original shape using a <I>0-1 simplex </I>.
+More formally, the task addressed here is to reconstruct a shape from a noisy point set \f$ S \f$ in  \f$ \mathbb{R}^2 \f$, i.e., given a set of points in the plane, find a <I>0-1 simplicial complex </I>which best approximates the original shape where the points were sampled from. The related task of simplifying a shape finds an approximation of the original shape using a <I>0-1 simplicial complex </I>.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_process,process.png}
-From left to right: input point set; Delaunay triangulation of input; after simplification, with ghost edges in grey, relevant solid edges in green, discarded solid edges in red; final reconstruction.
+From left to right: input point set; Delaunay triangulation of input point set; After simplification, with ghost edges in grey, relevant solid edges in green, and discarded solid edges in red; Final reconstruction.
 \cgalFigureEnd
 
-The algorithm of \cgalCite{degoes:hal-00758019} which is implemented here, performs the reconstruction and simplification task jointly, using a framework based on optimal transportations of measures. This method provides benefits such as robustness to noise, preservation of sharp features and boundaries. An optimal transportation plan is an assignment of the input-points to vertices and edges of an output simplex such that the 2-Wasserstein distance is minimized.
+The algorithm of \cgalCite{degoes:hal-00758019} which is implemented here, performs the reconstruction and simplification task jointly, using a framework based on optimal transportation of discrete measures. This method provides benefits such as robustness to noise, preservation of sharp features and boundaries. An optimal transportation plan is an assignment of the input-points to vertices and edges of an output simplicial complex such that the 2-Wasserstein distance is minimized.
 
 The algorithm can be summarized as: Considering \f$S\f$ as a measure  \f$ \mu \f$ consisting of Dirac masses, find a coarse simplicial complex \f$T\f$ such that  \f$ \mu \f$ is well approximated by a piecewise combination of uniform measure on the edges and vertices of  \f$ T \f$.
 
@@ -138,10 +137,6 @@ To access the reconstructed vertices and edges, models which implement the Recon
 
 
 \cgalExample{Reconstruction_simplification_2/Reconstruction_simplification_2_output_example.cpp}
-
-
-
-
 
 
 
