@@ -134,6 +134,7 @@ vcm_convolve (ForwardIterator first,
                     Fuzzy_sphere (get(point_pmap, *it), convolution_radius));
 
         Covariance m;
+        std::fill(m.begin(), m.end(), typename K::FT(0));
         for (size_t k = 0; k < nn.size(); ++k)
           for (int i=0; i<6; ++i)
             m[i] += cov[indices [nn[k]]][i];
