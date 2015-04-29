@@ -62,5 +62,6 @@ create_single_source_cgal_program( "foreach.cpp" )
 create_single_source_cgal_program( "triangulation.cpp" )
 create_single_source_cgal_program( "polyhedron.cpp" )
 create_single_source_cgal_program( "surface_mesh.cpp" )
+create_single_source_cgal_program( "arrangement.cpp" )
 
 
