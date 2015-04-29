@@ -836,6 +836,11 @@ Scene_polyhedron_item::compute_colors()
                 color_lines.push_back(this->color().lighter(50).greenF());
                 color_lines.push_back(this->color().lighter(50).blueF());
 
+                color_lines.push_back(this->color().lighter(50).redF());
+                color_lines.push_back(this->color().lighter(50).greenF());
+                color_lines.push_back(this->color().lighter(50).blueF());
+
+
 
 
         }
@@ -880,7 +885,7 @@ Scene_polyhedron_item::Scene_polyhedron_item()
       plugin_has_set_color_vector_m(false)
 {
     cur_shading=GL_FLAT;
-    is_selected = false;
+    is_selected = true;
     init();
     qFunc.glGenVertexArrays(2, vao);
     //Generates an integer which will be used as ID for each buffer
@@ -905,7 +910,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
       plugin_has_set_color_vector_m(false)
 {
     cur_shading=GL_FLAT;
-    is_selected = false;
+    is_selected = true;
     init();
     qFunc.glGenVertexArrays(2, vao);
     //Generates an integer which will be used as ID for each buffer
@@ -931,7 +936,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
       plugin_has_set_color_vector_m(false)
 {
     cur_shading=GL_FLAT;
-    is_selected=false;
+    is_selected=true;
     init();
     qFunc.glGenVertexArrays(2, vao);
     //Generates an integer which will be used as ID for each buffer
