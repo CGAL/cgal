@@ -1639,23 +1639,23 @@ next_face:
     if (p_orth_space_basis)
     {
       p_orth_space_basis->origin() = p;
-      for (int i = m_ambient_dim - m_intrinsic_dimension - 1 ;
-           i >= 0 ;
-           --i)
+      for (int j = m_ambient_dim - m_intrinsic_dimension - 1 ;
+           j >= 0 ;
+           --j)
       {
         if (normalize_basis)
         {
           Vector v = constr_vec(m_ambient_dim,
-                                eig.eigenvectors().col(i).data(),
-                                eig.eigenvectors().col(i).data() + m_ambient_dim);
+                                eig.eigenvectors().col(j).data(),
+                                eig.eigenvectors().col(j).data() + m_ambient_dim);
           p_orth_space_basis->push_back(normalize_vector(v, m_k));
         }
         else
         {
           p_orth_space_basis->push_back(constr_vec(
             m_ambient_dim,
-            eig.eigenvectors().col(i).data(),
-            eig.eigenvectors().col(i).data() + m_ambient_dim));
+            eig.eigenvectors().col(j).data(),
+            eig.eigenvectors().col(j).data() + m_ambient_dim));
         }
       }
     }
