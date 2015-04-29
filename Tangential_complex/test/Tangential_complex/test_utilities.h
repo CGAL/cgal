@@ -287,9 +287,12 @@ std::vector<typename Kernel::Point_d> generate_points_on_moment_curve(
 
 template <typename Kernel>
 std::vector<typename Kernel::Point_d> generate_points_on_sphere_d(
-  std::size_t num_points, int dim, double radius)
+  std::size_t num_points, int dim, double radius, 
+  double radius_noise_percentage = 0.)
 {
   typedef typename Kernel::Point_d Point;
+  Kernel k;
+  CGAL::Random rng;
   CGAL::Random_points_on_sphere_d<Point> generator(dim, radius);
   std::vector<Point> points;
   points.reserve(num_points);
@@ -299,6 +302,20 @@ std::vector<typename Kernel::Point_d> generate_points_on_sphere_d(
   for (std::size_t i = 0 ; i < num_points ; )
   {
     Point p = *generator++;
+    if (radius_noise_percentage > 0.)
+    { 
+      double radius_noise_ratio = rng.get_double(
+        (100. - radius_noise_percentage)/100., 
+        (100. + radius_noise_percentage)/100.);
+      
+      typename Kernel::Point_to_vector_d k_pt_to_vec =
+        k.point_to_vector_d_object();
+      typename Kernel::Vector_to_point_d k_vec_to_pt =
+        k.vector_to_point_d_object();
+      typename Kernel::Scaled_vector_d k_scaled_vec =
+        k.scaled_vector_d_object();
+      p = k_vec_to_pt(k_scaled_vec(k_pt_to_vec(p), radius_noise_ratio));
+    }
 #ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
     if (sparsifier.try_to_insert_point(p))
       ++i;
