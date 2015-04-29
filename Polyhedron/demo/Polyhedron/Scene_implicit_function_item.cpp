@@ -27,7 +27,7 @@ void Scene_implicit_function_item::initialize_buffers()
                  positions_tex_quad.data(),
                  GL_STATIC_DRAW);
     qFunc.glVertexAttribPointer(0, //number of the buffer
-                          4, //number of floats to be taken
+                          3, //number of floats to be taken
                           GL_FLOAT, // type of data
                           GL_FALSE, //not normalized
                           0, //compact data (not in a struct)
@@ -57,7 +57,7 @@ void Scene_implicit_function_item::initialize_buffers()
                  texture_map.data(), GL_STATIC_DRAW);
     qFunc.glVertexAttribPointer(2,
                           2,
-                          GL_DOUBLE,
+                          GL_FLOAT,
                           GL_FALSE,
                           0,
                           NULL
@@ -88,8 +88,10 @@ void Scene_implicit_function_item::initialize_buffers()
                  GL_RGB,
                  GL_UNSIGNED_BYTE,
                  texture->getData());
-    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+       qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+       qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+       qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
+       qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
 
     // Clean-up
     qFunc.glBindVertexArray(0);
@@ -312,41 +314,47 @@ void Scene_implicit_function_item::compute_vertices_and_texmap(void)
         positions_tex_quad.push_back(b.xmin);
         positions_tex_quad.push_back(b.ymin);
         positions_tex_quad.push_back(z);
-        positions_tex_quad.push_back(1.0);
+
 
         //B
         positions_tex_quad.push_back(b.xmin);
         positions_tex_quad.push_back(b.ymax);
         positions_tex_quad.push_back(z);
-        positions_tex_quad.push_back(1.0);
-
-        //C
-        positions_tex_quad.push_back(b.xmax);
-        positions_tex_quad.push_back(b.ymin);
-        positions_tex_quad.push_back(z);
-        positions_tex_quad.push_back(1.0);
 
 
         //C
         positions_tex_quad.push_back(b.xmax);
-        positions_tex_quad.push_back(b.ymin);
-        positions_tex_quad.push_back(z);
-        positions_tex_quad.push_back(1.0);
-
-        //B
-        positions_tex_quad.push_back(b.xmin);
         positions_tex_quad.push_back(b.ymax);
         positions_tex_quad.push_back(z);
-        positions_tex_quad.push_back(1.0);
+
+
+
+        //A
+        positions_tex_quad.push_back(b.xmin);
+        positions_tex_quad.push_back(b.ymin);
+        positions_tex_quad.push_back(z);
+
+
+        //C
+        positions_tex_quad.push_back(b.xmax);
+        positions_tex_quad.push_back(b.ymax);
+        positions_tex_quad.push_back(z);
+
 
         //D
         positions_tex_quad.push_back(b.xmax);
-        positions_tex_quad.push_back(b.ymax);
+        positions_tex_quad.push_back(b.ymin);
         positions_tex_quad.push_back(z);
-        positions_tex_quad.push_back(1.0);
+
 
         //UV Mapping x2 but I don't know why.
         texture_map.push_back(0.0);
+        texture_map.push_back(0.0);
+
+        texture_map.push_back(0.0);
+        texture_map.push_back(1.0);
+
+        texture_map.push_back(1.0);
         texture_map.push_back(1.0);
 
         texture_map.push_back(0.0);
@@ -356,31 +364,10 @@ void Scene_implicit_function_item::compute_vertices_and_texmap(void)
         texture_map.push_back(1.0);
 
         texture_map.push_back(1.0);
-        texture_map.push_back(1.0);
-
-        texture_map.push_back(0.0);
         texture_map.push_back(0.0);
 
-        texture_map.push_back(1.0);
-        texture_map.push_back(0.0);
 
-        texture_map.push_back(0.0);
-        texture_map.push_back(1.0);
 
-        texture_map.push_back(0.0);
-        texture_map.push_back(0.0);
-
-        texture_map.push_back(1.0);
-        texture_map.push_back(1.0);
-
-        texture_map.push_back(1.0);
-        texture_map.push_back(1.0);
-
-        texture_map.push_back(0.0);
-        texture_map.push_back(0.0);
-
-        texture_map.push_back(1.0);
-        texture_map.push_back(0.0);
     }
     //The grid
     {
@@ -618,13 +605,18 @@ void
 Scene_implicit_function_item::draw(Viewer_interface* viewer) const
 {
 
-    //draw_aux(viewer, false);
+    if(frame_->isManipulated()) {
+        if(need_update_) {
+            compute_function_grid();
+            need_update_ = false;
+        }
+    }
     qFunc.glBindVertexArray(vao);
     qFunc.glUseProgram(rendering_program_tex_quad);
     qFunc.glActiveTexture(GL_TEXTURE0);
     qFunc.glBindTexture(GL_TEXTURE_2D, textureId);
     uniform_attrib(viewer,0);
-    qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_tex_quad.size()/4);
+    qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_tex_quad.size()/3);
 
 
 
@@ -652,40 +644,6 @@ Scene_implicit_function_item::draw_edges(Viewer_interface* viewer) const
     qFunc.glBindVertexArray(0);
 }
 
-void
-Scene_implicit_function_item::draw_aux(Viewer_interface* viewer, bool edges) const
-{
-    if(edges) {
-        draw_bbox();
-        ::glPushMatrix();
-        ::glMultMatrixd(frame_->matrix());
-        QGLViewer::drawGrid((float)bbox().diagonal_length() * 0.3);
-        ::glPopMatrix();
-    }
-
-    if(!frame_->isManipulated()) {
-        if(need_update_) {
-            compute_function_grid();
-            need_update_ = false;
-        }
-        if(!viewer->inFastDrawing()) {
-            if(edges)
-                Scene_item_with_display_list::draw_edges(viewer);
-            else
-                Scene_item_with_display_list::draw(viewer);
-        }
-    }
-}
-
-void
-Scene_implicit_function_item::direct_draw(Viewer_interface* viewer) const
-{
-    // draw_function_grid(red_color_ramp_, blue_color_ramp_);
-
-}
-
-
-
 QString
 Scene_implicit_function_item::toolTip() const
 {
@@ -695,7 +653,7 @@ Scene_implicit_function_item::toolTip() const
 
 bool
 Scene_implicit_function_item::supportsRenderingMode(RenderingMode m) const
-{ 
+{
     switch ( m )
     {
     case Splatting:
@@ -787,7 +745,7 @@ void Scene_implicit_function_item::compute_texture(int i, int j)
         }
 }
 
-void 
+void
 Scene_implicit_function_item::
 draw_function_grid(const Color_ramp& ramp_pos,
                    const Color_ramp& ramp_neg) const
@@ -880,7 +838,7 @@ compute_function_grid() const
         }
     }
 
-    // Update display list
+    // Update
     const_cast<Scene_implicit_function_item*>(this)->changed();
 
 }
@@ -921,7 +879,7 @@ compute_min_max()
 void
 Scene_implicit_function_item::changed()
 {
-    Scene_item_with_display_list::changed();
+    Scene_item::changed();
     compute_vertices_and_texmap();
     initialize_buffers();
 }
