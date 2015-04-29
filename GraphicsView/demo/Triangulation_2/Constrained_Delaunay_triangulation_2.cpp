@@ -705,7 +705,7 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
   if(!ok) return;
 
   double edge_len = QInputDialog::getDouble(this, tr("Size criterion"),
-    tr("S = "), 0., 0., std::numeric_limits<double>::max(), 5, &ok);
+    tr("S = "), 0., 0., (std::numeric_limits<double>::max)(), 5, &ok);
   if(!ok) return;
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
