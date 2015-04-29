@@ -322,9 +322,6 @@ protected:
 	isolated points and one for storing the edges of the reconstructed shape.
 
 
-	\tparam Kernel is the geometric kernel, used for the reconstruction and
-						simplification task.
-
 	\tparam PointOutputIterator The output iterator type for storing the points
 
 	\tparam SegmentOutputIterator The output iterator type for storing the edges (as segments).
