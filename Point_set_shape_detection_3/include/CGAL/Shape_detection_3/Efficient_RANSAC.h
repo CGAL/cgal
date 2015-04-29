@@ -326,7 +326,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     }
 
     /*!
-      Calls `clear_shape_factories()`, `clear_octrees()` and removes all detected shapes.
+      Calls `clear_octrees()` and removes all detected shapes.
       All internal structures are cleaned, including formerly detected shapes.
       Thus iterators and ranges retrieved through `shapes()` and `indices_of_unassigned_points()` 
       are invalidated.
