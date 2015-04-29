@@ -108,13 +108,16 @@ Advancing_front_surface_reconstruction(Dt& dt);
 /// @{
 
 /*! 
-calls the surface reconstruction function with the default parameters.
+runs the surface reconstruction function with the default parameters.
 
-\param k  described in Section \ref AFSR_Boundaries
-\param beta described in Section \ref AFSR_Selection
+\param radius_ratio_bound candidates incident to surface triangles which are not in the beta-wedge
+       are discarded, if the ratio of their radius and the radius of the surface triangle is larger than `radius_ratio_bound`. 
+       Described in Section \ref AFSR_Boundaries
+\param beta half the angle of the wedge in which only the radius of triangles counts for the plausibility of candidates. 
+       Described in Section \ref AFSR_Selection
 
 */ 
-  void run(double k=5, double beta= 0.52);
+  void run(double radius_ratio_bound =5 , double beta = 0.52);
 
 /*! 
 returns the reconstructed surface.
@@ -190,15 +193,18 @@ describing the faces of the reconstructed surface.
 \tparam IndicesOutputIterator must be an output iterator to which 
 `CGAL::cpp11::tuple<std::size_t,std::size_t,std::size_t>` can be assigned.
 
-\param begin iterator on the first point of the sequence
-\param end past the end iterator the point sequence
+\param b iterator on the first point of the sequence
+\param e past the end iterator of the point sequence
 \param out output iterator
-\param K  described in Section \ref AFSR_Boundaries
-\param beta described in Section \ref AFSR_Selection
+\param radius_ratio_bound candidates incident to surface triangles which are not in the beta-wedge
+       are discarded, if the ratio of their radius and the radius of the surface triangle is larger than `radius_ratio_bound`. 
+       Described in Section \ref AFSR_Boundaries
+\param beta half the angle of the wedge in which only the radius of triangles counts for the plausibility of candidates. 
+       Described in Section \ref AFSR_Selection
 
 */
   template <class PointInputIterator, IndicesOutputIterator>
-  IndicesOutputIterator advancing_front_surface_reconstruction(PointInputIterator b, PointInputIterator e, IndicesOutputIterator out, double k=5, double beta= 0.18 );
+  IndicesOutputIterator advancing_front_surface_reconstruction(PointInputIterator b, PointInputIterator e, IndicesOutputIterator out, double radius_ratio_bound = 5, double beta= 0.52 );
 
 
 } /* end namespace CGAL */

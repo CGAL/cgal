@@ -162,15 +162,15 @@ would be very different.  These heuristic facts can be used for
 boundary detection.
 
 More specifically, we discard any candidate triangle \f$ t \f$, for an edge \f$ e \f$
-such that \f$ p(t) < 0\f$, and \f$ r_t > k r_{t'}\f$ where \f$ t'\f$ is 
-the triangle on the surface incident on \f$ e \f$. The parameter \f$ k \f$ 
+such that \f$ p(t) < 0\f$, and \f$ r_t > \mathrm{radius\_ratio\_bound} \times r_{t'}\f$ where \f$ t'\f$ is 
+the triangle on the surface incident on \f$ e \f$. The parameter \f$\mathrm{radius\_ratio\_bound}\f$ 
 is specified by the user and is set by default to 5.
 
 For the example given in  \cgalFigureRef{figAFSRplausible}, we said that if there 
 was no triangle `t3` in the green wedge, triangle `t4` would be chosen as it has
 the smallest angle between its normal and the normal of triangle `t'`. 
-However, in case its radius was \f$ k \f$ times larger than the radius of triangle `t'`,
-triangle `t2` would be chosen, assuming that its radius is not  \f$ k \f$ times larger.
+However, in case its radius was \f$\mathrm{radius\_ratio\_bound}\f$ times larger than the radius of triangle `t'`,
+triangle `t2` would be chosen, assuming that its radius is not  \f$\mathrm{radius\_ratio\_bound}\f$ times larger.
 
 
 Note that this heuristic implies that 
