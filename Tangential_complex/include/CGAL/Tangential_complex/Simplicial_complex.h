@@ -34,6 +34,8 @@
 #include <boost/graph/connected_components.hpp>
 #include <boost/container/flat_map.hpp>
 
+#include <algorithm>
+
 namespace CGAL {
 namespace Tangential_complex_ {
 
@@ -43,8 +45,44 @@ public:
   typedef std::set<std::size_t>                     Simplex;
   typedef std::set<Simplex>                         Simplex_range;
 
-  void add_simplex(const std::set<std::size_t> &s)
+  void add_simplex(
+    const std::set<std::size_t> &s, bool perform_checks = true)
   {
+    if (perform_checks)
+    {
+      unsigned int num_pts = static_cast<int>(s.size());
+      std::vector<Complex::iterator> to_erase;
+      bool check_higher_dim_simpl = true;
+      for (Complex::iterator it_simplex = m_complex.begin(), 
+                             it_simplex_end = m_complex.end() ;
+           it_simplex != it_simplex_end ; 
+           ++it_simplex)
+      {
+        // Check if the simplex is not already in a higher dim simplex
+        if (check_higher_dim_simpl 
+          && it_simplex->size() > num_pts 
+          && std::includes(it_simplex->begin(), it_simplex->end(),
+                           s.begin(), s.end()))
+        {
+          // No need to insert it, then
+          return;
+        }
+        // Check if the simplex includes some lower-dim simplices
+        if (it_simplex->size() < num_pts 
+          && std::includes(s.begin(), s.end(),
+                           it_simplex->begin(), it_simplex->end()))
+        {
+          to_erase.push_back(it_simplex);
+          // We don't need to check higher-sim simplices any more
+          check_higher_dim_simpl = false;
+        }
+      }
+      for (std::vector<Complex::iterator>::const_iterator it= to_erase.begin();
+           it != to_erase.end() ; ++it)
+      {
+        m_complex.erase(*it);
+      }
+    }
     m_complex.insert(s);
   }
 
@@ -56,6 +94,19 @@ public:
   void clear()
   {
     m_complex.clear();
+  }
+
+  template <typename Test, typename Output_it>
+  void get_simplices_matching_test(Test test, Output_it out)
+  {
+    for (Complex::const_iterator it_simplex = m_complex.begin(), 
+                                 it_simplex_end = m_complex.end() ;
+         it_simplex != it_simplex_end ; 
+         ++it_simplex)
+    {
+      if (test(*it_simplex))
+        *out++ = *it_simplex;
+    }
   }
 
   // When a simplex S has only one co-face C, we can remove S and C 
