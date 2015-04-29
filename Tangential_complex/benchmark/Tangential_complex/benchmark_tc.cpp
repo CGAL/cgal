@@ -127,6 +127,27 @@ protected:
   XML_exporter::Element_with_map m_current_element;
 };
 
+class Test_dim
+{
+public:
+  Test_dim(
+    int min_allowed_dim = 0, 
+    int max_allowed_dim = std::numeric_limits<int>::max())
+    : m_min_allowed_dim(min_allowed_dim), m_max_allowed_dim(max_allowed_dim)
+  {}
+
+  template <typename Simplex>
+  bool operator()(Simplex const& s)
+  {
+    return s.size() - 1 >= m_min_allowed_dim
+      && s.size() - 1 <= m_max_allowed_dim;
+  }
+
+private:
+  int m_min_allowed_dim;
+  int m_max_allowed_dim;
+};
+
 template <typename TC>
 bool export_to_off(
   TC const& tc, 
@@ -395,11 +416,19 @@ void make_tc(std::vector<Point> &points,
   }
 
   complex.display_stats();
+
+  // Export to OFF with higher-dim simplices colored
+  std::set<std::set<std::size_t> > higher_dim_simplices;
+  complex.get_simplices_matching_test(
+    Test_dim(intrinsic_dim + 1),
+    std::inserter(higher_dim_simplices, higher_dim_simplices.begin()));
+  export_to_off(
+    tc, input_name_stripped, "_BEFORE_COLLAPSE", false, &complex, 
+    &higher_dim_simplices);
   
   //===========================================================================
   // Collapse
   //===========================================================================
-  std::cerr << max_dim << std::endl;
   if (collapse)
     complex.collapse(max_dim);
   
@@ -409,7 +438,7 @@ void make_tc(std::vector<Point> &points,
   std::size_t num_wrong_dim_simplices, 
               num_wrong_number_of_cofaces, 
               num_unconnected_stars;
-  std::set<std::set<std::size_t> > wrong_dim_simplices; 
+  std::set<std::set<std::size_t> > wrong_dim_simplices;
   std::set<std::set<std::size_t> > wrong_number_of_cofaces_simplices;
   std::set<std::set<std::size_t> > unconnected_stars_simplices;
   bool is_pure_pseudomanifold = complex.is_pure_pseudomanifold(
@@ -607,7 +636,8 @@ int main()
             {
               points = generate_points_on_sphere_d<Kernel>(
                 num_points, ambient_dim, 
-                std::atof(param1.c_str()));
+                std::atof(param1.c_str()),
+                std::atof(param2.c_str()));
             }
             else if (input == "generate_klein_bottle_3D")
             {
