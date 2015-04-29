@@ -76,7 +76,8 @@ namespace CGAL {
 
 using namespace Tangential_complex_;
 
-enum Fix_inconsistencies_status { TC_FIXED = 0, TIME_LIMIT_REACHED };
+enum Fix_inconsistencies_status { 
+  TC_FIXED = 0, TIME_LIMIT_REACHED, FIX_NOT_PERFORMED };
 
 class Vertex_data
 {
@@ -244,6 +245,15 @@ public:
  && defined(CGAL_TC_GLOBAL_REFRESH)
     delete [] m_p_perturb_mutexes;
 #endif
+  }
+
+  int intrinsic_dimension() const
+  {
+    return m_intrinsic_dimension;
+  }
+  int ambient_dimension() const
+  {
+    return m_ambient_dim;
   }
 
   std::size_t number_of_vertices()
@@ -619,7 +629,7 @@ public:
 
   // Return the max dimension of the simplices
   int export_TC(Simplicial_complex &complex,
-    bool export_infinite_simplices = false)
+    bool export_infinite_simplices = false) const
   {
     int max_dim = -1;
 
@@ -690,15 +700,22 @@ public:
   
   std::ostream &export_to_off(
     const Simplicial_complex &complex, std::ostream & os,
-    std::set<std::set<std::size_t> > const *p_additional_simpl_to_color = NULL)
+    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_red = NULL,
+    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_green = NULL,
+    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_blue = NULL)
+    const
   {
-    return export_to_off(os, false, p_additional_simpl_to_color, &complex);
+    return export_to_off(
+      os, false, p_simpl_to_color_in_red, p_simpl_to_color_in_green, 
+      p_simpl_to_color_in_blue, &complex);
   }
   
   std::ostream &export_to_off(
     std::ostream & os, bool color_inconsistencies = false,
-    std::set<std::set<std::size_t> > const *p_additional_simpl_to_color = NULL, 
-    const Simplicial_complex *p_complex = NULL)
+    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_red = NULL,
+    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_green = NULL,
+    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_blue = NULL,
+    const Simplicial_complex *p_complex = NULL) const
   {
     if (m_points.empty())
       return os;
@@ -735,13 +752,14 @@ public:
     if (p_complex)
     {
       export_simplices_to_off(
-        *p_complex, output, num_simplices, p_additional_simpl_to_color);
+        *p_complex, output, num_simplices, p_simpl_to_color_in_red,
+        p_simpl_to_color_in_green, p_simpl_to_color_in_blue);
     }
     else
     {
       export_simplices_to_off(
-        output, num_simplices, color_inconsistencies, 
-        p_additional_simpl_to_color);
+        output, num_simplices, color_inconsistencies, p_simpl_to_color_in_red,
+        p_simpl_to_color_in_green, p_simpl_to_color_in_blue);
     }
 
 #ifdef CGAL_TC_EXPORT_NORMALS
@@ -1664,7 +1682,7 @@ next_face:
     */
   }
 
-  Point compute_perturbed_point(std::size_t pt_idx)
+  Point compute_perturbed_point(std::size_t pt_idx) const
   {
 #ifdef CGAL_TC_PERTURB_POSITION
     return m_k.translated_point_d_object()(
@@ -1809,7 +1827,7 @@ next_face:
   }
 
   // A simplex here is a local tri's full cell handle
-  bool is_simplex_consistent(Tr_full_cell_handle fch, int cur_dim)
+  bool is_simplex_consistent(Tr_full_cell_handle fch, int cur_dim) const
   {
     std::set<std::size_t> c;
     for (int i = 0 ; i < cur_dim + 1 ; ++i)
@@ -1821,7 +1839,7 @@ next_face:
   }
 
   // A simplex here is a list of point indices
-  bool is_simplex_consistent(std::set<std::size_t> const& simplex)
+  bool is_simplex_consistent(std::set<std::size_t> const& simplex) const
   {
     int cur_dim_plus_1 = static_cast<int>(simplex.size());
 
@@ -2169,7 +2187,7 @@ next_face:
 
   std::ostream &export_vertices_to_off(
     std::ostream & os, std::size_t &num_vertices,
-    bool use_perturbed_points = false)
+    bool use_perturbed_points = false) const
   {
     if (m_points.empty())
     {
@@ -2595,7 +2613,10 @@ next_face:
   std::ostream &export_simplices_to_off(
     std::ostream & os, std::size_t &num_simplices,
     bool color_inconsistencies = false,
-    std::set<std::set<std::size_t> > const *p_additional_simpl_to_color = NULL)
+    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_red = NULL,
+    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_green = NULL,
+    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_blue = NULL)
+    const
   {
     // If m_intrinsic_dimension = 1, each point is output two times
     // (see export_vertices_to_off)
@@ -2620,8 +2641,8 @@ next_face:
       //color << rand()%256 << " " << 100+rand()%156 << " " << 100+rand()%156;
       color << 128 << " " << 128 << " " << 128;
       
-      // Gather the triangles here, with a bool saying if it's consistent
-      typedef std::vector<std::pair<std::set<std::size_t>, bool> > 
+      // Gather the triangles here, with an int telling its color
+      typedef std::vector<std::pair<std::set<std::size_t>, int> > 
                                                            Star_using_triangles;
       Star_using_triangles star_using_triangles;
 
@@ -2634,22 +2655,40 @@ next_face:
         c.insert(idx);
         std::size_t num_vertices = c.size();
 
-        bool color_simplex = false;
+        int color_simplex = -1;// -1=no color, 0=yellow, 1=red, 2=green, 3=blue
         if (color_inconsistencies)
         {
-          color_simplex = !is_simplex_consistent(c);
-          if (color_simplex) 
-            is_star_inconsistent = true;
+          is_star_inconsistent = !is_simplex_consistent(c);
+          color_simplex = (is_star_inconsistent ? 0 : -1);
         }
 
-        if (p_additional_simpl_to_color && !color_simplex)
+        if (color_simplex == -1)
         {
-          color_simplex = (std::find(
-            p_additional_simpl_to_color->begin(),
-            p_additional_simpl_to_color->end(),
-            c) != p_additional_simpl_to_color->end());
+          if (p_simpl_to_color_in_red && 
+              std::find(
+                p_simpl_to_color_in_red->begin(),
+                p_simpl_to_color_in_red->end(),
+                c) != p_simpl_to_color_in_red->end())
+          {
+            color_simplex = 1;
+          }
+          else if (p_simpl_to_color_in_green && 
+              std::find(
+                p_simpl_to_color_in_green->begin(),
+                p_simpl_to_color_in_green->end(),
+                c) != p_simpl_to_color_in_green->end())
+          {
+            color_simplex = 2;
+          }
+          else if (p_simpl_to_color_in_blue && 
+              std::find(
+                p_simpl_to_color_in_blue->begin(),
+                p_simpl_to_color_in_blue->end(),
+                c) != p_simpl_to_color_in_blue->end())
+          {
+            color_simplex = 3;
+          }
         }
-
         
         // If m_intrinsic_dimension = 1, each point is output two times,
         // so we need to multiply each index by 2
@@ -2704,7 +2743,7 @@ next_face:
           continue;
         
         const std::set<std::size_t> &c = it_simplex->first;
-        bool color_simplex = it_simplex->second;
+        int color_simplex = it_simplex->second;
 
         std::stringstream sstr_c;
 
@@ -2716,19 +2755,21 @@ next_face:
 
         // In order to have only one time each simplex, we only keep it
         // if the lowest index is the index of the center vertex
-        if (*c.begin() != idx && !color_simplex)
+        if (*c.begin() != idx && color_simplex == -1)
           continue;
 
         os << 3 << " " << sstr_c.str();
-        if (color_inconsistencies || p_additional_simpl_to_color)
+        if (color_inconsistencies || p_simpl_to_color_in_red
+            || p_simpl_to_color_in_green || p_simpl_to_color_in_blue)
         {
-          if (color_simplex)
+          switch (color_simplex)
           {
-            os << " 255 0 0";
-            ++num_inconsistent_simplices;
-          }
-          else
-            os << " " << color.str();
+            case 0: os << " 255 255 0"; ++num_inconsistent_simplices; break;
+            case 1: os << " 255 0 0"; break;
+            case 2: os << " 0 255 0"; break;
+            case 3: os << " 0 0 255"; break;
+            default: os << " " << color.str(); break;
+          }            
         }
         ++num_simplices;
         os << std::endl;
@@ -2764,7 +2805,10 @@ next_face:
   std::ostream &export_simplices_to_off(
     const Simplicial_complex &complex,
     std::ostream & os, std::size_t &num_simplices,
-    std::set<std::set<std::size_t> > const *p_additional_simpl_to_color = NULL)
+    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_red = NULL,
+    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_green = NULL,
+    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_blue = NULL)
+    const
   {
     typedef Simplicial_complex::Simplex                     Simplex;
     typedef Simplicial_complex::Simplex_range               Simplex_range;
@@ -2780,15 +2824,32 @@ next_face:
     for ( ; it_s != it_s_end ; ++it_s)
     {
       Simplex c = *it_s;
-
-      bool color_simplex = false;
-      if (p_additional_simpl_to_color)
-      {
-        color_simplex = (std::find(
-          p_additional_simpl_to_color->begin(),
-          p_additional_simpl_to_color->end(),
-          c) != p_additional_simpl_to_color->end());
-      }
+      
+        int color_simplex = -1;// -1=no color, 0=yellow, 1=red, 2=green, 3=blue
+        if (p_simpl_to_color_in_red && 
+            std::find(
+              p_simpl_to_color_in_red->begin(),
+              p_simpl_to_color_in_red->end(),
+              c) != p_simpl_to_color_in_red->end())
+        {
+          color_simplex = 1;
+        }
+        else if (p_simpl_to_color_in_green && 
+            std::find(
+              p_simpl_to_color_in_green->begin(),
+              p_simpl_to_color_in_green->end(),
+              c) != p_simpl_to_color_in_green->end())
+        {
+          color_simplex = 2;
+        }
+        else if (p_simpl_to_color_in_blue && 
+            std::find(
+              p_simpl_to_color_in_blue->begin(),
+              p_simpl_to_color_in_blue->end(),
+              c) != p_simpl_to_color_in_blue->end())
+        {
+          color_simplex = 3;
+        }
 
       // Gather the triangles here
       typedef std::vector<Simplex> Triangles;
@@ -2854,12 +2915,17 @@ next_face:
           os << *it_point_idx << " ";
         }
 
-        if (p_additional_simpl_to_color)
+        if (p_simpl_to_color_in_red || p_simpl_to_color_in_green 
+            || p_simpl_to_color_in_blue)
         {
-          if (color_simplex)
-            os << " 255 0 0";
-          else
-            os << " 128 128 128";
+          switch (color_simplex)
+          {
+            case 0: os << " 255 255 0"; break;
+            case 1: os << " 255 0 0"; break;
+            case 2: os << " 0 255 0"; break;
+            case 3: os << " 0 0 255"; break;
+            default: os << " 128 128 128"; break;
+          }
         }
 
         ++num_simplices;
