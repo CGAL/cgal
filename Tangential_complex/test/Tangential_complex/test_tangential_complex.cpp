@@ -120,9 +120,10 @@ int main()
     std::size_t initial_num_inconsistent_local_tr;
     std::size_t best_num_inconsistent_local_tr;
     std::size_t final_num_inconsistent_local_tr;
-    CGAL::Fix_inconsistencies_status fix_ret = tc.fix_inconsistencies(
-      num_fix_steps, initial_num_inconsistent_local_tr,
-      best_num_inconsistent_local_tr, final_num_inconsistent_local_tr, 1000.);
+    CGAL::Fix_inconsistencies_status fix_ret = 
+      tc.fix_inconsistencies_using_perturbation(
+        num_fix_steps, initial_num_inconsistent_local_tr,
+        best_num_inconsistent_local_tr, final_num_inconsistent_local_tr, 1000.);
     double fix_time = t.elapsed(); t.reset();
 
     double export_after_time = -1.;

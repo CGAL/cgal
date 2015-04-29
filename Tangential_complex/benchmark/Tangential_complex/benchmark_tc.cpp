@@ -352,7 +352,7 @@ void make_tc(std::vector<Point> &points,
     std::size_t initial_num_inconsistent_local_tr;
     std::size_t best_num_inconsistent_local_tr;
     std::size_t final_num_inconsistent_local_tr;
-    perturb_ret = tc.fix_inconsistencies(
+    perturb_ret = tc.fix_inconsistencies_using_perturbation(
       num_perturb_steps, initial_num_inconsistent_local_tr,
       best_num_inconsistent_local_tr, final_num_inconsistent_local_tr,
       time_limit_for_perturb);

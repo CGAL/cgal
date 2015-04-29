@@ -445,7 +445,7 @@ public:
   }
 
   // time_limit in seconds: 0 = no fix to do, < 0 = no time limit
-  Fix_inconsistencies_status fix_inconsistencies(
+  Fix_inconsistencies_status fix_inconsistencies_using_perturbation(
     unsigned int &num_steps,
     std::size_t &initial_num_inconsistent_local_tr,
     std::size_t &best_num_inconsistent_local_tr,
@@ -533,7 +533,7 @@ public:
         << "Inconsistencies (detailed stats):\n"
         << "  * Number of vertices: " << m_points.size() << std::endl
         << std::endl
-        << "  * BEFORE fix_inconsistencies:" << std::endl
+        << "  * BEFORE fix_inconsistencies_using_perturbation:" << std::endl
         << "    - Total number of simplices in stars (incl. duplicates): "
         << stats_before.first << std::endl
         << "    - Num inconsistent simplices in stars (incl. duplicates): "
@@ -545,7 +545,7 @@ public:
         << " (" << 100. * num_inconsistent_local_tr / m_points.size() << "%)"
         << std::endl
         << std::endl
-        << "  * AFTER fix_inconsistencies:" << std::endl
+        << "  * AFTER fix_inconsistencies_using_perturbation:" << std::endl
         << "    - Total number of simplices in stars (incl. duplicates): "
         << stats_after.first << std::endl
         << "    - Num inconsistent simplices in stars (incl. duplicates): "
@@ -563,7 +563,7 @@ public:
       std::cerr << std::endl
         << "=========================================================="
         << std::endl
-        << "fix_inconsistencies():\n"
+        << "fix_inconsistencies_using_perturbation():\n"
         << "  * " << m_points.size() << " vertices" << std::endl
         << "  * " << num_inconsistent_local_tr
         << " (" << 100. * num_inconsistent_local_tr / m_points.size() << "%)"
