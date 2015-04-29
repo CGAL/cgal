@@ -379,14 +379,16 @@ namespace CGAL {
     /*!
       Retrieves the point location from its index.
      */
-    const Point_3& point(std::size_t i) const {
+    typename boost::property_traits< typename Traits::Point_map >::reference
+    point(std::size_t i) const {
       return get(this->m_point_pmap, *(this->m_first + i));
     }
     
     /*!
       Retrieves the normal vector from its index.
      */
-    const Vector_3& normal(std::size_t i) const {
+    typename boost::property_traits< typename Traits::Normal_map >::reference
+    normal(std::size_t i) const {
       return get(this->m_normal_pmap, *(this->m_first + i));
     }
     
