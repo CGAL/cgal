@@ -26,6 +26,13 @@
 #include <CGAL/Tangential_complex/utilities.h>
 
 #include <CGAL/basic.h>
+#include <CGAL/iterator.h>
+
+// For is_pure_pseudomanifold
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/connected_components.hpp>
+#include <boost/container/flat_map.hpp>
 
 namespace CGAL {
 namespace Tangential_complex_ {
@@ -46,8 +53,19 @@ public:
     return m_complex;
   }
 
-  void collapse(int max_simplex_dim)
+  void clear()
   {
+    m_complex.clear();
+  }
+
+  // When a simplex S has only one co-face C, we can remove S and C 
+  // without changing the topology
+  void collapse(int max_simplex_dim, bool quiet = false)
+  {
+#ifdef CGAL_TC_VERBOSE
+    if (!quiet)
+      std::cerr << "Collapsing... ";
+#endif
     // We note k = max_simplex_dim - 1
     int k = max_simplex_dim - 1;
     
@@ -121,7 +139,12 @@ public:
 
     // Collapse the lower dimension simplices
     if (k > 0)
-      collapse(max_simplex_dim - 1);
+      collapse(max_simplex_dim - 1, true);
+
+#ifdef CGAL_TC_VERBOSE
+    if (!quiet)
+      std::cerr << "done." << std::endl;
+#endif
   }
 
   void display_stats() const
@@ -137,9 +160,6 @@ public:
     {
       // Number of simplex for each dimension
       std::map<int, std::size_t> simplex_stats;
-    
-      typedef std::set<std::size_t>       Simplex;
-      typedef std::set<Simplex>           Complex;
 
       for (Complex::const_iterator it_simplex = m_complex.begin(), 
                                    it_simplex_end = m_complex.end() ;
@@ -161,16 +181,18 @@ public:
   }
 
   // verbose_level = 0, 1 or 2
-  bool is_pure_manifold(int simplex_dim,
-                        bool exit_at_the_first_problem = false, 
-                        int verbose_level = 0,
-                        std::size_t *p_num_wrong_dim_simplices = NULL, 
-                        std::size_t *p_num_wrong_number_of_cofaces = NULL)
+  bool is_pure_pseudomanifold__do_not_check_if_stars_are_connected(
+    int simplex_dim,
+    bool exit_at_the_first_problem = false, 
+    int verbose_level = 0,
+    std::size_t *p_num_wrong_dim_simplices = NULL, 
+    std::size_t *p_num_wrong_number_of_cofaces = NULL)
   {
     typedef std::set<std::size_t>               K_1_face;
     typedef std::map<K_1_face, std::size_t>     Cofaces_map;
     
-    std::size_t num_wrong_dim_simplices = 0, num_wrong_number_of_cofaces = 0;
+    std::size_t num_wrong_dim_simplices = 0;
+    std::size_t num_wrong_number_of_cofaces = 0;
 
     // Counts the number of cofaces of each K_1_face
     
@@ -242,8 +264,199 @@ public:
     return ret;
   }
 
+  // CJTODO: ADD COMMENTS
+  bool is_pure_pseudomanifold(
+    int simplex_dim,
+    std::size_t num_vertices,
+    bool exit_at_the_first_problem = false, 
+    int verbose_level = 0,
+    std::size_t *p_num_wrong_dim_simplices = NULL, 
+    std::size_t *p_num_wrong_number_of_cofaces = NULL,
+    std::size_t *p_num_unconnected_stars = NULL,
+    Simplex_range *p_wrong_dim_simplices = NULL,
+    Simplex_range *p_wrong_number_of_cofaces_simplices = NULL,
+    Simplex_range *p_unconnected_stars_simplices = NULL)
+  {
+    // If simplex_dim == 1, we do not need to check if stars are connected
+    if (simplex_dim == 1)
+    {
+      if (p_num_unconnected_stars)
+        *p_num_unconnected_stars = 0;
+      return is_pure_pseudomanifold__do_not_check_if_stars_are_connected(
+        simplex_dim,
+        exit_at_the_first_problem,
+        verbose_level,
+        p_num_wrong_dim_simplices,
+        p_num_wrong_number_of_cofaces);
+    }
+    // Associates each vertex (= the index in the vector) 
+    // to its star (list of simplices)
+    typedef std::vector<std::vector<Complex::const_iterator> > Stars;
+    std::size_t num_wrong_dim_simplices = 0;
+    std::size_t num_wrong_number_of_cofaces = 0;
+    std::size_t num_unconnected_stars = 0;
+
+    // Fills a Stars data structure
+    Stars stars;
+    stars.resize(num_vertices);
+    for (Complex::const_iterator it_simplex = m_complex.begin(), 
+                                 it_simplex_end = m_complex.end() ;
+         it_simplex != it_simplex_end ; 
+         ++it_simplex)
+    {
+      if (it_simplex->size() != simplex_dim + 1)
+      {
+        if (verbose_level >= 2)
+          std::cerr << "Found a simplex with dim = " 
+                    << it_simplex->size() - 1 << std::endl;
+        ++num_wrong_dim_simplices;
+        if (p_wrong_dim_simplices)
+          p_wrong_dim_simplices->insert(*it_simplex);
+      }
+      else
+      {
+        for (Simplex::const_iterator it_point_idx = it_simplex->begin() ; 
+             it_point_idx != it_simplex->end() ; 
+             ++it_point_idx)
+        {
+          stars[*it_point_idx].push_back(it_simplex);
+        }
+      }
+    }
+
+    // Now, for each star, with have a vector of its d-simplices
+    // i.e. one index for each d-simplex
+    // Boost Graph only deals with indexes, so we also need indexes for the
+    // (d-1)-simplices
+    std::size_t center_vertex_index = 0;
+    for (Stars::const_iterator it_star = stars.begin() ;
+         it_star != stars.end() ;
+         ++it_star, ++center_vertex_index)
+    {
+      typedef std::map<Simplex, std::vector<std::size_t> > 
+                                                      Dm1_faces_to_adj_D_faces;
+      Dm1_faces_to_adj_D_faces dm1_faces_to_adj_d_faces;
+      
+      for (int i_dsimpl = 0 ; i_dsimpl < it_star->size() ; ++i_dsimpl)
+      {
+        Simplex dm1_simpl_of_link = *((*it_star)[i_dsimpl]);
+        dm1_simpl_of_link.erase(center_vertex_index);
+        // Copy it to a vector so that we can use operator[] on it
+        std::vector<std::size_t> dm1_simpl_of_link_vec(
+          dm1_simpl_of_link.begin(), dm1_simpl_of_link.end());
+
+        CGAL::Combination_enumerator<int> dm2_simplices(
+          simplex_dim - 1, 0, simplex_dim);
+        for ( ; !dm2_simplices.finished() ; ++dm2_simplices)
+        {
+          Simplex dm2_simpl;
+          for (int j = 0 ; j < simplex_dim - 1 ; ++j)
+            dm2_simpl.insert(dm1_simpl_of_link_vec[dm2_simplices[j]]);
+          dm1_faces_to_adj_d_faces[dm2_simpl].push_back(i_dsimpl);
+        }
+      }
+
+      Adj_graph adj_graph;
+      std::vector<Graph_vertex> d_faces_descriptors;
+      d_faces_descriptors.resize(it_star->size());
+      for (int j = 0 ; j < it_star->size() ; ++j)
+        d_faces_descriptors[j] = boost::add_vertex(adj_graph);
+
+      Dm1_faces_to_adj_D_faces::const_iterator dm1_to_d_it = 
+        dm1_faces_to_adj_d_faces.begin();
+      Dm1_faces_to_adj_D_faces::const_iterator dm1_to_d_it_end = 
+        dm1_faces_to_adj_d_faces.end();
+      for (std::size_t i_km1_face = 0 ; 
+           dm1_to_d_it != dm1_to_d_it_end ; 
+           ++dm1_to_d_it, ++i_km1_face)
+      {
+        Graph_vertex km1_gv = boost::add_vertex(adj_graph);
+
+        for (std::vector<std::size_t>::const_iterator kface_it = 
+               dm1_to_d_it->second.begin() ;
+             kface_it != dm1_to_d_it->second.end() ;
+             ++kface_it)
+        {
+          boost::add_edge(km1_gv, *kface_it, adj_graph);
+        }
+
+        if (dm1_to_d_it->second.size() != 2)
+        {
+          ++num_wrong_number_of_cofaces;
+          if (p_wrong_number_of_cofaces_simplices)
+          {
+            for (auto idx : dm1_to_d_it->second)
+              p_wrong_number_of_cofaces_simplices->insert(*((*it_star)[idx]));
+          }
+        }
+      }
+
+      // What is left is to check the connexity
+      std::vector<int> components(boost::num_vertices(adj_graph));
+      bool is_connected =
+        (boost::connected_components(adj_graph, &components[0]) == 1);
+
+      if (!is_connected)
+      { 
+        if (verbose_level >= 2)
+          std::cerr << "Error: star #" << center_vertex_index
+                    << " is not connected" << std::endl;
+        ++num_unconnected_stars;
+        if (p_unconnected_stars_simplices)
+        {
+          for (std::vector<Complex::const_iterator>::const_iterator 
+                it_simpl = it_star->begin(),
+                it_simpl_end = it_star->end();
+               it_simpl != it_simpl_end ;
+               ++it_simpl)
+          {
+            p_unconnected_stars_simplices->insert(**it_simpl);
+          }
+        }
+      }
+    }
+
+    // Each one has been counted several times ("simplex_dim" times)
+    num_wrong_number_of_cofaces /= simplex_dim;
+
+    bool ret = 
+      num_wrong_dim_simplices == 0 
+      && num_wrong_number_of_cofaces == 0
+      && num_unconnected_stars == 0;
+
+    if (verbose_level >= 1)
+    {
+      std::cerr << "is_pure_pseudo_manifold: " 
+                << (ret ? "YES" : "NO") << std::endl;
+      if (!ret)
+      {
+        std::cerr << "  * Number of wrong dimension simplices: " 
+                  << num_wrong_dim_simplices << std::endl
+                  << "  * Number of wrong number of cofaces: " 
+                  << num_wrong_number_of_cofaces << std::endl
+                  << "  * Number of not-connected stars: " 
+                  << num_unconnected_stars << std::endl;
+      }
+    }
+
+    if (p_num_wrong_dim_simplices)
+      *p_num_wrong_dim_simplices = num_wrong_dim_simplices;
+    if (p_num_wrong_number_of_cofaces)
+      *p_num_wrong_number_of_cofaces = num_wrong_number_of_cofaces;
+    if (p_num_unconnected_stars)
+      *p_num_unconnected_stars = num_unconnected_stars;
+
+    return ret;
+  }
+
 private:
   typedef Simplex_range Complex;
+ 
+  // graph is an adjacency list
+  typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Adj_graph;
+  // map that gives to a certain simplex its node in graph and its dimension
+  typedef boost::graph_traits<Adj_graph>::vertex_descriptor Graph_vertex;
+  typedef boost::graph_traits<Adj_graph>::edge_descriptor Graph_edge;
 
   Complex       m_complex;
 
