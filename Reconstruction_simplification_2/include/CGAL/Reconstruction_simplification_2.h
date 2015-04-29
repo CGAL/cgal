@@ -49,7 +49,7 @@ namespace CGAL {
 
 \brief `Reconstruction_simplification_2` is the main class
 for executing the reconstruction and simplification tasks.
-Its constructor takes an InputIterator, used to traverse a collection
+Its constructor takes an `InputRange`, used to traverse a collection
 of point-mass pairs, where the points and their masses are accessed
 via the property maps  `PointMap` and `MassMap` respectively.
 
@@ -175,23 +175,20 @@ protected:
 		first output simplex is then made coarser during subsequent iterations.
 
 	     \details Instantiates a new Reconstruction_simplification_2 object
-	     	 	  for a given collection of point-mass pairs.
+	     	 	  for a givenrange of point-mass pairs.
 
-	     \tparam InputIterator is the iterator type of the algorithm input.
+	     \tparam InputRange is a model of `Range` with forward iterators, 
+               providing input points and point mass through the following two property maps.
 
-	     \param start_itr An InputIterator pointing the the first point-mass
-	     	 	 	 	 	 pair in a collection.
-   	   	 \param beyond_itr An InputIterator pointing beyond the last point-mass
-	     	 	 	 	 	 pair in a collection.
+	     \param input_range range of input data.
 	     \param point_map A `ReadablePropertyMap` used to access the input points
 
 	     \param mass_map A `ReadablePropertyMap` used to access the input points' mass.
 	*/
-	template <class InputIterator>
-	Reconstruction_simplification_2(InputIterator start_itr,
-									InputIterator beyond_itr,
-									PointMap point_map,
-									MassMap  mass_map) {
+	template <class InputRange>
+	Reconstruction_simplification_2(const InputRange& input_range,
+                                        PointMap point_map,
+                                        MassMap  mass_map) {
 
 
 		point_pmap = point_map;
@@ -199,7 +196,7 @@ protected:
 
 		initialize_parameters();
 
-		initialize(start_itr, beyond_itr);
+		initialize(input_range.begin(), input_range.end());
 	}
 
 
@@ -210,23 +207,20 @@ protected:
         first output simplex is then made coarser during subsequent iterations.
 
          \details Instantiates a new Reconstruction_simplification_2 object
-                  for a given collection of points.
+                  for a given range of points.
 
-         \tparam InputIterator is the iterator type of the algorithm input.
+	     \tparam InputRange is a model of `Range` with forward iterators, 
+               providing input points and point mass through...
 
-         \param start_point_itr An InputIterator pointing the the first point
-                              in a collection.
-         \param beyond_point_itr An InputIterator pointing beyond the last point
-                              in a collection.
+	     \param input_range range of input data.
     */
-    template <class InputIterator>
-    Reconstruction_simplification_2(InputIterator start_point_itr,
-                                    InputIterator beyond_point_itr) {
+    template <class InputRange>
+    Reconstruction_simplification_2(const InputRange& input_range) {
 
 
         PointMassList point_mass_list;
-        for (InputIterator it = start_point_itr; it != beyond_point_itr; it++) {
-            point_mass_list.push_back(std::make_pair(*it, 1));
+        BOOST_FOREACH(Point_2 p , input_range) {
+            point_mass_list.push_back(std::make_pair(p, 1));
         }
 
         PointMap point_map;
@@ -322,9 +316,9 @@ protected:
 	isolated points and one for storing the edges of the reconstructed shape.
 
 
-	\tparam PointOutputIterator The output iterator type for storing the points
+	\tparam PointOutputIterator The output iterator type for storing the isolated points
 
-	\tparam SegmentOutputIterator The output iterator type for storing the edges (as segments).
+	\tparam SegmentOutputIterator The output iterator type for storing the edges as segments.
 	 */
 	template<class PointOutputIterator, class SegmentOutputIterator>
 	void extract_list_output(PointOutputIterator v_it, SegmentOutputIterator e_it) {
@@ -1607,7 +1601,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 		}
 
 		 /*!
-			Computes a shape, reconstructing the input, by performing steps many
+			Computes a shape, reconstructing the input, by performing `steps` many
 			edge contractions on the output simplex.
 
 			\param steps The number of edge contractions performed by the algorithm.
