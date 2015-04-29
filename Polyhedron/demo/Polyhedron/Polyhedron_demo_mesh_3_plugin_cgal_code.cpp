@@ -88,7 +88,7 @@ public:
 
     void contextual_changed()
     {
-        if(frame->isInMouseGrabberPool())
+        if(frame->isManipulated()||frame->isSpinning())
             changed();
     }
     const C3t3& c3t3() const {
@@ -170,26 +170,17 @@ public:
     void draw() const { }
     void draw(Viewer_interface* viewer) const {
 
-        int err = glGetError();
-        if(err !=0)
-        std::cout<<"ERROR c3t3 1"<<std::endl;
-
         qFunc.glBindVertexArray(vao[0]);
         qFunc.glUseProgram(rendering_program_poly);
         uniform_attrib(viewer,0);
         qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/3);
-        err = glGetError();
-        if(err !=0)
-            std::cout<<"ERROR c3t3 2 "<<std::endl;
         qFunc.glUseProgram(0);
         qFunc.glBindVertexArray(0);
 
 
     }
     void draw_edges(Viewer_interface* viewer) const {
-        int err = glGetError();
-        if(err !=0)
-        std::cout<<"ERROR c3t33"<<std::endl;
+
         qFunc.glBindVertexArray(vao[1]);
         qFunc.glUseProgram(rendering_program_lines);
         uniform_attrib(viewer,2);
@@ -207,9 +198,6 @@ public:
     }
     void draw_points(Viewer_interface * viewer) const
     {
-        int err = glGetError();
-        if(err !=0)
-        std::cout<<"ERROR c3t3 4"<<std::endl;
         qFunc.glBindVertexArray(vao[0]);
         qFunc.glUseProgram(rendering_program_lines);
         uniform_attrib(viewer,1);
