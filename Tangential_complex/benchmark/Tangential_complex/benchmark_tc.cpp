@@ -91,12 +91,14 @@ protected:
     subelements.push_back("Final_num_inconsistent_local_tr");
     subelements.push_back("Init_time");
     subelements.push_back("Comput_time");
-    subelements.push_back("Fix1_successful");
-    subelements.push_back("Fix1_time");
-    subelements.push_back("Fix1_steps");
-    subelements.push_back("Fix2_pure_manifold");
-    subelements.push_back("Fix2_num_wrong_number_of_cofaces");
-    subelements.push_back("Fix2_time");
+    subelements.push_back("Perturb_successful");
+    subelements.push_back("Perturb_time");
+    subelements.push_back("Perturb_steps");
+    subelements.push_back("Add_higher_dim_simpl_time");
+    subelements.push_back("Result_pure_pseudomanifold");
+    subelements.push_back("Result_num_wrong_dim_simplices");
+    subelements.push_back("Result_num_wrong_number_of_cofaces");
+    subelements.push_back("Result_num_unconnected_stars");
     subelements.push_back("Info");
 
     return subelements;
@@ -125,13 +127,94 @@ protected:
   XML_exporter::Element_with_map m_current_element;
 };
 
-void make_tc(std::vector<Point> &points, int intrinsic_dim,
-             double sparsity = 0., double time_limit_for_fix = 0.,
+template <typename TC>
+bool export_to_off(
+  TC const& tc, 
+  std::string const& input_name_stripped,
+  std::string const& suffix,
+  bool color_inconsistencies = false,
+  typename TC::Simplicial_complex const* p_complex = NULL,
+  std::set<std::set<std::size_t> > const *p_simpl_to_color_in_red = NULL,
+  std::set<std::set<std::size_t> > const *p_simpl_to_color_in_green = NULL,
+  std::set<std::set<std::size_t> > const *p_simpl_to_color_in_blue = NULL)
+{
+  if (tc.intrinsic_dimension() <= 3)
+  {
+    std::stringstream output_filename;
+    output_filename << "output/" << input_name_stripped << "_" 
+      << tc.intrinsic_dimension() << "_in_R" 
+      << tc.ambient_dimension() << suffix << ".off";
+    std::ofstream off_stream(output_filename.str().c_str());
+
+    if (p_complex)
+    {
+      tc.export_to_off(
+        *p_complex, off_stream, 
+        p_simpl_to_color_in_red,
+        p_simpl_to_color_in_green, 
+        p_simpl_to_color_in_blue);
+    }
+    else
+    {
+#ifdef CGAL_ALPHA_TC
+      TC::Simplicial_complex complex;
+      tc.export_TC(complex, false);
+      tc.export_to_off(
+        complex, off_stream, 
+        p_simpl_to_color_in_red,
+        p_simpl_to_color_in_green, 
+        p_simpl_to_color_in_blue);
+#else
+      tc.export_to_off(
+        off_stream, color_inconsistencies, 
+        p_simpl_to_color_in_red,
+        p_simpl_to_color_in_green, 
+        p_simpl_to_color_in_blue);
+#endif
+    }
+    return true;
+  }
+  return false;
+}
+
+void make_tc(std::vector<Point> &points, 
+             int intrinsic_dim,
+             double sparsity = 0., 
+             bool perturb = true, 
+             bool add_high_dim_simpl = false, 
+             bool collapse = false,
+             double time_limit_for_perturb = 0.,
              const char *input_name = "tc")
 {
+  // CJTODO TEMP TEST
+  //TC::Simplicial_complex compl;
+  //{std::size_t ss[] = {0, 1, 2}; compl.add_simplex(std::set<std::size_t>(ss, ss + 3)); }
+  //{std::size_t ss[] = {0, 2, 3}; compl.add_simplex(std::set<std::size_t>(ss, ss + 3)); }
+  //{std::size_t ss[] = {0, 3, 4}; compl.add_simplex(std::set<std::size_t>(ss, ss + 3)); }
+  //{std::size_t ss[] = {0, 4, 1}; compl.add_simplex(std::set<std::size_t>(ss, ss + 3)); }
+  //{std::size_t ss[] = {0, 5, 6}; compl.add_simplex(std::set<std::size_t>(ss, ss + 3)); }
+  //compl.is_pure_pseudomanifold(2, 7, false, 10);
+
+  //TC::Simplicial_complex compl;
+  //{std::size_t ss[] = {0, 1, 2, 5}; compl.add_simplex(std::set<std::size_t>(ss, ss + 4)); }
+  //{std::size_t ss[] = {0, 2, 3, 5}; compl.add_simplex(std::set<std::size_t>(ss, ss + 4)); }
+  //{std::size_t ss[] = {0, 3, 4, 5}; compl.add_simplex(std::set<std::size_t>(ss, ss + 4)); }
+  //{std::size_t ss[] = {0, 4, 1, 5}; compl.add_simplex(std::set<std::size_t>(ss, ss + 4)); }
+  //{std::size_t ss[] = {0, 1, 2, 6}; compl.add_simplex(std::set<std::size_t>(ss, ss + 4)); }
+  //{std::size_t ss[] = {0, 2, 3, 6}; compl.add_simplex(std::set<std::size_t>(ss, ss + 4)); }
+  //{std::size_t ss[] = {0, 3, 4, 6}; compl.add_simplex(std::set<std::size_t>(ss, ss + 4)); }
+  //{std::size_t ss[] = {0, 4, 1, 6}; compl.add_simplex(std::set<std::size_t>(ss, ss + 4)); }
+  //{std::size_t ss[] = {0, 4, 7, 8}; compl.add_simplex(std::set<std::size_t>(ss, ss + 4)); }
+  //compl.is_pure_pseudomanifold(3, 9, false, 10);
+  // /CJTODO TEMP TEST
+
+  //===========================================================================
+  // Init
+  //===========================================================================
   Kernel k;
   Wall_clock_timer t;
 
+  // Get input_name_stripped
   std::string input_name_stripped(input_name);
   size_t slash_index = input_name_stripped.find_last_of('/');
   if (slash_index == std::string::npos)
@@ -160,6 +243,9 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
   std::vector<Point> points_not_sparse = points;
 #endif
 
+  //===========================================================================
+  // Sparsify point set if requested
+  //===========================================================================
   if (sparsity != 0.)
   {
     std::size_t num_points_before = points.size();
@@ -167,10 +253,14 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
     std::cerr << "Number of points before/after sparsification: "
       << num_points_before << " / " << points.size() << std::endl;
   }
-  
+
   CGAL_TC_SET_PERFORMANCE_DATA("Sparsity", sparsity);
   CGAL_TC_SET_PERFORMANCE_DATA("Num_points", points.size());
   
+  //===========================================================================
+  // Compute Tangential Complex
+  //===========================================================================
+
 #ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
   TC tc(points.begin(), points.end(), sparsity, intrinsic_dim,
     points_not_sparse.begin(), points_not_sparse.end(), k);
@@ -183,8 +273,10 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
   tc.compute_tangential_complex();
   double computation_time = t.elapsed(); t.reset();
     
-  // CJTODO TEMP ===========================
-  {
+  //===========================================================================
+  // CJTODO TEMP
+  //===========================================================================
+  /*{
   TC::Simplicial_complex complex;
   int max_dim = tc.export_TC(complex, false);
   complex.display_stats();
@@ -204,141 +296,191 @@ void make_tc(std::vector<Point> &points, int intrinsic_dim,
   std::ofstream off_stream(output_filename.str().c_str());
   tc.export_to_off(complex, off_stream);
   }
-  std::size_t num_wrong_dim_simplices, num_wrong_number_of_cofaces;
-  bool pure_manifold = complex.is_pure_manifold(
-    intrinsic_dim, false, 1,
-    &num_wrong_dim_simplices, &num_wrong_number_of_cofaces);
+  std::size_t num_wrong_dim_simplices, 
+              num_wrong_number_of_cofaces, 
+              num_unconnected_stars;
+  bool pure_manifold = complex.is_pure_pseudomanifold(
+    intrinsic_dim, tc.number_of_vertices(), false, 1,
+    &num_wrong_dim_simplices, &num_wrong_number_of_cofaces, 
+    &num_unconnected_stars);
   complex.display_stats();
   }
-
-  return;
+  return;*/
   // CJTODO TEMP ===========================
 
   //tc.check_if_all_simplices_are_in_the_ambient_delaunay();
 
-  double export_before_time = -1.;
-  if (intrinsic_dim <= 3)
-  {
-    t.reset();
-    std::stringstream output_filename;
-    output_filename << "output/" << input_name_stripped << "_" << intrinsic_dim
-      << "_in_R" << ambient_dim << "_BEFORE_FIX.off";
-    std::ofstream off_stream(output_filename.str().c_str());
-    tc.export_to_off(off_stream, true);
-    export_before_time = t.elapsed(); t.reset();
-  }
-
-
-
+  //===========================================================================
+  // Export to OFF
+  //===========================================================================
   t.reset();
-  unsigned int num_fix_steps;
-  std::size_t initial_num_inconsistent_local_tr;
-  std::size_t best_num_inconsistent_local_tr;
-  std::size_t final_num_inconsistent_local_tr;
-  CGAL::Fix_inconsistencies_status fix_ret = tc.fix_inconsistencies(
-    num_fix_steps, initial_num_inconsistent_local_tr,
-    best_num_inconsistent_local_tr, final_num_inconsistent_local_tr,
-    time_limit_for_fix);
-  double fix_time = t.elapsed(); t.reset();
-
-  CGAL_TC_SET_PERFORMANCE_DATA("Initial_num_inconsistent_local_tr", 
-                               initial_num_inconsistent_local_tr);
-  CGAL_TC_SET_PERFORMANCE_DATA("Best_num_inconsistent_local_tr", 
-                               best_num_inconsistent_local_tr);
-  CGAL_TC_SET_PERFORMANCE_DATA("Final_num_inconsistent_local_tr", 
-                               final_num_inconsistent_local_tr);
+  double export_before_time = 
+    (export_to_off(tc, input_name_stripped, "_BEFORE_FIX") ? t.elapsed() : -1);
+  t.reset();
   
-  double export_after_fix_time = -1.;
-  if (intrinsic_dim <= 3)
+  unsigned int num_perturb_steps = 0;
+  double perturb_time = -1;
+    double export_after_perturb_time = -1.;
+  CGAL::Fix_inconsistencies_status perturb_ret = CGAL::FIX_NOT_PERFORMED;
+  if (perturb)
   {
+    //=========================================================================
+    // Try to fix inconsistencies by perturbing points
+    //=========================================================================
     t.reset();
-    std::stringstream output_filename;
-    output_filename << "output/" << input_name_stripped << "_" << intrinsic_dim
-      << "_in_R" << ambient_dim << "_AFTER_FIX.off";
-    std::ofstream off_stream(output_filename.str().c_str());
-    tc.export_to_off(off_stream, true);
-    export_after_fix_time = t.elapsed(); t.reset();
+    std::size_t initial_num_inconsistent_local_tr;
+    std::size_t best_num_inconsistent_local_tr;
+    std::size_t final_num_inconsistent_local_tr;
+    perturb_ret = tc.fix_inconsistencies(
+      num_perturb_steps, initial_num_inconsistent_local_tr,
+      best_num_inconsistent_local_tr, final_num_inconsistent_local_tr,
+      time_limit_for_perturb);
+    perturb_time = t.elapsed(); t.reset();
+
+    CGAL_TC_SET_PERFORMANCE_DATA("Initial_num_inconsistent_local_tr", 
+                                 initial_num_inconsistent_local_tr);
+    CGAL_TC_SET_PERFORMANCE_DATA("Best_num_inconsistent_local_tr", 
+                                 best_num_inconsistent_local_tr);
+    CGAL_TC_SET_PERFORMANCE_DATA("Final_num_inconsistent_local_tr", 
+                                 final_num_inconsistent_local_tr);
+  
+    //=========================================================================
+    // Export to OFF
+    //=========================================================================
+    t.reset();
+    bool exported = export_to_off(tc, input_name_stripped, "_AFTER_FIX", true);
+    double export_after_perturb_time = (exported ? t.elapsed() : -1);
+    t.reset();
+  }
+  else
+  {
+    CGAL_TC_SET_PERFORMANCE_DATA("Initial_num_inconsistent_local_tr", "N/A");
+    CGAL_TC_SET_PERFORMANCE_DATA("Best_num_inconsistent_local_tr", "N/A");
+    CGAL_TC_SET_PERFORMANCE_DATA("Final_num_inconsistent_local_tr", "N/A");
   }
   
-  t.reset();
-  // Try to solve the remaining inconstencies
-  tc.check_and_solve_inconsistencies_by_adding_higher_dim_simplices();
-  double fix2_time = t.elapsed(); t.reset();
-  TC::Simplicial_complex complex;
-  int max_dim = tc.export_TC(complex, false);
-  std::set<std::set<std::size_t> > not_delaunay_simplices;
-  /*if (ambient_dim <= 4)
-  {
-    tc.check_if_all_simplices_are_in_the_ambient_delaunay(
-      &complex, true, &not_delaunay_simplices);
-  }*/
-
+  int max_dim = -1;
+  double fix2_time = -1;
   double export_after_fix2_time = -1.;
-  if (intrinsic_dim <= 3)
+  TC::Simplicial_complex complex;
+  if (add_high_dim_simpl)
   {
+    //=========================================================================
+    // Try to fix inconsistencies by adding higher-dimension simplices
+    //=========================================================================
     t.reset();
-    std::stringstream output_filename;
-    output_filename << "output/" << input_name_stripped << "_" << intrinsic_dim
-      << "_in_R" << ambient_dim << "_AFTER_FIX2.off";
-    std::ofstream off_stream(output_filename.str().c_str());
-    tc.export_to_off(complex, off_stream, &not_delaunay_simplices);
-    export_after_fix2_time = t.elapsed(); t.reset();
-  }
-
-  // Collapse
-  //complex.collapse(max_dim);
+    // Try to solve the remaining inconstencies
+    tc.check_and_solve_inconsistencies_by_adding_higher_dim_simplices();
+    fix2_time = t.elapsed(); t.reset();
+    max_dim = tc.export_TC(complex, false);
+    /*std::set<std::set<std::size_t> > not_delaunay_simplices;
+    if (ambient_dim <= 4)
+    {
+      tc.check_if_all_simplices_are_in_the_ambient_delaunay(
+        &complex, true, &not_delaunay_simplices);
+    }*/
   
-  double export_after_collapse_time = -1.;
-  if (intrinsic_dim <= 3)
-  {
+    //=========================================================================
+    // Export to OFF
+    //=========================================================================
     t.reset();
-    std::stringstream output_filename;
-    output_filename << "output/" << input_name_stripped << "_" << intrinsic_dim
-      << "_in_R" << ambient_dim << "_AFTER_COLLAPSE.off";
-    std::ofstream off_stream(output_filename.str().c_str());
-    tc.export_to_off(complex, off_stream);
-    export_after_collapse_time = t.elapsed(); t.reset();
+    bool exported = export_to_off(
+      tc, input_name_stripped, "_AFTER_FIX2", false, &complex);
+    double export_after_fix2_time = (exported ? t.elapsed() : -1);
+    t.reset();
   }
-  std::size_t num_wrong_dim_simplices, num_wrong_number_of_cofaces;
-  bool pure_manifold = complex.is_pure_manifold(
-    intrinsic_dim, false, 0,
-    &num_wrong_dim_simplices, &num_wrong_number_of_cofaces);
+  else
+  {
+    max_dim = tc.export_TC(complex, false);
+  }
 
   complex.display_stats();
+  
+  //===========================================================================
+  // Collapse
+  //===========================================================================
+  std::cerr << max_dim << std::endl;
+  if (collapse)
+    complex.collapse(max_dim);
+  
+  //===========================================================================
+  // Is the result a pure pseudomanifold?
+  //===========================================================================
+  std::size_t num_wrong_dim_simplices, 
+              num_wrong_number_of_cofaces, 
+              num_unconnected_stars;
+  std::set<std::set<std::size_t> > wrong_dim_simplices; 
+  std::set<std::set<std::size_t> > wrong_number_of_cofaces_simplices;
+  std::set<std::set<std::size_t> > unconnected_stars_simplices;
+  bool is_pure_pseudomanifold = complex.is_pure_pseudomanifold(
+    intrinsic_dim, tc.number_of_vertices(), false, 1,
+    &num_wrong_dim_simplices, &num_wrong_number_of_cofaces, 
+    &num_unconnected_stars,
+    &wrong_dim_simplices, &wrong_number_of_cofaces_simplices, 
+    &unconnected_stars_simplices);
+
+  // Stats about the simplices
+  complex.display_stats();
+
+  //===========================================================================
+  // Export to OFF
+  //===========================================================================
+  t.reset();
+  bool exported = export_to_off(
+    tc, input_name_stripped, "_AFTER_COLLAPSE", false, &complex, 
+    &wrong_dim_simplices, &wrong_number_of_cofaces_simplices, 
+    &unconnected_stars_simplices);
+  std::cerr 
+    << " OFF colors:" << std::endl
+    << "   * Red: wrong dim simplices" << std::endl
+    << "   * Green: wrong number of cofaces simplices" << std::endl
+    << "   * Blue: not-connected stars" << std::endl;
+  double export_after_collapse_time = (exported ? t.elapsed() : -1);
+  t.reset();
+
+  //===========================================================================
+  // Display info
+  //===========================================================================
 
   std::cerr << std::endl
     << "================================================" << std::endl
     << "Number of vertices: " << tc.number_of_vertices() << std::endl
-    << "Pure manifold: " << (pure_manifold ? "YES" : "NO") << std::endl
+    << "Pure pseudomanifold: " << (is_pure_pseudomanifold ? "YES" : "NO") << std::endl
     << "Computation times (seconds): " << std::endl
-    << "  * Tangential complex: " << init_time + computation_time
-    << std::endl
+    << "  * Tangential complex: " << init_time + computation_time << std::endl
     << "    - Init + kd-tree = " << init_time << std::endl
     << "    - TC computation = " << computation_time << std::endl
-    << "  * Export to OFF (before fix): " << export_before_time << std::endl
-    << "  * Fix inconsistencies 1: " << fix_time 
-    <<      " (" << num_fix_steps << " steps) ==> " 
-    <<      (fix_ret == CGAL::TC_FIXED ? "FIXED" : "NOT fixed") << std::endl
+    << "  * Export to OFF (before perturb): " << export_before_time << std::endl
+    << "  * Fix inconsistencies 1: " << perturb_time 
+    <<      " (" << num_perturb_steps << " steps) ==> " 
+    <<      (perturb_ret == CGAL::TC_FIXED ? "FIXED" : "NOT fixed") << std::endl
     << "  * Fix inconsistencies 2: " << fix2_time << std::endl
-    << "  * Export to OFF (after fix): " << export_after_fix_time << std::endl
+    << "  * Export to OFF (after perturb): " << export_after_perturb_time << std::endl
     << "  * Export to OFF (after fix2): "<< export_after_fix2_time << std::endl
     << "  * Export to OFF (after collapse): "
     <<      export_after_collapse_time << std::endl
     << "================================================" << std::endl
     << std::endl;
-
-    CGAL_TC_SET_PERFORMANCE_DATA("Init_time",     init_time);
-    CGAL_TC_SET_PERFORMANCE_DATA("Comput_time",   computation_time);
-    CGAL_TC_SET_PERFORMANCE_DATA("Fix1_successful",
-                                      (fix_ret == CGAL::TC_FIXED ? "Y" : "N"));
-    CGAL_TC_SET_PERFORMANCE_DATA("Fix1_time",     fix_time);
-    CGAL_TC_SET_PERFORMANCE_DATA("Fix1_steps",    num_fix_steps);
-    CGAL_TC_SET_PERFORMANCE_DATA("Fix2_pure_manifold",
-                                                  (pure_manifold ? "Y" : "N"));
-    CGAL_TC_SET_PERFORMANCE_DATA("Fix2_num_wrong_number_of_cofaces", 
-                                                  num_wrong_number_of_cofaces);
-    CGAL_TC_SET_PERFORMANCE_DATA("Fix2_time",     fix2_time);
-    CGAL_TC_SET_PERFORMANCE_DATA("Info", "");
+  
+  //===========================================================================
+  // Export info
+  //===========================================================================
+  CGAL_TC_SET_PERFORMANCE_DATA("Init_time", init_time);
+  CGAL_TC_SET_PERFORMANCE_DATA("Comput_time", computation_time);
+  CGAL_TC_SET_PERFORMANCE_DATA("Perturb_successful",
+                                (perturb_ret == CGAL::TC_FIXED ? "Y" : "N"));
+  CGAL_TC_SET_PERFORMANCE_DATA("Perturb_time", perturb_time);
+  CGAL_TC_SET_PERFORMANCE_DATA("Perturb_steps", num_perturb_steps);
+  CGAL_TC_SET_PERFORMANCE_DATA("Add_higher_dim_simpl_time", fix2_time);
+  CGAL_TC_SET_PERFORMANCE_DATA("Result_pure_pseudomanifold",
+                                (is_pure_pseudomanifold ? "Y" : "N"));
+  CGAL_TC_SET_PERFORMANCE_DATA("Result_num_wrong_dim_simplices",
+                                num_wrong_dim_simplices);
+  CGAL_TC_SET_PERFORMANCE_DATA("Result_num_wrong_number_of_cofaces", 
+                                num_wrong_number_of_cofaces);
+  CGAL_TC_SET_PERFORMANCE_DATA("Result_num_unconnected_stars", 
+                                num_unconnected_stars);
+  CGAL_TC_SET_PERFORMANCE_DATA("Info", "");
 }
 
 int main()
@@ -406,7 +548,8 @@ int main()
           int ambient_dim;
           int intrinsic_dim;
           double sparsity;
-          double time_limit_for_fix;
+          char perturb, add_high_dim_simpl, collapse;
+          double time_limit_for_perturb;
           int num_iteration;
           sstr >> input;
           sstr >> param1;
@@ -416,7 +559,10 @@ int main()
           sstr >> ambient_dim;
           sstr >> intrinsic_dim;
           sstr >> sparsity;
-          sstr >> time_limit_for_fix;
+          sstr >> perturb;
+          sstr >> add_high_dim_simpl;
+          sstr >> collapse;
+          sstr >> time_limit_for_perturb;
           sstr >> num_iteration;
 
           for (int j = 0 ; j < num_iteration ; ++j)
@@ -490,7 +636,8 @@ int main()
             if (!points.empty())
             {
               make_tc(points, intrinsic_dim, sparsity, 
-                      time_limit_for_fix, input.c_str());
+                      perturb=='Y', add_high_dim_simpl=='Y', collapse=='Y',
+                      time_limit_for_perturb, input.c_str());
 
               std::cerr << "TC #" << i++ << " done." << std::endl;
               std::cerr << std::endl << "---------------------------------" 

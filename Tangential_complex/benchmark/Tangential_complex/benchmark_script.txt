@@ -1,42 +1,54 @@
 #---------------------------------------------------------------------------------------------------------------------------------------------------------
-# Input															PARAM1	PARAM2	PARAM3	NUM_P	AMB		INTR	SPARSITY	FIX_TIME_LIMIT	NUM_ITERATIONS
+# Input															PARAM1	PARAM2	PARAM3	NUM_P	AMB		INTR	SPARSITY	PERTURB	ADD_HDIM	COLLAPSE	FIX_TIME_LIMIT	NUM_ITERATIONS
 #---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#---------------------------------------------------------- Very small cases for Debug mode -------------------------------------------------------------
-#generate_sphere_d												3		-		-		20		3		2		0.05		60  			1
-#generate_klein_bottle_4D										4		3		-		70		4		2		1.5			60  			1
+#---------------------------------------------------------- Very small cases for Debug mode --------------------------------------------------------------
+#generate_sphere_d												4		-		-		20		3		2		0.05		N		N			Y			60  			1
+#generate_sphere_d												3		-		-		70		3		2		0.05		Y		Y			Y			60  			1
+#generate_sphere_d												3		-		-		1000 	3		2		0.05		Y		Y			Y			60  			1
+#generate_sphere_d												3		-		-		70		4		3		0.05		Y		Y			Y			60  			1
+#generate_sphere_d												3		-		-		70		5		4		0.05		Y		Y			Y			60  			1
+#generate_klein_bottle_variant_5D								4		3		-		70  	5		2		0.05		Y		Y			Y			60  			1
+#data/SO3_10000.txt  											-		-		-		0		9 		3 		0.7 		Y		Y			Y			60  			1
+#generate_moment_curve											0		1		-		30  	3		1		0.005		Y		Y			Y			60  			1
 
-#------------------------------------------------------------------ From files ---------------------------------------------------------------------------
-data/SO3_50000.txt  											-		-		-		0		9 		3 		0.2 		60  			1
-data/SO3_10000.txt  											-		-		-		0		9 		3 		0.05 		60  			1
-#data/cube3D_eps_0.1.txt 										-		-		-		0		3 		2 		0.05 		3000			1
-#data/cube4D_eps_0.1.txt 										-		-		-		0		4 		3 		0.05 		3000			1
-#data/cube5D_eps_0.1.txt 										-		-		-		0		5 		4 		0.05 		3000			1
-data/Cy8.txt	 												-		-		-		0		24 		2 		0.1 		60				1
-data/Kl.txt 													-		-		-		0		5 		2 		0.05 		60  			1
-data/S3.txt 													-		-		-		0		4 		3 		0.05 		60  			1
+#---------------------------------------------------------------- Alpha TC tests ------------------------------------------------------------------------
+#generate_sphere_d												0.302 	-		-		70		2		1		0.005		N		N			Y			60  			1
+#generate_sphere_d												0.5 	-		-		70		2		1		0.005		N		N			Y			60  			1
+generate_klein_bottle_4D										40		15		-		130  	4		2		0.2			N		N			Y			60  			1	
+#generate_klein_bottle_4D										8		5		-		5000	4		2		0.2			Y		Y			Y			60  			1	#Takes forever
 
-#---------------------------------------------------------------------- 3D meshes ------------------------------------------------------------------------
-data/buddha_100kv.txt 											-		-		-		0		3 		2 		0.005 		60  			1
-data/fandisk.txt 												-		-		-		0		3 		2 		0.01 		60  			1
-data/fertility.txt  											-		-		-		0		3 		2 		0.4 		60  			1
-data/bunny.txt  												-		-		-		0		3 		2 		0.5 		60  			1
-data/blob.txt 													-		-		-		0		3 		2 		0.01 		60  			1
-data/3holes.txt 												-		-		-		0		3 		2 		0.01 		60  			1
-data/785_hand_2500v.txt										-		-		-		0		3 		2 		0.01 		60  			1
-data/785_hand_50kv.txt											-		-		-		0		3 		2 		0.01 		60  			1
-data/bumpy_sphere.txt											-		-		-		0		3 		2 		0.01 		60  			1
+#------------------------------------------------------------------ From files --------------------------------------------------------------------------
+#data/SO3_50000.txt  											-		-		-		0		9 		3 		0.2 		Y		Y			Y			60  			1
+#data/SO3_10000.txt  											-		-		-		0		9 		3 		0.05 		Y		Y			Y			60  			1
+#data/cube3D_eps_0.1.txt 										-		-		-		0		3 		2 		0.05 		Y		Y			Y			3000			1
+#data/cube4D_eps_0.1.txt 										-		-		-		0		4 		3 		0.05 		Y		Y			Y			3000			1
+#data/cube5D_eps_0.1.txt 										-		-		-		0		5 		4 		0.05 		Y		Y			Y			3000			1
+#data/Cy8.txt	 												-		-		-		0		24 		2 		0.1 		Y		Y			Y			60				1
+#data/Kl.txt 													-		-		-		0		5 		2 		0.05 		Y		Y			Y			60  			1
+#data/S3.txt 													-		-		-		0		4 		3 		0.05 		Y		Y			Y			60  			1
 
-#----------------------------------------------------------- Generated point sets ------------------------------------------------------------------------
-#generate_sphere_d												3		-		-		4		3		2		0.05		3000			1
-#generate_sphere_d												3		-		-		30000	2		1		0.005		3000			1
-#generate_sphere_d												3		-		-		30000	3		2		0.005		3000			1
-#generate_sphere_d												3		-		-		30000	4		3		0.05		3000			1
-#generate_plane													-		-		-		30000	3		2		0.005		3000			1
-generate_moment_curve											0		1		-		30000	6		1		0.005		60  			1
-generate_klein_bottle_4D										4		3		-		1000	4		2		0.1			60  			1
-generate_klein_bottle_variant_5D								4		3		-		30000	5		2		0.05		60  			1
+#---------------------------------------------------------------------- 3D meshes -----------------------------------------------------------------------
+#data/buddha_100kv.txt 											-		-		-		0		3 		2 		0.005 		Y		Y			Y			60  			1
+#data/fandisk.txt 												-		-		-		0		3 		2 		0.01 		Y		Y			Y			60  			1
+#data/fertility.txt  											-		-		-		0		3 		2 		0.4 		Y		Y			Y			60  			1
+#data/bunny.txt  												-		-		-		0		3 		2 		0.5 		Y		Y			Y			60  			1
+#data/blob.txt 													-		-		-		0		3 		2 		0.01 		Y		Y			Y			60  			1
+#data/3holes.txt 												-		-		-		0		3 		2 		0.01 		Y		Y			Y			60  			1
+#data/785_hand_2500v.txt										-		-		-		0		3 		2 		0.01 		Y		Y			Y			60  			1
+#data/785_hand_50kv.txt											-		-		-		0		3 		2 		0.01 		Y		Y			Y			60  			1
+#data/bumpy_sphere.txt											-		-		-		0		3 		2 		0.01 		Y		Y			Y			60  			1
 
-#----------------------------------------------------------- Performance testing -------------------------------------------------------------------------
-# TC: 5.55 / 1st fix step : 0.2
-#data/fertility.txt  											-		-		-		0		3 		2 		0.1 		100				1
+#----------------------------------------------------------- Generated point sets -----------------------------------------------------------------------
+#generate_sphere_d												3		-		-		4		3		2		0.05		Y		Y			Y			3000			1
+#generate_sphere_d												3		-		-		30000	2		1		0.005		Y		Y			Y			3000			1
+#generate_sphere_d												3		-		-		30000	3		2		0.005		Y		Y			Y			3000			1
+#generate_sphere_d												3		-		-		30000	4		3		0.05		Y		Y			Y			3000			1
+#generate_plane													-		-		-		30000	3		2		0.005		Y		Y			Y			3000			1
+#generate_moment_curve											0		1		-		30000	6		1		0.005		Y		Y			Y			60  			1
+#generate_klein_bottle_4D										4		3		-		1000	4		2		0.1			Y		Y			Y			60  			1
+#generate_klein_bottle_variant_5D								4		3		-		30000	5		2		0.05		Y		Y			Y			60  			1
+
+#----------------------------------------------------------- Performance testing ------------------------------------------------------------------------
+# TC: 5.55 / 1st fix step : 0.2                                                                                                                 
+#data/fertility.txt  											-		-		-		0		3 		2 		0.1 		Y		Y			Y			100				1
