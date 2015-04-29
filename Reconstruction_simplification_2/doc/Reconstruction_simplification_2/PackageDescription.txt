@@ -10,7 +10,7 @@
 \cgalPkgPicture{overview.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Fernando de Goes, Pierre Alliez, Ivo Vigan, Cl&eacute;ment Jamin}
-\cgalPkgDesc{This package provides an algorithm to simplify and reconstruct a shape form a noisy point set in the plane. It iteratively builds a simplified output simplex which approximates the input points in a fine-to-coarse manner.}
+\cgalPkgDesc{This package provides an algorithm to simplify and reconstruct a shape from a point set in the plane, possibly hampered by noise and outliers. It generates as output a simplicial complex, made up of vertices and edges, which approximates the input point set in a fine-to-coarse manner.}
 \cgalPkgManuals{Chapter_2D_Reconstruction_Simplification, PkgReconstructionSimplification2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
