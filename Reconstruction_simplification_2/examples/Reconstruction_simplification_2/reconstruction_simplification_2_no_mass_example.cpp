@@ -1,8 +1,8 @@
 // reconstruction_simplification_2_example.cpp
 
-
 //----------------------------------------------------------
-// Simple example for Reconstruction_simplification_2
+// Example for Reconstruction_simplification_2, with no mass
+// attributes for the input points
 //----------------------------------------------------------
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -41,31 +41,26 @@ void load_xy_file(const std::string& fileName, std::list<Point>& points)
 
 int main ()
 {
-
     std::list<Point> points;
-
 	load_xy_file("data/stair-noise00.xy", points);
 
 	Rs_2 rs2(points.begin(), points.end());
 
-	rs2.run(100); //100 steps
+	rs2.run(100); // 100 steps
 
- 	std::vector<Point> isolated_points;
+ 	std::vector<Point> isolated_vertices;
 	std::vector<Segment> edges;
+	rs2.extract_list_output(std::back_inserter(isolated_vertices), std::back_inserter(edges));
 
-
-	rs2.extract_list_output(std::back_inserter(isolated_points), std::back_inserter(edges));
-
-    std::cerr << "Isolated Vertices" << std::endl;
-    for (std::vector<Point>::iterator it = isolated_points.begin();
-			it != isolated_points.end(); it++) {
-		std::cout  <<  *it << std::endl;
+    std::cerr << "Isolated vertices" << std::endl;
+    for (std::vector<Point>::iterator vit = isolated_vertices.begin();
+			vit != isolated_vertices.end(); vit++) {
+		std::cout  <<  *vit << std::endl;
 	}
 
 	std::cerr << "Edges" << std::endl;
-	for (std::vector<Segment>::iterator it = edges.begin();
-			it != edges.end(); it++) {
-  		std::cout << *it << std::endl;
+	for (std::vector<Segment>::iterator eit = edges.begin();
+			eit != edges.end(); eit++) {
+  		std::cout << *eit << std::endl;
      }
-
 }

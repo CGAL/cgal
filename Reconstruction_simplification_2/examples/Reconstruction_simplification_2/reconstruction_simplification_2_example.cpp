@@ -1,6 +1,5 @@
 // reconstruction_simplification_2_example.cpp
 
-
 //----------------------------------------------------------
 // Simple example for Reconstruction_simplification_2
 //----------------------------------------------------------
@@ -48,11 +47,8 @@ void load_xy_file(const std::string& fileName, PointMassList& points)
    ifs.close();
 }
 
-
-
 int main ()
 {
-
 	PointMassList points;
 
 	load_xy_file("data/stair-noise00.xy", points);
@@ -62,24 +58,23 @@ int main ()
 
 	Rs_2 rs2(points.begin(), points.end(), point_pmap, mass_pmap);
 
-	rs2.run(100); //100 steps
+	rs2.run(100); // 100 steps
 
- 	std::vector<Point> isolated_points;
+ 	std::vector<Point> isolated_vertices;
 	std::vector<Segment> edges;
 
+	rs2.extract_list_output(std::back_inserter(isolated_vertices), std::back_inserter(edges));
 
-	rs2.extract_list_output(std::back_inserter(isolated_points), std::back_inserter(edges));
-
-    std::cerr << "Isolated Vertices" << std::endl;
-    for (std::vector<Point>::iterator it = isolated_points.begin();
-			it != isolated_points.end(); it++) {
-		std::cout  <<  *it << std::endl;
+    std::cerr << "Isolated vertices" << std::endl;
+    for (std::vector<Point>::iterator vit = isolated_vertices.begin();
+			vit != isolated_vertices.end(); vit++) {
+		std::cout  <<  *vit << std::endl;
 	}
 
 	std::cerr << "Edges" << std::endl;
-	for (std::vector<Segment>::iterator it = edges.begin();
-			it != edges.end(); it++) {
-  		std::cout << *it << std::endl;
+	for (std::vector<Segment>::iterator eit = edges.begin();
+			eit != edges.end(); eit++) {
+  		std::cout << *eit << std::endl;
      }
 
 }
