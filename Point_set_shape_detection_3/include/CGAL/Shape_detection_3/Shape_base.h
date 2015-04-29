@@ -391,7 +391,16 @@ namespace CGAL {
     normal(std::size_t i) const {
       return get(this->m_normal_pmap, *(this->m_first + i));
     }
-    
+
+    /*!
+      Retrieves the traits class.
+     */
+    const Traits&
+    traits() const
+    {
+      return m_traits;
+    }
+
     /// \cond SKIP_IN_MANUAL
     struct Compare_by_max_bound {
         bool operator() (const Shape *a, const Shape *b) {
