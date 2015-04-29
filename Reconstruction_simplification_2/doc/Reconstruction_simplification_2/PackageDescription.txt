@@ -8,7 +8,7 @@
 \addtogroup PkgReconstructionSimplification2
 \cgalPkgDescriptionBegin{2D Reconstruction Simplification, PkgReconstructionSimplification2Summary}
 \cgalPkgPicture{overview.png}
-\cgalPkgSummaryBegin
+\cgalPkgSummaryBegin
 \cgalPkgAuthor{Fernando de Goes, Pierre Alliez, Ivo Vigan, Cl&eacute;ment Jamin}
 \cgalPkgDesc{This package provides an algorithm to simplify and reconstruct a shape form a noisy point set in the plane. It iteratively builds a simplified output simplex which approximates the input points in a fine-to-coarse manner.}
 \cgalPkgManuals{Chapter_2D_Reconstruction_Simplification, PkgReconstructionSimplification2}
@@ -16,7 +16,7 @@
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.x}
 \cgalPkgDependsOn{\ref PkgTriangulation2}
-\cgalPkgBib{cgal:rec-simp2-14x}
+\cgalPkgBib{cgal:gavj-rs}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
