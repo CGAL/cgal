@@ -2820,36 +2820,36 @@ next_face:
       complex.simplex_range().begin();
     typename Simplex_range::const_iterator it_s_end =
       complex.simplex_range().end();
-    // For each triangulation
+    // For each simplex
     for ( ; it_s != it_s_end ; ++it_s)
     {
       Simplex c = *it_s;
       
-        int color_simplex = -1;// -1=no color, 0=yellow, 1=red, 2=green, 3=blue
-        if (p_simpl_to_color_in_red && 
-            std::find(
-              p_simpl_to_color_in_red->begin(),
-              p_simpl_to_color_in_red->end(),
-              c) != p_simpl_to_color_in_red->end())
-        {
-          color_simplex = 1;
-        }
-        else if (p_simpl_to_color_in_green && 
-            std::find(
-              p_simpl_to_color_in_green->begin(),
-              p_simpl_to_color_in_green->end(),
-              c) != p_simpl_to_color_in_green->end())
-        {
-          color_simplex = 2;
-        }
-        else if (p_simpl_to_color_in_blue && 
-            std::find(
-              p_simpl_to_color_in_blue->begin(),
-              p_simpl_to_color_in_blue->end(),
-              c) != p_simpl_to_color_in_blue->end())
-        {
-          color_simplex = 3;
-        }
+      int color_simplex = -1;// -1=no color, 0=yellow, 1=red, 2=green, 3=blue
+      if (p_simpl_to_color_in_red && 
+          std::find(
+            p_simpl_to_color_in_red->begin(),
+            p_simpl_to_color_in_red->end(),
+            c) != p_simpl_to_color_in_red->end())
+      {
+        color_simplex = 1;
+      }
+      else if (p_simpl_to_color_in_green && 
+          std::find(
+            p_simpl_to_color_in_green->begin(),
+            p_simpl_to_color_in_green->end(),
+            c) != p_simpl_to_color_in_green->end())
+      {
+        color_simplex = 2;
+      }
+      else if (p_simpl_to_color_in_blue && 
+          std::find(
+            p_simpl_to_color_in_blue->begin(),
+            p_simpl_to_color_in_blue->end(),
+            c) != p_simpl_to_color_in_blue->end())
+      {
+        color_simplex = 3;
+      }
 
       // Gather the triangles here
       typedef std::vector<Simplex> Triangles;
