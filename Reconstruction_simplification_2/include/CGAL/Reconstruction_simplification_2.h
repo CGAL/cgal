@@ -211,9 +211,9 @@ protected:
 
          \tparam InputIterator is the iterator type of the algorithm input.
 
-         \param start_itr An InputIterator pointing the the first point
+         \param start_point_itr An InputIterator pointing the the first point
                               in a collection.
-         \param beyond_itr An InputIterator pointing beyond the last point
+         \param beyond_point_itr An InputIterator pointing beyond the last point
                               in a collection.
     */
     template <class InputIterator>
