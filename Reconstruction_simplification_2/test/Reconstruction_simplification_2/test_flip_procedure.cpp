@@ -36,7 +36,7 @@ int main ()
 
 		rs2.print_stats_debug();
 
-		assert(rs2.get_vertex_count() == i);
+		assert(rs2.number_of_vertices() == i);
 
 		i = i + 20;
 

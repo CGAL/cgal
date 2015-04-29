@@ -63,8 +63,8 @@ via the Point_property_map and Mass_property_map `PropertyMaps` respectively.
 
  */
 template<class Kernel,
-        class Point_property_map = First_of_pair_property_map  <std::pair<typename Kernel::Point_2 , typename Kernel::FT > >,
-        class Mass_property_map  = Second_of_pair_property_map <std::pair<typename Kernel::Point_2 , typename Kernel::FT > > >
+        class PointMap = First_of_pair_property_map  <std::pair<typename Kernel::Point_2 , typename Kernel::FT > >,
+        class MassMap  = Second_of_pair_property_map <std::pair<typename Kernel::Point_2 , typename Kernel::FT > > >
 class Reconstruction_simplification_2 {
 public:
 
@@ -154,8 +154,8 @@ protected:
     double m_bbox_y;
     double m_bbox_size;
 
-    Point_property_map point_pmap;
-	Mass_property_map  mass_pmap;
+    PointMap point_pmap;
+	MassMap  mass_pmap;
 
 	  /// \endcond
 
@@ -187,8 +187,8 @@ protected:
 	template <class InputIterator>
 	Reconstruction_simplification_2(InputIterator start_itr,
 									InputIterator beyond_itr,
-									Point_property_map in_point_pmap,
-									Mass_property_map  in_mass_pmap) {
+									PointMap in_point_pmap,
+									MassMap  in_mass_pmap) {
 
 
 		point_pmap = in_point_pmap;
@@ -226,8 +226,8 @@ protected:
             point_mass_list.push_back(std::make_pair(*it, 1));
         }
 
-        Point_property_map in_point_pmap;
-        Mass_property_map  in_mass_pmap;
+        PointMap in_point_pmap;
+        MassMap  in_mass_pmap;
 
         point_pmap = in_point_pmap;
         mass_pmap  = in_mass_pmap;
@@ -277,8 +277,8 @@ protected:
 	template <class InputIterator>
 	void initialize(InputIterator start_itr,
 									InputIterator beyond_itr,
-									Point_property_map in_point_pmap,
-									Mass_property_map  in_mass_pmap) {
+									PointMap in_point_pmap,
+									MassMap  in_mass_pmap) {
 
 		point_pmap = in_point_pmap;
 		mass_pmap  = in_mass_pmap;
@@ -1544,7 +1544,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 	 /*!
 	    Returns the number of vertices present in the reconstructed triangulation.
 	  */
-	int get_vertex_count() {
+	int number_of_vertices() {
 		return m_dt.number_of_vertices()-4 ;
 
 	}
@@ -1552,7 +1552,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 	 /*!
 	    Returns the number of (solid) edges present in the reconstructed triangulation.
 	  */
-	int get_edge_count() {
+	int number_of_edges() {
 		int nb_solid = 0;
 		for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
 			    		ei != m_dt.finite_edges_end(); ++ei)
