@@ -222,8 +222,8 @@ struct Import_polyline
     if( insert_res.second )
     {
       source = decorator.vertices_push_back( *(P_first_halfedge->opposite()->vertex()) );
-      put(ppmap, source, get(ppmap, P_first_halfedge->opposite()->vertex() ) );
       decorator.set_vertex_halfedge(source, O_first_halfedge->opposite());
+      put(ppmap, source, get(ppmap, P_first_halfedge->opposite()->vertex() ) );
       insert_res.first->second = source;
     }
     else
@@ -238,8 +238,8 @@ struct Import_polyline
       if (insert_res.second)
       {
         target=decorator.vertices_push_back( *(P_first_halfedge->vertex()) );
-        put(ppmap, target, get(ppmap, P_first_halfedge->vertex() ) );
         decorator.set_vertex_halfedge(target, O_first_halfedge);
+        put(ppmap, target, get(ppmap, P_first_halfedge->vertex() ) );
         insert_res.first->second = target;
       }
       else
@@ -247,8 +247,8 @@ struct Import_polyline
     }
     else{
       target=decorator.vertices_push_back( *(P_first_halfedge->vertex()) );
-      put(ppmap, target, get(ppmap, P_first_halfedge->vertex() ) );
       decorator.set_vertex_halfedge(target, O_first_halfedge);
+      put(ppmap, target, get(ppmap, P_first_halfedge->vertex() ) );
     }
 
 
@@ -277,8 +277,8 @@ struct Import_polyline
       if (i!=nb_segments-1)
       {
         target=decorator.vertices_push_back( *(P_hedge->vertex()) );
-        put(ppmap, target, get(ppmap, P_hedge->vertex() ) );
         decorator.set_vertex_halfedge(target, O_hedge);
+        put(ppmap, target, get(ppmap, P_hedge->vertex() ) );
       }
       else{
         std::pair< typename std::map< Vertex_handle, Vertex_handle >::iterator, bool > insert_res=
@@ -286,19 +286,13 @@ struct Import_polyline
         if (insert_res.second)
         {
           target=decorator.vertices_push_back( *(P_hedge->vertex()) );
-          put(ppmap, target, get(ppmap, P_hedge->vertex() ) );
           decorator.set_vertex_halfedge(target, O_hedge);
+          put(ppmap, target, get(ppmap, P_hedge->vertex() ) );
           insert_res.first->second = target;
         }
         else
           target = insert_res.first->second;
       }
-
-      //set next/prev relationships
-      O_previous->HBase::set_next( O_hedge );
-      O_hedge->opposite()->HBase::set_next( O_previous->opposite() );
-      decorator.set_prev(O_hedge, O_previous);
-      decorator.set_prev(O_previous->opposite(), O_hedge->opposite());
 
       decorator.set_vertex(O_hedge, target);
       decorator.set_vertex(O_hedge->opposite(), source);
@@ -310,20 +304,6 @@ struct Import_polyline
 
       P_to_O_hedge.insert( std::make_pair(P_previous, O_previous) );
       Q_to_O_hedge.insert( std::make_pair(Q_previous, O_previous) );
-    }
-
-    //update next/prev relationships at the polyline endpoints
-    if ( P_first_halfedge == next_marked_halfedge_around_target_vertex(P_previous, border_halfedges)
-         || P_first_halfedge->opposite()->vertex() == P_previous->vertex() )
-    {
-      decorator.set_prev(O_first_halfedge, O_previous);
-      O_previous->HBase::set_next(O_first_halfedge);
-      decorator.set_prev(O_previous->opposite(), O_first_halfedge->opposite());
-      O_first_halfedge->opposite()->HBase::set_next(O_previous->opposite());
-    }
-    else
-    {
-        CGAL_assertion(!"OUCH see OUCHTAG");
     }
   }
 };
@@ -417,6 +397,7 @@ class Surface_extension_by_patch_appending
 
   const std::vector<Face_handle>& facets;
   const std::vector<Halfedge_handle>& interior_halfedges;
+  const std::vector<Halfedge_handle>& patch_border_halfedges;
   const std::set<Vertex_handle>& interior_vertices;
   PolyhedronPointPMap ppmap;
 
@@ -432,12 +413,14 @@ public:
   Surface_extension_by_patch_appending(
     const std::vector<Face_handle>& facets_,
     const std::vector<Halfedge_handle>& interior_halfedges_,
+    const std::vector<Halfedge_handle>& patch_border_halfedges_,
     const std::set<Vertex_handle>& interior_vertices_,
     typename Base::Hedge_map& Qhedge_to_Phedge_,
     PolyhedronPointPMap ppmap_
   ) : Base( Qhedge_to_Phedge_ )
     ,facets(facets_)
     ,interior_halfedges(interior_halfedges_)
+    ,patch_border_halfedges(patch_border_halfedges_)
     ,interior_vertices(interior_vertices_)
     ,ppmap(ppmap_)
   {}
@@ -445,43 +428,34 @@ public:
   void operator()(HDS& hds)
   {
     HalfedgeDS_decorator<HDS> decorator(hds);
-    std::vector<Halfedge_handle> hedge_to_update_vertices;
-    typedef std::pair<Halfedge_handle, Halfedge_handle> Hedge_pair;
-    BOOST_FOREACH(Hedge_pair p, Qhedge_to_Phedge)
-    {
-      hedge_to_update_vertices.push_back( p.second );
-      hedge_to_update_vertices.push_back( p.second->opposite() ); // needed for non-closed polyline
-    }
+    std::vector<Halfedge_handle> interior_vertex_halfedges;
 
-    //insert halfedges
+    //insert interior halfedges and create interior vertices
     BOOST_FOREACH(Halfedge_handle h, interior_halfedges){
       Halfedge_handle new_h = hds.edges_push_back( *h );
       Qhedge_to_Phedge[ h ] = new_h;
 
       //create a copy of interior vertices only once
-      if (  h->vertex()->halfedge()==h &&
-            interior_vertices.find(h->vertex()) != interior_vertices.end() )
+      if (  h->vertex()->halfedge()==h && interior_vertices.count(h->vertex()) )
       {
-        Vertex_handle v =
-          decorator.vertices_push_back( *(h->vertex()) );
-        put(ppmap, v, get(ppmap, h->vertex() ) );
+        Vertex_handle v = decorator.vertices_push_back( *(h->vertex()) );
         decorator.set_vertex_halfedge(v, new_h);
         decorator.set_vertex(new_h, v);
-        hedge_to_update_vertices.push_back( new_h );
+        put(ppmap, v, get(ppmap, h->vertex() ) );
+        interior_vertex_halfedges.push_back( new_h );
       }
       if (  h->opposite()->vertex()->halfedge()==h->opposite() &&
-            interior_vertices.find(h->opposite()->vertex()) != interior_vertices.end() )
+            interior_vertices.count(h->opposite()->vertex()) )
       {
-        Vertex_handle v =
-          decorator.vertices_push_back( *(h->opposite()->vertex()) );
-        put(ppmap, v, get(ppmap, h->opposite()->vertex() ) );
+        Vertex_handle v = decorator.vertices_push_back( *(h->opposite()->vertex()) );
         decorator.set_vertex_halfedge(v, new_h->opposite());
         decorator.set_vertex(new_h->opposite(), v);
-        hedge_to_update_vertices.push_back( new_h->opposite() );
+        put(ppmap, v, get(ppmap, h->opposite()->vertex() ) );
+        interior_vertex_halfedges.push_back( new_h->opposite() );
       }
     }
 
-    //create facets, connect halfedges, and create vertices
+    //create facets and connect halfedges
     BOOST_FOREACH(Face_handle f, facets)
     {
       Halfedge_handle hedges[]={
@@ -499,20 +473,46 @@ public:
       }
     }
 
-    //update incident vertices
-    BOOST_FOREACH(Halfedge_handle h, hedge_to_update_vertices)
+    // For all interior vertices, update the vertex pointer
+    // of all but the vertex halfedge
+    BOOST_FOREACH(Halfedge_handle h, interior_vertex_halfedges)
     {
       Vertex_handle v=h->vertex();
       Halfedge_handle next_around_vertex=h;
       do{
-#ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
-        #warning OUCHTAG Handle this properly: this appends only when having a polyhedron featuring only polylines \
-                 during the import of patches from P, at end point of polylines that are not cycles
-#endif //CGAL_COREFINEMENT_POLYHEDRA_DEBUG
         CGAL_assertion (next_around_vertex->next() != Halfedge_handle());
         next_around_vertex=next_around_vertex->next()->opposite();
         decorator.set_vertex(next_around_vertex, v);
       }while(h != next_around_vertex);
+    }
+
+    // For all patch boundary vertices, update the vertex pointer
+    // of all but the vertex halfedge
+    BOOST_FOREACH(Halfedge_handle qhedge, patch_border_halfedges)
+    {
+      //check for a halfedge pointing inside an already imported patch
+      Halfedge_handle h = Qhedge_to_Phedge[qhedge];
+      if (h->next() == Halfedge_handle()) h=h->opposite();
+      CGAL_assertion( h->next()!=Halfedge_handle() );
+
+      // update the pointers on the target
+      Halfedge_handle next_around_target=h;
+      Vertex_handle v=h->vertex();
+      do{
+        next_around_target = next_around_target->next()->opposite();
+        decorator.set_vertex(next_around_target, v);
+      }while( next_around_target->next()!=Halfedge_handle() &&
+              next_around_target!=h);
+
+      // update the pointers on the source
+      Halfedge_handle next_around_source=h->prev();
+      CGAL_assertion(next_around_source!=Halfedge_handle());
+      v = h->opposite()->vertex();
+      do{
+        decorator.set_vertex(next_around_source, v);
+        next_around_source = next_around_source->opposite()->prev();
+      }while( next_around_source!=Halfedge_handle() &&
+              next_around_source!=h->opposite());
     }
   }
 };
@@ -1157,7 +1157,7 @@ private:
       Patch_description& patch = patches[i];
 
       internal_IOP::Surface_extension_by_patch_appending<Polyhedron,PolyhedronPointPMap, reverse_patch_orientation>
-        modifier(patch.facets, patch.interior_halfedges, patch.interior_vertices, Qhedge_to_Phedge, ppmap);
+        modifier(patch.facets, patch.interior_halfedges, patch.patch_border_halfedges, patch.interior_vertices, Qhedge_to_Phedge, ppmap);
       P_ptr->delegate(modifier);
     }
 
@@ -1875,8 +1875,9 @@ public:
     std::cout << "\n";
     #endif
 
-    //For now I compute the union and the intersection is new polyhedra
-    //and P and Q are updated to respectively contain P-Q and Q-P
+    // TMP
+    // For now I compute the union and the intersection in new polyhedra,
+    // P and Q are updated to respectively contain P-Q and Q-P
 
     //backup an halfedge per polyline
     std::vector <Halfedge_handle> P_polylines, Q_polylines;
