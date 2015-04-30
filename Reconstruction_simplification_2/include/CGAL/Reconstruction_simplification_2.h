@@ -49,22 +49,22 @@ namespace CGAL {
 
 \brief `Reconstruction_simplification_2` is the main class
 for executing the reconstruction and simplification tasks.
-Its constructor takes an InputIterator, used to traverse a collection
+Its constructor takes an `InputRange`, used to traverse a collection
 of point-mass pairs, where the points and their masses are accessed
-via the Point_property_map and Mass_property_map `PropertyMaps` respectively.
+via the property maps  `PointMap` and `MassMap` respectively.
 
 
 \tparam Kernel a geometric kernel, used throughout the reconstruction and
 					simplification task.
 
-\tparam PointPMap a model of `ReadablePropertyMap` with a value_type = `Point_2`
+\tparam PointMap a model of `ReadablePropertyMap` with value type `Point_2`
 
-\tparam MassPMap   a model of `ReadablePropertyMap` with a value_type = `Kernel::FT`
+\tparam MassMap a model of `ReadablePropertyMap` with value type `Kernel::FT`
 
  */
 template<class Kernel,
-        class Point_property_map = First_of_pair_property_map  <std::pair<typename Kernel::Point_2 , typename Kernel::FT > >,
-        class Mass_property_map  = Second_of_pair_property_map <std::pair<typename Kernel::Point_2 , typename Kernel::FT > > >
+        class PointMap = First_of_pair_property_map  <std::pair<typename Kernel::Point_2 , typename Kernel::FT > >,
+        class MassMap  = Second_of_pair_property_map <std::pair<typename Kernel::Point_2 , typename Kernel::FT > > >
 class Reconstruction_simplification_2 {
 public:
 
@@ -78,20 +78,23 @@ public:
     */
     typedef typename Kernel::Point_2 Point;
 
+	 /// \cond SKIP_IN_MANUAL
 	/*!
 		Vector type.
 	*/
 	typedef typename Kernel::Vector_2 Vector;
 
+
 	typedef typename std::pair<Point, FT> PointMassPair;
 	typedef typename std::list<PointMassPair> PointMassList;
+
 
 	/*!
 	The Output simplex.
 	*/
 	typedef Reconstruction_triangulation_2<Kernel> Triangulation;
 
-	 /// \cond SKIP_IN_MANUAL
+
 	typedef typename Triangulation::Vertex Vertex;
 	typedef typename Triangulation::Vertex_handle Vertex_handle;
 	typedef typename Triangulation::Vertex_iterator Vertex_iterator;
@@ -154,8 +157,8 @@ protected:
     double m_bbox_y;
     double m_bbox_size;
 
-    Point_property_map point_pmap;
-	Mass_property_map  mass_pmap;
+    PointMap point_pmap;
+	MassMap  mass_pmap;
 
 	  /// \endcond
 
@@ -172,31 +175,28 @@ protected:
 		first output simplex is then made coarser during subsequent iterations.
 
 	     \details Instantiates a new Reconstruction_simplification_2 object
-	     	 	  for a given collection of point-mass pairs.
+	     	 	  for a givenrange of point-mass pairs.
 
-	     \tparam InputIterator is the iterator type of the algorithm input.
+	     \tparam InputRange is a model of `Range` with forward iterators, 
+               providing input points and point mass through the following two property maps.
 
-	     \param start_itr An InputIterator pointing the the first point-mass
-	     	 	 	 	 	 pair in a collection.
-   	   	 \param beyond_itr An InputIterator pointing beyond the last point-mass
-	     	 	 	 	 	 pair in a collection.
-	     \param in_point_pmap A `ReadablePropertyMap` used to access the input points
+	     \param input_range range of input data.
+	     \param point_map A `ReadablePropertyMap` used to access the input points
 
-	     \param in_mass_pmap A `ReadablePropertyMap` used to access the input points' mass.
+	     \param mass_map A `ReadablePropertyMap` used to access the input points' mass.
 	*/
-	template <class InputIterator>
-	Reconstruction_simplification_2(InputIterator start_itr,
-									InputIterator beyond_itr,
-									Point_property_map in_point_pmap,
-									Mass_property_map  in_mass_pmap) {
+	template <class InputRange>
+	Reconstruction_simplification_2(const InputRange& input_range,
+                                        PointMap point_map,
+                                        MassMap  mass_map) {
 
 
-		point_pmap = in_point_pmap;
-		mass_pmap  = in_mass_pmap;
+		point_pmap = point_map;
+		mass_pmap  = mass_map;
 
 		initialize_parameters();
 
-		initialize(start_itr, beyond_itr);
+		initialize(input_range.begin(), input_range.end());
 	}
 
 
@@ -207,30 +207,27 @@ protected:
         first output simplex is then made coarser during subsequent iterations.
 
          \details Instantiates a new Reconstruction_simplification_2 object
-                  for a given collection of points.
+                  for a given range of points.
 
-         \tparam InputIterator is the iterator type of the algorithm input.
+	     \tparam InputRange is a model of `Range` with forward iterators, 
+               providing input points and point mass through...
 
-         \param start_itr An InputIterator pointing the the first point
-                              in a collection.
-         \param beyond_itr An InputIterator pointing beyond the last point
-                              in a collection.
+	     \param input_range range of input data.
     */
-    template <class InputIterator>
-    Reconstruction_simplification_2(InputIterator start_point_itr,
-                                    InputIterator beyond_point_itr) {
+    template <class InputRange>
+    Reconstruction_simplification_2(const InputRange& input_range) {
 
 
         PointMassList point_mass_list;
-        for (InputIterator it = start_point_itr; it != beyond_point_itr; it++) {
-            point_mass_list.push_back(std::make_pair(*it, 1));
+        BOOST_FOREACH(Point_2 p , input_range) {
+            point_mass_list.push_back(std::make_pair(p, 1));
         }
 
-        Point_property_map in_point_pmap;
-        Mass_property_map  in_mass_pmap;
+        PointMap point_map;
+        MassMap  mass_map;
 
-        point_pmap = in_point_pmap;
-        mass_pmap  = in_mass_pmap;
+        point_pmap = point_map;
+        mass_pmap  = mass_map;
 
         initialize_parameters();
 
@@ -277,11 +274,11 @@ protected:
 	template <class InputIterator>
 	void initialize(InputIterator start_itr,
 									InputIterator beyond_itr,
-									Point_property_map in_point_pmap,
-									Mass_property_map  in_mass_pmap) {
+									PointMap point_map,
+									MassMap  mass_map) {
 
-		point_pmap = in_point_pmap;
-		mass_pmap  = in_mass_pmap;
+		point_pmap = point_map;
+		mass_pmap  = mass_map;
 
 		initialize(start_itr, beyond_itr);
 
@@ -312,23 +309,19 @@ protected:
 
 
 	/*!
-	 Returns the solid edges and vertics present after the reconstruction
+	 Returns the solid edges and vertices present after the reconstruction
 	 process finished.
 
-	\details It takes two `Output-Iterators`, one for storing the
+	\details It takes two output iterators, one for storing the
 	isolated points and one for storing the edges of the reconstructed shape.
 
 
-	\tparam Kernel is the geometric kernel, used for the reconstruction and
-						simplification task.
+	\tparam PointOutputIterator The output iterator type for storing the isolated points
 
-	\tparam OutputVertexIterator The `Output-Iterator` type for storing the points
-
-	\tparam OutputEdgeIterator The `Output-Iterator` type for storing the
-											edges (as Segments).
+	\tparam SegmentOutputIterator The output iterator type for storing the edges as segments.
 	 */
-	template<class OutputVertexIterator, class OutputEdgeIterator>
-	void extract_list_output(OutputVertexIterator v_it, OutputEdgeIterator e_it) {
+	template<class PointOutputIterator, class SegmentOutputIterator>
+	void extract_list_output(PointOutputIterator v_it, SegmentOutputIterator e_it) {
 
 		for (Vertex_iterator vi = m_dt.vertices_begin();
 						vi != m_dt.vertices_end(); ++vi)
@@ -377,7 +370,7 @@ protected:
 	/*!
 
 
-	 Returns the solid edges and vertics present after the reconstruction
+	 Returns the solid edges and vertices present after the reconstruction
 	 process finished.
 
 	Writes the edges and vertices of the output simplex into an `std::ostream`
@@ -521,7 +514,7 @@ protected:
 	/*!
 		Determines how much console output the algorithm generates.
 		By default verbose is set to 0. If set to a value larger than 0
-		details about the reconstruction process are writen to std::err.
+		details about the reconstruction process are writen to `std::err`.
 
 		\param verbose The verbosity level.
 	*/
@@ -539,7 +532,7 @@ protected:
 
 	/*!
 		The use_flip parameter determines whether the flipping procedure
-		is used for the half-edge collapse. By default use_flip is set to true.
+		is used for the half-edge collapse. By default use_flip is set to `true`.
 	 */
 	void set_use_flip(const bool use_flip) {
 		m_use_flip = use_flip;
@@ -1544,7 +1537,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 	 /*!
 	    Returns the number of vertices present in the reconstructed triangulation.
 	  */
-	int get_vertex_count() {
+	int number_of_vertices() {
 		return m_dt.number_of_vertices()-4 ;
 
 	}
@@ -1552,7 +1545,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 	 /*!
 	    Returns the number of (solid) edges present in the reconstructed triangulation.
 	  */
-	int get_edge_count() {
+	int number_of_edges() {
 		int nb_solid = 0;
 		for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
 			    		ei != m_dt.finite_edges_end(); ++ei)
@@ -1568,7 +1561,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 	 /*!
 	    Returns the cost of the (solid) edges present in the reconstructed triangulation.
 	  */
-	FT get_total_edge_cost() {
+	FT total_edge_cost() {
 		FT total_cost = 0;
 		for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
 				ei != m_dt.finite_edges_end(); ++ei) {
@@ -1608,7 +1601,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 		}
 
 		 /*!
-			Computes a shape, reconstructing the input, by performing steps many
+			Computes a shape, reconstructing the input, by performing `steps` many
 			edge contractions on the output simplex.
 
 			\param steps The number of edge contractions performed by the algorithm.
