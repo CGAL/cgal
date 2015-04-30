@@ -131,10 +131,10 @@ points and the edges of the reconstructed shape are extracted and printed to the
 \cgalExample{Reconstruction_simplification_2/reconstruction_simplification_2_example.cpp}
 
 
-\subsubsection Reconstruction_simplification_2Output Output-Example
+\subsubsection Reconstruction_simplification_2Output Output Example
 
-To access the reconstructed vertices and edges, models which implement the ReconstructionSimplificationOutput_2 concept can be used. The package offers three such models: List_output, Index_output, Tds_output.
-
+The result of the reconstuction can be obtained in two ways. Either as sequence of isolated points and segments.
+Or as a sequence of points and pairs of indices for describing the segments.
 
 \cgalExample{Reconstruction_simplification_2/Reconstruction_simplification_2_output_example.cpp}
 
