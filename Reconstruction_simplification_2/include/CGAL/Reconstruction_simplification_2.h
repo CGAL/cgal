@@ -53,36 +53,36 @@ Its constructor takes an `InputRange`, used to traverse a collection
 of point-mass pairs, where the points and their masses are accessed
 via the property maps  `PointMap` and `MassMap` respectively.
 
+\todo `Gt` must at least be a model of `DelaunayTriangulationTraits_2`.  @@Pierre: If more functionalty is needed we should introduce a `ReconstructionSimplificationTraits_2`.
 
-\tparam Kernel a geometric kernel, used throughout the reconstruction and
-					simplification task.
+\tparam Gt a model of the concept `Kernel`.
 
-\tparam PointMap a model of `ReadablePropertyMap` with value type `Point_2`
+\tparam PointMap a model of `ReadablePropertyMap` with value type `Gt::Point_2`
 
-\tparam MassMap a model of `ReadablePropertyMap` with value type `Kernel::FT`
+\tparam MassMap a model of `ReadablePropertyMap` with value type `Gt::FT`
 
  */
-template<class Kernel,
-        class PointMap = First_of_pair_property_map  <std::pair<typename Kernel::Point_2 , typename Kernel::FT > >,
-        class MassMap  = Second_of_pair_property_map <std::pair<typename Kernel::Point_2 , typename Kernel::FT > > >
+template<class Gt,
+        class PointMap = First_of_pair_property_map  <std::pair<typename Gt::Point_2 , typename Gt::FT > >,
+        class MassMap  = Second_of_pair_property_map <std::pair<typename Gt::Point_2 , typename Gt::FT > > >
 class Reconstruction_simplification_2 {
 public:
 
     /*!
         Number type.
     */
-    typedef typename Kernel::FT FT;
+    typedef typename Gt::FT FT;
 
     /*!
         Point type.
     */
-    typedef typename Kernel::Point_2 Point;
+    typedef typename Gt::Point_2 Point;
 
 	 /// \cond SKIP_IN_MANUAL
 	/*!
 		Vector type.
 	*/
-	typedef typename Kernel::Vector_2 Vector;
+	typedef typename Gt::Vector_2 Vector;
 
 
 	typedef typename std::pair<Point, FT> PointMassPair;
@@ -92,7 +92,7 @@ public:
 	/*!
 	The Output simplex.
 	*/
-	typedef Reconstruction_triangulation_2<Kernel> Triangulation;
+	typedef Reconstruction_triangulation_2<Gt> Triangulation;
 
 
 	typedef typename Triangulation::Vertex Vertex;
@@ -175,20 +175,30 @@ protected:
 		first output simplex is then made coarser during subsequent iterations.
 
 	     \details Instantiates a new Reconstruction_simplification_2 object
-	     	 	  for a givenrange of point-mass pairs.
+	     	 	  for a given range of point-mass pairs.
 
 	     \tparam InputRange is a model of `Range` with forward iterators, 
                providing input points and point mass through the following two property maps.
 
 	     \param input_range range of input data.
-	     \param point_map A `ReadablePropertyMap` used to access the input points
+	     \param point_map A `ReadablePropertyMap` used to access the input points.
 
 	     \param mass_map A `ReadablePropertyMap` used to access the input points' mass.
+             \param sample_size If != 0, the size of the random sample that replaces a priority queue.
+             \param use_flip If `true` the flipping procedure is used for the halfedge collapse.
+             \param relocation The number of point relocations that are performed between two edge collapses.
+             \param verbose controls how much console output is produced by the algorithm. The values are 0,1, or >1.
+
 	*/
 	template <class InputRange>
 	Reconstruction_simplification_2(const InputRange& input_range,
                                         PointMap point_map,
-                                        MassMap  mass_map) {
+                                        MassMap  mass_map,
+                                        std::size_t sample_size = 0,
+                                        bool use_flip = true,
+                                        std::size_t relocation = 0,
+                                        std::size_t verbose = 0
+                                        ) {
 
 
 		point_pmap = point_map;
@@ -304,7 +314,7 @@ protected:
 		assign_samples(m_samples.begin(), m_samples.end());
 	}
 
-	 /// \endcond
+
 
 
 
@@ -358,29 +368,33 @@ protected:
 	        Vertex_handle source = edge.first->vertex( (index+1)%3 );
 	        Vertex_handle target = edge.first->vertex( (index+2)%3 );
 
-	        typename Kernel::Segment_2  s(source->point(), target->point());
+	        typename Gt::Segment_2  s(source->point(), target->point());
 			*e_it = s;
 			e_it++;
 		}
 
 
 	}
-
+	 /// \endcond
 
 	/*!
+	Writes the points and segments of the output simplex in an indexed format into output iterators.
+        \tparam  PointOutputIterator An output iterator with value type `Point`.
+        \tparam IndexOutputIterator An output iterator with value type `std::size_t`
+        \tparam IndexPairOutputIterator An output iterator with value type `std::pair<std::size_t,std::size_t>`
 
-
-	 Returns the solid edges and vertices present after the reconstruction
-	 process finished.
-
-	Writes the edges and vertices of the output simplex into an `std::ostream`
-	in an indexed format.
-
-	\param os The `std::ostream` where the indexed data will be written to.
+	\param points the output iterator for all points
+        \param isolated_points the output iterator for the indices of isolated points
+        \param segments the output iterator for the pairs of indices of segments
 	*/
-	void extract_index_output(std::ostream& os) {
+  template <typename PointOutputIterator,
+            typename IndexOutputIterator,
+            typename IndexPairOutputIterator>
+  void indexed_output(PointOutputIterator points,
+                      IndexOutputIterator isolated_points,
+                      IndexPairOutputIterator segments) {
 
-		typedef typename Kernel::Segment_2 Segment;
+		typedef typename Gt::Segment_2 Segment;
 		std::vector<Point> isolated_points;
 		std::vector<Segment> edges;
 
@@ -502,23 +516,22 @@ protected:
 
 	/*!
 		Allows a speedup by not using the priority queue but instead using a random subset
-		of mchoice many samples. Based on those the next edge collapse step is determined.
-		By default mchoice is set to 0.
-
-		 \param mchoice The number of samples used for the  multiple choice selection.
+		of size `sample_size`. Based on those the next edge collapse step is determined.
+ \todo @@Pierre:  Tell what is a good value.
+		 \param sample_size The size of the random sample that replaces a priority queue.
 	*/
-	void set_mchoice(const int mchoice) {
+  void set_random_sample_size(std::size_t sample_size) {
 		m_mchoice = mchoice;
 	}
 
 	/*!
 		Determines how much console output the algorithm generates.
-		By default verbose is set to 0. If set to a value larger than 0
-		details about the reconstruction process are writen to `std::err`.
+		If set to a value larger than 0
+		details about the reconstruction process are written to `std::err`.
 
 		\param verbose The verbosity level.
 	*/
-	void set_verbose(const int verbose) {
+  void set_verbose(std::size_t verbose) {
 		m_verbose = verbose;
 	}
 
@@ -532,7 +545,7 @@ protected:
 
 	/*!
 		The use_flip parameter determines whether the flipping procedure
-		is used for the half-edge collapse. By default use_flip is set to `true`.
+		is used for the half-edge collapse. 
 	 */
 	void set_use_flip(const bool use_flip) {
 		m_use_flip = use_flip;
@@ -562,11 +575,10 @@ protected:
 
 
 	/*!
-		The relocation parameter controls the number of relocations
+		Sets the number of point relocations
 		that are performed between two edge collapses.
-		By default relocation is set to 0.
 	*/
-	void set_relocation(const unsigned relocation) {
+  void set_relocation(std::size_t relocation) {
 		m_relocation = relocation;
 	}
 
@@ -578,14 +590,11 @@ protected:
 
 
 	/*!
-		After the decimation is completed, irrelevant edges may exist in the
-		reconstructed simplex. Using a use-case related relevance score,
-		which favors long edges with large mass and low cost, the algorithm
-		discard the edges with low relevance. The default value of relevance is 1.
+          \todo @@Pierre: explain what relevance means 
 
 		\param relevance The relevance level.
 	 */
-	void set_ghost(const double relevance) {
+	void set_relevance(const double relevance) {
 		m_ghost = relevance;
 		m_dt.ghost_factor() = m_ghost;
 	}
@@ -1277,19 +1286,19 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 			}
 		}
 	}
-	 /// \endcond
 
+	 /// \endcond
 
 	/*!
 	Since noise and missing data may prevent the reconstructed shape to
 	have sharp corners well located, the algorithm offers the possibility to automatically
-	relocate vertices after each edge contraction. The new location of the
-	vertices is chosen such that the fitting of the output triangulation to the
+	relocate points after each edge contraction. The new location of the
+	points is chosen such that the fitting of the output segments to the
 	input points is improved. This is achieved by minimizing the normal component
-	of the weighted \f$L_2 \f$ distance. The vertices then get relocated only if the
-	 resulting triangulation is still embeddable.
+	of the weighted \f$L_2 \f$ distance. The points then get relocated only if the
+	underlying triangulation is still embeddable.
 	  */
-	void relocate_all_vertices() {
+	void relocate_all_points() {
 		double timer = clock();
 		std::cerr << yellow << "relocate all" << white << "...";
 
@@ -1329,6 +1338,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 		std::cerr << yellow << "done" << white << " (" << yellow
 				<< time_duration(timer) << white << " s)" << std::endl;
 	}
+
 
 	 /// \cond SKIP_IN_MANUAL
 	Vector compute_gradient(Vertex_handle vertex) {
@@ -1532,7 +1542,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 	}
 
 
-	/// \endcond
+
 
 	 /*!
 	    Returns the number of vertices present in the reconstructed triangulation.
@@ -1573,19 +1583,20 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 		return total_cost;
 	}
 
+	/// \endcond
 	// RECONSTRUCTION //
 
 		 /*!
-		    Computes a shape consisting of nv vertices, reconstructing the input
+		    Computes a shape consisting of `np  points, reconstructing the input
 		    points.
 
-		    \param nv The number of vertices which will be present in the output.
+		    \param np The number of points which will be present in the output.
 		  */
-		void run_until(const unsigned nv) {
+  void run_until(std::size_t np) {
 			double timer = clock();
-			std::cerr << yellow << "reconstruct until " << white << nv << " V";
+			std::cerr << yellow << "reconstruct until " << white << np << " V";
 
-			unsigned N = nv + 4;
+			unsigned N = np + 4;
 			unsigned performed = 0;
 			while (m_dt.number_of_vertices() > N) {
 				bool ok = decimate();

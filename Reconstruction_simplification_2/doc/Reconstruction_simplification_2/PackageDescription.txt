@@ -10,12 +10,12 @@
 \cgalPkgPicture{overview.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Fernando de Goes, Pierre Alliez, Ivo Vigan, Cl&eacute;ment Jamin}
-\cgalPkgDesc{This package provides an algorithm to simplify and reconstruct a shape from a point set in the plane, possibly hampered by noise and outliers. It generates as output a simplicial complex, made up of vertices and edges, which approximates the input point set in a fine-to-coarse manner.}
+\cgalPkgDesc{This package provides an algorithm to simplify and reconstruct a shape from a point set in the plane, possibly hampered by noise and outliers. It generates as output a simplicial complex, made up of points and segments, which approximates the input point set in a fine-to-coarse manner.}
 \cgalPkgManuals{Chapter_2D_Reconstruction_Simplification, PkgReconstructionSimplification2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.x}
-\cgalPkgDependsOn{\ref PkgTriangulation2}
+\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
 \cgalPkgBib{cgal:gavj-rs}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
