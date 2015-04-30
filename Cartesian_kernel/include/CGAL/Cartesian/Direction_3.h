@@ -76,15 +76,15 @@ public:
 
   const FT & dx() const
   {
-      return get(base)[0];
+      return get_pointee_or_identity(base)[0];
   }
   const FT & dy() const
   {
-      return get(base)[1];
+      return get_pointee_or_identity(base)[1];
   }
   const FT & dz() const
   {
-      return get(base)[2];
+      return get_pointee_or_identity(base)[2];
   }
 
   const FT & hdx() const

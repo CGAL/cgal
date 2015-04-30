@@ -111,11 +111,11 @@ public:
 
   const Point_3 & min BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
-      return get(base)[0];
+      return get_pointee_or_identity(base)[0];
   }
   const Point_3 & max BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
-      return get(base)[1];
+      return get_pointee_or_identity(base)[1];
   }
   Point_3 vertex(int i) const;
   Point_3 operator[](int i) const;
