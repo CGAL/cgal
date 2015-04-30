@@ -38,6 +38,7 @@
 #include <boost/multi_index/mem_fun.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/identity.hpp>
+#include <boost/property_map/property_map.hpp>
 
 namespace CGAL {
 
@@ -45,13 +46,14 @@ namespace CGAL {
 /*!
 \ingroup PkgReconstructionSimplification2Classes
 
+This class enables to reconstruct a 1-dimensional shape from a range of points with masses.
+The algorithm computes a triangulation, ....   and performs a simplification of the triangulation
+by performing edge contractions. The edges are either processed in the order imposed by 
+a priority queue, or in an order based on random sampling. As the priority queue guarantees
+a higher quality it is the default. The user can switch to the other method, for example
+for an initial simplification round, by calling `set_random_sample_size()`.
 
-
-\brief `Reconstruction_simplification_2` is the main class
-for executing the reconstruction and simplification tasks.
-Its constructor takes an `InputRange`, used to traverse a collection
-of point-mass pairs, where the points and their masses are accessed
-via the property maps  `PointMap` and `MassMap` respectively.
+\todo @@Pierre:  In the same way discuss the other parameters and run functions.
 
 \todo `Gt` must at least be a model of `DelaunayTriangulationTraits_2`.  @@Pierre: If more functionalty is needed we should introduce a `ReconstructionSimplificationTraits_2`.
 
@@ -64,10 +66,12 @@ via the property maps  `PointMap` and `MassMap` respectively.
  */
 template<class Gt,
         class PointMap = First_of_pair_property_map  <std::pair<typename Gt::Point_2 , typename Gt::FT > >,
-        class MassMap  = Second_of_pair_property_map <std::pair<typename Gt::Point_2 , typename Gt::FT > > >
+         class MassMap  = boost::static_property_map <typename Gt::Point_2 , typename Gt::FT > >
 class Reconstruction_simplification_2 {
 public:
 
+    /// \name Types 
+    /// @{
     /*!
         Number type.
     */
@@ -138,6 +142,7 @@ public:
 
 	typedef typename Triangulation::MultiIndex MultiIndex;
 
+    /// @}
 
 protected:
 	Triangulation m_dt;
@@ -162,20 +167,15 @@ protected:
 
 	  /// \endcond
 
-	// Public methods
 	public:
 
-	  /// \name Creation
+	  /// \name Initialization
 	  /// @{
 
 	/*!
-	     Instantiates a new Reconstruction_simplification_2.
-	     Computes a bounding box around the input points and creates a first
-		 (dense) output simplex as well as an initial transportation plan. This
-		first output simplex is then made coarser during subsequent iterations.
-
-	     \details Instantiates a new Reconstruction_simplification_2 object
-	     	 	  for a given range of point-mass pairs.
+             The constructor of the reconstruction simplification class
+             for a given range of point-mass pairs.
+             which already builds an initial simplex.
 
 	     \tparam InputRange is a model of `Range` with forward iterators, 
                providing input points and point mass through the following two property maps.
@@ -184,7 +184,7 @@ protected:
 	     \param point_map A `ReadablePropertyMap` used to access the input points.
 
 	     \param mass_map A `ReadablePropertyMap` used to access the input points' mass.
-             \param sample_size If != 0, the size of the random sample that replaces a priority queue.
+             \param sample_size If `sample_size != 0`, the size of the random sample that replaces a priority queue.
              \param use_flip If `true` the flipping procedure is used for the halfedge collapse.
              \param relocation The number of point relocations that are performed between two edge collapses.
              \param verbose controls how much console output is produced by the algorithm. The values are 0,1, or >1.
@@ -192,8 +192,8 @@ protected:
 	*/
 	template <class InputRange>
 	Reconstruction_simplification_2(const InputRange& input_range,
-                                        PointMap point_map,
-                                        MassMap  mass_map,
+                                        PointMap point_map = PointMap(),
+                                        MassMap  mass_map = MassMap(1),
                                         std::size_t sample_size = 0,
                                         bool use_flip = true,
                                         std::size_t relocation = 0,
@@ -210,315 +210,15 @@ protected:
 	}
 
 
-    /*!
-         Instantiates a new Reconstruction_simplification_2.
-         Computes a bounding box around the input points and creates a first
-         (dense) output simplex as well as an initial transportation plan. This
-        first output simplex is then made coarser during subsequent iterations.
-
-         \details Instantiates a new Reconstruction_simplification_2 object
-                  for a given range of points.
-
-	     \tparam InputRange is a model of `Range` with forward iterators, 
-               providing input points and point mass through...
-
-	     \param input_range range of input data.
-    */
-    template <class InputRange>
-    Reconstruction_simplification_2(const InputRange& input_range) {
-
-
-        PointMassList point_mass_list;
-        BOOST_FOREACH(Point_2 p , input_range) {
-            point_mass_list.push_back(std::make_pair(p, 1));
-        }
-
-        PointMap point_map;
-        MassMap  mass_map;
-
-        point_pmap = point_map;
-        mass_pmap  = mass_map;
-
-        initialize_parameters();
-
-        initialize(point_mass_list.begin(), point_mass_list.end());
-    }
-
-
 
 	  /// @}
 
-
-	 /// \cond SKIP_IN_MANUAL
-
-	Reconstruction_simplification_2() {
-		initialize_parameters();
-	}
-
-
-	~Reconstruction_simplification_2() {
-		clear();
-	}
-
-	void initialize_parameters() {
-
-
-		m_verbose = 0;
-		m_mchoice = 0;
-		m_use_flip = true;
-		m_alpha = 0.5;
-		m_norm_tol = 1.0;
-		m_tang_tol = 1.0;
-		m_ghost = 1.0;
-		m_relocation = 0;
-
-		m_bbox_x = 0.0;
-        m_bbox_y = 0.0;
-        m_bbox_size = 1.0;
-
-        m_ignore = 0;
-	}
-
-	//Function if one wants to create a Reconstruction_simplification_2
-	//without yet specifying the input in the constructor.
-	template <class InputIterator>
-	void initialize(InputIterator start_itr,
-									InputIterator beyond_itr,
-									PointMap point_map,
-									MassMap  mass_map) {
-
-		point_pmap = point_map;
-		mass_pmap  = mass_map;
-
-		initialize(start_itr, beyond_itr);
-
-	}
-
-
-	template <class InputIterator>
-	void initialize(InputIterator start, InputIterator beyond) {
-
-		clear();
-
-		insert_loose_bbox(m_bbox_x, m_bbox_y, 2 * m_bbox_size);
-
-		init(start, beyond);
-
-		std::list<Sample*> m_samples;
-		for (InputIterator it = start; it != beyond; it++) {
-			Point point = get(point_pmap, *it);
-			FT     mass = get( mass_pmap, *it);
-			Sample* s = new Sample(point, mass);
-			m_samples.push_back(s);
-		}
-		assign_samples(m_samples.begin(), m_samples.end());
-	}
-
-
-
-
-
+    /// \name Settting Parameters 
+  /// @{
 	/*!
-	 Returns the solid edges and vertices present after the reconstruction
-	 process finished.
-
-	\details It takes two output iterators, one for storing the
-	isolated points and one for storing the edges of the reconstructed shape.
-
-
-	\tparam PointOutputIterator The output iterator type for storing the isolated points
-
-	\tparam SegmentOutputIterator The output iterator type for storing the edges as segments.
-	 */
-	template<class PointOutputIterator, class SegmentOutputIterator>
-	void extract_list_output(PointOutputIterator v_it, SegmentOutputIterator e_it) {
-
-		for (Vertex_iterator vi = m_dt.vertices_begin();
-						vi != m_dt.vertices_end(); ++vi)
-		{
-
-			bool incident_edges_have_sample = false;
-			typename Triangulation::Edge_circulator start = m_dt.incident_edges(vi);
-			typename Triangulation::Edge_circulator cur   = start;
-
-			do {
-				if (!m_dt.is_ghost(*cur)) {
-					incident_edges_have_sample = true;
-					break;
-				}
-				++cur;
-			} while (cur != start);
-
-			if (!incident_edges_have_sample) {
-				if ((*vi).has_sample_assigned()) {
-					Point p = (*vi).point();
-					*v_it = p;
-					v_it++;
-				}
-			}
-		}
-
-		for (Finite_edges_iterator ei = m_dt.finite_edges_begin(); ei != m_dt.finite_edges_end(); ++ei)
-		{
-			Edge edge = *ei;
-			if (m_dt.is_ghost(edge))
-				continue;
-
-	        int index = edge.second;
-	        Vertex_handle source = edge.first->vertex( (index+1)%3 );
-	        Vertex_handle target = edge.first->vertex( (index+2)%3 );
-
-	        typename Gt::Segment_2  s(source->point(), target->point());
-			*e_it = s;
-			e_it++;
-		}
-
-
-	}
-	 /// \endcond
-
-	/*!
-	Writes the points and segments of the output simplex in an indexed format into output iterators.
-        \tparam  PointOutputIterator An output iterator with value type `Point`.
-        \tparam IndexOutputIterator An output iterator with value type `std::size_t`
-        \tparam IndexPairOutputIterator An output iterator with value type `std::pair<std::size_t,std::size_t>`
-
-	\param points the output iterator for all points
-        \param isolated_points the output iterator for the indices of isolated points
-        \param segments the output iterator for the pairs of indices of segments
-	*/
-  template <typename PointOutputIterator,
-            typename IndexOutputIterator,
-            typename IndexPairOutputIterator>
-  void indexed_output(PointOutputIterator points,
-                      IndexOutputIterator isolated_points,
-                      IndexPairOutputIterator segments) {
-
-		typedef typename Gt::Segment_2 Segment;
-		std::vector<Point> isolated_points;
-		std::vector<Segment> edges;
-
-		extract_list_output(std::back_inserter(isolated_points), std::back_inserter(edges));
-
-
-		//vertices_of_edges
-		std::set<Point> edge_vertices;
-		for (typename std::vector<Segment>::iterator it = edges.begin();
-						it != edges.end(); it++) {
-
-			Point a = (*it).source();
-			Point b = (*it).target();
-
-			edge_vertices.insert(a);
-			edge_vertices.insert(b);
-		}
-
-		os << "OFF " << isolated_points.size() + edge_vertices.size() <<
-				" 0 " << edges.size()  << std::endl;
-
-		for (typename std::vector<Point>::iterator it = isolated_points.begin();
-					it != isolated_points.end(); it++) {
-			os << *it << std::endl;
-		}
-
-		for (typename std::set<Point>::iterator it = edge_vertices.begin();
-				it != edge_vertices.end(); it++) {
-
-			os << *it << std::endl;
-		}
-
-		for (int i = 0; i < isolated_points.size(); i++) {
-			os << "1 " <<  i << std::endl;
-		}
-
-		for (typename std::vector<Segment>::iterator it = edges.begin();
-				it != edges.end(); it++) {
-
-			//save_one_edge(os, *it,edge_vertices);
-
-			Point a = (*it).source();
-			Point b = (*it).target();
-
-			typename std::set<Point>::iterator it_a = edge_vertices.find(a);
-			typename std::set<Point>::iterator it_b = edge_vertices.find(b);
-
-			int pos_a = std::distance(edge_vertices.begin(), it_a);
-			int pos_b = std::distance(edge_vertices.begin(), it_b);
-
-			os << "2 "  << pos_a + isolated_points.size() << " "
-					<< pos_b + isolated_points.size() << std::endl;
-
-
-
-		}
-	}
-
-
-	 /// \cond SKIP_IN_MANUAL
-	void extract_tds_output(Triangulation& rt2) {
-		rt2 = m_dt;
-		//mark vertices
-		for (Vertex_iterator vi = rt2.vertices_begin();
-			  vi != rt2.vertices_end(); ++vi)
-		{
-
-			bool incident_edges_have_sample = false;
-			typename Triangulation::Edge_circulator start = rt2.incident_edges(vi);
-			typename Triangulation::Edge_circulator cur = start;
-
-			do {
-			  if (!rt2.is_ghost(*cur)) {
-				  incident_edges_have_sample = true;
-				  break;
-			  }
-			  ++cur;
-			} while (cur != start);
-
-			if (!incident_edges_have_sample) {
-			  if ((*vi).has_sample_assigned())
-				  (*vi).set_relevance(1);
-			}
-		}
-
-
-		//mark edges
-		for (Finite_edges_iterator ei = rt2.finite_edges_begin(); ei != rt2.finite_edges_end(); ++ei)
-		{
-			Edge edge = *ei;
-			FT relevance = 0;
-			if (!rt2.is_ghost(edge)) {
-				relevance = rt2.get_edge_relevance(edge); // >= 0
-			}
-			edge.first->relevance(edge.second) = relevance;
-		}
-	}
-
-
-
-	template <class Vector>
-	Vector random_vec(const double scale)
-	{
-	    double dx = -scale + (double(rand()) / double(RAND_MAX)) * 2* scale;
-	    double dy = -scale + (double(rand()) / double(RAND_MAX)) * 2* scale;
-	    return Vector(dx, dy);
-	}
-
-	void clear() {
-		m_dt.clear();
-		m_mindex.clear();
-	}
-
-	double time_duration(const double init) {
-		return (clock() - init) / CLOCKS_PER_SEC;
-	}
-	 /// \endcond
-
-
-	/*!
-		Allows a speedup by not using the priority queue but instead using a random subset
-		of size `sample_size`. Based on those the next edge collapse step is determined.
- \todo @@Pierre:  Tell what is a good value.
-		 \param sample_size The size of the random sample that replaces a priority queue.
+          If `sample_size == 0`, the edge collapse is done using a priority queue.
+          \todo @@Pierre:  Tell what is a good value.
+          \param sample_size If `sample_size != 0`, the size of the random sample that replaces the priority queue.
 	*/
   void set_random_sample_size(std::size_t sample_size) {
 		m_mchoice = mchoice;
@@ -604,6 +304,96 @@ protected:
 	double get_ghost() {
 		return m_ghost;
 	}
+
+  /// @}
+
+	 /// \cond SKIP_IN_MANUAL
+
+	Reconstruction_simplification_2() {
+		initialize_parameters();
+	}
+
+
+	~Reconstruction_simplification_2() {
+		clear();
+	}
+
+	void initialize_parameters() {
+
+
+		m_verbose = 0;
+		m_mchoice = 0;
+		m_use_flip = true;
+		m_alpha = 0.5;
+		m_norm_tol = 1.0;
+		m_tang_tol = 1.0;
+		m_ghost = 1.0;
+		m_relocation = 0;
+
+		m_bbox_x = 0.0;
+        m_bbox_y = 0.0;
+        m_bbox_size = 1.0;
+
+        m_ignore = 0;
+	}
+
+	//Function if one wants to create a Reconstruction_simplification_2
+	//without yet specifying the input in the constructor.
+	template <class InputIterator>
+	void initialize(InputIterator start_itr,
+									InputIterator beyond_itr,
+									PointMap point_map,
+									MassMap  mass_map) {
+
+		point_pmap = point_map;
+		mass_pmap  = mass_map;
+
+		initialize(start_itr, beyond_itr);
+
+	}
+
+
+	template <class InputIterator>
+	void initialize(InputIterator start, InputIterator beyond) {
+
+		clear();
+
+		insert_loose_bbox(m_bbox_x, m_bbox_y, 2 * m_bbox_size);
+
+		init(start, beyond);
+
+		std::list<Sample*> m_samples;
+		for (InputIterator it = start; it != beyond; it++) {
+			Point point = get(point_pmap, *it);
+			FT     mass = get( mass_pmap, *it);
+			Sample* s = new Sample(point, mass);
+			m_samples.push_back(s);
+		}
+		assign_samples(m_samples.begin(), m_samples.end());
+	}
+
+
+
+
+
+	template <class Vector>
+	Vector random_vec(const double scale)
+	{
+	    double dx = -scale + (double(rand()) / double(RAND_MAX)) * 2* scale;
+	    double dy = -scale + (double(rand()) / double(RAND_MAX)) * 2* scale;
+	    return Vector(dx, dy);
+	}
+
+	void clear() {
+		m_dt.clear();
+		m_mindex.clear();
+	}
+
+	double time_duration(const double init) {
+		return (clock() - init) / CLOCKS_PER_SEC;
+	}
+
+
 
 	// INIT //
 	void insert_loose_bbox(const double x, const double y, const double size) {
@@ -1289,56 +1079,6 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 
 	 /// \endcond
 
-	/*!
-	Since noise and missing data may prevent the reconstructed shape to
-	have sharp corners well located, the algorithm offers the possibility to automatically
-	relocate points after each edge contraction. The new location of the
-	points is chosen such that the fitting of the output segments to the
-	input points is improved. This is achieved by minimizing the normal component
-	of the weighted \f$L_2 \f$ distance. The points then get relocated only if the
-	underlying triangulation is still embeddable.
-	  */
-	void relocate_all_points() {
-		double timer = clock();
-		std::cerr << yellow << "relocate all" << white << "...";
-
-		m_mindex.clear(); // pqueue must be recomputed
-
-		for (Finite_vertices_iterator v = m_dt.finite_vertices_begin();
-				v != m_dt.finite_vertices_end(); ++v) {
-			if (v->pinned())
-				continue;
-			v->relocated() = compute_relocation(v);
-		}
-
-		for (Finite_vertices_iterator v = m_dt.finite_vertices_begin();
-				v != m_dt.finite_vertices_end(); ++v) {
-			if (v->pinned())
-				continue;
-			if (v->point() == v->relocated())
-				continue;
-
-			Edge_list hull;
-			m_dt.get_edges_from_star_minus_link(v, hull, false);
-			bool ok = m_dt.is_in_kernel(v->relocated(), hull.begin(),
-					hull.end());
-
-			if (ok) {
-				// do relocation
-				FT norm_bef = m_dt.compute_cost_around_vertex(v).norm();
-				relocate_one_vertex(v);
-				FT norm_aft = m_dt.compute_cost_around_vertex(v).norm();
-
-				// undo relocation
-				if (norm_bef < norm_aft)
-					relocate_one_vertex(v);
-			}
-		}
-
-		std::cerr << yellow << "done" << white << " (" << yellow
-				<< time_duration(timer) << white << " s)" << std::endl;
-	}
-
 
 	 /// \cond SKIP_IN_MANUAL
 	Vector compute_gradient(Vertex_handle vertex) {
@@ -1584,10 +1324,13 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 	}
 
 	/// \endcond
-	// RECONSTRUCTION //
 
+
+  /// \name Simplification 
+  /// You can freely mix calls of the following functions. 
+  /// @{
 		 /*!
-		    Computes a shape consisting of `np  points, reconstructing the input
+		    Computes a shape consisting of `np`  points, reconstructing the input
 		    points.
 
 		    \param np The number of points which will be present in the output.
@@ -1634,6 +1377,244 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 					<< " V, " << yellow << time_duration(timer) << white << " s)"
 					<< std::endl;
 		}
+
+
+	/*!
+	Since noise and missing data may prevent the reconstructed shape to
+	have sharp corners well located, the algorithm offers the possibility to automatically
+	relocate points after each edge contraction. The new location of the
+	points is chosen such that the fitting of the output segments to the
+	input points is improved. This is achieved by minimizing the normal component
+	of the weighted \f$L_2 \f$ distance. The points then get relocated only if the
+	underlying triangulation is still embeddable.
+	  */
+	void relocate_all_points() {
+		double timer = clock();
+		std::cerr << yellow << "relocate all" << white << "...";
+
+		m_mindex.clear(); // pqueue must be recomputed
+
+		for (Finite_vertices_iterator v = m_dt.finite_vertices_begin();
+				v != m_dt.finite_vertices_end(); ++v) {
+			if (v->pinned())
+				continue;
+			v->relocated() = compute_relocation(v);
+		}
+
+		for (Finite_vertices_iterator v = m_dt.finite_vertices_begin();
+				v != m_dt.finite_vertices_end(); ++v) {
+			if (v->pinned())
+				continue;
+			if (v->point() == v->relocated())
+				continue;
+
+			Edge_list hull;
+			m_dt.get_edges_from_star_minus_link(v, hull, false);
+			bool ok = m_dt.is_in_kernel(v->relocated(), hull.begin(),
+					hull.end());
+
+			if (ok) {
+				// do relocation
+				FT norm_bef = m_dt.compute_cost_around_vertex(v).norm();
+				relocate_one_vertex(v);
+				FT norm_aft = m_dt.compute_cost_around_vertex(v).norm();
+
+				// undo relocation
+				if (norm_bef < norm_aft)
+					relocate_one_vertex(v);
+			}
+		}
+
+		std::cerr << yellow << "done" << white << " (" << yellow
+				<< time_duration(timer) << white << " s)" << std::endl;
+	}
+
+  /// @}
+
+    /// \name Output
+    /// @{
+
+	/*!
+	Writes the points and segments of the output simplex in an indexed format into output iterators.
+        \tparam  PointOutputIterator An output iterator with value type `Point`.
+        \tparam IndexOutputIterator An output iterator with value type `std::size_t`
+        \tparam IndexPairOutputIterator An output iterator with value type `std::pair<std::size_t,std::size_t>`
+
+	\param points the output iterator for all points
+        \param isolated_points the output iterator for the indices of isolated points
+        \param segments the output iterator for the pairs of indices of segments
+	*/
+  template <typename PointOutputIterator,
+            typename IndexOutputIterator,
+            typename IndexPairOutputIterator>
+  void indexed_output(PointOutputIterator points,
+                      IndexOutputIterator isolated_points,
+                      IndexPairOutputIterator segments) {
+
+		typedef typename Gt::Segment_2 Segment;
+		std::vector<Point> isolated_points;
+		std::vector<Segment> edges;
+
+		extract_list_output(std::back_inserter(isolated_points), std::back_inserter(edges));
+
+
+		//vertices_of_edges
+		std::set<Point> edge_vertices;
+		for (typename std::vector<Segment>::iterator it = edges.begin();
+						it != edges.end(); it++) {
+
+			Point a = (*it).source();
+			Point b = (*it).target();
+
+			edge_vertices.insert(a);
+			edge_vertices.insert(b);
+		}
+
+		os << "OFF " << isolated_points.size() + edge_vertices.size() <<
+				" 0 " << edges.size()  << std::endl;
+
+		for (typename std::vector<Point>::iterator it = isolated_points.begin();
+					it != isolated_points.end(); it++) {
+			os << *it << std::endl;
+		}
+
+		for (typename std::set<Point>::iterator it = edge_vertices.begin();
+				it != edge_vertices.end(); it++) {
+
+			os << *it << std::endl;
+		}
+
+		for (int i = 0; i < isolated_points.size(); i++) {
+			os << "1 " <<  i << std::endl;
+		}
+
+		for (typename std::vector<Segment>::iterator it = edges.begin();
+				it != edges.end(); it++) {
+
+			//save_one_edge(os, *it,edge_vertices);
+
+			Point a = (*it).source();
+			Point b = (*it).target();
+
+			typename std::set<Point>::iterator it_a = edge_vertices.find(a);
+			typename std::set<Point>::iterator it_b = edge_vertices.find(b);
+
+			int pos_a = std::distance(edge_vertices.begin(), it_a);
+			int pos_b = std::distance(edge_vertices.begin(), it_b);
+
+			os << "2 "  << pos_a + isolated_points.size() << " "
+					<< pos_b + isolated_points.size() << std::endl;
+
+
+
+		}
+	}
+
+	 /// \cond SKIP_IN_MANUAL
+
+	/*!
+	 Returns the solid edges and vertices present after the reconstruction
+	 process finished.
+
+	\details It takes two output iterators, one for storing the
+	isolated points and one for storing the edges of the reconstructed shape.
+
+
+	\tparam PointOutputIterator The output iterator type for storing the isolated points
+
+	\tparam SegmentOutputIterator The output iterator type for storing the edges as segments.
+	 */
+	template<class PointOutputIterator, class SegmentOutputIterator>
+	void extract_list_output(PointOutputIterator v_it, SegmentOutputIterator e_it) {
+
+		for (Vertex_iterator vi = m_dt.vertices_begin();
+						vi != m_dt.vertices_end(); ++vi)
+		{
+
+			bool incident_edges_have_sample = false;
+			typename Triangulation::Edge_circulator start = m_dt.incident_edges(vi);
+			typename Triangulation::Edge_circulator cur   = start;
+
+			do {
+				if (!m_dt.is_ghost(*cur)) {
+					incident_edges_have_sample = true;
+					break;
+				}
+				++cur;
+			} while (cur != start);
+
+			if (!incident_edges_have_sample) {
+				if ((*vi).has_sample_assigned()) {
+					Point p = (*vi).point();
+					*v_it = p;
+					v_it++;
+				}
+			}
+		}
+
+		for (Finite_edges_iterator ei = m_dt.finite_edges_begin(); ei != m_dt.finite_edges_end(); ++ei)
+		{
+			Edge edge = *ei;
+			if (m_dt.is_ghost(edge))
+				continue;
+
+	        int index = edge.second;
+	        Vertex_handle source = edge.first->vertex( (index+1)%3 );
+	        Vertex_handle target = edge.first->vertex( (index+2)%3 );
+
+	        typename Gt::Segment_2  s(source->point(), target->point());
+			*e_it = s;
+			e_it++;
+		}
+
+
+	}
+	 /// \endcond
+
+
+
+	 /// \cond SKIP_IN_MANUAL
+	void extract_tds_output(Triangulation& rt2) {
+		rt2 = m_dt;
+		//mark vertices
+		for (Vertex_iterator vi = rt2.vertices_begin();
+			  vi != rt2.vertices_end(); ++vi)
+		{
+
+			bool incident_edges_have_sample = false;
+			typename Triangulation::Edge_circulator start = rt2.incident_edges(vi);
+			typename Triangulation::Edge_circulator cur = start;
+
+			do {
+			  if (!rt2.is_ghost(*cur)) {
+				  incident_edges_have_sample = true;
+				  break;
+			  }
+			  ++cur;
+			} while (cur != start);
+
+			if (!incident_edges_have_sample) {
+			  if ((*vi).has_sample_assigned())
+				  (*vi).set_relevance(1);
+			}
+		}
+
+
+		//mark edges
+		for (Finite_edges_iterator ei = rt2.finite_edges_begin(); ei != rt2.finite_edges_end(); ++ei)
+		{
+			Edge edge = *ei;
+			FT relevance = 0;
+			if (!rt2.is_ghost(edge)) {
+				relevance = rt2.get_edge_relevance(edge); // >= 0
+			}
+			edge.first->relevance(edge.second) = relevance;
+		}
+	}
+
+
+  /// \endcond
+    /// @}
 
 };
 }
