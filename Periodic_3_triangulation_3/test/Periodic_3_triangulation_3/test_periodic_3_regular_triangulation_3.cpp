@@ -499,6 +499,7 @@ void test_insert_rnd_then_remove_all (unsigned pt_count, unsigned seed)
     for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
       hidden_point_count_2 += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
     assert(hidden_point_count <= hidden_point_count_2);
+    assert(hidden_point_count_2 + p3rt3.number_of_vertices() == cnt);
 
     std::cout << cnt << " - p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
     if (vh == Vertex_handle())
@@ -665,11 +666,52 @@ void test_dummy_points ()
   assert(p3rt3 == p3rt3_b);
 }
 
+void test_insert_range (unsigned pt_count, unsigned seed)
+{
+  CGAL::Random random(seed);
+  typedef CGAL::Creator_uniform_3<double,Bare_point>  Creator;
+  CGAL::Random_points_in_cube_3<Bare_point, Creator> in_cube(0.5, random);
+
+  P3RT3::Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
+  P3RT3 p3rt3(iso_cuboid);
+
+  std::vector<Weighted_point> points;
+  points.reserve(pt_count);
+
+  while (points.size() != pt_count)
+  {
+    Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
+    points.push_back(p);
+  }
+
+  p3rt3.insert(points.begin(), points.end(), true);
+
+  for (P3RT3::Vertex_iterator iter = p3rt3.vertices_begin(), end_iter = p3rt3.vertices_end(); iter != end_iter; ++iter)
+  {
+    std::vector<Weighted_point>::iterator it = std::find(points.begin(), points.end(), iter->point());
+    assert(it != points.end());
+  }
+  unsigned hidden_point_count = 0;
+  for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+  {
+    for (P3RT3::Cell::Point_iterator it = iter->hidden_points_begin(), end_it = iter->hidden_points_end(); it != end_it; ++it)
+    {
+      assert(std::find(points.begin(), points.end(), *it) != points.end());
+      ++hidden_point_count;
+    }
+  }
+  assert(p3rt3.number_of_vertices() == 659);
+  assert(p3rt3.number_of_vertices() + hidden_point_count == 800);
+
+  assert(p3rt3.is_valid());
+  assert(p3rt3.number_of_sheets() == CGAL::make_array(1,1,1));
+}
+
 int main (int argc, char** argv)
 {
   std::cout << "TESTING ..." << std::endl;
 
-  test_dummy_points();
+//  test_dummy_points();
 //  test_construction();
 //  test_insert_1();
 //  test_insert_point();
@@ -679,6 +721,7 @@ int main (int argc, char** argv)
 //  test_insert_two_points_with_the_same_position();
 //  test_remove();
 //  test_27_to_1_sheeted_covering();
+  test_insert_range(800, 7);
 //    Iso_cuboid unitaire ->  0 <= weight < 0.015625
 //  test_insert_rnd_as_delaunay(100, 0.);
 //  test_insert_rnd_as_delaunay(100, 0.01);
