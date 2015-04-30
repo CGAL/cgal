@@ -292,6 +292,73 @@ public:
       assert(p.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ));
       return Base::insert_in_conflict(p,lt,c,li,lj, tester,hider,cover_manager);
     }
+
+   template < class InputIterator >
+   std::ptrdiff_t insert(InputIterator first, InputIterator last,
+       bool is_large_point_set = false)
+  {
+    if (first == last)
+      return 0;
+    size_type n = number_of_vertices();
+    // The heuristic discards the existing triangulation so it can only be
+    // applied to empty triangulations.
+    if (n != 0)
+      is_large_point_set = false;
+
+    std::vector<Weighted_point> points(first, last);
+    std::random_shuffle(points.begin(), points.end());
+    Cell_handle hint;
+    std::vector<Vertex_handle> dummy_points_vhs, double_vertices;
+    std::vector<Weighted_point> dummy_points;
+    typename std::vector<Weighted_point>::iterator pbegin = points.begin();
+    if (is_large_point_set)
+    {
+      dummy_points_vhs = insert_dummy_points();
+      dummy_points.reserve(dummy_points_vhs.size());
+      for (typename std::vector<Vertex_handle>::iterator iter = dummy_points_vhs.begin(), end_iter = dummy_points_vhs.end(); iter != end_iter; ++iter)
+        dummy_points.push_back((*iter)->point());
+    }
+    else
+      while (!is_1_cover())
+      {
+        insert(*pbegin);
+        ++pbegin;
+        if (pbegin == points.end())
+          return number_of_vertices() - n;
+      }
+
+    // Use Geom_traits::K for efficiency: spatial_sort creates a lot
+    // of copies of the traits but does not need the domain that is
+    // stored in it.
+    spatial_sort(pbegin, points.end(), typename Geom_traits::K());
+
+    Conflict_tester tester(*pbegin, this);
+    Point_hider hider(this);
+    Cover_manager cover_manager(*this);
+    double_vertices = Base::insert_in_conflict(points.begin(), points.end(), hint, tester, hider, cover_manager);
+
+    if (is_large_point_set)
+    {
+      for (unsigned int i = 0; i < dummy_points_vhs.size(); ++i)
+      {
+        bool is_hidden = false;
+        for (Cell_iterator iter = this->cells_begin(); iter != this->cells_end(); ++iter)
+        {
+          typename Cell::Point_iterator it = std::find(iter->hidden_points_begin(), iter->hidden_points_end(), dummy_points[i]);
+          if (it != iter->hidden_points_end())
+          {
+            is_hidden = true;
+            iter->unhide_point(it);
+          }
+        }
+        if (!is_hidden)
+          if (std::find(double_vertices.begin(), double_vertices.end(), dummy_points_vhs[i]) == double_vertices.end())
+            remove(dummy_points_vhs[i]);
+      }
+    }
+
+    return number_of_vertices() - n;
+  }
    //@}
 
    void remove(Vertex_handle v)
@@ -374,13 +441,13 @@ public:
 	        Vertex_handle vh = tds().create_vertex();
 	        vertices.push_back(vh);
 
-	        FT x = FT(i) * domain_x / FT(6);
+	        FT x = (FT(i) * domain_x / FT(6)) + domain().xmin();
 	        if (k % 2)
 	          x += FT(1) * domain_x / FT(12);
-	        FT y = FT(j) * domain_y / FT(6);
+	        FT y = (FT(j) * domain_y / FT(6)) + domain().ymin();
 	        if (k % 2)
 	          y += FT(1) * domain_y / FT(12);
-	        FT z = FT(k) * domain_z / FT(8);
+	        FT z = (FT(k) * domain_z / FT(8)) + domain().zmin();
 
 	        vh->set_point(Weighted_point(Bare_point(x, y, z), 0));
 	      }

@@ -1013,7 +1013,8 @@ protected:
 
       new_vertex = insert_in_conflict(*begin,lt,hint,li,lj,tester,hider, cover_manager);
       if (lt == VERTEX) double_vertices.push_back(new_vertex);
-      start = new_vertex->cell();
+      if (new_vertex != Vertex_handle())
+        start = new_vertex->cell();
       begin++;
     }
     return double_vertices;
