@@ -443,7 +443,7 @@ public:
 
         using namespace boost::math::constants;
         double angle = std::acos(v1 * v2) * 180. / pi<double>();
-        histo[ std::min(179, int(angle)) ]++;
+        histo[ (std::min)(179, int(angle)) ]++;
 
         min_angle = (std::min)(min_angle, angle);
         max_angle = (std::max)(max_angle, angle);
