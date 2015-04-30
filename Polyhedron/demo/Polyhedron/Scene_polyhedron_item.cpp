@@ -1,5 +1,6 @@
-#include <CGAL/AABB_intersections.h>
+
 #include "Scene_polyhedron_item.h"
+#include <CGAL/AABB_intersections.h>
 #include "Kernel_type.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
 
@@ -20,6 +21,7 @@
 #include <list>
 #include <queue>
 #include <iostream>
+
 
 typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
@@ -239,11 +241,11 @@ Scene_polyhedron_item::triangulate_facet_color(Facet_iterator fit)
 
     // sets mark is_external
     for(typename CDT::All_faces_iterator
-        fit = cdt.all_faces_begin(),
+        ffit = cdt.all_faces_begin(),
         end = cdt.all_faces_end();
-        fit != end; ++fit)
+        ffit != end; ++ffit)
     {
-        fit->info().is_external = false;
+        ffit->info().is_external = false;
     }
     //check if the facet is external or internal
     std::queue<typename CDT::Face_handle> face_queue;
@@ -534,6 +536,7 @@ Scene_polyhedron_item::compile_shaders(void)
     glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
     glCompileShader(fragment_shader);
 
+
     //creates the program, attaches and links the shaders
     GLuint program= glCreateProgram();
     glAttachShader(program, vertex_shader);
@@ -542,7 +545,7 @@ Scene_polyhedron_item::compile_shaders(void)
 
     //Clean-up
     glDeleteShader(vertex_shader);
-
+    CGAL::gl_check_link(&program);
     rendering_program_facets = program;
 
     //For the edges
@@ -579,6 +582,7 @@ Scene_polyhedron_item::compile_shaders(void)
     //Clean-up
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
+    CGAL::gl_check_link(&program);
     rendering_program_lines = program;
 
 }
