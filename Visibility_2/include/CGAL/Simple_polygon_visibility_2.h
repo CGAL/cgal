@@ -32,6 +32,11 @@
 #include <stack>
 #include <map>
 
+// TODO:  
+// * rm DT = O(n^2)
+// * rm do_intersect 
+// * fix handle needles = O(nlogn)  
+
 namespace CGAL {
 
 template<class Arrangement_2_, class RegularizationCategory = CGAL::Tag_true> 
