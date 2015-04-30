@@ -381,7 +381,7 @@ public:
         (geom_traits, q, polygon_out, arr_out);
     }
 
-    conditional_regularize(arr_out, Regularization_category());
+    Visibility_2::conditional_regularize(arr_out, Regularization_category());
 
     if (arr_out.faces_begin()->is_unbounded())
       return ++arr_out.faces_begin();
@@ -405,7 +405,7 @@ public:
     Visibility_2::report_while_handling_needles<Rotational_sweep_visibility_2>
       (geom_traits, q, polygon, arr_out);
 
-    conditional_regularize(arr_out, Regularization_category());
+    Visibility_2::conditional_regularize(arr_out, Regularization_category());
 
     if (arr_out.faces_begin()->is_unbounded())
       return ++arr_out.faces_begin();
@@ -920,26 +920,6 @@ private:
     }
   }
 
-  template <typename VARR> 
-  void conditional_regularize(VARR& arr_out, CGAL::Tag_true) const {
-    regularize_output(arr_out);
-  }
-
-  template <typename VARR> 
-  void conditional_regularize(VARR&, CGAL::Tag_false) const {
-    //do nothing
-  }
-
-  template <typename VARR> 
-  void regularize_output(VARR& arr_out) const {
-    typename VARR::Edge_iterator e_itr;
-    for (e_itr = arr_out.edges_begin();
-         e_itr != arr_out.edges_end();
-         e_itr++) {
-      if (e_itr->face() == e_itr->twin()->face())
-        arr_out.remove_edge(e_itr);
-    }
-  }
 };
 } // end namespace CGAL
 

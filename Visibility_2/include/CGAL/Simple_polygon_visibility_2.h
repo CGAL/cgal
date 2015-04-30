@@ -222,32 +222,6 @@ private:
   mutable bool query_pt_is_vertex;
   mutable bool query_pt_is_on_halfedge;
 
-  /*! Regularize output if flag is set to true*/
-  template <typename VARR> 
-  void conditional_regularize(VARR& out_arr, CGAL::Tag_true) const {
-    regularize_output(out_arr);
-  }
-
-  /*! No need to regularize output if flag is set to false*/
-  template <typename VARR> 
-  void conditional_regularize(VARR&, CGAL::Tag_false) const {
-    //do nothing
-  }
-
-
-  /*! Regularizes the output - removes edges that have the same face on both
-      sides */
-  template <typename VARR> 
-  void regularize_output(VARR& out_arr) const {
-    typename VARR::Edge_iterator e_itr;
-    for (e_itr = out_arr.edges_begin(); e_itr != out_arr.edges_end(); ++e_itr) {
-
-      if (e_itr->face() == e_itr->twin()->face()) {
-        out_arr.remove_edge(e_itr);
-      }
-    }
-  }
-
 
   /*! Initialized the constrained Delaunay triangulation using the edges of
       the outer boundary of 'face' */
@@ -306,7 +280,7 @@ private:
       CGAL_postcondition(out_arr.number_of_isolated_vertices() == 0);
       CGAL_postcondition(s.empty());
 
-      conditional_regularize(out_arr, Regularization_category());
+      Visibility_2::conditional_regularize(out_arr, Regularization_category());
       vertices.clear();
 
       if (out_arr.faces_begin()->is_unbounded()) {

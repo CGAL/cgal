@@ -401,6 +401,34 @@ void report_while_handling_needles(
   }
 }
 
+template <typename VARR>
+void regularize_output(VARR& arr_out) {
+  typename VARR::Edge_iterator it = arr_out.edges_begin();
+
+  while(it != arr_out.edges_end()) {
+    if (it->face() == it->twin()->face()) {
+      typename VARR::Halfedge_handle he = it;
+      ++it;
+      arr_out.remove_edge(he);
+    }
+    else {
+      ++it;
+    }
+  }
+}
+
+template <typename VARR>
+void conditional_regularize(VARR& arr_out, CGAL::Tag_true) {
+  regularize_output(arr_out);
+}
+
+template <typename VARR>
+void conditional_regularize(VARR&, CGAL::Tag_false) {
+  //do nothing
+}
+
+
+
 } // end namespace Visibility_2
 } // end namespace CGAL
 
