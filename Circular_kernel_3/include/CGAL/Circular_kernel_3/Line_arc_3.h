@@ -150,17 +150,17 @@ namespace CGAL {
 
       const Line_3& supporting_line() const 
       {
-        return get(base).template get<0>();
+        return get_pointee_or_identity(base).template get<0>();
       }
 
       const Circular_arc_point_3& source() const 
       {
-        return get(base).template get<1>();
+        return get_pointee_or_identity(base).template get<1>();
       }
 
       const Circular_arc_point_3& target() const 
       {
-        return get(base).template get<2>();
+        return get_pointee_or_identity(base).template get<2>();
       }
 
       const Circular_arc_point_3& lower_xyz_extremity() const
