@@ -72,11 +72,11 @@ int main(int argc, char ** argv) {
 	// select a source vertex for dijkstra's algorithm
 	graph_traits<Graph>::vertex_descriptor v0;
 	v0 = vertex(0, g);
-	std::cout << "vertex 0: " << g[v0] << std::endl;
+	std::cout << "The source vertex is: " << g[v0] << std::endl;
 
 	// get the vertex index map
 	property_map<Graph, vertex_index_t>::type indexmap = get(vertex_index, g);
-	std::cout << "Index of v0: " << get(indexmap, v0) << std::endl;
+	std::cout << "The index of source vertex is: " << get(indexmap, v0) << std::endl;
 
 	// calculating edge length in Euclidean metric and store them in the edge property
 	graph_traits<Graph>::edge_iterator ei, ei_end;  

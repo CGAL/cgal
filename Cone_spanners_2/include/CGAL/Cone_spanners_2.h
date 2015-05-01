@@ -31,7 +31,7 @@
 // if leda::real is used, pls modify the following definition
 #define CGAL_USE_CORE 1
 
-#include <CGAL/Cone_spanners_2/_cxx0x_hack.h>
+//#include <CGAL/Cone_spanners_2/_cxx0x_hack.h>
 
 #include <iostream>
 #include <cstdlib>
@@ -95,22 +95,22 @@ class Cone_spanners_2 {
      *
      * @param k     Number of cones to divide space into
      * @param start An iterator pointing to the first point (vertex) in the graph.
-     *              (default: nullptr)
+     *              (default: NULL)
      * @param end   An iterator pointing to the place that passes the last point. 
-	                (default: nullptr)
+	                (default: NULL)
      * @param ray0  A direction denoting one of the rays deviding the
      *              cones. This allows arbitary rotations of the rays that divide
      *              the plane.
 	 *              (default: positive x-axis) 
      */
-#ifdef GXX11
-    template <typename PointInputIterator=Point_2*>
-#else
+//#ifdef GXX11
+//    template <typename PointInputIterator=Point_2*>
+//#else
     template <typename PointInputIterator>
-#endif
+//#endif
     Cone_spanners_2 (const unsigned int k,
-                    const PointInputIterator& start=nullptr, 
-					const PointInputIterator& end=nullptr,
+                    const PointInputIterator& start=NULL, 
+					const PointInputIterator& end=NULL,
                     const Direction_2& ray0 = Direction_2(1,0)
 				   ) 
 		           : num_cones(k), g() 
@@ -160,13 +160,9 @@ class Cone_spanners_2 {
      *  @param end    The iterator pointing to the place just passing the end of the point list.
      *                
      */
-#ifdef GXX11
-    template <typename PointInputIterator=Point_2*>
-#else
     template <typename PointInputIterator>
-#endif
-    void insert (PointInputIterator start=nullptr,
-                 const PointInputIterator& end=nullptr)
+    void insert (PointInputIterator start=NULL,
+                 const PointInputIterator& end=NULL)
     {
       populate_vertices(start, end);
     }
@@ -219,18 +215,17 @@ class Cone_spanners_2 {
      *  induced by the direction D".
      *
      *  This function object is based on the function `CGAL::compare_signed_distance_to_line_2()`, 
-	 *  which orders two points according to their signed distance to a line.
+	 *  which orders two points according to their signed distance to a base line.
      *  
-	 *  NB: The way the tie is broken in this functor potentially prevents the overlapping of cone boundaries.
+	 *  NB: The way of breaking ties in this functor is intended to prevent the overlapping of cone boundaries.
 	 *  Basically, the cw boundary will be considered to be inside this cone, while the ccw boundary not. 
-
+	 *  Specifically, ties are broken by a second order according to the ccw90(base_line) direction.
+     *
      *  @see  `CGAL::compare_signed_distance_to_line_2()`
      */
-    struct  vertex_smaller_2
-#ifndef GXX11
-        : public std::binary_function <typename Graph::vertex_descriptor,
-                                       typename Graph::vertex_descriptor, bool>
-#endif
+    struct  vertex_smaller_2 : public std::binary_function <typename Graph::vertex_descriptor,
+                                           typename Graph::vertex_descriptor, 
+									       bool>
     {
       // typedef for C++11 - doesn't hurt to also have for C++98
       typedef typename Graph::vertex_descriptor first_argument_type;
@@ -257,7 +252,8 @@ class Cone_spanners_2 {
 		  }
 
           /* otherwise, outcome == CGAL::EQUAL, 
-		   *    tie will be broken by a second order according to the ccw90(base_line) direction. */
+		   *    tie will be broken by a second order according to the ccw90(base_line) direction. 
+		   */
           // define a rotation of counter clockwise 90
 	      Transformation ccw90(0, -1, 1,  0);
 	      // rotate 
@@ -327,20 +323,20 @@ class Cone_spanners_2 <Exact_predicates_exact_constructions_kernel_with_sqrt,
      *
      * @param k     Number of cones to divide space into
      * @param start An iterator pointing to the first point (vertex) in the graph.
-     *              (default: nullptr)
+     *              (default: NULL)
      * @param end   An iterator pointing to the place that passes the last point. 
-	                (default: nullptr)
+	                (default: NULL)
      * @param ray0  The direction of the first ray. This allows the first ray can be at an arbitary 
 	 *              direction.  (default: positive x-axis) 
      */
-#ifdef GXX11
-    template <typename PointInputIterator=Point_2*>
-#else
+//#ifdef GXX11
+//    template <typename PointInputIterator=Point_2*>
+//#else
     template <typename PointInputIterator>
-#endif
+//#endif
     Cone_spanners_2 (const unsigned int k,
-                    const PointInputIterator& start=nullptr, 
-					const PointInputIterator& end=nullptr,
+                    const PointInputIterator& start=NULL, 
+					const PointInputIterator& end=NULL,
                     const Direction_2& ray0 = Direction_2(1,0)
 				   ) 
 		           : num_cones(k), g() 
@@ -425,13 +421,13 @@ class Cone_spanners_2 <Exact_predicates_exact_constructions_kernel_with_sqrt,
      *  @param end    The iterator pointing to the place just passing the end of the point list.
      *                
      */
-#ifdef GXX11
-    template <typename PointInputIterator=Point_2*>
-#else
+//#ifdef GXX11
+//    template <typename PointInputIterator=Point_2*>
+//#else
     template <typename PointInputIterator>
-#endif
-    void insert (PointInputIterator start=nullptr,
-                 const PointInputIterator& end=nullptr)
+//#endif
+    void insert (PointInputIterator start=NULL,
+                 const PointInputIterator& end=NULL)
     {
       populate_vertices(start, end);
     }
@@ -487,10 +483,10 @@ class Cone_spanners_2 <Exact_predicates_exact_constructions_kernel_with_sqrt,
      *  @see  directionally_smaller_2
      */
     struct  vertex_smaller_2
-#ifndef GXX11
+//#ifndef GXX11
         : public std::binary_function <typename Graph::vertex_descriptor,
                                        typename Graph::vertex_descriptor, bool>
-#endif
+//#endif
     {
       // typedef for C++11 - doesn't hurt to also have for C++98
       typedef typename Graph::vertex_descriptor first_argument_type;
@@ -562,8 +558,5 @@ std::ostream& operator<< (std::ostream& os, const Cone_spanners_2<Kernel, Direct
 
 }  // namespace CGAL
 
-#ifdef GXX11
-#undef GXX11
-#endif
 
 #endif

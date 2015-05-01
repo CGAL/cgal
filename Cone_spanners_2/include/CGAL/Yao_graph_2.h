@@ -28,14 +28,10 @@
 #ifndef CGAL_YAO_GRAPH_2_H
 #define CGAL_YAO_GRAPH_2_H
 
-#include <CGAL/Cone_spanners_2/_cxx0x_hack.h>
-
 #include <iostream>
 #include <cstdlib>
 #include <set>
-#ifndef GXX11
 #include <functional>
-#endif
 
 #include <boost/config.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -74,19 +70,19 @@ namespace CGAL {
 		*
 		* @param k     Number of cones to divide space into
 		* @param start An iterator pointing to the first point (vertex) in the graph.
-		*              (default: nullptr)
-		* @param end   An iterator pointing to the place that passes the last point. (default: nullptr)
+		*              (default: NULL)
+		* @param end   An iterator pointing to the place that passes the last point. (default: NULL)
 		* @param ray0  The direction of the first ray. This allows arbitary direction of the first ray.
 		*              (default: positive x-axis) 
 		*/
-#ifdef GXX11
-	    template <typename PointInputIterator=Point_2*>
-#else
+//#ifdef GXX11
+//	    template <typename PointInputIterator=Point_2*>
+//#else
 	    template <typename PointInputIterator>  
-#endif
+//#endif
 		Yao_graph_2(const unsigned int k,
-			        const PointInputIterator& start=nullptr, 
-					const PointInputIterator& end=nullptr,
+			        const PointInputIterator& start=NULL, 
+					const PointInputIterator& end=NULL,
 			        const Direction_2& ray0 = Direction_2(1,0)
 					)
 					: Cone_spanners_2<Kernel, Directedness, EdgeProperty>(k, start, end, ray0)
@@ -202,8 +198,5 @@ namespace CGAL {
 
 }  // namespace CGAL
 
-#ifdef GXX11
-#undef GXX11
-#endif
 
 #endif
