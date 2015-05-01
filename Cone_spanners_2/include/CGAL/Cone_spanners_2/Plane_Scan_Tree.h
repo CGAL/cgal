@@ -28,8 +28,6 @@
 #ifndef CGAL_PLANE_SCAN_TREE_2_H
 #define CGAL_PLANE_SCAN_TREE_2_H
 
-#include <CGAL/Cone_spanners_2/_cxx0x_hack.h>
-
 #include <iostream>
 #include <algorithm>
 #include <functional>
@@ -56,7 +54,8 @@ namespace ThetaDetail {
  *
  * <strong>!!! Note:</strong> No two keys in the tree may have equal ordering
  * according to key_compare. Results are undefined if key_compare does not give
- * unique ordering of the inserted keys.
+ * unique ordering of the inserted keys. The 'vertex_smaller_2' functor implemented
+ * by us guarantees the unique ordering, and is passed to Comp and VComp.
  *
  *  @see  G. Narasimhan and M. Smid, Geometric Spanner Networks: Cambridge
  *        University Press, 2007, p. 71
@@ -95,16 +94,16 @@ class Plane_Scan_Tree {
     /** Explicit Constructor. */
     explicit Plane_Scan_Tree (const key_compare& comp = key_compare(),
                             const value_compare& vcomp = value_compare())
-        : less (comp), vless (vcomp), root (nullptr), min (nullptr),
-          max (nullptr), _size (0) {}
+        : less (comp), vless (vcomp), root (NULL), min (NULL),
+          max (NULL), _size (0) {}
 
 	/** Constructor */
     template <typename InputIterator>
     Plane_Scan_Tree (InputIterator first, InputIterator last,
                     const key_compare& comp = key_compare(),
                     const value_compare& vcomp = value_compare())
-        : less (comp), vless (vcomp), root (nullptr), min (nullptr),
-          max (nullptr), _size (0) 
+        : less (comp), vless (vcomp), root (NULL), min (NULL),
+          max (NULL), _size (0) 
 	{
       // TODO - Inplement a more efficient algorithm that builds the tree bottom up
       for (;first != last; ++first)
@@ -116,26 +115,27 @@ class Plane_Scan_Tree {
      */
     ~Plane_Scan_Tree () {
       delete root;
-      root = nullptr;
-      min = nullptr;
-      max = nullptr;
+      root = NULL;
+      min = NULL;
+      max = NULL;
       _size = 0;;
     }
 
+/*
 #ifdef GXX11
-    /** Move constructor.
-     */
+    /// Move constructor.  
     Plane_Scan_Tree (Plane_Scan_Tree<Key, T, Comp>&& x) : less (x.less), _size(x._size) {
       root = x.root;
-      x.root = nullptr;
+      x.root = NULL;
 
       min = x.min;
-      x.min = nullptr;
+      x.min = NULL;
 
       max = x.max;
-      x.max = nullptr;
+      x.max = NULL;
     }
 #endif
+*/
 
     /** Returns the number of key-value pairs in the tree
      *
@@ -150,7 +150,7 @@ class Plane_Scan_Tree {
      * @param v   The value
      */
     void add (const key_type& k, const mapped_type& v) {
-      if (nullptr == root) {
+      if (NULL == root) {
         min = new _leaf_type (less, vless, this);
         max = min;
         root = min;
@@ -179,7 +179,7 @@ class Plane_Scan_Tree {
      * @return  The minimum value whose key is strictly greater than x.
      */
     const mapped_type* minAbove (const key_type& x) const {
-      if (nullptr == root) return nullptr;
+      if (NULL == root) return NULL;
       return root->minAbove(x);
     }
 
