@@ -12,10 +12,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein   <wein_r@yahoo.com>
 
 #ifndef CGAL_UNION_OF_SEGMENT_CYCLES_2_H
 #define CGAL_UNION_OF_SEGMENT_CYCLES_2_H
@@ -82,13 +79,13 @@ public:
     this->_construct_arrangement (begin, end, arr);
 
     // Produce the result. First set the outer boundary of the union, given
-    // as the inner boundary of the single hole in the unbounded face. 
+    // as the inner boundary of the single hole in the unbounded face.
     Face_iterator                    fit;
     const Face_handle                uf = arr.unbounded_face();
     Inner_ccb_iterator               iccb_it = uf->inner_ccbs_begin();
     Ccb_halfedge_circulator          first, circ;
     Halfedge_handle                  he;
-   
+
     out_bound.erase (out_bound.vertices_begin(), out_bound.vertices_end());
 
     circ = first = *iccb_it;
@@ -96,7 +93,7 @@ public:
     {
       out_bound.push_back (circ->source()->point());
       --circ;
-      
+
     } while (circ != first);
     ++iccb_it;
 
@@ -104,19 +101,19 @@ public:
     for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
     {
       CGAL_assertion (fit->data() != this->UNVISITED);
-      
+
       // If a bounded face has an inside count that equals 0, it forms a hole
       // in the union.
       if (! fit->is_unbounded() && fit->data() == 0)
       {
         Polygon_2   pgn_hole;
-          
+
         circ = first = fit->outer_ccb();
         do
         {
           pgn_hole.push_back (circ->source()->point());
           --circ;
-          
+
         } while (circ != first);
 
         // Insert it to the containers of holes in the Minkowski sum.

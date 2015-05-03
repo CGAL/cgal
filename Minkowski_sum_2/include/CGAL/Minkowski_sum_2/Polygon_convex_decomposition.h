@@ -12,10 +12,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-// Author(s)     : Ron Wein           <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein           <wein_r@yahoo.com>
 
 #ifndef CGAL_DECOMPOSITION_STRATEGY_ADAPTER_H
 #define CGAL_DECOMPOSITION_STRATEGY_ADAPTER_H
@@ -48,7 +45,7 @@ template <class Kernel_, class Container_, class StrategyTag_>
 class Decomposition_strategy_adapter
 {
 public:
-        
+
   typedef Kernel_                                  Kernel;
   typedef Polygon_2<Kernel, Container_>            Polygon_2;
   typedef StrategyTag_                             Strategy_tag;
