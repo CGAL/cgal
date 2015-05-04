@@ -162,11 +162,11 @@ void Scene_textured_polyhedron_item::compile_shaders(void)
         "in highp vec3 fColors; \n"
         "in highp vec2 f_texCoord; \n"
         "uniform sampler2D s_texture; \n"
-        "out highp vec3 color; \n"
+        "out highp vec4 color; \n"
         " \n"
         "void main(void) \n"
         "{ \n"
-        " color = vec3(texture(s_texture, f_texCoord)) * fColors; \n"
+        " color = vec4(vec3(texture(s_texture, f_texCoord))*fColors, 1.0); \n"
         "} \n"
     };
 
