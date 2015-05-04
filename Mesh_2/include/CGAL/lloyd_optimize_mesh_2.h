@@ -9,11 +9,22 @@
 
 #include <fstream>
 
+#define BOOST_PARAMETER_MAX_ARITY 12
 #include <boost/parameter.hpp>
 #include <boost/parameter/name.hpp>
 
 namespace parameters
 {
+// see <CGAL/config.h>
+CGAL_PRAGMA_DIAG_PUSH
+//ignore "unused variable" warning
+#if defined(__clang__) || (BOOST_GCC >= 40600)
+#  define CGAL_MESH_3_IGNORE_UNUSED_VARIABLES \
+    _Pragma("GCC diagnostic ignored \"-Wunused-variable\"")
+#else
+#  define CGAL_MESH_3_IGNORE_UNUSED_VARIABLES
+#endif
+
 BOOST_PARAMETER_NAME( cdt )
 BOOST_PARAMETER_NAME( (max_iteration_number, tag) max_iteration_number_ )
 BOOST_PARAMETER_NAME( (convergence, tag) convergence_)
@@ -22,7 +33,9 @@ BOOST_PARAMETER_NAME( (freeze_bound, tag) freeze_bound_)
 BOOST_PARAMETER_NAME( (seeds_begin, tag) seeds_begin_)
 BOOST_PARAMETER_NAME( (seeds_end, tag) seeds_end_)
 BOOST_PARAMETER_NAME( (mark, tag) mark_)
-}
+
+CGAL_PRAGMA_DIAG_POP	
+}//end namespace parameters
 
 using namespace parameters;
 
