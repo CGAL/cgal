@@ -57,18 +57,18 @@ namespace internal {
     {}
 
     const Root_of_2 & x() const 
-    { return get(_p).x(); }
+    { return get_pointee_or_identity(_p).x(); }
     
     const Root_of_2 & y() const 
-    { return get(_p).y(); }
+    { return get_pointee_or_identity(_p).y(); }
     
     CGAL::Bbox_2 bbox() const
     {
-      return get(_p).bbox();
+      return get_pointee_or_identity(_p).bbox();
     }
 
     const Root_for_circles_2_2 & coordinates() const 
-    { return get(_p); }
+    { return get_pointee_or_identity(_p); }
 
     bool equal_ref(const Circular_arc_point_2_base &p) const
     {
