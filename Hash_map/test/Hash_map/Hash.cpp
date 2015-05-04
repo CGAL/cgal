@@ -20,7 +20,7 @@ template <typename P>
 void
 fct(const P& p)
 {
-  typedef boost::graph_traits<P>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<P>::vertex_descriptor vertex_descriptor;
 
   std::map<vertex_descriptor,int> M;
   vertex_descriptor vd;
