@@ -49,6 +49,7 @@ void test_it(const char* N, int value)
 
   std::ostringstream os;
   os << ::CGAL::oformat(tmp1);
+  std::cout << os.str() << std::endl;
   std::istringstream is(os.str());
   is >> ::CGAL::iformat(tmp2);
   assert( tmp1 == tmp2 );

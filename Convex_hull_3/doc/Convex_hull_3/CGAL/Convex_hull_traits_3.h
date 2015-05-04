@@ -42,11 +42,6 @@ typedef unspecified_type Plane_3;
 /*!
 
 */ 
-typedef R::Vector_3 Vector_3; 
-
-/*!
-
-*/ 
 typedef Polyhedron_3<R> Polyhedron_3;
 
 /*!
@@ -72,16 +67,7 @@ typedef R::Construct_triangle_3 Construct_triangle_3;
 /*!
 
 */ 
-typedef R::Construct_centroid_3 Construct_centroid_3; 
-
-/*!
-
-*/ 
-typedef R::Construct_vector_3 Construct_vector_3;
-/*!
-
-*/ 
-typedef R::Orientation_3 Orientation_3;
+typedef R::Construct_centroid_3 Construct_centroid_3;
 
 /*!
 

@@ -20,7 +20,7 @@ public:
   non_trivial_cctor(const non_trivial_cctor& x) { data = new char[n]; std::copy(x.data, x.data + n, this->data);  }
   ~non_trivial_cctor() { delete[] data; }
 private:
-  const static int n;
+  static const int n;
   char* data;
 };
 

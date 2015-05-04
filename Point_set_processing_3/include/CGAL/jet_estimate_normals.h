@@ -37,9 +37,9 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
+/// \cond SKIP_IN_MANUAL
 namespace internal {
 
-/// \cond SKIP_IN_MANUAL
 
 /// Estimates normal direction using jet fitting
 /// on the k nearest neighbors.
@@ -101,9 +101,9 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
   return monge_form.normal_direction();
 }
 
+} /* namespace internal */
 /// \endcond
 
-} /* namespace internal */
 
 
 // ----------------------------------------------------------------------------
@@ -119,13 +119,13 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 ///
 ///
 /// @tparam ForwardIterator iterator model of the concept of the same name over input points and able to store output normals.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
-///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
-/// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = Vector_3<Kernel>.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with  value type `Point_3<Kernel>`.
+///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
+/// @tparam NormalPMap is a model of `WritablePropertyMap` with value type `Vector_3<Kernel>`.
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from PointPMap value_type.
+///        It can be omitted and deduced automatically from the value type of `PointPMap`.
 /// @tparam SvdTraits template parameter for the class `Monge_via_jet_fitting` that
-///         can be ommited in conditions described in the documentation of `Monge_via_jet_fitting`.
+///         can be ommited under conditions described in the documentation of `Monge_via_jet_fitting`.
 
 // This variant requires all parameters.
 template <typename ForwardIterator,

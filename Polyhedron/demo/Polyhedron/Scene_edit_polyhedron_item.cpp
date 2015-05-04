@@ -1,3 +1,4 @@
+#include "opengl_tools.h"
 #include "Scene_edit_polyhedron_item.h"
 #include <boost/foreach.hpp>
 #include <algorithm>
@@ -20,8 +21,8 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
   mw->installEventFilter(this);
   gluQuadricNormals(quadric, GLU_SMOOTH);
   // bind vertex picking 
-  connect(&k_ring_selector, SIGNAL(selected(const std::map<Polyhedron::Vertex_handle, int>&)), this, 
-    SLOT(selected(const std::map<Polyhedron::Vertex_handle, int>&)));
+  connect(&k_ring_selector, SIGNAL(selected(const std::set<Polyhedron::Vertex_handle>&)), this,
+    SLOT(selected(const std::set<Polyhedron::Vertex_handle>&)));
 
   poly_item->set_color_vector_read_only(true); // to prevent recomputation of color vector in changed()
   poly_item->update_vertex_indices();
@@ -60,16 +61,16 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
   tris.resize(polyhedron()->size_of_facets()*3);
   counter = 0;
   for(Polyhedron::Facet_handle fb = polyhedron()->facets_begin(); fb != polyhedron()->facets_end(); ++fb, ++counter) {
-    tris[counter*3] = fb->halfedge()->vertex()->id();
-    tris[counter*3+1] = fb->halfedge()->next()->vertex()->id();
-    tris[counter*3+2] = fb->halfedge()->prev()->vertex()->id();
+    tris[counter*3] =  static_cast<unsigned int>(fb->halfedge()->vertex()->id());
+    tris[counter*3+1] = static_cast<unsigned int>(fb->halfedge()->next()->vertex()->id());
+    tris[counter*3+2] = static_cast<unsigned int>(fb->halfedge()->prev()->vertex()->id());
   }
 
   edges.resize(polyhedron()->size_of_halfedges());
   counter = 0;
   for(Polyhedron::Edge_iterator eb = polyhedron()->edges_begin(); eb != polyhedron()->edges_end(); ++eb, ++counter) {
-    edges[counter*2] = eb->vertex()->id();
-    edges[counter*2+1] = eb->opposite()->vertex()->id();
+    edges[counter*2] = static_cast<unsigned int>(eb->vertex()->id());
+    edges[counter*2+1] = static_cast<unsigned int>(eb->opposite()->vertex()->id());
   }
 }
 

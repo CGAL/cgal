@@ -56,13 +56,13 @@ int main() {
   Solution::Infeasibility_certificate_iterator y = 
     s.infeasibility_certificate_begin();
   // check y >= 0
-  assert (y[0] >= 0);
-  assert (y[1] >= 0);
+  assert (ET(y[0]) >= 0);
+  assert (ET(y[1]) >= 0);
   // check y^T A >= 0
-  assert (y[0] * A[0][0] + y[1] * A[0][1] >= 0);
-  assert (y[0] * A[1][0] + y[1] * A[1][1] >= 0);
+  assert (ET(y[0]) * A[0][0] + ET(y[1]) * A[0][1] >= 0);
+  assert (ET(y[0]) * A[1][0] + ET(y[1]) * A[1][1] >= 0);
   // check y^T b < 0
-  assert (y[0] * b[0] + y[1] * b[1] < 0);
+  assert (ET(y[0]) * b[0] + ET(y[1]) * b[1] < 0);
 
   return 0;
 }

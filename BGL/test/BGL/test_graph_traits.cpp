@@ -1,11 +1,28 @@
 
 
 #include "test_Prefix.h"
-
+#include <boost/numeric/conversion/cast.hpp>
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
+#include <CGAL/use.h>
 
 typedef boost::unordered_set<std::size_t> id_map;
+
+template <typename Graph>
+void test_isolated_vertex(const Graph& g)
+{
+  std::cerr << typeid(g).name() << std::endl;
+  Graph G;
+  typedef boost::graph_traits< Graph > Traits;
+  typedef typename Traits::vertex_descriptor vertex_descriptor;
+  typedef typename Traits::halfedge_descriptor halfedge_descriptor;
+  vertex_descriptor v = add_vertex(G);
+  // the connectivity of v may be anything
+  set_halfedge(v, Traits::null_halfedge(), G);
+  halfedge_descriptor h = halfedge(v,G);
+  CGAL_USE(h);
+}
+
 
 template <typename Graph>
 void test_halfedge_around_vertex_iterator(const Graph& g)
@@ -49,13 +66,14 @@ void test_edge_iterators(const G& g)
   typedef boost::graph_traits< G > Traits;
   typedef typename Traits::edge_descriptor edge_descriptor;
   typedef typename Traits::edge_iterator edge_iterator;
+  typedef typename Traits::edges_size_type edges_size_type;
 
-  assert(g.size_of_halfedges() / 2 == num_edges(g));
+  // assert(g.size_of_halfedges() / 2 == num_edges(g));
   
   // do we iterate as many as that?
   edge_iterator eb, ee;
   boost::tie(eb, ee) = edges(g);
-  assert(std::distance(eb, ee) == static_cast<std::ptrdiff_t>(g.size_of_halfedges() / 2));
+  assert(boost::numeric_cast<edges_size_type>(std::distance(eb, ee)) == num_edges(g));
 
   id_map ids;
   unsigned int count = 0;
@@ -254,6 +272,7 @@ test(const std::vector<Graph>& graphs)
     test_faces(p);
     test_halfedge_around_vertex_iterator(p);
     test_halfedge_around_face_iterator(p);
+    test_isolated_vertex(p);
   }
 }
 

@@ -362,6 +362,75 @@ output_range(std::ostream& os,
     return os;
 }
 
+// Reimplementation of std::random_shuffle, for the use of Spatial_sorting.
+// We want an implementation of random_shuffle that produces the same
+// result on all platforms, for a given seeded random generator.
+template <class RandomAccessIterator,
+          class RandomGenerator>
+void
+random_shuffle(RandomAccessIterator begin, RandomAccessIterator end,
+               RandomGenerator& random)
+{
+  if(begin == end) return;
+  for(RandomAccessIterator it = begin + 1; it != end; ++it)
+  {
+    std::iter_swap( it, begin + random( (it - begin) + 1 ) );
+    // The +1 inside random is because random(N) gives numbers in the open
+    // interval [0, N[
+  }
+}
+
+namespace internal {
+namespace algorithm {
+
+// Implementation of the algorithm described here:
+//   http://en.wikipedia.org/w/index.php?title=Selection_algorithm&oldid=480099620#Partition-based_general_selection_algorithm
+template <class RandomAccessIterator, class Compare>
+RandomAccessIterator
+partition(RandomAccessIterator left,
+          RandomAccessIterator right,  // points to the last element of the sequence
+          RandomAccessIterator pivot_it,
+          Compare& compare)
+{
+  std::iter_swap(pivot_it, right); // move pivot to the right
+  RandomAccessIterator result = left;
+  for(RandomAccessIterator it = left; it != right; ++it) {
+    if(compare(*it, *right)) {
+      std::iter_swap(result, it);
+      ++result;
+    }
+  }
+  std::iter_swap(right, result);
+  return result;
+}
+
+} // end namespace algorithm
+} // end namespace internal
+
+// Reimplementation of std::nth_element, for the use of Spatial_sorting.
+// We want an implementation of nth_element that produces the same result
+// on all platforms.
+template <class RandomAccessIterator, class Compare>
+void nth_element(RandomAccessIterator left,
+                 RandomAccessIterator nth,
+                 RandomAccessIterator right,
+                 Compare& comp)
+{
+  if(left == right) return;
+  --right; // 'right' points to the last element of the sequence
+  if(left == right) return; // exit if there is only one element
+  while(true) {
+    RandomAccessIterator pivot_it = left + ((right - left) / 2);
+    RandomAccessIterator new_pivot_it = 
+      internal::algorithm::partition(left, right, pivot_it, comp);    
+    if(new_pivot_it == nth) return;
+    if(nth < new_pivot_it) 
+      right = new_pivot_it - 1;
+    else 
+      left = new_pivot_it + 1;
+  } // end while(true)
+}
+
 } //namespace CGAL
 
 #endif // CGAL_ALGORITHM_H

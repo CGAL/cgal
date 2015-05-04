@@ -112,6 +112,7 @@ public:
 
   typedef typename Tds::Face_iterator          All_faces_iterator;
   typedef typename Tds::Edge_iterator          All_edges_iterator;
+  typedef typename Tds::Halfedge_iterator      All_halfedges_iterator;
   typedef typename Tds::Vertex_iterator        All_vertices_iterator;
  
 
@@ -444,6 +445,8 @@ public:
   All_vertices_iterator all_vertices_end() const;
   All_edges_iterator all_edges_begin() const;
   All_edges_iterator all_edges_end() const; 
+  All_halfedges_iterator all_halfedges_begin() const;
+  All_halfedges_iterator all_halfedges_end() const; 
 
   //for compatibility with previous versions
   Face_iterator faces_begin() const {return finite_faces_begin();}
@@ -557,6 +560,11 @@ public:
   Face_handle create_face(Face_handle); //calls copy constructor of Face
   void delete_face(Face_handle f);
   void delete_vertex(Vertex_handle v);
+
+  Vertex_handle collapse_edge(Edge e)
+  {
+    return _tds.collapse_edge(e);
+  }
 
   Vertex_handle file_input(std::istream& is);
   void file_output(std::ostream& os) const;
@@ -3153,6 +3161,22 @@ Triangulation_2<Gt, Tds>::
 all_edges_end() const
 {
   return _tds.edges_end();
+}
+
+template <class Gt, class Tds >
+typename Triangulation_2<Gt, Tds>::All_halfedges_iterator
+Triangulation_2<Gt, Tds>::
+all_halfedges_begin() const
+{
+  return _tds.halfedges_begin();
+}
+
+template <class Gt, class Tds >
+typename Triangulation_2<Gt, Tds>::All_halfedges_iterator
+Triangulation_2<Gt, Tds>::
+all_halfedges_end() const
+{
+  return _tds.halfedges_end();
 }
 
 template <class Gt, class Tds >

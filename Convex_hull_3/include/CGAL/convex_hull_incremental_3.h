@@ -21,6 +21,9 @@
 
 #ifndef CGAL_CONVEX_HULL_INCREMENTAL_3_H
 #define CGAL_CONVEX_HULL_INCREMENTAL_3_H
+#define CGAL_DEPRECATED_HEADER "<CGAL/convex_hull_incremental_3.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/convex_hull_3.h>"
+#include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/Convex_hull_d.h>
 #include <CGAL/Convex_hull_d_traits_3.h>

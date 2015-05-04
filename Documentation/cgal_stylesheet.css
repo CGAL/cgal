@@ -68,6 +68,10 @@ a.el {
     font-weight: normal;
 }
 
+.memproto a {
+    font-weight: bold;
+}
+
 .PkgSummary {
     width: 60%;
 }
@@ -158,6 +162,10 @@ dl.requires dt a, dl.todo dt a, dl.bug dt a, dl.test dt a
 }
 
 div.cgal_figure_caption {
+	text-align: center;
+}
+
+div.cgal_video_caption {
 	text-align: center;
 }
 

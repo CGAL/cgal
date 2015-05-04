@@ -25,10 +25,6 @@ if ( CGAL_FOUND )
 
   # VisualC++ optimization for applications dealing with large data
   if (MSVC)
-    # Use /EHa option to catch stack overflows.
-    # Note: TAUCS needs a stack >= 2MB. CGAL default is 10MB.
-    string(REGEX REPLACE "/EH[asc]*" "/EHa" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-
     # Use /FR to turn on IntelliSense
     SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FR")
 
@@ -48,12 +44,21 @@ if ( CGAL_FOUND )
   # Temporary debugging stuff
   ADD_DEFINITIONS( "-DDEBUG_TRACE" )
 
+  find_package( TBB QUIET )
+
+  if( TBB_FOUND )
+    include(${TBB_USE_FILE})
+    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
+  endif()
+  
   # Executables that do *not* require LAPACK
   create_single_source_cgal_program( "read_test.cpp" )
   create_single_source_cgal_program( "read_test_with_different_pmaps.cpp" )
   create_single_source_cgal_program( "analysis_test.cpp" )
   create_single_source_cgal_program( "remove_outliers_test.cpp" )
-  create_single_source_cgal_program( "psp_jet_includes.cpp" )
+  create_single_source_cgal_program( "wlop_simplify_and_regularize_test.cpp" )
+  create_single_source_cgal_program( "bilateral_smoothing_test.cpp" )
+  create_single_source_cgal_program( "edge_aware_upsample_test.cpp" )
 
   # Use Eigen or BLAS and LAPACK (optional)
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)

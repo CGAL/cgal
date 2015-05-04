@@ -8,6 +8,7 @@ fi
 export CMAKE_GENERATOR='-GNMake Makefiles'
 export MAKE_CMD='/cygdrive/c/bin/jom/jom.exe'
 export PATH=$PATH:'/cygdrive/c/CGAL/CGAL-I/scripts:/cygdrive/c/CGAL/CGAL-I/developer_scripts'
+export PATH=$PATH:'/cygdrive/c/bin/depends'
 
 #Header only libraries
 export BOOST_INCLUDEDIR="C:\3rdPartyLibs\boost_${BOOST_VERSION}"
@@ -27,3 +28,10 @@ export QTDIR="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\QT-4.8.4"
 
 export PATH="`cygpath $CGAL_DIR`/bin:`cygpath $GMP_LIB_DIR`:`cygpath $QTDIR`/bin:`cygpath $BOOST_LIBRARYDIR`:`cygpath $QGLVIEWERROOT`/QGLViewer/debug:`cygpath $QGLVIEWERROOT`/QGLViewer/release:/cygdrive/c/3rdPartyLibs/VC-${ARCH}/zlib":$PATH
 
+#TBB # only when TBB_ARCH_PLATFORM is already defined in platform-specific setup
+if [ -n "${TBB_ARCH}" ]; then
+  export TBBROOT="C:\3rdPartyLibs\tbb43_20141204"
+  # bin and lib depend on compiler and architecture
+  export TBB_ARCH_PLATFORM="${TBB_ARCH}/vc${VC_VERSION}"
+  export PATH=$PATH:"${TBBROOT}\bin\\${TBB_ARCH}\vc${VC_VERSION}"
+fi

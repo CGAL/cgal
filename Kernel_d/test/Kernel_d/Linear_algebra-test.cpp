@@ -8,12 +8,13 @@
 #define VEC_DIM 10
 #define MAT_DIM 10
 
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_integer.h>
+#include <CGAL/Exact_rational.h>
 
 #if defined( CGAL_USE_LEDA) || defined ( CGAL_USE_GMP )
 
-typedef CGAL::Arithmetic_kernel::Integer RT;
-typedef CGAL::Arithmetic_kernel::Rational FT;
+typedef CGAL::Exact_integer RT;
+typedef CGAL::Exact_rational FT;
 
 #else
 

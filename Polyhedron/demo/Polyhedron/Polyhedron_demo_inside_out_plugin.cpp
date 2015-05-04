@@ -22,7 +22,7 @@ public:
     return QStringList() << "actionInsideOut";
   }
 
-  bool applicable() const { 
+  bool applicable(QAction*) const { 
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
     return qobject_cast<Scene_polyhedron_item*>(scene->item(index)) 
       || qobject_cast<Scene_polygon_soup_item*>(scene->item(index));

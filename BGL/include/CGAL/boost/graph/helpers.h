@@ -22,6 +22,7 @@
 
 
 #include <boost/foreach.hpp>
+#include <CGAL/boost/graph/iterator.h>
 
 namespace CGAL {
 
@@ -33,6 +34,17 @@ bool is_border(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, 
   return face(hd,g) == boost::graph_traits<FaceGraph>::null_face();
 }
 
+template <typename FaceGraph>
+bool is_border_edge(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
+{
+  return is_border(hd, g) || is_border(opposite(hd,g), g);
+}
+
+template <typename FaceGraph>
+bool is_border(typename boost::graph_traits<FaceGraph>::edge_descriptor ed, const FaceGraph& g)
+{
+  return is_border_edge(halfedge(ed,g), g);
+}
 
 template <typename Graph>
 boost::optional<typename boost::graph_traits<Graph>::halfedge_descriptor>

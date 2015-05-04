@@ -63,17 +63,17 @@ struct Splitter_test {
     if(CGAL::squared_distance(query,get_point(pd.first)) != pd.second){
       std::cout << CGAL::squared_distance(query,get_point(pd.first)) << " != " << pd.second << std::endl;
     }
-    assert(CGAL::squared_distance(query,get_point(pd.first)) == pd.second);
+    assert(CGAL_IA_FORCE_TO_DOUBLE(CGAL::squared_distance(query,get_point(pd.first))) == pd.second);
     it++;
     for(; it != oins.end();it++){
       Point_with_transformed_distance qd = *it;
       assert(pd.second <= qd.second);
       pd = qd;
       points2.push_back(get_point(pd.first));
-      if(CGAL::squared_distance(query,get_point(pd.first)) != pd.second){
+      if(CGAL_IA_FORCE_TO_DOUBLE(CGAL::squared_distance(query,get_point(pd.first))) != pd.second){
 	std::cout << CGAL::squared_distance(query,get_point(pd.first)) << " != " << pd.second << std::endl;
       }
-      assert(CGAL::squared_distance(query,get_point(pd.first)) == pd.second);
+      assert(CGAL_IA_FORCE_TO_DOUBLE(CGAL::squared_distance(query,get_point(pd.first))) == pd.second);
     }
     std::sort(points.begin(),points.end());
     std::sort(points2.begin(),points2.end());

@@ -76,7 +76,7 @@ Programs can be written to an output stream in MPSFormat, using one of the follo
 \cgalPkgDescriptionBegin{Linear and Quadratic Programming Solver,PkgQPSolverSummary}
 \cgalPkgPicture{qp.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Kaspar Fischer, Bernd G&auml;rtner, Sven Sch&ouml;nherr, and Frans Wessendorp}
+\cgalPkgAuthors{Kaspar Fischer, Bernd Gärtner, Sven Schönherr, and Frans Wessendorp}
 \cgalPkgDesc{This package contains algorithms for minimizing linear and convex quadratic functions over polyhedral domains, described by linear equations and inequalities. The algorithms are exact, i.e.\ the solution is computed in terms of multiprecision rational numbers.  The resulting solution is certified: along with the claims that the problem under consideration has an optimal solution, is infeasible, or is unbounded, the algorithms also deliver proofs for these facts. These proofs can easily (and independently from the algorithms) be  checked for correctness.  The solution algorithms are based on a generalization of the simplex  method to quadratic objective functions. }
 \cgalPkgManuals{Chapter_Linear_and_Quadratic_Programming_Solver,PkgQPSolver}
 \cgalPkgSummaryEnd

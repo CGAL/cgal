@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 
+
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -25,24 +27,8 @@ typedef boost::graph_traits<Surface_mesh>::edge_iterator edge_iterator;
 
 namespace SMS = CGAL::Surface_mesh_simplification ;
 
-
 //
 // BGL property map which indicates whether an edge is marked as non-removable
-
-struct Hash
-{
-  typedef std::size_t result_type;
- 
-  result_type operator()(const edge_descriptor& ed) const
-  {
-    // although two edge_descriptors may be equal, they may store any of its two halfedges
-    CGAL::Handle_hash_function hhf;
-    std::size_t st1 = hhf(halfedge(ed,Surface_mesh()));
-    std::size_t st2 = hhf(opposite(halfedge(ed,Surface_mesh()),Surface_mesh()));
-    return (std::min)(st1,st2);
-  }
-};
-
 struct Constrained_edge_map : public boost::put_get_helper<bool,Constrained_edge_map>
 {
   typedef boost::readable_property_map_tag      category;
@@ -50,7 +36,7 @@ struct Constrained_edge_map : public boost::put_get_helper<bool,Constrained_edge
   typedef bool                                  reference;
   typedef edge_descriptor                       key_type;
 
-  Constrained_edge_map(const CGAL::Unique_hash_map<key_type,bool,Hash>& aConstraints)
+  Constrained_edge_map(const CGAL::Unique_hash_map<key_type,bool>& aConstraints)
     : mConstraints(aConstraints)
   {}
 
@@ -61,7 +47,7 @@ struct Constrained_edge_map : public boost::put_get_helper<bool,Constrained_edge
   }
 
 private:
-  const CGAL::Unique_hash_map<key_type,bool,Hash>& mConstraints;
+  const CGAL::Unique_hash_map<key_type,bool>& mConstraints;
 };
 
 bool is_border (edge_descriptor e, const Surface_mesh& sm)
@@ -77,7 +63,7 @@ Point_3 point(vertex_descriptor vd,  const Surface_mesh& sm)
 
 int main( int argc, char** argv )
 {
-  CGAL::Unique_hash_map<edge_descriptor,bool,Hash> constraint_hmap(false);
+  CGAL::Unique_hash_map<edge_descriptor,bool> constraint_hmap(false);
 
   Surface_mesh surface_mesh;
 

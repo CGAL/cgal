@@ -1,17 +1,16 @@
 
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_extended_dcel.h>
 #include <CGAL/Arrangement_2.h>
 
-#include <climits> // needed as <boost/graph/dijkstra_shortest_paths.hpp> forgot it.
-#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
 
 #include <CGAL/graph_traits_Dual_Arrangement_2.h>
 
 // leda_rational, or Gmpq, or Quotient<MP_float>
-typedef CGAL::Arithmetic_kernel::Rational                    Number_type;
+typedef CGAL::Exact_rational                                 Number_type;
 
 typedef CGAL::Cartesian<Number_type>                         Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>                   Traits_2;

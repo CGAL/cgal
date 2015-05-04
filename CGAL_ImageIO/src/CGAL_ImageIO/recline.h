@@ -24,7 +24,7 @@
  *
  * $Id$
  *
- * Copyright©INRIA 1998
+ * CopyrightÂ©INRIA 1998
  *
  * DESCRIPTION: 
  *

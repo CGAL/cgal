@@ -27,10 +27,10 @@ the name of each function matches the name of an argument and wraps the actual p
 
 This is an example with 2 arguments: 
 
-`vertex_index_map(the_actual_vertex_index_map).halfedge_index_map(the_actual_halfedge_index_map)` 
+`get_cost(the_actual_cost).halfedge_index_map(the_actual_halfedge_index_map)` 
 
-`the_actual_vertex_index_map` and `the_actual_halfedge_index_map` are 
-the actual parameters, while `vertex_index_map()` and `halfedge_index_map()` 
+`the_actual_cost` and `the_actual_halfedge_index_map` are 
+the actual parameters, while `get_cost()` and `halfedge_index_map()` 
 are wrapper functions used to designate each formal argument. 
 
 All named parameters have default values so you only need to compose those for which the default 
@@ -40,26 +40,6 @@ designates the formal argument, the order of named parameters in the list is tot
 In the following subsections, each named parameter is documented as a helper function. The argument to each helper 
 function is the actual parameter to `edge_collapse()`, while the name of the helper 
 function designates which formal argument it is. 
-
-\cgalHeading{vertex_index_map(VertexIndexMap vpm)}
-
-Maps each vertex in the surface mesh into an unsigned integer number 
-in the range `[0,num_vertices(surface_mesh))`. 
-
-`VertexIndexMap` must be a model of
-`ReadablePropertyMap` 
-with key type 
-`boost::graph_traits<EdgeCollapsableSurfaceMesh const>::%vertex_descriptor` 
-and with value type `boost::graph_traits<EdgeCollapsableSurfaceMesh>::%size_type`, 
-
-<B>%Default</B>: the property map obtained by calling `get(CGAL::vertex_index,surface_mesh)`, 
-which requires the surface mesh vertices to have an `id()` member properly initialized to the 
-required value. 
-
-If the vertices don't have such an `id()`, you must pass some property map explicitly. 
-An external property map can be easily obtained by calling 
-`get(CGAL::vertex_external_index,surface_mesh)`. This constructs on the fly, and returns, 
-a property map which non-intrusively associates a proper id with each vertex. 
 
 \cgalHeading{vertex_point_map(VertexPointMap vpm)}
 
@@ -147,6 +127,29 @@ with equally named functions in some other namespace. If that happens,
 simply qualify the <I>first</I> 
 \cgalFootnote{The second and subsequent named parameters shall not be qualified as they are member functions} 
 named parameter with `CGAL::`, as shown in the examples in the user manual. 
+
+\cgalHeading{vertex_index_map(VertexIndexMap vpm)}
+\cgalDebugBegin
+This parameter is only used by debug functions and is usually not needed for users.
+
+Maps each vertex in the surface mesh into an unsigned integer number 
+in the range `[0,num_vertices(surface_mesh))`. 
+
+`VertexIndexMap` must be a model of
+`ReadablePropertyMap` 
+with key type 
+`boost::graph_traits<EdgeCollapsableSurfaceMesh const>::%vertex_descriptor` 
+and with value type `boost::graph_traits<EdgeCollapsableSurfaceMesh>::%size_type`, 
+
+<B>%Default</B>: the property map obtained by calling `get(CGAL::vertex_index,surface_mesh)`, 
+which requires the surface mesh vertices to have an `id()` member properly initialized to the 
+required value. 
+
+If the vertices don't have such an `id()`, you must pass some property map explicitly. 
+An external property map can be easily obtained by calling 
+`get(CGAL::vertex_external_index,surface_mesh)`. This constructs on the fly, and returns, 
+a property map which non-intrusively associates a proper id with each vertex. 
+\cgalDebugEnd
 
 \cgalHeading{Semantics}
 

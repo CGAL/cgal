@@ -14,7 +14,7 @@
    <string>CGAL 3D mesh generator demo</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="../Mesh_3.qrc">
     <normaloff>:/cgal/icons/resources/cgal_logo.xpm</normaloff>:/cgal/icons/resources/cgal_logo.xpm</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -128,7 +128,7 @@
             <string>+</string>
            </property>
            <property name="icon">
-            <iconset>
+            <iconset resource="../Mesh_3.qrc">
              <normaloff>:/cgal/icons/plus</normaloff>:/cgal/icons/plus</iconset>
            </property>
           </widget>
@@ -139,7 +139,7 @@
             <string>-</string>
            </property>
            <property name="icon">
-            <iconset>
+            <iconset resource="../Mesh_3.qrc">
              <normaloff>:/cgal/icons/minus</normaloff>:/cgal/icons/minus</iconset>
            </property>
           </widget>
@@ -150,7 +150,7 @@
             <string>...</string>
            </property>
            <property name="icon">
-            <iconset>
+            <iconset resource="../Mesh_3.qrc">
              <normaloff>:/cgal/icons/duplicate</normaloff>:/cgal/icons/duplicate</iconset>
            </property>
           </widget>
@@ -315,7 +315,7 @@
   </action>
   <action name="actionLoad">
    <property name="icon">
-    <iconset>
+    <iconset resource="../Mesh_3.qrc">
      <normaloff>:/cgal/icons/plus</normaloff>:/cgal/icons/plus</iconset>
    </property>
    <property name="text">
@@ -327,7 +327,7 @@
   </action>
   <action name="actionErase">
    <property name="icon">
-    <iconset>
+    <iconset resource="../Mesh_3.qrc">
      <normaloff>:/cgal/icons/minus</normaloff>:/cgal/icons/minus</iconset>
    </property>
    <property name="text">
@@ -339,7 +339,7 @@
   </action>
   <action name="actionDuplicate">
    <property name="icon">
-    <iconset>
+    <iconset resource="../Mesh_3.qrc">
      <normaloff>:/cgal/icons/duplicate</normaloff>:/cgal/icons/duplicate</iconset>
    </property>
    <property name="text">
@@ -465,6 +465,9 @@
    <property name="text">
     <string>Create a tetrahedral mesh</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
+   </property>
   </action>
   <action name="actionMVC">
    <property name="text">
@@ -503,20 +506,32 @@
    <property name="text">
     <string>ODT-smoothing</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionLloyd">
    <property name="text">
     <string>Lloyd-smoothing</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
    </property>
   </action>
   <action name="actionPerturb">
    <property name="text">
     <string>Sliver perturbation</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
   </action>
   <action name="actionExude">
    <property name="text">
     <string>Sliver exudation</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
    </property>
   </action>
   <action name="actionToto">
@@ -539,11 +554,11 @@
   <customwidget>
    <class>Viewer</class>
    <extends>QWidget</extends>
-    <header>CGAL_demo/Viewer.h</header>
+   <header>CGAL_demo/Viewer.h</header>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="Mesh_3.qrc"/>
+  <include location="../Mesh_3.qrc"/>
  </resources>
  <connections/>
 </ui>

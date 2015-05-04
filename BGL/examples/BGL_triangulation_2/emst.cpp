@@ -75,7 +75,7 @@ main(int,char*[])
 
   // In the function call you can see a named parameter: vertex_index_map
    std::list<edge_descriptor> mst;
-   boost::kruskal_minimum_spanning_tree(t,
+   boost::kruskal_minimum_spanning_tree(ft,
 					std::back_inserter(mst),
 					vertex_index_map(vertex_index_pmap));
 
@@ -84,8 +84,8 @@ main(int,char*[])
 
    for(std::list<edge_descriptor>::iterator it = mst.begin(); it != mst.end(); ++it){
      edge_descriptor ed = *it;
-     vertex_descriptor svd = boost::source(ed,t);
-     vertex_descriptor tvd = boost::target(ed,t);
+     vertex_descriptor svd = source(ed,t);
+     vertex_descriptor tvd = target(ed,t);
      Triangulation::Vertex_handle sv = svd;
      Triangulation::Vertex_handle tv = tvd;
      std::cout << "[ " << sv->point() << "  |  " << tv->point() << " ] " << std::endl;

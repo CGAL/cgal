@@ -3,6 +3,7 @@
 #include <QAction>
 #include <QStringList>
 
+#include "opengl_tools.h"
 #include "Scene_polyhedron_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
@@ -28,7 +29,7 @@ public:
     return QStringList() << "actionConvexHull";
   }
 
-  bool applicable() const {
+  bool applicable(QAction*) const {
     return 
       qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
       qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex())) ||

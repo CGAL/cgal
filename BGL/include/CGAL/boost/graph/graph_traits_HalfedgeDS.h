@@ -31,6 +31,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/boost/graph/iterator.h>
 
+#include <CGAL/Handle_hash_function.h>
+
 #ifndef CGAL_NO_DEPRECATED_CODE
 #include <CGAL/boost/graph/halfedge_graph_traits.h>
 #endif
@@ -133,6 +135,22 @@ struct HDS_edge {
 private:
   Halfedge_handle halfedge_;
 };
+
+// make edge_descriptor hashable by default in Unique_hash_map
+namespace handle{
+  template<typename Halfedge_handle>
+  struct Hash_functor< HDS_edge<Halfedge_handle> >
+  {
+    std::size_t
+    operator()(const HDS_edge<Halfedge_handle>& edge)
+    {
+      Halfedge_handle he = edge.halfedge();
+      if ( he < he->opposite() )
+        return Hash_functor<Halfedge_handle>()(he);
+      return Hash_functor<Halfedge_handle>()(he->opposite());
+    }
+  };
+} //end of namespace handle
 
 template<typename Halfedge_handle>
 struct Construct_edge {

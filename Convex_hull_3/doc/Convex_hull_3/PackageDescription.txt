@@ -27,7 +27,7 @@ degenerate hull may also be possible.
 \cgalPkgPicture{Convex_hull_3/fig/bunny.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Susan Hert and Stefan Schirra}
-\cgalPkgDesc{This package provides functions  for computing convex hulls in three dimensions as well as functions for checking if sets of points are strongly convex or not. One can compute the convex hull of a set of points in three dimensions in one of three ways: using a static algorithm, using an incremental construction algorithm, or using a triangulation to get a fully dynamic computation.}
+\cgalPkgDesc{This package provides functions  for computing convex hulls in three dimensions as well as functions for checking if sets of points are strongly convex or not. One can compute the convex hull of a set of points in three dimensions in two ways: using a static algorithm or using a triangulation to get a fully dynamic computation.}
 \cgalPkgManuals{Chapter_3D_Convex_Hulls,PkgConvexHull3}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -78,12 +78,15 @@ defining `CGAL_CH_CHECK_EXPENSIVE`.
 ## Convex Hull Functions ##
 
 - `CGAL::convex_hull_3`
-- `CGAL::convex_hull_incremental_3`
 - `CGAL::convex_hull_3_to_polyhedron_3`
 
 ## Convexity Checking Function ##
 
 - `CGAL::is_strongly_convex_3`
 
+## Halfspace Intersection Functions ##
+
+- `CGAL::halfspace_intersection_3`
+- `CGAL::halfspace_intersection_with_constructions_3`
 
 */

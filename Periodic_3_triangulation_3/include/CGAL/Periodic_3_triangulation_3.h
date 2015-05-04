@@ -1403,7 +1403,7 @@ public:
 	return point(periodic_point(cells[i],cells[i]->index(canonic_vh[idx])));
     }
     CGAL_assertion(false);
-  
+  return Point();
   }
 };
 
@@ -3919,30 +3919,21 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS> &tr)
 namespace internal {
 
   /// Internal function used by operator==.
+  // This function tests and registers the 4 neighbors of c1/c2,
+  // and performs a bfs traversal
+  // Returns false if an inequality has been found.
   //TODO: introduce offsets
   template <class GT, class TDS1, class TDS2>
   bool
   test_next(const Periodic_3_triangulation_3<GT, TDS1> &t1,
-      const Periodic_3_triangulation_3<GT, TDS2> &t2,
-      typename Periodic_3_triangulation_3<GT, TDS1>::Cell_handle c1,
-      typename Periodic_3_triangulation_3<GT, TDS2>::Cell_handle c2,
-      std::map<typename Periodic_3_triangulation_3<GT, TDS1>::Cell_handle,
-          typename Periodic_3_triangulation_3<GT, TDS2>::Cell_handle> &Cmap,
-      std::map<typename Periodic_3_triangulation_3<GT, TDS1>::Vertex_handle,
-          typename Periodic_3_triangulation_3<GT, TDS2>::Vertex_handle> &Vmap)
-  {
-    // This function tests and registers the 4 neighbors of c1/c2,
-    // and recursively calls itself over them.
-    // Returns false if an inequality has been found.
-
-    // Precondition: c1, c2 have been registered as well as their 4 vertices.
-    CGAL_triangulation_precondition(t1.number_of_vertices() != 0);
-    CGAL_triangulation_precondition(Cmap[c1] == c2);
-    CGAL_triangulation_precondition(Vmap.find(c1->vertex(0)) != Vmap.end());
-    CGAL_triangulation_precondition(Vmap.find(c1->vertex(1)) != Vmap.end());
-    CGAL_triangulation_precondition(Vmap.find(c1->vertex(2)) != Vmap.end());
-    CGAL_triangulation_precondition(Vmap.find(c1->vertex(3)) != Vmap.end());
-
+            const Periodic_3_triangulation_3<GT, TDS2> & /* needed_for_deducing_TDS2 */,
+            typename Periodic_3_triangulation_3<GT, TDS1>::Cell_handle c1,
+            typename Periodic_3_triangulation_3<GT, TDS2>::Cell_handle c2,
+            std::map<typename Periodic_3_triangulation_3<GT, TDS1>::Cell_handle,
+            typename Periodic_3_triangulation_3<GT, TDS2>::Cell_handle> &Cmap,
+            std::map<typename Periodic_3_triangulation_3<GT, TDS1>::Vertex_handle,
+            typename Periodic_3_triangulation_3<GT, TDS2>::Vertex_handle> &Vmap)
+  {  
     typedef Periodic_3_triangulation_3<GT, TDS1> Tr1;
     typedef Periodic_3_triangulation_3<GT, TDS2> Tr2;
     typedef typename Tr1::Vertex_handle  Vertex_handle1;
@@ -3950,48 +3941,61 @@ namespace internal {
     typedef typename Tr2::Vertex_handle  Vertex_handle2;
     typedef typename Tr2::Cell_handle    Cell_handle2;
     typedef typename std::map<Cell_handle1, Cell_handle2>::const_iterator  Cit;
-    typedef typename std::map<Vertex_handle1,
-      Vertex_handle2>::const_iterator Vit;
+    typedef typename std::map<Vertex_handle1, Vertex_handle2>::const_iterator Vit;
 
-    for (int i=0; i <= 3; ++i) {
-      Cell_handle1 n1 = c1->neighbor(i);
-      Cit cit = Cmap.find(n1);
-      Vertex_handle1 v1 = c1->vertex(i);
-      Vertex_handle2 v2 = Vmap[v1];
-      Cell_handle2 n2 = c2->neighbor(c2->index(v2));
-      if (cit != Cmap.end()) {
-        // n1 was already registered.
-        if (cit->second != n2)
-          return false;
-        continue;
-      }
-      // n1 has not yet been registered.
-      // We check that the new vertices match geometrically.
-      // And we register them.
-      Vertex_handle1 vn1 = n1->vertex(n1->index(c1));
-      Vertex_handle2 vn2 = n2->vertex(n2->index(c2));
-      Vit vit = Vmap.find(vn1);
-      if (vit != Vmap.end()) {
-        // vn1 already registered
-        if (vit->second != vn2)
-          return false;
-      }
-      else {
-        if (t1.geom_traits().compare_xyz_3_object()(vn1->point(),
-		vn2->point()) != 0)
-          return false;
+    std::vector<std::pair<Cell_handle1, Cell_handle2> > queue;
+    queue.push_back(std::make_pair(c1,c2));
+    
+    while(! queue.empty()){
+      boost::tie(c1,c2) = queue.back();
+      queue.pop_back();
+  
+      // Precondition: c1, c2 have been registered as well as their 4 vertices.
+      CGAL_triangulation_precondition(t1.number_of_vertices() != 0);
+      CGAL_triangulation_precondition(Cmap[c1] == c2);
+      CGAL_triangulation_precondition(Vmap.find(c1->vertex(0)) != Vmap.end());
+      CGAL_triangulation_precondition(Vmap.find(c1->vertex(1)) != Vmap.end());
+      CGAL_triangulation_precondition(Vmap.find(c1->vertex(2)) != Vmap.end());
+      CGAL_triangulation_precondition(Vmap.find(c1->vertex(3)) != Vmap.end());
+      
 
-        // We register vn1/vn2.
-        Vmap.insert(std::make_pair(vn1, vn2));
+      for (int i=0; i <= 3; ++i) {
+        Cell_handle1 n1 = c1->neighbor(i);
+        Cit cit = Cmap.find(n1);
+        Vertex_handle1 v1 = c1->vertex(i);
+        Vertex_handle2 v2 = Vmap[v1];
+        Cell_handle2 n2 = c2->neighbor(c2->index(v2));
+        if (cit != Cmap.end()) {
+          // n1 was already registered.
+          if (cit->second != n2)
+            return false;
+          continue;
+        }
+        // n1 has not yet been registered.
+        // We check that the new vertices match geometrically.
+        // And we register them.
+        Vertex_handle1 vn1 = n1->vertex(n1->index(c1));
+        Vertex_handle2 vn2 = n2->vertex(n2->index(c2));
+        Vit vit = Vmap.find(vn1);
+        if (vit != Vmap.end()) {
+          // vn1 already registered
+          if (vit->second != vn2)
+            return false;
+        }
+        else {
+          if (t1.geom_traits().compare_xyz_3_object()(vn1->point(),
+                                                      vn2->point()) != 0)
+            return false;
+          
+          // We register vn1/vn2.
+          Vmap.insert(std::make_pair(vn1, vn2));
+        }
+        
+        // We register n1/n2.
+        Cmap.insert(std::make_pair(n1, n2));
+        queue.push_back(std::make_pair(n1, n2));
       }
-
-      // We register n1/n2.
-      Cmap.insert(std::make_pair(n1, n2));
-      // We recurse on n1/n2.
-      if (!test_next(t1, t2, n1, n2, Cmap, Vmap))
-    return false;
     }
-
     return true;
   }
 
@@ -4118,9 +4122,8 @@ operator==(const Periodic_3_triangulation_3<GT,TDS1> &t1,
   if (Cmap.size() == 0)
     return false;
 
-  // We now have one cell, we need to propagate recursively.
-  return internal::test_next(t1, t2,
-      Cmap.begin()->first, Cmap.begin()->second, Cmap, Vmap);
+  // We now have one cell, we need to compare in a bfs graph traversal
+  return internal::test_next(t1, t2, Cmap.begin()->first, Cmap.begin()->second, Cmap, Vmap);
 }
 
 template < class GT, class TDS1, class TDS2 >

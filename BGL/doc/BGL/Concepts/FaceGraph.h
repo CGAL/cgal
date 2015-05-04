@@ -10,6 +10,7 @@ face.
 
 \cgalRefines `HalfedgeGraph`
 \cgalHasModel `CGAL::Polyhedron_3`
+\cgalHasModel `CGAL::Surface_mesh`
 
 \cgalHeading{Notations}
 

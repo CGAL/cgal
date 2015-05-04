@@ -21,6 +21,7 @@
 
 #ifndef CGAL_SEARCH_TRAITS_3_H
 #define CGAL_SEARCH_TRAITS_3_H
+#include <CGAL/Dimension.h>
 
 namespace CGAL {
 
@@ -30,7 +31,8 @@ namespace CGAL {
   class Search_traits_3 {
 
   public:
-    
+
+    typedef Dimension_tag<3> Dimension;
     typedef typename K::Cartesian_const_iterator_3 Cartesian_const_iterator_d;
     typedef typename K::Construct_cartesian_const_iterator_3 Construct_cartesian_const_iterator_d;
     typedef typename K::Point_3 Point_d;

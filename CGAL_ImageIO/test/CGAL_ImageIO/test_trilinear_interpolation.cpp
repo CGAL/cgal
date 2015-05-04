@@ -195,7 +195,7 @@ int main() {
     "../Surface_mesher_Examples/data/skull_2.9.inr" 
   };
 
-  unsigned int file_index = 0;
+  std::size_t file_index = 0;
   for(   ; file_index < sizeof(filenames); ++file_index)
   {
     std::ifstream image_file(filenames[file_index], std::ios_base::binary | std::ios_base::in );
@@ -242,18 +242,18 @@ int main() {
 	if(diff > 0.0001 )
 	{
 	  std::cerr.precision(20);
-	  const int i1 = (int)(d_z / image2.image()->vz); 
-	  const int j1 = (int)(d_y / image2.image()->vy);
-	  const int k1 = (int)(d_x / image2.image()->vx);
+	  const std::size_t i1 = static_cast<std::size_t>(d_z / image2.image()->vz);
+	  const std::size_t j1 = static_cast<std::size_t>(d_y / image2.image()->vy);
+	  const std::size_t k1 = static_cast<std::size_t>(d_x / image2.image()->vx);
 
 	  std::cerr << "pos = (" << d_x << ", " << d_y << ", " << d_z << ") => ("
 		    << i1 << ", " << j1 << ", " << k1 << ")\n";
 	  std::cerr << "value1 = " << value1
 		    << "\nvalue2 = " << value2 << std::endl;
 
-	  for(int di = 0; di < 2 ; ++di)
-	    for(int dj = 0; dj < 2 ; ++dj)
-	      for(int dk = 0; dk < 2 ; ++dk)
+	  for(std::size_t di = 0; di < 2 ; ++di)
+	    for(std::size_t dj = 0; dj < 2 ; ++dj)
+	      for(std::size_t dk = 0; dk < 2 ; ++dk)
 	      {
 		std::cerr << "value(" << i1 + di 
 			  << ", " << j1 + dj

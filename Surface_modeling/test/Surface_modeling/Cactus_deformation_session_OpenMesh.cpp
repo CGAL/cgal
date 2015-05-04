@@ -9,7 +9,7 @@
 #define CGAL_USE_OM_POINTS // use OpenMesh point type
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
 
-#include <CGAL/Deform_mesh.h>
+#include <CGAL/Surface_mesh_deformation.h>
 
 #include <CGAL/Timer.h>
 
@@ -18,8 +18,8 @@ typedef Mesh::Point                                                 Point;
 typedef boost::graph_traits<Mesh>::vertex_descriptor    vertex_descriptor;
 typedef boost::graph_traits<Mesh>::vertex_iterator        vertex_iterator;
 
-typedef CGAL::Deform_mesh<Mesh, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP>  Deform_mesh_arap;
-typedef CGAL::Deform_mesh<Mesh, CGAL::Default, CGAL::Default, CGAL::SPOKES_AND_RIMS> Deform_mesh_spoke;
+typedef CGAL::Surface_mesh_deformation<Mesh, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP>  Deform_mesh_arap;
+typedef CGAL::Surface_mesh_deformation<Mesh, CGAL::Default, CGAL::Default, CGAL::SPOKES_AND_RIMS> Deform_mesh_spoke;
 const double squared_threshold = 0.001; // alert if average difs between precomputed and deformed mesh models is above threshold
 
 double squared_length(const Point& p)

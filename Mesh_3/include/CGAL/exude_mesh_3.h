@@ -50,7 +50,7 @@ BOOST_PARAMETER_FUNCTION(
 
 
 
-template <typename C3T3> 
+template <typename C3T3>
 Mesh_optimization_return_code
 exude_mesh_3_impl(C3T3& c3t3,
                   const double time_limit,

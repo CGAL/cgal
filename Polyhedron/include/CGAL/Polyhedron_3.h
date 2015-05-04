@@ -785,6 +785,8 @@ public:
 
     bool empty() const { return size_of_halfedges() == 0; }
 
+    bool is_empty() const { return size_of_halfedges() == 0; }
+
     size_type capacity_of_vertices() const {
         // space reserved for vertices.
         return hds_.capacity_of_vertices();

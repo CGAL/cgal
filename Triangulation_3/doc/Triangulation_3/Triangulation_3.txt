@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor chapterTriangulation3
 \cgalAutoToc
 
-\authors Sylvain Pion and Monique Teillaud
+\authors Clément Jamin, Sylvain Pion and Monique Teillaud
 
 \image html triangulation3.png
 \image latex triangulation3.png
@@ -223,6 +223,16 @@ Chapter \ref chapterTDS3 "3D Triangulation Data Structure".
 triangulation class, described in Section \ref Triangulation3seclocpol.
 </UL>
 
+Optionally, the main Delaunay and regular triangulations algorithms (insert, remove) 
+support multi-core shared-memory architectures to take advantage of available parallelism.
+For this purpose, a model of the concept `SurjectiveLockDataStructure` can be 
+given as fourth template parameter; it defaults to 
+`Spatial_lock_grid_3`. This data structure
+allows to lock points with coordinates (x, y, z) in a 3D domain. When a thread owns the
+lock on a point, no other thread can lock this point. Locking a facet (resp. a cell)
+boils down to locking all its 3 (resp. 4) incident vertices. 
+See Section \ref Triangulation_3ParallelAlgorithms for more details.
+
 \subsection Triangulation3secTraits The Geometric Traits Parameter 
 
 The first template parameter of the triangulation class
@@ -402,6 +412,29 @@ My_vertex(const Point&p, Cell_handle c) : Vb(p, c) {}
 The situation is exactly similar for cell base classes.
 Section \ref TDS3secdesign "Software Design" provides more detailed information.
 
+\subsection Triangulation_3ParallelAlgorithms Parallel Algorithms
+
+Parallel algorithms of `Delaunay_triangulation_3` and 
+`Regular_triangulation_3` are enabled 
+if the `TriangulationDataStructure_3::Concurrency_tag` type is `Parallel_tag` and a
+reference to a lock data structure instance is provided via the constructor or 
+by using `Triangulation_3::set_lock_data_structure`. This data structure
+must be a model of the concept `SurjectiveLockDataStructure` and can be 
+optionally given as a template parameter of the triangulation; 
+it defaults to `Spatial_lock_grid_3`.
+
+Note that the parallel Delaunay 
+triangulation must use the default compact location policy (and not the fast 
+one). If those conditions are fulfilled, the insertion/removal of a 
+range of points will be performed in parallel, and the individual 
+insert/remove operations will be optionally thread-safe.
+
+Parallel algorithms require the program to be linked against 
+the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+To control the number of threads used, the user may use the tbb::task_scheduler_init class.
+See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+for more details.
+
 \section Triangulation3secexamples Examples 
 
 \subsection Triangulation_3BasicExample Basic Example
@@ -497,6 +530,19 @@ Another difference is that a specific traits class has to be used
 (at least at the moment).
 
 \cgalExample{Triangulation_3/regular_3.cpp}
+
+\subsection Triangulation_3ParallelDelaunay Parallel insertion in Delaunay triangulation
+
+This example shows the parallel building of a Delaunay triangulation.
+
+\cgalExample{Triangulation_3/parallel_insertion_in_delaunay_3.cpp}
+
+\subsection Triangulation_3ParallelRegular Parallel insertion and removal in Regular triangulation
+
+This example shows the parallel building of a Regular triangulation, followed by the parallel 
+removal of the first 100,000 vertices.
+
+\cgalExample{Triangulation_3/parallel_insertion_and_removal_in_regular_3.cpp}
 
 \section Triangulation3seccomplexity Complexity and Performance 
 
@@ -728,6 +774,22 @@ Running times in seconds for algorithms on 3D triangulations.
 
 More benchmarks comparing \cgal to other software can be found
 in \cgalCite{msri52:liu-snoeyink-05}.
+
+\subsection Triangulation_3ParallelPerformance Parallel Performance
+
+Figure \cgalFigureRef{Triangulation3figparallelspeedup} shows insertion
+and removal speed-ups obtained using the parallel version of the 
+triangulation algorithms of \cgal 4.5. The machine used is a PC running 
+Windows 7 64-bits with two 6-core 
+Intel Xeon CPU X5660 clocked at 2.80 GHz
+with 32GB of RAM. The program has been compiled with 
+Microsoft Visual C++ 2012 in Release mode.
+
+\cgalFigureBegin{Triangulation3figparallelspeedup,DT3_parallel_benchmark.png}
+Speed-up obtained for the insertion of 1M points randomly generated inside
+a cube (red), and the removal of 100K of them (blue), compared 
+to the sequential version of the algorithm.
+\cgalFigureEnd
 
 \subsection Triangulation_3MemoryUsage Memory Usage
 
@@ -1034,6 +1096,9 @@ structural filtering method, improving the efficiency of point location.
 A new demo of this package was introduced in \cgal 3.8, coded by Fei
 (Sophie) Che, who was co-mentored by Manuel Caroli and Monique
 Teillaud in the framework of the Google Summer of Code, 2010.
+
+In 2013, Clément Jamin added parallel algorithms (insert, remove) to the
+Delaunay and regular triangulations.
 
 The authors wish to thank Lutz Kettner for inspiring discussions about
 the design of \cgal. Jean-Daniel Boissonnat is also acknowledged

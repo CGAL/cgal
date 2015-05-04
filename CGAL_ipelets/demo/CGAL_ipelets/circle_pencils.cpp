@@ -127,6 +127,25 @@ void pencilIpelet::protected_run(int fn)
   }     //end of switch
 
 
+  // detect degenerate case
+  if (circ==Circle_2()){ 
+    Kernel::Vector_2  v;
+    if(fn==0)
+      v=Kernel::Vector_2(
+	  c2.center().y()-c1.center().y(),c2.center().x()-c1.center().x());
+    else v=c2.center()-c1.center();
+      Kernel::FT sqr_length= 1 / v.squared_length();
+      double length = 600 * sqrt( sqr_length);
+      v = Kernel::FT(length)*v;
+      Point_2 q1=c.center()+ v;
+      Point_2 q2=c.center()- v;
+      print_error_message(
+	 "degenerate case, circle is a line");
+      Kernel::Segment_2 s(q1,q2);
+      draw_in_ipe(s);
+      return;
+  }
+
   if (circ.squared_radius()>0){
     draw_in_ipe(circ);
   }else{

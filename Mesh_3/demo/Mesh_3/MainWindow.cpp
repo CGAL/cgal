@@ -146,6 +146,26 @@ MainWindow::MainWindow(QWidget* parent)
 
   readSettings(); // Among other things, the column widths are stored.
 
+  const char *windowTitle = "CGAL 3D mesh generator demo ["
+#ifdef CGAL_CONCURRENT_MESH_3
+    "Parallel"
+#else
+    "Sequential"
+# ifdef CGAL_LINKED_WITH_TBB
+    " - With TBB"
+# else
+    " - Without TBB"
+# endif
+#endif
+#ifdef _DEBUG
+    " - Debug]";
+#else
+    "]";
+#endif
+  
+  setWindowTitle(QApplication::translate(
+    "MainWindow", windowTitle, 0, QApplication::UnicodeUTF8));
+
   this->dumpObjectTree();
 }
 
@@ -160,18 +180,21 @@ void MainWindow::loadPlugins()
   QDir pluginsDir(qApp->applicationDirPath());
   Q_FOREACH (QString fileName, pluginsDir.entryList(QDir::Files)) {
     if(fileName.contains("plugin") && QLibrary::isLibrary(fileName)) {
-      qDebug("### Loading \"%s\"...", fileName.toUtf8().data());
+      QDebug qdebug = qDebug();
+      qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
       QPluginLoader loader;
       loader.setFileName(pluginsDir.absoluteFilePath(fileName));
       QObject *obj = loader.instance();
       if(obj) {
-        initPlugin(obj);
-        initIOPlugin(obj);
+        bool init1 = initPlugin(obj);
+        bool init2 = initIOPlugin(obj);
+        if (!init1 && !init2)
+          qdebug << "not for this program";
+        else
+          qdebug << "success";
       }
       else {
-        qDebug("Error loading \"%s\": %s",
-               qPrintable(fileName),
-               qPrintable(loader.errorString()));
+        qdebug << "error: " << qPrintable(loader.errorString());
       }
     }
   }
@@ -482,11 +505,13 @@ void MainWindow::on_actionSaveAs_triggered()
     return;
   }
   
+  QString selectedFilter;
   QString filename = 
     QFileDialog::getSaveFileName(this,
                                  tr("Save to File..."),
                                  QString(),
-                                 filters.join(";;"));
+                                 filters.join(";;"),
+                                 &selectedFilter);
   
   QFileInfo fileinfo(filename);
   if(!fileinfo.isFile() ||
@@ -499,7 +524,7 @@ void MainWindow::on_actionSaveAs_triggered()
   {
 
     Q_FOREACH(Io_plugin_interface* plugin, canSavePlugins) {
-      if(plugin->save(item, fileinfo))
+      if(plugin->save(item, fileinfo, selectedFilter))
         break;
     }
   }

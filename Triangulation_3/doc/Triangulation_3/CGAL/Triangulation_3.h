@@ -12,6 +12,17 @@ of points.
 \tparam TriangulationDataStructure_3 is the triangulation data structure.
 It has the default value `Triangulation_data_structure_3< Triangulation_vertex_base_3<TriangulationTraits_3>,Triangulation_cell_base_3<TriangulationTraits_3> >`. 
 
+\tparam SurjectiveLockDataStructure is an optional parameter to specify the type of the spatial lock data structure.
+        It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
+        TriangulationDataStructure_3::Concurrency_tag is Parallel_tag).
+        It must be a model of the `SurjectiveLockDataStructure` concept,
+        with `Object` being a `Point`.
+        The default value is `Spatial_lock_grid_3<Tag_priority_blocking>` if
+        the triangulation data structure is concurrency-safe, and `void` otherwise.
+        In order to use concurrent operations, the user must provide a
+        reference to a `SurjectiveLockDataStructure`
+        instance via the constructor or `Triangulation_3::set_lock_data_structure`.
+
 \cgalHeading{Traversal of the Triangulation}
 
 The triangulation class provides several iterators and circulators 
@@ -21,7 +32,8 @@ that allow one to traverse it (completely or partially).
 \sa `TriangulationDataStructure_3::Cell` 
 
 */
-template< typename TriangulationTraits_3, typename TriangulationDataStructure_3 >
+template< typename TriangulationTraits_3, typename TriangulationDataStructure_3,
+          typename SurjectiveLockDataStructure >
 class Triangulation_3 : public Triangulation_utils_3 {
 public:
 
@@ -41,6 +53,11 @@ public:
 
 */ 
 typedef TriangulationDataStructure_3 Triangulation_data_structure; 
+
+/*!
+
+*/ 
+typedef SurjectiveLockDataStructure Lock_data_structure; 
 
 /*!
 
@@ -194,6 +211,11 @@ circulator over all facets incident to a given edge
 */ 
 typedef TriangulationDataStructure_3::Facet_circulator Facet_circulator; 
 
+/*! 
+Concurrency tag (from the TDS).
+*/ 
+typedef TriangulationDataStructure_3::Concurrency_tag Concurrency_tag;
+
 /// @} 
 
 /// \name Creation 
@@ -201,13 +223,25 @@ typedef TriangulationDataStructure_3::Facet_circulator Facet_circulator;
 
 /*!
 Introduces a triangulation `t` having only one vertex which is the 
-infinite vertex. 
+infinite vertex.
+`lock_ds` is an optional pointer to the lock data structure for parallel operations. It
+must be provided if concurrency is enabled.
 */ 
 Triangulation_3 
-(const TriangulationTraits_3 & traits = TriangulationTraits_3()); 
+(const TriangulationTraits_3 & traits = TriangulationTraits_3(), 
+ Lock_data_structure *lock_ds = NULL);
+
+/*! 
+Same as the previous one, but with parameters in reverse order.
+*/ 
+Triangulation_3 
+(Lock_data_structure *lock_ds = NULL,
+ const TriangulationTraits_3 & traits = TriangulationTraits_3());
 
 /*!
 Copy constructor. All vertices and faces are duplicated. 
+The pointer to the lock data structure is not copied. Thus, the copy won't be
+concurrency-safe as long as the user has not call `Triangulation_3::set_lock_data_structure`.
 */ 
 Triangulation_3 (const Triangulation_3 & tr); 
 
@@ -217,7 +251,8 @@ traits class argument and calling `insert(first,last)`.
 */ 
 template < class InputIterator> 
 Triangulation_3 (InputIterator first, InputIterator last, 
-const TriangulationTraits_3 & traits = TriangulationTraits_3() ); 
+const TriangulationTraits_3 & traits = TriangulationTraits_3(),
+Lock_data_structure *lock_ds = NULL); 
 
 /// @} 
 
@@ -245,7 +280,7 @@ Deletes all finite vertices and all cells of `t`.
 void clear(); 
 
 /*!
-Equality operator. Returns true iff there exist a bijection between the 
+Equality operator. Returns `true` iff there exist a bijection between the 
 vertices of `t1` and those of `t2` and a bijection between the cells of 
 `t1` and those of `t2`, which preserve the geometry of the 
 triangulation, that is, the points of each corresponding pair of vertices are 
@@ -509,7 +544,7 @@ Cell_handle & c) const;
 /// @}
 
 /*! \name
-There is a method `has_vertex` in the cell class. The analogous methods for facets are defined here. 
+There is a method `has_vertex()` in the cell class. The analogous methods for facets are defined here. 
 */
 /// @{
 /*!
@@ -584,15 +619,22 @@ the facet (resp. edge, vertex) containing the query point.
 
 The optional argument `start` is used as a starting place for the search. 
 
+The optional argument `could_lock_zone` is used by the concurrency-safe
+version of the triangulation. When the pointer is not null, the locate will
+try to lock all the cells along the walk. If it succeeds, `*could_lock_zone`
+is `true`, otherwise it is false. In any case, the locked cells are not
+unlocked by `locate`, leaving this choice to the user.
 */ 
 Cell_handle 
-locate(const Point & query, Cell_handle start = Cell_handle()) const; 
+locate(const Point & query, Cell_handle start = Cell_handle(),
+       bool *could_lock_zone = NULL) const; 
 
 /*!
 Same as above but uses `hint` as the starting place for the search. 
 */ 
 Cell_handle 
-locate(const Point & query, Vertex_handle hint) const; 
+locate(const Point & query, Vertex_handle hint,
+       bool *could_lock_zone = NULL) const; 
 
 /*!
 Same as `locate()` but uses inexact predicates. 
@@ -629,17 +671,24 @@ triangulation, `lt` is set to `OUTSIDE_AFFINE_HULL` and
 
 The optional argument `start` is used as a starting place for the search. 
 
+The optional argument `could_lock_zone` is used by the concurrency-safe
+version of the triangulation. When the pointer is not null, the locate will
+try to lock all the cells along the walk. If it succeeds, `*could_lock_zone`
+is `true`, otherwise it is false. In any case, the locked cells are not
+unlocked by `locate`, leaving this choice to the user.
 */ 
 Cell_handle 
 locate(const Point & query, Locate_type & lt, 
-int & li, int & lj, Cell_handle start = Cell_handle() ) const; 
+int & li, int & lj, Cell_handle start = Cell_handle(),
+bool *could_lock_zone = NULL ) const; 
 
 /*!
 Same as above but uses `hint` as the starting place for the search. 
 */ 
 Cell_handle 
 locate(const Point & query, Locate_type & lt, 
-int & li, int & lj, Vertex_handle hint) const; 
+int & li, int & lj, Vertex_handle hint,
+bool *could_lock_zone = NULL) const; 
 
 
 /*!
@@ -735,7 +784,7 @@ Locate_type & lt, int & li) const;
 Two kinds of flips exist for a three-dimensional triangulation. They
 are reciprocal. To be flipped, an edge must be incident to three
 tetrahedra. During the flip, these three tetrahedra disappear and two
-tetrahedra appear. Figure \ref Triangulation3figflips (left) shows the
+tetrahedra appear.  \cgalFigureRef{Triangulation3figflips} (left) shows the
 edge that is flipped as bold dashed, and one of its three incident
 facets is shaded. On the right, the facet shared by the two new
 tetrahedra is shaded. Flips are possible only under the following
@@ -743,9 +792,9 @@ conditions: - the edge or facet to be flipped is not on the boundary
 of the convex hull of the triangulation - the five points involved are
 in convex position. 
 
-\anchor Triangulation3figflips
-\image html flips.png "Flips"
-\image latex flips.png "Flips"
+\cgalFigureBegin{Triangulation3figflips, flips.png}
+Flips
+\cgalFigureEnd
 
 The following methods guarantee the validity of the resulting 3D
 triangulation. Flips for a 2d triangulation are not implemented yet.
@@ -978,7 +1027,7 @@ The following iterators allow the user to visit cells, facets, edges and vertice
 /// @{
 
 /*!
-Starts at an arbitrary finite vertex. Then `++` and `-` will 
+Starts at an arbitrary finite vertex. Then `++` and `--` will 
 iterate over finite vertices. Returns `finite_vertices_end()` when 
 `t.number_of_vertices() == 0`. 
 */ 
@@ -990,7 +1039,7 @@ Past-the-end iterator
 Finite_vertices_iterator finite_vertices_end() const; 
 
 /*!
-Starts at an arbitrary finite edge. Then `++` and `-` will 
+Starts at an arbitrary finite edge. Then `++` and `--` will 
 iterate over finite edges. Returns `finite_edges_end()` when 
 `t.dimension() < 1`. 
 */ 
@@ -1002,7 +1051,7 @@ Past-the-end iterator
 Finite_edges_iterator finite_edges_end() const; 
 
 /*!
-Starts at an arbitrary finite facet. Then `++` and `-` will 
+Starts at an arbitrary finite facet. Then `++` and `--` will 
 iterate over finite facets. Returns `finite_facets_end()` when 
 `t.dimension() < 2`. 
 */ 
@@ -1014,7 +1063,7 @@ Past-the-end iterator
 Finite_facets_iterator finite_facets_end() const; 
 
 /*!
-Starts at an arbitrary finite cell. Then `++` and `-` will 
+Starts at an arbitrary finite cell. Then `++` and `--` will 
 iterate over finite cells. Returns `finite_cells_end()` when 
 `t.dimension() < 3`. 
 */ 
@@ -1170,6 +1219,18 @@ template <class OutputIterator>
 OutputIterator 
 incident_cells(Vertex_handle v, OutputIterator cells) const; 
 
+/*! 
+Try to lock and copy the `Cell_handle`s of all cells incident to `v` into
+`cells`. 
+Returns `true` in case of success. Otherwise, `cells` is emptied and the function
+returns false. In any case, the locked cells are not unlocked by 
+`try_lock_and_get_incident_cells()`, leaving this choice to the user.
+
+\pre `t.dimension() == 3`, `v != Vertex_handle()`, `t.is_vertex(v)`. 
+*/
+bool
+  try_lock_and_get_incident_cells(Vertex_handle v,
+                                  std::vector<Cell_handle>& cells) const;
 /*!
 Copies the `Cell_handle`s of all finite cells incident to `v` to the output 
 iterator `cells`. 
@@ -1283,7 +1344,7 @@ Facet mirror_facet(Facet f) const;
 Checks the combinatorial validity of the triangulation. Checks also the 
 validity of its geometric embedding (see 
 Section \ref Triangulation3secintro). 
-When `verbose` is set to true, 
+When `verbose` is set to `true`, 
 messages describing the first invalidity encountered are printed. 
 \cgalDebugEnd
 */ 
@@ -1346,6 +1407,18 @@ Writes the triangulation `t` into `os`.
 ostream& operator<< (ostream& os, const Triangulation_3 &t); 
 
 /// @}
+
+/// @} 
+
+/// \name Concurrency 
+/// @{
+
+/*! 
+Set the pointer to the lock data structure.
+*/ 
+void set_lock_data_structure(Lock_data_structure *lock_ds) const;
+
+/// @} 
 
 }; /* end Triangulation_3 */
 } /* end namespace CGAL */

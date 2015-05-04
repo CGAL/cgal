@@ -1,6 +1,7 @@
 struct Point {
   double vec[3];
 
+
   Point() { vec[0]= vec[1] = vec[2] = 0; }
   Point (double x, double y, double z) { vec[0]=x; vec[1]=y; vec[2]=z;  }
 

@@ -33,6 +33,7 @@
 #include <CGAL/Needs_parens_as_product.h>
 
 #include <utility>
+#include <limits>
 
 #include <CGAL/LEDA_basic.h>
 #if CGAL_LEDA_VERSION < 500
@@ -122,8 +123,9 @@ template <> class Real_embeddable_traits< leda_rational >
 #if CGAL_LEDA_VERSION >= 501
           CGAL_LEDA_SCOPE::interval temp(x);
           std::pair<double, double> result(temp.lower_bound(),temp.upper_bound());
-          CGAL_postcondition(Type(result.first)<=x);
-          CGAL_postcondition(Type(result.second)>=x);
+          CGAL_assertion_code( double infinity=std::numeric_limits<double>::infinity(); )
+          CGAL_postcondition(result.first  == -infinity || Type(result.first)<=x);
+          CGAL_postcondition(result.second ==  infinity || Type(result.second)>=x);
           return result;
 #else
           CGAL_LEDA_SCOPE::bigfloat xnum = x.numerator();

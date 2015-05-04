@@ -4,7 +4,7 @@
 // HalfedgeGraph adapters
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
 
-#include <CGAL/Deform_mesh.h>
+#include <CGAL/Surface_mesh_deformation.h>
 
 typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/>                     Mesh;
 
@@ -12,7 +12,7 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor    vertex_descriptor;
 typedef boost::graph_traits<Mesh>::vertex_iterator        vertex_iterator;
 typedef boost::graph_traits<Mesh>::halfedge_iterator    halfedge_iterator;
 
-typedef CGAL::Deform_mesh<Mesh> Deform_mesh;
+typedef CGAL::Surface_mesh_deformation<Mesh> Surface_mesh_deformation;
 
 int main()
 {
@@ -20,7 +20,7 @@ int main()
   OpenMesh::IO::read_mesh(mesh, "data/plane.off");
 
   // Create a deformation object
-  Deform_mesh deform_mesh(mesh);
+  Surface_mesh_deformation deform_mesh(mesh);
 
   // Definition of the region of interest (use the whole mesh)
   vertex_iterator vb,ve;
@@ -44,7 +44,7 @@ int main()
 
   // Use set_target_position() to set the constained position 
   // of control_1. control_2 remains at the last assigned positions
-  Deform_mesh::Point constrained_pos_1(-0.35, 0.40, 0.60);
+  Surface_mesh_deformation::Point constrained_pos_1(-0.35, 0.40, 0.60);
   deform_mesh.set_target_position(control_1, constrained_pos_1);
 
   // Deform the mesh, the positions of vertices of 'mesh' are updated
@@ -53,7 +53,7 @@ int main()
   deform_mesh.deform();
 
   // Set the constained position of control_2
-  Deform_mesh::Point constrained_pos_2(0.55, -0.30, 0.70);
+  Surface_mesh_deformation::Point constrained_pos_2(0.55, -0.30, 0.70);
   deform_mesh.set_target_position(control_2, constrained_pos_2);
 
   // Call the function deform() with one-time parameters:
@@ -74,7 +74,7 @@ int main()
   }
 
   // Deform the mesh
-  Deform_mesh::Point constrained_pos_3(0.55, 0.30, -0.70);
+  Surface_mesh_deformation::Point constrained_pos_3(0.55, 0.30, -0.70);
   deform_mesh.set_target_position(control_3, constrained_pos_3);
 
   deform_mesh.deform(15, 0.0);

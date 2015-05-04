@@ -1543,9 +1543,9 @@ float triLinInterp(const _image* image,
 
 // Gives the value of the image at pixel (i,j,k), converted in float.
 float evaluate(const _image* image,
-               const unsigned int i,
-               const unsigned int j,
-               const unsigned int k)
+               const std::size_t i,
+               const std::size_t j,
+               const std::size_t k)
 {
   using CGAL::IMAGEIO::static_evaluate;
 

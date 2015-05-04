@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 // 
-// Author: Luis Peñaranda <luis.penaranda@gmx.com>
+// Author: Luis PeÃ±aranda <luis.penaranda@gmx.com>
 //         Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
 
 #ifndef CGAL_GMPFI_H

@@ -1,9 +1,9 @@
 #include <cassert>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_rational.h>
 
 // leda_rational, or Gmpq, or Quotient<MP_float>
-typedef CGAL::Arithmetic_kernel::Rational  NT;
+typedef CGAL::Exact_rational               NT;
 typedef CGAL::Cartesian<NT>                Kernel;
 typedef Kernel::Triangle_3                 Triangle;
 typedef Kernel::Point_3                    Point;

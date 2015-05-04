@@ -6,7 +6,7 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Deform_mesh.h>
+#include <CGAL/Surface_mesh_deformation.h>
 
 #include <CGAL/Timer.h>
 
@@ -15,8 +15,8 @@ typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3>  Polyhedron
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
 
-typedef CGAL::Deform_mesh<Polyhedron, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP>  Deform_mesh_arap;
-typedef CGAL::Deform_mesh<Polyhedron, CGAL::Default, CGAL::Default, CGAL::SPOKES_AND_RIMS> Deform_mesh_spoke;
+typedef CGAL::Surface_mesh_deformation<Polyhedron, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP>  Deform_mesh_arap;
+typedef CGAL::Surface_mesh_deformation<Polyhedron, CGAL::Default, CGAL::Default, CGAL::SPOKES_AND_RIMS> Deform_mesh_spoke;
 
 const double squared_threshold = 0.001; // alert if average difs between precomputed and deformed mesh models is above threshold
 

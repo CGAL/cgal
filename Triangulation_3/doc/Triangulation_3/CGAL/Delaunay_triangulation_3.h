@@ -23,6 +23,8 @@ hierarchy data structure \cgalCite{cgal:d-dh-02}.
 The default is `Compact_location`, which saves memory (3-5%) by avoiding the need for this 
 separate data structure, and point location is then performed roughly in 
 \f$ O(n^{1/3})\f$ time. 
+If the triangulation is parallel (see user manual), the default compact 
+location policy must be used.
 Note that this argument can also come in second position, which can be useful when 
 the default value for the `TriangulationDataStructure_3` parameter is 
 satisfactory (this is using so-called deduced parameters). 
@@ -31,16 +33,33 @@ provided before \cgal 3.6 by `Triangulation_hierarchy_3`.
 An example of use can be found in the user 
 manual \ref Triangulation3exfastlocation. 
 
+\tparam SurjectiveLockDataStructure is an optional parameter to specify the type of the spatial lock data structure.
+        It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
+        TriangulationDataStructure_3::Concurrency_tag is Parallel_tag).
+        It must be a model of the `SurjectiveLockDataStructure` concept,
+        with `Object` being a `Point`.
+        The default value is `Spatial_lock_grid_3<Tag_priority_blocking>` if
+        the triangulation data structure is concurrency-safe, and `void` otherwise.
+        In order to use concurrent operations, the user must provide a 
+        reference to a `SurjectiveLockDataStructure`
+        instance via the constructor or `Triangulation_3::set_lock_data_structure`.
+
+If `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`, some operations, 
+such as insertion/removal of a range of points, are performed in parallel. See 
+the documentation of the operations for more details.
+
 \sa `CGAL::Regular_triangulation_3` 
 
 */
-template< typename DelaunayTriangulationTraits_3, typename TriangulationDataStructure_3, typename LocationPolicy >
+template< typename DelaunayTriangulationTraits_3, typename TriangulationDataStructure_3, typename LocationPolicy, typename SurjectiveLockDataStructure >
 class Delaunay_triangulation_3 : 
     public Triangulation_3<DelaunayTriangulationTraits_3,
                            Delaunay_triangulation_3<DelaunayTriangulationTraits_3,
                                                     TriangulationDataStructure_3,
-                                                    LocationPolicy>::Triangulation_data_structure 
+                                                    LocationPolicy>::Triangulation_data_structure,
+                           SurjectiveLockDataStructure
                            >
+                           
 {
 public:
 
@@ -52,6 +71,11 @@ public:
 
 */ 
 typedef LocationPolicy Location_policy; 
+
+/*!
+
+*/ 
+typedef SurjectiveLockDataStructure Lock_data_structure; 
 
 /// @}
 
@@ -88,21 +112,36 @@ typedef DelaunayTriangulationTraits_3::Object_3 Object;
 /*!
 Creates an empty Delaunay triangulation, possibly specifying a traits class 
 `traits`. 
+`lock_ds` is an optional pointer to the lock data structure for parallel operations. It
+must be provided if concurrency is enabled.
 */ 
 Delaunay_triangulation_3 
-(const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3()); 
+(const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3(), 
+Lock_data_structure *lock_ds = NULL);
 
 /*!
 Copy constructor. 
+The pointer to the lock data structure is not copied. Thus, the copy won't be
+concurrency-safe as long as the user has not called `Triangulation_3::set_lock_data_structure`.
 */ 
 Delaunay_triangulation_3 (const Delaunay_triangulation_3 & dt1); 
 
 /*!
 Equivalent to constructing an empty triangulation with the optional 
-traits class argument and calling `insert(first,last)`. 
+traits class argument and calling `insert(first,last)`.
+If parallelism is enabled, the points will be inserted in parallel.
 */ 
 template < class InputIterator > 
 Delaunay_triangulation_3 (InputIterator first, InputIterator last, 
+const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3(), 
+Lock_data_structure *lock_ds = NULL); 
+
+/*! 
+Same as before, with last two parameters in reverse order.
+*/ 
+template < class InputIterator > 
+Delaunay_triangulation_3 (InputIterator first, InputIterator last, 
+Lock_data_structure *lock_ds, 
 const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3()); 
 
 /// @} 
@@ -116,14 +155,23 @@ Inserts point `p` in the triangulation and returns the corresponding
 vertex. Similar to the insertion in a triangulation, but ensures in 
 addition the empty sphere property of all the created faces. 
 The optional argument `start` is used as a starting place for the search. 
+
+The optional argument `could_lock_zone` is used by the concurrency-safe
+version of the triangulation. If the pointer is not null, the insertion will
+try to lock all the cells of the conflict zone, i.e.\ all the vertices that are
+inside or on the boundary of the conflict zone. If it succeeds, `*could_lock_zone`
+is true, otherwise it is false and the return value is Vertex_handle() 
+(the point is not inserted). In any case, the locked cells are not unlocked by the 
+function, leaving this choice to the user.
 */ 
 Vertex_handle insert(const Point & p, 
-Cell_handle start = Cell_handle() ); 
+Cell_handle start = Cell_handle(), bool *could_lock_zone = NULL); 
 
 /*!
 Same as above but uses `hint` as a starting place for the search. 
 */ 
-Vertex_handle insert(const Point & p, Vertex_handle hint); 
+Vertex_handle insert(const Point & p, Vertex_handle hint,
+                     bool *could_lock_zone = NULL); 
 
 /*!
 Inserts point `p` in the triangulation and returns the corresponding 
@@ -132,13 +180,16 @@ parameter the return values of a previous location query. See description of
 `Triangulation_3::locate()`. 
 */ 
 Vertex_handle insert(const Point & p, Locate_type lt, 
-Cell_handle loc, int li, int lj); 
+Cell_handle loc, int li, int lj,
+bool *could_lock_zone = NULL); 
 
 /*!
 Inserts the points in the iterator range `[first,last)`. Returns the number of inserted points. 
 Note that this function is not guaranteed to insert the points 
 following the order of `PointInputIterator`, as `spatial_sort()` 
 is used to improve efficiency. 
+If parallelism is enabled, the points will be inserted in parallel.
+
 \tparam PointInputIterator must be an input iterator with the value type `Point`. 
 
 */ 
@@ -153,6 +204,7 @@ Returns the number of inserted points.
 Note that this function is not guaranteed to insert the points 
 following the order of `PointWithInfoInputIterator`, as `spatial_sort()` 
 is used to improve efficiency. 
+If parallelism is enabled, the points will be inserted in parallel.
 Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is 
 `v.point() == p` and `v.info() == i`. If several pairs have the same point, 
 only one vertex is created, and one of the objects of type `Vertex::Info` will be stored in the vertex. 
@@ -209,14 +261,41 @@ decreases drastically, it might be interesting to defragment the
 
 /*!
 Removes the vertex `v` from the triangulation. 
+
 \pre `v` is a finite vertex of the triangulation. 
 */ 
 void remove(Vertex_handle v); 
 
-/*!
-Removes the vertices specified by the iterator range `[first, beyond)`. 
-The function `remove(Vertex_handle)` is called over each element of the range. 
-The number of vertices removed is returned. 
+/*! 
+Removes the vertex `v` from the triangulation.
+
+This function is concurrency-safe if the triangulation is concurrency-safe. 
+It will first
+try to lock all the cells adjacent to `v`. If it succeeds, `*could_lock_zone`
+is true, otherwise it is false (and the point is not removed). In any case, 
+the locked cells are not unlocked by the function, leaving this choice to the user.
+
+This function will try to remove `v` only if the removal does not
+decrease the dimension.
+
+The return value is only meaningful if `*could_lock_zone` is `true`:
+  - returns true if the vertex was removed
+  - returns false if the vertex wasn't removed since it would decrease 
+    the dimension.
+
+\pre `v` is a finite vertex of the triangulation. 
+\pre `dt`.`dimension()` \f$ =3\f$.
+
+*/ 
+bool remove(Vertex_handle v, bool *could_lock_zone);
+
+/*! 
+Removes the vertices specified by the iterator range `[first, beyond)`.
+The number of vertices removed is returned.
+If parallelism is enabled, the points will be removed in parallel.
+Note that if at some step, the triangulation dimension becomes lower than 3,
+the removal of the remaining points will go on sequentially.
+
 \pre (i) all vertices of the range are finite vertices of the triangulation; and (ii) no vertices are repeated in the range. 
 
 \tparam InputIterator must be an input iterator with value type `Vertex_handle`.
@@ -228,7 +307,8 @@ int remove(InputIterator first, InputIterator beyond);
 This function has exactly the same result and the same preconditions as `remove(first, beyond)`. 
 The difference is in the implementation and efficiency. This version does not re-triangulate the hole after each 
 point removal but only after removing all vertices. This is more efficient if (and only if) the removed points 
-are organized in a small number of connected components of the Delaunay triangulation. 
+are organized in a small number of connected components of the Delaunay triangulation.
+Another difference is that there is no parallel version of this function.
 
 \tparam InputIterator must be an input iterator with value type `Vertex_handle`.
 */ 
@@ -338,6 +418,14 @@ respectively in the output iterators:
 (resp. edges) `(t, i)` where the cell (resp. facet) `t` is in 
 conflict, but `t->neighbor(i)` is not. 
 
+- `could_lock_zone`: The optional argument `could_lock_zone` is used by the concurrency-safe
+                     version of the triangulation. If the pointer is not null, the algorithm will
+                     try to lock all the cells of the conflict zone, i.e.\ all the vertices that are
+                     inside or on the boundary of the conflict zone (as a result, the boundary cells become
+                     partially locked). If it succeeds, `*could_lock_zone`
+                     is true, otherwise it is false (and the returned conflict zone is only partial). In any case, 
+                     the locked cells are not unlocked by the function, leaving this choice to the user.
+
 This function can be used in conjunction with `insert_in_hole()` in order 
 to decide the insertion of a point after seeing which elements of the 
 triangulation are affected. 
@@ -350,7 +438,7 @@ class OutputIteratorCells>
 std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells> 
 find_conflicts(Point p, Cell_handle c, 
 OutputIteratorBoundaryFacets bfit, 
-OutputIteratorCells cit); 
+OutputIteratorCells cit, bool *could_lock_zone = NULL); 
 
 /*!
 Same as the other `find_conflicts()` function, except that it also 
@@ -367,6 +455,14 @@ conflict, but `t->neighbor(i)` is not.
 - `ifit`: the facets (resp. edges) inside the hole, that is, delimiting 
 two cells (resp facets) in conflict. 
 
+- `could_lock_zone`: The optional argument `could_lock_zone` is used by the concurrency-safe
+                     version of the triangulation. If the pointer is not null, the algorithm will
+                     try to lock all the cells of the conflict zone, i.e.\ all the vertices that are
+                     inside or on the boundary of the conflict zone (as a result, the boundary cells become
+                     partially locked). If it succeeds, `*could_lock_zone`
+                     is true, otherwise it is false (and the returned conflict zone is only partial). In any case, 
+                     the locked cells are not unlocked by the function, leaving this choice to the user.
+
 Returns the `Triple` composed of the resulting output iterators. 
 \pre `dt`.`dimension()` \f$ \geq2\f$, and `c` is in conflict with `p`. 
 
@@ -380,7 +476,8 @@ OutputIteratorInternalFacets>
 find_conflicts(Point p, Cell_handle c, 
 OutputIteratorBoundaryFacets bfit, 
 OutputIteratorCells cit, 
-OutputIteratorInternalFacets ifit); 
+OutputIteratorInternalFacets ifit,
+bool *could_lock_zone = NULL); 
 
 /*!
 \deprecated This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 

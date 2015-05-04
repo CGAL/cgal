@@ -171,9 +171,9 @@ int main( int argc, char** argv )
             << "\nEdges proccessed: " << stats.processed
             << "\nEdges collapsed: "  << stats.collapsed
             << std::endl
-            << "\nEdges not collapsed due to topological constrians: "  << stats.non_collapsable
-            << "\nEdge not collapsed due to cost computation constrians: "  << stats.cost_uncomputable 
-            << "\nEdge not collapsed due to placement computation constrians: " << stats.placement_uncomputable 
+            << "\nEdges not collapsed due to topological constraints: "  << stats.non_collapsable
+            << "\nEdge not collapsed due to cost computation constraints: "  << stats.cost_uncomputable 
+            << "\nEdge not collapsed due to placement computation constraints: " << stats.placement_uncomputable 
             << std::endl ; 
             
   std::cout << "\nFinished...\n" << r << " edges removed.\n" 

@@ -38,7 +38,7 @@ If a number type is a model of both `IntegralDomainWithoutDivision` and
 `RealEmbeddable`, it follows that the ring represented by such a number type 
 is a sub-ring of the real numbers and hence has characteristic zero. 
 
-\cgalRefines `Equality` Comparable 
+\cgalRefines `EqualityComparable`
 \cgalRefines `LessThanComparable` 
 
 \sa `RealEmbeddableTraits`

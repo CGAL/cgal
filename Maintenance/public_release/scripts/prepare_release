@@ -9,8 +9,8 @@ if [ -z "$1" ]; then
 fi
 
 
-RELEASE_CANDIDATES_DIR=/var/CGAL/www/Members/release-candidates
-MANUAL_TESTS_DIR=/var/CGAL/www/Members/Manual_doxygen_test
+RELEASE_CANDIDATES_DIR=/srv/CGAL/www/Members/release-candidates
+MANUAL_TESTS_DIR=/srv/CGAL/www/Members/Manual_doxygen_test
 
 PUBLIC_RELEASE_DIR="$1"
 
@@ -32,11 +32,14 @@ printf "Copy documentation to doc_html/ and doc_html_online/...\n"
 
 [ -d "$DEST_DIR" ] || mkdir "$DEST_DIR"
 [ -d "$DEST_DIR/doc_html" ] || mkdir "$DEST_DIR/doc_html"
-[ -d "/var/CGAL/www/${PUBLIC_RELEASE_NAME#CGAL-}/Manual" ] || mkdir -p "/var/CGAL/www/${PUBLIC_RELEASE_NAME#CGAL-}/Manual"
+[ -d "/srv/CGAL/www/${PUBLIC_RELEASE_NAME#CGAL-}/Manual" ] || mkdir -p "/srv/CGAL/www/${PUBLIC_RELEASE_NAME#CGAL-}/Manual"
 
 cp "$PUBLIC_RELEASE_DIR"/*(.) "${RELEASE_CANDIDATES_DIR}/$PUBLIC_RELEASE_NAME"
-cp -a "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/output/* "$DEST_DIR/doc_html"
-cp -a "$DEST_DIR/doc_html" "$DEST_DIR/doc_html_online"
+rsync -a "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/output/* "$DEST_DIR/doc_html/"
+pushd "$DEST_DIR/doc_html/Manual/search"
+  for i in g n c s i; do sed -i "s/..\/BGL$i/..\/BGL\/$i/g" *; done
+popd
+rsync -a "$DEST_DIR/doc_html/" "$DEST_DIR/doc_html_online/"
 
 printf "Modify \"../../MathJax\" to MathJax CDN in doc_html...\n"
 pushd "$DEST_DIR/doc_html"
@@ -79,9 +82,9 @@ popd
 
 printf "Now use:\n"
 printf "  cd ${DEST_DIR}\n"
-printf "  mv cgal_manual.zip /var/CGAL/www/%s/Manual/\n" "${PUBLIC_RELEASE_NAME#CGAL-}"
-printf "  rsync --compress -av doc_html_online/ %s:/www/inf-websites/doc.cgal.org/Manual/%s\n" \
-    cgal@contact.mpi-inf.mpg.de \
+printf "  mv cgal_manual.zip /srv/CGAL/www/%s/Manual/\n" "${PUBLIC_RELEASE_NAME#CGAL-}"
+printf "  rsync --compress -av doc_html_online/ %s:doc.cgal.org/Manual/%s\n" \
+    cgalorgmnx@ftp.cgal.org \
     "${PUBLIC_RELEASE_NAME#CGAL-}"
 
 printf "DONE!\n"

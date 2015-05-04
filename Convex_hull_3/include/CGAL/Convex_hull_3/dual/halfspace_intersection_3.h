@@ -1,0 +1,331 @@
+// Copyright (c) 2014  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+//
+// Author(s)     : Jocelyn Meyron
+//
+
+#ifndef CGAL_HALFSPACE_INTERSECTION_3_H
+#define CGAL_HALFSPACE_INTERSECTION_3_H
+
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/Convex_hull_3/dual/Convex_hull_traits_dual_3.h>
+#include <CGAL/Origin.h>
+#include <CGAL/convex_hull_3.h>
+#include <CGAL/intersections.h>
+#include <CGAL/assertions.h>
+
+// For interior_polyhedron_3
+#include <CGAL/Convex_hull_3/dual/interior_polyhedron_3.h>
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpq.h>
+#else
+#include <CGAL/MP_Float.h>
+#endif
+
+namespace CGAL
+{
+    namespace Convex_hull_3
+    {
+        namespace internal
+        {
+            // Build the primal polyhedron associated to a dual polyhedron
+            // We also need the `origin` which represents a point inside the primal polyhedron
+            template <typename K, class Polyhedron_dual, class Polyhedron>
+                class Build_primal_polyhedron :
+                    public CGAL::Modifier_base<typename Polyhedron::HalfedgeDS> {
+                        typedef typename Polyhedron::HalfedgeDS HDS;
+                        const Polyhedron_dual & _dual;
+
+                        // Origin
+                        typedef typename K::Point_3 Primal_point_3;
+                        Primal_point_3 origin;
+
+                        public:
+                        Build_primal_polyhedron (const Polyhedron_dual & dual,
+                                                 Primal_point_3 o =
+                                                 Primal_point_3(CGAL::ORIGIN)) : _dual (dual), origin(o)
+                        {}
+
+                        void operator () (HDS &hds)
+                        {
+                            typedef typename K::RT RT;
+                            typedef typename K::Point_3 Point_3;
+
+                            // Typedefs for dual
+                            typedef typename Polyhedron_dual::Facet Facet;
+                            typedef typename Polyhedron_dual::Facet_const_handle
+                                Facet_const_handle;
+                            typedef typename Polyhedron_dual::Facet_const_iterator
+                                Facet_const_iterator;
+                            typedef typename Polyhedron_dual::Vertex_const_iterator
+                                Vertex_const_iterator;
+
+                            // Typedefs for primal
+                            typename CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
+
+                            // Typedefs for intersection
+                            typedef typename K::Plane_3 Plane_3;
+                            typedef typename K::Line_3 Line_3;
+                            typedef boost::optional< boost::variant< Point_3,
+                                                                     Line_3,
+                                                                     Plane_3 > > result_inter;
+
+                            B.begin_surface(_dual.size_of_facets(),
+                                            _dual.size_of_vertices(),
+                                            _dual.size_of_halfedges());
+
+                            std::map <Facet_const_handle, size_t> primal_vertices;
+                            size_t n = 0;
+
+                            // First, computing the primal vertices
+                            for (Facet_const_iterator it = _dual.facets_begin();
+                                 it != _dual.facets_end(); ++it, ++n) {
+                                typename Facet::Halfedge_const_handle h = it->halfedge();
+                                // Build the dual plane corresponding to the current facet
+                                Plane_3 p1 = h->vertex()->point();
+                                Plane_3 p2 = h->next()->vertex()->point();
+                                Plane_3 p3 = h->next()->next()->vertex()->point();
+
+                                RT dp1 = p1.d() + origin.x() * p1.a()
+                                    + origin.y() * p1.b() + origin.z() * p1.c();
+                                RT dp2 = p2.d() + origin.x() * p2.a()
+                                    + origin.y() * p2.b() + origin.z() * p2.c();
+                                RT dp3 = p3.d() + origin.x() * p3.a()
+                                    + origin.y() * p3.b() + origin.z() * p3.c();
+
+                                Plane_3 pp1(p1.a(), p1.b(), p1.c(), dp1);
+                                Plane_3 pp2(p2.a(), p2.b(), p2.c(), dp2);
+                                Plane_3 pp3(p3.a(), p3.b(), p3.c(), dp3);
+
+                                // Compute the intersection
+                                result_inter result = CGAL::intersection(pp1, pp2, pp3);
+                                CGAL_assertion_msg(bool(result),
+                                                   "halfspace_intersection_3: no intersection");
+                                CGAL_assertion_msg(boost::get<Point_3>(& *result) != NULL,
+                                                   "halfspace_intersection_3: intersection is not a point");
+
+                                const Point_3* pp = boost::get<Point_3>(& *result);
+
+                                // Primal vertex associated to the current dual plane
+                                Point_3 ppp(origin.x() + pp->x(),
+                                            origin.y() + pp->y(),
+                                            origin.z() + pp->z());
+
+                                B.add_vertex(ppp);
+                                primal_vertices[it] = n;
+                            }
+
+                            // Then, add facets to the primal polyhedron
+                            // To do this, for each dual vertex, we circulate around this vertex
+                            // and we add an edge between each facet we encounter
+                            for (Vertex_const_iterator it = _dual.vertices_begin();
+                                 it != _dual.vertices_end(); ++it) {
+                                typename Polyhedron_dual::Halfedge_around_vertex_const_circulator
+                                    h0 = it->vertex_begin(), hf = h0;
+
+                                B.begin_facet();
+                                do {
+                                    B.add_vertex_to_facet(primal_vertices[hf->facet()]);
+                                } while (++hf != h0);
+                                B.end_facet();
+                            }
+
+                            B.end_surface();
+                        }
+                    };
+
+            // Functor used during the computation of the equations
+            // of the facets of a convex polyhedron
+            template <class Facet>
+            struct Plane_equation_convex_polyhedron {
+                typename Facet::Plane_3 operator()(Facet& f) {
+                    typename Facet::Halfedge_handle h = f.halfedge();
+                    typedef typename Facet::Plane_3 Plane;
+                    return Plane(h->vertex()->point(),
+                                 h->next()->vertex()->point(),
+                                 h->next()->next()->vertex()->point());
+                }
+            };
+
+            // Test if a point is inside a convex polyhedron
+            template <class Polyhedron>
+            bool point_inside_convex_polyhedron (Polyhedron &P,
+                                                 typename Polyhedron::Traits::Point_3 const& p) {
+                // Compute the equations of the facets of the polyhedron
+                typedef typename Polyhedron::Plane_iterator Plane_iterator;
+                typedef typename Polyhedron::Facet Facet;
+
+                std::transform(P.facets_begin(), P.facets_end(), P.planes_begin(),
+                               Plane_equation_convex_polyhedron<Facet>());
+
+                // Check if the point is inside the polyhdreon
+                for (Plane_iterator pit = P.planes_begin();
+                     pit != P.planes_end();
+                     ++pit) {
+                    if (! pit->has_on_negative_side(p)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            template <class Plane>
+            bool collinear_plane (Plane u, Plane v) {
+                typedef typename Kernel_traits<Plane>::Kernel Kernel;
+                typedef typename Kernel::Vector_3 Vector;
+
+                Vector uu = u.orthogonal_vector();
+                Vector vv = v.orthogonal_vector();
+
+                return CGAL::cross_product(uu, vv) == Vector(0, 0, 0);
+            }
+
+            template <class Plane>
+            bool coplanar_plane (Plane u, Plane v, Plane w) {
+                typedef typename Kernel_traits<Plane>::Kernel Kernel;
+                typedef typename Kernel::Vector_3 Vector;
+
+                Vector uu = u.orthogonal_vector();
+                Vector vv = v.orthogonal_vector();
+                Vector ww = w.orthogonal_vector();
+
+                return CGAL::orientation(uu, vv, ww) == CGAL::COPLANAR;
+            }
+
+            // Checks if the dimension of intersection of the planes
+            // is a polyhedron (dimension == 3)
+            template <class PlaneIterator>
+            bool is_intersection_dim_3 (PlaneIterator begin,
+                                        PlaneIterator end) {
+                typedef typename std::iterator_traits<PlaneIterator>::value_type Plane;
+
+                std::list<Plane> planes(begin, end);
+
+                // Remove same planes
+                std::size_t size = planes.size();
+
+                // At least 4 points
+                if (size < 4)
+                    return false;
+
+                // Collinear
+                PlaneIterator plane1_it = planes.begin();
+                PlaneIterator plane2_it = planes.begin();
+                plane2_it++;
+
+                PlaneIterator plane3_it = planes.end();
+                plane3_it--;
+                while (plane2_it != planes.end() &&
+                       collinear_plane(*plane1_it, *plane2_it)) {
+                    plane2_it++;
+                }
+
+                if (plane2_it == planes.end()) {
+                    return false;
+                }
+
+                // Coplanar
+                while (plane2_it != planes.end() &&
+                       coplanar_plane(*plane1_it, *plane2_it, *plane3_it)) {
+                    plane2_it++;
+                }
+
+                if (plane2_it == planes.end()) {
+                    return false;
+                }
+
+                return true;
+            }
+        } // namespace internal
+    } // namespace Convex_hull_3
+
+    // Compute the intersection of halfspaces.
+    // If the user gives an origin then the function used it, otherwise, it is
+    // computed using a linear program.
+    template <class PlaneIterator, class Polyhedron>
+    void halfspace_intersection_3 (PlaneIterator begin, PlaneIterator end,
+                                   Polyhedron &P,
+                                   boost::optional<typename Polyhedron::Vertex::Point_3> const& origin) {
+        // Checks whether the intersection if a polyhedron
+        CGAL_assertion_msg(Convex_hull_3::internal::is_intersection_dim_3(begin, end), "halfspace_intersection_3: intersection not a polyhedron");
+
+        // Types
+        typedef typename Kernel_traits<typename Polyhedron::Vertex::Point_3>::Kernel K;
+        typedef Convex_hull_3::Convex_hull_traits_dual_3<K> Hull_traits_dual_3;
+        typedef Polyhedron_3<Hull_traits_dual_3> Polyhedron_dual_3;
+        typedef Convex_hull_3::internal::Build_primal_polyhedron<K, Polyhedron_dual_3, Polyhedron> Builder;
+        typedef typename Polyhedron::Vertex::Point_3 Point_3;
+
+        if (origin) {
+            Point_3 p_origin = boost::get(origin);
+            Hull_traits_dual_3 dual_traits(p_origin);
+
+            Polyhedron_dual_3 dual_convex_hull;
+            CGAL::convex_hull_3(begin, end, dual_convex_hull, dual_traits);
+            Builder build_primal(dual_convex_hull, p_origin);
+            P.delegate(build_primal);
+
+            // Posterior check if the origin is inside the computed polyhedron
+            Polyhedron Q(P);
+            CGAL_assertion_msg(!Convex_hull_3::internal::point_inside_convex_polyhedron(Q, p_origin), "halfspace_intersection_3: origin not in the polyhedron");
+        } else {
+          // choose exact integral type
+#ifdef CGAL_USE_GMP
+          typedef CGAL::Gmpq ET;
+#else
+          typedef CGAL::MP_Float ET;
+#endif
+          // find a point inside the intersection
+          typedef Interior_polyhedron_3<K, ET> Interior_polyhedron;
+          Interior_polyhedron interior;
+          CGAL_assertion_msg(interior.find(begin, end), "halfspace_intersection_3: problem when determing a point inside the intersection");
+          Point_3 origin = interior.inside_point();
+
+          Hull_traits_dual_3 dual_traits(origin);
+
+          Polyhedron_dual_3 dual_convex_hull;
+          CGAL::convex_hull_3(begin, end, dual_convex_hull, dual_traits);
+          Builder build_primal(dual_convex_hull, origin);
+          P.delegate(build_primal);
+
+          // Posterior check if the origin is inside the computed polyhedron
+          Polyhedron Q(P);
+          CGAL_assertion_msg(!Convex_hull_3::internal::point_inside_convex_polyhedron(Q, origin), "halfspace_intersection_3: origin not in the polyhedron");
+        }
+    }
+
+  // Compute the intersection of halfspaces by computing a point inside.
+  template <class PlaneIterator, class Polyhedron>
+  void halfspace_intersection_3 (PlaneIterator begin, PlaneIterator end,
+                                 Polyhedron &P) {
+    halfspace_intersection_3(begin, end , P, boost::none);
+  }
+
+  // Compute the intersection of halfspaces (an interior point is given.)
+  template <class PlaneIterator, class Polyhedron>
+  void halfspace_intersection_3 (PlaneIterator begin, PlaneIterator end,
+                                 Polyhedron &P,
+                                 typename Polyhedron::Vertex::Point_3 const& origin) {
+    halfspace_intersection_3(begin, end , P, boost::optional<typename Polyhedron::Vertex::Point_3>(origin));
+  }
+} // namespace CGAL
+
+#endif // CGAL_HALFSPACE_INTERSECTION_3_H
+

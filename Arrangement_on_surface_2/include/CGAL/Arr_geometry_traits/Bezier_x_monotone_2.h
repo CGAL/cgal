@@ -29,6 +29,7 @@
 #include <CGAL/Arr_geometry_traits/Bezier_curve_2.h>
 #include <CGAL/Arr_geometry_traits/Bezier_point_2.h>
 #include <CGAL/Arr_geometry_traits/Bezier_cache.h>
+#include <CGAL/Arr_enums.h>
 #include <ostream>
 
 namespace CGAL {
@@ -451,6 +452,17 @@ public:
     cv._dir_right = ! this->_dir_right;
 
     return (cv);
+  }
+
+  Self trim(const Point_2& src, const Point_2& tgt) const
+  {
+    //this will make a copy.
+    Self cv = *this;
+
+    cv._ps = src;
+    cv._pt = tgt;
+
+    return cv;
   }
 
 private:

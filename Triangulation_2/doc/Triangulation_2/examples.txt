@@ -16,4 +16,5 @@
 \example Triangulation_2/triangulation_prog1.cpp
 \example Triangulation_2/voronoi.cpp
 \example Triangulation_2/copy_triangulation_2.cpp
+\example Triangulation_2/polylines_triangulation.cpp
 */

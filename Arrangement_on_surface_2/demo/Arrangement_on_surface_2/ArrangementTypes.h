@@ -12,11 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/branches/features/gsoc2012-Arrangement_on_surface_2-demo-atsui/Arrangement_on_surface_2/demo/Arrangement_on_surface_2/cgal_types.h $
-// $Id: cgal_types.h 67117 2012-01-13 18:14:48Z lrineau $
-//
-//
-//
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Alex Tsui <alextsui05@gmail.com>
 
@@ -229,6 +224,12 @@ typedef CGAL::Arr_walk_along_line_point_location<Conic_arr>
 typedef CGAL::Arr_landmarks_point_location<Conic_arr>
  Conic_lanmarks_point_location;
 
+typedef Nt_traits::Integer                                Coefficient;
+typedef CGAL::Arr_algebraic_segment_traits_2<Coefficient> Alg_seg_traits;
+typedef Dcel< Alg_seg_traits >                            Alg_seg_dcel;
+typedef CGAL::Arrangement_with_history_2< Alg_seg_traits, Alg_seg_dcel >
+                                                          Alg_seg_arr;
+
 #endif
 
 // Linear:
@@ -296,12 +297,6 @@ typedef CGAL::Arr_landmarks_point_location<Arc_arr>
   Arc_landmarks_point_location;
 #endif
 
-typedef Nt_traits::Integer Coefficient;
-typedef CGAL::Arr_algebraic_segment_traits_2<Coefficient> Alg_seg_traits;
-typedef Dcel< Alg_seg_traits >                            Alg_seg_dcel;
-typedef CGAL::Arrangement_with_history_2< Alg_seg_traits, Alg_seg_dcel >
-                                                          Alg_seg_arr;
-
 template <class Arrangement_>
 class My_observer : public CGAL::Arr_observer<Arrangement_>
 {
@@ -313,13 +308,12 @@ public:
 
   My_observer (Arrangement& arr) : Arr_observer (arr) {}
 
-   virtual void after_split_face (Face_handle  f ,
-                                  Face_handle  new_f ,
-                                  bool         /* is_hole */)
+  virtual void after_split_face (Face_handle  f ,
+                                 Face_handle  new_f ,
+                                 bool         /* is_hole */)
   {
     new_f ->set_color(f->color());
   }
-
 };
 
 //Q_DECLARE_METATYPE( Seg_arr )

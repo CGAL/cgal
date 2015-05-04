@@ -80,7 +80,7 @@ int main(int argc, char** argv)
   ("show_patches", "Show surface patches in medit output");
   
   
-  po::options_description cmdline_options("Usage",1);
+  po::options_description cmdline_options("Usage");
   cmdline_options.add(generic).add(mesh).add(desc);
   
   po::variables_map vm;
@@ -150,7 +150,7 @@ int main(int argc, char** argv)
   // Output
   std::ofstream medit_file_before("out_before.mesh");
   c3t3.output_to_medit(medit_file_before,
-                       !vm.count("no_label_rebind"), vm.count("show_patches"));
+                       vm.count("no_label_rebind") == 0, vm.count("show_patches") > 0);
   
   // Odt
   if (  vm.count("odt") )
@@ -198,7 +198,7 @@ int main(int argc, char** argv)
 
   // Output
   std::ofstream medit_file("out.mesh");
-  c3t3.output_to_medit(medit_file,!vm.count("no_label_rebind"), vm.count("show_patches"));
+  c3t3.output_to_medit(medit_file, vm.count("no_label_rebind") == 0, vm.count("show_patches") > 0);
 
   return 0;
 }

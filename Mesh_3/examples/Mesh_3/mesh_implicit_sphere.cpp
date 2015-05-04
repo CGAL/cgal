@@ -15,7 +15,15 @@ typedef FT (Function)(const Point&);
 typedef CGAL::Implicit_mesh_domain_3<Function,K> Mesh_domain;
 
 // Triangulation
-typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+#ifdef CGAL_CONCURRENT_MESH_3
+  typedef CGAL::Mesh_triangulation_3<
+    Mesh_domain,
+    CGAL::Kernel_traits<Mesh_domain>::Kernel, // Same as sequential
+    CGAL::Parallel_tag                        // Tag to activate parallelism
+  >::type Tr;
+#else
+  typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+#endif
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 // Criteria
@@ -31,7 +39,8 @@ FT sphere_function (const Point& p)
 int main()
 {
   // Domain (Warning: Sphere_3 constructor uses squared radius !)
-  Mesh_domain domain(sphere_function, K::Sphere_3(CGAL::ORIGIN, 2.));
+  Mesh_domain domain(sphere_function,
+                     K::Sphere_3(CGAL::ORIGIN, 2.));
 
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_size=0.1, facet_distance=0.025,

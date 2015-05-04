@@ -39,46 +39,53 @@ void run(std::list<Point> all_points){
   );
 
   // define exact circular range query  (fuzziness=0)
-  Point center(0.2, 0.2);
-  Fuzzy_circle exact_range(typename Traits::Point_d(center), 0.2);
+  Point center(0.25, 0.25);
+  Fuzzy_circle exact_range(typename Traits::Point_d(center), 0.25);
     
   std::list<typename Traits::Point_d> result;
   tree.search(std::back_inserter( result ), exact_range);
-  
-  tree.search(CGAL::Emptyset_iterator(), Fuzzy_circle(center, 0.2) ); //test compilation when Point != Traits::Point_d
+
+  typedef std::vector<typename Traits::Point_d> V;
+  V vec;
+  vec.resize(result.size());
+  typename V::iterator it = tree.search(vec.begin(), exact_range);
+  assert(it == vec.end());
+ 
+  tree.search(CGAL::Emptyset_iterator(), Fuzzy_circle(center, 0.25) ); //test compilation when Point != Traits::Point_d
   
   // test the results of the exact query
   std::list<Point> copy_all_points(all_points);
   for (typename std::list<typename Traits::Point_d>::iterator pt=result.begin(); (pt != result.end()); ++pt) {
-    assert(CGAL::squared_distance(center,get_point(*pt))<=0.04);
+    assert(CGAL::squared_distance(center,get_point(*pt))<=0.0625);
     copy_all_points.remove(get_point(*pt));
   }
   
   for (std::list<Point>::iterator pt=copy_all_points.begin(); (pt != copy_all_points.end()); ++pt) {
-    if(CGAL::squared_distance(center,*pt)<=0.04){
+    if(CGAL::squared_distance(center,*pt)<=0.0625){
       std::cout << "we missed " << *pt << " with distance = " << CGAL::squared_distance(center,*pt) << std::endl;
     }
-    assert(CGAL::squared_distance(center,*pt)>0.04);
+    assert(CGAL::squared_distance(center,*pt)>0.0625);
   }
 
 
   result.clear();
-  // approximate range searching using value 0.1 for fuzziness parameter
-  Fuzzy_circle approximate_range(typename Traits::Point_d(center), 0.2, 0.1);
+  // approximate range searching using value 0.125 for fuzziness parameter
+  Fuzzy_circle approximate_range(typename Traits::Point_d(center), 0.25, 0.125);
 
   tree.search(std::back_inserter( result ), approximate_range);
   // test the results of the approximate query
   for (typename std::list<typename Traits::Point_d>::iterator pt=result.begin(); (pt != result.end()); ++pt) {
-    // a point we found may be slighlty outside the circle
-    assert(CGAL::squared_distance(center,get_point(*pt))<=0.09);
+    // a point with distance d to the center may be reported if d <= r + eps
+    assert(CGAL::squared_distance(center,get_point(*pt))<=0.140625); // (0.25 + 0.125)²
     all_points.remove(get_point(*pt));
   }
   
   for (std::list<Point>::iterator pt=all_points.begin(); (pt != all_points.end()); ++pt) {
-    if(CGAL::squared_distance(center,*pt)<=0.01){
+    if(CGAL::squared_distance(center,*pt)<=0.015625){ // 0.125²
       std::cout << "we missed " << *pt << " with distance = " << CGAL::squared_distance(center,*pt) << std::endl;
     }
-    assert(CGAL::squared_distance(center,*pt)> 0.01);
+    //all points with a distance d <= r-eps must be reported
+    assert(CGAL::squared_distance(center,*pt)> 0.015625);
   }
   std::cout << "done" << std::endl;  
 }

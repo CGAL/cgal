@@ -556,7 +556,7 @@ public:
         if(! this->ptr()->resultant) {
             compute_resultant();
         }
-        CGAL_assertion(this->ptr()->resultant);
+        CGAL_assertion(bool(this->ptr()->resultant));
         return this->ptr()->resultant.get();
     }
 
@@ -564,7 +564,7 @@ public:
         if(! this->ptr()->resultant_roots) {
             compute_resultant_roots_with_multiplicities();
         }
-        CGAL_assertion(this->ptr()->resultant_roots);
+        CGAL_assertion(bool(this->ptr()->resultant_roots));
         return this->ptr()->resultant_roots.get();
     }
 
@@ -578,7 +578,7 @@ public:
         if(! this->ptr()->multiplicities_of_resultant_roots) {
             compute_resultant_roots_with_multiplicities();
         }
-        CGAL_assertion(this->ptr()->multiplicities_of_resultant_roots);
+        CGAL_assertion(bool(this->ptr()->multiplicities_of_resultant_roots));
         return this->ptr()->multiplicities_of_resultant_roots.get();
     }    
     
@@ -598,7 +598,7 @@ public:
 	       resultant_roots().end(),
 	       std::back_inserter(this->ptr()->stripe_values.get()));
         }
-        CGAL_assertion(this->ptr()->stripe_values);
+        CGAL_assertion(bool(this->ptr()->stripe_values));
         return this->ptr()->stripe_values.get();
     }
 
@@ -606,7 +606,7 @@ public:
         if(! this->ptr()->event_x_coordinates) {
             compute_event_x_coordinates_with_event_indices();
         }
-        CGAL_assertion(this->ptr()->event_x_coordinates);
+        CGAL_assertion(bool(this->ptr()->event_x_coordinates));
         return this->ptr()->event_x_coordinates.get();
     }
 
@@ -614,7 +614,7 @@ public:
         if(! this->ptr()->event_indices) {
             compute_event_x_coordinates_with_event_indices();
         }
-        CGAL_assertion(this->ptr()->event_indices);
+        CGAL_assertion(bool(this->ptr()->event_indices));
         return this->ptr()->event_indices.get();
     } 
 
@@ -642,7 +642,7 @@ private:
         if(! this->ptr()->intermediate_values) {
             compute_intermediate_values_and_slices();
         }
-        CGAL_assertion(this->ptr()->intermediate_values);
+        CGAL_assertion(bool(this->ptr()->intermediate_values));
         return this->ptr()->intermediate_values.get();
     }
 
@@ -650,7 +650,7 @@ private:
         if(! this->ptr()->intermediate_slices) {
             compute_intermediate_values_and_slices();
         }
-        CGAL_assertion(this->ptr()->intermediate_slices);
+        CGAL_assertion(bool(this->ptr()->intermediate_slices));
         return this->ptr()->intermediate_slices.get();
     }
 
@@ -661,7 +661,7 @@ private:
         if(! this->ptr()->subresultants) {
             compute_subresultants();
         }
-        CGAL_assertion(this->ptr()->subresultants);
+        CGAL_assertion(bool(this->ptr()->subresultants));
         return this->ptr()->subresultants.get();
     }
 
@@ -675,7 +675,7 @@ private:
         if(! this->ptr()->principal_subresultants) {
             compute_subresultants();
         }
-        CGAL_assertion(this->ptr()->principal_subresultants);
+        CGAL_assertion(bool(this->ptr()->principal_subresultants));
         return this->ptr()->principal_subresultants.get();
     }
 
@@ -690,7 +690,7 @@ private:
         if(! this->ptr()->coprincipal_subresultants) {
             compute_subresultants();
         }
-        CGAL_assertion(this->ptr()->coprincipal_subresultants);
+        CGAL_assertion(bool(this->ptr()->coprincipal_subresultants));
         return this->ptr()->coprincipal_subresultants.get();
     }
 
@@ -1040,7 +1040,7 @@ public:
         if(! this->ptr()->event_slices[i]) {
             this->ptr()->event_slices[i] = create_event_slice(i);
         }
-        CGAL_assertion(this->ptr()->event_slices[i]);
+        CGAL_assertion(bool(this->ptr()->event_slices[i]));
         return this->ptr()->event_slices[i].get();
     }
       
@@ -1084,7 +1084,7 @@ public:
                 }
             }
         }
-        CGAL_assertion(intermediate_values()[i]);
+        CGAL_assertion(bool(intermediate_values()[i]));
         return intermediate_values()[i].get();
 
     }

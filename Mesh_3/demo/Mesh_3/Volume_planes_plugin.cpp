@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include <CGAL/Image_3.h>
 
 #include "Volume_plane.h"
@@ -126,7 +128,7 @@ signals:
   void realChange(int);
 
 private:
-  const static unsigned int scale;
+  static const unsigned int scale;
 
   qglviewer::Vec v;
   int id;

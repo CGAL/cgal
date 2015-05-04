@@ -28,7 +28,10 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/Kd_tree_node.h>
 #include <CGAL/Splitters.h>
-#include <CGAL/Compact_container.h>
+#include <CGAL/internal/Get_dimension_tag.h>
+
+#include <deque>
+#include <boost/container/deque.hpp>
 
 #ifdef CGAL_HAS_THREADS
 #include <boost/thread/mutex.hpp>
@@ -36,7 +39,7 @@
 
 namespace CGAL {
 
-  //template <class SearchTraits, class Splitter_=Median_of_rectangle<SearchTraits>, class UseExtendedNode = Tag_true >
+//template <class SearchTraits, class Splitter_=Median_of_rectangle<SearchTraits>, class UseExtendedNode = Tag_true >
 template <class SearchTraits, class Splitter_=Sliding_midpoint<SearchTraits>, class UseExtendedNode = Tag_true >
 class Kd_tree {
 
@@ -48,11 +51,17 @@ public:
 
   typedef typename SearchTraits::FT FT;
   typedef Kd_tree_node<SearchTraits, Splitter, UseExtendedNode > Node;
+  typedef Kd_tree_leaf_node<SearchTraits, Splitter, UseExtendedNode > Leaf_node;
+  typedef Kd_tree_internal_node<SearchTraits, Splitter, UseExtendedNode > Internal_node;
   typedef Kd_tree<SearchTraits, Splitter> Tree;
   typedef Kd_tree<SearchTraits, Splitter,UseExtendedNode> Self;
 
-  typedef typename Compact_container<Node>::iterator Node_handle;
-  typedef typename Compact_container<Node>::const_iterator Node_const_handle;
+  typedef Node* Node_handle;
+  typedef const Node* Node_const_handle;
+  typedef Leaf_node* Leaf_node_handle;
+  typedef const Leaf_node* Leaf_node_const_handle;
+  typedef Internal_node* Internal_node_handle;
+  typedef const Internal_node* Internal_node_const_handle;
   typedef typename std::vector<const Point_d*>::const_iterator Point_d_iterator;
   typedef typename std::vector<const Point_d*>::const_iterator Point_d_const_iterator;
   typedef typename Splitter::Separator Separator;
@@ -61,14 +70,25 @@ public:
 
   typedef typename std::vector<Point_d>::size_type size_type;
 
+  typedef typename internal::Get_dimension_tag<SearchTraits>::Dimension D;
+
 private:
   SearchTraits traits_;
   Splitter split;
-  Compact_container<Node> nodes;
+
+
+  // wokaround for https://svn.boost.org/trac/boost/ticket/9332
+#if   (_MSC_VER == 1800) && (BOOST_VERSION == 105500)
+  std::deque<Internal_node> internal_nodes;
+  std::deque<Leaf_node> leaf_nodes;
+#else
+  boost::container::deque<Internal_node> internal_nodes;
+  boost::container::deque<Leaf_node> leaf_nodes;
+#endif
 
   Node_handle tree_root;
 
-  Kd_tree_rectangle<FT>* bbox;
+  Kd_tree_rectangle<FT,D>* bbox;
   std::vector<Point_d> pts;
 
   // Instead of storing the points in arrays in the Kd_tree_node
@@ -97,9 +117,14 @@ private:
   Node_handle
   create_leaf_node(Point_container& c)
   {
-    Node_handle nh = nodes.emplace(static_cast<unsigned int>(c.size()), Node::LEAF);
+    Leaf_node node(true , static_cast<unsigned int>(c.size()));
+    std::ptrdiff_t tmp = c.begin() - data.begin();
+    node.data = pts.begin() + tmp;
 
-    nh->data = c.begin();
+    leaf_nodes.push_back(node);
+    Leaf_node_handle nh = &leaf_nodes.back();
+
+   
     return nh;
   }
 
@@ -127,18 +152,27 @@ private:
   Node_handle
   create_internal_node_use_extension(Point_container& c)
   {
-    Node_handle nh = nodes.emplace(Node::EXTENDED_INTERNAL);
+    Internal_node node(false);
+    internal_nodes.push_back(node);
+    Internal_node_handle nh = &internal_nodes.back();
 
+    Separator sep;
     Point_container c_low(c.dimension(),traits_);
-    split(nh->separator(), c, c_low);
+    split(sep, c, c_low);
+    nh->set_separator(sep);
 
-    int cd  = nh->separator().cutting_dimension();
+    int cd  = nh->cutting_dimension();
+    if(!c_low.empty())
+      nh->low_val = c_low.tight_bounding_box().max_coord(cd);
+    else
+      nh->low_val = c_low.bounding_box().min_coord(cd);
+    if(!c.empty())
+      nh->high_val = c.tight_bounding_box().min_coord(cd);
+    else
+      nh->high_val = c.bounding_box().max_coord(cd);
 
-    nh->low_val = c_low.bounding_box().min_coord(cd);
-    nh->high_val = c.bounding_box().max_coord(cd);
-
-    CGAL_assertion(nh->separator().cutting_value() >= nh->low_val);
-    CGAL_assertion(nh->separator().cutting_value() <= nh->high_val);
+    CGAL_assertion(nh->cutting_value() >= nh->low_val);
+    CGAL_assertion(nh->cutting_value() <= nh->high_val);
 
     if (c_low.size() > split.bucket_size()){
       nh->lower_ch = create_internal_node_use_extension(c_low);
@@ -151,6 +185,9 @@ private:
       nh->upper_ch = create_leaf_node(c);
     }
 
+    
+    
+
     return nh;
   }
 
@@ -160,10 +197,14 @@ private:
   Node_handle
   create_internal_node(Point_container& c)
   {
-    Node_handle nh = nodes.emplace(Node::INTERNAL);
+    Internal_node node(false);
+    internal_nodes.push_back(node);
+    Internal_node_handle nh = &internal_nodes.back();
+    Separator sep;
 
     Point_container c_low(c.dimension(),traits_);
-    split(nh->separator(), c, c_low);
+    split(sep, c, c_low);
+    nh->set_separator(sep);
 
     if (c_low.size() > split.bucket_size()){
       nh->lower_ch = create_internal_node(c_low);
@@ -175,6 +216,9 @@ private:
     }else{
       nh->upper_ch = create_leaf_node(c);
     }
+
+   
+
     return nh;
   }
 
@@ -210,12 +254,27 @@ public:
       data.push_back(&pts[i]);
     }
     Point_container c(dim, data.begin(), data.end(),traits_);
-    bbox = new Kd_tree_rectangle<FT>(c.bounding_box());
+    bbox = new Kd_tree_rectangle<FT,D>(c.bounding_box());
     if (c.size() <= split.bucket_size()){
       tree_root = create_leaf_node(c);
     }else {
       tree_root = create_internal_node(c, UseExtendedNode());
     }
+
+    //Reorder vector for spatial locality
+    std::vector<Point_d> ptstmp;
+    ptstmp.resize(pts.size());
+    for (std::size_t i = 0; i < pts.size(); ++i){
+      ptstmp[i] = *data[i];
+    }
+    for(std::size_t i = 0; i < leaf_nodes.size(); ++i){
+      std::ptrdiff_t tmp = leaf_nodes[i].begin() - pts.begin();
+      leaf_nodes[i].data = ptstmp.begin() + tmp;
+    }
+    pts.swap(ptstmp);
+
+    data.clear();
+
     built_ = true;
   }
 
@@ -239,7 +298,8 @@ public:
   void invalidate_built()
   {
     if(is_built()){
-      nodes.clear();
+      internal_nodes.clear();
+      leaf_nodes.clear();
       data.clear();
       delete bbox;
       built_ = false;
@@ -289,8 +349,8 @@ public:
       if(! is_built()){
 	const_build();
       }
-      Kd_tree_rectangle<FT> b(*bbox);
-      tree_root->search(it,q,b);
+      Kd_tree_rectangle<FT,D> b(*bbox);
+      return tree_root->search(it,q,b);
     }
     return it;
   }
@@ -335,7 +395,7 @@ public:
     root()->print();
   }
 
-  const Kd_tree_rectangle<FT>&
+  const Kd_tree_rectangle<FT,D>&
   bounding_box() const
   {
     if(! is_built()){

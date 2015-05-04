@@ -1,4 +1,4 @@
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_integer.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_S2/Sphere_point.h>
 #include <CGAL/Nef_S2/Sphere_circle.h>
@@ -60,7 +60,7 @@ int main()
 
   //  CGAL_NEF_SETDTHREAD(239);
 
-  typedef CGAL::Arithmetic_kernel::Integer  RT;
+  typedef CGAL::Exact_integer  RT;
   typedef CGAL::Homogeneous<RT> Kernel;
   typedef Test_SNC<Kernel> SNC;
   typedef SNC::Point_3 Point_3;

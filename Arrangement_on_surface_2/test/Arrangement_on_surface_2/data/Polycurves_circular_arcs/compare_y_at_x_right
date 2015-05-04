@@ -1,0 +1,7 @@
+# -*- comment-start: "#"; -*-
+# 
+# Format
+# <command>	<xcurve 1> <xcurve 2> <intersection point> <expected result>
+#
+#compare_y_at_x_left 0 1 19 LARGER
+#compare_y_at_x_left 3 2 19 SMALLER

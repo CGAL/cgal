@@ -30,6 +30,8 @@
 
 namespace CGAL {
 
+/// \cond SKIP_IN_MANUAL
+
 namespace EulerImpl {
 
 template<typename Graph>
@@ -76,10 +78,98 @@ join_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
 }
 } // namespace EulerImpl
 
+/// \endcond
 
   namespace Euler {
 /// \ingroup PkgBGLEulerOperations
 /// @{
+
+template<typename Graph, typename P>
+typename boost::graph_traits<Graph>::halfedge_descriptor
+make_tetrahedron(Graph& g, const P& p0, const P& p1, const P& p2, const P& p3)
+{
+  typedef typename boost::graph_traits<Graph>              Traits;
+  typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
+  typedef typename Traits::vertex_descriptor               vertex_descriptor;
+  typedef typename Traits::face_descriptor               face_descriptor;
+  typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
+
+  Point_property_map ppmap = get(CGAL::vertex_point, g);
+  vertex_descriptor v0, v1, v2, v3, v4;
+  v0 = add_vertex(g);
+  v1 = add_vertex(g);
+  v2 = add_vertex(g);
+  v3 = add_vertex(g);
+
+  ppmap[v0] = p0;
+  ppmap[v1] = p1;
+  ppmap[v2] = p2;
+  ppmap[v3] = p3;
+  halfedge_descriptor h0 = halfedge(add_edge(g),g);
+  halfedge_descriptor h1 = halfedge(add_edge(g),g);
+  halfedge_descriptor h2 = halfedge(add_edge(g),g);
+  set_next(h0, h1, g);
+  set_next(h1, h2, g);
+  set_next(h2, h0, g);
+  set_target(h0, v1, g);
+  set_target(h1, v2, g);
+  set_target(h2, v0, g);
+  set_halfedge(v1, h0, g);
+  set_halfedge(v2, h1, g);
+  set_halfedge(v0, h2, g);
+  face_descriptor f = add_face(g);
+  set_face(h0,f,g);
+  set_face(h1,f,g);
+  set_face(h2,f,g);
+  set_halfedge(f,h0,g);
+  h0 = opposite(h0,g);
+  h1 = opposite(h1,g);
+  h2 = opposite(h2,g);
+  set_target(h0, v0, g);
+  set_target(h1, v1, g);
+  set_target(h2, v2, g);
+  halfedge_descriptor h3 = halfedge(add_edge(g),g);
+  halfedge_descriptor h4 = halfedge(add_edge(g),g);
+  halfedge_descriptor h5 = halfedge(add_edge(g),g);
+  set_target(h3, v3, g);
+  set_target(h4, v3, g);
+  set_target(h5, v3, g);
+  set_halfedge(v3, h3, g);
+  
+  set_next(h0, h3, g);
+  set_next(h1, h4, g);
+  set_next(h2, h5, g);
+
+  set_next(h3, opposite(h4,g), g);
+  set_next(h4, opposite(h5,g), g);
+  set_next(h5, opposite(h3,g), g);
+  set_next(opposite(h4,g), h0, g);
+  set_next(opposite(h5,g), h1, g);
+  set_next(opposite(h3,g), h2, g);
+
+  set_target(opposite(h3,g), v0, g);
+  set_target(opposite(h4,g), v1, g);
+  set_target(opposite(h5,g), v2, g);
+
+  f = add_face(g);
+  set_halfedge(f,h0,g);
+  set_face(h0, f, g);
+  set_face(h3, f, g);
+  set_face(opposite(h4,g), f, g);
+  f = add_face(g);
+  set_halfedge(f,h1,g);
+  set_face(h1, f, g);
+  set_face(h4, f, g);
+  set_face(opposite(h5,g), f, g);
+  f = add_face(g);
+  set_halfedge(f,h2,g);
+  set_face(h2, f, g);
+  set_face(h5, f, g);
+  set_face(opposite(h3,g), f, g);
+  
+  return h0;
+}
+
 
 /**  
  * joins the two vertices incident to `h`, (that is `source(h, g)` and
@@ -149,8 +239,8 @@ join_vertex(typename boost::graph_traits<Graph>::halfedge_descriptor h,
 
 
 /** 
- * splits the vertex `v`, and connects the new vertex and `v` with a new
- * edge. Let `hnew` be `opposite(next(h1, g), g)` after the
+ * splits the target vertex `v` of `h1` and `h2`, and connects the new vertex
+ * and `v` with a new edge. Let `hnew` be `opposite(next(h1, g), g)` after the
  * split. The split regroups the halfedges around the two vertices. The
  * edge sequence `hnew`, `opposite(next(h2, g), g)`, ..., `h1`
  * remains around the old vertex, while the halfedge sequence
@@ -211,13 +301,13 @@ split_vertex(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
 
 /**
  * splits the halfedge `h` into two halfedges inserting a new vertex that is a copy of `vertex(opposite(h,g),g)`.
- * Is equivalent to `split_vertex( prev(h,g), opposite(h,g),g)`. 
+ * Is equivalent to `opposite(split_vertex( prev(h,g), opposite(h,g),g), g)`.
  * \returns the new halfedge `hnew` pointing to the inserted vertex. The new halfedge is followed by the old halfedge, i.e., `next(hnew,g) == h`.
  */
 template<typename Graph>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 split_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h, Graph& g)
-{ return split_vertex(prev(h,g), opposite(h,g),g); }
+{ return opposite(split_vertex(prev(h,g), opposite(h,g),g), g); }
 
 
 /**
@@ -228,7 +318,7 @@ split_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h, Graph& g)
  * the face incident to `opposite(h,g)` is removed.
  *
  * `join_face()` and `split_face()` are inverse operations, that is
- * `join_face(g, split_face(g,h))` returns `h`.
+ * `join_face(split_face(h,g),g)` returns `h`.
  *
  * \image html join_face.svg
  *
@@ -621,7 +711,7 @@ add_center_vertex(typename boost::graph_traits<Graph>::halfedge_descriptor h,
  * removes the vertex `target(h, g)` and all incident halfedges thereby merging all
  * incident faces.   The resulting face may not be triangulated. 
  * This function is the inverse operation of `add_center_vertex()`. 
- * The invariant `h == remove_center_vertex(g, add_center_vertex(g, h))` 
+ * The invariant `h == remove_center_vertex(add_center_vertex(h,g),g)` 
  * holds, if `h` is not a border halfedge. 
  *
  * \image html remove_center_vertex.svg
@@ -820,7 +910,7 @@ add_face_to_border(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
  * </UL>
  * \returns vertex `vkept` (which can be either `v0` or `v1`).
  * \pre g must be a triangulated graph
- * \pre `safisfies_link_condition(g, v0v1) == true`.
+ * \pre `satisfies_link_condition(v0v1,g) == true`.
  */
 template<typename Graph>
 typename boost::graph_traits<Graph>::vertex_descriptor
@@ -961,6 +1051,21 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
   return lP_Erased ? q : p ;
 }
 
+/**
+ * Collapses the edge `v0v1` replacing it with v0 or v1, as described in the paragraph above
+ * and guarantees that an edge `e2`, for which `get(edge_is_constrained_map, e2)==true`, 
+ * is not removed after the collapse.
+ * 
+ *
+ * \tparam Graph must be a model of `MutableFaceGraph`
+ * \tparam EdgeIsConstrainedMap mut be a model of `ReadablePropertyMap` with the edge descriptor of `Graph` 
+ *       as key type and a Boolean as value type. It indicates if an edge is constrained or not. 
+ *
+ * \pre This function requires `g` to be an oriented 2-manifold with or without boundaries. 
+ *       Furthermore, the edge `v0v1` must satisfy the link condition, which guarantees that the surface mesh is also 2-manifold after the edge collapse. 
+ * \pre `get(edge_is_constrained_map, v0v1)==false`. 
+ * \pre  `v0` and `v1` are not both incident to a constrained edge. 
+ */
 
 template<typename Graph, typename EdgeIsConstrainedMap>
 typename boost::graph_traits<Graph>::vertex_descriptor
@@ -1073,7 +1178,9 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
   };
 }
 
-
+/// performs an edge flip, rotating the edge pointed by
+/// `h` by one vertex in the direction of the face orientation.
+/// \pre Both faces incident to `h` are triangles.
 template<typename Graph>
 void
 flip_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h,
@@ -1112,36 +1219,12 @@ flip_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h,
   set_halfedge(foh,oh,g);
 }
 
-
-  ///\cond DO_NOT_INCLUDE_IN_SUBMISSION
-
-  /**  collapses `edge(coll,g)` and removes the edges `edge(rm0,g)` and `edge(rm1,g)`
-   *   \todo  implement
-   *   \todo finish doc
-   */  
-#if 0
-
-template<typename Graph>
-typename boost::graph_traits<Graph>::vertex_descriptor
-collapse_edge(typename boost::graph_traits<Graph>::halfedge_descriptor coll,
-              typename boost::graph_traits<Graph>::halfedge_descriptor rm0,
-              typename boost::graph_traits<Graph>::halfedge_descriptor rm1,
-              Graph& g)
-{}
-
-#endif
-
-  ///\endcond
-
-	
-
-
 /**
- *  \returns `true` if e satisfy the *link condition* \cgalCite{degn-tpec-98}, which guarantees that the surface is also 2-manifold after the edge collapse.
+ *  \returns `true` if `e` satisfies the *link condition* \cgalCite{degn-tpec-98}, which guarantees that the surface is also 2-manifold after the edge collapse.
  */
   template<typename Graph>
 bool
-  safisfies_link_condition(typename boost::graph_traits<Graph>::edge_descriptor e,
+  satisfies_link_condition(typename boost::graph_traits<Graph>::edge_descriptor e,
                            Graph& g)
 {
     typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;

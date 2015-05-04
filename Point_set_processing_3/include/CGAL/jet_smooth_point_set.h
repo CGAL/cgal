@@ -36,9 +36,10 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
+/// \cond SKIP_IN_MANUAL
+
 namespace internal {
 
-/// \cond SKIP_IN_MANUAL
 
 /// Smoothes one point position using jet fitting on the k
 /// nearest neighbors and reprojection onto the jet.
@@ -101,9 +102,10 @@ jet_smooth_point(
   return monge_form.origin();
 }
 
+} /* namespace internal */
+
 /// \endcond
 
-} /* namespace internal */
 
 
 // ----------------------------------------------------------------------------
@@ -119,12 +121,12 @@ jet_smooth_point(
 /// \pre `k >= 2`
 ///
 /// @tparam InputIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadWritePropertyMap` with a value_type = Point_3<Kernel>.
-///        It can be omitted if InputIterator value_type is convertible to Point_3<Kernel>.
+/// @tparam PointPMap is a model of `ReadWritePropertyMap` with value type `Point_3<Kernel>`.
+///        It can be omitted if  the value type of `InputIterator` is convertible to `Point_3<Kernel>`.
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from PointPMap value_type.
+///        It can be omitted and deduced automatically from the value type of `PointPMap`.
 /// @tparam SvdTraits template parameter for the class `Monge_via_jet_fitting` that
-///         can be ommited in conditions described in the documentation of `Monge_via_jet_fitting`.
+///         can be ommited under conditions described in the documentation of `Monge_via_jet_fitting`.
 
 // This variant requires all parameters.
 template <typename InputIterator,

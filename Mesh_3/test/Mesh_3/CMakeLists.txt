@@ -11,11 +11,17 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-find_package(CGAL QUIET COMPONENTS Core ImageIO)
+find_package(CGAL QUIET COMPONENTS ImageIO)
 
 if ( CGAL_FOUND )
-
   include( ${CGAL_USE_FILE} )
+
+  find_package( TBB QUIET )
+
+  if( TBB_FOUND )
+    include(${TBB_USE_FILE})
+    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
+  endif()
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
@@ -46,6 +52,8 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_meshing_polyhedron_with_features.cpp" )
   create_single_source_cgal_program( "test_meshing_unit_tetrahedron.cpp" )
   create_single_source_cgal_program( "test_robust_weighted_circumcenter.cpp" )
+  create_single_source_cgal_program( "test_meshing_determinism.cpp" )
+  create_single_source_cgal_program( "test_c3t3_extract_subdomains_boundaries.cpp" )
 
 else()
   

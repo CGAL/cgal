@@ -19,7 +19,7 @@
 #include <QGLViewer/camera.h>
 
 #include "ui_Deform_mesh.h"
-#include <CGAL/Deform_mesh.h> 
+#include <CGAL/Surface_mesh_deformation.h>
 #include <boost/function_output_iterator.hpp>
 
 
@@ -60,7 +60,7 @@ put(Array_based_vertex_point_map pmap,
   (*pmap.positions)[pos+2] = val.z();
 }
 
-typedef CGAL::Deform_mesh<Polyhedron, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP
+typedef CGAL::Surface_mesh_deformation<Polyhedron, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP
   ,CGAL::Default, CGAL::Default, CGAL::Default, 
   Array_based_vertex_point_map> Deform_mesh;
 
@@ -229,12 +229,12 @@ protected:
 
 public slots:
   void changed();
-  void selected(const std::map<Polyhedron::Vertex_handle, int>& m)
+  void selected(const std::set<Polyhedron::Vertex_handle>& m)
   {
     bool any_changes = false;
-    for(std::map<vertex_descriptor, int>::const_iterator it = m.begin(); it != m.end(); ++it)
+    for(std::set<vertex_descriptor>::const_iterator it = m.begin(); it != m.end(); ++it)
     {
-      vertex_descriptor vh = it->first;
+      vertex_descriptor vh = *it;
       bool changed = false;
       if(ui_widget->ROIRadioButton->isChecked()) {
         if(ui_widget->InsertRadioButton->isChecked()) { changed = insert_roi_vertex(vh); }
@@ -263,8 +263,8 @@ private:
   Scene_polyhedron_item* poly_item;
   // For drawing
   std::vector<double> positions;
-  std::vector<std::size_t> tris;
-  std::vector<std::size_t> edges;
+  std::vector<unsigned int> tris;
+  std::vector<unsigned int> edges;
   std::vector<double> normals;
 
   Deform_mesh deform_mesh;
@@ -531,7 +531,7 @@ public:
   struct Is_selected {
     Deform_mesh& dm;
     Is_selected(Deform_mesh& dm) : dm(dm) {}
-    bool is_selected(Vertex_handle vh) const {
+    bool count(Vertex_handle vh) const {
       return dm.is_roi_vertex(vh);
     }
   };
@@ -539,7 +539,7 @@ public:
   boost::optional<std::size_t> get_minimum_isolated_component() {
     Travel_isolated_components::Minimum_visitor visitor;
     Travel_isolated_components().travel<Vertex_handle>
-      (polyhedron()->vertices_begin(), polyhedron()->vertices_end(), 
+      (vertices(*polyhedron()).first, vertices(*polyhedron()).second, 
        polyhedron()->size_of_vertices(), Is_selected(deform_mesh), visitor);
     return visitor.minimum;
   }
@@ -558,7 +558,7 @@ public:
 
     Travel_isolated_components::Selection_visitor<Output_iterator> visitor(threshold, out);
     Travel_isolated_components().travel<Vertex_handle>
-      (polyhedron()->vertices_begin(), polyhedron()->vertices_end(), 
+      (vertices(*polyhedron()).first, vertices(*polyhedron()).second,
       polyhedron()->size_of_vertices(), Is_selected(deform_mesh), visitor);
 
     if(visitor.any_inserted) { emit itemChanged(); }

@@ -7,21 +7,21 @@ namespace CGAL {
 \cgalAutoToc
 \author Mariette Yvinec
 
-\image html tr1dt1.png
+\image html tr1dt1.svg
 \image latex tr1dt1.png
 
 This chapter describes the two dimensional triangulations
 of \cgal. 
 Section \ref Section_2D_Triangulations_Definitions recalls the
 main definitions about triangulations.
-Sections \ref Section_2D_Triangulations_Representation discusses
+Section \ref Section_2D_Triangulations_Representation discusses
 the way two-dimensional triangulations are represented in \cgal.
 Section \ref Section_2D_Triangulations_Software_Design presents
 the overall software
 design of the 2D triangulations package. 
 The next sections present the different two dimensional triangulations classes
 available in \cgal: 
-basic triangulations (section \ref Section_2D_Triangulations_Basic),
+basic triangulations (Section \ref Section_2D_Triangulations_Basic),
 Delaunay triangulations
 (Section \ref Section_2D_Triangulations_Delaunay),
 regular triangulations
@@ -99,7 +99,7 @@ the orientation of each facet can be chosen in such a way
 that all pairs of incident facets have consistent orientations.
 
 The data structure underlying \cgal triangulations
-allows to represent the combinatorics of 
+allows the user to represent the combinatorics of 
 any orientable two dimensional triangulations
 without boundaries. 
 On top of this data structure, the 2D triangulations classes
@@ -253,7 +253,7 @@ a vertex class and a face class.
 for these template parameters
 and provide default models for these concepts.
 The vertex and base classes are templated by the geometric
-traits which allows them to have some knowledge of the geometric
+traits class which enables them to obtain some knowledge of the geometric
 primitives of the triangulation. 
 Those default vertex and face base classes
 can be replaced by 
@@ -281,16 +281,16 @@ class.
 \cgalFigureRef{Triangulation_2D_Fig_derivation_tree} summarizes the derivation dependencies
 of \cgal 2D triangulations classes.
 Any 2D triangulation class is parametrized by
-a geometric traits and a triangulation data structure.
+a geometric traits class and a triangulation data structure.
 While a unique concept `TriangulationDataStructure_2`
 describes the triangulation data structure requirements
 for any triangulation class, 
-the concept of geometric traits actually depends
+the requirements on the geometric traits class actually depend
 on the triangulation class.
 In general, the requirements for the vertex and face base classes 
 are described by the basic concepts `TriangulationVertexBase_2`
 and `TriangulationFaceBase_2`. However, some triangulation
-classes requires base classes implementing
+classes require base classes implementing
 refinements 
 of the basic concepts.
 
@@ -329,14 +329,14 @@ any handle type argument can be replaced
 by an iterator or a circulator
 with the same value type.
 
-The triangulation class allows to visit the vertices
+The triangulation class provides a function to visit the vertices
 and neighbors of a face in clockwise or counterclockwise order.
 
 There are circulators 
 to visit the edges or faces 
 incident to a given vertex or the vertices 
 adjacent to it.
-Another circulator type allows to visit all the faces
+Another circulator type enables the visit of all the faces
 traversed by a given line.
 Circulators step through infinite features as well as 
 through finite ones.
@@ -415,7 +415,7 @@ of the triangulation data structure.
 
 \subsection Subsubsection_2D_Triangulation_Basic_Geometric_Traits Geometric Traits 
 
-The geometric traits of a triangulation 
+The geometric traits class of a triangulation 
 is required to provide
 the geometric objects (points, segments and triangles)
 building up the triangulation
@@ -468,7 +468,7 @@ respectively.
 The following program creates a triangulation of 2D points
 using the default kernel 
 `Exact_predicate_inexact_constructions_kernel`
-as geometric traits and the default triangulation data structure.
+as geometric traits class and the default triangulation data structure.
 The input points are read from a file 
 and inserted in the triangulation.
 Finally points on the convex hull are written to <TT>cout</TT>. 
@@ -510,7 +510,7 @@ of the dual Voronoi diagram.
 Geometric Traits 
 --------------
 
-The geometric traits has to be a model of the concept
+The geometric traits class has to be a model of the concept
 `DelaunayTriangulationTraits_2`
 which refines the concept `TriangulationTraits_2`.
 In particular this concept provides
@@ -521,7 +521,7 @@ passing through \f$ p\f$, \f$ q\f$ and \f$ r\f$.
 The `side_of_oriented_circle`
 predicate actually defines the Delaunay triangulation.
 Changing this predicate 
-allows to build variant of Delaunay triangulations for different metrics
+allows the user to build variant of Delaunay triangulations for different metrics
 such that \f$ L_1\f$ or \f$ L_{\infty}\f$ metric or any metric defined by a
 convex object. However, the user of an exotic metric
 must be careful that the constructed triangulation 
@@ -565,7 +565,7 @@ vertex of degree \f$ d\f$ takes time \f$ O(d^2)\f$.
 The degree \f$ d\f$ is \f$ O(1)\f$ for a random
 vertex in the triangulation.
 When the degree of the removed vertex is small (\f$ \leq7\f$) a special
-procedure is used that allows to increase global removal time by a factor of 2
+procedure is used that allows to decrease global removal time by a factor of 2
 for random points \cgalCite{d-vrtdd-09}.
 
 The displacement of a vertex \f$ v\f$ at a point \f$ p\f$ to a new location \f$ p'\f$, first checks whether the triangulation embedding remains
@@ -734,7 +734,7 @@ the vertices and edges of the dual power diagrams.
 
 \subsection Triangulation_2TheGeometricTraits The Geometric Traits
 
-The geometric traits of a regular triangulation
+The geometric traits class of a regular triangulation
 must provide a weighted point type
 and a power test on these weighted points.
 The concept 
@@ -773,7 +773,7 @@ the concept `TriangulationVertexBase_2`
 and provides a default model 
 for this concept.
 
-The base face type of a regular triangulation
+The face base type of a regular triangulation
 is required to provide a list of hidden vertices,
 designed to store the points hidden by the face. It has to be a model
 of the concept `RegularTriangulationFaceBase_2`.
@@ -793,46 +793,37 @@ of vertices and the number of hidden vertices.
 
 A constrained triangulation is a triangulation of a set of points
 that has to include among its edges 
-a given set of segments joining the points. The corresponding 
-edges are called <I>constrained edges</I>.
+a given set of polylines joining the points. The
+polylines are called *constraints*. The corresponding 
+edges are called *constrained edges*.
 
 The endpoints of constrained edges are of course vertices of the
-triangulation. However the triangulation may include
+triangulation. However, the triangulation may
 include other vertices as well.
 There are three versions of constrained triangulations.
 <UL>
 <LI>In the basic version, the constrained triangulation 
 does not handle intersecting constraints, and the set of input 
-constraints is required to be a set of segments that do not intersect
+constraints is required to be a set of segments that do not intersect,
 except possibly at their endpoints. Any number of constrained edges
-are allowed to share the same endpoint. Vertical constrained edges or
-constrained edges with null length are allowed.
+may share the same endpoint. Constrained edges may be vertical or
+have zero length.
 <LI>The two other versions support intersecting input constraints.
-In those versions, input constraints are allowed to be
-intersecting, overlapping or partially
-overlapping segments.
+In those versions, input constraints may consist of intersecting,
+overlapping or partially overlapping segments.
 The triangulation introduces additional vertices at each point that
-is the proper intersection points of two 
+is the proper intersection point of two 
 constraints. A single constraint intersecting other
-constraints will then appear as several edges in the triangulation.
-The two versions dealing with intersecting constraints differ
-in the way intersecting constraints are dealt with.
+constraints will then appear as several constrained edges in the triangulation.
+There are two ways to deal with intersecting constraints.
 <UL>
-<LI>One of them is
-designed to be robust when predicates are evaluated exactly but
-constructions (i. e. intersection computations) are
-approximate.
-<LI>The other one is designed to be used 
-with exact arithmetic (meaning exact
+<LI>The first one is robust when predicates are evaluated exactly but
+constructions (i. e. intersection computations) are approximate.
+<LI>The second one should be used with exact arithmetic (meaning exact
 evaluation of predicates and exact computation of intersections.)
-This last version finds its full efficiency when used in conjunction
-with a constraint hierarchy data structure (which allows one to avoid the
-cascading of intersection computations)
-as provided in the class
-`Constrained_triangulation_plus_2`. See
-section \ref Section_2D_Triangulations_Constrained_Plus.
 </UL>
 </UL>
+
 
 \image html constraints.png
 \image latex constraints.png
@@ -845,36 +836,40 @@ are dealt with. This parameter has to be instantiated
 by one of the following classes:
 - `No_intersection_tag` when input constraints do not
 intersect 
-- `Exact_predicates_tag` if the geometric traits provides
+- `Exact_predicates_tag` if the geometric traits class provides
 exact predicates but approximate constructions 
-- `Exact_intersections_tag` when an exact predicates
+- `Exact_intersections_tag` when exact predicates
 and exact constructions are provided.
 
 The class `Constrained_triangulation_2<Traits,Tds, Itag>`
 inherits from `Triangulation_2<Traits,Tds>`.
-It defines an additional type `Constraint`
-to represent the constraints. A
-constraint is represented as a pair of points.
-
 A constrained triangulation can be created
-from a
-list of constrained edges.
+from a list of pairs of points which represent the constraints.
+
 The class `Constrained_triangulation_2<Traits,Tds,Itag>`
 overrides the insertion and removal of a point to take care of the
-information about constrained edges. The class also allows inline
-insertion of a new constraint, given by its two endpoints
+information about constrained edges. The class also allows the user 
+online insertion of a new constraint, given as sequence of points,
 or the removal of a constraint.
-In current version, function `move()` is not 
-overwritten and thus does not take care of the constraints.
+In the current version, the function `move()` is not 
+overwritten and thus does not handle vertices of constraints.
+
+In order to retrieve the constrained edges of a constraint, or
+the constraints overlapping with a constrained edge, we provide
+the class `Constrained_triangulation_plus_2`. See
+Section \ref Section_2D_Triangulations_Constrained_Plus for details.
+This class should also be used when doing exact intersection computations
+as it avoids the cascading of intersection computations.
+
 
 \subsection Triangulation_2TheGeometricTraits_1 The Geometric Traits
 
-The geometric traits of a constraint triangulation
+The geometric traits class of a constraint triangulation
 has to be a model
 of the concept `TriangulationTraits_2`.
 When intersections of input constraints are supported, 
 the geometric traits class has to be a model 
-of the concept `ConstrainedTriangulationTraits_2`
+of the concept `ConstrainedTriangulationTraits_2`,
 which refines the concept `TriangulationTraits_2`
 providing additional function object types
 to compute the intersection of two segments.
@@ -882,33 +877,33 @@ to compute the intersection of two segments.
 \subsection Triangulation_2TheFaceBaseClassofaConstrained The Face Base Class of a Constrained Triangulation
 
 The information about constrained edges is stored in the 
-faces of the triangulation. The base face of a Constrained Triangulation
+faces of the triangulation. The face base of a Constrained Triangulation
 has to be a model for the concept `ConstrainedTriangulationFaceBase_2`
 which refines the concept `TriangulationFaceBase_2`.
 The concept `ConstrainedTriangulationFaceBase_2`
 requires member functions
-the get and set the constrained status of the edges.
+that get and set the constrained status of the edges.
 
-\cgal provides a default base face class
+\cgal provides a default face base class
 for constrained triangulations. This class, named
 `Constrained_triangulation_face_base_2<Traits>`,
 derives from the class
 `Triangulation_face_base_2<Traits>`
 and adds three Boolean data members to store the status of its edges.
 
-\cgalFigureBegin{Triangulation_2D_Fig_constrained,poisson_del_poisson.png}
-Constrained and Constrained Delaunay triangulation: the constraining edges are the green edges, a constrained triangulation is shown on the left, the constrained Delaunay triangulation with two examples of circumcircles is shown on the right.
+\cgalFigureBegin{Triangulation_2D_Fig_constrained,poisson_del_poisson.svg}
+Constrained and Constrained Delaunay triangulation: the constraining edges are the black edges, a constrained triangulation is shown on the left, the constrained Delaunay triangulation with two examples of circumcircles is shown on the right.
 \cgalFigureEnd
 
 
 \section Section_2D_Triangulations_Constrained_Delaunay Constrained Delaunay Triangulations 
 
 A constrained Delaunay triangulation is a triangulation with
-constrained edges which tries to be as much Delaunay as possible.
+constrained edges which try to be as much Delaunay as possible.
 As constrained edges are not necessarily Delaunay edges,
 the triangles of a constrained Delaunay triangulation do not
 necessarily fulfill the empty circle property
-but they fulfill a weaker `constrained empty circle property`.
+but they fulfill a weaker *constrained empty circle property*.
 To state this property,
 it is convenient to think of constrained
 edges as blocking the view. Then, a triangulation is 
@@ -919,11 +914,11 @@ no vertex visible
 from the interior of the facet.
 As in the case of constrained triangulations, three different versions
 of Delaunay constrained triangulations are provided. The first version
-handle set of constraints which do not intersect except possibly
+handles a set of constraints which do not intersect except possibly
 at the endpoints. The two other versions 
 handle intersecting input constraints. One of them
 is designed to be robust
-when used in conjunction with a geometric traits
+when used in conjunction with a geometric traits class
 providing exact predicates and approximate constructions
 (such as a `Filtered_kernel` or any kernel providing
 filtered exact predicates). The third version is designed to be used
@@ -934,7 +929,7 @@ The \cgal class
 is designed to represent
 constrained Delaunay triangulations.
 
-As in the case of constraints triangulation, the third parameter 
+As in the case of constrained triangulations, the third parameter 
 `Itag` is the intersection tag
 and serves to choose how intersecting constraints
 are dealt with. It can be instantiated with one of the following
@@ -953,30 +948,30 @@ the class `Constrained_triangulation_2<Traits,Tds,Itag>`.
 The constrained Delaunay triangulation
 has member functions to override the 
 insertion and removal of a point or of a constraint.
-Each of those member function takes care
+Each of those member functions takes care
 to restore
 the constrained empty circle
 property.
 
 \subsection Triangulation_2TheGeometricTraits_2 The Geometric Traits
 
-The geometric traits 
+The geometric traits class 
 of a constrained Delaunay triangulation is required
 to provide the `side_of_oriented_circle` predicate as the geometric traits
-of a Delaunay triangulation and has to a model of the concept
+class of a Delaunay triangulation, and has to be a model of the concept
 `DelaunayTriangulationTraits_2`. When intersecting input
 constraints
-are supported the geometric traits is further required 
+is supported, the geometric traits class is further required 
 to provide function objects to compute constraints intersections.
-Then the geometric traits has to be at the same time a model
+Then, the geometric traits class has to be at the same time a model
 of the concept `ConstrainedTriangulationTraits_2`.
 
 \subsection Triangulation_2TheFaceBaseClass The Face Base Class
 
 Information about the status (constrained or not)
 of the edges of the triangulation has to be stored
-in the face class
-and the base face class
+in the face class,
+and the face base class
 of a constrained Delaunay triangulation has to be a model
 of `ConstrainedTriangulationFaceBase_2`.
 
@@ -1001,11 +996,11 @@ Triangulation (in blue) of the domain delimited by the red polygons.
 
 \cgalExample{Triangulation_2/polygon_triangulation.cpp}
 
-\section Section_2D_Triangulations_Constrained_Plus Constrained Triangulations Plus 
+\section Section_2D_Triangulations_Constrained_Plus Constrained Triangulations with a Bidirectional Mapping between Constaints and Subconstraints
 
 The class `Constrained_triangulation_plus_2<Tr>`
 provides a constrained triangulation with an additional data
-structure called the constraint hierarchy 
+structure 
 that keeps track of the input constraints and of their refinement
 in the triangulation.
 The class `Constrained_triangulation_plus_2<Tr>`
@@ -1017,37 +1012,111 @@ When intersections of input constraints are supported,
 the base class constructs a triangulation of the arrangement
 of the constraints,
 introducing new vertices at each proper intersection
-points and refining the input constraints into sub-constraints
-which appear as edges (more precisely as constrained edges) of the
-triangulation. The data structure maintains for each 
-input constraint
-the sequence of intersection vertices added on this constraint.
-The constraint hierarchy also allows the user to retrieve the set
-of constrained edges of the triangulation, and for each
-constrained edge, the set of input constraints that overlap it.
+point.
+
+
+The triangulation maintains for each input constraint
+the sequence of vertices on this constraint. These vertices are
+either vertices of the input constraint or intersection points.
+
+Two consecutive vertices of an input constraint form a *subconstraint*.
+The triangulation enables the retrieval of the set
+of subconstraints of the triangulation (not ordered along constraints).
+
+It further enables the retrieval of the set of input constraints that induce a subconstraint.
+As it is straightforward to obtain a subconstraint from a constrained edge `e`,
+one can easily obtain the input constraints that induce `e`.
+
+\subsection Subsection_Edges_and_Constraints Edges, Constrained Edges, Constraints, and Subconstraints
+
+All triangulation classes define the type `Edge` as  `typedef std::pair<Face_handle, int> Edge`.
+For a pair `(fh,i)` it is the edge of the face `*fh`, which is opposite to the `i`'th vertex.
+
+A <em>constrained edge</em> `e` is an edge of a constrained triangulation `ct`, for which `ct.is_constrained(e)` returns `true`.
+
+A <em>constraint</em> is a polyline which is given as input (in the simplest case just a segment), and
+which is split into constrained edges in the triangulation. 
+
+The type `Subconstraint` is defined as `typedef std::pair<Vertex_handle,Vertex_handle> Subconstraint`.  The two vertex handles must
+be the vertices of a constrained edge.
+
+The type `Constraint_id` identifies a constraint.
+
+
+All constrained triangulation classes of \cgal provide functions to insert constraints, have the notion of constrained edges,
+and offer a `Constrained_edges_iterator`.
+
+The class `Constrained_triangulation_plus_2` additionally provides the means to
+- traverse all the constraints of the triangulation using an iterator of type `Constraint_iterator` the value type of which is `Constraint_id`,
+- obtain all constraints that induce a constrained edge or a subconstraint,
+- traverse the sequence of vertices of a constraint  using an iterator of type `Vertices_in_constraint_iterator`, the value type of which is `Vertex_handle` 
+- traverse the subconstraints in the triangulation  using an iterator of type `Subconstraint_iterator`,the value type of which is `Subconstraint`.
+
+Note that the `Constrained_edges_iterator` and the `Subconstraint_iterator` are quite similar.
+The `Constrained_edges_iterator` traverses all edges and skips those that are \em not constrained,
+which means that the time of traversal will be linear in the number of total edges.
+whereas the `Subconstraint_iterator` traverses a set of subconstraints stored in the triangulation.
+
+On the other hand, as a subconstraint is only a pair
+of vertex handles, determining the corresponding `Edge`
+takes the smaller degree of the two vertices,
+wheresas obtaining an Edge from a subconstraint is
+a constant time operation.
+
+
+
+\subsection Subsection_Constrained_plus_avoids_cascacding The Intersection Tag
 
 The class `Constrained_triangulation_plus_2<Tr>`
 is especially useful when the base constrained triangulation class
 handles intersections of constraints and uses an exact number type,
 i.e.\ when its intersection tag is `Exact_intersections_tag`.
-Indeed in this case, the `Constrained_triangulation_plus_2<Tr>`
-is specially designed to avoid cascading in the computations of
-intersection points.
+In this case, the `Constrained_triangulation_plus_2<Tr>`
+avoids cascading in the computations of intersection points.
 
-\subsection Triangulation_2ExampleBuildingaTriangulated Example: Building a Triangulated Arrangement of Segments
 
-The following code inserts a set of intersecting constraint segments
-into a triangulation 
-and counts the number of constrained edges of the
-resulting triangulation.
+This is best explained with an example.
 
-\cgalExample{Triangulation_2/constrained_plus.cpp}
+\cgalFigureBegin{figuretri_avoidcascading,CDTplusAvoidCascading.png}
+Computation of an intersection with an input constraint instead of with an edge.
+\cgalFigureEnd
+
+When inserting a constraint, say a segment `s` in the triangulation, this segment may intersect a constrained  edge `e`
+with the vertices `p` and `q`.
+The algorithm could  compute the intersection point `i` of `s` with the segment `[p,q]`. Because these points may be previously constructed
+intersection points, as `q` in the figure above, it is better to use an input constraint `c` that induce the edge. If `c` is a segment,
+the algorithm intersects `s` with `c`. If `c` is a polyline, the algorithm finds two vertices from the input constraint that
+define an input segment that induce `e`.
+
+
+
+
+\subsection Triangulation_2ExampleBuildingaTriangulated Example: Building a Triangulated Arrangement of Polylines
+
+The following code inserts two polyline constraints into a triangulation.
+Note that if the triangulation supports intersections we can have
+arbitrary complicated overlapping polylines.  They can share
+any number of edges, and a polyline may pass several times through 
+the same edge.  
+
+
+
+For an edge we can further find out how many and which polyline
+constraints pass through it. For an edge we can obtain an iterator
+range with value type `Constrained_triangulation_plus_2::Context`.
+From a context we can obtain the `Constrained_triangulation_plus_2::Constraint_id`, and an iterator
+pointing at the vertex in the polyline constraint that passes 
+through the edge.
+
+
+
+\cgalExample{Triangulation_2/polylines_triangulation.cpp}
 
 \section Section_2D_Triangulations_Hierarchy The Triangulation Hierarchy 
 
 The class `Triangulation_hierarchy_2<Tr>`
 implements a triangulation augmented with
-a data structure to answer efficiently point location queries.
+a data structure to efficiently answer point location queries.
 The data structure is a hierarchy 
 of triangulations. The triangulation at the lowest level is
 the original triangulation where operations and point location are to 
@@ -1067,7 +1136,7 @@ the data structure remains small and achieves fast point location
 queries on real
 data. As proved in \cgalCite{d-iirdt-98}, this structure has an optimal behavior
 when it is built for Delaunay triangulations.
-However it can be used as well for other triangulations
+However, it can be used as well for other triangulations
 and the class `Triangulation_hierarchy_2<Tr>` is templated by a parameter
 which is to be instantiated by one of the \cgal triangulation
 classes.
@@ -1099,14 +1168,14 @@ which is to be instantiated by a model of the concept
 `TriangulationVertexBase_2`.
 The class `Triangulation_hierarchy_vertex_base_2<Vb>` inherits
 from its template parameter `Vb`.
-This design allows to use for `Vb` 
+This design enables the usage of 
 either the default
 vertex class or a user customized
-vertex class with additional functionalities.
+vertex class with additional functionalities  for `Vb`.
 
 \subsection Subsection_2D_Triangulations_Hierarchy_Examples Examples For the Use of a Triangulation Hierarchy 
 
-The following program is example
+The following program is an example
 for the standard use of a triangulation hierarchy
 to enhance the efficiency
 of a Delaunay triangulation. The program outputs the number of vertices
@@ -1114,9 +1183,12 @@ at the different levels of the hierarchy.
 \cgalExample{Triangulation_2/hierarchy.cpp}
 
 The following program shows how to use
-a triangulation hierarchy in conjunction with a constrained 
-triangulation plus.
+a triangulation hierarchy in conjunction with a constrained triangulation with a constaint hierarchy.
+
 \cgalExample{Triangulation_2/constrained_hierarchy_plus.cpp}
+
+
+
 
 \section Section_2D_Triangulations_Flexibility Flexibility 
 
@@ -1144,7 +1216,7 @@ To insure flexibility, the triangulation data structure is templated by the
 vertex and face base classes. Also since incidence and adjacency
 relations are stored in vertices and faces, the base classes have to
 know the types of handles on vertices and faces provided
-by the triangulation data structure. Thus the vertex and base
+by the triangulation data structure. Thus the vertex and face base
 classes have to be themselves parameterized by the triangulation data
 structure, and there is a cyclic dependency on template parameter.
 
@@ -1189,7 +1261,7 @@ or `Triangulation_face_base_with_info_2<Info,Traits,Vb>`
 can be used. Those classes have
 a template parameter `Info` devoted to
 handle additional information.
-The following examples shows how to add a 
+The following examples show how to add a 
 `Color` in the triangulation faces.
 
 \cgalExample{Triangulation_2/colored_face.cpp}
@@ -1209,7 +1281,7 @@ data structure.
 The most efficient method to insert (weighted) points in a
 Delaunay (or regular) triangulation is to provide an iterator
 range over (weighted) points to the insert function. However, an iterator range of
-(weighted) points does not allow to set different information to each vertex.
+(weighted) points does not allow the user to set different information to each vertex.
 To solve this problem, in the case the vertex type of the triangulation 
 is a model of the concept `TriangulationVertexBaseWithInfo_2`
 (such as `Triangulation_vertex_base_with_info_2`), we provide three examples 

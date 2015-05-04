@@ -24,6 +24,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/squared_distance_2_1.h>
+#include <boost/shared_ptr.hpp>
 
 #define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
 
@@ -41,16 +42,20 @@ public:
   typedef std::size_t                      reference;
   typedef Handle                           key_type;
 
+private:
+  typedef CGAL::Unique_hash_map<key_type,std::size_t> Map;
+
+public:
   template <typename InputIterator>
   Polyhedron_index_map_external(InputIterator begin, InputIterator end, std::size_t max)
-    : map_(begin, end, 0, std::size_t(-1), max) {}
+    : map_(new Map(begin, end, 0, std::size_t(-1), max)) {}
 
-  reference operator[](const key_type& k) const { return map_[k]; }
+  reference operator[](const key_type& k) const { return (*map_)[k]; }
 private:
-  CGAL::Unique_hash_map<key_type,std::size_t> map_;
+   boost::shared_ptr<Map> map_;
 };
 
-// Special case for edges. Hashes each half_edge.
+// Special case for edges.
 template<class Polyhedron>
 class Polyhedron_edge_index_map_external
   : public boost::put_get_helper<std::size_t, Polyhedron_edge_index_map_external<Polyhedron> >
@@ -61,22 +66,22 @@ public:
   typedef std::size_t                                               reference;
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor key_type;
 
+private:
+  typedef CGAL::Unique_hash_map<key_type,std::size_t> Map;
+
+public:
   Polyhedron_edge_index_map_external(Polyhedron& p)
-    : map_(std::size_t(-1), num_halfedges(p)), p(p)
+    : map_(new Map(std::size_t(-1), num_halfedges(p)))
   {
     unsigned int data = 0;
     typename boost::graph_traits<Polyhedron>::edge_iterator it, end;
-    for(boost::tie(it, end) = edges(p); it != end; ++it, ++data) {
-      map_[halfedge(*it, p)] = data;
-      map_[opposite(halfedge(*it, p), p)] = data;
-    }
+    for(boost::tie(it, end) = edges(p); it != end; ++it, ++data)
+      (*map_)[*it] = data;
   }
 
-  reference operator[](const key_type& k) const { return map_[halfedge(k,p)]; }
+  reference operator[](const key_type& k) const { return (*map_)[k]; }
 private:
-  CGAL::Unique_hash_map<typename boost::graph_traits<Polyhedron>::halfedge_descriptor,
-                        std::size_t> map_;
-  Polyhedron& p;
+  boost::shared_ptr<Map> map_;
 };
 
 template<typename Handle>
@@ -122,49 +127,6 @@ struct Edge_index_accessor
 
   reference operator[](Handle h) const { return h.id(); }
 };
-
-template<typename Polyhedron, typename Handle>
-struct Is_border_accessor
-{
-
-  typedef boost::read_write_property_map_tag category;
-  typedef bool                             value_type;
-  typedef bool                             reference;
-  typedef Handle                           key_type;
-
-  friend reference get(const Is_border_accessor& , Handle h)
-  {
-    return h->is_border(); 
-  }
-  friend void put(const Is_border_accessor& , Handle h, bool b)
-  {
-     typedef typename Polyhedron::Halfedge::Base Sneak;
-     if(b){
-       static_cast<Sneak&>(*h).set_face(boost::graph_traits<Polyhedron>::null_face());
-     }
-  }
-private:
-  //  const Polyhedron& p;
-};
-
-
-template<typename Polyhedron, typename Handle>
-struct Is_border_edge_accessor
-  : boost::put_get_helper< bool, Is_border_edge_accessor<Polyhedron,Handle> >
-{
-  typedef boost::readable_property_map_tag category;
-  typedef bool                             value_type;
-  typedef bool                             reference;
-  typedef Handle                           key_type;
-
-  reference operator[](const Handle& h) const 
-  {
-    return h.halfedge()->is_border() || h.halfedge()->opposite()->is_border();
-  }
-};
-
-
-
 
 template<typename Handle, typename ValueType, typename Reference>
 struct Point_accessor
@@ -239,9 +201,6 @@ void put(PropertyTag p, CGAL::Polyhedron_3<Gt,I,HDS,A>& g, const Key& key, const
 CGAL_POLYHEDRON_INDEX_PM(halfedge, _index_t, Index)
 CGAL_POLYHEDRON_INDEX_PM(vertex, _index_t, Index)
 CGAL_POLYHEDRON_INDEX_PM(face, _index_t, Index)
-CGAL_POLYHEDRON_INDEX_PM(halfedge, _is_border_t, Is_border)
-
-CGAL_POLYHEDRON_INDEX_PM(edge, _is_border_t, Is_border_edge)
 
 #undef CGAL_POLYHEDRON_INDEX_PM
 

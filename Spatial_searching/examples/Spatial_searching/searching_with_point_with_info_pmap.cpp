@@ -1,5 +1,4 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/basic.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/point_generators_3.h>
@@ -54,7 +53,8 @@ int main() {
   K_neighbor_search search(tree, query, K,0,true,tr_dist);
   for(K_neighbor_search::iterator it = search.begin(); it != search.end(); it++){
     std::cout << " d(q, nearest neighbor)=  "
-	      << tr_dist.inverse_of_transformed_distance(it->second) << " " << points[it->first] << " " << it->first << std::endl;
+	      << tr_dist.inverse_of_transformed_distance(it->second) << " "
+              << points[it->first] << " " << it->first << std::endl;
   }
   return 0;
 }

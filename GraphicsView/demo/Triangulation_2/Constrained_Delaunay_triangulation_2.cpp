@@ -275,7 +275,9 @@ MainWindow::MainWindow()
   QObject::connect(this, SIGNAL(changed()),
 		   dgi, SLOT(modelChanged()));
 
-  dgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  dgi->verticesPen().setColor(Qt::black);
+  dgi->edgesPen().setColor(QColor("#333333"));
+  dgi->constraintsPen().setColor(QColor("#000080"));
   dgi->setZValue(-1);
   scene.addItem(dgi);
 
@@ -326,6 +328,7 @@ MainWindow::MainWindow()
   this->setupOptionsMenu();
   this->addAboutDemo(":/cgal/help/about_Constrained_Delaunay_triangulation_2.html");
   this->addAboutCGAL();
+  this->setupExportSVG(this->actionExport_SVG, this->graphicsView);
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),

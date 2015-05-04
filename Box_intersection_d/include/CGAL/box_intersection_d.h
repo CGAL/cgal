@@ -25,6 +25,7 @@
 #include <CGAL/Box_intersection_d/segment_tree.h>
 #include <CGAL/Box_intersection_d/Box_d.h>
 #include <CGAL/Box_intersection_d/Box_with_handle_d.h>
+#include <CGAL/Box_intersection_d/Box_with_info_d.h>
 #include <CGAL/Box_intersection_d/Box_traits_d.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
 

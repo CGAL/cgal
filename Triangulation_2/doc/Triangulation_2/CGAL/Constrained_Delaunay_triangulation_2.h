@@ -109,13 +109,13 @@ Constrained_Delaunay_triangulation_2& cdt1);
 
 /*!
 A templated constructor which introduces and builds 
-a constrained triangulation with constrained edges in the range 
+a constrained triangulation with constraints in the range 
 `[first,last)`. 
-\tparam InputIterator must be an input iterator with the value type `Constraint`. 
+\tparam ConstraintIterator must be an `InputIterator` with the value type `std::pair<Point,Point>` or `Segment`. 
 */ 
-template<class InputIterator> Constrained_Delaunay_triangulation_2( 
-InputIterator first, 
-InputIterator last, 
+template<class ConstraintIterator> Constrained_Delaunay_triangulation_2( 
+ConstraintIterator first, 
+ConstraintIterator last, 
 const Traits& t=Traits()); 
 
 /// @} 
@@ -149,68 +149,81 @@ Vertex_handle push_back(const Point& p);
 /*!
 Inserts the points in the range `[first,last)`. 
 Returns the number of inserted points. 
-\tparam InputIterator must be an input iterator with the value type `Point`. 
+\tparam PointIterator must be an `InputIterator` with the value type `Point`. 
 */ 
-template < class InputIterator > 
+template < class PointIterator > 
 std::ptrdiff_t 
-insert(InputIterator first, InputIterator last); 
+insert(PointIterator first, PointIterator last); 
 
 /*!
-inserts the points in the iterator range `[first,last)`. Returns the number of inserted points.
+inserts the points in the iterator range `[first,last)`.
+Returns the number of inserted points.
 Note that this function is not guaranteed to insert the points
-following the order of `PointWithInfoInputIterator`, as `spatial_sort()`
+following the order of `PointWithInfoIterator`, as `spatial_sort()`
 is used to improve efficiency.
 Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is
 `v.point() == p` and `v.info() == i`. If several pairs have the same point,
 only one vertex is created, and one of the objects of type `Vertex::Info` will be stored in the vertex.
 \pre `Vertex` must be model of the concept `TriangulationVertexBaseWithInfo_2`.
 
-\tparam PointWithInfoInputIterator must be an input iterator with the value type `std::pair<Point,Vertex::Info>`.
+\tparam PointWithInfoIterator must be an `InputIterator` with the value type `std::pair<Point,Vertex::Info>`.
 */ 
-template < class PointWithInfoInputIterator >
+template < class PointWithInfoIterator >
 std::ptrdiff_t
-insert(PointWithInfoInputIterator first, PointWithInfoInputIterator last);
+insert(PointWithInfoIterator first, PointWithInfoIterator last);
 
 /*!
-Inserts segment `ab` as a constrained edge in the triangulation. 
+Inserts the line segment `ab` as a constraint in the triangulation. 
 */ 
 void insert_constraint(Point a, Point b); 
 
 /*!
-inserts the constraints in the range `[first,beyond)`.
+Inserts the line segment between the points `c.first` and `c.second` as  a constraint in the triangulation.
+*/ 
+  void push_back(const std::pair<Point,Point>& c); 
+
+
+/*!
+Inserts the line segment whose endpoints are the vertices `va` and 
+`vb` as a constraint in the triangulation. 
+*/ 
+void insert_constraint(Vertex_handle va, Vertex_handle vb); 
+
+/*!
+Inserts a polyline defined by the points in the range `[first,last)`.
+The polyline is considered as a polygon if the first and last point are equal or if  `close = true`. This enables for example passing the vertex range of a `Polygon_2`.
+\tparam PointIterator must be an `InputIterator` with the value type `Point`. 
+*/
+template < class PointIterator>
+void insert_constraint(PointIterator first, PointIterator last, bool close=false);
+
+
+/*!
+inserts the constraints in the range `[first,last)`.
 Note that this function is not guaranteed to insert the constraints
 following the order of `ConstraintIterator`, as `spatial_sort()`
 is used to improve efficiency.
 More precisely, all endpoints are inserted prior to the segments and according to the order provided by the spatial sort.
 Once endpoints have been inserted, the segments are inserted in the order of the input iterator,
-using the vertex handles of its endpoints
+using the vertex handles of its endpoints.
 
 \return the number of inserted points.
-\tparam ConstraintIterator must be an input iterator with `Constraint` or `Segment_2` as value type.
+\tparam ConstraintIterator must be an `InputIterator` with the value type `std::pair<Point,Point>` or `Segment`.
 */
 template <class ConstraintIterator>
-std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator beyond);
+std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator last);
 
 /*!
 Same as above except that each constraints is given as a pair of indices of the points
-in the range [points_first, points_beyond). The indices must go from 0 to `std::distance(points_first, points_beyond)`
-\tparam PointIterator is an input iterator with `Point_2` as value type.
-\tparam IndicesIterator is an input iterator with `std::pair<Int, Int>` where `Int` is an integral type implicitly convertible to `std::size_t`
+in the range [points_first, points_last). The indices must go from 0 to `std::distance(points_first, points_last)`
+\tparam PointIterator is an `InputIterator` with the value type `Point`.
+\tparam IndicesIterator is an `InputIterator` with `std::pair<Int, Int>` where `Int` is an integral type implicitly convertible to `std::size_t`
 */
 template <class PointIterator, class IndicesIterator>
-std::size_t insert_constraints(PointIterator points_first, PointIterator points_beyond,
-                               IndicesIterator indices_first, IndicesIterator indices_beyond);
+std::size_t insert_constraints(PointIterator points_first, PointIterator points_last,
+                               IndicesIterator indices_first, IndicesIterator indices_last);
 
-/*!
-Inserts the line segment between the points `c.first` and `c.second` as  a constrained edge in the triangulation.
-*/ 
-void push_back(const Constraint& c); 
 
-/*!
-Inserts the line segment whose endpoints are the vertices `va` and 
-`vb` as a constrained edge e in the triangulation. 
-*/ 
-void insert_constraint(Vertex_handle va, Vertex_handle vb); 
 
 /*!
 Removes vertex v. 
@@ -254,8 +267,8 @@ and each edge is described through its incident face
 which is not in conflict with `p`. 
 The function returns in a `std::pair` the resulting output iterators. 
 
-\tparam OutItFaces is an output iterator with `Face_handle` as value type. 
-\tparam OutItBoundaryEdges is an output iterator with `Edge` as value type. 
+\tparam OutItFaces is an `OutputIterator` with the value type `Face_handle`.
+\tparam OutItBoundaryEdges is an `OutputIterator` with the value type `Edge`. 
 
 \pre `dimension()==2`. 
 */ 
@@ -288,8 +301,8 @@ of the conflict zone are output in counter-clockwise order
 and each edge is described through the incident face 
 which is not in conflict with `p`. 
 The function returns the resulting output iterator. 
-\tparam OutputItBoundaryEdges is an output iterator with 
-`Edge` as value type. 
+\tparam OutputItBoundaryEdges is an `OutputIterator` with 
+the value type `Edge`. 
 */ 
 template <class OutputItBoundaryEdges> 
 OutputItBoundaryEdges 

@@ -26,7 +26,7 @@
 \cgalPkgDependsOn{\ref PkgTriangulation3Summary and \ref PkgTDS3Summary}
 \cgalPkgBib{cgal:ct-pt3}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Periodic Delaunay Triangulation,periodic_3_triangulation_3.zip}
+\cgalPkgDemo{3D Periodic Delaunay Triangulation,periodic_3_triangulation_3.zip,3D Periodic Lloyd,periodic_3_lloyd.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

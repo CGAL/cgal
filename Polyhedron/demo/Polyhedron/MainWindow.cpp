@@ -226,8 +226,6 @@ MainWindow::MainWindow(QWidget* parent)
   //         this, SLOT(showSceneContextMenu(const QPoint &)));
 
   connect(ui->actionRecenterScene, SIGNAL(triggered()),
-          viewer->camera(), SLOT(interpolateToFitScene()));
-  connect(ui->actionRecenterScene, SIGNAL(triggered()),
           viewer, SLOT(update()));
 
   connect(ui->actionAntiAliasing, SIGNAL(toggled(bool)),
@@ -342,14 +340,8 @@ MainWindow::MainWindow(QWidget* parent)
 void MainWindow::filterOperations()
 {
   Q_FOREACH(const PluginNamePair& p, plugins) {
-    if(p.first->applicable()) {
-      Q_FOREACH(QAction* action, p.first->actions()) {
-        action->setVisible(true);
-      }
-    } else {
-      Q_FOREACH(QAction* action, p.first->actions()) {
-        action->setVisible(false);
-      }
+    Q_FOREACH(QAction* action, p.first->actions()) {
+        action->setVisible( p.first->applicable(action) );
     }
   }
 
@@ -448,19 +440,22 @@ void MainWindow::loadPlugins()
           qDebug("### Ignoring plugin \"%s\".", qPrintable(fileName));
           continue;
         }
-        qDebug("### Loading \"%s\"...", qPrintable(fileName));
+        QDebug qdebug = qDebug();
+        qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
         QPluginLoader loader;
         loader.setFileName(pluginsDir.absoluteFilePath(fileName));
         QObject *obj = loader.instance();
         if(obj) {
           obj->setObjectName(name);
-          initPlugin(obj);
-          initIOPlugin(obj);
+          bool init1 = initPlugin(obj);
+          bool init2 = initIOPlugin(obj);
+          if (!init1 && !init2)
+            qdebug << "not for this program";
+          else
+            qdebug << "success";
         }
         else {
-          qDebug("Error loading \"%s\": %s",
-                 qPrintable(fileName),
-                 qPrintable(loader.errorString()));
+          qdebug << "error: " << qPrintable(loader.errorString());
         }
       }
     }
@@ -795,6 +790,7 @@ void MainWindow::open(QString filename)
     // collect all io_plugins and offer them to load if the file extension match one name filter
     // also collect all available plugin in case of a no extension match
     Q_FOREACH(Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
+      if ( !io_plugin->canLoad() ) continue;
       all_items << io_plugin->name();
       if ( file_matches_filter(io_plugin->nameFilters(), filename) )
         selected_items << io_plugin->name();
@@ -894,10 +890,18 @@ void MainWindow::selectSceneItem(int i)
 
 void MainWindow::showSelectedPoint(double x, double y, double z)
 {
-  information(QString("Selected point: (%1, %2, %3)").
+  static double x_prev = 0;
+  static double y_prev = 0;
+  static double z_prev = 0;
+  double dist = std::sqrt((x-x_prev)*(x-x_prev) + (y-y_prev)*(y-y_prev) + (z-z_prev)*(z-z_prev)); 
+  information(QString("Selected point: (%1, %2, %3) distance to previous: %4").
               arg(x, 0, 'g', 10).
               arg(y, 0, 'g', 10).
-              arg(z, 0, 'g', 10));
+              arg(z, 0, 'g', 10).
+              arg(dist,0,'g',10));
+  x_prev = x;
+  y_prev = y;
+  z_prev = z;
 }
 
 void MainWindow::unSelectSceneItem(int i)
@@ -1420,4 +1424,10 @@ void MainWindow::on_action_Paste_camera_triggered()
 void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 {
   viewer->setAddKeyFrameKeyboardModifiers(m);
+}
+
+void MainWindow::on_actionRecenterScene_triggered()
+{
+  updateViewerBBox();
+  viewer->camera()->interpolateToFitScene();
 }

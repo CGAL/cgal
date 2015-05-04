@@ -31,7 +31,8 @@
 #define CGAL_NUMBER_TYPE_CONVERTER_NEF_3_H
 
 #include<sstream>
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Exact_integer.h>
 #include <CGAL/Fraction_traits.h>
 #include<CGAL/Cartesian.h>
 #include<CGAL/Homogeneous.h>
@@ -41,8 +42,8 @@
 namespace CGAL {
 
 
-typedef CGAL::Arithmetic_kernel::Integer Integer;
-typedef CGAL::Arithmetic_kernel::Rational Rational;
+typedef CGAL::Exact_integer Integer;
+typedef CGAL::Exact_rational Rational;
 
 class Homogeneous_tag;
 class Cartesian_tag;

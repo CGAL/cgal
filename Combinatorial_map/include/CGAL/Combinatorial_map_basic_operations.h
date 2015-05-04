@@ -102,7 +102,7 @@ namespace CGAL
   template < class Map, class Iterator >
   typename Map::size_type mark_orbit(const Map & amap,
                                      typename Map::Dart_const_handle adart,
-                                     unsigned int amark)
+                                     int amark)
   {
     CGAL_static_assertion( (boost::is_same<typename Iterator::Basic_iterator,
                             Tag_true>::value) );
@@ -173,7 +173,7 @@ namespace CGAL
   template < class Map, unsigned int i, unsigned int d>
   bool is_whole_cell_marked(const Map & amap, 
                             typename Map::Dart_const_handle adart,
-                            unsigned int amark)
+                            int amark)
   {  
     return CGAL::is_whole_orbit_marked<Map,
         typename Map::template Dart_of_cell_range<i,d>::const_iterator>
@@ -183,7 +183,7 @@ namespace CGAL
   template < class Map, unsigned int i>
   bool is_whole_cell_marked(const Map & amap, 
                             typename Map::Dart_const_handle adart,
-                            unsigned int amark)
+                            int amark)
   {  
     return CGAL::is_whole_cell_marked<Map,i,Map::dimension>(amap,adart,amark);
   }
@@ -197,7 +197,7 @@ namespace CGAL
   template < class Map, unsigned int i, unsigned int d >
   bool is_whole_cell_unmarked(const Map & amap, 
                               typename Map::Dart_const_handle adart,
-                              unsigned int amark)
+                              int amark)
   {  
     return CGAL::is_whole_orbit_unmarked<Map,
         typename Map::template Dart_of_cell_range<i,d>::iterator>
@@ -207,7 +207,7 @@ namespace CGAL
   template < class Map, unsigned int i>
   bool is_whole_cell_unmarked(const Map & amap, 
                               typename Map::Dart_const_handle adart,
-                              unsigned int amark)
+                              int amark)
   {  
     return CGAL::is_whole_cell_unmarked<Map,i,Map::dimension>
         (amap,adart,amark);
@@ -270,6 +270,7 @@ namespace CGAL
     typename Map::size_type nbIncident = 0;
     int mark = amap.get_new_mark();
     int treated = amap.get_new_mark();
+    CGAL_assume(mark != -1); CGAL_assume( treated != -1);
 
     typename Map::template
       Dart_of_cell_basic_range<i>::const_iterator it(amap, adart, mark);
@@ -317,6 +318,7 @@ namespace CGAL
     typename Map::size_type nbIncident = 0;
     int mark = amap.get_new_mark();
     int treated = amap.get_new_mark();
+    CGAL_assume(mark != -1); CGAL_assume( treated != -1);
 
     typename Map::template
       Dart_of_cell_basic_range<i>::const_iterator it(amap, adart, mark);

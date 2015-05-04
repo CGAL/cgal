@@ -53,6 +53,9 @@ public:
   void draw_normals() const;
   virtual void draw_edges() const { draw_normals(); }//to tweak scene
 
+  // Splat OpenGL drawing
+  virtual void draw_splats() const;
+  
   // Gets wrapped point set
   Point_set*       point_set();
   const Point_set* point_set() const;
@@ -67,6 +70,9 @@ public:
   // computes the local point spacing (aka radius) of each point
   void computes_local_spacing(int k);
 
+  bool has_normals() const;
+  void set_has_normals(bool b);
+
 public slots:
   // Delete selection
   virtual void deleteSelection();
@@ -78,6 +84,7 @@ public slots:
 // Data
 private:
   Point_set* m_points;
+  bool m_has_normals;
   QAction* actionDeleteSelection;
   QAction* actionResetSelection;
   QAction* actionSelectDuplicatedPoints;

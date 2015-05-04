@@ -17,10 +17,10 @@
 // source        : web/Optimisation/Min_sphere_d.aw
 // revision      : $Id$
 // revision_date : $Date$
-// author(s)     : Sven Schönherr <sven@inf.fu-berlin.de>
-//                 Bernd Gärtner
+// author(s)     : Sven SchÃ¶nherr <sven@inf.fu-berlin.de>
+//                 Bernd GÃ¤rtner
 //
-// coordinator   : ETH Zurich (Bernd Gärtner <gaertner@inf.ethz.ch>)
+// coordinator   : ETH Zurich (Bernd GÃ¤rtner <gaertner@inf.ethz.ch>)
 //
 // implementation: dD Smallest Enclosing Sphere
 // ============================================================================
@@ -30,7 +30,7 @@
 
 #include<CGAL/basic.h>
 
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Random.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Homogeneous_d.h>
@@ -42,7 +42,7 @@
 using namespace CGAL;
 
 // leda_rational, or Gmpq, or Quotient<MP_float>
-typedef CGAL::Arithmetic_kernel::Rational   NT;
+typedef CGAL::Exact_rational                NT;
 typedef NT                                  FT;
 typedef NT                                  RT;
 typedef Cartesian_d<FT>                     C;

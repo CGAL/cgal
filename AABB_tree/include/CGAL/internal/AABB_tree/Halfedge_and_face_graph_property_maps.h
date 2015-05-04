@@ -84,7 +84,7 @@ template < class HalfedgeGraph,
            class VertexPointPMap >
 struct Segment_from_edge_descriptor_property_map{
 
-  Segment_from_edge_descriptor_property_map()
+  Segment_from_edge_descriptor_property_map()  : m_graph(NULL)
   {}
 
 Segment_from_edge_descriptor_property_map(HalfedgeGraph* g)
@@ -126,9 +126,12 @@ Segment_from_edge_descriptor_property_map(HalfedgeGraph* g)
 template <class FaceGraph,
           class VertexPointPMap>
 struct One_point_from_face_descriptor_property_map{
+  One_point_from_face_descriptor_property_map()  : m_graph(NULL)
+  {}
 
-  One_point_from_face_descriptor_property_map(FaceGraph* g = NULL)
+  One_point_from_face_descriptor_property_map(FaceGraph* g)
     : m_graph( const_cast<typename boost::remove_const<FaceGraph>::type*>(g) )
+    , m_vppm( get(vertex_point, *m_graph) )
   {}
 
   One_point_from_face_descriptor_property_map(FaceGraph* g, VertexPointPMap vppm )
@@ -159,10 +162,12 @@ struct One_point_from_face_descriptor_property_map{
 template < class HalfedgeGraph,
            class VertexPointPMap >
 struct Source_point_from_edge_descriptor{
-  Source_point_from_edge_descriptor(
-    HalfedgeGraph* g = NULL ) :
-  m_graph( const_cast<typename boost::remove_const<HalfedgeGraph>::type*>(g) ),
-  m_vppm( get(vertex_point, *m_graph) )
+  Source_point_from_edge_descriptor()  : m_graph(NULL)
+  {}
+
+  Source_point_from_edge_descriptor(HalfedgeGraph* g)
+    : m_graph( const_cast<typename boost::remove_const<HalfedgeGraph>::type*>(g) )
+    , m_vppm( get(vertex_point, *m_graph) )
   {}
 
   Source_point_from_edge_descriptor(

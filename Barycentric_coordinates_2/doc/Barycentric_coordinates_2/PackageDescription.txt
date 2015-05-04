@@ -1,0 +1,46 @@
+/// \defgroup PkgBarycentric_coordinates_2 2D Generalized Barycentric Coordinates Reference
+
+/// \defgroup PkgBarycentric_coordinates_2Concepts Concepts
+/// \ingroup PkgBarycentric_coordinates_2
+
+/*!
+
+\addtogroup PkgBarycentric_coordinates_2
+\cgalPkgDescriptionBegin{2D Generalized Barycentric Coordinates, PkgBarycentric_coordinates_2Summary}
+\cgalPkgPicture{barcoord_thumb.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez}
+\cgalPkgDesc{The package 2D Generalized Barycentric Coordinates offers an efficient and robust implementation of two-dimensional closed-form generalized barycentric coordinates defined for simple two-dimensional polygons. If coordinates with respect to multivariate scattered points instead of a polygon are required, please refer to natural neighbour coordinates from the package 2D and Surface Function Interpolation.}
+\cgalPkgManuals{Chapter_2D_Generalized_Barycentric_Coordinates, PkgBarycentric_coordinates_2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.6}
+\cgalPkgBib{cgal:abha-gbc}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `BarycentricTraits_2`
+- `BarycentricCoordinates_2`
+
+## Namespaces ##
+- `CGAL::Barycentric_coordinates`
+
+## Classes ##
+- `CGAL::Barycentric_coordinates::Segment_coordinates_2<Traits>`
+- `CGAL::Barycentric_coordinates::Triangle_coordinates_2<Traits>`
+- `CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Coordinate_2, Traits>`
+
+## ##
+- `CGAL::Barycentric_coordinates::Wachspress_2<Traits>`
+- `CGAL::Barycentric_coordinates::Mean_value_2<Traits>`
+- `CGAL::Barycentric_coordinates::Discrete_harmonic_2<Traits>`
+
+## Enumerations ##
+- `CGAL::Barycentric_coordinates::Query_point_location`
+- `CGAL::Barycentric_coordinates::Type_of_algorithm`
+
+*/

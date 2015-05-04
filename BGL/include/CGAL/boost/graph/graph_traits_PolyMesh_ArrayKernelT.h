@@ -28,6 +28,7 @@
 #include <CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h>
 #include <CGAL/boost/graph/internal/OM_iterator_from_circulator.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/Iterator_range.h>
 
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 
@@ -68,7 +69,7 @@ public:
   OMesh_edge
   opposite_edge() const { return OMesh_edge(Halfedge_handle((halfedge_.idx() & 1) ? halfedge_.idx()-1 : halfedge_.idx()+1)); }
 
-  std::size_t idx() const { return halfedge_.idx() / 2; }
+  unsigned int idx() const { return halfedge_.idx() / 2; }
 private:
   Halfedge_handle halfedge_;
 };
@@ -248,45 +249,42 @@ target(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::halfed
 }
     
 template <typename K>
-std::pair<typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_iterator,
-          typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_iterator>
 vertices(const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
 {
-  return std::make_pair(sm.vertices_sbegin(), sm.vertices_end()); 
+  return CGAL::make_range(sm.vertices_sbegin(), sm.vertices_end()); 
 }
 
  
 template <typename K>
-std::pair<typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::edge_iterator,
-          typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::edge_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::edge_iterator>
 edges(const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
 {
   typedef typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::edge_iterator iterator;
   iterator beg(sm.edges_sbegin());
   iterator end(sm.edges_end());
-  return std::make_pair(beg,end); 
+  return CGAL::make_range(beg,end); 
 }
 
   
 template <typename K>
-std::pair<typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::in_edge_iterator,
-          typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::in_edge_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::in_edge_iterator>
 in_edges(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_descriptor v,
          const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
 {
   typedef typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::in_edge_iterator Iter;
 
-  return std::make_pair(Iter(halfedge(v,sm),sm), Iter(halfedge(v,sm),sm,1));
+  return CGAL::make_range(Iter(halfedge(v,sm),sm), Iter(halfedge(v,sm),sm,1));
 }
 
+
 template <typename K>
-std::pair<typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::out_edge_iterator,
-          typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::out_edge_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::out_edge_iterator>
 out_edges(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_descriptor v,
           const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
 {
   typedef typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::out_edge_iterator Iter;
-  return std::make_pair(Iter(halfedge(v,sm),sm), Iter(halfedge(v,sm),sm,1));
+  return CGAL::make_range(Iter(halfedge(v,sm),sm), Iter(halfedge(v,sm),sm,1));
 }
 
 
@@ -374,11 +372,10 @@ halfedge(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vert
 // HalfedgeListGraph
 //
 template <typename K>
-std::pair<typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::halfedge_iterator,
-          typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::halfedge_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::halfedge_iterator>
 halfedges(const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
 {
-  return std::make_pair(sm.halfedges_sbegin(), sm.halfedges_end());
+  return CGAL::make_range(sm.halfedges_sbegin(), sm.halfedges_end());
 }
 
 template <typename K>
@@ -503,11 +500,10 @@ num_faces(const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
 }
   
 template <typename K>
-std::pair<typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::face_iterator,
-          typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::face_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::face_iterator>
 faces(const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
 {
-  return std::make_pair(sm.faces_sbegin(), sm.faces_end()); 
+  return CGAL::make_range(sm.faces_sbegin(), sm.faces_end()); 
 }
  
 

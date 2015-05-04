@@ -20,33 +20,31 @@ namespace CGAL {
 template <class Kernel_, class Container_>
 class Minkowski_sum_by_reduced_convolution_2
 {
-
 private:
-
   typedef Kernel_ Kernel;
   typedef Container_ Container;
 
   // Basic types:
   typedef CGAL::Polygon_2<Kernel, Container> Polygon_2;
   typedef CGAL::Polygon_with_holes_2<Kernel, Container> Polygon_with_holes_2;
-  typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Vector_2 Vector_2;
-  typedef typename Kernel::Direction_2 Direction_2;
-  typedef typename Kernel::Triangle_2 Triangle_2;
-  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_2                      Point_2;
+  typedef typename Kernel::Vector_2                     Vector_2;
+  typedef typename Kernel::Direction_2                  Direction_2;
+  typedef typename Kernel::Triangle_2                   Triangle_2;
+  typedef typename Kernel::FT                           FT;
 
   // Segment-related types:
-  typedef Arr_segment_traits_2<Kernel> Traits_2;
-  typedef typename Traits_2::X_monotone_curve_2 Segment_2;
-  typedef std::list<Segment_2> Segment_list;
-  typedef Arr_default_dcel<Traits_2> Dcel;
-  typedef std::pair<int, int> State;
+  typedef Arr_segment_traits_2<Kernel>                  Traits_2;
+  typedef typename Traits_2::X_monotone_curve_2         Segment_2;
+  typedef std::list<Segment_2>                          Segment_list;
+  typedef Arr_default_dcel<Traits_2>                    Dcel;
+  typedef std::pair<int, int>                           State;
 
   // Arrangement-related types:
-  typedef Arrangement_with_history_2<Traits_2, Dcel> Arrangement_history_2;
+  typedef Arrangement_with_history_2<Traits_2, Dcel>    Arrangement_history_2;
   typedef typename Arrangement_history_2::Halfedge_handle Halfedge_handle;
   typedef typename Arrangement_history_2::Face_iterator Face_iterator;
-  typedef typename Arrangement_history_2::Face_handle Face_handle;
+  typedef typename Arrangement_history_2::Face_handle   Face_handle;
   typedef typename Arrangement_history_2::Ccb_halfedge_circulator
   Ccb_halfedge_circulator;
   typedef typename Arrangement_history_2::Originating_curve_iterator
@@ -62,7 +60,6 @@ private:
   typename Kernel::Counterclockwise_in_between_2 f_ccw_in_between;
 
 public:
-
   Minkowski_sum_by_reduced_convolution_2()
   {
     // Obtain kernel functors
@@ -75,11 +72,10 @@ public:
     f_ccw_in_between = ker.counterclockwise_in_between_2_object();
   }
 
-  template <class OutputIterator>
-  void operator()(const Polygon_2 &pgn1, const Polygon_2 &pgn2,
-                  Polygon_2 &outer_boundary, OutputIterator holes) const
+  template <typename OutputIterator>
+  void operator()(const Polygon_2& pgn1, const Polygon_2& pgn2,
+                  Polygon_2& outer_boundary, OutputIterator holes) const
   {
-
     CGAL_precondition(pgn1.is_simple());
     CGAL_precondition(pgn2.is_simple());
     CGAL_precondition(pgn1.orientation() == COUNTERCLOCKWISE);
@@ -91,21 +87,27 @@ public:
   }
 
   template <class OutputIterator>
-  void operator()(const Polygon_with_holes_2 &pgn1, const Polygon_2 &pgn2,
-                  Polygon_2 &outer_boundary, OutputIterator holes) const
+  void operator()(const Polygon_with_holes_2& pgn1,
+                  const Polygon_2& pgn2,
+                  Polygon_2& outer_boundary, OutputIterator holes) const
   {
+    CGAL_precondition(pgn2.is_simple());
+    CGAL_precondition(pgn2.orientation() == COUNTERCLOCKWISE);
     common_operator(pgn1, pgn2, outer_boundary, holes);
   }
 
 private:
-
   template <class OutputIterator>
-  void common_operator(const Polygon_with_holes_2 &pgn1, const Polygon_2 &pgn2,
-                  Polygon_2 &outer_boundary, OutputIterator holes) const
+  void common_operator(const Polygon_with_holes_2& pgn1,
+                      const Polygon_2& pgn2,
+                      Polygon_2& outer_boundary, OutputIterator holes) const
   {
-    // Initialize collision detector. It operates on pgn1 and on the inversed pgn2:
-    Polygon_2 inversed_pgn2(CGAL::transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn2));
-    AABB_collision_detector_2<Kernel, Container> collision_detector(pgn1, inversed_pgn2);
+    // Initialize collision detector. It operates on pgn1 and on the inversed
+    // pgn2:
+    Polygon_2 inversed_pgn2(CGAL::transform(
+      Aff_transformation_2<Kernel>(SCALING, -1), pgn2));
+    AABB_collision_detector_2<Kernel, Container>
+      collision_detector(pgn1, inversed_pgn2);
 
     // Compute the outer boundary and possible holes
     {
@@ -118,26 +120,29 @@ private:
       // Trace the outer loop and put it in 'outer_boundary'
       get_outer_loop(arr, outer_boundary);
 
-      // Check for each face whether it is a hole in the M-sum. If it is, add it to 'holes'.
-      // See chapter 3 of of Alon's master's thesis.
-      for (Face_iterator face = arr.faces_begin(); face != arr.faces_end(); ++face)
+      // Check for each face whether it is a hole in the M-sum. If it is, add it
+      // to 'holes'. See chapter 3 of of Alon's master's thesis.
+      for (Face_iterator face = arr.faces_begin(); face != arr.faces_end();
+              ++face)
       {
-          handle_face(arr, face, holes, collision_detector);
+        handle_face(arr, face, holes, collision_detector);
       }
     }
 
     // Compute each (possible) hole
     Segment_list reduced_convolution;
-    for (typename Polygon_with_holes_2::Hole_const_iterator hole = pgn1.holes_begin(); hole != pgn1.holes_end(); ++hole)
+    for (typename Polygon_with_holes_2::Hole_const_iterator hole =
+      pgn1.holes_begin(); hole != pgn1.holes_end(); ++hole)
     {
       Segment_list segments;
       build_reduced_convolution(pgn2, *hole, segments);
       Arrangement_history_2 arr;
       insert(arr, segments.begin(), segments.end());
 
-      // Check for each face whether it is a hole in the M-sum. If it is, add it to 'holes'.
-      // See chapter 3 of of Alon's master's thesis.
-      for (Face_iterator face = arr.faces_begin(); face != arr.faces_end(); ++face)
+      // Check for each face whether it is a hole in the M-sum. If it is, add it
+      // to 'holes'. See chapter 3 of of Alon's master's thesis.
+      for (Face_iterator face = arr.faces_begin(); face != arr.faces_end();
+           ++face)
       {
         handle_face(arr, face, holes, collision_detector);
       }
@@ -149,8 +154,8 @@ private:
   // vertex is reached, then do not explore further. This is a BFS-like
   // iteration beginning from each vertex in the first column of the fiber
   // grid.
-  void build_reduced_convolution(const Polygon_2 &pgn1, const Polygon_2 &pgn2,
-                                 Segment_list &reduced_convolution) const
+  void build_reduced_convolution(const Polygon_2& pgn1, const Polygon_2& pgn2,
+                                 Segment_list& reduced_convolution) const
   {
     unsigned int n1 = pgn1.size();
     unsigned int n2 = pgn2.size();
@@ -211,15 +216,15 @@ private:
         bool belongs_to_convolution;
         if (step_in_pgn1)
         {
-          belongs_to_convolution = f_ccw_in_between(p1_dirs[i1], p2_dirs[prev_i2],
-                                   p2_dirs[i2]) ||
-                                   p1_dirs[i1] == p2_dirs[i2];
+          belongs_to_convolution =
+            f_ccw_in_between(p1_dirs[i1], p2_dirs[prev_i2], p2_dirs[i2]) ||
+            p1_dirs[i1] == p2_dirs[i2];
         }
         else
         {
-          belongs_to_convolution = f_ccw_in_between(p2_dirs[i2], p1_dirs[prev_i1],
-                                   p1_dirs[i1]) ||
-                                   p2_dirs[i2] == p1_dirs[prev_i1];
+          belongs_to_convolution =
+            f_ccw_in_between(p2_dirs[i2], p1_dirs[prev_i1], p1_dirs[i1]) ||
+            p2_dirs[i2] == p1_dirs[prev_i1];
         }
 
         if (belongs_to_convolution)
@@ -250,7 +255,7 @@ private:
   }
 
   // Returns a sorted list of the polygon's edges
-  std::vector<Direction_2> directions_of_polygon(const Polygon_2 &p) const
+  std::vector<Direction_2> directions_of_polygon(const Polygon_2& p) const
   {
     std::vector<Direction_2> directions;
     unsigned int n = p.size();
@@ -264,23 +269,23 @@ private:
     return directions;
   }
 
-  bool is_convex(const Point_2 &prev, const Point_2 &curr,
-                 const Point_2 &next) const
+  bool is_convex(const Point_2& prev, const Point_2& curr,
+                 const Point_2& next) const
   {
     return f_orientation(prev, curr, next) == LEFT_TURN;
   }
 
   // Returns the point corresponding to a state (i,j).
-  Point_2 get_point(int i1, int i2, const Polygon_2 &pgn1,
-                    const Polygon_2 &pgn2) const
+  Point_2 get_point(int i1, int i2, const Polygon_2& pgn1,
+                    const Polygon_2& pgn2) const
   {
 
     return f_add(pgn1[i1], Vector_2(Point_2(ORIGIN), pgn2[i2]));
   }
 
   // Put the outer loop of the arrangement in 'outer_boundary'
-  void get_outer_loop(Arrangement_history_2 &arr,
-                      Polygon_2 &outer_boundary) const
+  void get_outer_loop(Arrangement_history_2& arr,
+                      Polygon_2& outer_boundary) const
   {
     Inner_ccb_iterator icit = arr.unbounded_face()->inner_ccbs_begin();
     Ccb_halfedge_circulator circ_start = *icit;
@@ -293,11 +298,13 @@ private:
     while (--circ != circ_start);
   }
 
-  // Check whether the face is on the M-sum's border. Add it to 'holes' if it is.
+  // Check whether the face is on the M-sum's border.
+  // Add it to 'holes' if it is.
   template <class OutputIterator>
-  void handle_face(const Arrangement_history_2 &arr, const Face_handle face,
-                   OutputIterator holes, AABB_collision_detector_2<Kernel, Container>
-                   &collision_detector) const
+  void handle_face(const Arrangement_history_2& arr, const Face_handle face,
+                   OutputIterator holes,
+                   AABB_collision_detector_2<Kernel, Container>&
+                   collision_detector) const
   {
 
     // If the face contains holes, it can't be on the Minkowski sum's border
@@ -343,7 +350,7 @@ private:
 
   // Check whether the convolution's original edge(s) had the same direction as
   // the arrangement's half edge
-  bool do_original_edges_have_same_direction(const Arrangement_history_2 &arr,
+  bool do_original_edges_have_same_direction(const Arrangement_history_2& arr,
                                              const Halfedge_handle he) const
   {
     Originating_curve_iterator segment_itr;
@@ -351,8 +358,8 @@ private:
     for (segment_itr = arr.originating_curves_begin(he);
          segment_itr != arr.originating_curves_end(he); ++segment_itr)
     {
-      if (f_compare_xy(segment_itr->source(),
-                       segment_itr->target()) == (Comparison_result)he->direction())
+      if (f_compare_xy(segment_itr->source(), segment_itr->target()) ==
+          (Comparison_result)he->direction())
       {
         return false;
       }

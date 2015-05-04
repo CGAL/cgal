@@ -1,0 +1,5 @@
+/// \example Surface_mesh_parameterization/Simple_parameterization.cpp
+/// \example Surface_mesh_parameterization/Mesh_cutting_parameterization.cpp
+/// \example Surface_mesh_parameterization/Complete_parameterization_example.cpp
+/// \example Surface_mesh_parameterization/Eigen_parameterization.cpp
+/// \example Surface_mesh_parameterization/polyhedron_ex_parameterization.cpp

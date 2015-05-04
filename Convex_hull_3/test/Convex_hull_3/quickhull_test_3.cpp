@@ -1,4 +1,4 @@
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/Convex_hull_traits_3.h>
@@ -8,7 +8,7 @@
 #include <vector>
 #include <cassert>
 
-typedef CGAL::Arithmetic_kernel::Rational             NT;
+typedef CGAL::Exact_rational                          NT;
 typedef CGAL::Cartesian<NT>                           K;
 typedef CGAL::Convex_hull_traits_3<K>                 Traits;
 typedef Traits::Polyhedron_3                          Polyhedron_3;

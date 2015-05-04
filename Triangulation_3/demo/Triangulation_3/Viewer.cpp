@@ -775,14 +775,6 @@ void Viewer::mouseMoveEvent(QMouseEvent *event)
     if( computeIntersect( event->pos(), pt ) ) {
       // note: QList::operator[] return a modifiable reference;
       //   while QList::at return a const reference
-#if CGAL_VERSION_NR < 1030700000
-      // move_point moves the point stored in v to p while preserving the Delaunay property
-      // it calls remove(v) followed by insert(p) and return the new handle
-      // it supposely faster when the point has not moved much
-      m_pScene->m_vhArray[m_vidMoving] = m_pScene->m_dt.move_if_no_collision(
-                                 m_pScene->m_vhArray.at( m_vidMoving ),
-                                 Point_3( pt.x, pt.y, pt.z ) );
-#else
       // move_if_no_collision moves the point stored in v to pt
       //  if there is not already another vertex placed on pt,
       //  the triangulation is modified s.t. the new position of v is pt;
@@ -798,7 +790,6 @@ void Viewer::mouseMoveEvent(QMouseEvent *event)
       else if( id2 != -1 )
         m_pScene->m_vhArray.removeAt( id2 );
       m_pScene->m_vhArray[m_vidMoving] = vh;
-#endif
     }//end-if-compute
 
     // redraw
@@ -904,14 +895,6 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
     if( computeIntersect( event->pos(), pt ) ) {
       // note: QList::operator[] return a modifiable reference;
       //   while QList::at return a const reference
-#if CGAL_VERSION_NR < 1030700000
-      // move_point moves the point stored in v to p while preserving the Delaunay property
-      // it calls remove(v) followed by insert(p) and return the new handle
-      // it supposely faster when the point has not moved much
-      m_pScene->m_vhArray[m_vidMoving] = m_pScene->m_dt.move_if_no_collision(
-                                 m_pScene->m_vhArray.at( m_vidMoving ),
-                                 Point_3( pt.x, pt.y, pt.z ) );
-#else
       // move_if_no_collision moves the point stored in v to pt
       //  if there is not already another vertex placed on pt,
       //  the triangulation is modified s.t. the new position of v is pt;
@@ -927,7 +910,6 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
       else if( id2 != -1 )
         m_pScene->m_vhArray.removeAt( id2 );
       m_pScene->m_vhArray[m_vidMoving] = vh;
-#endif
     }//end-if-compute
 
     // redraw
@@ -992,8 +974,8 @@ void Viewer::wheelEvent(QWheelEvent *event)
     //  note: most mouse types work in steps of 15 degrees
     //  positive value: rotate forwards away from the user;
     //  negative value: rotate backwards toward the user.
-    m_fRadius += (event->delta()*1. / m_iStep ); // inc-/decrease by 0.1 per step
-    if( m_fRadius < 0.1 )
+    m_fRadius += (event->delta()*1.f / m_iStep ); // inc-/decrease by 0.1 per step
+    if( m_fRadius < 0.1f )
       m_fRadius = 0.1f;
 
     // redraw
@@ -1006,8 +988,8 @@ void Viewer::wheelEvent(QWheelEvent *event)
     //  positive value: rotate forwards away from the user;
     //  negative value: rotate backwards toward the user.
   	float origR = m_fRadius;
-    m_fRadius += (event->delta()*1. / m_iStep ); // inc-/decrease by 0.1 per step
-    if( m_fRadius < 0.1 )
+    m_fRadius += (event->delta()*1.f / m_iStep ); // inc-/decrease by 0.1 per step
+    if( m_fRadius < 0.1f )
       m_fRadius = 0.1f;
     // update the new point and its conflict region
     if( m_hasNewPt ) {
@@ -1024,21 +1006,13 @@ void Viewer::wheelEvent(QWheelEvent *event)
   // resize the trackball when moving a point
   else if( m_curMode == MOVE && modifiers == Qt::SHIFT && m_isMoving ) {
   	float origR = m_fRadius;
-    m_fRadius += (event->delta()*1. / m_iStep ); // inc-/decrease by 0.1 per step
-    if( m_fRadius < 0.1 )
+    m_fRadius += (event->delta()*1.f / m_iStep ); // inc-/decrease by 0.1 per step
+    if( m_fRadius < 0.1f )
       m_fRadius = 0.1f;
     origR = m_fRadius / origR;
     Point_3 pt = m_pScene->m_vhArray.at( m_vidMoving )->point();
     // note: QList::operator[] return a modifiable reference;
     //   while QList::at return a const reference
-#if CGAL_VERSION_NR < 1030700000
-    // move_point moves the point stored in v to p while preserving the Delaunay property
-    // it calls remove(v) followed by insert(p) and return the new handle
-    // it supposely faster when the point has not moved much
-    m_pScene->m_vhArray[m_vidMoving] = m_pScene->m_dt.move_if_no_collision(
-                               m_pScene->m_vhArray.at( m_vidMoving ),
-                               Point_3( pt.x()*origR, pt.y()*origR, pt.z()*origR ) );
-#else
     // move_if_no_collision moves the point stored in v to pt
     //  if there is not already another vertex placed on pt,
     //  the triangulation is modified s.t. the new position of v is pt;
@@ -1054,7 +1028,6 @@ void Viewer::wheelEvent(QWheelEvent *event)
     else if( id2 != -1 )
       m_pScene->m_vhArray.removeAt( id2 );
     m_pScene->m_vhArray[m_vidMoving] = vh;
-#endif
 
     // redraw
     updateGL();

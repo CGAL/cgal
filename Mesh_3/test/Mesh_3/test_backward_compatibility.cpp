@@ -85,6 +85,7 @@ struct Mesh_new_facet_criteria {
 
 #include <CGAL/Implicit_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
+#include <CGAL/remove_far_points_in_mesh_3.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -93,20 +94,6 @@ typedef K::Point_3 Point;
 typedef FT (Function)(const Point&);
 typedef CGAL::Implicit_mesh_domain_3<Function,K> Mesh_domain;
 
-// Triangulation
-typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
-typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
-
-// Criteria
-typedef CGAL::Mesh_criteria_3<Tr, 
-                              CGAL::Mesh_edge_criteria_3<Tr>,
-                              Mesh_facet_criteria<Tr>,
-                              Mesh_cell_criteria<Tr> > Mesh_criteria;
-typedef CGAL::Mesh_criteria_3<Tr, 
-                              CGAL::Mesh_edge_criteria_3<Tr>,
-                              Mesh_new_facet_criteria<Tr>,
-                              Mesh_new_cell_criteria<Tr> > Mesh_new_criteria;
-
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
@@ -114,8 +101,21 @@ using namespace CGAL::parameters;
 FT sphere_function (const Point& p)
 { return CGAL::squared_distance(p, Point(CGAL::ORIGIN))-1; }
 
-int main()
+template <typename Tr>
+void test()
 {
+  typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+
+  // Criteria
+  typedef CGAL::Mesh_criteria_3<Tr, 
+                                CGAL::Mesh_edge_criteria_3<Tr>,
+                                Mesh_facet_criteria<Tr>,
+                                Mesh_cell_criteria<Tr> > Mesh_criteria;
+  typedef CGAL::Mesh_criteria_3<Tr, 
+                                CGAL::Mesh_edge_criteria_3<Tr>,
+                                Mesh_new_facet_criteria<Tr>,
+                                Mesh_new_cell_criteria<Tr> > Mesh_new_criteria;
+
   // Domain (Warning: Sphere_3 constructor uses squared radius !)
   Mesh_domain domain(sphere_function, K::Sphere_3(CGAL::ORIGIN, 2.));
 
@@ -129,11 +129,28 @@ int main()
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_exude(), no_perturb());
   CGAL::refine_mesh_3<C3t3>(c3t3, domain, new_criteria, no_exude(), no_perturb());
+  CGAL::remove_far_points_in_mesh_3(c3t3);
 
   std::cout << "Number of vertices: "
             << c3t3.triangulation().number_of_vertices() << "\n"
             << " (should be a small number, because there are no criteria"
             << " on facets and cells)\n";
+}
+
+int main()
+{
+  std::cout << "==== Test sequential meshing ====" << std::endl;
+  typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+  test<Tr>();
+
+#ifdef CGAL_LINKED_WITH_TBB
+  std::cout << "==== Test parallel meshing ====" << std::endl;
+  typedef CGAL::Mesh_triangulation_3<
+    Mesh_domain,
+    CGAL::Kernel_traits<Mesh_domain>::Kernel,
+    CGAL::Parallel_tag>::type TrP;
+  test<TrP>();
+#endif
 
   return 0;
 }

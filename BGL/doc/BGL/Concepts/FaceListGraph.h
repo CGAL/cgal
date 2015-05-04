@@ -7,6 +7,7 @@ the requirement for traversal of all faces in a graph.
 
 \cgalRefines `FaceGraph`
 \cgalHasModel `CGAL::Polyhedron_3`
+\cgalHasModel `CGAL::Surface_mesh`
 
 \cgalHeading{Notations}
 
@@ -25,10 +26,10 @@ Type              | Description
 
 \cgalHeading{Valid Expressions}
 
-Expression        |  returns                                    | Description
------------------ | ---------------                             | -----------------------
-`faces(g)`        |  `std::pair<face_iterator, face_iterator>`  | An iterator range over all faces.
-`num_faces(g)`    |  `faces_size_type`                          | An upper bound of the number of faces of the graph.
+Expression        |  returns                               | Description
+----------------- | ---------------                        | -----------------------
+`faces(g)`        |  `std::pair<face_iterator, face_iterator>` | An iterator range over all faces. 
+`num_faces(g)`    |  `faces_size_type`                     | An upper bound of the number of faces of the graph.
 
 \attention `num_faces()` may return a number larger than `std::distance(faces(g).first, faces(g).second)`.
 This is the case for implementations only marking faces deleted in the face container.

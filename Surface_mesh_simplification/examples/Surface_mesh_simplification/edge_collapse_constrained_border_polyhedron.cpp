@@ -29,22 +29,18 @@ namespace SMS = CGAL::Surface_mesh_simplification ;
 // BGL property map which indicates whether an edge is marked as non-removable
 //
 struct Border_is_constrained_edge_map{
-  const Surface_mesh* sm;
+  const Surface_mesh* sm_ptr;
   typedef boost::graph_traits<Surface_mesh>::edge_descriptor key_type;
   typedef bool value_type;
   typedef value_type reference;
   typedef boost::readable_property_map_tag category;
 
-  Border_is_constrained_edge_map()
-  {}
-
   Border_is_constrained_edge_map(const Surface_mesh& sm)
-    : sm(&sm)
+    : sm_ptr(&sm)
   {}
 
-  friend bool get(Border_is_constrained_edge_map m, key_type edge) {
-    return (face(halfedge(edge,*m.sm),*m.sm) == boost::graph_traits<Surface_mesh>::null_face()) 
-      || (face(opposite(halfedge(edge,*m.sm),*m.sm),*m.sm) == boost::graph_traits<Surface_mesh>::null_face());
+  friend bool get(Border_is_constrained_edge_map m, const key_type& edge) {
+    return CGAL::is_border(edge, *m.sm_ptr);
   }
 };
 
@@ -90,6 +86,9 @@ int main( int argc, char** argv )
   // Contract the surface mesh as much as possible
   SMS::Count_stop_predicate<Surface_mesh> stop(0);
 
+  Border_is_constrained_edge_map bem(surface_mesh);
+
+
   // This the actual call to the simplification algorithm.
   // The surface mesh and stop conditions are mandatory arguments.
   // The index maps are needed because the vertices and edges
@@ -99,8 +98,8 @@ int main( int argc, char** argv )
             ,stop
             ,CGAL::vertex_index_map(get(CGAL::vertex_external_index,surface_mesh))
                   .halfedge_index_map  (get(CGAL::halfedge_external_index  ,surface_mesh))
-                  .edge_is_constrained_map(Border_is_constrained_edge_map(surface_mesh))
-                  .get_placement(Placement())
+                  .edge_is_constrained_map(bem)
+                  .get_placement(Placement(bem))
             );
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n"

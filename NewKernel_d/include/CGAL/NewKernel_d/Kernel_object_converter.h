@@ -22,6 +22,7 @@
 #include <CGAL/NewKernel_d/utils.h>
 #include <CGAL/NewKernel_d/functor_tags.h>
 #include <CGAL/Kernel/mpl.h> // First_if_different
+#include <CGAL/Dimension.h>
 namespace CGAL {
 template <class Tag_, class K1, class K2> struct KO_converter;
 //TODO: It would probably be better if this was a Misc Functor in K1.

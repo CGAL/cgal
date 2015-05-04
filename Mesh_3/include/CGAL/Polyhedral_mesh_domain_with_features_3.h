@@ -28,11 +28,11 @@
 
 #include <CGAL/Mesh_3/config.h>
 
+#include <CGAL/Random.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Mesh_polyhedron_3.h>
 
-#include <CGAL/Mesh_polyhedron_3.h>
 #include <CGAL/Mesh_3/Detect_polylines_in_polyhedra.h>
 #include <CGAL/Mesh_3/Polyline_with_context.h>
 #include <CGAL/Mesh_3/Detect_features_in_polyhedra.h>
@@ -58,7 +58,7 @@ template < class IGT_,
            class Polyhedron_ = typename Mesh_polyhedron_3<IGT_>::type,
            class TriangleAccessor=Triangle_accessor_3<Polyhedron_,IGT_>,
            class Use_patch_id_tag = Tag_true,
-           class Use_exact_intersection_construction_tag = CGAL::Tag_true >
+           class Use_exact_intersection_construction_tag = Tag_true >
 class Polyhedral_mesh_domain_with_features_3
   : public Mesh_domain_with_polyline_features_3<
       Polyhedral_mesh_domain_3< Polyhedron_,
@@ -94,20 +94,36 @@ public:
   typedef CGAL::Tag_true           Has_features;
 
   /// Constructors
-  Polyhedral_mesh_domain_with_features_3(const Polyhedron& p);
-  Polyhedral_mesh_domain_with_features_3(const std::string& filename);
+  Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
+    CGAL::Random* p_rng = NULL);
+  Polyhedral_mesh_domain_with_features_3(const std::string& filename,
+    CGAL::Random* p_rng = NULL);
+
+  // The following is needed, because otherwise, when a "const char*" is
+  // passed, the constructors templates are a better match, than the
+  // constructor with `std::string`.
+  Polyhedral_mesh_domain_with_features_3(const char* filename,
+    CGAL::Random* p_rng = NULL);
 
   template <typename T1, typename T2>
-  Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b) : Base(a, b) {}
+  Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b,
+                                         CGAL::Random* p_rng = NULL)
+    : Base(a, b)
+  { this->set_random_generator(p_rng); }
+
 
   template <typename T1, typename T2, typename T3>
-  Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b, const T3& c)
-    : Base(a, b, c) {}
+  Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b, const T3& c,
+                                         CGAL::Random* p_rng = NULL)
+    : Base(a, b, c)
+  { this->set_random_generator(p_rng); }
 
   /// Destructor
   ~Polyhedral_mesh_domain_with_features_3() {}
 
   /// Detect features
+  void initialize_ts(Polyhedron& p);
+
   void detect_features(FT angle_in_degree, Polyhedron& p);
   void detect_features(FT angle_in_degree = FT(60)) { detect_features(angle_in_degree, polyhedron_); }
 
@@ -126,17 +142,35 @@ private:
 template < typename GT_, typename P_, typename TA_,
            typename Tag_, typename E_tag_>
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
-Polyhedral_mesh_domain_with_features_3(const Polyhedron& p)
+Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
+                                       CGAL::Random* p_rng)
   : Base()
   , polyhedron_(p)
 {
   this->add_primitives(polyhedron_);
+  this->set_random_generator(p_rng);
 }
 
 template < typename GT_, typename P_, typename TA_,
            typename Tag_, typename E_tag_>
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
-Polyhedral_mesh_domain_with_features_3(const std::string& filename)
+Polyhedral_mesh_domain_with_features_3(const char* filename,
+                                       CGAL::Random* p_rng)
+  : Base()
+  , polyhedron_()
+{
+  // Create input polyhedron
+  std::ifstream input(filename);
+  input >> polyhedron_;
+  this->add_primitives(polyhedron_);
+  this->set_random_generator(p_rng);
+}
+
+template < typename GT_, typename P_, typename TA_,
+           typename Tag_, typename E_tag_>
+Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
+Polyhedral_mesh_domain_with_features_3(const std::string& filename,
+                                       CGAL::Random* p_rng)
   : Base()
   , polyhedron_()
 {
@@ -144,6 +178,32 @@ Polyhedral_mesh_domain_with_features_3(const std::string& filename)
   std::ifstream input(filename.c_str());
   input >> polyhedron_;
   this->add_primitives(polyhedron_);
+  this->set_random_generator(p_rng);
+}
+
+
+template < typename GT_, typename P_, typename TA_,
+           typename Tag_, typename E_tag_>
+void
+Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
+initialize_ts(Polyhedron& p)
+{
+  std::size_t ts = 0;
+  for(typename Polyhedron::Vertex_iterator v = p.vertices_begin(),
+      end = p.vertices_end() ; v != end ; ++v)
+  {
+    v->set_time_stamp(ts++);
+  }
+  for(typename Polyhedron::Facet_iterator fit = p.facets_begin(),
+       end = p.facets_end() ; fit != end ; ++fit )
+  {
+    fit->set_time_stamp(ts++);
+  }
+  for(typename Polyhedron::Halfedge_iterator hit = p.halfedges_begin(),
+       end = p.halfedges_end() ; hit != end ; ++hit )
+  {
+    hit->set_time_stamp(ts++);
+  }
 }
 
 
@@ -153,6 +213,7 @@ void
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 detect_features(FT angle_in_degree, Polyhedron& p)
 {
+  initialize_ts(p);
   // Get sharp features
   Mesh_3::detect_features(p,angle_in_degree);
   

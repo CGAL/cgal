@@ -67,10 +67,10 @@ public:
             }
         } else {
             skip_comment();
-            m_in >> x >> y >> z;
+            m_in >> iformat(x) >> iformat(y) >> iformat(z);
             if ( is_homogeneous()) {
                 float w;
-                m_in >> w;
+                m_in >> iformat(w);
                 x /= w;
                 y /= w;
                 z /= w;
@@ -94,10 +94,10 @@ public:
             }
         } else {
             skip_comment();
-            m_in >> x >> y >> z;
+            m_in >> iformat(x) >> iformat(y) >> iformat(z);
             if ( is_homogeneous()) {
                 double w;
-                m_in >> w;
+                m_in >> iformat(w);
                 x /= w;
                 y /= w;
                 z /= w;
@@ -125,17 +125,17 @@ public:
             skip_comment();
             if ( is_homogeneous()) {
                 double fx, fy, fz, fw;
-                m_in >> fx >> fy >> fz >> fw;
+                m_in >> iformat(fx) >> iformat(fy) >> iformat(fz) >> iformat(fw);
                 x = int( fx / fw);
                 y = int( fy / fw);
                 z = int( fz / fw);
             } else {
                 double d;
-                m_in >> d;
+                m_in >> iformat(d);
                 x = int(d);
-                m_in >> d;
+                m_in >> iformat(d);
                 y = int(d);
-                m_in >> d;
+                m_in >> iformat(d);
                 z = int(d);
             }
         }
@@ -151,9 +151,9 @@ public:
                 I_Binary_read_big_endian_float32( m_in, w);
         } else {
             skip_comment();
-            m_in >> x >> y >> z;
+            m_in >> iformat(x) >> iformat(y) >> iformat(z);
             if ( is_homogeneous())
-                m_in >> w;
+              m_in >> iformat(w);
         }
     }
     void scan_vertex( double& x, double& y, double& z, double& w) {
@@ -172,11 +172,11 @@ public:
             }
         } else {
             skip_comment();
-            extract(m_in, x);
-            extract(m_in, y);
-            extract(m_in, z);
+            m_in >> iformat(x);
+            m_in >> iformat(y);
+            m_in >> iformat(z);
             if ( is_homogeneous())
-              extract(m_in, w);
+              m_in >> iformat(w);
         }
     }
     void scan_vertex( int& x, int& y, int& z, int& w) {
@@ -196,14 +196,14 @@ public:
         } else {
             skip_comment();
             double d;
-            m_in >> d;
+            m_in >> iformat(d);
             x = int(d);
-            m_in >> d;
+            m_in >> iformat(d);
             y = int(d);
-            m_in >> d;
+            m_in >> iformat(d);
             z = int(d);
             if ( is_homogeneous()) {
-                m_in >> d;
+                m_in >> iformat(d);
                 w = int(d);
             }
         }
@@ -224,10 +224,10 @@ public:
                     z /= w;
                 }
             } else {
-                m_in >> x >> y >> z;
+                m_in >> iformat(x) >> iformat(y) >> iformat(z);
                 if ( is_homogeneous()) {
                     float w;
-                    m_in >> w;
+                    m_in >> iformat(w);
                     x /= w;
                     y /= w;
                     z /= w;
@@ -257,12 +257,12 @@ public:
             } else {
                 if ( is_homogeneous()) {
                     float fx, fy, fz, fw;
-                    m_in >> fx >> fy >> fz >> fw;
+                    m_in >> iformat(fx) >> iformat(fy) >> iformat(fz) >> iformat(fw);
                     x = fx / fw;
                     y = fy / fw;
                     z = fz / fw;
                 } else
-                    m_in >> x >> y >> z;
+                    m_in >> iformat(x) >> iformat(y) >> iformat(z);
             }
         }
     }
@@ -288,17 +288,17 @@ public:
             } else {
                 if ( is_homogeneous()) {
                     float fx, fy, fz, fw;
-                    m_in >> fx >> fy >> fz >> fw;
+                    m_in >> iformat(fx) >> iformat(fy) >> iformat(fz) >> iformat(fw);
                     x = int( fx / fw);
                     y = int( fy / fw);
                     z = int( fz / fw);
                 } else {
                     double d;
-                    m_in >> d;
+                    m_in >> iformat(d);
                     x = int(d);
-                    m_in >> d;
+                    m_in >> iformat(d);
                     y = int(d);
-                    m_in >> d;
+                    m_in >> iformat(d);
                     z = int(d);
                 }
             }
@@ -316,9 +316,9 @@ public:
                 if ( is_homogeneous())
                     I_Binary_read_big_endian_float32( m_in, w);
             } else {
-                m_in >> x >> y >> z;
+                m_in >> iformat(x) >> iformat(y) >> iformat(z);
                 if ( is_homogeneous())
-                    m_in >> w;
+                    m_in >> iformat(w);
             }
         }
     }
@@ -339,9 +339,9 @@ public:
                     w = f;
                 }
             } else {
-                m_in >> x >> y >> z;
+                m_in >> iformat(x) >> iformat(y) >> iformat(z);
                 if ( is_homogeneous())
-                    m_in >> w;
+                    m_in >> iformat(w);
             }
         }
     }
@@ -363,14 +363,14 @@ public:
                 }
             } else {
                 double d;
-                m_in >> d;
+                m_in >> iformat(d);
                 x = int(d);
-                m_in >> d;
+                m_in >> iformat(d);
                 y = int(d);
-                m_in >> d;
+                m_in >> iformat(d);
                 z = int(d);
                 if ( is_homogeneous()) {
-                    m_in >> d;
+                    m_in >> iformat(d);
                     w = int(d);
                 }
             }

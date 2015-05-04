@@ -171,6 +171,26 @@ template<class R_> struct Orientation_of_points<R_,Dimension_tag<N>,true> : priv
 #undef CGAL_VAR
 
 #endif
+
+template<class R_> struct Orientation_of_points<R_,Dimension_tag<1>,true> : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points)
+	typedef R_ R;
+	typedef typename Get_type<R, RT_tag>::type RT;
+	typedef typename Get_type<R, Point_tag>::type Point;
+	typedef typename Get_type<R, Orientation_tag>::type result_type;
+	result_type operator()(Point const&x, Point const&y) const {
+		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
+		// No sign_of_determinant(RT) :-(
+		return CGAL::compare(c(y,0),c(x,0));
+	}
+	template<class Iter>
+	result_type operator()(Iter f, Iter CGAL_assertion_code(e))const{
+		Point const&x=*f;
+		Point const&y=*++f;
+		CGAL_assertion(++f==e);
+		return operator()(x,y);
+	}
+};
 }
 
 CGAL_KD_DEFAULT_FUNCTOR(Orientation_of_points_tag,(CartesianDKernelFunctors::Orientation_of_points<K>),(Point_tag),(Point_dimension_tag,Compute_point_cartesian_coordinate_tag));

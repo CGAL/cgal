@@ -1,0 +1,35 @@
+
+/// \defgroup PkgSurface_mesh Surface Mesh Reference
+
+/*!
+\addtogroup PkgSurface_mesh
+\cgalPkgDescriptionBegin{Surface Mesh,PkgSurfaceMeshSummary}
+\cgalPkgPicture{Surface_mesh_teaser.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Mario Botsch, Daniel Sieger, Philipp Moeller, and Andreas Fabri}
+\cgalPkgDesc{The surface mesh class provided by this package is an implementation
+ of the halfedge data structure allowing to represent polyhedral surfaces. It is
+an alternative to the packages \ref PkgHDSSummary and \ref PkgPolyhedronSummary.
+The main differences are that it is indexed based and not pointer based,
+and that the mechanism for adding information to vertices, halfedges, edges,
+and faces is much simpler and can be used at runtime and not at compile time.}
+\cgalPkgManuals{Chapter_3D_Surface_mesh,PkgSurface_mesh}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.6}
+\cgalPkgBib{cgal:bsmf-sm}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+
+\cgalClassifedRefPages
+
+
+
+## Classes ##
+
+- `CGAL::Surface_mesh<P>`
+                
+*/
+

@@ -1,0 +1,98 @@
+#!/bin/zsh
+
+zmodload zsh/stat
+
+dir=`dirname "$0"`
+PATH=$dir:$PATH
+
+if [ -z "`git --version`" ]; then
+    echo 'This script needs git!' >&2
+    exit 1
+fi
+
+git=git
+if hub --version 2> /dev/null > /dev/null; then
+    case "$(hub --version)" in
+	*hub\ version*) git=hub;;
+    esac
+fi
+
+if ! ${git} diff --exit-code > /dev/null || ! ${git} diff --staged --exit-code  > /dev/null ; then
+    echo 'Your working directory contains local modifications!' >&2
+    exit 1
+fi
+
+cd "`${git} rev-parse --show-toplevel`"
+
+if [ -n "`${git} ls-files --other --exclude-standard --exclude=build\*`" ]; then
+    echo 'You have untracked files!' >&2
+    exit 1
+fi
+
+branch=$1
+# if ! ${git} rev-parse "$branch" > /dev/null 2>&1; then
+#     echo "\"$branch\" is not a valid branch!" >&2
+#     exit 1
+#fi
+
+trap 'echo "(aborting the merge now)" && ${git} merge --abort' EXIT
+
+echo ".. Test merging of the branch \"$branch\"..."
+${git} merge --no-ff --no-commit "$branch" && ${git} status && ${git} diff --staged --summary
+
+if true; then # REMOVE
+echo '.. Testing permissions...'
+detect_wrong_permissions || exit 1
+
+echo '.. Testing licenses...'
+detect_packages_licenses || exit 1
+if ! ${git} diff --exit-code > /dev/null; then
+    echo '=> There are modifications in licenses:'
+    ${git} status --porcelain
+    exit 1
+fi
+
+
+fi # REMOVE
+
+if [ -d build ] && \
+   [ -f build/CMakeCache.txt ] && \
+   [ "$(grep -c -iE 'WITH_(demos|examples|tests):BOOL=(ON|TRUE|1)'  build/CMakeCache.txt)" -eq "3" ]; then
+    echo '.. Testing CMake configuration...'
+    cmake_output=$(cmake build 2>&1)
+    cmake_exit_code=$?
+    if [ "$cmake_exit_code" -ne 0 ]; then
+	echo 'CMake error:'
+	printf '%s\n' "${cmake_output}"
+	exit 1
+    else
+	echo OK
+    fi
+else
+    echo '.. Skip the CMake test (please configure a build/ CMake binary directory,'
+    echo 'with -DWITH_tests:BOOL=TRUE  -DWITH_examples:BOOL=TRUE  -DWITH_demos:BOOL=TRUE)'
+fi
+
+echo '.. List of new files (please check that it is the expected list:'
+new_files=( ${(f)"$(${git} status --porcelain | grep -E '^A')"} )
+if [ ${#new_files[@]} -gt 0 ]; then
+    string=${(F)new_files}
+    echo $string
+else
+    echo 'No new files.'
+fi
+
+current_rev=$(${git} rev-parse HEAD)
+trap 'echo "(aborting the merge now)" && ${git} reset --quiet --hard ${current_rev}' EXIT
+
+echo '.. Dummy merge commit...'
+conflicts=( ${(f)"$(${git} status --porcelain | awk '/^[^ ][^ ]/ {print $2}')"} )
+if [ ${#conflicts[@]} -gt 0 ]; then ${git} add $conflicts || exit 1; fi
+${git} commit -m 'dummy merge commit' || exit 1
+
+echo '.. Size of the gzipped bundle'
+trap 'echo "(aborting the merge now)" && rm bundle.gz && ${git} reset --quiet --hard ${current_rev}' EXIT
+${git} bundle create bundle ${current_rev}..HEAD > /dev/null 2>&1 && gzip bundle || exit 1
+size=$(zstat +size bundle.gz)
+echo "=> $size"
+exit 0

@@ -32,7 +32,7 @@
 #include <functional>
 #include <iterator>
 #include <boost/iterator/transform_iterator.hpp>
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 
 namespace CGAL {
 

@@ -19,6 +19,7 @@
 //
 // Author(s)     : Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
+#define TEST_CARTESIAN 1
 #define KERNEL CGAL::Cartesian< FT > 
 #define LAZY_KERNEL CGAL::Cartesian< LFT > 
 

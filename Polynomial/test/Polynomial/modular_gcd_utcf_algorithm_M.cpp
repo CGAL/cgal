@@ -22,7 +22,7 @@
 // Revision      : $Revision$
 // Revision_date : $Date$ 
 //
-// Author(s)     : Dominik Hülse <dominik.huelse@gmx.de>
+// Author(s)     : Dominik HÃ¼lse <dominik.huelse@gmx.de>
 //                 Michael Hemmer <hemmer@mpi-inf.mpg.de>
 //
 // ============================================================================

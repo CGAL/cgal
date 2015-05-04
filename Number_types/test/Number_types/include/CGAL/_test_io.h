@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 // 
-// Author: Luis Peñaranda <luis.penaranda@gmx.com>
+// Author: Luis PeÃ±aranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_TEST_IO_H
 #define CGAL_TEST_IO_H

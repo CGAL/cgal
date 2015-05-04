@@ -45,7 +45,7 @@ public:
 /// @{
 
 /*!
-Index type. 
+%Index type. 
 */ 
 typedef Tr::Vertex::Index Index; 
 
@@ -60,12 +60,12 @@ Subdomain index type.
 typedef Tr::Cell::Subdomain_index Subdomain_index; 
 
 /*!
-`Corner_index` type. 
+ Corner index type. 
 */ 
 typedef CornerIndex Corner_index; 
 
 /*!
-`Curve_segment_index` type. 
+Curve segment index type. 
 */ 
 typedef CurveSegmentIndex Curve_segment_index; 
 
@@ -79,6 +79,21 @@ Outputs the mesh to `os`
 in medit format. 
 */ 
 void output_to_medit(std::ofstream& os); 
+
+/**
+ * Outputs the outer boundary of the entire domain with facets oriented outward.
+ */
+std::ostream& output_boundary_to_off(std::ostream& out) const;
+
+/**
+ * Outputs the outer boundary of the selected subdomain with facets oriented outward.
+ */
+std::ostream& output_boundary_to_off(std::ostream& out, Subdomain_index subdomain) const;
+
+/**
+ * Outputs the surface facets with a consistent orientation at the interface of two subdomains.
+ */
+std::ostream& output_facets_in_complex_to_off(std::ostream& out) const;
 
 /// @}
 

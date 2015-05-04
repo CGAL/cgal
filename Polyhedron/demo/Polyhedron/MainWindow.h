@@ -148,6 +148,7 @@ protected slots:
 
   void filterOperations();
 
+  void on_actionRecenterScene_triggered();
 protected:
   void loadPlugins();
   bool initPlugin(QObject*);

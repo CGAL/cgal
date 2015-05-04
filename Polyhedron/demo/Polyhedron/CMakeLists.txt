@@ -9,6 +9,13 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
+# Compatibility with CMake 3.0
+if(POLICY CMP0042)
+  # Do not enable the use of MACOSX_RPATH
+  # http://www.cmake.org/cmake/help/v3.0/policy/CMP0042.html
+  cmake_policy(SET CMP0042 OLD)
+endif()
+
 #option(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL "In the Polyhedron demo, enable " OFF)
 #mark_as_advanced(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
 
@@ -49,6 +56,10 @@ if( POLYHEDRON_QTSCRIPT_DEBUGGER)
 endif()
 find_package(Qt4)
 
+# Find Glew (optional), for splatting
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/GlSplat/cmake)
+find_package(GLEW)
+
 # Find OpenGL
 find_package(OpenGL)
 
@@ -59,16 +70,17 @@ if(QT4_FOUND)
   find_package(QGLViewer )
 endif(QT4_FOUND)
 
+if(GLEW_FOUND)
+  include_directories ( ${GLEW_INCLUDE_DIR} )
+  add_definitions(-DCGAL_GLEW_ENABLED)
+else(GLEW_FOUND)
+  message(STATUS "NOTICE: GLEW library is not found. Splat rendering will not be available.")
+endif(GLEW_FOUND)
 
-
-# Eigen is required by default
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
-else()
-  message(STATUS "NOTICE: parametrization, poisson reconstruction and curvatures estimation plugins require Eigen 3.1 (or greater) and will not be available.")
-endif()
-
+endif(EIGEN3_FOUND)
 
 if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
@@ -172,12 +184,19 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # special
   target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)
 
+  if(GLEW_FOUND)
+    qt4_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
+    add_library(gl_splat SHARED
+      GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
+    target_link_libraries(gl_splat ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES})
+  endif(GLEW_FOUND)
+  
   add_item(scene_combinatorial_map_item Scene_combinatorial_map_item.cpp Scene_combinatorial_map_item.moc)
   # special
   target_link_libraries(scene_combinatorial_map_item scene_polyhedron_item)
 
   add_item(scene_polylines_item Scene_polylines_item.cpp Scene_polylines_item.moc)
-  
+
   add_item(scene_polyhedron_item_decorator Scene_polyhedron_item_decorator.cpp Scene_polyhedron_item_decorator.moc)
   target_link_libraries(scene_polyhedron_item_decorator scene_polyhedron_item)
   
@@ -199,6 +218,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_nef_rendering.cpp)
   target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item)
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp Scene_points_with_normal_item.moc)
+  if(GLEW_FOUND)
+    target_link_libraries( scene_points_with_normal_item gl_splat ${GLEW_LIBRARIES} )
+    target_link_libraries( demo_framework gl_splat ${GLEW_LIBRARIES} )
+  endif(GLEW_FOUND)
 
   foreach( lib 
       demo_framework
@@ -243,6 +266,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries( Polyhedron_3 demo_framework )
   target_link_libraries( Polyhedron_3 point_dialog )
 
+  if(GLEW_FOUND)
+    target_link_libraries( Polyhedron_3 gl_splat ${GLEW_LIBRARIES} )
+  endif(GLEW_FOUND)
+
   # Link with CGAL
   target_link_libraries( Polyhedron_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
@@ -274,7 +301,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     polyhedron_demo_plugin(mesh_3_plugin Polyhedron_demo_mesh_3_plugin 
       Polyhedron_demo_mesh_3_plugin_cgal_code.cpp Scene_c3t3_item.moc
       ${meshingUI_FILES})
-    target_link_libraries(mesh_3_plugin scene_polyhedron_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+    target_link_libraries(mesh_3_plugin scene_polyhedron_item scene_polygon_soup_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
   else( Boost_VERSION GREATER 103400 )
     message(STATUS "warning: the plugin mesh_3_plugin requires Boost>=1.34.1 and will not be compiled.")
   endif( Boost_VERSION GREATER 103400 )
@@ -298,7 +325,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(gocad_plugin scene_polyhedron_item)
 
   polyhedron_demo_plugin(stl_plugin Polyhedron_demo_stl_plugin)
-  target_link_libraries(stl_plugin scene_polyhedron_item)
+  target_link_libraries(stl_plugin scene_polyhedron_item scene_polygon_soup_item)
 
   polyhedron_demo_plugin(xyz_plugin Polyhedron_demo_xyz_plugin)
   target_link_libraries(xyz_plugin scene_points_with_normal_item)
@@ -328,23 +355,17 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(pca_plugin scene_polyhedron_item scene_basic_objects)
 
   if(EIGEN3_FOUND)
+    qt4_wrap_ui( scale_spaceUI_FILES Polyhedron_demo_scale_space_reconstruction_plugin.ui)
+    polyhedron_demo_plugin(scale_space_reconstruction_plugin Polyhedron_demo_scale_space_reconstruction_plugin ${scale_spaceUI_FILES})
+    target_link_libraries(scale_space_reconstruction_plugin scene_polygon_soup_item scene_polyhedron_item scene_points_with_normal_item)
+
     polyhedron_demo_plugin(parameterization_plugin Polyhedron_demo_parameterization_plugin)
     target_link_libraries(parameterization_plugin scene_polyhedron_item scene_textured_polyhedron_item )
-  endif()
-  
-  if(EIGEN3_FOUND)
+
     qt4_wrap_ui( poissonUI_FILES Polyhedron_demo_poisson_plugin.ui)
     polyhedron_demo_plugin(poisson_plugin Polyhedron_demo_poisson_plugin Polyhedron_demo_poisson_plugin_impl.cpp ${poissonUI_FILES})
     target_link_libraries(poisson_plugin scene_polyhedron_item scene_points_with_normal_item)
-  endif()
-  
-  
-  # Link with BLAS and LAPACK only (optional), for Jet Fitting
-  if (NOT EIGEN3_FOUND AND LAPACK_FOUND)
-    include( ${LAPACK_USE_FILE} )
-  endif()
-  
-  if(EIGEN3_FOUND OR LAPACK_FOUND)
+
     qt4_wrap_ui( normal_estimationUI_FILES Polyhedron_demo_normal_estimation_plugin.ui)
     polyhedron_demo_plugin(normal_estimation_plugin Polyhedron_demo_normal_estimation_plugin ${normal_estimationUI_FILES})
     target_link_libraries(normal_estimation_plugin scene_points_with_normal_item)
@@ -357,10 +378,15 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
     polyhedron_demo_plugin(jet_fitting_plugin Polyhedron_demo_jet_fitting_plugin)
     target_link_libraries(jet_fitting_plugin scene_polyhedron_item scene_polylines_item)
-    
-  else(EIGEN3_FOUND OR LAPACK_FOUND)
-    message(STATUS "NOTICE: Normal estimation and smoothing plugins require Eigen 3.1 (or greater) or LAPACK libraries and will not be available.")
-  endif(EIGEN3_FOUND OR LAPACK_FOUND)
+  else(EIGEN3_FOUND)
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Parameterization plugin will not be available.")
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Poisson reconstruction plugin will not be available.")
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Normal estimation plugin will not be available.")
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Smoothing plugin will not be available.")
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Average spacing plugin will not be available.")
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Jet fitting plugin will not be available.")
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Scale space reconstruction plugin will not be available.")
+  endif(EIGEN3_FOUND)
 
   polyhedron_demo_plugin(self_intersection_plugin Polyhedron_demo_self_intersection_plugin)
   target_link_libraries(self_intersection_plugin scene_polyhedron_item)
@@ -368,8 +394,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(polyhedron_stitching_plugin Polyhedron_demo_polyhedron_stitching_plugin)
   target_link_libraries(polyhedron_stitching_plugin scene_polyhedron_item scene_polylines_item)
 
-  polyhedron_demo_plugin(join_polyhedra_plugin Polyhedron_demo_join_polyhedra_plugin)
-  target_link_libraries(join_polyhedra_plugin scene_polyhedron_item)
+  polyhedron_demo_plugin(join_and_split_polyhedra_plugin Polyhedron_demo_join_and_split_polyhedra_plugin)
+  target_link_libraries(join_and_split_polyhedra_plugin scene_polyhedron_item)
 
   polyhedron_demo_plugin(subdivision_methods_plugin Polyhedron_demo_subdivision_methods_plugin)
   target_link_libraries(subdivision_methods_plugin scene_polyhedron_item)
@@ -445,6 +471,14 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     scene_polylines_item
     NAMESPACE Polyhedron_
     APPEND FILE polyhedron_demo_targets.cmake)
+
+  if(GLEW_FOUND)
+    export(
+      TARGETS
+      gl_splat
+      NAMESPACE Polyhedron_
+      APPEND FILE polyhedron_demo_targets.cmake)
+  endif(GLEW_FOUND)
 
   configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)
 

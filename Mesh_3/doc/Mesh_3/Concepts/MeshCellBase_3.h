@@ -4,7 +4,8 @@
 
 The concept `MeshCellBase_3` describes the requirements 
 for the `Cell` type of the triangulation 
-used in the 3D mesh generation process. The type `MeshCellBase_3` refines the concept `RegularTriangulationCellBase_3`. 
+used in the 3D mesh generation process. The type `MeshCellBase_3` refines the concept `RegularTriangulationCellBase_3`
+and must be copy constructible. 
 The concept `MeshCellBase_3` 
 includes a way to store and retrieve 
 if a given cell of the triangulation 
@@ -29,8 +30,17 @@ of a surface facet, the center of its biggest Delaunay surface ball.
 The optimizers also need this concept to provide read-write access to two `Cell_handle`
 called 'intrusive'.
 
+For parallel algorithms, the functions related to facet 
+access/modification must be concurrency-safe when several calls are
+made in parallel on different facets of the cell (e.g. calling 
+set_facet_visited(0, true), set_facet_visited(2, true) 
+and is_facet_visited(1) in parallel must be safe)
 
-\cgalRefines `RegularTriangulationCellBase_3` 
+Moreover, the parallel algorithms require an erase counter in 
+each cell (see below).
+
+\cgalRefines `RegularTriangulationCellBase_3`
+\cgalRefines `CopyConstructible`
 
 \cgalHasModel `CGAL::Compact_mesh_cell_base_3<Gt,MD,Tds>`
 \cgalHasModel `CGAL::Mesh_cell_base_3<Gt,MD,Cb>`
@@ -68,7 +78,7 @@ typedef unspecified_type Surface_patch_index;;
  of the input complex on which a possible future Steiner vertex lies.
  Must match the type `MeshDomain_3::Index`.
 */
-typedef unspecified_type Index;;
+typedef unspecified_type Index;
 
 /// @} 
 
@@ -104,7 +114,7 @@ sets `Surface_patch_index` of facet `i` to `index`.
 void set_surface_patch_index(int i, Surface_patch_index index); 
 
 /*!
-Returns `true` iff `facet(i)` has been visited. 
+Returns `true` iff `facet(i)` has been visited.
 */ 
 bool is_facet_visited (int i); 
 
@@ -124,7 +134,7 @@ Returns a const reference to the surface center of `facet(i)`.
 const Point& get_facet_surface_center(int i); 
 
 /*!
-Sets point `p` as the surface center of `facet(i)`. 
+Sets point `p` as the surface center of `facet(i)`.
 */ 
 void set_facet_surface_center (int i, Point p); 
 
@@ -145,6 +155,20 @@ invalidate this cache value.
 */
 void invalidate_circumcenter();
 
+/// Get the erase counter. 
+/// Only required by the parallel algorithms.
+/// See `CGAL::Compact_container` for more details.
+unsigned int erase_counter() const;
+
+/// Sets the erase counter. 
+/// Only required by the parallel algorithms.
+/// See `CGAL::Compact_container` for more details.
+void set_erase_counter(unsigned int c);
+
+/// Increments the erase counter.
+/// Only required by the parallel algorithms. 
+/// See `CGAL::Compact_container` for more details.
+void increment_erase_counter();
 /// @}
 
 /*! \name Internal 

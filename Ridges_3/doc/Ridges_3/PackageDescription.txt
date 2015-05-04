@@ -12,7 +12,7 @@
 \cgalPkgDescriptionBegin{Approximation of Ridges and Umbilics on Triangulated Surface Meshes,PkgRidges_3Summary}
 \cgalPkgPicture{RidgesMechPartDetail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Marc Pouget and Fr&eacute;d&eacute;ric Cazals}
+\cgalPkgAuthors{Marc Pouget and Frédéric Cazals}
 \cgalPkgDesc{Global features related to curvature extrema encode important informations used in segmentation, registration, matching and surface analysis. Given pointwise estimations of local differential quantities, this package allows the approximation of differential features on a triangulated surface mesh. Such curvature related features are curves: ridges or crests, and points: umbilics.}
 \cgalPkgManuals{Chapter_Approximation_of_Ridges_and_Umbilics_on_Triangulated_Surface_Meshes,PkgRidges_3}
 \cgalPkgSummaryEnd

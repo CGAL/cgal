@@ -153,7 +153,7 @@ In order to build the \cgal libraries, you need a \cpp compiler.
 |\sc{Gnu} `g++` 3.4 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} | Linux / MacOS X |
 |          | \sc{MS} Windows 95/98/2000/XP/NT4 | 
 | \sc{Intel} `C++` 11.0 or later\cgalFootnote{<A HREF="http://software.intel.com/en-us/intel-compilers/">`http://software.intel.com/en-us/intel-compilers/`</A>} | Linux  |
-|\sc{MS} Visual `C++` 9.0, 10.0, 11.0 (\sc{Visual Studio} 2008, 2010 and 2012)\cgalFootnote{<A HREF="http://msdn.microsoft.com/en-us/vstudio/">`http://msdn.microsoft.com/en-us/vstudio/`</A>} | \sc{MS} Windows 95/98/2000/XP/NT4/Vista/7/8 |
+|\sc{MS} Visual `C++` 10.0, 11.0, 12.0 (\sc{Visual Studio} 2010, 2012, and 2013)\cgalFootnote{<A HREF="http://msdn.microsoft.com/en-us/vstudio/">`http://msdn.microsoft.com/en-us/vstudio/`</A>} | \sc{MS} Windows 95/98/2000/XP/NT4/Vista/7/8 |
 
 
 \section secconfigwithcmake Configuring CGAL with CMake 
@@ -347,7 +347,7 @@ installed as binaries.
 
 \cgal requires the \sc{Boost} libraries. In particular the header files
 and the threading library (`Boost.Thread` and
-`Boost.System` binaries). Version 1.39 (or higher) are needed.
+`Boost.System` binaries). Version 1.48 (or higher) are needed.
 
 On Windows, as auto-linking is used, you also need the binaries of
 `Boost.Serialization` and `Boost.DateTime`, but the
@@ -703,7 +703,7 @@ cmake -DWITH_examples=OFF -DWITH_demos=OFF -DCMAKE_BUILD_TYPE=Release
 -- Build type: Release
 -- USING CXXFLAGS = ' -frounding-math -O3 -DNDEBUG'
 -- USING LDFLAGS = ' '
--- External libraries supported: GMP;GMPXX;MPFR;zlib;OpenGL;LEDA;MPFI;RS;RS3;OpenNL;TAUCS;EIGEN3;BLAS;LAPACK;QGLViewer;ESBTL;NTL
+-- External libraries supported: GMP;GMPXX;MPFR;zlib;OpenGL;LEDA;MPFI;RS;RS3;OpenNL;EIGEN3;BLAS;LAPACK;QGLViewer;ESBTL;NTL
 -- Preconfiguring library: GMP ...
 -- GMP has been preconfigured:
 -- CGAL_UseGMP-file: 
@@ -724,13 +724,13 @@ cmake -DWITH_examples=OFF -DWITH_demos=OFF -DCMAKE_BUILD_TYPE=Release
 -- MPFR libraries: /usr/lib/libmpfr.so
 -- MPFR definitions: 
 -- USING MPFR_VERSION = '3.0.0'
--- Boost version: 1.39.0
+-- Boost version: 1.48.0
 -- Found the following Boost libraries:
 -- thread
--- Boost include: /usr/include/boost_1_39_0/include/boost-1_39
+-- Boost include: /usr/include/boost_1_48_0/include/boost-1_48
 -- Boost libraries: /usr/lib/libboost_thread-mt.so;pthread
 -- Boost definitions: 
--- USING BOOST_VERSION = '1.39.0'
+-- USING BOOST_VERSION = '1.48.0'
 == Detect external libraries (DONE) ==
 
 == Write compiler_config.h ==
@@ -1374,10 +1374,13 @@ environment variable is sufficient.
 \subsection installation_tbb TBB Library
 
 If \sc{Tbb} is not automatically found, the user must set the `TBBROOT`
-environment variable. On Windows, `$TBBROOT\bin\tbbvars.bat <arch> <vs>` must be run 
-(running `tbbvars.bat` without args shows the available parameter values). On other 
-platforms, the environment variable `TBB_ARCH_PLATFORM=<arch>/<kernel>` must be set: 
-`<arch>` is `ia32` or `intel64` and `<linux_kernel_or_gcc_version>` is what is used in `$TBBROOT/lib/<arch>`.
+environment variable. The environment variable `TBB_ARCH_PLATFORM=<arch>/<compiler>` must be set. 
+`<arch>` is `ia32` or `intel64`. `<compiler>` describes the Linux kernel, gcc version or Visual Studio version
+used. It should be set to what is used in `$TBBROOT/lib/<arch>`.
+
+The folder `TBBROOT/bin/<arch>/<compiler>` should be added to the `PATH` variable.
+
+Note that the variables in the table below are begin used.
 
 | Variable             | Description           | Type        |
 | :-                   | :-                    | :-             |

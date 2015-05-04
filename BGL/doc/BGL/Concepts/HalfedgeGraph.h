@@ -22,6 +22,7 @@ iterators and circulators for these halfedge cycles.
 A model of `HalfedgeGraph` must have the interior property `vertex_point` attached to its vertices.
 
 \cgalHasModel `CGAL::Polyhedron_3`
+\cgalHasModel `CGAL::Surface_mesh`
 
 \cgalHeading{Notations}
 

@@ -44,20 +44,20 @@ exemple :
          -txt image acquise sur SIGNA 1.5T au CHRU de Caen
          donnees brutes sans traitement  -endtxt
 	
-- la première ligne comporte les dimensions de l'image, respectivement, le nombre de colonnes, de lignes, de coupes et de temps; ces deux, trois ou quatre entiers doivent être strictement positifs et rester inférieurs à 4096.
+- la premiÃ¨re ligne comporte les dimensions de l'image, respectivement, le nombre de colonnes, de lignes, de coupes et de temps; ces deux, trois ou quatre entiers doivent Ãªtre strictement positifs et rester infÃ©rieurs Ã  4096.
 
 - les lignes suivantes comportent des champs indiques par des mots clefs:
 			
    -type typespecifier
 
-   U8 entier non signé codé sur 8 bit (unsigned char) 
-   S8  entier signé codé sur 8 bit (signed char)
-   U16  entier non signé codé sur 16 bit (unsigned short)
-   S16  entier signé codé sur 16 bit (signed short)	
-   U32  entier non signé codé sur 32 bit (unsigned int)
-   S32  entier signé codé sur 32 bit (signed int)
-   FLOAT  flottant simple précision (float)
-   DOUBLE  flottant double précision (double)
+   U8 entier non signÃ© codÃ© sur 8 bit (unsigned char) 
+   S8  entier signÃ© codÃ© sur 8 bit (signed char)
+   U16  entier non signÃ© codÃ© sur 16 bit (unsigned short)
+   S16  entier signÃ© codÃ© sur 16 bit (signed short)	
+   U32  entier non signÃ© codÃ© sur 32 bit (unsigned int)
+   S32  entier signÃ© codÃ© sur 32 bit (signed int)
+   FLOAT  flottant simple prÃ©cision (float)
+   DOUBLE  flottant double prÃ©cision (double)
 			
    -dx double  (taille du voxel en x)
    -dy double  (taille du voxel en y)
@@ -66,7 +66,7 @@ exemple :
    -dt double  (taille du voxel en t)
                (taille donnee en secondes)
 
-   (spécification d'un sous-volume)
+   (spÃ©cification d'un sous-volume)
    -x1 entier  	
    -x2 entier  	
    -y1 entier  

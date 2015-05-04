@@ -84,7 +84,7 @@ inline bool
 do_intersect(const typename K::Iso_rectangle_2 &irect1,
              const typename K::Iso_rectangle_2 &irect2,
              const K&) {
-  return intersection(irect1, irect2);
+  return bool(intersection(irect1, irect2));
 }
 
 } // namespace internal

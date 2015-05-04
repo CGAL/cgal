@@ -26,6 +26,7 @@
 
 #include <CGAL/boost/graph/graph_concepts.h>
 
+
 typedef OpenMesh::PolyMesh_ArrayKernelT<> Sm;
 typedef boost::graph_traits< Sm >         Traits;
 typedef Traits::edge_descriptor           edge_descriptor;
@@ -63,7 +64,6 @@ void concept_check_polyhedron() {
   boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, face_descriptor,     CGAL::face_index_t> >();
   boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, halfedge_descriptor, CGAL::halfedge_index_t> >();
   //  boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, vertex_descriptor,   CGAL::vertex_is_border_t> >();
-  boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, halfedge_descriptor, CGAL::halfedge_is_border_t> >();
   // null
   boost::graph_traits<Sm>::null_vertex();
   boost::graph_traits<Sm>::null_face();

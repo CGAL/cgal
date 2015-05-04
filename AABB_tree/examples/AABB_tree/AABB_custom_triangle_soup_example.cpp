@@ -3,7 +3,7 @@
 // triangles (a triangle soup) stored into an array of points.
 
 #include <iostream>
-#include <list>
+#include <vector>
 #include <boost/iterator.hpp>
 
 #include <CGAL/Simple_cartesian.h>

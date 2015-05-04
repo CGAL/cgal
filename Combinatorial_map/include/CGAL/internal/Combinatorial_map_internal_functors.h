@@ -264,6 +264,67 @@ struct Test_is_valid_attribute_functor
   }
 };
 // ****************************************************************************
+/// Functor used to correct invalid attributes in an i-cell
+template<typename CMap>
+struct Correct_invalid_attributes_functor
+{
+  template <unsigned int i>
+  static void run(CMap* amap,
+                  typename CMap::Dart_handle adart,
+                  std::vector<int>* marks)
+  {
+    // std::cout << "Correct_invalid_attributes_functor for " << i << "-cell" << std::endl;
+    CGAL_static_assertion_msg(CMap::Helper::template
+                              Dimension_index<i>::value>=0,
+                              "Correct_invalid_attributes_functor<i> but "
+                              " i-attributes are disabled");
+
+    int amark = (*marks)[i];
+    typename CMap::template Attribute_handle<i>::type
+        a=amap->template attribute<i>(adart);
+
+    // dart already test, or without i-attribute
+    if ( amap->is_marked(adart, amark) ) return;
+    if ( a==amap->null_handle) { amap->mark(adart, amark); return; }
+
+    // We search if all the darts of the i-cell has the same i-attrib, and we count
+    // the number of darts of the i-cell.
+    unsigned int nb=0;
+    bool found_dart = false;
+
+    for ( CGAL::CMap_dart_iterator_basic_of_cell<CMap,i>
+            it(*amap, adart, amark); it.cont(); ++it, ++nb )
+    {
+      if ( a!=amap->template attribute<i>(it) )
+      {
+        // If two different i-attributes, we could call on_split ?
+        amap->template set_dart_attribute<i>(it, a);
+      }
+      if (it==amap->template dart_of_attribute<i>(a))
+      {
+        found_dart = true;
+      }
+      amap->mark(it, amark);
+    }
+
+    if (!found_dart)
+    {
+      // the current i-attrib does not belong to the i-cell
+      // so we affect it to the first dart of the i-cell
+      amap->template set_dart_of_attribute<i>(a,adart);
+    }
+
+    // If the i-cell has less darts than the ref counter of the i-attribute,
+    // the i-attribute is shared by different cells => we duplicate it.
+    if ( nb!=amap->template get_attribute<i>(a).get_nb_refs() )
+    {
+      typename CMap::template Attribute_handle<i>::type
+        a2=amap->template create_attribute<i>(amap->template get_attribute<i>(a));
+      amap->template set_attribute<i>(adart, a2);
+    }
+  }
+};
+// ****************************************************************************
 /// Functor for counting i-cell
 template<typename CMap>
 struct Count_cell_functor

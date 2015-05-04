@@ -86,8 +86,8 @@ namespace internal {
       }
       else // generic case
       {
-        FT l1 = (FT)(0.5 * ( -1*std::sqrt(p) + c + a));
-        FT l2 = (FT)(0.5 * (    std::sqrt(p) + c + a));
+        FT l1 = (FT)(0.5 * ( -1*CGAL::sqrt(p) + c + a));
+        FT l2 = (FT)(0.5 * (    CGAL::sqrt(p) + c + a));
 
         // all eigen values of a symmetric positive
         // definite matrix must be real and positive
@@ -101,15 +101,15 @@ namespace internal {
         {
           eigen_values.first  = l1;
           eigen_values.second = l2;
-          eigen_vectors.first  = Vector((FT)1.0, (FT)(-(std::sqrt(p)-c+a) / (2*b)));
-          eigen_vectors.second = Vector((FT)1.0, (FT)( (std::sqrt(p)+c-a) / (2*b)));
+          eigen_vectors.first  = Vector((FT)1.0, (FT)(-(CGAL::sqrt(p)-c+a) / (2*b)));
+          eigen_vectors.second = Vector((FT)1.0, (FT)( (CGAL::sqrt(p)+c-a) / (2*b)));
         }
         else
         {
           eigen_values.first  = l2;
           eigen_values.second = l1;
-          eigen_vectors.first  = Vector((FT)1.0, (FT)( (std::sqrt(p)+c-a) / (2*b)));
-          eigen_vectors.second = Vector((FT)1.0, (FT)(-(std::sqrt(p)-c+a) / (2*b)));
+          eigen_vectors.first  = Vector((FT)1.0, (FT)( (CGAL::sqrt(p)+c-a) / (2*b)));
+          eigen_vectors.second = Vector((FT)1.0, (FT)(-(CGAL::sqrt(p)-c+a) / (2*b)));
         }
       } // end generic case
     } // end non-degenerate case

@@ -176,6 +176,7 @@ MainWindow::MainWindow()
   this->setupOptionsMenu();
   this->addAboutDemo(":/cgal/help/about_Delaunay_triangulation_2.html");
   this->addAboutCGAL();
+  this->setupExportSVG(actionExport_SVG, graphicsView);
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),

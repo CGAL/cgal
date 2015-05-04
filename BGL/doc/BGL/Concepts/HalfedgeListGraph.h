@@ -7,6 +7,7 @@ and adds the requirements for traversal of all halfedges in the graph.
 
 \cgalRefines `HalfedgeGraph`
 \cgalHasModel `CGAL::Polyhedron_3`
+\cgalHasModel `CGAL::Surface_mesh`
 
 \cgalHeading{Notations}
 
@@ -25,10 +26,10 @@ Type                 | Description
 
 \cgalHeading{Valid Expressions}
 
-Expression                            | Returns                                              | Description  
-------------------------------------- | ---------------------------------------------------- | -----------
-`num_halfedges(g)`                    | `halfedges_size_type`                                | An upper bound of the number of halfedges of the graph.
-`halfedges(g)`                        | `std::pair<halfedge_iterator,halfedge_iterator>`     | An iterator range over the halfedges of the graph.
+Expression                            | Returns                                   | Description  
+------------------------------------- | ------------------------------------------| -----------
+`num_halfedges(g)`                    | `halfedges_size_type`                     | An upper bound of the number of halfedges of the graph.
+`halfedges(g)`                        | `std::pair<halfedge_iterator,halfedge_iterator>` | An iterator range over the halfedges of the graph.
 
 \attention `num_halfedges()` may return a number larger than `std::distance(halfedges(g).first,halfedges(g).second)`.
 This is the case for implementations only marking halfedges deleted in the halfedge container.

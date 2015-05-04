@@ -337,6 +337,7 @@ remove_center_vertex_test()
  assert(CGAL::internal::exact_num_vertices(f.m) == nv-1);
  assert(CGAL::internal::exact_num_faces(f.m) == (nf-deg)+1);
  assert(CGAL::internal::exact_num_halfedges(f.m) == nh-(2*deg));
+
 }
 
 template <typename T> 
@@ -352,7 +353,7 @@ satisfies_link_condition()
 {
   Surface_fixture_7<T> f;
 
-  assert(CGAL::Euler::safisfies_link_condition(*edges(f.m).first,f.m));
+  assert(CGAL::Euler::satisfies_link_condition(*edges(f.m).first,f.m));
 }
 
 
@@ -381,6 +382,7 @@ test_Euler_operations()
 int main()
 {
   test_Euler_operations<Polyhedron>();
+  test_Euler_operations<SM>();
   std::cerr << "done\n";
   return 0;
 }

@@ -28,6 +28,9 @@
 
 #ifndef CGAL_DELAUNAY_D_H
 #define CGAL_DELAUNAY_D_H
+#define CGAL_DEPRECATED_HEADER "<CGAL/Delaunay_d.h>"
+#define CGAL_REPLACEMENT_HEADER "the Triangulation package (see http://doc.cgal.org/latest/Triangulation)"
+#include <CGAL/internal/deprecation_warning.h>
 
 /*{\Manpage {Delaunay_d}{R,Lifted_R}{Delaunay Triangulations}{DT}}*/
 /*{\Mdefinition 

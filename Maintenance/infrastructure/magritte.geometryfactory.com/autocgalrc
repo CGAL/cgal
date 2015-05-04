@@ -38,3 +38,6 @@ UPLOAD_RESULT_DESTINATION="cgaltest@cgaltest.geometryfactory.com:incoming"
 
 EIGEN3_DIR=/Users/cgaltester/eigen-hg-git
 export EIGEN3_DIR
+
+ULIMIT_OPTIONS="-v 5000000 -c 0 -t 3600"
+export ULIMIT_OPTIONS

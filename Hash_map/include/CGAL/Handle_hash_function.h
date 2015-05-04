@@ -31,13 +31,28 @@
 
 namespace CGAL {
 
+//mechanism to abuse Handle_hash_function which is the default
+//template parameter of Unique_hash_map
+namespace internal{
+  namespace handle {
+    template <class H>
+    struct Hash_functor{
+      std::size_t
+      operator()(const H& h)
+      {
+        return std::size_t(&*h) /
+          sizeof( typename std::iterator_traits<H>::value_type);
+      }
+    };
+  }
+}
+
 struct Handle_hash_function {
     typedef std::size_t result_type;
     template <class H> 
-    std::size_t operator() (const H& h) const { 
-        return std::size_t(&*h) / 
-            sizeof( typename std::iterator_traits<H>::value_type);
-    } 
+    std::size_t operator() (const H& h) const {
+      return ::CGAL::internal::handle::Hash_functor<H>()(h);
+    }
 };
 
 } //namespace CGAL

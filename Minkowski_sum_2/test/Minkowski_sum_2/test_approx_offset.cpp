@@ -1,7 +1,7 @@
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_rational.h>
 
 // leda_rational, or Gmpq, or Quotient<MP_float>
-typedef CGAL::Arithmetic_kernel::Rational         Rational;
+typedef CGAL::Exact_rational         Rational;
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>

@@ -14,6 +14,6 @@ The package proposes currently an interface with CGAL Polyhedron_3 data structur
 
 Since parameterizing meshes require efficient representation of sparse matrices
 and efficient iterative or direct linear solvers, we provide links to standard
-libraries (TAUCS) and propose a separate package devoted to OpenNL
+libraries (Eigen3) and propose a separate package devoted to OpenNL
 sparse linear solver (Levy).
 

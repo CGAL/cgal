@@ -29,8 +29,8 @@ int main() {
   std::cout << "Enter output file name containing data points: \n" ;
   std::cin >> filename_out_data_points;
 
-  ifstream in;
-  ofstream out_query, out_data;
+  std::ifstream in;
+  std::ofstream out_query, out_data;
 
   int data_point_number, query_point_number;
 
@@ -52,7 +52,7 @@ int main() {
   std::cout << "data point number = " << data_point_number << std::endl;
   std::cout << "query point number = " << query_point_number << std::endl;
 
-  int query_point[point_number];
+  std::vector<int> query_point(point_number);
 
 
   for (int ii = 0; ii < point_number; ii++) query_point[ii]=0;
@@ -68,11 +68,11 @@ int main() {
   
 
  for (int i = 0; i < point_number; i++) {
-	double p[N];
+	std::vector<double> p(N);
         for (int j = 0; j < N; j++) {
           in >> p[j]; 
         } 	
-        Point_d Pnt(N,p,p+N);
+        Point_d Pnt(N,p.begin(),p.end());
         all_points.push_back(Pnt);
   }; 
 

@@ -495,6 +495,8 @@ template < class I, class P > struct Filter_iterator;
 
 template < class I, class P >
 bool operator==(const Filter_iterator<I,P>&, const Filter_iterator<I,P>&);
+template < class I, class P >
+bool operator<(const Filter_iterator<I,P>&, const Filter_iterator<I,P>&);
 
 template < class I, class P >
 struct Filter_iterator {
@@ -552,15 +554,17 @@ public:
     --(*this);
     return tmp;
   }
-
+  
   reference operator*() const { return *c_;  }
   pointer operator->() const  { return &*c_; }
   const Predicate& predicate() const { return p_; }
   Iterator base() const { return c_; }
 
+  Iterator end() const { return e_; }
   bool is_end() const { return (c_ == e_); }
 
   friend bool operator== <>(const Self&, const Self&);
+  friend bool operator< <>(const Self&, const Self&);
 };
 
 template < class I, class P >
@@ -580,6 +584,14 @@ bool operator==(const Filter_iterator<I,P>& it1,
 {
   CGAL_precondition(it1.e_ == it2.e_);
   return it1.base() == it2.base();
+}
+
+template < class I, class P >
+inline
+bool operator<(const Filter_iterator<I,P>& it1,
+                const Filter_iterator<I,P>& it2)
+{
+  return it1.base() < it2.base();
 }
 
 template < class I, class P >

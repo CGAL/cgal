@@ -3,7 +3,7 @@
  *
  * Copyright 2008-2009  Marius Muja (mariusm@cs.ubc.ca). All rights reserved.
  * Copyright 2008-2009  David G. Lowe (lowe@cs.ubc.ca). All rights reserved.
- * Copyright 2011-2013  Jose Luis Blanco (joseluisblancoc@gmail.com).
+ * Copyright 2011-2014  Jose Luis Blanco (joseluisblancoc@gmail.com).
  *   All rights reserved.
  *
  * THE BSD LICENSE
@@ -33,6 +33,7 @@
 #ifndef  NANOFLANN_HPP_
 #define  NANOFLANN_HPP_
 
+#include <CGAL/Memory_sizer.h>
 #include <vector>
 #include <cassert>
 #include <algorithm>
@@ -56,7 +57,7 @@ namespace nanoflann
   *  @{ */
 
   	/** Library version: 0xMmP (M=Major,m=minor,P=path) */
-	#define NANOFLANN_VERSION 0x114
+	#define NANOFLANN_VERSION 0x118
 
 	/** @addtogroup result_sets_grp Result set classes
 	  *  @{ */
@@ -150,7 +151,7 @@ namespace nanoflann
 		inline void addPoint(DistanceType dist, IndexType index)
 		{
 			if (dist<radius)
-				m_indices_dists.push_back(std::pair<IndexType,DistanceType>(index,dist));
+				m_indices_dists.push_back(std::make_pair(index,dist));
 		}
 
 		inline DistanceType worstDist() const { return radius; }
@@ -282,9 +283,9 @@ namespace nanoflann
 		}
 
 		template <typename U, typename V>
-		inline DistanceType accum_dist(const U a, const V b, int dim) const
+		inline DistanceType accum_dist(const U a, const V b, int ) const
 		{
-			return (a-b)*(a-b);
+			return nanoflann::abs(a-b);
 		}
 	};
 
@@ -331,7 +332,7 @@ namespace nanoflann
 		}
 
 		template <typename U, typename V>
-		inline DistanceType accum_dist(const U a, const V b, int dim) const
+		inline DistanceType accum_dist(const U a, const V b, int ) const
 		{
 			return (a-b)*(a-b);
 		}
@@ -357,7 +358,7 @@ namespace nanoflann
 		}
 
 		template <typename U, typename V>
-		inline DistanceType accum_dist(const U a, const V b, int dim) const
+		inline DistanceType accum_dist(const U a, const V b, int ) const
 		{
 			return (a-b)*(a-b);
 		}
@@ -409,7 +410,7 @@ namespace nanoflann
 	{
 		/** Note: The first argument (checks_IGNORED_) is ignored, but kept for compatibility with the FLANN interface */
 		SearchParams(int checks_IGNORED_ = 32, float eps_ = 0, bool sorted_ = true ) :
-			eps(eps_), sorted(sorted_) {}
+			checks(checks_IGNORED_), eps(eps_), sorted(sorted_) {}
 
 		int   checks;  //!< Ignored parameter (Kept for compatibility with the FLANN interface).
 		float eps;  //!< search for eps-approximate neighbours (default: 0)
@@ -467,6 +468,13 @@ namespace nanoflann
 		void*   loc;      /* Current location in block to next allocate memory. */
 		size_t  blocksize;
 
+		void internal_init()
+		{
+			remaining = 0;
+			base = NULL;
+			usedMemory = 0;
+			wastedMemory = 0;
+		}
 
 	public:
 		size_t  usedMemory;
@@ -475,26 +483,26 @@ namespace nanoflann
 		/**
 		    Default constructor. Initializes a new pool.
 		 */
-		PooledAllocator(const size_t blocksize = BLOCKSIZE)
-		{
-			this->blocksize = blocksize;
-			remaining = 0;
-			base = NULL;
-
-			usedMemory = 0;
-			wastedMemory = 0;
+		PooledAllocator(const size_t blocksize_ = BLOCKSIZE) : blocksize(blocksize_) {
+			internal_init();
 		}
 
 		/**
 		 * Destructor. Frees all the memory allocated in this pool.
 		 */
-		~PooledAllocator()
+		~PooledAllocator() {
+			free_all();
+		}
+
+		/** Frees all allocated memory chunks */
+		void free_all()
 		{
 			while (base != NULL) {
 				void *prev = *((void**) base); /* Get pointer to prev block. */
 				::free(base);
 				base = prev;
 			}
+			internal_init();
 		}
 
 		/**
@@ -563,6 +571,128 @@ namespace nanoflann
 	};
 	/** @} */
 
+	/** @addtogroup nanoflann_metaprog_grp Auxiliary metaprogramming stuff
+	  * @{ */
+
+	// ----------------  CArray -------------------------
+	/** A STL container (as wrapper) for arrays of constant size defined at compile time (class imported from the MRPT project)
+	 * This code is an adapted version from Boost, modifed for its integration
+	 *	within MRPT (JLBC, Dec/2009) (Renamed array -> CArray to avoid possible potential conflicts).
+	 * See
+	 *      http://www.josuttis.com/cppcode
+	 * for details and the latest version.
+	 * See
+	 *      http://www.boost.org/libs/array for Documentation.
+	 * for documentation.
+	 *
+	 * (C) Copyright Nicolai M. Josuttis 2001.
+	 * Permission to copy, use, modify, sell and distribute this software
+	 * is granted provided this copyright notice appears in all copies.
+	 * This software is provided "as is" without express or implied
+	 * warranty, and with no claim as to its suitability for any purpose.
+	 *
+	 * 29 Jan 2004 - minor fixes (Nico Josuttis)
+	 * 04 Dec 2003 - update to synch with library TR1 (Alisdair Meredith)
+	 * 23 Aug 2002 - fix for Non-MSVC compilers combined with MSVC libraries.
+	 * 05 Aug 2001 - minor update (Nico Josuttis)
+	 * 20 Jan 2001 - STLport fix (Beman Dawes)
+	 * 29 Sep 2000 - Initial Revision (Nico Josuttis)
+	 *
+	 * Jan 30, 2004
+	 */
+    template <typename T, std::size_t N>
+    class CArray {
+      public:
+        T elems[N];    // fixed-size array of elements of type T
+
+      public:
+        // type definitions
+        typedef T              value_type;
+        typedef T*             iterator;
+        typedef const T*       const_iterator;
+        typedef T&             reference;
+        typedef const T&       const_reference;
+        typedef std::size_t    size_type;
+        typedef std::ptrdiff_t difference_type;
+
+        // iterator support
+        inline iterator begin() { return elems; }
+        inline const_iterator begin() const { return elems; }
+        inline iterator end() { return elems+N; }
+        inline const_iterator end() const { return elems+N; }
+
+        // reverse iterator support
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION) && !defined(BOOST_MSVC_STD_ITERATOR) && !defined(BOOST_NO_STD_ITERATOR_TRAITS)
+        typedef std::reverse_iterator<iterator> reverse_iterator;
+        typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+#elif defined(_MSC_VER) && (_MSC_VER == 1300) && defined(BOOST_DINKUMWARE_STDLIB) && (BOOST_DINKUMWARE_STDLIB == 310)
+        // workaround for broken reverse_iterator in VC7
+        typedef std::reverse_iterator<std::_Ptrit<value_type, difference_type, iterator,
+                                      reference, iterator, reference> > reverse_iterator;
+        typedef std::reverse_iterator<std::_Ptrit<value_type, difference_type, const_iterator,
+                                      const_reference, iterator, reference> > const_reverse_iterator;
+#else
+        // workaround for broken reverse_iterator implementations
+        typedef std::reverse_iterator<iterator,T> reverse_iterator;
+        typedef std::reverse_iterator<const_iterator,T> const_reverse_iterator;
+#endif
+
+        reverse_iterator rbegin() { return reverse_iterator(end()); }
+        const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
+        reverse_iterator rend() { return reverse_iterator(begin()); }
+        const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
+        // operator[]
+        inline reference operator[](size_type i) { return elems[i]; }
+        inline const_reference operator[](size_type i) const { return elems[i]; }
+        // at() with range check
+        reference at(size_type i) { rangecheck(i); return elems[i]; }
+        const_reference at(size_type i) const { rangecheck(i); return elems[i]; }
+        // front() and back()
+        reference front() { return elems[0]; }
+        const_reference front() const { return elems[0]; }
+        reference back() { return elems[N-1]; }
+        const_reference back() const { return elems[N-1]; }
+        // size is constant
+        static inline size_type size() { return N; }
+        static bool empty() { return false; }
+        static size_type max_size() { return N; }
+        enum { static_size = N };
+		/** This method has no effects in this class, but raises an exception if the expected size does not match */
+		inline void resize(const size_t nElements) { if (nElements!=N) throw std::logic_error("Try to change the size of a CArray."); }
+        // swap (note: linear complexity in N, constant for given instantiation)
+        void swap (CArray<T,N>& y) { std::swap_ranges(begin(),end(),y.begin()); }
+        // direct access to data (read-only)
+        const T* data() const { return elems; }
+        // use array as C array (direct read/write access to data)
+        T* data() { return elems; }
+        // assignment with type conversion
+        template <typename T2> CArray<T,N>& operator= (const CArray<T2,N>& rhs) {
+            std::copy(rhs.begin(),rhs.end(), begin());
+            return *this;
+        }
+        // assign one value to all elements
+        inline void assign (const T& value) { for (size_t i=0;i<N;i++) elems[i]=value; }
+        // assign (compatible with std::vector's one) (by JLBC for MRPT)
+        void assign (const size_t n, const T& value) { assert(N==n); for (size_t i=0;i<N;i++) elems[i]=value; }
+      private:
+        // check range (may be private because it is static)
+        static void rangecheck (size_type i) { if (i >= size()) { throw std::out_of_range("CArray<>: index out of range"); } }
+    }; // end of CArray
+
+	/** Used to declare fixed-size arrays when DIM>0, dynamically-allocated vectors when DIM=-1.
+	  * Fixed size version for a generic DIM:
+	  */
+	template <int DIM, typename T>
+	struct array_or_vector_selector
+	{
+		typedef CArray<T,DIM> container_t;
+	};
+	/** Dynamic size version */
+	template <typename T>
+	struct array_or_vector_selector<-1,T> {
+		typedef std::vector<T> container_t;
+	};
+	/** @} */
 
 	/** @addtogroup kdtrees_grp KD-tree classes and adaptors
 	  * @{ */
@@ -603,6 +733,9 @@ namespace nanoflann
 	template <typename Distance, class DatasetAdaptor,int DIM = -1, typename IndexType = size_t>
 	class KDTreeSingleIndexAdaptor
 	{
+	private:
+		/** Hidden copy constructor, to disallow copying indices (Not implemented) */
+		KDTreeSingleIndexAdaptor(const KDTreeSingleIndexAdaptor<Distance,DatasetAdaptor,DIM,IndexType>&);
 	public:
 		typedef typename Distance::ElementType  ElementType;
 		typedef typename Distance::DistanceType DistanceType;
@@ -663,8 +796,11 @@ namespace nanoflann
 			ElementType low, high;
 		};
 
-		typedef std::vector<Interval> BoundingBox;
+		/** Define "BoundingBox" as a fixed-size or variable-size container depending on "DIM" */
+		typedef typename array_or_vector_selector<DIM,Interval>::container_t BoundingBox;
 
+		/** Define "distance_vector_t" as a fixed-size or variable-size container depending on "DIM" */
+		typedef typename array_or_vector_selector<DIM,DistanceType>::container_t distance_vector_t;
 
 		/** This record represents a branch point when finding neighbors in
 			the tree.  It contains a record of the minimum distance to the query
@@ -706,6 +842,8 @@ namespace nanoflann
 	public:
 
 		Distance distance;
+		int items,leafs,internals;
+		mutable int count_items,count_leafs,count_internals;
 
 		/**
 		 * KDTree constructor
@@ -719,6 +857,8 @@ namespace nanoflann
 		{
 			m_size = dataset.kdtree_get_point_count();
 			dim = dimensionality;
+			items=0,leafs=0,internals=0;
+			count_items=0,count_leafs=0,count_internals=0;
 			if (DIM>0) dim=DIM;
 			else {
 				if (params.dim>0) dim = params.dim;
@@ -736,14 +876,33 @@ namespace nanoflann
 		{
 		}
 
+		//memory usage
+		void print_mem_usage()
+		{
+			CGAL::Memory_sizer mem;
+			std::cerr<< "Virtual memory: "<<mem.virtual_size()<<"\n Resident memory: "<<mem.resident_size()<<std::endl;
+		}
+
+		/** Frees the previously-built index. Automatically called within buildIndex(). */
+		void freeIndex()
+		{
+			pool.free_all();
+			root_node=NULL;
+		}
+
 		/**
 		 * Builds the index
 		 */
 		void buildIndex()
 		{
 			init_vind();
+			freeIndex();
+			if(m_size == 0) return;
 			computeBoundingBox(root_bbox);
-			root_node = divideTree(0, m_size, root_bbox );   // construct the tree
+			root_node = divideTree(0, m_size, root_bbox );
+                        std::cerr << "Size of node : " << sizeof(*root_node) << std::endl;
+                        std::cerr << "Size of container : " << sizeof(pool) + (pool.usedMemory + pool.wastedMemory) << std::endl;
+                        std::cerr << "Size of vector pts : " << sizeof(vind) + sizeof(IndexType) * vind.size() << std::endl;// construct the tree
 		}
 
 		/**
@@ -789,10 +948,11 @@ namespace nanoflann
 		void findNeighbors(RESULTSET& result, const ElementType* vec, const SearchParams& searchParams) const
 		{
 			assert(vec);
-			if (!root_node) throw std::runtime_error("[nanoflann] findNeighbors() called before building the index.");
+			if (!root_node) throw std::runtime_error("[nanoflann] findNeighbors() called before building the index or no data points.");
 			float epsError = 1+searchParams.eps;
 
-			std::vector<DistanceType> dists( (DIM>0 ? DIM : dim) ,0);
+			distance_vector_t dists; // fixed or variable-sized container (depending on DIM)
+			dists.assign((DIM>0 ? DIM : dim) ,0); // Fill it with zeros.
 			DistanceType distsq = computeInitialDistances(vec, dists);
 			searchLevel(result, vec, root_node, distsq, dists, epsError);  // "count_leaf" parameter removed since was neither used nor returned to the user.
 		}
@@ -803,7 +963,7 @@ namespace nanoflann
 		 *  \sa radiusSearch, findNeighbors
 		 * \note nChecks_IGNORED is ignored but kept for compatibility with the original FLANN interface.
 		 */
-		inline void knnSearch(const ElementType *query_point, const size_t num_closest, IndexType *out_indices, DistanceType *out_distances_sq, const int nChecks_IGNORED = 10) const
+		inline void knnSearch(const ElementType *query_point, const size_t num_closest, IndexType *out_indices, DistanceType *out_distances_sq,const int nChecks_IGNORED = 10) const
 		{
 			nanoflann::KNNResultSet<DistanceType,IndexType> resultSet(num_closest);
 			resultSet.init(out_indices, out_distances_sq);
@@ -833,6 +993,18 @@ namespace nanoflann
 			return resultSet.size();
 		}
 
+		inline int depth(){
+			return depth(root_node);
+		}
+
+		inline int depth(NodePtr node){
+			if(node->child1 == NULL && node->child2 == NULL)
+				return 1;
+			else{
+				return std::max(depth(node->child1)+1,depth(node->child2)+1);
+			}
+		}
+
 		/** @} */
 
 	private:
@@ -841,11 +1013,8 @@ namespace nanoflann
 		{
 			// Create a permutable array of indices to the input vectors.
 			m_size = dataset.kdtree_get_point_count();
-			if (vind.size()!=m_size)
-			{
-				vind.resize(m_size);
-				for (size_t i = 0; i < m_size; i++) vind[i] = i;
-			}
+			if (vind.size()!=m_size) vind.resize(m_size);
+			for (size_t i = 0; i < m_size; i++) vind[i] = i;
 		}
 
 		/// Helper accessor to the dataset points:
@@ -888,11 +1057,12 @@ namespace nanoflann
 			}
 			else
 			{
+				const size_t N = dataset.kdtree_get_point_count();
+				if (!N) throw std::runtime_error("[nanoflann] computeBoundingBox() called but no data points found.");
 				for (int i=0; i<(DIM>0 ? DIM : dim); ++i) {
 					bbox[i].low =
-						bbox[i].high = dataset_get(0,i);
+					bbox[i].high = dataset_get(0,i);
 				}
-				const size_t N = dataset.kdtree_get_point_count();
 				for (size_t k=1; k<N; ++k) {
 					for (int i=0; i<(DIM>0 ? DIM : dim); ++i) {
 						if (dataset_get(k,i)<bbox[i].low) bbox[i].low = dataset_get(k,i);
@@ -918,6 +1088,9 @@ namespace nanoflann
 
 			/* If too few exemplars remain, then make this a leaf node. */
 			if ( (right-left) <= m_leaf_max_size) {
+				leafs++;
+				items+=right-left;
+
 				node->child1 = node->child2 = NULL;    /* Mark as leaf node. */
 				node->lr.left = left;
 				node->lr.right = right;
@@ -935,6 +1108,8 @@ namespace nanoflann
 				}
 			}
 			else {
+				internals++;
+
 				IndexType idx;
 				int cutfeat;
 				DistanceType cutval;
@@ -1098,7 +1273,7 @@ namespace nanoflann
 			lim2 = left;
 		}
 
-		DistanceType computeInitialDistances(const ElementType* vec, std::vector<DistanceType>& dists) const
+		DistanceType computeInitialDistances(const ElementType* vec, distance_vector_t& dists) const
 		{
 			assert(vec);
 			DistanceType distsq = 0.0;
@@ -1121,16 +1296,20 @@ namespace nanoflann
 		 * Performs an exact search in the tree starting from a node.
 		 * \tparam RESULTSET Should be any ResultSet<DistanceType>
 		 */
+
 		template <class RESULTSET>
 		void searchLevel(RESULTSET& result_set, const ElementType* vec, const NodePtr node, DistanceType mindistsq,
-						 std::vector<DistanceType>& dists, const float epsError) const
+						 distance_vector_t& dists, const float epsError) const
 		{
 			/* If this is a leaf node, then do check and return. */
 			if ((node->child1 == NULL)&&(node->child2 == NULL)) {
+                                
+				count_leafs++;
 				//count_leaf += (node->lr.right-node->lr.left);  // Removed since was neither used nor returned to the user.
 				DistanceType worst_dist = result_set.worstDist();
 				for (IndexType i=node->lr.left; i<node->lr.right; ++i) {
 					const IndexType index = vind[i];// reorder... : i;
+					count_items++;
 					DistanceType dist = distance(vec, index, (DIM>0 ? DIM : dim));
 					if (dist<worst_dist) {
 						result_set.addPoint(dist,vind[i]);
@@ -1138,7 +1317,7 @@ namespace nanoflann
 				}
 				return;
 			}
-
+			count_internals++;
 			/* Which child branch should be taken first? */
 			int idx = node->sub.divfeat;
 			ElementType val = vec[idx];
@@ -1225,7 +1404,7 @@ namespace nanoflann
 	template <class MatrixType, int DIM = -1, class Distance = nanoflann::metric_L2, typename IndexType = size_t>
 	struct KDTreeEigenMatrixAdaptor
 	{
-		typedef KDTreeEigenMatrixAdaptor<MatrixType,DIM,Distance> self_t;
+		typedef KDTreeEigenMatrixAdaptor<MatrixType,DIM,Distance,IndexType> self_t;
 		typedef typename MatrixType::Scalar              num_t;
 		typedef typename Distance::template traits<num_t,self_t>::distance_t metric_t;
 		typedef KDTreeSingleIndexAdaptor< metric_t,self_t,DIM,IndexType>  index_t;
@@ -1241,6 +1420,10 @@ namespace nanoflann
 			index = new index_t( dims, *this /* adaptor */, nanoflann::KDTreeSingleIndexAdaptorParams(leaf_max_size, dims ) );
 			index->buildIndex();
 		}
+	private:
+		/** Hidden copy constructor, to disallow copying this class (Not implemented) */
+		KDTreeEigenMatrixAdaptor(const self_t&);
+	public:
 
 		~KDTreeEigenMatrixAdaptor() {
 			delete index;

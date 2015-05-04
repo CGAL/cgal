@@ -45,11 +45,11 @@ namespace CGAL {
 /// \pre normals must be unit vectors
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
-///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
-/// @tparam NormalPMap is a model of `ReadablePropertyMap` with a value_type = Vector_3<Kernel>.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with  value type `Point_3<Kernel>`.
+///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
+/// @tparam NormalPMap is a model of `ReadablePropertyMap` with a value type  `Vector_3<Kernel>`.
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from PointPMap value_type.
+///        It can be omitted and deduced automatically from the value type of `PointPMap`.
 ///
 /// @return true on success.
 
@@ -158,10 +158,10 @@ write_off_points_and_normals(
 /// The function writes for each point a line with the x y z position.
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
-///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Point_3<Kernel>`.
+///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from PointPMap value_type.
+///        It can be omitted and deduced automatically from the value type of `PointPMap`.
 ///
 /// @return true on success.
 

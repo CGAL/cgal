@@ -25,7 +25,9 @@
 #ifndef CGAL_DEMO_MESH_3_MESH_FUNCTION_H
 #define CGAL_DEMO_MESH_3_MESH_FUNCTION_H
 
-#define CGAL_MESH_3_MESHER_STATUS_ACTIVATED 1
+//#define CGAL_MESH_3_MESHER_STATUS_ACTIVATED 1
+
+#include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 
 #include <QStringList>
 #include <QString>
@@ -37,7 +39,7 @@
 #include "C3t3_type.h"
 #include "Meshing_thread.h"
 #include <CGAL/make_mesh_3.h> // for C3t3_initializer
-
+#include <CGAL/use.h>
 
 struct Mesh_parameters
 {
@@ -112,7 +114,9 @@ private:
   Mesh_parameters p_;
   bool continue_;
   Mesher* mesher_;
+#ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   mutable typename Mesher::Mesher_status last_report_;
+#endif
 };
 
 
@@ -146,8 +150,13 @@ Mesh_function(C3t3& c3t3, Domain* domain, const Mesh_parameters& p)
 , p_(p)
 , continue_(true)
 , mesher_(NULL)
+#ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
 , last_report_(0,0,0)
+#endif
 {
+#ifdef CGAL_CONCURRENT_MESH_3
+  Concurrent_mesher_config::load_config_file(CONFIG_FILENAME, false);
+#endif
 }
 
 
@@ -191,12 +200,22 @@ launch()
 
   // Build mesher and launch refinement process
   mesher_ = new Mesher(c3t3_, *domain_, criteria);
-  mesher_->initialize();
+  mesher_->refine_mesh();
+  /*mesher_->initialize();
   
+#ifdef CGAL_MESH_3_PROFILING
+  WallClockTimer t;
+#endif
+
   while ( ! mesher_->is_algorithm_done() && continue_ )
   {
     mesher_->one_step();
   }
+
+#ifdef CGAL_MESH_3_PROFILING
+  std::cerr << "Full refinement time (without fix_c3t3): " << t.elapsed() << " seconds." << std::endl;
+#endif
+  */
   
   // Ensure c3t3 is ok (usefull if process has been stop by the user)
   mesher_->fix_c3t3();
@@ -226,6 +245,12 @@ QString
 Mesh_function<D_>::
 status(double time_period) const
 {
+  QString result;
+
+  CGAL_USE(time_period); // to avoid a warning when the macro
+                         // CGAL_MESH_3_MESHER_STATUS_ACTIVATED is not
+                         // defined
+#ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   // If mesher_ is not yet created, it means that either launch() has not
   // been called or that initial points have not been founded
   if ( NULL == mesher_ )
@@ -236,7 +261,7 @@ status(double time_period) const
   // Get status and return a string corresponding to it
   typename Mesher::Mesher_status s = mesher_->status();
   
-  QString result = QString("Vertices: %1 \n"
+  result = QString("Vertices: %1 \n"
                            "Vertices inserted last %2s: %3 \n\n"
                            "Bad facets: %4 \n"
                            "Bad cells: %5")
@@ -247,7 +272,7 @@ status(double time_period) const
     .arg(s.cells_queue);
   
   last_report_ = s;
-  
+#endif
   return result;
 }
 
