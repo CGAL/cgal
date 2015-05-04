@@ -64,6 +64,7 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program("connected_component_polyhedron.cpp")
 create_single_source_cgal_program("connected_component_surface_mesh.cpp")
+create_single_source_cgal_program("fairing_test.cpp")
 create_single_source_cgal_program("normals.cpp")
 create_single_source_cgal_program("orient_polygon_mesh_test.cpp" )
 create_single_source_cgal_program("orient_polygon_soup_test.cpp")
