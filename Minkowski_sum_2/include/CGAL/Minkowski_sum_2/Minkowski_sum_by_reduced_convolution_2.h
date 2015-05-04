@@ -86,13 +86,12 @@ public:
     CGAL_precondition(pgn2.orientation() == COUNTERCLOCKWISE);
 
     const Polygon_with_holes_2 pwh1(pgn1);
-    const Polygon_with_holes_2 pwh2(pgn2);
 
-    common_operator(pwh1, pwh2, outer_boundary, holes);
+    common_operator(pwh1, pgn2, outer_boundary, holes);
   }
 
   template <class OutputIterator>
-  void operator()(const Polygon_with_holes_2 &pgn1, const Polygon_with_holes_2 &pgn2,
+  void operator()(const Polygon_with_holes_2 &pgn1, const Polygon_2 &pgn2,
                   Polygon_2 &outer_boundary, OutputIterator holes) const
   {
     common_operator(pgn1, pgn2, outer_boundary, holes);
@@ -101,66 +100,46 @@ public:
 private:
 
   template <class OutputIterator>
-  void common_operator(const Polygon_with_holes_2 &pgn1, const Polygon_with_holes_2 &pgn2,
+  void common_operator(const Polygon_with_holes_2 &pgn1, const Polygon_2 &pgn2,
                   Polygon_2 &outer_boundary, OutputIterator holes) const
   {
-    // Initialize collision detector. It operates on pgn2 and on the inversed pgn1:
-    const Polygon_with_holes_2 inversed_pgn1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
-    AABB_collision_detector_2<Kernel, Container> collision_detector(pgn2, inversed_pgn1);
+    // Initialize collision detector. It operates on pgn1 and on the inversed pgn2:
+    Polygon_2 inversed_pgn2(CGAL::transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn2));
+    AABB_collision_detector_2<Kernel, Container> collision_detector(pgn1, inversed_pgn2);
 
-    // Compute the reduced convolution (see section 4.1 of Alon's master's thesis)
-    Segment_list reduced_convolution;
-    build_reduced_convolution(pgn1, pgn2, reduced_convolution);
-
-    // Insert the segments into an arrangement
-    Arrangement_history_2 arr;
-    insert(arr, reduced_convolution.begin(), reduced_convolution.end());
-
-    // Trace the outer loop and put it in 'outer_boundary'
-    get_outer_loop(arr, outer_boundary);
-
-    // Check for each face whether it is a hole in the M-sum. If it is, add it to 'holes'.
-    // See chapter 3 of of Alon's master's thesis.
-    for (Face_iterator face = arr.faces_begin(); face != arr.faces_end(); ++face)
+    // Compute the outer boundary and possible holes
     {
-      handle_face(arr, face, holes, collision_detector);
-    }
-  }
+      Segment_list segments;
+      build_reduced_convolution(pgn1.outer_boundary(), pgn2, segments);
+      // Insert the segments into an arrangement
+      Arrangement_history_2 arr;
+      insert(arr, segments.begin(), segments.end());
 
-  // Builds the reduced convolution for each pair of loop in the two
-  // polygons-with-holes.
-  void build_reduced_convolution(const Polygon_with_holes_2 &pgnwh1, const Polygon_with_holes_2 &pgnwh2,
-                                 Segment_list &reduced_convolution) const
-  {
-    for (int x = 0; x < 1+pgnwh1.number_of_holes(); x++)
-    {
-      for (int y = 0; y < 1+pgnwh2.number_of_holes(); y++)
+      // Trace the outer loop and put it in 'outer_boundary'
+      get_outer_loop(arr, outer_boundary);
+
+      // Check for each face whether it is a hole in the M-sum. If it is, add it to 'holes'.
+      // See chapter 3 of of Alon's master's thesis.
+      for (Face_iterator face = arr.faces_begin(); face != arr.faces_end(); ++face)
       {
+          handle_face(arr, face, holes, collision_detector);
+      }
+    }
 
-        if (x != 0 && y != 0)
-        {
-          continue;
-        }
+    // Compute each (possible) hole
+    Segment_list reduced_convolution;
+    for (typename Polygon_with_holes_2::Hole_const_iterator hole = pgn1.holes_begin(); hole != pgn1.holes_end(); ++hole)
+    {
+      Segment_list segments;
+      build_reduced_convolution(pgn2, *hole, segments);
+      Arrangement_history_2 arr;
+      insert(arr, segments.begin(), segments.end());
 
-        Polygon_2 pgn1, pgn2;
-
-        if (x == 0) {
-          pgn1 = pgnwh1.outer_boundary();
-        } else {
-          typename Polygon_with_holes_2::Hole_const_iterator it1 = pgnwh1.holes_begin();
-          for (int count = 0; count < x-1; count++) { it1++; }
-          pgn1 = *it1;
-        }
-
-        if (y == 0) {
-          pgn2 = pgnwh2.outer_boundary();
-        } else {
-          typename Polygon_with_holes_2::Hole_const_iterator it2 = pgnwh2.holes_begin();
-          for (int count = 0; count < y-1; count++) { it2++; }
-          pgn2 = *it2;
-        }
-
-        build_reduced_convolution(pgn1, pgn2, reduced_convolution);
+      // Check for each face whether it is a hole in the M-sum. If it is, add it to 'holes'.
+      // See chapter 3 of of Alon's master's thesis.
+      for (Face_iterator face = arr.faces_begin(); face != arr.faces_end(); ++face)
+      {
+        handle_face(arr, face, holes, collision_detector);
       }
     }
   }
@@ -340,8 +319,8 @@ private:
     }
     while (++circ != start);
 
-    // When the reversed polygon 1, translated by a point inside of this face,
-    // collides with polygon 2, this cannot be a hole
+    // When the reversed polygon 2, translated by a point inside of this face,
+    // collides with polygon 1, this cannot be a hole
     Point_2 inner_point = get_point_in_face(face);
     if (collision_detector.check_collision(inner_point))
     {
@@ -433,31 +412,6 @@ private:
     {
       return midpoint(v, min_q);
     }
-  }
-
-  template <class Transformation>
-  Polygon_with_holes_2 transform(const Transformation& t, const Polygon_with_holes_2 & p) const
-  {
-    Polygon_2 p1;
-    for(unsigned int i = 0; i< p.outer_boundary().size(); ++i)
-    {
-      p1.push_back(p.outer_boundary().vertex(i));
-    }
-
-    Polygon_with_holes_2 result(CGAL::transform(t, p1));
-
-    typename Polygon_with_holes_2::Hole_const_iterator it = p.holes_begin();
-    while(it != p.holes_end())
-    {
-      Polygon_2 p2;
-      for(unsigned int i = 0; i< (*it).size(); ++i)
-      {
-        p2.push_back((*it).vertex(i));
-      }
-      result.add_hole(CGAL::transform(t, p2));
-      ++it;
-    }
-    return result;
   }
 };
 

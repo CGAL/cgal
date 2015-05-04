@@ -26,8 +26,8 @@ public:
 
 public:
 
-  AABB_collision_detector_2(const Polygon_with_holes_2 &p, const Polygon_with_holes_2 &q)
-    : m_p(q), m_q(p)
+  AABB_collision_detector_2(const Polygon_with_holes_2 &p, const Polygon_2 &q)
+    : m_p(p), m_q(q)
   {
       m_stationary_tree.insert(p.outer_boundary().edges_begin(), p.outer_boundary().edges_end());
 
@@ -38,14 +38,7 @@ public:
         ++it;
       }
 
-      m_translating_tree.insert(q.outer_boundary().edges_begin(), q.outer_boundary().edges_end());
-
-      it = q.holes_begin();
-      while(it != q.holes_end())
-      {
-        m_translating_tree.insert(it->edges_begin(), it->edges_end());
-        ++it;
-      }
+      m_translating_tree.insert(q.edges_begin(), q.edges_end());
   }
 
   // Returns true iff the polygons' boundaries intersect or one polygon is
@@ -59,13 +52,13 @@ public:
 
     // If t_q is inside of P, or t_p is inside of Q, one polygon is completely
     // inside of the other.
-    Point_2 t_q = *m_q.outer_boundary().vertices_begin() + Vector_2(ORIGIN, t);
-    Point_2 t_p = *m_p.outer_boundary().vertices_begin() - Vector_2(ORIGIN, t);
+    Point_2 t_q = *m_q.vertices_begin() - Vector_2(ORIGIN, t);
+    Point_2 t_p = *m_p.outer_boundary().vertices_begin() + Vector_2(ORIGIN, t);
 
     // Use bounded_side_2() instead of on_bounded_side() because the latter
     // checks vor simplicity every time.
     return bounded_side_2(m_p.outer_boundary().vertices_begin(), m_p.outer_boundary().vertices_end(), t_q, m_p.outer_boundary().traits_member()) == ON_BOUNDED_SIDE
-        || bounded_side_2(m_q.outer_boundary().vertices_begin(), m_q.outer_boundary().vertices_end(), t_p, m_q.outer_boundary().traits_member()) == ON_BOUNDED_SIDE;
+        || bounded_side_2(m_q.vertices_begin(), m_q.vertices_end(), t_p, m_q.traits_member()) == ON_BOUNDED_SIDE;
   }
 
 private:
@@ -75,7 +68,7 @@ private:
   Tree_2 m_stationary_tree;
   Tree_2 m_translating_tree;
   const Polygon_with_holes_2 &m_p;
-  const Polygon_with_holes_2 &m_q;
+  const Polygon_2 &m_q;
 };
 
 } // namespace CGAL

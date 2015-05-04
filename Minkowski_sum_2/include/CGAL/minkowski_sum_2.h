@@ -92,7 +92,12 @@ minkowski_sum_reduced_convolution_2(const Polygon_with_holes_2<Kernel_, Containe
   Polygon_2<Kernel,Container>                               sum_bound;
   std::list<Polygon_2<Kernel,Container> >                   sum_holes;
 
-  mink_sum (filtered_pgn1, filtered_pgn2, sum_bound, std::back_inserter(sum_holes));
+  if (filtered_pgn1.number_of_holes() == 0) {
+    mink_sum (filtered_pgn2, filtered_pgn1.outer_boundary(), sum_bound, std::back_inserter(sum_holes));
+  } else {
+    // in this case, filtered_pgn2.number_of_holes() == 0
+    mink_sum (filtered_pgn1, filtered_pgn2.outer_boundary(), sum_bound, std::back_inserter(sum_holes));
+  }
 
   return (Polygon_with_holes_2<Kernel,Container> (sum_bound,
                                                   sum_holes.begin(),
