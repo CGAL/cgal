@@ -16,12 +16,14 @@
 // $Id$
 //
 // Author: Laurent Rineau
-
+#include <GL/glew.h>
 #ifndef CGAL_GL_CHECK_ERROR_H
 #define CGAL_GL_CHECK_ERROR_H
 
 #include <iostream>
 #include <CGAL/glu.h>
+#include <string>
+
 
 namespace CGAL {
 
@@ -39,6 +41,41 @@ inline bool check_gl_error(const char* filename, long line)
     return true;
   }
   return false;
+}
+
+inline bool gl_check_compilation(GLuint shader)
+{
+    GLint result;
+    glGetShaderiv(shader,GL_COMPILE_STATUS,&result);
+    if(result == GL_TRUE){
+        std::cout<<"Vertex compilation OK"<<std::endl;
+        return true;
+    } else {
+        int maxLength;
+        int length;
+        glGetShaderiv(shader,GL_INFO_LOG_LENGTH,&maxLength);
+        std::string log;
+        glGetShaderInfoLog(shader,maxLength,&length,&log[0]);
+        std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
+        return false;
+    }
+}
+inline bool gl_check_link(GLuint *program)
+{
+    GLint result;
+    glGetProgramiv(*program,GL_LINK_STATUS,&result);
+    if(result == GL_TRUE){
+        std::cout<<"Link OK"<<std::endl;
+        return true;
+    } else {
+        int maxLength;
+        int length;
+        glGetProgramiv(*program,GL_INFO_LOG_LENGTH,&maxLength);
+        std::string log;
+        glGetProgramInfoLog(*program,maxLength,&length,&log[0]);
+        std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
+        return false;
+    }
 }
 
 } // end namespace CGAL

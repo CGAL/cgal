@@ -1,7 +1,7 @@
 #ifndef SCENE_POLYHEDRON_ITEM_H
 #define SCENE_POLYHEDRON_ITEM_H
 
-//#include <GL/glew.h>
+#include <CGAL/check_gl_error.h>
 #include "Scene_polyhedron_item_config.h"
 #include "Scene_item.h" //<- modif ?
 #include "Polyhedron_type_fwd.h"

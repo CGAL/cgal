@@ -1,5 +1,6 @@
-#include <CGAL/AABB_intersections.h>
+
 #include "Scene_polyhedron_item.h"
+#include <CGAL/AABB_intersections.h>
 #include "Kernel_type.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
 
@@ -20,6 +21,7 @@
 #include <list>
 #include <queue>
 #include <iostream>
+
 
 typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
@@ -534,6 +536,7 @@ Scene_polyhedron_item::compile_shaders(void)
     qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
     qFunc.glCompileShader(fragment_shader);
 
+
     //creates the program, attaches and links the shaders
     GLuint program= qFunc.glCreateProgram();
     qFunc.glAttachShader(program, vertex_shader);
@@ -542,7 +545,7 @@ Scene_polyhedron_item::compile_shaders(void)
 
     //Clean-up
     qFunc.glDeleteShader(vertex_shader);
-
+    CGAL::gl_check_link(&program);
     rendering_program_facets = program;
 
     //For the edges
@@ -579,6 +582,7 @@ Scene_polyhedron_item::compile_shaders(void)
     //Clean-up
     qFunc.glDeleteShader(vertex_shader);
     qFunc.glDeleteShader(fragment_shader);
+    CGAL::gl_check_link(&program);
     rendering_program_lines = program;
 
 }
