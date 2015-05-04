@@ -20,15 +20,15 @@ public:
 
 /*! 
   The type of the 2D triangulation data structure describing the reconstructed surface.
-  The type `TDS_2::Vertex` is model of the concept `TriangulationDataStructure_2::Vertex` and has additionally the 
+  The type `Triangulation_data_structure_2::Vertex` is model of the concept `TriangulationDataStructure_2::Vertex` and has additionally the 
   method `vertex_3()` that returns a `Vertex_handle` to the associated 3D vertex.
-  The type `TDS_2::Face` is model of the concept `TriangulationDataStructure_2::Face` and  has additionally the
+  The type `Triangulation_data_structure_2::Face` is model of the concept `TriangulationDataStructure_2::Face` and  has additionally the
   method `facet()` that returns the associated `Facet`, and a method `bool is_on_surface()`
   for testing if a face is part of the reconstructed surface or a face incident to a boundary edge.  
   In case the surface has boundaries, the 2D surface has one vertex which is associated to the infinite
   vertex of the 3D triangulation.  
 */ 
-  typedef unspecified_type TDS_2; 
+  typedef unspecified_type Triangulation_data_structure_2; 
 
 
 /*! 
@@ -108,7 +108,7 @@ Advancing_front_surface_reconstruction(Dt& dt);
 /// @{
 
 /*! 
-runs the surface reconstruction function with the default parameters.
+runs the surface reconstruction function.
 
 \param radius_ratio_bound candidates incident to surface triangles which are not in the beta-wedge
        are discarded, if the ratio of their radius and the radius of the surface triangle is larger than `radius_ratio_bound`. 
@@ -122,8 +122,8 @@ runs the surface reconstruction function with the default parameters.
 /*! 
 returns the reconstructed surface.
 */ 
-const TDS_2& 
-tds_2(); 
+const Triangulation_data_structure_2& 
+triangulation_data_structure_2() const; 
 
 /*! 
 returns the underlying 3D Delaunay triangulation. 
@@ -165,16 +165,16 @@ bool
 has_on_surface(Facet f) const; 
 
 /*! 
-returns `true` if the facet f is on the surface.
+returns `true` if the facet `f2` is on the surface.
 */ 
 bool
-has_on_surface(TDS_2::Face_handle f2) const; 
+has_on_surface(Triangulation_data_structure_2::Face_handle f2) const; 
 
 /*! 
-returns `true` if the facet f is on the surface.
+returns `true` if the vertex `v2` is on the surface.
 */ 
 bool
-has_on_surface(TDS_2::Vertex_handle v2) const;
+has_on_surface(Triangulation_data_structure_2::Vertex_handle v2) const;
 /// @} 
 
 

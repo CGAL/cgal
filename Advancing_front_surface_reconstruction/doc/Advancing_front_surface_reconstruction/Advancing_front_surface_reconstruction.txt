@@ -210,14 +210,14 @@ corresponding facets of the underlying 3D Delaunay triangulation.
 
 The type of the 2D triangulation data structure describing the
 reconstructed surface is the nested type 
-\link Advancing_front_surface_reconstruction::TDS_2 `TDS_2`\endlink.  
+\link Advancing_front_surface_reconstruction::Triangulation_data_structure_2 `Advancing_front_surface_reconstruction::Triangulation_data_structure_2`\endlink.  
 
-The type `TDS_2::Vertex` is model of the
+The type `Advancing_front_surface_reconstruction::Triangulation_data_structure_2::Vertex` is model of the
 concept `TriangulationDataStructure_2::Vertex` and has additionally
 the method `vertex_3()` that returns an `Advancing_front_surface_reconstruction::Vertex_handle` to the
 associated 3D vertex.
 
- The type `TDS_2::Face` is model of the concept
+ The type `Advancing_front_surface_reconstruction::Triangulation_data_structure_2::Face` is model of the concept
 `TriangulationDataStructure_2::Face` and has additionally the method
 `facet()` that returns the associated `Advancing_front_surface_reconstruction::Facet`, 
 and a method `is_on_surface()` for testing if a face is part of the reconstructed

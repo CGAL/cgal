@@ -5,7 +5,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Advancing_front_surface_reconstruction<K> Reconstruction;
 typedef Reconstruction::Triangulation_3 Triangulation_3;
-typedef Reconstruction::TDS_2 TDS_2;
+typedef Reconstruction::Triangulation_data_structure_2 TDS_2;
 typedef K::Point_3 Point_3;
 
 int main()
