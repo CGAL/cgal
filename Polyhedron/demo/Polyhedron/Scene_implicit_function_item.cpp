@@ -194,11 +194,11 @@ void Scene_implicit_function_item::compile_shaders(void)
         "#version 300 es \n"
         " \n"
         "in highp vec3 fColors; \n"
-        "out highp vec3 color; \n"
+        "out highp vec4 color; \n"
         " \n"
         "void main(void) \n"
         "{ \n"
-        " color = fColors; \n"
+        " color = vec4(fColors, 1.0); \n"
         "} \n"
     };
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);

@@ -78,11 +78,11 @@ void Scene_polyhedron_transform_item::compile_shaders()
         " \n"
         "in highp vec3 fColors; \n"
 
-        "out highp vec3 color; \n"
+        "out highp vec4 color; \n"
         " \n"
         "void main(void) \n"
         "{ \n"
-        " color = fColors; \n"
+        " color = vec4(fColors, 1.0); \n"
         "} \n"
     };
 

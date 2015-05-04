@@ -195,12 +195,12 @@ Scene_polygon_soup_item::compile_shaders(void)
         " \n"
         "in highp vec3 fColors; \n"
 
-        "out highp vec3 color; \n"
+        "out highp vec4 color; \n"
         " \n"
         "void main(void) \n"
         "{ \n"
         "/* Lighting gestion */ \n"
-        " color = fColors; \n"
+        " color = vec4(fColors, 1.0); \n"
         "} \n"
     };
 

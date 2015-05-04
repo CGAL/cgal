@@ -461,11 +461,11 @@ void Scene_edit_polyhedron_item::compile_shaders(void)
         "precision mediump float; \n"
         "in vec3 fColors; \n"
 
-        "out vec3 color; \n"
+        "out vec4 color; \n"
         " \n"
         "void main(void) \n"
         "{ \n"
-        " color = fColors; \n"
+        " color = vec4(fColors, 1.0); \n"
         "} \n"
     };
 
