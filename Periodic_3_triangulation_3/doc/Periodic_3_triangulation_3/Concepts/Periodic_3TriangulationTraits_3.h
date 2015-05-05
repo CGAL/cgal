@@ -3,9 +3,10 @@
 \ingroup PkgPeriodic3Triangulation3Concepts
 \cgalConcept
 
+\cgalModifBegin
 The concept `Periodic_3TriangulationTraits_3` is the first template parameter of the classes
 `Periodic_3_triangulation_3`. It refines the concept 
-`TriangulationTraits_3` from the \cgal 3D Triangulations (cf. \ref PkgTriangulation3).
+`TriangulationTraits_3` from the \cgal 3D Triangulations.
 It redefines the geometric objects, predicates and constructions to 
 work with point-offset pairs. In most cases the offsets will be 
 (0,0,0) and the predicates from `TriangulationTraits_3`
@@ -24,6 +25,7 @@ requirements.
 \note The optional types must be provided in any case, however they
 can be replaced by dummy types if the respective functions are not
 used.
+\cgalModifEnd
 */
 class Periodic_3TriangulationTraits_3 {
 public:

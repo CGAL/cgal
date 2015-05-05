@@ -4,6 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgPeriodic3Triangulation3TraitsClasses
 
+\cgalModifBegin
 The class `Periodic_3_triangulation_traits_3` is designed as a default traits class for the
 class `Periodic_3_triangulation_3<Periodic_3TriangulationTraits_3,TriangulationDataStructure_3>`. 
 
@@ -17,6 +18,7 @@ filtered predicates. This holds implicitly for
 instantiation of `CGAL::Filtered_kernel`. 
 
 \cgalModels `Periodic_3TriangulationTraits_3`
+\cgalModifEnd
 */
 template< typename Traits, typename Periodic_3Offset_3 >
 class Periodic_3_triangulation_traits_3 : public Traits {
