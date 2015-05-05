@@ -13,16 +13,23 @@
 #include <boost/parameter.hpp>
 #include <boost/parameter/name.hpp>
 
+namespace CGAL
+{
 namespace parameters
 {
 // see <CGAL/config.h>
-CGAL_PRAGMA_DIAG_PUSH
+//CGAL_PRAGMA_DIAG_PUSH
 //ignore "unused variable" warning
-#if defined(__clang__) || (BOOST_GCC >= 40600)
-#  define CGAL_MESH_3_IGNORE_UNUSED_VARIABLES \
-    _Pragma("GCC diagnostic ignored \"-Wunused-variable\"")
-#else
-#  define CGAL_MESH_3_IGNORE_UNUSED_VARIABLES
+//#if defined(__clang__) || (BOOST_GCC >= 40600)
+//#  define CGAL_MESH_2_IGNORE_UNUSED_VARIABLES \
+//    _Pragma("GCC diagnostic ignored \"-Wunused-variable\"")
+//#else
+//#  define CGAL_MESH_2_IGNORE_UNUSED_VARIABLES
+//#endif
+
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable"
 #endif
 
 BOOST_PARAMETER_NAME( cdt )
@@ -34,13 +41,19 @@ BOOST_PARAMETER_NAME( (seeds_begin, tag) seeds_begin_)
 BOOST_PARAMETER_NAME( (seeds_end, tag) seeds_end_)
 BOOST_PARAMETER_NAME( (mark, tag) mark_)
 
-CGAL_PRAGMA_DIAG_POP	
-}//end namespace parameters
+//CGAL_PRAGMA_DIAG_POP
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
-using namespace parameters;
+}//end namespace parameters
+}//end namespace CGAL
+
 
 namespace CGAL
 {
+  using namespace parameters;
+
   BOOST_PARAMETER_FUNCTION(
   (Mesh_optimization_return_code),
   lloyd_optimize_mesh_2,

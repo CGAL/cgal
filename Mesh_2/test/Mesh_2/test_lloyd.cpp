@@ -17,7 +17,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epick;
 
-using namespace parameters;
+using namespace CGAL::parameters;
 
 template <typename K>
 struct Lloyd_tester
