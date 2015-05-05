@@ -307,7 +307,6 @@ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
                 Minkowski_sum_by_decomposition_2<DecompositionStrategy_,
                                                  Container_>::Traits_2& traits)
 {
-  typedef Kernel_                               Kernel;
   typedef Container_                            Container;
   typedef DecompositionStrategy_                Decomposition_strategy;
 

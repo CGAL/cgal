@@ -146,9 +146,9 @@ private:
                                  const Polygon_with_holes_2& pgnwh2,
                                  Segment_list& reduced_convolution) const
   {
-    for (int x = 0; x < 1+pgnwh1.number_of_holes(); ++x)
+    for (std::size_t x = 0; x < 1+pgnwh1.number_of_holes(); ++x)
     {
-      for (int y = 0; y < 1+pgnwh2.number_of_holes(); ++y)
+      for (std::size_t y = 0; y < 1+pgnwh2.number_of_holes(); ++y)
       {
         if ((x != 0) && (y != 0))
         {
@@ -163,16 +163,17 @@ private:
         else {
           typename Polygon_with_holes_2::Hole_const_iterator it1 =
             pgnwh1.holes_begin();
-          for (int count = 0; count < x-1; count++) { it1++; }
+          for (std::size_t count = 0; count < x-1; count++) { it1++; }
           pgn1 = *it1;
         }
 
         if (y == 0) {
           pgn2 = pgnwh2.outer_boundary();
-        } else {
+        }
+        else {
           typename Polygon_with_holes_2::Hole_const_iterator it2 =
             pgnwh2.holes_begin();
-          for (int count = 0; count < y-1; count++) { it2++; }
+          for (std::size_t count = 0; count < y-1; count++) { it2++; }
           pgn2 = *it2;
         }
 
@@ -189,8 +190,8 @@ private:
   void build_reduced_convolution(const Polygon_2& pgn1, const Polygon_2& pgn2,
                                  Segment_list& reduced_convolution) const
   {
-    unsigned int n1 = pgn1.size();
-    unsigned int n2 = pgn2.size();
+    std::size_t n1 = pgn1.size();
+    std::size_t n2 = pgn2.size();
 
     // Init the direcions of both polygons
     std::vector<Direction_2> p1_dirs = directions_of_polygon(pgn1);
@@ -290,9 +291,9 @@ private:
   std::vector<Direction_2> directions_of_polygon(const Polygon_2& p) const
   {
     std::vector<Direction_2> directions;
-    unsigned int n = p.size();
+    std::size_t n = p.size();
 
-    for (unsigned int i = 0; i < n-1; ++i)
+    for (std::size_t i = 0; i < n-1; ++i)
     {
       directions.push_back(f_direction(f_vector(p[i], p[i+1])));
     }
@@ -432,7 +433,7 @@ private:
       if (ear.has_on_bounded_side(q))
       {
         FT distance = squared_distance(q, v);
-        if (min_distance == -1 || distance < min_distance)
+        if ((min_distance == -1) || (distance < min_distance))
         {
           min_distance = distance;
           min_q = q;
@@ -457,7 +458,7 @@ private:
                                  const Polygon_with_holes_2& p) const
   {
     Polygon_2 p1;
-    for(unsigned int i = 0; i< p.outer_boundary().size(); ++i)
+    for (std::size_t i = 0; i< p.outer_boundary().size(); ++i)
     {
       p1.push_back(p.outer_boundary().vertex(i));
     }
@@ -468,7 +469,7 @@ private:
     while(it != p.holes_end())
     {
       Polygon_2 p2;
-      for(unsigned int i = 0; i< (*it).size(); ++i)
+      for (std::size_t i = 0; i< (*it).size(); ++i)
       {
         p2.push_back((*it).vertex(i));
       }

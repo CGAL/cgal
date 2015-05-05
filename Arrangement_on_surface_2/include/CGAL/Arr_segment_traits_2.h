@@ -1117,7 +1117,7 @@ public:
    */
   Bbox_2 bbox() const
   {
-    const Kernel& kernel = *this;
+    Kernel kernel;
     Segment_2 seg = kernel.construct_segment_2_object()(this->ps, this->pt);
     return (kernel.construct_bbox_2_object() (seg));
   }
