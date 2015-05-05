@@ -200,10 +200,10 @@ protected:
 	     \param point_map A `ReadablePropertyMap` used to access the input points.
 
 	     \param mass_map A `ReadablePropertyMap` used to access the input points' mass.
-             \param sample_size If `sample_size != 0`, the size of the random sample that replaces a priority queue.
-             \param use_flip If `true` the flipping procedure is used for the halfedge collapse.
+             \param sample_size If `sample_size != 0`, the size of the random sample replaces the exhaustive priority queue.
+             \param use_flip If `true` the edge flipping procedure is used to ensure that every edge can be made collapsible.
              \param relocation The number of point relocations that are performed between two edge collapses.
-             \param verbose controls how much console output is produced by the algorithm. The values are 0,1, or >1.
+             \param verbose controls how much console output is produced by the algorithm. The values are 0, 1, or > 1.
 
 	*/
 	template <class InputRange>
@@ -232,9 +232,12 @@ protected:
     /// \name Settting Parameters 
   /// @{
 	/*!
-          If `sample_size == 0`, the edge collapse is done using a priority queue.
-          \todo @@Pierre:  Tell what is a good value.
-          \param sample_size If `sample_size != 0`, the size of the random sample that replaces the priority queue.
+          If `sample_size == 0`, the simplification is performed using an exhaustive priority queue.
+          If `sample_size` is stricly positive the simplification is performed using a
+		  multiple choice approach, ie, a best-choice selection in a random sample of 
+		  edge collapse operators, of size `sample_size`. A typical value for the sample
+		  size is 15, but this value must be enlarged when targeting a very coarse simplification.
+          \param sample_size If `sample_size != 0`, the size of the random sample replaces the priority queue.
 	*/
   void set_random_sample_size(std::size_t sample_size) {
 		m_mchoice = mchoice;
