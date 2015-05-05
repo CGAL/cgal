@@ -65,7 +65,7 @@ I_polyhedron_cut_component( Poly&                          poly,
     
 template < class Poly, class Plane, class Traits>
 class I_Polyhedron_cut_plane_predicate {
-    const Plane&  plane;
+    const Plane&  p;
     const Traits& traits;
 public:
     typedef typename Poly::Vertex_const_handle Vertex_const_handle;
@@ -74,6 +74,9 @@ public:
     bool operator()( Vertex_const_handle v) const {
         return traits.has_on_negative_side_3_object()( plane, v->point());
     }
+	const Plane & plane() const {
+		return p;
+	}
 };
 
 template <class Kernel>
@@ -121,8 +124,12 @@ polyhedron_cut_plane_3( Poly& poly,
     CGAL_precondition( pred( h->vertex()));
     CGAL_precondition( ! pred( h->opposite()->vertex()));
     h = I_polyhedron_cut_component( poly, h, pred);
+	/** We don't need this part of the code anymore, since the vertex 
+	/** calculation is going to be done inside I_polyhedron_cut_component 
+	/** method */
+
     // Assign geometry
-    h->facet()->plane() = plane;
+    /*h->facet()->plane() = plane;
     Halfedge_handle start = h;
     do {
         h->vertex()->point() = 
@@ -130,7 +137,8 @@ polyhedron_cut_plane_3( Poly& poly,
                              h->next()->opposite()->facet()->plane(),
                              h->opposite()->facet()->plane());
         h = h->next();
-    } while ( h != start);
+    } while ( h != start);*/
+
     CGAL_postcondition( poly.is_valid());
     return h;
 }
