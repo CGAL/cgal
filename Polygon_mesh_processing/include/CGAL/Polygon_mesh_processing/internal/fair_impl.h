@@ -126,8 +126,33 @@ private:
     to_be_removed.insert(v_ymax);
     to_be_removed.insert(v_zmax);
 
+    //std::cout << ppmap[v_xmin] << std::endl;
+    //std::cout << ppmap[v_ymin] << std::endl;
+    //std::cout << ppmap[v_zmin] << std::endl;
+    //std::cout << ppmap[v_xmax] << std::endl;
+    //std::cout << ppmap[v_ymax] << std::endl;
+    //std::cout << ppmap[v_zmax] << std::endl;
+
     BOOST_FOREACH(vertex_descriptor v, to_be_removed)
       vertices.erase(v);
+  }
+
+  void remove_vertices(std::set<vertex_descriptor>& vertices
+    , const double& percent = 10/*percentage to be removed*/) const
+  {
+    CGAL_assertion(percent >= 0.1 && percent < 100.);
+    int freq = static_cast<int>(std::floor(0.01 * percent * vertices.size()));
+
+    int i = 1;
+    typename std::set<vertex_descriptor>::iterator vit;
+    for (vit = vertices.begin(); vit != vertices.end(); )
+    {
+      vertex_descriptor vd = *vit;
+      ++vit;
+      if (i % freq == 0)
+        vertices.erase(vd);
+      ++i;
+    }
   }
 
 public:
@@ -149,7 +174,8 @@ public:
     CGAL::Timer timer; timer.start();
 
     if (fair_all_mesh(vertices))
-      remove_extremal_vertices(interior_vertices);
+      remove_vertices(interior_vertices, 10/*percentage to be removed*/);
+      //remove_extremal_vertices(interior_vertices);
 
     const std::size_t nb_vertices = interior_vertices.size();
     Solver_vector X(nb_vertices), Bx(nb_vertices);
