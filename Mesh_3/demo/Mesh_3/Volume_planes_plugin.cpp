@@ -61,7 +61,7 @@ struct DoubleConverter {
 class PixelReader : public QObject
 {
 Q_OBJECT
-public slots:
+public Q_SLOTS:
   void update(const QPoint& p) {
     getPixel(p);
   }
@@ -83,9 +83,9 @@ private:
     glReadPixels(e.x(), vp[3] - e.y(), 1, 1, GL_RGB, GL_FLOAT, data);
 
     if(fc) {
-      emit x( (*fc)(data[0]) );
+      Q_EMIT x( (*fc)(data[0]) );
     } else if(ic) {
-      emit x( (*ic)(data[0]) );
+      Q_EMIT x( (*ic)(data[0]) );
     }
   }
 };
@@ -111,10 +111,10 @@ public:
       scene->itemChanged(id);
     }
 
-    emit realChange(this->value() / scale);
+    Q_EMIT realChange(this->value() / scale);
   }
 
-public slots:
+public Q_SLOTS:
   void updateValue() {
     float a, b, c;
     frame->getPosition(a, b, c);
@@ -177,7 +177,7 @@ public:
     return QList<QAction*>() << planeSwitch;
   }
 
-public slots:
+public Q_SLOTS:
   void selectPlanes() {
     std::vector< Scene_segmented_image_item* > seg_items;
     Scene_segmented_image_item* seg_img = NULL;

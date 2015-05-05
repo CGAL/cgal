@@ -67,15 +67,15 @@ public:
   // Logs
   QStringList parameters_log() const { return f_->parameters_log(); }
   
-public slots:
+public Q_SLOTS:
   // Stop
   void stop();
   
-private slots:
+private Q_SLOTS:
   // emit signal status report
   void emit_status();
   
-signals:
+Q_SIGNALS:
   // Emitted at the end of the process
   void done(Meshing_thread*);
   // Informs about status of meshing
