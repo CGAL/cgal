@@ -4,7 +4,12 @@ namespace CGAL {
 /*!
 \ingroup PkgAdvancingFrontSurfaceReconstruction
 
-The class `Advancing_front_surface_reconstruction` 
+The class `Advancing_front_surface_reconstruction` enables advanced users to provide the unstructured 
+point cloud in a 3D Delaunay triangulation. The reconstruction algorithm then marks vertices and faces
+in the triangulation as being on the 2D surface embedded in 3D space, and constructs a 2D triangulation
+data structure that describes the surface.  The vertices and facets of the 2D triangulation data structure 
+store handles to the vertices and faces of the 3D triangulation, which enables the user to explore the
+2D as well as 3D neighborhood of vertices and facets of the surface. 
 
 \tparam Dt must be a `Delaunay_triangulation_3` with
 `Advancing_front_surface_reconstruction_vertex_base_3` and `Advancing_front_surface_reconstruction_cell_base_3` blended into the vertex and cell type, and the geometric traits class must be the `Exact_predicates_inexact_constructions_kernel`.
@@ -97,7 +102,7 @@ typedef unspecified_type Vertex_on_boundary_range;
 /// @{
 
 /*! 
-Initializes from a 3D Delaunay triangulation of a point set. 
+Constructor for the unstructured point cloud given as 3D Delaunay triangulation. 
 */ 
 Advancing_front_surface_reconstruction(Dt& dt); 
 
