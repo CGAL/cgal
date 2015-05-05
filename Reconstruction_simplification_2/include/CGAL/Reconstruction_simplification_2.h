@@ -46,16 +46,32 @@ namespace CGAL {
 /*!
 \ingroup PkgReconstructionSimplification2Classes
 
-This class enables to reconstruct a 1-dimensional shape from a range of points with masses.
-The algorithm computes a triangulation, ....   and performs a simplification of the triangulation
-by performing edge contractions. The edges are either processed in the order imposed by 
-a priority queue, or in an order based on random sampling. As the priority queue guarantees
-a higher quality it is the default. The user can switch to the other method, for example
-for an initial simplification round, by calling `set_random_sample_size()`.
+This class provides a means to reconstruct a 1-dimensional shape from a set of 2D points with masses.
+The algorithm computes an initial 2D Delaunay triangulation from the input points, 
+and performs a simplification of the triangulation by performing half edge collapses, edge flips 
+and vertex relocations.
 
-\todo @@Pierre:  In the same way discuss the other parameters and run functions.
+The edges are either processed in the order imposed by an priority queue, or in an order based
+on random selection of edge collapse operators.
+As the exhaustive priority queue guarantees a higher quality it is the default.
+The user can switch to the other method, for example for an initial simplification round,
+by calling `set_random_sample_size()`.
 
-\todo `Gt` must at least be a model of `DelaunayTriangulationTraits_2`.  @@Pierre: If more functionalty is needed we should introduce a `ReconstructionSimplificationTraits_2`.
+By default edge flip operators are applied to ensure that every edge of the triangulation are
+candidate to be collapsed, while preserving a valid embedding of the triangulation.
+This option can be disabled by calling `set_use_flip(false)` to reduce the running times.
+
+By default the vertices are relocated after each half edge collapse.
+This option can be changed by setting the number of vertex relocations performed between
+two edge contraction operators.
+
+The simplification is performed by calling either `run_until(n)` or `run(steps)`. 
+The former simplifies the triangulation until n points remain, while the latter
+stops after `steps` edge collapse operators have been performed.
+Furthermore, we can relocate the vertices by calling `relocate_points()`.
+
+\todo `Gt` must at least be a model of `DelaunayTriangulationTraits_2`.
+@@Pierre: If more functionalty is needed we should introduce a `ReconstructionSimplificationTraits_2`.
 
 \tparam Gt a model of the concept `Kernel`.
 
@@ -244,7 +260,7 @@ protected:
 
 
 	/*!
-		The use_flip parameter determines whether the flipping procedure
+		The use_flip parameter determines whether the edge flipping procedure
 		is used for the half-edge collapse. 
 	 */
 	void set_use_flip(const bool use_flip) {
@@ -275,7 +291,7 @@ protected:
 
 
 	/*!
-		Sets the number of point relocations
+		Sets the number of vertex relocations
 		that are performed between two edge collapses.
 	*/
   void set_relocation(std::size_t relocation) {
@@ -292,7 +308,7 @@ protected:
 	/*!
           \todo @@Pierre: explain what relevance means 
 
-		\param relevance The relevance level.
+		\param relevance The relevance threshold.
 	 */
 	void set_relevance(const double relevance) {
 		m_ghost = relevance;
@@ -1356,9 +1372,9 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 
 		 /*!
 			Computes a shape, reconstructing the input, by performing `steps` many
-			edge contractions on the output simplex.
+			edge collapse operators on the output simplex.
 
-			\param steps The number of edge contractions performed by the algorithm.
+			\param steps The number of edge collapse operators performed by the algorithm.
 		  */
 		void run(const unsigned steps) {
 			double timer = clock();
