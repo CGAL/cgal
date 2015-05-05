@@ -7,6 +7,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/Hole_filling/Weights.h>
 #include <CGAL/Timer.h>
 #include <CGAL/trace.h>
+#include <iterator>
 
 namespace CGAL {
 
@@ -94,6 +95,41 @@ private:
     }
   }
 
+  template<class VertexRange>
+  bool fair_all_mesh(const VertexRange& vr) const
+  {
+    return std::distance(vr.begin(), vr.end())
+        == std::distance(vertices(pmesh).first, vertices(pmesh).second);
+  }
+
+  void remove_extremal_vertices(std::set<vertex_descriptor>& vertices) const
+  {
+    vertex_descriptor v_xmin, v_xmax, v_ymin, v_ymax, v_zmin, v_zmax;
+    v_xmin = v_xmax = v_ymin = v_ymax = v_zmin = v_zmax = *(vertices.begin());
+    BOOST_FOREACH(vertex_descriptor v, vertices)
+    {
+      Point_3 pv = ppmap[v];
+      if (pv.x() < ppmap[v_xmin].x()) v_xmin = v;
+      if (pv.y() < ppmap[v_ymin].y()) v_ymin = v;
+      if (pv.z() < ppmap[v_zmin].z()) v_zmin = v;
+      if (pv.x() > ppmap[v_xmax].x()) v_xmax = v;
+      if (pv.y() > ppmap[v_ymax].y()) v_ymax = v;
+      if (pv.z() > ppmap[v_zmax].z()) v_zmax = v;
+    }
+
+    //here we use a set to avoid removing twice the same vertex, which would crash
+    std::set<vertex_descriptor> to_be_removed;
+    to_be_removed.insert(v_xmin);
+    to_be_removed.insert(v_ymin);
+    to_be_removed.insert(v_zmin);
+    to_be_removed.insert(v_xmax);
+    to_be_removed.insert(v_ymax);
+    to_be_removed.insert(v_zmax);
+
+    BOOST_FOREACH(vertex_descriptor v, to_be_removed)
+      vertices.erase(v);
+  }
+
 public:
   template<class VertexRange>
   bool fair(const VertexRange& vertices
@@ -111,6 +147,9 @@ public:
     if(interior_vertices.empty()) { return true; }
 
     CGAL::Timer timer; timer.start();
+
+    if (fair_all_mesh(vertices))
+      remove_extremal_vertices(interior_vertices);
 
     const std::size_t nb_vertices = interior_vertices.size();
     Solver_vector X(nb_vertices), Bx(nb_vertices);
