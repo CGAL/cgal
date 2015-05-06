@@ -131,6 +131,18 @@ typename Kernel::Point_d construct_point(
   return k.construct_point_d_object()(5, &tab[0], &tab[5]);
 }
 
+// construct_point: dim 6
+template <typename Kernel>
+typename Kernel::Point_d construct_point(
+  const Kernel &k,
+  typename Kernel::FT x1, typename Kernel::FT x2, typename Kernel::FT x3,
+  typename Kernel::FT x4, typename Kernel::FT x5, typename Kernel::FT x6)
+{
+  typename Kernel::FT tab[6];
+  tab[0] = x1; tab[1] = x2; tab[2] = x3; tab[3] = x4; tab[4] = x5; tab[5] = x6;
+  return k.construct_point_d_object()(6, &tab[0], &tab[6]);
+}
+
 template <typename Kernel, typename Point_container>
 std::vector<typename Point_container::value_type>
 sparsify_point_set(
@@ -282,6 +294,128 @@ std::vector<typename Kernel::Point_d> generate_points_on_moment_curve(
     points.push_back(p);
     ++i;
 #endif
+  }
+  return points;
+}
+
+
+// R = big radius, r = small radius
+template <typename Kernel>
+std::vector<typename Kernel::Point_d> generate_points_on_torus_3D(
+  std::size_t num_points, double R, double r, bool uniform = false)
+{
+  typedef typename Kernel::Point_d Point;
+  typedef typename Kernel::FT FT;
+  Kernel k;
+  CGAL::Random rng;
+
+  // if uniform
+  std::size_t num_lines = (std::size_t)sqrt(num_points);
+  std::size_t num_cols = num_points/num_lines + 1;
+
+  std::vector<Point> points;
+  points.reserve(num_points);
+#ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
+  Point_sparsifier<Kernel, std::vector<Point> > sparsifier(points);
+#endif
+  for (std::size_t i = 0 ; i < num_points ; )
+  {
+    FT u, v;
+    if (uniform)
+    {
+      std::size_t k1 = i / num_lines;
+      std::size_t k2 = i % num_lines;
+      u = 6.2832 * k1 / num_lines;
+      v = 6.2832 * k2 / num_lines;
+    }
+    else
+    {
+      u = rng.get_double(0, 6.2832);
+      v = rng.get_double(0, 6.2832);
+    }
+    double tmp = cos(u/2)*sin(v) - sin(u/2)*sin(2.*v);
+    Point p = construct_point(k,
+      (R + r * std::cos(u)) * std::cos(v),
+      (R + r * std::cos(u)) * std::sin(v),
+      r * std::sin(u));
+#ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
+    if (sparsifier.try_to_insert_point(p))
+      ++i;
+#else
+    points.push_back(p);
+    ++i;
+#endif
+  }
+  return points;
+}
+
+template <typename Kernel, typename OutputIterator>
+static void generate_uniform_points_on_torus_d(
+  const Kernel &k, int dim, std::size_t num_slices, OutputIterator out,
+  std::vector<typename Kernel::FT> current_point = std::vector<typename Kernel::FT>())
+{
+  if (current_point.size() == 2*dim)
+  {
+    *out++ = k.construct_point_d_object()(
+      current_point.size(), current_point.begin(), current_point.end());
+  }
+  else
+  {
+    for (std::size_t slice_idx = 0 ; slice_idx < num_slices ; ++slice_idx)
+    {
+      std::vector<typename Kernel::FT> cp2 = current_point;
+      FT alpha = 6.2832 * slice_idx / num_slices;
+      cp2.push_back(std::cos(alpha));
+      cp2.push_back(std::sin(alpha));
+      generate_uniform_points_on_torus_d(
+        k, dim, num_slices, out, cp2);
+    }
+  }
+}
+
+template <typename Kernel>
+std::vector<typename Kernel::Point_d> generate_points_on_torus_d(
+  std::size_t num_points, int dim, bool uniform = false)
+{
+  typedef typename Kernel::Point_d Point;
+  typedef typename Kernel::FT FT;
+  Kernel k;
+  CGAL::Random rng;
+
+  // if uniform
+  std::size_t num_slices = (std::size_t)std::pow(num_points, 1./dim);
+
+  std::vector<Point> points;
+  points.reserve(num_points);
+  if (uniform)
+  {
+    generate_uniform_points_on_torus_d(
+      k, dim, num_slices, std::back_inserter(points));
+  }
+  else
+  {
+#ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
+    Point_sparsifier<Kernel, std::vector<Point> > sparsifier(points);
+#endif
+    for (std::size_t i = 0 ; i < num_points ; )
+    {
+      std::vector<typename Kernel::FT> pt;
+      for (int curdim = 0 ; curdim < dim ; ++curdim)
+      {
+        FT alpha = rng.get_double(0, 6.2832);
+        pt.push_back(std::cos(alpha));
+        pt.push_back(std::sin(alpha));
+      }
+
+      Point p = k.construct_point_d_object()(pt.size(), pt.begin(), pt.end());
+#ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
+      if (sparsifier.try_to_insert_point(p))
+        ++i;
+#else
+      points.push_back(p);
+      ++i;
+#endif
+    }
   }
   return points;
 }
