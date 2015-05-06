@@ -1213,7 +1213,7 @@ void Viewer::toggleIncremental(bool on) {
 void Viewer::stopIncremental() {
   if( !m_incrementalPts.isEmpty() ) {
     // will call toggleIncremental to stop the timer
-    emit( stopIncAnimation() );
+    Q_EMIT( stopIncAnimation() );
 
     // insert the rest points
     for(QList<Point_3>::iterator pit=m_incrementalPts.begin();
