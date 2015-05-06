@@ -77,13 +77,13 @@ private:
         std::cout << "duplicate point: " << p << std::endl; 
       }
     }
-    emit(changed());
+    Q_EMIT( changed());
   }
 
-protected slots:
+protected Q_SLOTS:
  virtual void open(QString);
 
-public slots:
+public Q_SLOTS:
 
   void processInput(CGAL::Object o);
 
@@ -104,7 +104,7 @@ public slots:
   void saveConstraints(QString);
 
 
-signals:
+Q_SIGNALS:
   void changed();
 };
 
@@ -204,7 +204,7 @@ MainWindow::processInput(CGAL::Object o)
   }
 
 
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -231,7 +231,7 @@ void
 MainWindow::on_actionClear_triggered()
 {
   svd.clear();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -283,7 +283,7 @@ MainWindow::loadPolygonConstraints(QString fileName)
   }
   
   
-  emit(changed());
+  Q_EMIT( changed());
   actionRecenter->trigger();
 }
 
@@ -325,7 +325,7 @@ MainWindow::loadEdgConstraints(QString fileName)
   statusBar()->showMessage(QString("Insertion took %1 seconds").arg(tim.time()), 2000);
   // default cursor
   QApplication::restoreOverrideCursor();
-  emit(changed());
+  Q_EMIT( changed());
   actionRecenter->trigger();
 }
 
