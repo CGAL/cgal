@@ -107,7 +107,6 @@ find_package(Boost COMPONENTS thread system)
 if(QT4_FOUND)
   include(${QT_USE_FILE})
 
-
  add_definitions(-DQT_NO_KEYWORDS)
 
   find_package(QGLViewer )

@@ -65,7 +65,7 @@ public Q_SLOTS:
   void update(const QPoint& p) {
     getPixel(p);
   }
-signals:
+Q_SIGNALS:
   void x(int);
 
 public:
@@ -124,7 +124,7 @@ public Q_SLOTS:
     setValue(sum1 * scale);
   }
 
-signals:
+Q_SIGNALS:
   void realChange(int);
 
 private:
