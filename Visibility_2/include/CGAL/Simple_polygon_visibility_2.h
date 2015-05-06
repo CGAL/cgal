@@ -34,7 +34,6 @@
 
 // TODO:  
 // * rm DT = O(n^2)
-// * rm do_intersect 
 // * fix handle needles = O(nlogn)  
 
 namespace CGAL {
@@ -47,6 +46,8 @@ public:
   typedef typename Arrangement_2::Traits_2              Traits_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Geometry_traits_2::Kernel            K;
+
+  typedef typename K::Intersect_2                       Intersect_2;
 
   typedef typename Arrangement_2::Halfedge_const_handle       
                                                         Halfedge_const_handle;
@@ -315,11 +316,11 @@ private:
         incident_next = incident_curr;
         ++incident_next;
 
-        if (Visibility_2::orientation_2(traits,
+        if (traits->orientation_2_object()(
                                         incident_curr->source()->point(),
                                         incident_curr->target()->point(),
                                         q) == LEFT_TURN
-         || Visibility_2::orientation_2(traits,
+         || traits->orientation_2_object()(
                                         incident_next->source()->point(),
                                         incident_next->target()->point(),
                                         q) == LEFT_TURN)
@@ -341,10 +342,9 @@ private:
   void visibility_region_impl(const Point_2& q) const {
     int i = 0;
     Point_2 w;
-    Orientation orient =
-            Visibility_2::orientation_2(traits, q, vertices[0], vertices[1]);
+    Orientation o = traits->orientation_2_object()(q, vertices[0], vertices[1]);
 
-    if ( orient != RIGHT_TURN ) {
+    if ( o != RIGHT_TURN ) {
       upcase = LEFT;
       i = 1;
       w = vertices[1];
@@ -385,16 +385,15 @@ private:
       if ( upcase == LEFT ) {
         Point_2 s_t = s.top();
         s.pop();
-        if ( Visibility_2::orientation_2(traits, q, vertices[0], s.top() )
+        if (traits->orientation_2_object()(q, vertices[0], s.top() )
              == RIGHT_TURN
              &&
-             Visibility_2::orientation_2(traits, q, vertices[0], s_t)
+             traits->orientation_2_object()(q, vertices[0], s_t)
              == LEFT_TURN )
         {
           Segment_2 seg( s.top(), s_t );
-          if ( Visibility_2::do_intersect_2(traits, seg, ray_origin) )
+          if (Object_2 result = Intersect_2()(seg, ray_origin) )
           {
-            Object_2 result = Visibility_2::intersect_2(traits, seg,ray_origin);
             const Point_2 * ipoint = object_cast<Point_2>(&result);
             assert( ipoint != NULL );
             s_t = *ipoint;
@@ -416,8 +415,7 @@ private:
        s.pop();
        Point_2 s_t_prev = s.top();
        s.push( s_t );
-       Orientation orient1 = Visibility_2::orientation_2
-                                   ( traits,
+       Orientation orient1 = traits->orientation_2_object()(
                                      q,
                                      vertices[i],
                                      vertices[i+1] );
@@ -429,8 +427,7 @@ private:
          w = vertices[i+1];
          i++;
        } else {
-         Orientation orient2 = Visibility_2::orientation_2
-                                     ( traits,
+         Orientation orient2 = traits->orientation_2_object()(
                                        s_t_prev,
                                        vertices[i],
                                        vertices[i+1] );
@@ -460,7 +457,7 @@ private:
      Orientation orient1, orient2;
 
      s_j_prev = s.top();
-     orient2 = Visibility_2::orientation_2( traits, q, s_j_prev, vertices[i] );
+     orient2 = traits->orientation_2_object()( q, s_j_prev, vertices[i] );
 
      while ( s.size() > 1 ) {
        s_j = s_j_prev;
@@ -468,7 +465,7 @@ private:
        s.pop();
        s_j_prev = s.top();
 
-       orient2 = Visibility_2::orientation_2( traits, q, s_j_prev, vertices[i]);
+       orient2 = traits->orientation_2_object()( q, s_j_prev, vertices[i]);
        if ( orient1 != LEFT_TURN && orient2 != RIGHT_TURN ) {
          mode = 1;
          break;
@@ -476,24 +473,26 @@ private:
 
        Segment_2 seg2( vertices[i-1], vertices[i] );
        Segment_2 seg( s_j_prev, s_j );
-       if ( vertices[i-1] != s_j &&
-            Visibility_2::do_intersect_2(traits, seg, seg2) )
+       if ( vertices[i-1] != s_j )
        {
-         Object_2 result = Visibility_2::intersect_2(traits, seg, seg2);
-         const Point_2 * ipoint = object_cast<Point_2>(&result);
-         assert( ipoint != NULL );
-         u = *ipoint;
-         mode = 2;
-         break;
+         Object_2 result = Intersect_2()( seg, seg2 );
+         if(result) {
+             const Point_2 * ipoint = object_cast<Point_2>(&result);
+             assert( ipoint != NULL );
+             u = *ipoint;
+             mode = 2;
+             break;
+         }
        }
      }
 
      assert( mode != 0 );
      if ( mode == 1 ) {
-       orient1 = Visibility_2::orientation_2
-                 ( traits, q, vertices[i], vertices[i+1] );
-       orient2 = Visibility_2::orientation_2
-                 ( traits, vertices[i-1], vertices[i], vertices[i+1] );
+       orient1 = traits->orientation_2_object()(q, vertices[i], vertices[i+1] );
+
+       orient2 = traits->orientation_2_object()(vertices[i-1],
+                                                vertices[i],
+                                                vertices[i+1] );
 
        if ( orient1 == RIGHT_TURN ) {
          // Case R1
@@ -509,7 +508,7 @@ private:
          Ray_2 ray( q, vertices[i] );
          Segment_2 seg( s_j_prev, s_j );
 
-         Object_2 result = Visibility_2::intersect_2( traits, seg, ray );
+         Object_2 result = Intersect_2()( seg, ray );
          const Point_2 * ipoint = object_cast<Point_2>(&result);
 
          assert( ipoint != NULL );
@@ -528,7 +527,7 @@ private:
          Ray_2 ray( q, vertices[i] );
          Segment_2 seg( s_j_prev, s_j );
 
-         Object_2 result = Visibility_2::intersect_2( traits, seg, ray );
+         Object_2 result = Intersect_2()( seg, ray );
          const Point_2 * ipoint = object_cast<Point_2>(&result);
 
          assert( ipoint != NULL );
@@ -556,11 +555,11 @@ private:
     int k = scan_edges( i, q, s.top(), u, true );
 
     Orientation orient1 =
-            Visibility_2::orientation_2(traits, q, vertices[k], vertices[k+1] );
+           traits->orientation_2_object()(q, vertices[k], vertices[k+1] );
 
     if ( orient1 == RIGHT_TURN ) {
-      bool fwd = Visibility_2::collinear_are_ordered_along_line_2
-                 ( traits, q, s.top(), u );
+      bool fwd = traits->
+              collinear_are_ordered_along_line_2_object()(q, s.top(), u );
 
       if ( !fwd ) {
         // Case A1
@@ -643,8 +642,7 @@ private:
     int k;
     Object_2 result;
     for ( k = i; k+1 < vertices.size(); k++ ) {
-      Orientation curr_orient = Visibility_2::orientation_2
-                                      ( traits,
+      Orientation curr_orient = traits->orientation_2_object()(
                                         ray_begin,
                                         ray_end,
                                         vertices[k+1] );
@@ -652,17 +650,13 @@ private:
         // Orientation switch, an intersection may occur
         Segment_2 seg( vertices[k], vertices[k+1] );
         if ( is_ray ) {
-          if (Visibility_2::do_intersect_2(traits, seg, ray) )
-          {
-            result = Visibility_2::intersect_2( traits, seg, ray );
-            break;
-          }
+            result = Intersect_2()( seg, ray );
+            if(result)
+                break;
         } else {
-          if (Visibility_2::do_intersect_2(traits, seg, s2) )
-          {
-            result = Visibility_2::intersect_2( traits, seg, s2 );
-            break;
-          }
+            result = Intersect_2()( seg, s2 );
+            if(result)
+                break;
         }
       }
       old_orient = curr_orient;
