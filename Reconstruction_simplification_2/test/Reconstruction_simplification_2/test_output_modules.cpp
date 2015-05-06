@@ -38,7 +38,7 @@ int main ()
 	//use the stair example for testing
 	load_xy_file_points<Point>("data/stair-noise00.xy", points);
 
-	Rs_2 rs2(points.begin(), points.end());
+	Rs_2 rs2(points);
 
 	rs2.run(100); //100 steps
 

@@ -30,7 +30,7 @@ int main ()
 
     for (int i = 1; i <= points.size();) {
 
-		CGAL::Reconstruction_simplification_2<K> rs2(points.begin(), points.end());
+		CGAL::Reconstruction_simplification_2<K> rs2(points);
 
 		rs2.run_until(i);
 
