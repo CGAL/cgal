@@ -304,9 +304,20 @@ protected:
 
 
 	/*!
-          \todo @@Pierre: explain what relevance means 
-
-		\param relevance The relevance threshold.
+		\param relevance The relevance threshold used for filtering the edges.
+		An edge is relevant from the approximation point of view
+		if it is long, covers a large mass (or equivalently the
+		number of points when all masses are equal), and has a
+		small transport cost. This notion is defined as
+		m(e) x |e|^2 / cost(e), where m(e) denotes the mass of the edge,
+		|e| denotes its length and cost(e) its transport cost.
+		As the cost is defined by mass time squared distance the
+		relevance is unitless.
+		
+		The default value is 0, so that all edges receiving some mass
+		are considered relevant.
+		Setting a large relevance value is used to get robustness to a
+		large amount of outliers.
 	 */
 	void set_relevance(const double relevance) {
 		m_ghost = relevance;
@@ -1450,13 +1461,13 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 
 	/*!
 	Writes the points and segments of the output simplex in an indexed format into output iterators.
-        \tparam  PointOutputIterator An output iterator with value type `Point`.
+        \tparam PointOutputIterator An output iterator with value type `Point`.
         \tparam IndexOutputIterator An output iterator with value type `std::size_t`
         \tparam IndexPairOutputIterator An output iterator with value type `std::pair<std::size_t,std::size_t>`
 
-	\param points the output iterator for all points
-        \param isolated_points the output iterator for the indices of isolated points
-        \param segments the output iterator for the pairs of indices of segments
+	    \param points The output iterator for all points
+        \param isolated_points The output iterator for the indices of isolated points
+        \param segments The output iterator for the pairs of segment indices
 	*/
   template <typename PointOutputIterator,
             typename IndexOutputIterator,
@@ -1475,7 +1486,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 		extract_list_output(std::back_inserter(isolated_points), std::back_inserter(edges));
 
 
-		//vertices_of_edges
+		// vertices_of_edges
 		std::set<Point> edge_vertices;
 		for (typename std::vector<Segment>::iterator it = edges.begin();
 						it != edges.end(); it++) {
@@ -1521,12 +1532,9 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 
 			os << "2 "  << pos_a + isolated_points.size() << " "
 					<< pos_b + isolated_points.size() << std::endl;
-
-
-
 		}
 
-    return CGAL::cpp11::make_tuple(points, isolated_points, segments);
+		return CGAL::cpp11::make_tuple(points, isolated_points, segments);
 	}
 
 	 /// \cond SKIP_IN_MANUAL
