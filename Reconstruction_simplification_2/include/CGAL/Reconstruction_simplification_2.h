@@ -81,8 +81,8 @@ Furthermore, we can relocate the vertices by calling `relocate_points()`.
 
  */
 template<class Gt,
-        class PointMap = First_of_pair_property_map  <std::pair<typename Gt::Point_2 , typename Gt::FT > >,
-         class MassMap  = boost::static_property_map <typename Gt::Point_2 , typename Gt::FT > >
+         class PointMap = Identity_property_map <typename Gt::Point_2>,
+         class MassMap  = boost::static_property_map <typename Gt::FT> >
 class Reconstruction_simplification_2 {
 public:
 
@@ -208,20 +208,15 @@ protected:
 	*/
 	template <class InputRange>
 	Reconstruction_simplification_2(const InputRange& input_range,
-                                        PointMap point_map = PointMap(),
-                                        MassMap  mass_map = MassMap(1),
-                                        std::size_t sample_size = 0,
-                                        bool use_flip = true,
-                                        std::size_t relocation = 0,
-                                        std::size_t verbose = 0
-                                        ) {
-
-
-		point_pmap = point_map;
-		mass_pmap  = mass_map;
-
+                                  PointMap point_map = PointMap(),
+                                  MassMap  mass_map = MassMap(1),
+                                  std::size_t sample_size = 0,
+                                  bool use_flip = true,
+                                  std::size_t relocation = 0,
+                                  std::size_t verbose = 0)
+  : point_pmap(point_map), mass_pmap(mass_map)
+  {
 		initialize_parameters();
-
 		initialize(input_range.begin(), input_range.end());
 	}
 
@@ -1466,9 +1461,12 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
   template <typename PointOutputIterator,
             typename IndexOutputIterator,
             typename IndexPairOutputIterator>
-  void indexed_output(PointOutputIterator points,
-                      IndexOutputIterator isolated_points,
-                      IndexPairOutputIterator segments) {
+  CGAL::cpp11::tuple<PointOutputIterator, 
+                     IndexOutputIterator, 
+                     IndexPairOutputIterator>
+  indexed_output(PointOutputIterator points,
+                 IndexOutputIterator isolated_points,
+                 IndexPairOutputIterator segments) {
 
 		typedef typename Gt::Segment_2 Segment;
 		std::vector<Point> isolated_points;
@@ -1527,6 +1525,8 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 
 
 		}
+
+    return CGAL::cpp11::make_tuple(points, isolated_points, segments);
 	}
 
 	 /// \cond SKIP_IN_MANUAL
