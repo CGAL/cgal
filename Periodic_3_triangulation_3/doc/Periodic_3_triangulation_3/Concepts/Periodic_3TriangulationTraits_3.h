@@ -4,7 +4,7 @@
 \cgalConcept
 
 \cgalModifBegin
-The concept `Periodic_3TriangulationTraits_3` is the first template parameter of the classes
+The concept `Periodic_3TriangulationTraits_3` is the first template parameter of the class
 `Periodic_3_triangulation_3`. It refines the concept 
 `TriangulationTraits_3` from the \cgal 3D Triangulations.
 It redefines the geometric objects, predicates and constructions to 
@@ -121,47 +121,6 @@ typedef unspecified_type Orientation_3;
 
 /// @}
 
-/// \name
-/// In addition, only when vertex removal is used, the traits class must provide the following predicate objects
-/// @{
-
-/*!
-A predicate object that must provide the function operators 
-
-`Orientation operator()(Point_3 p, Point_3 q, Point_3 r)`, 
-
-which returns `COLLINEAR`, if the points are collinear; otherwise 
-it must return a consistent orientation for any three points chosen in 
-a same plane and 
-
-`Orientation operator()(Point_3 p, Point_3 q, Point_3 r Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r)`, 
-
-which returns `COLLINEAR`, if the point-offset pairs are 
-collinear; otherwise it must return a consistent orientation for any 
-three point-offset pairs chosen in a same plane. 
-\pre `p`, `q`, `r` lie inside the domain. 
-*/ 
-typedef unspecified_type Coplanar_orientation_3; 
-
-/*!
-A predicate object that must provide the function operators 
-
-`Bounded_side operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)`, 
-
-which determines the bounded side of the circle defined by `p, q`, 
-and `r` on which the point `s` lies and 
-
-`Bounded_side operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s, Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r, Periodic_3_offset_3 o_s)`, 
-
-which determines the bounded side of the circle defined by 
-`(p,o_p), (q,o_q)`, and `(r,o_r)` on which the point-offset pair 
-`(s,o_s)` lies. 
-\pre `p,q,r`, and `s` are coplanar and `p,q`, and `r` are not collinear, `(p,o_p),(q,o_q),(r,o_r)`, and `(s,o_s)` are coplanar and `(p,o_p),(q,o_q)`, and `(r,o_r)` are not collinear, respectively, and `p`, `q`, `r`, `s`, `t` lie inside the domain. 
-*/ 
-typedef unspecified_type Coplanar_side_of_bounded_circle_3; 
-
-/// @}
-
 /// \name 
 /// Note that the traits must provide exact constructions in order to
 /// guarantee exactness of the following construction functors.
@@ -262,24 +221,6 @@ Compare_xyz_3 compare_xyz_3_object();
 
 */ 
 Orientation_3 orientation_3_object(); 
-
-/// @}
-
-/// \name
-/// The following functions must be provided if vertex removal is
-/// used; otherwise dummy functions can be provided.
-/// @{
-
-/*!
-
-*/ 
-Coplanar_orientation_3 coplanar_3_orientation_3_object(); 
-
-/*!
-
-*/ 
-Coplanar_side_of_bounded_circle_3 
-coplanar_side_of_bounded_circle_3_object(); 
 
 /// @}
 
