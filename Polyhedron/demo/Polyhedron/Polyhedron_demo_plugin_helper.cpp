@@ -7,6 +7,7 @@
 #include <QVector>
 #include <QSet>
 #include <QDockWidget>
+#include <boost/foreach.hpp>
 
 QAction*
 Polyhedron_demo_plugin_helper::
@@ -115,7 +116,7 @@ void Polyhedron_demo_plugin_helper::add_dock_widget(QDockWidget* dock_widget)
 
   QList<QDockWidget*> dockWidgets = mw->findChildren<QDockWidget*>();
   int counter = 0;
-  foreach(QDockWidget* dock, dockWidgets) {
+  BOOST_FOREACH(QDockWidget* dock, dockWidgets) {
     if( mw->dockWidgetArea(dock) != Qt::LeftDockWidgetArea ||
         dock == dock_widget ) 
     { continue; }

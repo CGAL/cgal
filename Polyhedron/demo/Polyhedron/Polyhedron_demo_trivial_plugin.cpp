@@ -106,7 +106,7 @@ public:
   bool applicable(QAction*) const { 
     return true;
   }
-public slots:
+public Q_SLOTS:
   void bbox();
   void enableAction();
 

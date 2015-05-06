@@ -216,13 +216,13 @@ void Viewer::postSelection(const QPoint& pixel)
   bool found = false;
   qglviewer::Vec point = camera()->pointUnderPixel(pixel, found);
   if(found) {
-    emit selectedPoint(point.x,
+    Q_EMIT selectedPoint(point.x,
                        point.y,
                        point.z);
-    emit selected(this->selectedName());
+    Q_EMIT selected(this->selectedName());
     const qglviewer::Vec orig = camera()->position();
     const qglviewer::Vec dir = point - orig;
-    emit selectionRay(orig.x, orig.y, orig.z,
+    Q_EMIT selectionRay(orig.x, orig.y, orig.z,
                       dir.x, dir.y, dir.z);
   }
 }

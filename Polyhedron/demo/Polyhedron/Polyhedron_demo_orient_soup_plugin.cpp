@@ -37,7 +37,7 @@ public:
 
   QList<QAction*> actions() const;
 
-public slots:
+public Q_SLOTS:
   void orient();
   void shuffle();
   void displayNonManifoldEdges();

@@ -30,13 +30,13 @@ public:
 
   virtual bool inFastDrawing() const = 0;
 
-signals:
+Q_SIGNALS:
   void selected(int);
   void requestContextMenu(QPoint global_pos);
   void selectedPoint(double, double, double);
   void selectionRay(double, double, double, double, double, double);
 
-public slots:
+public Q_SLOTS:
   virtual void setAntiAliasing(bool b) = 0;
   virtual void setTwoSides(bool b) = 0;
 

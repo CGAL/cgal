@@ -36,7 +36,7 @@ public:
     return qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionJetSmoothing_triggered();
 
 }; // end Polyhedron_demo_point_set_smoothing_plugin

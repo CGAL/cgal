@@ -65,6 +65,9 @@ find_package(OpenGL)
 
 # Find QGLViewer
 if(QT4_FOUND)
+
+  add_definitions(-DQT_NO_KEYWORDS)
+
   include(${QT_USE_FILE})
   include_directories( ${QT_INCLUDE_DIR}/QtScriptTools )
   find_package(QGLViewer )

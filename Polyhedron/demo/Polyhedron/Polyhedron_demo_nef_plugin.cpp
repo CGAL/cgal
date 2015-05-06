@@ -65,7 +65,7 @@ private:
   };
   void boolean_operation(const Boolean_operation operation);
 
-public slots:
+public Q_SLOTS:
   void on_actionToNef_triggered();
   void on_actionToPoly_triggered();
   void on_actionUnion_triggered();

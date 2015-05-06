@@ -115,7 +115,7 @@ void Scene_polygon_soup_item::load(Scene_polyhedron_item* poly_item) {
   CGAL::generic_print_polyhedron(std::cerr,
                                  *poly_item->polyhedron(),
                                  writer);
-  emit changed();
+  Q_EMIT changed();
 }
 
 void

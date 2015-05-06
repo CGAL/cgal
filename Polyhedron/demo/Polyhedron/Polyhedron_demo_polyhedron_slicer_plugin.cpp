@@ -69,7 +69,7 @@ public:
     for(int i = 0; i < 6; ++i && total_ok) { total_ok &= oks[i];}
     return total_ok;
   }
-public slots:
+public Q_SLOTS:
   void slicer_widget_action();
   void on_Generate_button_clicked();
   bool on_Update_plane_button_clicked();
