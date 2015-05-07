@@ -21,7 +21,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
@@ -36,12 +36,12 @@
 
 int main() {
 {
-  typedef CGAL::Gmpq                                        Number_type;
-  typedef CGAL::Cartesian<Number_type> 							        Kernel;
-  typedef CGAL::Arr_segment_traits_2<Kernel> 						    Traits_2;
-  typedef CGAL::Arrangement_2<Traits_2>							        Arrangement_2;
-  typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
-                                                    Simple_polygon_visibility_2;
+  typedef CGAL::Exact_rational                                    Number_type;
+  typedef CGAL::Cartesian<Number_type> 							  Kernel;
+  typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
+  typedef CGAL::Arrangement_2<Traits_2>							  Arrangement_2;
+  typedef CGAL::Simple_polygon_visibility_2<
+                Arrangement_2, CGAL::Tag_false>     Simple_polygon_visibility_2;
   std::cout << "Running model tests - ";
   CGAL::test_model_methods<Simple_polygon_visibility_2,Arrangement_2>();
   std::cout << GREEN << "Done!" << RESET << std::endl;
@@ -50,11 +50,11 @@ int main() {
   CGAL::run_tests<Simple_polygon_visibility_2,Arrangement_2>(22, 0);
 }
 {
-  typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
-  typedef CGAL::Arr_segment_traits_2<Kernel>                 Traits_2;
-  typedef CGAL::Arrangement_2<Traits_2>                      Arrangement_2;
-  typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
-                                                    Simple_polygon_visibility_2;
+  typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
+  typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
+  typedef CGAL::Arrangement_2<Traits_2>                           Arrangement_2;
+  typedef CGAL::Simple_polygon_visibility_2<
+                Arrangement_2, CGAL::Tag_false>     Simple_polygon_visibility_2;
   std::cout << "Running model tests - ";
   CGAL::test_model_methods<Simple_polygon_visibility_2,Arrangement_2>();
   std::cout << GREEN << "Done!" << RESET << std::endl;
@@ -64,11 +64,11 @@ int main() {
 }
 {
   // test Visibility_arrangement_type with extended DCEL     
-  typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
-  typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
-  typedef CGAL::Arrangement_2<Traits_2> ARR; 
-  typedef CGAL::Arr_extended_dcel<Traits_2, bool, bool, bool> EDCEL; 
-  typedef CGAL::Arrangement_2<Traits_2, EDCEL> EARR;   
+  typedef CGAL::Exact_predicates_exact_constructions_kernel         Kernel;
+  typedef CGAL::Arr_segment_traits_2<Kernel>                        Traits_2;
+  typedef CGAL::Arrangement_2<Traits_2>                             ARR;
+  typedef CGAL::Arr_extended_dcel<Traits_2, bool, bool, bool>       EDCEL;
+  typedef CGAL::Arrangement_2<Traits_2, EDCEL>                      EARR;
   {
     typedef CGAL::Simple_polygon_visibility_2<ARR,CGAL::Tag_true> Visibility_2;
     CGAL::test_model_methods<Visibility_2,EARR>();

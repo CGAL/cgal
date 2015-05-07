@@ -23,7 +23,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
@@ -36,9 +35,8 @@
 #include <iostream>
 #include <fstream>
 
-typedef CGAL::Gmpq                                        Number_type;
-typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel> 	              Traits_2;
+typedef CGAL::Exact_predicates_exact_constructions_kernel     Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>                    Traits_2;
 typedef Traits_2::Point_2		                              Point_2;
 typedef Traits_2::X_monotone_curve_2		                  Segment_2;
 typedef CGAL::Arrangement_2<Traits_2>		                  Arrangement_2;

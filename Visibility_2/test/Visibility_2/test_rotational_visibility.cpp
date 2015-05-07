@@ -21,7 +21,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
@@ -36,7 +36,7 @@
 
 int main() {
 {
-  typedef CGAL::Cartesian<CGAL::Gmpq>                               Kernel;
+  typedef CGAL::Cartesian<CGAL::Exact_rational>                     Kernel;
     typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
     typedef CGAL::Arrangement_2<Traits_2>                           Arrangement_2;
     {
@@ -74,11 +74,11 @@ int main() {
 }
 {
   // test Visibility_arrangement_type with extended DCEL     
-  typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
-  typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
-  typedef CGAL::Arrangement_2<Traits_2> ARR; 
-  typedef CGAL::Arr_extended_dcel<Traits_2, bool, bool, bool> EDCEL; 
-  typedef CGAL::Arrangement_2<Traits_2, EDCEL> EARR;   
+  typedef CGAL::Exact_predicates_exact_constructions_kernel         Kernel;
+  typedef CGAL::Arr_segment_traits_2<Kernel>                        Traits_2;
+  typedef CGAL::Arrangement_2<Traits_2>                             ARR;
+  typedef CGAL::Arr_extended_dcel<Traits_2, bool, bool, bool>       EDCEL;
+  typedef CGAL::Arrangement_2<Traits_2, EDCEL>                      EARR;
   {
     typedef CGAL::Rotational_sweep_visibility_2<ARR,CGAL::Tag_true> Visibility_2;
     CGAL::test_model_methods<Visibility_2,EARR>();

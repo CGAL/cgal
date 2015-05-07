@@ -203,7 +203,9 @@ private:
   typedef CGAL::No_intersection_tag                                Itag;
   typedef CGAL::Constrained_triangulation_2<K, TDS, Itag>          CDT;
 
-private:
+  typedef std::vector<Point_2>                                 Vertex_container;
+  typedef typename Vertex_container::size_type                 Size_type;
+
   const Arrangement_2 *p_arr;
   const Geometry_traits_2 *traits;
 
@@ -215,9 +217,9 @@ private:
   /*! Stack of visibile points; manipulated when going through the sequence
       of input vertices; contains the vertices of the visibility region after 
       the run of the algorithm*/
-  mutable std::stack<Point_2> s;
+  mutable std::stack<Point_2> stack;
   /*! Sequence of input vertices*/
-  mutable std::vector<Point_2> vertices;
+  mutable Vertex_container vertices;
   /*! State of visibility region algorithm*/
   mutable enum {LEFT, RIGHT, SCANA, SCANB, SCANC, SCAND, FINISH} upcase;
   mutable bool query_pt_is_vertex;
@@ -251,15 +253,15 @@ private:
   output(const Point_2& q, VARR& out_arr) const {
 
       std::vector<Point_2> points;
-      while(!s.empty()) {
-        const Point_2& top = s.top();
+      while(!stack.empty()) {
+        const Point_2& top = stack.top();
         if (top != q) {
           points.push_back(top);
         }
         else if (query_pt_is_vertex) {
           points.push_back(top);
         }
-        s.pop();
+        stack.pop();
       }
 
 
@@ -279,7 +281,7 @@ private:
 //                traits, q, points, out_arr);
 
       CGAL_postcondition(out_arr.number_of_isolated_vertices() == 0);
-      CGAL_postcondition(s.empty());
+      CGAL_postcondition(stack.empty());
 
       Visibility_2::conditional_regularize(out_arr, Regularization_category());
       vertices.clear();
@@ -340,7 +342,7 @@ private:
       'i' - current vertex' index
       'w' - endpoint of ray shot from query point */
   void visibility_region_impl(const Point_2& q) const {
-    int i = 0;
+    Size_type i = 0;
     Point_2 w;
     Orientation o = traits->orientation_2_object()(q, vertices[0], vertices[1]);
 
@@ -348,14 +350,14 @@ private:
       upcase = LEFT;
       i = 1;
       w = vertices[1];
-      s.push(vertices[0]);
-      s.push(vertices[1]);
+      stack.push(vertices[0]);
+      stack.push(vertices[1]);
     }
     else {
       upcase = SCANA;
       i = 1;
       w = vertices[1];
-      s.push(vertices[0]);
+      stack.push(vertices[0]);
     }
 
     Ray_2 ray_origin( q, vertices[0] );
@@ -383,15 +385,15 @@ private:
           break;
       }
       if ( upcase == LEFT ) {
-        Point_2 s_t = s.top();
-        s.pop();
-        if (traits->orientation_2_object()(q, vertices[0], s.top() )
+        Point_2 s_t = stack.top();
+        stack.pop();
+        if (traits->orientation_2_object()(q, vertices[0], stack.top() )
              == RIGHT_TURN
              &&
              traits->orientation_2_object()(q, vertices[0], s_t)
              == LEFT_TURN )
         {
-          Segment_2 seg( s.top(), s_t );
+          Segment_2 seg( stack.top(), s_t );
           if (Object_2 result = Intersect_2()(seg, ray_origin) )
           {
             const Point_2 * ipoint = object_cast<Point_2>(&result);
@@ -400,21 +402,21 @@ private:
             upcase = SCANB;
           }
         }
-        s.push( s_t );
+        stack.push( s_t );
       }
     } while(upcase != FINISH);
   }
 
   /*! Method that handles the left turns in the vertex algorithm */
-  void left(int& i, Point_2& w, const Point_2& q) const {
+  void left(Size_type& i, Point_2& w, const Point_2& q) const {
     if (i >= vertices.size() - 1) {
       upcase = FINISH;
     }
     else {
-       Point_2 s_t = s.top();
-       s.pop();
-       Point_2 s_t_prev = s.top();
-       s.push( s_t );
+       Point_2 s_t = stack.top();
+       stack.pop();
+       Point_2 s_t_prev = stack.top();
+       stack.push( s_t );
        Orientation orient1 = traits->orientation_2_object()(
                                      q,
                                      vertices[i],
@@ -423,7 +425,7 @@ private:
        if ( orient1 != RIGHT_TURN ) {
          // Case L2
          upcase = LEFT;
-         s.push( vertices[i+1] );
+         stack.push( vertices[i+1] );
          w = vertices[i+1];
          i++;
        } else {
@@ -449,21 +451,21 @@ private:
 
   /*! Scans the stack such that all vertices that were pushed before to the 
       stack and are now not visible anymore. */
-  void right(int& i, Point_2& w, const Point_2& q) const {
+  void right(Size_type& i, Point_2& w, const Point_2& q) const {
      Point_2 s_j;
      Point_2 s_j_prev;
      Point_2 u;
      int mode = 0;
      Orientation orient1, orient2;
 
-     s_j_prev = s.top();
+     s_j_prev = stack.top();
      orient2 = traits->orientation_2_object()( q, s_j_prev, vertices[i] );
 
-     while ( s.size() > 1 ) {
+     while ( stack.size() > 1 ) {
        s_j = s_j_prev;
        orient1 = orient2;
-       s.pop();
-       s_j_prev = s.top();
+       stack.pop();
+       s_j_prev = stack.top();
 
        orient2 = traits->orientation_2_object()( q, s_j_prev, vertices[i]);
        if ( orient1 != LEFT_TURN && orient2 != RIGHT_TURN ) {
@@ -500,7 +502,7 @@ private:
          // of (s_j,s_j_prev) and the ray (query_pt, vertices[i]),
          // thus, (s_j,s_j_prev) is not shortcutted, but it is harmless
          upcase = RIGHT;
-         s.push( s_j );
+         stack.push( s_j );
          w = vertices[i];
          i++;
        } else if ( orient2 == RIGHT_TURN ) {
@@ -514,12 +516,12 @@ private:
          assert( ipoint != NULL );
 
          u = *ipoint;
-         if ( s.top() != u ) {
-           s.push( u );
+         if ( stack.top() != u ) {
+           stack.push( u );
          }
          upcase = LEFT;
-         s.push( vertices[i] );
-         s.push( vertices[i+1] );
+         stack.push( vertices[i] );
+         stack.push( vertices[i+1] );
          w = vertices[i+1];
          i++;
        } else {
@@ -533,8 +535,8 @@ private:
          assert( ipoint != NULL );
 
          u = *ipoint;
-         if ( s.top() != u ) {
-           s.push( u );
+         if ( stack.top() != u ) {
+           stack.push( u );
          }
          upcase = SCANC;
          w = vertices[i];
@@ -549,17 +551,17 @@ private:
 
   /*! Scans the vertices starting from index 'i' for the first visible vertex
       out of the back hidden window */
-  void scana(int& i, Point_2& w, const Point_2& q) const {
+  void scana(Size_type& i, Point_2& w, const Point_2& q) const {
     // Scan v_i, v_i+1, ..., v_n for the first edge to intersect (z, s_t)
     Point_2 u;
-    int k = scan_edges( i, q, s.top(), u, true );
+    Size_type k = scan_edges( i, q, stack.top(), u, true );
 
     Orientation orient1 =
            traits->orientation_2_object()(q, vertices[k], vertices[k+1] );
 
     if ( orient1 == RIGHT_TURN ) {
       bool fwd = traits->
-              collinear_are_ordered_along_line_2_object()(q, s.top(), u );
+              collinear_are_ordered_along_line_2_object()(q, stack.top(), u );
 
       if ( !fwd ) {
         // Case A1
@@ -576,26 +578,26 @@ private:
       // Case A3
       upcase = LEFT;
       i = k+1;
-      s.push( u );
+      stack.push( u );
       if ( u != vertices[k+1] ) {
-        s.push( vertices[k+1] );
+        stack.push( vertices[k+1] );
       }
       w = vertices[k+1];
     }
   }
 
   /*! Find the first edge interecting the segment (v_0, s_t) */
-  void scanb(int& i, Point_2& w) const {
+  void scanb(Size_type& i, Point_2& w) const {
     if ( i == vertices.size() - 1 ) {
       upcase = FINISH;
       return;
     }
     Point_2 u;
-    int k = scan_edges( i, s.top(), vertices[0], u, false );
+    Size_type k = scan_edges( i, stack.top(), vertices[0], u, false );
     if ( (k+1 == vertices.size()-1) && (vertices[0] == u) ) {
       // Case B1
       upcase = FINISH;
-      s.push( vertices[0] );
+      stack.push( vertices[0] );
     } else {
       // Case B2
       upcase = RIGHT;
@@ -606,23 +608,23 @@ private:
 
   /*! Finds the exit from a general front hidden window by finding the first
       vertex to the right of the ray defined by the query_point and w*/
-  void scanc(int& i, Point_2& w) const {
+  void scanc(Size_type& i, Point_2& w) const {
     Point_2 u;
-    int k = scan_edges( i, s.top(), w, u, false );
+    Size_type k = scan_edges( i, stack.top(), w, u, false );
     upcase = RIGHT;
     i = k+1;
     w = u;
   }
 
   /*! find the first edge intersecting the given window (s_t, w) */
-  void scand(int& i, Point_2& w) const {
+  void scand(Size_type& i, Point_2& w) const {
     Point_2 u;
-    int k = scan_edges( i, s.top(), w, u, false );
+    Size_type k = scan_edges( i, stack.top(), w, u, false );
     upcase = LEFT;
     i = k+1;
-    s.push( u );
+    stack.push( u );
     if ( u != vertices[k+1] ) {
-      s.push( vertices[k+1] );
+      stack.push( vertices[k+1] );
     }
     w = vertices[k+1];
   }
@@ -630,7 +632,7 @@ private:
   /*! Scan edges v_i,v_{i+1},...,v_n, until find an edge intersecting given ray
       or given segment. is_ray = true -> ray, false -> segment.
       The intersection point is returned by u */
-  int scan_edges( int i,
+  Size_type scan_edges( Size_type i,
                   const Point_2& ray_begin,
                   const Point_2& ray_end,
                   Point_2& u,
@@ -639,7 +641,7 @@ private:
     Orientation old_orient = RIGHT_TURN;
     Ray_2 ray( ray_begin, ray_end );
     Segment_2 s2( ray_begin, ray_end );
-    int k;
+    Size_type k;
     Object_2 result;
     for ( k = i; k+1 < vertices.size(); k++ ) {
       Orientation curr_orient = traits->orientation_2_object()(
