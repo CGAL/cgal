@@ -4,6 +4,8 @@ namespace CGAL {
 /*!
 \ingroup PkgPeriodic3Triangulation3TraitsClasses
 
+\warning Using this traits class for Periodic_3_Delaunay_triangulation_3 is deprecated. You should use Periodic_3_Delaunay_triangulation_traits_3 instead.
+
 \cgalModifBegin
 The class `Periodic_3_triangulation_traits_3` is designed as a default traits class for the
 class `Periodic_3_triangulation_3<Periodic_3TriangulationTraits_3,TriangulationDataStructure_3>`. 
