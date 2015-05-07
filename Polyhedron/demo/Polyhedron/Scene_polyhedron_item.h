@@ -95,6 +95,7 @@ private:
   bool erase_next_picked_facet_m;
   //the following variable is used to indicate if the color vector must not be automatically updated.
   bool plugin_has_set_color_vector_m;
+  double volume, area;
 }; // end class Scene_polyhedron_item
 
 #endif // SCENE_POLYHEDRON_ITEM_H
