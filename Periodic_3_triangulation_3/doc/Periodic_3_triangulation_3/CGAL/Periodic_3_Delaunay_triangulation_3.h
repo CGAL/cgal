@@ -9,7 +9,6 @@ Delaunay triangulation in three-dimensional periodic space.
 
 \cgalHeading{Template Parameters}
 
-\cgalModifBegin
 The first template argument `PT` must be a model of the 
 `Periodic_3DelaunayTriangulationTraits_3` concept. 
 
@@ -18,7 +17,6 @@ The second template argument `TDS` must be a model of the
 functionality in cells and vertices. 
 Its default value is 
 `Triangulation_data_structure_3<Triangulation_vertex_base_3<PT,Periodic_3_triangulation_ds_vertex_base_3<>>,Triangulation_cell_base_3<PT,Periodic_3_triangulation_ds_cell_base_3<>>>`. 
-\cgalModifEnd
 
 */
 template< typename PT, typename TDS >

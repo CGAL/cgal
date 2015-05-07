@@ -4,7 +4,6 @@ namespace CGAL {
 /*!
 \ingroup PkgPeriodic3Triangulation3TraitsClasses
 
-\cgalModifBegin
 The class `Periodic_3_Delaunay_triangulation_traits_3` is designed as a default traits class for the
 class `Periodic_3_Delaunay_triangulation_3<Periodic_3DelaunayTriangulationTraits_3,TriangulationDataStructure_3>`.
 
@@ -17,8 +16,7 @@ filtered predicates. This holds implicitly for
 `CGAL::Exact_predicates_inexact_constructions_kernel`, as it is an 
 instantiation of `CGAL::Filtered_kernel`. 
 
-\cgalModels `Periodic_3DelaunayTriangulationTraits_3`
-\cgalModifEnd
+\cgalModels Periodic_3DelaunayTriangulationTraits_3
 */
 template< typename Traits, typename Periodic_3Offset_3 >
 class Periodic_3_Delaunay_triangulation_traits_3 : public Traits {

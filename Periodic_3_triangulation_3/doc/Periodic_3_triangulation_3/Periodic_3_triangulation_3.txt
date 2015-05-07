@@ -160,7 +160,6 @@ chapter \ref chapterTriangulation3 "3D Triangulations" to the periodic case.
 
 \section P3Triangulation3secdesign Software Design 
 
-\cgalModifBegin
 We have chosen the prefix "Periodic_3" to emphasize that the
 triangulation is periodic in all three directions of space.
 
@@ -196,11 +195,9 @@ Chapter \ref chapterTDS3 "3D Triangulation Data Structure". The triangulation da
 models of the concepts `Periodic_3TriangulationDSCellBase_3` and
 `Periodic_3TriangulationDSVertexBase_3` as template parameters. 
 </UL>
-\cgalModifEnd
 
 \subsection P3Triangulation3secTraits The Geometric Traits Parameter 
 
-\cgalModifBegin
 \subsubsection P3Triangulation3secTraitsP3T3 Traits for Periodic Triangulations 
 
 The first template parameter of the triangulation class
@@ -256,7 +253,6 @@ using `Exact_predicates_exact_constructions_kernel` provides
 fast and exact predicates and exact constructions. The latter is recommended if
 the dual constructions and constructions of points, segments,
 triangles, and tetrahedra are used.
-\cgalModifEnd
 
 \subsection P3Triangulation3sectds The Triangulation Data Structure Parameter 
 
