@@ -20,7 +20,6 @@
 #include <algorithm> // std::max
 #include <cmath> // std::sqrt
 #include <boost/format.hpp>
-#include <boost/foreach.hpp>
 
 #include "ui_mainwindow.h"
 #include "volume.h"
@@ -96,7 +95,7 @@ void MainWindow::show_only(QString tag)
   QTextStream err(&dummy);
 #endif
   err << "** Show only in \"" << tag << "\"\n";
-  BOOST_FOREACH(QObject* object, 
+  Q_FOREACH(QObject* object, 
             this->findChildren<QObject*>())
   {
     QStringList show_only_in = object->property("show_only_in").toStringList();
@@ -104,7 +103,7 @@ void MainWindow::show_only(QString tag)
     {
       err << object->metaObject()->className()
           << " \"" << object->objectName() << "\" only in: ";
-      BOOST_FOREACH(QString s, show_only_in)
+      Q_FOREACH(QString s, show_only_in)
         err << s << " ";
       const bool visible = show_only_in.contains(tag);
       err << (visible ? "(enabled)\n" : "(disabled)\n");

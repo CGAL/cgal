@@ -25,7 +25,6 @@
 
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/optional/optional.hpp>
-#include <boost/foreach.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
 
@@ -97,7 +96,7 @@ public Q_SLOTS:
     // place all selected polyhedron and point items to vectors below
     std::vector<const Polyhedron*> polys;
     std::vector<Point_set*> point_sets;
-    BOOST_FOREACH(Scene_interface::Item_id id, scene->selectionIndices()) {
+    Q_FOREACH(Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
       if(poly_item) { polys.push_back(poly_item->polyhedron()); }
 
@@ -149,7 +148,7 @@ public Q_SLOTS:
     print_message(QString("%1 points are selected. All Done!").arg(nb_selected));
 
     // for repaint
-    BOOST_FOREACH(Scene_interface::Item_id id, scene->selectionIndices()) {
+    Q_FOREACH(Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_points_with_normal_item* point_item = qobject_cast<Scene_points_with_normal_item*>(scene->item(id));
       if(point_item) { 
         scene->itemChanged(point_item);
@@ -168,7 +167,7 @@ public Q_SLOTS:
     //   warning about '*bbox' not being initialized.
     // -- Laurent Rineau, 2014/10/30
 
-    BOOST_FOREACH(Scene_interface::Item_id id, scene->selectionIndices()) {
+    Q_FOREACH(Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
       if(poly_item) {
         if(!bbox) {
