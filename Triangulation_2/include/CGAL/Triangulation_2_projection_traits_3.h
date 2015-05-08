@@ -251,6 +251,49 @@ public:
   }
 }; // end class Projected_intersect_3
 
+
+template <class Traits>
+class Less_along_axis
+{
+  // private members
+  typedef typename Traits::Vector_3 Vector_3;
+  typedef typename Traits::Point_2 Point;
+  const Vector_3 base;
+public:
+  Less_along_axis(const Vector_3& base) : base(base)
+  {
+    CGAL_PROFILER("Construct Less_along_axis")
+    CGAL_TIME_PROFILER("Construct Less_along_axis")
+  }
+
+  typedef bool result_type;
+
+  bool operator() (const Point &p, const Point &q) const {
+    return base * (p - q) < 0;
+  }
+}; // end class Less_along_axis
+
+template <class Traits>
+class Compare_along_axis
+{
+  // private members
+  typedef typename Traits::Vector_3 Vector_3;
+  typedef typename Traits::Point_2 Point;
+  const Vector_3 base;
+public:
+  Compare_along_axis(const Vector_3& base) : base(base)
+  {
+    CGAL_PROFILER("Construct Compare_along_axis")
+    CGAL_TIME_PROFILER("Construct Compare_along_axis")
+  }
+
+  typedef Comparison_result result_type;
+
+  Comparison_result operator() (const Point &p, const Point &q) const {
+    return compare(base * (p - q), 0);
+  }
+}; // end class Compare_along_axis
+
 } // end namespace TriangulationProjectionTraitsCartesianFunctors
 
 
@@ -259,28 +302,41 @@ class Triangulation_2_projection_traits_3
 {
   typedef Triangulation_2_projection_traits_3<Kernel> Self;
 
-  typename Kernel::Vector_3 n;
+  typename Kernel::Vector_3 n, b1, b2;
 
 public:
   typedef typename Kernel::Vector_3 Vector_3;
 
 
-  Triangulation_2_projection_traits_3(const Vector_3& n_)
+  explicit Triangulation_2_projection_traits_3(const Vector_3& n_)
     : n(n_)
-  {}
+  {
+    typedef typename Kernel::FT FT;
+    typedef typename Kernel::Vector_3 Vector_3;
+
+    const FT& nx = n.x();
+    const FT& ny = n.y();
+    const FT& nz = n.z();
+    const FT anz = CGAL::abs(nz);
+    if(anz >= CGAL::abs(nx) &&
+       anz >= CGAL::abs(ny)) { // z is the max absolute coordinate of n
+      b1 = Vector_3(nz, 0, -nx);
+    }
+    else {
+      b1 = Vector_3(ny, -nx, 0);
+    }
+    b2 = cross_product(n, b1);
+    // std::cerr << "\nTriangulation_2_projection_traits_3(" << b1 << "\n"
+    // 	      << "                                    " << b2 << "\n"
+    // 	      << "                                    " << n << "\n";
+  }
 
   Triangulation_2_projection_traits_3(const Self& other)
-    : n(other.n)
+    : n(other.n), b1(other.b1), b2(other.b2)
   {
 //     std::cerr << "Copy of a traits. Type="
 //               << typeid(*this).name() << std::endl
 //               << "normal=" << normal() << std::endl;
-  }
-
-  const Vector_3& normal() const
-  {
-//     std::cerr << "normal=" << n << std::endl;
-    return n;
   }
 
   Self& operator=(const Self& other)
@@ -289,9 +345,24 @@ public:
               << typeid(*this).name() << std::endl;
     if(this != &other) {
       n = other.n;
+      b1 = other.b1;
+      b2 = other.b2;
     }
     std::cerr << "Normal="<< this->normal() << std::endl;
     return *this;
+  }
+
+  const Vector_3& normal() const
+  {
+    return n;
+  }
+
+  const Vector_3& base1() const{
+    return b1;
+  }
+
+  const Vector_3& base2() const{
+    return b2;
   }
 
   typedef Kernel K;
@@ -302,14 +373,17 @@ public:
   typedef typename K::Triangle_3  Triangle_2;
   typedef typename K::Line_3      Line_2;
 
-  // Maybe not a good choice
-  typedef typename K::Less_xy_3            Less_x_2;
-  typedef typename K::Less_z_3             Less_y_2;
-
-  typedef typename K::Compare_xy_3                           Compare_x_2;
-  typedef typename K::Compare_z_3                            Compare_y_2;
-
   typedef typename K::Angle_3                                Angle_2;
+
+  typedef TriangulationProjectionTraitsCartesianFunctors::
+    Compare_along_axis<Self>                                 Compare_x_2;
+  typedef TriangulationProjectionTraitsCartesianFunctors::
+    Compare_along_axis<Self>                                 Compare_y_2;
+
+  typedef TriangulationProjectionTraitsCartesianFunctors::
+    Less_along_axis<Self>                                    Less_x_2;
+  typedef TriangulationProjectionTraitsCartesianFunctors::
+    Less_along_axis<Self>                                    Less_y_2;
 
   typedef TriangulationProjectionTraitsCartesianFunctors::
     Projected_orientation_with_normal_3<Self>                Orientation_2;
@@ -336,23 +410,27 @@ public:
   typedef typename K::Compute_area_3                Compute_area_2;
 
   Less_x_2
-  less_x_2_object() const
-    { return Less_x_2();}
+  Less_x_2_object() const
+  {
+    return Less_x_2(this->base1());
+  }
 
   Less_y_2
-  less_y_2_object() const
-    { return Less_y_2();}
+  Less_y_2_object() const
+  {
+    return Less_y_2(this->base2());
+  }
 
   Compare_x_2
   compare_x_2_object() const
   {
-    return Compare_x_2();
+    return Compare_x_2(this->base1());
   }
 
   Compare_y_2
   compare_y_2_object() const
   { 
-    return Compare_y_2();
+    return Compare_y_2(this->base2());
   }
 
   Orientation_2 
