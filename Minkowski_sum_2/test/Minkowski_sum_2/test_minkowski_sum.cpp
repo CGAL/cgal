@@ -87,7 +87,7 @@ Polygon_with_holes_2 compute_minkowski_sum_2(Polygon_2& p, Polygon_2& q,
      return minkowski_sum_2(p, q, decomp);
     }
 
-   case VERTICAL_DECOMP:
+   default: // VERTICAL_DECOMP
     {
      CGAL::Polygon_vertical_decomposition_2<Kernel> decomp;
      return minkowski_sum_2(p, q, decomp);
@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
   CGAL::Timer timer;
 
   std::list<Strategy> strategies;
-  for (int i = 0; i < strlen(argv[1]); ++i) {
+  for (std::size_t i = 0; i < strlen(argv[1]); ++i) {
     switch (argv[1][i]) {
       case 'r':
         strategies.push_back(REDUCED_CONVOLUTION);
