@@ -94,6 +94,17 @@ public:
     : sm_(pm.sm_)
     {}
 
+  value_type operator[](key_type v)
+  {
+#if defined(CGAL_USE_OM_POINTS)
+    return sm_->point(v);
+#else
+    CGAL_assertion(sm_!=NULL);
+    typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point const& omp = sm_->point(v);
+    return value_type(omp[0], omp[1], omp[2]);
+#endif
+  }
+
   inline friend reference get(const OM_point_pmap<K,P>& pm, key_type v)
   {
     CGAL_precondition(pm.sm_!=NULL);
