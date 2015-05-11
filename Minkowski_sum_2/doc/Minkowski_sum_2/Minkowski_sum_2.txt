@@ -215,7 +215,7 @@ of a function operator (`operator()`) that accepts a planar polygon and
 returns a range of convex polygons that represents its convex decomposition.
 If at least one of \f$ P \f$ or \f$ Q \f$ is a polygon with holes,
 `decomp` is an object of a type that models the concept
-`PolygonWithHolesConvexDecomposition`, which refines the concept
+`PolygonWithHolesConvexDecomposition_2`, which refines the concept
 `PolygonConvexDecomposition` and adds a requirement for the provision
 of a function operator (`operator()`) that accepts a planar polygon with
 holes.
@@ -478,7 +478,7 @@ represented as arcs of conic curves with rational coefficients. The
 \link offset_polygon_2() `offset_polygon_2(P, r, traits)`\endlink
 function template computes the offset of a given polygon \f$ P\f$
 by a rational radius \f$ r\f$ in an exact manner. The input
-polygon $P$ must be either simple or degenerate consisting of two
+polygon \f$ P\f$ must be either simple or degenerate consisting of two
 vertices (representing a line segment). The `traits` argument must model
 the concept `ArrangementTraits_2` and it should be capable of handling
 conic arcs in an exact manner---using an instance of the
@@ -511,7 +511,7 @@ counterparts that employ the convolution approach. However, similar to the
 functions that compute the general Minkowski sum, they are able to compute
 the offset of polygons with holes, given a decomposition strategy that
 handles polygons with holes, such as the
-'Polygon_vertical_decomposition_2<Kernel>' class template.
+`Polygon_vertical_decomposition_2<Kernel>` class template.
 \cgalAdvancedEnd
 
 \subsection mink_ssecinner_offset Computing Inner Offsets
@@ -595,8 +595,7 @@ offset computation. They have also suggested a few algorithmic improvements
 that made their way into version 3.4, yielding a faster approximation scheme.
 During the <I>Google Summer of Code</I> 2014, Sebastian Morr, mentored by
 Michael Hemmer, implemented the reduced convolution approach, based on Alon
-Baram's~2013 master's thesis.
+Baram's master's thesis.
 
 */
 } /* namespace CGAL */
-

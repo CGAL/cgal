@@ -30,9 +30,6 @@ public:
   /*! the point type, used to represent polygon vertices. */
   typedef unspecified_type Point_2;
 
-  /*! the container of points type. */
-  typedef unspecified_type Container;
-
   /*! the polygon type, defined as `Polygon_2<Kernel,Container>`. */
   typedef unspecified_type Polygon_2;
 
