@@ -41,7 +41,9 @@ int main(int argc, char* argv[])
                   poly,
                   h,
                   std::back_inserter(patch_facets),
-                  std::back_inserter(patch_vertices)));
+                  std::back_inserter(patch_vertices),
+     CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, poly)).
+                  geom_traits(Kernel())) );
 
       std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;
       std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;

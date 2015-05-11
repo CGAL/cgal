@@ -35,12 +35,14 @@ int main(int argc, char* argv[])
     {
       std::vector<face_descriptor>  patch_facets;
       std::vector<vertex_descriptor> patch_vertices;
-      //bool success = CGAL::cpp11::get<0>( // for fairing
-        CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(
+      bool success = CGAL::cpp11::get<0>(
+                                         CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(
                   mesh,
                   h,
                   std::back_inserter(patch_facets),
-                  std::back_inserter(patch_vertices));  // );
+                  std::back_inserter(patch_vertices),
+     CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, mesh)).
+                  geom_traits(Kernel())) );
 
       std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;
       std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;
@@ -51,6 +53,7 @@ int main(int argc, char* argv[])
 
   std::cout << std::endl;
   std::cout << nb_holes << " holes have been filled" << std::endl;
+
     OpenMesh::IO::write_mesh(mesh, "filled_OM.off");
   return 0;
 }

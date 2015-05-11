@@ -93,7 +93,6 @@ public:
   {
     Vector a = ppmap[v0] - ppmap[v1];
     Vector b = ppmap[v2] - ppmap[v1];
-
     
     double dot_ab = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     // rewritten for safer fp arithmetic
