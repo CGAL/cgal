@@ -4,6 +4,8 @@
 #include <CGAL/point_generators_3.h>
 
 #include <vector>
+#include <CGAL/IO/Polyhedron_iostream.h>
+
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 typedef K::Plane_3                                            Plane;
@@ -58,6 +60,13 @@ int main (void) {
   assert(P3.size_of_vertices()==8 && P3.size_of_facets()==6);
   assert(P4.size_of_vertices()==8 && P4.size_of_facets()==6);
   assert(P5.size_of_vertices()==8 && P5.size_of_facets()==6);
+
+  using CGAL::Convex_hull_3::internal::point_inside_convex_polyhedron;
+  assert(point_inside_convex_polyhedron(P1, Point(0,0,0)));
+  assert(point_inside_convex_polyhedron(P2, Point(0,0,0)));
+  assert(point_inside_convex_polyhedron(P3, Point(0,0,0)));
+  assert(point_inside_convex_polyhedron(P4, Point(0,0,0)));
+  assert(point_inside_convex_polyhedron(P5, Point(0,0,0)));
 
   return 0;
 }

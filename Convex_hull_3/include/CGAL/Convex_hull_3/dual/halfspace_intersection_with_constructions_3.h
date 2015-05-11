@@ -100,7 +100,7 @@ namespace CGAL
                     do
                     {
                         B.add_vertex_to_facet(extreme_points[hf->facet()]);
-                    } while (++hf != h0);
+                    } while (--hf != h0);
                     B.end_facet();
                 }
 

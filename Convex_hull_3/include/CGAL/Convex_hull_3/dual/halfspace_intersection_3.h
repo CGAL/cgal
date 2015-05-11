@@ -142,7 +142,7 @@ namespace CGAL
                                 B.begin_facet();
                                 do {
                                     B.add_vertex_to_facet(primal_vertices[hf->facet()]);
-                                } while (++hf != h0);
+                                } while (--hf != h0);
                                 B.end_facet();
                             }
 
@@ -269,7 +269,7 @@ namespace CGAL
             P.delegate(build_primal);
 
             // Posterior check if the origin is inside the computed polyhedron
-            CGAL_assertion_msg(!Convex_hull_3::internal::point_inside_convex_polyhedron(P, p_origin), "halfspace_intersection_3: origin not in the polyhedron");
+            CGAL_assertion_msg(Convex_hull_3::internal::point_inside_convex_polyhedron(P, p_origin), "halfspace_intersection_3: origin not in the polyhedron");
         } else {
           // choose exact integral type
 #ifdef CGAL_USE_GMP
@@ -293,7 +293,7 @@ namespace CGAL
           P.delegate(build_primal);
 
           // Posterior check if the origin is inside the computed polyhedron
-          CGAL_assertion_msg(!Convex_hull_3::internal::point_inside_convex_polyhedron(P, origin), "halfspace_intersection_3: origin not in the polyhedron");
+          CGAL_assertion_msg(Convex_hull_3::internal::point_inside_convex_polyhedron(P, origin), "halfspace_intersection_3: origin not in the polyhedron");
         }
     }
 
