@@ -25,8 +25,64 @@
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <boost/mpl/if.hpp>
 
 namespace CGAL {
+
+template <typename Mesh, typename Descriptor, typename Value>
+class OM_pmap {
+public:
+  typedef typename boost::mpl::if_<boost::is_same<Descriptor, typename boost::graph_traits<Mesh>::vertex_descriptor>,
+                                   OpenMesh::VPropHandleT<Value>,
+                                   typename boost::mpl::if_<boost::is_same<Descriptor, typename boost::graph_traits<Mesh>::face_descriptor>,
+                                                            OpenMesh::FPropHandleT<Value>,
+                                                            typename boost::mpl::if_<boost::is_same<Descriptor, typename boost::graph_traits<Mesh>::halfedge_descriptor>,
+                                                                                     OpenMesh::HPropHandleT<Value>,
+                                                                                     OpenMesh::EPropHandleT<Value> >::type>::type>::type H;
+  
+  typedef boost::read_write_property_map_tag category;
+  
+  typedef Descriptor key_type;
+  typedef Value value_type;
+  
+  typedef value_type& reference;
+  
+  OM_pmap(Mesh& m)
+    : mesh(m)
+  {}
+  
+  OM_pmap(Mesh& m, H h)
+    : mesh(m), h(h)
+  {}
+  
+  inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm, key_type k)
+  {
+    return pm.mesh.property(pm.h,k);
+  }
+
+  inline friend void put(const OM_pmap<Mesh,Descriptor,Value>& pm, key_type k, const value_type& v)
+  {
+    pm.mesh.property(pm.h,k) = v;
+  }
+
+  reference operator[](key_type k)
+  {
+    return mesh.property(h,k);
+  }
+
+  H handle() const
+  {
+    return h;
+  }
+
+  H& handle()
+  {
+    return h;
+  }
+
+  Mesh& mesh;
+  H h;
+};
 
 
 template <typename K>

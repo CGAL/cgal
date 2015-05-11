@@ -13,18 +13,18 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
-typedef OpenMesh::PolyMesh_ArrayKernelT< > Surface_mesh;
+typedef OpenMesh::PolyMesh_ArrayKernelT< > Mesh;
 
-typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
-typedef boost::graph_traits<Surface_mesh>::halfedge_descriptor halfedge_descriptor;
-typedef boost::graph_traits<Surface_mesh>::face_descriptor face_descriptor;
+typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
+typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
 int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
 
 
-  Surface_mesh mesh;
+  Mesh mesh;
   OpenMesh::IO::read_mesh(mesh, filename);
   
   // Incrementally fill the holes
@@ -35,22 +35,22 @@ int main(int argc, char* argv[])
     {
       std::vector<face_descriptor>  patch_facets;
       std::vector<vertex_descriptor> patch_vertices;
-      bool success = CGAL::cpp11::get<0>(
-        CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(
+      //bool success = CGAL::cpp11::get<0>( // for fairing
+        CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(
                   mesh,
                   h,
                   std::back_inserter(patch_facets),
-                  std::back_inserter(patch_vertices)));
+                  std::back_inserter(patch_vertices));  // );
 
       std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;
       std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;
-      std::cout << "  Is fairing successful: " << success << std::endl;
+      // std::cout << "  Is fairing successful: " << success << std::endl;
       nb_holes++;
     }
   }
 
   std::cout << std::endl;
   std::cout << nb_holes << " holes have been filled" << std::endl;
-  
+    OpenMesh::IO::write_mesh(mesh, "filled_OM.off");
   return 0;
 }
