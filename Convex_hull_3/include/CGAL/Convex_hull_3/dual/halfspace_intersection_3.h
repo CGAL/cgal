@@ -150,37 +150,23 @@ namespace CGAL
                         }
                     };
 
-            // Functor used during the computation of the equations
-            // of the facets of a convex polyhedron
-            template <class Facet>
-            struct Plane_equation_convex_polyhedron {
-                typename Facet::Plane_3 operator()(Facet& f) {
-                    typename Facet::Halfedge_handle h = f.halfedge();
-                    typedef typename Facet::Plane_3 Plane;
-                    return Plane(h->vertex()->point(),
-                                 h->next()->vertex()->point(),
-                                 h->next()->next()->vertex()->point());
-                }
-            };
-
             // Test if a point is inside a convex polyhedron
             template <class Polyhedron>
-            bool point_inside_convex_polyhedron (Polyhedron &P,
+            bool point_inside_convex_polyhedron (const Polyhedron &P,
                                                  typename Polyhedron::Traits::Point_3 const& p) {
                 // Compute the equations of the facets of the polyhedron
-                typedef typename Polyhedron::Plane_iterator Plane_iterator;
                 typedef typename Polyhedron::Facet Facet;
-
-                std::transform(P.facets_begin(), P.facets_end(), P.planes_begin(),
-                               Plane_equation_convex_polyhedron<Facet>());
-
-                // Check if the point is inside the polyhdreon
-                for (Plane_iterator pit = P.planes_begin();
-                     pit != P.planes_end();
-                     ++pit) {
-                    if (! pit->has_on_negative_side(p)) {
-                        return false;
-                    }
+                typedef typename Polyhedron::Facet_const_iterator Facet_iterator;
+                for(Facet_iterator  fit=P.facets_begin(), fit_end=P.facets_end();
+                                    fit!=fit_end; ++fit)
+                {
+                  typename Polyhedron::Halfedge_const_handle h = fit->halfedge();
+                  typedef typename Facet::Plane_3 Plane;
+                  Plane plane(h->vertex()->point(),
+                              h->next()->vertex()->point(),
+                              h->next()->next()->vertex()->point());
+                  if( !plane.has_on_negative_side(p) )
+                    return false;
                 }
 
                 return true;
@@ -283,8 +269,7 @@ namespace CGAL
             P.delegate(build_primal);
 
             // Posterior check if the origin is inside the computed polyhedron
-            Polyhedron Q(P);
-            CGAL_assertion_msg(!Convex_hull_3::internal::point_inside_convex_polyhedron(Q, p_origin), "halfspace_intersection_3: origin not in the polyhedron");
+            CGAL_assertion_msg(!Convex_hull_3::internal::point_inside_convex_polyhedron(P, p_origin), "halfspace_intersection_3: origin not in the polyhedron");
         } else {
           // choose exact integral type
 #ifdef CGAL_USE_GMP
@@ -306,8 +291,7 @@ namespace CGAL
           P.delegate(build_primal);
 
           // Posterior check if the origin is inside the computed polyhedron
-          Polyhedron Q(P);
-          CGAL_assertion_msg(!Convex_hull_3::internal::point_inside_convex_polyhedron(Q, origin), "halfspace_intersection_3: origin not in the polyhedron");
+          CGAL_assertion_msg(!Convex_hull_3::internal::point_inside_convex_polyhedron(P, origin), "halfspace_intersection_3: origin not in the polyhedron");
         }
     }
 
