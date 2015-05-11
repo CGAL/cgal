@@ -18,7 +18,7 @@
 //
 // Author(s)     : Quincy Tse, Weisheng Si
 
-/** @file _Plane_Scan_Tree.h
+/* _Plane_Scan_Tree.h
  *
  * This header implements the details of the class Plane_Scan_Tree.
  */
@@ -30,12 +30,12 @@
 
 namespace CGAL {
 
-/** This namespace contains the internal implementation of the tree for building Theta graph.
+/* This namespace contains the internal implementation of the tree for building Theta graph.
  * This is not meant to be imported by other codes.
  */
 namespace ThetaDetail {
 
-/** Contains the internal data structure for the Plane_Scan_Tree.
+/* Contains the internal data structure for the Plane_Scan_Tree.
  *
  * Plane_Scan_Tree is a ternary B+ tree using linked structures.
  */
@@ -55,7 +55,7 @@ class _Iterator;
 template < typename Key, typename T, typename Comp=std::less<Key>, typename VComp=std::less<const T> >
 class _RIterator;
 
-/** Abstract superclass */
+/* Abstract superclass */
 template < typename Key, typename T, typename Comp, typename VComp >
 class _Node {
   public:
@@ -70,19 +70,24 @@ class _Node {
     typedef _Internal<Key, T, Comp, VComp>      _internal_type;
     typedef Plane_Scan_Tree<Key, T, Comp, VComp>  tree_type;
 
-    /** Constructor */
+    /* Constructor */
     _Node(const key_compare& less, const value_compare& vless, tree_type *const t)
         : parent(NULL), less(less), vless(vless), tree(t) {}
-    /** @return true if the node is a leaf node, false otherwise. */
+
+    /* Destructor */
+    virtual ~_Node() {}
+
+    /* @return true if the node is a leaf node, false otherwise. */
     virtual bool isLeaf() const = 0;
-    /** Retrieves the leaf node that handles the specified key.
+
+    /* Retrieves the leaf node that handles the specified key.
      *
      * @param k The key being queried
      * @return The leaf node that handles the key.
      */
     virtual _leaf_type* leafNode(const key_type& k) = 0;
-    virtual ~_Node() {}
-    /** Returns the minimum value whose key is greater than x.
+
+    /* Returns the minimum value whose key is greater than x.
      *
      * @param x The threshold key
      * @return the minimum value whose key is greater than x.
@@ -95,14 +100,15 @@ class _Node {
     }
 
   protected:
-    /** Prints a string representation of the node in the ostream. */
+    /* Prints a string representation of the node in the ostream. */
     virtual void print(std::ostream&, const size_t) const = 0;
 
-    /** Sets the parent internal node for the node */
+    /* Sets the parent internal node for the node */
     void setParent(_internal_type *const p) {
       parent = p;
     }
-    /** Returns the minimum value in the subtree rooted at the current node. */
+
+    /* Returns the minimum value in the subtree rooted at the current node. */
     virtual const mapped_type* minV() const = 0;
 
     _internal_type* parent;
@@ -114,7 +120,7 @@ class _Node {
     friend class _Internal<key_type, mapped_type, key_compare, value_compare>;
 };
 
-/** Leaf node of the B+ tree. */
+/* Leaf node of the B+ tree. */
 template < typename Key, typename T, typename Comp, typename VComp >
 class _Leaf : public _Node<Key, T, Comp, VComp> {
   public:
@@ -137,7 +143,7 @@ class _Leaf : public _Node<Key, T, Comp, VComp> {
       std::memset (values, 0, 2*sizeof(value_type*));
     }
 
-    /** Destructor.
+    /* Destructor.
      * Frees memory used for storing key-value pair, thus invalidating any
      * exisitng pointers to any keys and/or values in the tree. During and
      * after destruction, neighbour nodes are not guarenteed to be consistent.
@@ -240,7 +246,7 @@ class _Leaf : public _Node<Key, T, Comp, VComp> {
     }
 
   private:
-    /** Key-value pairs */
+    /* Key-value pairs */
     value_type* values[2];
 
     /* Linked list structure of the B+ tree */
@@ -298,7 +304,7 @@ class _Internal : public _Node<Key, T, Comp, VComp> {
       return children[i]->leafNode(k);
     }
 
-    /** Update references to min values.
+    /* Update references to min values.
      *
      *  @param ch   The child node involved.
      */
@@ -316,7 +322,7 @@ class _Internal : public _Node<Key, T, Comp, VComp> {
         this->parent->updateMin(this);
     }
 
-    /** Process the splitting of children. This is called by the affected
+    /* Process the splitting of children. This is called by the affected
      * child AFTER splitting had occurred. This function updates relevant
      * pointers, and splits current internal node as necessary.
      *
