@@ -154,7 +154,7 @@ init()
       area+=std::sqrt( CGAL::squared_area(
               fh->halfedge()->vertex()->point(),
               fh->halfedge()->next()->vertex()->point(),
-              fh->halfedge()->prev()->vertex()->point() )s
+              fh->halfedge()->prev()->vertex()->point() )
             );
     }
   }
