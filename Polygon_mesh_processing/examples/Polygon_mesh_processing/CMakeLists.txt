@@ -46,6 +46,15 @@ if ( NOT Boost_FOUND )
 
 endif()
 
+
+find_package( OpenMesh QUIET )
+
+if ( OpenMesh_FOUND )
+include( UseOpenMesh )
+else()
+  message(STATUS "Examples that use OpenMesh will not be compiled.")
+endif()
+
 # include for local directory
 
 # include for local package
@@ -76,6 +85,10 @@ create_single_source_cgal_program( "refine_fair_example.cpp")
 create_single_source_cgal_program( "mesh_slicer_example.cpp")
 create_single_source_cgal_program( "remove_degeneracies_example.cpp")
 
+if(OpenMesh_FOUND)
+create_single_source_cgal_program( "compute_normals_example_OM.cpp" )
+target_link_libraries( compute_normals_example_OM ${OPENMESH_LIBRARIES} )
+endif()
 
 else(EIGEN3_FOUND)
   message(STATUS "NOTICE: Some examples require Eigen 3.1 (or greater) and will not be compiled.")  
