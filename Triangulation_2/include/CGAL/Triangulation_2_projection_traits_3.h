@@ -83,14 +83,6 @@ public:
   {
     CGAL_PROFILER("Construct Projected_side_of_oriented_circle_with_normal_3.")
     CGAL_TIME_PROFILER("Construct Projected_side_of_oriented_circle_with_normal_3.")
-//     std::cerr << "Projected_side_of_oriented_circle_with_normal_3(" << normal_ << ")\n";
-  }
-
-  Projected_side_of_oriented_circle_with_normal_3(const Self& other)
-    : normal(other.normal)
-  {
-    CGAL_PROFILER("Copy Projected_side_of_oriented_circle_with_normal_3::operator()")
-    CGAL_TIME_PROFILER("Copy Projected_side_of_oriented_circle_with_normal_3::operator()")
   }
 
   Oriented_side operator()(const Point& p,
@@ -101,7 +93,6 @@ public:
     CGAL_PROFILER("Projected_side_of_oriented_circle_with_normal_3::operator()")
     CGAL_TIME_PROFILER("Projected_side_of_oriented_circle_with_normal_3::operator()")
     const Vector_3& u = normal;
-//     std::cerr << "Projected_side_of_oriented_circle_with_normal_3::operator(). Normal=" << normal << ")\n";
 
     const Vector_3 tp = p - t;
     const Vector_3 tq = q - t;
@@ -326,30 +317,6 @@ public:
       b1 = Vector_3(ny, -nx, 0);
     }
     b2 = cross_product(n, b1);
-    // std::cerr << "\nTriangulation_2_projection_traits_3(" << b1 << "\n"
-    // 	      << "                                    " << b2 << "\n"
-    // 	      << "                                    " << n << "\n";
-  }
-
-  Triangulation_2_projection_traits_3(const Self& other)
-    : n(other.n), b1(other.b1), b2(other.b2)
-  {
-//     std::cerr << "Copy of a traits. Type="
-//               << typeid(*this).name() << std::endl
-//               << "normal=" << normal() << std::endl;
-  }
-
-  Self& operator=(const Self& other)
-  {
-    std::cerr << "Assign of a non-filtrered projected traits. Type="
-              << typeid(*this).name() << std::endl;
-    if(this != &other) {
-      n = other.n;
-      b1 = other.b1;
-      b2 = other.b2;
-    }
-    std::cerr << "Normal="<< this->normal() << std::endl;
-    return *this;
   }
 
   const Vector_3& normal() const

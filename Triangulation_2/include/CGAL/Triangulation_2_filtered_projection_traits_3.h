@@ -50,23 +50,6 @@ public:
   {
   }
 
-  Triangulation_2_filtered_projection_traits_3(const Self& other)
-    : Base(other)
-  {
-    CGAL_PROFILER("Copy of the filtered traits")
-    CGAL_TIME_PROFILER("Copy of the filtered traits")
-//     std::cerr << "Copy of the filtered traits.\n";
-  }
-
-  Self& operator=(const Self& other)
-  {
-    std::cerr << "Assignement of the filtered traits.\n";
-    if(this != &other) {
-      Base::operator=(other);
-    }
-    return *this;
-  }
-
 #define CGAL_TRIANGULATION_2_PROJ_TRAITS_FILTER_PRED(P, Pf, ACCESSOR)    \
   typedef  Filtered_predicate< \
     typename Exact_traits::P, \
@@ -76,7 +59,6 @@ public:
   P Pf() const { \
     return P(this->ACCESSOR()); \
   }
-  // std::cerr << #P << "_object()\n";
   CGAL_TRIANGULATION_2_PROJ_TRAITS_FILTER_PRED(Orientation_2,
                                                orientation_2_object,
                                                normal)
