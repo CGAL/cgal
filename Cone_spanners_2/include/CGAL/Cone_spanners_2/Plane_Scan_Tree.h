@@ -18,7 +18,7 @@
 //
 // Author(s)     : Quincy Tse, Weisheng Si
 
-/** @file Plane_Scan_Tree.h
+/* Plane_Scan_Tree.h
  *
  * This header defines the class Plane_Scan_Tree, the data structure for the balanced search tree used in
  * the Narasimhan and Smid's algorithm for constructing Theta graph.
@@ -37,12 +37,12 @@
 
 namespace CGAL {
 
-/** This namespace contains the internal implementation of the tree for builiding %Theta graph.
+/* This namespace contains the internal implementation of the tree for builiding Theta graph.
  * This is not meant to be imported by other code.
  */
 namespace ThetaDetail {
 
-/**
+/*
  * This is the balanced tree structure needed in Narasimhan and Smid's book,
  * but implemented using a partial ternary B+ tree instead of red-black tree.
  *
@@ -52,12 +52,12 @@ namespace ThetaDetail {
  * according to value_compare. Any single operation on this tree is guaranteed
  * to be at worst O(log n), and builds the tree from a list at O(nlogn).
  *
- * <strong>!!! Note:</strong> No two keys in the tree may have equal ordering
+ * !!! Note: No two keys in the tree may have equal ordering
  * according to key_compare. Results are undefined if key_compare does not give
- * unique ordering of the inserted keys. The 'vertex_smaller_2' functor implemented
+ * unique ordering of the inserted keys. The `Less_by_direction_2` functor implemented
  * by us guarantees the unique ordering, and is passed to Comp and VComp.
  *
- *  @see  G. Narasimhan and M. Smid, Geometric Spanner Networks: Cambridge
+ *  see  G. Narasimhan and M. Smid, Geometric Spanner Networks: Cambridge
  *        University Press, 2007, p. 71
  */
 template <typename Key, 
@@ -91,13 +91,13 @@ class Plane_Scan_Tree {
     typedef           reverse_iterator          const_reverse_iterator;
     typedef           size_t                    size_type;
 
-    /** Explicit Constructor. */
+    /* Explicit Constructor. */
     explicit Plane_Scan_Tree (const key_compare& comp = key_compare(),
                             const value_compare& vcomp = value_compare())
         : less (comp), vless (vcomp), root (NULL), min (NULL),
           max (NULL), _size (0) {}
 
-	/** Constructor */
+	/* Constructor */
     template <typename InputIterator>
     Plane_Scan_Tree (InputIterator first, InputIterator last,
                     const key_compare& comp = key_compare(),
@@ -110,7 +110,7 @@ class Plane_Scan_Tree {
         add (first->first, first->second);
     }
 
-    /** Destructor. This will recursively destroy all nodes in the tree, making
+    /* Destructor. This will recursively destroy all nodes in the tree, making
      * all iterators and pointers to values stored in this tree invalid.
      */
     ~Plane_Scan_Tree () {
@@ -137,7 +137,7 @@ class Plane_Scan_Tree {
 #endif
 */
 
-    /** Returns the number of key-value pairs in the tree
+    /* Returns the number of key-value pairs in the tree
      *
      * @return The number of key-value pairs in the tree.
      */
@@ -145,7 +145,7 @@ class Plane_Scan_Tree {
       return _size;
     }
 
-    /** Inserts a key-value pair into the tree.
+    /* Inserts a key-value pair into the tree.
      * @param k   The key
      * @param v   The value
      */
@@ -160,19 +160,19 @@ class Plane_Scan_Tree {
       _size++;
     }
 
-	/** find a key */
+	/* find a key */
     iterator find(const key_type& k) {
       _leaf_type* l = root->leafNode(k);
       return iterator (l, k);
     }
 
-	/** find a constant key */
+	/* find a constant key */
     const_iterator find(const key_type& k) const {
       _leaf_type* l = root->leafNode(k);
       return const_iterator (l, k);
     }
 
-    /** Returns the the minimum value that has a key strictly greater than
+    /* Returns the the minimum value that has a key strictly greater than
      * the specified key.
      *
      * @param x The threshold key
@@ -183,48 +183,48 @@ class Plane_Scan_Tree {
       return root->minAbove(x);
     }
 
-    /** Begin  Iterator */
+    /* Begin  Iterator */
     inline iterator begin() {
       return iterator (this->min);
     }
 
-    /** Const Begin  Iterator */
+    /* Const Begin  Iterator */
     inline const_iterator begin() const {
       return const_iterator (this->min);
     }
 
-    /** End  Iterator */
+    /* End  Iterator */
     inline iterator end() {
       static iterator res;
 
       return res;
     }
 
-    /** Constant End  Iterator */
+    /* Constant End  Iterator */
     inline const_iterator end() const {
       static const_iterator res;
 
       return res;
     }
 
-    /** Reverse order Begin Iterator */
+    /* Reverse order Begin Iterator */
     inline reverse_iterator rbegin() {
       return reverse_iterator (this->max);
     }
 
-    /** Constant Reverse order Begin Iterator */
+    /* Constant Reverse order Begin Iterator */
     const_reverse_iterator rbegin() const {
       return const_reverse_iterator (this->max);
     }
 
-    /** Reverse order End Iterator */
+    /* Reverse order End Iterator */
     reverse_iterator rend() {
       static reverse_iterator res;
 
       return res;
     }
 
-    /** Constant  Reverse order End Iterator */
+    /* Constant  Reverse order End Iterator */
     const_reverse_iterator rend() const {
       static const_reverse_iterator res;
 
@@ -242,22 +242,22 @@ class Plane_Scan_Tree {
 
   protected:
   private:
-	/** key_compare funtor */
+	/* key_compare funtor */
     const key_compare less;
 
-	/** value_compare funtor */
+	/* value_compare funtor */
     const value_compare vless;
 
-	/** pointer to root */
+	/* pointer to root */
     _node_type* root;
 
-	/** pointer to min */
+	/* pointer to min */
     _leaf_type* min;
 
-	/** pointer to max */
+	/* pointer to max */
     _leaf_type* max;
 
-	/** size of the tree */
+	/* size of the tree */
     size_t _size;
 };
 
