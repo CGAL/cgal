@@ -3,7 +3,7 @@
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_with_constructions_3.h>
 #include <CGAL/point_generators_3.h>
 
-#include <list>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 typedef K::Plane_3                                            Plane;
@@ -13,7 +13,7 @@ typedef CGAL::Polyhedron_3<K>                                 Polyhedron_3;
 int main (void) {
 
   // generates supporting planes of the facets of a cube
-  std::list<Plane> planes;
+  std::vector<Plane> planes;
   planes.push_back( Plane( 1, 0, 0,-1) ); // x= 1
   planes.push_back( Plane(-1, 0, 0,-1) ); // x=-1
   planes.push_back( Plane( 0, 1, 0,-1) ); // y= 1

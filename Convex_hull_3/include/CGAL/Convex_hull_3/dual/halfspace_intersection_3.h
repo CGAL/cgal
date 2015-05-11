@@ -211,13 +211,13 @@ namespace CGAL
 
             // Checks if the dimension of intersection of the planes
             // is a polyhedron (dimension == 3)
-            template <class PlaneIterator>
-            bool is_intersection_dim_3 (PlaneIterator begin,
-                                        PlaneIterator end) {
-                typedef typename std::iterator_traits<PlaneIterator>::value_type Plane;
+            template <class InputPlaneIterator>
+            bool is_intersection_dim_3 (InputPlaneIterator begin,
+                                        InputPlaneIterator end) {
+                typedef typename std::iterator_traits<InputPlaneIterator>::value_type Plane;
+                typedef typename std::vector<Plane>::iterator PlaneIterator;
 
-                std::list<Plane> planes(begin, end);
-
+                std::vector<Plane> planes(begin, end);
                 // Remove same planes
                 std::size_t size = planes.size();
 
@@ -228,13 +228,13 @@ namespace CGAL
                 // Collinear
                 PlaneIterator plane1_it = planes.begin();
                 PlaneIterator plane2_it = planes.begin();
-                plane2_it++;
+                ++plane2_it;
 
                 PlaneIterator plane3_it = planes.end();
-                plane3_it--;
+                --plane3_it;
                 while (plane2_it != planes.end() &&
                        collinear_plane(*plane1_it, *plane2_it)) {
-                    plane2_it++;
+                    ++plane2_it;
                 }
 
                 if (plane2_it == planes.end()) {
