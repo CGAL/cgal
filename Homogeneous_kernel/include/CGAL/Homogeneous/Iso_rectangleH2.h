@@ -69,13 +69,13 @@ template < class R >
 inline
 const typename Iso_rectangleH2<R>::Point_2 &
 Iso_rectangleH2<R>::min BOOST_PREVENT_MACRO_SUBSTITUTION () const
-{ return get(base)[0]; }
+{ return get_pointee_or_identity(base)[0]; }
 
 template < class R >
 inline
 const typename Iso_rectangleH2<R>::Point_2 &
 Iso_rectangleH2<R>::max BOOST_PREVENT_MACRO_SUBSTITUTION () const
-{ return get(base)[1]; }
+{ return get_pointee_or_identity(base)[1]; }
 
 template < class R >
 CGAL_KERNEL_INLINE

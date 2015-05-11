@@ -109,17 +109,17 @@ public:
 
   const Point_3_ & center() const
   {
-      return get(base).template get<0>();
+      return get_pointee_or_identity(base).template get<0>();
   }
   const FT & squared_radius() const
   {
       // Returns the square of the radius (instead of the radius itself,
       // which would require square roots)
-      return get(base).template get<1>();
+      return get_pointee_or_identity(base).template get<1>();
   }
   Orientation orientation() const
   {
-      return get(base).template get<2>();
+      return get_pointee_or_identity(base).template get<2>();
   }
 
   // A circle is degenerate if its (squared) radius is null or negative
