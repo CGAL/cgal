@@ -262,7 +262,7 @@ namespace CGAL
     template <class PlaneIterator, class Polyhedron>
     void halfspace_intersection_3 (PlaneIterator begin, PlaneIterator end,
                                    Polyhedron &P,
-                                   boost::optional<typename Polyhedron::Vertex::Point_3> const& origin) {
+                                   boost::optional<typename Polyhedron::Vertex::Point_3> const& origin = boost::none) {
         // Checks whether the intersection if a polyhedron
         CGAL_assertion_msg(Convex_hull_3::internal::is_intersection_dim_3(begin, end), "halfspace_intersection_3: intersection not a polyhedron");
 
@@ -311,20 +311,15 @@ namespace CGAL
         }
     }
 
-  // Compute the intersection of halfspaces by computing a point inside.
-  template <class PlaneIterator, class Polyhedron>
-  void halfspace_intersection_3 (PlaneIterator begin, PlaneIterator end,
-                                 Polyhedron &P) {
-    halfspace_intersection_3(begin, end , P, boost::none);
-  }
-
+  #ifndef CGAL_NO_DEPRECATED_CODE
   // Compute the intersection of halfspaces (an interior point is given.)
   template <class PlaneIterator, class Polyhedron>
   void halfspace_intersection_3 (PlaneIterator begin, PlaneIterator end,
                                  Polyhedron &P,
                                  typename Polyhedron::Vertex::Point_3 const& origin) {
-    halfspace_intersection_3(begin, end , P, boost::optional<typename Polyhedron::Vertex::Point_3>(origin));
+    halfspace_intersection_3(begin, end , P, boost::make_optional(origin));
   }
+  #endif
 } // namespace CGAL
 
 #endif // CGAL_HALFSPACE_INTERSECTION_3_H

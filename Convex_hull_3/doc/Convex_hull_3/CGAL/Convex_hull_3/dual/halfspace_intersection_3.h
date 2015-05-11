@@ -23,6 +23,6 @@ This version does not construct the dual points explicitely but uses a special t
 template <class PlaneIterator, class Polyhedron>
 void halfspace_intersection_3 (PlaneIterator begin, PlaneIterator end,
                                Polyhedron &P,
-                               boost::optional<Polyhedron::Vertex::Point_3> origin);
+                               boost::optional<Polyhedron::Vertex::Point_3> origin = boost::none);
 
 } /* namespace CGAL */
