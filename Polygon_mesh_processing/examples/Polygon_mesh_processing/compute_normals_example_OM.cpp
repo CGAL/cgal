@@ -56,7 +56,6 @@ public:
 int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/eight.off";
-  std::ifstream input(filename);
 
   Surface_mesh mesh;
   OpenMesh::IO::read_mesh(mesh, filename);
