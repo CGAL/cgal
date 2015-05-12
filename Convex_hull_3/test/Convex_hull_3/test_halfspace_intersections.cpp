@@ -16,12 +16,13 @@ int main (void) {
 
   // generates supporting planes of the facets of a cube
   std::vector<Plane> planes;
+
   planes.push_back( Plane( 1, 0, 0,-1) ); // x= 1
-  planes.push_back( Plane(-1, 0, 0,-1) ); // x=-1
   planes.push_back( Plane( 0, 1, 0,-1) ); // y= 1
   planes.push_back( Plane( 0,-1, 0,-1) ); // y=-1
   planes.push_back( Plane( 0, 0, 1,-1) ); // z= 1
   planes.push_back( Plane( 0, 0,-1,-1) ); // z=-1
+  planes.push_back( Plane(-1, 0, 0,-1) ); // x=-1
 
   // define polyhedron to hold the intersection
   Polyhedron_3 P1, P2, P3, P4, P5;

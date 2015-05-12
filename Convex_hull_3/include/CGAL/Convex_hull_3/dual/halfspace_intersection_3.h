@@ -211,31 +211,26 @@ namespace CGAL
                 if (size < 4)
                     return false;
 
-                // Collinear
+                // Look for two non-parallel planes
                 PlaneIterator plane1_it = planes.begin();
-                PlaneIterator plane2_it = planes.begin();
-                ++plane2_it;
+                PlaneIterator plane2_it = cpp11::next(planes.begin());
 
-                PlaneIterator plane3_it = planes.end();
-                --plane3_it;
                 while (plane2_it != planes.end() &&
                        collinear_plane(*plane1_it, *plane2_it)) {
                     ++plane2_it;
                 }
 
-                if (plane2_it == planes.end()) {
-                    return false;
-                }
+                if (plane2_it == planes.end()) return false;
 
-                // Coplanar
-                while (plane2_it != planes.end() &&
+                PlaneIterator plane3_it = cpp11::next(plane2_it);
+
+                // Look for a triple of planes intersecting in a point
+                while (plane3_it != planes.end() &&
                        coplanar_plane(*plane1_it, *plane2_it, *plane3_it)) {
-                    plane2_it++;
+                    ++plane3_it;
                 }
 
-                if (plane2_it == planes.end()) {
-                    return false;
-                }
+                if (plane3_it == planes.end()) return false;
 
                 return true;
             }
@@ -249,7 +244,7 @@ namespace CGAL
     void halfspace_intersection_3 (PlaneIterator begin, PlaneIterator end,
                                    Polyhedron &P,
                                    boost::optional<typename Polyhedron::Vertex::Point_3> const& origin = boost::none) {
-        // Checks whether the intersection if a polyhedron
+        // Checks whether the intersection is a polyhedron
         CGAL_assertion_msg(Convex_hull_3::internal::is_intersection_dim_3(begin, end), "halfspace_intersection_3: intersection not a polyhedron");
 
         // Types
