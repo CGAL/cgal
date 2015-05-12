@@ -97,6 +97,7 @@ struct Side_of_bounded_sphere_d {
 template<class ForwardIterator>
 Bounded_side operator()(ForwardIterator first, ForwardIterator last, const Point_d&p);
 };
+Construct_circumcenter_d construct_circumcenter_d_object();
 Compute_squared_radius_d compute_squared_radius_d_object();
 }; /* end Epick_d */
 } /* end namespace CGAL */

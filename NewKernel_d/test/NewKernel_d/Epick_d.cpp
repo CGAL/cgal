@@ -80,6 +80,7 @@ void test2(){
   typedef typename K1::Construct_sphere_d CSp;
   typedef typename CGAL::Get_functor<K1, CGAL::Segment_extremity_tag>::type CSE;
   typedef typename K1::Construct_cartesian_const_iterator_d CCI;
+  typedef typename K1::Construct_circumcenter_d CCc;
   typedef typename K1::Linear_base_d LB;
   typedef typename K1::Orientation_d PO;
   typedef typename K1::Side_of_oriented_sphere_d SOS;
@@ -115,6 +116,7 @@ void test2(){
   typedef typename K1::Position_on_line_d PoL;
   typedef typename K1::Equal_d E;
   typedef typename K1::Squared_distance_d SD;
+  typedef typename K1::Compute_squared_radius_d SR;
 
   CGAL_USE_TYPE(AT);
   CGAL_USE_TYPE(D);
@@ -131,6 +133,7 @@ void test2(){
   CV cv Kinit(construct_vector_d_object);
   CCI ci Kinit(construct_cartesian_const_iterator_d_object);
   CC cc Kinit(compute_coordinate_d_object);
+  CCc ccc Kinit(construct_circumcenter_d_object);
   PO po Kinit(orientation_d_object);
   CS cs Kinit(construct_segment_d_object);
   CSp csp Kinit(construct_sphere_d_object);
@@ -168,6 +171,7 @@ void test2(){
   PoL pol Kinit(position_on_line_d_object);
   E ed Kinit(equal_d_object);
   SD sd Kinit(squared_distance_d_object);
+  SR sr Kinit(compute_squared_radius_d_object);
 
   CGAL_USE(bc);
   CGAL_USE(pol);
@@ -217,6 +221,12 @@ void test2(){
   assert(sos(tabn+0,tabn+3,P(3,3))==CGAL::ON_POSITIVE_SIDE);
   assert(sbs(tabp+0,tabp+3,P(3,3))==CGAL::ON_UNBOUNDED_SIDE);
   assert(sbs(tabn+0,tabn+3,P(3,3))==CGAL::ON_UNBOUNDED_SIDE);
+  assert(sbs(tabp+1,tabp+3,P(1,1))==CGAL::ON_BOUNDARY);
+  assert(ccc(tabp+1,tabp+2)==tabp[1]);
+  assert(ccc(tabn+0,tabn+2)==P(0,.5));
+  assert(sr(tabp+2,tabp+3)==0);
+  assert(sr(tabp+1,tabp+3)==.5);
+  assert(sbs(tabp+1,tabp+3,P(10,-1))==CGAL::ON_UNBOUNDED_SIDE);
   assert(sos(tabp+0,tabp+3,P(.5,.5))==CGAL::ON_POSITIVE_SIDE);
   assert(sos(tabn+0,tabn+3,P(.5,.5))==CGAL::ON_NEGATIVE_SIDE);
   assert(sbs(tabp+0,tabp+3,P(.5,.5))==CGAL::ON_BOUNDED_SIDE);
@@ -372,7 +382,7 @@ void test3(){
   typedef typename K1::Squared_distance_d SD;
   typedef typename K1::Point_dimension_d PD;
   typedef typename K1::Affinely_independent_d AI;
-  typedef typename CGAL::Get_functor<K1, CGAL::Side_of_bounded_diametral_sphere_tag>::type SBDS;
+  typedef typename CGAL::Get_functor<K1, CGAL::Side_of_bounded_circumsphere_tag>::type SBDS;
 
   Ker k
 #if 1
@@ -431,7 +441,7 @@ void test3(){
   P tab[]={a,b,c,d,e};
   std::cout << po (&tab[0],tab+4) << ' ';
   std::cout << sos(&tab[0],tab+5) << ' ';
-  std::cout << sbs(&tab[0],tab+5) << std::endl;
+  std::cout << sbs(tab+1,tab+5,tab[0]) << std::endl;
   FO fo=cfo(&tab[0],tab+3);
   std::cout << fo;
   P x[]={cp(2,2,3),cp(2,2,0),cp(1,2,1)};
