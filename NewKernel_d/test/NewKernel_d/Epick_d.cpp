@@ -411,7 +411,7 @@ void test3(){
   typedef typename K1::Point_dimension_d PD;
   typedef typename K1::Affinely_independent_d AI;
   typedef typename K1::Scaled_vector_d SV;
-  typedef typename CGAL::Get_functor<K1, CGAL::Side_of_bounded_circumsphere_tag>::type SBDS;
+  typedef typename K1::Side_of_bounded_sphere_d SBDS;
 
   Ker k
 #if 1
@@ -443,7 +443,7 @@ void test3(){
   SD sd Kinit(squared_distance_d_object);
   PD pd Kinit(point_dimension_d_object);
   AI ai Kinit(affinely_independent_d_object);
-  SBDS sbds (k);
+  SBDS sbds Kinit(side_of_bounded_sphere_d_object);
   P a; // Triangulation needs this :-(
   a=cp(2,3,4);
   assert(pd(a)==3);
