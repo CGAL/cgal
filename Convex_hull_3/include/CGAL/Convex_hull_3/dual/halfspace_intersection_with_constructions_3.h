@@ -137,7 +137,8 @@ namespace CGAL
               // find a point inside the intersection
               typedef Interior_polyhedron_3<K, ET> Interior_polyhedron;
               Interior_polyhedron interior;
-              bool res = interior.find(pbegin, pend);
+              CGAL_assertion_code(bool res = )
+              interior.find(pbegin, pend);
               CGAL_assertion_msg(res, "halfspace_intersection_with_constructions_3: problem when determing a point inside");
               p_origin = interior.inside_point();
             }
