@@ -33,12 +33,12 @@ int main(int argc, char* argv[])
             << std::endl;
 
   // Approximate the offset polygon.
-  std::list<Polygon> inset_polygons;
+  std::list<Polygon_2> inset_polygons;
   boost::timer timer;
   approximated_inset_2(P, 1, 0.00001, std::back_inserter(inset_polygons));
   double secs = timer.elapsed();
 
-  std::list<Polygon>::iterator it;
+  std::list<Polygon_2>::iterator it;
   std::cout << "The inset comprises " << inset_polygons.size()
             << " polygon(s)." << std::endl;
   for (it = inset_polygons.begin(); it != inset_polygons.end(); ++it)

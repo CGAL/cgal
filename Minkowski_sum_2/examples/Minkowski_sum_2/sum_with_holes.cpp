@@ -18,12 +18,12 @@ int main(int argc, char* argv[])
     std::cerr << "Failed to open the input file." << std::endl;
     return -1;
   }
-  Polygon   P, Q;
+  Polygon_2   P, Q;
   in_file >> P >> Q;
   in_file.close();
 
   // Compute and print the Minkowski sum.
-  Polygon_with_holes  sum = CGAL::minkowski_sum_2(P, Q);
+  Polygon_with_holes_2  sum = CGAL::minkowski_sum_2(P, Q);
   std::cout << "P (+) Q = ";
   print_polygon_with_holes(sum);
   return 0;
