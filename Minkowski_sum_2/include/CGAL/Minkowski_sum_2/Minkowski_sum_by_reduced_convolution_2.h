@@ -206,8 +206,8 @@ private:
   void build_reduced_convolution(const Polygon_2& pgn1, const Polygon_2& pgn2,
                                  Segment_list& reduced_convolution) const
   {
-    std::size_t n1 = pgn1.size();
-    std::size_t n2 = pgn2.size();
+    int n1 = static_cast<int>(pgn1.size());
+    int n2 = static_cast<int>(pgn2.size());
 
     // Init the direcions of both polygons
     std::vector<Direction_2> p1_dirs = directions_of_polygon(pgn1);
