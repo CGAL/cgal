@@ -17,19 +17,10 @@ namespace CGAL
 {
 namespace parameters
 {
-// see <CGAL/config.h>
-//CGAL_PRAGMA_DIAG_PUSH
-//ignore "unused variable" warning
-//#if defined(__clang__) || (BOOST_GCC >= 40600)
-//#  define CGAL_MESH_2_IGNORE_UNUSED_VARIABLES \
-//    _Pragma("GCC diagnostic ignored \"-Wunused-variable\"")
-//#else
-//#  define CGAL_MESH_2_IGNORE_UNUSED_VARIABLES
-//#endif
-
 #ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-variable"
+#pragma clang diagnostic ignored "-Wunused-parameter"
 #endif
 
 BOOST_PARAMETER_NAME( cdt )
