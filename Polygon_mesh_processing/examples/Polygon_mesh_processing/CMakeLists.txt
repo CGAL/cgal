@@ -74,6 +74,7 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "self_intersections_example.cpp" )
 create_single_source_cgal_program( "hole_filling_example.cpp" )
+create_single_source_cgal_program( "hole_filling_example_SM.cpp" )
 create_single_source_cgal_program( "stitch_borders_example.cpp" )
 create_single_source_cgal_program( "compute_normals_example.cpp" )
 create_single_source_cgal_program( "point_inside_example.cpp")
