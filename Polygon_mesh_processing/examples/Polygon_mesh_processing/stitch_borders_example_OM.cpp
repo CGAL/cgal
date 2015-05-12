@@ -16,7 +16,6 @@ typedef OpenMesh::PolyMesh_ArrayKernelT< > Mesh;
 int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/full_border_quads.off";
-  std::ifstream input(filename);
 
   Mesh mesh;
   OpenMesh::IO::read_mesh(mesh, filename);
