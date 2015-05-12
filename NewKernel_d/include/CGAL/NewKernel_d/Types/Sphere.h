@@ -52,39 +52,13 @@ template <class R_> struct Construct_sphere : Store_kernel<R_> {
   }
   template <class Iter>
   result_type operator()(Iter f, Iter e)const{
-    // 2*(x-y).c == x^2-y^2
-    typedef typename R_::LA LA;
-    typedef typename LA::Square_matrix Matrix;
-    typedef typename LA::Vector Vec;
-    typedef typename LA::Construct_vector CVec;
     typedef typename Get_type<R_, Point_tag>::type	Point;
-    typename Get_functor<R_, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
-    typename Get_functor<R_, Construct_ttag<Point_tag> >::type cp(this->kernel());
-    typename Get_functor<R_, Point_dimension_tag>::type pd(this->kernel());
-    typename Get_functor<R_, Squared_distance_to_origin_tag>::type sdo(this->kernel());
+    typename Get_functor<R_, Construct_circumcenter_tag>::type cc(this->kernel());
     typename Get_functor<R_, Squared_distance_tag>::type sd(this->kernel());
 
-    Point const& p0=*f;
-    int d = pd(p0);
-    FT const& n0 = sdo(p0);
-    Matrix m(d,d);
-    Vec b = typename CVec::Dimension()(d);
-    // Write the point coordinates in lines.
-    int i;
-    for(i=0; ++f!=e; ++i) {
-      Point const& p=*f;
-      for(int j=0;j<d;++j) {
-	m(i,j)=2*(c(p,j)-c(p0,j));
-	b[i] = sdo(p) - n0;
-      }
-    }
-    CGAL_assertion (i == d);
-    Vec res = typename CVec::Dimension()(d);;
-    //std::cout << "Mat: " << m << "\n Vec: " << one << std::endl;
-    LA::solve(res, CGAL_MOVE(m), CGAL_MOVE(b));
-    //std::cout << "Sol: " << res << std::endl;
-    Point center = cp(d,LA::vector_begin(res),LA::vector_end(res));
-    FT const& r2 = sd (center, p0);
+    // It should be possible to avoid copying the center by moving this code to a constructor.
+    Point center = cc(f, e);
+    FT const& r2 = sd(center, *f);
     return this->operator()(CGAL_MOVE(center), r2);
   }
 };

@@ -130,6 +130,17 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	    return operator()(v, End_tag());
 	  }
 	};
+	struct Compute_squared_radius_d : private Store_kernel<Kernel> {
+	  typedef Kernel R_; // for the macro
+	  CGAL_FUNCTOR_INIT_STORE(Compute_squared_radius_d)
+	  typedef FT result_type;
+	  template<class S> FT operator()(CGAL_FORWARDABLE(S) s)const{
+	    return typename Get_functor<Base, Squared_radius_tag>::type(this->kernel())(CGAL_FORWARD(S,s));
+	  }
+	  template<class I> FT operator()(I b, I e)const{
+	    return typename Get_functor<Base, Squared_circumradius_tag>::type(this->kernel())(b,e);
+	  }
+	};
 	typedef typename Construct_cartesian_const_iterator_d::result_type Cartesian_const_iterator_d;
 	typedef typename Get_functor<Base, Squared_distance_tag>::type Squared_distance_d;
 	typedef typename Get_functor<Base, Squared_length_tag>::type Squared_length_d;
@@ -142,9 +153,10 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, Linear_rank_tag>::type Linear_rank_d;
 	typedef typename Get_functor<Base, Linearly_independent_tag>::type Linearly_independent_d;
 	typedef typename Get_functor<Base, Oriented_side_tag>::type Oriented_side_d;
-	typedef typename Get_functor<Base, Side_of_bounded_sphere_tag>::type Side_of_bounded_sphere_d;
+	typedef typename Get_functor<Base, Side_of_bounded_circumsphere_tag>::type Side_of_bounded_sphere_d;
 
 	typedef typename Get_functor<Base, Center_of_sphere_tag>::type Center_of_sphere_d;
+	typedef typename Get_functor<Base, Construct_circumcenter_tag>::type Construct_circumcenter_d;
 	typedef typename Get_functor<Base, Value_at_tag>::type Value_at_d;
 	typedef typename Get_functor<Base, Point_of_sphere_tag>::type Point_of_sphere_d;
 	typedef typename Get_functor<Base, Orthogonal_vector_tag>::type Orthogonal_vector_d;
@@ -196,10 +208,12 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Construct_segment_d construct_segment_d_object()const{ return Construct_segment_d(*this); }
 	Construct_sphere_d construct_sphere_d_object()const{ return Construct_sphere_d(*this); }
 	Construct_hyperplane_d construct_hyperplane_d_object()const{ return Construct_hyperplane_d(*this); }
+	Compute_squared_radius_d compute_squared_radius_d_object()const{ return Compute_squared_radius_d(*this); }
 	Squared_distance_d squared_distance_d_object()const{ return Squared_distance_d(*this); }
 	Squared_length_d squared_length_d_object()const{ return Squared_length_d(*this); }
 	Scalar_product_d scalar_product_d_object()const{ return Scalar_product_d(*this); }
 	Center_of_sphere_d center_of_sphere_d_object()const{ return Center_of_sphere_d(*this); }
+	Construct_circumcenter_d construct_circumcenter_d_object()const{ return Construct_circumcenter_d(*this); }
 	Construct_direction_d construct_direction_d_object()const{ return Construct_direction_d(*this); }
 	Construct_line_d construct_line_d_object()const{ return Construct_line_d(*this); }
 	Construct_ray_d construct_ray_d_object()const{ return Construct_ray_d(*this); }

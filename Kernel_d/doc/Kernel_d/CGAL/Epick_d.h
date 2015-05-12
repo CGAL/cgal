@@ -73,7 +73,36 @@ Cartesian_const_iterator_d cartesian_begin()const;
 /*! returns an iterator pointing beyond the last Cartesian coordinate. */
 Cartesian_const_iterator_d cartesian_end()const;
 };
-/// @}
 
+/*! \cgalModels `Kernel_d::Center_of_sphere_d`
+ */
+struct Construct_circumcenter_d {
+/*! returns the center of the sphere defined by `A=tuple[first,last)`. The sphere is centered in the affine hull of A and passes through all the points of A. The order of the points of A does not matter.
+    \pre A is affinely independant.
+    \cgalRequires The value type of `ForwardIterator` is `Epick_d::Point_d`.
+    */
+template<typename ForwardIterator>
+Point_d operator()(ForwardIterator first, ForwardIterator last);
+};
+struct Compute_squared_radius_d {
+/*! returns the radius of the sphere defined by `A=tuple[first,last)`. The sphere is centered in the affine hull of A and passes through all the points of A. The order of the points of A does not matter.
+    \pre A is affinely independant.
+    \cgalRequires The value type of `ForwardIterator` is `Epick_d::Point_d`.
+    */
+template<class ForwardIterator>
+Point_d operator()(ForwardIterator first, ForwardIterator last);
+};
+/*! \cgalModels `Kernel_d::Side_of_bounded_sphere_d`
+ */
+struct Side_of_bounded_sphere_d {
+/*! returns the relative position of point p to the sphere defined by `A=tuple[first,last)`. The sphere is centered in the affine hull of A and passes through all the points of A. The order of the points of A does not matter.
+    \pre A is affinely independant.
+    \cgalRequires The value type of `ForwardIterator` is `Epick_d::Point_d`.
+    */
+template<class ForwardIterator>
+Bounded_side operator()(ForwardIterator first, ForwardIterator last, const Point_d&p);
+};
+Construct_circumcenter_d construct_circumcenter_d_object();
+Compute_squared_radius_d compute_squared_radius_d_object();
 }; /* end Epick_d */
 } /* end namespace CGAL */

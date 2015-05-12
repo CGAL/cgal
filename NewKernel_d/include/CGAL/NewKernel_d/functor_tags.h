@@ -210,6 +210,7 @@ namespace CGAL {
 	CGAL_DECL_COMPUTE(Squared_distance_to_origin);
 	CGAL_DECL_COMPUTE(Squared_length);
 	CGAL_DECL_COMPUTE(Squared_radius);
+	CGAL_DECL_COMPUTE(Squared_circumradius);
 	CGAL_DECL_COMPUTE(Scalar_product);
 	CGAL_DECL_COMPUTE(Hyperplane_translation);
 	CGAL_DECL_COMPUTE(Value_at);
@@ -264,6 +265,7 @@ namespace CGAL {
 	CGAL_DECL_CONSTRUCT(Vector_to_point,Point);
 	CGAL_DECL_CONSTRUCT(Construct_min_vertex,Point);
 	CGAL_DECL_CONSTRUCT(Construct_max_vertex,Point);
+	CGAL_DECL_CONSTRUCT(Construct_circumcenter,Point);
 #undef CGAL_DECL_CONSTRUCT
 #if 0
 #define CGAL_DECL_ITER_CONSTRUCT(X,Y) struct X##_tag {}; \
@@ -293,6 +295,7 @@ namespace CGAL {
 	CGAL_DECL_PREDICATE(Orientation_of_vectors);
 	CGAL_DECL_PREDICATE(Side_of_oriented_sphere);
 	CGAL_DECL_PREDICATE(Side_of_bounded_sphere);
+	CGAL_DECL_PREDICATE(Side_of_bounded_circumsphere);
 	CGAL_DECL_PREDICATE(Contained_in_affine_hull);
 	CGAL_DECL_PREDICATE(In_flat_orientation);
 	CGAL_DECL_PREDICATE(In_flat_side_of_oriented_sphere);
