@@ -105,7 +105,7 @@ struct Naive_border_stitching_modifier
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
   typedef typename std::pair<halfedge_descriptor, halfedge_descriptor> halfedges_pair;
-  typedef typename PM::Point Point;
+  typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 
   typedef HalfedgePairsRange To_stitch;
 
@@ -151,7 +151,7 @@ struct Naive_border_stitching_modifier
       vertex_descriptor v_to_keep = h1_tgt;
       std::pair<typename std::map<Point, vertex_descriptor>::iterator, bool >
         insert_res =
-          vertices_kept.insert( std::make_pair(vpmap[v_to_keep], v_to_keep) );
+        vertices_kept.insert( std::make_pair(get(vpmap, v_to_keep), v_to_keep) );
 
       if (!insert_res.second && v_to_keep != insert_res.first->second)
       {
