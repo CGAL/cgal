@@ -23,6 +23,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/fair_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
@@ -97,9 +98,6 @@ namespace internal {
     using boost::get_param;
     using boost::choose_param;
 
-    typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh>
-      Default_Weight_calculator;
-
 #if defined(CGAL_EIGEN3_ENABLED)
   #if EIGEN_VERSION_AT_LEAST(3,2,0)
     typedef CGAL::Eigen_solver_traits<Eigen::SparseLU<
@@ -114,11 +112,17 @@ namespace internal {
       //if no solver is provided and Eigen version < 3.2
 #endif
 
+    typedef typename GetVertexPointMap < PolygonMesh, NamedParameters>::type VPMap;
+    typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh, VPMap>
+      Default_Weight_calculator;
+
+    VPMap vpmap_ = choose_param(get_param(np, vertex_point), get(CGAL::vertex_point, pmesh));
+
     return internal::fair(pmesh, vertices,
       choose_param(get_param(np, sparse_linear_solver), Default_solver()),
-      choose_param(get_param(np, weight_calculator), Default_Weight_calculator(pmesh)),
+      choose_param(get_param(np, weight_calculator), Default_Weight_calculator(pmesh, vpmap_)),
       choose_param(get_param(np, fairing_continuity), 1),
-      choose_param(get_param(np, vertex_point), get(CGAL::vertex_point, pmesh))
+      vpmap_
       );
   }
 

@@ -618,7 +618,8 @@ bool Polyhedron_demo_hole_filling_plugin::fill
     if(weight_index == 0) {
       success = CGAL::cpp11::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
               it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
-              CGAL::Polygon_mesh_processing::parameters::weight_calculator(CGAL::internal::Uniform_weight_fairing<Polyhedron>(poly)).
+              CGAL::Polygon_mesh_processing::parameters::weight_calculator
+                (CGAL::internal::Uniform_weight_fairing<Polyhedron>(poly)).
               density_control_factor(alpha).
               fairing_continuity(continuity).
               use_delaunay_triangulation(use_DT)));

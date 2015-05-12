@@ -24,6 +24,7 @@
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/property_map.h>
 
 namespace CGAL {
 namespace internal {
@@ -62,12 +63,13 @@ public:
 // The potential problem with previous one (Cotangent_value) is that it does not produce symmetric results
 // (i.e. for v0, v1, v2 and v2, v1, v0 returned cot weights can be slightly different)
 // This one provides stable results.
-template<class PolygonMesh>
+template<class PolygonMesh
+  , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point>::type>
 class Cotangent_value_Meyer
 { 
 public:
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
+  typedef VertexPointMap Point_property_map;
   typedef typename boost::property_traits<Point_property_map>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
 
@@ -80,8 +82,9 @@ private:
 
 public:
   
-  Cotangent_value_Meyer(PolygonMesh& pmesh_)
-    : pmesh_(pmesh_), ppmap(get(vertex_point,pmesh_))
+  Cotangent_value_Meyer(PolygonMesh& pmesh_, VertexPointMap vpmap_)
+    : pmesh_(pmesh_)
+    , ppmap(vpmap_)
   {}
 
   PolygonMesh& pmesh()
@@ -120,15 +123,17 @@ public:
 
 // Returns the cotangent value of half angle v0 v1 v2 by clamping between [1, 89] degrees
 // as suggested by -[Friedel] Unconstrained Spherical Parameterization-
-template<class PolygonMesh, class CotangentValue = Cotangent_value_Meyer<PolygonMesh> >
+template<class PolygonMesh
+  , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point>::type
+  , class CotangentValue = Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
 class Cotangent_value_clamped : CotangentValue
 {
   Cotangent_value_clamped()
   {}
 public:
 
-  Cotangent_value_clamped(PolygonMesh& pmesh_)
-    : CotangentValue(pmesh_)
+  Cotangent_value_clamped(PolygonMesh& pmesh_, VertexPointMap vpmap_)
+    : CotangentValue(pmesh_, vpmap_)
   {}
 
   PolygonMesh& pmesh()
@@ -147,7 +152,9 @@ public:
   }
 };
 
-template<class PolygonMesh, class CotangentValue = Cotangent_value_Meyer<PolygonMesh> >
+template<class PolygonMesh
+  , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point>::type
+  , class CotangentValue = Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
 class Cotangent_value_clamped_2 : CotangentValue
 {
   Cotangent_value_clamped_2()
@@ -155,8 +162,8 @@ class Cotangent_value_clamped_2 : CotangentValue
 
 public:
 
-  Cotangent_value_clamped_2(PolygonMesh& pmesh_)
-    : CotangentValue(pmesh_)
+  Cotangent_value_clamped_2(PolygonMesh& pmesh_, VertexPointMap vpmap_)
+    : CotangentValue(pmesh_, vpmap_)
   {}
 
   PolygonMesh& pmesh()
@@ -175,14 +182,16 @@ public:
   }
 };
 
-template<class PolygonMesh, class CotangentValue = Cotangent_value_Meyer<PolygonMesh> >
+template<class PolygonMesh
+  , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point>::type
+  , class CotangentValue = Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
 class Cotangent_value_minimum_zero : CotangentValue
 {
   Cotangent_value_minimum_zero()
   {}
 public:
-  Cotangent_value_minimum_zero(PolygonMesh& pmesh_)
-    : CotangentValue(pmesh_)
+  Cotangent_value_minimum_zero(PolygonMesh& pmesh_, VertexPointMap vpmap_)
+    : CotangentValue(pmesh_, vpmap_)
   {}
 
   PolygonMesh& pmesh()
@@ -199,16 +208,22 @@ public:
   }
 };
 
-template<class PolygonMesh, 
-         class CotangentValue = Cotangent_value_Meyer<PolygonMesh> >
+template<class PolygonMesh
+    , class VertexPointMap = boost::property_map<PolygonMesh, CGAL::vertex_point>::type
+    , class CotangentValue
+           = Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
 class Voronoi_area : CotangentValue
 {
   Voronoi_area()
   {}
   
 public:
+  Voronoi_area(PolygonMesh& pmesh_, VertexPointMap vpmap_)
+    : CotangentValue(pmesh_, vpmap_)
+  {}
+
   Voronoi_area(PolygonMesh& pmesh_)
-    : CotangentValue(pmesh_)
+    : CotangentValue(pmesh_, get(CGAL::vertex_point, pmesh_))
   {}
 
   PolygonMesh& pmesh()
@@ -220,7 +235,7 @@ public:
   typedef typename boost::graph_traits<PolygonMesh>::in_edge_iterator in_edge_iterator;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
-  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
+  typedef VertexPointMap Point_property_map;
   typedef typename boost::property_traits<Point_property_map>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
 
@@ -272,8 +287,9 @@ public:
 };
 // Returns the cotangent value of half angle v0 v1 v2 by dividing the triangle area
 // as suggested by -[Mullen08] Spectral Conformal Parameterization-
-template<class PolygonMesh, 
-         class CotangentValue = Cotangent_value_Meyer<PolygonMesh> >
+template<class PolygonMesh
+  , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point>::type
+  , class CotangentValue = Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
 class Cotangent_value_area_weighted : CotangentValue
 {
   Cotangent_value_area_weighted()
@@ -281,8 +297,8 @@ class Cotangent_value_area_weighted : CotangentValue
 
 public:
 
-  Cotangent_value_area_weighted(PolygonMesh& pmesh_)
-    : CotangentValue(pmesh_)
+  Cotangent_value_area_weighted(PolygonMesh& pmesh_, VertexPointMap vpmap_)
+    : CotangentValue(pmesh_, vpmap_)
   {}
 
   PolygonMesh& pmesh()
@@ -304,16 +320,22 @@ public:
 // Cotangent weight calculator 
 // Cotangent_value:               as suggested by -[Sorkine07] ARAP Surface Modeling-
 // Cotangent_value_area_weighted: as suggested by -[Mullen08] Spectral Conformal Parameterization-
-template<class PolygonMesh, 
-         class CotangentValue = Cotangent_value_minimum_zero<PolygonMesh> >
+template<class PolygonMesh
+  , class VertexPointMap = typename boost::property_map<PolygonMesh, vertex_point_t>::type
+  , class CotangentValue
+           = Cotangent_value_minimum_zero<PolygonMesh, VertexPointMap> >
 class Cotangent_weight : CotangentValue
 {
   Cotangent_weight()
   {}
 
 public:
+  Cotangent_weight(PolygonMesh& pmesh_, VertexPointMap vpmap_)
+    : CotangentValue(pmesh_, vpmap_)
+  {}
+
   Cotangent_weight(PolygonMesh& pmesh_)
-    : CotangentValue(pmesh_)
+    : CotangentValue(pmesh_, get(CGAL::vertex_point, pmesh_))
   {}
 
   PolygonMesh& pmesh()
@@ -360,15 +382,16 @@ public:
 };
 
 // Single cotangent from -[Chao10] Simple Geometric Model for Elastic Deformation
-template<class PolygonMesh, 
-         class CotangentValue = Cotangent_value_Meyer<PolygonMesh> >
+template<class PolygonMesh
+  , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point>::type
+  , class CotangentValue = Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
 class Single_cotangent_weight : CotangentValue
 {
   Single_cotangent_weight()
   {}
 public:
-  Single_cotangent_weight(PolygonMesh& pmesh_)
-    : CotangentValue(pmesh_)
+  Single_cotangent_weight(PolygonMesh& pmesh_, VertexPointMap vpmap_)
+    : CotangentValue(pmesh_, vpmap_)
   {}
 
   PolygonMesh& pmesh()
@@ -398,16 +421,19 @@ public:
 };
 
 // Mean value calculator described in -[Floater04] Mean Value Coordinates-
-template<class PolygonMesh>
+template<class PolygonMesh
+       , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point>::type>
 class Mean_value_weight
 {
   Mean_value_weight()
   {}
 
   PolygonMesh& pmesh_;
+  VertexPointMap vpmap_;
+
 public:
-  Mean_value_weight(PolygonMesh& pmesh_)
-    : pmesh_(pmesh_)
+  Mean_value_weight(PolygonMesh& pmesh_, VertexPointMap vpmap)
+    : pmesh_(pmesh_), vpmap_(vpmap)
   {}
 
   PolygonMesh& pmesh()
@@ -415,10 +441,10 @@ public:
     return pmesh_;
   }
 
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
 
-  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
+  typedef typename VertexPointMap Point_property_map;
   typedef typename boost::property_traits<Point_property_map>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
 
@@ -572,25 +598,37 @@ public:
   }
 };
 
-template<class PolygonMesh>
-class Cotangent_weight_with_voronoi_area_fairing {
-  Voronoi_area<PolygonMesh> voronoi_functor;
-  Cotangent_weight<PolygonMesh, Cotangent_value_Meyer<PolygonMesh> > cotangent_functor;
+template<class PolygonMesh
+  , class VertexPointMap = typename boost::property_map<PolygonMesh, vertex_point_t>::type
+>
+class Cotangent_weight_with_voronoi_area_fairing
+{
+  typedef PolygonMesh PM;
+  typedef VertexPointMap VPMap;
+  Voronoi_area<PM, VPMap> voronoi_functor;
+  Cotangent_weight<PM, VPMap, Cotangent_value_Meyer<PM, VPMap> > cotangent_functor;
+
 public:
-  Cotangent_weight_with_voronoi_area_fairing(PolygonMesh& pmesh_)
-    : voronoi_functor(pmesh_), cotangent_functor(pmesh_)
+  Cotangent_weight_with_voronoi_area_fairing(PM& pmesh_)
+    : voronoi_functor(pmesh_)
+    , cotangent_functor(pmesh_)
   {}
 
-  PolygonMesh& pmesh()
+  Cotangent_weight_with_voronoi_area_fairing(PM& pmesh_, VPMap vpmap_)
+    : voronoi_functor(pmesh_, get(CGAL::vertex_point, pmesh_))
+    , cotangent_functor(pmesh_, get(CGAL::vertex_point, pmesh_))
+  {}
+
+  PM& pmesh()
   {
     return voronoi_functor.pmesh();
   }
 
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PM>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
 
-  double w_i(vertex_descriptor v_i) {
-    
+  double w_i(vertex_descriptor v_i)
+  {
     return 0.5 / voronoi_functor(v_i);
   }
 
