@@ -209,9 +209,12 @@ private:
     int n1 = static_cast<int>(pgn1.size());
     int n2 = static_cast<int>(pgn2.size());
 
+    std::vector<Point_2> p1_vertices = vertices_of_polygon(pgn1);
+    std::vector<Point_2> p2_vertices = vertices_of_polygon(pgn2);
+
     // Init the direcions of both polygons
-    std::vector<Direction_2> p1_dirs = directions_of_polygon(pgn1);
-    std::vector<Direction_2> p2_dirs = directions_of_polygon(pgn2);
+    std::vector<Direction_2> p1_dirs = directions_of_polygon(pgn1, p1_vertices);
+    std::vector<Direction_2> p2_dirs = directions_of_polygon(pgn2, p2_vertices);
 
     // Contains states that were already visited
     boost::unordered_set<State> visited_states;
@@ -285,17 +288,20 @@ private:
           bool convex;
           if (step_in_pgn1)
           {
-            convex = is_convex(pgn2[prev_i2], pgn2[i2], pgn2[next_i2]);
+            convex = is_convex(p2_vertices[prev_i2], p2_vertices[i2],
+              p2_vertices[next_i2]);
           }
           else
           {
-            convex = is_convex(pgn1[prev_i1], pgn1[i1], pgn1[next_i1]);
+            convex = is_convex(p1_vertices[prev_i1], p1_vertices[i1],
+              p1_vertices[next_i1]);
           }
 
           if (convex)
           {
-            Point_2 start_point = get_point(i1, i2, pgn1, pgn2);
-            Point_2 end_point = get_point(new_i1, new_i2, pgn1, pgn2);
+            Point_2 start_point = get_point(i1, i2, p1_vertices, p2_vertices);
+            Point_2 end_point = get_point(new_i1, new_i2, p1_vertices,
+                                          p2_vertices);
             reduced_convolution.push_back(Segment_2(start_point, end_point));
           }
         }
@@ -303,17 +309,32 @@ private:
     }
   }
 
+  // Returns a vector of the polygon's vertices, in case that Container
+  // is std::list and we cannot use vertex(i).
+  std::vector<Point_2> vertices_of_polygon(const Polygon_2& p) const
+  {
+    std::vector<Point_2> vertices;
+
+    for (typename Polygon_2::Vertex_const_iterator it = p.vertices_begin();
+         it != p.vertices_end(); it++)
+    {
+      vertices.push_back(*it);
+    }
+    return vertices;
+  }
+
   // Returns a sorted list of the polygon's edges
-  std::vector<Direction_2> directions_of_polygon(const Polygon_2& p) const
+  std::vector<Direction_2> directions_of_polygon(const Polygon_2& p,
+    const std::vector<Point_2>& points) const
   {
     std::vector<Direction_2> directions;
-    std::size_t n = p.size();
+    std::size_t n = points.size();
 
     for (std::size_t i = 0; i < n-1; ++i)
     {
-      directions.push_back(f_direction(f_vector(p[i], p[i+1])));
+      directions.push_back(f_direction(f_vector(points[i], points[i+1])));
     }
-    directions.push_back(f_direction(f_vector(p[n-1], p[0])));
+    directions.push_back(f_direction(f_vector(points[n-1], points[0])));
 
     return directions;
   }
@@ -325,8 +346,8 @@ private:
   }
 
   // Returns the point corresponding to a state (i,j).
-  Point_2 get_point(int i1, int i2, const Polygon_2& pgn1,
-                    const Polygon_2& pgn2) const
+  Point_2 get_point(int i1, int i2, const std::vector<Point_2>& pgn1,
+                    const std::vector<Point_2>& pgn2) const
   {
 
     return f_add(pgn1[i1], Vector_2(Point_2(ORIGIN), pgn2[i2]));
@@ -473,22 +494,12 @@ private:
   Polygon_with_holes_2 transform(const Transformation& t,
                                  const Polygon_with_holes_2& p) const
   {
-    Polygon_2 p1;
-    for (std::size_t i = 0; i< p.outer_boundary().size(); ++i)
-    {
-      p1.push_back(p.outer_boundary().vertex(i));
-    }
-
-    Polygon_with_holes_2 result(CGAL::transform(t, p1));
+    Polygon_with_holes_2 result(CGAL::transform(t, p.outer_boundary()));
 
     typename Polygon_with_holes_2::Hole_const_iterator it = p.holes_begin();
     while(it != p.holes_end())
     {
-      Polygon_2 p2;
-      for (std::size_t i = 0; i< (*it).size(); ++i)
-      {
-        p2.push_back((*it).vertex(i));
-      }
+      Polygon_2 p2(it->vertices_begin(), it->vertices_end());
       result.add_hole(CGAL::transform(t, p2));
       ++it;
     }
