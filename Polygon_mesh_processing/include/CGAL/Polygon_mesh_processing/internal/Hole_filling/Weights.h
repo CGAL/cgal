@@ -89,15 +89,22 @@ public:
 
   PolygonMesh& pmesh()
   {
+    //std::cout << num_vertices(pmesh_) << std::endl;
+    //std::cout << std::distance(vertices(pmesh_).first, vertices(pmesh_).second)
+    //  << std::endl;
     return pmesh_;
   }
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    Vector a = ppmap[v0] - ppmap[v1];
-    Vector b = ppmap[v2] - ppmap[v1];
+    Point p0 = get(ppmap, v0);
+    Point p1 = get(ppmap, v1);
+    Point p2 = get(ppmap, v2);
+
+    Vector a = get(ppmap, v0) - get(ppmap, v1);
+    Vector b = get(ppmap, v2) - get(ppmap, v1);
     
-    double dot_ab = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
+    double dot_ab = a*b;
     // rewritten for safer fp arithmetic
     //double dot_aa = a.squared_length();
     //double dot_bb = b.squared_length();
@@ -108,7 +115,7 @@ public:
 
     if(divider == 0 /*|| divider != divider*/) 
     {
-      CGAL::collinear(ppmap[v0], ppmap[v1], ppmap[v2]) ? 
+      CGAL::collinear(get(ppmap, v0), get(ppmap, v1), get(ppmap, v2)) ? 
         CGAL_warning(!"Infinite Cotangent value with degenerate triangle!") :
         CGAL_warning(!"Infinite Cotangent value due to floating point arithmetic!");
       
@@ -214,17 +221,17 @@ template<class PolygonMesh
            = Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
 class Voronoi_area : CotangentValue
 {
-  Voronoi_area()
-  {}
+  //Voronoi_area()
+  //{}
   
 public:
   Voronoi_area(PolygonMesh& pmesh_, VertexPointMap vpmap_)
     : CotangentValue(pmesh_, vpmap_)
   {}
 
-  Voronoi_area(PolygonMesh& pmesh_)
-    : CotangentValue(pmesh_, get(CGAL::vertex_point, pmesh_))
-  {}
+  //Voronoi_area(PolygonMesh& pmesh_)
+  //  : CotangentValue(pmesh_, get(CGAL::vertex_point, pmesh_))
+  //{}
 
   PolygonMesh& pmesh()
   {
@@ -241,6 +248,8 @@ public:
 
   double operator()(vertex_descriptor v0) {
 
+    CGAL_assertion(pmesh().is_trimesh());
+
     //return 1.0;
     double voronoi_area = 0.0;
     in_edge_iterator e, e_end;
@@ -249,12 +258,26 @@ public:
       halfedge_descriptor he = halfedge(*e,pmesh());
       if( is_border(he,pmesh()) ) { continue; }
 
+      std::cout << ".";
+
+//      CGAL_assertion(v0 == target(he, pmesh()) || v0 == source(he, pmesh()));
       vertex_descriptor v1 = source(he, pmesh());
       vertex_descriptor v_op = target(next(he, pmesh()), pmesh());
 
-      const Point& v0_p = this->ppmap[v0];
-      const Point& v1_p = this->ppmap[v1];
-      const Point& v_op_p = this->ppmap[v_op];
+      if (v0 == v1 || v0 == v_op || v1 == v_op)
+        std::cout << "Two identical vertices" << std::endl;
+      if (he == opposite(next(he, pmesh()), pmesh()))
+        std::cout << "degenerate face" << std::endl;
+
+      halfedge_descriptor hen = next(he, pmesh());
+      if (source(hen, pmesh()) == target(hen, pmesh()))
+        std::cout << "degenerate halfedge" << std::endl;
+      if (target(he, pmesh()) != v0 && source(he, pmesh()) != v0)
+        std::cout << "something here! " << std::endl;
+
+      const Point& v0_p = get(this->ppmap, v0);
+      const Point& v1_p = get(this->ppmap, v1);
+      const Point& v_op_p = get(this->ppmap, v_op);
 
       // (?) check if there is a better way to predicate triangle is obtuse or not
       CGAL::Angle angle0 = CGAL::angle(v1_p, v0_p, v_op_p);
@@ -425,8 +448,8 @@ template<class PolygonMesh
        , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point>::type>
 class Mean_value_weight
 {
-  Mean_value_weight()
-  {}
+  //Mean_value_weight()
+  //{}
 
   PolygonMesh& pmesh_;
   VertexPointMap vpmap_;
@@ -610,13 +633,13 @@ class Cotangent_weight_with_voronoi_area_fairing
 
 public:
   Cotangent_weight_with_voronoi_area_fairing(PM& pmesh_)
-    : voronoi_functor(pmesh_)
-    , cotangent_functor(pmesh_)
+    : voronoi_functor(pmesh_, get(CGAL::vertex_point, pmesh_))
+    , cotangent_functor(pmesh_, get(CGAL::vertex_point, pmesh_))
   {}
 
   Cotangent_weight_with_voronoi_area_fairing(PM& pmesh_, VPMap vpmap_)
-    : voronoi_functor(pmesh_, get(CGAL::vertex_point, pmesh_))
-    , cotangent_functor(pmesh_, get(CGAL::vertex_point, pmesh_))
+    : voronoi_functor(pmesh_, vpmap_)
+    , cotangent_functor(pmesh_, vpmap_)
   {}
 
   PM& pmesh()

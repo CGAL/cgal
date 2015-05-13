@@ -32,7 +32,6 @@ class Fair_Polyhedron_3 {
 
 // members
   PolygonMesh& pmesh;
-  Sparse_linear_solver m_solver;
   WeightCalculator weight_calculator;
   VertexPointMap ppmap;
 
@@ -126,13 +125,6 @@ private:
     to_be_removed.insert(v_ymax);
     to_be_removed.insert(v_zmax);
 
-    //std::cout << ppmap[v_xmin] << std::endl;
-    //std::cout << ppmap[v_ymin] << std::endl;
-    //std::cout << ppmap[v_zmin] << std::endl;
-    //std::cout << ppmap[v_xmax] << std::endl;
-    //std::cout << ppmap[v_ymax] << std::endl;
-    //std::cout << ppmap[v_zmax] << std::endl;
-
     BOOST_FOREACH(vertex_descriptor v, to_be_removed)
       vertices.erase(v);
   }
@@ -158,7 +150,7 @@ private:
 public:
   template<class VertexRange>
   bool fair(const VertexRange& vertices
-    , SparseLinearSolver m_solver
+    , SparseLinearSolver solver
     , unsigned int fc)
   {
     int depth = static_cast<int>(fc) + 1;
@@ -204,8 +196,7 @@ public:
 
     // factorize
     double D;
-//    Sparse_linear_solver m_solver;
-    bool prefactor_ok = m_solver.factor(A, D);
+    bool prefactor_ok = solver.factor(A, D);
     if(!prefactor_ok) {
       CGAL_warning(!"pre_factor failed!");
       return false;
@@ -213,7 +204,7 @@ public:
     CGAL_TRACE_STREAM << "**Timer** System factorization: " << timer.time() << std::endl; timer.reset();
 
     // solve
-    bool is_all_solved = m_solver.linear_solver(Bx, X) && m_solver.linear_solver(By, Y) && m_solver.linear_solver(Bz, Z);
+    bool is_all_solved = solver.linear_solver(Bx, X) && solver.linear_solver(By, Y) && solver.linear_solver(Bz, Z);
     if(!is_all_solved) {
       CGAL_warning(!"linear_solver failed!"); 
       return false; 

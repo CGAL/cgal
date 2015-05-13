@@ -5,6 +5,7 @@
 
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+
 #include <CGAL/boost/graph/helpers.h>
 #include <iostream>
 #include <fstream>
@@ -26,7 +27,7 @@ int main(int argc, char* argv[])
 
   Mesh mesh;
   OpenMesh::IO::read_mesh(mesh, filename);
-  
+
   // Incrementally fill the holes
   unsigned int nb_holes = 0;
   BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh))
@@ -36,7 +37,7 @@ int main(int argc, char* argv[])
       std::vector<face_descriptor>  patch_facets;
       std::vector<vertex_descriptor> patch_vertices;
       bool success = CGAL::cpp11::get<0>(
-                                         CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(
+        CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(
                   mesh,
                   h,
                   std::back_inserter(patch_facets),
@@ -44,10 +45,10 @@ int main(int argc, char* argv[])
      CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, mesh)).
                   geom_traits(Kernel())) );
 
-      std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;
+      std::cout << "* FILL HOLE NUMBER " << ++nb_holes << std::endl;
+      std::cout << "  Number of facets in constructed patch: " << patch_facets.size() << std::endl;
       std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;
       // std::cout << "  Is fairing successful: " << success << std::endl;
-      nb_holes++;
     }
   }
 

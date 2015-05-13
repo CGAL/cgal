@@ -225,8 +225,13 @@ namespace Polygon_mesh_processing {
   {
     std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor> patch;
 
+    CGAL_assertion(pmesh.is_trimesh());
+
     face_out = triangulate_and_refine_hole
       (pmesh, border_halfedge, face_out, std::back_inserter(patch), np).first;
+
+    CGAL_assertion(is_valid(pmesh));
+    CGAL_assertion(pmesh.is_trimesh());
 
     bool fair_success = fair(pmesh, patch, np);
 
