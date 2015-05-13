@@ -28,6 +28,8 @@ int main(int argc, char* argv[])
                                                              geom_traits(K()));
 
   std::cout << "There were " << nb << " degenerate faces in this mesh" << std::endl;
-
+  mesh.garbage_collection();
+  OpenMesh::IO::write_mesh(mesh, "repaired.off");
+  
   return 0;
 }
