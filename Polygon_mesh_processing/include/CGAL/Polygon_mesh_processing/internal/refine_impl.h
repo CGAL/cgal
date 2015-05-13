@@ -149,9 +149,47 @@ private:
     //do not just use std::set (included_map) for iteration, the order effects the output (we like to make it deterministic)
     BOOST_FOREACH(halfedge_descriptor h, interior_edges)
     {
-      if( relax(h) ) {
+      std::cout << "." << h << std::endl;
+      {
+      vertex_descriptor v0 = target(h, pmesh);
+      typename boost::graph_traits<PolygonMesh>::in_edge_iterator e, e_end;
+      for (boost::tie(e, e_end) = in_edges(v0, pmesh); e != e_end; e++)
+      {
+        halfedge_descriptor he = halfedge(*e, pmesh);
+        if (is_border(he, pmesh)) { continue; }
+
+        CGAL_assertion(v0 == target(he, pmesh) || v0 == source(he, pmesh));
+      }
+      }
+
+      if (relax(h)) {
         ++flips;
       }
+
+      {
+      vertex_descriptor v0 = target(h, pmesh);
+      typename boost::graph_traits<PolygonMesh>::in_edge_iterator e, e_end;
+      for (boost::tie(e, e_end) = in_edges(v0, pmesh); e != e_end; e++)
+      {
+        halfedge_descriptor he = halfedge(*e, pmesh);
+        if (is_border(he, pmesh)) { continue; }
+
+        CGAL_assertion(v0 == target(he, pmesh) || v0 == source(he, pmesh));
+      }
+      }
+      {
+        vertex_descriptor v0 = source(h, pmesh);
+        typename boost::graph_traits<PolygonMesh>::in_edge_iterator e, e_end;
+        for (boost::tie(e, e_end) = in_edges(v0, pmesh); e != e_end; e++)
+        {
+          halfedge_descriptor he = halfedge(*e, pmesh);
+          if (is_border(he, pmesh)) { continue; }
+
+          CGAL_assertion(v0 == target(he, pmesh) || v0 == source(he, pmesh));
+        }
+      }
+
+
     }
 
     CGAL_TRACE_STREAM << "|flips| = " << flips << std::endl;
@@ -292,11 +330,13 @@ public:
       CGAL::Timer timer; timer.start();
       bool is_subdivided = subdivide(faces, border_edges, scale_attribute, vertex_out, facet_out, new_faces, alpha);
       CGAL_TRACE_STREAM << "**Timer** subdivide() :" << timer.time() << std::endl; timer.reset();
-      if(!is_subdivided) { break; }
+      if(!is_subdivided) { 
+        break; }
 
       bool is_relaxed = relax(faces, new_faces, border_edges);
       CGAL_TRACE_STREAM << "**Timer** relax() :" << timer.time() << std::endl;
-      if(!is_relaxed) { break; }
+      if(!is_relaxed) { 
+        break; }
     }
 
     CGAL_TRACE_STREAM << "**Timer** TOTAL: " << total_timer.time() << std::endl;

@@ -29,6 +29,8 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+#include <CGAL/boost/graph/helpers.h>
+
 #include <boost/tuple/tuple.hpp>
 
 namespace CGAL {
@@ -156,6 +158,8 @@ namespace Polygon_mesh_processing {
     triangulate_hole(pmesh, border_halfedge, std::back_inserter(patch), np);
     face_out = std::copy(patch.begin(), patch.end(), face_out);
 
+    test_in_edges(pmesh, vertices(pmesh));
+
     return refine(pmesh, patch, face_out, vertex_out, np);
   }
 
@@ -225,18 +229,35 @@ namespace Polygon_mesh_processing {
   {
     std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor> patch;
 
-    CGAL_assertion(pmesh.is_trimesh());
+    CGAL_assertion(CGAL::is_pure_triangle(pmesh));
 
     face_out = triangulate_and_refine_hole
       (pmesh, border_halfedge, face_out, std::back_inserter(patch), np).first;
 
-    CGAL_assertion(is_valid(pmesh));
-    CGAL_assertion(pmesh.is_trimesh());
+    CGAL_assertion(CGAL::is_pure_triangle(pmesh));
+
+    test_in_edges(pmesh, patch);
 
     bool fair_success = fair(pmesh, patch, np);
 
     vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
     return CGAL::cpp11::make_tuple(fair_success, face_out, vertex_out);
+  }
+
+  template<typename PM, typename VertexRange>
+  void test_in_edges(const PM& pmesh, const VertexRange& patch)
+  {
+    BOOST_FOREACH(typename boost::graph_traits<PM>::vertex_descriptor v0, patch)
+    {
+      typename boost::graph_traits<PM>::in_edge_iterator e, e_end;
+      for (boost::tie(e, e_end) = in_edges(v0, pmesh); e != e_end; e++)
+      {
+        typename boost::graph_traits<PM>::halfedge_descriptor he = halfedge(*e, pmesh);
+        if (is_border(he, pmesh)) { continue; }
+
+        CGAL_assertion(v0 == target(he, pmesh) || v0 == source(he, pmesh));
+      }
+    }
   }
 
   template<typename PolygonMesh,
