@@ -258,25 +258,25 @@ template < class R >
 inline
 const typename PlaneH3<R>::RT &
 PlaneH3<R>::a() const
-{ return get(base)[0]; }
+{ return get_pointee_or_identity(base)[0]; }
 
 template < class R >
 inline
 const typename PlaneH3<R>::RT &
 PlaneH3<R>::b() const
-{ return get(base)[1]; }
+{ return get_pointee_or_identity(base)[1]; }
 
 template < class R >
 inline
 const typename PlaneH3<R>::RT &
 PlaneH3<R>::c() const
-{ return get(base)[2]; }
+{ return get_pointee_or_identity(base)[2]; }
 
 template < class R >
 inline
 const typename PlaneH3<R>::RT &
 PlaneH3<R>::d() const
-{ return get(base)[3]; }
+{ return get_pointee_or_identity(base)[3]; }
 
 template < class R >
 CGAL_KERNEL_INLINE

@@ -78,12 +78,12 @@ public:
 
     Vector_2       to_vector() const;
 
-    const RT & x() const { return CGAL::get(base)[0]; }
-    const RT & y() const { return CGAL::get(base)[1]; }
+    const RT & x() const { return CGAL::get_pointee_or_identity(base)[0]; }
+    const RT & y() const { return CGAL::get_pointee_or_identity(base)[1]; }
 
     const RT & delta(int i) const;
-    const RT & dx() const { return CGAL::get(base)[0]; }
-    const RT & dy() const { return CGAL::get(base)[1]; }
+    const RT & dx() const { return CGAL::get_pointee_or_identity(base)[0]; }
+    const RT & dy() const { return CGAL::get_pointee_or_identity(base)[1]; }
 
 };
 

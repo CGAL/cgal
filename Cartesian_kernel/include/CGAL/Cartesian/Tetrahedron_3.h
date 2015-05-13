@@ -119,10 +119,10 @@ vertex(int i) const
   else if (i>3) i=i%4;
   switch (i)
     {
-    case 0: return get(base)[0];
-    case 1: return get(base)[1];
-    case 2: return get(base)[2];
-    default: return get(base)[3];
+    case 0: return get_pointee_or_identity(base)[0];
+    case 1: return get_pointee_or_identity(base)[1];
+    case 2: return get_pointee_or_identity(base)[2];
+    default: return get_pointee_or_identity(base)[3];
     }
 }
 

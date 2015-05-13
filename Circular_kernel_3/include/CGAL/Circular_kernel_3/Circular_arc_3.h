@@ -57,7 +57,7 @@ namespace CGAL {
     public:
 
       const Sphere_3& reference_sphere(){
-        return get_ref_sphere(get(base).template get<0>());
+        return get_ref_sphere(get_pointee_or_identity(base).template get<0>());
       };
 
         
@@ -228,17 +228,17 @@ namespace CGAL {
 
       const Circle_3& supporting_circle() const 
       {
-        return get(base).template get<0>();
+        return get_pointee_or_identity(base).template get<0>();
       }
 
       const Circular_arc_point_3& source() const 
       {
-        return get(base).template get<1>();
+        return get_pointee_or_identity(base).template get<1>();
       }
 
       const Circular_arc_point_3& target() const 
       {
-        return get(base).template get<2>();
+        return get_pointee_or_identity(base).template get<2>();
       }
 
       Plane_3 supporting_plane() const {
