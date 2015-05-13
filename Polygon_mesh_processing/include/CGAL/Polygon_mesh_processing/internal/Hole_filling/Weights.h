@@ -248,8 +248,6 @@ public:
 
   double operator()(vertex_descriptor v0) {
 
-    CGAL_assertion(pmesh().is_trimesh());
-
     //return 1.0;
     double voronoi_area = 0.0;
     in_edge_iterator e, e_end;
@@ -258,9 +256,8 @@ public:
       halfedge_descriptor he = halfedge(*e,pmesh());
       if( is_border(he,pmesh()) ) { continue; }
 
-      std::cout << ".";
-
-//      CGAL_assertion(v0 == target(he, pmesh()) || v0 == source(he, pmesh()));
+      CGAL_assertion(CGAL::is_pure_triangle(pmesh()));
+      CGAL_assertion(v0 == target(he, pmesh()) || v0 == source(he, pmesh()));
       vertex_descriptor v1 = source(he, pmesh());
       vertex_descriptor v_op = target(next(he, pmesh()), pmesh());
 
