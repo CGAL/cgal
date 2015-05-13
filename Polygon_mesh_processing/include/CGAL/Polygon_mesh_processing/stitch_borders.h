@@ -47,7 +47,7 @@ struct Less_for_halfedge
 {
   typedef typename boost::graph_traits<PM>::halfedge_descriptor
     halfedge_descriptor;
-  typedef typename PM::Point Point;
+  typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 
   Less_for_halfedge(const PM& pmesh_,
                     const VertexPointMap& vpmap_)
@@ -58,10 +58,10 @@ struct Less_for_halfedge
   bool operator()(halfedge_descriptor h1,
                   halfedge_descriptor h2) const
   {
-    const Point& s1 = vpmap[target(opposite(h1, pmesh), pmesh)];
-    const Point& t1 = vpmap[target(h1, pmesh)];
-    const Point& s2 = vpmap[target(opposite(h2, pmesh), pmesh)];
-    const Point& t2 = vpmap[target(h2, pmesh)];
+    const Point& s1 = get(vpmap, target(opposite(h1, pmesh), pmesh));
+    const Point& t1 = get(vpmap, target(h1, pmesh));
+    const Point& s2 = get(vpmap, target(opposite(h2, pmesh), pmesh));
+    const Point& t2 = get(vpmap, target(h2, pmesh));
     return
     ( s1 < t1?  std::make_pair(s1,t1) : std::make_pair(t1, s1) )
     <
@@ -174,7 +174,7 @@ struct Naive_border_stitching_modifier
       //update vertex pointers: target of h1 vs source of h2
       v_to_keep = h2_tgt;
       insert_res =
-          vertices_kept.insert( std::make_pair(vpmap[v_to_keep], v_to_keep) );
+          vertices_kept.insert( std::make_pair(get(vpmap, v_to_keep), v_to_keep) );
       if (!insert_res.second && v_to_keep != insert_res.first->second)
       {
         v_to_keep = insert_res.first->second;
