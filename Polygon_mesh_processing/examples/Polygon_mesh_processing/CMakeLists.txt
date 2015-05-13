@@ -98,6 +98,9 @@ target_link_libraries( point_inside_example_OM ${OPENMESH_LIBRARIES} )
 
 create_single_source_cgal_program( "stitch_borders_example_OM.cpp" )
 target_link_libraries( stitch_borders_example_OM ${OPENMESH_LIBRARIES} )
+
+create_single_source_cgal_program( "remove_degeneracies_example_OM.cpp")
+target_link_libraries( remove_degeneracies_example_OM ${OPENMESH_LIBRARIES} )
 endif()
 
 else(EIGEN3_FOUND)

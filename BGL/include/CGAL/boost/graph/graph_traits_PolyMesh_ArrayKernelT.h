@@ -60,6 +60,11 @@ public:
     }
   }
 
+  bool operator<(const OMesh_edge& other) const
+  { 
+    return this->idx() < other.idx();
+  }
+
   bool
   operator!=(const OMesh_edge& other) { return !(*this == other); }
 
