@@ -21,7 +21,7 @@ int main()
 
 #include "arr_conics.h"
 
-typedef CGAL::Polygon_2<Rat_kernel>             Polygon;
+typedef CGAL::Polygon_2<Rat_kernel>             Polygon_2;
 typedef CGAL::Gps_traits_2<Traits>              Gps_traits;
 typedef Gps_traits::Polygon_2                   Offset_polygon;
 
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     std::cerr << "Failed to open the input file." << std::endl;
     return -1;
   }
-  Polygon P;
+  Polygon_2 P;
   in_file >> P;
   in_file.close();
   std::cout << "Read an input polygon with " << P.size() << " vertices."

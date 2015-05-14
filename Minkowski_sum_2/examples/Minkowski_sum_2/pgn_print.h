@@ -9,10 +9,10 @@
 //-----------------------------------------------------------------------------
 // Pretty-print a CGAL polygon.
 //
-template <typename Polygon> void print_polygon(const Polygon & pgn)
+template <typename Polygon_2> void print_polygon(const Polygon_2 & pgn)
 {
   std::cout << "[ " << pgn.size() << " vertices: (";
-  typename Polygon::Vertex_const_iterator  vit;
+  typename Polygon_2::Vertex_const_iterator  vit;
   for (vit = pgn.vertices_begin(); vit != pgn.vertices_end(); ++vit)
     std::cout << "(" << *vit << ')';
   std::cout << ") ]" << std::endl;

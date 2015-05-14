@@ -324,7 +324,7 @@ private:
   }
 
   // Returns a sorted list of the polygon's edges
-  std::vector<Direction_2> directions_of_polygon(const Polygon_2& p,
+  std::vector<Direction_2> directions_of_polygon(
     const std::vector<Point_2>& points) const
   {
     std::vector<Direction_2> directions;

@@ -12,8 +12,8 @@
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef Kernel::Point_2                                   Point;
-typedef CGAL::Polygon_2<Kernel>                           Polygon;
-typedef CGAL::Polygon_with_holes_2<Kernel>                Polygon_with_holes;
+typedef CGAL::Polygon_2<Kernel>                           Polygon_2;
+typedef CGAL::Polygon_with_holes_2<Kernel>                Polygon_with_holes_2;
 
 int main(int argc, char* argv[])
 {
@@ -24,13 +24,13 @@ int main(int argc, char* argv[])
     std::cerr << "Failed to open the input file." << std::endl;
     return -1;
   }
-  Polygon   P, Q;
+  Polygon_2   P, Q;
   in_file >> P >> Q;
   in_file.close();
 
   // Compute the Minkowski sum using the decomposition approach.
   CGAL::Small_side_angle_bisector_decomposition_2<Kernel>  ssab_decomp;
-  Polygon_with_holes  sum = CGAL::minkowski_sum_2(P, Q, ssab_decomp);
+  Polygon_with_holes_2  sum = CGAL::minkowski_sum_2(P, Q, ssab_decomp);
   std::cout << "P (+) Q = "; print_polygon_with_holes(sum);
   return 0;
 }

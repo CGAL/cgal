@@ -21,9 +21,9 @@ int main()
 
 #include "arr_conics.h"
 
-typedef CGAL::Polygon_2<Rat_kernel>             Polygon;
+typedef CGAL::Polygon_2<Rat_kernel>             Polygon_2;
 typedef CGAL::Gps_traits_2<Traits>              Gps_traits;
-typedef Gps_traits::Polygon_with_holes_2        Offset_polygon_with_holes;
+typedef Gps_traits::Polygon_with_holes_2        Offset_polygon_with_holes_2;
 
 int main(int argc, char* argv[])
 {
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     std::cerr << "Failed to open the input file." << std::endl;
     return -1;
   }
-  Polygon  P;
+  Polygon_2  P;
   in_file >> P;
   in_file.close();
   std::cout << "Read an input polygon with " << P.size() << " vertices."
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
   // Compute the offset polygon.
   Traits traits;
   boost::timer timer;
-  Offset_polygon_with_holes offset = CGAL::offset_polygon_2(P, 5, traits);
+  Offset_polygon_with_holes_2 offset = CGAL::offset_polygon_2(P, 5, traits);
   double secs = timer.elapsed();
 
   std::cout << "The offset polygon has " << offset.outer_boundary().size()
