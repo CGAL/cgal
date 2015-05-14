@@ -161,7 +161,7 @@ namespace Polygon_mesh_processing{
 namespace parameters{
 
   pmp_bgl_named_params<bool, all_default_t>
-  all_default()
+  inline all_default()
   {
     typedef pmp_bgl_named_params<bool, all_default_t> Params;
     return Params();

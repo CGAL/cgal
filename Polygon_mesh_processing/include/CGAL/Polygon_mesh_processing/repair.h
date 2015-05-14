@@ -281,9 +281,9 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpmap = choose_const_pmap(get_param(np, boost::vertex_point),
-                                           tmesh,
-                                           boost::vertex_point);
+  VertexPointMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
+                                     tmesh,
+                                     boost::vertex_point);
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
   Traits traits = choose_param(get_param(np, geom_traits), Traits());
 
@@ -604,9 +604,9 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
       typename Traits::Compare_distance_3 compare_distance = traits.compare_distance_3_object();
 
       halfedge_descriptor edge_to_flip;
-      if (!compare_distance(p1,p2, p1,p3)) // p1p2 > p1p3
+      if (compare_distance(p1,p2, p1,p3) != CGAL::SMALLER) // p1p2 > p1p3
       {
-        if (!compare_distance(p1,p2, p2,p3)) // p1p2 > p2p3
+        if (compare_distance(p1,p2, p2,p3) != CGAL::SMALLER) // p1p2 > p2p3
           // flip p1p2
           edge_to_flip = next( halfedge(fd, tmesh), tmesh );
         else
@@ -614,7 +614,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
           edge_to_flip = prev( halfedge(fd, tmesh), tmesh );
       }
       else
-        if (!compare_distance(p1,p3, p2,p3)) // p1p3>p2p3
+        if (compare_distance(p1,p3, p2,p3) != CGAL::SMALLER) // p1p3>p2p3
           //flip p3p1
           edge_to_flip = halfedge(fd, tmesh);
         else
