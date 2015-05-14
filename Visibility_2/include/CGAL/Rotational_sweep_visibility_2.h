@@ -451,16 +451,16 @@ private:
   }
 
   //arrange vertices that on a same vision ray in a 'funnel' order
-  void funnel(int i, int j) const {
+  void funnel(typename VHs::size_type i, typename VHs::size_type j) const {
     VHs right, left;
     //whether the edges incident to a vertex block the left side and right side
     //of current vision ray.
     bool block_left(false), block_right(false);
     VH former = vs[i], nb;
-    for (int l=i; l<j; l++) {
+    for (typename VHs::size_type l=i; l<j; l++) {
       bool left_v(false), right_v(false), has_predecessor(false);
         EHs& edges = incident_edges[vs[l]];
-        for (int k=0; k<edges.size(); k++) {
+        for (typename EHs::size_type k=0; k<edges.size(); k++) {
           nb = get_neighbor(edges[k], vs[l]);
         if ( nb == former )  {
           has_predecessor = true;
@@ -495,9 +495,9 @@ private:
       }
       former = vs[l];
     }
-    for (int l=0; l!=right.size(); l++)
+    for (typename VHs::size_type l=0; l!=right.size(); l++)
       vs[i+l] = right[l];
-    for (int l=0; l!=left.size(); l++)
+    for (typename VHs::size_type l=0; l!=left.size(); l++)
       vs[i+l+right.size()] = left[left.size()-1-l];
   }
 
@@ -553,7 +553,7 @@ private:
       }
     }
     else {
-      for (int i=0; i!=relevant_edges.size(); i++)
+      for (typename EHs::size_type i=0; i!=relevant_edges.size(); i++)
         if (do_intersect_ray(q, dp, relevant_edges[i]->source()->point(),
                                     relevant_edges[i]->target()->point()))
           active_edges.insert(relevant_edges[i]);
@@ -561,12 +561,12 @@ private:
 
     //angular sweep begins
 //    std::cout<<active_edges.size()<<std::endl;
-    for (int i=0; i!=vs.size(); i++) {
+    for (typename VHs::size_type i=0; i!=vs.size(); i++) {
       VH vh = vs[i];
       EH closest_e = *active_edges.begin();
       EHs& edges = incident_edges[vh];
       EHs insert_ehs, remove_ehs;
-      for (int j=0; j!=edges.size(); j++) {
+      for (typename EHs::size_type j=0; j!=edges.size(); j++) {
         EH& e = edges[j];
         if (active_edges.find(e) == active_edges.end())
           insert_ehs.push_back(e);
@@ -822,8 +822,8 @@ private:
 
     std::sort(vs.begin(), vs.end(), Is_swept_earlier(q, geom_traits));
 
-    for (int i=0; i!=vs.size(); i++) {
-      int j = i+1;
+    for (typename VHs::size_type i=0; i!=vs.size(); i++) {
+      typename VHs::size_type j = i+1;
       while (j != vs.size()) {
         if (!CGAL::collinear(q, vs[i]->point(), vs[j]->point()))
           break;
@@ -860,7 +860,7 @@ private:
     //the vision ray will always intersect at least an edge.
     //this box doesn't intersect any relevant_edge.
     Points points;
-    for (int i=0; i<vs.size(); i++) {
+    for (typename VHs::size_type i=0; i<vs.size(); i++) {
       points.push_back(vs[i]->point());
     }
     points.push_back(q);
@@ -907,8 +907,8 @@ private:
 
     std::sort(vs.begin(), vs.end(), Is_swept_earlier(q, geom_traits));
 
-    for (int i=0; i!=vs.size(); i++) {
-      int j = i+1;
+    for (typename VHs::size_type i=0; i!=vs.size(); i++) {
+      typename VHs::size_type j = i+1;
       while (j != vs.size()) {
         if (!CGAL::collinear(q, vs[i]->point(), vs[j]->point()))
           break;

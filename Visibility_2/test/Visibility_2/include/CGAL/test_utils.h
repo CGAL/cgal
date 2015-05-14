@@ -735,7 +735,7 @@ void create_arrangement_from_env_file(_Arrangement_2 &arr, std::ifstream& input)
 
       std::getline(input, line);
       std::stringstream convert(line);
-      int number_of_vertices;
+      typename std::vector<Point_2>::size_type number_of_vertices;
       convert >> number_of_vertices;
       for (int j = 0; j < number_of_vertices; j++) {
         std::getline(input, line);
@@ -745,7 +745,9 @@ void create_arrangement_from_env_file(_Arrangement_2 &arr, std::ifstream& input)
         points.push_back(Point_2(string2num<Number_type>(n1),   
                                  string2num<Number_type>(n2)));
       }
-      for (int j = 0; j < number_of_vertices-1 ; j++) {
+      for (typename std::vector<Point_2>::size_type j = 0;
+           j < number_of_vertices-1 ; j++)
+      {
         segments.push_back(Segment_2(points[j], points[j+1]));
       }
       segments.push_back(Segment_2(points.front(), points.back()));
