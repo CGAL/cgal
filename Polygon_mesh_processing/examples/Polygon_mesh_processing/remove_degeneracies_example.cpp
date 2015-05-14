@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
   std::size_t nb
     = CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh);
 
-  std::cout << "There were " << nb << " degenerate faces in this mesh" << std::endl;
+  std::cerr << "There were " << nb << " degenerate faces in this mesh" << std::endl;
 
   return 0;
 }
