@@ -261,17 +261,6 @@ public:
       vertex_descriptor v1 = source(he, pmesh());
       vertex_descriptor v_op = target(next(he, pmesh()), pmesh());
 
-      if (v0 == v1 || v0 == v_op || v1 == v_op)
-        std::cout << "Two identical vertices" << std::endl;
-      if (he == opposite(next(he, pmesh()), pmesh()))
-        std::cout << "degenerate face" << std::endl;
-
-      halfedge_descriptor hen = next(he, pmesh());
-      if (source(hen, pmesh()) == target(hen, pmesh()))
-        std::cout << "degenerate halfedge" << std::endl;
-      if (target(he, pmesh()) != v0 && source(he, pmesh()) != v0)
-        std::cout << "something here! " << std::endl;
-
       const Point& v0_p = get(this->ppmap, v0);
       const Point& v1_p = get(this->ppmap, v1);
       const Point& v_op_p = get(this->ppmap, v_op);
