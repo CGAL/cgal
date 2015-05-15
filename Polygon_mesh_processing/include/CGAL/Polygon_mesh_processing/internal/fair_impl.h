@@ -94,59 +94,6 @@ private:
     }
   }
 
-  template<class VertexRange>
-  bool fair_all_mesh(const VertexRange& vr) const
-  {
-    return std::distance(vr.begin(), vr.end())
-        == std::distance(vertices(pmesh).first, vertices(pmesh).second);
-  }
-
-  void remove_extremal_vertices(std::set<vertex_descriptor>& vertices) const
-  {
-    vertex_descriptor v_xmin, v_xmax, v_ymin, v_ymax, v_zmin, v_zmax;
-    v_xmin = v_xmax = v_ymin = v_ymax = v_zmin = v_zmax = *(vertices.begin());
-    BOOST_FOREACH(vertex_descriptor v, vertices)
-    {
-      Point_3 pv = ppmap[v];
-      if (pv.x() < ppmap[v_xmin].x()) v_xmin = v;
-      if (pv.y() < ppmap[v_ymin].y()) v_ymin = v;
-      if (pv.z() < ppmap[v_zmin].z()) v_zmin = v;
-      if (pv.x() > ppmap[v_xmax].x()) v_xmax = v;
-      if (pv.y() > ppmap[v_ymax].y()) v_ymax = v;
-      if (pv.z() > ppmap[v_zmax].z()) v_zmax = v;
-    }
-
-    //here we use a set to avoid removing twice the same vertex, which would crash
-    std::set<vertex_descriptor> to_be_removed;
-    to_be_removed.insert(v_xmin);
-    to_be_removed.insert(v_ymin);
-    to_be_removed.insert(v_zmin);
-    to_be_removed.insert(v_xmax);
-    to_be_removed.insert(v_ymax);
-    to_be_removed.insert(v_zmax);
-
-    BOOST_FOREACH(vertex_descriptor v, to_be_removed)
-      vertices.erase(v);
-  }
-
-  void remove_vertices(std::set<vertex_descriptor>& vertices
-    , const double& percent = 10/*percentage to be removed*/) const
-  {
-    CGAL_assertion(percent >= 0.1 && percent < 100.);
-    int freq = static_cast<int>(std::floor(0.01 * percent * vertices.size()));
-
-    int i = 1;
-    typename std::set<vertex_descriptor>::iterator vit;
-    for (vit = vertices.begin(); vit != vertices.end(); )
-    {
-      vertex_descriptor vd = *vit;
-      ++vit;
-      if (i % freq == 0)
-        vertices.erase(vd);
-      ++i;
-    }
-  }
-
 public:
   template<class VertexRange>
   bool fair(const VertexRange& vertices
@@ -164,11 +111,6 @@ public:
     if(interior_vertices.empty()) { return true; }
 
     CGAL::Timer timer; timer.start();
-
-    if (fair_all_mesh(vertices))
-      remove_vertices(interior_vertices, 10/*percentage to be removed*/);
-      //remove_extremal_vertices(interior_vertices);
-
     const std::size_t nb_vertices = interior_vertices.size();
     Solver_vector X(nb_vertices), Bx(nb_vertices);
     Solver_vector Y(nb_vertices), By(nb_vertices);
