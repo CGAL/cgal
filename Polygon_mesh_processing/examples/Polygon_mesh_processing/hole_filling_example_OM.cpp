@@ -45,10 +45,12 @@ int main(int argc, char* argv[])
      CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, mesh)).
                   geom_traits(Kernel())) );
 
+      CGAL_assertion(CGAL::is_valid_polygon_mesh(mesh));
+
       std::cout << "* FILL HOLE NUMBER " << ++nb_holes << std::endl;
       std::cout << "  Number of facets in constructed patch: " << patch_facets.size() << std::endl;
       std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;
-      // std::cout << "  Is fairing successful: " << success << std::endl;
+      std::cout << "  Is fairing successful: " << success << std::endl;
     }
   }
 
