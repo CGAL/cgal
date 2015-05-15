@@ -181,6 +181,47 @@
      </widget>
     </item>
     <item>
+     <widget class="QGroupBox" name="groupBox_3">
+      <property name="title">
+       <string/>
+      </property>
+      <widget class="QCheckBox" name="use_features_checkBox">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>151</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Use feature edges</string>
+       </property>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Create_point_set_item_button">
+      <property name="text">
+       <string>Create Point Set Item from Selected Vertices</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Create_polyline_item_button">
+      <property name="text">
+       <string>Create Polyline Item from Selected Edges</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Create_polyhedron_item_button">
+      <property name="text">
+       <string>Create Polyhedron Item from Selected Facets</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QGroupBox" name="groupBox_4">
       <property name="title">
        <string/>
@@ -211,27 +252,6 @@
         </widget>
        </item>
       </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="Create_point_set_item_button">
-      <property name="text">
-       <string>Create Point Set Item from Selected Vertices</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="Create_polyline_item_button">
-      <property name="text">
-       <string>Create Polyline Item from Selected Edges</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="Create_polyhedron_item_button">
-      <property name="text">
-       <string>Create Polyhedron Item from Selected Facets</string>
-      </property>
      </widget>
     </item>
     <item>
