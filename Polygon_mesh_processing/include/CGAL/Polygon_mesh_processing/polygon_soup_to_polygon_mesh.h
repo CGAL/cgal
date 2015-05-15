@@ -25,6 +25,7 @@
 #include <CGAL/IO/generic_print_polyhedron.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/property_map.h>
 
 namespace CGAL
 {
@@ -61,11 +62,15 @@ public:
 
   void operator()(PM& pmesh)
   {
+    typename boost::property_map<PM, CGAL::vertex_point_t>::type
+      vpmap = get(CGAL::vertex_point, pmesh);
+
     std::vector<vertex_descriptor> vertices(_points.size());
     for (std::size_t i = 0, end = _points.size(); i < end; ++i)
     {
       Point_3 pi(_points[i][0], _points[i][1], _points[i][2]);
-      vertices[i] = add_vertex(pi, pmesh);
+      vertices[i] = add_vertex(pmesh);
+      put(vpmap, vertices[i], pi);
     }
 
     for (std::size_t i = 0, end = _polygons.size(); i < end; ++i)
