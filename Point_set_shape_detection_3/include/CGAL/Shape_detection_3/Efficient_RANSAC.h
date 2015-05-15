@@ -24,6 +24,7 @@
 
 #include <CGAL/Shape_detection_3/Octree.h>
 #include <CGAL/Shape_detection_3/Shape_base.h>
+#include <CGAL/Random.h>
 
 //for octree ------------------------------
 #include <boost/iterator/filter_iterator.hpp>
@@ -32,9 +33,8 @@
 //----------
 
 #include <vector>
-#include <random>
 #include <cmath>
-
+#include <limits>
 #include <fstream>
 #include <sstream>
 
@@ -173,7 +173,6 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     */ 
     Efficient_RANSAC(Traits t = Traits())
       : m_traits(t)
-      , m_rng(std::random_device()())
       , m_direct_octrees(NULL)
       , m_global_octree(NULL)
       , m_num_subsets(0)
@@ -253,7 +252,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
         if (s) {
           subsetSize >>= 1;
           for (std::size_t i = 0;i<subsetSize;i++) {
-            std::size_t index = m_rng() % 2;
+            std::size_t index = default_random(std::numeric_limits<int>::max()) % 2;
             index = index + (i<<1);
             index = (index >= remainingPoints) ? remainingPoints - 1 : index;
             indices[i] = index;
@@ -424,7 +423,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
           bool done = false;
           do {
             do 
-              firstSample = m_rng() % m_num_available_points;
+              firstSample = default_random(m_num_available_points);
               while (m_shape_index[firstSample] != -1);
               
             done = m_global_octree->drawSamplesFromCellContainingPoint(
@@ -658,7 +657,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
   private:
     int select_random_octree_level() {
-      return m_rng() % (m_global_octree->maxLevel() + 1);
+      return default_random(m_global_octree->maxLevel() + 1);
     }
 
     Shape* get_best_candidate(std::vector<Shape* >& candidates,
@@ -778,8 +777,6 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
     // Traits class.
     Traits m_traits;
-
-    std::mt19937 m_rng;
 
     // Octrees build on input data for quick shape evaluation and
     // sample selection within an octree cell.
