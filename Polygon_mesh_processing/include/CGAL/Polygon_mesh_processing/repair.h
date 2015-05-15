@@ -370,8 +370,8 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
         // join cc's
         BOOST_FOREACH(halfedge_descriptor hd, border)
         {
-          CGAL_assertion( marked_faces.count( face( hd, tmesh) ) );
-          CGAL_assertion( !marked_faces.count( face( opposite(hd, tmesh), tmesh) ) );
+          CGAL_assertion( marked_faces.count( face( hd, tmesh) ) > 0);
+          CGAL_assertion( marked_faces.count( face( opposite(hd, tmesh), tmesh) ) == 0 );
           halfedge_descriptor candidate = hd;
 
           do{
