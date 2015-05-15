@@ -270,6 +270,10 @@ namespace CGAL
           origin = boost::make_optional(interior.inside_point());
         }
 
+        // make sure the origin is on the negative side of all the planes
+        CGAL_assertion_code(for(PlaneIterator pit=begin;pit!=end;++pit))
+          CGAL_assertion(pit->has_on_negative_side(*origin));
+
         // compute the intersection of the half-space using the dual formulation
         Hull_traits_dual_3 dual_traits(*origin);
         Polyhedron_dual_3 dual_convex_hull;

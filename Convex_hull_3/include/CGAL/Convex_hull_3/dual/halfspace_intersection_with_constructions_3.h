@@ -146,6 +146,9 @@ namespace CGAL
             // construct dual points to apply the convex hull
             std::vector<Point> dual_points;
             for (PlaneIterator p = pbegin; p != pend; ++p) {
+                // make sure the origin is on the negative side of all the planes
+                CGAL_assertion(p->has_on_negative_side(p_origin));
+
                 // translate plane
                 Plane translated_p(p->a(),
                                    p->b(),
