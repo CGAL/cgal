@@ -255,6 +255,82 @@ bool is_tetrahedron( typename boost::graph_traits<FaceGraph>::halfedge_descripto
   return true;
   }
 
+template <typename FaceGraph>
+bool is_valid( typename boost::graph_traits<FaceGraph>::halfedge_descriptor h, const FaceGraph& g)
+{
+  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
+  face_descriptor f = face(h,g);
+  halfedge_descriptor done(h);
+  do{
+    if(face(h,g) != f){
+      std::cerr << "halfedge " << h << " is invalid\n";
+      return false;
+    }
+    halfedge_descriptor hc = h;
+    h = next(h,g);
+    if(prev(h,g) != h){
+      std::cerr << "halfedge " << h << " is invalid\n";
+      return false;
+    }
+    
+  } while(h != done);
+  return true;
+}
+
+template <typename FaceGraph>
+bool is_valid( typename boost::graph_traits<FaceGraph>::vertex_descriptor v, const FaceGraph& g)
+{
+  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+  halfedge_descriptor h = halfedge(v,g), done(h);
+  if(h == boost::graph_traits<FaceGraph>::null_halfedge()){
+    return true;
+  }
+  do{
+    if(target(h,g) != v){
+      std::cerr << "vertex " << v << " is invalid\n";
+    }
+    h = opposite(next(h,g),g);
+  }while(h != done);
+  return true;
+}
+
+template <typename FaceGraph>
+bool is_valid( typename boost::graph_traits<FaceGraph>::face_descriptor f, const FaceGraph& g)
+{
+  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+
+  halfedge_descriptor h = halfedge(f,g);
+  if(face(h,g) != h){
+    std::cerr << "face " << f << " is invalid\n";
+    return false;
+  }
+  return true;
+}
+
+
+template <typename FaceGraph>
+bool is_valid_polygon_mesh(const FaceGraph& g)
+{
+  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
+  BOOST_FOREACH(vertex_descriptor v, vertices(g)){
+    if(! is_valid(v,g)){
+      return false;
+    }
+  }
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(g)){
+    if(! is_valid(h,g)){
+      return false;
+    }
+  }
+  BOOST_FOREACH(face_descriptor f, faces(g)){
+    if(! is_valid(f,g)){
+      return false;
+    }
+  }
+  return true;
+}
 
 
 } // namespace CGAL

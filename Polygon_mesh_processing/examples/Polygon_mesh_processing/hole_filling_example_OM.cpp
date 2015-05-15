@@ -52,6 +52,7 @@ int main(int argc, char* argv[])
     }
   }
 
+  assert(CGAL::is_valid_polygon_mesh(mesh));
   std::cout << std::endl;
   std::cout << nb_holes << " holes have been filled" << std::endl;
 
