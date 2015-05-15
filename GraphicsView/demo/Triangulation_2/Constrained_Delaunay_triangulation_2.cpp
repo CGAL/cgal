@@ -243,12 +243,11 @@ public Q_SLOTS:
 
   void on_actionInsertRandomPoints_triggered();
 
-Q_SIGNALS:
   void on_actionTagBlindFaces_triggered();
 
   void on_actionLloyd_optimization_triggered();
 
-signals:
+Q_SIGNALS:
   void changed();
 };
 
@@ -522,7 +521,7 @@ MainWindow::open(QString fileName)
       this->addToRecentFiles(fileName);
     }
   }
-  emit(changed());
+  Q_EMIT(changed());
   actionRecenter->trigger();
 }
 
@@ -816,7 +815,7 @@ MainWindow::on_actionTagBlindFaces_triggered()
 
   // default cursor
   QApplication::restoreOverrideCursor();
-  emit(changed());
+  Q_EMIT(changed());
 }
 
 void
@@ -842,7 +841,7 @@ MainWindow::on_actionLloyd_optimization_triggered()
 
   // default cursor
   QApplication::restoreOverrideCursor();
-  emit(changed());
+  Q_EMIT(changed());
 }
 
 #include "Constrained_Delaunay_triangulation_2.moc"

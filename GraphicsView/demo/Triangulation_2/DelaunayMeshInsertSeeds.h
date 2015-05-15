@@ -48,7 +48,7 @@ DelaunayMeshInsertSeeds<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
     Converter<typename T::Geom_traits> convert;
 
     typename T::Point seed = convert(event->scenePos());
-    emit(generate(CGAL::make_object(seed)));
+    Q_EMIT(generate(CGAL::make_object(seed)));
   }
 }
 
