@@ -640,7 +640,7 @@ add_face(InputIterator begin, InputIterator end, OpenMesh::PolyMesh_ArrayKernelT
 template<typename K>
 bool is_valid(OpenMesh::PolyMesh_ArrayKernelT<K>& sm, bool verbose = false)
 {
-  return true;
+  return CGAL::is_valid_polygon_mesh(sm);
 }
 
 } // namespace OpenMesh
