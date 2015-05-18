@@ -5,7 +5,7 @@
 #include <CGAL/Parameterization_polyhedron_adaptor_3.h>
 #include <CGAL/parameterize.h>
 #include <CGAL/Discrete_authalic_parameterizer_3.h>
-
+#include <boost/foreach.hpp>
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
@@ -17,7 +17,8 @@
 
 typedef CGAL::Simple_cartesian<double>      Kernel;
 typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
-
+typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 
 // ----------------------------------------------------------------------------
 // main()
@@ -96,15 +97,21 @@ int main(int argc, char * argv[])
     //***************************************
 
     // Raw output: dump (u,v) pairs
-    Polyhedron::Vertex_iterator pVertex;
-    for (pVertex = mesh.vertices_begin();
-        pVertex != mesh.vertices_end();
-        pVertex++)
-    {
-        // (u,v) pair is stored in any halfedge
-        double u = mesh_adaptor.info(pVertex->halfedge())->uv().x();
-        double v = mesh_adaptor.info(pVertex->halfedge())->uv().y();
-        std::cout << "(u,v) = (" << u << "," << v << ")" << std::endl;
+
+    std::cout <<"OFF\n" << num_vertices(mesh) << " " << num_faces(mesh) << " 0\n";
+    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
+      // (u,v) pair is stored in any halfedge
+      double u = mesh_adaptor.info(vd->halfedge())->uv().x();
+      double v = mesh_adaptor.info(vd->halfedge())->uv().y();
+      //std::cout << "(u,v) = (" << u << "," << v << ")" << std::endl;
+      std::cout << u << " " << v << " 0" << std::endl;
+    }
+    BOOST_FOREACH(face_descriptor fd, faces(mesh)){
+      std::cout << "3";
+      BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(halfedge(fd,mesh),mesh)){
+        std::cout << " " <<   mesh_adaptor.info(vd)->index();
+      }
+      std::cout << std::endl;
     }
 
     return EXIT_SUCCESS;
