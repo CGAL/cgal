@@ -1,4 +1,5 @@
-// Copyright (c) 2009 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2009-2013 INRIA Sophia-Antipolis (France),
+//               2014-2015 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,13 +15,9 @@
 //
 // $URL$
 // $Id$
+// 
+// Author(s) : Jane Tournois, Raul Gallegos, Pierre Alliez, Stéphane Tayeb
 //
-//
-// Author(s)     : Jane Tournois, Raul Gallegos, Stéphane Tayeb
-//
-//******************************************************************************
-// File Description : 
-//******************************************************************************
 
 #ifndef CGAL_MESH_2_MESH_GLOBAL_OPTIMIZER_2_H
 #define CGAL_MESH_2_MESH_GLOBAL_OPTIMIZER_2_H
