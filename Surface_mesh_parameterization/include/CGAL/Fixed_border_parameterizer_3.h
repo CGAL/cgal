@@ -443,7 +443,7 @@ initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
          it != mesh.mesh_main_border_vertices_end();
          it++)
     {
-        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_parameterized(it));
+        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_parameterized(*it));
 
         // Get vertex index in sparse linear system
         int index = mesh.get_vertex_index(*it);

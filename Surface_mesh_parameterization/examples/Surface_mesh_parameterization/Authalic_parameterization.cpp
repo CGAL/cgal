@@ -18,6 +18,7 @@
 typedef CGAL::Simple_cartesian<double>      Kernel;
 typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 
 // ----------------------------------------------------------------------------
@@ -63,9 +64,26 @@ int main(int argc, char * argv[])
     // meshes that are topological disks
     //***************************************
 
-    typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron>
+    typedef std::map<vertex_descriptor,std::size_t> V_index_map;
+    typedef std::map<halfedge_descriptor,std::size_t> H_index_map;
+    typedef boost::associative_property_map<V_index_map> V_index_pmap;
+    typedef boost::associative_property_map<H_index_map> H_index_pmap;
+    V_index_map vim; V_index_pmap vipm(vim);
+    H_index_map him; H_index_pmap hipm(him);
+
+    std::size_t i = 0;
+    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
+      vim[vd] = i++;
+    } 
+
+    i = 0;
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(mesh)){
+      him[hd] = i++;
+    }
+
+    typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron, V_index_pmap, H_index_pmap>
                                             Parameterization_polyhedron_adaptor;
-    Parameterization_polyhedron_adaptor mesh_adaptor(mesh);
+    Parameterization_polyhedron_adaptor mesh_adaptor(mesh, vipm,hipm);
 
     //***************************************
     // Discrete Authalic Parameterization

@@ -119,7 +119,7 @@ double Circular_border_parameterizer_3<Adaptor>::compute_border_length(
         it != mesh.mesh_main_border_vertices_end();
         it++)
     {
-        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(it));
+        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(*it));
 
         // Get next iterator (looping)
         Border_vertex_iterator next = it;

@@ -35,6 +35,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <boost/foreach.hpp>
 #include <list>
+#include <set>
 
 /// \file Parameterization_polyhedron_adaptor_3.h
 
@@ -69,16 +70,13 @@ namespace CGAL {
 /// \cgalModels `ParameterizationPatchableMesh_3`
 ///
 
-template<class Polyhedron_3_>
+  template<class Polyhedron_3_, class VertexIndexMap, class HalfedgeIndexMap>
 class Parameterization_polyhedron_adaptor_3
 {
 // Forward references
 public:
     class                                   Halfedge_info;
     class                                   Vertex_info;
-
-private:
-    struct                                  Project_vertex_handle_vertex;
 
 // Private types
 private:
@@ -96,11 +94,9 @@ private:
   typedef CGAL::Vertex_around_face_circulator<TriangleMesh> vertex_around_face_circulator;
 
     /// Additional info attached to halfedges
-    typedef typename std::map<halfedge_descriptor,
-                              Halfedge_info>         Halfedge_info_map;
+    typedef typename std::vector<Halfedge_info>         Halfedge_info_map;
     /// Additional info attached to vertices
-    typedef typename std::map<vertex_descriptor,
-                              Vertex_info>         Vertex_info_map;
+    typedef typename std::vector<Vertex_info>         Vertex_info_map;
 
 
 // Public types
@@ -243,20 +239,24 @@ public:
     /// The input mesh can be of any genus.
     /// It can have have any number of borders. Its "main border"
     /// will be the mesh's longest border (if there is at least one border).
-    Parameterization_polyhedron_adaptor_3(Polyhedron& mesh)
+  Parameterization_polyhedron_adaptor_3(Polyhedron& mesh, VertexIndexMap vim, HalfedgeIndexMap him)
         // Store reference to adapted mesh
-      : m_polyhedron(mesh)
+    : m_polyhedron(mesh), m_vim(vim), m_him(him)
     {
         typedef typename Halfedge_info_map::value_type Halfedge_info_pair;
         typedef typename Vertex_info_map::value_type Vertex_info_pair;
 
+        m_halfedge_info.resize(num_halfedges(mesh));
         // Allocate extra info for each halfedge
-        BOOST_FOREACH(halfedge_descriptor he, halfedges(mesh))
-            m_halfedge_info.insert( Halfedge_info_pair(he, Halfedge_info()) );
+        Halfedge_info hinfo;
+        BOOST_FOREACH(halfedge_descriptor hd, halfedges(mesh))
+          m_halfedge_info[get(m_him,hd)] = hinfo;
 
+        m_vertex_info.resize(num_vertices(mesh));
         // Allocate extra info for each vertex
-        BOOST_FOREACH(vertex_descriptor vtx, vertices(mesh))
-            m_vertex_info.insert( Vertex_info_pair(vtx, Vertex_info()) );
+        Vertex_info vinfo;
+        BOOST_FOREACH(vertex_descriptor vd, vertices(mesh))
+          m_vertex_info[get(m_vim, vd)] = vinfo;
 
         // Extract mesh's longest border
         m_main_border = extract_longest_border(mesh);
@@ -286,29 +286,23 @@ public:
     /// Access to additional info attached to halfedges.
     const Halfedge_info* info(halfedge_descriptor halfedge) const
     {
-        typename Halfedge_info_map::const_iterator it = m_halfedge_info.find(halfedge);
-        CGAL_surface_mesh_parameterization_assertion(it != m_halfedge_info.end());
-        return &it->second;
+      return & m_halfedge_info[get(m_him,halfedge)];
     }
+
     Halfedge_info* info(halfedge_descriptor halfedge)
     {
-        typename Halfedge_info_map::iterator it = m_halfedge_info.find(halfedge);
-        CGAL_surface_mesh_parameterization_assertion(it != m_halfedge_info.end());
-        return &it->second;
+      return & m_halfedge_info[get(m_him,halfedge)];
     }
 
     /// Access to additional info attached to vertices.
     const Vertex_info* info(vertex_descriptor vertex) const
     {
-        typename Vertex_info_map::const_iterator it = m_vertex_info.find(vertex);
-        CGAL_surface_mesh_parameterization_assertion(it != m_vertex_info.end());
-        return &it->second;
+      return & m_vertex_info[get(m_vim,vertex)];
     }
+
     Vertex_info* info(vertex_descriptor vertex)
     {
-        typename Vertex_info_map::iterator it = m_vertex_info.find(vertex);
-        CGAL_surface_mesh_parameterization_assertion(it != m_vertex_info.end());
-        return &it->second;
+      return & m_vertex_info[get(m_vim,vertex)];
     }
 
     //@} // end of Interface specific to Parameterization_polyhedron_adaptor_3
@@ -627,9 +621,9 @@ public:
             CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
 
             // get "is parameterized" field from first inner halfedge (clockwise)
-            Halfedge_around_vertex_const_circulator cir(
-                                get_halfedge(next_vertex, vertex) );
-            return info(cir)->is_parameterized();
+            halfedge_around_target_circulator cir(
+                                                  get_halfedge(next_vertex, vertex),m_polyhedron );
+            return info(*cir)->is_parameterized();
         }
     }
     void set_corners_parameterized(vertex_descriptor vertex,
@@ -789,91 +783,26 @@ public:
 private:
 
     /// Extract mesh's longest border.
-    std::list<vertex_descriptor> extract_longest_border(Polyhedron& )
+    std::list<vertex_descriptor> extract_longest_border(Polyhedron& mesh)
     {
-        std::list<vertex_descriptor> longest_border;    // returned list
-        double                   max_len = 0;       // length of longest_border
+        std::list<vertex_descriptor> result;    // returned list
 
-        // Tag all vertices as unprocessed
-        const int tag_free = 0;
-        const int tag_done = 1;
-        BOOST_FOREACH(vertex_descriptor vd, vertices(m_polyhedron))
-             set_vertex_tag(vd, tag_free);
-
-        // find all closed borders and keep longest one
-        int nb = 0;
-        while (1)
-        {
-            // Find a border tagged as "free" and tag it as "processed"
-            std::list<vertex_descriptor> border = find_free_border(tag_free, tag_done);
-            if(border.empty())
-                break;
-
-            // compute  total len of 'border'
-            double len = 0.0;
-            typename std::list<vertex_descriptor>::const_iterator it;
-            for(it = border.begin(); it != border.end(); it++)
-            {
-                // Get next iterator (looping)
-                typename std::list<vertex_descriptor>::const_iterator next = it;
-                next++;
-                if (next == border.end())
-                    next = border.begin();
-
-                Vector_3 vect = get_vertex_position(*next) - get_vertex_position(*it);
-                len += std::sqrt(vect*vect);
-            }
-
-            // Keep 'border' if longer
-            if (len > max_len)
-            {
-                longest_border = border;
-                max_len = len;
-            }
-
-            nb++;
+        halfedge_descriptor hd = longest_border(mesh);
+        if(hd != boost::graph_traits<Polyhedron>::null_halfedge()){
+          BOOST_FOREACH(halfedge_descriptor hdf, halfedges_around_face(hd,mesh)){
+            result.push_back(target(hdf,mesh));
+          }
         }
-
-        return longest_border;
+        return result;
     }
-
-    /// Find a border tagged as <i>free</i> and tag it as <i>processed</i>.
-    /// Return an empty list if not found.
-    std::list<vertex_descriptor> find_free_border(int tag_free, int tag_done)
-    {
-        std::list<vertex_descriptor> border;    // returned list
-
-        // get any border vertex with "free" tag
-        vertex_descriptor seed_vertex = NULL;
-        
-        BOOST_FOREACH(vertex_descriptor vd, vertices(m_polyhedron))
-        {
-            if (is_vertex_on_border(vd) && get_vertex_tag(vd) == tag_free) {
-                seed_vertex = vd;
-                break;
-            }
-        }
-        if (seed_vertex == NULL)
-            return border;                  // return empty list
-
-        // Get the border containing seed_vertex
-        border = get_border(seed_vertex);
-
-        // Tag border vertices as "processed"
-        typename std::list<vertex_descriptor>::iterator it;
-        for(it = border.begin(); it != border.end(); it++)
-            set_vertex_tag(*it, tag_done);
-
-        return border;
-    }
-
-
 // Fields
 private:
 
     /// The adapted mesh (cannot be NULL).
     Polyhedron&                 m_polyhedron;
-
+  
+    VertexIndexMap              m_vim;
+    HalfedgeIndexMap            m_him;
     /// Additional info attached to halfedges.
     Halfedge_info_map           m_halfedge_info;
     /// Additional info attached to vertices.
@@ -883,14 +812,39 @@ private:
     std::list<vertex_descriptor>    m_main_border;
 
 
-// Private types
-private:
-
-  
-   
 
 
     }; // Parameterization_polyhedron_adaptor_3
+
+
+  template <typename PolygonMesh>
+  typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
+  longest_border(const PolygonMesh& mesh)
+  {
+    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor; 
+    typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type PPmap;
+    PPmap ppmap = get(CGAL::vertex_point,mesh);
+    double length=0;
+    halfedge_descriptor result;
+    std::set<halfedge_descriptor> visited;
+    // TODO use halfedge_index
+    // std::vector<bool> visited(num_halfedges(mesh));
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(mesh)){
+      if(is_border(hd,mesh)&& (visited.find(hd)== visited.end())){
+        double len=0;
+        BOOST_FOREACH(halfedge_descriptor hdf, halfedges_around_face(hd,mesh)){
+          visited.insert(hdf);
+          len += squared_distance(get(ppmap,source(hdf,mesh)), get(ppmap,target(hdf,mesh)));
+        }
+        if(len > length){
+          length = len;
+          result = hd;
+        }
+      }
+    }
+    return result;
+  }
+  
 
 
 } //namespace CGAL
