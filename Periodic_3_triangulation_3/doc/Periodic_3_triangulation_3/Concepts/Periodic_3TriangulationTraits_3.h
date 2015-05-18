@@ -20,10 +20,6 @@ In addition to the requirements described for the traits class
 TriangulationTraits_3, the geometric traits class of a
 Periodic triangulation must fulfill the following
 requirements.
-
-\note The optional types must be provided in any case, however they
-can be replaced by dummy types if the respective functions are not
-used.
 */
 class Periodic_3TriangulationTraits_3 {
 public:
