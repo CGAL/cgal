@@ -394,13 +394,7 @@ public:
         return index;
     }
 
-    /// Return true of all mesh's facets are triangles.
-    bool  is_mesh_triangular() const {
-        for (Facet_const_iterator it = mesh_facets_begin(); it != mesh_facets_end(); it++)
-            if (count_facet_vertices(it) != 3)
-                return false;
-        return true;            // mesh is triangular if we reach this point
-    }
+ 
 
     /// Count the number of halfedges of the mesh.
     int  count_mesh_halfedges() const {
@@ -428,17 +422,7 @@ public:
         return Vertex_around_facet_const_circulator(*this, m_mesh_adaptor.facet_vertices_begin(facet));
     }
 
-    /// Count the number of vertices of a facet.
-    int  count_facet_vertices(Facet_const_handle facet) const {
-        CGAL_surface_mesh_parameterization_assertion(is_valid(facet));
-        int index = 0;
-        Vertex_around_facet_const_circulator cir     = facet_vertices_begin(facet),
-                                             cir_end = cir;
-        CGAL_For_all(cir, cir_end)
-            index++;
-        return index;
-    }
-
+ 
     // VERTEX INTERFACE
 
     /// Get the 3D position of a vertex.

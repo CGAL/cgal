@@ -1,5 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Parameterization_polyhedron_adaptor_3.h>
 #include <CGAL/parameterize.h>
@@ -95,7 +96,7 @@ int main(int argc, char * argv[])
     //***************************************
 
     // Raw output: dump (u,v) pairs
-    Polyhedron::Vertex_const_iterator pVertex;
+    Polyhedron::Vertex_iterator pVertex;
     for (pVertex = mesh.vertices_begin();
         pVertex != mesh.vertices_end();
         pVertex++)

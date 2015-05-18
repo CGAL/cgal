@@ -29,6 +29,8 @@
 #include <cmath>
 #include <CGAL/circulator.h>
 
+#include <boost/foreach.hpp>
+
 /// \file Parameterization_mesh_feature_extractor.h
 
 namespace CGAL {
@@ -47,47 +49,22 @@ public:
     /// Export ParameterizationMesh_3 template parameter.
     typedef ParameterizationMesh_3          Adaptor;
 
+// Private types
+private:
+
+  typedef typename Adaptor::Polyhedron TriangleMesh;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
+    // Mesh_Adaptor_3 subtypes:
+    typedef typename Adaptor::Vector_3      Vector_3;
+
+public:
     /// Type representing a border = STL container of vertex handles.
-    typedef std::list<typename Adaptor::Vertex_handle>
-                                            Border;
+    typedef std::list<vertex_descriptor>    Border;
     /// Type representing the list of all borders of the mesh
     /// = STL container of Border elements.
     typedef std::vector<Border*>            Skeleton;
 
-// Private types
-private:
-    // Mesh_Adaptor_3 subtypes:
-    typedef typename Adaptor::NT            NT;
-    typedef typename Adaptor::Point_2       Point_2;
-    typedef typename Adaptor::Point_3       Point_3;
-    typedef typename Adaptor::Vector_2      Vector_2;
-    typedef typename Adaptor::Vector_3      Vector_3;
-    typedef typename Adaptor::Facet         Facet;
-    typedef typename Adaptor::Facet_handle  Facet_handle;
-    typedef typename Adaptor::Facet_const_handle
-                                            Facet_const_handle;
-    typedef typename Adaptor::Facet_iterator Facet_iterator;
-    typedef typename Adaptor::Facet_const_iterator
-                                            Facet_const_iterator;
-    typedef typename Adaptor::Vertex        Vertex;
-    typedef typename Adaptor::Vertex_handle Vertex_handle;
-    typedef typename Adaptor::Vertex_const_handle
-                                            Vertex_const_handle;
-    typedef typename Adaptor::Vertex_iterator Vertex_iterator;
-    typedef typename Adaptor::Vertex_const_iterator
-                                            Vertex_const_iterator;
-    typedef typename Adaptor::Border_vertex_iterator
-                                            Border_vertex_iterator;
-    typedef typename Adaptor::Border_vertex_const_iterator
-                                            Border_vertex_const_iterator;
-    typedef typename Adaptor::Vertex_around_facet_circulator
-                                            Vertex_around_facet_circulator;
-    typedef typename Adaptor::Vertex_around_facet_const_circulator
-                                            Vertex_around_facet_const_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_circulator
-                                            Vertex_around_vertex_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_const_circulator
-                                            Vertex_around_vertex_const_circulator;
 
 // Public operations
 public:
@@ -99,7 +76,7 @@ public:
     /// Parameterization_mesh_feature_extractor life cycle.
     Parameterization_mesh_feature_extractor(Adaptor& mesh)
         // Store reference to adapted mesh
-      : m_mesh_adaptor(mesh)
+      : m_mesh_adaptor(mesh), m_mesh(mesh.get_adapted_mesh())
     {
         // m_mesh_adaptor features are not yet computed
         m_nb_connex_components = -1;
@@ -174,11 +151,10 @@ private:
         // Tag all vertices as unprocessed
         const int tag_free = 0;
         const int tag_done = 1;
-        for (Vertex_iterator it = m_mesh_adaptor.mesh_vertices_begin();
-             it != m_mesh_adaptor.mesh_vertices_end();
-             it++)
+
+        BOOST_FOREACH(vertex_descriptor v, vertices(m_mesh))
         {
-             m_mesh_adaptor.set_vertex_tag(it, tag_free);
+             m_mesh_adaptor.set_vertex_tag(v, tag_free);
         }
 
         // find all closed borders
@@ -202,7 +178,7 @@ private:
     {
         // Find a border tagged as "free" and tag it as "processed"
         // Return an empty list if not found
-        std::list<Vertex_handle> border = find_free_border(tag_free, tag_done);
+        std::list<vertex_descriptor> border = find_free_border(tag_free, tag_done);
         if(border.empty())
             return false;
 
@@ -216,20 +192,19 @@ private:
 
     /// Find a border tagged as <i>free</i> and tag it as <i>processed</i>.
     /// Return an empty list if not found.
-    std::list<Vertex_handle> find_free_border(int tag_free, int tag_done)
+    std::list<vertex_descriptor> find_free_border(int tag_free, int tag_done)
     {
-        std::list<Vertex_handle> border;    // returned list
+        std::list<vertex_descriptor> border;    // returned list
 
         // get any border vertex with "free" tag
-        Vertex_handle seed_vertex = NULL;
-        for (Vertex_iterator pVertex = m_mesh_adaptor.mesh_vertices_begin();
-             pVertex != m_mesh_adaptor.mesh_vertices_end();
-             pVertex++)
+        vertex_descriptor seed_vertex = NULL;
+
+        BOOST_FOREACH(vertex_descriptor v, vertices(m_mesh))
         {
-            if (m_mesh_adaptor.is_vertex_on_border(pVertex) &&
-                m_mesh_adaptor.get_vertex_tag(pVertex) == tag_free)
+            if (m_mesh_adaptor.is_vertex_on_border(v) &&
+                m_mesh_adaptor.get_vertex_tag(v) == tag_free)
             {
-                seed_vertex = pVertex;
+                seed_vertex = v;
                 break;
             }
         }
@@ -240,7 +215,7 @@ private:
         border = m_mesh_adaptor.get_border(seed_vertex);
 
         // Tag border vertices as "processed"
-        typename std::list<Vertex_handle>::iterator it;
+        typename std::list<vertex_descriptor>::iterator it;
         for(it = border.begin(); it != border.end(); it++)
             m_mesh_adaptor.set_vertex_tag(*it, tag_done);
 
@@ -274,11 +249,11 @@ private:
     double len(const Border& border) const
     {
         double len = 0.0;
-        typename std::list<typename Adaptor::Vertex_handle>::const_iterator it;
+        typename std::list<vertex_descriptor>::const_iterator it;
         for(it = border.begin(); it != border.end(); it++)
         {
             // Get next iterator (looping)
-            typename std::list<typename Adaptor::Vertex_handle>::const_iterator next = it;
+            typename std::list<vertex_descriptor>::const_iterator next = it;
             next++;
             if (next == border.end())
                 next = border.begin();
@@ -298,14 +273,12 @@ private:
 
         const int tag_free = 0;
         const int tag_done = 1;
-        for (Vertex_iterator it = m_mesh_adaptor.mesh_vertices_begin();
-             it != m_mesh_adaptor.mesh_vertices_end();
-             it++)
+        BOOST_FOREACH(vertex_descriptor v, vertices(m_mesh))
         {
-             m_mesh_adaptor.set_vertex_tag(it, tag_free);
+             m_mesh_adaptor.set_vertex_tag(v, tag_free);
         }
 
-        Vertex_handle seed_vertex = NULL;
+        vertex_descriptor seed_vertex = NULL;
         while((seed_vertex = get_any_vertex_tag(tag_free)) != NULL)
         {
             m_nb_connex_components++;
@@ -314,33 +287,31 @@ private:
     }
 
     /// Get any vertex with tag.
-    Vertex_handle get_any_vertex_tag(int tag)
+    vertex_descriptor get_any_vertex_tag(int tag)
     {
-        for (Vertex_iterator it = m_mesh_adaptor.mesh_vertices_begin();
-             it != m_mesh_adaptor.mesh_vertices_end();
-             it++)
+        BOOST_FOREACH(vertex_descriptor v, vertices(m_mesh))
         {
-            if (m_mesh_adaptor.get_vertex_tag(it) == tag)
-                return it;
+            if (m_mesh_adaptor.get_vertex_tag(v) == tag)
+                return v;
         }
 
         return NULL;
     }
 
     /// Tag component.
-    void tag_component(Vertex_handle pSeedVertex,
+    void tag_component(vertex_descriptor pSeedVertex,
                        const int tag_free,
                        const int tag_done)
     {
         CGAL_surface_mesh_parameterization_precondition(
              m_mesh_adaptor.get_vertex_tag(pSeedVertex) == tag_free);
 
-        std::list<Vertex_handle> vertices;
+        std::list<vertex_descriptor> vertices;
         vertices.push_front(pSeedVertex);
 
         while (!vertices.empty())
         {
-            Vertex_handle pVertex = vertices.front();
+            vertex_descriptor pVertex = vertices.front();
             vertices.pop_front();
 
             // Stop if already done
@@ -349,12 +320,10 @@ private:
 
             m_mesh_adaptor.set_vertex_tag(pVertex, tag_done);
 
-            Vertex_around_vertex_circulator cir, cir_end;
-            cir     = m_mesh_adaptor.vertices_around_vertex_begin(pVertex);
-            cir_end = cir;
+            vertex_around_target_circulator cir(halfedge(pVertex,m_mesh), m_mesh), cir_end(cir);
             CGAL_For_all(cir,cir_end)
-                if (m_mesh_adaptor.get_vertex_tag(cir) == tag_free)
-                    vertices.push_front(cir);
+              if (m_mesh_adaptor.get_vertex_tag(*cir) == tag_free)
+                    vertices.push_front(*cir);
         }
     }
 
@@ -384,7 +353,7 @@ private:
 
     /// Pointer to mesh to parse
     Adaptor&    m_mesh_adaptor;
-
+  TriangleMesh& m_mesh;
     /// m_mesh_adaptor features:
     int         m_nb_borders;
     Skeleton    m_skeleton;             ///< List of borders of m_mesh_adaptor

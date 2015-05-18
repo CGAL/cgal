@@ -96,38 +96,21 @@ public:
 
 // Private types
 private:
+  typedef typename Adaptor::Polyhedron TriangleMesh;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_iterator face_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator vertex_iterator;
+ 
+  typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
+  typedef CGAL::Vertex_around_face_circulator<TriangleMesh> vertex_around_face_circulator;
+
     // Mesh_Adaptor_3 subtypes:
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Point_2       Point_2;
     typedef typename Adaptor::Point_3       Point_3;
     typedef typename Adaptor::Vector_2      Vector_2;
     typedef typename Adaptor::Vector_3      Vector_3;
-    typedef typename Adaptor::Facet         Facet;
-    typedef typename Adaptor::Facet_handle  Facet_handle;
-    typedef typename Adaptor::Facet_const_handle
-                                            Facet_const_handle;
-    typedef typename Adaptor::Facet_iterator Facet_iterator;
-    typedef typename Adaptor::Facet_const_iterator
-                                            Facet_const_iterator;
-    typedef typename Adaptor::Vertex        Vertex;
-    typedef typename Adaptor::Vertex_handle Vertex_handle;
-    typedef typename Adaptor::Vertex_const_handle
-                                            Vertex_const_handle;
-    typedef typename Adaptor::Vertex_iterator Vertex_iterator;
-    typedef typename Adaptor::Vertex_const_iterator
-                                            Vertex_const_iterator;
-    typedef typename Adaptor::Border_vertex_iterator
-                                            Border_vertex_iterator;
-    typedef typename Adaptor::Border_vertex_const_iterator
-                                            Border_vertex_const_iterator;
-    typedef typename Adaptor::Vertex_around_facet_circulator
-                                            Vertex_around_facet_circulator;
-    typedef typename Adaptor::Vertex_around_facet_const_circulator
-                                            Vertex_around_facet_const_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_circulator
-                                            Vertex_around_vertex_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_const_circulator
-                                            Vertex_around_vertex_const_circulator;
 
     // SparseLinearAlgebraTraits_d subtypes:
     typedef typename Sparse_LA::Vector      Vector;
@@ -153,11 +136,11 @@ public:
 protected:
     /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
     virtual NT compute_w_ij(const Adaptor& mesh,
-                            Vertex_const_handle main_vertex_v_i,
-                            Vertex_around_vertex_const_circulator neighbor_vertex_v_j)
+                            vertex_descriptor main_vertex_v_i,
+                            vertex_around_target_circulator neighbor_vertex_v_j)
     {
         Point_3 position_v_i = mesh.get_vertex_position(main_vertex_v_i);
-        Point_3 position_v_j = mesh.get_vertex_position(neighbor_vertex_v_j);
+        Point_3 position_v_j = mesh.get_vertex_position(*neighbor_vertex_v_j);
 
         // Compute the norm of v_j -> v_i vector
         Vector_3 edge = position_v_i - position_v_j;
@@ -165,16 +148,16 @@ protected:
 
         // Compute angle of (v_j,v_i,v_k) corner (i.e. angle of v_i corner)
         // if v_k is the vertex before v_j when circulating around v_i
-        Vertex_around_vertex_const_circulator previous_vertex_v_k = neighbor_vertex_v_j;
+        vertex_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
         previous_vertex_v_k --;
-        Point_3 position_v_k = mesh.get_vertex_position(previous_vertex_v_k);
+        Point_3 position_v_k = mesh.get_vertex_position(*previous_vertex_v_k);
         double gamma_ij  = compute_angle_rad(position_v_j, position_v_i, position_v_k);
 
         // Compute angle of (v_l,v_i,v_j) corner (i.e. angle of v_i corner)
         // if v_l is the vertex after v_j when circulating around v_i
-        Vertex_around_vertex_const_circulator next_vertex_v_l = neighbor_vertex_v_j;
+        vertex_around_target_circulator next_vertex_v_l = neighbor_vertex_v_j;
         next_vertex_v_l ++;
-        Point_3 position_v_l = mesh.get_vertex_position(next_vertex_v_l);
+        Point_3 position_v_l = mesh.get_vertex_position(*next_vertex_v_l);
         double delta_ij = compute_angle_rad(position_v_l, position_v_i, position_v_j);
 
         double weight = 0.0;

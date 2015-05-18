@@ -63,7 +63,9 @@ class Circular_border_parameterizer_3
 public:
     /// Export ParameterizationMesh_3 template parameter
     typedef ParameterizationMesh_3          Adaptor;
+  typedef typename Adaptor::Polyhedron TriangleMesh;
 
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 // Private types
 private:
     // Mesh_Adaptor_3 subtypes:
@@ -72,32 +74,10 @@ private:
     typedef typename Adaptor::Point_3       Point_3;
     typedef typename Adaptor::Vector_2      Vector_2;
     typedef typename Adaptor::Vector_3      Vector_3;
-    typedef typename Adaptor::Facet         Facet;
-    typedef typename Adaptor::Facet_handle  Facet_handle;
-    typedef typename Adaptor::Facet_const_handle
-                                            Facet_const_handle;
-    typedef typename Adaptor::Facet_iterator Facet_iterator;
-    typedef typename Adaptor::Facet_const_iterator
-                                            Facet_const_iterator;
-    typedef typename Adaptor::Vertex        Vertex;
-    typedef typename Adaptor::Vertex_handle Vertex_handle;
-    typedef typename Adaptor::Vertex_const_handle
-                                            Vertex_const_handle;
-    typedef typename Adaptor::Vertex_iterator Vertex_iterator;
-    typedef typename Adaptor::Vertex_const_iterator
-                                            Vertex_const_iterator;
+
     typedef typename Adaptor::Border_vertex_iterator
                                             Border_vertex_iterator;
-    typedef typename Adaptor::Border_vertex_const_iterator
-                                            Border_vertex_const_iterator;
-    typedef typename Adaptor::Vertex_around_facet_circulator
-                                            Vertex_around_facet_circulator;
-    typedef typename Adaptor::Vertex_around_facet_const_circulator
-                                            Vertex_around_facet_const_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_circulator
-                                            Vertex_around_vertex_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_const_circulator
-                                            Vertex_around_vertex_const_circulator;
+
 
 // Public operations
 public:
@@ -118,8 +98,8 @@ public:
 protected:
     /// Compute the length of an edge.
     virtual double compute_edge_length(const Adaptor& mesh,
-                                       Vertex_const_handle source,
-                                       Vertex_const_handle target) = 0;
+                                       vertex_descriptor source,
+                                       vertex_descriptor target) = 0;
 
 // Private operations
 private:
@@ -135,20 +115,20 @@ double Circular_border_parameterizer_3<Adaptor>::compute_border_length(
                                                         const Adaptor& mesh)
 {
     double len = 0.0;
-    for(Border_vertex_const_iterator it = mesh.mesh_main_border_vertices_begin();
+    for(Border_vertex_iterator it = mesh.mesh_main_border_vertices_begin();
         it != mesh.mesh_main_border_vertices_end();
         it++)
     {
         CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(it));
 
         // Get next iterator (looping)
-        Border_vertex_const_iterator next = it;
+        Border_vertex_iterator next = it;
         next++;
         if(next == mesh.mesh_main_border_vertices_end())
             next = mesh.mesh_main_border_vertices_begin();
 
         // Add 'length' of it -> next vector to 'len'
-        len += compute_edge_length(mesh, it, next);
+        len += compute_edge_length(mesh, *it, *next);
     }
     return len;
 }
@@ -180,17 +160,17 @@ Circular_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
         it != mesh.mesh_main_border_vertices_end();
         it++)
     {
-        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(it));
+        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(*it));
 
         double angle = len*tmp; // current position on the circle in radians
 
         // map vertex on unit circle
         Point_2 uv;
         uv = Point_2(0.5+0.5*std::cos(-angle),0.5+0.5*std::sin(-angle));
-        mesh.set_vertex_uv(it, uv);
+        mesh.set_vertex_uv(*it, uv);
 
         // Mark vertex as "parameterized"
-        mesh.set_vertex_parameterized(it, true);
+        mesh.set_vertex_parameterized(*it, true);
 
         // Get next iterator (looping)
         Border_vertex_iterator next = it;
@@ -199,7 +179,7 @@ Circular_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
             next = mesh.mesh_main_border_vertices_begin();
 
         // Add 'length' of it -> next vector to 'len'
-        len += compute_edge_length(mesh, it, next);
+        len += compute_edge_length(mesh, *it, *next);
     }
 
     return Parameterizer_traits_3<Adaptor>::OK;
@@ -242,32 +222,9 @@ private:
     typedef typename Adaptor::Point_3       Point_3;
     typedef typename Adaptor::Vector_2      Vector_2;
     typedef typename Adaptor::Vector_3      Vector_3;
-    typedef typename Adaptor::Facet         Facet;
-    typedef typename Adaptor::Facet_handle  Facet_handle;
-    typedef typename Adaptor::Facet_const_handle
-                                            Facet_const_handle;
-    typedef typename Adaptor::Facet_iterator Facet_iterator;
-    typedef typename Adaptor::Facet_const_iterator
-                                            Facet_const_iterator;
-    typedef typename Adaptor::Vertex        Vertex;
-    typedef typename Adaptor::Vertex_handle Vertex_handle;
-    typedef typename Adaptor::Vertex_const_handle
-                                            Vertex_const_handle;
-    typedef typename Adaptor::Vertex_iterator Vertex_iterator;
-    typedef typename Adaptor::Vertex_const_iterator
-                                            Vertex_const_iterator;
+
     typedef typename Adaptor::Border_vertex_iterator
                                             Border_vertex_iterator;
-    typedef typename Adaptor::Border_vertex_const_iterator
-                                            Border_vertex_const_iterator;
-    typedef typename Adaptor::Vertex_around_facet_circulator
-                                            Vertex_around_facet_circulator;
-    typedef typename Adaptor::Vertex_around_facet_const_circulator
-                                            Vertex_around_facet_const_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_circulator
-                                            Vertex_around_vertex_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_const_circulator
-                                            Vertex_around_vertex_const_circulator;
 
 // Public operations
 public:
@@ -277,8 +234,8 @@ public:
 protected:
     /// Compute the length of an edge.
     virtual double compute_edge_length(const Adaptor& /* mesh */,
-                                       Vertex_const_handle /* source */,
-                                       Vertex_const_handle /* target */)
+                                       vertex_descriptor /* source */,
+                                       vertex_descriptor /* target */)
     {
         /// Uniform border parameterization: points are equally spaced.
         return 1;
@@ -323,32 +280,9 @@ private:
     typedef typename Adaptor::Point_3       Point_3;
     typedef typename Adaptor::Vector_2      Vector_2;
     typedef typename Adaptor::Vector_3      Vector_3;
-    typedef typename Adaptor::Facet         Facet;
-    typedef typename Adaptor::Facet_handle  Facet_handle;
-    typedef typename Adaptor::Facet_const_handle
-                                            Facet_const_handle;
-    typedef typename Adaptor::Facet_iterator Facet_iterator;
-    typedef typename Adaptor::Facet_const_iterator
-                                            Facet_const_iterator;
-    typedef typename Adaptor::Vertex        Vertex;
-    typedef typename Adaptor::Vertex_handle Vertex_handle;
-    typedef typename Adaptor::Vertex_const_handle
-                                            Vertex_const_handle;
-    typedef typename Adaptor::Vertex_iterator Vertex_iterator;
-    typedef typename Adaptor::Vertex_const_iterator
-                                            Vertex_const_iterator;
+ 
     typedef typename Adaptor::Border_vertex_iterator
                                             Border_vertex_iterator;
-    typedef typename Adaptor::Border_vertex_const_iterator
-                                            Border_vertex_const_iterator;
-    typedef typename Adaptor::Vertex_around_facet_circulator
-                                            Vertex_around_facet_circulator;
-    typedef typename Adaptor::Vertex_around_facet_const_circulator
-                                            Vertex_around_facet_const_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_circulator
-                                            Vertex_around_vertex_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_const_circulator
-                                            Vertex_around_vertex_const_circulator;
 
 // Public operations
 public:
@@ -358,8 +292,8 @@ public:
 protected:
     /// Compute the length of an edge.
     virtual double compute_edge_length(const Adaptor& mesh,
-                                       Vertex_const_handle source,
-                                       Vertex_const_handle target)
+                                       vertex_descriptor source,
+                                       vertex_descriptor target)
     {
         /// Arc-length border parameterization: (u,v) values are
         /// proportional to the length of border edges.

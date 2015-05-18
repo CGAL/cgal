@@ -32,7 +32,8 @@
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <CGAL/Convertible_iterator_project.h>
 #include <CGAL/Convertible_circulator_project.h>
-
+#include <CGAL/boost/graph/helpers.h>
+#include <boost/foreach.hpp>
 #include <list>
 
 /// \file Parameterization_polyhedron_adaptor_3.h
@@ -77,41 +78,29 @@ public:
     class                                   Vertex_info;
 
 private:
-    struct                                  Less;
-    struct                                  Project_halfedge_vertex;
     struct                                  Project_vertex_handle_vertex;
-    struct                                  Project_opposite_halfedge_vertex;
 
 // Private types
 private:
 
-    /// Halfedge
-    typedef typename Polyhedron_3_::Halfedge Halfedge;
-    typedef typename Polyhedron_3_::Halfedge_handle
-                                            Halfedge_handle;
-    typedef typename Polyhedron_3_::Halfedge_const_handle
-                                            Halfedge_const_handle;
-    typedef typename Polyhedron_3_::Halfedge_iterator
-                                            Halfedge_iterator;
-    typedef typename Polyhedron_3_::Halfedge_const_iterator
-                                            Halfedge_const_iterator;
-    typedef typename Polyhedron_3_::Halfedge_around_vertex_circulator
-                                            Halfedge_around_vertex_circulator;
-    typedef typename Polyhedron_3_::Halfedge_around_vertex_const_circulator
-                                            Halfedge_around_vertex_const_circulator;
-    typedef typename Polyhedron_3_::Halfedge_around_facet_circulator
-                                            Halfedge_around_facet_circulator;
-    typedef typename Polyhedron_3_::Halfedge_around_facet_const_circulator
-                                            Halfedge_around_facet_const_circulator;
+  typedef typename Polyhedron_3_ TriangleMesh;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_iterator face_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator vertex_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_iterator halfedge_iterator;
+ 
+  typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
+  typedef CGAL::Halfedge_around_target_circulator<TriangleMesh> halfedge_around_target_circulator;
+  typedef CGAL::Vertex_around_face_circulator<TriangleMesh> vertex_around_face_circulator;
 
     /// Additional info attached to halfedges
-    typedef typename std::map<Halfedge_const_handle,
-                              Halfedge_info,
-                              Less>         Halfedge_info_map;
+    typedef typename std::map<halfedge_descriptor,
+                              Halfedge_info>         Halfedge_info_map;
     /// Additional info attached to vertices
-    typedef typename std::map<typename Polyhedron_3_::Vertex_const_handle,
-                              Vertex_info,
-                              Less>         Vertex_info_map;
+    typedef typename std::map<vertex_descriptor,
+                              Vertex_info>         Vertex_info_map;
 
 
 // Public types
@@ -234,72 +223,11 @@ public:
     typedef typename Polyhedron::Traits::Kernel::Vector_3
                                             Vector_3;
 
-    /// Opaque type representing a facet of the 3D mesh. No methods are expected.
-    typedef typename Polyhedron::Facet      Facet;
-    /// Handle to a facet. Model of the Handle concept.
-    typedef typename Polyhedron::Facet_handle Facet_handle;
-    typedef typename Polyhedron::Facet_const_handle
-                                            Facet_const_handle;
-    /// Iterator over all mesh facets. Model of the ForwardIterator concept.
-    typedef typename Polyhedron::Facet_iterator
-                                            Facet_iterator;
-    typedef typename Polyhedron::Facet_const_iterator
-                                            Facet_const_iterator;
-
-    /// Opaque type representing a vertex of the 3D mesh. No methods are expected.
-    typedef typename Polyhedron::Vertex     Vertex;
-    /// Handle to a vertex. Model of the Handle concept.
-    typedef typename Polyhedron::Vertex_handle
-                                            Vertex_handle;
-    typedef typename Polyhedron::Vertex_const_handle
-                                            Vertex_const_handle;
-    /// Iterator over all vertices of a mesh. Model of the ForwardIterator concept.
-    typedef typename Polyhedron::Vertex_iterator
-                                            Vertex_iterator;
-    typedef typename Polyhedron::Vertex_const_iterator
-                                            Vertex_const_iterator;
     /// Iterator over vertices of the mesh "main border".
     /// Model of the ForwardIterator concept.
-    typedef CGAL::Convertible_iterator_project<typename std::list<Vertex_handle>::iterator,
-                                               Project_vertex_handle_vertex,
-                                               Vertex_const_handle,
-                                               Vertex_handle>
-                                            Border_vertex_iterator;
-    typedef CGAL::Convertible_iterator_project<typename std::list<Vertex_handle>::const_iterator,
-                                               Project_vertex_handle_vertex,
-                                               Vertex_const_handle>
-                                            Border_vertex_const_iterator;
-    /// Counter-clockwise circulator over a facet's vertices.
-    /// Model of the BidirectionalCirculator concept.
-    typedef CGAL::Convertible_circulator_project<Halfedge_around_facet_circulator,
-                                                 Project_halfedge_vertex,
-                                                 Vertex&,
-                                                 Vertex*,
-                                                 Vertex_const_handle,
-                                                 Vertex_handle>
-                                            Vertex_around_facet_circulator;
-    typedef CGAL::Convertible_circulator_project<Halfedge_around_facet_const_circulator,
-                                                 Project_halfedge_vertex,
-                                                 const Vertex&,
-                                                 const Vertex*,
-                                                 Vertex_const_handle>
-                                            Vertex_around_facet_const_circulator;
-    /// Clockwise circulator over the vertices incident to a vertex.
-    /// Model of the BidirectionalCirculator concept.
-    typedef CGAL::Convertible_circulator_project<Halfedge_around_vertex_circulator,
-                                                 Project_opposite_halfedge_vertex,
-                                                 Vertex&,
-                                                 Vertex*,
-                                                 Vertex_const_handle,
-                                                 Vertex_handle>
-                                            Vertex_around_vertex_circulator;
-    typedef CGAL::Convertible_circulator_project<Halfedge_around_vertex_const_circulator,
-                                                 Project_opposite_halfedge_vertex,
-                                                 const Vertex&,
-                                                 const Vertex*,
-                                                 Vertex_const_handle>
-                                            Vertex_around_vertex_const_circulator;
+    typedef typename std::list<vertex_descriptor>::const_iterator Border_vertex_iterator;
 
+   
     //@} // end of ParameterizationMesh_3 INTERFACE
   #endif //DOXYGEN_RUNNING
 
@@ -323,13 +251,11 @@ public:
         typedef typename Vertex_info_map::value_type Vertex_info_pair;
 
         // Allocate extra info for each halfedge
-        Halfedge_iterator he;
-        for (he = m_polyhedron.halfedges_begin(); he != m_polyhedron.halfedges_end(); he++)
+        BOOST_FOREACH(halfedge_descriptor he, halfedges(mesh))
             m_halfedge_info.insert( Halfedge_info_pair(he, Halfedge_info()) );
 
         // Allocate extra info for each vertex
-        Vertex_iterator vtx;
-        for (vtx = m_polyhedron.vertices_begin(); vtx != m_polyhedron.vertices_end(); vtx++)
+        BOOST_FOREACH(vertex_descriptor vtx, vertices(mesh))
             m_vertex_info.insert( Vertex_info_pair(vtx, Vertex_info()) );
 
         // Extract mesh's longest border
@@ -349,38 +275,22 @@ public:
 
     /// Get halfedge from source and target vertices.
     /// Will assert if such a halfedge doesn't exist.
-    typename Polyhedron::Halfedge_const_handle get_halfedge(
-        Vertex_const_handle source, Vertex_const_handle target) const
+    halfedge_descriptor get_halfedge(
+        vertex_descriptor source, vertex_descriptor target) const
     {
-        CGAL_surface_mesh_parameterization_precondition(source != NULL);
-        CGAL_surface_mesh_parameterization_precondition(target != NULL);
-
-        Halfedge_around_vertex_const_circulator cir     = target->vertex_begin(),
-                                                cir_end = cir;
-        CGAL_For_all(cir, cir_end)
-            if (cir->opposite()->vertex() == source)
-                return cir;
-
-        // we should not get here
-        CGAL_error();
-        return NULL;
-    }
-    typename Polyhedron::Halfedge_handle get_halfedge(
-        Vertex_handle source, Vertex_handle target)
-    {
-        Halfedge_const_handle halfedge = get_halfedge((Vertex_const_handle)source,
-                                                      (Vertex_const_handle)target);
-        return const_cast<Halfedge*>(&*halfedge);
+      std::pair<halfedge_descriptor,bool> res = halfedge(source,target, m_polyhedron);
+      assert(res.second);
+      return res.first;
     }
 
     /// Access to additional info attached to halfedges.
-    const Halfedge_info* info(Halfedge_const_handle halfedge) const
+    const Halfedge_info* info(halfedge_descriptor halfedge) const
     {
         typename Halfedge_info_map::const_iterator it = m_halfedge_info.find(halfedge);
         CGAL_surface_mesh_parameterization_assertion(it != m_halfedge_info.end());
         return &it->second;
     }
-    Halfedge_info* info(Halfedge_const_handle halfedge)
+    Halfedge_info* info(halfedge_descriptor halfedge)
     {
         typename Halfedge_info_map::iterator it = m_halfedge_info.find(halfedge);
         CGAL_surface_mesh_parameterization_assertion(it != m_halfedge_info.end());
@@ -388,13 +298,13 @@ public:
     }
 
     /// Access to additional info attached to vertices.
-    const Vertex_info* info(Vertex_const_handle vertex) const
+    const Vertex_info* info(vertex_descriptor vertex) const
     {
         typename Vertex_info_map::const_iterator it = m_vertex_info.find(vertex);
         CGAL_surface_mesh_parameterization_assertion(it != m_vertex_info.end());
         return &it->second;
     }
-    Vertex_info* info(Vertex_const_handle vertex)
+    Vertex_info* info(vertex_descriptor vertex)
     {
         typename Vertex_info_map::iterator it = m_vertex_info.find(vertex);
         CGAL_surface_mesh_parameterization_assertion(it != m_vertex_info.end());
@@ -416,28 +326,14 @@ public:
         return m_polyhedron.is_valid();
     }
 
-    /// Get iterator over first vertex of mesh.
-    Vertex_iterator  mesh_vertices_begin() {
-        return m_polyhedron.vertices_begin();
-    }
-    Vertex_const_iterator  mesh_vertices_begin() const {
-        return m_polyhedron.vertices_begin();
-    }
-
-    /// Get iterator over past-the-end vertex of mesh.
-    Vertex_iterator  mesh_vertices_end() {
-        return m_polyhedron.vertices_end();
-    }
-    Vertex_const_iterator  mesh_vertices_end() const {
-        return m_polyhedron.vertices_end();
-    }
-
+  /// TODO: check if num_vertices would be ok
     /// Count the number of vertices of the mesh.
     int  count_mesh_vertices() const {
-        int index = 0;
-        for (Vertex_const_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
-            index++;
-        return index;
+        
+      vertex_iterator b, e;
+      boost::tie(b,e) = vertices(m_polyhedron);
+
+      return std::distance(b,e);
     }
 
     // Index vertices of the mesh from 0 to count_mesh_vertices()-1
@@ -447,7 +343,7 @@ public:
         fprintf(stderr,"  index Parameterization_polyhedron_adaptor vertices:\n");
 #endif
         int index = 0;
-        for (Vertex_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
+        BOOST_FOREACH (vertex_descriptor vd, vertices(m_polyhedron))
         {
             // Point_3 position = get_vertex_position(it);
 /*#ifdef DEBUG_TRACE
@@ -457,7 +353,7 @@ public:
                             (float)position.y(),
                             (float)position.z());
 #endif*/
-            set_vertex_index(it, index++);
+            set_vertex_index(vd, index++);
         }
 #ifdef DEBUG_TRACE
         fprintf(stderr,"    ok\n");
@@ -465,29 +361,22 @@ public:
     }
 
     /// Get iterator over first vertex of mesh's "main border".
-    Border_vertex_iterator  mesh_main_border_vertices_begin() {
-        return Border_vertex_iterator(m_main_border.begin());
-    }
-    Border_vertex_const_iterator  mesh_main_border_vertices_begin() const {
-        return Border_vertex_const_iterator(m_main_border.begin());
+    Border_vertex_iterator  mesh_main_border_vertices_begin() const {
+        return m_main_border.begin();
     }
 
     /// Get iterator over past-the-end vertex of mesh's "main border".
-    Border_vertex_iterator  mesh_main_border_vertices_end() {
-        return Border_vertex_iterator(m_main_border.end());
-    }
-    Border_vertex_const_iterator  mesh_main_border_vertices_end() const {
-        return Border_vertex_const_iterator(m_main_border.end());
+    Border_vertex_iterator  mesh_main_border_vertices_end() const {
+        return m_main_border.end();
     }
 
     /// Return the border containing seed_vertex.
     /// Return an empty list if not found.
-    std::list<Vertex_handle> get_border(Vertex_handle seed_vertex)
+    std::list<vertex_descriptor> get_border(vertex_descriptor seed_vertex)
     {
-        std::list<Vertex_handle> border;    // returned list
+        std::list<vertex_descriptor> border;    // returned list
 
-        Halfedge_around_vertex_circulator pHalfedge = seed_vertex->vertex_begin();
-        Halfedge_around_vertex_circulator end       = pHalfedge;
+        halfedge_around_target_circulator pHalfedge(halfedge(seed_vertex,m_polyhedron),m_polyhedron), end(pHalfedge);
 
         // if isolated vertex
         if (pHalfedge == NULL) {
@@ -496,10 +385,10 @@ public:
         }
 
         // Get seed_vertex' border halfedge
-        Halfedge_handle  seed_halfedge = NULL;
+        halfedge_descriptor  seed_halfedge = NULL;
         CGAL_For_all(pHalfedge,end) {
-            if(pHalfedge->is_border()) {
-                seed_halfedge = pHalfedge;
+          if(is_border(*pHalfedge, m_polyhedron)) {
+                seed_halfedge = *pHalfedge;
                 break;
             }
         }
@@ -513,12 +402,12 @@ public:
 
         // fill border
         int size = 1;
-        Halfedge_handle current_halfedge = seed_halfedge;
+        halfedge_descriptor current_halfedge = seed_halfedge;
         do
         {
             // Stop if end of loop
-            Halfedge_handle next_halfedge = current_halfedge->next();
-            Vertex_handle next_vertex = next_halfedge->vertex();
+          halfedge_descriptor next_halfedge = next(current_halfedge, m_polyhedron);
+          vertex_descriptor next_vertex = target(next_halfedge, m_polyhedron);
             if(next_vertex == seed_vertex)
                 break;
 
@@ -534,158 +423,100 @@ public:
     }
 
     /// Get iterator over first facet of mesh.
-    Facet_iterator  mesh_facets_begin() {
-        return m_polyhedron.facets_begin();
-    }
-    Facet_const_iterator  mesh_facets_begin() const {
-        return m_polyhedron.facets_begin();
+    face_iterator  mesh_facets_begin()const {
+      return faces(m_polyhedron).first;
     }
 
-    /// Get iterator over past-the-end facet of mesh.
-    Facet_iterator  mesh_facets_end() {
-        return m_polyhedron.facets_end();
-    }
-    Facet_const_iterator  mesh_facets_end() const {
-        return m_polyhedron.facets_end();
+    face_iterator  mesh_facets_end() const {
+      return faces(m_polyhedron).second;
     }
 
     /// Count the number of facets of the mesh.
     int  count_mesh_facets() const {
-        int index = 0;
-        for (Facet_const_iterator it=mesh_facets_begin(); it!=mesh_facets_end(); it++)
-            index++;
-        return index;
-    }
+        face_iterator b,e;
+        boost::tie(b,e) = faces(m_polyhedron);
 
-    /// Return true of all mesh's facets are triangles.
-    bool  is_mesh_triangular() const {
-        for (Facet_const_iterator it = mesh_facets_begin(); it != mesh_facets_end(); it++)
-            if (count_facet_vertices(it) != 3)
-                return false;
-        return true;            // mesh is triangular if we reach this point
+        return std::distance(b,e);
     }
 
     /// Count the number of halfedges of the mesh.
     int  count_mesh_halfedges() const {
-        int index = 0;
-        for (Halfedge_iterator pHalfedge = m_polyhedron.halfedges_begin();
-             pHalfedge != m_polyhedron.halfedges_end();
-             pHalfedge++)
-        {
-            index++;
-        }
-        return index;
-    }
-
-    // FACET INTERFACE
-
-    /// Get circulator over facet's vertices.
-    Vertex_around_facet_circulator  facet_vertices_begin(Facet_handle facet) {
-        return Vertex_around_facet_circulator(facet->facet_begin());
-    }
-    Vertex_around_facet_const_circulator  facet_vertices_begin(Facet_const_handle facet) const {
-        return Vertex_around_facet_const_circulator(facet->facet_begin());
-    }
-
-    /// Count the number of vertices of a facet.
-    int  count_facet_vertices(Facet_const_handle facet) const {
-        int index = 0;
-        Vertex_around_facet_const_circulator cir     = facet_vertices_begin(facet),
-                                             cir_end = cir;
-        CGAL_For_all(cir, cir_end)
-            index++;
-        return index;
+      halfedge_iterator b,e;
+      boost::tie(b,e) = halfedges(m_polyhedron);
+      return std::distance(b,e);
     }
 
     // VERTEX INTERFACE
 
     /// Get the 3D position of a vertex
-    Point_3 get_vertex_position(Vertex_const_handle vertex) const {
+    Point_3 get_vertex_position(vertex_descriptor vertex) const {
         return vertex->point();
     }
 
     /// Get/set the 2D position (u/v pair) of a vertex. Default value is undefined.
     /// (stored in halfedges sharing the same vertex).
-    Point_2  get_vertex_uv(Vertex_const_handle vertex) const {
+    Point_2  get_vertex_uv(vertex_descriptor vertex) const {
         return get_corners_uv(vertex, NULL, NULL);
     }
-    void  set_vertex_uv(Vertex_handle vertex, const Point_2& uv) {
+    void  set_vertex_uv(vertex_descriptor vertex, const Point_2& uv) {
         set_corners_uv(vertex, NULL, NULL, uv);
     }
 
     /// Get/set "is parameterized" field of vertex. Default value is undefined.
     /// (stored in halfedges sharing the same vertex).
-    bool  is_vertex_parameterized(Vertex_const_handle vertex) const {
+    bool  is_vertex_parameterized(vertex_descriptor vertex) const {
         return are_corners_parameterized(vertex, NULL, NULL);
     }
-    void  set_vertex_parameterized(Vertex_handle vertex, bool parameterized) {
+    void  set_vertex_parameterized(vertex_descriptor vertex, bool parameterized) {
         set_corners_parameterized(vertex, NULL, NULL, parameterized);
     }
 
     /// Get/set vertex index. Default value is undefined.
     /// (stored in Polyhedron vertex for debugging purpose).
-    int  get_vertex_index(Vertex_const_handle vertex) const {
+    int  get_vertex_index(vertex_descriptor vertex) const {
         return info(vertex)->index();
     }
-    void  set_vertex_index(Vertex_handle vertex, int index)
+    void  set_vertex_index(vertex_descriptor vertex, int index)
     {
         info(vertex)->index(index);
     }
 
     /// Get/set vertex' all purpose tag. Default value is undefined.
     /// (stored in halfedges sharing the same vertex).
-    int  get_vertex_tag(Vertex_const_handle vertex) const {
+    int  get_vertex_tag(vertex_descriptor vertex) const {
         return get_corners_tag(vertex, NULL, NULL);
     }
-    void set_vertex_tag(Vertex_handle vertex, int tag) {
+    void set_vertex_tag(vertex_descriptor vertex, int tag) {
         set_corners_tag(vertex, NULL, NULL, tag);
     }
 
     /// Return true if a vertex belongs to ANY mesh's border.
-    bool  is_vertex_on_border(Vertex_const_handle vertex) const
+    bool  is_vertex_on_border(vertex_descriptor vertex) const
     {
-        Halfedge_around_vertex_const_circulator pHalfedge = vertex->vertex_begin();
-        Halfedge_around_vertex_const_circulator end       = pHalfedge;
-        if(pHalfedge == NULL) // isolated vertex
-            return true;
-        CGAL_For_all(pHalfedge,end)
-            if(pHalfedge->is_border())
-                return true;
-        return false;
+      return is_border(vertex, m_polyhedron);
     }
 
     /// Return true if a vertex belongs to the UNIQUE mesh's main border,
     /// i.e. the mesh's LONGEST border.
-    bool  is_vertex_on_main_border(Vertex_const_handle vertex) const {
+    bool  is_vertex_on_main_border(vertex_descriptor vertex) const {
         return std::find(m_main_border.begin(),
                          m_main_border.end(),
-                         (Vertex*)&*vertex) != m_main_border.end();
+                         vertex) != m_main_border.end();
     }
 
     /// Get circulator over the vertices incident to 'vertex'.
     /// 'start_position' defines the optional initial position of the circulator.
-    Vertex_around_vertex_circulator vertices_around_vertex_begin(
-                            Vertex_handle vertex,
-                            Vertex_handle start_position = Vertex_handle())
+    vertex_around_target_circulator vertices_around_vertex_begin(
+                            vertex_descriptor vertex,
+                            vertex_descriptor start_position = vertex_descriptor())
     {
         if (start_position == NULL)
-            return Vertex_around_vertex_circulator(vertex->vertex_begin());
+          return vertex_around_target_circulator(halfedge(vertex,m_polyhedron));
         else
-            return Vertex_around_vertex_circulator(
-            		Halfedge_around_vertex_circulator(
-                        	get_halfedge(start_position, vertex)));
+            return vertex_around_target_circulator(
+                                                   get_halfedge(start_position, vertex));
     }
-    Vertex_around_vertex_const_circulator vertices_around_vertex_begin(
-                            Vertex_const_handle vertex,
-                            Vertex_const_handle start_position = Vertex_const_handle()) const
-    {
-        if (start_position == NULL)
-            return Vertex_around_vertex_const_circulator(vertex->vertex_begin());
-        else
-            return Vertex_around_vertex_const_circulator(
-            		Halfedge_around_vertex_const_circulator(
-                        	get_halfedge(start_position, vertex)));
-    }
+  
 
     //@} // end of ParameterizationMesh_3 INTERFACE
 
@@ -697,10 +528,10 @@ public:
     // VERTEX INTERFACE
 
     /// Get/set vertex seaming flag. Default value is undefined.
-    int  get_vertex_seaming(Vertex_const_handle vertex) const {
+    int  get_vertex_seaming(vertex_descriptor vertex) const {
         return info(vertex)->seaming();
     }
-    void set_vertex_seaming(Vertex_handle vertex, int seaming) {
+    void set_vertex_seaming(vertex_descriptor vertex, int seaming) {
         info(vertex)->seaming(seaming);
     }
 
@@ -708,10 +539,10 @@ public:
 
     /// Get/set oriented edge's seaming flag, i.e. position of the oriented edge
     /// w.r.t. to the UNIQUE main border.
-    int  get_halfedge_seaming(Vertex_const_handle source, Vertex_const_handle target) const {
+    int  get_halfedge_seaming(vertex_descriptor source, vertex_descriptor target) const {
         return info(get_halfedge(source, target))->seaming();
     }
-    void set_halfedge_seaming(Vertex_handle source, Vertex_handle target, int seaming) {
+    void set_halfedge_seaming(vertex_descriptor source, vertex_descriptor target, int seaming) {
         info(get_halfedge(source, target))->seaming(seaming);
     }
 
@@ -721,9 +552,9 @@ public:
     /// of the prev_vertex -> vertex -> next_vertex line.
     /// Default value is undefined.
     /// (stored in incident halfedges).
-    Point_2 get_corners_uv(Vertex_const_handle vertex,
-                           Vertex_const_handle prev_vertex,
-                           Vertex_const_handle next_vertex) const
+    Point_2 get_corners_uv(vertex_descriptor vertex,
+                           vertex_descriptor prev_vertex,
+                           vertex_descriptor next_vertex) const
     {
         // if inner vertex
         if (prev_vertex == NULL && next_vertex == NULL)
@@ -736,25 +567,25 @@ public:
             CGAL_surface_mesh_parameterization_precondition(prev_vertex != NULL);
             CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
 
+            // TODO no need for a circulator
             // get (u,v) pair from first inner halfedge (clockwise)
-            Halfedge_around_vertex_const_circulator cir(
-                                get_halfedge(next_vertex, vertex) );
-            return info(cir)->uv();
+            halfedge_around_target_circulator cir(
+                                                        get_halfedge(next_vertex, vertex), m_polyhedron );
+            return info(*cir)->uv();
         }
     }
-    void set_corners_uv(Vertex_handle vertex,
-                        Vertex_const_handle prev_vertex,
-                        Vertex_const_handle next_vertex,
+    void set_corners_uv(vertex_descriptor vertex,
+                        vertex_descriptor prev_vertex,
+                        vertex_descriptor next_vertex,
                         const Point_2& uv)
     {
         // if inner vertex
         if (prev_vertex == NULL && next_vertex == NULL)
         {
-            // Loop over all incident halfedges
-            Halfedge_around_vertex_circulator cir     = vertex->vertex_begin(),
-                                              cir_end = cir;
-            CGAL_For_all(cir, cir_end)
-                info(cir)->uv(uv);
+          // Loop over all incident halfedges
+          BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(vertex,m_polyhedron)){
+            info(hd)->uv(uv);
+          }
         }
         else // if seam vertex
         {
@@ -762,17 +593,17 @@ public:
             CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
 
             // first inner halfedge (for a clockwise rotation)
-            Halfedge_around_vertex_circulator cir(
-                                get_halfedge((Vertex*)&*next_vertex, vertex) );
+            halfedge_around_target_circulator cir(
+                                                  get_halfedge(next_vertex, vertex), m_polyhedron );
 
             // past-the-end inner halfedge (for a clockwise rotation)
-            Halfedge_around_vertex_circulator cir_end(
-                                get_halfedge((Vertex*)&*prev_vertex, vertex) );
+            halfedge_around_target_circulator cir_end(
+                                                      get_halfedge(prev_vertex, vertex), m_polyhedron );
 
             // Loop over incident halfedges at the "right"
             // of the prev_vertex -> vertex -> next_vertex line
             CGAL_For_all(cir, cir_end)
-                info(cir)->uv(uv);
+                info(*cir)->uv(uv);
         }
     }
 
@@ -780,9 +611,9 @@ public:
     /// of the prev_vertex -> vertex -> next_vertex line.
     /// Default value is undefined.
     /// (stored in incident halfedges).
-    bool are_corners_parameterized(Vertex_const_handle vertex,
-                                   Vertex_const_handle prev_vertex,
-                                   Vertex_const_handle next_vertex) const
+    bool are_corners_parameterized(vertex_descriptor vertex,
+                                   vertex_descriptor prev_vertex,
+                                   vertex_descriptor next_vertex) const
     {
         // if inner vertex
         if (prev_vertex == NULL && next_vertex == NULL)
@@ -801,19 +632,18 @@ public:
             return info(cir)->is_parameterized();
         }
     }
-    void set_corners_parameterized(Vertex_handle vertex,
-                                   Vertex_const_handle prev_vertex,
-                                   Vertex_const_handle next_vertex,
+    void set_corners_parameterized(vertex_descriptor vertex,
+                                   vertex_descriptor prev_vertex,
+                                   vertex_descriptor next_vertex,
                                    bool parameterized)
     {
         // if inner vertex
         if (prev_vertex == NULL && next_vertex == NULL)
         {
-            // Loop over all incident halfedges
-            Halfedge_around_vertex_circulator cir     = vertex->vertex_begin(),
-                                              cir_end = cir;
-            CGAL_For_all(cir, cir_end)
-                info(cir)->is_parameterized(parameterized);
+          // Loop over all incident halfedges
+          BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(vertex,m_polyhedron)){
+            info(hd)->is_parameterized(parameterized);
+          }
         }
         else // if seam vertex
         {
@@ -821,17 +651,17 @@ public:
             CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
 
             // first inner halfedge (for a clockwise rotation)
-            Halfedge_around_vertex_circulator cir(
-                                get_halfedge((Vertex*)&*next_vertex, vertex) );
+            halfedge_around_target_circulator cir(
+                                                  get_halfedge(next_vertex, vertex),m_polyhedron );
 
             // past-the-end inner halfedge (for a clockwise rotation)
-            Halfedge_around_vertex_circulator cir_end(
-                                get_halfedge((Vertex*)&*prev_vertex, vertex) );
+            halfedge_around_target_circulator cir_end(
+                                                      get_halfedge(prev_vertex, vertex),m_polyhedron );
 
             // Loop over incident halfedges at the "right"
             // of the prev_vertex -> vertex -> next_vertex line
             CGAL_For_all(cir, cir_end)
-                info(cir)->is_parameterized(parameterized);
+                info(*cir)->is_parameterized(parameterized);
         }
     }
 
@@ -839,9 +669,9 @@ public:
     /// of the prev_vertex -> vertex -> next_vertex line.
     /// Default value is undefined.
     /// (stored in incident halfedges).
-    int get_corners_index(Vertex_const_handle vertex,
-                          Vertex_const_handle prev_vertex,
-                          Vertex_const_handle next_vertex) const
+    int get_corners_index(vertex_descriptor vertex,
+                          vertex_descriptor prev_vertex,
+                          vertex_descriptor next_vertex) const
     {
         // if inner vertex
         if (prev_vertex == NULL && next_vertex == NULL)
@@ -855,24 +685,23 @@ public:
             CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
 
             // get index from first inner halfedge (clockwise)
-            Halfedge_around_vertex_const_circulator cir(
-                                get_halfedge(next_vertex, vertex) );
-            return info(cir)->index();
+            halfedge_around_target_circulator cir(
+                                                  get_halfedge(next_vertex, vertex), m_polyhedron );
+            return info(*cir)->index();
         }
     }
-    void set_corners_index(Vertex_handle vertex,
-                           Vertex_const_handle prev_vertex,
-                           Vertex_const_handle next_vertex,
+    void set_corners_index(vertex_descriptor vertex,
+                           vertex_descriptor prev_vertex,
+                           vertex_descriptor next_vertex,
                            int index)
     {
         // if inner vertex
         if (prev_vertex == NULL && next_vertex == NULL)
         {
             // Loop over all incident halfedges
-            Halfedge_around_vertex_circulator cir     = vertex->vertex_begin(),
-                                              cir_end = cir;
-            CGAL_For_all(cir, cir_end)
+          BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(vertex, m_polyhedron)){
                 info(cir)->index(index);
+            }
         }
         else // if seam vertex
         {
@@ -880,17 +709,17 @@ public:
             CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
 
             // first inner halfedge (for a clockwise rotation)
-            Halfedge_around_vertex_circulator cir(
-                                get_halfedge((Vertex*)&*next_vertex, vertex) );
+            halfedge_around_target_circulator cir(
+                                                  get_halfedge(next_vertex, vertex),m_polyhedron );
 
             // past-the-end inner halfedge (for a clockwise rotation)
-            Halfedge_around_vertex_circulator cir_end(
-                                get_halfedge((Vertex*)&*prev_vertex, vertex) );
+            halfedge_around_target_circulator cir_end(
+                                                      get_halfedge(prev_vertex, vertex),m_polyhedron );
 
             // Loop over incident halfedges at the "right"
             // of the prev_vertex -> vertex -> next_vertex line
             CGAL_For_all(cir, cir_end)
-                info(cir)->index(index);
+                info(*cir)->index(index);
         }
     }
 
@@ -898,9 +727,9 @@ public:
     /// of the prev_vertex -> vertex -> next_vertex line.
     /// Default value is undefined.
     /// (stored in incident halfedges).
-    int get_corners_tag(Vertex_const_handle vertex,
-                        Vertex_const_handle prev_vertex,
-                        Vertex_const_handle next_vertex) const
+    int get_corners_tag(vertex_descriptor vertex,
+                        vertex_descriptor prev_vertex,
+                        vertex_descriptor next_vertex) const
     {
         // if inner vertex
         if (prev_vertex == NULL && next_vertex == NULL)
@@ -914,24 +743,24 @@ public:
             CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
 
             // get tag from first inner halfedge (clockwise)
-            Halfedge_around_vertex_const_circulator cir(
-                                get_halfedge(next_vertex, vertex) );
-            return info(cir)->tag();
+            // TODO no need for a circulator
+            halfedge_around_target_circulator cir(
+                                                  get_halfedge(next_vertex, vertex),m_polyhedron );
+            return info(*cir)->tag();
         }
     }
-    void set_corners_tag(Vertex_handle vertex,
-                         Vertex_const_handle prev_vertex,
-                         Vertex_const_handle next_vertex,
+    void set_corners_tag(vertex_descriptor vertex,
+                         vertex_descriptor prev_vertex,
+                         vertex_descriptor next_vertex,
                          int tag)
     {
         // if inner vertex
         if (prev_vertex == NULL && next_vertex == NULL)
         {
             // Loop over all incident halfedges
-            Halfedge_around_vertex_circulator cir     = vertex->vertex_begin(),
-                                              cir_end = cir;
-            CGAL_For_all(cir, cir_end)
-                info(cir)->tag(tag);
+          BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(vertex,m_polyhedron)){
+              info(hd)->tag(tag);
+            }
         }
         else // if seam vertex
         {
@@ -939,19 +768,19 @@ public:
             CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
 
             // first inner halfedge (for a clockwise rotation)
-            Halfedge_around_vertex_circulator cir(
-                                get_halfedge((Vertex*)&*next_vertex, vertex) );
+            halfedge_around_target_circulator cir(
+                                                  get_halfedge(next_vertex, vertex),m_polyhedron );
 
             // past-the-end inner halfedge (for a clockwise rotation)
-            Halfedge_around_vertex_circulator cir_end(
-                                get_halfedge((Vertex*)&*prev_vertex, vertex) );
+            halfedge_around_target_circulator cir_end(
+                                get_halfedge(prev_vertex, vertex),m_polyhedron  );
 
             // Loop over incident halfedges at the "right"
             // of the prev_vertex -> vertex -> next_vertex line
             CGAL_For_all(cir, cir_end)
-                info(cir)->tag(tag);
+                info(*cir)->tag(tag);
         }
-    }
+        }
 
     //@} // end of ParameterizationPatchableMesh_3 INTERFACE
   #endif //DOXYGEN_RUNNING
@@ -960,33 +789,33 @@ public:
 private:
 
     /// Extract mesh's longest border.
-    std::list<Vertex_handle> extract_longest_border(Polyhedron& )
+    std::list<vertex_descriptor> extract_longest_border(Polyhedron& )
     {
-        std::list<Vertex_handle> longest_border;    // returned list
+        std::list<vertex_descriptor> longest_border;    // returned list
         double                   max_len = 0;       // length of longest_border
 
         // Tag all vertices as unprocessed
         const int tag_free = 0;
         const int tag_done = 1;
-        for (Vertex_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
-             set_vertex_tag(it, tag_free);
+        BOOST_FOREACH(vertex_descriptor vd, vertices(m_polyhedron))
+             set_vertex_tag(vd, tag_free);
 
         // find all closed borders and keep longest one
         int nb = 0;
         while (1)
         {
             // Find a border tagged as "free" and tag it as "processed"
-            std::list<Vertex_handle> border = find_free_border(tag_free, tag_done);
+            std::list<vertex_descriptor> border = find_free_border(tag_free, tag_done);
             if(border.empty())
                 break;
 
             // compute  total len of 'border'
             double len = 0.0;
-            typename std::list<Vertex_handle>::const_iterator it;
+            typename std::list<vertex_descriptor>::const_iterator it;
             for(it = border.begin(); it != border.end(); it++)
             {
                 // Get next iterator (looping)
-                typename std::list<Vertex_handle>::const_iterator next = it;
+                typename std::list<vertex_descriptor>::const_iterator next = it;
                 next++;
                 if (next == border.end())
                     next = border.begin();
@@ -1010,18 +839,17 @@ private:
 
     /// Find a border tagged as <i>free</i> and tag it as <i>processed</i>.
     /// Return an empty list if not found.
-    std::list<Vertex_handle> find_free_border(int tag_free, int tag_done)
+    std::list<vertex_descriptor> find_free_border(int tag_free, int tag_done)
     {
-        std::list<Vertex_handle> border;    // returned list
+        std::list<vertex_descriptor> border;    // returned list
 
         // get any border vertex with "free" tag
-        Vertex_handle seed_vertex = NULL;
-        for (Vertex_iterator pVertex = mesh_vertices_begin();
-             pVertex != mesh_vertices_end();
-             pVertex++)
+        vertex_descriptor seed_vertex = NULL;
+        
+        BOOST_FOREACH(vertex_descriptor vd, vertices(m_polyhedron))
         {
-            if (is_vertex_on_border(pVertex) && get_vertex_tag(pVertex) == tag_free) {
-                seed_vertex = pVertex;
+            if (is_vertex_on_border(vd) && get_vertex_tag(vd) == tag_free) {
+                seed_vertex = vd;
                 break;
             }
         }
@@ -1032,7 +860,7 @@ private:
         border = get_border(seed_vertex);
 
         // Tag border vertices as "processed"
-        typename std::list<Vertex_handle>::iterator it;
+        typename std::list<vertex_descriptor>::iterator it;
         for(it = border.begin(); it != border.end(); it++)
             set_vertex_tag(*it, tag_done);
 
@@ -1052,77 +880,17 @@ private:
     Vertex_info_map             m_vertex_info;
 
     /// Main border of a topological disc inside m_polyhedron (may be empty).
-    std::list<Vertex_handle>    m_main_border;
+    std::list<vertex_descriptor>    m_main_border;
 
 
 // Private types
 private:
 
-    /// Functor for operator< for classes lacking this operator.
-    struct Less
-    {
-        /// functor for operator< on Polyhedron::Halfedge_const_handle items
-        bool operator()(const Halfedge_const_handle& _Left,
-                        const Halfedge_const_handle& _Right) const
-        {
-            // apply operator< to pointers
-            return (&*_Left < &*_Right);
-        }
+  
+   
 
-        /// functor for operator< on Polyhedron::Vertex_const_handle items
-        bool operator()(const Vertex_const_handle& _Left,
-                        const Vertex_const_handle& _Right) const
-        {
-            // apply operator< to pointers
-            return (&*_Left < &*_Right);
-        }
-    };
 
-    /// Utility class to generate the Vertex_around_facet_circulator type.
-    struct Project_halfedge_vertex {
-        typedef Halfedge                            argument_type;
-        typedef typename Parameterization_polyhedron_adaptor_3::Vertex
-                                                    Vertex;
-        typedef Vertex                              result_type;
-
-        /// Get the target vertex of a halfedge
-        Vertex&       operator()(Halfedge& h)       const {
-            return *(h.vertex());
-        }
-        const Vertex& operator()(const Halfedge& h) const {
-            return *(h.vertex());
-        }
-    };
-
-    /// Utility class to generate the Border_vertex_iterator type.
-    struct Project_vertex_handle_vertex {
-        typedef Vertex_handle                       argument_type;
-        typedef typename Parameterization_polyhedron_adaptor_3::Vertex
-                                                    Vertex;
-        typedef Vertex                              result_type;
-
-        /// Convert Vertex_handle to Vertex
-        Vertex&       operator()(Vertex_handle& vh)       const { return *vh; }
-        const Vertex& operator()(const Vertex_handle& vh) const { return *vh; }
-    };
-
-    /// This class is used to generate the Vertex_around_vertex_circulator type.
-    struct Project_opposite_halfedge_vertex {
-        typedef Halfedge                            argument_type;
-        typedef typename Parameterization_polyhedron_adaptor_3::Vertex
-                                                    Vertex;
-        typedef Vertex                              result_type;
-
-        /// Get the source vertex of a halfedge
-        Vertex&       operator()(Halfedge& h)       const {
-            return *(h.opposite()->vertex());
-        }
-        const Vertex& operator()(const Halfedge& h) const {
-            return *(h.opposite()->vertex());
-        }
-    };
-
-}; // Parameterization_polyhedron_adaptor_3
+    }; // Parameterization_polyhedron_adaptor_3
 
 
 } //namespace CGAL

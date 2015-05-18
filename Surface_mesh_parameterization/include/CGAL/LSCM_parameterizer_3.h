@@ -112,39 +112,24 @@ public:
 private:  
     typedef SparseLinearAlgebraTraits_d     Sparse_LA;
 
+// Private types
+private:
+  typedef typename Adaptor::Polyhedron TriangleMesh;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_iterator face_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator vertex_iterator;
+ 
+  typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
+  typedef CGAL::Vertex_around_face_circulator<TriangleMesh> vertex_around_face_circulator;
+
     // Mesh_Adaptor_3 subtypes:
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Point_2       Point_2;
     typedef typename Adaptor::Point_3       Point_3;
     typedef typename Adaptor::Vector_2      Vector_2;
     typedef typename Adaptor::Vector_3      Vector_3;
-    typedef typename Adaptor::Facet         Facet;
-    typedef typename Adaptor::Facet_handle  Facet_handle;
-    typedef typename Adaptor::Facet_const_handle
-                                            Facet_const_handle;
-    typedef typename Adaptor::Facet_iterator Facet_iterator;
-    typedef typename Adaptor::Facet_const_iterator
-                                            Facet_const_iterator;
-    typedef typename Adaptor::Vertex        Vertex;
-    typedef typename Adaptor::Vertex_handle Vertex_handle;
-    typedef typename Adaptor::Vertex_const_handle
-                                            Vertex_const_handle;
-    typedef typename Adaptor::Vertex_iterator Vertex_iterator;
-    typedef typename Adaptor::Vertex_const_iterator
-                                            Vertex_const_iterator;
-    typedef typename Adaptor::Border_vertex_iterator
-                                            Border_vertex_iterator;
-    typedef typename Adaptor::Border_vertex_const_iterator
-                                            Border_vertex_const_iterator;
-    typedef typename Adaptor::Vertex_around_facet_circulator
-                                            Vertex_around_facet_circulator;
-    typedef typename Adaptor::Vertex_around_facet_const_circulator
-                                            Vertex_around_facet_const_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_circulator
-                                            Vertex_around_vertex_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_const_circulator
-                                            Vertex_around_vertex_const_circulator;
-
+   
     // SparseLinearAlgebraTraits_d subtypes:
     typedef typename Sparse_LA::Vector      Vector;
     typedef typename Sparse_LA::Matrix      Matrix;
@@ -200,7 +185,7 @@ private:
     /// \pre vertices must be indexed.
     Error_code setup_triangle_relations(LeastSquaresSolver& solver,
                                         const Adaptor& mesh,
-                                        Facet_const_handle facet) ;
+                                        face_descriptor facet) ;
 
     /// Copy X coordinates into the (u,v) pair of each vertex
     void set_mesh_uv_from_system(Adaptor& mesh,
@@ -259,6 +244,8 @@ typename LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
 LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 parameterize(Adaptor& mesh)
 {
+  const TriangleMesh& tmesh = mesh.get_adapted_mesh();
+
 #ifdef DEBUG_TRACE
     // Create timer for traces
     CGAL::Timer timer;
@@ -281,12 +268,9 @@ parameterize(Adaptor& mesh)
     mesh.index_mesh_vertices();
 
     // Mark all vertices as *not* "parameterized"
-    Vertex_iterator vertexIt;
-    for (vertexIt = mesh.mesh_vertices_begin();
-        vertexIt != mesh.mesh_vertices_end();
-        vertexIt++)
+    BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
     {
-        mesh.set_vertex_parameterized(vertexIt, false);
+        mesh.set_vertex_parameterized(v, false);
     }
 
     // Compute (u,v) for (at least two) border vertices
@@ -310,12 +294,10 @@ parameterize(Adaptor& mesh)
 
     // Fill the matrix for the other vertices
     solver.begin_system() ;
-    for (Facet_iterator facetIt = mesh.mesh_facets_begin();
-         facetIt != mesh.mesh_facets_end();
-         facetIt++)
+    BOOST_FOREACH(face_descriptor fd, faces(tmesh))
     {
         // Create two lines in the linear system per triangle (one for u, one for v)
-        status = setup_triangle_relations(solver, mesh, facetIt);
+        status = setup_triangle_relations(solver, mesh, fd);
             if (status != Base::OK)
             return status;
     }
@@ -366,6 +348,7 @@ typename LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
 LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 check_parameterize_preconditions(Adaptor& mesh)
 {
+  const TriangleMesh& tmesh = mesh.get_adapted_mesh();
     Error_code status = Base::OK;	    // returned value
 
     // Helper class to compute genus or count borders, vertices, ...
@@ -374,13 +357,15 @@ check_parameterize_preconditions(Adaptor& mesh)
     Mesh_feature_extractor feature_extractor(mesh);
 
     // Check that mesh is not empty
-    if (mesh.mesh_vertices_begin() == mesh.mesh_vertices_end())
+    vertex_iterator b,e;
+    boost::tie(b,e) = vertices(tmesh);
+    if (b == e)
         status = Base::ERROR_EMPTY_MESH;
     if (status != Base::OK)
         return status;
 
     // The whole surface parameterization package is restricted to triangular meshes
-    status = mesh.is_mesh_triangular() ? Base::OK
+    status = is_pure_triangle(mesh) ? Base::OK
                                        : Base::ERROR_NON_TRIANGULAR_MESH;
     if (status != Base::OK)
         return status;
@@ -412,15 +397,14 @@ void LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 initialize_system_from_mesh_border(LeastSquaresSolver& solver,
                                    const Adaptor& mesh)
 {
-    for (Vertex_const_iterator it = mesh.mesh_vertices_begin();
-        it != mesh.mesh_vertices_end();
-        it++)
+    const TriangleMesh& tmesh = mesh.get_adapted_mesh();
+    BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
     {
         // Get vertex index in sparse linear system
-        int index = mesh.get_vertex_index(it);
+        int index = mesh.get_vertex_index(v);
 
         // Get vertex (u,v) (meaningless if vertex is not parameterized)
-        Point_2 uv = mesh.get_vertex_uv(it);
+        Point_2 uv = mesh.get_vertex_uv(v);
 
         // Write (u,v) in X (meaningless if vertex is not parameterized)
         // Note  : 2*index     --> u
@@ -429,7 +413,7 @@ initialize_system_from_mesh_border(LeastSquaresSolver& solver,
         solver.variable(2*index + 1).set_value(uv.y()) ;
 
         // Copy (u,v) in B if vertex is parameterized
-        if (mesh.is_vertex_parameterized(it)) {
+        if (mesh.is_vertex_parameterized(v)) {
             solver.variable(2*index    ).lock() ;
             solver.variable(2*index + 1).lock() ;
         }
@@ -489,21 +473,21 @@ typename LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
 LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 setup_triangle_relations(LeastSquaresSolver& solver,
                          const Adaptor& mesh,
-                         Facet_const_handle facet)
+                         face_descriptor facet)
 {
+    const TriangleMesh& tmesh = mesh.get_adapted_mesh();
     // Get the 3 vertices of the triangle
-    Vertex_const_handle v0, v1, v2;
+    vertex_descriptor v0, v1, v2;
     int vertexIndex = 0;
-    Vertex_around_facet_const_circulator cir = mesh.facet_vertices_begin(facet),
-                                         end = cir;
+    vertex_around_face__circulator cir(halfedge(facet,tmesh),tmesh), end(cir);
     CGAL_For_all(cir, end)
     {
         if (vertexIndex == 0)
-            v0 = cir;
+            v0 = *cir;
         else if (vertexIndex == 1)
-            v1 = cir;
+            v1 = *cir;
         else if (vertexIndex == 2)
-            v2 = cir;
+            v2 = *cir;
 
         vertexIndex++;
     }
@@ -578,12 +562,10 @@ void LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 set_mesh_uv_from_system(Adaptor& mesh,
                         const LeastSquaresSolver& solver)
 {
-    Vertex_iterator vertexIt;
-    for (vertexIt = mesh.mesh_vertices_begin();
-         vertexIt != mesh.mesh_vertices_end();
-         vertexIt++)
+    const TriangleMesh& tmesh = mesh.get_adapted_mesh();
+     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh))
     {
-        int index = mesh.get_vertex_index(vertexIt);
+        int index = mesh.get_vertex_index(vd);
 
         // Note  : 2*index     --> u
         //         2*index + 1 --> v
@@ -592,7 +574,7 @@ set_mesh_uv_from_system(Adaptor& mesh,
 
         // Fill vertex (u,v) and mark it as "parameterized"
         mesh.set_vertex_uv(vertexIt, Point_2(u,v));
-        mesh.set_vertex_parameterized(vertexIt, true);
+        mesh.set_vertex_parameterized(vd, true);
     }
 }
 
@@ -624,25 +606,23 @@ bool LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 is_one_to_one_mapping(const Adaptor& mesh,
                       const LeastSquaresSolver& )
 {
+    const TriangleMesh& tmesh = mesh.get_adapted_mesh();
     Vector_3    first_triangle_normal(0., 0., 0.);
 
-    for (Facet_const_iterator facetIt = mesh.mesh_facets_begin();
-         facetIt != mesh.mesh_facets_end();
-         facetIt++)
+  BOOST_FOREACH(face_descriptor fd, faces(mesh))
     {
         // Get 3 vertices of the facet
-        Vertex_const_handle v0, v1, v2;
+        vertex_descriptor v0, v1, v2;
         int vertexIndex = 0;
-        Vertex_around_facet_const_circulator cir = mesh.facet_vertices_begin(facetIt),
-                                             end = cir;
+        vertex_around_face_circulator cir(halfedge(fd,tmesh),tmesh), first(cir), end(cir);
         CGAL_For_all(cir, end)
         {
             if (vertexIndex == 0)
-                v0 = cir;
+                v0 = *cir;
             else if (vertexIndex == 1)
-                v1 = cir;
+                v1 = *cir;
             else if (vertexIndex == 2)
-                v2 = cir;
+                v2 = *cir;
 
             vertexIndex++;
         }
@@ -663,7 +643,7 @@ is_one_to_one_mapping(const Adaptor& mesh,
 
         // Check that all normals are oriented the same way
         // => no 2D triangle is flipped
-        if (cir == mesh.facet_vertices_begin(facetIt))
+        if (cir == first)
         {
             first_triangle_normal = normal;
         }

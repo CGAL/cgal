@@ -34,7 +34,7 @@
 #include <CGAL/Circular_border_parameterizer_3.h>
 #include <CGAL/Parameterization_mesh_feature_extractor.h>
 #include <CGAL/surface_mesh_parameterization_assertions.h>
-
+#include <boost/foreach.hpp>
 #include <iostream>
 
 /// \file Fixed_border_parameterizer_3.h
@@ -110,38 +110,25 @@ public:
 
 // Private types
 private:
+
+  typedef typename Adaptor::Polyhedron TriangleMesh;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_iterator face_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator vertex_iterator;
+ 
+  typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
+  typedef CGAL::Vertex_around_face_circulator<TriangleMesh> vertex_around_face_circulator;
+
     // Mesh_Adaptor_3 subtypes:
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Point_2       Point_2;
     typedef typename Adaptor::Point_3       Point_3;
-    typedef typename Adaptor::Vector_2      Vector_2;
     typedef typename Adaptor::Vector_3      Vector_3;
-    typedef typename Adaptor::Facet         Facet;
-    typedef typename Adaptor::Facet_handle  Facet_handle;
-    typedef typename Adaptor::Facet_const_handle
-                                            Facet_const_handle;
-    typedef typename Adaptor::Facet_iterator Facet_iterator;
-    typedef typename Adaptor::Facet_const_iterator
-                                            Facet_const_iterator;
-    typedef typename Adaptor::Vertex        Vertex;
-    typedef typename Adaptor::Vertex_handle Vertex_handle;
-    typedef typename Adaptor::Vertex_const_handle
-                                            Vertex_const_handle;
-    typedef typename Adaptor::Vertex_iterator Vertex_iterator;
-    typedef typename Adaptor::Vertex_const_iterator
-                                            Vertex_const_iterator;
+
     typedef typename Adaptor::Border_vertex_iterator
                                             Border_vertex_iterator;
-    typedef typename Adaptor::Border_vertex_const_iterator
-                                            Border_vertex_const_iterator;
-    typedef typename Adaptor::Vertex_around_facet_circulator
-                                            Vertex_around_facet_circulator;
-    typedef typename Adaptor::Vertex_around_facet_const_circulator
-                                            Vertex_around_facet_const_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_circulator
-                                            Vertex_around_vertex_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_const_circulator
-                                            Vertex_around_vertex_const_circulator;
+  
 
     // SparseLinearAlgebraTraits_d subtypes:
     typedef typename Sparse_LA::Vector      Vector;
@@ -195,8 +182,8 @@ protected:
     /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
     /// Implementation note: Subclasses must at least implement compute_w_ij().
     virtual NT compute_w_ij(const Adaptor& mesh,
-                            Vertex_const_handle main_vertex_v_i,
-                            Vertex_around_vertex_const_circulator neighbor_vertex_v_j)
+                            vertex_descriptor main_vertex_v_i,
+                            vertex_around_target_circulator neighbor_vertex_v_j)
     = 0;
 
     /// Compute the line i of matrix A for i inner vertex:
@@ -210,7 +197,7 @@ protected:
                                                     Vector& Bu,
                                                     Vector& Bv,
                                                     const Adaptor& mesh,
-                                                    Vertex_const_handle vertex);
+                                                    vertex_descriptor vertex);
 
     /// Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex.
     void  set_mesh_uv_from_system (Adaptor& mesh,
@@ -265,8 +252,10 @@ template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
 Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
-parameterize(Adaptor& mesh)
+parameterize(Adaptor& amesh)
 {
+  const TriangleMesh& mesh = amesh.get_adapted_mesh();
+
 #ifdef DEBUG_TRACE
     // Create timer for traces
     CGAL::Timer timer;
@@ -274,7 +263,7 @@ parameterize(Adaptor& mesh)
 #endif
 
     // Check preconditions
-    Error_code status = check_parameterize_preconditions(mesh);
+    Error_code status = check_parameterize_preconditions(amesh);
 #ifdef DEBUG_TRACE
     std::cerr << "  parameterization preconditions: " << timer.time() << " seconds." << std::endl;
     timer.reset();
@@ -283,23 +272,20 @@ parameterize(Adaptor& mesh)
         return status;
 
     // Count vertices
-    int nbVertices = mesh.count_mesh_vertices();
+    int nbVertices = amesh.count_mesh_vertices();
 
     // Index vertices from 0 to nbVertices-1
-    mesh.index_mesh_vertices();
+    amesh.index_mesh_vertices();
 
     // Mark all vertices as *not* "parameterized"
-    Vertex_iterator vertexIt;
-    for (vertexIt = mesh.mesh_vertices_begin();
-        vertexIt != mesh.mesh_vertices_end();
-        vertexIt++)
+    BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
     {
-        mesh.set_vertex_parameterized(vertexIt, false);
+        amesh.set_vertex_parameterized(v, false);
     }
 
     // Compute (u,v) for border vertices
     // and mark them as "parameterized"
-    status = get_border_parameterizer().parameterize_border(mesh);
+    status = get_border_parameterizer().parameterize_border(amesh);
 #ifdef DEBUG_TRACE
     std::cerr << "  border vertices parameterization: " << timer.time() << " seconds." << std::endl;
     timer.reset();
@@ -318,24 +304,22 @@ parameterize(Adaptor& mesh)
     // @todo Fixed_border_parameterizer_3 should remove border vertices
     // from the linear systems in order to have a symmetric positive definite
     // matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
-    initialize_system_from_mesh_border (A, Bu, Bv, mesh);
+    initialize_system_from_mesh_border (A, Bu, Bv, amesh);
 
     // Fill the matrix for the inner vertices v_i: compute A's coefficient
     // w_ij for each neighbor j; then w_ii = - sum of w_ijs
-    for (vertexIt = mesh.mesh_vertices_begin();
-         vertexIt != mesh.mesh_vertices_end();
-         vertexIt++)
+    BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
     {
-        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(vertexIt)
-                                     == mesh.is_vertex_parameterized(vertexIt));
+        CGAL_surface_mesh_parameterization_assertion(amesh.is_vertex_on_main_border(v)
+                                     == amesh.is_vertex_parameterized(v));
 
         // inner vertices only
-        if( ! mesh.is_vertex_on_main_border(vertexIt) )
+        if( ! amesh.is_vertex_on_main_border(v) )
         {
             // Compute the line i of matrix A for i inner vertex
             status = setup_inner_vertex_relations(A, Bu, Bv,
-                                                  mesh,
-                                                  vertexIt);
+                                                  amesh,
+                                                  v);
             if (status != Base::OK)
                 return status;
         }
@@ -367,7 +351,7 @@ parameterize(Adaptor& mesh)
     CGAL_surface_mesh_parameterization_assertion(Dv == 1.0);
 
     // Copy Xu and Xv coordinates into the (u,v) pair of each vertex
-    set_mesh_uv_from_system (mesh, Xu, Xv);
+    set_mesh_uv_from_system (amesh, Xu, Xv);
 #ifdef DEBUG_TRACE
     std::cerr << "  copy computed UVs to mesh :"
               << timer.time() << " seconds." << std::endl;
@@ -375,7 +359,7 @@ parameterize(Adaptor& mesh)
 #endif
 
     // Check postconditions
-    status = check_parameterize_postconditions(mesh, A, Bu, Bv);
+    status = check_parameterize_postconditions(amesh, A, Bu, Bv);
 #ifdef DEBUG_TRACE
     std::cerr << "  parameterization postconditions: " << timer.time() << " seconds." << std::endl;
 #endif
@@ -394,24 +378,29 @@ template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
 Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
-check_parameterize_preconditions(Adaptor& mesh)
+check_parameterize_preconditions(Adaptor& amesh)
 {
+
+    const TriangleMesh& mesh = amesh.get_adapted_mesh();
+
     Error_code status = Base::OK;	    // returned value
 
     // Helper class to compute genus or count borders, vertices, ...
     typedef Parameterization_mesh_feature_extractor<Adaptor>
                                             Mesh_feature_extractor;
-    Mesh_feature_extractor feature_extractor(mesh);
+    Mesh_feature_extractor feature_extractor(amesh);
 
     // Check that mesh is not empty
-    if (mesh.mesh_vertices_begin() == mesh.mesh_vertices_end())
+    vertex_iterator b, e;
+    boost::tie(b,e) = vertices(mesh);
+    if (b == e)
         status = Base::ERROR_EMPTY_MESH;
     if (status != Base::OK)
         return status;
 
     // The whole surface parameterization package is restricted to triangular meshes
-    status = mesh.is_mesh_triangular() ? Base::OK
-                                       : Base::ERROR_NON_TRIANGULAR_MESH;
+    status = is_pure_triangle(mesh) ? Base::OK
+                                        : Base::ERROR_NON_TRIANGULAR_MESH;
     if (status != Base::OK)
         return status;
 
@@ -450,20 +439,20 @@ void Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
                                     const Adaptor& mesh)
 {
-    for (Border_vertex_const_iterator it = mesh.mesh_main_border_vertices_begin();
+    for (Border_vertex_iterator it = mesh.mesh_main_border_vertices_begin();
          it != mesh.mesh_main_border_vertices_end();
          it++)
     {
         CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_parameterized(it));
 
         // Get vertex index in sparse linear system
-        int index = mesh.get_vertex_index(it);
+        int index = mesh.get_vertex_index(*it);
 
         // Write a diagonal coefficient of A
         A.set_coef(index, index, 1, true /*new*/);
 
         // Write constant in Bu and Bv
-        Point_2 uv = mesh.get_vertex_uv(it);
+        Point_2 uv = mesh.get_vertex_uv(*it);
         Bu[index] = uv.x();
         Bv[index] = uv.y();
     }
@@ -484,29 +473,30 @@ Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 setup_inner_vertex_relations(Matrix& A,
                              Vector& ,
                              Vector& ,
-                             const Adaptor& mesh,
-                             Vertex_const_handle vertex)
+                             const Adaptor& amesh,
+                             vertex_descriptor vertex)
 {
-    CGAL_surface_mesh_parameterization_assertion( ! mesh.is_vertex_on_main_border(vertex) );
-    CGAL_surface_mesh_parameterization_assertion( ! mesh.is_vertex_parameterized(vertex) );
+    const TriangleMesh& mesh = amesh.get_adapted_mesh();
+    CGAL_surface_mesh_parameterization_assertion( ! amesh.is_vertex_on_main_border(vertex) );
+    CGAL_surface_mesh_parameterization_assertion( ! amesh.is_vertex_parameterized(vertex) );
 
-    int i = mesh.get_vertex_index(vertex);
+    int i = amesh.get_vertex_index(vertex);
 
     // circulate over vertices around 'vertex' to compute w_ii and w_ijs
     NT w_ii = 0;
     int vertexIndex = 0;
-    Vertex_around_vertex_const_circulator v_j = mesh.vertices_around_vertex_begin(vertex);
-    Vertex_around_vertex_const_circulator end = v_j;
+    vertex_around_target_circulator v_j(halfedge(vertex,mesh), mesh),
+      end = v_j;
     CGAL_For_all(v_j, end)
     {
         // Call to virtual method to do the actual coefficient computation
-        NT w_ij = -1.0 * compute_w_ij(mesh, vertex, v_j);
+        NT w_ij = -1.0 * compute_w_ij(amesh, vertex, v_j);
 
         // w_ii = - sum of w_ijs
         w_ii -= w_ij;
 
         // Get j index
-        int j = mesh.get_vertex_index(v_j);
+        int j = amesh.get_vertex_index(*v_j);
 
         // Set w_ij in matrix
         A.set_coef(i,j, w_ij, true /*new*/);
@@ -526,22 +516,21 @@ setup_inner_vertex_relations(Matrix& A,
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
-set_mesh_uv_from_system(Adaptor& mesh,
+set_mesh_uv_from_system(Adaptor& amesh,
                         const Vector& Xu, const Vector& Xv)
 {
-    Vertex_iterator vertexIt;
-    for (vertexIt = mesh.mesh_vertices_begin();
-        vertexIt != mesh.mesh_vertices_end();
-        vertexIt++)
+    const TriangleMesh& mesh = amesh.get_adapted_mesh();
+      
+    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh))
     {
-        int index = mesh.get_vertex_index(vertexIt);
+        int index = amesh.get_vertex_index(vd);
 
         NT u = Xu[index];
         NT v = Xv[index];
 
         // Fill vertex (u,v) and mark it as "parameterized"
-        mesh.set_vertex_uv(vertexIt, Point_2(u,v));
-        mesh.set_vertex_parameterized(vertexIt, true);
+        amesh.set_vertex_uv(vd, Point_2(u,v));
+        amesh.set_vertex_parameterized(vd, true);
     }
 }
 
@@ -573,39 +562,38 @@ check_parameterize_postconditions(const Adaptor& mesh,
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 bool Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
-is_one_to_one_mapping(const Adaptor& mesh,
+is_one_to_one_mapping(const Adaptor& amesh,
                       const Matrix& ,
                       const Vector& ,
                       const Vector& )
 {
+    const TriangleMesh& mesh = amesh.get_adapted_mesh();
+
     Vector_3 first_triangle_normal = NULL_VECTOR; // initialize to avoid warning
 
-    for (Facet_const_iterator facetIt = mesh.mesh_facets_begin();
-         facetIt != mesh.mesh_facets_end();
-         facetIt++)
+    BOOST_FOREACH(face_descriptor f, faces(mesh))
     {
         // Get 3 vertices of the facet
-        Vertex_const_handle v0, v1, v2;
+        vertex_descriptor v0, v1, v2;
         int vertexIndex = 0;
-        Vertex_around_facet_const_circulator cir = mesh.facet_vertices_begin(facetIt),
-                                             end = cir;
+        vertex_around_face_circulator cir(halfedge(f,mesh),mesh), first(cir), end(cir);
         CGAL_For_all(cir, end)
         {
             if (vertexIndex == 0)
-                v0 = cir;
+                v0 = *cir;
             else if (vertexIndex == 1)
-                v1 = cir;
+                v1 = *cir;
             else if (vertexIndex == 2)
-                v2 = cir;
+                v2 = *cir;
 
             vertexIndex++;
         }
         CGAL_surface_mesh_parameterization_assertion(vertexIndex >= 3);
 
         // Get the 3 vertices position IN 2D
-        Point_2 p0 = mesh.get_vertex_uv(v0) ;
-        Point_2 p1 = mesh.get_vertex_uv(v1) ;
-        Point_2 p2 = mesh.get_vertex_uv(v2) ;
+        Point_2 p0 = amesh.get_vertex_uv(v0) ;
+        Point_2 p1 = amesh.get_vertex_uv(v1) ;
+        Point_2 p2 = amesh.get_vertex_uv(v2) ;
 
         // Compute the facet normal
         Point_3 p0_3D(p0.x(), p0.y(), 0);
@@ -617,7 +605,7 @@ is_one_to_one_mapping(const Adaptor& mesh,
 
         // Check that all normals are oriented the same way
         // => no 2D triangle is flipped
-        if (cir == mesh.facet_vertices_begin(facetIt))
+        if (cir == first)
         {
             first_triangle_normal = normal;
         }
