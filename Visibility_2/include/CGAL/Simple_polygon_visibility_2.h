@@ -26,14 +26,12 @@
 #include <CGAL/tags.h>
 #include <CGAL/enum.h>
 #include <CGAL/Visibility_2/visibility_utils.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Arrangement_2.h>
+#include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/assertions.h>
 #include <stack>
-#include <map>
 
 // TODO:  
-// * rm DT = O(n^2)
 // * fix handle needles = O(nlogn)  
 
 namespace CGAL {
@@ -49,6 +47,7 @@ public:
 
   typedef typename K::Intersect_2                       Intersect_2;
 
+  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle       
                                                         Halfedge_const_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
@@ -63,9 +62,6 @@ public:
   typedef typename Geometry_traits_2::Ray_2             Ray_2;
   typedef typename Geometry_traits_2::Segment_2         Segment_2;
   typedef typename Geometry_traits_2::Line_2            Line_2;
-  typedef typename Geometry_traits_2::Vector_2          Vector_2;
-  typedef typename Geometry_traits_2::Direction_2       Direction_2;
-  typedef typename Geometry_traits_2::FT                Number_type;
   typedef typename Geometry_traits_2::Object_2          Object_2;
 
   typedef RegularizationCategory              Regularization_category;
@@ -78,8 +74,10 @@ public:
   Simple_polygon_visibility_2(const Arrangement_2& arr): 
     p_arr(&arr) {
     traits = p_arr->geometry_traits();
+    point_location.attach(arr);
     query_pt_is_vertex = false;
     query_pt_is_on_halfedge = false;
+    inserted_artificial_starting_vertex = false;
   }
 
   
@@ -97,18 +95,20 @@ public:
         detach();
         p_arr = &arr;
         traits = p_arr->geometry_traits();
+        point_location.attach(arr);
     }
   }
 
   /*! Detaches the visibility object from the arrangement it is
       attached to*/
   void detach() {
+    point_location.detach();
     p_arr = NULL;
     traits = NULL;
     vertices.clear();
     query_pt_is_vertex = false;
     query_pt_is_on_halfedge = false;
-    p_cdt.reset();
+    inserted_artificial_starting_vertex = false;
   }
 
   /*! Getter method for the input arrangement*/
@@ -131,6 +131,7 @@ public:
     
     query_pt_is_vertex = false;
     query_pt_is_on_halfedge = false;
+    inserted_artificial_starting_vertex = false;
 
     // Now retrieve the circulator to first visible vertex from triangulation
     Ccb_halfedge_const_circulator circ = find_visible_start(face, q);
@@ -197,11 +198,8 @@ public:
   }
 
 private:
-  typedef CGAL::Triangulation_vertex_base_2<K>                     Vb;
-  typedef CGAL::Constrained_triangulation_face_base_2<K>           Fb;
-  typedef CGAL::Triangulation_data_structure_2<Vb,Fb>              TDS;
-  typedef CGAL::No_intersection_tag                                Itag;
-  typedef CGAL::Constrained_triangulation_2<K, TDS, Itag>          CDT;
+  typedef Arr_walk_along_line_point_location<Arrangement_2>  Arr_point_location;
+  typedef typename Arr_point_location::result_type           Location_result;
 
   typedef std::vector<Point_2>                                 Vertex_container;
   typedef typename Vertex_container::size_type                 Size_type;
@@ -209,11 +207,8 @@ private:
   const Arrangement_2 *p_arr;
   const Geometry_traits_2 *traits;
 
-  /*! Boost pointer to the constrained Delaunay triangulation object*/
-  mutable boost::shared_ptr<CDT> p_cdt;
-  /*! Mapping of the vertices of the input to the corresponding circulator
-      needed for finding the first visible vertex in case of face queries*/
-  mutable std::map<Point_2, Ccb_halfedge_const_circulator> point_itr_map;
+  mutable Arr_point_location point_location;
+
   /*! Stack of visibile points; manipulated when going through the sequence
       of input vertices; contains the vertices of the visibility region after 
       the run of the algorithm*/
@@ -224,44 +219,28 @@ private:
   mutable enum {LEFT, RIGHT, SCANA, SCANB, SCANC, SCAND, FINISH} upcase;
   mutable bool query_pt_is_vertex;
   mutable bool query_pt_is_on_halfedge;
-
-
-  /*! Initialized the constrained Delaunay triangulation using the edges of
-      the outer boundary of 'face' */
-  void init_cdt(const Face_const_handle &face) const {
-
-    point_itr_map.clear();
-
-    std::vector<std::pair<Point_2,Point_2> > constraints; 
-    Ccb_halfedge_const_circulator circ = face->outer_ccb();
-    Ccb_halfedge_const_circulator curr = circ;
-
-    do {
-      const Point_2& source = curr->source()->point();
-      const Point_2& target = curr->target()->point();
-      point_itr_map.insert(std::make_pair(source, curr));
-      constraints.push_back(std::make_pair(source, target));
-    } while(++curr != circ);
-
-    p_cdt = boost::shared_ptr<CDT>(new CDT(constraints.begin(),
-                                           constraints.end()));
-  }
+  mutable bool inserted_artificial_starting_vertex;
 
 
   template <typename VARR>
   typename VARR::Face_handle
   output(const Point_2& q, VARR& out_arr) const {
 
+      if(inserted_artificial_starting_vertex)
+          stack.pop();
+
       std::vector<Point_2> points;
       while(!stack.empty()) {
         const Point_2& top = stack.top();
-        if (top != q) {
-          points.push_back(top);
-        }
-        else if (query_pt_is_vertex) {
-          points.push_back(top);
+        if (top != q || query_pt_is_vertex) {
+            points.push_back(top);
         }
         stack.pop();
+      }
+
+      if(inserted_artificial_starting_vertex) {
+          points.back() = points[0];
+          inserted_artificial_starting_vertex = false;
       }
 
 
@@ -298,41 +277,41 @@ private:
   /*! Finds a visible vertex from the query point 'q' in 'face' 
       to start the algorithm from*/
   Ccb_halfedge_const_circulator find_visible_start(Face_const_handle face,
-                                                   const Point_2 &q) const {
-    init_cdt(face);
-    typename CDT::Face_handle fh = p_cdt->locate(q);
-    const Point_2& start_point = fh->vertex(0)->point();
+                                                   const Point_2 &q) const
+  {
+      Location_result result = point_location.ray_shoot_up(q);
 
-    // Now retrieve the circulator to first visible vertex from triangulation
-    Ccb_halfedge_const_circulator circ = point_itr_map[start_point];
+      if(const Halfedge_const_handle* e =
+              boost::get<Halfedge_const_handle>(&(result)))
+      {
+              CGAL_assertion((*e)->face() == face);
+              Point_2 p(q.x(),
+                        traits->compute_y_at_x_2_object()(
+                            Line_2((*e)->source()->point(),
+                                   (*e)->target()->point()) ,
+                            q.x()));
 
-    Halfedge_around_vertex_const_circulator incident_circ =
-            circ->source()->incident_halfedges();
-    Halfedge_around_vertex_const_circulator incident_curr = incident_circ;
+              vertices.push_back(p);
+              inserted_artificial_starting_vertex = true;
 
-    Ccb_halfedge_const_circulator incident_next;
-
-    do {
-
-      if (incident_curr->face() == face) {
-        incident_next = incident_curr;
-        ++incident_next;
-
-        if (traits->orientation_2_object()(
-                                        incident_curr->source()->point(),
-                                        incident_curr->target()->point(),
-                                        q) == LEFT_TURN
-         || traits->orientation_2_object()(
-                                        incident_next->source()->point(),
-                                        incident_next->target()->point(),
-                                        q) == LEFT_TURN)
-        {
-          break;
-        }
+              return (*e)->next()->ccb();
       }
-    } while (++incident_curr != incident_circ);
+      else if (const Vertex_const_handle* v =
+               boost::get<Vertex_const_handle>(&(result)))
+      {
+          Halfedge_around_vertex_const_circulator cir =
+                  (*v)->incident_halfedges();
 
-    return incident_next;
+          while(face != cir->face()) {
+              ++cir;
+          }
+          return cir->next()->ccb();
+      }
+      else
+      {
+          CGAL_assertion_msg(false, "Should not be reachable.");
+          return Ccb_halfedge_const_circulator();
+      }
   }
 
 
