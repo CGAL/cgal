@@ -33,16 +33,12 @@ details are described in \cgalCite{cgal:k-reisv-04}.
 
 The class has three template parameters. The first and third 
 have essentially the same semantics as in the 
-`Segment_Delaunay_graph_2<Gt,DS>` class. The 
-first template parameter must be a model of the 
-`SegmentDelaunayGraphTraits_2` concept. The third template 
-parameter must be a model of the 
-`SegmentDelaunayGraphDataStructure_2` concept. However, the 
-vertex base class that is to be used in the segment Delaunay graph 
-data structure must be a model of the 
-`SegmentDelaunayGraphHierarchyVertexBase_2` 
-concept. The third template parameter defaults to 
-`Triangulation_data_structure_2< Segment_Delaunay_graph_hierarchy_vertex_base_2< Segment_Delaunay_graph_vertex_base_2<Gt> >, Triangulation_face_base_2<Gt> >`. The second template 
+`Segment_Delaunay_graph_2<Gt,DS>` class. 
+
+\tparam Gt must be a model of the 
+`SegmentDelaunayGraphTraits_2` concept. 
+
+\tparam STag The second template 
 parameter controls whether or not segments are added in the upper 
 levels of the hierarchy. It's possible values are `Tag_true` 
 and `Tag_false`. If it is set to `Tag_true`, 
@@ -50,6 +46,16 @@ segments are also inserted in the upper levels of the hierarchy. The
 value `Tag_false` indicates that only points are to be 
 inserted in the upper levels of the hierarchy. The default value for 
 the second template parameter is `Tag_false`. 
+
+\tparam DS must be a model of the 
+`SegmentDelaunayGraphDataStructure_2` concept. However, the 
+vertex base class that is to be used in the segment Delaunay graph 
+data structure must be a model of the 
+`SegmentDelaunayGraphHierarchyVertexBase_2` 
+concept. The third template parameter defaults to 
+`Triangulation_data_structure_2< Segment_Delaunay_graph_hierarchy_vertex_base_2< Segment_Delaunay_graph_vertex_base_2<Gt> >, Triangulation_face_base_2<Gt> >`. 
+
+
 
 The `Segment_Delaunay_graph_hierarchy_2` class derives publicly from the 
 `Segment_Delaunay_graph_2<Gt,DS>` class. The interface is 

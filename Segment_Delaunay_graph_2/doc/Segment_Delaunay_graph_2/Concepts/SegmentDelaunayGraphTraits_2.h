@@ -4,8 +4,8 @@
 \cgalConcept
 
 The concept `SegmentDelaunayGraphTraits_2` provides the traits 
-requirements for the `Segment_Delaunay_graph_2<Gt,DS>` and 
-`Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>` classes. In 
+requirements for the `CGAL::Segment_Delaunay_graph_2<Gt,DS>` and 
+`CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>` classes. In 
 particular, it provides a type `Site_2`, which must be a model of 
 the concept `SegmentDelaunayGraphSite_2`. It also provides 
 constructions for sites and several function object 

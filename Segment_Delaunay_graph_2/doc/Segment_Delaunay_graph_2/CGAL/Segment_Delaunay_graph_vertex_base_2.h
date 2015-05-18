@@ -7,10 +7,10 @@ namespace CGAL {
 The class `Segment_Delaunay_graph_vertex_base_2` provides a model for the 
 `SegmentDelaunayGraphVertexBase_2` concept which is the vertex 
 base required by the `SegmentDelaunayGraphDataStructure_2` 
-concept. The class `Segment_Delaunay_graph_vertex_base_2` has two template arguments, the first 
-being the geometric traits of the segment Delaunay graph and should be a 
-model of the concept `SegmentDelaunayGraphTraits_2`. 
-The second template argument indicates whether 
+concept. 
+
+\tparam Gt must be a model of the concept `SegmentDelaunayGraphTraits_2`. 
+\tparam SSTag indicates whether 
 or not to use the simple storage site that does not support 
 intersecting segments, or the full storage site, that supports 
 intersecting segments. The possible values are `Tag_true` 

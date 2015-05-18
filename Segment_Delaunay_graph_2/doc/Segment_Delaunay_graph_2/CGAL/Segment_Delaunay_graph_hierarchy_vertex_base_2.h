@@ -7,9 +7,9 @@ namespace CGAL {
 The class `Segment_Delaunay_graph_hierarchy_vertex_base_2` provides a model for the 
 `SegmentDelaunayGraphHierarchyVertexBase_2` concept, which is the 
 vertex base required by the 
-`Segment_Delaunay_graph_hierarchy_2<Gt,DS>` class. The class 
-`Segment_Delaunay_graph_hierarchy_vertex_base_2` is templated by a class `Vbb` which must be a model 
-of the `SegmentDelaunayGraphVertexBase_2` concept. 
+`Segment_Delaunay_graph_hierarchy_2<Gt,DS>` class. 
+
+\tparam Vbb must be a model of the `SegmentDelaunayGraphVertexBase_2` concept. 
 
 \cgalModels `SegmentDelaunayGraphHierarchyVertexBase_2`
 
@@ -22,7 +22,7 @@ of the `SegmentDelaunayGraphVertexBase_2` concept.
 
 */
 template< typename Vbb >
-class Segment_Delaunay_graph_hierarchy_vertex_base_2 : public Vcc {
+class Segment_Delaunay_graph_hierarchy_vertex_base_2 : public Vbb {
 public:
 
 /// @}

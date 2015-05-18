@@ -35,9 +35,9 @@ namespace CGAL {
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 void
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 init_hierarchy(const Geom_traits& gt)
 {
   hierarchy[0] = this; 
@@ -46,8 +46,8 @@ init_hierarchy(const Geom_traits& gt)
   }
 }
 
-template<class Gt, class ST, class STag, class D_S, class LTag>
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 Segment_Delaunay_graph_hierarchy_2(const Gt& gt)
   : Base(gt)
 { 
@@ -56,10 +56,10 @@ Segment_Delaunay_graph_hierarchy_2(const Gt& gt)
 
 
 // copy constructor duplicates vertices and faces
-template<class Gt, class ST, class STag, class D_S, class LTag>
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 Segment_Delaunay_graph_hierarchy_2
-(const Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag> &sdg)
+(const Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx> &sdg)
     : Base(sdg.geom_traits())
 { 
   // create an empty triangulation to be able to delete it !
@@ -72,8 +72,8 @@ Segment_Delaunay_graph_hierarchy_2
 //  destructor
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-template<class Gt, class ST, class STag, class D_S, class LTag>
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>:: 
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 ~Segment_Delaunay_graph_hierarchy_2()
 {
   clear();
@@ -87,10 +87,10 @@ Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 // assignment operator
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-template<class Gt, class ST, class STag, class D_S, class LTag>
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag> &
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
-operator=(const Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag> &sdg)
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx> &
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
+operator=(const Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx> &sdg)
 {
   if ( this != &sdg ) {
     copy(sdg);
@@ -108,9 +108,9 @@ operator=(const Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag> &sdg)
 // insertion of a point
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 std::pair<bool,int>
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 insert_point(const Point_2& p, const Storage_site_2& ss, int level,
 	     Vertex_handle* vertices)
 {
@@ -247,9 +247,9 @@ insert_point(const Point_2& p, const Storage_site_2& ss, int level,
 }
 
 
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 void
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 insert_point(const Site_2& t, const Storage_site_2& ss,
 	     int low, int high, Vertex_handle vbelow,
 	     Vertex_handle* vertices)
@@ -310,10 +310,10 @@ insert_point(const Site_2& t, const Storage_site_2& ss,
 //--------------------------------------------------------------------
 // insertion of a segment
 //--------------------------------------------------------------------
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 typename
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::Vertex_handle
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::Vertex_handle
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 insert_segment(const Point_2& p0, const Point_2& p1,
 	       const Storage_site_2& ss, int level)
 {
@@ -364,10 +364,10 @@ insert_segment(const Point_2& p0, const Point_2& p1,
   return vertex;
 }
 
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 typename
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::Vertex_handle
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::Vertex_handle
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 			const Vertex_handle* vertices, int level)
 {
@@ -514,9 +514,9 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 }
 
 
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 void
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 insert_segment_in_upper_levels(const Site_2& t, const Storage_site_2& ss,
 			       Vertex_handle vbelow,
 			       const Vertex_handle* vertices,
@@ -554,10 +554,10 @@ insert_segment_in_upper_levels(const Site_2& t, const Storage_site_2& ss,
 // insertion of a segment that goes through a point
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 typename
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::Vertex_handle
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::Vertex_handle
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 insert_segment_on_point(const Storage_site_2& ss,
 			const Vertex_handle& v,
 			int level, int which)
@@ -601,10 +601,10 @@ insert_segment_on_point(const Storage_site_2& ss,
 //--------------------------------------------------------------------
 // insertion of an intersecting segment
 //--------------------------------------------------------------------
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 typename
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::Vertex_handle
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::Vertex_handle
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 				     const Site_2& t, Vertex_handle v,
 				     int level,
@@ -648,10 +648,10 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   return vsx;
 }
 
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 typename
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::Vertex_handle
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::Vertex_handle
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 				     const Site_2& t, Vertex_handle v,
 				     int level,
@@ -751,9 +751,9 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 //====================================================================
 //====================================================================
 
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 bool
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 remove(const Vertex_handle& v)
 {
   CGAL_precondition( !is_infinite(v) );
@@ -805,10 +805,10 @@ remove(const Vertex_handle& v)
 //  nearest neighbor location
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 typename
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::Vertex_handle 
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::Vertex_handle
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 nearest_neighbor(const Point_2& p, bool force_point) const
 {
   Vertex_handle vnear[sdg_hierarchy_2__maxlevel];
@@ -820,9 +820,9 @@ nearest_neighbor(const Point_2& p, bool force_point) const
   return vnear[0];
 }
 
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 void
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 nearest_neighbor(const Site_2& t,
 		 Vertex_handle vnear[sdg_hierarchy_2__maxlevel],
 		 bool /* force_point */) const
@@ -862,10 +862,10 @@ nearest_neighbor(const Site_2& t,
 //  miscellaneous methods
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 void
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::   
-copy(const Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag> &sdg)
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
+copy(const Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx> &sdg)
 {
 #ifndef CGAL_NO_ASSERTIONS
   for (unsigned int i = 1; i < sdg_hierarchy_2__maxlevel; ++i) {
@@ -928,9 +928,9 @@ copy(const Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag> &sdg)
   //  hierarchy[0]->isc_ = sdg.hierarchy[0]->isc_;
 }
 
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 void
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>:: 
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 clear()
 {
   for(unsigned int i = 0; i < sdg_hierarchy_2__maxlevel; ++i) {
@@ -938,10 +938,10 @@ clear()
   }
 }
 
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 void
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>:: 
-swap(Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>& other)
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
+swap(Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>& other)
 {
   Base* temp;
   Base::swap(other);
@@ -957,9 +957,9 @@ swap(Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>& other)
 //  validity check
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 bool
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>:: 
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 is_valid(bool verbose, int level) const
 {
   bool result(true);
@@ -998,9 +998,9 @@ is_valid(bool verbose, int level) const
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 void
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 print_error_message() const
 {
   std::cerr << std::endl;
@@ -1020,9 +1020,9 @@ print_error_message() const
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 void
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 file_output(std::ostream& os) const
 {
   typedef std::map<Vertex_handle,int>        Vertex_map;
@@ -1099,9 +1099,9 @@ file_output(std::ostream& os) const
   delete[] V_down;
 }
 
-template<class Gt, class ST, class STag, class D_S, class LTag>
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx>
 void
-Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
+Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 file_input(std::istream& is)
 {
   typedef std::vector<Vertex_handle>  Vertex_vector;
