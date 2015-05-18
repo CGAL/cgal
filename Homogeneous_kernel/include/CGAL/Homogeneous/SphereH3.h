@@ -182,19 +182,19 @@ template <class R>
 inline
 const typename SphereH3<R>::Point_3 &
 SphereH3<R>::center() const
-{ return get(base).template get<0>(); }
+{ return get_pointee_or_identity(base).template get<0>(); }
 
 template <class R>
 inline
 const typename SphereH3<R>::FT &
 SphereH3<R>::squared_radius() const
-{ return get(base).template get<1>(); }
+{ return get_pointee_or_identity(base).template get<1>(); }
 
 template <class R>
 inline
 Orientation
 SphereH3<R>::orientation() const
-{ return get(base).template get<2>(); }
+{ return get_pointee_or_identity(base).template get<2>(); }
 
 template <class R>
 inline

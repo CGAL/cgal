@@ -65,12 +65,12 @@ public:
 
   const FT & x() const
   {
-      return CGAL::get(base)[0];
+      return CGAL::get_pointee_or_identity(base)[0];
   }
 
   const FT & y() const
   {
-      return CGAL::get(base)[1];
+      return CGAL::get_pointee_or_identity(base)[1];
   }
 
   const FT & hx() const
@@ -90,12 +90,12 @@ public:
 
   Cartesian_const_iterator cartesian_begin() const
   {
-    return CGAL::get(base).begin();
+    return CGAL::get_pointee_or_identity(base).begin();
   }
 
   Cartesian_const_iterator cartesian_end() const
   {
-    return CGAL::get(base).end();
+    return CGAL::get_pointee_or_identity(base).end();
   }
 
 };
