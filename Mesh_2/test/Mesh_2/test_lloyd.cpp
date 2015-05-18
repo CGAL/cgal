@@ -6,7 +6,9 @@
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
 #include <CGAL/Delaunay_mesher_2.h>
+
 #include <CGAL/lloyd_optimize_mesh_2.h>
+#include <CGAL/Mesh_2/Lipschitz_sizing_field_2.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 
 #include "test_utilities.h"
@@ -15,28 +17,24 @@
 #include <iostream>
 #include <cassert>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Epick;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Delaunay_mesh_vertex_base_2<K>  Vb;
+typedef CGAL::Delaunay_mesh_face_base_2<K>    Fb;
+
+typedef CGAL::Triangulation_data_structure_2<Vb, Fb>  TDS;
+typedef CGAL::Exact_predicates_tag                    Itag;
+typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> CDT;
+typedef CGAL::Delaunay_mesh_size_criteria_2<CDT> Criteria;
+
+typedef CDT::size_type size_type;
+typedef CDT::Point Point;
 
 using namespace CGAL::parameters;
 
-template <typename K>
 struct Lloyd_tester
 {
-  typedef CGAL::Delaunay_mesh_vertex_base_2<K>  Vb;
-  typedef CGAL::Delaunay_mesh_face_base_2<K>    Fb;
-
-  typedef CGAL::Triangulation_data_structure_2<Vb, Fb>  TDS;
-  typedef CGAL::Exact_predicates_tag                    Itag;
-  typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> CDT;
-  typedef CGAL::Delaunay_mesh_size_criteria_2<CDT> Criteria;
-
-  typedef typename CDT::size_type size_type;
-  typedef typename CDT::Point Point;
-
-  void operator()() const
+  void operator()(CDT& cdt) const
   {
-    CDT cdt;
-
     std::vector<Point> seeds;
     seeds.reserve(32);
 
@@ -79,6 +77,11 @@ struct Lloyd_tester
 int main()
 {
   std::cerr << "TESTING lloyd_optimize_mesh_2 with Epick...\n\n";
-  Lloyd_tester<Epick> tester;
-  tester();
+  CDT cdt;
+  Lloyd_tester tester;
+  tester(cdt);
+
+  //compilation test
+  CGAL::Lipschitz_sizing_field_2<CDT> lip_size(cdt);
+
 }
