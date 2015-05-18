@@ -1206,7 +1206,8 @@ private:
       Intersection intersection = construct_intersection(dual);
       Surface_patch surface =
         (CGAL::cpp0x::get<2>(intersection) == 0) ? Surface_patch() :
-        domain_.surface_patch_index(CGAL::cpp0x::get<1>(intersection));
+        Surface_patch(
+          domain_.surface_patch_index(CGAL::cpp0x::get<1>(intersection)));
 
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
@@ -1491,7 +1492,7 @@ private:
       //add_to_complex sets the index, and updates the cell counter
       //if c should be in the c3t3, add_to_complex has to be used
       //to increment the nb of cells and facets in c3t3
-      if(Subdomain_index() != subdomain_index_)
+      if(!( Subdomain_index() == subdomain_index_ ))
         c3t3.add_to_complex(c, subdomain_index_);
       else
         c3t3.remove_from_complex(c);
@@ -1501,7 +1502,7 @@ private:
         std::size_t old_i = index_map.at(static_cast<std::size_t>(i));
         Surface_patch_index index = surface_index_table_[old_i];
         //add_to_complex sets the index, and updates the facet counter
-        if(Surface_patch_index() != index)
+        if(!( Surface_patch_index() == index ))
           c3t3.add_to_complex(Facet(c, i), index);
         else
           c3t3.remove_from_complex(Facet(c,i));
@@ -1520,7 +1521,7 @@ private:
         if (!c3t3.triangulation().is_infinite(Facet(c,i)))
         {
           Surface_patch_index index = surface_index_table_[0];
-          if (Surface_patch_index() != index)
+          if (!( Surface_patch_index() == index ))
             c3t3.add_to_complex(Facet(c, i), index);
           else
             c3t3.remove_from_complex(Facet(c, i));
@@ -2018,7 +2019,7 @@ private:
                                        true); /* update surface centers */
       // false means "do not update the c3t3"
       if ( c3t3_.is_in_complex(*fit) != (bool)sp ||
-           ((bool)sp && c3t3_.surface_patch_index(*fit) != sp.get()) )
+           ((bool)sp && !(c3t3_.surface_patch_index(*fit) == sp.get()) ) )
         return false;
     }
 
