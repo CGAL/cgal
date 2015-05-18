@@ -41,7 +41,7 @@ struct Lloyd_tester
     std::cerr << "Reading fish-and-rectangle.poly...";
     std::ifstream poly_file("fish-and-rectangle.poly");
     CGAL::read_triangle_poly_file(cdt, poly_file, std::back_inserter(seeds));
-    assert( cdt.is_valid() );
+    CGAL_assertion( cdt.is_valid() );
 
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices()
               << "\nNumber of seeds: " << seeds.size() << "\n\n";
@@ -51,8 +51,8 @@ struct Lloyd_tester
                                  seeds.begin(), seeds.end(),
                                  Criteria(0.125, 0.1));
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices() << "\n\n";
-    assert( cdt.is_valid() );
-    assert( 580 <= cdt.number_of_vertices() &&
+    CGAL_assertion( cdt.is_valid() );
+    CGAL_assertion( 580 <= cdt.number_of_vertices() &&
                     cdt.number_of_vertices() <= 640 );
 
     const size_type number_of_constraints = number_of_constrained_edges(cdt);
@@ -68,9 +68,9 @@ struct Lloyd_tester
     std::cerr << " done (return code = "<< rc <<").\n";
     std::cerr << "Number of vertices: " << number_of_vertices2 << "\n\n";
 
-    assert( cdt.is_valid() );
-    assert( number_of_vertices1 == number_of_vertices2 );
-    assert( number_of_constraints == number_of_constrained_edges(cdt));
+    CGAL_assertion( cdt.is_valid() );
+    CGAL_assertion( number_of_vertices1 == number_of_vertices2 );
+    CGAL_assertion( number_of_constraints == number_of_constrained_edges(cdt));
   }
 };
 
