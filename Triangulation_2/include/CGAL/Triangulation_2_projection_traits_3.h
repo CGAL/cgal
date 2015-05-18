@@ -308,9 +308,7 @@ public:
     const FT& nx = n.x();
     const FT& ny = n.y();
     const FT& nz = n.z();
-    const FT anz = CGAL::abs(nz);
-    if(anz >= CGAL::abs(nx) &&
-       anz >= CGAL::abs(ny)) { // z is the max absolute coordinate of n
+    if(CGAL::abs(nz) >= CGAL::abs(ny)) {
       b1 = Vector_3(nz, 0, -nx);
     }
     else {
