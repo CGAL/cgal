@@ -64,11 +64,11 @@ public:
 
   const RT & dx() const
   {
-      return get(base)[0];
+      return get_pointee_or_identity(base)[0];
   }
   const RT & dy() const
   {
-      return get(base)[1];
+      return get_pointee_or_identity(base)[1];
   }
 };
 

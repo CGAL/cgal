@@ -37,9 +37,9 @@ deals with surface reconstruction from point sets with normal attributes.
 Point set processing pipeline for surface reconstruction. The algorithms listed in gray are available from other CGAL components (bounding volumes and principal component analysis).
 \cgalFigureEnd
 
-\section Point_set_processing_3InputOutput Input/Output
 
-\subsection Point_set_processing_3PropertyMaps Property Maps
+
+\section Point_set_processing_3PropertyMaps Property Maps
 
 The algorithms of this component take as input parameters iterator
 ranges of 3D points, or of 3D points with normals. The property maps
@@ -65,6 +65,15 @@ See below examples using pair and tuple property maps.
 
 Users of this package may use other types to represent positions and
 normals if they implement the corresponding property maps.
+
+Points and normals can even be stored in separate containers 
+and accessed by their index, as any built-in vector is also
+a property map.
+
+\cgalExample{Point_set_processing_3/grid_simplify_indices.cpp}
+
+
+\section Point_set_processing_3InputOutput Input/Output
 
 \subsection Point_set_processing_3Streams Streams
 
