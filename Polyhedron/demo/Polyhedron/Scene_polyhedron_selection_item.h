@@ -105,7 +105,9 @@ struct Selection_traits<typename SelectionItem::Facet_handle, SelectionItem>
     IsFaceSelectedPMap is_selected,
     OutputIterator out)
   {
-    return dilate_face_selection(selection, graph, k, is_selected, out);
+    return dilate_face_selection(selection, graph, k, is_selected,
+      Surface_patch_property_map<typename SelectionItem::Facet_handle ,true>(graph),
+      out);
   }
 
   SelectionItem* item;
@@ -576,8 +578,8 @@ public:
   };
 
   template <class Handle>
-  void dilate_selection(unsigned int steps) {
-
+  void dilate_selection(unsigned int steps)
+  {
     typedef Selection_traits<Handle, Scene_polyhedron_selection_item> Tr;
     Tr tr(this);
 

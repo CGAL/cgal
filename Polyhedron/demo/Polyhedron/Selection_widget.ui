@@ -182,43 +182,36 @@
     </item>
     <item>
      <widget class="QGroupBox" name="groupBox_3">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>35</height>
+       </size>
+      </property>
       <property name="title">
        <string/>
       </property>
-      <widget class="QCheckBox" name="use_features_checkBox">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>151</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Use feature edges</string>
-       </property>
-      </widget>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="Create_point_set_item_button">
-      <property name="text">
-       <string>Create Point Set Item from Selected Vertices</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="Create_polyline_item_button">
-      <property name="text">
-       <string>Create Polyline Item from Selected Edges</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="Create_polyhedron_item_button">
-      <property name="text">
-       <string>Create Polyhedron Item from Selected Facets</string>
-      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <item>
+        <widget class="QCheckBox" name="use_patches_checkBox">
+         <property name="text">
+          <string>Use surface patches</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
     <item>
@@ -261,6 +254,27 @@
       </property>
       <property name="text">
        <string>Keep connected components of Selected Facets</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Create_point_set_item_button">
+      <property name="text">
+       <string>Create Point Set Item from Selected Vertices</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Create_polyline_item_button">
+      <property name="text">
+       <string>Create Polyline Item from Selected Edges</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Create_polyhedron_item_button">
+      <property name="text">
+       <string>Create Polyhedron Item from Selected Facets</string>
       </property>
      </widget>
     </item>

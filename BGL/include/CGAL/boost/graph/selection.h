@@ -65,18 +65,23 @@ extract_selection_boundary(
 }
 } //end of namespace internal
 
-template <class FaceRange, class FaceGraph, class IsFaceSelectedPMap, class OutputIterator>
+template <class FaceRange, class FaceGraph, class IsFaceSelectedPMap, class SurfacePatchPMap, class OutputIterator>
 OutputIterator
 dilate_face_selection(
   const FaceRange& selection,
   FaceGraph& graph,
   unsigned int k,
   IsFaceSelectedPMap is_selected,
+  SurfacePatchPMap surface_patch,
   OutputIterator out)
 {
   typedef boost::graph_traits<FaceGraph> GT;
   typedef typename GT::face_descriptor face_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
+
+  int patch_id = (selection.empty())
+    ? -1
+    : get(surface_patch, *selection.begin());
 
   std::vector<face_descriptor> current_selection(selection.begin(), selection.end());
   for (unsigned int i=0; i<k; ++i)
@@ -95,7 +100,9 @@ dilate_face_selection(
       face_descriptor fd=face(hd, graph);
       while( !get(is_selected,fd) )
       {
-        new_selection_set.insert(fd);
+        if (patch_id == get(surface_patch, fd))
+          new_selection_set.insert(fd);
+
         hd=opposite( next(hd, graph), graph );
         fd=face(hd, graph);
         if ( face(hd, graph)==GT::null_face() ) break;
