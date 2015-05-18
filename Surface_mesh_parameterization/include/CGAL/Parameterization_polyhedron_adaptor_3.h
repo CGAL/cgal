@@ -70,7 +70,7 @@ namespace CGAL {
 /// \cgalModels `ParameterizationPatchableMesh_3`
 ///
 
-  template<class Polyhedron_3_, class VertexIndexMap, class HalfedgeIndexMap>
+  template<class Polyhedron_3_, class VertexIndexMap, class HalfedgeIndexMap, class HalfedgeUvMap>
 class Parameterization_polyhedron_adaptor_3
 {
 // Forward references
@@ -123,7 +123,6 @@ public:
         int m_tag;                  ///< general purpose tag
         bool m_is_parameterized;    ///< is parameterized?
         int m_seaming;              ///< seaming status
-        Point_2 m_uv;               ///< texture coordinates
         int m_index;                ///< unique index
 
     public:
@@ -131,7 +130,6 @@ public:
         Halfedge_info()
         {
             m_tag = -1;             // uninitialized
-            m_uv = Point_2(0, 0);
             m_index = -1;           // uninitialized
             m_seaming = -1;         // uninitialized
             m_is_parameterized = false;
@@ -147,9 +145,6 @@ public:
         int seaming() const { return m_seaming; }
         void seaming(int seaming) { m_seaming = seaming; }
 
-        /// Access to texture coordinates.
-        Point_2 uv() const { return m_uv; }
-        void uv(Point_2 uv) { m_uv = uv; }
 
         /// Access to "parameterized?" field.
         bool is_parameterized() const { return m_is_parameterized; }
@@ -239,9 +234,9 @@ public:
     /// The input mesh can be of any genus.
     /// It can have have any number of borders. Its "main border"
     /// will be the mesh's longest border (if there is at least one border).
-  Parameterization_polyhedron_adaptor_3(Polyhedron& mesh, VertexIndexMap vim, HalfedgeIndexMap him)
+  Parameterization_polyhedron_adaptor_3(Polyhedron& mesh, VertexIndexMap vim, HalfedgeIndexMap him, HalfedgeUvMap huvm)
         // Store reference to adapted mesh
-    : m_polyhedron(mesh), m_vim(vim), m_him(him)
+    : m_polyhedron(mesh), m_vim(vim), m_him(him), m_huvm(huvm)
     {
         typedef typename Halfedge_info_map::value_type Halfedge_info_pair;
         typedef typename Vertex_info_map::value_type Vertex_info_pair;
@@ -554,7 +549,7 @@ public:
         if (prev_vertex == NULL && next_vertex == NULL)
         {
             // get (u,v) pair from any incident halfedge
-            return info(vertex->halfedge())->uv();
+          return get(m_huvm, halfedge(vertex,m_polyhedron));
         }
         else // if seam vertex
         {
@@ -565,7 +560,7 @@ public:
             // get (u,v) pair from first inner halfedge (clockwise)
             halfedge_around_target_circulator cir(
                                                         get_halfedge(next_vertex, vertex), m_polyhedron );
-            return info(*cir)->uv();
+            return get(m_huvm, *cir);
         }
     }
     void set_corners_uv(vertex_descriptor vertex,
@@ -578,7 +573,7 @@ public:
         {
           // Loop over all incident halfedges
           BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(vertex,m_polyhedron)){
-            info(hd)->uv(uv);
+            put(m_huvm, hd, uv);
           }
         }
         else // if seam vertex
@@ -597,7 +592,7 @@ public:
             // Loop over incident halfedges at the "right"
             // of the prev_vertex -> vertex -> next_vertex line
             CGAL_For_all(cir, cir_end)
-                info(*cir)->uv(uv);
+              put(m_huvm, *cir, uv);
         }
     }
 
@@ -803,6 +798,7 @@ private:
   
     VertexIndexMap              m_vim;
     HalfedgeIndexMap            m_him;
+    HalfedgeUvMap               m_huvm;
     /// Additional info attached to halfedges.
     Halfedge_info_map           m_halfedge_info;
     /// Additional info attached to vertices.

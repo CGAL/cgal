@@ -16,6 +16,7 @@
 // ----------------------------------------------------------------------------
 
 typedef CGAL::Simple_cartesian<double>      Kernel;
+typedef Kernel::Point_2                     Point_2;
 typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
@@ -66,10 +67,13 @@ int main(int argc, char * argv[])
 
     typedef std::map<vertex_descriptor,std::size_t> V_index_map;
     typedef std::map<halfedge_descriptor,std::size_t> H_index_map;
+    typedef std::map<halfedge_descriptor,Point_2> H_uv_map;
     typedef boost::associative_property_map<V_index_map> V_index_pmap;
     typedef boost::associative_property_map<H_index_map> H_index_pmap;
+    typedef boost::associative_property_map<H_uv_map> H_uv_pmap;
     V_index_map vim; V_index_pmap vipm(vim);
     H_index_map him; H_index_pmap hipm(him);
+    H_uv_map huvm; H_uv_pmap huvpm(huvm);
 
     std::size_t i = 0;
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
@@ -81,9 +85,9 @@ int main(int argc, char * argv[])
       him[hd] = i++;
     }
 
-    typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron, V_index_pmap, H_index_pmap>
+    typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron, V_index_pmap, H_index_pmap, H_uv_pmap>
                                             Parameterization_polyhedron_adaptor;
-    Parameterization_polyhedron_adaptor mesh_adaptor(mesh, vipm,hipm);
+    Parameterization_polyhedron_adaptor mesh_adaptor(mesh, vipm,hipm,huvpm);
 
     //***************************************
     // Discrete Authalic Parameterization
@@ -119,10 +123,7 @@ int main(int argc, char * argv[])
     std::cout <<"OFF\n" << num_vertices(mesh) << " " << num_faces(mesh) << " 0\n";
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
       // (u,v) pair is stored in any halfedge
-      double u = mesh_adaptor.info(vd->halfedge())->uv().x();
-      double v = mesh_adaptor.info(vd->halfedge())->uv().y();
-      //std::cout << "(u,v) = (" << u << "," << v << ")" << std::endl;
-      std::cout << u << " " << v << " 0" << std::endl;
+      std::cout << huvm[vd->halfedge()] << " 0" << std::endl;
     }
     BOOST_FOREACH(face_descriptor fd, faces(mesh)){
       std::cout << "3";
