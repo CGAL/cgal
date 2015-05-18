@@ -21,8 +21,8 @@ namespace CGAL
 {
 
 template <typename Tr>
-class Lipschitz_sizing_field_2 
-	: public virtual Sizing_field_2<Tr>
+class Lipschitz_sizing_field_2
+  : public virtual Sizing_field_2<Tr>
 {
 public:
   typedef typename Tr::Geom_traits      Geom_traits;
@@ -58,13 +58,6 @@ public:
 
 public:
   // default constructor: empty point set and K = 1.0
-  Lipschitz_sizing_field_2(Tr& tr)
-    : Lipschitz_sizing_field_2()
-  {
-    //todo : use vertices of tr as sites
-  }
-
-  // default constructor: empty point set and K = 1.0
   Lipschitz_sizing_field_2()
     : K(1.0)
   {
@@ -94,6 +87,12 @@ public:
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
   std::cout << "done." << std::endl;
 #endif
+  }
+
+  // constructor from a triangulation
+  Lipschitz_sizing_field_2(Tr& tr, const double k = 1.0)
+    : Lipschitz_sizing_field_2(tr.points_begin(), tr.points_end(), k)
+  {
   }
 
   // assignment operator, copies point set and K
