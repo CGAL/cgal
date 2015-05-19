@@ -62,41 +62,15 @@ class Two_vertices_parameterizer_3
 public:
     /// Export ParameterizationMesh_3 template parameter
     typedef ParameterizationMesh_3          Adaptor;
+    typedef typename Adaptor::Polyhedron TriangleMesh;
 
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 // Private types
 private:
     // Mesh_Adaptor_3 subtypes:
-    typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Point_2       Point_2;
     typedef typename Adaptor::Point_3       Point_3;
-    typedef typename Adaptor::Vector_2      Vector_2;
     typedef typename Adaptor::Vector_3      Vector_3;
-    typedef typename Adaptor::Facet         Facet;
-    typedef typename Adaptor::Facet_handle  Facet_handle;
-    typedef typename Adaptor::Facet_const_handle
-                                            Facet_const_handle;
-    typedef typename Adaptor::Facet_iterator Facet_iterator;
-    typedef typename Adaptor::Facet_const_iterator
-                                            Facet_const_iterator;
-    typedef typename Adaptor::Vertex        Vertex;
-    typedef typename Adaptor::Vertex_handle Vertex_handle;
-    typedef typename Adaptor::Vertex_const_handle
-                                            Vertex_const_handle;
-    typedef typename Adaptor::Vertex_iterator Vertex_iterator;
-    typedef typename Adaptor::Vertex_const_iterator
-                                            Vertex_const_iterator;
-    typedef typename Adaptor::Border_vertex_iterator
-                                            Border_vertex_iterator;
-    typedef typename Adaptor::Border_vertex_const_iterator
-                                            Border_vertex_const_iterator;
-    typedef typename Adaptor::Vertex_around_facet_circulator
-                                            Vertex_around_facet_circulator;
-    typedef typename Adaptor::Vertex_around_facet_const_circulator
-                                            Vertex_around_facet_const_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_circulator
-                                            Vertex_around_vertex_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_const_circulator
-                                            Vertex_around_vertex_const_circulator;
 
 // Public operations
 public:
@@ -122,10 +96,12 @@ inline
 typename Parameterizer_traits_3<Adaptor>::Error_code
 Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
 {
-    Vertex_iterator it;
+    const TriangleMesh& tmesh = mesh.get_adapted_mesh();
 
+    typedef typename boost::property_map<typename Adaptor::Polyhedron, boost::vertex_point_t>::const_type PPmap;
+    PPmap ppmap = get(vertex_point, tmesh);
     // Nothing to do if no border
-    if (mesh.mesh_main_border_vertices_begin() == mesh.mesh_main_border_vertices_end())
+    if (mesh.main_border() == boost::graph_traits<TriangleMesh>::null_halfedge())
         return Parameterizer_traits_3<Adaptor>::ERROR_BORDER_TOO_SHORT;
 
     // Get mesh's bounding box
@@ -135,9 +111,9 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
     double xmax = (std::numeric_limits<double>::min)() ;
     double ymax = (std::numeric_limits<double>::min)() ;
     double zmax = (std::numeric_limits<double>::min)() ;
-    for (it = mesh.mesh_vertices_begin(); it != mesh.mesh_vertices_end(); it++)
+    BOOST_FOREACH(vertex_descriptor vd, vertices(tmesh))
     {
-        Point_3 position = mesh.get_vertex_position(it);
+        Point_3 position = get(ppmap,vd);
 
         xmin = (std::min)(position.x(), xmin) ;
         ymin = (std::min)(position.y(), ymin) ;
@@ -225,14 +201,14 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
 
     // Project onto longest bounding box axes,
     // Set extrema vertices' (u,v) in unit square and mark them as "parameterized"
-    Vertex_handle vxmin = NULL ;
+    vertex_descriptor vxmin;
     double  umin  =  (std::numeric_limits<double>::max)() ;
     double vmin =  (std::numeric_limits<double>::max)(), vmax=  (std::numeric_limits<double>::min)();
-    Vertex_handle vxmax = NULL ;
+    vertex_descriptor vxmax;
     double  umax  =  (std::numeric_limits<double>::min)() ;
-    for (it = mesh.mesh_vertices_begin(); it != mesh.mesh_vertices_end(); it++)
+    BOOST_FOREACH(vertex_descriptor vd, vertices(tmesh))
     {
-        Point_3  position = mesh.get_vertex_position(it);
+        Point_3  position = get(ppmap,vd);
         Vector_3 position_as_vector = position - Point_3(0,0,0);
 
         // coordinate along the bounding box' main axes
@@ -245,15 +221,15 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
         u = (u - V1_min) / (V1_max - V1_min);
         v = (v - V2_min) / (V2_max - V2_min);
 
-        mesh.set_vertex_uv(it, Point_2(u,v)) ; // useful only for vxmin and vxmax
+        mesh.set_vertex_uv(vd, Point_2(u,v)) ; // useful only for vxmin and vxmax
 
         if(u < umin || (u==umin && v < vmin) ) {
-            vxmin = it ;
+            vxmin = vd ;
             umin = u ;
             vmin = v ;
         }
         if(u > umax || (u==umax && v > vmax) ){
-            vxmax = it ;
+            vxmax = vd ;
             umax = u ;
             vmax = v ;
         }

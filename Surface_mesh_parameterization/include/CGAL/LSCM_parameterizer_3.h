@@ -268,7 +268,7 @@ parameterize(Adaptor& mesh)
     mesh.index_mesh_vertices();
 
     // Mark all vertices as *not* "parameterized"
-    BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
+    BOOST_FOREACH(vertex_descriptor v, vertices(tmesh))
     {
         mesh.set_vertex_parameterized(v, false);
     }
@@ -365,7 +365,7 @@ check_parameterize_preconditions(Adaptor& mesh)
         return status;
 
     // The whole surface parameterization package is restricted to triangular meshes
-    status = is_pure_triangle(mesh) ? Base::OK
+    status = is_pure_triangle(tmesh) ? Base::OK
                                        : Base::ERROR_NON_TRIANGULAR_MESH;
     if (status != Base::OK)
         return status;
@@ -398,7 +398,7 @@ initialize_system_from_mesh_border(LeastSquaresSolver& solver,
                                    const Adaptor& mesh)
 {
     const TriangleMesh& tmesh = mesh.get_adapted_mesh();
-    BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
+    BOOST_FOREACH(vertex_descriptor v, vertices(tmesh))
     {
         // Get vertex index in sparse linear system
         int index = mesh.get_vertex_index(v);
@@ -476,10 +476,12 @@ setup_triangle_relations(LeastSquaresSolver& solver,
                          face_descriptor facet)
 {
     const TriangleMesh& tmesh = mesh.get_adapted_mesh();
+    typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::const_type PPmap;
+    PPmap ppmap = get(vertex_point, tmesh);
     // Get the 3 vertices of the triangle
     vertex_descriptor v0, v1, v2;
     int vertexIndex = 0;
-    vertex_around_face__circulator cir(halfedge(facet,tmesh),tmesh), end(cir);
+    vertex_around_face_circulator cir(halfedge(facet,tmesh),tmesh), end(cir);
     CGAL_For_all(cir, end)
     {
         if (vertexIndex == 0)
@@ -500,9 +502,9 @@ setup_triangle_relations(LeastSquaresSolver& solver,
     int id2 = mesh.get_vertex_index(v2) ;
 
     // Get the vertices position
-    const Point_3& p0 = mesh.get_vertex_position(v0) ;
-    const Point_3& p1 = mesh.get_vertex_position(v1) ;
-    const Point_3& p2 = mesh.get_vertex_position(v2) ;
+    const Point_3& p0 = get(ppmap,v0) ;
+    const Point_3& p1 = get(ppmap,v1) ;
+    const Point_3& p2 = get(ppmap,v2) ;
 
     // Computes the coordinates of the vertices of a triangle
     // in a local 2D orthonormal basis of the triangle's plane.
@@ -563,7 +565,7 @@ set_mesh_uv_from_system(Adaptor& mesh,
                         const LeastSquaresSolver& solver)
 {
     const TriangleMesh& tmesh = mesh.get_adapted_mesh();
-     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh))
+     BOOST_FOREACH(vertex_descriptor vd, vertices(tmesh))
     {
         int index = mesh.get_vertex_index(vd);
 
@@ -573,7 +575,7 @@ set_mesh_uv_from_system(Adaptor& mesh,
         NT v = solver.variable(2*index + 1).value() ;
 
         // Fill vertex (u,v) and mark it as "parameterized"
-        mesh.set_vertex_uv(vertexIt, Point_2(u,v));
+        mesh.set_vertex_uv(vd, Point_2(u,v));
         mesh.set_vertex_parameterized(vd, true);
     }
 }
@@ -609,7 +611,7 @@ is_one_to_one_mapping(const Adaptor& mesh,
     const TriangleMesh& tmesh = mesh.get_adapted_mesh();
     Vector_3    first_triangle_normal(0., 0., 0.);
 
-  BOOST_FOREACH(face_descriptor fd, faces(mesh))
+  BOOST_FOREACH(face_descriptor fd, faces(tmesh))
     {
         // Get 3 vertices of the facet
         vertex_descriptor v0, v1, v2;

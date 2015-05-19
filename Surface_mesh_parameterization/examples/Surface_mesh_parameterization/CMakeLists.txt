@@ -48,12 +48,15 @@ if ( CGAL_FOUND )
     list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
  endif()
 
+  # Executables that do *not* require Eigen
+  create_single_source_cgal_program( "LSCM_parameterization.cpp" )
  
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
  
   if (EIGEN3_FOUND)
     # Executables that require Eigen 3.1
     include( ${EIGEN3_USE_FILE} ) 
+
   create_single_source_cgal_program( "Authalic_parameterization.cpp" )
   create_single_source_cgal_program( "Mesh_cutting_parameterization.cpp" )
   create_single_source_cgal_program( "Simple_parameterization.cpp" )
