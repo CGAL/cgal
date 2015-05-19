@@ -306,7 +306,6 @@ public Q_SLOTS:
     }
 
     int steps = ui_widget.Dilate_erode_spin_box->value();
-    bool use_surface_patches = ui_widget.use_patches_checkBox->isChecked();
     selection_item->dilate_or_erode(steps);
   }
   // To handle empty selection items coming from loader

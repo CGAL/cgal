@@ -15,39 +15,6 @@
 
 #include <CGAL/boost/graph/selection.h>
 
-template <typename Handle, bool use_surface_patches>
-struct Surface_patch_property_map
-{
-  typedef boost::graph_traits<Polyhedron>::edge_descriptor     edge_descriptor;
-  typedef boost::graph_traits<Polyhedron>::face_descriptor     face_descriptor;
-  typedef boost::graph_traits<Polyhedron>::vertex_descriptor   vertex_descriptor;
-
-  static face_descriptor face(edge_descriptor e) { return face(e, poly_); }
-  static face_descriptor face(face_descriptor f) { return f; }
-  static face_descriptor face(vertex_descriptor v) {
-    return face(halfedge(v, poly_), poly_);
-  }
-private:
-  const Polyhedron& poly_;
-
-public:
-  Surface_patch_property_map(const Polyhedron& p)
-    : poly_(p)
-  {}
-
-  friend int get(Surface_patch_property_map, Handle h)
-  {
-    if (use_surface_patches)
-      return face(h)->patch_id();
-    else
-      return -1;
-  }
-  friend void put(Surface_patch_property_map, Handle h, int pid)
-  {
-    face(h)->set_patch_id(pid);
-  }
-};
-
 class SCENE_POLYHEDRON_ITEM_K_RING_SELECTION_EXPORT Scene_polyhedron_item_k_ring_selection 
   : public QObject
 {
@@ -55,7 +22,7 @@ class SCENE_POLYHEDRON_ITEM_K_RING_SELECTION_EXPORT Scene_polyhedron_item_k_ring
 public:
   struct Active_handle { enum Type{ VERTEX = 0, FACET = 1, EDGE = 2 }; };
 
-  typedef boost::graph_traits<Polyhedron>::edge_descriptor     edge_descriptor;
+  typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
 
   // Hold mouse keyboard state together
   struct Mouse_keyboard_state
@@ -166,11 +133,10 @@ protected:
     selection.insert(clicked);
     if (k>0)
       CGAL::dilate_face_selection(CGAL::make_array(clicked),
-        *poly_item->polyhedron(),
-        k,
-        Is_selected_from_set<Polyhedron::Facet_handle>(selection),
-        Surface_patch_property_map<Polyhedron::Facet_handle, true>(*poly_item->polyhedron()),
-        CGAL::Emptyset_iterator());
+                                  *poly_item->polyhedron(),
+                                  k,
+                                  Is_selected_from_set<Polyhedron::Facet_handle>(selection),
+                                  CGAL::Emptyset_iterator());
 
     return selection;
   }

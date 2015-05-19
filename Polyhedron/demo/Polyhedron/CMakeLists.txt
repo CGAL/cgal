@@ -504,12 +504,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(isotropic_remeshing_plugin Polyhedron_demo_isotropic_remeshing_plugin)
   target_link_libraries(isotropic_remeshing_plugin  scene_polyhedron_item scene_polyhedron_selection_item)
   
-  polyhedron_demo_plugin(detect_sharp_edges_plugin Polyhedron_demo_detect_sharp_edges_plugin)
-  target_link_libraries(detect_sharp_edges_plugin scene_polyhedron_item)
-
-  polyhedron_demo_plugin(detect_surface_patches_plugin Polyhedron_demo_detect_surface_patches_plugin)
-  target_link_libraries(detect_surface_patches_plugin scene_polyhedron_item)
-
 #
 # Exporting
 #

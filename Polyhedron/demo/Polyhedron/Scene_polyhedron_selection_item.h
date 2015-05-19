@@ -105,9 +105,7 @@ struct Selection_traits<typename SelectionItem::Facet_handle, SelectionItem>
     IsFaceSelectedPMap is_selected,
     OutputIterator out)
   {
-    return dilate_face_selection(selection, graph, k, is_selected,
-      Surface_patch_property_map<typename SelectionItem::Facet_handle ,true>(graph),
-      out);
+    return dilate_face_selection(selection, graph, k, is_selected, out);
   }
 
   SelectionItem* item;
