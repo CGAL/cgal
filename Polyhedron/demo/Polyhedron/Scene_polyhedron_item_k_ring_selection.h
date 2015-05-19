@@ -20,7 +20,8 @@ class SCENE_POLYHEDRON_ITEM_K_RING_SELECTION_EXPORT Scene_polyhedron_item_k_ring
 {
   Q_OBJECT
 public:
-  struct Active_handle { enum Type{ VERTEX = 0, FACET = 1, EDGE = 2 }; };
+  struct Active_handle {
+    enum Type{ VERTEX = 0, FACET = 1, EDGE = 2 , CONNECTED_COMPONENT = 3}; };
 
   typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
 

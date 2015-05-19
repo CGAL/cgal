@@ -427,6 +427,7 @@ public:
     case Active_handle::VERTEX:
       select_all<Vertex_handle>(); break;
     case Active_handle::FACET:
+    case Active_handle::CONNECTED_COMPONENT:
       select_all<Facet_handle>(); break;
     case Active_handle::EDGE:
       selected_edges.insert(edges(*polyhedron()).first, edges(*polyhedron()).second);
@@ -449,6 +450,7 @@ public:
     case Active_handle::VERTEX:
       clear<Vertex_handle>(); break;
     case Active_handle::FACET:
+    case Active_handle::CONNECTED_COMPONENT:
       clear<Facet_handle>(); break;
     case Active_handle::EDGE:
       clear<edge_descriptor>(); break;
@@ -519,7 +521,7 @@ public:
         case Active_handle::FACET:
           dilate_selection<Facet_handle>(steps);
         break;
-        default:
+        case Active_handle::EDGE:
           dilate_selection<edge_descriptor>(steps);
       }
     }
@@ -532,7 +534,7 @@ public:
         case Active_handle::FACET:
           erode_selection<Facet_handle>(-steps);
         break;
-        default:
+        case Active_handle::EDGE:
           erode_selection<edge_descriptor>(-steps);
       }
     }
@@ -791,20 +793,50 @@ protected:
     }
   }
 
-  template<class HandleType>
-  void has_been_selected(const std::set<HandleType>& selection)
+  template<typename HandleRange>
+  bool treat_selection(const HandleRange& selection)
   {
-    if(!visible()) { return; }
+    typedef HandleRange::value_type HandleType;
     Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
 
     bool any_change = false;
-    if(is_insert) {
+    if (is_insert) {
       BOOST_FOREACH(HandleType h, selection)
         any_change |= tr.container().insert(h).second;
     }
     else{
       BOOST_FOREACH(HandleType h, selection)
-        any_change |= (tr.container().erase(h)!=0);
+        any_change |= (tr.container().erase(h) != 0);
+    }
+    return any_change;
+  }
+
+  Facet_handle face(Facet_handle fh)
+  { return fh; }
+  Facet_handle face(Vertex_handle)
+  { return boost::graph_traits<Polyhedron>::null_face(); }
+  Facet_handle face(edge_descriptor)
+  { return boost::graph_traits<Polyhedron>::null_face(); }
+
+  template<class HandleType>
+  void has_been_selected(const std::set<HandleType>& selection)
+  {
+    if(!visible()) { return; }
+
+    bool any_change = false;
+
+    if (get_active_handle_type() == Active_handle::CONNECTED_COMPONENT)
+    {
+      std::vector<Facet_handle> selected_cc;
+      CGAL::Polygon_mesh_processing::connected_component(
+        face(*selection.begin()),
+        *polyhedron(),
+        std::back_inserter(selected_cc));
+      any_change = treat_selection(selected_cc);
+    }
+    else
+    {
+      any_change = treat_selection(selection);
     }
     if(any_change) { Q_EMIT itemChanged(); }
   }

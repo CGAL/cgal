@@ -46,6 +46,11 @@
             <string>Edge</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>Connected component (facet)</string>
+           </property>
+          </item>
          </widget>
         </item>
        </layout>
