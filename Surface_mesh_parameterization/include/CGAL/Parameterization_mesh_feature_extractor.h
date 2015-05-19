@@ -248,6 +248,9 @@ private:
     /// Compute  total len of a border.
     double len(const Border& border) const
     {
+      typename Adaptor::Polyhedron& tmesh = m_mesh_adaptor.get_adapted_mesh();
+      typedef typename boost::property_map<typename Adaptor::Polyhedron, boost::vertex_point_t>::type PPmap;
+      PPmap ppmap = get(CGAL::vertex_point,tmesh);
         double len = 0.0;
         typename std::list<vertex_descriptor>::const_iterator it;
         for(it = border.begin(); it != border.end(); it++)
@@ -258,8 +261,7 @@ private:
             if (next == border.end())
                 next = border.begin();
 
-            Vector_3 v = m_mesh_adaptor.get_vertex_position(*next)
-                       - m_mesh_adaptor.get_vertex_position(*it);
+            Vector_3 v = get(ppmap, *next) - get(ppmap,*it);
             len += std::sqrt(v*v);
         }
         return len;

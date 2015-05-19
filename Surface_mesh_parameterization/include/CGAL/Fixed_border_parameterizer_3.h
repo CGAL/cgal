@@ -439,20 +439,20 @@ void Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
                                     const Adaptor& mesh)
 {
-    for (Border_vertex_iterator it = mesh.mesh_main_border_vertices_begin();
-         it != mesh.mesh_main_border_vertices_end();
-         it++)
+  const TriangleMesh& tmesh = mesh.get_adapted_mesh();
+   
+  BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(mesh.main_border(),tmesh))
     {
-        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_parameterized(*it));
+        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_parameterized(vd));
 
         // Get vertex index in sparse linear system
-        int index = mesh.get_vertex_index(*it);
+        int index = mesh.get_vertex_index(vd);
 
         // Write a diagonal coefficient of A
         A.set_coef(index, index, 1, true /*new*/);
 
         // Write constant in Bu and Bv
-        Point_2 uv = mesh.get_vertex_uv(*it);
+        Point_2 uv = mesh.get_vertex_uv(vd);
         Bu[index] = uv.x();
         Bv[index] = uv.y();
     }

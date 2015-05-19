@@ -69,14 +69,8 @@ public:
 // Private types
 private:
     // Mesh_Adaptor_3 subtypes:
-    typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Point_2       Point_2;
-    typedef typename Adaptor::Point_3       Point_3;
-    typedef typename Adaptor::Vector_2      Vector_2;
     typedef typename Adaptor::Vector_3      Vector_3;
-
-    typedef typename Adaptor::Border_vertex_iterator
-                                            Border_vertex_iterator;
 
 
 // Public operations
@@ -114,21 +108,13 @@ inline
 double Circular_border_parameterizer_3<Adaptor>::compute_border_length(
                                                         const Adaptor& mesh)
 {
+    const TriangleMesh& tmesh = mesh.get_adapted_mesh();
     double len = 0.0;
-    for(Border_vertex_iterator it = mesh.mesh_main_border_vertices_begin();
-        it != mesh.mesh_main_border_vertices_end();
-        it++)
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(mesh.main_border(),tmesh))
     {
-        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(*it));
-
-        // Get next iterator (looping)
-        Border_vertex_iterator next = it;
-        next++;
-        if(next == mesh.mesh_main_border_vertices_end())
-            next = mesh.mesh_main_border_vertices_begin();
-
-        // Add 'length' of it -> next vector to 'len'
-        len += compute_edge_length(mesh, *it, *next);
+      CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(target(hd, tmesh)));
+      // Add 'length' of it -> next vector to 'len'
+      len += compute_edge_length(mesh, source(hd,tmesh), target(hd,tmesh));
     }
     return len;
 }
@@ -143,9 +129,9 @@ Circular_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
 #ifdef DEBUG_TRACE
     std::cerr << "  map on a circle" << std::endl;
 #endif
-
+    const TriangleMesh& tmesh = mesh.get_adapted_mesh();
     // Nothing to do if no border
-    if (mesh.mesh_main_border_vertices_begin() == mesh.mesh_main_border_vertices_end())
+    if (mesh.main_border() == boost::graph_traits<TriangleMesh>::null_halfedge())
         return Parameterizer_traits_3<Adaptor>::ERROR_BORDER_TOO_SHORT;
 
     // Compute the total border length
@@ -156,30 +142,24 @@ Circular_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
     const double PI = 3.14159265359;
     const double tmp = 2*PI/total_len;
     double len = 0.0;           // current position on circle in [0, total_len]
-    for(Border_vertex_iterator it = mesh.mesh_main_border_vertices_begin();
-        it != mesh.mesh_main_border_vertices_end();
-        it++)
+    
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(mesh.main_border(), tmesh))
     {
-        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(*it));
+      vertex_descriptor vd = source(hd,tmesh);
+        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(vd));
 
         double angle = len*tmp; // current position on the circle in radians
 
         // map vertex on unit circle
         Point_2 uv;
         uv = Point_2(0.5+0.5*std::cos(-angle),0.5+0.5*std::sin(-angle));
-        mesh.set_vertex_uv(*it, uv);
+        mesh.set_vertex_uv(vd, uv);
 
         // Mark vertex as "parameterized"
-        mesh.set_vertex_parameterized(*it, true);
-
-        // Get next iterator (looping)
-        Border_vertex_iterator next = it;
-        next++;
-        if(next == mesh.mesh_main_border_vertices_end())
-            next = mesh.mesh_main_border_vertices_begin();
+        mesh.set_vertex_parameterized(vd, true);
 
         // Add 'length' of it -> next vector to 'len'
-        len += compute_edge_length(mesh, *it, *next);
+        len += compute_edge_length(mesh, vd, target(hd,tmesh));
     }
 
     return Parameterizer_traits_3<Adaptor>::OK;
@@ -219,12 +199,7 @@ private:
     // Mesh_Adaptor_3 subtypes:
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Point_2       Point_2;
-    typedef typename Adaptor::Point_3       Point_3;
-    typedef typename Adaptor::Vector_2      Vector_2;
     typedef typename Adaptor::Vector_3      Vector_3;
-
-    typedef typename Adaptor::Border_vertex_iterator
-                                            Border_vertex_iterator;
 
 // Public operations
 public:
@@ -277,13 +252,9 @@ private:
     // Mesh_Adaptor_3 subtypes:
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Point_2       Point_2;
-    typedef typename Adaptor::Point_3       Point_3;
-    typedef typename Adaptor::Vector_2      Vector_2;
     typedef typename Adaptor::Vector_3      Vector_3;
  
-    typedef typename Adaptor::Border_vertex_iterator
-                                            Border_vertex_iterator;
-
+ 
 // Public operations
 public:
     // Default constructor, copy constructor and operator =() are fine
@@ -294,11 +265,13 @@ protected:
     virtual double compute_edge_length(const Adaptor& mesh,
                                        vertex_descriptor source,
                                        vertex_descriptor target)
-    {
+    {  
+      typedef typename boost::property_map<typename Adaptor::Polyhedron, boost::vertex_point_t>::const_type PPmap;
+      PPmap ppmap = get(vertex_point, mesh.get_adapted_mesh());
         /// Arc-length border parameterization: (u,v) values are
         /// proportional to the length of border edges.
-        Vector_3 v = mesh.get_vertex_position(target)
-                   - mesh.get_vertex_position(source);
+      Vector_3 v = get(ppmap, target)
+                   - get(ppmap,source);
         return std::sqrt(v*v);
     }
 };

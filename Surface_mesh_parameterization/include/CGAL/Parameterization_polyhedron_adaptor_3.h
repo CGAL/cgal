@@ -98,6 +98,7 @@ private:
     /// Additional info attached to vertices
     typedef typename std::vector<Vertex_info>         Vertex_info_map;
 
+  typedef Parameterization_polyhedron_adaptor_3<Polyhedron_3_, VertexIndexMap,HalfedgeIndexMap, HalfedgeUvMap> Adaptor;
 
 // Public types
 public:
@@ -162,6 +163,7 @@ public:
         int m_tag;                  ///< general purpose tag
         int m_seaming;              ///< seaming status
         int m_index;                ///< unique index
+      int m_on_border;             ///<  0=inner, 1=border, 2=main border
 
     public:
         /// Default constructor.
@@ -170,6 +172,7 @@ public:
             m_index = -1;           // uninitialized
             m_tag = -1;             // uninitialized
             m_seaming = -1;         // uninitialized
+            m_on_border = 0;
         }
 
         // Default destructor, copy constructor and operator =() are fine.
@@ -185,6 +188,9 @@ public:
         /// Access to 'seaming status' field.
         int seaming() const { return m_seaming; }
         void seaming(int seaming) { m_seaming = seaming; }
+
+        int on_border() const { return m_on_border; }
+        void on_border(int i) { m_on_border = i; }
     };
 
     /// \endcond
@@ -328,36 +334,14 @@ public:
     // Index vertices of the mesh from 0 to count_mesh_vertices()-1
     void  index_mesh_vertices ()
     {
-#ifdef DEBUG_TRACE
-        fprintf(stderr,"  index Parameterization_polyhedron_adaptor vertices:\n");
-#endif
         int index = 0;
         BOOST_FOREACH (vertex_descriptor vd, vertices(m_polyhedron))
         {
-            // Point_3 position = get_vertex_position(it);
-/*#ifdef DEBUG_TRACE
-            fprintf(stderr, "    %d=(%f,%f,%f)\n",
-                            index,
-                            (float)position.x(),
-                            (float)position.y(),
-                            (float)position.z());
-#endif*/
             set_vertex_index(vd, index++);
         }
-#ifdef DEBUG_TRACE
-        fprintf(stderr,"    ok\n");
-#endif
     }
 
-    /// Get iterator over first vertex of mesh's "main border".
-    Border_vertex_iterator  mesh_main_border_vertices_begin() const {
-        return m_main_border.begin();
-    }
-
-    /// Get iterator over past-the-end vertex of mesh's "main border".
-    Border_vertex_iterator  mesh_main_border_vertices_end() const {
-        return m_main_border.end();
-    }
+  halfedge_descriptor main_border() const { return m_main_border; }
 
     /// Return the border containing seed_vertex.
     /// Return an empty list if not found.
@@ -365,25 +349,23 @@ public:
     {
         std::list<vertex_descriptor> border;    // returned list
 
-        halfedge_around_target_circulator pHalfedge(halfedge(seed_vertex,m_polyhedron),m_polyhedron), end(pHalfedge);
-
         // if isolated vertex
-        if (pHalfedge == NULL) {
-            border.push_back(seed_vertex);
-            return border;
+        if(halfedge(seed_vertex, m_polyhedron) ==  boost::graph_traits<Polyhedron>::null_halfedge()){
+          border.push_back(seed_vertex);
+          return border;
         }
 
         // Get seed_vertex' border halfedge
-        halfedge_descriptor  seed_halfedge = NULL;
-        CGAL_For_all(pHalfedge,end) {
-          if(is_border(*pHalfedge, m_polyhedron)) {
-                seed_halfedge = *pHalfedge;
+        halfedge_descriptor  seed_halfedge = boost::graph_traits<Polyhedron>::null_halfedge();
+        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(seed_vertex,m_polyhedron)) {
+          if(is_border(hd, m_polyhedron)) {
+                seed_halfedge = hd;
                 break;
             }
         }
 
         // if inner vertex
-        if (seed_halfedge == NULL)
+        if (seed_halfedge == boost::graph_traits<Polyhedron>::null_halfedge())
             return border;                  // return empty list
 
         // Add seed vertex
@@ -436,12 +418,12 @@ public:
     }
 
     // VERTEX INTERFACE
-
+#if 0
     /// Get the 3D position of a vertex
     Point_3 get_vertex_position(vertex_descriptor vertex) const {
         return vertex->point();
     }
-
+#endif 
     /// Get/set the 2D position (u/v pair) of a vertex. Default value is undefined.
     /// (stored in halfedges sharing the same vertex).
     Point_2  get_vertex_uv(vertex_descriptor vertex) const {
@@ -482,15 +464,13 @@ public:
     /// Return true if a vertex belongs to ANY mesh's border.
     bool  is_vertex_on_border(vertex_descriptor vertex) const
     {
-      return is_border(vertex, m_polyhedron);
+      return info(vertex)->on_border() > 0;
     }
 
     /// Return true if a vertex belongs to the UNIQUE mesh's main border,
     /// i.e. the mesh's LONGEST border.
     bool  is_vertex_on_main_border(vertex_descriptor vertex) const {
-        return std::find(m_main_border.begin(),
-                         m_main_border.end(),
-                         vertex) != m_main_border.end();
+        return info(vertex)->on_border() == 2;
     }
 
     /// Get circulator over the vertices incident to 'vertex'.
@@ -546,15 +526,15 @@ public:
                            vertex_descriptor next_vertex) const
     {
         // if inner vertex
-        if (prev_vertex == NULL && next_vertex == NULL)
+      if (prev_vertex == boost::graph_traits<Polyhedron>::null_vertex() && next_vertex == boost::graph_traits<Polyhedron>::null_vertex())
         {
             // get (u,v) pair from any incident halfedge
           return get(m_huvm, halfedge(vertex,m_polyhedron));
         }
         else // if seam vertex
         {
-            CGAL_surface_mesh_parameterization_precondition(prev_vertex != NULL);
-            CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(prev_vertex != boost::graph_traits<Polyhedron>::null_vertex());
+            CGAL_surface_mesh_parameterization_precondition(next_vertex != boost::graph_traits<Polyhedron>::null_vertex());
 
             // TODO no need for a circulator
             // get (u,v) pair from first inner halfedge (clockwise)
@@ -569,7 +549,7 @@ public:
                         const Point_2& uv)
     {
         // if inner vertex
-        if (prev_vertex == NULL && next_vertex == NULL)
+        if (prev_vertex == boost::graph_traits<Polyhedron>::null_vertex() && next_vertex == boost::graph_traits<Polyhedron>::null_vertex())
         {
           // Loop over all incident halfedges
           BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(vertex,m_polyhedron)){
@@ -578,8 +558,8 @@ public:
         }
         else // if seam vertex
         {
-            CGAL_surface_mesh_parameterization_precondition(prev_vertex != NULL);
-            CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(prev_vertex != boost::graph_traits<Polyhedron>::null_vertex());
+            CGAL_surface_mesh_parameterization_precondition(next_vertex != boost::graph_traits<Polyhedron>::null_vertex());
 
             // first inner halfedge (for a clockwise rotation)
             halfedge_around_target_circulator cir(
@@ -605,15 +585,15 @@ public:
                                    vertex_descriptor next_vertex) const
     {
         // if inner vertex
-        if (prev_vertex == NULL && next_vertex == NULL)
+        if (prev_vertex == boost::graph_traits<Polyhedron>::null_vertex() && next_vertex == boost::graph_traits<Polyhedron>::null_vertex())
         {
             // get "is parameterized" field from any incident halfedge
             return info(vertex->halfedge())->is_parameterized();
         }
         else // if seam vertex
         {
-            CGAL_surface_mesh_parameterization_precondition(prev_vertex != NULL);
-            CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(prev_vertex != boost::graph_traits<Polyhedron>::null_vertex());
+            CGAL_surface_mesh_parameterization_precondition(next_vertex != boost::graph_traits<Polyhedron>::null_vertex());
 
             // get "is parameterized" field from first inner halfedge (clockwise)
             halfedge_around_target_circulator cir(
@@ -627,7 +607,7 @@ public:
                                    bool parameterized)
     {
         // if inner vertex
-        if (prev_vertex == NULL && next_vertex == NULL)
+        if (prev_vertex == boost::graph_traits<Polyhedron>::null_vertex() && next_vertex == boost::graph_traits<Polyhedron>::null_vertex())
         {
           // Loop over all incident halfedges
           BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(vertex,m_polyhedron)){
@@ -636,8 +616,8 @@ public:
         }
         else // if seam vertex
         {
-            CGAL_surface_mesh_parameterization_precondition(prev_vertex != NULL);
-            CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(prev_vertex != boost::graph_traits<Polyhedron>::null_vertex());
+            CGAL_surface_mesh_parameterization_precondition(next_vertex != boost::graph_traits<Polyhedron>::null_vertex());
 
             // first inner halfedge (for a clockwise rotation)
             halfedge_around_target_circulator cir(
@@ -663,15 +643,15 @@ public:
                           vertex_descriptor next_vertex) const
     {
         // if inner vertex
-        if (prev_vertex == NULL && next_vertex == NULL)
+        if (prev_vertex == boost::graph_traits<Polyhedron>::null_vertex() && next_vertex == boost::graph_traits<Polyhedron>::null_vertex())
         {
             // get index from any incident halfedge
             return info(vertex->halfedge())->index();
         }
         else // if seam vertex
         {
-            CGAL_surface_mesh_parameterization_precondition(prev_vertex != NULL);
-            CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(prev_vertex != boost::graph_traits<Polyhedron>::null_vertex());
+            CGAL_surface_mesh_parameterization_precondition(next_vertex != boost::graph_traits<Polyhedron>::null_vertex());
 
             // get index from first inner halfedge (clockwise)
             halfedge_around_target_circulator cir(
@@ -685,7 +665,7 @@ public:
                            int index)
     {
         // if inner vertex
-        if (prev_vertex == NULL && next_vertex == NULL)
+        if (prev_vertex == boost::graph_traits<Polyhedron>::null_vertex() && next_vertex == boost::graph_traits<Polyhedron>::null_vertex())
         {
             // Loop over all incident halfedges
           BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(vertex, m_polyhedron)){
@@ -694,8 +674,8 @@ public:
         }
         else // if seam vertex
         {
-            CGAL_surface_mesh_parameterization_precondition(prev_vertex != NULL);
-            CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(prev_vertex != boost::graph_traits<Polyhedron>::null_vertex());
+            CGAL_surface_mesh_parameterization_precondition(next_vertex != boost::graph_traits<Polyhedron>::null_vertex());
 
             // first inner halfedge (for a clockwise rotation)
             halfedge_around_target_circulator cir(
@@ -721,15 +701,15 @@ public:
                         vertex_descriptor next_vertex) const
     {
         // if inner vertex
-        if (prev_vertex == NULL && next_vertex == NULL)
+        if (prev_vertex == boost::graph_traits<Polyhedron>::null_vertex() && next_vertex == boost::graph_traits<Polyhedron>::null_vertex())
         {
             // get tag from any incident halfedge
             return info(vertex->halfedge())->tag();
         }
         else // if seam vertex
         {
-            CGAL_surface_mesh_parameterization_precondition(prev_vertex != NULL);
-            CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(prev_vertex != boost::graph_traits<Polyhedron>::null_vertex());
+            CGAL_surface_mesh_parameterization_precondition(next_vertex != boost::graph_traits<Polyhedron>::null_vertex());
 
             // get tag from first inner halfedge (clockwise)
             // TODO no need for a circulator
@@ -744,7 +724,7 @@ public:
                          int tag)
     {
         // if inner vertex
-        if (prev_vertex == NULL && next_vertex == NULL)
+        if (prev_vertex == boost::graph_traits<Polyhedron>::null_vertex() && next_vertex == boost::graph_traits<Polyhedron>::null_vertex())
         {
             // Loop over all incident halfedges
           BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(vertex,m_polyhedron)){
@@ -753,8 +733,8 @@ public:
         }
         else // if seam vertex
         {
-            CGAL_surface_mesh_parameterization_precondition(prev_vertex != NULL);
-            CGAL_surface_mesh_parameterization_precondition(next_vertex != NULL);
+            CGAL_surface_mesh_parameterization_precondition(prev_vertex != boost::graph_traits<Polyhedron>::null_vertex());
+            CGAL_surface_mesh_parameterization_precondition(next_vertex != boost::graph_traits<Polyhedron>::null_vertex());
 
             // first inner halfedge (for a clockwise rotation)
             halfedge_around_target_circulator cir(
@@ -777,18 +757,35 @@ public:
 // Private operations
 private:
 
+  struct Fct {
+    Adaptor& a;
+    int i;
+
+    Fct(Adaptor& a, int i)
+      : a(a), i(i)
+    {}
+
+    void operator()(vertex_descriptor vd) const
+    {
+      a.info(vd)->on_border(i);
+    }
+  };
+  
+  
     /// Extract mesh's longest border.
-    std::list<vertex_descriptor> extract_longest_border(Polyhedron& mesh)
+    halfedge_descriptor extract_longest_border(Polyhedron& mesh)
     {
         std::list<vertex_descriptor> result;    // returned list
 
-        halfedge_descriptor hd = longest_border(mesh);
+        Fct fct1(*this,1);
+        Fct fct2(*this,2);
+        halfedge_descriptor hd = longest_border(mesh,fct1);
         if(hd != boost::graph_traits<Polyhedron>::null_halfedge()){
           BOOST_FOREACH(halfedge_descriptor hdf, halfedges_around_face(hd,mesh)){
-            result.push_back(target(hdf,mesh));
+            fct2(target(hdf,mesh));
           }
         }
-        return result;
+        return hd;
     }
 // Fields
 private:
@@ -805,17 +802,18 @@ private:
     Vertex_info_map             m_vertex_info;
 
     /// Main border of a topological disc inside m_polyhedron (may be empty).
-    std::list<vertex_descriptor>    m_main_border;
+    halfedge_descriptor m_main_border;
 
 
 
 
     }; // Parameterization_polyhedron_adaptor_3
 
+  
 
-  template <typename PolygonMesh>
+  template <typename PolygonMesh, typename Fct>
   typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
-  longest_border(const PolygonMesh& mesh)
+  longest_border(const PolygonMesh& mesh, Fct fct)
   {
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor; 
     typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type PPmap;
@@ -829,8 +827,9 @@ private:
       if(is_border(hd,mesh)&& (visited.find(hd)== visited.end())){
         double len=0;
         BOOST_FOREACH(halfedge_descriptor hdf, halfedges_around_face(hd,mesh)){
+          fct(target(hdf,mesh));
           visited.insert(hdf);
-          len += squared_distance(get(ppmap,source(hdf,mesh)), get(ppmap,target(hdf,mesh)));
+          len += std::sqrt(squared_distance(get(ppmap,source(hdf,mesh)), get(ppmap,target(hdf,mesh))));
         }
         if(len > length){
           length = len;
