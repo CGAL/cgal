@@ -573,7 +573,7 @@ namespace internal {
 
     int valence(const vertex_descriptor& v) const
     {
-      return degree(v, mesh_);
+      return static_cast<int>(degree(v, mesh_));
     }
 
     int target_valence(const vertex_descriptor& v) const
