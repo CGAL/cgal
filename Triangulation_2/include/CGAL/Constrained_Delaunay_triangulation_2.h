@@ -23,6 +23,7 @@
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Constrained_triangulation_2.h>
+#include <CGAL/Constrained_voronoi_diagram_2.h>
 #include <CGAL/Triangulation_2/insert_constraints.h>
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
@@ -113,7 +114,6 @@ public:
 
   typedef typename Geom_traits::Point_2  Point;
 
-
   Constrained_Delaunay_triangulation_2(const Geom_traits& gt=Geom_traits()) 
     : Ctr(gt) { }
 
@@ -181,7 +181,6 @@ public:
   // get_boundary_of_conflicts(const Point  &p, 
   // 			       OutputItBoundaryEdges eit, 
   // 			       Face_handle start ) const;
-   
 
   // INSERTION-REMOVAL
   Vertex_handle insert(const Point & a, Face_handle start = Face_handle());

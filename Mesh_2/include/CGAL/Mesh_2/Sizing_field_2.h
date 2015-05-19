@@ -8,21 +8,26 @@
 namespace CGAL
 {
 
-template <typename Kernel>
+template <typename Tr>
 class Sizing_field_2 // pure virtual class
 {    
 public:
-  typedef Point_2<Kernel> Point;
-	
+  typedef typename Tr::Geom_traits::Point_2 Point_2;
+  typedef typename Tr::Geom_traits::FT      FT;
+
 public:
   Sizing_field_2()
   {
   }
+  Sizing_field_2(Tr& tr)
+  {
+  }
+
   virtual ~Sizing_field_2()
   {
   }
 
-  virtual double query(const Point& p) const = 0;
+  virtual FT operator()(const Point_2& p) const = 0;
 };
 
 }//namespace CGAL

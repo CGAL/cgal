@@ -15,28 +15,29 @@
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_traits_2.h>
 
-#include <CGAL/Sizing_field_2.h>
+#include <CGAL/Mesh_2/Sizing_field_2.h>
 
 namespace CGAL
 {
 
-template <typename Kernel>
+template <typename Tr>
 class Lipschitz_sizing_field_2 
-	: public virtual Sizing_field_2<Kernel>
+	: public virtual Sizing_field_2<Tr>
 {
 public:
-  typedef Point_2<Kernel> Point;
+  typedef typename Tr::Geom_traits      Geom_traits;
+  typedef typename Geom_traits::Point_2 Point;
     
-  typedef Delaunay_triangulation_2<Kernel> Delaunay_triangulation;
+  typedef Delaunay_triangulation_2<Geom_traits> Delaunay_triangulation;
   typedef typename Delaunay_triangulation::All_faces_iterator Face_iterator;
   typedef typename Delaunay_triangulation::Finite_vertices_iterator Vertex_iterator;
   typedef typename Delaunay_triangulation::Face_circulator Face_circulator;
     
-  typedef Search_traits_2<Kernel> Tree_traits;
+  typedef Search_traits_2<Geom_traits> Tree_traits;
   typedef Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Search_tree;
     
-  typedef Apollonius_graph_traits_2<Kernel> Apollonius_traits;
+  typedef Apollonius_graph_traits_2<Geom_traits> Apollonius_traits;
   typedef Apollonius_graph_2<Apollonius_traits> Apollonius_graph;
   typedef typename Apollonius_traits::Site_2 Site;
 
@@ -56,7 +57,13 @@ public:
   };
 
 public:
-    
+  // default constructor: empty point set and K = 1.0
+  Lipschitz_sizing_field_2(Tr& tr)
+    : Lipschitz_sizing_field_2()
+  {
+    //todo : use vertices of tr as sites
+  }
+
   // default constructor: empty point set and K = 1.0
   Lipschitz_sizing_field_2()
     : K(1.0)
@@ -76,11 +83,17 @@ public:
 			   const double k = 1.0)
     : K(k)
   {
+#ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
+  std::cout << "Building sizing field..." << std::flush;
+#endif
     points = std::list<Point>(first, beyond);
     generate_delaunay();
     extract_poles();
     generate_sites();
     generate_apollonius();
+#ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
+  std::cout << "done." << std::endl;
+#endif
   }
 
   // assignment operator, copies point set and K
@@ -107,7 +120,7 @@ public:
     return *this;
   }
 
-  double query(const Point& p) const
+  double operator()(const Point& p) const
   {
     if(points.empty() || points.size() == 1)
       return K;
