@@ -136,8 +136,11 @@ vcm_convolve (ForwardIterator first,
         Covariance m;
         std::fill(m.begin(), m.end(), typename K::FT(0));
         for (size_t k = 0; k < nn.size(); ++k)
+        {
+          std::size_t index = indices [nn[k]];
           for (int i=0; i<6; ++i)
-            m[i] += cov[indices [nn[k]]][i];
+            m[i] += cov[index][i];
+        }
         ncov.push_back(m);
     }
 }
