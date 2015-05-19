@@ -116,10 +116,6 @@ public:
     /// Additional info attached to halfedges.
     class Halfedge_info
     {
-    public:
-        typedef typename Polyhedron_3_::Traits::Kernel::Point_2
-                                            Point_2;
-
     private:
         int m_tag;                  ///< general purpose tag
         bool m_is_parameterized;    ///< is parameterized?
@@ -204,21 +200,21 @@ public:
     //@{
 
     /// Number type to represent coordinates.
-    typedef typename Polyhedron::Traits::Kernel::FT NT;
+  typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::const_type PPmap;
+  typedef typename boost::property_traits<PPmap>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel Kernel;
+
+    typedef typename Kernel::FT NT;
 
     /// 2D point that represents (u,v) coordinates computed
     /// by parameterization methods. Must provide X() and Y() methods.
-    typedef typename Polyhedron::Traits::Kernel::Point_2
-                                            Point_2;
+    typedef typename Kernel::Point_2  Point_2;
     /// 3D point that represents vertices coordinates. Must provide X() and Y() methods.
-    typedef typename Polyhedron::Traits::Kernel::Point_3
-                                            Point_3;
+    typedef typename Kernel::Point_3   Point_3;
     /// 2D vector. Must provide X() and Y() methods.
-    typedef typename Polyhedron::Traits::Kernel::Vector_2
-                                            Vector_2;
+    typedef typename Kernel::Vector_2   Vector_2;
     /// 3D vector. Must provide X() and Y() methods.
-    typedef typename Polyhedron::Traits::Kernel::Vector_3
-                                            Vector_3;
+    typedef typename Kernel::Vector_3   Vector_3;
 
     /// Iterator over vertices of the mesh "main border".
     /// Model of the ForwardIterator concept.
@@ -422,19 +418,19 @@ public:
     /// Get/set the 2D position (u/v pair) of a vertex. Default value is undefined.
     /// (stored in halfedges sharing the same vertex).
     Point_2  get_vertex_uv(vertex_descriptor vertex) const {
-        return get_corners_uv(vertex, NULL, NULL);
+      return get_corners_uv(vertex, vertex_descriptor(), vertex_descriptor());
     }
     void  set_vertex_uv(vertex_descriptor vertex, const Point_2& uv) {
-        set_corners_uv(vertex, NULL, NULL, uv);
+      set_corners_uv(vertex, vertex_descriptor(), vertex_descriptor(), uv);
     }
 
     /// Get/set "is parameterized" field of vertex. Default value is undefined.
     /// (stored in halfedges sharing the same vertex).
     bool  is_vertex_parameterized(vertex_descriptor vertex) const {
-        return are_corners_parameterized(vertex, NULL, NULL);
+      return are_corners_parameterized(vertex, vertex_descriptor(), vertex_descriptor());
     }
     void  set_vertex_parameterized(vertex_descriptor vertex, bool parameterized) {
-        set_corners_parameterized(vertex, NULL, NULL, parameterized);
+      set_corners_parameterized(vertex, vertex_descriptor(), vertex_descriptor(), parameterized);
     }
 
     /// Get/set vertex index. Default value is undefined.
@@ -450,10 +446,10 @@ public:
     /// Get/set vertex' all purpose tag. Default value is undefined.
     /// (stored in halfedges sharing the same vertex).
     int  get_vertex_tag(vertex_descriptor vertex) const {
-        return get_corners_tag(vertex, NULL, NULL);
+      return get_corners_tag(vertex, vertex_descriptor(), vertex_descriptor());
     }
     void set_vertex_tag(vertex_descriptor vertex, int tag) {
-        set_corners_tag(vertex, NULL, NULL, tag);
+      set_corners_tag(vertex, vertex_descriptor(), vertex_descriptor(), tag);
     }
 
     /// Return true if a vertex belongs to ANY mesh's border.
@@ -474,7 +470,7 @@ public:
                             vertex_descriptor vertex,
                             vertex_descriptor start_position = vertex_descriptor())
     {
-        if (start_position == NULL)
+      if (start_position == vertex_descriptor())
           return vertex_around_target_circulator(halfedge(vertex,m_polyhedron));
         else
             return vertex_around_target_circulator(
@@ -583,7 +579,7 @@ public:
         if (prev_vertex == boost::graph_traits<Polyhedron>::null_vertex() && next_vertex == boost::graph_traits<Polyhedron>::null_vertex())
         {
             // get "is parameterized" field from any incident halfedge
-            return info(vertex->halfedge())->is_parameterized();
+          return info(halfedge(vertex,m_polyhedron))->is_parameterized();
         }
         else // if seam vertex
         {
@@ -641,7 +637,7 @@ public:
         if (prev_vertex == boost::graph_traits<Polyhedron>::null_vertex() && next_vertex == boost::graph_traits<Polyhedron>::null_vertex())
         {
             // get index from any incident halfedge
-            return info(vertex->halfedge())->index();
+          return info(halfedge(vertex, m_polyhedron))->index();
         }
         else // if seam vertex
         {
@@ -699,7 +695,7 @@ public:
         if (prev_vertex == boost::graph_traits<Polyhedron>::null_vertex() && next_vertex == boost::graph_traits<Polyhedron>::null_vertex())
         {
             // get tag from any incident halfedge
-            return info(vertex->halfedge())->tag();
+          return info(halfedge(vertex, m_polyhedron))->tag();
         }
         else // if seam vertex
         {

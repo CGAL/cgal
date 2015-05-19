@@ -197,7 +197,7 @@ private:
         std::list<vertex_descriptor> border;    // returned list
 
         // get any border vertex with "free" tag
-        vertex_descriptor seed_vertex = NULL;
+        vertex_descriptor seed_vertex; // = NULL
 
         BOOST_FOREACH(vertex_descriptor v, vertices(m_mesh))
         {
@@ -208,7 +208,7 @@ private:
                 break;
             }
         }
-        if (seed_vertex == NULL)
+        if (seed_vertex == vertex_descriptor())
             return border;                  // return empty list
 
         // Get the border containing seed_vertex
@@ -280,8 +280,8 @@ private:
              m_mesh_adaptor.set_vertex_tag(v, tag_free);
         }
 
-        vertex_descriptor seed_vertex = NULL;
-        while((seed_vertex = get_any_vertex_tag(tag_free)) != NULL)
+        vertex_descriptor seed_vertex; // = NULL  
+        while((seed_vertex = get_any_vertex_tag(tag_free)) != vertex_descriptor())
         {
             m_nb_connex_components++;
             tag_component(seed_vertex, tag_free, tag_done);
@@ -297,7 +297,7 @@ private:
                 return v;
         }
 
-        return NULL;
+        return vertex_descriptor();
     }
 
     /// Tag component.

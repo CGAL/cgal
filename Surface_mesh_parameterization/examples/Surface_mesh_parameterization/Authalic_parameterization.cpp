@@ -1,4 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -17,7 +19,12 @@
 
 typedef CGAL::Simple_cartesian<double>      Kernel;
 typedef Kernel::Point_2                     Point_2;
+#if 0
+typedef CGAL::Surface_mesh<Kernel::Point_3> Polyhedron;
+#else
 typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
+#endif
+
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
@@ -53,12 +60,13 @@ int main(int argc, char * argv[])
     std::ifstream stream(input_filename);
     Polyhedron mesh;
     stream >> mesh;
+    /*
     if(!stream || !mesh.is_valid() || mesh.empty())
     {
         std::cerr << "Error: cannot read OFF file " << input_filename << std::endl;
         return EXIT_FAILURE;
     }
-
+    */
     //***************************************
     // Create Polyhedron adaptor
     // Note: no cutting => we support only
@@ -123,7 +131,7 @@ int main(int argc, char * argv[])
     std::cout <<"OFF\n" << num_vertices(mesh) << " " << num_faces(mesh) << " 0\n";
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
       // (u,v) pair is stored in any halfedge
-      std::cout << huvm[vd->halfedge()] << " 0" << std::endl;
+      std::cout << huvm[halfedge(vd,mesh)] << " 0" << std::endl;
     }
     BOOST_FOREACH(face_descriptor fd, faces(mesh)){
       std::cout << "3";

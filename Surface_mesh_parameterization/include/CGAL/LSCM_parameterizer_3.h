@@ -565,7 +565,7 @@ set_mesh_uv_from_system(Adaptor& mesh,
                         const LeastSquaresSolver& solver)
 {
     const TriangleMesh& tmesh = mesh.get_adapted_mesh();
-     BOOST_FOREACH(vertex_descriptor vd, vertices(tmesh))
+    BOOST_FOREACH(vertex_descriptor vd, vertices(tmesh))
     {
         int index = mesh.get_vertex_index(vd);
 
@@ -611,7 +611,7 @@ is_one_to_one_mapping(const Adaptor& mesh,
     const TriangleMesh& tmesh = mesh.get_adapted_mesh();
     Vector_3    first_triangle_normal(0., 0., 0.);
 
-  BOOST_FOREACH(face_descriptor fd, faces(tmesh))
+    BOOST_FOREACH(face_descriptor fd, faces(tmesh))
     {
         // Get 3 vertices of the facet
         vertex_descriptor v0, v1, v2;
