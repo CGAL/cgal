@@ -97,7 +97,7 @@ GraphicsViewIsoRectangleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *even
   if(event->button() == ::Qt::LeftButton) {
     if(rectItem->isVisible()) {
       // we have clicked twice
-      emit generate(CGAL::make_object(convert(rectItem->rect())));
+      Q_EMIT generate(CGAL::make_object(convert(rectItem->rect())));
       rectItem->hide();
     } else { 
       // we enter a first point

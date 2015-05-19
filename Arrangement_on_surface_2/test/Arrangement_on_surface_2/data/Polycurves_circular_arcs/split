@@ -1,0 +1,7 @@
+## -*- comment-start: "#"; -*-
+# 
+# Format
+# <command>	<xcurve> <point of split> <resulting left polycurve> <resulting right polycurve>
+#
+split 11 9 1 2
+split 13 8 12 1 

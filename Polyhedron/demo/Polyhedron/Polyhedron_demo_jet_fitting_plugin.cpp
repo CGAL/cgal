@@ -29,7 +29,7 @@ public:
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionEstimateCurvature_triggered();
 }; // end Polyhedron_demo_jet_fitting_plugin
 

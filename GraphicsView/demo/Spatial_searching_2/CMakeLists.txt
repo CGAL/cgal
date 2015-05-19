@@ -26,6 +26,8 @@ include_directories (BEFORE ../../../Spatial_searching/include)
 
 if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
 
+  add_definitions(-DQT_NO_KEYWORDS)
+
   include(${QT_USE_FILE})
   #--------------------------------
   # Demo: Spatial_searching_2

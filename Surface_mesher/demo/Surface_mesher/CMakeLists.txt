@@ -34,6 +34,8 @@ set( QT_USE_QTMAIN   TRUE )
 
 find_package(CGAL COMPONENTS ImageIO Qt4)
 if ( CGAL_FOUND AND CGAL_Qt4_FOUND)
+
+  add_definitions(-DQT_NO_KEYWORDS)
   include( ${CGAL_USE_FILE} )
 
   find_package(Qt4 )

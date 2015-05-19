@@ -46,7 +46,7 @@ public:
     return false;
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionJoinPolyhedra_triggered();
   void on_actionSplitPolyhedra_triggered();
 

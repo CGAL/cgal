@@ -8,7 +8,7 @@ improves space locality. Two points close in the order will be close
 geometrically, and two points close geometrically will have a high probability 
 of being close in the order. 
 
-sorts the range `[begin, end)` in place. 
+It sorts the range `[begin, end)` in place. 
 
 The default traits class `Default_traits` is the kernel in which the type 
 `std::iterator_traits<RandomAccessIterator>::%value_type` is defined. 
@@ -16,7 +16,7 @@ The default traits class `Default_traits` is the kernel in which the type
 The default policy is `Hilbert_sort_median_policy()` and the 
 other option is `Hilbert_sort_middle_policy()`. 
 
-The default values for the thresholds and the ratio depends on the dimension. 
+The default values for the thresholds and the ratio depend on the dimension. 
 
 \cgalHeading{Requirements}
 

@@ -70,7 +70,7 @@ private:
   void* address_of_A;
   template <class Predicate> void export_as_polyhedron(Predicate,const QString&) const;
 
-public slots:
+public Q_SLOTS:
   void set_next_volume();
   void export_current_volume_as_polyhedron() const;
   void export_union_as_polyhedron() const;

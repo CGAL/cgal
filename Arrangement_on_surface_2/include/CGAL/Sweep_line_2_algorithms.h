@@ -57,11 +57,11 @@ struct Default_arr_traits<CGAL::Arr_segment_2<Kernel> >
   typedef CGAL::Arr_segment_traits_2<Kernel>                            Traits;
 };
 
-template <typename SegTraits>
-struct Default_arr_traits<CGAL::polyline::Polyline_2
-                          <SegTraits, typename SegTraits::Point_2> >
+template <typename SubcurveTraits>
+struct Default_arr_traits<CGAL::internal::Polycurve_2
+                          <SubcurveTraits, typename SubcurveTraits::Point_2> >
 {
-  typedef CGAL::Arr_polyline_traits_2<SegTraits>                        Traits;
+  typedef CGAL::Arr_polyline_traits_2<SubcurveTraits>                   Traits;
 };
 
 template <typename Rat_kernel_, class Alg_kernel_, class Nt_traits_>

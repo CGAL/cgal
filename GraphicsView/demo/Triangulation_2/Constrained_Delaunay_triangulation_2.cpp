@@ -187,10 +187,10 @@ private:
         std::cout << "duplicate point: " << p << std::endl; 
       }
     }
-    emit(changed());
+    Q_EMIT( changed());
   }
 
-public slots:
+public Q_SLOTS:
   void open(QString);
 
   void processInput(CGAL::Object o);
@@ -243,6 +243,7 @@ public slots:
 
   void on_actionInsertRandomPoints_triggered();
 
+Q_SIGNALS:
   void on_actionTagBlindFaces_triggered();
 
   void on_actionLloyd_optimization_triggered();
@@ -365,7 +366,7 @@ MainWindow::processInput(CGAL::Object o)
   }
 
   discoverComponents(cdt, m_seeds);
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -480,7 +481,7 @@ void
 MainWindow::on_actionClear_triggered()
 {
   clear();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 void
@@ -543,7 +544,7 @@ MainWindow::loadFile(QString fileName)
   ifs >> cdt;
   if(!ifs) abort();
   discoverComponents(cdt, m_seeds);
-  emit(changed());
+  Q_EMIT( changed());
   actionRecenter->trigger();
 }
 
@@ -577,7 +578,7 @@ MainWindow::loadPolygonConstraints(QString fileName)
   }
   
   discoverComponents(cdt, m_seeds);
-  emit(changed());
+  Q_EMIT( changed());
   actionRecenter->trigger();
 }
 
@@ -622,7 +623,7 @@ MainWindow::loadEdgConstraints(QString fileName)
   discoverComponents(cdt, m_seeds);
   // default cursor
   QApplication::restoreOverrideCursor();
-  emit(changed());
+  Q_EMIT( changed());
   actionRecenter->trigger();
 }
 
@@ -668,7 +669,7 @@ MainWindow::on_actionMakeGabrielConform_triggered()
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
   // default cursor
   QApplication::restoreOverrideCursor();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -684,7 +685,7 @@ MainWindow::on_actionMakeDelaunayConform_triggered()
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
    // default cursor
   QApplication::restoreOverrideCursor();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -722,7 +723,7 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
   statusBar()->showMessage(QString("Added %1 vertices in %2 seconds").arg(nv).arg(timer.time()), 2000);
   // default cursor
   QApplication::restoreOverrideCursor();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 void
@@ -766,7 +767,7 @@ MainWindow::on_actionMakeLipschitzDelaunayMesh_triggered()
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
   // default cursor
   QApplication::restoreOverrideCursor();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 void
@@ -801,7 +802,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   cdt.insert(points.begin(), points.end());
   // default cursor
   QApplication::restoreOverrideCursor();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 void

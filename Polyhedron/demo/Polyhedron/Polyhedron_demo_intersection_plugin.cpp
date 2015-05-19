@@ -55,7 +55,7 @@ private:
 
   QAction*  actionPolyhedronIntersection_3;
 
-public slots:
+public Q_SLOTS:
   void intersection();
 
 }; // end class Polyhedron_demo_intersection_plugin

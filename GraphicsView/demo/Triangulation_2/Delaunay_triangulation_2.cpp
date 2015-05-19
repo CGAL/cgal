@@ -56,7 +56,7 @@ private:
 public:
   MainWindow();
 
-public slots:
+public Q_SLOTS:
 
   void processInput(CGAL::Object o);
 
@@ -84,7 +84,7 @@ public slots:
 
   virtual void open(QString fileName);
 
-signals:
+Q_SIGNALS:
   void changed();
 };
 
@@ -191,7 +191,7 @@ MainWindow::processInput(CGAL::Object o)
   if(CGAL::assign(p, o)){
     dt.insert(p);
   }
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -269,7 +269,7 @@ void
 MainWindow::on_actionClear_triggered()
 {
   dt.clear();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -305,7 +305,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   dt.insert(points.begin(), points.end());
   // default cursor
   QApplication::restoreOverrideCursor();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -341,7 +341,7 @@ MainWindow::open(QString fileName)
   QApplication::restoreOverrideCursor();
   this->addToRecentFiles(fileName);
   actionRecenter->trigger();
-  emit(changed());
+  Q_EMIT( changed());
     
 }
 

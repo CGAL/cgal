@@ -14,9 +14,10 @@
 //
 // $URL$
 // $Id$
-// 
 //
-// Author(s)     : Ron Wein          <wein@post.tau.ac.il>
+//
+// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+//                 Waqar Khan <wkhan@mpi-inf.mpg.de>
 
 #ifndef CGAL_ARR_CONIC_TRAITS_2_H
 #define CGAL_ARR_CONIC_TRAITS_2_H
@@ -39,17 +40,17 @@ namespace CGAL {
  * \class A traits class for maintaining an arrangement of conic arcs (bounded
  * segments of algebraic curves of degree 2 at most).
  *
- * The class is templated with two parameters: 
+ * The class is templated with two parameters:
  * Rat_kernel A kernel that provides the input objects or coefficients.
  *            Rat_kernel::FT should be an integral or a rational type.
  * Alg_kernel A geometric kernel, where Alg_kernel::FT is the number type
  *            for the coordinates of arrangement vertices, which are algebraic
  *            numbers of degree up to 4 (preferably it is CORE::Expr).
  * Nt_traits A traits class for performing various operations on the integer,
- *           rational and algebraic types. 
+ *           rational and algebraic types.
  */
 template <class Rat_kernel_, class Alg_kernel_, class Nt_traits_>
-class Arr_conic_traits_2 
+class Arr_conic_traits_2
 {
 public:
 
@@ -73,6 +74,7 @@ public:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
   typedef Tag_false                       Has_do_intersect_category;
+  //typedef boost::true_type                Has_line_segment_constructor;
 
   typedef Arr_oblivious_side_tag          Left_side_category;
   typedef Arr_oblivious_side_tag          Bottom_side_category;
@@ -105,7 +107,7 @@ public:
   {}
 
   /*! Get the next conic index. */
-  static unsigned int get_index () 
+  static unsigned int get_index ()
   {
     static unsigned int index = 0;
     return (++index);
@@ -258,7 +260,7 @@ public:
         return (EQUAL);
 
       // Get a point q on the x-monotone arc with the same x coordinate as p.
-      Comparison_result  x_res; 
+      Comparison_result  x_res;
       Point_2            q;
 
       if ((x_res = ker.compare_x_2_object() (p, cv.left())) == EQUAL)
@@ -318,7 +320,7 @@ public:
       CGAL_precondition_code (
         Alg_kernel   ker;
       );
-      CGAL_precondition (ker.compare_xy_2_object() (p, 
+      CGAL_precondition (ker.compare_xy_2_object() (p,
                                                     cv1.left()) == LARGER &&
                          ker.compare_xy_2_object() (p,
                                                     cv2.left()) == LARGER);
@@ -375,7 +377,7 @@ public:
         Alg_kernel   ker;
       );
 
-      CGAL_precondition (ker.compare_xy_2_object() (p, 
+      CGAL_precondition (ker.compare_xy_2_object() (p,
                                                     cv1.right()) == SMALLER &&
                          ker.compare_xy_2_object() (p,
                                                     cv2.right()) == SMALLER);
@@ -455,7 +457,7 @@ public:
   public:
 
     /*!
-     * Cut the given conic curve (or conic arc) into x-monotone subcurves 
+     * Cut the given conic curve (or conic arc) into x-monotone subcurves
      * and insert them to the given output iterator.
      * \param cv The curve.
      * \param oi The output iterator, whose value-type is Object. The returned
@@ -469,7 +471,7 @@ public:
       // unique identifier.
       unsigned int  index = Self::get_index();
       Conic_id      conic_id (index);
-      
+
       // Find the points of vertical tangency to cv and act accordingly.
       typename Curve_2::Point_2  vtan_ps[2];
       int                        n_vtan_ps;
@@ -477,14 +479,14 @@ public:
       n_vtan_ps = cv.vertical_tangency_points (vtan_ps);
 
       if (n_vtan_ps == 0)
-      {    
+      {
         // In case the given curve is already x-monotone:
         *oi = make_object (X_monotone_curve_2 (cv, conic_id));
         ++oi;
         return (oi);
       }
 
-      // Split the conic arc into x-monotone sub-curves. 
+      // Split the conic arc into x-monotone sub-curves.
       if (cv.is_full_conic())
       {
         // Make sure we have two vertical tangency points.
@@ -493,10 +495,10 @@ public:
         // In case the curve is a full conic, split it into two x-monotone
         // arcs, one going from ps[0] to ps[1], and the other from ps[1] to
         // ps[0].
-        *oi = make_object (X_monotone_curve_2 (cv, vtan_ps[0], vtan_ps[1], 
+        *oi = make_object (X_monotone_curve_2 (cv, vtan_ps[0], vtan_ps[1],
                                                conic_id));
         ++oi;
-        *oi = make_object (X_monotone_curve_2 (cv, vtan_ps[1], vtan_ps[0], 
+        *oi = make_object (X_monotone_curve_2 (cv, vtan_ps[1], vtan_ps[0],
                                                conic_id));
         ++oi;
       }
@@ -506,10 +508,10 @@ public:
         {
           // Split the arc into two x-monotone sub-curves: one going from the
           // arc source to ps[0], and the other from ps[0] to the target.
-          *oi = make_object (X_monotone_curve_2 (cv, cv.source(), vtan_ps[0], 
+          *oi = make_object (X_monotone_curve_2 (cv, cv.source(), vtan_ps[0],
                                                  conic_id));
           ++oi;
-          *oi = make_object (X_monotone_curve_2 (cv, vtan_ps[0], cv.target(), 
+          *oi = make_object (X_monotone_curve_2 (cv, vtan_ps[0], cv.target(),
                                                  conic_id));
           ++oi;
         }
@@ -547,17 +549,17 @@ public:
 
           // Split the arc into three x-monotone sub-curves.
           *oi = make_object (X_monotone_curve_2 (cv,
-                                                 cv.source(), 
-                                                 vtan_ps[ind_first], 
+                                                 cv.source(),
+                                                 vtan_ps[ind_first],
                                                  conic_id));
           ++oi;
-          
+
           *oi = make_object (X_monotone_curve_2 (cv,
-                                                 vtan_ps[ind_first], 
-                                                 vtan_ps[ind_second], 
+                                                 vtan_ps[ind_first],
+                                                 vtan_ps[ind_second],
                                                  conic_id));
           ++oi;
-          
+
           *oi = make_object (X_monotone_curve_2 (cv,
                                                  vtan_ps[ind_second],
                                                  cv.target(),
@@ -671,7 +673,7 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
@@ -719,7 +721,7 @@ public:
      * \param p The exact point.
      * \param i The coordinate index (either 0 or 1).
      * \pre i is either 0 or 1.
-     * \return An approximation of p's x-coordinate (if i == 0), or an 
+     * \return An approximation of p's x-coordinate (if i == 0), or an
      *         approximation of p's y-coordinate (if i == 1).
      */
     Approximate_number_type operator() (const Point_2& p,
@@ -767,7 +769,7 @@ public:
 
   /// \name Functor definitions for the Boolean set-operation traits.
   //@{
- 
+
   class Compare_endpoints_xy_2
   {
   public:
@@ -814,9 +816,60 @@ public:
   {
     return Construct_opposite_2();
   }
+
+  class Trim_2
+  {
+  protected:
+    typedef Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>       Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Trim_2(const Traits& traits) : m_traits(traits) {}
+
+  public:
+    friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
+    /*!\brief
+     * Returns a trimmed version of an arc
+     *
+     * \param xcv The arc
+     * \param src the new first endpoint
+     * \param tgt the new second endpoint
+     * \return The trimmed arc
+     *
+     * \pre src != tgt
+     * \pre both points must be interior and must lie on \c cv
+     */
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
+                                  const Point_2& src,
+                                  const Point_2& tgt)const
+    {
+      // make functor objects
+      CGAL_precondition_code(Compare_y_at_x_2 compare_y_at_x_2 =
+                             m_traits.compare_y_at_x_2_object());
+      CGAL_precondition_code(Equal_2 equal_2 = m_traits.equal_2_object());
+      Compare_x_2 compare_x_2 = m_traits.compare_x_2_object();
+      // Check  whether source and taget are two distinct points and they lie
+      // on the line.
+      CGAL_precondition(compare_y_at_x_2(src, xcv) == EQUAL);
+      CGAL_precondition(compare_y_at_x_2(tgt, xcv) == EQUAL);
+      CGAL_precondition(! equal_2(src, tgt));
+
+      //check if the orientation conforms to the src and tgt.
+      if( (xcv.is_directed_right() && compare_x_2(src, tgt) == LARGER) ||
+          (! xcv.is_directed_right() && compare_x_2(src, tgt) == SMALLER) )
+        return (xcv.trim(tgt, src));
+      else return (xcv.trim(src, tgt));
+    }
+  };
+
+  /*! Obtain a Trim_2 functor object. */
+  Trim_2 trim_2_object() const { return Trim_2(*this); }
   //@}
 };
 
 } //namespace CGAL
-
 #endif

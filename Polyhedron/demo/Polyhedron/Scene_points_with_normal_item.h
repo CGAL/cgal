@@ -73,7 +73,7 @@ public:
   bool has_normals() const;
   void set_has_normals(bool b);
 
-public slots:
+public Q_SLOTS:
   // Delete selection
   virtual void deleteSelection();
   // Reset selection mark

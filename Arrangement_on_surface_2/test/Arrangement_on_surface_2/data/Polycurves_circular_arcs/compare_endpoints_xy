@@ -1,0 +1,12 @@
+# -*- comment-start: "#"; -*-
+#
+# compare_endpoints_xy -> returns LARGER if the x-monotone curve is oriented from right to left
+#								  SMALLER if the x-monotone curve is oriented from left to right.
+#
+# Format: <command> <x-curve id> <expected answer>
+compare_endpoints_xy 0 SMALLER
+compare_endpoints_xy 1 SMALLER
+compare_endpoints_xy 2 SMALLER
+compare_endpoints_xy 3 LARGER
+compare_endpoints_xy 4 SMALLER
+compare_endpoints_xy 5 SMALLER

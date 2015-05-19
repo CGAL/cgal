@@ -280,40 +280,40 @@ void Volume::set_inverse_normals(const bool b) {
                                // marching cube. See gl_draw_marchingcube()
                                // for an explanation.
 
-  emit changed();
+  Q_EMIT changed();
 }
 
 void Volume::set_two_sides(const bool b) {
   two_sides = b;
-  emit changed();
+  Q_EMIT changed();
 }
 
 void Volume::set_draw_triangles_edges(const bool b) {
   draw_triangles_edges = b;
-  emit changed();
+  Q_EMIT changed();
 }
 
 void Volume::set_draw_triangulation(const bool b) {
   m_draw_triangulation = b;
-  emit changed();
+  Q_EMIT changed();
 }
 
 void Volume::set_triangulation_edges_color() {
   const QColor color = QColorDialog::getColor(m_triangulation_color, mw);
   if (color.isValid()) {
     m_triangulation_color = color;
-    emit changed();
+    Q_EMIT changed();
   }
 }
 
 void Volume::set_use_gouraud(const bool b) {
   use_gouraud = b;
-  emit changed();
+  Q_EMIT changed();
 }
 
 void Volume::set_show_bbox(const bool b) {
   show_bbox = b;
-  emit changed();
+  Q_EMIT changed();
 }
 
 void Volume::only_in()
@@ -594,7 +594,7 @@ void Volume::finish_open()
   values_list->load_values(fileinfo.absoluteFilePath());
   load_image_settings(fileinfo.absoluteFilePath());
   changed_parameters();
-  emit changed();
+  Q_EMIT changed();
 }
 
 void Volume::export_off()
@@ -771,10 +771,10 @@ void Volume::display_marchin_cube()
 
   m_view_mc = true;
   m_view_surface = false;
-  emit changed();
+  Q_EMIT changed();
   if(!m_surface_mc.empty())
   {
-    emit new_bounding_box(bbox.xmin(),
+    Q_EMIT new_bounding_box(bbox.xmin(),
                           bbox.ymin(),
                           bbox.zmin(),
                           bbox.xmax(),
@@ -984,7 +984,7 @@ void Volume::display_surface_mesher_result()
 	  {
 	    cit->info() = classify(surface(cit->circumcenter()));
 	  }
-// 	  emit changed();
+// 	  Q_EMIT changed();
 	  qApp->processEvents();
 	  timer.stop();
 	  std::cerr << timer.time() << " secondes)\n";
@@ -1053,10 +1053,10 @@ void Volume::display_surface_mesher_result()
   // toggle visualization
   m_view_mc = false;
   m_view_surface = true;
-  emit changed();
+  Q_EMIT changed();
   if(!m_surface.empty())
   {
-    emit new_bounding_box(bbox.xmin(),
+    Q_EMIT new_bounding_box(bbox.xmin(),
                           bbox.ymin(),
                           bbox.zmin(),
                           bbox.xmax(),
@@ -1424,7 +1424,7 @@ void Volume::changed_parameters()
   c2t3.clear();
   del.clear();
   m_view_mc = m_view_surface = false;
-  emit changed();
+  Q_EMIT changed();
 }
 
 #ifdef CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE

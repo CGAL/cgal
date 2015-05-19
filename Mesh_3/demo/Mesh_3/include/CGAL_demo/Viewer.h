@@ -27,11 +27,11 @@ public:
   void setMask(bool b, double ratio=1);
   bool antiAliasing() const { return antialiasing; }
 
-signals:
+Q_SIGNALS:
   void selected(int);
   void pointSelected(QPoint);
 
-public slots:
+public Q_SLOTS:
   void setAntiAliasing(bool b);
   void setTwoSides(bool b);
 

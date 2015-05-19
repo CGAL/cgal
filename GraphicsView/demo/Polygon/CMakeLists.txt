@@ -25,6 +25,8 @@ include_directories (BEFORE ../../include)
 
 if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
 
+  add_definitions(-DQT_NO_KEYWORDS)
+
   if( CGAL_Core_FOUND)
     add_definitions(-DCGAL_USE_CORE)
   endif()

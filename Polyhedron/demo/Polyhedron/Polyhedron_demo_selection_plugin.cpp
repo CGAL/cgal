@@ -65,7 +65,7 @@ public:
     } 
   }
 
-public slots:
+public Q_SLOTS:
   void selection_action() { 
     dock_widget->show();
     dock_widget->raise();

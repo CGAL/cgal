@@ -92,7 +92,7 @@ TriangulationPointInputAndConflictZone<T>::mouseReleaseEvent(QGraphicsSceneMouse
     delete *it;
   }
   qfaces.clear();
-  emit (generate(CGAL::make_object(p)));
+  Q_EMIT( generate(CGAL::make_object(p)));
 }
 
 

@@ -18,7 +18,7 @@ protected:
       connect(this, SIGNAL(changed()), viewer, SLOT(updateGL()));
     viewer->set_surface(this);
   }
-public slots:
+public Q_SLOTS:
   virtual bool open(const QString& filename) = 0;
   virtual void close() = 0;
   virtual void draw() = 0;
@@ -26,7 +26,7 @@ public slots:
 			float&, float&, float&) = 0;
   virtual void drawWithNames() {};
   virtual void postSelection(const QPoint&) {};
-signals:
+Q_SIGNALS:
   void changed();
 
 protected:

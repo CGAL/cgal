@@ -71,15 +71,15 @@ public:
   QString optimizer_name() const { return f_->name(); }
   QStringList parameters_log() const { return f_->parameters_log(); }
   
-public slots:
+public Q_SLOTS:
   // Stop
   void stop();
   
-private slots:
+private Q_SLOTS:
   // emit signal status report
   void emit_status();
   
-signals:
+Q_SIGNALS:
   // Emitted at the end of the process
   void done(Optimizer_thread*);
   // Informs about status of the process
