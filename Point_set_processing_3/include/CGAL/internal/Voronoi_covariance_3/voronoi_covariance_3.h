@@ -24,7 +24,11 @@
 #include <list>
 #include <CGAL/array.h>
 #include <CGAL/internal/Voronoi_covariance_3/voronoi_covariance_sphere_3.h>
+#ifdef CGAL_VORONOI_COVARIANCE_USE_CONSTRUCTIONS
+#include <CGAL/Convex_hull_3/dual/halfspace_intersection_with_constructions_3.h>
+#else
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
+#endif
 
 namespace CGAL {
     namespace Voronoi_covariance_3 {
@@ -150,7 +154,12 @@ namespace CGAL {
                     sphere(std::back_inserter(planes));
 
                     Polyhedron P;
-                    CGAL::halfspace_intersection_3(planes.begin(), planes.end(), P, Point(CGAL::ORIGIN));
+                    #ifdef CGAL_VORONOI_COVARIANCE_USE_CONSTRUCTIONS
+                    halfspace_intersection_with_constructions_3
+                    #else
+                    halfspace_intersection_3
+                    #endif
+                      (planes.begin(), planes.end(), P, Point(CGAL::ORIGIN));
 
                     // apply f to the triangles on the boundary of P
                     for (typename Polyhedron::Facet_iterator it = P.facets_begin();
