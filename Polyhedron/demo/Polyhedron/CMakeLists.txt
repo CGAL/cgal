@@ -501,6 +501,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(shortest_path_plugin Polyhedron_demo_shortest_path_plugin ${shortestPathUI_FILES})
   target_link_libraries(shortest_path_plugin scene_polyhedron_item scene_polylines_item scene_polyhedron_selection_item scene_polyhedron_shortest_path_item scene_basic_objects)
   
+  polyhedron_demo_plugin(detect_sharp_edges_plugin Polyhedron_demo_detect_sharp_edges_plugin)
+  target_link_libraries(detect_sharp_edges_plugin scene_polyhedron_item)
+  
+  
   polyhedron_demo_plugin(isotropic_remeshing_plugin Polyhedron_demo_isotropic_remeshing_plugin)
   target_link_libraries(isotropic_remeshing_plugin  scene_polyhedron_item scene_polyhedron_selection_item)
   
