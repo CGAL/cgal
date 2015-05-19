@@ -109,8 +109,19 @@ public:
 
   // constructor from a triangulation
   Lipschitz_sizing_field_2(Tr& tr, const double k = 1.0)
-    : Lipschitz_sizing_field_2(tr.points_begin(), tr.points_end(), k)
+    : K(k)
   {
+#ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
+    std::cout << "Building sizing field..." << std::flush;
+#endif
+    points = std::list<Point>(tr.points_begin(), tr.points_end());
+    generate_delaunay();
+    extract_poles();
+    generate_sites();
+    generate_apollonius();
+#ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
+    std::cout << "done." << std::endl;
+#endif
   }
 
   // assignment operator, copies point set and K
