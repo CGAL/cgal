@@ -60,6 +60,8 @@ class Point_set_demo_normal_estimation_dialog : public QDialog, private Ui::VCMN
 
     float offsetRadius() const { return m_inputOffsetRadius->value(); }
     float convolveRadius() const { return m_inputConvolveRadius->value(); }
+    unsigned int convolveNeighbors() const { return m_inputConvolveNeighbors->value(); }
+    bool convolveUsingRadius() const { return m_inputUseConvRad->isChecked(); }
 };
 
 void Polyhedron_demo_vcm_normal_estimation_plugin::on_actionVCMNormalEstimation_triggered()
@@ -91,14 +93,26 @@ void Polyhedron_demo_vcm_normal_estimation_plugin::on_actionVCMNormalEstimation_
     //***************************************
 
     CGAL::Timer task_timer; task_timer.start();
-    std::cerr << "Estimates Normals Direction using VCM (R="
-        << dialog.offsetRadius() << " and r=" << dialog.convolveRadius() << ")...\n";
 
     // Estimates normals direction.
-    CGAL::vcm_estimate_normals(points->begin(), points->end(),
-                               CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
-                               dialog.offsetRadius(), dialog.convolveRadius());
+    if (dialog.convolveUsingRadius())
+    {
+      std::cerr << "Estimates Normals Direction using VCM (R="
+          << dialog.offsetRadius() << " and r=" << dialog.convolveRadius() << ")...\n";
 
+      CGAL::vcm_estimate_normals(points->begin(), points->end(),
+                                 CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
+                                 dialog.offsetRadius(), dialog.convolveRadius());
+    }
+    else
+    {
+      std::cerr << "Estimates Normals Direction using VCM (R="
+        << dialog.offsetRadius() << " and k=" << dialog.convolveNeighbors() << ")...\n";
+
+      CGAL::vcm_estimate_normals(points->begin(), points->end(),
+                                 CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
+                                 dialog.offsetRadius(), dialog.convolveNeighbors());
+    }
       // Mark all normals as unoriented
       first_unoriented_point = points->begin();
 

@@ -370,10 +370,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     polyhedron_demo_plugin(vcm_normal_estimation_plugin Polyhedron_demo_vcm_normal_estimation_plugin ${vcm_normal_estimationUI_FILES})
     target_link_libraries(vcm_normal_estimation_plugin scene_points_with_normal_item)
 
-    qt4_wrap_ui( vcm_neighbors_normal_estimationUI_FILES Polyhedron_demo_vcm_neighbors_normal_estimation_plugin.ui)
-    polyhedron_demo_plugin(vcm_neighbors_normal_estimation_plugin Polyhedron_demo_vcm_neighbors_normal_estimation_plugin ${vcm_neighbors_normal_estimationUI_FILES})
-    target_link_libraries(vcm_neighbors_normal_estimation_plugin scene_points_with_normal_item)
-
     qt4_wrap_ui( features_detection_pluginUI_FILES Polyhedron_demo_features_detection_plugin.ui)
     polyhedron_demo_plugin(features_detection_plugin Polyhedron_demo_features_detection_plugin ${features_detection_pluginUI_FILES})
     target_link_libraries(features_detection_plugin scene_points_with_normal_item)
