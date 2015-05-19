@@ -418,12 +418,7 @@ public:
     }
 
     // VERTEX INTERFACE
-#if 0
-    /// Get the 3D position of a vertex
-    Point_3 get_vertex_position(vertex_descriptor vertex) const {
-        return vertex->point();
-    }
-#endif 
+
     /// Get/set the 2D position (u/v pair) of a vertex. Default value is undefined.
     /// (stored in halfedges sharing the same vertex).
     Point_2  get_vertex_uv(vertex_descriptor vertex) const {
