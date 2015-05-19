@@ -7,6 +7,9 @@
 #include <CGAL/Parameterization_polyhedron_adaptor_3.h>
 #include <CGAL/parameterize.h>
 #include <CGAL/Discrete_authalic_parameterizer_3.h>
+#include <CGAL/Barycentric_mapping_parameterizer_3.h>
+#include <CGAL/Discrete_conformal_map_parameterizer_3.h>
+#include <CGAL/Mean_value_coordinates_parameterizer_3.h>
 #include <boost/foreach.hpp>
 #include <iostream>
 #include <cstdlib>
@@ -19,7 +22,7 @@
 
 typedef CGAL::Simple_cartesian<double>      Kernel;
 typedef Kernel::Point_2                     Point_2;
-#if 0
+#if 1
 typedef CGAL::Surface_mesh<Kernel::Point_3> Polyhedron;
 #else
 typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
@@ -102,7 +105,11 @@ int main(int argc, char * argv[])
     // (defaults are circular border and Eigen solver)
     //***************************************
 
-    typedef CGAL::Discrete_authalic_parameterizer_3<Parameterization_polyhedron_adaptor>
+    typedef 
+      CGAL::Discrete_authalic_parameterizer_3<Parameterization_polyhedron_adaptor>
+      //CGAL::Barycentric_mapping_parameterizer_3<Parameterization_polyhedron_adaptor>
+      //CGAL::Discrete_conformal_map_parameterizer_3<Parameterization_polyhedron_adaptor>
+      //CGAL::Mean_value_coordinates_parameterizer_3<Parameterization_polyhedron_adaptor>
                                                         Parameterizer;
 
     Parameterizer::Error_code err = CGAL::parameterize(mesh_adaptor, Parameterizer());

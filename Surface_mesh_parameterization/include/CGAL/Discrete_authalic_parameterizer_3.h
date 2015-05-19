@@ -132,10 +132,10 @@ protected:
                             vertex_descriptor main_vertex_v_i,
                             vertex_around_target_circulator neighbor_vertex_v_j)
     {
-typedef typename boost::property_map<typename Adaptor::Polyhedron, boost::vertex_point_t>::const_type PPmap;
- typedef typename boost::property_traits<PPmap>::reference Point_3;
+        typedef typename boost::property_map<typename Adaptor::Polyhedron, boost::vertex_point_t>::const_type PPmap;
+        typedef typename boost::property_traits<PPmap>::reference Point_3;
  
-      PPmap ppmap = get(vertex_point, mesh.get_adapted_mesh());
+        PPmap ppmap = get(vertex_point, mesh.get_adapted_mesh());
 
         Point_3 position_v_i = get(ppmap,main_vertex_v_i);
         Point_3 position_v_j = get(ppmap,*neighbor_vertex_v_j);

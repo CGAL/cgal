@@ -139,8 +139,12 @@ protected:
                             vertex_descriptor main_vertex_v_i,
                             vertex_around_target_circulator neighbor_vertex_v_j)
     {
-        Point_3 position_v_i = mesh.get_vertex_position(main_vertex_v_i);
-        Point_3 position_v_j = mesh.get_vertex_position(*neighbor_vertex_v_j);
+        typedef typename boost::property_map<typename Adaptor::Polyhedron, boost::vertex_point_t>::const_type PPmap;
+        typedef typename boost::property_traits<PPmap>::reference Point_3;
+ 
+        PPmap ppmap = get(vertex_point, mesh.get_adapted_mesh());
+        Point_3 position_v_i = get(ppmap,main_vertex_v_i);
+        Point_3 position_v_j = get(ppmap,*neighbor_vertex_v_j);
 
         // Compute the norm of v_j -> v_i vector
         Vector_3 edge = position_v_i - position_v_j;
@@ -150,14 +154,14 @@ protected:
         // if v_k is the vertex before v_j when circulating around v_i
         vertex_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
         previous_vertex_v_k --;
-        Point_3 position_v_k = mesh.get_vertex_position(*previous_vertex_v_k);
+        Point_3 position_v_k = get(ppmap,*previous_vertex_v_k);
         double gamma_ij  = compute_angle_rad(position_v_j, position_v_i, position_v_k);
 
         // Compute angle of (v_l,v_i,v_j) corner (i.e. angle of v_i corner)
         // if v_l is the vertex after v_j when circulating around v_i
         vertex_around_target_circulator next_vertex_v_l = neighbor_vertex_v_j;
         next_vertex_v_l ++;
-        Point_3 position_v_l = mesh.get_vertex_position(*next_vertex_v_l);
+        Point_3 position_v_l = get(ppmap,*next_vertex_v_l);
         double delta_ij = compute_angle_rad(position_v_l, position_v_i, position_v_j);
 
         double weight = 0.0;
