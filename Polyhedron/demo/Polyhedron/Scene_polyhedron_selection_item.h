@@ -13,6 +13,7 @@
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include "Polyhedron_demo_detect_sharp_edges.h"
 
 #include <fstream>
 #include <boost/foreach.hpp>
@@ -20,6 +21,7 @@
 #include <boost/property_map/vector_property_map.hpp>
 
 #include <CGAL/boost/graph/selection.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -703,6 +705,34 @@ public:
       points, polygons, *out);
 
     return out->size_of_vertices() > 0;
+  }
+
+  struct Is_sharp_edge_property_map
+  {
+    friend bool get(Is_sharp_edge_property_map,
+                    Polyhedron::Halfedge_handle h)
+    {
+      return h->is_feature_edge();
+    }
+    friend void put(Is_sharp_edge_property_map,
+                    Polyhedron::Halfedge_handle h,
+                    bool b)
+    {
+      h->set_feature_edge(b);
+    }
+  };
+
+  void select_sharp_edges(const double angle)
+  {
+    CGAL::detect_sharp_edges(polyhedron(), angle);
+
+    Is_sharp_edge_property_map is_sharp;
+    BOOST_FOREACH(edge_descriptor e, edges(*polyhedron()))
+    {
+      Polyhedron::Halfedge_handle h = halfedge(e, *polyhedron());
+      if (get(is_sharp, h))
+        selected_edges.insert(e);
+    }
   }
 
   void changed_with_poly_item() {
