@@ -733,6 +733,7 @@ public:
       if (get(is_sharp, h))
         selected_edges.insert(e);
     }
+    changed_with_poly_item();
   }
 
   void changed_with_poly_item() {
