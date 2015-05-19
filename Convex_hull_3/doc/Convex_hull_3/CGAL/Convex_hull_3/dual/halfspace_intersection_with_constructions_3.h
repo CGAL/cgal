@@ -24,7 +24,7 @@ template <class PlaneIterator, class Polyhedron, class Traits>
 void halfspace_intersection_with_constructions_3(PlaneIterator pbegin,
                                                  PlaneIterator pend,
                                                  Polyhedron &P,
-                                                 boost::optional<Polyhedron::Vertex::Point_3> origin,
+                                                 boost::optional<Polyhedron::Vertex::Point_3> origin = boost::none,
                                                  const Traits & ch_traits = Default_traits);
 
 } /* namespace CGAL */
