@@ -68,7 +68,7 @@ vcm_offset (ForwardIterator first, ///< iterator over the first input point.
             PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
             std::vector<Covariance> &cov, ///< vector of covariance matrices.
             double offset_radius, ///< radius of the sphere.
-            size_t N, ///< number of planes used to discretize the sphere.
+            std::size_t N, ///< number of planes used to discretize the sphere.
             const K & /*kernel*/) ///< geometric traits.
 {
     // Sphere discretization
@@ -132,7 +132,7 @@ vcm_convolve (ForwardIterator first,
 
         Covariance m;
         std::fill(m.begin(), m.end(), typename K::FT(0));
-        for (size_t k = 0; k < nn.size(); ++k)
+        for (std::size_t k = 0; k < nn.size(); ++k)
         {
           std::size_t index = nn[k].second;
           for (int i=0; i<6; ++i)
@@ -249,7 +249,7 @@ compute_vcm (ForwardIterator first,
 {
     // First, compute the VCM for each point
     std::vector< cpp11::array<typename Kernel::FT, 6> > cov;
-    size_t N = 20;
+    std::size_t N = 20;
     internal::vcm_offset (first, beyond,
                           point_pmap,
                           cov,
