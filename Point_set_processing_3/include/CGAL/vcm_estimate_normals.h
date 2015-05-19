@@ -75,19 +75,24 @@ vcm_offset (ForwardIterator first, ///< iterator over the first input point.
     typename CGAL::Voronoi_covariance_3::Sphere_discretization<K> sphere(offset_radius, N);
 
     // Compute the Delaunay Triangulation
-    typedef CGAL::Delaunay_triangulation_3<K> DT;
-    DT dt;
-    ForwardIterator it;
-    for (it = first; it != beyond; ++it) {
-        dt.insert(get(point_pmap, *it));
-    }
+    std::vector<typename K::Point_3> points;
+    points.reserve(std::distance(first, beyond));
+    for (ForwardIterator it = first; it != beyond; ++it)
+      points.push_back(get(point_pmap, *it));
+
+    typedef Delaunay_triangulation_3<K> DT;
+    DT dt(points.begin(), points.end());
 
     cov.clear();
+    cov.reserve(points.size());
     // Compute the VCM
-    for (it = first; it != beyond; ++it) {
-        typename DT::Vertex_handle vh = dt.nearest_vertex(get(point_pmap, *it));
-        Covariance c = Voronoi_covariance_3::voronoi_covariance_3(dt, vh, sphere);
-        cov.push_back(c);
+    for (typename std::vector<typename K::Point_3>::iterator
+          it = points.begin(); it != points.end(); ++it)
+    {
+        typename DT::Vertex_handle vh = dt.nearest_vertex(*it);
+        cov.push_back(
+          Voronoi_covariance_3::voronoi_covariance_3(dt, vh, sphere)
+        );
     }
 }
 /// @endcond
