@@ -27,6 +27,8 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_3.h>
+#include <CGAL/Search_traits_adapter.h>
+#include <CGAL/property_map.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Fuzzy_sphere.h>
 
@@ -106,30 +108,25 @@ vcm_convolve (ForwardIterator first,
               double convolution_radius,
               const K &)
 {
-    typedef typename K::Point_3 Point;
-    typedef CGAL::Search_traits_3<K> Traits;
-    typedef CGAL::Kd_tree<Traits> Tree;
-    typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_sphere;
-
-    ForwardIterator it;
+    typedef std::pair<typename K::Point_3, std::size_t>              Tree_point;
+    typedef First_of_pair_property_map< Tree_point >                  Tree_pmap;
+    typedef Search_traits_3<K>                                      Traits_base;
+    typedef Search_traits_adapter<Tree_point, Tree_pmap, Traits_base>    Traits;
+    typedef Kd_tree<Traits>                                                Tree;
+    typedef Fuzzy_sphere<Traits>                                   Fuzzy_sphere;
 
     // Kd tree
     Tree tree;
-    for (it = first; it != beyond; ++it) {
-        tree.insert(get(point_pmap, *it));
-    }
-
-    std::map<Point, size_t> indices;
-    size_t i = 0;
-    for (it = first; it != beyond; ++it) {
-        indices[get(point_pmap, *it)] = i;
-        i++;
-    }
+    tree.reserve(cov.size());
+    std::size_t i=0;
+    for (ForwardIterator it = first; it != beyond; ++it, ++i)
+        tree.insert( Tree_point(get(point_pmap, *it), i) );
 
     // Convolving
     ncov.clear();
-    for (it = first; it != beyond; ++it) {
-        std::vector<Point> nn;
+    ncov.reserve(cov.size());
+    for (ForwardIterator it = first; it != beyond; ++it) {
+        std::vector<Tree_point> nn;
         tree.search(std::back_inserter(nn),
                     Fuzzy_sphere (get(point_pmap, *it), convolution_radius));
 
@@ -137,7 +134,7 @@ vcm_convolve (ForwardIterator first,
         std::fill(m.begin(), m.end(), typename K::FT(0));
         for (size_t k = 0; k < nn.size(); ++k)
         {
-          std::size_t index = indices [nn[k]];
+          std::size_t index = nn[k].second;
           for (int i=0; i<6; ++i)
             m[i] += cov[index][i];
         }
@@ -162,41 +159,36 @@ vcm_convolve (ForwardIterator first,
               unsigned int nb_neighbors_convolve,
               const K &)
 {
-    typedef typename K::Point_3 Point;
-    typedef CGAL::Search_traits_3<K> Traits;
-    typedef CGAL::Orthogonal_k_neighbor_search<Traits> Neighbor_search;
-    typedef typename Neighbor_search::Tree Tree;
-
-    ForwardIterator it;
+    typedef std::pair<typename K::Point_3, std::size_t>              Tree_point;
+    typedef First_of_pair_property_map< Tree_point >                  Tree_pmap;
+    typedef Search_traits_3<K>                                      Traits_base;
+    typedef Search_traits_adapter<Tree_point, Tree_pmap, Traits_base>    Traits;
+    typedef Orthogonal_k_neighbor_search<Traits>                Neighbor_search;
+    typedef typename Neighbor_search::Tree                                 Tree;
 
     // Search tree
     Tree tree;
-    for (it = first; it != beyond; ++it) {
-        tree.insert(get(point_pmap, *it));
-    }
+    tree.reserve(cov.size());
+    std::size_t i=0;
+    for (ForwardIterator it = first; it != beyond; ++it, ++i)
+        tree.insert( Tree_point(get(point_pmap, *it), i) );
 
-    std::map<Point, size_t> indices;
-    size_t i = 0;
-    for (it = first; it != beyond; ++it) {
-        indices[get(point_pmap, *it)] = i;
-        i++;
-    }
     // Convolving
     ncov.clear();
-    for (it = first; it != beyond; ++it) {
+    ncov.reserve(cov.size());
+    for (ForwardIterator it = first; it != beyond; ++it) {
         Neighbor_search search(tree, get(point_pmap, *it), nb_neighbors_convolve);
-        std::vector<Point> nn;
-
-        for (typename Neighbor_search::iterator nit = search.begin();
-             nit != search.end();
-             ++nit) {
-            nn.push_back(nit->first);
-        }
 
         Covariance m;
-        for (size_t k = 0; k < nn.size(); ++k)
+        for (typename Neighbor_search::iterator nit = search.begin();
+             nit != search.end();
+             ++nit)
+        {
+          std::size_t index = nit->first.second;
           for (int i=0; i<6; ++i)
-            m[i] += cov[indices [nn[k]]][i];
+            m[i] += cov[index][i];
+        }
+
         ncov.push_back(m);
     }
 }
@@ -264,9 +256,9 @@ compute_vcm (ForwardIterator first,
                           offset_radius,
                           N,
                           kernel);
-
     // Then, convolve it (only when convolution_radius != 0)
     if (convolution_radius == 0) {
+        ccov.reserve(cov.size());
         std::copy(cov.begin(), cov.end(), std::back_inserter(ccov));
     } else {
         internal::vcm_convolve(first, beyond,
