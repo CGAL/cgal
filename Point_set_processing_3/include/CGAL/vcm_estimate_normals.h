@@ -325,16 +325,20 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                              20,
                              kernel);
 
-        std::vector<Covariance> ccov;
-        internal::vcm_convolve(first, beyond,
-                               point_pmap,
-                               cov,
-                               ccov,
-                               (unsigned int) nb_neighbors_convolve,
-                               kernel);
+        if (nb_neighbors_convolve > 0)
+        {
+          std::vector<Covariance> ccov;
+          ccov.reserve(cov.size());
+          internal::vcm_convolve(first, beyond,
+                                 point_pmap,
+                                 cov,
+                                 ccov,
+                                 (unsigned int) nb_neighbors_convolve,
+                                 kernel);
 
-        cov.clear();
-        std::copy(ccov.begin(), ccov.end(), std::back_inserter(cov));
+          cov.clear();
+          std::copy(ccov.begin(), ccov.end(), std::back_inserter(cov));
+        }
     }
 
     // And finally, compute the normals
