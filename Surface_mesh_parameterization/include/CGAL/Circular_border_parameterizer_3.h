@@ -19,8 +19,8 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
 
-#ifndef CGAL_CIRCULARBORDERPARAMETERIZER_3_H
-#define CGAL_CIRCULARBORDERPARAMETERIZER_3_H
+#ifndef CGAL_CIRCULAR_BORDER_PARAMETERIZER_3_H
+#define CGAL_CIRCULAR_BORDER_PARAMETERIZER_3_H
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
@@ -63,9 +63,9 @@ class Circular_border_parameterizer_3
 public:
     /// Export ParameterizationMesh_3 template parameter
     typedef ParameterizationMesh_3          Adaptor;
-  typedef typename Adaptor::Polyhedron TriangleMesh;
+    typedef typename Adaptor::Polyhedron TriangleMesh;
 
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+    typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 // Private types
 private:
     // Mesh_Adaptor_3 subtypes:
@@ -279,4 +279,4 @@ protected:
 
 } //namespace CGAL
 
-#endif //CGAL_CIRCULARBORDERPARAMETERIZER_3_H
+#endif //CGAL_CIRCULAR_BORDER_PARAMETERIZER_3_H

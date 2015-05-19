@@ -19,8 +19,8 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
 
-#ifndef CGAL_SQUAREBORDERPARAMETERIZER_3_H
-#define CGAL_SQUAREBORDERPARAMETERIZER_3_H
+#ifndef CGAL_SQUARE_BORDER_PARAMETERIZER_3_H
+#define CGAL_SQUARE_BORDER_PARAMETERIZER_3_H
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
@@ -66,41 +66,16 @@ class Square_border_parameterizer_3
 public:
     /// Export ParameterizationMesh_3 template parameter.
     typedef ParameterizationMesh_3          Adaptor;
+    typedef typename Adaptor::Polyhedron TriangleMesh;
+
+    typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef Halfedge_around_face_iterator<TriangleMesh> halfedge_around_face_iterator;
 
 // Private types
 private:
     // Mesh_Adaptor_3 subtypes:
-    typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Point_2       Point_2;
-    typedef typename Adaptor::Point_3       Point_3;
-    typedef typename Adaptor::Vector_2      Vector_2;
     typedef typename Adaptor::Vector_3      Vector_3;
-    typedef typename Adaptor::Facet         Facet;
-    typedef typename Adaptor::Facet_handle  Facet_handle;
-    typedef typename Adaptor::Facet_const_handle
-                                            Facet_const_handle;
-    typedef typename Adaptor::Facet_iterator Facet_iterator;
-    typedef typename Adaptor::Facet_const_iterator
-                                            Facet_const_iterator;
-    typedef typename Adaptor::Vertex        Vertex;
-    typedef typename Adaptor::Vertex_handle Vertex_handle;
-    typedef typename Adaptor::Vertex_const_handle
-                                            Vertex_const_handle;
-    typedef typename Adaptor::Vertex_iterator Vertex_iterator;
-    typedef typename Adaptor::Vertex_const_iterator
-                                            Vertex_const_iterator;
-    typedef typename Adaptor::Border_vertex_iterator
-                                            Border_vertex_iterator;
-    typedef typename Adaptor::Border_vertex_const_iterator
-                                            Border_vertex_const_iterator;
-    typedef typename Adaptor::Vertex_around_facet_circulator
-                                            Vertex_around_facet_circulator;
-    typedef typename Adaptor::Vertex_around_facet_const_circulator
-                                            Vertex_around_facet_const_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_circulator
-                                            Vertex_around_vertex_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_const_circulator
-                                            Vertex_around_vertex_const_circulator;
 
     typedef typename std::vector<double>    Offset_map;
 
@@ -123,8 +98,8 @@ public:
 protected:
     /// Compute the length of an edge.
     virtual double compute_edge_length(const Adaptor& mesh,
-                                       Vertex_const_handle source,
-                                       Vertex_const_handle target) = 0;
+                                       vertex_descriptor source,
+                                       vertex_descriptor target) = 0;
 
 // Private operations
 private:
@@ -132,9 +107,9 @@ private:
     double compute_border_length(const Adaptor& mesh);
 
     /// Get mesh iterator whose offset is closest to 'value'.
-    Border_vertex_iterator closest_iterator(Adaptor& mesh,
-                                            const Offset_map& offsets,
-                                            double value);
+    halfedge_around_face_iterator closest_iterator(Adaptor& mesh,
+                                                   const Offset_map& offsets,
+                                                   double value);
 };
 
 
@@ -144,21 +119,13 @@ inline
 double Square_border_parameterizer_3<Adaptor>::compute_border_length(
                                                         const Adaptor& mesh)
 {
+    const TriangleMesh& tmesh = mesh.get_adapted_mesh();
     double len = 0.0;
-    for(Border_vertex_const_iterator it = mesh.mesh_main_border_vertices_begin();
-        it != mesh.mesh_main_border_vertices_end();
-        it++)
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(mesh.main_border(),tmesh))
     {
-        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(it));
-
-        // Get next iterator (looping)
-        Border_vertex_const_iterator next = it;
-        next++;
-        if(next == mesh.mesh_main_border_vertices_end())
-            next = mesh.mesh_main_border_vertices_begin();
-
-        // Add 'length' of it -> next vector to 'len'
-        len += compute_edge_length(mesh, it, next);
+      CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(target(hd, tmesh)));
+      // Add 'length' of it -> next vector to 'len'
+      len += compute_edge_length(mesh, source(hd,tmesh), target(hd,tmesh));
     }
     return len;
 }
@@ -174,8 +141,10 @@ Square_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
     std::cerr << "  map on a square" << std::endl;
 #endif
 
+    const TriangleMesh& tmesh = mesh.get_adapted_mesh();
     // Nothing to do if no border
-    if (mesh.mesh_main_border_vertices_begin() == mesh.mesh_main_border_vertices_end())
+    
+    if (mesh.main_border() == boost::graph_traits<TriangleMesh>::null_halfedge())
         return Parameterizer_traits_3<Adaptor>::ERROR_BORDER_TOO_SHORT;
 
     // Compute the total border length
@@ -187,67 +156,64 @@ Square_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
     double len = 0.0;           // current position on square in [0, total_len[
     Offset_map offset;          // vertex index -> offset map
     offset.resize(mesh.count_mesh_vertices());
-    Border_vertex_iterator it;
-    for(it = mesh.mesh_main_border_vertices_begin();
-        it != mesh.mesh_main_border_vertices_end();
-        it++)
+    halfedge_around_face_iterator b,e;
+    boost::tie(b,e) =  halfedges_around_face(mesh.main_border(),tmesh);
+    
+    for(halfedge_around_face_iterator it = b;
+        it!= e;
+        ++it)
     {
-        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(it));
+      vertex_descriptor vs = source(*it,tmesh);
+      vertex_descriptor vt = target(*it,tmesh);
+        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(vs));
 
-        offset[mesh.get_vertex_index(it)] = 4.0f*len/total_len;
+        offset[mesh.get_vertex_index(vs)] = 4.0f*len/total_len;
                                 // current position on square in [0,4[
 
-        // Get next iterator (looping)
-        Border_vertex_iterator next = it;
-        next++;
-        if(next == mesh.mesh_main_border_vertices_end())
-            next = mesh.mesh_main_border_vertices_begin();
-
-        // Add edge "length" to 'len'
-        len += compute_edge_length(mesh, it, next);
+        len += compute_edge_length(mesh, vs, vt);
     }
 
     // First square corner is mapped to first vertex.
     // Then find closest points for three other corners.
-    Border_vertex_iterator it0 = mesh.mesh_main_border_vertices_begin();
-    Border_vertex_iterator it1 = closest_iterator(mesh, offset, 1.0);
-    Border_vertex_iterator it2 = closest_iterator(mesh, offset, 2.0);
-    Border_vertex_iterator it3 = closest_iterator(mesh, offset, 3.0);
+    halfedge_around_face_iterator it0 = b;
+    halfedge_around_face_iterator it1 = closest_iterator(mesh, offset, 1.0);
+    halfedge_around_face_iterator it2 = closest_iterator(mesh, offset, 2.0);
+    halfedge_around_face_iterator it3 = closest_iterator(mesh, offset, 3.0);
     //
     // We may get into trouble if the border is too short
     if (it0 == it1 || it1 == it2 || it2 == it3 || it3 == it0)
         return Parameterizer_traits_3<Adaptor>::ERROR_BORDER_TOO_SHORT;
     //
     // Snap these vertices to corners
-    offset[mesh.get_vertex_index(it0)] = 0.0;
-    offset[mesh.get_vertex_index(it1)] = 1.0;
-    offset[mesh.get_vertex_index(it2)] = 2.0;
-    offset[mesh.get_vertex_index(it3)] = 3.0;
+    offset[mesh.get_vertex_index(source(*it0,tmesh))] = 0.0;
+    offset[mesh.get_vertex_index(source(*it1,tmesh))] = 1.0;
+    offset[mesh.get_vertex_index(source(*it2,tmesh))] = 2.0;
+    offset[mesh.get_vertex_index(source(*it3,tmesh))] = 3.0;
 
     // Set vertices along square's sides and mark them as "parameterized"
-    for(it = it0; it != it1; it++) // 1st side
+    for(halfedge_around_face_iterator it = it0; it != it1; it++) // 1st side
     {
-        Point_2 uv(offset[mesh.get_vertex_index(it)], 0.0);
-        mesh.set_vertex_uv(it, uv);
-        mesh.set_vertex_parameterized(it, true);
+      Point_2 uv(offset[mesh.get_vertex_index(source(*it,tmesh))], 0.0);
+        mesh.set_vertex_uv(source(*it,tmesh), uv);
+        mesh.set_vertex_parameterized(source(*it,tmesh), true);
     }
-    for(it = it1; it != it2; it++) // 2nd side
+    for(halfedge_around_face_iterator it = it1; it != it2; it++) // 2nd side
     {
-        Point_2 uv(1.0, offset[mesh.get_vertex_index(it)]-1);
-        mesh.set_vertex_uv(it, uv);
-        mesh.set_vertex_parameterized(it, true);
+        Point_2 uv(1.0, offset[mesh.get_vertex_index(source(*it,tmesh))]-1);
+        mesh.set_vertex_uv(source(*it,tmesh), uv);
+        mesh.set_vertex_parameterized(source(*it,tmesh), true);
     }
-    for(it = it2; it != it3; it++) // 3rd side
+    for(halfedge_around_face_iterator it = it2; it != it3; it++) // 3rd side
     {
-        Point_2 uv(3-offset[mesh.get_vertex_index(it)], 1.0);
-        mesh.set_vertex_uv(it, uv);
-        mesh.set_vertex_parameterized(it, true);
+        Point_2 uv(3-offset[mesh.get_vertex_index(source(*it,tmesh))], 1.0);
+        mesh.set_vertex_uv(source(*it,tmesh), uv);
+        mesh.set_vertex_parameterized(source(*it,tmesh), true);
     }
-    for(it = it3; it != mesh.mesh_main_border_vertices_end(); it++) // 4th side
+    for(halfedge_around_face_iterator it = it3; it != e; it++) // 4th side
     {
-        Point_2 uv(0.0, 4-offset[mesh.get_vertex_index(it)]);
-        mesh.set_vertex_uv(it, uv);
-        mesh.set_vertex_parameterized(it, true);
+        Point_2 uv(0.0, 4-offset[mesh.get_vertex_index(source(*it,tmesh))]);
+        mesh.set_vertex_uv(source(*it,tmesh), uv);
+        mesh.set_vertex_parameterized(source(*it,tmesh), true);
     }
 
     return Parameterizer_traits_3<Adaptor>::OK;
@@ -257,28 +223,29 @@ Square_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
 // Compute mesh iterator whose offset is closest to 'value'.
 template<class Adaptor>
 inline
-typename Adaptor::Border_vertex_iterator
+typename Square_border_parameterizer_3<Adaptor>::halfedge_around_face_iterator
 Square_border_parameterizer_3<Adaptor>::closest_iterator(Adaptor& mesh,
                                                        const Offset_map& offset,
                                                        double value)
 {
-    Border_vertex_iterator best;
+    const TriangleMesh& tmesh = mesh.get_adapted_mesh();
+    halfedge_around_face_iterator b, e, best;
     double min = DBL_MAX;           // distance for 'best'
 
-    for (Border_vertex_iterator it = mesh.mesh_main_border_vertices_begin();
-         it != mesh.mesh_main_border_vertices_end();
-         it++)
+    for(boost::tie(b,e) = halfedges_around_face(mesh.main_border(), tmesh);
+        b!=e;
+        ++b)
     {
-        double d = CGAL::abs(offset[mesh.get_vertex_index(it)] - value);
+      double d = CGAL::abs(offset[mesh.get_vertex_index(source(*b,tmesh))] - value);
         if (d < min)
         {
-            best = it;
+            best = b;
             min = d;
         }
     }
 
     return best;
-}
+ }
 
 
 //
@@ -306,43 +273,19 @@ class Square_border_uniform_parameterizer_3
 public:
     // We have to repeat the types exported by superclass
     /// @cond SKIP_IN_MANUAL
-    typedef ParameterizationMesh_3          Adaptor;
+    typedef ParameterizationMesh_3          Adaptor; 
+    typedef typename Adaptor::Polyhedron TriangleMesh;
+
+    typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+
     /// @endcond
 
 // Private types
 private:
     // Mesh_Adaptor_3 subtypes:
-    typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Point_2       Point_2;
-    typedef typename Adaptor::Point_3       Point_3;
-    typedef typename Adaptor::Vector_2      Vector_2;
     typedef typename Adaptor::Vector_3      Vector_3;
-    typedef typename Adaptor::Facet         Facet;
-    typedef typename Adaptor::Facet_handle  Facet_handle;
-    typedef typename Adaptor::Facet_const_handle
-                                            Facet_const_handle;
-    typedef typename Adaptor::Facet_iterator Facet_iterator;
-    typedef typename Adaptor::Facet_const_iterator
-                                            Facet_const_iterator;
-    typedef typename Adaptor::Vertex        Vertex;
-    typedef typename Adaptor::Vertex_handle Vertex_handle;
-    typedef typename Adaptor::Vertex_const_handle
-                                            Vertex_const_handle;
-    typedef typename Adaptor::Vertex_iterator Vertex_iterator;
-    typedef typename Adaptor::Vertex_const_iterator
-                                            Vertex_const_iterator;
-    typedef typename Adaptor::Border_vertex_iterator
-                                            Border_vertex_iterator;
-    typedef typename Adaptor::Border_vertex_const_iterator
-                                            Border_vertex_const_iterator;
-    typedef typename Adaptor::Vertex_around_facet_circulator
-                                            Vertex_around_facet_circulator;
-    typedef typename Adaptor::Vertex_around_facet_const_circulator
-                                            Vertex_around_facet_const_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_circulator
-                                            Vertex_around_vertex_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_const_circulator
-                                            Vertex_around_vertex_const_circulator;
+
 
 // Public operations
 public:
@@ -352,8 +295,8 @@ public:
 protected:
     /// Compute the length of an edge.
     virtual double compute_edge_length(const Adaptor& /* mesh */,
-                                       Vertex_const_handle /* source */,
-                                       Vertex_const_handle /* target */)
+                                       vertex_descriptor /* source */,
+                                       vertex_descriptor /* target */)
     {
         /// Uniform border parameterization: points are equally spaced.
         return 1;
@@ -392,37 +335,8 @@ public:
 // Private types
 private:
     // Mesh_Adaptor_3 subtypes:
-    typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Point_2       Point_2;
-    typedef typename Adaptor::Point_3       Point_3;
-    typedef typename Adaptor::Vector_2      Vector_2;
     typedef typename Adaptor::Vector_3      Vector_3;
-    typedef typename Adaptor::Facet         Facet;
-    typedef typename Adaptor::Facet_handle  Facet_handle;
-    typedef typename Adaptor::Facet_const_handle
-                                            Facet_const_handle;
-    typedef typename Adaptor::Facet_iterator Facet_iterator;
-    typedef typename Adaptor::Facet_const_iterator
-                                            Facet_const_iterator;
-    typedef typename Adaptor::Vertex        Vertex;
-    typedef typename Adaptor::Vertex_handle Vertex_handle;
-    typedef typename Adaptor::Vertex_const_handle
-                                            Vertex_const_handle;
-    typedef typename Adaptor::Vertex_iterator Vertex_iterator;
-    typedef typename Adaptor::Vertex_const_iterator
-                                            Vertex_const_iterator;
-    typedef typename Adaptor::Border_vertex_iterator
-                                            Border_vertex_iterator;
-    typedef typename Adaptor::Border_vertex_const_iterator
-                                            Border_vertex_const_iterator;
-    typedef typename Adaptor::Vertex_around_facet_circulator
-                                            Vertex_around_facet_circulator;
-    typedef typename Adaptor::Vertex_around_facet_const_circulator
-                                            Vertex_around_facet_const_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_circulator
-                                            Vertex_around_vertex_circulator;
-    typedef typename Adaptor::Vertex_around_vertex_const_circulator
-                                            Vertex_around_vertex_const_circulator;
 
 // Public operations
 public:
@@ -432,13 +346,15 @@ public:
 protected:
     /// Compute the length of an edge.
     virtual double compute_edge_length(const Adaptor& mesh,
-                                       Vertex_const_handle source,
-                                       Vertex_const_handle target)
-    {
+                                       vertex_descriptor source,
+                                       vertex_descriptor target)
+    { 
+      typedef typename boost::property_map<typename Adaptor::Polyhedron, boost::vertex_point_t>::const_type PPmap;
+      PPmap ppmap = get(vertex_point, mesh.get_adapted_mesh());
         /// Arc-length border parameterization: (u,v) values are
         /// proportional to the length of border edges.
-        Vector_3 v = mesh.get_vertex_position(target)
-                   - mesh.get_vertex_position(source);
+      Vector_3 v = get(ppmap, target)
+                   - get(ppmap,source);
         return std::sqrt(v*v);
     }
 };
@@ -446,4 +362,4 @@ protected:
 
 } //namespace CGAL
 
-#endif //CGAL_SQUAREBORDERPARAMETERIZER_3_H
+#endif //CGAL_SQUARE_BORDER_PARAMETERIZER_3_H
