@@ -480,21 +480,12 @@ setup_triangle_relations(LeastSquaresSolver& solver,
     PPmap ppmap = get(vertex_point, tmesh);
     // Get the 3 vertices of the triangle
     vertex_descriptor v0, v1, v2;
-    int vertexIndex = 0;
-    vertex_around_face_circulator cir(halfedge(facet,tmesh),tmesh), end(cir);
-    CGAL_For_all(cir, end)
-    {
-        if (vertexIndex == 0)
-            v0 = *cir;
-        else if (vertexIndex == 1)
-            v1 = *cir;
-        else if (vertexIndex == 2)
-            v2 = *cir;
-
-        vertexIndex++;
-    }
-    if (vertexIndex != 3)
-        return Base::ERROR_NON_TRIANGULAR_MESH;
+    halfedge_descriptor h = halfedge(facet,tmesh);
+    v0 = target(h,tmesh);
+    h = next(h,tmesh);
+    v1 = target(h,tmesh);
+    h = next(h,tmesh);
+    v2 = target(h,tmesh);
 
     // Get the vertices index
     int id0 = mesh.get_vertex_index(v0) ;

@@ -277,6 +277,7 @@ parameterize(Adaptor& amesh)
     // Index vertices from 0 to nbVertices-1
     amesh.index_mesh_vertices();
 
+    // AF: mark all halfedges as not parameterized
     // Mark all vertices as *not* "parameterized"
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
     {
@@ -306,6 +307,7 @@ parameterize(Adaptor& amesh)
     // matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
     initialize_system_from_mesh_border (A, Bu, Bv, amesh);
 
+    // AF: no change, as this are only concerns inner vertices
     // Fill the matrix for the inner vertices v_i: compute A's coefficient
     // w_ij for each neighbor j; then w_ii = - sum of w_ijs
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
@@ -441,16 +443,19 @@ initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
 {
   const TriangleMesh& tmesh = mesh.get_adapted_mesh();
    
+  // AF: loop over border halfedges
   BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(mesh.main_border(),tmesh))
     {
         CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_parameterized(vd));
 
+        // AF: get the halfedge-as-vertex index
         // Get vertex index in sparse linear system
         int index = mesh.get_vertex_index(vd);
 
         // Write a diagonal coefficient of A
         A.set_coef(index, index, 1, true /*new*/);
 
+        // get the halfedge uv
         // Write constant in Bu and Bv
         Point_2 uv = mesh.get_vertex_uv(vd);
         Bu[index] = uv.x();
@@ -464,7 +469,7 @@ initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
 //
 // Preconditions:
 // - Vertices must be indexed.
-// - Vertex i musn't be already parameterized.
+// - Vertex i must not be already parameterized.
 // - Line i of A must contain only zeros.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
@@ -521,6 +526,7 @@ set_mesh_uv_from_system(Adaptor& amesh,
 {
     const TriangleMesh& mesh = amesh.get_adapted_mesh();
       
+    // AF: do that for halfedges
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh))
     {
         int index = amesh.get_vertex_index(vd);
