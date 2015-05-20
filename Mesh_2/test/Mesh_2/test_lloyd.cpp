@@ -86,5 +86,7 @@ int main()
 
   //compilation test
   CGAL::Lipschitz_sizing_field_2<CDT> lip_size(cdt);
+  lip_size.set_K(2.);
+  CGAL_assertion(lip_size.get_K() == 2.);
 
 }
