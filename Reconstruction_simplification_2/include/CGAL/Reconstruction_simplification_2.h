@@ -425,7 +425,7 @@ protected:
 		double timer = clock();
 		std::cerr << yellow << "insert loose bbox" << white << "...";
 
-		int nb = m_dt.number_of_vertices();
+		int nb = static_cast<int>(m_dt.number_of_vertices());
 		insert_point(Point(x - size, y - size), true, nb++);
 		insert_point(Point(x - size, y + size), true, nb++);
 		insert_point(Point(x + size, y + size), true, nb++);
@@ -441,7 +441,7 @@ protected:
 		double timer = clock();
 		std::cerr << yellow << "init" << white << "...";
 
-		int nb = m_dt.number_of_vertices();
+    int nb = static_cast<int>(m_dt.number_of_vertices());
 		m_dt.infinite_vertex()->pinned() = true;
 		for (Iterator it = begin; it != beyond; it++) {
 			Point point = get(point_pmap, *it);
@@ -1480,11 +1480,11 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
                  IndexPairOutputIterator segments) {
 
 		typedef typename Gt::Segment_2 Segment;
-		std::vector<Point> isolated_points;
+		std::vector<Point> isolated_points_;
 		std::vector<Segment> edges;
 
-		extract_list_output(std::back_inserter(isolated_points), std::back_inserter(edges));
-
+		extract_list_output(
+      std::back_inserter(isolated_points_), std::back_inserter(edges));
 
 		// vertices_of_edges
 		std::set<Point> edge_vertices;
@@ -1498,40 +1498,35 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 			edge_vertices.insert(b);
 		}
 
-		os << "OFF " << isolated_points.size() + edge_vertices.size() <<
-				" 0 " << edges.size()  << std::endl;
-
-		for (typename std::vector<Point>::iterator it = isolated_points.begin();
-					it != isolated_points.end(); it++) {
-			os << *it << std::endl;
-		}
-
+    std::size_t count_points = 0;
 		for (typename std::set<Point>::iterator it = edge_vertices.begin();
 				it != edge_vertices.end(); it++) {
 
-			os << *it << std::endl;
+			*points++ = *it;
+      ++count_points;
 		}
 
-		for (int i = 0; i < isolated_points.size(); i++) {
-			os << "1 " <<  i << std::endl;
+		for (typename std::vector<Point>::iterator it = isolated_points_.begin();
+				it != isolated_points_.end(); it++) {
+
+      *isolated_points++ = count_points;
+			*points++ = *it;
+      ++count_points;
 		}
 
 		for (typename std::vector<Segment>::iterator it = edges.begin();
 				it != edges.end(); it++) {
 
-			//save_one_edge(os, *it,edge_vertices);
-
-			Point a = (*it).source();
-			Point b = (*it).target();
+			Point const& a = it->source();
+			Point const& b = it->target();
 
 			typename std::set<Point>::iterator it_a = edge_vertices.find(a);
 			typename std::set<Point>::iterator it_b = edge_vertices.find(b);
 
-			int pos_a = std::distance(edge_vertices.begin(), it_a);
-			int pos_b = std::distance(edge_vertices.begin(), it_b);
+			std::size_t pos_a = std::distance(edge_vertices.begin(), it_a);
+			std::size_t pos_b = std::distance(edge_vertices.begin(), it_b);
 
-			os << "2 "  << pos_a + isolated_points.size() << " "
-					<< pos_b + isolated_points.size() << std::endl;
+      *segments++ = std::make_pair(pos_a, pos_b);
 		}
 
 		return CGAL::cpp11::make_tuple(points, isolated_points, segments);
