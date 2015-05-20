@@ -235,7 +235,7 @@ protected:
           \param sample_size If `sample_size != 0`, the size of the random sample replaces the priority queue.
 	*/
   void set_random_sample_size(std::size_t sample_size) {
-		m_mchoice = mchoice;
+		m_mchoice = sample_size;
 	}
 
 	/*!
