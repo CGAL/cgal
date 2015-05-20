@@ -1312,8 +1312,8 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 	 /*!
 	    Returns the number of vertices present in the reconstructed triangulation.
 	  */
-	int number_of_vertices() {
-		return m_dt.number_of_vertices()-4 ;
+	std::size_t number_of_vertices() {
+		return m_dt.number_of_vertices() - 4;
 
 	}
 
@@ -1364,8 +1364,8 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 			double timer = clock();
 			std::cerr << yellow << "reconstruct until " << white << np << " V";
 
-			unsigned N = np + 4;
-			unsigned performed = 0;
+			std::size_t N = np + 4;
+			std::size_t performed = 0;
 			while (m_dt.number_of_vertices() > N) {
 				bool ok = decimate();
 				if (!ok)
