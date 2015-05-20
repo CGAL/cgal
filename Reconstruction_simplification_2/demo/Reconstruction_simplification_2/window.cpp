@@ -583,7 +583,7 @@ void MainWindow::on_actionReconstruction_until_triggered()
 void MainWindow::on_actionRelocate_vertices_triggered()
 {
 	QApplication::setOverrideCursor(Qt::WaitCursor);
-	m_scene->relocate_all_vertices();
+	m_scene->relocate_all_points();
 	QApplication::restoreOverrideCursor();
 	update();
 }
@@ -686,13 +686,13 @@ void MainWindow::on_actionSet_parameters_triggered()
 	Dialog_options dlg;
 	dlg.set_all_ranges();
 	dlg.set_verbose(m_verbose);
-	dlg.set_mchoice(m_mchoice);
+	dlg.set_random_sample_size(m_mchoice);
 	dlg.set_percent(m_percent);
 	dlg.set_norm_tol(m_norm_tol);
 	dlg.set_tang_tol(m_tang_tol);
 	dlg.set_alpha(m_alpha);
 	dlg.set_relocation(m_relocation);
-	dlg.set_ghost(m_ghost);
+	dlg.set_relevance(m_ghost);
 	dlg.set_use_flip(m_use_flip);
 	dlg.set_line_thickness(viewer->line_thickness());
 	dlg.set_point_size(viewer->point_size());

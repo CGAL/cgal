@@ -551,13 +551,13 @@ public:
 			const double ghost) {
 
 		m_pwsrec->set_verbose(verbose);
-		m_pwsrec->set_mchoice(mchoice);
+		m_pwsrec->set_random_sample_size(mchoice);
 		m_pwsrec->set_use_flip(use_flip);
 		m_pwsrec->set_alpha(alpha);
 		m_pwsrec->set_tang_tol(tang_tol * m_bbox_size);
 		m_pwsrec->set_norm_tol(norm_tol * m_bbox_size);
 		m_pwsrec->set_relocation(relocation);
-		m_pwsrec->set_ghost(ghost);
+		m_pwsrec->set_relevance(ghost);
 	}
 
 	bool init_reconstruction(const double percentage) {
@@ -649,9 +649,9 @@ public:
 		m_pwsrec->run(steps);
 	}
 
-	void relocate_all_vertices() {
-		std::cout << "relocate_all_vertices" << std::endl;
-		m_pwsrec->relocate_all_vertices();
+	void relocate_all_points() {
+		std::cout << "relocate_all_points" << std::endl;
+		m_pwsrec->relocate_all_points();
 	}
 
 	void print_stats() {

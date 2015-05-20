@@ -243,7 +243,7 @@ void R_s_k_2::draw_pedges(const float line_width)
     }
     if (min_value == max_value) max_value += 1.0;
     
-    unsigned N = values.size();
+    std::size_t N = values.size();
     for (unsigned i = 0; i < N; ++i)
         draw_one_pedge(edges[i], values[i], min_value, max_value, line_width);
 
