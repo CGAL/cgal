@@ -1,9 +1,10 @@
 /** @file exact_theta_io.cpp
  *
- * An example application that exactly constructs a Theta graph with an input vertex list,
+ * An example application that constructs a Theta graph exactly with an input vertex list,
  * and then generates the Gnuplot files to plot the Theta graph.
  */
 
+// authors: Weisheng Si, Quincy Tse
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -14,22 +15,24 @@
 
 #include <boost/graph/adjacency_list.hpp>
 
-#include <CGAL/Theta_graph_2.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+#include <CGAL/Construct_theta_graph_2.h>
 #include <CGAL/gnuplot_output_2.h>
 
 // select the kernel type
 typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt   Kernel;
 typedef Kernel::Point_2                   Point_2;
 typedef Kernel::Direction_2               Direction_2;
-// define the theta graph to use the selected kernel and to be undirected
-typedef CGAL::Theta_graph_2<Kernel, boost::undirectedS>      T;
-// obtain the graph type by boost::adjacency_list
-typedef T::Graph                          Graph;
+typedef boost::adjacency_list<boost::setS,
+                              boost::vecS,
+                              boost::undirectedS,
+                              Point_2
+                             > Graph;
 
 int main(int argc, char ** argv) {
 
     if (argc < 3) {
-        std::cout << "Usage: " << argv[0] << " <no. of cones> <input filename> [<dx> <dy>]" << std::endl;
+        std::cout << "Usage: " << argv[0] << " <no. of cones> <input filename> [<direction-x> <direction-y>]" << std::endl;
         return 1;
     }
 
@@ -46,13 +49,13 @@ int main(int argc, char ** argv) {
         return 1;
     }
 
-    Direction_2 startingray;
+    Direction_2 initial_direction;
     if (argc == 3)
-        startingray = Direction_2(1, 0);
+        initial_direction = Direction_2(1, 0);  // default initial_direction
     else if (argc == 5)
-        startingray = Direction_2(atof(argv[3]), atof(argv[4]));
+        initial_direction = Direction_2(atof(argv[3]), atof(argv[4]));
     else {
-        std::cout << "Usage: " << argv[0] << " <no. of cones> <input filename> [<dx> <dy>]" << std::endl;
+        std::cout << "Usage: " << argv[0] << " <no. of cones> <input filename> [<direction-x> <direction-y>]" << std::endl;
         return 1;
     }
 
@@ -60,16 +63,18 @@ int main(int argc, char ** argv) {
     std::istream_iterator<Point_2> input_begin( inf );
     std::istream_iterator<Point_2> input_end;
 
-    // construct the theta graph on the vertex list
-    T t(k, input_begin, input_end, startingray);
+    // initialize the functor
+	CGAL::Construct_theta_graph_2<Kernel, Graph> theta(k, initial_direction);
+	// create an adjacency_list object
+	Graph g;
+	// construct the theta graph on the vertex list
+	theta(input_begin, input_end, g);
 
-    // obtain a reference to the boost::adjacency_list object of the constructed graph
-    const Graph& g = t.graph();
     // obtain the number of vertices in the constructed graph
     unsigned int n = boost::num_vertices(g);
 
-    // generate gnuplot files for plotting this graph, 'e' stands for 'exact'
-    std::string fileprefix = "et" + std::to_string(k) + "n" + std::to_string(n);
+    // generate gnuplot files for plotting this graph
+    std::string fileprefix = "t" + std::to_string(k) + "n" + std::to_string(n);
     CGAL::gnuplot_output_2(g, fileprefix);
 
     return 0;

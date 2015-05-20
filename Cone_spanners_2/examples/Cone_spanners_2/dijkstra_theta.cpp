@@ -1,9 +1,9 @@
 /** @file dijkstra_theta.cpp
  *
- * An example application that calculates the shortest paths on a constructed Theta graph 
- * by calling the Dijkstra's algorithm from BGL.
+ * An example application that constructs Theta graph first and then calculates 
+ * the shortest paths on this graph by calling the Dijkstra's algorithm from BGL.
  */
-
+// Authors: Weisheng Si, Quincy Tse
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -18,7 +18,7 @@
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Theta_graph_2.h>
+#include <CGAL/Construct_theta_graph_2.h>
 
 using namespace boost;
 
@@ -32,11 +32,10 @@ struct Edge_property {
 	/** record the Euclidean length of the edge */
 	double euclidean_length;
 };
-// define the theta graph to use the selected kernel, to be undirected,
+
+// define the Graph to use the selected kernel, to be undirected,
 // and to use Edge_property as the edge property
-typedef CGAL::Theta_graph_2<Kernel, boost::undirectedS, Edge_property>      T;
-// obtain the graph type by boost::adjacency_list 
-typedef T::Graph                                              Graph;
+typedef adjacency_list<listS, vecS, undirectedS, Point_2, Edge_property>     Graph;
 
 int main(int argc, char ** argv) {
 
@@ -62,12 +61,13 @@ int main(int argc, char ** argv) {
 	std::istream_iterator< Point_2 > input_begin( inf );
 	std::istream_iterator< Point_2 > input_end;
 
+    // initialize the functor
+	// If the initial direction is omitted, the x-axis will be used
+	CGAL::Construct_theta_graph_2<Kernel, Graph> theta(k);
+    // create an adjacency_list object
+	Graph g;
 	// construct the theta graph on the vertex list
-	T t(k, input_begin, input_end, Direction_2(1,0));
-
-	// copy the boost::adjacency_list object of the constructed graph from t
-	// copy is used here because we need to modify the edge property when calling the dijkstra's algorithm.
-	Graph g = t.graph();
+	theta(input_begin, input_end, g);
 
 	// select a source vertex for dijkstra's algorithm
 	graph_traits<Graph>::vertex_descriptor v0;
