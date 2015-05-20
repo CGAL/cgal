@@ -273,12 +273,14 @@ public:
             set_vertex_index(vd, index++);
         }
 
+        BOOST_FOREACH(halfedge_descriptor hd, halfedges(mesh)){
+          info(hd)->vindex(info(target(hd,mesh))->index());
+        }
         // if there is no seam each halfedge stores the index of the target
         BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(border,mesh)){
           m_main_border.push_back(hd);
           info(hd)->on_border(2);
           info(target(hd,mesh))->on_border(2);
-          info(hd)->vindex(info(target(hd,mesh))->index());
         }
 
 #ifndef CGAL_NDEBUG
