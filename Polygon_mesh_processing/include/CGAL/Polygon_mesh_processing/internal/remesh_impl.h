@@ -83,7 +83,8 @@ namespace internal {
         vertex_descriptor v1 = target(h, mesh_);
         vertex_descriptor v2 = target(next(h, mesh_), mesh_);
         vertex_descriptor v3 = target(next(next(h, mesh_), mesh_), mesh_);
-        input_triangles_.push_back(Triangle_3(vpmap[v1], vpmap[v2], vpmap[v3]));
+        input_triangles_.push_back(
+          Triangle_3(get(vpmap, v1), get(vpmap, v2), get(vpmap, v3)));
       }
       tree_ptr_ = new AABB_tree(input_triangles_.begin(), input_triangles_.end());
 
@@ -139,7 +140,7 @@ namespace internal {
 
         //move refinement point
         vertex_descriptor vnew = target(hnew, mesh_);
-        vpmap_[vnew] = refinement_point;
+        put(vpmap_, vnew, refinement_point);
 
         //check sub-edges
         double sqlen_new = 0.25 * sqlen;
@@ -332,9 +333,9 @@ namespace internal {
           halfedge_and_opp_removed(prev(he, mesh_));
 
           //perform collapse
-          Point target_point = vpmap_[vb];
+          Point target_point = get(vpmap_, vb);
           vertex_descriptor vkept = CGAL::Euler::collapse_edge(edge(he, mesh_), mesh_);
-          vpmap_[vkept] = target_point;
+          put(vpmap_, vkept, target_point);
           ++nb_collapses;
 
           // merge halfedge_status to keep the more important on both sides
@@ -477,11 +478,11 @@ namespace internal {
         unsigned int star_size = 0;
         BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, mesh_))
         {
-          move = move + Vector_3(vpmap_[v], vpmap_[source(h, mesh_)]);
+          move = move + Vector_3(get(vpmap_, v), get(vpmap_, source(h, mesh_)));
           ++star_size;
         }
         move = (1. / (double)star_size) * move;
-        barycenters[v] = vpmap_[v] + move;
+        barycenters[v] = get(vpmap_, v) + move;
       }
 
       // compute moves
@@ -493,14 +494,14 @@ namespace internal {
           continue;
         Vector_3 nv = boost::get(propmap_normals, v);
         Point qv = barycenters[v];
-        new_locations[v] = qv + (nv * Vector_3(qv, vpmap_[v])) * nv;
+        new_locations[v] = qv + (nv * Vector_3(qv, get(vpmap_, v))) * nv;
       }
 
       // perform moves
       typedef typename std::map<vertex_descriptor, Point>::value_type VP_pair;
       BOOST_FOREACH(const VP_pair& vp, new_locations)
       {
-        vpmap_[vp.first] = new_locations[vp.first];
+        put(vpmap_, vp.first, new_locations[vp.first]);
       }
 
       CGAL_assertion(is_valid(mesh_));
@@ -525,7 +526,7 @@ namespace internal {
       {
         if (!is_on_patch(v))
           continue;
-        vpmap_[v] = tree_ptr_->closest_point(vpmap_[v]);
+        put(vpmap_, v, tree_ptr_->closest_point(get(vpmap_, v)));
       }
 
       CGAL_assertion(is_valid(mesh_));
@@ -542,7 +543,7 @@ namespace internal {
     double sqlength(const vertex_descriptor& v1,
                     const vertex_descriptor& v2) const
     {
-      return CGAL::squared_distance(vpmap_[v1], vpmap_[v2]);
+      return CGAL::squared_distance(get(vpmap_, v1), get(vpmap_, v2));
     }
 
     double sqlength(const halfedge_descriptor& h) const
@@ -559,8 +560,8 @@ namespace internal {
 
     Point midpoint(const halfedge_descriptor& he) const
     {
-      Point p1 = vpmap_[target(he, mesh_)];
-      Point p2 = vpmap_[source(he, mesh_)];
+      Point p1 = get(vpmap_, target(he, mesh_));
+      Point p2 = get(vpmap_, source(he, mesh_));
       return CGAL::midpoint(p1, p2);
     }
 
@@ -589,8 +590,8 @@ namespace internal {
       if (!is_on_patch(he))
         return false;
 
-      Point p1 = vpmap_[target(he, mesh_)];
-      Point p2 = vpmap_[source(he, mesh_)];
+      Point p1 = get(vpmap_, target(he, mesh_));
+      Point p2 = get(vpmap_, source(he, mesh_));
       Vector_3 normal(p1, p2);
 
       //construct planes passing through p1 and p2,
@@ -602,8 +603,8 @@ namespace internal {
         plane1.orthogonal_vector() * plane2.orthogonal_vector() > 0.);
 
       //get third points of triangles shared by e
-      Point p3 = vpmap_[target(next(he, mesh_), mesh_)];
-      Point p4 = vpmap_[target(next(opposite(he, mesh_), mesh_), mesh_)];
+      Point p3 = get(vpmap_, target(next(he, mesh_), mesh_));
+      Point p4 = get(vpmap_, target(next(opposite(he, mesh_), mesh_), mesh_));
 
       //check whether p3 and p4 are between plane1 and plane2
       return (plane1.oriented_side(p3) != plane2.oriented_side(p3))
