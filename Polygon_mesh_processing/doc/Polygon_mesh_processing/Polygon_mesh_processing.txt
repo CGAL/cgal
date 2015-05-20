@@ -70,9 +70,11 @@ The visual results of aforementioned steps are depicted by \cgalFigureRef{Mech_s
 
 \subsection MeshingAPI API
 
-Refinement and fairing functions can be applied to an arbitrary region on a polygon mesh, using :
-- `CGAL::Polygon_mesh_processing::refine()` : given a range of facets on a mesh, refines the region.
-- `CGAL::Polygon_mesh_processing::fair()` : given a range of vertices on a mesh, fairs the region.
+\subsubsection Meshing
+
+Refinement and fairing functions can be applied to an arbitrary region on a mesh, using :
+- `CGAL::Polygon_mesh_processing::refine()` : given a set of facets on a mesh, refines the region.
+- `CGAL::Polygon_mesh_processing::fair()` : given a set of vertices on a mesh, fairs the region.
 
 Fairing needs a sparse linear solver and we recommend the use of \ref thirdpartyEigen 3.2 or later.
 Note that fairing might fail if fixed vertices, which are used as boundary conditions, do
@@ -90,6 +92,10 @@ Then, the triangulation of each face is the one obtained by building a
 This choice is made because the constrained Delaunay triangulation
 is the triangulation that, given the edges of the face to be triangulated,
 maximizes the minimum angle of all the angles of the triangles in the triangulation.
+
+\subsubsection Remeshing
+- `CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing()`
+\todo user manual remeshing
 
 \subsection MeshingExamples Meshing Examples
 
