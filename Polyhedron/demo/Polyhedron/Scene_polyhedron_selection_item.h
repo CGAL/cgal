@@ -716,6 +716,11 @@ public:
     {
       return h->is_feature_edge();
     }
+    friend bool get(Is_sharp_edge_property_map,
+                    edge_descriptor e)
+    {
+      return e.halfedge()->is_feature_edge();
+    }
     friend void put(Is_sharp_edge_property_map,
                     Polyhedron::Halfedge_handle h,
                     bool b)
@@ -827,11 +832,14 @@ protected:
 
     if (get_active_handle_type() == Active_handle::CONNECTED_COMPONENT)
     {
+      Is_sharp_edge_property_map is_sharp;
       std::vector<Facet_handle> selected_cc;
       CGAL::Polygon_mesh_processing::connected_component(
         face(*selection.begin()),
         *polyhedron(),
-        std::back_inserter(selected_cc));
+        std::back_inserter(selected_cc),
+        CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(is_sharp));
+
       any_change = treat_selection(selected_cc);
     }
     else

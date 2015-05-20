@@ -72,8 +72,9 @@ public Q_SLOTS:
   }
   void facet_has_been_selected(void* void_ptr)
   {
-    if(active_handle_type != Active_handle::FACET) { return; }
-    process_selection( static_cast<Polyhedron::Facet*>(void_ptr)->halfedge()->facet() );
+    if (active_handle_type == Active_handle::FACET
+      || active_handle_type == Active_handle::CONNECTED_COMPONENT)
+    process_selection(static_cast<Polyhedron::Facet*>(void_ptr)->halfedge()->facet());
   }
   void edge_has_been_selected(void* void_ptr) 
   {
