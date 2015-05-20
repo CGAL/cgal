@@ -32,22 +32,34 @@ namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
-/**
+/*!
 * \ingroup PkgPolygonMeshProcessing
+* @brief remeshes a triangulated region of a polygon mesh.
 * implements section 6.5.3 "Incremental remeshing" from the PMP book
+*
 * @tparam PolygonMesh model of `MutableFaceGraph` that 
 *         has an internal property map for `CGAL::vertex_point_t`
-* @tparam FaceRange range of face descriptors, model of `SinglePassRange`
+* @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
+          model of `Range`. Its iterator type is `InputIterator`.
+* @tparam NamedParameters a sequence of \ref namedparameters
 *
-* @param pmesh polygon mesh with patches to be refined 
+* @param pmesh polygon mesh with patches to be remeshed
 * @param faces the range of faces defining one patch to remesh
+* @param target_edge_length the edge length that is targetted in the remeshed patch
+* @param np optional sequence of \ref namedparameters among the ones listed below
+
+* \cgalNamedParamsBegin
+*  \cgalParamBegin{vertex_point_map} the property map with the points associated
+*    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
+*  \cgalParamEnd
+*  \cgalParamBegin{number_of_iterations} TODO...
+*  \cgalParamEnd
+*  \cgalParamBegin{geom_traits} a geometric traits class instance 
+   \cgalParamEnd
+* \cgalNamedParamsEnd
 *
-* named parameters :
-* vertex_point_map
-* nb_iterations
-* geom_traits, that needs Point_3, Vector_3, Plane_3
-*
-*@todo we suppose `faces` describe only one patch. Handle several patches
+*@todo we suppose `faces` describe only one patch. Handle several patches.
+*@todo document `number_of_iterations`
 */
 template<typename PolygonMesh
        , typename FaceRange
