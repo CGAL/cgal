@@ -26,6 +26,7 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/bounding_box.h>
 #include <boost/unordered_map.hpp> 
+#include <iterator>
 
 
 namespace CGAL {
@@ -362,8 +363,11 @@ public:
       }
     }
 
-    typename Points::iterator first = polygon.begin() + small_idx;
-    typename Points::iterator last = polygon.begin() + big_idx;
+    typename Points::iterator first = polygon.begin();
+    std::advance(first, small_idx);
+    typename Points::iterator last = polygon.begin();
+    std::advance(last, big_idx);
+
     if (is_between) {
       Points polygon_out(first, last+1);
       if (is_vertex_query)
@@ -780,7 +784,7 @@ private:
   //for vertex and edge query: the visibility is limited in a cone.
   void input_edge(const Halfedge_const_handle e,
                   EHs& good_edges) const {
-    for (int i=0; i<bad_edges.size(); i++)
+    for (typename EHs::size_type i = 0; i < bad_edges.size(); i++)
       if (e == bad_edges[i])
         return;
     VH v1 = e->target();
