@@ -31,20 +31,26 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup PkgPolygonMeshProcessing
-  * collects the border of a face range
+  * collects the border of a surface patch
+  * defined as a face range. The border is "seen from inside" the patch,
+  * i.e. the collected halfedges are
+  * the ones that belong to the input faces.
 
   * @tparam PolygonMesh model of `HalfedgeGraph`
-  * @tparam FaceRange
+  * @tparam FaceRange range of
+       `boost::graph_traits<PolygonMesh>::%face_descriptor`, model of `Range`.
+        Its iterator type is `InputIterator`.
   * @tparam HalfedgeOutputIterator model of `OutputIterator`
      holding `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
      for patch border
 
-  * @param faces the range of face descriptors describing the surface patch
-  *              around which the border is computed
+  * @param faces the range of faces defining the patch
+  *              around which the border is collected
   * @param out the output iterator that collects halfedges that form the border
   *            of `faces`, seen from inside the surface patch
   *
   * @todo code : what shall we do for more than one connected components
+  * @todo add get_border to the user manual
   */
   template<typename PolygonMesh
          , typename FaceRange
