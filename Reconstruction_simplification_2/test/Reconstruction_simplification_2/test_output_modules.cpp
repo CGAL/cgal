@@ -50,35 +50,54 @@ int main ()
 
 void test_index_output(Rs_2& rs2) {
 
-	std::cout <<"(-------------Off OUTPUT---------- )" << std::endl;
+	std::cout <<"(-------------OFF OUTPUT---------- )" << std::endl;
+  
+    std::vector<Point> points;
+    std::vector<std::size_t> isolated_points;
+    std::vector<std::pair<std::size_t,std::size_t> > edges;
+    rs2.indexed_output(
+      std::back_inserter(points), 
+      std::back_inserter(isolated_points),
+      std::back_inserter(edges));
+    
+    std::stringstream sstr;
 
-    rs2.extract_index_output(std::cout);
+		sstr << "OFF " << points.size() <<
+				" 0 " << edges.size()  << std::endl;
+
+		for (std::vector<Point>::iterator it = points.begin();
+				it != points.end(); it++) {
+
+			sstr << *it << std::endl;
+		}
+
+		for (std::vector<std::pair<std::size_t,std::size_t> >::iterator it 
+          = edges.begin();
+				it != edges.end(); it++) {
+
+      sstr << "2 "  << it->first << " " << it->second << std::endl;
+		}
+
+    std::cout << sstr.str() << std::endl;
 
     //print
 
     //test cardinalities
-    std::ostringstream buffer;
-    rs2.extract_index_output(buffer);
 
-    std::stringstream stream(buffer.str());
 	std::vector<std::string> res;
 	while (1){
 		std::string line;
-		std::getline(stream,line);
-		if (!stream.good())
+		std::getline(sstr, line);
+		if (!sstr.good())
 			break;
 		res.push_back(line);
 	}
 
-	assert(res.size() == 110);
+	assert(res.size() == 92);
 
 	assert(res.front() == "OFF 60 0 31");
 
-	for (int i = 61; i < 79; i++) {
-		assert(res[i].substr(0,2) == "1 ");
-	}
-
-	for (int i = 79; i < 110; i++) {
+	for (int i = 61; i < 92; i++) {
 		assert(res[i].substr(0,2) == "2 ");
 	}
 }
