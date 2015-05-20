@@ -31,6 +31,7 @@
 
 // CGAL
 #include <CGAL/basic.h>
+#include <CGAL/Random.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
@@ -163,13 +164,14 @@ public:
 	}
 
 	Edge random_finite_edge() {
-		int nbf = Base::number_of_faces();
-		int offset = random_int(0, nbf - 1);
+    static CGAL::Random rng;
+		std::size_t nbf = Base::number_of_faces();
+		int offset = rng.get_int(0, static_cast<int>(nbf - 1));
 		Finite_faces_iterator fi = Base::finite_faces_begin();
 		for (int i = 0; i < offset; i++)
 			fi++;
 		Face_handle face = fi;
-		int index = random_int(0, 40) % 3;
+    int index = rng.get_int(0, 40) % 3;
 		return Edge(face, index);
 	}
 
@@ -1078,12 +1080,6 @@ public:
 
 		        return true;
 		    }
-
-	int random_int(const int min, const int max) {
-		int range = max - min;
-		return min + int((double(rand()) / double(RAND_MAX)) * range);
-	}
-
 };
 } //namespace CGAL
 
