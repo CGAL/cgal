@@ -118,6 +118,7 @@ private:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator vertex_iterator;
  
   typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
+  typedef CGAL::Halfedge_around_target_circulator<TriangleMesh> halfedge_around_target_circulator;
   typedef CGAL::Vertex_around_face_circulator<TriangleMesh> vertex_around_face_circulator;
 
     // Mesh_Adaptor_3 subtypes:
@@ -126,9 +127,6 @@ private:
     typedef typename Adaptor::Point_3       Point_3;
     typedef typename Adaptor::Vector_3      Vector_3;
 
-    typedef typename Adaptor::Border_vertex_iterator
-                                            Border_vertex_iterator;
-  
 
     // SparseLinearAlgebraTraits_d subtypes:
     typedef typename Sparse_LA::Vector      Vector;
@@ -184,6 +182,7 @@ protected:
     virtual NT compute_w_ij(const Adaptor& mesh,
                             vertex_descriptor main_vertex_v_i,
                             vertex_around_target_circulator neighbor_vertex_v_j)
+    //   halfedge_around_target_circulator neighbor_vertex_v_j)
     = 0;
 
     /// Compute the line i of matrix A for i inner vertex:
@@ -263,7 +262,7 @@ parameterize(Adaptor& amesh)
 #endif
 
     // Check preconditions
-    Error_code status = check_parameterize_preconditions(amesh);
+    Error_code status = Base::OK; // AF check_parameterize_preconditions(amesh);
 #ifdef DEBUG_TRACE
     std::cerr << "  parameterization preconditions: " << timer.time() << " seconds." << std::endl;
     timer.reset();
@@ -361,7 +360,7 @@ parameterize(Adaptor& amesh)
 #endif
 
     // Check postconditions
-    status = check_parameterize_postconditions(amesh, A, Bu, Bv);
+    // AF status = check_parameterize_postconditions(amesh, A, Bu, Bv);
 #ifdef DEBUG_TRACE
     std::cerr << "  parameterization postconditions: " << timer.time() << " seconds." << std::endl;
 #endif
@@ -444,20 +443,20 @@ initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
   const TriangleMesh& tmesh = mesh.get_adapted_mesh();
    
   // AF: loop over border halfedges
-  BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(mesh.main_border(),tmesh))
+  BOOST_FOREACH(halfedge_descriptor hd, mesh.main_border())
     {
-        CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_parameterized(vd));
+      CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_parameterized(target(hd,tmesh)));
 
         // AF: get the halfedge-as-vertex index
         // Get vertex index in sparse linear system
-        int index = mesh.get_vertex_index(vd);
+        int index = mesh.get_vertex_index(hd);
 
         // Write a diagonal coefficient of A
         A.set_coef(index, index, 1, true /*new*/);
 
         // get the halfedge uv
         // Write constant in Bu and Bv
-        Point_2 uv = mesh.get_vertex_uv(vd);
+        Point_2 uv = mesh.get_vertex_uv(hd);
         Bu[index] = uv.x();
         Bv[index] = uv.y();
     }
@@ -490,8 +489,11 @@ setup_inner_vertex_relations(Matrix& A,
     // circulate over vertices around 'vertex' to compute w_ii and w_ijs
     NT w_ii = 0;
     int vertexIndex = 0;
+    // AF: switch to halfedge_around_target to get the right "vertex" if it is on a seam
     vertex_around_target_circulator v_j(halfedge(vertex,mesh), mesh),
+    //halfedge_around_target_circulator v_j(halfedge(vertex,mesh), mesh),
       end = v_j;
+
     CGAL_For_all(v_j, end)
     {
         // Call to virtual method to do the actual coefficient computation
@@ -501,6 +503,7 @@ setup_inner_vertex_relations(Matrix& A,
         w_ii -= w_ij;
 
         // Get j index
+        //int j = amesh.get_vertex_index(opposite(*v_j,mesh));
         int j = amesh.get_vertex_index(*v_j);
 
         // Set w_ij in matrix

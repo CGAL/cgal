@@ -98,7 +98,7 @@ private:
 
   typedef typename Adaptor::Polyhedron TriangleMesh;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
-
+  typedef CGAL::Halfedge_around_target_circulator<TriangleMesh> halfedge_around_target_circulator;
   typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
     // Mesh_Adaptor_3 subtypes:
     typedef typename Adaptor::NT            NT;
@@ -131,11 +131,13 @@ protected:
     virtual NT compute_w_ij(const Adaptor& mesh,
                             vertex_descriptor main_vertex_v_i,
                             vertex_around_target_circulator neighbor_vertex_v_j)
+    //halfedge_around_target_circulator neighbor_vertex_v_j)
     {
+  const TriangleMesh& tmesh = mesh.get_adapted_mesh();
         typedef typename boost::property_map<typename Adaptor::Polyhedron, boost::vertex_point_t>::const_type PPmap;
         typedef typename boost::property_traits<PPmap>::reference Point_3;
  
-        PPmap ppmap = get(vertex_point, mesh.get_adapted_mesh());
+        PPmap ppmap = get(vertex_point, tmesh);
 
         Point_3 position_v_i = get(ppmap,main_vertex_v_i);
         Point_3 position_v_j = get(ppmap,*neighbor_vertex_v_j);

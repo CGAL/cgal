@@ -110,7 +110,7 @@ double Circular_border_parameterizer_3<Adaptor>::compute_border_length(
 {
     const TriangleMesh& tmesh = mesh.get_adapted_mesh();
     double len = 0.0;
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(mesh.main_border(),tmesh))
+    BOOST_FOREACH(halfedge_descriptor hd, mesh.main_border())
     {
       CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(target(hd, tmesh)));
       // Add 'length' of it -> next vector to 'len'
@@ -131,7 +131,7 @@ Circular_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
 #endif
     const TriangleMesh& tmesh = mesh.get_adapted_mesh();
     // Nothing to do if no border
-    if (mesh.main_border() == boost::graph_traits<TriangleMesh>::null_halfedge())
+    if (mesh.main_border().empty())
         return Parameterizer_traits_3<Adaptor>::ERROR_BORDER_TOO_SHORT;
 
     // Compute the total border length
@@ -143,9 +143,9 @@ Circular_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
     const double tmp = 2*PI/total_len;
     double len = 0.0;           // current position on circle in [0, total_len]
     
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(mesh.main_border(), tmesh))
+    BOOST_FOREACH(halfedge_descriptor hd, mesh.main_border())
     {
-      vertex_descriptor vd = source(hd,tmesh);
+      vertex_descriptor vd = target(hd,tmesh);
         CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_on_main_border(vd));
 
         double angle = len*tmp; // current position on the circle in radians
@@ -153,13 +153,12 @@ Circular_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
         // map vertex on unit circle
         Point_2 uv;
         uv = Point_2(0.5+0.5*std::cos(-angle),0.5+0.5*std::sin(-angle));
-        mesh.set_vertex_uv(vd, uv);
+        mesh.set_vertex_uv(hd, uv);
 
         // Mark vertex as "parameterized"
-        mesh.set_vertex_parameterized(vd, true);
+        mesh.set_vertex_parameterized(hd, true);
 
-        // Add 'length' of it -> next vector to 'len'
-        len += compute_edge_length(mesh, vd, target(hd,tmesh));
+        len += compute_edge_length(mesh, source(hd,tmesh), vd);
     }
 
     return Parameterizer_traits_3<Adaptor>::OK;

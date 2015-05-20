@@ -97,9 +97,11 @@ int main(int argc, char * argv[])
       him[hd] = i++;
     }
 
+    halfedge_descriptor border = longest_border(mesh);
+
     typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron, V_index_pmap, H_index_pmap, H_uv_pmap>
                                             Parameterization_polyhedron_adaptor;
-    Parameterization_polyhedron_adaptor mesh_adaptor(mesh, vipm,hipm,huvpm);
+    Parameterization_polyhedron_adaptor mesh_adaptor(mesh, border, vipm,hipm,huvpm);
 
     //***************************************
     // Discrete Authalic Parameterization
@@ -107,7 +109,9 @@ int main(int argc, char * argv[])
     //***************************************
 
     typedef 
-      CGAL::Discrete_authalic_parameterizer_3<Parameterization_polyhedron_adaptor, CGAL::Square_border_arc_length_parameterizer_3<Parameterization_polyhedron_adaptor> >
+      CGAL::Discrete_authalic_parameterizer_3<Parameterization_polyhedron_adaptor
+                                              //, CGAL::Square_border_arc_length_parameterizer_3<Parameterization_polyhedron_adaptor> 
+>
       //CGAL::Barycentric_mapping_parameterizer_3<Parameterization_polyhedron_adaptor>
       //CGAL::Discrete_conformal_map_parameterizer_3<Parameterization_polyhedron_adaptor>
       //CGAL::Mean_value_coordinates_parameterizer_3<Parameterization_polyhedron_adaptor>

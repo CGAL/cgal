@@ -144,7 +144,7 @@ Square_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
     const TriangleMesh& tmesh = mesh.get_adapted_mesh();
     // Nothing to do if no border
     
-    if (mesh.main_border() == boost::graph_traits<TriangleMesh>::null_halfedge())
+    if (mesh.main_border().empty())
         return Parameterizer_traits_3<Adaptor>::ERROR_BORDER_TOO_SHORT;
 
     // Compute the total border length
