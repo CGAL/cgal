@@ -34,7 +34,8 @@ void list_output(Rs_2& rs2)
   std::vector<Point> isolated_vertices;
   std::vector<Segment> edges;
   
-  rs2.extract_list_output(std::back_inserter(isolated_vertices), std::back_inserter(edges));
+  rs2.extract_list_output(
+    std::back_inserter(isolated_vertices), std::back_inserter(edges));
   
   for (std::vector<Point>::iterator vit = isolated_vertices.begin();
        vit != isolated_vertices.end(); vit++) {
@@ -52,7 +53,28 @@ void index_output(Rs_2& rs2)
 {  
   std::cout << "(-------------Off output---------- )" << std::endl;
   
-  rs2.extract_index_output(std::cout);
+  std::vector<Point> points;
+  std::vector<std::size_t> isolated_points;
+  std::vector<std::pair<std::size_t,std::size_t> > edges;
+
+  rs2.indexed_output(
+    std::back_inserter(points), 
+    std::back_inserter(isolated_points),
+    std::back_inserter(edges));
+  
+  std::cout << "OFF " << points.size() <<
+		  " 0 " << edges.size()  << std::endl;
+
+  for (std::vector<Point>::iterator it = points.begin(); 
+       it != points.end(); it++) {
+	  std::cout << *it << std::endl;
+  }
+
+  for (std::vector<std::pair<std::size_t,std::size_t> >::iterator it 
+        = edges.begin();
+		  it != edges.end(); it++) {
+    std::cout << "2 "  << it->first << " " << it->second << std::endl;
+  }
 }
 
 int main ()
