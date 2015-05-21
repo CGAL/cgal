@@ -36,11 +36,23 @@ public:
   typedef Fb Base;
   typedef typename Base::Vertex_handle  Vertex_handle;
   typedef typename Base::Face_handle    Face_handle;
-  typedef std::pair<Face_handle, int> Edge;
+  typedef std::pair<Face_handle, int>   Edge_cdt;
   typedef Constrained_Delaunay_triangulation_face_base_2 CDT_face_base;
 
   typedef typename Kernel::Point_2      Point;
   typedef typename Kernel::Segment_2    Segment;
+
+  struct Edge
+  {
+    Face_handle face;
+    int index;
+    Edge()
+      : face(), index(-1)
+    {}
+    Edge(Face_handle face_, int index_)
+      : face(face_), index(index_)
+    {}
+  };
 
 private:
   bool m_blind;
@@ -89,16 +101,18 @@ public:
 
   // if blind, the constrained edge that prevents the face
   // to see its circumcenter 
-  const Edge& blinding_constraint() const
+  const Edge_cdt& blinding_constraint() const
   {
     CGAL_precondition(this->is_blind());
-    return m_blinding_constraint;
+    return std::make_pair(m_blinding_constraint.face,
+                          m_blinding_constraint.index);
   }
-  void set_blinding_constraint(const Edge& e)
+  void set_blinding_constraint(const Edge_cdt& e)
   {
     CGAL_precondition(this->is_blind());
     CGAL_precondition(e.first->is_constrained(e.second));
-    m_blinding_constraint = e;
+    m_blinding_constraint.face = e.first;
+    m_blinding_constraint.index = e.second;
   }
 };
 
