@@ -45,7 +45,11 @@ typedef K::FT FT;
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Regular_traits;
 typedef CGAL::Periodic_3_Regular_triangulation_traits_3<Regular_traits> Traits;
 
+/* Explicit instantiation.
+ * It allows us to test if the template class, instantiated with given template parameters, compiles.
+ */
 template class CGAL::Periodic_3_Regular_triangulation_3<Traits>;
+
 typedef CGAL::Periodic_3_Regular_triangulation_3<Traits> P3RT3;
 typedef P3RT3::Vertex_handle Vertex_handle;
 typedef P3RT3::Cell_handle Cell_handle;
