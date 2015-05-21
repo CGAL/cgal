@@ -519,6 +519,7 @@ public:
           dilate_selection<Vertex_handle>(steps);
         break;
         case Active_handle::FACET:
+        case Active_handle::CONNECTED_COMPONENT:
           dilate_selection<Facet_handle>(steps);
         break;
         case Active_handle::EDGE:
@@ -532,6 +533,7 @@ public:
           erode_selection<Vertex_handle>(-steps);
         break;
         case Active_handle::FACET:
+        case Active_handle::CONNECTED_COMPONENT:
           erode_selection<Facet_handle>(-steps);
         break;
         case Active_handle::EDGE:
