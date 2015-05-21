@@ -56,6 +56,7 @@ public:
 public Q_SLOTS:
   virtual void changed();
   void show_only_feature_edges(bool);
+  void show_feature_edges(bool);
   void enable_facets_picking(bool);
   void set_erase_next_picked_facet(bool);
 
@@ -91,6 +92,7 @@ private:
   Color_vector colors_;
 
   bool show_only_feature_edges_m;
+  bool show_feature_edges_m;
   bool facet_picking_m;
   bool erase_next_picked_facet_m;
   //the following variable is used to indicate if the color vector must not be automatically updated.

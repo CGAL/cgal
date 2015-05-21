@@ -80,7 +80,7 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
     Polyhedron* pMesh = item->polyhedron();
     if(!pMesh)
       return;
-    
+    item->show_feature_edges(true);
     polyhedrons << make_pair(index, pMesh);
   }
 
