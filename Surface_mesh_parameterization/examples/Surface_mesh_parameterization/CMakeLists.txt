@@ -49,6 +49,7 @@ if ( CGAL_FOUND )
  endif()
 
   # Executables that do *not* require Eigen
+  create_single_source_cgal_program( "seam.cpp" )
   create_single_source_cgal_program( "LSCM_parameterization.cpp" )
  
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)

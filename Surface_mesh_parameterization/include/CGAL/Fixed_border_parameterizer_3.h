@@ -118,6 +118,7 @@ private:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator vertex_iterator;
  
   typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
+  typedef CGAL::Vertex_around_face_circulator<TriangleMesh> vertex_around_face_circulator;
   typedef CGAL::Halfedge_around_target_circulator<TriangleMesh> halfedge_around_target_circulator;
 
     // Mesh_Adaptor_3 subtypes:
@@ -272,9 +273,6 @@ parameterize(Adaptor& amesh)
     // Count vertices
     int nbVertices = amesh.count_mesh_vertices();
 
-    // Index vertices from 0 to nbVertices-1
-    amesh.index_mesh_vertices();
-
     // AF: mark all halfedges as not parameterized
     // Mark all vertices as *not* "parameterized"
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
@@ -310,8 +308,8 @@ parameterize(Adaptor& amesh)
     // w_ij for each neighbor j; then w_ii = - sum of w_ijs
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
     {
-        CGAL_surface_mesh_parameterization_assertion(amesh.is_vertex_on_main_border(v)
-                                     == amesh.is_vertex_parameterized(v));
+      //        CGAL_surface_mesh_parameterization_assertion(amesh.is_vertex_on_main_border(v)
+      // == amesh.is_vertex_parameterized(v));
 
         // inner vertices only
         if( ! amesh.is_vertex_on_main_border(v) )
@@ -444,7 +442,7 @@ initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
   // AF: loop over border halfedges
   BOOST_FOREACH(halfedge_descriptor hd, mesh.main_border())
     {
-      CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_parameterized(target(hd,tmesh)));
+      // AF not written for halfedge      CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_parameterized(target(hd,tmesh)));
 
         // AF: get the halfedge-as-vertex index
         // Get vertex index in sparse linear system
@@ -518,6 +516,7 @@ setup_inner_vertex_relations(Matrix& A,
 }
 
 // Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex.
+// AF: this only concerns vertices NOT on the border
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -531,12 +530,14 @@ set_mesh_uv_from_system(Adaptor& amesh,
     {
         int index = amesh.get_vertex_index(vd);
 
-        NT u = Xu[index];
-        NT v = Xv[index];
-
-        // Fill vertex (u,v) and mark it as "parameterized"
-        amesh.set_vertex_uv(vd, Point_2(u,v));
-        amesh.set_vertex_parameterized(vd, true);
+        if(index != -1){
+          NT u = Xu[index];
+          NT v = Xv[index];
+          
+          // Fill vertex (u,v) and mark it as "parameterized"
+          amesh.set_vertex_uv(vd, Point_2(u,v));
+          amesh.set_vertex_parameterized(vd, true);
+        }
     }
 }
 

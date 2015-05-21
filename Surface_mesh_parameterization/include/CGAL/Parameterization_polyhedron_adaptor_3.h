@@ -84,6 +84,7 @@ private:
   typedef typename Polyhedron_3_ TriangleMesh;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_iterator face_iterator;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator vertex_iterator;
@@ -130,7 +131,7 @@ public:
         {
             m_tag = -1;             // uninitialized
             m_index = -1;           // uninitialized
-            m_seaming = -1;         // uninitialized
+            m_seaming = 0;         // uninitialized
             m_is_parameterized = false;
             m_vindex = -1;
             m_on_border = 0;
@@ -177,7 +178,7 @@ public:
         {
             m_index = -1;           // uninitialized
             m_tag = -1;             // uninitialized
-            m_seaming = -1;         // uninitialized
+            m_seaming = 0;         // uninitialized
             m_on_border = 0;
         }
 
@@ -258,19 +259,12 @@ public:
         typedef typename Vertex_info_map::value_type Vertex_info_pair;
 
         m_halfedge_info.resize(num_halfedges(mesh));
-        // Allocate extra info for each halfedge
-        Halfedge_info hinfo;
-        BOOST_FOREACH(halfedge_descriptor hd, halfedges(mesh)){
-          m_halfedge_info[get(m_him,hd)] = hinfo;
-        }
-
         m_vertex_info.resize(num_vertices(mesh));
+
         // Allocate extra info for each vertex
-        Vertex_info vinfo;
-  int index = 0;
+        m_num_vertices = 0;
         BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
-          m_vertex_info[get(m_vim, vd)] = vinfo;
-            set_vertex_index(vd, index++);
+          set_vertex_index(vd, m_num_vertices++);
         }
 
         BOOST_FOREACH(halfedge_descriptor hd, halfedges(mesh)){
@@ -282,12 +276,93 @@ public:
           info(hd)->on_border(2);
           info(target(hd,mesh))->on_border(2);
         }
-
-#ifndef CGAL_NDEBUG
-        // Index vertices right away to ease debugging
-        //        index_mesh_vertices();
-#endif
     }
+
+
+
+  /// Create an adaptator for an existing Polyhedron_3 mesh.
+  /// The input mesh can be of any genus.
+  /// It can have have any number of borders.
+  /// the seam will be the main border
+  
+  ///
+  Parameterization_polyhedron_adaptor_3(Polyhedron& mesh,
+                                        std::vector<edge_descriptor>& seam,
+                                        VertexIndexMap vim,
+                                        HalfedgeIndexMap him,
+                                        HalfedgeUvMap huvm)
+        // Store reference to adapted mesh
+    : m_polyhedron(mesh), m_vim(vim), m_him(him), m_huvm(huvm)
+  {
+    typedef typename Halfedge_info_map::value_type Halfedge_info_pair;
+    typedef typename Vertex_info_map::value_type Vertex_info_pair;
+
+    m_halfedge_info.resize(num_halfedges(mesh));
+    m_vertex_info.resize(num_vertices(mesh));
+
+    // each vertex shall know on how many seaming edges it is
+    BOOST_FOREACH(edge_descriptor e, seam){
+      info(halfedge(e,mesh))->seaming(1);
+      info(opposite(halfedge(e,mesh),mesh))->seaming(1);
+      vertex_descriptor vd = target(e,mesh);
+      info(vd)->seaming(info(vd)->seaming()+1);
+      vd = source(e,mesh);
+      info(vd)->seaming(info(vd)->seaming()+1);
+    }
+
+    // we only want to use the index stored in info if it is not inside a seam
+    m_num_vertices = 0;
+    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
+      if(info(vd)->seaming() == 0){
+        set_vertex_index(vd, m_num_vertices++);
+      } else {
+        assert(get_vertex_index(vd) == -1);
+      } 
+    }
+    BOOST_FOREACH(edge_descriptor e, seam){
+      halfedge_descriptor hd = halfedge(e,mesh);
+      info(target(hd,mesh))->on_border(2);
+      set_vertex_index(hd,m_num_vertices);
+      while(info(next(hd,mesh))->seaming()==0){
+        hd = opposite(next(hd,mesh),mesh);
+        set_vertex_index(hd,m_num_vertices);
+      }
+      ++m_num_vertices;
+      hd = opposite(halfedge(e,mesh),mesh);
+      info(target(hd,mesh))->on_border(2);
+      set_vertex_index(hd,m_num_vertices);
+      while(info(next(hd,mesh))->seaming()==0){
+        hd = opposite(next(hd,mesh),mesh);
+        set_vertex_index(hd,m_num_vertices);
+      
+      }
+      ++m_num_vertices;
+    }
+
+    // all halfedges where target is not on a seam will get it from the target
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(mesh)){
+      if(info(target(hd,mesh))->seaming()==0){
+        assert(info(hd)->seaming()==0);
+        assert(info(target(hd,mesh))->index() != -1);
+        set_vertex_index(hd, info(target(hd,mesh))->index());
+      }
+      assert(get_vertex_index(hd)!= -1);
+    }
+    
+
+    // to get started deal with a polyline border 
+    for(int i=0; i < seam.size(); i++){
+      m_main_border.push_back(halfedge(seam[i],mesh));
+    }
+    for(int i=seam.size(); i>0 ; i--){
+      m_main_border.push_back(opposite(halfedge(seam[i-1],mesh),mesh));
+    }
+
+    // We do not set on_border for vinfo or hinfo
+
+  }
+
+
 
     // Default destructor, copy constructor and operator =() are fine
 
@@ -342,25 +417,11 @@ public:
         return m_polyhedron.is_valid();
     }
 
-  /// TODO: check if num_vertices would be ok
     /// Count the number of vertices of the mesh.
     int  count_mesh_vertices() const {
-        
-      vertex_iterator b, e;
-      boost::tie(b,e) = vertices(m_polyhedron);
-
-      return std::distance(b,e);
+      return m_num_vertices;
     }
 
-    // Index vertices of the mesh from 0 to count_mesh_vertices()-1
-    void  index_mesh_vertices ()
-    {
-        int index = 0;
-        BOOST_FOREACH (vertex_descriptor vd, vertices(m_polyhedron))
-        {
-            set_vertex_index(vd, index++);
-        }
-    }
 
     const std::list<halfedge_descriptor>& main_border() const { return m_main_border; }
 
@@ -455,17 +516,26 @@ public:
           put(m_huvm, hd, uv);
         }
       }else {
-        std::cerr << "todo\n";
+        put(m_huvm, halfedge, uv);
+        while(info(next(halfedge,m_polyhedron))->seaming()>0){
+          halfedge = opposite(next(halfedge,m_polyhedron),m_polyhedron);
+          put(m_huvm, halfedge, uv);
+        }
       }
     }
 
     void  set_vertex_parameterized(halfedge_descriptor halfedge, bool b) {
+      std::cerr << "set_vertex_parameterized\n";
       if(is_border(halfedge,m_polyhedron)){
         BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(halfedge,m_polyhedron)){
           info(hd)->is_parameterized(b);
         }
       }else {
-        std::cerr << "todo\n";
+        info(halfedge)->is_parameterized(true);
+        while(info(next(halfedge,m_polyhedron))->seaming()>0){
+          halfedge = opposite(next(halfedge,m_polyhedron),m_polyhedron);
+          info(halfedge)->is_parameterized(true);
+        }
       }
     }
     Point_2  get_vertex_uv(halfedge_descriptor halfedge) const {
@@ -854,10 +924,8 @@ private:
     Vertex_info_map             m_vertex_info;
 
     /// Main border of a topological disc inside m_polyhedron (may be empty).
-  std::list<halfedge_descriptor> m_main_border;
-
-
-
+    std::list<halfedge_descriptor> m_main_border;
+    int m_num_vertices;
 
     }; // Parameterization_polyhedron_adaptor_3
 

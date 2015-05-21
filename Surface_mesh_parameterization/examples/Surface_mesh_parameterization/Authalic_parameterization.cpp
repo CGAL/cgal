@@ -23,7 +23,7 @@
 
 typedef CGAL::Simple_cartesian<double>      Kernel;
 typedef Kernel::Point_2                     Point_2;
-#if 0
+#if 1
 typedef CGAL::Surface_mesh<Kernel::Point_3> Polyhedron;
 #else
 typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
@@ -32,6 +32,7 @@ typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
 
 // ----------------------------------------------------------------------------
 // main()
@@ -47,9 +48,9 @@ int main(int argc, char * argv[])
     // decode parameters
     //***************************************
 
-    if (argc-1 != 1)
+    if (argc-1 != 2)
     {
-        std::cerr << "Usage: " << argv[0] << " input_file.off" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " input_file.off  input_file.seams" << std::endl;
         return(EXIT_FAILURE);
     }
 
@@ -71,6 +72,22 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
     }
     */
+
+    std::ifstream index_pair_stream(argv[2]);
+    
+    std::vector<edge_descriptor> edges;
+    {
+      std::size_t i,j;
+      while(index_pair_stream >> i >> j){
+        edge_descriptor e;
+        bool found;
+        boost::tie(e,found) = edge(vertex_descriptor(i),vertex_descriptor(j), mesh);
+        assert(found);
+        edges.push_back(e);
+        std::cout << std::size_t(e) << std::endl;
+      }
+    }
+
     //***************************************
     // Create Polyhedron adaptor
     // Note: no cutting => we support only
@@ -101,7 +118,8 @@ int main(int argc, char * argv[])
 
     typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron, V_index_pmap, H_index_pmap, H_uv_pmap>
                                             Parameterization_polyhedron_adaptor;
-    Parameterization_polyhedron_adaptor mesh_adaptor(mesh, border, vipm,hipm,huvpm);
+    // Parameterization_polyhedron_adaptor mesh_adaptor(mesh, border, vipm,hipm,huvpm);
+    Parameterization_polyhedron_adaptor mesh_adaptor(mesh, edges, vipm,hipm,huvpm);
 
     //***************************************
     // Discrete Authalic Parameterization

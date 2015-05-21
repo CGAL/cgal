@@ -65,14 +65,17 @@ int main(int, char* argv[])
 
   std::vector<Point> points;
   do {
-    points.push_back(get(ppmap,tv));
+    std::cout << std::size_t(tv) << " " << std::size_t(predecessor[tv]) <<  std::endl;
+    //points.push_back(get(ppmap,tv));
     tv = predecessor[tv];
   } while(predecessor[tv]!=tv);
 
+  /*
   points.push_back(get(ppmap,sv));
   std::cout << points.size() << std::endl;
   BOOST_FOREACH(Point p, points){
     std::cout << p << std::endl;
   }
+  */
   return 0;
 }
