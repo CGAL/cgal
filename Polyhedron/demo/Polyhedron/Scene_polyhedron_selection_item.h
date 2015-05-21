@@ -717,35 +717,14 @@ public:
     return out->size_of_vertices() > 0;
   }
 
-  struct Is_sharp_edge_property_map
-  {
-    friend bool get(Is_sharp_edge_property_map,
-                    Polyhedron::Halfedge_handle h)
-    {
-      return h->is_feature_edge();
-    }
-    friend bool get(Is_sharp_edge_property_map,
-                    edge_descriptor e)
-    {
-      return e.halfedge()->is_feature_edge();
-    }
-    friend void put(Is_sharp_edge_property_map,
-                    Polyhedron::Halfedge_handle h,
-                    bool b)
-    {
-      h->set_feature_edge(b);
-    }
-  };
-
   void select_sharp_edges(const double angle)
   {
     CGAL::detect_sharp_edges(polyhedron(), angle);
 
-    Is_sharp_edge_property_map is_sharp;
     BOOST_FOREACH(edge_descriptor e, edges(*polyhedron()))
     {
       Polyhedron::Halfedge_handle h = halfedge(e, *polyhedron());
-      if (get(is_sharp, h))
+      if (h->is_feature_edge())
         selected_edges.insert(e);
     }
     changed_with_poly_item();
@@ -840,13 +819,21 @@ protected:
 
     if (get_active_handle_type() == Active_handle::CONNECTED_COMPONENT)
     {
-      Is_sharp_edge_property_map is_sharp;
+      Selection_traits<edge_descriptor,
+                       Scene_polyhedron_selection_item> tr(this);
+      tr.update_indices();
+
+      std::vector<bool> mark(tr.size(), false);
+      BOOST_FOREACH(edge_descriptor e, selected_edges)
+        mark[tr.id(e)] = true;
+
       std::vector<Facet_handle> selected_cc;
       CGAL::Polygon_mesh_processing::connected_component(
         face(*selection.begin()),
         *polyhedron(),
         std::back_inserter(selected_cc),
-        CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(is_sharp));
+        CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
+          Is_selected_property_map<edge_descriptor>(mark)));
 
       any_change = treat_selection(selected_cc);
     }
