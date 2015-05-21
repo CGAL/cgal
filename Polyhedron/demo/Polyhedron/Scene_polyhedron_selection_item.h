@@ -465,6 +465,12 @@ public:
     Q_EMIT itemChanged();
   }
 
+  void clear_all(){
+    clear<Vertex_handle>();
+    clear<Facet_handle>();
+    clear<edge_descriptor>();
+  }
+
   boost::optional<std::size_t> get_minimum_isolated_component() {
     switch(get_active_handle_type()) {
     case Active_handle::VERTEX:
@@ -848,7 +854,7 @@ protected:
     {
       any_change = treat_selection(selection);
     }
-    if(any_change) { Q_EMIT itemChanged(); }
+    if(any_change) { Q_EMIT changed_with_poly_item(); }
   }
 
 public:

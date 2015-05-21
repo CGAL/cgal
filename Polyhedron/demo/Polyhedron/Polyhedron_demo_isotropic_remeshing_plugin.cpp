@@ -114,6 +114,8 @@ public Q_SLOTS:
          , target_length
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter));
 
+        selection_item->poly_item_changed();
+        selection_item->clear_all();
         selection_item->changed_with_poly_item();
       }
       else if (poly_item){
