@@ -452,7 +452,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(point_set_outliers_removal_plugin scene_points_with_normal_item)
 
   polyhedron_demo_plugin(selection_plugin Polyhedron_demo_selection_plugin ${selectionUI_FILES})
-  target_link_libraries(selection_plugin scene_polyhedron_selection_item scene_points_with_normal_item)
+  target_link_libraries(selection_plugin scene_polyhedron_selection_item scene_points_with_normal_item scene_polylines_item)
 #
 # Exporting
 #
