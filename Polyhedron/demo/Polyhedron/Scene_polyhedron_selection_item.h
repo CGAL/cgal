@@ -801,7 +801,7 @@ protected:
   template<typename HandleRange>
   bool treat_selection(const HandleRange& selection)
   {
-    typedef HandleRange::value_type HandleType;
+    typedef typename HandleRange::value_type HandleType;
     Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
 
     bool any_change = false;
