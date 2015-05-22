@@ -72,7 +72,7 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
     }
     */
-
+#if 1
     std::ifstream index_pair_stream(argv[2]);
     
     std::vector<edge_descriptor> edges;
@@ -82,12 +82,13 @@ int main(int argc, char * argv[])
         edge_descriptor e;
         bool found;
         boost::tie(e,found) = edge(vertex_descriptor(i),vertex_descriptor(j), mesh);
+        std::cerr << size_t(e) << std::endl;
         assert(found);
         edges.push_back(e);
-        std::cout << std::size_t(e) << std::endl;
       }
+      std::cerr <<std::endl;
     }
-
+#endif
     //***************************************
     // Create Polyhedron adaptor
     // Note: no cutting => we support only
@@ -114,11 +115,11 @@ int main(int argc, char * argv[])
       him[hd] = i++;
     }
 
-    halfedge_descriptor border = longest_border(mesh);
+    //halfedge_descriptor border = longest_border(mesh);
 
     typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron, V_index_pmap, H_index_pmap, H_uv_pmap>
                                             Parameterization_polyhedron_adaptor;
-    // Parameterization_polyhedron_adaptor mesh_adaptor(mesh, border, vipm,hipm,huvpm);
+    //Parameterization_polyhedron_adaptor mesh_adaptor(mesh, border, vipm,hipm,huvpm);
     Parameterization_polyhedron_adaptor mesh_adaptor(mesh, edges, vipm,hipm,huvpm);
 
     //***************************************
@@ -158,18 +159,25 @@ int main(int argc, char * argv[])
 
     // Raw output: dump (u,v) pairs
 
-    std::cout <<"OFF\n" << num_vertices(mesh) << " " << num_faces(mesh) << " 0\n";
-    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
-      // (u,v) pair is stored in any halfedge
-      std::cout << huvm[halfedge(vd,mesh)] << " 0" << std::endl;
+    std::vector<Point_2> vertices(mesh_adaptor.count_mesh_vertices());
+    
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(mesh)){
+      assert(huvm.find(hd)!=huvm.end());
+      vertices[mesh_adaptor.get_vertex_index(hd)] = huvm[hd]; 
+    }
+
+    std::cout << "OFF\n" << vertices.size() << " " << num_faces(mesh) << " 0\n";
+    BOOST_FOREACH(Point_2 p, vertices){
+      std::cout << p << " 0" << std::endl;
     }
     BOOST_FOREACH(face_descriptor fd, faces(mesh)){
       std::cout << "3";
-      BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(halfedge(fd,mesh),mesh)){
-        std::cout << " " <<   mesh_adaptor.info(vd)->index();
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd,mesh),mesh)){
+        std::cout << " " <<   mesh_adaptor.get_vertex_index(hd);
       }
       std::cout << std::endl;
     }
+ 
 
     return EXIT_SUCCESS;
 }

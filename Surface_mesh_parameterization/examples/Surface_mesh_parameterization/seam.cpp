@@ -1,6 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 
+#include <string>
 #include <iostream>
 #include <fstream>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
@@ -41,41 +42,52 @@ vertex_descriptor closest_vertex(const Point& p, const PolygonMesh& mesh)
 int main(int, char* argv[]) 
 {
   Mesh mesh;
-  std::ifstream in(argv[1]);
+
+  std::string base(argv[1]);
+  unsigned found = base.find_last_of(".");
+  if(found !=  std::string::npos){
+    base = base.substr(0,found);
+  }
+  std::ifstream in(base + ".off");
+  std::ifstream pin(base + ".pts");
+  std::ofstream poly(base + ".poly");
+  std::ofstream seam(base + ".seam");
+
   in >> mesh;
 
   typedef boost::property_map<Mesh, CGAL::vertex_point_t>::const_type PPmap;
   PPmap ppmap = get(CGAL::vertex_point, mesh);
 
   Point sp, tp;
-  std::ifstream pin(argv[2]);
-  pin >> sp >>  tp;
 
-  vertex_descriptor sv, tv;
-  sv = closest_vertex(sp, mesh);
-  tv = closest_vertex(tp, mesh);
   
-  std::cout << "2\n" << get(ppmap,sv)  << std::endl;
-  std::cout <<get(ppmap,tv)  << std::endl;
-
-  Mesh::Property_map<vertex_descriptor,vertex_descriptor> predecessor;
-  predecessor = mesh.add_property_map<vertex_descriptor,vertex_descriptor>("v:predecessor").first;
-
-  boost::dijkstra_shortest_paths(mesh, sv, predecessor_map(predecessor));
-
-  std::vector<Point> points;
-  do {
-    std::cout << std::size_t(tv) << " " << std::size_t(predecessor[tv]) <<  std::endl;
-    //points.push_back(get(ppmap,tv));
-    tv = predecessor[tv];
-  } while(predecessor[tv]!=tv);
-
-  /*
-  points.push_back(get(ppmap,sv));
-  std::cout << points.size() << std::endl;
-  BOOST_FOREACH(Point p, points){
-    std::cout << p << std::endl;
+  while(pin >> sp >>  tp){
+    
+    vertex_descriptor sv, tv;
+    sv = closest_vertex(sp, mesh);
+    tv = closest_vertex(tp, mesh);
+    
+    
+    Mesh::Property_map<vertex_descriptor,vertex_descriptor> predecessor;
+    predecessor = mesh.add_property_map<vertex_descriptor,vertex_descriptor>("v:predecessor").first;
+    
+    boost::dijkstra_shortest_paths(mesh, sv, predecessor_map(predecessor));
+    
+    std::vector<Point> points;
+    
+    do {
+      seam << std::size_t(tv) << " " << std::size_t(predecessor[tv]) <<  std::endl;
+      points.push_back(get(ppmap,tv));
+      tv = predecessor[tv];
+    } while(predecessor[tv]!=tv);
+    
+    points.push_back(get(ppmap,sv));
+    
+    poly << points.size() << std::endl;
+    BOOST_FOREACH(Point p, points){
+      poly << p << std::endl;
+    }
   }
-  */
+  
   return 0;
 }

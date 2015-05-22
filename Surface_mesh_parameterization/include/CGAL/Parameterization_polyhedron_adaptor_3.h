@@ -350,6 +350,17 @@ public:
     }
     
 
+    halfedge_descriptor hd = halfedge(seam[0],mesh), done(hd);
+    do {
+      m_main_border.push_back(hd);
+      while(info(next(hd,mesh))->seaming()!=1){
+        hd = opposite(next(hd,mesh),mesh);
+      }
+      hd =next(hd,mesh);
+    } while(hd != done);
+
+    std::cerr << "main border initialized\n";
+#if 0
     // to get started deal with a polyline border 
     for(int i=0; i < seam.size(); i++){
       m_main_border.push_back(halfedge(seam[i],mesh));
@@ -357,9 +368,7 @@ public:
     for(int i=seam.size(); i>0 ; i--){
       m_main_border.push_back(opposite(halfedge(seam[i-1],mesh),mesh));
     }
-
-    // We do not set on_border for vinfo or hinfo
-
+#endif
   }
 
 
@@ -517,7 +526,7 @@ public:
         }
       }else {
         put(m_huvm, halfedge, uv);
-        while(info(next(halfedge,m_polyhedron))->seaming()>0){
+        while(info(next(halfedge,m_polyhedron))->seaming()==0){
           halfedge = opposite(next(halfedge,m_polyhedron),m_polyhedron);
           put(m_huvm, halfedge, uv);
         }
@@ -525,14 +534,13 @@ public:
     }
 
     void  set_vertex_parameterized(halfedge_descriptor halfedge, bool b) {
-      std::cerr << "set_vertex_parameterized\n";
       if(is_border(halfedge,m_polyhedron)){
         BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(halfedge,m_polyhedron)){
           info(hd)->is_parameterized(b);
         }
       }else {
         info(halfedge)->is_parameterized(true);
-        while(info(next(halfedge,m_polyhedron))->seaming()>0){
+        while(info(next(halfedge,m_polyhedron))->seaming()==0){
           halfedge = opposite(next(halfedge,m_polyhedron),m_polyhedron);
           info(halfedge)->is_parameterized(true);
         }
