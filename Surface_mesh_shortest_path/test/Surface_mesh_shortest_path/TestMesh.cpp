@@ -50,20 +50,20 @@ struct TestMeshProgramInstance
   typedef typename Traits::Triangle_3 Triangle_3;
   typedef typename Traits::Triangle_2 Triangle_2;
   typedef typename Traits::Segment_2 Segment_2;
-  typedef boost::graph_traits<Polyhedron_3> GraphTraits;
-  typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
-  typedef typename GraphTraits::vertex_iterator vertex_iterator;
-  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
-  typedef typename GraphTraits::halfedge_iterator halfedge_iterator;
-  typedef typename GraphTraits::face_descriptor face_descriptor;
-  typedef typename GraphTraits::face_iterator face_iterator;
+  typedef boost::graph_traits<Polyhedron_3> Graph_traits;
+  typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
+  typedef typename Graph_traits::vertex_iterator vertex_iterator;
+  typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
+  typedef typename Graph_traits::halfedge_iterator halfedge_iterator;
+  typedef typename Graph_traits::face_descriptor face_descriptor;
+  typedef typename Graph_traits::face_iterator face_iterator;
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
   typedef typename Surface_mesh_shortest_path::Face_location Face_location;
   typedef typename boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
-  typedef typename boost::property_map<typename Traits::FaceListGraph, boost::vertex_index_t>::type VIM;
-  typedef typename boost::property_map<typename Traits::FaceListGraph, boost::edge_index_t>::type EIM;
-  typedef typename boost::property_map<typename Traits::FaceListGraph, boost::halfedge_index_t>::type HIM;
-  typedef typename boost::property_map<typename Traits::FaceListGraph, boost::face_index_t>::type FIM;
+  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::vertex_index_t>::type VIM;
+  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::edge_index_t>::type EIM;
+  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::halfedge_index_t>::type HIM;
+  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::face_index_t>::type FIM;
 
   TestMeshProgramInstance()
   {
@@ -83,7 +83,7 @@ struct TestMeshProgramInstance
   Face_location next_location(Surface_mesh_shortest_path& shortestPath, Polyhedron_3& polyhedron, const std::vector<vertex_descriptor>& vertices)
   {
     typename Traits::Construct_barycentric_coordinate construct_barycentric_coordinate;
-    
+
     if (randomizer)
     {
       return shortestPath.face_location(vertices[randomizer->get_int(0, vertices.size())]);
@@ -91,16 +91,16 @@ struct TestMeshProgramInstance
     else
     {
       std::string type;
-        
+
       std::cin >> type;
-      
+
       boost::algorithm::to_lower(type);
-      
+
       if (type == "v")
       {
         size_t x;
         std::cin >> x;
-        
+
         return shortestPath.face_location(vertices[x]);
       }
       else if (type == "e")
@@ -120,8 +120,8 @@ struct TestMeshProgramInstance
         std::pair<halfedge_descriptor, bool> he = CGAL::halfedge(vertices[x], vertices[y], polyhedron);
         return Face_location(CGAL::face(he.first, polyhedron), construct_barycentric_coordinate(FT(alpha0), FT(alpha1), FT(alpha2)));
       }
-      
-      return Face_location(GraphTraits::null_face(), construct_barycentric_coordinate(FT(0.0), FT(0.0), FT(0.0)));
+
+      return Face_location(Graph_traits::null_face(), construct_barycentric_coordinate(FT(0.0), FT(0.0), FT(0.0)));
     }
   }
 
@@ -145,38 +145,38 @@ struct TestMeshProgramInstance
 
     Polyhedron_3 polyhedron;
     std::ifstream in(meshName.c_str());
-    
+
     in >> polyhedron;
-    
+
     in.close();
-    
+
     CGAL::set_halfedgeds_items_id(polyhedron);
 
     numVertices = boost::num_vertices(polyhedron);
-    
+
     VIM vertexIndexMap(get(boost::vertex_index, polyhedron));
     HIM halfedgeIndexMap(get(boost::halfedge_index, polyhedron));
     FIM faceIndexMap(get(boost::face_index, polyhedron));
-    
+
     vertex_iterator verticesStart;
     vertex_iterator verticesEnd;
-    
+
     std::vector<vertex_descriptor> vertices;
-    
+
     boost::tie(verticesStart, verticesEnd) = boost::vertices(polyhedron);
 
     for (vertex_iterator it = verticesStart; it != verticesEnd; ++it)
     {
       vertices.push_back(*it);
     }
-    
+
     face_iterator facesStart;
     face_iterator facesEnd;
-    
+
     std::vector<face_descriptor> faces;
-    
+
     boost::tie(facesStart, facesEnd) = CGAL::faces(polyhedron);
-    
+
     for (face_iterator it = facesStart; it != facesEnd; ++it)
     {
       faces.push_back(*it);
@@ -184,14 +184,14 @@ struct TestMeshProgramInstance
 
     Surface_mesh_shortest_path startToEndShortestPaths(polyhedron, traits);
     startToEndShortestPaths.m_debugOutput = debugMode;
-    
+
     Surface_mesh_shortest_path endToStartShortestPaths(polyhedron, traits);
     endToStartShortestPaths.m_debugOutput = debugMode;
 
     std::cout << "Mesh: " << meshName << " " << boost::num_vertices(polyhedron) << " " << CGAL::num_faces(polyhedron) << " " << CGAL::num_halfedges(polyhedron) << std::endl;
 
     std::cout << std::setprecision(20);
-    
+
     for (size_t i = 0; i < numIterations; ++i)
     {
       Face_location startLocation = next_location(startToEndShortestPaths, polyhedron, vertices);
@@ -203,9 +203,9 @@ struct TestMeshProgramInstance
       startToEndShortestPaths.clear();
       startToEndShortestPaths.add_source_point(startLocation.first, startLocation.second);
       startToEndShortestPaths.build_sequence_tree();
-      
+
       CGAL::test::Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
-      
+
       startToEndShortestPaths.shortest_path_sequence_to_source_points(endLocation.first, endLocation.second, startToEndCollector);
 
       FT startToEnd = startToEndShortestPaths.shortest_distance_to_source_points(endLocation.first, endLocation.second).first;
@@ -235,15 +235,15 @@ struct TestMeshProgramInstance
       std::string names[2] = { "STE", "ETS" };
       Surface_mesh_shortest_path* pathStructures[2] = { &startToEndShortestPaths, &endToStartShortestPaths };
       CGAL::test::Edge_sequence_collector<Traits>* collectors[2] = { &startToEndCollector, &endToStartCollector };
-      
+
       for (size_t d = 0; d < 2; ++d)
       {
         for (size_t j = 0; j < collectors[d]->m_sequence.size(); ++j)
         {
           std::cout << names[d] << "(sequence:" << j << "): ";
-          
+
           CGAL::test::Sequence_item<Traits>& seqItem = collectors[d]->m_sequence[j];
-          
+
           if (seqItem.type == CGAL::test::SEQUENCE_ITEM_EDGE)
           {
             std::cout << vertexIndexMap[CGAL::source(seqItem.halfedge, polyhedron)] << " , " << vertexIndexMap[CGAL::target(seqItem.halfedge, polyhedron)] << " : " << seqItem.edgeAlpha << std::endl;
@@ -267,11 +267,11 @@ void run_program_instance(po::variables_map& vm)
   {
     programInstance.randomizer = new CGAL::Random(vm["randomSeed"].as<size_t>());
   }
-  
+
   programInstance.debugMode = vm["debugmode"].as<bool>();
   programInstance.numIterations = vm["trials"].as<size_t>();
   programInstance.meshName = vm["polyhedron"].as<std::string>();
-  
+
   programInstance.test_mesh_function();
 }
 
@@ -306,7 +306,7 @@ Kernel_type parse_kernel_type(const std::string& s)
 int main(int argc, char** argv)
 {
   po::options_description options;
-  
+
   options.add_options()
     ("help,h", "Display help message")
     ("polyhedron,p", po::value<std::string>(), "Polyhedron input file")
@@ -319,7 +319,7 @@ int main(int argc, char** argv)
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, options), vm);
   po::notify(vm);
-  
+
   if (vm.count("help"))
   {
     std::cout << options << std::endl;
@@ -345,6 +345,6 @@ int main(int argc, char** argv)
   {
     std::cerr << "Error, must specify a polyhedron." << std::endl;
   }
-  
+
   return 0;
 }

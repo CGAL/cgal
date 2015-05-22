@@ -29,38 +29,38 @@ namespace CGAL {
 
 namespace internal {
 
-template <class Triangle_3, class FaceListGraph, class VertexPointMap>
-Triangle_3 triangle_from_halfedge(typename boost::graph_traits<FaceListGraph>::halfedge_descriptor edge, const FaceListGraph& g, VertexPointMap vertexPointMap)
+template <class Triangle_3, class Triangle_mesh, class VertexPointMap>
+Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor edge, const Triangle_mesh& g, VertexPointMap vertexPointMap)
 {
-  typedef typename boost::graph_traits<FaceListGraph>::halfedge_descriptor halfedge_descriptor;
-  
+  typedef typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor halfedge_descriptor;
+
   halfedge_descriptor e0 = edge;
   halfedge_descriptor e1 = next(edge, g);
 
   return Triangle_3(get(vertexPointMap, boost::source(e0, g)), get(vertexPointMap, boost::target(e0, g)), get(vertexPointMap, boost::target(e1, g)));
 }
 
-template <class Triangle_3, class FaceListGraph>
-Triangle_3 triangle_from_halfedge(typename boost::graph_traits<FaceListGraph>::halfedge_descriptor edge, const FaceListGraph& g)
+template <class Triangle_3, class Triangle_mesh>
+Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor edge, const Triangle_mesh& g)
 {
-  return triangle_from_halfedge<Triangle_3, FaceListGraph, typename boost::property_map<FaceListGraph, boost::vertex_point_t>::type>(edge, g, get(boost::vertex_point, g));
+  return triangle_from_halfedge<Triangle_3, Triangle_mesh, typename boost::property_map<Triangle_mesh, boost::vertex_point_t>::type>(edge, g, get(boost::vertex_point, g));
 }
 
 
-template <class FaceListGraph>
-size_t edge_index(typename boost::graph_traits<FaceListGraph>::halfedge_descriptor he, FaceListGraph& p)
+template <class Triangle_mesh>
+size_t edge_index(typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor he, Triangle_mesh& p)
 {
-  typedef typename boost::graph_traits<FaceListGraph> GraphTraits;
-  typedef typename GraphTraits::face_descriptor face_descriptor;
-  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
-  
+  typedef typename boost::graph_traits<Triangle_mesh> Graph_traits;
+  typedef typename Graph_traits::face_descriptor face_descriptor;
+  typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
+
   face_descriptor f = face(he, p);
-  
+
   halfedge_descriptor start = halfedge(f, p);
   halfedge_descriptor current = start;
-  
+
   size_t count = 0;
-  
+
   while (current != he)
   {
     current = next(current, p);
@@ -85,7 +85,7 @@ FT internal_sqrt(const FT& x, CGAL::Tag_false)
 template <class FT>
 FT select_sqrt(const FT& x)
 {
-  typedef ::CGAL::Algebraic_structure_traits<FT> AST; 
+  typedef ::CGAL::Algebraic_structure_traits<FT> AST;
   static const bool has_sqrt = ! ::boost::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
   return internal_sqrt(x, ::CGAL::Boolean_tag<has_sqrt>());
 }

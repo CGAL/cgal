@@ -87,7 +87,7 @@ int main(int argc, char** argv)
 {
   // read input polyhedron
   Polyhedron_3 polyhedron;
-  std::ifstream input(argv[1]);
+  std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
   input >> polyhedron;
   input.close();
 

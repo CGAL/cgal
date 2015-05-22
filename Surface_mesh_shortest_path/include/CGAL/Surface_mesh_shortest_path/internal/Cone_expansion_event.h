@@ -39,7 +39,7 @@ public:
   {
     LEFT_CHILD,
     RIGHT_CHILD,
-    PSEUDO_SOURCE,
+    PSEUDO_SOURCE
   };
 
 public:
@@ -48,7 +48,7 @@ public:
   Expansion_type m_type;
   Segment_2 m_windowSegment;
   bool m_cancelled;
-  
+
 public:
   Cone_expansion_event(Cone_tree_node<Traits>* parent, const FT& distanceEstimate, Expansion_type type)
     : m_parent(parent)
@@ -57,7 +57,7 @@ public:
     , m_cancelled(false)
   {
   }
-  
+
   Cone_expansion_event(Cone_tree_node<Traits>* parent, const FT& distanceEstimate, Expansion_type type, const Segment_2& windowSegment)
     : m_parent(parent)
     , m_distanceEstimate(distanceEstimate)

@@ -30,17 +30,17 @@ typedef CGAL::Surface_mesh_shortest_path<Traits,
                                          Vertex_index_map,
                                          Halfedge_index_map,
                                          Face_index_map>  Surface_mesh_shortest_path;
-typedef boost::graph_traits<Polyhedron_3> GraphTraits;
-typedef GraphTraits::vertex_iterator vertex_iterator;
-typedef GraphTraits::halfedge_iterator halfedge_iterator;
-typedef GraphTraits::face_iterator face_iterator;
+typedef boost::graph_traits<Polyhedron_3> Graph_traits;
+typedef Graph_traits::vertex_iterator vertex_iterator;
+typedef Graph_traits::halfedge_iterator halfedge_iterator;
+typedef Graph_traits::face_iterator face_iterator;
 
 
 int main(int argc, char** argv)
 {
   // read input polyhedron
   Polyhedron_3 polyhedron;
-  std::ifstream input(argv[1]);
+  std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
   input >> polyhedron;
   input.close();
 

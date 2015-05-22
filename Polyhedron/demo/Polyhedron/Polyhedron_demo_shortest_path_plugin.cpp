@@ -23,7 +23,7 @@
 #include <algorithm>
 #include <vector>
 
-class Polyhedron_demo_shortest_path_plugin : 
+class Polyhedron_demo_shortest_path_plugin :
     public QObject,
     public Polyhedron_demo_plugin_helper
 {
@@ -35,47 +35,47 @@ private:
   typedef boost::property_map<Polyhedron, CGAL::halfedge_index_t>::type HalfedgeIndexMap;
   typedef boost::property_map<Polyhedron, CGAL::face_index_t>::type FaceIndexMap;
   typedef boost::property_map<Polyhedron, CGAL::vertex_point_t>::type VertexPointMap;
-  
+
   typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron> Surface_mesh_shortest_path_traits;
   typedef CGAL::Surface_mesh_shortest_path<Surface_mesh_shortest_path_traits, VertexIndexMap, HalfedgeIndexMap, FaceIndexMap, VertexPointMap> Surface_mesh_shortest_path;
-  
+
   struct ShortestPathsPointsVisitor
   {
-    typedef std::vector<typename Surface_mesh_shortest_path::Point_3> Container; 
+    typedef std::vector<typename Surface_mesh_shortest_path::Point_3> Container;
     Container& m_container;
 
     ShortestPathsPointsVisitor(Container& container)
       : m_container(container)
     {
     }
-    
+
     void point(const Surface_mesh_shortest_path::Point_3& point)
     {
       std::cout << point << std::endl;
       m_container.push_back(point);
     }
   };
-  
+
   typedef std::map<Scene_polyhedron_item*, Scene_polyhedron_shortest_path_item* > Shortest_paths_map;
-  
+
 public:
 
-  QList<QAction*> actions() const 
+  QList<QAction*> actions() const
   {
       return QList<QAction*>() << actionMakeShortestPaths;
   }
 
-  bool applicable() const 
+  bool applicable(QAction*) const
   {
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
-  
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* messages) 
+
+  void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* messages)
   {
     this->scene = scene_interface;
     this->mw = mainWindow;
     this->m_messages = messages;
-    
+
     dock_widget = new QDockWidget("Shortest path", mw);
     dock_widget->setVisible(false);
 
@@ -86,7 +86,7 @@ public:
     connect(ui_widget.Primitives_type_combo_box, SIGNAL(currentIndexChanged(int)), this, SLOT(on_Primitives_type_combo_box_changed(int)));
 
     actionMakeShortestPaths = new QAction("Make Shortest Path", this->mw);
-   
+
     connect(actionMakeShortestPaths, SIGNAL(triggered()), this, SLOT(on_actionMakeShortestPaths_triggered()));
 
     Scene* trueScene = dynamic_cast<Scene*>(scene_interface);
@@ -96,21 +96,21 @@ public:
         connect(trueScene, SIGNAL(newItem(int)), this, SLOT(new_item(int)));
     }
   }
-  
+
 private:
 
   Scene_polyhedron_shortest_path_item::Selection_mode get_selection_mode() const;
   Scene_polyhedron_shortest_path_item::Primitives_mode get_primitives_mode() const;
 
   void check_and_set_ids(Polyhedron* polyhedron);
-  
+
 public slots:
   void on_actionMakeShortestPaths_triggered();
   void on_Selection_type_combo_box_changed(int index);
   void on_Primitives_type_combo_box_changed(int index);
   void new_item(int index);
   void item_about_to_be_destroyed(Scene_item* scene_item);
-  
+
 private:
   Shortest_paths_map m_shortestPathsMap;
 
@@ -131,11 +131,11 @@ Scene_polyhedron_shortest_path_item::Primitives_mode Polyhedron_demo_shortest_pa
   return (Scene_polyhedron_shortest_path_item::Primitives_mode) ui_widget.Primitives_type_combo_box->currentIndex();
 }
 
-void Polyhedron_demo_shortest_path_plugin::item_about_to_be_destroyed(Scene_item* sceneItem) 
+void Polyhedron_demo_shortest_path_plugin::item_about_to_be_destroyed(Scene_item* sceneItem)
 {
     // if polyhedron item
     Scene_polyhedron_item* polyhedronItem = qobject_cast<Scene_polyhedron_item*>(sceneItem);
-    if(polyhedronItem) 
+    if(polyhedronItem)
     {
       Shortest_paths_map::iterator found = m_shortestPathsMap.find(polyhedronItem);
 
@@ -146,10 +146,10 @@ void Polyhedron_demo_shortest_path_plugin::item_about_to_be_destroyed(Scene_item
         scene->erase(scene->item_id(shortestPathItem));
       }
     }
-    
+
     // if polyhedron selection item
     Scene_polyhedron_shortest_path_item* shortestPathItem = qobject_cast<Scene_polyhedron_shortest_path_item*>(sceneItem);
-    if(shortestPathItem) 
+    if(shortestPathItem)
     {
       Scene_polyhedron_item* polyhedronItem = shortestPathItem->polyhedron_item();
       Shortest_paths_map::iterator found = m_shortestPathsMap.find(polyhedronItem);
@@ -170,11 +170,11 @@ void Polyhedron_demo_shortest_path_plugin::new_item(int itemIndex)
     return;
   }
 
-  if(item->polyhedron_item() == NULL) 
-  { 
+  if(item->polyhedron_item() == NULL)
+  {
     Scene_polyhedron_item* polyhedronItem = get_selected_item<Scene_polyhedron_item>();
 
-    if(!polyhedronItem) 
+    if(!polyhedronItem)
     {
       CGAL_assertion(item->polyhedron_item() == NULL); // which means it is coming from selection_io loader
       this->m_messages->information(tr("Error: please select corresponding polyhedron item from Geometric Objects list."));
@@ -182,7 +182,7 @@ void Polyhedron_demo_shortest_path_plugin::new_item(int itemIndex)
       return;
     }
 
-    if(!item->deferred_load(polyhedronItem, this->scene, this->m_messages, this->mw)) 
+    if(!item->deferred_load(polyhedronItem, this->scene, this->m_messages, this->mw))
     {
       this->m_messages->information("Error: loading selection item is not successful!");
       scene->erase(itemIndex);
@@ -193,19 +193,19 @@ void Polyhedron_demo_shortest_path_plugin::new_item(int itemIndex)
   check_and_set_ids(item->polyhedron_item()->polyhedron());
 
   Scene_polyhedron_shortest_path_item::Selection_mode selectionMode = get_selection_mode(); // Scene_polyhedron_shortest_path_item::INSERT_POINTS_MODE;
-  
+
   std::cout << "Selection mode: " << selectionMode << std::endl;
-  
+
   item->set_selection_mode(selectionMode);
-  
+
   Scene_polyhedron_shortest_path_item::Primitives_mode primitivesMode = get_primitives_mode(); // Scene_polyhedron_shortest_path_item::FACE_MODE;
-  
+
   std::cout << "Primitives mode: " << primitivesMode << std::endl;
 
   item->set_primitives_mode(primitivesMode);
-  
+
   item->setRenderingMode(Flat);
-  
+
   if(item->name() == "unamed")
   {
     item->setName(tr("%1 (shortest path computation item)").arg(item->polyhedron_item()->name()));
@@ -217,7 +217,7 @@ void Polyhedron_demo_shortest_path_plugin::new_item(int itemIndex)
 void Polyhedron_demo_shortest_path_plugin::on_actionMakeShortestPaths_triggered()
 {
   Scene_polyhedron_item* polyhedronItem = get_selected_item<Scene_polyhedron_item>();
-  
+
   if (polyhedronItem)
   {
     if (m_shortestPathsMap.find(polyhedronItem) == m_shortestPathsMap.end())
@@ -241,7 +241,7 @@ void Polyhedron_demo_shortest_path_plugin::on_actionMakeShortestPaths_triggered(
 void Polyhedron_demo_shortest_path_plugin::on_Selection_type_combo_box_changed(int index)
 {
   std::cout << "Selection mode changed: " << index << std::endl;
-  
+
   for (Shortest_paths_map::iterator it = m_shortestPathsMap.begin(); it != m_shortestPathsMap.end(); ++it)
   {
     it->second->set_selection_mode(get_selection_mode());
@@ -251,7 +251,7 @@ void Polyhedron_demo_shortest_path_plugin::on_Selection_type_combo_box_changed(i
 void Polyhedron_demo_shortest_path_plugin::on_Primitives_type_combo_box_changed(int index)
 {
   std::cout << "Primitives mode changed: " << index << std::endl;
-  
+
   for (Shortest_paths_map::iterator it = m_shortestPathsMap.begin(); it != m_shortestPathsMap.end(); ++it)
   {
     it->second->set_primitives_mode(get_primitives_mode());
@@ -262,7 +262,7 @@ void Polyhedron_demo_shortest_path_plugin::check_and_set_ids(Polyhedron* polyhed
 {
   Polyhedron::Vertex_iterator testVertex1 = polyhedron->vertices_begin();
   Polyhedron::Vertex_iterator testVertex2 = ++polyhedron->vertices_begin();
-  
+
   if(testVertex1->id() == testVertex2->id())
   {
     std::size_t vertexId = 0;
@@ -272,10 +272,10 @@ void Polyhedron_demo_shortest_path_plugin::check_and_set_ids(Polyhedron* polyhed
         currentVertex->id() = vertexId;
     }
   }
-  
+
   Polyhedron::Halfedge_iterator testHalfedge1 = polyhedron->halfedges_begin();
   Polyhedron::Halfedge_iterator testHalfedge2 = ++polyhedron->halfedges_begin();
-  
+
   if (testHalfedge1->id() == testHalfedge2->id())
   {
     std::size_t halfedgeId = 0;
@@ -285,10 +285,10 @@ void Polyhedron_demo_shortest_path_plugin::check_and_set_ids(Polyhedron* polyhed
         currentHalfedge->id() = halfedgeId;
     }
   }
-  
+
   Polyhedron::Facet_iterator testFacet1 = polyhedron->facets_begin();
   Polyhedron::Facet_iterator testFacet2 = ++polyhedron->facets_begin();
-  
+
   if (testFacet1->id() == testFacet2->id())
   {
     std::size_t facetId = 0;
