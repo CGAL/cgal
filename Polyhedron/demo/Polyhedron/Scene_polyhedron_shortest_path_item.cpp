@@ -7,7 +7,7 @@
 #include <QKeySequence>
 #include <fstream>
 
-#include <Surface_mesh_shortest_path/function_objects.h>
+#include <CGAL/Surface_mesh_shortest_path/function_objects.h>
 
 Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item() 
   : Scene_polyhedron_item_decorator(NULL, false)
@@ -240,20 +240,22 @@ void Scene_polyhedron_shortest_path_item::get_as_edge_point(Scene_polyhedron_sho
   
   for (size_t i = 0; i < 3; ++i)
   {
-    if (i != minCoord)
+    if (i != minIndex)
     {
       nearestEdge[current] = i;
       ++current;
     }
   }
-  
+
+  Construct_barycentric_coordinate construct_barycentric_coordinate;
+
   Point_3 trianglePoints[3] = { 
     m_shortestPaths->point(inOutLocation.first, construct_barycentric_coordinate(FT(1.0), FT(0.0), FT(0.0))),
     m_shortestPaths->point(inOutLocation.first, construct_barycentric_coordinate(FT(0.0), FT(1.0), FT(0.0))),
     m_shortestPaths->point(inOutLocation.first, construct_barycentric_coordinate(FT(0.0), FT(0.0), FT(1.0))),
   };
   
-  Surface_mesh_shortest_paths_3::Parametric_distance_along_segment_3<Surface_mesh_shortest_path_traits> parametricDistanceSegment3;
+  CGAL::Surface_mesh_shortest_paths_3::Parametric_distance_along_segment_3<Surface_mesh_shortest_path_traits> parametricDistanceSegment3;
   
   Point_3 trianglePoint = m_shortestPaths->point(inOutLocation.first, inOutLocation.second);
   
@@ -263,9 +265,8 @@ void Scene_polyhedron_shortest_path_item::get_as_edge_point(Scene_polyhedron_sho
   
   coords[nearestEdge[1]] = distanceAlongSegment;
   coords[nearestEdge[0]] = FT(1.0) - distanceAlongSegment;
-  
-  Construct_barycentric_coordinate constructBarycentricCoordinate;
-  inOutLocation.second = constructBarycentricCoordinate(coords[0], coords[1], coords[2]);
+
+  inOutLocation.second = construct_barycentric_coordinate(coords[0], coords[1], coords[2]);
 }
 
 void Scene_polyhedron_shortest_path_item::get_as_vertex_point(Scene_polyhedron_shortest_path_item::Face_location& inOutLocation)
