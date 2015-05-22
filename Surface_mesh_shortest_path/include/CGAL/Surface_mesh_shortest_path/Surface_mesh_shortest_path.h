@@ -1600,16 +1600,7 @@ private:
           
           visitor(current->entry_edge(), t0);
 
-          if (current->is_left_child())
-          {
-            Segment_2 baseSegment = current->parent()->left_child_base_segment();
-            currentLocation = *result;
-          }
-          else if (current->is_right_child())
-          {
-            Segment_2 baseSegment = current->parent()->right_child_base_segment();
-            currentLocation = *result;
-          }
+          currentLocation = *result;
 
           current = current->parent();
 
