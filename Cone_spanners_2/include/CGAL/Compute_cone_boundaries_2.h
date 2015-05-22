@@ -20,7 +20,8 @@
 
 /*! \file Compute_cone_boundaries_2.h
  *
- * This header implements the functor for constructing theta graphs.
+ * This header implements the functor for computing the directions of cone boundaries with a given
+ *  cone number and a given initial direction either exactly or inexactly.
  */
 
 #ifndef CGAL_COMPUTE_CONE_BOUNDARIES_2_H
@@ -41,33 +42,43 @@
 namespace CGAL {
 
 /*! \ingroup PkgConeBasedSpanners
+ *
  *  \brief The functor for computing the directions of cone boundaries with a given
- *  cone number and a given initial direction. The results are stored in the vector
- *  \p rays.
+ *  cone number and a given initial direction. The results are returned by the reference 
+ *  argument: vector \p rays.
  *
  *  This computation can be either inexact by simply dividing an approximate Pi by the cone number
- *  (which is quick), or exact by using roots of polynomials (entailing number types such as `CORE::Expr` or `LEDA::Real`,
+ *  (which is quick), or exact by using roots of polynomials (requiring number types such as `CORE::Expr` or `LEDA::Real`,
  *  which are slow). The inexact computation is done by the general functor definition,
  *  while the exact computation is done by a specialization of this functor.
- *  If the template parameter `Kernel_` is `Exact_predicates_exact_constructions_kernel_with_sqrt`,
- *  the specialization functor will be invoked.
+ *   
+ *  \tparam Kernel_   If this parameter is `Exact_predicates_exact_constructions_kernel_with_sqrt`,
+ *                    the specialization functor will be called; otherwise, the general functor will
+ *                    be called.
  *
  *  In the construction of Yao graph and Theta graph implemented by this package,
  *  all predicates and construction functions are from \cgal.
  *  Therefore, if the kernel `Exact_predicates_exact_constructions_kernel_with_sqrt` is used,
  *  the Yao or Theta graph will be constructed exactly, otherwise inexactly.
  *
+ *  Of course, this functor can also be used in other applications where the plane needs to be divided
+ *  into equally-angled cones.
+ *
  */
 template <typename Kernel_>
 class Compute_cone_boundaries_2 {
+
 public:
     typedef  Kernel_                    kernel_type;
+
+private:
     typedef  typename Kernel_::FT                FT;
     typedef  typename Kernel_::Direction_2       Direction_2;
 	typedef  typename Kernel_::Aff_transformation_2    Transformation;
 
-	/* No member variables in this class, so a Constructor is not needed. */
-	//Compute_cone_boundaries_2() {};
+public:
+	/* No member variables in this class, so a customed Constructor is not needed. */
+	// Compute_cone_boundaries_2() {};
 
 	/*! \brief The operator().  
 	 *
@@ -106,17 +117,43 @@ public:
 
 };
 
+
+/*! \ingroup PkgConeBasedSpanners
+ *
+ *  \brief The specialised functor for computing the directions of cone boundaries with a given
+ *  cone number and a given initial direction. The results are returned by the reference 
+ *  argument: vector \p rays.
+ *
+ *  \tparam Kernel_   If this parameter is `Exact_predicates_exact_constructions_kernel_with_sqrt`,
+ *                    this specialization functor will be called; otherwise, the general functor will
+ *                    be called.
+ *
+ */
 template <>
 class Compute_cone_boundaries_2<Exact_predicates_exact_constructions_kernel_with_sqrt> {
+
 public:
     typedef  Exact_predicates_exact_constructions_kernel_with_sqrt                kernel_type;
+
+private:
     typedef  typename Exact_predicates_exact_constructions_kernel_with_sqrt::FT            FT;
     typedef  typename Exact_predicates_exact_constructions_kernel_with_sqrt::Direction_2   Direction_2;
 	typedef  typename Exact_predicates_exact_constructions_kernel_with_sqrt::Aff_transformation_2   Transformation;
 
-	/*! \brief Constructor. */
-	Compute_cone_boundaries_2() {};
+public:
+	/* No member variables in this class, so a Constructor is not needed. */
+	// Compute_cone_boundaries_2() {};
 
+	/*! \brief The operator().  
+	 *
+	 *  The direction of the first ray can be specified by the parameter
+	 *  \p initial_direction, which allows the first ray to start at any direction. The remaining rays are calculated in
+	 *  counter-clockwise order.
+	 *
+	 *  \param[in] cone_number The number of cones
+	 *  \param[in] initial_direction The direction of the first ray
+	 *  \param[out] rays  The results, a vector of directions
+	 */
     void operator()(const unsigned int cone_number,
                     Direction_2& initial_direction,
                     std::vector< Direction_2 >& rays) {

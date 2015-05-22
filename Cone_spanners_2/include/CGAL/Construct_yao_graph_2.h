@@ -79,8 +79,7 @@ private:
     unsigned int  cone_number;
 
     /* Store the directions of the rays dividing the plane. The initial direction will be
-     * stored in rays[0].
-     */
+       stored in rays[0].  */
     std::vector<Direction_2>   rays;
 
 public:
@@ -89,7 +88,7 @@ public:
      *  Constructs a `Construct_yao_graph_2` object.
      *
      * \param k     Number of cones to divide space into
-     * \param initial_direction  A direction denoting one of the rays deviding the
+     * \param initial_direction  A direction denoting one of the rays dividing the
      *              cones. This allows arbitary rotations of the rays that divide
      *              the plane.  (default: positive x-axis)
      */

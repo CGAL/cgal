@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014  The University of Western Sydney, Australia.
+// Copyright (c) 2013-2015  The University of Western Sydney, Australia.
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -16,13 +16,13 @@
 // $Id$
 // 
 //
-// Author(s)     : Quincy Tse, Weisheng Si
+// Author(s): Quincy Tse, Weisheng Si
 
 /*! \file gnuplot_output_2.h
  *
  * This header implements the function that can generate data and script files for plotting  
  * graphs by Gnuplot. This function requires that graphs be represented by boost::adjacency_list 
- * with vertex property Point_2.
+ * with its template parameter VertexProperties set to CGAL::Point_2.
  */
 
 #ifndef GNUPLOT_OUTPUT_2_H
@@ -39,10 +39,10 @@
 
 namespace CGAL {
 
-	// Declarations go first, then implementations follow.
+	/*  ------ Declarations go first, then implementations follow.   ------ */
 	
 	/*!
-	*  \brief Output a set of files used by Gnuplot to plot %g.
+	*  \brief Output a set of files used by Gnuplot to plot \p g.
 	*  
 	*  The files that are generated for Gnuplot are:
 	*  (1) prefix.v (vertex list)
@@ -55,16 +55,15 @@ namespace CGAL {
 	*      files.
 	*  (2) Parallel and self-edges cannot be plotted.
 	*
-	*  \param g       A boost::adjacency_list graph with Point_2 as the vertex property to be plotted
+	*  \param g       A boost::adjacency_list graph with CGAL::Point_2 as the VertexProperties to be plotted
 	*  \param prefix  The prefix of the output files names
-	*  \return        The Gnuplot script.
 	*/
 	template <typename Graph>
 	void gnuplot_output_2 (const Graph& g, const std::string& prefix);
 
 	/*!
-	*  \brief Compiles a multi-lined %string to draw the edges in %g by Gnuplot.
-	*  Compiles an edge list of %g in the following format:
+	*  \brief Compiles a multi-lined %string to draw the edges in \p g by Gnuplot.
+	*  Compiles an edge list in the following format:
 	*
 	*  set arrow from (start x, start y) to (end x, end y)
 	*   ...
@@ -72,20 +71,20 @@ namespace CGAL {
 	*  NOTE: For undirected graphs, use "set style arrow nohead"; for directed graphs,
 	*        use "set style arrow head"
 	*
-	*  \param g  A boost::adjacency_list graph with Point_2 as the vertex property to be plotted
+	*  \param g  A boost::adjacency_list graph with CGAL::Point_2 as the VertexProperties to be plotted
 	*  \return   The edge list string.
 	*/
 	template <typename Graph> std::string gnuplot_edge_list (const Graph& g);
 
 	/*!
-	*  \brief Compiles a multi-lined %string representing the vertices in %g.
+	*  \brief Compiles a multi-lined %string representing the vertices in \p g.
 	*  
-	* Compiles a vertex list of %g in the following format:
+	* Compiles a vertex list in the following format:
 	*  x  y
 	*  x  y
 	*  ...
 	*
-	*  \param g  A boost::adjacency_list graph with Point_2 as the vertex property to be plotted
+	*  \param g  A boost::adjacency_list graph with CGAL::Point_2 as the VertexProperties to be plotted
 	*  \return   The vertex list string.
 	*/
 	template <typename Graph> std::string gnuplot_vertex_list (const Graph& g);
@@ -98,8 +97,8 @@ namespace CGAL {
 	template <typename Graph, typename Directedness=typename Graph::directed_selector>
 	struct Gnuplot_edges_2;
 
-	// IMPLEMENTATIONS
-	// exported functions
+	/* -------   IMPLEMENTATIONS  ------- */
+
 	template <typename Graph>
 	std::string gnuplot_edge_list (const Graph& g) 
 	{
