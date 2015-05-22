@@ -1,29 +1,42 @@
-
 /*!
 \ingroup PkgConeBasedSpannersConcepts
 \cgalConcept
 
-The concept `ConeSpanners_2` describes the set of requirements to be fulfilled by any class that constructs a cone based spanner, such as a Theta graph and a Yao graph, etc. 
+The concept `ConstructConeBasedSpanner_2` describes the set of requirements to be fulfilled by any functor class that 
+constructs a cone based spanner, such as a Theta graph and a Yao graph, etc. 
 
-\cgalHasModel `CGAL::Theta_graph_2`
-\cgalHasModel `CGAL::Yao_graph_2`
+\cgalHasModel `CGAL::Construct_theta_graph_2`
+\cgalHasModel `CGAL::Construct_yao_graph_2`
 
 */
-
-class ConeSpanners_2 {
+template <typename Kernel_, typename Graph_>
+class ConstructConeBasedSpanner_2 {
 public:
 
 /// \name Types 
 /// @{
 
-/*!
-Any model of this concept must use `boost::adjacency_list` to store the constructed cone based spanner. Of the seven
-template parameters of `boost::adjacency_list`, the fourth parameter 'VertexProperties' must be Point_2 from \cgal, 
-and other parameters can be decided freely. This particular type is named 'Graph'.
+/*! The CGAL kernel type used by the functor. If this parameter is
+	`CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt`,
+    the graph will be constructed exactly; otherwise, inexactly using an approximate PI=3.1415...
+	This kernel type also decides other types such as Kernel_::Point_2, Kernel_::Direction_2, etc.
 */
-typedef adjacency_list<OutEdgeList, VertexList, Directed,
-               Point_2, EdgeProperties,
-               GraphProperties, EdgeList> Graph;
+typedef Kernel_                          kernel_type;
+
+/*! The graph type to store the constructed cone based spanner. It should be a model of
+	both concepts MutableGraph and VertexAndEdgeListGraph in BGL. Of the two graph classes provided
+    in BGL: `adjacency_list` and `adjacency_matrix`, only `adjacency_list` is such a model.
+    So pls use `adjacency_list` to be your graph type. Note that there are seven template parameters for
+    `boost::adjacency_list`: `OutEdgeList`, `VertexList`, `Directed`, `VertexProperties`, `EdgeProperties`,
+    `GraphProperties`, `EdgeList`, of which we only require the `VertexProperties` be `Point_2` from \cgal,
+    while other parameters can be chosen freely. Here `Point_2` is passed directly as bundled properties
+	to `adjacency_list` because this makes our implementation much more straightforward than using property maps.
+	For detailed information about bundled properties, pls refer to
+	http://www.boost.org/doc/libs/1_58_0/libs/graph/doc/bundles.html.
+	If more properties for vertices are needed, you can add them later as external properties using 
+	property maps.
+*/
+typedef Graph_                           graph_type;
 
 /// @}
 
@@ -31,43 +44,48 @@ typedef adjacency_list<OutEdgeList, VertexList, Directed,
 /// \name Creation 
 /// @{
 
-/** @brief constructor for a ConeSpanners_2 object.
-*
-* @tparam PointInputIterator   Must be Point_2 of a certain type of \cgal Kernel.
-* @param k     Number of cones to divide space into
-* @param start An iterator pointing to the first point (vertex) in the graph.
-*              (default: nullptr)
-* @param end   An iterator pointing to the place that passes the last point.  (default: nullptr)
-* @param ray0  The direction of the first ray. This allows the first ray to be at an arbitary 
-*              direction.  (default: positive x-axis) 
+/*! \brief Constructor.
+
+   \param k     Number of cones to divide the plane
+   \param initial_direction  A direction denoting one of the rays dividing the
+                  cones. This allows arbitary rotations of the rays that divide
+	              the plane.  (default: positive x-axis)
 */
-template <typename PointInputIterator>  
-ConeSpanners_2(const unsigned int k,
-			const PointInputIterator& start=nullptr, 
-			const PointInputIterator& end=nullptr,
-			const Direction_2& ray0 = Direction_2(1,0)	);
+Construct_spanner_2(unsigned int k, Direction_2 initial_direction = Direction_2(1,0) );
 
 /// @} 
 
+/// \name Operator 
+/// @{
+
+/*! \brief Operator () to construct a cone based spanner.
+ *
+ * This operator implements the algorithm to build the spanner.
+ *
+ * \param start[in] An iterator pointing to the first point (vertex).
+ * \param end[in]   An iterator pointing to the place that passes the last point.
+ * \param g[out]    The constructed graph object.
+ */
+template <typename PointInputIterator>
+Graph_& operator()(const PointInputIterator& start,
+				   const PointInputIterator& end,
+				   Graph_& g);
+
+	
+/// @} 
 
 /// \name Member Access Functions 
 /// @{
 
-/** @brief returns the `boost::adjacency_list` object for the constructed cone based spanner.
+/*! \brief returns the number of cones in this graph. 
  */
-Graph graph();
+const unsigned int number_of_cones() const;
 
-/** @brief returns the number of cones in this graph. 
- */
-const unsigned int& number_of_cones() const;
-
-/** @brief returns the vector of the directions of the rays dividing the plane. 
- *
- *  @return a vector of Direction_2
+/*! \brief returns the vector of the directions of the rays dividing the plane. 
  */
 const std::vector<Direction_2>& directions() const;
 	
 /// @} 
 
-}; /* end ConeSpanners_2 */
+}; /* end ConstructConeBasedSpanner_2 */
 
