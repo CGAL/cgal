@@ -2977,7 +2977,6 @@ namespace std {
   struct hash<CGAL::SM_Halfedge_index > {
     std::size_t operator()(const CGAL::SM_Halfedge_index& i) const
     {
-      std::cerr << "SM_Halfege_index HashFct" << std::endl;
       return i;
     }
   };
@@ -3012,7 +3011,6 @@ namespace boost {
   struct hash<CGAL::SM_Vertex_index > {
     std::size_t operator()(const CGAL::SM_Vertex_index& i) const
     {
-      //      std::cerr <<"hash"<<std::endl;
       return i;
     }
   };
