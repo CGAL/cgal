@@ -101,7 +101,7 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
     typedef typename boost::property_map<typename Adaptor::Polyhedron, boost::vertex_point_t>::const_type PPmap;
     PPmap ppmap = get(vertex_point, tmesh);
     // Nothing to do if no border
-    if (mesh.main_border() == boost::graph_traits<TriangleMesh>::null_halfedge())
+    if (mesh.main_border().empty())
         return Parameterizer_traits_3<Adaptor>::ERROR_BORDER_TOO_SHORT;
 
     // Get mesh's bounding box
