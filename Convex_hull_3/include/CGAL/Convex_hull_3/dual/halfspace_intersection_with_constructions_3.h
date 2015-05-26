@@ -29,11 +29,7 @@
 
 // For interior_polyhedron_3
 #include <CGAL/Convex_hull_3/dual/interior_polyhedron_3.h>
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpq.h>
-#else
-#include <CGAL/MP_Float.h>
-#endif
+#include <CGAL/internal/Exact_type_selector.h>
 
 namespace CGAL
 {
@@ -129,11 +125,8 @@ namespace CGAL
               p_origin = boost::get(origin);
             } else {
               // choose exact integral type
-#ifdef CGAL_USE_GMP
-              typedef CGAL::Gmpq ET;
-#else
-              typedef CGAL::MP_Float ET;
-#endif
+              typedef typename internal::Exact_field_selector<void*>::Type ET;
+
               // find a point inside the intersection
               typedef Interior_polyhedron_3<K, ET> Interior_polyhedron;
               Interior_polyhedron interior;
@@ -146,6 +139,9 @@ namespace CGAL
             // construct dual points to apply the convex hull
             std::vector<Point> dual_points;
             for (PlaneIterator p = pbegin; p != pend; ++p) {
+                // make sure the origin is on the negative side of all the planes
+                CGAL_assertion(p->has_on_negative_side(p_origin));
+
                 // translate plane
                 Plane translated_p(p->a(),
                                    p->b(),
