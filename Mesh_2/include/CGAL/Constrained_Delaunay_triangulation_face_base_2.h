@@ -101,7 +101,7 @@ public:
 
   // if blind, the constrained edge that prevents the face
   // to see its circumcenter 
-  const Edge_cdt& blinding_constraint() const
+  Edge_cdt blinding_constraint() const
   {
     CGAL_precondition(this->is_blind());
     return std::make_pair(m_blinding_constraint.face,
