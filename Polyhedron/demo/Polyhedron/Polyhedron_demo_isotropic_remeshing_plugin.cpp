@@ -107,12 +107,19 @@ public Q_SLOTS:
       QTime time;
       time.start();
 
-      if (selection_item) {
+      if (selection_item)
+      {
+        std::vector<bool> selected(
+          selection_item->polyhedron()->size_of_halfedges()/2,
+          false);
+
         CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(
          *selection_item->polyhedron()
          , selection_item->selected_facets
          , target_length
-         , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter));
+         , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+         .edge_is_constrained_map(
+         selection_item->selected_edges_pmap(selected)));
 
         selection_item->poly_item_changed();
         selection_item->clear_all();

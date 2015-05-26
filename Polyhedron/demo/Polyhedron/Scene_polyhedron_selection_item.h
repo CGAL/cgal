@@ -849,7 +849,7 @@ public:
     selected_edges_pmap(std::vector<bool>& mark)
   {
     Selection_traits<edge_descriptor,
-      Scene_polyhedron_selection_item> tr(this);
+                     Scene_polyhedron_selection_item> tr(this);
     tr.update_indices();
 
     for (unsigned int i = 0; i < mark.size(); ++i)

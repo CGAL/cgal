@@ -38,10 +38,40 @@ namespace internal {
     MESH_BORDER  //h belongs to the mesh, face(hopp, pmesh) == null_face()
   };
 
+  // A property map 
+  template <typename PM, typename FaceRange>
+  struct Border_constraint_pmap
+  {
+    typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
+    typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
+
+    std::map<edge_descriptor, bool> border_edges;
+    const PM& pmesh_;
+  public:
+    Border_constraint_pmap(const PM& pmesh, const FaceRange& faces)
+      : pmesh_(pmesh)
+    {
+      std::vector<halfedge_descriptor> border;
+      PMP::get_border(pmesh_, faces, std::back_inserter(border));
+
+      BOOST_FOREACH(edge_descriptor e, edges(pmesh_))
+        border_edges.insert(std::make_pair(e, false));
+
+      BOOST_FOREACH(halfedge_descriptor h, border)
+        border_edges[edge(h, pmesh_)] = true;
+    }
+    friend bool get(Border_constraint_pmap<PM, FaceRange> map,
+                    edge_descriptor e)
+    {
+      return map.border_edges[e];
+    }
+  };
+
   template<typename PolygonMesh
          , typename FaceRange
          , typename VertexPointMap
          , typename GeomTraits
+         , typename EdgeIsConstrainedMap
   >
   class Incremental_remesher
   {
@@ -65,9 +95,11 @@ namespace internal {
   public:
     Incremental_remesher(PolygonMesh& pmesh
                        , const FaceRange& face_range
-                       , VertexPointMap& vpmap)
+                       , VertexPointMap& vpmap
+                       , const EdgeIsConstrainedMap& ecmap)
       : mesh_(pmesh)
       , vpmap_(vpmap)
+      , ecmap_(ecmap)
       , own_tree_(true)
       , input_triangles_()
       , halfedge_status_map_()
@@ -163,8 +195,10 @@ namespace internal {
                                                               next(next(hnew, mesh_), mesh_),
                                                               mesh_);
           Halfedge_status snew = (is_on_patch(hnew)
-            || (is_on_patch_border(hnew) && is_on_mesh(hnew_opp))
-            || (is_on_patch_border(hnew) && is_on_border(hnew_opp)))
+            || (is_on_patch_border(hnew)
+                && (is_on_mesh(hnew_opp)
+                   || is_on_border(hnew_opp)
+                   || is_on_patch_border(hnew_opp))))
             ? PATCH
             : MESH;
           halfedge_added(hnew2, snew);
@@ -185,8 +219,10 @@ namespace internal {
                                                               next(hnew_opp, mesh_),
                                                               mesh_);
           Halfedge_status snew = (is_on_patch(hnew_opp)
-            || (is_on_patch_border(hnew_opp) && is_on_mesh(hnew))
-            || (is_on_patch_border(hnew_opp) && is_on_border(hnew)))
+             || (is_on_patch_border(hnew_opp)
+                 && (is_on_mesh(hnew)
+                    || is_on_border(hnew)
+                    || is_on_patch_border(hnew))))
             ? PATCH
             : MESH;
           halfedge_added(hnew2, snew);
@@ -655,16 +691,18 @@ namespace internal {
 
       //override the border of PATCH
       //tag PATCH_BORDER,//h belongs to the patch, hopp doesn't
-      std::vector<halfedge_descriptor> border_halfedges;
-      PMP::get_border(mesh_, face_range, std::back_inserter(border_halfedges));
-      BOOST_FOREACH(halfedge_descriptor h, border_halfedges)
+      BOOST_FOREACH(edge_descriptor e, edges(mesh_))
       {
-        typedef typename std::map<halfedge_descriptor, Halfedge_status>::iterator IT;
-        CGAL_assertion_code(IT it = halfedge_status_map_.find(h));
-        CGAL_assertion(it != halfedge_status_map_.end());
-        CGAL_assertion(it->second == PATCH);
-
-        halfedge_status_map_[h] = PATCH_BORDER;
+        if (get(ecmap_, e))
+        {
+          //deal with h and hopp for borders that are sharp edges to be preserved
+          halfedge_descriptor h = halfedge(e, mesh_);
+          if (halfedge_status_map_[h] == PATCH)
+            halfedge_status_map_[h] = PATCH_BORDER;
+          halfedge_descriptor hopp = opposite(halfedge(e, mesh_), mesh_);
+          if (halfedge_status_map_[hopp] == PATCH)
+            halfedge_status_map_[hopp] = PATCH_BORDER;
+        }
       }
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
@@ -727,7 +765,9 @@ namespace internal {
       if (res)
       {
         CGAL_assertion_code(Halfedge_status hs = status(opposite(h, mesh_)));
-        CGAL_assertion(hs == MESH_BORDER || hs == MESH);
+        CGAL_assertion(hs == MESH_BORDER
+                    || hs == MESH
+                    || hs == PATCH_BORDER);//when 2 incident patches are remeshed
       }
       return res;
     }
@@ -855,6 +895,7 @@ namespace internal {
   private:
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
+    EdgeIsConstrainedMap ecmap_;
     const AABB_tree* tree_ptr_;
     bool own_tree_;
     Triangle_list input_triangles_;

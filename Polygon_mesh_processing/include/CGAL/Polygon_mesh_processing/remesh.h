@@ -54,8 +54,10 @@ namespace Polygon_mesh_processing {
 *  \cgalParamEnd
 *  \cgalParamBegin{number_of_iterations} TODO...
 *  \cgalParamEnd
-*  \cgalParamBegin{geom_traits} a geometric traits class instance 
-   \cgalParamEnd
+*  \cgalParamBegin{geom_traits} a geometric traits class instance
+*  \cgalParamEnd
+*  \cgalParamBegin{edge_is_constrained_map}
+*  \cgalParamEnd
 * \cgalNamedParamsEnd
 *
 *@todo we suppose `faces` describe only one patch. Handle several patches.
@@ -74,14 +76,24 @@ void incremental_triangle_based_remeshing(PolygonMesh& pmesh
   using boost::get_param;
   using boost::choose_param;
 
-  typedef typename GetGeomTraits<PM, NamedParameters>::type GeomTraits;
+  typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
 
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
   VPMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
                             pmesh,
                             boost::vertex_point);
-  typename internal::Incremental_remesher<PM, FaceRange, VPMap, GeomTraits>
-    remesher(pmesh, faces, vpmap);
+
+  typedef typename boost::lookup_named_param_def <
+      CGAL::edge_is_constrained_t,
+      NamedParameters,
+      internal::Border_constraint_pmap<PM, FaceRange>//default
+    > ::type ECMap;
+  ECMap ecmap
+    = choose_param(get_param(np, edge_is_constrained),
+                   internal::Border_constraint_pmap<PM, FaceRange>(pmesh, faces));
+
+  typename internal::Incremental_remesher<PM, FaceRange, VPMap, GT, ECMap>
+    remesher(pmesh, faces, vpmap, ecmap);
 
   unsigned int nb_iterations = choose_param(get_param(np, number_of_iterations), 1);
 
