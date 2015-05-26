@@ -30,7 +30,7 @@ public:
   void 
   gl_draw_surface();
 
- public slots :
+ public Q_SLOTS:
 
  void sceneChanged();
    

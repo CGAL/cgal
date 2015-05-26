@@ -97,7 +97,7 @@ public:
     frame_initial_center = calculate_initial_center();
     bbox = calculate_initial_bbox();
 
-    bool oldState = frame->blockSignals(true); // do not let it emit modified, which will cause a deformation
+    bool oldState = frame->blockSignals(true); // do not let it Q_EMIT modified, which will cause a deformation
                                   // but we are just adjusting the center so it does not require a deformation
     frame->setOrientation(qglviewer::Quaternion());
     frame->setPosition(frame_initial_center);
@@ -227,7 +227,7 @@ protected:
   void timerEvent(QTimerEvent *event);
   void draw_ROI_and_control_vertices() const;
 
-public slots:
+public Q_SLOTS:
   void changed();
   void selected(const std::set<Polyhedron::Vertex_handle>& m)
   {
@@ -246,7 +246,7 @@ public slots:
       }
       any_changes |= changed;
     }
-    if(any_changes) { emit itemChanged(); }
+    if(any_changes) { Q_EMIT itemChanged(); }
   }
 
   void select(double orig_x,
@@ -366,7 +366,7 @@ public:
 
     connect(new_frame, SIGNAL(modified()), this, SLOT(deform()));  // OK we are deforming via timer,
     // but it makes demo more responsive if we also add this signal
-    emit itemChanged();
+    Q_EMIT itemChanged();
 
     print_message("A new empty group of control vertices is created.");
   }
@@ -561,7 +561,7 @@ public:
       (vertices(*polyhedron()).first, vertices(*polyhedron()).second,
       polyhedron()->size_of_vertices(), Is_selected(deform_mesh), visitor);
 
-    if(visitor.any_inserted) { emit itemChanged(); }
+    if(visitor.any_inserted) { Q_EMIT itemChanged(); }
     return visitor.minimum_visitor.minimum;
   }
 protected:

@@ -64,11 +64,11 @@ Scene::addItem(Scene_item* item)
   connect(item, SIGNAL(itemChanged()),
           this, SLOT(itemChanged()));
   if(bbox_before + item->bbox() != bbox_before)
-  { emit updated_bbox(); }
-  emit updated();
+  { Q_EMIT updated_bbox(); }
+  Q_EMIT updated();
   QAbstractListModel::reset();
   Item_id id = m_entries.size() - 1;
-  emit newItem(id);
+  Q_EMIT newItem(id);
   return id;
 }
 
@@ -79,7 +79,7 @@ Scene::replaceItem(Scene::Item_id index, Scene_item* item, bool emit_item_about_
     return 0;
 
   if(emit_item_about_to_be_destroyed) {
-    emit itemAboutToBeDestroyed(m_entries[index]);
+    Q_EMIT itemAboutToBeDestroyed(m_entries[index]);
   }
 
   connect(item, SIGNAL(itemChanged()),
@@ -90,9 +90,9 @@ Scene::replaceItem(Scene::Item_id index, Scene_item* item, bool emit_item_about_
        m_entries[index]->isFinite() && !m_entries[index]->isEmpty() &&
         item->bbox()!=m_entries[index]->bbox() )
   {
-    emit updated_bbox();
+    Q_EMIT updated_bbox();
   }
-  emit updated();
+  Q_EMIT updated();
   itemChanged(index);
   // QAbstractListModel::reset();
   return item;
@@ -105,12 +105,12 @@ Scene::erase(int index)
     return -1;
 
   Scene_item* item = m_entries[index];
-  emit itemAboutToBeDestroyed(item);
+  Q_EMIT itemAboutToBeDestroyed(item);
   delete item;
   m_entries.removeAt(index);
 
   selected_item = -1;
-  emit updated();
+  Q_EMIT updated();
   QAbstractListModel::reset();
 
   if(--index >= 0)
@@ -132,7 +132,7 @@ Scene::erase(QList<int> indices)
     max_index = (std::max)(max_index, index);
     Scene_item* item = m_entries[index];
     to_be_removed.push_back(item);
-    emit itemAboutToBeDestroyed(item);
+    Q_EMIT itemAboutToBeDestroyed(item);
     delete item;
   }
 
@@ -141,7 +141,7 @@ Scene::erase(QList<int> indices)
   }
 
   selected_item = -1;
-  emit updated();
+  Q_EMIT updated();
   QAbstractListModel::reset();
 
   int index = max_index + 1 - indices.size();
@@ -554,13 +554,13 @@ Scene::setData(const QModelIndex &index,
   case NameColumn:
     item->setName(value.toString());
     item->changed();
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
     return true;
     break;
   case ColorColumn:
     item->setColor(value.value<QColor>());
     item->changed();
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
     return true;
     break;
   case RenderingModeColumn:
@@ -577,14 +577,14 @@ Scene::setData(const QModelIndex &index,
     }
     item->setRenderingMode(rendering_mode);
     item->changed();
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
     return true;
     break;
   }
   case VisibleColumn:
     item->setVisible(value.toBool());
     item->changed();
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
     return true;
   default:
     return false;
@@ -633,14 +633,14 @@ void Scene::itemChanged(Item_id i)
     return;
 
   m_entries[i]->changed();
-  emit dataChanged(this->createIndex(i, 0),
+  Q_EMIT dataChanged(this->createIndex(i, 0),
                    this->createIndex(i, LastColumn));
 }
 
 void Scene::itemChanged(Scene_item* item)
 {
   item->changed();
-  emit dataChanged(this->createIndex(0, 0),
+  Q_EMIT dataChanged(this->createIndex(0, 0),
                    this->createIndex(m_entries.size() - 1, LastColumn));
 }
 
@@ -765,7 +765,7 @@ void Scene::setItemVisible(int index, bool b)
   if( index < 0 || index >= m_entries.size() )
     return;
   m_entries[index]->setVisible(b);
-  emit dataChanged(this->createIndex(index, VisibleColumn),
+  Q_EMIT dataChanged(this->createIndex(index, VisibleColumn),
                    this->createIndex(index, VisibleColumn));
 }
 
@@ -792,7 +792,7 @@ void Scene::setItemA(int i)
   {
     item_B = -1;
   }
-  emit dataChanged(this->createIndex(0, ABColumn),
+  Q_EMIT dataChanged(this->createIndex(0, ABColumn),
                    this->createIndex(m_entries.size()-1, ABColumn));
 }
 
@@ -803,8 +803,8 @@ void Scene::setItemB(int i)
   {
     item_A = -1;
   }
-  emit updated();
-  emit dataChanged(this->createIndex(0, ABColumn),
+  Q_EMIT updated();
+  Q_EMIT dataChanged(this->createIndex(0, ABColumn),
                    this->createIndex(m_entries.size()-1, ABColumn));
 }
 

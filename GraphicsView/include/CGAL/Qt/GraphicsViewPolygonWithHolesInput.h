@@ -60,7 +60,7 @@ public:
   GraphicsViewPolygonWithHolesInput(QObject *parent, QGraphicsScene* s); 
   ~GraphicsViewPolygonWithHolesInput();
   
-public slots:
+public Q_SLOTS:
   void processInput(CGAL::Object o);
 
 typedef CGAL::Polygon_2<K> Polygon;
@@ -141,7 +141,7 @@ GraphicsViewPolygonWithHolesInput<K>::processInput(CGAL::Object o)
       it++;
       pwh = Polygon_with_holes(holes.front(), it, holes.end());
     }
-    emit(modelChanged());
+    Q_EMIT( modelChanged());
     polygon_input = false;
   } 
 }
@@ -172,11 +172,11 @@ GraphicsViewPolygonWithHolesInput<K>::eventFilter(QObject *obj, QEvent *event)
 	polygon_input = true;
 	return pi->eventFilter(obj, event);
       } else if(mouseEvent->button() == ::Qt::RightButton) {
-	emit(generate(CGAL::make_object(pwh)));
+	Q_EMIT( generate(CGAL::make_object(pwh)));
 	pwh.clear();
 	holes.clear();
 	polygon_input = false;
-	emit(modelChanged());
+	Q_EMIT( modelChanged());
       }
       return true;
     } else if (event->type() == QEvent::KeyPress) {

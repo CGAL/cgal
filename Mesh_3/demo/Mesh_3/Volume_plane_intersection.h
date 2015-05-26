@@ -32,7 +32,7 @@ public:
   void setY(Volume_plane_interface* x) { b = x; }
   void setZ(Volume_plane_interface* x) { c = x; }
 
-public slots:
+public Q_SLOTS:
   void planeRemoved(Volume_plane_interface* i) {
     if(a == i) {
       a = NULL;

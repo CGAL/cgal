@@ -53,7 +53,7 @@ RegularTriangulationRemoveVertex<T>::mousePressEvent(QGraphicsSceneMouseEvent *e
       typename T::Vertex_handle selected_vertex = dt->nearest_power_vertex(convert(event->scenePos()));
       dt->remove(selected_vertex);
     }
-    emit (modelChanged());
+    Q_EMIT( modelChanged());
   }
 }
 

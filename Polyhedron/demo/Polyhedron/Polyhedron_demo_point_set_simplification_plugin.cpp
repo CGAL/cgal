@@ -42,7 +42,7 @@ public:
     return QList<QAction*>() << actionSimplify;
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionSimplify_triggered();
 
 }; // end Polyhedron_demo_point_set_simplification_plugin

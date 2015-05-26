@@ -261,7 +261,7 @@ QMenu* Scene_polyhedron_item::contextMenu()
 void Scene_polyhedron_item::show_only_feature_edges(bool b)
 {
   show_only_feature_edges_m = b;
-  emit itemChanged();
+  Q_EMIT itemChanged();
 }
 
 void Scene_polyhedron_item::enable_facets_picking(bool b)
@@ -341,7 +341,7 @@ void
 Scene_polyhedron_item::
 changed()
 {
-  emit item_is_about_to_be_changed();
+  Q_EMIT item_is_about_to_be_changed();
   delete_aabb_tree(this);
   init();
   Base::changed();
@@ -421,7 +421,7 @@ Scene_polyhedron_item::select(double orig_x,
               }
             }
 
-            emit selected_vertex((void*)(&*nearest_v));
+            Q_EMIT selected_vertex((void*)(&*nearest_v));
           }
 
           if(QObject::receivers(SIGNAL(selected_edge(void*))) > 0
@@ -444,17 +444,17 @@ Scene_polyhedron_item::select(double orig_x,
               }
             }
 
-            emit selected_halfedge((void*)(&*nearest_h));
-            emit selected_edge((void*)(std::min)(&*nearest_h, &*nearest_h->opposite()));
+            Q_EMIT selected_halfedge((void*)(&*nearest_h));
+            Q_EMIT selected_edge((void*)(std::min)(&*nearest_h, &*nearest_h->opposite()));
           }
           
-          emit selected_facet((void*)(&*selected_fh));
+          Q_EMIT selected_facet((void*)(&*selected_fh));
           if(erase_next_picked_facet_m) {
             polyhedron()->erase_facet(selected_fh->halfedge());
             polyhedron()->normalize_border();
             //set_erase_next_picked_facet(false);
             changed();
-            emit itemChanged();
+            Q_EMIT itemChanged();
           }
         }
       }

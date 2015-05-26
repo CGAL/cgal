@@ -19,7 +19,7 @@ public:
   // OpenGL drawing using a display list
   virtual void draw() const; 
   virtual void draw_edges() const;
-public slots:
+public Q_SLOTS:
   // Call that once you have finished changing something in the item
   // (either the properties or internal data).
   virtual void changed();

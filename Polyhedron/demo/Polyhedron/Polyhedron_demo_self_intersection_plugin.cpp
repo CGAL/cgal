@@ -34,7 +34,7 @@ public:
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionSelfIntersection_triggered();
 
 }; // end Polyhedron_demo_self_intersection_plugin

@@ -53,7 +53,7 @@ public:
   }
 
 
-public slots:
+public Q_SLOTS:
   void untriangulate() {
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
   

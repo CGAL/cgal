@@ -114,7 +114,7 @@ public:
     settings.setValue("Show/spherecolor", m_colorEmptySphere);
   }
 
-public slots :
+public Q_SLOTS:
   // clear scene
   void clear() {
     m_pScene->eraseOldData();
@@ -126,7 +126,7 @@ public slots :
     m_nearestNb = NULL;
     m_hasEmptyS = false;
     if( !m_incrementalPts.isEmpty() ) {
-      emit( stopIncAnimation() );
+      Q_EMIT( stopIncAnimation() );
       m_incrementalPts.clear();
     }
   }
@@ -185,7 +185,7 @@ public slots :
     updateGL();
   }
 
-  signals:
+  Q_SIGNALS:
   void stopIncAnimation();
 
 // overloading QGLViewer virtual functions

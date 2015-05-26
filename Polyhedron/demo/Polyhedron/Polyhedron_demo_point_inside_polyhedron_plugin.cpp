@@ -80,7 +80,7 @@ private:
     { return *poly_ptr; }
   };
 
-public slots:
+public Q_SLOTS:
   void point_inside_polyhedron_action() { dock_widget->show(); }
   void on_Select_button() 
   {
@@ -96,7 +96,7 @@ public slots:
     // place all selected polyhedron and point items to vectors below
     std::vector<const Polyhedron*> polys;
     std::vector<Point_set*> point_sets;
-    foreach(Scene_interface::Item_id id, scene->selectionIndices()) {
+    Q_FOREACH(Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
       if(poly_item) { polys.push_back(poly_item->polyhedron()); }
 
@@ -148,7 +148,7 @@ public slots:
     print_message(QString("%1 points are selected. All Done!").arg(nb_selected));
 
     // for repaint
-    foreach(Scene_interface::Item_id id, scene->selectionIndices()) {
+    Q_FOREACH(Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_points_with_normal_item* point_item = qobject_cast<Scene_points_with_normal_item*>(scene->item(id));
       if(point_item) { 
         scene->itemChanged(point_item);
@@ -167,7 +167,7 @@ public slots:
     //   warning about '*bbox' not being initialized.
     // -- Laurent Rineau, 2014/10/30
 
-    foreach(Scene_interface::Item_id id, scene->selectionIndices()) {
+    Q_FOREACH(Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
       if(poly_item) {
         if(!bbox) {

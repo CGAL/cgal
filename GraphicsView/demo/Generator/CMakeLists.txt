@@ -24,7 +24,7 @@ find_package(Qt4)
 include_directories (BEFORE ../../include)
 
 if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
-
+  add_definitions(-DQT_NO_KEYWORDS)
   include(${QT_USE_FILE})
   #--------------------------------
   # Demo: Generator_2

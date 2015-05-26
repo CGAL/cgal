@@ -50,7 +50,7 @@ public:
     return QList<QAction*>() << actionPoissonReconstruction;
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionPoissonReconstruction_triggered();
 }; // end class Polyhedron_demo_poisson_plugin
 

@@ -46,7 +46,7 @@ public:
   QList<QAction*> actions() const {
     return QList<QAction*>() << actionRemeshing;
   }
-public slots:
+public Q_SLOTS:
   void remesh();
 
 private:

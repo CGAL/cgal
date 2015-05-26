@@ -149,7 +149,7 @@ public:
   void init_polygon_soup(std::size_t nb_pts, std::size_t nb_polygons);
   void finalize_polygon_soup();
 
-public slots:
+public Q_SLOTS:
   void shuffle_orientations();
   bool orient();
   bool exportAsPolyhedron(Polyhedron*);

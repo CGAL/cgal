@@ -42,7 +42,7 @@ public:
   
   virtual QString toolTip() const;
 
-public slots:
+public Q_SLOTS:
   void compute_function_grid();
 
 private:
