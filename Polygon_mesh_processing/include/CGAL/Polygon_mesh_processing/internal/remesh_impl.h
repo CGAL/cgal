@@ -195,10 +195,7 @@ namespace internal {
                                                               next(next(hnew, mesh_), mesh_),
                                                               mesh_);
           Halfedge_status snew = (is_on_patch(hnew)
-            || (is_on_patch_border(hnew)
-                && (is_on_mesh(hnew_opp)
-                   || is_on_border(hnew_opp)
-                   || is_on_patch_border(hnew_opp))))
+            || (is_on_patch_border(hnew) && !is_on_patch(hnew_opp)))
             ? PATCH
             : MESH;
           halfedge_added(hnew2, snew);
@@ -219,10 +216,7 @@ namespace internal {
                                                               next(hnew_opp, mesh_),
                                                               mesh_);
           Halfedge_status snew = (is_on_patch(hnew_opp)
-             || (is_on_patch_border(hnew_opp)
-                 && (is_on_mesh(hnew)
-                    || is_on_border(hnew)
-                    || is_on_patch_border(hnew))))
+             || (is_on_patch_border(hnew_opp) && !is_on_patch(hnew)))
             ? PATCH
             : MESH;
           halfedge_added(hnew2, snew);
