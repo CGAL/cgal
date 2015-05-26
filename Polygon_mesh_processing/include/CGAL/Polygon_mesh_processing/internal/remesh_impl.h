@@ -99,7 +99,6 @@ namespace internal {
                        , const EdgeIsConstrainedMap& ecmap)
       : mesh_(pmesh)
       , vpmap_(vpmap)
-      , ecmap_(ecmap)
       , own_tree_(true)
       , input_triangles_()
       , halfedge_status_map_()
@@ -120,7 +119,7 @@ namespace internal {
       }
       tree_ptr_ = new AABB_tree(input_triangles_.begin(), input_triangles_.end());
 
-      tag_halfedges_status(face_range);
+      tag_halfedges_status(face_range, ecmap);
     }
 
     ~Incremental_remesher()
@@ -184,11 +183,12 @@ namespace internal {
         }
 
         //after splitting
-        halfedge_added(hnew,                  status(he));
-        halfedge_added(opposite(hnew, mesh_), status(opposite(he, mesh_)));
+        halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
+        halfedge_added(hnew,     status(he));
+        halfedge_added(hnew_opp, status(opposite(he, mesh_)));
 
         //insert new edges to keep triangular faces, and update long_edges
-        halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
+        
         if (!is_on_border(hnew))
         {
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(hnew,
@@ -198,7 +198,7 @@ namespace internal {
             || (is_on_patch_border(hnew) && !is_on_patch(hnew_opp)))
             ? PATCH
             : MESH;
-          halfedge_added(hnew2, snew);
+          halfedge_added(hnew2,                  snew);
           halfedge_added(opposite(hnew2, mesh_), snew);
 
           if (snew == PATCH)
@@ -219,7 +219,7 @@ namespace internal {
              || (is_on_patch_border(hnew_opp) && !is_on_patch(hnew)))
             ? PATCH
             : MESH;
-          halfedge_added(hnew2, snew);
+          halfedge_added(hnew2,                  snew);
           halfedge_added(opposite(hnew2, mesh_), snew);
 
           if (snew == PATCH)
@@ -660,7 +660,8 @@ namespace internal {
         || (is_on_border(opposite(he, mesh_)) && is_on_patch_border(he));
     }
 
-    void tag_halfedges_status(const FaceRange& face_range)
+    void tag_halfedges_status(const FaceRange& face_range
+                            , const EdgeIsConstrainedMap& ecmap)
     {
       //tag MESH,        //h and hopp belong to the mesh, not the patch
       //tag MESH_BORDER  //h belongs to the mesh, face(hopp, pmesh) == null_face()
@@ -687,7 +688,7 @@ namespace internal {
       //tag PATCH_BORDER,//h belongs to the patch, hopp doesn't
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
       {
-        if (get(ecmap_, e))
+        if (get(ecmap, e))
         {
           //deal with h and hopp for borders that are sharp edges to be preserved
           halfedge_descriptor h = halfedge(e, mesh_);
@@ -889,7 +890,6 @@ namespace internal {
   private:
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
-    EdgeIsConstrainedMap ecmap_;
     const AABB_tree* tree_ptr_;
     bool own_tree_;
     Triangle_list input_triangles_;
