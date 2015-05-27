@@ -38,7 +38,7 @@ void  fct(int ii, int jj)
   typedef boost::unordered_map<Vertex_handle,Point_2> BUM;
   
   Dt dt;
-  Vector_2 v(0,0,0);
+  Vector_2 v(0,0);
   Random_points rp( 250);
   std::vector<Point_2> points;
   for(int i =0; i < ii; i++){

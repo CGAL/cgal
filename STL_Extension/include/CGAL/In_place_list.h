@@ -178,7 +178,11 @@ template <class T, class Alloc>
   std::size_t hash_value(const In_place_list_iterator<T,Alloc>&  i)
   {
     T* ptr = &*i;
+#ifdef CGAL_USE_HASH_OF_POINTERS
+    return boost::hash_value<T>(ptr);
+#else    
     return reinterpret_cast<std::size_t>(ptr)/ sizeof(T);
+#endif
   }
 
 
@@ -186,8 +190,12 @@ template <class T, class Alloc>
   std::size_t hash_value(const In_place_list_const_iterator<T,Alloc>&  i)
   {
     T* ptr = &*i;
+#ifdef CGAL_USE_HASH_OF_POINTERS
+    return boost::hash_value<T>(ptr);
+#else    
     return reinterpret_cast<std::size_t>(ptr)/ sizeof(T);
-  }
+#endif
+   }
 
 }
 
@@ -775,18 +783,33 @@ namespace std {
   template <typename T> struct hash;
 
   template < class T, class Alloc >
-  struct hash<CGAL::internal::In_place_list_iterator<T, Alloc> > {
+  struct hash<CGAL::internal::In_place_list_iterator<T, Alloc> >
+    : public std::unary_function<CGAL::internal::In_place_list_iterator<T, Alloc>, std::size_t>  {
+
     std::size_t operator()(const CGAL::internal::In_place_list_iterator<T, Alloc>& i) const
     {
-      return hash_value(i);
+      const T* ptr = &*i;
+#ifdef CGAL_USE_HASH_OF_POINTERS
+      return std::hash<const T*>()(ptr);
+#else
+      return reinterpret_cast<std::size_t>(ptr)/ sizeof(T);
+#endif
     }
   };
 
   template < class T, class Alloc >
-  struct hash<CGAL::internal::In_place_list_const_iterator<T, Alloc> > {
+  struct hash<CGAL::internal::In_place_list_const_iterator<T, Alloc> >
+    : public std::unary_function<CGAL::internal::In_place_list_const_iterator<T, Alloc>, std::size_t> {
+
     std::size_t operator()(const CGAL::internal::In_place_list_const_iterator<T, Alloc>& i) const
     {
-      return hash_value(i);
+      const T* ptr = &*i;
+#ifdef CGAL_USE_HASH_OF_POINTERS
+      return std::hash<const T*>()(ptr);
+#else
+      return reinterpret_cast<std::size_t>(ptr)/ sizeof(T);
+#endif
+
     }
   };
 }

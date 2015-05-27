@@ -1,4 +1,4 @@
-
+//#define CGAL_USE_HASH_OF_POINTERS 
 #include <iostream>
 #include <fstream>
 #include <map>
@@ -9,7 +9,7 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
-
+#include <CGAL/Unique_hash_map.h>
 
 #include <CGAL/Timer.h>
 #include<boost/range/iterator_range.hpp> 
@@ -36,6 +36,8 @@ void  fct(int ii, int jj)
   typedef std::map<vertex_descriptor,Point_3> SM;
   typedef std::unordered_map<vertex_descriptor,Point_3> SUM;
   typedef boost::unordered_map<vertex_descriptor,Point_3> BUM;
+  typedef CGAL::Unique_hash_map<vertex_descriptor, Point_3> UHM;
+
   
   Mesh mesh;
   typedef boost::property_map<Mesh,CGAL::vertex_point_t>::type  VPM;
@@ -56,8 +58,9 @@ void  fct(int ii, int jj)
   random_shuffle(V.begin(), V.end());
   
 
-  Timer tsmc, tsumc, tbumc;
-  Timer tsmq, tsumq, tbumq;
+  Timer tsmc, tsumc, tbumc, tuhmc;
+  Timer tsmq, tsumq, tbumq, tuhmq;
+
   for(int j=0; j <jj; j++){
     
     {
@@ -105,6 +108,22 @@ void  fct(int ii, int jj)
       }
       tbumq.stop();
     }
+
+    {
+      tuhmc.start();
+      UHM sm;
+      for(vertex_descriptor vh : V){
+        sm[vh] = get(vpm,vh);
+      }
+      tuhmc.stop();
+      
+      
+      tuhmq.start();
+      for(vertex_descriptor vh : V){
+        v = v + (sm[vh] - CGAL::ORIGIN);
+      }
+      tuhmq.stop();
+    }
   }
   std::cerr << ii << " items and queries (repeated " << jj << " times)" << std::endl;
   std::cerr << "std::map             construction : "<< tsmc.time() << " sec." << std::endl;
@@ -115,6 +134,9 @@ void  fct(int ii, int jj)
   
   std::cerr << "boost::unordered_map construction : "<< tbumc.time() << " sec." << std::endl;
   std::cerr << "boost::unordered_map queries      : "<< tbumq.time() << " sec.\n" << std::endl;
+
+  std::cerr << "Unique_hash_map      construction : "<< tuhmc.time() << " sec." << std::endl;
+  std::cerr << "Unique_hash_map      queries      : "<< tuhmq.time() << " sec.\n" << std::endl;
 
 }
 
