@@ -1704,7 +1704,7 @@ next_face:
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
         if (perturb)
           mat_points(j, i) += m_random_generator.get_double(
-            -m_half_sparsity, m_half_sparsity);
+            -0.5*m_half_sparsity, 0.5*m_half_sparsity);
 #endif
       }
     }
@@ -2700,7 +2700,7 @@ next_face:
   }
 
   std::ostream &export_simplices_to_off(
-    std::ostream & os, std::size_t &num_simplices,
+    std::ostream & os, std::size_t &num_OFF_simplices,
     bool color_inconsistencies = false,
     std::set<std::set<std::size_t> > const *p_simpl_to_color_in_red = NULL,
     std::set<std::set<std::size_t> > const *p_simpl_to_color_in_green = NULL,
@@ -2709,8 +2709,9 @@ next_face:
   {
     // If m_intrinsic_dimension = 1, each point is output two times
     // (see export_vertices_to_off)
-    num_simplices = 0;
-    std::size_t num_inconsistent_simplices = 0;
+    num_OFF_simplices = 0;
+    std::size_t num_maximal_simplices = 0;
+    std::size_t num_inconsistent_maximal_simplices = 0;
     std::size_t num_inconsistent_stars = 0;
     typename Tr_container::const_iterator it_tr = m_triangulations.begin();
     typename Tr_container::const_iterator it_tr_end = m_triangulations.end();
@@ -2743,15 +2744,16 @@ next_face:
         std::set<std::size_t> c = *it_inc_simplex;
         c.insert(idx);
         std::size_t num_vertices = c.size();
+        ++num_maximal_simplices;
 
         int color_simplex = -1;// -1=no color, 0=yellow, 1=red, 2=green, 3=blue
-        if (color_inconsistencies)
+        if (color_inconsistencies && !is_simplex_consistent(c))
         {
-          is_star_inconsistent = !is_simplex_consistent(c);
-          color_simplex = (is_star_inconsistent ? 0 : -1);
+          ++num_inconsistent_maximal_simplices;
+          color_simplex = 0;
+          is_star_inconsistent = true;
         }
-
-        if (color_simplex == -1)
+        else
         {
           if (p_simpl_to_color_in_red && 
               std::find(
@@ -2844,7 +2846,8 @@ next_face:
 
         // In order to have only one time each simplex, we only keep it
         // if the lowest index is the index of the center vertex
-        if (*c.begin() != idx && color_simplex == -1)
+        if (*c.begin() != (m_intrinsic_dimension == 1 ? 2*idx : idx)
+            && color_simplex == -1)
           continue;
 
         os << 3 << " " << sstr_c.str();
@@ -2853,14 +2856,14 @@ next_face:
         {
           switch (color_simplex)
           {
-            case 0: os << " 255 255 0"; ++num_inconsistent_simplices; break;
+            case 0: os << " 255 255 0"; break;
             case 1: os << " 255 0 0"; break;
             case 2: os << " 0 255 0"; break;
             case 3: os << " 0 0 255"; break;
             default: os << " " << color.str(); break;
           }            
         }
-        ++num_simplices;
+        ++num_OFF_simplices;
         os << std::endl;
       }
       if (is_star_inconsistent)
@@ -2871,21 +2874,27 @@ next_face:
     std::cerr << std::endl
       << "=========================================================="
       << std::endl
-      << "Export to OFF:\n"
+      << "Export from list of stars to OFF:\n"
       << "  * Number of vertices: " << m_points.size() << std::endl
-      << "  * Total number of simplices: " << num_simplices << std::endl
-      << "  * Number of inconsistent stars: "
-      << num_inconsistent_stars << " ("
-      << (m_points.size() > 0 ?
-          100. * num_inconsistent_stars / m_points.size() : 0.) << "%)"
-      << std::endl
-      << "  * Number of inconsistent simplices: "
-      << num_inconsistent_simplices << " ("
-      << (num_simplices > 0 ?
-          100. * num_inconsistent_simplices / num_simplices : 0.) << "%)"
-      << std::endl
-      << "=========================================================="
+      << "  * Total number of maximal simplices: " << num_maximal_simplices 
       << std::endl;
+    if (color_inconsistencies)
+    {
+      std::cerr
+        << "  * Number of inconsistent stars: "
+        << num_inconsistent_stars << " ("
+        << (m_points.size() > 0 ?
+            100. * num_inconsistent_stars / m_points.size() : 0.) << "%)"
+        << std::endl
+        << "  * Number of inconsistent maximal simplices: "
+        << num_inconsistent_maximal_simplices << " ("
+        << (num_maximal_simplices > 0 ?
+            100. * num_inconsistent_maximal_simplices / num_maximal_simplices 
+            : 0.) << "%)"
+        << std::endl;
+    }
+    std::cerr << "=========================================================="
+              << std::endl;
 #endif
 
     return os;
@@ -2894,7 +2903,7 @@ next_face:
 public:
   std::ostream &export_simplices_to_off(
     const Simplicial_complex &complex,
-    std::ostream & os, std::size_t &num_simplices,
+    std::ostream & os, std::size_t &num_OFF_simplices,
     std::set<std::set<std::size_t> > const *p_simpl_to_color_in_red = NULL,
     std::set<std::set<std::size_t> > const *p_simpl_to_color_in_green = NULL,
     std::set<std::set<std::size_t> > const *p_simpl_to_color_in_blue = NULL)
@@ -2905,7 +2914,9 @@ public:
 
     // If m_intrinsic_dimension = 1, each point is output two times
     // (see export_vertices_to_off)
-    num_simplices = 0;
+    num_OFF_simplices = 0;
+    std::size_t num_maximal_simplices = 0;
+
     typename Simplex_range::const_iterator it_s =
       complex.simplex_range().begin();
     typename Simplex_range::const_iterator it_s_end =
@@ -2914,6 +2925,7 @@ public:
     for ( ; it_s != it_s_end ; ++it_s)
     {
       Simplex c = *it_s;
+      ++num_maximal_simplices;
       
       int color_simplex = -1;// -1=no color, 0=yellow, 1=red, 2=green, 3=blue
       if (p_simpl_to_color_in_red && 
@@ -3018,7 +3030,7 @@ public:
           }
         }
 
-        ++num_simplices;
+        ++num_OFF_simplices;
         os << std::endl;
       }
     }
@@ -3027,9 +3039,10 @@ public:
     std::cerr << std::endl
       << "=========================================================="
       << std::endl
-      << "Export to OFF:\n"
+      << "Export from complex to OFF:\n"
       << "  * Number of vertices: " << m_points.size() << std::endl
-      << "  * Total number of simplices: " << num_simplices << std::endl
+      << "  * Total number of maximal simplices: " << num_maximal_simplices 
+      << std::endl
       << "=========================================================="
       << std::endl;
 #endif
