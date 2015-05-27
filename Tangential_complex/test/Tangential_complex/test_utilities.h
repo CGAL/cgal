@@ -382,13 +382,11 @@ std::vector<typename Kernel::Point_d> generate_points_on_torus_d(
   Kernel k;
   CGAL::Random rng;
 
-  // if uniform
-  std::size_t num_slices = (std::size_t)std::pow(num_points, 1./dim);
-
   std::vector<Point> points;
   points.reserve(num_points);
   if (uniform)
   {
+    std::size_t num_slices = (std::size_t)std::pow(num_points, 1./dim);
     generate_uniform_points_on_torus_d(
       k, dim, num_slices, std::back_inserter(points));
   }
@@ -400,6 +398,7 @@ std::vector<typename Kernel::Point_d> generate_points_on_torus_d(
     for (std::size_t i = 0 ; i < num_points ; )
     {
       std::vector<typename Kernel::FT> pt;
+      pt.reserve(dim*2);
       for (int curdim = 0 ; curdim < dim ; ++curdim)
       {
         FT alpha = rng.get_double(0, 6.2832);
