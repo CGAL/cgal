@@ -802,6 +802,52 @@ public:
 
     return os;
   }
+  
+  // Return a pair<num_simplices, num_inconsistent_simplices>
+  void export_inconsistent_stars_to_OFF_files(
+    std::string const& filename_base) const
+  {
+    std::size_t num_simplices = 0;
+    std::size_t num_inconsistent_simplices = 0;
+    typename Tr_container::const_iterator it_tr = m_triangulations.begin();
+    typename Tr_container::const_iterator it_tr_end = m_triangulations.end();
+    // For each triangulation
+    for (std::size_t idx = 0 ; it_tr != it_tr_end ; ++it_tr, ++idx)
+    {
+      // We build a SC along the way in case it's inconsistent
+      Simplicial_complex sc;
+      // For each cell
+      bool is_inconsistent = false;
+      Star::const_iterator it_inc_simplex = m_stars[idx].begin();
+      Star::const_iterator it_inc_simplex_end = m_stars[idx].end();
+      for ( ; it_inc_simplex != it_inc_simplex_end ; 
+           ++it_inc_simplex)
+      {
+        // Skip infinite cells
+        if (*it_inc_simplex->rbegin() == std::numeric_limits<std::size_t>::max())
+          continue;
+
+        std::set<std::size_t> c = *it_inc_simplex;
+        c.insert(idx); // Add the missing index
+
+        sc.add_simplex(c);
+
+        // If we do not already know this star is inconsistent, test it
+        if (!is_inconsistent && !is_simplex_consistent(c))
+          is_inconsistent = true;
+      }
+
+      if (is_inconsistent)
+      {
+        // Export star to OFF file
+        std::stringstream output_filename;
+        output_filename << filename_base << "_" << idx << ".off";
+        std::ofstream off_stream(output_filename.str().c_str());
+        export_to_off(sc, off_stream);
+      }
+    }
+  }
+  
 
   bool check_if_all_simplices_are_in_the_ambient_delaunay(
     const Simplicial_complex *p_complex = NULL,
