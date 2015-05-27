@@ -1703,7 +1703,8 @@ next_face:
         mat_points(j, i) = CGAL::to_double(coord(m_points[nn_it->first], i));
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
         if (perturb)
-          mat_points(j, i) += m_random_generator.get_double(-0.3, 0.3);
+          mat_points(j, i) += m_random_generator.get_double(
+            -m_half_sparsity, m_half_sparsity);
 #endif
       }
     }
@@ -2012,18 +2013,17 @@ next_face:
     typename Kernel::Point_to_vector_d k_pt_to_vec =
       m_k.point_to_vector_d_object();
     CGAL::Random_points_on_sphere_d<Point>
-      tr_point_on_sphere_generator(m_ambient_dim, 1);
+      tr_point_on_sphere_generator(
+        m_ambient_dim, m_random_generator.get_double(0., m_half_sparsity));
     // Parallel
 #  if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
-    Vector transl = k_scaled_vec(k_pt_to_vec(*tr_point_on_sphere_generator++),
-                                 m_half_sparsity);
+    Vector transl = k_pt_to_vec(*tr_point_on_sphere_generator);
     m_p_perturb_mutexes[point_idx].lock();
     m_translations[point_idx] = transl;
     m_p_perturb_mutexes[point_idx].unlock();
     // Sequential
 #  else
-    m_translations[point_idx] = k_scaled_vec(k_pt_to_vec(
-      *tr_point_on_sphere_generator++), m_half_sparsity);
+    m_translations[point_idx] = k_pt_to_vec(*tr_point_on_sphere_generator);
 #  endif
 
 # else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
@@ -2038,19 +2038,21 @@ next_face:
     typename Kernel::Scaled_vector_d k_scaled_vec =
       m_k.scaled_vector_d_object();
 
-    CGAL::Random_points_on_sphere_d<Tr_bare_point>
-      tr_point_on_sphere_generator(m_intrinsic_dimension, 1);
+    CGAL::Random_points_on_sphere_d<Tr_bare_point> 
+      tr_point_on_sphere_generator(
+        m_intrinsic_dimension, 
+        m_random_generator.get_double(0., m_half_sparsity));
 
     Tr_point local_random_transl =
       local_tr_traits.construct_weighted_point_d_object()(
-        *tr_point_on_sphere_generator++, 0);
+        *tr_point_on_sphere_generator, 0);
     Translation_for_perturb global_transl = k_constr_vec(m_ambient_dim);
     const Tangent_space_basis &tsb = m_tangent_spaces[point_idx];
     for (int i = 0 ; i < m_intrinsic_dimension ; ++i)
     {
       global_transl = k_transl(
         global_transl,
-        k_scaled_vec(tsb[i], m_half_sparsity*coord(local_random_transl, i))
+        k_scaled_vec(tsb[i], coord(local_random_transl, i))
       );
     }
     // Parallel
