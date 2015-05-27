@@ -117,8 +117,8 @@ int main(int argc, char* argv[])
 
   bool first = true;
 
-  FT minimum[3];
-  FT maximum[3];
+  FT minimum[3] = {0., 0., 0.};
+  FT maximum[3] = {0., 0., 0.};
 
   for (vertex_iterator currVertexIt = startVertexIt; currVertexIt != endVertexIt; ++currVertexIt)
   {
