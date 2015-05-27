@@ -127,18 +127,17 @@ user might encounter.
 - `CGAL::is_border()`
 - `CGAL::is_border_edge()`
 - `CGAL::is_bivalent()`
-- `CGAL::is_pure_bivalent()`
+- `CGAL::is_bivalent_mesh()`
 - `CGAL::is_trivalent()`
-- `CGAL::is_pure_trivalent()`
+- `CGAL::is_trivalent_mesh()`
 - `CGAL::is_closed()`
 
 - `CGAL::is_triangle()`
-- `CGAL::is_pure_triangle()`
+- `CGAL::is_triangle_mesh()`
 - `CGAL::is_quad()`
-- `CGAL::is_pure_quad()`
+- `CGAL::is_quad_mesh()`
 
 - `CGAL::is_tetrahedron()`
-- `CGAL::is_quadrangle()`
 - `CGAL::is_hexahedron()`
 - `CGAL::make_triangle()`
 - `CGAL::make_tetrahedron()`
