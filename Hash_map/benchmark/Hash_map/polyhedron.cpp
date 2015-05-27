@@ -1,4 +1,3 @@
-//#define CGAL_USE_HASH_OF_POINTERS 
 #include <iostream>
 #include <fstream>
 #include <map>
