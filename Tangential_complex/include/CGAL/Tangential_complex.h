@@ -375,6 +375,8 @@ public:
       m_k.compute_coordinate_d_object();
 
     std::vector<FT> sum_eigen_values(m_ambient_dim, FT(0));
+    std::size_t num_points_for_pca =
+      std::pow(BASE_VALUE_FOR_PCA, m_intrinsic_dimension);
 
     typename Points::const_iterator it_p = m_points.begin();
     typename Points::const_iterator it_p_end = m_points.end();
@@ -383,14 +385,14 @@ public:
     {
       const Point &p = *it_p;
 
-      KNS_range kns_range = m_points_ds.query_ANN(p, NUM_POINTS_FOR_PCA, false);
+      KNS_range kns_range = m_points_ds.query_ANN(p, num_points_for_pca, false);
       //******************************* PCA *************************************
 
       // One row = one point
-      Eigen::MatrixXd mat_points(NUM_POINTS_FOR_PCA, m_ambient_dim);
+      Eigen::MatrixXd mat_points(num_points_for_pca, m_ambient_dim);
       KNS_iterator nn_it = kns_range.begin();
       for (int j = 0 ;
-            j < NUM_POINTS_FOR_PCA && nn_it != kns_range.end() ;
+            j < num_points_for_pca && nn_it != kns_range.end() ;
             ++j, ++nn_it)
       {
         for (int i = 0 ; i < m_ambient_dim ; ++i)
@@ -1613,6 +1615,9 @@ next_face:
     
 #else
 
+    unsigned int num_points_for_pca = static_cast<unsigned int>(
+      std::pow(BASE_VALUE_FOR_PCA, m_intrinsic_dimension));
+
     // Kernel functors
     typename Kernel::Construct_vector_d      constr_vec =
       m_k.construct_vector_d_object();
@@ -1631,18 +1636,18 @@ next_face:
 
 #ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
     KNS_range kns_range = m_points_ds_for_tse.query_ANN(
-      p, NUM_POINTS_FOR_PCA, false);
+      p, num_points_for_pca, false);
     const Points &points_for_pca = m_points_for_tse;
 #else
-    KNS_range kns_range = m_points_ds.query_ANN(p, NUM_POINTS_FOR_PCA, false);
+    KNS_range kns_range = m_points_ds.query_ANN(p, num_points_for_pca, false);
     const Points &points_for_pca = m_points;
 #endif
 
     // One row = one point
-    Eigen::MatrixXd mat_points(NUM_POINTS_FOR_PCA, m_ambient_dim);
+    Eigen::MatrixXd mat_points(num_points_for_pca, m_ambient_dim);
     KNS_iterator nn_it = kns_range.begin();
-    for (int j = 0 ;
-         j < NUM_POINTS_FOR_PCA && nn_it != kns_range.end() ;
+    for (unsigned int j = 0 ;
+         j < num_points_for_pca && nn_it != kns_range.end() ;
          ++j, ++nn_it)
     {
       for (int i = 0 ; i < m_ambient_dim ; ++i)

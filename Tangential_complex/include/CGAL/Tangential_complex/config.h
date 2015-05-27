@@ -65,6 +65,8 @@
 //#define CGAL_TC_PERTURB_TANGENT_SPACE
 
 //========================= Parameters ========================================
-const std::size_t NUM_POINTS_FOR_PCA = 20;
+
+// PCA will use BASE_VALUE_FOR_PCA^intrinsic_dim points
+const std::size_t BASE_VALUE_FOR_PCA = 5;
 
 #endif // CGAL_TC_CONFIG_H
