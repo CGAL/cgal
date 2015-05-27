@@ -460,33 +460,33 @@ private:
 
     Triangle_2 ear(a, v, b);
     FT min_distance = -1;
-    Point_2 min_q;
+    const Point_2* min_q = 0;
 
     // Of the remaining vertices, find the one inside of the "ear" with minimal
     // distance to v:
     while (++next_edge != current_edge)
     {
-      Point_2 q = next_edge->target()->point();
+      const Point_2& q = next_edge->target()->point();
       if (ear.has_on_bounded_side(q))
       {
         FT distance = squared_distance(q, v);
-        if ((min_distance == -1) || (distance < min_distance))
+        if ((min_q == 0) || (distance < min_distance))
         {
           min_distance = distance;
-          min_q = q;
+          min_q = &q;
         }
       }
     }
 
     // If there was no vertex inside of the ear, return it's centroid.
     // Otherwise, return a point between v and min_q.
-    if (min_distance == -1)
+    if (min_q == 0)
     {
       return centroid(ear);
     }
     else
     {
-      return midpoint(v, min_q);
+      return midpoint(v, *min_q);
     }
   }
 
