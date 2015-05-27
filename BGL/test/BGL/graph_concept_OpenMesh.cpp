@@ -67,7 +67,7 @@ void concept_check_polyhedron() {
   // null
   boost::graph_traits<Sm>::null_vertex();
   boost::graph_traits<Sm>::null_face();
-};
+}
 
 
 
