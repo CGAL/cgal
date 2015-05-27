@@ -18,6 +18,7 @@
 #include <boost/algorithm/string/trim_all.hpp>
 
 #include <cstdlib>
+#include <ctime>
 #include <fstream>
 #include <math.h>
 
@@ -164,7 +165,9 @@ bool export_to_off(
     std::stringstream output_filename;
     output_filename << "output/" << input_name_stripped << "_" 
       << tc.intrinsic_dimension() << "_in_R" 
-      << tc.ambient_dimension() << suffix << ".off";
+      << tc.ambient_dimension() << "_"
+      << tc.number_of_vertices() << "v"
+      << suffix << ".off";
     std::ofstream off_stream(output_filename.str().c_str());
 
     if (p_complex)
@@ -372,6 +375,10 @@ void make_tc(std::vector<Point> &points,
     bool exported = export_to_off(tc, input_name_stripped, "_AFTER_FIX", true);
     double export_after_perturb_time = (exported ? t.elapsed() : -1);
     t.reset();
+
+    //std::string fn = "output/inc_stars/";
+    //fn += input_name_stripped;
+    //tc.export_inconsistent_stars_to_OFF_files(fn);
   }
   else
   {
@@ -522,8 +529,8 @@ int main()
 # endif
 #endif
 
-  int seed = CGAL::default_random.get_int(0, 1<<30);
-  CGAL::default_random = CGAL::Random();
+  int seed = time(NULL);
+  CGAL::default_random = CGAL::Random(seed);
   std::cerr << "Random seed = " << seed << std::endl;
 
   std::ifstream script_file;
@@ -638,6 +645,21 @@ int main()
                 num_points, ambient_dim,
                 std::atof(param1.c_str()),
                 std::atof(param2.c_str()));
+            }
+            else if (input == "generate_torus_3D")
+            {
+              points = generate_points_on_torus_3D<Kernel>(
+                num_points,
+                std::atof(param1.c_str()),
+                std::atof(param2.c_str()),
+                param3 == "Y");
+            }
+            else if (input == "generate_torus_d")
+            {
+              points = generate_points_on_torus_d<Kernel>(
+                num_points, 
+                intrinsic_dim,
+                param1 == "Y");
             }
             else if (input == "generate_klein_bottle_3D")
             {
