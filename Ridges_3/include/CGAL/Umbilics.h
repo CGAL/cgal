@@ -165,7 +165,7 @@ Umbilic_approximation(const TriangleMesh& p,
   : P(p), k1(vertex2k1_pm), k2(vertex2k2_pm), 
     d1(vertex2d1_pm), d2(vertex2d2_pm)
 {
-  CGAL_precondition(is_triangle_mesh(P));
+  CGAL_precondition(is_pure_triangle(P));
 
   poly_neighbors = boost::shared_ptr<Poly_neighbors>(new Poly_neighbors(P));
 }
