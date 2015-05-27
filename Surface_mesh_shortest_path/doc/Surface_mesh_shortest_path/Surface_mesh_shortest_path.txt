@@ -239,7 +239,7 @@ The following figures track the construction time, query time, and peak memory u
   A <em>saddle vertex</em> on a surface mesh is a vertex \f$v\f$ where the sum of surface angles of all faces incident at \f$v\f$ is greater than \f$2 \pi\f$, or, in simpler terms, one cannot flatten all the faces incident to \f$v\f$ into the plane without overlap.  Identifying and dealing with saddle vertices are important in shortest path algorithms because they form <em>blind spots</em> which cannot be reached by a single geodesic curve.
 
   \cgalFigureBegin{Saddle_vertex,saddleVertex.png}
-  A visibility window (shaded blue) encounters a saddle vertex; the shaded red region behind the vertex is not reachable with by a geodesic curve from the source point (assuming the geodesic must stay inside the initial window).
+  A visibility window (shaded blue) encounters a saddle vertex; the shaded red region behind the vertex is not reachable by a geodesic curve from the source point (assuming the geodesic must stay inside the initial window).
   \cgalFigureEnd
 
 In order to deal with this, we must create a new set of child visibility windows which branch out around the saddle vertex. The paths through these child windows would first arrive at the saddle vertex, and then follow a new visibility window (forming a kind of poly-line on the surface). Note that similar behavior is required when we reach a boundary vertex of a non-closed surface mesh.
