@@ -65,12 +65,16 @@
 #endif
 
 //#define CGAL_TC_EXPORT_NORMALS // Only for 3D surfaces (k=2, d=3)
-#define CGAL_ALPHA_TC
+//#define CGAL_ALPHA_TC
 const double ALPHA = 0.3;
 #ifdef CGAL_LINKED_WITH_TBB
 tbb::atomic<unsigned int> ttt_star; // CJTODO TEMP
 tbb::atomic<unsigned int> ttt_intersect;
 #endif
+
+//CJTODO: debug
+//#define CGAL_TC_COMPUTE_TANGENT_PLANES_FOR_SPHERE_3
+//#define CGAL_TC_COMPUTE_TANGENT_PLANES_FOR_TORUS_D
 
 namespace CGAL {
 
@@ -234,12 +238,12 @@ public:
     m_points(first, last),
     m_weights(m_points.size(), FT(0))
 #ifdef CGAL_TC_PERTURB_WEIGHT
-    m_weights_memory()
+    , m_weights_memory()
 #endif
-# if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_PERTURB_POSITION) \
+#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_PERTURB_POSITION) \
   && defined(CGAL_TC_GLOBAL_REFRESH)
     , m_p_perturb_mutexes(NULL)
-# endif
+#endif
     , m_points_ds(m_points)
     , m_are_tangent_spaces_computed(m_points.size(), false)
     , m_tangent_spaces(m_points.size(), Tangent_space_basis())
@@ -294,11 +298,12 @@ public:
               << " tangent spaces manually at the same time" << std::endl;
     std::exit(EXIT_FAILURE);
 #endif
-    CGAL_assertion(m_points.size() == tangent_spaces.size()
 #if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
-                   && m_points.size() == orthogonal_spaces.size()
+    CGAL_assertion(m_points.size() == tangent_spaces.size()
+                   && m_points.size() == orthogonal_spaces.size());
+#else
+    CGAL_assertion(m_points.size() == tangent_spaces.size());
 #endif
-                   );
     m_tangent_spaces = tangent_spaces;
 #if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
     m_orth_spaces = orthogonal_spaces;
@@ -540,7 +545,7 @@ public:
         << stats_before.second
         << " (" << 100. * stats_before.second / stats_before.first << "%)"
         << std::endl
-        << "  * Num inconsistent local triangulations: "
+        << "  * Num inconsistent stars: "
         << num_inconsistent_local_tr
         << " (" << 100. * num_inconsistent_local_tr / m_points.size() << "%)"
         << std::endl
@@ -567,7 +572,7 @@ public:
         << "  * " << m_points.size() << " vertices" << std::endl
         << "  * " << num_inconsistent_local_tr
         << " (" << 100. * num_inconsistent_local_tr / m_points.size() << "%)"
-        << " inconsistent triangulations encountered" << std::endl
+        << " inconsistent stars encountered" << std::endl
         << "=========================================================="
         << std::endl;
 # endif
@@ -1563,7 +1568,50 @@ next_face:
 #endif
     )
   {
+#ifdef CGAL_TC_COMPUTE_TANGENT_PLANES_FOR_SPHERE_3
+
+    // CJTODO: this is only for a sphere in R^3
+    double tt1[3] = {-p[1] - p[2], p[0], p[0]};
+    double tt2[3] = {p[1] * tt1[2] - p[2] * tt1[1],
+                     p[2] * tt1[0] - p[0] * tt1[2],
+                     p[0] * tt1[1] - p[1] * tt1[0]};
+    Vector t1(3, &tt1[0], &tt1[3]);
+    Vector t2(3, &tt2[0], &tt2[3]);
+
+    // Normalize t1 and t2
+    typename Kernel::Squared_length_d sqlen      = m_k.squared_length_d_object();
+    typename Kernel::Scaled_vector_d  scaled_vec = m_k.scaled_vector_d_object();
+
+    Tangent_space_basis ts;
+    ts.reserve(m_intrinsic_dimension);
+    ts.push_back(scaled_vec(t1, FT(1)/CGAL::sqrt(sqlen(t1))));
+    ts.push_back(scaled_vec(t2, FT(1)/CGAL::sqrt(sqlen(t2))));
+
+    m_are_tangent_spaces_computed[i] = true;
+
+    return ts;
+
+#elif defined(CGAL_TC_COMPUTE_TANGENT_PLANES_FOR_TORUS_D)
+
+    // CJTODO: this is only for torus_d
+    Tangent_space_basis ts(p);
+    ts.reserve(m_intrinsic_dimension);
+    for (int dim = 0 ; dim < m_intrinsic_dimension ; ++dim)
+    {
+      std::vector<FT> tt(m_ambient_dim, 0.);
+      tt[2*dim] = -p[2*dim + 1];
+      tt[2*dim + 1] = p[2*dim];
+      Vector t(2*m_intrinsic_dimension, tt.begin(), tt.end());
+      ts.push_back(t);
+    }
+
+    m_are_tangent_spaces_computed[i] = true;
+    
+    //return compute_gram_schmidt_basis(ts, m_k);
+    return ts;
     //******************************* PCA *************************************
+    
+#else
 
     // Kernel functors
     typename Kernel::Construct_vector_d      constr_vec =
@@ -1616,23 +1664,23 @@ next_face:
 
     // The eigenvectors are sorted in increasing order of their corresponding
     // eigenvalues
-    for (int i = m_ambient_dim - 1 ;
-         i >= m_ambient_dim - m_intrinsic_dimension ;
-         --i)
+    for (int j = m_ambient_dim - 1 ;
+         j >= m_ambient_dim - m_intrinsic_dimension ;
+         --j)
     {
       if (normalize_basis)
       {
         Vector v = constr_vec(m_ambient_dim,
-                              eig.eigenvectors().col(i).data(),
-                              eig.eigenvectors().col(i).data() + m_ambient_dim);
+                              eig.eigenvectors().col(j).data(),
+                              eig.eigenvectors().col(j).data() + m_ambient_dim);
         tsb.push_back(normalize_vector(v, m_k));
       }
       else
       {
         tsb.push_back(constr_vec(
           m_ambient_dim,
-          eig.eigenvectors().col(i).data(),
-          eig.eigenvectors().col(i).data() + m_ambient_dim));
+          eig.eigenvectors().col(j).data(),
+          eig.eigenvectors().col(j).data() + m_ambient_dim));
       }
     }
 
@@ -1669,25 +1717,8 @@ next_face:
     //std::cerr << "IP = " << inner_pdct(n, ts[0]) << " & " << inner_pdct(n, ts[1]) << std::endl;
 
     return tsb;
-
-    // CJTODO: this is only for a sphere in R^3
-    /*double tt1[3] = {-p[1] - p[2], p[0], p[0]};
-    double tt2[3] = {p[1] * tt1[2] - p[2] * tt1[1],
-                     p[2] * tt1[0] - p[0] * tt1[2],
-                     p[0] * tt1[1] - p[1] * tt1[0]};
-    Vector t1(3, &tt1[0], &tt1[3]);
-    Vector t2(3, &tt2[0], &tt2[3]);
-
-    // Normalize t1 and t2
-    typename Kernel::Squared_length_d sqlen      = m_k.squared_length_d_object();
-    typename Kernel::Scaled_vector_d  scaled_vec = m_k.scaled_vector_d_object();
-
-    Tangent_space_basis ts;
-    ts.reserve(m_intrinsic_dimension);
-    ts.push_back(scaled_vec(t1, FT(1)/CGAL::sqrt(sqlen(t1))));
-    ts.push_back(scaled_vec(t2, FT(1)/CGAL::sqrt(sqlen(t2))));
-
-    return ts;*/
+    
+#endif
 
     /*
     // Alternative code (to be used later)
@@ -1917,7 +1948,7 @@ next_face:
 #ifdef CGAL_TC_PERTURB_WEIGHT
     m_weights[point_idx] = m_random_generator.get_double(0., m_sq_half_sparsity);
     if(m_weights_memory.size() > 0) // external weights were initially set
-      m_weights[point_idx] += m_weights_memory[point_idx]
+      m_weights[point_idx] = m_weights[point_idx] + m_weights_memory[point_idx];
 #endif
 
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
