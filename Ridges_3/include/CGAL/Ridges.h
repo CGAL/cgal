@@ -343,7 +343,7 @@ Ridge_approximation(const TriangleMesh &p,
   for(;itb!=ite;itb++) {
     is_visited_map[*itb] = false;
   }
-  CGAL_precondition( is_pure_triangle(p) );
+  CGAL_precondition( is_triangle_mesh(p) );
 
   std::vector<Point_3> points;
   BOOST_FOREACH(vertex_descriptor v, vertices(p)){
