@@ -444,14 +444,11 @@ typedef boost::graph_traits<PolyhedralSurf>::vertex_descriptor  vertex_descripto
 typedef boost::graph_traits<PolyhedralSurf>::vertex_iterator vertex_iterator;
 typedef boost::graph_traits<PolyhedralSurf>::face_descriptor face_descriptor;
 
-typedef map<vertex_descriptor, FT> VertexFT_map;
+typedef std::map<vertex_descriptor, FT> VertexFT_map;
 typedef boost::associative_property_map< VertexFT_map > VertexFT_property_map;
 
-typedef map<vertex_descriptor, Vector_3> VertexVector_map;
+typedef std::map<vertex_descriptor, Vector_3> VertexVector_map;
 typedef boost::associative_property_map< VertexVector_map > VertexVector_property_map;
-
-typedef map<face_descriptor, Vector_3> Face2Vector_map;
-typedef boost::associative_property_map< Face2Vector_map > Face2Vector_property_map;
 
 //RIDGES
 typedef CGAL::Ridge_line<PolyhedralSurf> Ridge_line;
@@ -465,15 +462,15 @@ typedef CGAL::Umbilic_approximation < PolyhedralSurf,
                                       VertexVector_property_map > Umbilic_approximation;
 
 //create property maps
-VertexFT_map vertex2k1_map, vertex2k2_map, 
-  vertex2b0_map, vertex2b3_map, 
-  vertex2P1_map, vertex2P2_map;
-  VertexVector_map vertex2d1_map, vertex2d2_map;
+VertexFT_map vertex_k1_map, vertex_k2_map, 
+  vertex_b0_map, vertex_b3_map, 
+  vertex_P1_map, vertex_P2_map;
+  VertexVector_map vertex_d1_map, vertex_d2_map;
 
-VertexFT_property_map vertex2k1_pm(vertex2k1_map), vertex2k2_pm(vertex2k2_map), 
-  vertex2b0_pm(vertex2b0_map), vertex2b3_pm(vertex2b3_map), 
-  vertex2P1_pm(vertex2P1_map), vertex2P2_pm(vertex2P2_map);
-  VertexVector_property_map vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_map);
+VertexFT_property_map vertex_k1_pm(vertex_k1_map), vertex_k2_pm(vertex_k2_map), 
+  vertex_b0_pm(vertex_b0_map), vertex_b3_pm(vertex_b3_map), 
+  vertex_P1_pm(vertex_P1_map), vertex_P2_pm(vertex_P2_map);
+  VertexVector_property_map vertex_d1_pm(vertex_d1_map), vertex_d2_pm(vertex_d2_map);
 
 int main(int argc, char *argv[])
 { 
@@ -485,10 +482,10 @@ int main(int argc, char *argv[])
   //Ridges
   //--------------------------------------------------------------------------
   Ridge_approximation ridge_approximation(P, 
-                                          vertex2k1_pm, vertex2k2_pm,
-                                          vertex2b0_pm, vertex2b3_pm,
-                                          vertex2P1_pm, vertex2P2_pm,
-                                          vertex2d1_pm, vertex2d2_pm);
+                                          vertex_k1_pm, vertex_k2_pm,
+                                          vertex_b0_pm, vertex_b3_pm,
+                                          vertex_P1_pm, vertex_P2_pm,
+                                          vertex_d1_pm, vertex_d2_pm);
   std::vector<Ridge_line*> ridge_lines;
   std::back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
 
@@ -501,8 +498,8 @@ int main(int argc, char *argv[])
   // UMBILICS
   //--------------------------------------------------------------------------
   Umbilic_approximation umbilic_approximation(P, 
-                                              vertex2k1_pm, vertex2k2_pm,
-                                              vertex2d1_pm, vertex2d2_pm);
+                                              vertex_k1_pm, vertex_k2_pm,
+                                              vertex_d1_pm, vertex_d2_pm);
   std::vector<Umbilic*> umbilics;
   std::back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
   umbilic_approximation.compute(umb_it, umb_size);
