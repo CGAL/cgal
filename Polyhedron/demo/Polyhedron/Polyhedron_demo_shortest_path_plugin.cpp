@@ -41,7 +41,7 @@ private:
 
   struct ShortestPathsPointsVisitor
   {
-    typedef std::vector<typename Surface_mesh_shortest_path::Point_3> Container;
+    typedef std::vector<Surface_mesh_shortest_path::Point_3> Container;
     Container& m_container;
 
     ShortestPathsPointsVisitor(Container& container)
