@@ -65,15 +65,13 @@ void shortest_path_regular_tetrahedron()
   vertex_iterator currentVertex;
   vertex_iterator endVertex;
 
-  size_t vertexIndex = 0;
-
   Kernel::FT sideLength = Kernel::FT(2.0);
   Kernel::FT halfSideLength = sideLength / Kernel::FT(2.0);
   Kernel::FT triangleHeight = CGAL::sqrt((sideLength*sideLength) - (halfSideLength*halfSideLength));
 
   for (boost::tie(currentVertex, endVertex) = CGAL::vertices(P); currentVertex != endVertex; ++currentVertex)
   {
-    if (vertexIndex == 0)
+    if ((*currentVertex)->point().y()==-1)
     {
       CHECK_CLOSE(shortestPaths.shortest_distance_to_source_points(*currentVertex).first, Kernel::FT((triangleHeight * Kernel::FT(4.0)) / Kernel::FT(3.0)), Kernel::FT(0.000001));
     }
@@ -81,8 +79,6 @@ void shortest_path_regular_tetrahedron()
     {
       CHECK_CLOSE(shortestPaths.shortest_distance_to_source_points(*currentVertex).first, Kernel::FT((triangleHeight * Kernel::FT(2.0)) / Kernel::FT(3.0)), Kernel::FT(0.000001));
     }
-
-    ++vertexIndex;
   }
 }
 

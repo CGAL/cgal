@@ -71,7 +71,7 @@ void test_simple_2D_barycentric_coordinates()
   boost::tie(b0Type, outVertex0) = classify_barycentric_coordinate(b0);
 
   CHECK_EQUAL(b0Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_VERTEX);
-  CHECK_EQUAL(outVertex0, 0);
+  CHECK_EQUAL(outVertex0, 0u);
 
   Traits::Barycentric_coordinate b1 = construct_barycentric_coordinate_in_triangle_2(simpleTriangle, simpleTriangle[1]);
 
@@ -84,7 +84,7 @@ void test_simple_2D_barycentric_coordinates()
   boost::tie(b1Type, outVertex1) = classify_barycentric_coordinate(b1);
 
   CHECK_EQUAL(b1Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_VERTEX);
-  CHECK_EQUAL(outVertex1, 1);
+  CHECK_EQUAL(outVertex1, 1u);
 
   Traits::Barycentric_coordinate b2 = construct_barycentric_coordinate_in_triangle_2(simpleTriangle, simpleTriangle[2]);
 
@@ -97,7 +97,7 @@ void test_simple_2D_barycentric_coordinates()
   boost::tie(b2Type, outVertex2) = classify_barycentric_coordinate(b2);
 
   CHECK_EQUAL(b2Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_ON_VERTEX);
-  CHECK_EQUAL(outVertex2, 2);
+  CHECK_EQUAL(outVertex2, 2u);
 
   Traits::Point_2 location(Kernel::FT(0.3), Kernel::FT(0.2));
   Traits::Barycentric_coordinate bLocation = construct_barycentric_coordinate_in_triangle_2(simpleTriangle, location);

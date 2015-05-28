@@ -141,7 +141,7 @@ protected:
 protected:
   bool eventFilter(QObject* /*target*/, QEvent * gen_event);
   
-public slots:
+public Q_SLOTS:
   virtual void poly_item_changed();
   virtual void changed();
 };

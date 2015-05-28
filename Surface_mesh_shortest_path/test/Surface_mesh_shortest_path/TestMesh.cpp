@@ -280,7 +280,7 @@ enum Kernel_type
   KERNEL_UNKNOWN,
   KERNEL_IPICK,
   KERNEL_EPICK,
-  KERNEL_EPECK,
+  KERNEL_EPECK
 };
 
 Kernel_type parse_kernel_type(const std::string& s)

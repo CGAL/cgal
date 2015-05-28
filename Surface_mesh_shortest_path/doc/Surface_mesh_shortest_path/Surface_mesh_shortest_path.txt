@@ -239,7 +239,7 @@ The following figures track the construction time, query time, and peak memory u
   A <em>saddle vertex</em> on a surface mesh is a vertex \f$v\f$ where the sum of surface angles of all faces incident at \f$v\f$ is greater than \f$2 \pi\f$, or, in simpler terms, one cannot flatten all the faces incident to \f$v\f$ into the plane without overlap.  Identifying and dealing with saddle vertices are important in shortest path algorithms because they form <em>blind spots</em> which cannot be reached by a single geodesic curve.
 
   \cgalFigureBegin{Saddle_vertex,saddleVertex.png}
-  A visibility window (shaded blue) encounters a saddle vertex; the shaded red region behind the vertex is not reachable with by a geodesic curve from the source point (assuming the geodesic must stay inside the initial window).
+  A visibility window (shaded blue) encounters a saddle vertex; the shaded red region behind the vertex is not reachable by a geodesic curve from the source point (assuming the geodesic must stay inside the initial window).
   \cgalFigureEnd
 
 In order to deal with this, we must create a new set of child visibility windows which branch out around the saddle vertex. The paths through these child windows would first arrive at the saddle vertex, and then follow a new visibility window (forming a kind of poly-line on the surface). Note that similar behavior is required when we reach a boundary vertex of a non-closed surface mesh.
@@ -254,10 +254,10 @@ In order to deal with this, we must create a new set of child visibility windows
 
   Whenever a vertex of the surface mesh is encountered, a branch occurs in the sequence tree. If the vertex is a non-saddle vertex, then only two children are created, one for each edge incident to that vertex on the current face. If the vertex is a saddle vertex, in addition to the two children mentioned above, a special type of node, called a <em>pseudo-source</em>, is created which branches out from that vertex.
 
-  Once a sequence tree is built, the <em>potential shortest paths</em> from the source to every point inside a given visibility window can be computed. The sequence of faces along each branch of the tree are laid out edge to edge, into a common plane, such that the geodesic distance from any point on the surface to its nearest source point can be obtained using a single 2D %Euclidean distance computation. Note that if the window belongs to a pseudo-source, the distance is measure from the target to the pseudo-source, and then the distance from the pseudo-source back to its parent is measured, and so on back to the original source.
+  Once a sequence tree is built, the <em>potential shortest paths</em> from the source to every point inside a given visibility window can be computed. The sequence of faces along each branch of the tree are laid out edge to edge, into a common plane, such that the geodesic distance from any point on the surface to its nearest source point can be obtained using a single 2D %Euclidean distance computation. Note that if the window belongs to a pseudo-source, the distance is measured from the target to the pseudo-source, and then the distance from the pseudo-source back to its parent is measured, and so on back to the original source.
 
 \subsection Surface_mesh_shortest_pathAlgorithmOverview Algorithm Overview
-  The size of the sequence tree from any source point is theoretically infinite, however we only ever care about trees which are of depth at most N, where N is the number of faces in the surface mesh (since no shortest path can cross the same face twice). Even then, the size of this truncated sequence tree is potentially exponential in the size of the surface mesh, thus a simple breadth-first search is not feasible.  Rather, we apply techniques to eliminate entire branches which are provably unable to contain shortest paths from the source point(s).  The techniques used are given in greater detail in a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, which itself expands on earlier work by Chen and Han \cgalCite{ch-spp-96} and Mitchell, Mount, and Papadimitriou \cgalCite{mmp-dgp-87} .
+  The size of the sequence tree from any source point is theoretically infinite, however we only ever care about trees which are of depth at most N, where N is the number of faces in the surface mesh (since no shortest path can cross the same face twice). Even then, the size of this truncated sequence tree is potentially exponential in the size of the surface mesh, thus a simple breadth-first search is not feasible.  Rather, we apply techniques to eliminate entire branches which are provably unable to contain shortest paths from the source point(s).  The techniques used are given in greater detail in a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, which itself expands an earlier work by Chen and Han \cgalCite{ch-spp-96} and Mitchell, Mount, and Papadimitriou \cgalCite{mmp-dgp-87} .
 
   Handling multiple source points is simply a matter of constructing multiple sequence trees concurrently, using a method similar to the multi-source Dijsktra's algorithm.
 
@@ -270,7 +270,8 @@ In order to deal with this, we must create a new set of child visibility windows
 - For each vertex, only <em>one</em> two-way branch may occur per face incident to that vertex, specifically, that of the nearest node to that vertex which crosses that face.  We call that closest node the <em>occupier</em> of that vertex.
 - If the vertex is a saddle vertex, only one pseudo-source may be established at that vertex, this time by the absolute nearest node to that vertex.
 
-  This method alone can decrease the running time for construction of the sequence tree construction to polynomial time.
+
+This method alone can decrease the running time for construction of the sequence tree construction to polynomial time.
 
 \subsection Surface_mesh_shortest_pathDistanceFiltering Distance Filtering
 
@@ -278,7 +279,7 @@ In order to deal with this, we must create a new set of child visibility windows
 
 \subsection Surface_mesh_shortest_pathLocatingShortestPaths Locating Shortest Paths
 
-  In order to locate the shortest path from a target point to a source point, we must select the correct visibility window. A simple method is to keep track for each face \f$f\f$ of all windows which cross \f$f\f$. In practice, at most a constant number of windows will cross any given face, so for simplicity this is the method we employ. An alternative is to construct a Voronoi-like structure on each face, where each cell represents a visibility window. We do did not attempt this method, however it would seem likely that it would be of no computational benefit.
+  In order to locate the shortest path from a target point to a source point, we must select the correct visibility window. A simple method is to keep track for each face \f$f\f$ of all windows which cross \f$f\f$. In practice, at most a constant number of windows will cross any given face, so for simplicity this is the method we employ. An alternative is to construct a Voronoi-like structure on each face, where each cell represents a visibility window. We did not attempt this method, however it would seem likely that it would be of no computational benefit.
 
 \subsection Pseudo-Code
 
@@ -363,7 +364,7 @@ method ShortestPathTree:
   Input:
     s[1..n] : a set of source points on the surface of G.
               For simplicity (and without loss of generality),
-              we will consider assume they are all vertices of G.
+              we will assume they are all vertices of G.
   Output:
     T[1..n] : a set of sequence trees for the source points
   Declare:
@@ -399,12 +400,12 @@ method ShortestPathTree:
     return T[1..n]
 \endverbatim
 
-To perform shortest path distance queries to each vertex, we can simply use the results stored in `S` after the completion of ShortestPathTree, as it contains a map from each vertex to the `VisibilityWindow` which has the shortest path to that vertex. Performing shortest path computations to any arbitrary face location is slightly more complex. As eluded to above, after completion of the algorithm, we traverse each of the sequence trees, and for each face `f` we store all the VisibilityWindows which cross `f` in a look-up structure. Then, to find the shortest path to a point on the surface of face `f`, we look up that pre-stored set of VisibilityWindows associated with it, and among those windows we select the one which contains the query point, and has the shortest path back to the origin. Though it may seem slow since it involves a linear search, it is efficient in practice since the number of faces crossing any single face is typically limited (this is due to the additional filtering method given by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}.
+To perform shortest path distance queries to each vertex, we can simply use the results stored in `S` after the completion of ShortestPathTree, as it contains a map from each vertex to the `VisibilityWindow` which has the shortest path to that vertex. Performing shortest path computations to any arbitrary face location is slightly more complex. As eluded to above, after completion of the algorithm, we traverse each of the sequence trees, and for each face `f` we store all the VisibilityWindows which cross `f` in a look-up structure. Then, to find the shortest path to a point on the surface of face `f`, we look up that pre-stored set of VisibilityWindows associated with it, and among those windows we select the one which contains the query point and has the shortest path back to the origin. Though it may seem slow since it involves a linear search but it is efficient in practice since the number of faces crossing any single face is typically limited (this is due to the additional filtering method given by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}.
 
 The actual surface paths can be reconstructed by backtracking from the VisibilityWindow, through its parents in the tree up to the root, and keeping track of each face that was crossed.
 
 \section Surface_mesh_shortest_pathImplementationhistory Design and Implementation History
-The initial implementation of this package is the result of the work of Stephen Kiazyk during the 2014 season
+This package is the result of the work of Stephen Kiazyk during the 2014 season
 of the Google Summer of Code. He has been mentored by Sébastien Loriot and Éric Colin de Verdière
 who also contributed to the documentation and the API definition.
 

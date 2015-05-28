@@ -104,7 +104,7 @@ private:
 
   void check_and_set_ids(Polyhedron* polyhedron);
 
-public slots:
+public Q_SLOTS:
   void on_actionMakeShortestPaths_triggered();
   void on_Selection_type_combo_box_changed(int index);
   void on_Primitives_type_combo_box_changed(int index);
