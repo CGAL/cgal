@@ -161,7 +161,26 @@ struct Face {
     return face(h,*g);
   }
 };
+template <typename G>
+struct OppositeFace {
+  const G* g; 
 
+  OppositeFace()
+    : g(NULL)
+  {}
+
+  OppositeFace(const G& g)
+    : g(&g)
+  {}
+
+  typedef typename boost::graph_traits<G>::face_descriptor result_type;
+  typedef typename boost::graph_traits<G>::halfedge_descriptor argument_type;
+
+  result_type operator()(argument_type h) const
+  {
+    return face(opposite(h,*g),*g);
+  }
+};
 } // namespace internal
 /// \endcond
 
@@ -866,7 +885,7 @@ class Face_around_face_iterator
 #endif
 {
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
-  internal::Face<Graph> fct;
+  internal::OppositeFace<Graph> fct;
 public:
 
   Face_around_face_iterator()
