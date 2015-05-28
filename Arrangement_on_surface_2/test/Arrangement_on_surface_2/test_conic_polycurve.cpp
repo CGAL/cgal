@@ -107,7 +107,7 @@ void check_equal()
  {
   Polycurve_conic_traits_2 traits;
   std::vector<CGAL::Object> intersection_points;
-  traits.intersect_2_object()(xcv1, xcv2,
+  traits.intersect_2_object()(xcv1, xcv2, std::back_inserter(intersection_points));
   std::cout<< "Number of intersection Points: " << intersection_points.size()
            << std::endl;
 

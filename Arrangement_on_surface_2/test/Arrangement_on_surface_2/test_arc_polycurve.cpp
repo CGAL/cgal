@@ -290,12 +290,12 @@ void check_push_back(Polycurve_arc_traits_2::Make_x_monotone_2
   ////pushing segments in polycurve
   push_back_2(polycurve, curves[0]);
   std::cout << "size of polycurve after 1 push_back: "
-            << polycurve.number_of_subcurves()() << std::endl;
+            << polycurve.number_of_subcurves() << std::endl;
 
   push_back_2(polycurve, curves[1]);
   //throws a warning "size is depricated"
   std::cout << "size of polycurve after 2 push_backs: "
-            << polycurve.number_of_subcurves()() << std::endl;
+            << polycurve.number_of_subcurves() << std::endl;
 }
 
 int main()
