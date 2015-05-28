@@ -9,11 +9,11 @@ specializations `boost::hash<Key>` and `std::hash<Key>` exist.
 \cgalHasModel All handles and indices of \cgal data structures.
 
 
-\sa `CGAL::Unique_hash_map<Key,Data,Hash>` 
-\sa `std::unordered_set`
-\sa `std::unordered_map`
-\sa `boost::unordered_set`
-\sa `boost::unordered_map`
+\sa `CGAL::Unique_hash_map<Key,Mapped,Hash>` 
+\sa <A HREF="http://www.cplusplus.com/reference/unordered_set/unordered_set/">`std::unordered_set`</a>
+\sa <A HREF="http://www.cplusplus.com/reference/unordered_set/unordered_map/">`std::unordered_map`</a>
+\sa <A HREF="http://www.boost.org/doc/libs/release/doc/html/boost/unordered_set.html">`boost::unordered_set`</a>
+\sa <A HREF="http://www.boost.org/doc/libs/release/doc/html/boost/unordered_map.html">`boost::unordered_map`</a>
 
 */
 
