@@ -303,7 +303,7 @@ bool Scene_polyhedron_shortest_path_item::run_point_select(const Ray_3& ray)
   }
   else
   {
-    m_messages->information(tr("Shortest Paths: Selected Face: %1 , %2 %3 %4")
+    m_messages->information(tr("Shortest Paths: Selected Face: %1; Barycentric coordinates: %2 %3 %4")
       .arg(faceLocation.first->id())
       .arg(double(faceLocation.second[0]))
       .arg(double(faceLocation.second[1]))
@@ -354,6 +354,7 @@ bool Scene_polyhedron_shortest_path_item::run_point_select(const Ray_3& ray)
 
         QTime time;
         time.start();
+        //~ m_shortestPaths->m_debugOutput=true;
         m_shortestPaths->shortest_path_points_to_source_points(faceLocation.first, faceLocation.second, std::back_inserter(polylines->polylines.back()));
         std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
         
