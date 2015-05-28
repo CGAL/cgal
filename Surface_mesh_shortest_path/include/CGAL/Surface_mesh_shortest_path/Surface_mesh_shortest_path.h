@@ -1669,7 +1669,7 @@ private:
     std::size_t faceIndex = get(m_faceIndexMap, f);
 
     Cone_tree_node* closest = NULL;
-    FT closestDistance;
+    FT closestDistance = 0;
 
     std::vector<Cone_tree_node*>& currentFaceList = m_faceOccupiers[faceIndex];
 
