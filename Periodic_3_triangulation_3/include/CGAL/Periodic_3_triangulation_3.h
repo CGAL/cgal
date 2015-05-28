@@ -1411,7 +1411,14 @@ protected:
     Cell_handle c, bool& found) const;
 
   Offset get_neighbor_offset(Cell_handle ch, int i, Cell_handle nb) const;
+
+public:
+  Offset get_neighbor_offset(Cell_handle ch, int i) const
+  {
+    return get_neighbor_offset(ch, i, ch->neighbor(i));
+  }
   
+protected:
   /** @name Friends */ //@{
   friend class Perturbation_order<typename GT::Compare_xyz_3>;
   friend std::istream& operator>> <>
