@@ -644,9 +644,43 @@ public:
     CGAL_triangulation_precondition( number_of_vertices() != 0 );
     return make_array(
         std::make_pair(c->vertex(0)->point(), get_offset(c,0)),
-	std::make_pair(c->vertex(1)->point(), get_offset(c,1)),
+  std::make_pair(c->vertex(1)->point(), get_offset(c,1)),
         std::make_pair(c->vertex(2)->point(), get_offset(c,2)),
-	std::make_pair(c->vertex(3)->point(), get_offset(c,3)) );
+  std::make_pair(c->vertex(3)->point(), get_offset(c,3)) );
+  }
+
+  Periodic_segment periodic_segment(const Cell_handle c, Offset offset, int i, int j) const
+  {
+    Periodic_segment result = periodic_segment(c,i,j);
+    offset.x() *= _cover[0];
+    offset.y() *= _cover[1];
+    offset.z() *= _cover[2];
+    result[0].second += offset;
+    result[1].second += offset;
+    return result;
+  }
+  Periodic_triangle periodic_triangle(const Cell_handle c, Offset offset, int i) const
+  {
+    Periodic_triangle result = periodic_triangle(c,i);
+    offset.x() *= _cover[0];
+    offset.y() *= _cover[1];
+    offset.z() *= _cover[2];
+    result[0].second += offset;
+    result[1].second += offset;
+    result[2].second += offset;
+    return result;
+  }
+  Periodic_tetrahedron periodic_tetrahedron(const Cell_handle c, Offset offset) const
+  {
+    Periodic_tetrahedron result = periodic_tetrahedron(c);
+    offset.x() *= _cover[0];
+    offset.y() *= _cover[1];
+    offset.z() *= _cover[2];
+    result[0].second += offset;
+    result[1].second += offset;
+    result[2].second += offset;
+    result[3].second += offset;
+    return result;
   }
 
   Point point(const Periodic_point & pp) const {
@@ -784,7 +818,7 @@ public:
 
 #ifdef CGAL_NO_STRUCTURAL_FILTERING
   Cell_handle
-  periodic_locate(const Point & p, const Offset &o_p,
+  periodic_locate(const Point & p, const Offset &o_p, Offset& lo,
 	 Locate_type & lt, int & li, int & lj,
 	 Cell_handle start = Cell_handle()) const;
 #else // no CGAL_NO_STRUCTURAL_FILTERING
@@ -799,27 +833,27 @@ public:
                  int max_num_cells = CGAL_PT3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS) const;
 protected:
   Cell_handle
-  exact_periodic_locate(const Point& p, const Offset &o_p,
+  exact_periodic_locate(const Point& p, const Offset &o_p, Offset& lo,
                Locate_type& lt,
                int& li, int & lj,
                Cell_handle start) const;
 
   Cell_handle
-  generic_periodic_locate(const Point& p, const Offset &o_p,
+  generic_periodic_locate(const Point& p, const Offset &o_p, Offset& lo,
                  Locate_type& lt,
                  int& li, int & lj,
                  Cell_handle start,
                  internal::Periodic_structural_filtering_3_tag) const {
-    return exact_periodic_locate(p, o_p, lt, li, lj, inexact_periodic_locate(p, o_p, start));
+    return exact_periodic_locate(p, o_p, lo, lt, li, lj, inexact_periodic_locate(p, o_p, start));
   }
 
   Cell_handle
-  generic_periodic_locate(const Point& p, const Offset &o_p,
+  generic_periodic_locate(const Point& p, const Offset &o_p, Offset& lo,
                  Locate_type& lt,
                  int& li, int & lj,
                  Cell_handle start,
                  internal::No_periodic_structural_filtering_3_tag) const {
-    return exact_periodic_locate(p, o_p, lt, li, lj, start);
+    return exact_periodic_locate(p, o_p, lo, lt, li, lj, start);
   }
 
   Orientation
@@ -872,15 +906,14 @@ protected:
 public:
 
   Cell_handle
-  periodic_locate(const Point & p, const Offset &o_p,
+  periodic_locate(const Point & p, const Offset &o_p, Offset& lo,
          Locate_type & lt, int & li, int & lj,
          Cell_handle start = Cell_handle()) const
   {
     typedef Triangulation_structural_filtering_traits<Geometric_traits> TSFT;
     typedef typename internal::Periodic_structural_filtering_selector_3<
       TSFT::Use_structural_filtering_tag::value >::Tag Should_filter_tag;
-
-    return generic_periodic_locate(p, o_p, lt, li, lj, start, Should_filter_tag());
+    return generic_periodic_locate(p, o_p, lo, lt, li, lj, start, Should_filter_tag());
   }
 
   Cell_handle
@@ -916,7 +949,24 @@ public:
     */
   Cell_handle locate(const Point & p, Locate_type & lt, int & li, int & lj,
       Cell_handle start = Cell_handle()) const {
-    return periodic_locate(p, Offset(), lt, li, lj, start);
+    Offset lo;
+    return locate( p, lo, lt, li, lj, start);
+  }
+
+  Cell_handle locate(const Point & p, Offset& lo,
+      Cell_handle start = Cell_handle()) const {
+    Locate_type lt;
+    int li, lj;
+    return locate( p, lo, lt, li, lj, start);
+  }
+
+  Cell_handle locate(const Point & p, Offset& lo, Locate_type & lt, int & li, int & lj,
+      Cell_handle start = Cell_handle()) const {
+    Cell_handle ch = periodic_locate(p, Offset(), lo, lt, li, lj, start);
+    for (unsigned i = 0; i < 3; ++i)
+      if (lo[i] >= 1)
+        lo[i] = -1;
+    return ch;
   }
 
   Bounded_side side_of_cell(const Point & p,
@@ -978,7 +1028,8 @@ protected:
       const Conflict_tester &tester, Point_hider &hider, CoverManager& cover_manager) {
     Locate_type lt = Locate_type();
     int li=0, lj=0;
-    Cell_handle c = periodic_locate(p, Offset(), lt, li, lj, start);
+    Offset lo;
+    Cell_handle c = periodic_locate(p, Offset(), lo, lt, li, lj, start);
     return insert_in_conflict(p,lt,c,li,lj,tester,hider, cover_manager);
   }
 
@@ -1002,7 +1053,8 @@ protected:
     Cell_handle hint;
     while (begin!=end) {
       tester.set_point(*begin);
-      hint = periodic_locate(*begin, Offset(), lt, li, lj, start);
+      Offset lo;
+      hint = periodic_locate(*begin, Offset(), lo, lt, li, lj, start);
       CGAL_triangulation_assertion_code( if (number_of_vertices() != 0) { );
 	CGAL_triangulation_assertion(side_of_cell(
 		*begin,Offset(), hint, lta, ia, ja) != ON_UNBOUNDED_SIDE);
@@ -1525,11 +1577,12 @@ periodic_locate
 #else
 exact_periodic_locate
 #endif
-(const Point & p, const Offset &o_p,
+(const Point & p, const Offset &o_p, Offset& lo,
     Locate_type & lt, int & li, int & lj, Cell_handle start) const {
   int cumm_off = 0;
   Offset off_query = o_p;
   if (number_of_vertices() == 0) {
+    lo = Offset();
     lt = EMPTY;
     return Cell_handle();
   }
@@ -1692,6 +1745,7 @@ try_next_cell:
     // Vertex can not lie on four facets
     CGAL_triangulation_assertion(false);
   }
+  lo = off_query;
   return c;
 }
 
@@ -2351,12 +2405,13 @@ Periodic_3_triangulation_3<GT,TDS>::insert_in_conflict(const Point & p,
   }
 
   virtual_vertices_reverse[vh] = std::vector<Vertex_handle>();
+  Offset lo;
   // insert 26 periodic copies
   for (int i=0; i<_cover[0]; i++) {
     for (int j=0; j<_cover[1]; j++) {
       for (int k=0; k<_cover[2]; k++) {
         if ((i!=0)||(j!=0)||(k!=0)) {
-          c = periodic_locate(p, Offset(i,j,k), lt, li, lj, Cell_handle());
+          c = periodic_locate(p, Offset(i,j,k), lo, lt, li, lj, Cell_handle());
           periodic_insert(p, Offset(i,j,k), lt, c, tester, hider,cover_manager,vh);
         }
       }

@@ -711,10 +711,63 @@ void test_insert_range (unsigned pt_count, unsigned seed)
   assert(p3rt3.number_of_sheets() == CGAL::make_array(1,1,1));
 }
 
+void test_locate_geometry ()
+{
+  unsigned pt_count = 600;
+
+  CGAL::Random random(7);
+  typedef CGAL::Creator_uniform_3<double,Bare_point>  Creator;
+  CGAL::Random_points_in_cube_3<Bare_point, Creator> in_cube(0.5, random);
+
+  P3RT3::Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
+  P3RT3 p3rt3(iso_cuboid);
+
+  std::vector<Weighted_point> points;
+  points.reserve(pt_count);
+
+  while (points.size() != pt_count)
+  {
+    Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
+    points.push_back(p);
+  }
+
+  p3rt3.insert(points.begin(), points.end(), true);
+
+  Weighted_point wp(Bare_point(-0.49, -0.49, -0.49), 0.);
+  P3RT3::Offset lo;
+  Cell_handle ch = p3rt3.locate(wp, lo);
+  P3RT3::Periodic_tetrahedron p_tetra = p3rt3.periodic_tetrahedron(ch, lo);
+  P3RT3::Tetrahedron tetra = p3rt3.tetrahedron(p_tetra);
+
+  assert(p3rt3.orientation(wp, tetra[1], tetra[2], tetra[3]) == CGAL::POSITIVE);
+  assert(p3rt3.orientation(tetra[0], wp, tetra[2], tetra[3]) == CGAL::POSITIVE);
+  assert(p3rt3.orientation(tetra[0], tetra[1], wp, tetra[3]) == CGAL::POSITIVE);
+  assert(p3rt3.orientation(tetra[0], tetra[1], tetra[2], wp) == CGAL::POSITIVE);
+
+  CGAL::Vector_3<K> v(tetra[0], tetra[1]);
+  v = v * 0.5;
+  wp = tetra[0] + v;
+  P3RT3::Locate_type lt;
+  int li, lj;
+  ch = p3rt3.locate(wp, lo, lt, li, lj);
+  assert(lt == P3RT3::EDGE);
+  P3RT3::Segment segment = p3rt3.segment(p3rt3.periodic_segment(ch, lo, li, lj));
+  assert(CGAL::collinear(segment[0], segment[1], wp));
+
+  v = CGAL::Vector_3<K>(wp, tetra[2]);
+  v = v * 0.5;
+  wp = wp + v;
+  ch = p3rt3.locate(wp, lo, lt, li, lj);
+  assert(lt == P3RT3::FACET);
+  P3RT3::Triangle triangle = p3rt3.triangle(p3rt3.periodic_triangle(ch, lo, li));
+  assert(p3rt3.coplanar(triangle[0], triangle[1], triangle[2], wp));
+}
+
 int main (int argc, char** argv)
 {
   std::cout << "TESTING ..." << std::endl;
 
+  test_locate_geometry();
 //  test_dummy_points();
 //  test_construction();
 //  test_insert_1();
@@ -725,7 +778,7 @@ int main (int argc, char** argv)
 //  test_insert_two_points_with_the_same_position();
 //  test_remove();
 //  test_27_to_1_sheeted_covering();
-  test_insert_range(800, 7);
+//  test_insert_range(800, 7);
 //    Iso_cuboid unitaire ->  0 <= weight < 0.015625
 //  test_insert_rnd_as_delaunay(100, 0.);
 //  test_insert_rnd_as_delaunay(100, 0.01);
