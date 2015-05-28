@@ -8,7 +8,7 @@
 \anchor sectionProjectionFunctionObjects 
 
 
-The concept `Projection_object` is modeled after the STL 
+The concept `ProjectionObject` is modeled after the STL 
 concept `UnaryFunction`, but takes also care of (const) 
 references. 
 
@@ -29,7 +29,7 @@ references.
 
 */
 
-class Projection_object {
+class ProjectionObject {
 public:
 
 
@@ -55,7 +55,7 @@ typedef unspecified_type result_type;
 /*!
 default constructor. 
 */ 
-Projection_object(); 
+ProjectionObject(); 
 
 
 
@@ -87,5 +87,5 @@ const result_type& operator()(const argument_type &) const;
 
 
 
-}; /* end Projection_object */
+}; /* end ProjectionObject */
 
