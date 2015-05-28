@@ -9,6 +9,22 @@
 #generate_klein_bottle_4D										40		15		-		500  	4		2		0.2			N		N			Y			60  			1
 #generate_klein_bottle_4D										40		15		-		2000  	4		2		0.2			N		N			Y			60  			1
 #generate_klein_bottle_4D										8		5		-		5000	4		2		0.2			N		Y			N			60  			1	#Takes forever
+#generate_torus_3D   											2		1		Y		150   	3		2		0.05  		Y		N			N			600   			1
+#generate_torus_d     											N		-		-		30    	2		1		0.01 		Y		N			N			30   			1
+#generate_torus_d     											Y		-		-		70  	4		2		0.05 		Y		N			N			30   			1
+#generate_torus_d     											N		-		-		200  	4		2		0.05 		Y		N			N			30   			1
+#generate_torus_d     											N		-		-		20000  	4		2		0.65 		Y		N			N			30   			1
+#generate_torus_d    											N		-		-		10000  	6		3		0.05 		Y		N			N			300     		1
+#generate_torus_d    											N		-		-		50000  	6		3		0.05 		Y		N			N			7000     		1
+#generate_torus_d    											N		-		-		100000 	6		3		0.05 		Y		N			N			7000    		1
+#generate_torus_d    											N		-		-		1000000	6		3		0.3 		Y		N			N			3000      		1
+#generate_torus_d    											Y		-		-		10000  	8		4		0.05 		Y		N			N			3600   			1
+
+#---------------------------------------------------------- Spatial search benchmarking --------------------------------------------------------------
+generate_torus_d    											Y		-		-		1000000	30		15		0 			Y		N			N			3600   			1
+data/SO3_50000.txt  											-		-		-		0		9 		3 		0    		Y		Y			N			60  			1
+data/Cy8.txt	 												-		-		-		0		24 		2 		0    		N		Y			N			60				1
+data/buddha_100kv.txt 											-		-		-		0		3 		2 		0     		N		Y			N			120  			1
 
 #---------------------------------------------------------- Very small cases for Debug mode --------------------------------------------------------------
 #generate_sphere_d												4		-		-		20		3		2		0.05		N		Y			N			60  			1
@@ -19,16 +35,6 @@
 #generate_klein_bottle_variant_5D								4		3		-		70  	5		2		0.05		N		Y			N			60  			1
 #data/SO3_10000.txt  											-		-		-		0		9 		3 		0.7 		N		Y			N			60  			1
 #generate_moment_curve											0		1		-		30  	3		1		0.005		N		Y			N			60  			1
-#generate_torus_3D   											2		1		Y		150   	3		2		0.05  		Y		N			N			600   			1
-#generate_torus_d     											N		-		-		30    	2		1		0.01 		Y		N			N			30   			1
-#generate_torus_d     											Y		-		-		70  	4		2		0.05 		Y		N			N			30   			1
-#generate_torus_d     											N		-		-		200  	4		2		0.05 		Y		N			N			30   			1
-#generate_torus_d     											N		-		-		20000  	4		2		0.65 		Y		N			N			30   			1
-#generate_torus_d    											N		-		-		10000  	6		3		0.05 		Y		N			N			300     		1
-#generate_torus_d    											N		-		-		50000  	6		3		0.05 		Y		N			N			7000     		1
-#generate_torus_d    											N		-		-		100000 	6		3		0.05 		Y		N			N			7000    		1
-generate_torus_d    											N		-		-		1000000	6		3		0.3 		Y		N			N			3000      		1
-#generate_torus_d    											Y		-		-		10000  	8		4		0.05 		Y		N			N			3600   			1
 
 #------------------------------------------------------------------ From files --------------------------------------------------------------------------
 #data/SO3_50000.txt  											-		-		-		0		9 		3 		0.05 		Y		Y			N			60  			1

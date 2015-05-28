@@ -50,7 +50,7 @@
 
 
 //========================= Strategy ==========================================
-//#define CGAL_TC_USE_NANOFLANN
+#define CGAL_TC_NANOFLANN_IS_AVAILABLE
 //#define CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
 #define CGAL_TC_GLOBAL_REFRESH
 //#define CGAL_TC_ON_DEMAND_REFRESH // CJTODO: not implemented yet

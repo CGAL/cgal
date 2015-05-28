@@ -210,6 +210,8 @@ void make_tc(std::vector<Point> &points,
              double time_limit_for_perturb = 0.,
              const char *input_name = "tc")
 {
+  Kernel k;
+
   // CJTODO TEMP TEST
   //TC::Simplicial_complex compl;
   //{std::size_t ss[] = {0, 1, 2}; compl.add_simplex(std::set<std::size_t>(ss, ss + 3)); }
@@ -232,10 +234,13 @@ void make_tc(std::vector<Point> &points,
   //compl.is_pure_pseudomanifold(3, 9, false, 10);
   // /CJTODO TEMP TEST
 
+  // CJTODO TEMP TEST
+  benchmark_spatial_search(points, k);
+  return;
+
   //===========================================================================
   // Init
   //===========================================================================
-  Kernel k;
   Wall_clock_timer t;
 
   // Get input_name_stripped
@@ -529,7 +534,7 @@ int main()
 # endif
 #endif
 
-  int seed = time(NULL);
+  unsigned int seed = static_cast<unsigned int>(time(NULL));
   CGAL::default_random = CGAL::Random(seed);
   std::cerr << "Random seed = " << seed << std::endl;
 

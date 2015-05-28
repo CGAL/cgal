@@ -615,4 +615,77 @@ generate_points_on_klein_bottle_variant_5D(
   return points;
 }
 
+template <typename Kernel>
+void benchmark_spatial_search(
+  const std::vector<typename Kernel::Point_d> &points, const Kernel &k)
+{
+  std::cout << 
+    "****************************************\n"
+    "***** Benchmarking spatial search ******\n"
+    "****************************************\n\n";
+
+  const std::size_t NUM_QUERIES = 100000;
+  const std::size_t NUM_NEIGHBORS = 50;
+  
+  typedef Kernel::FT                                  FT;
+  typedef Kernel::Point_d                             Point;
+  typedef std::vector<Point>                          Points;
+  
+  CGAL::Random random_generator;
+  Wall_clock_timer t;
+
+  //****************************** CGAL ***************************************
+  {
+  std::cout << "\n=== CGAL ===\n";
+
+  typedef CGAL::Tangential_complex_::Point_cloud_data_structure<Kernel, Points>  
+                                                      Points_ds;
+  typedef Points_ds::KNS_range                        KNS_range;
+  typedef Points_ds::KNS_iterator                     KNS_iterator;
+  typedef Points_ds::INS_range                        INS_range;
+  typedef Points_ds::INS_iterator                     INS_iterator;
+  
+  t.reset();
+  Points_ds points_ds(points);
+  double init_time = t.elapsed();
+  std::cout << "Init: " << init_time << std::endl;
+  t.reset();
+  
+  for (std::size_t i = 0 ; i < NUM_QUERIES ; ++i)
+  {
+    std::size_t pt_idx = random_generator.get_int(0, points.size() - 1);
+    KNS_range kns_range = points_ds.query_ANN(
+      points[pt_idx], NUM_NEIGHBORS, true);
+  }
+  double queries_time = t.elapsed();
+  std::cout << NUM_QUERIES << " queries among " 
+    << points.size() << " points: " << queries_time << std::endl;
+  }
+  //**************************** nanoflann ************************************
+  {
+  std::cout << "\n=== nanoflann ===\n";
+  
+  typedef CGAL::Tangential_complex_::
+    Point_cloud_data_structure__nanoflann<Kernel, Points>  
+                                             Points_ds;
+  
+  t.reset();
+  Points_ds points_ds(points, k);
+  double init_time = t.elapsed();
+  std::cout << "Init: " << init_time << std::endl;
+  t.reset();
+  
+  for (std::size_t i = 0 ; i < NUM_QUERIES ; ++i)
+  {
+    std::size_t pt_idx = random_generator.get_int(0, points.size() - 1);
+    std::size_t neighbors_indices[NUM_NEIGHBORS];
+    FT neighbors_sq_distances[NUM_NEIGHBORS];
+    points_ds.query_ANN(
+      points[pt_idx], NUM_NEIGHBORS, neighbors_indices, neighbors_sq_distances);
+  }
+  double queries_time = t.elapsed();
+  std::cout << NUM_QUERIES << " queries among " 
+    << points.size() << " points: " << queries_time << std::endl;
+  }
+}
 #endif // CGAL_MESH_3_TEST_TEST_UTILITIES_H
