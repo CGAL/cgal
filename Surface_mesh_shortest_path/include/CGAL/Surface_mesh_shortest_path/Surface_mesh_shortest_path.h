@@ -788,15 +788,10 @@ private:
         std::cout << "\t\tLocation = " << sourcePoints[side] << std::endl;
       }
 
-      Cone_tree_node* mainChild = new Cone_tree_node(m_traits, m_graph, baseEdges[side], layoutFaces[side], sourcePoints[side], FT(0.0), cv2(layoutFaces[side], 0), cv2(layoutFaces[side], 2), Cone_tree_node::EDGE_SOURCE);
+      Cone_tree_node* mainChild = new Cone_tree_node(m_traits, m_graph, baseEdges[side], layoutFaces[side], sourcePoints[side], FT(0.0), cv2(layoutFaces[side], 0), cv2(layoutFaces[side], 1), Cone_tree_node::EDGE_SOURCE);
       node_created();
       edgeRoot->push_middle_child(mainChild);
       process_node(mainChild);
-
-      Cone_tree_node* oppositeChild = new Cone_tree_node(m_traits, m_graph, prev(baseEdges[side], m_graph), ct2(cv2(layoutFaces[side], 2), cv2(layoutFaces[side], 0), cv2(layoutFaces[side], 1)), sourcePoints[side], FT(0.0), cv2(layoutFaces[side], 2), cv2(layoutFaces[side], 1), Cone_tree_node::EDGE_SOURCE);
-      node_created();
-      edgeRoot->push_middle_child(oppositeChild);
-      process_node(oppositeChild);
     }
   }
 
@@ -1050,6 +1045,11 @@ private:
       leftSide = node->has_left_side();
       rightSide = node->has_right_side();
     }
+    else if (node->node_type() == Cone_tree_node::EDGE_SOURCE) 
+    {
+      leftSide = true;
+      rightSide = true;
+    }
     else
     {
       leftSide = true;
@@ -1150,7 +1150,7 @@ private:
 
         // This is a consequence of using the same basic node type for source and interval nodes
         // If this is a source node, it is only pointing to one of the two opposite edges (the left one by convention)
-        if (node->node_type() != Cone_tree_node::INTERVAL)
+        if (node->node_type() != Cone_tree_node::INTERVAL && node->node_type() != Cone_tree_node::EDGE_SOURCE)
         {
           propagateRight = false;
 
@@ -1266,7 +1266,7 @@ private:
         push_left_child(node);
       }
 
-      if (propagateRight && !node->is_source_node())
+      if (propagateRight && (!node->is_source_node() || node->node_type() == Cone_tree_node::EDGE_SOURCE))
       {
         push_right_child(node);
       }
