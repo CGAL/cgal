@@ -27,41 +27,37 @@
 #include <CGAL/Traits_with_offsets_adaptor.h>
 #include <CGAL/Periodic_3_construct_point_3.h>
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/Periodic_3_triangulation_traits_3.h>
 
 
 namespace CGAL { 
 
 template < class Kernel, class Off = typename CGAL::Periodic_3_offset_3 >
 class Periodic_3_Delaunay_triangulation_traits_base_3
-  : public Kernel
+  : public Periodic_3_triangulation_traits_base_3<Kernel, Off>
 {
 public:
   typedef Kernel                                                 K;
   typedef Off                                                    Offset;
+  typedef Periodic_3_triangulation_traits_base_3<K, Offset>               Base;
   typedef Periodic_3_Delaunay_triangulation_traits_base_3< K, Offset >    Self;
 
-  typedef typename K::RT                RT;
-  typedef typename K::FT                FT;
-  typedef typename K::Point_3           Point_3;
-  typedef typename K::Vector_3          Vector_3;
-  typedef Offset                        Periodic_3_offset_3;
-  typedef typename K::Iso_cuboid_3      Iso_cuboid_3;
+  typedef typename Base::RT                   RT;
+  typedef typename Base::FT                   FT;
+  typedef typename Base::Point_3              Point_3;
+  typedef typename Base::Vector_3             Vector_3;
+  typedef typename Base::Periodic_3_offset_3  Periodic_3_offset_3;
+  typedef typename Base::Iso_cuboid_3         Iso_cuboid_3;
 
   // The next typedef is there for backward compatibility
   // Some users take their point type from the traits class.
   // Before this type was Point
   typedef Point_3 Point;
 
-  typedef typename K::Segment_3         Segment_3;
-  typedef typename K::Triangle_3        Triangle_3;
-  typedef typename K::Tetrahedron_3     Tetrahedron_3;
+  typedef typename Base::Segment_3         Segment_3;
+  typedef typename Base::Triangle_3        Triangle_3;
+  typedef typename Base::Tetrahedron_3     Tetrahedron_3;
 
-  // Triangulation predicates
-  typedef Traits_with_offsets_adaptor<Self, typename K::Compare_xyz_3>
-      Compare_xyz_3;
-  typedef Traits_with_offsets_adaptor<Self, typename K::Orientation_3>
-      Orientation_3;
-  
   // Delaunay specific predicates
   typedef Traits_with_offsets_adaptor<Self,
 				      typename K::Side_of_oriented_sphere_3>
@@ -79,82 +75,36 @@ public:
               typename K::Coplanar_side_of_bounded_circle_3>
       Coplanar_side_of_bounded_circle_3;
 
-  // Triangulation constructions
-  typedef Periodic_3_construct_point_3<Self, typename K::Construct_point_3>
-      Construct_point_3;
-  typedef Traits_with_offsets_adaptor<Self, typename K::Construct_segment_3>
-      Construct_segment_3;
-  typedef Traits_with_offsets_adaptor<Self, typename K::Construct_triangle_3>
-      Construct_triangle_3;
-  typedef Traits_with_offsets_adaptor<Self, typename K::Construct_tetrahedron_3>
-      Construct_tetrahedron_3;
-
   // Delaunay specific constructions
   typedef Traits_with_offsets_adaptor<Self,
 				      typename K::Construct_circumcenter_3>
       Construct_circumcenter_3;
 
-  // Access
-  void set_domain(const Iso_cuboid_3& domain) {
-    _domain = domain;
-  }
-  
-  Iso_cuboid_3 get_domain() const {
-    return _domain;
-  }
-
   // Operations
-  Compare_xyz_3
-  compare_xyz_3_object() const {
-    return Compare_xyz_3(&_domain);
-  }
-  Orientation_3
-  orientation_3_object() const {
-    return Orientation_3(&_domain);
-  }
   Side_of_oriented_sphere_3
   side_of_oriented_sphere_3_object() const {
-    return Side_of_oriented_sphere_3(&_domain);
+    return Side_of_oriented_sphere_3(&this->_domain);
   }
   Compare_distance_3
   compare_distance_3_object() const {
-    return Compare_distance_3(&_domain);
-  }
-  Coplanar_orientation_3
-  coplanar_orientation_3_object() const {
-    return Coplanar_orientation_3(&_domain);
-  }
-  Coplanar_side_of_bounded_circle_3
-  coplanar_side_of_bounded_circle_3_object() const {
-    return Coplanar_side_of_bounded_circle_3(&_domain);
+    return Compare_distance_3(&this->_domain);
   }
   Side_of_bounded_sphere_3
   side_of_bounded_sphere_3_object() const {
-    return Side_of_bounded_sphere_3(&_domain);
+    return Side_of_bounded_sphere_3(&this->_domain);
   }
-  Construct_point_3
-  construct_point_3_object() const {
-    return Construct_point_3(_domain);
+  Coplanar_orientation_3
+  coplanar_orientation_3_object() const {
+    return Coplanar_orientation_3(&this->_domain);
   }
-  Construct_segment_3
-  construct_segment_3_object() const {
-    return Construct_segment_3(&_domain);
-  }
-  Construct_triangle_3
-  construct_triangle_3_object() const {
-    return Construct_triangle_3(&_domain);
-  }
-  Construct_tetrahedron_3
-  construct_tetrahedron_3_object() const {
-    return Construct_tetrahedron_3(&_domain);
+  Coplanar_side_of_bounded_circle_3
+  coplanar_side_of_bounded_circle_3_object() const {
+    return Coplanar_side_of_bounded_circle_3(&this->_domain);
   }
   Construct_circumcenter_3
   construct_circumcenter_3_object() const {
-    return Construct_circumcenter_3(&_domain);
+    return Construct_circumcenter_3(&this->_domain);
   }
-
-protected:
-  Iso_cuboid_3 _domain;
 };
 
 template < typename K, typename Off = CGAL::Periodic_3_offset_3 >
