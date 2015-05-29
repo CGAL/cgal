@@ -71,6 +71,8 @@ void incremental_triangle_based_remeshing(PolygonMesh& pmesh
                                         , const double& target_edge_length
                                         , const NamedParameters& np)
 {
+  std::cout.precision(18);
+
   typedef PolygonMesh PM;
   using boost::choose_pmap;
   using boost::get_param;
@@ -92,8 +94,10 @@ void incremental_triangle_based_remeshing(PolygonMesh& pmesh
     = choose_param(get_param(np, edge_is_constrained),
                    internal::Border_constraint_pmap<PM, FaceRange>(pmesh, faces));
 
+  bool protect = choose_param(get_param(np, protect_constraints), false);
+
   typename internal::Incremental_remesher<PM, FaceRange, VPMap, GT, ECMap>
-    remesher(pmesh, faces, vpmap, ecmap);
+    remesher(pmesh, faces, vpmap, ecmap, protect);
 
   unsigned int nb_iterations = choose_param(get_param(np, number_of_iterations), 1);
 

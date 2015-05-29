@@ -96,12 +96,14 @@ namespace internal {
     Incremental_remesher(PolygonMesh& pmesh
                        , const FaceRange& face_range
                        , VertexPointMap& vpmap
-                       , const EdgeIsConstrainedMap& ecmap)
+                       , const EdgeIsConstrainedMap& ecmap
+                       , const bool protect_constraints)
       : mesh_(pmesh)
       , vpmap_(vpmap)
       , own_tree_(true)
       , input_triangles_()
       , halfedge_status_map_()
+      , protect_constraints_(protect_constraints)
     {
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
 
@@ -162,9 +164,12 @@ namespace internal {
         halfedge_descriptor he = eit->second;
         double sqlen = eit->first;
         long_edges.right.erase(eit);
-        Point refinement_point = this->midpoint(he);
+
+        if (protect_constraints_ && !is_split_allowed(edge(he, mesh_)))
+          continue;
 
         //split edge
+        Point refinement_point = this->midpoint(he);
         halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
         CGAL_assertion(he == next(hnew, mesh_));
         ++nb_splits;
@@ -172,6 +177,11 @@ namespace internal {
         //move refinement point
         vertex_descriptor vnew = target(hnew, mesh_);
         put(vpmap_, vnew, refinement_point);
+
+        //after splitting
+        halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
+        halfedge_added(hnew, status(he));
+        halfedge_added(hnew_opp, status(opposite(he, mesh_)));
 
         //check sub-edges
         double sqlen_new = 0.25 * sqlen;
@@ -182,20 +192,13 @@ namespace internal {
           long_edges.insert(long_edge(next(hnew, mesh_), sqlen_new));
         }
 
-        //after splitting
-        halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
-        halfedge_added(hnew,     status(he));
-        halfedge_added(hnew_opp, status(opposite(he, mesh_)));
-
         //insert new edges to keep triangular faces, and update long_edges
-        
         if (!is_on_border(hnew))
         {
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(hnew,
                                                               next(next(hnew, mesh_), mesh_),
                                                               mesh_);
-          Halfedge_status snew = (is_on_patch(hnew)
-            || (is_on_patch_border(hnew) && !is_on_patch(hnew_opp)))
+          Halfedge_status snew = (is_on_patch(hnew) || is_on_patch_border(hnew))
             ? PATCH
             : MESH;
           halfedge_added(hnew2,                  snew);
@@ -215,8 +218,7 @@ namespace internal {
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(prev(hnew_opp, mesh_),
                                                               next(hnew_opp, mesh_),
                                                               mesh_);
-          Halfedge_status snew = (is_on_patch(hnew_opp)
-             || (is_on_patch_border(hnew_opp) && !is_on_patch(hnew)))
+          Halfedge_status snew = (is_on_patch(hnew_opp) || is_on_patch_border(hnew_opp))
             ? PATCH
             : MESH;
           halfedge_added(hnew2,                  snew);
@@ -641,23 +643,59 @@ namespace internal {
          &&  (plane1.oriented_side(p4) != plane2.oriented_side(p4));
     }
 
-    //todo : simplify the list of cases
     bool is_split_allowed(const edge_descriptor& e) const
     {
       halfedge_descriptor he = halfedge(e, mesh_);
-      return is_on_patch(he) //opp is also on patch
-          || (is_on_border(he) && is_on_patch_border(opposite(he, mesh_)))
-          || (is_on_border(opposite(he, mesh_)) && is_on_patch_border(he))
-          || is_on_patch_border(he)
-          || is_on_patch_border(opposite(he, mesh_));
+      halfedge_descriptor hopp = opposite(he, mesh_);
+
+      bool splittable = false;
+      if (is_on_patch(face(he, mesh_)))
+        splittable = is_split_allowed(he);
+
+      if (splittable && is_on_patch(face(hopp, mesh_)))
+        splittable = is_split_allowed(hopp);
+
+      return splittable;
+    }
+
+    bool is_split_allowed(const halfedge_descriptor& h) const
+    {
+      if (!protect_constraints_)//allow splitting constraints
+      {
+        return is_on_patch_border(h)
+            || is_on_patch(h)
+            || is_on_border(h);
+      }
+      else
+      {
+        if (!is_on_patch(h)) //PATCH are the only splittable edges
+          return false;
+        else
+          return is_longest_edge_of_face(h);
+      }
+    }
+
+    bool is_longest_edge_of_face(const halfedge_descriptor& h) const
+    {
+      double sqh = sqlength(h);
+      return sqh >= sqlength(next(h, mesh_))
+          && sqh >= sqlength(next(next(h, mesh_), mesh_));
     }
 
     bool is_collapse_allowed(const edge_descriptor& e) const
     {
       halfedge_descriptor he = halfedge(e, mesh_);
+      halfedge_descriptor hopp = opposite(he, mesh_);
+
+      if (protect_constraints_)
+      {
+        if (is_on_patch_border(he) || is_on_patch_border(hopp))
+          return false;
+      }
+
       return is_on_patch(he) //opp is also on patch
-        || (is_on_border(he) && is_on_patch_border(opposite(he, mesh_)))
-        || (is_on_border(opposite(he, mesh_)) && is_on_patch_border(he));
+        || (is_on_border(he) && is_on_patch_border(hopp))
+        || (is_on_border(hopp) && is_on_patch_border(he));
     }
 
     void tag_halfedges_status(const FaceRange& face_range
@@ -741,6 +779,17 @@ namespace internal {
       bool res =(status(h) == PATCH);
       CGAL_assertion(res == (status(opposite(h, mesh_)) == PATCH));
       return res;
+    }
+
+    bool is_on_patch(const face_descriptor& f) const
+    {
+      BOOST_FOREACH(halfedge_descriptor h,
+                    halfedges_around_face(halfedge(f, mesh_), mesh_))
+      {
+        if (is_on_patch(h) || is_on_patch_border(h))
+          return true;
+      }
+      return false;
     }
 
     bool is_on_patch(const vertex_descriptor& v) const
@@ -894,6 +943,7 @@ namespace internal {
     bool own_tree_;
     Triangle_list input_triangles_;
     std::map<halfedge_descriptor, Halfedge_status> halfedge_status_map_;
+    bool protect_constraints_;
 
   };//end class Incremental_remesher
 }//end namespace internal

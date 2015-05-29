@@ -35,6 +35,7 @@ namespace CGAL{
   enum less_halfedge_t              { less_halfedge };
   enum geom_traits_t                { geom_traits };
   enum number_of_iterations_t       { number_of_iterations };
+  enum protect_constraints_t        { protect_constraints };
 
   //internal
   enum weight_calculator_t          { weight_calculator };
@@ -128,6 +129,13 @@ namespace CGAL{
     {
       typedef pmp_bgl_named_params<NT, number_of_iterations_t, self> Params;
       return Params(n, *this);
+    }
+
+    pmp_bgl_named_params<bool, protect_constraints_t, self>
+    protect_constraints(const bool& b) const
+    {
+      typedef pmp_bgl_named_params<bool, protect_constraints_t, self> Params;
+      return Params(b, *this);
     }
 
     //overload
@@ -250,6 +258,13 @@ namespace parameters{
   {
     typedef pmp_bgl_named_params<NT, number_of_iterations_t> Params;
     return Params(n);
+  }
+
+  pmp_bgl_named_params<bool, protect_constraints_t>
+  protect_constraints(const bool& b)
+  {
+    typedef pmp_bgl_named_params<bool, protect_constraints_t> Params;
+    return Params(b);
   }
 
   //overload
