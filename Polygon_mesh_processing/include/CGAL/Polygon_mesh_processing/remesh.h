@@ -58,6 +58,13 @@ namespace Polygon_mesh_processing {
 *  \cgalParamEnd
 *  \cgalParamBegin{edge_is_constrained_map}
 *  \cgalParamEnd
+*  \cgalParamBegin{protect_constraints} If `true`, the edges set as constrained
+*     in `edge_is_constrained_map` (or by default the boundary edges)
+*     are not splitted nor collapsed during remeshing.
+*     Note that around edges that have their length higher than
+*     twice `target_edge_length`, remeshing will fail to provide
+*     good quality results.
+*  \cgalParamEnd
 * \cgalNamedParamsEnd
 *
 *@todo we suppose `faces` describe only one patch. Handle several patches.
