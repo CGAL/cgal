@@ -13,13 +13,15 @@
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
-#include <QInputDialog>
 #include <QString>
+#include <QDialog>
 
 #include <vector>
 #include <algorithm>
 #include <queue>
 #include <sstream>
+
+#include "ui_Polyhedron_demo_isotropic_remeshing_dialog.h"
 
 class Polyhedron_demo_isotropic_remeshing_plugin :
   public QObject,
@@ -63,43 +65,52 @@ public Q_SLOTS:
 
     if (poly_item || selection_item)
     {
-      double diago_length = (poly_item != NULL)
-        ? poly_item->bbox().diagonal_length()
-        : selection_item->bbox().diagonal_length();
+      // Create dialog box
+      QDialog dialog(mw);
+      Ui::Isotropic_remeshing_dialog ui;
+      ui.setupUi(&dialog);
+      connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+      connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+
+      //Set default parameters
+      bool p_ = (poly_item != NULL);
+      Scene_interface::Bbox bbox = p_ ? poly_item->bbox() : selection_item->bbox();
+      ui.objectName->setText(p_ ? poly_item->name() : selection_item->name());
+      ui.objectNameSize->setText(
+        tr("Object bbox size (w,h,d):  <b>%1</b>,  <b>%2</b>,  <b>%3</b>")
+        .arg(bbox.width(),  0, 'g', 3)
+        .arg(bbox.height(), 0, 'g', 3)
+        .arg(bbox.depth(),  0, 'g', 3));
+
+      double diago_length = bbox.diagonal_length();
+      ui.edgeLength_dspinbox->setDecimals(3);
+      ui.edgeLength_dspinbox->setSingleStep(0.001);
+      ui.edgeLength_dspinbox->setRange(1e-6 * diago_length, //min
+                                       2.   * diago_length);//max
+      ui.edgeLength_dspinbox->setValue(0.05 * diago_length);
 
       std::ostringstream oss;
-      oss << "Target edge length?" << std::endl;
-      oss << "  Diagonal length of the Bbox of the selection to remesh is ";
-      oss << diago_length << std::endl;
-      oss << "  (default is 5% of it)" << std::endl;
+      oss << "Diagonal length of the Bbox of the selection to remesh is ";
+      oss << diago_length << "." << std::endl;
+      oss << "Default is 5% of it" << std::endl;
+      ui.edgeLength_dspinbox->setToolTip(QString::fromStdString(oss.str()));
 
-      bool ok;
-      double target_length = QInputDialog::getDouble(this->mw,
-        QString("Isotropic remeshing : Edge length"),
-        QString::fromStdString(oss.str()),//question
-        0.05 * diago_length,              //value
-        1e-6 * diago_length,              //min
-        2.   * diago_length,              //max
-        3,                                //decimals
-        &ok); //Qt::WindowFlags flags = 0);
-      if (!ok)
+      ui.nbIterations_spinbox->setSingleStep(1);
+      ui.nbIterations_spinbox->setRange(1/*min*/, 1000/*max*/);
+      ui.nbIterations_spinbox->setValue(1);
+
+      ui.protect_checkbox->setChecked(false);
+
+      // Get values
+      int i = dialog.exec();
+      if (i == QDialog::Rejected)
       {
         std::cout << "Remeshing aborted" << std::endl;
         return;
       }
-      double nb_iter = QInputDialog::getInt(this->mw,
-        QString("Isotropic remeshing : Number of iterations"),
-        QString("Enter number of iterations"),//question
-        1,              //value
-        1,              //min
-        1000,           //max
-        1,              //step
-        &ok); //Qt::WindowFlags flags = 0);
-      if (!ok)
-      {
-        std::cout << "Remeshing aborted" << std::endl;
-        return;
-      }
+      double target_length = ui.edgeLength_dspinbox->value();
+      int nb_iter = ui.nbIterations_spinbox->value();
+      bool protect = ui.protect_checkbox->isChecked();
 
       // wait cursor
       QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -118,19 +129,21 @@ public Q_SLOTS:
          , selection_item->selected_facets
          , target_length
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
-         .edge_is_constrained_map(
-         selection_item->selected_edges_pmap(selected)));
+         .edge_is_constrained_map(selection_item->selected_edges_pmap(selected))
+         .protect_constraints(protect));
 
         selection_item->poly_item_changed();
         selection_item->clear_all();
         selection_item->changed_with_poly_item();
       }
-      else if (poly_item){
+      else if (poly_item)
+      {
         CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(
          *poly_item->polyhedron()
          , faces(*poly_item->polyhedron())
          , target_length
-         , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter));
+         , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+         .protect_constraints(protect));
 
         poly_item->changed();
       }
