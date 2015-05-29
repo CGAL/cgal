@@ -39,6 +39,12 @@ typedef CGAL::Tangential_complex<
   Kernel, CGAL::Dynamic_dimension_tag,
   CGAL::Parallel_tag>                                           TC;
 
+//#define JUST_BENCHMARK_SPATIAL_SEARCH // CJTODO: test
+
+#ifdef JUST_BENCHMARK_SPATIAL_SEARCH
+std::ofstream spatial_search_csv_file("benchmark_spatial_search.csv");
+#endif
+
 class XML_perf_data
 {
 public:
@@ -234,9 +240,10 @@ void make_tc(std::vector<Point> &points,
   //compl.is_pure_pseudomanifold(3, 9, false, 10);
   // /CJTODO TEMP TEST
 
-  // CJTODO TEMP TEST
-  benchmark_spatial_search(points, k);
+#ifdef JUST_BENCHMARK_SPATIAL_SEARCH
+  benchmark_spatial_search(points, k, spatial_search_csv_file);
   return;
+#endif
 
   //===========================================================================
   // Init
@@ -256,15 +263,6 @@ void make_tc(std::vector<Point> &points,
     slash_index, input_name_stripped.find_last_of('.') - slash_index);
 
   int ambient_dim = k.point_dimension_d_object()(*points.begin());
-
-#ifdef CGAL_TC_PROFILING
-  Wall_clock_timer t_gen;
-#endif
-
-#ifdef CGAL_TC_PROFILING
-  std::cerr << "Point set generated in " << t_gen.elapsed()
-            << " seconds." << std::endl;
-#endif
 
   CGAL_TC_SET_PERFORMANCE_DATA("Num_points_in_input", points.size());
 
@@ -631,6 +629,10 @@ int main()
 #endif
 
             std::cerr << std::endl << "TC #" << i << "..." << std::endl;
+          
+#ifdef CGAL_TC_PROFILING
+            Wall_clock_timer t_gen;
+#endif
 
             std::vector<Point> points;
 
@@ -689,6 +691,11 @@ int main()
               load_points_from_file<Point>(
                 input, std::back_inserter(points)/*, 600*/);
             }
+
+#ifdef CGAL_TC_PROFILING
+            std::cerr << "Point set generated/loaded in " << t_gen.elapsed()
+                      << " seconds." << std::endl;
+#endif
 
             if (!points.empty())
             {
