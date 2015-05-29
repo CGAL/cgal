@@ -63,14 +63,14 @@ public:
   {
     INSERT_POINTS_MODE = 0,
     REMOVE_POINTS_MODE = 1,
-    SHORTEST_PATH_MODE = 2,
+    SHORTEST_PATH_MODE = 2
   };
   
   enum Primitives_mode
   {
     VERTEX_MODE = 0,
     EDGE_MODE = 1,
-    FACE_MODE = 2,
+    FACE_MODE = 2
   };
   
 private:
