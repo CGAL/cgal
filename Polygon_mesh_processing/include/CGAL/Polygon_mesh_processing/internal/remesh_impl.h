@@ -174,9 +174,6 @@ namespace internal {
         vertex_descriptor vnew = target(hnew, mesh_);
         put(vpmap_, vnew, refinement_point);
 
-        //after splitting
-        halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
-
         //check sub-edges
         double sqlen_new = 0.25 * sqlen;
         if (sqlen_new > sq_high)
@@ -194,6 +191,7 @@ namespace internal {
         }
 
         //do it again on the other side if we're not on boundary
+        halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
         if (!is_border(hnew_opp, mesh_))
         {
           halfedge_descriptor hnew2
