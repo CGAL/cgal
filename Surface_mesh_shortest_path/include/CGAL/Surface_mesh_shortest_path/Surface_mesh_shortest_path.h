@@ -549,7 +549,7 @@ private:
 
     bool hasD1 = v1Distance.first != NULL;
     bool hasD2 = v2Distance.first != NULL;
-    bool hasD3 = v3Distance.first != NULL;
+    bool hasD3 = v3Distance.first != NULL && v3Distance.first != cone->parent();
 
     if (hasD1 && (d + CGAL::internal::select_sqrt(csd2(I, B)) > d1 + CGAL::internal::select_sqrt(csd2(v1, B))))
     {
