@@ -1,0 +1,36 @@
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/vcm_estimate_normals.h>
+#include <cassert>
+#include <vector>
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef CGAL::Point_3<Kernel> Point_3;
+typedef CGAL::Vector_3<Kernel> Vector_3;
+typedef std::pair<Point_3, Vector_3> PointWithNormal;
+
+int main (void) {
+    // Generate points on a plane
+    int k = 100;
+    float r = 10;
+
+    std::vector<PointWithNormal> points;
+    points.push_back(std::make_pair(Point_3(0, 0, 0), Vector_3(0, 0, 0)));
+    for (int i = 0; i < k; ++i) {
+        float theta = 2 * i * M_PI / k;
+        points.push_back(std::make_pair(Point_3(r * cos(theta), r * sin(theta), 0),
+                                        Vector_3(0, 0, 0)));
+    }
+
+    // Estimate the normals using VCM
+    float R = 20;
+    vcm_estimate_normals(points.begin(), points.end(),
+                         CGAL::First_of_pair_property_map<PointWithNormal>(),
+                         CGAL::Second_of_pair_property_map<PointWithNormal>(),
+                         R, 0.0);
+
+    // The normal at the origin should be (0, 0, -1)
+    assert(points[0].second == Vector_3(0, 0, -1));
+
+    return 0;
+}
+
