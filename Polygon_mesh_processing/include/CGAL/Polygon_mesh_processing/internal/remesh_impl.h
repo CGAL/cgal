@@ -198,9 +198,7 @@ namespace internal {
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(hnew,
                                                               next(next(hnew, mesh_), mesh_),
                                                               mesh_);
-          Halfedge_status snew = (is_on_patch(hnew)
-            || (is_on_patch_border(hnew) && !is_on_patch(hnew_opp))
-            || (is_on_patch_border(hnew) && is_on_patch_border(hnew_opp)))
+          Halfedge_status snew = (is_on_patch(hnew) || is_on_patch_border(hnew))
             ? PATCH
             : MESH;
           halfedge_added(hnew2,                  snew);
@@ -220,9 +218,7 @@ namespace internal {
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(prev(hnew_opp, mesh_),
                                                               next(hnew_opp, mesh_),
                                                               mesh_);
-          Halfedge_status snew = (is_on_patch(hnew_opp)
-             || (is_on_patch_border(hnew_opp) && !is_on_patch(hnew))
-             || (is_on_patch_border(hnew_opp) && is_on_patch_border(hnew)))
+          Halfedge_status snew = (is_on_patch(hnew_opp) || is_on_patch_border(hnew_opp))
              ? PATCH
             : MESH;
           halfedge_added(hnew2,                  snew);
