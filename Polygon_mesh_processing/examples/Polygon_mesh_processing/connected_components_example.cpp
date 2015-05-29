@@ -2,7 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-
+#include <boost/function_output_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/foreach.hpp>
 #include <iostream>
@@ -48,6 +48,22 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<G> >
 };
 
 
+template <typename PM>
+struct Put_true {
+  Put_true(const PM pm)
+    :pm(pm)
+  {}
+
+  template <typename T>
+  void operator()(const T& t)
+  {
+    put(pm, t, true);
+  }
+
+  PM pm;
+};
+
+
 int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
@@ -70,6 +86,15 @@ int main(int argc, char* argv[])
 
   std::cerr << "Connected components without edge constraints" << std::endl;
   std::cerr << cc.size() << " faces in the CC of " << fd << std::endl;
+
+
+  // Instead of writing the faces into a container, you can set a face property to true
+  typedef Mesh::Property_map<face_descriptor, bool> F_select_map;
+  F_select_map fselect_map;
+  fselect_map = mesh.add_property_map<face_descriptor, bool>("f:select", false).first;
+  CGAL::Polygon_mesh_processing::connected_component(fd,
+                                                     mesh,
+                                                     boost::make_function_output_iterator(Put_true<F_select_map>(fselect_map)));
 
 
   std::cerr << "\nConnected components with edge constraints (dihedral angle < 3/4 pi)" << std::endl;
