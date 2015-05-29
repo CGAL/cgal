@@ -72,6 +72,12 @@ public Q_SLOTS:
       connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
       connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
 
+      //connect checkbox to spinbox
+      connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
+              ui.nbIterations_spinbox, SLOT(setDisabled(bool)));
+      connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
+              ui.protect_checkbox, SLOT(setDisabled(bool)));
+
       //Set default parameters
       bool p_ = (poly_item != NULL);
       Scene_interface::Bbox bbox = p_ ? poly_item->bbox() : selection_item->bbox();
@@ -108,6 +114,7 @@ public Q_SLOTS:
         std::cout << "Remeshing aborted" << std::endl;
         return;
       }
+      bool edges_only = ui.splitEdgesOnly_checkbox->isChecked();
       double target_length = ui.edgeLength_dspinbox->value();
       int nb_iter = ui.nbIterations_spinbox->value();
       bool protect = ui.protect_checkbox->isChecked();
@@ -118,8 +125,29 @@ public Q_SLOTS:
       QTime time;
       time.start();
 
+      typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
+      typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
       if (selection_item)
       {
+        if (edges_only)
+        {
+          const Polyhedron& pmesh = *selection_item->polyhedron();
+          std::vector<edge_descriptor> edges;
+          BOOST_FOREACH(edge_descriptor e, selection_item->selected_edges)
+          {
+            if (selection_item->selected_facets.find(face(halfedge(e, pmesh), pmesh))
+                 != selection_item->selected_facets.end()
+             || selection_item->selected_facets.find(face(opposite(halfedge(e, pmesh), pmesh), pmesh))
+                 != selection_item->selected_facets.end())
+              edges.push_back(e);
+          }
+          CGAL::Polygon_mesh_processing::split_long_edges(
+            *selection_item->polyhedron()
+            , edges
+            , target_length);
+        }
+        else
+        {
         std::vector<bool> selected(
           selection_item->polyhedron()->size_of_halfedges()/2,
           false);
@@ -131,20 +159,37 @@ public Q_SLOTS:
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .edge_is_constrained_map(selection_item->selected_edges_pmap(selected))
          .protect_constraints(protect));
-
+        }
         selection_item->poly_item_changed();
         selection_item->clear_all();
         selection_item->changed_with_poly_item();
       }
       else if (poly_item)
       {
+        if (edges_only)
+        {
+          const Polyhedron& pmesh = *poly_item->polyhedron();
+          std::vector<halfedge_descriptor> border;
+          CGAL::Polygon_mesh_processing::get_border(pmesh,
+                                                    faces(*poly_item->polyhedron()),
+                                                    std::back_inserter(border));
+          std::vector<edge_descriptor> border_edges;
+          BOOST_FOREACH(halfedge_descriptor h, border)
+            border_edges.push_back(edge(h, pmesh));
+
+          CGAL::Polygon_mesh_processing::split_long_edges(*poly_item->polyhedron()
+                                                        , border_edges
+                                                        , target_length);
+        }
+        else
+        {
         CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(
          *poly_item->polyhedron()
          , faces(*poly_item->polyhedron())
          , target_length
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect));
-
+        }
         poly_item->changed();
       }
       else{
