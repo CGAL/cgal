@@ -751,7 +751,6 @@ private:
     typename Traits::Construct_barycenter_2 cb2(m_traits.construct_barycenter_2_object());
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
     typename Traits::Construct_triangle_3_to_triangle_2_projection pt3t2(m_traits.construct_triangle_3_to_triangle_2_projection_object());
-    typename Traits::Construct_triangle_2 ct2(m_traits.construct_triangle_2_object());
 
     if (m_debugOutput)
     {
