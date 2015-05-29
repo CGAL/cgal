@@ -657,12 +657,10 @@ namespace internal {
           //check whether h is the longest edge in its associated face
           //overwise refinement will go for an endless loop
           double sqh = sqlength(h);
-          if (sqh < sqlength(next(h, mesh_))
-           || sqh < sqlength(next(next(h, mesh_), mesh_)))
-            return false;
-
+          return sqh >= sqlength(next(h, mesh_))
+              && sqh >= sqlength(next(next(h, mesh_), mesh_))
           //do the same for hopp
-          return sqh >= sqlength(next(hopp, mesh_))
+              && sqh >= sqlength(next(hopp, mesh_))
               && sqh >= sqlength(next(next(hopp, mesh_), mesh_));
         }
       }
