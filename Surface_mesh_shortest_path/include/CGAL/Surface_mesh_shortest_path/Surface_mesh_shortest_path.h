@@ -571,7 +571,7 @@ private:
     {
       if (m_debugOutput)
       {
-        std::cout << "Filter: d + |I,A| > d1 + |v2,A|: " << std::endl;
+        std::cout << "Filter: d + |I,A| > d2 + |v2,A|: " << std::endl;
         std::cout << "v1 = " << v1Index << " , " << d1 << " , v2 = " << v2Index << " , " << d2 << " , v3 = " << v3Index << " , " << d3 << std::endl;
         std::cout << "d = " << d << std::endl;
         std::cout << "v2,A = " << CGAL::internal::select_sqrt(csd2(v2, A)) << std::endl;
@@ -586,7 +586,7 @@ private:
     {
       if (m_debugOutput)
       {
-        std::cout << "Filter: d + |I,A| > d1 + |v3,A|: " << std::endl;
+        std::cout << "Filter: d + |I,A| > d3 + |v3,A|: " << std::endl;
         std::cout << "v1 = " << v1Index << " , " << d1 << " , v2 = " << v2Index << " , " << d2 << " , v3 = " << v3Index << " , " << d3 << std::endl;
         std::cout << "d = " << d << std::endl;
         std::cout << "v3,A = " << CGAL::internal::select_sqrt(csd2(v3, A)) << std::endl;
