@@ -198,7 +198,9 @@ namespace internal {
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(hnew,
                                                               next(next(hnew, mesh_), mesh_),
                                                               mesh_);
-          Halfedge_status snew = (is_on_patch(hnew) || is_on_patch_border(hnew))
+          Halfedge_status snew = (is_on_patch(hnew)
+            || (is_on_patch_border(hnew) && !is_on_patch(hnew_opp))
+            || (is_on_patch_border(hnew) && is_on_patch_border(hnew_opp)))
             ? PATCH
             : MESH;
           halfedge_added(hnew2,                  snew);
@@ -218,8 +220,10 @@ namespace internal {
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(prev(hnew_opp, mesh_),
                                                               next(hnew_opp, mesh_),
                                                               mesh_);
-          Halfedge_status snew = (is_on_patch(hnew_opp) || is_on_patch_border(hnew_opp))
-            ? PATCH
+          Halfedge_status snew = (is_on_patch(hnew_opp)
+             || (is_on_patch_border(hnew_opp) && !is_on_patch(hnew))
+             || (is_on_patch_border(hnew_opp) && is_on_patch_border(hnew)))
+             ? PATCH
             : MESH;
           halfedge_added(hnew2,                  snew);
           halfedge_added(opposite(hnew2, mesh_), snew);
@@ -645,41 +649,38 @@ namespace internal {
 
     bool is_split_allowed(const edge_descriptor& e) const
     {
-      halfedge_descriptor he = halfedge(e, mesh_);
-      halfedge_descriptor hopp = opposite(he, mesh_);
+      halfedge_descriptor h = halfedge(e, mesh_);
+      halfedge_descriptor hopp = opposite(h, mesh_);
 
-      bool splittable = false;
-      if (is_on_patch(face(he, mesh_)))
-        splittable = is_split_allowed(he);
-
-      if (splittable && is_on_patch(face(hopp, mesh_)))
-        splittable = is_split_allowed(hopp);
-
-      return splittable;
-    }
-
-    bool is_split_allowed(const halfedge_descriptor& h) const
-    {
-      if (!protect_constraints_)//allow splitting constraints
-      {
-        return is_on_patch_border(h)
-            || is_on_patch(h)
-            || is_on_border(h);
-      }
-      else
+      if (protect_constraints_)
       {
         if (!is_on_patch(h)) //PATCH are the only splittable edges
           return false;
-        else
-          return is_longest_edge_of_face(h);
-      }
-    }
+        else //h and hopp are PATCH
+        {
+          //check whether h is the longest edge in its associated face
+          //overwise refinement will go for an endless loop
+          double sqh = sqlength(h);
+          if (sqh < sqlength(next(h, mesh_))
+           || sqh < sqlength(next(next(h, mesh_), mesh_)))
+            return false;
 
-    bool is_longest_edge_of_face(const halfedge_descriptor& h) const
-    {
-      double sqh = sqlength(h);
-      return sqh >= sqlength(next(h, mesh_))
-          && sqh >= sqlength(next(next(h, mesh_), mesh_));
+          //do the same for hopp
+          return sqh >= sqlength(next(hopp, mesh_))
+              && sqh >= sqlength(next(next(hopp, mesh_), mesh_));
+        }
+      }
+      else //allow splitting constraints
+      {
+        if (is_on_mesh(h) && is_on_mesh(hopp))
+          return false;
+        else if (is_on_mesh(h) && is_on_border(hopp))
+          return false;
+        else if (is_on_mesh(hopp) && is_on_border(h))
+          return false;
+        else
+          return true;
+      }
     }
 
     bool is_collapse_allowed(const edge_descriptor& e) const
