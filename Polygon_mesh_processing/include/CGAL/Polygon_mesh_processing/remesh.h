@@ -67,6 +67,8 @@ namespace Polygon_mesh_processing {
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 *
+* @sa `split_long_edges`
+*
 *@todo we suppose `faces` describe only one patch. Handle several patches.
 *@todo document `number_of_iterations`
 */
@@ -78,8 +80,6 @@ void incremental_triangle_based_remeshing(PolygonMesh& pmesh
                                         , const double& target_edge_length
                                         , const NamedParameters& np)
 {
-  std::cout.precision(18);
-
   typedef PolygonMesh PM;
   using boost::choose_pmap;
   using boost::get_param;
@@ -103,8 +103,9 @@ void incremental_triangle_based_remeshing(PolygonMesh& pmesh
 
   bool protect = choose_param(get_param(np, protect_constraints), false);
 
-  typename internal::Incremental_remesher<PM, FaceRange, VPMap, GT, ECMap>
-    remesher(pmesh, faces, vpmap, ecmap, protect);
+  typename internal::Incremental_remesher<PM, VPMap, GT>
+    remesher(pmesh, vpmap, protect);
+  remesher.init_faces_remeshing(faces, ecmap);
 
   unsigned int nb_iterations = choose_param(get_param(np, number_of_iterations), 1);
 
@@ -131,6 +132,48 @@ void incremental_triangle_based_remeshing(PolygonMesh& pmesh
   incremental_triangle_based_remeshing(pmesh,
     faces,
     target_edge_length,
+    parameters::all_default());
+}
+
+/*!
+* \ingroup PkgPolygonMeshProcessing
+* @brief splits the edges listed in `edges`
+*
+* @tparam PolygonMesh model of `MutableFaceGraph` that
+*         has an internal property map for `CGAL::vertex_point_t`
+*/
+template<typename PolygonMesh
+       , typename EdgeRange
+       , typename NamedParameters>
+void split_long_edges(PolygonMesh& pmesh
+                    , EdgeRange& edge_range
+                    , const double& max_length
+                    , const NamedParameters& np)
+{
+  typedef PolygonMesh PM;
+  using boost::choose_pmap;
+  using boost::get_param;
+
+  typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
+  typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
+  VPMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
+                            pmesh,
+                            boost::vertex_point);
+
+  typename internal::Incremental_remesher<PM, VPMap, GT>
+    remesher(pmesh, vpmap, false/*protect constraints*/);
+
+  remesher.split_long_edges(edge_range, max_length);
+}
+
+template<typename PolygonMesh, typename EdgeRange>
+void split_long_edges(PolygonMesh& pmesh
+                    , EdgeRange& edges
+                    , const double& max_length)
+{
+  split_long_edges(pmesh,
+    edges,
+    max_length,
     parameters::all_default());
 }
 

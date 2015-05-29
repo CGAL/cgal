@@ -6,6 +6,7 @@
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/remesh.h>
+#include <CGAL/Polygon_mesh_processing/get_border.h>
 
 #include <CGAL/Timer.h>
 #include <boost/foreach.hpp>
@@ -103,13 +104,21 @@ int main(int argc, char* argv[])
   }
   const std::set<face_descriptor>& patch = k_ring(patch_center, 3, m);
 
+  std::vector<halfedge_descriptor> border;
+  PMP::get_border(m, patch, std::back_inserter(border));
+  
+  CGAL::Polygon_mesh_processing::split_long_edges(
+    m, border, 1.5 * target_edge_length);
+
   CGAL::Timer t;
   t.start();
 
   CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(m,
-    faces(m),//patch,
+    patch,
     target_edge_length,
-    CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter));
+    CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+    .protect_constraints(true)
+    );
 
   t.stop();
   std::cout << "Remeshing took " << t.time() << std::endl;

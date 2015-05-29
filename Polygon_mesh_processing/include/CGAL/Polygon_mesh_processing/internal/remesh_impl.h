@@ -68,10 +68,8 @@ namespace internal {
   };
 
   template<typename PolygonMesh
-         , typename FaceRange
          , typename VertexPointMap
          , typename GeomTraits
-         , typename EdgeIsConstrainedMap
   >
   class Incremental_remesher
   {
@@ -94,9 +92,7 @@ namespace internal {
 
   public:
     Incremental_remesher(PolygonMesh& pmesh
-                       , const FaceRange& face_range
                        , VertexPointMap& vpmap
-                       , const EdgeIsConstrainedMap& ecmap
                        , const bool protect_constraints)
       : mesh_(pmesh)
       , vpmap_(vpmap)
@@ -120,8 +116,6 @@ namespace internal {
           Triangle_3(get(vpmap, v1), get(vpmap, v2), get(vpmap, v3)));
       }
       tree_ptr_ = new AABB_tree(input_triangles_.begin(), input_triangles_.end());
-
-      tag_halfedges_status(face_range, ecmap);
     }
 
     ~Incremental_remesher()
@@ -130,6 +124,85 @@ namespace internal {
         delete tree_ptr_;
     }
     
+    template<typename FaceRange
+           , typename EdgeIsConstrainedMap>
+    void init_faces_remeshing(const FaceRange& face_range
+                            , const EdgeIsConstrainedMap& ecmap)
+    {
+      tag_halfedges_status(face_range, ecmap);
+    }
+
+    // split edges of edge_range that have their length > high
+    template<typename EdgeRange>
+    void split_long_edges(const EdgeRange& edge_range,
+                          const double& high)
+    {
+      typedef boost::bimap<
+        boost::bimaps::set_of<halfedge_descriptor>,
+        boost::bimaps::multiset_of<double, std::greater<double> > >  Boost_bimap;
+      typedef typename Boost_bimap::value_type                       long_edge;
+
+      std::cout << "Split long edges (" << high << ")...";
+      double sq_high = high*high;
+
+      //collect long edges
+      Boost_bimap long_edges;
+      BOOST_FOREACH(edge_descriptor e, edge_range)
+      {
+        double sqlen = sqlength(e);
+        if (sqlen > sq_high)
+          long_edges.insert(long_edge(halfedge(e, mesh_), sqlen));
+      }
+
+      //split long edges
+      unsigned int nb_splits = 0;
+      while (!long_edges.empty())
+      {
+        //the edge with longest length
+        typename Boost_bimap::right_map::iterator eit = long_edges.right.begin();
+        halfedge_descriptor he = eit->second;
+        double sqlen = eit->first;
+        long_edges.right.erase(eit);
+
+        //split edge
+        Point refinement_point = this->midpoint(he);
+        halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
+        CGAL_assertion(he == next(hnew, mesh_));
+        ++nb_splits;
+
+        //move refinement point
+        vertex_descriptor vnew = target(hnew, mesh_);
+        put(vpmap_, vnew, refinement_point);
+
+        //after splitting
+        halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
+
+        //check sub-edges
+        double sqlen_new = 0.25 * sqlen;
+        if (sqlen_new > sq_high)
+        {
+          //if it was more than twice the "long" threshold, insert them
+          long_edges.insert(long_edge(hnew, sqlen_new));
+          long_edges.insert(long_edge(next(hnew, mesh_), sqlen_new));
+        }
+
+        //insert new edges to keep triangular faces, and update long_edges
+        if (!is_border(hnew, mesh_))
+        {
+          halfedge_descriptor hnew2
+            = CGAL::Euler::split_face(hnew, next(next(hnew, mesh_), mesh_), mesh_);
+        }
+
+        //do it again on the other side if we're not on boundary
+        if (!is_border(hnew_opp, mesh_))
+        {
+          halfedge_descriptor hnew2
+            = CGAL::Euler::split_face(prev(hnew_opp, mesh_), next(hnew_opp, mesh_), mesh_);
+        }
+      }
+      std::cout << " done (" << nb_splits << " splits)." << std::endl;
+    }
+
     // PMP book :
     // "visits all edges of the mesh
     //if an edge is longer than the given threshold `high`, the edge
@@ -693,6 +766,7 @@ namespace internal {
         || (is_on_border(hopp) && is_on_patch_border(he));
     }
 
+    template<typename FaceRange, typename EdgeIsConstrainedMap>
     void tag_halfedges_status(const FaceRange& face_range
                             , const EdgeIsConstrainedMap& ecmap)
     {
