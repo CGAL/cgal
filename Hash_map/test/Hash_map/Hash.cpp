@@ -18,7 +18,7 @@ typedef CGAL::Triangulation_2<Kernel> Triangulation_2;
 
 template <typename P>
 void
-fct(const P& p)
+fct(const P& )
 {
   typedef typename boost::graph_traits<P>::vertex_descriptor vertex_descriptor;
 
