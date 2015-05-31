@@ -12,7 +12,6 @@
 #include <CGAL/CGAL_Ipelet_base.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_traits_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_hv_traits_2.h>
 
 namespace CGAL_svdlinf {
 
@@ -21,24 +20,18 @@ namespace CGAL_svdlinf {
 //typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
   typedef CGAL::Segment_Delaunay_graph_Linf_traits_2<Kernel>    Gt;
   typedef CGAL::Segment_Delaunay_graph_Linf_2<Gt>               SDG2;
-  typedef CGAL::Segment_Delaunay_graph_Linf_hv_traits_2<Kernel> Gthv;
-  typedef CGAL::Segment_Delaunay_graph_Linf_2<Gthv>             SDG2hv;
 
-  const unsigned int num_entries = 5;
+  const unsigned int num_entries = 3;
 
   const std::string sublabel[] = {
     "Segment VD Linf general",
     "Segment skeleton Linf general",
-    "Segment VD Linf axis-parallel",
-    "Segment skeleton Linf axis-parallel",
     "Help"
   };
 
   const std::string helpmsg[] = {
     "Draw the L_inf Voronoi diagram of segments in Linf",
     "Draw the L_inf Voronoi skeleton of segments in Linf",
-    "Draw the L_inf Voronoi diagram of axis-parallel segments in Linf",
-    "Draw the L_inf Voronoi skeleton of axis-parallel segments in Linf",
   };
 
   class svdlinfIpelet
@@ -55,7 +48,6 @@ namespace CGAL_svdlinf {
   void svdlinfIpelet::protected_run(int fn)
   {
     SDG2   svd;
-    SDG2hv svdhv;
 
     if (fn == (num_entries-1)) {
       show_help();
@@ -107,8 +99,6 @@ namespace CGAL_svdlinf {
       bbox.min()+Kernel::Vector_2(-incr_len,-incr_len),
       bbox.max()+Kernel::Vector_2(incr_len,incr_len));
 
-    // insert input into svd or svdhv
-
     for (std::list<Segment_2>::iterator
          sit  = sg_list.begin();
          sit != sg_list.end();
@@ -116,30 +106,18 @@ namespace CGAL_svdlinf {
     {
       CGAL_SDG_DEBUG( std::cout << "IPELET: inserting segment "
           << *sit << std::endl ; );
-      if ((fn == 0) or (fn == 1)) {
-        svd.insert(sit->point(0),sit->point(1));
-      } else {
-        svdhv.insert(sit->point(0),sit->point(1));
-      }
+      svd.insert(sit->point(0),sit->point(1));
     }
 
     CGAL_SDG_DEBUG( std::cout << "IPELET: inserting points"
         << std::endl ; );
 
-    if ((fn == 0) or (fn == 1)) {
-      svd.insert(pt_list.begin(),pt_list.end());
-    } else {
-      svdhv.insert(pt_list.begin(),pt_list.end());
-    }
+    svd.insert(pt_list.begin(),pt_list.end());
 
     if ( fn == 0 ) {
       draw_dual_in_ipe(svd, bbox);
     } else if ( fn == 1 ) {
       draw_skeleton_in_ipe(svd, bbox);
-    } else if ( fn == 2 ) {
-      draw_dual_in_ipe(svdhv, bbox);
-    } else if ( fn == 3 ) {
-      draw_skeleton_in_ipe(svdhv, bbox);
     }
 
   } // end of void svdlinfIpelet::protected_run(int fn)
