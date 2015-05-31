@@ -46,16 +46,13 @@ qt4_generate_moc( "Segment_voronoi_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Segment_v
 
 # The executable itself.
 add_executable  ( Segment_voronoi_2 Segment_voronoi_2.cpp Segment_voronoi_2.moc ${CDT_UI_FILES} ${CDT_RESOURCE_FILES} )
-add_executable  ( Segment_voronoi_2-hv Segment_voronoi_2-hv.cpp Segment_voronoi_2.moc ${CDT_UI_FILES} ${CDT_RESOURCE_FILES} )
 
-add_to_cached_list( CGAL_EXECUTABLE_TARGETS Segment_voronoi_2 Segment_voronoi_2-hv )
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS Segment_voronoi_2 )
 
 # Link with Qt libraries
 target_link_libraries( Segment_voronoi_2 ${QT_LIBRARIES} )
-target_link_libraries( Segment_voronoi_2-hv ${QT_LIBRARIES} )
 # Link with CGAL
 target_link_libraries( Segment_voronoi_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
-target_link_libraries( Segment_voronoi_2-hv ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
 
 
 else()
