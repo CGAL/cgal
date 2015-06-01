@@ -26,6 +26,8 @@
 #include <CGAL/Periodic_3_offset_3.h>
 #include <CGAL/Periodic_3_construct_point_3.h>
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/Traits_with_offsets_adaptor.h>
+
 
 namespace CGAL { 
 
