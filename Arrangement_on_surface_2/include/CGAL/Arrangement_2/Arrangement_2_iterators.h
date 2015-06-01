@@ -21,6 +21,8 @@
 #ifndef CGAL_ARRANGEMENT_2_ITERATORS_H
 #define CGAL_ARRANGEMENT_2_ITERATORS_H
 
+#include <functional>
+
 /*! \file
  * Definitions of auxiliary iterator adaptors.
  */
@@ -556,7 +558,11 @@ public:
 } //namespace CGAL
 
 namespace std {
-  template <typename T> struct hash;
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4099) // For VC10 it is class hash 
+#endif
 
 template <class CIterator_, class Filter_, class MIterator_,
           class Value_, class Diff_, class Category_>
@@ -642,5 +648,10 @@ struct hash<CGAL::I_Filtered_const_iterator<CIterator_,
       return reinterpret_cast<std::size_t>(&*i) / sizeof(typename I::value_type);
     }
   };
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 }
 #endif

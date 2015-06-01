@@ -27,6 +27,7 @@
 #include <vector>
 #include <string>
 #include <typeinfo>
+#include <functional>
 
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>
@@ -2971,7 +2972,11 @@ returns `i` as hash value for the index types `Vertex_index`, `Halfedge_index`,
 
 
 namespace std {
-  template <typename T> struct hash;
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4099) // For VC10 it is class hash 
+#endif
 
   template <>
   struct hash<CGAL::SM_Halfedge_index >
@@ -3022,6 +3027,12 @@ namespace boost {
       return i;
     }
   };
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 }
+
 #endif /* CGAL_SURFACE_MESH_H */
 

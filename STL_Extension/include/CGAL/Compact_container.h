@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <vector>
 #include <cstring>
+#include <functional>
 
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
@@ -1170,7 +1171,11 @@ namespace internal {
 } //namespace CGAL
 
 namespace std {
-  template <typename T> struct hash;
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4099) // For VC10 it is class hash 
+#endif
 
   template < class DSC, bool Const >
   struct hash<CGAL::internal::CC_iterator<DSC, Const> >
@@ -1181,6 +1186,10 @@ namespace std {
       return reinterpret_cast<std::size_t>(&*i) / sizeof(typename DSC::value_type);
     }
   };
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 }
 
 #endif // CGAL_COMPACT_CONTAINER_H

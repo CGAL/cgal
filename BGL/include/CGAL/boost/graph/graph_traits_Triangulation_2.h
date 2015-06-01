@@ -20,6 +20,8 @@
 #ifndef CGAL_GRAPH_TRAITS_TRIANGULATION_2_H
 #define CGAL_GRAPH_TRAITS_TRIANGULATION_2_H
 
+#include <functional>
+
 #include <boost/config.hpp>
 #include <boost/iterator_adaptors.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -828,7 +830,12 @@ namespace boost {
 
 
 namespace std {
-  template <typename T> struct hash;
+
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4099) // For VC10 it is class hash 
+#endif
 
   template < class T, class EdgeBase>
   struct hash<CGAL::detail::Edge<T,EdgeBase> > {
@@ -847,6 +854,11 @@ namespace std {
       return hash_value(e);
     }
   };
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 } // namespace std
 
 //#include <CGAL/graph_traits_Delaunay_triangulation_2.h>

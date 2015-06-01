@@ -34,6 +34,7 @@
 #include <algorithm>
 #include <CGAL/memory.h>
 #include <boost/functional/hash.hpp>
+#include <functional>
 
 namespace CGAL {
 
@@ -772,7 +773,11 @@ void In_place_list<T,managed,Alloc>::sort() {
 } //namespace CGAL
 
 namespace std {
-  template <typename T> struct hash;
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4099) // For VC10 it is class hash 
+#endif
 
   template < class T, class Alloc >
   struct hash<CGAL::internal::In_place_list_iterator<T, Alloc> >
@@ -795,5 +800,10 @@ namespace std {
       return reinterpret_cast<std::size_t>(ptr)/ sizeof(T);
     }
   };
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 }
 #endif // CGAL_IN_PLACE_LIST_H
