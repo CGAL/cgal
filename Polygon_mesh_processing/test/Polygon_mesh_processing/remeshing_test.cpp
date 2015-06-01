@@ -73,6 +73,43 @@ std::set<face_descriptor> k_ring(vertex_descriptor v,
   return kring;
 }
 
+std::set<face_descriptor> collect_patch(const char* file,
+                                        const Mesh& m)
+{
+  std::set<face_descriptor> patch;
+  std::ifstream in(file);
+  if (!in.is_open())
+    return patch;
+
+  std::string line;
+  std::size_t id;
+
+  if (!std::getline(in, line)) { return patch; }
+  std::istringstream vertex_line(line);
+  while (vertex_line >> id) {
+    if (id >= m.number_of_vertices()) { return patch; }
+    //do nothing with vertices
+  }
+
+  if (!std::getline(in, line)) { return patch; }
+  std::istringstream facet_line(line);
+  while (facet_line >> id) {
+    if (id >= m.number_of_faces()) { return patch; }
+    patch.insert(Mesh::Face_index(id));
+  }
+
+  if (!std::getline(in, line)) { return patch; }
+  std::istringstream edge_line(line);
+  while (edge_line >> id) {
+    if (id >= m.number_of_edges()) { return patch; }
+    //do nothing with edges
+  }
+
+  in.close();
+  return patch;
+}
+
+
 int main(int argc, char* argv[])
 {
   std::cout.precision(17);
@@ -86,9 +123,6 @@ int main(int argc, char* argv[])
   }
 
   double target_edge_length = (argc > 2) ? atof(argv[2]) : 0.01;
-  double low = 4. / 5. * target_edge_length;
-  double high = 4. / 3. * target_edge_length;
-
   unsigned int nb_iter = (argc > 3) ? atoi(argv[3]) : 5;
 
   unsigned int center_id = 26;
@@ -102,13 +136,19 @@ int main(int argc, char* argv[])
       break;
     }
   }
-  const std::set<face_descriptor>& patch = k_ring(patch_center, 3, m);
+
+  const std::set<face_descriptor>& patch = 
+    (argc > 4)
+    ? collect_patch(argv[4], m)
+    : k_ring(patch_center, 3, m);
 
   std::vector<halfedge_descriptor> border;
   PMP::get_border(m, patch, std::back_inserter(border));
   
   CGAL::Polygon_mesh_processing::split_long_edges(
-    m, border, 1.5 * target_edge_length);
+    m,
+    border,
+    /*1.5 * */target_edge_length);
 
   CGAL::Timer t;
   t.start();
