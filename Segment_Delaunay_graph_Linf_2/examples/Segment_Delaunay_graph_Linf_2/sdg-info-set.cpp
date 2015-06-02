@@ -195,7 +195,7 @@ typedef SDG2::Site_2                       Site_2;
 
 int main( int argc, char *argv[] )
 {
-  if ( not (( argc == 1 ) or (argc == 2)) ) {
+  if ( ! (( argc == 1 ) || (argc == 2)) ) {
     std::cout <<"usage: "<< argv[0] <<" [filename]\n";
   }
 

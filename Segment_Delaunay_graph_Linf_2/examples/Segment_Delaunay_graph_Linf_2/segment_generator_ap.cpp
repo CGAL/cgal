@@ -8,7 +8,7 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-  if ( not( argc == 3 ) ) {
+  if ( !( argc == 3 ) ) {
     std::cout <<"usage: "<< argv[0] <<" [filename] " << "[num_of_segments]\n";
   } 
   ofstream ofs( (argc == 1 ) ? "data/test.cin" : argv[1] );
