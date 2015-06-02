@@ -24,6 +24,10 @@
 #include <vector>
 #include <iterator>
 
+#ifdef CGAL_PMP_REMESHING_DEBUG
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#endif
+
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 
@@ -199,6 +203,9 @@ namespace internal {
         }
       }
       std::cout << " done (" << nb_splits << " splits)." << std::endl;
+#ifdef CGAL_DUMP_REMESHING_STEPS
+      dump("0-border_split.off");
+#endif
     }
 
     // PMP book :
@@ -352,22 +359,22 @@ namespace internal {
         double sqlen = eit->first;
         short_edges.right.erase(eit);
 
+        CGAL_assertion(is_valid(he, mesh_));
+
         //handle the boundary case :
         //a PATCH_BORDER edge can be collapsed,
         //and an edge incident to PATCH_BORDER can be collapsed,
         //but only if the boundary vertex is kept,
         //so re-insert opposite(he) to collapse it
-        if (is_on_border(he))
+        if (!is_on_patch(he))
         {
-          he = opposite(he, mesh_); //he now is PATCH_BORDER
-          CGAL_assertion(is_on_patch_border(he));
-        }
-        else if (is_on_patch_border(opposite(he, mesh_)))
-        {
-          CGAL_assertion(is_on_mesh(he));
-          he = opposite(he, mesh_); //he now is PATCH_BORDER
-          CGAL_assertion(is_on_patch_border(he));
-        }
+          CGAL_assertion(!protect_constraints_);//is_collapse_allowed returned false
+          if (is_on_border(he) || is_on_mesh(he))
+          {
+            he = opposite(he, mesh_); //he now is PATCH_BORDER
+            CGAL_assertion(is_on_patch_border(he));
+          }
+        }//end if(not on PATCH)
 
         //let's try to collapse he into vb
         vertex_descriptor va = source(he, mesh_);
@@ -436,10 +443,21 @@ namespace internal {
           halfedge_and_opp_removed(prev(he, mesh_));
 
           //perform collapse
+          Point source_point = get(vpmap_, va);
           Point target_point = get(vpmap_, vb);
+
+          debug_self_intersections(va);
+          debug_self_intersections(vb);
+
+          if (va == PM::Vertex_index(388) && vb == PM::Vertex_index(375))
+            std::cout << "stop" << std::endl;
+
           vertex_descriptor vkept = CGAL::Euler::collapse_edge(edge(he, mesh_), mesh_);
+          debug_self_intersections(vkept);
+
           put(vpmap_, vkept, target_point);
           ++nb_collapses;
+
 
           // merge halfedge_status to keep the more important on both sides
           merge_status(en, s_epo, s_ep);
@@ -452,6 +470,7 @@ namespace internal {
           CGAL_assertion(source(en, mesh_) == source(en_p, mesh_));
           debug_status_map();
           debug_patch_border();
+          debug_self_intersections(vkept);
 #endif
 
           //insert new/remaining short edges
@@ -565,11 +584,15 @@ namespace internal {
       typedef std::map<vertex_descriptor, Vector_3> VNormalsMap;
       VNormalsMap vnormals;
       boost::associative_property_map<VNormalsMap> propmap_normals(vnormals);
-
-      PMP::compute_vertex_normals(mesh_,
-                                  propmap_normals,
-                                  PMP::parameters::vertex_point_map(vpmap_).
-                                  geom_traits(GeomTraits()));
+      BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
+      {
+        if (!is_on_patch(v))
+          continue;
+        Vector_3 vn = PMP::compute_vertex_normal(v, mesh_
+                            , PMP::parameters::vertex_point_map(vpmap_)
+                            .geom_traits(GeomTraits()));
+        put(propmap_normals, v, vn);
+      }
 
       // at each vertex, compute barycenter of neighbors
       std::map<vertex_descriptor, Point> barycenters;
@@ -584,27 +607,30 @@ namespace internal {
           move = move + Vector_3(get(vpmap_, v), get(vpmap_, source(h, mesh_)));
           ++star_size;
         }
+        CGAL_assertion(star_size > 0);
         move = (1. / (double)star_size) * move;
+
         barycenters[v] = get(vpmap_, v) + move;
       }
 
       // compute moves
       //todo : iterate on barycenters instead. Would avoid retesting is_on_patch
+      typedef typename std::map<vertex_descriptor, Point>::value_type VP_pair;
       std::map<vertex_descriptor, Point> new_locations;
-      BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
+      BOOST_FOREACH(const VP_pair& vp, barycenters)
       {
-        if (!is_on_patch(v))
-          continue;
+        vertex_descriptor v = vp.first;
+        Point pv = get(vpmap_, v);
         Vector_3 nv = boost::get(propmap_normals, v);
-        Point qv = barycenters[v];
-        new_locations[v] = qv + (nv * Vector_3(qv, get(vpmap_, v))) * nv;
+        Point qv = vp.second; //barycenter at v
+
+        new_locations[v] = qv + (nv * Vector_3(qv, pv)) * nv;
       }
 
       // perform moves
-      typedef typename std::map<vertex_descriptor, Point>::value_type VP_pair;
       BOOST_FOREACH(const VP_pair& vp, new_locations)
       {
-        put(vpmap_, vp.first, new_locations[vp.first]);
+        put(vpmap_, vp.first, vp.second);
       }
 
       CGAL_assertion(is_valid(mesh_));
@@ -671,7 +697,7 @@ namespace internal {
     void dump(const char* filename) const
     {
       std::ofstream out(filename);
-//      out << mesh_;
+      out << mesh_;
       out.close();
     }
 
@@ -729,10 +755,10 @@ namespace internal {
           //overwise refinement will go for an endless loop
           double sqh = sqlength(h);
           return sqh >= sqlength(next(h, mesh_))
-              && sqh >= sqlength(next(next(h, mesh_), mesh_))
-          //do the same for hopp
-              && sqh >= sqlength(next(hopp, mesh_))
-              && sqh >= sqlength(next(next(hopp, mesh_), mesh_));
+            && sqh >= sqlength(next(next(h, mesh_), mesh_))
+            //do the same for hopp
+            && sqh >= sqlength(next(hopp, mesh_))
+            && sqh >= sqlength(next(next(hopp, mesh_), mesh_));
         }
       }
       else //allow splitting constraints
@@ -753,15 +779,12 @@ namespace internal {
       halfedge_descriptor he = halfedge(e, mesh_);
       halfedge_descriptor hopp = opposite(he, mesh_);
 
-      if (protect_constraints_)
-      {
-        if (is_on_patch_border(he) || is_on_patch_border(hopp))
-          return false;
-      }
-
-      return is_on_patch(he) //opp is also on patch
-        || (is_on_border(he) && is_on_patch_border(hopp))
-        || (is_on_border(hopp) && is_on_patch_border(he));
+      if (is_on_patch(he)) //hopp is also on patch
+        return true;
+      else if (is_on_patch_border(he) || is_on_patch_border(hopp))
+        return !protect_constraints_;//allowed only when no protection
+      else
+        return false;
     }
 
     template<typename FaceRange, typename EdgeIsConstrainedMap>
@@ -974,6 +997,18 @@ namespace internal {
         V_pair;
       BOOST_FOREACH(const V_pair& v, patch_border)
         CGAL_assertion(v.second == 2);
+    }
+
+    void debug_self_intersections(const vertex_descriptor& v) const
+    {
+      std::cout << "Test self intersections...";
+      std::vector<std::pair<face_descriptor, face_descriptor> > facets;
+      PMP::does_self_intersect(
+        mesh_,
+        std::back_inserter(facets),
+        PMP::parameters::vertex_point_map(vpmap_));
+      CGAL_assertion(facets.empty());
+      std::cout << "done." << std::endl;
     }
 
     void debug_mesh_border() const
