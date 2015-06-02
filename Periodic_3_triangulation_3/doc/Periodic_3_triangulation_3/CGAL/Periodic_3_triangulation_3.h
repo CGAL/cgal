@@ -370,6 +370,12 @@ currently computed in.
 */ 
 Covering_sheets number_of_sheets() const; 
 
+/*!
+Get the offset between the origins of the internal offset coordinate
+systems of two neighboring cells with respect from ch to its i-th neighbor.
+*/
+Offset neighbor_offset(Cell_handle ch, int i) const;
+
 /// @} 
 
 /// \name Non const access 
