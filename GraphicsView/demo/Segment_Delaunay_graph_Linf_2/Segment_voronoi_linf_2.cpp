@@ -445,7 +445,7 @@ MainWindow::saveConstraints(QString /*fileName*/)
 
 
 
-#include "Segment_voronoi_2.moc"
+#include "Segment_voronoi_linf_2.moc"
 #include <CGAL/Qt/resources.h>
 
 
