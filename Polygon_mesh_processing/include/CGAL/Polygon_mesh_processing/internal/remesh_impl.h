@@ -387,8 +387,22 @@ namespace internal {
           he = opposite(he, mesh_);
           va = source(he, mesh_);
           vb = target(he, mesh_);
-
           CGAL_assertion(is_on_patch_border(vb) && !is_on_patch_border(va));
+        }
+        else if (is_on_patch(va) && is_on_patch(vb))
+        {
+          if(!collapse_does_not_invert_face(he))
+          {
+            if (collapse_does_not_invert_face(opposite(he, mesh_)))
+            {
+              he = opposite(he, mesh_);
+              va = source(he, mesh_);
+              vb = target(he, mesh_);
+            }
+            else
+              continue;//both directions invert a face
+          }
+          CGAL_assertion(collapse_does_not_invert_face(he));
         }
 
         CGAL_assertion(is_collapse_allowed(edge(he, mesh_)));
@@ -479,17 +493,17 @@ namespace internal {
 
       std::cout << " done (" << nb_collapses << " collapses)." << std::endl;
 
+#ifdef CGAL_DUMP_REMESHING_STEPS
+      dump("2-edge_collapse.off");
+#endif
+
 #ifdef CGAL_PMP_REMESHING_DEBUG
       CGAL_assertion(nb_valid_halfedges() == halfedge_status_map_.size());
       CGAL_expensive_assertion(is_triangle_mesh(mesh_));
       debug_status_map();
       debug_patch_border();
       debug_mesh_border();
-//      debug_self_intersections();
-#endif
-
-#ifdef CGAL_DUMP_REMESHING_STEPS
-      dump("2-edge_collapse.off");
+      debug_self_intersections();
 #endif
     }
 
@@ -779,6 +793,62 @@ namespace internal {
         return !protect_constraints_;//allowed only when no protection
       else
         return false;
+    }
+
+    bool collapse_does_not_invert_face(const halfedge_descriptor& h) const
+    {
+      vertex_descriptor vs = source(h, mesh_);
+      vertex_descriptor vt = target(h, mesh_);
+      
+      //backup source point
+      Point ps = get(vpmap_, vs);
+      //move source at target
+      put(vpmap_, vs, get(vpmap_, vt));
+
+      typedef typename GeomTraits::Triangle_3 Triangle;
+
+      Vector_3 normal = CGAL::NULL_VECTOR;
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(h, mesh_))
+      {
+        Triangle tr(get(vpmap_, target(hd, mesh_)),
+                    get(vpmap_, target(next(hd, mesh_), mesh_)),
+                    get(vpmap_, target(next(next(hd, mesh_), mesh_), mesh_)));
+        if (!tr.is_degenerate())
+        {
+          //Vector_3 nt = tr.supporting_plane().orthogonal_vector();
+          Vector_3 nt = PMP::compute_face_normal(face(hd, mesh_), mesh_);
+          if (normal == CGAL::NULL_VECTOR)
+            normal = nt;
+          else if (normal * nt <= 0.)
+          {
+            //restore position
+            put(vpmap_, vs, ps);
+            return false;
+          }
+        }
+      }
+      //restore position
+      put(vpmap_, vs, ps);
+      return true;
+    }
+
+    bool has_consistent_orientation(const halfedge_descriptor& h) const
+    {
+      Point p = get(vpmap_, source(h, mesh_));
+      Point q = get(vpmap_, target(h, mesh_));
+      Point r = get(vpmap_, target(next(h, mesh_), mesh_));
+      Point r2 = get(vpmap_, target(next(opposite(h, mesh_), mesh_), mesh_));
+
+      typedef GeomTraits GT;
+      Vector_3 rp = GT().construct_vector_3_object()(r, p);
+      Vector_3 rq = GT().construct_vector_3_object()(r, q);
+      Vector_3 r2p = GT().construct_vector_3_object()(r2, p);
+      Vector_3 r2q = GT().construct_vector_3_object()(r2, q);
+
+      Vector_3 n1 = GT().construct_cross_product_vector_3_object()(rp, rq);
+      Vector_3 n2 = GT().construct_cross_product_vector_3_object()(r2q, r2p);
+
+      return is_positive(GT().compute_scalar_product_3_object()(n1, n2));
     }
 
     template<typename FaceRange, typename EdgeIsConstrainedMap>
