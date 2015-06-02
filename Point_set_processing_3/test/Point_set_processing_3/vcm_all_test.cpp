@@ -55,8 +55,10 @@ std::cout << "=== test_fandisk ===\n";
   on_feature_edge.reset();
   for(int i=0;i<243;++i)
     on_feature_edge.set(indices_no_cov[i]);
+  std::size_t nb_wrong=0;
   for (std::size_t i=0; i<points.size(); ++i)
-    assert( on_feature_edge[i] == CGAL::vcm_is_on_feature_edge(cov[i], 0.18));
+    if( on_feature_edge[i] != CGAL::vcm_is_on_feature_edge(cov[i], 0.18)) ++nb_wrong;
+  assert( nb_wrong < 20 ); // be tolerant to numeric errors
 
 // test vcm with convolution
   std::cout << " Test compute vcm with convolution\n";
@@ -73,8 +75,10 @@ std::cout << "=== test_fandisk ===\n";
   on_feature_edge.reset();
   for(int i=0;i<2746;++i)
     on_feature_edge.set(indices_with_cov[i]);
+  nb_wrong=0;
   for (std::size_t i=0; i<points.size(); ++i)
-    assert( on_feature_edge[i] == CGAL::vcm_is_on_feature_edge(cov[i], 0.18));
+    if( on_feature_edge[i] != CGAL::vcm_is_on_feature_edge(cov[i], 0.18)) ++nb_wrong;
+  assert( nb_wrong < 20 ); // be tolerant to numeric errors
 
   return true;
 }
