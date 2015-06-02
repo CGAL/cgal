@@ -1798,6 +1798,7 @@ public:
   {
     CGAL_precondition(pt_site.is_point());
     CGAL_precondition(t.is_point());
+    CGAL_USE(other_s);
     CGAL_SDG_DEBUG(std::cout << "debug points_inside_touching_sides_v "
         << "ls: " << ls.a() << ' ' << ls.b() << ' ' <<  ls.c()
         << " pt_site=" << pt_site << " other_s=" << other_s

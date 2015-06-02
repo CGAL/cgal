@@ -89,6 +89,7 @@ public:
                            const Point_2 & pt) const
   {
     CGAL_precondition( s.is_segment() && p.is_point() );
+    CGAL_USE(pt);
 
     Voronoi_vertex_2 v(s1, s2, s3);
     Line_2 l = compute_supporting_line( s.supporting_site() );
@@ -307,6 +308,7 @@ public:
                            const Point_2 & pt) const
   {
     CGAL_precondition( s.is_segment() and p.is_point() );
+    CGAL_USE(pt);
 
     Line_2 lseg = compute_supporting_line( s.supporting_site() );
     Line_2 lp = compute_linf_perpendicular(lseg, p.point());

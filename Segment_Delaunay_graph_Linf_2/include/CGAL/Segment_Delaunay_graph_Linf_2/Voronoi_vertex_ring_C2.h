@@ -571,6 +571,10 @@ private:
       const bool is_r_hv, const bool is_r_hor)
   const
   {
+    CGAL_USE(is_q_hv);
+    CGAL_USE(is_q_hor);
+    CGAL_USE(is_r_hv);
+    CGAL_USE(is_r_hor);
     const Line_2 lq = orient_line_nonendp(p, q);
     const Line_2 lr = orient_line_nonendp(p, r);
     const unsigned int bq = bearing(lq);
@@ -623,6 +627,9 @@ private:
       const Bearing bq, const Bearing br)
   const
   {
+    CGAL_USE(q);
+    CGAL_USE(r);
+    CGAL_USE(bq);
     const Bearing bside = (br + ((br % 2 == 0) ? 1 : 2)) % 8;
     const bool l_compute_y = (bside % 4 == 1) ? true : false;
     const FT pcoord = l_compute_y ? p.point().x() : p.point().y();
@@ -646,6 +653,8 @@ private:
       const Bearing bq, const Bearing br)
   const
   {
+    CGAL_USE(q);
+    CGAL_USE(r);
     const FT xp = p.point().x();
     const FT yp = p.point().y();
     const bool lq_compute_y = ((bq / 2) % 2 == 0) ? false : true;
@@ -702,6 +711,10 @@ private:
   const
   {
     CGAL_precondition((bqr == 1) or (bqr == 5));
+    CGAL_USE(q);
+    CGAL_USE(r);
+    CGAL_USE(bq);
+    CGAL_USE(br);
     const FT xp = p.point().x();
     const FT x =
       (lr.b()*(lq.b()*xp + lq.c()) - lq.b()*lr.c()) /
@@ -739,6 +752,10 @@ private:
   const
   {
     CGAL_precondition((bqr == 3) or (bqr == 7));
+    CGAL_USE(q);
+    CGAL_USE(r);
+    CGAL_USE(bq);
+    CGAL_USE(br);
     const FT yp = p.point().y();
     const FT y =
       (lr.a()*(lq.a()*yp - lq.c()) + lq.a()*lr.c()) /
@@ -987,6 +1004,7 @@ private:
                    const bool p_endp_r, const bool is_r_horizontal)
   const
   {
+    CGAL_USE(r);
     const Site_2 & A = p_endp_r ? p : q;
     const Site_2 & B = p_endp_r ? q : p;
     const RT Apar = is_r_horizontal ? A.point().x() : A.point().y();
@@ -1117,6 +1135,7 @@ private:
                    const bool p_endp_r, const bool pos_slope)
   const
   {
+    CGAL_USE(r);
     const Site_2 & A = p_endp_r ? p : q;
     const Site_2 & B = p_endp_r ? q : p;
     const RT Ax = A.point().x();

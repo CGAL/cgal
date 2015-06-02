@@ -545,6 +545,7 @@ private:
   compute_pps_endp_hv(const Site_2& p, const Site_2& q, const Site_2& r,
                    const bool p_endp_r, const bool is_r_horizontal) const
   {
+    CGAL_USE(r);
     const Site_2 & A = p_endp_r ? p : q;
     const Site_2 & B = p_endp_r ? q : p;
     const FT Apar = is_r_horizontal ? A.point().x() : A.point().y();
@@ -572,6 +573,7 @@ private:
   compute_pps_endp_slope(const Site_2& p, const Site_2& q, const Site_2& r,
                    const bool p_endp_r, const bool pos_slope) const
   {
+    CGAL_USE(r);
     const Site_2 & A = p_endp_r ? p : q;
     const Site_2 & B = p_endp_r ? q : p;
     const FT Ax = A.point().x();
@@ -900,6 +902,7 @@ private:
   {
     CGAL_precondition( sp.is_point() && sq.is_point() &&
 		       sr.is_segment() );
+    CGAL_USE(type);
 
     CGAL_SDG_DEBUG(std::cout
         << "debug: compute_vv PPS entering p=" << sp
@@ -1079,6 +1082,10 @@ private:
       const bool is_q_hv, const bool is_q_hor,
       const bool is_r_hv, const bool is_r_hor) const
   {
+    CGAL_USE(is_q_hv);
+    CGAL_USE(is_q_hor);
+    CGAL_USE(is_r_hv);
+    CGAL_USE(is_r_hor);
     const Line_2 lq = orient_line_nonendp(p, q);
     const Line_2 lr = orient_line_nonendp(p, r);
     const Bearing bq = bearing(lq);
@@ -1127,6 +1134,9 @@ private:
       const Line_2& lq, const Line_2 & lr,
       const Bearing bq, const Bearing br) const
   {
+    CGAL_USE(q);
+    CGAL_USE(r);
+    CGAL_USE(bq);
     const Bearing bside = (br + ((br % 2 == 0) ? 1 : 2)) % 8;
     const bool l_compute_y = (bside % 4 == 1) ? true : false;
     const FT pcoord = l_compute_y ? p.point().x() : p.point().y();
@@ -1145,6 +1155,8 @@ private:
       const Line_2& lq, const Line_2 & lr,
       const Bearing bq, const Bearing br) const
   {
+    CGAL_USE(q);
+    CGAL_USE(r);
     const FT xp = p.point().x();
     const FT yp = p.point().y();
     const bool lq_compute_y = ((bq / 2) % 2 == 0) ? false : true;
@@ -1195,6 +1207,10 @@ private:
       const Bearing bqr) const
   {
     CGAL_precondition((bqr == 1) or (bqr == 5));
+    CGAL_USE(q);
+    CGAL_USE(r);
+    CGAL_USE(bq);
+    CGAL_USE(br);
     const FT xp = p.point().x();
     const FT x =
       (lr.b()*(lq.b()*xp + lq.c()) - lq.b()*lr.c()) /
@@ -1227,6 +1243,10 @@ private:
       const Bearing bqr) const
   {
     CGAL_precondition((bqr == 3) or (bqr == 7));
+    CGAL_USE(q);
+    CGAL_USE(r);
+    CGAL_USE(bq);
+    CGAL_USE(br);
     const FT yp = p.point().y();
     const FT y =
       (lr.a()*(lq.a()*yp - lq.c()) + lq.a()*lr.c()) /
@@ -1829,12 +1849,14 @@ private:
   linf_refine_nonhv(const Point_2& vv,
               const Site_2& p, const Site_2& q, const Site_2& r,
               const Line_2& l, Homogeneous_point_2& lref,
-              const PPS_Type & type
+              const PPS_Type &
              ) const
   {
     CGAL_assertion(p.is_point());
     CGAL_assertion(q.is_point());
     CGAL_assertion(r.is_segment());
+    CGAL_USE(vv);
+    CGAL_USE(lref);
     if (points_inside_touching_sides_v(l, p, r, q, this->point())) {
       return LARGER;
     }
@@ -1847,12 +1869,14 @@ private:
   linf_refine_nonhv(const Point_2& vv,
               const Site_2& p, const Site_2& q, const Site_2& r,
               const Line_2& l, Homogeneous_point_2& lref,
-              const PPP_Type & type
+              const PPP_Type &
              ) const
   {
     CGAL_assertion(p.is_point());
     CGAL_assertion(q.is_point());
     CGAL_assertion(r.is_point());
+    CGAL_USE(vv);
+    CGAL_USE(lref);
     if (points_inside_touching_sides_v(l, p, q, r, this->point())) {
       return LARGER;
     }
