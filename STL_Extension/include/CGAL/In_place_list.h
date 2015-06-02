@@ -34,7 +34,6 @@
 #include <algorithm>
 #include <CGAL/memory.h>
 #include <boost/functional/hash.hpp>
-#include <functional>
 
 namespace CGAL {
 
@@ -778,6 +777,9 @@ namespace std {
 #  pragma warning(push)
 #  pragma warning(disable:4099) // For VC10 it is class hash 
 #endif
+
+  template < class T>
+  struct hash;
 
   template < class T, class Alloc >
   struct hash<CGAL::internal::In_place_list_iterator<T, Alloc> >

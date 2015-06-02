@@ -226,6 +226,9 @@ namespace std {
 #  pragma warning(disable:4099) // For VC10 it is class hash 
 #endif
 
+  template < class T>
+  struct hash;
+
   template <typename H>
   struct hash<CGAL::internal::HDS_edge<H> > {
     std::size_t operator()(const CGAL::internal::HDS_edge<H>& e) const

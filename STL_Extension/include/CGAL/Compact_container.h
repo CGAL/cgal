@@ -1176,7 +1176,10 @@ namespace std {
 #  pragma warning(push)
 #  pragma warning(disable:4099) // For VC10 it is class hash 
 #endif
-
+  
+  template < class T>
+  struct hash;
+  
   template < class DSC, bool Const >
   struct hash<CGAL::internal::CC_iterator<DSC, Const> >
     : public std::unary_function<CGAL::internal::CC_iterator<DSC, Const>, std::size_t> {

@@ -2978,6 +2978,9 @@ namespace std {
 #  pragma warning(disable:4099) // For VC10 it is class hash 
 #endif
 
+  template < class T>
+  struct hash;
+
   template <>
   struct hash<CGAL::SM_Halfedge_index >
     : public std::unary_function<CGAL::SM_Halfedge_index, std::size_t> {

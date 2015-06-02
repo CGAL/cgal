@@ -564,6 +564,9 @@ namespace std {
 #  pragma warning(disable:4099) // For VC10 it is class hash 
 #endif
 
+template < class T>
+struct hash;
+  
 template <class CIterator_, class Filter_, class MIterator_,
           class Value_, class Diff_, class Category_>
 struct hash<CGAL::I_Filtered_const_iterator<CIterator_,

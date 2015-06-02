@@ -837,6 +837,9 @@ namespace std {
 #  pragma warning(disable:4099) // For VC10 it is class hash 
 #endif
 
+  template < class T>
+  struct hash;
+  
   template < class T, class EdgeBase>
   struct hash<CGAL::detail::Edge<T,EdgeBase> > {
     std::size_t operator()(const CGAL::detail::Edge<T,EdgeBase>& e) const
