@@ -61,12 +61,12 @@ private:
     else {
       // here both cmpxpq != EQUAL and cmpypq != EQUAL
       bool is_monotone = 
-          ( ( ( cmpxpr == -cmpxqr ) and
-              ( cmpypr == -cmpyqr )    ) or
-            ( ( cmpxpq == cmpxpr) and ( cmpxpr == cmpxqr ) and
-              ( cmpypq == cmpypr) and ( cmpypr == cmpyqr )    ) or
-            ( (-cmpxpq == cmpxpr) and ( cmpxpr == cmpxqr) and
-              (-cmpypq == cmpypr) and ( cmpypr == cmpyqr)     )    ) ;
+          ( ( ( cmpxpr == -cmpxqr ) &&
+              ( cmpypr == -cmpyqr )    ) ||
+            ( ( cmpxpq == cmpxpr) && ( cmpxpr == cmpxqr ) &&
+              ( cmpypq == cmpypr) && ( cmpypr == cmpyqr )    ) ||
+            ( (-cmpxpq == cmpxpr) && ( cmpxpr == cmpxqr) &&
+              (-cmpypq == cmpypr) && ( cmpypr == cmpyqr)     )    ) ;
 
       //std::cout << "debug is_monotone=" << is_monotone << std::endl; 
 

@@ -167,7 +167,7 @@ public:
     CGAL_SDG_DEBUG( std::cout << "debug construct bisector line "
               << "p=" << p << " q=" << q << std::endl; );
 
-    if ( p.is_point() and q.is_point() ) {
+    if ( p.is_point() && q.is_point() ) {
       Point_2 pp = p.point();
       Point_2 pq = q.point();
 
@@ -194,7 +194,7 @@ public:
       // midpoint m of two points p and q
       Point_2 m = midpoint(pp, pq);
 
-      if ((cmpabsdxy == EQUAL) or (cmpx == EQUAL) or (cmpy == EQUAL)) {
+      if ((cmpabsdxy == EQUAL) || (cmpx == EQUAL) || (cmpy == EQUAL)) {
           // bisector is line going through m with direction d;
           // we will store this line as the union of two rays starting
           // at m with directions -d (incoming) and d (outgoing)
@@ -245,8 +245,8 @@ public:
       return pcl;
     }// end of point - point case
 
-    if ( (p.is_point() and q.is_segment())
-        or (p.is_segment() and q.is_point()) ) {
+    if ( (p.is_point() && q.is_segment())
+        || (p.is_segment() && q.is_point()) ) {
 
       Point_2 pnt = (p.is_point()) ? p.point() : q.point();
       Segment_2 seg = (p.is_segment()) ? p.segment() : q.segment();
@@ -262,7 +262,7 @@ public:
       Equal_2     are_same_points;
 
       if (are_same_points(sitep,sites.source_site())
-          or are_same_points(sitep,sites.target_site())) {
+          || are_same_points(sitep,sites.target_site())) {
         npts = 1;
         points[0] = pnt;
         Point_2 pseg = (are_same_points(sitep,sites.source_site())) ?
@@ -286,8 +286,8 @@ public:
         // pnt is not end point of seg
         // seg must not be horizontal or vertical
         CGAL_assertion(
-            not( sites.supporting_site().segment().is_horizontal() or
-                 sites.supporting_site().segment().is_vertical()     ) );
+            !( sites.supporting_site().segment().is_horizontal() ||
+               sites.supporting_site().segment().is_vertical()     ) );
         Line_2 lseg = sites.supporting_site().segment().supporting_line();
         Point_2 phor, pver;
         phor = Point_2(lseg.x_at_y(pnt.y()), pnt.y());
@@ -321,9 +321,9 @@ public:
             == compare_y_2(seg.source(),seg.target())) {
           //segment with positive slope
           if ( (compare_x_2(seg.source(),seg.target()) == SMALLER
-                and lseg.has_on_positive_side(pnt))
-              or (compare_x_2(seg.source(),seg.target()) == LARGER
-                  and lseg.has_on_negative_side(pnt)) ) {
+                && lseg.has_on_positive_side(pnt))
+              || (compare_x_2(seg.source(),seg.target()) == LARGER
+                  && lseg.has_on_negative_side(pnt)) ) {
                 //pcfirst is center of square,
                 //pfirst = phor, upward direction
                 //pclast is center of sqaure, plast = pver, left direction
@@ -343,9 +343,9 @@ public:
         else {
           //segment with negative slope
           if ( (compare_x_2(seg.source(),seg.target()) == SMALLER
-                and lseg.has_on_positive_side(pnt))
-              or (compare_x_2(seg.source(),seg.target()) == LARGER
-                  and lseg.has_on_negative_side(pnt)) ) {
+                && lseg.has_on_positive_side(pnt))
+              || (compare_x_2(seg.source(),seg.target()) == LARGER
+                  && lseg.has_on_negative_side(pnt)) ) {
                 //pcfirst is center of square,
                 //pfirst = pver, right direction
                 //pclast is center of sqaure, plast = phor, upward direction
@@ -447,7 +447,7 @@ public:
 
     // compute oriented bisector between p and q
 
-    if ( p.is_point() and q.is_point() ) {
+    if ( p.is_point() && q.is_point() ) {
       Point_2 pp = p.point();
       Point_2 pq = q.point();
 
@@ -474,7 +474,7 @@ public:
       // bisector ray always starts with v
       points[0] = v;
 
-      if ((cmpabsdxy == EQUAL) or (cmpx == EQUAL) or (cmpy == EQUAL)) {
+      if ((cmpabsdxy == EQUAL) || (cmpx == EQUAL) || (cmpy == EQUAL)) {
           // bisector ray consists of a ray starting at v
           npts = 1;
       } else {
@@ -533,8 +533,8 @@ public:
       return pcr;
     }
 
-    if ( (p.is_point() and q.is_segment())
-        or (p.is_segment() and q.is_point()) ) {
+    if ( (p.is_point() && q.is_segment())
+        || (p.is_segment() && q.is_point()) ) {
 
       Point_2 pnt = (p.is_point()) ? p.point() : q.point();
       Segment_2 seg = (p.is_segment()) ? p.segment() : q.segment();
@@ -550,7 +550,7 @@ public:
       Equal_2     are_same_points;
 
       if (are_same_points(sitep,sites.source_site())
-          or are_same_points(sitep,sites.target_site())) {
+          || are_same_points(sitep,sites.target_site())) {
         npts = 1;
         points[0] = v;
         Point_2 pseg =
@@ -581,8 +581,8 @@ public:
         // pnt is not end point of seg
         // seg must not be horizontal or vertical
         CGAL_assertion(
-            not( sites.supporting_site().segment().is_horizontal() or
-                 sites.supporting_site().segment().is_vertical()     ) );
+            !( sites.supporting_site().segment().is_horizontal() ||
+               sites.supporting_site().segment().is_vertical()     ) );
         // bisector ray always starts with v
         points[0] = v;
         Line_2 lseg = sites.supporting_site().segment().supporting_line();
@@ -618,9 +618,9 @@ public:
             == compare_y_2(seg.source(),seg.target())) {
           //segment with positive slope
           if ( (compare_x_2(seg.source(),seg.target()) == SMALLER
-                and lseg.has_on_positive_side(pnt))
-              or (compare_x_2(seg.source(),seg.target()) == LARGER
-                  and lseg.has_on_negative_side(pnt)) ) {
+                && lseg.has_on_positive_side(pnt))
+              || (compare_x_2(seg.source(),seg.target()) == LARGER
+                  && lseg.has_on_negative_side(pnt)) ) {
             //pcfirst is center of square , pfirst = phor, upward direction
             //pclast is center of sqaure, plast = pver, left direction
             pcfirst = Point_2(pmid_pfirst_pnt.x(),
@@ -639,9 +639,9 @@ public:
         else {
           //segment with negative slope
           if ( (compare_x_2(seg.source(),seg.target()) == SMALLER
-                and lseg.has_on_positive_side(pnt))
-              or (compare_x_2(seg.source(),seg.target()) == LARGER
-                  and lseg.has_on_negative_side(pnt)) ) {
+                && lseg.has_on_positive_side(pnt))
+              || (compare_x_2(seg.source(),seg.target()) == LARGER
+                  && lseg.has_on_negative_side(pnt)) ) {
             //pcfirst is center of square , pfirst = pver, right direction
             //pclast is center of sqaure, plast = phor, upward direction
             pcfirst = Point_2(pmid_pfirst_pnt.x()+seglenhalffirst,
@@ -690,8 +690,8 @@ public:
         }
 
         if (l.perpendicular(pnt).has_on_positive_side(v)) {
-          if ( (p.is_segment() and l.has_on_positive_side(v))
-              or(p.is_point() and l.has_on_negative_side(v)) ) {
+          if ( (p.is_segment() && l.has_on_positive_side(v))
+              ||(p.is_point() && l.has_on_negative_side(v)) ) {
             npts = 4;
           } else {
             npts = 3;
@@ -700,8 +700,8 @@ public:
           }
         }
         else {
-          if ( (p.is_segment() and l.has_on_negative_side(v))
-              or(p.is_point() and l.has_on_positive_side(v)) ) {
+          if ( (p.is_segment() && l.has_on_negative_side(v))
+              ||(p.is_point() && l.has_on_positive_side(v)) ) {
             npts = 2;
             points[1] = points[3];
           }
@@ -791,7 +791,7 @@ public:
       << " cmpy=" << cmpy_vpqr_vqps
       << std::endl; );
 
-    if ( (cmpx_vpqr_vqps == EQUAL) and
+    if ( (cmpx_vpqr_vqps == EQUAL) &&
          (cmpy_vpqr_vqps == EQUAL)    ) {
       // philaris: here vpqr and vqps are the same point,
       // therefore the bisector segment is (vpqr,vqps),
@@ -807,11 +807,11 @@ public:
       return pcs;
     }
 
-    if ( p.is_point() and q.is_point() ) {
+    if ( p.is_point() && q.is_point() ) {
       Point_2 pp = p.point();
       Point_2 pq = q.point();
 
-      CGAL_assertion( not (are_same_points(p, q)) );
+      CGAL_assertion( ! (are_same_points(p, q)) );
       Comparison_result cmpx = compare_x_2(pp, pq);
       Comparison_result cmpy = compare_y_2(pp, pq);
       Comparison_result cmpabsdxy =
@@ -831,7 +831,7 @@ public:
       // bisector segment always starts with vpqr
       points[0] = vpqr;
 
-      if ((cmpabsdxy == EQUAL) or (cmpx == EQUAL) or (cmpy == EQUAL)) {
+      if ((cmpabsdxy == EQUAL) || (cmpx == EQUAL) || (cmpy == EQUAL)) {
         // bisector ray is line segment (vpqr,vqps)
         npts = 2;
       } else {
@@ -906,8 +906,8 @@ public:
 
       return pcs;
     } // end of two points case
-    else if ( (p.is_point() and q.is_segment()) or
-              (q.is_point() and p.is_segment()) ) {
+    else if ( (p.is_point() && q.is_segment()) ||
+              (q.is_point() && p.is_segment()) ) {
       //one site is point and one site is segment
       unsigned int npts;
       Point_2 points[5];
@@ -915,11 +915,11 @@ public:
       Equal_2 are_same_points;
       // check if p is point and is an endpoint of q
       // or if q is a point and is an end point of p
-      if (   ( p.is_point() and
-              (are_same_points(p, q.source_site()) or
+      if (   ( p.is_point() &&
+              (are_same_points(p, q.source_site()) ||
                are_same_points(p, q.target_site())   ) )
-          or (q.is_point() and
-              (are_same_points(q, p.source_site()) or
+          || (q.is_point() &&
+              (are_same_points(q, p.source_site()) ||
                are_same_points(q, p.target_site())   ) ) )
       {
         npts = 2;
@@ -977,7 +977,7 @@ public:
               << npts << std::endl; );
 
           /*CGAL_assertion((l.perpendicular(vpqr).
-                         has_on_negative_side(vqps)) or
+                         has_on_negative_side(vqps)) ||
                          ((compare_x_2(vpqr, vqps) == EQUAL) and
                           (compare_y_2(vpqr, vqps) == EQUAL))
                          );*/
@@ -1085,9 +1085,9 @@ public:
               == compare_y_2(seg.source(),seg.target())) {
             //segment with positive slope
             if ( (compare_x_2(seg.source(),seg.target()) == SMALLER
-                  and lseg.has_on_positive_side(pnt))
-                or (compare_x_2(seg.source(),seg.target()) == LARGER
-                  and lseg.has_on_negative_side(pnt)) ) {
+                  && lseg.has_on_positive_side(pnt))
+                || (compare_x_2(seg.source(),seg.target()) == LARGER
+                  && lseg.has_on_negative_side(pnt)) ) {
               //pcfirst is center of square, pfirst = phor, upward direction
               //pclast is center of sqaure, plast = pver, left direction
               pcfirst = Point_2(pmid_pfirst_pnt.x(),
@@ -1106,9 +1106,9 @@ public:
           else {
             //segment with negative slope
             if ( (compare_x_2(seg.source(),seg.target()) == SMALLER
-                  and lseg.has_on_positive_side(pnt))
-                or (compare_x_2(seg.source(),seg.target()) == LARGER
-                  and lseg.has_on_negative_side(pnt)) ) {
+                  && lseg.has_on_positive_side(pnt))
+                || (compare_x_2(seg.source(),seg.target()) == LARGER
+                  && lseg.has_on_negative_side(pnt)) ) {
               //pcfirst is center of square , pfirst = pver, right direction
               //pclast is center of sqaure, plast = phor, upward direction
               pcfirst = Point_2(pmid_pfirst_pnt.x()+seglenhalffirst,
@@ -1155,12 +1155,12 @@ public:
 
           // philaris: probably not needed, but check more
           //CGAL_assertion((l.perpendicular(vpqr).
-          //                has_on_negative_side(vqps)) or
+          //                has_on_negative_side(vqps)) ||
           //               (vpqr == vqps));
 
           if (l.perpendicular(pnt).has_on_positive_side(vpqr)) {
-            if ( (p.is_segment() and l.has_on_positive_side(vpqr))
-                or(p.is_point() and l.has_on_negative_side(vpqr)) ) {
+            if ( (p.is_segment() && l.has_on_positive_side(vpqr))
+                ||(p.is_point() && l.has_on_negative_side(vpqr)) ) {
               npts = 5;
             } else {
               npts = 4;
@@ -1169,8 +1169,8 @@ public:
             }
           }
           else {
-            if ( (p.is_segment() and l.has_on_negative_side(vpqr))
-                or(p.is_point() and l.has_on_positive_side(vpqr)) ) {
+            if ( (p.is_segment() && l.has_on_negative_side(vpqr))
+                ||(p.is_point() && l.has_on_positive_side(vpqr)) ) {
               npts = 3;
               points[1] = points[3];
             }
@@ -1182,33 +1182,33 @@ public:
           CGAL_SDG_DEBUG( std::cout << "debug first check npts="
               << npts << std::endl; );
 
-          if ((npts == 3) and
-              ((p.is_segment() and not l.has_on_positive_side(vqps))
-               or(p.is_point() and not l.has_on_negative_side(vqps)))) {
+          if ((npts == 3) &&
+              ((p.is_segment() && ! l.has_on_positive_side(vqps))
+               ||(p.is_point() && ! l.has_on_negative_side(vqps)))) {
             npts = 2;
           }
           if (npts == 4) {
-            if (not l.perpendicular(pnt).has_on_negative_side(vqps)) {
+            if (! l.perpendicular(pnt).has_on_negative_side(vqps)) {
               npts = 2;
             } else {
-              if ((p.is_segment() and not l.has_on_positive_side(vqps))
-                  or(p.is_point() and not l.has_on_negative_side(vqps))) {
+              if ((p.is_segment() && ! l.has_on_positive_side(vqps))
+                  ||(p.is_point() && ! l.has_on_negative_side(vqps))) {
                 npts = 3;
               }
             }
           }
           if (npts == 5) {
             if (l.perpendicular(pnt).has_on_negative_side(vqps)) {
-              if ( (p.is_segment() and l.has_on_positive_side(vqps))
-                  or(p.is_point() and l.has_on_negative_side(vqps)) ) {
+              if ( (p.is_segment() && l.has_on_positive_side(vqps))
+                  ||(p.is_point() && l.has_on_negative_side(vqps)) ) {
                 npts = 5;
               } else {
                 npts = 4;
               }
             }
             else {
-              if ( (p.is_segment() and l.has_on_negative_side(vpqr))
-                  or(p.is_point() and l.has_on_positive_side(vpqr)) ) {
+              if ( (p.is_segment() && l.has_on_negative_side(vpqr))
+                  ||(p.is_point() && l.has_on_positive_side(vpqr)) ) {
                 npts = 3;
               }
               else {

@@ -351,26 +351,26 @@ private:
 
     // here the pair of p, q contains a point and a segment
 
-    CGAL_assertion( p.is_point() or q.is_point() );
+    CGAL_assertion( p.is_point() || q.is_point() );
 
     CGAL_SDG_DEBUG( std::cout << "debug incircle_p of p=" << p
                    << " q=" << q << " t=" << t << std::endl; );
 
     // philaris: here, for Linf there are differences from L2
 
-    if ((q.is_segment() and is_site_h_or_v(q)) or
-        (p.is_segment() and is_site_h_or_v(p))   ) {
+    if ((q.is_segment() && is_site_h_or_v(q)) ||
+        (p.is_segment() && is_site_h_or_v(p))   ) {
       // the case of horizontal or vertical segment is the same
       // as in L2
       Orientation o;
       if ( p.is_point() && q.is_segment() ) {
-        CGAL_assertion( same_points(p, q.source_site()) or
+        CGAL_assertion( same_points(p, q.source_site()) ||
             same_points(p, q.target_site()) );
         Point_2 pq =
           same_points(p, q.source_site()) ? q.target() : q.source();
         o = orientation_linf(p.point(), pq, t.point());
       } else { // p is a segment and q is a point
-        CGAL_assertion( same_points(q, p.source_site()) or
+        CGAL_assertion( same_points(q, p.source_site()) ||
             same_points(q, p.target_site()) );
         Point_2 pp =
           same_points(q, p.source_site()) ? p.target() : p.source();
@@ -403,7 +403,7 @@ private:
 
 
         Oriented_side side_of_pnt;
-        if (same_points(q.source_site(), p) or
+        if (same_points(q.source_site(), p) ||
             same_points(q.target_site(), p)   ) {
           side_of_pnt = ON_ORIENTED_BOUNDARY;
         } else {
@@ -411,7 +411,7 @@ private:
         }
 
         if (side_of_pnt == ON_ORIENTED_BOUNDARY) {
-          CGAL_assertion(same_points(q.source_site(), p) or
+          CGAL_assertion(same_points(q.source_site(), p) ||
                          same_points(q.target_site(), p)   );
         } else {
           // here, side_of_pnt is non-zero
@@ -430,7 +430,7 @@ private:
 
         Segment_2 seg = q.segment();
 
-        if (is_same_qsrc_p or is_same_qtrg_p) {
+        if (is_same_qsrc_p || is_same_qtrg_p) {
           Point_2 otherpnt;
           if (is_same_qsrc_p) {
             otherpnt = seg.target();
@@ -520,7 +520,7 @@ private:
                        << " osv=" << osv << std::endl; );
 
         if ((osh !=
-             ON_NEGATIVE_SIDE) and
+             ON_NEGATIVE_SIDE) &&
             (osv !=
              ON_NEGATIVE_SIDE))
         {
@@ -546,7 +546,7 @@ private:
         Point_2 pnt = q.point();
 
         Oriented_side side_of_pnt;
-        if (same_points(p.source_site(), q) or
+        if (same_points(p.source_site(), q) ||
             same_points(p.target_site(), q)   ) {
           side_of_pnt = ON_ORIENTED_BOUNDARY;
         } else {
@@ -557,7 +557,7 @@ private:
            << " side_of_pnt=" << side_of_pnt << std::endl; );
 
         if (side_of_pnt == ON_ORIENTED_BOUNDARY) {
-          CGAL_assertion(same_points(p.source_site(), q) or
+          CGAL_assertion(same_points(p.source_site(), q) ||
                          same_points(p.target_site(), q)   );
         } else {
           // here, side_of_pnt is non-zero
@@ -576,7 +576,7 @@ private:
 
         Segment_2 seg = p.segment();
 
-        if (is_same_psrc_q or is_same_ptrg_q) {
+        if (is_same_psrc_q || is_same_ptrg_q) {
           Point_2 otherpnt;
           if (is_same_psrc_q) {
             otherpnt = seg.target();
@@ -670,7 +670,7 @@ private:
             << " osv=" << osv << std::endl; );
 
         if ((osh !=
-             ON_NEGATIVE_SIDE) and
+             ON_NEGATIVE_SIDE) &&
             (osv !=
              ON_NEGATIVE_SIDE))
         {
@@ -759,13 +759,13 @@ private:
         Comparison_result cmpxpq = cmpx(pp, qq);
         Comparison_result cmpypq = cmpy(pp, qq);
 
-        if ((cmpxpq == EQUAL) or (cmpypq == EQUAL)) {
-          if (not (is_p_tsrc or is_q_tsrc)) {
+        if ((cmpxpq == EQUAL) || (cmpypq == EQUAL)) {
+          if (! (is_p_tsrc || is_q_tsrc)) {
             if (CGAL::right_turn(pp, qq, t.segment().source())) {
               return NEGATIVE;
             }
           }
-          if (not (is_p_ttrg or is_q_ttrg)) {
+          if (! (is_p_ttrg || is_q_ttrg)) {
             if (CGAL::right_turn(pp, qq, t.segment().target())) {
               return NEGATIVE;
             }
@@ -801,17 +801,17 @@ private:
     bool is_q_tsrc = same_points(q, t.source_site());
     bool is_q_ttrg = same_points(q, t.target_site());
 
-    bool is_q_on_t = is_q_tsrc or is_q_ttrg;
+    bool is_q_on_t = is_q_tsrc || is_q_ttrg;
 
     bool is_q_psrc = same_points(q, p.source_site());
     bool is_q_ptrg = same_points(q, p.target_site());
 
-    bool is_q_on_p = is_q_psrc or is_q_ptrg;
+    bool is_q_on_p = is_q_psrc || is_q_ptrg;
 
 
-    if ( is_q_on_t and is_q_on_p) {
+    if ( is_q_on_t && is_q_on_p) {
       CGAL_SDG_DEBUG(std::cout << "debug incircle_sps "
-        << "is_q_on_t and is_q_on_p" << std::endl; );
+        << "is_q_on_t && is_q_on_p" << std::endl; );
 
       Point_2 pother = is_q_psrc ? p.target() : p.source();
       Point_2 tother = is_q_tsrc ? t.target() : t.source();
@@ -825,7 +825,7 @@ private:
       if (o != RIGHT_TURN) {
         return POSITIVE;
       } else {
-        if (is_site_h_or_v(p) or is_site_h_or_v(t)) {
+        if (is_site_h_or_v(p) || is_site_h_or_v(t)) {
           return NEGATIVE;
         } else {
           bool has_p_pos_slope = has_positive_slope(p);
@@ -844,7 +844,7 @@ private:
       if ( is_site_h_or_v(p) ) {
         return POSITIVE;
       } else {
-        CGAL_assertion(not is_site_h_or_v(p));
+        CGAL_assertion(! is_site_h_or_v(p));
 
         // compute slope of segment p
         Line_2 l = compute_supporting_line(p.supporting_site());
@@ -857,7 +857,7 @@ private:
           oriented_side_of_line(l, pnt);
 
         if (side_of_pnt == ON_ORIENTED_BOUNDARY) {
-          CGAL_assertion(same_points(p.source_site(), q) or
+          CGAL_assertion(same_points(p.source_site(), q) ||
                          same_points(p.target_site(), q)   );
         }
 
@@ -870,7 +870,7 @@ private:
         Point_2 pnt_on_seg;
         Segment_2 seg = p.segment();
 
-        if (is_same_psrc_q or is_same_ptrg_q) {
+        if (is_same_psrc_q || is_same_ptrg_q) {
           pnt_on_seg = pnt;
           Point_2 otherpnt;
           if (is_same_psrc_q) {
@@ -946,7 +946,7 @@ private:
 
           Point_2 testp, otherp;
 
-          if (is_psrc_tsrc or is_ptrg_tsrc) {
+          if (is_psrc_tsrc || is_ptrg_tsrc) {
             CGAL_SDG_DEBUG(std::cout
                 << "debug incircle_sps tsrc endp of p"
                 << std::endl; );
@@ -962,7 +962,7 @@ private:
 
             testp = t.source_site().point();
             otherp = t.target_site().point();
-          } else if (is_psrc_ttrg or is_ptrg_ttrg) {
+          } else if (is_psrc_ttrg || is_ptrg_ttrg) {
             CGAL_SDG_DEBUG(std::cout
                 << "debug incircle_sps ttrg endp of p"
                 << std::endl; );
@@ -992,7 +992,7 @@ private:
 
           // check if testp equals pnt_on_seg
 
-          if ((cmpx(testp, pnt_on_seg) == EQUAL ) and
+          if ((cmpx(testp, pnt_on_seg) == EQUAL ) &&
               (cmpy(testp, pnt_on_seg) == EQUAL )   ) {
             // here testp is the same as pnt_on_seg
 
@@ -1055,16 +1055,16 @@ private:
     bool is_p_tsrc = same_points(p, t.source_site());
     bool is_p_ttrg = same_points(p, t.target_site());
 
-    bool is_p_on_t = is_p_tsrc or is_p_ttrg;
+    bool is_p_on_t = is_p_tsrc || is_p_ttrg;
 
     bool is_p_qsrc = same_points(p, q.source_site());
     bool is_p_qtrg = same_points(p, q.target_site());
 
-    bool is_p_on_q = is_p_qsrc or is_p_qtrg;
+    bool is_p_on_q = is_p_qsrc || is_p_qtrg;
 
-    if ( is_p_on_t and is_p_on_q ) {
+    if ( is_p_on_t && is_p_on_q ) {
       CGAL_SDG_DEBUG(std::cout << "debug incircle_pss "
-        << "is_p_on_t and is_p_on_q" << std::endl; );
+        << "is_p_on_t && is_p_on_q" << std::endl; );
 
       Point_2 qother = is_p_qsrc ? q.target() : q.source();
       Point_2 tother = is_p_tsrc ? t.target() : t.source();
@@ -1078,7 +1078,7 @@ private:
       if (o != LEFT_TURN) {
         return POSITIVE;
       } else {
-        if ( is_site_h_or_v(q) or is_site_h_or_v(t) ) {
+        if ( is_site_h_or_v(q) || is_site_h_or_v(t) ) {
           return NEGATIVE;
         } else {
           bool has_q_pos_slope = has_positive_slope(q);
@@ -1099,7 +1099,7 @@ private:
       if ( is_site_h_or_v(q) ) {
         return POSITIVE;
       } else {
-        CGAL_assertion(not is_site_h_or_v(q));
+        CGAL_assertion(! is_site_h_or_v(q));
 
         Point_2 pnt = p.point();
 
@@ -1116,7 +1116,7 @@ private:
           oriented_side_of_line(l, pnt);
 
         if (side_of_pnt == ON_ORIENTED_BOUNDARY) {
-          CGAL_assertion(same_points(q.source_site(), p) or
+          CGAL_assertion(same_points(q.source_site(), p) ||
                          same_points(q.target_site(), p)   );
         }
 
@@ -1129,7 +1129,7 @@ private:
         Point_2 pnt_on_seg;
         Segment_2 seg = q.segment();
 
-        if (is_same_qsrc_p or is_same_qtrg_p) {
+        if (is_same_qsrc_p || is_same_qtrg_p) {
           CGAL_SDG_DEBUG(std::cout
               << "debug: pss: p is endpoint of q" << std::endl; );
           pnt_on_seg = pnt;
@@ -1203,7 +1203,7 @@ private:
 
           Point_2 testt, othert;
 
-          if (is_qsrc_tsrc or is_qtrg_tsrc) {
+          if (is_qsrc_tsrc || is_qtrg_tsrc) {
             CGAL_SDG_DEBUG(std::cout
                 << "debug incircle_pss tsrc endp of q" << std::endl; );
 
@@ -1218,7 +1218,7 @@ private:
 
             testt = t.source_site().point();
             othert = t.target_site().point();
-          } else if (is_qsrc_ttrg or is_qtrg_ttrg) {
+          } else if (is_qsrc_ttrg || is_qtrg_ttrg) {
             CGAL_SDG_DEBUG(std::cout
                 << "debug incircle_pss ttrg endp of q" << std::endl; );
 
@@ -1247,7 +1247,7 @@ private:
 
           // check if testp equals pnt_on_seg
 
-          if ((cmpx(testt, pnt_on_seg) == EQUAL ) and
+          if ((cmpx(testt, pnt_on_seg) == EQUAL ) &&
               (cmpy(testt, pnt_on_seg) == EQUAL )   ) {
             // here testt is the same as pnt_on_seg
 

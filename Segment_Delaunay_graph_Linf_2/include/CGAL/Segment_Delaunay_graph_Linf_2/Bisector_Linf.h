@@ -47,11 +47,11 @@ private:
 
 private:
   result_type bisector(const Site_2& p, const Site_2& q) const {
-    if (p.is_point() and q.is_point()) {
+    if (p.is_point() && q.is_point()) {
       return bisector_PP(p, q);
-    } else if (p.is_point() and q.is_segment()) {
+    } else if (p.is_point() && q.is_segment()) {
       return bisector_PS(p, q);
-    } else if (p.is_segment() and q.is_point()) {
+    } else if (p.is_segment() && q.is_point()) {
       return - bisector_PS(q, p);
     } else { // p.is_segment() and q.is_segment()
       return bisector_SS(p, q);
@@ -60,7 +60,7 @@ private:
 
   result_type bisector_PP(const Site_2& p, const Site_2& q) const {
     // adapt from constructions
-    CGAL_assertion(p.is_point() and q.is_point());
+    CGAL_assertion(p.is_point() && q.is_point());
     Point_2 pp = p.point();
     Point_2 pq = q.point();
     //CGAL_SDG_DEBUG(std::cout << "debug bisector infinite "
@@ -92,7 +92,7 @@ private:
     // midpoint m of two points p and q
     Point_2 m = midpoint(pp, pq);
 
-    if ((cmpabsdxy == EQUAL) or (cmpx == EQUAL) or (cmpy == EQUAL)) {
+    if ((cmpabsdxy == EQUAL) || (cmpx == EQUAL) || (cmpy == EQUAL)) {
       // bisector is line going through m with direction d;
       // we will store this line as the union of two rays starting
       // at m with directions -d (incoming) and d (outgoing)
@@ -147,7 +147,7 @@ private:
     CGAL_SDG_DEBUG(std::cout << "bisector_PS entering with p=" << p
               << " q=" << q << std::endl;);
 
-    CGAL_assertion(p.is_point() and q.is_segment());
+    CGAL_assertion(p.is_point() && q.is_segment());
     Point_2 pnt = p.point();
     Segment_2 seg = q.segment();
     Full_Line_2 lseg = q.supporting_site().segment().supporting_line();
@@ -156,7 +156,7 @@ private:
     Compare_x_2 compare_x_2;
     Compare_y_2 compare_y_2;
 
-    if (same_points(p,q.source_site()) or
+    if (same_points(p,q.source_site()) ||
         same_points(p,q.target_site())) {
       //p must be one of the end point of segment q,
       //and the bisector is a line passing through p
@@ -185,7 +185,7 @@ private:
       Oriented_side side = lseg.oriented_side(pnt);
 
       // point pp sould not lie on the supporting line of q
-      CGAL_assertion(not (side == ON_ORIENTED_BOUNDARY));
+      CGAL_assertion(! (side == ON_ORIENTED_BOUNDARY));
 
       Point_2 points[3];
       unsigned int npts;
@@ -277,9 +277,9 @@ private:
         if (has_lseg_pos_slope) {
           //segment with positive slope
           if ( (compare_x_2(seg.source(),seg.target()) == SMALLER
-                  and lseg.has_on_positive_side(pnt))
-              or (compare_x_2(seg.source(),seg.target()) == LARGER
-                  and lseg.has_on_negative_side(pnt)) ) {
+                  && lseg.has_on_positive_side(pnt))
+              || (compare_x_2(seg.source(),seg.target()) == LARGER
+                  && lseg.has_on_negative_side(pnt)) ) {
                 // pcfirst is center of square,
                 // pfirst = phor, upward direction
                 // pclast is center of sqaure, plast = pver, left direction
@@ -300,9 +300,9 @@ private:
         else {
           //segment with negative slope
           if ( (compare_x_2(seg.source(),seg.target()) == SMALLER
-                and lseg.has_on_positive_side(pnt))
-              or (compare_x_2(seg.source(),seg.target()) == LARGER
-                  and lseg.has_on_negative_side(pnt)) ) {
+                && lseg.has_on_positive_side(pnt))
+              || (compare_x_2(seg.source(),seg.target()) == LARGER
+                  && lseg.has_on_negative_side(pnt)) ) {
                 // pcfirst is center of square,
                 // pfirst = pver, right direction
                 // pclast is center of sqaure, plast = phor, upward dir
@@ -356,7 +356,7 @@ private:
 
 
   result_type bisector_SS(const Site_2& p, const Site_2& q) const {
-    CGAL_precondition( p.is_segment() and q.is_segment() );
+    CGAL_precondition( p.is_segment() && q.is_segment() );
 
     CGAL_SDG_DEBUG(std::cout << "bisector_SS entering with p=" << p
               << " q=" << q << std::endl;);
@@ -374,14 +374,14 @@ private:
       are_same_points(p.source_site(), q.source_site());
     bool is_psrc_qtrg =
       are_same_points(p.source_site(), q.target_site());
-    bool is_mid_psrc = is_psrc_qsrc or is_psrc_qtrg;
+    bool is_mid_psrc = is_psrc_qsrc || is_psrc_qtrg;
     bool is_ptrg_qsrc =
       are_same_points(p.target_site(), q.source_site());
     bool is_ptrg_qtrg =
       are_same_points(p.target_site(), q.target_site());
-    bool is_mid_ptrg = is_ptrg_qsrc or is_ptrg_qtrg;
+    bool is_mid_ptrg = is_ptrg_qsrc || is_ptrg_qtrg;
 
-    bool have_common_endp = is_mid_psrc or is_mid_ptrg;
+    bool have_common_endp = is_mid_psrc || is_mid_ptrg;
 
     bool optimize_for_line(false);
 
@@ -399,7 +399,7 @@ private:
     Point_2 points[1];
     Direction_2 dinc, dout;
 
-    if ((not have_common_endp) and are_parallel(p, q)) {
+    if ((! have_common_endp) && are_parallel(p, q)) {
       // here p and q are parallel,
       // but not on the same supporting line (precondition)
 
@@ -458,7 +458,7 @@ private:
 
       if (have_common_endp) {
         // intersection is common point here
-        bool is_mid_qsrc = is_psrc_qsrc or is_ptrg_qsrc;
+        bool is_mid_qsrc = is_psrc_qsrc || is_ptrg_qsrc;
         const Point_2& mid  = is_mid_psrc ? p.source() : p.target();
         const Point_2& prep = is_mid_psrc ? p.target() : p.source();
         const Point_2& qrep = is_mid_qsrc ? q.target() : q.source();
@@ -517,14 +517,14 @@ private:
         Comparison_result cmpyqsm = compare_y_2(qsrc, mid);
         Comparison_result cmpymqt = compare_y_2(mid, qtrg);
 
-        if ((cmpxpsm == cmpxmpt) and (cmpypsm == cmpympt))
+        if ((cmpxpsm == cmpxmpt) && (cmpypsm == cmpympt))
         {
           // mid is inside p
           CGAL_SDG_DEBUG(std::cout <<
               "debug bisector_SS mid in p" << std::endl;);
 
           // take any endpoint of q not the same as mid
-          Point_2 qrep = ( (cmpxqsm == EQUAL) or (cmpyqsm == EQUAL) )
+          Point_2 qrep = ( (cmpxqsm == EQUAL) || (cmpyqsm == EQUAL) )
               ? qtrg : qsrc;
 
           Direction_2 dirq    ( Vector_2(mid, qrep) );
@@ -554,14 +554,14 @@ private:
               "debug bisector_SS dout=" << dout << std::endl;);
 
         } else {
-          if ((cmpxqsm == cmpxmqt) and (cmpyqsm == cmpymqt))
+          if ((cmpxqsm == cmpxmqt) && (cmpyqsm == cmpymqt))
           {
             // mid is inside q
             CGAL_SDG_DEBUG(std::cout <<
                 "debug bisector_SS mid in q" << std::endl;);
 
             // take any endpoint of p not the same as mid
-            Point_2 prep = ( (cmpxpsm == EQUAL) or (cmpypsm == EQUAL) )
+            Point_2 prep = ( (cmpxpsm == EQUAL) || (cmpypsm == EQUAL) )
                 ? ptrg : psrc;
 
             Direction_2 dirp    ( Vector_2(mid, prep) );
@@ -665,17 +665,17 @@ private:
     CGAL_SDG_DEBUG(std::cout << "debug ABCD = " << A << ' ' << B << ' '
               << C << ' ' << D << std::endl;);
 
-    if ((CGAL::sign(A) == POSITIVE) and
+    if ((CGAL::sign(A) == POSITIVE) &&
         (CGAL::sign(B) != NEGATIVE)    ) {
       // A > 0 and B >= 0
 
-      if ((CGAL::sign(C) == POSITIVE) and
+      if ((CGAL::sign(C) == POSITIVE) &&
           (CGAL::sign(D) != NEGATIVE)    ) {
         // C > 0 and D >= 0
         return Direction_2 (two*A*C+A*D+B*C,
                             two*B*D+A*D+B*C);
       }
-      else if ((CGAL::sign(C) != POSITIVE) and
+      else if ((CGAL::sign(C) != POSITIVE) &&
           (CGAL::sign(D) == POSITIVE)    ) {
         // C <= 0 and D > 0
         return Direction_2 (A*D+B*C,
@@ -686,16 +686,16 @@ private:
         return Direction_2( minusone, plusone);
       }
     }
-    else if ((CGAL::sign(A) != POSITIVE) and
+    else if ((CGAL::sign(A) != POSITIVE) &&
         (CGAL::sign(B) == POSITIVE)    ) {
       // A <= 0 and B > 0
-      if ((CGAL::sign(C) != POSITIVE) and
+      if ((CGAL::sign(C) != POSITIVE) &&
           (CGAL::sign(D) == POSITIVE)    ) {
         // C <= 0 and D > 0
         return Direction_2 (-two*A*C+A*D+B*C,
                              two*B*D-A*D-B*C);
       }
-      else if ((CGAL::sign(C) == NEGATIVE) and
+      else if ((CGAL::sign(C) == NEGATIVE) &&
           (CGAL::sign(D) != POSITIVE)    ) {
         // C < 0 and D <= 0
         return Direction_2 (-two*A*C-A*D+B*C,
@@ -706,16 +706,16 @@ private:
         return Direction_2( minusone, minusone);
       }
     }
-    else if ((CGAL::sign(A) == NEGATIVE) and
+    else if ((CGAL::sign(A) == NEGATIVE) &&
         (CGAL::sign(B) != POSITIVE)    ) {
       // A < 0 and B <= 0
-      if ((CGAL::sign(C) == NEGATIVE) and
+      if ((CGAL::sign(C) == NEGATIVE) &&
           (CGAL::sign(D) != POSITIVE)    ) {
         // C < 0 and D <= 0
         return Direction_2 (-two*A*C-A*D-B*C,
                             -two*B*D-A*D-B*C);
       }
-      else if ((CGAL::sign(C) != NEGATIVE) and
+      else if ((CGAL::sign(C) != NEGATIVE) &&
           (CGAL::sign(D) == NEGATIVE)    ) {
         // C >= 0 and D < 0
         return Direction_2 (-A*D-B*C,
@@ -728,13 +728,13 @@ private:
     }
     else {
       // here A >= 0 and B < 0
-      if ((CGAL::sign(C) != NEGATIVE) and
+      if ((CGAL::sign(C) != NEGATIVE) &&
           (CGAL::sign(D) == NEGATIVE)    ) {
         // C >= 0 and D < 0
         return Direction_2 ( two*A*C-A*D-B*C,
                             -two*B*D+A*D+B*C);
       }
-      else if ((CGAL::sign(C) == POSITIVE) and
+      else if ((CGAL::sign(C) == POSITIVE) &&
           (CGAL::sign(D) != NEGATIVE)    ) {
         // C > 0 and D >= 0
         return Direction_2 ( two*A*C+A*D-B*C,

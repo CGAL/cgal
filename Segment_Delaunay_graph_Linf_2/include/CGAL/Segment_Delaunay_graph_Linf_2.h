@@ -368,7 +368,7 @@ public:
       unsigned int cnt = 0;
       do {
         vh = vc1;
-        CGAL_assertion(not is_infinite(vh));
+        CGAL_assertion(! is_infinite(vh));
         if (is_infinite(vh)) {
           os << "vertex " << ++cnt << " : " << inf_vertex << std::endl;
         } else {

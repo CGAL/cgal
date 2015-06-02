@@ -42,18 +42,18 @@ namespace CGAL {
           bool is_degenerate_pqt = (orientation_Linf(p,q,t) == DEGENERATE);
           bool is_degenerate_qrt = (orientation_Linf(q,r,t) == DEGENERATE);
 
-          if (is_degenerate_pqt and is_degenerate_qrt) {
+          if (is_degenerate_pqt && is_degenerate_qrt) {
             //p,q,r,t are all collinear
             CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs pqrt all collin" << std::endl;);
             return ON_ORIENTED_BOUNDARY;
           }
 
-          if (not is_degenerate_pqt) {
+          if (! is_degenerate_pqt) {
             //CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs qpt not monotone" << std::endl;);
             return predicate(q,p,t,r);
           }
 
-          if (not is_degenerate_qrt) {
+          if (! is_degenerate_qrt) {
             //CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs rqt not monotone" << std::endl;);
             return predicate(r,q,t,p);
           }
@@ -70,21 +70,21 @@ namespace CGAL {
           Comparison_result cytr = compare_y_2(t,r);
 
           // if t equals any one of p,q,r return zero
-	  if (((cxtp == EQUAL) and (cytp == EQUAL)) or
-              ((cxtq == EQUAL) and (cytq == EQUAL)) or
-              ((cxtr == EQUAL) and (cytr == EQUAL))   )
+	  if (((cxtp == EQUAL) && (cytp == EQUAL)) ||
+              ((cxtq == EQUAL) && (cytq == EQUAL)) ||
+              ((cxtr == EQUAL) && (cytr == EQUAL))   )
           {
             return ON_ORIENTED_BOUNDARY;
           }
 
           // check if query point is inside any of the following
           // segments: pq, qr, rp
-          if (((cxtp == EQUAL) and (cxtq == EQUAL) and (cytp != cytq))
-           or ((cxtq == EQUAL) and (cxtr == EQUAL) and (cytq != cytr))
-           or ((cxtr == EQUAL) and (cxtp == EQUAL) and (cytr != cytp))
-           or ((cytp == EQUAL) and (cytq == EQUAL) and (cxtp != cxtq))
-           or ((cytq == EQUAL) and (cytr == EQUAL) and (cxtq != cxtr))
-           or ((cytr == EQUAL) and (cytp == EQUAL) and (cxtr != cxtp)))
+          if (((cxtp == EQUAL) && (cxtq == EQUAL) && (cytp != cytq))
+           || ((cxtq == EQUAL) && (cxtr == EQUAL) && (cytq != cytr))
+           || ((cxtr == EQUAL) && (cxtp == EQUAL) && (cytr != cytp))
+           || ((cytp == EQUAL) && (cytq == EQUAL) && (cxtp != cxtq))
+           || ((cytq == EQUAL) && (cytr == EQUAL) && (cxtq != cxtr))
+           || ((cytr == EQUAL) && (cytp == EQUAL) && (cxtr != cxtp)))
           {
             CGAL_SDG_DEBUG(std::cout << "debug side_of_os query point in segment"
               << std::endl;);
@@ -100,22 +100,22 @@ namespace CGAL {
 
           if (bspqrt == ON_BOUNDARY) {
 
-            if ((cxtp != EQUAL) and (cytp != EQUAL)
-                and (not (orientation_Linf(r,q,t)==DEGENERATE))) {
+            if ((cxtp != EQUAL) && (cytp != EQUAL)
+                && (! (orientation_Linf(r,q,t)==DEGENERATE))) {
                // r q t p
                return (Oriented_side)
                  (((int) orientation_Linf(r,q,t)) *
                   ((int) side_of_bounded_square_2(r,q,t,p)) ) ;
 	    }
-            if ((cxtq != EQUAL) and (cytq != EQUAL)
-                and (not (orientation_Linf(p,r,t)==DEGENERATE))) {
+            if ((cxtq != EQUAL) && (cytq != EQUAL)
+                && (! (orientation_Linf(p,r,t)==DEGENERATE))) {
                // p r t q
                return (Oriented_side)
                  (((int) orientation_Linf(p,r,t)) *
                   ((int) side_of_bounded_square_2(p,r,t,q)) ) ;
 	    }
-            if ((cxtr != EQUAL) and (cytr != EQUAL)
-                and (not (orientation_Linf(q,p,t)==DEGENERATE))) {
+            if ((cxtr != EQUAL) && (cytr != EQUAL)
+                && (! (orientation_Linf(q,p,t)==DEGENERATE))) {
                // q p t r
                return (Oriented_side)
                  (((int) orientation_Linf(q,p,t)) *

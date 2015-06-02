@@ -97,9 +97,9 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
     // direction is (1, 0)
 
     Compare_y_2 cmpy;
-    if (((cmpy(q, p) == LARGER) and
-         (s == ON_NEGATIVE_SIDE)   ) or
-        ((cmpy(q, p) == SMALLER) and
+    if (((cmpy(q, p) == LARGER) &&
+         (s == ON_NEGATIVE_SIDE)   ) ||
+        ((cmpy(q, p) == SMALLER) &&
          (s == ON_POSITIVE_SIDE)   )   ) {
       b = -b;
       c = -c;
@@ -126,9 +126,9 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
     // direction is (0, -1)
 
     Compare_x_2 cmpx;
-    if (((cmpx(q, p) == LARGER) and
-         (s == ON_NEGATIVE_SIDE)   ) or
-        ((cmpx(q, p) == SMALLER) and
+    if (((cmpx(q, p) == LARGER) &&
+         (s == ON_NEGATIVE_SIDE)   ) ||
+        ((cmpx(q, p) == SMALLER) &&
          (s == ON_POSITIVE_SIDE)   )   ) {
       a = -a;
       c = -c;
@@ -143,9 +143,9 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
   Homogeneous_point_2
   compute_linf_projection_hom(const Line_2& l, const Point_2& p)
   {
-    //CGAL_precondition( not l.is_degenerate() );
+    //CGAL_precondition( ! l.is_degenerate() );
     CGAL_precondition(
-        (CGAL::sign(l.a()) != ZERO) or (CGAL::sign(l.b()) != ZERO) );
+        (CGAL::sign(l.a()) != ZERO) || (CGAL::sign(l.b()) != ZERO) );
 
     Sign signa = CGAL::sign(l.a());
     Sign signb = CGAL::sign(l.b());
@@ -182,9 +182,9 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
   Point_2
   compute_linf_projection_nonhom(const Line_2& l, const Point_2& p)
   {
-    //CGAL_precondition( not l.is_degenerate() );
+    //CGAL_precondition( ! l.is_degenerate() );
     CGAL_precondition(
-        (CGAL::sign(l.a()) != ZERO) or (CGAL::sign(l.b()) != ZERO) );
+        (CGAL::sign(l.a()) != ZERO) || (CGAL::sign(l.b()) != ZERO) );
 
     Sign signa = CGAL::sign(l.a());
     Sign signb = CGAL::sign(l.b());
@@ -221,7 +221,7 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
   Homogeneous_point_2
   compute_horizontal_projection_hom(const Line_2& l, const Point_2& p)
   {
-    //CGAL_precondition( not l.is_horizontal() );
+    //CGAL_precondition( ! l.is_horizontal() );
 
     CGAL_precondition(
         (CGAL::sign(l.a()) != ZERO) );
@@ -239,7 +239,7 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
   Point_2
   compute_horizontal_projection(const Line_2& l, const Point_2& p)
   {
-    //CGAL_precondition( not l.is_horizontal() );
+    //CGAL_precondition( ! l.is_horizontal() );
     CGAL_precondition(
         (CGAL::sign(l.a()) != ZERO) );
 
@@ -256,7 +256,7 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
   Homogeneous_point_2
   compute_vertical_projection_hom(const Line_2& l, const Point_2& p)
   {
-    //CGAL_precondition( not l.is_horizontal() );
+    //CGAL_precondition( ! l.is_horizontal() );
     CGAL_precondition(
         (CGAL::sign(l.b()) != ZERO) );
 
@@ -273,7 +273,7 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
   Point_2
   compute_vertical_projection(const Line_2& l, const Point_2& p)
   {
-    //CGAL_precondition( not l.is_horizontal() );
+    //CGAL_precondition( ! l.is_horizontal() );
     CGAL_precondition(
         (CGAL::sign(l.b()) != ZERO) );
 
@@ -324,7 +324,7 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
     a = p.y() - q.y();
     b = q.x() - p.x();
 
-    CGAL_assertion((CGAL::sign(a) != ZERO) or
+    CGAL_assertion((CGAL::sign(a) != ZERO) ||
                    (CGAL::sign(b) != ZERO))   ;
 
     c = p.x() * q.y() - q.x() * p.y();
@@ -478,7 +478,7 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
       const Site_2 & p, const Site_2 & q,
       const bool samexpq)
   {
-    const RT lineval = coord_at(l, closest_coord, not samexpq);
+    const RT lineval = coord_at(l, closest_coord, ! samexpq);
     return CGAL::abs(lineval - ((samexpq) ? p.point().x() : p.point().y()))
            <
            CGAL::abs((samexpq)? p.point().y() - q.point().y() :
@@ -598,7 +598,7 @@ public:
     CGAL_SDG_DEBUG(std::cout << "debug bounded_side_of_bbox (p q r) = ("
                    << p << ") (" << q << ") (" << r << ")" << std::endl; );
 
-    if ((CGAL::compare(p.x(), q.x()) == EQUAL) and
+    if ((CGAL::compare(p.x(), q.x()) == EQUAL) &&
         (CGAL::compare(p.y(), q.y()) == EQUAL)    ) {
       return ON_BOUNDARY;
     }
@@ -661,7 +661,7 @@ public:
           << "oslsrc=" << oslsrc << " osltrg=" << osltrg
                      << std::endl;);
 
-    if ((oslsrc == ON_POSITIVE_SIDE) or
+    if ((oslsrc == ON_POSITIVE_SIDE) ||
         (osltrg == ON_POSITIVE_SIDE)   )
     {
       return true;
@@ -699,7 +699,7 @@ public:
         << "oslsrc=" << oslsrc << " osltrg=" << osltrg
         << std::endl;);
 
-    if ((oslsrc == ON_NEGATIVE_SIDE) or
+    if ((oslsrc == ON_NEGATIVE_SIDE) ||
         (osltrg == ON_NEGATIVE_SIDE)   )
     {
       return true;
@@ -738,7 +738,7 @@ public:
     Compare_y_2 cmpy;
 
     bool is_ssrc_positive;
-    if (same_points(q, s.source_site()) or
+    if (same_points(q, s.source_site()) ||
         same_points(p, s.source_site())   ) {
       is_ssrc_positive = false;
     } else {
@@ -746,7 +746,7 @@ public:
         (cmpx(pp, ssrc) == cmpxpq) : (cmpy(pp, ssrc) == cmpypq) ;
       const bool conflq = eqcmp ?
         (cmpy(ssrc, qq) == cmpypq) : (cmpx(ssrc, qq) == cmpxpq) ;
-      is_ssrc_positive = (conflp and conflq);
+      is_ssrc_positive = (conflp && conflq);
     }
     if (is_ssrc_positive) {
       CGAL_SDG_DEBUG(std::cout << "debug is_segment_inside_inf_box "
@@ -755,7 +755,7 @@ public:
     }
 
     bool is_strg_positive;
-    if (same_points(q, s.target_site()) or
+    if (same_points(q, s.target_site()) ||
         same_points(p, s.target_site())   ) {
       is_strg_positive = false;
     } else {
@@ -763,7 +763,7 @@ public:
         (cmpx(pp, strg) == cmpxpq) : (cmpy(pp, strg) == cmpypq) ;
       const bool conflq = eqcmp ?
         (cmpy(strg, qq) == cmpypq) : (cmpx(strg, qq) == cmpxpq) ;
-      is_strg_positive = (conflp and conflq);
+      is_strg_positive = (conflp && conflq);
     }
 
     if (is_strg_positive) {
@@ -815,8 +815,8 @@ public:
           (CGAL::sign(cmpxsrcip * cmpxiptrg +
                       cmpysrcip * cmpyiptrg   )) == POSITIVE;
 
-        if ((os_lqc_ip == ON_POSITIVE_SIDE) and
-            (os_lcp_ip == ON_POSITIVE_SIDE) and
+        if ((os_lqc_ip == ON_POSITIVE_SIDE) &&
+            (os_lcp_ip == ON_POSITIVE_SIDE) &&
             is_ip_inside_segment ) {
           return true;
         } else {
@@ -853,26 +853,26 @@ public:
     Are_same_points_2 same_points;
 
     bool is_ssrc_positive;
-    if (same_points(q, s.source_site()) or
+    if (same_points(q, s.source_site()) ||
         same_points(p, s.source_site())   ) {
       is_ssrc_positive = false;
     } else {
       Oriented_side os_lqc_ssrc = oriented_side_of_line(lqc, ssrc);
       Oriented_side os_lcp_ssrc = oriented_side_of_line(lcp, ssrc);
       is_ssrc_positive =
-        ((os_lqc_ssrc == ON_POSITIVE_SIDE) and
+        ((os_lqc_ssrc == ON_POSITIVE_SIDE) &&
          (os_lcp_ssrc == ON_POSITIVE_SIDE)    ) ;
     }
 
     bool is_strg_positive;
-    if (same_points(q, s.target_site()) or
+    if (same_points(q, s.target_site()) ||
         same_points(p, s.target_site())   ) {
       is_strg_positive = false;
     } else {
       Oriented_side os_lqc_strg = oriented_side_of_line(lqc, strg);
       Oriented_side os_lcp_strg = oriented_side_of_line(lcp, strg);
       is_strg_positive =
-        ((os_lqc_strg == ON_POSITIVE_SIDE) and
+        ((os_lqc_strg == ON_POSITIVE_SIDE) &&
          (os_lcp_strg == ON_POSITIVE_SIDE)    ) ;
     }
 
@@ -882,7 +882,7 @@ public:
         << " isstrgpos=" << is_strg_positive
         << std::endl;);
 
-    if (is_ssrc_positive or is_strg_positive) {
+    if (is_ssrc_positive || is_strg_positive) {
       CGAL_SDG_DEBUG(std::cout << "debug is_segment_inside_inf_box "
                      << "endpoint inside" << std::endl;);
       return true;
@@ -935,8 +935,8 @@ public:
           (CGAL::sign(cmpxsrcip * cmpxiptrg +
                       cmpysrcip * cmpyiptrg   )) == POSITIVE;
 
-        if ((os_lqc_ip == ON_POSITIVE_SIDE) and
-            (os_lcp_ip == ON_POSITIVE_SIDE) and
+        if ((os_lqc_ip == ON_POSITIVE_SIDE) &&
+            (os_lcp_ip == ON_POSITIVE_SIDE) &&
             is_ip_inside_segment ) {
           return true;
         } else {
@@ -976,9 +976,9 @@ public:
     Oriented_side os_lhor_strg = oriented_side_of_line(lhor, strg);
     Oriented_side os_lver_strg = oriented_side_of_line(lver, strg);
 
-    if (((os_lhor_ssrc == orside) and
-         (os_lver_ssrc == orside)) or
-        ((os_lhor_strg == orside) and
+    if (((os_lhor_ssrc == orside) &&
+         (os_lver_ssrc == orside)) ||
+        ((os_lhor_strg == orside) &&
          (os_lver_strg == orside))   ) {
           CGAL_SDG_DEBUG(std::cout
               << "debug intersects_segment_side_of_wedge "
@@ -1053,8 +1053,8 @@ public:
           (CGAL::sign(cmpxsrcip * cmpxiptrg +
                       cmpysrcip * cmpyiptrg   )) == POSITIVE;
 
-        if ((os_lhor_ip == orside) and
-            (os_lver_ip == orside) and
+        if ((os_lhor_ip == orside) &&
+            (os_lver_ip == orside) &&
             is_ip_inside_segment      ) {
           return true;
         } else {
@@ -1113,7 +1113,7 @@ public:
   {
     CGAL_assertion( t.is_segment() );
     CGAL_assertion( s.is_segment() );
-    CGAL_assertion(not is_site_h_or_v(s));
+    CGAL_assertion(! is_site_h_or_v(s));
 
     Segment_2 seg = s.segment();
 
@@ -1132,7 +1132,7 @@ public:
 
     //sandeep: lhor, lver remains same for left turn and right turn
 
-    if (dxs == NEGATIVE and dys == NEGATIVE) {
+    if (dxs == NEGATIVE && dys == NEGATIVE) {
 
       Line_2 lhor = Line_2(0,1,-pp.y());
       Line_2 lver = Line_2(-1,0,pp.x());
@@ -1140,7 +1140,7 @@ public:
       return intersects_segment_side_of_wedge(t,
                                        lhor, lver,
                                        os_lseg_p);
-    } else if (dxs == POSITIVE and dys == NEGATIVE) {
+    } else if (dxs == POSITIVE && dys == NEGATIVE) {
 
       Line_2 lhor = Line_2(0,-1,pp.y());
       Line_2 lver = Line_2(-1,0,pp.x());
@@ -1148,7 +1148,7 @@ public:
       return intersects_segment_side_of_wedge(t,
                                        lhor, lver,
                                        os_lseg_p);
-    } else if (dxs == POSITIVE and dys == POSITIVE) {
+    } else if (dxs == POSITIVE && dys == POSITIVE) {
 
       Line_2 lhor = Line_2(0,-1,pp.y());
       Line_2 lver = Line_2(1,0,-pp.x());
@@ -1197,10 +1197,10 @@ public:
 
     if (CGAL::orientation( qq, corner1, pp ) == LEFT_TURN) {
       return intersects_segment_interior_inf_box(s, q, corner1, p)
-         and intersects_segment_interior_inf_box(s, p, corner2, q);
+          && intersects_segment_interior_inf_box(s, p, corner2, q);
     } else {
       return intersects_segment_interior_inf_box(s, q, corner2, p)
-         and intersects_segment_interior_inf_box(s, p, corner1, q);
+          && intersects_segment_interior_inf_box(s, p, corner1, q);
     }
   } // end of intersects_segment_interior_bbox
 
@@ -1212,7 +1212,7 @@ public:
   has_positive_slope(const Site_2 & s)
   {
     CGAL_precondition(s.is_segment());
-    CGAL_precondition(not is_site_h_or_v(s));
+    CGAL_precondition(! is_site_h_or_v(s));
     Compare_x_2 cmpx;
     Compare_y_2 cmpy;
     Point_2 src = s.supporting_site().source();
@@ -1248,12 +1248,12 @@ public:
         << " scmpx=" << scmpx << " scmpy=" << scmpy
         << " tcmpx=" << tcmpx << " tcmpy=" << tcmpy
         << std::endl;);
-    if (   ((scmpx == EQUAL) and (tcmpx == EQUAL)) // vertical
-        or ((scmpy == EQUAL) and (tcmpy == EQUAL)) // horizontal
-        or ((scmpx == scmpy) and (tcmpx == tcmpy)) // positive
-        or ((scmpx != EQUAL) and (scmpy != EQUAL) and
-            (tcmpx != EQUAL) and (tcmpy != EQUAL) and
-            (scmpx != scmpy) and (tcmpx != tcmpy)) // negative
+    if (   ((scmpx == EQUAL) && (tcmpx == EQUAL)) // vertical
+        || ((scmpy == EQUAL) && (tcmpy == EQUAL)) // horizontal
+        || ((scmpx == scmpy) && (tcmpx == tcmpy)) // positive
+        || ((scmpx != EQUAL) && (scmpy != EQUAL) &&
+            (tcmpx != EQUAL) && (tcmpy != EQUAL) &&
+            (scmpx != scmpy) && (tcmpx != tcmpy)) // negative
        ) {
       return true;
     } else {
@@ -1266,7 +1266,7 @@ public:
   Boolean
   is_site_h_or_v(const Site_2 & s)
   {
-    return is_site_horizontal(s) or is_site_vertical(s);
+    return is_site_horizontal(s) || is_site_vertical(s);
   }
 
   inline
@@ -1292,7 +1292,7 @@ public:
   Boolean
   is_line_h_or_v(const Line_2 & l)
   {
-    return (CGAL::sign(l.a()) == ZERO) or (CGAL::sign(l.b()) == ZERO);
+    return (CGAL::sign(l.a()) == ZERO) || (CGAL::sign(l.b()) == ZERO);
   }
 
   inline
@@ -1320,7 +1320,7 @@ public:
     Orientation oupt = CGAL::orientation(pu, p.point(), pt);
     Orientation otpv = CGAL::orientation(pt, p.point(), pv);
 
-    return (oupt == LEFT_TURN) and (otpv == LEFT_TURN);
+    return (oupt == LEFT_TURN) && (otpv == LEFT_TURN);
   }
 
   static
@@ -1328,7 +1328,7 @@ public:
   are_in_same_open_halfspace_of(
       const Site_2 & p, const Site_2 & q, const Site_2 & r)
   {
-    CGAL_precondition(p.is_point() and q.is_point() and r.is_segment());
+    CGAL_precondition(p.is_point() && q.is_point() && r.is_segment());
     Line_2 lseg = compute_supporting_line(r.supporting_site());
     Oriented_side os_lseg_p = oriented_side_of_line(lseg, p.point());
     if ( os_lseg_p == ON_ORIENTED_BOUNDARY ) {
@@ -1359,7 +1359,7 @@ public:
   RT hvseg_coord(const Site_2 & s, const bool is_hor) {
     CGAL_assertion(s.is_segment());
     CGAL_assertion(is_site_horizontal(s) == is_hor);
-    CGAL_assertion(is_site_vertical(s) == (not is_hor));
+    CGAL_assertion(is_site_vertical(s) == (! is_hor));
     return is_hor ? s.supporting_site().source_site().point().y() :
                     s.supporting_site().source_site().point().x() ;
   }
@@ -1445,13 +1445,13 @@ public:
 private:
   inline static bool
   have_same_bearing(const Line_2 & l1, const Line_2 & l2) {
-    return (CGAL::sign(l1.a()) == CGAL::sign(l2.a())) and
+    return (CGAL::sign(l1.a()) == CGAL::sign(l2.a())) &&
            (CGAL::sign(l1.b()) == CGAL::sign(l2.b()))    ;
   }
 
   inline static bool
   have_opposite_bearing(const Line_2 & l1, const Line_2 & l2) {
-    return (CGAL::sign(l1.a()) == -CGAL::sign(l2.a())) and
+    return (CGAL::sign(l1.a()) == -CGAL::sign(l2.a())) &&
            (CGAL::sign(l1.b()) == -CGAL::sign(l2.b()))    ;
   }
 
@@ -1593,13 +1593,13 @@ public:
     const Bearing br = bearing(l[i_no]);
     if ( bearing_outside(bprev, br, bnext) ) {
       CGAL_assertion_code( const Bearing bropp = (br+4)%8 );
-      CGAL_assertion( not bearing_outside(bprev, bropp, bnext) );
+      CGAL_assertion( ! bearing_outside(bprev, bropp, bnext) );
       l[i_no] = opposite_line(l[i_no]);
       is_oriented[i_no] = true;
     } else {
-      CGAL_assertion( not bearing_outside(bprev, br, bnext) );
+      CGAL_assertion( ! bearing_outside(bprev, br, bnext) );
       const Bearing bropp = (br+4)%8;
-      if ( not bearing_outside(bprev, bropp, bnext) ) {
+      if ( ! bearing_outside(bprev, bropp, bnext) ) {
         CGAL_assertion( diffbear == 6 );
         CGAL_assertion( br % 2 == 1 ); // undecided is axis-parallel
         const Site_2 & sprev = iprev == 0 ? p : (iprev == 1? q : r);
@@ -1677,7 +1677,7 @@ public:
   {
     const bool is_psrc_q = is_endpoint_of(p.source_site(), q);
     const bool is_ptrg_q = is_endpoint_of(p.target_site(), q);
-    const bool have_common_pq = is_psrc_q or is_ptrg_q;
+    const bool have_common_pq = is_psrc_q || is_ptrg_q;
     Homogeneous_point_2 xpq;
     if (have_common_pq) {
       xpq = is_psrc_q ? p.source() : p.target();
@@ -1699,9 +1699,9 @@ public:
   inline static
   bool is_endpoint_of(const Site_2& p, const Site_2& s)
   {
-    CGAL_precondition( p.is_point() and s.is_segment() );
+    CGAL_precondition( p.is_point() && s.is_segment() );
     Are_same_points_2 same_points;
-    return ( same_points(p, s.source_site()) or
+    return ( same_points(p, s.source_site()) ||
 	     same_points(p, s.target_site())   );
   }
 
@@ -1845,12 +1845,12 @@ public:
         << "s=" << s
         << " pt_site=" << pt_site << " other_s=" << other_s
         << " t=" << t << std::endl;);
-    CGAL_assertion(not is_site_h_or_v(s));
+    CGAL_assertion(! is_site_h_or_v(s));
     if (other_s.is_segment()) {
       // shortcut: when the point pt_site is on a corner of
       // the Linf square, because it is the endpoint of the
       // other site which is a segment; return false immediately
-      if ((not is_site_h_or_v(other_s)) and
+      if ((! is_site_h_or_v(other_s)) &&
           is_endpoint_of(pt_site, other_s)) {
         return false;
       }
@@ -1868,20 +1868,20 @@ public:
   {
     Are_same_points_2 same_points;
     if (p.is_segment()) { return false; }
-    if (r.is_point() or s.is_point()) { return false; }
+    if (r.is_point() || s.is_point()) { return false; }
     const bool is_p_rsrc = same_points(p, r.source_site());
     const bool is_p_rtrg =
-      (not is_p_rsrc) and same_points(p, r.target_site());
-    const bool is_p_endp_of_r = is_p_rsrc or is_p_rtrg;
+      (! is_p_rsrc) && same_points(p, r.target_site());
+    const bool is_p_endp_of_r = is_p_rsrc || is_p_rtrg;
     if (is_p_endp_of_r) {
       const bool is_p_ssrc = same_points(p, s.source_site());
       const bool is_p_strg =
-        (not is_p_ssrc) and same_points(p, s.target_site());
-      const bool is_p_endp_of_s = is_p_ssrc or is_p_strg;
+        (! is_p_ssrc) && same_points(p, s.target_site());
+      const bool is_p_endp_of_s = is_p_ssrc || is_p_strg;
       if (is_p_endp_of_s) {
-        if (is_site_horizontal(r) and is_site_horizontal(s)) { return true; }
-        if (is_site_vertical(r) and is_site_vertical(s)) { return true; }
-        if ((not is_site_h_or_v(r)) and (not is_site_h_or_v(s))) {
+        if (is_site_horizontal(r) && is_site_horizontal(s)) { return true; }
+        if (is_site_vertical(r) && is_site_vertical(s)) { return true; }
+        if ((! is_site_h_or_v(r)) && (! is_site_h_or_v(s))) {
           const bool pos_r = has_positive_slope(r);
           const bool pos_s = has_positive_slope(s);
           if (pos_r == pos_s) {
@@ -1908,8 +1908,8 @@ public:
     Compare_x_2_Sites_Type scmpx;
     Compare_y_2_Sites_Type scmpy;
     const bool is_hor = is_site_horizontal(s);
-    const bool is_ver = (not is_hor) and is_site_vertical(s);
-    if (is_hor or is_ver) {
+    const bool is_ver = (! is_hor) && is_site_vertical(s);
+    if (is_hor || is_ver) {
       return ( (is_hor) ?
                scmpy(p, s.source_site()) : scmpx(p, s.source_site()) )
           == EQUAL;

@@ -75,10 +75,10 @@ public:
     }
 
     if ( t.is_segment() ) {
-      if (q.is_point() and s.is_point() and r.is_point()) {
+      if (q.is_point() && s.is_point() && r.is_point()) {
         if (sgn == NEGATIVE) {
           CGAL_SDG_DEBUG(std::cout << "debug return tocheck" << std::endl;);
-          if (same_points(q, t.source_site()) or
+          if (same_points(q, t.source_site()) ||
               same_points(q, t.target_site())   ) {
             // this works because endpoints of a segment are
             // inserted before its interior
@@ -92,7 +92,7 @@ public:
           } else {
 
             // here q is point
-            if ( not is_site_h_or_v(t) ) {
+            if ( ! is_site_h_or_v(t) ) {
 
               Line_2 lt = compute_supporting_line(t.supporting_site());
 
@@ -109,7 +109,7 @@ public:
               Oriented_side osr =
                 oriented_side_of_line(lq, r.point());
 
-              if ((oss == ON_NEGATIVE_SIDE) and
+              if ((oss == ON_NEGATIVE_SIDE) &&
                   (osr == ON_POSITIVE_SIDE)    ) {
                 CGAL_SDG_DEBUG(
                     std::cout
@@ -143,9 +143,9 @@ public:
           bool is_q_tsrc = same_points(q, t.source_site());
           bool is_q_ttrg = same_points(q, t.target_site());
 
-          CGAL_assertion(not (is_q_tsrc or is_q_ttrg));
+          CGAL_assertion(! (is_q_tsrc || is_q_ttrg));
 
-          if (is_q_tsrc or is_q_ttrg) {
+          if (is_q_tsrc || is_q_ttrg) {
             // philaris: this code should never be executed
 
             CGAL_assertion_code(
@@ -156,8 +156,8 @@ public:
             );
 
             CGAL_assertion(
-                (is_q_ssrc or is_q_strg) and
-                (is_q_rsrc or is_q_rtrg)    );
+                (is_q_ssrc || is_q_strg) &&
+                (is_q_rsrc || is_q_rtrg)    );
 
             CGAL_SDG_DEBUG(
                 std::cout
@@ -168,10 +168,10 @@ public:
             return true;
           }
 
-          CGAL_assertion( not (is_q_tsrc or is_q_ttrg) );
+          CGAL_assertion( ! (is_q_tsrc || is_q_ttrg) );
 
           // here q is point
-          if ( not is_site_h_or_v(t) ) {
+          if ( ! is_site_h_or_v(t) ) {
 
             Line_2 lt = compute_supporting_line(t.supporting_site());
 
@@ -187,7 +187,7 @@ public:
               srep = s.point();
             } else {
               // s is segment
-              CGAL_assertion( not is_site_h_or_v(s) ) ;
+              CGAL_assertion( ! is_site_h_or_v(s) ) ;
 
               Direction_2 d (s.supporting_site().segment());
               Line_2 ls = compute_supporting_line(s.supporting_site());
@@ -207,7 +207,7 @@ public:
               rrep = r.point();
             } else {
               // r is segment
-              CGAL_assertion( not is_site_h_or_v(r) ) ;
+              CGAL_assertion( ! is_site_h_or_v(r) ) ;
 
               Direction_2 d (r.supporting_site().segment());
               Line_2 lr = compute_supporting_line(r.supporting_site());
@@ -223,7 +223,7 @@ public:
             Oriented_side osr =
               oriented_side_of_line(lq, rrep);
 
-            if ((oss == ON_NEGATIVE_SIDE) and
+            if ((oss == ON_NEGATIVE_SIDE) &&
                 (osr == ON_POSITIVE_SIDE)    ) {
               CGAL_SDG_DEBUG(
                   std::cout
@@ -281,7 +281,7 @@ public:
       // in Linf they still have to be points, but
       // they do not have to be endpoints of q
       // (this has to be checked)
-      CGAL_assertion(s.is_point() and r.is_point());
+      CGAL_assertion(s.is_point() && r.is_point());
 
       if ( is_site_h_or_v(q) )
       {
@@ -309,16 +309,16 @@ public:
         // here sgn is non-negative
 
         bool is_s_endp_of_q =
-          same_points(s, q.source_site()) or
+          same_points(s, q.source_site()) ||
           same_points(s, q.target_site());
         bool is_r_endp_of_q =
-          same_points(r, q.source_site()) or
+          same_points(r, q.source_site()) ||
           same_points(r, q.target_site());
 
         Line_2 l;
         bool is_conflicting_side_of_q = false;
 
-        if (is_s_endp_of_q and is_r_endp_of_q) {
+        if (is_s_endp_of_q && is_r_endp_of_q) {
           // check if t is on positive side of rs
           l = compute_line_from_to(r.point(), s.point());
           if (oriented_side_of_line(l, t.point()) ==
@@ -348,7 +348,7 @@ public:
           }
         } // end of case: some of s, r is not endpoint of q
 
-        if (not is_conflicting_side_of_q) {
+        if (! is_conflicting_side_of_q) {
           CGAL_SDG_DEBUG(
               std::cout
               << "debug infinite-edge-int-cf with (q,s,r,t,sgn)= "
@@ -369,7 +369,7 @@ public:
         Comparison_result A = cmpx(s.point(), r.point());
         Comparison_result B = cmpy(s.point(), r.point());
 
-        CGAL_assertion((A != EQUAL) and (B != EQUAL));
+        CGAL_assertion((A != EQUAL) && (B != EQUAL));
 
         // corner point of infinite square
         Point_2 corner;
@@ -388,7 +388,7 @@ public:
         Oriented_side sidelst =
           oriented_side_of_line(ls, t.point());
 
-        if ((sidelrt == ON_NEGATIVE_SIDE) or
+        if ((sidelrt == ON_NEGATIVE_SIDE) ||
             (sidelst == ON_NEGATIVE_SIDE)   ) {
           CGAL_SDG_DEBUG(
               std::cout
@@ -466,7 +466,7 @@ public:
       CGAL_SDG_DEBUG(std::cout <<
           "debug infcf s=r and is segment" << std::endl;);
 
-      if ( same_points(q, s.source_site()) or
+      if ( same_points(q, s.source_site()) ||
            same_points(q, s.target_site())   )  {
         // here point q is endpoint of segment s
         Site_2 ss;
@@ -505,7 +505,7 @@ public:
 
         CGAL_assertion(sgn == NEGATIVE);
 
-        CGAL_assertion(not is_site_h_or_v(s));
+        CGAL_assertion(! is_site_h_or_v(s));
 
         // compute infinite square with corner at q
         // and with center at infinity at
@@ -550,7 +550,7 @@ public:
 
         Boolean retval =
           (osl1 !=
-           ON_NEGATIVE_SIDE) and
+           ON_NEGATIVE_SIDE) &&
           (osl2 !=
            ON_NEGATIVE_SIDE)     ;
 
@@ -581,9 +581,9 @@ public:
         << q << ' ' << s << ' ' << r << ' ' << t
         << ' ' << sgn << std::endl;);
 
-      if (s.is_point() and r.is_point()) {
+      if (s.is_point() && r.is_point()) {
         if ((bounded_side_of_bbox(
-                q.point(), s.point(), t.point()) == ON_BOUNDED_SIDE) and
+                q.point(), s.point(), t.point()) == ON_BOUNDED_SIDE) &&
             (bounded_side_of_bbox(
                 q.point(), r.point(), t.point()) == ON_BOUNDED_SIDE))
         {
@@ -609,10 +609,10 @@ public:
       CGAL_SDG_DEBUG(
           std::cout << "debug infinite-edge-int-cf special POS"
           << std::endl;);
-      if (s.is_point() and r.is_point()) {
+      if (s.is_point() && r.is_point()) {
         if ((bounded_side_of_bbox(
                t.point(), s.point(), q.point()) ==
-                 ON_BOUNDED_SIDE) and
+                 ON_BOUNDED_SIDE) &&
             (bounded_side_of_bbox(
                t.point(), r.point(), q.point()) ==
                  ON_BOUNDED_SIDE))
@@ -626,18 +626,18 @@ public:
           return true;
           // otherwise it will return false later
         }
-      } else if (s.is_segment() and r.is_segment()) {
+      } else if (s.is_segment() && r.is_segment()) {
         // here s and r are both segments
 
         // philaris: I assert that q is an endpoint of both s and r
 
         CGAL_assertion(
-            same_points(q, s.source_site()) or
+            same_points(q, s.source_site()) ||
             same_points(q, s.target_site())
             );
 
         CGAL_assertion(
-            same_points(q, r.source_site()) or
+            same_points(q, r.source_site()) ||
             same_points(q, r.target_site())
             );
 

@@ -119,7 +119,7 @@ private:
 
   inline void
   compute_v_if_not_computed() const {
-    if (not is_v_computed) {
+    if (! is_v_computed) {
       compute_vertex(p_, q_, r_);
       is_v_computed = true;
     }
@@ -178,8 +178,8 @@ private:
         CGAL_SDG_DEBUG(std::cout << "debug r is left of p, q" << std::endl;);
         Comparison_result cmpyrp = CGAL::compare(r.y(), p.y());
         Comparison_result cmpyrq = CGAL::compare(r.y(), q.y());
-        if (((cmpyrp == LARGER)  and (cmpyrq == LARGER)) or
-            ((cmpyrp == SMALLER) and (cmpyrq == SMALLER))
+        if (((cmpyrp == LARGER)  && (cmpyrq == LARGER)) ||
+            ((cmpyrp == SMALLER) && (cmpyrq == SMALLER))
            ) {
           // do fix
           if (cmpyrp == LARGER) {
@@ -198,8 +198,8 @@ private:
         CGAL_SDG_DEBUG(std::cout << "debug r is right of p, q" << std::endl;);
         Comparison_result cmpyrp = CGAL::compare(r.y(), p.y());
         Comparison_result cmpyrq = CGAL::compare(r.y(), q.y());
-        if (((cmpyrp == LARGER)  and (cmpyrq == LARGER)) or
-            ((cmpyrp == SMALLER) and (cmpyrq == SMALLER))
+        if (((cmpyrp == LARGER)  && (cmpyrq == LARGER)) ||
+            ((cmpyrp == SMALLER) && (cmpyrq == SMALLER))
            ) {
           // do fix
           if (cmpyrp == LARGER) {
@@ -222,24 +222,24 @@ private:
     Comparison_result cmpyqp = CGAL::compare(q.y(), p.y());
 
     if (cmpyqp == SMALLER) { // q.y() < p.y()
-      if (not is_set_y_min) {
+      if (! is_set_y_min) {
         y_min = q.y();
       }
-      if (not is_set_y_max) {
+      if (! is_set_y_max) {
         y_max = p.y();
       }
     } else if (cmpyqp == LARGER) { // q.y() > p.y()
-      if (not is_set_y_min) {
+      if (! is_set_y_min) {
         y_min = p.y();
       }
-      if (not is_set_y_max) {
+      if (! is_set_y_max) {
         y_max = q.y();
       }
     } else { //  q.y() = p.y()
-      if (not is_set_y_min) {
+      if (! is_set_y_min) {
         y_min = p.y();
       }
-      if (not is_set_y_max) {
+      if (! is_set_y_max) {
         y_max = p.y();
       }
       two_x_center = p.x() + q.x();
@@ -249,8 +249,8 @@ private:
       if (cmpyrothers == SMALLER) {
         Comparison_result cmpxrp = CGAL::compare(r.x(), p.x());
         Comparison_result cmpxrq = CGAL::compare(r.x(), q.x());
-        if (((cmpxrp == LARGER)  and (cmpxrq == LARGER)) or
-            ((cmpxrp == SMALLER) and (cmpxrq == SMALLER))
+        if (((cmpxrp == LARGER)  && (cmpxrq == LARGER)) ||
+            ((cmpxrp == SMALLER) && (cmpxrq == SMALLER))
            ) {
           // do fix
           if (cmpxrp == LARGER) {
@@ -264,8 +264,8 @@ private:
       } else if (cmpyrothers == LARGER) {
         Comparison_result cmpxrp = CGAL::compare(r.x(), p.x());
         Comparison_result cmpxrq = CGAL::compare(r.x(), q.x());
-        if (((cmpxrp == LARGER)  and (cmpxrq == LARGER)) or
-            ((cmpxrp == SMALLER) and (cmpxrq == SMALLER))
+        if (((cmpxrp == LARGER)  && (cmpxrq == LARGER)) ||
+            ((cmpxrp == SMALLER) && (cmpxrq == SMALLER))
            ) {
           // do fix
           if (cmpxrp == LARGER) {
@@ -286,30 +286,30 @@ private:
     Comparison_result cmpxrmax = CGAL::compare(r.x(), x_max);
     if (cmpxrmin == SMALLER) {
 	// here r.x() < x_min <= x_max
-        if (not is_set_x_min) {
+        if (! is_set_x_min) {
           x_min = r.x();
         }
     } else if (cmpxrmin == LARGER) {
       // here r.x() > x_min
       if (cmpxrmax == LARGER) {
         // here x_min <= x_max < r.x()
-        if (not is_set_x_max) {
+        if (! is_set_x_max) {
           x_max = r.x();
         }
       } else if (cmpxrmax == SMALLER) {
         // x_min < r.x() < x_max
         // do nothing
       } else { // r.x() = x_max
-        // r.x() = p.x() or r.x() = q.x()
+        // r.x() = p.x() || r.x() = q.x()
         if (CGAL::compare(r.x(), p.x()) == EQUAL) {
           two_y_center = p.y() + r.y();
           //Comparison_result cmpyqp = CGAL::compare(q.y(),p.y());
           Comparison_result cmpyqr = CGAL::compare(q.y(),r.y());
-          if ((cmpyqp == LARGER) and (cmpyqr == LARGER)) {
+          if ((cmpyqp == LARGER) && (cmpyqr == LARGER)) {
             y_min = two_y_center - q.y();
             is_set_y_min = true;
           }
-          if ((cmpyqp == SMALLER) and (cmpyqr == SMALLER)) {
+          if ((cmpyqp == SMALLER) && (cmpyqr == SMALLER)) {
             y_max = two_y_center - q.y();
             is_set_y_max = true;
           }
@@ -317,11 +317,11 @@ private:
           two_y_center = q.y() + r.y();
           Comparison_result cmpypq = CGAL::compare(p.y(),q.y());
           Comparison_result cmpypr = CGAL::compare(p.y(),r.y());
-          if ((cmpypq == LARGER) and (cmpypr == LARGER)) {
+          if ((cmpypq == LARGER) && (cmpypr == LARGER)) {
             y_min = two_y_center - p.y();
             is_set_y_min = true;
           }
-          if ((cmpypq == SMALLER) and (cmpypr == SMALLER)) {
+          if ((cmpypq == SMALLER) && (cmpypr == SMALLER)) {
             y_max = two_y_center - p.y();
             is_set_y_max = true;
           }
@@ -330,19 +330,19 @@ private:
       }
     } else {
       // here r.x() = x_min
-      // r.x() = p.x() or r.x() = q.x()
+      // r.x() = p.x() || r.x() = q.x()
       if (CGAL::compare(r.x(), p.x()) == EQUAL) {
         CGAL_SDG_DEBUG(std::cout << "debug r.x = p.x" << std::endl;);
         // r.x() = p.x()
         two_y_center = p.y() + r.y();
         //Comparison_result cmpyqp = CGAL::compare(q.y(),p.y());
         Comparison_result cmpyqr = CGAL::compare(q.y(),r.y());
-        if ((cmpyqp == LARGER) and (cmpyqr == LARGER)) {
+        if ((cmpyqp == LARGER) && (cmpyqr == LARGER)) {
           CGAL_SDG_DEBUG(std::cout << "debug q is above p, r" << std::endl;);
           y_min = two_y_center - q.y();
           is_set_y_min = true;
         }
-        if ((cmpyqp == SMALLER) and (cmpyqr == SMALLER)) {
+        if ((cmpyqp == SMALLER) && (cmpyqr == SMALLER)) {
           CGAL_SDG_DEBUG(std::cout << "debug q is below p, r" << std::endl;);
           y_max = two_y_center - q.y();
           is_set_y_max = true;
@@ -353,12 +353,12 @@ private:
         two_y_center = q.y() + r.y();
         Comparison_result cmpypq = CGAL::compare(p.y(),q.y());
         Comparison_result cmpypr = CGAL::compare(p.y(),r.y());
-        if ((cmpypq == LARGER) and (cmpypr == LARGER)) {
+        if ((cmpypq == LARGER) && (cmpypr == LARGER)) {
           CGAL_SDG_DEBUG(std::cout << "debug p is above q, r" << std::endl;);
           y_min = two_y_center - p.y();
           is_set_y_min = true;
         }
-        if ((cmpypq == SMALLER) and (cmpypr == SMALLER)) {
+        if ((cmpypq == SMALLER) && (cmpypr == SMALLER)) {
           CGAL_SDG_DEBUG(std::cout << "debug p is below q, r" << std::endl;);
           y_max = two_y_center - p.y();
           is_set_y_max = true;
@@ -371,30 +371,30 @@ private:
     Comparison_result cmpyrmax = CGAL::compare(r.y(), y_max);
     if (cmpyrmin == SMALLER) {
       // here r.y() < y_min <= y_max
-      if (not is_set_y_min) {
+      if (! is_set_y_min) {
         y_min = r.y();
       }
     } else if (cmpyrmin == LARGER) {
       // here r.y() > y_min
       if (cmpyrmax == LARGER) {
         // here y_min <= y_max < r.y()
-        if (not is_set_y_max) {
+        if (! is_set_y_max) {
           y_max = r.y();
         }
       } else if (cmpyrmax == SMALLER) {
         // y_min < r.y() < y_max
         // do nothing
       } else { // r.y() = y_max
-        // r.y() = p.y() or r.y() = q.y()
+        // r.y() = p.y() || r.y() = q.y()
         if (CGAL::compare(r.y(), p.y()) == EQUAL) {
           two_x_center = p.x() + r.x();
           //Comparison_result cmpxqp = CGAL::compare(q.x(),p.x());
           Comparison_result cmpxqr = CGAL::compare(q.x(),r.x());
-          if ((cmpxqp == LARGER) and (cmpxqr == LARGER)) {
+          if ((cmpxqp == LARGER) && (cmpxqr == LARGER)) {
             x_min = two_x_center - q.x();
             is_set_x_min = true;
           }
-          if ((cmpxqp == SMALLER) and (cmpxqr == SMALLER)) {
+          if ((cmpxqp == SMALLER) && (cmpxqr == SMALLER)) {
             x_max = two_x_center - q.x();
             is_set_x_max = true;
           }
@@ -402,11 +402,11 @@ private:
           two_x_center = q.x() + r.x();
           Comparison_result cmpxpq = CGAL::compare(p.x(),q.x());
           Comparison_result cmpxpr = CGAL::compare(p.x(),r.x());
-          if ((cmpxpq == LARGER) and (cmpxpr == LARGER)) {
+          if ((cmpxpq == LARGER) && (cmpxpr == LARGER)) {
             x_min = two_x_center - p.x();
             is_set_x_min = true;
           }
-          if ((cmpxpq == SMALLER) and (cmpxpr == SMALLER)) {
+          if ((cmpxpq == SMALLER) && (cmpxpr == SMALLER)) {
             x_max = two_x_center - p.x();
             is_set_x_max = true;
           }
@@ -415,16 +415,16 @@ private:
       }
     } else {
       // here r.y() = y_min
-      // r.y() = p.y() or r.y() = q.y()
+      // r.y() = p.y() || r.y() = q.y()
       if (CGAL::compare(r.y(), p.y()) == EQUAL) {
         two_x_center = p.x() + r.x();
         //Comparison_result cmpxqp = CGAL::compare(q.x(),p.x());
         Comparison_result cmpxqr = CGAL::compare(q.x(),r.x());
-        if ((cmpxqp == LARGER) and (cmpxqr == LARGER)) {
+        if ((cmpxqp == LARGER) && (cmpxqr == LARGER)) {
           x_min = two_x_center - q.x();
           is_set_x_min = true;
         }
-        if ((cmpxqp == SMALLER) and (cmpxqr == SMALLER)) {
+        if ((cmpxqp == SMALLER) && (cmpxqr == SMALLER)) {
           x_max = two_x_center - q.x();
           is_set_x_max = true;
         }
@@ -432,11 +432,11 @@ private:
         two_x_center = q.x() + r.x();
         Comparison_result cmpxpq = CGAL::compare(p.x(),q.x());
         Comparison_result cmpxpr = CGAL::compare(p.x(),r.x());
-        if ((cmpxpq == LARGER) and (cmpxpr == LARGER)) {
+        if ((cmpxpq == LARGER) && (cmpxpr == LARGER)) {
           x_min = two_x_center - p.x();
           is_set_x_min = true;
         }
-        if ((cmpxpq == SMALLER) and (cmpxpr == SMALLER)) {
+        if ((cmpxpq == SMALLER) && (cmpxpr == SMALLER)) {
           x_max = two_x_center - p.x();
           is_set_x_max = true;
         }
@@ -461,14 +461,14 @@ private:
           break;
         }
         // grow only if any point is inside vertical sides
-	if (((CGAL::compare(p.x(), x_min) == EQUAL)   and
-	     (CGAL::compare(p.y(), y_max) == SMALLER) and
-	     (CGAL::compare(p.y(), y_min) == LARGER)     ) or
-	    ((CGAL::compare(q.x(), x_min) == EQUAL)   and
-	     (CGAL::compare(q.y(), y_max) == SMALLER) and
-	     (CGAL::compare(q.y(), y_min) == LARGER)     ) or
-	    ((CGAL::compare(r.x(), x_min) == EQUAL)   and
-	     (CGAL::compare(r.y(), y_max) == SMALLER) and
+	if (((CGAL::compare(p.x(), x_min) == EQUAL)   &&
+	     (CGAL::compare(p.y(), y_max) == SMALLER) &&
+	     (CGAL::compare(p.y(), y_min) == LARGER)     ) ||
+	    ((CGAL::compare(q.x(), x_min) == EQUAL)   &&
+	     (CGAL::compare(q.y(), y_max) == SMALLER) &&
+	     (CGAL::compare(q.y(), y_min) == LARGER)     ) ||
+	    ((CGAL::compare(r.x(), x_min) == EQUAL)   &&
+	     (CGAL::compare(r.y(), y_max) == SMALLER) &&
 	     (CGAL::compare(r.y(), y_min) == LARGER)     )   )
         { // grow rectangle to the right
           CGAL_SDG_DEBUG(std::cout << "debug vring grow right" << std::endl;);
@@ -489,14 +489,14 @@ private:
           break;
         }
         // grow only if any point is inside horizontal sides
-	if (((CGAL::compare(p.y(), y_min) == EQUAL)   and
-	     (CGAL::compare(p.x(), x_max) == SMALLER) and
-	     (CGAL::compare(p.x(), x_min) == LARGER)     ) or
-	    ((CGAL::compare(q.y(), y_min) == EQUAL)   and
-	     (CGAL::compare(q.x(), x_max) == SMALLER) and
-	     (CGAL::compare(q.x(), x_min) == LARGER)     ) or
-	    ((CGAL::compare(r.y(), y_min) == EQUAL)   and
-	     (CGAL::compare(r.x(), x_max) == SMALLER) and
+	if (((CGAL::compare(p.y(), y_min) == EQUAL)   &&
+	     (CGAL::compare(p.x(), x_max) == SMALLER) &&
+	     (CGAL::compare(p.x(), x_min) == LARGER)     ) ||
+	    ((CGAL::compare(q.y(), y_min) == EQUAL)   &&
+	     (CGAL::compare(q.x(), x_max) == SMALLER) &&
+	     (CGAL::compare(q.x(), x_min) == LARGER)     ) ||
+	    ((CGAL::compare(r.y(), y_min) == EQUAL)   &&
+	     (CGAL::compare(r.x(), x_max) == SMALLER) &&
 	     (CGAL::compare(r.x(), x_min) == LARGER)     )   )
         { // grow rectangle upwards
           CGAL_SDG_DEBUG(std::cout
@@ -548,12 +548,12 @@ private:
     const bool is_q_ver = is_site_vertical(q);
     const bool is_r_hor = is_site_horizontal(r);
     const bool is_r_ver = is_site_vertical(r);
-    const bool is_q_hv = is_q_hor or is_q_ver;
-    const bool is_r_hv = is_r_hor or is_r_ver;
-    if (is_q_hv and is_r_hv) {
+    const bool is_q_hv = is_q_hor || is_q_ver;
+    const bool is_r_hv = is_r_hor || is_r_ver;
+    if (is_q_hv && is_r_hv) {
       compute_pss_both_hv(p, q, r, is_q_hor, is_r_hor, pq, pr);
     } else {
-      if (pq or pr) {
+      if (pq || pr) {
         compute_pss_endp(p, q, r,
             is_q_hv, is_q_hor, pq, is_r_hv, is_r_hor, pr);
       } else {
@@ -587,7 +587,7 @@ private:
       compute_pss_corner_and_pt(p, q, r, lq, lr, bq, br);
     } else if (bdiff == 2) {
       compute_pss_nonhv_consecutive(p, q, r, lq, lr, bq, br);
-    } else if ((bdiff == 3) or (bdiff == 4)) {
+    } else if ((bdiff == 3) || (bdiff == 4)) {
       compute_pss_ortho_wedge(p, q, r, lq, lr, bq, br);
     } else if (bdiff == 5) {
       compute_pss_side_p_known(p, q, r, lq, lr, bq, br);
@@ -661,11 +661,11 @@ private:
     const FT & lq_from_p = lq_compute_y ? xp : yp;
     const FT & lr_from_p = lq_compute_y ? yp : xp;
     const FT qcoord = coord_at(lq, lq_from_p, lq_compute_y);
-    const FT rcoord = coord_at(lr, lr_from_p, not lq_compute_y);
+    const FT rcoord = coord_at(lr, lr_from_p, ! lq_compute_y);
     const FT qdist = (bq < 4) ? qcoord - lr_from_p :
                                 lr_from_p - qcoord;
     CGAL_assertion(CGAL::sign(qdist) == POSITIVE);
-    const FT rdist = (bq <= 1) or (bq >= 6) ? rcoord - lq_from_p :
+    const FT rdist = (bq <= 1) || (bq >= 6) ? rcoord - lq_from_p :
                                               lq_from_p - rcoord;
     CGAL_assertion(CGAL::sign(rdist) == POSITIVE);
     const Comparison_result cmpqr = CGAL::compare(qdist, rdist);
@@ -710,7 +710,7 @@ private:
       const Bearing bqr)
   const
   {
-    CGAL_precondition((bqr == 1) or (bqr == 5));
+    CGAL_precondition((bqr == 1) || (bqr == 5));
     CGAL_USE(q);
     CGAL_USE(r);
     CGAL_USE(bq);
@@ -751,7 +751,7 @@ private:
       const Bearing bqr)
   const
   {
-    CGAL_precondition((bqr == 3) or (bqr == 7));
+    CGAL_precondition((bqr == 3) || (bqr == 7));
     CGAL_USE(q);
     CGAL_USE(r);
     CGAL_USE(bq);
@@ -819,7 +819,7 @@ private:
       const bool is_r_hv, const bool is_r_hor, const bool pr)
   const
   {
-    CGAL_precondition(pq or pr);
+    CGAL_precondition(pq || pr);
     const Line_2 lendp = orient_line_endp(p, (pq ? q : r), pq);
     const Line_2 lnon = orient_line_nonendp(p, (pq ? r : q));
     CGAL_SDG_DEBUG(std::cout << "debug compute_pss_endp lendp="
@@ -863,7 +863,7 @@ private:
       const bool pq, const bool pr)
   const
   {
-    CGAL_precondition(not (pq and pr));
+    CGAL_precondition(! (pq && pr));
     if (is_q_hor == is_r_hor) {
       // parallel segments
       const RT q_coord = hvseg_coord(q, is_q_hor);
@@ -871,7 +871,7 @@ private:
       RT & upar = is_q_hor ? ux_ : uy_;
       RT & uort = is_q_hor ? uy_ : ux_;
       upar = RT(2)*(is_q_hor ? p.point().x() : p.point().y())
-        + (( pq or pr ) ? RT(0) :
+        + (( pq || pr ) ? RT(0) :
                           RT(is_q_hor ? +1 : -1)*(r_coord - q_coord));
       uort = q_coord + r_coord;
       uz_ = RT(2);
@@ -890,7 +890,7 @@ private:
   const
   {
     CGAL_precondition(is_q_hor != is_r_hor);
-    if (pq or pr) {
+    if (pq || pr) {
       const RT q_coord = hvseg_coord(q, is_q_hor);
       const RT r_coord = hvseg_coord(r, is_r_hor);
       const bool is_touched_hor = pq ? is_q_hor : is_r_hor;
@@ -931,7 +931,7 @@ private:
       const bool pq, const bool pr)
   const
   {
-    CGAL_precondition(not (pq or pr));
+    CGAL_precondition(! (pq || pr));
     const RT q_coord = hvseg_coord(q, is_q_hor);
     const RT r_coord = hvseg_coord(r, is_r_hor);
     const RT p_coord_q = is_q_hor ? p.point().y() : p.point().x();
@@ -1059,8 +1059,8 @@ private:
                          const bool is_r_horizontal)
   const
   {
-    if ((is_r_horizontal       and (scmpx(p, q) == EQUAL)) or
-        ((not is_r_horizontal) and (scmpy(p, q) == EQUAL))   ) {
+    if ((is_r_horizontal     && (scmpx(p, q) == EQUAL)) ||
+        ((! is_r_horizontal) && (scmpy(p, q) == EQUAL))   ) {
       return compute_pps_nonendp_hv_samecoord(p, q, r, is_r_horizontal);
     }
 
@@ -1163,7 +1163,7 @@ private:
   const
   {
     const bool is_r_horizontal = is_site_horizontal(r);
-    if (is_r_horizontal or is_site_vertical(r)) {
+    if (is_r_horizontal || is_site_vertical(r)) {
       return compute_pps_endp_hv(p, q, r, p_endp_r, is_r_horizontal);
     } else {
       const bool pos_slope = has_positive_slope(r);
@@ -1215,7 +1215,7 @@ private:
     }
     if (second_comp == second_value) {
       const RT qcoord = pos_slope ? q.point().y() : q.point().x();
-      const RT lineval = coord_at(l, qcoord, not pos_slope);
+      const RT lineval = coord_at(l, qcoord, ! pos_slope);
       const Point_2 corner = pos_slope?
         Point_2(lineval, qcoord) : Point_2(qcoord, lineval);
       const RT sidelen = CGAL::max(CGAL::abs(corner.x() - p.point().x()),
@@ -1226,7 +1226,7 @@ private:
       return;
     }
 
-    CGAL_assertion((first_comp  == -first_value ) and
+    CGAL_assertion((first_comp  == -first_value ) &&
                    (second_comp == -second_value)    );
 
     const RT px = p.point().x();
@@ -1256,7 +1256,7 @@ private:
     }
 
     const RT & qcoord = pos_slope ? qy : qx;
-    const RT qlineval = coord_at(l, qcoord, not pos_slope);
+    const RT qlineval = coord_at(l, qcoord, ! pos_slope);
     const RT & qothercoord = pos_slope ? qx : qy;
     const RT qlen = CGAL::abs(qlineval -  qothercoord);
     CGAL_SDG_DEBUG(std::cout
@@ -1272,7 +1272,7 @@ private:
       return;
     }
 
-    CGAL_assertion((pqdist < plen) and (pqdist < qlen));
+    CGAL_assertion((pqdist < plen) && (pqdist < qlen));
 
     // here, compute corner opposite of corner on line of segment r
     const Point_2 opposite_corner = pos_slope ?
@@ -1294,10 +1294,10 @@ private:
   {
     const bool samexpq = scmpx(p, q) == EQUAL;
     const bool sameypq = (samexpq)? false : make_certain(scmpy(p, q) == EQUAL);
-    if (not (samexpq or sameypq)) {
+    if (! (samexpq || sameypq)) {
       return compute_pps_nonendp_nonhv_nonsamec(p, q, r);
     } else {
-      // samexpq or sameypq
+      // samexpq || sameypq
       CGAL_assertion(samexpq != sameypq);
       Line_2 l = compute_supporting_line(r);
       const FT common_coord = (samexpq) ? p.point().x() : p.point().y();
@@ -1342,7 +1342,7 @@ private:
   const
   {
     const bool is_r_horizontal = is_site_horizontal(r);
-    if (is_r_horizontal or is_site_vertical(r)) {
+    if (is_r_horizontal || is_site_vertical(r)) {
       return compute_pps_nonendp_hv(p, q, r, is_r_horizontal);
     } else {
       return compute_pps_nonendp_nonhv(p, q, r);
@@ -1363,7 +1363,7 @@ private:
     bool p_endp_r = is_endpoint_of(p, r);
     bool q_endp_r = is_endpoint_of(q, r);
 
-    if (p_endp_r or q_endp_r) {
+    if (p_endp_r || q_endp_r) {
       return compute_pps_endp(p, q, r, p_endp_r);
     }
     CGAL_assertion(are_in_same_open_halfspace_of(p, q, r));
@@ -1389,12 +1389,12 @@ private:
         << p << " q=" << q << std::endl;);
     CGAL_SDG_DEBUG(std::cout << "debug: bpq =" << bpq << std::endl;);
 
-    CGAL_assertion(not (p_endp_r and q_endp_r));
+    CGAL_assertion(! (p_endp_r && q_endp_r));
 
     bool samexpq = (scmpx(p, q) == EQUAL);
     bool sameypq = (scmpy(p, q) == EQUAL);
 
-    bool samecoordpq = samexpq or sameypq ;
+    bool samecoordpq = samexpq || sameypq ;
 
     Polychainline_2 goodbisector;
     if (p_endp_r) {
@@ -1419,8 +1419,8 @@ private:
 
       Line_2 l = compute_supporting_line(r.supporting_site());
 
-      if (((CGAL::sign(l.a()) == ZERO) and sameypq) or
-          ((CGAL::sign(l.b()) == ZERO) and samexpq)   )  {
+      if (((CGAL::sign(l.a()) == ZERO) && sameypq) ||
+          ((CGAL::sign(l.b()) == ZERO) && samexpq)   )  {
         // here l is horizontal or vertical and parallel to pq;
         // bqr or brp are equally good
         use_bqr = true;
@@ -1500,11 +1500,11 @@ private:
     const bool is_ptrg_q = is_endpoint_of(p.target_site(), q);
     const bool is_ptrg_r = is_endpoint_of(p.target_site(), r);
 
-    if (is_psrc_q and is_psrc_r) {
+    if (is_psrc_q && is_psrc_r) {
       ux_ = p.source().hx();
       uy_ = p.source().hy();
       uz_ = p.source().hw();
-    } else if (is_ptrg_q and is_ptrg_r) {
+    } else if (is_ptrg_q && is_ptrg_r) {
       ux_ = p.target().hx();
       uy_ = p.target().hy();
       uz_ = p.target().hw();
@@ -1515,11 +1515,11 @@ private:
       const bool is_q_hor = is_site_horizontal(q);
       const bool is_r_hor = is_site_horizontal(r);
 
-      const bool is_p_hv = is_p_hor or is_site_vertical(p);
-      const bool is_q_hv = is_q_hor or is_site_vertical(q);
-      const bool is_r_hv = is_r_hor or is_site_vertical(r);
+      const bool is_p_hv = is_p_hor || is_site_vertical(p);
+      const bool is_q_hv = is_q_hor || is_site_vertical(q);
+      const bool is_r_hv = is_r_hor || is_site_vertical(r);
 
-      if (is_p_hv and is_q_hv and is_r_hv) {
+      if (is_p_hv && is_q_hv && is_r_hv) {
         return compute_sss_hv(p, q, r, is_p_hor, is_q_hor, is_r_hor);
       }
 
@@ -1540,29 +1540,29 @@ private:
       const bool is_p_hor, const bool is_q_hor, const bool is_r_hor)
   const
   {
-    CGAL_precondition(not (is_p_hor and is_q_hor and is_r_hor));
-    CGAL_precondition(is_p_hor or is_q_hor or is_r_hor);
+    CGAL_precondition(! (is_p_hor && is_q_hor && is_r_hor));
+    CGAL_precondition(is_p_hor || is_q_hor || is_r_hor);
     const unsigned int num_hor =
       (is_p_hor ? 1 : 0) + (is_q_hor ? 1 : 0) + (is_r_hor ? 1 : 0);
-    CGAL_assertion((num_hor == 1) or (num_hor == 2));
+    CGAL_assertion((num_hor == 1) || (num_hor == 2));
     const bool are_common_hor = num_hor == 2;
-    const bool is_odd_hor = not are_common_hor;
+    const bool is_odd_hor = ! are_common_hor;
 
     const Site_2 & odd = (is_odd_hor) ?
       (is_p_hor ? p : (is_q_hor ? q : r)) :
       (is_p_hor ? (is_q_hor ? r : q) : p);
-    CGAL_assertion( (not (num_hor == 1)) or is_site_horizontal(odd) );
-    CGAL_assertion( (not (num_hor == 2)) or is_site_vertical(odd) );
+    CGAL_assertion( (! (num_hor == 1)) || is_site_horizontal(odd) );
+    CGAL_assertion( (! (num_hor == 2)) || is_site_vertical(odd) );
     const Site_2 & prev = (is_odd_hor) ?
       (is_p_hor ? r : (is_q_hor ? p : q)) :
       (is_p_hor ? (is_q_hor ? q : p) : r);
-    CGAL_assertion( (not (num_hor == 1)) or is_site_vertical(prev) );
-    CGAL_assertion( (not (num_hor == 2)) or is_site_horizontal(prev) );
+    CGAL_assertion( (! (num_hor == 1)) || is_site_vertical(prev) );
+    CGAL_assertion( (! (num_hor == 2)) || is_site_horizontal(prev) );
     const Site_2 & next = (is_odd_hor) ?
       (is_p_hor ? q : (is_q_hor ? r : p)) :
       (is_p_hor ? (is_q_hor ? p : r) : q);
-    CGAL_assertion( (not (num_hor == 1)) or is_site_vertical(next) );
-    CGAL_assertion( (not (num_hor == 2)) or is_site_horizontal(next) );
+    CGAL_assertion( (! (num_hor == 1)) || is_site_vertical(next) );
+    CGAL_assertion( (! (num_hor == 2)) || is_site_horizontal(next) );
 
     const RT prevc = hvseg_coord(prev, are_common_hor);
     const RT nextc = hvseg_coord(next, are_common_hor);
@@ -1632,7 +1632,7 @@ private:
   compute_vertex(const Site_2& s1, const Site_2& s2, const Site_2& s3)
   const
   {
-    CGAL_assertion( not is_v_computed );
+    CGAL_assertion( ! is_v_computed );
     CGAL_SDG_DEBUG(std::cout << "debug vring compute_vertex "
         << s1 << ' ' << s2 << ' ' << s3 << std::endl;);
     if ( v_type == PPP ) {
@@ -1745,9 +1745,9 @@ private:
     }
 
     if (
-      ( p_.is_segment() and is_on_hv_seg_line(t, p_) ) or
-      ( q_.is_segment() and is_on_hv_seg_line(t, q_) ) or
-      ( r_.is_segment() and is_on_hv_seg_line(t, r_) )  )
+      ( p_.is_segment() && is_on_hv_seg_line(t, p_) ) ||
+      ( q_.is_segment() && is_on_hv_seg_line(t, q_) ) ||
+      ( r_.is_segment() && is_on_hv_seg_line(t, r_) )  )
     {
       use_result = true;
       return POSITIVE;
@@ -1771,7 +1771,7 @@ private:
   {
     CGAL_precondition( t.is_point() );
     use_result = false;
-    if (is_endpoint_of(t, p_) or is_endpoint_of(t, q_) or
+    if (is_endpoint_of(t, p_) || is_endpoint_of(t, q_) ||
         is_endpoint_of(t, r_) ) {
       use_result = true;
       return POSITIVE;
@@ -1892,7 +1892,7 @@ private:
         const bool p_t_samex =
           CGAL::compare(scalediffdvpx, scalediffdvtx) == EQUAL;
         const bool p_t_on_same_ver_side =
-          (p_t_samex) and
+          (p_t_samex) &&
           (CGAL::compare(CGAL::abs(scalediffdvpx), Rs1) == EQUAL) ;
         if (p_t_on_same_ver_side) {
           sidecmp = CGAL::compare(d_fine, CGAL::abs(scalediffdvpy));
@@ -1900,7 +1900,7 @@ private:
         const bool p_t_samey =
           CGAL::compare(scalediffdvpy, scalediffdvty) == EQUAL;
         const bool p_t_on_same_hor_side =
-          (p_t_samey) and
+          (p_t_samey) &&
           (CGAL::compare(CGAL::abs(scalediffdvpy), Rs1) == EQUAL) ;
         if (p_t_on_same_hor_side) {
           sidecmp = CGAL::compare(d_fine, CGAL::abs(scalediffdvpx));
@@ -1921,8 +1921,8 @@ private:
       const bool is_p2_endp_of_s = is_endpoint_of(p2, s);
 
       // check for p, q with same coordinate and r non-hv segment
-      if ((not (is_s_hor or is_s_ver)) and
-          (not (is_p1_endp_of_s or is_p2_endp_of_s))
+      if ((! (is_s_hor || is_s_ver)) &&
+          (! (is_p1_endp_of_s || is_p2_endp_of_s))
          ) {
         CGAL_SDG_DEBUG(std::cout << "debug vring seg=" << s
             << " is non-axis parallel"
@@ -1940,10 +1940,10 @@ private:
                 << " might be on same Linf horizontal side" << std::endl;);
           }
         }
-        if (pqsamex or pqsamey) {
+        if (pqsamex || pqsamey) {
           Line_2 lr = compute_supporting_line(s.supporting_site());
           Homogeneous_point_2 rref = compute_linf_projection_hom(lr, point());
-          if ( pqsamex and (CGAL::compare(rref.x(), pointref.x()) == EQUAL) ) {
+          if ( pqsamex && (CGAL::compare(rref.x(), pointref.x()) == EQUAL) ) {
             RT scalediffdvry = uy_ - rref.y() * uz_;
             if (CGAL::sign(scalediffdvry) == CGAL::sign(scalediffdvty)) {
               if (CGAL::compare(CGAL::abs(scalediffdvtx),
@@ -1952,7 +1952,7 @@ private:
               }
             }
           } // end of pqsamex and rref same x case
-          if ( pqsamey and (CGAL::compare(rref.y(), pointref.y()) == EQUAL) ) {
+          if ( pqsamey && (CGAL::compare(rref.y(), pointref.y()) == EQUAL) ) {
             RT scalediffdvrx = ux_ - rref.x() * uz_;
             if (CGAL::sign(scalediffdvrx) == CGAL::sign(scalediffdvtx)) {
               if (CGAL::compare(CGAL::abs(scalediffdvty),
@@ -1961,7 +1961,7 @@ private:
               }
             }
           } // end of pqsamey and rref same y case
-        } // end of case: pqsamex or pqsamey
+        } // end of case: pqsamex || pqsamey
       } // end of non-hv segment r case with p, q non-endpoints of r
 
       return ZERO;
@@ -2032,13 +2032,13 @@ private:
       const bool is_s1src_s2 = is_endpoint_of(s1.source_site(), s2);
       const bool is_s1trg_s2 = is_endpoint_of(s1.target_site(), s2);
 
-      if (is_s1src_s2 or is_s1trg_s2) {
-        if ((is_site_h_or_v(s1) and (not is_site_h_or_v(s2))) or
-            (is_site_h_or_v(s2) and (not is_site_h_or_v(s1)))   )
+      if (is_s1src_s2 || is_s1trg_s2) {
+        if ((is_site_h_or_v(s1) && (! is_site_h_or_v(s2))) ||
+            (is_site_h_or_v(s2) && (! is_site_h_or_v(s1)))   )
         {
           CGAL_SDG_DEBUG(std::cout << "debug vring "
               << "s1, s2 candidates" << std::endl; );
-          if (is_site_horizontal(s1) or is_site_horizontal(s2)) {
+          if (is_site_horizontal(s1) || is_site_horizontal(s2)) {
             Site_2 s1test = is_s1src_s2?
                        (s1.source_site()):
                        (s1.target_site());
@@ -2092,7 +2092,7 @@ private:
       const bool p_t_samex =
         CGAL::compare(scalediffdvpx, scalediffdvtx) == EQUAL;
       const bool p_t_on_same_ver_side =
-        (p_t_samex) and
+        (p_t_samex) &&
         (CGAL::compare(CGAL::abs(scalediffdvpx), Rs1) == EQUAL) ;
       if (p_t_on_same_ver_side) {
         sidecmp = CGAL::compare(d_fine, CGAL::abs(scalediffdvpy));
@@ -2100,7 +2100,7 @@ private:
       const bool p_t_samey =
         CGAL::compare(scalediffdvpy, scalediffdvty) == EQUAL;
       const bool p_t_on_same_hor_side =
-        (p_t_samey) and
+        (p_t_samey) &&
         (CGAL::compare(CGAL::abs(scalediffdvpy), Rs1) == EQUAL) ;
       if (p_t_on_same_hor_side) {
         sidecmp = CGAL::compare(d_fine, CGAL::abs(scalediffdvpx));
@@ -2113,11 +2113,11 @@ private:
         return POSITIVE;
       }
 
-      if (p_t_samex or p_t_samey) {
+      if (p_t_samex || p_t_samey) {
         return ZERO;
       }
 
-      if (not is_site_h_or_v(s1)) {
+      if (! is_site_h_or_v(s1)) {
         // here s1 is non-axis parallel
         // therefore, it touches the square at a corner
         if (points_inside_touching_sides_v(
@@ -2126,7 +2126,7 @@ private:
         }
       }
 
-      if (not is_site_h_or_v(s2)) {
+      if (! is_site_h_or_v(s2)) {
         // here s2 is non-axis parallel
         // therefore, it touches the square at a corner
         if (points_inside_touching_sides_v(
@@ -2193,13 +2193,13 @@ private:
         bool is_s1src_s2 = is_endpoint_of((*s1_ptr).source_site(), *s2_ptr);
         bool is_s1trg_s2 = is_endpoint_of((*s1_ptr).target_site(), *s2_ptr);
 
-        if (is_s1src_s2 or is_s1trg_s2) {
-          if ((is_site_h_or_v(*s1_ptr) and (not is_site_h_or_v(*s2_ptr))) or
-              (is_site_h_or_v(*s2_ptr) and (not is_site_h_or_v(*s1_ptr)))   )
+        if (is_s1src_s2 || is_s1trg_s2) {
+          if ((is_site_h_or_v(*s1_ptr) && (! is_site_h_or_v(*s2_ptr))) ||
+              (is_site_h_or_v(*s2_ptr) && (! is_site_h_or_v(*s1_ptr)))   )
           {
             CGAL_SDG_DEBUG(std::cout << "debug vring "
                 << "s1, s2 candidates" << std::endl; );
-            if (is_site_horizontal(*s1_ptr) or is_site_horizontal(*s2_ptr)) {
+            if (is_site_horizontal(*s1_ptr) || is_site_horizontal(*s2_ptr)) {
               Site_2 s1test = is_s1src_s2?
                 ((*s1_ptr).source_site()):
                 ((*s1_ptr).target_site());
@@ -2637,7 +2637,7 @@ private:
     }
 #ifndef CGAL_NO_ASSERTIONS
     else { // p is segment
-      if (same_points(p_.source_site(), t.source_site()) or
+      if (same_points(p_.source_site(), t.source_site()) ||
           same_points(p_.target_site(), t.source_site())   ) {
         has_p_endp_tsrc = true;
       }
@@ -2653,7 +2653,7 @@ private:
     }
 #ifndef CGAL_NO_ASSERTIONS
     else { // q is segment
-      if (same_points(q_.source_site(), t.source_site()) or
+      if (same_points(q_.source_site(), t.source_site()) ||
           same_points(q_.target_site(), t.source_site())   ) {
         has_q_endp_tsrc = true;
       }
@@ -2669,7 +2669,7 @@ private:
     }
 #ifndef CGAL_NO_ASSERTIONS
     else { // r is segment
-      if (same_points(r_.source_site(), t.source_site()) or
+      if (same_points(r_.source_site(), t.source_site()) ||
           same_points(r_.target_site(), t.source_site())   ) {
         has_r_endp_tsrc = true;
       }
@@ -2691,7 +2691,7 @@ private:
     unsigned int numendpts_of_t = 0;
 
     Sign d1, d2;
-    if ( is_p_tsrc or is_q_tsrc or is_r_tsrc ) {
+    if ( is_p_tsrc || is_q_tsrc || is_r_tsrc ) {
       d1 = ZERO;
       ++numendpts_of_t;
     } else {
@@ -2713,7 +2713,7 @@ private:
     }
 #ifndef CGAL_NO_ASSERTIONS
     else { // p is segment
-      if (same_points(p_.source_site(), t.target_site()) or
+      if (same_points(p_.source_site(), t.target_site()) ||
           same_points(p_.target_site(), t.target_site())   ) {
         has_p_endp_ttrg = true;
       }
@@ -2729,7 +2729,7 @@ private:
     }
 #ifndef CGAL_NO_ASSERTIONS
     else { // q is segment
-      if (same_points(q_.source_site(), t.target_site()) or
+      if (same_points(q_.source_site(), t.target_site()) ||
           same_points(q_.target_site(), t.target_site())   ) {
         has_q_endp_ttrg = true;
       }
@@ -2745,7 +2745,7 @@ private:
     }
 #ifndef CGAL_NO_ASSERTIONS
     else { // r is segment
-      if (same_points(r_.source_site(), t.target_site()) or
+      if (same_points(r_.source_site(), t.target_site()) ||
           same_points(r_.target_site(), t.target_site())   ) {
         has_r_endp_ttrg = true;
       }
@@ -2764,7 +2764,7 @@ private:
     );
 #endif
 
-    if ( is_p_ttrg or is_q_ttrg or is_r_ttrg ) {
+    if ( is_p_ttrg || is_q_ttrg || is_r_ttrg ) {
       d2 = ZERO;
       ++numendpts_of_t;
     } else {
@@ -2786,12 +2786,12 @@ private:
       bool is_t_horizontal = is_site_horizontal(t);
       bool is_t_vertical   = is_site_vertical(t);
 
-      if (is_t_horizontal or is_t_vertical) {
+      if (is_t_horizontal || is_t_vertical) {
         CGAL_assertion(numendpts_of_t == 1);
 
         // set endp to endpoint in {p,q,r}
         Site_2 endp;
-        if ( is_p_tsrc or is_q_tsrc or is_r_tsrc ) {
+        if ( is_p_tsrc || is_q_tsrc || is_r_tsrc ) {
           endp = t.source_site();
         } else {
           endp = t.target_site();
@@ -2807,17 +2807,17 @@ private:
         // if there is a segment in {p,q,r}, try its endpoints
         if (numpts_in_pqr < 3) {
 
-          if ((not is_p_point) and is_endpoint_of(endp, p_)) {
+          if ((! is_p_point) && is_endpoint_of(endp, p_)) {
             numothers++;
             other = p_;
           }
 
-          if ((not is_q_point) and is_endpoint_of(endp, q_)) {
+          if ((! is_q_point) && is_endpoint_of(endp, q_)) {
             numothers++;
             other = q_;
           }
 
-          if ((not is_r_point) and is_endpoint_of(endp, r_)) {
+          if ((! is_r_point) && is_endpoint_of(endp, r_)) {
             numothers++;
             other = r_;
           }
@@ -2830,8 +2830,8 @@ private:
           bool is_other_horizontal = is_site_horizontal(other);
           bool is_other_vertical = is_site_vertical(other);
 
-          if ((is_t_horizontal and is_other_horizontal) or
-              (is_t_vertical and is_other_vertical)       ) {
+          if ((is_t_horizontal && is_other_horizontal) ||
+              (is_t_vertical && is_other_vertical)       ) {
             return POSITIVE;
           }
         } else {
@@ -2845,14 +2845,14 @@ private:
 
           CGAL_SDG_DEBUG(std::cout << "debug vv = " << vv << std::endl;);
 
-          if ( ( (ptcmpxve == EQUAL) and is_t_horizontal ) or
-               ( (ptcmpyve == EQUAL) and is_t_vertical   )    ) {
+          if ( ( (ptcmpxve == EQUAL) && is_t_horizontal ) ||
+               ( (ptcmpyve == EQUAL) && is_t_vertical   )    ) {
             return ZERO;
           }
 
         } // end of case numothers == 0
-      }  // endif (is_t_horizontal or is_t_vertical)
-    } // endif ((numendpts_of_t > 0) and (numpts_in_pqr < 3))
+      }  // endif (is_t_horizontal || is_t_vertical)
+    } // endif ((numendpts_of_t > 0) && (numpts_in_pqr < 3))
 
     bool is_tsrc_endp_of_p (false);
     bool is_tsrc_endp_of_q (false);
@@ -2861,51 +2861,51 @@ private:
     bool is_ttrg_endp_of_q (false);
     bool is_ttrg_endp_of_r (false);
 
-    if (not is_p_point) {
+    if (! is_p_point) {
       is_tsrc_endp_of_p = same_points(t.source_site(), p_.source_site())
-                       or same_points(t.source_site(), p_.target_site());
+                       || same_points(t.source_site(), p_.target_site());
       is_ttrg_endp_of_p = same_points(t.target_site(), p_.source_site())
-                       or same_points(t.target_site(), p_.target_site());
+                       || same_points(t.target_site(), p_.target_site());
     }
-    if (not is_q_point) {
+    if (! is_q_point) {
       is_tsrc_endp_of_q = same_points(t.source_site(), q_.source_site())
-                       or same_points(t.source_site(), q_.target_site());
+                       || same_points(t.source_site(), q_.target_site());
       is_ttrg_endp_of_q = same_points(t.target_site(), q_.source_site())
-                       or same_points(t.target_site(), q_.target_site());
+                       || same_points(t.target_site(), q_.target_site());
     }
-    if (not is_r_point) {
+    if (! is_r_point) {
       is_tsrc_endp_of_r = same_points(t.source_site(), r_.source_site())
-                       or same_points(t.source_site(), r_.target_site());
+                       || same_points(t.source_site(), r_.target_site());
       is_ttrg_endp_of_r = same_points(t.target_site(), r_.source_site())
-                       or same_points(t.target_site(), r_.target_site());
+                       || same_points(t.target_site(), r_.target_site());
     }
 
-    if (is_tsrc_endp_of_p and is_tsrc_endp_of_q) {
+    if (is_tsrc_endp_of_p && is_tsrc_endp_of_q) {
       if (test_star(t.source_site(), p_, q_, t)) {
         return NEGATIVE;
       }
     }
-    if (is_ttrg_endp_of_p and is_ttrg_endp_of_q) {
+    if (is_ttrg_endp_of_p && is_ttrg_endp_of_q) {
       if (test_star(t.target_site(), p_, q_, t)) {
         return NEGATIVE;
       }
     }
-    if (is_tsrc_endp_of_q and is_tsrc_endp_of_r) {
+    if (is_tsrc_endp_of_q && is_tsrc_endp_of_r) {
       if (test_star(t.source_site(), q_, r_, t)) {
         return NEGATIVE;
       }
     }
-    if (is_ttrg_endp_of_q and is_ttrg_endp_of_r) {
+    if (is_ttrg_endp_of_q && is_ttrg_endp_of_r) {
       if (test_star(t.target_site(), q_, r_, t)) {
         return NEGATIVE;
       }
     }
-    if (is_tsrc_endp_of_r and is_tsrc_endp_of_p) {
+    if (is_tsrc_endp_of_r && is_tsrc_endp_of_p) {
       if (test_star(t.source_site(), r_, p_, t)) {
         return NEGATIVE;
       }
     }
-    if (is_ttrg_endp_of_r and is_ttrg_endp_of_p) {
+    if (is_ttrg_endp_of_r && is_ttrg_endp_of_p) {
       if (test_star(t.target_site(), r_, p_, t)) {
         return NEGATIVE;
       }
@@ -3036,7 +3036,7 @@ private:
     if (is_p_point) {
       is_p_tsrc = same_points(p, t.source_site());
       const bool is_p_ttrg = same_points(p, t.target_site());
-      is_p_endp_of_t = is_p_tsrc or is_p_ttrg;
+      is_p_endp_of_t = is_p_tsrc || is_p_ttrg;
 
       if (is_p_endp_of_t) {
         sqpnt = p;
@@ -3048,7 +3048,7 @@ private:
     if (is_q_point) {
       is_q_tsrc = same_points(q, t.source_site());
       const bool is_q_ttrg = same_points(q, t.target_site());
-      is_q_endp_of_t = is_q_tsrc or is_q_ttrg;
+      is_q_endp_of_t = is_q_tsrc || is_q_ttrg;
       if (is_q_endp_of_t) {
         sqpnt = q;
       }
@@ -3060,7 +3060,7 @@ private:
     if (is_r_point) {
       is_r_tsrc = same_points(r, t.source_site());
       const bool is_r_ttrg = same_points(r, t.target_site());
-      is_r_endp_of_t = is_r_tsrc or is_r_ttrg;
+      is_r_endp_of_t = is_r_tsrc || is_r_ttrg;
       if (is_r_endp_of_t) {
         sqpnt = r;
       }
@@ -3080,8 +3080,8 @@ private:
            have_common_p_ttrg(false),
            have_common_p_t(false);
 
-      if (not is_p_point) {
-        CGAL_assertion( not same_segments(p, t) );
+      if (! is_p_point) {
+        CGAL_assertion( ! same_segments(p, t) );
         const bool is_psrc_tsrc =
           same_points(p.source_site(), t.source_site());
         const bool is_ptrg_tsrc =
@@ -3090,39 +3090,39 @@ private:
           same_points(p.source_site(), t.target_site());
         const bool is_ptrg_ttrg =
           same_points(p.target_site(), t.target_site());
-        have_common_p_tsrc = is_psrc_tsrc or is_ptrg_tsrc;
-        have_common_p_ttrg = is_psrc_ttrg or is_ptrg_ttrg;
-        have_common_p_t = have_common_p_tsrc or have_common_p_ttrg;
+        have_common_p_tsrc = is_psrc_tsrc || is_ptrg_tsrc;
+        have_common_p_ttrg = is_psrc_ttrg || is_ptrg_ttrg;
+        have_common_p_t = have_common_p_tsrc || have_common_p_ttrg;
       }
 
       bool have_common_q_tsrc(false),
            have_common_q_ttrg(false),
            have_common_q_t(false);
 
-      if (not is_q_point) {
-        CGAL_assertion( not same_segments(q, t) );
+      if (! is_q_point) {
+        CGAL_assertion( ! same_segments(q, t) );
         const bool is_qsrc_tsrc = same_points(q.source_site(), t.source_site());
         const bool is_qtrg_tsrc = same_points(q.target_site(), t.source_site());
         const bool is_qsrc_ttrg = same_points(q.source_site(), t.target_site());
         const bool is_qtrg_ttrg = same_points(q.target_site(), t.target_site());
-        have_common_q_tsrc = is_qsrc_tsrc or is_qtrg_tsrc;
-        have_common_q_ttrg = is_qsrc_ttrg or is_qtrg_ttrg;
-        have_common_q_t = have_common_q_tsrc or have_common_q_ttrg;
+        have_common_q_tsrc = is_qsrc_tsrc || is_qtrg_tsrc;
+        have_common_q_ttrg = is_qsrc_ttrg || is_qtrg_ttrg;
+        have_common_q_t = have_common_q_tsrc || have_common_q_ttrg;
       }
 
       bool have_common_r_tsrc(false),
            have_common_r_ttrg(false),
            have_common_r_t(false);
 
-      if (not is_r_point) {
-        CGAL_assertion( not same_segments(r, t) );
+      if (! is_r_point) {
+        CGAL_assertion( ! same_segments(r, t) );
         const bool is_rsrc_tsrc = same_points(r.source_site(), t.source_site());
         const bool is_rtrg_tsrc = same_points(r.target_site(), t.source_site());
         const bool is_rsrc_ttrg = same_points(r.source_site(), t.target_site());
         const bool is_rtrg_ttrg = same_points(r.target_site(), t.target_site());
-        have_common_r_tsrc = is_rsrc_tsrc or is_rtrg_tsrc;
-        have_common_r_ttrg = is_rsrc_ttrg or is_rtrg_ttrg;
-        have_common_r_t = have_common_r_tsrc or have_common_r_ttrg;
+        have_common_r_tsrc = is_rsrc_tsrc || is_rtrg_tsrc;
+        have_common_r_ttrg = is_rsrc_ttrg || is_rtrg_ttrg;
+        have_common_r_t = have_common_r_tsrc || have_common_r_ttrg;
       }
 
       const unsigned int numcommon =
@@ -3169,11 +3169,11 @@ private:
         other_of_t = t.source_site();
       }
 
-      if (have_common_p_t and have_common_q_t) {
+      if (have_common_p_t && have_common_q_t) {
         compute_helper_two_seg(p, q, sqpnt, other_of_seg);
-      } else if (have_common_q_t and have_common_r_t) {
+      } else if (have_common_q_t && have_common_r_t) {
         compute_helper_two_seg(q, r, sqpnt, other_of_seg);
-      } else if (have_common_r_t and have_common_p_t) {
+      } else if (have_common_r_t && have_common_p_t) {
         compute_helper_two_seg(r, p, sqpnt, other_of_seg);
       } else {
         CGAL_assertion(false);
@@ -3185,7 +3185,7 @@ private:
     // philaris: tocheck
     CGAL_assertion( numendpts_of_t == 1 );
 
-    if (is_p_tsrc or is_q_tsrc or is_r_tsrc) {
+    if (is_p_tsrc || is_q_tsrc || is_r_tsrc) {
       other_of_t = t.target_site();
     } else {
       other_of_t = t.source_site();
@@ -3195,7 +3195,7 @@ private:
       if (q.is_segment()) {
         bool is_p_qsrc = same_points(p, q.source_site());
         bool is_p_qtrg = same_points(p, q.target_site());
-        if (is_p_qsrc or is_p_qtrg) {
+        if (is_p_qsrc || is_p_qtrg) {
           other_of_seg = is_p_qsrc ? q.target_site() : q.source_site();
           return true;
         }
@@ -3203,7 +3203,7 @@ private:
       if (r.is_segment()) {
         bool is_p_rsrc = same_points(p, r.source_site());
         bool is_p_rtrg = same_points(p, r.target_site());
-        if (is_p_rsrc or is_p_rtrg) {
+        if (is_p_rsrc || is_p_rtrg) {
           other_of_seg = is_p_rsrc ? r.target_site() : r.source_site();
           return true;
         }
@@ -3215,7 +3215,7 @@ private:
       if (r.is_segment()) {
         bool is_q_rsrc = same_points(q, r.source_site());
         bool is_q_rtrg = same_points(q, r.target_site());
-        if (is_q_rsrc or is_q_rtrg) {
+        if (is_q_rsrc || is_q_rtrg) {
           other_of_seg = is_q_rsrc ? r.target_site() : r.source_site();
           return true;
         }
@@ -3224,7 +3224,7 @@ private:
       if (p.is_segment()) {
         bool is_q_psrc = same_points(q, p.source_site());
         bool is_q_ptrg = same_points(q, p.target_site());
-        if (is_q_psrc or is_q_ptrg) {
+        if (is_q_psrc || is_q_ptrg) {
           other_of_seg = is_q_psrc ? p.target_site() : p.source_site();
           return true;
         }
@@ -3236,7 +3236,7 @@ private:
       if (p.is_segment()) {
         bool is_r_psrc = same_points(r, p.source_site());
         bool is_r_ptrg = same_points(r, p.target_site());
-        if (is_r_psrc or is_r_ptrg) {
+        if (is_r_psrc || is_r_ptrg) {
           other_of_seg = is_r_psrc ? p.target_site() : p.source_site();
           return true;
         }
@@ -3245,7 +3245,7 @@ private:
       if (q.is_segment()) {
         bool is_r_qsrc = same_points(r, q.source_site());
         bool is_r_qtrg = same_points(r, q.target_site());
-        if (is_r_qsrc or is_r_qtrg) {
+        if (is_r_qsrc || is_r_qtrg) {
           other_of_seg = is_r_qsrc ? q.target_site() : q.source_site();
           return true;
         }
@@ -3665,10 +3665,10 @@ public:
     Comparison_result cmplabsxy = CGAL::compare(absdifxvl, absdifyvl);
 
     // lref is corner if and only if the line is not axis-parallel
-    CGAL_assertion( (cmplabsxy == EQUAL) == (not is_l_h_or_v) );
+    CGAL_assertion( (cmplabsxy == EQUAL) == (! is_l_h_or_v) );
 
     Oriented_side oslvv (ON_ORIENTED_BOUNDARY);
-    if ((p_.is_segment() or q_.is_segment() or r_.is_segment()) and
+    if ((p_.is_segment() || q_.is_segment() || r_.is_segment()) &&
         is_l_h_or_v) {
       oslvv = oriented_side_of_line(l, vv);
       CGAL_assertion(oslvv != ON_ORIENTED_BOUNDARY);
@@ -3687,14 +3687,14 @@ public:
       FT absdifxvp = CGAL::abs(difxvp);
       FT absdifyvp = CGAL::abs(difyvp);
       Comparison_result cmppabsxy = CGAL::compare(absdifxvp, absdifyvp);
-      if (not ( (cmplabsxy == SMALLER) and (cmppabsxy == SMALLER) ))
+      if (! ( (cmplabsxy == SMALLER) && (cmppabsxy == SMALLER) ))
       {
         if (CGAL::compare(difxvl, difxvp) == EQUAL) {
           compare_p = CGAL::compare(absdifyvl, absdifyvp);
           corner_agree_pt_x = true;
         }
       }
-      if (not ( (cmplabsxy == LARGER ) and (cmppabsxy == LARGER ) ))
+      if (! ( (cmplabsxy == LARGER ) && (cmppabsxy == LARGER ) ))
       {
         if (CGAL::compare(difyvl, difyvp) == EQUAL) {
           CGAL_assertion(compare_p == EQUAL);
@@ -3708,8 +3708,8 @@ public:
           oriented_side_of_line(l, p_.source_site().point());
         Oriented_side oslptrg =
           oriented_side_of_line(l, p_.target_site().point());
-        if (((oslpsrc != oslvv) and (oslptrg != oslvv)) and
-            ((oslpsrc != ON_ORIENTED_BOUNDARY) or
+        if (((oslpsrc != oslvv) && (oslptrg != oslvv)) &&
+            ((oslpsrc != ON_ORIENTED_BOUNDARY) ||
              (oslptrg != ON_ORIENTED_BOUNDARY)   )         ) {
           compare_p = SMALLER;
         }
@@ -3723,14 +3723,14 @@ public:
       FT absdifxvq = CGAL::abs(difxvq);
       FT absdifyvq = CGAL::abs(difyvq);
       Comparison_result cmpqabsxy = CGAL::compare(absdifxvq, absdifyvq);
-      if (not ( (cmplabsxy == SMALLER) and (cmpqabsxy == SMALLER) ))
+      if (! ( (cmplabsxy == SMALLER) && (cmpqabsxy == SMALLER) ))
       {
         if (CGAL::compare(difxvl, difxvq) == EQUAL) {
           compare_q = CGAL::compare(absdifyvl, absdifyvq);
           corner_agree_pt_x = true;
         }
       }
-      if (not ( (cmplabsxy == LARGER ) and (cmpqabsxy == LARGER ) ))
+      if (! ( (cmplabsxy == LARGER ) && (cmpqabsxy == LARGER ) ))
       {
         if (CGAL::compare(difyvl, difyvq) == EQUAL) {
           CGAL_assertion(compare_q == EQUAL);
@@ -3744,8 +3744,8 @@ public:
           oriented_side_of_line(l, q_.source_site().point());
         Oriented_side oslqtrg =
           oriented_side_of_line(l, q_.target_site().point());
-        if (((oslqsrc != oslvv) and (oslqtrg != oslvv)) and
-            ((oslqsrc != ON_ORIENTED_BOUNDARY) or
+        if (((oslqsrc != oslvv) && (oslqtrg != oslvv)) &&
+            ((oslqsrc != ON_ORIENTED_BOUNDARY) ||
              (oslqtrg != ON_ORIENTED_BOUNDARY)   )         ) {
           compare_q = SMALLER;
         }
@@ -3759,14 +3759,14 @@ public:
       FT absdifxvr = CGAL::abs(difxvr);
       FT absdifyvr = CGAL::abs(difyvr);
       Comparison_result cmprabsxy = CGAL::compare(absdifxvr, absdifyvr);
-      if (not ( (cmplabsxy == SMALLER) and (cmprabsxy == SMALLER) ))
+      if (! ( (cmplabsxy == SMALLER) && (cmprabsxy == SMALLER) ))
       {
         if (CGAL::compare(difxvl, difxvr) == EQUAL) {
           compare_r = CGAL::compare(absdifyvl, absdifyvr);
           corner_agree_pt_x = true;
         }
       }
-      if (not ( (cmplabsxy == LARGER ) and (cmprabsxy == LARGER ) ))
+      if (! ( (cmplabsxy == LARGER ) && (cmprabsxy == LARGER ) ))
       {
         if (CGAL::compare(difyvl, difyvr) == EQUAL) {
           CGAL_assertion(compare_r == EQUAL);
@@ -3780,8 +3780,8 @@ public:
           oriented_side_of_line(l, r_.source_site().point());
         Oriented_side oslrtrg =
           oriented_side_of_line(l, r_.target_site().point());
-        if (((oslrsrc != oslvv) and (oslrtrg != oslvv)) and
-            ((oslrsrc != ON_ORIENTED_BOUNDARY) or
+        if (((oslrsrc != oslvv) && (oslrtrg != oslvv)) &&
+            ((oslrsrc != ON_ORIENTED_BOUNDARY) ||
              (oslrtrg != ON_ORIENTED_BOUNDARY)   )         ) {
           compare_r = SMALLER;
         }
@@ -3791,13 +3791,13 @@ public:
     CGAL_SDG_DEBUG(std::cout << "debug linf_refine compare p q r = "
       << compare_p << " " << compare_q << " " << compare_r << std::endl;);
 
-    if ((compare_p == SMALLER) or
-        (compare_q == SMALLER) or
+    if ((compare_p == SMALLER) ||
+        (compare_q == SMALLER) ||
         (compare_r == SMALLER)   ) {
       return SMALLER;
     }
-    if (corner_agree_pt_x and corner_agree_pt_y) {
-      CGAL_assertion(not is_l_h_or_v);
+    if (corner_agree_pt_x && corner_agree_pt_y) {
+      CGAL_assertion(! is_l_h_or_v);
       const unsigned int count_larger =
         (compare_p ? 1 : 0) +
         (compare_q ? 1 : 0) +
@@ -3838,13 +3838,13 @@ public:
       FT absdifxvp = CGAL::abs(difxvp);
       FT absdifyvp = CGAL::abs(difyvp);
       Comparison_result cmppabsxy = CGAL::compare(absdifxvp, absdifyvp);
-      if (not ( (cmplabsxy == SMALLER) and (cmppabsxy == SMALLER) ))
+      if (! ( (cmplabsxy == SMALLER) && (cmppabsxy == SMALLER) ))
       {
         if (CGAL::compare(difxvl, difxvp) == EQUAL) {
           compare_p = CGAL::compare(absdifyvl, absdifyvp);
         }
       }
-      if (not ( (cmplabsxy == LARGER ) and (cmppabsxy == LARGER ) ))
+      if (! ( (cmplabsxy == LARGER ) && (cmppabsxy == LARGER ) ))
       {
         if (CGAL::compare(difyvl, difyvp) == EQUAL) {
           CGAL_assertion(compare_p == EQUAL);
@@ -3860,13 +3860,13 @@ public:
       FT absdifxvq = CGAL::abs(difxvq);
       FT absdifyvq = CGAL::abs(difyvq);
       Comparison_result cmpqabsxy = CGAL::compare(absdifxvq, absdifyvq);
-      if (not ( (cmplabsxy == SMALLER) and (cmpqabsxy == SMALLER) ))
+      if (! ( (cmplabsxy == SMALLER) && (cmpqabsxy == SMALLER) ))
       {
         if (CGAL::compare(difxvl, difxvq) == EQUAL) {
           compare_q = CGAL::compare(absdifyvl, absdifyvq);
         }
       }
-      if (not ( (cmplabsxy == LARGER ) and (cmpqabsxy == LARGER ) ))
+      if (! ( (cmplabsxy == LARGER ) && (cmpqabsxy == LARGER ) ))
       {
         if (CGAL::compare(difyvl, difyvq) == EQUAL) {
           CGAL_assertion(compare_q == EQUAL);
@@ -3882,13 +3882,13 @@ public:
       FT absdifxvr = CGAL::abs(difxvr);
       FT absdifyvr = CGAL::abs(difyvr);
       Comparison_result cmprabsxy = CGAL::compare(absdifxvr, absdifyvr);
-      if (not ( (cmplabsxy == SMALLER) and (cmprabsxy == SMALLER) ))
+      if (! ( (cmplabsxy == SMALLER) && (cmprabsxy == SMALLER) ))
       {
         if (CGAL::compare(difxvl, difxvr) == EQUAL) {
           compare_r = CGAL::compare(absdifyvl, absdifyvr);
         }
       }
-      if (not ( (cmplabsxy == LARGER ) and (cmprabsxy == LARGER ) ))
+      if (! ( (cmplabsxy == LARGER ) && (cmprabsxy == LARGER ) ))
       {
         if (CGAL::compare(difyvl, difyvr) == EQUAL) {
           CGAL_assertion(compare_r == EQUAL);
@@ -3900,14 +3900,14 @@ public:
     CGAL_SDG_DEBUG(std::cout << "debug compare p q r = "
       << compare_p << " " << compare_q << " " << compare_r << std::endl;);
 
-    if ((compare_p == SMALLER) or
-        (compare_q == SMALLER) or
+    if ((compare_p == SMALLER) ||
+        (compare_q == SMALLER) ||
         (compare_r == SMALLER)   ) {
       return SMALLER;
     }
     /*
-    if ((compare_p == LARGER) or
-        (compare_q == LARGER) or
+    if ((compare_p == LARGER) ||
+        (compare_q == LARGER) ||
         (compare_r == LARGER)   ) {
       // tocheck
       return LARGER;

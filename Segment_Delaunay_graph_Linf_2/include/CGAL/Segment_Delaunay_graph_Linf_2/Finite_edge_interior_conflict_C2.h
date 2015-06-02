@@ -94,7 +94,7 @@ private:
   {
     Boolean   in_conflict(false);
 
-    if ( zero_voronoi_area(p, r, s) or zero_voronoi_area(q, r, s) ) {
+    if ( zero_voronoi_area(p, r, s) || zero_voronoi_area(q, r, s) ) {
       return true;
     }
 
@@ -432,12 +432,12 @@ private:
     CGAL_assertion( p.is_segment() || q.is_segment() );
 
     bool are_same_sites_rs (false);
-    if (r.is_point() and s.is_point()) {
+    if (r.is_point() && s.is_point()) {
       if (same_points(r, s)) {
         are_same_sites_rs = true;
       }
     } else {
-      if (r.is_segment() and s.is_segment()) {
+      if (r.is_segment() && s.is_segment()) {
         if (same_segments(r, s)) {
           are_same_sites_rs = true;
         }
@@ -447,7 +447,7 @@ private:
     if (are_same_sites_rs) {
       // philaris: the text would give false
       // philaris: for segments, we have to refine later
-      if (r.is_point() and s.is_point()) {
+      if (r.is_point() && s.is_point()) {
         CGAL_SDG_DEBUG(std::cout << "debug is_interior_in_conflict_touch"
             << " about to return false with same points" << std::endl; );
         return false;
@@ -485,7 +485,7 @@ private:
     }
 
     CGAL_SDG_DEBUG(std::cout << "debug is_interior_in_conflict_touch"
-        << " shuffle and recursion" << std::endl; );
+        << " recursion with permuted input" << std::endl; );
     return is_interior_in_conflict_touch(q, p, s, r, t, tag);
   }
 
@@ -741,7 +741,7 @@ public:
     */
 
     // if p, q, t are points, then return (sgn == NEGATIVE)
-    if (t.is_point() and p.is_point() and q.is_point()) {
+    if (t.is_point() && p.is_point() && q.is_point()) {
       CGAL_SDG_DEBUG( std::cout <<
           "debug finite-edge-int-cf with (p,q,r,t,sgn)= ("
           << p << ") (" << q << ") (" << r <<  " ) ("
@@ -750,11 +750,11 @@ public:
       return ( sgn == NEGATIVE );
     }
 
-    if (t.is_point() and (sgn == NEGATIVE)) {
+    if (t.is_point() && (sgn == NEGATIVE)) {
       bool is_p_pnt = p.is_point();
       bool is_q_pnt = q.is_point();
-      bool parabola_case = (is_p_pnt and (not is_q_pnt)) or
-                           (is_q_pnt and (not is_p_pnt))   ;
+      bool parabola_case = (is_p_pnt && (! is_q_pnt)) ||
+                           (is_q_pnt && (! is_p_pnt))   ;
       if (parabola_case) {
         if (is_p_pnt) {
           Point_2 pp = p.point();
@@ -769,7 +769,7 @@ public:
           Boolean on_different_parabola_arcs = (opqr == ON_NEGATIVE_SIDE);
 
           //if ( !on_different_parabola_arcs ) { return true; }
-          if (certainly( not on_different_parabola_arcs ) ) {
+          if (certainly( ! on_different_parabola_arcs ) ) {
             CGAL_SDG_DEBUG( std::cout
                 << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= ("
                 << p << ") (" << q << ") (" << r <<  ") ("
@@ -777,7 +777,7 @@ public:
                 << sgn << " returns " << true << std::endl; );
             return true;
           }
-          if (not is_certain( not on_different_parabola_arcs ) ) {
+          if (! is_certain( ! on_different_parabola_arcs ) ) {
             return indeterminate<Boolean>();
           }
         }
@@ -795,7 +795,7 @@ public:
             (opqr == ON_POSITIVE_SIDE);
 
           //if ( !on_different_parabola_arcs ) { return true; }
-          if (certainly( not on_different_parabola_arcs ) ) {
+          if (certainly( ! on_different_parabola_arcs ) ) {
             CGAL_SDG_DEBUG( std::cout
                 << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= ("
                 << p << ") (" << q << ") (" << r <<  ") ("
@@ -803,7 +803,7 @@ public:
                 << sgn << " returns " << true << std::endl; );
             return true;
           }
-          if (not is_certain( not on_different_parabola_arcs ) ) {
+          if (! is_certain( ! on_different_parabola_arcs ) ) {
             return indeterminate<Boolean>();
           }
         }
@@ -833,13 +833,13 @@ public:
       // tocheck
       CGAL_assertion( sgn == POSITIVE );
 
-      CGAL_assertion( p.is_point() or q.is_point() );
-      CGAL_assertion( p.is_segment() or q.is_segment() );
+      CGAL_assertion( p.is_point() || q.is_point() );
+      CGAL_assertion( p.is_segment() || q.is_segment() );
 
       CGAL_assertion(t.is_point());
 
-      if ( p.is_point() and q.is_segment() ) {
-        if (same_points(p, q.source_site()) or
+      if ( p.is_point() && q.is_segment() ) {
+        if (same_points(p, q.source_site()) ||
             same_points(p, q.target_site())   ) {
           CGAL_SDG_DEBUG( std::cout <<
               "debug finite-edge-int-cf with (p,q,r,t,sgn)= ("
@@ -852,7 +852,7 @@ public:
           CGAL_SDG_DEBUG( std::cout << "debug fecf p is not endpoint of q"
             << std::endl; );
 
-          CGAL_assertion( not is_site_h_or_v(q) ) ;
+          CGAL_assertion( ! is_site_h_or_v(q) ) ;
 
           Line_2 lseg = compute_supporting_line(q.supporting_site());
 
@@ -927,8 +927,8 @@ public:
         } // end of case where p is not endpoint of q
       } // end of case where p is point and q is segment
 
-      if ( p.is_segment() and q.is_point() ) {
-        if (same_points(q, p.source_site()) or
+      if ( p.is_segment() && q.is_point() ) {
+        if (same_points(q, p.source_site()) ||
             same_points(q, p.target_site())   ) {
           CGAL_SDG_DEBUG( std::cout <<
               "debug finite-edge-int-cf with (p,q,r,t,sgn)= ("
@@ -937,7 +937,7 @@ public:
               << sgn << " returns " << false << std::endl; );
           return false;
         } else { // q is not endpoint of p
-          CGAL_assertion( not is_site_h_or_v(p) );
+          CGAL_assertion( ! is_site_h_or_v(p) );
 
           Line_2 lseg = compute_supporting_line(p.supporting_site());
 
@@ -1019,18 +1019,18 @@ public:
 
     // here and on, sgn == NEGATIVE
 
-    if ( p.is_segment() or q.is_segment() ) {
+    if ( p.is_segment() || q.is_segment() ) {
       // philaris: p and q are consecutive on convex hull
       // therefore, one of them is a point and the other is a segment
-      CGAL_assertion( p.is_point() or q.is_point() );
+      CGAL_assertion( p.is_point() || q.is_point() );
 
       // philaris:
 
       CGAL_assertion( p.is_point() ?
-                      ((not same_points(p, q.source_site())) and
-                       (not same_points(p, q.target_site())))    :
-                      ((not same_points(q, p.source_site())) and
-                       (not same_points(q, p.target_site())))
+                      ((! same_points(p, q.source_site())) &&
+                       (! same_points(p, q.target_site())))    :
+                      ((! same_points(q, p.source_site())) &&
+                       (! same_points(q, p.target_site())))
                     ) ;
 
       //sandeep: if t is segment and it not intersects the wedge
@@ -1044,7 +1044,7 @@ public:
           CGAL_assertion(q.is_segment());
           //p may be end point of t
           if ( same_points(p,t.source_site())
-               or same_points(p,t.target_site()) ) {
+               || same_points(p,t.target_site()) ) {
             CGAL_SDG_DEBUG(
                 std::cout
                 << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= ("
@@ -1053,9 +1053,9 @@ public:
                 << sgn << " returns " << true << std::endl; );
             return true;
           } else {
-            if (same_points(q.source_site(), t.source_site()) or
-                same_points(q.source_site(), t.target_site()) or
-                same_points(q.target_site(), t.source_site()) or
+            if (same_points(q.source_site(), t.source_site()) ||
+                same_points(q.source_site(), t.target_site()) ||
+                same_points(q.target_site(), t.source_site()) ||
                 same_points(q.target_site(), t.target_site())   ) {
               result = true;
             } else {
@@ -1072,7 +1072,7 @@ public:
                 (opqr == ON_NEGATIVE_SIDE);
 
               //if ( !on_different_parabola_arcs ) { return true; }
-              if (certainly( not on_different_parabola_arcs ) ) {
+              if (certainly( ! on_different_parabola_arcs ) ) {
                 CGAL_SDG_DEBUG(
                     std::cout
                     << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= ("
@@ -1081,7 +1081,7 @@ public:
                     << sgn << " returns " << true << std::endl; );
                 return true;
               }
-              if (not is_certain( not on_different_parabola_arcs ) ) {
+              if (! is_certain( ! on_different_parabola_arcs ) ) {
                 return indeterminate<Boolean>();
               }
 
@@ -1100,7 +1100,7 @@ public:
           CGAL_assertion(q.is_point());
           //q may be endpoint of t
           if (   same_points(q,t.source_site())
-              or same_points(q,t.target_site())) {
+              || same_points(q,t.target_site())) {
             CGAL_SDG_DEBUG( std::cout
                 << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= ("
                 << p << ") (" << q << ") (" << r <<  ") ("
@@ -1108,9 +1108,9 @@ public:
                 << sgn << " returns " << true << std::endl; );
             return true;
           } else {
-            if (same_points(p.source_site(), t.source_site()) or
-                same_points(p.source_site(), t.target_site()) or
-                same_points(p.target_site(), t.source_site()) or
+            if (same_points(p.source_site(), t.source_site()) ||
+                same_points(p.source_site(), t.target_site()) ||
+                same_points(p.target_site(), t.source_site()) ||
                 same_points(p.target_site(), t.target_site())   ) {
               result = true;
             } else {
@@ -1127,7 +1127,7 @@ public:
                 (opqr == ON_POSITIVE_SIDE);
 
               //if ( !on_different_parabola_arcs ) { return true; }
-              if (certainly( not on_different_parabola_arcs ) ) {
+              if (certainly( ! on_different_parabola_arcs ) ) {
                 CGAL_SDG_DEBUG(
                     std::cout
                     << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= ("
@@ -1136,7 +1136,7 @@ public:
                     << sgn << " returns " << true << std::endl; );
                 return true;
               }
-              if (not is_certain( not on_different_parabola_arcs ) ) {
+              if (! is_certain( ! on_different_parabola_arcs ) ) {
                 return indeterminate<Boolean>();
               }
 
@@ -1181,7 +1181,7 @@ public:
       same_points(q, t.source_site()) || same_points(q, t.target_site());
 
     // philaris: change for Linf
-    if ((cmpx(p.point(), q.point()) == EQUAL) or
+    if ((cmpx(p.point(), q.point()) == EQUAL) ||
         (cmpy(p.point(), q.point()) == EQUAL)    ) {
       // if p or q have one same coordinate, behave like in L2
       return ( p_is_endpoint && q_is_endpoint );
@@ -1205,17 +1205,17 @@ public:
         << p << ' ' << q << ' ' << t << ' '
         << "(sgn " << sgn << " not ignored)"  << std::endl; );
 
-    CGAL_assertion( not ( p.is_segment() and q.is_segment()) );
+    CGAL_assertion( ! ( p.is_segment() && q.is_segment()) );
 
-    if ( p.is_segment() or q.is_segment() ) {
+    if ( p.is_segment() || q.is_segment() ) {
       Site_2 siteseg = (p.is_point())? q: p;
 
       if ( is_site_h_or_v(siteseg) ) {
         if (p.is_point()) {
-          CGAL_assertion( same_points(p, q.source_site()) or
+          CGAL_assertion( same_points(p, q.source_site()) ||
                           same_points(p, q.target_site())   ) ;
         } else {
-          CGAL_assertion( same_points(q, p.source_site()) or
+          CGAL_assertion( same_points(q, p.source_site()) ||
                           same_points(q, p.target_site())   ) ;
         }
         CGAL_SDG_DEBUG(
@@ -1226,7 +1226,7 @@ public:
         return false;
       }
 
-      CGAL_assertion(not is_site_h_or_v(siteseg));
+      CGAL_assertion(! is_site_h_or_v(siteseg));
       // t is segment
       if (t.is_segment()) {
         CGAL_assertion(sgn == NEGATIVE);
@@ -1235,12 +1235,12 @@ public:
         // this works if p or q is point
         bool result;
         if (p.is_point()) { // p is point, q is segment
-          CGAL_assertion((not same_points(p, q.source_site())) and
-                         (not same_points(p, q.target_site()))    );
+          CGAL_assertion((! same_points(p, q.source_site())) &&
+                         (! same_points(p, q.target_site()))    );
           result = intersects_segment_interior_inf_wedge_sp(q,p,t);
         } else { // q is point and p is segment
-          CGAL_assertion((not same_points(q, p.source_site())) and
-                         (not same_points(q, p.target_site()))    );
+          CGAL_assertion((! same_points(q, p.source_site())) &&
+                         (! same_points(q, p.target_site()))    );
           result = intersects_segment_interior_inf_wedge_sp(p,q,t);
         }
 
@@ -1261,8 +1261,8 @@ public:
       CGAL_assertion(t.is_point());
 
       if (sgn == POSITIVE) {
-        if (p.is_point() and q.is_segment()) {
-          if (same_points(p, q.source_site()) or
+        if (p.is_point() && q.is_segment()) {
+          if (same_points(p, q.source_site()) ||
               same_points(p, q.target_site())   ) {
             CGAL_SDG_DEBUG(
                 std::cout << "debug finite-edge-int-cf with (p,q,t,sgn)= "
@@ -1273,9 +1273,9 @@ public:
           }
         } // end of case: p: point, q: segment
         else
-        // if (p.is_segment() and q.is_point())
+        // if (p.is_segment() && q.is_point())
         {
-          if (same_points(q, p.source_site()) or
+          if (same_points(q, p.source_site()) ||
               same_points(q, p.target_site())   ) {
             CGAL_SDG_DEBUG(
                 std::cout << "debug finite-edge-int-cf with (p,q,t,sgn)= "
@@ -1386,7 +1386,7 @@ public:
     Comparison_result cmpxpq = cmpx(p.point(), q.point());
     Comparison_result cmpypq = cmpy(p.point(), q.point());
 
-    if ((cmpxpq == EQUAL) or (cmpypq == EQUAL)) {
+    if ((cmpxpq == EQUAL) || (cmpypq == EQUAL)) {
       CGAL_SDG_DEBUG(
           std::cout << "debug finite-edge-int-cf with (p,q,t,sgn)= "
           << p << ' ' << q << ' ' << t << ' '
