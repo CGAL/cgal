@@ -44,12 +44,12 @@ int main (int , char**) {
     // Find the points on the edges.
     // Note that this step is not expensive and can be done several time to get better results
     double threshold = 0.16;
-    std::vector<PointVectorPair> points_on_edges;
+    std::ofstream output("points_on_edges.xyz");
     int i = 0;
     BOOST_FOREACH(const PointVectorPair& p, points)
     {
       if (CGAL::vcm_is_on_feature_edge(cov[i], threshold))
-          points_on_edges.push_back(p);
+          output << p.first << "\n";
       ++i;
     }
 
