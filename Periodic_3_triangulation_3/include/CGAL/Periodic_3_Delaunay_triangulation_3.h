@@ -149,7 +149,7 @@ public:
   using Base::get_offset;
   using Base::get_original_vertex;
   using Base::get_location_offset;
-  using Base::get_neighbor_offset;
+  using Base::neighbor_offset;
   using Base::incident_edges;
   using Base::incident_facets;
   using Base::incident_cells;
@@ -744,7 +744,7 @@ bool is_canonical(const Facet &f) const {
   
   bool canonical_dual_segment(Cell_handle c, int i, Periodic_segment& ps) const {
     CGAL_triangulation_precondition(c != Cell_handle());
-    Offset off = get_neighbor_offset(c,i,c->neighbor(i));
+    Offset off = neighbor_offset(c,i,c->neighbor(i));
     Periodic_point p1 = periodic_circumcenter(c);
     Periodic_point p2 = periodic_circumcenter(c->neighbor(i));
     Offset o1 = -p1.second;

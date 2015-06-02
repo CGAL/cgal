@@ -733,34 +733,34 @@ void test_locate_geometry ()
 
   p3rt3.insert(points.begin(), points.end(), true);
 
-  Weighted_point wp(Bare_point(-0.49, -0.49, -0.49), 0.);
+  Bare_point point(-0.49, -0.49, -0.49);
   P3RT3::Offset lo;
-  Cell_handle ch = p3rt3.locate(wp, lo);
+  Cell_handle ch = p3rt3.locate(point, lo);
   P3RT3::Periodic_tetrahedron p_tetra = p3rt3.periodic_tetrahedron(ch, lo);
   P3RT3::Tetrahedron tetra = p3rt3.tetrahedron(p_tetra);
 
-  assert(p3rt3.orientation(wp, tetra[1], tetra[2], tetra[3]) == CGAL::POSITIVE);
-  assert(p3rt3.orientation(tetra[0], wp, tetra[2], tetra[3]) == CGAL::POSITIVE);
-  assert(p3rt3.orientation(tetra[0], tetra[1], wp, tetra[3]) == CGAL::POSITIVE);
-  assert(p3rt3.orientation(tetra[0], tetra[1], tetra[2], wp) == CGAL::POSITIVE);
+  assert(p3rt3.orientation(point, tetra[1], tetra[2], tetra[3]) == CGAL::POSITIVE);
+  assert(p3rt3.orientation(tetra[0], point, tetra[2], tetra[3]) == CGAL::POSITIVE);
+  assert(p3rt3.orientation(tetra[0], tetra[1], point, tetra[3]) == CGAL::POSITIVE);
+  assert(p3rt3.orientation(tetra[0], tetra[1], tetra[2], point) == CGAL::POSITIVE);
 
   CGAL::Vector_3<K> v(tetra[0], tetra[1]);
   v = v * 0.5;
-  wp = tetra[0] + v;
+  point = tetra[0] + v;
   P3RT3::Locate_type lt;
   int li, lj;
-  ch = p3rt3.locate(wp, lo, lt, li, lj);
+  ch = p3rt3.locate(point, lo, lt, li, lj);
   assert(lt == P3RT3::EDGE);
   P3RT3::Segment segment = p3rt3.segment(p3rt3.periodic_segment(ch, lo, li, lj));
-  assert(CGAL::collinear(segment[0], segment[1], wp));
+  assert(CGAL::collinear(segment[0], segment[1], point));
 
-  v = CGAL::Vector_3<K>(wp, tetra[2]);
+  v = CGAL::Vector_3<K>(point, tetra[2]);
   v = v * 0.5;
-  wp = wp + v;
-  ch = p3rt3.locate(wp, lo, lt, li, lj);
+  point = point + v;
+  ch = p3rt3.locate(point, lo, lt, li, lj);
   assert(lt == P3RT3::FACET);
   P3RT3::Triangle triangle = p3rt3.triangle(p3rt3.periodic_triangle(ch, lo, li));
-  assert(p3rt3.coplanar(triangle[0], triangle[1], triangle[2], wp));
+  assert(p3rt3.coplanar(triangle[0], triangle[1], triangle[2], point));
 }
 
 int main (int argc, char** argv)

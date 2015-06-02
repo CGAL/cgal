@@ -106,7 +106,7 @@ using Base::combine_offsets;
 using Base::get_offset;
 using Base::get_original_vertex;
 using Base::get_location_offset;
-using Base::get_neighbor_offset;
+using Base::neighbor_offset;
 using Base::incident_edges;
 using Base::incident_facets;
 using Base::incident_cells;
