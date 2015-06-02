@@ -572,15 +572,15 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
           for (std::size_t i=0;i< candidates.size()-1;i++) {
             if (candidates[i]) {
               candidates[i]->update_points(m_shape_index);
+              candidates[i]->compute_bound(
+                subsetSizes[candidates[i]->m_nb_subset_used - 1],
+                m_num_available_points - numInvalid);
 
               if (candidates[i]->max_bound() < m_options.min_points) {
                 delete candidates[i];
                 candidates[i] = NULL;
               }
               else {
-                candidates[i]->compute_bound(
-                   subsetSizes[candidates[i]->m_nb_subset_used - 1],
-                   m_num_available_points - numInvalid);
                 bestExp = (candidates[i]->expected_value() > bestExp) ?
                   candidates[i]->expected_value() : bestExp;
               }
