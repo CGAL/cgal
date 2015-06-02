@@ -4,6 +4,7 @@
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/get_border.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -443,21 +444,11 @@ namespace internal {
           halfedge_and_opp_removed(prev(he, mesh_));
 
           //perform collapse
-          Point source_point = get(vpmap_, va);
           Point target_point = get(vpmap_, vb);
 
-          debug_self_intersections(va);
-          debug_self_intersections(vb);
-
-          if (va == PM::Vertex_index(388) && vb == PM::Vertex_index(375))
-            std::cout << "stop" << std::endl;
-
           vertex_descriptor vkept = CGAL::Euler::collapse_edge(edge(he, mesh_), mesh_);
-          debug_self_intersections(vkept);
-
           put(vpmap_, vkept, target_point);
           ++nb_collapses;
-
 
           // merge halfedge_status to keep the more important on both sides
           merge_status(en, s_epo, s_ep);
@@ -470,7 +461,6 @@ namespace internal {
           CGAL_assertion(source(en, mesh_) == source(en_p, mesh_));
           debug_status_map();
           debug_patch_border();
-          debug_self_intersections(vkept);
 #endif
 
           //insert new/remaining short edges
@@ -484,6 +474,9 @@ namespace internal {
           }
         }//end if(collapse_ok)
       }
+
+      PMP::remove_degenerate_faces(mesh_/*todo : add named parameters*/);
+
       std::cout << " done (" << nb_collapses << " collapses)." << std::endl;
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
@@ -492,6 +485,7 @@ namespace internal {
       debug_status_map();
       debug_patch_border();
       debug_mesh_border();
+//      debug_self_intersections();
 #endif
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
@@ -999,7 +993,7 @@ namespace internal {
         CGAL_assertion(v.second == 2);
     }
 
-    void debug_self_intersections(const vertex_descriptor& v) const
+    void debug_self_intersections() const
     {
       std::cout << "Test self intersections...";
       std::vector<std::pair<face_descriptor, face_descriptor> > facets;
