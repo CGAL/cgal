@@ -300,14 +300,18 @@ std::vector<typename Kernel::Point_d> generate_points_on_moment_curve(
 
 
 // R = big radius, r = small radius
-template <typename Kernel>
+template <typename Kernel/*, typename TC_basis*/>
 std::vector<typename Kernel::Point_d> generate_points_on_torus_3D(
-  std::size_t num_points, double R, double r, bool uniform = false)
+  std::size_t num_points, double R, double r, bool uniform = false
+  /*, std::vector<TC_basis> *p_tangent_planes = NULL*/)
 {
   typedef typename Kernel::Point_d Point;
+  typedef typename Kernel::Vector_d Vector;
   typedef typename Kernel::FT FT;
   Kernel k;
   CGAL::Random rng;
+  
+  //typename Kernel::Construct_vector_d cstr_vec = k.construct_vector_d_object();
 
   // if uniform
   std::size_t num_lines = (std::size_t)sqrt(num_points);
@@ -345,6 +349,20 @@ std::vector<typename Kernel::Point_d> generate_points_on_torus_3D(
     points.push_back(p);
     ++i;
 #endif
+    /*if (p_tangent_planes)
+    {
+      TC_basis tp(p);
+      tp.push_back(cstr_vec(
+        -r * std::cos(v) * std::sin(u),
+        -r * std::sin(v) * std::sin(u),
+        r * std::cos(u)));
+      tp.push_back(cstr_vec(
+        -(R + r * std::cos(u)) * std::sin(v),
+        (R + r * std::cos(u)) * std::cos(v),
+        0));
+      p_tangent_planes->push_back(
+        CGAL::Tangential_complex_::compute_gram_schmidt_basis(sp, k));
+    }*/
   }
   return points;
 }
@@ -452,6 +470,111 @@ std::vector<typename Kernel::Point_d> generate_points_on_sphere_d(
     }
 #ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
     if (sparsifier.try_to_insert_point(p))
+      ++i;
+#else
+    points.push_back(p);
+    ++i;
+#endif
+  }
+  return points;
+}
+
+template <typename Kernel>
+std::vector<typename Kernel::Point_d> generate_points_on_two_spheres_d(
+  std::size_t num_points, int dim, double radius, 
+  double distance_between_centers, double radius_noise_percentage = 0.)
+{
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_d Point;
+  typedef typename Kernel::Vector_d Vector;
+  Kernel k;
+  CGAL::Random rng;
+  CGAL::Random_points_on_sphere_d<Point> generator(dim, radius);
+  std::vector<Point> points;
+  points.reserve(num_points);
+
+  std::vector<FT> t(dim, FT(0));
+  t[0] = distance_between_centers;
+  Vector c1_to_c2(t.begin(), t.end());
+
+#ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
+  Point_sparsifier<Kernel, std::vector<Point> > sparsifier(points);
+#endif
+  for (std::size_t i = 0 ; i < num_points ; )
+  {
+    Point p = *generator++;
+    if (radius_noise_percentage > 0.)
+    { 
+      double radius_noise_ratio = rng.get_double(
+        (100. - radius_noise_percentage)/100., 
+        (100. + radius_noise_percentage)/100.);
+      
+      typename Kernel::Point_to_vector_d k_pt_to_vec =
+        k.point_to_vector_d_object();
+      typename Kernel::Vector_to_point_d k_vec_to_pt =
+        k.vector_to_point_d_object();
+      typename Kernel::Scaled_vector_d k_scaled_vec =
+        k.scaled_vector_d_object();
+      p = k_vec_to_pt(k_scaled_vec(k_pt_to_vec(p), radius_noise_ratio));
+    }
+    
+    typename Kernel::Translated_point_d k_transl =
+      k.translated_point_d_object();
+    Point p2 = k_transl(p, c1_to_c2);
+
+#ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
+    if (sparsifier.try_to_insert_point(p))
+      ++i;
+    if (sparsifier.try_to_insert_point(p2))
+      ++i;
+#else
+    points.push_back(p);
+    points.push_back(p2);
+    i += 2;
+#endif
+  }
+  return points;
+}
+
+// Product of a 3-sphere and a circle => d = 3 / D = 5
+template <typename Kernel>
+std::vector<typename Kernel::Point_d> generate_points_on_3sphere_and_circle(
+  std::size_t num_points, double sphere_radius)
+{
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_d Point;
+  typedef typename Kernel::Vector_d Vector;
+  Kernel k;
+  CGAL::Random rng;
+  CGAL::Random_points_on_sphere_d<Point> generator(3, sphere_radius);
+  std::vector<Point> points;
+  points.reserve(num_points);
+  
+  typename Kernel::Translated_point_d k_transl =
+    k.translated_point_d_object();
+  typename Kernel::Compute_coordinate_d k_coord =
+    k.compute_coordinate_d_object();
+
+#ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
+  Point_sparsifier<Kernel, std::vector<Point> > sparsifier(points);
+#endif
+  for (std::size_t i = 0 ; i < num_points ; )
+  {
+    Point p_sphere = *generator++; // First 3 coords
+
+    FT alpha = rng.get_double(0, 6.2832);
+    std::vector<FT> pt(5);
+    pt[0] = k_coord(p_sphere, 0);
+    pt[1] = k_coord(p_sphere, 1);
+    pt[2] = k_coord(p_sphere, 2);
+    pt[3] = std::cos(alpha);
+    pt[4] = std::sin(alpha);
+    Point p(pt.begin(), pt.end());
+
+#ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
+    if (sparsifier.try_to_insert_point(p))
+      ++i;
+    if (sparsifier.try_to_insert_point(p2))
       ++i;
 #else
     points.push_back(p);
@@ -617,7 +740,8 @@ generate_points_on_klein_bottle_variant_5D(
 
 template <typename Kernel>
 void benchmark_spatial_search(
-  const std::vector<typename Kernel::Point_d> &points, const Kernel &k)
+  const std::vector<typename Kernel::Point_d> &points, const Kernel &k,
+  std::ostream & csv_file)
 {
   std::cout << 
     "****************************************\n"
@@ -660,6 +784,7 @@ void benchmark_spatial_search(
   double queries_time = t.elapsed();
   std::cout << NUM_QUERIES << " queries among " 
     << points.size() << " points: " << queries_time << std::endl;
+  csv_file << queries_time << ";";
   }
   //**************************** nanoflann ************************************
   {
@@ -686,6 +811,35 @@ void benchmark_spatial_search(
   double queries_time = t.elapsed();
   std::cout << NUM_QUERIES << " queries among " 
     << points.size() << " points: " << queries_time << std::endl;
+  csv_file << queries_time << ";";
+  }
+
+  //******************************* ANN ***************************************
+  {
+  std::cout << "\n=== ANN ===\n";
+  
+  typedef CGAL::Tangential_complex_::
+    Point_cloud_data_structure__ANN<Kernel, Points>  
+                                             Points_ds;
+  
+  t.reset();
+  Points_ds points_ds(points, k);
+  double init_time = t.elapsed();
+  std::cout << "Init: " << init_time << std::endl;
+  t.reset();
+  
+  for (std::size_t i = 0 ; i < NUM_QUERIES ; ++i)
+  {
+    std::size_t pt_idx = random_generator.get_int(0, points.size() - 1);
+    int neighbors_indices[NUM_NEIGHBORS];
+    double neighbors_sq_distances[NUM_NEIGHBORS];
+    points_ds.query_ANN(
+      points[pt_idx], NUM_NEIGHBORS, neighbors_indices, neighbors_sq_distances);
+  }
+  double queries_time = t.elapsed();
+  std::cout << NUM_QUERIES << " queries among " 
+    << points.size() << " points: " << queries_time << std::endl;
+  csv_file << queries_time << "\n";
   }
 }
 #endif // CGAL_MESH_3_TEST_TEST_UTILITIES_H

@@ -653,6 +653,22 @@ int main()
                 std::atof(param1.c_str()),
                 std::atof(param2.c_str()));
             }
+            else if (input == "generate_two_spheres_d")
+            {
+              points = generate_points_on_two_spheres_d<Kernel>(
+                num_points, ambient_dim,
+                std::atof(param1.c_str()),
+                std::atof(param2.c_str()),
+                std::atof(param3.c_str()));
+            }
+            else if (input == "generate_3sphere_and_circle_d")
+            {
+              CGAL_assertion(intrinsic_dim == 3);
+              CGAL_assertion(ambient_dim == 5);
+              points = generate_points_on_3sphere_and_circle<Kernel>(
+                num_points,
+                std::atof(param1.c_str()));
+            }
             else if (input == "generate_torus_3D")
             {
               points = generate_points_on_torus_3D<Kernel>(
