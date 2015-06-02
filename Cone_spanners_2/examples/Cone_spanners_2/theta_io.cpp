@@ -1,6 +1,6 @@
-/** @file theta_io.cpp
+/** @file exact_theta_io.cpp
  *
- * An example application that constructs a Theta graph with an input vertex list,
+ * An example application that constructs a Theta graph exactly with an input vertex list,
  * and then generates the Gnuplot files to plot the Theta graph.
  */
 
@@ -15,15 +15,14 @@
 
 #include <boost/graph/adjacency_list.hpp>
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Construct_theta_graph_2.h>
 #include <CGAL/gnuplot_output_2.h>
 
 // select the kernel type
-typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
+typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt   Kernel;
 typedef Kernel::Point_2                   Point_2;
 typedef Kernel::Direction_2               Direction_2;
-// it is important that the edgelist is 'setS', such that duplicate edges will be automatically removed.
 typedef boost::adjacency_list<boost::setS,
                               boost::vecS,
                               boost::undirectedS,
