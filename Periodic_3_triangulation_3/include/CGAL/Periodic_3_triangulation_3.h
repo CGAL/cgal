@@ -1410,12 +1410,12 @@ protected:
   Offset get_location_offset(const Conflict_tester& tester,
     Cell_handle c, bool& found) const;
 
-  Offset get_neighbor_offset(Cell_handle ch, int i, Cell_handle nb) const;
+  Offset neighbor_offset(Cell_handle ch, int i, Cell_handle nb) const;
 
 public:
-  Offset get_neighbor_offset(Cell_handle ch, int i) const
+  Offset neighbor_offset(Cell_handle ch, int i) const
   {
-    return get_neighbor_offset(ch, i, ch->neighbor(i));
+    return neighbor_offset(ch, i, ch->neighbor(i));
   }
   
 protected:
@@ -1711,7 +1711,7 @@ try_next_cell:
 
     // Test whether we need to adapt the offset of the query point.
     // This means, if we get out of the current cover.
-    off_query = combine_offsets(off_query, get_neighbor_offset(c,i,next));
+    off_query = combine_offsets(off_query, neighbor_offset(c,i,next));
     previous = c;
     c = next;
     goto try_next_cell;
@@ -1868,7 +1868,7 @@ try_next_cell:
 
 		// Test whether we need to adapt the offset of the query point.
 		// This means, if we get out of the current cover.
-		off_query = combine_offsets(off_query, get_neighbor_offset(c,i,next));
+		off_query = combine_offsets(off_query, neighbor_offset(c,i,next));
 		previous = c;
 		c = next;
 		if (n_of_turns)
@@ -2312,7 +2312,7 @@ find_conflicts(Cell_handle d, const Offset &current_off,
 	continue; // test was already in conflict.
       }
       if (test->tds_data().is_clear()) {
-	Offset o_test = current_off2 + get_neighbor_offset(c, i, test);
+	Offset o_test = current_off2 + neighbor_offset(c, i, test);
 	if (tester(test,o_test)) {
 	  if (c < test)
 	    *it.third++ = Facet(c, i); // Internal facet.
@@ -2555,7 +2555,7 @@ is_valid_conflict(ConflictTester &tester, bool verbose, int level) const {
   for ( it = cells_begin(); it != cells_end(); ++it ) {
     is_valid(it, verbose, level);
     for (int i=0; i<4; i++ ) {
-      Offset o_nb = get_neighbor_offset(it,i,it->neighbor(i));
+      Offset o_nb = neighbor_offset(it,i,it->neighbor(i));
       Offset o_vt = get_offset(it->neighbor(i),
 				      it->neighbor(i)->index(it));
       if (tester(it,
@@ -3144,7 +3144,7 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_27_sheeted_covering() {
     for (int i=0; i<4; i++){
       Cell_handle ccc = *cit;
       Cell_handle nnn = ccc->neighbor(i);
-      off_nb_c[i] = get_neighbor_offset(ccc,i,nnn);
+      off_nb_c[i] = neighbor_offset(ccc,i,nnn);
     }
     off_nb.push_back(off_nb_c);
   }
@@ -3444,7 +3444,7 @@ Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
   */
 template < class GT, class TDS >
 inline typename Periodic_3_triangulation_3<GT,TDS>::Offset
-Periodic_3_triangulation_3<GT,TDS>::get_neighbor_offset(
+Periodic_3_triangulation_3<GT,TDS>::neighbor_offset(
     Cell_handle ch, int i, Cell_handle nb) const {
   // Redundance in the signature!
   CGAL_triangulation_precondition(ch->neighbor(i) == nb);
