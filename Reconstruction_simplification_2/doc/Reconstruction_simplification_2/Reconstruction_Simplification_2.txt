@@ -45,7 +45,7 @@ The transportation plan is approximated by assigning each input point temporaril
 
 
 
-While previous work address the reconstruction and simplification tasks sequentially, here they are performed jointly using a framework based on optimal transport of measures. This method provides benefits such as robustness to noise, preservation of sharp features and boundaries. It furthermore guarantees that the output is a simplicial complex. Transportation theory studies optimal transportations between a set \f$M\f$ of \f$n\f$ sources and a set  \f$F \f$ of \f$n\f$ targets (both can be primitives in various dimensions.). Given a cost function  \f$c : \mathbb{R}^2 \times \mathbb{R}^2 \rightarrow \mathbb{R}^+ \f$, the goal is to find a mapping between \f$M\f$ and \f$F\f$ such that the sum of the costs \f$c\f$ gets minimized. The optimal transport problem can also be defined between measures, and here we view the reconstruction and simplification tasks as such a transportation problem, where the input points are Dirac measure and the reconstructed simplicial complex is the support of a piecewise uniform measure. The algorithm then performs edge contractions in a greedy fashion w.r.t. the transportation cost, until the desired number of vertices are reached or a predefined iteration threshold has been exceeded.
+While previous work address the reconstruction and simplification tasks sequentially, here they are performed jointly using a framework based on optimal transport of measures. It furthermore guarantees that the output is a simplicial complex. Transportation theory studies optimal transportations between a set \f$M\f$ of \f$n\f$ sources and a set  \f$F \f$ of \f$n\f$ targets (both can be primitives in various dimensions.). Given a cost function  \f$c : \mathbb{R}^2 \times \mathbb{R}^2 \rightarrow \mathbb{R}^+ \f$, the goal is to find a mapping between \f$M\f$ and \f$F\f$ such that the sum of the costs \f$c\f$ gets minimized. The optimal transport problem can also be defined between measures, and here we view the reconstruction and simplification tasks as such a transportation problem, where the input points are Dirac measure and the reconstructed simplicial complex is the support of a piecewise uniform measure. The algorithm then performs edge contractions in a greedy fashion w.r.t. the transportation cost, until the desired number of vertices are reached or a predefined iteration threshold has been exceeded.
 
 
 \section Reconstruction_simplification_2Trans Optimal Transport Formulation
@@ -85,18 +85,16 @@ exposed to the user is the <I> Reconstruction_simplification_2</I>  class.
 
 \code{.cpp}
 /*
-K            	 : a geometric kernel, used for the reconstruction and simplification task.
-
-input.
-Point_property_map 		 : a PropertyMap for accessing the input points.
-Mass_property_map		 : a PropertyMap for accessing the input points' measures.
+K            	   : a geometric kernel, used for the reconstruction and simplification task.
+Point_property_map : a PropertyMap for accessing the input points.
+Mass_property_map  : a PropertyMap for accessing the input points' measures.
 */
 
 
 Reconstruction_simplification_2<K, Point_property_map, Mass_property_map>
-    	rs2(points.begin(), points.end(), point_pmap, mass_pmap);
+  rs2(points.begin(), points.end(), point_pmap, mass_pmap);
 
-    rs2.run(100); // perform 100 contraction steps
+rs2.run(100); // perform 100 contraction steps
 \endcode
 
 Alternatively to calling the reconstruction module using
