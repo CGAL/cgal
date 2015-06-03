@@ -72,8 +72,7 @@ void R_s_k_2::draw_face(Face_handle face)
     ::glEnd();
 }
 
-void R_s_k_2::
-	draw_edge_with_arrow(const Point& s, const Point& t)
+void R_s_k_2::draw_edge_with_arrow(const Point& s, const Point& t)
 {
     Vector vec = t - s;
     Vector vec90(-vec.y(),vec.x());
@@ -92,8 +91,7 @@ void R_s_k_2::
     ::glEnd();
 }
 
-void R_s_k_2::
-			draw_vertices(const float point_size,
+void R_s_k_2::draw_vertices(const float point_size,
                            const float red,
                            const float green,
                            const float blue)
@@ -135,8 +133,7 @@ void R_s_k_2::draw_edges(const float line_width,
     }
 }
 
-void R_s_k_2::
-draw_footpoints(const float line_width,
+void R_s_k_2::draw_footpoints(const float line_width,
                              const float red,
                              const float green,
                              const float blue)
@@ -541,7 +538,6 @@ void R_s_k_2::draw_mesh_one_ring(const float point_size,
     
     ::glLineWidth(2.0f*line_width);
     ::glColor3f(0., 0., 1.);
-    //draw_edge(edge);
     draw_edge_with_arrow(s->point(), t->point());
     
     ::glPointSize(0.5*point_size);
@@ -941,6 +937,5 @@ void R_s_k_2::save_one_edge(std::ofstream& ofs, const Edge& edge)
     Face_handle face = edge.first;
     Point a = face->vertex((i+1)%3)->point();
     Point b = face->vertex((i+2)%3)->point();
-    //TODO: IV COMMNT IN AGAIN
-//    ofs << a << " " << b << std::endl;
+	ofs << a << " " << b << std::endl;
 }
