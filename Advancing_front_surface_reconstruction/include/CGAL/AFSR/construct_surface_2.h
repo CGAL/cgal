@@ -20,7 +20,7 @@ construct_surface(TDS& tds, const CGAL::Advancing_front_surface_reconstruction<K
   typedef typename TDS::Edge Edge;
 
 
-  Triangulation& T = surface.triangulation();
+  Triangulation& T = surface.triangulation_3();
   // create an infinite-vertex and  infinite faces with the
   // boundary edges if any.
   // return the infinite vertex if created

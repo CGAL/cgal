@@ -14,7 +14,7 @@ orient(TDS& tds, const Advancing_front_surface_reconstruction<Kernel,Triangulati
   typedef typename TDS::Face_handle Face_handle;
   typedef typename TDS::Edge Edge;
 
-  Triangulation& T = surface.triangulation();
+  Triangulation& T = surface.triangulation_3();
   // create an infinite-vertex and  infinite faces with the
   // boundary edges if any.
   // return the infinite vertex if created

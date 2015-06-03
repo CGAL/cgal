@@ -437,7 +437,7 @@ int main(int argc,  char* argv[])
 
   
   Surface S(dt, opt);
-  S();
+  S.run();
 
   std::cerr << "Total time: " << timer.time() << " sec." << std::endl; 
   //  write_to_file_vrml2(opt.foutname, S, opt.contour, opt.red, opt.green, opt.blue, opt.no_header);

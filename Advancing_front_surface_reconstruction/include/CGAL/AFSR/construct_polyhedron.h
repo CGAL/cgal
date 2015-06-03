@@ -33,13 +33,13 @@ public:
       typedef typename TDS_2::Vertex_iterator Vertex_iterator;
       typedef typename Surface::Cell_handle Cell_handle;
 
-      const TDS_2& tds = s.tds_2();
+      const TDS_2& tds = s.triangulation_data_structure_2();
 
       int index = 0;
       Vertex_iterator end = tds.vertices_end();
 
       for(Vertex_iterator vit = tds.vertices_begin(); vit != end; ++vit){
-        if(vit->vertex_3() != s.triangulation().infinite_vertex()){
+        if(vit->vertex_3() != s.triangulation_3().infinite_vertex()){
           B.add_vertex(vit->point());
           vit->vertex_3()->id() = index++;
         }

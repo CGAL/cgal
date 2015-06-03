@@ -16,7 +16,7 @@
 
 #include <CGAL/Advancing_front_surface_reconstruction_vertex_base_3.h>
 #include <CGAL/Advancing_front_surface_reconstruction_cell_base_3.h>
-
+#include <CGAL/Timer.h>
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/AFSR/Surface_vertex_base_2.h>
 #include <CGAL/AFSR/Surface_face_base_2.h>
@@ -51,7 +51,7 @@ public:
   bool first, last;
        
   Advancing_front_surface_reconstruction_boundary_iterator(const Surface& S_, int m)
-    : S(S_), mark(m), first_vertex(S.triangulation().finite_vertices_begin()), pos(first_vertex)
+    : S(S_), mark(m), first_vertex(S.triangulation_3().finite_vertices_begin()), pos(first_vertex)
   {
     if (pos->number_of_incident_border() <= 0){
       advance_to_next_boundary();
@@ -121,12 +121,13 @@ public:
     }
     do {
       first_vertex++;
-    } while((first_vertex != S.triangulation().finite_vertices_end()) && 
+    } while((first_vertex != S.triangulation_3().finite_vertices_end()) && 
 	    (! ((first_vertex->is_on_border()) 
 		&& ! first_vertex->is_post_marked(mark))));
-    if(first_vertex != S.triangulation().finite_vertices_end()) {
+    if(first_vertex != S.triangulation_3().finite_vertices_end()) {
       pos = first_vertex;
       pos->set_post_mark(mark);
+      assert(pos->is_on_border());
       
     } else {
       pos = NULL;
@@ -199,8 +200,17 @@ public:
 
   //=====================================================================
   //=====================================================================
+
+ 
+    typedef const std::list<std::list<Vertex_handle> > Boundary_range;
+    typedef const std::list<Vertex_handle> Vertex_on_boundary_range;
+
 private:
 
+    mutable std::list<std::list<Vertex_handle> >  m_boundaries;  
+  
+  Timer postprocess_timer, extend_timer, extend2_timer, init_timer;
+    
   Triangulation_3& T;
 
   Ordered_border_type _ordered_border;
@@ -233,14 +243,14 @@ private:
   mutable int _postprocessing_counter;
   int _size_before_postprocessing;
 
-  std::list<Point> outliers;
+  std::list<Point> m_outliers;
 
   int _number_of_connected_components;
 
     std::list<Vertex_handle> interior_edges;
     std::list< Incidence_request_elt > incidence_requests;
-
-
+    typename std::list< Incidence_request_elt >::iterator sentinel;
+    typename std::list<Vertex_handle>::iterator ie_sentinel;
     std::list<Next_border_elt> nbe_pool;
     std::list<Intern_successors_type> ist_pool;
   
@@ -314,7 +324,7 @@ private:
     {
 
       bool r1;
-      if(w->m_ie_first == interior_edges.end()){
+      if(w->m_ie_first == ie_sentinel){
 	r1 = false;
       }else {
 	typename std::list<Vertex_handle>::iterator b(w->m_ie_first), e(w->m_ie_last);
@@ -333,7 +343,7 @@ private:
 
     inline void set_interior_edge(Vertex_handle w, Vertex_handle v)
     {
-      if(w->m_ie_last == interior_edges.end()){ // empty set
+      if(w->m_ie_last == ie_sentinel){ // empty set
 	assert(w->m_ie_first == w->m_ie_last);
 	w->m_ie_last = interior_edges.insert(w->m_ie_last, v);
 	w->m_ie_first = w->m_ie_last;
@@ -351,12 +361,12 @@ private:
 
     inline void remove_interior_edge(Vertex_handle w, Vertex_handle v)
     {
-      if(w->m_ie_first == interior_edges.end()){
+      if(w->m_ie_first == ie_sentinel){
 	assert(w->m_ie_last == w->m_ie_first);
       } else if(w->m_ie_first == w->m_ie_last){ // there is only one element
 	if(*(w->m_ie_first) == v){
 	  interior_edges.erase(w->m_ie_first);
-	  w->m_ie_last = interior_edges.end();
+	  w->m_ie_last = ie_sentinel;
 	  w->m_ie_first = w->m_ie_last;
 	}
       } else {
@@ -380,7 +390,7 @@ private:
   
     inline void set_incidence_request(Vertex_handle w, const Incidence_request_elt& ir)
     {
-      if(w->m_ir_last == incidence_requests.end()){
+      if(w->m_ir_last == sentinel ){
 	assert(w->m_ir_first == w->m_ir_last);
 	w->m_ir_last = incidence_requests.insert(w->m_ir_last, ir);
 	w->m_ir_first = w->m_ir_last;
@@ -393,10 +403,10 @@ private:
 
   inline bool is_incidence_requested(Vertex_handle w) const
     {
-      if(w->m_ir_last == incidence_requests.end()){
-	assert(w->m_ir_first == incidence_requests.end());
+      if(w->m_ir_last == sentinel ){
+	assert(w->m_ir_first == sentinel );
       }
-      return (w->m_ir_last != incidence_requests.end());
+      return (w->m_ir_last != sentinel );
     }
   
   inline Incidence_request_iterator incidence_request_begin(Vertex_handle w)
@@ -406,8 +416,8 @@ private:
 
   inline Incidence_request_iterator incidence_request_end(Vertex_handle w)
     {
-      if(w->m_ir_last != incidence_requests.end()){
-	assert(w->m_ir_first != incidence_requests.end());
+      if(w->m_ir_last != sentinel ){
+	assert(w->m_ir_first != sentinel );
 	Incidence_request_iterator it(w->m_ir_last);
 	it++;
 	return it;
@@ -417,12 +427,12 @@ private:
 
   inline void erase_incidence_request(Vertex_handle w)
     { 
-      if(w->m_ir_last != incidence_requests.end()){
-	assert(w->m_ir_first != incidence_requests.end());
+      if(w->m_ir_last != sentinel ){
+	assert(w->m_ir_first != sentinel );
 	w->m_ir_last++;
 	incidence_requests.erase(w->m_ir_first, w->m_ir_last);
-	w->m_ir_first = incidence_requests.end();
-	w->m_ir_last = incidence_requests.end();
+	w->m_ir_first = sentinel ;
+	w->m_ir_last = sentinel ;
       }
     }
   
@@ -434,13 +444,13 @@ private:
 	  w->delete_border();
 	}
 
-      if(w->m_ir_first != incidence_requests.end()){
-	assert(w->m_ir_last != incidence_requests.end());
+      if(w->m_ir_first != sentinel ){
+	assert(w->m_ir_last != sentinel );
 	typename std::list< Incidence_request_elt >::iterator b(w->m_ir_first), e(w->m_ir_last);
 	e++;
 	incidence_requests.erase(b, e);
-	w->m_ir_first = incidence_requests.end();
-	w->m_ir_last = incidence_requests.end();
+	w->m_ir_first = sentinel ;
+	w->m_ir_last = sentinel ;
       }
 
       w->m_incident_border = new_border();
@@ -464,11 +474,21 @@ private:
 
     void initialize_vertices_and_cells()
     {
+      
+      Incidence_request_elt ire;
+      incidence_requests.clear();
+      incidence_requests.push_back(ire);
+      sentinel = incidence_requests.begin();
+
+      interior_edges.clear();
+      interior_edges.push_back(Vertex_handle());
+      ie_sentinel = interior_edges.begin();
+
       for(All_vertices_iterator fit = T.all_vertices_begin();
           fit != T.all_vertices_end();
           ++fit){
-        fit->m_ie_first =  fit->m_ie_last = interior_edges.end();
-        fit->m_ir_first = fit->m_ir_last = incidence_requests.end();
+        fit->m_ie_first =  fit->m_ie_last = ie_sentinel;
+        fit->m_ir_first = fit->m_ir_last = sentinel ;
         fit->m_incident_border = new_border();
       }
     }
@@ -481,15 +501,15 @@ private:
 	{
 	  w->delete_border();
 	}
-      if(w->m_ir_first != incidence_requests.end()){
-	assert(w->m_ir_last != incidence_requests.end());
+      if(w->m_ir_first != sentinel ){
+	assert(w->m_ir_last != sentinel );
 	typename std::list< Incidence_request_elt >::iterator b(w->m_ir_first), e(w->m_ir_last);
 	e++;
 	incidence_requests.erase(b, e);
       }
 
-      if(w->m_ie_first != interior_edges.end()){
-	assert(w->m_ie_last != interior_edges.end());
+      if(w->m_ie_first != ie_sentinel){
+	assert(w->m_ie_last != ie_sentinel);
 	typename std::list<Vertex_handle>::iterator b(w->m_ie_first), e(w->m_ie_last);
 	e++;
 	interior_edges.erase(b, e);
@@ -519,8 +539,28 @@ public:
     
     {}
 
+   ~Advancing_front_surface_reconstruction()
+    {
+      /*
+      std::cerr << "postprocessing" << postprocess_timer.time() << std::endl;
+      std::cerr << "extend        " << extend_timer.time() << std::endl;
+      std::cerr << "extend2       " << extend2_timer.time() << std::endl;
+      std::cerr << "init          " << postprocess_timer.time() << std::endl;
+      std::cerr << "#outliers     " << number_of_outliers() << std::endl;
+      */
+    }
 
-    void operator()(const AFSR_options& opt = AFSR_options())
+    void run(double radius_ratio_bound=5, double beta=0.52)
+    {
+      AFSR_options opt;
+      opt.K = radius_ratio_bound;
+      // TODO: what to do with beta
+
+      run(opt);
+    }
+
+
+    void run(const AFSR_options opt)
     {
       initialize_vertices_and_cells();
     bool re_init = false;
@@ -531,14 +571,19 @@ public:
 	if ( (re_init = init(re_init)) )
 	  {
 	    //std::cerr << "Growing connected component " << _number_of_connected_components << std::endl;
+            extend_timer.start();
 	    extend(opt.K_init, opt.K_step, opt.K);
+            extend_timer.stop();
 
 	    if ((number_of_facets() > static_cast<int>(T.number_of_vertices()))&&
 		(opt.NB_BORDER_MAX > 0))
 	      // en principe 2*nb_sommets = nb_facettes: y a encore de la marge!!!
 	      {
 		while(postprocessing(opt.NB_BORDER_MAX)){
+                  extend2_timer.start();
 		  extend(opt.K_init, opt.K_step, opt.K);
+                  
+                  extend2_timer.stop();
 		}
 	      }
 	  } 
@@ -548,6 +593,7 @@ public:
 
     _tds_2_inf = AFSR::construct_surface(_tds_2, *this);
 
+    boundaries();
     clear_vertices();
   }
 
@@ -555,12 +601,13 @@ public:
   typedef Triangulation_data_structure_2<AFSR::Surface_vertex_base_2<Kernel,Vertex_handle>,
                                          AFSR::Surface_face_base_2<Kernel, typename Triangulation_3::Facet> > TDS_2;
 
+    typedef TDS_2 Triangulation_data_structure_2;
 
   mutable TDS_2 _tds_2;
 
   mutable typename TDS_2::Vertex_handle _tds_2_inf;
 
-  const TDS_2& tds_2() const
+  const TDS_2& triangulation_data_structure_2() const
   {
     return _tds_2;
   }
@@ -569,7 +616,8 @@ public:
   bool
   has_boundaries() const
   {
-    return _tds_2_inf->vertex_3() == triangulation().infinite_vertex();
+    return _tds_2_inf != typename TDS_2::Vertex_handle(); 
+    // return _tds_2_inf->vertex_3() == triangulation_3().infinite_vertex();
   }
     
 
@@ -599,7 +647,7 @@ public:
 
 
   Triangulation_3&
-  triangulation() const
+  triangulation_3() const
   {
     return T;
   }
@@ -620,19 +668,27 @@ public:
 
   int number_of_outliers() const
   {
-    return static_cast<int>(outliers.size());
+    return static_cast<int>(m_outliers.size());
   }
+
+  typedef std::list<Point> Outlier_range;
 
   typedef typename std::list<Point>::const_iterator Outlier_iterator;
 
-  Outlier_iterator outliers_begin() const
+  const Outlier_range& outliers() const
   {
-    return outliers.begin();
+    return m_outliers;
   }
 
-  Outlier_iterator outliers_end() const
+    
+  Outlier_iterator outliers_begin() const
   {
-    return outliers.end();
+    return m_outliers.begin();
+  }
+
+  Outlier_iterator m_outliers_end() const
+  {
+    return m_outliers.end();
   }
 
   typedef Advancing_front_surface_reconstruction_boundary_iterator<Extract> Boundary_iterator; 
@@ -645,6 +701,25 @@ public:
   Boundary_iterator boundaries_end() const
   {
      return Boundary_iterator(*this);
+  }
+    
+  const Boundary_range& boundaries() const
+  {
+    if(has_boundaries() && m_boundaries.empty()){
+      Boundary_iterator b =  boundaries_begin();
+      Boundary_iterator e =  boundaries_end();
+      for(; b!= e; ++b){
+        Vertex_handle v = *b;
+        std::list<Vertex_handle> border;
+        m_boundaries.push_back(border);
+        do {
+          m_boundaries.back().push_back(*b);
+          ++b;
+        }while(*b != v);
+      }
+    }
+  
+    return  m_boundaries; 
   }
 
 
@@ -1239,6 +1314,7 @@ public:
   bool
   init(const bool& re_init)
   {
+    init_timer.start();
     Facet min_facet;
     coord_type min_value = HUGE_VAL;
     int i1, i2, i3;
@@ -1316,8 +1392,10 @@ public:
 	_ordered_border.insert(Radius_ptr_type (e31.first, p31));
 
 	select_facet(c_min, ind);
+        init_timer.stop();
 	return true;
       }
+    init_timer.stop();
     return false;
   }
 
@@ -1427,9 +1505,7 @@ public:
   {  
     remove_border_elt(ordered_key);
     force_merge(ordered_el1, result1);
-  
     Radius_edge_type e2 = compute_value(edge_Ifacet_2);
-
     IO_edge_type* p2;
     if (ordered_el1.first == v1)
       p2 = set_border_elt(v2, ordered_el1.second,
@@ -1437,7 +1513,6 @@ public:
     else
       p2 = set_border_elt(ordered_el1.first, v2,
 			  Border_elt(e2,result1.second));
-
     dec_mark(v1);
 
     _ordered_border.insert(Radius_ptr_type(e2.first, p2));
@@ -1445,7 +1520,6 @@ public:
     //depiler les eventuelles requettes de connections avortees... zones etoilees, 
     //en effet le bord a change donc on peut peut etre maintenant.
     dequeue_incidence_request(v2);
-
     if (ordered_el1.first == v1)
       dequeue_incidence_request(ordered_el1.second);
     else
@@ -1513,7 +1587,6 @@ public:
       is_border_el2 = is_border_elt(ordered_el2, result2);
 
     Radius_edge_type e1, e2;
-
     if (c->vertex(i)->not_interior())
       {
 	if ((!is_interior_edge(ordered_el1))&&
@@ -1536,7 +1609,6 @@ public:
 
 		return FINAL_CASE;
 	      }
-
 	    //--------------------------------------------------------------------- 
 	    //on peut alors marquer v1 et on pourrait essayer de merger 
 	    //sans faire de calcul inutile???
@@ -1551,7 +1623,6 @@ public:
 
 		return EAR_CASE;
 	      }
-
 	    //---------------------------------------------------------------------
 	    //idem pour v2
 	    if (is_border_el2)
@@ -1560,13 +1631,11 @@ public:
 					  edge_Efacet.second);
 		merge_ear(ordered_el2, result2, 
 			  ordered_key, v2, v1, edge_Ifacet_1);
-
 		select_facet(c, edge_Efacet.second);
 
 		return EAR_CASE;
 	      }
 	    
-
 	    //---------------------------------------------------------------------
 	    if ((!is_border_el1)&&(!is_border_el2))
 	      { 
@@ -1580,7 +1649,7 @@ public:
 		//       if (c->vertex(i)->not_interior() deja teste en haut	      
 	      
 		if(c->vertex(i)->is_exterior())
-		  {		  
+		  {	
 		    Edge_incident_facet edge_Ifacet_1(Edge(c, i, edge_Efacet.first.second), 
 					      edge_Efacet.second);
 		  
@@ -1610,7 +1679,7 @@ public:
 		else // c->vertex(i) is a border point (and now there's only 1
 		  // border incident to a point... _mark<1 even if th orientation
 		  // may be such as one vh has 2 successorson the same border...
-		  {		 
+		  {	
 		    // a ce niveau on peut tester si le recollement se fait en
 		    // maintenant la compatibilite d'orientation des bords (pour
 		    // surface orientable...) ou si elle est brisee...
@@ -1660,7 +1729,6 @@ public:
 		    bool is_border_ear1 = is_ordered_border_elt(ear1_e, result_ear1);		  
 		    bool is_border_ear2 = is_ordered_border_elt(ear2_e, result_ear2);
 		    bool ear1_valid(false), ear2_valid(false);
-
 		    if (is_border_ear1&&(e1.first < STANDBY_CANDIDATE)&&
 			(e1.first <=  value)&&
 			(result12.second==result_ear1.second))
@@ -1669,7 +1737,6 @@ public:
 						smallest_radius_delaunay_sphere(ear1_c, 
                                                                                 ear1.second)) != 0;
 		      }
-		  
 		    if (is_border_ear2&&(e2.first < STANDBY_CANDIDATE)&&
 			(e2.first <= value)&&
 			(result12.second==result_ear2.second))
@@ -1678,7 +1745,6 @@ public:
 						smallest_radius_delaunay_sphere(ear2_c, 
                                                                                 ear2.second)) != 0;
 		      } 
-
 		    if ((!ear1_valid)&&(!ear2_valid)) 
 		      return NOT_VALID_CONNECTING_CASE;
 
@@ -1754,9 +1820,7 @@ public:
 			    _ordered_border.insert(Radius_ptr_type(e2.first, p2));
 			  }
 		      }
-
 		    select_facet(c, edge_Efacet.second);
-
 		    return CONNECTING_CASE;
 		  }
 	      }
@@ -1812,12 +1876,15 @@ public:
     K = K_init; // valeur d'initialisation de K pour commencer prudemment...
 
     Vertex_handle v1, v2;
-    if (_ordered_border.empty()) return;
+    if (_ordered_border.empty()){
+      return;
+    }
     do
       {
 	min_K = HUGE_VAL; // pour retenir le prochain K necessaire pour progresser...
 	do
 	  { 
+
 	    Ordered_border_iterator e_it = _ordered_border.begin();
 
 	    criteria value = e_it->first;
@@ -1841,9 +1908,7 @@ public:
 		Radius_edge_type mem_e_it(e_it->first, *e_it->second);
 
 		_ordered_border.erase(e_it);
-	        
 		Validation_case validate_result = validate(candidate, value);
-
 		if ((validate_result == NOT_VALID)||
 		    (validate_result == NOT_VALID_CONNECTING_CASE))
 		  { 
@@ -1971,16 +2036,17 @@ public:
 	int ind = circ.second;
 	Cell_handle neigh = ch->neighbor(ind);
 	int n_ind = neigh->index(ch);
-	if (ch->is_selected_facet(ind))
+	if (ch->is_selected_facet(ind)){
 	  return Facet(ch, ind);
-	if (neigh->is_selected_facet(n_ind))
+        }
+	if (neigh->is_selected_facet(n_ind)){
 	  return Facet(neigh, n_ind);
+        }
 	circ = next(circ);
       }
     while(circ.first.first != c);
     // si on passe par la, alors y a eu un probleme....
     std::cerr << "+++probleme dans la MAJ avant remove..." << std::endl;
-  
     return Facet(c, start.second);
   }
 
@@ -2109,7 +2175,7 @@ public:
 
   void
   store_outlier(const Point& p){
-    outliers.push_back(p);
+    m_outliers.push_back(p);
   }
 
   void dec_vh_number()
@@ -2159,7 +2225,9 @@ public:
   //---------------------------------------------------------------------
 
   bool postprocessing(int NB_BORDER_MAX)
-  {  
+  {
+    postprocess_timer.start();
+
     _postprocessing_counter++;
 
     std::list<Vertex_handle> L_v;
@@ -2228,6 +2296,7 @@ public:
 	re_compute_values();
       }
     else{
+      postprocess_timer.stop();
       return false;
     }
     // we stop if we removed more than 10% of points or after 20 rounds
@@ -2235,6 +2304,7 @@ public:
 	((_size_before_postprocessing - T.number_of_vertices()) >
 	 .1 * _size_before_postprocessing)||
 	(_postprocessing_counter > 20)){
+      postprocess_timer.stop();
       return false;
     }
 
@@ -2242,9 +2312,9 @@ public:
     // fin--
     //   if (_postprocessing_counter < 5)
     //     return true;
+      postprocess_timer.stop();
     return true;
   }
-
 
 }; // class Advancing_front_surface_reconstruction
 
@@ -2262,7 +2332,11 @@ struct Auto_count : public std::unary_function<const T&,std::pair<T,int> >{
 
 template <typename PointIterator, typename IndexTripleIterator>
 IndexTripleIterator
-advancing_front_surface_reconstruction(PointIterator b, PointIterator e, IndexTripleIterator out)
+advancing_front_surface_reconstruction(PointIterator b,
+                                       PointIterator e,
+                                       IndexTripleIterator out,
+                                       double radius_ratio_bound = 5,
+                                       double  	beta = 0.52 )
 {
   typedef Exact_predicates_inexact_constructions_kernel Kernel;
   typedef Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
@@ -2277,14 +2351,23 @@ advancing_front_surface_reconstruction(PointIterator b, PointIterator e, IndexTr
   Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count<Point_3>()),
                       boost::make_transform_iterator(e, AFSR::Auto_count<Point_3>() )  );
 
-  Reconstruction R(dt);
-  R();
+  AFSR_options opt;
+  opt.K = radius_ratio_bound;
+  // TODO: What  to do with beta???
+  Reconstruction R(dt,opt);
+  R.run(opt);
   write_triple_indices(out, R);
   return out;
 }
+
 template <typename PointIterator, typename Kernel>
 void
-advancing_front_surface_reconstruction(PointIterator b, PointIterator e, Polyhedron_3<Kernel>& polyhedron, double max_perimeter = 2)
+advancing_front_surface_reconstruction(PointIterator b,
+                                       PointIterator e,
+                                       Polyhedron_3<Kernel>& polyhedron,
+                                       double radius_ratio_bound = 5,
+                                       double  	beta = 0.52,
+                                       double max_perimeter = 0)
 {
   typedef Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
   typedef Advancing_front_surface_reconstruction_cell_base_3<Kernel> LCb;
@@ -2299,9 +2382,11 @@ advancing_front_surface_reconstruction(PointIterator b, PointIterator e, Polyhed
                       boost::make_transform_iterator(e, AFSR::Auto_count<Point_3>() )  );
   
   AFSR_options opt;
+  opt.K = radius_ratio_bound;
+  // TODO: What  to do with beta???
   opt.abs_perimeter = max_perimeter;
   Reconstruction R(dt, opt);
-  R();
+  R.run(opt);
   AFSR::construct_polyhedron(polyhedron, R);
 }
 

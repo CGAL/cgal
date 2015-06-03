@@ -1,6 +1,5 @@
-
-
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
@@ -20,12 +19,13 @@ namespace std {
   }
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+  std::ifstream in((argc>1)?argv[1]:"data/half.xyz"); 
   std::vector<Point_3> points;
   std::vector<Facet> facets;
-
-  std::copy(std::istream_iterator<Point_3>(std::cin), 
+  
+  std::copy(std::istream_iterator<Point_3>(in), 
             std::istream_iterator<Point_3>(), 
             std::back_inserter(points));
   

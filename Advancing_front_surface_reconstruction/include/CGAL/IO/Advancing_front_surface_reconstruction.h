@@ -15,6 +15,8 @@
 #include <CGAL/AFSR/orient.h>
 #include <CGAL/IO/AFSR_vrml.h>
 
+#include <boost/foreach.hpp>
+
 namespace CGAL {
 
 
@@ -36,7 +38,7 @@ write_to_file_medit(char* foutput, const Surface& S)
   typedef typename Surface::Vertex Vertex;
   typedef typename Surface::Cell_handle Cell_handle;
 
-  Triangulation_3& T = S.triangulation();
+  Triangulation_3& T = S.triangulation_3();
 
   char foutput_points[100];
   char foutput_faces[100];
@@ -130,7 +132,7 @@ write_to_file_gv(char* foutput, const Surface& S)
   typedef typename Surface::Vertex_handle Vertex_handle;
   typedef typename Surface::Vertex Vertex;
   typedef typename Surface::Cell_handle Cell_handle;
-  Triangulation_3& T = S.triangulation();
+  Triangulation_3& T = S.triangulation_3();
 
   char foutput_tmp[100];
   std::strcpy(foutput_tmp, foutput);
@@ -235,7 +237,7 @@ write_triple_indices(OutputIterator out, const Surface& S)
   typedef typename Surface::Vertex_handle Vertex_handle;
   typedef typename Surface::Vertex Vertex;
   typedef typename Surface::Cell_handle Cell_handle;
-  Triangulation_3& T = S.triangulation();
+  Triangulation_3& T = S.triangulation_3();
 
  
   for(Finite_facets_iterator f_it = T.finite_facets_begin(); 
@@ -285,7 +287,7 @@ write_to_file_ply(char* foutput, const Surface& S)
   typedef typename Surface::Finite_facets_iterator Finite_facets_iterator;
   typedef typename Surface::Vertex_handle Vertex_handle;
   typedef typename Surface::Cell_handle Cell_handle;
-  Triangulation_3& T = S.triangulation();
+  Triangulation_3& T = S.triangulation_3();
   char foutput_tmp[100];
   std::strcpy(foutput_tmp, foutput);
 
@@ -386,7 +388,7 @@ write_to_file_iv_border_edges(const Surface& S, std::ofstream& os)
   typedef typename Surface::Edge_like Edge_like;
   typedef typename Surface::Border_elt Border_elt;
 
-  Triangulation_3& T = S.triangulation();
+  Triangulation_3& T = S.triangulation_3();
   typedef std::pair<Vertex_handle, int>  indiced_vh;
   std::map<Vertex_handle, int> _vh_vect;
   int _vh_bord_count = 0;
@@ -464,7 +466,7 @@ write_to_file_iv_remaining_points(const Surface& S, std::ofstream& os)
   typedef typename Surface::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Surface::Vertex_handle Vertex_handle;
   typedef typename Surface::Cell_handle Cell_handle;
-  Triangulation_3& T = S.triangulation();
+  Triangulation_3& T = S.triangulation_3();
   typedef std::pair<Vertex_handle, int>  indiced_vh;
   std::map<Vertex_handle, int> _vh_vect;
   int _vh_bord_count(0);
@@ -530,7 +532,7 @@ write_to_file_iv_border_facets(const Surface& S, std::ofstream& os)
   typedef typename Surface::Edge_like Edge_like;
   typedef typename Surface::Border_elt Border_elt;
 
-  Triangulation_3& T = S.triangulation();
+  Triangulation_3& T = S.triangulation_3();
   typedef std::pair<Vertex_handle, int>  indiced_vh;
   std::map<Vertex_handle, int> _vh_vect;
   int _vh_bord_count(0);
@@ -649,7 +651,7 @@ write_to_file_iv(char* foutput, const Surface& S,
   typedef typename Surface::Finite_facets_iterator Finite_facets_iterator;
   typedef typename Surface::Vertex_handle Vertex_handle;
   typedef typename Surface::Cell_handle Cell_handle;
-  Triangulation_3& T = S.triangulation();
+  Triangulation_3& T = S.triangulation_3();
   char foutput_tmp[100];
   std::strcpy(foutput_tmp, foutput);
 
@@ -837,7 +839,7 @@ write_to_file_vrml2(char* foutput, const Surface& S,
   typedef typename Surface::Finite_facets_iterator Finite_facets_iterator;
   typedef typename Surface::Vertex_handle Vertex_handle;
   typedef typename Surface::Cell_handle Cell_handle;
-  //Triangulation_3& T = S.triangulation();
+  //Triangulation_3& T = S.triangulation_3();
 
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
  
@@ -880,13 +882,13 @@ write_to_file_vrml2(char* foutput, const Surface& S,
 
   typename Surface::Outlier_iterator pit = S.outliers_begin();
 
-  if(pit != S.outliers_end()) {
+  if(S.number_of_outliers()!= 0) {
     os << "Shape {\n"
       "geometry PointSet {\n"
       "coord Coordinate { point [\n";
 
-    for(; pit != S.outliers_end(); pit++){
-      os << pit->x() << " " << pit->y() << " " << pit->z() << ",\n";
+    BOOST_FOREACH(const typename Surface::Point& p , S.outliers()){
+      os << p.x() << " " << p.y() << " " << p.z() << ",\n";
     } 
     os << "] } }\n"
       "appearance Appearance {\n"
@@ -918,7 +920,7 @@ write_to_file_stl(char* foutput, const Surface& S)
   typedef typename Surface::Cell_handle Cell_handle;
   typedef typename Triangulation_3::Point Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel::Vector_3 Vector;
-  Triangulation_3& T = S.triangulation();
+  Triangulation_3& T = S.triangulation_3();
 
 
   char foutput_tmp[100];
