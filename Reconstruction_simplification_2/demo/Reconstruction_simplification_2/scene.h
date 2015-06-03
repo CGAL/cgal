@@ -358,7 +358,8 @@ public:
 				float mass = 1.0f - grayscale.atXY(i, j);
 				double x = double(i) / grayscale.width();
 				double y = 1.0 - double(j) / grayscale.height();
-				add_sample(Point(x, y), mass);
+        if (mass > 0.f)
+				  add_sample(Point(x, y), mass);
 			}
 		}
 		std::cerr << "done (" << m_samples.size() << ")" << std::endl;
@@ -574,8 +575,6 @@ public:
 		PointMassList point_mass_list;
 		Sample_list_const_iterator it;
 		for (it = vertices.begin(); it != vertices.end(); it++) {
-			std::cout << "Sample in Scene " << (*it)->point() << " : "
-					<< (*it)->mass() << std::endl;
 			point_mass_list.push_back(
 					std::make_pair((*it)->point(), (*it)->mass()));
 		}
