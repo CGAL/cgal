@@ -4,8 +4,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Reconstruction_simplification_2.h>
 
-#include<fstream>
-#include<iostream>
+#include <fstream>
+#include <iostream>
 #include <string>
 #include <iterator>
 #include <list>
@@ -16,7 +16,7 @@ typedef K::Segment_2                                        Segment;
 
 typedef K::FT                                               FT;
 
-typedef CGAL::Reconstruction_simplification_2<K> Rs_2;
+typedef CGAL::Reconstruction_simplification_2<K>            Rs_2;
 
 
 void load_xy_file(const std::string& fileName, std::list<Point>& points)
