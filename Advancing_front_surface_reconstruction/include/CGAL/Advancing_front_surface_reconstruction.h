@@ -1329,7 +1329,7 @@ public:
   //=====================================================================
   //=====================================================================
 
-  // The parameter re_init is true the first time only
+  // The parameter re_init is false the first time only
   // Returns true, iff it found a face where the next surface can grow
   bool
   init(const bool& re_init)
