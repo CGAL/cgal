@@ -13,6 +13,7 @@
 #include <cassert>
 #include <vector>
 #include <list>
+#include <set>
 
 #include <CGAL/Advancing_front_surface_reconstruction_vertex_base_3.h>
 #include <CGAL/Advancing_front_surface_reconstruction_cell_base_3.h>
@@ -190,9 +191,28 @@ public:
   typedef std::pair< Vertex_handle, Vertex_handle > Edge_like;
   typedef CGAL::Triple< Vertex_handle, Vertex_handle, Vertex_handle > Facet_like;
 
-    
+#if USE_MM    
   typedef std::multimap< criteria, IO_edge_type*, 
                          std::less<criteria> > Ordered_border_type;
+#else 
+  
+    struct LE {
+      
+      bool operator()(const Radius_ptr_type& p1,
+                      const Radius_ptr_type p2) const
+      {
+        if(p1.first < p2.first) return true;
+        if(p1.first > p2.first) return false;
+        return p1.second < p2.second;
+      }
+      
+    };
+
+    
+    typedef std::set<Radius_ptr_type> Ordered_border_type;
+#endif
+
+
   typedef typename Ordered_border_type::iterator Ordered_border_iterator;
 
   enum Validation_case {NOT_VALID, NOT_VALID_CONNECTING_CASE, FINAL_CASE,
@@ -213,7 +233,7 @@ private:
     
   Triangulation_3& T;
 
-  Ordered_border_type _ordered_border;
+    Ordered_border_type _ordered_border;
   int _number_of_border;
 
   const coord_type SLIVER_ANGULUS; // = sampling quality of the surface
@@ -541,13 +561,13 @@ public:
 
    ~Advancing_front_surface_reconstruction()
     {
-      /*
+      
       std::cerr << "postprocessing" << postprocess_timer.time() << std::endl;
       std::cerr << "extend        " << extend_timer.time() << std::endl;
       std::cerr << "extend2       " << extend2_timer.time() << std::endl;
       std::cerr << "init          " << postprocess_timer.time() << std::endl;
       std::cerr << "#outliers     " << number_of_outliers() << std::endl;
-      */
+      
     }
 
     void run(double radius_ratio_bound=5, double beta=0.52)
@@ -1319,10 +1339,11 @@ public:
     coord_type min_value = HUGE_VAL;
     int i1, i2, i3;
 
-    if (!re_init)
+    if (!re_init){
+      Finite_facets_iterator end = T.finite_facets_end();
       for(Finite_facets_iterator facet_it = T.finite_facets_begin(); 
-	  facet_it != T.finite_facets_end(); 
-	  facet_it++)
+	  facet_it != end; 
+	  ++facet_it)
 	{
 	  coord_type value = smallest_radius_delaunay_sphere((*facet_it).first,
                                                              (*facet_it).second);
@@ -1332,10 +1353,11 @@ public:
 	      min_value = value;
 	    }
 	}
-    else //if (re_init)
+    }else{ //if (re_init)
+      Finite_facets_iterator end = T.finite_facets_end();
       for(Finite_facets_iterator facet_it = T.finite_facets_begin(); 
-	  facet_it != T.finite_facets_end(); 
-	  facet_it++)
+	  facet_it != end; 
+	  ++facet_it)
 	{
 	  Cell_handle c = (*facet_it).first;
 	  int index = (*facet_it).second;	 
@@ -1361,6 +1383,7 @@ public:
 		    }
 		}
 	}
+    }
 
     if (min_value != HUGE_VAL)
       {
@@ -1437,6 +1460,7 @@ public:
   void
   ordered_map_erase(const criteria& value, const IO_edge_type* pkey)
   {
+#if USE_MM
     std::size_t number_of_conflict = _ordered_border.count(value);  
     if (number_of_conflict == 1)
       {
@@ -1460,6 +1484,9 @@ public:
 	    elt_it++;
 	  }
       }
+#else
+    _ordered_border.erase(Radius_ptr_type(value,(IO_edge_type*)pkey));
+#endif
   }
 
   //---------------------------------------------------------------------

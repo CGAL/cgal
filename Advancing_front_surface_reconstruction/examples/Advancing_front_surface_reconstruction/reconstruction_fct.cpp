@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
   CGAL::advancing_front_surface_reconstruction(points.begin(),
                                                points.end(),
                                                std::back_inserter(facets));
-
+  
   std::cout << "OFF\n" << points.size() << " " << facets.size() << " 0\n";
   std::copy(points.begin(),
             points.end(),
@@ -40,6 +40,6 @@ int main(int argc, char* argv[])
   std::copy(facets.begin(),
             facets.end(),
             std::ostream_iterator<Facet>(std::cout, "\n"));
-
+  
   return 0;
 }
