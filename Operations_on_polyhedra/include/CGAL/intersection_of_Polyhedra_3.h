@@ -656,13 +656,11 @@ namespace internal_IOP{
     
     size_t size() const {return enodes.size();}
 
-    void add_new_node(Halfedge_handle edge,Facet_handle facet)
-    {
-      enodes.push_back(compute_triangle_segment_intersection_point<Polyhedron,Kernel>(edge,facet,ek) );
-      inodes.push_back( exact_to_interval(enodes.back()) );
-    }
-
     void add_new_node(const Exact_kernel::Point_3& p){
+      const Ikernel::Point_3& p_approx=p.approx();
+      if ( !has_smaller_relative_precision(p_approx.x(),Lazy_exact_nt<typename Exact_kernel::FT>::get_relative_precision_of_to_double()) ||
+           !has_smaller_relative_precision(p_approx.y(),Lazy_exact_nt<typename Exact_kernel::FT>::get_relative_precision_of_to_double()) ||
+           !has_smaller_relative_precision(p_approx.z(),Lazy_exact_nt<typename Exact_kernel::FT>::get_relative_precision_of_to_double()) ) p.exact();
       enodes.push_back(p);
       inodes.push_back( exact_to_interval(p) );
     }
