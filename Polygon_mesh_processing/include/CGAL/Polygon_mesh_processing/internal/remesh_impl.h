@@ -65,11 +65,18 @@ namespace internal {
       BOOST_FOREACH(halfedge_descriptor h, border)
         border_edges[edge(h, pmesh_)] = true;
     }
-    friend bool get(Border_constraint_pmap<PM, FaceRange> map,
-                    edge_descriptor e)
+
+    friend bool get(const Border_constraint_pmap<PM, FaceRange>& map,
+                    const edge_descriptor& e)
     {
-      return map.border_edges[e];
+      CGAL_assertion(!map.border_edges.empty());
+      typename std::map<edge_descriptor, bool>::const_iterator it
+        = map.border_edges.find(e);
+
+      CGAL_assertion(it != map.border_edges.end());
+      return it->second;
     }
+
   };
 
   template<typename PolygonMesh
@@ -221,6 +228,7 @@ namespace internal {
       typedef typename Boost_bimap::value_type                       long_edge;
 
       std::cout << "Split long edges (" << high << ")...";
+      std::cout.flush(); 
       double sq_high = high*high;
 
       //collect long edges
@@ -338,6 +346,7 @@ namespace internal {
       typedef typename Boost_bimap::value_type                    short_edge;
 
       std::cout << "Collapse short edges (" << low << ", " << high << ")...";
+      std::cout.flush();
       double sq_low = low*low;
       double sq_high = high*high;
 
@@ -518,6 +527,7 @@ namespace internal {
     void equalize_valences()
     {
       std::cout << "Equalize valences...";
+      std::cout.flush(); 
       unsigned int nb_flips = 0;
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
       {
@@ -535,14 +545,14 @@ namespace internal {
                           + CGAL::abs(valence(vc) - target_valence(vc))
                           + CGAL::abs(valence(vd) - target_valence(vd));
 
-        Halfedge_status s1 = status(he);
-        Halfedge_status s1o = status(opposite(he, mesh_));
+        CGAL_assertion_code(Halfedge_status s1 = status(he));
+        CGAL_assertion_code(Halfedge_status s1o = status(opposite(he, mesh_)));
 
         CGAL::Euler::flip_edge(he, mesh_);
         ++nb_flips;
 
-        Halfedge_status s2 = status(he);
-        Halfedge_status s2o = status(opposite(he, mesh_));
+        CGAL_assertion_code(Halfedge_status s2 = status(he));
+        CGAL_assertion_code(Halfedge_status s2o = status(opposite(he, mesh_)));
         CGAL_assertion(s1 == s2   && s1 == PATCH);
         CGAL_assertion(s1o == s2o && s1o == PATCH);
         CGAL_assertion(nb_valid_halfedges() == halfedge_status_map_.size());
@@ -562,7 +572,7 @@ namespace internal {
           CGAL::Euler::flip_edge(he, mesh_);
           --nb_flips;
 
-          Halfedge_status s3 = status(he);
+          CGAL_assertion_code(Halfedge_status s3 = status(he));
           CGAL_assertion(s1 == s3);
           CGAL_assertion(!is_border(he, mesh_));
           CGAL_assertion(
@@ -570,7 +580,13 @@ namespace internal {
             || (vb == source(he, mesh_) && va == target(he, mesh_)));
         }
       }
-      PMP::remove_degenerate_faces(mesh_/*todo : add named parameters*/);
+
+      std::setprecision(17);
+      dump("after-edge-flips.off");
+
+      PMP::remove_degenerate_faces(mesh_
+        , PMP::parameters::vertex_point_map(vpmap_)
+        .geom_traits(GeomTraits()));
 
       std::cout << "done. ("<< nb_flips << " flips)" << std::endl;
 
@@ -592,6 +608,7 @@ namespace internal {
     {
       //todo : move border vertices along 1-dimensional features
       std::cout << "Tangential relaxation...";
+      std::cout.flush();
 
       //todo : use boost::vector_property_map to improve computing time
       typedef std::map<vertex_descriptor, Vector_3> VNormalsMap;
@@ -627,7 +644,6 @@ namespace internal {
       }
 
       // compute moves
-      //todo : iterate on barycenters instead. Would avoid retesting is_on_patch
       typedef typename std::map<vertex_descriptor, Point>::value_type VP_pair;
       std::map<vertex_descriptor, Point> new_locations;
       BOOST_FOREACH(const VP_pair& vp, barycenters)
@@ -663,6 +679,7 @@ namespace internal {
     {
       //todo : handle the case of boundary vertices
       std::cout << "Project to surface...";
+      std::cout.flush();
 
       BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
       {
