@@ -17,6 +17,7 @@
 // This package
 #include <CGAL/pca_estimate_normals.h>
 #include <CGAL/jet_estimate_normals.h>
+#include <CGAL/vcm_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/property_map.h>
 #include <CGAL/IO/read_off_points.h>
@@ -94,6 +95,30 @@ void run_jet_estimate_normals(PointList& points, // input points + output normal
                         << std::endl;
 }
 
+// Compute normals direction using the VCM
+void run_vcm_estimate_normals(PointList &points, // input points + output normals
+                              double R, // radius of the offset
+                              double r) { // radius used during the convolution
+    CGAL::Timer task_timer; task_timer.start();
+    std::cerr << "Estimates Normals Direction using VCM (R="
+        << R << " and r=" << r << ")...\n";
+
+  // Estimates normals direction.
+  // Note: vcm_estimate_normals() requires an iterator over points
+  // + property maps to access each point's position and normal.
+    CGAL::vcm_estimate_normals(points.begin(), points.end(),
+                               CGAL::First_of_pair_property_map<PointVectorPair>(),
+                               CGAL::Second_of_pair_property_map<PointVectorPair>(),
+                               R,
+                               r);
+
+    long memory = CGAL::Memory_sizer().virtual_size();
+    std::cerr << "done: " << task_timer.time() << " seconds, "
+        << (memory>>20) << " Mb allocated"
+        << std::endl;
+
+}
+
 // Hoppe92 normal orientation using a Minimum Spanning Tree.
 void run_mst_orient_normals(PointList& points, // input points + input/output normals
                             unsigned int nb_neighbors_mst) // number of neighbors
@@ -144,15 +169,19 @@ int main(int argc, char * argv[])
       std::cerr << "Input file formats are .off, .xyz and .pwn.\n";
       std::cerr << "Output file formats are .xyz and .pwn.\n";
       std::cerr << "Options:\n";
-      std::cerr << "  -estimate plane|quadric          Estimates normals direction\n";
-      std::cerr << "  using a tangent plane or quadric (default=quadric)\n";
-      std::cerr << "  -nb_neighbors_pca <int>          Number of neighbors\n";
+      std::cerr << "  -estimate plane|quadric|vcm          Estimates normals direction\n";
+      std::cerr << "  using a tangent plane or quadric or vcm (default=quadric)\n";
+      std::cerr << "  -nb_neighbors_pca <int>              Number of neighbors\n";
       std::cerr << "  to compute tangent plane (default=18)\n";
-      std::cerr << "  -nb_neighbors_jet_fitting <int>  Number of neighbors\n";
+      std::cerr << "  -nb_neighbors_jet_fitting <int>      Number of neighbors\n";
       std::cerr << "  to compute quadric (default=18)\n";
-      std::cerr << "  -orient MST                      Orient normals\n";
+      std::cerr << "  -offset_radius_vcm <double>           Offset radius\n";
+      std::cerr << "  to compute VCM (default=0.1)\n";
+      std::cerr << "  -convolve_radius_vcm <double>         Convolve radius\n";
+      std::cerr << "  to compute VCM (default=0)\n";
+      std::cerr << "  -orient MST                          Orient normals\n";
       std::cerr << "  using a Minimum Spanning Tree (default=MST)\n";
-      std::cerr << "  -nb_neighbors_mst <int>          Number of neighbors\n";
+      std::cerr << "  -nb_neighbors_mst <int>              Number of neighbors\n";
       std::cerr << "  to compute the MST (default=18)\n";
       return EXIT_FAILURE;
     }
@@ -161,6 +190,8 @@ int main(int argc, char * argv[])
     unsigned int nb_neighbors_pca_normals = 18; // K-nearest neighbors = 3 rings (estimate normals by PCA)
     unsigned int nb_neighbors_jet_fitting_normals = 18; // K-nearest neighbors (estimate normals by Jet Fitting)
     unsigned int nb_neighbors_mst = 18; // K-nearest neighbors (orient normals by MST)
+    double offset_radius_vcm = 0.1; // Offset radius (estimate normals by VCM)
+    double convolve_radius_vcm = 0; // Convolve radius (estimate normals by VCM)
     std::string estimate = "quadric"; // estimate normals by jet fitting
     std::string orient = "MST"; // orient normals using a Minimum Spanning Tree
 
@@ -171,7 +202,7 @@ int main(int argc, char * argv[])
     {
       if (std::string(argv[i])=="-estimate") {
         estimate = argv[++i];
-        if (estimate != "plane" && estimate != "quadric")
+        if (estimate != "plane" && estimate != "quadric" && estimate != "vcm")
           std::cerr << "invalid option " << argv[i] << "\n";
       }
       else if (std::string(argv[i])=="-nb_neighbors_pca") {
@@ -179,6 +210,12 @@ int main(int argc, char * argv[])
       }
       else if (std::string(argv[i])=="-nb_neighbors_jet_fitting") {
         nb_neighbors_jet_fitting_normals = atoi(argv[++i]);
+      }
+      else if (std::string(argv[i])=="-offset_radius_vcm") {
+          offset_radius_vcm = atof(argv[++i]);
+      }
+      else if (std::string(argv[i])=="-convolve_radius_vcm") {
+          convolve_radius_vcm = atof(argv[++i]);
       }
       else if (std::string(argv[i])=="-orient") {
         orient = argv[++i];
@@ -259,6 +296,8 @@ int main(int argc, char * argv[])
       run_pca_estimate_normals(points, nb_neighbors_pca_normals);
     else if (estimate == "quadric")
       run_jet_estimate_normals(points, nb_neighbors_jet_fitting_normals);
+    else if (estimate == "vcm")
+      run_vcm_estimate_normals(points, offset_radius_vcm, convolve_radius_vcm);
 
     // Orient normals.
     if (orient == "MST")

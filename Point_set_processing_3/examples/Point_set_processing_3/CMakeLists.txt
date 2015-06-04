@@ -84,6 +84,7 @@ if ( CGAL_FOUND )
     # Executables that require Eigen or BLAS and LAPACK
     create_single_source_cgal_program( "jet_smoothing_example.cpp" )
     create_single_source_cgal_program( "normal_estimation.cpp" )
+    create_single_source_cgal_program( "edges_example.cpp" )
   else(EIGEN3_FOUND OR LAPACK_FOUND)
 
     message(STATUS "NOTICE: Some of the executables in this directory need either Eigen 3.1 (or greater) or LAPACK, and will not be compiled.")
