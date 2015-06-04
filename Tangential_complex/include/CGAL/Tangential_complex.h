@@ -47,6 +47,7 @@
 
 #include <boost/optional.hpp>
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/math/special_functions/factorials.hpp>
 
 #include <vector>
 #include <set>
@@ -1931,6 +1932,61 @@ next_face:
     }
     return is_simplex_consistent(c);
   }
+  
+  // A simplex here is a list of point indices
+  template <typename IndexRange>
+  double compute_simplex_fatness(IndexRange const& simplex) const
+  {
+    // Kernel functors
+    typename Kernel::Compute_coordinate_d coord =
+      m_k.compute_coordinate_d_object();
+    typename Kernel::Squared_distance_d sqdist =
+      m_k.squared_distance_d_object();
+    typename Kernel::Difference_of_points_d diff_pts =
+      m_k.difference_of_points_d_object();
+    
+    typename Tr_traits::Difference_of_points_d tr_diff_pts =
+      m_triangulations[0].tr().geom_traits().difference_of_points_d_object();
+
+    std::vector<std::size_t> s(simplex.begin(), simplex.end());
+
+    // Compute basis
+    Tangent_space_basis basis(m_points[s[0]]);
+    for (int j = 0 ; j < m_intrinsic_dimension ; ++j)
+    {
+      Vector e = diff_pts(
+        m_points[s[j+1]], m_points[s[0]]);
+      basis.push_back(e);
+    }
+    basis = compute_gram_schmidt_basis(basis, m_k);
+
+    // Compute the volume of the simplex: determinant
+    Eigen::MatrixXd m(m_intrinsic_dimension, m_intrinsic_dimension);
+    for (int j = 0 ; j < m_intrinsic_dimension ; ++j)
+    {
+      Tr_vector v_j = tr_diff_pts(
+        project_point(m_points[s[j+1]], basis), 
+        project_point(m_points[s[0]], basis));
+      for (int i = 0 ; i < m_intrinsic_dimension ; ++i)
+        m(j, i) = CGAL::to_double(coord(v_j, i));
+    }
+    double volume = 
+      std::abs(m.determinant()) 
+      / boost::math::factorial<double>(m_intrinsic_dimension);
+
+    // Compute the longest edge of the simplex
+    CGAL::Combination_enumerator<int> combi(2, 0, m_intrinsic_dimension+1);
+    FT max_sq_length = FT(0);
+    for ( ; !combi.finished() ; ++combi)
+    {
+      FT sq_length = sqdist(
+        m_points[s[combi[0]]], m_points[s[combi[1]]]);
+      if (sq_length > max_sq_length)
+        max_sq_length = sq_length;
+    }
+
+    return volume / std::pow(CGAL::sqrt(max_sq_length), m_intrinsic_dimension);
+  }
 
   // A simplex here is a list of point indices
   bool is_simplex_consistent(std::set<std::size_t> const& simplex) const
@@ -3048,6 +3104,78 @@ public:
 #endif
 
     return os;
+  }
+
+  // Return a pair<num_simplices, num_inconsistent_simplices>
+  void check_correlation_between_inconsistencies_and_fatness() const
+  {
+    std::ofstream csv_consistent("output/correlation_consistent.csv"); // CJTODO TEMP
+    std::ofstream csv_inconsistent("output/correlation_inconsistent.csv"); // CJTODO TEMP
+    if (m_intrinsic_dimension < 3)
+    {
+      std::cerr << std::endl
+        << "==========================================================" << std::endl
+        << "check_correlation_between_inconsistencies_and_slivers():" << std::endl
+        << "Intrinsic dimension should be >= 3." << std::endl
+        << "==========================================================" << std::endl
+        << std::endl;
+    }
+
+    std::size_t num_consistent_simplices = 0;
+    double sum_vol_edge_ratio_consistent = 0.;
+    std::size_t num_inconsistent_simplices = 0;
+    double sum_vol_edge_ratio_inconsistent = 0.;
+    typename Tr_container::const_iterator it_tr = m_triangulations.begin();
+    typename Tr_container::const_iterator it_tr_end = m_triangulations.end();
+    // For each triangulation
+    for (std::size_t idx = 0 ; it_tr != it_tr_end ; ++it_tr, ++idx)
+    {
+      // For each cell
+      Star::const_iterator it_inc_simplex = m_stars[idx].begin();
+      Star::const_iterator it_inc_simplex_end = m_stars[idx].end();
+      for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
+      {
+        // Don't check infinite cells
+        if (*it_inc_simplex->rbegin() == std::numeric_limits<std::size_t>::max())
+          continue;
+
+        std::set<std::size_t> c = *it_inc_simplex;
+        c.insert(idx); // Add the missing index
+
+        double fatness = compute_simplex_fatness(c);
+        
+        if (!is_simplex_consistent(c))
+        {
+          ++num_inconsistent_simplices;
+          sum_vol_edge_ratio_inconsistent += fatness;
+          csv_inconsistent << fatness << std::endl;
+        }
+        else
+        {
+          ++num_consistent_simplices;
+          sum_vol_edge_ratio_consistent += fatness;
+          csv_consistent << fatness << std::endl;
+        }
+      }
+    }
+
+    double avg_vol_edge_ratio_inconsistent = 
+      sum_vol_edge_ratio_inconsistent / num_inconsistent_simplices;
+    double avg_vol_edge_ratio_consistent = 
+      sum_vol_edge_ratio_consistent / num_consistent_simplices;
+    
+    std::cerr << std::endl
+      << "=========================================================="
+      << std::endl
+      << "check_correlation_between_inconsistencies_and_slivers()\n"
+      << "  * Avg. volume/longest_edge^d ratio of consistent simplices: " 
+      << avg_vol_edge_ratio_consistent 
+      << " (" << num_consistent_simplices << " simplices)" << std::endl
+      << "  * Avg. volume/longest_edge^d ratio of inconsistent simplices: " 
+      << avg_vol_edge_ratio_inconsistent
+      << " (" << num_inconsistent_simplices << " simplices)" << std::endl
+      << "=========================================================="
+      << std::endl;
   }
 
 private:
