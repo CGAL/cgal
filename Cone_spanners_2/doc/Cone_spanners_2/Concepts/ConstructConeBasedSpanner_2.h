@@ -28,7 +28,7 @@ typedef Kernel_                          kernel_type;
     in BGL: `adjacency_list` and `adjacency_matrix`, only `adjacency_list` is such a model.
     So pls use `adjacency_list` to be your graph type. Note that there are seven template parameters for
     `boost::adjacency_list`: `OutEdgeList`, `VertexList`, `Directed`, `VertexProperties`, `EdgeProperties`,
-    `GraphProperties`, `EdgeList`, of which we only require the `VertexProperties` be `Point_2` from \cgal,
+    `GraphProperties`, `EdgeList`, of which we only require the `VertexProperties` be `CGAL::Point_2`,
     while other parameters can be chosen freely. Here `Point_2` is passed directly as bundled properties
 	to `adjacency_list` because this makes our implementation much more straightforward than using property maps.
 	For detailed information about bundled properties, pls refer to

@@ -66,7 +66,9 @@ template <typename Kernel_, typename Graph_>
 class Construct_theta_graph_2 {
 
 public:
+	/*! Indicate the \cgal kernel type. */
     typedef Kernel_                          kernel_type;
+	/*! Indicate the specific type of `boost::adjacency_list`. */
     typedef Graph_                           graph_type;
 
 private:

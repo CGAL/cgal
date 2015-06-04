@@ -44,7 +44,7 @@ namespace CGAL {
 /*! \ingroup PkgConeBasedSpanners
  *
  *  \brief The functor for computing the directions of cone boundaries with a given
- *  cone number and a given initial direction. The results are returned by the reference 
+ *  cone number and a given initial direction. The results are returned through the reference 
  *  argument: vector \p rays.
  *
  *  This computation can be either inexact by simply dividing an approximate Pi by the cone number
@@ -69,6 +69,7 @@ template <typename Kernel_>
 class Compute_cone_boundaries_2 {
 
 public:
+	/*! Indicate the type of the \cgal kernel. */
     typedef  Kernel_                    kernel_type;
 
 private:
@@ -77,7 +78,7 @@ private:
 	typedef  typename Kernel_::Aff_transformation_2    Transformation;
 
 public:
-	/* No member variables in this class, so a customed Constructor is not needed. */
+	/* No member variables in this class, so a custom constructor is not needed. */
 	// Compute_cone_boundaries_2() {};
 
 	/*! \brief The operator().  
@@ -133,6 +134,7 @@ template <>
 class Compute_cone_boundaries_2<Exact_predicates_exact_constructions_kernel_with_sqrt> {
 
 public:
+	/*! Indicate the type of the \cgal kernel. */
     typedef  Exact_predicates_exact_constructions_kernel_with_sqrt                kernel_type;
 
 private:
