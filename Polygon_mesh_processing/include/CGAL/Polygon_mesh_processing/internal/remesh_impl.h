@@ -244,7 +244,7 @@ namespace internal {
         double sqlen = eit->first;
         long_edges.right.erase(eit);
 
-        if (protect_constraints_ && !is_split_allowed(edge(he, mesh_)))
+        if (protect_constraints_ && !is_longest_on_faces(edge(he, mesh_)))
           continue;
 
         //split edge
@@ -359,8 +359,6 @@ namespace internal {
         halfedge_descriptor he = eit->second;
         double sqlen = eit->first;
         short_edges.right.erase(eit);
-
-        CGAL_assertion(is_valid(he, mesh_));
 
         //handle the boundary case :
         //a PATCH_BORDER edge can be collapsed,
@@ -712,7 +710,7 @@ namespace internal {
     void dump(const char* filename) const
     {
       std::ofstream out(filename);
-      out << mesh_;
+//      out << mesh_;
       out.close();
     }
 
@@ -755,6 +753,21 @@ namespace internal {
          &&  (plane1.oriented_side(p4) != plane2.oriented_side(p4));
     }
 
+    bool is_longest_on_faces(const edge_descriptor& e) const
+    {
+      halfedge_descriptor h = halfedge(e, mesh_);
+      halfedge_descriptor hopp = opposite(h, mesh_);
+
+      //check whether h is the longest edge in its associated face
+      //overwise refinement will go for an endless loop
+      double sqh = sqlength(h);
+      return sqh >= sqlength(next(h, mesh_))
+          && sqh >= sqlength(next(next(h, mesh_), mesh_))
+          //do the same for hopp
+          && sqh >= sqlength(next(hopp, mesh_))
+          && sqh >= sqlength(next(next(hopp, mesh_), mesh_));
+    }
+
     bool is_split_allowed(const edge_descriptor& e) const
     {
       halfedge_descriptor h = halfedge(e, mesh_);
@@ -762,19 +775,7 @@ namespace internal {
 
       if (protect_constraints_)
       {
-        if (!is_on_patch(h)) //PATCH are the only splittable edges
-          return false;
-        else //h and hopp are PATCH
-        {
-          //check whether h is the longest edge in its associated face
-          //overwise refinement will go for an endless loop
-          double sqh = sqlength(h);
-          return sqh >= sqlength(next(h, mesh_))
-            && sqh >= sqlength(next(next(h, mesh_), mesh_))
-            //do the same for hopp
-            && sqh >= sqlength(next(hopp, mesh_))
-            && sqh >= sqlength(next(next(hopp, mesh_), mesh_));
-        }
+        return is_on_patch(h); //PATCH are the only splittable edges
       }
       else //allow splitting constraints
       {
