@@ -567,19 +567,20 @@ namespace internal_IOP{
     
     size_t size() const {return nodes.size();}
     
+    void add_new_node(const typename Exact_kernel::Point_3& p)
+    {
+      nodes.push_back(  exact_to_double(p) );
+    }
+
     //add a new node in the final graph.
     //it is the intersection of the triangle with the segment
     void add_new_node(Halfedge_handle edge,Facet_handle facet)
     {
-      nodes.push_back (  exact_to_double(
+      add_new_node(
         compute_triangle_segment_intersection_point<Polyhedron,Kernel>(edge,facet,ek)
-      ));
+      );
     }
-    
-    void add_new_node(const typename Exact_kernel::Point_3& p)
-    {
-      nodes.push_back(  exact_to_double(p) );
-    }    
+
 
     void add_new_node(const typename Kernel::Point_3& p)
     {
@@ -663,6 +664,11 @@ namespace internal_IOP{
            !has_smaller_relative_precision(p_approx.z(),Lazy_exact_nt<typename Exact_kernel::FT>::get_relative_precision_of_to_double()) ) p.exact();
       enodes.push_back(p);
       inodes.push_back( exact_to_interval(p) );
+    }
+
+    void add_new_node(Halfedge_handle edge,Facet_handle facet)
+    {
+      add_new_node(compute_triangle_segment_intersection_point<Polyhedron,Kernel>(edge,facet,ek) );
     }
 
     //the point is an input
