@@ -1,5 +1,6 @@
 
-//#define CGAL_PMP_REMESHING_DEBUG
+#define CGAL_PMP_REMESHING_DEBUG
+#define CGAL_DUMP_REMESHING_STEPS
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
@@ -7,6 +8,8 @@
 
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/get_border.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
 #include <CGAL/Timer.h>
 #include <boost/foreach.hpp>
@@ -74,7 +77,7 @@ std::set<face_descriptor> k_ring(vertex_descriptor v,
 }
 
 std::set<face_descriptor> collect_patch(const char* file,
-                                        const Mesh& m)
+                                          const Mesh& m)
 {
   std::set<face_descriptor> patch;
   std::ifstream in(file);
@@ -95,7 +98,7 @@ std::set<face_descriptor> collect_patch(const char* file,
   std::istringstream facet_line(line);
   while (facet_line >> id) {
     if (id >= m.number_of_faces()) { return patch; }
-    patch.insert(Mesh::Face_index(id));
+    patch.insert(Mesh::Face_index(Mesh::size_type(id)));
   }
 
   if (!std::getline(in, line)) { return patch; }
@@ -109,11 +112,14 @@ std::set<face_descriptor> collect_patch(const char* file,
   return patch;
 }
 
-
 int main(int argc, char* argv[])
 {
+#ifdef CGAL_PMP_REMESHING_DEBUG
   std::cout.precision(17);
-  const char* filename = (argc > 1) ? argv[1] : "data/U.off";
+#endif
+
+  const char* filename = (argc > 1) ? argv[1]
+    : "data/joint_refined.off";
   std::ifstream input(filename);
 
   Mesh m;
@@ -122,8 +128,10 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  double target_edge_length = (argc > 2) ? atof(argv[2]) : 0.01;
-  unsigned int nb_iter = (argc > 3) ? atoi(argv[3]) : 5;
+  double target_edge_length = (argc > 2) ? atof(argv[2])
+    : 0.079;
+  unsigned int nb_iter = (argc > 3) ? atoi(argv[3])
+    : 1;
 
   unsigned int center_id = 26;
   unsigned int i = 0;
@@ -137,34 +145,49 @@ int main(int argc, char* argv[])
     }
   }
 
-  const std::set<face_descriptor>& patch = 
+  const char* selection_file = (argc > 4) ? argv[4]
+    : "data/joint-patch.selection.txt";
+  const std::set<face_descriptor>& pre_patch = 
     (argc > 4)
-    ? collect_patch(argv[4], m)
+    ? collect_patch(selection_file, m)
     : k_ring(patch_center, 3, m);
 
-  std::vector<halfedge_descriptor> border;
-  PMP::get_border(m, patch, std::back_inserter(border));
-  
-  CGAL::Polygon_mesh_processing::split_long_edges(
-    m,
-    border,
-    /*1.5 * */target_edge_length);
+  std::cout << "Test self intersections...";
+  std::vector<std::pair<face_descriptor, face_descriptor> > facets;
+  PMP::self_intersections(pre_patch,
+                          m,
+                          std::back_inserter(facets));
+  CGAL_assertion(facets.empty());
+  std::cout << "done." << std::endl;
+
+  //std::vector<halfedge_descriptor> border;
+  //PMP::get_border(m, pre_patch, std::back_inserter(border));
+  //
+  //PMP::split_long_edges(m,
+  //                      border,
+  //                      target_edge_length);
+
+
+  std::set<face_descriptor> patch;
+  std::copy(pre_patch.begin(), pre_patch.end(),
+            std::inserter(patch, patch.begin()));
+
+  //PMP::connected_component(face(border.front(), m),
+  //  m,
+  //  std::inserter(patch, patch.begin()));
 
   CGAL::Timer t;
   t.start();
 
-  CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(m,
+  PMP::incremental_triangle_based_remeshing(m,
     patch,
     target_edge_length,
-    CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
-    .protect_constraints(true)
+    PMP::parameters::number_of_iterations(nb_iter)
+    .protect_constraints(false)
     );
 
   t.stop();
   std::cout << "Remeshing took " << t.time() << std::endl;
-
-  //boost::property_map<Mesh, boost::vertex_point_t>::const_type vpmap
-  //  = boost::get(CGAL::vertex_point, m);
 
   std::ofstream out("remeshed.off");
   out << m;
