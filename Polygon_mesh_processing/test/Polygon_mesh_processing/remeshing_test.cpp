@@ -1,5 +1,5 @@
 
-#define CGAL_PMP_REMESHING_DEBUG
+//#define CGAL_PMP_REMESHING_DEBUG
 #define CGAL_DUMP_REMESHING_STEPS
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -157,8 +157,13 @@ int main(int argc, char* argv[])
   PMP::self_intersections(pre_patch,
                           m,
                           std::back_inserter(facets));
-  CGAL_assertion(facets.empty());
-  std::cout << "done." << std::endl;
+  if(!facets.empty())
+  {
+    std::cout << "Input is self intersecting. STOP" << std::endl;
+    return 0;
+  }
+  else
+    std::cout << "OK." << std::endl;
 
   //std::vector<halfedge_descriptor> border;
   //PMP::get_border(m, pre_patch, std::back_inserter(border));
@@ -175,6 +180,9 @@ int main(int argc, char* argv[])
   //PMP::connected_component(face(border.front(), m),
   //  m,
   //  std::inserter(patch, patch.begin()));
+
+  std::cout << "Start remeshing of " << selection_file
+    << " (" << patch.size() << " faces)..." << std::endl;
 
   CGAL::Timer t;
   t.start();
