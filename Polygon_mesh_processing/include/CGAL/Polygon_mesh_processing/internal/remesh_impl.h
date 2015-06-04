@@ -381,7 +381,6 @@ namespace internal {
         vertex_descriptor va = source(he, mesh_);
         vertex_descriptor vb = target(he, mesh_);
 
-        //todo : this test can be restricted to avoid some tests
         if (is_on_patch_border(va) && !is_on_patch_border(vb))
         {
           he = opposite(he, mesh_);
@@ -463,6 +462,12 @@ namespace internal {
           vertex_descriptor vkept = CGAL::Euler::collapse_edge(edge(he, mesh_), mesh_);
           put(vpmap_, vkept, target_point);
           ++nb_collapses;
+
+#ifdef CGAL_PMP_REMESHING_DEBUG
+          debug_normals(vkept);
+          //PMP::remove_degenerate_faces(mesh_/*todo : add named parameters*/);
+          //debug_self_intersections(vkept);
+#endif
 
           // merge halfedge_status to keep the more important on both sides
           merge_status(en, s_epo, s_ep);
@@ -567,6 +572,8 @@ namespace internal {
             || (vb == source(he, mesh_) && va == target(he, mesh_)));
         }
       }
+      PMP::remove_degenerate_faces(mesh_/*todo : add named parameters*/);
+
       std::cout << "done. ("<< nb_flips << " flips)" << std::endl;
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
@@ -805,26 +812,33 @@ namespace internal {
       //move source at target
       put(vpmap_, vs, get(vpmap_, vt));
 
-      typedef typename GeomTraits::Triangle_3 Triangle;
-
-      Vector_3 normal = CGAL::NULL_VECTOR;
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(h, mesh_))
+      //collect normals to faces around vs AND vt
+      //vertices are at the same location, but connectivity is still be same,
+      //with plenty of degenerate triangles (which are common to both stars)
+      std::vector<Vector_3> normals;
+      BOOST_FOREACH(halfedge_descriptor hd,
+                    halfedges_around_target(h, mesh_))
       {
-        Triangle tr(get(vpmap_, target(hd, mesh_)),
-                    get(vpmap_, target(next(hd, mesh_), mesh_)),
-                    get(vpmap_, target(next(next(hd, mesh_), mesh_), mesh_)));
-        if (!tr.is_degenerate())
+        Vector_3 n = compute_normal(face(hd, mesh_));
+        if (n != CGAL::NULL_VECTOR)
+          normals.push_back(n);
+      }
+      BOOST_FOREACH(halfedge_descriptor hd,
+                    halfedges_around_target(opposite(h, mesh_), mesh_))
+      {
+        Vector_3 n = compute_normal(face(hd, mesh_));
+        if (n != CGAL::NULL_VECTOR)
+          normals.push_back(n);
+      }
+
+      //check all normals have same orientation
+      for(std::size_t i = 1; i < normals.size(); ++i)/*start at 1 on purpose*/
+      {
+        if (normals[i-1] * normals[i] <= 0.)
         {
-          //Vector_3 nt = tr.supporting_plane().orthogonal_vector();
-          Vector_3 nt = PMP::compute_face_normal(face(hd, mesh_), mesh_);
-          if (normal == CGAL::NULL_VECTOR)
-            normal = nt;
-          else if (normal * nt <= 0.)
-          {
-            //restore position
-            put(vpmap_, vs, ps);
-            return false;
-          }
+          //restore position
+          put(vpmap_, vs, ps);
+          return false;
         }
       }
       //restore position
@@ -832,23 +846,18 @@ namespace internal {
       return true;
     }
 
-    bool has_consistent_orientation(const halfedge_descriptor& h) const
+    Vector_3 compute_normal(const face_descriptor& f) const
     {
-      Point p = get(vpmap_, source(h, mesh_));
-      Point q = get(vpmap_, target(h, mesh_));
-      Point r = get(vpmap_, target(next(h, mesh_), mesh_));
-      Point r2 = get(vpmap_, target(next(opposite(h, mesh_), mesh_), mesh_));
+      halfedge_descriptor hd = halfedge(f, mesh_);
+      typename GeomTraits::Triangle_3
+        tr(get(vpmap_, target(hd, mesh_)),
+           get(vpmap_, target(next(hd, mesh_), mesh_)),
+           get(vpmap_, target(next(next(hd, mesh_), mesh_), mesh_)));
 
-      typedef GeomTraits GT;
-      Vector_3 rp = GT().construct_vector_3_object()(r, p);
-      Vector_3 rq = GT().construct_vector_3_object()(r, q);
-      Vector_3 r2p = GT().construct_vector_3_object()(r2, p);
-      Vector_3 r2q = GT().construct_vector_3_object()(r2, q);
-
-      Vector_3 n1 = GT().construct_cross_product_vector_3_object()(rp, rq);
-      Vector_3 n2 = GT().construct_cross_product_vector_3_object()(r2q, r2p);
-
-      return is_positive(GT().compute_scalar_product_3_object()(n1, n2));
+      if (tr.is_degenerate())
+        return CGAL::NULL_VECTOR;
+      else
+        return PMP::compute_face_normal(f, mesh_);
     }
 
     template<typename FaceRange, typename EdgeIsConstrainedMap>
@@ -1073,6 +1082,37 @@ namespace internal {
         PMP::parameters::vertex_point_map(vpmap_));
       CGAL_assertion(facets.empty());
       std::cout << "done." << std::endl;
+    }
+
+    void debug_self_intersections(const vertex_descriptor& v) const
+    {
+      std::cout << "Test self intersections...";
+      std::vector<std::pair<face_descriptor, face_descriptor> > facets;
+      PMP::does_self_intersect(
+        faces_around_target(halfedge(v, mesh_), mesh_),
+        mesh_,
+        std::back_inserter(facets),
+        PMP::parameters::vertex_point_map(vpmap_));
+      CGAL_assertion(facets.empty());
+      std::cout << "done." << std::endl;
+    }
+
+    void debug_normals(const vertex_descriptor& v) const
+    {
+      if (!is_on_patch(v))
+        return;//not much to say if we are on a boundary/sharp edge
+
+      std::vector<Vector_3> normals;
+      BOOST_FOREACH(halfedge_descriptor hd,
+                    halfedges_around_target(halfedge(v, mesh_), mesh_))
+      {
+        Vector_3 n = compute_normal(face(hd, mesh_));
+        if (n != CGAL::NULL_VECTOR)
+          normals.push_back(n);
+      }
+      //check all normals have same orientation
+      for (std::size_t i = 1; i < normals.size(); ++i)/*start at 1 on purpose*/
+        CGAL_assertion(normals[i - 1] * normals[i] > 0.);
     }
 
     void debug_mesh_border() const
