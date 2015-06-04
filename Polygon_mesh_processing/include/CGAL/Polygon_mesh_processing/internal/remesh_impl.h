@@ -581,9 +581,6 @@ namespace internal {
         }
       }
 
-      std::setprecision(17);
-      dump("after-edge-flips.off");
-
       PMP::remove_degenerate_faces(mesh_
         , PMP::parameters::vertex_point_map(vpmap_)
         .geom_traits(GeomTraits()));
