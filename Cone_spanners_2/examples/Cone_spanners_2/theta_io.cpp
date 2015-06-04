@@ -1,20 +1,15 @@
-/** @file exact_theta_io.cpp
- *
+/** @file theta_io.cpp
  * An example application that constructs a Theta graph exactly with an input vertex list,
- * and then generates the Gnuplot files to plot the Theta graph.
+ * and then generates the Gnuplot files for plotting the Theta graph.
  */
-
-// authors: Weisheng Si, Quincy Tse
+// authors: Weisheng Si and Quincy Tse, University of Western Sydney
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <iterator>
 #include <string>
 #include <vector>
-#include <algorithm>
-
 #include <boost/graph/adjacency_list.hpp>
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Construct_theta_graph_2.h>
 #include <CGAL/gnuplot_output_2.h>
@@ -23,9 +18,10 @@
 typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt   Kernel;
 typedef Kernel::Point_2                   Point_2;
 typedef Kernel::Direction_2               Direction_2;
-typedef boost::adjacency_list<boost::setS,
+// define the graph type
+typedef boost::adjacency_list<boost::listS,
                               boost::vecS,
-                              boost::undirectedS,
+                              boost::directedS,
                               Point_2
                              > Graph;
 
@@ -72,10 +68,9 @@ int main(int argc, char ** argv) {
 
     // obtain the number of vertices in the constructed graph
     unsigned int n = boost::num_vertices(g);
-
     // generate gnuplot files for plotting this graph
-    std::string fileprefix = "t" + std::to_string(k) + "n" + std::to_string(n);
-    CGAL::gnuplot_output_2(g, fileprefix);
+    std::string file_prefix = "t" + std::to_string(k) + "n" + std::to_string(n);
+    CGAL::gnuplot_output_2(g, file_prefix);
 
     return 0;
 }

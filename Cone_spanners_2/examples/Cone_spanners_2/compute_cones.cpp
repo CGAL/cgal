@@ -1,19 +1,13 @@
 /** @file compute_cones.cpp
- * An example application that computes cones given the number of cones (k)
- * and the initial direction. If exact computation is used, for any k<=28,
- * the computation can be done successfully; for any k>28, the computation cannot be completed
- * because CORE::Expr exceeds its limit. We don't experiment with LEDA::real.
- * We believe k<=28 suffices most applications. Also, if inexact computation
- * is used, the computation will be successful for any k>1.
+ * An example application that computes the cone boundariess given the number of cones
+ * and the initial direction. 
  */
-// authors: Weisheng Si, Quincy Tse
+// authors: Weisheng Si and Quincy Tse, University of Western Sydney
 #include <cstdlib>
 #include <iostream>
-#include <fstream>
 #include <iterator>
 #include <string>
 #include <vector>
-#include <algorithm>
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Compute_cone_boundaries_2.h>
@@ -53,7 +47,7 @@ int main(int argc, char ** argv) {
 	// compute the cone boundaries and store them in rays
 	cones(k, initial_direction, rays);
 
-	// display the computed rays
+	// display the computed rays, starting from the initial direction, ccw order
     for (int i=0; i<k; i++) 
 		std::cout << "Ray " << i << ": " << rays[i] << std::endl;
 

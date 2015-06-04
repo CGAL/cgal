@@ -1,22 +1,18 @@
 /** @file dijkstra_theta.cpp
- *
  * An example application that constructs Theta graph first and then calculates 
  * the shortest paths on this graph by calling the Dijkstra's algorithm from BGL.
  */
-// Authors: Weisheng Si, Quincy Tse
+// Authors: Weisheng Si and Quincy Tse, University of Western Sydney
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <iterator>
 #include <string>
 #include <vector>
-#include <algorithm>
-
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Construct_theta_graph_2.h>
 
@@ -33,9 +29,9 @@ struct Edge_property {
 	double euclidean_length;
 };
 
-// define the Graph to use the selected kernel, to be undirected,
-// and to use Edge_property as the edge property
-typedef adjacency_list<listS, vecS, undirectedS, Point_2, Edge_property>     Graph;
+// define the Graph (e.g., to be undirected,
+// and to use Edge_property as the edge property, etc.)
+typedef adjacency_list<listS, vecS, undirectedS, Point_2, Edge_property>  Graph;
 
 int main(int argc, char ** argv) {
 
@@ -43,13 +39,11 @@ int main(int argc, char ** argv) {
 		std::cout << "Usage: " << argv[0] << " <no. of cones> <input filename>" << std::endl;
         return 1;
     }
-
 	unsigned long k = atol(argv[1]);
 	if (k<2) {
 		std::cout << "The number of cones should be larger than 1!" << std::endl;
 		return 1;
 	}
-
 	// open the file containing the vertex list
 	std::ifstream inf(argv[2]);
 	if (!inf) {

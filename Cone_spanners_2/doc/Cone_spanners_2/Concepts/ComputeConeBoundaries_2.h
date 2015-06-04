@@ -37,7 +37,8 @@ typedef Kernel_                          kernel_type;
  *
  *  \param[in] cone_number The number of cones
  *  \param[in] initial_direction The direction of the first ray
- *  \param[out] rays  The results, a vector of directions
+ *  \param[out] rays  Storing the results, a vector of directions. It should contain no
+ *                    elements when passed to this operator.
  */
 void operator()(const unsigned int cone_number,
 				Direction_2& initial_direction,
