@@ -121,14 +121,13 @@ public:
 
 /*! \ingroup PkgConeBasedSpanners
  *
- *  \brief The specialised functor for computing the directions of cone boundaries with a given
- *  cone number and a given initial direction. The results are returned by the reference 
+ *  \brief The specialised functor for computing the directions of cone boundaries exactly
+ *  with a given cone number and a given initial direction. The results are returned by the reference 
  *  argument: vector \p rays.
  *
  *  \tparam Kernel_   If this parameter is `Exact_predicates_exact_constructions_kernel_with_sqrt`,
  *                    this specialization functor will be called; otherwise, the general functor will
  *                    be called.
- *
  */
 template <>
 class Compute_cone_boundaries_2<Exact_predicates_exact_constructions_kernel_with_sqrt> {
