@@ -46,6 +46,9 @@
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
 
+#include <boost/foreach.hpp>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
+
 #ifdef CGAL_COREFINEMENT_DEBUG
 #warning look at CGAL/Mesh_3/Robust_intersection_traits.h and the statically filtered decision tree
 #endif
@@ -725,6 +728,16 @@ namespace internal_IOP{
   
 }
 
+#ifdef CGAL_COREFINEMENT_DO_REPORT_SELF_INTERSECTIONS
+struct Intersection_of_Polyhedra_3_self_intersection_exception
+  : public std::logic_error
+  {
+    Intersection_of_Polyhedra_3_self_intersection_exception()
+      : std::logic_error("Self-intersection found in the facets involved in the intersection")
+    {}
+  };
+#endif
+
 //TODO an important requirement is that the Polyhedron should be based on a list-based
 //HDS. We use a lot of maps that use the address of Facet,Halfedge and a reallocation would
 //be dramatic.
@@ -929,6 +942,74 @@ class Intersection_of_Polyhedra_3{
       visitor.add_filtered_intersection(eh,fh,polyhedron_edge,polyhedron_triangle);
     }
   };
+
+  class Map_edge_facet_bbox_intersection_extract_coplanar_filter_self_intersections {
+    Polyhedron_ref polyhedron_triangle;
+    Polyhedron_ref polyhedron_edge;
+
+    std::set<Facet_handle>& m_reported_facets;
+    std::vector<std::pair<const Box*,const Box*> >& m_intersecting_bboxes;
+  public:
+    Map_edge_facet_bbox_intersection_extract_coplanar_filter_self_intersections(
+      Polyhedron_ref  P,
+      Polyhedron_ref Q,
+      std::set<Facet_handle>& reported_facets,
+      std::vector<std::pair<const Box*,const Box*> >& intersecting_bboxes
+    )
+      : polyhedron_triangle(P)
+      , polyhedron_edge(Q)
+      , m_reported_facets(reported_facets)
+      , m_intersecting_bboxes(intersecting_bboxes)
+    {}
+
+    void operator()( const Box* fb, const Box* eb) {
+      m_reported_facets.insert( fb->handle()->facet() );
+      m_intersecting_bboxes.push_back( std::make_pair(fb, eb) );
+    }
+
+    bool self_intersections_found()
+    {
+      try{
+        typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, Facet_handle> Box;
+
+        // make one box per facet
+        std::vector<Box> boxes;
+        boxes.reserve(m_reported_facets.size());
+
+        BOOST_FOREACH(Facet_handle fh, m_reported_facets)
+        {
+          boxes.push_back( Box( fh->halfedge()->vertex()->point().bbox() +
+                                fh->halfedge()->next()->vertex()->point().bbox() +
+                                fh->halfedge()->opposite()->vertex()->point().bbox(), fh )
+          );
+        }
+
+        // generate box pointers
+        std::vector<const Box*> box_ptr;
+        box_ptr.reserve(boxes.size());
+        typename std::vector<Box>::iterator b;
+        for(b = boxes.begin();
+          b != boxes.end();
+          b++)
+          box_ptr.push_back(&*b);
+
+        // compute self-intersections filtered out by boxes
+        typedef boost::function_output_iterator<internal::Throw_at_output> OutputIterator;
+        OutputIterator out;
+        internal::Intersect_facets<Polyhedron,Kernel,
+                                   Box,OutputIterator,
+                                   typename boost::property_map<Polyhedron,boost::vertex_point_t>::type>
+          intersect_facets(polyhedron_triangle, out, get(boost::vertex_point, polyhedron_triangle), Kernel());
+        std::ptrdiff_t cutoff = 2000;
+        CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets,cutoff);
+        return false;
+      }
+      catch( internal::Throw_at_output::Throw_at_output_exception& )
+      {
+        return true;
+      }
+    }
+  };
   
   // This function tests the intersection of the faces of P with the edges of Q
   void filter_intersections( Polyhedron_ref P, Polyhedron_ref Q) {
@@ -962,6 +1043,29 @@ class Intersection_of_Polyhedra_3{
         edge_box_ptr.push_back( &*j);
     }
 
+  #ifdef CGAL_COREFINEMENT_DO_REPORT_SELF_INTERSECTIONS
+    // this version first collect faces involved in the intersection and first
+    // check if they are involved in a self-intersection.
+    std::set<Facet_handle> reported_facets;
+    std::vector<std::pair<const Box*,const Box*> > intersecting_bboxes;
+    Map_edge_facet_bbox_intersection_extract_coplanar_filter_self_intersections
+      inter_functor4selfi(P, Q, reported_facets, intersecting_bboxes);
+    CGAL::box_intersection_d( facet_box_ptr.begin(), facet_box_ptr.end(),
+                              edge_box_ptr.begin(), edge_box_ptr.end(),
+                              inter_functor4selfi, std::ptrdiff_t(2000) );
+
+    if (inter_functor4selfi.self_intersections_found()) throw Intersection_of_Polyhedra_3_self_intersection_exception();
+
+    #ifdef DO_NOT_HANDLE_COPLANAR_FACETS
+    Map_edge_facet_bbox_intersection inter_functor(edge_to_sfacet,P,Q,*visitor);
+    #else // not DO_NOT_HANDLE_COPLANAR_FACETS
+    Map_edge_facet_bbox_intersection_extract_coplanar inter_functor(edge_to_sfacet,coplanar_facets,P,Q,*visitor);
+    #endif // not DO_NOT_HANDLE_COPLANAR_FACETS
+
+    typedef std::pair<const Box*,const Box*> Type_pair;
+    BOOST_FOREACH(const Type_pair& p, intersecting_bboxes)
+      inter_functor(p.first, p.second);
+  #else
     CGAL::box_intersection_d( facet_box_ptr.begin(), facet_box_ptr.end(),
                               edge_box_ptr.begin(), edge_box_ptr.end(),
     #ifdef DO_NOT_HANDLE_COPLANAR_FACETS
@@ -973,6 +1077,7 @@ class Intersection_of_Polyhedra_3{
     #endif // not DO_NOT_HANDLE_COPLANAR_FACETS
                               std::ptrdiff_t(2000)
     );
+  #endif
   }
 
 
