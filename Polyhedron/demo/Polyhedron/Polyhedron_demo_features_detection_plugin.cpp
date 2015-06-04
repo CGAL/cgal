@@ -33,7 +33,7 @@ public:
     return qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionDetectFeatures_triggered();
 
 }; // end Polyhedron_demo_features_detection_plugin
