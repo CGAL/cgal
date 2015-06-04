@@ -185,7 +185,7 @@ Scene_polyhedron_item::load(std::istream& in)
 bool 
 Scene_polyhedron_item::save(std::ostream& out) const
 {
-  out.precision(13);
+  out.precision(17);
   out << *poly;
   return (bool) out;
 }
