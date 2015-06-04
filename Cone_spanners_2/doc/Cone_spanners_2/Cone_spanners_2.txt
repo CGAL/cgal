@@ -229,7 +229,7 @@ After compiling 'theta_io.cpp', execute the executable `theta_io` to construct a
 on a set of 20 vertices (which is given in the file `data/n20.cin`):
 
 \code{.txt}
-      $ ./exact_theta_io  4  data/n20.cin
+      $ ./theta_io  4  data/n20.cin
 \endcode
 
 The following two files will be generated for Gnuplot: 
