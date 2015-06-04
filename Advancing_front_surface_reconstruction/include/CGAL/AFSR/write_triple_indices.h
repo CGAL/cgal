@@ -19,6 +19,10 @@ OutputIterator
   typedef typename TDS_2::Face_iterator Face_iterator;
   typedef typename Surface::Cell_handle Cell_handle;
 
+  if(S.triangulation_3().dimension() < 3){
+    std::cerr << "not 3D\n";
+    return out;
+  }
   const TDS_2& tds = S.triangulation_data_structure_2();
 
   for(Face_iterator fit = tds.faces_begin(); fit != tds.faces_end(); ++fit){

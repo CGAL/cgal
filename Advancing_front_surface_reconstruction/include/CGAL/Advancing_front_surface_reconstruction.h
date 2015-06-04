@@ -191,27 +191,7 @@ public:
   typedef std::pair< Vertex_handle, Vertex_handle > Edge_like;
   typedef CGAL::Triple< Vertex_handle, Vertex_handle, Vertex_handle > Facet_like;
 
-#if USE_MM    
-  typedef std::multimap< criteria, IO_edge_type*, 
-                         std::less<criteria> > Ordered_border_type;
-#else 
-  
-    struct LE {
-      
-      bool operator()(const Radius_ptr_type& p1,
-                      const Radius_ptr_type p2) const
-      {
-        if(p1.first < p2.first) return true;
-        if(p1.first > p2.first) return false;
-        return p1.second < p2.second;
-      }
-      
-    };
-
-    
-    typedef std::set<Radius_ptr_type> Ordered_border_type;
-#endif
-
+  typedef std::set<Radius_ptr_type> Ordered_border_type;
 
   typedef typename Ordered_border_type::iterator Ordered_border_iterator;
 
@@ -267,6 +247,8 @@ private:
 
   int _number_of_connected_components;
 
+    Vertex_handle added_vertex;
+    bool deal_with_2d;
     std::list<Vertex_handle> interior_edges;
     std::list< Incidence_request_elt > incidence_requests;
     typename std::list< Incidence_request_elt >::iterator sentinel;
@@ -555,19 +537,40 @@ public:
       NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2), area(opt.area), perimeter(opt.perimeter),
     abs_area(opt.abs_area), abs_perimeter(opt.abs_perimeter), total_area(0), total_perimeter(0),
     _vh_number(static_cast<int>(T.number_of_vertices())), _facet_number(0),
-     _postprocessing_counter(0), _size_before_postprocessing(0), _number_of_connected_components(0)
+      _postprocessing_counter(0), _size_before_postprocessing(0), _number_of_connected_components(0), deal_with_2d(false)
     
-    {}
+    {
+      if(T.dimension() == 2){
+        deal_with_2d = true;
+        Finite_vertices_iterator it = T.finite_vertices_begin();
+        const Point& p = it->point();
+        ++it;
+        const Point& q = it->point();
+        do{
+          ++it;
+        }while(collinear(p,q,it->point()));
+        const Point& r = it->point();
+        Vector u = q-r;
+        Vector v = q-p;
+        Vector w = r-p;
+        Vector vw = cross_product(v,w);
+        double len = (std::max)(u*u,(std::max)(v*v,w*w));
+        Point s = p + 10* len * (vw/(vw*vw));
+        std::size_t n = T.number_of_vertices();
+        added_vertex = T.insert(s);
+        
+      }
+    }
 
    ~Advancing_front_surface_reconstruction()
     {
-      
+      /*
       std::cerr << "postprocessing" << postprocess_timer.time() << std::endl;
       std::cerr << "extend        " << extend_timer.time() << std::endl;
       std::cerr << "extend2       " << extend2_timer.time() << std::endl;
       std::cerr << "init          " << postprocess_timer.time() << std::endl;
       std::cerr << "#outliers     " << number_of_outliers() << std::endl;
-      
+      */
     }
 
     void run(double radius_ratio_bound=5, double beta=0.52)
@@ -582,6 +585,9 @@ public:
 
     void run(const AFSR_options opt)
     {
+      if(T.dimension() < 3){
+        return;
+      }
       initialize_vertices_and_cells();
     bool re_init = false;
     do 
@@ -637,7 +643,6 @@ public:
   has_boundaries() const
   {
     return _tds_2_inf != typename TDS_2::Vertex_handle(); 
-    // return _tds_2_inf->vertex_3() == triangulation_3().infinite_vertex();
   }
     
 
@@ -671,10 +676,6 @@ public:
   {
     return T;
   }
-
-
-
-
 
   int number_of_facets() const
   {
@@ -1033,6 +1034,12 @@ public:
   {
     int i1, i2, i3;
 
+    if(deal_with_2d && ( (c->vertex((index+1) & 3) == added_vertex) 
+                         || (c->vertex((index+2) & 3) == added_vertex) 
+                         || (c->vertex((index+3) & 3) == added_vertex) ))
+      {
+        return HUGE_VAL;
+      }
     Cell_handle n = c->neighbor(index);
     // lazy evaluation ...
     coord_type value = c->smallest_radius(index);
@@ -1460,33 +1467,7 @@ public:
   void
   ordered_map_erase(const criteria& value, const IO_edge_type* pkey)
   {
-#if USE_MM
-    std::size_t number_of_conflict = _ordered_border.count(value);  
-    if (number_of_conflict == 1)
-      {
-	_ordered_border.erase(_ordered_border.find(value));
-
-      }
-
-    else if (number_of_conflict > 1)
-      {
-	Ordered_border_iterator elt_it =
-	  _ordered_border.find(value);
-	// si ca foire jamais on peut s'areter des que l'elt 
-	// est trouve!!! 
-	for(std::size_t jj=0; (jj<number_of_conflict); jj++)
-	  {	  
-	    if (((long) elt_it->second) == ((long) pkey))
-	      {
-		_ordered_border.erase(elt_it);
-		return;
-	      } 
-	    elt_it++;
-	  }
-      }
-#else
     _ordered_border.erase(Radius_ptr_type(value,(IO_edge_type*)pkey));
-#endif
   }
 
   //---------------------------------------------------------------------

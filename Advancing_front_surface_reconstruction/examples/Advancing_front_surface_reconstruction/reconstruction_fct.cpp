@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
   CGAL::advancing_front_surface_reconstruction(points.begin(),
                                                points.end(),
                                                std::back_inserter(facets));
-  
+
   std::cout << "OFF\n" << points.size() << " " << facets.size() << " 0\n";
   std::copy(points.begin(),
             points.end(),
