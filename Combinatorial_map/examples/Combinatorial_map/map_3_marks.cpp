@@ -18,6 +18,7 @@ int main()
   // we try to reserve more marks than available
   std::cout << cm.NB_MARKS << " available marks\n";
   size_type marks[cm.NB_MARKS+1];
+#if 0
   for (size_type i=0;i<cm.NB_MARKS+1;i++)
   {
     try
@@ -36,6 +37,7 @@ int main()
   {
     cm.free_mark(marks[i]);
   }
+#endif
 
   // 1) Reserve a mark.
   size_type mark;
