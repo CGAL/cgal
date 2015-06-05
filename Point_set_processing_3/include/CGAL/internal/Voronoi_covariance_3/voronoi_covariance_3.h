@@ -218,8 +218,8 @@ namespace CGAL {
                 return internal::tessellate_and_intersect(dt, v, sphere, va).result();
             }
 
-    }; // namespace Voronoi_covariance_3
-}; // namespace CGAL
+    } // namespace Voronoi_covariance_3
+} // namespace CGAL
 
 #endif // CGAL_INTERNAL_VCM_VORONOI_COVARIANCE_3_HPP
 

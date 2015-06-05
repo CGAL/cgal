@@ -99,8 +99,8 @@ namespace CGAL {
                     }
             };
 
-    }; // namespace Voronoi_covariance_3
-}; // namespace CGAL
+    } // namespace Voronoi_covariance_3
+} // namespace CGAL
 
 #endif // CGAL_INTERNAL_VCM_VORONOI_COVARIANCE_SPHERE_3_HPP
 
