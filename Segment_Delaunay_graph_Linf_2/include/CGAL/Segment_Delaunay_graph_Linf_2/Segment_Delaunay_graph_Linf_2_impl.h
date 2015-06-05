@@ -583,7 +583,7 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
     // count number of adjacent faces of vsx
     Face_circulator fc = incident_faces(vsx);
     Face_circulator fc_start = fc;
-    int n_faces = 0;
+    unsigned int n_faces = 0;
     do {
       fc++;
       n_faces++;
@@ -727,7 +727,7 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
     // count number of adjacent faces of vsx
     Face_circulator fc = incident_faces(vsx);
     Face_circulator fc_start = fc;
-    int n_faces = 0;
+    unsigned int n_faces = 0;
     do {
       fc++;
       n_faces++;
