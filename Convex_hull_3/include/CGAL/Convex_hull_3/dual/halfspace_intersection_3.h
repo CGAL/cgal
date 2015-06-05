@@ -151,18 +151,23 @@ namespace CGAL
             bool point_inside_convex_polyhedron (const Polyhedron &P,
                                                  typename Polyhedron::Traits::Point_3 const& p) {
                 // Compute the equations of the facets of the polyhedron
-                typedef typename Polyhedron::Facet Facet;
                 typedef typename Polyhedron::Facet_const_iterator Facet_iterator;
                 for(Facet_iterator  fit=P.facets_begin(), fit_end=P.facets_end();
                                     fit!=fit_end; ++fit)
                 {
                   typename Polyhedron::Halfedge_const_handle h = fit->halfedge();
-                  typedef typename Facet::Plane_3 Plane;
-                  Plane plane(h->vertex()->point(),
-                              h->next()->vertex()->point(),
-                              h->next()->next()->vertex()->point());
-                  if( !plane.has_on_negative_side(p) )
-                    return false;
+                  typename Polyhedron::Traits::Point_3 const& p1=h->vertex()->point();
+                  typename Polyhedron::Traits::Point_3 const& p2=h->next()->vertex()->point();
+                  h=h->next()->next();
+                  typename Polyhedron::Traits::Point_3 p3 = h->vertex()->point();
+                  while( h!=fit->halfedge() && collinear(p1,p2,p3) )
+                  {
+                    h=h->next();
+                    p3 = h->vertex()->point();
+                  }
+                  if (h==fit->halfedge()) continue; //degenerate facet, skip it
+
+                  if ( orientation (p1, p2, p3, p) != CGAL::NEGATIVE ) return false;
                 }
 
                 return true;
