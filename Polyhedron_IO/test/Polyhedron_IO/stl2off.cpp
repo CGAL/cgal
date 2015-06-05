@@ -5,10 +5,9 @@
 #include <iostream>
 #include <vector>
 
-int main(int argc, char* argv[])
+void read(char* fname)
 {
-  std::ifstream input((argc>1)?argv[1]:"data/triangle.stl",
-                      std::ios::in | std::ios::binary);
+  std::ifstream input(fname, std::ios::in | std::ios::binary);
 
   std::vector< CGAL::cpp11::array<double,3> > points;
   std::vector< CGAL::cpp11::array<int,3> > faces;
@@ -18,6 +17,8 @@ int main(int argc, char* argv[])
                   faces,
                   true);
   
+  std::cout << "OFF version of file " << fname << std::endl;
+
   std::cout.precision(17);
   std::cout << "OFF\n" << points.size() << " " << faces.size()  << " 0" << std::endl;
   for(int i=0; i < points.size(); i++){
@@ -28,5 +29,13 @@ int main(int argc, char* argv[])
     std::cout << "3 " << faces[i][0] << " " << faces[i][1] << " " << faces[i][2] << std::endl;
   }
 
+
+}
+
+
+int main(int argc, char* argv[])
+{
+  read("data/cube.stl");
+  read("data/triangle.stl");
   return 0;
 }
