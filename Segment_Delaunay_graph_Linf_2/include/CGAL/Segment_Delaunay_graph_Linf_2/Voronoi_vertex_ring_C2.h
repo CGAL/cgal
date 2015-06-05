@@ -1657,15 +1657,6 @@ private:
     is_v_computed = true;
   }
 
-  //--------------------------------------------------------------------------
-
-  bool is_endpoint_of(const Site_2& p, const Site_2& s) const
-  {
-    CGAL_precondition( p.is_point() && s.is_segment() );
-    return ( same_points(p, s.source_site()) ||
-	     same_points(p, s.target_site()) );
-  }
-
 
   //--------------------------------------------------------------------------
   //--------------------------------------------------------------------------
