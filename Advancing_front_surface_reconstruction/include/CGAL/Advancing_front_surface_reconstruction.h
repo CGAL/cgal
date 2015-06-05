@@ -226,11 +226,8 @@ private:
   const criteria STANDBY_CANDIDATE_BIS;
   const criteria NOT_VALID_CANDIDATE;
 
-  const double area;
   const double perimeter;
-  const double abs_area;
   const double abs_perimeter;
-  double total_area;
   double total_perimeter;
   //---------------------------------------------------------------------
   //Pour une visu correcte
@@ -534,8 +531,8 @@ public:
     : T(T_), _number_of_border(1), SLIVER_ANGULUS(.86), DELTA(opt.delta), min_K(HUGE_VAL), 
     eps(1e-7), inv_eps_2(coord_type(1)/(eps*eps)), eps_3(eps*eps*eps),
     STANDBY_CANDIDATE(3), STANDBY_CANDIDATE_BIS(STANDBY_CANDIDATE+1), 
-      NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2), area(opt.area), perimeter(opt.perimeter),
-    abs_area(opt.abs_area), abs_perimeter(opt.abs_perimeter), total_area(0), total_perimeter(0),
+      NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2), perimeter(opt.perimeter),
+    abs_perimeter(opt.abs_perimeter), total_perimeter(0),
     _vh_number(static_cast<int>(T.number_of_vertices())), _facet_number(0),
       _postprocessing_counter(0), _size_before_postprocessing(0), _number_of_connected_components(0), deal_with_2d(false)
     
@@ -1128,12 +1125,7 @@ public:
 
     return value;
   }
-//---------------------------------------------------------------------
-  coord_type
-  compute_area(const Point& p1, const Point& p2, const Point& p3) const
-  {
-    return typename Kernel::Compute_area_3()(p1,p2,p3);
-  }
+
 //---------------------------------------------------------------------
   coord_type
   compute_perimeter(const Point& p1, const Point& p2, const Point& p3) const
@@ -1191,32 +1183,20 @@ public:
 	    coord_type tmp=0;
 	    coord_type ar=0, pe=0;
 	    
-	    // If the triangle has a very large area and a very high perimeter,
+	    // If the triangle has a high perimeter,
 	    // we do not want to consider it as a good candidate.
 
-	    if( (abs_area != 0) || ( (_facet_number > 1000) && (area != 0)) ){
-	      ar = compute_area(facet_it.first->vertex(n_i1)->point(),
-				facet_it.first->vertex(n_i2)->point(),
-				facet_it.first->vertex(n_i3)->point());
-	    }
-	    
 	    if( (abs_perimeter != 0) || ( (_facet_number > 1000) && (perimeter != 0)) ){
 	      pe = compute_perimeter(facet_it.first->vertex(n_i1)->point(),
 						  facet_it.first->vertex(n_i2)->point(),
 						  facet_it.first->vertex(n_i3)->point());
 	    }
 
-	    if( ((abs_area != 0)&&(ar > abs_area)) || ((abs_perimeter != 0) && (pe >  abs_perimeter)) ){
+	    if((abs_perimeter != 0) && (pe >  abs_perimeter)){
 	      tmp = HUGE_VAL;
 	    }
 
 	    if((tmp != HUGE_VAL) && (_facet_number > 1000)){
-	      if(area != 0){
-		coord_type avg_area = total_area/_facet_number;
-		if(ar > (area * avg_area)){
-		  tmp = HUGE_VAL;
-		}
-	      }
 	      if((perimeter != 0) && (tmp != HUGE_VAL)){
 		coord_type avg_perimeter = total_perimeter/_facet_number;
 		if(pe > (perimeter * avg_perimeter)){

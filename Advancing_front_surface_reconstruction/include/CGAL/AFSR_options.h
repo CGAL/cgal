@@ -11,8 +11,8 @@ public:
 	   Delaunay(false), contour(false), binary(false), xyz(false), 
            Section_file(false), max_connected_comp(-1),
 	   delta(.86), K_init(1.1), K_step(.1), K(5), out_format(0),
-	   NB_BORDER_MAX(15), red(0), green(0), blue(0), no_header(false), area(0), perimeter(0), 
-	   abs_area(0), abs_perimeter(0)
+	   NB_BORDER_MAX(15), red(0), green(0), blue(0), no_header(false), perimeter(0), 
+	   abs_perimeter(0)
   { 
     std::strcpy(finname,"finput");
     std::strcpy(foutname,"foutput"); 
@@ -37,7 +37,7 @@ public:
   int NB_BORDER_MAX;
   double red, green, blue;
   bool no_header;
-  double area, perimeter, abs_area, abs_perimeter;
+  double perimeter, abs_perimeter;
 };
 
 
