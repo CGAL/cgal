@@ -985,16 +985,6 @@ public:
    void
   select_facet(const Cell_handle& c, const int& i)
   {
-    if(area!=0){
-            total_area += compute_area(c->vertex((i+1)&3)->point(),
-				       c->vertex((i+2)&3)->point(),
-				       c->vertex((i+3)&3)->point());
-    }
-    if(perimeter != 0){
-      total_perimeter += compute_perimeter(c->vertex((i+1)&3)->point(),
-					   c->vertex((i+2)&3)->point(),
-					   c->vertex((i+3)&3)->point());
-    }
     c->select_facet(i);
     _facet_number++;
     c->set_facet_number(i, _facet_number);
