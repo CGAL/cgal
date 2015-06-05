@@ -34,6 +34,8 @@
 #include <CGAL/Convex_hull_3/dual/interior_polyhedron_3.h>
 #include <CGAL/internal/Exact_type_selector.h>
 
+ #include <boost/type_traits/is_floating_point.hpp>
+
 namespace CGAL
 {
     namespace Convex_hull_3
@@ -280,7 +282,13 @@ namespace CGAL
         P.delegate(build_primal);
 
         // Posterior check if the origin is inside the computed polyhedron
-        CGAL_assertion_msg(Convex_hull_3::internal::point_inside_convex_polyhedron(P, *origin), "halfspace_intersection_3: origin not in the polyhedron");
+        // The check is done only if the number type is not float or double because in that
+        // case we know the construction of dual points is not exact
+        CGAL_assertion_msg(
+          boost::is_floating_point<typename K::FT>::value ||
+          Convex_hull_3::internal::point_inside_convex_polyhedron(P, *origin),
+          "halfspace_intersection_3: origin not in the polyhedron"
+        );
     }
 
   #ifndef CGAL_NO_DEPRECATED_CODE
