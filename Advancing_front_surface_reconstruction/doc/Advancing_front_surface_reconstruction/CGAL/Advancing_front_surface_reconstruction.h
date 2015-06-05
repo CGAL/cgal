@@ -11,12 +11,16 @@ data structure that describes the surface.  The vertices and facets of the 2D tr
 store handles to the vertices and faces of the 3D triangulation, which enables the user to explore the
 2D as well as 3D neighborhood of vertices and facets of the surface. 
 
+\tparam Gt must be a model of `Kernel`.
 \tparam Dt must be a `Delaunay_triangulation_3` with
 `Advancing_front_surface_reconstruction_vertex_base_3` and `Advancing_front_surface_reconstruction_cell_base_3` blended into the vertex and cell type, and the geometric traits class must be the `Exact_predicates_inexact_constructions_kernel`.
 
+\tparam Filter must be a functor with `bool operator()(Gt::Point_3,Gt::Point_3,Gt::Point_3)` that allows the user to filter candidate triangles, for example based on its size.
+        It defaults to a functor that always returns `false`.
+
 */
 
-template< typename Dt>
+  template< typename Gt, typename Dt, typename Filter>
 class Advancing_front_surface_reconstruction {
 public:
 
@@ -210,6 +214,33 @@ describing the faces of the reconstructed surface.
 */
   template <class PointInputIterator, IndicesOutputIterator>
   IndicesOutputIterator advancing_front_surface_reconstruction(PointInputIterator b, PointInputIterator e, IndicesOutputIterator out, double radius_ratio_bound = 5, double beta= 0.52 );
+
+
+/*!
+\ingroup PkgAdvancingFrontSurfaceReconstruction
+
+For a sequence of points computes a sequence of index triples
+describing the faces of the reconstructed surface.
+
+\tparam PointInputIterator must be an input iterator with 3D points from the `Exact_predicates_inexact_constructions_kernel` as value type.
+\tparam IndicesOutputIterator must be an output iterator to which 
+`CGAL::cpp11::tuple<std::size_t,std::size_t,std::size_t>` can be assigned.
+\tparam Filter must be a functor with `bool operator()(Gt::Point_3,Gt::Point_3,Gt::Point_3)`.
+
+\param b iterator on the first point of the sequence
+\param e past the end iterator of the point sequence
+\param out output iterator
+\param radius_ratio_bound candidates incident to surface triangles which are not in the beta-wedge
+       are discarded, if the ratio of their radius and the radius of the surface triangle is larger than `radius_ratio_bound`. 
+       Described in Section \ref AFSR_Boundaries
+\param beta half the angle of the wedge in which only the radius of triangles counts for the plausibility of candidates. 
+       Described in Section \ref AFSR_Selection
+\param filter allows the user to filter candidate triangles, for example based on their size.   
+
+*/
+  template <class PointInputIterator, IndicesOutputIterator, class Filter>
+  IndicesOutputIterator advancing_front_surface_reconstruction(PointInputIterator b, PointInputIterator e, IndicesOutputIterator out, Filter filter, double radius_ratio_bound = 5, double beta= 0.52 );
+
 
 
 } /* end namespace CGAL */

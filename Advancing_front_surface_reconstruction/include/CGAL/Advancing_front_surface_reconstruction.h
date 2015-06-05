@@ -1137,14 +1137,6 @@ public:
     return value;
   }
 
-//---------------------------------------------------------------------
-  coord_type
-  compute_perimeter(const Point& p1, const Point& p2, const Point& p3) const
-  {
-    return sqrt(squared_distance(p1,p2)) 
-           + sqrt(squared_distance(p2,p3)) 
-           + sqrt(squared_distance(p3,p1));
-  }
 
   //---------------------------------------------------------------------
   // For a border edge e we determine the incident facet which has the highest 
@@ -2390,7 +2382,6 @@ advancing_front_surface_reconstruction(PointIterator b,
   AFSR_options opt;
   opt.K = radius_ratio_bound;
   // TODO: What  to do with beta???
-  //opt.abs_perimeter = max_perimeter;
   Reconstruction R(dt, opt);
   R.run(opt);
   AFSR::construct_polyhedron(polyhedron, R);
