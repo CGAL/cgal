@@ -25,7 +25,6 @@ class Polyhedron_demo_vcm_normal_estimation_plugin :
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
   QAction* actionVCMNormalEstimation;
-  QAction* actionNormalInversion;
 
 public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
