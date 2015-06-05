@@ -115,7 +115,6 @@ private:
   Shortest_paths_map m_shortestPathsMap;
 
   Messages_interface* m_messages;
-  QAction* actionComputeShortestPath;
   QAction* actionMakeShortestPaths;
   QDockWidget* dock_widget;
   Ui::Shortest_path ui_widget;
