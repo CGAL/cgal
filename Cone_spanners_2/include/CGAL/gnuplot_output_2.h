@@ -42,7 +42,7 @@ namespace CGAL {
 	/*  ------ Declarations go first, then implementations follow.   ------ */
 	
 	/*!
-	*  \brief Output a set of files used by Gnuplot to plot \p g.
+	*  \brief Output a set of files used by Gnuplot to plot `g`.
 	*  
 	*  The files that are generated for Gnuplot are:
 	*  (1) prefix.v (vertex list)
@@ -55,13 +55,17 @@ namespace CGAL {
 	*      files.
 	*  (2) Parallel and self-edges cannot be plotted.
 	*
-	*  \param g       A boost::adjacency_list graph with CGAL::Point_2 as the VertexProperties to be plotted
+	*  \tparam Graph  The type of the graph to be plotted. For this function to work,
+	*                 the graph type must be `boost::adjacency_list` with `CGAL::Point_2` 
+	*                 as the `VertexProperties`.
+	*
+	*  \param g       A `boost::adjacency_list` graph with `CGAL::Point_2` as the VertexProperties to be plotted
 	*  \param prefix  The prefix of the output files names
 	*/
 	template <typename Graph>
 	void gnuplot_output_2 (const Graph& g, const std::string& prefix);
 
-	/*!
+	/*
 	*  \brief Compiles a multi-lined %string to draw the edges in \p g by Gnuplot.
 	*  Compiles an edge list in the following format:
 	*
@@ -74,9 +78,10 @@ namespace CGAL {
 	*  \param g  A boost::adjacency_list graph with CGAL::Point_2 as the VertexProperties to be plotted
 	*  \return   The edge list string.
 	*/
-	template <typename Graph> std::string gnuplot_edge_list (const Graph& g);
+	template <typename Graph> 
+	std::string gnuplot_edge_list (const Graph& g);
 
-	/*!
+	/*
 	*  \brief Compiles a multi-lined %string representing the vertices in \p g.
 	*  
 	* Compiles a vertex list in the following format:
@@ -87,9 +92,10 @@ namespace CGAL {
 	*  \param g  A boost::adjacency_list graph with CGAL::Point_2 as the VertexProperties to be plotted
 	*  \return   The vertex list string.
 	*/
-	template <typename Graph> std::string gnuplot_vertex_list (const Graph& g);
+	template <typename Graph> 
+	std::string gnuplot_vertex_list (const Graph& g);
 
-	/*! This struct is defined to use partial specialization to generate arrow styles differently for
+	/* This struct is defined to use partial specialization to generate arrow styles differently for
 	 * directed and undirected graphs.
 	 * Note: Need to use structs because C++ before 11 doesn't allow partial specialisation
 	 * for functions
