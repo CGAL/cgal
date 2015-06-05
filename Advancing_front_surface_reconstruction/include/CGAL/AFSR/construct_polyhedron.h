@@ -6,7 +6,7 @@
 
 namespace CGAL {
 
-template <class Kernel, class Triangulation>
+  template <class Kernel, class Triangulation, class Filter>
 class Advancing_front_polyhedron_reconstruction;
 
 namespace AFSR {

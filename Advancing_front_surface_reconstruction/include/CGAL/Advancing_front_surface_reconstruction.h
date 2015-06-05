@@ -136,14 +136,25 @@ public:
   }
 };  
 
+  struct Always_false {
+
+    template <typename T>
+    bool operator()(const T&, const T&, const T&) const
+    {
+      return false;
+    }
+
+  };
+
 
   template <class Kernel, 
-            class Triangulation = Delaunay_triangulation_3<Kernel, Triangulation_data_structure_3<Advancing_front_surface_reconstruction_vertex_base_3<Kernel>, Advancing_front_surface_reconstruction_cell_base_3<Kernel> > > >
+            class Triangulation = Delaunay_triangulation_3<Kernel, Triangulation_data_structure_3<Advancing_front_surface_reconstruction_vertex_base_3<Kernel>, Advancing_front_surface_reconstruction_cell_base_3<Kernel> > >,
+            class Reject = Always_false>
 class Advancing_front_surface_reconstruction {
 
 public:
   typedef Triangulation Triangulation_3;
-  typedef Advancing_front_surface_reconstruction<Kernel,Triangulation_3> Extract;
+    typedef Advancing_front_surface_reconstruction<Kernel,Triangulation_3,Reject> Extract;
   typedef typename Triangulation_3::Geom_traits Geom_traits;
 
   typedef typename Kernel::FT coord_type;
@@ -205,7 +216,7 @@ public:
     typedef const std::list<std::list<Vertex_handle> > Boundary_range;
     typedef const std::list<Vertex_handle> Vertex_on_boundary_range;
 
-private:
+private: 
 
     mutable std::list<std::list<Vertex_handle> >  m_boundaries;  
   
@@ -226,9 +237,6 @@ private:
   const criteria STANDBY_CANDIDATE_BIS;
   const criteria NOT_VALID_CANDIDATE;
 
-  const double perimeter;
-  const double abs_perimeter;
-  double total_perimeter;
   //---------------------------------------------------------------------
   //Pour une visu correcte
   //pour retenir les facettes selectionnees
@@ -246,6 +254,7 @@ private:
 
     Vertex_handle added_vertex;
     bool deal_with_2d;
+    Reject reject;
     std::list<Vertex_handle> interior_edges;
     std::list< Incidence_request_elt > incidence_requests;
     typename std::list< Incidence_request_elt >::iterator sentinel;
@@ -527,14 +536,16 @@ private:
 
 
 public:
-    Advancing_front_surface_reconstruction(Triangulation_3& T_, const AFSR_options& opt = AFSR_options())
-    : T(T_), _number_of_border(1), SLIVER_ANGULUS(.86), DELTA(opt.delta), min_K(HUGE_VAL), 
+    Advancing_front_surface_reconstruction(Triangulation_3& T_,
+                                           const AFSR_options& opt = AFSR_options(),
+                                           Reject reject = Reject())
+      : T(T_), _number_of_border(1), SLIVER_ANGULUS(.86), DELTA(opt.delta), min_K(HUGE_VAL), 
     eps(1e-7), inv_eps_2(coord_type(1)/(eps*eps)), eps_3(eps*eps*eps),
     STANDBY_CANDIDATE(3), STANDBY_CANDIDATE_BIS(STANDBY_CANDIDATE+1), 
-      NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2), perimeter(opt.perimeter),
-    abs_perimeter(opt.abs_perimeter), total_perimeter(0),
+      NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2),
     _vh_number(static_cast<int>(T.number_of_vertices())), _facet_number(0),
-      _postprocessing_counter(0), _size_before_postprocessing(0), _number_of_connected_components(0), deal_with_2d(false)
+      _postprocessing_counter(0), _size_before_postprocessing(0), _number_of_connected_components(0),
+      deal_with_2d(false), reject(reject)
     
     {
       if(T.dimension() == 2){
@@ -1181,30 +1192,16 @@ public:
 	    int n_i3 = 6 - n_ind - n_i1 - n_i2; 
 
 	    coord_type tmp=0;
-	    coord_type ar=0, pe=0;
 	    
 	    // If the triangle has a high perimeter,
 	    // we do not want to consider it as a good candidate.
 
-	    if( (abs_perimeter != 0) || ( (_facet_number > 1000) && (perimeter != 0)) ){
-	      pe = compute_perimeter(facet_it.first->vertex(n_i1)->point(),
-						  facet_it.first->vertex(n_i2)->point(),
-						  facet_it.first->vertex(n_i3)->point());
-	    }
-
-	    if((abs_perimeter != 0) && (pe >  abs_perimeter)){
+	    if(reject(facet_it.first->vertex(n_i1)->point(),
+                      facet_it.first->vertex(n_i2)->point(),
+                      facet_it.first->vertex(n_i3)->point())){
 	      tmp = HUGE_VAL;
 	    }
-
-	    if((tmp != HUGE_VAL) && (_facet_number > 1000)){
-	      if((perimeter != 0) && (tmp != HUGE_VAL)){
-		coord_type avg_perimeter = total_perimeter/_facet_number;
-		if(pe > (perimeter * avg_perimeter)){
-		  tmp = HUGE_VAL;
-		}
-	      }
-	    }
-	       
+  
 	       
 	    if(tmp != HUGE_VAL){
 	      tmp = smallest_radius_delaunay_sphere(neigh, n_ind);
@@ -1343,14 +1340,12 @@ public:
 	      if (c->vertex((index+3) & 3)->is_exterior())
 		{
 		  coord_type value = smallest_radius_delaunay_sphere(c, index);
-		  coord_type pe=0;
-		  if(abs_perimeter != 0){
-		    pe = compute_perimeter(c->vertex((index+1)&3)->point(),
-					   c->vertex((index+2)&3)->point(),
-					   c->vertex((index+3)&3)->point());
-		    if(pe > abs_perimeter){
-		      value = min_value;
-		    }
+
+                  // we might not want the triangle, for example because it is too large
+                  if(reject(c->vertex((index+1)&3)->point(),
+                            c->vertex((index+2)&3)->point(),
+                            c->vertex((index+3)&3)->point())){
+                    value = min_value;
 		  }
 
 		  if (value < min_value)
@@ -2308,6 +2303,7 @@ struct Auto_count : public std::unary_function<const T&,std::pair<T,int> >{
   };
 }
 
+
 template <typename PointIterator, typename IndexTripleIterator>
 IndexTripleIterator
 advancing_front_surface_reconstruction(PointIterator b,
@@ -2338,14 +2334,46 @@ advancing_front_surface_reconstruction(PointIterator b,
   return out;
 }
 
+
+  template <typename PointIterator, typename IndexTripleIterator, typename Filter>
+IndexTripleIterator
+advancing_front_surface_reconstruction(PointIterator b,
+                                       PointIterator e,
+                                       IndexTripleIterator out,
+                                       Filter filter,
+                                       double radius_ratio_bound = 5,
+                                       double  	beta = 0.52 )
+{
+  typedef Exact_predicates_inexact_constructions_kernel Kernel;
+  typedef Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
+  typedef Advancing_front_surface_reconstruction_cell_base_3<Kernel> LCb;
+
+  typedef Triangulation_data_structure_3<LVb,LCb> Tds;
+  typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
+
+  typedef Advancing_front_surface_reconstruction<Kernel,Triangulation_3,Filter> Reconstruction;
+  typedef Kernel::Point_3 Point_3;
+  
+  Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count<Point_3>()),
+                      boost::make_transform_iterator(e, AFSR::Auto_count<Point_3>() )  );
+
+  AFSR_options opt;
+  opt.K = radius_ratio_bound;
+  // TODO: What  to do with beta???
+  Reconstruction R(dt,opt, filter);
+  R.run(opt);
+  write_triple_indices(out, R);
+  return out;
+}
+
+
 template <typename PointIterator, typename Kernel>
 void
 advancing_front_surface_reconstruction(PointIterator b,
                                        PointIterator e,
                                        Polyhedron_3<Kernel>& polyhedron,
                                        double radius_ratio_bound = 5,
-                                       double  	beta = 0.52,
-                                       double max_perimeter = 0)
+                                       double  	beta = 0.52)
 {
   typedef Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
   typedef Advancing_front_surface_reconstruction_cell_base_3<Kernel> LCb;
@@ -2362,7 +2390,7 @@ advancing_front_surface_reconstruction(PointIterator b,
   AFSR_options opt;
   opt.K = radius_ratio_bound;
   // TODO: What  to do with beta???
-  opt.abs_perimeter = max_perimeter;
+  //opt.abs_perimeter = max_perimeter;
   Reconstruction R(dt, opt);
   R.run(opt);
   AFSR::construct_polyhedron(polyhedron, R);

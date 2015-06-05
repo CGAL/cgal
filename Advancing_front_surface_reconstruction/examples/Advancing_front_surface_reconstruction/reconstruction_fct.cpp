@@ -19,6 +19,25 @@ namespace std {
   }
 }
 
+struct Perimeter {
+
+  double bound;
+
+  Perimeter(double bound)
+    : bound(bound)
+  {}
+
+  bool operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+  {
+    double d  = sqrt(squared_distance(p,q));
+    if(d>bound) return true;
+    d += sqrt(squared_distance(p,r)) ;
+    if(d>bound) return true;
+    d+= sqrt(squared_distance(q,r));
+    return d>bound;
+  }
+};
+
 int main(int argc, char* argv[])
 {
   std::ifstream in((argc>1)?argv[1]:"data/half.xyz"); 
@@ -29,9 +48,11 @@ int main(int argc, char* argv[])
             std::istream_iterator<Point_3>(), 
             std::back_inserter(points));
   
+  Perimeter perimeter(0.5);
   CGAL::advancing_front_surface_reconstruction(points.begin(),
                                                points.end(),
-                                               std::back_inserter(facets));
+                                               std::back_inserter(facets),
+                                               perimeter);
 
   std::cout << "OFF\n" << points.size() << " " << facets.size() << " 0\n";
   std::copy(points.begin(),
