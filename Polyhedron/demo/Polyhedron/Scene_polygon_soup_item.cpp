@@ -175,8 +175,8 @@ Scene_polygon_soup_item::orient()
     }
     if (!to_remove) valid_polygons.push_back(polygon);
   }
-  if (valid_polygons.size()!=polygons.size())
-    polygons.swap(valid_polygons);
+  if (valid_polygons.size()!=soup->polygons.size())
+    soup->polygons.swap(valid_polygons);
 
   return CGAL::orient_polygon_soup(soup->points, soup->polygons);
 }
