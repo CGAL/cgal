@@ -23,6 +23,8 @@
 
 #include "ui_Polyhedron_demo_isotropic_remeshing_dialog.h"
 
+#define CGAL_PMP_REMESHING_VERBOSE
+
 class Polyhedron_demo_isotropic_remeshing_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper

@@ -154,7 +154,10 @@ namespace internal {
         boost::bimaps::multiset_of<double, std::greater<double> > >  Boost_bimap;
       typedef typename Boost_bimap::value_type                       long_edge;
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Split long edges (" << high << ")...";
+      std::cout.flush();
+#endif
       double sq_high = high*high;
 
       //collect long edges
@@ -210,7 +213,9 @@ namespace internal {
             = CGAL::Euler::split_face(prev(hnew_opp, mesh_), next(hnew_opp, mesh_), mesh_);
         }
       }
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << " done (" << nb_splits << " splits)." << std::endl;
+#endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
       dump("0-border_split.off");
 #endif
@@ -227,8 +232,10 @@ namespace internal {
         boost::bimaps::multiset_of<double, std::greater<double> > >  Boost_bimap;
       typedef typename Boost_bimap::value_type                       long_edge;
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Split long edges (" << high << ")...";
       std::cout.flush(); 
+#endif
       double sq_high = high*high;
 
       //collect long edges
@@ -319,7 +326,9 @@ namespace internal {
           }
         }
       }
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << " done ("<< nb_splits << " splits)." << std::endl;
+#endif
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
       CGAL_expensive_assertion(is_triangle_mesh(mesh_));
@@ -345,8 +354,10 @@ namespace internal {
         boost::bimaps::multiset_of<double, std::less<double> > >  Boost_bimap;
       typedef typename Boost_bimap::value_type                    short_edge;
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Collapse short edges (" << low << ", " << high << ")...";
       std::cout.flush();
+#endif
       double sq_low = low*low;
       double sq_high = high*high;
 
@@ -507,7 +518,9 @@ namespace internal {
         , PMP::parameters::vertex_point_map(vpmap_)
         .geom_traits(GeomTraits()));
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << " done (" << nb_collapses << " collapses)." << std::endl;
+#endif
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
       dump("2-edge_collapse.off");
@@ -530,8 +543,10 @@ namespace internal {
     // to the target valences decreases. If not, the edge is flipped back"
     void equalize_valences()
     {
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Equalize valences...";
       std::cout.flush(); 
+#endif
       unsigned int nb_flips = 0;
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
       {
@@ -596,7 +611,9 @@ namespace internal {
         , PMP::parameters::vertex_point_map(vpmap_)
         .geom_traits(GeomTraits()));
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "done. ("<< nb_flips << " flips)" << std::endl;
+#endif
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
       CGAL_assertion(nb_valid_halfedges() == halfedge_status_map_.size());
@@ -615,8 +632,10 @@ namespace internal {
     void tangential_relaxation()
     {
       //todo : move border vertices along 1-dimensional features
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Tangential relaxation...";
       std::cout.flush();
+#endif
 
       //todo : use boost::vector_property_map to improve computing time
       typedef std::map<vertex_descriptor, Vector_3> VNormalsMap;
@@ -673,7 +692,9 @@ namespace internal {
       CGAL_assertion(is_valid(mesh_));
       CGAL_assertion(is_triangle_mesh(mesh_));
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "done." << std::endl;
+#endif
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
       dump("4-relaxation.off");
@@ -686,8 +707,10 @@ namespace internal {
     void project_to_surface()
     {
       //todo : handle the case of boundary vertices
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Project to surface...";
       std::cout.flush();
+#endif
 
       BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
       {
@@ -699,7 +722,9 @@ namespace internal {
       CGAL_assertion(is_valid(mesh_));
       CGAL_assertion(is_triangle_mesh(mesh_));
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "done." << std::endl;
+#endif
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
       dump("5-project.off");
