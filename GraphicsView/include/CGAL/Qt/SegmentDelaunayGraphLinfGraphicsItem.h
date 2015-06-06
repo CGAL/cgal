@@ -49,7 +49,7 @@ public:
 
   QRectF boundingRect() const;
  
- void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
  
   const QPen& verticesPen() const
   {
@@ -87,7 +87,7 @@ public:
 
 protected:
   void drawAll(QPainter *painter, const QStyleOptionGraphicsItem *option);
- void drawDualEdge(QPainter *painter, typename T::Edge e);
+  void drawDualEdge(QPainter *painter, typename T::Edge e);
 
 
 
@@ -95,7 +95,7 @@ protected:
 
 template <typename T>
 void 
-SegmentDelaunayGraphLinfGraphicsItem<T>::drawDualEdge(QPainter *painter, typename T::Edge e)
+SegmentDelaunayGraphLinfGraphicsItem<T>::drawDualEdge(QPainter * /*painter*/, typename T::Edge e)
 {
   CGAL_precondition( ! t->is_infinite(e) );
 
@@ -277,7 +277,7 @@ template <typename T>
 void 
 SegmentDelaunayGraphLinfGraphicsItem<T>::paint(QPainter *painter, 
                                     const QStyleOptionGraphicsItem *option,
-                                    QWidget * widget)
+                                    QWidget * /*widget*/)
 {
 
 //   painter->drawRect(boundingRect());
