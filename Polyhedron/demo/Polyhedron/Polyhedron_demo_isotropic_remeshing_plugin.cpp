@@ -130,6 +130,7 @@ public Q_SLOTS:
 
       typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
       typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+      typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
       if (selection_item)
       {
         if (edges_only)
@@ -144,6 +145,15 @@ public Q_SLOTS:
                  != selection_item->selected_facets.end())
               edges.push_back(e);
           }
+          BOOST_FOREACH(face_descriptor f, selection_item->selected_facets)
+          {
+            BOOST_FOREACH(halfedge_descriptor he, halfedges_around_face(halfedge(f, pmesh), pmesh))
+            {
+              if (selection_item->selected_facets.find(face(opposite(he, pmesh), pmesh))
+                  == selection_item->selected_facets.end())
+              edges.push_back(edge(he, pmesh));
+            }
+          }
           CGAL::Polygon_mesh_processing::split_long_edges(
             *selection_item->polyhedron()
             , edges
@@ -155,13 +165,23 @@ public Q_SLOTS:
           selection_item->polyhedron()->size_of_halfedges()/2,
           false);
 
+        if (selection_item->selected_edges.empty())
+          CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(
+          *selection_item->polyhedron()
+          , selection_item->selected_facets
+          , target_length
+          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+          .protect_constraints(protect));
+        else
         CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(
          *selection_item->polyhedron()
          , selection_item->selected_facets
          , target_length
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+         .protect_constraints(protect)
          .edge_is_constrained_map(selection_item->selected_edges_pmap(selected))
-         .protect_constraints(protect));
+         );
+
         }
         selection_item->poly_item_changed();
         selection_item->clear_all();
