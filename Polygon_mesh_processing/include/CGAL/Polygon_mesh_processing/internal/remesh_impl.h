@@ -742,6 +742,11 @@ namespace internal {
       return (is_border(v, mesh_)) ? 4 : 6;
     }
 
+    bool is_on_triangle(const halfedge_descriptor& h) const
+    {
+      return h == next(next(next(h, mesh_), mesh_), mesh_);
+    }
+
     bool is_flip_allowed(const edge_descriptor& e) const
     {
       //only the patch, and non-border edges are
@@ -750,6 +755,16 @@ namespace internal {
       if (!is_on_patch(he))
         return false;
 
+      //check that mesh does not become non-triangle
+      CGAL::Euler::flip_edge(he, mesh_);
+      if (!is_on_triangle(he) || !is_on_triangle(opposite(he, mesh_)))
+      {
+        CGAL::Euler::flip_edge(he, mesh_);
+        return false;
+      }
+      CGAL::Euler::flip_edge(he, mesh_);
+
+      //check that we don't inverse a face
       Point p1 = get(vpmap_, target(he, mesh_));
       Point p2 = get(vpmap_, source(he, mesh_));
       Vector_3 normal(p1, p2);
