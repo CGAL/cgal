@@ -472,7 +472,9 @@ namespace internal {
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
           debug_normals(vkept);
-          //PMP::remove_degenerate_faces(mesh_/*todo : add named parameters*/);
+          //PMP::remove_degenerate_faces(mesh_
+          //  , PMP::parameters::vertex_point_map(vpmap_)
+          //  .geom_traits(GeomTraits()));
           //debug_self_intersections(vkept);
 #endif
 
@@ -501,7 +503,9 @@ namespace internal {
         }//end if(collapse_ok)
       }
 
-      PMP::remove_degenerate_faces(mesh_/*todo : add named parameters*/);
+      PMP::remove_degenerate_faces(mesh_
+        , PMP::parameters::vertex_point_map(vpmap_)
+        .geom_traits(GeomTraits()));
 
       std::cout << " done (" << nb_collapses << " collapses)." << std::endl;
 
