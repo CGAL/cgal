@@ -534,9 +534,11 @@ namespace internal {
         }//end if(collapse_ok)
       }
 
-      PMP::remove_degenerate_faces(mesh_
+      std::size_t n = PMP::remove_degenerate_faces(mesh_
         , PMP::parameters::vertex_point_map(vpmap_)
-        .geom_traits(GeomTraits()));
+         .geom_traits(GeomTraits()));
+      if (n > 0)
+        std::cout << "Warning : tags should maybe be fixed" << std::endl;
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << " done (" << nb_collapses << " collapses)." << std::endl;
@@ -627,9 +629,11 @@ namespace internal {
         }
       }
 
-      PMP::remove_degenerate_faces(mesh_
+      std::size_t n = PMP::remove_degenerate_faces(mesh_
         , PMP::parameters::vertex_point_map(vpmap_)
-        .geom_traits(GeomTraits()));
+          .geom_traits(GeomTraits()));
+      if (n > 0)
+        std::cout << "Warning : tags should maybe be fixed" << std::endl;
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "done. ("<< nb_flips << " flips)" << std::endl;
@@ -959,7 +963,7 @@ namespace internal {
       typename std::map < halfedge_descriptor, Halfedge_status >::const_iterator
         it = halfedge_status_map_.find(h);
       if (it == halfedge_status_map_.end())
-        std::cout << "stop" << std::endl;
+        std::cout << "stop " << std::endl;
       CGAL_assertion(it != halfedge_status_map_.end());
       return it->second;
     }
