@@ -535,10 +535,11 @@ namespace internal {
       unsigned int nb_flips = 0;
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
       {
-        if (!is_flip_allowed(e))
+        //only the patch edges are allowed to be flipped
+        halfedge_descriptor he = halfedge(e, mesh_);
+        if (!is_on_patch(he))
           continue;
 
-        halfedge_descriptor he = halfedge(e, mesh_);
         vertex_descriptor va = source(he, mesh_);
         vertex_descriptor vb = target(he, mesh_);
         vertex_descriptor vc = target(next(he, mesh_), mesh_);
@@ -571,7 +572,13 @@ namespace internal {
                           + CGAL::abs(valence(vc) - target_valence(vc))
                           + CGAL::abs(valence(vd) - target_valence(vd));
 
-        if (deviation_pre < deviation_post)
+        //check that mesh does not become non-triangle,
+        //nor has inverted faces
+        if (deviation_pre < deviation_post
+          || !is_on_triangle(he)
+          || !is_on_triangle(opposite(he, mesh_))
+          || !check_normals(target(he, mesh_))
+          || !check_normals(source(he, mesh_)))
         {
           CGAL::Euler::flip_edge(he, mesh_);
           --nb_flips;
@@ -745,45 +752,6 @@ namespace internal {
     bool is_on_triangle(const halfedge_descriptor& h) const
     {
       return h == next(next(next(h, mesh_), mesh_), mesh_);
-    }
-
-    bool is_flip_allowed(const edge_descriptor& e) const
-    {
-      //only the patch, and non-border edges are
-      //allowed to be flipped
-      halfedge_descriptor he = halfedge(e, mesh_);
-      if (!is_on_patch(he))
-        return false;
-
-      //check that mesh does not become non-triangle
-      CGAL::Euler::flip_edge(he, mesh_);
-      if (!is_on_triangle(he) || !is_on_triangle(opposite(he, mesh_)))
-      {
-        CGAL::Euler::flip_edge(he, mesh_);
-        return false;
-      }
-      CGAL::Euler::flip_edge(he, mesh_);
-
-      //check that we don't inverse a face
-      Point p1 = get(vpmap_, target(he, mesh_));
-      Point p2 = get(vpmap_, source(he, mesh_));
-      Vector_3 normal(p1, p2);
-
-      //construct planes passing through p1 and p2,
-      // and orthogonal to e
-      Plane_3 plane1(p1, normal);
-      Plane_3 plane2(p2, normal);
-
-      CGAL_assertion(//check orientation is consistent
-        plane1.orthogonal_vector() * plane2.orthogonal_vector() > 0.);
-
-      //get third points of triangles shared by e
-      Point p3 = get(vpmap_, target(next(he, mesh_), mesh_));
-      Point p4 = get(vpmap_, target(next(opposite(he, mesh_), mesh_), mesh_));
-
-      //check whether p3 and p4 are between plane1 and plane2
-      return (plane1.oriented_side(p3) != plane2.oriented_side(p3))
-         &&  (plane1.oriented_side(p4) != plane2.oriented_side(p4));
     }
 
     bool is_longest_on_faces(const edge_descriptor& e) const
@@ -1133,8 +1101,13 @@ namespace internal {
 
     void debug_normals(const vertex_descriptor& v) const
     {
+      CGAL_assertion(check_normals(v));
+    }
+
+    bool check_normals(const vertex_descriptor& v) const
+    {
       if (!is_on_patch(v))
-        return;//not much to say if we are on a boundary/sharp edge
+        return true;//not much to say if we are on a boundary/sharp edge
 
       std::vector<Vector_3> normals;
       BOOST_FOREACH(halfedge_descriptor hd,
@@ -1146,7 +1119,10 @@ namespace internal {
       }
       //check all normals have same orientation
       for (std::size_t i = 1; i < normals.size(); ++i)/*start at 1 on purpose*/
-        CGAL_assertion(normals[i - 1] * normals[i] > 0.);
+        if (normals[i - 1] * normals[i] <= 0.)
+          return false;
+
+      return true;
     }
 
     void debug_mesh_border() const
