@@ -1110,7 +1110,7 @@ private:
         (perpcomp == SMALLER ? pp : qq) ;
     CGAL_assertion(Base::compare_linf_distances_to_line(
           l, farp == pp ? qq : pp , farp) == SMALLER);
-    const RT pqdist = CGAL::max(
+    const RT pqdist = (CGAL::max)(
       CGAL::abs(pp.x()-qq.x()), CGAL::abs(pp.y()-qq.y()));
 
     const RT sdistf = (is_r_horizontal ? farp.y() : farp.x()) - coordr;
@@ -1206,8 +1206,8 @@ private:
       const RT lineval = coord_at(l, pcoord, pos_slope);
       const Point_2 corner = pos_slope?
         Point_2(pcoord, lineval) : Point_2(lineval, pcoord);
-      const RT sidelen = CGAL::max(CGAL::abs(corner.x() - q.point().x()),
-                                   CGAL::abs(corner.y() - q.point().y()));
+      const RT sidelen = (CGAL::max)(CGAL::abs(corner.x() - q.point().x()),
+                                     CGAL::abs(corner.y() - q.point().y()));
       ux_ = RT(2)*corner.x() + signla*sidelen;
       uy_ = RT(2)*corner.y() + signlb*sidelen;
       uz_ = RT(2);
@@ -1218,8 +1218,8 @@ private:
       const RT lineval = coord_at(l, qcoord, ! pos_slope);
       const Point_2 corner = pos_slope?
         Point_2(lineval, qcoord) : Point_2(qcoord, lineval);
-      const RT sidelen = CGAL::max(CGAL::abs(corner.x() - p.point().x()),
-                                   CGAL::abs(corner.y() - p.point().y()));
+      const RT sidelen = (CGAL::max)(CGAL::abs(corner.x() - p.point().x()),
+                                     CGAL::abs(corner.y() - p.point().y()));
       ux_ = RT(2)*corner.x() + signla*sidelen;
       uy_ = RT(2)*corner.y() + signlb*sidelen;
       uz_ = RT(2);
@@ -1233,7 +1233,7 @@ private:
     const RT py = p.point().y();
     const RT qx = q.point().x();
     const RT qy = q.point().y();
-    const RT pqdist = CGAL::max(CGAL::abs(px - qx), CGAL::abs(py - qy));
+    const RT pqdist = (CGAL::max)(CGAL::abs(px - qx), CGAL::abs(py - qy));
 
     CGAL_SDG_DEBUG(std::cout
         << "debug: vring pqdist=" << pqdist << std::endl;);
@@ -1835,13 +1835,13 @@ private:
     RT vy = uy_ - pointref.y() * uz_;
 
     RT Rs =
-      CGAL::max ( CGAL::abs(vx), CGAL::abs(vy) );
+      (CGAL::max) ( CGAL::abs(vx), CGAL::abs(vy) );
 
     RT scalediffdvtx = ux_ - t.x() * uz_;
     RT scalediffdvty = uy_ - t.y() * uz_;
 
     RT Rs1 =
-      CGAL::max(
+      (CGAL::max)(
         CGAL::abs(scalediffdvtx),
         CGAL::abs(scalediffdvty) );
 
@@ -1871,8 +1871,8 @@ private:
       const Site_2 & p2 = cpp11::get<1>(sites);
       const Site_2 & s  = cpp11::get<2>(sites);
 
-      const RT d_fine = CGAL::min(CGAL::abs(scalediffdvtx),
-                            CGAL::abs(scalediffdvty));
+      const RT d_fine = (CGAL::min)(CGAL::abs(scalediffdvtx),
+                                    CGAL::abs(scalediffdvty));
       for (size_t i = 0; i < 2; ++i) {
         const Site_2 & cur = (i == 0) ? p1 : p2;
         const Point_2 pref = cur.point();
@@ -1982,7 +1982,7 @@ private:
     const RT vy = uy_ - yref * uz_;
 
     const RT Rs =
-      CGAL::max ( CGAL::abs(vx), CGAL::abs(vy) );
+      (CGAL::max) ( CGAL::abs(vx), CGAL::abs(vy) );
 
     const RT tx = t.x() ;
     const RT ty = t.y() ;
@@ -1991,7 +1991,7 @@ private:
     const RT scalediffdvty = uy_ - ty * uz_;
 
     const RT Rs1 =
-      CGAL::max(
+      (CGAL::max)(
         CGAL::abs(scalediffdvtx),
         CGAL::abs(scalediffdvty) );
 
@@ -2074,8 +2074,8 @@ private:
         }
       }
 
-      const RT d_fine = CGAL::min(CGAL::abs(scalediffdvtx),
-                            CGAL::abs(scalediffdvty));
+      const RT d_fine = (CGAL::min)(CGAL::abs(scalediffdvtx),
+                                    CGAL::abs(scalediffdvty));
       const Point_2 pref = pt_site.point();
       const RT scalediffdvpx = ux_ - pref.x() * uz_;
       const RT scalediffdvpy = uy_ - pref.y() * uz_;
@@ -2147,14 +2147,14 @@ private:
     Homogeneous_point_2 hp = compute_linf_projection_hom(l, point());
 
     RT dup =
-      CGAL::max(CGAL::abs(ux_ - hp.x() * uz_),
-                CGAL::abs(uy_ - hp.y() * uz_));
+      (CGAL::max)(CGAL::abs(ux_ - hp.x() * uz_),
+                  CGAL::abs(uy_ - hp.y() * uz_));
 
     RT scalediffdvtx = ux_ - t.x() * uz_;
     RT scalediffdvty = uy_ - t.y() * uz_;
 
     RT dut =
-      CGAL::max(
+      (CGAL::max)(
         CGAL::abs(scalediffdvtx),
         CGAL::abs(scalediffdvty) );
 
@@ -2376,11 +2376,11 @@ private:
     CGAL_SDG_DEBUG(std::cout << "debug incircle l PPP: pref="
       << pref << std::endl;);
 
-    RT dul = CGAL::max(
+    RT dul = (CGAL::max)(
         CGAL::abs(ux_ - hp.x() * uz_),
         CGAL::abs(uy_ - hp.y() * uz_));
 
-    RT dupref = CGAL::max(
+    RT dupref = (CGAL::max)(
         CGAL::abs(ux_ - pref.x() * uz_),
         CGAL::abs(uy_ - pref.y() * uz_));
 
@@ -2423,11 +2423,11 @@ private:
     RT vx = ux_ - pref.x() * uz_;
     RT vy = uy_ - pref.y() * uz_;
 
-    RT dupref = CGAL::max(CGAL::abs(vx), CGAL::abs(vy));
+    RT dupref = (CGAL::max)(CGAL::abs(vx), CGAL::abs(vy));
 
     Homogeneous_point_2 hp = compute_linf_projection_hom(l, point());
 
-    RT dul = CGAL::max(
+    RT dul = (CGAL::max)(
         CGAL::abs(ux_ - hp.x() * uz_),
         CGAL::abs(uy_ - hp.y() * uz_));
 
@@ -2471,11 +2471,11 @@ private:
     RT vx = ux_ - (pref.x() ) * uz_;
     RT vy = uy_ - (pref.y() ) * uz_;
 
-    RT dupref = CGAL::max(CGAL::abs(vx), CGAL::abs(vy));
+    RT dupref = (CGAL::max)(CGAL::abs(vx), CGAL::abs(vy));
 
     Homogeneous_point_2 lhp = compute_linf_projection_hom(l, point());
 
-    RT dul = CGAL::max(
+    RT dul = (CGAL::max)(
         CGAL::abs(ux_ - lhp.x() * uz_),
         CGAL::abs(uy_ - lhp.y() * uz_));
 
@@ -2515,12 +2515,12 @@ private:
     Line_2 lref = compute_supporting_line(p_.supporting_site());
     Homogeneous_point_2 lrefhp =
       compute_linf_projection_hom(lref, point());
-    RT dulref = CGAL::max(
+    RT dulref = (CGAL::max)(
         CGAL::abs(ux_ - lrefhp.x() * uz_),
         CGAL::abs(uy_ - lrefhp.y() * uz_));
 
     Homogeneous_point_2 lhp = compute_linf_projection_hom(l, point());
-    RT dul = CGAL::max(
+    RT dul = (CGAL::max)(
         CGAL::abs(ux_ - lhp.x() * uz_),
         CGAL::abs(uy_ - lhp.y() * uz_));
 
@@ -3513,8 +3513,8 @@ public:
 	Point_2 pref = p_ref().point();
 	//FT absdx = CGAL::abs(x() - pref.x());
 	//FT absdy = CGAL::abs(y() - pref.y());
-        return CGAL::max( CGAL::abs(x() - pref.x()),
-		          CGAL::abs(y() - pref.y()) );
+        return (CGAL::max)( CGAL::abs(x() - pref.x()),
+		            CGAL::abs(y() - pref.y()) );
       }
       break;
     case SSS:
@@ -3524,7 +3524,7 @@ public:
 
 	FT dx = CGAL::abs(x() - q.x());
 	FT dy = CGAL::abs(y() - q.y());
-	return CGAL::max(dx, dy);
+	return (CGAL::max)(dx, dy);
       }
       break;
     default:

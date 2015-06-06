@@ -421,7 +421,7 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
   static
   RT compute_linf_distance(const Point_2& p, const Point_2& q)
   {
-    return CGAL::max(
+    return (CGAL::max)(
               CGAL::abs(p.x() - q.x()),
               CGAL::abs(p.y() - q.y()));
   }
@@ -498,11 +498,11 @@ public:
     Homogeneous_point_2 hp = compute_linf_projection_hom(l, p);
     Homogeneous_point_2 hq = compute_linf_projection_hom(l, q);
 
-    RT dlp = CGAL::max(CGAL::abs(p.x() - hp.x()),
-                       CGAL::abs(p.y() - hp.y()));
+    RT dlp = (CGAL::max)(CGAL::abs(p.x() - hp.x()),
+                         CGAL::abs(p.y() - hp.y()));
 
-    RT dlq = CGAL::max(CGAL::abs(q.x() - hq.x()),
-                       CGAL::abs(q.y() - hq.y()));
+    RT dlq = (CGAL::max)(CGAL::abs(q.x() - hq.x()),
+                         CGAL::abs(q.y() - hq.y()));
 
     Comparison_result crude = CGAL::compare(dlp, dlq);
 
@@ -525,11 +525,11 @@ public:
     Homogeneous_point_2 hl1 = compute_linf_projection_hom(l1, p);
     Homogeneous_point_2 hl2 = compute_linf_projection_hom(l2, p);
 
-    RT dl1p = CGAL::max(CGAL::abs(hl1.x() - p.x()),
-                        CGAL::abs(hl1.y() - p.y()));
+    RT dl1p = (CGAL::max)(CGAL::abs(hl1.x() - p.x()),
+                          CGAL::abs(hl1.y() - p.y()));
 
-    RT dl2p = CGAL::max(CGAL::abs(hl2.x() - p.x()),
-                        CGAL::abs(hl2.y() - p.y()));
+    RT dl2p = (CGAL::max)(CGAL::abs(hl2.x() - p.x()),
+                          CGAL::abs(hl2.y() - p.y()));
 
     Comparison_result crude = CGAL::compare(dl1p, dl2p);
 
