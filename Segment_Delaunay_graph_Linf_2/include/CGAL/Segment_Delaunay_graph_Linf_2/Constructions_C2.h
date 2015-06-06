@@ -173,7 +173,7 @@ public:
 
       Compare_x_2 compare_x_2;
       Compare_y_2 compare_y_2;
-      Equal_2 are_same_points;//the arguments are sites
+      CGAL_assertion_code ( Equal_2 are_same_points );
       CGAL_assertion( !(are_same_points(p, q)) );
       Comparison_result cmpx = compare_x_2(pp, pq);
       Comparison_result cmpy = compare_y_2(pp, pq);
@@ -453,7 +453,7 @@ public:
 
       Compare_x_2 compare_x_2;
       Compare_y_2 compare_y_2;
-      Equal_2 are_same_points;
+      CGAL_assertion_code ( Equal_2 are_same_points );
       CGAL_assertion( !(are_same_points(p, q)) );
       Comparison_result cmpx = compare_x_2(pp, pq);
       Comparison_result cmpy = compare_y_2(pp, pq);
@@ -777,7 +777,6 @@ public:
 
     Compare_x_2 compare_x_2;
     Compare_y_2 compare_y_2;
-    Equal_2 are_same_points;
 
     Comparison_result cmpx_vpqr_vqps =
       compare_x_2(vpqr, vqps);
@@ -811,6 +810,7 @@ public:
       Point_2 pp = p.point();
       Point_2 pq = q.point();
 
+      CGAL_assertion_code( Equal_2 are_same_points );
       CGAL_assertion( ! (are_same_points(p, q)) );
       Comparison_result cmpx = compare_x_2(pp, pq);
       Comparison_result cmpy = compare_y_2(pp, pq);
