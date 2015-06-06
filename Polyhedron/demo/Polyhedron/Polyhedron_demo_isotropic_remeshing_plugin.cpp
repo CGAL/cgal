@@ -1,3 +1,6 @@
+#define CGAL_PMP_REMESHING_VERBOSE
+#define CGAL_PMP_REMESHING_VERY_VERBOSE
+
 #include <QtCore/qglobal.h>
 
 #include "Scene_polyhedron_item.h"
@@ -22,8 +25,6 @@
 #include <sstream>
 
 #include "ui_Polyhedron_demo_isotropic_remeshing_dialog.h"
-
-#define CGAL_PMP_REMESHING_VERBOSE
 
 class Polyhedron_demo_isotropic_remeshing_plugin :
   public QObject,

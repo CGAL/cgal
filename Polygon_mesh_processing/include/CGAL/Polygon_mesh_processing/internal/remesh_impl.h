@@ -29,6 +29,11 @@
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #endif
 
+#ifdef CGAL_PMP_REMESHING_VERY_VERBOSE
+#define CGAL_PMP_REMESHING_VERBOSE
+#endif
+
+
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 
@@ -188,6 +193,11 @@ namespace internal {
         //move refinement point
         vertex_descriptor vnew = target(hnew, mesh_);
         put(vpmap_, vnew, refinement_point);
+#ifdef CGAL_PMP_REMESHING_VERY_VERBOSE
+        std::cout << " * status(hnew) :     " << status(hnew) << std::endl;
+        std::cout << "   status(hnew_opp) : " << status(opposite(hnew, mesh_)) << std::endl;
+        std::cout << "   refinement point : " << refinement_point << std::endl;
+#endif
 
         //check sub-edges
         double sqlen_new = 0.25 * sqlen;
@@ -271,6 +281,9 @@ namespace internal {
         //move refinement point
         vertex_descriptor vnew = target(hnew, mesh_);
         put(vpmap_, vnew, refinement_point);
+#ifdef CGAL_PMP_REMESHING_VERY_VERBOSE
+        std::cout << "   Refinement point : " << refinement_point << std::endl;
+#endif
 
         //after splitting
         halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
