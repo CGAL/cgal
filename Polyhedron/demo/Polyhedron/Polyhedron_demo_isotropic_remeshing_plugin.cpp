@@ -133,6 +133,7 @@ public Q_SLOTS:
       typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
       if (selection_item)
       {
+        std::vector<edge_descriptor> updated_selected_edges;
         if (edges_only)
         {
           const Polyhedron& pmesh = *selection_item->polyhedron();
@@ -157,7 +158,9 @@ public Q_SLOTS:
           CGAL::Polygon_mesh_processing::split_long_edges(
             *selection_item->polyhedron()
             , edges
-            , target_length);
+            , target_length
+            , std::back_inserter(updated_selected_edges)
+            , PMP::parameters::geom_traits(Kernel()));
         }
         else
         {
@@ -185,6 +188,8 @@ public Q_SLOTS:
         }
         selection_item->poly_item_changed();
         selection_item->clear_all();
+        selection_item->selected_edges.insert(updated_selected_edges.begin(),
+                                              updated_selected_edges.end());
         selection_item->changed_with_poly_item();
       }
       else if (poly_item)

@@ -163,7 +163,7 @@ void split_long_edges(PolygonMesh& pmesh
   typename internal::Incremental_remesher<PM, VPMap, GT>
     remesher(pmesh, vpmap, false/*protect constraints*/);
 
-  remesher.split_long_edges(edge_range, max_length);
+  remesher.split_long_edges(edge_range, max_length, Emptyset_iterator());
 }
 
 template<typename PolygonMesh, typename EdgeRange>
@@ -175,6 +175,33 @@ void split_long_edges(PolygonMesh& pmesh
     edges,
     max_length,
     parameters::all_default());
+}
+
+//used in the Polyhedron demo
+template<typename PolygonMesh
+       , typename EdgeRange
+       , typename OutputIterator
+       , typename NamedParameters>
+void split_long_edges(PolygonMesh& pmesh
+        , EdgeRange& edge_range
+        , const double& max_length
+        , OutputIterator out//edges after splitting, all shorter than target_length
+        , const NamedParameters& np)
+{
+  typedef PolygonMesh PM;
+  using boost::choose_pmap;
+  using boost::get_param;
+
+  typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
+  typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
+  VPMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
+                            pmesh,
+                            boost::vertex_point);
+
+  typename internal::Incremental_remesher<PM, VPMap, GT>
+    remesher(pmesh, vpmap, false/*protect constraints*/);
+
+  remesher.split_long_edges(edge_range, max_length, out);
 }
 
 } //end namespace Polygon_mesh_processing

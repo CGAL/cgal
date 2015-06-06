@@ -6,6 +6,7 @@
 #include <CGAL/Polygon_mesh_processing/get_border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
+#include <CGAL/iterator.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
@@ -150,9 +151,10 @@ namespace internal {
     }
 
     // split edges of edge_range that have their length > high
-    template<typename EdgeRange>
+    template<typename EdgeRange, typename OutputIterator>
     void split_long_edges(const EdgeRange& edge_range,
-                          const double& high)
+                          const double& high,
+                          OutputIterator out)//new edges, replacing edge_range
     {
       typedef boost::bimap<
         boost::bimaps::set_of<halfedge_descriptor>,
@@ -172,6 +174,8 @@ namespace internal {
         double sqlen = sqlength(e);
         if (sqlen > sq_high)
           long_edges.insert(long_edge(halfedge(e, mesh_), sqlen));
+        else
+          *out++ = e;
       }
 
       //split long edges
@@ -194,8 +198,6 @@ namespace internal {
         vertex_descriptor vnew = target(hnew, mesh_);
         put(vpmap_, vnew, refinement_point);
 #ifdef CGAL_PMP_REMESHING_VERY_VERBOSE
-        std::cout << " * status(hnew) :     " << status(hnew) << std::endl;
-        std::cout << "   status(hnew_opp) : " << status(opposite(hnew, mesh_)) << std::endl;
         std::cout << "   refinement point : " << refinement_point << std::endl;
 #endif
 
@@ -206,6 +208,11 @@ namespace internal {
           //if it was more than twice the "long" threshold, insert them
           long_edges.insert(long_edge(hnew, sqlen_new));
           long_edges.insert(long_edge(next(hnew, mesh_), sqlen_new));
+        }
+        else
+        {
+          *out++ = edge(hnew, mesh_);
+          *out++ = edge(next(hnew, mesh_), mesh_);
         }
 
         //insert new edges to keep triangular faces, and update long_edges
@@ -951,6 +958,8 @@ namespace internal {
     {
       typename std::map < halfedge_descriptor, Halfedge_status >::const_iterator
         it = halfedge_status_map_.find(h);
+      if (it == halfedge_status_map_.end())
+        std::cout << "stop" << std::endl;
       CGAL_assertion(it != halfedge_status_map_.end());
       return it->second;
     }
