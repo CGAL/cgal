@@ -9,8 +9,7 @@ namespace CGAL {
 
 \section Reconstruction_simplification_2Introduction Introduction
 
-
-This package implements methods to reconstruct and simplify 2D point sets. The input is a noisy 2D point set and the output is a set of line segments and points which approximate the input shape, where the input points were sampled from as illustrated in Figure \cgalFigureRef{2D_Reconstruction_Simplification_overview}. 
+This package implements methods to reconstruct and simplify 2D point sets. The input is a 2D point set, possibly hampered by noise and outliers. The output is a set of line segments and isolated points which approximate the input shape, where the input points were sampled from, as illustrated in Figure \cgalFigureRef{2D_Reconstruction_Simplification_overview}. 
 
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_overview,summary.png}
@@ -131,8 +130,7 @@ points and the edges of the reconstructed shape are extracted and printed to the
 
 \subsubsection Reconstruction_simplification_2Output Output Example
 
-The result of the reconstuction can be obtained in two ways. Either as sequence of isolated points and segments.
-Or as a sequence of points and pairs of indices for describing the segments.
+The output of the reconstruction can be obtained in two ways: either as a sequence of points and segments, or as an indexed format when the connectivity of segments is encoded. The indexed format records a list of points, then pairs of point indices in the list for the edges, and point indices for isolated vertices. 
 
 \cgalExample{Reconstruction_simplification_2/Reconstruction_simplification_2_output_example.cpp}
 
