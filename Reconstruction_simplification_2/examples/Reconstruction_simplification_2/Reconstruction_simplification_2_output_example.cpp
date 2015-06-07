@@ -20,9 +20,9 @@ void load_xy_file(const std::string& filename, std::list<Point>& points)
 {
   std::ifstream ifs(filename);
   Point point;
-  while (ifs >> point){
+  while (ifs >> point)
     points.push_back(point);
-  }
+  
   ifs.close();
 }
 
@@ -37,15 +37,13 @@ void list_output(Rs_2& rs2)
   rs2.extract_list_output(
     std::back_inserter(isolated_vertices), std::back_inserter(edges));
   
-  for (std::vector<Point>::iterator vit = isolated_vertices.begin();
-       vit != isolated_vertices.end(); vit++) {
+  std::vector<Point>::iterator vit;
+  for (vit = isolated_vertices.begin(); vit != isolated_vertices.end(); vit++) 
     std::cout  <<  *vit << std::endl;
-  }
   
-  for (std::vector<Segment>::iterator eit = edges.begin();
-       eit != edges.end(); eit++) {
+  std::vector<Segment>::iterator eit;
+  for (eit = edges.begin(); eit != edges.end(); eit++) 
     std::cout << *eit << std::endl;
-  }
 }
 
 
@@ -62,24 +60,19 @@ void index_output(Rs_2& rs2)
     std::back_inserter(isolated_points),
     std::back_inserter(edges));
   
-  std::cout << "OFF " << points.size() <<
-		  " 0 " << edges.size()  << std::endl;
+  std::cout << "OFF " << points.size() << " 0 " << edges.size()  << std::endl;
 
-  for (std::vector<Point>::iterator it = points.begin(); 
-       it != points.end(); it++) {
-	  std::cout << *it << std::endl;
-  }
+  std::vector<Point>::iterator pit;
+  for (pit = points.begin(); pit != points.end(); pit++) 
+	  std::cout << *pit << std::endl;
 
-  for (std::vector<std::pair<std::size_t,std::size_t> >::iterator it 
-        = edges.begin();
-		  it != edges.end(); it++) {
-    std::cout << "2 "  << it->first << " " << it->second << std::endl;
-  }
+  std::vector<std::pair<std::size_t, std::size_t> >::iterator eit;
+  for (eit = edges.begin(); eit != edges.end(); eit++)
+    std::cout << "2 "  << eit->first << " " << eit->second << std::endl;
 }
 
 int main ()
 {
-  
   std::list<Point> points;
   
   load_xy_file("data/stair-noise00.xy", points);
@@ -90,5 +83,6 @@ int main ()
 
   list_output(rs2);
   index_output(rs2);
+
   return 0;
 }

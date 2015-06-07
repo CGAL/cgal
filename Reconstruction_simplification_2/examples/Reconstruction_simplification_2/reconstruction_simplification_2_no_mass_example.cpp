@@ -22,10 +22,11 @@ typedef CGAL::Reconstruction_simplification_2<K>            Rs_2;
 void load_xy_file(const std::string& fileName, std::list<Point>& points)
 {
   std::ifstream ifs(fileName);
+
   Point point;
-  while (ifs >> point){
+  while (ifs >> point)
     points.push_back(point);
-  }
+  
   ifs.close();
 }
 
@@ -44,15 +45,14 @@ int main ()
   rs2.extract_list_output(std::back_inserter(isolated_vertices), std::back_inserter(edges));
   
   std::cerr << "Isolated vertices" << std::endl;
-  for (std::vector<Point>::iterator vit = isolated_vertices.begin();
-       vit != isolated_vertices.end(); vit++) {
-    std::cout  <<  *vit << std::endl;
-  }
+  std::vector<Point>::iterator vit;
+  for (vit = isolated_vertices.begin(); vit != isolated_vertices.end(); vit++)
+    std::cout << *vit << std::endl;
   
   std::cerr << "Edges" << std::endl;
-  for (std::vector<Segment>::iterator eit = edges.begin();
-       eit != edges.end(); eit++) {
+  std::vector<Segment>::iterator eit;
+  for (eit = edges.begin(); eit != edges.end(); eit++) 
     std::cout << *eit << std::endl;
-  }
+  
   return 0;
 }

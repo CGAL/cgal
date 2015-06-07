@@ -30,10 +30,10 @@ void load_xy_file(const std::string& fileName, PointMassList& points)
 {
    std::ifstream ifs(fileName);
    Point point;
-   unsigned int nb = 0;
-   while (ifs >> point){
-     points.push_back(std::make_pair(point, 1));
-   }
+
+   while (ifs >> point)
+	 points.push_back(std::make_pair(point, 1));
+   
    ifs.close();
 }
 
@@ -56,15 +56,14 @@ int main ()
   rs2.extract_list_output(std::back_inserter(isolated_vertices), std::back_inserter(edges));
   
   std::cerr << "Isolated vertices" << std::endl;
-  for (std::vector<Point>::iterator vit = isolated_vertices.begin();
-       vit != isolated_vertices.end(); vit++) {
-    std::cout  <<  *vit << std::endl;
-  }
+  std::vector<Point>::iterator vit;
+  for (vit = isolated_vertices.begin(); vit != isolated_vertices.end(); vit++) 
+	std::cout  <<  *vit << std::endl;
   
   std::cerr << "Edges" << std::endl;
-  for (std::vector<Segment>::iterator eit = edges.begin();
-       eit != edges.end(); eit++) {
-                std::cout << *eit << std::endl;
-  }
+  std::vector<Segment>::iterator eit;
+  for (eit = edges.begin(); eit != edges.end(); eit++) 
+	std::cout << *eit << std::endl;
+  
   return 0;
 }
