@@ -2,6 +2,8 @@
 #include <CGAL/Reconstruction_simplification_2.h>
 
 #include <fstream>
+// Example for Reconstruction_simplification_2
+
 #include <iostream>
 #include <string>
 #include <iterator>
@@ -26,13 +28,15 @@ typedef CGAL::Reconstruction_simplification_2<
   K, Point_property_map, Mass_property_map>                 Rs_2;
 
 
-void load_xy_file(const std::string& fileName, PointMassList& points)
+void load_xym_file(const std::string& filename, PointMassList& points)
 {
-   std::ifstream ifs(fileName);
+   std::ifstream ifs(filename);
+	
    Point point;
+	 FT mass;
 
-   while (ifs >> point)
-	 points.push_back(std::make_pair(point, 1));
+   while (ifs >> point && ifs >> mass)
+	   points.push_back(std::make_pair(point, mass));
    
    ifs.close();
 }
@@ -41,7 +45,7 @@ int main ()
 {
   PointMassList points;
   
-  load_xy_file("data/stair-noise00.xy", points);
+  load_xym_file("data/stair.xym", points);
   
   Point_property_map point_pmap;
   Mass_property_map  mass_pmap;

@@ -30,29 +30,14 @@ void load_xy_file(const std::string& fileName, std::list<Point>& points)
   ifs.close();
 }
 
-
 int main ()
 {
   std::list<Point> points;
-  load_xy_file("data/stair-noise00.xy", points);
+  load_xy_file("data/stair.xy", points);
   
   Rs_2 rs2(points);
 
   rs2.run(100); // 100 steps
-  
-  std::vector<Point> isolated_vertices;
-  std::vector<Segment> edges;
-  rs2.extract_list_output(std::back_inserter(isolated_vertices), std::back_inserter(edges));
-  
-  std::cerr << "Isolated vertices" << std::endl;
-  std::vector<Point>::iterator vit;
-  for (vit = isolated_vertices.begin(); vit != isolated_vertices.end(); vit++)
-    std::cout << *vit << std::endl;
-  
-  std::cerr << "Edges" << std::endl;
-  std::vector<Segment>::iterator eit;
-  for (eit = edges.begin(); eit != edges.end(); eit++) 
-    std::cout << *eit << std::endl;
   
   return 0;
 }
