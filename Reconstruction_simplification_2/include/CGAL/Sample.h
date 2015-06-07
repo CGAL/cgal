@@ -131,7 +131,6 @@ public:
 };
 
 
-//TODO: IV: What is the correct place for this struct?
 template <class T>
 struct greater_priority
 {
