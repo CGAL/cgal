@@ -3,7 +3,9 @@
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
 #include <Scene_polyhedron_item.h>
-
+#include "Kernel_type.h"
+#include "Polyhedron_type.h"
+#include <CGAL/Advancing_front_surface_reconstruction.h>
 
 #include <QObject>
 #include <QAction>
@@ -14,10 +16,28 @@
 
 #include "ui_Polyhedron_demo_advancing_front_plugin.h"
 
-// Reconstructs a surface mesh from a point set and writes facet indices into polygon soup.
-Polyhedron* advancing_front_reconstruct(const Point_set& points,
-                                       double sm_perimeter,
-                                       double sm_area);
+struct Perimeter {
+
+  double bound;
+
+  Perimeter(double bound)
+    : bound(bound)
+  {}
+
+  bool operator()(const Kernel::Point_3& p, const Kernel::Point_3& q, const Kernel::Point_3& r) const
+  {
+    if(bound == 0){
+      return true;
+    }
+    double d  = sqrt(squared_distance(p,q));
+    if(d>bound) return true;
+    d += sqrt(squared_distance(p,r)) ;
+    if(d>bound) return true;
+    d+= sqrt(squared_distance(q,r));
+    return d>bound;
+  }
+};
+
 
 class Polyhedron_demo_advancing_front_plugin :
   public QObject,
@@ -61,7 +81,6 @@ class Polyhedron_demo_advancing_front_plugin_dialog : public QDialog, private Ui
     }
 
     double trianglePerimeter() const { return m_inputPerimeter->value(); }
-    double triangleArea() const { return m_inputArea->value(); }
 };
 
 void Polyhedron_demo_advancing_front_plugin::on_actionAdvancingFrontReconstruction_triggered()
@@ -82,7 +101,6 @@ void Polyhedron_demo_advancing_front_plugin::on_actionAdvancingFrontReconstructi
     if(!dialog.exec())
       return;
     const double sm_perimeter     = dialog.trianglePerimeter();
-    const double sm_area    = dialog.triangleArea();
 
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -90,15 +108,15 @@ void Polyhedron_demo_advancing_front_plugin::on_actionAdvancingFrontReconstructi
     // Add polyhedron to scene
     
     // Reconstruct point set as a polyhedron
-     Polyhedron *poly = advancing_front_reconstruct(*points, sm_perimeter, sm_area);
-
-     Scene_polyhedron_item* new_item = new Scene_polyhedron_item(poly);
+    Scene_polyhedron_item* new_item = new Scene_polyhedron_item(Polyhedron());
+    Polyhedron& P = * const_cast<Polyhedron*>(new_item->polyhedron());
+    Perimeter filter(sm_perimeter);
+      CGAL::advancing_front_surface_reconstructionP((points)->begin(), points->end(), P, filter);
 
 
     new_item->setName(tr("%1 Advancing Front (%2 %3)")
                       .arg(point_set_item->name())
-                      .arg(sm_perimeter)
-                      .arg(sm_area));
+                      .arg(sm_perimeter));
     new_item->setColor(Qt::lightGray);
     scene->addItem(new_item);
     

@@ -2359,13 +2359,14 @@ advancing_front_surface_reconstruction(PointIterator b,
 }
 
 
-template <typename PointIterator, typename Kernel>
+  template <typename PointIterator, typename Kernel, typename Items, typename Filter>
 void
-advancing_front_surface_reconstruction(PointIterator b,
-                                       PointIterator e,
-                                       Polyhedron_3<Kernel>& polyhedron,
-                                       double radius_ratio_bound = 5,
-                                       double  	beta = 0.52)
+advancing_front_surface_reconstructionP(PointIterator b,
+                                        PointIterator e,
+                                        Polyhedron_3<Kernel,Items>& polyhedron,
+                                        Filter filter,
+                                        double radius_ratio_bound = 5,
+                                        double  	beta = 0.52)
 {
   typedef Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
   typedef Advancing_front_surface_reconstruction_cell_base_3<Kernel> LCb;
@@ -2373,7 +2374,7 @@ advancing_front_surface_reconstruction(PointIterator b,
   typedef Triangulation_data_structure_3<LVb,LCb> Tds;
   typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
-  typedef Advancing_front_surface_reconstruction<Kernel,Triangulation_3> Reconstruction;
+  typedef Advancing_front_surface_reconstruction<Kernel,Triangulation_3,Filter> Reconstruction;
   typedef typename Kernel::Point_3 Point_3;
   
   Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count<Point_3>()),
@@ -2382,7 +2383,7 @@ advancing_front_surface_reconstruction(PointIterator b,
   AFSR_options opt;
   opt.K = radius_ratio_bound;
   // TODO: What  to do with beta???
-  Reconstruction R(dt, opt);
+  Reconstruction R(dt, opt,filter);
   R.run(opt);
   AFSR::construct_polyhedron(polyhedron, R);
 }

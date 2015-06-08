@@ -355,7 +355,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(pca_plugin scene_polyhedron_item scene_basic_objects)
 
   qt4_wrap_ui( advancing_frontUI_FILES Polyhedron_demo_advancing_front_plugin.ui)
-    polyhedron_demo_plugin(advancing_front_plugin Polyhedron_demo_advancing_front_plugin Polyhedron_demo_advancing_front_plugin_impl ${advancing_frontUI_FILES})
+    polyhedron_demo_plugin(advancing_front_plugin Polyhedron_demo_advancing_front_plugin ${advancing_frontUI_FILES})
     target_link_libraries(advancing_front_plugin scene_polygon_soup_item scene_points_with_normal_item)
 
   if(EIGEN3_FOUND)
