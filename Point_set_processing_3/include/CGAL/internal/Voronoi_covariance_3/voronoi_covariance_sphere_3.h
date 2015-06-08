@@ -22,6 +22,7 @@
 #define CGAL_INTERNAL_VCM_VORONOI_COVARIANCE_SPHERE_3_HPP
 
 #include <CGAL/point_generators_3.h>
+#include <cmath>
 
 namespace CGAL {
     namespace Voronoi_covariance_3 {
@@ -48,8 +49,8 @@ namespace CGAL {
 
                         if (_N == 8)
                         {
-                            static const FT phi = (FT(1) + ::sqrt(5))/FT(2);
-                            static const FT s = FT(1) / ::sqrt(phi + FT(2));
+                            static const FT phi = (FT(1) + std::sqrt(5))/FT(2);
+                            static const FT s = FT(1) / std::sqrt(phi + FT(2));
 
                             *out ++ = Plane(0, +s, +s*phi, -_R);
                             *out ++ = Plane(0, -s, +s*phi, -_R);
@@ -68,9 +69,9 @@ namespace CGAL {
                         }
                         else if (_N == 20)
                         {
-                            const FT phi = (FT(1) + ::sqrt(5))/FT(2);
+                            const FT phi = (FT(1) + std::sqrt(5))/FT(2);
                             const FT one_phi = FT(1)/phi;
-                            const FT s = FT(1) / ::sqrt(3.0);
+                            const FT s = FT(1) / std::sqrt(3.0);
 
                             *out ++ = Plane(+s, +s, +s, -_R);
                             *out ++ = Plane(-s, +s, +s, -_R);
