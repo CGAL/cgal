@@ -9,7 +9,7 @@ namespace CGAL {
 
 \section Reconstruction_simplification_2Introduction Introduction
 
-This package implements methods to reconstruct and simplify 2D point sets. The input is a 2D point set, possibly hampered by noise and outliers. The output is a set of line segments and isolated points which approximate the input shape, where the input points were sampled from, as illustrated in Figure \cgalFigureRef{2D_Reconstruction_Simplification_overview}. 
+This package implements a method to reconstruct and simplify 2D point sets The algorithm of \cgalCite{degoes:hal-00758019}. The input is a 2D point set, possibly hampered by noise and outliers. The output is a set of line segments and isolated points which approximate the input shape, where the input points were sampled from, as illustrated in Figure \cgalFigureRef{2D_Reconstruction_Simplification_overview}. 
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_overview,summary.png}
 Left: input point set hampered by noise. Right: The corresponding reconstructed shape consisting of line segments.
@@ -32,10 +32,57 @@ After initializing it, 100 iterations of the reconstruction process are performe
 
 
 
+\section Reconstruction_simplification_2API API
+The API design is chosen in such a way that most of the implementation details are hidden from the user, i.e., the only class exposed to the user is the <I> Reconstruction_simplification_2</I>  class.
+
+\subsection Reconstruction_simplification_2Sample Sample Call
+
+\code{.cpp}
+/*
+K            	     : a geometric kernel.
+Point_property_map : a PropertyMap for accessing the input points.
+Mass_property_map  : a PropertyMap for accessing the mass attributes of the input points.
+*/
+
+Reconstruction_simplification_2<K, Point_property_map, Mass_property_map>
+  rs2(points.begin(), points.end(), point_pmap, mass_pmap);
+
+rs2.run(100); // perform 100 contraction steps
+\endcode
+
+Alternatively to calling the reconstruction module using
+\code{.cpp}
+  rs2.run(100);   // perform 100 contraction steps
+\endcode
+
+one can use the run_until function
+\code{.cpp}
+  rs2.run_until(20); // perform edge contractions until only 20 vertices are left.
+\endcode
+and specify the number of output vertices one wants to keep as illustrated next.
+
+\cgalFigureBegin{2D_Reconstruction_Simplification_20vertices,20vertices.png}
+Examples of 20-vertex reconstructions from datasets consisting of 2000, 400 and 200 input points respectively. The examples illustrates the behavior of the algorithm when the input point density decreases. 
+\cgalFigureEnd
 
 
 
-\section Reconstruction_simplification_2Overview Reconstruction Process
+\section Reconstruction_simplification_2VertexRelocation Vertex Relocation
+
+Since noise and missing data may prevent the reconstructed shape to have sharp corners at the correct places, the algorithm offers the option to automatically relocate vertices after each edge contraction. The new location of the vertices is chosen such that the fitting of the output triangulation to the input points is improved. This is achieved by minimizing the normal component of their weighted  \f$L_2 \f$ distance. The vertices get relocated only if the resulting triangulation is still embeddable. 
+
+
+\cgalFigureBegin{2D_Reconstruction_Simplification_vertexrelocation,vertexrelocation.png}
+A noisy skyline on the left, and the relocated vertices on the right.
+\cgalFigureEnd
+
+
+
+
+
+
+
+\section Reconstruction_simplification_2Overview Methodology (advanced)
 
 More formally, the task addressed here is to reconstruct a shape from a noisy point set \f$ S \f$ in  \f$ \mathbb{R}^2 \f$, i.e., given a set of points in the plane, find a <I>0-1 simplicial complex </I>which best approximates the original shape where the points were sampled from. The related task of simplifying a shape finds an approximation of the original shape using a <I>0-1 simplicial complex </I>.
 
@@ -81,50 +128,6 @@ Illustration of the bins of a simplicial-edge induced by the input points assign
 
 
 
-\section Reconstruction_simplification_2VertexRelocation Vertex Relocation
-
-Since noise and missing data may prevent the reconstructed shape to have sharp corners at the correct places, the algorithm offers the option to automatically relocate vertices after each edge contraction. The new location of the vertices is chosen such that the fitting of the output triangulation to the input points is improved. This is achieved by minimizing the normal component of their weighted  \f$L_2 \f$ distance. The vertices get relocated only if the resulting triangulation is still embeddable. 
-
-
-\cgalFigureBegin{2D_Reconstruction_Simplification_vertexrelocation,vertexrelocation.png}
-A noisy skyline on the left, and the relocated vertices on the right.
-\cgalFigureEnd
-
-
-\section Reconstruction_simplification_2API API
-
-The API design is chosen in such a way that most of the implementation details are hidden from the user, i.e., the only class exposed to the user is the <I> Reconstruction_simplification_2</I>  class.
-
-\subsection Reconstruction_simplification_2Sample Sample Call
-
-\code{.cpp}
-/*
-K            	   : a geometric kernel, used for the reconstruction and simplification task.
-Point_property_map : a PropertyMap for accessing the input points.
-Mass_property_map  : a PropertyMap for accessing the input points' masses.
-*/
-
-
-Reconstruction_simplification_2<K, Point_property_map, Mass_property_map>
-  rs2(points.begin(), points.end(), point_pmap, mass_pmap);
-
-rs2.run(100); // perform 100 contraction steps
-\endcode
-
-Alternatively to calling the reconstruction module using
-\code{.cpp}
-  rs2.run(100);   // perform 100 contraction steps
-\endcode
-
-one can use the run_until function
-\code{.cpp}
-  rs2.run_until(20); // perform edge contractions until only 20 vertices are left.
-\endcode
-and specify the number of output vertices one wants to keep as illustrated in the following picture.
-
-\cgalFigureBegin{2D_Reconstruction_Simplification_20vertices,20vertices.png}
-Examples of 20-vertex reconstructions from datasets consisting of 2000, 400 and 200 input points respectively. The examples illustrates the behavior of the algorithm when the input point density decreases. 
-\cgalFigureEnd
 
 
 
