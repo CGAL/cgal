@@ -9,14 +9,14 @@ namespace CGAL {
 
 \section Reconstruction_simplification_2Introduction Introduction
 
-This package implements a method to reconstruct and simplify 2D point sets The algorithm of \cgalCite{degoes:hal-00758019}. The input is a 2D point set, possibly hampered by noise and outliers. The output is a set of line segments and isolated points which approximate the input shape, where the input points were sampled from, as illustrated in Figure \cgalFigureRef{2D_Reconstruction_Simplification_summary}. 
+This package implements a method to reconstruct and simplify 2D point sets \cgalCite{degoes:hal-00758019}. The input is a set of 2D points with mass attributes, possibly hampered by noise and outliers. The output is a set of line segments and isolated points which approximate the input shape, where the input points were sampled from, as illustrated in Figure \cgalFigureRef{2D_Reconstruction_Simplification_summary}. Intuitively, the mass attribute relates to the weight given to each point from the approximation point of view.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_summary,summary.png}
 Left: input point set hampered by noise. Right: The corresponding reconstructed shape consisting of line segments.
 \cgalFigureEnd
 
 
-Internally, the algorithm constructs an initial 2D Delaunay triangulation from all the input points, then simplifies the triangulation so that a subset of the edges and vertices of the triangulation approximate well the input points. Approximate herein refers to a robust distance based on optimal transportation (see advanced section below for more details). 
+Internally, the algorithm constructs an initial 2D Delaunay triangulation from all the input points, then simplifies the triangulation so that a subset of the edges and vertices of the triangulation approximate well the input points. Approximate herein refers to a robust distance based on optimal transportation (see advanced section below for more details). The triangulation is simplified using a combination of half edge operators and edge flips. The triangulation remains valid during simplification. 
 
 The output of the reconstruction algorithm is a subset of edges and vertices of the triangulation. Figure \cgalFigureRef{2D_Reconstruction_Simplification_algorithm} depicts an example where the output is composed of green edges and one isolated vertex. The green edges are considered relevant as they approximate well many of the input points. The edges depicted in grey, referred to as ghost edges and discarded, are they approximate none of the input points. The edges depicted in red, referred to as irrelevant and also discarded, approximate some of the input points but not enough to be considered relevant.
 
@@ -33,7 +33,7 @@ The following example first reads a set of input points from an ASCII file. The 
 The output of the reconstruction can be obtained in two ways: either as a sequence of points and segments, or as an indexed format when the connectivity of the segments is encoded, hence the terms vertices and edges. The indexed format records a list of points, then pairs of point indices in the said list for the edges, and point indices for isolated vertices. 
 \cgalExample{Reconstruction_simplification_2/reconstruction_simplification_2_output_example.cpp}
 
-\subsection Reconstruction_simplification_2Mass_example Example with mass attributes
+\subsection Reconstruction_simplification_2Mass_example Example with Mass Attributes
 The following example first reads a set of input points and masses from an ASCII file. Using two property maps,  the points and their initial mass are passed to the Reconstruction_simplification_2 object. After initializing it, 100 iterations of the reconstruction process are performed. Lastly, the segments and isolated points of the reconstructed shape are extracted and printed to the console. 
 \cgalExample{Reconstruction_simplification_2/reconstruction_simplification_2_mass_example.cpp}
 
@@ -78,7 +78,7 @@ Since noise and missing data may prevent the reconstructed shape to have sharp c
 \code{.cpp}
   rs2.relocate_all_points();
 \endcode
-The new locations is chosen such that the approximation of the output segments and isolated points to the input points is improved. An optional parameter in the constructor of the <I> Reconstruction_simplification_2 </I>  class provides a means to relocate the vertices after a specific number of atomic simplification operators.
+The new point locations are chosen such that the approximation of the output segments and isolated points to the input points is improved. An optional parameter of the constructor of the <I> Reconstruction_simplification_2 </I>  class provides a means to relocate the points after a specified number of atomic simplification operators.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_relocation,relocation.png}
 Left: before point relocation. Right: after point relocation.
@@ -87,32 +87,42 @@ Left: before point relocation. Right: after point relocation.
 
 \section Reconstruction_simplification_2Parameters User parameters
 
-\subsection Reconstruction_simplification_2Relevance Edge relevance
+The behavior of the algorithm is parameterized via five parameters: 
 
-An edge is relevant from the approximation point of view if it is long, approximates a large number of points (or equivalently the number of points when all masses are equal), and has a small approximation error. This notion is defined as m(e) x |e|^2 / cost(e), where m(e) denotes the mass of the edge, |e| denotes its length and cost(e) its approximation error. As the error is defined by mass time squared distance the relevance is unitless.
+\subsection Reconstruction_simplification_2Flip Edge Flipping
 
+During simplification of the internal triangulation some recursive edge flip operators are required to guarantee that the triangulation remain valid when applying a half edge collapse operator. Calling set_use_flip(false) prevents the algorithm from using edge flips, yielding shorter computational times at the price of suboptimal results as not all edges can be candidate to be collapsed.
+
+FIGURE WITH AND WITHOUT 
+
+\subsection Reconstruction_simplification_2Relevance Edge Relevance
+
+An edge is relevant from the approximation point of view if (1) it is long, (2) approximates a large number of points (or equivalently the number of points when all masses are equal), and (3) has a small approximation error. This notion is defined as m(e) x |e|^2 / cost(e), where m(e) denotes the mass of the edge, |e| denotes its length and cost(e) its approximation error. As the error is defined by mass time squared distance the relevance is unitless.
 The default value is 0, so that all edges approximating some input points are considered relevant.
 A larger relevance value provides a means to increase resilience to outliers.
 
+FIGURE WITH VARIOUS RELEVANCE VALUES
 
 \subsection Reconstruction_simplification_2Random Random Sample Size
 
-By default the simplification relies upon an exhaustive priority queue of edge collapse operators during decimation. For improved efficiency a parameter <I> sample size </I> strictly greater than 0 switches to a multiple choice approach, ie, a best-choice selection in a random sample of edge collapse operators, of size sample_size. A typical value for the sample size is 15, but this value may be enlarged when targeting a very coarse simplification. 
+By default the simplification relies upon an exhaustive priority queue of edge collapse operators during decimation. For improved efficiency, a parameter <I> sample size </I> strictly greater than 0 switches to a multiple choice approach, i.e., a best-choice selection in a random sample of edge collapse operators, of size sample_size. A typical value for the sample size is 15, but this value may be larger when targeting a very coarse simplification. 
 
 \subsection Reconstruction_simplification_2Verbose Verbose Output
 
-The verbose parameter determines how much console output the algorithm generates. 
-A value larger than 0 generates output to the standard output std::cout.
+The verbose parameter , between 0 and 2, determines how much console output the algorithm generates. 
+A 0 value generates no output to the standard output.
+A value greater than 0 generates output to the standard output std::cout.
 
-
+	
 
 
 \section Reconstruction_simplification_2Advanced Advanced
 
-More formally, the task addressed here is to reconstruct a shape from a noisy point set \f$ S \f$ in  \f$ \mathbb{R}^2 \f$, i.e., given a set of points in the plane, find a <I>0-1 simplicial complex </I>which best approximates the original shape where the points were sampled from. The related task of simplifying a shape finds an approximation of the original shape using a <I>0-1 simplicial complex </I>.
+The task addressed here is to reconstruct a shape from a noisy point set \f$ S \f$ in  \f$ \mathbb{R}^2 \f$, i.e., given a set of points in the plane, find a <I>0-1 simplicial complex </I>which best approximates the original shape where the points were sampled from. 
 
 
-The algorithm of \cgalCite{degoes:hal-00758019} which is implemented here, performs the reconstruction and simplification task jointly, using a framework based on optimal transportation of discrete measures. This method provides benefits such as robustness to noise, preservation of sharp features and boundaries. An optimal transportation plan is an assignment of the input-points to vertices and edges of an output simplicial complex such that the 2-Wasserstein distance is minimized.
+
+based on optimal transportation of discrete measures. This method provides benefits such as robustness to noise, preservation of sharp features and boundaries. An optimal transportation plan is an assignment of the input-points to vertices and edges of an output simplicial complex such that the 2-Wasserstein distance is minimized.
 
 The algorithm can be summarized as: Considering \f$S\f$ as a measure  \f$ \mu \f$ consisting of Dirac masses, find a coarse simplicial complex \f$T\f$ such that  \f$ \mu \f$ is well approximated by a piecewise combination of uniform measure on the edges and vertices of  \f$ T \f$.
 
