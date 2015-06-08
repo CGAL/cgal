@@ -9,31 +9,35 @@ namespace CGAL {
 
 \section Reconstruction_simplification_2Introduction Introduction
 
-This package implements a method to reconstruct and simplify 2D point sets The algorithm of \cgalCite{degoes:hal-00758019}. The input is a 2D point set, possibly hampered by noise and outliers. The output is a set of line segments and isolated points which approximate the input shape, where the input points were sampled from, as illustrated in Figure \cgalFigureRef{2D_Reconstruction_Simplification_overview}. 
+This package implements a method to reconstruct and simplify 2D point sets The algorithm of \cgalCite{degoes:hal-00758019}. The input is a 2D point set, possibly hampered by noise and outliers. The output is a set of line segments and isolated points which approximate the input shape, where the input points were sampled from, as illustrated in Figure \cgalFigureRef{2D_Reconstruction_Simplification_summary}. 
 
-\cgalFigureBegin{2D_Reconstruction_Simplification_overview,summary.png}
+\cgalFigureBegin{2D_Reconstruction_Simplification_summary,summary.png}
 Left: input point set hampered by noise. Right: The corresponding reconstructed shape consisting of line segments.
 \cgalFigureEnd
 
-\subsection Reconstruction_simplification_2Examples Simplest Example
-The following example first reads a set of input points from an ASCII file. The points, with no mass attribute, are passed to the Reconstruction_simplification_2 object. After initializing it, 100 iterations of the reconstruction process are performed. 
-\cgalExample{Reconstruction_simplification_2/reconstruction_simplification_2_no_mass_example.cpp}
 
-\subsubsection Reconstruction_simplification_2Output Output Example
-The output of the reconstruction can be obtained in two ways: either as a sequence of points and segments, or as an indexed format when the connectivity of segments is encoded. The indexed format records a list of points, then pairs of point indices in the list for the edges, and point indices for isolated vertices. 
+Internally, the algorithm constructs an initial 2D Delaunay triangulation from all the input points, then simplifies the triangulation so that a subset of the edges and vertices of the triangulation approximate well the input points. The output of the reconstruction algorithm is a subset of edges and vertices of the triangulation. Figure \cgalFigureRef{2D_Reconstruction_Simplification_algorithm} depicts an example where the output is composed of green edges and one isolated vertex. The green edges are considered relevant as are approximating well many of the input points. The edges depicted in grey, referred to as ghost edges and discarded, are approximating none of the input points. The edges depicted in red, referred to as irrelevant and also discarded, are approximating some of the input points but not enough to be considered relevant.
+
+\cgalFigureBegin{2D_Reconstruction_Simplification_algorithm,algorithm.png}
+From left to right: input point set; Delaunay triangulation of the input points; After simplification, with ghost edges in grey, relevant edges in green, and irrelevant edges in red; Final reconstruction made up of edges and one isolated vertex.
+\cgalFigureEnd
+
+
+\subsection Reconstruction_simplification_2Simplest_example Simplest Example
+The following example first reads a set of input points from an ASCII file. The points, with no mass attribute, are then passed to the Reconstruction_simplification_2 object. After initializing it, 100 iterations of the reconstruction process are performed. 
+\cgalExample{Reconstruction_simplification_2/reconstruction_simplification_2_simplest_example.cpp}
+
+\subsubsection Reconstruction_simplification_2Output_example Output Example
+The output of the reconstruction can be obtained in two ways: either as a sequence of points and segments, or as an indexed format when the connectivity of the segments is encoded, hence the terms vertices and edges. The indexed format records a list of points, then pairs of point indices in the said list for the edges, and point indices for isolated vertices. 
 \cgalExample{Reconstruction_simplification_2/Reconstruction_simplification_2_output_example.cpp}
 
-\subsection Reconstruction_simplification_2Examples Example with mass attributes
-The following example first reads a set of input points and masses from an ASCII file. Using two property maps,  
-the points and their initial mass are passed to the Reconstruction_simplification_2 object.
-After initializing it, 100 iterations of the reconstruction process are performed. Lastly, the segments and isolated points of the reconstructed shape are extracted and printed to the console. 
+\subsection Reconstruction_simplification_2Mass_example Example with mass attributes
+The following example first reads a set of input points and masses from an ASCII file. Using two property maps,  the points and their initial mass are passed to the Reconstruction_simplification_2 object. After initializing it, 100 iterations of the reconstruction process are performed. Lastly, the segments and isolated points of the reconstructed shape are extracted and printed to the console. 
 \cgalExample{Reconstruction_simplification_2/reconstruction_simplification_2_example.cpp}
 
 
-
-
 \section Reconstruction_simplification_2API API
-The API design is chosen in such a way that most of the implementation details are hidden from the user, i.e., the only class exposed to the user is the <I> Reconstruction_simplification_2</I>  class.
+The API design is chosen in such a way that most of the implementation details are hidden from the user, i.e., the only class exposed to the user is the <I> Reconstruction_simplification_2 </I>  class.
 
 \subsection Reconstruction_simplification_2Sample Sample Call
 
@@ -66,8 +70,11 @@ Examples of 20-vertex reconstructions from datasets consisting of 2000, 400 and 
 \cgalFigureEnd
 
 
+\section Reconstruction_simplification_2Parameters Parameters
 
-\section Reconstruction_simplification_2VertexRelocation Vertex Relocation
+
+
+\subsection Reconstruction_simplification_2VertexRelocation Vertex Relocation
 
 Since noise and missing data may prevent the reconstructed shape to have sharp corners at the correct places, the algorithm offers the option to automatically relocate vertices after each edge contraction. The new location of the vertices is chosen such that the fitting of the output triangulation to the input points is improved. This is achieved by minimizing the normal component of their weighted  \f$L_2 \f$ distance. The vertices get relocated only if the resulting triangulation is still embeddable. 
 
@@ -82,13 +89,10 @@ A noisy skyline on the left, and the relocated vertices on the right.
 
 
 
-\section Reconstruction_simplification_2Overview Methodology (advanced)
+\section Reconstruction_simplification_2Advanced Advanced
 
 More formally, the task addressed here is to reconstruct a shape from a noisy point set \f$ S \f$ in  \f$ \mathbb{R}^2 \f$, i.e., given a set of points in the plane, find a <I>0-1 simplicial complex </I>which best approximates the original shape where the points were sampled from. The related task of simplifying a shape finds an approximation of the original shape using a <I>0-1 simplicial complex </I>.
 
-\cgalFigureBegin{2D_Reconstruction_Simplification_process,process.png}
-From left to right: input point set; Delaunay triangulation of input point set; After simplification, with ghost edges in grey, relevant solid edges in green, and discarded solid edges in red; Final reconstruction.
-\cgalFigureEnd
 
 The algorithm of \cgalCite{degoes:hal-00758019} which is implemented here, performs the reconstruction and simplification task jointly, using a framework based on optimal transportation of discrete measures. This method provides benefits such as robustness to noise, preservation of sharp features and boundaries. An optimal transportation plan is an assignment of the input-points to vertices and edges of an output simplicial complex such that the 2-Wasserstein distance is minimized.
 
@@ -122,14 +126,10 @@ Assuming that the algorithm is given an output simplex  \f$T \f$ and a <I>point-
 the total transportation cost is computed using the following assignment rules: For a point to vertex assignment, the transportation cost is simply the sum of the weighted  \f$L_2 \f$-distance of all the points assigned to the given vertex. 
 
 For an edge \f$e \f$  of the simplex, the optimal transportation plan and its cost is computed indirectly, by decomposing the transportation plan into a tangential and normal component. While the normal plan is simply an orthogonal projection, the tangential plan is slightly more involved. In order to compute it, the algorithm decomposes  \f$e \f$ into bins. This decomposition is done by sorting the projected points on  \f$e \f$ and choosing the length of the  \f$i \f$-th bin as  \f$(m_i / M_e)|e| \f$, with \f$  m_i \f$ denoting the mass of point of the corresponding projected point \f$q_i \f$, while \f$M_e \f$ denotes the sum of the mass of all points assigned to \f$ e \f$ and \f$ |e| \f$ denotes the length of \f$ e \f$. Each projected point  \f$q_i \f$ on  \f$e \f$ is then spread over the  \f$i \f$-th bin. such that we get a uniform measure on  \f$e \f$, which is then used to define an optimal transport from the input points to  \f$e\f$. Because the transport cost is based on the \f$L_2 \f$-distance the decomposition of the transportation plan into a tangential and normal component, the above procedure yields a closed formula for the cost.
+
 \cgalFigureBegin{2D_Reconstruction_Simplification_tangentialplan,tangentialplan.png}
 Illustration of the bins of a simplicial-edge induced by the input points assigned to the edge. These bins are used for computing the tangential transportation cost from the input points to this edge. Note that since the points are all assumed to be of equal weight, all the bins have the same width.
 \cgalFigureEnd
-
-
-
-
-
 
 
 
