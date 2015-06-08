@@ -1507,10 +1507,11 @@ private:
 
   void reset_algorithm(bool clearFaceLocations = true)
   {
+    Cone_tree_node* null_value=NULL;
     m_closestToVertices.resize(num_vertices(m_graph));
-    std::fill(m_closestToVertices.begin(), m_closestToVertices.end(), Node_distance_pair(NULL, FT(0.0)));
+    std::fill(m_closestToVertices.begin(), m_closestToVertices.end(), Node_distance_pair(null_value, FT(0.0)));
     m_vertexOccupiers.resize(num_halfedges(m_graph));
-    std::fill(m_vertexOccupiers.begin(), m_vertexOccupiers.end(), Node_distance_pair(NULL, FT(0.0)));
+    std::fill(m_vertexOccupiers.begin(), m_vertexOccupiers.end(), Node_distance_pair(null_value, FT(0.0)));
 
     while (!m_expansionPriqueue.empty())
     {
