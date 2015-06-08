@@ -16,10 +16,12 @@ Left: input point set hampered by noise. Right: The corresponding reconstructed 
 \cgalFigureEnd
 
 
-Internally, the algorithm constructs an initial 2D Delaunay triangulation from all the input points, then simplifies the triangulation so that a subset of the edges and vertices of the triangulation approximate well the input points. The output of the reconstruction algorithm is a subset of edges and vertices of the triangulation. Figure \cgalFigureRef{2D_Reconstruction_Simplification_algorithm} depicts an example where the output is composed of green edges and one isolated vertex. The green edges are considered relevant as are approximating well many of the input points. The edges depicted in grey, referred to as ghost edges and discarded, are approximating none of the input points. The edges depicted in red, referred to as irrelevant and also discarded, are approximating some of the input points but not enough to be considered relevant.
+Internally, the algorithm constructs an initial 2D Delaunay triangulation from all the input points, then simplifies the triangulation so that a subset of the edges and vertices of the triangulation approximate well the input points. Approximate herein refers to a robust distance based on optimal transportation (see advanced section below for more details). 
+
+The output of the reconstruction algorithm is a subset of edges and vertices of the triangulation. Figure \cgalFigureRef{2D_Reconstruction_Simplification_algorithm} depicts an example where the output is composed of green edges and one isolated vertex. The green edges are considered relevant as they approximate well many of the input points. The edges depicted in grey, referred to as ghost edges and discarded, are they approximate none of the input points. The edges depicted in red, referred to as irrelevant and also discarded, approximate some of the input points but not enough to be considered relevant.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_algorithm,algorithm.png}
-From left to right: input point set; Delaunay triangulation of the input points; After simplification, with ghost edges in grey, relevant edges in green, and irrelevant edges in red; Final reconstruction made up of edges and one isolated vertex.
+From left to right: input point set; Delaunay triangulation of the input points; After simplification, with ghost edges in grey, relevant edges in green, and irrelevant edges in red; Final reconstruction made up of several edges and one isolated vertex.
 \cgalFigureEnd
 
 
@@ -65,23 +67,28 @@ one can use the run_until function
 \endcode
 and specify the number of output vertices one wants to keep as illustrated next.
 
-\cgalFigureBegin{2D_Reconstruction_Simplification_20vertices,20vertices.png}
+\cgalFigureBegin{2D_Reconstruction_Simplification_twenty_vertices,twenty_vertices.png}
 Examples of 20-vertex reconstructions from datasets consisting of 2000, 400 and 200 input points respectively. The examples illustrates the behavior of the algorithm when the input point density decreases. 
 \cgalFigureEnd
 
 
-\section Reconstruction_simplification_2Parameters Parameters
+\subsection Reconstruction_simplification_2Relocation Point Relocation
 
+Since noise and missing data may prevent the reconstructed shape to have sharp corners at the correct places, the algorithm offers a function to relocate all points:
+\code{.cpp}
+  rs2.relocate_all_points();
+\endcode
+The new locations is chosen such that the approximation of the output segments and isolated points to the input points is improved. An optional parameter in the constructor of the <I> Reconstruction_simplification_2 </I>  class provides a means to relocate the vertices after a specific number of atomic simplification operators.
 
-
-\subsection Reconstruction_simplification_2VertexRelocation Vertex Relocation
-
-Since noise and missing data may prevent the reconstructed shape to have sharp corners at the correct places, the algorithm offers the option to automatically relocate vertices after each edge contraction. The new location of the vertices is chosen such that the fitting of the output triangulation to the input points is improved. This is achieved by minimizing the normal component of their weighted  \f$L_2 \f$ distance. The vertices get relocated only if the resulting triangulation is still embeddable. 
-
-
-\cgalFigureBegin{2D_Reconstruction_Simplification_vertexrelocation,vertexrelocation.png}
-A noisy skyline on the left, and the relocated vertices on the right.
+\cgalFigureBegin{2D_Reconstruction_Simplification_relocation,relocation.png}
+Left: before point relocation. Right: after point relocation.
 \cgalFigureEnd
+
+
+\section Reconstruction_simplification_2Parameters User parameters
+
+
+
 
 
 
@@ -127,11 +134,9 @@ the total transportation cost is computed using the following assignment rules: 
 
 For an edge \f$e \f$  of the simplex, the optimal transportation plan and its cost is computed indirectly, by decomposing the transportation plan into a tangential and normal component. While the normal plan is simply an orthogonal projection, the tangential plan is slightly more involved. In order to compute it, the algorithm decomposes  \f$e \f$ into bins. This decomposition is done by sorting the projected points on  \f$e \f$ and choosing the length of the  \f$i \f$-th bin as  \f$(m_i / M_e)|e| \f$, with \f$  m_i \f$ denoting the mass of point of the corresponding projected point \f$q_i \f$, while \f$M_e \f$ denotes the sum of the mass of all points assigned to \f$ e \f$ and \f$ |e| \f$ denotes the length of \f$ e \f$. Each projected point  \f$q_i \f$ on  \f$e \f$ is then spread over the  \f$i \f$-th bin. such that we get a uniform measure on  \f$e \f$, which is then used to define an optimal transport from the input points to  \f$e\f$. Because the transport cost is based on the \f$L_2 \f$-distance the decomposition of the transportation plan into a tangential and normal component, the above procedure yields a closed formula for the cost.
 
-\cgalFigureBegin{2D_Reconstruction_Simplification_tangentialplan,tangentialplan.png}
+\cgalFigureBegin{2D_Reconstruction_Simplification_plan,plan.png}
 Illustration of the bins of a simplicial-edge induced by the input points assigned to the edge. These bins are used for computing the tangential transportation cost from the input points to this edge. Note that since the points are all assumed to be of equal weight, all the bins have the same width.
 \cgalFigureEnd
-
-
 
 
 */ 
