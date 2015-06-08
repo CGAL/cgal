@@ -21,11 +21,11 @@ void read(char* fname)
 
   std::cout.precision(17);
   std::cout << "OFF\n" << points.size() << " " << faces.size()  << " 0" << std::endl;
-  for(int i=0; i < points.size(); i++){
+  for(std::size_t i=0; i < points.size(); i++){
     std::cout << points[i][0] << " " << points[i][1] << " " << points[i][2]<< std::endl;
   }
 
-  for(int i=0; i < faces.size(); i++){
+  for(std::size_t i=0; i < faces.size(); i++){
     std::cout << "3 " << faces[i][0] << " " << faces[i][1] << " " << faces[i][2] << std::endl;
   }
 
