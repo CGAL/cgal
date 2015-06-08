@@ -30,8 +30,8 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Profile_counter.h>
-#include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_triangulation_filtered_traits_3.h>
+#include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 
 namespace CGAL {
 

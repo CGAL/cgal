@@ -30,7 +30,6 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Profile_counter.h>
-#include <CGAL/Periodic_3_triangulation_traits_3.h>
 
 namespace CGAL {
 
@@ -66,7 +65,12 @@ public:
     : Base( EP(oe), AP(oa) )
   {}
 };
+}
 
+#include <CGAL/Periodic_3_triangulation_traits_3.h>
+
+namespace CGAL
+{
 // The Offset_converter is parametrized by a usual kernel converter,
 // and adds the conversions for Offsets.
 template < typename Converter >
