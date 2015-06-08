@@ -133,7 +133,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
 }
 
 struct Polyhedron_cc_marker{
-  std::size_t cc_index;
+  const int cc_index;
   Polyhedron_cc_marker() : cc_index(0) {}
   void start_new_connected_component(){
     ++cc_index;
