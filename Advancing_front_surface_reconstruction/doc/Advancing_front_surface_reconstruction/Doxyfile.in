@@ -1,0 +1,10 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Advancing Front Surface Reconstruction"
+
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Advancing_front_surface_reconstruction/doc/Advancing_front_surface_reconstruction/
+
+
+
+MULTILINE_CPP_IS_BRIEF = YES
