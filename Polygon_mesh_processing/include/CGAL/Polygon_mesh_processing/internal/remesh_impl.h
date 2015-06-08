@@ -877,16 +877,22 @@ namespace internal {
       BOOST_FOREACH(halfedge_descriptor hd,
                     halfedges_around_target(h, mesh_))
       {
+        if (source(hd, mesh_) == vs
+          || target(next(hd, mesh_), mesh_) == vs) //degenerate face
+          continue;
         Vector_3 n = compute_normal(face(hd, mesh_));
-        if (n != CGAL::NULL_VECTOR)
-          normals.push_back(n);
+        CGAL_assertion(n != CGAL::NULL_VECTOR);
+        normals.push_back(n);
       }
       BOOST_FOREACH(halfedge_descriptor hd,
                     halfedges_around_target(opposite(h, mesh_), mesh_))
       {
+        if (source(hd, mesh_) == vt
+          || target(next(hd, mesh_), mesh_) == vt) //degenerate face
+          continue;
         Vector_3 n = compute_normal(face(hd, mesh_));
-        if (n != CGAL::NULL_VECTOR)
-          normals.push_back(n);
+        CGAL_assertion(n != CGAL::NULL_VECTOR);
+        normals.push_back(n);
       }
 
       //check all normals have same orientation
@@ -1129,14 +1135,14 @@ namespace internal {
 
     void debug_normals(const vertex_descriptor& v) const
     {
+      if (!is_on_patch(v))
+        return;//not much to say if we are on a boundary/sharp edge
       CGAL_assertion(check_normals(v));
     }
 
     bool check_normals(const vertex_descriptor& v) const
     {
-      if (!is_on_patch(v))
-        return true;//not much to say if we are on a boundary/sharp edge
-
+      //assume we are on a patch without checking it
       std::vector<Vector_3> normals;
       BOOST_FOREACH(halfedge_descriptor hd,
                     halfedges_around_target(halfedge(v, mesh_), mesh_))
@@ -1147,9 +1153,11 @@ namespace internal {
       }
       //check all normals have same orientation
       for (std::size_t i = 1; i < normals.size(); ++i)/*start at 1 on purpose*/
-        if (normals[i - 1] * normals[i] <= 0.)
+      {
+        double dot = normals[i - 1] * normals[i];
+        if(dot <= 0.)
           return false;
-
+      }
       return true;
     }
 
