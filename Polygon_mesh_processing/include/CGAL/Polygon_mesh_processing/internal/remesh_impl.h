@@ -359,7 +359,6 @@ namespace internal {
       CGAL_expensive_assertion(is_triangle_mesh(mesh_));
       CGAL_assertion(halfedge_status_map_.size() == nb_valid_halfedges());
       debug_status_map();
-      debug_mesh_border();
 #endif
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
@@ -560,7 +559,6 @@ namespace internal {
       CGAL_assertion(nb_valid_halfedges() == halfedge_status_map_.size());
       CGAL_expensive_assertion(is_triangle_mesh(mesh_));
       debug_status_map();
-      debug_mesh_border();
       debug_self_intersections();
 #endif
     }
@@ -1159,33 +1157,6 @@ namespace internal {
           return false;
       }
       return true;
-    }
-
-    void debug_mesh_border() const
-    {
-      std::map<vertex_descriptor, unsigned int> mesh_border;
-      typedef typename std::map<halfedge_descriptor, Halfedge_status>::value_type
-        HD_pair;
-      BOOST_FOREACH(const HD_pair& hs, halfedge_status_map_)
-      {
-        if (is_on_border(hs.first))
-        {
-          if (mesh_border.find(target(hs.first, mesh_)) != mesh_border.end())
-            mesh_border[target(hs.first, mesh_)]++;
-          else
-            mesh_border[target(hs.first, mesh_)] = 1;
-
-          if (mesh_border.find(source(hs.first, mesh_)) != mesh_border.end())
-            mesh_border[source(hs.first, mesh_)]++;
-          else
-            mesh_border[source(hs.first, mesh_)] = 1;
-        }
-      }
-      //check we found each vertex exactly twice
-      typedef typename std::map<vertex_descriptor, unsigned int>::value_type
-        V_pair;
-      BOOST_FOREACH(const V_pair& v, mesh_border)
-        CGAL_assertion(v.second == 2);
     }
 
   private:
