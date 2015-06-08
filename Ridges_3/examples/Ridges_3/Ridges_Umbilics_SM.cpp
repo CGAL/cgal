@@ -1,16 +1,13 @@
-
-//this is an enriched Polyhedron with facet normals
-#include "PolyhedralSurf.h"
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include "PolyhedralSurf_rings.h"
 #include "compute_normals.h"
 #include <CGAL/Ridges.h>
-
 #include <CGAL/Umbilics.h>
 #include <CGAL/Monge_via_jet_fitting.h>
 #include <fstream>
 #include <cassert>
-
-
 
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
@@ -18,29 +15,23 @@ namespace po = boost::program_options;
 #endif
 
 
-typedef PolyhedralSurf::Traits          Kernel;
+typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::FT                      FT;
 typedef Kernel::Point_3                 Point_3;
 typedef Kernel::Vector_3                Vector_3;
 
-typedef boost::graph_traits<PolyhedralSurf>::vertex_descriptor  vertex_descriptor;
-typedef boost::graph_traits<PolyhedralSurf>::vertex_iterator vertex_iterator;
-typedef boost::graph_traits<PolyhedralSurf>::face_descriptor face_descriptor;
+typedef CGAL::Surface_mesh<Point_3> PolyhedralSurf;
+
+typedef boost::graph_traits<PolyhedralSurf>::vertex_descriptor vertex_descriptor;
+typedef boost::graph_traits<PolyhedralSurf>::vertex_iterator   vertex_iterator;
+typedef boost::graph_traits<PolyhedralSurf>::face_descriptor   face_descriptor;
 
 typedef T_PolyhedralSurf_rings<PolyhedralSurf> Poly_rings;
 typedef CGAL::Monge_via_jet_fitting<Kernel>    Monge_via_jet_fitting;
 typedef Monge_via_jet_fitting::Monge_form      Monge_form;
 
-
-typedef std::map<vertex_descriptor, FT> VertexFT_map;
-typedef boost::associative_property_map< VertexFT_map > VertexFT_property_map;
-
-typedef std::map<vertex_descriptor, Vector_3> VertexVector_map;
-typedef boost::associative_property_map< VertexVector_map > VertexVector_property_map;
-
-typedef std::map<face_descriptor, Vector_3> Face2Vector_map;
-typedef boost::associative_property_map< Face2Vector_map > Face2Vector_property_map;
-
+typedef PolyhedralSurf::Property_map<vertex_descriptor,FT> VertexFT_property_map;
+typedef PolyhedralSurf::Property_map<vertex_descriptor,Vector_3> VertexVector_property_map;
 //RIDGES
 typedef CGAL::Ridge_line<PolyhedralSurf> Ridge_line;
 typedef CGAL::Ridge_approximation < PolyhedralSurf,
@@ -53,17 +44,15 @@ typedef CGAL::Umbilic_approximation < PolyhedralSurf,
 				      VertexVector_property_map > Umbilic_approximation;
 
 //create property maps
-VertexFT_map vertex_k1_map, vertex_k2_map,
-  vertex_b0_map, vertex_b3_map,
-  vertex_P1_map, vertex_P2_map;
-VertexVector_map vertex_d1_map, vertex_d2_map;
-Face2Vector_map face2normal_map;
 
-VertexFT_property_map vertex_k1_pm(vertex_k1_map), vertex_k2_pm(vertex_k2_map),
-  vertex_b0_pm(vertex_b0_map), vertex_b3_pm(vertex_b3_map),
-  vertex_P1_pm(vertex_P1_map), vertex_P2_pm(vertex_P2_map);
-VertexVector_property_map vertex_d1_pm(vertex_d1_map), vertex_d2_pm(vertex_d2_map);
-Face2Vector_property_map  face2normal_pm(face2normal_map);
+PolyhedralSurf::Property_map<vertex_descriptor,FT> 
+vertex_k1_pm, vertex_k2_pm,
+  vertex_b0_pm, vertex_b3_pm,
+  vertex_P1_pm, vertex_P2_pm;
+
+PolyhedralSurf::Property_map<vertex_descriptor,Vector_3> vertex_d1_pm, vertex_d2_pm;
+
+PolyhedralSurf::Property_map<face_descriptor,Vector_3> face2normal_pm;
 
 // default fct parameter values and global variables
 unsigned int d_fitting = 3;
@@ -152,22 +141,22 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
     monge_form.comply_wrt_given_normal(normal_mesh);
 
     //Store monge data needed for ridge computations in property maps
-    vertex_d1_map[v] = monge_form.maximal_principal_direction();
-    vertex_d2_map[v] = monge_form.minimal_principal_direction();
-    vertex_k1_map[v] = monge_form.coefficients()[0];
-    vertex_k2_map[v] = monge_form.coefficients()[1];
-    vertex_b0_map[v] = monge_form.coefficients()[2];
-    vertex_b3_map[v] = monge_form.coefficients()[5];
+    vertex_d1_pm[v] = monge_form.maximal_principal_direction();
+    vertex_d2_pm[v] = monge_form.minimal_principal_direction();
+    vertex_k1_pm[v] = monge_form.coefficients()[0];
+    vertex_k2_pm[v] = monge_form.coefficients()[1];
+    vertex_b0_pm[v] = monge_form.coefficients()[2];
+    vertex_b3_pm[v] = monge_form.coefficients()[5];
     if ( d_monge >= 4) {
       //= 3*b1^2+(k1-k2)(c0-3k1^3)
-      vertex_P1_map[v] =
+      vertex_P1_pm[v] =
 	3*monge_form.coefficients()[3]*monge_form.coefficients()[3]
 	+(monge_form.coefficients()[0]-monge_form.coefficients()[1])
 	*(monge_form.coefficients()[6]
 	  -3*monge_form.coefficients()[0]*monge_form.coefficients()[0]
 	  *monge_form.coefficients()[0]);
       //= 3*b2^2+(k2-k1)(c4-3k2^3)
-      vertex_P2_map[v] =
+      vertex_P2_pm[v] =
 	3*monge_form.coefficients()[4]*monge_form.coefficients()[4]
 	+(-monge_form.coefficients()[0]+monge_form.coefficients()[1])
 	*(monge_form.coefficients()[10]
@@ -286,14 +275,27 @@ int main()
   std::ifstream stream(if_name.c_str());
   stream >> P;
   fprintf(stderr, "loadMesh %d Ves %d Facets\n",
-	  (int)P.size_of_vertices(), (int)P.size_of_facets());
+	  (int)num_vertices(P), (int)num_faces(P));
   if(verbose)
-    out_verb << "Polysurf with " << P.size_of_vertices()
-	     << " vertices and " << P.size_of_facets()
+    out_verb << "Polysurf with " << num_vertices(P)
+	     << " vertices and " << num_faces(P)
 	     << " facets. " << std::endl;
 
+
+vertex_k1_pm = P.add_property_map<vertex_descriptor,FT>("v:k1",0).first;
+vertex_k2_pm = P.add_property_map<vertex_descriptor,FT>("v:k2",0).first;
+vertex_b0_pm = P.add_property_map<vertex_descriptor,FT>("v:b0",0).first; 
+vertex_b3_pm = P.add_property_map<vertex_descriptor,FT>("v:b3",0).first;
+vertex_P1_pm = P.add_property_map<vertex_descriptor,FT>("v:P1",0).first; 
+vertex_P2_pm = P.add_property_map<vertex_descriptor,FT>("v:P2",0).first;
+
+vertex_d1_pm = P.add_property_map<vertex_descriptor,Vector_3>("v:d1",Vector_3(0,0,0)).first;
+vertex_d2_pm = P.add_property_map<vertex_descriptor,Vector_3>("v:d2",Vector_3(0,0,0)).first;
+
+face2normal_pm = P.add_property_map<face_descriptor,Vector_3>("f:n",Vector_3(0,0,0)).first;
+
   //exit if not enough points in the model
-  if (min_nb_points > P.size_of_vertices())
+  if (min_nb_points > num_vertices(P))
     {std::cerr << "not enough points in the model" << std::endl;   exit(1);}
 
   //initialize Polyhedral data : normal of facets
@@ -385,5 +387,3 @@ int main()
   }
   return 0;
 }
-
-
