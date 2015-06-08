@@ -22,8 +22,8 @@ if ( CGAL_FOUND )
   include_directories (BEFORE "include")
 
   create_single_source_cgal_program( "reconstruction_simplification_2_output_example.cpp" )
-  create_single_source_cgal_program( "reconstruction_simplification_2_example.cpp" )
-  create_single_source_cgal_program( "reconstruction_simplification_2_no_mass_example.cpp" )
+  create_single_source_cgal_program( "reconstruction_simplification_2_mass_example.cpp" )
+  create_single_source_cgal_program( "reconstruction_simplification_2_simplest_example.cpp" )
 
 else()
   

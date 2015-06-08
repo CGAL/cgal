@@ -31,11 +31,11 @@ The following example first reads a set of input points from an ASCII file. The 
 
 \subsubsection Reconstruction_simplification_2Output_example Output Example
 The output of the reconstruction can be obtained in two ways: either as a sequence of points and segments, or as an indexed format when the connectivity of the segments is encoded, hence the terms vertices and edges. The indexed format records a list of points, then pairs of point indices in the said list for the edges, and point indices for isolated vertices. 
-\cgalExample{Reconstruction_simplification_2/Reconstruction_simplification_2_output_example.cpp}
+\cgalExample{Reconstruction_simplification_2/reconstruction_simplification_2_output_example.cpp}
 
 \subsection Reconstruction_simplification_2Mass_example Example with mass attributes
 The following example first reads a set of input points and masses from an ASCII file. Using two property maps,  the points and their initial mass are passed to the Reconstruction_simplification_2 object. After initializing it, 100 iterations of the reconstruction process are performed. Lastly, the segments and isolated points of the reconstructed shape are extracted and printed to the console. 
-\cgalExample{Reconstruction_simplification_2/reconstruction_simplification_2_example.cpp}
+\cgalExample{Reconstruction_simplification_2/reconstruction_simplification_2_mass_example.cpp}
 
 
 \section Reconstruction_simplification_2API API
@@ -87,11 +87,22 @@ Left: before point relocation. Right: after point relocation.
 
 \section Reconstruction_simplification_2Parameters User parameters
 
+\subsection Reconstruction_simplification_2Relevance Edge relevance
+
+An edge is relevant from the approximation point of view if it is long, approximates a large number of points (or equivalently the number of points when all masses are equal), and has a small approximation error. This notion is defined as m(e) x |e|^2 / cost(e), where m(e) denotes the mass of the edge, |e| denotes its length and cost(e) its approximation error. As the error is defined by mass time squared distance the relevance is unitless.
+
+The default value is 0, so that all edges approximating some input points are considered relevant.
+A larger relevance value provides a means to increase resilience to outliers.
 
 
+\subsection Reconstruction_simplification_2Random Random Sample Size
 
+By default the simplification relies upon an exhaustive priority queue of edge collapse operators during decimation. For improved efficiency a parameter <I> sample size </I> strictly greater than 0 switches to a multiple choice approach, ie, a best-choice selection in a random sample of edge collapse operators, of size sample_size. A typical value for the sample size is 15, but this value may be enlarged when targeting a very coarse simplification. 
 
+\subsection Reconstruction_simplification_2Verbose Verbose Output
 
+The verbose parameter determines how much console output the algorithm generates. 
+A value larger than 0 generates output to the standard output std::cout.
 
 
 
