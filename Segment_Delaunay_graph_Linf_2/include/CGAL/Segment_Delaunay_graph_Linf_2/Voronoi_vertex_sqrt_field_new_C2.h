@@ -1107,8 +1107,8 @@ private:
     } else {
       CGAL_assertion( false );
     }
-    CGAL_assertion( oriented_side_of_line(lq, this->point()) );
-    CGAL_assertion( oriented_side_of_line(lr, this->point()) );
+    CGAL_assertion( oriented_side_of_line(lq, this->point()) != ZERO );
+    CGAL_assertion( oriented_side_of_line(lr, this->point()) != ZERO );
   }
 
   inline void
@@ -1308,8 +1308,8 @@ private:
     RT ux, uy, uz;
     compute_intersection_of_lines(llbis, lperp, ux, uy, uz);
     vv = Point_2(ux, uy, uz);
-    CGAL_assertion( oriented_side_of_line(lendp, this->point()) );
-    CGAL_assertion( oriented_side_of_line(lnon, this->point()) );
+    CGAL_assertion( oriented_side_of_line(lendp, this->point()) != ZERO );
+    CGAL_assertion( oriented_side_of_line(lnon, this->point()) != ZERO );
   }
 
   // both segments are axis-parallel
@@ -1597,9 +1597,9 @@ private:
       vv = Point_2(ux, uy, uz);
       CGAL_SDG_DEBUG(std::cout
           << "debug: vsqr SSS vv=" << vv << std::endl;);
-      CGAL_assertion( oriented_side_of_line(lines[0], this->point()) );
-      CGAL_assertion( oriented_side_of_line(lines[1], this->point()) );
-      CGAL_assertion( oriented_side_of_line(lines[2], this->point()) );
+      CGAL_assertion( oriented_side_of_line(lines[0], this->point()) != ZERO );
+      CGAL_assertion( oriented_side_of_line(lines[1], this->point()) != ZERO );
+      CGAL_assertion( oriented_side_of_line(lines[2], this->point()) != ZERO );
     }
   }
 
