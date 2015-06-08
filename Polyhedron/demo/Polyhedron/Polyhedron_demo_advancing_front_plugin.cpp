@@ -27,7 +27,7 @@ struct Perimeter {
   bool operator()(const Kernel::Point_3& p, const Kernel::Point_3& q, const Kernel::Point_3& r) const
   {
     if(bound == 0){
-      return true;
+      return false;
     }
     double d  = sqrt(squared_distance(p,q));
     if(d>bound) return true;
