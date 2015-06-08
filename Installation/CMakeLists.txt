@@ -476,6 +476,16 @@ if ( CMAKE_COMPILER_IS_GNUCXX )
   
     if ( RUNNING_CGAL_AUTO_TEST )
       uniquely_add_flags( CGAL_CXX_FLAGS "-Wall" )
+      # Remove -g from the relevant CXX_FLAGS. This will also
+      # propagate to the rest of the tests, since we overwrite those
+      # flags with the ones used to build CGAL.
+      string(REGEX REPLACE "-g( |$)" ""
+        CMAKE_CXX_FLAGS
+        "${CMAKE_CXX_FLAGS}")
+      string( TOUPPER "${CMAKE_BUILD_TYPE}" CGAL_BUILD_TYPE_UPPER )
+      string(REGEX REPLACE "-g( |$)" ""
+        CMAKE_CXX_FLAGS_${CGAL_BUILD_TYPE_UPPER}
+        "${CMAKE_CXX_FLAGS_${CGAL_BUILD_TYPE_UPPER}}")
     endif()
     
     if ( "${GCC_VERSION}" MATCHES "^[4-9]." )
