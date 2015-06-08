@@ -250,8 +250,7 @@ namespace internal {
       typedef typename Boost_bimap::value_type                       long_edge;
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-      std::cout << "Split long edges (" << high << ")...";
-      std::cout.flush(); 
+      std::cout << "Split long edges (" << high << ")..." << std::endl;
 #endif
       double sq_high = high*high;
 
@@ -275,6 +274,12 @@ namespace internal {
         halfedge_descriptor he = eit->second;
         double sqlen = eit->first;
         long_edges.right.erase(eit);
+
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        std::cout << "\r\t(" << long_edges.left.size() << " long edges, ";
+        std::cout << nb_splits << " splits)";
+        std::cout.flush();
+#endif
 
         if (protect_constraints_ && !is_longest_on_faces(edge(he, mesh_)))
           continue;
@@ -354,7 +359,6 @@ namespace internal {
       CGAL_expensive_assertion(is_triangle_mesh(mesh_));
       CGAL_assertion(halfedge_status_map_.size() == nb_valid_halfedges());
       debug_status_map();
-      debug_patch_border();
       debug_mesh_border();
 #endif
 
@@ -375,8 +379,8 @@ namespace internal {
       typedef typename Boost_bimap::value_type                    short_edge;
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-      std::cout << "Collapse short edges (" << low << ", " << high << ")...";
-      std::cout.flush();
+      std::cout << "Collapse short edges (" << low << ", " << high << ")..."
+                << std::endl;
 #endif
       double sq_low = low*low;
       double sq_high = high*high;
@@ -399,6 +403,12 @@ namespace internal {
         halfedge_descriptor he = eit->second;
         double sqlen = eit->first;
         short_edges.right.erase(eit);
+
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        std::cout << "\r\t(" << short_edges.left.size() << " short edges, ";
+        std::cout << nb_collapses << " collapses)";
+        std::cout.flush();
+#endif
 
         //handle the boundary case :
         //a PATCH_BORDER edge can be collapsed,
@@ -501,14 +511,6 @@ namespace internal {
           put(vpmap_, vkept, target_point);
           ++nb_collapses;
 
-#ifdef CGAL_PMP_REMESHING_DEBUG
-          debug_normals(vkept);
-          //PMP::remove_degenerate_faces(mesh_
-          //  , PMP::parameters::vertex_point_map(vpmap_)
-          //  .geom_traits(GeomTraits()));
-          //debug_self_intersections(vkept);
-#endif
-
           // merge halfedge_status to keep the more important on both sides
           merge_status(en, s_epo, s_ep);
           if (!mesh_border_case)
@@ -519,7 +521,6 @@ namespace internal {
           CGAL_assertion(nbb == halfedge_status_map_.size());
           CGAL_assertion(source(en, mesh_) == source(en_p, mesh_));
           debug_status_map();
-          debug_patch_border();
 #endif
 
           //insert new/remaining short edges
@@ -538,8 +539,15 @@ namespace internal {
         , PMP::parameters::vertex_point_map(vpmap_)
          .geom_traits(GeomTraits()));
       if (n > 0)
+      {
         std::cout << "Warning : tags should maybe be fixed" << std::endl;
-
+        unsigned int nbb = nb_valid_halfedges();
+        CGAL_assertion(nbb == halfedge_status_map_.size());
+      }
+#ifdef CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
+      BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
+        debug_normals(v);
+#endif
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << " done (" << nb_collapses << " collapses)." << std::endl;
 #endif
@@ -552,7 +560,6 @@ namespace internal {
       CGAL_assertion(nb_valid_halfedges() == halfedge_status_map_.size());
       CGAL_expensive_assertion(is_triangle_mesh(mesh_));
       debug_status_map();
-      debug_patch_border();
       debug_mesh_border();
       debug_self_intersections();
 #endif
@@ -952,10 +959,7 @@ namespace internal {
         }
       }
 
-#ifdef CGAL_PMP_REMESHING_DEBUG
       CGAL_assertion(halfedge_status_map_.size() == nb_valid_halfedges());
-      debug_patch_border();
-#endif
     }
 
     Halfedge_status status(const halfedge_descriptor& h) const
@@ -1098,33 +1102,6 @@ namespace internal {
       }
     }
 
-    void debug_patch_border() const
-    {
-      std::map<vertex_descriptor, unsigned int> patch_border;
-      typedef typename std::map<halfedge_descriptor, Halfedge_status>::value_type
-        HD_pair;
-      BOOST_FOREACH(const HD_pair& hs, halfedge_status_map_)
-      {
-        if (is_on_patch_border(hs.first))
-        {
-          if (patch_border.find(target(hs.first, mesh_)) != patch_border.end())
-            patch_border[target(hs.first, mesh_)]++;
-          else
-            patch_border[target(hs.first, mesh_)] = 1;
-
-          if (patch_border.find(source(hs.first, mesh_)) != patch_border.end())
-            patch_border[source(hs.first, mesh_)]++;
-          else
-            patch_border[source(hs.first, mesh_)] = 1;
-        }
-      }
-      //check we found each vertex exactly twice
-      typedef typename std::map<vertex_descriptor, unsigned int>::value_type
-        V_pair;
-      BOOST_FOREACH(const V_pair& v, patch_border)
-        CGAL_assertion(v.second == 2);
-    }
-
     void debug_self_intersections() const
     {
       std::cout << "Test self intersections...";
@@ -1165,8 +1142,8 @@ namespace internal {
                     halfedges_around_target(halfedge(v, mesh_), mesh_))
       {
         Vector_3 n = compute_normal(face(hd, mesh_));
-        if (n != CGAL::NULL_VECTOR)
-          normals.push_back(n);
+        normals.push_back(n);
+        CGAL_assertion(n != CGAL::NULL_VECTOR);
       }
       //check all normals have same orientation
       for (std::size_t i = 1; i < normals.size(); ++i)/*start at 1 on purpose*/

@@ -1,6 +1,8 @@
 
-//#define CGAL_PMP_REMESHING_DEBUG
+#define CGAL_PMP_REMESHING_DEBUG
 #define CGAL_DUMP_REMESHING_STEPS
+#define CGAL_PMP_REMESHING_VERBOSE
+#define CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
@@ -165,13 +167,13 @@ int main(int argc, char* argv[])
   else
     std::cout << "OK." << std::endl;
 
-  //std::vector<halfedge_descriptor> border;
-  //PMP::get_border(m, pre_patch, std::back_inserter(border));
-  //
-  //PMP::split_long_edges(m,
-  //                      border,
-  //                      target_edge_length);
-
+  std::cout << "Split border...";
+  std::vector<halfedge_descriptor> border;
+  PMP::get_border(m, pre_patch, std::back_inserter(border));
+  PMP::split_long_edges(m,
+                        border,
+                        target_edge_length);
+  std::cout << "done." << std::endl;
 
   std::set<face_descriptor> patch;
   std::copy(pre_patch.begin(), pre_patch.end(),
@@ -191,7 +193,7 @@ int main(int argc, char* argv[])
     patch,
     target_edge_length,
     PMP::parameters::number_of_iterations(nb_iter)
-    .protect_constraints(false)
+    .protect_constraints(true)
     );
 
   t.stop();
