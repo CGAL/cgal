@@ -881,10 +881,10 @@ private:
 
     //make the box a little bigger than bb so that it won't intersect any
     //relevant_edge.
-    xmin = compute_x(bb.min())-1;
-    ymin = compute_y(bb.min())-1;
-    xmax = compute_x(bb.max())+1;
-    ymax = compute_y(bb.max())+1;
+    xmin = compute_x((bb.min)())-1;
+    ymin = compute_y((bb.min)())-1;
+    xmax = compute_x((bb.max)())+1;
+    ymax = compute_y((bb.max)())+1;
     Point_2 box[4] = {Point_2(xmin, ymin), Point_2(xmax, ymin),
                       Point_2(xmax, ymax), Point_2(xmin, ymax)};
 
