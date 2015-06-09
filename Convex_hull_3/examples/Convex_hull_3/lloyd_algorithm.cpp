@@ -75,7 +75,7 @@ class Centroid_volume_accumulator {
             return Point(cx, cy, cz);
         }
 
-        float volume () const {
+        double volume () const {
             return vol;
         }
 
@@ -88,10 +88,10 @@ class Centroid_volume_accumulator {
 
     private:
         // Volume
-        float vol;
+        double vol;
 
         // Centroid
-        float cx, cy, cz;
+        double cx, cy, cz;
 };
 
 // Apply a function object to all the triangles composing the faces of a polyhedron.
