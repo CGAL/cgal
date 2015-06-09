@@ -76,18 +76,18 @@ private:
 #ifdef CGAL_HEADER_ONLY
   static boost::thread_specific_ptr<int>& get_static_prime_int_()
   {
-  static boost::thread_specific_ptr<int> prime_int_;
-  return prime_int_;
+    static boost::thread_specific_ptr<int> prime_int_;
+    return prime_int_;
   }
   static boost::thread_specific_ptr<double>& get_static_prime_()
   {
-  static boost::thread_specific_ptr<double> prime_;
-  return prime_;
+    static boost::thread_specific_ptr<double> prime_;
+    return prime_;
   }
   static boost::thread_specific_ptr<double>& get_static_prime_inv_()
   {
-  static boost::thread_specific_ptr<double> prime_inv_;
-  return prime_inv_;
+    static boost::thread_specific_ptr<double> prime_inv_;
+    return prime_inv_;
   }
 #else // CGAL_HEADER_ONLY
   CGAL_EXPORT static boost::thread_specific_ptr<int>    prime_int_;
@@ -132,18 +132,18 @@ private:
 #ifdef CGAL_HEADER_ONLY
   static int& get_static_prime_int()
   {
-  static int prime_int = 67111067;
-  return prime_int;
+    static int prime_int = 67111067;
+    return prime_int;
   }
   static double& get_static_prime()
   {
-  static double prime = 67111067.0;
-  return prime;
+    static double prime = 67111067.0;
+    return prime;
   }
   static double& get_static_prime_inv()
   {
-  static double prime_inv = 1/67111067.0;
-  return prime_inv;
+    static double prime_inv = 1/67111067.0;
+    return prime_inv;
   }
 
 #else //
