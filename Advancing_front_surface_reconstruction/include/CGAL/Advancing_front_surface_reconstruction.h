@@ -564,9 +564,7 @@ public:
         Vector vw = cross_product(v,w);
         double len = (std::max)(u*u,(std::max)(v*v,w*w));
         Point s = p + 10* len * (vw/(vw*vw));
-        std::size_t n = T.number_of_vertices();
         added_vertex = T.insert(s);
-        
       }
     }
 
