@@ -84,10 +84,7 @@ void jama_polynomial_compute_roots(const double *begin, const double *end,
 double lb, double ub,
 std::vector<double> &roots)
 {
-#ifdef CGAL_HEADER_ONLY
-  int i = 0;
-#endif
-  std::ptrdiff_t degree= endss-begin-1;
+  std::ptrdiff_t degree= end-begin-1;
     switch( degree) {
         case -1:
         case 0:
