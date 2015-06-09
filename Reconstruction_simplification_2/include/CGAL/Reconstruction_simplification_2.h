@@ -191,10 +191,10 @@ protected:
 	/*!
              The constructor of the reconstruction simplification class
              for a given range of point-mass pairs.
-             which already builds an initial simplex.
+             which already builds an initial simplicial complex.
 
 	     \tparam InputRange is a model of `Range` with forward iterators, 
-               providing input points and point mass through the following two property maps.
+               providing input points and point masses through the following two property maps.
 
 	     \param input_range range of input data.
 	     \param point_map A `ReadablePropertyMap` used to access the input points.
@@ -1409,13 +1409,11 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 	have sharp corners well located, the algorithm offers the possibility to automatically
 	relocate points after each edge contraction. The new location of the
 	points is chosen such that the fitting of the output segments to the
-	input points is improved. This is achieved by minimizing the normal component
-	of the weighted \f$L_2 \f$ distance. The points then get relocated only if the
-	underlying triangulation is still embeddable.
+	input points is improved. 
 	  */
 	void relocate_all_points() {
 		double timer = clock();
-		std::cerr << yellow << "relocate all" << white << "...";
+		std::cerr << yellow << "relocate all points" << white << "...";
 
 		m_mindex.clear(); // pqueue must be recomputed
 
@@ -1622,7 +1620,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 		}
 
 
-		//mark edges
+		// mark edges
 		for (Finite_edges_iterator ei = rt2.finite_edges_begin(); ei != rt2.finite_edges_end(); ++ei)
 		{
 			Edge edge = *ei;

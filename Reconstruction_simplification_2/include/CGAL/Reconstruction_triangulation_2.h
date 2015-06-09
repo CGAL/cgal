@@ -696,12 +696,10 @@ public:
 	}
 
 	void assign_sample_to_vertex(Sample* sample, Vertex_handle vertex) {
-		// DEBUG
 		if (vertex->get_sample()) {
 			std::cout << "assign to vertex: vertex already has sample"
 					<< std::endl;
 		}
-		//
 
 		sample->distance2() = 0.0;
 		sample->coordinate() = 0.0;
