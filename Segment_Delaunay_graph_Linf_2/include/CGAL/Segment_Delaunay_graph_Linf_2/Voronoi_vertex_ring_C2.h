@@ -597,8 +597,8 @@ private:
       CGAL_assertion( false );
     }
     CGAL_assertion_code( is_v_computed = true );
-    CGAL_assertion( oriented_side_of_line(lq, this->point()) );
-    CGAL_assertion( oriented_side_of_line(lr, this->point()) );
+    CGAL_assertion( oriented_side_of_line(lq, this->point()) != ZERO );
+    CGAL_assertion( oriented_side_of_line(lr, this->point()) != ZERO );
   }
 
   inline void
@@ -852,8 +852,8 @@ private:
         << ux_ << ' ' << uy_ << ' ' << uz_ << ' '
         << Point_2(ux_, uy_, uz_) << std::endl ; );
     CGAL_assertion_code( is_v_computed = true );
-    CGAL_assertion( oriented_side_of_line(lendp, this->point()) );
-    CGAL_assertion( oriented_side_of_line(lnon, this->point()) );
+    CGAL_assertion( oriented_side_of_line(lendp, this->point()) != ZERO );
+    CGAL_assertion( oriented_side_of_line(lnon, this->point()) != ZERO );
   }
 
   // both segments are axis-parallel
@@ -1528,9 +1528,9 @@ private:
 
       compute_sss_bisectors(p, q, r, lines);
       CGAL_assertion_code( is_v_computed = true );
-      CGAL_assertion( oriented_side_of_line(lines[0], this->point()) );
-      CGAL_assertion( oriented_side_of_line(lines[1], this->point()) );
-      CGAL_assertion( oriented_side_of_line(lines[2], this->point()) );
+      CGAL_assertion( oriented_side_of_line(lines[0], this->point()) != ZERO );
+      CGAL_assertion( oriented_side_of_line(lines[1], this->point()) != ZERO );
+      CGAL_assertion( oriented_side_of_line(lines[2], this->point()) != ZERO );
     }
   }
 
