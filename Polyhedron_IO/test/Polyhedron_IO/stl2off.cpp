@@ -5,7 +5,7 @@
 #include <iostream>
 #include <vector>
 
-void read(char* fname)
+void read(const char* fname)
 {
   std::ifstream input(fname, std::ios::in | std::ios::binary);
 
