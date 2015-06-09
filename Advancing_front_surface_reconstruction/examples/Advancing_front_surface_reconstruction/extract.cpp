@@ -36,9 +36,30 @@ typedef CGAL::Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
 typedef Triangulation_3::Vertex_handle Vertex_handle;
 
-typedef CGAL::Advancing_front_surface_reconstruction<Kernel,Triangulation_3> Surface;
-typedef CGAL::AFSR_options Options;
+struct Perimeter {
 
+  double bound;
+
+  Perimeter(double bound)
+    : bound(bound)
+  {}
+
+  bool operator()(const Point& p, const Point& q, const Point& r) const
+  {
+    if(bound == 0){
+      return false;
+    }
+    double d  = sqrt(squared_distance(p,q));
+    if(d>bound) return true;
+    d += sqrt(squared_distance(p,r)) ;
+    if(d>bound) return true;
+    d+= sqrt(squared_distance(q,r));
+    return d>bound;
+  }
+};
+
+typedef CGAL::Advancing_front_surface_reconstruction<Kernel,Triangulation_3,Perimeter> Surface;
+typedef CGAL::AFSR_options Options;
 
 //---------------------------------------------------------------------
 
@@ -109,9 +130,7 @@ void usage(char* program)
 	    << "                                                     ply, stl, all, none)" << std::endl
             << "     -rgb r g b       : color of the surface" << std::endl
             << "     -no_header       : The Vrml header and footer are not written" << std::endl	    
-	    << "     -area  a         : No faces larger than area * average_area" << std::endl
 	    << "     -perimeter  p    : No faces larger than perimeter * average_perimeter" << std::endl   
-	    << "     -abs_area  a     : No faces larger than abs_area" << std::endl
 	    << "     -abs_perimeter p : No faces with perimeter longer than abs_perimeter" << std::endl
             << "\n     Options for internal use" << std::endl
 
@@ -184,16 +203,7 @@ parse(int argc, char* argv[], Options &opt)
       argv += 2;
       argc -= 2;
       std::cerr << "-d " << opt.delta << " "; 
-    }  
-    else if ((!std::strcmp(argv[0], "-a")) || (!std::strcmp(argv[0], "-area"))){
-      if (sscanf(argv[1], "%lf", &opt.area) != 1) {
-	std::cerr << "Argument for area must be a number"
-		  << std::endl;
-      }
-      argv += 2;
-      argc -= 2;
-      std::cerr << "-a " << opt.area << " "; 
-    }   
+    }    
     else if ((!std::strcmp(argv[0], "-pe")) || (!std::strcmp(argv[0], "-perimeter"))){
       if (sscanf(argv[1], "%lf", &opt.perimeter) != 1) {
 	std::cerr << "Argument for perimeter must be a number"
@@ -202,25 +212,7 @@ parse(int argc, char* argv[], Options &opt)
       argv += 2;
       argc -= 2;
       std::cerr << "-perimeter " << opt.perimeter << " "; 
-    }    
-    else if ((!std::strcmp(argv[0], "-aa")) || (!std::strcmp(argv[0], "-abs_area"))){
-      if (sscanf(argv[1], "%lf", &opt.abs_area) != 1) {
-	std::cerr << "Argument for abs_area must be a number"
-		  << std::endl;
-      }
-      argv += 2;
-      argc -= 2;
-      std::cerr << "-abs_area " << opt.abs_area << " "; 
-    }     
-    else if ((!std::strcmp(argv[0], "-ae")) || (!std::strcmp(argv[0], "-abs_perimeter"))){
-      if (sscanf(argv[1], "%lf", &opt.abs_perimeter) != 1) {
-	std::cerr << "Argument for abs_perimeter must be a number"
-		  << std::endl;
-      }
-      argv += 2;
-      argc -= 2;
-      std::cerr << "-abs_perimeter " << opt.abs_perimeter << " "; 
-    }  
+    }
     else if ((!std::strcmp(argv[0], "-ki"))){
       if ((sscanf(argv[1], "%lf", &opt.K_init) != 1)||
 	  (sscanf(argv[2], "%lf", &opt.K) != 1)){
@@ -435,9 +427,9 @@ int main(int argc,  char* argv[])
   
   points.clear();
 
-  
-  Surface S(dt, opt);
-  S.run();
+  Perimeter filter(opt.perimeter);
+  Surface S(dt, opt, filter);
+  S.run(opt);
 
   std::cerr << "Total time: " << timer.time() << " sec." << std::endl; 
   //  write_to_file_vrml2(opt.foutname, S, opt.contour, opt.red, opt.green, opt.blue, opt.no_header);

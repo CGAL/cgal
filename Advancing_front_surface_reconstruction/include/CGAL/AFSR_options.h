@@ -26,6 +26,7 @@ public:
   bool contour;
   bool binary;
   bool xyz;
+  double perimeter;
   bool Section_file;
   int  max_connected_comp;
   double delta;
