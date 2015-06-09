@@ -25,13 +25,10 @@ public:
     {
       CGAL::Polyhedron_incremental_builder_3<HDS> B( hds, true);
       B.begin_surface( s.number_of_vertices(), s.number_of_facets(), 6* s.number_of_facets());
-      typedef typename HDS::Vertex   Vertex;
-      typedef typename Vertex::Point Point;
       
       typedef typename Surface::TDS_2 TDS_2;
       typedef typename TDS_2::Face_iterator Face_iterator;
       typedef typename TDS_2::Vertex_iterator Vertex_iterator;
-      typedef typename Surface::Cell_handle Cell_handle;
 
       const TDS_2& tds = s.triangulation_data_structure_2();
 

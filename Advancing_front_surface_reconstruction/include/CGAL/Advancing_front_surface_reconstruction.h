@@ -632,10 +632,10 @@ public:
   }
 
 
-  typedef Triangulation_data_structure_2<AFSR::Surface_vertex_base_2<Kernel,Vertex_handle>,
-                                         AFSR::Surface_face_base_2<Kernel, typename Triangulation_3::Facet> > TDS_2;
+  typedef CGAL::Triangulation_data_structure_2<AFSR::Surface_vertex_base_2<Kernel,Vertex_handle>,
+                                               AFSR::Surface_face_base_2<Kernel, typename Triangulation_3::Facet> > TDS_2;
 
-    typedef TDS_2 Triangulation_data_structure_2;
+  typedef TDS_2 Triangulation_data_structure_2;
 
   mutable TDS_2 _tds_2;
 
