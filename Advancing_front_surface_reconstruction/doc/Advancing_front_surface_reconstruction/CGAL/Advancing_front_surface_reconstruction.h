@@ -30,9 +30,9 @@ public:
 /*! 
   The type of the 2D triangulation data structure describing the reconstructed surface.
   The type `Triangulation_data_structure_2::Vertex` is model of the concept `TriangulationDataStructure_2::Vertex` and has additionally the 
-  method `vertex_3()` that returns a `Vertex_handle` to the associated 3D vertex.
+  method `vertex_3()` that returns a `#Vertex_handle` to the associated 3D vertex.
   The type `Triangulation_data_structure_2::Face` is model of the concept `TriangulationDataStructure_2::Face` and  has additionally the
-  method `facet()` that returns the associated `Facet`, and a method `bool is_on_surface()`
+  method `facet()` that returns the associated `#Facet`, and a method `bool is_on_surface()`
   for testing if a face is part of the reconstructed surface or a face incident to a boundary edge.  
   In case the surface has boundaries, the 2D surface has one vertex which is associated to the infinite
   vertex of the 3D triangulation.  
@@ -73,7 +73,7 @@ The facet type of the 3D triangulation.
 /*! 
   A bidirectional iterator range which enables to enumerate all points that were removed
   from the 3D Delaunay triangulation during the surface reconstruction. The value type
-  of the iterator is `Point`. 
+  of the iterator is `#Point`. 
 */ 
 typedef unspecified_type Outlier_range; 
 
@@ -83,7 +83,7 @@ typedef unspecified_type Outlier_range;
   visits the entry point of each boundary twice. This allows to
   detect that the traversal of a boundary is finished. One more increment
   brings us to the vertex on the next boundary. 
-  The value type of the iterator is `Vertex_handle`.
+  The value type of the iterator is `#Vertex_handle`.
 */ 
 
 #endif
@@ -95,7 +95,7 @@ typedef unspecified_type Boundary_range;
 
  /*!
    A bidirectional iterator range which enables to visit all vertices on a boundary.
-     The value type of the iterator is  `Vertex_handle`
+     The value type of the iterator is  `#Vertex_handle`
    */
 typedef unspecified_type Vertex_on_boundary_range; 
 
