@@ -1,0 +1,76 @@
+Guillaume
+
+CGAL:
+
+DONE #include "/home/gdamiand/sources/CGAL/STL_Extension/src/CGAL/assertions.cpp" // variables globales
+DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/io.cpp" // variable statique de classe
+DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/Color.cpp" // constantes globales
+DONE #include "/home/gdamiand/sources/CGAL/Kernel_23/src/CGAL/kernel.cpp" // constantes globales
+DONE #include "/home/gdamiand/sources/CGAL/Number_types/src/CGAL/Interval_arithmetic.cpp" // constante globale
+DONE #include "/home/gdamiand/sources/CGAL/Number_types/src/CGAL/test_FPU_rounding_mode.cpp" // variable static de classe const
+DONE #include "/home/gdamiand/sources/CGAL/Profiling_tools/src/CGAL/Timer.cpp" // variable statique de classe
+DONE #include "/home/gdamiand/sources/CGAL/Profiling_tools/src/CGAL/Real_timer.cpp" // variable statique de classe
+DONE #include "/home/gdamiand/sources/CGAL/Random_numbers/src/CGAL/Random.cpp" // variable globale; utilisée directement (donc pb pour header only) -> we need to replace the use of CGAL::default_random by CGAL::get_default_random().
+DONE #include "/home/gdamiand/sources/CGAL/Modular_arithmetic/src/CGAL/primes.cpp" // constante globale
+DONE #include "/home/gdamiand/sources/CGAL/Modular_arithmetic/src/CGAL/Residue_type.cpp" // variables globales (! version multi-thread !)
+
+DONE #include "/home/gdamiand/sources/CGAL/Geomview/src/CGAL/Geomview_stream.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Intersections_2/src/CGAL/Bbox_2_intersections.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_header_extended_OFF.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_inventor.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_header_OFF.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_scanner_OFF.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_OFF.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_VRML_2.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_wavefront.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Nef_2/src/CGAL/NefPolynomial.cpp"
+
+CGAL_Qt4:
+
+DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/utility.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/resources.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/debug.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/GraphicsViewPolylineInput.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/DemosMainWindow.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/GraphicsViewNavigation.cpp"
+
+Clement:
+
+CGAL:
+
+DONE #include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/JAMA_numeric_solver.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/KDS_Log.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/numeric_solvers_support.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/Turkowski_numeric_solver.cpp"
+
+CGAL_Core:
+
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/CoreIO.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/CoreAux.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/CoreDefs.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/Expr.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/GmpIO.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/BigFloat.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/Real.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/extLong.cpp"
+
+CGAL_ImageIO:
+
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/analyze.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/bmpread.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/recline.cpp" // 1 global variable 
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/mincio.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/convert.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/recbuffer.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/gif.cpp" // several global variables
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/gis.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/bmp.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/reech4x4.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/bmpendian.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/fgetns.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/Image_3.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/iris.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/ImageIO.cpp"
+
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/pnm.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/inr.cpp"

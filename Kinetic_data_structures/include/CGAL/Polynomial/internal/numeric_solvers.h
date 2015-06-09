@@ -109,4 +109,10 @@ struct Turkowski_cleaned_numeric_solver
 };
 
 } } } //namespace CGAL::POLYNOMIAL::internal
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/Polynomial/internal/JAMA_numeric_solvers_impl.h>
+#include <CGAL/Polynomial/internal/Turkowski_numeric_solvers_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif

@@ -1,8 +1,8 @@
 #ifndef CGAL_VOLUME_PLANE_THREAD_H
 #define CGAL_VOLUME_PLANE_THREAD_H
 
-#include <CGAL/Image_3.h>
 #include "Volume_plane.h"
+#include <CGAL/Image_3.h>
 
 #include "Scene_segmented_image_item.h"
 

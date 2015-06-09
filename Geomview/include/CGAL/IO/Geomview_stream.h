@@ -26,6 +26,9 @@
 #define CGAL_GEOMVIEW_STREAM_H
 
 #include <CGAL/basic.h>
+
+#ifdef CGAL_USE_GEOMVIEW
+
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/IO/Color.h>
@@ -592,5 +595,11 @@ operator>>(Geomview_stream &gv, Point_3<R> &point)
 #endif
 
 } //namespace CGAL
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/IO/Geomview_stream_impl.h>
+#endif // CGAL_HEADER_ONLY
+
+#endif // CGAL_USE_GEOMVIEW
 
 #endif // CGAL_GEOMVIEW_STREAM_H

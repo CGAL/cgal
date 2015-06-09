@@ -36,12 +36,19 @@ class Scaling {};
 class Reflection {};
 class Identity_transformation {};
 
-CGAL_EXPORT extern const Translation             TRANSLATION;
-CGAL_EXPORT extern const Rotation                ROTATION;
-CGAL_EXPORT extern const Scaling                 SCALING;
-CGAL_EXPORT extern const Reflection              REFLECTION;
-CGAL_EXPORT extern const Identity_transformation IDENTITY;
+#ifndef CGAL_HEADER_ONLY
+
+CGAL_EXPORT extern const Translation              TRANSLATION;
+CGAL_EXPORT extern const Rotation                 ROTATION;
+CGAL_EXPORT extern const Scaling                  SCALING;
+CGAL_EXPORT extern const Reflection               REFLECTION;
+CGAL_EXPORT extern const Identity_transformation  IDENTITY;
+
+#endif
 
 } //namespace CGAL
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/aff_transformation_tags_impl.h>
+#endif // CGAL_HEADER_ONLY
 
 #endif // CGAL_AFF_TRANSFORMATION_TAGS_H

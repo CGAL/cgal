@@ -22,28 +22,11 @@
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
-#include <CGAL/basic.h>
-#include <iostream>
+#ifndef CGAL_HEADER_ONLY
+
 #include <CGAL/IO/File_writer_OFF.h>
+#include <CGAL/IO/File_writer_OFF_impl.h>
 
-namespace CGAL {
+#endif // CGAL_HEADER_ONLY
 
-void
-File_writer_OFF::
-write_header( std::ostream& o,
-              std::size_t   vertices,
-              std::size_t   halfedges,
-              std::size_t   facets,
-              bool          normals) {
-    m_out = &o;
-    m_header.set_vertices(  vertices);
-    // Don't. This halfdges aren't trusted:
-    // m_header.set_halfedges( halfedges);
-    (void)halfedges;
-    m_header.set_facets(  facets);
-    m_header.set_normals( normals);
-    // Print header.
-    out() << m_header;
-}
-} //namespace CGAL
 // EOF //

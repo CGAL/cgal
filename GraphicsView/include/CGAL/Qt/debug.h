@@ -43,5 +43,8 @@ CGAL_QT4_EXPORT void traverse_resources(const QString& name,
 } // namespace Qt
 } // namespace CGAL
 
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/Qt/debug_impl.h>
+#endif // CGAL_HEADER_ONLY
 
 #endif // CGAL_QT_DEBUG_H

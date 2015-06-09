@@ -22,54 +22,11 @@
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
-#include <CGAL/basic.h>
-#include <iostream>
+#ifndef CGAL_HEADER_ONLY
+
 #include <CGAL/IO/File_writer_VRML_2.h>
+#include <CGAL/IO/File_writer_VRML_2_impl.h>
 
-namespace CGAL {
+#endif // CGAL_HEADER_ONLY
 
-void
-File_writer_VRML_2::
-write_header( std::ostream& o,
-              std::size_t   vertices,
-              std::size_t   halfedges,
-              std::size_t   facets) {
-    m_out    = &o;
-    m_facets = facets;
-
-    out() << "        #-- Begin of Polyhedron_3\n";
-    out() << "        # " << vertices  << " vertices\n";
-    out() << "        # " << halfedges << " halfedges\n";
-    out() << "        # " << facets    << " facets\n";
-    out() << "        Group {\n"
-             "            children [\n"
-             "                Shape {\n"
-             "                    appearance Appearance { material "
-                                               "USE Material }\n"
-             "                    geometry IndexedFaceSet {\n"
-             "                        convex FALSE\n"
-             "                        solid  FALSE\n"
-             "                        coord  Coordinate {\n"
-             "                            point [" << std::endl;
-}
-
-void
-File_writer_VRML_2::
-write_facet_header() const {
-    out() << "                            ] #point\n"
-             "                        } #coord Coordinate\n"
-             "                        coordIndex  [" << std::endl;
-}
-
-void
-File_writer_VRML_2::
-write_footer() const {
-    out() << "                        ] #coordIndex\n"
-             "                    } #geometry\n"
-             "                } #Shape\n"
-             "            ] #children\n"
-             "        } #Group" << std::endl;
-}
-
-} //namespace CGAL
 // EOF //

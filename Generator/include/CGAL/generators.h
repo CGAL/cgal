@@ -68,7 +68,7 @@ protected:
 public:
     typedef  Random_generator_base<T> This;
 
-    Random_generator_base() : _rnd( default_random) {}
+    Random_generator_base() : _rnd( CGAL::get_default_random() ) {}
     Random_generator_base( double range, Random& rnd)
         : Generator_base<T>( range), _rnd( rnd) {}
     Random_generator_base( const T& item, double range, Random& rnd)
@@ -83,7 +83,7 @@ class Random_double_in_interval : public Random_generator_base<double> {
 
  public:
   typedef Random_double_in_interval This;
-  Random_double_in_interval(double a = 1, Random& rnd = default_random)
+  Random_double_in_interval(double a = 1, Random& rnd = CGAL::get_default_random())
     // g is an input iterator creating points of type `P' uniformly
     // distributed in the half-open square with side length a,
     // centered around the origin, i.e. \forall p = `*g': -\frac{a}{2}

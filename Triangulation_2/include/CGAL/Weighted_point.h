@@ -109,7 +109,7 @@ template < class Point, class Weight >
 std::ostream &
 operator<<(std::ostream &os, const Weighted_point<Point,Weight> &p)
 {
-  switch(os.iword(IO::mode))
+  switch(get_mode(os))
   {
   case IO::ASCII :
     return os << p.point() <<  " " << p.weight();

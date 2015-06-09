@@ -186,7 +186,7 @@ std::ostream&
 insert(std::ostream& os, const Direction_2<R>& d, const Cartesian_tag&)
 {
     typename R::Vector_2 v = d.to_vector();
-    switch(os.iword(IO::mode)) {
+    switch(get_mode(os)) {
     case IO::ASCII :
         return os << v.x() << ' ' << v.y();
     case IO::BINARY :
@@ -202,7 +202,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Direction_2<R>& d, const Homogeneous_tag&)
 {
-  switch(os.iword(IO::mode))
+  switch(get_mode(os))
   {
     case IO::ASCII :
         return os << d.dx() << ' ' << d.dy();
@@ -229,7 +229,7 @@ std::istream&
 extract(std::istream& is, Direction_2<R>& d, const Cartesian_tag&)
 {
     typename R::FT x, y;
-    switch(is.iword(IO::mode)) {
+    switch(get_mode(is)) {
     case IO::ASCII :
         is >> iformat(x) >> iformat(y);
         break;
@@ -252,7 +252,7 @@ std::istream&
 extract(std::istream& is, Direction_2<R>& d, const Homogeneous_tag&)
 {
   typename R::RT x, y;
-  switch(is.iword(IO::mode))
+  switch(get_mode(is))
   {
     case IO::ASCII :
         is >> iformat(x) >> iformat(y);

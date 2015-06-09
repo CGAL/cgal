@@ -20,20 +20,28 @@
 #ifndef CGAL_EXPORT_HELPERS_H
 #define CGAL_EXPORT_HELPERS_H
 
-#if defined(_WIN32) || defined(__CYGWIN__)
-#  define CGAL_DLL_IMPORT __declspec(dllimport)
-#  define CGAL_DLL_EXPORT __declspec(dllexport)
+#ifdef CGAL_HEADER_ONLY
+#  define CGAL_DLL_IMPORT
+#  define CGAL_DLL_EXPORT
 #  define CGAL_DLL_LOCAL
-#else
-  #if __GNUC__ >= 4
-    #define CGAL_DLL_IMPORT __attribute__ ((visibility ("default")))
-    #define CGAL_DLL_EXPORT __attribute__ ((visibility ("default")))
-    #define CGAL_DLL_LOCAL  __attribute__ ((visibility ("hidden")))
-  #else
-    #define CGAL_DLL_IMPORT
-    #define CGAL_DLL_EXPORT
-    #define CGAL_DLL_LOCAL
-  #endif
-#endif
+
+#else // !CGAL_HEADER_ONLY
+#  if defined(_WIN32) || defined(__CYGWIN__)
+#    define CGAL_DLL_IMPORT __declspec(dllimport)
+#    define CGAL_DLL_EXPORT __declspec(dllexport)
+#    define CGAL_DLL_LOCAL
+#  else
+    #if __GNUC__ >= 4
+      #define CGAL_DLL_IMPORT __attribute__ ((visibility ("default")))
+      #define CGAL_DLL_EXPORT __attribute__ ((visibility ("default")))
+      #define CGAL_DLL_LOCAL  __attribute__ ((visibility ("hidden")))
+    #else
+      #define CGAL_DLL_IMPORT
+      #define CGAL_DLL_EXPORT
+      #define CGAL_DLL_LOCAL
+    #endif
+#  endif
+
+#endif // CGAL_HEADER_ONLY
 
 #endif // CGAL_EXPORT_HELPERS_H

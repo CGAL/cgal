@@ -83,6 +83,7 @@ CGAL_VERSION:        Defined in <CGAL/version.h>
 ***************************************************************************/
 
 #ifndef CGAL_NO_AUTOLINK
+#ifndef CGAL_HEADER_ONLY // header only = no CGAL library
 
 #ifdef __cplusplus
 #  ifndef BOOST_CONFIG_HPP
@@ -410,6 +411,7 @@ CGAL_VERSION:        Defined in <CGAL/version.h>
 
 #endif // _MSC_VER || __BORLANDC__
 
+#endif // CGAL_HEADER_ONLY
 #endif // CGAL_NO_AUTOLINK
 
 //

@@ -39,4 +39,9 @@ CGAL_CORE_EXPORT std::istream& io_read (std::istream &, mpq_ptr);
 //std::istream& operator>> (std::istream &, mpq_ptr);
 
 } //namespace CORE
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/CORE/Gmp_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // _CORE_GMP_H_

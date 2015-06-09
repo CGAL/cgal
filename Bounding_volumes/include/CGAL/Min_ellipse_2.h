@@ -57,7 +57,7 @@ class Min_ellipse_2 {
     Min_ellipse_2( InputIterator first,
                    InputIterator last,
                    bool          randomize = false,
-                   Random&       random    = default_random,
+                   Random&       random    = get_default_random(),
                    const Traits& traits    = Traits());
     
     Min_ellipse_2( const Traits& traits = Traits());
@@ -328,7 +328,7 @@ class Min_ellipse_2 {
                                                = false
     #endif
                                                       ,
-                       Random&       random    = default_random,
+                     Random&       random    = get_default_random(),
                        const Traits& traits    = Traits())
             : tco( traits)
         {

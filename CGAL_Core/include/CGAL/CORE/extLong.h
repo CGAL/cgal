@@ -294,4 +294,9 @@ inline bool extLong::isNaN() const {
 }
 
 } //namespace CORE
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/CORE/extLong_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // _CORE_EXTLONG_H_

@@ -50,7 +50,17 @@ private:
     int         interv;
     bool        running;
 
+#ifdef CGAL_HEADER_ONLY
+    static bool& get_static_realtimer_m_failed()
+    {
+      static bool m_failed = false;
+      return m_failed;
+    }
+#else // CGAL_HEADER_ONLY
     static bool m_failed;
+    static bool& get_static_realtimer_m_failed()
+    { return Real_timer::m_failed; }
+#endif // CGAL_HEADER_ONLY
 
     double   get_real_time()     const; // in seconds
     double   compute_precision() const; // in seconds
@@ -113,6 +123,10 @@ inline double Real_timer::time() const {
 }
 
 } //namespace CGAL
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/Real_timer_impl.h>
+#endif // CGAL_HEADER_ONLY
 
 #endif // CGAL_REAL_TIMER_H //
 // EOF //

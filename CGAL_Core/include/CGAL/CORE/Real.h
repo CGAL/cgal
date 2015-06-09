@@ -57,10 +57,10 @@ public:
   Real(const BigInt& I) : RCReal(new RealBigInt(I)) {}
   Real(const BigRat& R) : RCReal(new RealBigRat(R)) {}
   Real(const BigFloat& F) : RCReal(new RealBigFloat(F)) {}
-  Real(const char* s, const extLong& prec=defInputDigits) : RCReal(NULL) {
+  Real(const char* s, const extLong& prec=get_static_defInputDigits()) : RCReal(NULL) {
     constructFromString(s, prec);
   }
-  Real(const std::string& s, const extLong& prec=defInputDigits) : RCReal(NULL){
+  Real(const std::string& s, const extLong& prec=get_static_defInputDigits()) : RCReal(NULL){
     constructFromString(s.c_str(), prec);
   }
 
@@ -134,12 +134,12 @@ public:
   /// \name String Conversion Functions
   //@{
   /// set value from <tt>const char*</tt>
-  void fromString(const char* s, const extLong& prec = defInputDigits) {
+  void fromString(const char* s, const extLong& prec = get_static_defInputDigits()) {
     *this = Real(s, prec);
   }
   /// convert to <tt>std::string</tt>
   /** give decimal string representation */
-  std::string toString(long prec=defOutputDigits, bool sci=false) const {
+  std::string toString(long prec=get_static_defOutputDigits(), bool sci=false) const {
     return rep->toString(prec, sci);
   }
   //@}
@@ -179,7 +179,8 @@ public:
   /// \name Aprroximation Function
   //@{
   /// approximation
-  Real approx(const extLong& r=defRelPrec, const extLong& a=defAbsPrec) const {
+  Real approx(const extLong& r=get_static_defRelPrec(), 
+              const extLong& a=get_static_defAbsPrec()) const {
     return rep->approx(r, a);
   }
   //@}
@@ -395,7 +396,7 @@ inline Real& Real::operator*=(const Real& rhs) {
   return *this;
 }
 inline Real& Real::operator/=(const Real& rhs) {
-  *this = real_div::eval(getRep(), rhs.getRep(), defRelPrec);
+  *this = real_div::eval(getRep(), rhs.getRep(), get_static_defRelPrec());
   return *this;
 }
 
@@ -413,7 +414,7 @@ inline Real operator*(const Real& x, const Real& y) {
 }
 // operator/
 inline Real operator/(const Real& x, const Real& y) {
-  return real_div::eval(x.getRep(), y.getRep(), defRelPrec);
+  return real_div::eval(x.getRep(), y.getRep(), get_static_defRelPrec());
 }
 // div w/ precision
 inline Real Real::div(const Real& x, const extLong& r) const {
@@ -478,7 +479,7 @@ inline Real power(const Real& r, unsigned long p) {
 }
 /// square root
 inline Real sqrt(const Real& x) {
-  return x.sqrt(defAbsPrec);
+  return x.sqrt(get_static_defAbsPrec());
 }
 
 // class Realbase_for (need defined after Real)
@@ -493,4 +494,9 @@ inline Real RealLong::operator-() const {
 }
 
 } //namespace CORE
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/CORE/Real_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // _CORE_REAL_H_
