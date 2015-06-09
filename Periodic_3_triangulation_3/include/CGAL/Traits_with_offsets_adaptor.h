@@ -1,3 +1,27 @@
+// Copyright (c) 1999-2004,2006-2009   INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+//
+// Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+//                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
+//                 Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
+//                 Nico Kruithof <Nico.Kruithof@sophia.inria.fr>
+//                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
+//                 Aymeric Pellé <Aymeric.Pelle@sophia.inria.fr>
 #ifndef CGAL_TRAITS_WITH_OFFSETS_ADAPTOR_H
 #define CGAL_TRAITS_WITH_OFFSETS_ADAPTOR_H
 
