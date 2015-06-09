@@ -97,7 +97,7 @@ FIGURE WITH AND WITHOUT
 
 \subsection Reconstruction_simplification_2Relevance Edge Relevance
 
-An edge is relevant from the approximation point of view if (1) it is long, (2) approximates a large number of points (or equivalently the number of points when all masses are equal), and (3) has a small approximation error. This notion is defined as m(e) x |e|^2 / cost(e), where m(e) denotes the mass of the edge, |e| denotes its length and cost(e) its approximation error. As the error is defined by mass time squared distance the relevance is unitless.
+An edge is relevant from the approximation point of view if (1) it is long, (2) approximates a large number of points (or a large amount of mass when points have mass attributes), and (3) has a small approximation error. The notion of relevance is defined as m(e) x |e|^2 / cost(e), where m(e) denotes the mass of the points approximated by the edge, |e| denotes the edge length and cost(e) its approximation error. As the error is defined by mass time squared distance the relevance is unitless.
 The default value is 0, so that all edges approximating some input points are considered relevant.
 A larger relevance value provides a means to increase resilience to outliers.
 
@@ -105,7 +105,7 @@ FIGURE WITH VARIOUS RELEVANCE VALUES
 
 \subsection Reconstruction_simplification_2Random Random Sample Size
 
-By default the simplification relies upon an exhaustive priority queue of edge collapse operators during decimation. For improved efficiency, a parameter <I> sample size </I> strictly greater than 0 switches to a multiple choice approach, i.e., a best-choice selection in a random sample of edge collapse operators, of size sample_size. A typical value for the sample size is 15, but this value may be larger when targeting a very coarse simplification. 
+By default the simplification relies upon an exhaustive priority queue of edge collapse operators during decimation. For improved efficiency, a parameter <I> sample size </I> strictly greater than 0 switches to a multiple choice approach, i.e., a best-choice selection in a random sample of edge collapse operators, of size sample_size. A typical value for the sample size is 15, but this value must be enlarged when targeting a very coarse simplification. 
 
 \subsection Reconstruction_simplification_2Verbose Verbose Output
 
@@ -118,11 +118,14 @@ A value greater than 0 generates output to the standard output std::cout.
 
 \section Reconstruction_simplification_2Advanced Advanced
 
-The task addressed here is to reconstruct a shape from a noisy point set \f$ S \f$ in  \f$ \mathbb{R}^2 \f$, i.e., given a set of points in the plane, find a <I>0-1 simplicial complex </I>which best approximates the original shape where the points were sampled from. 
+The task addressed here is to reconstruct a shape from a noisy point set \f$ S \f$ in  \f$ \mathbb{R}^2 \f$, i.e., given a set of points in the plane, find a set of points and segments (more formally, a <I> 0-1 simplicial complex </I>) which best approximates \f$ S \f$. 
+
+The approximation error is derived from the theory of optimal transportation between geometric measures. More specifically, the input point set is seen as a discrete measure, ie, a set of pointwise masses. The goal is to find a 0-1 simplicial complex where the edges are the support of a piecewise uniform measure and the vertices are the support of a discrete measure. Approximating the input point set in our context translates into approximating the input discrete measure by another measure composed of line segments and points.
+
+Intuitively, the input point set S may be seen as grains of sand with total mass M. Approximating S with a given set of line segments and points, in sense of optimal transportation, amounts to finding the line and point densities and associated transport plan that minimizes the Wasserstein-2 distance. The latter 
 
 
-
-based on optimal transportation of discrete measures. This method provides benefits such as robustness to noise, preservation of sharp features and boundaries. An optimal transportation plan is an assignment of the input-points to vertices and edges of an output simplicial complex such that the 2-Wasserstein distance is minimized.
+based on optimal transportation of discrete measures. This method provides benefits such as robustness to noise, preservation of sharp features and boundaries. An optimal transportation plan is an assignment of the input-points to vertices and edges of an output simplicial complex such that the 2- distance is minimized.
 
 The algorithm can be summarized as: Considering \f$S\f$ as a measure  \f$ \mu \f$ consisting of Dirac masses, find a coarse simplicial complex \f$T\f$ such that  \f$ \mu \f$ is well approximated by a piecewise combination of uniform measure on the edges and vertices of  \f$ T \f$.
 
