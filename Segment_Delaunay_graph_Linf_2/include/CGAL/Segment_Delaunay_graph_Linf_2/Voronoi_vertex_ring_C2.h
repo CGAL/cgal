@@ -820,6 +820,7 @@ private:
   const
   {
     CGAL_precondition(pq || pr);
+    CGAL_USE(pr);
     const Line_2 lendp = orient_line_endp(p, (pq ? q : r), pq);
     const Line_2 lnon = orient_line_nonendp(p, (pq ? r : q));
     CGAL_SDG_DEBUG(std::cout << "debug compute_pss_endp lendp="
@@ -932,6 +933,8 @@ private:
   const
   {
     CGAL_precondition(! (pq || pr));
+    CGAL_USE(pq);
+    CGAL_USE(pr);
     const RT q_coord = hvseg_coord(q, is_q_hor);
     const RT r_coord = hvseg_coord(r, is_r_hor);
     const RT p_coord_q = is_q_hor ? p.point().y() : p.point().x();

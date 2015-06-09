@@ -1290,6 +1290,7 @@ private:
       const bool is_r_hv, const bool is_r_hor, const bool pr) const
   {
     CGAL_precondition(pq || pr);
+    CGAL_USE(pr);
     const Line_2 lendp = orient_line_endp(p, (pq ? q : r), pq);
     const Line_2 lnon = orient_line_nonendp(p, (pq ? r : q));
     const Line_2 llbis = bisector_linf_line(
@@ -1389,6 +1390,8 @@ private:
       const bool pq, const bool pr) const
   {
     CGAL_precondition(! (pq || pr));
+    CGAL_USE(pq);
+    CGAL_USE(pr);
     const RT q_coord = hvseg_coord(q, is_q_hor);
     const RT r_coord = hvseg_coord(r, is_r_hor);
     const RT p_coord_q = is_q_hor ? p.point().y() : p.point().x();
@@ -1706,6 +1709,8 @@ private:
 		 const SSS_Type&) const
   {
     CGAL_assertion( p.is_segment() && q.is_segment() && r.is_segment() );
+    CGAL_USE(q);
+    CGAL_USE(r);
 
     Line_2 l = compute_supporting_line(p.supporting_site());
     Homogeneous_point_2 pref = compute_linf_projection_hom(l, vv);

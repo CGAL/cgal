@@ -188,6 +188,8 @@ private:
 				  const Site_2& , Method_tag) const
   {
     CGAL_precondition( p.is_segment() && q.is_segment() );
+    CGAL_USE(p);
+    CGAL_USE(q);
     return true;
   }
 
@@ -525,6 +527,9 @@ private:
 				  const Site_2& t, Method_tag ) const
   {
     CGAL_precondition( p.is_point() && q.is_point() && t.is_point() );
+    CGAL_USE(p);
+    CGAL_USE(q);
+    CGAL_USE(t);
     return false;
   }
 
