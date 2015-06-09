@@ -396,7 +396,8 @@ MainWindow::loadPointsInput(QString fileName)
 void
 MainWindow::loadSitesInput(QString fileName)
 {
-  SVD::Site_2 site;
+  K::Point_2 p(0, 0);
+  SVD::Site_2 site = SVD::Site_2::construct_site_2(p);
   std::ifstream ifs(qPrintable(fileName));
   while (ifs >> site) {
     svd.insert(site);
