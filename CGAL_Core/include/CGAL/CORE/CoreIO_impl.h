@@ -38,19 +38,13 @@
 #define CGAL_INLINE_FUNCTION
 #endif
 
-#ifdef CGAL_HEADER_ONLY
-#define CGAL_HEADERONLY_STATIC_FUNCTION static
-#else
-#define CGAL_HEADERONLY_STATIC_FUNCTION
-#endif
-
 #include <CGAL/CORE/BigFloatRep.h>
 #include <CGAL/CORE/BigFloat.h>
 #include <CGAL/CORE/BigInt.h>
 
 namespace CORE { 
 
-CGAL_HEADERONLY_STATIC_FUNCTION
+CGAL_INLINE_FUNCTION
 void core_io_error_handler(const char *f, const char *m) {
   std::cout << "\n error_handler";
   std::cout << "::" << f << "::" << m << "\n";
@@ -58,7 +52,7 @@ void core_io_error_handler(const char *f, const char *m) {
   std::abort();
 }
 
-CGAL_HEADERONLY_STATIC_FUNCTION
+CGAL_INLINE_FUNCTION
 void core_io_memory_handler(char *t, const char *f, const char *m) {
   if (t == NULL) {
     std::cout << "\n memory_handler";
@@ -70,7 +64,7 @@ void core_io_memory_handler(char *t, const char *f, const char *m) {
 }
 
 // s has size old_size and will be resized to new_size.
-CGAL_HEADERONLY_STATIC_FUNCTION
+CGAL_INLINE_FUNCTION
 void allocate (char * &s, int old_size, int new_size) {
   if (old_size > new_size)
     old_size = new_size;
@@ -91,7 +85,7 @@ void allocate (char * &s, int old_size, int new_size) {
 
 // appends c to s at position pos.
 // sz is the size of s
-CGAL_HEADERONLY_STATIC_FUNCTION
+CGAL_INLINE_FUNCTION
 void append_char (char * &s, int & sz, int pos, char c) {
   if (pos > sz)
     core_io_error_handler("CoreIO", "append_char::invalid argument");
@@ -105,7 +99,7 @@ void append_char (char * &s, int & sz, int pos, char c) {
 }
 
 // skip blanks, tabs, line breaks and comment lines
-CGAL_HEADERONLY_STATIC_FUNCTION
+CGAL_INLINE_FUNCTION
 int skip_comment_line (std::istream & in) {
   int c;
 
@@ -127,7 +121,7 @@ int skip_comment_line (std::istream & in) {
 }
 
 // skips '\\' followed by '\n'
-CGAL_HEADERONLY_STATIC_FUNCTION
+CGAL_INLINE_FUNCTION
 int skip_backslash_new_line (std::istream & in) {
   int c = in.get();
 
@@ -143,7 +137,7 @@ int skip_backslash_new_line (std::istream & in) {
   return c;
 }
 
-CGAL_HEADERONLY_STATIC_FUNCTION
+CGAL_INLINE_FUNCTION
 void read_string(std::istream& in, char* &buffer, int sz) {
   int c, pos=0;
   skip_comment_line(in);
@@ -157,7 +151,7 @@ void read_string(std::istream& in, char* &buffer, int sz) {
   append_char(buffer, sz, pos, '\0');
 }
 
-CGAL_HEADERONLY_STATIC_FUNCTION
+CGAL_INLINE_FUNCTION
 void read_base_number(std::istream& in, BigInt& m, long length, long maxBits) {
   char *buffer;
   int size, offset;
@@ -229,7 +223,7 @@ void read_base_number(std::istream& in, BigInt& m, long length, long maxBits) {
 }
 
 
-CGAL_HEADERONLY_STATIC_FUNCTION
+CGAL_INLINE_FUNCTION
 void write_base_number(std::ostream& out, char* buffer, int length, int base, int charsPerLine) {
   // write big number in a format that gmp's mpz_set_str() can
   // automatically recognize with argument base = 0.
