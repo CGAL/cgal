@@ -22,7 +22,7 @@ int main()
             std::istream_iterator<Point_3>(), 
             std::back_inserter(points));
   
-  CGAL::advancing_front_surface_reconstruction(points.begin(),
+  CGAL::advancing_front_surface_reconstructionP(points.begin(),
                                                points.end(),
                                                P);
 

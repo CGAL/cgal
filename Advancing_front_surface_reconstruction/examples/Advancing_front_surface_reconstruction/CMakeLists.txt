@@ -21,9 +21,7 @@ if ( CGAL_FOUND )
   include( CGAL_CreateSingleSourceCGALProgram )
 
   include_directories (BEFORE ../../include)
-#  include_directories (BEFORE ../../../../../trunk/Triangulation_2/include)
 
-  create_single_source_cgal_program( "extract.cpp" )
   create_single_source_cgal_program( "reconstruction_fct.cpp" )
   create_single_source_cgal_program( "reconstruction_class.cpp" )
   create_single_source_cgal_program( "reconstruction_polyhedron.cpp" )
