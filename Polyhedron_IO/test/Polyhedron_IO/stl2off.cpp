@@ -33,7 +33,7 @@ void read(const char* fname)
 }
 
 
-int main(int argc, char* argv[])
+int main()
 {
   read("data/cube.stl");
   read("data/triangle.stl");
