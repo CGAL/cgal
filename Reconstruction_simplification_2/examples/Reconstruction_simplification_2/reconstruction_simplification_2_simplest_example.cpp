@@ -21,7 +21,7 @@ typedef CGAL::Reconstruction_simplification_2<K>            Rs_2;
 
 void load_xy_file(const std::string& fileName, std::list<Point>& points)
 {
-  std::ifstream ifs(fileName);
+  std::ifstream ifs(fileName.c_str());
 
   Point point;
   while (ifs >> point)

@@ -30,7 +30,7 @@ typedef CGAL::Reconstruction_simplification_2<
 
 void load_xym_file(const std::string& filename, PointMassList& points)
 {
-   std::ifstream ifs(filename);
+   std::ifstream ifs(filename.c_str());
 	
    Point point;
 	 FT mass;
