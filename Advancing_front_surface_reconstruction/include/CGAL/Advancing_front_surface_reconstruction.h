@@ -2400,11 +2400,11 @@ advancing_front_surface_reconstruction(PointIterator b,
 }
 
 
-  template <typename PointIterator, typename Kernel, typename Items, typename Filter>
+  template <typename PointIterator, typename Kernel, typename Items,  template < class T, class I, class A> class HDS, typename Alloc,typename Filter>
 void
-advancing_front_surface_reconstructionP(PointIterator b,
+advancing_front_surface_reconstruction(PointIterator b,
                                         PointIterator e,
-                                        Polyhedron_3<Kernel,Items>& polyhedron,
+                                       Polyhedron_3<Kernel,Items,HDS,Alloc>& polyhedron,
                                         Filter filter,
                                         double radius_ratio_bound = 5,
                                         double  	beta = 0.52)
@@ -2416,10 +2416,14 @@ advancing_front_surface_reconstructionP(PointIterator b,
   typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
   typedef Advancing_front_surface_reconstruction<Triangulation_3,Filter> Reconstruction;
+  typedef std::iterator_traits<PointIterator>::value_type InputPoint;
+  typedef typename Kernel_traits<InputPoint>::Kernel InputKernel;
+  typedef Cartesian_converter<InputKernel,Kernel> CC;
   typedef typename Kernel::Point_3 Point_3;
   
-  Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count<Point_3>()),
-                      boost::make_transform_iterator(e, AFSR::Auto_count<Point_3>() )  );
+  CC cc=CC();
+  Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count_cc<Point_3,CC>(cc)),
+                      boost::make_transform_iterator(e, AFSR::Auto_count_cc<Point_3,CC>(cc) )  );
   
   AFSR_options opt;
   opt.K = radius_ratio_bound;
@@ -2429,11 +2433,11 @@ advancing_front_surface_reconstructionP(PointIterator b,
   AFSR::construct_polyhedron(polyhedron, R);
 }
 
-template <typename PointIterator, typename Kernel, typename Items>
+  template <typename PointIterator, typename Kernel, typename Items, template < class T, class I, class A> class HDS, typename Alloc>
 void
-advancing_front_surface_reconstructionP(PointIterator b,
+advancing_front_surface_reconstruction(PointIterator b,
                                         PointIterator e,
-                                        Polyhedron_3<Kernel,Items>& polyhedron,
+                                       Polyhedron_3<Kernel,Items,HDS,Alloc>& polyhedron,
                                         double radius_ratio_bound = 5,
                                         double  	beta = 0.52)
 {
