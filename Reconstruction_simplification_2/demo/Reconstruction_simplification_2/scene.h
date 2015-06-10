@@ -315,7 +315,7 @@ public:
 		Point point;
 		unsigned nb, x, y, z;
 		ifs >> nb >> x >> y >> z;
-		for (unsigned i = 0; i < nb; ++i) {
+		for (unsigned int i = 0; i < nb; ++i) {
 			ifs >> x >> point;
 			add_sample(point, 1.0);
 		}
@@ -535,7 +535,7 @@ public:
 	void save_gtn(const QString& filename, const Sample_list& samples) {
 		std::ofstream ofs(qPrintable(filename));
 		ofs << samples.size() << " 2 0 0" << std::endl;
-		unsigned i = 0;
+		unsigned int i = 0;
 		for (Sample_list_const_iterator it = samples.begin();
 				it != samples.end(); ++it, ++i) {
 			Sample* sample = *it;
@@ -548,7 +548,7 @@ public:
 
 	void set_parameters(const int verbose, const int mchoice,
 			const bool use_flip, const double alpha, const double norm_tol,
-			const double tang_tol, const unsigned relocation,
+			const double tang_tol, const unsigned int relocation,
 			const double ghost) {
 
 		m_pwsrec->set_verbose(verbose);
@@ -638,12 +638,12 @@ public:
 		}
 	}
 
-	void reconstruct_until(const unsigned nv) {
+	void reconstruct_until(const unsigned int nv) {
 		std::cout << "reconstruct_until" << std::endl;
 		m_pwsrec->run_until(nv);
 	}
 
-	void reconstruct(const unsigned steps) {
+	void reconstruct(const unsigned int steps) {
 		std::cout << "reconstruct" << std::endl;
 		m_pwsrec->run(steps);
 	}
@@ -779,12 +779,12 @@ public:
 	}
 
 	void draw_one_circle(const Point& center) {
-		unsigned N = 10;
+		unsigned int N = 10;
 		const double r = std::sqrt(m_pwsrec->get_norm_tol());
 		const double x = center.x();
 		const double y = center.y();
 		::glBegin (GL_POLYGON);
-		for (unsigned i = 0; i < N; ++i) {
+		for (unsigned int i = 0; i < N; ++i) {
 			double angle = 2.0 * M_PI * (double(i) / double(N));
 			double u = r * std::cos(angle) + x;
 			double v = r * std::sin(angle) + y;

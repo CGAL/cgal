@@ -263,7 +263,7 @@ void MainWindow::on_actionCircle_triggered()
 void MainWindow::on_actionHalf_circle_triggered()
 {
 	bool ok;
-	unsigned density = QInputDialog::getInteger(
+	unsigned int density = QInputDialog::getInteger(
 			this, tr("Density"), tr("Density:"), 150, 10, 10000, 1, &ok);
 	if (!ok) return;
 
@@ -291,7 +291,7 @@ void MainWindow::on_actionSpiral_triggered()
 void MainWindow::on_actionLine_triggered()
 {
 	bool ok;
-	unsigned density = QInputDialog::getInteger(
+	unsigned int density = QInputDialog::getInteger(
 			this, tr("Density"), tr("Density:"), 50, 1, 10000, 1, &ok);
 	if (!ok) return;
 
@@ -329,7 +329,7 @@ void MainWindow::on_actionBox_triggered()
 void MainWindow::on_actionBoxes_triggered()
 {
 	bool ok;
-	unsigned density = QInputDialog::getInteger(
+	unsigned int density = QInputDialog::getInteger(
 			this, tr("Density"), tr("Density:"), 10, 1, 10000, 1, &ok);
 	if (!ok) return;
 
@@ -360,7 +360,7 @@ void MainWindow::on_actionParallel_lines_triggered()
 void MainWindow::on_actionBox_with_boundaries_triggered()
 {
 	bool ok;
-	unsigned density = QInputDialog::getInteger(
+	unsigned int density = QInputDialog::getInteger(
 			this, tr("Density"), tr("Density:"), 10, 1, 10000, 1, &ok);
 	if (!ok) return;
 
@@ -371,7 +371,7 @@ void MainWindow::on_actionBox_with_boundaries_triggered()
 void MainWindow::on_actionBox_with_missing_corners_triggered()
 {
 	bool ok;
-	unsigned density = QInputDialog::getInteger(
+	unsigned int density = QInputDialog::getInteger(
 			this, tr("Density"), tr("Density:"), 10, 1, 10000, 1, &ok);
 	if (!ok) return;
 
@@ -398,7 +398,7 @@ void MainWindow::on_actionStar_triggered()
 void MainWindow::on_actionStair_triggered()
 {
 	bool ok;
-	unsigned density = QInputDialog::getInteger(
+	unsigned int density = QInputDialog::getInteger(
 			this, tr("Density"), tr("Density:"), 30, 2, 10000, 1, &ok);
 	if (!ok) return;
 
@@ -410,7 +410,7 @@ void MainWindow::on_actionStair_triggered()
 void MainWindow::on_actionSkyline_triggered()
 {
 	bool ok;
-	unsigned density = QInputDialog::getInteger(
+	unsigned int density = QInputDialog::getInteger(
 			this, tr("Density"), tr("Density:"), 10, 1, 10000, 1, &ok);
 	if (!ok) return;
 
@@ -422,7 +422,7 @@ void MainWindow::on_actionSkyline_triggered()
 void MainWindow::on_actionIncreasingly_sharp_angles_triggered()
 {
 	bool ok;
-	unsigned density = QInputDialog::getInteger(
+	unsigned int density = QInputDialog::getInteger(
 			this, tr("Density"), tr("Density:"), 100, 1, 10000, 1, &ok);
 	if (!ok) return;
 

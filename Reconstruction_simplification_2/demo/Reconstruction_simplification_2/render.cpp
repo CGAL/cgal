@@ -1,3 +1,5 @@
+#include <fstream>
+
 // Qt
 #include <QtOpenGL>
 
@@ -14,7 +16,7 @@ void R_s_k_2::print_stats() const
     int nb_solid = 0;
     int nb_ghost = 0;
     for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
-    		ei != m_dt.finite_edges_end(); ++ei)
+         ei != m_dt.finite_edges_end(); ++ei)
     {
         Edge edge = *ei;
         if (m_dt.is_ghost(edge)) nb_ghost++;
@@ -46,10 +48,10 @@ void R_s_k_2::draw_point(const Point& point)
 
 void R_s_k_2::draw_segment(const Point& s, const Point& t)
 {
-	::glBegin(GL_LINES);
+    ::glBegin(GL_LINES);
     ::glVertex2d(s.x(), s.y());
     ::glVertex2d(t.x(), t.y());
-	::glEnd();
+    ::glEnd();
 }
 
 void R_s_k_2::draw_edge(const Edge& edge)
@@ -96,8 +98,8 @@ void R_s_k_2::draw_vertices(const float point_size,
                            const float green,
                            const float blue)
 {
-    for (Finite_vertices_iterator vi = m_dt.finite_vertices_begin(); vi
-    			!= m_dt.finite_vertices_end(); vi++)
+    for (Finite_vertices_iterator vi = m_dt.finite_vertices_begin(); 
+         vi != m_dt.finite_vertices_end(); vi++)
     {
         Vertex_handle vertex = vi;
         if (vertex->pinned())
@@ -121,7 +123,7 @@ void R_s_k_2::draw_edges(const float line_width,
 {
     ::glLineWidth(line_width);
     for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
-    		ei != m_dt.finite_edges_end(); ei++)
+         ei != m_dt.finite_edges_end(); ei++)
     {
         Edge edge = *ei;
         Edge twin = m_dt.twin_edge(edge);
@@ -205,7 +207,7 @@ void R_s_k_2::draw_pedges(const float line_width)
     for (Finite_edges_iterator ei = m_dt.finite_edges_begin(); ei != m_dt.finite_edges_end(); ++ei)
     {
         Edge edge = *ei;
-        for (unsigned i = 0; i < 2; ++i)
+        for (unsigned int i = 0; i < 2; ++i)
         {
             if (m_dt.is_pinned(edge)) 
             {
@@ -241,7 +243,7 @@ void R_s_k_2::draw_pedges(const float line_width)
     if (min_value == max_value) max_value += 1.0;
     
     std::size_t N = values.size();
-    for (unsigned i = 0; i < N; ++i)
+    for (unsigned int i = 0; i < N; ++i)
         draw_one_pedge(edges[i], values[i], min_value, max_value, line_width);
 
     std::cout << "There are: " << N << " pedges"
@@ -831,7 +833,7 @@ void R_s_k_2::draw_bg_edges(const Triangulation& mesh,
     for (Finite_faces_iterator fi = mesh.finite_faces_begin(); fi != mesh.finite_faces_end(); ++fi)
     {
         Face_handle f = fi;
-        for (unsigned i = 0; i < 3; ++i)
+        for (unsigned int i = 0; i < 3; ++i)
         {
             Edge e(f, i);
             e = mesh.twin_edge(e);            
@@ -893,7 +895,7 @@ void R_s_k_2::draw_vertex_edges(Vertex_handle vertex,
     {
         Face_handle f = fcirc;
         int index = f->index(vertex);
-        for (unsigned i = 0; i < 3; ++i)
+        for (unsigned int i = 0; i < 3; ++i)
         {
             Edge e(f, i);
             if (mesh.is_infinite(e)) continue;            
@@ -918,15 +920,15 @@ void R_s_k_2::save_edges(std::ofstream& ofs, const int nb)
     int nb_remove = (std::min)(nb, int(mindex.size()));
     for (int i = 0; i < nb_remove; ++i) 
     {
-    	PEdge pedge = *(mindex.get<1>()).begin();
-    	(mindex.get<0>()).erase(pedge);
+        PEdge pedge = *(mindex.get<1>()).begin();
+        (mindex.get<0>()).erase(pedge);
 
     }
     
     while (!mindex.empty())
     {
-    	PEdge pedge = *(mindex.get<1>()).begin();
-    	(mindex.get<0>()).erase(pedge);
+        PEdge pedge = *(mindex.get<1>()).begin();
+        (mindex.get<0>()).erase(pedge);
         save_one_edge(ofs, pedge.edge());
     }
 }
@@ -935,7 +937,7 @@ void R_s_k_2::save_one_edge(std::ofstream& ofs, const Edge& edge)
 {
     int i = edge.second;
     Face_handle face = edge.first;
-    Point a = face->vertex((i+1)%3)->point();
-    Point b = face->vertex((i+2)%3)->point();
-	ofs << a << " " << b << std::endl;
+    Point const& a = face->vertex((i+1)%3)->point();
+    Point const& b = face->vertex((i+2)%3)->point();
+    ofs << a << " - " << b << std::endl;
 }

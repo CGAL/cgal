@@ -28,7 +28,7 @@ private:
 	double m_percent;
 	double m_norm_tol;
 	double m_tang_tol;
-    double m_relocation;
+  double m_relocation;
     
 	unsigned int maxNumRecentFiles;
 	QAction* recentFilesSeparator;

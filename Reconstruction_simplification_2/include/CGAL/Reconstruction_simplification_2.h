@@ -165,13 +165,13 @@ protected:
 	MultiIndex m_mindex;
 	int m_ignore;
 	int m_verbose;
-	int m_mchoice;  // # Edges
+	std::size_t m_mchoice;  // # Edges
 	bool m_use_flip;
 	double m_alpha; // [0, 1]
 	double m_norm_tol; // [0,BBOX]
 	double m_tang_tol; // [0,BBOX]
 	double m_ghost; // ghost vs solid
-	unsigned m_relocation; // # relocations
+	unsigned int m_relocation; // # relocations
 
     // bbox
     double m_bbox_x;
@@ -245,7 +245,7 @@ protected:
 
 		\param verbose The verbosity level.
 	*/
-  void set_verbose(std::size_t verbose) {
+  void set_verbose(int verbose) {
 		m_verbose = verbose;
 	}
 
@@ -292,12 +292,12 @@ protected:
 		Sets the number of vertex relocations
 		that are performed between two edge collapses.
 	*/
-  void set_relocation(std::size_t relocation) {
+  void set_relocation(unsigned int relocation) {
 		m_relocation = relocation;
 	}
 
 	/// \cond SKIP_IN_MANUAL
-	unsigned get_relocation() const {
+	unsigned int get_relocation() const {
 		return m_relocation;
 	}
 	/// \endcond
@@ -539,7 +539,7 @@ protected:
 		if (m_mchoice == 0)
 			push_stencil_to_pqueue(hull.begin(), hull.end());
 
-		for (unsigned i = 0; i < m_relocation; ++i) {
+		for (unsigned int i = 0; i < m_relocation; ++i) {
 			relocate_one_ring(hull.begin(), hull.end());
 		}
 
@@ -707,11 +707,11 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 
 	// PQUEUE (MCHOICE or EXHAUSTIVE) //
 
-	bool pick_edge(int nb, Reconstruction_edge_2& best_pedge) {
+	bool pick_edge(std::size_t nb, Reconstruction_edge_2& best_pedge) {
 		if (m_dt.number_of_faces() < 2)
 			return false;
 
-		int ne = int(2 * m_dt.tds().number_of_edges());
+		std::size_t ne = 2 * m_dt.tds().number_of_edges();
 		if (nb > ne)
 			nb = ne;
 
@@ -759,9 +759,9 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 		return true;
 	}
 
-	bool pick_edge_randomly(int nb, Reconstruction_edge_2& best_pedge) {
+	bool pick_edge_randomly(std::size_t nb, Reconstruction_edge_2& best_pedge) {
 		MultiIndex mindex;
-		for (int i = 0; i < nb; ++i) {
+		for (std::size_t i = 0; i < nb; ++i) {
 			Reconstruction_edge_2 pedge;
 			if (random_pedge(pedge))
 				mindex.insert(pedge);
