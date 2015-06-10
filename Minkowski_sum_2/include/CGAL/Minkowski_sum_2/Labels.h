@@ -12,10 +12,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein   <wein_r@yahoo.com>
 
 #ifndef CGAL_MINKOWSKI_SUM_LABELS_H
 #define CGAL_MINKOWSKI_SUM_LABELS_H
@@ -46,7 +43,7 @@ public:
    * \param component The index of the component.
    * \param index Index of the point within the component.
    */
-  Point_label (unsigned int component, 
+  Point_label (unsigned int component,
                unsigned int index) :
     _component (component),
     _index (index)
@@ -86,7 +83,7 @@ public:
   void set_component (unsigned int component)
   {
     CGAL_precondition (component != 0);
-    
+
     _component = component;
     return;
   }
@@ -134,7 +131,7 @@ public:
    * \param is_last Is this the last curve of the component.
    */
   X_curve_label (bool is_directed_right,
-                 unsigned int component, 
+                 unsigned int component,
                  unsigned int index,
                  bool is_last = false) :
     _component (component),
@@ -252,13 +249,13 @@ public:
   void set_component (unsigned int component)
   {
     CGAL_precondition (component != 0);
-    
+
     _component = component;
     return;
   }
 
   /*!
-   * Set the curve index within the component. 
+   * Set the curve index within the component.
    * \param index The index in the component.
    * \param is_last Is this the last curve of the component.
    */
