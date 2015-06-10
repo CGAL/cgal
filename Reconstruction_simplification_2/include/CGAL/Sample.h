@@ -23,6 +23,7 @@
 
 /// \cond SKIP_IN_MANUAL
 
+namespace CGAL {
 template <class Kernel>
 class Sample
 {
@@ -139,5 +140,7 @@ struct greater_priority
         return ( a.priority() > b.priority() );
     }
 };
+
+} //end namespace CGAL
 
 #endif // SAMPLE_H
