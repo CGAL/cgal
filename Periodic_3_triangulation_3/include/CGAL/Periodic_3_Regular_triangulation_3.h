@@ -217,7 +217,7 @@ public:
   template <class CellIt>
   void insert_too_long_edges(Vertex_handle /*v*/, CellIt begin, const CellIt end)
   {
-    FT threshold = FT(1)/FT(64) * (domain().xmax()-domain().xmin());
+    FT threshold = FT(1)/FT(64) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
     for (; begin != end; ++begin)
     {
       if (squared_orthoball_radius(*begin) >= threshold)
@@ -235,7 +235,7 @@ public:
   bool update_cover_data_during_management (Cell_handle new_ch, const std::vector<Cell_handle>& new_cells)
   {
     bool result = false;
-    FT threshold = FT(1)/FT(64) * (domain().xmax() - domain().xmin());
+    FT threshold = FT(1)/FT(64) * (domain().xmax() - domain().xmin()) * (domain().xmax() - domain().xmin());
 
     if (squared_orthoball_radius(new_ch) >= threshold)
     {
@@ -254,7 +254,7 @@ public:
 
   virtual void update_cover_data_after_converting_to_27_sheeted_covering ()
   {
-    FT threshold = FT(1)/FT(64) * (domain().xmax()-domain().xmin());
+    FT threshold = FT(1)/FT(64) * (domain().xmax()-domain().xmin()) * (domain().xmax() - domain().xmin());
     for (Cell_iterator iter = cells_begin(), end_iter = cells_end(); iter != end_iter; ++iter)
     {
       if (squared_orthoball_radius(iter) >= threshold)
