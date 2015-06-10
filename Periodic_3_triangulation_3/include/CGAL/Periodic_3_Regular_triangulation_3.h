@@ -280,7 +280,7 @@ public:
      Conflict_tester tester(p, this);
      Point_hider hider(this);
      Cover_manager cover_manager(*this);
-     assert(p.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ));
+     CGAL_triangulation_assertion(p.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ));
      return Base::insert_in_conflict(p, start, tester, hider, cover_manager);
    }
 
@@ -289,7 +289,7 @@ public:
       Conflict_tester tester(p, this);
       Point_hider hider(this);
       Cover_manager cover_manager(*this);
-      assert(p.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ));
+      CGAL_triangulation_assertion(p.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ));
       return Base::insert_in_conflict(p,lt,c,li,lj, tester,hider,cover_manager);
     }
 
