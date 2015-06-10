@@ -228,7 +228,7 @@ describing the faces of the reconstructed surface.
 be convertible to `Exact_predicates_inexact_constructions_kernel::Point_3` with the `Cartesian_converter`.
 \tparam IndicesOutputIterator must be an output iterator to which 
 `CGAL::cpp11::tuple<std::size_t,std::size_t,std::size_t>` can be assigned.
-\tparam Filter must be a functor with `bool operator()(Gt::Point_3,Gt::Point_3,Gt::Point_3)`.
+\tparam Filter must be a functor with `bool operator()(Point,Point,Point)` where Point is `Exact_predicates_inexact_constructions_kernel::Point_3`.
 
 \param b iterator on the first point of the sequence
 \param e past the end iterator of the point sequence
