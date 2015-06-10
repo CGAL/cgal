@@ -21,7 +21,7 @@
 #define RECONSTRUCTION_VERTEX_BASE_2_H_
 
 #include <CGAL/Triangulation_vertex_base_2.h>
-#include <CGAL/sample.h>
+#include <CGAL/Sample.h>
 
 /// The Reconstruction_vertex_base_2 class is the default
 /// vertex class of the Reconstruction_triangulation_2 class.
