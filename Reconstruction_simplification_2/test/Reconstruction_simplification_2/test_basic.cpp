@@ -8,7 +8,7 @@
 #include <CGAL/Reconstruction_simplification_2.h>
 #include "testing_tools.h"
 
-#include<list>
+#include <list>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                                          Point;

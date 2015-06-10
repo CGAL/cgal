@@ -25,7 +25,7 @@ typedef CGAL::Reconstruction_simplification_2<K> Rs_2;
 
 typedef Rs_2::Vertex Vertex;
 
-typedef Rs_2::Reconstruction_edge_2 R_edge_2;
+typedef Rs_2::Rec_edge_2 R_edge_2;
 
 void test_list_output(Rs_2& rs2);
 void test_index_output(Rs_2& rs2);

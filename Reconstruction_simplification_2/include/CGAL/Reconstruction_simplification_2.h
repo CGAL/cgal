@@ -21,9 +21,7 @@
 #define RECONSTRUCTION_SIMPLIFICATION_2_H_
 
 #include <CGAL/Reconstruction_triangulation_2.h>
-#include <CGAL/Cost.h>
 #include <CGAL/Reconstruction_edge_2.h>
-#include <CGAL/Sample.h>
 #include <CGAL/console_color.h>
 
 #include <CGAL/property_map.h>
@@ -81,7 +79,7 @@ Furthermore, we can relocate the vertices by calling `relocate_points()`.
 
  */
 template<class Gt,
-         class PointMap = Identity_property_map <typename Gt::Point_2>,
+         class PointMap = boost::typed_identity_property_map <typename Gt::Point_2>,
          class MassMap  = boost::static_property_map <typename Gt::FT> >
 class Reconstruction_simplification_2 {
 public:
@@ -141,8 +139,8 @@ public:
 
 	typedef typename Triangulation::Edge_list Edge_list;
 
-	typedef typename Triangulation::Cost Cost;
-	typedef typename Triangulation::Sample Sample;
+	typedef typename Triangulation::Cost_ Cost_;
+	typedef typename Triangulation::Sample_ Sample_;
 	typedef typename Triangulation::Sample_list Sample_list;
 	typedef typename Triangulation::Sample_list_const_iterator
 			Sample_list_const_iterator;
@@ -154,7 +152,7 @@ public:
 	typedef typename Triangulation::PSample PSample;
 	typedef typename Triangulation::SQueue SQueue;
 
-	typedef typename Triangulation::Reconstruction_edge_2 Reconstruction_edge_2;
+	typedef typename Triangulation::Rec_edge_2 Rec_edge_2;
 
 	typedef typename Triangulation::MultiIndex MultiIndex;
 
@@ -387,16 +385,16 @@ protected:
 
 		init(start, beyond);
 
-		std::list<Sample*> m_samples;
+		std::list<Sample_*> m_samples;
 		for (InputIterator it = start; it != beyond; it++) {
   #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      Point point = get(point_pmap, it);
+                        Point point = get(point_pmap, it);
 			FT    mass = get( mass_pmap, it);
   #else
 			Point point = get(point_pmap, *it);
 			FT    mass = get( mass_pmap, *it);
   #endif
-			Sample* s = new Sample(point, mass);
+			Sample_* s = new Sample_(point, mass);
 			m_samples.push_back(s);
 		}
 		assign_samples(m_samples.begin(), m_samples.end());
@@ -476,7 +474,7 @@ protected:
 		m_dt.cleanup_assignments();
 	}
 
-	template<class Iterator>  // value_type = Sample*
+	template<class Iterator>  // value_type = Sample_*
 	void assign_samples(Iterator begin, Iterator end) {
 		double timer = clock();
 		std::cerr << yellow << "assign samples" << white << "...";
@@ -559,7 +557,7 @@ protected:
 		return true;
 	}
 
-	bool simulate_collapse(const Edge& edge, Cost& cost) {
+	bool simulate_collapse(const Edge& edge, Cost_& cost) {
 		bool ok;
 		Vertex_handle s = m_dt.source_vertex(edge);
 		Vertex_handle t = m_dt.target_vertex(edge);
@@ -610,18 +608,18 @@ protected:
 		return true;
 	}
 
-	template<class Iterator> // value_type = Sample*
+	template<class Iterator> // value_type = Sample_*
 	void backup_samples(Iterator begin, Iterator end) {
 		for (Iterator it = begin; it != end; ++it) {
-			Sample* sample = *it;
+			Sample_* sample = *it;
 			sample->backup();
 		}
 	}
 
-	template<class Iterator> // value_type = Sample*
+	template<class Iterator> // value_type = Sample_*
 	void restore_samples(Iterator begin, Iterator end) {
 		for (Iterator it = begin; it != end; ++it) {
-			Sample* sample = *it;
+			Sample_* sample = *it;
 			sample->restore();
 		}
 	}
@@ -630,7 +628,7 @@ protected:
 
 	bool decimate() {
 		bool ok;
-		Reconstruction_edge_2 pedge;
+		Rec_edge_2 pedge;
 		ok = pick_edge(m_mchoice, pedge);
 		if (!ok)
 			return false;
@@ -641,8 +639,8 @@ protected:
 		return true;
 	}
 
-bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
-		Cost after_cost;
+bool create_pedge(const Edge& edge, Rec_edge_2& pedge) {
+		Cost_ after_cost;
 		bool ok = simulate_collapse(edge, after_cost);
 		if (!ok)
 			return false;
@@ -652,15 +650,15 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 			return false;
 
 		Vertex_handle source = m_dt.source_vertex(edge);
-		Cost before_cost = m_dt.compute_cost_around_vertex(source);
+		Cost_ before_cost = m_dt.compute_cost_around_vertex(source);
 
 		FT before = before_cost.finalize(m_alpha);
 		FT after = after_cost.finalize(m_alpha);
-		pedge = Reconstruction_edge_2(edge, before, after);
+		pedge = Rec_edge_2(edge, before, after);
 		return true;
 	}
 
-	bool is_within_tol(const Cost& cost) const {
+	bool is_within_tol(const Cost_& cost) const {
 		if (cost.max_norm() > m_norm_tol)
 			return false;
 		if (cost.max_tang() > m_tang_tol)
@@ -716,7 +714,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 
 	// PQUEUE (MCHOICE or EXHAUSTIVE) //
 
-	bool pick_edge(std::size_t nb, Reconstruction_edge_2& best_pedge) {
+	bool pick_edge(std::size_t nb, Rec_edge_2& best_pedge) {
 		if (m_dt.number_of_faces() < 2)
 			return false;
 
@@ -740,7 +738,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 		return ok;
 	}
 
-	bool pick_edge_from_pqueue(Reconstruction_edge_2& best_pedge) {
+	bool pick_edge_from_pqueue(Rec_edge_2& best_pedge) {
 		if (m_mindex.empty())
 			populate_pqueue();
 		if (m_mindex.empty())
@@ -750,7 +748,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 		return true;
 	}
 
-	bool pick_edge_brute_force(Reconstruction_edge_2& best_pedge) {
+	bool pick_edge_brute_force(Rec_edge_2& best_pedge) {
 		MultiIndex mindex;
 		Finite_edges_iterator ei;
 		for (ei = m_dt.finite_edges_begin(); ei != m_dt.finite_edges_end();
@@ -768,10 +766,10 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 		return true;
 	}
 
-	bool pick_edge_randomly(std::size_t nb, Reconstruction_edge_2& best_pedge) {
+	bool pick_edge_randomly(std::size_t nb, Rec_edge_2& best_pedge) {
 		MultiIndex mindex;
 		for (std::size_t i = 0; i < nb; ++i) {
-			Reconstruction_edge_2 pedge;
+			Rec_edge_2 pedge;
 			if (random_pedge(pedge))
 				mindex.insert(pedge);
 		}
@@ -800,7 +798,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 		if (m_dt.is_target_cyclic(edge))
 			return false;
 
-		Reconstruction_edge_2 pedge;
+		Rec_edge_2 pedge;
 		bool ok = create_pedge(edge, pedge);
 		if (!ok)
 			return false;
@@ -810,7 +808,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 
 
 
-	bool random_pedge(Reconstruction_edge_2& pedge) {
+	bool random_pedge(Rec_edge_2& pedge) {
 		for (unsigned i = 0; i < 10; ++i) {
 			Edge edge = m_dt.random_finite_edge();
 			if (m_dt.is_pinned(edge))
@@ -835,7 +833,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 		typename Edge_list::const_iterator ei;
 		for (ei = edges.begin(); ei != edges.end(); ++ei) {
 			Edge edge = *ei;
-			(m_mindex.template get<0>()).erase(Reconstruction_edge_2(edge));
+			(m_mindex.template get<0>()).erase(Rec_edge_2(edge));
 		}
 	}
 
@@ -1159,7 +1157,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 
 	void compute_relocation_for_vertex(Vertex_handle vertex, FT& coef,
 			Vector& rhs) {
-		Sample* sample = vertex->get_sample();
+		Sample_* sample = vertex->get_sample();
 		if (sample) {
 			const FT m = sample->mass();
 			const Point& ps = sample->point();
@@ -1180,7 +1178,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 		Vector grad(0.0, 0.0);
 		Sample_list_const_iterator it;
 		for (it = samples.begin(); it != samples.end(); ++it) {
-			Sample* sample = *it;
+			Sample_* sample = *it;
 			const FT m = sample->mass();
 			const Point& ps = sample->point();
 
@@ -1203,7 +1201,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 
 		Sample_list_const_iterator it;
 		for (it = samples.begin(); it != samples.end(); ++it) {
-			Sample* sample = *it;
+			Sample_* sample = *it;
 			const FT m = sample->mass();
 			const Point& ps = sample->point();
 

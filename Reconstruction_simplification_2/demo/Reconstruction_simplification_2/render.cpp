@@ -201,7 +201,7 @@ void R_s_k_2::draw_pedges(const float line_width)
     int nb_cyclic = 0;
     int nb_discart = 0;
     FT min_value = (std::numeric_limits<FT>::max)();
-    FT max_value = std::numeric_limits<FT>::lowest();
+    FT max_value = -(std::numeric_limits<FT>::max)();
     std::vector<FT>  values;
     std::vector<Edge> edges;
     for (Finite_edges_iterator ei = m_dt.finite_edges_begin(); ei != m_dt.finite_edges_end(); ++ei)
@@ -282,7 +282,7 @@ void R_s_k_2::draw_one_pedge(const Edge& edge,
 void R_s_k_2::draw_costs(const float line_width, const bool view_ghost)
 {
     FT min_value = (std::numeric_limits<FT>::max)();
-    FT max_value = std::numeric_limits<FT>::lowest();
+    FT max_value = -(std::numeric_limits<FT>::max)();
     for (Finite_edges_iterator ei = m_dt.finite_edges_begin(); ei != m_dt.finite_edges_end(); ++ei)
     {
         Edge edge = *ei;
@@ -333,7 +333,7 @@ void R_s_k_2::draw_relevance(const float line_width, const int nb, const bool in
 {
     MultiIndex mindex;
     FT min_value = (std::numeric_limits<FT>::max)();
-    FT max_value = (std::numeric_limits<FT>::lowest)();
+    FT max_value = -(std::numeric_limits<FT>::max)();
     unsigned nb_initial = 0;
     for (Finite_edges_iterator ei = m_dt.finite_edges_begin(); ei != m_dt.finite_edges_end(); ++ei)
     {

@@ -56,16 +56,16 @@ public:
     };
 
     typedef typename Kernel::FT FT;
-    typedef typename Cost<FT> Cost;
-    typedef typename Sample<Kernel> Sample;
-    typedef std::list<Sample*> Sample_list;
+    typedef Cost<FT> Cost_;
+    typedef Sample<Kernel> Sample_;
+    typedef std::list<Sample_*> Sample_list;
 
 private:
     Sample_list m_samples[3];
     FT m_mass[3];
 
-    Cost m_cost0[3];
-    Cost m_cost1[3];
+    Cost_ m_cost0[3];
+    Cost_ m_cost1[3];
     int  m_plan[3];
 
     FT m_relevance[3];
@@ -135,13 +135,13 @@ public:
         m_mass[1] = 0.0;
         m_mass[2] = 0.0;
 
-        m_cost0[0] = Cost();
-        m_cost0[1] = Cost();
-        m_cost0[2] = Cost();
+        m_cost0[0] = Cost_();
+        m_cost0[1] = Cost_();
+        m_cost0[2] = Cost_();
 
-        m_cost1[0] = Cost();
-        m_cost1[1] = Cost();
-        m_cost1[2] = Cost();
+        m_cost1[0] = Cost_();
+        m_cost1[1] = Cost_();
+        m_cost1[2] = Cost_();
 
         m_plan[0] = 0;
         m_plan[1] = 0;
@@ -159,17 +159,17 @@ public:
     const FT& mass(int edge) const { return m_mass[edge]; }
     FT& mass(int edge) { return m_mass[edge]; }
 
-    const Cost& vertex_cost(int edge) const { return m_cost0[edge]; }
-    Cost& vertex_cost(int edge) { return m_cost0[edge]; }
+    const Cost_& vertex_cost(int edge) const { return m_cost0[edge]; }
+    Cost_& vertex_cost(int edge) { return m_cost0[edge]; }
 
-    const Cost& edge_cost(int edge) const { return m_cost1[edge]; }
-    Cost& edge_cost(int edge) { return m_cost1[edge]; }
+    const Cost_& edge_cost(int edge) const { return m_cost1[edge]; }
+    Cost_& edge_cost(int edge) { return m_cost1[edge]; }
 
     const FT& relevance(int edge) const { return m_relevance[edge]; }
     FT& relevance(int edge) { return m_relevance[edge]; }
 
 
-    const Cost& cost(int edge) const
+    const Cost_& cost(int edge) const
     {
         if (plan(edge) == 0) return vertex_cost(edge);
         return edge_cost(edge);
@@ -185,7 +185,7 @@ public:
     const Sample_list& samples(int edge) const { return m_samples[edge]; }
     Sample_list& samples(int edge) { return m_samples[edge]; }
 
-    void add_sample(int edge, Sample* sample)
+    void add_sample(int edge, Sample_* sample)
     {
         m_samples[edge].push_back(sample);
     }

@@ -34,7 +34,7 @@ typedef CGAL::Reconstruction_triangulation_2<K> Rt_2;
 typedef Rt_2::Finite_edges_iterator Finite_edges_iterator;
 
 typedef Rt_2::Edge Edge;
-typedef Rt_2::Reconstruction_edge_2 R_edge_2;
+typedef Rt_2::Rec_edge_2 R_edge_2;
 
 PointMassList* load_xy_file(const std::string& fileName);
 PointMassList* simple_point_set();
@@ -117,6 +117,7 @@ void test_edge_collapse() {
 
     //test that the edge was collapsed
     assert(!found);
+    CGAL_USE(found);
 }
 
 

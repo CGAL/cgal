@@ -119,28 +119,28 @@ public:
 	typedef std::list<Point> Point_list;
 	typedef typename Point_list::const_iterator Point_list_const_iterator;
 
-	typedef typename Cost<FT> Cost;
-	typedef Sample<Kernel> Sample;
-	typedef std::list<Sample*> Sample_list;
+	typedef Cost<FT> Cost_;
+	typedef Sample<Kernel> Sample_;
+	typedef std::list<Sample_*> Sample_list;
 	typedef typename Sample_list::const_iterator Sample_list_const_iterator;
 
-	typedef Sample_with_priority<Sample> PSample;
+	typedef Sample_with_priority<Sample_> PSample;
 	typedef std::priority_queue<PSample, std::vector<PSample>,
 			greater_priority<PSample> > SQueue;
 
-	typedef typename Reconstruction_edge_2<FT, Edge, Vertex_handle, Face_handle>
-	Reconstruction_edge_2;
+	typedef Reconstruction_edge_2<FT, Edge, Vertex_handle, Face_handle>
+	Rec_edge_2;
 
 	 typedef boost::multi_index_container<
-		  Reconstruction_edge_2,
+		  Rec_edge_2,
 		  boost::multi_index::indexed_by<
-		  // sort by Reconstruction_edge_2::operator<
+		  // sort by Rec_edge_2::operator<
 		  boost::multi_index::ordered_unique< boost::multi_index::identity<
-		  	  Reconstruction_edge_2 > > ,
-		  	// sort by Reconstruction_edge_2::priority()
+		  	  Rec_edge_2 > > ,
+		  	// sort by Rec_edge_2::priority()
 		  boost::multi_index::ordered_non_unique<
 		  	  boost::multi_index::const_mem_fun<
-		  	  	  Reconstruction_edge_2,const FT,&Reconstruction_edge_2::priority> >
+		  	  	  Rec_edge_2,const FT,&Rec_edge_2::priority> >
 	  	  >
 	  > MultiIndex;
 
@@ -291,21 +291,21 @@ public:
 		edge.first->mass(edge.second) = mass;
 	}
 
-	const Cost& get_cost(const Edge& edge) const {
+	const Cost_& get_cost(const Edge& edge) const {
 		return edge.first->cost(edge.second);
 	}
 
-	void set_vertex_cost(const Edge& edge, const Cost& cost) {
+	void set_vertex_cost(const Edge& edge, const Cost_& cost) {
 		edge.first->vertex_cost(edge.second) = cost;
 	}
 
-	void set_edge_cost(const Edge& edge, const Cost& cost) {
+	void set_edge_cost(const Edge& edge, const Cost_& cost) {
 		edge.first->edge_cost(edge.second) = cost;
 	}
 
 	FT get_vertex_minus_edge_cost(const Edge& edge) const {
-		const Cost& vcost = edge.first->vertex_cost(edge.second);
-		const Cost& ecost = edge.first->edge_cost(edge.second);
+		const Cost_& vcost = edge.first->vertex_cost(edge.second);
+		const Cost_& ecost = edge.first->edge_cost(edge.second);
 		return vcost.finalize() - m_factor * ecost.finalize();
 	}
 
@@ -365,7 +365,7 @@ public:
 			if (cleanup)
 				face->clean_all_samples();
 		}
-		Sample* sample = vertex->get_sample();
+		Sample_* sample = vertex->get_sample();
 		if (sample)
 			samples.push_back(sample);
 		if (cleanup)
@@ -383,7 +383,7 @@ public:
 		for (Finite_vertices_iterator vi = Base::finite_vertices_begin();
 				vi != Base::finite_vertices_end(); ++vi) {
 			Vertex_handle v = vi;
-			Sample* sample = v->get_sample();
+			Sample_* sample = v->get_sample();
 			if (sample)
 				samples.push_back(sample);
 		}
@@ -402,21 +402,21 @@ public:
 
 	// COST //
 
-	Cost compute_total_cost() const {
-		Cost sum;
+	Cost_ compute_total_cost() const {
+		Cost_ sum;
 		for (Finite_edges_iterator ei = Base::finite_edges_begin();
 				ei != Base::finite_edges_end(); ++ei) {
 			Edge edge = *ei;
-			const Cost& cost = get_cost(edge);
+			const Cost_& cost = get_cost(edge);
 			sum.update_max(cost);
 			sum.add(cost);
 		}
 		return sum;
 	}
 
-	Cost compute_cost_around_vertex(Vertex_handle vertex) const {
-		Cost inner;
-		Cost outer;
+	Cost_ compute_cost_around_vertex(Vertex_handle vertex) const {
+		Cost_ inner;
+		Cost_ outer;
 		Face_circulator fcirc = Base::incident_faces(vertex);
 		Face_circulator fend = fcirc;
 		CGAL_For_all(fcirc, fend)
@@ -425,7 +425,7 @@ public:
 			int index = face->index(vertex);
 
 			Edge edge(face, index);
-			Cost cost = get_cost(edge);
+			Cost_ cost = get_cost(edge);
 			outer.update_max(cost);
 			outer.add(cost);
 
@@ -441,7 +441,7 @@ public:
 		}
 		inner.divide(2.0);
 
-		Cost sum;
+		Cost_ sum;
 		sum.add(inner);
 		sum.add(outer);
 		sum.update_max(inner);
@@ -470,14 +470,14 @@ public:
 		typename Sample_list::const_iterator it;
 		const Sample_list& samples0 = edge.first->samples(edge.second);
 		for (it = samples0.begin(); it != samples0.end(); ++it) {
-			Sample* sample = *it;
+			Sample_* sample = *it;
 			mass += sample->mass();
 		}
 
 		Edge twin = twin_edge(edge);
 		const Sample_list& samples1 = twin.first->samples(twin.second);
 		for (it = samples1.begin(); it != samples1.end(); ++it) {
-			Sample* sample = *it;
+			Sample_* sample = *it;
 			mass += sample->mass();
 		}
 
@@ -505,7 +505,7 @@ public:
 		FT M = get_mass(edge);
 		FT L = get_length(edge);
 		sort_samples_from_edge(edge, squeue);
-		Cost cost = compute_cost_from_squeue(squeue, M, L);
+		Cost_ cost = compute_cost_from_squeue(squeue, M, L);
 
 		Edge twin = twin_edge(edge);
 		set_edge_cost(edge, cost);
@@ -516,25 +516,25 @@ public:
 		typename Sample_list::const_iterator it;
 		const Sample_list& samples0 = edge.first->samples(edge.second);
 		for (it = samples0.begin(); it != samples0.end(); ++it) {
-			Sample* sample = *it;
+			Sample_* sample = *it;
 			squeue.push(PSample(sample, sample->coordinate()));
 		}
 
 		Edge twin = twin_edge(edge);
 		const Sample_list& samples1 = twin.first->samples(twin.second);
 		for (it = samples1.begin(); it != samples1.end(); ++it) {
-			Sample* sample = *it;
+			Sample_* sample = *it;
 			squeue.push(PSample(sample, 1.0 - sample->coordinate()));
 		}
 	}
 
-	Cost compute_cost_from_squeue(SQueue& squeue, const FT M, const FT L) {
+	Cost_ compute_cost_from_squeue(SQueue& squeue, const FT M, const FT L) {
 		if (squeue.empty())
-			return Cost();
+			return Cost_();
 		if (M == 0.0)
-			return Cost();
+			return Cost_();
 
-		Cost sum;
+		Cost_ sum;
 		FT start = 0.0;
 		FT coef = L / M;
 		while (!squeue.empty()) {
@@ -550,7 +550,7 @@ public:
 			FT norm2 = psample.sample()->distance2();
 			FT tang2 = bin * bin / 12 + pos * pos;
 
-			sum.add(Cost(norm2, tang2), mass);
+			sum.add(Cost_(norm2, tang2), mass);
 			sum.compute_max(norm2, tang2);
 
 			start += bin;
@@ -567,10 +567,10 @@ public:
 		collect_samples_from_edge(edge, samples);
 		collect_samples_from_edge(twin, samples);
 
-		Cost sum;
+		Cost_ sum;
 		for (Sample_list_const_iterator it = samples.begin();
 				it != samples.end(); ++it) {
-			Sample* sample = *it;
+			Sample_* sample = *it;
 			FT mass = sample->mass();
 			const Point& query = sample->point();
 
@@ -581,7 +581,7 @@ public:
 			FT norm2 = sample->distance2();
 			FT tang2 = dist2 - norm2;
 
-			sum.add(Cost(norm2, tang2), mass);
+			sum.add(Cost_(norm2, tang2), mass);
 			sum.compute_max(norm2, tang2);
 		}
 		set_vertex_cost(edge, sum);
@@ -590,23 +590,23 @@ public:
 
 	// SAMPLE //
 
-	template<class Iterator> // value_type = Sample*
+	template<class Iterator> // value_type = Sample_*
 	void assign_samples(Iterator begin, Iterator end) {
 		for (Iterator it = begin; it != end; ++it) {
-			Sample* sample = *it;
+			Sample_* sample = *it;
 			assign_sample(sample);
 		}
 	}
 
-	template<class Iterator> // value_type = Sample*
+	template<class Iterator> // value_type = Sample_*
 	void assign_samples_brute_force(Iterator begin, Iterator end) {
 		for (Iterator it = begin; it != end; ++it) {
-			Sample* sample = *it;
+			Sample_* sample = *it;
 			assign_sample_brute_force(sample);
 		}
 	}
 
-	bool assign_sample(Sample* sample) {
+	bool assign_sample(Sample_* sample) {
 		const Point& point = sample->point();
 		Face_handle face = Base::locate(point);
 
@@ -626,7 +626,7 @@ public:
 		return true;
 	}
 
-	bool assign_sample_brute_force(Sample* sample) {
+	bool assign_sample_brute_force(Sample_* sample) {
 		const Point& point = sample->point();
 		Face_handle nearest_face = Face_handle();
 		for (Finite_faces_iterator fi = Base::finite_faces_begin();
@@ -695,7 +695,7 @@ public:
 		return nearest;
 	}
 
-	void assign_sample_to_vertex(Sample* sample, Vertex_handle vertex) {
+	void assign_sample_to_vertex(Sample_* sample, Vertex_handle vertex) {
 		if (vertex->get_sample()) {
 			std::cout << "assign to vertex: vertex already has sample"
 					<< std::endl;
@@ -706,7 +706,7 @@ public:
 		vertex->set_sample(sample);
 	}
 
-	void assign_sample_to_edge(Sample* sample, const Edge& edge) {
+	void assign_sample_to_edge(Sample_* sample, const Edge& edge) {
 		Segment segment = get_segment(edge);
 		const Point& query = sample->point();
 		sample->distance2() = compute_distance2(query, segment);
@@ -971,7 +971,7 @@ public:
 	}
 
 	//TODO IV remove --------
-	void print_edge(Reconstruction_edge_2 edge) {
+	void print_edge(Rec_edge_2 edge) {
 		int i = ((edge).edge()).second;
 		Point a = ((edge).edge()).first->vertex((i+1)%3)->point();
 		Point b = ((edge).edge()).first->vertex((i+2)%3)->point();
@@ -993,7 +993,7 @@ public:
 		            Vertex_handle b = target_vertex(ab);
 		            FT D = signed_distance_from_intersection(a, b, target, source);
 		            if (D < 0.0) {
-		            	multi_ind.insert(Reconstruction_edge_2(ab, D));
+		            	multi_ind.insert(Rec_edge_2(ab, D));
 		            }
 		        }
 
@@ -1001,7 +1001,7 @@ public:
 		        int nb_flips = 0;
 		        while (!multi_ind.empty())
 		        {
-		        	Reconstruction_edge_2 pedge = *(multi_ind.template get<1>()).begin();
+		        	Rec_edge_2 pedge = *(multi_ind.template get<1>()).begin();
 					FT Dbc = pedge.priority();
 		            Edge bc = pedge.edge();
 		            (multi_ind.template get<0>()).erase(pedge);
@@ -1016,16 +1016,16 @@ public:
 		            Vertex_handle c = target_vertex(bc);
 		            Vertex_handle d = target_vertex(cd);
 
-		            FT Dac =  std::numeric_limits<FT>::lowest();
+		            FT Dac =  -std::numeric_limits<FT>::max();
 		            if (a != c && is_triangle_ccw(a, b, c))
 		                Dac = signed_distance_from_intersection(a, c, target, source);
 
-		            FT Dbd =  std::numeric_limits<FT>::lowest();
+		            FT Dbd =  -std::numeric_limits<FT>::max();
 		            if (b != d && is_triangle_ccw(b, c, d))
 		                Dbd = signed_distance_from_intersection(b, d, target, source);
 
-		            if (Dac ==  std::numeric_limits<FT>::lowest() && Dbd ==
-		            		std::numeric_limits<FT>::lowest())
+		            if (Dac ==  -std::numeric_limits<FT>::max() && Dbd ==
+		            	        -std::numeric_limits<FT>::max())
 		            {
 		                // TODO: IV comment in std::cerr << red << "---
 		            	//No flips available ---" << white << std::endl;
@@ -1053,19 +1053,19 @@ public:
 
 		            if (Dac > Dbd)
 		            {
-		                (multi_ind.template get<0>()).erase(Reconstruction_edge_2(ab));
+		                (multi_ind.template get<0>()).erase(Rec_edge_2(ab));
 
 		                Edge ac = flip(sb, edge, verbose);
 		                if (Dac < 0.0) {
-		                	multi_ind.insert(Reconstruction_edge_2(ac, Dac));
+		                	multi_ind.insert(Rec_edge_2(ac, Dac));
 		                }
 		            }
 		            else
 		            {
-		                (multi_ind.template get<0>()).erase(Reconstruction_edge_2(cd));
+		                (multi_ind.template get<0>()).erase(Rec_edge_2(cd));
 		                Edge bd = flip(sc, edge, verbose);
 		                if (Dbd < 0.0) {
-		                	multi_ind.insert(Reconstruction_edge_2(bd, Dbd));
+		                	multi_ind.insert(Rec_edge_2(bd, Dbd));
 		                }
 		            }
 		            nb_flips++;
