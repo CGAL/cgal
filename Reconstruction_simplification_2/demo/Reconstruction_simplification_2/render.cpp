@@ -8,7 +8,7 @@
 #include <CGAL/Reconstruction_simplification_2.h>
 
 
-typedef Reconstruction_simplification_kerneled_2::Reconstruction_edge_2 PEdge;
+typedef Reconstruction_simplification_kerneled_2::Rec_edge_2 PEdge;
 typedef Reconstruction_simplification_kerneled_2 R_s_k_2;
 
 void R_s_k_2::print_stats() const
@@ -171,7 +171,7 @@ void R_s_k_2::draw_edge_footpoints(const Triangulation& mesh,
     Sample_list::const_iterator it;
     for (it = samples.begin(); it != samples.end(); ++it)
     {
-        Sample* sample = *it;
+        Sample_* sample = *it;
         Point p = sample->point();
         FT m = 0.5*(1.0 - sample->mass());
 
@@ -403,7 +403,7 @@ void R_s_k_2::draw_bins_plan0(const Edge& edge)
     Sample_list_const_iterator it;
     for (it = samples.begin(); it != samples.end(); ++it)
     {
-        Sample* sample = *it;
+        Sample_* sample = *it;
         const Point& ps = sample->point();
         
         Point q = pa;
@@ -899,7 +899,7 @@ void R_s_k_2::draw_vertex_edges(Vertex_handle vertex,
         {
             Edge e(f, i);
             if (mesh.is_infinite(e)) continue;            
-            if (i == index) ::glColor3f(ro, go, bo);
+            if (static_cast<int>(i) == index) ::glColor3f(ro, go, bo);
             else ::glColor3f(ri, gi, bi);
             draw_edge(e);
         }
