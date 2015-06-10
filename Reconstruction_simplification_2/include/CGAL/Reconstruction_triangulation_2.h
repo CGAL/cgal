@@ -1016,16 +1016,16 @@ public:
 		            Vertex_handle c = target_vertex(bc);
 		            Vertex_handle d = target_vertex(cd);
 
-		            FT Dac =  -std::numeric_limits<FT>::max();
+		            FT Dac =  -(std::numeric_limits<FT>::max)();
 		            if (a != c && is_triangle_ccw(a, b, c))
 		                Dac = signed_distance_from_intersection(a, c, target, source);
 
-		            FT Dbd =  -std::numeric_limits<FT>::max();
+		            FT Dbd =  -(std::numeric_limits<FT>::max)();
 		            if (b != d && is_triangle_ccw(b, c, d))
 		                Dbd = signed_distance_from_intersection(b, d, target, source);
 
-		            if (Dac ==  -std::numeric_limits<FT>::max() && Dbd ==
-		            	        -std::numeric_limits<FT>::max())
+		            if (Dac ==  -(std::numeric_limits<FT>::max)() && Dbd ==
+		            	        -(std::numeric_limits<FT>::max)())
 		            {
 		                // TODO: IV comment in std::cerr << red << "---
 		            	//No flips available ---" << white << std::endl;
