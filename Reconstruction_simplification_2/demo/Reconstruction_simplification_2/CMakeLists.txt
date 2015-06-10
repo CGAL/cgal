@@ -1,7 +1,7 @@
 # CMake
 # Fernando de Goes (fdegoes@caltech.edu)
 # Copyright @ 2011
-project(pwsrec2D)
+project(Reconstruction_simplification_2_demo)
 
 cmake_minimum_required(VERSION 2.4.5)
 cmake_policy(VERSION 2.4.5)
