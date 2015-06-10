@@ -49,7 +49,7 @@ namespace CGAL {
 
                         if (_N == 8)
                         {
-                            static const FT phi = (FT(1) + std::sqrt(5))/FT(2);
+                            static const FT phi = (FT(1) + std::sqrt(5.0))/FT(2);
                             static const FT s = FT(1) / std::sqrt(phi + FT(2));
 
                             *out ++ = Plane(0, +s, +s*phi, -_R);
@@ -69,7 +69,7 @@ namespace CGAL {
                         }
                         else if (_N == 20)
                         {
-                            const FT phi = (FT(1) + std::sqrt(5))/FT(2);
+                            const FT phi = (FT(1) + std::sqrt(5.0))/FT(2);
                             const FT one_phi = FT(1)/phi;
                             const FT s = FT(1) / std::sqrt(3.0);
 
