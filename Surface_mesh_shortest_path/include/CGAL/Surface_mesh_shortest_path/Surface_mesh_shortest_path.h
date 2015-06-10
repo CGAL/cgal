@@ -80,7 +80,7 @@ public:
   typedef typename Traits::Triangle_mesh Triangle_mesh;
 
   /// The BGL graph traits for this triangle mesh
-  typedef typename boost::graph_traits<Triangle_mesh> Graph_traits;
+  typedef boost::graph_traits<Triangle_mesh> Graph_traits;
 
   /// Descriptors for the vertices of `Triangle_mesh`
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
@@ -143,11 +143,11 @@ public:
   /// - `w0 = source(halfedge(f,g),g)`
   /// - `w1 = target(halfedge(f,g),g)`
   /// - `w2 = target(next(halfedge(f,g),g),g)`
-  typedef typename std::pair<face_descriptor, Barycentric_coordinate> Face_location;
+  typedef std::pair<face_descriptor, Barycentric_coordinate> Face_location;
 
 private:
 
-  typedef typename std::list<Face_location> Source_point_list;
+  typedef std::list<Face_location> Source_point_list;
   typedef typename Source_point_list::iterator Source_point_underlying_iterator;
 
 public:
@@ -259,7 +259,7 @@ public:
   /// The return type from shortest path distance queries. Stores the distance
   /// to the nearest source point, and a `Source_point_iterator` to the
   /// source point itself.
-  typedef typename std::pair<FT, Source_point_iterator> Shortest_path_result;
+  typedef std::pair<FT, Source_point_iterator> Shortest_path_result;
 
 /// @}
 
@@ -277,11 +277,11 @@ private:
   typedef typename Traits::Point_2 Point_2;
   typedef typename Traits::Vector_2 Vector_2;
 
-  typedef typename internal::Cone_tree_node<Traits> Cone_tree_node;
-  typedef typename internal::Cone_expansion_event<Traits> Cone_expansion_event;
+  typedef internal::Cone_tree_node<Traits> Cone_tree_node;
+  typedef internal::Cone_expansion_event<Traits> Cone_expansion_event;
 
-  typedef typename std::priority_queue<Cone_expansion_event, std::vector<Cone_expansion_event*>, internal::Cone_expansion_event_min_priority_queue_comparator<Traits> > Expansion_priqueue;
-  typedef typename std::pair<Cone_tree_node*, FT> Node_distance_pair;
+  typedef std::priority_queue<Cone_expansion_event, std::vector<Cone_expansion_event*>, internal::Cone_expansion_event_min_priority_queue_comparator<Traits> > Expansion_priqueue;
+  typedef std::pair<Cone_tree_node*, FT> Node_distance_pair;
 
 private:
 
