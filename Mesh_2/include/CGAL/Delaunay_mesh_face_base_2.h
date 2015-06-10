@@ -21,12 +21,12 @@
 #ifndef CGAL_DELAUNAY_FACE_BASE_2_H
 #define CGAL_DELAUNAY_FACE_BASE_2_H
 
-#include <CGAL/Constrained_triangulation_face_base_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_face_base_2.h>
 
 namespace CGAL {
 
 template <class Gt,
-          class Fb = Constrained_triangulation_face_base_2<Gt> >
+          class Fb = Constrained_Delaunay_triangulation_face_base_2<Gt> >
 class Delaunay_mesh_face_base_2 : public Fb
 {
 public:

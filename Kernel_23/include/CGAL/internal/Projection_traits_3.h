@@ -501,6 +501,7 @@ public:
   typedef typename Rp::Vector_3                               Vector_2;
   typedef typename Rp::Triangle_3                             Triangle_2;
   typedef typename Rp::Line_3                                 Line_2;
+  typedef typename Rp::Ray_3                                  Ray_2;
 
   typedef typename Projector<R,dim>::Less_x_2                 Less_x_2;
   typedef typename Projector<R,dim>::Less_y_2                 Less_y_2;

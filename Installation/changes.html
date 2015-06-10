@@ -156,6 +156,17 @@ and <code>src/</code> directories).
 <!-- Triangulations and Delaunay Triangulations -->
 <!-- Voronoi Diagrams -->
 <!-- Mesh Generation -->
+  <h3>2D Conforming Triangulations and Meshes</h3>
+  <ul>
+    <li>
+    Add an optimization method <code>CGAL::lloyd_optimize_mesh_2()</code> that implements
+    the Lloyd (or Centroidal Voronoi Tesselation) optimization algorithm
+    in a Constrained Delaunay Triangulation.
+    For optimization, the triangulation data structure on which the mesher relies
+    needs its <code>VertexBase</code> template parameter to be a model
+    of the new concept <code>DelaunayMeshVertexBase_2</code>.
+    </li>
+  </ul>
 <!-- Geometry Processing -->
 <!-- Spatial Searching and Sorting -->
   <h3>Spatial Sorting</h3>
