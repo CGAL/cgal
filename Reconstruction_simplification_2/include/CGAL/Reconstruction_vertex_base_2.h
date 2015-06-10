@@ -40,7 +40,7 @@ class Reconstruction_vertex_base_2 : public Vb
 public:
     typedef Vb Base;
     typedef typename Kernel::FT FT;
-    typedef Sample<Kernel> Sample;
+    typedef typename Sample<Kernel> Sample;
     typedef typename Kernel::Point_2 Point;
     typedef typename Base::Face_handle Face_handle;
 

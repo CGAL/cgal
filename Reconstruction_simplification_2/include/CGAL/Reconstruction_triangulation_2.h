@@ -119,7 +119,7 @@ public:
 	typedef std::list<Point> Point_list;
 	typedef typename Point_list::const_iterator Point_list_const_iterator;
 
-	typedef Cost<FT> Cost;
+	typedef typename Cost<FT> Cost;
 	typedef Sample<Kernel> Sample;
 	typedef std::list<Sample*> Sample_list;
 	typedef typename Sample_list::const_iterator Sample_list_const_iterator;
@@ -128,7 +128,7 @@ public:
 	typedef std::priority_queue<PSample, std::vector<PSample>,
 			greater_priority<PSample> > SQueue;
 
-	typedef Reconstruction_edge_2<FT, Edge, Vertex_handle, Face_handle>
+	typedef typename Reconstruction_edge_2<FT, Edge, Vertex_handle, Face_handle>
 	Reconstruction_edge_2;
 
 	 typedef boost::multi_index_container<

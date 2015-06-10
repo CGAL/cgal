@@ -56,8 +56,8 @@ public:
     };
 
     typedef typename Kernel::FT FT;
-    typedef Cost<FT> Cost;
-    typedef Sample<Kernel> Sample;
+    typedef typename Cost<FT> Cost;
+    typedef typename Sample<Kernel> Sample;
     typedef std::list<Sample*> Sample_list;
 
 private:
