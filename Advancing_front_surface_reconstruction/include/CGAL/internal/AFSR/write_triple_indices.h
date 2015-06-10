@@ -24,16 +24,16 @@
 
 namespace CGAL {
 
-template <class Kernel, class Triangulation, class Filter>
+template <class Triangulation, class Filter>
 class Advancing_front_surface_reconstruction;
 
 
 
-template <class OutputIterator, class Kernel, class Triangulation, class Filter>
+template <class OutputIterator, class Triangulation, class Filter>
 OutputIterator
-  write_triple_indices(OutputIterator out, const Advancing_front_surface_reconstruction<Kernel,Triangulation,Filter>& S)
+  write_triple_indices(OutputIterator out, const Advancing_front_surface_reconstruction<Triangulation,Filter>& S)
 { 
-  typedef Advancing_front_surface_reconstruction<Kernel,Triangulation,Filter> Surface;
+  typedef Advancing_front_surface_reconstruction<Triangulation,Filter> Surface;
   typedef typename Surface::TDS_2 TDS_2;
   typedef typename TDS_2::Face_iterator Face_iterator;
 

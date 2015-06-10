@@ -26,6 +26,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Cartesian_converter.h>
 
 #include <cstdio>
 #include <cstring>
@@ -166,14 +167,15 @@ public:
   };
 
 
-  template <class Kernel, 
-            class Triangulation = Delaunay_triangulation_3<Kernel, Triangulation_data_structure_3<Advancing_front_surface_reconstruction_vertex_base_3<Kernel>, Advancing_front_surface_reconstruction_cell_base_3<Kernel> > >,
+  template <
+            class Triangulation = Delaunay_triangulation_3<Exact_predicates_inexact_constructions_kernel, Triangulation_data_structure_3<Advancing_front_surface_reconstruction_vertex_base_3<Exact_predicates_inexact_constructions_kernel>, Advancing_front_surface_reconstruction_cell_base_3<Exact_predicates_inexact_constructions_kernel> > >,
             class Reject = Always_false>
 class Advancing_front_surface_reconstruction {
 
 public:
   typedef Triangulation Triangulation_3;
-    typedef Advancing_front_surface_reconstruction<Kernel,Triangulation_3,Reject> Extract;
+  typedef typename Triangulation_3::Geom_traits Kernel;
+  typedef Advancing_front_surface_reconstruction<Triangulation_3,Reject> Extract;
   typedef typename Triangulation_3::Geom_traits Geom_traits;
 
   typedef typename Kernel::FT coord_type;
@@ -2305,9 +2307,28 @@ namespace AFSR {
   template <typename T>
 struct Auto_count : public std::unary_function<const T&,std::pair<T,int> >{
     mutable int i;
-    Auto_count() : i(0){}
+
+    Auto_count()
+      : i(0)
+    {}
+
     std::pair<T,int> operator()(const T& p) const {
       return std::make_pair(p,i++);
+    }
+  };
+
+  template <typename T, typename CC>
+struct Auto_count_cc : public std::unary_function<const T&,std::pair<T,int> >{
+    mutable int i;
+    CC cc;
+
+    Auto_count_cc(CC cc)
+      : i(0), cc(cc)
+    {}
+
+    template <typename T2>
+    std::pair<T,int> operator()(const T2& p) const {
+      return std::make_pair(cc(p),i++);
     }
   };
 }
@@ -2328,7 +2349,7 @@ advancing_front_surface_reconstruction(PointIterator b,
   typedef Triangulation_data_structure_3<LVb,LCb> Tds;
   typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
-  typedef Advancing_front_surface_reconstruction<Kernel,Triangulation_3> Reconstruction;
+  typedef Advancing_front_surface_reconstruction<Triangulation_3> Reconstruction;
   typedef Kernel::Point_3 Point_3;
   
   Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count<Point_3>()),
@@ -2360,11 +2381,14 @@ advancing_front_surface_reconstruction(PointIterator b,
   typedef Triangulation_data_structure_3<LVb,LCb> Tds;
   typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
-  typedef Advancing_front_surface_reconstruction<Kernel,Triangulation_3,Filter> Reconstruction;
+  typedef Advancing_front_surface_reconstruction<Triangulation_3,Filter> Reconstruction;
+  typedef std::iterator_traits<PointIterator>::value_type InputPoint;
+  typedef typename Kernel_traits<InputPoint>::Kernel InputKernel;
+  typedef Cartesian_converter<InputKernel,Kernel> CC;
   typedef Kernel::Point_3 Point_3;
-  
-  Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count<Point_3>()),
-                      boost::make_transform_iterator(e, AFSR::Auto_count<Point_3>() )  );
+  CC cc=CC();
+  Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count_cc<Point_3,CC>(cc)),
+                      boost::make_transform_iterator(e, AFSR::Auto_count_cc<Point_3,CC>(cc) )  );
 
   AFSR_options opt;
   opt.K = radius_ratio_bound;
@@ -2391,7 +2415,7 @@ advancing_front_surface_reconstructionP(PointIterator b,
   typedef Triangulation_data_structure_3<LVb,LCb> Tds;
   typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
-  typedef Advancing_front_surface_reconstruction<Kernel,Triangulation_3,Filter> Reconstruction;
+  typedef Advancing_front_surface_reconstruction<Triangulation_3,Filter> Reconstruction;
   typedef typename Kernel::Point_3 Point_3;
   
   Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count<Point_3>()),
@@ -2419,7 +2443,7 @@ advancing_front_surface_reconstructionP(PointIterator b,
   typedef Triangulation_data_structure_3<LVb,LCb> Tds;
   typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
-  typedef Advancing_front_surface_reconstruction<Kernel,Triangulation_3> Reconstruction;
+  typedef Advancing_front_surface_reconstruction<Triangulation_3> Reconstruction;
   typedef typename Kernel::Point_3 Point_3;
   
   Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count<Point_3>()),

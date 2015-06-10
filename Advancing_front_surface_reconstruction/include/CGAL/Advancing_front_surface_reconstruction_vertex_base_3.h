@@ -31,7 +31,7 @@
 
 namespace CGAL {
 
-  template <class A, class B, class C> class Advancing_front_surface_reconstruction;
+  template <class B, class C> class Advancing_front_surface_reconstruction;
 
 template <class K, class VertexBase = Triangulation_vertex_base_3<K> >
 class Advancing_front_surface_reconstruction_vertex_base_3 : public VertexBase
@@ -45,7 +45,7 @@ public:
   };
 
 
-  template <class A, class B,class C> friend class Advancing_front_surface_reconstruction;
+  template <class B,class C> friend class Advancing_front_surface_reconstruction;
 
 
   typedef VertexBase Base;

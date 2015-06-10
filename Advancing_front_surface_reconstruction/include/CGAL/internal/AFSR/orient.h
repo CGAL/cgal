@@ -23,9 +23,9 @@ namespace CGAL {
 namespace AFSR {
 
 
-  template <class Kernel, class Triangulation, class TDS, class Filter>
+  template <class Triangulation, class TDS, class Filter>
 typename TDS::Vertex_handle
-  orient(TDS& tds, const Advancing_front_surface_reconstruction<Kernel,Triangulation,Filter>& surface)
+  orient(TDS& tds, const Advancing_front_surface_reconstruction<Triangulation,Filter>& surface)
 {
 
   typedef typename TDS::Vertex_handle Vertex_handle;

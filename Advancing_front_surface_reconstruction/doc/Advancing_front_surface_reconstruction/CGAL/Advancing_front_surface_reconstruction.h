@@ -11,16 +11,16 @@ data structure that describes the surface.  The vertices and facets of the 2D tr
 store handles to the vertices and faces of the 3D triangulation, which enables the user to explore the
 2D as well as 3D neighborhood of vertices and facets of the surface. 
 
-\tparam Gt must be a model of `Kernel`.
 \tparam Dt must be a `Delaunay_triangulation_3` with
-`Advancing_front_surface_reconstruction_vertex_base_3` and `Advancing_front_surface_reconstruction_cell_base_3` blended into the vertex and cell type, and the geometric traits class must be the `Exact_predicates_inexact_constructions_kernel`.
+`Advancing_front_surface_reconstruction_vertex_base_3` and `Advancing_front_surface_reconstruction_cell_base_3` blended into the vertex and cell type.
+The default uses the `Exact_predicates_inexact_constructions_kernel` as geometric traits class.
 
-\tparam Filter must be a functor with `bool operator()(Gt::Point_3,Gt::Point_3,Gt::Point_3)` that allows the user to filter candidate triangles, for example based on its size.
-        It defaults to a functor that always returns `false`.
+\tparam Filter must be a functor with `bool operator()(Point,Point,Point)` that allows the user to filter candidate triangles, for example based on its size.
+        The type `Point` must be the point type of the geometric traits class of the triangulation. It defaults to a functor that always returns `false`.
 
 */
 
-  template< typename Gt, typename Dt, typename Filter>
+  template< typename Dt, typename Filter>
 class Advancing_front_surface_reconstruction {
 public:
 
@@ -199,7 +199,8 @@ has_on_surface(Triangulation_data_structure_2::Vertex_handle v2) const;
 For a sequence of points computes a sequence of index triples
 describing the faces of the reconstructed surface.
 
-\tparam PointInputIterator must be an input iterator with 3D points from the `Exact_predicates_inexact_constructions_kernel` as value type.
+\tparam PointInputIterator must be an input iterator with 3D points as value type.  This point type must
+be convertible to `Exact_predicates_inexact_constructions_kernel::Point_3` with the `Cartesian_converter`.
 \tparam IndicesOutputIterator must be an output iterator to which 
 `CGAL::cpp11::tuple<std::size_t,std::size_t,std::size_t>` can be assigned.
 
@@ -223,7 +224,8 @@ describing the faces of the reconstructed surface.
 For a sequence of points computes a sequence of index triples
 describing the faces of the reconstructed surface.
 
-\tparam PointInputIterator must be an input iterator with 3D points from the `Exact_predicates_inexact_constructions_kernel` as value type.
+\tparam PointInputIterator must be an input iterator with 3D points as value type.  This point type must
+be convertible to `Exact_predicates_inexact_constructions_kernel::Point_3` with the `Cartesian_converter`.
 \tparam IndicesOutputIterator must be an output iterator to which 
 `CGAL::cpp11::tuple<std::size_t,std::size_t,std::size_t>` can be assigned.
 \tparam Filter must be a functor with `bool operator()(Gt::Point_3,Gt::Point_3,Gt::Point_3)`.

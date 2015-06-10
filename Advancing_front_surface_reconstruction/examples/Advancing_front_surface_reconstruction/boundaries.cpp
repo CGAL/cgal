@@ -5,7 +5,7 @@
 #include <boost/foreach.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Advancing_front_surface_reconstruction<K> Reconstruction;
+typedef CGAL::Advancing_front_surface_reconstruction<> Reconstruction;
 typedef Reconstruction::Triangulation_3 Triangulation_3;
 typedef Reconstruction::Outlier_range Outlier_range;
 typedef Reconstruction::Boundary_range Boundary_range;

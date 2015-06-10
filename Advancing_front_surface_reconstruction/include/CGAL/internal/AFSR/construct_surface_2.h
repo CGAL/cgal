@@ -22,15 +22,15 @@
 
 namespace CGAL {
 
-  template <class Kernel, class Triangulation, class Filter>
+  template <class Triangulation, class Filter>
 class Advancing_front_surface_reconstruction;
 
 namespace AFSR {
 
 
-  template <class Kernel, class Triangulation, class TDS, class Filter>
+  template <class Triangulation, class TDS, class Filter>
 typename TDS::Vertex_handle
-construct_surface(TDS& tds, const CGAL::Advancing_front_surface_reconstruction<Kernel,Triangulation,Filter>& surface)
+construct_surface(TDS& tds, const CGAL::Advancing_front_surface_reconstruction<Triangulation,Filter>& surface)
 {
 
   typedef typename TDS::Vertex_handle Vertex_handle;
