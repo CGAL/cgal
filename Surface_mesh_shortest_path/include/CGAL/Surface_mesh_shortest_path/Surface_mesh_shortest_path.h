@@ -1702,7 +1702,7 @@ private:
     }
     else
     {
-      return std::make_pair(Node_distance_pair(NULL, FT(0.0)), cbc(FT(0.0), FT(0.0), FT(0.0)));
+      return std::make_pair(Node_distance_pair((Cone_tree_node*)NULL, FT(0.0)), cbc(FT(0.0), FT(0.0), FT(0.0)));
     }
   }
 
