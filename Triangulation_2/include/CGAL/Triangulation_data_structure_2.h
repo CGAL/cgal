@@ -1481,7 +1481,7 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
     return join_vertices(f->neighbor(i), mirror_index(f,i), v);
   }
 
-  int deg2 = degree(v2);
+  std::size_t deg2 = degree(v2);
 
   CGAL_triangulation_precondition( deg2 >= 3 );
 
@@ -1491,7 +1491,7 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
   }
   
   /*
-  // The following drawing corrsponds to the variables
+  // The following drawing corresponds to the variables
   // used in this part...
   // The vertex v1 is returned...
   //
