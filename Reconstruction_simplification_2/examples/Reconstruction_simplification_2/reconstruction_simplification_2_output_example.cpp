@@ -47,7 +47,7 @@ void list_output(Rs_2& rs2)
 }
 
 
-void index_output(Rs_2& rs2)
+void indexed_output(Rs_2& rs2)
 {  
   std::cout << "(-------------Off output---------- )" << std::endl;
   
@@ -89,7 +89,7 @@ int main ()
   rs2.run(100); // 100 steps
 
   list_output(rs2);
-  index_output(rs2);
+  indexed_output(rs2);
 
   return 0;
 }
