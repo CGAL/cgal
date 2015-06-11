@@ -189,7 +189,7 @@ the faces are connected with the facets of underlying 3D Delaunay triangulation.
 The third example shows how to get outliers and the boundaries of
 the surface.
 
-\subsection AFSR_Example_function Example for Global Function 
+\subsection AFSR_Example_function Examples for Global Function 
 
 The global function `advancing_front_surface_reconstruction()` 
 takes an iterator range of points as input and writes for each face of the 
@@ -202,6 +202,13 @@ for example to avoid the generation of triangles with a perimeter larger
 than a given bound.
 
 \cgalExample{Advancing_front_surface_reconstruction/reconstruction_fct.cpp}
+
+
+While the first example just writes index triples, the second example
+uses as output iterator a wrapper around a reference to a `Surface_mesh`
+and calls the function `add_face()`.
+
+\cgalExample{Advancing_front_surface_reconstruction/reconstruction_surface_mesh.cpp}
 
 
 \subsection AFSR_Example_class Example for the Reconstruction Class
