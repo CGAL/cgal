@@ -8,7 +8,7 @@
 namespace boost
 {
   template<typename V, typename Graph>
-  struct boost::graph_traits<
+  struct graph_traits<
     boost::tuple<boost::reference_wrapper<V>, boost::reference_wrapper<Graph> > >
     : boost::graph_traits< Graph >
   {
@@ -17,7 +17,7 @@ namespace boost
   };
 
   template<typename V, typename Graph>
-  struct boost::graph_traits<
+  struct graph_traits<
     boost::tuple<boost::reference_wrapper<V>, boost::reference_wrapper<Graph> > const >
     : boost::graph_traits< Graph >
   {};
