@@ -189,7 +189,7 @@ The following example shows how to use the segment Delaunay graph filtered
 traits mechanism. In addition it shows how to use a few of the iterators
 provided by the `Segment_Delaunay_graph_Linf_2` class in order to count a few
 site-related quantities.
-\cgalExample{Segment_Delaunay_graph_Linf_2/sdg-count-sites.cpp}
+\cgalExample{Segment_Delaunay_graph_Linf_2/sdg-count-sites-linf.cpp}
 
 \subsection Segment_Delaunay_graph_Linf_2FastSP Using Spatial Sorting to Speed up Insertion
 
@@ -198,13 +198,13 @@ the spatial sorting of your input (end) points. Note that the functions
 \link CGAL::Segment_Delaunay_graph_2::insert_points `insert_points` \endlink or
 \link CGAL::Segment_Delaunay_graph_2::insert_segments `insert_segments` \endlink
 can be used if your input is only composed of points or segments.
-\cgalExample{Segment_Delaunay_graph_Linf_2/sdg-fast-sp.cpp}
+\cgalExample{Segment_Delaunay_graph_Linf_2/sdg-fast-sp-linf.cpp}
 
 \subsection Segment_Delaunay_graph_Linf_2FastSPPolygon Delaunay Graph of a Polygon
 
 This example shows how to efficiently compute the Delaunay graph of a simple polygon
 using the spatial sorting to speed up the insertion.
-\cgalExample{Segment_Delaunay_graph_Linf_2/sdg-fast-sp-polygon.cpp}
+\cgalExample{Segment_Delaunay_graph_Linf_2/sdg-fast-sp-polygon-linf.cpp}
 
 \subsection Segment_Delaunay_graph_Linf_2ExHierarchy Using the Hierarchy for Faster Location
 
@@ -214,14 +214,14 @@ intersecting sites. The hierarchy should be preferred when the
 size of the input is large: Experiments suggest that the hierarchy
 is faster than the plain segment Delaunay graph when the size of
 the input exceeds 1000 sites.
-\cgalExample{Segment_Delaunay_graph_Linf_2/sdg-filtered-traits.cpp}
+\cgalExample{Segment_Delaunay_graph_Linf_2/sdg-filtered-traits-linf.cpp}
 
 \subsection Segment_Delaunay_graph_Linf_2ExVorEdges Voronoi Edges
 
 The following example demonstrates how to recover the defining sites
 for the edges of the Voronoi diagram (which are the duals of the
 edges of the segment Delaunay graph computed).
-\cgalExample{Segment_Delaunay_graph_Linf_2/sdg-voronoi-edges.cpp}
+\cgalExample{Segment_Delaunay_graph_Linf_2/sdg-voronoi-edges-linf.cpp}
 
 */
 } /* namespace CGAL */
