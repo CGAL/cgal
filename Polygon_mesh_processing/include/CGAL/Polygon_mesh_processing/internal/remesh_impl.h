@@ -87,21 +87,45 @@ namespace internal {
 
   };
 
+  ///////////// Visitor dealing with status map ////////////////
+
   template<typename PolygonMesh>
   class Status_map_visitor
     : public Visitor_base<PolygonMesh>
   {
+    typedef PolygonMesh Graph;
     typedef Visitor_base<PolygonMesh> Base;
-    typedef typename Base::halfedge_descriptor halfedge_descriptor;
+    typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
+    typedef typename boost::graph_traits<Graph>::face_descriptor face_descriptor;
 
     std::map<halfedge_descriptor, Halfedge_status>& halfedge_status_map_;
+    PolygonMesh& pmesh_;
 
   public:
-    Status_map_visitor(std::map<halfedge_descriptor, Halfedge_status>& hsmap)
+    Status_map_visitor(std::map<halfedge_descriptor, Halfedge_status>& hsmap,
+                       PolygonMesh& pmesh)
       : halfedge_status_map_(hsmap)
+      , pmesh_(pmesh)
     {}
 
+    void remove_halfedges(const face_descriptor& f)
+    {
+      halfedge_descriptor h = halfedge(f, pmesh_);
+      halfedge_status_map_.erase(h);
+      halfedge_status_map_.erase(next(h, pmesh_));
+      halfedge_status_map_.erase(next(next(h, pmesh_), pmesh_));
+    }
+
   };
+
+  template<typename Graph>
+  void remove_face(typename boost::graph_traits<Graph>::face_descriptor f
+                 , Status_map_visitor<Graph> & w)
+  {
+    w.remove_halfedges(f);
+  }
+
+  ////////// End of visitor ////////////////
 
   template<typename PolygonMesh
          , typename VertexPointMap
@@ -397,13 +421,6 @@ namespace internal {
         boost::bimaps::multiset_of<double, std::less<double> > >  Boost_bimap;
       typedef typename Boost_bimap::value_type                    short_edge;
 
-      //Status_visitor visitor2(halfedge_status_map_);
-      //std::cout << "Valid : " 
-      //  << is_valid(mesh_)
-      //  << "\t"
-      //  << is_valid(CGAL::make_graph_with_visitor(visitor2, mesh_))
-      //  << std::endl;
-
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Collapse short edges (" << low << ", " << high << ")..."
                 << std::endl;
@@ -561,11 +578,10 @@ namespace internal {
         }//end if(collapse_ok)
       }
 
-      Status_visitor visitor(halfedge_status_map_);
-
+      Status_visitor visitor(halfedge_status_map_, mesh_);
       boost::tuple<boost::reference_wrapper<Status_visitor>,
-		   boost::reference_wrapper<PolygonMesh> > g_with_visitor =
-	CGAL::make_graph_with_visitor(visitor, mesh_);
+                   boost::reference_wrapper<PolygonMesh> >
+        g_with_visitor = CGAL::make_graph_with_visitor(visitor, mesh_);
 
       std::size_t n = PMP::remove_degenerate_faces(
           g_with_visitor
