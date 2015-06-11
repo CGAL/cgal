@@ -279,7 +279,7 @@ template<class K>
 void _test_cls_periodic_3_regular_triangulation_traits_3 ()
 {
   typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Regular_traits;
-  typedef CGAL::Periodic_3_Regular_triangulation_traits_3<Regular_traits> Traits;
+  typedef CGAL::Periodic_3_regular_triangulation_traits_3<Regular_traits> Traits;
   typedef typename Traits::Weighted_point Weighted_point;
   typedef typename Traits::Bare_point Bare_point;
   typedef typename Traits::Iso_cuboid_3 Iso_cuboid;
