@@ -3,7 +3,7 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <boost/core/ref.hpp>
+#include <boost/ref.hpp>
 
 namespace boost
 {
