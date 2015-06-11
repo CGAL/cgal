@@ -197,8 +197,8 @@ protected:
 	     \param input_range range of input data.
 	     \param point_map A `ReadablePropertyMap` used to access the input points.
 
-	     \param mass_map A `ReadablePropertyMap` used to access the input points' mass.
-             \param sample_size If `sample_size != 0`, the size of the random sample replaces the exhaustive priority queue.
+	     \param mass_map A `ReadablePropertyMap` used to access the input points' masses.
+             \param sample_size If `sample_size != 0`, the size of the random sample which replaces the exhaustive priority queue.
              \param use_flip If `true` the edge flipping procedure is used to ensure that every edge can be made collapsible.
              \param relocation The number of point relocations that are performed between two edge collapses.
              \param verbose controls how much console output is produced by the algorithm. The values are 0, 1, or > 1.
@@ -1387,10 +1387,10 @@ bool create_pedge(const Edge& edge, Rec_edge_2& pedge) {
 		}
 
 		 /*!
-			Computes a shape, reconstructing the input, by performing `steps` many
+			Computes a shape, reconstructing the input, by performing `steps`
 			edge collapse operators on the output simplex.
 
-			\param steps The number of edge collapse operators performed by the algorithm.
+			\param steps The number of edge collapse operators to be performed.
 		  */
 		void run(const unsigned steps) {
 			double timer = clock();

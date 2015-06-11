@@ -64,7 +64,7 @@ one can use the run_until function
 \code{.cpp}
   rs2.run_until(20); // perform edge contractions until only 20 vertices are left.
 \endcode
-and specify the number of output vertices one wants to keep as illustrated next.
+and specify the number of output vertices one wants to keep as illustrated in Figure \cgalFigureRef{2D_Reconstruction_Simplification_twenty_vertices}.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_twenty_vertices,twenty_vertices.png}
 Examples of 20-vertex reconstructions from datasets consisting of 2000, 400 and 200 input points respectively. The examples illustrates the behavior of the algorithm when the input point density decreases. 
