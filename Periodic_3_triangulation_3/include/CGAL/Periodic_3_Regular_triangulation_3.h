@@ -5964,6 +5964,14 @@ public:
   Bounded_side _side_of_power_sphere(const Cell_handle& c, const Weighted_point& p,
       const Offset & offset = Offset(), bool perturb = false) const;
 
+  unsigned number_of_hidden_points () const
+  {
+    unsigned count = 0;
+    for (Cell_iterator iter = cells_begin(), end_iter = cells_end(); iter != end_iter; ++iter)
+      count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+    return count;
+  }
+
   bool is_valid(bool verbose = false, int level = 0) const;
   bool is_valid(Cell_handle c, bool verbose = false, int level = 0) const;
 

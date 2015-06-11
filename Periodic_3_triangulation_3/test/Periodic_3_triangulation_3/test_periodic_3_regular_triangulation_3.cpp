@@ -672,6 +672,8 @@ void test_dummy_points ()
 
 void test_insert_range (unsigned pt_count, unsigned seed)
 {
+  std::cout << "--- test_insert_range" << std::endl;
+
   CGAL::Random random(seed);
   typedef CGAL::Creator_uniform_3<double,Bare_point>  Creator;
   CGAL::Random_points_in_cube_3<Bare_point, Creator> in_cube(0.5, random);
@@ -713,6 +715,8 @@ void test_insert_range (unsigned pt_count, unsigned seed)
 
 void test_locate_geometry ()
 {
+  std::cout << "--- test_locate_geometry" << std::endl;
+
   unsigned pt_count = 600;
 
   CGAL::Random random(7);
@@ -763,26 +767,77 @@ void test_locate_geometry ()
   assert(p3rt3.coplanar(triangle[0], triangle[1], triangle[2], point));
 }
 
+void test_number_of_hidden_points ()
+{
+  std::cout << "--- test_number_of_hidden_points" << std::endl;
+
+  P3RT3 p3rt3(P3RT3::Iso_cuboid(0,0,0, 1,1,1));
+
+  Vertex_handle vh;
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.1),0.01));
+  assert(vh != Vertex_handle());
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.9,0.1,0.1),0.01));
+  assert(vh != Vertex_handle());
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.9,0.1),0.01));
+  assert(vh != Vertex_handle());
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.1,0.1,0.9),0.01));
+  assert(vh != Vertex_handle());
+  assert(p3rt3.is_valid());
+  assert(p3rt3.number_of_vertices() == 4);
+  assert(p3rt3.number_of_stored_vertices() == 108);
+
+  unsigned hidden_point_count = 0;
+  for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+    hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+  assert(hidden_point_count == 0);
+  assert(p3rt3.number_of_hidden_points() == 0);
+
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.101, 0.101, 0.101), 0.001));
+  assert(vh == Vertex_handle());
+  hidden_point_count = 0;
+  for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+    hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+  assert(hidden_point_count == 1);
+  assert(p3rt3.number_of_hidden_points() == 1);
+
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.101, 0.101, 0.102), 0.001));
+  assert(vh == Vertex_handle());
+  hidden_point_count = 0;
+  for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+    hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+  assert(hidden_point_count == 2);
+  assert(p3rt3.number_of_hidden_points() == 2);
+
+  vh = p3rt3.insert(Weighted_point(Bare_point(0.101, 0.102, 0.101), 0.001));
+  assert(vh == Vertex_handle());
+  hidden_point_count = 0;
+  for (P3RT3::Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
+    hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+  assert(hidden_point_count == 3);
+  assert(p3rt3.number_of_hidden_points() == 3);
+}
+
 int main (int argc, char** argv)
 {
   std::cout << "TESTING ..." << std::endl;
 
+  test_number_of_hidden_points();
   test_locate_geometry();
-//  test_dummy_points();
-//  test_construction();
-//  test_insert_1();
-//  test_insert_point();
-//  test_insert_hidden_point();
-//  test_insert_hiding_point();
-//  test_insert_a_point_twice();
-//  test_insert_two_points_with_the_same_position();
-//  test_remove();
-//  test_27_to_1_sheeted_covering();
-//  test_insert_range(800, 7);
+  test_dummy_points();
+  test_construction();
+  test_insert_1();
+  test_insert_point();
+  test_insert_hidden_point();
+  test_insert_hiding_point();
+  test_insert_a_point_twice();
+  test_insert_two_points_with_the_same_position();
+  test_remove();
+  test_27_to_1_sheeted_covering();
+  test_insert_range(800, 7);
 //    Iso_cuboid unitaire ->  0 <= weight < 0.015625
-//  test_insert_rnd_as_delaunay(100, 0.);
-//  test_insert_rnd_as_delaunay(100, 0.01);
-//  test_insert_rnd_then_remove_all(5000, 7);
+  test_insert_rnd_as_delaunay(100, 0.);
+  test_insert_rnd_as_delaunay(100, 0.01);
+  test_insert_rnd_then_remove_all(5000, 7);
 //  test_insert_rnd_then_remove_all(5000, 12);
 
   std::cout << "EXIT SUCCESS" << std::endl;
