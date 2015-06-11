@@ -83,12 +83,12 @@ private:
 };
 
 template <class Kernel, class Off = typename CGAL::Periodic_3_offset_3>
-class Periodic_3_Regular_triangulation_traits_base_3 : public Kernel
+class Periodic_3_regular_triangulation_traits_base_3 : public Kernel
 {
 public:
 	typedef Kernel                                                       K;
 	typedef Off                                                          Offset;
-	typedef Periodic_3_Regular_triangulation_traits_base_3<K, Offset>    Self;
+	typedef Periodic_3_regular_triangulation_traits_base_3<K, Offset>    Self;
 
 	typedef typename K::FT                             FT;
 	typedef typename K::Weighted_point_3               Weighted_point_3;
@@ -231,7 +231,7 @@ protected:
 };
 
 template<typename K, typename Off = CGAL::Periodic_3_offset_3>
-class Periodic_3_Regular_triangulation_traits_3;
+class Periodic_3_regular_triangulation_traits_3;
 } // namespace CGAL
 
 // Partial specialization for Filtered_kernel<CK>.
@@ -244,22 +244,22 @@ namespace CGAL
 
 // This declaration is needed to break the cyclic dependency.
 template<typename K, typename Off>
-class Periodic_3_Regular_triangulation_filtered_traits_3;
+class Periodic_3_regular_triangulation_filtered_traits_3;
 
 template<class K, class Off>
-class Periodic_3_Regular_triangulation_traits_3: public Periodic_3_Regular_triangulation_traits_base_3<K, Off>
+class Periodic_3_regular_triangulation_traits_3: public Periodic_3_regular_triangulation_traits_base_3<K, Off>
 {
 };
 
 //template<typename CK, typename Off>
-//class Periodic_3_Regular_triangulation_traits_3<Filtered_kernel<CK>, Off> : public Periodic_3_Regular_triangulation_filtered_traits_3<Filtered_kernel<CK>, Off>
+//class Periodic_3_regular_triangulation_traits_3<Filtered_kernel<CK>, Off> : public Periodic_3_regular_triangulation_filtered_traits_3<Filtered_kernel<CK>, Off>
 //{
 //public:
 //	typedef Filtered_kernel<CK> Kernel;
 //};
 //
 //template<class Off>
-//class Periodic_3_Regular_triangulation_traits_3<CGAL::Epick, Off> : public Periodic_3_Regular_triangulation_filtered_traits_3<CGAL::Epick, Off>
+//class Periodic_3_regular_triangulation_traits_3<CGAL::Epick, Off> : public Periodic_3_regular_triangulation_filtered_traits_3<CGAL::Epick, Off>
 //{
 //	typedef CGAL::Epick Kernel;
 //};

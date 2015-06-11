@@ -17,9 +17,9 @@ template < class Gt,
 		   class Tds = Triangulation_data_structure_3 < Triangulation_vertex_base_3<Gt, Periodic_3_triangulation_ds_vertex_base_3<> >,
 		                                                Regular_triangulation_cell_base_3<Gt, Periodic_3_triangulation_ds_cell_base_3<> > >
 		 >
-class Periodic_3_Regular_triangulation_3 : public Periodic_3_triangulation_3<Gt,Tds>
+class Periodic_3_regular_triangulation_3 : public Periodic_3_triangulation_3<Gt,Tds>
 {
-	typedef Periodic_3_Regular_triangulation_3<Gt,Tds>  Self;
+	typedef Periodic_3_regular_triangulation_3<Gt,Tds>  Self;
 
 public:
 	typedef Periodic_3_triangulation_3<Gt,Tds>  Base;
@@ -124,10 +124,10 @@ private:
 
   class Cover_manager
   {
-    Periodic_3_Regular_triangulation_3& tr;
+    Periodic_3_regular_triangulation_3& tr;
 
   public:
-    Cover_manager (Periodic_3_Regular_triangulation_3& tr)
+    Cover_manager (Periodic_3_regular_triangulation_3& tr)
   : tr(tr)
   {}
 
@@ -161,14 +161,14 @@ private:
 
 public:
 	/** @name Creation */ //@{
-	Periodic_3_Regular_triangulation_3 (const Iso_cuboid& domain = Iso_cuboid(0, 0, 0, 1, 1, 1),
+	Periodic_3_regular_triangulation_3 (const Iso_cuboid& domain = Iso_cuboid(0, 0, 0, 1, 1, 1),
 			                            const Geometric_traits& gt = Geometric_traits())
 	: Base(domain, gt)
 	{
 	}
 
   // copy constructor duplicates vertices and cells
-  Periodic_3_Regular_triangulation_3 (const Periodic_3_Regular_triangulation_3& tr)
+  Periodic_3_regular_triangulation_3 (const Periodic_3_regular_triangulation_3& tr)
   : Base(tr)
   {
     CGAL_triangulation_expensive_postcondition( is_valid() );
@@ -6033,7 +6033,7 @@ private:
 };
 
 template < class Gt, class Tds >
-Bounded_side Periodic_3_Regular_triangulation_3<Gt,Tds>::
+Bounded_side Periodic_3_regular_triangulation_3<Gt,Tds>::
 _side_of_power_sphere(const Cell_handle &c, const Weighted_point &q,
     const Offset &offset, bool perturb ) const
 {
@@ -6099,7 +6099,7 @@ _side_of_power_sphere(const Cell_handle &c, const Weighted_point &q,
 
 template < class Gt, class Tds >
 bool
-Periodic_3_Regular_triangulation_3<Gt,Tds>::
+Periodic_3_regular_triangulation_3<Gt,Tds>::
 is_valid(bool verbose, int level) const
 {
   if (!Base::is_valid(verbose, level)) {
@@ -6122,7 +6122,7 @@ is_valid(bool verbose, int level) const
 
 template < class GT, class TDS >
 bool
-Periodic_3_Regular_triangulation_3<GT,TDS>::
+Periodic_3_regular_triangulation_3<GT,TDS>::
 is_valid(Cell_handle ch, bool verbose, int level) const {
   bool error = false;
   if (!Base::is_valid(ch, verbose, level)) {
@@ -6166,7 +6166,7 @@ is_valid(Cell_handle ch, bool verbose, int level) const {
 }
 
 template < class GT, class Tds >
-class Periodic_3_Regular_triangulation_3<GT,Tds>::Conflict_tester
+class Periodic_3_regular_triangulation_3<GT,Tds>::Conflict_tester
 {
   // stores a pointer to the triangulation,
   // a point, and an offset
@@ -6223,7 +6223,7 @@ public:
 };
 
 template < class GT, class Tds>
-class Periodic_3_Regular_triangulation_3<GT,Tds>::Point_hider
+class Periodic_3_regular_triangulation_3<GT,Tds>::Point_hider
 {
   Self *t;
   mutable std::vector<Vertex_handle> vertices;
@@ -6322,7 +6322,7 @@ public:
 #ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
 template <class GT, class Tds>
 template <class TriangulationR3>
-struct Periodic_3_Regular_triangulation_3<GT,Tds>::Vertex_remover
+struct Periodic_3_regular_triangulation_3<GT,Tds>::Vertex_remover
 {
   typedef TriangulationR3      Triangulation_R3;
 
