@@ -256,10 +256,9 @@ bool is_tetrahedron( typename boost::graph_traits<FaceGraph>::halfedge_descripto
   }
 
 template <typename FaceGraph>
-bool is_valid( typename boost::graph_traits<FaceGraph>::halfedge_descriptor h, const FaceGraph& g)
+bool is_valid_halfedge_descriptor( typename boost::graph_traits<FaceGraph>::halfedge_descriptor h, const FaceGraph& g)
 {
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
   face_descriptor f = face(h,g);
   halfedge_descriptor done(h);
@@ -280,7 +279,7 @@ bool is_valid( typename boost::graph_traits<FaceGraph>::halfedge_descriptor h, c
 }
 
 template <typename FaceGraph>
-bool is_valid( typename boost::graph_traits<FaceGraph>::vertex_descriptor v, const FaceGraph& g)
+bool is_valid_vertex_descriptor( typename boost::graph_traits<FaceGraph>::vertex_descriptor v, const FaceGraph& g)
 {
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
   halfedge_descriptor h = halfedge(v,g), done(h);
@@ -298,7 +297,7 @@ bool is_valid( typename boost::graph_traits<FaceGraph>::vertex_descriptor v, con
 }
 
 template <typename FaceGraph>
-bool is_valid( typename boost::graph_traits<FaceGraph>::face_descriptor f, const FaceGraph& g)
+bool is_valid_face_descriptor( typename boost::graph_traits<FaceGraph>::face_descriptor f, const FaceGraph& g)
 {
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
 
@@ -318,17 +317,17 @@ bool is_valid_polygon_mesh(const FaceGraph& g)
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor     face_descriptor;
   BOOST_FOREACH(vertex_descriptor v, vertices(g)){
-    if(! is_valid(v,g)){
+    if(! is_valid_vertex_descriptor(v,g)){
       return false;
     }
   }
   BOOST_FOREACH(halfedge_descriptor h, halfedges(g)){
-    if(! is_valid(h,g)){
+    if(! is_valid_halfedge_descriptor(h,g)){
       return false;
     }
   }
   BOOST_FOREACH(face_descriptor f, faces(g)){
-    if(! is_valid(f,g)){
+    if(! is_valid_face_descriptor(f,g)){
       return false;
     }
   }
