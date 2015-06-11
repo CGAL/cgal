@@ -111,7 +111,7 @@ void Polyhedron_demo_advancing_front_plugin::on_actionAdvancingFrontReconstructi
     Scene_polyhedron_item* new_item = new Scene_polyhedron_item(Polyhedron());
     Polyhedron& P = * const_cast<Polyhedron*>(new_item->polyhedron());
     Perimeter filter(sm_perimeter);
-      CGAL::advancing_front_surface_reconstructionP((points)->begin(), points->end(), P, filter);
+      CGAL::advancing_front_surface_reconstruction((points)->begin(), points->end(), P, filter);
 
 
     new_item->setName(tr("%1 Advancing Front (%2 %3)")

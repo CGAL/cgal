@@ -4,9 +4,9 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/tuple.h>
+#include <CGAL/array.h>
 
-typedef CGAL::cpp11::tuple<std::size_t,std::size_t,std::size_t> Facet;
+typedef CGAL::cpp11::array<std::size_t,3> Facet;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3  Point_3;
@@ -30,9 +30,10 @@ struct Construct{
   Construct& operator=(const Facet f)
   {
     typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-    mesh.add_face(vertex_descriptor(get<0>(f)), 
-                  vertex_descriptor(get<1>(f)),
-                  vertex_descriptor(get<2>(f)));
+    typedef boost::graph_traits<Mesh>::vertices_size_type size_type;
+    mesh.add_face(vertex_descriptor(static_cast<size_type>(f[0])), 
+                  vertex_descriptor(static_cast<size_type>(f[1])),
+                  vertex_descriptor(static_cast<size_type>(f[2])));
     return *this;
   }
 

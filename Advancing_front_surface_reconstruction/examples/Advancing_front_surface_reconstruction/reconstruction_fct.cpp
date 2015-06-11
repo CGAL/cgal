@@ -8,13 +8,13 @@
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3  Point_3;
 
-typedef CGAL::cpp11::tuple<std::size_t,std::size_t,std::size_t> Facet;
+typedef CGAL::cpp11::array<std::size_t,3> Facet;
 
 namespace std {
   std::ostream& 
   operator<<(std::ostream& os, const Facet& f)
   {
-    os << "3 " << get<0>(f) << " " << get<1>(f) << " " << get<2>(f);
+    os << "3 " << f[0] << " " << f[1] << " " << f[2];
     return os;
   }
 }
