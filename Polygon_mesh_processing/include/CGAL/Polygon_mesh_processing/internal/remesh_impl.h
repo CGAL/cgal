@@ -12,6 +12,7 @@
 #include <CGAL/AABB_triangle_primitive.h>
 
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/visitor.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 
@@ -85,6 +86,22 @@ namespace internal {
 
   };
 
+  template<typename PolygonMesh>
+  class Status_map_visitor
+    : public Visitor_base<PolygonMesh>
+  {
+    typedef Visitor_base<PolygonMesh> Base;
+    typedef typename Base::halfedge_descriptor halfedge_descriptor;
+
+    std::map<halfedge_descriptor, Halfedge_status>& halfedge_status_map_;
+
+  public:
+    Status_map_visitor(std::map<halfedge_descriptor, Halfedge_status>& hsmap)
+      : halfedge_status_map_(hsmap)
+    {}
+
+  };
+
   template<typename PolygonMesh
          , typename VertexPointMap
          , typename GeomTraits
@@ -107,6 +124,8 @@ namespace internal {
     typedef CGAL::AABB_triangle_primitive<GeomTraits, Tr_iterator> Primitive;
     typedef CGAL::AABB_traits<GeomTraits, Primitive>               Traits;
     typedef CGAL::AABB_tree<Traits>                                AABB_tree;
+
+    typedef Status_map_visitor<PM> Status_visitor;
 
   public:
     Incremental_remesher(PolygonMesh& pmesh
@@ -377,6 +396,13 @@ namespace internal {
         boost::bimaps::multiset_of<double, std::less<double> > >  Boost_bimap;
       typedef typename Boost_bimap::value_type                    short_edge;
 
+      //Status_visitor visitor2(halfedge_status_map_);
+      //std::cout << "Valid : " 
+      //  << is_valid(mesh_)
+      //  << "\t"
+      //  << is_valid(CGAL::make_graph_with_visitor(visitor2, mesh_))
+      //  << std::endl;
+
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Collapse short edges (" << low << ", " << high << ")..."
                 << std::endl;
@@ -534,9 +560,12 @@ namespace internal {
         }//end if(collapse_ok)
       }
 
-      std::size_t n = PMP::remove_degenerate_faces(mesh_
+      Status_visitor visitor(halfedge_status_map_);
+      std::size_t n = PMP::remove_degenerate_faces(
+        CGAL::make_graph_with_visitor(visitor, mesh_)
         , PMP::parameters::vertex_point_map(vpmap_)
          .geom_traits(GeomTraits()));
+
       if (n > 0)
       {
         std::cout << "Warning : tags should maybe be fixed" << std::endl;
@@ -970,8 +999,6 @@ namespace internal {
     {
       typename std::map < halfedge_descriptor, Halfedge_status >::const_iterator
         it = halfedge_status_map_.find(h);
-      if (it == halfedge_status_map_.end())
-        std::cout << "stop " << std::endl;
       CGAL_assertion(it != halfedge_status_map_.end());
       return it->second;
     }
