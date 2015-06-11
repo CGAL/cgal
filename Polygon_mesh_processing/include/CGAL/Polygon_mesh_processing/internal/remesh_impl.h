@@ -26,6 +26,7 @@
 #include <list>
 #include <vector>
 #include <iterator>
+#include <fstream>
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
@@ -561,8 +562,13 @@ namespace internal {
       }
 
       Status_visitor visitor(halfedge_status_map_);
+
+      boost::tuple<boost::reference_wrapper<Status_visitor>,
+		   boost::reference_wrapper<PolygonMesh> > g_with_visitor =
+	CGAL::make_graph_with_visitor(visitor, mesh_);
+
       std::size_t n = PMP::remove_degenerate_faces(
-        CGAL::make_graph_with_visitor(visitor, mesh_)
+          g_with_visitor
         , PMP::parameters::vertex_point_map(vpmap_)
          .geom_traits(GeomTraits()));
 
