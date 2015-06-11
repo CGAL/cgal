@@ -569,16 +569,7 @@ private:
         Segment_2 seg = p.segment();
 
         if (is_same_psrc_q || is_same_ptrg_q) {
-          Point_2 otherpnt;
-          if (is_same_psrc_q) {
-            otherpnt = seg.target();
-          } else if (is_same_ptrg_q) {
-            otherpnt = seg.source();
-          } else {
-            // unreachable
-            CGAL_assertion( false );
-          }
-
+          const Point_2 otherpnt = is_same_psrc_q ? seg.target() : seg.source();
           lhor = compute_horizontal_side_line(
                    pnt, otherpnt,
                    is_positive_slope ?
