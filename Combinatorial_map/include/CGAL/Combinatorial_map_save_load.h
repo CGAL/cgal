@@ -378,7 +378,7 @@ namespace CGAL {
   {
     std::ofstream output(filename);
     if (!output) return false;
-    save_combinatorial_map(amap, filename);
+    save_combinatorial_map(amap, output);
   }
   
   // Here T is a Dart_handle so no need of &
