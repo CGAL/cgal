@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/" >
+        <file>icons/Voronoi_diagram_2.png</file>
+        <file>icons/fileNew.png</file>
+        <file>icons/fileOpen.png</file>
+        <file>icons/fileSave.png</file>
+        <file>icons/fit-page-32.png</file>
+        <file>icons/inputPoint.png</file>
+        <file>icons/snapshot.png</file>
+        <file>icons/triangulation.png</file>
+        <file>icons/until.png</file>
+        <file>icons/vertex.png</file>
+    </qresource>
+</RCC>
