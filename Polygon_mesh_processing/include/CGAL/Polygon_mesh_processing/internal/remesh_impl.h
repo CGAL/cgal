@@ -926,37 +926,33 @@ namespace internal {
       BOOST_FOREACH(halfedge_descriptor hd,
                     halfedges_around_target(h, mesh_))
       {
-        if (source(hd, mesh_) == vs
-          || target(next(hd, mesh_), mesh_) == vs) //degenerate face
-          continue;
         Vector_3 n = compute_normal(face(hd, mesh_));
-        CGAL_assertion(n != CGAL::NULL_VECTOR);
-        normals.push_back(n);
+        //n can be 0 in the splitting step because we remove degenerate faces
+        //only at the end of the splitting step
+        if(n != CGAL::NULL_VECTOR)
+          normals.push_back(n);
       }
       BOOST_FOREACH(halfedge_descriptor hd,
                     halfedges_around_target(opposite(h, mesh_), mesh_))
       {
-        if (source(hd, mesh_) == vt
-          || target(next(hd, mesh_), mesh_) == vt) //degenerate face
-          continue;
         Vector_3 n = compute_normal(face(hd, mesh_));
-        CGAL_assertion(n != CGAL::NULL_VECTOR);
-        normals.push_back(n);
+        if(n != CGAL::NULL_VECTOR)
+          normals.push_back(n);
       }
 
       //check all normals have same orientation
+      bool res = true;
       for(std::size_t i = 1; i < normals.size(); ++i)/*start at 1 on purpose*/
       {
         if (normals[i-1] * normals[i] <= 0.)
         {
-          //restore position
-          put(vpmap_, vs, ps);
-          return false;
+          res = false;
+          break;
         }
       }
       //restore position
       put(vpmap_, vs, ps);
-      return true;
+      return res;
     }
 
     Vector_3 compute_normal(const face_descriptor& f) const
