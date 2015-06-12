@@ -136,7 +136,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     struct Parameters {
       Parameters()
         : probability(0.01)
-        , min_points(SIZE_MAX)
+        , min_points(std::numeric_limits<std::size_t>::max())
         , epsilon(-1)
         , normal_threshold(0.9)
         , cluster_epsilon(-1)
