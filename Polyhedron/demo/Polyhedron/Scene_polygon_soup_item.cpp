@@ -94,235 +94,44 @@ struct Polyhedron_to_polygon_soup_writer {
 void
 Scene_polygon_soup_item::initialize_buffers()
 {
-    qFunc.glBindVertexArray(vao);
 
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (positions_poly.size())*sizeof(float),
-                 positions_poly.data(),
-                 GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(0, //number of the buffer
-                          4, //number of floats to be taken
-                          GL_FLOAT, // type of data
-                          GL_FALSE, //not normalized
-                          0, //compact data (not in a struct)
-                          NULL //no offset (seperated in several buffers)
-                          );
-    qFunc.glEnableVertexAttribArray(0);
-
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (positions_lines.size())*sizeof(float),
-                 positions_lines.data(),
-                 GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(1, //number of the buffer
-                          4, //number of floats to be taken
-                          GL_FLOAT, // type of data
-                          GL_FALSE, //not normalized
-                          0, //compact data (not in a struct)
-                          NULL //no offset (seperated in several buffers)
-                          );
-    qFunc.glEnableVertexAttribArray(1);
-
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (normals.size())*sizeof(float),
-                 normals.data(), GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(2,
-                          3,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          0,
-                          NULL
-                          );
-    qFunc.glEnableVertexAttribArray(2);
-
-    // Clean-up
-    qFunc.glBindVertexArray(0);
-}
-
-void
-Scene_polygon_soup_item::compile_shaders(void)
-{
-    //fill the vertex shader
-    static const GLchar* vertex_shader_source[] =
+    //vao containing the data for the facets
     {
-        "#version 300 es \n"
-        " \n"
-        "layout (location = 0) in vec4 positions_poly; \n"
-        "layout (location = 2) in vec3 vNormals; \n"
-        "uniform mat4 mvp_matrix; \n"
-        "uniform mat4 mv_matrix; \n"
+        rendering_program_with_light.bind();
 
-        "uniform int is_two_side; \n"
-        "uniform vec3 light_pos;  \n"
-        "uniform vec3 light_diff; \n"
-        "uniform vec3 light_spec; \n"
-        "uniform vec3 light_amb;  \n"
-        "float spec_power = 128.0; \n"
-
-        "out highp vec3 fColors; \n"
-        " \n"
-
-        "void main(void) \n"
-        "{ \n"
-        "vec4 P = mv_matrix * positions_poly; \n"
-        "vec3 N = mat3(mv_matrix)* vNormals; \n"
-        "vec3 L = light_pos - P.xyz; \n"
-        "vec3 V = -P.xyz; \n"
-
-        "N=normalize(N); \n"
-        "L = normalize(L); \n"
-        "V = normalize(V); \n"
-
-        "vec3 R = reflect(-L, N); \n"
-        "  vec3 diffuse; \n"
-        "if(is_two_side == 1) \n"
-        "   diffuse = abs(dot(N,L)) * light_diff; \n"
-        "else \n"
-        "   diffuse = max(dot(N,L), 0.0) * light_diff; \n"
-        "vec3 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
-
-        "fColors = light_amb + diffuse + specular ; \n"
-
-        "gl_Position = mvp_matrix * positions_poly; \n"
-        "} \n"
-    };
-    //fill the fragment shader
-    static const GLchar* fragment_shader_source[]=
-    {
-        "#version 300 es \n"
-        " \n"
-        "in highp vec3 fColors; \n"
-
-        "out highp vec4 color; \n"
-        " \n"
-        "void main(void) \n"
-        "{ \n"
-        "/* Lighting gestion */ \n"
-        " color = vec4(fColors, 1.0); \n"
-        "} \n"
-    };
-
-    vertex_shader =	qFunc.glCreateShader(GL_VERTEX_SHADER);
-    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
-    qFunc.glCompileShader(vertex_shader);
-
-    fragment_shader =	qFunc.glCreateShader(GL_FRAGMENT_SHADER);
-    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    qFunc.glCompileShader(fragment_shader);
-
-    GLuint program = qFunc.glCreateProgram();
-    qFunc.glAttachShader(program, vertex_shader);
-    qFunc.glAttachShader(program, fragment_shader);
-    qFunc.glLinkProgram(program);
-
-    qFunc.glDeleteShader(vertex_shader);
-    rendering_program_poly = program;
-
-    //For the edges
-    static const GLchar* vertex_shader_source_lines[] =
-    {
-        "#version 300 es \n"
-        " \n"
-        "layout (location = 1) in vec4 positions_lines; \n"
-
-        "uniform mat4 mvp_matrix; \n"
-        "uniform vec4 color; \n"
-        "out highp vec3 fColors; \n"
-        " \n"
-
-        "void main(void) \n"
-        "{ \n"
-        "   fColors = vec3(color); \n"
-        "   gl_Position = mvp_matrix * positions_lines; \n"
-        "} \n"
-    };
-
-    vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
-    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source_lines, NULL);
-    qFunc.glCompileShader(vertex_shader);
-    qFunc.glDeleteShader(fragment_shader);
-
-    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    qFunc.glCompileShader(fragment_shader);
-
-    program = qFunc.glCreateProgram();
-    qFunc.glAttachShader(program, vertex_shader);
-    qFunc.glAttachShader(program, fragment_shader);
-    qFunc.glLinkProgram(program);
-
-    //Clean-up
-    qFunc.glDeleteShader(vertex_shader);
-    qFunc.glDeleteShader(fragment_shader);
-    rendering_program_lines = program;
-}
-void
-Scene_polygon_soup_item::uniform_attrib(Viewer_interface* viewer, int mode) const
-{
-    GLfloat colors[4];
-    light_info light;
-    GLint is_both_sides = 0;
-    GLfloat mvp_mat[16];
-    GLfloat mv_mat[16];
-
-    //fills the MVP and MV matrices.
-
-    GLdouble d_mat[16];
-    viewer->camera()->getModelViewProjectionMatrix(d_mat);
-    //Convert the GLdoubles matrices in GLfloats
-    for (int i=0; i<16; ++i)
-        mvp_mat[i] = GLfloat(d_mat[i]);
-
-    viewer->camera()->getModelViewMatrix(d_mat);
-    for (int i=0; i<16; ++i)
-        mv_mat[i] = GLfloat(d_mat[i]);
+        vaos[0].bind();
+        buffers[0].bind();
+        buffers[0].allocate(positions_poly.data(), positions_poly.size()*sizeof(float));
+        rendering_program_with_light.enableAttributeArray("vertex");
+        rendering_program_with_light.setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        buffers[0].release();
 
 
-    qFunc.glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
 
-    //fills the arraw of colors with the current color
-    qFunc.glGetFloatv(GL_CURRENT_COLOR, colors);
+        buffers[1].bind();
+        buffers[1].allocate(normals.data(), normals.size()*sizeof(float));
+        rendering_program_with_light.enableAttributeArray("normals");
+        rendering_program_with_light.setAttributeBuffer("normals",GL_FLOAT,0,3);
+        buffers[1].release();
 
-    //Gets lighting info :
+        rendering_program_with_light.release();
 
-    //position
-    glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
-
-    //ambient
-    glGetLightfv(GL_LIGHT0, GL_AMBIENT, light.ambient);
-    light.ambient[0]*=colors[0];
-    light.ambient[1]*=colors[1];
-    light.ambient[2]*=colors[2];
-
-    //specular
-    glGetLightfv(GL_LIGHT0, GL_SPECULAR, light.specular);
-
-    //diffuse
-    glGetLightfv(GL_LIGHT0, GL_DIFFUSE, light.diffuse);
-
-    light.diffuse[0]*=colors[0];
-    light.diffuse[1]*=colors[1];
-    light.diffuse[2]*=colors[2];
-
-    //For the Flat mode
-    if(mode ==0)
-    {
-        qFunc.glUseProgram(rendering_program_poly);
-        qFunc.glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
-        qFunc.glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
-        qFunc.glUniform3fv(location[2], 1, light.position);
-        qFunc.glUniform3fv(location[3], 1, light.diffuse);
-        qFunc.glUniform3fv(location[4], 1, light.specular);
-        qFunc.glUniform3fv(location[5], 1, light.ambient);
-        qFunc.glUniform1i(location[6], is_both_sides);
     }
-    //For the Wire mode
-    else if(mode ==1)
+    //vao containing the data for the edges
     {
-        qFunc.glUseProgram(rendering_program_lines);
-        qFunc.glUniformMatrix4fv(location[7], 1, GL_FALSE, mvp_mat);
-        qFunc.glUniform4fv(location[8],1,colors);
+        rendering_program_without_light.bind();
+        vaos[1].bind();
+
+        buffers[3].bind();
+        buffers[3].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
+        rendering_program_without_light.enableAttributeArray("vertex");
+        rendering_program_without_light.setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        buffers[3].release();
+
+        rendering_program_without_light.release();
+
+        vaos[1].release();
+
     }
 }
 
@@ -520,18 +329,6 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
         }
     }
 
-
-
-    location[0] = qFunc.glGetUniformLocation(rendering_program_poly, "mvp_matrix");
-    location[1] = qFunc.glGetUniformLocation(rendering_program_poly, "mv_matrix");
-    location[2] = qFunc.glGetUniformLocation(rendering_program_poly, "light_pos");
-    location[3] = qFunc.glGetUniformLocation(rendering_program_poly, "light_diff");
-    location[4] = qFunc.glGetUniformLocation(rendering_program_poly, "light_spec");
-    location[5] = qFunc.glGetUniformLocation(rendering_program_poly, "light_amb");
-    location[6] = qFunc.glGetUniformLocation(rendering_program_poly, "is_two_side");
-
-    location[7] = qFunc.glGetUniformLocation(rendering_program_lines, "mvp_matrix");
-    location[8] = qFunc.glGetUniformLocation(rendering_program_lines, "color");
 }
 
 
@@ -540,19 +337,11 @@ Scene_polygon_soup_item::Scene_polygon_soup_item()
       soup(0),positions_poly(0),positions_lines(0), normals(0),
       oriented(false)
 {
-    qFunc.initializeOpenGLFunctions();
-    qFunc.glGenVertexArrays(1, &vao);
-    //Generates an integer which will be used as ID for each buffer
-    qFunc.glGenBuffers(3, buffer);
     compile_shaders();
 }
 
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
 {
-    qFunc.glDeleteBuffers(3, buffer);
-    qFunc.glDeleteVertexArrays(1, &vao);
-    qFunc.glDeleteProgram(rendering_program_lines);
-    qFunc.glDeleteProgram(rendering_program_poly);
 
     delete soup;
 }
@@ -724,44 +513,50 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     if(soup == 0) return;
     //Calls the buffer info again so that it's the right one used even if
     //there are several objects drawn
-    qFunc.glBindVertexArray(vao);
-    uniform_attrib(viewer,0);
+    vaos[0].bind();
+    attrib_buffers(viewer);
+    //fills the arraw of colors with the current color
+    GLfloat colors[4];
+    qFunc.glGetFloatv(GL_CURRENT_COLOR, colors);
+    QVector4D v_colors = QVector4D(colors[0],colors[1],colors[2],colors[3]);
     // tells the GPU to use the program just created
-    qFunc.glUseProgram(rendering_program_poly);
+    rendering_program_with_light.bind();
+    rendering_program_with_light.setAttributeValue("colors", v_colors);
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
     qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
     // Clean-up
-    qFunc.glUseProgram(0);
-    qFunc.glBindVertexArray(0);
+    rendering_program_with_light.release();
+    vaos[0].release();
+
 }
 
 void
 Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
 
     if(soup == 0) return;
-    qFunc.glBindVertexArray(vao);
-    uniform_attrib(viewer,1);
-    qFunc.glUseProgram(rendering_program_lines);
+    vaos[1].bind();
+    attrib_buffers(viewer);
+    rendering_program_without_light.bind();
     //draw the points
     qFunc.glDrawArrays(GL_POINTS, 0, positions_lines.size()/4);
     // Clean-up
-    qFunc.glUseProgram(0);
-    qFunc.glBindVertexArray(0);
+    rendering_program_without_light.release();
+    vaos[1].release();
 }
 
 void
 Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
     if(soup == 0) return;
 
-    qFunc.glBindVertexArray(vao);
-    uniform_attrib(viewer,1);
-    qFunc.glUseProgram(rendering_program_lines);
+    vaos[1].bind();
+    attrib_buffers(viewer);
+    rendering_program_without_light.bind();
     //draw the edges
     qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
     // Clean-up
-    qFunc.glUseProgram(0);
-    qFunc.glBindVertexArray(0);
+    rendering_program_without_light.release();
+    vaos[1].release();
 
 }
 

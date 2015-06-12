@@ -171,20 +171,8 @@ private:
     std::vector<float> positions_lines;
     std::vector<float> normals;
 
-    GLuint rendering_program_poly;
-    GLuint rendering_program_lines;
-    GLint location[9];
-
-
-    GLuint vertex_shader;
-    GLuint fragment_shader;
-    GLuint vao;
-    GLuint buffer[3];
     void initialize_buffers();
-    void compile_shaders(void);
     void compute_normals_and_vertices(void);
-    void uniform_attrib(Viewer_interface*, int) const;
-    //void is_Triangulated();
     void triangulate_polygon(Polygons_iterator );
 
 }; // end class Scene_polygon_soup_item
