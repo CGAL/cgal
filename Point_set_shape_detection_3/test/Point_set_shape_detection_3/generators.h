@@ -144,7 +144,7 @@ void generatePointsOnCone(const std::size_t num_points, typename CGAL::Point_3<K
     }
     normal = normal * (1.0 / CGAL::sqrt(normal.squared_length()));
 
-    FT l = random_float<K>(s, e);
+    FT l = random_float(s, e);
 
     CGAL::Point_3<K> p = apex + axis * l + (l * radiusGrow) * normal;
 
@@ -225,8 +225,8 @@ void generatePointsOnTorus(const std::size_t num_points, CGAL::Point_3<K> const&
 
   for (size_t i = 0 ; i < num_points ; ++i)
   {
-    FT tau = random_float<K>(0., 2. * M_PI);
-    FT phi = random_float<K>(0., 2. * M_PI);
+    FT tau = random_float(0., 2. * M_PI);
+    FT phi = random_float(0., 2. * M_PI);
 
     Vector normal = sin(tau) * b1 + cos(tau) * b2;
     normal = normal / sqrt(normal.squared_length());
