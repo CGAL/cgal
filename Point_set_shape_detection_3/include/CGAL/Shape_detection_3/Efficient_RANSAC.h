@@ -222,7 +222,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     */ 
     template <class ShapeType>
     void add_shape_factory() {
-      m_shape_factories.push_back(factory<ShapeType>());
+      m_shape_factories.push_back(factory<ShapeType>);
     }
 
     /*!
