@@ -31,11 +31,8 @@ bool test_plane_connected_component() {
   for (std::size_t i = 0;i<rounds;i++) {
     Pwn_vector points;
 
-    K::FT dist = 0;
     Vector normal;
     CGAL::Bbox_3 bbox(-10, -10, -10, 10, 10, 10);
-
-    std::size_t index = 0;
 
     // Sample 4 rectangles with 0.05 spacing between points
     // and 0.2 spacing between rectangles.
@@ -59,7 +56,7 @@ bool test_plane_connected_component() {
     // shape and for the second half choose a small cluster_epsilon to find
     // four separated shapes.
     
-    Efficient_ransac::Parameters parameters;
+    typename Efficient_ransac::Parameters parameters;
     parameters.probability = 0.05f;
     parameters.min_points = 100;
     parameters.epsilon = 0.002f;
@@ -75,7 +72,7 @@ bool test_plane_connected_component() {
       return false;
     }
     
-    Efficient_ransac::Shape_range shapes = ransac.shapes();
+    typename Efficient_ransac::Shape_range shapes = ransac.shapes();
 
     if (i <= rounds/2 && shapes.size() != 1)
       continue;
@@ -101,11 +98,11 @@ int main() {
   bool success = true;
 
   std::cout << "test_plane_connected_component<CGAL::Simple_cartesian<float>> ";
-  if (!test_plane_connected_component<CGAL::Simple_cartesian<float>>()) 
+  if (!test_plane_connected_component<CGAL::Simple_cartesian<float> >()) 
     success = false;
 
   std::cout << "test_plane_connected_component<CGAL::Simple_cartesian<double>> ";
-  if (!test_plane_connected_component<CGAL::Simple_cartesian<double>>())
+  if (!test_plane_connected_component<CGAL::Simple_cartesian<double> >())
     success = false;
 
   std::cout << "test_plane_connected_component<CGAL::Exact_predicates_inexact_constructions_kernel> ";

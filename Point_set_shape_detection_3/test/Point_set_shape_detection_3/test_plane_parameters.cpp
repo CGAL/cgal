@@ -12,6 +12,7 @@ const int ptsCount = 1000;
 
 template <class K>
 bool test_plane_parameters() {
+  typedef typename K::FT                                      FT;
   typedef typename CGAL::Point_with_normal_3<K>               Pwn;
   typedef typename CGAL::Point_3<K>                           Point;
   typedef typename CGAL::Vector_3<K>                          Vector;
@@ -30,7 +31,7 @@ bool test_plane_parameters() {
   for (std::size_t i = 0;i<rounds;i++) {
     Pwn_vector points;
 
-    K::FT dist = 0;
+    typename K::FT dist = 0;
     Vector normal;
     CGAL::Bbox_3 bbox(-10, -10, -10, 10, 10, 10);
     
@@ -50,7 +51,7 @@ bool test_plane_parameters() {
 
     // Set cluster epsilon to a high value as just the parameters of
     // the extracted primitives are to be tested.
-    Efficient_ransac::Parameters parameters;
+    typename Efficient_ransac::Parameters parameters;
     parameters.probability = 0.05f;
     parameters.min_points = 100;
     parameters.epsilon = 0.002f;
@@ -62,7 +63,7 @@ bool test_plane_parameters() {
       return false;
     }
     
-    Efficient_ransac::Shape_range shapes = ransac.shapes();
+    typename Efficient_ransac::Shape_range shapes = ransac.shapes();
 
     if (shapes.size() != 1)
       continue;
@@ -72,10 +73,10 @@ bool test_plane_parameters() {
     if (!pl)
       continue;
 
-    const K::FT phi = normal * pl->plane_normal();
-    const K::FT sign = (phi < 0) ? -1.0f : 1.0f;
+    const FT phi = normal * pl->plane_normal();
+    const FT sign = (phi < 0) ? -1.0f : 1.0f;
 
-    const K::FT dist2 = (CGAL::Plane_3<K>(*pl)).d();
+    const FT dist2 = (CGAL::Plane_3<K>(*pl)).d();
 
     if (abs(phi) < 0.98 || abs(dist2 - sign * dist) > 0.02)
       continue;
@@ -98,11 +99,11 @@ int main() {
   bool success = true;
 
   std::cout << "test_plane_parameters<CGAL::Simple_cartesian<float>> ";
-  if (!test_plane_parameters<CGAL::Simple_cartesian<float>>()) 
+  if (!test_plane_parameters<CGAL::Simple_cartesian<float> >()) 
     success = false;
 
   std::cout << "test_plane_parameters<CGAL::Simple_cartesian<double>> ";
-  if (!test_plane_parameters<CGAL::Simple_cartesian<double>>())
+  if (!test_plane_parameters<CGAL::Simple_cartesian<double> >())
     success = false;
 
   std::cout << "test_plane_parameters<CGAL::Exact_predicates_inexact_constructions_kernel> ";
