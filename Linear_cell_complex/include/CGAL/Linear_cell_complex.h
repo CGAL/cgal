@@ -420,16 +420,6 @@ namespace CGAL {
 
       std::map<Point, std::vector<Dart_handle> > one_dart_per_facet;
       size_type mymark;
-      // CGAL_assertion( mymark!=-1 );
-      try
-      {
-        mymark = this->get_new_mark();
-      }
-      catch (typename Base::Exception_mark_is_out_of_border e)
-      {
-        std::cerr<<"No more free mark, exit."<<std::endl;
-        exit(-1);
-      }
 
       // First we fill the std::map by one dart per facet, and by using
       // the minimal point as index.

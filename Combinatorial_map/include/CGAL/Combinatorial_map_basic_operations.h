@@ -270,25 +270,8 @@ namespace CGAL
     typename Map::size_type nbIncident = 0;
     typename Map::size_type mark;
     typename Map::size_type treated;
-    // CGAL_assume(mark != -1); CGAL_assume( treated != -1);
-    try
-    {
-      mark = amap.get_new_mark();
-    }
-    catch (typename Map::Exception_mark_is_out_of_border e)
-    {
-      std::cerr<<"No more free mark, exit."<<std::endl;
-      exit(-1);
-    }
-    try
-    {
-      treated = amap.get_new_mark();
-    }
-    catch (typename Map::Exception_mark_is_out_of_border e)
-    {
-      std::cerr<<"No more free mark, exit."<<std::endl;
-      exit(-1);
-    }
+    mark = amap.get_new_mark();
+    treated = amap.get_new_mark();
 
     typename Map::template
       Dart_of_cell_basic_range<i>::const_iterator it(amap, adart, mark);
@@ -336,25 +319,8 @@ namespace CGAL
     typename Map::size_type nbIncident = 0;
     typename Map::size_type mark;
     typename Map::size_type treated;
-    // CGAL_assume(mark != -1); CGAL_assume( treated != -1);
-    try
-    {
-      mark = amap.get_new_mark();
-    }
-    catch (typename Map::Exception_mark_is_out_of_border e)
-    {
-      std::cerr<<"No more free mark, exit."<<std::endl;
-      exit(-1);
-    }
-    try
-    {
-      treated = amap.get_new_mark();
-    }
-    catch (typename Map::Exception_mark_is_out_of_border e)
-    {
-      std::cerr<<"No more free mark, exit."<<std::endl;
-      exit(-1);
-    }
+    mark = amap.get_new_mark();
+    treated = amap.get_new_mark();
 
     typename Map::template
       Dart_of_cell_basic_range<i>::const_iterator it(amap, adart, mark);

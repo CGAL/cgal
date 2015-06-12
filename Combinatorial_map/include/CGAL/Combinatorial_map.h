@@ -97,7 +97,7 @@ namespace CGAL {
 
     static const size_type NB_MARKS = Base::NB_MARKS;
     // to fix the use of -1 to test unused marks in several algorithms
-    static const size_type MARK_ERROR = NB_MARKS;
+    static const size_type INVALID_MARK = NB_MARKS;
     static const unsigned int dimension = Base::dimension;
 
     typedef typename Base::Null_handle_type Null_handle_type;
@@ -146,7 +146,7 @@ namespace CGAL {
       public Base::template Attribute_const_range<i>
     {};
 
-  class Exception_mark_is_out_of_border {};
+  class Exception_no_more_available_mark {};
 
   public:
     /** Default Combinatorial_map constructor.
@@ -749,8 +749,7 @@ namespace CGAL {
      */
     bool is_reserved(size_type amark) const
     {
-      CGAL_assertion(amark>=0 && amark<NB_MARKS);
-      // CGAL_assume( (size_type)amark<NB_MARKS );
+      CGAL_assertion(amark<NB_MARKS);
 
       return (mnb_times_reserved_marks[amark]!=0);
     }
@@ -762,7 +761,6 @@ namespace CGAL {
     size_type number_of_marked_darts(size_type amark) const
     {
       CGAL_assertion( is_reserved(amark) );
-      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       return mnb_marked_darts[amark];
     }
@@ -803,9 +801,8 @@ namespace CGAL {
       {
         std::cerr << "Not enough Boolean marks: "
           "increase NB_MARKS in item class." << std::endl;
-        // return -1;
         std::cerr << "  (exception launched)" << std::endl;
-        throw Exception_mark_is_out_of_border();
+        throw Exception_no_more_available_mark();
       }
 
       size_type m = mfree_marks_stack[mnb_used_marks];
@@ -826,7 +823,6 @@ namespace CGAL {
     void share_a_mark(size_type amark) const
     {
       CGAL_assertion( is_reserved(amark) );
-      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       ++mnb_times_reserved_marks[amark];
     }
@@ -837,7 +833,6 @@ namespace CGAL {
     size_type get_number_of_times_mark_reserved(size_type amark) const
     {
       CGAL_assertion( amark<NB_MARKS );
-      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       return mnb_times_reserved_marks[amark];
     }
@@ -850,7 +845,6 @@ namespace CGAL {
     void negate_mark(size_type amark) const
     {
       CGAL_assertion( is_reserved(amark) );
-      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       mnb_marked_darts[amark] = number_of_darts() - mnb_marked_darts[amark];
 
@@ -866,7 +860,6 @@ namespace CGAL {
     {
       // CGAL_assertion( adart != null_dart_handle );
       CGAL_assertion( is_reserved(amark) );
-      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       return get_dart_mark(adart, amark)!=mmask_marks[amark];
     }
@@ -881,7 +874,6 @@ namespace CGAL {
     {
       CGAL_assertion( adart != null_dart_handle );
       CGAL_assertion( is_reserved(amark) );
-      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       if (is_marked(adart, amark) != astate)
       {
@@ -900,7 +892,6 @@ namespace CGAL {
     {
       CGAL_assertion( adart != null_dart_handle );
       CGAL_assertion( is_reserved(amark) );
-      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       if (is_marked(adart, amark)) return;
 
@@ -916,7 +907,6 @@ namespace CGAL {
     {
       CGAL_assertion( adart != null_dart_handle );
       CGAL_assertion( is_reserved(amark) );
-      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       if (!is_marked(adart, amark)) return;
 
@@ -932,7 +922,6 @@ namespace CGAL {
     void mark_null_dart(size_type amark) const
     {
       CGAL_assertion( is_reserved(amark) );
-      // CGAL_assume( (size_type)amark<NB_MARKS );
 
 #ifdef CGAL_CMAP_DEPRECATED
       if ( null_dart_handle!=NULL ) // Pb with static null_dart_handle for windows
@@ -946,7 +935,6 @@ namespace CGAL {
     void unmark_null_dart(size_type amark) const
     {
       CGAL_assertion( is_reserved(amark) );
-      // CGAL_assume( (size_type)amark<NB_MARKS );
 
 #ifdef CGAL_CMAP_DEPRECATED
       if ( null_dart_handle!=NULL ) // Pb with static null_dart_handle for windows
@@ -983,7 +971,6 @@ namespace CGAL {
     void free_mark(size_type amark) const
     {
       CGAL_assertion( is_reserved(amark) );
-      // CGAL_assume( (size_type)amark<NB_MARKS );
 
       if ( mnb_times_reserved_marks[amark]>1 )
       {
@@ -1093,7 +1080,7 @@ namespace CGAL {
       unsigned int i = 0, j = 0;
       std::vector<size_type> marks(dimension+1);
       for ( i=0; i<=dimension; ++i)
-        marks[i] = MARK_ERROR;
+        marks[i] = INVALID_MARK;
 
       Helper::template
         Foreach_enabled_attributes<Reserve_mark_functor<Self> >::
@@ -1105,7 +1092,7 @@ namespace CGAL {
         if ( !valid )
         { // We continue the traversal to mark all the darts.
           for ( i=0; i<=dimension; ++i)
-            if (marks[i]!=MARK_ERROR) mark(it,marks[i]);
+            if (marks[i]!=INVALID_MARK) mark(it,marks[i]);
         }
         else
         {
@@ -1178,7 +1165,7 @@ namespace CGAL {
         }
       }
       for ( i=0; i<=dimension; ++i)
-        if ( marks[i]!=MARK_ERROR )
+        if ( marks[i]!=INVALID_MARK )
         {
           CGAL_assertion( is_whole_map_marked(marks[i]) );
           free_mark(marks[i]);
@@ -1192,7 +1179,7 @@ namespace CGAL {
     {
       std::vector<size_type> marks(dimension+1);
       for ( unsigned int i=0; i<=dimension; ++i)
-        marks[i] = MARK_ERROR;
+        marks[i] = INVALID_MARK;
 
       Helper::template
         Foreach_enabled_attributes<Reserve_mark_functor<Self> >::
@@ -1207,7 +1194,7 @@ namespace CGAL {
       }
 
       for ( unsigned int i=0; i<=dimension; ++i)
-        if ( marks[i]!=MARK_ERROR )
+        if ( marks[i]!=INVALID_MARK )
         {
           CGAL_assertion( is_whole_map_marked(marks[i]) );
           free_mark(marks[i]);
@@ -1953,18 +1940,7 @@ namespace CGAL {
         dartv.push_back(it);
       }
 
-      // size_type mark = get_new_mark();
-      // CGAL_assertion( mark!=-1 );
-      size_type mark;
-      try
-      {
-        mark = get_new_mark();
-      }
-      catch (Exception_mark_is_out_of_border e)
-      {
-        std::cerr<<"No more free mark, exit."<<std::endl;
-        exit(-1);
-      }
+      size_type mark = get_new_mark();
 
       CGAL::CMap_dart_iterator_basic_of_involution<Self, 1>
           I1(*this, adart1, mark);
@@ -2035,18 +2011,7 @@ namespace CGAL {
         dartv.push_back(it);
       }
 
-      // int mark = get_new_mark();
-      // CGAL_assertion( mark!=-1 );
-      size_type mark;
-      try
-      {
-        mark = get_new_mark();
-      }
-      catch (Exception_mark_is_out_of_border e)
-      {
-        std::cerr<<"No more free mark, exit."<<std::endl;
-        exit(-1);
-      }
+      size_type mark = get_new_mark();
 
       CGAL::CMap_dart_iterator_basic_of_involution<Self, 1>
           I1(*this, adart1, mark);
@@ -2102,18 +2067,7 @@ namespace CGAL {
       CGAL_assertion( 2<=i && i<=dimension );
       CGAL_assertion( (is_sewable<i>(adart1,adart2)) );
 
-      // int mark=get_new_mark();
-      // CGAL_assertion( mark!=-1 );
-      size_type mark;
-      try
-      {
-        mark = get_new_mark();
-      }
-      catch (Exception_mark_is_out_of_border e)
-      {
-        std::cerr<<"No more free mark, exit."<<std::endl;
-        exit(-1);
-      }
+      size_type mark=get_new_mark();
 
       CGAL::CMap_dart_iterator_basic_of_involution<Self, i>
           I1(*this, adart1, mark);
@@ -2463,14 +2417,14 @@ namespace CGAL {
       for ( unsigned int i=0; i<dimension+2; ++i)
       {
         res[i]=0;
-        marks[i]=MARK_ERROR;
+        marks[i]=INVALID_MARK;
       }
 
       // Mark reservation
       for ( unsigned int i=0; i<acells.size(); ++i)
       {
         CGAL_assertion(acells[i]<=dimension+1);
-        if ( marks[acells[i]]==MARK_ERROR )
+        if ( marks[acells[i]]==INVALID_MARK )
         {
           marks[acells[i]] = get_new_mark();
         }
@@ -2489,7 +2443,7 @@ namespace CGAL {
       }
 
       // Unmarking darts
-      std::vector<unsigned int> tounmark;
+      std::vector<size_type> tounmark;
       for ( unsigned int i=0; i<acells.size(); ++i)
       {
         if ( is_whole_map_marked(marks[acells[i]]) ||
@@ -2618,7 +2572,7 @@ namespace CGAL {
       <Self, CGAL::CMap_dart_iterator_basic_of_orbit<Self,Beta...>,
        CGAL::CMap_dart_const_iterator_basic_of_orbit<Self,Beta...> > Base;
 
-      Dart_of_orbit_basic_range(Self &amap, Dart_handle adart, size_type amark=MARK_ERROR):
+      Dart_of_orbit_basic_range(Self &amap, Dart_handle adart, size_type amark=INVALID_MARK):
         Base(amap, adart, amark)
       {}
     };
@@ -2633,7 +2587,7 @@ namespace CGAL {
       Base;
 
       Dart_of_orbit_basic_const_range(const Self &amap, Dart_const_handle
-                                      adart, size_type amark=MARK_ERROR):
+                                      adart, size_type amark=INVALID_MARK):
         Base(amap, adart, amark)
       {}
     };
@@ -2677,12 +2631,12 @@ namespace CGAL {
     //--------------------------------------------------------------------------
     template<unsigned int ... Beta>
     Dart_of_orbit_basic_range<Beta...> darts_of_orbit_basic(Dart_handle adart,
-                                                            size_type amark=MARK_ERROR)
+                                                            size_type amark=INVALID_MARK)
     { return Dart_of_orbit_basic_range<Beta...>(*this,adart,amark); }
     //--------------------------------------------------------------------------
     template<unsigned int ... Beta>
     Dart_of_orbit_basic_const_range<Beta...>
-    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=MARK_ERROR) const
+    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
     { return Dart_of_orbit_basic_const_range<Beta...>(*this,adart,amark); }
     //**************************************************************************
 #else
@@ -2703,7 +2657,7 @@ namespace CGAL {
                                                B6,B7,B8,B9> > Base;
 
       Dart_of_orbit_basic_range(Self &amap, Dart_handle adart,
-                                size_type /*amark*/=MARK_ERROR):
+                                size_type /*amark*/=INVALID_MARK):
         Base(amap, adart)
       {}
     };
@@ -2721,7 +2675,7 @@ namespace CGAL {
        <Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> > Base;
 
       Dart_of_orbit_basic_const_range(const Self &amap,
-                                      Dart_const_handle adart, size_type amark=MARK_ERROR):
+                                      Dart_const_handle adart, size_type amark=INVALID_MARK):
         Base(amap, adart, amark)
       {}
     };
@@ -2867,104 +2821,104 @@ namespace CGAL {
     //--------------------------------------------------------------------------
     // Basic versions
     Dart_of_orbit_basic_range<> darts_of_orbit_basic(Dart_handle adart,
-                                                     size_type amark=MARK_ERROR)
+                                                     size_type amark=INVALID_MARK)
     { return Dart_of_orbit_basic_range<>(*this,adart,amark); }
     //--------------------------------------------------------------------------
     Dart_of_orbit_basic_const_range<> darts_of_orbit_basic
-    (Dart_const_handle adart,size_type amark=MARK_ERROR) const
+    (Dart_const_handle adart,size_type amark=INVALID_MARK) const
     { return Dart_of_orbit_basic_const_range<>(*this,adart,amark); }
     //--------------------------------------------------------------------------
     template <unsigned int B1>
     Dart_of_orbit_basic_range<B1> darts_of_orbit_basic(Dart_handle adart,
-                                                       size_type amark=MARK_ERROR)
+                                                       size_type amark=INVALID_MARK)
     { return Dart_of_orbit_basic_range<B1>(*this,adart,amark); }
     //--------------------------------------------------------------------------
     template <unsigned int B1>
     Dart_of_orbit_basic_const_range<B1> darts_of_orbit_basic
-    (Dart_const_handle adart, size_type amark=MARK_ERROR) const
+    (Dart_const_handle adart, size_type amark=INVALID_MARK) const
     { return Dart_of_orbit_basic_const_range<B1>(*this,adart,amark); }
     //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2>
     Dart_of_orbit_basic_range<B1,B2> darts_of_orbit_basic(Dart_handle adart,
-                                                          size_type amark=MARK_ERROR)
+                                                          size_type amark=INVALID_MARK)
     { return Dart_of_orbit_basic_range<B1,B2>(*this,adart,amark); }
     //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2>
     Dart_of_orbit_basic_const_range<B1,B2> darts_of_orbit_basic
-    (Dart_const_handle adart, size_type amark=MARK_ERROR) const
+    (Dart_const_handle adart, size_type amark=INVALID_MARK) const
     { return Dart_of_orbit_basic_const_range<B1,B2>(*this,adart,amark); }
     //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3>
     Dart_of_orbit_basic_range<B1,B2,B3> darts_of_orbit_basic(Dart_handle adart,
-                                                             size_type amark=MARK_ERROR)
+                                                             size_type amark=INVALID_MARK)
     { return Dart_of_orbit_basic_range<B1,B2,B3>(*this,adart,amark); }
     //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3>
     Dart_of_orbit_basic_const_range<B1,B2,B3> darts_of_orbit_basic
-    (Dart_const_handle adart, size_type amark=MARK_ERROR) const
+    (Dart_const_handle adart, size_type amark=INVALID_MARK) const
     { return Dart_of_orbit_basic_const_range<B1,B2,B3>(*this,adart,amark); }
     //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4>
     Dart_of_orbit_basic_range<B1,B2,B3,B4> darts_of_orbit_basic
-    (Dart_handle adart, size_type amark=MARK_ERROR)
+    (Dart_handle adart, size_type amark=INVALID_MARK)
     { return Dart_of_orbit_basic_range<B1,B2,B3,B4>(*this,adart,amark); }
     //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4>
     Dart_of_orbit_basic_const_range<B1,B2,B3,B4>
-    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=MARK_ERROR) const
+    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
     { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4>(*this,adart,amark); }
     //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
               unsigned int B5>
     Dart_of_orbit_basic_range<B1,B2,B3,B4,B5> darts_of_orbit_basic
-    (Dart_handle adart, size_type amark=MARK_ERROR)
+    (Dart_handle adart, size_type amark=INVALID_MARK)
     { return Dart_of_orbit_basic_range<B1,B2,B3,B4,B5>(*this,adart,amark); }
     //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
               unsigned int B5>
     Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5>
-    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=MARK_ERROR) const
+    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
     { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5>
         (*this,adart,amark); }
     //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
               unsigned int B5,unsigned int B6>
     Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6> darts_of_orbit_basic
-    (Dart_handle adart, size_type amark=MARK_ERROR)
+    (Dart_handle adart, size_type amark=INVALID_MARK)
     { return Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6>(*this,adart,amark); }
     //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
               unsigned int B5,unsigned int B6>
     Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6>
-    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=MARK_ERROR) const
+    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
     { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6>
         (*this,adart,amark); }
     //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
               unsigned int B5,unsigned int B6,unsigned int B7>
     Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7> darts_of_orbit_basic
-    (Dart_handle adart, size_type amark=MARK_ERROR)
+    (Dart_handle adart, size_type amark=INVALID_MARK)
     { return Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7>
         (*this,adart,amark); }
     //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
               unsigned int B5,unsigned int B6,unsigned int B7>
     Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7>
-    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=MARK_ERROR) const
+    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
     { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7>
         (*this,adart,amark); }
     //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
               unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8>
     Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7,B8> darts_of_orbit
-    (Dart_handle adart, size_type amark=MARK_ERROR)
+    (Dart_handle adart, size_type amark=INVALID_MARK)
     { return Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7,B8>
         (*this,adart,amark); }
     //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
               unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8>
     Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7,B8>
-    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=MARK_ERROR) const
+    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
     { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7,B8>
         (*this,adart,amark); }
     //--------------------------------------------------------------------------
@@ -2972,7 +2926,7 @@ namespace CGAL {
               unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8,
               unsigned int B9>
     Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7,B8,B9>
-    darts_of_orbit_basic(Dart_handle adart, size_type amark=MARK_ERROR)
+    darts_of_orbit_basic(Dart_handle adart, size_type amark=INVALID_MARK)
     { return Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7,B8,B9>
         (*this,adart,amark); }
     //--------------------------------------------------------------------------
@@ -2980,7 +2934,7 @@ namespace CGAL {
               unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8,
               unsigned int B9>
     Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7,B8,B9>
-    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=MARK_ERROR) const
+    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
     { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7,B8,B9>
         (*this,adart,amark); }
     //**************************************************************************
@@ -2996,7 +2950,7 @@ namespace CGAL {
       <Self, CGAL::CMap_dart_iterator_basic_of_cell<Self,i,dim>,
        CGAL::CMap_dart_const_iterator_basic_of_cell<Self,i,dim> > Base;
 
-      Dart_of_cell_basic_range(Self &amap, Dart_handle adart, size_type amark=MARK_ERROR) :
+      Dart_of_cell_basic_range(Self &amap, Dart_handle adart, size_type amark=INVALID_MARK) :
         Base(amap, adart, amark)
       {}
     };
@@ -3010,7 +2964,7 @@ namespace CGAL {
       <Self, CGAL::CMap_dart_const_iterator_basic_of_cell<Self,i,dim> > Base;
 
       Dart_of_cell_basic_const_range(const Self &amap, Dart_const_handle adart,
-                                     size_type amark=MARK_ERROR) :
+                                     size_type amark=INVALID_MARK) :
         Base(amap, adart, amark)
       {}
     };
@@ -3046,22 +3000,22 @@ namespace CGAL {
     /// @return a range on all the darts of the given i-cell
     template<unsigned int i, int dim>
     Dart_of_cell_basic_range<i,dim> darts_of_cell_basic(Dart_handle adart,
-                                                        size_type amark=MARK_ERROR)
+                                                        size_type amark=INVALID_MARK)
     { return Dart_of_cell_basic_range<i,dim>(*this,adart,amark); }
     //--------------------------------------------------------------------------
     template<unsigned int i, int dim>
     Dart_of_cell_basic_const_range<i,dim> darts_of_cell_basic
-    (Dart_const_handle adart, size_type amark=MARK_ERROR) const
+    (Dart_const_handle adart, size_type amark=INVALID_MARK) const
     { return Dart_of_cell_basic_const_range<i,dim>(*this,adart,amark); }
     //--------------------------------------------------------------------------
     template<unsigned int i>
     Dart_of_cell_basic_range<i,Self::dimension>
-    darts_of_cell_basic(Dart_handle adart, size_type amark=MARK_ERROR)
+    darts_of_cell_basic(Dart_handle adart, size_type amark=INVALID_MARK)
     { return darts_of_cell_basic<i,Self::dimension>(adart,amark); }
     //--------------------------------------------------------------------------
     template<unsigned int i>
     Dart_of_cell_basic_const_range<i,Self::dimension>
-    darts_of_cell_basic(Dart_const_handle adart, size_type amark=MARK_ERROR) const
+    darts_of_cell_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
     { return darts_of_cell_basic<i,Self::dimension>(adart,amark); }
     //--------------------------------------------------------------------------
     template<unsigned int i, int dim>
@@ -3092,7 +3046,7 @@ namespace CGAL {
        CGAL::CMap_dart_const_iterator_basic_of_involution<Self,i,dim> > Base;
 
       Dart_of_involution_basic_range(Self &amap, Dart_handle adart,
-                                     size_type amark=MARK_ERROR):
+                                     size_type amark=INVALID_MARK):
         Base(amap, adart, amark)
       {}
     };
@@ -3108,30 +3062,30 @@ namespace CGAL {
 
       Dart_of_involution_basic_const_range(const Self &amap,
                                            Dart_const_handle adart,
-                                           size_type amark=MARK_ERROR) :
+                                           size_type amark=INVALID_MARK) :
         Base(amap, adart, amark)
       {}
     };
     //**************************************************************************
     template<unsigned int i,int dim>
     Dart_of_involution_basic_range<i,dim>
-    darts_of_involution_basic(Dart_handle adart, size_type amark=MARK_ERROR)
+    darts_of_involution_basic(Dart_handle adart, size_type amark=INVALID_MARK)
     { return Dart_of_involution_basic_range<i,dim>(*this,adart,amark); }
     //--------------------------------------------------------------------------
     template<unsigned int i,int dim>
     Dart_of_involution_basic_const_range<i,dim>
-    darts_of_involution_basic(Dart_const_handle adart, size_type amark=MARK_ERROR) const
+    darts_of_involution_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
     { return Dart_of_involution_basic_const_range<i,dim>(*this,adart,amark); }
     //--------------------------------------------------------------------------
     template<unsigned int i>
     Dart_of_involution_basic_range<i,Self::dimension>
-    darts_of_involution_basic(Dart_handle adart, size_type amark=MARK_ERROR)
+    darts_of_involution_basic(Dart_handle adart, size_type amark=INVALID_MARK)
     { return Dart_of_involution_basic_range<i,Self::dimension>
         (*this,adart,amark); }
     //--------------------------------------------------------------------------
     template<unsigned int i>
     Dart_of_involution_basic_const_range<i,Self::dimension>
-    darts_of_involution_basic(Dart_const_handle adart, size_type amark=MARK_ERROR) const
+    darts_of_involution_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
     { return Dart_of_involution_basic_const_range<i,Self::dimension>
         (*this,adart,amark); }
     //**************************************************************************
@@ -3147,7 +3101,7 @@ namespace CGAL {
       Base;
 
       Dart_of_involution_inv_basic_range(Self &amap, Dart_handle adart,
-                                         size_type amark=MARK_ERROR):
+                                         size_type amark=INVALID_MARK):
         Base(amap, adart, amark)
       {}
     };
@@ -3164,31 +3118,31 @@ namespace CGAL {
 
       Dart_of_involution_inv_basic_const_range(const Self &amap,
                                                Dart_const_handle adart,
-                                               size_type amark=MARK_ERROR) :
+                                               size_type amark=INVALID_MARK) :
         Base(amap, adart, amark)
       {}
     };
     //**************************************************************************
     template<unsigned int i,int dim>
     Dart_of_involution_inv_basic_range<i,dim>
-    darts_of_involution_inv_basic(Dart_handle adart, size_type amark=MARK_ERROR)
+    darts_of_involution_inv_basic(Dart_handle adart, size_type amark=INVALID_MARK)
     { return Dart_of_involution_inv_basic_range<i,dim>(*this,adart,amark); }
     //--------------------------------------------------------------------------
     template<unsigned int i,int dim>
     Dart_of_involution_inv_basic_const_range<i,dim>
-    darts_of_involution_inv_basic(Dart_const_handle adart, size_type amark=MARK_ERROR) const
+    darts_of_involution_inv_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
     { return Dart_of_involution_inv_basic_const_range<i,dim>
         (*this,adart,amark); }
     //--------------------------------------------------------------------------
     template<unsigned int i>
     Dart_of_involution_inv_basic_range<i,Self::dimension>
-    darts_of_involution_inv_basic(Dart_handle adart, size_type amark=MARK_ERROR)
+    darts_of_involution_inv_basic(Dart_handle adart, size_type amark=INVALID_MARK)
     { return Dart_of_involution_inv_basic_range<i,Self::dimension>
         (*this,adart,amark); }
     //--------------------------------------------------------------------------
     template<unsigned int i>
     Dart_of_involution_inv_basic_const_range<i,Self::dimension>
-    darts_of_involution_inv_basic(Dart_const_handle adart, size_type amark=MARK_ERROR) const
+    darts_of_involution_inv_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
     { return Dart_of_involution_inv_basic_const_range<i,Self::dimension>
         (*this,adart,amark); }
     //**************************************************************************

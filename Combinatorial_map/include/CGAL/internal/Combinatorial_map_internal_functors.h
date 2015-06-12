@@ -341,7 +341,7 @@ struct Count_cell_functor
                    std::vector<size_type>* amarks,
                    std::vector<unsigned int>* ares )
   {
-    if ( (*amarks)[i]!=CMap::MARK_ERROR && !amap->is_marked(adart, (*amarks)[i]) )
+    if ( (*amarks)[i]!=CMap::INVALID_MARK && !amap->is_marked(adart, (*amarks)[i]) )
     {
       ++ (*ares)[i];
       CGAL::mark_cell<CMap,i>(*amap, adart, (*amarks)[i]);

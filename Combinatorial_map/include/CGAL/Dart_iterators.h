@@ -1203,7 +1203,7 @@ namespace CGAL {
     /// Rewind of the iterator to its beginning.
     void rewind()
     {
-      CGAL_assertion(mmark_number != Map::MARK_ERROR);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       Base::rewind();
       mto_treat = std::queue<Dart_handle>();
       this->mmap->mark(*this, mmark_number);
@@ -1213,7 +1213,7 @@ namespace CGAL {
     /// Prefix ++ operator.
     Self& operator++()
     {
-      CGAL_assertion(mmark_number != Map::MARK_ERROR);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       CGAL_assertion(this->cont());
       Dart_handle nd = this->mmap->null_handle;
       
@@ -1315,7 +1315,7 @@ namespace CGAL {
     /// Rewind of the iterator to its beginning.
     void rewind()
     {
-      CGAL_assertion(mmark_number != Map::MARK_ERROR);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       Base::rewind();
       mto_treat = std::queue<Dart_handle>();
       this->mmap->mark((*this), mmark_number);
@@ -1325,7 +1325,7 @@ namespace CGAL {
     /// Prefix ++ operator.
     Self& operator++()
     {
-      CGAL_assertion(mmark_number != Map::MARK_ERROR);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       CGAL_assertion(this->cont());
 
       Dart_handle nd = this->mmap->null_handle;
@@ -1411,7 +1411,7 @@ namespace CGAL {
     /// Rewind of the iterator to its beginning.
     void rewind()
     {
-      CGAL_assertion(mmark_number != Map::MARK_ERROR);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       Base::rewind();
       mto_treat = std::queue<Dart_handle>();
       this->mmap->mark((*this), mmark_number);
@@ -1421,7 +1421,7 @@ namespace CGAL {
     /// Prefix ++ operator.
     Self& operator++()
     {
-      CGAL_assertion(mmark_number != Map::MARK_ERROR);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       CGAL_assertion(this->cont());
 
       Dart_handle nd = this->mmap->null_handle;
@@ -1939,7 +1939,7 @@ namespace CGAL {
     /// Rewind of the iterator to its beginning.
     void rewind()
     {
-      CGAL_assertion(mmark_number != Map::MARK_ERROR);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       Base::rewind();
       mto_treat = std::queue<Dart_handle>();
       this->mmap->mark((*this), mmark_number);
@@ -1949,7 +1949,7 @@ namespace CGAL {
     /// Prefix ++ operator.
     Self& operator++()
     {
-      CGAL_assertion(mmark_number != Map::MARK_ERROR);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       CGAL_assertion(this->cont());
 
       Dart_handle nd = this->mmap->null_handle;
@@ -2061,7 +2061,7 @@ namespace CGAL {
     /// Rewind of the iterator to its beginning.
     void rewind()
     {
-      CGAL_assertion(mmark_number != Map::MARK_ERROR);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       Base::rewind();
       mto_treat = std::queue<Dart_handle>();
       this->mmap->mark((*this), mmark_number);
@@ -2071,7 +2071,7 @@ namespace CGAL {
     /// Prefix ++ operator.
     Self& operator++()
     {
-      CGAL_assertion(mmark_number != Map::MARK_ERROR);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       CGAL_assertion(this->cont());
 
       Dart_handle nd = this->mmap->null_handle;
@@ -2178,7 +2178,7 @@ namespace CGAL {
     /// Rewind of the iterator to its beginning.
     void rewind()
     {
-      CGAL_assertion(mmark_number != Map::MARK_ERROR);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       Base::rewind();
       mto_treat = std::queue<Dart_handle>();
       this->mmap->mark_null_dart(mmark_number);
@@ -2188,7 +2188,7 @@ namespace CGAL {
     /// Prefix ++ operator.
     Self& operator++()
     {
-      CGAL_assertion(mmark_number != Map::MARK_ERROR);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       CGAL_assertion(this->cont());
 
       Dart_handle nd = this->mmap->null_handle;
@@ -2305,7 +2305,7 @@ namespace CGAL {
     /// Rewind of the iterator to its beginning.
     void rewind()
     {
-      CGAL_assertion(mmark_number != Map::MARK_ERROR);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       Base::rewind();
       mto_treat = std::queue<Dart_handle>();
       this->mmap->mark((*this), mmark_number);
@@ -2315,7 +2315,7 @@ namespace CGAL {
     /// Prefix ++ operator.
     Self& operator++()
     {
-      CGAL_assertion(mmark_number != Map::MARK_ERROR);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       CGAL_assertion(this->cont());
 
       Dart_handle nd = this->mmap->null_handle;

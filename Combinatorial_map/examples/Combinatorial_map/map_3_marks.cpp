@@ -9,43 +9,24 @@ typedef CMap_3::Dart_handle Dart_handle;
 
 typedef CMap_3::size_type size_type;
 
-typedef CMap_3::Exception_mark_is_out_of_border Exception_mark_is_out_of_border;
+typedef CMap_3::Exception_no_more_available_mark Exception_no_more_available_mark;
 
 int main()
 {
   CMap_3 cm;
-  
-  // we try to reserve more marks than available
-  std::cout << cm.NB_MARKS << " available marks\n";
-  size_type marks[cm.NB_MARKS+1];
-#if 0
-  for (size_type i=0;i<cm.NB_MARKS+1;i++)
-  {
-    try
-    {
-      marks[i] = cm.get_new_mark();
-    }
-    catch (Exception_mark_is_out_of_border e)
-    {
-      std::cout << "Mark number " << i << " is NOT ok\n";
-      std::cerr<<"No more free mark, exit."<<std::endl;
-      exit(-1);
-    }
-    std::cout << "Mark number " << i << " is ok\n";
-  }
-  for (size_type i=0;i<cm.NB_MARKS+1;i++)
-  {
-    cm.free_mark(marks[i]);
-  }
-#endif
 
+  while (1)
+  {
+    size_type m = cm.get_new_mark();
+  }
+  
   // 1) Reserve a mark.
   size_type mark;
   try
     {
       mark = cm.get_new_mark();
     }
-  catch (Exception_mark_is_out_of_border e)
+  catch (Exception_no_more_available_mark e)
     {
       std::cerr<<"No more free mark, exit."<<std::endl;
       exit(-1);

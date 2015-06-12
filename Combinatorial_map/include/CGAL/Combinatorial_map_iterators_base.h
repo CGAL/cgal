@@ -230,7 +230,7 @@ namespace CGAL {
     /// Rewind of the iterator to its beginning.
     void rewind()
     {
-      CGAL_assertion(mmark_number != Map::MARK_ERROR);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       Base::operator= ( Base(*this->mmap,minitial_dart) );
       mto_treat = std::queue<Dart_handle>();
       this->mmap->mark(minitial_dart, mmark_number);
@@ -246,7 +246,7 @@ namespace CGAL {
     /// Prefix ++ operator.
     Self& operator++()
     {
-      CGAL_assertion(mmark_number != Map::MARK_ERROR);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       CGAL_assertion(this->cont());
 
       do
@@ -342,7 +342,7 @@ namespace CGAL {
     /// Rewind of the iterator to its beginning.
     void rewind()
     {
-      CGAL_assertion(this->mmark_number != Map::MARK_ERROR);
+      CGAL_assertion(this->mmark_number != Map::INVALID_MARK);
       Base::rewind();
       if ( !this->mmap->is_free(this->minitial_dart, Bi) &&
            this->mmap->beta(this->minitial_dart, Bi)!=this->minitial_dart )
@@ -412,12 +412,12 @@ namespace CGAL {
     /// Destructor.
     ~CMap_non_basic_iterator()
     {
-      CGAL_assertion( this->mmark_number!=Map::MARK_ERROR );
+      CGAL_assertion( this->mmark_number!=Map::INVALID_MARK );
       if (this->mmap->get_number_of_times_mark_reserved
           (this->mmark_number)==1)
         unmark_treated_darts();
       this->mmap->free_mark(this->mmark_number);
-      this->mmark_number = Map::MARK_ERROR; // To avoid basic class to try to unmark darts.
+      this->mmark_number = Map::INVALID_MARK; // To avoid basic class to try to unmark darts.
     }
 
     /// Copy constructor.
@@ -434,7 +434,7 @@ namespace CGAL {
             (this->mmark_number)==1)
           unmark_treated_darts();
         this->mmap->free_mark(this->mmark_number);
-        this->mmark_number = Map::MARK_ERROR;
+        this->mmark_number = Map::INVALID_MARK;
 
         Base::operator=(aiterator);
         this->mmap->share_a_mark(this->mmark_number);
@@ -533,7 +533,7 @@ namespace CGAL {
 
     typedef typename Map_::size_type size_type;
 
-    CMap_range(Map_ &amap, typename Map_::Dart_handle adart, size_type amark=Map_::MARK_ERROR):
+    CMap_range(Map_ &amap, typename Map_::Dart_handle adart, size_type amark=Map_::INVALID_MARK):
       mmap(amap), mdart(adart), msize(0), mmark(amark)
     {}
     iterator begin()             { return iterator(mmap,mdart,mmark); }
@@ -588,7 +588,7 @@ namespace CGAL {
     typedef Const_it const_iterator;
     typedef typename Map_::size_type size_type;
     CMap_const_range(const Map_ &amap, typename Map_::Dart_const_handle adart,
-                     size_type amark=Map_::MARK_ERROR):
+                     size_type amark=Map_::INVALID_MARK):
       mmap(amap), mdart(adart), msize(0), mmark(amark)
     {}
     const_iterator begin() const { return const_iterator(mmap,mdart,mmark); }
@@ -607,7 +607,7 @@ namespace CGAL {
     const Map_ & mmap;
     typename Map_::Dart_const_handle mdart;
     mutable typename Map_::size_type msize;
-    int mmark;
+    size_type mmark;
   };
   //****************************************************************************
 } // namespace CGAL

@@ -105,8 +105,8 @@ namespace CGAL {
         unmark_treated_darts();
       this->mmap->free_mark(mcell_mark_number);
       this->mmap->free_mark(this->mmark_number);
-      this->mcell_mark_number = Map::MARK_ERROR; // To avoid basic class to try to unmark darts.
-      this->mmark_number = Map::MARK_ERROR; // To avoid basic class to try to unmark darts.
+      this->mcell_mark_number = Map::INVALID_MARK; // To avoid basic class to try to unmark darts.
+      this->mmark_number = Map::INVALID_MARK; // To avoid basic class to try to unmark darts.
     }
 
     /// Copy constructor.
@@ -217,7 +217,7 @@ namespace CGAL {
       if (this->mmap->get_number_of_times_mark_reserved(mmark_number)==1)
         unmark_treated_darts();
       this->mmap->free_mark(mmark_number);
-      this->mmark_number = Map::MARK_ERROR; // To avoid basic class to try to unmark darts.
+      this->mmark_number = Map::INVALID_MARK; // To avoid basic class to try to unmark darts.
     }
 
     /// Copy constructor.
@@ -333,7 +333,7 @@ namespace CGAL {
       if (this->mmap->get_number_of_times_mark_reserved(mmark_number)==1)
         unmark_treated_darts();
       this->mmap->free_mark(mmark_number);
-      this->mmark_number = Map::MARK_ERROR; // To avoid basic class to try to unmark darts.
+      this->mmark_number = Map::INVALID_MARK; // To avoid basic class to try to unmark darts.
     }
 
     /// Copy constructor.
