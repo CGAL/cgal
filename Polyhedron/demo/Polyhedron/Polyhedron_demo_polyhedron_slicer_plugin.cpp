@@ -2,7 +2,6 @@
 #include <CGAL/AABB_intersections.h>
 
 #include "Messages_interface.h"
-#include "Scene_item_with_display_list.h"
 #include "Scene_plane_item.h"
 #include "Scene_polyhedron_item.h"
 #include "Scene_polylines_item.h"

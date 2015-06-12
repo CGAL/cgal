@@ -6,6 +6,10 @@
 #include <QPixmap>
 #include <QFont>
 #include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLBuffer>
+#include <QOpenGLShader>
+#include <QOpenGLVertexArrayObject>
+#include <vector>
 namespace qglviewer {
   class ManipulatedFrame;
 }
@@ -35,13 +39,22 @@ public:
       rendering_mode(FlatPlusEdges),
       defaultContextMenu(0)
   {}
+  Scene_item(int buffers_size, int vaos_size)
+    : name_("unamed"),
+      color_(defaultColor),
+      visible_(true),
+      rendering_mode(FlatPlusEdges),
+      defaultContextMenu(0),
+      buffersSize(buffers_size),
+      vaosSize(vaos_size)
+  {}
   virtual ~Scene_item();
   virtual Scene_item* clone() const = 0;
 
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const = 0;
   // Flat/Gouraud OpenGL drawing
-  virtual void draw() const = 0;
+  virtual void draw() const {}
   virtual void draw(Viewer_interface*) const  { draw(); }
   // Wireframe OpenGL drawing
   virtual void draw_edges() const { draw(); }
@@ -156,6 +169,23 @@ protected:
   int cur_shading;
 
   mutable QOpenGLFunctions_3_3_Core qFunc;
+  int buffersSize;
+  int vaosSize;
+  mutable QOpenGLBuffer buffers[10];
+  //not allowed to use vectors of VAO for some reason
+  mutable QOpenGLVertexArrayObject vaos[10];
+  mutable  QOpenGLShaderProgram rendering_program_with_light;
+  mutable  QOpenGLShaderProgram rendering_program_without_light;
+
+  int vertexLoc;
+  int normalLoc;
+  int colorLoc;
+
+  virtual void initialize_buffers(){}
+  virtual void compute_elements(){}
+  virtual void attrib_buffers(Viewer_interface*) const;
+  virtual void compile_shaders();
+
 
 }; // end class Scene_item
 

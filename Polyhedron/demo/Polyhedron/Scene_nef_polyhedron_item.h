@@ -1,15 +1,14 @@
 #ifndef SCENE_NEF_POLYHEDRON_ITEM_H
 #define SCENE_NEF_POLYHEDRON_ITEM_H
-
+#include "Scene_item.h"
 #include "Scene_nef_polyhedron_item_config.h"
-#include "Scene_item_with_display_list.h"
 #include "Nef_type_fwd.h"
 #include <iostream>
 #include <queue>
 class Scene_polyhedron_item;
 
 class SCENE_NEF_POLYHEDRON_ITEM_EXPORT Scene_nef_polyhedron_item
- : public Scene_item_with_display_list 
+ : public Scene_item
 {
   Q_OBJECT
 public:

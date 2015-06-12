@@ -62,7 +62,7 @@ struct DPoint {
     GLdouble coords[3];
 };
 Scene_nef_polyhedron_item::Scene_nef_polyhedron_item()
-    : Scene_item_with_display_list(),
+    : Scene_item(),
       positions_facets(0),
       positions_lines(0),
       color_lines(0),
@@ -82,7 +82,7 @@ Scene_nef_polyhedron_item::Scene_nef_polyhedron_item()
 }
 
 Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(Nef_polyhedron* const p)
-    : Scene_item_with_display_list(),
+    : Scene_item(),
       positions_facets(0),
       positions_lines(0),
       color_lines(0),
@@ -102,7 +102,7 @@ Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(Nef_polyhedron* const p)
 }
 
 Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(const Nef_polyhedron& p)
-    : Scene_item_with_display_list(),
+    : Scene_item(),
       positions_facets(0),
       positions_lines(0),
       normals(0),

@@ -4,7 +4,6 @@
 #include <CGAL/AABB_intersections.h>
 
 #include "Messages_interface.h"
-#include "Scene_item_with_display_list.h"
 #include "Scene_plane_item.h"
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_demo_plugin_interface.h"
@@ -26,6 +25,7 @@
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
+#include "Scene_item.h"
 
 //typedef CGAL::Simple_cartesian<double> Epic_kernel;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
@@ -34,7 +34,7 @@ typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron>     AABB_primitive;
 typedef CGAL::AABB_traits<Epic_kernel,AABB_primitive>           AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits>                            AABB_tree;
 
-class Q_DECL_EXPORT Scene_aabb_item : public Scene_item_with_display_list
+class Q_DECL_EXPORT Scene_aabb_item : public Scene_item
 {
   Q_OBJECT
 public:

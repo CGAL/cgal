@@ -4,13 +4,12 @@
 //=========
 #include <CGAL/internal/corefinement/Combinatorial_map_for_corefinement.h>
 #include "Scene_combinatorial_map_item_config.h"
-#include "Scene_item_with_display_list.h"
 #include <iostream>
-#include <QGLBuffer>
-#include <QGLShader>
-#include <QGLShaderProgram>
+#include <QOpenGLBuffer>
+#include <QOpenGLShader>
+#include <QOpenGLShaderProgram>
 #include "Polyhedron_type.h"
-
+#include "Scene_item.h"
 typedef CGAL::internal_IOP::Item_with_points_and_volume_info<Kernel,Polyhedron> Items;
 typedef CGAL::Combinatorial_map<3,Items> Combinatorial_map_3;
 //=========
@@ -21,7 +20,7 @@ class Scene_interface;
 class Scene_polyhedron_item;
 
 class SCENE_COMBINATORIAL_MAP_ITEM_EXPORT Scene_combinatorial_map_item
-        : public Scene_item_with_display_list
+        : public Scene_item
 {
     Q_OBJECT
 public:  
@@ -77,11 +76,11 @@ private:
     std::vector<float> color_lines;
     std::vector<float> color_facets;
 
-    QGLShaderProgram *rendering_program;
+    QOpenGLShaderProgram *rendering_program;
     GLint location[9];
 
     GLuint vao;
-    QGLBuffer buffer[5];
+    QOpenGLBuffer buffer[5];
     void initialize_buffers();
     void compile_shaders(void);
     void compute_normals_and_vertices(void);

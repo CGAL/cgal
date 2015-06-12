@@ -1,11 +1,10 @@
 #ifndef POINT_SET_ITEM_H
 #define POINT_SET_ITEM_H
-
+#include "Scene_item.h"
 #include "Scene_points_with_normal_item_config.h"
 #include "Polyhedron_type_fwd.h"
 #include "Kernel_type.h"
 #include "Point_set_3.h"
-#include "Scene_item_with_display_list.h"
 
 #include <iostream>
 
@@ -19,7 +18,7 @@ class QAction;
 
 // This class represents a point set in the OpenGL scene
 class SCENE_POINTS_WITH_NORMAL_ITEM_EXPORT Scene_points_with_normal_item
-  : public Scene_item_with_display_list
+  : public Scene_item
 {
   Q_OBJECT
 

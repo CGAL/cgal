@@ -21,7 +21,6 @@
 #include <algorithm>
 #include <boost/array.hpp>
 
-#include <QOpenGLFunctions_3_1>
 
 struct light_info
 {
@@ -39,7 +38,7 @@ struct light_info
 };
 
 Scene_points_with_normal_item::Scene_points_with_normal_item()
-    : Scene_item_with_display_list(),
+    : Scene_item(),
       m_points(new Point_set),
       positions_lines(0),
       color_lines(0),
@@ -65,7 +64,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item()
 
 // Copy constructor
 Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_with_normal_item& toCopy)
-    : Scene_item_with_display_list(), // do not call superclass' copy constructor
+    : Scene_item(), // do not call superclass' copy constructor
       m_points(new Point_set(*toCopy.m_points)),
       positions_lines(0),
       color_lines(0),
@@ -106,7 +105,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
 
 // Converts polyhedron to point set
 Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& input_mesh)
-    : Scene_item_with_display_list(),
+    : Scene_item(),
       m_points(new Point_set),
       positions_lines(0),
       color_lines(0),
@@ -1003,7 +1002,7 @@ QMenu* Scene_points_with_normal_item::contextMenu()
 
 void Scene_points_with_normal_item::setRenderingMode(RenderingMode m)
 {
-    Scene_item_with_display_list::setRenderingMode(m);
+    Scene_item::setRenderingMode(m);
     if (rendering_mode==Splatting && (!m_points->are_radii_uptodate()))
     {
         computes_local_spacing(6); // default value = small

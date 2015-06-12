@@ -52,6 +52,7 @@ Scene::~Scene()
 {
     delete m_pPolyhedron;
     delete m_frame;
+
     buffers[0].destroy();
     buffers[1].destroy();
     buffers[2].destroy();

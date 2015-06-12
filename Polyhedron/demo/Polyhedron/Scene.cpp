@@ -366,9 +366,15 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
                 ::glPointSize(2.f);
                 ::glLineWidth(1.0f);
                 if(index == selected_item)
+                {
                     CGALglcolor(Qt::black);
+                      item.selection_changed(true);
+                }
                 else
+                {
                     CGALglcolor(item.color().lighter(50));
+                      item.selection_changed(false);
+                }
 
 
 

@@ -8,6 +8,10 @@
 #include "Polyhedron_type.h"
 #include "Viewer.h"
 #include <iostream>
+#include <QOpenGLVertexArrayObject>
+#include <QOpenGLBuffer>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLTexture>
 
 #include <set>
 #include <vector>
@@ -115,16 +119,9 @@ private:
     std::vector<float> color_lines_selected;
     std::vector<float> color_facets_selected;
 
-    GLuint rendering_program_facets;
-    GLuint rendering_program_lines;
-    GLint location[9];
 
-    GLuint vao[2];
-    GLuint buffer[10];
     void initialize_buffers();
-    void compile_shaders(void);
     void compute_normals_and_vertices(void);
-    void uniform_attrib(Viewer_interface*, int) const;
     void compute_colors();
     void triangulate_facet(Facet_iterator );
     void triangulate_facet_color(Facet_iterator );

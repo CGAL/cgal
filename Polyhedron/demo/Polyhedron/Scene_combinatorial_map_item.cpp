@@ -11,11 +11,11 @@
 void Scene_combinatorial_map_item::initialize_buffers()
 {
     qFunc.glBindVertexArray(vao);
-    buffer[0] = QGLBuffer(QGLBuffer::VertexBuffer);
+    buffer[0] = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
     if(!(buffer[0].create()))
         std::cout<<"ERROR lors de la creation"<<std::endl;
     buffer[0].bind();
-    buffer[0].setUsagePattern(QGLBuffer::StaticDraw);
+    buffer[0].setUsagePattern(QOpenGLBuffer::StaticDraw);
     buffer[0].allocate(positions.data(),positions.size()*sizeof(float));
     /*
     qFunc.glVertexAttribPointer(0, //number of the buffer
@@ -66,16 +66,16 @@ void Scene_combinatorial_map_item::compile_shaders(void)
         "} \n"
     };
 
-    QGLShader *vertex_shader = new QGLShader(QGLShader::Vertex);
+    QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
     if(!vertex_shader->compileSourceCode(vertex_shader_source))
         std::cout<<vertex_shader->log().toStdString()<<std::endl;
 
-    QGLShader *fragment_shader = new QGLShader(QGLShader::Fragment);
+    QOpenGLShader *fragment_shader = new QOpenGLShader(QOpenGLShader::Fragment);
     if(!fragment_shader->compileSourceCode(fragment_shader_source))
         std::cout<<fragment_shader->log().toStdString()<<std::endl;
 
 
-    rendering_program = new QGLShaderProgram();
+    rendering_program = new QOpenGLShaderProgram();
     if(!rendering_program->addShader(vertex_shader))
         std::cout<<rendering_program->log().toStdString()<<std::endl;
     if(!rendering_program->addShader(fragment_shader))
