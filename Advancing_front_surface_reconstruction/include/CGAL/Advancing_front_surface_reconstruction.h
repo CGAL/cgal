@@ -2382,7 +2382,7 @@ advancing_front_surface_reconstruction(PointIterator b,
   typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
   typedef Advancing_front_surface_reconstruction<Triangulation_3,Filter> Reconstruction;
-  typedef std::iterator_traits<PointIterator>::value_type InputPoint;
+  typedef typename std::iterator_traits<PointIterator>::value_type InputPoint;
   typedef typename Kernel_traits<InputPoint>::Kernel InputKernel;
   typedef Cartesian_converter<InputKernel,Kernel> CC;
   typedef Kernel::Point_3 Point_3;
@@ -2416,7 +2416,7 @@ advancing_front_surface_reconstruction(PointIterator b,
   typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
   typedef Advancing_front_surface_reconstruction<Triangulation_3,Filter> Reconstruction;
-  typedef std::iterator_traits<PointIterator>::value_type InputPoint;
+  typedef typename std::iterator_traits<PointIterator>::value_type InputPoint;
   typedef typename Kernel_traits<InputPoint>::Kernel InputKernel;
   typedef Cartesian_converter<InputKernel,Kernel> CC;
   typedef typename Kernel::Point_3 Point_3;
