@@ -41,7 +41,7 @@ Scene_item*
 Polyhedron_demo_stl_plugin::load(QFileInfo fileinfo) {
 
   // Open file
-  std::ifstream in(fileinfo.filePath().toUtf8());
+  std::ifstream in(fileinfo.filePath().toUtf8(), std::ios::in | std::ios::binary);
   if(!in) {
     std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
     return NULL;
