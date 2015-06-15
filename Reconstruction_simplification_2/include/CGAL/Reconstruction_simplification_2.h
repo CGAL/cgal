@@ -212,10 +212,10 @@ protected:
                                   bool use_flip = true,
                                   std::size_t relocation = 0,
                                   std::size_t verbose = 0)
-    : m_mchoice(sample_size),
+    : m_verbose(verbose),
+      m_mchoice(sample_size),
       m_use_flip(use_flip),
       m_relocation(relocation),
-      m_verbose(verbose),
       point_pmap(point_map),
       mass_pmap(mass_map)
     {
