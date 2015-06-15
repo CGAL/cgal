@@ -103,7 +103,7 @@ namespace CGAL {
 
       Vector_3 v = p - m_point_on_axis;
       v = v - ((v * a) * a);
-      FT d = sqrt(v.squared_length()) - m_radius;
+      FT d = CGAL::sqrt(v.squared_length()) - m_radius;
 
       return d * d;
     }
@@ -119,18 +119,18 @@ namespace CGAL {
       Vector_3 n2 = this->normal(indices[1]);
 
       Vector_3 axis = CGAL::cross_product(n1, n2);
-      FT axisL = sqrt(axis.squared_length());
+      FT axisL = CGAL::sqrt(axis.squared_length());
       if (axisL < (FT)0.0001) {
         return;
       }
-      axis = axis * (1.0 / axisL);
+      axis = axis * (FT(1.0) / axisL);
 
       // establish two directions in the plane axis * x = 0, 
       // whereas xDir is the projected n1
       Vector_3 xDir = n1 - (n1 * axis) * axis;
-      xDir = xDir * ((FT)1.0 / sqrt(xDir.squared_length()));
+      xDir = xDir * ((FT)1.0 / CGAL::sqrt(xDir.squared_length()));
       Vector_3 yDir = CGAL::cross_product(axis, xDir);
-      yDir = yDir * ((FT)1.0 / sqrt(yDir.squared_length()));
+      yDir = yDir * ((FT)1.0 / CGAL::sqrt(yDir.squared_length()));
 
       FT n2x = n2 * yDir;
       FT n2y = -n2 * xDir;
@@ -155,22 +155,22 @@ namespace CGAL {
       this->m_is_valid = true;
     }
 
-    void parameters(std::vector<std::pair<FT, FT> > &parameterSpace,
-                    const std::vector<std::size_t> &indices,
+    void parameters(const std::vector<std::size_t> &indices,
+                    std::vector<std::pair<FT, FT> > &parameterSpace,                    
                     FT min[2],
                     FT max[2]) const {
-      Vector_3 d1 = Vector_3(0, 0, 1);
+      Vector_3 d1 = Vector_3((FT) 0, (FT) 0, (FT) 1);
       Vector_3 a = m_axis.to_vector();
-      a = a * ((FT)1.0 / sqrt(a.squared_length()));
+      a = a * ((FT)1.0 / CGAL::sqrt(a.squared_length()));
 
       Vector_3 d2 = CGAL::cross_product(a, d1);
       FT l = d2.squared_length();
       if (l < (FT)0.0001) {
-        d1 = Vector_3(1, 0, 0);
+        d1 = Vector_3((FT) 1, (FT) 0, (FT) 0);
         d2 = CGAL::cross_product(m_axis.to_vector(), d1);
         l = d2.squared_length();
       }
-      d2 = d2 / sqrt(l);
+      d2 = d2 / CGAL::sqrt(l);
 
       d1 = CGAL::cross_product(m_axis.to_vector(), d2);
       FT length = CGAL::sqrt(d1.squared_length());
@@ -180,7 +180,7 @@ namespace CGAL {
       d1 = d1 * (FT)1.0 / length;
 
       // 1.0 / circumfence
-      FT c = (FT)1.0 / 2 * M_PI * m_radius;
+      FT c = FT(1.0 / 2 * M_PI * m_radius);
 
       // first one separate for initializing min/max
       Vector_3 vec = this->point(indices[0]) - m_point_on_axis;
@@ -192,7 +192,7 @@ namespace CGAL {
       FT a1 = acos(vec * d1);
       FT a2 = acos(vec * d2);
 
-      FT u = ((a2 < M_PI_2) ? 2 * M_PI - a1 : a1) * c;
+      FT u = FT((a2 < M_PI_2) ? 2 * M_PI - a1 : a1) * c;
 
       parameterSpace[0] = std::pair<FT, FT>(u, v);
 
@@ -209,7 +209,7 @@ namespace CGAL {
         FT a1 = acos(vec * d1);
         FT a2 = acos(vec * d2);
 
-        FT u = ((a2 < M_PI_2) ? 2 * M_PI - a1 : a1) * c;
+        FT u = FT((a2 < M_PI_2) ? 2 * M_PI - a1 : a1) * c;
 
         min[0] = (std::min<FT>)(min[0], u);
         max[0] = (std::max<FT>)(max[0], u);

@@ -536,10 +536,11 @@ namespace CGAL {
 
     void hypergeometrical_dist(const int UN, 
                                const int x,
-                               const FT n, 
+                               const int n, 
                                FT &low,
                                FT &high) {                           
-      const FT sq = sqrt(x * n * (UN- x) * (UN - n) / (UN - 1));
+      const FT q = FT(x * n * double(UN - x) * (UN - n) / (UN - 1));
+      const FT sq = CGAL::sqrt(q);
       low  = (x * n - sq) / UN;
       high = (x * n + sq)/UN;
 

@@ -69,7 +69,6 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
     /// \cond SKIP_IN_MANUAL
     struct Filter_unassigned_points {
-      Filter_unassigned_points() : m_shape_index() {}
       Filter_unassigned_points(const std::vector<int> &shapeIndex)
         : m_shape_index(shapeIndex) {}
 
@@ -135,10 +134,10 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
        */
     struct Parameters {
       Parameters()
-        : probability(0.01)
+        : probability((FT) 0.01)
         , min_points(std::numeric_limits<std::size_t>::max())
         , epsilon(-1)
-        , normal_threshold(0.9)
+        , normal_threshold((FT) 0.9)
         , cluster_epsilon(-1)
       {}
 
@@ -377,13 +376,13 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
       // use bounding box diagonal as reference for default values
       Bbox_3 bbox = m_global_octree->boundingBox();
-      FT bboxDiagonal = sqrt((bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin()) + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin()) + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
+      FT bboxDiagonal = (FT) CGAL::sqrt((bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin()) + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin()) + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
 
       m_options = options;
 
       // epsilon or cluster_epsilon have been set by the user? if not, derive from bounding box diagonal
-      m_options.epsilon = (m_options.epsilon < 0) ? bboxDiagonal * 0.01 : m_options.epsilon;
-      m_options.cluster_epsilon = (m_options.cluster_epsilon < 0) ? bboxDiagonal * 0.01 : m_options.cluster_epsilon;
+      m_options.epsilon = (m_options.epsilon < 0) ? bboxDiagonal * (FT) 0.01 : m_options.epsilon;
+      m_options.cluster_epsilon = (m_options.cluster_epsilon < 0) ? bboxDiagonal * (FT) 0.01 : m_options.cluster_epsilon;
 
       // minimum number of points has been set?
       m_options.min_points = (m_options.min_points >= m_num_available_points) ? (std::size_t)((FT)0.001 * m_num_available_points) : m_options.min_points;
@@ -476,7 +475,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
             forceExit = true;
 
         } while( !forceExit
-          && stop_probability(bestExp,
+          && stop_probability((std::size_t) bestExp,
                              m_num_available_points - numInvalid, 
                              nbNewCandidates,
                              m_global_octree->maxLevel()) 
@@ -515,7 +514,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
         best_Candidate->connected_component(best_Candidate->m_indices, m_options.cluster_epsilon);
 
-        if (stop_probability(best_Candidate->expected_value(),
+        if (stop_probability((std::size_t) best_Candidate->expected_value(),
                             (m_num_available_points - numInvalid),
                             nbNewCandidates,
                             m_global_octree->maxLevel())
@@ -768,8 +767,8 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       return true;
     }
     
-    inline FT stop_probability(FT _sizeC, FT _np, FT _dC, FT _l) const {
-      return (std::min<FT>)(std::pow(1.f - _sizeC / (_np * _l * 3), _dC), 1.);
+    inline FT stop_probability(std::size_t largest_candidate, std::size_t num_pts, std::size_t num_candidates, std::size_t octree_depth) const {
+      return (std::min<FT>)(std::pow((FT) 1.f - (FT) largest_candidate / FT(num_pts * octree_depth * 3), (int) num_candidates), (FT) 1);
     }
     
   private:

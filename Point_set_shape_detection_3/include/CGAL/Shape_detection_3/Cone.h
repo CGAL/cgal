@@ -137,7 +137,7 @@ namespace CGAL {
       // first calculate intersection of three planes -> apex
 
       Vector_3 lineDir = CGAL::cross_product(n1, n2);
-      FT length = sqrt(lineDir.squared_length());
+      FT length = CGAL::sqrt(lineDir.squared_length());
       if (length == 0)
         return;
 
@@ -147,7 +147,7 @@ namespace CGAL {
       //  of two planes (p1, n1) and (p2, n2)
       // get point on line by moving point p1 onto line
       Vector_3 orthLineInPlane = CGAL::cross_product(n1, lineDir);
-      length = sqrt(orthLineInPlane.squared_length());
+      length = CGAL::sqrt(orthLineInPlane.squared_length());
       if (length == 0)
         return;
 
@@ -172,21 +172,21 @@ namespace CGAL {
 
       // 2. find axis
       Vector_3 v1 = p1 - m_apex;
-      length = sqrt(v1.squared_length());
+      length = CGAL::sqrt(v1.squared_length());
       if (length == 0)
         return;
       v1 = v1 * (FT)1.0 / length;
       Point_3 c1 = m_apex + v1;
 
       Vector_3 v2 = p2 - m_apex;
-      length = sqrt(v2.squared_length());
+      length = CGAL::sqrt(v2.squared_length());
       if (length == 0)
         return;
       v2 = v2 * (FT)1.0 / length;
       Point_3 c2 = m_apex + v2;
 
       Vector_3 v3 = p3 - m_apex;
-      length = sqrt(v3.squared_length());
+      length = CGAL::sqrt(v3.squared_length());
       if (length == 0)
         return;
       v3 = v3 * (FT)1.0 / length;
@@ -258,7 +258,7 @@ namespace CGAL {
       Vector_3 a = p - m_apex;
       Vector_3 b = CGAL::cross_product(m_axis, CGAL::cross_product(m_axis, a));
       b = (a * b < 0) ? -b : b;
-      FT length = sqrt(b.squared_length());
+      FT length = CGAL::sqrt(b.squared_length());
       if (length == 0) {
         return (FT)1.0;
       }

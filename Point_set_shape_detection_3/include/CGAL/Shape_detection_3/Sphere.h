@@ -75,7 +75,7 @@ namespace CGAL {
       Access to the radius of the sphere.
      */
     FT radius() const {
-      return sqrt(m_sphere.squared_radius());
+      return CGAL::sqrt(m_sphere.squared_radius());
     }
 
     /// \cond SKIP_IN_MANUAL
@@ -83,7 +83,7 @@ namespace CGAL {
       Computes the squared Euclidean distance from query point to the shape.
       */
     FT squared_distance(const Point_3 &p) const {
-      const FT d = sqrt((m_sphere.center() - p).squared_length()) - sqrt(m_sphere.squared_radius());
+      const FT d = CGAL::sqrt((m_sphere.center() - p).squared_length()) - CGAL::sqrt(m_sphere.squared_radius());
       return d * d;
     }
     
@@ -94,7 +94,7 @@ namespace CGAL {
     std::string info() const {
       std::stringstream sstr;
       Point_3 c = m_sphere.center();
-      FT r = sqrt(m_sphere.squared_radius());
+      FT r = CGAL::sqrt(m_sphere.squared_radius());
 
       sstr << "Type: sphere center: (" << c.x() << ", " << c.y();
       sstr << ", " << c.z() << ") radius:" << r;
@@ -132,7 +132,7 @@ namespace CGAL {
       }
 
       FT e = -n2 * diff;
-      FT invDet = 1.0 / det;
+      FT invDet = (FT) 1.0 / det;
       FT s = (b * e - c * d) * invDet;
       FT t = (d * b - a * e) * invDet;
 
@@ -141,8 +141,8 @@ namespace CGAL {
 
       Vector_3 v1 = (p1 - center);
       Vector_3 v2 = (p2 - center);
-      FT d1 = sqrt(v1.squared_length());
-      FT d2 = sqrt(v2.squared_length());
+      FT d1 = CGAL::sqrt(v1.squared_length());
+      FT d2 = CGAL::sqrt(v2.squared_length());
 
       if (abs(d1 - d2) > (FT)2.0 * this->m_epsilon) {
         this->m_is_valid = false;
@@ -159,7 +159,7 @@ namespace CGAL {
       }
 
       Vector_3 v3 = (p3 - center);
-      FT d3 = sqrt(v3.squared_length());
+      FT d3 = CGAL::sqrt(v3.squared_length());
       v3 = v3 * ((FT)1.0 / d3);
 
       FT radius = (d1 + d2) * (FT)0.5;
@@ -178,10 +178,10 @@ namespace CGAL {
     virtual void squared_distance(const std::vector<std::size_t> &indices,
                                   std::vector<FT> &dists) {
 
-      FT radius = sqrt(m_sphere.squared_radius());
+      FT radius = CGAL::sqrt(m_sphere.squared_radius());
 
       for (std::size_t i = 0;i<indices.size();i++) {
-        dists[i] = sqrt((m_sphere.center()
+        dists[i] = CGAL::sqrt((m_sphere.center()
           - this->point(indices[i])).squared_length())
           - radius;
 
@@ -194,7 +194,7 @@ namespace CGAL {
       for (std::size_t i = 0;i<indices.size();i++) {
         Vector_3 n = m_sphere.center() - this->point(indices[i]);
 
-        FT length = sqrt(n.squared_length());
+        FT length = CGAL::sqrt(n.squared_length());
         if (length == 0) {
           angles[i] = (FT)1.0;
           continue;

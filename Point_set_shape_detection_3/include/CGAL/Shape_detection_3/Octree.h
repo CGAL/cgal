@@ -30,10 +30,6 @@
 #include <CGAL/Shape_detection_3/Shape_base.h>
 
 
-// CODE REVIEW
-// fix naming: m_bucketSize -> m_bucket_size
-// make code modular
-
 extern int scoreTime;
 
 namespace CGAL {
@@ -546,7 +542,7 @@ namespace CGAL {
 
           FT width = m_width / (1<<(cell->level));
 
-          FT diag = ::sqrt(3 * width * width) + epsilon;
+          FT diag = CGAL::sqrt(3 * width * width) + epsilon;
 
           FT dist = candidate->squared_distance(cell->center);
 
@@ -608,10 +604,10 @@ namespace CGAL {
         m_bBox = Bbox_3(min[0], min[1], min[2], max[0], max[1], max[2]);
 
         m_width = (std::max)(max[0] - min[0], 
-          (std::max)(max[1] - min[1], max[2] - min[2])) * 0.5;
-        m_center = Point((min[0] + max[0]) * 0.5,
-                         (min[1] + max[1]) * 0.5,
-                         (min[2] + max[2]) * 0.5);
+          (std::max)(max[1] - min[1], max[2] - min[2])) * (FT) 0.5;
+        m_center = Point((min[0] + max[0]) * (FT) 0.5,
+                         (min[1] + max[1]) * (FT) 0.5,
+                         (min[2] + max[2]) * (FT) 0.5);
 
         return m_bBox;
       }

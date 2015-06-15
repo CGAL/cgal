@@ -114,13 +114,13 @@ namespace CGAL {
       const FT height = d * m_axis;
 
       // distance from axis in plane
-      const FT l = sqrt(d * d - height * height);
+      const FT l = CGAL::sqrt(d * d - height * height);
 
       // inPlane distance from circle
       const FT l2 = m_majorRad - l;
 
       // distance from torus
-      const FT squared_dist = sqrt(height * height + l2 * l2) - m_minorRad;
+      const FT squared_dist = CGAL::sqrt(height * height + l2 * l2) - m_minorRad;
 
       return squared_dist * squared_dist;
     }
@@ -141,31 +141,31 @@ namespace CGAL {
       }
 
       // Implemented method from 'Geometric least-squares fitting of spheres, cylinders, cones and tori' by G. Lukacs,A.D. Marshall, R. R. Martin
-      double a01 = CGAL::cross_product(n[0], n[1]) * n[2];
-      double b01 = CGAL::cross_product(n[0], n[1]) * n[3];
-      double a0 = CGAL::cross_product(p[2] - p[1], n[0]) * n[2];
-      double b0 = CGAL::cross_product(p[3] - p[1], n[0]) * n[3];
-      double a1 = CGAL::cross_product(p[0] - p[2], n[1]) * n[2];
-      double b1 = CGAL::cross_product(p[0] - p[3], n[1]) * n[3];
-      double a = CGAL::cross_product(p[0] - p[2], p[1] - p[0]) * n[2];
-      double b = CGAL::cross_product(p[0] - p[3], p[1] - p[0]) * n[3];
+      const FT a01 = CGAL::cross_product(n[0], n[1]) * n[2];
+      const FT b01 = CGAL::cross_product(n[0], n[1]) * n[3];
+      const FT a0 = CGAL::cross_product(p[2] - p[1], n[0]) * n[2];
+      const FT b0 = CGAL::cross_product(p[3] - p[1], n[0]) * n[3];
+      const FT a1 = CGAL::cross_product(p[0] - p[2], n[1]) * n[2];
+      const FT b1 = CGAL::cross_product(p[0] - p[3], n[1]) * n[3];
+      const FT a = CGAL::cross_product(p[0] - p[2], p[1] - p[0]) * n[2];
+      const FT b = CGAL::cross_product(p[0] - p[3], p[1] - p[0]) * n[3];
 
-      double div = (b1 * a01 - b01 * a1);
+      FT div = (b1 * a01 - b01 * a1);
       if (div == 0)
         return;
 
       div = (FT)1.0 / div;
-      double r = ((a01 * b + b1 * a0 - b0 * a1 - b01 * a)) * div * (FT)0.5;
-      double q = (b * a0 - b0 * a) * div;
+      const FT r = ((a01 * b + b1 * a0 - b0 * a1 - b01 * a)) * div * (FT)0.5;
+      const FT q = (b * a0 - b0 * a) * div;
 
       FT root = r * r - q;
       if (r * r - q < 0)
         root = 0;
 
-      double y1 = -r - sqrt(root);
-      double y2 = -r + sqrt(root);
-      double x1 = (a01 * y1 + a0);
-      double x2 =  (a01 * y2 + a0);
+      const FT y1 = -r - CGAL::sqrt(root);
+      const FT y2 = -r + CGAL::sqrt(root);
+      FT x1 = (a01 * y1 + a0);
+      FT x2 =  (a01 * y2 + a0);
 
       if (x1 == 0 || x2 == 0)
         return;
@@ -183,7 +183,7 @@ namespace CGAL {
 
         FT l = axis1.squared_length();
         if (l > (FT)0.00001 && l == l) {
-          axis1 = axis1 / sqrt(l);
+          axis1 = axis1 / CGAL::sqrt(l);
           dist1 = getCircle(c1, axis1, p, majorRad1, minorRad1);
         }
       }
@@ -198,7 +198,7 @@ namespace CGAL {
 
         FT l = axis2.squared_length();
         if (l > (FT)0.00001 && l == l) {
-          axis2 = axis2 / sqrt(l);
+          axis2 = axis2 / CGAL::sqrt(l);
           dist2 = getCircle(c2, axis2, p, majorRad2, minorRad2);
         }
       }
@@ -207,13 +207,13 @@ namespace CGAL {
         m_center = c1;
         m_axis = axis1;
         m_majorRad = majorRad1;
-        m_minorRad = sqrt(minorRad1);
+        m_minorRad = CGAL::sqrt(minorRad1);
       }
       else {
         m_center = c2;
         m_axis = axis2;
         m_majorRad = majorRad2;
-        m_minorRad = sqrt(minorRad2);
+        m_minorRad = CGAL::sqrt(minorRad2);
       }
 
       //validate points and normals
@@ -226,17 +226,13 @@ namespace CGAL {
 
         // check normal deviation
         Vector_3 d = p[i] - m_center;
-        // height over symmetry plane
-        //FT p = d * m_axis;
-        // distance from axis in plane
-        //FT l = sqrt(d * d - p * p);
 
         Vector_3 in_plane = CGAL::cross_product(m_axis,
           CGAL::cross_product(m_axis, d));
         if (in_plane * d < 0)
           in_plane = -in_plane;
 
-        FT length = sqrt(in_plane.squared_length());
+        FT length = CGAL::sqrt(in_plane.squared_length());
         if (length == 0)
           return;
 
@@ -244,7 +240,7 @@ namespace CGAL {
 
         d = p[i] - (m_center + in_plane * m_majorRad);
 
-        length = sqrt(d.squared_length());
+        length = CGAL::sqrt(d.squared_length());
         if (length == 0)
           return;
 
@@ -266,13 +262,13 @@ namespace CGAL {
         // height over symmetry plane
         const FT p = d * m_axis;
         // distance from axis in plane
-        FT l = sqrt(d * d - p * p);
+        FT l = CGAL::sqrt(d * d - p * p);
 
         // inPlane distance from circle
         const FT l2 = m_majorRad - l;
 
         // distance from torus
-        l = sqrt(p * p + l2 * l2) - m_minorRad;
+        l = CGAL::sqrt(p * p + l2 * l2) - m_minorRad;
         dists[i] = l * l;
       }
     }
@@ -287,7 +283,7 @@ namespace CGAL {
         if (in_plane * d < 0)
           in_plane = -in_plane;
 
-        FT length = (FT)sqrt(in_plane.squared_length());
+        FT length = (FT) CGAL::sqrt(in_plane.squared_length());
 
         // If length is 0 the point is on the axis, maybe in the apex. We
         // accept any normal for that position.
@@ -296,10 +292,10 @@ namespace CGAL {
           continue;
         }
 
-        in_plane = in_plane / sqrt(in_plane.squared_length());
+        in_plane = in_plane / CGAL::sqrt(in_plane.squared_length());
 
         d = this->point(indices[i]) - (m_center + in_plane * m_majorRad);
-        d = d / sqrt(d.squared_length());
+        d = d / CGAL::sqrt(d.squared_length());
         angles[i] = abs(d * this->normal(indices[i]));
       }
     }
@@ -312,7 +308,7 @@ namespace CGAL {
       if (in_plane * d < 0)
         in_plane = -in_plane;
       
-      float length = sqrt(in_plane.squared_length());
+      float length = CGAL::sqrt(in_plane.squared_length());
 
       // If length is 0 the point is on the axis, maybe in the apex. We
       // accept any normal for that position.
@@ -320,10 +316,10 @@ namespace CGAL {
         return (FT)1.0;
       }
 
-      in_plane = in_plane / sqrt(in_plane.squared_length());
+      in_plane = in_plane / CGAL::sqrt(in_plane.squared_length());
 
       d = p - (m_center + in_plane * m_majorRad);
-      d = d / sqrt(d.squared_length());
+      d = d / CGAL::sqrt(d.squared_length());
 
       return abs(d * n);
     }
@@ -354,9 +350,9 @@ namespace CGAL {
         FT e = d * axis;
         FT f = d * d - e * e;
         if (f <= 0)
-          pts[i] = Point_2(e, 0);
+          pts[i] = Point_2(e, (FT) 0);
         else
-          pts[i] = Point_2(e, sqrt(d * d - e * e));
+          pts[i] = Point_2(e, CGAL::sqrt(d * d - e * e));
       }
 
       if (CGAL::collinear(pts[0], pts[1], pts[2])) {

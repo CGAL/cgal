@@ -100,7 +100,7 @@ namespace CGAL {
 
       m_normal = CGAL::cross_product(p1 - p2, p1 - p3);
 
-      FT length = sqrt(m_normal.squared_length());
+      FT length = CGAL::sqrt(m_normal.squared_length());
 
       // Are the points almost singular?
       if (length < (FT)0.0001) {
@@ -116,17 +116,17 @@ namespace CGAL {
         l_v = this->normal(indices[i]);
 
         if (abs(l_v * m_normal)
-            < this->m_normal_threshold * sqrt(l_v.squared_length())) {
+            < this->m_normal_threshold * CGAL::sqrt(l_v.squared_length())) {
           this->m_is_valid = false;
           return;
         }
 
         m_point_on_primitive = p1;
         m_base1 = CGAL::cross_product(p1 - p2, m_normal);
-        m_base1 = m_base1 * ((FT)1.0 / sqrt(m_base1.squared_length()));
+        m_base1 = m_base1 * ((FT)1.0 / CGAL::sqrt(m_base1.squared_length()));
 
         m_base2 = CGAL::cross_product(m_base1, m_normal);
-        m_base2 = m_base2 * ((FT)1.0 / sqrt(m_base2.squared_length()));
+        m_base2 = m_base2 * ((FT)1.0 / CGAL::sqrt(m_base2.squared_length()));
       }
 
       this->m_is_valid = true;
