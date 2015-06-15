@@ -4,6 +4,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Kernel/global_functions.h>
+#include <CGAL/squared_distance_3.h>
 #include <string>
 #include <fstream>
 
@@ -244,7 +245,6 @@ void generate_points_on_torus(const std::size_t num_points,
   typename K::FT minor_radius,
   OutputIterator points) {
   typedef typename K::FT FT;
-  size_t i = 0;
 
   // calculate basis  
   CGAL::Vector_3<K> b1, b2;
@@ -292,7 +292,7 @@ void filter_by_distance(
   std::vector<P> &points) {
   typename K::FT d2 = dist * dist;
 
-  std::vector<P>::iterator it = points.begin();
+  typename std::vector<P>::iterator it = points.begin();
   while (it != points.end()) {
     if (CGAL::squared_distance(plane, *it) < d2)
       it = points.erase(it);
