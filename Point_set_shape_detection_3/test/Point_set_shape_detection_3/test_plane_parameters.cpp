@@ -32,7 +32,7 @@ bool test_plane_parameters() {
   for (std::size_t i = 0;i<NB_ROUNDS;i++) {
     Pwn_vector points;
 
-    typename K::FT dist = 0;
+    FT dist = 0;
     Vector normal;
     CGAL::Bbox_3 bbox(-10, -10, -10, 10, 10, 10);
 

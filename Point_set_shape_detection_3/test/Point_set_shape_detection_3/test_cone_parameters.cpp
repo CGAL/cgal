@@ -13,12 +13,13 @@ bool test_cone_parameters() {
   const int NB_ROUNDS = 10;
   const int NB_POINTS = 1000;
 
-  typedef typename CGAL::Point_with_normal_3<K>               Pwn;
-  typedef typename CGAL::Point_3<K>                           Point;
-  typedef typename CGAL::Vector_3<K>                          Vector;
+  typedef typename K::FT                                      FT;
+  typedef CGAL::Point_with_normal_3<K>                        Pwn;
+  typedef CGAL::Point_3<K>                                    Point;
+  typedef CGAL::Vector_3<K>                                   Vector;
   typedef std::vector<Pwn>                                    Pwn_vector;
-  typedef typename CGAL::Identity_property_map<Pwn>           Point_map;
-  typedef typename CGAL::Normal_of_point_with_normal_pmap<K>  Normal_map;
+  typedef CGAL::Identity_property_map<Pwn>                    Point_map;
+  typedef CGAL::Normal_of_point_with_normal_pmap<K>           Normal_map;
 
   typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<
     K, Pwn_vector, Point_map, Normal_map>                     Traits;
@@ -34,7 +35,7 @@ bool test_cone_parameters() {
 	// generate random points on random cone
     Vector axis;
     Point apex;
-    K::FT angle = 0;
+    FT angle = 0;
     CGAL::Bbox_3 bbox(-10, -10, -10, 10, 10, 10);
     
     sample_random_cone(NB_POINTS, apex, axis, angle,
@@ -67,7 +68,7 @@ bool test_cone_parameters() {
     
     typename Efficient_ransac::Shape_range shapes = ransac.shapes();
 
-	// check: unique shape detected
+	  // check: unique shape detected
     if (shapes.size() != 1)
       continue;
 
@@ -78,12 +79,12 @@ bool test_cone_parameters() {
       continue;
     
     // Check radius and alignment with axis.
-    if (abs(angle - cone->angle()) > (K::FT) 0.02 || abs(abs(axis * cone->axis()) - (K::FT) 1.0) > (K::FT) 0.02)
+    if (abs(angle - cone->angle()) > (FT) 0.02 || abs(abs(axis * cone->axis()) - (FT) 1.0) > (FT) 0.02)
       continue;
 
     // Check apex.
     Point pos = cone->apex();
-    if ((pos - apex).squared_length() > (K::FT) 0.0004)
+    if ((pos - apex).squared_length() > (FT) 0.0004)
       continue;
 
     success++;

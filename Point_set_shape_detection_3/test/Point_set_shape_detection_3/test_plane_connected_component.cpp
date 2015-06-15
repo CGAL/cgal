@@ -11,13 +11,14 @@
 template <class K>
 bool test_plane_connected_component() {
   const int NB_ROUNDS = 10;
-
-  typedef typename CGAL::Point_with_normal_3<K>               Pwn;
-  typedef typename CGAL::Point_3<K>                           Point;
-  typedef typename CGAL::Vector_3<K>                          Vector;
+  
+  typedef typename K::FT                                      FT;
+  typedef CGAL::Point_with_normal_3<K>                        Pwn;
+  typedef CGAL::Point_3<K>                                    Point;
+  typedef CGAL::Vector_3<K>                                   Vector;
   typedef std::vector<Pwn>                                    Pwn_vector;
-  typedef typename CGAL::Identity_property_map<Pwn>           Point_map;
-  typedef typename CGAL::Normal_of_point_with_normal_pmap<K>  Normal_map;
+  typedef CGAL::Identity_property_map<Pwn>                    Point_map;
+  typedef CGAL::Normal_of_point_with_normal_pmap<K>           Normal_map;
 
   typedef typename CGAL::Shape_detection_3::Efficient_RANSAC_traits<K,
     Pwn_vector, Point_map, Normal_map>                        Traits;
@@ -37,16 +38,16 @@ bool test_plane_connected_component() {
 
     // Sample 4 rectangles with 0.05 spacing between points
     // and 0.2 spacing between rectangles.
-    Vector offset[] = {Vector((K::FT) 0, (K::FT) 0, (K::FT) 0),
-      Vector((K::FT) 1.2, (K::FT) 0, (K::FT) 0),
-      Vector((K::FT) 0, (K::FT) 1.2, (K::FT) 0),
-      Vector((K::FT) 1.2, (K::FT) 1.2, (K::FT) 0)};
+    Vector offset[] = {Vector((FT) 0, (FT) 0, (FT) 0),
+      Vector((FT) 1.2, (FT) 0, (FT) 0),
+      Vector((FT) 0, (FT) 1.2, (FT) 0),
+      Vector((FT) 1.2, (FT) 1.2, (FT) 0)};
 
     for (std::size_t j = 0;j<4;j++) {
       for (std::size_t x = 0;x<=20;x++)
         for (std::size_t y = 0;y<=20;y++)
-          points.push_back(Pwn(Point(K::FT(x * 0.05), K::FT(y * 0.05), (K::FT) 0) + offset[j],
-                                Vector((K::FT) 0, (K::FT) 0, (K::FT) 1)));
+          points.push_back(Pwn(Point(FT(x * 0.05), FT(y * 0.05), (FT) 0) + offset[j],
+                                Vector((FT) 0, (FT) 0, (FT) 1)));
     }
         
     Efficient_ransac ransac;

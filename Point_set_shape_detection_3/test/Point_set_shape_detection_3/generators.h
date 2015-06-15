@@ -15,53 +15,56 @@ fl_t random_float(fl_t min, fl_t max) {
 }
 
 template <typename K>
-typename CGAL::Vector_3<K> random_normal() {
+CGAL::Vector_3<K> random_normal() {
+  typedef typename K::FT FT;  
   CGAL::Vector_3<K> n;
   do {
-    n = CGAL::Vector_3<K>(random_float((K::FT) -1.0, (K::FT) 1.0),
-               random_float((K::FT) -1.0, (K::FT) 1.0),
-               random_float((K::FT) -1.0, (K::FT) 1.0));
-  } while (n.squared_length() < (K::FT) 0.001);
+    n = CGAL::Vector_3<K>(random_float((FT) -1.0, (FT) 1.0),
+               random_float((FT) -1.0, (FT) 1.0),
+               random_float((FT) -1.0, (FT) 1.0));
+  } while (n.squared_length() < (FT) 0.001);
 
-  n = n * (K::FT) 1.0 / (CGAL::sqrt(n.squared_length()));
+  n = n * (FT) 1.0 / (CGAL::sqrt(n.squared_length()));
 
   return n;
 }
 
 template <class K>
-typename CGAL::Point_3<K> random_point_in(const CGAL::Bbox_3& bbox) {
+CGAL::Point_3<K> random_point_in(const CGAL::Bbox_3& bbox) {
   typedef typename K::FT FT;
 
-  FT x = random_float((K::FT) bbox.xmin(), (K::FT) bbox.xmax());
-  FT y = random_float((K::FT) bbox.ymin(), (K::FT) bbox.ymax());
-  FT z = random_float((K::FT) bbox.zmin(), (K::FT) bbox.zmax());
+  FT x = random_float((FT) bbox.xmin(), (FT) bbox.xmax());
+  FT y = random_float((FT) bbox.ymin(), (FT) bbox.ymax());
+  FT z = random_float((FT) bbox.zmin(), (FT) bbox.zmax());
 
-  return typename CGAL::Point_3<K>(x, y, z);
+  return CGAL::Point_3<K>(x, y, z);
 }
 
 template <class K>
-typename CGAL::Point_with_normal_3<K> random_pwn_in(const CGAL::Bbox_3 &bbox) {
-  return typename CGAL::Point_with_normal_3<K>(random_point_in<K>(bbox),
+CGAL::Point_with_normal_3<K> random_pwn_in(const CGAL::Bbox_3 &bbox) {
+  return CGAL::Point_with_normal_3<K>(random_point_in<K>(bbox),
     random_normal<K>());
 }
 
 template <class K>
-typename CGAL::Vector_3<K> normalize(typename CGAL::Vector_3<K> const& v) {
-  typename K::FT l = CGAL::sqrt(v.squared_length());
-  if (l < (K::FT) 0.00001)
-    return typename CGAL::Vector_3<K>((K::FT) 0, (K::FT) 0, (K::FT) 0);
+CGAL::Vector_3<K> normalize(CGAL::Vector_3<K> const& v) {
+  typedef typename K::FT FT;
+  FT l = CGAL::sqrt(v.squared_length());
+  if (l < (FT) 0.00001)
+    return CGAL::Vector_3<K>((FT) 0, (FT) 0, (FT) 0);
   else return v * l;
 }
 
 template <typename K, typename OutputIterator>
 void sample_sphere(const std::size_t num_points,
-  typename CGAL::Point_3<K> const& center, typename K::FT radius,
+  CGAL::Point_3<K> const& center, typename K::FT radius,
   OutputIterator points) {
+  typedef typename K::FT FT;
   for (std::size_t i = 0;i < num_points;++i) {
-    CGAL::Vector_3<K> direction(random_float((K::FT) -1, (K::FT) 1), 
-      random_float((K::FT) -1, (K::FT) 1), 
-      random_float((K::FT) -1,(K::FT)  1));
-    direction = direction * ((K::FT) 1.0 / CGAL::sqrt(direction.squared_length()));
+    CGAL::Vector_3<K> direction(random_float((FT) -1, (FT) 1), 
+      random_float((FT) -1, (FT) 1), 
+      random_float((FT) -1,(FT)  1));
+    direction = direction * ((FT) 1.0 / CGAL::sqrt(direction.squared_length()));
 
     CGAL::Point_3<K> p = center + direction * radius;
 
@@ -72,10 +75,11 @@ void sample_sphere(const std::size_t num_points,
 
 template <typename K, typename OutputIterator>
 void sample_random_sphere_in_box(const std::size_t num_points,
-  const CGAL::Bbox_3 &bbox, typename CGAL::Point_3<K> &center,
+  const CGAL::Bbox_3 &bbox, CGAL::Point_3<K> &center,
   typename K::FT &radius, OutputIterator points) {
+    typedef typename K::FT FT;
     // Generate random parameters
-    radius = random_float((K::FT) 0.01, (K::FT) 5);
+    radius = random_float((FT) 0.01, (FT) 5);
     center = random_point_in<K>(bbox);
 
     sample_sphere(num_points, center, radius, points);
@@ -83,23 +87,24 @@ void sample_random_sphere_in_box(const std::size_t num_points,
 
 template <typename K, typename OutputIterator>
 void sample_cylinder(const std::size_t num_points,
-  const typename CGAL::Point_3<K> &center,
-  const typename CGAL::Vector_3<K> &axis, const typename K::FT radius,
-  const typename K::FT length, OutputIterator points) {
+  const CGAL::Point_3<K> &center,
+  const CGAL::Vector_3<K> &axis, typename K::FT radius,
+  typename K::FT length, OutputIterator points) {
+    typedef typename K::FT FT;
      // Sample shape
     for (size_t i = 0 ; i < num_points ; ++i) {
       CGAL::Vector_3<K> normal(
-        random_float((K::FT) -1, (K::FT) 1), 
-        random_float((K::FT) -1, (K::FT) 1), 
-        random_float((K::FT) -1, (K::FT) 1));
+        random_float((FT) -1, (FT) 1), 
+        random_float((FT) -1, (FT) 1), 
+        random_float((FT) -1, (FT) 1));
       normal = normal - ((normal * axis) * axis);
-      if (normal.squared_length() < (K::FT)0.0001) {
+      if (normal.squared_length() < (FT)0.0001) {
         i--;
         continue;
       }
-      normal = normal * ((K::FT)1.0 / CGAL::sqrt(normal.squared_length()));
+      normal = normal * ((FT)1.0 / CGAL::sqrt(normal.squared_length()));
 
-      typename K::FT l = random_float(-length, length);
+      FT l = random_float(-length, length);
 
       CGAL::Point_3<K> p = center + axis * l + radius * normal;
       *points = CGAL::Point_with_normal_3<K>(p, normal);
@@ -109,13 +114,14 @@ void sample_cylinder(const std::size_t num_points,
 
 template <typename K, typename OutputIterator>
 void sample_random_cylinder(const std::size_t num_points,
-  typename CGAL::Point_3<K> &center,
-  typename CGAL::Vector_3<K> &axis, typename K::FT &radius,
+  CGAL::Point_3<K> &center,
+  CGAL::Vector_3<K> &axis, typename K::FT &radius,
   OutputIterator points) {
+    typedef typename K::FT FT;
     // Generate random parameters
     axis = random_normal<K>();
-    radius = random_float((K::FT) 0.5, (K::FT) 5);
-    typename K::FT length = random_float((K::FT) 0.2, (K::FT) 10);
+    radius = random_float((FT) 0.5, (FT) 5);
+    FT length = random_float((FT) 0.2, (FT) 10);
 
     // Find random center point placed on the plane through
     // the origin with 'axis' as normal.
@@ -124,18 +130,18 @@ void sample_random_cylinder(const std::size_t num_points,
     v = v * 1.0 / CGAL::sqrt(v.squared_length());
     u = CGAL::cross_product(v, axis);
 
-    center = CGAL::ORIGIN + random_float((K::FT) -5, (K::FT) 5) * u + random_float((K::FT) -5, (K::FT) 5) * v;
+    center = CGAL::ORIGIN + random_float((FT) -5, (FT) 5) * u + random_float((FT) -5, (FT) 5) * v;
 
     sample_cylinder(num_points, center, axis, radius, length, points);
 }
 
 template <typename K, typename OutputIterator>
 void sample_cone(const std::size_t num_points,
-  typename CGAL::Point_3<K> const& apex,
-  typename CGAL::Vector_3<K> const& axis, typename K::FT angle,
+  CGAL::Point_3<K> const& apex,
+  CGAL::Vector_3<K> const& axis, typename K::FT angle,
   typename K::FT s, typename K::FT e, OutputIterator points) {
   typedef typename K::FT FT;
-  typedef typename CGAL::Vector_3<K> Vector;
+  typedef CGAL::Vector_3<K> Vector;
   FT radiusGrow = std::tan(angle);
 
   FT cosAng = std::cos(angle);
@@ -143,26 +149,26 @@ void sample_cone(const std::size_t num_points,
 
   for (size_t i = 0 ; i < num_points ; ++i)
   {
-    Vector normal(random_float((K::FT) -1, (K::FT) 1), 
-      random_float((K::FT)-1, (K::FT) 1), 
-      random_float((K::FT)-1, (K::FT) 1));
+    Vector normal(random_float((FT) -1, (FT) 1), 
+      random_float((FT)-1, (FT) 1), 
+      random_float((FT)-1, (FT) 1));
     normal = normal - ((normal * axis) * axis);
-    if (normal.squared_length() < (K::FT) 0.0001) {
+    if (normal.squared_length() < (FT) 0.0001) {
       i--;
       continue;
     }
-    normal = normal * ((K::FT) 1.0 / CGAL::sqrt(normal.squared_length()));
+    normal = normal * ((FT) 1.0 / CGAL::sqrt(normal.squared_length()));
 
     FT l = random_float(s, e);
 
     CGAL::Point_3<K> p = apex + axis * l + (l * radiusGrow) * normal;
 
     // axis is pointing down from apex
-    normal = normal * (K::FT) 1.0 / (CGAL::sqrt(normal.squared_length()));
+    normal = normal * (FT) 1.0 / (CGAL::sqrt(normal.squared_length()));
     // normal is pointing from axis to surface point
     normal = normal * cosAng - axis * sinAng;
     l = CGAL::sqrt(normal.squared_length());
-    if ((K::FT) 0.95 > l || l > (K::FT) 1.05)
+    if ((FT) 0.95 > l || l > (FT) 1.05)
       std::cout << "normal not normalized" << std::endl;
 
     *points = CGAL::Point_with_normal_3<K>(p, normal);
@@ -172,22 +178,24 @@ void sample_cone(const std::size_t num_points,
 
 template <typename K, typename OutputIterator>
 void sample_random_cone(const std::size_t num_points,
-  typename CGAL::Point_3<K> &apex,  typename CGAL::Vector_3<K> &axis,
+  CGAL::Point_3<K> &apex,  CGAL::Vector_3<K> &axis,
   typename K::FT &angle, OutputIterator points) {
+    typedef typename K::FT FT;
     // Generate random parameters
     apex = random_point_in<K>(CGAL::Bbox_3(-5, -5, -5, 5, 5, 5));
     axis = random_normal<K>();
-    angle = random_float((K::FT) 0.2, (K::FT) 1.4);
-    K::FT start  = random_float((K::FT) 0, (K::FT) 2.5);
-    K::FT end = start + random_float((K::FT) 0.5, (K::FT) 2.5);
+    angle = random_float((FT) 0.2, (FT) 1.4);
+    FT start  = random_float((FT) 0, (FT) 2.5);
+    FT end = start + random_float((FT) 0.5, (FT) 2.5);
 
     sample_cone(num_points, apex, axis, angle, start, end, points);
 }
 
 template <typename K, typename OutputIterator>
 void sample_random_parallelogram_in_box(const std::size_t num_points,
-  const CGAL::Bbox_3 &bbox, typename CGAL::Vector_3<K> &normal,
+  const CGAL::Bbox_3 &bbox, CGAL::Vector_3<K> &normal,
   typename K::FT &dist, OutputIterator points) {
+  typedef typename K::FT FT;
   // Generate random plane from 3 non collinear points.
   CGAL::Vector_3<K> u, v;
   CGAL::Point_3<K> p[3];
@@ -199,8 +207,8 @@ void sample_random_parallelogram_in_box(const std::size_t num_points,
     CGAL::Vector_3<K> a = p[1] - p[0];
     CGAL::Vector_3<K> b = p[2] - p[0];
 
-    if (a.squared_length() < (K::FT) 4.0 || b.squared_length() < (K::FT) 4.0) {
-      normal = CGAL::Vector_3<K>((K::FT) 0, (K::FT) 0, (K::FT) 0);
+    if (a.squared_length() < (FT) 4.0 || b.squared_length() < (FT) 4.0) {
+      normal = CGAL::Vector_3<K>((FT) 0, (FT) 0, (FT) 0);
       continue;
     }
 
@@ -209,9 +217,9 @@ void sample_random_parallelogram_in_box(const std::size_t num_points,
 
     normal = CGAL::cross_product(a, b);
     // repeat if angle between a and b is small
-  } while (normal.squared_length() < (K::FT) 0.2);
+  } while (normal.squared_length() < (FT) 0.2);
 
-  normal = normal * (K::FT) 1.0 / CGAL::sqrt(normal.squared_length());
+  normal = normal * (FT) 1.0 / CGAL::sqrt(normal.squared_length());
   dist = -((p[0] - CGAL::ORIGIN) * normal);
 
   // sample
@@ -220,8 +228,8 @@ void sample_random_parallelogram_in_box(const std::size_t num_points,
   v = p[2] - p[0];
   
   for (std::size_t i = 0;i < num_points; ++i) {
-    K::FT s = random_float((K::FT) 0, (K::FT) 1);
-    K::FT t = random_float((K::FT) 0, (K::FT) 1);
+    FT s = random_float((FT) 0, (FT) 1);
+    FT t = random_float((FT) 0, (FT) 1);
 
     *points = CGAL::Point_with_normal_3<K>(p[0] + s * u + t * v, normal);
     ++points;
@@ -230,18 +238,19 @@ void sample_random_parallelogram_in_box(const std::size_t num_points,
 
 template <typename K, typename OutputIterator>
 void generate_points_on_torus(const std::size_t num_points,
-  typename const CGAL::Point_3<K> &center,
-  typename const CGAL::Vector_3<K> &axis,
-  typename const K::FT major_radius,
-  typename const K::FT minor_radius,
+  const CGAL::Point_3<K> &center,
+  const CGAL::Vector_3<K> &axis,
+  typename K::FT major_radius,
+  typename K::FT minor_radius,
   OutputIterator points) {
+  typedef typename K::FT FT;
   size_t i = 0;
 
   // calculate basis  
   CGAL::Vector_3<K> b1, b2;
-  b1 = CGAL::cross_product(axis, CGAL::Vector_3<K>((K::FT) 0, (K::FT) 0, (K::FT) 1));
-  if (b1.squared_length() < (K::FT) 0.1)
-    b1 = CGAL::cross_product(axis, CGAL::Vector_3<K>((K::FT) 0, (K::FT) 1, (K::FT) 0));
+  b1 = CGAL::cross_product(axis, CGAL::Vector_3<K>((FT) 0, (FT) 0, (FT) 1));
+  if (b1.squared_length() < (FT) 0.1)
+    b1 = CGAL::cross_product(axis, CGAL::Vector_3<K>((FT) 0, (FT) 1, (FT) 0));
   b1 = b1 / CGAL::sqrt(b1.squared_length());
 
   b2 = CGAL::cross_product(axis, b1);
@@ -249,8 +258,8 @@ void generate_points_on_torus(const std::size_t num_points,
 
   for (size_t i = 0 ; i < num_points ; ++i)
   {
-    K::FT tau = random_float((K::FT) 0, (K::FT) (2 * 3.141592656));
-    K::FT phi = random_float((K::FT) 0, (K::FT) (2 * 3.141592656));
+    FT tau = random_float((FT) 0, (FT) (2 * 3.141592656));
+    FT phi = random_float((FT) 0, (FT) (2 * 3.141592656));
 
     CGAL::Vector_3<K> normal = sin(tau) * b1 + cos(tau) * b2;
     normal = normal / CGAL::sqrt(normal.squared_length());
@@ -264,21 +273,24 @@ void generate_points_on_torus(const std::size_t num_points,
 }
 
 template <typename K, typename OutputIterator>
-void sample_random_torus(const std::size_t num_points, typename CGAL::Point_3<K> &center,
-  typename CGAL::Vector_3<K> &axis, typename K::FT &major_radius,
+void sample_random_torus(const std::size_t num_points, CGAL::Point_3<K> &center,
+  CGAL::Vector_3<K> &axis, typename K::FT &major_radius,
   typename K::FT &minor_radius, OutputIterator points) {
+    typedef typename K::FT FT;  
     // Generate random parameters
     center = random_point_in<K>(CGAL::Bbox_3(-5, -5, -5, 5, 5, 5));
     axis = random_normal<K>();
-    major_radius = random_float((K::FT) 1.0, (K::FT) 5.0);
-    minor_radius = random_float((K::FT) 0.1, (K::FT) 1.0);
+    major_radius = random_float((FT) 1.0, (FT) 5.0);
+    minor_radius = random_float((FT) 0.1, (FT) 1.0);
 
     generate_points_on_torus(num_points, center, axis, major_radius, minor_radius, points);
 }
 
 template <typename K, typename P>
-void filter_by_distance(typename const CGAL::Plane_3<K> &plane, typename K::FT dist, std::vector<typename P> &points) {
-  K::FT d2 = dist * dist;
+void filter_by_distance(
+  const CGAL::Plane_3<K> &plane, typename K::FT dist, 
+  std::vector<P> &points) {
+  typename K::FT d2 = dist * dist;
 
   std::vector<P>::iterator it = points.begin();
   while (it != points.end()) {

@@ -12,13 +12,14 @@ template <class K>
 bool test_torus_parameters() {
   const int NB_ROUNDS = 10;
   const int NB_POINTS = 1000;
-
-  typedef typename CGAL::Point_with_normal_3<K>               Pwn;
-  typedef typename CGAL::Point_3<K>                           Point;
-  typedef typename CGAL::Vector_3<K>                          Vector;
+  
+  typedef typename K::FT                                      FT;
+  typedef CGAL::Point_with_normal_3<K>                        Pwn;
+  typedef CGAL::Point_3<K>                                    Point;
+  typedef CGAL::Vector_3<K>                                   Vector;
   typedef std::vector<Pwn>                                    Pwn_vector;
-  typedef typename CGAL::Identity_property_map<Pwn>           Point_map;
-  typedef typename CGAL::Normal_of_point_with_normal_pmap<K>  Normal_map;
+  typedef CGAL::Identity_property_map<Pwn>                    Point_map;
+  typedef CGAL::Normal_of_point_with_normal_pmap<K>           Normal_map;
 
   typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<
     K, Pwn_vector, Point_map, Normal_map>                     Traits;
@@ -32,8 +33,8 @@ bool test_torus_parameters() {
     Pwn_vector points;
 
     // generate random points on random cylinder
-    K::FT minor_radius = (K::FT) 0;
-    K::FT major_radius = (K::FT) 0;
+    FT minor_radius = (FT) 0;
+    FT major_radius = (FT) 0;
     Vector axis;
     Point center;
     CGAL::Bbox_3 bbox(-10, -10, -10, 10, 10, 10);
@@ -83,13 +84,13 @@ bool test_torus_parameters() {
     Point pos = torus->center();
 
     // Check radii and alignment with axis.
-    if (abs(major_radius - torus->major_radius()) > (K::FT) 0.02 
-      || abs(minor_radius - torus->minor_radius()) > (K::FT) 0.02
-      || abs(abs(axis * torus->axis()) - 1.0) > (K::FT) 0.02)
+    if (abs(major_radius - torus->major_radius()) > (FT) 0.02 
+      || abs(minor_radius - torus->minor_radius()) > (FT) 0.02
+      || abs(abs(axis * torus->axis()) - 1.0) > (FT) 0.02)
       continue;
 
     // Check center.
-    if ((pos - center).squared_length() > (K::FT) 0.0004)
+    if ((pos - center).squared_length() > (FT) 0.0004)
       continue;
 
     success++;
