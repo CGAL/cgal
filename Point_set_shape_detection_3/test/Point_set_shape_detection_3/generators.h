@@ -224,7 +224,6 @@ void sample_random_parallelogram_in_box(const std::size_t num_points,
   dist = -((p[0] - CGAL::ORIGIN) * normal);
 
   // sample
-  size_t i = 0;
   u = p[1] - p[0];
   v = p[2] - p[0];
   
