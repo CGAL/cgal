@@ -25,6 +25,15 @@
 #include <QGLViewer/qglviewer.h>
 #include <QKeyEvent>
 
+static void monCombine(GLdouble c[3], void *d[4], GLfloat w[4], void **out)
+{
+   GLdouble *nv = (GLdouble *) malloc(sizeof(GLdouble)*3);
+   nv[0] = c[0];
+   nv[1] = c[1];
+   nv[2] = c[2];
+   *out = nv;
+}
+
 class Viewer : public QGLViewer
 {
   Q_OBJECT
@@ -43,9 +52,10 @@ class Viewer : public QGLViewer
   GLuint m_dlVertices;
   bool m_displayListCreated;
 
+  GLUtesselator* FTess;
+
   typedef LCC::Dart_handle Dart_handle;
   typedef LCC::Dart_const_handle Dart_const_handle;
-
 
 public:
   Viewer(QWidget* parent)
@@ -56,6 +66,17 @@ public:
     newFormat.setSampleBuffers(true);
     newFormat.setSamples(16);
     this->setFormat(newFormat);
+
+    FTess = gluNewTess();
+    gluTessCallback(FTess, GLU_TESS_BEGIN, (GLvoid (*) ( )) & glBegin);
+    gluTessCallback(FTess, GLU_TESS_END, (GLvoid (*) ( )) & glEnd);
+    gluTessCallback(FTess, GLU_TESS_VERTEX, (GLvoid (*) ( )) & glVertex3dv);
+    gluTessCallback(FTess, GLU_TESS_COMBINE, (GLvoid (*) ( )) & monCombine );
+  }
+
+  ~Viewer()
+  {
+      gluDeleteTess(FTess);
   }
 
   void setScene(Scene* scene_)
@@ -81,6 +102,8 @@ protected:
   void drawAllFaces(bool flat);
   void drawAllEdges();
   void drawAllVertices();
+  void drawOneFaceWireframe(Dart_handle);
+  void drawOneFilledFace(Dart_handle);
 };
 
 #endif

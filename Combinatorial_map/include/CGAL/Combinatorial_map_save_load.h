@@ -487,11 +487,11 @@ namespace CGAL {
                   (typeid(typename CMap::template Attribute_type<i>::type::Point).name());
 
                 //  std::cout<<"ptype="<<ptype<<"  and type_map="<<type_map<<std::endl;
-                if(type!=type_map && ptype!=ptype_map)
+                /* if(type!=type_map && ptype!=ptype_map)
                 {
                   //  std::cout<<"Not loaded."<<std::endl;
                   return;
-                }
+                  }*/
 
                 BOOST_FOREACH(const boost::property_tree::ptree::value_type &v1,
                               v0.second )
@@ -559,11 +559,11 @@ namespace CGAL {
                 std::string type_map= typeid
                   (typename CMap::template Attribute_type<i>::type::Point).name();
                 //  std::cout<<"ptype="<<ptype<<"  and type_map="<<type_map<<std::endl;
-                if(ptype!=type_map)
+                /*                if(ptype!=type_map)
                 {
                   //  std::cout<<"Not loaded."<<std::endl;
                   return;
-                }
+                  }*/
 
                 BOOST_FOREACH(const boost::property_tree::ptree::value_type &v1,
                               v0.second )
@@ -620,11 +620,11 @@ namespace CGAL {
                 std::string type_map= typeid
                   (typename CMap::template Attribute_type<i>::type::Info).name();
                 //  std::cout<<"ptype="<<ptype<<"  and type_map="<<type_map<<std::endl;
-                if(ptype!=type_map)
+                /*      if(ptype!=type_map)
                 {
                   //  std::cout<<"Not loaded."<<std::endl;
                   return;
-                }
+                  } */
 
                 BOOST_FOREACH(const boost::property_tree::ptree::value_type &v1,
                               v0.second )

@@ -50,7 +50,7 @@ class Volume_info
   (const boost::property_tree::ptree::value_type &v,Volume_info &val);
 
   friend void CGAL::write_cmap_attribute_node<Volume_info>(boost::property_tree::ptree & node,
-                                                           const Volume_info& arg);  
+                                                           const Volume_info& arg);
 public:
   Volume_info() : m_color(CGAL::Color(myrandom.get_int(0,256),
                                       myrandom.get_int(0,256),
@@ -109,11 +109,22 @@ template<>
 inline void read_cmap_attribute_node<Volume_info>
 (const boost::property_tree::ptree::value_type &v,Volume_info &val)
 {
-  val.m_status = v.second.get<int>("status");
-  char r = v.second.get<int>("color-r");
-  char g = v.second.get<int>("color-g");
-  char b = v.second.get<int>("color-b");
-  val.m_color = CGAL::Color(r,g,b);
+  try
+  {
+    val.m_status = v.second.get<int>("status");
+  }
+  catch(const std::exception &  )
+  {}
+
+  try
+  {
+    char r = v.second.get<int>("color-r");
+    char g = v.second.get<int>("color-g");
+    char b = v.second.get<int>("color-b");
+    val.m_color = CGAL::Color(r,g,b);
+  }
+  catch(const std::exception &  )
+  {}
 }
 
 // Definition of function allowing to save custon information.
@@ -134,13 +145,13 @@ class Myitems
 {
 public:
   template < class Refs >
-  struct Dart_wrapper 
+  struct Dart_wrapper
   {
     typedef CGAL::Dart<3, Refs > Dart;
-    
+
     typedef CGAL::Cell_attribute_with_point< Refs > Vertex_attrib;
     typedef CGAL::Cell_attribute< Refs, Volume_info> Volume_attrib;
-    
+
     typedef CGAL::cpp11::tuple<Vertex_attrib,void,void,
                                Volume_attrib> Attributes;
   };

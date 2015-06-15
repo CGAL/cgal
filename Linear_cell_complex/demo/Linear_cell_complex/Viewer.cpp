@@ -38,6 +38,97 @@ Viewer::sceneChanged()
   this->showEntireScene();
 }
 
+void Viewer::drawOneFaceWireframe(Dart_handle dh)
+{
+  ::glColor3f(.2f,.2f,.6f);
+
+  ::glBegin(GL_LINE_STRIP);
+
+  for (LCC::Dart_of_orbit_range<1>::const_iterator
+         orbitIter = scene->lcc->darts_of_orbit<1>(dh).begin();
+       orbitIter.cont(); ++orbitIter)
+  {
+    const LCC::Point& p = scene->lcc->point(orbitIter);
+    ::glVertex3d(p.x(),p.y(),p.z());
+  }
+
+  ::glEnd();
+}
+
+void Viewer::drawOneFilledFace(Dart_handle dh)
+{
+  LCC &lcc = *scene->lcc;
+
+  //  double r = (double)dartIter->attribute<3>()->info().r()/255.0;
+  double r = (double)lcc.info<3>(dh).color().r()/255.0;
+  double g = (double)lcc.info<3>(dh).color().g()/255.0;
+  double b = (double)lcc.info<3>(dh).color().b()/255.0;
+  if ( !lcc.is_free(dh, 3) )
+  {
+    r += (double)lcc.info<3>(lcc.beta(dh,3)).color().r()/255.0;
+    g += (double)lcc.info<3>(lcc.beta(dh,3)).color().g()/255.0;
+    b += (double)lcc.info<3>(lcc.beta(dh,3)).color().b()/255.0;
+    r /= 2; g /= 2; b /= 2;
+  }
+
+  ::glColor3f(r,g,b);
+
+  if(flatShading)
+  {
+    LCC::Vector normal = CGAL::compute_normal_of_cell_2(lcc,dh);
+    normal = normal/(CGAL::sqrt(normal*normal));
+    ::glNormal3d(normal.x(), normal.y(), normal.z());
+  }
+
+  // array of vertices of the face
+  std::size_t nb=0;
+  for (LCC::Dart_of_orbit_range<1>::const_iterator it(lcc, dh); it.cont(); ++it, ++nb);
+  ++nb; // the last vertex of the array is the first vertex
+
+  gluTessBeginPolygon(FTess, NULL);
+  gluTessBeginContour(FTess);
+
+  GLdouble* data = new GLdouble[3*nb];
+  std::size_t i=0;
+  for (LCC::Dart_of_orbit_range<1>::const_iterator it(lcc, dh); it.cont(); ++it, ++i)
+  {
+    const LCC::Point& p = lcc.point(it);
+    data[  (i*3)] = p.x();
+    data[1+(i*3)] = p.y();
+    data[2+(i*3)] = p.z();
+
+    if(!flatShading)
+    {
+      // If Gouraud shading: 1 normal per vertex
+      LCC::Vector normal = CGAL::compute_normal_of_cell_0(lcc,it);
+      normal = normal/(CGAL::sqrt(normal*normal));
+      ::glNormal3d(normal.x(), normal.y(), normal.z());
+    }
+
+    gluTessVertex(FTess, &data[i*3], &data[i*3]);
+  }
+
+  const LCC::Point& p = lcc.point(dh);
+  data[  (i*3)] = p.x();
+  data[1+(i*3)] = p.y();
+  data[2+(i*3)] = p.z();
+
+  // If Gouraud shading: 1 normal per vertex
+  if(!flatShading)
+  {
+    LCC::Vector normal = CGAL::compute_normal_of_cell_0(lcc,dh);
+    normal = normal/(CGAL::sqrt(normal*normal));
+    ::glNormal3d(normal.x(), normal.y(), normal.z());
+  }
+
+  gluTessVertex(FTess, &data[i*3], &data[i*3]);
+
+  gluTessEndContour(FTess);
+  gluTessEndPolygon(FTess);
+
+  delete [] data;
+}
+
 void Viewer::drawAllFaces(bool flat)
 {
   LCC &lcc = *scene->lcc;
@@ -55,51 +146,12 @@ void Viewer::drawAllFaces(bool flat)
         // We draw the polygon
         if ( it->info().is_filled() )
         {
-          ::glBegin(GL_POLYGON);
-          //  double r = (double)dartIter->attribute<3>()->info().r()/255.0;
-          double r = (double)lcc.info<3>(dartIter).color().r()/255.0;
-          double g = (double)lcc.info<3>(dartIter).color().g()/255.0;
-          double b = (double)lcc.info<3>(dartIter).color().b()/255.0;
-          if ( !lcc.is_free(dartIter, 3) )
-          {
-            r += (double)lcc.info<3>(lcc.beta(dartIter,3)).color().r()/255.0;
-            g += (double)lcc.info<3>(lcc.beta(dartIter,3)).color().g()/255.0;
-            b += (double)lcc.info<3>(lcc.beta(dartIter,3)).color().b()/255.0;
-            r /= 2; g /= 2; b /= 2;
-          }
-
-          ::glColor3f(r,g,b);
-
-          if(flat)
-          {
-            LCC::Vector normal = CGAL::compute_normal_of_cell_2(lcc,dartIter);
-            normal = normal/(CGAL::sqrt(normal*normal));
-            ::glNormal3d(normal.x(), normal.y(), normal.z());
-          }
+          drawOneFilledFace(dartIter);
         }
         else
         {
-          ::glBegin(GL_LINE_STRIP);
-           ::glColor3f(.2f,.2f,.6f);
+          drawOneFaceWireframe(dartIter);
         }
-
-        for (LCC::Dart_of_orbit_range<1>::const_iterator
-               orbitIter = lcc.darts_of_orbit<1>(dartIter).begin();
-             orbitIter.cont(); ++orbitIter)
-        {
-          if(!flat && it->info().is_filled())
-          {
-            // If Gouraud shading: 1 normal per vertex
-            LCC::Vector normal = CGAL::compute_normal_of_cell_0(lcc,orbitIter);
-            normal = normal/(CGAL::sqrt(normal*normal));
-            ::glNormal3d(normal.x(), normal.y(), normal.z());
-          }
-
-          const LCC::Point& p = lcc.point(orbitIter);
-          ::glVertex3d(p.x(),p.y(),p.z());
-        }
-
-        ::glEnd();
       }
     }
   }
@@ -112,9 +164,10 @@ void Viewer::drawAllEdges()
   if ( lcc.is_empty() ) return;
 
   //    ::glDepthRange(0.0, 1.0-0.005);
-  ::glBegin(GL_LINES);
   //::glColor3f(0.0f, 0.0f, 0.0f);
   ::glColor3f(.2f,.2f,.6f);
+
+  ::glBegin(GL_LINES);
 
   for (LCC::Attribute_range<3>::type::iterator
          it=lcc.attributes<3>().begin(),
@@ -154,8 +207,9 @@ void Viewer::drawAllVertices()
 
   //    ::glDepthRange(0.0, 1.0-0.005);
   ::glPointSize(7.0);
-  ::glBegin(GL_POINTS);
   ::glColor3f(0.2f, 0.2f, 0.7f);
+
+  ::glBegin(GL_POINTS);
 
   bool empty = true;
   for (LCC::Attribute_range<3>::type::iterator
