@@ -354,13 +354,13 @@ namespace CGAL {
       save_combinatorial_map(amap, os);
       return os;
     }
-    
+
     friend std::ifstream& operator>> (std::ifstream& is, Self& amap)
     {
       load_combinatorial_map(is, amap);
       return is;
     }
-    
+
     /** Create a new dart and add it to the map.
      * The marks of the darts are initialised with mmask_marks, i.e. the dart
      * is unmarked for all the marks.

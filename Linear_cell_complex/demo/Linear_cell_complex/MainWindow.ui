@@ -33,13 +33,16 @@
      <x>0</x>
      <y>0</y>
      <width>635</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="actionLoad"/>
+    <addaction name="actionSave"/>
+    <addaction name="separator"/>
     <addaction name="actionImportOFF"/>
     <addaction name="actionAddOFF"/>
     <addaction name="separator"/>
@@ -219,6 +222,16 @@
   <action name="actionCreate_Sierpinski_Triangle">
    <property name="text">
     <string>Create Sierpinski Triangle</string>
+   </property>
+  </action>
+  <action name="actionLoad">
+   <property name="text">
+    <string>&amp;Load</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>&amp;Save</string>
    </property>
   </action>
  </widget>

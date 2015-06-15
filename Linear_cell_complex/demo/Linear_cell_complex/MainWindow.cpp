@@ -81,7 +81,7 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
 
   this->addRecentFiles (this->menuFile, this->actionQuit);
   connect (this, SIGNAL (openRecentFile (QString)),
-           this, SLOT (load_off (QString)));
+           this, SLOT (load_depend_on_extension(QString)));
 
   statusMessage = new QLabel
       ("Darts: 0,  Vertices: 0  (Points: 0),  Edges: 0, Facets: 0,"
@@ -222,6 +222,32 @@ void MainWindow::init_all_new_volumes()
     { on_new_volume(it); }
 }
 
+void MainWindow::on_actionSave_triggered ()
+{
+  QString fileName = QFileDialog::getSaveFileName (this,
+                                                   tr ("Save"),
+                                                   "save.3map",
+                                                   tr ("3-map files (*.3map)"));
+
+  if (!fileName.isEmpty ())
+  {
+     save(fileName);
+  }
+}
+
+void MainWindow::on_actionLoad_triggered ()
+{
+  QString fileName = QFileDialog::getOpenFileName (this,
+                                                   tr ("Load"),
+                                                   "./3map",
+                                                   tr ("3-map files (*.3map)"));
+
+  if (!fileName.isEmpty ())
+  {
+    load(fileName, true);
+  }
+}
+
 void MainWindow::on_actionImportOFF_triggered ()
 {
   QString fileName = QFileDialog::getOpenFileName (this,
@@ -261,6 +287,76 @@ void MainWindow::on_actionAddOFF_triggered()
   {
     load_off (fileName, false);
   }
+}
+
+void MainWindow::load_depend_on_extension(const QString & fileName, bool clear)
+{
+  QString ext = QFileInfo(fileName).suffix();
+  if ( ext=="3map")
+    load(fileName, clear);
+  else if (ext=="off")
+    load_off(fileName, clear);
+  else
+  {
+    std::cout<<"Extension not considered."<<std::endl;
+  }
+}
+
+void MainWindow::load(const QString & fileName, bool clear)
+{
+  QApplication::setOverrideCursor (Qt::WaitCursor);
+
+  if (clear) this->clear_all();
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
+  bool res = load_combinatorial_map(fileName.toStdString().c_str(), *(scene.lcc));
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to load 3-map "<<qPrintable(fileName)<<": "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
+
+  init_all_new_volumes();
+
+  this->addToRecentFiles(fileName);
+  QApplication::restoreOverrideCursor ();
+
+  if (res)
+    statusBar ()->showMessage (QString ("3-map loaded ") + fileName,
+                               DELAY_STATUSMSG);
+  else
+    statusBar ()->showMessage (QString ("Problem: 3-map not loaded ") + fileName,
+                               DELAY_STATUSMSG);
+  Q_EMIT (sceneChanged ());
+}
+
+void MainWindow::save(const QString & fileName)
+{
+  QApplication::setOverrideCursor (Qt::WaitCursor);
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
+  if ( save_combinatorial_map(*(scene.lcc), fileName.toStdString().c_str()) )
+    statusBar ()->showMessage (QString ("3-map saved ") + fileName,
+                               DELAY_STATUSMSG);
+  else
+    statusBar ()->showMessage (QString ("Problem: 3-map not saved ") + fileName,
+                               DELAY_STATUSMSG);
+  QApplication::restoreOverrideCursor ();
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to save 3-map "<<qPrintable(fileName)<<": "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
 }
 
 void MainWindow::load_off (const QString & fileName, bool clear)

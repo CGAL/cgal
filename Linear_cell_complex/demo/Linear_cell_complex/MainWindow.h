@@ -110,6 +110,8 @@ public:
 
 public Q_SLOTS:
   // File menu
+  void on_actionSave_triggered();
+  void on_actionLoad_triggered();  
   void on_actionImportOFF_triggered();
   void on_actionAddOFF_triggered();
   void on_actionImport3DTDS_triggered();
@@ -141,6 +143,9 @@ public Q_SLOTS:
   void on_actionExtend_hidden_volumes_triggered();
 
   // Other slots
+  void load_depend_on_extension(const QString& fileName, bool clear=true);
+  void load(const QString& fileName, bool clear=true);
+  void save(const QString& fileName);
   void load_off(const QString& fileName, bool clear=true);
   void load_3DTDS(const QString& fileName, bool clear=true);
 
