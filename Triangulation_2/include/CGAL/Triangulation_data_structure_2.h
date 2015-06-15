@@ -1527,7 +1527,7 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
     return join_vertices(f->neighbor(i), mirror_index(f,i), v);
   }
 
-  int deg2 = degree(v2);
+  std::size_t deg2 = degree(v2);
 
   CGAL_triangulation_precondition( deg2 >= 3 );
 
@@ -1605,7 +1605,7 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
     ++fc;
   } while ( fc != fc_start );
 
-  CGAL_triangulation_assertion( int(star_faces_of_v2.size()) == deg2 );
+  CGAL_triangulation_assertion( star_faces_of_v2.size() == deg2 );
 
   // from this point and on we modify the values
 

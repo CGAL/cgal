@@ -210,8 +210,8 @@ protected:
                                   MassMap  mass_map = MassMap(1),
                                   std::size_t sample_size = 0,
                                   bool use_flip = true,
-                                  std::size_t relocation = 0,
-                                  std::size_t verbose = 0)
+                                  unsigned int relocation = 0,
+                                  int verbose = 0)
     : m_verbose(verbose),
       m_mchoice(sample_size),
       m_use_flip(use_flip),
