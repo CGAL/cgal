@@ -37,7 +37,7 @@ protected:
     m_normal = m_normal * (1.0 / sqrt(m_normal.squared_length()));
     m_d = -(p1[0] * m_normal[0] + p1[1] * m_normal[1] + p1[2] * m_normal[2]);
 
-    m_is_valid = true;
+    this->m_is_valid = true;
   }
 
   // Computes squared Euclidean distance from a set of points.

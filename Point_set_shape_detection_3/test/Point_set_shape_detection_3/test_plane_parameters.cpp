@@ -15,7 +15,6 @@ bool test_plane_parameters() {
 
   typedef typename K::FT                                      FT;
   typedef typename CGAL::Point_with_normal_3<K>               Pwn;
-  typedef typename CGAL::Point_3<K>                           Point;
   typedef typename CGAL::Vector_3<K>                          Vector;
   typedef std::vector<Pwn>                                    Pwn_vector;
   typedef typename CGAL::Identity_property_map<Pwn>           Point_map;

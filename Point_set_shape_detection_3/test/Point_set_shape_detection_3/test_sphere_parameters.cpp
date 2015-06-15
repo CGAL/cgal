@@ -16,7 +16,6 @@ bool test_sphere_parameters() {
   typedef typename K::FT                                      FT;
   typedef CGAL::Point_with_normal_3<K>                        Pwn;
   typedef CGAL::Point_3<K>                                    Point;
-  typedef CGAL::Vector_3<K>                                   Vector;
   typedef std::vector<Pwn>                                    Pwn_vector;
   typedef CGAL::Identity_property_map<Pwn>                    Point_map;
   typedef CGAL::Normal_of_point_with_normal_pmap<K>           Normal_map;
