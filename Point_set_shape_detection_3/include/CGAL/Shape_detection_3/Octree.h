@@ -23,9 +23,9 @@
 #define CGAL_SHAPE_DETECTION_3_OCTREE_H
 
 #include <limits>
-#include <random>
 #include <stack>
 
+#include <CGAL/Random.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Shape_detection_3/Shape_base.h>
 
@@ -455,9 +455,7 @@ namespace CGAL {
                                               std::set<std::size_t>& indices,
                                               const std::vector<int>& shapeIndex,
                                               std::size_t requiredSamples) {
-        static std::random_device rd;
-        static std::mt19937 rng(rd());
-        static std::uniform_int_distribution<> dis(0, this->size() - 1);
+        static CGAL::Random rand;
 
         bool upperZ, upperY, upperX;
         Cell *cur = m_root;
@@ -491,7 +489,7 @@ namespace CGAL {
           }
           if (enough >= requiredSamples) {
             do {
-              std::size_t p = dis(rng) % cur->size();
+              std::size_t p = rand.get_int(0, cur->size() - 1);
               std::size_t j = this->index(cur->first + p);
               if (shapeIndex[j] == -1)
                 indices.insert(j);
