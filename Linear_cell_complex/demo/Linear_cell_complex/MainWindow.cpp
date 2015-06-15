@@ -22,9 +22,10 @@
 #include "MainWindow.h"
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <QSettings>
-#include "MainWindow.moc"
 #include <CGAL/Timer.h>
 #include <CGAL/ipower.h>
+#include "MainWindow.moc"
+#include "import_moka.h"
 
 // Function defined in Linear_cell_complex_3_subivision.cpp
 void subdivide_lcc_3 (LCC & m);
@@ -261,6 +262,19 @@ void MainWindow::on_actionImportOFF_triggered ()
   }
 }
 
+void MainWindow::on_actionImportMoka_triggered()
+{
+  QString fileName = QFileDialog::getOpenFileName (this,
+                                                   tr ("Import Moka"),
+                                                   "./moka",
+                                                   tr ("Moka files (*.moka)"));
+
+  if (!fileName.isEmpty ())
+  {
+    load_moka(fileName, true);
+  }
+}
+
 void MainWindow::on_actionImport3DTDS_triggered ()
 {
   QString fileName = QFileDialog::getOpenFileName (this,
@@ -296,6 +310,8 @@ void MainWindow::load_depend_on_extension(const QString & fileName, bool clear)
     load(fileName, clear);
   else if (ext=="off")
     load_off(fileName, clear);
+  else if (ext=="moka")
+    load_moka(fileName, clear);
   else
   {
     std::cout<<"Extension not considered."<<std::endl;
@@ -321,7 +337,7 @@ void MainWindow::load(const QString & fileName, bool clear)
            <<timer.time()<<" seconds."<<std::endl;
 #endif
 
-  init_all_new_volumes();
+  recreate_whole_volume_list();
 
   this->addToRecentFiles(fileName);
   QApplication::restoreOverrideCursor ();
@@ -425,6 +441,40 @@ void MainWindow::load_3DTDS (const QString & fileName, bool clear)
   init_all_new_volumes();
 
   QApplication::restoreOverrideCursor ();
+  Q_EMIT (sceneChanged ());
+}
+
+void MainWindow::load_moka(const QString & fileName, bool clear)
+{
+  QApplication::setOverrideCursor (Qt::WaitCursor);
+
+  if (clear) this->clear_all();
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
+  CGAL::import_from_moka < LCC > (*scene.lcc, qPrintable (fileName));
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to load off "<<qPrintable(fileName)<<": "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
+
+  init_all_new_volumes();
+  recreate_whole_volume_list();
+
+  this->addToRecentFiles (fileName);
+  QApplication::restoreOverrideCursor ();
+
+  if (clear)
+    statusBar ()->showMessage (QString ("Load off file") + fileName,
+                               DELAY_STATUSMSG);
+  else
+    statusBar ()->showMessage (QString ("Add off file") + fileName,
+                               DELAY_STATUSMSG);
   Q_EMIT (sceneChanged ());
 }
 

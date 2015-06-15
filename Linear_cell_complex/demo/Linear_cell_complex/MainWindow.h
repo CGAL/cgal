@@ -115,6 +115,7 @@ public Q_SLOTS:
   void on_actionImportOFF_triggered();
   void on_actionAddOFF_triggered();
   void on_actionImport3DTDS_triggered();
+  void on_actionImportMoka_triggered();
   void on_actionCompute_Voronoi_3D_triggered();
   void on_actionClear_triggered();
   
@@ -148,6 +149,7 @@ public Q_SLOTS:
   void save(const QString& fileName);
   void load_off(const QString& fileName, bool clear=true);
   void load_3DTDS(const QString& fileName, bool clear=true);
+  void load_moka(const QString& fileName, bool clear=true);
 
   void onSceneChanged();
 

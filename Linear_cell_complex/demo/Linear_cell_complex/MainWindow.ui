@@ -45,6 +45,7 @@
     <addaction name="separator"/>
     <addaction name="actionImportOFF"/>
     <addaction name="actionAddOFF"/>
+    <addaction name="actionImportMoka"/>
     <addaction name="separator"/>
     <addaction name="actionImport3DTDS"/>
     <addaction name="actionCompute_Voronoi_3D"/>
@@ -232,6 +233,11 @@
   <action name="actionSave">
    <property name="text">
     <string>&amp;Save</string>
+   </property>
+  </action>
+  <action name="actionImportMoka">
+   <property name="text">
+    <string>Import Moka</string>
    </property>
   </action>
  </widget>

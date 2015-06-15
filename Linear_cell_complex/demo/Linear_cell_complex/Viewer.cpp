@@ -30,11 +30,11 @@ Viewer::sceneChanged()
   this->initDraw();
 
   this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(),
-						     bb.ymin(),
-						     bb.zmin()),
-				      qglviewer::Vec(bb.xmax(),
-						     bb.ymax(),
-						     bb.zmax()));
+                                                     bb.ymin(),
+                                                     bb.zmin()),
+                                      qglviewer::Vec(bb.xmax(),
+                                                     bb.ymax(),
+                                                     bb.zmax()));
   this->showEntireScene();
 }
 
@@ -53,34 +53,41 @@ void Viewer::drawAllFaces(bool flat)
             (lcc.dart_of_attribute<3>(it)).begin(); dartIter.cont(); ++dartIter)
       {
         // We draw the polygon
-        ::glBegin(GL_POLYGON);
-
-        //  double r = (double)dartIter->attribute<3>()->info().r()/255.0;
-        double r = (double)lcc.info<3>(dartIter).color().r()/255.0;
-        double g = (double)lcc.info<3>(dartIter).color().g()/255.0;
-        double b = (double)lcc.info<3>(dartIter).color().b()/255.0;
-        if ( !lcc.is_free(dartIter, 3) )
+        if ( it->info().is_filled() )
         {
-          r += (double)lcc.info<3>(lcc.beta(dartIter,3)).color().r()/255.0;
-          g += (double)lcc.info<3>(lcc.beta(dartIter,3)).color().g()/255.0;
-          b += (double)lcc.info<3>(lcc.beta(dartIter,3)).color().b()/255.0;
-          r /= 2; g /= 2; b /= 2;
+          ::glBegin(GL_POLYGON);
+          //  double r = (double)dartIter->attribute<3>()->info().r()/255.0;
+          double r = (double)lcc.info<3>(dartIter).color().r()/255.0;
+          double g = (double)lcc.info<3>(dartIter).color().g()/255.0;
+          double b = (double)lcc.info<3>(dartIter).color().b()/255.0;
+          if ( !lcc.is_free(dartIter, 3) )
+          {
+            r += (double)lcc.info<3>(lcc.beta(dartIter,3)).color().r()/255.0;
+            g += (double)lcc.info<3>(lcc.beta(dartIter,3)).color().g()/255.0;
+            b += (double)lcc.info<3>(lcc.beta(dartIter,3)).color().b()/255.0;
+            r /= 2; g /= 2; b /= 2;
+          }
+
+          ::glColor3f(r,g,b);
+
+          if(flat)
+          {
+            LCC::Vector normal = CGAL::compute_normal_of_cell_2(lcc,dartIter);
+            normal = normal/(CGAL::sqrt(normal*normal));
+            ::glNormal3d(normal.x(), normal.y(), normal.z());
+          }
         }
-
-        ::glColor3f(r,g,b);
-
-        if(flat)
+        else
         {
-          LCC::Vector normal = CGAL::compute_normal_of_cell_2(lcc,dartIter);
-          normal = normal/(CGAL::sqrt(normal*normal));
-          ::glNormal3d(normal.x(), normal.y(), normal.z());
+          ::glBegin(GL_LINE_STRIP);
+           ::glColor3f(.2f,.2f,.6f);
         }
 
         for (LCC::Dart_of_orbit_range<1>::const_iterator
                orbitIter = lcc.darts_of_orbit<1>(dartIter).begin();
              orbitIter.cont(); ++orbitIter)
         {
-          if(!flat)
+          if(!flat && it->info().is_filled())
           {
             // If Gouraud shading: 1 normal per vertex
             LCC::Vector normal = CGAL::compute_normal_of_cell_0(lcc,orbitIter);
