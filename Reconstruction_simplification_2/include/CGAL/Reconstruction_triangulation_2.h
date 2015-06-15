@@ -916,7 +916,7 @@ public:
 	// (s,a,b) + (s,b,c) -> (s,a,c) + (a,b,c)
 	// st = (source,target) from 'make_collapsible'
 	// return (a,c)
-	Edge flip(const Edge& sb, Edge& st, int verbose = 0) {
+        Edge flip(const Edge& sb, Edge& st, int /*verbose*/ = 0) {
 		Vertex_handle t = target_vertex(st);
 
 		Edge sc = twin_edge(prev_edge(sb));
@@ -930,7 +930,7 @@ public:
 		return ac;
 	}
 
-	void collapse(const Edge& edge, int verbose = 0) {
+        void collapse(const Edge& edge, int /*verbose*/ = 0) {
 		if (is_edge_cyclic(edge)) {
 			collapse_cyclic_edge(edge);
 			return;

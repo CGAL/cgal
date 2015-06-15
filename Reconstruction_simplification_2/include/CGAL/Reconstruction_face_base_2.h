@@ -153,7 +153,7 @@ public:
 
     }
 
-    const int plan(int edge) const { return m_plan[edge]; }
+    int plan(int edge) const { return m_plan[edge]; }
     int& plan(int edge) { return m_plan[edge]; }
 
     const FT& mass(int edge) const { return m_mass[edge]; }
@@ -175,7 +175,7 @@ public:
         return edge_cost(edge);
     }
 
-    const bool ghost(int edge) const
+    bool ghost(int edge) const
     {
         if (mass(edge) == 0.0) return true;
         if (plan(edge) == 0) return true;
