@@ -8,6 +8,11 @@ const QColor Scene_item::defaultColor = QColor(100, 100, 255);
 
 Scene_item::~Scene_item() {
     delete defaultContextMenu;
+    for(int i=0; i<10; i++)
+    {
+        vaos[i].destroy();
+        buffers[i].destroy();
+    }
 }
 
 void Scene_item::itemAboutToBeDestroyed(Scene_item* item) {
@@ -113,7 +118,7 @@ void Scene_item::select(double /*orig_x*/,
                         double /*dir_z*/)
 {
 }
-
+//set-up the shader programs
 void Scene_item::compile_shaders()
 {
     qFunc.initializeOpenGLFunctions();
@@ -222,10 +227,88 @@ void Scene_item::compile_shaders()
         std::cerr<<"linking Program FAILED"<<std::endl;
     }
     rendering_program_without_light.bind();
+
+    //fill the vertex shader
+    const char vertex_shader_with_texture_source[] =
+    {
+        "attribute highp vec4 vertex; \n"
+        "attribute highp vec3 normal; \n"
+        "attribute highp vec3 color_facets; \n"
+        "attribute highp vec2 v_texCoord; \n"
+
+        "uniform highp mat4 mvp_matrix; \n"
+        "uniform highp mat4 mv_matrix; \n"
+        "uniform highp int is_two_side; \n"
+        "uniform highp vec4 light_pos;  \n"
+        "uniform highp vec4 light_diff; \n"
+        "uniform highp vec3 light_spec; \n"
+        "uniform highp vec4 light_amb;  \n"
+        "uniform highp float spec_power; \n"
+        "varying highp vec3 fColors; \n"
+        "varying highp vec2 f_texCoord; \n"
+        " \n"
+        "void main(void) \n"
+        "{ \n"
+        "   vec4 P = mv_matrix * vertex; \n"
+        "   vec3 N = mat3(mv_matrix)* normal; \n"
+        "   vec3 L = light_pos.xyz - P.xyz; \n"
+        "   N = normalize(N); \n"
+        "   L = normalize(L); \n"
+        "   vec3 diffuse; \n"
+        "   if(is_two_side == 1) \n"
+        "       diffuse = abs(dot(N,L)) * light_diff.xyz; \n"
+        "   else \n"
+        "       diffuse = max(dot(N,L), 0.0) * light_diff.xyz; \n"
+        "   f_texCoord = v_texCoord; \n"
+        "   fColors = color_facets * (light_amb.xyz + diffuse); \n"
+        "   gl_Position =  mvp_matrix * vertex; \n"
+        "} \n"
+
+    };
+    //fill the fragment shader
+    const char fragment_with_texture_shader_source[]=
+    {        
+        "varying highp vec3 fColors; \n"
+        "varying highp vec2 f_texCoord; \n"
+        "uniform sampler2D s_texture; \n"
+        " \n"
+        "void main(void) \n"
+        "{ \n"
+        " gl_FragColor = vec4(vec3(texture(s_texture, f_texCoord))*fColors, 1.0); \n"
+        "} \n"
+    };
+
+    QOpenGLShader *vertex_with_texture_shader = new QOpenGLShader(QOpenGLShader::Vertex);
+    if(!vertex_with_texture_shader->compileSourceCode(vertex_shader_with_texture_source))
+    {
+        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+    }
+
+    QOpenGLShader *fragment_with_texture_shader= new QOpenGLShader(QOpenGLShader::Fragment);
+    if(!fragment_with_texture_shader->compileSourceCode(fragment_with_texture_shader_source))
+    {
+        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+    }
+
+    if(!rendering_program_with_texture.addShader(vertex_with_texture_shader))
+    {
+        std::cerr<<"adding vertex shader FAILED"<<std::endl;
+    }
+    if(!rendering_program_with_texture.addShader(fragment_with_texture_shader))
+    {
+        std::cerr<<"adding fragment shader FAILED"<<std::endl;
+    }
+    if(!rendering_program_with_texture.link())
+    {
+        std::cerr<<"linking Program FAILED"<<std::endl;
+    }
+    rendering_program_with_texture.bind();
+
 }
+
+// set-up the uniform attributes of the shader programs.
 void Scene_item::attrib_buffers(Viewer_interface* viewer) const
 {
-
     GLint is_both_sides = 0;
     QMatrix4x4 mvp_mat;
     QMatrix4x4 mv_mat;
@@ -253,6 +336,16 @@ void Scene_item::attrib_buffers(Viewer_interface* viewer) const
     // Specular
     QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
 
+    QColor temp = this->color();
+    if(is_selected)
+    {
+
+       rendering_program_with_texture.setAttributeValue("color_facets", temp.lighter(120).redF(),temp.lighter(120).greenF(), temp.lighter(120).blueF());
+    }
+    else
+    {
+        rendering_program_with_texture.setAttributeValue("color_facets", temp.redF(),temp.greenF(), temp.blueF());
+    }
 
     rendering_program_with_light.bind();
 
@@ -280,7 +373,21 @@ void Scene_item::attrib_buffers(Viewer_interface* viewer) const
     rendering_program_without_light.setUniformValue("is_two_side", is_both_sides);
     rendering_program_without_light.setAttributeValue("normals", 0.0,0.0,0.0);
 
+
     rendering_program_without_light.release();
+
+    rendering_program_with_texture.bind();
+    rendering_program_with_texture.setUniformValue("mvp_matrix", mvp_mat);
+    rendering_program_with_texture.setUniformValue("mv_matrix", mv_mat);
+    rendering_program_with_texture.setUniformValue("light_pos", position);
+    rendering_program_with_texture.setUniformValue("light_diff",diffuse);
+    rendering_program_with_texture.setUniformValue("light_spec", specular);
+    rendering_program_with_texture.setUniformValue("light_amb", ambient);
+    rendering_program_with_texture.setUniformValue("spec_power", 51.8f);
+    rendering_program_with_texture.setUniformValue("s_texture",0);
+
+
+    rendering_program_with_texture.release();
 }
 #include "Scene_item.moc"
 

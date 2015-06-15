@@ -59,18 +59,13 @@ private:
   std::vector<float> textures_map_lines;
 
 
-  GLuint rendering_program_facets;
-  GLuint rendering_program_lines;
   GLuint textureId;
-  GLint location[10];
-  GLint sampler_location;
+  mutable QOpenGLShaderProgram rendering_program_edges;
 
-  GLuint vao[1];
-  GLuint buffer[5];
   bool smooth_shading;
   void initialize_buffers();
   void compile_shaders(void);
-  void uniform_attrib(Viewer_interface*, int) const;
+  void uniform_attrib(Viewer_interface*) const;
   void compute_normals_and_vertices(void);
 
 

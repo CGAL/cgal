@@ -176,6 +176,7 @@ protected:
   mutable QOpenGLVertexArrayObject vaos[10];
   mutable  QOpenGLShaderProgram rendering_program_with_light;
   mutable  QOpenGLShaderProgram rendering_program_without_light;
+  mutable  QOpenGLShaderProgram rendering_program_with_texture;
 
   int vertexLoc;
   int normalLoc;
