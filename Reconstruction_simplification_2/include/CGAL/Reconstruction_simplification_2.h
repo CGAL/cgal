@@ -212,7 +212,12 @@ protected:
                                   bool use_flip = true,
                                   std::size_t relocation = 0,
                                   std::size_t verbose = 0)
-  : point_pmap(point_map), mass_pmap(mass_map)
+  : point_pmap(point_map), 
+    mass_pmap(mass_map),
+    m_mchoice(sample_size),
+    m_use_flip(use_flip),
+    m_relocation(relocation),
+    m_verbose(verbose)
   {
 		initialize_parameters();
 		initialize(input_range.begin(), input_range.end());
