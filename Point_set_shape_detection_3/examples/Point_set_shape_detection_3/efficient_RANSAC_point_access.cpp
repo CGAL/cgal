@@ -52,7 +52,7 @@ int main()
   ransac.set_input(points);
 
   // Registers detection of planes
-  ransac.add_shape_factory<Plane>();
+  ransac.template add_shape_factory<Plane>();
 
   // Measures time before setting up the shape detection.
   CGAL::Timer time;

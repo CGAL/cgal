@@ -48,7 +48,7 @@ bool test_cylinder_parameters() {
 
     Efficient_ransac ransac;
 
-    ransac.add_shape_factory<Cylinder>();
+    ransac.template add_shape_factory<Cylinder>();
 
     ransac.set_input(points);
 

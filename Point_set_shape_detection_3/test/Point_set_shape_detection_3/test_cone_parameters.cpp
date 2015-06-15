@@ -48,7 +48,7 @@ bool test_cone_parameters() {
         
     Efficient_ransac ransac;
 
-    ransac.add_shape_factory<Cone>();
+    ransac.template add_shape_factory<Cone>();
     
     ransac.set_input(points);
 

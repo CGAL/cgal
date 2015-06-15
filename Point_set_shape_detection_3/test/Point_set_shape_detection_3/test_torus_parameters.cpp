@@ -50,7 +50,7 @@ bool test_torus_parameters() {
 
     Efficient_ransac ransac;
 
-    ransac.add_shape_factory<Torus>();
+    ransac.template add_shape_factory<Torus>();
 
     ransac.set_input(points);
 

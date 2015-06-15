@@ -52,7 +52,7 @@ bool test_plane_connected_component() {
         
     Efficient_ransac ransac;
 
-    ransac.add_shape_factory<Plane>();
+    ransac.template add_shape_factory<Plane>();
     
     ransac.set_input(points);
 

@@ -47,7 +47,7 @@ bool test_sphere_parameters() {
 
     Efficient_ransac ransac;
 
-    ransac.add_shape_factory<Sphere>();
+    ransac.template add_shape_factory<Sphere>();
 
     ransac.set_input(points);
 

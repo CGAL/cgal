@@ -46,7 +46,7 @@ bool test_plane_parameters() {
 
       Efficient_ransac ransac;
 
-      ransac.add_shape_factory<Plane>();
+      ransac.template add_shape_factory<Plane>();
 
       ransac.set_input(points);
 
