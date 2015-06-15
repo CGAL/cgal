@@ -43,11 +43,11 @@ public:
     return QStringList() << "actionReconstructionParallelSlices";
   }
 
-  bool applicable() const {
+  bool applicable(QAction*) const {
     return qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionReconstructionParallelSlices_triggered();
 
 }; // end Polyhedron_demo_reconstruction_parallel_slices_plugin
@@ -117,7 +117,7 @@ struct Visitor_update{
   int m_item_index;
   
   Visitor_update(Scene_interface* scene,int item_index):m_scene(scene),m_item_index(item_index){}
-  void one_layer_is_finished() { emit m_scene->itemChanged(m_item_index); }
+  void one_layer_is_finished() { Q_EMIT m_scene->itemChanged(m_item_index); }
 };
 
 void Polyhedron_demo_reconstruction_parallel_slices_plugin::on_actionReconstructionParallelSlices_triggered()
