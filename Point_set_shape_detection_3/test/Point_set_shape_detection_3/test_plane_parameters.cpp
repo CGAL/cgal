@@ -7,11 +7,12 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
 
-const int rounds = 50;
-const int ptsCount = 1000;
 
 template <class K>
 bool test_plane_parameters() {
+  const int NB_ROUNDS = 10;
+  const int NB_POINTS = 1000;
+
   typedef typename K::FT                                      FT;
   typedef typename CGAL::Point_with_normal_3<K>               Pwn;
   typedef typename CGAL::Point_3<K>                           Point;
@@ -28,63 +29,63 @@ bool test_plane_parameters() {
 
   std::size_t success = 0;
 
-  for (std::size_t i = 0;i<rounds;i++) {
+  for (std::size_t i = 0;i<NB_ROUNDS;i++) {
     Pwn_vector points;
 
     typename K::FT dist = 0;
     Vector normal;
     CGAL::Bbox_3 bbox(-10, -10, -10, 10, 10, 10);
-    
-    sampleRandomParallelogramInBox(ptsCount, bbox, normal,
-                                   dist, std::back_inserter(points));
 
-    if (i >= rounds / 2)
-      for (std::size_t j = 0;j<ptsCount/2;j++) {
+    sample_random_parallelogram_in_box(NB_POINTS, bbox, normal,
+      dist, std::back_inserter(points));
+
+    if (i >= NB_ROUNDS / 2)
+      for (std::size_t j = 0;j<NB_POINTS/2;j++) {
         points.push_back(random_pwn_in<K>(bbox));
       }
-    
-    Efficient_ransac ransac;
 
-    ransac.add_shape_factory<Plane>();
-    
-    ransac.set_input(points);
+      Efficient_ransac ransac;
 
-    // Set cluster epsilon to a high value as just the parameters of
-    // the extracted primitives are to be tested.
-    typename Efficient_ransac::Parameters parameters;
-    parameters.probability = 0.05f;
-    parameters.min_points = 100;
-    parameters.epsilon = 0.002f;
-    parameters.cluster_epsilon = 1.0f;
-    parameters.normal_threshold = 0.9f;
+      ransac.add_shape_factory<Plane>();
 
-    if (!ransac.detect(parameters)) {
-      std::cout << " aborted" << std::endl;
-      return false;
-    }
-    
-    typename Efficient_ransac::Shape_range shapes = ransac.shapes();
+      ransac.set_input(points);
 
-    if (shapes.size() != 1)
-      continue;
+      // Set cluster epsilon to a high value as just the parameters of
+      // the extracted primitives are to be tested.
+      typename Efficient_ransac::Parameters parameters;
+      parameters.probability = 0.05f;
+      parameters.min_points = 100;
+      parameters.epsilon = 0.002f;
+      parameters.cluster_epsilon = 1.0f;
+      parameters.normal_threshold = 0.9f;
 
-    boost::shared_ptr<Plane> pl = boost::dynamic_pointer_cast<Plane>((*shapes.first));
+      if (!ransac.detect(parameters)) {
+        std::cout << " aborted" << std::endl;
+        return false;
+      }
 
-    if (!pl)
-      continue;
+      typename Efficient_ransac::Shape_range shapes = ransac.shapes();
 
-    const FT phi = normal * pl->plane_normal();
-    const FT sign = (phi < 0) ? -1.0f : 1.0f;
+      if (shapes.size() != 1)
+        continue;
 
-    const FT dist2 = (CGAL::Plane_3<K>(*pl)).d();
+      boost::shared_ptr<Plane> pl = boost::dynamic_pointer_cast<Plane>((*shapes.first));
 
-    if (abs(phi) < 0.98 || abs(dist2 - sign * dist) > 0.02)
-      continue;
+      if (!pl)
+        continue;
 
-    success++;
+      const FT phi = normal * pl->plane_normal();
+      const FT sign = (phi < 0) ? -1.0f : 1.0f;
+
+      const FT dist2 = (CGAL::Plane_3<K>(*pl)).d();
+
+      if (abs(phi) < 0.98 || abs(dist2 - sign * dist) > 0.02)
+        continue;
+
+      success++;
   }
-  
-  if (success >= rounds * 0.8) {
+
+  if (success >= NB_ROUNDS * 0.8) {
     std::cout << " succeeded" << std::endl;
     return true;
   }

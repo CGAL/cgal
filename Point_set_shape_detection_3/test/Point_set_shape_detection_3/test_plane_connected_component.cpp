@@ -7,10 +7,11 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
 
-const int rounds = 50;
 
 template <class K>
 bool test_plane_connected_component() {
+  const int NB_ROUNDS = 10;
+
   typedef typename CGAL::Point_with_normal_3<K>               Pwn;
   typedef typename CGAL::Point_3<K>                           Point;
   typedef typename CGAL::Vector_3<K>                          Vector;
@@ -28,7 +29,7 @@ bool test_plane_connected_component() {
 
   std::size_t success = 0;
 
-  for (std::size_t i = 0;i<rounds;i++) {
+  for (std::size_t i = 0;i<NB_ROUNDS;i++) {
     Pwn_vector points;
 
     Vector normal;
@@ -36,14 +37,16 @@ bool test_plane_connected_component() {
 
     // Sample 4 rectangles with 0.05 spacing between points
     // and 0.2 spacing between rectangles.
-    Vector offset[] = {Vector(0, 0, 0), Vector(1.2, 0, 0),
-      Vector(0, 1.2, 0), Vector(1.2, 1.2, 0)};
+    Vector offset[] = {Vector((K::FT) 0, (K::FT) 0, (K::FT) 0),
+      Vector((K::FT) 1.2, (K::FT) 0, (K::FT) 0),
+      Vector((K::FT) 0, (K::FT) 1.2, (K::FT) 0),
+      Vector((K::FT) 1.2, (K::FT) 1.2, (K::FT) 0)};
 
     for (std::size_t j = 0;j<4;j++) {
       for (std::size_t x = 0;x<=20;x++)
         for (std::size_t y = 0;y<=20;y++)
-          points.push_back(Pwn(Point(x * 0.05, y * 0.05, 0) + offset[j],
-                                Vector(0, 0, 1)));
+          points.push_back(Pwn(Point(K::FT(x * 0.05), K::FT(y * 0.05), (K::FT) 0) + offset[j],
+                                Vector((K::FT) 0, (K::FT) 0, (K::FT) 1)));
     }
         
     Efficient_ransac ransac;
@@ -62,7 +65,7 @@ bool test_plane_connected_component() {
     parameters.epsilon = 0.002f;
     parameters.normal_threshold = 0.9f;
 
-    if (i <= rounds/2)
+    if (i <= NB_ROUNDS/2)
       parameters.cluster_epsilon = 0.201f;
     else
       parameters.cluster_epsilon = 0.051f;
@@ -74,16 +77,16 @@ bool test_plane_connected_component() {
     
     typename Efficient_ransac::Shape_range shapes = ransac.shapes();
 
-    if (i <= rounds/2 && shapes.size() != 1)
+    if (i <= NB_ROUNDS/2 && shapes.size() != 1)
       continue;
 
-    if (i > rounds/2 && shapes.size() != 4)
+    if (i > NB_ROUNDS/2 && shapes.size() != 4)
       continue;
 
     success++;
   }
 
-  if (success >= rounds * 0.8) {
+  if (success >= NB_ROUNDS * 0.8) {
     std::cout << " succeeded" << std::endl;
     return true;
   }
