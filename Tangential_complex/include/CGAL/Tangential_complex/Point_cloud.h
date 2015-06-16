@@ -37,6 +37,14 @@
 
 #include <utility>
 
+#ifdef CGAL_TC_ANN_IS_AVAILABLE
+# include <ANN/ANN.h>
+#endif
+
+#ifdef CGAL_TC_NANOFLANN_IS_AVAILABLE
+# include "nanoflann.hpp"
+#endif
+
 namespace CGAL {
 namespace Tangential_complex_ {
 
@@ -75,7 +83,10 @@ public:
            boost::counting_iterator<std::ptrdiff_t>(points.size()),
            typename Tree::Splitter(),
            STraits((Point*)&(points[0])) )
-  { }
+  {
+    // Build the tree now (we don't want to wait for the first query)
+    m_tree.build();
+  }
 
   /// Constructor
   Point_cloud_data_structure(
@@ -88,6 +99,8 @@ public:
       typename Tree::Splitter(),
       STraits((Point*)&(points[0])) )
   {
+    // Build the tree now (we don't want to wait for the first query)
+    m_tree.build();
   }
 
   /*Point_container_ &points()
@@ -149,10 +162,11 @@ protected:
   Tree m_tree;
 };
 
+//*****************************************************************************
+//*****************************************************************************
+//*****************************************************************************
 
 #ifdef CGAL_TC_NANOFLANN_IS_AVAILABLE
-
-#include "nanoflann.hpp"
 
 // "dataset to kd-tree" adaptor class
 template <typename K, typename Point_container_>
@@ -164,7 +178,7 @@ public:
   typedef typename Kernel::FT                       FT;
 
   /// The constructor that sets the data set source
-  Point_cloud_adaptator__nanoflann(const Point_container_ &points, Kernel const& k)
+  Point_cloud_adaptator__nanoflann(Point_container_ const& points, Kernel const& k)
     : m_points(points), m_k(k)
   {}
 
@@ -313,8 +327,65 @@ protected:
 
 #endif //CGAL_TC_NANOFLANN_IS_AVAILABLE
 
+//*****************************************************************************
+//*****************************************************************************
+//*****************************************************************************
+
+#ifdef CGAL_TC_ANN_IS_AVAILABLE
+
+template <typename K, typename Point_container_>
+class Point_cloud_data_structure__ANN
+{
+public:
+  typedef typename Point_container_::value_type         Point;
+  typedef K                                             Kernel;
+  typedef typename Kernel::FT                           FT;
+
+  /// Constructor
+  Point_cloud_data_structure__ANN(
+    Point_container_ const& points, Kernel const& k)
+  : m_dim(k.point_dimension_d_object()(*points.begin())),
+    m_k(k),
+    m_points(annAllocPts(points.size(), m_dim)),
+    m_tree(m_points, points.size(), m_dim)
+  {
+    for (int i = 0 ; i < points.size() ; ++i)
+    {
+      for (int j = 0 ; j < m_dim ; ++j)
+        m_points[i][j] = m_k.compute_coordinate_d_object()(points[i], j);
+    }
+  }
+
+  void query_ANN(
+    Point const& p,
+    unsigned int k,
+    ANNidxArray neighbors_indices,
+    ANNdistArray neighbors_sq_distances)
+  {
+    // Create an ANN query point
+    ANNpoint query_pt = annAllocPt(m_dim);
+    for (int j = 0 ; j < m_dim ; ++j)
+      query_pt[j] = m_k.compute_coordinate_d_object()(p, j);
+
+    m_tree.annkSearch(        // search
+      query_pt,               // query point
+      k,                      // number of near neighbors
+      neighbors_indices,      // nearest neighbors (returned)
+      neighbors_sq_distances, // distance (returned)
+      0);                     // error bound
+
+  }
+
+protected:
+  int m_dim;
+  Kernel const& m_k;
+  ANNpointArray m_points;
+  ANNkd_tree m_tree;
+};
+
+#endif // CGAL_TC_ANN_IS_AVAILABLE
+
 } // namespace Tangential_complex_
 } //namespace CGAL
-
 
 #endif // POINT_CLOUD_H
