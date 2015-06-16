@@ -1097,6 +1097,7 @@ private:
     // Kernel functor & objects
     typename Kernel::Squared_distance_d k_sqdist =
       m_k.squared_distance_d_object();
+    typename Kernel::Equal_d k_eq = m_k.equal_d_object();
 
     // Triangulation's traits functor & objects
     typename Tr_traits::Point_weight_d point_weight =
@@ -1128,10 +1129,8 @@ private:
     //***************************************************
 
     // Insert p
-    typename Kernel::Equal_d eq = m_k.equal_d_object();
-
     Tr_point proj_wp;
-    if(eq(compute_perturbed_point(i), m_tangent_spaces[i].origin()))
+    if(k_eq(compute_perturbed_point(i), m_tangent_spaces[i].origin()))
     {
       proj_wp = local_tr_traits.construct_weighted_point_d_object()(
         local_tr_traits.construct_point_d_object()(triangulation_dim, ORIGIN),
@@ -1343,7 +1342,7 @@ private:
     //***************************************************
 
 #ifdef CGAL_TC_PROFILING
-        Wall_clock_timer t_star;
+    Wall_clock_timer t_star;
 #endif
 
     Amb_RT local_amb_tr(m_ambient_dim);

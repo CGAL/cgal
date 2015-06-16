@@ -170,7 +170,10 @@ namespace Tangential_complex_ {
 
     struct Thickening_vector
     {
-      Thickening_vector() : alpha_minus(FT(0)), alpha_plus(FT(0)) {}
+      Thickening_vector() 
+        : alpha_minus(FT(0)), alpha_plus(FT(0)) {}
+      Thickening_vector(Vector const& v, FT am, FT ap) 
+        : vec(v), alpha_minus(am), alpha_plus(ap) {}
 
       Vector vec;
       FT alpha_minus;
