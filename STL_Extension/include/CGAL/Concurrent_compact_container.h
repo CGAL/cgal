@@ -233,6 +233,11 @@ public:
     clear();
   }
 
+  bool is_used(const_iterator ptr) const
+  {
+    return (type(&*ptr)==USED);
+  }
+
   void swap(Self &c)
   {
     std::swap(m_alloc, c.m_alloc);
