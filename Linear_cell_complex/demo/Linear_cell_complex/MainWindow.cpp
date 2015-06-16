@@ -1378,6 +1378,8 @@ void MainWindow::recreate_whole_volume_list()
 
 void MainWindow::onCellChanged(int row, int col)
 {
+  volumeList->disconnect(this);
+
   LCC::Attribute_type<3>::type* ptr=
       reinterpret_cast<LCC::Attribute_type<3>::type*>
       ( volumeList->item(row,3)->data(Qt::UserRole).value<quintptr>() );
@@ -1397,6 +1399,7 @@ void MainWindow::onCellChanged(int row, int col)
           (volumeList->item(row,1)->flags()|Qt::ItemIsEnabled);
   }
 
+  connectVolumeListHandlers();
   Q_EMIT( sceneChanged());
 }
 
