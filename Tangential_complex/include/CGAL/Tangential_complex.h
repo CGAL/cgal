@@ -66,7 +66,7 @@
 #endif
 
 //#define CGAL_TC_EXPORT_NORMALS // Only for 3D surfaces (k=2, d=3)
-//#define CGAL_ALPHA_TC
+//#define CGAL_FIXED_ALPHA_TC
 const double ALPHA = 0.3;
 
 //CJTODO: debug
@@ -244,7 +244,7 @@ public:
     , m_points_ds(m_points)
     , m_are_tangent_spaces_computed(m_points.size(), false)
     , m_tangent_spaces(m_points.size(), Tangent_space_basis())
-#if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+#if defined(CGAL_FIXED_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
     , m_orth_spaces(m_points.size(), Orthogonal_space_basis())
 #endif
 #ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
@@ -285,7 +285,7 @@ public:
   }
 
   void set_tangent_planes(const TS_container& tangent_spaces
-#if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+#if defined(CGAL_FIXED_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
                         , const OS_container& orthogonal_spaces
 #endif
                          )
@@ -295,14 +295,14 @@ public:
               << " tangent spaces manually at the same time" << std::endl;
     std::exit(EXIT_FAILURE);
 #endif
-#if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+#if defined(CGAL_FIXED_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
     CGAL_assertion(m_points.size() == tangent_spaces.size()
                    && m_points.size() == orthogonal_spaces.size());
 #else
     CGAL_assertion(m_points.size() == tangent_spaces.size());
 #endif
     m_tangent_spaces = tangent_spaces;
-#if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+#if defined(CGAL_FIXED_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
     m_orth_spaces = orthogonal_spaces;
 #endif
     for(std::size_t i=0; i<m_points.size(); ++i)
@@ -348,7 +348,7 @@ public:
 #endif // CGAL_LINKED_WITH_TBB
     {
       for (std::size_t i = 0 ; i < m_points.size() ; ++i)
-#ifdef CGAL_ALPHA_TC
+#ifdef CGAL_FIXED_ALPHA_TC
         compute_alpha_tangent_triangulation(i, ALPHA);
 #else
         compute_tangent_triangulation(i);
@@ -430,7 +430,7 @@ public:
     {
       for (std::size_t i = 0 ; i < m_points.size() ; ++i)
       {
-#ifdef CGAL_ALPHA_TC
+#ifdef CGAL_FIXED_ALPHA_TC
         compute_alpha_tangent_triangulation(i, ALPHA);
 #else
         compute_tangent_triangulation(i);
@@ -1035,7 +1035,7 @@ private:
     {
       for( size_t i = r.begin() ; i != r.end() ; ++i)
       {
-#ifdef CGAL_ALPHA_TC
+#ifdef CGAL_FIXED_ALPHA_TC
         m_tc.compute_alpha_tangent_triangulation(i, ALPHA);
 #else
         m_tc.compute_tangent_triangulation(i);
@@ -1072,7 +1072,7 @@ private:
     // Estimate the tangent space
     if (!m_are_tangent_spaces_computed[i])
     {
-#if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+#if defined(CGAL_FIXED_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
       m_tangent_spaces[i] =
         compute_tangent_space(center_pt, i, true/*normalize*/, &m_orth_spaces[i]);
 #else
@@ -1082,7 +1082,7 @@ private:
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
     else if (m_perturb_tangent_space[i])
     {
-#if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+#if defined(CGAL_FIXED_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
       m_tangent_spaces[i] = compute_tangent_space(center_pt, i,
                                                   true /*normalize_basis*/,
                                                   &m_orth_spaces[i],
@@ -1264,7 +1264,7 @@ private:
     //CGAL::export_triangulation_to_off(off_stream_tr, local_tr);
   }
 
-#ifdef CGAL_ALPHA_TC
+#ifdef CGAL_FIXED_ALPHA_TC
   void compute_alpha_tangent_triangulation(std::size_t i, FT alpha,
                                            bool verbose = false)
   {
@@ -1590,7 +1590,7 @@ next_face:
     //std::ofstream off_stream_tr(sstr.str());
     //CGAL::export_triangulation_to_off(off_stream_tr, local_amb_tr);
   }
-#endif // CGAL_ALPHA_TC
+#endif // CGAL_FIXED_ALPHA_TC
 
   Tangent_space_basis compute_tangent_space(
       const Point &p
@@ -3188,7 +3188,7 @@ private:
   Points_ds                 m_points_ds;
   std::vector<bool>         m_are_tangent_spaces_computed;
   TS_container              m_tangent_spaces;
-#if defined(CGAL_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+#if defined(CGAL_FIXED_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
   OS_container              m_orth_spaces;
 #endif
   Tr_container              m_triangulations; // Contains the triangulations
