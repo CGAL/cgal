@@ -201,7 +201,7 @@ void compute_and_set_tangent_planes(TC& tc,
     }
     tsc.push_back(CGAL::Tangential_complex_::compute_gram_schmidt_basis(ts, kerd));
 
-#ifdef CGAL_ALPHA_TC
+#ifdef CGAL_FIXED_ALPHA_TC
 // compute the osc
     Basis os(origin);
 
@@ -211,7 +211,7 @@ void compute_and_set_tangent_planes(TC& tc,
   }
 
   tc.set_tangent_planes(tsc
-#ifdef CGAL_ALPHA_TC
+#ifdef CGAL_FIXED_ALPHA_TC
                       , osc
 #endif
                         );
