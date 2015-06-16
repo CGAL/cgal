@@ -381,7 +381,8 @@ static void generate_uniform_points_on_torus_d(
   if (current_point.size() == 2*dim)
   {
     *out++ = k.construct_point_d_object()(
-      current_point.size(), current_point.begin(), current_point.end());
+      static_cast<int>(current_point.size()), 
+      current_point.begin(), current_point.end());
   }
   else
   {
