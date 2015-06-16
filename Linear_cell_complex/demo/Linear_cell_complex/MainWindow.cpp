@@ -251,6 +251,7 @@ void MainWindow::on_actionLoad_triggered ()
   if (!fileName.isEmpty ())
   {
     load(fileName, true);
+    viewer->showEntireScene();
   }
 }
 
@@ -264,6 +265,7 @@ void MainWindow::on_actionImportOFF_triggered ()
   if (!fileName.isEmpty ())
   {
     load_off (fileName, true);
+    viewer->showEntireScene();
   }
 }
 
@@ -277,6 +279,7 @@ void MainWindow::on_actionImportMoka_triggered()
   if (!fileName.isEmpty ())
   {
     load_moka(fileName, true);
+    viewer->showEntireScene();
   }
 }
 
@@ -290,6 +293,7 @@ void MainWindow::on_actionImport3DTDS_triggered ()
   if (!fileName.isEmpty ())
   {
     load_3DTDS (fileName, true);
+    viewer->showEntireScene();
     statusBar ()->showMessage (QString ("Import 3DTDS file") + fileName,
                                DELAY_STATUSMSG);
   }
@@ -305,6 +309,7 @@ void MainWindow::on_actionAddOFF_triggered()
   if (!fileName.isEmpty ())
   {
     load_off (fileName, false);
+    viewer->showEntireScene();
   }
 }
 
@@ -312,11 +317,20 @@ void MainWindow::load_depend_on_extension(const QString & fileName, bool clear)
 {
   QString ext = QFileInfo(fileName).suffix();
   if ( ext=="3map")
+  {
     load(fileName, clear);
+    viewer->showEntireScene();
+  }
   else if (ext=="off")
+  {
     load_off(fileName, clear);
+    viewer->showEntireScene();
+  }
   else if (ext=="moka")
+  {
     load_moka(fileName, clear);
+    viewer->showEntireScene();
+  }
   else
   {
     std::cout<<"Extension not considered."<<std::endl;
@@ -1016,7 +1030,7 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
       do
       {
         if ( scene.lcc->beta<0, 2>(actu)==actu ) prev = scene.lcc->beta<1>(actu);
-        else  if prev = scene.lcc->beta<0>(actu);
+        else prev = scene.lcc->beta<0>(actu);
         
         CGAL::remove_cell<LCC, 1>(*scene.lcc, actu);
         actu = prev;

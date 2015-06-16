@@ -35,8 +35,8 @@ Viewer::sceneChanged()
                                       qglviewer::Vec(bb.xmax(),
                                                      bb.ymax(),
                                                      bb.zmax()));
-  this->showEntireScene();
-}
+  //  this->showEntireScene();
+  this->updateGL();}
 
 void Viewer::drawOneFaceWireframe(Dart_handle dh)
 {
