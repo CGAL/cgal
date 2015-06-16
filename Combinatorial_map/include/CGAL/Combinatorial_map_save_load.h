@@ -155,7 +155,7 @@ namespace CGAL {
   struct My_functor_cmap_save_one_attrib<CMap, i, true, true>
   {
     static void run(const CMap* amap, boost::property_tree::ptree* ptree,
-                    std::map<typename CMap::Dart_const_handle, int>* myDarts)
+                    std::map<typename CMap::Dart_const_handle, typename CMap::size_type>* myDarts)
     {
       // to check all i-cells of the map
       typename CMap::template Attribute_range<i>::type::const_iterator
@@ -174,7 +174,7 @@ namespace CGAL {
       {
         // make composant, dart and property node
         boost::property_tree::ptree & nattr = ndim.add("a", "");
-        boost::property_tree::ptree & ndarts =
+        /* boost::property_tree::ptree & ndarts = */
           nattr.add("d", (*myDarts)[it_attrib->dart()]);
 
         // update property node to add a value node (from basic or custom type
@@ -189,7 +189,7 @@ namespace CGAL {
   struct My_functor_cmap_save_one_attrib<CMap, i, false, true>
   {
     static void run(const CMap* amap, boost::property_tree::ptree* ptree,
-                    std::map<typename CMap::Dart_const_handle, int>* myDarts)
+                    std::map<typename CMap::Dart_const_handle, typename CMap::size_type>* myDarts)
     {
       // to check all i-cells of the map
       typename CMap::template Attribute_range<i>::type::const_iterator
@@ -208,7 +208,7 @@ namespace CGAL {
       {
         // make composant, dart and property node
         boost::property_tree::ptree & nattr = ndim.add("a", "");
-        boost::property_tree::ptree & ndarts =
+        /* boost::property_tree::ptree & ndarts = */
           nattr.add("d", (*myDarts)[it_attrib->dart()]);
 
         // update property node to add a value node (from basic or custom type
@@ -222,7 +222,7 @@ namespace CGAL {
   struct My_functor_cmap_save_one_attrib<CMap, i, true, false>
   {
     static void run(const CMap* amap, boost::property_tree::ptree* ptree,
-                    std::map<typename CMap::Dart_const_handle, int>* myDarts)
+                    std::map<typename CMap::Dart_const_handle, typename CMap::size_type>* myDarts)
     {
       // to check all i-cells of the map
       typename CMap::template Attribute_range<i>::type::const_iterator
@@ -241,7 +241,7 @@ namespace CGAL {
       {
         // make composant, dart and property node
         boost::property_tree::ptree & nattr = ndim.add("a", "");
-        boost::property_tree::ptree & ndarts =
+        /* boost::property_tree::ptree & ndarts = */
           nattr.add("d", (*myDarts)[it_attrib->dart()]);
 
         // update property node to add a value node (from basic or custom type
@@ -255,7 +255,7 @@ namespace CGAL {
   struct My_functor_cmap_save_one_attrib<CMap, i, false, false>
   {
     static void run(const CMap* amap, boost::property_tree::ptree* ptree,
-                    std::map<typename CMap::Dart_const_handle, int>* myDarts)
+                    std::map<typename CMap::Dart_const_handle, typename CMap::size_type>* myDarts)
     {
       // to check all i-cells of the map
       typename CMap::template Attribute_range<i>::type::const_iterator
@@ -274,7 +274,7 @@ namespace CGAL {
       {
         // make composant, dart and property node
         boost::property_tree::ptree & nattr = ndim.add("a", "");
-        boost::property_tree::ptree & ndarts =
+        /* boost::property_tree::ptree & ndarts = */
           nattr.add("d", (*myDarts)[it_attrib->dart()]);
       }
     }
@@ -285,7 +285,7 @@ namespace CGAL {
   {
     template <unsigned int i>
     static void run(const CMap* amap, boost::property_tree::ptree* ptree,
-                    std::map<typename CMap::Dart_const_handle, int>* myDarts)
+                    std::map<typename CMap::Dart_const_handle, typename CMap::size_type>* myDarts)
     {
         My_functor_cmap_save_one_attrib<CMap, i>::run(amap, ptree, myDarts);
     }
@@ -293,7 +293,7 @@ namespace CGAL {
 
   template < class CMap >
   boost::property_tree::ptree cmap_save_darts
-  (const CMap& amap, std::map<typename CMap::Dart_const_handle, int>& myDarts)
+  (const CMap& amap, std::map<typename CMap::Dart_const_handle, typename CMap::size_type>& myDarts)
   {
     assert( myDarts.empty() );
     
@@ -336,7 +336,7 @@ namespace CGAL {
 
   template < class CMap >
   boost::property_tree::ptree cmap_save_attributes
-  (const CMap& amap, std::map<typename CMap::Dart_const_handle, int>& myDarts)
+  (const CMap& amap, std::map<typename CMap::Dart_const_handle, typename CMap::size_type>& myDarts)
   {
     using boost::property_tree::ptree;
     ptree pt;
@@ -355,7 +355,7 @@ namespace CGAL {
     ptree data;
 
     // map dart => number
-    std::map<typename CMap::Dart_const_handle, int> myDarts;
+    std::map<typename CMap::Dart_const_handle, typename CMap::size_type> myDarts;
 
     // Get darts
     ptree pt_darts;
@@ -378,7 +378,7 @@ namespace CGAL {
   {
     std::ofstream output(filename);
     if (!output) return false;
-    save_combinatorial_map(amap, output);
+    return save_combinatorial_map(amap, output);
   }
   
   // Here T is a Dart_handle so no need of &
