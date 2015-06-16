@@ -308,6 +308,11 @@ public:
     delete time_stamper;
   }
 
+  bool is_used(const_iterator ptr) const
+  {
+    return (type(&*ptr)==USED);
+  }
+
   bool is_used(size_type i) const
   {
     typename Self::size_type block_number, index_in_block;
