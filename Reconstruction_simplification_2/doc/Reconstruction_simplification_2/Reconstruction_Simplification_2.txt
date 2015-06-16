@@ -26,15 +26,15 @@ From left to right: input point set; Delaunay triangulation of the input points;
 
 \subsection Reconstruction_simplification_2Simplest_example Simplest Example
 The following example first reads a set of input points from an ASCII file. The points, with no mass attribute, are then passed to the Reconstruction_simplification_2 object. After initializing it, 100 iterations of the reconstruction process are performed. 
-\cgalExample{Reconstruction_simplification_2/reconstruction_simplification_2_simplest_example.cpp}
+\cgalExample{Reconstruction_simplification_2/rs2_simplest_example.cpp}
 
 \subsubsection Reconstruction_simplification_2Output_example Output Example
 The output of the reconstruction can be obtained in two ways: either as a sequence of points and segments, or as an indexed format when the connectivity of the segments is encoded, hence the terms vertices and edges. The indexed format records a list of points, then pairs of point indices in the said list for the edges, and point indices for isolated vertices. 
-\cgalExample{Reconstruction_simplification_2/reconstruction_simplification_2_output_example.cpp}
+\cgalExample{Reconstruction_simplification_2/rs2_output_example.cpp}
 
 \subsection Reconstruction_simplification_2Mass_example Example with Mass Attributes
 The following example first reads a set of input points and masses from an ASCII file. Using two property maps,  the points and their initial mass are passed to the Reconstruction_simplification_2 object. After initializing it, 100 iterations of the reconstruction process are performed. Lastly, the segments and isolated points of the reconstructed shape are extracted and printed to the console. 
-\cgalExample{Reconstruction_simplification_2/reconstruction_simplification_2_mass_example.cpp}
+\cgalExample{Reconstruction_simplification_2/rs2_mass_example.cpp}
 
 
 \section Reconstruction_simplification_2API API
