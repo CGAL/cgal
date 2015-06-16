@@ -72,6 +72,7 @@ const double ALPHA = 0.3;
 //CJTODO: debug
 //#define CGAL_TC_COMPUTE_TANGENT_PLANES_FOR_SPHERE_3
 //#define CGAL_TC_COMPUTE_TANGENT_PLANES_FOR_TORUS_D
+//#define CGAL_TC_ADD_NOISE_TO_TANGENT_SPACE
 
 namespace CGAL {
 
@@ -1687,6 +1688,10 @@ next_face:
         //const Point p = transl(
         //  m_points[nn_it->first], m_translations[nn_it->first]);
         mat_points(j, i) = CGAL::to_double(coord(m_points[nn_it->first], i));
+#ifdef CGAL_TC_ADD_NOISE_TO_TANGENT_SPACE
+        mat_points(j, i) += m_random_generator.get_double(
+            -0.5*m_half_sparsity, 0.5*m_half_sparsity);
+#endif
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
         if (perturb)
           mat_points(j, i) += m_random_generator.get_double(
