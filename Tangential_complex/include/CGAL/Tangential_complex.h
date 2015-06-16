@@ -2053,18 +2053,18 @@ next_face:
 # ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
     typename Kernel::Point_to_vector_d k_pt_to_vec =
       m_k.point_to_vector_d_object();
-    CGAL::Random_points_on_sphere_d<Point>
-      tr_point_on_sphere_generator(
-        m_ambient_dim, m_random_generator.get_double(0., m_half_sparsity));
+    CGAL::Random_points_in_ball_d<Point>
+      tr_point_in_ball_generator(
+        m_ambient_dim, m_half_sparsity);
     // Parallel
 #  if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
-    Vector transl = k_pt_to_vec(*tr_point_on_sphere_generator);
+    Vector transl = k_pt_to_vec(*tr_point_in_ball_generator++);
     m_p_perturb_mutexes[point_idx].lock();
     m_translations[point_idx] = transl;
     m_p_perturb_mutexes[point_idx].unlock();
     // Sequential
 #  else
-    m_translations[point_idx] = k_pt_to_vec(*tr_point_on_sphere_generator);
+    m_translations[point_idx] = k_pt_to_vec(*tr_point_in_ball_generator++);
 #  endif
 
 # else // CGAL_TC_PERTURB_POSITION_TANGENTIAL
@@ -2079,14 +2079,14 @@ next_face:
     typename Kernel::Scaled_vector_d k_scaled_vec =
       m_k.scaled_vector_d_object();
 
-    CGAL::Random_points_on_sphere_d<Tr_bare_point> 
-      tr_point_on_sphere_generator(
+    CGAL::Random_points_in_ball_d<Tr_bare_point>
+      tr_point_in_ball_generator(
         m_intrinsic_dimension, 
         m_random_generator.get_double(0., m_half_sparsity));
 
     Tr_point local_random_transl =
       local_tr_traits.construct_weighted_point_d_object()(
-        *tr_point_on_sphere_generator, 0);
+        *tr_point_in_ball_generator++, 0);
     Translation_for_perturb global_transl = k_constr_vec(m_ambient_dim);
     const Tangent_space_basis &tsb = m_tangent_spaces[point_idx];
     for (int i = 0 ; i < m_intrinsic_dimension ; ++i)
