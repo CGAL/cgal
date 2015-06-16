@@ -1009,7 +1009,22 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
   for (std::vector<Dart_handle>::iterator it=edges.begin(),
          itend=edges.end(); it!=itend; ++it)
   {
-    if ( !CGAL::belong_to_same_cell<LCC, 2>(*scene.lcc, *it, scene.lcc->beta<2>(*it)) )
+    if ( scene.lcc->beta<0, 2>(*it)==*it || scene.lcc->beta<1, 2>(*it)==*it)
+    { // To process dangling edges
+
+      Dart_handle actu = *it, prev=NULL;
+      do
+      {
+        if ( scene.lcc->beta<0, 2>(actu)==actu ) prev = scene.lcc->beta<1>(actu);
+        else  if prev = scene.lcc->beta<0>(actu);
+        
+        CGAL::remove_cell<LCC, 1>(*scene.lcc, actu);
+        actu = prev;
+      }
+      while (scene.lcc->beta<0, 2>(actu)==actu || scene.lcc->beta<1, 2>(actu)==actu);
+    }
+    else if ( !CGAL::belong_to_same_cell<LCC, 2>(*scene.lcc, *it,
+                                                 scene.lcc->beta<2>(*it)) )
       CGAL::remove_cell<LCC, 1>(*scene.lcc, *it);
     else
       CGAL::unmark_cell<LCC, 1>(*scene.lcc, *it, treated);
