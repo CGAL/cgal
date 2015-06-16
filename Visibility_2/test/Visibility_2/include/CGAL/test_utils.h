@@ -36,7 +36,6 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include <CGAL/Gmpq.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/Visibility_2/visibility_utils.h>
@@ -151,28 +150,7 @@ bool test_are_equal(const ARR1 &arr1, const ARR2 &arr2) {
   return true; 
 }
 
-template<class Number_type>
-Number_type string2num(const std::string& s) {
-  typename std::string::size_type i;
-  if (s.find("/") != std::string::npos) {
-    i = s.find("/");
-    std::string p = s.substr(0, i);
-    std::string q = s.substr(i+1);
-    std::stringstream convert(p);
-    int n, d;
-    convert >> n;
-    std::stringstream convert2(q);
-    convert2 >> d;        
-    return Number_type(n)/Number_type(d);
 
-  }
-  else {
-    std::stringstream convert(s);
-    double n;
-    convert >> n;
-    return Number_type(n);
-  }
-}
 
 template<class Number_type>
 std::string num2string(Number_type& n) {
@@ -223,11 +201,9 @@ bool create_arrangement_from_dat_file(std::ifstream &input,
   typedef typename Arrangement_2::Face_handle                 Face_handle;
   typedef typename Geometry_traits_2::Segment_2               Segment_2;
   typedef typename Geometry_traits_2::Point_2                 Point_2;
-  typedef typename Geometry_traits_2::FT                      Number_type;
 
   if (input) {
     std::string curr_line;
-    std::vector<Point_2> isolated_vertices;
     std::getline(input, curr_line);
     std::stringstream convert(curr_line);
     int number_of_isolated_vertices;
@@ -236,11 +212,9 @@ bool create_arrangement_from_dat_file(std::ifstream &input,
     for (int i = 0 ; i < number_of_isolated_vertices ; i++) {
       std::getline(input, curr_line);
       std::istringstream iss(curr_line);
-      std::string x, y;
-      iss >> x >> y;
-      arr.insert_in_face_interior(Point_2(string2num<Number_type>(x), 
-                                          string2num<Number_type>(y)),
-                                  uface);
+      Point_2 p;
+      iss >> p;
+      arr.insert_in_face_interior(p, uface);
     }
     std::vector<Segment_2> edges;
     int number_of_edges;
@@ -249,13 +223,10 @@ bool create_arrangement_from_dat_file(std::ifstream &input,
     convert2 >> number_of_edges;
     for (int i = 0 ; i < number_of_edges ; i++) {
       std::getline(input, curr_line);
-      std::string x1, y1, x2, y2;
       std::istringstream iss(curr_line);
-      iss >> x1 >> y1 >> x2 >> y2;
-      edges.push_back(Segment_2(Point_2(string2num<Number_type>(x1), 
-                                        string2num<Number_type>(y1)), 
-                                Point_2(string2num<Number_type>(x2), 
-                                        string2num<Number_type>(y2))));
+      Segment_2 seg;
+      iss >> seg;
+      edges.push_back(seg);
     }
     CGAL::insert(arr, edges.begin(), edges.end());
     return true;
@@ -294,43 +265,12 @@ void regularize(Arrangement_2& arr){
   //std::cout << "regularize done" << std::endl; 
 }
 
-template <class Arrangement_2>
-bool is_regular_arr(Arrangement_2& arr){
-  //std::cout << "\n regularize" << std::endl;
-  // remove all edges with the same face on both sides
-  typedef typename Arrangement_2::Edge_iterator EIT;
-  for(EIT eit = arr.edges_begin(); eit != arr.edges_end();){
-    if(eit->face() == eit->twin()->face()){
-      // arr.remove_edge(eit++,false,false); did not compile
-      EIT eh = eit;
-      ++eit;
-      return false;
-    }else{
-      ++eit;
-    }
-  }
-  // remove all isolated vertices (also those left from prvious step)
-  typedef typename Arrangement_2::Vertex_iterator VIT;
-  for(VIT vit = arr.vertices_begin(); vit != arr.vertices_end();){
-    if(vit->degree()== 0){
-      VIT vh = vit;
-      vit++;
-      return false;
-    }else{
-      vit++;
-    }
-  }
-  return true;
-  //std::cout << "regularize done" << std::endl;
-}
-
 
 template <class Visibility_2, class Visibility_arrangement_2>
 bool run_test_case_from_file(Visibility_2& visibility, std::ifstream &input) {
   typedef typename Visibility_2::Arrangement_2          Arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Geometry_traits_2::Point_2                 Point_2; 
-  typedef typename Geometry_traits_2::FT                      Number_type;
   typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator
                                         Halfedge_around_vertex_const_circulator;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
@@ -346,17 +286,14 @@ bool run_test_case_from_file(Visibility_2& visibility, std::ifstream &input) {
     if (curr_line[0] != '#' && curr_line[0] != '/')
       break;
   }
-  std::stringstream convert(curr_line);
-  std::string x, y;
-  convert >> x >> y;
-  Point_2 query_pt(string2num<Number_type>(x),
-                   string2num<Number_type>(y));
+  std::stringstream ss(curr_line);
+  Point_2 query_pt;
+  ss >> query_pt;
+
   std::getline(input, curr_line);
-  std::string x1, y1;
   std::istringstream iss(curr_line);
-  iss >> x1 >> y1;
-  Point_2 reference_pt(string2num<Number_type>(x1),
-                       string2num<Number_type>(y1));
+  Point_2 reference_pt;
+  iss >> reference_pt;
 
   std::getline(input, curr_line);
   if (!create_arrangement_from_dat_file<Arrangement_2>(input, arr_in)) {
@@ -677,7 +614,7 @@ void create_arrangement_from_file(_Arrangement_2 &arr, std::ifstream& input) {
   typedef typename Arrangement_2::Geometry_traits_2	  Geometry_traits_2;
   typedef typename Geometry_traits_2::Segment_2         Segment_2;
   typedef typename Geometry_traits_2::Point_2	          Point_2;
-  typedef typename Geometry_traits_2::FT                Number_type;
+
   if (input) {
     std::string line;
     while (std::getline(input, line)) {
@@ -692,11 +629,10 @@ void create_arrangement_from_file(_Arrangement_2 &arr, std::ifstream& input) {
 
     for (int i = 0; i != number_of_points; i++) {
       std::getline(input, line);
-      std::string n1, n2;
       std::istringstream iss(line);
-      iss>> n1 >> n2;
-      points.push_back(Point_2(string2num<Number_type>(n1), 
-                               string2num<Number_type>(n2)));
+      Point_2 p;
+      iss >> p;
+      points.push_back(p);
     }
     int number_of_edges;
     input >> number_of_edges;
@@ -719,7 +655,7 @@ void create_arrangement_from_env_file(_Arrangement_2 &arr, std::ifstream& input)
   typedef typename Arrangement_2::Geometry_traits_2	    Geometry_traits_2;
   typedef typename Geometry_traits_2::Segment_2         Segment_2;
   typedef typename Geometry_traits_2::Point_2	          Point_2;
-  typedef typename Geometry_traits_2::FT                Number_type;
+
   if (input) {
     std::string line;
     while (std::getline(input, line)) {
@@ -735,17 +671,19 @@ void create_arrangement_from_env_file(_Arrangement_2 &arr, std::ifstream& input)
 
       std::getline(input, line);
       std::stringstream convert(line);
-      int number_of_vertices;
+      typename std::vector<Point_2>::size_type number_of_vertices;
       convert >> number_of_vertices;
-      for (int j = 0; j < number_of_vertices; j++) {
+      for (typename std::vector<Point_2>::size_type j = 0;
+           j < number_of_vertices; j++) {
         std::getline(input, line);
-        std::string n1, n2;
         std::istringstream iss(line);
-        iss >> n1 >> n2;
-        points.push_back(Point_2(string2num<Number_type>(n1),   
-                                 string2num<Number_type>(n2)));
+        Point_2 p;
+        iss >> p;
+        points.push_back(p);
       }
-      for (int j = 0; j < number_of_vertices-1 ; j++) {
+      for (typename std::vector<Point_2>::size_type j = 0;
+           j < number_of_vertices-1 ; j++)
+      {
         segments.push_back(Segment_2(points[j], points[j+1]));
       }
       segments.push_back(Segment_2(points.front(), points.back()));
@@ -965,19 +903,7 @@ typename Arrangement_2::Face_const_handle construct_biggest_arr_with_no_holes(
       }
     }
   }
-  Ccb_halfedge_const_circulator circ_p = fch->outer_ccb();
-  Ccb_halfedge_const_circulator curr_p = circ_p;
-  Halfedge_const_handle he_p;/*
-  std::cout << "OUT FACE\n";
-  do {
-    he_p = curr_p;
-    Ccb_halfedge_const_circulator next = curr_p;
-    next++;
-    Halfedge_const_handle h_next = next;
-    assert(he_p->target() == h_next->source());
-    std::cout << he_p->source()->point() << std::endl;
-  } while(++curr_p != circ_p);
-  std::cout << "END\n";*/
+
   return fch;
 }
 
@@ -1334,22 +1260,6 @@ void pure_benchmark(  Visibility_2 &visibility,
 //   std::cout << query_cnt << " queries are done.\n"
 //             << "cost " << qtime << "  sec" << std::endl;
 //   std::cout << "total time is:" << ptime + qtime << "  sec" << std::endl;
-}
-
-template<class Segment_2, class Point_2>
-int intersect_seg(const Segment_2& seg1, const Segment_2& seg2, Segment_2& seg_out, Point_2& p_out)
-{
-    CGAL::Object result = CGAL::intersection(seg1, seg2);
-    if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
-        p_out = *ipoint;
-        return 1;
-    } else
-        if (const Segment_2 *iseg = CGAL::object_cast<Segment_2>(&result)) {
-            seg_out = *iseg;
-            return 2;
-        } else {
-            return 0;
-        }
 }
 
 
