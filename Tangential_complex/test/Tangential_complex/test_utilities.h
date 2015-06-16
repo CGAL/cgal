@@ -237,7 +237,8 @@ bool load_points_from_file(
 }
 
 template <typename Kernel>
-std::vector<typename Kernel::Point_d> generate_points_on_plane(std::size_t num_points)
+std::vector<typename Kernel::Point_d> generate_points_on_plane(
+  std::size_t num_points, int intrinsic_dim, int ambient_dim)
 {
   typedef typename Kernel::Point_d Point;
   typedef typename Kernel::FT FT;
@@ -250,9 +251,14 @@ std::vector<typename Kernel::Point_d> generate_points_on_plane(std::size_t num_p
 #endif
   for (std::size_t i = 0 ; i < num_points ; )
   {
-    FT x = rng.get_double(0, 5);
-    FT y = rng.get_double(0, 5);
-    Point p = construct_point(k, x, y, FT(0));
+    std::vector<FT> pt(ambient_dim, FT(0));
+    for (int j = 0 ; j < intrinsic_dim ; ++j)
+      pt[j] = rng.get_double(-5., 5.);
+    /*for (int j = intrinsic_dim ; j < ambient_dim ; ++j)
+      pt[j] = rng.get_double(-0.01, 0.01);*/
+        
+    Point p = k.construct_point_d_object()(ambient_dim, pt.begin(), pt.end());
+
 #ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
     if (sparsifier.try_to_insert_point(p))
       ++i;
@@ -424,7 +430,7 @@ std::vector<typename Kernel::Point_d> generate_points_on_torus_d(
         pt.push_back(std::sin(alpha));
       }
 
-      Point p = k.construct_point_d_object()(pt.size(), pt.begin(), pt.end());
+      Point p = k.construct_point_d_object()(pt.begin(), pt.end());
 #ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
       if (sparsifier.try_to_insert_point(p))
         ++i;
@@ -521,6 +527,68 @@ std::vector<typename Kernel::Point_d> generate_points_on_two_spheres_d(
     typename Kernel::Translated_point_d k_transl =
       k.translated_point_d_object();
     Point p2 = k_transl(p, c1_to_c2);
+
+#ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
+    if (sparsifier.try_to_insert_point(p))
+      ++i;
+    if (sparsifier.try_to_insert_point(p2))
+      ++i;
+#else
+    points.push_back(p);
+    points.push_back(p2);
+    i += 2;
+#endif
+  }
+  return points;
+}
+
+template <typename Kernel>
+std::vector<typename Kernel::Point_d> 
+generate_points_on_two_orthogonal_spheres_d(
+  std::size_t num_points, int intrinsic_dim, int ambient_dim, double radius, 
+  double distance_between_centers, double radius_noise_percentage = 0.)
+{
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_d Point;
+  typedef typename Kernel::Vector_d Vector;
+  Kernel k;
+  CGAL::Random rng;
+  CGAL::Random_points_on_sphere_d<Point> generator(dim, radius);
+  std::vector<Point> points;
+  points.reserve(num_points);
+  
+  typename Kernel::Compute_coordinate_d k_coord =
+    k.compute_coordinate_d_object();
+
+  std::vector<FT> t(dim, FT(0));
+  t[0] = distance_between_centers;
+  Vector c1_to_c2(t.begin(), t.end());
+
+#ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
+  Point_sparsifier<Kernel, std::vector<Point> > sparsifier(points);
+#endif
+  for (std::size_t i = 0 ; i < num_points ; )
+  {
+    Point p = *generator++;
+    if (radius_noise_percentage > 0.)
+    { 
+      double radius_noise_ratio = rng.get_double(
+        (100. - radius_noise_percentage)/100., 
+        (100. + radius_noise_percentage)/100.);
+      
+      typename Kernel::Point_to_vector_d k_pt_to_vec =
+        k.point_to_vector_d_object();
+      typename Kernel::Vector_to_point_d k_vec_to_pt =
+        k.vector_to_point_d_object();
+      typename Kernel::Scaled_vector_d k_scaled_vec =
+        k.scaled_vector_d_object();
+      p = k_vec_to_pt(k_scaled_vec(k_pt_to_vec(p), radius_noise_ratio));
+    }
+    
+    std::vector<FT> pt1(ambient_dim);
+    for (int i = 0 ; i < intrinsic_dim ; ++i)
+      pt1[i] = k_coord(p, i);
+    // TODO : p2
 
 #ifdef CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
     if (sparsifier.try_to_insert_point(p))

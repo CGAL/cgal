@@ -337,6 +337,8 @@ void make_tc(std::vector<Point> &points,
 
   //tc.check_if_all_simplices_are_in_the_ambient_delaunay();
 
+  //tc.check_correlation_between_inconsistencies_and_fatness();
+
   //===========================================================================
   // Export to OFF
   //===========================================================================
@@ -370,6 +372,8 @@ void make_tc(std::vector<Point> &points,
                                  best_num_inconsistent_local_tr);
     CGAL_TC_SET_PERFORMANCE_DATA("Final_num_inconsistent_local_tr", 
                                  final_num_inconsistent_local_tr);
+
+    //tc.check_correlation_between_inconsistencies_and_fatness();
 
     //=========================================================================
     // Export to OFF
@@ -644,7 +648,8 @@ int main()
             }
             else if (input == "generate_plane")
             {
-              points = generate_points_on_plane<Kernel>(num_points);
+              points = generate_points_on_plane<Kernel>(
+                num_points, intrinsic_dim, ambient_dim);
             }
             else if (input == "generate_sphere_d")
             {
