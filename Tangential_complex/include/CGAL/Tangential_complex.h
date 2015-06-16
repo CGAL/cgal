@@ -102,7 +102,7 @@ template <
   typename Concurrency_tag = CGAL::Parallel_tag,
 #ifdef CGAL_ALPHA_TC
   // For the alpha-TC, the dimension of the RT is variable
-  // => we need to force it to Dynamic_dimension_tag
+  // => we need to force 
   typename Tr = Regular_triangulation
   <
     Regular_triangulation_euclidean_traits<
@@ -1349,8 +1349,7 @@ private:
     Amb_RT local_amb_tr(m_ambient_dim);
 
     // Insert p
-    Weighted_point wp = m_k.construct_weighted_point_d_object()(center_pt,
-                                                                m_weights[i]);
+    Weighted_point wp = compute_perturbed_weighted_point(i);
     Amb_RT_VH center_vertex = local_amb_tr.insert(wp);
     center_vertex->data() = i;
     if (verbose)
@@ -1378,12 +1377,6 @@ private:
         // called while other threads are perturbing the positions
         Weighted_point neighbor_wp =
           compute_perturbed_weighted_point(neighbor_point_idx);
-// fixme ?
-// Above seems incorrect since we later pass m_points[] to
-// "does_voronoi_face_and_alpha_tangent_subspace_intersect()" and we lose
-// the possible position pertubation of wp.
-// Either we ignore the translations and it's neighbor_wp = points[idx]+weight
-// or need to give m_translations to the voronoi intersections computations
 
         // "4*m_sq_half_sparsity" because both points can be perturbed
         if (squared_star_sphere_radius_plus_margin
@@ -1574,8 +1567,7 @@ next_face:
 #endif
         bool does_intersect =
           does_voronoi_face_and_alpha_tangent_subspace_intersect(
-              m_points, m_weights, i, P, curr_neighbors,
-              m_orth_spaces[i], alpha, m_k);
+              i, P, curr_neighbors, m_orth_spaces[i], alpha);
         if (does_intersect)
         {
           star.push_back(current_DT_face);
@@ -2876,6 +2868,145 @@ next_face:
     }
 
     return inconsistencies_found;
+  }
+
+  // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
+  // Q: vertices which are common neighbors of all vertices of P
+  template <typename Indexed_point_range, typename Indexed_point_range_2>
+  bool does_voronoi_face_and_alpha_tangent_subspace_intersect(
+      std::size_t center_pt_index,
+      Indexed_point_range const& P,
+      Indexed_point_range_2 const& Q,
+      Orthogonal_space_basis const& orthogonal_subspace_basis,
+      FT alpha)
+  {
+    // Notations:
+    // Fv: Voronoi k-face
+    // Fd: dual, (D-k)-face of Delaunay (p0, p1, ..., pn)
+
+    typename Kernel::Scalar_product_d scalar_pdct = m_k.scalar_product_d_object();
+    typename Kernel::Point_to_vector_d pt_to_vec = m_k.point_to_vector_d_object();
+    typename Kernel::Compute_coordinate_d coord = m_k.compute_coordinate_d_object();
+
+    Point center_pt = compute_perturbed_point(center_pt_index);
+    int const ambient_dim = m_k.point_dimension_d_object()(center_pt);
+
+    std::size_t card_P = P.size();
+    std::size_t card_Q = Q.size();
+    std::size_t card_OSB = orthogonal_subspace_basis.size();
+    std::size_t num_couples_among_P = card_P*(card_P-1)/2;
+    std::size_t num_equations =
+      2*num_couples_among_P + card_P*card_Q + 2*card_OSB;
+
+    // Linear solver
+    typedef CGAL::Quadratic_program<FT> Linear_program;
+    typedef CGAL::Quadratic_program_solution<ET> LP_solution;
+
+    Linear_program lp(CGAL::SMALLER, false);
+    int current_row = 0;
+
+    //=========== First set of equations ===========
+    // For points pi in P
+    //   2(p0 - pi).x = p0^2 - w0 - pi^2 + wi
+    Point const& p0 = center_pt;
+    FT const w0 = m_weights[center_pt_index];
+    FT p0_dot_p0 = scalar_pdct(pt_to_vec(p0), pt_to_vec(p0));
+
+    for (typename Indexed_point_range::const_iterator it_p = P.begin(),
+                                                      it_p_end = P.end() ;
+         it_p != it_p_end ; ++it_p)
+    {
+      Point pi;
+      FT wi;
+      compute_perturbed_weighted_point(*it_p, pi, wi);
+
+      for (int k = 0 ; k < ambient_dim ; ++k)
+        lp.set_a(k, current_row, 2*(coord(p0, k) - coord(pi, k)));
+
+      FT pi_dot_pi = scalar_pdct(pt_to_vec(pi), pt_to_vec(pi));
+      lp.set_b(current_row, p0_dot_p0 - pi_dot_pi - w0 + wi);
+      lp.set_r(current_row, CGAL::EQUAL);
+
+      ++current_row;
+    }
+
+    // CJTODO: this code might be useful for Option 1
+    /*CGAL::Combination_enumerator<int> pi_pj(2, 0, static_cast<int>(card_P));
+    for ( ; !pi_pj.finished() ; ++pi_pj)
+    {
+      Point const& pi = P[pi_pj[0]];
+      FT wi = all_weights[pi_pj[0]];
+      Point const& pj = P[pi_pj[1]];
+      FT wj = all_weights[pi_pj[1]];
+
+      for (int k = 0 ; k < ambient_dim ; ++k)
+      {
+        FT a = 2*(coord(pi, k) + coord(pj, k));
+        lp.set_a(k, current_row    , -a);
+        lp.set_a(k, current_row + 1,  a);
+      }
+
+      FT b = scalar_pdct(pi, pi) - wi - scalar_pdct(pj, pj) + wj;
+      lp.set_b(current_row    , -b);
+      lp.set_b(current_row + 1,  b);
+
+      current_row += 2;
+    }*/
+
+    //=========== Second set of equations ===========
+    // For each point qi in Q
+    //  2(qi - p0).x <= qi^2 - wi - p0^2 + w0
+    for (typename Indexed_point_range_2::const_iterator it_q = Q.begin(),
+                                                        it_q_end = Q.end() ;
+         it_q != it_q_end ; ++it_q)
+    {
+      Point qi;
+      FT wi;
+      compute_perturbed_weighted_point(*it_q, qi, wi);
+
+      for (int k = 0 ; k < ambient_dim ; ++k)
+        lp.set_a(k, current_row, 2*(coord(qi, k) - coord(p0, k)));
+
+      FT qi_dot_qi = scalar_pdct(pt_to_vec(qi), pt_to_vec(qi));
+      lp.set_b(current_row, qi_dot_qi - wi - p0_dot_p0 + w0);
+
+      ++current_row;
+    }
+
+    //=========== Third set of equations ===========
+    // For each vector bi of OSB, (x-p).bi <= alpha and >= -alpha
+    // p is the origin of the basis
+    //     bi.x <=  bi.p + alpha
+    //    -bi.x <= -bi.p + alpha
+    for (typename Orthogonal_space_basis::const_iterator it_osb =
+         orthogonal_subspace_basis.begin(),
+         it_osb_end = orthogonal_subspace_basis.end() ;
+         it_osb != it_osb_end ; ++it_osb)
+    {
+      Vector const& bi = *it_osb;
+
+      for (int k = 0 ; k < ambient_dim ; ++k)
+      {
+        lp.set_a(k, current_row    ,  bi[k]);
+        lp.set_a(k, current_row + 1, -bi[k]);
+      }
+
+      Point const& basis_origin = orthogonal_subspace_basis.origin();
+      FT bi_dot_p = scalar_pdct(bi, pt_to_vec(basis_origin));
+      lp.set_b(current_row    ,  bi_dot_p + alpha);
+      lp.set_b(current_row + 1, -bi_dot_p + alpha);
+
+      current_row += 2;
+    }
+
+    //=========== Other LP parameters ===========
+    lp.set_c(0, 1); // Minimize x[0]
+
+    //=========== Solve =========================
+    LP_solution solution = CGAL::solve_linear_program(lp, ET());
+    bool ret = (solution.status() == CGAL::QP_OPTIMAL);
+
+    return ret;
   }
 
   std::ostream &export_simplices_to_off(
