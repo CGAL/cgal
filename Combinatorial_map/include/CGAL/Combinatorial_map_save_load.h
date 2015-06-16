@@ -67,11 +67,11 @@ namespace CGAL {
 
   // Here T is a Dart_const_handle so we don't need &
   template<typename T>
-  void write_cmap_dart_node(boost::property_tree::ptree & node, T)
+  void write_cmap_dart_node(boost::property_tree::ptree & /*node*/, T)
   {}
 
   template<typename T>
-  void write_cmap_attribute_node(boost::property_tree::ptree & node, const T&)
+  void write_cmap_attribute_node(boost::property_tree::ptree & /*node*/, const T&)
   {}
   
   inline
@@ -384,11 +384,11 @@ namespace CGAL {
   // Here T is a Dart_handle so no need of &
   template<typename T>
   void read_cmap_dart_node
-  (const boost::property_tree::ptree::value_type &v, T val)
+  (const boost::property_tree::ptree::value_type &/*v*/, T /*val*/)
   {}
   template<typename T>
   void read_cmap_attribute_node
-  (const boost::property_tree::ptree::value_type &v, T &val)
+  (const boost::property_tree::ptree::value_type &/*v*/, T &/*val*/)
   {}
   template<> inline
   void read_cmap_attribute_node
