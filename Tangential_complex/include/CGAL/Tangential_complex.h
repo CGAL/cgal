@@ -69,10 +69,13 @@
 //#define CGAL_FIXED_ALPHA_TC
 const double ALPHA = 0.3;
 
+//static std::ofstream csv_stream("output/stats.csv"); // CJTODO TEMP
+
 //CJTODO: debug
 //#define CGAL_TC_COMPUTE_TANGENT_PLANES_FOR_SPHERE_3
 //#define CGAL_TC_COMPUTE_TANGENT_PLANES_FOR_TORUS_D
 //#define CGAL_TC_ADD_NOISE_TO_TANGENT_SPACE
+//#define BETTER_EXPORT_FOR_FLAT_TORUS
 
 namespace CGAL {
 
@@ -2353,8 +2356,15 @@ next_face:
       for (int ii = 0 ; ii < N ; ++ii)
       {
         int i = 0;
+#if BETTER_EXPORT_FOR_FLAT_TORUS
+        // For flat torus
+        os << (2 + 1 * CGAL::to_double(coord(p, 0))) * CGAL::to_double(coord(p, 2)) << " "
+           << (2 + 1 * CGAL::to_double(coord(p, 0))) * CGAL::to_double(coord(p, 3)) << " "
+           << 1 * CGAL::to_double(coord(p, 1));
+#else
         for ( ; i < num_coords ; ++i)
           os << CGAL::to_double(coord(p, i)) << " ";
+#endif
         if (i == 2)
           os << "0";
 
@@ -2593,11 +2603,51 @@ next_face:
       }
       std::cerr << std::endl;
     }*/
+
+    // CJTODO TEMP DEBUG
+    // If co-intrinsic dimension = 1, let's compare normals
+    /*if (m_ambient_dim - m_intrinsic_dimension == 1)
+    {
+      typename Kernel::Scaled_vector_d k_scaled_vec =
+        m_k.scaled_vector_d_object();
+      typename Kernel::Squared_length_d k_sqlen =
+        m_k.squared_length_d_object();
+      Vector pq = k_diff_pts(
+        compute_perturbed_point(q_idx), compute_perturbed_point(p_idx));
+      pq = k_scaled_vec(pq, FT(1)/sqrt(k_sqlen(pq)));
+      FT dot_product_1 = std::abs(
+          k_inner_pdct(m_orth_spaces[p_idx][0], pq));
+      FT dot_product_2 = std::abs(
+          k_inner_pdct(m_orth_spaces[q_idx][0], pq));
+      csv_stream << inside_pt_indices.size() << " ; ";
+      csv_stream << dot_product_1 << " ; " << dot_product_2;
+      csv_stream << std::endl;
+    }*/
+    
     // CJTODO TEMP DEBUG
     if (inside_pt_indices.size() > 1)
     {
       std::cerr << "Warning: " << inside_pt_indices.size() << " insiders in "
         << inconsistent_simplex.size() - 1 << " simplex\n";
+      
+      // If co-intrinsic dimension = 1, let's compare normals
+      /*if (m_ambient_dim - m_intrinsic_dimension == 1)
+      {
+        std::cerr << "(dot product between normals = ";
+        std::set<std::size_t>::const_iterator it_v = 
+          inconsistent_simplex.begin();
+        std::size_t i1 = *it_v;
+        ++it_v;
+        for ( ; it_v != inconsistent_simplex.end() ; ++it_v)
+        {
+          FT dot_products_between_normals =
+            k_inner_pdct(m_tangent_spaces[i1][0], m_tangent_spaces[*it_v][0]);
+          std::cerr << dot_products_between_normals << ", ";
+          //csv_stream << " ; " <<dot_products_between_normals;
+        }
+        std::cerr << std::endl;
+        //csv_stream << std::endl;
+      }*/
     }
 
     //-------------------------------------------------------------------------
@@ -2740,6 +2790,28 @@ next_face:
         inconsistencies_found = true;
         break;
       }
+      // CJTODO TEMP
+      /*else if (m_ambient_dim - m_intrinsic_dimension == 1)
+      {
+        typename Kernel::Difference_of_points_d k_diff_pts =
+          m_k.difference_of_points_d_object();
+        typename Kernel::Scaled_vector_d k_scaled_vec =
+          m_k.scaled_vector_d_object();
+        typename Kernel::Squared_length_d k_sqlen =
+          m_k.squared_length_d_object();
+        typename Kernel::Scalar_product_d k_inner_pdct =
+          m_k.scalar_product_d_object();
+        Vector pq = k_diff_pts(
+          compute_perturbed_point(*it_point_idx), compute_perturbed_point(tr_index));
+        pq = k_scaled_vec(pq, FT(1)/sqrt(k_sqlen(pq)));
+        FT dot_product_1 = std::abs(
+            k_inner_pdct(m_orth_spaces[tr_index][0], pq));
+        FT dot_product_2 = std::abs(
+            k_inner_pdct(m_orth_spaces[*it_point_idx][0], pq));
+        csv_stream << "0 ; ";
+        csv_stream << dot_product_1 << " ; " << dot_product_2;
+        csv_stream << std::endl;
+      }*/
     }
 
     return inconsistencies_found;
@@ -3105,7 +3177,7 @@ public:
     {
       std::cerr << std::endl
         << "==========================================================" << std::endl
-        << "check_correlation_between_inconsistencies_and_slivers():" << std::endl
+        << "check_correlation_between_inconsistencies_and_fatness():" << std::endl
         << "Intrinsic dimension should be >= 3." << std::endl
         << "==========================================================" << std::endl
         << std::endl;
@@ -3157,7 +3229,7 @@ public:
     std::cerr << std::endl
       << "=========================================================="
       << std::endl
-      << "check_correlation_between_inconsistencies_and_slivers()\n"
+      << "check_correlation_between_inconsistencies_and_fatness()\n"
       << "  * Avg. volume/longest_edge^d ratio of consistent simplices: " 
       << avg_vol_edge_ratio_consistent 
       << " (" << num_consistent_simplices << " simplices)" << std::endl
