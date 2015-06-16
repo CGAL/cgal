@@ -247,7 +247,7 @@ private:
 
       // Quick fix for now. Can be done faster
       bool is_degenerate = false; 
-      for(int i = 0; i < points.size()-2;i++){
+      for(typename std::vector<Point_2>::size_type i = 0; i < points.size()-2;i++){
 	if(CGAL::orientation(points[i],points[i+1],points[i+2]) == CGAL::COLLINEAR){
 	  is_degenerate = true;
 	  break; 
