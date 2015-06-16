@@ -30,6 +30,12 @@
 # define TBB_USE_THREADING_TOOL
 #endif
 
+//=========================== Alpha-TC or not? ================================
+
+//#define CGAL_FIXED_ALPHA_TC
+const double ALPHA = 0.3;
+
+#define CGAL_ALPHA_TC
 
 //========================= Debugging & profiling =============================
 #define CGAL_TC_PROFILING

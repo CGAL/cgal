@@ -140,9 +140,10 @@ namespace Tangential_complex_ {
   template<typename Kernel>
   struct Basis
   {
-    typedef typename Kernel::Point_d                           Point;
-    typedef typename Kernel::Vector_d                          Vector;
-    typedef typename std::vector<Vector>::const_iterator       const_iterator;
+    typedef typename Kernel::FT                             FT;
+    typedef typename Kernel::Point_d                        Point;
+    typedef typename Kernel::Vector_d                       Vector;
+    typedef typename std::vector<Vector>::const_iterator    const_iterator;
 
     Point m_origin; //fixme should probably be (const?) ref ?
     std::vector<Vector> m_vectors;
@@ -163,6 +164,47 @@ namespace Tangential_complex_ {
     Basis(const Point& p, const std::vector<Vector>& vectors)
       : m_origin(p), m_vectors(vectors)
     { }
+    
+#ifdef CGAL_ALPHA_TC
+    // Thickening vectors...
+
+    struct Thickening_vector
+    {
+      Thickening_vector() : alpha_minus(FT(0)), alpha_plus(FT(0)) {}
+
+      Vector vec;
+      FT alpha_minus;
+      FT alpha_plus;
+    };
+    typedef std::vector<Thickening_vector> Thickening_vectors;
+
+    Thickening_vectors m_thickening_vectors;
+
+
+    std::size_t num_thickening_vectors() const 
+    {
+      return m_thickening_vectors.size();
+    }
+    Thickening_vectors const& thickening_vectors() const 
+    {
+      return m_thickening_vectors;
+    }
+    void add_thickening_vector(Vector const& vec, FT alpha_minus, FT alpha_plus)
+    {
+      m_thickening_vectors.push_back(
+        Thickening_vector(vec, alpha_minus, alpha_plus));
+    }
+
+    int dimension() const
+    {
+      return static_cast<int>(m_vectors.size() + m_thickening_vectors.size());
+    }
+#else
+    int dimension() const
+    {
+      return static_cast<int>(m_vectors.size());
+    }
+#endif
   };
 
   template <typename K>

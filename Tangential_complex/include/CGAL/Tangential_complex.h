@@ -66,8 +66,6 @@
 #endif
 
 //#define CGAL_TC_EXPORT_NORMALS // Only for 3D surfaces (k=2, d=3)
-//#define CGAL_FIXED_ALPHA_TC
-const double ALPHA = 0.3;
 
 //static std::ofstream csv_stream("output/stats.csv"); // CJTODO TEMP
 
@@ -102,6 +100,25 @@ template <
   typename Kernel, // ambiant dimension
   typename DimensionTag, // intrinsic dimension
   typename Concurrency_tag = CGAL::Parallel_tag,
+#ifdef CGAL_ALPHA_TC
+  // For the alpha-TC, the dimension of the RT is variable
+  // => we need to force it to Dynamic_dimension_tag
+  typename Tr = Regular_triangulation
+  <
+    Regular_triangulation_euclidean_traits<
+      Epick_d<CGAL::Dynamic_dimension_tag> >,
+
+    Triangulation_data_structure
+    <
+      typename Regular_triangulation_euclidean_traits<
+        Epick_d<CGAL::Dynamic_dimension_tag> >::Dimension,
+      Triangulation_vertex<Regular_triangulation_euclidean_traits<
+        Epick_d<CGAL::Dynamic_dimension_tag> >, Vertex_data >,
+      Triangulation_full_cell<Regular_triangulation_euclidean_traits<
+        Epick_d<CGAL::Dynamic_dimension_tag> > >
+    >
+  >
+#else
   typename Tr = Regular_triangulation
   <
     Regular_triangulation_euclidean_traits<
@@ -117,6 +134,7 @@ template <
         Epick_d<DimensionTag> > >
     >
   >
+#endif
 >
 class Tangential_complex
 {
@@ -1054,20 +1072,6 @@ private:
     if (verbose)
       std::cerr << "** Computing tangent tri #" << i << " **" << std::endl;
     //std::cerr << "***********************************************" << std::endl;
-    Triangulation &local_tr =
-      m_triangulations[i].construct_triangulation(m_intrinsic_dimension);
-    const Tr_traits &local_tr_traits = local_tr.geom_traits();
-    Tr_vertex_handle &center_vertex = m_triangulations[i].center_vertex();
-
-    // Kernel functor & objects
-    typename Kernel::Squared_distance_d k_sqdist =
-      m_k.squared_distance_d_object();
-
-    // Triangulation's traits functor & objects
-    typename Tr_traits::Point_weight_d point_weight =
-      local_tr_traits.point_weight_d_object();
-    typename Tr_traits::Power_center_d power_center =
-      local_tr_traits.power_center_d_object();
 
     // No need to lock the mutex here since this will not be called while
     // other threads are perturbing the positions
@@ -1083,6 +1087,23 @@ private:
       m_tangent_spaces[i] = compute_tangent_space(center_pt, i);
 #endif
     }
+
+    int triangulation_dim = local_triangulation_dim(i);
+    Triangulation &local_tr =
+      m_triangulations[i].construct_triangulation(triangulation_dim);
+    const Tr_traits &local_tr_traits = local_tr.geom_traits();
+    Tr_vertex_handle &center_vertex = m_triangulations[i].center_vertex();
+
+    // Kernel functor & objects
+    typename Kernel::Squared_distance_d k_sqdist =
+      m_k.squared_distance_d_object();
+
+    // Triangulation's traits functor & objects
+    typename Tr_traits::Point_weight_d point_weight =
+      local_tr_traits.point_weight_d_object();
+    typename Tr_traits::Power_center_d power_center =
+      local_tr_traits.power_center_d_object();
+
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
     else if (m_perturb_tangent_space[i])
     {
@@ -1113,8 +1134,8 @@ private:
     if(eq(compute_perturbed_point(i), m_tangent_spaces[i].origin()))
     {
       proj_wp = local_tr_traits.construct_weighted_point_d_object()(
-      local_tr_traits.construct_point_d_object()(m_intrinsic_dimension, ORIGIN),
-      m_weights[i]);
+        local_tr_traits.construct_point_d_object()(triangulation_dim, ORIGIN),
+        m_weights[i]);
     }
     else
     {
@@ -1175,7 +1196,7 @@ private:
           vh->data() = neighbor_point_idx;
 
           // Let's recompute squared_star_sphere_radius_plus_margin
-          if (local_tr.current_dimension() >= m_intrinsic_dimension)
+          if (local_tr.current_dimension() >= triangulation_dim)
           {
             squared_star_sphere_radius_plus_margin = boost::none;
             // Get the incident cells and look for the biggest circumsphere
@@ -1781,6 +1802,13 @@ next_face:
     */
   }
 
+  // Returns the dimension of the ith local triangulation
+  // This is particularly useful for the alpha-TC
+  int local_triangulation_dim(std::size_t i) const
+  {
+    return m_tangent_spaces[i].dimension();
+  }
+
   Point compute_perturbed_point(std::size_t pt_idx) const
   {
 #ifdef CGAL_TC_PERTURB_POSITION
@@ -1834,11 +1862,19 @@ next_face:
       global_point = k_transl(global_point,
                               k_scaled_vec(tsb[i], coord(p, i)));
 
+#ifdef CGAL_ALPHA_TC
+    Tangent_space_basis::Thickening_vectors const& tv = tsb.thickening_vectors();
+    for (int i = 0 ; i < tv.size() ; ++i)
+    {
+      global_point = k_transl(
+        global_point,
+        k_scaled_vec(tv[i].vec, coord(p, m_intrinsic_dimension + i)));
+    }
+#endif
     return global_point;
   }
 
   // Project the point in the tangent space
-  // The weight will be the squared distance between p and the projection of p
   Tr_bare_point project_point(const Point &p,
                               const Tangent_space_basis &tsb) const
   {
@@ -1846,19 +1882,28 @@ next_face:
       m_k.scalar_product_d_object();
     typename Kernel::Difference_of_points_d diff_points =
       m_k.difference_of_points_d_object();
+    
+    Vector v = diff_points(p, tsb.origin());
 
     std::vector<FT> coords;
     // Ambiant-space coords of the projected point
-    coords.reserve(m_intrinsic_dimension);
+    coords.reserve(tsb.dimension());
     for (std::size_t i = 0 ; i < m_intrinsic_dimension ; ++i)
     {
       // Local coords are given by the inner product with the vectors of tsb
-      Vector v = diff_points(p, tsb.origin());
       FT coord = inner_pdct(v, tsb[i]);
       coords.push_back(coord);
     }
-
-    return Tr_bare_point(m_intrinsic_dimension, coords.begin(), coords.end());
+        
+#ifdef CGAL_ALPHA_TC
+    Tangent_space_basis::Thickening_vectors const& tv = tsb.thickening_vectors();
+    for (int i = 0 ; i < tv.size() ; ++i)
+    {
+      FT coord = inner_pdct(v, tv[i].vec);
+      coords.push_back(coord);
+    }
+#endif
+    return Tr_bare_point(tsb.dimension(), coords.begin(), coords.end());
   }
 
   // Project the point in the tangent space
@@ -1884,6 +1929,8 @@ next_face:
       m_k.scalar_product_d_object();
     typename Kernel::Difference_of_points_d diff_points =
       m_k.difference_of_points_d_object();
+    typename Kernel::Compute_coordinate_d coord =
+      m_k.compute_coordinate_d_object();
     typename Kernel::Construct_cartesian_const_iterator_d ccci =
       m_k.construct_cartesian_const_iterator_d_object();
 
@@ -1892,24 +1939,37 @@ next_face:
     std::vector<FT> coords;
     // Ambiant-space coords of the projected point
     std::vector<FT> p_proj(ccci(tsb.origin()), ccci(tsb.origin(), 0));
-    coords.reserve(m_intrinsic_dimension);
+    coords.reserve(tsb.dimension());
     for (std::size_t i = 0 ; i < m_intrinsic_dimension ; ++i)
     {
       // Local coords are given by the inner product with the vectors of tsb
-      FT coord = inner_pdct(v, tsb[i]);
-      coords.push_back(coord);
+      FT c = inner_pdct(v, tsb[i]);
+      coords.push_back(c);
 
-      // p_proj += coord * v;
+      // p_proj += c * v;
       for (int j = 0 ; j < point_dim ; ++j)
-        p_proj[j] += coord * tsb[i][j];
+        p_proj[j] += c * coord(tsb[i], j);
     }
+    
+#ifdef CGAL_ALPHA_TC
+    Tangent_space_basis::Thickening_vectors const& tv = tsb.thickening_vectors();
+    for (int i = 0 ; i < tv.size() ; ++i)
+    {
+      FT c = inner_pdct(v, tv[i].vec);
+      coords.push_back(c);
+      
+      // p_proj += c * v;
+      for (int j = 0 ; j < point_dim ; ++j)
+        p_proj[j] += c * coord(tv[i].vec, j);
+    }
+#endif
 
     Point projected_pt(point_dim, p_proj.begin(), p_proj.end());
 
     return tr_traits.construct_weighted_point_d_object()
     (
       tr_traits.construct_point_d_object()(
-        m_intrinsic_dimension, coords.begin(), coords.end()),
+        tsb.dimension(), coords.begin(), coords.end()),
       w - m_k.squared_distance_d_object()(p, projected_pt)
     );
   }
@@ -1942,10 +2002,11 @@ next_face:
       m_triangulations[0].tr().geom_traits().difference_of_points_d_object();
 
     std::vector<std::size_t> s(simplex.begin(), simplex.end());
+    std::size_t simplex_dim = s.size() - 1;
 
     // Compute basis
     Tangent_space_basis basis(m_points[s[0]]);
-    for (int j = 0 ; j < m_intrinsic_dimension ; ++j)
+    for (int j = 0 ; j < simplex_dim  ; ++j)
     {
       Vector e = diff_pts(
         m_points[s[j+1]], m_points[s[0]]);
@@ -1954,21 +2015,21 @@ next_face:
     basis = compute_gram_schmidt_basis(basis, m_k);
 
     // Compute the volume of the simplex: determinant
-    Eigen::MatrixXd m(m_intrinsic_dimension, m_intrinsic_dimension);
-    for (int j = 0 ; j < m_intrinsic_dimension ; ++j)
+    Eigen::MatrixXd m(simplex_dim, simplex_dim);
+    for (int j = 0 ; j < simplex_dim ; ++j)
     {
       Tr_vector v_j = tr_diff_pts(
         project_point(m_points[s[j+1]], basis), 
         project_point(m_points[s[0]], basis));
-      for (int i = 0 ; i < m_intrinsic_dimension ; ++i)
+      for (int i = 0 ; i < simplex_dim ; ++i)
         m(j, i) = CGAL::to_double(coord(v_j, i));
     }
     double volume = 
       std::abs(m.determinant()) 
-      / boost::math::factorial<double>(m_intrinsic_dimension);
+      / boost::math::factorial<double>(simplex_dim);
 
     // Compute the longest edge of the simplex
-    CGAL::Combination_enumerator<int> combi(2, 0, m_intrinsic_dimension+1);
+    CGAL::Combination_enumerator<int> combi(2, 0, simplex_dim+1);
     FT max_sq_length = FT(0);
     for ( ; !combi.finished() ; ++combi)
     {
@@ -1978,7 +2039,7 @@ next_face:
         max_sq_length = sq_length;
     }
 
-    return volume / std::pow(CGAL::sqrt(max_sq_length), m_intrinsic_dimension);
+    return volume / std::pow(CGAL::sqrt(max_sq_length), simplex_dim);
   }
 
   // A simplex here is a list of point indices
