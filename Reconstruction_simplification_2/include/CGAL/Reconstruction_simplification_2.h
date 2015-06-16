@@ -466,7 +466,7 @@ protected:
   #else
       Point point = get(point_pmap, *it);
   #endif
-            Vertex_handle vertex = insert_point(point, false, nb++);
+            insert_point(point, false, nb++);
         }
 
         std::cerr << yellow << "done" << white << " (" << nb << " vertices, "
@@ -1266,7 +1266,7 @@ bool create_pedge(const Edge& edge, Rec_edge_2& pedge) {
     }
 
     void compute_relocation_for_plan1(const Edge& edge, FT& coef, Vector& rhs) {
-        FT M = m_dt.get_mass(edge);
+        //FT M = m_dt.get_mass(edge);
         const Point& pb = m_dt.target_vertex(edge)->point();
 
         SQueue queue;
