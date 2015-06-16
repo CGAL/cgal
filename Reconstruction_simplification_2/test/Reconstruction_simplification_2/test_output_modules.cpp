@@ -109,7 +109,7 @@ void test_list_output(Rs_2& rs2) {
 	std::vector<Point> isolated_points;
 	std::vector<Segment> edges;
 
-	rs2.extract_list_output(std::back_inserter(isolated_points), std::back_inserter(edges));
+	rs2.list_output (std::back_inserter(isolated_points), std::back_inserter(edges));
 
     int vertex_count = 0;
 	for (std::vector<Point>::iterator it = isolated_points.begin();

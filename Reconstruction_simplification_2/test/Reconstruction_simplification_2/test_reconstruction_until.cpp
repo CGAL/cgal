@@ -39,7 +39,7 @@ int main ()
     std::vector<Point> isolated_points;
 	std::vector<Segment> edges;
 
-	rs2.extract_list_output(std::back_inserter(isolated_points), std::back_inserter(edges));
+	rs2.list_output (std::back_inserter(isolated_points), std::back_inserter(edges));
 
     std::cout << "isolated_points " << isolated_points.size() << std::endl;
     std::cout << "edges " << edges.size() << std::endl;

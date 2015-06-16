@@ -1502,7 +1502,7 @@ bool create_pedge(const Edge& edge, Rec_edge_2& pedge) {
         std::vector<Point> isolated_points_;
         std::vector<Segment> edges;
 
-        extract_list_output(
+        list_output (
       std::back_inserter(isolated_points_), std::back_inserter(edges));
 
         // vertices_of_edges
@@ -1566,7 +1566,7 @@ bool create_pedge(const Edge& edge, Rec_edge_2& pedge) {
     \tparam SegmentOutputIterator The output iterator type for storing the edges as segments.
      */
     template<class PointOutputIterator, class SegmentOutputIterator>
-    void extract_list_output(PointOutputIterator v_it, SegmentOutputIterator e_it) {
+    void list_output (PointOutputIterator v_it, SegmentOutputIterator e_it) {
 
         for (Vertex_iterator vi = m_dt.vertices_begin();
                         vi != m_dt.vertices_end(); ++vi)

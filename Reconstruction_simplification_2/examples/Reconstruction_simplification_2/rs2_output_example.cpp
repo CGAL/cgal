@@ -34,7 +34,7 @@ void list_output(Rs_2& rs2)
   std::vector<Point> isolated_points;
   std::vector<Segment> segments;
   
-  rs2.extract_list_output(
+  rs2.list_output (
     std::back_inserter(isolated_points), std::back_inserter(segments));
   
   std::vector<Point>::iterator pit;

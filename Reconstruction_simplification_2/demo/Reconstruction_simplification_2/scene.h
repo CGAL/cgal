@@ -406,7 +406,7 @@ public:
 	    std::vector<Point> isolated_points;
 		std::vector<Segment> edges;
 
-		m_pwsrec->extract_list_output(std::back_inserter(isolated_points), std::back_inserter(edges));
+		m_pwsrec->list_output (std::back_inserter(isolated_points), std::back_inserter(edges));
 
 
 

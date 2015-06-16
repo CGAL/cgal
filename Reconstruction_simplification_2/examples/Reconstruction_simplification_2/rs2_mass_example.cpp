@@ -57,7 +57,7 @@ int main ()
   std::vector<Point> isolated_vertices;
   std::vector<Segment> edges;
   
-  rs2.extract_list_output(std::back_inserter(isolated_vertices), std::back_inserter(edges));
+  rs2.list_output (std::back_inserter(isolated_vertices), std::back_inserter(edges));
   
   std::cerr << "Isolated vertices" << std::endl;
   std::vector<Point>::iterator vit;
