@@ -25,7 +25,7 @@
 #include <QGLViewer/qglviewer.h>
 #include <QKeyEvent>
 
-static void monCombine(GLdouble c[3], void *d[4], GLfloat w[4], void **out)
+static void monCombine(GLdouble c[3], void */*d*/[4], GLfloat /*w*/[4], void **out)
 {
    GLdouble *nv = (GLdouble *) malloc(sizeof(GLdouble)*3);
    nv[0] = c[0];
@@ -51,7 +51,8 @@ class Viewer : public QGLViewer
   GLuint m_dlEdges;
   GLuint m_dlVertices;
   bool m_displayListCreated;
-
+  bool m_previous_scene_empty;
+  
   GLUtesselator* FTess;
 
   typedef LCC::Dart_handle Dart_handle;
@@ -60,7 +61,8 @@ class Viewer : public QGLViewer
 public:
   Viewer(QWidget* parent)
     : QGLViewer(parent), wireframe(false), flatShading(true),
-      edges(true), vertices(true), m_displayListCreated(false)
+      edges(true), vertices(true), m_displayListCreated(false),
+      m_previous_scene_empty(true)
   {
     QGLFormat newFormat = this->format();
     newFormat.setSampleBuffers(true);
@@ -103,7 +105,7 @@ protected:
   void drawAllEdges();
   void drawAllVertices();
   void drawOneFaceWireframe(Dart_handle);
-  void drawOneFilledFace(Dart_handle);
+  void drawOneFilledFace(Dart_handle, bool flat);
 };
 
 #endif

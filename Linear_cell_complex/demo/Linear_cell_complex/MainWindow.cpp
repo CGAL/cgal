@@ -251,7 +251,6 @@ void MainWindow::on_actionLoad_triggered ()
   if (!fileName.isEmpty ())
   {
     load(fileName, true);
-    viewer->showEntireScene();
   }
 }
 
@@ -265,7 +264,6 @@ void MainWindow::on_actionImportOFF_triggered ()
   if (!fileName.isEmpty ())
   {
     load_off (fileName, true);
-    viewer->showEntireScene();
   }
 }
 
@@ -279,7 +277,6 @@ void MainWindow::on_actionImportMoka_triggered()
   if (!fileName.isEmpty ())
   {
     load_moka(fileName, true);
-    viewer->showEntireScene();
   }
 }
 
@@ -293,7 +290,6 @@ void MainWindow::on_actionImport3DTDS_triggered ()
   if (!fileName.isEmpty ())
   {
     load_3DTDS (fileName, true);
-    viewer->showEntireScene();
     statusBar ()->showMessage (QString ("Import 3DTDS file") + fileName,
                                DELAY_STATUSMSG);
   }
@@ -309,7 +305,6 @@ void MainWindow::on_actionAddOFF_triggered()
   if (!fileName.isEmpty ())
   {
     load_off (fileName, false);
-    viewer->showEntireScene();
   }
 }
 
@@ -319,17 +314,14 @@ void MainWindow::load_depend_on_extension(const QString & fileName, bool clear)
   if ( ext=="3map")
   {
     load(fileName, clear);
-    viewer->showEntireScene();
   }
   else if (ext=="off")
   {
     load_off(fileName, clear);
-    viewer->showEntireScene();
   }
   else if (ext=="moka")
   {
     load_moka(fileName, clear);
-    viewer->showEntireScene();
   }
   else
   {
@@ -998,6 +990,8 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
   CGAL::Timer timer;
   timer.start();
 #endif
+
+  scene.lcc->set_update_attributes(false);
   
   std::vector<Dart_handle> edges;
   int treated =  scene.lcc->get_new_mark();
@@ -1005,20 +999,23 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
   for ( typename LCC::Dart_range::iterator it= scene.lcc->darts().begin(),
           itend = scene.lcc->darts().end(); it!=itend; ++it )
   {
-    if (!scene.lcc->is_marked(it, treated) &&
-        CGAL::is_removable<LCC, 1>(*scene.lcc, it) )
+    if (!scene.lcc->is_marked(it, treated) )
     {
-      LCC::Vector normal1 = CGAL::compute_normal_of_cell_2(*scene.lcc,it);
-      LCC::Vector normal2 = CGAL::compute_normal_of_cell_2(*scene.lcc, scene.lcc->beta<2>(it) );
-      double angle = compute_angle3d(normal1, normal2);
-      
-      if ( ((angle<5.0 or angle>355.0) or (angle<185.0 and angle>175.0)) )
+      if ( CGAL::is_removable<LCC, 1>(*scene.lcc, it) )
       {
-        CGAL::mark_cell<LCC, 1>(*scene.lcc, it, treated);
-        edges.push_back(it);
+        LCC::Vector normal1 = CGAL::compute_normal_of_cell_2(*scene.lcc,it);
+        LCC::Vector normal2 = CGAL::compute_normal_of_cell_2(*scene.lcc, scene.lcc->beta<2>(it) );
+        double angle = compute_angle3d(normal1, normal2);
+        
+        if ( ((angle<5.0 or angle>355.0) or (angle<185.0 and angle>175.0)) )
+        {
+          edges.push_back(it);
+        }
       }
+      CGAL::mark_cell<LCC, 1>(*scene.lcc, it, treated);
     }
   }
+  
   
   for (std::vector<Dart_handle>::iterator it=edges.begin(),
          itend=edges.end(); it!=itend; ++it)
@@ -1034,18 +1031,19 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
         
         CGAL::remove_cell<LCC, 1>(*scene.lcc, actu);
         actu = prev;
+        std::cout<<&(*actu)<<std::endl;
       }
       while (scene.lcc->beta<0, 2>(actu)==actu || scene.lcc->beta<1, 2>(actu)==actu);
     }
     else if ( !CGAL::belong_to_same_cell<LCC, 2>(*scene.lcc, *it,
                                                  scene.lcc->beta<2>(*it)) )
       CGAL::remove_cell<LCC, 1>(*scene.lcc, *it);
-    else
-      CGAL::unmark_cell<LCC, 1>(*scene.lcc, *it, treated);
   }
 
-  assert(scene.lcc->is_whole_map_unmarked(treated));
+  assert(scene.lcc->is_whole_map_marked(treated));
   scene.lcc->free_mark(treated);
+
+  scene.lcc->set_update_attributes(true);
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
@@ -1271,7 +1269,9 @@ void MainWindow::on_actionTriangulate_all_facets_triggered()
   for (LCC::One_dart_per_cell_range<2>::iterator
        it(scene.lcc->one_dart_per_cell<2>().begin()); it.cont(); ++it)
   {
-    if ( scene.lcc->info<3>(it).is_filled_and_visible() )
+    if ( scene.lcc->info<3>(it).is_filled_and_visible() ||
+         (!scene.lcc->is_free<3>(it) &&
+          scene.lcc->info<3>(scene.lcc->beta<3>(it)).is_filled_and_visible()) )
       v.push_back(it);
   }
   

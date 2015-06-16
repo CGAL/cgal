@@ -35,8 +35,14 @@ Viewer::sceneChanged()
                                       qglviewer::Vec(bb.xmax(),
                                                      bb.ymax(),
                                                      bb.zmax()));
-  //  this->showEntireScene();
-  this->updateGL();}
+
+  if (m_previous_scene_empty)
+    this->showEntireScene();
+  else
+    this->updateGL();
+
+  m_previous_scene_empty = scene->lcc->is_empty(); // for the next call to sceneChanged
+}
 
 void Viewer::drawOneFaceWireframe(Dart_handle dh)
 {
@@ -55,7 +61,7 @@ void Viewer::drawOneFaceWireframe(Dart_handle dh)
   ::glEnd();
 }
 
-void Viewer::drawOneFilledFace(Dart_handle dh)
+void Viewer::drawOneFilledFace(Dart_handle dh, bool flat)
 {
   LCC &lcc = *scene->lcc;
 
@@ -73,7 +79,7 @@ void Viewer::drawOneFilledFace(Dart_handle dh)
 
   ::glColor3f(r,g,b);
 
-  if(flatShading)
+  if(flat)
   {
     LCC::Vector normal = CGAL::compute_normal_of_cell_2(lcc,dh);
     normal = normal/(CGAL::sqrt(normal*normal));
@@ -97,7 +103,7 @@ void Viewer::drawOneFilledFace(Dart_handle dh)
     data[1+(i*3)] = p.y();
     data[2+(i*3)] = p.z();
 
-    if(!flatShading)
+    if(!flat)
     {
       // If Gouraud shading: 1 normal per vertex
       LCC::Vector normal = CGAL::compute_normal_of_cell_0(lcc,it);
@@ -114,7 +120,7 @@ void Viewer::drawOneFilledFace(Dart_handle dh)
   data[2+(i*3)] = p.z();
 
   // If Gouraud shading: 1 normal per vertex
-  if(!flatShading)
+  if(!flat)
   {
     LCC::Vector normal = CGAL::compute_normal_of_cell_0(lcc,dh);
     normal = normal/(CGAL::sqrt(normal*normal));
@@ -146,7 +152,7 @@ void Viewer::drawAllFaces(bool flat)
         // We draw the polygon
         if ( it->info().is_filled() )
         {
-          drawOneFilledFace(dartIter);
+          drawOneFilledFace(dartIter, flat);
         }
         else
         {
@@ -238,12 +244,6 @@ void Viewer::drawAllVertices()
   }
 
   ::glEnd();
-
-  if ( lcc.is_empty() )
-  {
-    bb = LCC::Point(CGAL::ORIGIN).bbox();
-    bb = bb + LCC::Point(1,1,1).bbox(); // To avoid a warning from Qglviewer
-  }
 }
 
 void Viewer::initDraw()
