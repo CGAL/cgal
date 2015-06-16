@@ -68,10 +68,6 @@
 //#define CGAL_TC_EXPORT_NORMALS // Only for 3D surfaces (k=2, d=3)
 //#define CGAL_ALPHA_TC
 const double ALPHA = 0.3;
-#ifdef CGAL_LINKED_WITH_TBB
-tbb::atomic<unsigned int> ttt_star; // CJTODO TEMP
-tbb::atomic<unsigned int> ttt_intersect;
-#endif
 
 //CJTODO: debug
 //#define CGAL_TC_COMPUTE_TANGENT_PLANES_FOR_SPHERE_3
@@ -317,8 +313,6 @@ public:
   {
 #if defined(CGAL_TC_PROFILING) && defined(CGAL_LINKED_WITH_TBB)
     Wall_clock_timer t;
-    ttt_intersect = 0;
-    ttt_star = 0;
 #endif
 
     // We need to do that because we don't want the container to copy the
@@ -364,8 +358,6 @@ public:
 #if defined(CGAL_TC_PROFILING) && defined(CGAL_LINKED_WITH_TBB)
     std::cerr << "Tangential complex computed in " << t.elapsed()
               << " seconds." << std::endl;
-    std::cerr << "Intersect: " << ((double)ttt_intersect)/1000000 << " s\n"
-              << "Star: " << ((double)ttt_star)/1000000 << " s\n";
 #endif
   }
 
@@ -1440,10 +1432,6 @@ private:
       }
     }
 
-#if defined(CGAL_TC_PROFILING) && defined(CGAL_LINKED_WITH_TBB)
-    ttt_star += 1000000*t_star.elapsed();
-#endif
-
     //***************************************************
     // Parse the faces of the star and add the ones that are in the
     // restriction to alpha-Tp
@@ -1563,9 +1551,6 @@ next_face:
           does_voronoi_face_and_alpha_tangent_subspace_intersect(
               m_points, m_weights, i, P, curr_neighbors,
               m_orth_spaces[i], alpha, m_k);
-#if defined(CGAL_TC_PROFILING) && defined(CGAL_LINKED_WITH_TBB)
-        ttt_intersect += 1000000*t_inters.elapsed();
-#endif
         if (does_intersect)
         {
           star.push_back(current_DT_face);
