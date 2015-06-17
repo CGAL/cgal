@@ -5,7 +5,7 @@
 #include <iostream>
 #include <vector>
 
-void read(char* fname)
+void read(const char* fname)
 {
   std::ifstream input(fname, std::ios::in | std::ios::binary);
 
@@ -33,7 +33,7 @@ void read(char* fname)
 }
 
 
-int main(int argc, char* argv[])
+int main()
 {
   read("data/cube.stl");
   read("data/triangle.stl");
