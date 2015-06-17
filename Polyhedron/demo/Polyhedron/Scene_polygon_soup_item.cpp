@@ -92,47 +92,50 @@ struct Polyhedron_to_polygon_soup_writer {
 }; // end struct Polyhedron_to_soup_writer
 
 void
-Scene_polygon_soup_item::initialize_buffers()
+Scene_polygon_soup_item::initialize_buffers(Viewer_interface* viewer) const
 {
-
     //vao containing the data for the facets
     {
-        rendering_program_with_light.bind();
+        program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
+        program->bind();
 
         vaos[0].bind();
         buffers[0].bind();
         buffers[0].allocate(positions_poly.data(), positions_poly.size()*sizeof(float));
-        rendering_program_with_light.enableAttributeArray("vertex");
-        rendering_program_with_light.setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[0].release();
 
 
 
         buffers[1].bind();
         buffers[1].allocate(normals.data(), normals.size()*sizeof(float));
-        rendering_program_with_light.enableAttributeArray("normals");
-        rendering_program_with_light.setAttributeBuffer("normals",GL_FLOAT,0,3);
+        program->enableAttributeArray("normals");
+        program->setAttributeBuffer("normals",GL_FLOAT,0,3);
         buffers[1].release();
 
-        rendering_program_with_light.release();
+        program->release();
+        vaos[0].release();
 
     }
     //vao containing the data for the edges
     {
-        rendering_program_without_light.bind();
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program->bind();
         vaos[1].bind();
 
         buffers[3].bind();
         buffers[3].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
-        rendering_program_without_light.enableAttributeArray("vertex");
-        rendering_program_without_light.setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[3].release();
 
-        rendering_program_without_light.release();
+        program->release();
 
         vaos[1].release();
 
     }
+    are_buffers_filled = true;
 }
 
 typedef typename Polyhedron::Traits Traits;
@@ -313,10 +316,11 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
         }
 
         //Lines
-        for(size_type i = 0; i < it->size()-1; i++)
+        for(size_type i = 0; i < it->size(); ++i)
         {
+
             const Point_3& pa = soup->points[it->at(i)];
-            const Point_3& pb = soup->points[it->at(i+1)];
+            const Point_3& pb = soup->points[it->at((i+1)%it->size())];
             positions_lines.push_back(pa.x());
             positions_lines.push_back(pa.y());
             positions_lines.push_back(pa.z());
@@ -337,7 +341,7 @@ Scene_polygon_soup_item::Scene_polygon_soup_item()
       soup(0),positions_poly(0),positions_lines(0), normals(0),
       oriented(false)
 {
-    compile_shaders();
+ qFunc.initializeOpenGLFunctions();
 }
 
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
@@ -510,54 +514,71 @@ Scene_polygon_soup_item::toolTip() const
 
 void
 Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
+    if(!are_buffers_filled)
+    {
+     initialize_buffers(viewer);
+    }
     if(soup == 0) return;
     //Calls the buffer info again so that it's the right one used even if
     //there are several objects drawn
     vaos[0].bind();
-    attrib_buffers(viewer,0);
+    attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
     //fills the arraw of colors with the current color
-    GLfloat colors[4];
-    qFunc.glGetFloatv(GL_CURRENT_COLOR, colors);
-    QVector4D v_colors = QVector4D(colors[0],colors[1],colors[2],colors[3]);
+
+    QColor v_colors = this->color();
     // tells the GPU to use the program just created
-    rendering_program_with_light.bind();
-    rendering_program_with_light.setAttributeValue("colors", v_colors);
+    program = getShaderProgram(PROGRAM_WITH_LIGHT);
+    program->bind();
+    program->setAttributeValue("colors", v_colors);
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
     qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
     // Clean-up
-    rendering_program_with_light.release();
+    program->release();
     vaos[0].release();
 
 }
 
 void
 Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
-
+    if(!are_buffers_filled)
+    {
+     initialize_buffers(viewer);
+    }
     if(soup == 0) return;
     vaos[1].bind();
-    attrib_buffers(viewer,0);
-    rendering_program_without_light.bind();
+    attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    program->bind();
+    QColor color = this->color();
+    program->setAttributeValue("colors", color);
     //draw the points
     qFunc.glDrawArrays(GL_POINTS, 0, positions_lines.size()/4);
     // Clean-up
-    rendering_program_without_light.release();
+    program->release();
     vaos[1].release();
 }
 
 void
 Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
+    if(!are_buffers_filled)
+    {
+     initialize_buffers(viewer);
+    }
     if(soup == 0) return;
 
     vaos[1].bind();
-    attrib_buffers(viewer,0);
-    rendering_program_without_light.bind();
+    attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    program->bind();
+    QColor color=QColor(0,0,0);
+
+    program->setAttributeValue("colors", color);
     //draw the edges
     qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
     // Clean-up
-    rendering_program_without_light.release();
+    program->release();
     vaos[1].release();
-
 }
 
 bool
@@ -569,7 +590,7 @@ void
 Scene_polygon_soup_item::changed()
 {
     compute_normals_and_vertices();
-    initialize_buffers();
+    are_buffers_filled = false;
 }
 
 Scene_polygon_soup_item::Bbox

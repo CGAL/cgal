@@ -171,9 +171,10 @@ private:
     std::vector<float> positions_lines;
     std::vector<float> normals;
 
-    void initialize_buffers();
+    void initialize_buffers(Viewer_interface *viewer) const;
     void compute_normals_and_vertices(void);
     void triangulate_polygon(Polygons_iterator );
+    mutable QOpenGLShaderProgram *program;
 
 }; // end class Scene_polygon_soup_item
 

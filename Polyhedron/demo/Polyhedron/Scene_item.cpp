@@ -240,29 +240,23 @@ void Scene_item::compile_shaders()
 // set-up the uniform attributes of the shader programs.
 void Scene_item::attrib_buffers(Viewer_interface* viewer, int program_name) const
 {
-
     GLint is_both_sides = 0;
     QMatrix4x4 mvp_mat;
     QMatrix4x4 mv_mat;
     QMatrix4x4 f_mat;
     f_mat.setToIdentity();
-
     //fills the MVP and MV matrices.
-
     GLdouble d_mat[16];
     viewer->camera()->getModelViewProjectionMatrix(d_mat);
     //Convert the GLdoubles matrices in GLfloats
     for (int i=0; i<16; ++i){
         mvp_mat.data()[i] = GLfloat(d_mat[i]);
     }
-
     viewer->camera()->getModelViewMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mv_mat.data()[i] = GLfloat(d_mat[i]);
 
-
     qFunc.glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
-
 
     QVector4D position(0.0f,0.0f,1.0f, 1.0f );
     QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
@@ -274,19 +268,15 @@ void Scene_item::attrib_buffers(Viewer_interface* viewer, int program_name) cons
     switch(program_name)
     {
     case PROGRAM_WITH_LIGHT:
-
         shader_programs[PROGRAM_WITH_LIGHT]->bind();
-
         shader_programs[PROGRAM_WITH_LIGHT]->setUniformValue("mvp_matrix", mvp_mat);
         shader_programs[PROGRAM_WITH_LIGHT]->setUniformValue("mv_matrix", mv_mat);
-
         shader_programs[PROGRAM_WITH_LIGHT]->setUniformValue("light_pos", position);
         shader_programs[PROGRAM_WITH_LIGHT]->setUniformValue("light_diff",diffuse);
         shader_programs[PROGRAM_WITH_LIGHT]->setUniformValue("light_spec", specular);
         shader_programs[PROGRAM_WITH_LIGHT]->setUniformValue("light_amb", ambient);
         shader_programs[PROGRAM_WITH_LIGHT]->setUniformValue("spec_power", 51.8f);
         shader_programs[PROGRAM_WITH_LIGHT]->setUniformValue("is_two_side", is_both_sides);
-
         shader_programs[PROGRAM_WITH_LIGHT]->release();
         break;
     case PROGRAM_WITHOUT_LIGHT:
