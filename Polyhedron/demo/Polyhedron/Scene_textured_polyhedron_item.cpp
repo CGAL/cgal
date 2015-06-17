@@ -21,52 +21,54 @@ struct light_info
     GLfloat specular[4];
 };
 
-void Scene_textured_polyhedron_item::initialize_buffers()
+void Scene_textured_polyhedron_item::initialize_buffers(Viewer_interface *viewer = 0) const
 {
     //vao for the facets
     {
-        rendering_program_with_texture.bind();
+        program = getShaderProgram(PROGRAM_WITH_TEXTURE, viewer);
+        program->bind();
         vaos[0].bind();
         buffers[0].bind();
         buffers[0].allocate(positions_facets.data(), positions_facets.size()*sizeof(float));
-        rendering_program_with_texture.enableAttributeArray("vertex");
-        rendering_program_with_texture.setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[0].release();
 
         buffers[1].bind();
         buffers[1].allocate(normals.data(), normals.size()*sizeof(float));
-        rendering_program_with_texture.enableAttributeArray("normal");
-        rendering_program_with_texture.setAttributeBuffer("normal",GL_FLOAT,0,3);
+        program->enableAttributeArray("normal");
+        program->setAttributeBuffer("normal",GL_FLOAT,0,3);
         buffers[1].release();
 
 
         buffers[2].bind();
         buffers[2].allocate(textures_map_facets.data(), textures_map_facets.size()*sizeof(float));
-        rendering_program_with_texture.enableAttributeArray("v_texCoord");
-        rendering_program_with_texture.setAttributeBuffer("v_texCoord",GL_FLOAT,0,2);
+        program->enableAttributeArray("v_texCoord");
+        program->setAttributeBuffer("v_texCoord",GL_FLOAT,0,2);
         buffers[2].release();
         vaos[0].release();
-        rendering_program_with_texture.release();
+        program->release();
     }
 
     //vao for the lines
     {
-        rendering_program_edges.bind();
+        program = getShaderProgram(PROGRAM_WITH_TEXTURED_EDGES, viewer);
+        program->bind();
         vaos[1].bind();
         buffers[3].bind();
         buffers[3].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
-        rendering_program_with_texture.enableAttributeArray("vertex");
-        rendering_program_with_texture.setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[3].release();
 
 
         buffers[4].bind();
         buffers[4].allocate(textures_map_lines.data(), textures_map_lines.size()*sizeof(float));
-        rendering_program_with_texture.enableAttributeArray("v_texCoord");
-        rendering_program_with_texture.setAttributeBuffer("v_texCoord",GL_FLOAT,0,2);
+        program->enableAttributeArray("v_texCoord");
+        program->setAttributeBuffer("v_texCoord",GL_FLOAT,0,2);
         buffers[4].release();
         vaos[1].release();
-        rendering_program_edges.release();
+        program->release();
     }
     qFunc.glActiveTexture(GL_TEXTURE0);
     qFunc.glBindTexture(GL_TEXTURE_2D, textureId);
@@ -85,104 +87,8 @@ void Scene_textured_polyhedron_item::initialize_buffers()
     qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
+    are_buffers_filled = true;
 }
-
-void Scene_textured_polyhedron_item::compile_shaders(void)
-{
-    Scene_item::compile_shaders();
-
-    //For the edges
-    const char vertex_shader_source[] =
-    {
-        "attribute highp vec4 vertex; \n"
-        "attribute highp vec2 v_texCoord; \n"
-        "uniform highp vec3 color_lines; \n"
-        "uniform highp mat4 mvp_matrix; \n"
-        "varying highp vec3 fColors; \n"
-        "varying highp vec2 f_texCoord; \n"
-        " \n"
-        "void main(void) \n"
-        "{ \n"
-        "   f_texCoord = v_texCoord; \n"
-        "   fColors = color_lines; \n"
-        "   gl_Position = mvp_matrix * vertex; \n"
-        "} \n"
-    };
-
-     const char fragment_shader_source[] =
-    {
-        "varying highp vec3 fColors; \n"
-        "varying highp vec2 f_texCoord; \n"
-        "uniform highp sampler2D s_texture; \n"
-        " \n"
-        "void main(void) \n"
-        "{ \n"
-        " gl_FragColor = vec4(vec3(texture(s_texture, f_texCoord))*fColors, 1.0); \n"
-         "}\n"
-    };
-
-
-    QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
-    if(!vertex_shader->compileSourceCode(vertex_shader_source))
-    {
-        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
-    }
-
-    QOpenGLShader *fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
-    if(!fragment_shader->compileSourceCode(fragment_shader_source))
-    {
-        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
-    }
-
-    if(!rendering_program_edges.addShader(vertex_shader))
-    {
-        std::cerr<<"adding vertex shader FAILED"<<std::endl;
-    }
-    if(!rendering_program_edges.addShader(fragment_shader))
-    {
-        std::cerr<<"adding fragment shader FAILED"<<std::endl;
-    }
-    if(!rendering_program_edges.link())
-    {
-        std::cerr<<"linking Program FAILED"<<std::endl;
-    }
-    rendering_program_edges.bind();
-
-
-}
-
-
-void Scene_textured_polyhedron_item::uniform_attrib(Viewer_interface* viewer) const
-{
-
-    QMatrix4x4 mvp_mat;
-
-    //fills the MVP and MV matrices.
-
-    GLdouble d_mat[16];
-    viewer->camera()->getModelViewProjectionMatrix(d_mat);
-    //Convert the GLdoubles matrices in GLfloats
-    for (int i=0; i<16; ++i){
-        mvp_mat.data()[i] = GLfloat(d_mat[i]);
-    }
-
-    QColor temp = this->color();
-    rendering_program_edges.bind();
-    if(is_selected)
-    {
-       rendering_program_edges.setUniformValue("color_lines",QVector3D(0.0,0.0,0.0));
-    }
-    else
-    {
-        rendering_program_edges.setUniformValue("color_lines", QVector3D(temp.lighter(50).redF(), temp.lighter(50).greenF(), temp.lighter(50).blueF()));
-
-    }
-
-    rendering_program_edges.setUniformValue("mvp_matrix", mvp_mat);
-    rendering_program_edges.setUniformValue("s_texture",0);
-    rendering_program_edges.release();
-}
-
 
 void
 Scene_textured_polyhedron_item::compute_normals_and_vertices(void)
@@ -387,23 +293,30 @@ Scene_textured_polyhedron_item::toolTip() const
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 void Scene_textured_polyhedron_item::draw(Viewer_interface* viewer) const {
 
-    vaos[0].bind();
-    attrib_buffers(viewer);
+    if(!are_buffers_filled)
+        initialize_buffers(viewer);
 
-    rendering_program_with_texture.bind();
+    vaos[0].bind();
+    attrib_buffers(viewer, PROGRAM_WITH_TEXTURE);
+    program=getShaderProgram(PROGRAM_WITH_TEXTURE);
+    program->bind();
     qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/4);
     //Clean-up
-    rendering_program_with_texture.release();
+    program->release();
     vaos[0].release();
 }
 void Scene_textured_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
-    vaos[1].bind();
-    uniform_attrib(viewer);
+    if(!are_buffers_filled)
+        initialize_buffers(viewer);
 
-    rendering_program_edges.bind();
+    vaos[1].bind();
+    attrib_buffers(viewer, PROGRAM_WITH_TEXTURED_EDGES);
+
+    program=getShaderProgram(PROGRAM_WITH_TEXTURED_EDGES);
+    program->bind();
     qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
     //Clean-up
-    rendering_program_edges.release();
+    program->release();
     vaos[1].release();
 }
 
@@ -433,8 +346,7 @@ void
 Scene_textured_polyhedron_item::changed()
 {
     compute_normals_and_vertices();
-    initialize_buffers();
-}
+    are_buffers_filled = false;}
 void
 Scene_textured_polyhedron_item::
 contextual_changed()

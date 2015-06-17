@@ -121,14 +121,6 @@ void Scene_item::select(double /*orig_x*/,
 //set-up the shader programs
 void Scene_item::compile_shaders()
 {
-    qFunc.initializeOpenGLFunctions();
-    for(int i=0; i<10; i++)
-    {
-     if(!buffers[i].create())
-         qDebug()<<"ERROR";
-     if(!vaos[i].create())
-         qDebug()<<"ERROR";
-    }
     //fill the vertex shader
     const char vertex_shader_source[] =
     {"attribute highp vec4 vertex;\n"
@@ -228,73 +220,12 @@ void Scene_item::compile_shaders()
     }
     rendering_program_without_light.bind();
 
-    //fill the vertex shader
-    const char vertex_shader_with_texture_source[] =
-    {
-        "attribute highp vec4 vertex; \n"
-        "attribute highp vec3 normal; \n"
-        "attribute highp vec3 color_facets; \n"
-        "attribute highp vec2 v_texCoord; \n"
 
-        "uniform highp mat4 mvp_matrix; \n"
-        "uniform highp mat4 mv_matrix; \n"
-        "uniform highp int is_two_side; \n"
-        "uniform highp vec4 light_pos;  \n"
-        "uniform highp vec4 light_diff; \n"
-        "uniform highp vec3 light_spec; \n"
-        "uniform highp vec4 light_amb;  \n"
-        "uniform highp float spec_power; \n"
-        "varying highp vec3 fColors; \n"
-        "varying highp vec2 f_texCoord; \n"
-        " \n"
-        "void main(void) \n"
-        "{ \n"
-        "   vec4 P = mv_matrix * vertex; \n"
-        "   vec3 N = mat3(mv_matrix)* normal; \n"
-        "   vec3 L = light_pos.xyz - P.xyz; \n"
-        "   N = normalize(N); \n"
-        "   L = normalize(L); \n"
-        "   vec3 diffuse; \n"
-        "   if(is_two_side == 1) \n"
-        "       diffuse = abs(dot(N,L)) * light_diff.xyz; \n"
-        "   else \n"
-        "       diffuse = max(dot(N,L), 0.0) * light_diff.xyz; \n"
-        "   f_texCoord = v_texCoord; \n"
-        "   fColors = color_facets * (light_amb.xyz + diffuse); \n"
-        "   gl_Position =  mvp_matrix * vertex; \n"
-        "} \n"
-
-    };
-    //fill the fragment shader
-    const char fragment_with_texture_shader_source[]=
-    {        
-        "varying highp vec3 fColors; \n"
-        "varying highp vec2 f_texCoord; \n"
-        "uniform sampler2D s_texture; \n"
-        " \n"
-        "void main(void) \n"
-        "{ \n"
-        " gl_FragColor = vec4(vec3(texture(s_texture, f_texCoord))*fColors, 1.0); \n"
-        "} \n"
-    };
-
-    QOpenGLShader *vertex_with_texture_shader = new QOpenGLShader(QOpenGLShader::Vertex);
-    if(!vertex_with_texture_shader->compileSourceCode(vertex_shader_with_texture_source))
-    {
-        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
-    }
-
-    QOpenGLShader *fragment_with_texture_shader= new QOpenGLShader(QOpenGLShader::Fragment);
-    if(!fragment_with_texture_shader->compileSourceCode(fragment_with_texture_shader_source))
-    {
-        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
-    }
-
-    if(!rendering_program_with_texture.addShader(vertex_with_texture_shader))
+    if(!rendering_program_with_texture.addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_with_texture.v"))
     {
         std::cerr<<"adding vertex shader FAILED"<<std::endl;
     }
-    if(!rendering_program_with_texture.addShader(fragment_with_texture_shader))
+    if(!rendering_program_with_texture.addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_with_texture.f"))
     {
         std::cerr<<"adding fragment shader FAILED"<<std::endl;
     }
@@ -307,8 +238,9 @@ void Scene_item::compile_shaders()
 }
 
 // set-up the uniform attributes of the shader programs.
-void Scene_item::attrib_buffers(Viewer_interface* viewer) const
+void Scene_item::attrib_buffers(Viewer_interface* viewer, int program_name) const
 {
+
     GLint is_both_sides = 0;
     QMatrix4x4 mvp_mat;
     QMatrix4x4 mv_mat;
@@ -335,59 +267,243 @@ void Scene_item::attrib_buffers(Viewer_interface* viewer) const
     QVector4D diffuse(1.0f, 1.0f, 1.0f, 1.0f);
     // Specular
     QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
-
     QColor temp = this->color();
-    if(is_selected)
+    switch(program_name)
     {
+    case PROGRAM_WITH_LIGHT:
 
-       rendering_program_with_texture.setAttributeValue("color_facets", temp.lighter(120).redF(),temp.lighter(120).greenF(), temp.lighter(120).blueF());
+        shader_programs[PROGRAM_WITH_LIGHT]->bind();
+
+        shader_programs[PROGRAM_WITH_LIGHT]->setUniformValue("mvp_matrix", mvp_mat);
+        shader_programs[PROGRAM_WITH_LIGHT]->setUniformValue("mv_matrix", mv_mat);
+
+        shader_programs[PROGRAM_WITH_LIGHT]->setUniformValue("light_pos", position);
+        shader_programs[PROGRAM_WITH_LIGHT]->setUniformValue("light_diff",diffuse);
+        shader_programs[PROGRAM_WITH_LIGHT]->setUniformValue("light_spec", specular);
+        shader_programs[PROGRAM_WITH_LIGHT]->setUniformValue("light_amb", ambient);
+        shader_programs[PROGRAM_WITH_LIGHT]->setUniformValue("spec_power", 51.8f);
+        shader_programs[PROGRAM_WITH_LIGHT]->setUniformValue("is_two_side", is_both_sides);
+
+        shader_programs[PROGRAM_WITH_LIGHT]->release();
+        break;
+    case PROGRAM_WITHOUT_LIGHT:
+        shader_programs[PROGRAM_WITHOUT_LIGHT]->bind();
+        shader_programs[PROGRAM_WITHOUT_LIGHT]->setUniformValue("mvp_matrix", mvp_mat);
+        shader_programs[PROGRAM_WITHOUT_LIGHT]->setUniformValue("mv_matrix", mv_mat);
+
+        shader_programs[PROGRAM_WITHOUT_LIGHT]->setUniformValue("light_pos", position);
+        shader_programs[PROGRAM_WITHOUT_LIGHT]->setUniformValue("light_diff", diffuse);
+        shader_programs[PROGRAM_WITHOUT_LIGHT]->setUniformValue("light_spec", specular);
+        shader_programs[PROGRAM_WITHOUT_LIGHT]->setUniformValue("light_amb", ambient);
+        shader_programs[PROGRAM_WITHOUT_LIGHT]->setUniformValue("spec_power", 51.8f);
+        shader_programs[PROGRAM_WITHOUT_LIGHT]->setUniformValue("is_two_side", is_both_sides);
+        shader_programs[PROGRAM_WITHOUT_LIGHT]->setAttributeValue("normals", 0.0,0.0,0.0);
+
+
+        shader_programs[PROGRAM_WITHOUT_LIGHT]->release();
+        break;
+    case PROGRAM_WITH_TEXTURE:
+        if(is_selected)
+        {
+
+            shader_programs[PROGRAM_WITH_TEXTURE]->setAttributeValue("color_facets", temp.lighter(120).redF(),temp.lighter(120).greenF(), temp.lighter(120).blueF());
+        }
+        else
+        {
+            shader_programs[PROGRAM_WITH_TEXTURE]->setAttributeValue("color_facets", temp.redF(),temp.greenF(), temp.blueF());
+        }
+
+        shader_programs[PROGRAM_WITH_TEXTURE]->bind();
+        shader_programs[PROGRAM_WITH_TEXTURE]->setUniformValue("mvp_matrix", mvp_mat);
+        shader_programs[PROGRAM_WITH_TEXTURE]->setUniformValue("mv_matrix", mv_mat);
+        shader_programs[PROGRAM_WITH_TEXTURE]->setUniformValue("light_pos", position);
+        shader_programs[PROGRAM_WITH_TEXTURE]->setUniformValue("light_diff",diffuse);
+        shader_programs[PROGRAM_WITH_TEXTURE]->setUniformValue("light_spec", specular);
+        shader_programs[PROGRAM_WITH_TEXTURE]->setUniformValue("light_amb", ambient);
+        shader_programs[PROGRAM_WITH_TEXTURE]->setUniformValue("spec_power", 51.8f);
+        shader_programs[PROGRAM_WITH_TEXTURE]->setUniformValue("s_texture",0);
+
+
+        shader_programs[PROGRAM_WITH_TEXTURE]->release();
+        break;
+    case PROGRAM_WITH_TEXTURED_EDGES:
+        shader_programs[PROGRAM_WITH_TEXTURED_EDGES]->bind();
+        if(is_selected)
+        {
+            shader_programs[PROGRAM_WITH_TEXTURED_EDGES]->setUniformValue("color_lines",QVector3D(0.0,0.0,0.0));
+        }
+        else
+        {
+            shader_programs[PROGRAM_WITH_TEXTURED_EDGES]->setUniformValue("color_lines", QVector3D(temp.lighter(50).redF(), temp.lighter(50).greenF(), temp.lighter(50).blueF()));
+
+        }
+
+        shader_programs[PROGRAM_WITH_TEXTURED_EDGES]->setUniformValue("mvp_matrix", mvp_mat);
+        shader_programs[PROGRAM_WITH_TEXTURED_EDGES]->setUniformValue("s_texture",0);
+        shader_programs[PROGRAM_WITH_TEXTURED_EDGES]->release();
+        break;
+    case PROGRAM_INSTANCED:
+
+        shader_programs[PROGRAM_INSTANCED]->bind();
+        shader_programs[PROGRAM_INSTANCED]->setUniformValue("mvp_matrix", mvp_mat);
+        shader_programs[PROGRAM_INSTANCED]->setUniformValue("mv_matrix", mv_mat);
+
+        shader_programs[PROGRAM_INSTANCED]->setUniformValue("light_pos", position);
+        shader_programs[PROGRAM_INSTANCED]->setUniformValue("light_diff",diffuse);
+        shader_programs[PROGRAM_INSTANCED]->setUniformValue("light_spec", specular);
+        shader_programs[PROGRAM_INSTANCED]->setUniformValue("light_amb", ambient);
+        shader_programs[PROGRAM_INSTANCED]->setUniformValue("spec_power", 51.8f);
+        shader_programs[PROGRAM_INSTANCED]->setUniformValue("is_two_side", is_both_sides);
+        shader_programs[PROGRAM_INSTANCED]->release();
+
+        break;
+    case PROGRAM_INSTANCED_WIRE:
+        shader_programs[PROGRAM_INSTANCED_WIRE]->bind();
+        shader_programs[PROGRAM_INSTANCED_WIRE]->setUniformValue("mvp_matrix", mvp_mat);
+        shader_programs[PROGRAM_INSTANCED_WIRE]->release();
+        break;
     }
-    else
+}
+
+
+QOpenGLShaderProgram* Scene_item::getShaderProgram(int name, Viewer_interface * viewer) const
+{
+    switch(name)
     {
-        rendering_program_with_texture.setAttributeValue("color_facets", temp.redF(),temp.greenF(), temp.blueF());
+    case PROGRAM_WITH_LIGHT:
+        if(shader_programs[PROGRAM_WITH_LIGHT])
+        {
+            return shader_programs[PROGRAM_WITH_LIGHT];
+        }
+
+        else
+        {
+
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_with_light.v"))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_with_light.f"))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->link();
+            shader_programs[PROGRAM_WITH_LIGHT] = program;
+            return program;
+        }
+        break;
+    case PROGRAM_WITHOUT_LIGHT:
+        if( shader_programs[PROGRAM_WITHOUT_LIGHT])
+        {
+            return shader_programs[PROGRAM_WITHOUT_LIGHT];
+        }
+        else
+        {
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_without_light.v"))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_without_light.f"))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->link();
+            shader_programs[PROGRAM_WITHOUT_LIGHT] = program;
+            return program;
+        }
+        break;
+    case PROGRAM_WITH_TEXTURE:
+        if( shader_programs[PROGRAM_WITH_TEXTURE])
+        {
+            return shader_programs[PROGRAM_WITH_TEXTURE];
+        }
+        else
+        {
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_with_texture.v"))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_with_texture.f"))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->link();
+            shader_programs[PROGRAM_WITH_TEXTURE] = program;
+            return program;
+        }
+        break;
+    case PROGRAM_WITH_TEXTURED_EDGES:
+        if( shader_programs[PROGRAM_WITH_TEXTURED_EDGES])
+        {
+            return shader_programs[PROGRAM_WITH_TEXTURED_EDGES];
+        }
+        else
+        {
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_with_textured_edges.v" ))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_with_textured_edges.f" ))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->link();
+            shader_programs[PROGRAM_WITH_TEXTURED_EDGES] = program;
+            return program;
+
+        }
+        break;
+    case PROGRAM_INSTANCED:
+        if( shader_programs[PROGRAM_INSTANCED])
+        {
+            return shader_programs[PROGRAM_INSTANCED];
+        }
+        else
+        {
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_instanced.v" ))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_with_light.f" ))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->link();
+            shader_programs[PROGRAM_INSTANCED] = program;
+            return program;
+
+        }
+        break;
+    case PROGRAM_INSTANCED_WIRE:
+        if( shader_programs[PROGRAM_INSTANCED_WIRE])
+        {
+            return shader_programs[PROGRAM_INSTANCED_WIRE];
+        }
+        else
+        {
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_instanced.v" ))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_without_light.f" ))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->link();
+            shader_programs[PROGRAM_INSTANCED_WIRE] = program;
+            return program;
+
+        }
+        break;
+    default:
+        std::cerr<<"ERROR : Program not found."<<std::endl;
     }
-
-    rendering_program_with_light.bind();
-
-    rendering_program_with_light.setUniformValue("mvp_matrix", mvp_mat);
-    rendering_program_with_light.setUniformValue("mv_matrix", mv_mat);
-
-    rendering_program_with_light.setUniformValue("light_pos", position);
-    rendering_program_with_light.setUniformValue("light_diff",diffuse);
-    rendering_program_with_light.setUniformValue("light_spec", specular);
-    rendering_program_with_light.setUniformValue("light_amb", ambient);
-    rendering_program_with_light.setUniformValue("spec_power", 51.8f);
-    rendering_program_with_light.setUniformValue("is_two_side", is_both_sides);
-
-    rendering_program_with_light.release();
-
-    rendering_program_without_light.bind();
-    rendering_program_without_light.setUniformValue("mvp_matrix", mvp_mat);
-    rendering_program_without_light.setUniformValue("mv_matrix", mv_mat);
-
-    rendering_program_without_light.setUniformValue("light_pos", position);
-    rendering_program_without_light.setUniformValue("light_diff", diffuse);
-    rendering_program_without_light.setUniformValue("light_spec", specular);
-    rendering_program_without_light.setUniformValue("light_amb", ambient);
-    rendering_program_without_light.setUniformValue("spec_power", 51.8f);
-    rendering_program_without_light.setUniformValue("is_two_side", is_both_sides);
-    rendering_program_without_light.setAttributeValue("normals", 0.0,0.0,0.0);
-
-
-    rendering_program_without_light.release();
-
-    rendering_program_with_texture.bind();
-    rendering_program_with_texture.setUniformValue("mvp_matrix", mvp_mat);
-    rendering_program_with_texture.setUniformValue("mv_matrix", mv_mat);
-    rendering_program_with_texture.setUniformValue("light_pos", position);
-    rendering_program_with_texture.setUniformValue("light_diff",diffuse);
-    rendering_program_with_texture.setUniformValue("light_spec", specular);
-    rendering_program_with_texture.setUniformValue("light_amb", ambient);
-    rendering_program_with_texture.setUniformValue("spec_power", 51.8f);
-    rendering_program_with_texture.setUniformValue("s_texture",0);
-
-
-    rendering_program_with_texture.release();
 }
 #include "Scene_item.moc"
 

@@ -317,243 +317,109 @@ struct light_info
 };
 
 void
-Scene_polyhedron_item::initialize_buffers()
+Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
 {
     //vao containing the data for the unselected facets
     {
-        rendering_program_with_light.bind();
+        program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
+        program->bind();
 
         vaos[0].bind();
         buffers[0].bind();
         buffers[0].allocate(positions_facets.data(), positions_facets.size()*sizeof(float));
-        rendering_program_with_light.enableAttributeArray("vertex");
-        rendering_program_with_light.setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[0].release();
 
 
 
         buffers[1].bind();
         buffers[1].allocate(normals.data(), normals.size()*sizeof(float));
-        rendering_program_with_light.enableAttributeArray("normals");
-        rendering_program_with_light.setAttributeBuffer("normals",GL_FLOAT,0,3);
+        program->enableAttributeArray("normals");
+        program->setAttributeBuffer("normals",GL_FLOAT,0,3);
         buffers[1].release();
 
         buffers[2].bind();
         buffers[2].allocate(color_facets.data(), color_facets.size()*sizeof(float));
-        rendering_program_with_light.enableAttributeArray("colors");
-        rendering_program_with_light.setAttributeBuffer("colors",GL_FLOAT,0,3);
+        program->enableAttributeArray("colors");
+        program->setAttributeBuffer("colors",GL_FLOAT,0,3);
         buffers[2].release();
         vaos[0].release();
-        rendering_program_with_light.release();
+        program->release();
 
     }
     //vao containing the data for the unselected lines
     {
-        rendering_program_without_light.bind();
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program->bind();
         vaos[1].bind();
 
         buffers[3].bind();
         buffers[3].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
-        rendering_program_without_light.enableAttributeArray("vertex");
-        rendering_program_without_light.setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[3].release();
 
         buffers[4].bind();
         buffers[4].allocate(color_lines.data(), color_lines.size()*sizeof(float));
-        rendering_program_without_light.enableAttributeArray("colors");
-        rendering_program_without_light.setAttributeBuffer("colors",GL_FLOAT,0,3);
+        program->enableAttributeArray("colors");
+        program->setAttributeBuffer("colors",GL_FLOAT,0,3);
         buffers[4].release();
-        rendering_program_without_light.release();
+        program->release();
 
         vaos[1].release();
 
     }
     //vao containing the data for the selected facets
     {
-        rendering_program_with_light.bind();
+        program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
+        program->bind();
         vaos[2].bind();
 
 
         buffers[5].bind();
         buffers[5].allocate(positions_facets.data(), positions_facets.size()*sizeof(float));
-        rendering_program_with_light.enableAttributeArray("vertex");
-        rendering_program_with_light.setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[5].release();
 
         buffers[6].bind();
         buffers[6].allocate(normals.data(), normals.size()*sizeof(float));
-        rendering_program_with_light.enableAttributeArray("normals");
-        rendering_program_with_light.setAttributeBuffer("normals",GL_FLOAT,0,3);
+        program->enableAttributeArray("normals");
+        program->setAttributeBuffer("normals",GL_FLOAT,0,3);
         buffers[6].release();
 
 
         buffers[7].bind();
         buffers[7].allocate(color_facets_selected.data(), color_facets_selected.size()*sizeof(float));
-        rendering_program_with_light.enableAttributeArray("colors");
-        rendering_program_with_light.setAttributeBuffer("colors",GL_FLOAT,0,3);
+        program->enableAttributeArray("colors");
+        program->setAttributeBuffer("colors",GL_FLOAT,0,3);
         buffers[7].release();
-        rendering_program_with_light.release();
+        program->release();
 
         vaos[2].release();
     }
     //vao containing the data for the selected lines
     {
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         vaos[3].bind();
-        rendering_program_without_light.bind();
+        program->bind();
         buffers[8].bind();
         buffers[8].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
-
-        rendering_program_without_light.enableAttributeArray("vertex");
-        rendering_program_without_light.setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[8].release();
 
         buffers[9].bind();
         buffers[9].allocate(color_lines_selected.data(), color_lines_selected.size()*sizeof(float));
-        rendering_program_without_light.enableAttributeArray("colors");
-        rendering_program_without_light.setAttributeBuffer("colors",GL_FLOAT,0,3);
+        program->enableAttributeArray("colors");
+        program->setAttributeBuffer("colors",GL_FLOAT,0,3);
         buffers[9].release();
-        rendering_program_without_light.release();
+        program->release();
 
         vaos[3].release();
     }
-
-    /*  qFunc.glBindVertexArray(vaos[0]);
-
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (positions_facets.size())*sizeof(float),
-                 positions_facets.data(),
-                 GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(0, //number of the buffer
-                          4, //number of floats to be taken
-                          GL_FLOAT, // type of data
-                          GL_FALSE, //not normalized
-                          0, //compact data (not in a struct)
-                          NULL //no offset (seperated in several buffers)
-                          );
-    qFunc.glEnableVertexAttribArray(0);
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (positions_lines.size())*sizeof(float),
-                 positions_lines.data(),
-                 GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(1, //number of the buffer
-                          4, //number of floats to be taken
-                          GL_FLOAT, // type of data
-                          GL_FALSE, //not normalized
-                          0, //compact data (not in a struct)
-                          NULL //no offset (seperated in several buffers)
-                          );
-    qFunc.glEnableVertexAttribArray(1);
-
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (normals.size())*sizeof(float),
-                 normals.data(), GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(2,
-                          3,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          0,
-                          NULL
-                          );
-    qFunc.glEnableVertexAttribArray(2);
-
-   qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[3]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (color_facets.size())*sizeof(float),
-                 color_facets.data(), GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(3,
-                          3,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          0,
-                          NULL
-                          );
-    qFunc.glEnableVertexAttribArray(3);
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[4]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (color_lines.size())*sizeof(float),
-                 color_lines.data(), GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(4,
-                          3,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          0,
-                          NULL
-                          );
-    qFunc.glEnableVertexAttribArray(4);
-    qFunc.glBindVertexArray(vaos[1]);
-
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[5]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (positions_facets.size())*sizeof(float),
-                 positions_facets.data(),
-                 GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(0, //number of the buffer
-                          4, //number of floats to be taken
-                          GL_FLOAT, // type of data
-                          GL_FALSE, //not normalized
-                          0, //compact data (not in a struct)
-                          NULL //no offset (seperated in several buffers)
-                          );
-    qFunc.glEnableVertexAttribArray(0);
-
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[6]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (positions_lines.size())*sizeof(float),
-                 positions_lines.data(),
-                 GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(1, //number of the buffer
-                          4, //number of floats to be taken
-                          GL_FLOAT, // type of data
-                          GL_FALSE, //not normalized
-                          0, //compact data (not in a struct)
-                          NULL //no offset (seperated in several buffers)
-                          );
-    qFunc.glEnableVertexAttribArray(1);
-
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[7]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (normals.size())*sizeof(float),
-                 normals.data(), GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(2,
-                          3,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          0,
-                          NULL
-                          );
-    qFunc.glEnableVertexAttribArray(2);
-
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[8]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (color_facets_selected.size())*sizeof(float),
-                 color_facets_selected.data(), GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(3,
-                          3,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          0,
-                          NULL
-                          );
-    qFunc.glEnableVertexAttribArray(3);
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[9]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (color_lines_selected.size())*sizeof(float),
-                 color_lines_selected.data(), GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(4,
-                          3,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          0,
-                          NULL
-                          );
-    qFunc.glEnableVertexAttribArray(4);
-    // Clean-up
-    qFunc.glBindVertexArray(0);*/
-
-
+    are_buffers_filled = true;
 }
 
 void
@@ -791,10 +657,9 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     cur_shading=GL_FLAT;
     is_selected = true;
     init();
-    //qFunc.glGenVertexArrays(2, vao);
     //Generates an integer which will be used as ID for each buffer
-    //qFunc.glGenBuffers(10, buffer);
-    compile_shaders();
+    //compile_shaders();
+
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
@@ -819,7 +684,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     //qFunc.glGenVertexArrays(2, vao);
     //Generates an integer which will be used as ID for each buffer
     //qFunc.glGenBuffers(10, buffer);
-    compile_shaders();
+   // compile_shaders();
     changed();
 }
 
@@ -845,7 +710,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     //qFunc.glGenVertexArrays(2, vao);
     //Generates an integer which will be used as ID for each buffer
     //qFunc.glGenBuffers(10, buffer);
-    compile_shaders();
+   // compile_shaders();
     changed();
 }
 
@@ -862,11 +727,6 @@ Scene_polyhedron_item::~Scene_polyhedron_item()
     //qFunc.glDeleteVertexArrays(2, vao);
     //qFunc.glDeleteProgram(rendering_program_with_light);
     //qFunc.glDeleteProgram(rendering_program_without_light);
-    for(int i=0; i<10; i++)
-    {
-        buffers[i].destroy();
-        vaos[i].destroy();
-    }
     delete_aabb_tree(this);
     delete poly;
 }
@@ -1005,16 +865,21 @@ void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
 }
 
 void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
+    if(!are_buffers_filled)
+        initialize_buffers(viewer);
+
+
     if(!is_selected)
         vaos[0].bind();
     else
     {
         vaos[2].bind();
     }
-    attrib_buffers(viewer);
-    rendering_program_with_light.bind();
+    attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
+    program = getShaderProgram(PROGRAM_WITH_LIGHT);
+    program->bind();
     qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/4);
-    rendering_program_with_light.release();
+    program->release();
     if(!is_selected)
         vaos[0].release();
     else
@@ -1032,11 +897,12 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     {
         vaos[3].bind();
     }
-    attrib_buffers(viewer);
-    rendering_program_without_light.bind();
+    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    program->bind();
     //draw the edges
     qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
-    rendering_program_without_light.release();
+    program->release();
     if(!is_selected)
         vaos[1].release();
     else
@@ -1047,12 +913,12 @@ void
 Scene_polyhedron_item::draw_points(Viewer_interface* viewer) const {
 
     vaos[1].bind();
-    attrib_buffers(viewer);
-    rendering_program_without_light.bind();
+    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    program->bind();
     //draw the points
     qFunc.glDrawArrays(GL_POINTS, 0, positions_lines.size()/4);
     // Clean-up
-    rendering_program_without_light.release();
+    program->release();
     vaos[1].release();
 }
 
@@ -1090,7 +956,7 @@ changed()
     Base::changed();
     is_Triangulated();
     compute_normals_and_vertices();
-    initialize_buffers();
+    are_buffers_filled = false;
 
 }
 void

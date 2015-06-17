@@ -60,12 +60,10 @@ private:
 
 
   GLuint textureId;
-  mutable QOpenGLShaderProgram rendering_program_edges;
+  mutable QOpenGLShaderProgram* program;
 
   bool smooth_shading;
-  void initialize_buffers();
-  void compile_shaders(void);
-  void uniform_attrib(Viewer_interface*) const;
+  void initialize_buffers(Viewer_interface *viewer) const;
   void compute_normals_and_vertices(void);
 
 

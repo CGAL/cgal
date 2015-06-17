@@ -514,7 +514,7 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     //Calls the buffer info again so that it's the right one used even if
     //there are several objects drawn
     vaos[0].bind();
-    attrib_buffers(viewer);
+    attrib_buffers(viewer,0);
     //fills the arraw of colors with the current color
     GLfloat colors[4];
     qFunc.glGetFloatv(GL_CURRENT_COLOR, colors);
@@ -536,7 +536,7 @@ Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
 
     if(soup == 0) return;
     vaos[1].bind();
-    attrib_buffers(viewer);
+    attrib_buffers(viewer,0);
     rendering_program_without_light.bind();
     //draw the points
     qFunc.glDrawArrays(GL_POINTS, 0, positions_lines.size()/4);
@@ -550,7 +550,7 @@ Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
     if(soup == 0) return;
 
     vaos[1].bind();
-    attrib_buffers(viewer);
+    attrib_buffers(viewer,0);
     rendering_program_without_light.bind();
     //draw the edges
     qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/4);

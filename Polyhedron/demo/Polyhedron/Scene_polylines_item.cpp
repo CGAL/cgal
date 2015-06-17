@@ -41,7 +41,6 @@ typedef K::Point_3 Point_3;
 //Fill the VBO with coordinates of the vertices composing a sphere
 void Scene_polylines_item::create_Sphere(double R)
 {
-
     float T, P;
     float x[4],y[4],z[4];
 
@@ -256,331 +255,98 @@ private:
 };
 
 void
-Scene_polylines_item::initialize_buffers()
+Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
 {
+//vao for the lines
+    {
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program->bind();
 
-    qFunc.glBindVertexArray(vao[0]);
+        vaos[0].bind();
+        buffers[0].bind();
+        buffers[0].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        buffers[0].release();
+        vaos[0].release();
+        program->release();
+    }
 
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (positions_lines.size())*sizeof(float),
-                 positions_lines.data(),
-                 GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(0, //number of the buffer
-                          4, //number of floats to be taken
-                          GL_FLOAT, // type of data
-                          GL_FALSE, //not normalized
-                          0, //compact data (not in a struct)
-                          NULL //no offset (seperated in several buffers)
-                          );
-    qFunc.glEnableVertexAttribArray(0);
+   //vao for the spheres
+    {
+        program = getShaderProgram(PROGRAM_INSTANCED, viewer);
+        program->bind();
 
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (positions_spheres.size())*sizeof(float),
-                 positions_spheres.data(),
-                 GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(1, //number of the buffer
-                          4, //number of floats to be taken
-                          GL_FLOAT, // type of data
-                          GL_FALSE, //not normalized
-                          0, //compact data (not in a struct)
-                          NULL //no offset (seperated in several buffers)
-                          );
-    qFunc.glEnableVertexAttribArray(1);
+        vaos[1].bind();
+        buffers[1].bind();
+        buffers[1].allocate(positions_spheres.data(), positions_spheres.size()*sizeof(float));
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        buffers[1].release();
 
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (normals_spheres.size())*sizeof(float),
-                 normals_spheres.data(), GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(2,
-                          3,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          0,
-                          NULL
-                          );
-    qFunc.glEnableVertexAttribArray(2);
+        buffers[2].bind();
+        buffers[2].allocate(normals_spheres.data(), normals_spheres.size()*sizeof(float));
+        program->enableAttributeArray("normals");
+        program->setAttributeBuffer("normals",GL_FLOAT,0,3);
+        buffers[2].release();
+
+        buffers[3].bind();
+        buffers[3].allocate(color_spheres.data(), color_spheres.size()*sizeof(float));
+        program->enableAttributeArray("colors");
+        program->setAttributeBuffer("colors",GL_FLOAT,0,3);
+        buffers[3].release();
+
+        buffers[4].bind();
+        buffers[4].allocate(positions_center.data(), positions_center.size()*sizeof(float));
+        program->enableAttributeArray("center");
+        program->setAttributeBuffer("center",GL_FLOAT,0,3);
+        buffers[4].release();
+
+        qFunc.glVertexAttribDivisor(program->attributeLocation("center"), 1);
+        qFunc.glVertexAttribDivisor(program->attributeLocation("colors"), 1);
+        vaos[1].release();
+
+        program->release();
+    }
 
 
+//vao for the wired spheres
+    {
+        program = getShaderProgram(PROGRAM_INSTANCED_WIRE, viewer);
+        program->bind();
 
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[3]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (color_spheres.size())*sizeof(float),
-                 color_spheres.data(), GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(3,
-                          3,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          0,
-                          NULL
-                          );
-    qFunc.glEnableVertexAttribArray(3);
+        vaos[2].bind();
+        buffers[5].bind();
+        buffers[5].allocate(positions_wire_spheres.data(), positions_wire_spheres.size()*sizeof(float));
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        buffers[5].release();
+        QColor temp = this->color();
+        program->setAttributeValue("colors", temp);
 
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[4]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (positions_center.size())*sizeof(float),
-                 positions_center.data(), GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(4,
-                          3,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          0,
-                          NULL
-                          );
-    qFunc.glEnableVertexAttribArray(4);
+        program->setAttributeValue("normals",QVector3D(0.0,0.0,0.0));
 
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[5]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (positions_wire_spheres.size())*sizeof(float),
-                 positions_wire_spheres.data(),
-                 GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(5, //number of the buffer
-                          4, //number of floats to be taken
-                          GL_FLOAT, // type of data
-                          GL_FALSE, //not normalized
-                          0, //compact data (not in a struct)
-                          NULL //no offset (seperated in several buffers)
-                          );
-    qFunc.glEnableVertexAttribArray(5);
+        buffers[6].bind();
+        buffers[6].allocate(color_spheres.data(), color_spheres.size()*sizeof(float));
+        program->enableAttributeArray("colors");
+        program->setAttributeBuffer("colors",GL_FLOAT,0,3);
+        buffers[6].release();
 
-    qFunc.glVertexAttribDivisor(3, 1);
-    qFunc.glVertexAttribDivisor(4, 1);
+        buffers[7].bind();
+        buffers[7].allocate(positions_center.data(), positions_center.size()*sizeof(float));
+        program->enableAttributeArray("center");
+        program->setAttributeBuffer("center",GL_FLOAT,0,3);
+        buffers[7].release();
 
-    // Clean-up
-    qFunc.glBindVertexArray(0);
+        qFunc.glVertexAttribDivisor(program->attributeLocation("center"), 1);
+        vaos[2].release();
+        program->release();
+    }
+
+   are_buffers_filled = true;
 
 
 }
-
-void
-Scene_polylines_item::compile_shaders()
-{
-    //fill the vertex shader
-    static const GLchar* vertex_shader_source[] =
-    {
-        "#version 300 es \n"
-        " \n"
-        "layout (location = 1) in vec4 positions_spheres; \n"
-        "layout (location = 2) in vec3 vNormals; \n"
-        "layout (location = 3) in vec3 color_spheres; \n"
-        "layout (location = 4) in vec3 center; \n"
-        " \n"
-        "uniform mat4 mvp_matrix; \n"
-        "uniform mat4 mv_matrix; \n"
-        " \n"
-        "uniform int is_two_side; \n"
-        "uniform vec3 light_pos;  \n"
-        "uniform vec3 light_diff; \n"
-        "uniform vec3 light_spec; \n"
-        "uniform vec3 light_amb;  \n"
-        "float spec_power = 128.0; \n"
-        " \n"
-        "out highp vec3 fColors; \n"
-        " \n"
-        " \n"
-        "void main(void) \n"
-        "{ \n"
-        "   vec4 P = mv_matrix * positions_spheres; \n"
-        "   vec3 N = mat3(mv_matrix)* vNormals; \n"
-        "   vec3 L = light_pos - P.xyz; \n"
-        "   vec3 V = -P.xyz; \n"
-        " \n"
-        "   N = normalize(N); \n"
-        "   L = normalize(L); \n"
-        "   V = normalize(V); \n"
-        " \n"
-        "   vec3 R = reflect(-L, N); \n"
-        "   vec3 diffuse; \n"
-        "   if(is_two_side == 1) \n"
-        "       diffuse = abs(dot(N,L)) * light_diff * color_spheres; \n"
-        "   else \n"
-        "       diffuse = max(dot(N,L), 0.0) * light_diff * color_spheres; \n"
-        "   vec3 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
-        " \n"
-        "   fColors = light_amb*color_spheres + diffuse + specular ; \n"
-        "   gl_Position =  mvp_matrix * vec4(positions_spheres.x + center.x, positions_spheres.y + center.y, positions_spheres.z + center.z, 1.0) ; \n"
-        "} \n"
-    };
-    //fill the fragment shader
-    static const GLchar* fragment_shader_source[]=
-    {
-        "#version 300 es \n"
-        " \n"
-        "in highp vec3 fColors; \n"
-
-        "out highp vec4 color; \n"
-        " \n"
-        "void main(void) \n"
-        "{ \n"
-        " color = vec4(fColors, 1.0); \n"
-        "} \n"
-    };
-
-    //creates and compiles the vertex shader
-    GLuint vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
-    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
-    qFunc.glCompileShader(vertex_shader);
-
-    //creates and compiles the fragment shader
-    GLuint fragment_shader =	qFunc.glCreateShader(GL_FRAGMENT_SHADER);
-    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    qFunc.glCompileShader(fragment_shader);
-
-    //creates the program, attaches and links the shaders
-    GLuint program= qFunc.glCreateProgram();
-    qFunc.glAttachShader(program, vertex_shader);
-    qFunc.glAttachShader(program, fragment_shader);
-    qFunc.glLinkProgram(program);
-
-    //Delete the shaders which are now in the memory
-    qFunc.glDeleteShader(vertex_shader);
-
-    rendering_program_spheres = program;
-
-    //For the lines
-    //fill the vertex shader
-    static const GLchar* vertex_shader_source_lines[] =
-    {
-        "#version 300 es \n"
-        " \n"
-        "layout (location = 0) in vec4 positions_lines; \n"
-
-        "uniform mat4 mvp_matrix; \n"
-        "uniform vec3 color_lines; \n"
-
-        "out highp vec3 fColors; \n"
-        " \n"
-
-        "void main(void) \n"
-        "{ \n"
-        "   fColors = color_lines; \n"
-        "   gl_Position = mvp_matrix * positions_lines; \n"
-        "} \n"
-    };
-
-    vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
-    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source_lines, NULL);
-    qFunc.glCompileShader(vertex_shader);
-
-    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    qFunc.glCompileShader(fragment_shader);
-
-    program = qFunc.glCreateProgram();
-    qFunc.glAttachShader(program, vertex_shader);
-    qFunc.glAttachShader(program, fragment_shader);
-    qFunc.glLinkProgram(program);
-
-    qFunc.glDeleteShader(vertex_shader);
-    rendering_program_lines = program;
-
-    //For the wired spheres
-    static const GLchar* vertex_shader_source_wire_sphere[] =
-    {
-        "#version 300 es \n"
-        " \n"
-        "layout (location = 5) in vec4 positions_WireSpheres; \n"
-        "layout (location = 3) in vec3 color_spheres; \n"
-        "layout (location = 4) in vec3 center; \n"
-        " \n"
-        "uniform mat4 mvp_matrix; \n"
-        " \n"
-        " \n"
-        "out highp vec3 fColors; \n"
-        " \n"
-        " \n"
-        "void main(void) \n"
-        "{ \n"
-        "   fColors = color_spheres; \n"
-        "   gl_Position =  mvp_matrix * vec4(positions_WireSpheres.x + center.x, positions_WireSpheres.y + center.y, positions_WireSpheres.z + center.z, 1.0) ; \n"
-        "} \n"
-    };
-
-    vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
-    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source_wire_sphere, NULL);
-    qFunc.glCompileShader(vertex_shader);
-
-    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    qFunc.glCompileShader(fragment_shader);
-
-    program = qFunc.glCreateProgram();
-    qFunc.glAttachShader(program, vertex_shader);
-    qFunc.glAttachShader(program, fragment_shader);
-    qFunc.glLinkProgram(program);
-
-    qFunc.glDeleteShader(vertex_shader);
-    qFunc.glDeleteShader(fragment_shader);
-    rendering_program_WireSpheres = program;
-
-}
-
-
-void Scene_polylines_item::uniform_attrib(Viewer_interface* viewer, int mode) const
-{
-    light_info light;
-    GLint is_both_sides = 0;
-    GLfloat mvp_mat[16];
-    GLfloat mv_mat[16];
-
-    //fills the MVP and MV matrices.
-
-    GLdouble d_mat[16];
-    viewer->camera()->getModelViewProjectionMatrix(d_mat);
-    //Convert the GLdoubles matrices in GLfloats
-    for (int i=0; i<16; ++i){
-        mvp_mat[i] = GLfloat(d_mat[i]);
-    }
-    viewer->camera()->getModelViewMatrix(d_mat);
-    for (int i=0; i<16; ++i)
-        mv_mat[i] = GLfloat(d_mat[i]);
-
-    //Program for the Flat mode
-    if(mode ==0)
-    {
-        //Decides if the light is one or both sides
-        qFunc.glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
-
-        //Gets lighting info :
-
-        //position
-        glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
-
-        //ambient
-        glGetLightfv(GL_LIGHT0, GL_AMBIENT, light.ambient);
-
-        //specular
-        glGetLightfv(GL_LIGHT0, GL_SPECULAR, light.specular);
-
-        //diffuse
-        glGetLightfv(GL_LIGHT0, GL_DIFFUSE, light.diffuse);
-
-        qFunc.glUseProgram(rendering_program_spheres);
-        qFunc.glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
-        qFunc.glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
-        qFunc.glUniform3fv(location[2], 1, light.position);
-        qFunc.glUniform3fv(location[3], 1, light.diffuse);
-        qFunc.glUniform3fv(location[4], 1, light.specular);
-        qFunc.glUniform3fv(location[5], 1, light.ambient);
-        qFunc.glUniform1i(location[6], is_both_sides);
-    }
-    //For the wiremode programs
-    else if(mode ==1)
-    {
-        //Lines
-        GLfloat colors[3];
-        colors[0] = this->color().redF();
-        colors[1] = this->color().greenF();
-        colors[2] = this->color().blueF();
-        qFunc.glUseProgram(rendering_program_lines);
-        qFunc.glUniformMatrix4fv(location[7], 1, GL_FALSE, mvp_mat);
-        qFunc.glUniform3fv(location[8], 1, colors);
-
-        qFunc.glUseProgram(rendering_program_WireSpheres);
-        qFunc.glUniformMatrix4fv(location[9], 1, GL_FALSE, mvp_mat);
-        qFunc.glUniform3fv(location[10], 1, colors);
-    }
-}
-
 void
 Scene_polylines_item::compute_elements()
 {
@@ -798,19 +564,7 @@ Scene_polylines_item::compute_elements()
         }
     }
 
-    location[0] = qFunc.glGetUniformLocation(rendering_program_spheres, "mvp_matrix");
-    location[1] = qFunc.glGetUniformLocation(rendering_program_spheres, "mv_matrix");
-    location[2] = qFunc.glGetUniformLocation(rendering_program_spheres, "light_pos");
-    location[3] = qFunc.glGetUniformLocation(rendering_program_spheres, "light_diff");
-    location[4] = qFunc.glGetUniformLocation(rendering_program_spheres, "light_spec");
-    location[5] = qFunc.glGetUniformLocation(rendering_program_spheres, "light_amb");
-    location[6] = qFunc.glGetUniformLocation(rendering_program_spheres, "is_two_side");
 
-    location[7] = qFunc.glGetUniformLocation(rendering_program_lines, "mvp_matrix");
-    location[8] = qFunc.glGetUniformLocation(rendering_program_lines, "color_lines");
-
-    location[9] = qFunc.glGetUniformLocation( rendering_program_WireSpheres, "mvp_matrix");
-    location[10] = qFunc.glGetUniformLocation(rendering_program_WireSpheres, "color_lines");
 }
 
 
@@ -820,11 +574,6 @@ Scene_polylines_item::Scene_polylines_item()
       rings(18), sectors(36)
 {
     qFunc.initializeOpenGLFunctions();
-    qFunc.glGenVertexArrays(1, vao);
-    //Generates an integer which will be used as ID for each buffer
-    qFunc.glGenBuffers(6, buffer);
-
-    compile_shaders();
     changed();
 
 }
@@ -832,11 +581,7 @@ Scene_polylines_item::Scene_polylines_item()
 Scene_polylines_item::~Scene_polylines_item()
 {
     delete d;
-    qFunc.glDeleteBuffers(6, buffer);
-    qFunc.glDeleteVertexArrays(1, vao);
-    qFunc.glDeleteProgram(rendering_program_spheres);
-    qFunc.glDeleteProgram(rendering_program_lines);
-    qFunc.glDeleteProgram(rendering_program_WireSpheres);
+
 }
 
 bool
@@ -916,14 +661,17 @@ Scene_polylines_item::supportsRenderingMode(RenderingMode m) const {
 void
 Scene_polylines_item::draw(Viewer_interface* viewer) const {
 
+    if(!are_buffers_filled)
+        initialize_buffers(viewer);
     if(d->draw_extremities)
     {
-        qFunc.glBindVertexArray(vao[0]);
-        qFunc.glUseProgram(rendering_program_spheres);
-        uniform_attrib(viewer,0);
+        vaos[1].bind();
+        program = getShaderProgram(PROGRAM_INSTANCED);
+        attrib_buffers(viewer, PROGRAM_INSTANCED);
+        program->bind();
         qFunc.glDrawArraysInstanced(GL_TRIANGLES, 0, positions_spheres.size()/4, nbSpheres);
-        qFunc.glUseProgram(0);
-        qFunc.glBindVertexArray(0);
+        program->release();
+        vaos[1].release();
     }
 }
 
@@ -931,138 +679,44 @@ Scene_polylines_item::draw(Viewer_interface* viewer) const {
 void 
 Scene_polylines_item::draw_edges(Viewer_interface* viewer) const {
 
-    qFunc.glBindVertexArray(vao[0]);
-    uniform_attrib(viewer,1);
-    qFunc.glUseProgram(rendering_program_lines);
+    if(!are_buffers_filled)
+        initialize_buffers(viewer);
+
+    vaos[0].bind();
+    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    program->bind();
+    QColor temp = this->color();
+    program->setAttributeValue("colors", temp);
     qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
+    program->release();
+    vaos[0].release();
     if(d->draw_extremities)
     {
-        uniform_attrib(viewer,0);
-        qFunc.glUseProgram(rendering_program_WireSpheres);
+        vaos[2].bind();
+        attrib_buffers(viewer, PROGRAM_INSTANCED_WIRE);
+        program = getShaderProgram(PROGRAM_INSTANCED_WIRE);
+        program->bind();
         qFunc.glDrawArraysInstanced(GL_LINES, 0, positions_wire_spheres.size()/4, nbSpheres);
+        program->release();
+        vaos[2].release();
     }
-    // Clean-up
-    qFunc.glUseProgram(0);
-    qFunc.glBindVertexArray(0);
+
 }
 
 void 
 Scene_polylines_item::draw_points(Viewer_interface* viewer) const {
-    qFunc.glBindVertexArray(vao[0]);
-    uniform_attrib(viewer,1);
-    qFunc.glUseProgram(rendering_program_lines);
+    if(!are_buffers_filled)
+        initialize_buffers(viewer);
+
+    vaos[0].bind();
+    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    program->bind();
     qFunc.glDrawArrays(GL_POINTS, 0, positions_lines.size()/4);
     // Clean-up
-    qFunc.glUseProgram(0);
-    qFunc.glBindVertexArray(0);
-}
-
-void
-Scene_polylines_item_private::
-draw_spheres(const Scene_polylines_item* item) const {
-    // FIRST, count the number of incident cycles and polylines
-    // for all extremities.
-    typedef std::map<Point_3, int> Point_to_int_map;
-    typedef Point_to_int_map::iterator iterator;
-    Point_to_int_map corner_polyline_nb;
-
-    { // scope to fill corner_polyline_nb'
-        Point_to_int_map corner_cycles_nb;
-
-        for(std::list<std::vector<Point_3> >::const_iterator
-            it = item->polylines.begin(),
-            end = item->polylines.end();
-            it != end; ++it)
-        {
-            const K::Point_3& a = *it->begin();
-            const K::Point_3& b = *it->rbegin();
-            if(a == b) {
-                if ( it->size()>1 )
-                    ++corner_cycles_nb[a];
-                else
-                    ++corner_polyline_nb[a];
-            }
-            else {
-                ++corner_polyline_nb[a];
-                ++corner_polyline_nb[b];
-            }
-        }
-        // THEN, ignore points that are incident to one cycle only.
-        for(iterator
-            c_it = corner_cycles_nb.begin(),
-            end = corner_cycles_nb.end();
-            c_it != end; ++c_it)
-        {
-            const Point_3& a = c_it->first;
-
-            iterator p_it = corner_polyline_nb.find(a);
-
-            // If the point 'a'=c_it->first has only incident cycles...
-            if(p_it == corner_polyline_nb.end()) {
-                // ...then count it as a corner only if it has two incident cycles
-                // or more.
-                if(c_it->second > 1) {
-                    corner_polyline_nb[a] = c_it->second;
-                }
-            } else {
-                // else add the number of cycles.
-                p_it->second += c_it->second;
-            }
-        }
-    }
-    // At this point, 'corner_polyline_nb' gives the multiplicity of all
-    // corners.
-    for(iterator
-        p_it = corner_polyline_nb.begin(),
-        end = corner_polyline_nb.end();
-        p_it != end; ++p_it)
-    {
-        switch(p_it->second) {
-        case 1:
-            ::glColor3d(0.0, 0.0, 0.0); // black
-            break;
-        case 2:
-            ::glColor3d(0.0, 0.8, 0.0); // green
-            break;
-        case 3:
-            ::glColor3d(0.0, 0.0, 0.8); // blue
-            break;
-        case 4:
-            ::glColor3d(0.8, 0.0, 0.0); //red
-            break;
-        default:
-            ::glColor3d(0.8, 0.0, 0.8); //fuschia
-        }
-        this->draw_sphere(p_it->first, this->spheres_drawn_radius);
-    }
-}
-
-void 
-Scene_polylines_item_private::draw_sphere(const K::Point_3& p,
-                                          double r) const
-{
-    if(sphere_display_list == 0) {
-        sphere_display_list = glGenLists(1);
-        if(sphere_display_list == 0)
-            std::cerr << "ERROR: Cannot create display list!\n";
-        if(quadric == 0)
-            quadric = gluNewQuadric();
-        if(quadric == 0)
-            std::cerr << "ERROR: Cannot create GLU quadric!\n";
-        glNewList(sphere_display_list, GL_COMPILE);
-        gluSphere(quadric, 1., 10, 10);
-        glEndList();
-        if(glGetError() != GL_NO_ERROR)
-            std::cerr << gluErrorString(glGetError());
-    }
-    glPushMatrix();
-    glTranslated(CGAL::to_double(p.x()),
-                 CGAL::to_double(p.y()),
-                 CGAL::to_double(p.z()));
-
-    glScaled(r, r, r);
-    glCallList(sphere_display_list);
-    glPopMatrix();
+   vaos[0].release();
+   program->release();
 }
 
 QMenu* Scene_polylines_item::contextMenu() 
@@ -1094,7 +748,7 @@ QMenu* Scene_polylines_item::contextMenu()
 void Scene_polylines_item::changed()
 {
     compute_elements();
-    initialize_buffers();
+    are_buffers_filled = false;
 
 
 }

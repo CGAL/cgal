@@ -115,12 +115,12 @@ private:
     std::vector<float> normals;
     std::vector<float> color_lines;
     std::vector<float> color_facets;
-
     std::vector<float> color_lines_selected;
     std::vector<float> color_facets_selected;
 
+    mutable QOpenGLShaderProgram *program;
 
-    void initialize_buffers();
+    void initialize_buffers(Viewer_interface *viewer = 0) const;
     void compute_normals_and_vertices(void);
     void compute_colors();
     void triangulate_facet(Facet_iterator );

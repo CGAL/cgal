@@ -10,6 +10,15 @@
 #include <QOpenGLShader>
 #include <QOpenGLVertexArrayObject>
 #include <vector>
+#include <QMap>
+#define PROGRAM_WITH_LIGHT 0
+#define PROGRAM_WITHOUT_LIGHT 1
+#define PROGRAM_WITH_TEXTURE 2
+#define PROGRAM_WITH_TEXTURED_EDGES 3
+#define PROGRAM_INSTANCED 4
+#define PROGRAM_INSTANCED_WIRE 5
+
+
 namespace qglviewer {
   class ManipulatedFrame;
 }
@@ -37,8 +46,16 @@ public:
       color_(defaultColor),
       visible_(true),
       rendering_mode(FlatPlusEdges),
-      defaultContextMenu(0)
-  {}
+      defaultContextMenu(0),
+      are_buffers_filled(false)
+  {
+
+      for(int i=0; i<10; i++)
+      {
+       buffers[i].create();
+       vaos[i].create();
+      }
+  }
   Scene_item(int buffers_size, int vaos_size)
     : name_("unamed"),
       color_(defaultColor),
@@ -46,8 +63,16 @@ public:
       rendering_mode(FlatPlusEdges),
       defaultContextMenu(0),
       buffersSize(buffers_size),
-      vaosSize(vaos_size)
-  {}
+      vaosSize(vaos_size),
+      are_buffers_filled(false)
+  {
+
+      for(int i=0; i<10; i++)
+      {
+       buffers[i].create();
+       vaos[i].create();
+      }
+  }
   virtual ~Scene_item();
   virtual Scene_item* clone() const = 0;
 
@@ -162,6 +187,7 @@ protected:
   QColor color_;
   bool visible_;
   bool is_selected;
+  mutable bool are_buffers_filled;
   RenderingMode rendering_mode;
   QMenu* defaultContextMenu;
 
@@ -174,9 +200,11 @@ protected:
   mutable QOpenGLBuffer buffers[10];
   //not allowed to use vectors of VAO for some reason
   mutable QOpenGLVertexArrayObject vaos[10];
-  mutable  QOpenGLShaderProgram rendering_program_with_light;
-  mutable  QOpenGLShaderProgram rendering_program_without_light;
-  mutable  QOpenGLShaderProgram rendering_program_with_texture;
+  mutable QOpenGLShaderProgram rendering_program_with_light;
+  mutable QOpenGLShaderProgram rendering_program_without_light;
+  mutable QOpenGLShaderProgram rendering_program_with_texture;
+  mutable QMap<int, QOpenGLShaderProgram*> shader_programs;
+  QOpenGLShaderProgram* getShaderProgram(int , Viewer_interface *viewer = 0) const;
 
   int vertexLoc;
   int normalLoc;
@@ -184,7 +212,7 @@ protected:
 
   virtual void initialize_buffers(){}
   virtual void compute_elements(){}
-  virtual void attrib_buffers(Viewer_interface*) const;
+  virtual void attrib_buffers(Viewer_interface*, int program_name) const;
   virtual void compile_shaders();
 
 
