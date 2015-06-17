@@ -78,12 +78,6 @@ public slots:
 private:
   typedef qglviewer::Vec                  Point;
   typedef std::pair <Point,double>        Point_value;
-
-  void draw_bbox() const;
-  void draw_function_grid(const Color_ramp&, const Color_ramp&) const;
-  void draw_grid_vertex(const Point_value&,
-                        const Color_ramp&, const Color_ramp&) const;
-  
   void compute_min_max();
   
 private:
@@ -106,19 +100,14 @@ private:
   Texture *texture;
 
 
-  GLuint rendering_program_tex_quad;
-  GLuint rendering_program_cube;
-  GLuint rendering_program_grid;
+  mutable QOpenGLShaderProgram *program;
   GLuint textureId;
-  GLint location[5];
-  GLint sampler_location;
+
 
 
   GLuint vao;
   GLuint buffer[4];
-  void initialize_buffers();
-  void compile_shaders(void);
-  void uniform_attrib(Viewer_interface*, int) const;
+  void initialize_buffers(Viewer_interface *viewer) const;
   void compute_vertices_and_texmap(void);
   void compute_texture(int, int);
 };

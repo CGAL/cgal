@@ -297,6 +297,8 @@ void Scene_textured_polyhedron_item::draw(Viewer_interface* viewer) const {
         initialize_buffers(viewer);
 
     vaos[0].bind();
+    qFunc.glActiveTexture(GL_TEXTURE0);
+    qFunc.glBindTexture(GL_TEXTURE_2D, textureId);
     attrib_buffers(viewer, PROGRAM_WITH_TEXTURE);
     program=getShaderProgram(PROGRAM_WITH_TEXTURE);
     program->bind();
@@ -310,6 +312,8 @@ void Scene_textured_polyhedron_item::draw_edges(Viewer_interface* viewer) const 
         initialize_buffers(viewer);
 
     vaos[1].bind();
+    qFunc.glActiveTexture(GL_TEXTURE0);
+    qFunc.glBindTexture(GL_TEXTURE_2D, textureId);
     attrib_buffers(viewer, PROGRAM_WITH_TEXTURED_EDGES);
 
     program=getShaderProgram(PROGRAM_WITH_TEXTURED_EDGES);

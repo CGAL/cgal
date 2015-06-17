@@ -16,66 +16,65 @@ bool is_nan(double d)
     return !CGAL::Is_valid<double>()( d );
 }
 
-void Scene_implicit_function_item::initialize_buffers()
+void Scene_implicit_function_item::initialize_buffers(Viewer_interface *viewer = 0) const
 {
-    qFunc.initializeOpenGLFunctions();
-    qFunc.glBindVertexArray(vao);
-
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (positions_tex_quad.size())*sizeof(float),
-                 positions_tex_quad.data(),
-                 GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(0, //number of the buffer
-                          3, //number of floats to be taken
-                          GL_FLOAT, // type of data
-                          GL_FALSE, //not normalized
-                          0, //compact data (not in a struct)
-                          NULL //no offset (seperated in several buffers)
-                          );
-    qFunc.glEnableVertexAttribArray(0);
-
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (positions_cube.size())*sizeof(float),
-                 positions_cube.data(),
-                 GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(1, //number of the buffer
-                          4, //number of floats to be taken
-                          GL_FLOAT, // type of data
-                          GL_FALSE, //not normalized
-                          0, //compact data (not in a struct)
-                          NULL //no offset (seperated in several buffers)
-                          );
-    qFunc.glEnableVertexAttribArray(1);
+    //vao fot the cutting plane
+    {
+        program = getShaderProgram(PROGRAM_WITH_TEXTURE, viewer);
+        program->bind();
+        vaos[0].bind();
 
 
+        buffers[0].bind();
+        buffers[0].allocate(positions_tex_quad.data(), positions_tex_quad.size()*sizeof(float));
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+        buffers[0].release();
 
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (texture_map.size())*sizeof(float),
-                 texture_map.data(), GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(2,
-                          2,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          0,
-                          NULL
-                          );
-    qFunc.glEnableVertexAttribArray(2);
+        buffers[1].bind();
+        buffers[1].allocate(texture_map.data(), texture_map.size()*sizeof(float));
+        program->enableAttributeArray("v_texCoord");
+        program->setAttributeBuffer("v_texCoord",GL_FLOAT,0,2);
+        buffers[1].release();
+        program->setAttributeValue("normal", QVector3D(0,0,0));
 
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[3]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (positions_grid.size())*sizeof(float),
-                 positions_grid.data(), GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(3,
-                          4,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          0,
-                          NULL
-                          );
-    qFunc.glEnableVertexAttribArray(3);
+        program->release();
+        vaos[0].release();
+    }
+    //vao fot the bbox
+    {
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program->bind();
+        vaos[1].bind();
+
+
+        buffers[2].bind();
+        buffers[2].allocate(positions_cube.data(), positions_cube.size()*sizeof(float));
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+        buffers[2].release();
+
+        program->setAttributeValue("colors", QVector3D(0,0,0));
+        program->release();
+        vaos[1].release();
+    }
+    //vao fot the grid
+    {
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program->bind();
+        vaos[2].bind();
+
+
+        buffers[3].bind();
+        buffers[3].allocate(positions_grid.data(), positions_grid.size()*sizeof(float));
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+        buffers[3].release();
+        program->setAttributeValue("colors", QVector3D(0.6,0.6,0.6));
+        program->release();
+        vaos[2].release();
+    }
+
 
 
     qFunc.glBindTexture(GL_TEXTURE_2D, textureId);
@@ -93,207 +92,9 @@ void Scene_implicit_function_item::initialize_buffers()
        qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
        qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
 
-    // Clean-up
-    qFunc.glBindVertexArray(0);
+       are_buffers_filled = true;
 }
 
-void Scene_implicit_function_item::compile_shaders(void)
-{
-    //fill the vertex shader
-    static const GLchar* vertex_shader_source[] =
-    {
-        "#version 300 es \n"
-        " \n"
-        "layout (location = 0) in vec4 positions_tex_quad; \n"
-        "layout (location = 2) in vec2 v_texCoord; \n"
-
-        "uniform mat4 mvp_matrix; \n"
-        "uniform mat4 m_matrix; \n"
-
-        "out highp vec2 f_texCoord; \n"
-        " \n"
-        "void main(void) \n"
-        "{ \n"
-        "   f_texCoord = v_texCoord; \n"
-        "   gl_Position =  mvp_matrix *m_matrix * positions_tex_quad; \n"
-        "} \n"
-    };
-    //fill the fragment shader
-    static const GLchar* fragment_shader_source[]=
-    {
-        "#version 300 es \n"
-        " \n"
-        "in highp vec2 f_texCoord; \n"
-        "uniform sampler2D s_texture; \n"
-        "out highp vec4 color; \n"
-        " \n"
-        "void main(void) \n"
-        "{ \n"
-        " color = texture2D(s_texture, f_texCoord); \n"
-        "} \n"
-    };
-
-    GLuint vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
-    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
-    qFunc.glCompileShader(vertex_shader);
-
-
-    GLuint fragment_shader =	qFunc.glCreateShader(GL_FRAGMENT_SHADER);
-    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    qFunc.glCompileShader(fragment_shader);
-
-
-    //creates the program, attaches and links the shaders
-    GLuint program= qFunc.glCreateProgram();
-    qFunc.glAttachShader(program, vertex_shader);
-    qFunc.glAttachShader(program, fragment_shader);
-    qFunc.glLinkProgram(program);
-    GLint result;
-    qFunc.glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&result);
-    if(result == GL_TRUE){
-        std::cout<<"Vertex compilation OK"<<std::endl;
-    } else {
-        int maxLength;
-        int length;
-        qFunc.glGetShaderiv(vertex_shader,GL_INFO_LOG_LENGTH,&maxLength);
-        char* log = new char[maxLength];
-        qFunc.glGetShaderInfoLog(vertex_shader,maxLength,&length,log);
-        std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
-    }
-    qFunc.glGetShaderiv(fragment_shader,GL_COMPILE_STATUS,&result);
-    if(result == GL_TRUE){
-        std::cout<<"Fragment compilation OK"<<std::endl;
-    } else {
-        int maxLength;
-        int length;
-        qFunc.glGetShaderiv(fragment_shader,GL_INFO_LOG_LENGTH,&maxLength);
-        char* log = new char[maxLength];
-        qFunc.glGetShaderInfoLog(fragment_shader,maxLength,&length,log);
-        std::cout<<"link error : Length = "<<length<<", log ="<<log<<std::endl;
-    }
-    //Clean-up
-    qFunc.glDeleteShader(vertex_shader);
-
-    rendering_program_tex_quad = program;
-
-    //For the cube
-    static const GLchar* vertex_shader_source_cube[] =
-    {
-        "#version 300 es \n"
-        " \n"
-        "layout (location = 1) in vec4 positions_lines; \n"
-        "uniform mat4 mvp_matrix; \n"
-        "out highp vec3 fColors; \n"
-        " \n"
-        "void main(void) \n"
-        "{ \n"
-        "   fColors = vec3(0.6, 0.6, 0.6); \n"
-        "   gl_Position = mvp_matrix * positions_lines; \n"
-        "} \n"
-    };
-    static const GLchar* fragment_shader_source_lines[]=
-    {
-        "#version 300 es \n"
-        " \n"
-        "in highp vec3 fColors; \n"
-        "out highp vec4 color; \n"
-        " \n"
-        "void main(void) \n"
-        "{ \n"
-        " color = vec4(fColors, 1.0); \n"
-        "} \n"
-    };
-    vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
-    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source_cube, NULL);
-    qFunc.glCompileShader(vertex_shader);
-
-
-    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source_lines, NULL);
-    qFunc.glCompileShader(fragment_shader);
-
-    program = qFunc.glCreateProgram();
-    qFunc.glAttachShader(program, vertex_shader);
-    qFunc.glAttachShader(program, fragment_shader);
-    qFunc.glLinkProgram(program);
-    rendering_program_cube = program;
-
-
-    //Clean-up
-    qFunc.glDeleteShader(vertex_shader);
-
-    //For the grid
-    static const GLchar* vertex_shader_source_grid[] =
-    {
-        "#version 300 es \n"
-        " \n"
-        "layout (location = 3) in vec4 positions_lines; \n"
-        "uniform mat4 mvp_matrix; \n"
-        "uniform mat4 m_matrix; \n"
-        "out highp vec3 fColors; \n"
-        " \n"
-        "void main(void) \n"
-        "{ \n"
-        "   fColors = vec3(0.6, 0.6, 0.6); \n"
-        "   gl_Position = mvp_matrix * m_matrix* positions_lines; \n"
-        "} \n"
-    };
-
-    vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
-    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source_grid, NULL);
-    qFunc.glCompileShader(vertex_shader);
-
-
-    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source_lines, NULL);
-    qFunc.glCompileShader(fragment_shader);
-
-    program = qFunc.glCreateProgram();
-    qFunc.glAttachShader(program, vertex_shader);
-    qFunc.glAttachShader(program, fragment_shader);
-    qFunc.glLinkProgram(program);
-    rendering_program_grid = program;
-    //Clean-up
-    qFunc.glDeleteShader(vertex_shader);
-    qFunc.glDeleteShader(fragment_shader);
-
-}
-
-void Scene_implicit_function_item::uniform_attrib(Viewer_interface* viewer, int mode) const
-{
-
-    GLfloat mvp_mat[16];
-    GLfloat m_mat[16];
-
-    //fills the MVP matrix.
-    GLdouble d_mat[16];
-    viewer->camera()->getModelViewProjectionMatrix(d_mat);
-    //Convert the GLdoubles matrices in GLfloats
-    for (int i=0; i<16; ++i){
-        mvp_mat[i] = GLfloat(d_mat[i]);
-    }
-
-    for (int i=0; i<16; ++i){
-        m_mat[i] = GLfloat(frame_->matrix()[i]);
-    }
-    if(mode ==0)
-    {
-        qFunc.glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
-        qFunc.glUniformMatrix4fv(location[2], 1, GL_FALSE, m_mat);
-        qFunc.glUniform1i(sampler_location, 0);
-
-    }
-    else if(mode ==1)
-    {
-
-        qFunc.glUniformMatrix4fv(location[1], 1, GL_FALSE, mvp_mat);
-
-    }
-    else if (mode ==2)
-    {
-        qFunc.glUniformMatrix4fv(location[3], 1, GL_FALSE, mvp_mat);
-        qFunc.glUniformMatrix4fv(location[4], 1, GL_FALSE, m_mat);
-    }
-
-}
 void Scene_implicit_function_item::compute_vertices_and_texmap(void)
 {
     positions_tex_quad.clear();
@@ -378,12 +179,10 @@ void Scene_implicit_function_item::compute_vertices_and_texmap(void)
             positions_grid.push_back(b.xmin + x* u);
             positions_grid.push_back(b.ymin);
             positions_grid.push_back(z);
-            positions_grid.push_back(1.0);
 
             positions_grid.push_back(b.xmin + x* u);
             positions_grid.push_back(b.ymax);
             positions_grid.push_back(z);
-            positions_grid.push_back(1.0);
         }
         for(int v=0; v<11; v++)
         {
@@ -391,12 +190,10 @@ void Scene_implicit_function_item::compute_vertices_and_texmap(void)
             positions_grid.push_back(b.xmin);
             positions_grid.push_back(b.ymin + v * y);
             positions_grid.push_back(z);
-            positions_grid.push_back(1.0);
 
             positions_grid.push_back(b.xmax);
             positions_grid.push_back(b.ymin + v * y);
             positions_grid.push_back(z);
-            positions_grid.push_back(1.0);
         }
 
     }
@@ -406,122 +203,121 @@ void Scene_implicit_function_item::compute_vertices_and_texmap(void)
         positions_cube.push_back(b.xmin);
         positions_cube.push_back(b.ymin);
         positions_cube.push_back(b.zmin);
-        positions_cube.push_back(1.0);
 
         positions_cube.push_back(b.xmin);
         positions_cube.push_back(b.ymin);
         positions_cube.push_back(b.zmax);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmin);
         positions_cube.push_back(b.ymin);
         positions_cube.push_back(b.zmin);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmin);
         positions_cube.push_back(b.ymax);
         positions_cube.push_back(b.zmin);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmin);
         positions_cube.push_back(b.ymin);
         positions_cube.push_back(b.zmin);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmax);
         positions_cube.push_back(b.ymin);
         positions_cube.push_back(b.zmin);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmax);
         positions_cube.push_back(b.ymin);
         positions_cube.push_back(b.zmin);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmax);
         positions_cube.push_back(b.ymax);
         positions_cube.push_back(b.zmin);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmax);
         positions_cube.push_back(b.ymin);
         positions_cube.push_back(b.zmin);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmax);
         positions_cube.push_back(b.ymin);
         positions_cube.push_back(b.zmax);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmin);
         positions_cube.push_back(b.ymax);
         positions_cube.push_back(b.zmin);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmin);
         positions_cube.push_back(b.ymax);
         positions_cube.push_back(b.zmax);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmin);
         positions_cube.push_back(b.ymax);
         positions_cube.push_back(b.zmin);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmax);
         positions_cube.push_back(b.ymax);
         positions_cube.push_back(b.zmin);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmax);
         positions_cube.push_back(b.ymax);
         positions_cube.push_back(b.zmin);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmax);
         positions_cube.push_back(b.ymax);
         positions_cube.push_back(b.zmax);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmin);
         positions_cube.push_back(b.ymin);
         positions_cube.push_back(b.zmax);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmin);
         positions_cube.push_back(b.ymax);
         positions_cube.push_back(b.zmax);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmin);
         positions_cube.push_back(b.ymin);
         positions_cube.push_back(b.zmax);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmax);
         positions_cube.push_back(b.ymin);
         positions_cube.push_back(b.zmax);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmax);
         positions_cube.push_back(b.ymax);
         positions_cube.push_back(b.zmax);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmin);
         positions_cube.push_back(b.ymax);
         positions_cube.push_back(b.zmax);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmax);
         positions_cube.push_back(b.ymax);
         positions_cube.push_back(b.zmax);
-        positions_cube.push_back(1.0);
+
 
         positions_cube.push_back(b.xmax);
         positions_cube.push_back(b.ymin);
         positions_cube.push_back(b.zmax);
-        positions_cube.push_back(1.0);
+
     }
 
     //The texture
@@ -532,16 +328,6 @@ void Scene_implicit_function_item::compute_vertices_and_texmap(void)
             compute_texture(i,j);
         }
     }
-
-    location[0] = qFunc.glGetUniformLocation(rendering_program_tex_quad, "mvp_matrix");
-    location[2] = qFunc.glGetUniformLocation(rendering_program_tex_quad, "m_matrix");
-
-    sampler_location = qFunc.glGetUniformLocation(rendering_program_tex_quad, "s_texture");
-
-    location[1] = qFunc.glGetUniformLocation(rendering_program_cube, "mvp_matrix");
-    location[3] = qFunc.glGetUniformLocation(rendering_program_grid, "mvp_matrix");
-    location[4] = qFunc.glGetUniformLocation(rendering_program_grid, "m_matrix");
-
 }
 
 Scene_implicit_function_item::
@@ -564,12 +350,11 @@ Scene_implicit_function_item(Implicit_function_interface* f)
     blue_color_ramp_.build_blue();
     red_color_ramp_.build_red();
     qFunc.initializeOpenGLFunctions();
-    qFunc.glGenVertexArrays(1, &vao);
+    //
     //Generates an integer which will be used as ID for each buffer
-    qFunc.glGenBuffers(4, buffer);
+
     qFunc.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     qFunc.glGenTextures(1, &textureId);
-    compile_shaders();
     compute_min_max();
     compute_function_grid();
     double offset_x = (bbox().xmin + bbox().xmax) / 2;
@@ -585,11 +370,7 @@ Scene_implicit_function_item(Implicit_function_interface* f)
 
 Scene_implicit_function_item::~Scene_implicit_function_item()
 {
-    qFunc.glDeleteBuffers(4, buffer);
-    qFunc.glDeleteVertexArrays(1, &vao);
-    qFunc.glDeleteProgram(rendering_program_tex_quad);
-    qFunc.glDeleteProgram(rendering_program_cube);
-    qFunc.glDeleteProgram(rendering_program_grid);
+
     delete frame_;
 
 }
@@ -604,6 +385,8 @@ Scene_implicit_function_item::bbox() const
 void
 Scene_implicit_function_item::draw(Viewer_interface* viewer) const
 {
+    if(!are_buffers_filled)
+        initialize_buffers(viewer);
 
     if(frame_->isManipulated()) {
         if(need_update_) {
@@ -611,37 +394,52 @@ Scene_implicit_function_item::draw(Viewer_interface* viewer) const
             need_update_ = false;
         }
     }
-    qFunc.glBindVertexArray(vao);
-    qFunc.glUseProgram(rendering_program_tex_quad);
+    vaos[0].bind();
     qFunc.glActiveTexture(GL_TEXTURE0);
     qFunc.glBindTexture(GL_TEXTURE_2D, textureId);
-    uniform_attrib(viewer,0);
+    attrib_buffers(viewer, PROGRAM_WITH_TEXTURE);
+    QMatrix4x4 f_mat;
+    GLdouble d_mat[16];
+    frame_->getMatrix(d_mat);
+    //Convert the GLdoubles matrices in GLfloats
+    for (int i=0; i<16; ++i){
+        f_mat.data()[i] = GLfloat(d_mat[i]);
+    }
+    program = getShaderProgram(PROGRAM_WITH_TEXTURE);
+    program->bind();
+    program->setUniformValue("f_matrix", f_mat);
+    program->setUniformValue("light_amb", QVector4D(1.0,1.0,1.0,1.0));
+    program->setUniformValue("light_diff", QVector4D(0,0,0,1));
+    program->setAttributeValue("color_facets", QVector3D(1.0,1.0,1.0));
     qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_tex_quad.size()/3);
-
-
-
-    // Clean-up
-    qFunc.glUseProgram(0);
-    qFunc.glBindVertexArray(0);
-
+    vaos[0].release();
+    program->release();
 }
 
 void
 Scene_implicit_function_item::draw_edges(Viewer_interface* viewer) const
 {
+    if(!are_buffers_filled)
+        initialize_buffers(viewer);
     //  draw_aux(viewer, true);
-    qFunc.glBindVertexArray(vao);
-    qFunc.glUseProgram(rendering_program_cube);
-    uniform_attrib(viewer,1);
-    qFunc.glDrawArrays(GL_LINES, 0, positions_cube.size()/4);
-
-    qFunc.glUseProgram(rendering_program_grid);
-    uniform_attrib(viewer,2);
-    qFunc.glDrawArrays(GL_LINES, 0, positions_grid.size()/4);
-
-    // Clean-up
-    qFunc.glUseProgram(0);
-    qFunc.glBindVertexArray(0);
+    vaos[1].bind();
+    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    program->bind();
+    qFunc.glDrawArrays(GL_LINES, 0, positions_cube.size()/3);
+    vaos[1].release();
+    vaos[2].bind();
+    QMatrix4x4 f_mat;
+    GLdouble d_mat[16];
+    frame_->getMatrix(d_mat);
+    //Convert the GLdoubles matrices in GLfloats
+    for (int i=0; i<16; ++i){
+        f_mat.data()[i] = GLfloat(d_mat[i]);
+    }
+    program->setUniformValue("f_matrix", f_mat);
+    qFunc.glDrawArrays(GL_LINES, 0, positions_grid.size()/3);
+    vaos[2].release();
+    program->release();
 }
 
 QString
@@ -673,55 +471,6 @@ Scene_implicit_function_item::supportsRenderingMode(RenderingMode m) const
     return false;
 }
 
-void
-Scene_implicit_function_item::
-draw_bbox() const
-{
-    const Bbox& b = bbox();
-
-    ::glDisable(GL_LIGHTING);
-    ::glColor3f(0.f,0.f,0.f);
-    ::glBegin(GL_LINES);
-
-    ::glVertex3d(b.xmin,b.ymin,b.zmin);
-    ::glVertex3d(b.xmin,b.ymin,b.zmax);
-
-    ::glVertex3d(b.xmin,b.ymin,b.zmin);
-    ::glVertex3d(b.xmin,b.ymax,b.zmin);
-
-    ::glVertex3d(b.xmin,b.ymin,b.zmin);
-    ::glVertex3d(b.xmax,b.ymin,b.zmin);
-
-    ::glVertex3d(b.xmax,b.ymin,b.zmin);
-    ::glVertex3d(b.xmax,b.ymax,b.zmin);
-
-    ::glVertex3d(b.xmax,b.ymin,b.zmin);
-    ::glVertex3d(b.xmax,b.ymin,b.zmax);
-
-    ::glVertex3d(b.xmin,b.ymax,b.zmin);
-    ::glVertex3d(b.xmin,b.ymax,b.zmax);
-
-    ::glVertex3d(b.xmin,b.ymax,b.zmin);
-    ::glVertex3d(b.xmax,b.ymax,b.zmin);
-
-    ::glVertex3d(b.xmax,b.ymax,b.zmin);
-    ::glVertex3d(b.xmax,b.ymax,b.zmax);
-
-    ::glVertex3d(b.xmin,b.ymin,b.zmax);
-    ::glVertex3d(b.xmin,b.ymax,b.zmax);
-
-    ::glVertex3d(b.xmin,b.ymin,b.zmax);
-    ::glVertex3d(b.xmax,b.ymin,b.zmax);
-
-    ::glVertex3d(b.xmax,b.ymax,b.zmax);
-    ::glVertex3d(b.xmin,b.ymax,b.zmax);
-
-    ::glVertex3d(b.xmax,b.ymax,b.zmax);
-    ::glVertex3d(b.xmax,b.ymin,b.zmax);
-
-    ::glEnd();
-}
-
 void Scene_implicit_function_item::compute_texture(int i, int j)
 {
     const Point& p = (implicit_grid_[i][j]).first;
@@ -743,59 +492,6 @@ void Scene_implicit_function_item::compute_texture(int i, int j)
             GLdouble r = blue_color_ramp_.r(v), g = blue_color_ramp_.g(v), b = blue_color_ramp_.b(v);
             texture->setData(i,j,255*r,255*g,255*b);
         }
-}
-
-void
-Scene_implicit_function_item::
-draw_function_grid(const Color_ramp& ramp_pos,
-                   const Color_ramp& ramp_neg) const
-{
-    ::glDisable(GL_LIGHTING);
-    ::glShadeModel(GL_SMOOTH);
-
-    ::glBegin(GL_QUADS);
-    const int nb_quads = grid_size_ - 1;
-    for( int i=0 ; i < nb_quads ; i++ )
-    {
-        for( int j=0 ; j < nb_quads ; j++)
-        {
-            draw_grid_vertex(implicit_grid_[i][j], ramp_pos, ramp_neg);
-            draw_grid_vertex(implicit_grid_[i][j+1], ramp_pos, ramp_neg);
-            draw_grid_vertex(implicit_grid_[i+1][j+1], ramp_pos, ramp_neg);
-            draw_grid_vertex(implicit_grid_[i+1][j], ramp_pos, ramp_neg);
-        }
-    }
-    ::glEnd();
-}
-
-
-void
-Scene_implicit_function_item::
-draw_grid_vertex(const Point_value& pv,
-                 const Color_ramp& ramp_positive,
-                 const Color_ramp& ramp_negative) const
-{
-    const Point& p = pv.first;
-    double v = pv.second;
-
-    if(is_nan(v)) {
-        ::glColor3f(0.2f, 0.2f, 0.2f);
-    } else
-        // determines grey level
-        if ( v > 0 )
-        {
-            v = v/max_value_;
-            ::glColor3d(ramp_positive.r(v),ramp_positive.g(v),ramp_positive.b(v));
-        }
-        else
-        {
-            v = v/min_value_;
-            ::glColor3d(ramp_negative.r(v),ramp_negative.g(v),ramp_negative.b(v));
-        }
-
-    ::glVertex3d(p.x,p.y,p.z);
-
-
 }
 
 
@@ -881,7 +577,7 @@ Scene_implicit_function_item::changed()
 {
     Scene_item::changed();
     compute_vertices_and_texmap();
-    initialize_buffers();
+    are_buffers_filled = false;
 }
 
 void Scene_implicit_function_item::contextual_changed()

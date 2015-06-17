@@ -5,6 +5,7 @@ attribute highp vec2 v_texCoord;
 
 uniform highp mat4 mvp_matrix;
 uniform highp mat4 mv_matrix; 
+uniform highp mat4 f_matrix; 
 uniform highp int is_two_side; 
 uniform highp vec4 light_pos;  
 uniform highp vec4 light_diff; 
@@ -21,12 +22,12 @@ void main(void)
    vec3 L = light_pos.xyz - P.xyz; 
    N = normalize(N); 
    L = normalize(L); 
-   vec3 diffuse; 
+   vec3 diffuse;
    if(is_two_side == 1) 
        diffuse = abs(dot(N,L)) * light_diff.xyz; 
    else 
        diffuse = max(dot(N,L), 0.0) * light_diff.xyz; 
    f_texCoord = v_texCoord; 
-   fColors = color_facets * (light_amb.xyz + diffuse); 
-   gl_Position =  mvp_matrix * vertex; 
+   fColors = color_facets * (light_amb.xyz + diffuse);
+   gl_Position =  mvp_matrix * f_matrix * vertex; 
 }  

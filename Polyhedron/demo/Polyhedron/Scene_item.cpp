@@ -244,6 +244,8 @@ void Scene_item::attrib_buffers(Viewer_interface* viewer, int program_name) cons
     GLint is_both_sides = 0;
     QMatrix4x4 mvp_mat;
     QMatrix4x4 mv_mat;
+    QMatrix4x4 f_mat;
+    f_mat.setToIdentity();
 
     //fills the MVP and MV matrices.
 
@@ -257,6 +259,7 @@ void Scene_item::attrib_buffers(Viewer_interface* viewer, int program_name) cons
     viewer->camera()->getModelViewMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mv_mat.data()[i] = GLfloat(d_mat[i]);
+
 
     qFunc.glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
 
@@ -298,6 +301,7 @@ void Scene_item::attrib_buffers(Viewer_interface* viewer, int program_name) cons
         shader_programs[PROGRAM_WITHOUT_LIGHT]->setUniformValue("spec_power", 51.8f);
         shader_programs[PROGRAM_WITHOUT_LIGHT]->setUniformValue("is_two_side", is_both_sides);
         shader_programs[PROGRAM_WITHOUT_LIGHT]->setAttributeValue("normals", 0.0,0.0,0.0);
+        shader_programs[PROGRAM_WITHOUT_LIGHT]->setUniformValue("f_matrix",f_mat);
 
 
         shader_programs[PROGRAM_WITHOUT_LIGHT]->release();
@@ -322,6 +326,7 @@ void Scene_item::attrib_buffers(Viewer_interface* viewer, int program_name) cons
         shader_programs[PROGRAM_WITH_TEXTURE]->setUniformValue("light_amb", ambient);
         shader_programs[PROGRAM_WITH_TEXTURE]->setUniformValue("spec_power", 51.8f);
         shader_programs[PROGRAM_WITH_TEXTURE]->setUniformValue("s_texture",0);
+        shader_programs[PROGRAM_WITH_TEXTURE]->setUniformValue("f_matrix",f_mat);
 
 
         shader_programs[PROGRAM_WITH_TEXTURE]->release();
