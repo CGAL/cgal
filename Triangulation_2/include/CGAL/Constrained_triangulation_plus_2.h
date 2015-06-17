@@ -795,6 +795,30 @@ insert_subconstraint(Vertex_handle vaa,
   List_edges edges(conflict_boundary_ab);
   std::copy(conflict_boundary_ba.begin(), conflict_boundary_ba.end(), std::back_inserter(edges));
 
+  // edges may contain mirror edges. They no longer exist after triangulate_hole
+  // so we have to remove them before calling get_bounded_faces
+  if(! edges.empty()){
+    typename List_edges::iterator it, it2;
+    
+    it = edges.begin();
+    it2 = it;
+    ++it2;
+    for(; it2 != edges.end();){
+      Edge e1 = *it, e2 = *it2;
+      if(this->mirror_edge(e1) == e2){
+        typename List_edges::iterator del = it;
+        --it;
+        edges.erase(del);
+        edges.erase(it2);
+        it2 = it;
+        ++it2;
+      } else {
+        ++it;
+        ++it2;
+      }
+    }
+  }
+
   this->triangulate_hole(intersected_faces,
                          conflict_boundary_ab,
                          conflict_boundary_ba);
