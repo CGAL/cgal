@@ -32,10 +32,9 @@
 
 //=========================== Alpha-TC or not? ================================
 
-//#define CGAL_FIXED_ALPHA_TC
-const double ALPHA = 0.3;
-
 #define CGAL_ALPHA_TC
+  #define CGAL_USE_A_FIXED_ALPHA
+  const double CGAL_TC_ALPHA_VALUE = 0.3;
 
 //========================= Debugging & profiling =============================
 #define CGAL_TC_PROFILING

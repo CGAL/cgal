@@ -266,7 +266,7 @@ public:
     , m_points_ds(m_points)
     , m_are_tangent_spaces_computed(m_points.size(), false)
     , m_tangent_spaces(m_points.size(), Tangent_space_basis())
-#if defined(CGAL_FIXED_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+#ifdef CGAL_TC_EXPORT_NORMALS
     , m_orth_spaces(m_points.size(), Orthogonal_space_basis())
 #endif
 #ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
@@ -307,7 +307,7 @@ public:
   }
 
   void set_tangent_planes(const TS_container& tangent_spaces
-#if defined(CGAL_FIXED_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+#ifdef CGAL_TC_EXPORT_NORMALS
                         , const OS_container& orthogonal_spaces
 #endif
                          )
@@ -317,14 +317,14 @@ public:
               << " tangent spaces manually at the same time" << std::endl;
     std::exit(EXIT_FAILURE);
 #endif
-#if defined(CGAL_FIXED_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+#ifdef CGAL_TC_EXPORT_NORMALS
     CGAL_assertion(m_points.size() == tangent_spaces.size()
                    && m_points.size() == orthogonal_spaces.size());
 #else
     CGAL_assertion(m_points.size() == tangent_spaces.size());
 #endif
     m_tangent_spaces = tangent_spaces;
-#if defined(CGAL_FIXED_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+#ifdef CGAL_TC_EXPORT_NORMALS
     m_orth_spaces = orthogonal_spaces;
 #endif
     for(std::size_t i=0; i<m_points.size(); ++i)
@@ -370,11 +370,7 @@ public:
 #endif // CGAL_LINKED_WITH_TBB
     {
       for (std::size_t i = 0 ; i < m_points.size() ; ++i)
-#ifdef CGAL_FIXED_ALPHA_TC
-        compute_alpha_tangent_triangulation(i, ALPHA);
-#else
         compute_tangent_triangulation(i);
-#endif
     }
 
 #if defined(CGAL_TC_PROFILING) && defined(CGAL_LINKED_WITH_TBB)
@@ -451,13 +447,7 @@ public:
 #endif // CGAL_LINKED_WITH_TBB
     {
       for (std::size_t i = 0 ; i < m_points.size() ; ++i)
-      {
-#ifdef CGAL_FIXED_ALPHA_TC
-        compute_alpha_tangent_triangulation(i, ALPHA);
-#else
         compute_tangent_triangulation(i);
-#endif
-      }
     }
 
 #ifdef CGAL_TC_PROFILING
@@ -1056,13 +1046,7 @@ private:
     void operator()( const tbb::blocked_range<size_t>& r ) const
     {
       for( size_t i = r.begin() ; i != r.end() ; ++i)
-      {
-#ifdef CGAL_FIXED_ALPHA_TC
-        m_tc.compute_alpha_tangent_triangulation(i, ALPHA);
-#else
         m_tc.compute_tangent_triangulation(i);
-#endif
-      }
     }
   };
 #endif // CGAL_LINKED_WITH_TBB
@@ -1076,17 +1060,34 @@ private:
     // No need to lock the mutex here since this will not be called while
     // other threads are perturbing the positions
     const Point center_pt = compute_perturbed_point(i);
+    Tangent_space_basis &tsb = m_tangent_spaces[i];
 
     // Estimate the tangent space
     if (!m_are_tangent_spaces_computed[i])
     {
-#if defined(CGAL_FIXED_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
-      m_tangent_spaces[i] =
-        compute_tangent_space(center_pt, i, true/*normalize*/, &m_orth_spaces[i]);
+#ifdef CGAL_TC_EXPORT_NORMALS
+      tsb = compute_tangent_space(center_pt, i, true/*normalize*/, &m_orth_spaces[i]);
 #else
-      m_tangent_spaces[i] = compute_tangent_space(center_pt, i);
+      tsb = compute_tangent_space(center_pt, i);
 #endif
     }
+#ifdef CGAL_TC_PERTURB_TANGENT_SPACE
+    else if (m_perturb_tangent_space[i])
+    {
+#ifdef CGAL_TC_EXPORT_NORMALS
+      tsb = compute_tangent_space(center_pt, i,
+                                  true /*normalize_basis*/,
+                                  &m_orth_spaces[i],
+                                  true /*perturb*/);
+#else
+      tsb = compute_tangent_space(center_pt, i,
+                                  true /*normalize_basis*/,
+                                  NULL /*ortho basis*/,
+                                  true /*perturb*/);
+#endif
+      m_perturb_tangent_space[i] = false;
+    }
+#endif
 
     int triangulation_dim = local_triangulation_dim(i);
     Triangulation &local_tr =
@@ -1105,23 +1106,6 @@ private:
     typename Tr_traits::Power_center_d power_center =
       local_tr_traits.power_center_d_object();
 
-#ifdef CGAL_TC_PERTURB_TANGENT_SPACE
-    else if (m_perturb_tangent_space[i])
-    {
-#if defined(CGAL_FIXED_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
-      m_tangent_spaces[i] = compute_tangent_space(center_pt, i,
-                                                  true /*normalize_basis*/,
-                                                  &m_orth_spaces[i],
-                                                  true /*perturb*/);
-#else
-      m_tangent_spaces[i] = compute_tangent_space(center_pt, i,
-                                                  true /*normalize_basis*/,
-                                                  NULL /*ortho basis*/,
-                                                  true /*perturb*/);
-#endif
-      m_perturb_tangent_space[i] = false;
-    }
-#endif
 
     //***************************************************
     // Build a minimal triangulation in the tangent space
@@ -1130,7 +1114,7 @@ private:
 
     // Insert p
     Tr_point proj_wp;
-    if(k_eq(compute_perturbed_point(i), m_tangent_spaces[i].origin()))
+    if(k_eq(compute_perturbed_point(i), tsb.origin()))
     {
       proj_wp = local_tr_traits.construct_weighted_point_d_object()(
         local_tr_traits.construct_point_d_object()(triangulation_dim, ORIGIN),
@@ -1139,8 +1123,7 @@ private:
     else
     {
       const Weighted_point& wp = compute_perturbed_weighted_point(i);
-      proj_wp = project_point_and_compute_weight(wp, m_tangent_spaces[i],
-                                                 local_tr_traits);
+      proj_wp = project_point_and_compute_weight(wp, tsb, local_tr_traits);
     }
 
     center_vertex = local_tr.insert(proj_wp);
@@ -1182,7 +1165,7 @@ private:
           break;
 
         Tr_point proj_pt = project_point_and_compute_weight(
-          neighbor_pt, neighbor_weight, m_tangent_spaces[i],
+          neighbor_pt, neighbor_weight, tsb,
           local_tr_traits);
 
         Tr_vertex_handle vh = local_tr.insert_if_in_star(proj_pt, center_vertex);
@@ -1251,11 +1234,26 @@ private:
       }
     }
 
+#ifdef CGAL_ALPHA_TC
+    if (tsb.num_thickening_vectors() == 0)
+      update_star__no_thickening_vectors(i);
+    else
+      update_star__with_thickening_vector(i);
+#else
+    update_star__no_thickening_vectors(i);
+#endif
+  }
+
+  // Updates m_stars[i] directly from m_triangulations[i]
+  void update_star__no_thickening_vectors(std::size_t i)
+  {
     //***************************************************
     // Update the associated star (in m_stars)
     //***************************************************
     Star &star = m_stars[i];
     star.clear();
+    Triangulation &local_tr = m_triangulations[i].tr();
+    Tr_vertex_handle center_vertex = m_triangulations[i].center_vertex();
     int cur_dim_plus_1 = local_tr.current_dimension() + 1;
 
     std::vector<Tr_full_cell_handle> incident_cells;
@@ -1288,214 +1286,64 @@ private:
     //CGAL::export_triangulation_to_off(off_stream_tr, local_tr);
   }
 
-#ifdef CGAL_FIXED_ALPHA_TC
-  void compute_alpha_tangent_triangulation(std::size_t i, FT alpha,
-                                           bool verbose = false)
+#ifdef CGAL_ALPHA_TC
+  void update_star__with_thickening_vector(std::size_t i)
   {
-    if (verbose)
-      std::cerr << "** Computing alpha tangent tri #"
-                << i << " **" << std::endl;
-
-    typedef Regular_triangulation_euclidean_traits<Kernel>    Amb_RT_Traits;
-    typedef Regular_triangulation<
-      Amb_RT_Traits,
-      Triangulation_data_structure<
-        typename Amb_RT_Traits::Dimension,
-        Triangulation_vertex<Amb_RT_Traits, Vertex_data>
-      > >                                                     Amb_RT;
-    typedef typename Amb_RT::Weighted_point                   Amb_RT_Point;
-    typedef typename Amb_RT::Vertex_handle                    Amb_RT_VH;
-    typedef typename Amb_RT::Full_cell_handle                 Amb_RT_FCH;
-    //typedef typename Amb_RT::Finite_full_cell_const_iterator  Amb_FFC_it;
-
-    typename Kernel::Point_drop_weight_d k_drop_w =
-      m_k.point_drop_weight_d_object();
-    typename Kernel::Squared_distance_d k_sqdist =
-      m_k.squared_distance_d_object();
-    typename Kernel::Point_weight_d k_point_weight =
-      m_k.point_weight_d_object();
-    typename Kernel::Power_center_d k_power_center =
-      m_k.power_center_d_object();
-
-    // No need to lock the mutex here since this will not be called while
-    // other threads are perturbing the positions
-    const Point &center_pt = m_points[i];
-
-    // Estimate the tangent space
-    if (!m_are_tangent_spaces_computed[i])
-    {
-      m_tangent_spaces[i] =
-        compute_tangent_space(center_pt, i, true /*normalize*/, &m_orth_spaces[i]);
-    }
-#ifdef CGAL_TC_PERTURB_TANGENT_SPACE
-    else if (m_perturb_tangent_space[i])
-    {
-      m_tangent_spaces[i] =
-        compute_tangent_space(center_pt, i, true, &m_orth_spaces[i], true);
-      m_perturb_tangent_space[i] = false;
-    }
-#endif
-
-    //***************************************************
-    // Build a minimal triangulation in the tangent space
-    // (we only need the star of p in the AMBIENT triangulation)
-    //***************************************************
-
-#ifdef CGAL_TC_PROFILING
-    Wall_clock_timer t_star;
-#endif
-
-    Amb_RT local_amb_tr(m_ambient_dim);
-
-    // Insert p
-    Weighted_point wp = compute_perturbed_weighted_point(i);
-    Amb_RT_VH center_vertex = local_amb_tr.insert(wp);
-    center_vertex->data() = i;
-    if (verbose)
-      std::cerr << "* Inserted point #" << i << std::endl;
-
-    INS_range ins_range = m_points_ds.query_incremental_ANN(center_pt);
-
-    // While building the local triangulation, we keep the radius
-    // of the sphere "star sphere" centered at "center_vertex"
-    // and which contains all the
-    // circumspheres of the star of "center_vertex"
-    boost::optional<FT> squared_star_sphere_radius_plus_margin;
-
-    // Insert points until we find a point which is outside "star shere"
-    for (INS_iterator nn_it = ins_range.begin() ;
-         nn_it != ins_range.end() ;
-         ++nn_it)
-    {
-      std::size_t neighbor_point_idx = nn_it->first;
-
-      // ith point = p, which is already inserted
-      if (neighbor_point_idx != i)
-      {
-        // No need to lock the Mutex_for_perturb here since this will not be
-        // called while other threads are perturbing the positions
-        Weighted_point neighbor_wp =
-          compute_perturbed_weighted_point(neighbor_point_idx);
-
-        // "4*m_sq_half_sparsity" because both points can be perturbed
-        if (squared_star_sphere_radius_plus_margin
-          && k_sqdist(center_pt, k_drop_w(neighbor_wp))
-             > *squared_star_sphere_radius_plus_margin)
-          break;
-
-        Amb_RT_VH vh = local_amb_tr.insert_if_in_star(neighbor_wp, center_vertex);
-        //Amb_RT_VH vh = local_amb_tr.insert(neighbor_wp);
-        if (vh != Amb_RT_VH())
-        {
-          if (verbose)
-            std::cerr << "* Inserted point #" << neighbor_point_idx << std::endl;
-
-          vh->data() = neighbor_point_idx;
-
-          // Let's recompute squared_star_sphere_radius_plus_margin
-          if (local_amb_tr.current_dimension() == m_ambient_dim)
-          {
-            squared_star_sphere_radius_plus_margin = boost::none;
-            // Get the incident cells and look for the biggest circumsphere
-            std::vector<Amb_RT_FCH> incident_cells;
-            local_amb_tr.incident_full_cells(
-              center_vertex,
-              std::back_inserter(incident_cells));
-            for (typename std::vector<Amb_RT_FCH>::iterator cit =
-                 incident_cells.begin(); cit != incident_cells.end(); ++cit)
-            {
-              Amb_RT_FCH cell = *cit;
-              if (local_amb_tr.is_infinite(cell))
-              {
-                squared_star_sphere_radius_plus_margin = boost::none;
-                break;
-              }
-              else
-              {
-                Amb_RT_Point c = k_power_center(
-                  boost::make_transform_iterator(
-                    cell->vertices_begin(),
-                    vertex_handle_to_point<Weighted_point, Amb_RT_VH>),
-                  boost::make_transform_iterator(
-                    cell->vertices_end(),
-                    vertex_handle_to_point<Weighted_point, Amb_RT_VH>));
-
-                FT sq_power_sphere_diam = 4*k_point_weight(c);
-
-                if (!squared_star_sphere_radius_plus_margin
-                 || sq_power_sphere_diam >
-                    *squared_star_sphere_radius_plus_margin)
-                {
-                  squared_star_sphere_radius_plus_margin = sq_power_sphere_diam;
-                }
-              }
-            }
-
-            // Let's add the margin, now
-            // The value depends on whether we perturb weight or position
-            if (squared_star_sphere_radius_plus_margin)
-            {
-#ifdef CGAL_TC_PERTURB_WEIGHT
-              squared_star_sphere_radius_plus_margin =
-                *squared_star_sphere_radius_plus_margin + 4*m_sq_half_sparsity;
-#else
-              squared_star_sphere_radius_plus_margin = CGAL::square(
-                CGAL::sqrt(*squared_star_sphere_radius_plus_margin)
-                + 2*m_half_sparsity);
-#endif
-            }
-          }
-        }
-      }
-    }
-
     //***************************************************
     // Parse the faces of the star and add the ones that are in the
     // restriction to alpha-Tp
     // Update the associated star (in m_stars)
     //***************************************************
+    
+    int triangulation_dim = local_triangulation_dim(i);
+    Triangulation &local_tr = m_triangulations[i].tr();
+    Tr_traits const& local_tr_traits = local_tr.geom_traits();
+    Tr_vertex_handle center_vertex = m_triangulations[i].center_vertex();
+    Tangent_space_basis const& tsb = m_tangent_spaces[i];
+
     Star &star = m_stars[i];
     star.clear();
-    int cur_dim_plus_1 = m_ambient_dim + 1;
+    int cur_dim_plus_1 = triangulation_dim + 1;
 
-    std::vector<Amb_RT_FCH> incident_cells;
-    local_amb_tr.incident_full_cells(
+    std::vector<Tr_full_cell_handle> incident_cells;
+    local_tr.incident_full_cells(
       center_vertex, std::back_inserter(incident_cells));
 
-    typedef std::set<std::size_t> DT_face; // DT face without center vertex (i)
-    typedef std::set<std::size_t> Neighbor_vertices;
+    typedef std::set<Tr_vertex_handle> DT_face; // DT face without center vertex (i)
+    typedef std::set<Tr_vertex_handle> Neighbor_vertices;
     typedef std::map<DT_face, Neighbor_vertices> DT_faces_and_neighbors;
 
-    // Maps that associate a k-face and the list of its neighbor points
-    // (i.e. there are k+1-cofaces that contain these points)
-    // N.B.: each k-face contains 'i', so 'i' is not stored in the faces
-    // faces_and_neighbors[0] => dim 1, faces_and_neighbors[1] => dim 2
+    // Maps that associate a m-face F and the points of its m+1-cofaces
+    // (except the points of F). Those points are called its "neighbors".
+    // N.B.: each m-face contains 'i', so 'i' is not stored in the faces
+    // N.B.2: faces_and_neighbors[0] => dim 1, faces_and_neighbors[1] => dim 2
     std::vector<DT_faces_and_neighbors> faces_and_neighbors;
-    faces_and_neighbors.resize(m_ambient_dim);
+    faces_and_neighbors.resize(triangulation_dim);
 
     // Fill faces_and_neighbors
-    // Let's first take care of the D-faces
-    typename std::vector<Amb_RT_FCH>::const_iterator it_c = incident_cells.begin();
-    typename std::vector<Amb_RT_FCH>::const_iterator it_c_end = incident_cells.end();
+    // Let's first take care of the maximal simplices (dim = triangulation_dim)
+    typename std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
+    typename std::vector<Tr_full_cell_handle>::const_iterator it_c_end = incident_cells.end();
     // For each cell
     for ( ; it_c != it_c_end ; ++it_c)
     {
       DT_face face;
-      // CJTODO: use (*it_c)->vertices_begin(), etc.
       for (int j = 0 ; j < cur_dim_plus_1 ; ++j)
       {
-        std::size_t index = (*it_c)->vertex(j)->data();
-        if (index == std::numeric_limits<std::size_t>::max())
+        Tr_vertex_handle vh = (*it_c)->vertex(j);
+        // Skip infinite simplices
+        if (vh == local_tr.infinite_vertex())
           goto next_face;
-        if (index != i)
-          face.insert(index);
+        if (vh->data() != i)
+          face.insert(vh);
       }
-      faces_and_neighbors[m_ambient_dim-1][face] = Neighbor_vertices();
+      // No co-faces => no neighbors
+      faces_and_neighbors[triangulation_dim-1][face] = Neighbor_vertices();
 next_face:
       ;
     }
-    // Then the D-k-faces...
-    int current_dim = m_ambient_dim - 1;
+    // Then the D-m-faces...
+    int current_dim = triangulation_dim - 1;
     while (current_dim > 0)
     {
       // Let's fill faces_and_neighbors[current_dim-1]
@@ -1504,21 +1352,21 @@ next_face:
         faces_and_neighbors[current_dim-1];
 
       typedef DT_faces_and_neighbors::const_iterator FaN_it;
-      // Parse k+1-faces
+      // Parse m+1-faces
       for (FaN_it it_k_p1_face = faces_and_neighbors[current_dim].begin(),
                   it_k_p1_face_end = faces_and_neighbors[current_dim].end() ;
            it_k_p1_face != it_k_p1_face_end ; ++it_k_p1_face)
       {
         DT_face const& k_p1_face = it_k_p1_face->first;
 
-        // Add each k faces to cur_faces_and_nghb
+        // Add each m-face to cur_faces_and_nghb
         std::size_t n = current_dim + 1; // Not +2 since 'i' is not stored
         std::vector<bool> booleans(n, false);
         std::fill(booleans.begin() + 1, booleans.end(), true);
         do
         {
           DT_face k_face;
-          std::size_t remaining_vertex;
+          Tr_vertex_handle remaining_vertex;
           DT_face::const_iterator it_v = k_p1_face.begin();
           for (std::size_t i = 0 ; i < n ; ++i, ++it_v)
           {
@@ -1537,7 +1385,8 @@ next_face:
 
     // For each face V of Voronoi_cell(P[i]) - dim 0 to dim D-1
     // I.e. For each DT face F of the star - dim D to dim 1
-    current_dim = m_ambient_dim;
+    // Test if V intersects the thickened tangent space
+    current_dim = triangulation_dim;
     while (current_dim > 0)
     {
       // Remember: faces_and_neighbors[current_dim-1] stores
@@ -1557,19 +1406,28 @@ next_face:
                        == current_dim);
 
         // P: list of current_DT_face points (including 'i')
-        std::vector<std::size_t> P(
+        std::vector<Tr_vertex_handle> P(
           current_DT_face.begin(), current_DT_face.end());
-        P.push_back(i);
+        P.push_back(center_vertex);
 
-#ifdef CGAL_TC_PROFILING
-        Wall_clock_timer t_inters;
-#endif
         bool does_intersect =
-          does_voronoi_face_and_alpha_tangent_subspace_intersect(
-              i, P, curr_neighbors, m_orth_spaces[i], alpha);
+          does_voronoi_face_and_tangent_subspace_intersect(
+            triangulation_dim, 
+            center_vertex, 
+            P, 
+            curr_neighbors, 
+            tsb, 
+            local_tr_traits);
         if (does_intersect)
         {
-          star.push_back(current_DT_face);
+          // Get the indices of the face's points
+          Incident_simplex face;
+          DT_face::const_iterator it_vh = current_DT_face.begin();
+          DT_face::const_iterator it_vh_end = current_DT_face.end();
+          for ( ; it_vh != it_vh_end ; ++it_vh)
+            face.insert((*it_vh)->data());
+
+          star.push_back(face);
 
           // Clear all subfaces of current_DT_face from the maps
           for (int dim = current_dim - 1 ; dim > 0 ; --dim)
@@ -1596,17 +1454,9 @@ next_face:
 
       --current_dim;
     }
-
-    // CJTODO DEBUG
-    //std::cerr << "\nChecking topology and geometry..."
-    //          << (local_amb_tr.is_valid(true) ? "OK.\n" : "Error.\n");
-    // DEBUG: output the local mesh into an OFF file
-    //std::stringstream sstr;
-    //sstr << "data/local_tri_" << i << ".off";
-    //std::ofstream off_stream_tr(sstr.str());
-    //CGAL::export_triangulation_to_off(off_stream_tr, local_amb_tr);
   }
-#endif // CGAL_FIXED_ALPHA_TC
+#endif //CGAL_ALPHA_TC
+
 
   Tangent_space_basis compute_tangent_space(
       const Point &p
@@ -1765,6 +1615,19 @@ next_face:
         }
       }
     }
+#if defined(CGAL_ALPHA_TC) && defined(CGAL_USE_A_FIXED_ALPHA)
+    // Add the orthogonal vectors as "thickening vectors"
+    for (int j = m_ambient_dim - m_intrinsic_dimension - 1 ;
+          j >= 0 ;
+          --j)
+    {
+      Vector v = constr_vec(m_ambient_dim,
+                            eig.eigenvectors().col(j).data(),
+                            eig.eigenvectors().col(j).data() + m_ambient_dim);
+      tsb.add_thickening_vector(
+        normalize_vector(v, m_k), -CGAL_TC_ALPHA_VALUE, CGAL_TC_ALPHA_VALUE);
+    }
+#endif
 
     m_are_tangent_spaces_computed[i] = true;
 
@@ -2868,16 +2731,135 @@ next_face:
 
     return inconsistencies_found;
   }
+  
+  // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
+  // Q: vertices which are common neighbors of all vertices of P
+  template <typename VH_range_a, typename VH_range_b>
+  bool does_voronoi_face_and_tangent_subspace_intersect(
+    int points_dim,
+    Tr_vertex_handle center_vh,
+    VH_range_a const& P,
+    VH_range_b const& Q,
+    Tangent_space_basis const& tsb,
+    const Tr_traits &tr_traits) const
+  {
+    // Notations:
+    // Fv: Voronoi k-face
+    // Fd: dual, (D-k)-face of Delaunay (p0, p1, ..., pn)
+    
+    typename Tr_traits::Point_drop_weight_d drop_w =
+      tr_traits.point_drop_weight_d_object();
+    typename Tr_traits::Point_weight_d point_weight =
+      tr_traits.point_weight_d_object();
+    typename Tr_traits::Scalar_product_d scalar_pdct = 
+      tr_traits.scalar_product_d_object();
+    typename Tr_traits::Point_to_vector_d pt_to_vec = 
+      tr_traits.point_to_vector_d_object();
+    typename Tr_traits::Compute_coordinate_d coord = 
+      tr_traits.compute_coordinate_d_object();
+    
+    typename Kernel::Compute_coordinate_d k_coord = 
+      m_k.compute_coordinate_d_object();
+
+    std::size_t card_P = P.size();
+    std::size_t card_Q = Q.size();
+
+    // Linear solver
+    typedef CGAL::Quadratic_program<FT> Linear_program;
+    typedef CGAL::Quadratic_program_solution<ET> LP_solution;
+
+    Linear_program lp(CGAL::SMALLER, false);
+    int current_row = 0;
+
+    //=========== First set of equations ===========
+    // For points pi in P
+    //   2(p0 - pi).x = p0^2 - wght(p0) - pi^2 + wght(pi)
+    Tr_point const& p0 = center_vh->point();
+    FT const w0 = point_weight(p0);
+    FT p0_dot_p0 = scalar_pdct(pt_to_vec(drop_w(p0)), pt_to_vec(drop_w(p0)));
+
+    for (typename VH_range_a::const_iterator it_vh = P.begin(),
+                                             it_vh_end = P.end() ;
+         it_vh != it_vh_end ; ++it_vh)
+    {
+      Tr_point const& pi = (*it_vh)->point();
+      FT const wi = point_weight(pi);
+
+      for (int k = 0 ; k < points_dim ; ++k)
+        lp.set_a(k, current_row, 2*(coord(p0, k) - coord(pi, k)));
+
+      FT pi_dot_pi = scalar_pdct(pt_to_vec(drop_w(pi)), pt_to_vec(drop_w(pi)));
+      lp.set_b(current_row, p0_dot_p0 - pi_dot_pi - w0 + wi);
+      lp.set_r(current_row, CGAL::EQUAL);
+
+      ++current_row;
+    }
+
+    //=========== Second set of equations ===========
+    // For each point qi in Q
+    //  2(qi - p0).x <= qi^2 - wght(pi) - p0^2 + wght(p0)
+    for (typename VH_range_b::const_iterator it_vh = Q.begin(),
+                                             it_vh_end = Q.end() ;
+         it_vh != it_vh_end ; ++it_vh)
+    {
+      Tr_point const& qi = (*it_vh)->point();
+      FT const wi = point_weight(qi);
+
+      for (int k = 0 ; k < points_dim ; ++k)
+        lp.set_a(k, current_row, 2*(coord(qi, k) - coord(p0, k)));
+
+      FT qi_dot_qi = scalar_pdct(pt_to_vec(drop_w(qi)), pt_to_vec(drop_w(qi)));
+      lp.set_b(current_row, qi_dot_qi - wi - p0_dot_p0 + w0);
+
+      ++current_row;
+    }
+
+    //=========== Third set of equations ===========
+    // For each thickening vector bj of TSB, 
+    // x.bj <= alpha_plus and >= alpha_minus
+    // where bj is in the TSB => bj = (0..., 1..., 0) (1 is at the ith position)
+    //   x.bj  <=  alpha_plus
+    //   -x.bj <= -alpha_minus
+    std::size_t j = points_dim - tsb.num_thickening_vectors();
+    for (Tangent_space_basis::Thickening_vectors::const_iterator 
+           it_tv = tsb.thickening_vectors().begin(),
+           it_tv_end = tsb.thickening_vectors().end() ;
+         it_tv != it_tv_end ; ++it_tv)
+    {
+      Tangent_space_basis::Thickening_vector const& bj = *it_tv;
+
+      for (int k = 0 ; k < points_dim ; ++k)
+      {
+        lp.set_a(k, current_row    , (j == k ? 1. : 0.));
+        lp.set_a(k, current_row + 1, (j == k ? -1. : 0.));
+      }
+
+      lp.set_b(current_row    ,  bj.alpha_plus);
+      lp.set_b(current_row + 1, -bj.alpha_minus);
+
+      current_row += 2;
+      ++j;
+    }
+
+    //=========== Other LP parameters ===========
+    lp.set_c(0, 1); // Minimize x[0]
+
+    //=========== Solve =========================
+    LP_solution solution = CGAL::solve_linear_program(lp, ET());
+    bool ret = (solution.status() == CGAL::QP_OPTIMAL);
+
+    return ret;
+  }
 
   // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
   // Q: vertices which are common neighbors of all vertices of P
-  template <typename Indexed_point_range, typename Indexed_point_range_2>
+  template <typename Indexed_point_range_a, typename Indexed_point_range_b>
   bool does_voronoi_face_and_alpha_tangent_subspace_intersect(
       std::size_t center_pt_index,
-      Indexed_point_range const& P,
-      Indexed_point_range_2 const& Q,
+      Indexed_point_range_a const& P,
+      Indexed_point_range_b const& Q,
       Orthogonal_space_basis const& orthogonal_subspace_basis,
-      FT alpha)
+      FT alpha) const
   {
     // Notations:
     // Fv: Voronoi k-face
@@ -2892,10 +2874,6 @@ next_face:
 
     std::size_t card_P = P.size();
     std::size_t card_Q = Q.size();
-    std::size_t card_OSB = orthogonal_subspace_basis.size();
-    std::size_t num_couples_among_P = card_P*(card_P-1)/2;
-    std::size_t num_equations =
-      2*num_couples_among_P + card_P*card_Q + 2*card_OSB;
 
     // Linear solver
     typedef CGAL::Quadratic_program<FT> Linear_program;
@@ -2911,8 +2889,8 @@ next_face:
     FT const w0 = m_weights[center_pt_index];
     FT p0_dot_p0 = scalar_pdct(pt_to_vec(p0), pt_to_vec(p0));
 
-    for (typename Indexed_point_range::const_iterator it_p = P.begin(),
-                                                      it_p_end = P.end() ;
+    for (typename Indexed_point_range_a::const_iterator it_p = P.begin(),
+                                                        it_p_end = P.end() ;
          it_p != it_p_end ; ++it_p)
     {
       Point pi;
@@ -2955,7 +2933,7 @@ next_face:
     //=========== Second set of equations ===========
     // For each point qi in Q
     //  2(qi - p0).x <= qi^2 - wi - p0^2 + w0
-    for (typename Indexed_point_range_2::const_iterator it_q = Q.begin(),
+    for (typename Indexed_point_range_b::const_iterator it_q = Q.begin(),
                                                         it_q_end = Q.end() ;
          it_q != it_q_end ; ++it_q)
     {
@@ -2977,17 +2955,17 @@ next_face:
     // p is the origin of the basis
     //     bi.x <=  bi.p + alpha
     //    -bi.x <= -bi.p + alpha
-    for (typename Orthogonal_space_basis::const_iterator it_osb =
-         orthogonal_subspace_basis.begin(),
-         it_osb_end = orthogonal_subspace_basis.end() ;
+    for (Orthogonal_space_basis::const_iterator it_osb =
+          orthogonal_subspace_basis.begin(),
+          it_osb_end = orthogonal_subspace_basis.end() ;
          it_osb != it_osb_end ; ++it_osb)
     {
       Vector const& bi = *it_osb;
 
       for (int k = 0 ; k < ambient_dim ; ++k)
       {
-        lp.set_a(k, current_row    ,  bi[k]);
-        lp.set_a(k, current_row + 1, -bi[k]);
+        lp.set_a(k, current_row    ,  coord(bi, k));
+        lp.set_a(k, current_row + 1, -coord(bi, k));
       }
 
       Point const& basis_origin = orthogonal_subspace_basis.origin();
@@ -3456,7 +3434,7 @@ private:
   Points_ds                 m_points_ds;
   std::vector<bool>         m_are_tangent_spaces_computed;
   TS_container              m_tangent_spaces;
-#if defined(CGAL_FIXED_ALPHA_TC) || defined(CGAL_TC_EXPORT_NORMALS)
+#ifdef CGAL_TC_EXPORT_NORMALS
   OS_container              m_orth_spaces;
 #endif
   Tr_container              m_triangulations; // Contains the triangulations
