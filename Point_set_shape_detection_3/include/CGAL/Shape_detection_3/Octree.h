@@ -490,7 +490,7 @@ namespace CGAL {
           }
           if (enough >= requiredSamples) {
             do {
-              std::size_t p = rand.get_int(0, cur->size());
+              std::size_t p = rand.uniform_int<std::size_t>(0, cur->size() - 1);
               std::size_t j = this->index(cur->first + p);
               if (shapeIndex[j] == -1)
                 indices.insert(j);

@@ -534,9 +534,9 @@ namespace CGAL {
       m_upper_bound = -1 - m_upper_bound;
     }
 
-    void hypergeometrical_dist(const int UN, 
-                               const int x,
-                               const int n, 
+    void hypergeometrical_dist(const std::ptrdiff_t UN, 
+                               const std::ptrdiff_t x,
+                               const std::ptrdiff_t n, 
                                FT &low,
                                FT &high) {                           
       const FT q = FT(x * n * double(UN - x) * (UN - n) / (UN - 1));
