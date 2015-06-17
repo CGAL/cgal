@@ -80,7 +80,9 @@ void sample_random_sphere_in_box(const std::size_t num_points,
   typename K::FT &radius, OutputIterator points) {
     typedef typename K::FT FT;
     // Generate random parameters
-    radius = random_float((FT) 0.01, (FT) 5);
+    if (radius < 0.00001)
+      radius = random_float<FT>((FT) 0.01, (FT) 5);
+    else radius = random_float<FT>(radius / (FT) 10.0, (FT) radius);
     center = random_point_in<K>(bbox);
 
     sample_sphere(num_points, center, radius, points);
@@ -180,7 +182,7 @@ void sample_cone(const std::size_t num_points,
 template <typename K, typename OutputIterator>
 void sample_random_cone(const std::size_t num_points,
   CGAL::Point_3<K> &apex,  CGAL::Vector_3<K> &axis,
-  typename K::FT &angle, OutputIterator points) {
+  typename K::FT &angle, typename K::FT &mid, OutputIterator points) {
     typedef typename K::FT FT;
     // Generate random parameters
     apex = random_point_in<K>(CGAL::Bbox_3(-5, -5, -5, 5, 5, 5));
@@ -188,6 +190,8 @@ void sample_random_cone(const std::size_t num_points,
     angle = random_float((FT) 0.2, (FT) 1.4);
     FT start  = random_float((FT) 0, (FT) 2.5);
     FT end = start + random_float((FT) 0.5, (FT) 2.5);
+
+    mid = (start + end) / (FT) 2.0;
 
     sample_cone(num_points, apex, axis, angle, start, end, points);
 }
@@ -237,7 +241,7 @@ void sample_random_parallelogram_in_box(const std::size_t num_points,
 }
 
 template <typename K, typename OutputIterator>
-void generate_points_on_torus(const std::size_t num_points,
+void sample_torus(const std::size_t num_points,
   const CGAL::Point_3<K> &center,
   const CGAL::Vector_3<K> &axis,
   typename K::FT major_radius,
@@ -282,7 +286,7 @@ void sample_random_torus(const std::size_t num_points, CGAL::Point_3<K> &center,
     major_radius = random_float((FT) 1.0, (FT) 5.0);
     minor_radius = random_float((FT) 0.1, (FT) 1.0);
 
-    generate_points_on_torus(num_points, center, axis, major_radius, minor_radius, points);
+    sample_torus(num_points, center, axis, major_radius, minor_radius, points);
 }
 
 template <typename K, typename P>

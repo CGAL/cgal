@@ -138,53 +138,53 @@ namespace CGAL {
 
       FT min[] = {0,0}, max[] = {0,0};
 
-      std::vector<std::pair<FT, FT> > parameterSpace;
-      parameterSpace.resize(indices.size());
+      std::vector<std::pair<FT, FT> > parameter_space;
+      parameter_space.resize(indices.size());
 
-      parameters(m_indices, parameterSpace, min, max);
-      int iMin[2], iMax[2];
-      iMin[0] = (int) (min[0] / cluster_epsilon);
-      iMin[1] = (int) (min[1] / cluster_epsilon);
-      iMax[0] = (int) (max[0] / cluster_epsilon);
-      iMax[1] = (int) (max[1] / cluster_epsilon);
+      parameters(m_indices, parameter_space, min, max);
+      int i_min[2], i_max[2];
+      i_min[0] = (int) (min[0] / cluster_epsilon);
+      i_min[1] = (int) (min[1] / cluster_epsilon);
+      i_max[0] = (int) (max[0] / cluster_epsilon);
+      i_max[1] = (int) (max[1] / cluster_epsilon);
 
-      std::size_t uExtent = abs(iMax[0] - iMin[0]) + 2;
-      std::size_t vExtent = abs(iMax[1] - iMin[1]) + 2;
+      std::size_t u_extent = abs(i_max[0] - i_min[0]) + 2;
+      std::size_t v_extent = abs(i_max[1] - i_min[1]) + 2;
 
-      std::vector<std::vector<int> > bitmap;
+      std::vector<std::vector<std::size_t> > bitmap;
       std::vector<bool> visited;
-      bitmap.resize(uExtent * vExtent);
-      visited.resize(uExtent * vExtent, false);
+      bitmap.resize(u_extent * v_extent);
+      visited.resize(u_extent * v_extent, false);
 
-      bool wrapU = wraps_u();
-      bool wrapV = wraps_v();
+      bool wrap_u = wraps_u();
+      bool wrap_v = wraps_v();
 
-      for (std::size_t i = 0;i<parameterSpace.size();i++) {
-        int u = (int)((parameterSpace[i].first - min[0]) / cluster_epsilon);
-        int v = (int)((parameterSpace[i].second - min[1]) / cluster_epsilon);
-        if (u < 0 || (std::size_t)u >= uExtent) {
-          if (wrapU) {
-            while (u < 0) u += uExtent;
-            while ((std::size_t)u >= uExtent) u-= uExtent;
+      for (std::size_t i = 0;i<parameter_space.size();i++) {
+        int u = (int)((parameter_space[i].first - min[0]) / cluster_epsilon);
+        int v = (int)((parameter_space[i].second - min[1]) / cluster_epsilon);
+        if (u < 0 || (std::size_t)u >= u_extent) {
+          if (wrap_u) {
+            while (u < 0) u += (int) u_extent;
+            while (u >= (int) u_extent) u-= (int)u_extent;
           }
           else {
-            u = (u < 0) ? 0 : ((std::size_t)u >= uExtent) ? (int)uExtent - 1 : u;
+            u = (u < 0) ? 0 : (u >= (int) u_extent) ? (int)u_extent - 1 : u;
           }
         }
-        if (v < 0 || (std::size_t)v >= vExtent) {
-          if (wrapV) {
-            while (v < 0) v += vExtent;
-            while ((std::size_t)v >= vExtent) v-= vExtent;
+        if (v < 0 || v >= (int) v_extent) {
+          if (wrap_v) {
+            while (v < 0) v += (int) v_extent;
+            while (v >= (int) v_extent) v-= (int) v_extent;
           }
           else {
-            v = (v < 0) ? 0 : ((std::size_t)v >= vExtent) ? (int)vExtent - 1 : v;
+            v = (v < 0) ? 0 : (v >= (int) v_extent) ? (int) v_extent - 1 : v;
           }
         }
-        bitmap[v * uExtent + u].push_back(m_indices[i]);
+        bitmap[v * int(u_extent) + u].push_back(m_indices[i]);
       }
 
       std::vector<std::vector<std::size_t> > cluster;
-      for (std::size_t i = 0;i<(uExtent * vExtent);i++) {
+      for (std::size_t i = 0;i<(u_extent * v_extent);i++) {
         cluster.push_back(std::vector<std::size_t>());
         if (bitmap[i].empty())
           continue;
@@ -207,61 +207,61 @@ namespace CGAL {
             std::back_inserter(cluster.back()));
 
           // grow 8-neighborhood
-          int vIndex = f / uExtent;
-          int uIndex = f % uExtent;
-          bool upperBorder = vIndex == 0;
-          bool lowerBorder = vIndex == ((int)vExtent - 1);
-          bool leftBorder = uIndex == 0;
-          bool rightBorder = uIndex == ((int)uExtent - 1);
+          int v_index = int(f / u_extent);
+          int u_index = int(f % u_extent);
+          bool upper_border = v_index == 0;
+          bool lower_border = v_index == ((int)v_extent - 1);
+          bool left_border = u_index == 0;
+          bool right_border = u_index == ((int)u_extent - 1);
 
           int n;
-          if (!upperBorder) {
-            n = f - uExtent;
+          if (!upper_border) {
+            n = int(f - u_extent);
             if (!visited[n])
               fields.push(n);
           }
-          else if (wrapV) {
-            n = f + (vExtent - 1) * uExtent;
+          else if (wrap_v) {
+            n = int((f + v_extent - 1) * u_extent);
             if (!visited[n]) fields.push(n);
           }
 
-          if (!leftBorder) {
-            n = f - 1;
+          if (!left_border) {
+            n = int(f - 1);
             if (!visited[n]) fields.push(n);
           }
-          else if (wrapU) {
-            n = f + uExtent - 1;
-            if (!visited[n]) fields.push(n);
-          }
-
-          if (!lowerBorder) {
-            n = f + uExtent;
-            if (!visited[n]) fields.push(n);
-          }
-          else if (wrapV) {
-            n = f - (vExtent - 1) * uExtent;
+          else if (wrap_u) {
+            n = int(f + u_extent - 1);
             if (!visited[n]) fields.push(n);
           }
 
-          if (!rightBorder) {
-            n = f + 1;
+          if (!lower_border) {
+            n = int(f + u_extent);
             if (!visited[n]) fields.push(n);
           }
-          else if (wrapU) {
-            n = f - uExtent + 1;
+          else if (wrap_v) {
+            n = int((f - (v_extent - 1)) * u_extent);
+            if (!visited[n]) fields.push(n);
+          }
+
+          if (!right_border) {
+            n = int(f) + 1;
+            if (!visited[n]) fields.push(n);
+          }
+          else if (wrap_u) {
+            n = int(f - u_extent + 1);
             if (!visited[n]) fields.push(n);
           }
         }
       }
 
-      int maxCluster = 0;
+      std::size_t max_cluster = 0;
       for (std::size_t i = 1;i<cluster.size();i++) {
-        if (cluster[i].size() > cluster[maxCluster].size()) {
-          maxCluster = i;
+        if (cluster[i].size() > cluster[max_cluster].size()) {
+          max_cluster = i;
         }
       }
 
-      indices = cluster[maxCluster];
+      indices = cluster[max_cluster];
 
       return m_score = indices.size();
     }
@@ -273,9 +273,9 @@ namespace CGAL {
      */
     std::size_t connected_component_kdTree(std::vector<std::size_t> &indices,
                                            FT cluster_epsilon) {
-      typedef boost::tuple<Point_3,int> Point_and_int;
-      typedef CGAL::Search_traits_adapter<Point_and_int,
-        CGAL::Nth_of_tuple_property_map<0, Point_and_int>,
+      typedef boost::tuple<Point_3, std::size_t> Point_and_size_t;
+      typedef CGAL::Search_traits_adapter<Point_and_size_t,
+        CGAL::Nth_of_tuple_property_map<0, Point_and_size_t>,
         typename Traits::Search_traits> Search_traits_adapter;
 
       typedef CGAL::Kd_tree<Search_traits_adapter> Kd_Tree;
@@ -283,47 +283,47 @@ namespace CGAL {
 
       m_has_connected_component = true;
       
-      std::vector<Point_and_int> pts;
-      std::vector<std::size_t> labelMap;
+      std::vector<Point_and_size_t> pts;
+      std::vector<std::size_t> label_map;
       pts.resize(indices.size());
-      labelMap.resize(indices.size(), 0);
+      label_map.resize(indices.size(), 0);
 
       for (std::size_t i = 0;i < indices.size();i++) {
-        pts[i] = Point_and_int(point(indices[i]), i);
+        pts[i] = Point_and_size_t(point(indices[i]), i);
       }
 
       // construct kd tree
       Kd_Tree tree(pts.begin(), pts.end());
       
-      std::stack<int> stack;
+      std::stack<std::size_t> stack;
       std::size_t unlabeled = pts.size();
       std::size_t label = 1;
       std::size_t best = 0;
-      std::size_t bestSize = 0;
+      std::size_t best_size = 0;
 
       for (std::size_t i = 0;i<pts.size();i++) {
-        if (labelMap[i] != 0)
+        if (label_map[i] != 0)
           continue;
 
         std::size_t assigned = 0;
 
         stack.push(i);
         while(!stack.empty()) {
-          std::vector<Point_and_int> nearPoints;
+          std::vector<Point_and_size_t> near_points;
 
           std::size_t p = stack.top();
           stack.pop();
 
           Fuzzy_sphere fs(pts[p], cluster_epsilon, 0);
-          tree.search(std::back_inserter(nearPoints), fs);
+          tree.search(std::back_inserter(near_points), fs);
 
-          for (std::size_t j = 0;j<nearPoints.size();j++) {
-            std::size_t index = boost::get<1>(nearPoints[j]);
+          for (std::size_t j = 0;j<near_points.size();j++) {
+            std::size_t index = boost::get<1>(near_points[j]);
             if (index == p)
               continue;
 
-            if (labelMap[index] != label) {
-              labelMap[index] = label;
+            if (label_map[index] != label) {
+              label_map[index] = label;
               assigned++;
               stack.push(index);
             }
@@ -332,26 +332,26 @@ namespace CGAL {
         
         // Track most prominent label and remaining points
         unlabeled -= assigned;
-        if (assigned > bestSize) {
+        if (assigned > best_size) {
           best = label;
-          bestSize = assigned;
+          best_size = assigned;
         }
 
         label++;
 
         // Can we stop already?
-        if (unlabeled <= bestSize)
+        if (unlabeled <= best_size)
           break;
       }
 
-      std::vector<std::size_t> tmpIndices;
-      tmpIndices.reserve(bestSize);
+      std::vector<std::size_t> tmp_indices;
+      tmp_indices.reserve(best_size);
       for (std::size_t i = 0;i<pts.size();i++) {
-        if (labelMap[i] == best)
-          tmpIndices.push_back(indices[i]);
+        if (label_map[i] == best)
+          tmp_indices.push_back(indices[i]);
       }
 
-      indices = tmpIndices;
+      indices = tmp_indices;
       
       return indices.size();
     }
@@ -434,19 +434,19 @@ namespace CGAL {
       return expected_value();
     }
 
-    void update_points(const std::vector<int> &shapeIndex) {
+    void update_points(const std::vector<int> &shape_index) {
       if (!m_indices.size())
         return;
       std::size_t start = 0, end = m_indices.size() - 1;
       while (start < end) {
-        while (shapeIndex[m_indices[start]] == -1
+        while (shape_index[m_indices[start]] == -1
           && start < end) start++;
 
-        while (shapeIndex[m_indices[end]] != -1
+        while (shape_index[m_indices[end]] != -1
           && start < end) end--;
 
-        if (shapeIndex[m_indices[start]] != -1
-          && shapeIndex[m_indices[end]] == -1
+        if (shape_index[m_indices[start]] != -1
+          && shape_index[m_indices[end]] == -1
           && start < end) {
           std::size_t tmp = m_indices[start];
           m_indices[start] = m_indices[end];
@@ -462,12 +462,12 @@ namespace CGAL {
     }
 
     virtual void parameters(const std::vector<std::size_t>& indices,
-                            std::vector<std::pair<FT, FT> >& parameterSpace,
+                            std::vector<std::pair<FT, FT> >& parameter_space,
                             FT min[2],
                             FT max[2]) const {
       // Avoid compiler warnings about unused parameters.
       (void)indices;
-      (void)parameterSpace;
+      (void)parameter_space;
       (void)min;
       (void)max;
     }
@@ -507,7 +507,7 @@ namespace CGAL {
       angles.resize(indices.size());
       cos_to_normal(indices, angles);
 
-      std::size_t scoreBefore = m_indices.size();
+      std::size_t score_before = m_indices.size();
 
       FT eps = epsilon * epsilon;
       for (std::size_t i = 0;i<indices.size();i++) {
@@ -515,7 +515,7 @@ namespace CGAL {
             m_indices.push_back(indices[i]);
         }
 
-      return m_indices.size() - scoreBefore;
+      return m_indices.size() - score_before;
     }
 
     template<typename T> bool is_finite(T arg) {
@@ -524,9 +524,9 @@ namespace CGAL {
         arg != -std::numeric_limits<T>::infinity();
     }
 
-    void compute_bound(const int sizeS1, const int sizeP) {
-      hypergeometrical_dist(-2 - sizeS1,
-                            -2 - sizeP,
+    void compute_bound(const std::size_t num_evaluated_points, const std::size_t num_available_points) {
+      hypergeometrical_dist(-2 - num_evaluated_points,
+                            -2 - num_available_points,
                             -1 - signed(m_indices.size()),
                             m_lower_bound, m_upper_bound);
 

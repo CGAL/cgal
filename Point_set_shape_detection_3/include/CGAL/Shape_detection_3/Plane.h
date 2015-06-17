@@ -66,6 +66,13 @@ namespace CGAL {
     Vector_3 plane_normal() const {
       return m_normal;
     }
+            
+    /*!
+      Signed distance from the origin.
+     */
+    FT d() const {
+      return m_d;
+    }
     
     /// \cond SKIP_IN_MANUAL
     /*!

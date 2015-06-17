@@ -46,7 +46,7 @@ bool test_plane_connected_component() {
     for (std::size_t j = 0;j<4;j++) {
       for (std::size_t x = 0;x<=20;x++)
         for (std::size_t y = 0;y<=20;y++)
-          points.push_back(Pwn(Point(FT(x * 0.05), FT(y * 0.05), (FT) 0) + offset[j],
+          points.push_back(Pwn(Point(FT(x * 0.05), FT(y * 0.05), (FT) 1.0) + offset[j],
                                 Vector((FT) 0, (FT) 0, (FT) 1)));
     }
         
@@ -66,7 +66,7 @@ bool test_plane_connected_component() {
     parameters.epsilon = 0.002f;
     parameters.normal_threshold = 0.9f;
 
-    if (i <= NB_ROUNDS/2)
+    if (i < NB_ROUNDS/2)
       parameters.cluster_epsilon = 0.201f;
     else
       parameters.cluster_epsilon = 0.051f;
@@ -77,11 +77,11 @@ bool test_plane_connected_component() {
     }
     
     typename Efficient_ransac::Shape_range shapes = ransac.shapes();
-
-    if (i <= NB_ROUNDS/2 && shapes.size() != 1)
+    
+    if (i < NB_ROUNDS/2 && shapes.size() != 1)
       continue;
 
-    if (i > NB_ROUNDS/2 && shapes.size() != 4)
+    if (i >= NB_ROUNDS/2 && shapes.size() != 4)
       continue;
 
     success++;

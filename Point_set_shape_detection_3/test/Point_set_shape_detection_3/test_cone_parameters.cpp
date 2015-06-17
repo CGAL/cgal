@@ -36,9 +36,10 @@ bool test_cone_parameters() {
     Vector axis;
     Point apex;
     FT angle = 0;
+    FT mid = 0;
     CGAL::Bbox_3 bbox(-10, -10, -10, 10, 10, 10);
     
-    sample_random_cone(NB_POINTS, apex, axis, angle,
+    sample_random_cone(NB_POINTS, apex, axis, angle, mid,
       std::back_inserter(points));
 
 	// add outliers in second half of rounds

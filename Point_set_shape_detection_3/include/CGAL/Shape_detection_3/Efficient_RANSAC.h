@@ -41,6 +41,7 @@
 //boost --------------
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 //---------------------
 
 
@@ -107,8 +108,15 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type Shape_range;
 #else
-    typedef
-    Iterator_range<typename std::vector<boost::shared_ptr<Shape> >::const_iterator>  Shape_range;
+    struct Shape_range : public Iterator_range<
+      typename std::vector<boost::shared_ptr<Shape> >::const_iterator> {
+      Shape_range(boost::shared_ptr<std::vector<boost::shared_ptr<Shape> > >
+        extracted_shapes) : Iterator_range(make_range(extracted_shapes->begin(),
+        extracted_shapes->end())), m_extracted_shapes(extracted_shapes) {}
+    private:
+      boost::shared_ptr<std::vector<boost::shared_ptr<Shape> > >
+        m_extracted_shapes; // keeps a reference to the shape vector
+    };
 #endif
     ///< An `Iterator_range` with a bidirectional constant iterator type with value type `boost::shared_ptr<Shape>`.
 
@@ -200,15 +208,15 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       Normal_map normal_map = Normal_map()
       ///< property map to access the normal of an input point.
       ) {
-        clear();
-
-        m_extracted_shapes.clear();
-
         m_point_pmap = point_map;
         m_normal_pmap = normal_map;
 
         m_inputIterator_first = input_range.begin();
         m_inputIterator_beyond = input_range.end();
+
+        clear();
+
+        m_extracted_shapes = boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
 
         m_num_available_points = m_inputIterator_beyond - m_inputIterator_first;
 
@@ -245,7 +253,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
       m_available_octree_sizes.resize(m_num_subsets);
       m_direct_octrees = new Direct_octree *[m_num_subsets];
-      for (int s = m_num_subsets - 1;s >= 0;--s) {
+      for (int s = int(m_num_subsets) - 1;s >= 0;--s) {
         std::size_t subsetSize = remainingPoints;
         std::vector<std::size_t> indices(subsetSize);
         if (s) {
@@ -258,13 +266,15 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
           }
 
           // move points to the end of the point vector
-          for (int i = subsetSize - 1;i >= 0;i--) {
+          std::size_t j = subsetSize;
+          do {
+            j--;
             typename std::iterator_traits<Input_iterator>::value_type
               tmp = (*last);
-            *last = m_inputIterator_first[indices[std::size_t(i)]];
-            m_inputIterator_first[indices[std::size_t(i)]] = tmp;
+            *last = m_inputIterator_first[indices[std::size_t(j)]];
+            m_inputIterator_first[indices[std::size_t(j)]] = tmp;
             last--;
-          }
+          } while (j > 0);
           m_direct_octrees[s] = new Direct_octree(last + 1,
             last + subsetSize + 1,
             remainingPoints - subsetSize);
@@ -335,7 +345,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
       std::vector<int>().swap(m_shape_index);
 
-      m_extracted_shapes.clear();
+      m_extracted_shapes = boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
 
       m_num_available_points = m_inputIterator_beyond - m_inputIterator_first;
 
@@ -367,7 +377,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       }
 
       // Reset data structures possibly used by former search
-      m_extracted_shapes.clear();
+      m_extracted_shapes = boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
       m_num_available_points = m_inputIterator_beyond - m_inputIterator_first;
 
       for (std::size_t i = 0;i<m_num_subsets;i++) {
@@ -525,7 +535,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
             candidates.back() = NULL;
 
             //1. add best candidate to final result.
-            m_extracted_shapes.push_back(boost::shared_ptr<Shape>(best_Candidate));
+            m_extracted_shapes->push_back(boost::shared_ptr<Shape>(best_Candidate));
 
             //2. remove the points
             //2.1 update boolean
@@ -534,7 +544,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
             for (std::size_t i = 0;i<indices_points_best_candidate.size();i++) {
               m_shape_index[indices_points_best_candidate.at(i)] =
-                m_extracted_shapes.size() - 1;
+                int(m_extracted_shapes->size()) - 1;
 
               numInvalid++;
               
@@ -626,8 +636,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       for the detection, the shapes are ordered with decreasing size.
     */
     Shape_range shapes() const {
-      return make_range(m_extracted_shapes.begin(),
-                        m_extracted_shapes.end());
+      return Shape_range(m_extracted_shapes);
     }
       
     /*! 
@@ -656,11 +665,11 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
   private:
     int select_random_octree_level() {
-      return default_random(m_global_octree->maxLevel() + 1);
+      return (int) default_random(m_global_octree->maxLevel() + 1);
     }
 
     Shape* get_best_candidate(std::vector<Shape* >& candidates,
-                            const int _SizeP) {
+                            const std::size_t num_available_points) {
       if (candidates.size() == 1)
         return candidates.back();
 
@@ -678,13 +687,13 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
         //refine the best one 
         improve_bound(candidates.back(),
-                     _SizeP, m_num_subsets,
+                     num_available_points, m_num_subsets,
                      m_options.min_points);
 
         int position_stop;
 
         //Take all those intersecting the best one, check for equal ones
-        for (position_stop = candidates.size() - 1;
+        for (position_stop = int(candidates.size()) - 1;
              position_stop > index_worse_candidate;
              position_stop--) {
           if (candidates.back()->min_bound() >
@@ -699,7 +708,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
           //  between best one and position_stop
           //so request refining bound on position_stop
           improved |= improve_bound(candidates.at(position_stop),
-                                   _SizeP,
+                                   num_available_points,
                                    m_num_subsets,
                                    m_options.min_points);
 
@@ -716,7 +725,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     }
 
     bool improve_bound(Shape *candidate,
-                      const int _SizeP,
+                      std::size_t num_available_points,
                       std::size_t max_subset,
                       std::size_t min_points) {
       if (candidate->m_nb_subset_used >= max_subset)
@@ -732,43 +741,43 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       //what it does is add another subset and recompute lower and upper bound
       //the next subset to include is provided by m_nb_subset_used
 
-      std::size_t numPointsEvaluated = 0;
+      std::size_t num_points_evaluated = 0;
       for (std::size_t i=0;i<candidate->m_nb_subset_used;i++)
-        numPointsEvaluated += m_available_octree_sizes[i];
+        num_points_evaluated += m_available_octree_sizes[i];
 
       // need score of new subset as well as sum of
       // the score of the previous considered subset
-      std::size_t newScore = 0;
-      std::size_t newSampledPoints = 0;
+      std::size_t new_score = 0;
+      std::size_t new_sampled_points = 0;
 
       do {
-        newScore = m_direct_octrees[candidate->m_nb_subset_used]->score(
+        new_score = m_direct_octrees[candidate->m_nb_subset_used]->score(
           candidate, 
           m_shape_index, 
           m_options.epsilon,
           m_options.normal_threshold);
 
-        candidate->m_score += newScore;
+        candidate->m_score += new_score;
         
-        numPointsEvaluated += 
+        num_points_evaluated += 
           m_available_octree_sizes[candidate->m_nb_subset_used];
 
-        newSampledPoints +=
+        new_sampled_points +=
           m_available_octree_sizes[candidate->m_nb_subset_used];
 
         candidate->m_nb_subset_used++;
-      } while (newSampledPoints < min_points &&
+      } while (new_sampled_points < min_points &&
         candidate->m_nb_subset_used < m_num_subsets);
 
       candidate->m_score = candidate->m_indices.size();
 
-      candidate->compute_bound(numPointsEvaluated, _SizeP);
+      candidate->compute_bound(num_points_evaluated, num_available_points);
 
       return true;
     }
     
     inline FT stop_probability(std::size_t largest_candidate, std::size_t num_pts, std::size_t num_candidates, std::size_t octree_depth) const {
-      return (std::min<FT>)(std::pow((FT) 1.f - (FT) largest_candidate / FT(num_pts * octree_depth * 3), (int) num_candidates), (FT) 1);
+      return (std::min<FT>)(std::pow((FT) 1.f - (FT) largest_candidate / FT(num_pts * octree_depth * 4), (int) num_candidates), (FT) 1);
     }
     
   private:
@@ -781,7 +790,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     // sample selection within an octree cell.
     Direct_octree **m_direct_octrees;
     Indexed_octree *m_global_octree;
-    std::vector<int> m_available_octree_sizes;
+    std::vector<std::size_t> m_available_octree_sizes;
     std::size_t m_num_subsets;
 
     // maps index into points to assigned extracted primitive
@@ -791,7 +800,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     //give the index of the subset of point i
     std::vector<int> m_index_subsets;
 
-    std::vector<boost::shared_ptr<Shape> > m_extracted_shapes;
+    boost::shared_ptr<std::vector<boost::shared_ptr<Shape> > > m_extracted_shapes;
 
     std::vector<Shape *(*)()> m_shape_factories;
 

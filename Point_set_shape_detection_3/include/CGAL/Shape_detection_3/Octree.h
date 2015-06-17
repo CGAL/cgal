@@ -39,6 +39,8 @@ namespace CGAL {
     class Efficient_RANSAC;
     
   namespace internal {
+
+    const std::size_t size_t_max = std::numeric_limits<std::size_t>::max();
   
     template<class Sdt>
     class DirectPointAccessor {
@@ -192,7 +194,7 @@ namespace CGAL {
         }
 
         std::size_t size() const {
-          if (first == -1 || last == -1)
+          if (first == size_t_max || last == size_t_max)
             return 0;
           else return (last - first + 1);
         }
@@ -238,7 +240,7 @@ namespace CGAL {
       // z max before z min, then y max before y min, then x max before x min
       void createTree() {
         buildBoundingCube();
-        int count = 0;
+        std::size_t count = 0;
         m_max_level = 0;
 
         std::stack<Cell *> stack;
@@ -252,50 +254,50 @@ namespace CGAL {
           if (cell->level == m_set_max_level)
             continue;
           
-          int zLowYHighXSplit, zLowYLowXSplit, zLowYSplit;
-          int zHighYSplit, zHighYHighXSplit, zHighYLowXSplit;
+          std::size_t zLowYHighXSplit, zLowYLowXSplit, zLowYSplit;
+          std::size_t zHighYSplit, zHighYHighXSplit, zHighYLowXSplit;
 
-          int zSplit = split(cell->first, cell->last, 2, cell->center[2]);
+          std::size_t zSplit = split(cell->first, cell->last, 2, cell->center[2]);
 
-          if (zSplit != -1) {
+          if (zSplit != size_t_max) {
 
             zLowYSplit = split(cell->first, zSplit, 1, cell->center[1]);
-            if (zLowYSplit != -1) {
+            if (zLowYSplit != size_t_max) {
               zLowYLowXSplit = split(cell->first,
                                      zLowYSplit, 0, cell->center[0]);
               zLowYHighXSplit = split(zLowYSplit + 1,
                                       zSplit, 0, cell->center[0]); 
             }
             else {
-              zLowYLowXSplit = -1;
+              zLowYLowXSplit = size_t_max;
               zLowYHighXSplit = split(cell->first, zSplit, 0, cell->center[0]);
             }
 
             zHighYSplit = split(zSplit + 1, cell->last, 1, cell->center[1]);  
 
-            if (zHighYSplit != -1) {
+            if (zHighYSplit != size_t_max) {
               zHighYHighXSplit = split(zHighYSplit + 1,
                                        cell->last, 0, cell->center[0]);
               zHighYLowXSplit = split(zSplit + 1,
                                       zHighYSplit, 0, cell->center[0]);
             }
             else {
-              zHighYLowXSplit = -1;
+              zHighYLowXSplit = size_t_max;
               zHighYHighXSplit = split(zSplit + 1,
                                        cell->last, 0, cell->center[0]);
             }
           }
           else {
-            zLowYSplit = -1;
-            zLowYLowXSplit = -1;
-            zLowYHighXSplit = -1;
+            zLowYSplit = size_t_max;
+            zLowYLowXSplit = size_t_max;
+            zLowYHighXSplit = size_t_max;
 
             zHighYSplit = split(cell->first,
                                 cell->last,
                                 1,
                                 cell->center[1]); 
 
-            if (zHighYSplit != -1) {
+            if (zHighYSplit != size_t_max) {
               zHighYHighXSplit = split(zHighYSplit + 1, 
                                        cell->last, 
                                        0, 
@@ -307,7 +309,7 @@ namespace CGAL {
                                       cell->center[0]); 
             }
             else {
-              zHighYLowXSplit = -1;
+              zHighYLowXSplit = size_t_max;
               zHighYHighXSplit = split(cell->first,
                                        cell->last, 
                                        0,
@@ -318,9 +320,9 @@ namespace CGAL {
 
           FT width = m_width / (1<<(cell->level + 1));
 
-          if (zSplit != -1) {
-            if (zLowYSplit != -1) {
-              if (zLowYLowXSplit != -1) {
+          if (zSplit != size_t_max) {
+            if (zLowYSplit != size_t_max) {
+              if (zLowYLowXSplit != size_t_max) {
 
                 if ((int)cell->first <= zLowYLowXSplit) {
                   //---
@@ -336,7 +338,7 @@ namespace CGAL {
               }
               else zLowYLowXSplit = cell->first - 1;
 
-              if (zLowYLowXSplit < zLowYSplit) {
+              if (zLowYLowXSplit < zLowYSplit || zLowYLowXSplit == size_t_max) {
                 //+--
                 cell->child[6] = new Cell(zLowYLowXSplit + 1,
                                           zLowYSplit, 
@@ -350,9 +352,9 @@ namespace CGAL {
             }
             else zLowYSplit = cell->first - 1;
 
-            if (zLowYHighXSplit != -1) {
+            if (zLowYHighXSplit != size_t_max) {
 
-              if (zLowYSplit < zLowYHighXSplit) {
+              if (zLowYSplit < zLowYHighXSplit || zLowYSplit == size_t_max) {
                 //-+-
                 cell->child[5] = new Cell(zLowYSplit + 1, 
                                           zLowYHighXSplit, 
@@ -366,7 +368,7 @@ namespace CGAL {
             }
             else zLowYHighXSplit = zLowYSplit;
 
-            if (zLowYHighXSplit < zSplit) {
+            if (zLowYHighXSplit < zSplit || zLowYHighXSplit == size_t_max) {
               //++-
               cell->child[4] = new Cell(zLowYHighXSplit + 1,
                                         zSplit, 
@@ -380,10 +382,10 @@ namespace CGAL {
           }
           else zSplit = cell->first - 1;
 
-          if (zHighYSplit != -1) {
-            if (zHighYLowXSplit != -1) {
+          if (zHighYSplit != size_t_max) {
+            if (zHighYLowXSplit != size_t_max) {
 
-              if (zSplit < zHighYLowXSplit) {
+              if (zSplit < zHighYLowXSplit || zSplit == size_t_max) {
                 //--+
                 cell->child[3] = new Cell(zSplit + 1,
                                           zHighYLowXSplit,
@@ -397,7 +399,7 @@ namespace CGAL {
             }
             else zHighYLowXSplit = zSplit;
 
-            if (zHighYLowXSplit < zHighYSplit) {
+            if (zHighYLowXSplit < zHighYSplit || zHighYLowXSplit == size_t_max) {
               //+-+
               cell->child[2] = new Cell(zHighYLowXSplit + 1,
                                         zHighYSplit, 
@@ -412,9 +414,8 @@ namespace CGAL {
           }
           else zHighYSplit = zSplit;
 
-          if (zHighYHighXSplit != -1) {
-
-            if (zHighYSplit < zHighYHighXSplit) {
+          if (zHighYHighXSplit != size_t_max) {
+            if (zHighYSplit < zHighYHighXSplit || zHighYSplit == size_t_max) {
               //-++
               cell->child[1] = new Cell(zHighYSplit + 1,
                                         zHighYHighXSplit, 
@@ -428,8 +429,8 @@ namespace CGAL {
           }
           else zHighYHighXSplit = zHighYSplit;
 
-          if (zHighYHighXSplit <= (int)cell->last) {
-            if (zHighYHighXSplit < (int)cell->last) {
+          if (zHighYHighXSplit <= (int)cell->last || zHighYHighXSplit == size_t_max) {
+            if (zHighYHighXSplit < (int)cell->last || zHighYHighXSplit == size_t_max) {
               //+++
               cell->child[0] = new Cell(zHighYHighXSplit + 1, 
                                         cell->last,
@@ -442,7 +443,7 @@ namespace CGAL {
             }
           }
 
-          int sum = 0;
+          std::size_t sum = 0;
           for (std::size_t i = 0;i<8;i++)
             sum += (cell->child[i]) ? cell->child[i]->size() : 0;
 
@@ -489,7 +490,7 @@ namespace CGAL {
           }
           if (enough >= requiredSamples) {
             do {
-              std::size_t p = rand.get_int(0, cur->size() - 1);
+              std::size_t p = rand.get_int(0, cur->size());
               std::size_t j = this->index(cur->first + p);
               if (shapeIndex[j] == -1)
                 indices.insert(j);
@@ -611,21 +612,21 @@ namespace CGAL {
       }
 
       // returns index of last point below threshold
-      int split(int first, int last, std::size_t dimension, FT threshold) {
-        if (last == -1 || first == -1)
-          return -1;
+      std::size_t split(std::size_t first, std::size_t last, std::size_t dimension, FT threshold) {
+        if (last == size_t_max || first == size_t_max) 
+          return size_t_max;
 
         if (first > last)
           return first - 1;
 
-        int origFirst = first;
+        std::size_t origFirst = first;
 
         while(first < last) {
           // find first above threshold
           Point p1 = get(m_point_pmap, *this->at(first));
-          FT v1 = p1[dimension];
+          FT v1 = p1[(int) dimension];
           while (get(m_point_pmap,
-                     *this->at(first))[dimension] < threshold
+                     *this->at(first))[(int) dimension] < threshold
                  && first < last) {
             first++;
           }
@@ -633,15 +634,15 @@ namespace CGAL {
           // check if last has been reached
           if (first == last) {
             return (get(m_point_pmap,
-                        *this->at(first))[dimension] < threshold) ?
-                   first : (first == origFirst) ? -1 : first - 1;
+                        *this->at(first))[(int) dimension] < threshold) ?
+                   first : (first == origFirst) ? size_t_max : first - 1;
           }
 
           // find last below threshold
           p1 = get(m_point_pmap, *this->at(last));
-          v1 = p1[dimension];
+          v1 = p1[(int) dimension];
           while (get(m_point_pmap, 
-                 *this->at(last))[dimension] >= threshold
+                 *this->at(last))[(int) dimension] >= threshold
                  && last > first) {
             last--;
           }
@@ -649,22 +650,22 @@ namespace CGAL {
           // check if first has been reached
           if (last == first) {
             return (get(m_point_pmap,
-                        *this->at(first))[dimension] < threshold) ?
-                    first : (first == origFirst) ? -1 : first - 1;
+                        *this->at(first))[(int) dimension] < threshold) ?
+                    first : (first == origFirst) ? size_t_max : first - 1;
           }
 
           this->swap(first, last);
           p1 = get(m_point_pmap, *this->at(first));
-          v1 = p1[dimension];
+          v1 = p1[(int) dimension];
           p1 = get(m_point_pmap, *this->at(last));
-          v1 = p1[dimension];
+          v1 = p1[(int) dimension];
           first++;
           last--;
         }
 
         return (get(m_point_pmap,
-                    *this->at(first))[dimension] < threshold) ?
-               first : (first == origFirst) ? -1 : first - 1;
+                    *this->at(first))[(int) dimension] < threshold) ?
+               first : (first == origFirst) ? size_t_max : first - 1;
       }
 
       Bbox_3 m_bBox;

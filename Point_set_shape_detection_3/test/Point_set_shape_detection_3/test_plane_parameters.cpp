@@ -76,7 +76,7 @@ bool test_plane_parameters() {
       const FT phi = normal * pl->plane_normal();
       const FT sign = (phi < 0) ? -1.0f : 1.0f;
 
-      const FT dist2 = (CGAL::Plane_3<K>(*pl)).d();
+      const FT dist2 = pl->d();
 
       if (abs(phi) < 0.98 || abs(dist2 - sign * dist) > 0.02)
         continue;
