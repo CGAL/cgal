@@ -1077,8 +1077,8 @@ namespace internal {
     {
       CGAL_assertion_msg(m_ptr.p != NULL,
          "Incrementing a singular iterator or an empty container iterator ?");
-      CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED,
-                         "Incrementing an invalid iterator.");
+      /* CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED,
+         "Incrementing an invalid iterator."); */
       increment();
       return *this;
     }
@@ -1087,9 +1087,9 @@ namespace internal {
     {
       CGAL_assertion_msg(m_ptr.p != NULL,
          "Decrementing a singular iterator or an empty container iterator ?");
-      CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED
+      /*CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED
                       || DSC::type(m_ptr.p) == DSC::START_END,
-                         "Decrementing an invalid iterator.");
+                      "Decrementing an invalid iterator.");*/
       decrement();
       return *this;
     }
