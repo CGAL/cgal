@@ -34,9 +34,10 @@ int main(int argc, char* argv[])
       Triangulation_3::Cell_handle ch = f.first;
       int ci = f.second;
       Point_3 points[3];
-      for(int i = 0, j = 0; i < 4; i++, j++){
+      for(int i = 0, j = 0; i < 4; i++){
         if(ci != i){
           points[j] = ch->vertex(i)->point();
+          j++;
         }
       }
       std::cout << "  facet normal " 
