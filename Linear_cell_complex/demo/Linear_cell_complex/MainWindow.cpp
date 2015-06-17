@@ -996,7 +996,7 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
   std::vector<Dart_handle> edges;
   int treated =  scene.lcc->get_new_mark();
   
-  for ( typename LCC::Dart_range::iterator it= scene.lcc->darts().begin(),
+  for ( LCC::Dart_range::iterator it= scene.lcc->darts().begin(),
           itend = scene.lcc->darts().end(); it!=itend; ++it )
   {
     if (!scene.lcc->is_marked(it, treated) )
@@ -1007,7 +1007,7 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
         LCC::Vector normal2 = CGAL::compute_normal_of_cell_2(*scene.lcc, scene.lcc->beta<2>(it) );
         double angle = compute_angle3d(normal1, normal2);
         
-        if ( ((angle<5.0 or angle>355.0) or (angle<185.0 and angle>175.0)) )
+        if ( ((angle<5.0 || angle>355.0) || (angle<185.0 && angle>175.0)) )
         {
           edges.push_back(it);
         }

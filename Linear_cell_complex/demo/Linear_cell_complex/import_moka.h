@@ -70,7 +70,7 @@ bool import_from_moka(LCC& lcc, const char* filename)
   std::getline(ifile, line);
 
   std::vector<GDart> gdarts;
-  int nbLoaded = 0;
+  unsigned int nbLoaded = 0;
   unsigned int number;
   double x,y,z;
 
@@ -102,8 +102,8 @@ bool import_from_moka(LCC& lcc, const char* filename)
   ifile.close();
 
   // Second orient the gmap, and create oriented darts.
-  std::stack<int> totreat;
-  for (int startingdart = 0; startingdart<nbLoaded; ++startingdart)
+  std::stack<unsigned int> totreat;
+  for (unsigned int startingdart = 0; startingdart<nbLoaded; ++startingdart)
   {
     bool orient=(gdarts[startingdart].dh==NULL);
     for (unsigned int dim=0; orient && dim<4; ++dim)
@@ -116,7 +116,7 @@ bool import_from_moka(LCC& lcc, const char* filename)
 
       while ( !totreat.empty() )
       {
-        int i=totreat.top();
+        unsigned int i=totreat.top();
         totreat.pop();
 
         assert(gdarts[i].dh!=NULL);
@@ -157,7 +157,7 @@ bool import_from_moka(LCC& lcc, const char* filename)
 
   // Test that the gmap was orientable.
   bool orientable = true;
-  for (int i = 0; i<nbLoaded; ++i)
+  for (unsigned int i = 0; i<nbLoaded; ++i)
   {
     if (gdarts[i].dh!=NULL)
     {

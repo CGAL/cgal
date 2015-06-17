@@ -317,7 +317,7 @@ namespace CGAL {
       ptree & ndart = pt.add("d", "");
 
       // the beta, only for non free sews
-      for(int dim=1; dim<=amap.dimension; dim++)
+      for(unsigned int dim=1; dim<=amap.dimension; dim++)
       {
         if(!amap.is_free(it, dim))
         {
@@ -728,7 +728,7 @@ namespace CGAL {
     }
 
     // update beta links
-    int index;
+    unsigned int index;
     unsigned int currentDartInt = 0;
     unsigned int nextDartInt;
 

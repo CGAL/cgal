@@ -16,6 +16,7 @@ endif()
 
 ## For profilling with gprof
 # add_definitions("-pg")
+add_definitions("-Wall -Wextra")
 # SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 
 ## To add an is_valid test after each operation (only in debug mode)

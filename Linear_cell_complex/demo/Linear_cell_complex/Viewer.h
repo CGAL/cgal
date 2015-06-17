@@ -70,10 +70,10 @@ public:
     this->setFormat(newFormat);
 
     FTess = gluNewTess();
-    gluTessCallback(FTess, GLU_TESS_BEGIN, (GLvoid (*) ( )) & glBegin);
-    gluTessCallback(FTess, GLU_TESS_END, (GLvoid (*) ( )) & glEnd);
-    gluTessCallback(FTess, GLU_TESS_VERTEX, (GLvoid (*) ( )) & glVertex3dv);
-    gluTessCallback(FTess, GLU_TESS_COMBINE, (GLvoid (*) ( )) & monCombine );
+    gluTessCallback(FTess, GLU_TESS_BEGIN,(void (*) ( ))  & glBegin);
+    gluTessCallback(FTess, GLU_TESS_END, (void (*) ( )) & glEnd);
+    gluTessCallback(FTess, GLU_TESS_VERTEX, (void (*) ( )) & glVertex3dv);
+    gluTessCallback(FTess, GLU_TESS_COMBINE, (void (*) ( )) & monCombine );
   }
 
   ~Viewer()
