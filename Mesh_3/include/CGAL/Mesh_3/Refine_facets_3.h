@@ -1673,13 +1673,12 @@ compute_facet_properties(const Facet& facet,
           r_oracle_.surface_patch_index(CGAL::cpp11::get<1>(intersect)));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-       {
-         fp = Facet_properties(CGAL::cpp11::make_tuple(*surface,
-                                       CGAL::cpp11::get<1>(intersect),
-                                       Point(CGAL::cpp11::get<0>(intersect))));
-         return;
-       }
-      
+      {
+        fp = Facet_properties(CGAL::cpp11::make_tuple(*surface,
+                                      CGAL::cpp11::get<1>(intersect),
+                                      Point(CGAL::cpp11::get<0>(intersect))));
+        return;
+      }
     }
   }
   // If the dual is a line
@@ -1714,12 +1713,12 @@ compute_facet_properties(const Facet& facet,
           r_oracle_.surface_patch_index(CGAL::cpp11::get<1>(intersect)));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-       {
-	      fp = Facet_properties(CGAL::cpp11::make_tuple(*surface,
-                                       CGAL::cpp11::get<1>(intersect),
-                                       Point(CGAL::cpp11::get<0>(intersect))));
-          return;
-       }
+      {
+       fp = Facet_properties(CGAL::cpp11::make_tuple(*surface,
+                                     CGAL::cpp11::get<1>(intersect),
+                                     Point(CGAL::cpp11::get<0>(intersect))));
+       return;
+      }
     }
   }
   else
