@@ -19,6 +19,11 @@
 // Author(s)     : Francois Rebufat
 //                 Manuel Caroli
 
+#ifdef CGAL_NO_DEPRECATED_CODE
+int main() { return 0;}
+#else
+#  define CGAL_NO_DEPRECATION_WARNINGS 1
+
 #include <iostream>
 #include <cassert>
 
@@ -29,20 +34,20 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K1;
-typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<K1> PDTT1;
+typedef CGAL::Periodic_3_triangulation_traits_3<K1> PDTT1;
 // Explicit instantiation of the whole class:
 template class CGAL::Periodic_3_triangulation_3<PDTT1>;
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 typedef CGAL::Exact_predicates_exact_constructions_kernel K2;
-typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<K2> PDTT2;
+typedef CGAL::Periodic_3_triangulation_traits_3<K2> PDTT2;
 // Explicit instantiation of the whole class:
 template class CGAL::Periodic_3_triangulation_3<PDTT2>;
 
 #include <CGAL/MP_Float.h>
 #include <CGAL/Simple_homogeneous.h>
 typedef CGAL::Simple_homogeneous<CGAL::MP_Float> K3;
-typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<K3> PDTT3;
+typedef CGAL::Periodic_3_triangulation_traits_3<K3> PDTT3;
 // Explicit instantiation of the whole class:
 template class CGAL::Periodic_3_triangulation_3<PDTT3>;
 
@@ -72,3 +77,6 @@ int main()
 
   return 0;
 }
+
+#endif
+

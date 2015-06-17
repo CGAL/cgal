@@ -7,7 +7,7 @@ namespace CGAL {
 The class `Periodic_triangulation_3` represents a 3-dimensional 
 triangulation of a point set in \f$ \mathbb T_c^3\f$. 
 
-\tparam PT must be a model of the `Periodic_3DelaunayTriangulationTraits_3` concept. 
+\tparam PT must be a model of the `Periodic_3TriangulationTraits_3` concept.
 
 \tparam TDS must be a model of  `TriangulationDataStructure_3` concept 
 with some additional  functionality in cells and vertices. 

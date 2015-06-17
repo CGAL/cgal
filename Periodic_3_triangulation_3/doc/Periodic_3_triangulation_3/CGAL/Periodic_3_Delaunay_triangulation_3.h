@@ -18,7 +18,6 @@ functionality in cells and vertices.
 Its default value is 
 `Triangulation_data_structure_3<Triangulation_vertex_base_3<PT,Periodic_3_triangulation_ds_vertex_base_3<>>,Triangulation_cell_base_3<PT,Periodic_3_triangulation_ds_cell_base_3<>>>`. 
 
-\sa `Periodic_3_triangulation_3` 
 */
 template< typename PT, typename TDS >
 class Periodic_3_Delaunay_triangulation_3 : 

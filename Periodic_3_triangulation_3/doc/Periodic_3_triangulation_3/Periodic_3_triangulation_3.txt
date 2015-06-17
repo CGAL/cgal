@@ -161,9 +161,7 @@ chapter \ref chapterTriangulation3 "3D Triangulations" to the periodic case.
 \section P3Triangulation3secdesign Software Design 
 
 We have chosen the prefix "Periodic_3" to emphasize that the
-triangulation is periodic in all three directions of space. There are
-also "cylindrical" periodicities where the triangulation is periodic
-only in one or two directions of space.
+triangulation is periodic in all three directions of space.
 
 The two main classes `Periodic_3_Delaunay_triangulation_3` and
 `Periodic_3_triangulation_3` provide high-level geometric
@@ -187,10 +185,9 @@ parameters:
 to use as well as the elementary operations on them (predicates and
 constructions). Furthermore it contains the offset type.
 The concept for this parameter is described in more
-detail in Section \ref P3Triangulation3secTraits
-and as the concept `Periodic_3DelaunayTriangulationTraits_3` in
-the reference
-manual.
+detail in the section \ref P3Triangulation3secTraits
+and models of one of the two concepts `Periodic_3DelaunayTriangulationTraits_3` 
+and `Periodic_3TriangulationTraits_3` can be used for this parameter.
 <LI> the <B>triangulation data structure</B> class, which stores the
 combinatorial structure, described in
 Section \ref P3Triangulation3sectds and in more detail in
@@ -201,6 +198,27 @@ models of the concepts `Periodic_3TriangulationDSCellBase_3` and
 
 \subsection P3Triangulation3secTraits The Geometric Traits Parameter 
 
+\subsubsection P3Triangulation3secTraitsP3T3 Traits for Periodic Triangulations 
+
+The first template parameter of the triangulation class
+`Periodic_3_triangulation_3<Periodic_3TriangulationTraits_3, TriangulationDataStructure_3>`
+is the geometric traits class, described by the concept
+`Periodic_3TriangulationTraits_3`. It is different to the
+TriangulationTraits_3 (see
+chapter \ref Triangulation3secTraits "3D Triangulations") in that it 
+implements all objects, predicates and constructions with
+using offsets.
+
+The class `Periodic_3_triangulation_traits_3<TriangulationTraits_3,Periodic_3Offset_3>`
+provides the required functionality. It expects two template
+parameters: A model of the concept `TriangulationTraits_3`
+and a model of the concept `Periodic_3Offset_3`.
+
+The second parameter `Periodic_3Offset_3` defaults to
+`Periodic_3_offset_3`.
+
+\subsubsection P3Triangulation3secTraitsP3DT3 Traits for Periodic Delaunay Triangulations 
+
 The first template parameter of the Delaunay triangulation class
 `Periodic_3_Delaunay_triangulation_3<Periodic_3DelaunayTriangulationTraits_3, TriangulationDataStructure_3>`
 is the geometric traits class, described by the concept
@@ -210,28 +228,31 @@ chapter \ref Triangulation3secTraits "3D Triangulations") in that it
 implements all objects, predicates and constructions with
 using offsets.
 
-The class `Periodic_3_triangulation_traits_3<Traits,Periodic_3Offset_3>`
+The class `Periodic_3_Delaunay_triangulation_traits_3<DelaunayTriangulationTraits_3,Periodic_3Offset_3>`
 provides the required functionality. It expects two template
 parameters: A model of the concept `DelaunayTriangulationTraits_3`
 and a model of the concept `Periodic_3Offset_3`.
 
+The second parameter `Periodic_3Offset_3` defaults to
+`Periodic_3_offset_3`.
+
+\subsubsection P3Triangulation3secTraitsK Compatible Kernels
+
 The kernels `Cartesian`, `Homogeneous`,
 `Simple_cartesian`, `Simple_homogeneous` and
 `Filtered_kernel` can all be used as models for
-`Traits`. `Periodic_3_triangulation_traits_3` provides exact
-predicates and exact constructions if `Traits` does. It provides
+`TriangulationTraits_3` and `DelaunayTriangulationTraits_3`. 
+`Periodic_3_triangulation_traits_3` and `Periodic_3_Delaunay_triangulation_traits_3` provide exact
+predicates and exact constructions if `TriangulationTraits_3` and `DelaunayTriangulationTraits_3` do. They provide
 exact predicates but not exact constructions if
 `Filtered_kernel<CK>` with `CK` an inexact kernel is used as
-its first template parameter. Using
+their first template parameter. Using
 `Exact_predicates_inexact_constructions_kernel` as
 `Traits` provides fast and exact predicates and not exact constructions,
 using `Exact_predicates_exact_constructions_kernel` provides
 fast and exact predicates and exact constructions. The latter is recommended if
 the dual constructions and constructions of points, segments,
 triangles, and tetrahedra are used.
-
-The second parameter `Periodic_3Offset_3` defaults to
-`Periodic_3_offset_3`.
 
 \subsection P3Triangulation3sectds The Triangulation Data Structure Parameter 
 
