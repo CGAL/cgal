@@ -169,20 +169,11 @@ public:
     Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw)
         : Scene_polyhedron_item_decorator(NULL, false)
     { init(poly_item, mw);
-        qFunc.glGenVertexArrays(1, vao);
-        //Generates an integer which will be used as ID for each buffer
-        qFunc.glGenBuffers(4, buffer);
-        compile_shaders();
         changed();
     }
 
    ~Scene_polyhedron_selection_item()
     {
-        qFunc.glDeleteBuffers(4, buffer);
-        qFunc.glDeleteVertexArrays(1, vao);
-        qFunc.glDeleteProgram(rendering_program_facets);
-        qFunc.glDeleteProgram(rendering_program_lines);
-        qFunc.glDeleteProgram(rendering_program_points);
     }
 
 protected: 
@@ -225,87 +216,11 @@ public:
     typedef boost::unordered_set<Facet_handle, CGAL::Handle_hash_function>      Selection_set_facet;
     typedef boost::unordered_set<edge_descriptor, CGAL::Handle_hash_function>    Selection_set_edge;
 
-    // drawing
-    void draw() const {
-        draw_selected_vertices();
-        draw_selected_facets();
-        draw_selected_edges();
-    }
+
     virtual void draw(Viewer_interface*) const;
     virtual void draw_edges() const { }
     virtual void draw_edges(Viewer_interface*) const;
     virtual void draw_points(Viewer_interface*) const;
-     void draw_selected_vertices() const {
-        GLboolean enable_back_lighting = glIsEnabled(GL_LIGHTING);
-        glDisable(GL_LIGHTING);
-
-
-        CGAL::GL::Point_size point_size; point_size.set_point_size(5);
-        CGALglcolor(vertex_color);
-
-        ::glBegin(GL_POINTS);
-        for(Selection_set_vertex::iterator
-            it = selected_vertices.begin(),
-            end = selected_vertices.end();
-            it != end; ++it)
-        {
-            const Kernel::Point_3& p = (*it)->point();
-            ::glVertex3d(p.x(), p.y(), p.z());
-        }
-        ::glEnd();
-
-        if(enable_back_lighting) { glEnable(GL_LIGHTING); }
-    }
-    void draw_selected_facets() const {
-        CGALglcolor(facet_color);
-
-        GLfloat offset_factor;
-        GLfloat offset_units;
-        ::glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &offset_factor);
-        ::glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
-
-        ::glPolygonOffset(-1.f, 1.f);
-        ::glBegin(GL_TRIANGLES);
-        for(Selection_set_facet::iterator
-            it = selected_facets.begin(),
-            end = selected_facets.end();
-            it != end; ++it)
-        {
-            const Kernel::Vector_3 n =
-                    compute_facet_normal<Polyhedron::Facet,Kernel>(**it);
-            ::glNormal3d(n.x(),n.y(),n.z());
-
-            Polyhedron::Halfedge_around_facet_circulator
-                    he = (*it)->facet_begin(),
-                    cend = he;
-
-            CGAL_For_all(he,cend)
-            {
-                const Kernel::Point_3& p = he->vertex()->point();
-                ::glVertex3d(p.x(),p.y(),p.z());
-            }
-        }
-        ::glEnd();
-        ::glPolygonOffset(offset_factor, offset_units);
-    }
-    void draw_selected_edges() const {
-        GLboolean enable_back_lighting = glIsEnabled(GL_LIGHTING);
-        glDisable(GL_LIGHTING);
-
-        CGALglcolor(edge_color);
-        ::glLineWidth(3.f);
-        ::glBegin(GL_LINES);
-        for(Selection_set_edge::iterator it = selected_edges.begin(); it != selected_edges.end(); ++it) {
-            const Kernel::Point_3& a = (it->halfedge())->vertex()->point();
-            const Kernel::Point_3& b = (it->halfedge())->opposite()->vertex()->point();
-            ::glVertex3d(a.x(),a.y(),a.z());
-            ::glVertex3d(b.x(),b.y(),b.z());
-        }
-        ::glEnd();
-
-        if(enable_back_lighting) { glEnable(GL_LIGHTING); }
-    }
-
     bool supportsRenderingMode(RenderingMode m) const { return (m==Flat); }
 
     bool isEmpty() const {
@@ -678,7 +593,7 @@ public slots:
         // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
       //  poly_item->changed();
         compute_elements();
-        initialize_buffers();
+        are_buffers_filled = false;
     }
     // slots are called by signals of polyhedron_k_ring_selector
     void selected(const std::set<Polyhedron::Vertex_handle>& m)
@@ -764,18 +679,8 @@ private:
     std::vector<float> positions_lines;
     std::vector<float> positions_points;
 
-
-
-    GLint location[11];
-    GLuint vao[1];
-    GLuint buffer[4];
-    GLuint rendering_program_facets;
-    GLuint rendering_program_lines;
-    GLuint rendering_program_points;
-
-    void initialize_buffers();
-    void compile_shaders();
-    void uniform_attrib(Viewer_interface*, int) const;
+    mutable QOpenGLShaderProgram *program;
+    void initialize_buffers(Viewer_interface *viewer) const;
     void compute_elements();
 
 };
