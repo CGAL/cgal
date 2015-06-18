@@ -838,7 +838,7 @@ int main (int argc, char** argv)
   test_insert_rnd_as_delaunay(100, 0.);
   test_insert_rnd_as_delaunay(100, 0.01);
   test_insert_rnd_then_remove_all(5000, 7);
-//  test_insert_rnd_then_remove_all(5000, 12);
+  test_insert_rnd_then_remove_all(5000, 12);
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return EXIT_SUCCESS;

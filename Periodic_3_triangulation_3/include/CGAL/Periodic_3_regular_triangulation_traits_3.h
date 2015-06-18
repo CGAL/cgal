@@ -237,7 +237,7 @@ class Periodic_3_regular_triangulation_traits_3;
 // Partial specialization for Filtered_kernel<CK>.
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Periodic_3_triangulation_filtered_traits_3.h>
+//#include <CGAL/Periodic_3_Delaunay_triangulation_filtered_traits_3.h>
 
 namespace CGAL
 {
