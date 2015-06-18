@@ -1,5 +1,6 @@
-#include <CGAL/AABB_intersections.h>
+#include <CGAL/check_gl_error.h>
 #include "Scene_polyhedron_item.h"
+#include <CGAL/AABB_intersections.h>
 #include "Kernel_type.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
 
@@ -21,6 +22,7 @@
 #include <queue>
 #include <iostream>
 #include <QDebug>
+
 
 typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
@@ -323,7 +325,6 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
     {
         program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
         program->bind();
-
         vaos[0].bind();
         buffers[0].bind();
         buffers[0].allocate(positions_facets.data(), positions_facets.size()*sizeof(float));
