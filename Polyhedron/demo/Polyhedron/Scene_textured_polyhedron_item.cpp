@@ -203,10 +203,7 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item()
     cur_shading=GL_FLAT;
     is_selected=false;
     qFunc.initializeOpenGLFunctions();
-    //Generates an integer which will be used as ID for each buffer
     qFunc.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-    compile_shaders();
     changed();
 }
 
@@ -218,9 +215,6 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(Textured_polyhedr
     is_selected=false;
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
     qFunc.initializeOpenGLFunctions();
-    //Generates an integer which will be used as ID for each buffer
-
-    compile_shaders();
     changed();
 }
 
@@ -232,9 +226,6 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(const Textured_po
     cur_shading=GL_FLAT;
     is_selected=false;
     qFunc.initializeOpenGLFunctions();
-    //Generates an integer which will be used as ID for each buffer
-
-    compile_shaders();
     changed();
 }
 

@@ -86,9 +86,7 @@ private:
   mutable QOpenGLShaderProgram *program;
 
   void initialize_buffers(Viewer_interface *viewer) const;
-  //void compile_shaders(void);
   void compute_normals_and_vertices(void);
-  //void uniform_attrib(Viewer_interface*, int) const;
 
   void triangulate_facet();
   void triangulate_facet_color();

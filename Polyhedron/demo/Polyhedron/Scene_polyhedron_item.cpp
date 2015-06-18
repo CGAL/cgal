@@ -657,8 +657,6 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     cur_shading=GL_FLAT;
     is_selected = true;
     init();
-    //Generates an integer which will be used as ID for each buffer
-    //compile_shaders();
 
 }
 
@@ -681,10 +679,6 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     cur_shading=GL_FLAT;
     is_selected = true;
     init();
-    //qFunc.glGenVertexArrays(2, vao);
-    //Generates an integer which will be used as ID for each buffer
-    //qFunc.glGenBuffers(10, buffer);
-   // compile_shaders();
     changed();
 }
 
@@ -707,10 +701,6 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     cur_shading=GL_FLAT;
     is_selected=true;
     init();
-    //qFunc.glGenVertexArrays(2, vao);
-    //Generates an integer which will be used as ID for each buffer
-    //qFunc.glGenBuffers(10, buffer);
-   // compile_shaders();
     changed();
 }
 
