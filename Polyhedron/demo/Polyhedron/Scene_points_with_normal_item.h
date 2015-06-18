@@ -49,16 +49,10 @@ public:
 
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const;
-  // Points OpenGL drawing in a display list
-  virtual void direct_draw() const;
+
   virtual void draw_edges(Viewer_interface* viewer) const;
   virtual void draw_points(Viewer_interface*) const;
-  // Normals OpenGL drawing
-  void draw_normals() const;
-  virtual void draw_edges() const { draw_normals(); }//to tweak scene
 
-  // Splat OpenGL drawing
-  virtual void draw_splats() const;
   virtual void draw_splats(Viewer_interface*) const;
   
   // Gets wrapped point set
@@ -107,19 +101,14 @@ private:
 
   mutable int texture[3];
 
-  mutable GLuint rendering_program_lines;
-  mutable GLuint rendering_program_points;
-  mutable GLuint rendering_program_splats;
-  mutable GLint location[9];
+  mutable QOpenGLShaderProgram *program;
   mutable GLuint textureId;
   mutable GLint sampler_location;
 
-  mutable GLuint vao[2];
-  mutable GLuint buffer[9];
-  void initialize_buffers();
-  void compile_shaders(void);
+  void initialize_buffers(Viewer_interface *viewer) const;
+
   void compute_normals_and_vertices(void);
-  void uniform_attrib(Viewer_interface*, int) const;
+
 
 }; // end class Scene_points_with_normal_item
 
