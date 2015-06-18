@@ -557,10 +557,11 @@ namespace internal {
           if (!mesh_border_case)
             merge_status(en_p, s_epo_p, s_ep_p);
 
+          fix_degenerate_faces(vkept, short_edges, sq_low);
+
 #ifdef CGAL_PMP_REMESHING_DEBUG
           unsigned int nbb = nb_valid_halfedges();
           CGAL_assertion(nbb == halfedge_status_map_.size());
-          CGAL_assertion(source(en, mesh_) == source(en_p, mesh_));
           debug_status_map();
 #endif
 
@@ -576,17 +577,8 @@ namespace internal {
         }//end if(collapse_ok)
       }
 
-      std::size_t n = PMP::remove_degenerate_faces(
-          mesh_
-        , PMP::parameters::vertex_point_map(vpmap_)
-         .geom_traits(GeomTraits()));
+      debug_status_map();
 
-      if (n > 0)
-      {
-        std::cout << "Warning : tags should maybe be fixed" << std::endl;
-        unsigned int nbb = nb_valid_halfedges();
-        CGAL_assertion(nbb == halfedge_status_map_.size());
-      }
 #ifdef CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
       BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
         debug_normals(v);
@@ -1034,6 +1026,86 @@ namespace internal {
         halfedge_status_map_[eno] = s_ep;
       }
       // else keep current status for en and eno
+    }
+
+    template<typename Bimap>
+    void fix_degenerate_faces(const vertex_descriptor& v,
+                              Bimap& short_edges,
+                              const double& sq_low)
+    {
+      CGAL_assertion_code(std::size_t nb_done = 0);
+      std::vector<halfedge_descriptor> degenerate_faces;
+      BOOST_FOREACH(halfedge_descriptor h,
+                    halfedges_around_target(halfedge(v, mesh_), mesh_))
+      {
+        if (PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()))
+          degenerate_faces.push_back(h);
+      }
+      BOOST_FOREACH(halfedge_descriptor h, degenerate_faces)
+      {
+        BOOST_FOREACH(halfedge_descriptor hf,
+                      halfedges_around_face(h, mesh_))
+        {
+          vertex_descriptor vc = target(hf, mesh_);
+          vertex_descriptor va = target(next(hf, mesh_), mesh_);
+          vertex_descriptor vb = target(next(next(hf, mesh_), mesh_), mesh_);
+          Vector_3 ab(vpmap_[va], vpmap_[vb]);
+          Vector_3 ac(vpmap_[va], vpmap_[vc]);
+          if (ab * ac < 0)
+          {
+            halfedge_descriptor hfo = opposite(hf, mesh_);
+            halfedge_descriptor h_ab = prev(hf, mesh_);
+            halfedge_descriptor h_ca = next(hf, mesh_);
+
+            short_edges.left.erase(hf);
+            short_edges.left.erase(hfo);
+
+            CGAL::Euler::flip_edge(hf, mesh_);
+            CGAL_assertion_code(++nb_done);
+
+            //update halfedge_status_map_
+            halfedge_status_map_[h_ab] = merge_status(h_ab, hf, hfo);
+            halfedge_status_map_[h_ca] = merge_status(h_ca, hf, hfo);
+            halfedge_status_map_[hf] =
+              (is_on_patch(h_ca) || is_on_patch_border(h_ca))
+              ? PATCH
+              : MESH;
+            halfedge_status_map_[hfo] = status(hf);
+            debug_status_map();
+
+            //insert new edges in 'short_edges'
+            if (is_collapse_allowed(hf))
+            {
+              double sqlen = sqlength(hf);
+              if (sqlen < sq_low)
+                short_edges.insert(typename Bimap::value_type(hf, sqlen));
+            }
+            break;
+          }
+        }
+      }
+      CGAL_assertion(degenerate_faces.size() == nb_done);
+#ifdef CGAL_PMP_REMESHING_DEBUG
+      debug_status_map();
+#endif
+    }
+
+    Halfedge_status merge_status(const halfedge_descriptor& h1,
+      const halfedge_descriptor& h2,
+      const halfedge_descriptor& h3)
+    {
+      Halfedge_status s1 = status(h1);
+      if (s1 == MESH_BORDER) return s1;
+      Halfedge_status s2 = status(h2);
+      if (s2 == MESH_BORDER) return s2;
+      Halfedge_status s3 = status(h3);
+      if (s3 == MESH_BORDER) return s3;
+      else if (s1 == PATCH_BORDER) return s1;
+      else if (s2 == PATCH_BORDER) return s2;
+      else if (s3 == PATCH_BORDER) return s3;
+
+      CGAL_assertion(s1 == s2 && s1 == s3);
+      return s1;
     }
 
     bool is_on_patch(const halfedge_descriptor& h) const
