@@ -65,7 +65,7 @@ The visual results of aforementioned steps can be seen in \cgalFigureRef{Mech_st
 
 \subsection MeshingAPI API
 
-Refinement and fairing functions can be applied to an arbitrary region on a mesh, using :
+Refinement and fairing functions can be applied to an arbitrary region on a polygon mesh, using :
 - `CGAL::Polygon_mesh_processing::refine()` : given a set of facets on a mesh, refines the region.
 - `CGAL::Polygon_mesh_processing::fair()` : given a set of vertices on a mesh, fairs the region.
 
@@ -241,7 +241,7 @@ to remove those faces and to fix the connectivity of the newly cleaned up mesh.
 
 \subsubsection RemoveDegenerateExample Example
 
-In the following example, the degenerate faces of a simple mesh containing
+In the following example, the degenerate faces of a simple triangle mesh containing
  some are removed, the connectivity is fixed, and the number of removed faces
  is displayed.
 
@@ -251,7 +251,7 @@ In the following example, the degenerate faces of a simple mesh containing
 *******************
 \subsection PolygonSoups Polygon Soups
 
-When the faces of a mesh are given but the connectivity is not known,
+When the faces of a polygon mesh are given but the connectivity is not known,
 we talk of a \e polygon \e soup.
 
 Before being able to run any of this package algorithms on the so-called 
@@ -271,7 +271,8 @@ performs this mesh construction step.
 This example shows how to build a mesh from a polygon soup.
 The first step is to get a soup of consistently oriented faces, before
 reconstituting the connectivity.
-In this example, some orientation tests are run on the output mesh to illustrate
+In this example, some orientation tests are run on the output
+polygon mesh to illustrate
 Section \ref PMPOrientation.
 
 \cgalExample{Polygon_mesh_processing/polygon_soup_example.cpp}
@@ -281,7 +282,7 @@ Section \ref PMPOrientation.
 ****************************************
 \section PMPNormalComp Normals Computation
 
-This package provides methods to compute normals to the polygon mesh.
+This package provides methods to compute normals to a polygon mesh.
 The normal can be computed on a single face,
 or estimated at a vertex, as the average of its incident faces normals.
 These computations are done with :
@@ -321,7 +322,7 @@ and a plane for which a translation following the normal to the plane
 is performed.
 
 \cgalFigureBegin{SlicerFig, slicer.png}
-Slicing process. A triangle mesh (left) and the polylines
+Slicing process. A triangulated surface mesh (left) and the polylines
 computed by the mesh slicer by intersecting the yellow plane
 and translations of it with the mesh (right).
 \cgalFigureEnd
