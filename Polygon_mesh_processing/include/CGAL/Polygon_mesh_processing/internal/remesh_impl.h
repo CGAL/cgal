@@ -150,8 +150,6 @@ namespace internal {
     typedef CGAL::AABB_traits<GeomTraits, Primitive>               Traits;
     typedef CGAL::AABB_tree<Traits>                                AABB_tree;
 
-    typedef Status_map_visitor<PM> Status_visitor;
-
   public:
     Incremental_remesher(PolygonMesh& pmesh
                        , VertexPointMap& vpmap
@@ -578,13 +576,8 @@ namespace internal {
         }//end if(collapse_ok)
       }
 
-      Status_visitor visitor(halfedge_status_map_, mesh_);
-      boost::tuple<boost::reference_wrapper<Status_visitor>,
-                   boost::reference_wrapper<PolygonMesh> >
-        g_with_visitor = CGAL::make_graph_with_visitor(visitor, mesh_);
-
       std::size_t n = PMP::remove_degenerate_faces(
-          g_with_visitor
+          mesh_
         , PMP::parameters::vertex_point_map(vpmap_)
          .geom_traits(GeomTraits()));
 
