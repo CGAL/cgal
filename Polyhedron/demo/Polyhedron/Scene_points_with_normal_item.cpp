@@ -311,6 +311,7 @@ QMenu* Scene_points_with_normal_item::contextMenu()
     actionSelectDuplicatedPoints->setObjectName("actionSelectDuplicatedPoints");
     connect(actionSelectDuplicatedPoints, SIGNAL(triggered()),this, SLOT(selectDuplicates()));
 
+
     menu->setProperty(prop_name, true);
   }
 
