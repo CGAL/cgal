@@ -607,8 +607,10 @@ namespace CGAL {
       }
     */
 
-    void run(double radius_ratio_bound=5, double beta=0.52)
+    void run(double radius_ratio_bound=5, double beta= 0.52)
     {
+      K = radius_ratio_bound;
+      COS_BETA = acos(beta);
       if(T.dimension() < 3){
         return;
       }
@@ -2349,7 +2351,7 @@ namespace CGAL {
                         boost::make_transform_iterator(e, AFSR::Auto_count<Point_3>() )  );
 
     Reconstruction R(dt);
-    R.run(radius_ratio_bound, acos(beta));
+    R.run(radius_ratio_bound, beta);
     write_triple_indices(out, R);
     return out;
   }
@@ -2381,7 +2383,7 @@ namespace CGAL {
                         boost::make_transform_iterator(e, AFSR::Auto_count_cc<Point_3,CC>(cc) )  );
 
     Reconstruction R(dt, filter);
-    R.run(radius_ratio_bound, acos(beta));
+    R.run(radius_ratio_bound, beta);
     write_triple_indices(out, R);
     return out;
   }
@@ -2413,7 +2415,7 @@ namespace CGAL {
                         boost::make_transform_iterator(e, AFSR::Auto_count_cc<Point_3,CC>(cc) )  );
   
     Reconstruction R(dt, filter);
-    R.run(radius_ratio_bound, acos(beta));
+    R.run(radius_ratio_bound, beta);
     AFSR::construct_polyhedron(polyhedron, R);
   }
 
@@ -2439,7 +2441,7 @@ namespace CGAL {
                         boost::make_transform_iterator(e, AFSR::Auto_count<Point_3>() )  );
   
     Reconstruction R(dt);
-    R.run(radius_ratio_bound, acos(beta));
+    R.run(radius_ratio_bound, beta);
     AFSR::construct_polyhedron(polyhedron, R);
   }
 
