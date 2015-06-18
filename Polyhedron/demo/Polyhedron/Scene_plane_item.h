@@ -34,18 +34,11 @@ public:
   {
     setNormal(0., 0., 1.);
     qFunc.initializeOpenGLFunctions();
-    qFunc.glGenVertexArrays(1, vao);
     //Generates an integer which will be used as ID for each buffer
-    qFunc.glGenBuffers(2, buffer);
-    compile_shaders();
     changed();
   }
 
   ~Scene_plane_item() {
-      qFunc.glDeleteBuffers(2, buffer);
-      qFunc.glDeleteVertexArrays(1, vao);
-      qFunc.glDeleteProgram(rendering_program_lines);
-      qFunc.glDeleteProgram(rendering_program_quad);
     delete frame;
   }
 
@@ -103,33 +96,7 @@ public:
   bool supportsRenderingMode(RenderingMode m) const {
     return (m == Wireframe || m == Flat); 
   }
-
-  // Flat OpenGL drawing
-  void draw() const {
-    const double diag = scene_diag();
-    ::glPushMatrix();
-    ::glMultMatrixd(frame->matrix());
-    GLboolean lighting;
-    ::glGetBooleanv(GL_LIGHTING, &lighting);
-    ::glDisable(GL_LIGHTING);
-    ::glBegin(GL_POLYGON);
-    ::glVertex3d(-diag, -diag, 0.);
-    ::glVertex3d(-diag,  diag, 0.);
-    ::glVertex3d( diag,  diag, 0.);
-    ::glVertex3d( diag, -diag, 0.);
-    ::glEnd();
-    if(lighting)
-      ::glEnable(GL_LIGHTING);
-    ::glPopMatrix();
-  };
   virtual void draw(Viewer_interface*) const;
-  // Wireframe OpenGL drawing
-  void draw_edges() const {
-    ::glPushMatrix();
-    ::glMultMatrixd(frame->matrix());
-    QGLViewer::drawGrid((float)scene_diag());
-    ::glPopMatrix();
-  }
  virtual void draw_edges(Viewer_interface* viewer)const;
   Plane_3 plane() const {
     const qglviewer::Vec& pos = frame->position();
@@ -154,7 +121,7 @@ public slots:
    virtual void changed()
   {
 compute_normals_and_vertices();
-initialize_buffers();
+are_buffers_filled = false;
   }
 
   void setPosition(float x, float y, float z) {
@@ -188,17 +155,11 @@ private:
 
   mutable std::vector<float> positions_lines;
   mutable std::vector<float> positions_quad;
-  mutable GLuint rendering_program_quad;
-  mutable GLuint rendering_program_lines;
-  mutable GLint location[10];
   mutable GLint sampler_location;
-  mutable GLuint vao[1];
-  mutable GLuint buffer[2];
   mutable bool smooth_shading;
+  mutable QOpenGLShaderProgram *program;
 
-  void initialize_buffers();
-  void compile_shaders(void);
-  void uniform_attrib(Viewer_interface*, int) const;
+  void initialize_buffers(Viewer_interface*)const;
   void compute_normals_and_vertices(void);
 };
 

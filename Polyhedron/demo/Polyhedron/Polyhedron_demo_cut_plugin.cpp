@@ -105,7 +105,6 @@ private:
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffers[0].release();
-        program->setAttributeValue("colors",this->color());
         program->release();
 
         vaos[0].release();
@@ -129,6 +128,7 @@ private:
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program->bind();
+        program->setAttributeValue("colors",this->color());
         qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
         program->release();
         vaos[0].release();
@@ -221,7 +221,6 @@ private:
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffers[0].release();
-        program->setAttributeValue("colors",this->color());
         program->release();
 
         vaos[0].release();
@@ -248,6 +247,7 @@ private:
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program->bind();
+        program->setAttributeValue("colors",this->color());
         qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
         vaos[0].release();
         program->release();
