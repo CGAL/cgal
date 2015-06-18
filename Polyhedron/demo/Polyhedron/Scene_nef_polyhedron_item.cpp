@@ -194,6 +194,7 @@ void Scene_nef_polyhedron_item::initialize_buffers(Viewer_interface *viewer) con
         vaos[2].release();
         program->release();
     }
+    are_buffers_filled = true;
 }
 void Scene_nef_polyhedron_item::compute_normals_and_vertices(void)
 {

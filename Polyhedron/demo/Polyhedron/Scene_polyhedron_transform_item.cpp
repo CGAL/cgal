@@ -11,118 +11,37 @@ Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer
     center_(pos) {
     frame->setPosition(pos);
     qFunc.initializeOpenGLFunctions();
-    qFunc.glGenVertexArrays(1, vao);
-    //Generates an integer which will be used as ID for each buffer
-    qFunc.glGenBuffers(1, buffer);
-    compile_shaders();
-
 }
 
 Scene_polyhedron_transform_item::~Scene_polyhedron_transform_item()
 {
 
-    qFunc.glDeleteBuffers(1, buffer);
-    qFunc.glDeleteVertexArrays(1, vao);
-    qFunc.glDeleteProgram(rendering_program);
     delete frame;
     emit killed();
 }
 
-void Scene_polyhedron_transform_item::initialize_buffers()
+void Scene_polyhedron_transform_item::initialize_buffers(Viewer_interface *viewer =0) const
 {
-
-    qFunc.glBindVertexArray(vao[0]);
-
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (positions_lines.size())*sizeof(float),
-                 positions_lines.data(),
-                 GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(0, //number of the buffer
-                          3, //number of floats to be taken
-                          GL_FLOAT, // type of data
-                          GL_FALSE, //not normalized
-                          0, //compact data (not in a struct)
-                          NULL //no offset (seperated in several buffers)
-                          );
-    qFunc.glEnableVertexAttribArray(0);
-    qFunc.glBindVertexArray(0);
-}
-void Scene_polyhedron_transform_item::compile_shaders()
-{
-    //fill the vertex shader
-    static const GLchar* vertex_shader_source_lines[] =
+    //vao for the edges
     {
-        "#version 300 es \n"
-        " \n"
-        "layout (location = 0) in vec3 positions; \n"
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program->bind();
 
-        "uniform mat4 mvp_matrix; \n"
-        "uniform mat4 f_matrix; \n"
-        "uniform vec3 color_lines; \n"
-        "vec4 positions_lines = vec4(positions, 1.0); \n"
-        "out highp vec3 fColors; \n"
-        " \n"
+        vaos[0].bind();
+        buffers[0].bind();
+        buffers[0].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+        buffers[0].release();
 
-        "void main(void) \n"
-        "{ \n"
-        "   fColors = color_lines; \n"
-        "   gl_Position = mvp_matrix * f_matrix * positions_lines; \n"
-        "} \n"
-    };
-
-    //fill the fragment shader
-    static const GLchar* fragment_shader_source[]=
-    {
-        "#version 300 es \n"
-        " \n"
-        "in highp vec3 fColors; \n"
-
-        "out highp vec4 color; \n"
-        " \n"
-        "void main(void) \n"
-        "{ \n"
-        " color = vec4(fColors, 1.0); \n"
-        "} \n"
-    };
-
-    GLuint vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
-    qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source_lines, NULL);
-    qFunc.glCompileShader(vertex_shader);
-    GLuint fragment_shader =	qFunc.glCreateShader(GL_FRAGMENT_SHADER);
-    qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-    qFunc.glCompileShader(fragment_shader);
-
-    GLuint program = qFunc.glCreateProgram();
-    qFunc.glAttachShader(program, vertex_shader);
-    qFunc.glAttachShader(program, fragment_shader);
-    qFunc.glLinkProgram(program);
-
-    qFunc.glDeleteShader(vertex_shader);
-    qFunc.glDeleteShader(fragment_shader);
-    rendering_program = program;
-
-}
-void Scene_polyhedron_transform_item::uniform_attrib(Viewer_interface* viewer) const
-{
-    GLfloat mvp_mat[16];
-    GLfloat f_mat[16];
-    GLdouble d_mat[16];
-    viewer->camera()->getModelViewProjectionMatrix(d_mat);
-    for (int i=0; i<16; ++i){
-        mvp_mat[i] = GLfloat(d_mat[i]);
-        f_mat[i] = frame->matrix()[i];
+        QColor color = this->color();
+        program->setAttributeValue("colors",color);
+        vaos[0].release();
+        program->release();
     }
-
-    GLfloat colors[3];
-    colors[0] = this->color().redF();
-    colors[1] = this->color().greenF();
-    colors[2] = this->color().blueF();
-    qFunc.glUseProgram(rendering_program);
-    qFunc.glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
-    qFunc.glUniform3fv(location[1], 1, colors);
-    qFunc.glUniformMatrix4fv(location[2], 1, GL_FALSE, f_mat);
+    are_buffers_filled = true;
 }
+
 void Scene_polyhedron_transform_item::compute_elements()
 {
      positions_lines.clear();
@@ -146,48 +65,27 @@ void Scene_polyhedron_transform_item::compute_elements()
 
     }
 
-    location[0] = qFunc.glGetUniformLocation(rendering_program, "mvp_matrix");
-    location[1] = qFunc.glGetUniformLocation(rendering_program, "color_lines");
-    location[2] = qFunc.glGetUniformLocation(rendering_program, "f_matrix");
 }
 
-
-void Scene_polyhedron_transform_item::draw() const{
-    glPushMatrix();
-    glMultMatrixd(frame->matrix());
-    direct_draw_edges();
-    //Scene_item_with_display_list::draw();
-    glPopMatrix();
-}
 void Scene_polyhedron_transform_item::draw_edges(Viewer_interface* viewer) const
 {
-    qFunc.glBindVertexArray(vao[0]);
-    qFunc.glUseProgram(rendering_program);
-    uniform_attrib(viewer);
-    qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
-    qFunc.glUseProgram(0);
-    qFunc.glBindVertexArray(0);
-
-}
-void Scene_polyhedron_transform_item::direct_draw_edges() const {
-    typedef Kernel::Point_3		Point;
-    typedef Polyhedron::Edge_const_iterator	Edge_iterator;
-
-    ::glDisable(GL_LIGHTING);
-    ::glBegin(GL_LINES);
-    Edge_iterator he;
-    for(he = poly->edges_begin();
-        he != poly->edges_end();
-        he++)
-    {
-        const Point& a = he->vertex()->point();
-        const Point& b = he->opposite()->vertex()->point();
-        ::glVertex3d(a.x()-center_.x,a.y()-center_.y,a.z()-center_.z);
-        ::glVertex3d(b.x()-center_.x,b.y()-center_.y,b.z()-center_.z);
+    if(!are_buffers_filled)
+        initialize_buffers(viewer);
+    vaos[0].bind();
+    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+    program->bind();
+    QMatrix4x4 f_matrix;
+    for (int i=0; i<16; ++i){
+        f_matrix.data()[i] = (float)frame->matrix()[i];
     }
-    ::glEnd();
-    ::glEnable(GL_LIGHTING);
+    program->setUniformValue("f_matrix", f_matrix);
+    qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
+    vaos[0].release();
+    program->release();
+
 }
+
 QString Scene_polyhedron_transform_item::toolTip() const {
     return QObject::tr("<p>Affine transformation of <b>%1</b></p>"
                        "<p>Keep <b>Ctrl</b> pressed and use the arcball to define an affine transformation.<br />"
@@ -219,7 +117,7 @@ Scene_polyhedron_transform_item::bbox() const {
 void Scene_polyhedron_transform_item::changed()
 {
     compute_elements();
-    initialize_buffers();
+    are_buffers_filled = false;
 }
 #include "Scene_polyhedron_transform_item.moc"
 
