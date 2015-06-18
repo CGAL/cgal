@@ -43,7 +43,6 @@
 #include <CGAL/internal/AFSR/Surface_face_base_2.h>
 #include <CGAL/internal/AFSR/construct_surface_2.h>
 #include <CGAL/internal/AFSR/construct_polyhedron.h>
-#include <CGAL/internal/AFSR/AFSR_options.h>
 #include <CGAL/internal/AFSR/write_triple_indices.h>
 
 namespace CGAL {
@@ -169,14 +168,16 @@ namespace CGAL {
 
 
   template <
-    class Triangulation = Delaunay_triangulation_3<Exact_predicates_inexact_constructions_kernel, Triangulation_data_structure_3<Advancing_front_surface_reconstruction_vertex_base_3<Exact_predicates_inexact_constructions_kernel>, Advancing_front_surface_reconstruction_cell_base_3<Exact_predicates_inexact_constructions_kernel> > >,
+    class Triangulation_ = Default,
     class Reject = Always_false>
   class Advancing_front_surface_reconstruction {
+
+    typedef typename Default::Get<Triangulation_,Delaunay_triangulation_3<Exact_predicates_inexact_constructions_kernel, Triangulation_data_structure_3<Advancing_front_surface_reconstruction_vertex_base_3<Exact_predicates_inexact_constructions_kernel>, Advancing_front_surface_reconstruction_cell_base_3<Exact_predicates_inexact_constructions_kernel> > > >::type Triangulation;
 
   public:
     typedef Triangulation Triangulation_3;
     typedef typename Triangulation_3::Geom_traits Kernel;
-    typedef Advancing_front_surface_reconstruction<Triangulation_3,Reject> Extract;
+    typedef Advancing_front_surface_reconstruction<Triangulation_,Reject> Extract;
     typedef typename Triangulation_3::Geom_traits Geom_traits;
 
     typedef typename Kernel::FT coord_type;
@@ -250,7 +251,8 @@ namespace CGAL {
     int _number_of_border;
 
     const coord_type COS_ALPHA_SLIVER;
-    const coord_type COS_BETA;
+    coord_type COS_BETA;
+    const int NB_BORDER_MAX;
     coord_type DELTA; // = sampling quality of the border
     coord_type K, min_K;
     const coord_type eps;
@@ -278,6 +280,8 @@ namespace CGAL {
     Vertex_handle added_vertex;
     bool deal_with_2d;
     Reject reject;
+    int max_connected_component;
+    double K_init, K_step;
     std::list<Vertex_handle> interior_edges;
     std::list< Incidence_request_elt > incidence_requests;
     typename std::list< Incidence_request_elt >::iterator sentinel;
@@ -560,15 +564,15 @@ namespace CGAL {
 
   public:
     Advancing_front_surface_reconstruction(Triangulation_3& T_,
-                                           const AFSR_options& opt = AFSR_options(),
                                            Reject reject = Reject())
-      : T(T_), _number_of_border(1), COS_ALPHA_SLIVER(-0.86), COS_BETA(opt.COS_BETA), DELTA(opt.delta), min_K(HUGE_VAL), 
+      : T(T_), _number_of_border(1), COS_ALPHA_SLIVER(-0.86), 
+        NB_BORDER_MAX(15), DELTA(.86), min_K(HUGE_VAL), 
         eps(1e-7), inv_eps_2(coord_type(1)/(eps*eps)), eps_3(eps*eps*eps),
         STANDBY_CANDIDATE(3), STANDBY_CANDIDATE_BIS(STANDBY_CANDIDATE+1), 
         NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2),
       _vh_number(static_cast<int>(T.number_of_vertices())), _facet_number(0),
       _postprocessing_counter(0), _size_before_postprocessing(0), _number_of_connected_components(0),
-      deal_with_2d(false), reject(reject)
+      deal_with_2d(false), reject(reject), max_connected_component(-1), K_init(1.1), K_step(.1)
     
     {
       if(T.dimension() == 2){
@@ -605,17 +609,6 @@ namespace CGAL {
 
     void run(double radius_ratio_bound=5, double beta=0.52)
     {
-      AFSR_options opt;
-      opt.K = radius_ratio_bound;
-      opt.COS_BETA = acos(beta);
-      // TODO: what to do with beta
-
-      run(opt);
-    }
-
-
-    void run(const AFSR_options opt)
-    {
       if(T.dimension() < 3){
         return;
       }
@@ -629,24 +622,24 @@ namespace CGAL {
             {
               //std::cerr << "Growing connected component " << _number_of_connected_components << std::endl;
               extend_timer.start();
-              extend(opt.K_init, opt.K_step, opt.K);
+              extend();
               extend_timer.stop();
 
               if ((number_of_facets() > static_cast<int>(T.number_of_vertices()))&&
-                  (opt.NB_BORDER_MAX > 0))
+                  (NB_BORDER_MAX > 0))
                 // en principe 2*nb_sommets = nb_facettes: y a encore de la marge!!!
                 {
-                  while(postprocessing(opt.NB_BORDER_MAX)){
+                  while(postprocessing()){
                     extend2_timer.start();
-                    extend(opt.K_init, opt.K_step, opt.K);
+                    extend();
                   
                     extend2_timer.stop();
                   }
                 }
             } 
         }while(re_init &&
-               ((_number_of_connected_components < opt.max_connected_comp)||
-                (opt.max_connected_comp < 0))); 
+               ((_number_of_connected_components < max_connected_component)||
+                (max_connected_component < 0))); 
 
       _tds_2_inf = AFSR::construct_surface(_tds_2, *this);
 
@@ -1855,7 +1848,7 @@ namespace CGAL {
 
     //---------------------------------------------------------------------
     void 
-    extend(const coord_type& K_init, const coord_type& K_step, const coord_type& K_max)
+    extend()
     {
       // initilisation de la variable globale K: qualite d'echantillonnage requise
       K = K_init; // valeur d'initialisation de K pour commencer prudemment...
@@ -1924,11 +1917,11 @@ namespace CGAL {
           while((!_ordered_border.empty())&&
                 (_ordered_border.begin()->first < STANDBY_CANDIDATE_BIS));
 
-          K += (std::max)(K_step, min_K-K+eps); 
+          K += (std::max)(K_step, min_K - K + eps); 
           // on augmente progressivement le K mais on a deja rempli sans
           // faire des betises auparavant...
         }
-      while((!_ordered_border.empty())&&(K <= K_max)&&(min_K != HUGE_VAL));
+      while((!_ordered_border.empty())&&(K <= K)&&(min_K != HUGE_VAL));
 
 #ifdef VERBOSE
       if ((min_K < HUGE_VAL)&&(!_ordered_border.empty())) {
@@ -2208,7 +2201,7 @@ namespace CGAL {
 
     //---------------------------------------------------------------------
     bool
-    postprocessing(int NB_BORDER_MAX)
+    postprocessing()
     {
       postprocess_timer.start();
 
@@ -2340,7 +2333,7 @@ namespace CGAL {
                                          PointIterator e,
                                          IndexTripleIterator out,
                                          double radius_ratio_bound = 5,
-                                         double  	beta = 0.52 )
+                                         double beta = 0.52 )
   {
     typedef Exact_predicates_inexact_constructions_kernel Kernel;
     typedef Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
@@ -2355,11 +2348,8 @@ namespace CGAL {
     Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count<Point_3>()),
                         boost::make_transform_iterator(e, AFSR::Auto_count<Point_3>() )  );
 
-    AFSR_options opt;
-    opt.K = radius_ratio_bound;
-    opt.COS_BETA = acos(beta);
-    Reconstruction R(dt,opt);
-    R.run(opt);
+    Reconstruction R(dt);
+    R.run(radius_ratio_bound, acos(beta));
     write_triple_indices(out, R);
     return out;
   }
@@ -2372,7 +2362,7 @@ namespace CGAL {
                                          IndexTripleIterator out,
                                          Filter filter,
                                          double radius_ratio_bound = 5,
-                                         double  	beta = 0.52 )
+                                         double beta = 0.52 )
   {
     typedef Exact_predicates_inexact_constructions_kernel Kernel;
     typedef Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
@@ -2390,11 +2380,8 @@ namespace CGAL {
     Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count_cc<Point_3,CC>(cc)),
                         boost::make_transform_iterator(e, AFSR::Auto_count_cc<Point_3,CC>(cc) )  );
 
-    AFSR_options opt;
-    opt.K = radius_ratio_bound;
-    opt.COS_BETA = acos(beta);
-    Reconstruction R(dt,opt, filter);
-    R.run(opt);
+    Reconstruction R(dt, filter);
+    R.run(radius_ratio_bound, acos(beta));
     write_triple_indices(out, R);
     return out;
   }
@@ -2407,7 +2394,7 @@ namespace CGAL {
                                          Polyhedron_3<Kernel,Items,HDS,Alloc>& polyhedron,
                                          Filter filter,
                                          double radius_ratio_bound = 5,
-                                         double  	beta = 0.52)
+                                         double beta = 0.52)
   {
     typedef Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
     typedef Advancing_front_surface_reconstruction_cell_base_3<Kernel> LCb;
@@ -2425,11 +2412,8 @@ namespace CGAL {
     Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count_cc<Point_3,CC>(cc)),
                         boost::make_transform_iterator(e, AFSR::Auto_count_cc<Point_3,CC>(cc) )  );
   
-    AFSR_options opt;
-    opt.K = radius_ratio_bound;
-    opt.COS_BETA = acos(beta);
-    Reconstruction R(dt, opt,filter);
-    R.run(opt);
+    Reconstruction R(dt, filter);
+    R.run(radius_ratio_bound, acos(beta));
     AFSR::construct_polyhedron(polyhedron, R);
   }
 
@@ -2440,7 +2424,7 @@ namespace CGAL {
                                          PointIterator e,
                                          Polyhedron_3<Kernel,Items,HDS,Alloc>& polyhedron,
                                          double radius_ratio_bound = 5,
-                                         double  	beta = 0.52)
+                                         double beta = 0.52)
   {
     typedef Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
     typedef Advancing_front_surface_reconstruction_cell_base_3<Kernel> LCb;
@@ -2454,11 +2438,8 @@ namespace CGAL {
     Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count<Point_3>()),
                         boost::make_transform_iterator(e, AFSR::Auto_count<Point_3>() )  );
   
-    AFSR_options opt;
-    opt.K = radius_ratio_bound;
-    opt.COS_BETA = acos(beta);
-    Reconstruction R(dt, opt);
-    R.run(opt);
+    Reconstruction R(dt);
+    R.run(radius_ratio_bound, acos(beta));
     AFSR::construct_polyhedron(polyhedron, R);
   }
 

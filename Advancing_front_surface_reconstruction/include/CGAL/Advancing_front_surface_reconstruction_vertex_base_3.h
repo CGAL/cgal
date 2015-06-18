@@ -126,7 +126,7 @@ namespace CGAL {
     {}
 
     Advancing_front_surface_reconstruction_vertex_base_3(const Advancing_front_surface_reconstruction_vertex_base_3& other)
-      : VertexBase(), m_mark(-1), 
+      : VertexBase(other), m_mark(-1), 
         m_post_mark(-1) 
     {}
 
