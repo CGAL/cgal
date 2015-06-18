@@ -99,21 +99,21 @@ namespace internal {
     typedef typename boost::graph_traits<Graph>::face_descriptor face_descriptor;
 
     std::map<halfedge_descriptor, Halfedge_status>& halfedge_status_map_;
-    PolygonMesh& pmesh_;
+    PolygonMesh& mesh_;
 
   public:
     Status_map_visitor(std::map<halfedge_descriptor, Halfedge_status>& hsmap,
                        PolygonMesh& pmesh)
       : halfedge_status_map_(hsmap)
-      , pmesh_(pmesh)
+      , mesh_(pmesh)
     {}
 
     void remove_halfedges(const face_descriptor& f)
     {
-      halfedge_descriptor h = halfedge(f, pmesh_);
+      halfedge_descriptor h = halfedge(f, mesh_);
       halfedge_status_map_.erase(h);
-      halfedge_status_map_.erase(next(h, pmesh_));
-      halfedge_status_map_.erase(next(next(h, pmesh_), pmesh_));
+      halfedge_status_map_.erase(next(h, mesh_));
+      halfedge_status_map_.erase(next(next(h, mesh_), mesh_));
     }
 
   };
