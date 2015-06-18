@@ -105,18 +105,23 @@ radius. While the radius is a good criterion in the case of 2D smooth
 curve reconstruction \cgalCite{b-cccda-94}, we need another criterion
 for 3D surface reconstruction, namely the dihedral angle between
 triangles on the surface, that is the angle between the normals of the
-triangles. There are two bounds namely \f$ \alpha_\mathrm{sliver} \f$
-and \f$ \beta \f$.
+triangles. There are three bounds namely \f$ \alpha_\mathrm{sliver} \f$,
+\f$ \beta \f$, and \f$ \delta \f$.
+
+The *candidate* triangle of an edge \f$ e \f$ is the triangle
+with the smallest radius:
+- that is valid for \f$ e \f$, and
+- that has \f$ \beta_t < \alpha_\mathrm{sliver} \f$, and
+- that has its internal angles with \f$ e \f$ smaller than \f$ \delta \f$.
+
+There may be no such triangle. In the implementation
+of the algorithm \f$ \alpha_\mathrm{sliver} \f$ and \f$ \delta\f$ are equal
+to \f$ 5\pi/6 \f$.
+
 
 We denote by \f$ \beta_t\f$ the angle between the normal of a triangle
 \f$ t\f$ incident on a boundary edge \f$ e \f$ and the normal of the
 triangle on the surface incident to \f$ e \f$.
-
-The *candidate* triangle of an edge \f$ e \f$ is the triangle 
-with the smallest radius that is valid for \f$ e \f$
-and that has \f$ \beta_t < \alpha_\mathrm{sliver} \f$.
-There may be no such triangle. In the implementation 
-of the algorithm \f$ \alpha_\mathrm{sliver} = 5\pi/6 \f$.
 
 
 We define the *plausibility* grade \f$ p(t) \f$ as \f$ 1/r_t \f$, if
