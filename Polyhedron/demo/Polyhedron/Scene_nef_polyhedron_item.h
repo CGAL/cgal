@@ -83,17 +83,12 @@ private:
   std::vector<double> color_facets;
   std::vector<double> color_points;
 
-  GLuint rendering_program_facets;
-  GLuint rendering_program_lines;
-  GLuint rendering_program_points;
-  GLint location[9];
+  mutable QOpenGLShaderProgram *program;
 
-  GLuint vao[1];
-  GLuint buffer[7];
-  void initialize_buffers();
-  void compile_shaders(void);
+  void initialize_buffers(Viewer_interface *viewer) const;
+  //void compile_shaders(void);
   void compute_normals_and_vertices(void);
-  void uniform_attrib(Viewer_interface*, int) const;
+  //void uniform_attrib(Viewer_interface*, int) const;
 
   void triangulate_facet();
   void triangulate_facet_color();
