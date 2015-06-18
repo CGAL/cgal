@@ -603,7 +603,7 @@ namespace internal {
       CGAL_expensive_assertion(is_triangle_mesh(mesh_));
       debug_status_map();
       debug_self_intersections();
-      CGAL_expensive_assertion(0 == PMP::remove_degenerate_faces(mesh_,
+      CGAL_assertion(0 == PMP::remove_degenerate_faces(mesh_,
         PMP::parameters::vertex_point_map(vpmap_).geom_traits(GeomTraits())));
 #endif
     }
@@ -642,7 +642,7 @@ namespace internal {
 
         CGAL::Euler::flip_edge(he, mesh_);
         ++nb_flips;
-
+        
         CGAL_assertion_code(Halfedge_status s2 = status(he));
         CGAL_assertion_code(Halfedge_status s2o = status(opposite(he, mesh_)));
         CGAL_assertion(s1 == s2   && s1 == PATCH);
@@ -662,6 +662,8 @@ namespace internal {
         //check that mesh does not become non-triangle,
         //nor has inverted faces
         if (deviation_pre < deviation_post
+          || incident_to_degenerate(he)
+          || incident_to_degenerate(opposite(he, mesh_))
           || !is_on_triangle(he)
           || !is_on_triangle(opposite(he, mesh_))
           || !check_normals(target(he, mesh_))
@@ -1107,6 +1109,17 @@ namespace internal {
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_status_map();
 #endif
+    }
+
+    bool incident_to_degenerate(const halfedge_descriptor& he)
+    {
+      BOOST_FOREACH(halfedge_descriptor h,
+                    halfedges_around_target(he, mesh_))
+      {
+        if (PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()))
+          return true;
+      }
+      return false;
     }
 
     Halfedge_status merge_status(const halfedge_descriptor& h1,
