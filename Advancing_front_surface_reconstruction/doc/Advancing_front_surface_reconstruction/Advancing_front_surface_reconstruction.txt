@@ -30,10 +30,10 @@ In most surface based Delaunay algorithms the triangles are
 selected independently, that is in parallel \cgalCite{agj-lcsr-00}\cgalCite{ab-srvf-98}.
 
 This chapter presents a surface-based Delaunay surface
-reconstruction algorithm by selecting the triangles sequentially, that
-is by using previous selected triangles to select a new triangle for
+reconstruction algorithm that sequentially selects the triangles, that
+is it uses previously selected triangles to select a new triangle for
 advancing the front. At each advancing step the most plausible
-triangle is selected, and the triangles are selected in a way that
+triangle is selected, and such that the triangles selected
 generates an orientable manifold triangulated surface.
 
 Two other examples of this greedy approach are the ball pivoting
@@ -53,16 +53,16 @@ We describe next the algorithm and provide examples.
 A detailed description of the algorithm and the underlying theory are provided
 in \cgalCite{cgal:csd-gdbsra-04}.
 
-
 The first step of the algorithm is the construction of a 3D Delaunay
-triangulation of the point set. The Delaunay triangle with the
-smallest radius is the starting point for the greedy algorithm. The
-radius of a triangle \f$ t \f$ is the radius of the smallest sphere
+triangulation of the point set.
+The radius of a triangle \f$ t \f$ is the radius of the smallest sphere
 passing through the vertices of \f$ t\f$ and enclosing no sample
 point. In other words, the radius \f$ r_t\f$ is the distance from any
 vertex of \f$ t\f$ to the Voronoi edge dual to \f$ t\f$. This triangle with
 three boundary edges is the initial triangulated surface, and its
 boundary is the advancing front.
+The Delaunay triangle with the smallest radius is the starting point
+for the greedy algorithm.
 
 The algorithm maintains a priority queue of candidate triangles, that
 is of valid triangles incident to the boundary edges of the current
@@ -77,7 +77,7 @@ which are explained next.
 
 \subsection AFSR_Topology Topological Constraints
 
-Any triangle \f$t\f$ considered as next potential candidate shares an
+Any triangle \f$t\f$ considered as the next potential candidate shares an
 edge \f$e\f$ with the front of the current reconstruction. Let \f$b\f$
 be the vertex of \f$t\f$ opposite to \f$e\f$. There are four
 configurations where \f$t\f$ is added to the surface.
@@ -105,15 +105,15 @@ radius. While the radius is a good criterion in the case of 2D smooth
 curve reconstruction \cgalCite{b-cccda-94}, we need another criterion
 for 3D surface reconstruction, namely the dihedral angle between
 triangles on the surface, that is the angle between the normals of the
-triangles.
-
+triangles. There are two bounds namely \f$ \alpha_\mathrm{sliver} \f$
+and \f$ \beta \f$.
 
 We denote by \f$ \beta_t\f$ the angle between the normal of a triangle
 \f$ t\f$ incident on a boundary edge \f$ e \f$ and the normal of the
 triangle on the surface incident to \f$ e \f$.
 
 The *candidate* triangle of an edge \f$ e \f$ is the triangle 
-with the smallest radius, that is valid for \f$ e \f$ 
+with the smallest radius that is valid for \f$ e \f$
 and that has \f$ \beta_t < \alpha_\mathrm{sliver} \f$.
 There may be no such triangle. In the implementation 
 of the algorithm \f$ \alpha_\mathrm{sliver} = 5\pi/6 \f$.
