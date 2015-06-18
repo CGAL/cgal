@@ -249,7 +249,8 @@ private:
     Ordered_border_type _ordered_border;
   int _number_of_border;
 
-  const coord_type SLIVER_ANGULUS; // = sampling quality of the surface
+  const coord_type COS_ALPHA_SLIVER;
+  const coord_type COS_BETA;
   coord_type DELTA; // = sampling quality of the border
   coord_type K, min_K;
   const coord_type eps;
@@ -561,7 +562,7 @@ public:
     Advancing_front_surface_reconstruction(Triangulation_3& T_,
                                            const AFSR_options& opt = AFSR_options(),
                                            Reject reject = Reject())
-      : T(T_), _number_of_border(1), SLIVER_ANGULUS(.86), DELTA(opt.delta), min_K(HUGE_VAL), 
+      : T(T_), _number_of_border(1), COS_ALPHA_SLIVER(-0.86), COS_BETA(0.86), DELTA(opt.delta), min_K(HUGE_VAL), 
     eps(1e-7), inv_eps_2(coord_type(1)/(eps*eps)), eps_3(eps*eps*eps),
     STANDBY_CANDIDATE(3), STANDBY_CANDIDATE_BIS(STANDBY_CANDIDATE+1), 
       NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2),
@@ -1235,10 +1236,9 @@ public:
 		//            on peut alors tester v1*v2 >= 0
 		norm =  sqrt(norm1 * (v2*v2));
 		pscal = v1*v2;
-		//SLIVER_ANGULUS represente la qualite d'echantillonnage de la
-		//surface 
+		// check if the triangle will produce a sliver on the surface
 		bool sliver_facet = ((succ_start || (neigh == c_predone))&& 
-				     (pscal <= -SLIVER_ANGULUS*norm));
+				     (pscal <= COS_ALPHA_SLIVER*norm));
 	      
 		if (succ_start) succ_start = false;
 
@@ -1248,14 +1248,20 @@ public:
 		      {
 			PnP1 = p1-pn;
 			// DELTA represente la qualite d'echantillonnage du bord
+                        // We skip triangles having an internal angle along e
+                        // whose cosinus is smaller than -DELTA
+                        // that is the angle is larger than arcos(-DELTA)
 			border_facet = !((P2P1*P2Pn >= 
 					  -DELTA*sqrt(norm12*(P2Pn*P2Pn)))&&
 					 (P2P1*PnP1 >= 
 					  -DELTA*sqrt(norm12*(PnP1*PnP1))));
-
+                        /// \todo investigate why we simply do not skip this triangle
+                        /// but continue looking for a better candidate
+                        /// if (!border_facet){ 
 			min_facetA = facet_it; 
 			min_valueA = tmp;
 			min_valueP = pscal/norm;
+                        ///}
 		      }
 		  }
 	      }
@@ -1284,7 +1290,7 @@ public:
 	// alors -(1+1/min_valueA) app a [-inf, -1]
 	// -min_valueP app a [-1, 1]
 
-	if (min_valueP > SLIVER_ANGULUS)
+	if (min_valueP > COS_BETA)
 	  value = -(coord_type(1) + coord_type(1)/min_valueA);
 	else
 	  {
@@ -1429,7 +1435,7 @@ public:
       v2 = cross_product(p1-p2,pn-p2);
     coord_type norm = sqrt((v1*v1)*(v2*v2));
 
-    if (v1*v2 > SLIVER_ANGULUS*norm)    
+    if (v1*v2 > COS_BETA*norm)    
       return 1; // label bonne pliure sinon:
 
     if (ear_alpha <= K*smallest_radius_delaunay_sphere(neigh, n_ind))
