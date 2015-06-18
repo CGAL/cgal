@@ -50,7 +50,7 @@ of a polygon mesh, and discard the smallest ones.
 \section PMPMeshing Meshing
 
 A surface patch can be refined by inserting new vertices and flipping edges to get a valid triangulation.
-Using a criterion presented in \cgalCite{Lipea2003FillingHoles},
+Using a criterion presented in \cgalCite{liepa2003filling},
 the density of triangles near the boundary of the patch is approximated by the refinement function.
 The validity of the mesh is kept by flipping edges.
 An edge is flipped only if the opposite edge does not exist in the original mesh
@@ -101,7 +101,7 @@ as shown in the example below.
 
 This package provides algorithms for filling a hole that is either in a triangulated surface mesh
 or defined by a sequence of points that describe a polyline.
-The main steps of the algorithm are described in \cgalCite{Lipea2003FillingHoles} and can be summarized as follows.
+The main steps of the algorithm are described in \cgalCite{liepa2003filling} and can be summarized as follows.
 
 First, a triangular patch for the hole is generated without introducing any new vertex. 
 The patch minimizes a quality function evaluated for all possible triangular patches.
