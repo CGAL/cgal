@@ -116,9 +116,10 @@ described in Section \ref PMPMeshing.
 
 \cgalFigureBegin{Mech_steps, mech_hole_horz.png}
 Results of the main steps of the algorithm.
-From left to right: the hole, after triangulation,
-after triangulation and refinement,
-after triangulation, refinement and fairing.
+From left to right: (a) the hole,
+(b) the hole after its triangulation,
+(c) after triangulation and refinement,
+(d) after triangulation, refinement and fairing.
 \cgalFigureEnd
 
 
@@ -170,7 +171,8 @@ Self intersections can be detected and collected from a triangle mesh, using the
 and `CGAL::Polygon_mesh_processing::self_intersections()`.
 
 \cgalFigureBegin{SelfIntersections, selfintersections.png}
-Results of detection of self intersections (right) on a triangle mesh (left).
+Results of detection of self intersections on a triangle mesh.
+The intersecting triangles are displayed in dark grey on the right image.
 \cgalFigureEnd
 
 \subsubsection SIExample Self Intersections Example
