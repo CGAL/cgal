@@ -244,50 +244,48 @@ private:
       }
 
 
-
       // Quick fix for now. Can be done faster
       bool is_degenerate = false; 
-      for(int i = 0; i < points.size()-2;i++){
-	if(CGAL::orientation(points[i],points[i+1],points[i+2]) == CGAL::COLLINEAR){
-	  is_degenerate = true;
-	  break; 
-	}
+      for(Size_type i = 0; i < points.size()- 2; ++i) {
+        if(traits->orientation_2_object()(points[i], points[i+1], points[i+2])
+                == CGAL::COLLINEAR)
+        {
+          is_degenerate = true;
+          break;
+        }
       }
-      if(is_degenerate){
-	//std::cout << is_degenerate << std::endl;
-	std::vector<Segment_2> segments;
-	
-	for(typename std::vector<Point_2>::size_type i = 0;i < points.size() - 1; ++i)
-	  {
-	    segments.push_back(Segment_2(points[i], points[i+1]));
-	  }
-	CGAL::insert(out_arr, segments.begin(), segments.end());
-      }else{
-	points.pop_back();
-	//std::cout << " ordanary " << std::endl; 	
-	typename VARR::Vertex_handle v_last, v_first;
-	v_last = v_first = 
-        out_arr.insert_in_face_interior(points[0],out_arr.unbounded_face());
-	
-	for(unsigned int i = 0; i < points.size()-1; i++){
-	  if(points[i] < points[(i+1)]){
-	    v_last = out_arr.insert_from_left_vertex (
-						      Segment_2(points[i], points[i+1]), v_last
-						      )->target();
-	  } else {
-	    v_last = out_arr.insert_from_right_vertex(
-						      Segment_2(points[i], points[i+1]), v_last
-						      )->target();
-	  }        
-	}
-	out_arr.insert_at_vertices(
-				   Segment_2(points.front(), points.back()),
-				   v_last, v_first
-				   );
-      }
+      if(is_degenerate) {
+        //std::cout << is_degenerate << std::endl;
+        std::vector<Segment_2> segments;
 
-//    Visibility_2::report_while_handling_needles<Simple_polygon_visibility_2>(
-//                traits, q, points, out_arr);
+        for(Size_type i = 0; i < points.size() - 1; ++i) {
+            segments.push_back(Segment_2(points[i], points[i+1]));
+        }
+        CGAL::insert(out_arr, segments.begin(), segments.end());
+
+      } else {
+        points.pop_back();
+        //std::cout << " ordanary " << std::endl;
+        typename VARR::Vertex_handle v_last, v_first;
+        v_last = v_first =
+            out_arr.insert_in_face_interior(points[0],out_arr.unbounded_face());
+
+        for(Size_type i = 0; i < points.size() - 1; ++i) {
+          if(points[i] < points[(i+1)]) {
+            v_last = out_arr.insert_from_left_vertex (
+                                  Segment_2(points[i], points[i+1]), v_last
+                                  )->target();
+          } else {
+            v_last = out_arr.insert_from_right_vertex(
+                                  Segment_2(points[i], points[i+1]), v_last
+                                  )->target();
+          }
+        }
+        out_arr.insert_at_vertices(
+                       Segment_2(points.front(), points.back()),
+                       v_last, v_first
+                       );
+      }
 
       CGAL_postcondition(out_arr.number_of_isolated_vertices() == 0);
       CGAL_postcondition(stack.empty());
