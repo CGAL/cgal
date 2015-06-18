@@ -401,6 +401,7 @@ namespace internal {
       CGAL_expensive_assertion(is_triangle_mesh(mesh_));
       CGAL_assertion(halfedge_status_map_.size() == nb_valid_halfedges());
       debug_status_map();
+      debug_self_intersections();
 #endif
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
@@ -563,6 +564,12 @@ namespace internal {
           unsigned int nbb = nb_valid_halfedges();
           CGAL_assertion(nbb == halfedge_status_map_.size());
           debug_status_map();
+          BOOST_FOREACH(halfedge_descriptor hv,
+                        halfedges_around_target(halfedge(vkept, mesh_), mesh_))
+          {
+            CGAL_assertion(!PMP::is_degenerated(hv, mesh_, vpmap_, GeomTraits()));
+          }
+          debug_normals(vkept);
 #endif
 
           //insert new/remaining short edges
@@ -596,6 +603,8 @@ namespace internal {
       CGAL_expensive_assertion(is_triangle_mesh(mesh_));
       debug_status_map();
       debug_self_intersections();
+      CGAL_expensive_assertion(0 == PMP::remove_degenerate_faces(mesh_,
+        PMP::parameters::vertex_point_map(vpmap_).geom_traits(GeomTraits())));
 #endif
     }
 
@@ -1041,8 +1050,13 @@ namespace internal {
         if (PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()))
           degenerate_faces.push_back(h);
       }
-      BOOST_FOREACH(halfedge_descriptor h, degenerate_faces)
+      while(!degenerate_faces.empty())
       {
+        halfedge_descriptor h = degenerate_faces.back();
+        degenerate_faces.pop_back();
+
+        CGAL_assertion(PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()));
+
         BOOST_FOREACH(halfedge_descriptor hf,
                       halfedges_around_face(h, mesh_))
         {
@@ -1080,11 +1094,16 @@ namespace internal {
               if (sqlen < sq_low)
                 short_edges.insert(typename Bimap::value_type(hf, sqlen));
             }
+
+            if (PMP::is_degenerated(hf, mesh_, vpmap_, GeomTraits()))
+              degenerate_faces.push_back(hf);
+            if (PMP::is_degenerated(hfo, mesh_, vpmap_, GeomTraits()))
+              degenerate_faces.push_back(hfo);
+
             break;
           }
         }
       }
-      CGAL_assertion(degenerate_faces.size() == nb_done);
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_status_map();
 #endif
@@ -1243,14 +1262,14 @@ namespace internal {
 
     void debug_normals(const vertex_descriptor& v) const
     {
-      if (!is_on_patch(v))
-        return;//not much to say if we are on a boundary/sharp edge
       CGAL_assertion(check_normals(v));
     }
 
     bool check_normals(const vertex_descriptor& v) const
     {
-      //assume we are on a patch without checking it
+      if (!is_on_patch(v))
+        return true;//not much to say if we are on a boundary/sharp edge
+
       std::vector<Vector_3> normals;
       BOOST_FOREACH(halfedge_descriptor hd,
                     halfedges_around_target(halfedge(v, mesh_), mesh_))
