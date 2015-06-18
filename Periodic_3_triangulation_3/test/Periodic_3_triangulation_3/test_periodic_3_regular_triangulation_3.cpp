@@ -821,6 +821,8 @@ int main (int argc, char** argv)
 {
   std::cout << "TESTING ..." << std::endl;
 
+  CGAL::force_ieee_double_precision();
+
   test_number_of_hidden_points();
   test_locate_geometry();
   test_dummy_points();
