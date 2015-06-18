@@ -65,7 +65,7 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
   labels.append(QString(tr("Hidden")));
   volumeList->setHorizontalHeaderLabels(labels);
   //volumeList->resizeColumnsToContents();
-  volumeList->setFixedWidth(200);
+  volumeList->setFixedWidth(220);
 /*  volumeList->setColumnWidth(0,85);
   volumeList->setColumnWidth(1,35);
   volumeList->setColumnWidth(2,35);*/
