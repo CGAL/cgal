@@ -276,23 +276,25 @@ public:
   }
 
   /** @name Insertion */ //@{
-   Vertex_handle insert(const Weighted_point& p, Cell_handle start = Cell_handle()) {
-     Conflict_tester tester(p, this);
+   Vertex_handle insert(const Weighted_point& point, Cell_handle start = Cell_handle()) {
+     Conflict_tester tester(point, this);
      Point_hider hider(this);
      Cover_manager cover_manager(*this);
-     CGAL_triangulation_precondition_msg(p.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ),
+     CGAL_triangulation_precondition(point.weight() >= 0);
+     CGAL_triangulation_precondition_msg(point.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ),
          "point.weight() < 1/64 * domain_size * domain_size");
-     return Base::insert_in_conflict(p, start, tester, hider, cover_manager);
+     return Base::insert_in_conflict(point, start, tester, hider, cover_manager);
    }
 
-   Vertex_handle insert(const Weighted_point& p, Locate_type lt, Cell_handle c,
+   Vertex_handle insert(const Weighted_point& point, Locate_type lt, Cell_handle c,
         int li, int lj) {
-      Conflict_tester tester(p, this);
+      Conflict_tester tester(point, this);
       Point_hider hider(this);
       Cover_manager cover_manager(*this);
-      CGAL_triangulation_precondition_msg(p.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ),
+      CGAL_triangulation_precondition(point.weight() >= 0);
+      CGAL_triangulation_precondition_msg(point.weight() < ( FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin()) ),
           "point.weight() < 1/64 * domain_size * domain_size");
-      return Base::insert_in_conflict(p,lt,c,li,lj, tester,hider,cover_manager);
+      return Base::insert_in_conflict(point,lt,c,li,lj, tester,hider,cover_manager);
     }
 
    template < class InputIterator >
@@ -301,6 +303,21 @@ public:
   {
     if (first == last)
       return 0;
+
+    CGAL_triangulation_precondition_code
+    (
+        bool precondition_is_satisfied = true;
+        FT upper_bound = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
+        for (InputIterator pc_first = first, pc_last = last; pc_first != pc_last; ++pc_first)
+          if (pc_first->weight() < FT(0) || pc_first->weight() >= upper_bound)
+          {
+            precondition_is_satisfied = false;
+            break;
+          }
+    )
+    CGAL_triangulation_precondition_msg(precondition_is_satisfied,
+        "0 <= point.weight() < 1/64 * domain_size * domain_size");
+
     size_type n = number_of_vertices();
     // The heuristic discards the existing triangulation so it can only be
     // applied to empty triangulations.
