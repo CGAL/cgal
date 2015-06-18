@@ -58,8 +58,8 @@ namespace CGAL {
 template < class Surface>
 class Advancing_front_surface_reconstruction_boundary_iterator {
 private:
-  Advancing_front_surface_reconstruction_boundary_iterator(){}
-public:
+  Advancing_front_surface_reconstruction_boundary_iterator();
+
   typedef typename Surface::Finite_vertices_iterator Finite_vertices_iterator;
   typedef Advancing_front_surface_reconstruction_boundary_iterator<Surface>  Self;
   typedef typename Surface::Vertex_handle            Vertex_handle;
@@ -70,7 +70,8 @@ public:
   Finite_vertices_iterator first_vertex;
   Vertex_handle pos;
   bool first, last;
-       
+
+public:       
   Advancing_front_surface_reconstruction_boundary_iterator(const Surface& S_, int m)
     : S(S_), mark(m), first_vertex(S.triangulation_3().finite_vertices_begin()), pos(first_vertex)
   {
