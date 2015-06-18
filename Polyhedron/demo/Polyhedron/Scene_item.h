@@ -52,8 +52,12 @@ public:
 
       for(int i=0; i<10; i++)
       {
-       buffers[i].create();
        vaos[i].create();
+      }
+
+      for(int i=0; i<20; i++)
+      {
+       buffers[i].create();
       }
   }
   Scene_item(int buffers_size, int vaos_size)
@@ -69,8 +73,12 @@ public:
 
       for(int i=0; i<10; i++)
       {
-       buffers[i].create();
        vaos[i].create();
+      }
+
+      for(int i=0; i<20; i++)
+      {
+       buffers[i].create();
       }
   }
   virtual ~Scene_item();
@@ -197,7 +205,7 @@ protected:
   mutable QOpenGLFunctions_3_3_Core qFunc;
   int buffersSize;
   int vaosSize;
-  mutable QOpenGLBuffer buffers[10];
+  mutable QOpenGLBuffer buffers[20];
   //not allowed to use vectors of VAO for some reason
   mutable QOpenGLVertexArrayObject vaos[10];
   mutable QOpenGLShaderProgram rendering_program_with_light;

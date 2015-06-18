@@ -202,12 +202,9 @@ public:
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
   void draw() const{}
   void draw(Viewer_interface*) const;
-  void draw_edges() const{};
   void draw_edges(Viewer_interface*) const;
   void draw_bbox(const Scene_interface::Bbox&) const;
-  void gl_draw_edge(double px, double py, double pz,
-                          double qx, double qy, double qz) const;
-  void gl_draw_point(const Point& p) const;
+  void draw_ROI_and_control_vertices(Viewer_interface *viewer) const;
 
   // Get wrapped polyhedron
   Polyhedron*       polyhedron();
@@ -232,7 +229,7 @@ public:
   
 protected:
   void timerEvent(QTimerEvent *event);
-  void draw_ROI_and_control_vertices(Viewer_interface *viewer) const;
+
 
 public slots:
   void changed();
@@ -288,18 +285,12 @@ private:
   std::vector<GLdouble> centers_ROI;
   std::vector<GLdouble> color_sphere_ROI;
   std::vector<GLdouble> color_sphere_control;
-  GLuint rendering_program_facets;
-  GLuint rendering_program_lines;
-  GLuint rendering_program_points;
-  GLuint rendering_program_spheres;
-  GLint location[22];
-  GLuint vao[3];
-  GLuint buffer[19];
+  mutable QOpenGLShaderProgram *program;
+  mutable QOpenGLShaderProgram bbox_program;
 
-  void initialize_buffers();
-  void compile_shaders(void);
+  mutable QOpenGLBuffer *in_bu;
+  void initialize_buffers(Viewer_interface *viewer) const;
   void compute_normals_and_vertices(void);
-  void uniform_attrib(Viewer_interface*, int) const;
   void compute_bbox(const Scene_interface::Bbox&);
   void create_Sphere(double);
 

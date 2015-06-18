@@ -8,10 +8,13 @@ const QColor Scene_item::defaultColor = QColor(100, 100, 255);
 
 Scene_item::~Scene_item() {
     delete defaultContextMenu;
+    for(int i=0; i<20; i++)
+    {
+        buffers[i].destroy();
+    }
     for(int i=0; i<10; i++)
     {
-        vaos[i].destroy();
-        buffers[i].destroy();
+     vaos[i].destroy();
     }
 }
 
