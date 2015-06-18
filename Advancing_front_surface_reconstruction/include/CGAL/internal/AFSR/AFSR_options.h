@@ -33,6 +33,7 @@ public:
   double K_init;
   double K_step;
   double K;
+  double COS_BETA;
   int out_format;
   int NB_BORDER_MAX;
   double red, green, blue;

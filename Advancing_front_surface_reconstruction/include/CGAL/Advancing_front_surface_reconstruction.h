@@ -562,7 +562,7 @@ public:
     Advancing_front_surface_reconstruction(Triangulation_3& T_,
                                            const AFSR_options& opt = AFSR_options(),
                                            Reject reject = Reject())
-      : T(T_), _number_of_border(1), COS_ALPHA_SLIVER(-0.86), COS_BETA(0.86), DELTA(opt.delta), min_K(HUGE_VAL), 
+      : T(T_), _number_of_border(1), COS_ALPHA_SLIVER(-0.86), COS_BETA(opt.COS_BETA), DELTA(opt.delta), min_K(HUGE_VAL), 
     eps(1e-7), inv_eps_2(coord_type(1)/(eps*eps)), eps_3(eps*eps*eps),
     STANDBY_CANDIDATE(3), STANDBY_CANDIDATE_BIS(STANDBY_CANDIDATE+1), 
       NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2),
@@ -591,21 +591,23 @@ public:
       }
     }
 
+      /*
    ~Advancing_front_surface_reconstruction()
     {
-      /*
+
       std::cerr << "postprocessing" << postprocess_timer.time() << std::endl;
       std::cerr << "extend        " << extend_timer.time() << std::endl;
       std::cerr << "extend2       " << extend2_timer.time() << std::endl;
       std::cerr << "init          " << postprocess_timer.time() << std::endl;
       std::cerr << "#outliers     " << number_of_outliers() << std::endl;
-      */
     }
+      */
 
     void run(double radius_ratio_bound=5, double beta=0.52)
     {
       AFSR_options opt;
       opt.K = radius_ratio_bound;
+      opt.COS_BETA = acos(beta);
       // TODO: what to do with beta
 
       run(opt);
@@ -2364,7 +2366,7 @@ advancing_front_surface_reconstruction(PointIterator b,
 
   AFSR_options opt;
   opt.K = radius_ratio_bound;
-  // TODO: What  to do with beta???
+  opt.COS_BETA = acos(beta);
   Reconstruction R(dt,opt);
   R.run(opt);
   write_triple_indices(out, R);
@@ -2399,7 +2401,7 @@ advancing_front_surface_reconstruction(PointIterator b,
 
   AFSR_options opt;
   opt.K = radius_ratio_bound;
-  // TODO: What  to do with beta???
+  opt.COS_BETA = acos(beta);
   Reconstruction R(dt,opt, filter);
   R.run(opt);
   write_triple_indices(out, R);
@@ -2434,7 +2436,7 @@ advancing_front_surface_reconstruction(PointIterator b,
   
   AFSR_options opt;
   opt.K = radius_ratio_bound;
-  // TODO: What  to do with beta???
+  opt.COS_BETA = acos(beta);
   Reconstruction R(dt, opt,filter);
   R.run(opt);
   AFSR::construct_polyhedron(polyhedron, R);
@@ -2462,7 +2464,7 @@ advancing_front_surface_reconstruction(PointIterator b,
   
   AFSR_options opt;
   opt.K = radius_ratio_bound;
-  // TODO: What  to do with beta???
+  opt.COS_BETA = acos(beta);
   Reconstruction R(dt, opt);
   R.run(opt);
   AFSR::construct_polyhedron(polyhedron, R);
