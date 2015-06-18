@@ -106,7 +106,7 @@ The main steps of the algorithm are described in \cgalCite{liepa2003filling} and
 First, a triangular patch for the hole is generated without introducing any new vertex. 
 The patch minimizes a quality function evaluated for all possible triangular patches.
 The quality function first minimizes the worst dihedral angle between patch triangles, then the total surface area as a tiebreaker.
-Following the suggestions in \cgalCite{Zou2013AnAlgorithm}, the performance of the algorithm is significantly improved
+Following the suggestions in \cgalCite{zou2013algorithm}, the performance of the algorithm is significantly improved
 by narrowing the search space to faces of a 3D Delaunay triangulation of the border vertices,
 from all possible patches, while searching for the best patch. 
 
