@@ -143,16 +143,9 @@ public:
     {
         positions_lines.resize(0);
         qFunc.initializeOpenGLFunctions();
-        qFunc.glGenVertexArrays(1, vao);
-        //Generates an integer which will be used as ID for each buffer
-        qFunc.glGenBuffers(1, buffer);
-        compile_shaders();
     }
   ~Scene_edges_item()
   {
-        qFunc.glDeleteBuffers(1, buffer);
-        qFunc.glDeleteVertexArrays(1, vao);
-        qFunc.glDeleteProgram(rendering_program_lines);
   }
     bool isFinite() const { return true; }
   bool isEmpty() const { return edges.empty(); }
@@ -173,7 +166,7 @@ public:
   void changed()
   {
       compute_elements();
-      initialize_buffers();
+      are_buffers_filled = false;
   }
 
   Scene_edges_item* clone() const {
@@ -198,23 +191,7 @@ public:
     return (m == Wireframe);
   }
 
-  // Flat/Gouraud OpenGL drawing
-  void draw() const {
-  }
 
-  // Wireframe OpenGL drawing
-  void draw_edges() const {
-    /*::glBegin(GL_LINES);
-    for(size_t i = 0, end = edges.size();
-        i < end; ++i)
-    {
-      const Epic_kernel::Point_3& a = edges[i].source();
-      const Epic_kernel::Point_3& b = edges[i].target();
-      ::glVertex3d(a.x(), a.y(), a.z());
-      ::glVertex3d(b.x(), b.y(), b.z());
-    }
-    ::glEnd();*/
-  }
 
   bool save(std::ostream& os) const
   {
@@ -231,106 +208,24 @@ public:
 private:
     std::vector<float> positions_lines;
 
-    GLint location[2];
-    GLuint vao[1];
-    GLuint buffer[1];
-    GLuint rendering_program_lines;
+  mutable QOpenGLShaderProgram *program;
 
-    void initialize_buffers()
+    void initialize_buffers(Viewer_interface *viewer)const
     {
-        qFunc.glBindVertexArray(vao[0]);
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program->bind();
+        vaos[0].bind();
 
-        qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-        qFunc.glBufferData(GL_ARRAY_BUFFER,
-                     (positions_lines.size())*sizeof(float),
-                     positions_lines.data(),
-                     GL_STATIC_DRAW);
-        qFunc.glVertexAttribPointer(0, //number of the buffer
-                              3, //number of floats to be taken
-                              GL_FLOAT, // type of data
-                              GL_FALSE, //not normalized
-                              0, //compact data (not in a struct)
-                              NULL //no offset (seperated in several buffers)
-                              );
-        qFunc.glEnableVertexAttribArray(0);
+        buffers[0].bind();
+        buffers[0].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+        buffers[0].release();
+        program->setAttributeValue("colors",this->color());
+        program->release();
 
-        qFunc.glBindVertexArray(0);
-    }
-    void compile_shaders()
-    {
-        //fill the vertex shader
-        static const GLchar* vertex_shader_source[] =
-        {
-            "#version 300 es \n"
-            " \n"
-            "layout (location = 0) in vec3 positions; \n"
-
-            "uniform mat4 mvp_matrix; \n"
-            "uniform vec3 color; \n"
-            "out highp vec3 fColors; \n"
-            "vec4 positions_lines = vec4(positions, 1.0); \n"
-            " \n"
-
-            "void main(void) \n"
-            "{ \n"
-            "   fColors = color; \n"
-            "   gl_Position = mvp_matrix * positions_lines; \n"
-            "} \n"
-        };
-
-        //fill the fragment shader
-        static const GLchar* fragment_shader_source[]=
-        {
-            "#version 300 es \n"
-            " \n"
-            "in highp vec3 fColors; \n"
-
-            "out highp vec4 color; \n"
-            " \n"
-            "void main(void) \n"
-            "{ \n"
-            " color = vec4(fColors, 1.0); \n"
-            "} \n"
-        };
-
-        GLuint vertex_shader = qFunc.glCreateShader(GL_VERTEX_SHADER);
-        qFunc.glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
-        qFunc.glCompileShader(vertex_shader);
-        GLuint fragment_shader =	qFunc.glCreateShader(GL_FRAGMENT_SHADER);
-        qFunc.glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
-        qFunc.glCompileShader(fragment_shader);
-
-        GLuint program = qFunc.glCreateProgram();
-        qFunc.glAttachShader(program, vertex_shader);
-        qFunc.glAttachShader(program, fragment_shader);
-        qFunc.glLinkProgram(program);
-
-        qFunc.glDeleteShader(vertex_shader);
-        qFunc.glDeleteShader(fragment_shader);
-        rendering_program_lines = program;
-    }
-    void uniform_attrib(Viewer_interface* viewer) const
-    {
-        GLfloat colors[3];
-        GLfloat mvp_mat[16];
-
-        //fills the MVP and MV matrices.
-
-        GLdouble d_mat[16];
-        viewer->camera()->getModelViewProjectionMatrix(d_mat);
-        for (int i=0; i<16; ++i)
-            mvp_mat[i] = GLfloat(d_mat[i]);
-
-
-        //fills the arraw of colors with the current color
-        colors[0] = this->color().redF();
-        colors[1] = this->color().greenF();
-        colors[2] = this->color().blueF();
-
-
-            qFunc.glUseProgram(rendering_program_lines);
-            qFunc.glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
-            qFunc.glUniform3fv(location[1],1,colors);
+        vaos[0].release();
+        are_buffers_filled = true;
     }
     void compute_elements()
     {
@@ -344,18 +239,18 @@ private:
          positions_lines.push_back(a.x()); positions_lines.push_back(a.y()); positions_lines.push_back(a.z());
          positions_lines.push_back(b.x()); positions_lines.push_back(b.y()); positions_lines.push_back(b.z());
        }
-
-        location[0] = qFunc.glGetUniformLocation(rendering_program_lines, "mvp_matrix");
-        location[1] = qFunc.glGetUniformLocation(rendering_program_lines, "color");
     }
     void draw_edges(Viewer_interface* viewer) const
     {
-        qFunc.glBindVertexArray(vao[0]);
-        qFunc.glUseProgram(rendering_program_lines);
-        uniform_attrib(viewer);
+        if(!are_buffers_filled)
+            initialize_buffers(viewer);
+        vaos[0].bind();
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+        attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+        program->bind();
         qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
-        qFunc.glUseProgram(0);
-        qFunc.glBindVertexArray(0);
+        vaos[0].release();
+        program->release();
 
     }
 
