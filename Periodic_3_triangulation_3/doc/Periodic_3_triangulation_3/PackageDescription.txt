@@ -35,23 +35,27 @@ The main classes of the 3D Periodic Triangulation package are
 `Periodic_3_triangulation_3` 
 `Periodic_3_Delaunay_triangulation_3`
 and `Periodic_3_regular_triangulation_3`. 
-\cgalModifEnd
  They contain functionality
 to access triangulations and to run queries on
 them. `Periodic_3_Delaunay_triangulation_3` can construct and
-modify Delaunay triangulations. It takes the geometric traits as well
+modify Delaunay triangulationss, while
+`Periodic_3_regular_triangulation_3` can do it for weighted Delaunay
+triangulations. They take the geometric traits as well
 as the triangulation data structure as template parameters.
 
-The geometric traits class must be a model of the concept
-`Periodic_3DelaunayTriangulationTraits_3` for periodic Delaunay triangulations,
-or `Periodic_3TriangulationTraits_3` for periodic triangulations. It must contains all
-predicates and constructions that are needed by the functions in the
-triangulation classes.
+The geometric traits class of each triangulation class must be a model
+of its associated concept, i.e., it must contain all
+predicates and constructions that are needed by the 
+triangulation class.
+\cgalModifEnd 
 
 The package uses `Triangulation_data_structure_3` to represent the
 triangulation. The cells and vertices need to be models of the
 concepts `Periodic_3TriangulationDSCellBase_3` and
 `Periodic_3TriangulationDSVertexBase_3`, respectively.
+\cgalModifBegin 
+still true for regular ?
+\cgalModifEnd
 A triangulation is stored as a collection of vertices and cells that
 are linked together through incidence and adjacency relations. Each
 cell gives access to its four incident vertices and to its four
@@ -76,6 +80,9 @@ of the concept `Periodic_3Offset_3`.
 
 - `Periodic_3TriangulationTraits_3`
 - `Periodic_3DelaunayTriangulationTraits_3`
+\cgalModifBegin 
+- `Periodic_3RegularTriangulationTraits_3`
+\cgalModifEnd
 - `TriangulationDataStructure_3`
 - `Periodic_3TriangulationDSCellBase_3`
 - `Periodic_3TriangulationDSVertexBase_3`
@@ -87,6 +94,9 @@ of the concept `Periodic_3Offset_3`.
 
 - `CGAL::Periodic_3_triangulation_3<PT,TDS>`
 - `CGAL::Periodic_3_Delaunay_triangulation_3<PT,TDS>`
+\cgalModifBegin 
+- `CGAL::Periodic_3_regular_triangulation_3<PT,TDS>`
+\cgalModifEnd
 - `CGAL::Periodic_3_triangulation_hierarchy_3<PTr>`
 - `CGAL::Periodic_3_triangulation_ds_cell_base_3<>`
 - `CGAL::Periodic_3_triangulation_ds_vertex_base_3<>`
@@ -96,6 +106,9 @@ of the concept `Periodic_3Offset_3`.
 
 - `CGAL::Periodic_3_triangulation_traits_3<Traits,Periodic_3Offset_3>`
 - `CGAL::Periodic_3_Delaunay_triangulation_traits_3<Traits,Periodic_3Offset_3>`
+\cgalModifBegin 
+- `CGAL::Periodic_3_regular_triangulation_traits_3<Traits,Periodic_3Offset_3>`
+\cgalModifEnd
 
 ## Enums ##
 
