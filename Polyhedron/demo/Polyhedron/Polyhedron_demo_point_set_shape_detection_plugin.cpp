@@ -57,7 +57,7 @@ public:
     return QList<QAction*>() << actionDetect;
   }
 
-  public slots:
+  public Q_SLOTS:
     void on_actionDetect_triggered();
 
 }; // end Polyhedron_demo_point_set_shape_detection_plugin
