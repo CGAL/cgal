@@ -121,7 +121,7 @@ void incremental_triangle_based_remeshing(PolygonMesh& pmesh
   for (unsigned int i = 0; i < nb_iterations; ++i)
   {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-    std::cout << " * Iteration " << (i + 1) << "*" << std::endl;
+    std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
 #endif
 
     remesher.split_long_edges(high);

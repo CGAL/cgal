@@ -520,11 +520,7 @@ namespace internal {
           unsigned int nbb = nb_valid_halfedges();
           CGAL_assertion(nbb == halfedge_status_map_.size());
           debug_status_map();
-          BOOST_FOREACH(halfedge_descriptor hv,
-                        halfedges_around_target(halfedge(vkept, mesh_), mesh_))
-          {
-            CGAL_assertion(!PMP::is_degenerated(hv, mesh_, vpmap_, GeomTraits()));
-          }
+          CGAL_assertion(!incident_to_degenerate(halfedge(vkept, mesh_)));
           debug_normals(vkept);
 #endif
 
@@ -539,10 +535,6 @@ namespace internal {
           }
         }//end if(collapse_ok)
       }
-
-#ifdef CGAL_PMP_REMESHING_DEBUG
-      debug_status_map();
-#endif
 
 #ifdef CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
       BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
@@ -639,12 +631,6 @@ namespace internal {
         }
       }
 
-      std::size_t n = PMP::remove_degenerate_faces(mesh_
-        , PMP::parameters::vertex_point_map(vpmap_)
-          .geom_traits(GeomTraits()));
-      if (n > 0)
-        std::cout << "Warning : tags should maybe be fixed" << std::endl;
-
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "done. ("<< nb_flips << " flips)" << std::endl;
 #endif
@@ -652,6 +638,10 @@ namespace internal {
 #ifdef CGAL_PMP_REMESHING_DEBUG
       CGAL_assertion(nb_valid_halfedges() == halfedge_status_map_.size());
       debug_status_map();
+      CGAL_assertion(0 == PMP::remove_degenerate_faces(mesh_
+                            , PMP::parameters::vertex_point_map(vpmap_)
+                            .geom_traits(GeomTraits())));
+      debug_self_intersections();
 #endif
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
@@ -724,12 +714,14 @@ namespace internal {
       }
 
       CGAL_assertion(is_valid(mesh_));
-      CGAL_assertion(is_triangle_mesh(mesh_));
 
+      CGAL_assertion(is_triangle_mesh(mesh_));
+#ifdef CGAL_PMP_REMESHING_DEBUG
+      debug_self_intersections();
+#endif
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "done." << std::endl;
 #endif
-
 #ifdef CGAL_DUMP_REMESHING_STEPS
       dump("4-relaxation.off");
 #endif
@@ -756,6 +748,9 @@ namespace internal {
       CGAL_assertion(is_valid(mesh_));
       CGAL_assertion(is_triangle_mesh(mesh_));
 
+#ifdef CGAL_PMP_REMESHING_DEBUG
+      debug_self_intersections();
+#endif
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "done." << std::endl;
 #endif
