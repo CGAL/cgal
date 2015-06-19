@@ -913,10 +913,10 @@ namespace CGAL {
         return *(c->lazy_squared_radius());
 
       c->set_lazy_squared_radius
-        (squared_radius(c->vertex(0)->point(),
-                        c->vertex(1)->point(),
-                        c->vertex(2)->point(),
-                        c->vertex(3)->point()));
+        (CGAL::squared_radius(c->vertex(0)->point(),
+                              c->vertex(1)->point(),
+                              c->vertex(2)->point(),
+                              c->vertex(3)->point()));
       return *(c->lazy_squared_radius());
     }
 
@@ -1112,6 +1112,7 @@ namespace CGAL {
 #ifdef AFSR_LAZY
                   value = lazy_squared_radius(cc);
 #else
+                  // qualified with CGAL, to avoid a compilation error with clang
                   value = squared_radius(pp0, pp1, pp2, pp3);
 #endif
                 }
@@ -1134,8 +1135,10 @@ namespace CGAL {
               if ((ac > 0) && (an > 0))
                 {
                   value = (Vc*Vc) - ac*ac/norm_V;
-                  if ((value < 0)||(norm_V > inv_eps_2))
-                    value = squared_radius(cp1, cp2, cp3);
+                  if ((value < 0)||(norm_V > inv_eps_2)){
+                    // qualified with CGAL, to avoid a compilation error with clang
+                    value = CGAL::squared_radius(cp1, cp2, cp3);
+                  }
                 }
               else
                 {
