@@ -584,7 +584,9 @@ namespace internal {
         }//end if(collapse_ok)
       }
 
+#ifdef CGAL_PMP_REMESHING_DEBUG
       debug_status_map();
+#endif
 
 #ifdef CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
       BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
@@ -1087,7 +1089,9 @@ namespace internal {
               ? PATCH
               : MESH;
             halfedge_status_map_[hfo] = status(hf);
+#ifdef CGAL_PMP_REMESHING_DEBUG
             debug_status_map();
+#endif
 
             //insert new edges in 'short_edges'
             if (is_collapse_allowed(edge(hf, mesh_)))
