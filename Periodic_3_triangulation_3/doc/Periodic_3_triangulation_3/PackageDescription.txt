@@ -80,9 +80,11 @@ of the concept `Periodic_3Offset_3`.
 
 - `Periodic_3TriangulationTraits_3`
 - `Periodic_3DelaunayTriangulationTraits_3`
+
 \cgalModifBegin 
 - `Periodic_3RegularTriangulationTraits_3`
 \cgalModifEnd
+
 - `TriangulationDataStructure_3`
 - `Periodic_3TriangulationDSCellBase_3`
 - `Periodic_3TriangulationDSVertexBase_3`
@@ -94,9 +96,11 @@ of the concept `Periodic_3Offset_3`.
 
 - `CGAL::Periodic_3_triangulation_3<PT,TDS>`
 - `CGAL::Periodic_3_Delaunay_triangulation_3<PT,TDS>`
+
 \cgalModifBegin 
 - `CGAL::Periodic_3_regular_triangulation_3<PT,TDS>`
-\cgalModifEnd
+\cgalModifEnd 
+
 - `CGAL::Periodic_3_triangulation_hierarchy_3<PTr>`
 - `CGAL::Periodic_3_triangulation_ds_cell_base_3<>`
 - `CGAL::Periodic_3_triangulation_ds_vertex_base_3<>`
@@ -106,6 +110,7 @@ of the concept `Periodic_3Offset_3`.
 
 - `CGAL::Periodic_3_triangulation_traits_3<Traits,Periodic_3Offset_3>`
 - `CGAL::Periodic_3_Delaunay_triangulation_traits_3<Traits,Periodic_3Offset_3>`
+
 \cgalModifBegin 
 - `CGAL::Periodic_3_regular_triangulation_traits_3<Traits,Periodic_3Offset_3>`
 \cgalModifEnd
