@@ -614,6 +614,7 @@ namespace internal {
         //check that mesh does not become non-triangle,
         //nor has inverted faces
         if (deviation_pre < deviation_post
+          || !check_normals(he)
           || incident_to_degenerate(he)
           || incident_to_degenerate(opposite(he, mesh_))
           || !is_on_triangle(he)
@@ -1256,6 +1257,15 @@ namespace internal {
           return false;
       }
       return true;
+    }
+
+    bool check_normals(const halfedge_descriptor& h) const
+    {
+      if (!is_on_patch(h))
+        return true;//nothing to say
+      Vector_3 n = compute_normal(face(h, mesh_));
+      Vector_3 no = compute_normal(face(opposite(h, mesh_), mesh_));
+      return n * no > 0.;
     }
 
   private:
