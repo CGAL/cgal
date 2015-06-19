@@ -1,4 +1,5 @@
 #include "config.h"
+#include <random>
 #include "Scene_points_with_normal_item.h"
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"

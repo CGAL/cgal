@@ -110,8 +110,11 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 #else
     struct Shape_range : public Iterator_range<
       typename std::vector<boost::shared_ptr<Shape> >::const_iterator> {
+      typedef Iterator_range<
+        typename std::vector<boost::shared_ptr<Shape> >::const_iterator> Base;
+
       Shape_range(boost::shared_ptr<std::vector<boost::shared_ptr<Shape> > >
-        extracted_shapes) : Iterator_range(make_range(extracted_shapes->begin(),
+        extracted_shapes) : Base(make_range(extracted_shapes->begin(),
         extracted_shapes->end())), m_extracted_shapes(extracted_shapes) {}
     private:
       boost::shared_ptr<std::vector<boost::shared_ptr<Shape> > >
@@ -143,7 +146,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     struct Parameters {
       Parameters()
         : probability((FT) 0.01)
-        , min_points(std::numeric_limits<std::size_t>::max())
+        , min_points((std::numeric_limits<std::size_t>::max)())
         , epsilon(-1)
         , normal_threshold((FT) 0.9)
         , cluster_epsilon(-1)
@@ -259,7 +262,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
         if (s) {
           subsetSize >>= 1;
           for (std::size_t i = 0;i<subsetSize;i++) {
-            std::size_t index = default_random(std::numeric_limits<int>::max()) % 2;
+            std::size_t index = default_random((std::numeric_limits<int>::max)()) % 2;
             index = index + (i<<1);
             index = (index >= remainingPoints) ? remainingPoints - 1 : index;
             indices[i] = index;
