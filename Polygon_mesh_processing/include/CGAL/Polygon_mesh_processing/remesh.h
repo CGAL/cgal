@@ -113,6 +113,7 @@ void incremental_triangle_based_remeshing(PolygonMesh& pmesh
   double high = 4. / 3. * target_edge_length;
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
+  std::cout << std::endl;
   std::cout << "Remeshing (size = " << target_edge_length;
   std::cout << ", #iter = " << nb_iterations << ")..." << std::endl;
 #endif
@@ -122,11 +123,16 @@ void incremental_triangle_based_remeshing(PolygonMesh& pmesh
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     std::cout << " * Iteration " << (i + 1) << "*" << std::endl;
 #endif
+
     remesher.split_long_edges(high);
     remesher.collapse_short_edges(low, high);
     remesher.equalize_valences();
     remesher.tangential_relaxation();
     remesher.project_to_surface();
+
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+    std::cout << std::endl;
+#endif
   }
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
