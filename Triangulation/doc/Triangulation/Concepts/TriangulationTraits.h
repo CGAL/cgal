@@ -5,7 +5,7 @@
 
 This concept describes the geometric types and predicates required to build
 a triangulation. It corresponds to the first template parameter of the class 
-`Triangulation<TriangulationTraits, TriangulationDataStructure>`.
+`CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>`.
 
 \cgalRefines `SpatialSortingTraits_d`
 
@@ -14,8 +14,7 @@ traits must refine `SpatialSortingTraits_d`. The insertion is
 then optimized using spatial sorting. 
 This is not required if the points are inserted one by one.
 
-\cgalHasModel `CGAL::Cartesian_d<FT, Dim, LA>`
-\cgalHasModel `CGAL::Epick_d<Dim>` (recommended)
+\cgalHasModel `CGAL::Epick_d<Dim>`
 
 \sa `DelaunayTriangulationTraits`
 */
