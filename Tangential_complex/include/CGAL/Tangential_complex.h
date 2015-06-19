@@ -2735,7 +2735,8 @@ next_face:
   // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
   // Q: vertices which are common neighbors of all vertices of P
   template <typename VH_range_a, typename VH_range_b>
-  bool does_voronoi_face_and_tangent_subspace_intersect(
+  CGAL::Quadratic_program_solution<ET> 
+    compute_voronoi_face_and_tangent_subspace_LP_problem(
     int points_dim,
     Tr_vertex_handle center_vh,
     VH_range_a const& P,
@@ -2846,7 +2847,59 @@ next_face:
 
     //=========== Solve =========================
     LP_solution solution = CGAL::solve_linear_program(lp, ET());
-    bool ret = (solution.status() == CGAL::QP_OPTIMAL);
+    return solution;
+  }
+
+  // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
+  // Q: vertices which are common neighbors of all vertices of P
+  template <typename VH_range_a, typename VH_range_b>
+  bool does_voronoi_face_and_tangent_subspace_intersect(
+    int points_dim,
+    Tr_vertex_handle center_vh,
+    VH_range_a const& P,
+    VH_range_b const& Q,
+    Tangent_space_basis const& tsb,
+    const Tr_traits &tr_traits) const
+  {
+    return compute_voronoi_face_and_tangent_subspace_LP_problem(
+      points_dim, center_vh, P, Q, tsb, tr_traits).status() == CGAL::QP_OPTIMAL;
+  }
+  
+  // Returns any point of intersection
+  // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
+  // Q: vertices which are common neighbors of all vertices of P
+  template <typename VH_range_a, typename VH_range_b>
+  boost::optional<Point> compute_voronoi_face_and_tangent_subspace_intersection(
+    int points_dim,
+    Tr_vertex_handle center_vh,
+    VH_range_a const& P,
+    VH_range_b const& Q,
+    Tangent_space_basis const& tsb,
+    const Tr_traits &tr_traits) const
+  {
+    typedef CGAL::Quadratic_program_solution<ET> LP_solution;
+    
+    LP_solution sol = compute_voronoi_face_and_tangent_subspace_LP_problem(
+      points_dim, center_vh, P, Q, tsb, tr_traits);
+
+    boost::optional<Point> ret;
+    if (sol.status() == CGAL::QP_OPTIMAL)
+    {
+      std::vector<FT> p;
+      p.reserve(points_dim);
+      for (LP_solution::Variable_value_iterator 
+        it_v = sol.variable_values_begin(),
+        it_v_end = sol.variable_values_end() ;
+        it_v != it_v_end ; ++it_v)
+      {
+        p.push_back(to_double(*it_v));
+      }
+      ret = m_k.construct_point_d_object()(points_dim, p.begin(), p.end());
+    }
+    else
+    {
+      ret = boost::none;
+    }
 
     return ret;
   }
