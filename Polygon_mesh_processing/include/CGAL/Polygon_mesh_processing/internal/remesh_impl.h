@@ -1090,7 +1090,7 @@ namespace internal {
             debug_status_map();
 
             //insert new edges in 'short_edges'
-            if (is_collapse_allowed(hf))
+            if (is_collapse_allowed(edge(hf, mesh_)))
             {
               double sqlen = sqlength(hf);
               if (sqlen < sq_low)
