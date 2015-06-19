@@ -12,7 +12,6 @@
 #include <CGAL/AABB_triangle_primitive.h>
 
 #include <CGAL/boost/graph/Euler_operations.h>
-#include <CGAL/boost/graph/visitor.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 
@@ -86,46 +85,6 @@ namespace internal {
     }
 
   };
-
-  ///////////// Visitor dealing with status map ////////////////
-
-  template<typename PolygonMesh>
-  class Status_map_visitor
-    : public Visitor_base<PolygonMesh>
-  {
-    typedef PolygonMesh Graph;
-    typedef Visitor_base<PolygonMesh> Base;
-    typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
-    typedef typename boost::graph_traits<Graph>::face_descriptor face_descriptor;
-
-    std::map<halfedge_descriptor, Halfedge_status>& halfedge_status_map_;
-    PolygonMesh& mesh_;
-
-  public:
-    Status_map_visitor(std::map<halfedge_descriptor, Halfedge_status>& hsmap,
-                       PolygonMesh& pmesh)
-      : halfedge_status_map_(hsmap)
-      , mesh_(pmesh)
-    {}
-
-    void remove_halfedges(const face_descriptor& f)
-    {
-      halfedge_descriptor h = halfedge(f, mesh_);
-      halfedge_status_map_.erase(h);
-      halfedge_status_map_.erase(next(h, mesh_));
-      halfedge_status_map_.erase(next(next(h, mesh_), mesh_));
-    }
-
-  };
-
-  template<typename Graph>
-  void remove_face(typename boost::graph_traits<Graph>::face_descriptor f
-                 , Status_map_visitor<Graph> & w)
-  {
-    w.remove_halfedges(f);
-  }
-
-  ////////// End of visitor ////////////////
 
   template<typename PolygonMesh
          , typename VertexPointMap
