@@ -589,6 +589,8 @@ namespace internal {
 
         CGAL_assertion_code(Halfedge_status s1 = status(he));
         CGAL_assertion_code(Halfedge_status s1o = status(opposite(he, mesh_)));
+        CGAL_assertion(!incident_to_degenerate(he));
+        CGAL_assertion(!incident_to_degenerate(opposite(he, mesh_)));
 
         CGAL::Euler::flip_edge(he, mesh_);
         ++nb_flips;
