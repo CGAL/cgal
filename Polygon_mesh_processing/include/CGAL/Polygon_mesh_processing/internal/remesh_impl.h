@@ -260,16 +260,14 @@ namespace internal {
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_border(hnew, mesh_))
         {
-          halfedge_descriptor hnew2
-            = CGAL::Euler::split_face(hnew, next(next(hnew, mesh_), mesh_), mesh_);
+          CGAL::Euler::split_face(hnew, next(next(hnew, mesh_), mesh_), mesh_);
         }
 
         //do it again on the other side if we're not on boundary
         halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
         if (!is_border(hnew_opp, mesh_))
         {
-          halfedge_descriptor hnew2
-            = CGAL::Euler::split_face(prev(hnew_opp, mesh_), next(hnew_opp, mesh_), mesh_);
+          CGAL::Euler::split_face(prev(hnew_opp, mesh_), next(hnew_opp, mesh_), mesh_);
         }
       }
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -535,7 +533,6 @@ namespace internal {
           halfedge_descriptor en    = next(he, mesh_);
           halfedge_descriptor en_p  = next(opposite(he, mesh_), mesh_);
           Halfedge_status s_ep_p    = status(ep_p);
-          Halfedge_status s_en_p    = status(en_p);
           Halfedge_status s_epo_p   = status(epo_p);
           Halfedge_status s_ep      = status(prev(he, mesh_));
           Halfedge_status s_epo     = status(opposite(prev(he, mesh_), mesh_));
