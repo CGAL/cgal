@@ -40,7 +40,7 @@ namespace CGAL {
     
   namespace internal {
 
-    const std::size_t size_t_max = std::numeric_limits<std::size_t>::max();
+    const std::size_t size_t_max = (std::numeric_limits<std::size_t>::max)();
   
     template<class Sdt>
     class DirectPointAccessor {
