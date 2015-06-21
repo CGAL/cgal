@@ -1,10 +1,12 @@
 #include <CGAL/basic.h>
+#ifdef CGAL_USE_GMP
 #include <CGAL/Mpzf.h>
+#endif
 #include <iostream>
 #include <stdlib.h>
 #include "checked_NT.h"
-#include <CGAL/Gmpq.h>
 #ifdef CGAL_HAS_MPZF
+#include <CGAL/Gmpq.h>
 using CGAL::Mpzf;
 template<class NT,class IT>
 void test1(){

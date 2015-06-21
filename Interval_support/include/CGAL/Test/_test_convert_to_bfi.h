@@ -29,6 +29,7 @@
 
 #include <cassert>
 #include <CGAL/tags.h>
+#include <CGAL/use.h>
 
 #include <CGAL/convert_to_bfi.h> 
 #include <CGAL/Sqrt_extension.h> 
@@ -46,6 +47,7 @@ void test_convert_to_bfi_from(BFI,CGAL::Null_tag){return;}
 template <typename BFI, typename From>
 void test_convert_to_bfi_from(BFI,From){
   typedef typename CGAL::Coercion_traits<BFI,From>::Type CT_type;
+  CGAL_USE_TYPE(CT_type);
   CGAL_static_assertion(( ::boost::is_same<CT_type, BFI>::value));
   assert(CGAL::convert_to_bfi(From(0))  == BFI(0));
   assert(CGAL::convert_to_bfi(From(1))  == BFI(1));

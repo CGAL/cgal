@@ -27,6 +27,8 @@
 #include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Projection_traits_yz_3.h>
 #include <list>
+#include <CGAL/Filtered_predicate.h>
+#include <CGAL/Cartesian_converter.h>
 
 namespace CGAL {
 template < class R_ >
@@ -53,18 +55,40 @@ public:
 
 };
 
+template <class From, class To>
+struct Point_triple_converter{
+  // Point_triple_less_signed_distance_to_plane_3 is only working with a Cartesian Kernel
+  // so I hardcoded the converter type
+  CGAL::Cartesian_converter<From, To> base;
+
+  Point_triple<To>
+  operator()(const Point_triple<From>& t) const{
+    return Point_triple<To>(
+      base(t.p()),
+      base(t.q()),
+      base(t.r()) );
+  }
+
+  typename To::Point_3
+  operator()(const typename From::Point_3& t) const{
+    return base(t);
+  }
+};
+
 template <class K>
 class Point_triple_has_on_positive_side_3 {
 
 public:
     typedef typename K::Point_3 Point_3;
-    typedef typename K::Plane_3 Plane_3;
+    typedef Point_triple<K> Plane_3;
   bool
     operator()( const Plane_3& pl, const Point_3& p) const
     {
       typename K::Orientation_3 o; 
       return ( o(pl.p(), pl.q(), pl.r(), p) == CGAL::POSITIVE );
     }
+
+  typedef bool result_type;
 };
 template <class K, class OldK>
 class Point_triple_construct_orthogonal_vector_3 
@@ -103,12 +127,12 @@ public:
     }
 };
 
-template <typename K, typename OldK>
+template <typename K>
 class Point_triple_less_signed_distance_to_plane_3 
 {  
 public:
     typedef typename K::Point_3 Point_3;
-    typedef typename K::Plane_3 Plane_3;
+    typedef Point_triple<K> Plane_3;
 
     typedef bool             result_type;
 
@@ -130,42 +154,44 @@ public:
     }
   };
 
-
-
-template <class T>
-class Max_coordinate_3 
-{
-public:
-
-    int operator()(const T& v)
-    {
-      if (CGAL_NTS abs(v.x()) >= CGAL_NTS abs(v.y()))
-      {
-         if (CGAL_NTS abs(v.x()) >= CGAL_NTS abs(v.z())) return 0;
-         return 2;
-      }
-      else
-      {
-         if (CGAL_NTS abs(v.y()) >= CGAL_NTS abs(v.z())) return 1;
-         return 2;
-      }
-    }
-};
-
-
 template <typename GT>
 struct GT3_for_CH3 {
   typedef typename GT::Point_3 Point_2;
 };
 
+template <class R_, class Has_filtered_predicates_tag /* = Tag_false */>
+struct Convex_hull_traits_base_3 {
+  typedef Point_triple_has_on_positive_side_3<R_>     Has_on_positive_side_3;
 
+  typedef  Point_triple_less_signed_distance_to_plane_3<R_>
+                                                  Less_signed_distance_to_plane_3;
+};
 
 template <class R_>
-class Convex_hull_traits_3 
+struct Convex_hull_traits_base_3<R_, Tag_true>{
+  typedef Filtered_predicate<
+      Point_triple_has_on_positive_side_3< typename R_::Exact_kernel_rt >,
+      Point_triple_has_on_positive_side_3< typename R_::Approximate_kernel >,
+      Point_triple_converter<R_,typename R_::Exact_kernel_rt>,
+      Point_triple_converter<R_,typename R_::Approximate_kernel>
+  > Has_on_positive_side_3;
+
+  typedef Filtered_predicate<
+      Point_triple_less_signed_distance_to_plane_3< typename R_::Exact_kernel_rt >,
+      Point_triple_less_signed_distance_to_plane_3< typename R_::Approximate_kernel >,
+      Point_triple_converter<R_,typename R_::Exact_kernel_rt>,
+      Point_triple_converter<R_,typename R_::Approximate_kernel>
+  > Less_signed_distance_to_plane_3;
+};
+
+
+template <class R_, class Has_filtered_predicates_tag = Tag_false>
+class Convex_hull_traits_3 :
+  public Convex_hull_traits_base_3<R_, Has_filtered_predicates_tag>
 {
  public:  
   typedef R_                                     R;
-  typedef Convex_hull_traits_3<R>                Self;
+  typedef Convex_hull_traits_3<R, Has_filtered_predicates_tag>  Self;
   typedef typename R::Point_3                    Point_3;
   typedef typename R::Segment_3                  Segment_3;
   typedef typename R::Triangle_3                 Triangle_3;
@@ -185,7 +211,6 @@ class Convex_hull_traits_3
     }
   };
 
-  typedef typename R::Construct_vector_3         Construct_vector_3;
   typedef typename R::Construct_triangle_3       Construct_triangle_3;
   typedef typename R::Construct_centroid_3       Construct_centroid_3;
   typedef Point_triple_construct_orthogonal_vector_3<Self, R>
@@ -196,20 +221,23 @@ class Convex_hull_traits_3
   typedef typename R::Collinear_3                Collinear_3;
   typedef typename R::Coplanar_3                 Coplanar_3;
   typedef typename R::Less_distance_to_point_3   Less_distance_to_point_3;
-  typedef Point_triple_has_on_positive_side_3<Self>     Has_on_positive_side_3;
 
-  typedef  Point_triple_less_signed_distance_to_plane_3<Self, R>
-                                               Less_signed_distance_to_plane_3;
+  typedef typename Convex_hull_traits_base_3<R_, Has_filtered_predicates_tag>
+    ::Has_on_positive_side_3 Has_on_positive_side_3;
+
+  typedef typename Convex_hull_traits_base_3<R_, Has_filtered_predicates_tag>
+    ::Less_signed_distance_to_plane_3 Less_signed_distance_to_plane_3;
 
   // required for degenerate case of all points coplanar
-  typedef CGAL::Max_coordinate_3<Vector_3>             Max_coordinate_3;
-
+  typedef CGAL::Projection_traits_xy_3<R>         Traits_xy_3;
+  typedef CGAL::Projection_traits_yz_3<R>         Traits_yz_3;
+  typedef CGAL::Projection_traits_xz_3<R>         Traits_xz_3;
+  typedef typename R::Construct_vector_3          Construct_vector_3;
   // for postcondition checking 
   typedef typename R::Ray_3                      Ray_3; 
 
   typedef typename R::Has_on_3                   Has_on_3;
   typedef Point_triple_oriented_side_3<Self>     Oriented_side_3;
-  typedef typename R::Intersect_3                Intersect_3;
   typedef typename R::Do_intersect_3             Do_intersect_3;
 
   Construct_segment_3
@@ -227,10 +255,6 @@ class Convex_hull_traits_3
   Construct_triangle_3
   construct_triangle_3_object() const
   { return Construct_triangle_3(); }
-
-  Construct_vector_3
-  construct_vector_3_object() const
-  { return Construct_vector_3(); }
 
   Construct_centroid_3  
   construct_centroid_3_object() const
@@ -268,10 +292,6 @@ class Convex_hull_traits_3
   equal_3_object() const
   { return Equal_3(); }
 
-  Intersect_3
-  intersect_3_object() const
-  { return Intersect_3(); }
-
   Do_intersect_3
   do_intersect_3_object() const
   { return Do_intersect_3(); }
@@ -280,9 +300,14 @@ class Convex_hull_traits_3
   less_signed_distance_to_plane_3_object() const
   { return Less_signed_distance_to_plane_3(); }
 
-  Max_coordinate_3  
-  max_coordinate_3_object() const
-  { return Max_coordinate_3(); }
+  Orientation_3
+  orientation_3_object() const
+  { return Orientation_3(); }
+
+  Construct_vector_3
+  construct_vector_3_object() const
+  { return Construct_vector_3(); }
+
 };
 
 } // namespace CGAL

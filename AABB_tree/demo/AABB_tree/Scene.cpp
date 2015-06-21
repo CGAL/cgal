@@ -401,7 +401,7 @@ void Scene::build_facet_tree()
     CGAL::Timer timer;
     timer.start();
     std::cout << "Construct Facet AABB tree...";
-    m_facet_tree.rebuild(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end(),*m_pPolyhedron);
+    m_facet_tree.rebuild(faces(*m_pPolyhedron).first, faces(*m_pPolyhedron).second,*m_pPolyhedron);
     m_facet_tree.accelerate_distance_queries();
     std::cout << "done (" << timer.time() << " s)" << std::endl;
 }
@@ -421,7 +421,7 @@ void Scene::build_edge_tree()
     CGAL::Timer timer;
     timer.start();
     std::cout << "Construct Edge AABB tree...";
-    m_edge_tree.rebuild(boost::edges(*m_pPolyhedron).first,boost::edges(*m_pPolyhedron).second,*m_pPolyhedron);
+    m_edge_tree.rebuild(edges(*m_pPolyhedron).first,edges(*m_pPolyhedron).second,*m_pPolyhedron);
     m_edge_tree.accelerate_distance_queries();
     std::cout << "done (" << timer.time() << " s)" << std::endl;
 }
@@ -465,7 +465,7 @@ void Scene::generate_points_in(const unsigned int nb_points,
     typedef CGAL::AABB_tree<Traits> Tree;
 
     std::cout << "Construct AABB tree...";
-    Tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end(), *m_pPolyhedron);
+    Tree tree(faces(*m_pPolyhedron).first, faces(*m_pPolyhedron).second, *m_pPolyhedron);
     std::cout << "done." << std::endl;
 
     CGAL::Timer timer;
@@ -517,7 +517,7 @@ void Scene::generate_inside_points(const unsigned int nb_points)
     typedef CGAL::AABB_tree<Traits> Tree;
 
     std::cout << "Construct AABB tree...";
-    Tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end(),*m_pPolyhedron);
+    Tree tree(faces(*m_pPolyhedron).first, faces(*m_pPolyhedron).second,*m_pPolyhedron);
     std::cout << "done." << std::endl;
 
     CGAL::Timer timer;
@@ -559,7 +559,7 @@ void Scene::generate_boundary_segments(const unsigned int nb_slices)
     typedef Tree::Object_and_primitive_id Object_and_primitive_id;
 
     std::cout << "Construct AABB tree...";
-    Tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end(),*m_pPolyhedron);
+    Tree tree(faces(*m_pPolyhedron).first,faces(*m_pPolyhedron).second,*m_pPolyhedron);
     std::cout << "done." << std::endl;
 
     CGAL::Timer timer;
@@ -608,7 +608,7 @@ void Scene::generate_boundary_points(const unsigned int nb_points)
     typedef Tree::Object_and_primitive_id Object_and_primitive_id;
 
     std::cout << "Construct AABB tree...";
-    Tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end(),*m_pPolyhedron);
+    Tree tree(faces(*m_pPolyhedron).first, faces(*m_pPolyhedron).second,*m_pPolyhedron);
     std::cout << "done." << std::endl;
 
     CGAL::Timer timer;
@@ -657,8 +657,8 @@ void Scene::generate_edge_points(const unsigned int nb_points)
     typedef Tree::Object_and_primitive_id Object_and_primitive_id;
 
     std::cout << "Construct AABB tree...";
-    Tree tree( CGAL::undirected_edges(*m_pPolyhedron).first,
-               CGAL::undirected_edges(*m_pPolyhedron).second,
+    Tree tree( CGAL::edges(*m_pPolyhedron).first,
+               CGAL::edges(*m_pPolyhedron).second,
                *m_pPolyhedron);
     std::cout << "done." << std::endl;
 

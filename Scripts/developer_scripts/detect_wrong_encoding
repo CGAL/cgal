@@ -1,0 +1,5 @@
+#!/bin/zsh
+
+setopt extendedglob
+
+file ^build*/(demo|test|examples|include|doc|src)/**/*.(h|hpp|H|C|c|cpp)| egrep -v ':[[:space:]]+(C(\+\+)? source, |LaTeX document, |HTML document, )?(ASCII|UTF-8 Unicode) text(, with very long lines)?$'

@@ -28,7 +28,7 @@ class Polyhedron_demo_corefinement_plugin :
 
 public:
 
-  bool applicable() const { 
+  bool applicable(QAction*) const { 
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
@@ -50,7 +50,7 @@ private:
 
   QAction*  actionPolyhedronCorefinement_3;
 
-public slots:
+public Q_SLOTS:
   void corefinement();
 
 }; // end class Polyhedron_demo_corefinement_plugin

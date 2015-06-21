@@ -23,9 +23,32 @@ find_package(Qt4)
 find_package(OpenGL)
 
 if(QT4_FOUND)
+  add_definitions(-DQT_NO_KEYWORDS)
   include( ${QT_USE_FILE} )
   find_package(QGLViewer)
 endif(QT4_FOUND)
+
+# Activate concurrency ? (turned OFF by default)
+option(ACTIVATE_CONCURRENT_TRIANGULATION_3
+  "Activate parallelism in Triangulation_3"
+  OFF)
+  
+# And add -DCGAL_CONCURRENT_TRIANGULATION_3 if that option is ON
+if( ACTIVATE_CONCURRENT_TRIANGULATION_3 )
+  add_definitions( -DCGAL_CONCURRENT_TRIANGULATION_3 )
+  find_package( TBB REQUIRED )
+else( ACTIVATE_CONCURRENT_TRIANGULATION_3 )
+  option( LINK_WITH_TBB
+    "Link with TBB anyway so we can use TBB timers for profiling"
+    ON)
+  if( LINK_WITH_TBB )
+    find_package( TBB )
+  endif( LINK_WITH_TBB )
+endif()
+
+if( TBB_FOUND )
+  include(${TBB_USE_FILE})
+endif()
 
 if ( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
@@ -53,7 +76,7 @@ if ( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS T3_demo )
 
   target_link_libraries( T3_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-  target_link_libraries( T3_demo ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} )
+  target_link_libraries( T3_demo ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${TBB_LIBRARIES})
   target_link_libraries( T3_demo ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 
 else( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )

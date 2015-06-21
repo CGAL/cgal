@@ -47,12 +47,16 @@ inline void compute_the_thing(Truc &thing)
 }
 
 #ifdef CGAL_LINKED_WITH_TBB
+// For parallel_for
 template <typename Array_t>
 class Change_array_functor
 {
 public:
   Change_array_functor(Array_t &v)
     : m_v(v) {}
+
+  Change_array_functor(const Change_array_functor &caf)
+    : m_v(caf.m_v) {}
 
   void operator() (const tbb::blocked_range<size_t>& r) const
   {
@@ -65,12 +69,17 @@ private:
   Array_t &m_v;
 };
 
+// For parallel_for
+// Specialization for std::vector
 template <>
 class Change_array_functor<std::vector<Truc> >
 {
 public:
   Change_array_functor(std::vector<Truc> &v)
     : m_v(v) {}
+  
+  Change_array_functor(const Change_array_functor &caf)
+    : m_v(caf.m_v) {}
 
   void operator() (const tbb::blocked_range<size_t>& r) const
   {
@@ -80,6 +89,17 @@ public:
 
 private:
   std::vector<Truc> &m_v;
+};
+
+// For parallel_do
+template <typename Array_t>
+class Change_array_functor_2
+{
+public:
+  void operator() (typename Array_t::value_type& truc) const
+  {
+    compute_the_thing(truc);
+  }
 };
 
 // Parallel_for
@@ -125,10 +145,7 @@ double change_array(Array_t &v, Parallel_do_tag)
   t.start();
   tbb::parallel_do(
     v.begin(), v.end(),
-    []( typename Array_t::value_type& truc ) // CJTODO: lambdas ok?
-    {
-      compute_the_thing(truc);
-    });
+    Change_array_functor_2<Array_t>());
   t.stop();
   std::cout << " done in " << t.time() << " seconds." << std::endl;
   return t.time();

@@ -41,11 +41,33 @@ namespace internal {
 template <typename K>
 inline
 typename K::Angle
+angle(const typename K::Vector_3 &u,
+      const typename K::Vector_3 &v,
+      const K &k)
+{
+  return k.angle_3_object()(u, v);
+}
+
+template <typename K>
+inline
+typename K::Angle
 angle(const typename K::Point_3 &p,
       const typename K::Point_3 &q,
       const typename K::Point_3 &r, const K &k)
 {
   return k.angle_3_object()(p, q, r);
+}
+
+template <typename K>
+inline
+typename K::Angle
+angle(const typename K::Point_3 &p,
+      const typename K::Point_3 &q,
+      const typename K::Point_3 &r,
+      const typename K::Point_3 &s,
+      const K &k)
+{
+  return k.angle_3_object()(p, q, r, s);
 }
 
 template < class K >

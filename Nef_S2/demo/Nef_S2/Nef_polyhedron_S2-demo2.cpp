@@ -23,14 +23,14 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous.h>
-#include <CGAL/Gmpz.h>
+#include <CGAL/Exact_integer.h>
 #include <CGAL/random_selection.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/Nef_S2/SM_items.h>
 #include <CGAL/IO/Qt_widget_Nef_S2.h>
 
-typedef CGAL::Gmpz NT;
+typedef CGAL::Exact_integer NT;
 typedef CGAL::Homogeneous<NT> Kernel;
 typedef Kernel::Point_3       Point_3;
 typedef Kernel::Plane_3       Plane_3;

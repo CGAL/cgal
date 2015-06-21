@@ -56,7 +56,7 @@ private:
 public:
   MainWindow();
 
-public slots:
+public Q_SLOTS:
 
   void processInput(CGAL::Object o);
 
@@ -72,7 +72,7 @@ public slots:
 
   void open(QString fileName);
 
-signals:
+Q_SIGNALS:
   void changed();
 };
 
@@ -160,7 +160,7 @@ MainWindow::processInput(CGAL::Object o)
       as.make_alpha_shape(points.begin(), points.end());
       as.set_alpha(alpha);
     }
-    emit(changed());
+    Q_EMIT( changed());
   }
 }
 
@@ -181,7 +181,7 @@ void MainWindow::alphaChanged(int i)
     alpha = 0;
     as.set_alpha(0);
   }
-  emit (changed());
+  Q_EMIT( changed());
 }
 
 /* 
@@ -199,7 +199,7 @@ MainWindow::on_actionClear_triggered()
 {
   as.clear();
   points.clear();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -236,7 +236,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   as.set_alpha(alpha);
   // default cursor
   QApplication::restoreOverrideCursor();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -273,7 +273,7 @@ MainWindow::open(QString fileName)
   QApplication::restoreOverrideCursor();
   this->addToRecentFiles(fileName);
   actionRecenter->trigger();
-  emit(changed());
+  Q_EMIT( changed());
     
 }
 

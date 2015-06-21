@@ -27,6 +27,7 @@
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/to_rational.h>
+#include <CGAL/use.h>
 #include <climits>
 #include <cmath>
 
@@ -49,8 +50,10 @@ simplest_rational_in_interval(double x, double y) {
     typedef typename FT::Compose Compose;
 
     // Must be a fraction
+    CGAL_USE_TYPE(Is_fraction);
     CGAL_static_assertion((::boost::is_same<Is_fraction, Tag_true>::value));
     // Numerator_type,Denominator_type must be the same
+    CGAL_USE_TYPE(Denominator_type);
     CGAL_static_assertion((::boost::is_same<Numerator_type, Denominator_type>::value));
 
 

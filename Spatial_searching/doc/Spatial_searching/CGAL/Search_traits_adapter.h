@@ -8,14 +8,13 @@ key as point type.
 When using `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` 
 in a nearest neighbor search algorithm, this class must be used as distance. 
 
-\cgalHeading{Parameters}
 
-`Key` is a type that is associated to a point of type `Base_distance::Point_d`. 
+\tparam Key is a type that is associated to a point of type `Base_distance::Point_d`. 
 
-`PointPropertyMap` is a model of `LvaluePropertyMap`
-with `Key` as `key_type` and `Base_distance::Point_d` as `value_type`. 
+\tparam PointPropertyMap is a model of `LvaluePropertyMap`
+with `Key` as  key type  and `Base_distance::Point_d` as  value type. 
 
-`Base_distance` is a model of either `GeneralDistance` or `OrthogonalDistance`. 
+\tparam Base_distance is a model of either `GeneralDistance` or `OrthogonalDistance`. 
 
 \cgalModels `GeneralDistance` if Base_distance is a model of `GeneralDistance`
 \cgalModels `OrthogonalDistance` if Base_distance is a model of `OrthogonalDistance`
@@ -80,14 +79,13 @@ and the search classes. When using this traits class in a nearest neighbor searc
 `Distance_adapter<Key,PointPropertyMap,Base_distance>` 
 must be used as distance. 
 
-\cgalHeading{Parameters}
 
-`Key` is a type that is associated to a point of type `Base_distance::Point_d`. 
+\tparam Key is a type that is associated to a point of type `Base_distance::Point_d`. 
 
-`PointPropertyMap` is a model of `LvaluePropertyMap`
+\tparam PointPropertyMap is a model of `LvaluePropertyMap`
 with `Key` as `key_type` and `Base_distance::Point_d` as `value_type`. 
 
-`BaseTraits` is a model of either `SearchTraits` or `RangeSearchTraits`. 
+\tparam BaseTraits is a model of either `SearchTraits` or `RangeSearchTraits`. 
 
 \cgalModels `SearchTraits` if `BaseTraits` is a model of `SearchTraits`.
 \cgalModels `RangeSearchTraits` if `BaseTraits` is a model of `RangeSearchTraits`.
@@ -96,7 +94,7 @@ with `Key` as `key_type` and `Base_distance::Point_d` as `value_type`.
 \sa `Search_traits_2<Kernel>` 
 \sa `Search_traits_3<Kernel>` 
 \sa `Search_traits_d<Kernel>` 
-\sa `Search_traits<Point,CartesianConstIterator,ConstructCartesianConstIterator` 
+\sa `Search_traits<Point,CartesianConstIterator,ConstructCartesianConstIterator>` 
 
 */
 template< typename Key, typename PointPropertyMap, typename BaseTraits >
@@ -108,23 +106,28 @@ public:
 
 /*!
 
-*/ 
-Key Point_d; 
+*/
+typedef BaseTraits::Dimension Dimension;
 
 /*!
 
 */ 
-BaseTraits::FT FT; 
+typedef Key Point_d;
 
 /*!
 
 */ 
-BaseTraits::Cartesian_const_iterator_d Cartesian_const_iterator_d; 
+typedef BaseTraits::FT FT;
 
 /*!
 
 */ 
-BaseTraits Base; 
+typedef BaseTraits::Cartesian_const_iterator_d Cartesian_const_iterator_d;
+
+/*!
+
+*/ 
+typedef BaseTraits Base;
 
 /// @} 
 

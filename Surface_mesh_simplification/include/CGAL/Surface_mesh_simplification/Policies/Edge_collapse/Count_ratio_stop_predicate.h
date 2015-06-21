@@ -49,19 +49,14 @@ public:
   
   typedef typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor ;
   typedef typename boost::graph_traits<ECM>::edges_size_type size_type ;
-  
-  typedef typename halfedge_graph_traits<ECM>::Point Point ;
-  typedef typename Kernel_traits<Point>::Kernel      Kernel ;
-  typedef typename Kernel::FT                        FT ;
-  
-public :
-  
+    
   Count_ratio_stop_predicate( double aRatio ) : mRatio(aRatio) {}
   
-  bool operator()( FT const&      // aCurrentCost
-                 , Profile const& //aEdgeProfile
-                 , size_type      aInitialCount
-                 , size_type      aCurrentCount
+  template <typename F> 
+  bool operator()( F const&       // aCurrentCost
+                 , Profile const& // aEdgeProfile
+                 , size_type         aInitialCount
+                 , size_type         aCurrentCount
                  ) const 
   {
     return ( static_cast<double>(aCurrentCount) / static_cast<double>(aInitialCount) ) < mRatio ;

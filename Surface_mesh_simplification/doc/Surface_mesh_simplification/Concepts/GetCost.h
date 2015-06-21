@@ -22,30 +22,6 @@ or can be intentionally returned to prevent the edge from being collapsed.
 class GetCost {
 public:
 
-/// \name Types 
-/// @{
-
-/*!
-The type of the edge profile cache. Must be a model of the `EdgeProfile` concept. 
-*/ 
-typedef unspecified_type Profile; 
-
-/*!
-A field type representing the collapse cost 
-*/ 
-typedef unspecified_type FT; 
-
-/*!
-The point type for the surface mesh vertex. Must be a model of `Point_3`. 
-*/ 
-typename CGAL::halfedge_graph_traits<ECM>::Point Point; 
-
-/*!
-The type of the result (an optional cost value). 
-*/ 
-boost::optional<FT> result_type; 
-
-/// @} 
 
 /// \name Operations 
 /// @{
@@ -53,10 +29,11 @@ boost::optional<FT> result_type;
 /*!
 Computes and returns the cost of collapsing the edge (represented by its profile), 
 using the calculated placement. 
-
+\tparam Profile must be a model of `EdgeProfile`.
 */ 
-result_type operator()( Profile const& edge_profile 
-, boost::optional<Point> const& placement ) const; 
+  template <class Profile>
+  boost::optional<typename Profile::FT> operator()( Profile const& edge_profile 
+                                                    , boost::optional<typename Profile::Point> const& placement ) const; 
 
 /// @}
 

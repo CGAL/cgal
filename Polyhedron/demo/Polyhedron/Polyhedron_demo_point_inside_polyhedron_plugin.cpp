@@ -1,4 +1,5 @@
 #include <QtCore/qglobal.h>
+#include "opengl_tools.h"
 
 #include "Messages_interface.h"
 #include "Scene_polyhedron_item.h"
@@ -35,7 +36,7 @@ class Polyhedron_demo_point_inside_polyhedron_plugin :
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
-  bool applicable() const 
+  bool applicable(QAction*) const 
   {
     bool poly_item_exists = false;
     bool point_item_exists = false;
@@ -79,7 +80,7 @@ private:
     { return *poly_ptr; }
   };
 
-public slots:
+public Q_SLOTS:
   void point_inside_polyhedron_action() { dock_widget->show(); }
   void on_Select_button() 
   {
@@ -95,7 +96,7 @@ public slots:
     // place all selected polyhedron and point items to vectors below
     std::vector<const Polyhedron*> polys;
     std::vector<Point_set*> point_sets;
-    foreach(Scene_interface::Item_id id, scene->selectionIndices()) {
+    Q_FOREACH(Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
       if(poly_item) { polys.push_back(poly_item->polyhedron()); }
 
@@ -147,7 +148,7 @@ public slots:
     print_message(QString("%1 points are selected. All Done!").arg(nb_selected));
 
     // for repaint
-    foreach(Scene_interface::Item_id id, scene->selectionIndices()) {
+    Q_FOREACH(Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_points_with_normal_item* point_item = qobject_cast<Scene_points_with_normal_item*>(scene->item(id));
       if(point_item) { 
         scene->itemChanged(point_item);
@@ -158,8 +159,15 @@ public slots:
   void on_Sample_random_points_from_bbox() {
     
     // calculate bbox of selected polyhedron items
-    boost::optional<Scene_interface::Bbox> bbox;
-    foreach(Scene_interface::Item_id id, scene->selectionIndices()) {
+    boost::optional<Scene_interface::Bbox> bbox
+      = boost::make_optional(false, Scene_interface::Bbox());
+    // Workaround a bug in g++-4.8.3:
+    //   http://stackoverflow.com/a/21755207/1728537
+    // Using boost::make_optional to copy-initialize 'bbox' hides the
+    //   warning about '*bbox' not being initialized.
+    // -- Laurent Rineau, 2014/10/30
+
+    Q_FOREACH(Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
       if(poly_item) {
         if(!bbox) {

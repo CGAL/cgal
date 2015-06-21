@@ -574,7 +574,7 @@ is_one_to_one_mapping(const Adaptor& mesh,
                       const Vector& ,
                       const Vector& )
 {
-    Vector_3    first_triangle_normal;
+    Vector_3 first_triangle_normal = NULL_VECTOR; // initialize to avoid warning
 
     for (Facet_const_iterator facetIt = mesh.mesh_facets_begin();
          facetIt != mesh.mesh_facets_end();

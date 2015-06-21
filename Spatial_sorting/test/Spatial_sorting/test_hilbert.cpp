@@ -2,6 +2,7 @@
 #include <cassert>
 
 #include <CGAL/hilbert_sort.h>
+#include <CGAL/hilbert_sort_on_sphere.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Cartesian_d.h>
@@ -22,6 +23,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                                          Point_2;
 typedef K::Point_3                                          Point_3;
+typedef K::Vector_3                                         Vector_3;
 typedef CGAL::Creator_uniform_2<double,Point_2>             Creator_2;
 typedef CGAL::Creator_uniform_3<double,Point_3>             Creator_3;
 
@@ -277,6 +279,130 @@ int main ()
 	  assert(CGAL::squared_distance( v[i], v[i+1]) - 4.0 < 0.1 );
 	}
         std::cout << "OK." << std::endl;
+    }
+	{
+      std::cout << "Testing Spherical (median policy): Generating "<<nb_points_3<<" random points... " << std::flush;
+
+        std::vector<Point_3> v;
+        v.reserve (nb_points_3);
+
+        CGAL::Random_points_on_sphere_3<Point_3> gen (1.0, random);
+
+        for (int i = 0; i < nb_points_3; ++i)
+            v.push_back (*gen++);
+
+        std::cout << "done." << std::endl;
+
+        std::vector<Point_3> v2 (v);
+
+        std::cout << "            Sorting points...    " << std::flush;
+
+	cost.reset();cost.start();
+        CGAL::hilbert_sort(v.begin(),v.end());
+	cost.stop();
+
+        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+
+        std::cout << "            Checking...          " << std::flush;
+
+        std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
+        std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
+        assert(v == v2);
+
+        std::cout << "no points lost." << std::endl;
+    }
+    {
+      std::cout << "Testing Spherical (median policy) + given sphere: Generating "<<nb_points_3<<" random points... " << std::flush;
+
+        std::vector<Point_3> v;
+        v.reserve (nb_points_3);
+
+        CGAL::Random_points_on_sphere_3<Point_3> gen (2.0, random);
+
+        for (int i = 0; i < nb_points_3; ++i)
+            v.push_back (*gen++ + Vector_3(3,5,5));
+
+        std::cout << "done." << std::endl;
+
+        std::vector<Point_3> v2 (v);
+
+        std::cout << "            Sorting points...    " << std::flush;
+
+	cost.reset();cost.start();
+        CGAL::hilbert_sort_on_sphere(v.begin(),v.end(), 4, CGAL::ORIGIN + Vector_3(3,5,5));
+	cost.stop();
+
+        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+
+        std::cout << "            Checking...          " << std::flush;
+
+        std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
+        std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
+        assert(v == v2);
+
+        std::cout << "no points lost." << std::endl;
+    }
+	{
+      std::cout << "Testing Spherical (middle policy): Generating "<<nb_points_3<<" random points... " << std::flush;
+
+        std::vector<Point_3> v;
+        v.reserve (nb_points_3);
+
+        CGAL::Random_points_on_sphere_3<Point_3> gen (1.0, random);
+
+        for (int i = 0; i < nb_points_3; ++i)
+            v.push_back (*gen++);
+
+        std::cout << "done." << std::endl;
+
+        std::vector<Point_3> v2 (v);
+
+        std::cout << "            Sorting points...    " << std::flush;
+
+	cost.reset();cost.start();
+        CGAL::hilbert_sort_on_sphere(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy());
+	cost.stop();
+
+        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+
+        std::cout << "            Checking...          " << std::flush;
+
+        std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
+        std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
+        assert(v == v2);
+
+        std::cout << "no points lost." << std::endl;
+    }
+    {
+      std::cout << "Testing Spherical (middle policy) + given sphere: Generating "<<nb_points_3<<" random points... " << std::flush;
+
+        std::vector<Point_3> v;
+        v.reserve (nb_points_3);
+
+        CGAL::Random_points_on_sphere_3<Point_3> gen (2.0, random);
+
+        for (int i = 0; i < nb_points_3; ++i)
+            v.push_back (*gen++ + Vector_3(3,5,5));
+
+        std::cout << "done." << std::endl;
+
+        std::vector<Point_3> v2 (v);
+
+        std::cout << "            Sorting points...    " << std::flush;
+
+	cost.reset();cost.start();
+        CGAL::hilbert_sort_on_sphere(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy(), 4, CGAL::ORIGIN + Vector_3(3,5,5));
+	cost.stop();
+
+        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+
+        std::cout << "            Checking...          " << std::flush;
+
+        std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
+        std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
+        assert(v == v2);
+
+        std::cout << "no points lost." << std::endl;
     }
     {
       int dim =5;

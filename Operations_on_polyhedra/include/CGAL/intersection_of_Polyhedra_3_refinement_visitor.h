@@ -576,7 +576,7 @@ void sew_3_marked_darts( Combinatorial_map_3& final_map,
     darts_to_remove.insert(not_top);   darts_to_remove.insert(not_top->beta(1)); darts_to_remove.insert(not_top->beta(1)->beta(1));
     darts_to_remove.insert(not_top->beta(3));   darts_to_remove.insert(not_top->beta(3)->beta(1)); darts_to_remove.insert(not_top->beta(3)->beta(1)->beta(1));
     O_Dart_handle current_1=next_marked_dart_around_target_vertex(final_map,not_top,mark_index);
-    CGAL_precondition(current_1);
+    CGAL_precondition(bool(current_1));
     not_top=*current_1;
   }
   while(not_top!=start);
@@ -1373,6 +1373,7 @@ public:
   void add_filtered_intersection(Halfedge_handle eh,Halfedge_handle fh,Polyhedron& Pe,Polyhedron& Pf){
     //use the representant halfedge of the facet as key
     //--set polyhedron for the two facets incident to the edge
+    CGAL_assertion(!eh->is_border());
     hedge_to_polyhedron.insert(std::make_pair(eh->facet()->halfedge(),&Pe));
     if ( !eh->opposite()->is_border() )
       hedge_to_polyhedron.insert(std::make_pair(eh->opposite()->facet()->halfedge(),&Pe));
@@ -2145,6 +2146,8 @@ public:
     Polyhedron* Poly_B = boost::next(polyhedron_to_map_node_to_polyhedron_vertex.begin())->first;
     Inside_poly_test* inside_A_test_ptr=NULL;
     Inside_poly_test* inside_B_test_ptr=NULL;
+    bool Poly_A_is_closed = Poly_A->is_closed();
+    bool Poly_B_is_closed = Poly_B->is_closed();
 
     #ifdef CGAL_COREFINEMENT_DEBUG
     final_map().display_characteristics(std::cout); std::cout << "\n";
@@ -2170,12 +2173,22 @@ public:
         Inside_poly_test* inside_test_ptr;
         if ( current_poly==Poly_A)
         {
+          // is the polyhedron is not closed, we set Poly_A to be outside by default
+          if (!Poly_B_is_closed){
+            info.outside.insert(Poly_B);
+            continue;
+          }
           test_poly=Poly_B;
           if (inside_B_test_ptr == NULL) inside_B_test_ptr=new Inside_poly_test(*Poly_B);
           inside_test_ptr=inside_B_test_ptr;
         }
         else
         {
+          // is the polyhedron is not closed, we set Poly_B to be outside by default
+          if (!Poly_A_is_closed){
+            info.outside.insert(Poly_A);
+            continue;
+          }
           test_poly=Poly_A;
           if (inside_A_test_ptr == NULL) inside_A_test_ptr=new Inside_poly_test(*Poly_A);
           inside_test_ptr=inside_A_test_ptr;

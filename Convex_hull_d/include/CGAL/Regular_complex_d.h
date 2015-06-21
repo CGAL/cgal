@@ -28,6 +28,9 @@
 
 #ifndef CGAL_REGULAR_COMPLEX_D_H
 #define CGAL_REGULAR_COMPLEX_D_H
+#define CGAL_DEPRECATED_HEADER "<CGAL/Regular_complex_d.h>"
+#define CGAL_REPLACEMENT_HEADER "the Triangulation package (see http://doc.cgal.org/latest/Triangulation)"
+#include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Iterator_project.h>

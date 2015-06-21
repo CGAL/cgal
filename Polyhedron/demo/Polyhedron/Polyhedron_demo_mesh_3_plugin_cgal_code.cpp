@@ -7,16 +7,20 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Polyhedral_mesh_domain_3.h>
+#include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
 
+#include <Scene_polyhedron_item.h>
+#include <Scene_polygon_soup_item.h>
 #include <fstream>
+#include <sstream>
 
 #include <CGAL/Timer.h>
 
+#include <QMenu>
 
-// @TODO: Is that the right kernel?!
-typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Kernel> Mesh_domain;
+typedef CGAL::Polyhedral_mesh_domain_with_features_3<Kernel,
+                                                     Polyhedron> Mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
@@ -26,6 +30,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 // Mesh Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+typedef Mesh_criteria::Edge_criteria Edge_criteria;
 typedef Mesh_criteria::Facet_criteria Facet_criteria;
 typedef Mesh_criteria::Cell_criteria Cell_criteria;
 
@@ -51,8 +56,7 @@ public:
   typedef qglviewer::ManipulatedFrame ManipulatedFrame;
 
   Scene_c3t3_item(const C3t3& c3t3)
-    : c3t3_(c3t3), frame(new ManipulatedFrame())
-
+    : c3t3_(c3t3), frame(new ManipulatedFrame()), last_known_scene(NULL)
   {}
 
   ~Scene_c3t3_item()
@@ -133,7 +137,7 @@ public:
 
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
-    return (m != Gouraud && m!=PointsPlusNormals); // CHECK THIS!
+    return (m != Gouraud && m!=PointsPlusNormals && m!=Splatting); // CHECK THIS!
   }
 
   void draw() const {
@@ -273,50 +277,121 @@ private:
     return diag * 0.7;
   }
 
-  C3t3 c3t3_;
+public Q_SLOTS:
+  void export_facets_in_complex()
+  {
+    std::stringstream off_sstream;
+    c3t3().output_facets_in_complex_to_off(off_sstream);
+    std::string backup = off_sstream.str();
+    // Try to read .off in a polyhedron
+    Scene_polyhedron_item* item = new Scene_polyhedron_item();
+    if(!item->load(off_sstream))
+    {
+      delete item;
+      off_sstream.clear();
+      off_sstream.str(backup);
 
+      // Try to read .off in a polygon soup
+      Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
+
+      if(!soup_item->load(off_sstream)) {
+        delete soup_item;
+        return;
+      }
+
+      soup_item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
+      last_known_scene->addItem(soup_item);
+    }
+    else{
+      item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
+      last_known_scene->addItem(item);
+    }
+  }
+
+public:
+
+  QMenu* contextMenu()
+  {
+    const char* prop_name = "Menu modified by Scene_c3t3_item.";
+
+    QMenu* menu = Scene_item::contextMenu();
+
+    // Use dynamic properties:
+    // http://doc.trolltech.com/lastest/qobject.html#property
+    bool menuChanged = menu->property(prop_name).toBool();
+
+    if(!menuChanged) {
+      QAction* actionExportFacetsInComplex =
+        menu->addAction(tr("Export facets in complex"));
+      actionExportFacetsInComplex->setObjectName("actionExportFacetsInComplex");
+      connect(actionExportFacetsInComplex,
+              SIGNAL(triggered()),this,
+              SLOT(export_facets_in_complex()));
+      menu->setProperty(prop_name, true);
+    }
+    return menu;
+  }
+
+  void set_scene(Scene_interface* scene){ last_known_scene=scene; }
+
+private:
+  C3t3 c3t3_;
   qglviewer::ManipulatedFrame* frame;
+  Scene_interface* last_known_scene;
 };
 
 Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
-                             const QString filename,
+                             QString filename,
                              const double angle,
-                             const double sizing,
+                             const double facet_sizing,
                              const double approx,
-                             const double tets_sizing)
+                             const double tet_sizing,
+                             const double tet_shape,
+                             const bool protect_features,
+                             Scene_interface* scene)
 {
   if(!pMesh) return 0;
 
   // remesh
 
   // Set mesh criteria
-  Facet_criteria facet_criteria(angle, sizing, approx); // angle, size, approximation
-  Cell_criteria cell_criteria(4, tets_sizing); // radius-edge ratio, size
-  Mesh_criteria criteria(facet_criteria, cell_criteria);
+  Edge_criteria edge_criteria(facet_sizing);
+  Facet_criteria facet_criteria(angle, facet_sizing, approx); // angle, size, approximation
+  Cell_criteria cell_criteria(tet_shape, tet_sizing); // radius-edge ratio, size
+  Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
 
   CGAL::Timer timer;
   timer.start();
   std::cerr << "Meshing file \"" << qPrintable(filename) << "\"\n";
   std::cerr << "  angle: " << angle << std::endl
-            << "  facets size bound: " << sizing << std::endl
+            << "  facets size bound: " << facet_sizing << std::endl
             << "  approximation bound: " << approx << std::endl
-            << "  tetrahedra size bound: " << tets_sizing << std::endl;
+            << "  tetrahedra size bound: " << tet_sizing << std::endl;
   std::cerr << "Build AABB tree...";
   // Create domain
   Mesh_domain domain(*pMesh);
+  if(protect_features) {
+    domain.detect_features();
+  }
   std::cerr << "done (" << timer.time() << " ms)" << std::endl;
 
   // Meshing
   std::cerr << "Mesh...";
-  Scene_c3t3_item* new_item = 
-    new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria));
+  CGAL::parameters::internal::Features_options features =
+    protect_features ?
+    CGAL::parameters::features(domain) :
+    CGAL::parameters::no_features();
 
+  Scene_c3t3_item* new_item = 
+    new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria, features));
+  new_item->set_scene(scene);
   std::cerr << "done (" << timer.time() << " ms, " << new_item->c3t3().triangulation().number_of_vertices() << " vertices)" << std::endl;
 
   if(new_item->c3t3().triangulation().number_of_vertices() > 0)
   {
     std::ofstream medit_out("out.mesh");
     new_item->c3t3().output_to_medit(medit_out);
+
     const Scene_item::Bbox& bbox = new_item->bbox();
     new_item->setPosition((float)(bbox.xmin + bbox.xmax)/2.f,
                           (float)(bbox.ymin + bbox.ymax)/2.f,

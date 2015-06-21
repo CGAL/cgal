@@ -35,11 +35,6 @@ a 3D triangle
 typedef unspecified_type Triangle_3; 
 
 /*!
-a 3D vector 
-*/ 
-typedef unspecified_type Vector_3; 
-
-/*!
 Function object type that provides 
 `Plane_3 operator()(Point_3 p, Point_3 q, Point_3 r)`, which constructs 
 and returns a plane passing through `p`, `q`, and `r` and oriented 
@@ -60,14 +55,7 @@ Function object type that provides
 constructs and returns the triangle with vertices `p`, `q`, and 
 `r`. 
 */ 
-typedef unspecified_type Construct_triangle_3; 
-
-/*!
-Function object type that provides 
-`Vector_3 operator()(Point_3 p, Point_3 q)`, which constructs and 
-returns the vector `q`-`p`. 
-*/ 
-typedef unspecified_type Construct_vector_3; 
+typedef unspecified_type Construct_triangle_3;  
 
 /*!
 Predicate object type that provides 
@@ -115,7 +103,27 @@ than the signed distance from `r` to `p`
 */ 
 typedef unspecified_type Less_signed_distance_to_plane_3; 
 
-/// @} 
+/*!
+A traits class providing the requirements of the template parameter `Traits` of
+the 2D convex hull function `CGAL::ch_bykat()` such that `Traits::Point_2`
+is `Point_3`, and the 2D points considered in the algorithm are the projections
+of the 3D points in the `xy`-plane.
+If this type is not available, the function `CGAL::convex_hull_3()` will
+automatically use `CGAL::Projection_traits_xy< CGAL::Kernel_traits<Point_3>::%Kernel >.`
+*/
+typedef unspecified_type Traits_xy_3;
+
+/*!
+Same as above but in the `yz`-plane
+*/
+typedef unspecified_type Traits_yz_3;
+
+/*!
+Same as above but in the `xz`-plane
+*/
+typedef unspecified_type Traits_xz_3;
+
+/// @}
 
 /// \name Creation 
 /// Only a copy constructor is required. 

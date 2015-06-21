@@ -15,7 +15,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h>
 #include <CGAL/trace.h>
-#include <CGAL/Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
@@ -25,9 +25,6 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/compute_average_spacing.h>
-#ifdef CGAL_TAUCS_ENABLED
-#include <CGAL/Taucs_solver_traits.h>
-#endif
 
 #include "compute_normal.h"
 
@@ -124,9 +121,6 @@ int main(int argc, char * argv[])
       std::cerr << "Options:\n";
       std::cerr << "  -sm_radius <float>     Radius upper bound (default=100 * average spacing)\n";
       std::cerr << "  -sm_distance <float>   Distance upper bound (default=0.25 * average spacing)\n";
-      #if defined(CGAL_EIGEN3_ENABLED) && defined(CGAL_TAUCS_ENABLED)
-      std::cerr << "  -solver eigen|taucs Sparse linear solver (default=eigen)\n";
-      #endif
       
       return EXIT_FAILURE;
     }
@@ -135,15 +129,7 @@ int main(int argc, char * argv[])
     FT sm_angle = 20.0; // Min triangle angle (degrees).
     FT sm_radius = 100; // Max triangle size w.r.t. point set average spacing.
     FT sm_distance = 0.25; // Approximation error w.r.t. point set average spacing.
-    #ifdef CGAL_EIGEN3_ENABLED
     std::string solver_name = "eigen"; // Sparse linear solver name.
-    #else
-      #ifdef CGAL_TAUCS_ENABLED
-      std::string solver_name = "taucs"; // Sparse linear solver name.
-      #else
-      std::string solver_name = "no_solver_available";
-      #endif
-    #endif
     double approximation_ratio = 0.02;
     double average_spacing_ratio = 5;
 
@@ -273,37 +259,6 @@ int main(int argc, char * argv[])
                               CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type()),
                               visitor);
 
-    #ifdef CGAL_TAUCS_ENABLED
-    if (solver_name == "taucs")
-    {
-      std::cerr << "Use TAUCS out-of-core Multifrontal Supernodal Cholesky Factorization\n";
-
-      // Creates sparse linear solver:
-      // TAUCS out-of-core Multifrontal Supernodal Cholesky Factorization
-      const char* OOC_SUPERNODAL_CHOLESKY_FACTORIZATION[] =
-      {
-        "taucs.factor.LLT=true",
-        "taucs.factor.mf=true",
-        "taucs.factor.ordering=metis",
-        "taucs.ooc=true", "taucs.ooc.basename=taucs-ooc",
-        NULL
-      };
-      unlink("taucs-ooc.0"); // make sure TAUCS ooc file does not exist
-      CGAL::Taucs_symmetric_solver_traits<double> solver(OOC_SUPERNODAL_CHOLESKY_FACTORIZATION);
-
-      // Computes the Poisson indicator function f()
-      // at each vertex of the triangulation.
-
-      if ( ! function.compute_implicit_function(solver, visitor, 
-                                                approximation_ratio,
-                                                average_spacing_ratio) )
-      {
-        std::cerr << "Error: cannot compute implicit function" << std::endl;
-        return EXIT_FAILURE;
-      }
-    }
-    else
-    #endif
     #ifdef CGAL_EIGEN3_ENABLED
     {
       if (solver_name == "eigen")
@@ -410,7 +365,7 @@ int main(int argc, char * argv[])
 
     // Constructs AABB tree and computes internal KD-tree
     // data structure to accelerate distance queries
-    AABB_tree tree(output_mesh.facets_begin(), output_mesh.facets_end(), output_mesh);
+    AABB_tree tree(faces(output_mesh).first, faces(output_mesh).second, output_mesh);
     tree.accelerate_distance_queries();
 
     // Computes distance from each input point to reconstructed mesh

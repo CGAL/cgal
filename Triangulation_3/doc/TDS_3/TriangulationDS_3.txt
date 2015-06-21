@@ -6,7 +6,7 @@
 \anchor chapterTDS3
 
 \cgalAutoToc
-\authors Sylvain Pion and Monique Teillaud
+\authors Clément Jamin, Sylvain Pion and Monique Teillaud
 
 A geometric triangulation has two aspects: the combinatorial structure, which
 gives the incidence and adjacency relations between faces, and the
@@ -301,6 +301,14 @@ typedef Triangulation_vertex_base_3<GT, Vb2> Other;
 
 \endcode
 
+\subsection tds3parallel Parallel Operations
+
+The third template parameter of `Triangulation_data_structure_3` is 
+`Concurrency_tag`. It enables the use of a concurrent
+container (`Concurrent_compact_container`) to store vertices and cells. 
+If it is `Parallel_tag`, then `create_vertex`, `create_cell`, `delete_vertex` 
+and `delete_cell` can be called concurrently.
+
 \section TDS3secexamples Examples 
 
 \subsection TDS_3IncrementalConstruction Incremental Construction
@@ -326,6 +334,8 @@ triangulations and handle degenerate dimensions \cgalCite{t-tdtc-99}.
 Sylvain Pion improved the software in several ways, in particular
 regarding the memory management.
 
+In 2013, Clément Jamin added the ability to create/delete vertices and cells
+in parallel. This feature is used by the parallel triangulation.
 */ 
 } /* namespace CGAL */
 

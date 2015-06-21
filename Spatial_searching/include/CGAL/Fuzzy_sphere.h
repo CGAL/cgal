@@ -34,6 +34,7 @@ namespace CGAL {
     public:
 
     typedef typename SearchTraits::FT FT;
+    typedef typename SearchTraits::Dimension Dimension;
     private:
 
     Point_d c;
@@ -71,11 +72,11 @@ namespace CGAL {
 			((*cit)-(*pit))*((*cit)-(*pit));
 		}
 		
-		return (distance < squared_radius); 
+		return (distance <= squared_radius); 
         }
 
         
-	bool inner_range_intersects(const Kd_tree_rectangle<FT>& rectangle) const {                          
+	bool inner_range_intersects(const Kd_tree_rectangle<FT,Dimension>& rectangle) const {                          
                 // test whether the interior of a sphere
 		// with radius (r-eps) intersects r, i.e.
                 // if the minimal distance of r to c is less than r-eps
@@ -94,11 +95,11 @@ namespace CGAL {
 				((*cit)-rectangle.max_coord(i))*((*cit)-rectangle.max_coord(i));
 		}
 		
-		return (distance < squared_radius);
+		return (distance <= squared_radius);
 	}
 
 
-	bool outer_range_contains(const Kd_tree_rectangle<FT>& rectangle) const { 
+	bool outer_range_contains(const Kd_tree_rectangle<FT,Dimension>& rectangle) const { 
         // test whether the interior of a sphere
 	// with radius (r+eps) is contained by r, i.e.
         // if the minimal distance of the boundary of r 
@@ -117,7 +118,7 @@ namespace CGAL {
 			distance += ((*cit)-rectangle.min_coord(i))*((*cit)-rectangle.min_coord(i));
 		}
 		
-		return (distance < squared_radius);
+		return (distance <= squared_radius);
 	}
   }; // class Fuzzy_sphere_impl
 

@@ -41,7 +41,9 @@
 #include <CGAL/Nef_2/debug.h>
 
 #ifndef CGAL_USE_LEDA
-#define LEDA_MEMORY(t) 
+#define LEDA_MEMORY(t)
+#else
+#include <LEDA/system/memory.h>
 #endif
 
 namespace CGAL {

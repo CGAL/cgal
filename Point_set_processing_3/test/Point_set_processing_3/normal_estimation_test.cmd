@@ -1,1 +1,1 @@
-data/sphere926.pwn data/sphere_20k.xyz data/ChineseDragon-10kv.off
+data/sphere926.pwn data/sphere_1k.xyz

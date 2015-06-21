@@ -35,13 +35,9 @@
 #include <climits>
 #include <math.h>
 
-#include <boost/version.hpp>
-#if BOOST_VERSION >= 104000
-  #include <boost/property_map/property_map.hpp>
-#else
-  #include <boost/property_map.hpp>
-#endif
+#include <CGAL/property_map.h>
 #include <boost/graph/adjacency_list.hpp>
+#include <CGAL/boost/graph/dijkstra_shortest_paths.h> // work around a bug in boost 1.54
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
 
 namespace CGAL {
@@ -50,8 +46,8 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace internal {
 /// \cond SKIP_IN_MANUAL
+namespace internal {
 
 /// Generalization of std::distance() to compute the distance between 2 integers
 inline std::size_t
@@ -502,6 +498,9 @@ create_mst_graph(
     // Add vertices. source_point is the unique point marked "oriented".
     for (ForwardIterator it = first; it != beyond; it++)
     {
+        // With C++11, the following line triggers a bug in Boost versions
+        // 1.56 and 1.57:
+        //   https://svn.boost.org/trac/boost/ticket/10382
         typename MST_graph::vertex_descriptor v = add_vertex(mst_graph);
         CGAL_point_set_processing_assertion(v == get(index_pmap,it));
         mst_graph[v].input_point = it;
@@ -524,10 +523,8 @@ create_mst_graph(
     return mst_graph;
 }
 
-/// \endcond
-
 } /* namespace internal */
-
+/// \endcond
 
 // ----------------------------------------------------------------------------
 // Public section
@@ -547,11 +544,11 @@ create_mst_graph(
 /// \pre `k >= 2`
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
-///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
-/// @tparam NormalPMap is a model of `ReadWritePropertyMap` with a value_type = Vector_3<Kernel>.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with value type  `Point_3<Kernel>`.
+///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
+/// @tparam NormalPMap is a model of `ReadWritePropertyMap` with value type `Vector_3<Kernel>` .
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from PointPMap value_type.
+///        It can be omitted and deduced automatically from the value type of `PointPMap`.
 ///
 /// @return iterator over the first point with an unoriented normal.
 

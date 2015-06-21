@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/Search_traits.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -7,7 +6,8 @@
 
 typedef CGAL::Random_points_in_cube_3<Point> Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
-typedef CGAL::Search_traits<double, Point, const double*, Construct_coord_iterator> Traits;
+typedef CGAL::Dimension_tag<3> D;
+typedef CGAL::Search_traits<double, Point, const double*, Construct_coord_iterator, D> Traits;
 typedef CGAL::Orthogonal_k_neighbor_search<Traits, Distance> K_neighbor_search;
 typedef K_neighbor_search::Tree Tree;
 

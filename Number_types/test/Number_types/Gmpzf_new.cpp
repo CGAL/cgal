@@ -1,3 +1,8 @@
+
+#include <CGAL/config.h>
+
+#ifdef CGAL_USE_GMP
+
 #include <iostream>
 #include <cassert>
 #include <CGAL/Gmpzf.h>
@@ -31,3 +36,12 @@ int main() {
     }
  return 0;
 }
+
+#else 
+
+int main()
+{
+  return 0;
+}
+
+#endif

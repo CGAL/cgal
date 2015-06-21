@@ -12,7 +12,7 @@ public:
 
   unsigned int image_word_size() const;
 
-private slots:
+private Q_SLOTS:
   void update_image_size();
 };
 

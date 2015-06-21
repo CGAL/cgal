@@ -23,10 +23,10 @@ public:
                          << "actionSqrt3";
   }
 
-  bool applicable() const { 
+  bool applicable(QAction*) const { 
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
-public slots:
+public Q_SLOTS:
   void on_actionLoop_triggered();
   void on_actionCatmullClark_triggered();
   void on_actionSqrt3_triggered();

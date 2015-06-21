@@ -17,7 +17,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License along
-# with this program. If not, see <http://www.gnu.org/licenses/>.
+# with this program. If not, see <https://www.gnu.org/licenses/>.
 
 =head1 NAME
 
@@ -160,7 +160,7 @@ my $default_ignore_regex = '
 $default_ignore_regex =~ s/^#.*$//mg;
 $default_ignore_regex =~ s/\n//sg;
 
-my $default_check_regex = '\.(c(c|pp|xx)?|h(h|pp|xx)?|f(77|90)?|p(l|m)|xs|sh|php|py(|x)|rb|java|vala|el|sc(i|e)|cs|pas|inc|dtd|xsl|mod|m|tex|mli?)$';
+my $default_check_regex = '\.(c(c|pp|xx)?|h(h|pp|xx)?|f(77|90)?|go|p(l|m)|xs|sh|php|py(|x)|rb|java|js|vala|el|sc(i|e)|cs|pas|inc|dtd|xsl|mod|m|tex|mli?|(c|l)?hs)$';
 
 my $modified_conf_msg;
 
@@ -329,9 +329,16 @@ sub parse_copyright {
 	)';
     my $copyright_disindicator_regex = '
 	\b(?:info(?:rmation)?	# Discussing copyright information
-	|notice			# Discussing the notice
-	|and|or                 # Part of a sentence
+	|(notice|statement|claim|string)s?	# Discussing the notice
+	|and|or|is|in|to        # Part of a sentence
+	|(holder|owner)s?       # Part of a sentence
+	|ownership              # Part of a sentence
 	)\b';
+    my $copyright_predisindicator_regex = '(
+    ^[#]define\s+.*\(c\)    # #define foo(c) -- not copyright
+	)';
+
+    if ( ! m%$copyright_predisindicator_regex%ix) {
 
     if (m%$copyright_indicator_regex(?::\s*|\s+)(\S.*)$%ix) {
 	$match = $1;
@@ -347,25 +354,21 @@ sub parse_copyright {
 	    $copyright = $match;
 	}
     }
+    }
 
     return $copyright;
 }
 
 sub clean_comments {
     local $_ = shift or return q{};
-    my $first_match;
 
     # Remove generic comments: look for 4 or more lines beginning with
     # regular comment pattern and trim it. Fall back to old algorithm
     # if no such pattern found.
-    if( 4 <= scalar(($first_match)=m{ ^\s*
-                           ([^a-zA-Z0-9\s]{1,3})
-                           \s\w
-                       }xmg)
-    ){
-        my $comment_length=length($first_match);
-        my $comment_re=qr{\s*  [$1]{${comment_length}}  \s*}x;
-        s/^$comment_re//mg;
+    my @matches = m/^\s*([^a-zA-Z0-9\s]{1,3})\s\w/mg;
+    if (@matches >= 4) {
+	my $comment_re = qr/\s*[\Q$matches[0]\E]{1,3}\s*/;
+	s/^$comment_re//mg;
     }
 
     # Remove Fortran comments
@@ -411,7 +414,7 @@ EOF
 
 sub version {
     print <<"EOF";
-This is $progname, from the Debian devscripts package, version (2.13.1) UNRELEASED
+This is $progname, from the Debian devscripts package, version 
 Copyright (C) 2007, 2008 by Adam D. Barratt <adam\@adam-barratt.org.uk>; based
 on a script of the same name from the KDE SDK by <dfaure\@kde.org>.
 
@@ -493,7 +496,7 @@ sub parselicense {
     if ($licensetext =~ /THIS SOFTWARE IS PROVIDED .*AS IS AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY/) {
 	if ($licensetext =~ /All advertising materials mentioning features or use of this software must display the following acknowledge?ment.*This product includes software developed by/i) {
 	    $license = "BSD (4 clause) $license";
-	} elsif ($licensetext =~ /(The name .*? may not|Neither the names? .*? nor the names of (its|their|other) contributors may) be used to endorse or promote products derived from this software/i) {
+	} elsif ($licensetext =~ /(The name(?:\(s\))? .*? may not|Neither the (names? .*?|authors?) nor the names of( (its|their|other|any))? contributors may) be used to endorse or promote products derived from this software/i) {
 	    $license = "BSD (3 clause) $license";
 	} elsif ($licensetext =~ /Redistributions of source code must retain the above copyright notice/i) {
 	    $license = "BSD (2 clause) $license";

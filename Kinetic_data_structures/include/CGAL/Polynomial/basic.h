@@ -53,8 +53,9 @@ typedef CGAL::Gmpq Default_field_nt;
 } } //namespace CGAL::POLYNOMIAL
 #else
 #include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
 namespace CGAL { namespace POLYNOMIAL {
-typedef CGAL::MP_Float Default_field_nt;
+typedef CGAL::Quotient<CGAL::MP_Float> Default_field_nt;
 } } //namespace CGAL::POLYNOMIAL
 #endif
 

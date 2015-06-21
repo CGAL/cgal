@@ -3,7 +3,6 @@
 /// \ingroup PkgModularArithmetic
 /*!
 \addtogroup PkgModularArithmetic
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Modular Arithmetic,PkgModularArithmeticSummary}
 \cgalPkgPicture{Modular_arithmetic.png}
 \cgalPkgSummaryBegin

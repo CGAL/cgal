@@ -67,10 +67,10 @@ public:
           ch_facets.begin();it!=ch_facets.end();++it)
     {
       unsigned ifv_index= (*it)->index(t.infinite_vertex());
-      bool is_odd=ifv_index%2==0;
-      unsigned i0=get_vertex_index(vertex_map,(*it)->vertex((ifv_index + (is_odd?3:1) )%4),B,vindex);
+      bool is_even=ifv_index%2==0;
+      unsigned i0=get_vertex_index(vertex_map,(*it)->vertex((ifv_index + (is_even?3:1) )%4),B,vindex);
       unsigned i1=get_vertex_index(vertex_map,(*it)->vertex((ifv_index + 2            )%4),B,vindex);
-      unsigned i2=get_vertex_index(vertex_map,(*it)->vertex((ifv_index + (is_odd?1:3) )%4),B,vindex);
+      unsigned i2=get_vertex_index(vertex_map,(*it)->vertex((ifv_index + (is_even?1:3) )%4),B,vindex);
       B.begin_facet();
       B.add_vertex_to_facet( i0 );
       B.add_vertex_to_facet( i1 );

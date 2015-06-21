@@ -32,7 +32,6 @@ if `ep` is not constrained. Otherwise, it is `en` that is removed from `ecm`.
 using the specialization \link BGLPolyGT `boost::graph_traits< CGAL::Polyhedron_3<Traits> >` \endlink.
 
 \sa \link BGLPolyGT `boost::graph_traits< CGAL::Polyhedron_3<Traits> >` \endlink
-\sa `CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> >`
 
 */
 

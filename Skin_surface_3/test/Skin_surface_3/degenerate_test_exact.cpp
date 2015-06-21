@@ -1,4 +1,3 @@
-// examples/Skin_surface_3/skin_surface_simple.C
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Skin_surface_3.h>
@@ -31,7 +30,10 @@ public:
     std::ifstream in(filename.c_str());
     assert(in.is_open());
     Weighted_point wp;
-    while (in >> wp) l.push_front(wp);
+    double x, y, z, w;
+    while (in >> x >> y >> z >> w ) {
+      l.push_front(Weighted_point(Bare_point(x,y,z),w));
+    }
     
     Skin_surface_3 skin_surface(l.begin(), l.end(), s);
     

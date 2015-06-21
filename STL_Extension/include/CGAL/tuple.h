@@ -25,6 +25,15 @@
 
 #include <CGAL/config.h>
 
+// workaround issue in the tuple implementation of libc++
+// by falling back onto boost's
+#ifndef CGAL_CFG_NO_CPP0X_TUPLE
+  #include <cstddef>
+  #if defined( _LIBCPP_VERSION ) // check if libc++ is used
+    #define CGAL_CFG_NO_CPP0X_TUPLE
+  #endif
+#endif
+
 #ifndef CGAL_CFG_NO_CPP0X_TUPLE
 #  include <tuple>
 #else

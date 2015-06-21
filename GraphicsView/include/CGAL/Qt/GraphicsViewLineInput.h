@@ -114,7 +114,7 @@ GraphicsViewLineInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
       sp = convert(qsp);
       tp = convert(qtp);
       scene_->removeItem(&line);
-      emit generate(CGAL::make_object(typename K::Line_2(sp,tp)));
+      Q_EMIT generate(CGAL::make_object(typename K::Line_2(sp,tp)));
   } else {
     qsp = event->scenePos();
     qtp = QPointF(qsp.x()+1, qsp.y());

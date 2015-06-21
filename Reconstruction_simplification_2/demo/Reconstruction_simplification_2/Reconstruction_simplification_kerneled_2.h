@@ -28,21 +28,22 @@ typedef CGAL::First_of_pair_property_map<PointMassPair> Point_property_map;
 typedef CGAL::Second_of_pair_property_map<PointMassPair> Mass_property_map;
 
 typedef CGAL::Reconstruction_simplification_2<K, Point_property_map,
-		Mass_property_map> Reconstruction_simplification_2;
+		Mass_property_map> Rs_2;
 
 class Reconstruction_simplification_kerneled_2:
-		public Reconstruction_simplification_2 {
+		public Rs_2 {
 
 public:
-
-	Reconstruction_simplification_kerneled_2(InputIterator start,
-			InputIterator beyond, Point_property_map point_pmap, Mass_property_map mass_pmap) :
-			Reconstruction_simplification_2(start, beyond, point_pmap,
+  
+	template <typename InputRange>
+	Reconstruction_simplification_kerneled_2(const InputRange& input_range, 
+      Point_property_map point_pmap, Mass_property_map mass_pmap) :
+			Rs_2(input_range, point_pmap,
 					mass_pmap) {
 	}
 
 	Reconstruction_simplification_kerneled_2() :
-		Reconstruction_simplification_2() {
+		Rs_2() {
 	}
 
 	// RENDER //

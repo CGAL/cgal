@@ -28,7 +28,7 @@ public:
   QString toolTip() const;
 
   // Indicate if rendering mode is supported
-  virtual bool supportsRenderingMode(RenderingMode m) const { return m != Gouraud; } // CHECK THIS!
+  virtual bool supportsRenderingMode(RenderingMode m) const { return m != Gouraud && m!=Splatting; } // CHECK THIS!
   // OpenGL drawing in a display list
   void direct_draw() const;
   // Wireframe OpenGL drawing

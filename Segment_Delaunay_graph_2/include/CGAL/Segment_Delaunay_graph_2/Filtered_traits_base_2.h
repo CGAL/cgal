@@ -184,6 +184,9 @@ public:
 			C2E, C2F, E2C, F2C>
   Construct_svd_vertex_2;
 
+  // L2 traits do not contain bisector constructions
+  typedef Tag_false Tag_has_bisector_constructions;
+
   //  typedef typename CK::Construct_site_2   Construct_site_2;
 
   //  typedef typename CK_traits::Construct_sdg_circle_2

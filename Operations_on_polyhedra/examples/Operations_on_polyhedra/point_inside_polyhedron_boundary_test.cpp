@@ -6,47 +6,61 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
+
 #include <CGAL/Timer.h>
-#include <boost/lexical_cast.hpp>
+#include <boost/foreach.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
+
+
+typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
+typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+typedef boost::property_map<Polyhedron, boost::vertex_point_t>::const_type Ppmap;
 
 // this can produce false negatives
 // poly should be pure triangle
 void generate_near_boundary(const Polyhedron& poly, std::vector<Point>& points, std::vector<bool>& on_boundary) {
   CGAL_assertion(poly.is_pure_triangle());
 
-  std::size_t exp_size = poly.size_of_vertices() + poly.size_of_vertices() + poly.size_of_halfedges() / 2;
-  points.resize(exp_size);
-  on_boundary.resize(exp_size);
+  std::size_t exp_size = num_vertices(poly) + num_faces(poly) + num_edges(poly);
+  points.reserve(exp_size);
+  on_boundary.reserve(exp_size);
 
+  Ppmap ppmap = get(boost::vertex_point,poly);
   // put vertices
-  for(Polyhedron::Vertex_const_iterator vb = poly.vertices_begin(); vb != poly.vertices_end(); ++vb) {
-    points.push_back(vb->point());
+  vertex_descriptor vd;
+
+  BOOST_FOREACH(vertex_descriptor vb, vertices(poly)) {
+    points.push_back(ppmap[vb]);
     on_boundary.push_back(true);
   }
   // sample middle of edges
-  for(Polyhedron::Edge_const_iterator eb = poly.edges_begin(); eb != poly.edges_end(); ++eb) {
-    const Point& p0 = eb->vertex()->point();
-    const Point& p1 = eb->opposite()->vertex()->point();
+  BOOST_FOREACH(edge_descriptor eb, edges(poly)) {
+    halfedge_descriptor hd = halfedge(eb,poly);
+    const Point& p0 = ppmap[target(hd,poly)];
+    const Point& p1 = ppmap[target(opposite(hd,poly),poly)];
     const Point& m = CGAL::ORIGIN + (((p0 + (p1 - CGAL::ORIGIN)) - CGAL::ORIGIN ) / 2.0);
 
     bool has_on = false;
-    has_on |= CGAL::Triangle_3<K>(eb->vertex()->point(), eb->next()->vertex()->point(),
-      eb->prev()->vertex()->point()).has_on(m);
-    has_on |= CGAL::Triangle_3<K>(eb->opposite()->vertex()->point(), eb->opposite()->next()->vertex()->point(), 
-      eb->opposite()->prev()->vertex()->point()).has_on(m);
+    has_on |= CGAL::Triangle_3<K>(ppmap[target(hd,poly)], ppmap[target(next(hd,poly),poly)],
+                                  ppmap[target(prev(hd,poly),poly)]).has_on(m);
+    has_on |= CGAL::Triangle_3<K>(ppmap[target(opposite(hd,poly),poly)], ppmap[target(next(opposite(hd,poly),poly),poly)], 
+                                  ppmap[target(prev(opposite(hd,poly),poly),poly)]).has_on(m);
     
     points.push_back(m);
     on_boundary.push_back(has_on);
   }
   // sample middle of facets
-  for(Polyhedron::Facet_const_handle fb = poly.facets_begin(); fb != poly.facets_end(); ++fb) {
-    const Point& p0 = fb->halfedge()->vertex()->point();
-    const Point& p1 = fb->halfedge()->next()->vertex()->point();
-    const Point& p2 = fb->halfedge()->prev()->vertex()->point();
+  BOOST_FOREACH(face_descriptor fb, faces(poly)) {
+    const Point& p0 = ppmap[target(halfedge(fb,poly),poly)];
+    const Point& p1 = ppmap[target(next(halfedge(fb,poly),poly),poly)];
+    const Point& p2 = ppmap[target(prev(halfedge(fb,poly),poly),poly)];
 
     const Point& m = CGAL::centroid(p0, p1, p2);
     bool has_on = CGAL::Triangle_3<K>(p0, p1, p2).has_on(m);
@@ -77,7 +91,7 @@ void test(
   const std::vector<Point>& points,
   const std::vector<bool>& on_boundary = std::vector<bool>())
 {
-  std::cerr << "|V| = " << poly.size_of_vertices() << std::endl;
+  std::cerr << "|V| = " << num_vertices(poly) << std::endl;
 
   CGAL::Timer timer;
   timer.start();
@@ -85,7 +99,6 @@ void test(
   std::cerr << "  Preprocessing took " << timer.time() << " sec." << std::endl;
   timer.reset();  
 
-  timer.start();
   int nb_inside = 0;
   int nb_boundary = 0;
   for(std::size_t i = 0; i < points.size(); ++i) {
@@ -107,9 +120,10 @@ void test(
 }
 
 CGAL::Bbox_3 bbox(const Polyhedron& polyhedron) {
-  CGAL::Bbox_3 bbox(polyhedron.vertices_begin()->point().bbox());
-  for(Polyhedron::Vertex_const_iterator vb = polyhedron.vertices_begin(); vb != polyhedron.vertices_end(); ++vb) {
-    bbox = bbox + vb->point().bbox();
+  Ppmap ppmap = get(boost::vertex_point,polyhedron);
+  CGAL::Bbox_3 bbox(ppmap[*vertices(polyhedron).first].bbox());
+  BOOST_FOREACH(vertex_descriptor vb, vertices(polyhedron)) {
+    bbox = bbox + ppmap[vb].bbox();
   }
   return bbox;
 }
@@ -128,10 +142,10 @@ void from_file(const char* file_name, std::vector<Point>& points) {
   in.close();
 }
 
-int main() {
-  std::ifstream input("elephant.off");
+int main(int, char** argv) {
+  std::ifstream input(argv[1]);
   Polyhedron poly;
-  if ( !input || !(input >> poly) || poly.empty() ){
+  if ( !input || !(input >> poly) || poly.is_empty() ){
     std::cerr << "Error: can not read file.";
     return 1;
   }
@@ -141,7 +155,6 @@ int main() {
   std::vector<bool> on_boundary;
   generate_near_boundary(poly, points, on_boundary);
   test(poly, points, on_boundary);
-  to_file("elephant_3_boundary.txt", points);
 
   points.clear();
   const int nb_query = (int)1.e6;

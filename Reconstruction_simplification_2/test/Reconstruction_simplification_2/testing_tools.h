@@ -4,7 +4,7 @@
 template <class PointMassList, class Point>
 void load_xy_file(const std::string& filename, PointMassList& points)
 {
-   std::ifstream ifs(filename);
+   std::ifstream ifs(filename.c_str());
    Point point;
    while (ifs >> point)
       points.push_back(std::make_pair(point, 1));
@@ -15,7 +15,7 @@ void load_xy_file(const std::string& filename, PointMassList& points)
 template <class Point>
 void load_xy_file_points(const std::string& fileName, std::list<Point>& points)
 {
-   std::ifstream ifs(fileName);
+   std::ifstream ifs(fileName.c_str());
    Point point;
    while (ifs >> point)
    {

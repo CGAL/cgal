@@ -1,10 +1,10 @@
-#include <CGAL/Gmpz.h>
+#include <CGAL/Exact_integer.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/OFF_to_nef_3.h>
 
 int main()
 {
-   typedef CGAL::Homogeneous<CGAL::Gmpz>  Kernel;
+   typedef CGAL::Homogeneous<CGAL::Exact_integer>  Kernel;
    typedef CGAL::Nef_polyhedron_3<Kernel> Nef_3;
 
    Nef_3 N;

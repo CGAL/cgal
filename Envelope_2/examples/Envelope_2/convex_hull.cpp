@@ -2,7 +2,7 @@
 // Compute the convex hull of set of points using the lower envelope and upper
 // envelopes of their dual line.
 
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arr_curve_data_traits_2.h>
@@ -10,7 +10,7 @@
 #include <CGAL/envelope_2.h>
 #include <vector>
 
-typedef CGAL::Gmpq                                       Number_type;
+typedef CGAL::Exact_rational                             Number_type;
 typedef CGAL::Cartesian<Number_type>                     Kernel;
 typedef CGAL::Arr_linear_traits_2<Kernel>                Linear_traits_2;
 typedef Linear_traits_2::Point_2                         Point_2;

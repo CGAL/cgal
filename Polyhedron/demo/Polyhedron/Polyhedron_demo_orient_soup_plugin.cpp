@@ -23,18 +23,21 @@ public:
             Scene_interface* scene_interface,
             Messages_interface* m);
 
-  bool applicable() const {
+  bool applicable(QAction* action) const {
     Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices()) {
-      if(qobject_cast<Scene_polygon_soup_item*>(scene->item(index))||
-         qobject_cast<Scene_polyhedron_item*>(scene->item(index)))
+      if(qobject_cast<Scene_polygon_soup_item*>(scene->item(index)))
         return true;
+      else
+        if (action==actionShuffle && 
+            qobject_cast<Scene_polyhedron_item*>(scene->item(index)))
+            return true;
     }
     return false;
   }
 
   QList<QAction*> actions() const;
 
-public slots:
+public Q_SLOTS:
   void orient();
   void shuffle();
   void displayNonManifoldEdges();
@@ -89,29 +92,31 @@ void Polyhedron_demo_orient_soup_plugin::orient()
       //     qDebug()  << tr("I have the item %1\n").arg(item->name());
       QApplication::setOverrideCursor(Qt::WaitCursor);
       if(!item->orient()) {
-        messages->warning(tr("The polygon soup \"%1\" is not orientable.")
-                          .arg(item->name()));
-      //      QMessageBox::information(mw, tr("Not orientable"),
-      //                                tr("The polygon soup \"%1\" is not orientable.")
-      //                                .arg(item->name()));
-        scene->itemChanged(item);
-      } else {
-
-        Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
-        if(item->exportAsPolyhedron(poly_item->polyhedron())) {
-          poly_item->setName(item->name());
-          poly_item->setColor(item->color());
-          poly_item->setRenderingMode(item->renderingMode());
-          poly_item->setVisible(item->visible());
-          poly_item->changed();
-          poly_item->setProperty("source filename", item->property("source filename"));
-          scene->replaceItem(index, poly_item);
-          delete item;
-        } else {
-          scene->itemChanged(item);
-        }
+         QMessageBox::information(mw, tr("Not orientable without self-intersections"),
+                                      tr("The polygon soup \"%1\" is not directly orientable."
+                                         " Some vertices have been duplicated and some self-intersections"
+                                         " have been created.")
+                                      .arg(item->name()));
       }
+
+      Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
+      if(item->exportAsPolyhedron(poly_item->polyhedron())) {
+        poly_item->setName(item->name());
+        poly_item->setColor(item->color());
+        poly_item->setRenderingMode(item->renderingMode());
+        poly_item->setVisible(item->visible());
+        poly_item->changed();
+        poly_item->setProperty("source filename", item->property("source filename"));
+        scene->replaceItem(index, poly_item);
+        delete item;
+      } else {
+        scene->itemChanged(item);
+      }
+
       QApplication::restoreOverrideCursor();
+    }
+    else{
+      messages->warning(tr("This function is only applicable on polygon soups."));
     }
   }
 }

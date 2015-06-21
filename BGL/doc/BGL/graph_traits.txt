@@ -1,21 +1,60 @@
 /*!
 \defgroup PkgBGLTraits Specializations of boost::graph_traits
-Specializations of `boost::graph_traits` for \cgal types.
+
 \ingroup PkgBGL
 
-The boost %graph library (BGL) uses the type trait class
+\sc{Bgl} defines the class template
 <A HREF="http://www.boost.org/libs/graph/doc/graph_traits.html">`boost::graph_traits`</A>
-to provides a uniform interface to the properties and types of %graph types.
+as a uniform interface to the properties and types of %graph types.
+
+We provide specializations of this class template for several \cgal data structures. 
+
+\section BGLSMGT Specialization for the Surface_mesh Class
+
+Defined in `<CGAL/boost/graph/graph_traits_Surface_mesh.h>`
+
+We provide partial specialization for the class `CGAL::Surface_mesh` so that it is a model
+of the graph concepts
+<A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and
+<A HREF="http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html">`EdgeAndVertexListGraph`</A>
+and of the concept `MutableFaceGraph`.
+
+The const specialization, `boost::graph_traits< CGAL::Surface_mesh<Traits> const>`
+is also defined, using the constant handles in the polyhedron.
+
+The traits class `boost::graph_traits< CGAL::Surface_mesh<T> >` provides the following types:
+
+| Member                   | Value  | Description |
+| :----------------------- | :----: | :---------- |
+| `vertex_descriptor`      | `Surface_mesh::Vertex_index`     | The vertex descriptor |
+| `edge_descriptor`        | `Surface_mesh::Edge_index`   | The edge descriptor |
+| `halfedge_descriptor`    | `Surface_mesh::Halfedge_index`   | The halfedge descriptor |
+| `face_descriptor`        | `Surface_mesh::Face_index`       | The face descriptor |
+| `adjacency_iterator`     | `CGAL::Vertex_around_target_iterator<Surface_mesh<P> >` | Iterates through adjacent vertices|
+| `out_edge_iterator`      | `CGAL::Out_edge_iterator<Surface_mesh<P> >` | Iterate through the out-edges of a vertex. |
+| `in_edge_iterator`       | `CGAL::Out_edge_iterator<Surface_mesh<P> >` | Iterate through the in-edges of a vertex. |
+| `vertex_iterator`        | `Surface_mesh::Vertex_iterator`     | Iterate through the vertices of a polyhedron.|
+| `edge_iterator`          | `Surface_mesh::Edge_iterator`     | Iterate through the edges of a polyhedron.|
+| `halfedge_iterator`      | `Surface_mesh::Halfedge_iterator`     | Iterate through the halfedges of a polyhedron.|
+| `face_iterator`          | `Surface_mesh::Face_iterator`         | Iterate through the faces of a polyhedron.|
+| `directed_category`      | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag` and `boost::edge_list_graph_tag` | |
+| `edge_parallel_category` | `boost::disallow_parallel_edge_tag`   | Indicates that this graph does not support multiedges |
+| `traversal_category`     | `boost::bidirectional_graph_tag`      | Indicates that this graph is bidirectional |
+| `vertices_size_type`     | `Surface_mesh::vertices_size_type` | The size type of the vertex list |
+| `edges_size_type`        | `Surface_mesh::edges_size_type` | The size type of the edge list |
+| `degree_size_type`       | `Surface_mesh::degree_size_type` | The size type of the adjacency list |
+
+
 
 \section BGLPolyGT Specialization for the Polyhedron Class
 
 Defined in `<CGAL/boost/graph/graph_traits_Polyhedron_3.h>`
 
-Partial specialization for the class `CGAL::Polyhedron_3`. It provides the types associated
-to the
-<A HREF="http://www.boost.org/libs/graph/doc/graph_concepts.html">graph</A> concepts
+We provide partial specialization for the class `CGAL::Polyhedron_3` so that it is a model
+of the graph concepts
 <A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and
-<A HREF="http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html">`EdgeAndVertexListGraph`</A>.
+<A HREF="http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html">`EdgeAndVertexListGraph`</A>
+and of the concept `MutableFaceGraph`.
 
 The const specialization, `boost::graph_traits< CGAL::Polyhedron_3<Traits> const>`
 is also defined, using the constant handles in the polyhedron.
@@ -25,27 +64,35 @@ The traits class `boost::graph_traits< CGAL::Polyhedron_3<T> >` provides the fol
 | Member                   | Value  | Description |
 | :----------------------- | :----: | :---------- |
 | `vertex_descriptor`      | `Polyhedron_3::Vertex_handle`     | The vertex descriptor |
-| `edge_descriptor`        | `Polyhedron_3::Halfedge_handle`     | The edge descriptor |
-| `adjacency_iterator`     | Not provided | |
-| `out_edge_iterator`      | `unspecified_type` | An edge iterator which only iterates over the outgoing halfedges around a vertex. It corresponds to a `Polyhedron_3::Halfedge_around_vertex_circulator` with the difference that its value type is an edge descriptor and not `Polyhedron_3::Halfedge` |
-| `in_edge_iterator`       | `unspecified_type` | An edge iterator which only iterates over the incoming edges around a vertex. It corresponds to a `Polyhedron_3::Halfedge_around_vertex_circulator` with the difference that its value type is an edge descriptor and not `Polyhedron_3::Halfedge` |
-| `vertex_iterator`        | `unspecified_type`     | An iterator corresponding to `Polyhedron_3::Vertex_iterator`, with the difference that its value type is a vertex descriptor and not `Polyhedron_3::Vertex` |
-| `edge_iterator`          | `Polyhedron_3::Halfedge_iterator`     | An iterator corresponding to `Polyhedron_3::Halfedge_iterator` with the difference that its value type is an edge descriptor and not `Polyhedron_3::Halfedge` |
+| `edge_descriptor`        | `unspecified_type`   | The edge descriptor |
+| `halfedge_descriptor`    | `Polyhedron_3::Halfedge_handle`   | The halfedge descriptor |
+| `face_descriptor`        | `Polyhedron_3::Face_handle`       | The face descriptor |
+| `adjacency_iterator`     | `CGAL::Vertex_around_target_iterator<Polyhedron_3<T> >` | Iterates through adjacent vertices|
+| `out_edge_iterator`      | `CGAL::Out_edge_iterator<Polyhedron_3<T> >` | Iterate through the out-edges of a vertex. |
+| `in_edge_iterator`       | `CGAL::Out_edge_iterator<Polyhedron_3<T> >` | Iterate through the in-edges of a vertex. |
+| `vertex_iterator`        | `unspecified_type`     | Iterate through the vertices of a polyhedron.|
+| `edge_iterator`          | `unspecified_type`     | Iterate through the edges of a polyhedron.|
+| `halfedge_iterator`      | `Polyhedron_3::Halfedge_iterator`     | Iterate through the halfedges of a polyhedron.|
+| `face_iterator`          | `Polyhedron_3::Face_iterator`         | Iterate through the faces of a polyhedron.|
 | `directed_category`      | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag` and `boost::edge_list_graph_tag` | |
-| `edge_parallel_category` | boost::disallow_parallel_edge_tag | Indicates that this graph does not support multiedges |
-| `traversal_category`     | boost::bidirectional_graph_tag | Indicates that this graph is bidirectional |
-| `vertices_size_type`     | Polyhedron_3::size_type | The size type of the vertex list |
-| `edges_size_type`        | Polyhedron_3::size_type | The size type of the edge list |
-| `degree_size_type`       | Polyhedron_3::size_type | The size type of the adjacency list |
+| `edge_parallel_category` | `boost::disallow_parallel_edge_tag`   | Indicates that this graph does not support multiedges |
+| `traversal_category`     | `boost::bidirectional_graph_tag`      | Indicates that this graph is bidirectional |
+| `vertices_size_type`     | `Polyhedron_3::size_type` | The size type of the vertex list |
+| `edges_size_type`        | `Polyhedron_3::size_type` | The size type of the edge list |
+| `degree_size_type`       | `Polyhedron_3::size_type` | The size type of the adjacency list |
 
+For convenience, the type `edge_descriptor` is hashable using the functor `CGAL::Handle_hash_function`
+that is the default hash functor of `CGAL::Unique_hash_map`.
 
 \section BGLT2GT Specializations for the 2D Triangulation Classes
 
 Defined in `<CGAL/boost/graph/graph_traits_Triangulation_2.h>` and `<CGAL/boost/graph/graph_traits_Delaunay_triangulation_2.h>`
 
-The triangulations of \cgal are all models of the concepts
-`BidirectionalGraph` and `VertexAndEdgeListGraph` of the Boost Graph
-Library \cgalCite{cgal:sll-bgl-02}.
+We provide partial specialization for the classes `CGAL::Triangulation_2` and `CGAL::Delaunay_triangulation_2`
+so that they are model of the graph concepts
+<A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and
+<A HREF="http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html">`EdgeAndVertexListGraph`</A>.
+
 
 The mapping between vertices and edges of the triangulation and the
 graph is rather straightforward, but there are some subtleties. The
@@ -56,7 +103,7 @@ hence have as value type Vertex or Edge.
 The graph traits class for triangulations does not distinguish between
 finite and infinite vertices and edges. As the edge weight computed
 with the default property map of \sc{Bgl} algorithms (obtained with
-`boost::get(t, boost::edge_weight)`) is the length of the edge,
+`get(t, boost::edge_weight)`) is the length of the edge,
 the edge weight is not well defined for infinite edges. For algorithms
 that make use of the edge weight the user must therefore
 define a <A HREF="http://www.boost.org/libs/graph/doc/filtered_graph.html">`boost::filtered_graph`</A> or pass a property map to the
@@ -92,9 +139,8 @@ provide the following types:
 
 Defined in `<CGAL/boost/graph/graph_traits_Arrangement_2.h>`
 
-
-The class `Arrangement_2` is a model of to the
-<A HREF="http://www.boost.org/libs/graph/doc/graph_concepts.html">graph</A> concepts
+We provide partial specialization for the class  `Arrangement_2`
+so that it is model of the graph concepts
 <A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and
 <A HREF="http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html">`EdgeAndVertexListGraph`</A>.
 

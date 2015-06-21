@@ -33,12 +33,13 @@ typedef unspecified_type Profile;
 /*!
 The point type for the surface mesh vertex. Must be a model of `Point_3`. 
 */ 
-typename CGAL::halfedge_graph_traits<ECM>::Point Point; 
+typename unspecified_type Point; 
 
 /*!
 An integer type representing the number of edges 
 */ 
 typedef unspecified_type size_type; 
+
 
 /// @} 
 
@@ -101,6 +102,11 @@ the edge will not be collapsed.
 void OnCollapsing( Profile const& profile 
 , boost::optional<Point> placement 
 ); 
+
+/*!
+Called when an edge has been collapsed and replaced by the vertex `vd`
+*/
+void OnCollapsed( Profile const&, Profile::vertex_descriptor const& vd) {}
 
 /*!
 Called for each selected edge which cannot be 

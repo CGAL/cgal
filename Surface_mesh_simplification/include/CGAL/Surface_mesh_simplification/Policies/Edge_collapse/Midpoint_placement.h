@@ -27,26 +27,18 @@ namespace CGAL {
 namespace Surface_mesh_simplification
 {
 
-template<class ECM_>
+  template<class ECM_>
 class Midpoint_placement
 {
 public:
     
-  typedef ECM_ ECM ;
+  Midpoint_placement()
+  {}
   
-  typedef Edge_profile<ECM> Profile ;
-  
-  typedef typename halfedge_graph_traits<ECM>::Point Point ;
-  
-  typedef optional<Point> result_type ;
-    
-public:
-
-  Midpoint_placement() {}
-  
-  result_type operator()( Profile const& aProfile ) const
+  template <typename Profile>
+  optional<typename Profile::Point> operator()( Profile const& aProfile ) const
   {
-    return result_type(midpoint(aProfile.p0(),aProfile.p1()));
+    return optional<typename Profile::Point> (midpoint(aProfile.p0(),aProfile.p1()));
   }
 
 };

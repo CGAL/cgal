@@ -239,7 +239,6 @@ CGAL_postcondition_code(do {)
             CGAL_postcondition_code(++cc);
             CGAL_postcondition_code(} while (cc != ce));
             return ret;*/
-
 }
 
 

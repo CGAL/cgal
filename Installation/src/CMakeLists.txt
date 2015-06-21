@@ -103,6 +103,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CGAL_RUNTIME_DIR})
 #  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONF_TYPE} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 #endforeach()
 
+# TODO: Seems useless, because it is called again in ../CMakeLists.txt
+#       Should probably be removed. -- Laurent Rineau, 2014/07/22
 create_CGALconfig_files()
 
 set(CGAL_DIR ${CMAKE_BINARY_DIR})
@@ -110,7 +112,7 @@ set(CGAL_DIR ${CMAKE_BINARY_DIR})
 add_subdirectory(CGAL)
 
 # search libs
-set(CGAL_CONFIGURED_LIBRARIES "" PARENT_SCOPE)
+set(CGAL_CONFIGURED_LIBRARIES "")
  
 foreach(package ${CGAL_CONFIGURED_PACKAGES}) 
   file(GLOB CONFIGURED_LIBS_IN_PACKAGE ${package}/src/CGAL_*/CMakeLists.txt)
@@ -128,8 +130,7 @@ foreach(package ${CGAL_CONFIGURED_PACKAGES})
       cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_INCLUDE_DIRS   "" )
       cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES      "" )
       cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES_DIRS "" ) 
-
-      if (${CGAL_CONFIGURED_LIBRARY_NAME} STREQUAL "Core") 
+      if (${CGAL_CONFIGURED_LIBRARY_NAME} STREQUAL "CGAL_Core") 
         if (NOT CGAL_NO_CORE)
           configure_component( ${package}/src/${CGAL_CONFIGURED_LIBRARY_NAME} ${CGAL_CONFIGURED_LIBRARY_NAME})
         else(NOT CGAL_NO_CORE)

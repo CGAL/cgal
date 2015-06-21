@@ -16,7 +16,7 @@ class Values_delegate : public QItemDelegate
 public:
   Values_delegate(QWidget* parent);
 
-signals:
+Q_SIGNALS:
   void new_color(const QModelIndex&) const;
   void new_value(const QModelIndex&) const;
 
@@ -49,7 +49,7 @@ public:
   const QTreeWidgetItem* item(const int i) const;
   const QTreeWidgetItem* search(const double value) const;
 
-public slots:
+public Q_SLOTS:
   void save_values(QString) const;
   void load_values(QString);
   void on_plusButton_clicked();
@@ -60,10 +60,10 @@ public slots:
 
   void setHeaderTitle(QString);
 
-private slots:
+private Q_SLOTS:
   void update_items_cache();
 
-signals:
+Q_SIGNALS:
   void changed();
   void colors_changed();
   void values_changed();

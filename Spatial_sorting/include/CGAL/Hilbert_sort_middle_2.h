@@ -125,9 +125,26 @@ public:
     template <class RandomAccessIterator>
     void operator() (RandomAccessIterator begin, RandomAccessIterator end) const
     {
-      Bbox_2 box=bbox_2(begin, end);
-      sort <0, false, false> (begin, end, 
-			      box.xmin(), box.ymin(), box.xmax(), box.ymax());
+      //Bbox_2 box=bbox_2(begin, end); BUG: WE NEED TO FIX THIS
+
+		K k;
+	    double xmin=to_double(k.compute_x_2_object()(*begin)),
+		     ymin=to_double(k.compute_y_2_object()(*begin)),
+	  	     xmax=xmin,
+		     ymax=ymin;
+		
+	    for(RandomAccessIterator it=begin+1; it<end; ++it){
+			if ( to_double(k.compute_x_2_object()(*it)) < xmin) 
+		  		xmin = to_double(k.compute_x_2_object()(*it));
+			if ( to_double(k.compute_y_2_object()(*it)) < ymin) 
+		  		ymin = to_double(k.compute_y_2_object()(*it));
+			if ( to_double(k.compute_x_2_object()(*it)) > xmax) 
+		  		xmax = to_double(k.compute_x_2_object()(*it));
+			if ( to_double(k.compute_y_2_object()(*it)) > ymax) 
+		  		ymax = to_double(k.compute_y_2_object()(*it));
+	    }
+
+        sort <0, false, false> (begin, end, xmin, ymin, xmax, ymax);
     }
 };
 

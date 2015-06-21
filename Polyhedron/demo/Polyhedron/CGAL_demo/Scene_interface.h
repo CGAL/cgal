@@ -12,6 +12,7 @@ class Scene_item;
 // OpenGL rendering mode
 enum RenderingMode { Points = 0,
                      PointsPlusNormals,
+                     Splatting,
                      Wireframe, 
                      Flat,
                      FlatPlusEdges,
@@ -87,6 +88,7 @@ public:
   // Accessors (getters)
   virtual int numberOfEntries() const = 0;
   virtual Scene_item* item(Item_id) const = 0;
+  virtual Item_id item_id(Scene_item*) const = 0;
   virtual Item_id mainSelectionIndex() const = 0;
   virtual QList<Item_id> selectionIndices() const = 0;
   virtual Item_id selectionAindex() const = 0;

@@ -34,7 +34,7 @@ public:
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
 
-  bool applicable() const {
+  bool applicable(QAction*) const {
     return qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
@@ -42,7 +42,7 @@ public:
     return QList<QAction*>() << actionSimplify;
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionSimplify_triggered();
 
 }; // end Polyhedron_demo_point_set_simplification_plugin

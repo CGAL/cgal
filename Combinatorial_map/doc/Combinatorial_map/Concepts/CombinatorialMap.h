@@ -690,6 +690,37 @@ void swap(CombinatorialMap& cmap);
 
 /// @}
 
+/// \name Attributes management
+/// @{
+
+/*!
+Returns the status of the management of the attributes of the combinatorial map. <code>true</code> if the high level operations update the non void attributes (default value); <code>false</code> otherwise.
+*/
+bool are_attributes_automatically_managed() const;
+
+/*!
+Set the status of the managment of the attributes of the combinatorial map.
+
+\cgalAdvancedBegin
+After calling `set_automatic_attributes_management(false)`, all high level operations will not update non void attributes, until the call of `set_automatic_attributes_management(true)`. The call of `set_automatic_attributes_management(true)` call the \link CombinatorialMap::correct_invalid_attributes `correct_invalid_attributes()`\endlink function.
+\cgalAdvancedEnd
+
+*/
+void set_automatic_attributes_management(bool update_attributes);
+
+/*!
+Correct the invalid attributes of the combinatorial map.
+We can have invalid attribute either if we have called \link CombinatorialMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink before to use some modification operations or if we have modified the combinatorial map by using low level operations.
+
+\f$ \forall i \f$, 0 \f$ \leq \f$ i \f$ \leq \f$ \ref CombinatorialMap::dimension "dimension" such that the i-attributes are non void, \f$ \forall \f$ d \f$ \in\f$`darts()`:
+ - if there exists a dart `d2` in the same i-cell than `d` with a different i-attribute, then the i-attribute of `d2` is set to the i-attribute of `d`;
+ - if there exists a dart `d2` in a different i-cell than `d` with the same i-attribute, then the i-attribute of all the darts in i-cell(`d`) is set to a new i-attribute (copy of the original attribute);
+ - ensures that \link CombinatorialMap::dart_of_attribute `dart_of_attribute(d)`\endlink \f$ \in \f$ i-cell(`d`).
+*/
+void correct_invalid_attributes();
+
+/// @}
+
 /// \name Operations
 /// @{
 
@@ -719,7 +750,8 @@ satisfying: <I>f</I>(<I>*dh1</I>)=<I>*dh2</I>, and for all <I>e</I>\f$ \in\f$<I>
 <I>j</I>\f$ \in\f${1,\f$ \ldots\f$,<I>i</I>-2,<I>i</I>+2,\f$ \ldots\f$,<I>d</I>},
 <I>f</I>(\f$ \beta_j\f$(<I>e</I>))=\f$ \beta_j^{-1}\f$(<I>f</I>(<I>e</I>)).
 
-If `update_attributes` is `true`, when necessary, non void
+If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`,
+when necessary, non void
 attributes are updated to ensure the validity of the combinatorial map: for each
 <I>j</I>-cells <I>c1</I> and <I>c2</I> which are merged into one <I>j</I>-cell during
 the sew, the two associated attributes <I>attr1</I> and <I>attr2</I> are
@@ -734,20 +766,20 @@ the two attributes <I>attr1</I> and <I>attr2</I>. If set, the dynamic onmerge fu
 \pre \ref CombinatorialMap::is_sewable "is_sewable<i>(dh1,dh2)".
 
 \cgalAdvancedBegin
-If `update_attributes` is `false`, non void attributes are
+If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are
 not updated; thus the combinatorial map can be no more valid after this operation.
 \cgalAdvancedEnd
 
 */
-template <unsigned int i> void sew(Dart_handle dh1,
-Dart_handle dh2, bool update_attributes=true);
+template <unsigned int i> void sew(Dart_handle dh1,Dart_handle dh2);
 
 /*!
   <I>i</I>-unsew darts `*dh` and \f$ \beta_i\f$`(*dh)`, by keeping the combinatorial map valid.
 Unlinks by \f$ \beta_i\f$ all the darts in the
 orbit
 \f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(`*dh`). If
-`update_attributes` is `true`, when necessary, non void
+\link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`,
+when necessary, non void
 attributes are updated to ensure the validity of the combinatorial map: for each
 <I>j</I>-cell <I>c</I> split in two <I>j</I>-cells <I>c1</I> and <I>c2</I> by the
 operation, if <I>c</I> is associated to a <I>j</I>-attribute <I>attr1</I>, then
@@ -760,17 +792,17 @@ two attributes <I>attr1</I> and <I>attr2</I>. If set, the dynamic onsplit functi
      `*dh`\f$ \in\f$`darts()` and `*dh` is not <I>i</I>-free.
 
 \cgalAdvancedBegin
-If `update_attributes` is `false`, non void attributes are
+If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are
 not updated thus the combinatorial map can be no more valid after this operation.
 \cgalAdvancedEnd
 */
-template <unsigned int i> void unsew(Dart_handle dh, bool
-update_attributes=true);
+template <unsigned int i> void unsew(Dart_handle dh);
 
 /*!
 Links `*dh1` and `*dh2` by \f$ \beta_i\f$.
 The combinatorial map can be no more valid after this operation. If
-`update_attributes` is true, non void attributes of `*dh1` and
+\link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`,
+non void attributes of `*dh1` and
 `*dh2` are updated: if one dart has an attribute and the second
 dart not, the non null attribute is associated to the dart having a null attribute.
 If both darts have an attribute,
@@ -778,7 +810,7 @@ the attribute of `*dh1` is associated to `*dh2`.
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension",
     `*dh1`\f$ \in\f$`darts()`, `*dh2`\f$ \in\f$`darts()` and (<I>i</I>\f$ <\f$ 2 or `dh1`\f$ \neq\f$`dh2`).
 */
-template <unsigned int i> void link_beta(Dart_handle dh1, Dart_handle dh2, bool update_attributes=true);
+template <unsigned int i> void link_beta(Dart_handle dh1, Dart_handle dh2);
 
 /*!
 Unlinks `*dh` and \f$ \beta_i\f$(`*dh`) by \f$ \beta_i\f$.

@@ -27,6 +27,8 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_3.h>
+#include <CGAL/Has_timestamp.h>
+#include <CGAL/tags.h>
 
 #include <set>
 
@@ -44,6 +46,8 @@ private:
   typedef CGAL::HalfedgeDS_vertex_base<Refs, Tag, Point> Pdv_base;
   
   Set_of_indices indices;
+  std::size_t time_stamp_;
+
 public:
   int nb_of_feature_edges;
   
@@ -58,6 +62,18 @@ public:
   void add_incident_patch(const Patch_id i) {
     indices.insert(i);
   }
+
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+  ///@}
   
   const Set_of_indices&
   incident_patches_ids_set() const {
@@ -74,6 +90,8 @@ public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
 {
 private:
   bool feature_edge;
+  std::size_t time_stamp_;
+
 public:
   
   Mesh_polyhedron_halfedge() 
@@ -87,7 +105,32 @@ public:
     feature_edge = b;
     this->opposite()->feature_edge = b;
   }
+
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+  ///@}
 };
+
+template <typename Integral>
+inline std::pair<Integral, Integral>
+patch_id_default_value(std::pair<Integral, Integral>)
+{
+  return std::pair<Integral, Integral>(1, 0);
+}
+
+template <typename Integral>
+inline Integral patch_id_default_value(Integral)
+{
+  return Integral(1);
+}
 
 template <class Refs, class T_, class Pln_, class Patch_id_>
 class Mesh_polyhedron_face : 
@@ -95,12 +138,14 @@ public CGAL::HalfedgeDS_face_base<Refs,T_,Pln_>
 {
 private:
   Patch_id_ patch_id_;
+  std::size_t time_stamp_;
+
 public:
 
   typedef Patch_id_ Patch_id;
   
   Mesh_polyhedron_face() 
-  : patch_id_(1) {}
+  : patch_id_(patch_id_default_value(Patch_id())) {}
   
   const Patch_id& patch_id() const {
     return patch_id_;
@@ -109,7 +154,21 @@ public:
   void set_patch_id(const Patch_id& i) {
     patch_id_ = i;
   }
+
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+  ///@}
 };
+
+
 
 template <typename Patch_id>
 class Mesh_polyhedron_items : public CGAL::Polyhedron_items_3 {
@@ -153,7 +212,6 @@ struct Mesh_polyhedron_3
   typedef type Type;
 };
 
-  
 } // end namespace CGAL
 
 #endif // CGAL_MESH_POLYHEDRON_3_H

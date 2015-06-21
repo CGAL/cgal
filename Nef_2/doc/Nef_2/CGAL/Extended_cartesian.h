@@ -10,11 +10,7 @@ representation based on a field number type `FT`.
 
 \cgalModels `ExtendedKernelTraits_2`
 
-\cgalHeading{Requirements}
-
-To make a field number type `FT_model` work with this class, you 
-must provide a specialization of the traits class 
-`Number_type_traits<FT_model>` 
+\tparam FT  must be a model of `FieldNumberType`.
 
 
 

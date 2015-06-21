@@ -223,9 +223,9 @@ namespace CommonKernelFunctors {
       if(sc_prod_1 >= 0 ) {
         if(cosine >= 0) {
           // the two cosine are >= 0, cosine is decreasing on [0,1]
-          return compare(CGAL::square(cosine)*
-                         abac1.squared_length()*abad1.squared_length(),
-                         CGAL::square(sc_prod_1));
+          return CGAL::compare(CGAL::square(cosine)*
+                               abac1.squared_length()*abad1.squared_length(),
+                               CGAL::square(sc_prod_1));
         }
         else {
           return SMALLER;
@@ -234,9 +234,9 @@ namespace CommonKernelFunctors {
       else {
         if(cosine < 0) {
           // the two cosine are < 0, cosine is increasing on [-1,0]
-          return compare(CGAL::square(sc_prod_1),
-                         CGAL::square(cosine)*
-                         abac1.squared_length()*abad1.squared_length());
+          return CGAL::compare(CGAL::square(sc_prod_1),
+                               CGAL::square(cosine)*
+                               abac1.squared_length()*abad1.squared_length());
         }
         else
           return LARGER;
@@ -272,10 +272,10 @@ namespace CommonKernelFunctors {
       if(sc_prod_1 >= 0 ) {
         if(sc_prod_2 >= 0) {
           // the two cosine are >= 0, cosine is decreasing on [0,1]
-          return compare(CGAL::square(sc_prod_2)*
-                         abac1.squared_length()*abad1.squared_length(),
-                         CGAL::square(sc_prod_1)*
-                         abac2.squared_length()*abad2.squared_length());
+          return CGAL::compare(CGAL::square(sc_prod_2)*
+                               abac1.squared_length()*abad1.squared_length(),
+                               CGAL::square(sc_prod_1)*
+                               abac2.squared_length()*abad2.squared_length());
         }
         else {
           return SMALLER;
@@ -284,10 +284,10 @@ namespace CommonKernelFunctors {
       else {
         if(sc_prod_2 < 0) {
           // the two cosine are < 0, cosine is increasing on [-1,0]
-          return compare(CGAL::square(sc_prod_1)*
-                         abac2.squared_length()*abad2.squared_length(),
-                         CGAL::square(sc_prod_2)*
-                         abac1.squared_length()*abad1.squared_length());
+          return CGAL::compare(CGAL::square(sc_prod_1)*
+                               abac2.squared_length()*abad2.squared_length(),
+                               CGAL::square(sc_prod_2)*
+                               abac1.squared_length()*abad1.squared_length());
         }
         else
           return LARGER;
@@ -306,14 +306,14 @@ namespace CommonKernelFunctors {
     result_type
     operator()(const T1& p, const T2& q, const FT& d2) const
     {
-      return CGAL_NTS compare(squared_distance(p, q), d2);
+      return CGAL::compare(squared_distance(p, q), d2);
     }
 
     template <class T1, class T2, class T3, class T4>
     result_type
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
-      return CGAL_NTS compare(squared_distance(p, q), squared_distance(r, s));
+      return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
     }
   };
 
@@ -328,14 +328,14 @@ namespace CommonKernelFunctors {
     result_type
     operator()(const T1& p, const T2& q, const FT& d2) const
     {
-      return CGAL_NTS compare(squared_distance(p, q), d2);
+      return CGAL::compare(squared_distance(p, q), d2);
     }
 
     template <class T1, class T2, class T3, class T4>
     result_type
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
-      return CGAL_NTS compare(squared_distance(p, q), squared_distance(r, s));
+      return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
     }
   };
 

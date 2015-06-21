@@ -1,3 +1,4 @@
+#define BOOST_FILESYSTEM_VERSION 2
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -14,7 +15,7 @@
 #include <sstream>
 #include <stdlib.h>
 #include <algorithm>
-#include <tr1/memory>
+#include <boost/shared_ptr.hpp>
 
 #include "thread_queue.h"
 
@@ -50,7 +51,7 @@ template <class C3T3, class Domain> struct Optimizer;
 template <class C3T3, class MeshCriteria, class Domain>
 struct Mesher
 {
-  Mesher(const std::tr1::shared_ptr<Domain_builder<Domain> >& pdomain_builder,
+  Mesher(const boost::shared_ptr<Domain_builder<Domain> >& pdomain_builder,
          const int mesh_nb,
          const std::string& filename,
          const std::string& output,
@@ -94,7 +95,7 @@ struct Mesher
     timer.start();
 
     // we keep c3t3 between lines
-    std::tr1::shared_ptr<C3T3> pc3t3_save (new C3T3());
+    boost::shared_ptr<C3T3> pc3t3_save (new C3T3());
 
     // Generate Mesh
     file_out << "Generate mesh...";
@@ -182,7 +183,7 @@ private:
   }
   
 private:
-  std::tr1::shared_ptr<Domain_builder<Domain> > pdomain_builder_;
+  boost::shared_ptr<Domain_builder<Domain> > pdomain_builder_;
   int mesh_nb_;
   std::string filename_;
   std::string output_prefix_;
@@ -195,8 +196,8 @@ private:
 template <class C3T3, class Domain>
 struct Optimizer
 {
-  Optimizer(const std::tr1::shared_ptr<C3T3>& pc3t3,
-            const std::tr1::shared_ptr<Domain_builder<Domain> >& pdomain_builder,
+  Optimizer(const boost::shared_ptr<C3T3>& pc3t3,
+            const boost::shared_ptr<Domain_builder<Domain> >& pdomain_builder,
             const int mesh_nb,
             const std::string& output,
             const std::string& command_line)
@@ -338,8 +339,8 @@ private:
 
   
 private:
-  std::tr1::shared_ptr<C3T3> pc3t3_;
-  std::tr1::shared_ptr<Domain_builder<Domain> > pdomain_builder_;
+  boost::shared_ptr<C3T3> pc3t3_;
+  boost::shared_ptr<Domain_builder<Domain> > pdomain_builder_;
   std::string mesh_nb_;
   std::string output_prefix_;
   std::string command_line_;
@@ -408,32 +409,32 @@ void save_histogram(const std::string& filename,
 		const Point_3& p3 = cit->vertex(3)->point();
 		
 		double a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p0,p1,p2,p3)));
-		histo[std::floor(a)] += 1;
+		histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
 
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p0, p2, p1, p3)));
-		histo[std::floor(a)] += 1;
+		histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
 
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p0, p3, p1, p2)));
-		histo[std::floor(a)] += 1;
+		histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
 
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p1, p2, p0, p3)));
-		histo[std::floor(a)] += 1;
+		histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
 
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p1, p3, p0, p2)));
-		histo[std::floor(a)] += 1;
+		histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
 
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p2, p3, p0, p1)));
-		histo[std::floor(a)] += 1;
+		histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
 
@@ -570,7 +571,7 @@ void mesh(const std::string& data, const std::string& output_dir, const int nb_t
     //Load the domain
     std::stringstream cout_loc;
     cout_loc << "+ [" << filename << "] Create domain...";
-    std::tr1::shared_ptr<Domain_builder<Domain> > pdomain_builder(new Domain_builder<Domain>(it->string()));     
+    boost::shared_ptr<Domain_builder<Domain> > pdomain_builder(new Domain_builder<Domain>(it->path().string()));
     cout_loc << "done (" << timer.time() << "s)\n";
     std::cout << cout_loc.str();
     

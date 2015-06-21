@@ -79,17 +79,7 @@ mark_domains(CDT& cdt)
   }
 }
 
-void insert_polygon(CDT& cdt,const Polygon_2& polygon){
-  if ( polygon.is_empty() ) return;
-  CDT::Vertex_handle v_prev=cdt.insert(*CGAL::cpp11::prev(polygon.vertices_end()));
-  for (Polygon_2::Vertex_iterator vit=polygon.vertices_begin();
-       vit!=polygon.vertices_end();++vit)
-  {
-    CDT::Vertex_handle vh=cdt.insert(*vit);
-    cdt.insert_constraint(vh,v_prev);
-    v_prev=vh;
-  }  
-}
+
 
 int main( )
 {
@@ -105,10 +95,10 @@ int main( )
   polygon2.push_back(Point(1.5,1.5));
   polygon2.push_back(Point(0.5,1.5));
   
-  //Insert the polyons into a constrained triangulation
+  //Insert the polygons into a constrained triangulation
   CDT cdt;
-  insert_polygon(cdt,polygon1);
-  insert_polygon(cdt,polygon2);
+  cdt.insert_constraint(polygon1.vertices_begin(), polygon1.vertices_end(), true);
+  cdt.insert_constraint(polygon2.vertices_begin(), polygon2.vertices_end(), true);
   
   //Mark facets that are inside the domain bounded by the polygon
   mark_domains(cdt);

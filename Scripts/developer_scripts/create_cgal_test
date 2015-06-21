@@ -99,7 +99,7 @@ compile_and_run()
   echo "Compiling \$1 ... "
   SUCCESS="y"
 
-  if eval '\${MAKE_CMD} VERBOSE=ON -fMakefile \$1' ; then
+  if eval '"\${MAKE_CMD}" VERBOSE=ON -fMakefile \$1' ; then
     echo "   successful compilation of \$1" >> \$ERRORFILE
   else
     echo "   ERROR:    compilation of \$1" >> \$ERRORFILE
@@ -151,6 +151,11 @@ if [ \$# -ne 0 ] ; then
 else
   echo "Run all tests."
 EOF
+
+  # workaround for Cygwin, to avoid that the 'sort' from
+  # C:\Windows\system32 is used instead of /usr/bin/sort
+  PATH=/usr/bin:$PATH
+
   for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
     if [ -n "`grep '\<main\>' $file`" ] ; then
       tmp=`basename $file .C`
@@ -172,7 +177,7 @@ fi
 #
 if [ -n "\${NEED_CLEAN}" ]; then
   if ! ( uname | grep -q "CYGWIN" ) ; then
-    \${MAKE_CMD} -fMakefile clean
+    "\${MAKE_CMD}" -fMakefile clean
   fi
 fi
 EOF

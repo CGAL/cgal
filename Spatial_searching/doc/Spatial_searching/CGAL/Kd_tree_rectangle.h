@@ -7,12 +7,18 @@ The class `Kd_tree_rectangle` implements `d`-dimensional iso-rectangles and rela
 e.g., methods to compute bounding boxes of point sets. 
 
 */
-template< typename FT >
+template< typename FT , typename Dimension>
 class Kd_tree_rectangle {
 public:
 
 /// \name Types 
 /// @{
+
+/*!
+Dimension type. Either `CGAL::Dimension_tag`
+or `CGAL::Dynamic_dimension_tag`.
+*/
+typedef Dimension Dimension;
 
 /*!
 Number type. 
@@ -82,7 +88,7 @@ int dimension() const;
 Splits rectangle in dimension `d` at coordinate-value `value` 
 by modifying itself to lower half and by modifying `r` to upper half. 
 */ 
-void split(Kd_tree_rectangle<FT>& r, int d, FT value); 
+void split(Kd_tree_rectangle<FT,Dimension>& r, int d, FT value); 
 
 /// @}
 

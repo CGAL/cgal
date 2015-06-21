@@ -5,7 +5,21 @@
 #include <cassert>
 
 // choose number type
-#ifdef CGAL_USE_GMP
+
+// choose number type
+#ifdef CGAL_USE_LEDA
+
+#  include <CGAL/leda_rational.h>
+typedef leda_rational                     exact_ring_t;
+typedef leda_rational                     exact_field_t;
+
+namespace CGAL {
+// needed for the drawing methods
+leda_rational sqrt(const leda_rational& x) {
+  return leda_rational(  CGAL::sqrt( CGAL::to_double(x) )  );
+}
+}
+#elif defined( CGAL_USE_GMP )
 
 #  include <CGAL/Gmpq.h>
 typedef CGAL::Gmpq                     exact_ring_t;
@@ -35,8 +49,8 @@ typedef exact_field_t  field_number_t;
 #include <CGAL/Segment_Delaunay_graph_2.h>
 #include <CGAL/Segment_Delaunay_graph_traits_2.h>
 
-struct K_ring  : public CGAL::Simple_cartesian<ring_number_t> {};
-struct K_field : public CGAL::Simple_cartesian<field_number_t> {};
+typedef CGAL::Simple_cartesian<ring_number_t> K_ring;
+typedef CGAL::Simple_cartesian<field_number_t> K_field;
 
 typedef CGAL::Field_tag  MTag;
 typedef CGAL::Integral_domain_without_division_tag   MTag_wi;

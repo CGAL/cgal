@@ -25,7 +25,6 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Kernel_traits.h>
 #include <vector>
-#include <boost/mpl/has_xxx.hpp>
 
 /* Definition of functors used internally to manage attributes (we need
  * functors as attributes are stored in tuple, thus all the access must be
@@ -65,12 +64,6 @@
  * internal::Test_is_same_attribute_functor<Map1, Map2> to test if two
  *   i-attributes of two darts are isomorphic.
  *
- * internal::Is_attribute_has_non_void_info<Attr> to test if the attribute
- *   Attr is non Void and has an non void Info as inner type
- *
- * internal::Is_attribute_has_point<Attr> to test if the attribute
- *   Attr is non Void and has a Point inner type
- *
  * internal::Reverse_orientation_of_map_functor<CMap> to reverse the
  *   orientation of a whole combinatorial map
  *
@@ -83,6 +76,11 @@
 
 namespace CGAL
 {
+//-----------------------------------------------------------------------------
+template<typename Attr>
+struct Is_attribute_has_non_void_info;
+template<typename Attr>
+struct Is_attribute_has_point;
 // ****************************************************************************
 namespace internal
 {
@@ -208,8 +206,10 @@ struct Test_is_valid_attribute_functor
         a=amap->template attribute<i>(adart);
 
     unsigned int nb = 0;
-    for ( CGAL::CMap_dart_const_iterator_basic_of_cell<CMap,i>
-          it(*amap, adart, amark); it.cont(); ++it )
+    for ( typename
+            CMap::template Dart_of_cell_basic_const_range<i>::const_iterator
+            it=amap->template darts_of_cell_basic<i>(adart, amark).begin();
+          it.cont(); ++it )
     {
       if ( amap->template attribute<i>(it) != a )
       {
@@ -259,6 +259,67 @@ struct Test_is_valid_attribute_functor
     }
 
     if ( !valid ) (*ares)=false;
+  }
+};
+// ****************************************************************************
+/// Functor used to correct invalid attributes in an i-cell
+template<typename CMap>
+struct Correct_invalid_attributes_functor
+{
+  template <unsigned int i>
+  static void run(CMap* amap,
+                  typename CMap::Dart_handle adart,
+                  std::vector<int>* marks)
+  {
+    // std::cout << "Correct_invalid_attributes_functor for " << i << "-cell" << std::endl;
+    CGAL_static_assertion_msg(CMap::Helper::template
+                              Dimension_index<i>::value>=0,
+                              "Correct_invalid_attributes_functor<i> but "
+                              " i-attributes are disabled");
+
+    int amark = (*marks)[i];
+    typename CMap::template Attribute_handle<i>::type
+        a=amap->template attribute<i>(adart);
+
+    // dart already test, or without i-attribute
+    if ( amap->is_marked(adart, amark) ) return;
+    if ( a==amap->null_handle) { amap->mark(adart, amark); return; }
+
+    // We search if all the darts of the i-cell has the same i-attrib, and we count
+    // the number of darts of the i-cell.
+    unsigned int nb=0;
+    bool found_dart = false;
+
+    for ( CGAL::CMap_dart_iterator_basic_of_cell<CMap,i>
+            it(*amap, adart, amark); it.cont(); ++it, ++nb )
+    {
+      if ( a!=amap->template attribute<i>(it) )
+      {
+        // If two different i-attributes, we could call on_split ?
+        amap->template set_dart_attribute<i>(it, a);
+      }
+      if (it==amap->template dart_of_attribute<i>(a))
+      {
+        found_dart = true;
+      }
+      amap->mark(it, amark);
+    }
+
+    if (!found_dart)
+    {
+      // the current i-attrib does not belong to the i-cell
+      // so we affect it to the first dart of the i-cell
+      amap->template set_dart_of_attribute<i>(a,adart);
+    }
+
+    // If the i-cell has less darts than the ref counter of the i-attribute,
+    // the i-attribute is shared by different cells => we duplicate it.
+    if ( nb!=amap->template get_attribute<i>(a).get_nb_refs() )
+    {
+      typename CMap::template Attribute_handle<i>::type
+        a2=amap->template create_attribute<i>(amap->template get_attribute<i>(a));
+      amap->template set_attribute<i>(adart, a2);
+    }
   }
 };
 // ****************************************************************************
@@ -574,34 +635,6 @@ struct Is_same_attribute_point_functor<Map1, Map2, T1, T2, false, false, i>
                   typename Map2::Dart_const_handle)
   { return true; }
 };
-// ****************************************************************************
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_point,Point,false)
-
-template<typename Attr, typename Info=typename Attr::Info>
-struct Is_nonvoid_attribute_has_non_void_info
-{
-  static const bool value=true;
-};
-template<typename Attr>
-struct Is_nonvoid_attribute_has_non_void_info<Attr, void>
-{
-  static const bool value=false;
-};
-
-template<typename Attr>
-struct Is_attribute_has_non_void_info
-{
-  static const bool value=Is_nonvoid_attribute_has_non_void_info<Attr>::value;
-};
-template<>
-struct Is_attribute_has_non_void_info<CGAL::Void>
-{
-  static const bool value=false;
-};
-// ****************************************************************************
-template<typename Attr>
-struct Is_attribute_has_point
-{ static const bool value=Has_point<Attr>::value; };
 // ****************************************************************************
 /// Test if the two darts are associated with the same attribute.
 template<typename Map1, typename Map2>

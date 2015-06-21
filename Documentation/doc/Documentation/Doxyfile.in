@@ -10,7 +10,8 @@ INPUT = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation \
 HTML_HEADER         = ${CGAL_DOC_HEADER}
 LAYOUT_FILE         = ${CMAKE_SOURCE_DIR}/Documentation/DoxygenLayout.xml
 GENERATE_TAGFILE    = ${CGAL_DOC_TAG_GEN_DIR}/Manual.tag
-EXAMPLE_PATH        = ${CMAKE_SOURCE_DIR}/Convex_hull_2/examples
+EXAMPLE_PATH        = ${CMAKE_SOURCE_DIR}/Convex_hull_2/examples \
+                      ${CMAKE_SOURCE_DIR}/Kernel_23/examples
 FILTER_PATTERNS     = *.txt=${CMAKE_BINARY_DIR}/pkglist_filter
 
 HTML_EXTRA_FILES += ${CMAKE_SOURCE_DIR}/Documentation/hacks.js \
@@ -35,6 +36,7 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Algebraic_foundations/doc/Algebraic_foundations/fig \
              ${CMAKE_SOURCE_DIR}/AABB_tree/doc/AABB_tree/fig \
              ${CMAKE_SOURCE_DIR}/Polygon/doc/Polygon/fig \
+             ${CMAKE_SOURCE_DIR}/Polyline_simplification_2/doc/Polyline_simplification_2/fig \
              ${CMAKE_SOURCE_DIR}/Number_types/doc/Number_types/fig \
              ${CMAKE_SOURCE_DIR}/Alpha_shapes_2/doc/Alpha_shapes_2/fig \
              ${CMAKE_SOURCE_DIR}/Alpha_shapes_3/doc/Alpha_shapes_3/fig \
@@ -94,12 +96,14 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Triangulation_2/doc/Triangulation_2/fig \
              ${CMAKE_SOURCE_DIR}/Triangulation_3/doc/TDS_3/fig \
              ${CMAKE_SOURCE_DIR}/Triangulation_3/doc/Triangulation_3/fig \
+             ${CMAKE_SOURCE_DIR}/Triangulation/doc/Triangulation/fig \
              ${CMAKE_SOURCE_DIR}/Ridges_3/doc/Ridges_3/fig \
              ${CMAKE_SOURCE_DIR}/Point_set_processing_3/doc/Point_set_processing_3/fig \
              ${CMAKE_SOURCE_DIR}/Point_set_processing_3/doc/Property_map/fig \
              ${CMAKE_SOURCE_DIR}/Kinetic_data_structures/doc/Kinetic_framework/fig \
              ${CMAKE_SOURCE_DIR}/Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig \
              ${CMAKE_SOURCE_DIR}/Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig \
+             ${CMAKE_SOURCE_DIR}/Scale_space_reconstruction_3/doc/Scale_space_reconstruction_3/fig \
              ${CMAKE_SOURCE_DIR}/Spatial_searching/doc/Spatial_searching/fig \
              ${CMAKE_SOURCE_DIR}/Spatial_sorting/doc/Spatial_sorting/fig \
              ${CMAKE_SOURCE_DIR}/Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig \
@@ -109,7 +113,10 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Surface_mesh_segmentation/doc/Surface_mesh_segmentation/fig \
              ${CMAKE_SOURCE_DIR}/Subdivision_method_3/doc/Subdivision_method_3/fig \
              ${CMAKE_SOURCE_DIR}/Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig \
+             ${CMAKE_SOURCE_DIR}/Surface_mesh/doc/Surface_mesh/fig \
              ${CMAKE_SOURCE_DIR}/Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig \
              ${CMAKE_SOURCE_DIR}/Stream_lines_2/doc/Stream_lines_2/fig \
              ${CMAKE_SOURCE_DIR}/Stream_support/doc/Stream_support/fig \
-	     ${CMAKE_SOURCE_DIR}/Reconstruction_simplification_2/doc/Reconstruction_simplification_2/fig
+             ${CMAKE_SOURCE_DIR}/Surface_modeling/doc/Surface_modeling/fig \
+             ${CMAKE_SOURCE_DIR}/Barycentric_coordinates_2/doc/Barycentric_coordinates_2/fig \
+             ${CMAKE_SOURCE_DIR}/Reconstruction_simplification_2/doc/Reconstruction_simplification_2/fig

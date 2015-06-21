@@ -21,6 +21,7 @@
 //******************************************************************************
 // File Description : 
 //******************************************************************************
+#include "config.h"
 
 #include <CGAL_demo/Plugin_interface.h>
 #include <CGAL_demo/Plugin_helper.h>
@@ -58,7 +59,7 @@ public:
     return QList<QAction*>();
   }
   
-public slots:
+public Q_SLOTS:
   void load_function() const;
   
 private:

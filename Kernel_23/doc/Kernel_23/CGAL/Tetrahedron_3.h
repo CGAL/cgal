@@ -28,7 +28,7 @@ public:
 /// @{
 
 /*!
-introduces a tetrahedron `t` with vertices `p_0`, `p_1`, `p_2` and `p_3`. 
+introduces a tetrahedron `t` with vertices `p0`, `p1`, `p2` and `p3`. 
 */ 
 Tetrahedron_3(const Point_3<Kernel> &p0, 
 const Point_3<Kernel> &p1, 

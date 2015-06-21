@@ -141,8 +141,6 @@ struct Solve_z_1{
         template <class OutputIterator>
         OutputIterator operator()(const Polynomial_1 &p,
                                   OutputIterator res)const{
-                typedef std::pair<Polynomial_1,int>     polmult;
-                typedef std::vector<polmult>            sqvec;
                 typedef std::pair<ZPolynomial_1,int>    zpolmult;
                 typedef std::vector<zpolmult>           zsqvec;
 

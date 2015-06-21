@@ -28,9 +28,9 @@ int main ()
 	load_xy_file_points<Point>("data/stair-noise00.xy", points);
 
 
-    for (int i = 1; i <= points.size();) {
+	for (std::size_t i = 1; i <= points.size();) {
 
-		CGAL::Reconstruction_simplification_2<K> rs2(points.begin(), points.end());
+		CGAL::Reconstruction_simplification_2<K> rs2(points);
 
 		rs2.run_until(i);
 

@@ -137,18 +137,18 @@ Builds an empty 2D complex embedded in the triangulation `t3`
 */ 
 SurfaceMeshComplex_2InTriangulation_3(Triangulation& t3); 
 
-/*!
-Builds a 2D complex embedded in the triangulation `t3`, 
-including in the 2D complex the facets of `t3` for 
-which the predicate `select` returns `true`. 
+// /*!
+// Builds a 2D complex embedded in the triangulation `t3`, 
+// including in the 2D complex the facets of `t3` for 
+// which the predicate `select` returns `true`. 
 
-The type `FacetSelector` must be 
-a function object with an operator to select facets: 
-`bool operator()(Facet f);`. 
-*/ 
-template < class FacetSelector> 
-SurfaceMeshComplex_2InTriangulation_3(Triangulation& t3, 
-FacetSelector select); 
+// The type `FacetSelector` must be 
+// a function object with an operator to select facets: 
+// `bool operator()(Facet f);`. 
+// */ 
+// template < class FacetSelector> 
+// SurfaceMeshComplex_2InTriangulation_3(Triangulation& t3, 
+// FacetSelector select); 
 
 /// @} 
 

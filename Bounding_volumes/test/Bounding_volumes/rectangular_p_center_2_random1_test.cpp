@@ -244,7 +244,7 @@ main(int argc, char* argv[])
         if (ydist(*i, *j) == result / FT(2))
           ++bottom;
       }
-      if (left > 0 && right > 0 || top > 0 && bottom > 0)
+      if ( (left > 0 && right > 0) || (top > 0 && bottom > 0) )
         boundary = true;
     }
     #ifdef _MSC_VER

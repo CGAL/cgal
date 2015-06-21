@@ -117,7 +117,8 @@ typedef unspecified_type Compute_bbox;
 
 /*!
 A functor object to compute intersection predicates between the query and the nodes of the tree. Provides the operators: 
-`bool operator()(const Query & q, const Bounding_box & box);` which returns `true` iff the query intersects the bounding box, and `bool operator()(const Query & q, const Primitive & primitive);` which returns `true` iff the query intersects the primitive. 
+- `bool operator()(const Query & q, const Bounding_box & box);` which returns `true` iff the query intersects the bounding box
+- `bool operator()(const Query & q, const Primitive & primitive);` which returns `true` iff the query intersects the primitive
 */ 
 typedef unspecified_type Do_intersect; 
 
@@ -138,7 +139,8 @@ typedef unspecified_type Intersect;
 
 /*!
 A functor object to compute distance comparisons between the query and the nodes of the tree. Provides the operators: 
-`bool operator()(const Query & query, const Bounding_box& box, const Point & closest);` which returns `true` iff the bounding box is closer to `query` than `closest` is, and `bool operator()(const Query & query, const Primitive & primitive, const Point & closest);` which returns `true` iff `primitive` is closer to the `query` than `closest` is. 
+- `bool operator()(const Query & query, const Bounding_box& box, const Point & closest);` which returns `true` iff the bounding box is closer to `query` than `closest` is
+- `bool operator()(const Query & query, const Primitive & primitive, const Point & closest);` which returns `true` iff `primitive` is closer to the `query` than `closest` is
 */ 
 typedef unspecified_type Compare_distance; 
 

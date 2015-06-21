@@ -54,7 +54,7 @@ class QTreeWidgetItem;
 #include <CGAL/Surface_mesh_vertex_base_3.h>
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
 #include <CGAL/Surface_mesh_cell_base_3.h>
-#include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_with_circumcenter_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Surface_mesh_complex_2_in_triangulation_3.h>
 #include <CGAL/Surface_mesh_default_criteria_3.h>
@@ -63,7 +63,7 @@ class QTreeWidgetItem;
 typedef CGAL::Surface_mesh_vertex_base_3<Kernel> Vb;
 typedef CGAL::Triangulation_cell_base_with_info_3<unsigned char, Kernel> Cb1;
 typedef CGAL::Surface_mesh_cell_base_3<Kernel, Cb1> Cb2;
-typedef CGAL::Triangulation_cell_base_with_circumcenter_3<Kernel, Cb2> Cb;
+typedef CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3<Kernel, Cb2> Cb;
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
 typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Tr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr> C2t3;
@@ -142,7 +142,7 @@ private:
   bool m_view_mc; // that boolean is here even with if
 		  // CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
                   // is not defined.
-public slots:
+public Q_SLOTS:
 void display_marchin_cube();
 
 private:
@@ -159,11 +159,11 @@ private:
 public:
   void gl_draw_surface();
 
-signals:
+Q_SIGNALS:
 
   void new_bounding_box(double, double, double, double, double, double);
 
-public slots:
+public Q_SLOTS:
   void only_in();
   void set_inverse_normals(const bool);
   void set_two_sides(const bool);
@@ -208,9 +208,9 @@ void Volume::search_for_connected_components(PointsOutputIterator it,
 					     DomainsOutputIterator dom_it,
 					     TransformOperator transform)
 {
-  const unsigned int nx = m_image.xdim();
-  const unsigned int ny = m_image.ydim();
-  const unsigned int nz = m_image.zdim();
+  const std::size_t nx = m_image.xdim();
+  const std::size_t ny = m_image.ydim();
+  const std::size_t nz = m_image.zdim();
 
   const double max_v = (std::max)((std::max)(m_image.vx(),
                                              m_image.vy()),
@@ -220,14 +220,15 @@ void Volume::search_for_connected_components(PointsOutputIterator it,
   typedef typename TransformOperator::result_type Label;
 
   boost::multi_array<Marker, 3> visited(boost::extents[nx][ny][nz]);
-  typedef boost::tuple<int, int, int, int> Indices;
-  typedef std::queue<Indices> Indices_queue;
-  typedef std::vector<Indices> Border_vector;
+  typedef boost::tuple<std::size_t, std::size_t, std::size_t, std::size_t>
+                                Indices;
+  typedef std::queue<Indices>   Indices_queue;
+  typedef std::vector<Indices>  Border_vector;
 
   int number_of_connected_components = 0;
-  for(unsigned int i=0;i<nx;i++)
-    for(unsigned int j=0;j<ny;j++)
-      for(unsigned int k=0;k<nz;k++)
+  for(std::size_t i=0; i<nx; i++)
+    for(std::size_t j=0; j<ny; j++)
+      for(std::size_t k=0; k<nz; k++)
       {
         if(visited[i][j][k]>0)
           continue;
@@ -272,10 +273,10 @@ void Volume::search_for_connected_components(PointsOutputIterator it,
           queue.pop();
 
           // warning: those indices i, j and k are local to the while loop
-          const int i = boost::get<0>(indices);
-          const int j = boost::get<1>(indices);
-          const int k = boost::get<2>(indices);
-          const int depth = boost::get<3>(indices);
+          const std::size_t i = boost::get<0>(indices);
+          const std::size_t j = boost::get<1>(indices);
+          const std::size_t k = boost::get<2>(indices);
+          const std::size_t depth = boost::get<3>(indices);
 
           if(visited[i][j][k] < pass)
           {
@@ -303,12 +304,12 @@ void Volume::search_for_connected_components(PointsOutputIterator it,
             // (i_n, j_n, k_n) are indices of neighbors.
             for(int n = 0; n < 6; ++n)
             {
-              const int i_n = i + neighbors_offset[n][0];
-              const int j_n = j + neighbors_offset[n][1];
-              const int k_n = k + neighbors_offset[n][2];
-              if(i_n < 0 || i_n >= static_cast<int>(nx) ||
-                 j_n < 0 || j_n >= static_cast<int>(ny) ||
-                 k_n < 0 || k_n >= static_cast<int>(nz))
+              const ptrdiff_t i_n = i + neighbors_offset[n][0];
+              const ptrdiff_t j_n = j + neighbors_offset[n][1];
+              const ptrdiff_t k_n = k + neighbors_offset[n][2];
+              if(i_n < 0 || i_n >= static_cast<ptrdiff_t>(nx) ||
+                 j_n < 0 || j_n >= static_cast<ptrdiff_t>(ny) ||
+                 k_n < 0 || k_n >= static_cast<ptrdiff_t>(nz))
               {
                 voxel_is_on_border = true;
                 continue;

@@ -38,9 +38,9 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
+/// \cond SKIP_IN_MANUAL
 namespace internal {
 
-/// \cond SKIP_IN_MANUAL
 
 /// Estimates normal direction using linear least
 /// squares fitting of a plane on the K nearest neighbors.
@@ -93,9 +93,9 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
   return plane.orthogonal_vector();
 }
 
+} /* namespace internal */
 /// \endcond
 
-} /* namespace internal */
 
 
 // ----------------------------------------------------------------------------
@@ -110,11 +110,11 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 /// \pre `k >= 2`
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
-///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
-/// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = Vector_3<Kernel>.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
+///        It can be omitted if the value type of  `ForwardIterator` is convertible to `Point_3<Kernel>`.
+/// @tparam NormalPMap is a model of `WritablePropertyMap` with value type  `Vector_3<Kernel>`.
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from PointPMap value_type.
+///        It can be omitted and deduced automatically from the value type of `PointPMap`.
 
 // This variant requires all parameters.
 template <typename ForwardIterator,

@@ -34,7 +34,7 @@ namespace CGAL {
   `Box_intersection_d::HALF_OPEN` and 
   `Box_intersection_d::CLOSED`. 
 
-  In addition, a box has an unique `id`-number. Boxes with equal 
+  In addition, a box has a unique `id`-number. Boxes with equal 
   `id`-number are not reported since they obviously intersect trivially. 
 
   The algorithm uses a traits class of the `BoxIntersectionTraits_d` 
@@ -100,7 +100,7 @@ namespace CGAL {
   `Box_intersection_d::HALF_OPEN` and 
   `Box_intersection_d::CLOSED`. 
 
-  In addition, a box has an unique `id`-number. It is used to order 
+  In addition, a box has a unique `id`-number. It is used to order 
   boxes consistently in each dimension even if boxes have identical 
   coordinates. In consequence, the algorithm guarantees that a pair of 
   intersecting boxes is reported only once. Boxes with equal 
@@ -430,7 +430,7 @@ namespace CGAL {
   `Box_intersection_d::HALF_OPEN` and 
   `Box_intersection_d::CLOSED`. 
 
-  In addition, a box has an unique `id`-number. It is used to order 
+  In addition, a box has a unique `id`-number. It is used to order 
   boxes consistently in each dimension even if boxes have identical 
   coordinates. In consequence, the algorithm guarantees that a pair of 
   intersecting boxes is reported only once. This self-intersection 

@@ -38,8 +38,6 @@ public:
 
 	typedef K::Segment_2 Segment;
 
-	typedef R_s_2::FT FT;
-	typedef R_s_2::Point Point;
 	typedef R_s_2::Vector Vector;
 
 	typedef R_s_2::Vertex Vertex;
@@ -67,8 +65,7 @@ public:
 
 	typedef R_s_2::Edge_list Edge_list;
 
-	typedef R_s_2::Cost Cost;
-	typedef R_s_2::Sample Sample;
+	typedef R_s_2::Sample_ Sample_;
 	typedef R_s_2::Sample_list Sample_list;
 	typedef R_s_2::Sample_list_const_iterator Sample_list_const_iterator;
 
@@ -78,12 +75,12 @@ public:
 	typedef R_s_2::PSample PSample;
 	typedef R_s_2::SQueue SQueue;
 
-	typedef R_s_2::Reconstruction_edge_2 PEdge;
+	typedef R_s_2::Rec_edge_2 PEdge;
 
 
 private:
 	// data
-	std::list<Sample> m_samples;
+	std::list<Sample_> m_samples;
 	double m_min_mass;
 	double m_max_mass;
 
@@ -128,9 +125,9 @@ public:
 
 	void invert_mass() {
 		double new_max_mass = 0.0;
-		std::list<Sample>::iterator it;
+		std::list<Sample_>::iterator it;
 		for (it = m_samples.begin(); it != m_samples.end(); ++it) {
-			Sample& sample = *it;
+			Sample_& sample = *it;
 			sample.mass() = m_max_mass - sample.mass();
 			new_max_mass = (std::max)(new_max_mass, sample.mass());
 		}
@@ -138,10 +135,10 @@ public:
 	}
 
 	void clamp_mass() {
-		std::list<Sample> new_samples;
-		std::list<Sample>::iterator it;
+		std::list<Sample_> new_samples;
+		std::list<Sample_>::iterator it;
 		for (it = m_samples.begin(); it != m_samples.end(); ++it) {
-			Sample& sample = *it;
+			Sample_& sample = *it;
 			if (sample.mass() > m_min_mass) {
 				sample.mass() = 1.0;
 				new_samples.push_back(sample);
@@ -155,22 +152,22 @@ public:
 		if (m_samples.size() < 3)
 			return;
 
-		std::list<Sample> new_samples;
-		std::list<Sample>::const_iterator it = m_samples.begin();
-		std::list<Sample>::const_iterator last = it++;
+		std::list<Sample_> new_samples;
+		std::list<Sample_>::const_iterator it = m_samples.begin();
+		std::list<Sample_>::const_iterator last = it++;
 		while (it != m_samples.end()) {
 			Point p = CGAL::midpoint(last->point(), it->point());
 			FT m = 0.5 * (last->mass() + it->mass());
-			new_samples.push_back(Sample(p, m));
+			new_samples.push_back(Sample_(p, m));
 			last = it++;
 		}
 		it = m_samples.begin();
 		Point p = CGAL::midpoint(last->point(), it->point());
 		FT m = 0.5 * (last->mass() + it->mass());
-		new_samples.push_back(Sample(p, m));
+		new_samples.push_back(Sample_(p, m));
 
-		std::list<Sample> final_samples;
-		std::list<Sample>::const_iterator it2 = new_samples.begin();
+		std::list<Sample_> final_samples;
+		std::list<Sample_>::const_iterator it2 = new_samples.begin();
 		while (it != m_samples.end() && it2 != new_samples.end()) {
 			final_samples.push_back(*it);
 			final_samples.push_back(*it2);
@@ -184,7 +181,7 @@ public:
 	// SAMPLE //
 
 	void add_sample(const Point& point, const FT mass = 1.0) {
-		m_samples.push_back(Sample(point, mass));
+		m_samples.push_back(Sample_(point, mass));
 		m_max_mass = (std::max)(m_max_mass, mass);
 	}
 
@@ -199,9 +196,9 @@ public:
 
 	void noise(const FT scale) {
 		std::cerr << "noise by " << scale << "...";
-		std::list<Sample>::iterator it;
+		std::list<Sample_>::iterator it;
 		for (it = m_samples.begin(); it != m_samples.end(); it++) {
-			Sample& sample = *it;
+			Sample_& sample = *it;
 			Point& point = sample.point();
 			point = point + random_vec<Vector>(scale);
 		}
@@ -215,9 +212,9 @@ public:
 			return;
 
 		Point center(m_bbox_x, m_bbox_y);
-		std::list<Sample>::iterator it;
+		std::list<Sample_>::iterator it;
 		for (it = m_samples.begin(); it != m_samples.end(); ++it) {
-			Sample& sample = *it;
+			Sample_& sample = *it;
 			Vector vec = (sample.point() - center) / m_bbox_size;
 			sample.point() = CGAL::ORIGIN + vec;
 		}
@@ -233,7 +230,7 @@ public:
 		}
 
 		FT x_min, x_max, y_min, y_max;
-		std::list<Sample>::const_iterator it = m_samples.begin();
+		std::list<Sample_>::const_iterator it = m_samples.begin();
 		Point p = it->point();
 		x_min = x_max = p.x();
 		y_min = y_max = p.y();
@@ -315,7 +312,7 @@ public:
 		Point point;
 		unsigned nb, x, y, z;
 		ifs >> nb >> x >> y >> z;
-		for (unsigned i = 0; i < nb; ++i) {
+		for (unsigned int i = 0; i < nb; ++i) {
 			ifs >> x >> point;
 			add_sample(point, 1.0);
 		}
@@ -358,7 +355,8 @@ public:
 				float mass = 1.0f - grayscale.atXY(i, j);
 				double x = double(i) / grayscale.width();
 				double y = 1.0 - double(j) / grayscale.height();
-				add_sample(Point(x, y), mass);
+        if (mass > 0.f)
+				  add_sample(Point(x, y), mass);
 			}
 		}
 		std::cerr << "done (" << m_samples.size() << ")" << std::endl;
@@ -408,7 +406,7 @@ public:
 	    std::vector<Point> isolated_points;
 		std::vector<Segment> edges;
 
-		m_pwsrec->extract_list_output(std::back_inserter(isolated_points), std::back_inserter(edges));
+		m_pwsrec->list_output (std::back_inserter(isolated_points), std::back_inserter(edges));
 
 
 
@@ -440,9 +438,9 @@ public:
 		}
 
 		Sample_list samples;
-		for (std::list<Sample>::iterator it = m_samples.begin();
+		for (std::list<Sample_>::iterator it = m_samples.begin();
 				it != m_samples.end(); ++it) {
-			Sample& s = *it;
+			Sample_& s = *it;
 			if (s.mass() < m_min_mass)
 				continue;
 			samples.push_back(&s);
@@ -476,7 +474,7 @@ public:
 		std::list<Vector>::const_iterator ni = normals.begin();
 		for (Sample_list_const_iterator it = samples.begin();
 				it != samples.end(); ++it) {
-			Sample* sample = *it;
+			Sample_* sample = *it;
 			ofs << sample->point() << " " << *ni << std::endl;
 			ni++;
 		}
@@ -514,7 +512,7 @@ public:
 		std::ofstream ofs(qPrintable(filename));
 		for (Sample_list_const_iterator it = samples.begin();
 				it != samples.end(); ++it) {
-			Sample* sample = *it;
+			Sample_* sample = *it;
 			ofs << sample->point() << std::endl;
 		}
 		ofs.close();
@@ -525,7 +523,7 @@ public:
 		ofs << "POFF " << samples.size() << " 0 0" << std::endl;
 		for (Sample_list_const_iterator it = samples.begin();
 				it != samples.end(); ++it) {
-			Sample* sample = *it;
+			Sample_* sample = *it;
 			ofs << sample->point() << std::endl;
 		}
 		ofs.close();
@@ -534,10 +532,10 @@ public:
 	void save_gtn(const QString& filename, const Sample_list& samples) {
 		std::ofstream ofs(qPrintable(filename));
 		ofs << samples.size() << " 2 0 0" << std::endl;
-		unsigned i = 0;
+		unsigned int i = 0;
 		for (Sample_list_const_iterator it = samples.begin();
 				it != samples.end(); ++it, ++i) {
-			Sample* sample = *it;
+			Sample_* sample = *it;
 			ofs << i << " " << sample->point() << std::endl;
 		}
 		ofs.close();
@@ -547,17 +545,17 @@ public:
 
 	void set_parameters(const int verbose, const int mchoice,
 			const bool use_flip, const double alpha, const double norm_tol,
-			const double tang_tol, const unsigned relocation,
+			const double tang_tol, const unsigned int relocation,
 			const double ghost) {
 
 		m_pwsrec->set_verbose(verbose);
-		m_pwsrec->set_mchoice(mchoice);
+		m_pwsrec->set_random_sample_size(mchoice);
 		m_pwsrec->set_use_flip(use_flip);
 		m_pwsrec->set_alpha(alpha);
 		m_pwsrec->set_tang_tol(tang_tol * m_bbox_size);
 		m_pwsrec->set_norm_tol(norm_tol * m_bbox_size);
 		m_pwsrec->set_relocation(relocation);
-		m_pwsrec->set_ghost(ghost);
+		m_pwsrec->set_relevance(ghost);
 	}
 
 	bool init_reconstruction(const double percentage) {
@@ -574,8 +572,6 @@ public:
 		PointMassList point_mass_list;
 		Sample_list_const_iterator it;
 		for (it = vertices.begin(); it != vertices.end(); it++) {
-			std::cout << "Sample in Scene " << (*it)->point() << " : "
-					<< (*it)->mass() << std::endl;
 			point_mass_list.push_back(
 					std::make_pair((*it)->point(), (*it)->mass()));
 		}
@@ -592,9 +588,9 @@ public:
 
 	void decimate(const double percentage) {
 		std::cout << "Decimate from " << m_samples.size() << " to...";
-		std::list<Sample> selected;
+		std::list<Sample_> selected;
 
-		std::list<Sample>::iterator it;
+		std::list<Sample_>::iterator it;
 		for (it = m_samples.begin(); it != m_samples.end(); it++) {
 			const double rd = random_double(0.0, 1.0);
 			if (rd >= percentage)
@@ -609,10 +605,10 @@ public:
 
 	void keep_one_point_out_of(const int n) {
 		std::cout << "Decimate from " << m_samples.size() << " to...";
-		std::list<Sample> selected;
+		std::list<Sample_> selected;
 
 		int index = 0;
-		std::list<Sample>::iterator it;
+		std::list<Sample_>::iterator it;
 		for (it = m_samples.begin(); it != m_samples.end(); it++, index++) {
 			if (index % n == 0)
 				selected.push_back(*it);
@@ -626,9 +622,9 @@ public:
 
 	void select_samples(const double percentage, Sample_list& vertices,
 			Sample_list& samples) {
-		std::list<Sample>::iterator it;
+		std::list<Sample_>::iterator it;
 		for (it = m_samples.begin(); it != m_samples.end(); ++it) {
-			Sample& s = *it;
+			Sample_& s = *it;
 			if (s.mass() <= m_min_mass)
 				continue;
 
@@ -639,19 +635,19 @@ public:
 		}
 	}
 
-	void reconstruct_until(const unsigned nv) {
+	void reconstruct_until(const unsigned int nv) {
 		std::cout << "reconstruct_until" << std::endl;
 		m_pwsrec->run_until(nv);
 	}
 
-	void reconstruct(const unsigned steps) {
+	void reconstruct(const unsigned int steps) {
 		std::cout << "reconstruct" << std::endl;
 		m_pwsrec->run(steps);
 	}
 
-	void relocate_all_vertices() {
-		std::cout << "relocate_all_vertices" << std::endl;
-		m_pwsrec->relocate_all_vertices();
+	void relocate_all_points() {
+		std::cout << "relocate_all_points" << std::endl;
+		m_pwsrec->relocate_all_points();
 	}
 
 	void print_stats() {
@@ -743,7 +739,7 @@ public:
 
 		::glPointSize(point_size);
 		::glBegin(GL_POINTS);
-		std::list<Sample>::const_iterator it;
+		std::list<Sample_>::const_iterator it;
 		for (it = m_samples.begin(); it != m_samples.end(); it++) {
 			double mass = it->mass();
 			if (mass <= m_min_mass)
@@ -773,19 +769,19 @@ public:
 		::glColor4f(1.0f, 1.0f, 0.2f, 0.25f);
 		for (Sample_list_const_iterator it = samples.begin();
 				it != samples.end(); it++) {
-			Sample* sample = *it;
+			Sample_* sample = *it;
 			draw_one_circle(sample->point());
 		}
 		::glDisable(GL_BLEND);
 	}
 
 	void draw_one_circle(const Point& center) {
-		unsigned N = 10;
+		unsigned int N = 10;
 		const double r = std::sqrt(m_pwsrec->get_norm_tol());
 		const double x = center.x();
 		const double y = center.y();
 		::glBegin (GL_POLYGON);
-		for (unsigned i = 0; i < N; ++i) {
+		for (unsigned int i = 0; i < N; ++i) {
 			double angle = 2.0 * M_PI * (double(i) / double(N));
 			double u = r * std::cos(angle) + x;
 			double v = r * std::sin(angle) + y;

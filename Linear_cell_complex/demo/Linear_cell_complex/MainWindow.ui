@@ -33,7 +33,7 @@
      <x>0</x>
      <y>0</y>
      <width>635</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -74,6 +74,9 @@
     <addaction name="actionCreate2Volumes"/>
     <addaction name="actionCreate_mesh"/>
     <addaction name="actionCreate_Menger_Sponge"/>
+    <addaction name="separator"/>
+    <addaction name="actionCreate_Sierpinski_Carpet"/>
+    <addaction name="actionCreate_Sierpinski_Triangle"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -206,6 +209,16 @@
   <action name="actionMerge_all_volumes">
    <property name="text">
     <string>&amp;Merge volumes</string>
+   </property>
+  </action>
+  <action name="actionCreate_Sierpinski_Carpet">
+   <property name="text">
+    <string>Create Sierpinski Carpet</string>
+   </property>
+  </action>
+  <action name="actionCreate_Sierpinski_Triangle">
+   <property name="text">
+    <string>Create Sierpinski Triangle</string>
    </property>
   </action>
  </widget>

@@ -1,0 +1,40 @@
+#
+# 1.<Type of curve> 2.<Number of curves in a polycurve> 3.<coefficients of conic> 4.<Orientation> 5.<source point> 6.<Target point> (repeat 3 to 6 for number of curves time. )
+#
+# 2nd and 3rd Quadrant 
+# curve 1: y^2=-x [ (-25,-5)->(0,0) ]  counter-clockwise
+# curve 2: y^2=-x [ (0,0)->(-25,5)  ]  counter-clockwise 
+# Curve id: 0
+a 2 0 1 0 1 0 0 1 -25 -5 0 0 0 1 0 1 0 0 1 0 0 -25 5 
+#
+# 1st and 4th Quadrant
+# curve 1: (y^2 = x) [(25,-5)->(0,0)]  counter-clockwise 
+# curve 2: (y = x^2) [(0,0)->(5,25)]   counter-clockwise
+# Curve id: 1
+a 2 0 1 0 -1 0 0 1 25 -5 0 0 -1 0 0 0 1 0 1 0 0 5 25
+#
+# 1st and 4th Quadrant
+# curve 1: (x-25)^2 + (y+6)^2 = 1 [(25,-7)->(25, -5)] counter-clockwise
+# curve 2: (y^2 = x) 			  [(25,-5)->(0,0)]    counter-clockwise 
+# curve 3: (y = x^2) 			  [(0,0)->(5,25)]     counter-clockwise
+# Curve id: 2
+a 3 1 1 0 -50 12 660 1 25 -7 25 -5 0 1 0 -1 0 0 1 25 -5 0 0 -1 0 0 0 1 0 1 0 0 5 25
+#
+# 4th Quadrant
+# curve 1: (x-25)^2 + (y+6)^2 = 1 [(25,-7)->(25, -5)] counter-clockwise
+# curve 2: (y^2 = x) 			  [(25,-5)->(0,0)]    counter-clockwise 
+# Curve id: 3
+a 2 1 1 0 -50 12 660 1 25 -7 25 -5 0 1 0 -1 0 0 1 25 -5 0 0
+#
+#
+# Segments ( basically conic curves)
+# Format:
+#        TODO
+#
+# (x-25)^2 + (y+6)^2 = 1 [(25,-7)->(25, -5)] counter-clockwise
+# segment id: 0
+s 1 1 0 -50 12 660 1 25 -7 25 -5
+#
+# curve 2: y^2=-x [ (0,0)->(-25,5)  ]  counter-clockwise 
+# segment id = 1
+s -1 0 0 0 1 0 1 0 0 5 25

@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage User Manual 
 \anchor Chapter_3D_Mesh_Generation
 \anchor userchaptermesh3
-\authors Pierre Alliez, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec
+\authors Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec
 \cgalAutoToc
 
 \cgalFigureBegin{figuremultilabel_mesher,multilabel_mesher.jpg}
@@ -15,7 +15,7 @@ Cut-view of a multi-domain 3D mesh generated from a segmented image.
 
 This package is devoted to the generation of isotropic simplicial
 meshes discretizing 3D domains.
-The domain to be meshed is a region of 3D space that has to be bounded.
+The domain to be meshed is a region of 3D space, required to be bounded.
 The region may be connected or composed of multiple components
 and/or subdivided in several subdomains. 
 
@@ -54,6 +54,9 @@ whatever may be the input geometry, in particular whatever small angles
 the boundary and subdivision surface patches may form \cgalCite{cgal:cdl-pdma-07}, \cgalCite{cgal:cdr-drpsc-07}.
 The Delaunay refinement is followed by a mesh optimization phase
 to remove slivers and provide a good quality mesh.
+
+Optionally, the meshing and optimization algorithms support multi-core shared-memory 
+architectures to take advantage of available parallelism.
 
 \subsection Mesh_3InputDomain Input Domain
 
@@ -543,6 +546,21 @@ Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3);
 Note that the global functions activating the optimization processes or launching
 those processes have themselves parameters (see details in reference pages) to tune the optimization process.
 
+\subsection Mesh_3ParallelAlgorithms Parallel Algorithms
+
+Enabling parallel meshing and optimization algorithms is achieved through 
+setting the third template parameter of the `Mesh_triangulation_3` class  
+to `Parallel_tag`, when defining the triangulation type. 
+Note that when the user provides his/her own vertex and 
+cell base classes, the `MeshVertexBase_3` and 
+`MeshCellBase_3` concepts impose additionnal requirements.
+
+Parallel algorithms require the executable to be linked against the 
+<a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+To control the number of threads used, the user may use the tbb::task_scheduler_init class.
+See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+for more details.
+
 \section Mesh_3_section_examples Examples
 
 \subsection Mesh_33DDomainsBoundedbyIsosurfaces 3D Domains Bounded by Isosurfaces
@@ -559,6 +577,37 @@ constructor of the `Mesh_criteria` instance.
 
 \cgalFigureBegin{figureimplicit_domain,implicit_domain.jpg}
 Cut view of a 3D mesh produced from an implicit domain
+\cgalFigureEnd
+
+\subsection Mesh_3MeshingMultipleDomains Meshing Multiple Domains
+
+\anchor Mesh_3_subsection_examples_multi_domain
+
+\subsubsection Mesh_3MeshingMultipleDomains_1 Construction from a vector of implicit functions
+
+The following code produces a 3D mesh for a domain consisting of several subdomains.
+It uses `Implicit_multi_domain_to_labeling_function_wrapper` as model of `ImplicitFunction` which is required by `Labeled_mesh_domain_3`.
+
+\cgalFigureRef{figuremulti_domain} shows a view and a cut view of the
+resulting mesh.
+
+\cgalExample{Mesh_3/mesh_implicit_domains.cpp}
+\cgalFigureBegin{figuremulti_domain,multi_domain.jpg,multi_domain_cut.jpg}
+View (left) and cut view (right) of a 3D mesh of a torus intersecting sphere.
+\cgalFigureEnd
+
+\subsubsection Mesh_3MeshingMultipleDomains_2 Construction from a vector of implicit functions and a vector of strings
+
+The following code produces a 3D mesh for a domain consisting of several subdomains too.
+Here, the set of subdomains is given by a vector of vector of signs, whereas the set was built automatically in the previous example.
+Each subdomain corresponds to a sign vector [s1, s2, ..., sn] where si is the sign of the function fi(p) at a point p of the subdomain.
+
+\cgalFigureRef{figuremulti_domain} shows a view of the
+resulting mesh.
+
+\cgalExample{Mesh_3/mesh_implicit_domains_2.cpp}
+\cgalFigureBegin{figuremulti_domain,multi_domain_2.jpg}
+View of a 3D mesh of the relative complement of a torus in a sphere.
 \cgalFigureEnd
 
 \subsection Mesh_33DPolyhedralDomains 3D Polyhedral Domains
@@ -684,17 +733,18 @@ We set a time bound of 10s and a sliver bound of 10 degrees for the exuder.
 
 \cgalExample{Mesh_3/mesh_optimization_lloyd_example.cpp}
 
-\section Mesh_3Performances Performances
+\section Mesh_3Performances Performance
 
-We provide here some benchmarks of the performances of the mesh generation engine. The machine
-used is a PC running Linux64 with two Intel Xeon CPU X5450 clocked at 3.00 GHz
-with 32GB of RAM. The program has been compiled with g++ v4.3.2 with the -O3 option. 
-Note that our implementation does not take advantage of multi-core
-architectures.
-
-Those benchmarks have been done using \cgal v3.8.
+We provide here some benchmarks of the performance of the mesh generation algorithms.
 
 \subsection Mesh_3DelaunayRefinement_1 Delaunay Refinement
+
+The computer used for benchmarking is a PC running Linux64 with two Intel Xeon CPU X5450 clocked at 3.00 GHz
+with 32GB of RAM. The program has been compiled with g++ v4.3.2 with the -O3 option. 
+These benchmarks have been done using \cgal v3.8.
+Note that these benchmarks were obtained with the sequential version of the algorithm, 
+which does not take advantage of multi-core architectures. See the next 
+section for performance of parallel algorithms.
 
 We study the refinement part of the mesh generation engine in this section. We
 give the CPU time (measured by `Timer`) using the 3 provided oracles. In all experiments, we produce well
@@ -975,6 +1025,23 @@ vertices/second
 
 </CENTER>
 
+\subsection Mesh_3Parallel_performance_1 Parallel Performance
+
+We provide below speed-up charts generated using the parallel version of the meshing algorithms of \cgal 4.5.
+The machine used is a PC running Windows 7 64-bits with two 6-core Intel Xeon CPU X5660 clocked at 2.80 GHz
+with 32GB of RAM. The program has been compiled with Microsoft Visual C++ 2012 in Release mode.
+
+Figure \cgalFigureRef{figure_refinement_speedup} shows mesh refinement speed-up, and figure \cgalFigureRef{figure_lloyd_speedup}
+shows Lloyd optimization speed-up. ODT optimization exhibits similar speed-up.
+
+\cgalFigureBegin{figure_refinement_speedup,refinement_speedup.png}
+Facet refinement speed-up (left) and cell refinement speed-up (right), compared to the sequential version of the algorithm.
+\cgalFigureEnd
+
+\cgalFigureBegin{figure_lloyd_speedup,lloyd_speedup.png}
+Lloyd optimization speed-up, compared to the sequential version of the algorithm. Parallel ODT exhibits similar performance.
+\cgalFigureEnd
+
 \section Mesh_3DesignAndImpl Design and Implementation History
 
 \subsection Mesh_3TheoreticalFoundations Theoretical Foundations
@@ -1026,5 +1093,8 @@ Dobrina Boltcheva et al. \cgalCite{cgal:byb-mgmmi-09}, \cgalCite{cgal:-byb-fpdmg
 of 1-dimensional features was worked out by Laurent Rineau, Stéphane Tayeb
 and Mariette Yvinec. It appeared first in the release 3.8 of \cgal.
 
+In 2013, Clément Jamin made the meshing and optimization algorithms parallel
+on multi-core shared-memory architectures. 
+\todo Add reference to paper or research report when it is available.
 */ 
 } /* namespace CGAL */

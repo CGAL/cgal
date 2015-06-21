@@ -25,7 +25,7 @@
 #include "test_meshing_utilities.h"
 #include <CGAL/Implicit_mesh_domain_3.h>
 
-template <typename K>
+template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Implicit_tester : public Tester<K>
 {
   typedef typename K::Point_3 Point;
@@ -43,7 +43,10 @@ struct Implicit_tester : public Tester<K>
     
     typedef CGAL::Implicit_mesh_domain_3<Function, K> Mesh_domain;
     
-    typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+    typedef typename CGAL::Mesh_triangulation_3<
+      Mesh_domain,
+      typename CGAL::Kernel_traits<Mesh_domain>::Kernel,
+      Concurrency_tag>::type Tr;
     typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
     
     typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
@@ -57,8 +60,12 @@ struct Implicit_tester : public Tester<K>
     //-------------------------------------------------------
     // Data generation
     //-------------------------------------------------------
+    std::cout << "\tSeed is\t" 
+      << CGAL::default_random.get_seed() << std::endl;
     Mesh_domain domain(Implicit_tester<K>::sphere_function,
-                       Sphere_3(CGAL::ORIGIN,2.));
+                       Sphere_3(CGAL::ORIGIN,2.),
+                       1e-3,
+                       &CGAL::default_random);
     
     // Set mesh criteria
     Facet_criteria facet_criteria(0, 0, 0.3);
@@ -82,9 +89,21 @@ struct Implicit_tester : public Tester<K>
     CGAL::refine_mesh_3(c3t3, domain, criteria,
                         CGAL::parameters::no_exude(),
                         CGAL::parameters::no_perturb());
-    
-    // Verify
-    this->verify(c3t3,domain,criteria,Bissection_tag(),50,58,80,90);
+
+    CGAL::remove_far_points_in_mesh_3(c3t3);
+
+#ifdef CGAL_LINKED_WITH_TBB
+    // Parallel
+    if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
+    {
+      this->verify(c3t3, domain, criteria, Bissection_tag(), 40, 65, 60, 110);
+    }
+    else
+#endif //CGAL_LINKED_WITH_TBB
+    {
+      // Verify
+      this->verify(c3t3, domain, criteria, Bissection_tag(), 50, 58, 80, 90);
+    }
   }
 };
 
@@ -95,5 +114,10 @@ int main()
   std::cerr << "Mesh generation from an implicit function:\n";
   test_epic.implicit();
   
+#ifdef CGAL_LINKED_WITH_TBB
+  Implicit_tester<K_e_i, CGAL::Parallel_tag> test_epic_p;
+  std::cerr << "Parallel mesh generation from an implicit function:\n";
+  test_epic_p.implicit();
+#endif
   return EXIT_SUCCESS;
 }

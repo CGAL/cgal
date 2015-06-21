@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh2
+\ingroup PkgMesh2Functions
 
 
 
@@ -19,7 +19,7 @@ template<class CDT> void make_conforming_Delaunay_2 (CDT &t);
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh2
+\ingroup PkgMesh2Functions
 
 
 

@@ -57,6 +57,25 @@
 # TBB_MALLOCPROXY_DEBUG_LIBRARY, the TBB debug malloc_proxy library (not included in TBB_LIBRARIES since it's optionnal)
 # TBB_MALLOCPROXY_RELEASE_LIBRARY, the TBB release malloc_proxy library (not included in TBB_LIBRARIES since it's optionnal)
 
+include(CheckCXXSourceCompiles)
+
+# Usage:
+#   try_TBB_with_pthread(<result_var_name> [additional linker args...])
+function(try_TBB_with_pthread result_var)
+    set(TBB_try_ts_source "
+          #include <tbb/enumerable_thread_specific.h>
+          int main() {
+            tbb::enumerable_thread_specific<
+              bool*,
+              tbb::cache_aligned_allocator<bool*>,
+              tbb::ets_key_per_instance> grid;
+          }
+          ")
+    set(CMAKE_REQUIRED_LIBRARIES ${ALL_TBB_LIBRARIES} ${ARGN})
+    set(CMAKE_REQUIRED_INCLUDES ${TBB_INCLUDE_DIR})
+    check_cxx_source_compiles("${TBB_try_ts_source}" ${result_var})
+    set(${result_var} ${${result_var}} PARENT_SCOPE)
+endfunction(try_TBB_with_pthread)
 
 if (WIN32)
     # has em64t/vc8 em64t/vc9
@@ -200,10 +219,20 @@ endmacro(TBB_CORRECT_LIB_DIR var_content)
 set (TBB_INC_SEARCH_DIR ${_TBB_INSTALL_DIR}/include)
 # Jiri: tbbvars now sets the CPATH environment variable to the directory
 #       containing the headers.
+#  LR: search first with NO_DEFAULT_PATH...
 find_path(TBB_INCLUDE_DIR
     tbb/task_scheduler_init.h
     PATHS ${TBB_INC_SEARCH_DIR} ENV CPATH
+    NO_DEFAULT_PATH
 )
+if(NOT TBB_INCLUDE_DIR)
+#  LR: ... and then search again with NO_DEFAULT_PATH if nothing was found in
+#  hinted paths
+  find_path(TBB_INCLUDE_DIR
+      tbb/task_scheduler_init.h
+      PATHS ${TBB_INC_SEARCH_DIR} ENV CPATH
+  )
+endif()
 mark_as_advanced(TBB_INCLUDE_DIR)
 
 
@@ -239,12 +268,23 @@ list(APPEND _TBB_LIBRARY_DIR ${_TBB_INSTALL_DIR}/lib)
 #       and LD_LIBRARY_PATH environment variables is now even more important
 #       that tbbvars doesn't export TBB_ARCH_PLATFORM and it facilitates
 #       the use of TBB built from sources.
+#  LR: search first with NO_DEFAULT_PATH...
 find_library(TBB_RELEASE_LIBRARY ${_TBB_LIB_RELEASE_NAME} HINTS ${_TBB_LIBRARY_DIR}
-        PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
+        PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH NO_DEFAULT_PATH)
 find_library(TBB_MALLOC_RELEASE_LIBRARY ${_TBB_LIB_MALLOC_RELEASE_NAME} HINTS ${_TBB_LIBRARY_DIR}
-        PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
+        PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH NO_DEFAULT_PATH)
 find_library(TBB_MALLOCPROXY_RELEASE_LIBRARY ${_TBB_LIB_MALLOCPROXY_RELEASE_NAME} HINTS ${_TBB_LIBRARY_DIR}
-        PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
+        PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH NO_DEFAULT_PATH)
+if(NOT TBB_RELEASE_LIBRARY OR NOT TBB_MALLOC_RELEASE_LIBRARY OR NOT TBB_MALLOCPROXY_RELEASE_LIBRARY)
+# LR: ... and then search again with NO_DEFAULT_PATH if nothing was found
+#  in hinted paths
+    find_library(TBB_RELEASE_LIBRARY ${_TBB_LIB_RELEASE_NAME} HINTS ${_TBB_LIBRARY_DIR}
+            PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
+    find_library(TBB_MALLOC_RELEASE_LIBRARY ${_TBB_LIB_MALLOC_RELEASE_NAME} HINTS ${_TBB_LIBRARY_DIR}
+            PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
+    find_library(TBB_MALLOCPROXY_RELEASE_LIBRARY ${_TBB_LIB_MALLOCPROXY_RELEASE_NAME} HINTS ${_TBB_LIBRARY_DIR}
+            PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
+endif()
 
 #Extract path from TBB_RELEASE_LIBRARY name
 get_filename_component(TBB_RELEASE_LIBRARY_DIR ${TBB_RELEASE_LIBRARY} PATH)
@@ -257,11 +297,19 @@ mark_as_advanced(TBB_RELEASE_LIBRARY TBB_MALLOC_RELEASE_LIBRARY TBB_MALLOCPROXY_
 #-- Look for debug libraries
 # Jiri: Changed the same way as for the release libraries.
 find_library(TBB_DEBUG_LIBRARY ${_TBB_LIB_DEBUG_NAME} HINTS ${_TBB_LIBRARY_DIR}
-        PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
+        PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH NO_DEFAULT_PATH)
 find_library(TBB_MALLOC_DEBUG_LIBRARY ${_TBB_LIB_MALLOC_DEBUG_NAME} HINTS ${_TBB_LIBRARY_DIR}
-        PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
+        PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH NO_DEFAULT_PATH)
 find_library(TBB_MALLOCPROXY_DEBUG_LIBRARY ${_TBB_LIB_MALLOCPROXY_DEBUG_NAME} HINTS ${_TBB_LIBRARY_DIR}
-        PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
+        PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH NO_DEFAULT_PATH)
+if(NOT TBB_DEBUG_LIBRARY OR NOT TBB_MALLOC_DEBUG_LIBRARY OR NOT TBB_MALLOCPROXY_DEBUG_LIBRARY)
+    find_library(TBB_DEBUG_LIBRARY ${_TBB_LIB_DEBUG_NAME} HINTS ${_TBB_LIBRARY_DIR}
+            PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
+    find_library(TBB_MALLOC_DEBUG_LIBRARY ${_TBB_LIB_MALLOC_DEBUG_NAME} HINTS ${_TBB_LIBRARY_DIR}
+            PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
+    find_library(TBB_MALLOCPROXY_DEBUG_LIBRARY ${_TBB_LIB_MALLOCPROXY_DEBUG_NAME} HINTS ${_TBB_LIBRARY_DIR}
+            PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
+endif()
 
 # Jiri: Self-built TBB stores the debug libraries in a separate directory.
 #       Extract path from TBB_DEBUG_LIBRARY name
@@ -309,6 +357,21 @@ if (TBB_INCLUDE_DIR)
             endif (TBB_MALLOC_DEBUG_LIBRARY)
         endif (TBB_MALLOC_RELEASE_LIBRARY)
 
+        if(UNIX AND NOT APPLE)
+            # On Fedora, code using TBB might need -pthread
+
+            # First check without pthread
+            try_TBB_with_pthread(TBB_without_pthread)
+
+            if(NOT TBB_without_pthread)
+                # Then check with -pthread
+                try_TBB_with_pthread(TBB_with_pthread -pthread)
+                if(TBB_with_pthread)
+                    list(APPEND ALL_TBB_LIBRARIES general -pthread)
+                endif(TBB_with_pthread)
+                endif(NOT TBB_without_pthread)
+        endif(UNIX AND NOT APPLE)
+
         set (TBB_LIBRARIES ${ALL_TBB_LIBRARIES}
              CACHE PATH "TBB libraries" FORCE)
 
@@ -331,8 +394,10 @@ if (TBB_INCLUDE_DIR)
 endif (TBB_INCLUDE_DIR)
 
 if (NOT TBB_FOUND)
-    message("ERROR: Intel TBB NOT found! Please define the TBBROOT (or TBB_INSTALL_DIR) and/or TBB_ARCH_PLATFORM environment variables.")
-    message(STATUS "Looked for Threading Building Blocks in ${_TBB_INSTALL_DIR}")
+    if(NOT TBB_FIND_QUIETLY)
+        message("ERROR: Intel TBB NOT found! Please define the TBBROOT (or TBB_INSTALL_DIR) and/or TBB_ARCH_PLATFORM environment variables.")
+        message(STATUS "Looked for Threading Building Blocks in ${_TBB_INSTALL_DIR}")
+    endif(NOT TBB_FIND_QUIETLY)
     SET(TBB_INSTALL_DIR "TBB_INSTALL_DIR_NOT_FOUND" CACHE STRING "Intel TBB install directory")
     # do only throw fatal, if this pkg is REQUIRED
     if (TBB_FIND_REQUIRED)
@@ -350,3 +415,8 @@ if (TBB_FOUND)
 endif (TBB_FOUND)
 
 set(TBB_USE_FILE "UseTBB")
+
+### ** Emacs settings **
+### Local Variables:
+### cmake-tab-width: 4
+### End:

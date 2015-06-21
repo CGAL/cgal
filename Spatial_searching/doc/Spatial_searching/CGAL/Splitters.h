@@ -14,14 +14,11 @@ which the points have the largest spread. It then splits the points
 in the most even manner possible, subject to maintaining the bound on 
 the ratio of the resulting rectangles. 
 
-\cgalHeading{Parameters}
+\tparam Traits must be a model of 
+the concept `SearchTraits`, for example `CGAL::Search_traits_2`. 
 
-Expects for the first template argument a model of 
-the concept `SearchTraits`, 
-for example `Simple_cartesian<double>`. 
-
-Expects for the second template argument a model of the concept `SpatialSeparator`. 
-It has as default value the type, `Plane_separator<Traits::FT>`. 
+\tparam SpatialSeparator must be a model of the concept `SpatialSeparator`. 
+It has as default value the type `Plane_separator<Traits::FT>`. 
 
 \cgalModels `Splitter`
 
@@ -370,7 +367,7 @@ public:
 /*!
 Constructor. 
 */ 
-Sliding_fair(unsigned int bucket_size); 
+Sliding_midpoint(unsigned int bucket_size); 
 
 /// @} 
 

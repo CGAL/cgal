@@ -39,7 +39,7 @@ class Point_inside_vertical_ray_cast
   typedef typename Kernel::Ray_3         Ray;
   typedef typename AABBTree::AABB_traits Traits;
 
-  const static unsigned int seed = 1340818006;
+  static const unsigned int seed = 1340818006;
 
 public:
   Bounded_side operator()(

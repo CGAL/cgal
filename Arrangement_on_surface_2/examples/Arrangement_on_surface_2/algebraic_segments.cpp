@@ -1,4 +1,5 @@
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
+#include <CGAL/use.h>
 #include <iostream>
 
 #if (!CGAL_USE_CORE) && (!CGAL_USE_LEDA) && (!(CGAL_USE_GMP && CGAL_USE_MPFI))
@@ -64,7 +65,7 @@ int main() {
     for(size_t i = 0; i < pre_segs.size(); i++ ) {
         X_monotone_curve_2 curr;
         bool check = CGAL::assign(curr,pre_segs[i]);
-        assert(check);
+        assert(check); CGAL_USE(check);
         segs.push_back(curr);
     }
     // Construct an ellipse with equation 2*x^2+5*y^2-7=0

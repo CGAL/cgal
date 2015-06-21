@@ -41,30 +41,29 @@ namespace CGAL {
 namespace Surface_mesh_simplification
 {
 
-template<class ECM_, class Kernel_ = typename Kernel_traits< typename halfedge_graph_traits<ECM_>::Point>::Kernel >
+  template<class ECM_, class Profile_>
 class LindstromTurkCore
 {
 public:
     
   typedef ECM_    ECM ;
-  typedef Kernel_ Kernel ;
-  
-  typedef Edge_profile<ECM> Profile ;
+  typedef Profile_ Profile ;
   
   typedef boost::graph_traits<ECM> GraphTraits ;
   
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor ;
-  typedef typename GraphTraits::edge_descriptor   edge_descriptor ;
-  typedef typename GraphTraits::in_edge_iterator  in_edge_iterator ;
+  typedef typename GraphTraits::halfedge_descriptor   halfedge_descriptor ;
   
   typedef LindstromTurk_params Params ;
   
-  typedef typename Kernel::Point_3 Point ;
+  typedef typename Profile::Point Point ;
 
-  typedef typename halfedge_graph_traits<ECM>::Point ECM_Point ;
+  typedef typename Profile::VertexPointMap Vertex_point_pmap;
+  typedef typename boost::property_traits<Vertex_point_pmap>::value_type ECM_Point;
   
   typedef typename Kernel_traits<ECM_Point>::Kernel ECM_Kernel ;
   
+  typedef typename Kernel_traits<Point>::Kernel Kernel;
   typedef typename Kernel::Vector_3 Vector ;
   typedef typename Kernel::FT       FT ;
  
@@ -78,7 +77,7 @@ public:
   typedef typename Profile::vertex_descriptor_vector vertex_descriptor_vector ;
   
   typedef typename Profile::Triangle_vector       ::const_iterator const_triangle_iterator ;
-  typedef typename Profile::edge_descriptor_vector::const_iterator const_border_edge_iterator ;
+  typedef typename Profile::halfedge_descriptor_vector::const_iterator const_border_edge_iterator ;
   
 public:
   
@@ -111,18 +110,18 @@ private :
   void Extract_triangle_data();
   void Extract_boundary_data();
   
-  void Add_boundary_preservation_constrians( Boundary_data_vector const& aBdry ) ;
-  void Add_volume_preservation_constrians( Triangle_data_vector const& aTriangles );
-  void Add_boundary_and_volume_optimization_constrians( Boundary_data_vector const& aBdry, Triangle_data_vector const& aTriangles ) ;
-  void Add_shape_optimization_constrians( vertex_descriptor_vector const& aLink ) ;
+  void Add_boundary_preservation_constraints( Boundary_data_vector const& aBdry ) ;
+  void Add_volume_preservation_constraints( Triangle_data_vector const& aTriangles );
+  void Add_boundary_and_volume_optimization_constraints( Boundary_data_vector const& aBdry, Triangle_data_vector const& aTriangles ) ;
+  void Add_shape_optimization_constraints( vertex_descriptor_vector const& aLink ) ;
 
   FT Compute_boundary_cost( Vector const& v, Boundary_data_vector const& aBdry ) ;
   FT Compute_volume_cost  ( Vector const& v, Triangle_data_vector const& aTriangles ) ;
   FT Compute_shape_cost   ( Point  const& p, vertex_descriptor_vector const& aLink ) ;
 
-  Point get_point ( vertex_descriptor const& v ) const 
+  Point get_point ( vertex_descriptor const& v ) const
   {
-    return convert(get(vertex_point,surface(),v));
+    return convert(get(mProfile.vertex_point_map(),v));
   }
 
   static Vector Point_cross_product ( Point const& a, Point const& b ) 

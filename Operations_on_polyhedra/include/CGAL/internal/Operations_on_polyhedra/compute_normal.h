@@ -22,6 +22,8 @@
 #ifndef CGAL_INTERNAL_OPERATIONS_ON_POLYHEDRA_COMPUTE_NORMAL_H
 #define CGAL_INTERNAL_OPERATIONS_ON_POLYHEDRA_COMPUTE_NORMAL_H
 
+#include <CGAL/circulator.h>
+
 template <class Facet, class Kernel>
 typename Kernel::Vector_3 compute_facet_normal(const Facet& f)
 {

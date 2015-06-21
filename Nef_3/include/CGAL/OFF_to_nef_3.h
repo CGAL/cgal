@@ -23,25 +23,27 @@
 
 #include <CGAL/Nef_polyhedron_3.h>
 
+
+
 // --- begin preliminary number type converter -----------------
 
 #ifndef CGAL_NUMBER_TYPE_CONVERTER_NEF_3_H
 #define CGAL_NUMBER_TYPE_CONVERTER_NEF_3_H
 
 #include<sstream>
-#include<CGAL/Gmpz.h>
-#include<CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Exact_integer.h>
+#include <CGAL/Fraction_traits.h>
 #include<CGAL/Cartesian.h>
 #include<CGAL/Homogeneous.h>
 #include<CGAL/Nef_S2/Normalizing.h>
 #include<CGAL/Nef_nary_union_3.h>
 
-#ifdef CGAL_USE_LEDA
-#include<CGAL/leda_integer.h>
-#include<CGAL/leda_rational.h>
-#endif // CGAL_USE_LEDA
-
 namespace CGAL {
+
+
+typedef CGAL::Exact_integer Integer;
+typedef CGAL::Exact_rational Rational;
 
 class Homogeneous_tag;
 class Cartesian_tag;
@@ -55,15 +57,21 @@ class number_type_converter_nef_3<Homogeneous_tag, Kernel> {
   {
     typedef typename Kernel::Point_3   Point_3;
     typedef typename Kernel::RT        RT;
-    
-    CGAL::Gmpq x(d.x()), y(d.y()), z(d.z());
-    
-      CGAL::Homogeneous<CGAL::Gmpz>::Point_3 b =
-	normalized ( CGAL::Homogeneous<CGAL::Gmpz>::Point_3 (
-	 x.numerator()   * y.denominator() * z.denominator(),
-         x.denominator() * y.numerator()   * z.denominator(),
-         x.denominator() * y.denominator() * z.numerator(),
-         x.denominator() * y.denominator() * z.denominator() ) );
+
+    typedef Fraction_traits<Rational> F_traits;
+
+    Rational x(d.x()), y(d.y()), z(d.z());
+    Integer xn, xd, yn, yd, zn, zd;
+    typename F_traits::Decompose decompose;
+    decompose(x, xn, xd);
+    decompose(y, yn, yd);
+    decompose(z, zn, zd);
+      CGAL::Homogeneous<Integer>::Point_3 b =
+	normalized ( CGAL::Homogeneous<Integer>::Point_3 (
+	 xn * yd * zd,
+         xd * yn * zd,
+         xd * yd * zn,
+         xd * yd * zd ) );
 
       std::ostringstream outx, outy, outz, outw;
       outx << b.hx();

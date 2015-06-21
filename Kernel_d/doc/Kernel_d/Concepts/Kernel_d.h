@@ -20,6 +20,7 @@ replacing operators, especially for equality testing.
 
 \cgalHasModel `CGAL::Cartesian_d<FieldNumberType>`
 \cgalHasModel `CGAL::Homogeneous_d<RingNumberType>` 
+\cgalHasModel `CGAL::Epick_d<DimensionTag>`
 */
 class Kernel_d {
 public:
@@ -36,6 +37,11 @@ typedef unspecified_type FT;
 a number type that is a model for `RingNumberType` 
 */ 
 typedef unspecified_type RT; 
+
+/*!
+the dimension of the ambient space. It must be either `Dimension_tag<d>` for some integer d or `Dynamic_dimension_tag`.
+*/
+typedef unspecified_type Dimension;
 
 /// @} 
 
@@ -184,11 +190,6 @@ a model of `Kernel_d::Intersect_d`
 typedef unspecified_type Intersect_d; 
 
 /*!
-a model of `Kernel_d::Lift_to_paraboloid_d` 
-*/ 
-typedef unspecified_type Lift_to_paraboloid_d; 
-
-/*!
 a model of `Kernel_d::Linear_base_d` 
 */ 
 typedef unspecified_type Linear_base_d; 
@@ -212,11 +213,6 @@ typedef unspecified_type Point_of_sphere_d;
 a model of `Kernel_d::Point_to_vector_d` 
 */ 
 typedef unspecified_type Point_to_vector_d; 
-
-/*!
-a model of `Kernel_d::Project_along_d_axis_d` 
-*/ 
-typedef unspecified_type Project_along_d_axis_d; 
 
 /*!
 a model of `Kernel_d::Squared_distance_d` 

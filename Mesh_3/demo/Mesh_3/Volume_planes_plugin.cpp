@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include <CGAL/Image_3.h>
 
 #include "Volume_plane.h"
@@ -59,11 +61,11 @@ struct DoubleConverter {
 class PixelReader : public QObject
 {
 Q_OBJECT
-public slots:
+public Q_SLOTS:
   void update(const QPoint& p) {
     getPixel(p);
   }
-signals:
+Q_SIGNALS:
   void x(int);
 
 public:
@@ -81,9 +83,9 @@ private:
     glReadPixels(e.x(), vp[3] - e.y(), 1, 1, GL_RGB, GL_FLOAT, data);
 
     if(fc) {
-      emit x( (*fc)(data[0]) );
+      Q_EMIT x( (*fc)(data[0]) );
     } else if(ic) {
-      emit x( (*ic)(data[0]) );
+      Q_EMIT x( (*ic)(data[0]) );
     }
   }
 };
@@ -109,10 +111,10 @@ public:
       scene->itemChanged(id);
     }
 
-    emit realChange(this->value() / scale);
+    Q_EMIT realChange(this->value() / scale);
   }
 
-public slots:
+public Q_SLOTS:
   void updateValue() {
     float a, b, c;
     frame->getPosition(a, b, c);
@@ -122,11 +124,11 @@ public slots:
     setValue(sum1 * scale);
   }
 
-signals:
+Q_SIGNALS:
   void realChange(int);
 
 private:
-  const static unsigned int scale;
+  static const unsigned int scale;
 
   qglviewer::Vec v;
   int id;
@@ -175,7 +177,7 @@ public:
     return QList<QAction*>() << planeSwitch;
   }
 
-public slots:
+public Q_SLOTS:
   void selectPlanes() {
     std::vector< Scene_segmented_image_item* > seg_items;
     Scene_segmented_image_item* seg_img = NULL;

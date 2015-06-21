@@ -17,6 +17,9 @@
 //Build shared libraries
 BUILD_SHARED_LIBS:BOOL=ON
 
+//Activate the debug messages of the script FindBoost
+Boost_DEBUG:BOOL=OFF
+
 //Path to a file.
 Boost_INCLUDE_DIR:PATH=/usr/include
 
@@ -45,7 +48,7 @@ CGAL_BINARY_DIR:STATIC=/home/lrineau/infrastructure/reference-platforms/x86-64_L
 CGAL_Boost_USE_STATIC_LIBS:BOOL=OFF
 
 //User-defined flags
-CGAL_CXX_FLAGS:STRING= -frounding-math -std=c++98 -Wall -pedantic-errors -Wno-long-long -fdiagnostics-show-option
+CGAL_CXX_FLAGS:STRING= -frounding-math -std=c++98 -Wall -pedantic-errors -Wno-long-long -Wno-variadic-macros -fdiagnostics-show-option
 
 //Value Computed by CMake
 CGAL_Core_BINARY_DIR:STATIC=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_ansi/src/Core
@@ -142,7 +145,7 @@ CGAL_Qt4_BINARY_DIR:STATIC=/home/lrineau/infrastructure/reference-platforms/x86-
 CGAL_Qt4_LIBRARY:STRING=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_ansi/lib/libCGAL_Qt4.so
 
 //Dependencies for the target
-CGAL_Qt4_LIB_DEPENDS:STATIC=general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_ansi/lib/libCGAL.so;general;/usr/lib64/libboost_thread.so;general;/usr/lib64/libboost_system.so;optimized;/usr/lib64/libQtOpenGL.so;debug;/usr/lib64/libQtOpenGL_debug.so;optimized;/usr/lib64/libQtGui.so;debug;/usr/lib64/libQtGui_debug.so;optimized;/usr/lib64/libQtCore.so;debug;/usr/lib64/libQtCore_debug.so;general;/usr/lib64/libGLU.so;general;/usr/lib64/libGL.so;general;/usr/lib64/libSM.so;general;/usr/lib64/libICE.so;general;/usr/lib64/libX11.so;general;/usr/lib64/libXext.so;
+CGAL_Qt4_LIB_DEPENDS:STATIC=general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_ansi/lib/libCGAL.so;general;/usr/lib64/libboost_thread.so;general;/usr/lib64/libboost_system.so;optimized;/usr/lib64/libQtOpenGL.so;debug;/usr/lib64/libQtOpenGL_debug.so;optimized;/usr/lib64/libQtSvg.so;debug;/usr/lib64/libQtSvg_debug.so;optimized;/usr/lib64/libQtGui.so;debug;/usr/lib64/libQtGui_debug.so;optimized;/usr/lib64/libQtCore.so;debug;/usr/lib64/libQtCore_debug.so;general;/usr/lib64/libGLU.so;general;/usr/lib64/libGL.so;general;/usr/lib64/libSM.so;general;/usr/lib64/libICE.so;general;/usr/lib64/libX11.so;general;/usr/lib64/libXext.so;
 
 //Value Computed by CMake
 CGAL_Qt4_SOURCE_DIR:STATIC=/home/lrineau/CGAL/CGAL-I/src/CGALQt4
@@ -173,7 +176,7 @@ CMAKE_COLOR_MAKEFILE:BOOL=ON
 CMAKE_CXX_COMPILER:FILEPATH=/usr/lib64/ccache/c++
 
 //User-defined flags
-CMAKE_CXX_FLAGS:STRING= -frounding-math -std=c++98 -ansi -Wall -pedantic -Wno-long-long -pedantic-errors -fdiagnostics-show-option
+CMAKE_CXX_FLAGS:STRING= -frounding-math -std=c++98 -ansi -Wall -pedantic -Wno-long-long -Wno-variadic-macros -pedantic-errors -fdiagnostics-show-option
 
 //Flags used by the compiler during debug builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=-g
@@ -1327,6 +1330,8 @@ ZLIB_LIBRARY:FILEPATH=/usr/lib64/libz.so
 
 //Name of all CGAL libraries.
 ALL_CGAL_LIBRARIES:INTERNAL=CGAL;CGAL_Core;CGAL_ImageIO;CGAL_Qt3;CGAL_Qt4
+//ADVANCED property for variable: Boost_DEBUG
+Boost_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_INCLUDE_DIR
 Boost_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_LIBRARY_DIR
@@ -1492,7 +1497,7 @@ CGAL_CFG_USING_BASE_MEMBER_BUG_2_COMPILED:INTERNAL=TRUE
 CGAL_CGAL_LIBRARY:INTERNAL=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_ansi/lib/libCGAL.so
 //Variable hidden from user
 CGAL_CGAL_LIBRARY_NAME:INTERNAL=libCGAL.so
-CGAL_CONFIGURED_LIBRARIES:INTERNAL=CGAL;CGAL_Core;CGAL_ImageIO;CGAL_Qt3;CGAL_Qt4;Core;ImageIO;Qt3;Qt4
+CGAL_CONFIGURED_LIBRARIES:INTERNAL=CGAL_Core;CGAL_ImageIO;CGAL_Qt3;CGAL_Qt4
 //Directory containing the Core package
 CGAL_CORE_PACKAGE_DIR:INTERNAL=/home/lrineau/CGAL/CGAL-I
 CGAL_Core_3RD_PARTY_DEFINITIONS:INTERNAL=
@@ -1506,7 +1511,7 @@ CGAL_Core_LIBRARY_INSTALLED:INTERNAL=/usr/local/lib/libCGAL_Core.so
 //Variable hidden from user
 CGAL_Core_LIBRARY_NAME:INTERNAL=libCGAL_Core.so
 //Variable hidden from user
-CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES:INTERNAL=GMP;MPFR;GMP;MPFR
+CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES:INTERNAL=GMP;MPFR
 CGAL_EXECUTABLE_TARGETS:INTERNAL=
 //Variable hidden from user
 CGAL_EXT_LIB_BLAS_PREFIX:INTERNAL=BLAS
@@ -1587,7 +1592,7 @@ CGAL_Qt3_LIBRARY_INSTALLED:INTERNAL=/usr/local/lib/libCGAL_Qt3.so
 CGAL_Qt3_LIBRARY_NAME:INTERNAL=libCGAL_Qt3.so
 CGAL_Qt4_3RD_PARTY_DEFINITIONS:INTERNAL=
 CGAL_Qt4_3RD_PARTY_INCLUDE_DIRS:INTERNAL=/usr/include;/usr/include
-CGAL_Qt4_3RD_PARTY_LIBRARIES:INTERNAL=optimized;/usr/lib64/libQtOpenGL.so;debug;/usr/lib64/libQtOpenGL_debug.so;optimized;/usr/lib64/libQtGui.so;debug;/usr/lib64/libQtGui_debug.so;optimized;/usr/lib64/libQtCore.so;debug;/usr/lib64/libQtCore_debug.so;/usr/lib64/libGLU.so;/usr/lib64/libGL.so;/usr/lib64/libSM.so;/usr/lib64/libICE.so;/usr/lib64/libX11.so;/usr/lib64/libXext.so
+CGAL_Qt4_3RD_PARTY_LIBRARIES:INTERNAL=optimized;/usr/lib64/libQtOpenGL.so;debug;/usr/lib64/libQtOpenGL_debug.so;optimized;/usr/lib64/libQtSvg.so;debug;/usr/lib64/libQtSvg_debug.so;optimized;/usr/lib64/libQtGui.so;debug;/usr/lib64/libQtGui_debug.so;optimized;/usr/lib64/libQtCore.so;debug;/usr/lib64/libQtCore_debug.so;/usr/lib64/libGLU.so;/usr/lib64/libGL.so;/usr/lib64/libSM.so;/usr/lib64/libICE.so;/usr/lib64/libX11.so;/usr/lib64/libXext.so
 CGAL_Qt4_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=
 //ADVANCED property for variable: CGAL_Qt4_LIBRARY
 CGAL_Qt4_LIBRARY-ADVANCED:INTERNAL=1
@@ -1600,7 +1605,7 @@ CGAL_SONAME_VERSION-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CGAL_SOVERSION
 CGAL_SOVERSION-ADVANCED:INTERNAL=1
 //Variable hidden from user
-CGAL_SUPPORTING_3RD_PARTY_LIBRARIES:INTERNAL=GMP;GMPXX;MPFR;ZLIB;OpenGL;LEDA;MPFI;RS;RS3;OpenNL;TAUCS;Eigen3;BLAS;LAPACK;QGLViewer;ESBTL;Coin3D;NTL;IPE
+CGAL_SUPPORTING_3RD_PARTY_LIBRARIES:INTERNAL=GMP;GMPXX;MPFR;ZLIB;OpenGL;LEDA;MPFI;RS;RS3;OpenNL;Eigen3;BLAS;LAPACK;QGLViewer;ESBTL;Coin3D;NTL;IPE;TAUCS
 //ADVANCED property for variable: CMAKE_AR
 CMAKE_AR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_BACKWARDS_COMPATIBILITY
@@ -1759,7 +1764,7 @@ CMAKE_UNAME:INTERNAL=/bin/uname
 CMAKE_USE_RELATIVE_PATHS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-CONFIG_CXX_FLAGS:INTERNAL= -frounding-math -std=c++98 -ansi -Wall -pedantic -Wno-long-long -pedantic-errors -fdiagnostics-show-option
+CONFIG_CXX_FLAGS:INTERNAL= -frounding-math -std=c++98 -ansi -Wall -pedantic -Wno-long-long -Wno-variadic-macros -pedantic-errors -fdiagnostics-show-option
 //Variable hidden from user
 Core_LIBRARY_INSTALLED:INTERNAL=
 //Variable hidden from user

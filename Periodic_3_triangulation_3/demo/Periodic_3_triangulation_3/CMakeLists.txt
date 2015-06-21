@@ -25,6 +25,7 @@ find_package(OpenGL)
 
 # Find QGLViewer
 if(QT4_FOUND)
+  add_definitions(-DQT_NO_KEYWORDS)
   include( ${QT_USE_FILE} )
   find_package(QGLViewer)
 endif(QT4_FOUND)

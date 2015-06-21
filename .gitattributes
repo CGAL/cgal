@@ -38,6 +38,7 @@
 # Declare files that will always have LF line endings on checkout.
 Documentation/Doxyfile text eol=lf
 Documentation/pkglist_filter text eol=lf
+Installation/update_CHANGES text eol=lf
 Scripts/developer_scripts/autotest_cgal text eol=lf
 Scripts/developer_scripts/autotest_cgal_with_cmake text eol=lf
 Scripts/developer_scripts/cgal_build text eol=lf

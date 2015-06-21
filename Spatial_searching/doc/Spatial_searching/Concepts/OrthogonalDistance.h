@@ -20,6 +20,11 @@ public:
 /// @{
 
 /*!
+Dimension Tag.
+*/
+typedef unspecified_type D;
+
+/*!
 Number type. 
 */ 
 typedef unspecified_type FT; 
@@ -42,7 +47,7 @@ typedef unspecified_type Query_item;
 /*!
 Constructor implementing distance for `d`-dimensional points. 
 */ 
-OrthogonalDistance(int d); 
+OrthogonalDistance(); 
 
 /// @} 
 
@@ -58,13 +63,29 @@ FT transformed_distance(Query_item q, Point_d r) const;
 Returns the transformed distance between `q` and 
 the point on the boundary of `r` closest to `q`. 
 */ 
-FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r) const; 
+FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r) const; 
+
+/*!
+Returns the transformed distance between `q` and 
+the point on the boundary of `r` closest to `q`.
+The vector `dists` has the size of the dimension of the data points
+and is filled with the distance in each dimension.
+*/ 
+  FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r, std::vector<FT>& dists); 
 
 /*!
 Returns the transformed distance between `q` and 
 the point on the boundary of `r` farthest to `q`. 
 */ 
-FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r) const; 
+FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r) const; 
+
+/*!
+Returns the transformed distance between `q` and 
+the point on the boundary of `r` farthest to `q`.
+The vector `dists` has the size of the dimension of the data points
+and is filled with the distance in each dimension.
+*/ 
+  FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r, std::vector<FT>& dists); 
 
 /*!
 Returns the transformed distance. 

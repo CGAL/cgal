@@ -57,6 +57,7 @@ struct Point_on_merge
   void operator() (Attribute& a1,const Attribute& a2) const
   {
     CGAL_assertion(a1.point()==a2.point() );
+    CGAL_USE(a1); CGAL_USE(a2);
   }
 };
 #endif

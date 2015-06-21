@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Michael Hemmer, Dominik Hülse
+// Author(s)     : Michael Hemmer, Dominik HÃ¼lse
 //
 // ============================================================================
 

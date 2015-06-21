@@ -20,8 +20,8 @@
 //
 //******************************************************************************
 // File Description :
-// Implicit_to_labeled_function_wrapper and
-// Implicit_vector_to_labeled_function_wrapper class declaration
+// Implicit_to_labeling_function_wrapper and
+// Implicit_vector_to_labeling_function_wrapper class declaration
 // and implementation.
 //
 // See classes description to have more information.
@@ -30,11 +30,16 @@
 #ifndef CGAL_MESH_3_IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H
 #define CGAL_MESH_3_IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H
 
-
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored
 #endif
+
+#define CGAL_DEPRECATED_HEADER "<CGAL/Mesh_3/Implicit_to_labeled_function_wrapper.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Implicit_to_labeling_function_wrapper.h>"
+#include <CGAL/internal/deprecation_warning.h>
+
+#include <vector>
 
 namespace CGAL {
 
@@ -81,6 +86,8 @@ private:
 
 
 /**
+ * \deprecated
+ *
  * @class Implicit_vector_to_labeled_function_wrapper
  *
  * Wraps a set of implicit function [f1,f2,...] to one function F which
@@ -112,7 +119,7 @@ public:
   /// Operator ()
   return_type operator()(const Point_3& p, const bool = true) const
   {
-    int nb_func = function_vector_.size();
+    int nb_func = static_cast<int>(function_vector_.size());
     if ( nb_func > 8 )
     {
       CGAL_error_msg("We support at most 8 functions !");
@@ -134,7 +141,6 @@ private:
   const Function_vector function_vector_;
 
 };  // end class Implicit_to_labeled_function_wrapper
-
 
 }  // end namespace Mesh_3
 

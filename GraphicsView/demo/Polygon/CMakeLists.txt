@@ -10,7 +10,7 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-find_package(CGAL COMPONENTS Qt4 Core GMP MPFR)
+find_package(CGAL COMPONENTS Qt4 Core)
 
 include(${CGAL_USE_FILE})
 
@@ -24,6 +24,8 @@ set( QT_USE_QTOPENGL  TRUE )
 include_directories (BEFORE ../../include)
 
 if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
+
+  add_definitions(-DQT_NO_KEYWORDS)
 
   if( CGAL_Core_FOUND)
     add_definitions(-DCGAL_USE_CORE)

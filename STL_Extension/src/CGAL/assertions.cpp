@@ -20,7 +20,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Geert-Jan Giezeman and Sven Schönherr
+// Author(s)     : Geert-Jan Giezeman and Sven SchÃ¶nherr
 
 #include <CGAL/config.h>
 #include <CGAL/assertions.h>

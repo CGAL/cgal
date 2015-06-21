@@ -4,22 +4,16 @@
 #include <CGAL/Filtered_extended_homogeneous.h>
 #include <CGAL/Extended_cartesian.h>
 #include <CGAL/Nef_polyhedron_2.h>
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Exact_integer.h>
 
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-#include <CGAL/leda_rational.h>
-typedef leda_integer Integer;
-typedef leda_rational Rational;
-#else
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpz.h>
-#include <CGAL/Gmpq.h>
-typedef CGAL::Gmpz Integer;
-typedef CGAL::Gmpq Rational;
+#if defined (CGAL_USE_LEDA) || defined (CGAL_USE_GMP)
+
+typedef CGAL::Exact_integer Integer;
+typedef CGAL::Exact_rational Rational;
 #else
 typedef long Integer;
 typedef double Rational;
-#endif
 #endif
 
 

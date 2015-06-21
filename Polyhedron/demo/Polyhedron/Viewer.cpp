@@ -26,15 +26,28 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->twosides = false;
   d->macro_mode = false;
   setShortcut(EXIT_VIEWER, 0);
-  setMouseBinding(Qt::SHIFT + Qt::LeftButton, SELECT);
-  setMouseBindingDescription(Qt::SHIFT + Qt::RightButton, 
-                             tr("Selects and display context "
-                                "menu of the selected item"));
   setKeyDescription(Qt::Key_T,
                     tr("Turn the camera by 180 degrees"));
   setKeyDescription(Qt::Key_M,
                     tr("Toggle macro mode: useful to view details very near from the camera, "
                        "but decrease the z-buffer precision"));
+#if QGLVIEWER_VERSION >= 0x020501
+  //modify mouse bindings that have been updated
+  setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL, true, Qt::RightButton);
+  setMouseBindingDescription(Qt::ShiftModifier, Qt::RightButton,
+                             tr("Select and pop context menu"));
+  setMouseBinding(Qt::Key_R, Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL);
+  //use the new API for these
+  setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, SELECT);
+  setMouseBindingDescription(Qt::Key(0), Qt::ShiftModifier, Qt::LeftButton,
+                             tr("Selects and display context "
+                                "menu of the selected item"));
+#else
+  setMouseBinding(Qt::SHIFT + Qt::LeftButton, SELECT);
+  setMouseBindingDescription(Qt::SHIFT + Qt::RightButton,
+                             tr("Selects and display context "
+                                "menu of the selected item"));
+#endif // QGLVIEWER_VERSION >= 2.5.0
 }
 
 Viewer::~Viewer()
@@ -203,13 +216,13 @@ void Viewer::postSelection(const QPoint& pixel)
   bool found = false;
   qglviewer::Vec point = camera()->pointUnderPixel(pixel, found);
   if(found) {
-    emit selectedPoint(point.x,
+    Q_EMIT selectedPoint(point.x,
                        point.y,
                        point.z);
-    emit selected(this->selectedName());
+    Q_EMIT selected(this->selectedName());
     const qglviewer::Vec orig = camera()->position();
     const qglviewer::Vec dir = point - orig;
-    emit selectionRay(orig.x, orig.y, orig.z,
+    Q_EMIT selectionRay(orig.x, orig.y, orig.z,
                       dir.x, dir.y, dir.z);
   }
 }

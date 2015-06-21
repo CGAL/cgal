@@ -77,11 +77,7 @@ int main (int argc, char **argv)
   int i = 1;
   while (i < argc)
   {
-    if (! read_polygon (argv[i], pgn))
-    {
-      std::cerr << "Failed to read: <" << argv[i] << ">." << std::endl;
-      return (1);
-    }
+    read_polygon (argv[i], pgn);
     
     // Read the offset radius.
     int         numer, denom;

@@ -16,9 +16,6 @@
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/compute_average_spacing.h>
 
-#ifdef CGAL_TAUCS_ENABLED
-#include <CGAL/Taucs_solver_traits.h>
-#endif
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>
 #endif
@@ -90,27 +87,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
                               points.begin(), points.end(),
                               CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()));
 
-    bool ok = false;
-    #ifdef CGAL_TAUCS_ENABLED
-    if(solver_name=="Taucs")
-    {
-      // Creates sparse linear solver: 
-      // TAUCS out-of-core Multifrontal Supernodal Cholesky Factorization
-      const char* OOC_SUPERNODAL_CHOLESKY_FACTORIZATION[] = 
-      {
-        "taucs.factor.LLT=true",
-        "taucs.factor.mf=true",
-        "taucs.factor.ordering=metis",
-        "taucs.ooc=true", "taucs.ooc.basename=taucs-ooc",
-        NULL
-      };
-      unlink("taucs-ooc.0"); // make sure TAUCS ooc file does not exist
-      CGAL::Taucs_symmetric_solver_traits<double> solver(OOC_SUPERNODAL_CHOLESKY_FACTORIZATION);
-      
-      ok = function.compute_implicit_function(solver, use_two_passes);
-    }
-    #endif
-    
+    bool ok = false;    
     #ifdef CGAL_EIGEN3_ENABLED
     if(solver_name=="Eigen - built-in simplicial LDLt")
     {
@@ -212,7 +189,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
 
     // Constructs AABB tree and computes internal KD-tree
     // data structure to accelerate distance queries
-    AABB_tree tree(output_mesh->facets_begin(), output_mesh->facets_end(), *output_mesh);
+    AABB_tree tree(faces(*output_mesh).first, faces(*output_mesh).second, *output_mesh);
     tree.accelerate_distance_queries();
 
     // Computes distance from each input point to reconstructed mesh

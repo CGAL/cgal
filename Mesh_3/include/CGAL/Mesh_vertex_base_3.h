@@ -30,11 +30,68 @@
 #define CGAL_COMPACT_MESH_VERTEX_BASE_3_H
 
 #include <CGAL/Triangulation_vertex_base_3.h>
-#include <CGAL/Mesh_3/Has_features.h>
 #include <CGAL/internal/Mesh_3/get_index.h>
 #include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/Has_timestamp.h>
+#include <CGAL/tags.h>
 
 namespace CGAL {
+  
+// Without erase counter
+template <typename Concurrency_tag>
+class Mesh_vertex_base_3_base
+{
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+
+public:
+  // Erase counter (cf. Compact_container)
+  unsigned int erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+    this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+  
+protected:
+  typedef unsigned int              Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
+#endif
+};
+
+#ifdef CGAL_LINKED_WITH_TBB
+// Specialized version (parallel)
+template <>
+class Mesh_vertex_base_3_base<Parallel_tag>
+{
+public:
+  
+  // Erase counter (cf. Compact_container)
+  unsigned int erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+    this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+  
+protected:
+  typedef tbb::atomic<unsigned int> Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
+
+};
+#endif // CGAL_LINKED_WITH_TBB
 
 // Class Mesh_vertex_base_3
 // Vertex base class used in 3D meshing process.
@@ -44,7 +101,9 @@ template<class GT,
          class MD,
          class Vb = Triangulation_vertex_base_3<GT> >
 class Mesh_vertex_base_3
-: public Vb
+: public Vb,
+  public Mesh_vertex_base_3_base<
+    typename Vb::Triangulation_data_structure::Concurrency_tag>
 {
 public:
   typedef Vb Cmvb3_base;
@@ -74,6 +133,7 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif //CGAL_INTRUSIVE_LIST
+    , time_stamp_(-1)
   {}
 
   // Default copy constructor and assignment operator are ok
@@ -123,6 +183,18 @@ public:
     previous_intrusive_ = v; 
   }
 #endif
+
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+  ///@}
 
   bool is_c2t3_cache_valid() const {
     return cache_validity;
@@ -179,12 +251,9 @@ private:
   Vertex_handle next_intrusive_;
   Vertex_handle previous_intrusive_;
 #endif
-};  // end class Mesh_vertex_base_3
+  std::size_t time_stamp_;
 
-namespace internal {
-namespace Mesh_3 {
-} // end namespace internal::Mesh_3
-} // end namespace internal
+};  // end class Mesh_vertex_base_3
 
 template<class GT,
          class MD,

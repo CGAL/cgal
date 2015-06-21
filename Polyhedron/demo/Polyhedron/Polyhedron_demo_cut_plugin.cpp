@@ -1,3 +1,5 @@
+
+#include <fstream>
 #include <QtCore/qglobal.h>
 #include <CGAL/AABB_intersections.h>
 
@@ -6,6 +8,7 @@
 #include "Scene_plane_item.h"
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_demo_plugin_interface.h"
+#include "Polyhedron_demo_io_plugin_interface.h"
 #include <CGAL/gl.h>
 
 #include <CGAL/AABB_tree.h>
@@ -63,6 +66,7 @@ public:
       .arg(this->color().name())
       .arg(tree.size());
   }
+  
 
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
@@ -139,6 +143,15 @@ public:
     ::glEnd();
   }
 
+  bool save(std::ostream& os) const
+  {
+    os.precision(17);
+    for(size_t i = 0, end = edges.size(); i < end; ++i){
+      os << "2 " << edges[i].source() << " " <<  edges[i].target() << "\n";
+    }
+    return true;
+  }
+
 public:
   std::vector<Epic_kernel::Segment_3> edges;
 }; // end class Scene_edges_item
@@ -146,10 +159,12 @@ public:
 
 class Polyhedron_demo_cut_plugin :
   public QObject,
-  public Polyhedron_demo_plugin_interface
+  public Polyhedron_demo_plugin_interface,
+  public Polyhedron_demo_io_plugin_interface 
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
 
 public:
   Polyhedron_demo_cut_plugin() : QObject(), edges_item(0) {
@@ -157,15 +172,67 @@ public:
   
   virtual ~Polyhedron_demo_cut_plugin();
 
-  bool applicable() const { 
-    return true;
+  bool applicable(QAction*) const {
+    // returns true if one polyhedron is in the entries
+    for (int i=0; i< scene->numberOfEntries(); ++i)
+    {
+      if ( qobject_cast<Scene_polyhedron_item*>(scene->item(i)) )
+        return true;
+    }
+    return false;
   }
+
+  virtual QString name() const
+  {
+    return "cut-plugin";
+  }
+
+
+  virtual QString nameFilters() const
+  {
+    return "Segment soup file (*.polylines.txt *.cgal)";
+  }
+
+
+  bool canLoad() const
+  {
+    return false;
+  }
+
+  virtual Scene_item* load(QFileInfo /* fileinfo */)
+  {
+    return 0;
+  }
+
+  virtual bool canSave(const Scene_item* item)
+  {
+    // This plugin supports edges items
+    bool b = qobject_cast<const Scene_edges_item*>(item) != 0;
+    return b;
+  }
+
+
+  virtual bool save(const Scene_item* item, QFileInfo fileinfo)
+  {  // This plugin supports edges items
+    const Scene_edges_item* edges_item = 
+      qobject_cast<const Scene_edges_item*>(item);
+    
+    if(!edges_item){
+      return false;
+    }
+    
+    std::ofstream out(fileinfo.filePath().toUtf8());
+    
+    return (out && edges_item->save(out));
+  }
+
+
 
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface,
             Messages_interface* m);
   QList<QAction*> actions() const;
 
-public slots:
+public Q_SLOTS:
   void createCutPlane();
   void enableAction();
   void cut();
@@ -266,8 +333,8 @@ void Polyhedron_demo_cut_plugin::cut() {
     if(it == trees.end()) {
       it = trees.insert(trees.begin(),
                         std::make_pair(poly_item,
-                                       new AABB_tree(poly_item->polyhedron()->facets_begin(),
-                                                     poly_item->polyhedron()->facets_end(),
+                                       new AABB_tree(faces(*(poly_item->polyhedron())).first,
+                                                     faces(*(poly_item->polyhedron())).second,
                                                      *poly_item->polyhedron() )));
       Scene_aabb_item* aabb_item = new Scene_aabb_item(*it->second);
       aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));

@@ -48,11 +48,11 @@ namespace CGAL {
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
 /// @tparam OutputIterator iterator over output points.
-/// @tparam PointPMap is a model of `WritablePropertyMap` with a value_type = Point_3<Kernel>.
-///        It can be omitted if OutputIterator value_type is convertible to Point_3<Kernel>.
-/// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = Vector_3<Kernel>.
+/// @tparam PointPMap is a model of `WritablePropertyMap` with  value type `Point_3<Kernel>`.
+///        It can be omitted if the value type of `OutputIterator` is convertible to `Point_3<Kernel>`.
+/// @tparam NormalPMap is a model of `WritablePropertyMap` with value type `Vector_3<Kernel>`.
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from PointPMap value_type.
+///        It can be omitted and deduced automatically from the value type of `PointPMap`.
 ///
 /// @return true on success.
 
@@ -126,15 +126,15 @@ read_off_points_and_normals(
       // Reads position + normal...
       double x,y,z;
       double nx,ny,nz;
-      if (iss >> x >> y >> z)
+      if (iss >> iformat(x) >> iformat(y) >> iformat(z))
       {
         Point point(x,y,z);
         Vector normal = CGAL::NULL_VECTOR;
         // ... + normal...
-        if (iss >> nx)
+        if (iss >> iformat(nx))
         {
           // In case we could read one number, we expect that there are two more
-          if(iss  >> ny >> nz){
+          if(iss  >> iformat(ny) >> iformat(nz)){
             normal = Vector(nx,ny,nz);
           } else {
             std::cerr << "Error line " << lineNumber << " of file" << std::endl;
@@ -289,12 +289,12 @@ read_off_points_and_normals(
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
 /// @tparam OutputIterator iterator over output points.
-/// @tparam PointPMap is a model of `WritablePropertyMap` with a value_type = Point_3<Kernel>.
-///        It can be omitted if OutputIterator value_type is convertible to Point_3<Kernel>.
+/// @tparam PointPMap is a model of `WritablePropertyMap` with  value_type `Point_3<Kernel>`.
+///        It can be omitted if the value type of `OutputIterator` is convertible to `Point_3<Kernel>`.
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from PointPMap value_type.
+///        It can be omitted and deduced automatically from  the value type of `PointPMap`.
 ///
-/// @return true on success.
+/// @return `true` on success.
 
 // This variant requires all parameters.
 //-----------------------------------------------------------------------------------

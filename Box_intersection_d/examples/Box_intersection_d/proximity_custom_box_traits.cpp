@@ -1,15 +1,10 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/box_intersection_d.h>
-#include <CGAL/point_generators_3.h>
-#include <CGAL/algorithm.h>
 #include <vector>
-#include <algorithm>
-#include <iterator>
-#include <cmath>
+#include <fstream>
 
 typedef CGAL::Simple_cartesian<float>             Kernel;
 typedef Kernel::Point_3                           Point_3;
-typedef CGAL::Random_points_on_sphere_3<Point_3>  Points_on_sphere;
 
 std::vector<Point_3>  points;
 std::vector<Point_3*> boxes;     // boxes are just pointers to points
@@ -44,17 +39,18 @@ void report( const Point_3* a, const Point_3* b) {
     }
 }
 
-int main() {
-    // create some random points on the sphere of radius 1.0
-    Points_on_sphere generator( 1.0);
-    points.reserve( 50);
-    for ( int i = 0; i != 50; ++i) {
-        points.push_back( *generator++);
-        boxes.push_back( & points.back());
-    }
-
-    // run the intersection algorithm and report proximity pairs
-    CGAL::box_self_intersection_d( boxes.begin(), boxes.end(),
-                                   report, Traits());
-    return 0;
+int main(int argc, char*argv[]) {
+  
+  std::ifstream in((argc>1)?argv[1]:"data/points.xyz");
+  Point_3 p;
+  while(in >> p){
+    points.push_back(p);
+  }
+  for(std::size_t i = 0; i< points.size();++i) {
+    boxes.push_back( &points[i]);
+  }
+  // run the intersection algorithm and report proximity pairs
+  CGAL::box_self_intersection_d( boxes.begin(), boxes.end(),
+                                 report, Traits());
+  return 0;
 }

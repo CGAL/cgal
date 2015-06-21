@@ -86,6 +86,8 @@ public:
   typedef typename Base_traits::Cartesian_const_iterator_d      Cartesian_const_iterator_d;
   typedef Point_with_info                                       Point_d;
   typedef typename Base_traits::FT                              FT;
+  typedef typename Base_traits::Dimension                       Dimension;
+  
 
   struct Construct_cartesian_const_iterator_d: public Base_traits::Construct_cartesian_const_iterator_d{
     PointPropertyMap ppmap;
@@ -149,16 +151,27 @@ public:
     return this->transformed_distance(p1,get(ppmap,p2));
   }
 
-  template <class FT>
-  FT min_distance_to_rectangle(const Query_item& p, const CGAL::Kd_tree_rectangle<FT>& b) const
+  template <class FT,class Dimension>
+  FT min_distance_to_rectangle(const Query_item& p, const CGAL::Kd_tree_rectangle<FT,Dimension>& b) const
   {
     return static_cast<const Base_distance*>(this)->min_distance_to_rectangle(p,b);
   }
 
-  template <class FT>
-  FT max_distance_to_rectangle(const Query_item& p,const CGAL::Kd_tree_rectangle<FT>& b) const
+  template <class FT,class Dimension>
+  FT min_distance_to_rectangle(const Query_item& p, const CGAL::Kd_tree_rectangle<FT,Dimension>& b,std::vector<FT>& dists) 
+  {
+    return static_cast<Base_distance*>(this)->min_distance_to_rectangle(p,b,dists);
+  }
+
+  template <class FT,class Dimension>
+  FT max_distance_to_rectangle(const Query_item& p,const CGAL::Kd_tree_rectangle<FT,Dimension>& b) const
   {
     return static_cast<const Base_distance*>(this)->max_distance_to_rectangle(p,b);
+  }  
+  template <class FT,class Dimension>
+  FT max_distance_to_rectangle(const Query_item& p,const CGAL::Kd_tree_rectangle<FT,Dimension>& b,std::vector<FT>& dists)
+  {
+    return static_cast<Base_distance*>(this)->max_distance_to_rectangle(p,b,dists);
   }  
 };
 

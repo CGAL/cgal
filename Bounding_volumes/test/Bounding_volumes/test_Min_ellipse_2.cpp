@@ -19,12 +19,13 @@
 // revision      : $Id$
 // revision_date : $Date$
 //
-// author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
-// coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
+// author(s)     : Sven SchÃ¶nherr <sven@inf.ethz.ch>, Bernd GÃ¤rtner
+// coordinator   : ETH ZÃ¼rich (Bernd GÃ¤rtner <gaertner@inf.ethz.ch>)
 //
 // implementation: test program for 2D Smallest Enclosing Ellipse
 // ============================================================================
 
+#include <CGAL/Exact_integer.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Min_ellipse_2.h>
@@ -37,15 +38,11 @@
 #include <cstring>
 #include <fstream>
 
-#ifdef CGAL_USE_LEDA_FOR_OPTIMISATION_TEST
-#  include <CGAL/leda_integer.h>
-   typedef  leda_integer                       Rt;
-   typedef  CGAL::Quotient< leda_integer >     Ft;
-#else
-#  include <CGAL/Gmpz.h>
-   typedef  CGAL::Gmpz                         Rt;
-   typedef  CGAL::Quotient< CGAL::Gmpz >       Ft;
-#endif
+
+typedef CGAL::Exact_integer      Rt;
+typedef  CGAL::Quotient< Rt >                 Ft;
+
+
 
 #ifdef CGAL_USE_CORE
    #include <CGAL/CORE_Expr.h>

@@ -26,10 +26,10 @@ public:
     return QStringList() << "actionSimplify";
   }
 
-  bool applicable() const { 
+  bool applicable(QAction*) const { 
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
-public slots:
+public Q_SLOTS:
   void on_actionSimplify_triggered();
 
 }; // end Polyhedron_demo_mesh_simplification_plugin
@@ -68,8 +68,8 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
     namespace SMS = CGAL::Surface_mesh_simplification;
     SMS::Count_stop_predicate< Polyhedron > stop(nb_edges); // target #edges
     SMS::edge_collapse( *pMesh, stop,
-      CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,*pMesh))
-      .edge_index_map(boost::get(CGAL::edge_external_index,*pMesh)));
+      CGAL::vertex_index_map(get(CGAL::vertex_external_index,*pMesh))
+      .halfedge_index_map(get(CGAL::halfedge_external_index,*pMesh)));
     std::cout << "ok (" << time.elapsed() << " ms, " 
       << pMesh->size_of_halfedges() / 2 << " edges)" << std::endl;
 

@@ -33,6 +33,8 @@
 
 #include <CGAL/config.h>
 #include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/CORE_arithmetic_kernel.h>
+#include <CGAL/LEDA_arithmetic_kernel.h>
 #include <CGAL/Polynomial.h>
 #include <CGAL/Polynomial/polynomial_functions.h>
 #include <cassert>

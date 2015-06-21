@@ -33,7 +33,7 @@ class Polyhedron_demo_intersection_plugin :
 
 public:
 
-  bool applicable() const { 
+  bool applicable(QAction*) const { 
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
@@ -55,7 +55,7 @@ private:
 
   QAction*  actionPolyhedronIntersection_3;
 
-public slots:
+public Q_SLOTS:
   void intersection();
 
 }; // end class Polyhedron_demo_intersection_plugin

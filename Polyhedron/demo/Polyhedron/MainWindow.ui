@@ -209,6 +209,13 @@
            </property>
           </spacer>
          </item>
+         <item>
+          <widget class="QLineEdit" name="searchEdit">
+           <property name="placeholderText">
+            <string>Quick filter... &lt;Alt+Q&gt;</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>

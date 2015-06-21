@@ -195,7 +195,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
       #endif
 
     private: // member fields:
-      int m;                    // number of pushed balls
+      unsigned int m;           // number of pushed balls
       const Sphere *b[D+1];     // pointers to pushed balls
       Result center[D+1];       // contains, when is_spanning() returns true,
                                 // the center of the miniball

@@ -1,3 +1,9 @@
+
+#ifdef CGAL_GLEW_ENABLED
+# include "GlSplat/GlSplat.h"
+#endif
+
+
 #include <CGAL/check_gl_error.h>
 #include "config.h"
 #include "Scene.h"
@@ -14,6 +20,7 @@
 #include <QApplication>
 #include <QPointer>
 #include <QList>
+#include <QAbstractProxyModel>
 
 namespace {
   void CGALglcolor(QColor c)
@@ -21,6 +28,16 @@ namespace {
     ::glColor4d(c.red()/255.0, c.green()/255.0, c.blue()/255.0, c.alpha()/255.0);
   }
 }
+
+#ifdef CGAL_GLEW_ENABLED
+GlSplat::SplatRenderer* Scene::ms_splatting = 0;
+int Scene::ms_splattingCounter = 0;
+GlSplat::SplatRenderer* Scene::splatting()
+{
+  assert(ms_splatting!=0 && "A Scene object must be created before requesting the splatting object");
+  return ms_splatting;
+}
+#endif
 
 Scene::Scene(QObject* parent)
   : QAbstractListModel(parent),
@@ -32,20 +49,26 @@ Scene::Scene(QObject* parent)
                                     double, double, double)),
           this, SLOT(setSelectionRay(double, double, double, 
                                      double, double, double)));
+#ifdef CGAL_GLEW_ENABLED
+  if(ms_splatting==0)
+    ms_splatting  = new GlSplat::SplatRenderer();
+  ms_splattingCounter++;
+#endif
 }
 
 Scene::Item_id
 Scene::addItem(Scene_item* item)
 {
+  Bbox bbox_before = bbox();
   m_entries.push_back(item);
-
   connect(item, SIGNAL(itemChanged()),
           this, SLOT(itemChanged()));
-  emit updated_bbox();
-  emit updated();
+  if(bbox_before + item->bbox() != bbox_before)
+  { Q_EMIT updated_bbox(); }
+  Q_EMIT updated();
   QAbstractListModel::reset();
   Item_id id = m_entries.size() - 1;
-  emit newItem(id);
+  Q_EMIT newItem(id);
   return id;
 }
 
@@ -56,7 +79,7 @@ Scene::replaceItem(Scene::Item_id index, Scene_item* item, bool emit_item_about_
     return 0;
 
   if(emit_item_about_to_be_destroyed) {
-    emit itemAboutToBeDestroyed(m_entries[index]);
+    Q_EMIT itemAboutToBeDestroyed(m_entries[index]);
   }
 
   connect(item, SIGNAL(itemChanged()),
@@ -67,9 +90,9 @@ Scene::replaceItem(Scene::Item_id index, Scene_item* item, bool emit_item_about_
        m_entries[index]->isFinite() && !m_entries[index]->isEmpty() &&
         item->bbox()!=m_entries[index]->bbox() )
   {
-    emit updated_bbox();
+    Q_EMIT updated_bbox();
   }
-  emit updated();
+  Q_EMIT updated();
   itemChanged(index);
   // QAbstractListModel::reset();
   return item;
@@ -82,12 +105,12 @@ Scene::erase(int index)
     return -1;
 
   Scene_item* item = m_entries[index];
-  emit itemAboutToBeDestroyed(item);
+  Q_EMIT itemAboutToBeDestroyed(item);
   delete item;
   m_entries.removeAt(index);
 
   selected_item = -1;
-  emit updated();
+  Q_EMIT updated();
   QAbstractListModel::reset();
 
   if(--index >= 0)
@@ -109,7 +132,7 @@ Scene::erase(QList<int> indices)
     max_index = (std::max)(max_index, index);
     Scene_item* item = m_entries[index];
     to_be_removed.push_back(item);
-    emit itemAboutToBeDestroyed(item);
+    Q_EMIT itemAboutToBeDestroyed(item);
     delete item;
   }
 
@@ -118,7 +141,7 @@ Scene::erase(QList<int> indices)
   }
 
   selected_item = -1;
-  emit updated();
+  Q_EMIT updated();
   QAbstractListModel::reset();
 
   int index = max_index + 1 - indices.size();
@@ -139,12 +162,23 @@ Scene::~Scene()
     delete item_ptr;
   }
   m_entries.clear();
+
+#ifdef CGAL_GLEW_ENABLED
+  if((--ms_splattingCounter)==0)
+    delete ms_splatting;
+#endif
 }
 
 Scene_item*
 Scene::item(Item_id index) const
 {
   return m_entries.value(index); // QList::value checks bounds
+}
+
+Scene::Item_id 
+Scene::item_id(Scene_item* scene_item) const
+{
+  return m_entries.indexOf(scene_item);
 }
 
 int
@@ -176,6 +210,9 @@ Scene::duplicate(Item_id index)
 
 void Scene::initializeGL()
 {
+#ifdef CGAL_GLEW_ENABLED
+  ms_splatting->init();
+#endif
 }
 
 // workaround for Qt-4.2.
@@ -307,9 +344,9 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
           item.draw_edges();
         }
       }
-      if(with_names) {
-        ::glPopName();
-      }
+    }
+    if(with_names) {
+      ::glPopName();
     }
   }
 
@@ -328,21 +365,46 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
         ::glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
         ::glPointSize(2.f);
         ::glLineWidth(1.0f);
-        if(index == selected_item)
-          CGALglcolor(Qt::black);
-        else
-          CGALglcolor(item.color().lighter(50));
+        CGALglcolor(item.color());
 
         if(viewer)
           item.draw_points(viewer);
         else
           item.draw_points();
       }
-      if(with_names) {
-        ::glPopName();
-      }
+    }
+    if(with_names) {
+      ::glPopName();
     }
   }
+
+#ifdef CGAL_GLEW_ENABLED
+  // Splatting
+  if(!with_names && ms_splatting->isSupported())
+  {
+    ms_splatting->beginVisibilityPass();
+    for(int index = 0; index < m_entries.size(); ++index)
+    {
+      Scene_item& item = *m_entries[index];
+      if(item.visible() && item.renderingMode() == Splatting)
+      {
+        item.draw_splats();
+      }
+    }
+    ms_splatting->beginAttributePass();
+    for(int index = 0; index < m_entries.size(); ++index)
+    {
+      Scene_item& item = *m_entries[index];
+      if(item.visible() && item.renderingMode() == Splatting)
+      {
+        CGALglcolor(item.color());
+        item.draw_splats();
+      }
+    }
+    ms_splatting->finalize();
+  }
+#endif
+
 }
 
 // workaround for Qt-4.2 (see above)
@@ -492,32 +554,37 @@ Scene::setData(const QModelIndex &index,
   case NameColumn:
     item->setName(value.toString());
     item->changed();
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
     return true;
     break;
   case ColorColumn:
     item->setColor(value.value<QColor>());
     item->changed();
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
     return true;
     break;
   case RenderingModeColumn:
   {
     RenderingMode rendering_mode = static_cast<RenderingMode>(value.toInt());
     // Find next supported rendering mode
-    while ( ! item->supportsRenderingMode(rendering_mode) ) {
+    while ( ! item->supportsRenderingMode(rendering_mode) 
+#ifdef CGAL_GLEW_ENABLED
+         || (rendering_mode==Splatting && !Scene::splatting()->isSupported())
+#endif
+    )
+    {
       rendering_mode = static_cast<RenderingMode>( (rendering_mode+1) % NumberOfRenderingMode );
     }
     item->setRenderingMode(rendering_mode);
     item->changed();
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
     return true;
     break;
   }
   case VisibleColumn:
     item->setVisible(value.toBool());
     item->changed();
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
     return true;
   default:
     return false;
@@ -543,14 +610,14 @@ int Scene::selectionBindex() const {
 
 QItemSelection Scene::createSelection(int i)
 {
-  return QItemSelection(QAbstractItemModel::createIndex(i, 0),
-    QAbstractItemModel::createIndex(i, LastColumn));
+  return QItemSelection(this->createIndex(i, 0),
+                        this->createIndex(i, LastColumn));
 }
 
 QItemSelection Scene::createSelectionAll()
 {
-  return QItemSelection(QAbstractItemModel::createIndex(0, 0),
-    QAbstractItemModel::createIndex(m_entries.size() - 1 , LastColumn));
+  return QItemSelection(this->createIndex(0, 0),
+                        this->createIndex(m_entries.size() - 1 , LastColumn));
 }
 
 void Scene::itemChanged()
@@ -566,22 +633,24 @@ void Scene::itemChanged(Item_id i)
     return;
 
   m_entries[i]->changed();
-  emit dataChanged(QAbstractItemModel::createIndex(i, 0),
-    QAbstractItemModel::createIndex(i, LastColumn));
+  Q_EMIT dataChanged(this->createIndex(i, 0),
+                   this->createIndex(i, LastColumn));
 }
 
 void Scene::itemChanged(Scene_item* item)
 {
   item->changed();
-  emit dataChanged(QAbstractItemModel::createIndex(0, 0),
-    QAbstractItemModel::createIndex(m_entries.size() - 1, LastColumn));
+  Q_EMIT dataChanged(this->createIndex(0, 0),
+                   this->createIndex(m_entries.size() - 1, LastColumn));
 }
 
 bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 				const QStyleOptionViewItem &option,
 				const QModelIndex &index)
 {
-  Scene *scene = static_cast<Scene*>(model);
+  QAbstractProxyModel* proxyModel = dynamic_cast<QAbstractProxyModel*>(model);
+  Q_ASSERT(proxyModel);
+  Scene *scene = dynamic_cast<Scene*>(proxyModel->sourceModel());
   Q_ASSERT(scene);
   switch(index.column()) {
   case Scene::VisibleColumn:
@@ -648,8 +717,8 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
       else {
 	scene->item_B = index.row();
       }
-      scene->dataChanged(scene->createIndex(Scene::ABColumn, 0),
-	scene->createIndex(Scene::ABColumn, scene->rowCount()));
+      scene->dataChanged(scene->createIndex(0, Scene::ABColumn),
+                         scene->createIndex(scene->rowCount() - 1, Scene::ABColumn));
     }
     return false;
     break;
@@ -696,8 +765,8 @@ void Scene::setItemVisible(int index, bool b)
   if( index < 0 || index >= m_entries.size() )
     return;
   m_entries[index]->setVisible(b);
-  emit dataChanged(QAbstractItemModel::createIndex(index, VisibleColumn),
-    QAbstractItemModel::createIndex(index, VisibleColumn));
+  Q_EMIT dataChanged(this->createIndex(index, VisibleColumn),
+                   this->createIndex(index, VisibleColumn));
 }
 
 void Scene::setSelectionRay(double orig_x,
@@ -723,8 +792,8 @@ void Scene::setItemA(int i)
   {
     item_B = -1;
   }
-  emit dataChanged(QAbstractItemModel::createIndex(0, ABColumn),
-    QAbstractItemModel::createIndex(m_entries.size()-1, ABColumn));
+  Q_EMIT dataChanged(this->createIndex(0, ABColumn),
+                   this->createIndex(m_entries.size()-1, ABColumn));
 }
 
 void Scene::setItemB(int i)
@@ -734,9 +803,9 @@ void Scene::setItemB(int i)
   {
     item_A = -1;
   }
-  emit updated();
-  emit dataChanged(QAbstractItemModel::createIndex(0, ABColumn),
-    QAbstractItemModel::createIndex(m_entries.size()-1, ABColumn));
+  Q_EMIT updated();
+  Q_EMIT dataChanged(this->createIndex(0, ABColumn),
+                   this->createIndex(m_entries.size()-1, ABColumn));
 }
 
 Scene::Bbox Scene::bbox() const

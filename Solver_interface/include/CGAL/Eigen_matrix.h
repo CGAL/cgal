@@ -44,11 +44,23 @@ struct Eigen_sparse_matrix
 // Public types
 public:
 
-  typedef Eigen::SparseMatrix<T> EigenType;
+	typedef Eigen::SparseMatrix<T> EigenType;
   typedef T NT;
 
 // Public operations
 public:
+
+  /// Create a square matrix initialized with zeros.
+  Eigen_sparse_matrix(std::size_t  dim,                   ///< Matrix dimension.
+                      bool is_symmetric = false)  ///< Symmetric/hermitian?
+    : m_is_already_built(false), m_matrix(static_cast<int>(dim),static_cast<int>(dim))
+  {
+    CGAL_precondition(dim > 0);
+
+    m_is_symmetric = is_symmetric;
+    // reserve memory for a regular 3D grid
+    m_triplets.reserve(dim);
+  }
 
   /// Create a square matrix initialized with zeros.
   Eigen_sparse_matrix(int  dim,                   ///< Matrix dimension.
@@ -60,6 +72,30 @@ public:
     m_is_symmetric = is_symmetric;
     // reserve memory for a regular 3D grid
     m_triplets.reserve(dim);
+  }
+
+  /// Create a rectangular matrix initialized with zeros.
+  ///
+  /// @commentheading Precondition: rows == columns if is_symmetric is true.
+  Eigen_sparse_matrix(std::size_t  rows,                 ///< Number of rows.
+                      std::size_t  columns,              ///< Number of columns.
+                      bool is_symmetric = false) ///< Symmetric/hermitian?
+    : m_is_already_built(false), m_matrix(static_cast<int>(rows),static_cast<int>(columns))
+  {
+    CGAL_precondition(rows > 0);
+    CGAL_precondition(columns > 0);
+    if (is_symmetric) {
+        CGAL_precondition(rows == columns);
+    }
+
+    m_is_symmetric = is_symmetric;
+    // reserve memory for a regular 3D grid
+    m_triplets.reserve(rows);
+  }
+
+  /// Delete this object and the wrapped matrix.
+  ~Eigen_sparse_matrix()
+  {
   }
 
   /// Create a rectangular matrix initialized with zeros.
@@ -81,11 +117,6 @@ public:
     m_triplets.reserve(rows);
   }
 
-  /// Delete this object and the wrapped TAUCS matrix.
-  ~Eigen_sparse_matrix()
-  {
-  }
-
   /// Return the matrix number of rows
   int row_dimension() const    { return m_matrix.rows(); }
   /// Return the matrix number of columns
@@ -103,8 +134,10 @@ public:
   /// @commentheading Preconditions:
   /// - 0 <= i < row_dimension().
   /// - 0 <= j < column_dimension().
-  void set_coef(int i, int j, T  val, bool new_coef = false)
+  void set_coef(std::size_t i_, std::size_t j_, T  val, bool new_coef = false)
   {
+    int i = static_cast<int>(i_);
+    int j = static_cast<int>(j_);
     CGAL_precondition(i < row_dimension());
     CGAL_precondition(j < column_dimension());
 

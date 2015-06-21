@@ -46,7 +46,9 @@ int main(int argc, char** argv)
 		     Point(0, 1, 0),
 		     Point(0, 0, 1));
 
-  Mesh_domain domain(p);
+    std::cout << "\tSeed is\t"
+      << CGAL::default_random.get_seed() << std::endl;
+  Mesh_domain domain(p, &CGAL::default_random);
 
   typedef std::vector<K::Point_3> Polyline;
   typedef std::vector<Polyline> Polylines;
@@ -97,6 +99,6 @@ int main(int argc, char** argv)
   save_binary_file(binary_file, c3t3);
   std::cout << "Number of vertices in c3t3: "
             << c3t3.triangulation().number_of_vertices() << std::endl;
-  assert(c3t3.triangulation().number_of_vertices() > 700);
-  assert(c3t3.triangulation().number_of_vertices() < 1000);
+  assert(c3t3.triangulation().number_of_vertices() > 900);
+  assert(c3t3.triangulation().number_of_vertices() < 1100);
 }

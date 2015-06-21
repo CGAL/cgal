@@ -39,6 +39,12 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/Profile_counter.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4146)
+     // warning on - applied on unsigned number
+#endif
+
 namespace CGAL {
 
 // Wrapper around mpq_t to get the destructor call mpq_clear.
@@ -60,13 +66,14 @@ private:
 
 class Gmpq
   : Handle_for<Gmpq_rep>,
-    boost::ordered_field_operators1< Gmpq
+    boost::totally_ordered1< Gmpq
   , boost::ordered_field_operators2< Gmpq, int
   , boost::ordered_field_operators2< Gmpq, long
+  , boost::ordered_field_operators2< Gmpq, long long
   , boost::ordered_field_operators2< Gmpq, double
   , boost::ordered_field_operators2< Gmpq, Gmpz
   , boost::ordered_field_operators2< Gmpq, Gmpfr
-    > > > > > >
+    > > > > > > >
 {
   typedef Handle_for<Gmpq_rep> Base;
 public:
@@ -94,6 +101,35 @@ public:
 
   Gmpq(unsigned long n)
   { mpq_set_ui(mpq(), n, 1); }
+
+private:
+  void init_ull(unsigned long long n){
+      CGAL_assertion(sizeof(long)==4 && sizeof(long long)==8);
+      mpq_set_ui(mpq(), (unsigned long)(n>>32), 1);
+      mpz_ptr z = mpq_numref(mpq());
+      mpz_mul_2exp (z, z, 32);
+      mpz_add_ui (z, z, (unsigned long)n);
+  }
+public:
+  Gmpq(unsigned long long n)
+  {
+    if (n <= std::numeric_limits<unsigned long>::max BOOST_PREVENT_MACRO_SUBSTITUTION ())
+      mpq_set_ui(mpq(), (unsigned long)n, 1);
+    else
+      init_ull(n);
+  }
+
+  Gmpq(long long n)
+  {
+    if (sizeof(long)==sizeof(long long))
+      mpq_set_si(mpq(), (long)n, 1);
+    else if (n>=0)
+      init_ull(n);
+    else {
+      init_ull(-(unsigned long long)n);
+      mpq_neg(mpq(), mpq());
+    }
+  }
 
   Gmpq(const Gmpz& n)
   { mpq_set_z(mpq(), n.mpz()); }
@@ -223,6 +259,15 @@ public:
   bool  operator< (long z) const {return mpq_cmp_si(mpq(),z,1)<0;}
   bool  operator> (long z) const {return mpq_cmp_si(mpq(),z,1)>0;}
 
+  // Interoperability with long long
+  Gmpq& operator+=(long long z){return (*this)+= Gmpq(z);}
+  Gmpq& operator-=(long long z){return (*this)-= Gmpq(z);}
+  Gmpq& operator*=(long long z){return (*this)*= Gmpq(z);}
+  Gmpq& operator/=(long long z){return (*this)/= Gmpq(z);}
+  bool  operator==(long long z) const {return (*this)== Gmpq(z);}
+  bool  operator< (long long z) const {return (*this)<  Gmpq(z);}
+  bool  operator> (long long z) const {return (*this)>  Gmpq(z);}
+
   // Interoperability with double
   Gmpq& operator+=(double d){return (*this)+= Gmpq(d);}
   Gmpq& operator-=(double d){return (*this)-= Gmpq(d);}
@@ -269,43 +314,71 @@ Gmpq::operator+() const
 }
 
 inline
+Gmpq
+operator+(const Gmpq &x, const Gmpq &y)
+{
+    Gmpq Res;
+    mpq_add(Res.mpq(), x.mpq(), y.mpq());
+    return Res;
+}
+
+inline
 Gmpq&
 Gmpq::operator+=(const Gmpq &z)
 {
-    Gmpq Res;
-    mpq_add(Res.mpq(), mpq(), z.mpq());
-    swap(Res);
+    (*this + z).swap(*this);
     return *this;
+}
+
+inline
+Gmpq
+operator-(const Gmpq &x, const Gmpq &y)
+{
+    Gmpq Res;
+    mpq_sub(Res.mpq(), x.mpq(), y.mpq());
+    return Res;
 }
 
 inline
 Gmpq&
 Gmpq::operator-=(const Gmpq &z)
 {
-    Gmpq Res;
-    mpq_sub(Res.mpq(), mpq(), z.mpq());
-    swap(Res);
+    (*this - z).swap(*this);
     return *this;
+}
+
+inline
+Gmpq
+operator*(const Gmpq &x, const Gmpq &y)
+{
+    Gmpq Res;
+    mpq_mul(Res.mpq(), x.mpq(), y.mpq());
+    return Res;
 }
 
 inline
 Gmpq&
 Gmpq::operator*=(const Gmpq &z)
 {
-    Gmpq Res;
-    mpq_mul(Res.mpq(), mpq(), z.mpq());
-    swap(Res);
+    (*this * z).swap(*this);
     return *this;
+}
+
+inline
+Gmpq
+operator/(const Gmpq &x, const Gmpq &y)
+{
+    CGAL_precondition(y != 0);
+    Gmpq Res;
+    mpq_div(Res.mpq(), x.mpq(), y.mpq());
+    return Res;
 }
 
 inline
 Gmpq&
 Gmpq::operator/=(const Gmpq &z)
 {
-    CGAL_precondition(z != 0);
-    Gmpq Res;
-    mpq_div(Res.mpq(), mpq(), z.mpq());
-    swap(Res);
+    (*this / z).swap(*this);
     return *this;
 }
 
@@ -552,5 +625,9 @@ inline Gmpq max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpq& x,const Gmpq& y){
 }
 
 } //namespace CGAL
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 #endif // CGAL_GMPQ_TYPE_H

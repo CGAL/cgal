@@ -11,6 +11,24 @@
 
 #include <CGAL/Polyhedron_stitching.h>
 
+#include <CGAL/boost/graph/split_graph_into_polylines.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <boost/graph/filtered_graph.hpp>
+
+template <typename G>
+struct Is_border {
+  const G& g;
+  Is_border(const G& g)
+    : g(g)
+  {}
+
+ template <typename Edge>
+  bool operator()(const Edge& e) const {
+   return is_border(e,g);
+  }
+};
+
+
 
 class Polyhedron_demo_polyhedron_stitching_plugin :
   public QObject,
@@ -22,6 +40,7 @@ class Polyhedron_demo_polyhedron_stitching_plugin :
   QAction* actionStitchBorders;
 public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionDetectBorders << actionStitchBorders; }
+  using Polyhedron_demo_plugin_helper::init;
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* /* m */)
   {
     actionDetectBorders= new QAction(tr("Detect polyhedron boundaries"), mainWindow);
@@ -31,65 +50,105 @@ public:
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
 
-  bool applicable() const {
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+  bool applicable(QAction*) const {
+    Q_FOREACH(int index, scene->selectionIndices())
+    {
+      if ( qobject_cast<Scene_polyhedron_item*>(scene->item(index)) )
+        return true;
+    }
+    return false;
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionDetectBorders_triggered();
   void on_actionStitchBorders_triggered();
 
 }; // end Polyhedron_demo_polyhedron_stitching_plugin
 
+
+
+struct Polyline_visitor
+{
+  Scene_polylines_item* new_item;
+
+  Polyline_visitor(Scene_polylines_item* new_item)
+    : new_item(new_item)
+  {}
+
+  void start_new_polyline()
+  {
+    new_item->polylines.push_back( Scene_polylines_item::Polyline() );
+  }
+
+  void add_node(boost::graph_traits<Polyhedron>::vertex_descriptor vd)
+  {
+    new_item->polylines.back().push_back(vd->point());
+  }
+};
+
 void Polyhedron_demo_polyhedron_stitching_plugin::on_actionDetectBorders_triggered()
 {
-  Scene_interface::Item_id index = scene->mainSelectionIndex();
-
-  Scene_polyhedron_item* item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-
-  if(item)
+  Q_FOREACH(int index, scene->selectionIndices())
   {
-    Scene_polylines_item* new_item = new Scene_polylines_item();
+    Scene_polyhedron_item* item =
+      qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
-    Polyhedron* pMesh = item->polyhedron();
-    pMesh->normalize_border();
+    if(item)
+    {
+      Scene_polylines_item* new_item = new Scene_polylines_item();
 
-    for (Polyhedron::Halfedge_iterator
-            it=pMesh->border_halfedges_begin(), it_end=pMesh->halfedges_end();
-            it!=it_end; ++it)
-    {
-      if (!it->is_border()) continue;
-      /// \todo build cycles and graph with nodes of valence 2.
-      new_item->polylines.push_back( Scene_polylines_item::Polyline() );
-      new_item->polylines.back().push_back( it->opposite()->vertex()->point() );
-      new_item->polylines.back().push_back( it->vertex()->point() );
-    }
-    if (new_item->polylines.empty())
-    {
-      delete new_item;
-    }
-    else
-    {
-      new_item->setName(tr("Boundary of %1").arg(item->name()));
-      new_item->setColor(Qt::red);
-      scene->addItem(new_item);
+      Polyhedron* pMesh = item->polyhedron();
+      pMesh->normalize_border();
+
+#if 0
+      for (Polyhedron::Halfedge_iterator
+              it=pMesh->border_halfedges_begin(), it_end=pMesh->halfedges_end();
+              it!=it_end; ++it)
+      {
+        if (!it->is_border()) continue;
+        /// \todo build cycles and graph with nodes of valence 2.
+        new_item->polylines.push_back( Scene_polylines_item::Polyline() );
+        new_item->polylines.back().push_back( it->opposite()->vertex()->point() );
+        new_item->polylines.back().push_back( it->vertex()->point() );
+      }
+#else
+      typedef boost::filtered_graph<Polyhedron,Is_border<Polyhedron> > BorderGraph;
+      
+      Is_border<Polyhedron> ib(*pMesh);
+      BorderGraph bg(*pMesh,ib);
+      Polyline_visitor polyline_visitor(new_item); 
+      CGAL::split_graph_into_polylines( bg,
+                                        polyline_visitor,
+                                        CGAL::IsTerminalDefault() );
+#endif
+      
+      if (new_item->polylines.empty())
+      {
+        delete new_item;
+      }
+      else
+      {
+        new_item->setName(tr("Boundary of %1").arg(item->name()));
+        new_item->setColor(Qt::red);
+        scene->addItem(new_item);
+      }
     }
   }
 }
 
 void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchBorders_triggered()
 {
-  Scene_interface::Item_id index = scene->mainSelectionIndex();
-
-  Scene_polyhedron_item* item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-
-  if(item)
+  Q_FOREACH(int index, scene->selectionIndices())
   {
-    Polyhedron* pMesh = item->polyhedron();
-    CGAL::polyhedron_stitching(*pMesh);
-    scene->itemChanged(item);
+    Scene_polyhedron_item* item =
+      qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+
+    if(item)
+    {
+      Polyhedron* pMesh = item->polyhedron();
+      CGAL::polyhedron_stitching(*pMesh);
+      scene->itemChanged(item);
+    }
   }
 }
 

@@ -54,8 +54,8 @@ public:
   }
 
    /// Create a vector initialized with zeros.
-   Eigen_vector(int dimension)
-     : EigenType(dimension)
+  Eigen_vector(std::size_t dimension)
+    : EigenType(static_cast<int>(dimension))
    {
      this->setZero();
    }
@@ -75,7 +75,7 @@ public:
        return this->size();
    }
 
-   /// Get TAUCS vector wrapped by this object.
+   /// Get vector wrapped by this object.
    const EigenType& eigen_object() const {
        return *this;
    }
@@ -83,8 +83,8 @@ public:
        return *this;
    }
    
-   void set(int i,NT value) {
-     this->operator[](i)=value;
+  void set(std::size_t i,NT value) {
+    this->operator[](static_cast<int>(i))=value;
    }
    
    NT* vector() {return this->data();}

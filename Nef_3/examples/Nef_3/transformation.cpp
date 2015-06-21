@@ -1,13 +1,13 @@
-#include <CGAL/Gmpz.h>
+#include <CGAL/Exact_integer.h>
 #include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 
 
 //instead of
-//typedef CGAL::Extended_homogeneous<CGAL::Gmpz>  Kernel;
+//typedef CGAL::Extended_homogeneous<CGAL::Exact_integer>  Kernel;
 // workaround for VC++
-struct Kernel : public CGAL::Extended_homogeneous<CGAL::Gmpz> {};
+struct Kernel : public CGAL::Extended_homogeneous<CGAL::Exact_integer> {};
 
 typedef CGAL::Nef_polyhedron_3<Kernel>  Nef_polyhedron;
 typedef Nef_polyhedron::Plane_3  Plane_3;

@@ -50,6 +50,9 @@ public:
   // Points OpenGL drawing
   virtual void draw_points() const { draw(); }
   virtual void draw_points(Viewer_interface*) const { draw_points(); }
+  // Splats OpenGL drawing
+  virtual void draw_splats() const {}
+  virtual void draw_splats(Viewer_interface*) const {draw_splats();}
 
   // Functions for displaying meta-data of the item
   virtual QString toolTip() const = 0;
@@ -78,7 +81,7 @@ public:
 
   // Event handling
   virtual bool keyPressEvent(QKeyEvent*){return false;}
-public slots:
+public Q_SLOTS:
   // Call that once you have finished changing something in the item
   // (either the properties or internal data)
   virtual void changed();
@@ -122,6 +125,10 @@ public slots:
     setRenderingMode(PointsPlusNormals);
   }
   
+  void setSplattingMode(){
+    setRenderingMode(Splatting);
+  }
+  
   virtual void itemAboutToBeDestroyed(Scene_item*);
 
   virtual void select(double orig_x,
@@ -131,7 +138,7 @@ public slots:
                       double dir_y,
                       double dir_z);
 
-signals:
+Q_SIGNALS:
   void itemChanged();
   void aboutToBeDestroyed();
 

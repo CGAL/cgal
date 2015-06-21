@@ -1,12 +1,10 @@
 #ifndef POLYHEDRON_TYPE_FWD_H
 #define POLYHEDRON_TYPE_FWD_H
 
-#include <CGAL/Filtered_kernel_fwd.h>
-#include <memory>
+#include <memory>  // for std::allocator
+#include <utility> // for std::pair
 
 #ifdef USE_FORWARD_DECL
-
-#include <CGAL/Filtered_kernel_fwd.h>
 
 namespace CGAL {
 
@@ -27,16 +25,21 @@ namespace CGAL {
              class Alloc
              >
   class Polyhedron_3;
-  
+
+  namespace Mesh_3 {
+    template <typename Patch_id>
+    class Mesh_polyhedron_items;
+  } // end namespace Mesh_3
 } // end namespace CGAL
 
 // kernel
 
 typedef CGAL::Epick Kernel;
 
+typedef std::pair<int, int> Patch_id;
 // surface mesh
 typedef CGAL::Polyhedron_3<Kernel,
-                           CGAL::Polyhedron_items_3,
+                           CGAL::Mesh_3::Mesh_polyhedron_items<Patch_id>,
                            CGAL::HalfedgeDS_default,
                            std::allocator<int> > Polyhedron;
 

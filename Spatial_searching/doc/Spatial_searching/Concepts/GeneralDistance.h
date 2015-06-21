@@ -20,6 +20,11 @@ public:
 /// @{
 
 /*!
+Dimension Tag.
+*/
+typedef unspecified_type D;
+
+/*!
 Number type. 
 */ 
 typedef unspecified_type FT; 
@@ -48,13 +53,13 @@ FT transformed_distance(Query_item q, Point_d r);
 Returns the transformed distance between `q` and 
 the point on the boundary of `r` closest to `q`. 
 */ 
-FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r) const; 
+FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r) const; 
 
 /*!
 Returns the transformed distance between `q` and 
 the point on the boundary of `r` furthest to `q`. 
 */ 
-FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r) const; 
+FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r) const; 
 
 /*!
 Returns the transformed distance. 

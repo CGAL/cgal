@@ -46,7 +46,7 @@ public:
 		     double sharp_edges_angle_upper_bound = 120);
 
   ~Polyhedral_surface();
-public slots:
+public Q_SLOTS:
   void clear();
   void connect_actions();
   void display_nb_elements_in_status_bar() const;
@@ -75,7 +75,7 @@ public:
   void get_bbox(float& xmin, float& ymin, float& zmin,
 		float& xmax, float& ymax, float& zmax);
 
-public slots:
+public Q_SLOTS:
   void set_inverse_normals(const bool b);
 
 public:

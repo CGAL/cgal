@@ -29,7 +29,7 @@ public:
     void set_verbose(int verbose) { verbose_spinbox->setValue(verbose); }    
     
     int get_mchoice() const { return mchoice_spinbox->value(); }
-    void set_mchoice(const int mchoice) { mchoice_spinbox->setValue(mchoice); }
+    void set_random_sample_size(const int mchoice) { mchoice_spinbox->setValue(mchoice); }
     
     double get_percent() const { return percent_spinbox->value(); }
     void set_percent(const double percent) { percent_spinbox->setValue(percent); }
@@ -49,7 +49,7 @@ public:
     }
     
     double get_ghost() const { return ghost_spinbox->value(); }
-    void set_ghost(double ghost) { ghost_spinbox->setValue(ghost); }
+    void set_relevance(double ghost) { ghost_spinbox->setValue(ghost); }
     
     bool get_use_flip() const { return use_flip_checkbox->isChecked(); }
     void set_use_flip(const bool flip) {

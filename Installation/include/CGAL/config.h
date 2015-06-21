@@ -44,11 +44,41 @@
 #endif // CGAL_TEST_SUITE and NDEBUG
 
 // Workaround to the following bug:
-//   https://bugreports.qt.nokia.com/browse/QTBUG-22829
+// https://bugreports.qt-project.org/browse/QTBUG-22829
 #ifdef Q_MOC_RUN
 // When Qt moc runs on CGAL files, do not process
 // <boost/type_traits/has_operator.hpp>
 #  define BOOST_TT_HAS_OPERATOR_HPP_INCLUDED
+#  define BOOST_TT_HAS_BIT_AND_ASSIGN_HPP_INCLUDED
+#  define BOOST_TT_HAS_BIT_OR_HPP_INCLUDED
+#  define BOOST_TT_HAS_BIT_OR_ASSIGN_HPP_INCLUDED
+#  define BOOST_TT_HAS_BIT_XOR_HPP_INCLUDED
+#  define BOOST_TT_HAS_BIT_XOR_ASSIGN_HPP_INCLUDED
+#  define BOOST_TT_HAS_DIVIDES_HPP_INCLUDED
+#  define BOOST_TT_HAS_DIVIDES_ASSIGN_HPP_INCLUDED
+#  define BOOST_TT_HAS_EQUAL_TO_HPP_INCLUDED
+#  define BOOST_TT_HAS_GREATER_HPP_INCLUDED
+#  define BOOST_TT_HAS_GREATER_EQUAL_HPP_INCLUDED
+#  define BOOST_TT_HAS_LEFT_SHIFT_HPP_INCLUDED
+#  define BOOST_TT_HAS_LEFT_SHIFT_ASSIGN_HPP_INCLUDED
+#  define BOOST_TT_HAS_LESS_HPP_INCLUDED
+#  define BOOST_TT_HAS_LESS_EQUAL_HPP_INCLUDED
+#  define BOOST_TT_HAS_LOGICAL_AND_HPP_INCLUDED
+#  define BOOST_TT_HAS_LOGICAL_OR_HPP_INCLUDED
+#  define BOOST_TT_HAS_MINUS_HPP_INCLUDED
+#  define BOOST_TT_HAS_MINUS_ASSIGN_HPP_INCLUDED
+#  define BOOST_TT_HAS_MODULUS_HPP_INCLUDED
+#  define BOOST_TT_HAS_MODULUS_ASSIGN_HPP_INCLUDED
+#  define BOOST_TT_HAS_MULTIPLIES_HPP_INCLUDED
+#  define BOOST_TT_HAS_MULTIPLIES_ASSIGN_HPP_INCLUDED
+#  define BOOST_TT_HAS_NOT_EQUAL_TO_HPP_INCLUDED
+#  define BOOST_TT_HAS_PLUS_HPP_INCLUDED
+#  define BOOST_TT_HAS_PLUS_ASSIGN_HPP_INCLUDED
+#  define BOOST_TT_HAS_RIGHT_SHIFT_HPP_INCLUDED
+#  define BOOST_TT_HAS_RIGHT_SHIFT_ASSIGN_HPP_INCLUDED
+// do not include <boost/random.hpp> either
+// it includes <boost/type_traits/has_binary_operator.hpp>
+#  define BOOST_RANDOM_HPP
 #endif
 
 // The following header file defines among other things  BOOST_PREVENT_MACRO_SUBSTITUTION 
@@ -83,6 +113,9 @@
 //  feature is not available, even if that is wrong.
 //  ----------------------------------------------------------------------//
 
+#if defined(BOOST_NO_CXX11_RANGE_BASED_FOR) || BOOST_VERSION < 105000
+#define CGAL_NO_CPP0X_RANGE_BASED_FOR 1
+#endif
 #if defined(BOOST_NO_0X_HDR_ARRAY) || BOOST_VERSION < 104000
 #define CGAL_CFG_NO_CPP0X_ARRAY 1
 #endif
@@ -140,6 +173,20 @@
 #define CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS 1
 #endif
 
+// Some random list to let us write C++11 without thinking about
+// each feature we are using.
+#if __cplusplus >= 201103L && \
+    !defined CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES && \
+    !defined CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE && \
+    !defined CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS && \
+    !defined CGAL_CFG_NO_CPP0X_TUPLE && \
+    !defined CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX && \
+    !defined CGAL_CFG_NO_CPP0X_STATIC_ASSERT && \
+    !defined CGAL_CFG_NO_CPP0X_DECLTYPE && \
+    !defined CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS && \
+    !defined CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+#define CGAL_CXX11
+#endif
 
 //----------------------------------------------------------------------//
 //  auto-link the CGAL library on platforms that support it
@@ -366,6 +413,15 @@ using std::max;
 #    define CGAL_HAS_THREADS
 #  endif
 #endif
+
+// Support for LEDA with threads
+//   Not that, if CGAL_HAS_THREADS is defined, and you want to use LEDA,
+//   you must link with a version of LEDA libraries that support threads.
+#if defined(CGAL_HAS_THREADS) && CGAL_USE_LEDA
+#  define LEDA_MULTI_THREAD 1
+#endif
+// Support for LEDA_numbers on Windows
+#define LEDA_NUMBERS_DLL 1
 
 // Helper macros to disable macros
 #if defined(__clang__) || (BOOST_GCC >= 40600)

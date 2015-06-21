@@ -67,7 +67,7 @@ unordered set of elements of the corresponding tuple.
 
 This extends the syntax of random access iterators to input iterators.
 If we index the tuple as above then we require that
-\f$ ++^{(d+1)}\mathit{first} = \mathit{last}\f$.
+\f$ ++^{(d)}\mathit{first} = \mathit{last}\f$.
 
 \section Kernel_dKernel Kernel Representations
 
@@ -109,12 +109,14 @@ argument for this parameter must fulfill certain requirements on
 syntax and semantics. The list of requirements defines an abstract
 kernel concept. In \cgal such a kernel concept is often also called a
 <I>representation class</I> and denoted by `R`. A representation
-class provides the actual implementations of the kernel objects. For
-all kernel objects `Kernel_object`, the types
-`CGAL::Kernel_object<R>` and `R::Kernel_object` are identical.
+class provides the actual implementations of the kernel objects.
+For all kernel objects `Kernel_object` of a representation class `R` based
+on `Cartesian_d` or `Homogeneous_d`, the types `CGAL::Kernel_object<R>` and
+`R::Kernel_object` are identical.
 
-\cgal offers two families of concrete models for the concept
-representation class, one based on the %Cartesian
+
+\cgal offers three families of concrete models for the concept
+representation class, two based on the %Cartesian
 representation of points and one based on the homogeneous
 representation of points. The interface of the kernel objects is
 designed such that it works well with both
@@ -140,7 +142,7 @@ strictly speaking, the built-in type `int` does not fulfill the
 requirements on a field type, since `int`s correspond to elements
 of a ring rather than a field, especially operation \f$ /\f$ is not the
 inverse of \f$ *\f$. The requirements on the type `R::RT` are
-weaker. This type must fulfill the requirements on what is called an
+weaker. This type must fulfill the requirements on what is called a
 <I>Euclidean ring type</I> in \cgal. This roughly means that
 `R::RT` is a type for which operations \f$ +\f$, \f$ -\f$, \f$ *\f$ are
 defined with semantics (approximately) corresponding to those of a
@@ -205,10 +207,29 @@ circumvented. With `Homogeneous_d<RingNumberType>`,
 `Homogeneous_d<RingNumberType,LinearAlgebra>::%LA` is mapped to the
 type `LinearAlgebra`.
 
-\subsection Kernel_dNamingconventions Naming conventions
+\subsection Kernel_dEpickKernel Epick_d Kernel
 
-The use of representation classes not only avoids problems, it also
-makes all \cgal classes very uniform. They <B>always</B> consist of:
+The kernel `Epick_d<DimensionTag>`, short for <em>Exact Predicates Inexact
+Constructions Kernel</em> is a kernel particularly useful when the dimension of
+the space is known at compile-time; The template parameter `DimensionTag` is then
+`Dimension_tag<d>` where `d` is an integer representing the dimension. It
+may also be used with parameter `Dynamic_dimension_tag`, in which case the
+dimension does not need to be known at compile-time.
+It uses a %Cartesian representation and
+supports construction of points from `double` coordinates. It provides exact
+geometric predicates, but the geometric constructions are not guaranteed to
+be exact.
+
+Note that it provides few interfaces in addition to those documented in the
+`Kernel_d` concept. In particular, the type of a point is only available as
+`Epick_d<DimensionTag>::%Point_d`, <B>not</B> `Point_d<Epick_d<DimensionTag>>`.
+
+
+\subsection Kernel_dNamingconventions Naming Conventions
+
+The use of representation classes does not only avoid problems, it also
+makes all \cgal classes very uniform. Like `Cartesian_d<double>::%Point_d`,
+they <B>always</B> consist of:
 <OL>
 
 <LI>The <I>capitalized base name</I> of the geometric object, such as
@@ -216,9 +237,10 @@ makes all \cgal classes very uniform. They <B>always</B> consist of:
 
 <LI>Followed by `_d`.
 
-<LI>A <I>representation class</I> as parameter, which itself is
-parameterized with a number type, such as
-`Cartesian_d<double>` or `Homogeneous_d<leda_integer>`.
+<LI>A <I>representation class</I>, which itself may be parameterized with a
+number type, such as `Cartesian_d<double>` or `Homogeneous_d<leda_integer>`,
+where the type can be found, except for `Epick_d<DimensionTag>` where the
+number type is implicitly `double`.
 </OL>
 
 \subsection Kernel_dKernelasaTraitsClass Kernel as a Traits Class
@@ -231,7 +253,7 @@ library you can use a kernel as a traits class. For some algorithms
 you even do not have to specify the kernel; it is detected
 automatically using the types of the geometric objects passed to the
 algorithm. In some other cases, the algorithms or data structures
-needs more than is provided by a kernel. In these cases, a kernel can
+need more than is provided by a kernel. In these cases, a kernel can
 not be used as a traits class.
 
 \subsection Kernel_dChoosingaKernel Choosing a Kernel
@@ -265,6 +287,11 @@ Still other people will prefer the built-in type <TT>double</TT>, because
 they need speed and can live with approximate results, or even
 algorithms that, from time to time, crash or compute incorrect results
 due to accumulated rounding errors.
+
+The `Epick_d` kernel provides a compromise using `double` coordinates. It
+evaluates predicates exactly, which is slower than plain `double`
+computations, but still faster than using an exact number type thanks to
+filtering techniques. Constructions are inexact, computed with `double`.
 
 \subsection Kernel_dInclusionofHeaderFiles Inclusion of Header Files
 
@@ -439,8 +466,8 @@ where `T...` is a list of all possible resulting geometric objects.
 
 The exact result type of an intersection can be determined by using
 `cpp11::result_of<Kernel::Intersect_d(Type1, Type2)>::%type`
-`where `Type1` and `Type2` are the types of the objects
-used in the intersection query.
+where `Type1` and `Type2` are the types of the objects
+used in the intersection computation.
 
 
 \subsubsection Kernel_dExample Example
@@ -511,10 +538,16 @@ evolution of the low-dimensional kernel. The kernel was revised
 based on suggestions by Herv&eacute; Br&ouml;nnimann, Michael Hoffmann, and
 Stefan Schirra.
 
+Epick_d was added by Marc Glisse in 2014.
+
 \subsection Kernel_dAcknowledgments Acknowledgments
 
 This work was supported by ESPRIT IV Long Term Research Projects
 No. 21957 (CGAL) and No. 28155 (GALIA).
+
+The Epick_d kernel was partially supported by the IST Programme of the EU
+(FET Open) Project under Contract No IST-25582 – (CGL - Computational
+Geometric Learning).
 
 */ 
 } /* namespace CGAL */

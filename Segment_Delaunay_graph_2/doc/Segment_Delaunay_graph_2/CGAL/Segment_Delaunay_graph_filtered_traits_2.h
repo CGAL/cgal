@@ -16,16 +16,19 @@ to those provided by the traits class
 `Segment_Delaunay_graph_traits_2<CK,CM>`, which means that 
 they may be inexact depending on the choice of the `CK` kernel. 
 
-This class has six template parameters. The first, third and fifth 
-template parameters must be a models of the `Kernel` concept. The 
-parameter `CK` is the construction kernel and it is the kernel 
-that will be used for constructions. The parameter `FK` is the 
-filtering kernel; this kernel will be used for performing the 
+This class has six template parameters. 
+\tparam CK is the construction kernel and it is the kernel 
+that will be used for constructions.
+\tparam CM must be `Field_with_sqrt_tag` or `Field_tag`
+\tparam FK is the  filtering kernel; this kernel will be used for performing the 
 arithmetic filtering for the predicates involved in the computation of 
-the segment Delaunay graph. Finally, the parameter `EK` is the 
-exact kernel; this kernel will be used for computing the predicates if 
+the segment Delaunay graph. 
+\tparam FM must be `Field_with_sqrt_tag` or `Field_tag`
+\tparam EK is the exact kernel; this kernel will be used for computing the predicates if 
 the filtering kernel fails to produce an answer. 
+\tparam EM must be `Field_with_sqrt_tag` or `Field_tag`
 
+The first, third and fifth template parameters must be models of the `Kernel` concept.
 The second, fourth and sixth template parameters correspond to how 
 predicates are evaluated. There are two predefined possible values for 
 these parameters, namely `Field_with_sqrt_tag` and 
@@ -35,23 +38,20 @@ expressions involving all four basic operations and square roots,
 whereas the second one requires that only field operations are 
 exact. Finally, in order to get exact constructions `CM` 
 must be set to `Field_with_sqrt_tag` and the number type in 
-`CK` must support operations involing divisions and square roots 
+`CK` must support operations involving divisions and square roots 
 (as well as the other three basic operations of course). 
 The way the predicates are evaluated is discussed in 
 \cgalCite{b-ecvdl-96} and \cgalCite{cgal:k-reisv-04} (the geometric filtering 
 part). 
 
-The default values for the template parameters are as follows: 
-`CM = Field_with_sqrt_tag` (it is assumed that 
-`Cartesian<double>` or `Simple_cartesian<double>` 
-will be the entry for the template parameter `CK`), 
-`EM = Field_tag`, 
-`FK = Simple_cartesian<Interval_nt<false> >`, 
-`FM = Field_with_sqrt_tag`. If the <span class="textsc">Gmp</span> package is 
-installed with \cgal, the template parameter `EK` has the default 
-value: `EK = Simple_cartesian<Gmpq>`, otherwise its 
-default value is 
-`EK = Simple_cartesian<Quotient<MP_Float> >`. 
+The default values for the template parameters are as follows:
+<ul>
+ <li> `CM = Field_with_sqrt_tag` (it is assumed that `Cartesian<double>` or `Simple_cartesian<double>`  will be the entry for the template parameter `CK`), 
+ <li> `EM = Field_tag`, 
+ <li> `FK = Simple_cartesian<Interval_nt<false> >`, 
+ <li> `FM = Field_with_sqrt_tag`. 
+ <li> If the \sc{Gmp} package is  installed with \cgal, the template parameter `EK` has the default   value: `EK = Simple_cartesian<Gmpq>`, otherwise its   default value is   `EK = Simple_cartesian<Quotient<MP_Float> >`. 
+</ul>
 
 \cgalModels `SegmentDelaunayGraphTraits_2`
 \cgalModels `DefaultConstructible`
@@ -166,16 +166,22 @@ to those provided by the traits class
 which means that they may be inexact, depending on the choice of the 
 `CK` kernel. 
 
-This class has six template parameters. The first, third and fifth 
-template parameters must be a models of the `Kernel` concept. The 
-parameter `CK` is the construction kernel and it is the kernel 
-that will be used for constructions. The parameter `FK` is the 
+This class has six template parameters. 
+
+\tparam CK is the construction kernel and it is the kernel 
+that will be used for constructions.
+\tparam CM must be `Field_with_sqrt_tag` or `Field_tag`
+\tparam FK is the 
 filtering kernel; this kernel will be used for performing the 
 arithmetic filtering for the predicates involved in the computation of 
-the segment Delaunay graph. Finally, the parameter `EK` is the 
-exact kernel; this kernel will be used for computing the predicates if 
+the segment Delaunay graph. 
+\tparam FM must be `Field_with_sqrt_tag` or `Field_tag`
+\tparam EK is the exact kernel; this kernel will be used for computing the predicates if 
 the filtering kernel fails to produce an answer. 
+\tparam EM must be `Field_with_sqrt_tag` or `Field_tag`
 
+The first, third and fifth 
+template parameters must be a models of the `Kernel` concept.
 The second, fourth and sixth template parameters 
 correspond to how predicates are evaluated. There are two predefined 
 possible values for these parameters, namely `Field_with_sqrt_tag` 
@@ -192,17 +198,20 @@ The way the predicates are evaluated is discussed in
 \cgalCite{b-ecvdl-96} and \cgalCite{cgal:k-reisv-04} (the geometric filtering 
 part). 
 
-The default values for the template parameters are as follows: 
-`CM = CGAL::Field_with_sqrt_tag` (it is assumed that 
+The default values for the template parameters are as follows:
+<ul>
+<li> `CM = CGAL::Field_with_sqrt_tag` (it is assumed that 
 `Cartesian<double>` or `Simple_cartesian<double>` 
 will be the entry for the template parameter `CK`), 
-`EM = CGAL::Euclidean_ring_tag`, 
-`FK = CGAL::Simple_cartesian<CGAL::Interval_nt<false> >`, 
-`FM = CGAL::Field_with_sqrt_tag`. If the <span class="textsc">Gmp</span> package is 
+<li> `EM = CGAL::Euclidean_ring_tag`, 
+<li> `FK = CGAL::Simple_cartesian<CGAL::Interval_nt<false> >`, 
+<li> `FM = CGAL::Field_with_sqrt_tag`. 
+<li> If the \sc{Gmp} package is 
 installed with \cgal, the template parameter `EK` has the default 
 value: `EK = CGAL::Simple_cartesian<CGAL::Gmpq>`, otherwise its 
 default value is 
 `EK = CGAL::Simple_cartesian<CGAL::MP_Float>`. 
+</ul>
 
 \cgalModels `SegmentDelaunayGraphTraits_2`
 \cgalModels `DefaultConstructible`

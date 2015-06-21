@@ -12,22 +12,22 @@ else()
             DOC "The directory containing the LEDA header files WITHOUT the LEDA prefix"
           )
 
-  find_library(LEDA_LIBRARY_RELEASE NAMES "leda"
+  find_library(LEDA_LIBRARY_RELEASE NAMES "leda_md" "leda" "leda_numbers_md" "leda_numbers"
                HINTS ENV LEDA_LIB_DIR
                      ENV LEDA_DIR
-#               PATH_SUFFIXES lib
+               PATH_SUFFIXES lib
                DOC "Path to the LEDA library"
               )
 
-  find_library(LEDA_LIBRARY_DEBUG NAMES "ledaD"
+  find_library(LEDA_LIBRARY_DEBUG NAMES "leda_mdd" "ledaD" "leda_numbers_mdd" "leda_numbers"
                HINTS ENV LEDA_LIB_DIR
                      ENV LEDA_DIR
-#               PATH_SUFFIXES lib
+               PATH_SUFFIXES lib
                DOC "Path to the LEDA library"
               )
 
   if ( NOT LEDA_INCLUDE_DIR )
-    typed_cache_set( FILEPATH "The directory containing the LEDA header files WITHOUT the LEDA prefix" LEDA_INCLUDE_DIR "$ENV{LEDA_INC_DIR}" )
+    typed_cache_set( PATH "The directory containing the LEDA header files WITHOUT the LEDA prefix" LEDA_INCLUDE_DIR "$ENV{LEDA_INC_DIR}" )
   endif()
 
   if ( NOT LEDA_DEFINITIONS )
@@ -94,17 +94,17 @@ if ( LEDA_INCLUDE_DIR AND LEDA_LIBRARIES)
     get_dependency_version (GCC)
     if ( NOT "${GCC_VERSION}" VERSION_LESS "4.1" )
       set(LEDA_CGAL_FRIEND_INJECTION TRUE)
-      typed_cache_set( STRING "Add -ffriend-injection on gcc >= 4.1" LEDA_CGAL_FRIEND_INJECTION "Using LEDA with gcc version 4.1 or later: Adding -ffriend-injection")
+      typed_cache_set( INTERNAL "Add -ffriend-injection on gcc >= 4.1" LEDA_CGAL_FRIEND_INJECTION "Using LEDA with gcc version 4.1 or later: Adding -ffriend-injection")
       uniquely_add_flags (LEDA_CXX_FLAGS "-ffriend-injection")
     endif()
     if ( NOT "${GCC_VERSION}" VERSION_LESS "4.4" )
       set(LEDA_CGAL_NO_STRICT_ALIASING TRUE)
-      typed_cache_set( STRING "Add -fno-strict-aliasing on gcc >= 4.4" LEDA_CGAL_NO_STRICT_ALIASING "Using LEDA with gcc version 4.4 or later: Adding -fno-strict-aliasing")
+      typed_cache_set( INTERNAL "Add -fno-strict-aliasing on gcc >= 4.4" LEDA_CGAL_NO_STRICT_ALIASING "Using LEDA with gcc version 4.4 or later: Adding -fno-strict-aliasing")
       uniquely_add_flags (LEDA_CXX_FLAGS "-fno-strict-aliasing")
     endif()
-    if ( UNIX )
+    if ( UNIX AND IS_DIRECTORY "${LEDA_INCLUDE_DIR}/LEDA/graphics")
       set(LEDA_CGAL_LINK_X11 TRUE)
-      typed_cache_set( STRING "Link against X11 on *nix" LEDA_CGAL_LINK_X11 "Using LEDA with gcc on *nix: Adding -lX11")
+      typed_cache_set( INTERNAL "Link against X11 on *nix" LEDA_CGAL_LINK_X11 "Using LEDA with gcc on *nix: Adding -lX11")
       uniquely_add_flags( LEDA_LINKER_FLAGS "-lX11" )
     endif()
   endif()

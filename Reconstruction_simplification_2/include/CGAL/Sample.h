@@ -23,6 +23,7 @@
 
 /// \cond SKIP_IN_MANUAL
 
+namespace CGAL {
 template <class Kernel>
 class Sample
 {
@@ -131,7 +132,6 @@ public:
 };
 
 
-//TODO: IV: What is the correct place for this struct?
 template <class T>
 struct greater_priority
 {
@@ -140,5 +140,7 @@ struct greater_priority
         return ( a.priority() > b.priority() );
     }
 };
+
+} //end namespace CGAL
 
 #endif // SAMPLE_H

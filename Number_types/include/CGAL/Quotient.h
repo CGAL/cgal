@@ -861,6 +861,7 @@ namespace Eigen {
     typedef CGAL::Quotient<NT> Nested;
 
     static inline Real epsilon() { return NumTraits<NT>::epsilon(); }
+    static inline Real dummy_precision() { return NumTraits<NT>::dummy_precision(); }
 
     enum {
       IsInteger = 0,

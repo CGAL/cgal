@@ -44,7 +44,7 @@ void test_overflow_to_double()
   for (int i=0; i<3000; ++i) {
     // std::cout << CGAL_NTS to_double(val) << std::endl;
     // std::cout << val.numerator() << " , " << val.denominator() << std::endl;
-    val = val * (1<<16);
+    val = val * (1LL<<16);
     val = val / (1<<16);
   }
   assert(CGAL_NTS to_double(val) == 0.5);

@@ -3,7 +3,11 @@
 
 #include "Scene_item.h"
 #include <Scene_interface.h>
-#include <CGAL/gl.h>
+#ifdef CGAL_GLEW_ENABLED
+# include <GL/glew.h>
+#else
+# include <CGAL/gl.h>
+#endif
 
 class Viewer_interface;
 
@@ -28,7 +32,7 @@ public:
   virtual void draw_edges() const;
   virtual void draw_edges(Viewer_interface*) const { draw_edges(); }
 
-public slots:
+public Q_SLOTS:
   // Call that once you have finished changing something in the item
   // (either the properties or internal data).
   virtual void changed();

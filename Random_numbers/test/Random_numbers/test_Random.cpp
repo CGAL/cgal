@@ -15,7 +15,7 @@
 // revision      : $Id$
 // revision_date : $Date$
 //
-// author(s)     : Sven Schönherr <sven@inf.ethz.ch>
+// author(s)     : Sven SchÃ¶nherr <sven@inf.ethz.ch>
 // coordinator   : INRIA Sophia-Antipolis
 //
 // implementation: test program for Random Numbers Generator

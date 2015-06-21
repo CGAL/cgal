@@ -12,20 +12,20 @@ having only triangular faces.
 It can have any number of connected components, boundaries 
 (borders and holes) and handles (arbitrary genus). 
 
-\cgalRefines `HalfedgeGraph` 
+\cgalRefines `MutableFaceGraph` 
 
 \cgalHeading{Valid Expressions}
 
 Let `v0v1` an edge of the triangulated surface mesh `ecm` and
 `v0` and `v1` being the source and target vertices of that edge.
-The surface mesh simplification algorithm requires the call to the function `halfedge_collapse(v0v1,ecm)`
+The surface mesh simplification algorithm requires the call to the function `Euler::edge_collapse(e,ecm)`
 to be valid and to return the vertex not removed after collapsing
-the undirected edge `(v0v1,v1v0)`.
+the edge `e` with the two halfedges `v0v1`  and `v1v0`.
 
-For `e` \f$ \in \{\f$ `v0v1,v1v0` \f$ \}\f$, let `en` and `ep` be the next and previous 
-edges, that is `en = next_edge(e, surface_mesh)`, `ep = prev_edge(e,surface_mesh)`, and let 
+For `h` \f$ \in \{\f$ `v0v1,v1v0` \f$ \}\f$, let `en` and `ep` be the next and previous 
+edges, that is `en = next(h, surface_mesh)`, `ep = prev(h,surface_mesh)`, and let 
 `eno` and `epo` be their opposite edges, that is 
-`eno = opposite_edge(en, surface_mesh)` and `epo = opposite_edge(ep,surface_mesh)`. 
+`eno = opposite(en, surface_mesh)` and `epo = opposite(ep,surface_mesh)`. 
 
 Then, after the collapse of `(v0v1,v1v0)` the following holds: 
 
@@ -34,9 +34,9 @@ Then, after the collapse of `(v0v1,v1v0)` the following holds:
 <LI>One of \f$ \{\f$`v0,v1`\f$ \}\f$ is no longer in `surface_mesh` while the other remains. 
 \cgalFootnote{Most of the time v0 is the vertex being removed but in some cases removing the edge e requires v1 to be removed. See Figure \ref CollapseFigure5.}
 Let `vgone` be the removed vertex and `vkept` be the remaining vertex. 
-<LI>If `e` was a border edge, that is `get(is_border, e, surface_mesh) == true`, then `next_edge(ep) == en`, and `prev_edge(en) == ep`. 
+<LI>If `e` was a border edge, that is `get(CGAL::is_border, e, surface_mesh) == true`, then `next(ep) == en`, and `prev(en) == ep`. 
 <LI>If `e` was not a border edge, that is `get(is_border, e, surface_mesh) == false`, then `ep` and `epo` are no longer in `surface_mesh` while `en` and `eno` are kept in `surface_mesh`. 
-<LI>For all edges `ie` in `in_edges(vgone,surface_mesh)`, `target(ie,surface_mesh) == vkept` and `source(opposite_edge(ie),surface_mesh) == vkept`. 
+<LI>For all edges `ie` in `in_edges(vgone,surface_mesh)`, `target(ie,surface_mesh) == vkept` and `source(opposite(ie,surface_mesh),surface_mesh) == vkept`. 
 <LI>No other incidence information has changed in `surface_mesh`. 
 </UL>
 
@@ -78,7 +78,6 @@ remains.
 using the specialization \link BGLPolyGT `boost::graph_traits< CGAL::Polyhedron_3<Traits> >` \endlink.
 
 \sa \link BGLPolyGT `boost::graph_traits< CGAL::Polyhedron_3<Traits> >` \endlink
-\sa `CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> >`
 
 */
 

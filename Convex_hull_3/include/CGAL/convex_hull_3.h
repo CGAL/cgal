@@ -44,6 +44,8 @@
 #include <boost/bind.hpp>
 #include <boost/next_prior.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/mpl/has_xxx.hpp>
 #include <CGAL/internal/Exact_type_selector.h>
 
 
@@ -67,7 +69,7 @@ struct Default_traits_for_Chull_3{
 //FT is a floating point type and Kernel is a filtered kernel
 template <class Point_3>
 struct Default_traits_for_Chull_3<Point_3,boost::true_type,Tag_true>{
-  typedef Convex_hull_traits_3< typename Kernel_traits<Point_3>::Kernel > type;
+  typedef Convex_hull_traits_3< typename Kernel_traits<Point_3>::Kernel, Tag_true > type;
 };
 
 template <class Traits>
@@ -75,9 +77,9 @@ struct Default_polyhedron_for_Chull_3{
   typedef CGAL::Polyhedron_3<Traits> type;
 };
 
-template <class K>
-struct Default_polyhedron_for_Chull_3<Convex_hull_traits_3<K> >{
-  typedef typename  Convex_hull_traits_3<K>::Polyhedron_3 type;
+template <class K,class Tag>
+struct Default_polyhedron_for_Chull_3<Convex_hull_traits_3<K, Tag> >{
+  typedef typename  Convex_hull_traits_3<K, Tag>::Polyhedron_3 type;
 };
  
 //utility class to select the right version of internal predicate Is_on_positive_side_of_plane_3
@@ -85,13 +87,18 @@ template <class Traits,
           class Is_floating_point=
             typename boost::is_floating_point<typename Kernel_traits<typename Traits::Point_3>::Kernel::FT>::type,
           class Has_filtered_predicates_tag=typename Kernel_traits<typename Traits::Point_3>::Kernel::Has_filtered_predicates_tag,
-          class Has_cartesian_tag=typename Kernel_traits<typename Traits::Point_3>::Kernel::Kernel_tag >
+          class Has_cartesian_tag=typename Kernel_traits<typename Traits::Point_3>::Kernel::Kernel_tag,
+          class Has_classical_point_type =
+              typename boost::is_same<
+                typename Kernel_traits<typename Traits::Point_3>::Kernel::Point_3,
+                typename Traits::Point_3  >::type
+         >
 struct Use_advanced_filtering{
   typedef CGAL::Tag_false type;
 };
 
 template <class Traits>
-struct Use_advanced_filtering<Traits,boost::true_type,Tag_true,Cartesian_tag>{
+struct Use_advanced_filtering<Traits,boost::true_type,Tag_true,Cartesian_tag,boost::true_type>{
   typedef typename Kernel_traits<typename Traits::Point_3>::Kernel K;
   typedef CGAL::Boolean_tag<K::Has_static_filters> type;
 };
@@ -122,10 +129,10 @@ public:
 //interval arithmetic (the protector must be created before using this predicate)
 //and in case of failure, exact arithmetic is used.
 template <class Kernel>
-class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel>,Tag_true>{
+class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel, Tag_true>,Tag_true>{
   typedef Simple_cartesian<CGAL::internal::Exact_field_selector<double>::Type>         PK;
   typedef Simple_cartesian<Interval_nt_advanced >                               CK;  
-  typedef Convex_hull_traits_3<Kernel>                                          Traits;
+  typedef Convex_hull_traits_3<Kernel, Tag_true>                                Traits;
   typedef typename Traits::Point_3                                              Point_3;
   
   Cartesian_converter<Kernel,CK>                        to_CK;
@@ -274,50 +281,71 @@ class Build_coplanar_poly : public Modifier_base<HDS> {
   ForwardIterator end;    
 };
 
-template <class InputIterator, class Plane_3, class Polyhedron_3, class Traits>
+
+namespace internal { namespace Convex_hull_3{
+
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Traits_has_typedef_Traits_xy_3,Traits_xy_3,false)
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Traits_has_typedef_Traits_yz_3,Traits_xy_3,false)
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Traits_has_typedef_Traits_xz_3,Traits_xy_3,false)
+
+template <class T,bool has_projection_traits=
+  Traits_has_typedef_Traits_xy_3<T>::value &&
+  Traits_has_typedef_Traits_yz_3<T>::value &&
+  Traits_has_typedef_Traits_xz_3<T>::value
+>
+struct Projection_traits{
+  typedef typename Kernel_traits<typename T::Point_3>::Kernel K;
+  typedef CGAL::Projection_traits_xy_3<K> Traits_xy_3;
+  typedef CGAL::Projection_traits_yz_3<K> Traits_yz_3;
+  typedef CGAL::Projection_traits_xz_3<K> Traits_xz_3;
+};
+
+template <class T>
+struct Projection_traits<T,true>{
+  typedef typename T::Traits_xy_3 Traits_xy_3;
+  typedef typename T::Traits_yz_3 Traits_yz_3;
+  typedef typename T::Traits_xz_3 Traits_xz_3;
+};
+
+} } //end of namespace internal::Convex_hull_3
+
+template <class InputIterator, class Point_3, class Polyhedron_3, class Traits>
 void coplanar_3_hull(InputIterator first, InputIterator beyond,
-                     Plane_3 plane, Polyhedron_3& P, const Traits& traits)
+                     const Point_3& p1, const Point_3& p2, const Point_3& p3, 
+                     Polyhedron_3& P, const Traits& /* traits */)
 {
-  typedef typename Traits::Point_3               Point_3;
-  typedef typename Kernel_traits<Point_3>::Kernel R;
-  typedef typename Traits::Vector_3              Vector_3;
-  typedef Max_coordinate_3<Vector_3>             Max_coordinate_3;
-  typedef Polyhedron_3                           Polyhedron;
-  
+  typedef typename internal::Convex_hull_3::Projection_traits<Traits> PTraits;
+  typedef typename PTraits::Traits_xy_3 Traits_xy_3;
+  typedef typename PTraits::Traits_yz_3 Traits_yz_3;
+  typedef typename PTraits::Traits_xz_3 Traits_xz_3;
+
   std::list<Point_3> CH_2;
   typedef typename std::list<Point_3>::iterator  CH_2_iterator;
-  typedef typename Traits::Construct_orthogonal_vector_3
-                                                   Construct_normal_vec;
-  Max_coordinate_3 max_coordinate;
-
-  Construct_normal_vec c_normal = 
-                          traits.construct_orthogonal_vector_3_object();
-  Vector_3 normal = c_normal(plane);
-  int max_coord = max_coordinate(normal);
-  switch (max_coord)
-  {
-     case 0:
-     {
-       convex_hull_points_2(first, beyond, std::back_inserter(CH_2),
-            Projection_traits_yz_3<R>());
-       break;
-     }
-     case 1:
-     {
-       convex_hull_points_2(first, beyond, std::back_inserter(CH_2),
-            Projection_traits_xz_3<R>());
-       break;
-     }
-     case 2:
-     {
-       convex_hull_points_2(first, beyond, std::back_inserter(CH_2),
-            Projection_traits_xy_3<R>());
-       break;
-     }
-     default:
-       break;
+ 
+  Traits_xy_3 traits_xy;
+  typename Traits_xy_3::Left_turn_2 left_turn_in_xy = traits_xy.left_turn_2_object();
+  if ( left_turn_in_xy(p1,p2,p3) || left_turn_in_xy(p2,p1,p3) )
+     convex_hull_points_2( first, beyond,
+                           std::back_inserter(CH_2),
+                           traits_xy );
+  else{
+    Traits_yz_3 traits_yz;
+    typename Traits_yz_3::Left_turn_2 left_turn_in_yz = traits_yz.left_turn_2_object();
+    if ( left_turn_in_yz(p1,p2,p3) || left_turn_in_yz(p2,p1,p3) )
+       convex_hull_points_2( first, beyond,
+                             std::back_inserter(CH_2),
+                             traits_yz );
+    else{
+      Traits_xz_3 traits_xz;
+      CGAL_assertion_code( typename Traits_xz_3::Left_turn_2 left_turn_in_xz = traits_xz.left_turn_2_object(); )
+      CGAL_assertion( left_turn_in_xz(p1,p2,p3) || left_turn_in_xz(p2,p1,p3) );
+         convex_hull_points_2( first, beyond,
+                               std::back_inserter(CH_2),
+                               traits_xz );
+    }
   }
-  typedef typename Polyhedron::Halfedge_data_structure HDS;
+
+  typedef typename Polyhedron_3::Halfedge_data_structure HDS;
 
   Build_coplanar_poly<HDS,CH_2_iterator> poly(CH_2.begin(),CH_2.end());
   P.delegate(poly);
@@ -670,10 +698,9 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
   typedef typename Traits::Plane_3		      	  Plane_3;
   typedef typename std::list<Point_3>::iterator           P3_iterator;
 
-  typedef typename Kernel_traits<typename Traits::Point_3>::Kernel R;
   typedef Triangulation_data_structure_2<
-    Triangulation_vertex_base_with_info_2<int, GT3_for_CH3<R> >,
-    Convex_hull_face_base_2<int, R> >                           Tds;  
+    Triangulation_vertex_base_with_info_2<int, GT3_for_CH3<Traits> >,
+    Convex_hull_face_base_2<int, Traits> >                           Tds;
   typedef typename Tds::Vertex_handle                     Vertex_handle;
   typedef typename Tds::Face_handle                     Face_handle;
 
@@ -708,7 +735,7 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
 
   // if the maximum distance point is on the plane then all are coplanar
   if (coplanar(*point1_it, *point2_it, *point3_it, *max_it)) {
-     coplanar_3_hull(points.begin(), points.end(), plane, P, traits);
+     coplanar_3_hull(points.begin(), points.end(), *point1_it, *point2_it, *point3_it, P, traits);
   } else {  
     Tds tds;
     Vertex_handle v0 = tds.create_vertex(); v0->set_point(*point1_it);

@@ -7,7 +7,10 @@
 \example BGL_polyhedron_3/distance.cpp
 \example BGL_polyhedron_3/kruskal.cpp
 \example BGL_polyhedron_3/kruskal_with_stored_id.cpp
+\example BGL_polyhedron_3/normals.cpp
+\example BGL_polyhedron_3/incident_vertices.cpp
 \example BGL_triangulation_2/dijkstra.cpp
 \example BGL_triangulation_2/dijkstra_with_internal_properties.cpp
 \example BGL_triangulation_2/emst.cpp
+\example BGL_surface_mesh/prim.cpp
 */

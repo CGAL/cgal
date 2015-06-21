@@ -368,7 +368,7 @@ void Scene_polylines_item::change_corner_radii(double r) {
     d->spheres_drawn_radius = r;
     d->draw_extremities = (r > 0);
     this->changed();
-    emit itemChanged();
+    Q_EMIT itemChanged();
   }
 }
 
@@ -453,7 +453,7 @@ void Scene_polylines_item::split_at_sharp_angles()
       }
     }
   }
-  emit itemChanged();
+  Q_EMIT itemChanged();
 }
 
 void

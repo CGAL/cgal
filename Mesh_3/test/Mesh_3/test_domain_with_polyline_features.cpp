@@ -41,10 +41,6 @@ struct Dummy_domain
 
 typedef Dummy_domain<K_e_i> Smooth_domain;
 typedef CGAL::Mesh_domain_with_polyline_features_3<Smooth_domain> Mesh_domain;
-
-typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
-typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
-
 typedef Mesh_domain::Point_3 Point;
 typedef Mesh_domain::FT FT;
 

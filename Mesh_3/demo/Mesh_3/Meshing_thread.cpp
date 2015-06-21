@@ -22,6 +22,7 @@
 // File Description : 
 //******************************************************************************
 
+#include "config.h"
 
 #include <QTime>
 #include <QApplication>
@@ -64,7 +65,7 @@ run()
   f_->launch();
   time_ = double(timer.elapsed()) / 1000;
   
-  emit done(this);
+  Q_EMIT done(this);
 }
 
 
@@ -83,7 +84,7 @@ void
 Meshing_thread::
 emit_status()
 {
-  emit (status_report(f_->status(timer_period_)));
+  Q_EMIT (status_report(f_->status(timer_period_)));
 }
 
 

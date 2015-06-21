@@ -36,7 +36,7 @@ public:
   }
   
   //! Applicate for Point_sets with normals.
-  bool applicable() const {
+  bool applicable(QAction*) const {
     return qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
@@ -44,7 +44,7 @@ public:
     return QList<QAction*>() << actionOutlierRemoval;
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionOutlierRemoval_triggered();
 
 }; // end Polyhedron_demo_point_set_outliers_removal_plugin

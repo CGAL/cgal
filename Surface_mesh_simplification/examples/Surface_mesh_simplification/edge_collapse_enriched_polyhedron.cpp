@@ -5,8 +5,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-// Adaptor for Polyhedron_3
-#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 // Simplification function
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
@@ -172,9 +171,9 @@ int main( int argc, char** argv )
             << "\nEdges proccessed: " << stats.processed
             << "\nEdges collapsed: "  << stats.collapsed
             << std::endl
-            << "\nEdges not collapsed due to topological constrians: "  << stats.non_collapsable
-            << "\nEdge not collapsed due to cost computation constrians: "  << stats.cost_uncomputable 
-            << "\nEdge not collapsed due to placement computation constrians: " << stats.placement_uncomputable 
+            << "\nEdges not collapsed due to topological constraints: "  << stats.non_collapsable
+            << "\nEdge not collapsed due to cost computation constraints: "  << stats.cost_uncomputable 
+            << "\nEdge not collapsed due to placement computation constraints: " << stats.placement_uncomputable 
             << std::endl ; 
             
   std::cout << "\nFinished...\n" << r << " edges removed.\n" 

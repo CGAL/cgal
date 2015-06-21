@@ -28,6 +28,7 @@
 
 #include <CGAL/_test_types.h>
 #include <CGAL/_test_cls_regular_3.h>
+#include <CGAL/_test_cls_parallel_triangulation_3.h>
 
 bool del=true;
 
@@ -37,24 +38,22 @@ typedef CGAL::Regular_triangulation_euclidean_traits_3<FK> traits;
 // Explicit instantiation of the whole class :
 template class CGAL::Regular_triangulation_3<traits>;
 
-int main()
+template<typename RT>
+void test_RT()
 {
-  std::cout << " with CGAL::Regular_triangulation_euclidean_traits_3: "
-            << std::endl;
-
-  typedef CGAL::Regular_triangulation_3<traits>                 Cls;
+  typedef RT                 Cls;
 
   //  _test_cls_regular_3( Cls() );
   typedef traits::Bare_point Point;
   typedef traits::Weighted_point Weighted_point;
 
-  typedef Cls::Vertex_handle                         Vertex_handle;
-  typedef Cls::Cell_handle                           Cell_handle; 
-  typedef Cls::Facet                                 Facet;
-  typedef Cls::Edge                                  Edge;
+  typedef typename Cls::Vertex_handle                Vertex_handle;
+  typedef typename Cls::Cell_handle                  Cell_handle; 
+  typedef typename Cls::Facet                        Facet;
+  typedef typename Cls::Edge                         Edge;
   
   typedef std::list<Weighted_point>                  list_point;
-  typedef Cls::Finite_cells_iterator                 Finite_cells_iterator;
+  typedef typename Cls::Finite_cells_iterator        Finite_cells_iterator;
 
   // temporary version
 
@@ -94,7 +93,7 @@ int main()
   }
   assert( T1.is_valid() );
   std::cout << std::endl << " number of vertices : " 
-	    << T1.number_of_vertices() << std::endl;
+      << T1.number_of_vertices() << std::endl;
 
   std::cout << " number of inserted points : " ;
   Weighted_point q[5];
@@ -109,14 +108,14 @@ int main()
       std::cout << count << '\b' ;
     else
       if (count < 100)
-	std::cout << count << '\b' << '\b' ;
+  std::cout << count << '\b' << '\b' ;
       else
-	std::cout << count << '\b' << '\b' << '\b' ;
+  std::cout << count << '\b' << '\b' << '\b' ;
     std::cout.flush();  
   }
   assert( T1.is_valid() );
   std::cout << std::endl << " number of vertices : " 
-	    << T1.number_of_vertices() << std::endl;
+      << T1.number_of_vertices() << std::endl;
 
   std::cout << " number of inserted points : " ;
   Weighted_point r[10];
@@ -131,14 +130,14 @@ int main()
       std::cout << count << '\b' ;
     else
       if (count < 100)
-	std::cout << count << '\b' << '\b' ;
+  std::cout << count << '\b' << '\b' ;
       else
-	std::cout << count << '\b' << '\b' << '\b' ;
+  std::cout << count << '\b' << '\b' << '\b' ;
     std::cout.flush();  
   }
   assert( T1.is_valid() );
   std::cout << std::endl << " number of vertices : " 
-	    << T1.number_of_vertices() << std::endl;
+      << T1.number_of_vertices() << std::endl;
   assert( T1.dimension()==1 );
 
   // The following is distilled from a bug report by Wulue Zhao
@@ -225,12 +224,12 @@ int main()
       T2.insert( s[m+20*n] );
       count++;
       if (count <10)
-	std::cout << count << '\b' ;
+  std::cout << count << '\b' ;
       else
-	if (count < 100)
-	  std::cout << count << '\b' << '\b' ;
-	else
-	  std::cout << count << '\b' << '\b' << '\b' ;
+  if (count < 100)
+    std::cout << count << '\b' << '\b' ;
+  else
+    std::cout << count << '\b' << '\b' << '\b' ;
       std::cout.flush();
     }
   for (m=10; m<20; m++)
@@ -239,12 +238,12 @@ int main()
       T2.insert( s[m+20*n] );
       count++;
       if (count <10)
-	std::cout << count << '\b' ;
+  std::cout << count << '\b' ;
       else
-	if (count < 100)
-	  std::cout << count << '\b' << '\b' ;
-	else
-	  std::cout << count << '\b' << '\b' << '\b' ;
+  if (count < 100)
+    std::cout << count << '\b' << '\b' ;
+  else
+    std::cout << count << '\b' << '\b' << '\b' ;
       std::cout.flush();
     }
   for (m=0; m<10; m++)
@@ -253,12 +252,12 @@ int main()
       T2.insert( s[m+20*n] );
       count++;
       if (count <10)
-	std::cout << count << '\b' ;
+  std::cout << count << '\b' ;
       else
-	if (count < 100)
-	  std::cout << count << '\b' << '\b' ;
-	else
-	  std::cout << count << '\b' << '\b' << '\b' ;
+  if (count < 100)
+    std::cout << count << '\b' << '\b' ;
+  else
+    std::cout << count << '\b' << '\b' << '\b' ;
       std::cout.flush();
     }
   for (m=10; m<20; m++)
@@ -267,17 +266,17 @@ int main()
       T2.insert( s[m+20*n] );
       count++;
       if (count <10)
-	std::cout << count << '\b' ;
+  std::cout << count << '\b' ;
       else
-	if (count < 100)
-	  std::cout << count << '\b' << '\b' ;
-	else
-	  std::cout << count << '\b' << '\b' << '\b' ;
+  if (count < 100)
+    std::cout << count << '\b' << '\b' ;
+  else
+    std::cout << count << '\b' << '\b' << '\b' ;
       std::cout.flush();
     }
  
   std::cout << std::endl << " number of vertices : " 
-	    << T2.number_of_vertices() << std::endl;
+      << T2.number_of_vertices() << std::endl;
   assert( T2.dimension()==2 );
   assert( T2.is_valid() );
 
@@ -292,10 +291,10 @@ int main()
     for (b=0;b!=5;b++)
       //      for (d=0;d!=10;d++)
       for (d=0;d!=5;d++)
-	lp.push_back(Weighted_point( Point(a*b-d*a + (a-b)*10 +a ,
-					   a-b+d +5*b,
-					   a*a-d*d+b),
-				     a*b-a*d) );
+  lp.push_back(Weighted_point( Point(a*b-d*a + (a-b)*10 +a ,
+             a-b+d +5*b,
+             a*a-d*d+b),
+             a*b-a*d) );
   list_point::iterator it;
   count = 0 ;
   std::cout << " number of inserted points : " ;
@@ -311,13 +310,13 @@ int main()
         if (count < 1000)
           std::cout << count << '\b' << '\b' << '\b' ;
         else
-	  std::cout << count << std::endl;
+    std::cout << count << std::endl;
     std::cout.flush();
   }
   std::cout << std::endl;
 
   std::cout << " number of vertices : " 
-	    << T.number_of_vertices() << std::endl;
+      << T.number_of_vertices() << std::endl;
   assert(T.is_valid());
   assert(T.dimension()==3);
 
@@ -326,7 +325,7 @@ int main()
   T.insert (lp.begin(), lp.end());
 
   std::cout << " number of vertices : " 
-	    << T.number_of_vertices() << std::endl;
+      << T.number_of_vertices() << std::endl;
   assert(T.is_valid());
   assert(T.dimension()==3);
 
@@ -435,6 +434,30 @@ int main()
   assert(T5.nearest_power_vertex(v0->point().point()) == v3);
   assert(T5.is_Gabriel(v3));
   assert(!T5.is_Gabriel(v0));
+}
+
+int main()
+{
+  std::cout << " with CGAL::Regular_triangulation_euclidean_traits_3: "
+            << std::endl;
+
+  test_RT<CGAL::Regular_triangulation_3<traits> >();
+  
+#ifdef CGAL_LINKED_WITH_TBB
+  typedef CGAL::Spatial_lock_grid_3<
+    CGAL::Tag_priority_blocking>                      Lock_ds;
+  typedef CGAL::Triangulation_data_structure_3< 
+    CGAL::Triangulation_vertex_base_3<traits>, 
+    CGAL::Regular_triangulation_cell_base_3<traits>, 
+    CGAL::Parallel_tag >	                            Tds_parallel;
+  typedef CGAL::Regular_triangulation_3<
+    traits, Tds_parallel, Lock_ds>                    RT_parallel;
+  // The following test won't do things in parallel since it doesn't provide
+  // a lock data structure
+  test_RT<RT_parallel>();
+  // This test performs parallel operations
+  _test_cls_parallel_triangulation_3( RT_parallel() );
+#endif
 
   std::cout << " quit " << std::endl;
   return 0;

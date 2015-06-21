@@ -13,7 +13,6 @@ class GlViewer : public QGLWidget
     Q_OBJECT
     
 private:
-    typedef Scene::Point Point;
     Scene* m_scene;
     
     // toggles

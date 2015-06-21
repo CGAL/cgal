@@ -15,21 +15,22 @@ typedef Kernel::Vector_3 Vector;
 // Point with normal vector stored as a std::pair.
 typedef std::pair<Point, Vector> Pwn;
 
-int main(void)
+int main(int argc, char*argv[])
 {
+  const char* fname = (argc>1)?argv[1]:"data/oni.xyz";
     // Reads a .xyz point set file in points[].
     // Note: read_xyz_points_and_normals() requires an output iterator
     // over points and as well as property maps to access each
     // point position and normal.
     std::vector<Pwn> points;
-    std::ifstream in("data/oni.xyz");
+    std::ifstream in(fname);
     if (!in ||
         !CGAL::read_xyz_points_and_normals(
             in,std::back_inserter(points),
             CGAL::First_of_pair_property_map<Pwn>(),
             CGAL::Second_of_pair_property_map<Pwn>()))
     {
-      std::cerr << "Error: cannot read file data/oni.xyz" << std::endl;
+      std::cerr << "Error: cannot read file " << fname << std::endl;
       return EXIT_FAILURE;
     }
 

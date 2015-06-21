@@ -14,10 +14,11 @@
 //
 // $URL$
 // $Id$
-// 
 //
-// Author(s)     : Ron Wein        <wein@post.tau.ac.il>
+//
+// Author(s)     : Ron Wein <wein@post.tau.ac.il>
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Waqar Khan <wkhan@mpi-inf.mpg.de>
 
 #ifndef CGAL_CIRCLE_SEGMENT_2_H
 #define CGAL_CIRCLE_SEGMENT_2_H
@@ -64,7 +65,7 @@ public:
     _y (0)
   {}
 
-  /*! Constructor of a point with one-root coefficients. 
+  /*! Constructor of a point with one-root coefficients.
      This constructor of a point can also be used with rational coefficients
      thanks to convertor of CoordNT. */
   _One_root_point_2_rep (const CoordNT& x, const CoordNT& y) :
@@ -104,7 +105,7 @@ public:
     Point_handle (p)
   {}
 
-  /*! Constructor of a point with one-root coefficients. 
+  /*! Constructor of a point with one-root coefficients.
      This constructor of a point can also be used with rational coefficients
      thanks to convertor of CoordNT. */
   _One_root_point_2 (const CoordNT& x, const CoordNT& y) :
@@ -132,12 +133,16 @@ public:
     return (CGAL::compare (this->ptr()->_x, p.ptr()->_x) == EQUAL &&
             CGAL::compare (this->ptr()->_y, p.ptr()->_y) == EQUAL);
   }
-/*
+
   bool operator != (const Self& p) const
   {
     return !equals(p);
   }
-*/
+
+  bool operator == (const Self& p)
+  {
+    return equals(p);
+  }
   /*! Set the point coordinates. */
   void set (const NT& x, const NT& y)
   {
@@ -171,7 +176,7 @@ operator<< (std::ostream& os,
 
 /*
 template <class NT, bool Filter>
-std::istream & operator >> (std::istream & is, 
+std::istream & operator >> (std::istream & is,
                             _One_root_point_2<NT, Filter>& p)
 {
   typename _One_root_point_2<NT, Filter>::CoordNT ort1,ort2;
@@ -370,7 +375,7 @@ public:
 
   /*!
    * Constructor of a circular arc, from the given three points, in case of
-   * three collinear points, a segment will be constructed.            
+   * three collinear points, a segment will be constructed.
    * \param p1 The arc source.
    * \param p2 A point in the interior of the arc.
    * \param p3 The arc target.
@@ -392,7 +397,7 @@ public:
     NT          x3 = p3.x();
     NT          y3 = p3.y();
 
-  
+
     // Make sure that the source and the taget are not the same.
     CGAL_precondition (Kernel().compare_xy_2_object() (p1, p3) != EQUAL);
 
@@ -403,7 +408,7 @@ public:
 
     const NT  A1 = _two*(x1 - x2);
     const NT  B1 = _two*(y1 - y2);
-    const NT  C1 = CGAL::square(y2) - CGAL::square(y1) + 
+    const NT  C1 = CGAL::square(y2) - CGAL::square(y1) +
                    CGAL::square(x2) - CGAL::square(x1);
 
     const NT  A2 = _two*(x2 - x3);
@@ -428,15 +433,15 @@ public:
     }
 
     // The equation of the underlying circle is given by:
-    
+
     NT x_center = Nx / D;
     NT y_center = Ny / D;
 
     typename Kernel::Point_2 circ_center(x_center, y_center);
 
 
-    
-    NT sqr_rad = (CGAL::square(D*x2 - Nx) + CGAL::square(D*y2 - Ny)) / 
+
+    NT sqr_rad = (CGAL::square(D*x2 - Nx) + CGAL::square(D*y2 - Ny)) /
                  CGAL::square(D);
 
     // Determine the orientation: If the mid-point forms a left-turn with
@@ -445,7 +450,7 @@ public:
     // Otherwise, it is negative (going clockwise).
     Kernel                         ker;
     typename Kernel::Orientation_2 orient_f = ker.orientation_2_object();
- 
+
     if (orient_f(p1, p2, p3) == LEFT_TURN)
       _orient = COUNTERCLOCKWISE;
     else
@@ -455,7 +460,7 @@ public:
   }
 
   /*!
-   * Get the orientation of the curve. 
+   * Get the orientation of the curve.
    * \return COLLINEAR in case of a line segment,
    *         CLOCKWISE or COUNTERCLOCKWISE for circular curves.
    */
@@ -598,19 +603,19 @@ private:
     const NT&     y0 = _circ.center().y();
     int           qs = _quart_index (src);
     int           qt = _quart_index (trg);
-  
+
     if (qs == qt)
     {
       if ((qs == 0 || qs == 1) && CGAL::compare (src.x(), trg.x()) == LARGER)
         // We have an x-monotone arc lying on the upper half of the circle:
         return (0);
-      
+
       if ((qs == 2 || qs == 3) && CGAL::compare (src.x(), trg.x()) == SMALLER)
         // We have an x-monotone arc lying on the lower half of the circle:
         return (0);
     }
 
-    // Make sure the target quarter is larger than the source quarter, by 
+    // Make sure the target quarter is larger than the source quarter, by
     // adding 4 to its index, if necessary.
     if (qt <= qs)
       qt += 4;
@@ -692,8 +697,8 @@ private:
  * Exporter for line segments and circular arcs.
  */
 template <class Kernel, bool Filter>
-std::ostream& 
-operator<< (std::ostream& os, 
+std::ostream&
+operator<< (std::ostream& os,
             const _Circle_segment_2<Kernel, Filter>& c)
 {
   if (c.orientation() == COLLINEAR)
@@ -767,7 +772,7 @@ protected:
 
   NT           _third;       // The squared radius of the supporting circle.
                              // Or: the free coefficient in the line equation.
-  
+
   Point_2      _source;      // The source point.
   Point_2      _target;      // The target point.
 
@@ -793,10 +798,11 @@ public:
    * Default constructor.
    */
   _X_monotone_circle_segment_2 () :
-    _first(), 
+    _first(),
     _second(),
     _third(),
-    _source(), _target(),
+    _source(),
+    _target(),
     _info (0)
   {}
 
@@ -812,7 +818,7 @@ public:
     _first (line.a()),
     _second (line.b()),
     _third (line.c()),
-    _source (source), 
+    _source (source),
     _target(target),
     _info (index << INDEX_SHIFT_BITS)
   {
@@ -850,7 +856,7 @@ public:
     _first  = line.a();
     _second = line.b();
     _third  = line.c();
-    
+
     // Check if the segment is directed left or right:
     Comparison_result   res = CGAL::compare (source.x(), target.x());
 
@@ -868,9 +874,8 @@ public:
     if (res == SMALLER)
       _info = (_info | IS_DIRECTED_RIGHT_MASK);
   }
-     
 
-  /*! 
+  /*!
    * Construct a circular arc.
    * \param line The supporting line.
    * \param source The source point.
@@ -884,7 +889,7 @@ public:
     _first (circ.center().x()),
     _second (circ.center().y()),
     _third (circ.squared_radius()),
-    _source (source), 
+    _source (source),
     _target(target),
     _info (index << INDEX_SHIFT_BITS)
   {
@@ -916,7 +921,7 @@ public:
   }
 
   /*!
-   * Get the supporting line. 
+   * Get the supporting line.
    * \pre The arc is linear (a line segment).
    */
   Line_2 supporting_line () const
@@ -927,7 +932,7 @@ public:
   }
 
   /*!
-   * Get the supporting circle. 
+   * Get the supporting circle.
    * \pre The arc is circular.
    */
   Circle_2 supporting_circle () const
@@ -954,6 +959,16 @@ public:
   bool is_directed_right () const
   {
     return ((_info & IS_DIRECTED_RIGHT_MASK) != 0);
+  }
+
+  bool has_left() const
+  {
+    return true;
+  }
+
+  bool has_right() const
+  {
+    return true;
   }
 
   /*! Get the left endpoint of the arc. */
@@ -989,7 +1004,7 @@ public:
     return ((_info & IS_VERTICAL_SEGMENT_MASK) != 0);
   }
 
-  /*! Get the orientation of the arc. */ 
+  /*! Get the orientation of the arc. */
   inline Orientation orientation() const
   {
     unsigned int   _or = (_info & ORIENTATION_MASK);
@@ -1024,9 +1039,9 @@ public:
     {
       if (cv.is_linear())
         return (_lines_compare_to_right (cv, p));
-      
+
       Comparison_result   res = cv._circ_line_compare_to_right (*this, p);
-      
+
       if (res != EQUAL)
         res = (res == SMALLER) ? LARGER : SMALLER;
 
@@ -1050,9 +1065,9 @@ public:
     {
       if (cv.is_linear())
         return (_lines_compare_to_left (cv, p));
-      
+
       Comparison_result   res = cv._circ_line_compare_to_left (*this, p);
-      
+
       if (res != EQUAL)
         res = (res == SMALLER) ? LARGER : SMALLER;
 
@@ -1217,7 +1232,7 @@ public:
         id_pair = Curve_id_pair (_index(), cv._index());
       else
         id_pair = Curve_id_pair (cv._index(), _index());
-      
+
       map_iter = inter_map->find (id_pair);
     }
     else
@@ -1343,8 +1358,8 @@ public:
   Bbox_2 bbox() const
   {
     double x_min = to_double(left().x());
-    double x_max = to_double(right().x());   
-    double y_min = to_double(left().y()); 
+    double x_max = to_double(right().x());
+    double y_min = to_double(left().y());
     double y_max = to_double(right().y());
     if(y_min > y_max)
       std::swap(y_min, y_max);
@@ -1353,17 +1368,17 @@ public:
       const Circle_2& circ = this->supporting_circle();
       if(_is_upper())
       {
-        y_max = to_double(circ.center().y())+ 
+        y_max = to_double(circ.center().y())+
                 std::sqrt(to_double(circ.squared_radius()));
       }
       else
       {
-        y_min = to_double(circ.center().y()) - 
+        y_min = to_double(circ.center().y()) -
                 std::sqrt(to_double(circ.squared_radius()));
       }
     }
 
-    
+
     return Bbox_2(x_min, y_min, x_max, y_max);
   }
 
@@ -1557,7 +1572,7 @@ protected:
     // A vertical segment lies above any other circle to the right of p:
     if (cv.is_vertical())
       return (SMALLER);
-    
+
     // We have to compare the slopes of the supporting circles and the
     // supporting line at p:
     //
@@ -1586,7 +1601,7 @@ protected:
       if (swap_res)
         // Swap the comparison result, if necessary:
         slope_res = (slope_res == SMALLER) ? LARGER : SMALLER;
-      
+
       return (slope_res);
     }
 
@@ -1697,7 +1712,7 @@ protected:
 
     // Compare the slopes of the two tangents to the circles.
     Comparison_result  slope_res;
-    
+
     if (sign_slope1 == ZERO && sign_slope2 == ZERO)
     {
       // Special case were both circles have a horizontal tangent:
@@ -1705,11 +1720,11 @@ protected:
     }
     else
     {
-      // Actually compare the slopes.    
+      // Actually compare the slopes.
       const bool    swap_res = (sign_denom1 != sign_denom2);
       const CoordNT A = (cv.y0() - y0())*p.x() + (y0()*cv.x0() - cv.y0()*x0());
       const CoordNT B = (cv.x0() - x0())*p.y();
-     
+
       slope_res = CGAL::compare (A, B);
 
       if (slope_res != EQUAL && swap_res)
@@ -1794,7 +1809,7 @@ protected:
     // A vertical segment lies below any other circle to the left of p:
     if (cv.is_vertical())
       return (LARGER);
-    
+
     // We have to compare the slopes of the supporting circles and the
     // supporting line at p, and return the swapped result:
     //
@@ -1823,7 +1838,7 @@ protected:
       if (swap_res)
         // Swap the comparison result, if necessary:
         slope_res = (slope_res == SMALLER) ? LARGER : SMALLER;
-      
+
       // Swap at any case to get the position to the left:
       return ((slope_res == SMALLER) ? LARGER : SMALLER);
     }
@@ -1837,7 +1852,7 @@ protected:
   /*!
    * Compare the two arcs to the left of their intersection point.
    */
-  Comparison_result _circs_compare_to_left (const Self& cv, 
+  Comparison_result _circs_compare_to_left (const Self& cv,
                                             const Point_2& p) const
   {
     if (_index() != 0 && _index() == cv._index())
@@ -1936,7 +1951,7 @@ protected:
 
     // Compare the slopes of the two tangents to the circles.
     Comparison_result  slope_res;
-    
+
     if (sign_slope1 == ZERO && sign_slope2 == ZERO)
     {
       // Special case were both circles have a horizontal tangent:
@@ -1944,11 +1959,11 @@ protected:
     }
     else
     {
-      // Actually compare the slopes.    
+      // Actually compare the slopes.
       const bool    swap_res = (sign_denom1 != sign_denom2);
       const CoordNT A = (cv.y0() - y0())*p.x() + (y0()*cv.x0() - cv.y0()*x0());
       const CoordNT B = (cv.x0() - x0())*p.y();
-     
+
       slope_res = CGAL::compare (A, B);
 
       if (slope_res != EQUAL && swap_res)
@@ -2027,7 +2042,7 @@ protected:
   }
 
   /*!
-   * Compute the intersections between the supporting circle of (*this) and 
+   * Compute the intersections between the supporting circle of (*this) and
    * the supporting line of the segement cv.
    */
   void _circ_line_intersect (const Self& cv,
@@ -2046,7 +2061,7 @@ protected:
       const NT   vx = -cv.c() / cv.a();
       const NT   vdisc = sqr_r() - CGAL::square (vx - x0());
       CGAL::Sign sign_vdisc = CGAL::sign (vdisc);
-      
+
       if (sign_vdisc == NEGATIVE)
       {
         // The circle and the vertical line do not intersect.
@@ -2058,17 +2073,17 @@ protected:
         mult = 2;
         p = Point_2 (vx, y0());
         inter_list.push_back (Intersection_point_2 (p, mult));
-        
+
         return;
       }
-      
+
       // Compute the two intersection points:
       mult = 1;
 
       p = Point_2 (CoordNT (vx),
                    CoordNT (y0(), NT(-1), vdisc));
       inter_list.push_back (Intersection_point_2 (p, mult));
-      
+
       p = Point_2 (CoordNT (vx),
                    CoordNT (y0(), NT(1), vdisc));
       inter_list.push_back (Intersection_point_2 (p, mult));
@@ -2084,7 +2099,7 @@ protected:
       const NT   hy = -cv.c() / cv.b();
       const NT   hdisc = sqr_r() - CGAL::square (hy - y0());
       CGAL::Sign sign_hdisc = CGAL::sign (hdisc);
-      
+
       if (sign_hdisc == NEGATIVE)
       {
         // The circle and the vertical line do not intersect.
@@ -2099,7 +2114,7 @@ protected:
 
         return;
       }
-      
+
       // Compute the two intersection points:
       mult = 1;
 
@@ -2184,7 +2199,7 @@ protected:
     // Compute the squared distance between the circle centers, inducing the
     // discriminant of the quadratic equations we have to solve.
     const NT   diff_x = cv.x0() - x0();
-    const NT   diff_y = cv.y0() - y0();    
+    const NT   diff_y = cv.y0() - y0();
     const NT   sqr_dist = CGAL::square(diff_x) + CGAL::square(diff_y);
     const NT   diff_sqr_rad = sqr_r() - cv.sqr_r();
     const NT   disc = 2*sqr_dist*(sqr_r() + cv.sqr_r()) -
@@ -2260,7 +2275,7 @@ protected:
       {
         // Check if the point is in the y-range of the arc.
         // Note that left() is the lower endpoint and right() is the upper
-        // endpoint of the segment in this case. 
+        // endpoint of the segment in this case.
         Comparison_result    res = CGAL::compare (p.y(), left().y());
 
         if (res == SMALLER)
@@ -2299,7 +2314,7 @@ protected:
   {
     if (p.equals (_source) || p.equals (_target))
       return (false);
-    
+
     return (_is_between_endpoints (p));
   }
 
@@ -2409,7 +2424,7 @@ protected:
     const double  app_xcenter = CGAL::to_double (this->_first);
     const double  app_ycenter = CGAL::to_double (this->_second);
     const double  app_sqr_rad = CGAL::to_double (this->_third);
-   
+
     const double  x_jump = (x_right - x_left) / n;
     double        x, y;
     double        disc;
@@ -2435,6 +2450,25 @@ protected:
     ++oi;
   }
 
+  /*!
+   * Trim the arc given its new endpoints.
+   * \param ps The new source point.
+   * \param pt The new target point.
+   * \return The new trimmed arc.
+   * \pre Both ps and pt lies on the arc and must conform with the current
+   *      direction of the arc.
+   */
+  Self trim (const Point_2& ps,
+             const Point_2& pt) const
+  {
+    Self  arc = *this;
+
+    arc._source = ps;
+    arc._target = pt;
+
+    return arc;
+  }
+
   //@}
 };
 
@@ -2442,8 +2476,8 @@ protected:
  * Exporter for circular arcs (or line segments).
  */
 template <class Kernel, bool Filter>
-std::ostream& 
-operator<< (std::ostream& os, 
+std::ostream&
+operator<< (std::ostream& os,
             const _X_monotone_circle_segment_2<Kernel, Filter> & arc)
 {
   if (! arc.is_linear())

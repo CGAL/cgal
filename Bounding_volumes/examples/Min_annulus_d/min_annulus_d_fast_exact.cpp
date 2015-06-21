@@ -9,13 +9,8 @@
 #include <CGAL/Min_annulus_d.h>
 #include <CGAL/Min_sphere_annulus_d_traits_2.h>
 
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpzf.h>
-typedef CGAL::Gmpzf ET;
-#else
-#include <CGAL/MP_Float.h>
-typedef CGAL::MP_Float ET;
-#endif
+#include <CGAL/Exact_integer.h>
+typedef CGAL::Exact_integer ET;
 
 // use an inexact kernel...
 typedef CGAL::Homogeneous<double>                          K;

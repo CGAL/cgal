@@ -25,10 +25,6 @@
 
 #include <CGAL/basic.h>
 
-#ifndef CGAL_USE_LEDA
-#warning This header file needs LEDA installed in order to work properly.
-#else // CGAL_USE_LEDA
-
 #include <CGAL/LEDA_basic.h>
 #if CGAL_LEDA_VERSION < 500
 #include <LEDA/bigfloat.h>
@@ -38,10 +34,6 @@
 
 #include <boost/numeric/interval.hpp>
 
-#include <CGAL/leda_integer.h>
-#include <CGAL/leda_rational.h>
-#include <CGAL/leda_real.h>
-#include <CGAL/leda_bigfloat.h>
 #include <CGAL/Interval_traits.h>
 #include <CGAL/Bigfloat_interval_traits.h>
 #include <CGAL/ipower.h>
@@ -169,6 +161,15 @@ typedef boost::numeric::interval
       < internal::Rounding_for_leda_bigfloat,
         internal::Checking_for_leda_bigfloat > > 
 leda_bigfloat_interval;
+
+} //end of namespace CGAL
+
+#include <CGAL/leda_integer.h>
+#include <CGAL/leda_rational.h>
+#include <CGAL/leda_real.h>
+#include <CGAL/leda_bigfloat.h>
+
+namespace CGAL {
 
 template <> class Algebraic_structure_traits< leda_bigfloat_interval >
     : public Algebraic_structure_traits_base< leda_bigfloat_interval,
@@ -487,5 +488,5 @@ leda_bigfloat_interval inline ipower(const leda_bigfloat_interval& x, int i ){
 
 
 } //namespace CGAL
-#endif // CGAL_USE_LEDA
+
 #endif //  CGAL_LEDA_BIGFLOAT_INTERVAL_H

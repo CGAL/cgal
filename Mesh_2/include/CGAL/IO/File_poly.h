@@ -54,7 +54,7 @@ read_triangle_poly_file(CDT& t, std::istream &f,
     {
       unsigned int j;
       double x, y;
-      f >> j >> x >> y;
+      f >> j >> iformat(x) >> iformat(y);
       Point p(x, y);
       skip_until_EOL(f); skip_comment_OFF(f);
       vertices[--j] = t.insert(p);

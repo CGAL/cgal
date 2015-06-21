@@ -1,15 +1,7 @@
-#include <CGAL/basic.h>
+#include <CGAL/Exact_rational.h>
 
-#ifdef CGAL_USE_GMP
-  // GMP is installed. Use the GMP rational number-type. 
-  #include <CGAL/Gmpq.h>
-  typedef CGAL::Gmpq                                    Rational;
-#else
-  // GMP is not installed. Use CGAL's exact rational number-type.
-  #include <CGAL/MP_Float.h>
-  #include <CGAL/Quotient.h>
-  typedef CGAL::Quotient<CGAL::MP_Float>                Rational;
-#endif
+// leda_rational, or Gmpq, or Quotient<MP_float>
+typedef CGAL::Exact_rational         Rational;
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
@@ -63,10 +55,7 @@ int main (int argc, char* argv[])
     // Read the polygon from the input file.
     Polygon_2   pgn;
     const char* filename = argv[i];
-    if (! read_polygon (filename, pgn)) {
-      std::cerr << "Failed to read: <" << filename << ">." << std::endl;
-      return -1;
-    }
+    read_polygon (filename, pgn);
     
     // Read the offset radius.
     Rational r;

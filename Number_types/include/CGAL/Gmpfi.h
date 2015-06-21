@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 // 
-// Author: Luis Peñaranda <luis.penaranda@gmx.com>
+// Author: Luis PeÃ±aranda <luis.penaranda@gmx.com>
 //         Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
 
 #ifndef CGAL_GMPFI_H
@@ -344,6 +344,7 @@ namespace Eigen {
     typedef CGAL::Gmpfi Nested;
 
     static inline Real epsilon() { return 0; }
+    static inline Real dummy_precision() { return 0; }
 
     enum {
       IsInteger = 0,

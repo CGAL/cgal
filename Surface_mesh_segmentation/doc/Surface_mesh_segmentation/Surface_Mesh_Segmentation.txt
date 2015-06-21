@@ -1,6 +1,6 @@
 namespace CGAL {
 /*!
-\mainpage Triangulated Surface Mesh Segmentation
+\mainpage User Manual
 \anchor Chapter_3D_SurfaceSegmentation
 
 \cgalAutoToc

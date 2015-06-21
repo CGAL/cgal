@@ -40,7 +40,8 @@ if ( CGAL_FOUND )
       list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
    endif()
 
-   create_single_source_cgal_program( Compute_Ridges_Umbilics.cpp PolyhedralSurf.cpp)
+   create_single_source_cgal_program( Compute_Ridges_Umbilics.cpp)
+   create_single_source_cgal_program( Ridges_Umbilics_SM.cpp)
 
   else(EIGEN3_FOUND OR LAPACK_FOUND)
 

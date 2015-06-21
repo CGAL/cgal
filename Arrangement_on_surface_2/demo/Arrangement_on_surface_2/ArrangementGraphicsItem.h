@@ -12,9 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
-//
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
 #ifndef CGAL_QT_ARRANGEMENT_GRAPHICS_ITEM_H
@@ -325,16 +322,16 @@ protected:
       Poly_const_max_v poly_const_max_v=poly_tr.construct_max_vertex_2_object();
 
       // Construct needed functors from the segment traits
-      typedef typename Arr_poly_traits::Segment_traits_2       Segment_traits;
-      typedef typename Segment_traits::Construct_min_vertex_2  Seg_const_min_v;
-      typedef typename Segment_traits::Construct_max_vertex_2  Seg_const_max_v;
-      Seg_const_min_v construct_min_v = poly_tr.segment_traits_2()->
+      typedef typename Arr_poly_traits::Subcurve_traits_2      Subcurve_traits;
+      typedef typename Subcurve_traits::Construct_min_vertex_2 Seg_const_min_v;
+      typedef typename Subcurve_traits::Construct_max_vertex_2 Seg_const_max_v;
+      Seg_const_min_v construct_min_v = poly_tr.subcurve_traits_2()->
         construct_min_vertex_2_object();
-      Seg_const_max_v construct_max_v = poly_tr.segment_traits_2()->
+      Seg_const_max_v construct_max_v = poly_tr.subcurve_traits_2()->
         construct_max_vertex_2_object();
 
       // Iterator of the segments of an x-monotone polyline
-      typename X_monotone_curve_2::Segment_const_iterator seg_it;
+      typename X_monotone_curve_2::Subcurve_const_iterator seg_it;
 
       QVector< QPointF > pts; // holds the points of the polygon
       X_monotone_curve_2 cv;
@@ -349,8 +346,8 @@ protected:
         // Determine the direction of cv (left-to-right or right-to-left)
         Comparison_result dir = comp_end_pts(cv);
 
-        for (seg_it = cv.begin_segments();
-             seg_it != cv.end_segments() ; ++seg_it)
+        for (seg_it = cv.begin_subcurves();
+             seg_it != cv.end_subcurves() ; ++seg_it)
           {
             if (dir == SMALLER)
               {
@@ -417,6 +414,7 @@ protected:
     }
   }
 
+#ifdef CGAL_USE_CORE
   template < typename RatKernel, typename AlgKernel, typename NtTraits >
   void paintFace( Face_handle f, QPainter* painter,
                   CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > )
@@ -532,6 +530,7 @@ protected:
       painter->fillRect( rect, color );
     }
   }
+#endif
 
   template < typename CircularKernel >
   void paintFace(Face_handle f, QPainter* painter,

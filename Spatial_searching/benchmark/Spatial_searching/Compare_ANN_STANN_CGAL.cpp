@@ -11,10 +11,12 @@
 #include <CGAL/K_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
 
-#include<sfcnn.hpp>
-
 #include <ANN/ANN.h>
 #include <ANN/ANNperf.h>
+
+#include<sfcnn.hpp>
+
+
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point_3;

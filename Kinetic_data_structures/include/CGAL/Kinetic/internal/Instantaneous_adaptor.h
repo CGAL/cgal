@@ -23,6 +23,12 @@
 #include <CGAL/Kinetic/basic.h>
 #include <functional>
 
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4800) // conversion to bool performance warning
+#endif
+
 namespace CGAL { namespace Kinetic {
 
 //! An object to help convert between moving objects and their static representations to wrap a predicate.
@@ -166,4 +172,11 @@ protected:
 };
 
 } } //namespace CGAL::Kinetic
+
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
+
 #endif

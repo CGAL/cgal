@@ -379,7 +379,7 @@ public:
      */
     inline 
     const Coordinate_2& xy() const {
-        CGAL_precondition_msg(this->ptr()->_m_xy,
+        CGAL_precondition_msg(bool(this->ptr()->_m_xy),
             "Denied access to the curve end lying at x/y-infinity");
         return *(this->ptr()->_m_xy);
     }
@@ -469,7 +469,7 @@ public:
      */
     inline 
     bool is_finite() const {
-        return this->ptr()->_m_xy;
+        return bool(this->ptr()->_m_xy);
     }
     
     //!@}      
@@ -514,8 +514,8 @@ public:
     inline
     CGAL::Comparison_result compare_xy(const Kernel_point_2& q, 
                                        bool equal_x = false) const {
-        CGAL_precondition(this->ptr()->_m_xy);
-        CGAL_precondition(q.ptr()->_m_xy);
+        CGAL_precondition(bool(this->ptr()->_m_xy));
+        CGAL_precondition(bool(q.ptr()->_m_xy));
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Compare_xy_2, compare_xy_2)
         CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this) != NULL);
@@ -534,7 +534,7 @@ public:
     bool is_on(
          const typename Curved_kernel_via_analysis_2::Curve_2& curve
     ) const {
-        CGAL_precondition(this->ptr()->_m_xy);
+        CGAL_precondition(bool(this->ptr()->_m_xy));
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Is_on_2, is_on_2)
         CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this) != NULL);

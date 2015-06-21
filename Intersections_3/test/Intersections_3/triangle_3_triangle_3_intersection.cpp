@@ -1,19 +1,14 @@
 #include <cassert>
 #include <CGAL/Cartesian.h>
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpq.h>
-typedef CGAL::Gmpq NT;
-#else
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
-typedef CGAL::Quotient<CGAL::MP_Float> NT;
-#endif
+#include <CGAL/Exact_rational.h>
 
-typedef CGAL::Cartesian<NT> Kernel;
-typedef Kernel::Triangle_3  Triangle;
-typedef Kernel::Point_3     Point;
-typedef Kernel::Segment_3   Segment;
-typedef std::vector<Point>    Polygon2;
+// leda_rational, or Gmpq, or Quotient<MP_float>
+typedef CGAL::Exact_rational               NT;
+typedef CGAL::Cartesian<NT>                Kernel;
+typedef Kernel::Triangle_3                 Triangle;
+typedef Kernel::Point_3                    Point;
+typedef Kernel::Segment_3                  Segment;
+typedef std::vector<Point>                 Polygon2;
 
 void test_coplanar_triangles(){
   CGAL::Object obj;

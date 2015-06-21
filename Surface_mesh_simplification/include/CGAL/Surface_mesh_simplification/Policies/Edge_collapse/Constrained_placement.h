@@ -32,9 +32,6 @@ class Constrained_placement : public BasePlacement
 {
 public:
 
-  typedef typename BasePlacement::Profile Profile;
-  typedef typename BasePlacement::Point Point;
-  typedef optional<Point> result_type ;
   EdgeIsConstrainedMap Edge_is_constrained_map;
 
 public:
@@ -45,27 +42,25 @@ public:
   , Edge_is_constrained_map(map)
   {}
 
-  result_type operator()( Profile const& aProfile ) const
+  template <typename Profile> 
+  optional<typename Profile::Point> operator()( Profile const& aProfile ) const
   {
     typedef typename Profile::ECM                                ECM;
-    typedef typename boost::graph_traits<ECM>            GraphTraits;
-    typedef typename GraphTraits::in_edge_iterator  in_edge_iterator;
+    typedef typename CGAL::Halfedge_around_target_iterator<ECM>  in_edge_iterator;
 
     in_edge_iterator eb, ee ;
-    for ( boost::tie(eb,ee) = in_edges(aProfile.v0(),aProfile.surface_mesh());
+    for ( boost::tie(eb,ee) = halfedges_around_target(aProfile.v0(),aProfile.surface_mesh());
       eb != ee ; ++ eb )
     {
-      if( get(Edge_is_constrained_map, *eb) )
-        return get(vertex_point,
-                   aProfile.surface_mesh(),
+      if( get(Edge_is_constrained_map, edge(*eb,aProfile.surface_mesh())) )
+        return get(aProfile.vertex_point_map(),
                    aProfile.v0());
     }
-    for ( boost::tie(eb,ee) = in_edges(aProfile.v1(),aProfile.surface_mesh());
+    for ( boost::tie(eb,ee) = halfedges_around_target(aProfile.v1(),aProfile.surface_mesh());
       eb != ee ; ++ eb )
     {
-      if( get(Edge_is_constrained_map, *eb) )
-        return get(vertex_point,
-                   aProfile.surface_mesh(),
+      if( get(Edge_is_constrained_map, edge(*eb,aProfile.surface_mesh())) )
+        return get(aProfile.vertex_point_map(),
                    aProfile.v1());
     }
 

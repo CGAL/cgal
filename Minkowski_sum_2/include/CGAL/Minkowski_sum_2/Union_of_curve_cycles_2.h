@@ -12,10 +12,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein   <wein_r@yahoo.com>
 
 #ifndef CGAL_UNION_OF_CURVE_CYCLES_2_H
 #define CGAL_UNION_OF_CURVE_CYCLES_2_H
@@ -151,7 +148,7 @@ public:
 
       return (temp);
     }
-      
+
   };
 
   /*! Default constructor. */
@@ -179,7 +176,7 @@ public:
     this->_construct_arrangement (begin, end, arr);
 
     // Produce the result. First set the outer boundary of the union, given
-    // as the inner boundary of the single hole in the unbounded face. 
+    // as the inner boundary of the single hole in the unbounded face.
     Face_iterator                    fit;
     const Face_handle                uf = arr.unbounded_face();
     Inner_ccb_iterator               iccb_it = uf->inner_ccbs_begin();
@@ -193,7 +190,7 @@ public:
     for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
     {
       CGAL_assertion (fit->data() != this->UNVISITED);
-      
+
       // If a bounded face has an inside count that equals 0, it forms a hole
       // in the union.
       if (! fit->is_unbounded() && fit->data() == 0)

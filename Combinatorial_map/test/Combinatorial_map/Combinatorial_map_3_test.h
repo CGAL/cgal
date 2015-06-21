@@ -25,6 +25,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -59,10 +60,22 @@ bool check_number_of_cells_3(CMap& cmap, unsigned int nbv, unsigned int nbe,
   return true;
 }
 
+template<typename CMap>
+struct Count_nb_darts
+{
+  Count_nb_darts(std::size_t &nb) : m_nb(nb)
+  {}
+
+  void operator() (const typename CMap::Dart&)
+  { ++m_nb; }
+protected:
+  std::size_t& m_nb;
+};
+
 template<class Map, class Functor>
 void createAllBasicCases1()
 {
-  Map map; 
+  Map map;
   Functor functor;
 
   typename Map::Dart_handle dh, dh2, dh3;
@@ -186,7 +199,7 @@ struct Myclose<Map,-1>
 template<class Map, class Functor, int close1, int close2>
 void createAllBasicCases2()
 {
-  Map map; 
+  Map map;
   Functor functor;
 
   typename Map::Dart_handle dh, dh2, dh3, dh4;
@@ -330,7 +343,7 @@ bool test3D()
   Map map;
   cout << "***************************** TEST BASIC CREATION 3D:"
        << endl;
-  
+
   dh = map.create_dart();
   dh2 = map.create_dart();
 
@@ -339,13 +352,13 @@ bool test3D()
   if (map.is_valid()) cout << "Map valid." << endl;
   cout << "Nombre de brins : " << map.number_of_darts() << endl;
   map.clear();
-    
+
   cout << "***************************** TEST BASIC CREATION 3D DONE."
        << endl;
 
   cout << "***************************** TEST CREATION WITH EMBEDDING 3D:"
        << endl;
-  
+
   dh = map.create_dart();
   dh2 = map.create_dart();
 
@@ -372,7 +385,7 @@ bool test3D()
 
   if (map.is_valid()) cout << "Map valid." << endl;
   map.clear();
-    
+
   cout << "***************************** TEST CREATION WITH EMBEDDING 3D DONE."
        << endl;
 
@@ -392,7 +405,7 @@ bool test3D()
 
   if (map.is_valid()) cout << "Map valid." << endl;
   map.clear();
-    
+
   cout << "***************************** TEST SEW 3D DONE." << endl;
 
   cout << "***************************** TEST TRIANGULATION_2 3D:" << endl;
@@ -407,7 +420,7 @@ bool test3D()
 
   if (map.is_valid()) cout << "Map valid." << endl;
   map.clear();
-    
+
   cout << "***************************** TEST TRIANGULATION_2 3D DONE."
        << endl;
 
@@ -438,7 +451,7 @@ bool test3D()
 
   if (map.is_valid()) cout << "Map valid." << endl;
   map.clear();
-       
+
   cout << "***************************** TEST TRIANGULATION_3 3D DONE."
        << endl;
 
@@ -477,32 +490,10 @@ bool test3D()
        << endl;
   map.unmark_all(mark);
 
-  // Tout les parcours possibles :
-  /*  for (int i = CGAL::SELF_ORBIT; i <= CGAL::ALL_DARTS_ORBIT; ++i)
-    {
-      cout << "Parcours orbite " << Map::ORBIT_NAME[i] << " : #cellules=" << flush;
-      unsigned int nbc = 0, nb2 = 0;
-      for (CGAL::CMap_dart_iterator_of_all<Map> it1(map);it1.cont(); ++it1)
-        {
-	  ++nb2;
-	  if (!map.is_marked(*it1, mark))
-            {
-	      ++nbc;
-	      CGAL::CMap_dart_iterator_basic_of_orbit_3<Map> it2(map, *it1, i, mark);
-	      for (;it2.cont(); ++it2)
-		{}
-            }
-        }
-      cout << nbc << "." << ", #brins=" << nb2 << "." << endl
-	   << "All the darts marked ? " << map.is_whole_map_marked(mark)
-	   << endl;
-	   map.unmark_all(mark);
-    }*/
-
   // Iterator stl like
   {
     nbc = 0, nb2 = 0;
-	unsigned nbtest=0;
+    unsigned int nbtest=0;
     cout << "Iterator stl like: #cellules=" << flush;
    for (typename Map::Dart_range::const_iterator it1(map.darts().begin());
 	it1!=map.darts().end(); ++it1)
@@ -519,6 +510,10 @@ bool test3D()
 		   it2(map.template darts_of_cell<2>(it1).begin());
 		 it2 != map.template darts_of_cell<2>(it1).end(); ++it2)
 	      { ++nbtest; }
+	    for (typename Map::template Dart_of_involution_range<2>::const_iterator
+		   it2(map.template darts_of_involution<2>(it1).begin());
+		 it2 != map.template darts_of_involution<2>(it1).end(); ++it2)
+	      { ++nbtest; }
 	    for (typename Map::template One_dart_per_incident_cell_range<2,0>::const_iterator
 		   it2(map.template one_dart_per_incident_cell<2,0>(it1).begin());
 		 it2 != map.template one_dart_per_incident_cell<2,0>(it1).end(); ++it2)
@@ -527,18 +522,76 @@ bool test3D()
       }
     cout << nbc << "." << ", #brins=" << nb2 << "." << endl
 	 << "All the darts marked ? " << map.is_whole_map_marked(mark) << endl;
-	{
-		for (typename Map::template One_dart_per_cell_range<0>::const_iterator
-		   it2(map.template one_dart_per_cell<0>().begin());
-		 it2 != map.template one_dart_per_cell<0>().end(); ++it2)
-	      { ++nbtest; }
-	}
-	cout<<"Different const_iterators: "<<nbtest<<std::endl;
+    {
+      for (typename Map::template One_dart_per_cell_range<0>::const_iterator
+             it2(map.template one_dart_per_cell<0>().begin());
+           it2 != map.template one_dart_per_cell<0>().end(); ++it2)
+      { ++nbtest; }
+    }
+    cout<<"Different const_iterators: "<<nbtest<<std::endl;
     map.unmark_all(mark);
   }
   map.free_mark(mark);
+
+  {
+    cout<<"Test operator= between iterators."<<std::endl;
+    typename Map::Dart_range::const_iterator it1(map.darts().begin());
+    it1=map.darts().begin();
+
+    typename Map::template Dart_of_orbit_range<2>::const_iterator
+      it2(map.template darts_of_orbit<2>(it1).begin());
+    it2 = map.template darts_of_orbit<2>(it1).begin();
+
+    typename Map::template Dart_of_cell_range<2>::const_iterator
+      it3(map.template darts_of_cell<2>(it1).begin());
+    it3 = map.template darts_of_cell<2>(it1).begin();
+
+    typename Map::template Dart_of_involution_range<2>::const_iterator
+      it4(map.template darts_of_involution<2>(it1).begin());
+    it4 = map.template darts_of_involution<2>(it1).begin();
+
+    typename Map::template One_dart_per_incident_cell_range<2,0>::const_iterator
+      it5(map.template one_dart_per_incident_cell<2,0>(it1).begin());
+    it5 = map.template one_dart_per_incident_cell<2,0>(it1).begin();
+
+    typename Map::template One_dart_per_cell_range<0>::const_iterator
+      it6(map.template one_dart_per_cell<0>().begin());
+    it6 = map.template one_dart_per_cell<0>().begin();
+  }
+
+  {
+    std::size_t nbtest=0;
+    cout<<"std::for_each iterators : ";
+    std::for_each(map.darts().begin(), map.darts().end(),
+                  Count_nb_darts<Map>(nbtest));
+    typename Map::Dart_range::const_iterator it1(map.darts().begin());
+    std::for_each(map.template darts_of_orbit<1,2>(it1).begin(),
+                  map.template darts_of_orbit<1,2>(it1).end(),
+                  Count_nb_darts<Map>(nbtest));
+    std::for_each(map.template darts_of_cell<3>(it1).begin(),
+                  map.template darts_of_cell<3>(it1).end(),
+                  Count_nb_darts<Map>(nbtest));
+    std::for_each(map.template darts_of_involution<2>(it1).begin(),
+                  map.template darts_of_involution<2>(it1).end(),
+                  Count_nb_darts<Map>(nbtest));
+    std::for_each(map.template one_dart_per_incident_cell<0,2>(it1).begin(),
+                  map.template one_dart_per_incident_cell<0,2>(it1).end(),
+                  Count_nb_darts<Map>(nbtest));
+    std::for_each(map.template one_dart_per_cell<1>().begin(),
+                  map.template one_dart_per_cell<1>().end(),
+                  Count_nb_darts<Map>(nbtest));
+    std::cout<<nbtest<<", comparison using size(): ";
+
+    std::size_t nbtest2 = map.darts().size()+
+      map.template darts_of_orbit<1,2>(it1).size()+
+      map.template darts_of_cell<3>(it1).size()+
+      map.template darts_of_involution<2>(it1).size()+
+      map.template one_dart_per_incident_cell<0,2>(it1).size()+
+      map.template one_dart_per_cell<1>().size();
+    std::cout<<nbtest2<<(nbtest==nbtest2?". OK":". PROBLEM")<<std::endl;
+  }
   map.clear();
-    
+
   cout << "***************************** TEST ITERATORS 3D DONE." << endl;
 
   cout << "***************************** TEST INCIDENCE ITERATORS 3D:"
@@ -553,7 +606,7 @@ bool test3D()
 
   map.free_mark(mark);
   map.clear();
-    
+
   cout << "***************************** TEST INCIDENCE ITERATORS 3D DONE."
        << endl;
 
@@ -612,7 +665,7 @@ bool test3D()
   cout << "remove vertex11: " << flush; CGAL::remove_cell<Map,0>(map,d3);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
-    
+
   cout << "***************************** TEST VERTEX REMOVAL 3D DONE."
        << endl;
 
@@ -702,7 +755,7 @@ bool test3D()
   {
     std::vector<Dart_handle> V;
     {
-      for ( typename Map::template Dart_of_cell_range<0,2>::iterator 
+      for ( typename Map::template Dart_of_cell_range<0,2>::iterator
 	      it =  map.template darts_of_cell<0,2>(d3).begin();
 	    it!=map.template darts_of_cell<0,2>(d3).end(); ++it)
 	V.push_back(it);
@@ -716,7 +769,7 @@ bool test3D()
       }
   }
   map.clear();
-    
+
   cout << "***************************** TEST EDGE REMOVAL 3D DONE."
        << endl;
 
@@ -808,7 +861,7 @@ bool test3D()
       }
   }
   map.clear();
-    
+
   cout << "***************************** TEST FACET REMOVAL 3D DONE."
        << endl;
 
@@ -918,7 +971,7 @@ bool test3D()
   cout << "insert vertex18: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
-    
+
   cout << "***************************** TEST INSERT VERTEX 3D DONE."
        << endl;
 
@@ -974,7 +1027,7 @@ bool test3D()
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
   map.clear();
-    
+
   cout << "***************************** TEST INSERT EDGE 3D DONE."
        << endl;
 
@@ -1062,10 +1115,10 @@ bool test3D()
   CGAL::insert_cell_2_in_cell_3(map,v.begin(),v.end());
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear(); v.clear();
-    
+
   d1 = make_combinatorial_hexahedron(map);
   d2 = make_combinatorial_hexahedron(map);
-  map.template sew<3>(d1,d2);   
+  map.template sew<3>(d1,d2);
   d3 = map.beta(d1, 2);
   d4 = map.beta(d1, 1,3,1,2);
   assert(d4==map.beta(d1,1,3,1,2));
@@ -1076,8 +1129,8 @@ bool test3D()
   v.push_back(map.beta(v[1],1,2,1)); v.push_back(map.beta(v[2],1,2,1));
   cout << "insert facet4: " << flush; CGAL::insert_cell_2_in_cell_3(map,v.begin(),v.end());
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  map.clear(); v.clear();    
-    
+  map.clear(); v.clear();
+
   cout << "***************************** TEST INSERT FACET 3D DONE."
        << endl;
 

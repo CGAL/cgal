@@ -25,7 +25,6 @@
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_XY_COORDINATE_2_H
 
 #include <CGAL/basic.h>
-#include <boost/pool/pool_alloc.hpp>
 #include <boost/numeric/interval.hpp>
 
 #include <CGAL/Bbox_2.h>
@@ -387,7 +386,7 @@ public:
                         (*candidates.begin())->high()
                 );
         }
-        CGAL_postcondition(this->ptr()->_m_y);
+        CGAL_postcondition(bool(this->ptr()->_m_y));
         return *this->ptr()->_m_y;
     }
     

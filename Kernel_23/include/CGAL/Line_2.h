@@ -262,7 +262,7 @@ extract(std::istream& is, Line_2<R>& l)
     typename R::RT a, b, c;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
-        is >> a >> b >> c;
+        is >> iformat(a) >> iformat(b) >> iformat(c);
         break;
     case IO::BINARY :
         read(is, a);

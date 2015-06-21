@@ -16,7 +16,8 @@
 // $Id$
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
-//
+// Contributor(s): Adrien Pilleboue
+
 #ifndef CGAL_LCC_3_VIEWER_QT_H
 #define CGAL_LCC_3_VIEWER_QT_H
 
@@ -39,12 +40,12 @@ struct Geom_utils;
 template<class LCC>
 struct Geom_utils<LCC,3>
 {
-  Local_point get_point(typename LCC::Vertex_attribute_const_handle vh)
-  { return converter(vh->point()); }
+  Local_point get_point(LCC& lcc, typename LCC::Vertex_attribute_const_handle vh)
+  { return converter(lcc.point_of_vertex_attribute(vh)); }
 
-  Local_point get_point(typename LCC::Dart_const_handle dh)
-  { return converter(LCC::point(dh)); }
-  
+  Local_point get_point(LCC& lcc, typename LCC::Dart_const_handle dh)
+  { return converter(lcc.point(dh)); }
+
   Local_vector get_facet_normal(LCC& lcc, typename LCC::Dart_const_handle dh)
   {
     Local_vector n = converter(CGAL::compute_normal_of_cell_2<LCC>(lcc,dh));
@@ -65,14 +66,15 @@ protected:
 template<class LCC>
 struct Geom_utils<LCC,2>
 {
-  Local_point get_point(typename LCC::Vertex_attribute_const_handle vh)
+  Local_point get_point(LCC& lcc, typename LCC::Vertex_attribute_const_handle vh)
   {
-    Local_point p(converter(vh->point().x()),0,converter(vh->point().y()));
+    Local_point p(converter(lcc.point_of_vertex_attribute(vh).x()),0,
+                  converter(lcc.point_of_vertex_attribute(vh).y()));
     return p;
   }
 
-  Local_point get_point(typename LCC::Dart_const_handle dh)
-  { return get_point(LCC::vertex_attribute(dh)); }
+  Local_point get_point(LCC& lcc, typename LCC::Dart_const_handle dh)
+  { return get_point(lcc, lcc.vertex_attribute(dh)); }
 
   Local_vector get_facet_normal(LCC&, typename LCC::Dart_const_handle)
   {
@@ -83,10 +85,10 @@ struct Geom_utils<LCC,2>
   Local_vector get_vertex_normal(LCC&, typename LCC::Dart_const_handle)
   {
     Local_vector n(0,1,0);
-    return n;    
+    return n;
   }
 protected:
-  CGAL::Cartesian_converter<typename LCC::Traits, Local_kernel> converter;  
+  CGAL::Cartesian_converter<typename LCC::Traits, Local_kernel> converter;
 };
 
 template<class LCC>
@@ -94,18 +96,18 @@ CGAL::Bbox_3 bbox(LCC& lcc)
 {
   CGAL::Bbox_3 bb;
   Geom_utils<LCC> geomutils;
-  
+
   typename LCC::Vertex_attribute_range::const_iterator
     it=lcc.vertex_attributes().begin(), itend=lcc.vertex_attributes().end();
   if ( it!=itend )
   {
-    bb = geomutils.get_point(it).bbox();
+    bb = geomutils.get_point(lcc, it).bbox();
     for( ++it; it!=itend; ++it)
     {
-      bb = bb + geomutils.get_point(it).bbox();
+      bb = bb + geomutils.get_point(lcc, it).bbox();
     }
   }
-  
+
   return bb;
 }
 
@@ -113,131 +115,158 @@ template<class LCC>
 class SimpleLCCViewerQt : public QGLViewer
 {
   typedef typename LCC::Dart_handle Dart_handle;
-  
-  
+
 public:
 
   // Constructor/Destructor
-  SimpleLCCViewerQt(LCC& alcc) : QGLViewer(), lcc(alcc),
-                                 wireframe(false), flatShading(true),
-                                 edges(true), vertices(true)
+  SimpleLCCViewerQt(LCC& alcc) :
+    lcc(alcc),
+    wireframe(false),
+    flatShading(true),
+    edges(true),
+    vertices(true),
+    m_displayListCreated(false)
   {
     setWindowTitle("3D lcc viewer");
     resize(500, 450);
+
+    QGLFormat newFormat = this->format();
+    newFormat.setSampleBuffers(true);
+    newFormat.setSamples(16);
+    this->setFormat(newFormat);
   }
 
 protected :
-  // Draw the facet given by ADart
-  void drawFacet(Dart_handle ADart, int AMark)
+  void drawAllFaces(bool flat)
   {
-    ::glBegin(GL_POLYGON);
-    ::glColor3f(.7,.7,.7);
-
-    // If Flat shading: 1 normal per polygon
-    if (flatShading)
+    for(typename LCC::template One_dart_per_cell_range<2>::iterator
+          dartIter=lcc.template one_dart_per_cell<2>().begin();
+        dartIter.cont(); ++dartIter)
     {
-      Local_vector n = geomutils.get_facet_normal(lcc,ADart);
-      ::glNormal3d(n.x(),n.y(),n.z());
-    }
+      Dart_handle& dart = dartIter;
+      ::glBegin(GL_POLYGON);
+      ::glColor3f(1.0f, .7f, .7f);
 
-    for (typename LCC::template Dart_of_orbit_range<1>::const_iterator
-           it=lcc.template darts_of_orbit<1>(ADart).begin();
-         it.cont(); ++it)
-    {
-      // If Gouraud shading: 1 normal per vertex
-      if (!flatShading)
+      if(flat)
       {
-        Local_vector n = geomutils.get_vertex_normal(lcc,it);
-        ::glNormal3d(n.x(),n.y(),n.z());
+        Local_vector normal = geomutils.get_facet_normal(lcc,dart);
+        ::glNormal3d(normal.x(), normal.y(), normal.z());
       }
-      
-      Local_point p = geomutils.get_point(it);
-      ::glVertex3d(p.x(),p.y(),p.z());
-      
-      lcc.mark(it, AMark);
-      if ( lcc.dimension>=3 && !it->is_free(3) ) lcc.mark(it->beta(3), AMark);
+
+      for (typename LCC::template Dart_of_orbit_range<1>::const_iterator
+             orbitIter = lcc.template darts_of_orbit<1>(dart).begin();
+           orbitIter.cont(); ++orbitIter)
+      {
+        if(!flat)
+        {
+          // If Gouraud shading: 1 normal per vertex
+          Local_vector n = geomutils.get_vertex_normal(lcc,orbitIter);
+          ::glNormal3d(n.x(),n.y(),n.z());
+        }
+
+        Local_point p = geomutils.get_point(lcc, orbitIter);
+        ::glVertex3d(p.x(),p.y(),p.z());
+      }
+
+      ::glEnd();
     }
-    // close the polygon
-    if (!flatShading)
-    {
-      Local_vector n = geomutils.get_vertex_normal(lcc,ADart);
-      ::glNormal3d(n.x(),n.y(),n.z());
-    }
-    
-    Local_point p = geomutils.get_point(ADart);
-    ::glVertex3d(p.x(),p.y(),p.z());    
-    
-    ::glEnd();
   }
 
-  /// Draw all the edge of the facet given by ADart
-  void drawEdges(Dart_handle ADart)
+  void drawAllEdges()
   {
-    glDepthRange (0.0, 0.9);
-    glBegin(GL_LINES);
-    ::glColor3f(.2,.2,.6);
-    for (typename LCC::template Dart_of_orbit_range<1>::iterator
-           it=lcc.template darts_of_orbit<1>(ADart).begin();
-         it.cont(); ++it)
+    //    ::glDepthRange(0.0, 1.0-0.005);
+    ::glBegin(GL_LINES);
+    ::glColor3f(0.0f, 0.0f, 0.0f);
+
+    for(typename LCC::template One_dart_per_cell_range<1>::iterator
+          dartIter=lcc.template one_dart_per_cell<1>().begin();
+        dartIter.cont(); ++dartIter)
     {
-      Local_point p =  geomutils.get_point(it);
-      Dart_handle d2 = it->other_extremity();
+      Dart_handle& dart = dartIter;
+
+      Local_point p =  geomutils.get_point(lcc, dartIter);
+      Dart_handle d2 = lcc.other_extremity(dartIter);
       if ( d2!=NULL )
       {
-        Local_point p2 = geomutils.get_point(d2);
+        Local_point p2 = geomutils.get_point(lcc, d2);
         glVertex3f( p.x(),p.y(),p.z());
         glVertex3f( p2.x(),p2.y(),p2.z());
       }
     }
-    glEnd();
-    glDepthRange (0.1, 1.0); 
-  }   
-  
+
+    ::glEnd();
+    //    ::glDepthRange(0.005, 1.0);
+  }
+
+  void drawAllVertices()
+  {
+    //    ::glDepthRange(0.0, 1.0-0.005);
+    ::glPointSize(7.0);
+    ::glBegin(GL_POINTS);
+    ::glColor3f(0.2f, 0.2f, 0.7f);
+
+    for (typename LCC::Vertex_attribute_const_range::iterator
+           v=lcc.vertex_attributes().begin(),
+           vend=lcc.vertex_attributes().end();
+         v!=vend; ++v)
+    {
+      Local_point p = geomutils.get_point(lcc, v);
+      glVertex3f(p.x(), p.y(), p.z());
+    }
+
+    ::glEnd();
+    //    ::glDepthRange(0.005, 1.0);
+  }
+
+  void initDraw()
+  {
+    //Compile drawFacet
+    std::cout << "Compile Display Lists : Faces," << std::flush;
+    m_dlFaces = ::glGenLists(1);
+    ::glNewList(m_dlFaces, GL_COMPILE);
+    drawAllFaces(false);
+    ::glEndList();
+
+    //Compile drawFacet with flat shading
+    std::cout << "Faces (flat shading), " << std::flush;
+    m_dlFacesFlat = ::glGenLists(1);
+    ::glNewList(m_dlFacesFlat, GL_COMPILE);
+    drawAllFaces(true);
+    ::glEndList();
+
+    //Compile drawEdge
+    std::cout << "edges, " << std::flush;
+    m_dlEdges = ::glGenLists(1);
+    ::glNewList(m_dlEdges, GL_COMPILE);
+    drawAllEdges();
+    ::glEndList();
+
+    //Compile drawvertices
+    std::cout << "vertices" << std::flush;
+    m_dlVertices = ::glGenLists(1);
+    ::glNewList(m_dlVertices, GL_COMPILE);
+    drawAllVertices();
+    ::glEndList();
+
+     std::cout << ". DONE." << std::endl;
+     m_displayListCreated = true;
+  }
+
   virtual void draw()
   {
-    int facettreated = lcc.get_new_mark();
-    int vertextreated = -1;
+    if(!m_displayListCreated) initDraw();
 
-    if ( vertices) vertextreated=lcc.get_new_mark();
-
-    for(typename LCC::Dart_range::iterator it=lcc.darts().begin(),
-        itend=lcc.darts().end(); it!=itend; ++it)
+    if ( !wireframe )
     {
-      if ( !lcc.is_marked(it,facettreated) )
-      {
-        drawFacet(it,facettreated);
-        if ( edges) drawEdges(it);
-      }
-
-      if (vertices)
-      {
-        if ( !lcc.is_marked(it, vertextreated) )
-        {
-          Local_point p = geomutils.get_point(it);
-
-          glDepthRange (0.0, 0.9);
-          glBegin(GL_POINTS);
-          ::glColor3f(.6,.2,.8);
-          glVertex3f(p.x(),p.y(),p.z());
-          glEnd();
-          glDepthRange (0.1, 1.0); 
-
-          CGAL::mark_cell<LCC, 0>(lcc, it, vertextreated);
-        }
-      }
+      if(flatShading) ::glCallList(m_dlFacesFlat);
+      else ::glCallList(m_dlFaces);
     }
 
-    CGAL_assertion(lcc.is_whole_map_marked(facettreated));
+    if(edges) ::glCallList(m_dlEdges);
 
-    if ( vertices)
-    {
-      CGAL_assertion(lcc.is_whole_map_marked(vertextreated));
-      lcc.free_mark(vertextreated);
-    }
-    
-    lcc.free_mark(facettreated);  
+    if(vertices) ::glCallList(m_dlVertices);
   }
-  
+
   virtual void init()
   {
     // Restore previous viewer state.
@@ -261,17 +290,18 @@ protected :
     ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
     ::glEnable(GL_LIGHTING);
-    
+
     ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
     // ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 
+ //   ::glDepthRange(0.005, 1.0);
     if (flatShading)
     {
       ::glShadeModel(GL_FLAT);
-      ::glDisable(GL_BLEND); 
-      ::glDisable(GL_LINE_SMOOTH); 
-      ::glDisable(GL_POLYGON_SMOOTH_HINT); 
-      ::glBlendFunc(GL_ONE, GL_ZERO); 
+      ::glDisable(GL_BLEND);
+      ::glDisable(GL_LINE_SMOOTH);
+      ::glDisable(GL_POLYGON_SMOOTH_HINT);
+      ::glBlendFunc(GL_ONE, GL_ZERO);
       ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
     }
     else
@@ -284,17 +314,18 @@ protected :
     }
 
     CGAL::Bbox_3 bb = bbox(lcc);
-    
+
     this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(),
                                                        bb.ymin(),
                                                        bb.zmin()),
                                         qglviewer::Vec(bb.xmax(),
                                                        bb.ymax(),
                                                        bb.zmax()));
-    
+
     this->showEntireScene();
+    initDraw();
   }
-  
+
   void keyPressEvent(QKeyEvent *e)
   {
     const Qt::KeyboardModifiers modifiers = e->modifiers();
@@ -316,10 +347,10 @@ protected :
       if (flatShading)
       {
         ::glShadeModel(GL_FLAT);
-        ::glDisable(GL_BLEND); 
-        ::glDisable(GL_LINE_SMOOTH); 
-        ::glDisable(GL_POLYGON_SMOOTH_HINT); 
-        ::glBlendFunc(GL_ONE, GL_ZERO); 
+        ::glDisable(GL_BLEND);
+        ::glDisable(GL_LINE_SMOOTH);
+        ::glDisable(GL_POLYGON_SMOOTH_HINT);
+        ::glBlendFunc(GL_ONE, GL_ZERO);
         ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
       }
       else
@@ -345,7 +376,7 @@ protected :
       handled = true;
       updateGL();
     }
-    
+
     if (!handled)
       QGLViewer::keyPressEvent(e);
   }
@@ -389,6 +420,12 @@ private:
   bool edges;
   bool vertices;
   Geom_utils<LCC> geomutils;
+
+  GLuint m_dlFaces;
+  GLuint m_dlFacesFlat;
+  GLuint m_dlEdges;
+  GLuint m_dlVertices;
+  bool m_displayListCreated;
 };
 
 template<class LCC>
@@ -396,10 +433,10 @@ void display_lcc(LCC& alcc)
 {
   int argc=1;
   typedef char* s;
-  
+
   const char* argv[2]={"lccviewer","\0"};
   QApplication app(argc,const_cast<char**>(argv));
-  
+
   SimpleLCCViewerQt<LCC> mainwindow(alcc);
   mainwindow.show();
 

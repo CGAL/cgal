@@ -54,7 +54,7 @@ TriangulationRemoveVertex<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
       typename T::Vertex_handle selected_vertex = dt->nearest_vertex(convert(event->scenePos()));
       dt->remove(selected_vertex);
     }
-    emit (modelChanged());
+    Q_EMIT( modelChanged());
   }
 }
 

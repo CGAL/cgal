@@ -44,7 +44,7 @@ public:
                              << actionUnTriangulateFacets;
   }
 
-  bool applicable() const { 
+  bool applicable(QAction*) const { 
     Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices())  {
       Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
       if(!item) return false;
@@ -53,7 +53,7 @@ public:
   }
 
 
-public slots:
+public Q_SLOTS:
   void untriangulate() {
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
   
