@@ -13,13 +13,13 @@ bool test_sphere_connected_component() {
   const int NB_ROUNDS = 10;
   const int NB_POINTS = 2000;
 
-  typedef typename K::FT                                      FT;
-  typedef typename CGAL::Point_with_normal_3<K>               Pwn;
-  typedef typename CGAL::Point_3<K>                           Point;
-  typedef typename CGAL::Vector_3<K>                          Vector;
-  typedef std::vector<Pwn>                                    Pwn_vector;
-  typedef typename CGAL::Identity_property_map<Pwn>           Point_map;
-  typedef typename CGAL::Normal_of_point_with_normal_pmap<K>  Normal_map;
+  typedef K::FT                                      FT;
+  typedef CGAL::Point_with_normal_3<K>               Pwn;
+  typedef CGAL::Point_3<K>                           Point;
+  typedef CGAL::Vector_3<K>                          Vector;
+  typedef std::vector<Pwn>                           Pwn_vector;
+  typedef CGAL::Identity_property_map<Pwn>           Point_map;
+  typedef CGAL::Normal_of_point_with_normal_pmap<K>  Normal_map;
 
   typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<
     K, Pwn_vector, Point_map, Normal_map>                     Traits;

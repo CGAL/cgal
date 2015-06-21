@@ -70,6 +70,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
     /// \cond SKIP_IN_MANUAL
     struct Filter_unassigned_points {
+      Filter_unassigned_points() : m_shape_index(dummy) {}
       Filter_unassigned_points(const std::vector<int> &shapeIndex)
         : m_shape_index(shapeIndex) {}
 
@@ -79,6 +80,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
         else return true; // to prevent infinite incrementing
       }
       const std::vector<int>&  m_shape_index;
+      std::vector<int> dummy;
     };
 
     typedef boost::filter_iterator<Filter_unassigned_points,
