@@ -17,6 +17,7 @@
 #include "third/CImg.h"
 #include "random.h"
 #include <utility>      // std::pair
+#include <vector>
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
 
@@ -25,7 +26,7 @@ class Scene {
 public:
 	typedef std::pair<Point, FT> PointMassPair;
 
-	typedef std::list<PointMassPair> PointMassList;
+	typedef std::vector<PointMassPair> PointMassList;
 	typedef PointMassList::const_iterator InputIterator;
 
 	typedef CGAL::value_type_traits<InputIterator>::type MassPoint;
@@ -80,7 +81,7 @@ public:
 
 private:
 	// data
-	std::list<Sample_> m_samples;
+	std::vector<Sample_> m_samples;
 	double m_min_mass;
 	double m_max_mass;
 
@@ -125,7 +126,7 @@ public:
 
 	void invert_mass() {
 		double new_max_mass = 0.0;
-		std::list<Sample_>::iterator it;
+		std::vector<Sample_>::iterator it;
 		for (it = m_samples.begin(); it != m_samples.end(); ++it) {
 			Sample_& sample = *it;
 			sample.mass() = m_max_mass - sample.mass();
@@ -135,8 +136,8 @@ public:
 	}
 
 	void clamp_mass() {
-		std::list<Sample_> new_samples;
-		std::list<Sample_>::iterator it;
+		std::vector<Sample_> new_samples;
+		std::vector<Sample_>::iterator it;
 		for (it = m_samples.begin(); it != m_samples.end(); ++it) {
 			Sample_& sample = *it;
 			if (sample.mass() > m_min_mass) {
@@ -152,9 +153,9 @@ public:
 		if (m_samples.size() < 3)
 			return;
 
-		std::list<Sample_> new_samples;
-		std::list<Sample_>::const_iterator it = m_samples.begin();
-		std::list<Sample_>::const_iterator last = it++;
+		std::vector<Sample_> new_samples;
+		std::vector<Sample_>::const_iterator it = m_samples.begin();
+		std::vector<Sample_>::const_iterator last = it++;
 		while (it != m_samples.end()) {
 			Point p = CGAL::midpoint(last->point(), it->point());
 			FT m = 0.5 * (last->mass() + it->mass());
@@ -166,8 +167,8 @@ public:
 		FT m = 0.5 * (last->mass() + it->mass());
 		new_samples.push_back(Sample_(p, m));
 
-		std::list<Sample_> final_samples;
-		std::list<Sample_>::const_iterator it2 = new_samples.begin();
+		std::vector<Sample_> final_samples;
+		std::vector<Sample_>::const_iterator it2 = new_samples.begin();
 		while (it != m_samples.end() && it2 != new_samples.end()) {
 			final_samples.push_back(*it);
 			final_samples.push_back(*it2);
@@ -196,7 +197,7 @@ public:
 
 	void noise(const FT scale) {
 		std::cerr << "noise by " << scale << "...";
-		std::list<Sample_>::iterator it;
+		std::vector<Sample_>::iterator it;
 		for (it = m_samples.begin(); it != m_samples.end(); it++) {
 			Sample_& sample = *it;
 			Point& point = sample.point();
@@ -212,7 +213,7 @@ public:
 			return;
 
 		Point center(m_bbox_x, m_bbox_y);
-		std::list<Sample_>::iterator it;
+		std::vector<Sample_>::iterator it;
 		for (it = m_samples.begin(); it != m_samples.end(); ++it) {
 			Sample_& sample = *it;
 			Vector vec = (sample.point() - center) / m_bbox_size;
@@ -230,7 +231,7 @@ public:
 		}
 
 		FT x_min, x_max, y_min, y_max;
-		std::list<Sample_>::const_iterator it = m_samples.begin();
+		std::vector<Sample_>::const_iterator it = m_samples.begin();
 		Point p = it->point();
 		x_min = x_max = p.x();
 		y_min = y_max = p.y();
@@ -438,7 +439,7 @@ public:
 		}
 
 		Sample_list samples;
-		for (std::list<Sample_>::iterator it = m_samples.begin();
+		for (std::vector<Sample_>::iterator it = m_samples.begin();
 				it != m_samples.end(); ++it) {
 			Sample_& s = *it;
 			if (s.mass() < m_min_mass)
@@ -468,10 +469,10 @@ public:
 	}
 
 	void save_pwn(const QString& filename, const Sample_list& samples) {
-		std::list<Vector> normals;
+		std::vector<Vector> normals;
 		compute_normals(samples, normals);
 		std::ofstream ofs(qPrintable(filename));
-		std::list<Vector>::const_iterator ni = normals.begin();
+		std::vector<Vector>::const_iterator ni = normals.begin();
 		for (Sample_list_const_iterator it = samples.begin();
 				it != samples.end(); ++it) {
 			Sample_* sample = *it;
@@ -482,7 +483,7 @@ public:
 	}
 
 	void compute_normals(const Sample_list& samples,
-			std::list<Vector>& normals) {
+			std::vector<Vector>& normals) {
 		normals.clear();
 		Point last = samples.back()->point();
 		Sample_list_const_iterator si = samples.begin();
@@ -588,9 +589,9 @@ public:
 
 	void decimate(const double percentage) {
 		std::cout << "Decimate from " << m_samples.size() << " to...";
-		std::list<Sample_> selected;
+		std::vector<Sample_> selected;
 
-		std::list<Sample_>::iterator it;
+		std::vector<Sample_>::iterator it;
 		for (it = m_samples.begin(); it != m_samples.end(); it++) {
 			const double rd = random_double(0.0, 1.0);
 			if (rd >= percentage)
@@ -605,10 +606,10 @@ public:
 
 	void keep_one_point_out_of(const int n) {
 		std::cout << "Decimate from " << m_samples.size() << " to...";
-		std::list<Sample_> selected;
+		std::vector<Sample_> selected;
 
 		int index = 0;
-		std::list<Sample_>::iterator it;
+		std::vector<Sample_>::iterator it;
 		for (it = m_samples.begin(); it != m_samples.end(); it++, index++) {
 			if (index % n == 0)
 				selected.push_back(*it);
@@ -622,7 +623,7 @@ public:
 
 	void select_samples(const double percentage, Sample_list& vertices,
 			Sample_list& samples) {
-		std::list<Sample_>::iterator it;
+		std::vector<Sample_>::iterator it;
 		for (it = m_samples.begin(); it != m_samples.end(); ++it) {
 			Sample_& s = *it;
 			if (s.mass() <= m_min_mass)
@@ -739,7 +740,7 @@ public:
 
 		::glPointSize(point_size);
 		::glBegin(GL_POINTS);
-		std::list<Sample_>::const_iterator it;
+		std::vector<Sample_>::const_iterator it;
 		for (it = m_samples.begin(); it != m_samples.end(); it++) {
 			double mass = it->mass();
 			if (mass <= m_min_mass)
