@@ -1113,7 +1113,7 @@ namespace CGAL {
                   value = lazy_squared_radius(cc);
 #else
                   // qualified with CGAL, to avoid a compilation error with clang
-                  value = squared_radius(pp0, pp1, pp2, pp3);
+                  value = CGAL::squared_radius(pp0, pp1, pp2, pp3);
 #endif
                 }
               else
