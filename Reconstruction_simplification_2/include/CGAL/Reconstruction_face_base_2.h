@@ -25,7 +25,7 @@
 #include <CGAL/Sample.h>
 #include <CGAL/Triangulation_face_base_2.h>
 
-#include <list>
+#include <vector>
 
 /// \cond SKIP_IN_MANUAL
 
@@ -58,10 +58,10 @@ public:
     typedef typename Kernel::FT FT;
     typedef Cost<FT> Cost_;
     typedef Sample<Kernel> Sample_;
-    typedef std::list<Sample_*> Sample_list;
+    typedef std::vector<Sample_*> Sample_vector;
 
 private:
-    Sample_list m_samples[3];
+    Sample_vector m_samples[3];
     FT m_mass[3];
 
     Cost_ m_cost0[3];
@@ -182,8 +182,8 @@ public:
         return false;
     }
 
-    const Sample_list& samples(int edge) const { return m_samples[edge]; }
-    Sample_list& samples(int edge) { return m_samples[edge]; }
+    const Sample_vector& samples(int edge) const { return m_samples[edge]; }
+    Sample_vector& samples(int edge) { return m_samples[edge]; }
 
     void add_sample(int edge, Sample_* sample)
     {

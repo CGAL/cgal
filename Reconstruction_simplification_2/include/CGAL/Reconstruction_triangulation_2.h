@@ -24,7 +24,7 @@
 // STL
 #include <map>
 #include <set>
-#include <list>
+#include <vector>
 #include <queue>
 #include <iostream>
 #include <limits>
@@ -114,15 +114,15 @@ public:
 			Vertex_handle_set;
 	typedef std::set<Edge, less_Edge<Edge> > Edge_set;
 
-	typedef std::list<Edge> Edge_list;
+	typedef std::vector<Edge> Edge_vector;
 
-	typedef std::list<Point> Point_list;
-	typedef typename Point_list::const_iterator Point_list_const_iterator;
+	typedef std::vector<Point> Point_vector;
+	typedef typename Point_vector::const_iterator Point_vector_const_iterator;
 
 	typedef Cost<FT> Cost_;
 	typedef Sample<Kernel> Sample_;
-	typedef std::list<Sample_*> Sample_list;
-	typedef typename Sample_list::const_iterator Sample_list_const_iterator;
+	typedef std::vector<Sample_*> Sample_vector;
+	typedef typename Sample_vector::const_iterator Sample_vector_const_iterator;
 
 	typedef Sample_with_priority<Sample_> PSample;
 	typedef std::priority_queue<PSample, std::vector<PSample>,
@@ -254,7 +254,7 @@ public:
 
 	// boundary of star(vertex)
 	// 'outward' chooses the orientation of the boundary
-	void get_edges_from_star_minus_link(Vertex_handle vertex, Edge_list& hull,
+	void get_edges_from_star_minus_link(Vertex_handle vertex, Edge_vector& hull,
 			bool outward = false) const {
 		Face_circulator fcirc = Base::incident_faces(vertex);
 		Face_circulator fend = fcirc;
@@ -339,12 +339,12 @@ public:
 				+ twin.first->samples(twin.second).size();
 	}
 
-	void collect_samples_from_edge(const Edge& edge, Sample_list& samples) {
-		const Sample_list& edge_samples = edge.first->samples(edge.second);
+	void collect_samples_from_edge(const Edge& edge, Sample_vector& samples) {
+		const Sample_vector& edge_samples = edge.first->samples(edge.second);
 		samples.insert(samples.end(), edge_samples.begin(), edge_samples.end());
 	}
 
-	void collect_samples_from_vertex(Vertex_handle vertex, Sample_list& samples,
+	void collect_samples_from_vertex(Vertex_handle vertex, Sample_vector& samples,
 			bool cleanup) {
 		Face_circulator fcirc = Base::incident_faces(vertex);
 		Face_circulator fend = fcirc;
@@ -372,7 +372,7 @@ public:
 			vertex->set_sample(NULL);
 	}
 
-	void collect_all_samples(Sample_list& samples) {
+	void collect_all_samples(Sample_vector& samples) {
 		for (Finite_edges_iterator ei = Base::finite_edges_begin();
 				ei != Base::finite_edges_end(); ++ei) {
 			Edge edge = *ei;
@@ -467,15 +467,15 @@ public:
 	void compute_mass(const Edge& edge) {
 		FT mass = 0.0;
 
-		typename Sample_list::const_iterator it;
-		const Sample_list& samples0 = edge.first->samples(edge.second);
+		typename Sample_vector::const_iterator it;
+		const Sample_vector& samples0 = edge.first->samples(edge.second);
 		for (it = samples0.begin(); it != samples0.end(); ++it) {
 			Sample_* sample = *it;
 			mass += sample->mass();
 		}
 
 		Edge twin = twin_edge(edge);
-		const Sample_list& samples1 = twin.first->samples(twin.second);
+		const Sample_vector& samples1 = twin.first->samples(twin.second);
 		for (it = samples1.begin(); it != samples1.end(); ++it) {
 			Sample_* sample = *it;
 			mass += sample->mass();
@@ -513,15 +513,15 @@ public:
 	}
 
 	void sort_samples_from_edge(const Edge& edge, SQueue& squeue) {
-		typename Sample_list::const_iterator it;
-		const Sample_list& samples0 = edge.first->samples(edge.second);
+		typename Sample_vector::const_iterator it;
+		const Sample_vector& samples0 = edge.first->samples(edge.second);
 		for (it = samples0.begin(); it != samples0.end(); ++it) {
 			Sample_* sample = *it;
 			squeue.push(PSample(sample, sample->coordinate()));
 		}
 
 		Edge twin = twin_edge(edge);
-		const Sample_list& samples1 = twin.first->samples(twin.second);
+		const Sample_vector& samples1 = twin.first->samples(twin.second);
 		for (it = samples1.begin(); it != samples1.end(); ++it) {
 			Sample_* sample = *it;
 			squeue.push(PSample(sample, 1.0 - sample->coordinate()));
@@ -563,12 +563,12 @@ public:
 		const Point& ps = source_vertex(edge)->point();
 		const Point& pt = target_vertex(edge)->point();
 
-		Sample_list samples;
+		Sample_vector samples;
 		collect_samples_from_edge(edge, samples);
 		collect_samples_from_edge(twin, samples);
 
 		Cost_ sum;
-		for (Sample_list_const_iterator it = samples.begin();
+		for (Sample_vector_const_iterator it = samples.begin();
 				it != samples.end(); ++it) {
 			Sample_* sample = *it;
 			FT mass = sample->mass();
@@ -894,7 +894,7 @@ public:
 		Vertex_handle s = source_vertex(edge);
 		Vertex_handle t = target_vertex(edge);
 
-		Edge_list hull;
+		Edge_vector hull;
 		get_edges_from_star_minus_link(s, hull);
 		return is_in_kernel(t->point(), hull.begin(), hull.end());
 	}

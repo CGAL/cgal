@@ -9,7 +9,7 @@
 
 #include <CGAL/Sample.h>
 #include <utility>      // std::pair
-#include <list>
+#include <vector>
 
 //Qt
 #include <QColor>
@@ -19,7 +19,7 @@ typedef K::Point_2 Point;
 typedef K::FT FT;
 
 typedef std::pair<Point, FT> PointMassPair;
-typedef std::list<PointMassPair> PointMassList;
+typedef std::vector<PointMassPair> PointMassList;
 typedef PointMassList::const_iterator InputIterator;
 
 typedef CGAL::value_type_traits<InputIterator>::type MassPoint;

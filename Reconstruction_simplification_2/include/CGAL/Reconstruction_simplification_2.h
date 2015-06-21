@@ -28,6 +28,7 @@
 
 #include <iterator>
 #include <iostream>
+#include <vector>
 #include <list>
 #include <algorithm>
 #include <utility>      // std::pair
@@ -104,7 +105,7 @@ public:
 
 
     typedef typename std::pair<Point, FT> PointMassPair;
-    typedef typename std::list<PointMassPair> PointMassList;
+    typedef typename std::vector<PointMassPair> PointMassList;
 
 
     /*!
@@ -137,17 +138,18 @@ public:
     typedef typename Triangulation::Vertex_handle_set Vertex_handle_set;
     typedef typename Triangulation::Edge_set Edge_set;
 
-    typedef typename Triangulation::Edge_list Edge_list;
+    typedef typename Triangulation::Edge_vector Edge_vector;
+    typedef std::list<Edge> Edge_list;
 
     typedef typename Triangulation::Cost_ Cost_;
     typedef typename Triangulation::Sample_ Sample_;
-    typedef typename Triangulation::Sample_list Sample_list;
-    typedef typename Triangulation::Sample_list_const_iterator
-            Sample_list_const_iterator;
+    typedef typename Triangulation::Sample_vector Sample_vector;
+    typedef typename Triangulation::Sample_vector_const_iterator
+            Sample_vector_const_iterator;
 
-    typedef typename Triangulation::Point_list Point_list;
-    typedef typename Triangulation::Point_list_const_iterator
-            Point_list_const_iterator;
+    typedef typename Triangulation::Point_vector Point_vector;
+    typedef typename Triangulation::Point_vector_const_iterator
+            Point_vector_const_iterator;
 
     typedef typename Triangulation::PSample PSample;
     typedef typename Triangulation::SQueue SQueue;
@@ -399,7 +401,7 @@ protected:
 
         init(start, beyond);
 
-        std::list<Sample_*> m_samples;
+        std::vector<Sample_*> m_samples;
         for (InputIterator it = start; it != beyond; it++) {
   #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
                         Point point = get(point_pmap, it);
@@ -501,7 +503,7 @@ protected:
     }
 
     void reassign_samples() {
-        Sample_list samples;
+        Sample_vector samples;
         m_dt.collect_all_samples(samples);
         m_dt.cleanup_assignments();
         m_dt.assign_samples(samples.begin(), samples.end());
@@ -509,11 +511,11 @@ protected:
     }
 
     void reassign_samples_around_vertex(Vertex_handle vertex) {
-        Sample_list samples;
+        Sample_vector samples;
         m_dt.collect_samples_from_vertex(vertex, samples, true);
         m_dt.assign_samples(samples.begin(), samples.end());
 
-        Edge_list hull;
+        Edge_vector hull;
         m_dt.get_edges_from_star_minus_link(vertex, hull, true);
         update_cost(hull.begin(), hull.end());
     }
@@ -529,10 +531,10 @@ protected:
                     << s->id() << "->" << t->id() << ") ... " << std::endl;
         }
 
-        Sample_list samples;
+        Sample_vector samples;
         m_dt.collect_samples_from_vertex(s, samples, true);
 
-        Edge_list hull;
+        Edge_vector hull;
         m_dt.get_edges_from_star_minus_link(s, hull, true);
 
         if (m_mchoice == 0)
@@ -586,7 +588,7 @@ protected:
         Vertex_handle copy_source = copy.source_vertex(copy_edge);
 
         if (m_use_flip) {
-            Edge_list copy_hull;
+            Edge_vector copy_hull;
             copy.get_edges_from_star_minus_link(copy_source, copy_hull, true);
             ok = copy.make_collapsible(copy_edge, copy_hull.begin(),
                     copy_hull.end(), m_verbose);
@@ -606,7 +608,7 @@ protected:
 
         copy.collapse(copy_edge, m_verbose);
 
-        Sample_list samples;
+        Sample_vector samples;
         m_dt.collect_samples_from_vertex(s, samples, false);
 
         backup_samples(samples.begin(), samples.end());
@@ -688,10 +690,10 @@ bool create_pedge(const Edge& edge, Rec_edge_2& pedge) {
 
     template<class Iterator> // value_type = Edge
     void update_cost(Iterator begin, Iterator end) {
-        Edge_list edges;
+        Edge_vector edges;
         collect_cost_stencil(m_dt, begin, end, edges);
 
-        typename Edge_list::iterator ei;
+        typename Edge_vector::iterator ei;
         for (ei = edges.begin(); ei != edges.end(); ++ei) {
             Edge edge = *ei;
             m_dt.update_cost(edge);
@@ -700,7 +702,7 @@ bool create_pedge(const Edge& edge, Rec_edge_2& pedge) {
 
     template<class Iterator> // value_type = Edge
     void collect_cost_stencil(const Triangulation& mesh, Iterator begin,
-            Iterator end, Edge_list& edges) {
+            Iterator end, Edge_vector& edges) {
         Edge_set done;
         Edge_list fifo;
         for (Iterator it = begin; it != end; ++it) {
@@ -841,10 +843,10 @@ bool create_pedge(const Edge& edge, Rec_edge_2& pedge) {
         if (m_mindex.empty())
             return;
 
-        Edge_list edges;
+        Edge_vector edges;
         collect_pqueue_stencil(m_dt, begin, end, edges);
 
-        typename Edge_list::const_iterator ei;
+        typename Edge_vector::const_iterator ei;
         for (ei = edges.begin(); ei != edges.end(); ++ei) {
             Edge edge = *ei;
             (m_mindex.template get<0>()).erase(Rec_edge_2(edge));
@@ -853,10 +855,10 @@ bool create_pedge(const Edge& edge, Rec_edge_2& pedge) {
 
     template<class Iterator> // value_type = Edge
     void push_stencil_to_pqueue(Iterator begin, Iterator end) {
-        Edge_list edges;
+        Edge_vector edges;
         collect_pqueue_stencil(m_dt, begin, end, edges);
 
-        typename Edge_list::const_iterator ei;
+        typename Edge_vector::const_iterator ei;
         for (ei = edges.begin(); ei != edges.end(); ++ei) {
             Edge edge = *ei;
             push_to_mindex(edge, m_mindex);
@@ -865,7 +867,7 @@ bool create_pedge(const Edge& edge, Rec_edge_2& pedge) {
 
     template<class Iterator> // value_type = Edge
     void collect_pqueue_stencil(const Triangulation& mesh, Iterator begin,
-            Iterator end, Edge_list& edges) {
+            Iterator end, Edge_vector& edges) {
         Vertex_handle_set vertex_set;
         for (Iterator it = begin; it != end; ++it) {
             Edge edge = *it;
@@ -1049,7 +1051,7 @@ bool create_pedge(const Edge& edge, Rec_edge_2& pedge) {
             index = copy_face->index(copy_vertex);
             Edge copy_twin = copy.twin_edge(Edge(copy_face, index));
 
-            Sample_list samples;
+            Sample_vector samples;
             m_dt.collect_samples_from_edge(twin, samples);
             copy_twin.first->samples(copy_twin.second) = samples;
         }
@@ -1098,7 +1100,7 @@ bool create_pedge(const Edge& edge, Rec_edge_2& pedge) {
             if (v->point() == v->relocated())
                 continue;
 
-            Edge_list hull;
+            Edge_vector hull;
             m_dt.get_edges_from_star_minus_link(v, hull, false);
             bool ok = m_dt.is_in_kernel(v->relocated(), hull.begin(),
                     hull.end());
@@ -1185,12 +1187,12 @@ bool create_pedge(const Edge& edge, Rec_edge_2& pedge) {
         const Point& pa = m_dt.source_vertex(edge)->point();
         const Point& pb = m_dt.target_vertex(edge)->point();
 
-        Sample_list samples;
+        Sample_vector samples;
         m_dt.collect_samples_from_edge(edge, samples);
         m_dt.collect_samples_from_edge(twin, samples);
 
         Vector grad(0.0, 0.0);
-        Sample_list_const_iterator it;
+        Sample_vector_const_iterator it;
         for (it = samples.begin(); it != samples.end(); ++it) {
             Sample_* sample = *it;
             const FT m = sample->mass();
@@ -1209,11 +1211,11 @@ bool create_pedge(const Edge& edge, Rec_edge_2& pedge) {
         const Point& pa = m_dt.source_vertex(edge)->point();
         const Point& pb = m_dt.target_vertex(edge)->point();
 
-        Sample_list samples;
+        Sample_vector samples;
         m_dt.collect_samples_from_edge(edge, samples);
         m_dt.collect_samples_from_edge(twin, samples);
 
-        Sample_list_const_iterator it;
+        Sample_vector_const_iterator it;
         for (it = samples.begin(); it != samples.end(); ++it) {
             Sample_* sample = *it;
             const FT m = sample->mass();
@@ -1452,7 +1454,7 @@ bool create_pedge(const Edge& edge, Rec_edge_2& pedge) {
             if (v->point() == v->relocated())
                 continue;
 
-            Edge_list hull;
+            Edge_vector hull;
             m_dt.get_edges_from_star_minus_link(v, hull, false);
             bool ok = m_dt.is_in_kernel(v->relocated(), hull.begin(),
                     hull.end());
