@@ -24,10 +24,12 @@ if ( CGAL_FOUND )
   include_directories (BEFORE "../../include")
 
   create_single_source_cgal_program( "test_cone_parameters.cpp" )
-  create_single_source_cgal_program( "test_cylinders_parameters.cpp" )
+  create_single_source_cgal_program( "test_cylinder_parameters.cpp" )
   create_single_source_cgal_program( "test_plane_connected_component.cpp" )
   create_single_source_cgal_program( "test_plane_parameters.cpp" )
+  create_single_source_cgal_program( "test_sphere_connected_component.cpp" )
   create_single_source_cgal_program( "test_sphere_parameters.cpp" )
+  create_single_source_cgal_program( "test_torus_connected_component.cpp" )
   create_single_source_cgal_program( "test_torus_parameters.cpp" )
 
 else()

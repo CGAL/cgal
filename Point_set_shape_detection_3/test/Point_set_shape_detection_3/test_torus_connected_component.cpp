@@ -9,10 +9,10 @@
 
 
 template <class K>
-bool test_torus_parameters() {
+bool test_torus_connected_component() {
   const int NB_ROUNDS = 10;
-  const int NB_POINTS = 1000;
-  
+  const int NB_POINTS = 2000;
+
   typedef typename K::FT                                      FT;
   typedef CGAL::Point_with_normal_3<K>                        Pwn;
   typedef CGAL::Point_3<K>                                    Point;
@@ -32,36 +32,46 @@ bool test_torus_parameters() {
   for (std::size_t i = 0;i<NB_ROUNDS;i++) {
     Pwn_vector points;
 
-    // generate random points on random cylinder
-    FT minor_radius = (FT) 0;
-    FT major_radius = (FT) 0;
-    Vector axis;
-    Point center;
+    // generate random points on torus
     CGAL::Bbox_3 bbox(-10, -10, -10, 10, 10, 10);
+    FT minor_radius = (FT) 0.7;
+    FT major_radius = (FT) 2.0;
+    Vector axis = random_normal<K>();
+    Point center = random_point_in<K>(bbox);
 
-    sample_random_torus(NB_POINTS, center, axis,
+    sample_torus(NB_POINTS, center, axis,
       major_radius, minor_radius, std::back_inserter(points));
 
-    // add outliers in second half of rounds
-    if (i >= NB_ROUNDS / 2)
-      for (std::size_t j = 0; j < NB_POINTS / 2; j++) 
-        points.push_back(random_pwn_in<K>(bbox));
+    CGAL::Vector_3<K> n = random_normal<K>();
+    n = CGAL::cross_product(axis, n);
+    n = n * (FT) 1.0 / (CGAL::sqrt(n.squared_length()));
+    CGAL::Plane_3<K> pl(center, n);
 
+    FT spacing = (FT) 1;
 
+    filter_by_distance(pl, spacing * (K::FT) 0.5, points);
+    
     Efficient_ransac ransac;
 
     ransac.template add_shape_factory<Torus>();
 
     ransac.set_input(points);
 
-    // Set cluster epsilon to a high value as just the parameters of
-    // the extracted primitives are to be tested.
+    // Same parameters as for the parameters unit tests, besides
+    // the cluster_epsilon.
     typename Efficient_ransac::Parameters parameters;
     parameters.probability = 0.05f;
     parameters.min_points = NB_POINTS/10;
     parameters.epsilon = 0.002f;
-    parameters.cluster_epsilon = 1.0f;
     parameters.normal_threshold = 0.9f;
+
+    // The first half of rounds choose a high cluster_epsilon to get only
+    // a single shape and a lower cluster_epsilon for the second half
+    // to get two separated shapes.
+    if (i < NB_ROUNDS/2)
+      parameters.cluster_epsilon = spacing * (FT) 1.5;
+    else
+      parameters.cluster_epsilon = spacing * (FT) 0.9;
 
     if (!ransac.detect(parameters)) {
       std::cout << " aborted" << std::endl;
@@ -69,28 +79,11 @@ bool test_torus_parameters() {
     }
 
     typename Efficient_ransac::Shape_range shapes = ransac.shapes();
-
-    // check: unique shape detected
-    if (shapes.size() != 1)
+    
+    if (i < NB_ROUNDS/2 && shapes.size() != 1)
       continue;
 
-    boost::shared_ptr<Torus> torus =
-      boost::dynamic_pointer_cast<Torus>((*shapes.first));
-
-    // check: shape detected is a torus
-    if (!torus)
-      continue;
-
-    Point pos = torus->center();
-
-    // Check radii and alignment with axis.
-    if (abs(major_radius - torus->major_radius()) > (FT) 0.02 
-      || abs(minor_radius - torus->minor_radius()) > (FT) 0.02
-      || abs(abs(axis * torus->axis()) - 1.0) > (FT) 0.02)
-      continue;
-
-    // Check center.
-    if ((pos - center).squared_length() > (FT) 0.0004)
+    if (i >= NB_ROUNDS/2 && shapes.size() != 2)
       continue;
 
     success++;
@@ -110,16 +103,16 @@ bool test_torus_parameters() {
 int main() {
   bool success = true;
 
-  std::cout << "test_torus_parameters<CGAL::Simple_cartesian<float>> ";
-  if (!test_torus_parameters<CGAL::Simple_cartesian<float> >()) 
+  std::cout << "test_torus_connected_component<CGAL::Simple_cartesian<float>> ";
+  if (!test_torus_connected_component<CGAL::Simple_cartesian<float> >()) 
     success = false;
 
-  std::cout << "test_torus_parameters<CGAL::Simple_cartesian<double>> ";
-  if (!test_torus_parameters<CGAL::Simple_cartesian<double> >())
+  std::cout << "test_torus_connected_component<CGAL::Simple_cartesian<double>> ";
+  if (!test_torus_connected_component<CGAL::Simple_cartesian<double> >())
     success = false;
 
-  std::cout << "test_torus_parameters<CGAL::Exact_predicates_inexact_constructions_kernel> ";
-  if (!test_torus_parameters<CGAL::Exact_predicates_inexact_constructions_kernel>()) 
+  std::cout << "test_torus_connected_component<CGAL::Exact_predicates_inexact_constructions_kernel> ";
+  if (!test_torus_connected_component<CGAL::Exact_predicates_inexact_constructions_kernel>()) 
     success = false;
 
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;

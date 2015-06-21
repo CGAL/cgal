@@ -53,18 +53,21 @@ bool test_sphere_connected_component() {
 
     ransac.set_input(points);
 
-    // Set cluster epsilon to a high value as just the parameters of
-    // the extracted primitives are to be tested.
+    // Same parameters as for the parameters unit tests, besides
+    // the cluster_epsilon.
     typename Efficient_ransac::Parameters parameters;
     parameters.probability = 0.05f;
     parameters.min_points = NB_POINTS/10;
     parameters.epsilon = 0.002f;
     parameters.normal_threshold = 0.9f;
 
+    // The first half of rounds choose a high cluster_epsilon to get only
+    // a single shape and a lower cluster_epsilon for the second half
+    // to get two separated shapes.
     if (i < NB_ROUNDS/2)
-      parameters.cluster_epsilon = spacing * (K::FT) 1.21;
+      parameters.cluster_epsilon = spacing * (K::FT) 1.5;
     else
-      parameters.cluster_epsilon = spacing / (K::FT) 2;
+      parameters.cluster_epsilon = spacing * (K::FT) 0.9;
 
     if (!ransac.detect(parameters)) {
       std::cout << " aborted" << std::endl;

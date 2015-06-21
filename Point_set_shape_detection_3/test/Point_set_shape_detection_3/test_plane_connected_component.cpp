@@ -56,16 +56,17 @@ bool test_plane_connected_component() {
     
     ransac.set_input(points);
 
-    // For the first half the rounds chose a high cluster_epsilon to find one
-    // shape and for the second half choose a small cluster_epsilon to find
-    // four separated shapes.
-    
+    // Same parameters as for the parameters unit tests, besides
+    // the cluster_epsilon.
     typename Efficient_ransac::Parameters parameters;
     parameters.probability = 0.05f;
     parameters.min_points = 100;
     parameters.epsilon = 0.002f;
     parameters.normal_threshold = 0.9f;
 
+    // For the first half the rounds chose a high cluster_epsilon to find one
+    // shape and for the second half choose a small cluster_epsilon to find
+    // four separated shapes.
     if (i < NB_ROUNDS/2)
       parameters.cluster_epsilon = 0.201f;
     else
