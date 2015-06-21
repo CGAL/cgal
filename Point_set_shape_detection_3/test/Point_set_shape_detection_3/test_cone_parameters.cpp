@@ -88,6 +88,8 @@ bool test_cone_parameters() {
     if ((pos - apex).squared_length() > (FT) 0.0004)
       continue;
 
+    std::string info = cone->info();
+
     success++;
   }
 

@@ -93,6 +93,8 @@ bool test_torus_parameters() {
     if ((pos - center).squared_length() > (FT) 0.0004)
       continue;
 
+    std::string info = torus->info();
+
     success++;
   }
 

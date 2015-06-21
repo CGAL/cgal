@@ -85,6 +85,8 @@ bool test_sphere_parameters() {
     if ((pos - center).squared_length() > (FT) 0.0004)
       continue;
 
+    std::string info = sphere->info();
+
     success++;
   }
 

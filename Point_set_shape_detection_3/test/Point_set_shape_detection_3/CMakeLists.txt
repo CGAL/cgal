@@ -23,7 +23,9 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE "../../include")
 
+  create_single_source_cgal_program( "test_cone_connected_component.cpp" )
   create_single_source_cgal_program( "test_cone_parameters.cpp" )
+  create_single_source_cgal_program( "test_cylinder_connected_component.cpp" )
   create_single_source_cgal_program( "test_cylinder_parameters.cpp" )
   create_single_source_cgal_program( "test_plane_connected_component.cpp" )
   create_single_source_cgal_program( "test_plane_parameters.cpp" )

@@ -81,6 +81,8 @@ bool test_plane_parameters() {
       if (abs(phi) < 0.98 || abs(dist2 - sign * dist) > 0.02)
         continue;
 
+      std::string info = pl->info();
+
       success++;
   }
 

@@ -179,9 +179,6 @@ namespace CGAL {
 
       d1 = d1 * (FT)1.0 / length;
 
-      // 1.0 / circumfence
-      FT c = FT(1.0 / 2 * M_PI * m_radius);
-
       // first one separate for initializing min/max
       Vector_3 vec = this->point(indices[0]) - m_point_on_axis;
       FT v = vec * a;
@@ -192,11 +189,10 @@ namespace CGAL {
       FT a1 = acos(vec * d1);
       FT a2 = acos(vec * d2);
 
-      FT u = FT((a2 < M_PI_2) ? 2 * M_PI - a1 : a1) * c;
+      FT u = FT((a2 < M_PI_2) ? 2 * M_PI - a1 : a1) * m_radius;
 
       parameterSpace[0] = std::pair<FT, FT>(u, v);
 
-      min[0] = max[0] = u;
       min[1] = max[1] = v;
 
       for (std::size_t i = 0;i<indices.size();i++) {
@@ -209,15 +205,17 @@ namespace CGAL {
         FT a1 = acos(vec * d1);
         FT a2 = acos(vec * d2);
 
-        FT u = FT((a2 < M_PI_2) ? 2 * M_PI - a1 : a1) * c;
-
-        min[0] = (std::min<FT>)(min[0], u);
-        max[0] = (std::max<FT>)(max[0], u);
+        FT u = FT((a2 < M_PI_2) ? 2 * M_PI - a1 : a1) * m_radius;
         min[1] = (std::min<FT>)(min[1], v);
         max[1] = (std::max<FT>)(max[1], v);
 
         parameterSpace[i] = std::pair<FT, FT>(u, v);
       }
+
+      // Due to wrapping, the u parameter 'rotation around axis' always needs
+      // to be the full extend.
+      min[0] = 0;
+      max[0] = FT(M_PI * 2.0 * m_radius);
     }
 
     virtual void squared_distance(const std::vector<std::size_t> &indices,

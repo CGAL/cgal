@@ -246,7 +246,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
         return false;
 
       // Generation of subsets
-      m_num_subsets = (std::max<std::size_t>)((std::size_t)
+      m_num_subsets = (std::size_t)(std::max<std::ptrdiff_t>)((std::ptrdiff_t)
         std::floor(std::log(double(m_num_available_points))/std::log(2.))-9, 2);
 
       // SUBSET GENERATION ->

@@ -148,8 +148,8 @@ namespace CGAL {
       i_max[0] = (int) (max[0] / cluster_epsilon);
       i_max[1] = (int) (max[1] / cluster_epsilon);
 
-      std::size_t u_extent = abs(i_max[0] - i_min[0]) + 2;
-      std::size_t v_extent = abs(i_max[1] - i_min[1]) + 2;
+      std::size_t u_extent = abs(i_max[0] - i_min[0]) + 1;
+      std::size_t v_extent = abs(i_max[1] - i_min[1]) + 1;
 
       std::vector<std::vector<std::size_t> > bitmap;
       std::vector<bool> visited;
@@ -162,6 +162,7 @@ namespace CGAL {
       for (std::size_t i = 0;i<parameter_space.size();i++) {
         int u = (int)((parameter_space[i].first - min[0]) / cluster_epsilon);
         int v = (int)((parameter_space[i].second - min[1]) / cluster_epsilon);
+
         if (u < 0 || (std::size_t)u >= u_extent) {
           if (wrap_u) {
             while (u < 0) u += (int) u_extent;
@@ -180,6 +181,7 @@ namespace CGAL {
             v = (v < 0) ? 0 : (v >= (int) v_extent) ? (int) v_extent - 1 : v;
           }
         }
+
         bitmap[v * int(u_extent) + u].push_back(m_indices[i]);
       }
 
