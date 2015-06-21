@@ -11,7 +11,7 @@
 #include<iostream>
 #include <cassert>
 #include <iterator>
-#include <list>
+#include <vector>
 
 #include "testing_tools.h"
 
@@ -34,7 +34,7 @@ void test_index_output(Rs_2& rs2);
 int main ()
 {
 
-    std::list<Point> points;
+    std::vector<Point> points;
 	//use the stair example for testing
 	load_xy_file_points<Point>("data/stair-noise00.xy", points);
 

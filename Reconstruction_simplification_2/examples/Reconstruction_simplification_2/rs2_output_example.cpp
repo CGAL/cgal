@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 #include <iterator>
-#include <list>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                                          Point;
@@ -16,7 +16,7 @@ typedef K::FT                                               FT;
 typedef CGAL::Reconstruction_simplification_2<K>            Rs_2;
 
 
-void load_xy_file(const std::string& filename, std::list<Point>& points)
+void load_xy_file(const std::string& filename, std::vector<Point>& points)
 {
   std::ifstream ifs(filename.c_str());
   Point point;
@@ -80,7 +80,7 @@ void indexed_output(Rs_2& rs2)
 
 int main ()
 {
-  std::list<Point> points;
+  std::vector<Point> points;
   
   load_xy_file("data/stair-noise00.xy", points);
   

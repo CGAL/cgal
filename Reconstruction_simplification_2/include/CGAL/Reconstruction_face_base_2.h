@@ -1,4 +1,4 @@
-fdsa    // Copyright (c) 2014  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
+// Copyright (c) 2014  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
 // All rights reserved.
 //
 

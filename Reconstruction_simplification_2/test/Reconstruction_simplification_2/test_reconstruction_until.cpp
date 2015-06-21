@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include <iterator>
-#include <list>
+#include <vector>
 #include <cassert>
 
 #include "testing_tools.h"
@@ -25,7 +25,7 @@ typedef K::Segment_2 										Segment;
 int main ()
 {
 
-    std::list<Point> points;
+    std::vector<Point> points;
 
     //use the stair example for testing
 	load_xy_file_points<Point>("data/stair-noise00.xy", points);

@@ -14,7 +14,7 @@
 #include <iterator>
 #include <utility>      // std::pair
 #include <cassert>
-
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                                          Point;
@@ -23,7 +23,7 @@ typedef K::FT                                         		FT;
 
 int main ()
 {
-    std::list<Point> points;
+    std::vector<Point> points;
 	//use the stair example for testing
 	load_xy_file_points<Point>("data/stair-noise00.xy", points);
 

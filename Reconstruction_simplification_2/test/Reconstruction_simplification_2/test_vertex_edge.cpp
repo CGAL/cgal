@@ -16,6 +16,7 @@
 #include<iostream>
 #include <string>
 #include <iterator>
+#include <vector>
 #include <utility>      // std::pair
 
 #include <CGAL/property_map.h>
@@ -25,7 +26,7 @@ typedef K::Point_2                                          Point;
 typedef K::FT                                         		FT;
 
 typedef std::pair<Point, FT> PointMassPair;
-typedef std::list<PointMassPair> PointMassList;
+typedef std::vector<PointMassPair> PointMassList;
 
 typedef CGAL::First_of_pair_property_map <PointMassPair> Point_property_map;
 typedef CGAL::Second_of_pair_property_map <PointMassPair> Mass_property_map;
@@ -70,7 +71,6 @@ void test_edge_collapse() {
 
     CGAL::Reconstruction_simplification_2<K, Point_property_map, Mass_property_map>
     	rs2(points, point_pmap, mass_pmap);
-
 
     Rt_2 rt2;
     rs2.extract_tds_output(rt2);

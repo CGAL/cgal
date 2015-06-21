@@ -21,7 +21,7 @@ typedef K::Point_2                                          Point;
 typedef K::FT                                         		FT;
 
 typedef std::pair<Point, FT> PointMassPair;
-typedef std::list<PointMassPair> PointMassList;
+typedef std::vector<PointMassPair> PointMassList;
 
 typedef CGAL::First_of_pair_property_map <PointMassPair> Point_property_map;
 typedef CGAL::Second_of_pair_property_map <PointMassPair> Mass_property_map;
