@@ -429,6 +429,27 @@ protected:
     }
 
     void clear() {
+        // Deallocate samples
+        for (Vertex_iterator vi = m_dt.vertices_begin();
+             vi != m_dt.vertices_end(); ++vi)
+        {
+          Sample_ *s = vi->get_sample();
+          if (s)
+            delete s;
+        }
+
+        for (Finite_edges_iterator ei = m_dt.finite_edges_begin(); 
+             ei != m_dt.finite_edges_end(); ++ei)
+        {
+            Edge &edge = *ei;
+            const Sample_vector& samples = edge.first->samples(edge.second);
+            Sample_vector::const_iterator it;
+            for (it = samples.begin(); it != samples.end(); ++it)
+            {
+                delete *it;
+            }
+        }
+
         m_dt.clear();
         m_mindex.clear();
     }
