@@ -6,6 +6,7 @@
 #include <CGAL/Shape_detection_3.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
+#include <CGAL/number_utils.h>
 
 
 template <class K>
@@ -78,7 +79,7 @@ bool test_plane_parameters() {
 
       const FT dist2 = pl->d();
 
-      if (abs(phi) < 0.98 || abs(dist2 - sign * dist) > 0.02)
+      if (CGAL::abs(phi) < 0.98 || CGAL::abs(dist2 - sign * dist) > 0.02)
         continue;
 
       std::string info = pl->info();

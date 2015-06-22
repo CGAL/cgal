@@ -23,6 +23,7 @@
 #define CGAL_SHAPE_DETECTION_3_CONE_H
 
 #include <CGAL/Shape_detection_3/Shape_base.h>
+#include <CGAL/number_utils.h>
 #include <cmath>
 
 #ifndef M_PI
@@ -226,7 +227,8 @@ namespace CGAL {
           FT d = m_neg_sin_ang * b;
 
           // far on other side?
-          dists[i] = (b < 0 && c - d < 0) ? a : abs(c + d) * abs(c + d);
+          dists[i] = 
+            (b < 0 && c - d < 0) ? a : CGAL::abs(c + d) * CGAL::abs(c + d);
         }
       }
 
@@ -266,7 +268,7 @@ namespace CGAL {
       b = b * (FT)1.0 / length;
       b = m_cos_ang * b + m_neg_sin_ang * m_axis;
 
-      return abs(n * b);
+      return CGAL::abs(n * b);
     }
       
     virtual std::size_t minimum_sample_size() const {

@@ -23,8 +23,9 @@
 #define CGAL_SHAPE_DETECTION_3_TORUS_H
 
 #include <CGAL/Shape_detection_3/Shape_base.h>
-#include <cmath>
 #include <CGAL/Circle_2.h>
+#include <CGAL/number_utils.h>
+#include <cmath>
 
 /*!
  \file Torus.h
@@ -245,7 +246,7 @@ namespace CGAL {
           return;
 
         d = d / length;
-        if (abs(d * n[i]) < this->m_normal_threshold) {
+        if (CGAL::abs(d * n[i]) < this->m_normal_threshold) {
           this->m_is_valid = false;
           return;
         }
@@ -296,7 +297,7 @@ namespace CGAL {
 
         d = this->point(indices[i]) - (m_center + in_plane * m_majorRad);
         d = d / CGAL::sqrt(d.squared_length());
-        angles[i] = abs(d * this->normal(indices[i]));
+        angles[i] = CGAL::abs(d * this->normal(indices[i]));
       }
     }
 
@@ -321,7 +322,7 @@ namespace CGAL {
       d = p - (m_center + in_plane * m_majorRad);
       d = d / CGAL::sqrt(d.squared_length());
 
-      return abs(d * n);
+      return CGAL::abs(d * n);
     }
       
     virtual std::size_t minimum_sample_size() const {
@@ -364,7 +365,7 @@ namespace CGAL {
       majorRad = c.center().y();
       center = center + c.center().x() * axis;
 
-      return abs((pts[3] - c.center()).squared_length() - c.squared_radius());
+      return CGAL::abs((pts[3] - c.center()).squared_length() - c.squared_radius());
     }
 
     Point_3 m_center;

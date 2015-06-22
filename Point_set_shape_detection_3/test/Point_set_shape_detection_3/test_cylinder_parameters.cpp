@@ -6,6 +6,7 @@
 #include <CGAL/Shape_detection_3.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
+#include <CGAL/number_utils.h>
 
 
 template <class K>
@@ -78,11 +79,11 @@ bool test_cylinder_parameters() {
     if (!cyl)
       continue;
 
-    Vector dir = cyl->axis().to_vector();
     Point pos = cyl->axis().point(0);
 
     // Check radius and alignment with axis.
-    if (abs(radius - cyl->radius()) > 0.02 || abs(abs(axis * cyl->axis().to_vector()) - 1.0) > 0.02)
+    if (CGAL::abs(radius - cyl->radius()) > 0.02 
+      || CGAL::abs(abs(axis * cyl->axis().to_vector()) - 1.0) > 0.02)
       continue;
 
     pos = pos - ((pos - CGAL::ORIGIN) * axis) * axis;

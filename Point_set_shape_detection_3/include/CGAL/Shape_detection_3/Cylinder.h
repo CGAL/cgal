@@ -23,6 +23,7 @@
 #define CGAL_SHAPE_DETECTION_3_CYLINDER_H
 
 #include <CGAL/Shape_detection_3/Shape_base.h>
+#include <CGAL/number_utils.h>
 #include <cmath>
 
 #ifndef M_PI
@@ -144,7 +145,7 @@ namespace CGAL {
 
       m_radius = lineDist / n2x;
       m_point_on_axis = p1 + m_radius * xDir;
-      m_radius = abs(m_radius);
+      m_radius = CGAL::abs(m_radius);
 
       m_axis = Line_3(m_point_on_axis, axis);
 
@@ -245,7 +246,7 @@ namespace CGAL {
             continue;
           }
           v = v * (FT)1.0 / length;
-          angles[i] = abs(v * this->normal(indices[i]));
+          angles[i] = CGAL::abs(v * this->normal(indices[i]));
       }
     }
 
@@ -261,7 +262,7 @@ namespace CGAL {
        return (FT)1.0;
 
       v = v * (FT)1.0 / length;
-      return abs(v * n);
+      return CGAL::abs(v * n);
     }
 
     virtual std::size_t minimum_sample_size() const {

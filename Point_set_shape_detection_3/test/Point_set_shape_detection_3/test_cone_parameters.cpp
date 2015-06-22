@@ -6,6 +6,7 @@
 #include <CGAL/Shape_detection_3.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
+#include <CGAL/number_utils.h>
 
 
 template <class K>
@@ -80,7 +81,8 @@ bool test_cone_parameters() {
       continue;
     
     // Check radius and alignment with axis.
-    if (abs(angle - cone->angle()) > (FT) 0.02 || abs(abs(axis * cone->axis()) - (FT) 1.0) > (FT) 0.02)
+    if (CGAL::abs(angle - cone->angle()) > (FT) 0.02 
+      || CGAL::abs(abs(axis * cone->axis()) - (FT) 1.0) > (FT) 0.02)
       continue;
 
     // Check apex.

@@ -6,6 +6,7 @@
 #include <CGAL/Shape_detection_3.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
+#include <CGAL/number_utils.h>
 
 
 template <class K>
@@ -84,9 +85,9 @@ bool test_torus_parameters() {
     Point pos = torus->center();
 
     // Check radii and alignment with axis.
-    if (abs(major_radius - torus->major_radius()) > (FT) 0.02 
-      || abs(minor_radius - torus->minor_radius()) > (FT) 0.02
-      || abs(abs(axis * torus->axis()) - 1.0) > (FT) 0.02)
+    if (CGAL::abs(major_radius - torus->major_radius()) > (FT) 0.02 
+      || CGAL::abs(minor_radius - torus->minor_radius()) > (FT) 0.02
+      || CGAL::abs(abs(axis * torus->axis()) - 1.0) > (FT) 0.02)
       continue;
 
     // Check center.

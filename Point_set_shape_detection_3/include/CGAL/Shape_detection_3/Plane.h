@@ -23,6 +23,7 @@
 #define CGAL_SHAPE_DETECTION_3_PLANE_H
 
 #include <CGAL/Shape_detection_3/Shape_base.h>
+#include <CGAL/number_utils.h>
 
 /*!
  \file Plane.h
@@ -122,7 +123,7 @@ namespace CGAL {
       for (std::size_t i = 0;i<3;i++) {
         l_v = this->normal(indices[i]);
 
-        if (abs(l_v * m_normal)
+        if (CGAL::abs(l_v * m_normal)
             < this->m_normal_threshold * CGAL::sqrt(l_v.squared_length())) {
           this->m_is_valid = false;
           return;
@@ -174,12 +175,12 @@ namespace CGAL {
     virtual void cos_to_normal(const std::vector<std::size_t> &indices, 
                                std::vector<FT> &angles) const {
       for (std::size_t i = 0;i<indices.size();i++) {
-        angles[i] = abs(this->normal(indices[i]) * m_normal);
+        angles[i] = CGAL::abs(this->normal(indices[i]) * m_normal);
       }
     }
 
     FT cos_to_normal(const Point_3 &p, const Vector_3 &n) const{
-      return abs(n * m_normal);
+      return CGAL::abs(n * m_normal);
     } 
     
     virtual std::size_t minimum_sample_size() const {

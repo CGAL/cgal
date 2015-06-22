@@ -30,6 +30,7 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/property_map.h>
+#include <CGAL/number_utils.h>
 
 /*!
  \file Shape_base.h
@@ -148,8 +149,8 @@ namespace CGAL {
       i_max[0] = (int) (max[0] / cluster_epsilon);
       i_max[1] = (int) (max[1] / cluster_epsilon);
 
-      std::size_t u_extent = abs(i_max[0] - i_min[0]) + 1;
-      std::size_t v_extent = abs(i_max[1] - i_min[1]) + 1;
+      std::size_t u_extent = CGAL::abs(i_max[0] - i_min[0]) + 1;
+      std::size_t v_extent = CGAL::abs(i_max[1] - i_min[1]) + 1;
 
       std::vector<std::vector<std::size_t> > bitmap;
       std::vector<bool> visited;

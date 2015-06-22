@@ -6,6 +6,7 @@
 #include <CGAL/Shape_detection_3.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
+#include <CGAL/number_utils.h>
 
 
 template <class K>
@@ -77,7 +78,7 @@ bool test_sphere_parameters() {
       continue;
 
     // Check radius and alignment with axis.
-    if (abs(radius - sphere->radius()) > (FT) 0.02)
+    if (CGAL::abs(radius - sphere->radius()) > (FT) 0.02)
       continue;
 
     // Check center.

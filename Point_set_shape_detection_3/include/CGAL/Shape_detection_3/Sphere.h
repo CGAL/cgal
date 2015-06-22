@@ -23,6 +23,7 @@
 #define CGAL_SHAPE_DETECTION_3_SPHERE_H
 
 #include <CGAL/Shape_detection_3/Shape_base.h>
+#include <CGAL/number_utils.h>
 
 /*!
  \file Sphere.h
@@ -123,7 +124,7 @@ namespace CGAL {
       FT c = n2 * n2;
       FT d = n1 * diff;
 
-      FT det = abs(a * c - b * b);
+      FT det = CGAL::abs(a * c - b * b);
 
       // degenerated when nearly parallel
       if (det < (FT)0.00001) {
@@ -144,7 +145,7 @@ namespace CGAL {
       FT d1 = CGAL::sqrt(v1.squared_length());
       FT d2 = CGAL::sqrt(v2.squared_length());
 
-      if (abs(d1 - d2) > (FT)2.0 * this->m_epsilon) {
+      if (CGAL::abs(d1 - d2) > (FT)2.0 * this->m_epsilon) {
         this->m_is_valid = false;
         return;
       }
@@ -164,7 +165,7 @@ namespace CGAL {
 
       FT radius = (d1 + d2) * (FT)0.5;
 
-      if (abs(d3 - radius) > this->m_epsilon ||
+      if (CGAL::abs(d3 - radius) > this->m_epsilon ||
           n3 * v3 < this->m_normal_threshold) {
         this->m_is_valid = false;
         return;
@@ -201,7 +202,7 @@ namespace CGAL {
         }
 
         n = n * (FT)1.0 / length;
-        angles[i] = abs(this->normal(indices[i]) * n);
+        angles[i] = CGAL::abs(this->normal(indices[i]) * n);
       }
     }
 
@@ -212,7 +213,7 @@ namespace CGAL {
         return 1;
 
       sphere_normal = sphere_normal * ((FT)1.0 / length);
-      return abs(sphere_normal * n);
+      return CGAL::abs(sphere_normal * n);
     }
       
     virtual std::size_t minimum_sample_size() const {

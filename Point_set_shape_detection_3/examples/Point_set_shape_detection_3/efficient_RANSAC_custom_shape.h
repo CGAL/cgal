@@ -2,6 +2,7 @@
 #define MY_PLANE_SHAPE_H
 
 #include <CGAL/Shape_detection_3.h>
+#include <CGAL/number_utils.h>
 
 /*
 My_Plane derives from Shape_base. The plane is represented by
@@ -57,7 +58,7 @@ protected:
   virtual void cos_to_normal(const std::vector<std::size_t> &indices,
                              std::vector<FT> &angles) const {
       for (std::size_t i = 0; i < indices.size(); i++)
-        angles[i] = abs(this->normal(indices[i]) * m_normal);
+        angles[i] = CGAL::abs(this->normal(indices[i]) * m_normal);
   }
 
   // Returns the number of required samples for construction.
