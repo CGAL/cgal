@@ -64,7 +64,7 @@ public:
 // (i.e. for v0, v1, v2 and v2, v1, v0 returned cot weights can be slightly different)
 // This one provides stable results.
 template<class PolygonMesh
-  , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point>::type>
+  , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>
 class Cotangent_value_Meyer
 { 
 public:
@@ -131,7 +131,7 @@ public:
 // Returns the cotangent value of half angle v0 v1 v2 by clamping between [1, 89] degrees
 // as suggested by -[Friedel] Unconstrained Spherical Parameterization-
 template<class PolygonMesh
-  , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point>::type
+  , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type
   , class CotangentValue = Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
 class Cotangent_value_clamped : CotangentValue
 {
@@ -160,7 +160,7 @@ public:
 };
 
 template<class PolygonMesh
-  , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point>::type
+  , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type
   , class CotangentValue = Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
 class Cotangent_value_clamped_2 : CotangentValue
 {
@@ -190,7 +190,7 @@ public:
 };
 
 template<class PolygonMesh
-  , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point>::type
+  , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type
   , class CotangentValue = Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
 class Cotangent_value_minimum_zero : CotangentValue
 {
@@ -216,7 +216,7 @@ public:
 };
 
 template<class PolygonMesh
-    , class VertexPointMap = boost::property_map<PolygonMesh, CGAL::vertex_point>::type
+    , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type
     , class CotangentValue
            = Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
 class Voronoi_area : CotangentValue
@@ -297,7 +297,7 @@ public:
 // Returns the cotangent value of half angle v0 v1 v2 by dividing the triangle area
 // as suggested by -[Mullen08] Spectral Conformal Parameterization-
 template<class PolygonMesh
-  , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point>::type
+  , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type
   , class CotangentValue = Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
 class Cotangent_value_area_weighted : CotangentValue
 {
@@ -392,7 +392,7 @@ public:
 
 // Single cotangent from -[Chao10] Simple Geometric Model for Elastic Deformation
 template<class PolygonMesh
-  , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point>::type
+  , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type
   , class CotangentValue = Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
 class Single_cotangent_weight : CotangentValue
 {
@@ -431,7 +431,7 @@ public:
 
 // Mean value calculator described in -[Floater04] Mean Value Coordinates-
 template<class PolygonMesh
-       , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point>::type>
+       , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>
 class Mean_value_weight
 {
   //Mean_value_weight()
@@ -453,7 +453,7 @@ public:
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
 
-  typedef typename VertexPointMap Point_property_map;
+  typedef VertexPointMap Point_property_map;
   typedef typename boost::property_traits<Point_property_map>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
 

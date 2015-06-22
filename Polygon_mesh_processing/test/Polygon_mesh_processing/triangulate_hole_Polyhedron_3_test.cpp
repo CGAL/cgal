@@ -247,7 +247,7 @@ void test_ouput_iterators_triangulate_hole(const char* file_name) {
     Facet_handle* output_it =
       CGAL::Polygon_mesh_processing::triangulate_hole(poly_2, *it_2, &*patch_2.begin());
 
-    if(patch.size() != (output_it - &*patch_2.begin())) {
+    if(patch.size() != (std::size_t)(output_it - &*patch_2.begin())) {
       std::cerr << "  Error: returned facet output iterator is not valid!" << std::endl;
       std::cerr << "  " << patch.size() << " vs " << (output_it - &*patch_2.begin()) << std::endl;
       CGAL_assertion(false);
@@ -281,13 +281,13 @@ void test_ouput_iterators_triangulate_and_refine_hole(const char* file_name) {
       CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly_2,
         *it_2, &*patch_facets_2.begin(), &*patch_vertices_2.begin());
 
-    if(patch_facets.size() != (output_its.first - &*patch_facets_2.begin())) {
+    if(patch_facets.size() != (std::size_t) (output_its.first - &*patch_facets_2.begin())) {
       std::cerr << "  Error: returned facet output iterator is not valid!" << std::endl;
       std::cerr << "  " << patch_facets.size() << " vs " << (output_its.first - &*patch_facets_2.begin()) << std::endl;
       CGAL_assertion(false);
     }
 
-    if(patch_vertices.size() != (output_its.second - &*patch_vertices_2.begin())) {
+    if(patch_vertices.size() != (std::size_t) (output_its.second - &*patch_vertices_2.begin())) {
       std::cerr << "  Error: returned vertex output iterator is not valid!" << std::endl;
       std::cerr << "  " << patch_vertices.size() << " vs " << (output_its.second - &*patch_vertices_2.begin()) << std::endl;
       CGAL_assertion(false);
