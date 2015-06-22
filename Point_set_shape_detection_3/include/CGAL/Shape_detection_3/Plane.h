@@ -179,7 +179,7 @@ namespace CGAL {
       }
     }
 
-    FT cos_to_normal(const Point_3 &p, const Vector_3 &n) const{
+    FT cos_to_normal(const Point_3 &, const Vector_3 &n) const{
       return CGAL::abs(n * m_normal);
     } 
     

@@ -324,7 +324,7 @@ namespace CGAL {
             if (zLowYSplit != size_t_max) {
               if (zLowYLowXSplit != size_t_max) {
 
-                if ((int)cell->first <= zLowYLowXSplit) {
+                if (cell->first <= zLowYLowXSplit) {
                   //---
                   cell->child[7] = new Cell(cell->first,
                                             zLowYLowXSplit, 
@@ -429,8 +429,8 @@ namespace CGAL {
           }
           else zHighYHighXSplit = zHighYSplit;
 
-          if (zHighYHighXSplit <= (int)cell->last || zHighYHighXSplit == size_t_max) {
-            if (zHighYHighXSplit < (int)cell->last || zHighYHighXSplit == size_t_max) {
+          if (zHighYHighXSplit <= cell->last || zHighYHighXSplit == size_t_max) {
+            if (zHighYHighXSplit < cell->last || zHighYHighXSplit == size_t_max) {
               //+++
               cell->child[0] = new Cell(zHighYHighXSplit + 1, 
                                         cell->last,
