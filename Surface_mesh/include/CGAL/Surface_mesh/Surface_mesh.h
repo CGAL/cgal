@@ -124,7 +124,6 @@ namespace CGAL {
   template <class T>
   std::size_t hash_value(const SM_Index<T>&  i)
   {
-    std::cerr << "hash_value" << std::endl;
     std::size_t ret = i;
     return ret;
   }
@@ -2956,17 +2955,7 @@ collect_garbage()
     garbage_ = false;
 }
 
-#ifdef DOXYGEN_RUNNING
-/*!
-returns `i` as hash value for the index types `Vertex_index`, `Halfedge_index`, 
-`Edge_index`, and `Face_index`. 
-\relates Surface_mesh
-*/ 
-  template <class P>
-  std::size_t hash_value(Surface_mesh<P>::Index i);  
 
-
-#endif
 
 } // CGAL
 
