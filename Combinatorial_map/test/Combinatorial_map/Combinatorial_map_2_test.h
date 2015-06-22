@@ -55,9 +55,13 @@ bool test2D()
     dh = map.create_dart ();
     dh2 = map.create_dart();
 
+    if (!map.is_dart_used(dh) ) return false;
+
     if ( map.is_valid() ) cout << "Map valid." << endl;
     cout << "Nombre de brins : " << map.number_of_darts() << endl;
     map.clear();
+
+    if ( map.is_dart_used(dh) ) return false;
 
     cout << "***************************** TEST BASIC CREATION 2D DONE."
          << endl;

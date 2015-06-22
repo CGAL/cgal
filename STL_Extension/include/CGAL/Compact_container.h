@@ -860,7 +860,10 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::clear()
     size_type s = it->second;
     for (pointer pp = p + 1; pp != p + s - 1; ++pp) {
       if (type(pp) == USED)
+      {
         alloc.destroy(pp);
+        set_type(pp, NULL, FREE);
+      }
     }
     alloc.deallocate(p, s);
   }
