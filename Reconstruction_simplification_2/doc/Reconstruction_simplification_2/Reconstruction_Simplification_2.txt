@@ -71,13 +71,13 @@ Examples of 20-vertex reconstructions from datasets consisting of 2000, 400 and 
 \cgalFigureEnd
 
 
-\subsection Reconstruction_simplification_2Relocation Point Relocation
+\subsection Reconstruction_simplification_2Global_relocation Global Point Relocation
 
 Since noise and missing data may prevent the reconstructed shape to have sharp corners at the correct places, the algorithm offers a function to relocate all points:
 \code{.cpp}
   rs2.relocate_all_points();
 \endcode
-The new point locations are chosen such that the approximation of the output segments and isolated points to the input points is improved. Note also that an optional parameter of the constructor of the <I> Reconstruction_simplification_2 </I> class provides a means to relocate the points after a specified number of atomic simplification operators.
+The new point locations are chosen such that the approximation of the output segments and isolated points to the input points is improved. 
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_relocation,relocation.png}
 Left: before point relocation. Right: after point relocation.
@@ -86,7 +86,7 @@ Left: before point relocation. Right: after point relocation.
 
 \section Reconstruction_simplification_2Parameters User parameters
 
-The behavior of the algorithm is parameterized via five parameters. 
+The behavior of the algorithm is controlled via five parameters. 
 
 \subsection Reconstruction_simplification_2Flip Edge Flipping
 
@@ -99,14 +99,17 @@ Edge flipping. Left: the blue edge creates fold-overs because of blocking edges 
 \subsection Reconstruction_simplification_2Relevance Edge Relevance
 
 An edge is relevant from the approximation point of view if (1) it is long, (2) approximates a large number of points (or a large amount of mass when points have mass attributes), and (3) has a small approximation error. The notion of relevance is defined as m(e) x |e|^2 / cost(e), where m(e) denotes the mass of the points approximated by the edge, |e| denotes the edge length and cost(e) its approximation error. As the error is defined by mass time squared distance the relevance is unitless.
-The default value is 0, so that all edges approximating some input points are considered relevant.
-A larger relevance value provides a means to increase resilience to outliers.
+The default value is 0, so that all edges approximating some input points are considered relevant. A larger relevance value provides a means to increase resilience to outliers.
 
-% FIGURE WITH VARIOUS RELEVANCE VALUES
+
 
 \subsection Reconstruction_simplification_2Random Random Sample Size
 
 By default the simplification relies upon an exhaustive priority queue of half edge collapse operators during decimation. For improved efficiency, a parameter <I> sample size </I> strictly greater than 0 switches to a multiple choice approach, i.e., a best-choice selection in a random sample of edge collapse operators, of size sample_size. A typical value for the sample size is 15, but this value must be enlarged when targeting a very coarse simplification. 
+
+\subsection Reconstruction_simplification_2Local_relocation Local Point Relocation
+
+In addition to the global relocation function an optional parameter of the constructor of the <I> Reconstruction_simplification_2 </I> class provides a means to relocate the points locally after a specified number of atomic simplification operators. The new local point locations are chosen such that the approximation of the output segments and isolated points to the input points is improved. 
 
 \subsection Reconstruction_simplification_2Verbose Verbose Output
 
@@ -133,10 +136,13 @@ Figure \cgalFigureRef{2D_Reconstruction_Simplification_mixed} depicts an input p
 Mixed dimension. Left: input point set. Middle: Isolated vertices in blue, relevant edges in green and irrelevant edges in red. Right: final output.
 \cgalFigureEnd
 
-\section Reconstruction_simplification_2Variable_mass Variable_mass
+\section Reconstruction_simplification_2Variable_mass Variable Mass
 
-% FIGURE VARIABLE MASS
+The mass attributes provides a means to adjust the importance given to each point for approximation. Figure \cgalFigureRef{2D_Reconstruction_Simplification_variable} depicts a reconstruction from a gray level image after thresholding, where the gray level of the pixels are used as mass attribute.
 
+\cgalFigureBegin{2D_Reconstruction_Simplification_variable,variable.png}
+Variable mass. Left: input gray level image. Middle: image after thresholding to reduce the number of pixels with non-zero mass. Right: final reconstruction.
+\cgalFigureEnd
 
 \section Reconstruction_simplification_2Advanced Advanced
 
