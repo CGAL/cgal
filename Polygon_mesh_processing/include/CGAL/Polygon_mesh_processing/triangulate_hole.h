@@ -111,6 +111,22 @@ namespace Polygon_mesh_processing {
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
+  template<typename PM, typename VertexRange>
+  void test_in_edges(const PM& pmesh, const VertexRange& patch)
+  {
+    BOOST_FOREACH(typename boost::graph_traits<PM>::vertex_descriptor v0, patch)
+    {
+      typename boost::graph_traits<PM>::in_edge_iterator e, e_end;
+      for (boost::tie(e, e_end) = in_edges(v0, pmesh); e != e_end; e++)
+      {
+        typename boost::graph_traits<PM>::halfedge_descriptor he = halfedge(*e, pmesh);
+        if (is_border(he, pmesh)) { continue; }
+
+        CGAL_assertion(v0 == target(he, pmesh) || v0 == source(he, pmesh));
+      }
+    }
+  }
+
   /*!
   \ingroup PkgPolygonMeshProcessing
   @brief triangulates and refines a hole in a polygon mesh.
@@ -177,7 +193,6 @@ namespace Polygon_mesh_processing {
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
-
   /*!
   \ingroup PkgPolygonMeshProcessing
   @brief triangulates, refines and fairs a hole in a polygon mesh.
@@ -242,22 +257,6 @@ namespace Polygon_mesh_processing {
 
     vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
     return CGAL::cpp11::make_tuple(fair_success, face_out, vertex_out);
-  }
-
-  template<typename PM, typename VertexRange>
-  void test_in_edges(const PM& pmesh, const VertexRange& patch)
-  {
-    BOOST_FOREACH(typename boost::graph_traits<PM>::vertex_descriptor v0, patch)
-    {
-      typename boost::graph_traits<PM>::in_edge_iterator e, e_end;
-      for (boost::tie(e, e_end) = in_edges(v0, pmesh); e != e_end; e++)
-      {
-        typename boost::graph_traits<PM>::halfedge_descriptor he = halfedge(*e, pmesh);
-        if (is_border(he, pmesh)) { continue; }
-
-        CGAL_assertion(v0 == target(he, pmesh) || v0 == source(he, pmesh));
-      }
-    }
   }
 
   template<typename PolygonMesh,

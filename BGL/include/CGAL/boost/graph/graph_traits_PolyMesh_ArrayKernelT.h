@@ -29,6 +29,7 @@
 #include <CGAL/boost/graph/internal/OM_iterator_from_circulator.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Iterator_range.h>
+#include <CGAL/boost/graph/helpers.h>
 
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 
@@ -638,7 +639,7 @@ add_face(InputIterator begin, InputIterator end, OpenMesh::PolyMesh_ArrayKernelT
 }
 
 template<typename K>
-bool is_valid(OpenMesh::PolyMesh_ArrayKernelT<K>& sm, bool verbose = false)
+bool is_valid(OpenMesh::PolyMesh_ArrayKernelT<K>& sm, bool /* verbose */ = false)
 {
   return CGAL::is_valid_polygon_mesh(sm);
 }
