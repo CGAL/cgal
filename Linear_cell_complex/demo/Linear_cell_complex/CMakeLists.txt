@@ -13,10 +13,10 @@ endif()
 
 ## To add expensive tests
 # add_definitions("-DCGAL_CHECK_EXPENSIVE")
+# add_definitions("-Wall -Wextra")
 
 ## For profilling with gprof
 # add_definitions("-pg")
-add_definitions("-Wall -Wextra")
 # SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 
 ## To add an is_valid test after each operation (only in debug mode)
