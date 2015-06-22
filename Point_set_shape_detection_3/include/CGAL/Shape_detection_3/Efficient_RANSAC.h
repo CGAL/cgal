@@ -223,7 +223,8 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
         m_extracted_shapes = boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
 
-        m_num_available_points = m_inputIterator_beyond - m_inputIterator_first;
+        m_num_available_points = std::distance(
+          m_inputIterator_first, m_inputIterator_beyond);
 
         m_valid_iterators = true;
     }
@@ -354,8 +355,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       std::vector<int>().swap(m_shape_index);
 
       m_extracted_shapes = boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
-
-      m_num_available_points = m_inputIterator_beyond - m_inputIterator_first;
+      
+      m_num_available_points = std::distance(
+        m_inputIterator_first, m_inputIterator_beyond);
 
       clear_octrees();
     }
@@ -385,8 +387,10 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       }
 
       // Reset data structures possibly used by former search
-      m_extracted_shapes = boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
-      m_num_available_points = m_inputIterator_beyond - m_inputIterator_first;
+      m_extracted_shapes = 
+        boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
+      m_num_available_points = std::distance(
+        m_inputIterator_first, m_inputIterator_beyond);
 
       for (std::size_t i = 0;i<m_num_subsets;i++) {
         m_available_octree_sizes[i] = m_direct_octrees[i]->size();
@@ -403,7 +407,10 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       m_options.cluster_epsilon = (m_options.cluster_epsilon < 0) ? bboxDiagonal * (FT) 0.01 : m_options.cluster_epsilon;
 
       // minimum number of points has been set?
-      m_options.min_points = (m_options.min_points >= m_num_available_points) ? (std::size_t)((FT)0.001 * m_num_available_points) : m_options.min_points;
+      m_options.min_points = 
+        (m_options.min_points >= m_num_available_points) ? 
+          (std::size_t)((FT)0.001 * m_num_available_points) : 
+          m_options.min_points;
       
       // initializing the shape index
       m_shape_index.assign(m_num_available_points, -1);
