@@ -102,8 +102,11 @@ void test_edge_collapse() {
 
 	std::cout << "--------" << std::endl;
 
-	//test that the right edge was picked for collapsing
-    assert(pedge == contract_edge);
+    //test that the right edge was picked for collapsing
+    // N.B.: it can be two different edges if several edges have the same
+    // priority value.
+    assert(CGAL::abs(pedge.priority() - contract_edge.priority()) 
+      < pedge.priority()*1e-13);
     rs2.do_collapse(contract_edge.edge());
 
     bool found = false;
