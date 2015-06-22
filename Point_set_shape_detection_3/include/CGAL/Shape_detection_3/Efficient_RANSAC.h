@@ -230,7 +230,10 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     /*!
       Registers in the detection engine the shape type `ShapeType` that must inherit from `Shape_base`.
       For example, for registering a plane as detectable shape you should call
-      `ransac.template add_shape_factory< Shape_detection_3::Plane<Traits> >();`
+      `ransac.add_shape_factory< Shape_detection_3::Plane<Traits> >();`. Note
+      that if your call is within a template, you should add the `template`
+      keyword just before `add_shape_factory`: 
+      `ransac.template add_shape_factory< Shape_detection_3::Plane<Traits> >();`.
     */ 
     template <class ShapeType>
     void add_shape_factory() {
