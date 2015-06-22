@@ -1595,9 +1595,10 @@ compute_facet_properties(const Facet& facet,
   // Functor
   typename Gt::Is_degenerate_3 is_degenerate = Gt().is_degenerate_3_object();
   typename Gt::Compare_xyz_3 compare_xyz = Gt().compare_xyz_3_object();
+#ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
   typename MD::Do_intersect_surface do_intersect_surface =
       r_oracle_.do_intersect_surface_object();
-
+#endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
   // Get dual of facet
   Object dual = (force_exact ? dual_exact(facet) : r_tr_.dual(facet));
@@ -1616,7 +1617,7 @@ compute_facet_properties(const Facet& facet,
       typename MD::Construct_intersection construct_intersection =
           r_oracle_.construct_intersection_object();
 
-      // Trick to have canonical vector : thus, we compute alwais the same
+      // Trick to have canonical vector : thus, we compute always the same
       // intersection
       Segment_3 segment = *p_segment;
       if ( compare_xyz(p_segment->source(),p_segment->target())
@@ -1635,12 +1636,13 @@ compute_facet_properties(const Facet& facet,
       // the later does not work.
       Surface_patch surface =
         (CGAL::cpp11::get<2>(intersect) == 0) ? Surface_patch() :
-        r_oracle_.surface_patch_index(CGAL::cpp11::get<1>(intersect));
+        Surface_patch(
+          r_oracle_.surface_patch_index(CGAL::cpp11::get<1>(intersect)));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       fp =  Facet_properties(CGAL::cpp11::make_tuple(*surface,
-                                               CGAL::cpp11::get<1>(intersect),
-                                               CGAL::cpp11::get<0>(intersect)));
+                                    CGAL::cpp11::get<1>(intersect),
+                                    Point(CGAL::cpp11::get<0>(intersect))));
       return;
     }
   }
@@ -1667,28 +1669,30 @@ compute_facet_properties(const Facet& facet,
 #ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       Surface_patch surface =
         (CGAL::cpp11::get<2>(intersect) == 0) ? Surface_patch() :
-        r_oracle_.surface_patch_index(CGAL::cpp11::get<1>(intersect));
+        Surface_patch(
+          r_oracle_.surface_patch_index(CGAL::cpp11::get<1>(intersect)));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-        {
-          fp = Facet_properties(CGAL::cpp11::make_tuple(*surface,
-                                              CGAL::cpp11::get<1>(intersect),
-                                              CGAL::cpp11::get<0>(intersect)));
-          return;
-        }
-      
+      {
+        fp = Facet_properties(CGAL::cpp11::make_tuple(*surface,
+                                      CGAL::cpp11::get<1>(intersect),
+                                      Point(CGAL::cpp11::get<0>(intersect))));
+        return;
+      }
     }
   }
   // If the dual is a line
   else if ( const Line_3* p_line = object_cast<Line_3>(&dual) )
   {
+#ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
     Surface_patch surface = do_intersect_surface(*p_line);
     if ( surface )
+#endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
     {
       typename MD::Construct_intersection construct_intersection =
           r_oracle_.construct_intersection_object();
 
-      // Trick to have canonical vector : thus, we compute alwais the same
+      // Trick to have canonical vector : thus, we compute always the same
       // intersection
       Line_3 line = *p_line;
       typename Gt::Compare_xyz_3 compare_xyz = Gt().compare_xyz_3_object();
@@ -1702,10 +1706,19 @@ compute_facet_properties(const Facet& facet,
       }
 
       Intersection intersect = construct_intersection(line);
-      fp = Facet_properties(CGAL::cpp11::make_tuple(*surface,
-                                              CGAL::cpp11::get<1>(intersect),
-                                              CGAL::cpp11::get<0>(intersect)));
-      return;
+#ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
+      Surface_patch surface =
+        (CGAL::cpp11::get<2>(intersect) == 0) ? Surface_patch() :
+        Surface_patch(
+          r_oracle_.surface_patch_index(CGAL::cpp11::get<1>(intersect)));
+      if(surface)
+#endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
+      {
+       fp = Facet_properties(CGAL::cpp11::make_tuple(*surface,
+                                     CGAL::cpp11::get<1>(intersect),
+                                     Point(CGAL::cpp11::get<0>(intersect))));
+       return;
+      }
     }
   }
   else

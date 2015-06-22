@@ -1207,7 +1207,8 @@ private:
       Intersection intersection = construct_intersection(dual);
       Surface_patch surface =
         (CGAL::cpp0x::get<2>(intersection) == 0) ? Surface_patch() :
-        domain_.surface_patch_index(CGAL::cpp0x::get<1>(intersection));
+        Surface_patch(
+          domain_.surface_patch_index(CGAL::cpp0x::get<1>(intersection)));
 
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
