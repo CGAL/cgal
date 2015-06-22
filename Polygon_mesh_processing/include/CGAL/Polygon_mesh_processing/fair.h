@@ -62,9 +62,9 @@ namespace internal {
   \ingroup PkgPolygonMeshProcessing
   @brief fairs a region on a polygon mesh.
   The points of the selected vertices are
-  relocated to yield an as-smooth-as-possible surface patch, based on the
-  Euler-Lagrange equations, discretized with the Laplace-Beltrami
-  operator, described in \cgalCite{botsch2008linear}.
+  relocated to yield an as-smooth-as-possible surface patch,
+  based on solving a linear bi-Laplacian system with boundary constraints,
+  described in \cgalCite{Botsch2008OnLinearVariational}.
   The optional parameter `fairing_continuity` gives the ability to control the tangential
   continuity C<sup>\a n</sup> of the output mesh.
 
