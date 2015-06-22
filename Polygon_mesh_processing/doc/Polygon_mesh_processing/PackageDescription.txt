@@ -33,8 +33,8 @@
 
 Optional parameters of the functions of this package
 are implemented as BGL named parameters.
-The page \ref namedparameters describes how they should be used
-and gives a list of the parameters that are used in this package.
+The page \ref namedparameters describes their usage
+and provides a list of the parameters that are used in this package.
 
 ## Meshing Functions ##
 - `CGAL::Polygon_mesh_processing::fair()`
@@ -48,7 +48,7 @@ and gives a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::triangulate_hole_polyline()`
 
 ## Predicate Functions and Classes ##
-- `CGAL::Polygon_mesh_processing::is_self_intersecting()`
+- `CGAL::Polygon_mesh_processing::does_self_intersect()`
 - `CGAL::Polygon_mesh_processing::self_intersections()`
 - `CGAL::Point_inside_polygon_mesh`
 
