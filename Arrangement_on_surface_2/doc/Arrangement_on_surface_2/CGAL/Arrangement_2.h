@@ -370,6 +370,8 @@ counterparts. `Vertex_iterator`, `Halfedge_iterator`, and
 the handles appear in function parameter lists, the respective
 iterators can be passed as well.
 
+All handles are model of `LessThanComparable` and `Hashable`.
+
 */
 /// @{
 

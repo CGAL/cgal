@@ -130,6 +130,8 @@ namespace CGAL {
 
     /// This class represents a vertex.
     /// \cgalModels `Index`
+    /// \cgalModels `LessThanComparable`
+    /// \cgalModels `Hashable`
     /// \sa `Halfedge_index`, `Edge_index`, `Face_index`
     class SM_Vertex_index
  : public SM_Index<SM_Vertex_index>
@@ -149,6 +151,8 @@ namespace CGAL {
 
     /// This class represents a halfedge.
     /// \cgalModels `Index`
+    /// \cgalModels `LessThanComparable`
+    /// \cgalModels `Hashable`
     /// \sa `Vertex_index`, `Edge_index`, `Face_index`
     class SM_Halfedge_index
       : public SM_Index<SM_Halfedge_index>
@@ -168,6 +172,8 @@ namespace CGAL {
 
     /// This class represents a face
     /// \cgalModels `Index`
+    /// \cgalModels `LessThanComparable`
+    /// \cgalModels `Hashable`
     /// \sa `Vertex_index`, `Halfedge_index`, `Edge_index`
     class SM_Face_index
       : public SM_Index<SM_Face_index>
@@ -187,6 +193,8 @@ namespace CGAL {
 
     /// This class represents an edge.
     /// \cgalModels `Index`
+    /// \cgalModels `LessThanComparable`
+    /// \cgalModels `Hashable`
     /// \sa `Vertex_index`, `Halfedge_index`, `Face_index`
     class SM_Edge_index
     {
