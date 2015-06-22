@@ -379,13 +379,22 @@ public:
 /**
  * \ingroup PkgPolygonMeshProcessing
  * tries to consistently orient a soup of polygons in 3D space.
- * When it is not possible to produce a combinatorial manifold surface, some points are
- * duplicated.
- * These points are either an endpoint of an edge incident to more than
- * two polygons, an endpoint of an edge between two polygons with incompatible orientations
- * (during the re-orientation process), or more generally if the intersection of the union of
- * the polygon incident to a point with a infinitesimally small ball centered at the point
- * is not a topological disk.
+ * When it is not possible to produce a combinatorial manifold surface,
+ * some points are duplicated.
+ * Because a polygon soup does not have any connectivity (each point
+ * has as many occurences as the number of polygons it belongs to),
+ * duplicating one point (or a pair of points)
+ * amounts to duplicate the polygon to which it belongs.
+ *
+ * These points are either an endpoint of an edge incident to more
+ * than two polygons, an endpoint of an edge between 
+ * two polygons with incompatible orientations (during the re-orientation process),
+ * or more generally a point \a p at which the intersection
+ * of an infinitesimally small ball centered at \a p
+ * with the polygons incident to it is not a topological disk.
+ *
+ * The algorithm is described in \cgalCite{gueziec2001cutting}.
+ *
  * @tparam Point the point type
  * @tparam Polygon a `std::vector<std::size_t>` containing the indices
  *         of the points of the face

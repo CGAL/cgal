@@ -62,13 +62,18 @@ namespace internal {
   \ingroup PkgPolygonMeshProcessing
   @brief fairs a region on a polygon mesh.
   The points of the selected vertices are
-  relocated to yield an as-smooth-as-possible surface patch.
-  
+  relocated to yield an as-smooth-as-possible surface patch, based on the
+  Euler-Lagrange equations, discretized with the Laplace-Beltrami
+  operator, described in \cgalCite{botsch2008linear}.
+  The optional parameter `fairing_continuity` gives the ability to control the tangential
+  continuity C<sup>\a n</sup> of the output mesh.
+
   The region described by `vertices` might contain multiple disconnected components.
   Note that the mesh connectivity is not altered in any way,
   only vertex locations get updated.
 
-  Fairing might fail if fixed vertices, which are used as boundary conditions, do not suffice to solve constructed linear system.
+  Fairing might fail if fixed vertices, which are used as boundary conditions,
+  do not suffice to solve constructed linear system.
 
   Note that if the vertex range to which fairing is applied contains all the vertices of the polygon mesh,
   fairing does not fail, but the mesh gets shrinked to `CGAL::ORIGIN`.
