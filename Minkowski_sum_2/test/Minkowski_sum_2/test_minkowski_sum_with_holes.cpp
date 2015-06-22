@@ -4,6 +4,7 @@
 #include <CGAL/Polygon_vertical_decomposition_2.h>
 #include <CGAL/Polygon_triangulation_decomposition_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
+#include <CGAL/Small_side_angle_bisector_decomposition_2.h>
 
 #include "read_polygon.h"
 
@@ -26,13 +27,17 @@ bool are_equal(const Polygon_with_holes_2& ph1,
 typedef enum {
   REDUCED_CONVOLUTION,
   VERTICAL_DECOMP,
-  TRIANGULATION_DECOMP
+  TRIANGULATION_DECOMP,
+  VERTICAL_AND_ANGLE_BISECTOR_DECOMP,
+  TRIANGULATION_AND_ANGLE_BISECTOR_DECOMP
 } Strategy;
 
 static const char* strategy_names[] = {
   "reduced convolution",
   "vertical decomposition",
-  "constrained triangulation decomposition"
+  "constrained triangulation decomposition",
+  "vertical and angle bisector decomposition",
+  "constrained triangulation and angle bisector decomposition"
 };
 
 Polygon_with_holes_2 compute_minkowski_sum_2(Polygon_with_holes_2& p,
@@ -42,18 +47,97 @@ Polygon_with_holes_2 compute_minkowski_sum_2(Polygon_with_holes_2& p,
   switch (strategy) {
    case REDUCED_CONVOLUTION:
     {
-     return minkowski_sum_reduced_convolution_2(p, q);
+     return CGAL::minkowski_sum_reduced_convolution_2(p, q);
     }
    case VERTICAL_DECOMP:
     {
      CGAL::Polygon_vertical_decomposition_2<Kernel> decomp;
-     return minkowski_sum_2(p, q, decomp);
+     return CGAL::minkowski_sum_2(p, q, decomp);
     }
-   default: // TRIANGULATION_DECOMP
+   case TRIANGULATION_DECOMP:
     {
      CGAL::Polygon_triangulation_decomposition_2<Kernel> decomp;
-     return minkowski_sum_2(p, q, decomp);
+     return CGAL::minkowski_sum_2(p, q, decomp);
     }
+
+   case VERTICAL_AND_ANGLE_BISECTOR_DECOMP:
+    {
+     typedef CGAL::Small_side_angle_bisector_decomposition_2<Kernel>
+       No_hole_decomposition;
+     typedef CGAL::Polygon_vertical_decomposition_2<Kernel>
+       With_hole_decomposition;
+
+     if (0 == p.number_of_holes()) {
+       const Polygon_2& pnh = p.outer_boundary();
+       No_hole_decomposition decomp_no_holes;
+       if  (0 == q.number_of_holes()) {
+         const Polygon_2& qnh = q.outer_boundary();
+         return CGAL::minkowski_sum_2<Kernel, Polygon_2::Container,
+                                      No_hole_decomposition,
+                                      No_hole_decomposition>
+           (pnh, qnh, decomp_no_holes, decomp_no_holes);
+       }
+       else {
+         With_hole_decomposition decomp_with_holes;
+         return
+           CGAL::minkowski_sum_2(pnh, q, decomp_no_holes, decomp_with_holes);
+       }
+     }
+     else {
+       With_hole_decomposition decomp_with_holes;
+       if  (0 == q.number_of_holes()) {
+         const Polygon_2& qnh = q.outer_boundary();
+         No_hole_decomposition decomp_no_holes;
+         return
+           CGAL::minkowski_sum_2(p, qnh, decomp_with_holes, decomp_no_holes);
+       }
+       else {
+         return
+           CGAL::minkowski_sum_2(p, q, decomp_with_holes, decomp_with_holes);
+       }
+     }
+    }
+
+   case TRIANGULATION_AND_ANGLE_BISECTOR_DECOMP:
+    {
+     typedef CGAL::Small_side_angle_bisector_decomposition_2<Kernel>
+       No_hole_decomposition;
+     typedef CGAL::Polygon_triangulation_decomposition_2<Kernel>
+       With_hole_decomposition;
+     if (0 == p.number_of_holes()) {
+       const Polygon_2& pnh = p.outer_boundary();
+       No_hole_decomposition decomp_no_holes;
+       if  (0 == q.number_of_holes()) {
+         const Polygon_2& qnh = q.outer_boundary();
+         return CGAL::minkowski_sum_2<Kernel, Polygon_2::Container,
+                                      No_hole_decomposition,
+                                      No_hole_decomposition>
+           (pnh, qnh, decomp_no_holes, decomp_no_holes);
+       }
+       else {
+         With_hole_decomposition decomp_with_holes;
+         return
+           CGAL::minkowski_sum_2(pnh, q, decomp_no_holes, decomp_with_holes);
+       }
+     }
+     else {
+       With_hole_decomposition decomp_with_holes;
+       if  (0 == q.number_of_holes()) {
+         const Polygon_2& qnh = q.outer_boundary();
+         No_hole_decomposition decomp_no_holes;
+         return
+           CGAL::minkowski_sum_2(p, qnh, decomp_with_holes, decomp_no_holes);
+       }
+       else {
+         return
+           CGAL::minkowski_sum_2(p, q, decomp_with_holes, decomp_with_holes);
+       }
+     }
+    }
+
+   default:
+    std::cerr << "Invalid strategy" << std::endl;
+    return Polygon_with_holes_2();
   }
 }
 
@@ -86,6 +170,14 @@ int main(int argc, char* argv[])
 
       case 't':
         strategies.push_back(TRIANGULATION_DECOMP);
+        break;
+
+      case 'w':
+        strategies.push_back(VERTICAL_AND_ANGLE_BISECTOR_DECOMP);
+        break;
+
+      case 'u':
+        strategies.push_back(TRIANGULATION_AND_ANGLE_BISECTOR_DECOMP);
         break;
 
      default:

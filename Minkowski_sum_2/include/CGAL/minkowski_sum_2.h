@@ -499,7 +499,7 @@ minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
                                                  Container_>::Traits_2& traits)
 {
   return minkowski_sum_2(pgn2, pgn1,
-                         decomposition_strategy1, decomposition_strategy2,
+                         decomposition_strategy2, decomposition_strategy1,
                          traits);
 }
 
