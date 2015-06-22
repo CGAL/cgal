@@ -839,7 +839,9 @@ public:
     value type `Point`. Similarly, a `Plane_iterator` is provided.
 
 
-    All handles are model of `LessThanComparable` and `Hashable`.
+    All handles are model of `LessThanComparable` and `Hashable`,
+    that is they can be used as keys in containers such as `std::map`
+    and `boost::unordered_map`. 
   */
   /// @{
 
