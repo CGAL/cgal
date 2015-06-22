@@ -75,11 +75,11 @@ bool test_scene() {
 
   typename Efficient_ransac::Shape_range shapes = ransac.shapes();
 
-  Efficient_ransac::Shape_range::iterator it = shapes.begin();
+  typename Efficient_ransac::Shape_range::iterator it = shapes.begin();
 
   // Iterate through all shapes and access each point.
   while (it != shapes.end()) {
-    boost::shared_ptr<Efficient_ransac::Shape> shape = *it;
+    boost::shared_ptr<typename Efficient_ransac::Shape> shape = *it;
 
     // Sums distances of points to detected shapes.
     FT sum_distances = 0;

@@ -305,7 +305,7 @@ void filter_by_distance(
 
 template <typename K>
 void save_scene(const std::string &fn, const std::vector<CGAL::Point_with_normal_3<K> > &pts) {
-  std::ofstream plyFile(fn);
+  std::ofstream plyFile(fn.c_str());
 
   plyFile << "ply" << std::endl;
   plyFile << "format ascii 1.0" << std::endl;

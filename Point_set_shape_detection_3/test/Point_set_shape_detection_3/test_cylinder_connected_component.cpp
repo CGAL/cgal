@@ -34,7 +34,7 @@ bool test_cylinder_connected_component() {
 
     // generate random points on random cylinder
     CGAL::Bbox_3 bbox(-10, -10, -10, 10, 10, 10);
-    typename FT radius = (FT) 1.0;
+    FT radius = FT(1.0);
     Vector axis = random_normal<K>();
     Point center = random_point_in<K>(bbox);
     
@@ -50,13 +50,13 @@ bool test_cylinder_connected_component() {
 
     save_scene("cylinder_pre.ply", points);
 
-    filter_by_distance(pl, spacing * (K::FT) 0.5, points);
+    filter_by_distance(pl, spacing * FT(0.5), points);
 
     save_scene("cylinder_post.ply", points);
     
     Efficient_ransac ransac;
 
-    ransac.add_shape_factory<Cylinder>();
+    ransac.template add_shape_factory<Cylinder>();
     
     ransac.set_input(points);
 

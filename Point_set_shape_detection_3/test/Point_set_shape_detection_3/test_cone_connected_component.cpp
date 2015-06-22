@@ -47,12 +47,12 @@ bool test_cone_connected_component() {
     CGAL::Vector_3<K> n = random_normal<K>();
     n = CGAL::cross_product(axis, n);
     n = n * (FT) 1.0 / (CGAL::sqrt(n.squared_length()));
-    K::FT a = n * axis;
+    FT a = n * axis;
     CGAL::Plane_3<K> pl(apex, n);
     
     FT spacing = angle;
 
-    filter_by_distance(pl, spacing * (K::FT) 0.5, points);
+    filter_by_distance(pl, spacing * FT(0.5), points);
 
 
     Efficient_ransac ransac;
@@ -73,9 +73,9 @@ bool test_cone_connected_component() {
     // a single shape and a lower cluster_epsilon for the second half
     // to get two separated shapes.
     if (i < NB_ROUNDS/2)
-      parameters.cluster_epsilon = spacing * (K::FT) 1.5;
+      parameters.cluster_epsilon = spacing * FT(1.5);
     else
-      parameters.cluster_epsilon = spacing * (K::FT) 0.8;
+      parameters.cluster_epsilon = spacing * FT(0.8);
 
     if (!ransac.detect(parameters)) {
       std::cout << " aborted" << std::endl;

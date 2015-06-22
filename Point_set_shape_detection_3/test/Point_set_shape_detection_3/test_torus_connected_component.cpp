@@ -49,9 +49,10 @@ bool test_torus_connected_component() {
 
     FT spacing = (FT) 1;
 
-    filter_by_distance(pl, spacing * (K::FT) 0.5, points);
+    filter_by_distance(pl, spacing * FT(0.5), points);
     
     Efficient_ransac ransac;
+
 
     ransac.template add_shape_factory<Torus>();
 

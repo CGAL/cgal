@@ -13,10 +13,9 @@ bool test_sphere_connected_component() {
   const int NB_ROUNDS = 10;
   const int NB_POINTS = 2000;
 
-  typedef K::FT                                      FT;
+  typedef typename K::FT                             FT;
   typedef CGAL::Point_with_normal_3<K>               Pwn;
   typedef CGAL::Point_3<K>                           Point;
-  typedef CGAL::Vector_3<K>                          Vector;
   typedef std::vector<Pwn>                           Pwn_vector;
   typedef CGAL::Identity_property_map<Pwn>           Point_map;
   typedef CGAL::Normal_of_point_with_normal_pmap<K>  Normal_map;
@@ -33,7 +32,7 @@ bool test_sphere_connected_component() {
     Pwn_vector points;
 
     // generate random points on random sphere
-    typename FT radius = 1.0;
+    FT radius = 1.0;
     Point center;
     CGAL::Bbox_3 bbox(-10, -10, -10, 10, 10, 10);
 
@@ -43,9 +42,9 @@ bool test_sphere_connected_component() {
     CGAL::Vector_3<K> n = random_normal<K>();
     CGAL::Plane_3<K> pl(center, n);
 
-    FT spacing = radius / K::FT(4);
+    FT spacing = radius / FT(4);
 
-    filter_by_distance(pl, spacing * (K::FT) 0.5, points);
+    filter_by_distance(pl, spacing * FT(0.5), points);
 
     Efficient_ransac ransac;
 
@@ -65,9 +64,9 @@ bool test_sphere_connected_component() {
     // a single shape and a lower cluster_epsilon for the second half
     // to get two separated shapes.
     if (i < NB_ROUNDS/2)
-      parameters.cluster_epsilon = spacing * (K::FT) 1.5;
+      parameters.cluster_epsilon = spacing * FT(1.5);
     else
-      parameters.cluster_epsilon = spacing * (K::FT) 0.9;
+      parameters.cluster_epsilon = spacing * FT(0.9);
 
     if (!ransac.detect(parameters)) {
       std::cout << " aborted" << std::endl;
