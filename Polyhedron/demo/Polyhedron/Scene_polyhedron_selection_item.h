@@ -164,11 +164,35 @@ public:
     // To be used inside loader
     Scene_polyhedron_selection_item()
         : Scene_polyhedron_item_decorator(NULL, false)
-    { }
+    {
+        nbVaos = 0;
+        for(int i=0; i<3; i++)
+        {
+            addVaos(i);
+            vaos[i]->create();
+        }
+
+        for(int i=0; i<7; i++)
+        {
+            buffers[i].create();
+        }
+    }
 
     Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw)
         : Scene_polyhedron_item_decorator(NULL, false)
-    { init(poly_item, mw);
+    {
+        nbVaos = 0;
+        for(int i=0; i<3; i++)
+        {
+            addVaos(i);
+            vaos[i]->create();
+        }
+
+        for(int i=0; i<7; i++)
+        {
+            buffers[i].create();
+        }
+        init(poly_item, mw);
         changed();
     }
 

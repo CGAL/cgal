@@ -38,7 +38,7 @@ struct light_info
 };
 
 Scene_points_with_normal_item::Scene_points_with_normal_item()
-    : Scene_item(),
+    : Scene_item(6,2),
       m_points(new Point_set),
       positions_lines(0),
       color_lines(0),
@@ -60,7 +60,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item()
 
 // Copy constructor
 Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_with_normal_item& toCopy)
-    : Scene_item(), // do not call superclass' copy constructor
+    : Scene_item(6,2), // do not call superclass' copy constructor
       m_points(new Point_set(*toCopy.m_points)),
       positions_lines(0),
       color_lines(0),
@@ -93,7 +93,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
 
 // Converts polyhedron to point set
 Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& input_mesh)
-    : Scene_item(),
+    : Scene_item(6,2),
       m_points(new Point_set),
       positions_lines(0),
       color_lines(0),
@@ -139,7 +139,7 @@ void Scene_points_with_normal_item::initialize_buffers(Viewer_interface *viewer)
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
 
-        vaos[0].bind();
+        vaos[0]->bind();
         buffers[0].bind();
         buffers[0].allocate(positions_lines.data(), positions_lines.size()*sizeof(double));
         program->enableAttributeArray("vertex");
@@ -154,7 +154,7 @@ void Scene_points_with_normal_item::initialize_buffers(Viewer_interface *viewer)
         program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
         buffers[1].release();
 
-        vaos[0].release();
+        vaos[0]->release();
         program->release();
     }
     //vao for the points
@@ -162,7 +162,7 @@ void Scene_points_with_normal_item::initialize_buffers(Viewer_interface *viewer)
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
 
-        vaos[1].bind();
+        vaos[1]->bind();
         buffers[2].bind();
         buffers[2].allocate(positions_points.data(), positions_points.size()*sizeof(double));
         program->enableAttributeArray("vertex");
@@ -177,7 +177,7 @@ void Scene_points_with_normal_item::initialize_buffers(Viewer_interface *viewer)
         program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
         buffers[3].release();
 
-        vaos[1].release();
+        vaos[1]->release();
         program->release();
     }
     //vao for the selected points
@@ -185,7 +185,7 @@ void Scene_points_with_normal_item::initialize_buffers(Viewer_interface *viewer)
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
 
-        vaos[2].bind();
+        vaos[2]->bind();
         buffers[4].bind();
         buffers[4].allocate(positions_selected_points.data(), positions_selected_points.size()*sizeof(double));
         program->enableAttributeArray("vertex");
@@ -200,7 +200,7 @@ void Scene_points_with_normal_item::initialize_buffers(Viewer_interface *viewer)
         program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
         buffers[5].release();
 
-        vaos[2].release();
+        vaos[2]->release();
         program->release();
     }
     are_buffers_filled = true;
@@ -658,12 +658,12 @@ void Scene_points_with_normal_item::draw_edges(Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
         initialize_buffers(viewer);
-    vaos[0].bind();
+    vaos[0]->bind();
     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
-    vaos[0].release();
+    vaos[0]->release();
     program->release();
 }
 void Scene_points_with_normal_item::draw_points(Viewer_interface* viewer) const
@@ -671,24 +671,24 @@ void Scene_points_with_normal_item::draw_points(Viewer_interface* viewer) const
     if(!are_buffers_filled)
         initialize_buffers(viewer);
 
-    vaos[1].bind();
+    vaos[1]->bind();
     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     qFunc.glDrawArrays(GL_POINTS, 0, positions_points.size()/3);
-    vaos[1].release();
+    vaos[1]->release();
     program->release();
 
     GLfloat point_size;
     qFunc.glGetFloatv(GL_POINT_SIZE, &point_size);
     qFunc.glPointSize(4.f);
 
-    vaos[2].bind();
+    vaos[2]->bind();
     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     qFunc.glDrawArrays(GL_POINTS, 0, positions_selected_points.size()/3);
-    vaos[2].release();
+    vaos[2]->release();
     program->release();
     qFunc.glPointSize(point_size);
 }

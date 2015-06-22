@@ -47,15 +47,17 @@ public:
       visible_(true),
       rendering_mode(FlatPlusEdges),
       defaultContextMenu(0),
+      buffersSize(20),
+      vaosSize(10),
       are_buffers_filled(false)
   {
 
-      for(int i=0; i<10; i++)
+      for(int i=0; i<vaosSize; i++)
       {
-       vaos[i].create();
+       vaos[i]->create();
       }
 
-      for(int i=0; i<20; i++)
+      for(int i=0; i<buffersSize; i++)
       {
        buffers[i].create();
       }
@@ -70,15 +72,18 @@ public:
       vaosSize(vaos_size),
       are_buffers_filled(false)
   {
-
-      for(int i=0; i<10; i++)
+      nbVaos = 0;
+      for(int i=0; i<vaosSize; i++)
       {
-       vaos[i].create();
+          addVaos(i);
+          vaos[i]->create();
       }
 
-      for(int i=0; i<20; i++)
+      for(int i=0; i<buffersSize; i++)
       {
-       buffers[i].create();
+          QOpenGLBuffer n_buf;
+          buffers.push_back(n_buf);
+          buffers[i].create();
       }
   }
   virtual ~Scene_item();
@@ -205,12 +210,19 @@ protected:
   mutable QOpenGLFunctions_3_3_Core qFunc;
   int buffersSize;
   int vaosSize;
-  mutable QOpenGLBuffer buffers[20];
+  mutable std::vector<QOpenGLBuffer> buffers;
   //not allowed to use vectors of VAO for some reason
-  mutable QOpenGLVertexArrayObject vaos[10];
-  mutable QOpenGLShaderProgram rendering_program_with_light;
-  mutable QOpenGLShaderProgram rendering_program_without_light;
-  mutable QOpenGLShaderProgram rendering_program_with_texture;
+  //mutable QOpenGLVertexArrayObject vaos[10];
+  QMap<int,QOpenGLVertexArrayObject*> vaos;
+  int nbVaos;
+  void addVaos(int i)
+  {
+      QOpenGLVertexArrayObject* n_vao = new QOpenGLVertexArrayObject();
+      vaos[i] = n_vao;
+      nbVaos ++;
+  }
+
+
   mutable QMap<int, QOpenGLShaderProgram*> shader_programs;
   QOpenGLShaderProgram* getShaderProgram(int , Viewer_interface *viewer = 0) const;
 
@@ -221,7 +233,7 @@ protected:
   virtual void initialize_buffers(){}
   virtual void compute_elements(){}
   virtual void attrib_buffers(Viewer_interface*, int program_name) const;
-  virtual void compile_shaders();
+
 
 
 }; // end class Scene_item

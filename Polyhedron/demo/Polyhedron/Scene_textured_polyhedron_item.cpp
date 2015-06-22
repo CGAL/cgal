@@ -27,7 +27,7 @@ void Scene_textured_polyhedron_item::initialize_buffers(Viewer_interface *viewer
     {
         program = getShaderProgram(PROGRAM_WITH_TEXTURE, viewer);
         program->bind();
-        vaos[0].bind();
+        vaos[0]->bind();
         buffers[0].bind();
         buffers[0].allocate(positions_facets.data(), positions_facets.size()*sizeof(float));
         program->enableAttributeArray("vertex");
@@ -46,7 +46,7 @@ void Scene_textured_polyhedron_item::initialize_buffers(Viewer_interface *viewer
         program->enableAttributeArray("v_texCoord");
         program->setAttributeBuffer("v_texCoord",GL_FLOAT,0,2);
         buffers[2].release();
-        vaos[0].release();
+        vaos[0]->release();
         program->release();
     }
 
@@ -54,7 +54,7 @@ void Scene_textured_polyhedron_item::initialize_buffers(Viewer_interface *viewer
     {
         program = getShaderProgram(PROGRAM_WITH_TEXTURED_EDGES, viewer);
         program->bind();
-        vaos[1].bind();
+        vaos[1]->bind();
         buffers[3].bind();
         buffers[3].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
         program->enableAttributeArray("vertex");
@@ -67,7 +67,7 @@ void Scene_textured_polyhedron_item::initialize_buffers(Viewer_interface *viewer
         program->enableAttributeArray("v_texCoord");
         program->setAttributeBuffer("v_texCoord",GL_FLOAT,0,2);
         buffers[4].release();
-        vaos[1].release();
+        vaos[1]->release();
         program->release();
     }
     qFunc.glActiveTexture(GL_TEXTURE0);
@@ -196,7 +196,7 @@ Scene_textured_polyhedron_item::compute_normals_and_vertices(void)
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item()
-    : Scene_item(),positions_lines(0),positions_facets(0),normals(0),textures_map_facets(0),
+    : Scene_item(5,2),positions_lines(0),positions_facets(0),normals(0),textures_map_facets(0),
       textures_map_lines(0),poly(new Textured_polyhedron)
 {
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
@@ -208,7 +208,7 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item()
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(Textured_polyhedron* const p)
-    : Scene_item(),smooth_shading(true),positions_lines(0),positions_facets(0),textures_map_facets(0),
+    : Scene_item(5,2),smooth_shading(true),positions_lines(0),positions_facets(0),textures_map_facets(0),
       textures_map_lines(0), poly(p)
 {
     cur_shading=GL_FLAT;
@@ -219,7 +219,7 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(Textured_polyhedr
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(const Textured_polyhedron& p)
-    : Scene_item(),smooth_shading(true),positions_lines(0),positions_facets(0),textures_map_facets(0),
+    : Scene_item(5,2),smooth_shading(true),positions_lines(0),positions_facets(0),textures_map_facets(0),
       textures_map_lines(0), poly(new Textured_polyhedron(p))
 {
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
@@ -287,7 +287,7 @@ void Scene_textured_polyhedron_item::draw(Viewer_interface* viewer) const {
     if(!are_buffers_filled)
         initialize_buffers(viewer);
 
-    vaos[0].bind();
+    vaos[0]->bind();
     qFunc.glActiveTexture(GL_TEXTURE0);
     qFunc.glBindTexture(GL_TEXTURE_2D, textureId);
     attrib_buffers(viewer, PROGRAM_WITH_TEXTURE);
@@ -296,13 +296,13 @@ void Scene_textured_polyhedron_item::draw(Viewer_interface* viewer) const {
     qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/4);
     //Clean-up
     program->release();
-    vaos[0].release();
+    vaos[0]->release();
 }
 void Scene_textured_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     if(!are_buffers_filled)
         initialize_buffers(viewer);
 
-    vaos[1].bind();
+    vaos[1]->bind();
     qFunc.glActiveTexture(GL_TEXTURE0);
     qFunc.glBindTexture(GL_TEXTURE_2D, textureId);
     attrib_buffers(viewer, PROGRAM_WITH_TEXTURED_EDGES);
@@ -312,7 +312,7 @@ void Scene_textured_polyhedron_item::draw_edges(Viewer_interface* viewer) const 
     qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
     //Clean-up
     program->release();
-    vaos[1].release();
+    vaos[1]->release();
 }
 
 Textured_polyhedron* 

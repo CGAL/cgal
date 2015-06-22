@@ -325,7 +325,7 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
     {
         program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
         program->bind();
-        vaos[0].bind();
+        vaos[0]->bind();
         buffers[0].bind();
         buffers[0].allocate(positions_facets.data(), positions_facets.size()*sizeof(float));
         program->enableAttributeArray("vertex");
@@ -345,7 +345,7 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
         program->enableAttributeArray("colors");
         program->setAttributeBuffer("colors",GL_FLOAT,0,3);
         buffers[2].release();
-        vaos[0].release();
+        vaos[0]->release();
         program->release();
 
     }
@@ -353,7 +353,7 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
-        vaos[1].bind();
+        vaos[1]->bind();
 
         buffers[3].bind();
         buffers[3].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
@@ -368,14 +368,14 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
         buffers[4].release();
         program->release();
 
-        vaos[1].release();
+        vaos[1]->release();
 
     }
     //vao containing the data for the selected facets
     {
         program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
         program->bind();
-        vaos[2].bind();
+        vaos[2]->bind();
 
 
         buffers[5].bind();
@@ -398,12 +398,12 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
         buffers[7].release();
         program->release();
 
-        vaos[2].release();
+        vaos[2]->release();
     }
     //vao containing the data for the selected lines
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
-        vaos[3].bind();
+        vaos[3]->bind();
         program->bind();
         buffers[8].bind();
         buffers[8].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
@@ -418,7 +418,7 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
         buffers[9].release();
         program->release();
 
-        vaos[3].release();
+        vaos[3]->release();
     }
     are_buffers_filled = true;
 }
@@ -640,7 +640,7 @@ Scene_polyhedron_item::compute_colors()
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item()
-    : Scene_item(),
+    : Scene_item(10,4),
       positions_facets(0),
       positions_lines(0),
       color_facets(0),
@@ -662,7 +662,7 @@ Scene_polyhedron_item::Scene_polyhedron_item()
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
-    : Scene_item(),
+    : Scene_item(10,4),
       positions_facets(0),
       positions_lines(0),
       color_facets(0),
@@ -684,7 +684,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
-    : Scene_item(),
+    : Scene_item(10,4),
       positions_facets(0),
       positions_lines(0),
       color_facets(0),
@@ -705,19 +705,8 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     changed();
 }
 
- /*Scene_polyhedron_item::Scene_polyhedron_item(const Scene_polyhedron_item& item)
-   : Scene_item(item),
-     poly(new Polyhedron(*item.poly)),
-     show_only_feature_edges_m(false)
- {
- }*/
-
 Scene_polyhedron_item::~Scene_polyhedron_item()
 {
-    //qFunc.glDeleteBuffers(10, buffer);
-    //qFunc.glDeleteVertexArrays(2, vao);
-    //qFunc.glDeleteProgram(rendering_program_with_light);
-    //qFunc.glDeleteProgram(rendering_program_without_light);
     delete_aabb_tree(this);
     delete poly;
 }
@@ -861,10 +850,10 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
 
 
     if(!is_selected)
-        vaos[0].bind();
+        vaos[0]->bind();
     else
     {
-        vaos[2].bind();
+        vaos[2]->bind();
     }
     attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
@@ -872,9 +861,9 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
     qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/4);
     program->release();
     if(!is_selected)
-        vaos[0].release();
+        vaos[0]->release();
     else
-        vaos[2].release();
+        vaos[2]->release();
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
@@ -882,11 +871,11 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
 
     if(!is_selected)
     {
-        vaos[1].bind();
+        vaos[1]->bind();
     }
     else
     {
-        vaos[3].bind();
+        vaos[3]->bind();
     }
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
@@ -895,22 +884,22 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
     program->release();
     if(!is_selected)
-        vaos[1].release();
+        vaos[1]->release();
     else
-        vaos[3].release();
+        vaos[3]->release();
 }
 
 void
 Scene_polyhedron_item::draw_points(Viewer_interface* viewer) const {
 
-    vaos[1].bind();
+    vaos[1]->bind();
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
     program->bind();
     //draw the points
     qFunc.glDrawArrays(GL_POINTS, 0, positions_lines.size()/4);
     // Clean-up
     program->release();
-    vaos[1].release();
+    vaos[1]->release();
 }
 
 Polyhedron*

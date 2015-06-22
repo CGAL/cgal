@@ -262,22 +262,21 @@ Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
 
-        vaos[0].bind();
+        vaos[0]->bind();
         buffers[0].bind();
         buffers[0].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[0].release();
-        vaos[0].release();
+        vaos[0]->release();
         program->release();
     }
-
    //vao for the spheres
     {
         program = getShaderProgram(PROGRAM_INSTANCED, viewer);
         program->bind();
 
-        vaos[1].bind();
+        vaos[1]->bind();
         buffers[1].bind();
         buffers[1].allocate(positions_spheres.data(), positions_spheres.size()*sizeof(float));
         program->enableAttributeArray("vertex");
@@ -304,18 +303,17 @@ Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
 
         qFunc.glVertexAttribDivisor(program->attributeLocation("center"), 1);
         qFunc.glVertexAttribDivisor(program->attributeLocation("colors"), 1);
-        vaos[1].release();
+        vaos[1]->release();
 
         program->release();
     }
-
 
 //vao for the wired spheres
     {
         program = getShaderProgram(PROGRAM_INSTANCED_WIRE, viewer);
         program->bind();
 
-        vaos[2].bind();
+        vaos[2]->bind();
         buffers[5].bind();
         buffers[5].allocate(positions_wire_spheres.data(), positions_wire_spheres.size()*sizeof(float));
         program->enableAttributeArray("vertex");
@@ -339,12 +337,11 @@ Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
         buffers[7].release();
 
         qFunc.glVertexAttribDivisor(program->attributeLocation("center"), 1);
-        vaos[2].release();
+        vaos[2]->release();
         program->release();
     }
 
    are_buffers_filled = true;
-
 
 }
 void
@@ -571,7 +568,7 @@ Scene_polylines_item::compute_elements()
 Scene_polylines_item::Scene_polylines_item() 
     : d(new Scene_polylines_item_private()),positions_lines(0), positions_spheres(0),
       normals_spheres(0), positions_center(0),color_spheres(0), positions_wire_spheres(0),nbSpheres(0),
-      rings(18), sectors(36)
+      rings(18), sectors(36), Scene_item(8,3)
 {
     qFunc.initializeOpenGLFunctions();
     changed();
@@ -665,13 +662,13 @@ Scene_polylines_item::draw(Viewer_interface* viewer) const {
         initialize_buffers(viewer);
     if(d->draw_extremities)
     {
-        vaos[1].bind();
+        vaos[1]->bind();
         program = getShaderProgram(PROGRAM_INSTANCED);
         attrib_buffers(viewer, PROGRAM_INSTANCED);
         program->bind();
         qFunc.glDrawArraysInstanced(GL_TRIANGLES, 0, positions_spheres.size()/4, nbSpheres);
         program->release();
-        vaos[1].release();
+        vaos[1]->release();
     }
 }
 
@@ -682,7 +679,7 @@ Scene_polylines_item::draw_edges(Viewer_interface* viewer) const {
     if(!are_buffers_filled)
         initialize_buffers(viewer);
 
-    vaos[0].bind();
+    vaos[0]->bind();
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
@@ -690,16 +687,16 @@ Scene_polylines_item::draw_edges(Viewer_interface* viewer) const {
     program->setAttributeValue("colors", temp);
     qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
     program->release();
-    vaos[0].release();
+    vaos[0]->release();
     if(d->draw_extremities)
     {
-        vaos[2].bind();
+        vaos[2]->bind();
         attrib_buffers(viewer, PROGRAM_INSTANCED_WIRE);
         program = getShaderProgram(PROGRAM_INSTANCED_WIRE);
         program->bind();
         qFunc.glDrawArraysInstanced(GL_LINES, 0, positions_wire_spheres.size()/4, nbSpheres);
         program->release();
-        vaos[2].release();
+        vaos[2]->release();
     }
 
 }
@@ -709,13 +706,13 @@ Scene_polylines_item::draw_points(Viewer_interface* viewer) const {
     if(!are_buffers_filled)
         initialize_buffers(viewer);
 
-    vaos[0].bind();
+    vaos[0]->bind();
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     qFunc.glDrawArrays(GL_POINTS, 0, positions_lines.size()/4);
     // Clean-up
-   vaos[0].release();
+   vaos[0]->release();
    program->release();
 }
 

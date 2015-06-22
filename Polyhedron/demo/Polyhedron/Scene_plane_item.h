@@ -30,7 +30,8 @@ public:
       can_clone(true),
       positions_lines(0),
       positions_quad(0),
-      frame(new ManipulatedFrame())
+      frame(new ManipulatedFrame()),
+      Scene_item(2,2)
   {
     setNormal(0., 0., 1.);
     qFunc.initializeOpenGLFunctions();

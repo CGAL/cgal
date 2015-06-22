@@ -22,7 +22,7 @@ void Scene_implicit_function_item::initialize_buffers(Viewer_interface *viewer =
     {
         program = getShaderProgram(PROGRAM_WITH_TEXTURE, viewer);
         program->bind();
-        vaos[0].bind();
+        vaos[0]->bind();
 
 
         buffers[0].bind();
@@ -39,13 +39,13 @@ void Scene_implicit_function_item::initialize_buffers(Viewer_interface *viewer =
         program->setAttributeValue("normal", QVector3D(0,0,0));
 
         program->release();
-        vaos[0].release();
+        vaos[0]->release();
     }
     //vao fot the bbox
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
-        vaos[1].bind();
+        vaos[1]->bind();
 
 
         buffers[2].bind();
@@ -56,13 +56,13 @@ void Scene_implicit_function_item::initialize_buffers(Viewer_interface *viewer =
 
         program->setAttributeValue("colors", QVector3D(0,0,0));
         program->release();
-        vaos[1].release();
+        vaos[1]->release();
     }
     //vao fot the grid
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
-        vaos[2].bind();
+        vaos[2]->bind();
 
 
         buffers[3].bind();
@@ -72,7 +72,7 @@ void Scene_implicit_function_item::initialize_buffers(Viewer_interface *viewer =
         buffers[3].release();
         program->setAttributeValue("colors", QVector3D(0.6,0.6,0.6));
         program->release();
-        vaos[2].release();
+        vaos[2]->release();
     }
 
 
@@ -344,6 +344,7 @@ Scene_implicit_function_item(Implicit_function_interface* f)
     , positions_grid(0)
     , positions_tex_quad(0)
     , texture_map(0)
+    ,Scene_item(4,3)
 
 {
     texture = new Texture(grid_size_-1,grid_size_-1);
@@ -394,7 +395,7 @@ Scene_implicit_function_item::draw(Viewer_interface* viewer) const
             need_update_ = false;
         }
     }
-    vaos[0].bind();
+    vaos[0]->bind();
     qFunc.glActiveTexture(GL_TEXTURE0);
     qFunc.glBindTexture(GL_TEXTURE_2D, textureId);
     attrib_buffers(viewer, PROGRAM_WITH_TEXTURE);
@@ -412,7 +413,7 @@ Scene_implicit_function_item::draw(Viewer_interface* viewer) const
     program->setUniformValue("light_diff", QVector4D(0,0,0,1));
     program->setAttributeValue("color_facets", QVector3D(1.0,1.0,1.0));
     qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_tex_quad.size()/3);
-    vaos[0].release();
+    vaos[0]->release();
     program->release();
 }
 
@@ -422,13 +423,13 @@ Scene_implicit_function_item::draw_edges(Viewer_interface* viewer) const
     if(!are_buffers_filled)
         initialize_buffers(viewer);
     //  draw_aux(viewer, true);
-    vaos[1].bind();
+    vaos[1]->bind();
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     qFunc.glDrawArrays(GL_LINES, 0, positions_cube.size()/3);
-    vaos[1].release();
-    vaos[2].bind();
+    vaos[1]->release();
+    vaos[2]->bind();
     QMatrix4x4 f_mat;
     GLdouble d_mat[16];
     frame_->getMatrix(d_mat);
@@ -438,7 +439,7 @@ Scene_implicit_function_item::draw_edges(Viewer_interface* viewer) const
     }
     program->setUniformValue("f_matrix", f_mat);
     qFunc.glDrawArrays(GL_LINES, 0, positions_grid.size()/3);
-    vaos[2].release();
+    vaos[2]->release();
     program->release();
 }
 

@@ -38,7 +38,7 @@ class Q_DECL_EXPORT Scene_aabb_item : public Scene_item
 {
   Q_OBJECT
 public:
-  Scene_aabb_item(const AABB_tree& tree_) : tree(tree_)
+  Scene_aabb_item(const AABB_tree& tree_) : tree(tree_), Scene_item(1,1)
   {
       positions_lines.resize(0);
       qFunc.initializeOpenGLFunctions();
@@ -98,7 +98,7 @@ private:
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
-        vaos[0].bind();
+        vaos[0]->bind();
 
         buffers[0].bind();
         buffers[0].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
@@ -107,7 +107,7 @@ private:
         buffers[0].release();
         program->release();
 
-        vaos[0].release();
+        vaos[0]->release();
         are_buffers_filled = true;
     }
 
@@ -124,14 +124,14 @@ private:
     {
         if(!are_buffers_filled)
             initialize_buffers(viewer);
-        vaos[0].bind();
+        vaos[0]->bind();
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program->bind();
         program->setAttributeValue("colors",this->color());
         qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
         program->release();
-        vaos[0].release();
+        vaos[0]->release();
     }
 }; // end class Scene_aabb_item
 
@@ -139,7 +139,7 @@ class Q_DECL_EXPORT Scene_edges_item : public Scene_item
 {
   Q_OBJECT
 public:
-    Scene_edges_item()
+    Scene_edges_item():Scene_item(1,1)
     {
         positions_lines.resize(0);
         qFunc.initializeOpenGLFunctions();
@@ -214,7 +214,7 @@ private:
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
-        vaos[0].bind();
+        vaos[0]->bind();
 
         buffers[0].bind();
         buffers[0].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
@@ -223,7 +223,7 @@ private:
         buffers[0].release();
         program->release();
 
-        vaos[0].release();
+        vaos[0]->release();
         are_buffers_filled = true;
     }
     void compute_elements()
@@ -243,13 +243,13 @@ private:
     {
         if(!are_buffers_filled)
             initialize_buffers(viewer);
-        vaos[0].bind();
+        vaos[0]->bind();
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program->bind();
         program->setAttributeValue("colors",this->color());
         qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
-        vaos[0].release();
+        vaos[0]->release();
         program->release();
 
     }

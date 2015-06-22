@@ -24,7 +24,7 @@ void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewe
         program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
         program->bind();
 
-        vaos[0].bind();
+        vaos[0]->bind();
         buffers[0].bind();
         buffers[0].allocate(positions_facets.data(), positions_facets.size()*sizeof(float));
         program->enableAttributeArray("vertex");
@@ -40,7 +40,7 @@ void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewe
         buffers[1].release();
 
         program->setAttributeValue("colors",facet_color);
-        vaos[0].release();
+        vaos[0]->release();
         program->release();
 
     }
@@ -48,7 +48,7 @@ void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewe
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
-        vaos[1].bind();
+        vaos[1]->bind();
 
         buffers[2].bind();
         buffers[2].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
@@ -59,14 +59,14 @@ void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewe
         program->setAttributeValue("colors",edge_color);
         program->release();
 
-        vaos[1].release();
+        vaos[1]->release();
 
     }
     //vao containing the data for the points
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
-        vaos[2].bind();
+        vaos[2]->bind();
 
         buffers[3].bind();
         buffers[3].allocate(positions_points.data(), positions_points.size()*sizeof(float));
@@ -79,7 +79,7 @@ void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewe
         buffers[6].release();
         program->release();
 
-        vaos[2].release();
+        vaos[2]->release();
     }
 
     are_buffers_filled = true;
@@ -175,13 +175,13 @@ void Scene_polyhedron_selection_item::draw(Viewer_interface* viewer) const
     qFunc.glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
     glPolygonOffset(-1.f, 1.f);
 
-    vaos[0].bind();
+    vaos[0]->bind();
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
     program->bind();
     qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/3);
     program->release();
-    vaos[0].release();
+    vaos[0]->release();
     glPolygonOffset(offset_factor, offset_units);
     draw_edges(viewer);
 
@@ -192,26 +192,26 @@ void Scene_polyhedron_selection_item::draw_edges(Viewer_interface* viewer) const
 {
 
     qFunc.glLineWidth(3.f);
-    vaos[1].bind();
+    vaos[1]->bind();
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
     program->release();
-    vaos[1].release();
+    vaos[1]->release();
     qFunc.glLineWidth(1.f);
 }
 
 void Scene_polyhedron_selection_item::draw_points(Viewer_interface* viewer) const
 {
     qFunc.glPointSize(5.f);
-    vaos[2].bind();
+    vaos[2]->bind();
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     qFunc.glDrawArrays(GL_POINTS, 0, positions_points.size()/3);
     program->release();
-    vaos[2].release();
+    vaos[2]->release();
     qFunc.glPointSize(1.f);
 
 }

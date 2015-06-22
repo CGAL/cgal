@@ -99,7 +99,7 @@ Scene_polygon_soup_item::initialize_buffers(Viewer_interface* viewer) const
         program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
         program->bind();
 
-        vaos[0].bind();
+        vaos[0]->bind();
         buffers[0].bind();
         buffers[0].allocate(positions_poly.data(), positions_poly.size()*sizeof(float));
         program->enableAttributeArray("vertex");
@@ -115,14 +115,14 @@ Scene_polygon_soup_item::initialize_buffers(Viewer_interface* viewer) const
         buffers[1].release();
 
         program->release();
-        vaos[0].release();
+        vaos[0]->release();
 
     }
     //vao containing the data for the edges
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
-        vaos[1].bind();
+        vaos[1]->bind();
 
         buffers[3].bind();
         buffers[3].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
@@ -132,7 +132,7 @@ Scene_polygon_soup_item::initialize_buffers(Viewer_interface* viewer) const
 
         program->release();
 
-        vaos[1].release();
+        vaos[1]->release();
 
     }
     are_buffers_filled = true;
@@ -337,7 +337,7 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
 
 
 Scene_polygon_soup_item::Scene_polygon_soup_item()
-    : Scene_item(),
+    : Scene_item(4,2),
       soup(0),positions_poly(0),positions_lines(0), normals(0),
       oriented(false)
 {
@@ -521,7 +521,7 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     if(soup == 0) return;
     //Calls the buffer info again so that it's the right one used even if
     //there are several objects drawn
-    vaos[0].bind();
+    vaos[0]->bind();
     attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
     //fills the arraw of colors with the current color
 
@@ -535,7 +535,7 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
     // Clean-up
     program->release();
-    vaos[0].release();
+    vaos[0]->release();
 
 }
 
@@ -546,7 +546,7 @@ Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
      initialize_buffers(viewer);
     }
     if(soup == 0) return;
-    vaos[1].bind();
+    vaos[1]->bind();
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
@@ -556,7 +556,7 @@ Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
     qFunc.glDrawArrays(GL_POINTS, 0, positions_lines.size()/4);
     // Clean-up
     program->release();
-    vaos[1].release();
+    vaos[1]->release();
 }
 
 void
@@ -567,7 +567,7 @@ Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
     }
     if(soup == 0) return;
 
-    vaos[1].bind();
+    vaos[1]->bind();
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
@@ -578,7 +578,7 @@ Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
     qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
     // Clean-up
     program->release();
-    vaos[1].release();
+    vaos[1]->release();
 }
 
 bool

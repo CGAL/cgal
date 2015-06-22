@@ -13,7 +13,8 @@ class Q_DECL_EXPORT Scene_bbox_item : public Scene_item
     Q_OBJECT
 public:
     Scene_bbox_item(const Scene_interface* scene_interface)
-        : scene(scene_interface)
+        : scene(scene_interface),
+          Scene_item(1,1)
     {
 
         positions_lines.resize(0);
@@ -51,13 +52,13 @@ public:
     {
         if(!are_buffers_filled)
             initialize_buffers(viewer);
-        vaos[0].bind();
+        vaos[0]->bind();
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program->bind();
         program->setAttributeValue("colors", this->color());
         qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
-        vaos[0].release();
+        vaos[0]->release();
         program->release();
 
     }
@@ -80,14 +81,14 @@ private:
             program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
             program->bind();
 
-            vaos[0].bind();
+            vaos[0]->bind();
             buffers[0].bind();
             buffers[0].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
             program->enableAttributeArray("vertex");
             program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
             buffers[0].release();
 
-            vaos[0].release();
+            vaos[0]->release();
             program->release();
 
         }
