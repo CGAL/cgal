@@ -156,7 +156,7 @@ public:
 
     if (m_own_strategy2) {
       if (m_decomposition_strategy2 != NULL) {
-        // delete m_decomposition_strategy1;
+        delete m_decomposition_strategy2;
         m_decomposition_strategy2 = NULL;
       }
       m_own_strategy2 = false;
@@ -177,7 +177,7 @@ public:
       m_own_strategy1 = true;
     }
     if (m_decomposition_strategy2 == NULL) {
-      m_decomposition_strategy2 = m_decomposition_strategy1;
+      m_decomposition_strategy2 = new Decomposition_strategy2;
       m_own_strategy2 = true;
     }
 
