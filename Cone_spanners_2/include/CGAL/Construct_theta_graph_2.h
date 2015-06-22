@@ -45,22 +45,13 @@ namespace CGAL {
 
 /*! \ingroup PkgConeBasedSpanners
  
-  \brief A functor for constructing theta graphs with a given set of 2D points.
+  \brief A template functor for constructing Theta graphs with a given set of 2D points and 
+         a given initial direction for the cone boundaries.
  
-  \tparam Kernel_ The CGAL kernel used by this functor. If this parameter is 
-      `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt`,
-      the graph will be constructed exactly; otherwise, inexactly using an approximate PI=3.1415...
-
-  \tparam Graph_  The graph type to store the constructed Theta graph. It should be a model of 
-      both concepts MutableGraph and VertexAndEdgeListGraph in BGL. Of the two graph classes provided
-      in BGL: `adjacency_list` and `adjacency_matrix`, only `adjacency_list` is such a model. 
-      So pls use `adjacency_list` to be your graph type. Note that there are seven template parameters for 
-      `boost::adjacency_list`: `OutEdgeList`, `VertexList`, `Directed`, `VertexProperties`, `EdgeProperties`,
-	  `GraphProperties`, `EdgeList`, of which we require `VertexProperties` be `Point_2` from \cgal, 
-      and other parameters can be chosen freely. Here `Point_2` is passed directly as bundled properties 
-	  to `adjacency_list` because this makes our implementation much more straightforward than using property maps. 
-	  For detailed information about bundled properties, pls refer to 
-      http://www.boost.org/doc/libs/1_58_0/libs/graph/doc/bundles.html.
+  For the meaning and use of its template parameters, please refer to the concept
+  `ConstructConeBasedSpanner_2`.
+   
+   \cgalModels `ConstructConeBasedSpanner_2`
  */
 template <typename Kernel_, typename Graph_>
 class Construct_theta_graph_2 {
@@ -88,13 +79,12 @@ private:
 
 public:
     /*! \brief Constructor.
-     *
-     *  Constructs a `Construct_theta_graph_2` object.
-     *
-     * \param k     Number of cones to divide space into
-     * \param initial_direction  A direction denoting one of the rays deviding the
-     *              cones. This allows arbitary rotations of the rays that divide
-     *              the plane.  (default: positive x-axis)
+      Constructs a `Construct_theta_graph_2` object.
+     
+     \param k     Number of cones to divide space into
+     \param initial_direction  A direction denoting one of the rays deviding the
+                   cones. This allows arbitary rotations of the rays that divide
+                   the plane.  (default: positive x-axis)
      */
     Construct_theta_graph_2 (unsigned int k,
                              Direction_2 initial_direction = Direction_2(1,0) )
@@ -114,21 +104,20 @@ public:
     }
 
     /*! \brief Copy constructor.
-     *  \param x  another Construct_theta_graph_2 object to copy from.
+       \param x  another Construct_theta_graph_2 object to copy from.
      */
     Construct_theta_graph_2 (const Construct_theta_graph_2& x) : cone_number(x.cone_number), rays(x.rays) {}
 
     /*! \brief Operator to construct a Theta graph.
-     *
-     * This operator implements the algorithm for adding edges to build the Theta graph.
-     * The algorithm implemented is described in:
-     * Giri Narasimhan and Michiel Smid, Chapter 4: Spanners based on the Theta graph, Geometric Spanner Networks,
-     * Cambridge University Press, 2007.
-     * This algorithm has the complexity of O(n*log(n)), which is optimal.
-     *
-     * \param start[in] An iterator pointing to the first point (vertex).
-     * \param end[in]   An iterator pointing to the place that passes the last point.
-     * \param g[out]    The constructed graph object.
+     This operator implements the algorithm for adding edges to build the Theta graph.
+     The algorithm implemented is described in:
+     Giri Narasimhan and Michiel Smid, Chapter 4: Spanners based on the Theta graph, Geometric Spanner Networks,
+     Cambridge University Press, 2007.
+     This algorithm has the complexity of O(n*log(n)), which is optimal.
+     
+     \param start[in] An iterator pointing to the first point (vertex).
+     \param end[in]   An iterator pointing to the place that passes the last point.
+     \param g[out]    The constructed graph object.
      */
     template <typename PointInputIterator>
     Graph_& operator()(const PointInputIterator& start,
@@ -159,8 +148,8 @@ public:
     }
 
     /*! \brief returns the vector of the directions of the rays dividing the plane.
-     *
-     *  \return a vector of Direction_2
+     
+       \return a vector of Direction_2
      */
     const std::vector<Direction_2>& directions() const {
         return rays;
@@ -168,7 +157,7 @@ public:
 
 protected:
 
-    /* \brief Construct edges in one cone bounded by two directions.
+    /* Construct edges in one cone bounded by two directions.
 
      \param cwBound      The direction of the clockwise boundary of the cone.
      \param ccwBound     The direction of the counter-clockwise boundary.

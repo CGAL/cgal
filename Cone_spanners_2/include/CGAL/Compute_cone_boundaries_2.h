@@ -44,8 +44,7 @@ namespace CGAL {
 /*! \ingroup PkgConeBasedSpanners
  *
  *  \brief The functor for computing the directions of cone boundaries with a given
- *  cone number and a given initial direction. The results are returned through the reference 
- *  argument: vector \p rays.
+ *  cone number and a given initial direction. 
  *
  *  This computation can be either inexact by simply dividing an approximate Pi by the cone number
  *  (which is quick), or exact by using roots of polynomials (requiring number types such as `CORE::Expr` or `LEDA::Real`,
@@ -63,6 +62,8 @@ namespace CGAL {
  *
  *  Of course, this functor can also be used in other applications where the plane needs to be divided
  *  into equally-angled cones.
+ *
+ *  \cgalModels `ComputeConeBoundaries_2`
  *
  */
 template <typename Kernel_>
@@ -119,21 +120,15 @@ public:
 };
 
 
-/*! \ingroup PkgConeBasedSpanners
- *
- *  \brief The specialised functor for computing the directions of cone boundaries exactly
- *  with a given cone number and a given initial direction. The results are returned by the reference 
- *  argument: vector \p rays.
- *
- *  \tparam Kernel_   If this parameter is `Exact_predicates_exact_constructions_kernel_with_sqrt`,
- *                    this specialization functor will be called; otherwise, the general functor will
- *                    be called.
+/* 
+ *  The specialised functor for computing the directions of cone boundaries exactly
+ *  with a given cone number and a given initial direction. 
  */
 template <>
 class Compute_cone_boundaries_2<Exact_predicates_exact_constructions_kernel_with_sqrt> {
 
 public:
-	/*! Indicate the type of the \cgal kernel. */
+	/* Indicate the type of the cgal kernel. */
     typedef  Exact_predicates_exact_constructions_kernel_with_sqrt                kernel_type;
 
 private:
@@ -145,10 +140,10 @@ public:
 	/* No member variables in this class, so a Constructor is not needed. */
 	// Compute_cone_boundaries_2() {};
 
-	/*! \brief The operator().  
+	/* The operator().  
 	 *
 	 *  The direction of the first ray can be specified by the parameter
-	 *  \p initial_direction, which allows the first ray to start at any direction. The remaining rays are calculated in
+	 *  initial_direction, which allows the first ray to start at any direction. The remaining rays are calculated in
 	 *  counter-clockwise order.
 	 *
 	 *  \param[in] cone_number The number of cones
