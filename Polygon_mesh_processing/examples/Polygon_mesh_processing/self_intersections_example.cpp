@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  bool intersecting = CGAL::Polygon_mesh_processing::is_self_intersecting(mesh,
+  bool intersecting = CGAL::Polygon_mesh_processing::does_self_intersect(mesh,
       CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, mesh)));
 
   std::cout

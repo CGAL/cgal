@@ -39,13 +39,12 @@ int main(int, char** argv) {
 
   timer.reset();
   bool intersecting_2
-    = CGAL::Polygon_mesh_processing::is_self_intersecting
-    (poly,
+    = CGAL::Polygon_mesh_processing::does_self_intersect(poly,
      CGAL::Polygon_mesh_processing::parameters::vertex_index_map(get(CGAL::vertex_point, poly)));
   
   CGAL_assertion(intersecting_1 == intersecting_2);
 
-  std::cerr << "is_self_intersecting test took " << timer.time() << " sec." << std::endl;
+  std::cerr << "does_self_intersect test took " << timer.time() << " sec." << std::endl;
   std::cerr << (intersecting_2 ? "There is a self-intersection." : "There is no self-intersection.") << std::endl;
 
   return 0;

@@ -34,12 +34,12 @@ int main(int, char** argv) {
   std::cerr << intersected_tris.size() << " pairs of triangles are intersecting." << std::endl;
 
   timer.reset();
-  bool intersecting_2 = CGAL::Polygon_mesh_processing::is_self_intersecting(m,
+  bool intersecting_2 = CGAL::Polygon_mesh_processing::does_self_intersect(m,
     CGAL::Polygon_mesh_processing::parameters::vertex_index_map(get(CGAL::vertex_point, m)));
   
   CGAL_assertion(intersecting_1 == intersecting_2);
 
-  std::cerr << "is_self_intersecting test took " << timer.time() << " sec." << std::endl;
+  std::cerr << "does_self_intersect test took " << timer.time() << " sec." << std::endl;
   std::cerr << (intersecting_2 ? "There is a self-intersection." : "There is no self-intersection.") << std::endl;
 
   return 0;

@@ -357,7 +357,7 @@ OutputIterator self_intersections(const FaceRange& face_range,
 template <class TriangleMesh
         , class NamedParameters
           >
-bool is_self_intersecting(const TriangleMesh& tmesh
+bool does_self_intersect(const TriangleMesh& tmesh
                         , const NamedParameters& np)
 {
   CGAL_precondition(CGAL::is_pure_triangle(tmesh));
@@ -375,9 +375,9 @@ bool is_self_intersecting(const TriangleMesh& tmesh
 
 /// \cond SKIP_IN_MANUAL
 template <class TriangleMesh>
-bool is_self_intersecting(const TriangleMesh& tmesh)
+bool does_self_intersect(const TriangleMesh& tmesh)
 {
-  return is_self_intersecting(tmesh,
+  return does_self_intersect(tmesh,
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 /// \endcond
