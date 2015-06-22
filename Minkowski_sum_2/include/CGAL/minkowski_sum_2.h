@@ -282,7 +282,7 @@ Polygon_with_holes_2<Kernel_, Container_>
 minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
                 const Polygon_2<Kernel_, Container_>& pgn2,
                 const DecompositionStrategy1_& decomposition_strategy1,
-                const DecompositionStrategy1_& decomposition_strategy2)
+                const DecompositionStrategy2_& decomposition_strategy2)
 {
   typename Minkowski_sum_by_decomposition_2<DecompositionStrategy1_,
                                             DecompositionStrategy2_,

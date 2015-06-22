@@ -72,10 +72,8 @@ Polygon_with_holes_2 compute_minkowski_sum_2(Polygon_with_holes_2& p,
        No_hole_decomposition decomp_no_holes;
        if  (0 == q.number_of_holes()) {
          const Polygon_2& qnh = q.outer_boundary();
-         return CGAL::minkowski_sum_2<Kernel, Polygon_2::Container,
-                                      No_hole_decomposition,
-                                      No_hole_decomposition>
-           (pnh, qnh, decomp_no_holes, decomp_no_holes);
+         return CGAL::minkowski_sum_2(pnh, qnh,
+                                      decomp_no_holes, decomp_no_holes);
        }
        else {
          With_hole_decomposition decomp_with_holes;
@@ -109,10 +107,8 @@ Polygon_with_holes_2 compute_minkowski_sum_2(Polygon_with_holes_2& p,
        No_hole_decomposition decomp_no_holes;
        if  (0 == q.number_of_holes()) {
          const Polygon_2& qnh = q.outer_boundary();
-         return CGAL::minkowski_sum_2<Kernel, Polygon_2::Container,
-                                      No_hole_decomposition,
-                                      No_hole_decomposition>
-           (pnh, qnh, decomp_no_holes, decomp_no_holes);
+         return CGAL::minkowski_sum_2(pnh, qnh,
+                                      decomp_no_holes, decomp_no_holes);
        }
        else {
          With_hole_decomposition decomp_with_holes;
