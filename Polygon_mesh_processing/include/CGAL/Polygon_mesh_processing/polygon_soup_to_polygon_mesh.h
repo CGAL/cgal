@@ -94,7 +94,8 @@ public:
   /**
   * \ingroup PkgPolygonMeshProcessing
   * builds a polygon mesh from a soup of polygons.
-  * @pre the input polygon soup is consistently oriented and define a valid polygon mesh.
+  * @pre the input polygon soup is consistently oriented
+  * and describes a polygon mesh.
   *
   * @tparam PolygonMesh a model of `MutableFaceGraph`
   * @tparam Point a point type that has an operator `[]` to access coordinates

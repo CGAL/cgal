@@ -379,8 +379,9 @@ public:
 /**
  * \ingroup PkgPolygonMeshProcessing
  * tries to consistently orient a soup of polygons in 3D space.
- * If it is not possible to produce a combinatorial manifold surface, some points are
- * duplicated. These points are either an endpoint of an edge incident to more than
+ * When it is not possible to produce a combinatorial manifold surface, some points are
+ * duplicated.
+ * These points are either an endpoint of an edge incident to more than
  * two polygons, an endpoint of an edge between two polygons with incompatible orientations
  * (during the re-orientation process), or more generally if the intersection of the union of
  * the polygon incident to a point with a infinitesimally small ball centered at the point

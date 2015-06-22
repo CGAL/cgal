@@ -393,9 +393,9 @@ namespace Polygon_mesh_processing{
 
 /*!
  * \ingroup PkgPolygonMeshProcessing
- *  discovers all the faces in the same connected component as `seed_face` and puts them in `out`.
+ *  discovers all the faces in the same connected component as `seed_face` and records them in `out`.
  * `seed_face` will also be added in `out`.
- *  Two faces are put in the same connected component if they share an edge that is not marked as constrained.
+ *  Two faces are recorded in the same connected component if they share an edge that is not marked as constrained.
 
  *  \tparam PolygonMesh a model of `FaceGraph`
  *  \tparam FaceOutputIterator a model of `OutputIterator` that accepts
@@ -474,8 +474,8 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
 
 /*!
  * \ingroup PkgPolygonMeshProcessing
- *  computes for each face the index of the connected component to which it belongs.
- *  Two faces are put in the same connected component if they share an edge that is not marked as constrained.
+ *  computes for each face the index of the corresponding connected component.
+ *  Two faces are recorded in the same connected component if they share an edge that is not marked as constrained.
  *  \tparam PolygonMesh a model of `FaceListGraph`
  *  \tparam FaceComponentMap a model of `WritablePropertyMap` with
         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
@@ -545,9 +545,9 @@ connected_components(const PolygonMesh& pmesh,
 
 /*!
  * \ingroup PkgPolygonMeshProcessing
- *  erases the small connected components and the isolated vertices.
+ *  erases the small connected components and all the isolated vertices.
  *  Keep `nb_components_to_keep` largest connected components. 
- *  Two faces are put in the same connected component if they share an edge that is not marked as constrained.
+ *  Two faces are considered in the same connected component if they share an edge that is not marked as constrained.
  *
  * \tparam PolygonMesh a model of `FaceListGraph`
  * \tparam NamedParameters a sequence of \ref namedparameters

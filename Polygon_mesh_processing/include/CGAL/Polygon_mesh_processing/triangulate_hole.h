@@ -42,7 +42,7 @@ namespace Polygon_mesh_processing {
   triangulates a hole in a polygon mesh.
   The hole must not contain any non-manifold vertex.
   The patch generated does not introduce non-manifold edges nor degenerate triangles.
-  If a hole cannot be triangulated, `pmesh` is not modified and nothing is put in `out`.
+  If a hole cannot be triangulated, `pmesh` is not modified and nothing is recorded in `out`.
 
   @tparam PolygonMesh a model of `MutableFaceGraph`
           that has an internal property map for `CGAL::vertex_point_t`
@@ -277,9 +277,9 @@ namespace Polygon_mesh_processing {
   /*!
   \ingroup PkgPolygonMeshProcessing
   creates triangles to fill the hole defined by points in the range `points`.
-  Triangles are put into `out` using the indices of the input points in the range `points`.
+  Triangles are recorded into `out` using the indices of the input points in the range `points`.
   Note that no degenerate triangles will be produced.
-  If no triangulation can be found, then nothing is put in `out`.
+  If no triangulation can be found, then nothing is recorded in `out`.
 
   The point range `third_points` indicates for each pair of consecutive points in the range `points`,
   the third point of the facet this segment is incident to.

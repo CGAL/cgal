@@ -261,7 +261,7 @@ namespace internal {
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-/// \return number of degenerate faces found
+/// \return number of degenerate faces removed
 ///
 template <class TriangleMesh, class NamedParameters>
 std::size_t remove_degenerate_faces(TriangleMesh& tmesh,

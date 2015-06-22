@@ -75,7 +75,7 @@ void sum_normals(const PM& pmesh,
 *
 * @return the computed normal. The return type is a 3D vector type. It is
 * either deduced from the `geom_traits` \ref namedparameters if provided,
-* or the geometric traits class deduced from the point property map
+* or from the geometric traits class deduced from the point property map
 * of `pmesh`.
 */
 template <typename PolygonMesh, typename NamedParameters>

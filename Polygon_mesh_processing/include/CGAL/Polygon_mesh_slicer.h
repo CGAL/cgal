@@ -41,7 +41,7 @@
 namespace CGAL {
 
 /// \ingroup PkgPolygonMeshProcessing
-/// Function object that can compute the intersection of planes with
+/// Function object that computes the intersection of a plane with
 /// a triangulated surface mesh.
 ///
 /// \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
@@ -298,7 +298,7 @@ public:
   /**
   * Constructor using `edges(tmesh)` to initialize the
   * internal `AABB_tree`.
-  * @param tmesh the triangulated surface mesh to be cut.
+  * @param tmesh the triangulated surface mesh to be sliced.
   *              It must be valid and non modified as long
   *              as the functor is used.
   * @param vpmap an instance of the vertex point property map associated to `tmesh`
@@ -320,7 +320,7 @@ public:
 
   /**
   * Constructor using a pre-built `AABB_tree` of edges provided by the user.
-  * @param tmesh the triangulated surface mesh to be cut.
+  * @param tmesh the triangulated surface mesh to be sliced.
   *              It must be valid and non modified as long
   *              as the functor is used.
   * @param tree must be initialized with all the edges of `tmesh`
@@ -342,7 +342,7 @@ public:
   * Constructor using `edges(tmesh)` to initialize the
   * internal `AABB_tree`. The vertex point property map used
   * is `get(CGAL::vertex_point, tmesh)`
-  * @param tmesh the triangulated surface mesh to be cut.
+  * @param tmesh the triangulated surface mesh to be sliced.
   *              It must be valid and non modified as long
   *              as the functor is used.
   * @param traits a traits class instance, can be omitted
@@ -363,7 +363,7 @@ public:
   /**
   * Constructor using a `AABB_tree` provided by the user.
   * The vertex point property map used is `get(CGAL::vertex_point, tmesh)`
-  * @param tmesh the triangulated surface mesh to be cut.
+  * @param tmesh the triangulated surface mesh to be sliced.
   *              It must be valid and non modified as long
   *              as the functor is used.
   * @param tree must be initialized with all the edges of `tmesh`

@@ -46,14 +46,16 @@ namespace Polygon_mesh_processing {
 
   @param pmesh polygon mesh with patches to be refined
   @param faces the range of faces defining the patches to refine
-  @param faces_out output iterator into which descriptors of new faces are put
-  @param vertices_out output iterator into which descriptors of new vertices are put
+  @param faces_out output iterator into which descriptors of new faces are recorded
+  @param vertices_out output iterator into which descriptors of new vertices are recorded
   @param np optional sequence of \ref namedparameters among the ones listed below
 
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`
       Instance of a class model of `ReadWritePropertyMap` \cgalParamEnd
-    \cgalParamBegin{density_control_factor} factor to control density of the ouput mesh, where larger values cause denser refinements. The density of vertices of `faces_out` is this factor times higher than the vertices of `faces.` \cgalParamEnd
+    \cgalParamBegin{density_control_factor} factor to control density of the ouput mesh,
+      where larger values lead to denser refinements.
+      The density of vertices of `faces_out` is this factor times higher than the vertices of `faces.` \cgalParamEnd
   \cgalNamedParamsEnd
 
 

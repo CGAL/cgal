@@ -144,7 +144,8 @@ public:
    * @param point the query point to be located with respect to the input
             polyhedral surface
    * @return 
-   *   - `CGAL::ON_BOUNDED_SIDE` if the point is inside the triangle mesh
+   *   - `CGAL::ON_BOUNDED_SIDE` if the point is inside the
+   -      volume bounded by the input triangle mesh
    *   - `CGAL::ON_BOUNDARY` if the point is on triangle mesh
    *   - `CGAL::ON_UNBOUNDED_SIDE` if the point is outside triangle mesh
    */

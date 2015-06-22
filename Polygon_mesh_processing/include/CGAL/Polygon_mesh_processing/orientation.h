@@ -59,16 +59,16 @@ namespace internal{
  * \ingroup PkgPolygonMeshProcessing
  * tests whether a closed polygon mesh has a positive orientation.
  * A closed polygon mesh is considered to have a positive orientation if the normal vectors
- * of its faces point outside the domain bounded by the polygon mesh. For each face, its normal vector
- * is considered to point on the side of the face where the sequence of vertices of
- * the facet is seen counterclockwise.
+ * to all its faces point outside the domain bounded by the polygon mesh.
+ * The normal vector to each face is chosen pointing on the side of the face
+ * where its sequence of vertices is seen counterclockwise.
  * @pre `CGAL::is_closed(pmesh)`
- * @pre If `pmesh` contains several connected components they are oriented consistently,
- *      that is the answer to this predicate would be the same if called on each
+ * @pre If `pmesh` contains several connected components, they are oriented consistently.
+ *      In other words, the answer to this predicate would be the same for each
  *      isolated connected component.
  *
  * @tparam PolygonMesh a model of `FaceListGraph` that has an internal property map
-*         for `boost::vertex_point_t`
+ *         for `boost::vertex_point_t`
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param pmesh the closed polygon mesh to be tested

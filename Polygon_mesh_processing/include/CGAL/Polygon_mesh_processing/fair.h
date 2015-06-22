@@ -61,10 +61,12 @@ namespace internal {
   /*!
   \ingroup PkgPolygonMeshProcessing
   @brief fairs a region on a polygon mesh.
-  The points of the selected vertices are moved to get an as-smooth-as-possible surface patch.
+  The points of the selected vertices are
+  relocated to yield an as-smooth-as-possible surface patch.
   
   The region described by `vertices` might contain multiple disconnected components.
-  Note that the structure is not altered in any way, only positions of the vertices get updated.
+  Note that the mesh connectivity is not altered in any way,
+  only vertex locations get updated.
 
   Fairing might fail if fixed vertices, which are used as boundary conditions, do not suffice to solve constructed linear system.
 
@@ -87,7 +89,7 @@ namespace internal {
     \cgalParamBegin{sparse_linear_solver} an instance of the sparse linear solver used for fairing \cgalParamEnd
   \cgalNamedParamsEnd
   
-  @return `true` if fairing is successful, otherwise no vertex position is changed
+  @return `true` if fairing is successful, otherwise no vertices are relocated
 
   @todo accuracy of solvers are not good, for example when there is no boundary condition pre_factor should fail, but it does not.
   */

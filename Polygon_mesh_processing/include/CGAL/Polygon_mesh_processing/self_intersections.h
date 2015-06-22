@@ -204,7 +204,7 @@ self_intersections( const FaceRange& face_range,
 
 /** 
  * \ingroup PkgPolygonMeshProcessing
- * detects and reports self-intersections of a triangulated surface mesh.
+ * detects and records self-intersections of a triangulated surface mesh.
  * This function depends on the package \ref PkgBoxIntersectionDSummary
  * @pre `CGAL::is_pure_triangle(tmesh)`
  *
@@ -334,7 +334,7 @@ OutputIterator self_intersections(const FaceRange& face_range,
 
 /**
  * \ingroup PkgPolygonMeshProcessing
- * tests if a triangulated surface mesh is self-intersecting.
+ * tests if a triangulated surface mesh self-intersects.
  * This function depends on the package \ref PkgBoxIntersectionDSummary
  * @pre `CGAL::is_pure_triangle(tmesh)`
  *
@@ -352,7 +352,7 @@ OutputIterator self_intersections(const FaceRange& face_range,
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `SelfIntersectionTraits` \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * @return true if `tmesh` is self-intersecting
+ * @return true if `tmesh` self-intersects
  */
 template <class TriangleMesh
         , class NamedParameters
