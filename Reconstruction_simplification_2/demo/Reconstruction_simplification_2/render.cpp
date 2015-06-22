@@ -602,7 +602,7 @@ void R_s_k_2::draw_collapsible_edge(const float point_size,
     Vertex_handle copy_src = copy.source_vertex(copy_edge);
     Vertex_handle copy_dst = copy.target_vertex(copy_edge);
     
-    Edge_list copy_hull;
+    Edge_vector copy_hull;
     copy.get_edges_from_star_minus_link(copy_src, copy_hull, true);    
     ok = copy.make_collapsible(copy_edge, copy_hull.begin(), copy_hull.end(), m_verbose);
 
@@ -625,7 +625,7 @@ void R_s_k_2::draw_simulation(const float point_size,
     Vertex_handle copy_src = copy.source_vertex(copy_edge);
     Vertex_handle copy_dst = copy.target_vertex(copy_edge);
     
-    Edge_list copy_hull;
+    Edge_vector copy_hull;
     copy.get_edges_from_star_minus_link(copy_src, copy_hull, true);    
     ok = copy.make_collapsible(copy_edge, copy_hull.begin(), copy_hull.end(), m_verbose);
     
@@ -664,7 +664,7 @@ void R_s_k_2::draw_cost_stencil(const float point_size,
     Vertex_handle copy_src = copy.source_vertex(copy_edge);
     Vertex_handle copy_dst = copy.target_vertex(copy_edge);
     
-    Edge_list copy_hull;
+    Edge_vector copy_hull;
     copy.get_edges_from_star_minus_link(copy_src, copy_hull, true);    
     ok = copy.make_collapsible(copy_edge, copy_hull.begin(), copy_hull.end(), m_verbose);    
     if (!ok) return;
@@ -675,9 +675,9 @@ void R_s_k_2::draw_cost_stencil(const float point_size,
     ::glLineWidth(line_width);
     ::glPointSize(point_size);
 
-    Edge_list stencil;
+    Edge_vector stencil;
     collect_cost_stencil(copy, copy_hull.begin(), copy_hull.end(), stencil);
-    for (Edge_list::const_iterator it = stencil.begin(); it != stencil.end(); ++it)
+    for (Edge_vector::const_iterator it = stencil.begin(); it != stencil.end(); ++it)
     {
         Edge e = *it;
         ::glColor3f(0.7f, 0.4f, 0.0f);
@@ -696,9 +696,9 @@ void R_s_k_2::draw_remove_queue_stencil(const float point_size,
     bool ok = locate_edge(query, edge);
     if (!ok) return;
     
-    Edge_list hull;
-    Edge_list stencil;
-    Edge_list::const_iterator it;
+    Edge_vector hull;
+    Edge_vector stencil;
+    Edge_vector::const_iterator it;
     Vertex_handle src = m_dt.source_vertex(edge);
     m_dt.get_edges_from_star_minus_link(src, hull, true);    
     collect_pqueue_stencil(m_dt, hull.begin(), hull.end(), stencil);
@@ -739,13 +739,13 @@ void R_s_k_2::draw_push_queue_stencil(const float point_size,
     bool ok = locate_edge(query, edge);
     if (!ok) return;
     
-    Edge_list hull;
-    Edge_list stencil;
+    Edge_vector hull;
+    Edge_vector stencil;
     Vertex_handle src = m_dt.source_vertex(edge);
     m_dt.get_edges_from_star_minus_link(src, hull, true);    
     collect_pqueue_stencil(m_dt, hull.begin(), hull.end(), stencil);
 
-    Edge_list::iterator it = stencil.begin();
+    Edge_vector::iterator it = stencil.begin();
     while (it != stencil.end())
     {
         Edge edge = *it;
@@ -758,8 +758,8 @@ void R_s_k_2::draw_push_queue_stencil(const float point_size,
     }
         
     Triangulation copy;
-    Edge_list copy_hull;
-    Edge_list copy_stencil;
+    Edge_vector copy_hull;
+    Edge_vector copy_stencil;
     Edge copy_edge = copy_star(edge, copy);
     Vertex_handle copy_src = copy.source_vertex(copy_edge);
     Vertex_handle copy_dst = copy.target_vertex(copy_edge);    

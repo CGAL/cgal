@@ -64,7 +64,7 @@ public:
 	typedef R_s_2::Vertex_handle_set Vertex_handle_set;
 	typedef R_s_2::Edge_set Edge_set;
 
-	typedef R_s_2::Edge_list Edge_list;
+	typedef R_s_2::Edge_vector Edge_vector;
 
 	typedef R_s_2::Sample_ Sample_;
 	typedef R_s_2::Sample_vector Sample_vector;
