@@ -196,7 +196,7 @@ namespace CGAL {
 	}
 
 	// directed graphs
-	/*! Writing edge list to the gnuplot script for directed graphs */
+	/* Writing edge list to the gnuplot script for directed graphs */
 	template <typename Graph>
 	struct Gnuplot_edges_2<Graph, boost::directedS> {
 
@@ -217,12 +217,12 @@ namespace CGAL {
 	};
 
 	// Bidirectional graph, the same as the directed graph.
-	/*! Writing edge list to the gnuplot script for bidirectional graphs */
+	/* Writing edge list to the gnuplot script for bidirectional graphs */
 	template <typename Graph>
 	struct Gnuplot_edges_2<Graph, boost::bidirectionalS> : public Gnuplot_edges_2<Graph, boost::directedS> {};
 
 	// Undirected graphs
-	/*! Writing edge list to the gnuplot script for undirected graphs */
+	/* Writing edge list to the gnuplot script for undirected graphs */
 	template <typename Graph>
 	struct Gnuplot_edges_2<Graph, boost::undirectedS> {
 
