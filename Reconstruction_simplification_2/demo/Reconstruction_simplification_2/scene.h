@@ -67,11 +67,11 @@ public:
 	typedef R_s_2::Edge_list Edge_list;
 
 	typedef R_s_2::Sample_ Sample_;
-	typedef R_s_2::Sample_list Sample_list;
-	typedef R_s_2::Sample_list_const_iterator Sample_list_const_iterator;
+	typedef R_s_2::Sample_vector Sample_vector;
+	typedef R_s_2::Sample_vector_const_iterator Sample_vector_const_iterator;
 
-	typedef R_s_2::Point_list Point_list;
-	typedef R_s_2::Point_list_const_iterator Point_list_const_iterator;
+	typedef R_s_2::Point_vector Point_vector;
+	typedef R_s_2::Point_vector_const_iterator Point_vector_const_iterator;
 
 	typedef R_s_2::PSample PSample;
 	typedef R_s_2::SQueue SQueue;
@@ -438,7 +438,7 @@ public:
 			return;
 		}
 
-		Sample_list samples;
+		Sample_vector samples;
 		for (std::vector<Sample_>::iterator it = m_samples.begin();
 				it != m_samples.end(); ++it) {
 			Sample_& s = *it;
@@ -468,12 +468,12 @@ public:
 		}
 	}
 
-	void save_pwn(const QString& filename, const Sample_list& samples) {
+	void save_pwn(const QString& filename, const Sample_vector& samples) {
 		std::vector<Vector> normals;
 		compute_normals(samples, normals);
 		std::ofstream ofs(qPrintable(filename));
 		std::vector<Vector>::const_iterator ni = normals.begin();
-		for (Sample_list_const_iterator it = samples.begin();
+		for (Sample_vector_const_iterator it = samples.begin();
 				it != samples.end(); ++it) {
 			Sample_* sample = *it;
 			ofs << sample->point() << " " << *ni << std::endl;
@@ -482,11 +482,11 @@ public:
 		ofs.close();
 	}
 
-	void compute_normals(const Sample_list& samples,
+	void compute_normals(const Sample_vector& samples,
 			std::vector<Vector>& normals) {
 		normals.clear();
 		Point last = samples.back()->point();
-		Sample_list_const_iterator si = samples.begin();
+		Sample_vector_const_iterator si = samples.begin();
 		while (si != samples.end()) {
 			Point p = (*si)->point();
 			si++;
@@ -509,9 +509,9 @@ public:
 		}
 	}
 
-	void save_xy(const QString& filename, const Sample_list& samples) {
+	void save_xy(const QString& filename, const Sample_vector& samples) {
 		std::ofstream ofs(qPrintable(filename));
-		for (Sample_list_const_iterator it = samples.begin();
+		for (Sample_vector_const_iterator it = samples.begin();
 				it != samples.end(); ++it) {
 			Sample_* sample = *it;
 			ofs << sample->point() << std::endl;
@@ -519,10 +519,10 @@ public:
 		ofs.close();
 	}
 
-	void save_poff(const QString& filename, const Sample_list& samples) {
+	void save_poff(const QString& filename, const Sample_vector& samples) {
 		std::ofstream ofs(qPrintable(filename));
 		ofs << "POFF " << samples.size() << " 0 0" << std::endl;
-		for (Sample_list_const_iterator it = samples.begin();
+		for (Sample_vector_const_iterator it = samples.begin();
 				it != samples.end(); ++it) {
 			Sample_* sample = *it;
 			ofs << sample->point() << std::endl;
@@ -530,11 +530,11 @@ public:
 		ofs.close();
 	}
 
-	void save_gtn(const QString& filename, const Sample_list& samples) {
+	void save_gtn(const QString& filename, const Sample_vector& samples) {
 		std::ofstream ofs(qPrintable(filename));
 		ofs << samples.size() << " 2 0 0" << std::endl;
 		unsigned int i = 0;
-		for (Sample_list_const_iterator it = samples.begin();
+		for (Sample_vector_const_iterator it = samples.begin();
 				it != samples.end(); ++it, ++i) {
 			Sample_* sample = *it;
 			ofs << i << " " << sample->point() << std::endl;
@@ -567,11 +567,11 @@ public:
 			return false;
 		}
 
-		Sample_list vertices, samples;
+		Sample_vector vertices, samples;
 		select_samples(percentage, vertices, samples);
 
 		PointMassList point_mass_list;
-		Sample_list_const_iterator it;
+		Sample_vector_const_iterator it;
 		for (it = vertices.begin(); it != vertices.end(); it++) {
 			point_mass_list.push_back(
 					std::make_pair((*it)->point(), (*it)->mass()));
@@ -621,8 +621,8 @@ public:
 		std::cout << m_samples.size() << std::endl;
 	}
 
-	void select_samples(const double percentage, Sample_list& vertices,
-			Sample_list& samples) {
+	void select_samples(const double percentage, Sample_vector& vertices,
+			Sample_vector& samples) {
 		std::vector<Sample_>::iterator it;
 		for (it = m_samples.begin(); it != m_samples.end(); ++it) {
 			Sample_& s = *it;
@@ -756,7 +756,7 @@ public:
 	}
 
 	void draw_circles() {
-		Sample_list vertices, samples;
+		Sample_vector vertices, samples;
 		select_samples(1.0, vertices, samples);
 		double percentage = 500.0 / double(vertices.size());
 		percentage = (std::min)(percentage, 1.0);
@@ -768,7 +768,7 @@ public:
 		::glEnable(GL_BLEND);
 		::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		::glColor4f(1.0f, 1.0f, 0.2f, 0.25f);
-		for (Sample_list_const_iterator it = samples.begin();
+		for (Sample_vector_const_iterator it = samples.begin();
 				it != samples.end(); it++) {
 			Sample_* sample = *it;
 			draw_one_circle(sample->point());

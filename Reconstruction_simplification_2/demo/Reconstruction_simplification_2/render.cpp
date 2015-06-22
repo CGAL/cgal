@@ -166,9 +166,9 @@ void R_s_k_2::draw_edge_footpoints(const Triangulation& mesh,
 {
     const Point& a = mesh.source_vertex(edge)->point();
     const Point& b = mesh.target_vertex(edge)->point();
-    const Sample_list& samples = edge.first->samples(edge.second);
+    const Sample_vector& samples = edge.first->samples(edge.second);
     
-    Sample_list::const_iterator it;
+    Sample_vector::const_iterator it;
     for (it = samples.begin(); it != samples.end(); ++it)
     {
         Sample_* sample = *it;
@@ -395,12 +395,12 @@ void R_s_k_2::draw_bins_plan0(const Edge& edge)
     const Point& pa = m_dt.source_vertex(edge)->point();
     const Point& pb = m_dt.target_vertex(edge)->point();
     
-    Sample_list samples;
+    Sample_vector samples;
     m_dt.collect_samples_from_edge(edge, samples);
     m_dt.collect_samples_from_edge(twin, samples);
     
     ::glColor3f(0.0f, 1.0f, 0.0f);
-    Sample_list_const_iterator it;
+    Sample_vector_const_iterator it;
     for (it = samples.begin(); it != samples.end(); ++it)
     {
         Sample_* sample = *it;
