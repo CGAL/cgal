@@ -166,13 +166,13 @@ public:
 
         //std::cout << "Specialization is called!" << std::endl;
 
-        // We actually use -x instead of x since CGAL::root_of() will give the k-th
-        //     smallest root but we want the second largest one without counting.
+        // here -x is actually used instead of x, since CGAL::root_of() gives the 
+		// k-th smallest root, but we want the second largest one with no need to count.
         Polynomial<FT> x(CGAL::shift(Polynomial<FT>(-1), 1));
-        Polynomial<FT> twox(2*x);
+        Polynomial<FT> double_x(2*x);
         Polynomial<FT> a(1), b(x);
         for (unsigned int i = 2; i <= cone_number; ++i) {
-            Polynomial<FT> c = twox*b - a;
+            Polynomial<FT> c = double_x*b - a;
             a = b;
             b = c;
         }
