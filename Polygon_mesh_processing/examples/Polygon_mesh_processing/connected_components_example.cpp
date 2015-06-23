@@ -15,6 +15,7 @@ typedef Kernel::Compare_dihedral_angle_3                    Compare_dihedral_ang
 
 typedef CGAL::Surface_mesh<Point>                           Mesh;
 
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 template <typename G>
 struct Constraint : public boost::put_get_helper<bool,Constraint<G> >
@@ -29,16 +30,17 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<G> >
     :g_(NULL)
   {}
 
-  Constraint(G & g, double bound) 
+  Constraint(G& g, double bound) 
     : g_(&g), bound_(bound)
   {}
 
-  bool operator[](edge_descriptor e) const {
+  bool operator[](edge_descriptor e) const
+  {
     const G& g = *g_;
-    return compare_(g.point(source(e,g)),
+    return compare_(g.point(source(e, g)),
                     g.point(target(e, g)),
-                    g.point(target(next(halfedge(e,g),g),g)),
-                    g.point(target(next(opposite(halfedge(e,g),g),g),g)),
+                    g.point(target(next(halfedge(e, g), g), g)),
+                    g.point(target(next(opposite(halfedge(e, g), g), g), g)),
                    bound_) == CGAL::SMALLER;
   }
 
@@ -49,7 +51,8 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<G> >
 
 
 template <typename PM>
-struct Put_true {
+struct Put_true
+{
   Put_true(const PM pm)
     :pm(pm)
   {}
@@ -80,29 +83,28 @@ int main(int argc, char* argv[])
 
   std::vector<face_descriptor> cc;
   face_descriptor fd = *faces(mesh).first;
-  CGAL::Polygon_mesh_processing::connected_component(fd,
-                                        mesh,
-                                        std::back_inserter(cc));
+  PMP::connected_component(fd,
+      mesh,
+      std::back_inserter(cc));
 
   std::cerr << "Connected components without edge constraints" << std::endl;
   std::cerr << cc.size() << " faces in the CC of " << fd << std::endl;
-
-
+  
   // Instead of writing the faces into a container, you can set a face property to true
   typedef Mesh::Property_map<face_descriptor, bool> F_select_map;
-  F_select_map fselect_map;
-  fselect_map = mesh.add_property_map<face_descriptor, bool>("f:select", false).first;
-  CGAL::Polygon_mesh_processing::connected_component(fd,
-                                                     mesh,
-                                                     boost::make_function_output_iterator(Put_true<F_select_map>(fselect_map)));
+  F_select_map fselect_map =
+    mesh.add_property_map<face_descriptor, bool>("f:select", false).first;
+  PMP::connected_component(fd,
+      mesh,
+      boost::make_function_output_iterator(Put_true<F_select_map>(fselect_map)));
 
 
   std::cerr << "\nConnected components with edge constraints (dihedral angle < 3/4 pi)" << std::endl;
-  Mesh::Property_map<face_descriptor, std::size_t> fccmap;
-  fccmap = mesh.add_property_map<face_descriptor, std::size_t>("f:CC").first;
-  std::size_t num = CGAL::Polygon_mesh_processing::connected_components(mesh,
-    fccmap,
-    CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(Constraint<Mesh>(mesh, bound)));
+  Mesh::Property_map<face_descriptor, std::size_t> fccmap =
+    mesh.add_property_map<face_descriptor, std::size_t>("f:CC").first;
+  std::size_t num = PMP::connected_components(mesh,
+      fccmap,
+      PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(mesh, bound)));
 
   std::cerr << "- The graph has " << num << " connected components (face connectivity)" << std::endl;
   typedef std::map<std::size_t/*index of CC*/, unsigned int/*nb*/> Components_size;
@@ -116,9 +118,9 @@ int main(int argc, char* argv[])
   }
 
   std::cerr << "- We keep the two largest components" << std::endl; 
-  CGAL::Polygon_mesh_processing::keep_largest_connected_components(mesh,
-    2,
-    CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(Constraint<Mesh>(mesh, bound)));
+  PMP::keep_largest_connected_components(mesh,
+      2,
+      PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(mesh, bound)));
 
   return 0;
 }
