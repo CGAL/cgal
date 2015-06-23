@@ -30,7 +30,7 @@ bool test_plane_connected_component() {
 
   std::size_t success = 0;
 
-  for (std::size_t i = 0;i<NB_ROUNDS;i++) {
+  for (int i = 0 ; i < NB_ROUNDS ; i++) {
     Pwn_vector points;
 
     Vector normal;

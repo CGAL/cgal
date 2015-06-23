@@ -29,7 +29,7 @@ bool test_plane_parameters() {
 
   std::size_t success = 0;
 
-  for (std::size_t i = 0;i<NB_ROUNDS;i++) {
+  for (int i = 0;i<NB_ROUNDS;i++) {
     Pwn_vector points;
 
     FT dist = 0;

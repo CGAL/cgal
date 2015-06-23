@@ -29,7 +29,7 @@ bool test_cone_connected_component() {
 
   std::size_t success = 0;
 
-  for (std::size_t i = 0;i<NB_ROUNDS;i++) {
+  for (int i = 0 ; i < NB_ROUNDS ; i++) {
     Pwn_vector points;
 
     // generate random points on a cone
@@ -37,7 +37,6 @@ bool test_cone_connected_component() {
     Vector axis = random_normal<K>();
     Point apex = random_point_in<K>(bbox);
     FT angle = random_float((FT) 0.2, (FT) 1.4);
-    FT mid = 0;
     FT start = 0.5;
     FT end = 1.5;
 
@@ -47,7 +46,6 @@ bool test_cone_connected_component() {
     CGAL::Vector_3<K> n = random_normal<K>();
     n = CGAL::cross_product(axis, n);
     n = n * (FT) 1.0 / (CGAL::sqrt(n.squared_length()));
-    FT a = n * axis;
     CGAL::Plane_3<K> pl(apex, n);
     
     FT spacing = angle;

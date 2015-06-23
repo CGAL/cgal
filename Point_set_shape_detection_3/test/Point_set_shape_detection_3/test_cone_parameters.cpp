@@ -30,7 +30,7 @@ bool test_cone_parameters() {
 
   std::size_t success = 0;
 
-  for (std::size_t i = 0;i<NB_ROUNDS;i++) {
+  for (int i = 0 ; i < NB_ROUNDS ; i++) {
     Pwn_vector points;
 
 	// generate random points on random cone
@@ -82,7 +82,7 @@ bool test_cone_parameters() {
     
     // Check radius and alignment with axis.
     if (CGAL::abs(angle - cone->angle()) > (FT) 0.02 
-      || CGAL::abs(abs(axis * cone->axis()) - (FT) 1.0) > (FT) 0.02)
+      || CGAL::abs(CGAL::abs(axis * cone->axis()) - (FT) 1.0) > (FT) 0.02)
       continue;
 
     // Check apex.

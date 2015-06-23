@@ -30,7 +30,7 @@ bool test_torus_parameters() {
 
   std::size_t success = 0;
 
-  for (std::size_t i = 0;i<NB_ROUNDS;i++) {
+  for (int i = 0;i<NB_ROUNDS;i++) {
     Pwn_vector points;
 
     // generate random points on random cylinder
@@ -87,7 +87,7 @@ bool test_torus_parameters() {
     // Check radii and alignment with axis.
     if (CGAL::abs(major_radius - torus->major_radius()) > (FT) 0.02 
       || CGAL::abs(minor_radius - torus->minor_radius()) > (FT) 0.02
-      || CGAL::abs(abs(axis * torus->axis()) - 1.0) > (FT) 0.02)
+      || CGAL::abs(CGAL::abs(axis * torus->axis()) - 1.0) > (FT) 0.02)
       continue;
 
     // Check center.

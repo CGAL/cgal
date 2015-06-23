@@ -29,7 +29,7 @@ bool test_cylinder_parameters() {
 
   std::size_t success = 0;
 
-  for (std::size_t i = 0;i<NB_ROUNDS;i++) {
+  for (int i = 0 ; i < NB_ROUNDS ; i++) {
     Pwn_vector points;
 
     // generate random points on random cylinder
@@ -83,7 +83,7 @@ bool test_cylinder_parameters() {
 
     // Check radius and alignment with axis.
     if (CGAL::abs(radius - cyl->radius()) > 0.02 
-      || CGAL::abs(abs(axis * cyl->axis().to_vector()) - 1.0) > 0.02)
+      || CGAL::abs(CGAL::abs(axis * cyl->axis().to_vector()) - 1.0) > 0.02)
       continue;
 
     pos = pos - ((pos - CGAL::ORIGIN) * axis) * axis;
