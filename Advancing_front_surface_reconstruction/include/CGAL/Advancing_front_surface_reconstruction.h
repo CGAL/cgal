@@ -2348,10 +2348,14 @@ namespace CGAL {
     typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
     typedef Advancing_front_surface_reconstruction<Triangulation_3> Reconstruction;
+    typedef typename std::iterator_traits<PointIterator>::value_type InputPoint;
+    typedef typename Kernel_traits<InputPoint>::Kernel InputKernel;
+    typedef Cartesian_converter<InputKernel,Kernel> CC;
     typedef Kernel::Point_3 Point_3;
-  
-    Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count<Point_3>()),
-                        boost::make_transform_iterator(e, AFSR::Auto_count<Point_3>() )  );
+
+    CC cc=CC();  
+    Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count_cc<Point_3,CC>(cc)),
+                        boost::make_transform_iterator(e, AFSR::Auto_count_cc<Point_3,CC>(cc) )  );
 
     Reconstruction R(dt);
     R.run(radius_ratio_bound, beta);
@@ -2381,6 +2385,7 @@ namespace CGAL {
     typedef typename Kernel_traits<InputPoint>::Kernel InputKernel;
     typedef Cartesian_converter<InputKernel,Kernel> CC;
     typedef Kernel::Point_3 Point_3;
+
     CC cc=CC();
     Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count_cc<Point_3,CC>(cc)),
                         boost::make_transform_iterator(e, AFSR::Auto_count_cc<Point_3,CC>(cc) )  );
@@ -2438,10 +2443,13 @@ namespace CGAL {
     typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
     typedef Advancing_front_surface_reconstruction<Triangulation_3> Reconstruction;
+    typedef typename std::iterator_traits<PointIterator>::value_type InputPoint;
+    typedef typename Kernel_traits<InputPoint>::Kernel InputKernel;
+    typedef Cartesian_converter<InputKernel,Kernel> CC;
     typedef typename Kernel::Point_3 Point_3;
   
-    Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count<Point_3>()),
-                        boost::make_transform_iterator(e, AFSR::Auto_count<Point_3>() )  );
+    Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count_cc<Point_3,CC>(cc)),
+                        boost::make_transform_iterator(e, AFSR::Auto_count_cc<Point_3,CC>(cc) )  );
   
     Reconstruction R(dt);
     R.run(radius_ratio_bound, beta);
