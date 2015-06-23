@@ -405,7 +405,8 @@ void make_tc(std::vector<Point> &points,
     //=========================================================================
     t.reset();
     // Try to solve the remaining inconstencies
-    tc.check_and_solve_inconsistencies_by_adding_higher_dim_simplices();
+    //tc.check_and_solve_inconsistencies_by_adding_higher_dim_simplices();
+    tc.solve_inconsistencies_using_adaptive_alpha_TC();
     fix2_time = t.elapsed(); t.reset();
     max_dim = tc.export_TC(complex, false);
     /*std::set<std::set<std::size_t> > not_delaunay_simplices;

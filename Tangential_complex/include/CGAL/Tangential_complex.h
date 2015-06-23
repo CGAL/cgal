@@ -213,6 +213,34 @@ class Tangential_complex
     Tr_vertex_handle m_center_vertex;
   };
 
+  class Simplex_and_alpha
+  {
+  public:
+    Simplex_and_alpha() {}
+    Simplex_and_alpha(
+      std::size_t center_point_index,
+      std::set<std::size_t> const& simplex, // including "center_point_index"
+      FT squared_alpha,
+      Vector const& thickening_vector)
+    : m_center_point_index(center_point_index),
+      m_simplex(simplex),
+      m_squared_alpha(squared_alpha),
+      m_thickening_vector(thickening_vector)
+    {}
+
+    // For the priority queue
+    bool operator>(Simplex_and_alpha const& other) const
+    {
+      return m_squared_alpha > other.m_squared_alpha;
+    }
+
+  private:
+    std::size_t           m_center_point_index; // P
+    std::set<std::size_t> m_simplex; // Missing simplex (includes P)
+    FT                    m_squared_alpha;
+    Vector                m_thickening_vector; // (P, Cq)
+  };
+
 public:
   typedef typename std::vector<Tangent_space_basis>     TS_container;
   typedef typename std::vector<Orthogonal_space_basis>  OS_container;
@@ -725,6 +753,92 @@ public:
       << "    - Percentage of inconsistencies: "
       << 100. * stats_after.second / stats_after.first << "%"
       << std::endl;
+  }
+  
+  void solve_inconsistencies_using_adaptive_alpha_TC()
+  {
+#ifdef CGAL_TC_PROFILING
+    Wall_clock_timer t;
+#endif
+
+#ifdef CGAL_TC_VERBOSE
+    std::cerr << "Fixing inconsistencies using adaptive alpha TC..." << std::endl;
+#endif
+    
+    // Kernel/traits functors
+    typename Kernel::Difference_of_points_d k_diff_points =
+      m_k.difference_of_points_d_object();
+    typename Kernel::Squared_length_d k_sqlen =
+      m_k.squared_length_d_object();
+    typename Tr_traits::Construct_weighted_point_d constr_wp =
+      m_triangulations[0].tr().geom_traits().construct_weighted_point_d_object();
+
+    //-------------------------------------------------------------------------
+    //1. Fill priority queue
+    //-------------------------------------------------------------------------
+    typedef std::priority_queue<Simplex_and_alpha,
+      std::vector<Simplex_and_alpha>,
+      std::greater<Simplex_and_alpha> > AATC_pq;
+
+    AATC_pq pqueue;
+
+    // For each triangulation
+    for (std::size_t idx = 0 ; idx < m_points.size() ; ++idx)
+    {
+      // For each cell
+      Star::const_iterator it_inc_simplex = m_stars[idx].begin();
+      Star::const_iterator it_inc_simplex_end = m_stars[idx].end();
+      for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
+      {
+        Incident_simplex const& s = *it_inc_simplex;
+
+        // Don't check infinite cells
+        if (*s.rbegin() == std::numeric_limits<std::size_t>::max())
+          continue;
+
+        // P: points whose star does not contain "s"
+        std::vector<std::size_t> P;
+        is_simplex_consistent(idx, s, std::back_inserter(P), true);
+
+        if (!P.empty())
+        {
+          Triangulation const& q_tr = m_triangulations[idx].tr();
+          std::set<std::size_t> full_simplex = s;
+          full_simplex.insert(idx);
+          for (std::vector<std::size_t>::const_iterator it_p = P.begin(),
+            it_p_end = P.end() ; it_p != it_p_end ; ++it_p)
+          {
+            // star(p) does not contain "s"
+            std::size_t const& p = *it_p;
+
+            Tr_bare_point intersection = 
+              *compute_aff_of_voronoi_face_and_tangent_subspace_intersection(
+                q_tr.current_dimension(),
+                project_points_and_compute_weights(
+                  full_simplex, m_tangent_spaces[idx], q_tr.geom_traits()),
+                m_tangent_spaces[idx],
+                q_tr.geom_traits());
+
+            // The following computations are done in the Euclidian space
+            Point inters_global = unproject_point(
+              constr_wp(intersection, 0), m_tangent_spaces[idx], 
+              q_tr.geom_traits());
+            Vector thickening_v = k_diff_points(inters_global, m_points[p]);
+            FT squared_alpha = k_sqlen(thickening_v);
+
+            pqueue.push(Simplex_and_alpha(
+              p, full_simplex, squared_alpha, thickening_v));
+          }
+        }
+      }
+    }
+
+    // CJTODO: the rest
+    
+#ifdef CGAL_TC_PROFILING
+    std::cerr << "Tangential complex fixed in " << t.elapsed()
+              << " seconds." << std::endl;
+#endif
   }
 
   std::ostream &export_to_off(
@@ -1400,15 +1514,29 @@ next_face:
                        == current_dim);
 
         // P: list of current_DT_face points (including 'i')
-        std::vector<Tr_vertex_handle> P(
-          current_DT_face.begin(), current_DT_face.end());
-        P.push_back(center_vertex);
+        std::vector<Tr_point> P;
+        P.reserve(current_DT_face.size() + 1);
+        for (DT_face::const_iterator it = current_DT_face.begin(),
+          it_end = current_DT_face.end() ; it != it_end ; ++it)
+        {
+          P.push_back((*it)->point());
+        }
+        P.push_back(center_vertex->point());
+        
+        // Q: vertices which are common neighbors of all vertices of P
+        std::vector<Tr_point> Q;
+        P.reserve(curr_neighbors.size());
+        for (Neighbor_vertices::const_iterator it = curr_neighbors.begin(),
+          it_end = curr_neighbors.end() ; it != it_end ; ++it)
+        {
+          Q.push_back((*it)->point());
+        }
 
         bool does_intersect =
           does_voronoi_face_and_tangent_subspace_intersect(
             triangulation_dim,
             P, 
-            curr_neighbors, 
+            Q, 
             tsb, 
             local_tr_traits);
         if (does_intersect)
@@ -1820,6 +1948,24 @@ next_face:
       w - m_k.squared_distance_d_object()(p, projected_pt)
     );
   }
+  
+  // Project all the points in the tangent space
+  template <typename Indexed_point_range>
+  std::vector<Tr_point> project_points_and_compute_weights(
+    const Indexed_point_range &point_indices,
+    const Tangent_space_basis &tsb,
+    const Tr_traits &tr_traits) const
+  {
+    std::vector<Tr_point> ret;
+    for (typename Indexed_point_range::const_iterator 
+      it = point_indices.begin(), it_end = point_indices.end();
+      it != it_end ; ++it)
+    {
+      ret.push_back(project_point_and_compute_weight(
+        m_points[*it], m_weights[*it], tsb, tr_traits));
+    }
+    return ret;
+  }
 
   // A simplex here is a local tri's full cell handle
   bool is_simplex_consistent(Tr_full_cell_handle fch, int cur_dim) const
@@ -1890,10 +2036,9 @@ next_face:
   }
 
   // A simplex here is a list of point indices
+  // CJTODO: improve it like the other "is_simplex_consistent" below
   bool is_simplex_consistent(std::set<std::size_t> const& simplex) const
   {
-    int cur_dim_plus_1 = static_cast<int>(simplex.size());
-
     // Check if the simplex is in the stars of all its vertices
     std::set<std::size_t>::const_iterator it_point_idx = simplex.begin();
     // For each point p of the simplex, we parse the incidents cells of p
@@ -1908,12 +2053,71 @@ next_face:
       Star const& star = m_stars[point_idx];
 
       // What we're looking for is "simplex" \ point_idx
-      Incident_simplex ic_to_find = simplex;
-      ic_to_find.erase(point_idx);
+      Incident_simplex is_to_find = simplex;
+      is_to_find.erase(point_idx);
 
       // For each cell
-      if (std::find(star.begin(), star.end(), ic_to_find) == star.end())
+      if (std::find(star.begin(), star.end(), is_to_find) == star.end())
         return false;
+    }
+
+    return true;
+  }
+  
+  // A simplex here is a list of point indices
+  // "s" contains all the points of the simplex except "center_point"
+  // This function returns the points whose star doesn't contain the simplex
+  // N.B.: the function assumes that the simplex is contained in 
+  //       star(center_point)
+  template <typename OutputIterator> // value_type = std::size_t
+  bool is_simplex_consistent(
+    std::size_t center_point,
+    Incident_simplex const& s, // without "center_point"
+    OutputIterator points_whose_star_does_not_contain_s,
+    bool check_also_in_non_maximal_faces = false) const
+  {
+    std::set<std::size_t> full_simplex = s;
+    full_simplex.insert(center_point);
+
+    // Check if the simplex is in the stars of all its vertices
+    Incident_simplex::const_iterator it_point_idx = s.begin();
+    // For each point p of the simplex, we parse the incidents cells of p
+    // and we check if "simplex" is among them
+    for ( ; it_point_idx != s.end() ; ++it_point_idx)
+    {
+      std::size_t point_idx = *it_point_idx;
+      // Don't check infinite simplices
+      if (point_idx == std::numeric_limits<std::size_t>::max())
+        continue;
+
+      Star const& star = m_stars[point_idx];
+
+      // What we're looking for is full_simplex \ point_idx
+      Incident_simplex is_to_find = full_simplex;
+      is_to_find.erase(point_idx);
+
+      if (check_also_in_non_maximal_faces)
+      {
+        // For each simplex "is" of the star, check if ic_to_simplex is
+        // included in "is"
+        bool found = false;
+        for (Star::const_iterator is = star.begin(), is_end = star.end() ;
+          !found && is != is_end ; ++is)
+        {
+          if (std::includes(is->begin(), is->end(), 
+                            is_to_find.begin(), is_to_find.end()))
+            found = true;
+        }
+
+        if (!found)
+          *points_whose_star_does_not_contain_s++ = point_idx;
+      }
+      else
+      {
+        // Does the star contain is_to_find?
+        if (std::find(star.begin(), star.end(), is_to_find) == star.end())
+          *points_whose_star_does_not_contain_s++ = point_idx;
+      }
     }
 
     return true;
@@ -2688,10 +2892,10 @@ next_face:
       Star const& star = m_stars[point_idx];
 
       // What we're looking for is "simplex" \ point_idx
-      Incident_simplex ic_to_find = simplex;
-      ic_to_find.erase(point_idx);
+      Incident_simplex is_to_find = simplex;
+      is_to_find.erase(point_idx);
 
-      if (std::find(star.begin(), star.end(), ic_to_find) == star.end())
+      if (std::find(star.begin(), star.end(), is_to_find) == star.end())
       {
         solve_inconsistency_by_adding_higher_dimensional_simplices(
           tr_index, *it_point_idx, simplex);
@@ -2724,15 +2928,17 @@ next_face:
 
     return inconsistencies_found;
   }
-  
+
   // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
   // Q: vertices which are common neighbors of all vertices of P
-  template <typename VH_range_a, typename VH_range_b>
+  // Note the computation is made in local coordinates. "tsb"'s vectors are not
+  // used because these vectors become (0..., 1..., 0) in local coordinates.
+  template <typename Weighted_point_range_a, typename Weighted_point_range_b>
   CGAL::Quadratic_program_solution<ET> 
     compute_voronoi_face_and_tangent_subspace_LP_problem(
     int points_dim,
-    VH_range_a const& P,
-    VH_range_b const& Q,
+    Weighted_point_range_a const& P,
+    Weighted_point_range_b const& Q,
     Tangent_space_basis const& tsb,
     const Tr_traits &tr_traits) const
   {
@@ -2767,15 +2973,15 @@ next_face:
     //=========== First set of equations ===========
     // For points pi in P
     //   2(p0 - pi).x = p0^2 - wght(p0) - pi^2 + wght(pi)
-    typename VH_range_a::const_iterator it_vh = P.begin();
-    Tr_point const& p0 = (*it_vh)->point();
+    typename Weighted_point_range_a::const_iterator it_p = P.begin();
+    Tr_point const& p0 = *it_p;
     FT const w0 = point_weight(p0);
     FT p0_dot_p0 = scalar_pdct(pt_to_vec(drop_w(p0)), pt_to_vec(drop_w(p0)));
-    ++it_vh;
-    for (typename VH_range_a::const_iterator it_vh_end = P.end() ;
-         it_vh != it_vh_end ; ++it_vh)
+    ++it_p;
+    for (typename Weighted_point_range_a::const_iterator it_p_end = P.end() ;
+         it_p != it_p_end ; ++it_p)
     {
-      Tr_point const& pi = (*it_vh)->point();
+      Tr_point const& pi = *it_p;
       FT const wi = point_weight(pi);
 
       for (int k = 0 ; k < points_dim ; ++k)
@@ -2791,11 +2997,11 @@ next_face:
     //=========== Second set of equations ===========
     // For each point qi in Q
     //  2(qi - p0).x <= qi^2 - wght(pi) - p0^2 + wght(p0)
-    for (typename VH_range_b::const_iterator it_vh = Q.begin(),
-                                             it_vh_end = Q.end() ;
-         it_vh != it_vh_end ; ++it_vh)
+    for (typename Weighted_point_range_b::const_iterator it_q = Q.begin(),
+                                             it_q_end = Q.end() ;
+         it_q != it_q_end ; ++it_q)
     {
-      Tr_point const& qi = (*it_vh)->point();
+      Tr_point const& qi = *it_q;
       FT const wi = point_weight(qi);
 
       for (int k = 0 ; k < points_dim ; ++k)
@@ -2810,7 +3016,7 @@ next_face:
     //=========== Third set of equations ===========
     // For each thickening vector bj of TSB, 
     // x.bj <= alpha_plus and >= alpha_minus
-    // where bj is in the TSB => bj = (0..., 1..., 0) (1 is at the ith position)
+    // where bj is in the TSB => bj = (0..., 1..., 0) (1 is at the jth position)
     //   x.bj  <=  alpha_plus
     //   -x.bj <= -alpha_minus
     std::size_t j = points_dim - tsb.num_thickening_vectors();
@@ -2844,11 +3050,11 @@ next_face:
 
   // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
   // Q: vertices which are common neighbors of all vertices of P
-  template <typename VH_range_a, typename VH_range_b>
+  template <typename Weighted_point_range_a, typename Weighted_point_range_b>
   bool does_voronoi_face_and_tangent_subspace_intersect(
     int points_dim,
-    VH_range_a const& P,
-    VH_range_b const& Q,
+    Weighted_point_range_a const& P,
+    Weighted_point_range_b const& Q,
     Tangent_space_basis const& tsb,
     const Tr_traits &tr_traits) const
   {
@@ -2859,37 +3065,41 @@ next_face:
   // Returns any point of the intersection between aff(voronoi_cell) and a
   // tangent space.
   // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
-  template <typename VH_range_a, typename VH_range_b>
-  boost::optional<Point> 
+  // Return value: the point coordinates are expressed in the tsb base
+  template <typename Weighted_point_range>
+  boost::optional<Tr_bare_point> 
   compute_aff_of_voronoi_face_and_tangent_subspace_intersection(
     int points_dim,
-    VH_range_a const& P,
+    Weighted_point_range const& P,
     Tangent_space_basis const& tsb,
     const Tr_traits &tr_traits) const
   {
     // As we're only interested by aff(v), Q is empty
     return compute_voronoi_face_and_tangent_subspace_intersection(
-      points_dim, P, std::vector<Tr_vertex_handle>(), tsb, tr_traits);
+      points_dim, P, std::vector<typename Weighted_point_range::value_type>(), 
+      tsb, tr_traits);
   }
   
   // Returns any point of the intersection between a Voronoi cell and a
   // tangent space.
   // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
   // Q: vertices which are common neighbors of all vertices of P
-  template <typename VH_range_a, typename VH_range_b>
-  boost::optional<Point> compute_voronoi_face_and_tangent_subspace_intersection(
+  // Return value: the point coordinates are expressed in the tsb base
+  template <typename Weighted_point_range_a, typename Weighted_point_range_b>
+  boost::optional<Tr_bare_point> 
+  compute_voronoi_face_and_tangent_subspace_intersection(
     int points_dim,
-    VH_range_a const& P,
-    VH_range_b const& Q,
+    Weighted_point_range_a const& P,
+    Weighted_point_range_b const& Q,
     Tangent_space_basis const& tsb,
     const Tr_traits &tr_traits) const
   {
     typedef CGAL::Quadratic_program_solution<ET> LP_solution;
     
     LP_solution sol = compute_voronoi_face_and_tangent_subspace_LP_problem(
-      points_dim, center_vh, P, Q, tsb, tr_traits);
+      points_dim, P, Q, tsb, tr_traits);
 
-    boost::optional<Point> ret;
+    boost::optional<Tr_bare_point> ret;
     if (sol.status() == CGAL::QP_OPTIMAL)
     {
       std::vector<FT> p;
@@ -2901,7 +3111,7 @@ next_face:
       {
         p.push_back(to_double(*it_v));
       }
-      ret = m_k.construct_point_d_object()(points_dim, p.begin(), p.end());
+      ret = tr_traits.construct_point_d_object()(points_dim, p.begin(), p.end());
     }
     else
     {
