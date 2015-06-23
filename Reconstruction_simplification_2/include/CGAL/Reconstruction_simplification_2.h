@@ -443,7 +443,7 @@ public:
     {
       Edge &edge = *ei;
       const Sample_vector& samples = edge.first->samples(edge.second);
-      Sample_vector::const_iterator it;
+      Sample_vector_const_iterator it;
       for (it = samples.begin(); it != samples.end(); ++it)
       {
         delete *it;
