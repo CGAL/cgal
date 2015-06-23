@@ -8,7 +8,7 @@ class Dialog_options : public QDialog, private Ui::Dialog_options
     Q_OBJECT
 
 public:
-    Dialog_options(QWidget *parent = 0)
+    Dialog_options(QWidget * = 0)
     {
         setupUi(this);
     }
