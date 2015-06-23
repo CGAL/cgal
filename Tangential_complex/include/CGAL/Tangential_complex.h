@@ -213,13 +213,28 @@ class Tangential_complex
     Tr_vertex_handle m_center_vertex;
   };
 
+public:
+  typedef typename std::vector<Tangent_space_basis>     TS_container;
+  typedef typename std::vector<Orthogonal_space_basis>  OS_container;
+private:
+  typedef typename std::vector<Tr_and_VH>               Tr_container;
+  typedef typename std::vector<Vector>                  Vectors;
+
+  // An Incident_simplex is the list of the vertex indices
+  // except the center vertex
+  typedef std::set<std::size_t>                         Incident_simplex;
+  typedef std::set<std::size_t>                         Indexed_simplex;
+  typedef std::vector<Incident_simplex>                 Star;
+  typedef std::vector<Star>                             Stars_container;
+
+  // For the priority queues of solve_inconsistencies_using_adaptive_alpha_TC
   class Simplex_and_alpha
   {
   public:
     Simplex_and_alpha() {}
     Simplex_and_alpha(
       std::size_t center_point_index,
-      std::set<std::size_t> const& simplex, // including "center_point_index"
+      Incident_simplex const& simplex, // NOT including "center_point_index"
       FT squared_alpha,
       Vector const& thickening_vector)
     : m_center_point_index(center_point_index),
@@ -236,23 +251,10 @@ class Tangential_complex
 
   private:
     std::size_t           m_center_point_index; // P
-    std::set<std::size_t> m_simplex; // Missing simplex (includes P)
+    Incident_simplex      m_simplex; // Missing simplex (does NOT includes P)
     FT                    m_squared_alpha;
     Vector                m_thickening_vector; // (P, Cq)
   };
-
-public:
-  typedef typename std::vector<Tangent_space_basis>     TS_container;
-  typedef typename std::vector<Orthogonal_space_basis>  OS_container;
-private:
-  typedef typename std::vector<Tr_and_VH>               Tr_container;
-  typedef typename std::vector<Vector>                  Vectors;
-
-  // An Incident_simplex is the list of the vertex indices
-  // except the center vertex
-  typedef std::set<std::size_t>                         Incident_simplex;
-  typedef std::vector<Incident_simplex>                 Star;
-  typedef std::vector<Star>                             Stars_container;
 
   // For transform_iterator
   static const Tr_point &vertex_handle_to_point(Tr_vertex_handle vh)
@@ -658,7 +660,7 @@ public:
         if (*it_inc_simplex->rbegin() == std::numeric_limits<std::size_t>::max())
           continue;
 
-        std::set<std::size_t> c = *it_inc_simplex;
+        Indexed_simplex c = *it_inc_simplex;
         c.insert(idx); // Add the missing index
 
         if (!is_simplex_consistent(c))
@@ -707,7 +709,7 @@ public:
             == std::numeric_limits<std::size_t>::max())
           continue;
 
-        std::set<std::size_t> c = *it_inc_simplex;
+        Indexed_simplex c = *it_inc_simplex;
         if (static_cast<int>(c.size()) > max_dim)
           max_dim = static_cast<int>(c.size());
         // Add the missing center vertex
@@ -755,6 +757,7 @@ public:
       << std::endl;
   }
   
+
   void solve_inconsistencies_using_adaptive_alpha_TC()
   {
 #ifdef CGAL_TC_PROFILING
@@ -774,15 +777,16 @@ public:
       m_triangulations[0].tr().geom_traits().construct_weighted_point_d_object();
 
     //-------------------------------------------------------------------------
-    //1. Fill priority queue
+    // 1. Fill priority queues
     //-------------------------------------------------------------------------
     typedef std::priority_queue<Simplex_and_alpha,
       std::vector<Simplex_and_alpha>,
       std::greater<Simplex_and_alpha> > AATC_pq;
+    typedef std::vector<AATC_pq> PQueues;
 
     // One queue per dimension, from intrinsic dim (index = 0) to 
     // ambiant dim (index = ambiant - intrinsic dim)
-    std::vector<AATC_pq> pqueues;
+    PQueues pqueues;
     pqueues.resize(m_ambient_dim - m_intrinsic_dim + 1);
 
     // For each triangulation
@@ -799,7 +803,7 @@ public:
         if (*s.rbegin() == std::numeric_limits<std::size_t>::max())
           continue;
 
-        int simplex_dim = s.size();
+        int simplex_dim = static_cast<int>(s.size());
 
         // P: points whose star does not contain "s"
         std::vector<std::size_t> P;
@@ -808,13 +812,13 @@ public:
         if (!P.empty())
         {
           Triangulation const& q_tr = m_triangulations[idx].tr();
-          std::set<std::size_t> full_simplex = s;
+          Indexed_simplex full_simplex = s;
           full_simplex.insert(idx);
           for (std::vector<std::size_t>::const_iterator it_p = P.begin(),
             it_p_end = P.end() ; it_p != it_p_end ; ++it_p)
           {
             // star(p) does not contain "s"
-            std::size_t const& p = *it_p;
+            std::size_t p = *it_p;
 
             Tr_bare_point intersection = 
               *compute_aff_of_voronoi_face_and_tangent_subspace_intersection(
@@ -831,8 +835,11 @@ public:
             Vector thickening_v = k_diff_points(inters_global, m_points[p]);
             FT squared_alpha = k_sqlen(thickening_v);
 
+            // We insert full_simplex \ p
+            Incident_simplex is = full_simplex;
+            is.erase(p);
             pqueues[simplex_dim - m_intrinsic_dim].push(
-              Simplex_and_alpha(p, full_simplex, squared_alpha, thickening_v));
+              Simplex_and_alpha(p, is, squared_alpha, thickening_v));
           }
         }
       }
@@ -848,9 +855,9 @@ public:
 
   std::ostream &export_to_off(
     const Simplicial_complex &complex, std::ostream & os,
-    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_red = NULL,
-    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_green = NULL,
-    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_blue = NULL)
+    std::set<Indexed_simplex > const *p_simpl_to_color_in_red = NULL,
+    std::set<Indexed_simplex > const *p_simpl_to_color_in_green = NULL,
+    std::set<Indexed_simplex > const *p_simpl_to_color_in_blue = NULL)
     const
   {
     return export_to_off(
@@ -860,9 +867,9 @@ public:
 
   std::ostream &export_to_off(
     std::ostream & os, bool color_inconsistencies = false,
-    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_red = NULL,
-    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_green = NULL,
-    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_blue = NULL,
+    std::set<Indexed_simplex > const *p_simpl_to_color_in_red = NULL,
+    std::set<Indexed_simplex > const *p_simpl_to_color_in_green = NULL,
+    std::set<Indexed_simplex > const *p_simpl_to_color_in_blue = NULL,
     const Simplicial_complex *p_complex = NULL) const
   {
     if (m_points.empty())
@@ -945,7 +952,7 @@ public:
         if (*it_inc_simplex->rbegin() == std::numeric_limits<std::size_t>::max())
           continue;
 
-        std::set<std::size_t> c = *it_inc_simplex;
+        Indexed_simplex c = *it_inc_simplex;
         c.insert(idx); // Add the missing index
 
         sc.add_simplex(c);
@@ -970,7 +977,7 @@ public:
   bool check_if_all_simplices_are_in_the_ambient_delaunay(
     const Simplicial_complex *p_complex = NULL,
     bool check_for_any_dimension_simplices = true,
-    std::set<std::set<std::size_t> > * incorrect_simplices = NULL) const
+    std::set<Indexed_simplex > * incorrect_simplices = NULL) const
   {
     typedef Simplicial_complex::Simplex                     Simplex;
     typedef Simplicial_complex::Simplex_range               Simplex_range;
@@ -1975,7 +1982,7 @@ next_face:
   // A simplex here is a local tri's full cell handle
   bool is_simplex_consistent(Tr_full_cell_handle fch, int cur_dim) const
   {
-    std::set<std::size_t> c;
+    Indexed_simplex c;
     for (int i = 0 ; i < cur_dim + 1 ; ++i)
     {
       std::size_t data = fch->vertex(i)->data();
@@ -2042,10 +2049,10 @@ next_face:
 
   // A simplex here is a list of point indices
   // CJTODO: improve it like the other "is_simplex_consistent" below
-  bool is_simplex_consistent(std::set<std::size_t> const& simplex) const
+  bool is_simplex_consistent(Indexed_simplex const& simplex) const
   {
     // Check if the simplex is in the stars of all its vertices
-    std::set<std::size_t>::const_iterator it_point_idx = simplex.begin();
+    Indexed_simplex::const_iterator it_point_idx = simplex.begin();
     // For each point p of the simplex, we parse the incidents cells of p
     // and we check if "simplex" is among them
     for ( ; it_point_idx != simplex.end() ; ++it_point_idx)
@@ -2081,7 +2088,7 @@ next_face:
     OutputIterator points_whose_star_does_not_contain_s,
     bool check_also_in_non_maximal_faces = false) const
   {
-    std::set<std::size_t> full_simplex = s;
+    Indexed_simplex full_simplex = s;
     full_simplex.insert(center_point);
 
     // Check if the simplex is in the stars of all its vertices
@@ -2261,7 +2268,7 @@ next_face:
       if (*incident_simplex.rbegin() == std::numeric_limits<std::size_t>::max())
         continue;
 
-      std::set<std::size_t> c = incident_simplex;
+      Indexed_simplex c = incident_simplex;
       c.insert(tr_index); // Add the missing index
 
 //*****************************************************************************
@@ -2273,7 +2280,7 @@ next_face:
       {
         is_inconsistent = true;
 
-        for (std::set<std::size_t>::const_iterator it = c.begin();
+        for (Indexed_simplex::const_iterator it = c.begin();
              it != c.end() ; ++it)
         {
           perturb(*it);
@@ -2422,7 +2429,7 @@ next_face:
           perturb(tr_index);
         else
         {
-          std::set<std::size_t>::const_iterator it_idx = c.begin();
+          Indexed_simplex::const_iterator it_idx = c.begin();
           std::advance(it_idx, rnd - 1);
           perturb(*it_idx);
         }
@@ -2502,15 +2509,15 @@ next_face:
 
   void insert_higher_dim_simplex_into_star(
     std::size_t index,
-    const std::set<std::size_t> &simplex)
+    const Indexed_simplex &simplex)
   {
     Incident_simplex incident_simplex = simplex;
     incident_simplex.erase(index); // Remove the center index
 
     Star &star = m_stars[index];
 
-    std::set<std::size_t>::const_iterator it_point_idx = simplex.begin();
-    std::set<std::size_t>::const_iterator it_point_idx_end = simplex.end();
+    Indexed_simplex::const_iterator it_point_idx = simplex.begin();
+    Indexed_simplex::const_iterator it_point_idx_end = simplex.end();
     for ( ; it_point_idx != it_point_idx_end ; ++it_point_idx)
     {
       // Skip center index
@@ -2533,12 +2540,12 @@ next_face:
   // "inconsistent_simplex" must be in star(p) but not in star(q)
   void solve_inconsistency_by_adding_higher_dimensional_simplices(
     std::size_t p_idx, std::size_t q_idx,
-    const std::set<std::size_t> &inconsistent_simplex)
+    const Indexed_simplex &inconsistent_simplex)
   {
     CGAL_assertion_code(
-      std::set<std::size_t> inc_s_minus_p = inconsistent_simplex;
+      Indexed_simplex inc_s_minus_p = inconsistent_simplex;
       inc_s_minus_p.erase(p_idx);
-      std::set<std::size_t> inc_s_minus_q = inconsistent_simplex;
+      Indexed_simplex inc_s_minus_q = inconsistent_simplex;
       inc_s_minus_q.erase(q_idx);
     );
     CGAL_assertion(std::find(m_stars[p_idx].begin(), m_stars[p_idx].end(),
@@ -2582,9 +2589,9 @@ next_face:
     // other threads are perturbing the positions
     const Point pt_p = compute_perturbed_point(p_idx);
 
-    std::set<std::size_t>::const_iterator it_point_idx =
+    Indexed_simplex::const_iterator it_point_idx =
                                                   inconsistent_simplex.begin();
-    std::set<std::size_t>::const_iterator it_point_idx_end =
+    Indexed_simplex::const_iterator it_point_idx_end =
                                                   inconsistent_simplex.end();
     // For each point of the simplex, we reproject it onto the tangent
     // space. Could be optimized since it's already been computed before.
@@ -2751,7 +2758,7 @@ next_face:
       /*if (m_ambient_dim - m_intrinsic_dim == 1)
       {
         std::cerr << "(dot product between normals = ";
-        std::set<std::size_t>::const_iterator it_v = 
+        Indexed_simplex::const_iterator it_v = 
           inconsistent_simplex.begin();
         std::size_t i1 = *it_v;
         ++it_v;
@@ -2855,7 +2862,7 @@ next_face:
     //-------------------------------------------------------------------------
     //7. Create a k+1-simplex (inconsistent_simplex, ti)
     //-------------------------------------------------------------------------
-    std::set<std::size_t> new_simplex = inconsistent_simplex;
+    Indexed_simplex new_simplex = inconsistent_simplex;
     new_simplex.insert(inside_point_idx);
 
     it_point_idx = new_simplex.begin();
@@ -2874,7 +2881,7 @@ next_face:
   // Returns true if some inconsistencies were found.
   // Precondition: incident_simplex is in the star of m_points[tr_index]
   bool check_and_solve_inconsistencies_by_adding_higher_dim_simplices(
-    std::size_t tr_index, const std::set<std::size_t> &incident_simplex)
+    std::size_t tr_index, const Incident_simplex &incident_simplex)
   {
     bool inconsistencies_found = false;
 
@@ -2883,11 +2890,11 @@ next_face:
         == std::numeric_limits<std::size_t>::max())
       return false;
 
-    std::set<std::size_t> simplex = incident_simplex;
+    Indexed_simplex simplex = incident_simplex;
     simplex.insert(tr_index);
 
     // Check if the simplex is in the stars of all its vertices
-    std::set<std::size_t>::const_iterator it_point_idx = incident_simplex.begin();
+    Incident_simplex::const_iterator it_point_idx = incident_simplex.begin();
     // For each point p of the simplex, we parse the incidents cells of p
     // and we check if "simplex" is among them
     for ( ; it_point_idx != incident_simplex.end() ; ++it_point_idx)
@@ -3264,9 +3271,9 @@ next_face:
   std::ostream &export_simplices_to_off(
     std::ostream & os, std::size_t &num_OFF_simplices,
     bool color_inconsistencies = false,
-    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_red = NULL,
-    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_green = NULL,
-    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_blue = NULL)
+    std::set<Indexed_simplex > const *p_simpl_to_color_in_red = NULL,
+    std::set<Indexed_simplex > const *p_simpl_to_color_in_green = NULL,
+    std::set<Indexed_simplex > const *p_simpl_to_color_in_blue = NULL)
     const
   {
     // If m_intrinsic_dim = 1, each point is output two times
@@ -3294,8 +3301,8 @@ next_face:
       color << 128 << " " << 128 << " " << 128;
 
       // Gather the triangles here, with an int telling its color
-      typedef std::vector<std::pair<std::set<std::size_t>, int> >
-                                                           Star_using_triangles;
+      typedef std::vector<std::pair<Indexed_simplex, int> >
+                                                          Star_using_triangles;
       Star_using_triangles star_using_triangles;
 
       // For each cell of the star
@@ -3303,7 +3310,7 @@ next_face:
       Star::const_iterator it_inc_simplex_end = m_stars[idx].end();
       for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
       {
-        std::set<std::size_t> c = *it_inc_simplex;
+        Indexed_simplex c = *it_inc_simplex;
         c.insert(idx);
         std::size_t num_vertices = c.size();
         ++num_maximal_simplices;
@@ -3349,8 +3356,8 @@ next_face:
         // the file when m_intrinsic dim = 2)
         if (m_intrinsic_dim == 1)
         {
-          std::set<std::size_t> tmp_c;
-          std::set<std::size_t>::iterator it = c.begin();
+          Indexed_simplex tmp_c;
+          Indexed_simplex::iterator it = c.begin();
           for ( ; it != c.end() ; ++it)
             tmp_c.insert(*it * 2);
           if (num_vertices == 2)
@@ -3370,8 +3377,8 @@ next_face:
           std::fill(booleans.begin() + num_vertices - 3, booleans.end(), true);
           do
           {
-            std::set<std::size_t> triangle;
-            std::set<std::size_t>::iterator it = c.begin();
+            Indexed_simplex triangle;
+            Indexed_simplex::iterator it = c.begin();
             for (int i = 0; it != c.end() ; ++i, ++it)
             {
               if (booleans[i])
@@ -3395,12 +3402,12 @@ next_face:
             == std::numeric_limits<std::size_t>::max())
           continue;
 
-        const std::set<std::size_t> &c = it_simplex->first;
+        const Indexed_simplex &c = it_simplex->first;
         int color_simplex = it_simplex->second;
 
         std::stringstream sstr_c;
 
-        std::set<std::size_t>::const_iterator it_point_idx = c.begin();
+        Indexed_simplex::const_iterator it_point_idx = c.begin();
         for ( ; it_point_idx != c.end() ; ++it_point_idx)
         {
           sstr_c << *it_point_idx << " ";
@@ -3466,9 +3473,9 @@ public:
   std::ostream &export_simplices_to_off(
     const Simplicial_complex &complex,
     std::ostream & os, std::size_t &num_OFF_simplices,
-    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_red = NULL,
-    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_green = NULL,
-    std::set<std::set<std::size_t> > const *p_simpl_to_color_in_blue = NULL)
+    std::set<Indexed_simplex > const *p_simpl_to_color_in_red = NULL,
+    std::set<Indexed_simplex > const *p_simpl_to_color_in_green = NULL,
+    std::set<Indexed_simplex > const *p_simpl_to_color_in_blue = NULL)
     const
   {
     typedef Simplicial_complex::Simplex                     Simplex;
@@ -3530,8 +3537,8 @@ public:
       // the file when m_intrinsic dim = 2)
       if (m_intrinsic_dim == 1)
       {
-        std::set<std::size_t> tmp_c;
-        std::set<std::size_t>::iterator it = c.begin();
+        Indexed_simplex tmp_c;
+        Indexed_simplex::iterator it = c.begin();
         for ( ; it != c.end() ; ++it)
           tmp_c.insert(*it * 2);
         if (num_vertices == 2)
@@ -3551,8 +3558,8 @@ public:
         std::fill(booleans.begin() + num_vertices - 3, booleans.end(), true);
         do
         {
-          std::set<std::size_t> triangle;
-          std::set<std::size_t>::iterator it = c.begin();
+          Indexed_simplex triangle;
+          Indexed_simplex::iterator it = c.begin();
           for (int i = 0; it != c.end() ; ++i, ++it)
           {
             if (booleans[i])
@@ -3573,7 +3580,7 @@ public:
           continue;
 
         os << 3 << " ";
-        std::set<std::size_t>::const_iterator it_point_idx = it_tri->begin();
+        Indexed_simplex::const_iterator it_point_idx = it_tri->begin();
         for ( ; it_point_idx != it_tri->end() ; ++it_point_idx)
         {
           os << *it_point_idx << " ";
@@ -3643,7 +3650,7 @@ public:
         if (*it_inc_simplex->rbegin() == std::numeric_limits<std::size_t>::max())
           continue;
 
-        std::set<std::size_t> c = *it_inc_simplex;
+        Indexed_simplex c = *it_inc_simplex;
         c.insert(idx); // Add the missing index
 
         double fatness = compute_simplex_fatness(c);
