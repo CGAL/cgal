@@ -166,8 +166,8 @@ public:
       }
 
       // then modify the polyhedron
-      // make_hole
-      Euler::make_hole(halfedge(f, pmesh), pmesh);
+      // make_hole. (see comment in function body)
+      this->make_hole(halfedge(f, pmesh), pmesh);
 
       for(typename CDT::Finite_edges_iterator eit = cdt.finite_edges_begin(),
                                               end = cdt.finite_edges_end();
@@ -226,6 +226,24 @@ public:
       }
     } // end loop on facets of the input polyhedron
   }
+
+  void make_hole(halfedge_descriptor h, PM& pmesh)
+  {
+    //we are not using Euler::make_hole because it has a precondition
+    //that the hole is not made on the boundary of the mesh
+    //here we allow making a hole on the boundary, and the pair(s) of
+    //halfedges that become border-border are fixed by the connectivity
+    //setting made in operator()
+    CGAL_assertion(!is_border(h, pmesh));
+    face_descriptor fd = face(h, pmesh);
+
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(h, pmesh))
+    {
+      CGAL::internal::set_border(hd, pmesh);
+    }
+    remove_face(fd, pmesh);
+  }
+
 
 }; // end class Triangulate_modifier
 
