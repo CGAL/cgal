@@ -26,7 +26,7 @@ void load_xy_file(const std::string& fileName, std::vector<Point>& points)
   Point point;
   while (ifs >> point)
     points.push_back(point);
-  
+
   ifs.close();
 }
 
@@ -34,10 +34,10 @@ int main ()
 {
   std::vector<Point> points;
   load_xy_file("data/stair.xy", points);
-  
+
   Rs_2 rs2(points);
 
   rs2.run(100); // 100 steps
-  
+
   return 0;
 }

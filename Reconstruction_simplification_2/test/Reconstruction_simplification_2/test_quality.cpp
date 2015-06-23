@@ -29,26 +29,26 @@ typedef CGAL::Second_of_pair_property_map <PointMassPair> Mass_property_map;
 
 int main ()
 {
-	PointMassList points;
-	//use the stair example for testing
-	load_xy_file<PointMassList, Point>("data/stair-noise00.xy", points);
+  PointMassList points;
+  //use the stair example for testing
+  load_xy_file<PointMassList, Point>("data/stair-noise00.xy", points);
 
-    Point_property_map point_pmap;
-    Mass_property_map  mass_pmap;
+  Point_property_map point_pmap;
+  Mass_property_map  mass_pmap;
 
-    CGAL::Reconstruction_simplification_2<K, Point_property_map, Mass_property_map>
-    	rs2(points, point_pmap, mass_pmap);
+  CGAL::Reconstruction_simplification_2<K, Point_property_map, Mass_property_map>
+  rs2(points, point_pmap, mass_pmap);
 
-    rs2.run_until(9);
-
-
-
-    std::cout << " total_edge_cost "<< rs2.total_edge_cost() << std::endl;
+  rs2.run_until(9);
 
 
-    assert(rs2.total_edge_cost() < 0.3);
-    assert(0 < rs2.total_edge_cost());
+
+  std::cout << " total_edge_cost "<< rs2.total_edge_cost() << std::endl;
 
 
-    rs2.print_stats_debug();
+  assert(rs2.total_edge_cost() < 0.3);
+  assert(0 < rs2.total_edge_cost());
+
+
+  rs2.print_stats_debug();
 }

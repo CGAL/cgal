@@ -18,13 +18,13 @@ typedef K::FT                                         		FT;
 
 int main ()
 {
-    std::vector<Point> points;
-	//use the stair example for testing
-	load_xy_file_points<Point>("data/stair-noise00.xy", points);
+  std::vector<Point> points;
+  //use the stair example for testing
+  load_xy_file_points<Point>("data/stair-noise00.xy", points);
 
-    CGAL::Reconstruction_simplification_2<K> rs2(points);
+  CGAL::Reconstruction_simplification_2<K> rs2(points);
 
-    rs2.run(100); //100 steps
+  rs2.run(100); //100 steps
 
-    rs2.print_stats_debug();
+  rs2.print_stats_debug();
 }
