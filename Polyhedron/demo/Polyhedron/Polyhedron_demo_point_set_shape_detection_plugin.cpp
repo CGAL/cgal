@@ -1,5 +1,4 @@
 #include "config.h"
-#include <random>
 #include "Scene_points_with_normal_item.h"
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
@@ -9,6 +8,7 @@
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
+#include <CGAL/Random.h>
 
 #include <CGAL/Shape_detection_3.h>
 
@@ -82,7 +82,7 @@ public:
 };
 
 void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered() {
-  std::mt19937 rng(time(0));
+  CGAL::Random rand(time(0));
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* item =
@@ -147,9 +147,9 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
         point_item->point_set()->push_back((*points)[i]);
 
       unsigned char r, g, b;
-      r = 64 + rng()%192;
-      g = 64 + rng()%192;
-      b = 64 + rng()%192;
+      r = static_cast<unsigned char>(64 + rand.get_int(0, 192));
+      g = static_cast<unsigned char>(64 + rand.get_int(0, 192));
+      b = static_cast<unsigned char>(64 + rand.get_int(0, 192));
       point_item->setRbgColor(r, g, b);
 
       // Providing a useful name consisting of the order of detection, name of type and number of inliers
