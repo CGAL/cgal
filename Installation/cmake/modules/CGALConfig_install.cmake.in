@@ -8,6 +8,9 @@
 
 set(CGAL_CONFIG_LOADED TRUE)
 
+get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+include("${CGAL_CONFIG_DIR}/CGALExports.cmake")
+
 # CGAL_DIR is the directory where this CGALConfig.cmake is installed
 set(CGAL_INSTALL_PREFIX "@CMAKE_INSTALL_PREFIX@")
 
