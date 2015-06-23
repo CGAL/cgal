@@ -780,7 +780,10 @@ public:
       std::vector<Simplex_and_alpha>,
       std::greater<Simplex_and_alpha> > AATC_pq;
 
-    AATC_pq pqueue;
+    // One queue per dimension, from intrinsic dim (index = 0) to 
+    // ambiant dim (index = ambiant - intrinsic dim)
+    std::vector<AATC_pq> pqueues;
+    pqueues.resize(m_ambient_dim - m_intrinsic_dimension + 1);
 
     // For each triangulation
     for (std::size_t idx = 0 ; idx < m_points.size() ; ++idx)
@@ -795,6 +798,8 @@ public:
         // Don't check infinite cells
         if (*s.rbegin() == std::numeric_limits<std::size_t>::max())
           continue;
+
+        int simplex_dim = s.size();
 
         // P: points whose star does not contain "s"
         std::vector<std::size_t> P;
@@ -826,8 +831,8 @@ public:
             Vector thickening_v = k_diff_points(inters_global, m_points[p]);
             FT squared_alpha = k_sqlen(thickening_v);
 
-            pqueue.push(Simplex_and_alpha(
-              p, full_simplex, squared_alpha, thickening_v));
+            pqueues[simplex_dim - m_intrinsic_dimension].push(
+              Simplex_and_alpha(p, full_simplex, squared_alpha, thickening_v));
           }
         }
       }
