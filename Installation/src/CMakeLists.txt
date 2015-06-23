@@ -69,7 +69,7 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
     endif()
   endif(NOT CGAL_AUTO_LINK_ENABLED)
 
-  install(TARGETS ${LIBRARY_NAME}
+  install(TARGETS ${LIBRARY_NAME} EXPORT CGALExports
           RUNTIME DESTINATION ${CGAL_INSTALL_BIN_DIR}
           LIBRARY DESTINATION ${CGAL_INSTALL_LIB_DIR}
           ARCHIVE DESTINATION ${CGAL_INSTALL_LIB_DIR})
@@ -162,6 +162,27 @@ endif()
 list(REMOVE_DUPLICATES CGAL_CONFIGURED_LIBRARIES)
 list(SORT CGAL_CONFIGURED_LIBRARIES)
 cache_set(CGAL_CONFIGURED_LIBRARIES "${CGAL_CONFIGURED_LIBRARIES}")
+
+# CGAL_CONFIGURED_LIBRARIES is a virtually useless variable, because
+# we do not know if those components actually created a target.  It
+# might seem bad that we hardcode the target names here, but they have
+# always been hardcoded in the CGALConfig files, so we do not make it
+# any worse. We can also not use export(EXPORT) since that is only
+# available in newer CMake versions.
+set(CGAL_ACTUAL_CONFIGURED_LIBRARIES "")
+macro(CGAL_add_if_target TARGET)
+  if(TARGET ${TARGET})
+    list(APPEND CGAL_ACTUAL_CONFIGURED_LIBRARIES ${TARGET})
+  endif()
+endmacro()
+
+CGAL_add_if_target(CGAL)
+CGAL_add_if_target(CGAL_Core)
+CGAL_add_if_target(CGAL_ImageIO)
+CGAL_add_if_target(CGAL_Qt3)
+CGAL_add_if_target(CGAL_Qt4)
+
+export(TARGETS ${CGAL_ACTUAL_CONFIGURED_LIBRARIES} NAMESPACE CGAL:: FILE "${CMAKE_BINARY_DIR}/CGALExports.cmake")
 
 message(STATUS "Sources for CGAL component libraries '${CGAL_CONFIGURED_LIBRARIES}' detected")
 
