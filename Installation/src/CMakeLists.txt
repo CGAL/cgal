@@ -47,12 +47,7 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
       SOVERSION "${CGAL_SONAME_VERSION}")
   endif()
 
-  if (NOT CGAL_AUTO_LINK_ENABLED )
-    get_target_property( ${LIBRARY_NAME}_LIBRARY_FULL_PATH ${LIBRARY_NAME} LOCATION  )
-  
-    set(${LIBRARY_NAME}_LIBRARY ${${LIBRARY_NAME}_LIBRARY_FULL_PATH} CACHE STRING "The ${LIBRARY_NAME} library" FORCE)
-    mark_as_advanced(${LIBRARY_NAME}_LIBRARY)
-  else(NOT CGAL_AUTO_LINK_ENABLED)
+  if(CGAL_AUTO_LINK_ENABLED)
     set(${LIBRARY_NAME}_LIBRARY)
 
     set_target_properties( ${LIBRARY_NAME} PROPERTIES 
@@ -67,7 +62,7 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
       add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(TargetDir)$(TargetName).pdb\" copy /Y \"$(TargetDir)$(TargetName).pdb\" \"$(TargetDir)..\" )
       add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(SolutionDir)lib\\$(ConfigurationName)\\$(TargetName).lib\" copy /Y \"$(SolutionDir)lib\\$(ConfigurationName)\\$(TargetName).lib\" \"$(SolutionDir)lib\" )
     endif()
-  endif(NOT CGAL_AUTO_LINK_ENABLED)
+  endif()
 
   install(TARGETS ${LIBRARY_NAME} EXPORT CGALExports
           RUNTIME DESTINATION ${CGAL_INSTALL_BIN_DIR}

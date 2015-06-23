@@ -22,11 +22,6 @@ endif()
 #
 # Compatibility with CMake 3.0
 #
-if(POLICY CMP0026)
-  # Allow the LOCATION target property
-  # http://www.cmake.org/cmake/help/v3.0/policy/CMP0026.html
-  cmake_policy(SET CMP0026 OLD)
-endif()
 if(POLICY CMP0042)
   # Do not enable the use of MACOSX_RPATH
   # http://www.cmake.org/cmake/help/v3.0/policy/CMP0042.html
