@@ -24,6 +24,10 @@
 #include "tbb/parallel_for.h"
 #endif // CGAL_LINKED_WITH_TBB
 
+#include <boost/function_output_iterator.hpp>
+#include <boost/lexical_cast.hpp>
+#include <string>
+
 namespace CGAL {
 
 template < class Gt, class FS, class Sh, class wA, class Ct >
@@ -71,6 +75,21 @@ public:
 }; // In_surface_tester
 
 
+struct Inc {
+  unsigned int * i;
+  
+  Inc(unsigned int& i)
+    : i(&i)
+  {}
+
+  template <typename T>
+  void operator()(const T&) const
+  {
+    ++(*i);
+  }
+
+};
+
 // Compute the number of neighbors of a point that lie within a fixed radius.
 template < class Gt, class FS, class Sh, class wA, class Ct >
 class
@@ -85,13 +104,19 @@ private:
 
     const Pointset&     _pts;
     const Search_tree&  _tree;
-    const FT&           _sq_rd;
+    const FT           _sq_rd;
     CountVec&           _nn;
 
 public:
     ComputeNN(const Pointset& points, const Search_tree&  tree,
               const FT& sq_radius, CountVec& nn)
-    : _pts(points), _tree(tree), _sq_rd(sq_radius), _nn(nn) {}
+      : _pts(points), _tree(tree), _sq_rd(
+#if 1
+                                          sqrt(sq_radius)
+#else
+sq_radius
+#endif 
+), _nn(nn) {}
     
 #ifdef CGAL_LINKED_WITH_TBB
     void operator()( const tbb::blocked_range< std::size_t >& range ) const {
@@ -100,12 +125,26 @@ public:
     }
 #endif // CGAL_LINKED_WITH_TBB
     void operator()( const std::size_t& i ) const {
+#if 1
+      Sphere sp(_pts[i], _sq_rd, 0);
+
+      Inc inc(_nn[i]);
+      _tree.search(boost::make_function_output_iterator(inc),sp);
+#endif
+#if 0
         // Iterate over the neighbors until the first one is found that is too far.
         Dynamic_search search( _tree, _pts[i] );
         for( typename Dynamic_search::iterator nit = search.begin();
              nit != search.end() && compare( _pts[i], nit->first, _sq_rd ) != LARGER;
              ++nit )
             ++_nn[i];
+        /*
+        if(count != _nn[i]){
+          std::string s = boost::lexical_cast<std::string>(count) + " !=  " + boost::lexical_cast<std::string>(_nn[i]) + "\n";
+          std::cerr << s;
+        }
+        */
+#endif
     }
 }; // class ComputeNN
 
@@ -141,7 +180,16 @@ public:
         // If the neighborhood is too small, the vertex is not moved.
         if( _nn[i] < 4 )
             return;
-    
+#if 1
+        Static_search search(_tree, _pts[i], _nn[i]);
+        Approximation pca( _nn[i] );
+        unsigned int column = 0;
+        for( typename Static_search::iterator nit = search.begin();
+             nit != search.end() && column < _nn[i];
+             ++nit, ++column ) {
+            pca.set_point( column, nit->first, 1.0 / _nn[ _ind.at( nit->first ) ] );
+        }
+#else
         // Collect the vertices within the ball and their weights.
         Dynamic_search search( _tree, _pts[i] );
         Approximation pca( _nn[i] );
@@ -152,6 +200,7 @@ public:
             pca.set_point( column, nit->first, 1.0 / _nn[ _ind.at( nit->first ) ] );
         }
         CGAL_assertion( column == _nn[i] );
+#endif
     
         // Compute the weighted least-squares planar approximation of the point set.
         if( !pca.compute() )
@@ -409,7 +458,11 @@ increase_scale( unsigned int iterations ) {
         // This can be done concurrently.
         CountVec neighbors( _tree.size(), 0 );
         try_parallel( ComputeNN( _points, _tree, _squared_radius, neighbors ), 0, _tree.size() );
-
+        /*
+        for(int i =0; i < neighbors.size(); i++){
+          std::cerr << neighbors[i] << std::endl;
+        }
+        */
         // Construct a mapping from each point to its index.
         PIMap indices;
         std::size_t index = 0;

@@ -31,6 +31,7 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Random.h>
 
 #include <CGAL/Scale_space_reconstruction_3/Shape_construction_3.h>
@@ -109,7 +110,7 @@ private:
     typedef Orthogonal_incremental_neighbor_search< Search_traits >
                                                         Dynamic_search;
     typedef typename Dynamic_search::Tree               Search_tree;
-
+    typedef Fuzzy_sphere< Search_traits >               Sphere;
     typedef CGAL::Random                                Random;
 
     // Constructing the surface.
