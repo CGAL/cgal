@@ -78,10 +78,8 @@ detect_duplicated_boundary_edges
 (PM& pmesh, OutputIterator out, LessHedge less_hedge)
 {
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
-
-//  pmesh.normalize_border();//only available in Polyhedron_3
-
   typedef std::set<halfedge_descriptor, LessHedge> Border_halfedge_set;
+
   Border_halfedge_set border_halfedge_set(less_hedge);
   BOOST_FOREACH(halfedge_descriptor he, halfedges(pmesh))
   {
