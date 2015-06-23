@@ -1412,8 +1412,7 @@ next_face:
 
         bool does_intersect =
           does_voronoi_face_and_tangent_subspace_intersect(
-            triangulation_dim, 
-            center_vertex, 
+            triangulation_dim,
             P, 
             curr_neighbors, 
             tsb, 
@@ -2738,7 +2737,6 @@ next_face:
   CGAL::Quadratic_program_solution<ET> 
     compute_voronoi_face_and_tangent_subspace_LP_problem(
     int points_dim,
-    Tr_vertex_handle center_vh,
     VH_range_a const& P,
     VH_range_b const& Q,
     Tangent_space_basis const& tsb,
@@ -2775,12 +2773,12 @@ next_face:
     //=========== First set of equations ===========
     // For points pi in P
     //   2(p0 - pi).x = p0^2 - wght(p0) - pi^2 + wght(pi)
-    Tr_point const& p0 = center_vh->point();
+    typename VH_range_a::const_iterator it_vh = P.begin();
+    Tr_point const& p0 = (*it_vh)->point();
     FT const w0 = point_weight(p0);
     FT p0_dot_p0 = scalar_pdct(pt_to_vec(drop_w(p0)), pt_to_vec(drop_w(p0)));
-
-    for (typename VH_range_a::const_iterator it_vh = P.begin(),
-                                             it_vh_end = P.end() ;
+    ++it_vh;
+    for (typename VH_range_a::const_iterator it_vh_end = P.end() ;
          it_vh != it_vh_end ; ++it_vh)
     {
       Tr_point const& pi = (*it_vh)->point();
@@ -2855,23 +2853,38 @@ next_face:
   template <typename VH_range_a, typename VH_range_b>
   bool does_voronoi_face_and_tangent_subspace_intersect(
     int points_dim,
-    Tr_vertex_handle center_vh,
     VH_range_a const& P,
     VH_range_b const& Q,
     Tangent_space_basis const& tsb,
     const Tr_traits &tr_traits) const
   {
     return compute_voronoi_face_and_tangent_subspace_LP_problem(
-      points_dim, center_vh, P, Q, tsb, tr_traits).status() == CGAL::QP_OPTIMAL;
+      points_dim, P, Q, tsb, tr_traits).status() == CGAL::QP_OPTIMAL;
   }
   
-  // Returns any point of intersection
+  // Returns any point of the intersection between aff(voronoi_cell) and a
+  // tangent space.
+  // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
+  template <typename VH_range_a, typename VH_range_b>
+  boost::optional<Point> 
+  compute_aff_of_voronoi_face_and_tangent_subspace_intersection(
+    int points_dim,
+    VH_range_a const& P,
+    Tangent_space_basis const& tsb,
+    const Tr_traits &tr_traits) const
+  {
+    // As we're only interested by aff(v), Q is empty
+    return compute_voronoi_face_and_tangent_subspace_intersection(
+      points_dim, P, std::vector<Tr_vertex_handle>(), tsb, tr_traits);
+  }
+  
+  // Returns any point of the intersection between a Voronoi cell and a
+  // tangent space.
   // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
   // Q: vertices which are common neighbors of all vertices of P
   template <typename VH_range_a, typename VH_range_b>
   boost::optional<Point> compute_voronoi_face_and_tangent_subspace_intersection(
     int points_dim,
-    Tr_vertex_handle center_vh,
     VH_range_a const& P,
     VH_range_b const& Q,
     Tangent_space_basis const& tsb,
