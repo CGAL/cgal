@@ -278,7 +278,7 @@ public:
                      const Kernel &k = Kernel()
                      )
   : m_k(k),
-    m_intrinsic_dimension(intrinsic_dimension),
+    m_intrinsic_dim(intrinsic_dimension),
     m_half_sparsity(0.5*sparsity),
     m_sq_half_sparsity(m_half_sparsity*m_half_sparsity),
     m_ambient_dim(k.point_dimension_d_object()(*first)),
@@ -314,7 +314,7 @@ public:
 
   int intrinsic_dimension() const
   {
-    return m_intrinsic_dimension;
+    return m_intrinsic_dim;
   }
   int ambient_dimension() const
   {
@@ -415,7 +415,7 @@ public:
 
     std::vector<FT> sum_eigen_values(m_ambient_dim, FT(0));
     std::size_t num_points_for_pca =
-      std::pow(BASE_VALUE_FOR_PCA, m_intrinsic_dimension);
+      std::pow(BASE_VALUE_FOR_PCA, m_intrinsic_dim);
 
     typename Points::const_iterator it_p = m_points.begin();
     typename Points::const_iterator it_p_end = m_points.end();
@@ -783,7 +783,7 @@ public:
     // One queue per dimension, from intrinsic dim (index = 0) to 
     // ambiant dim (index = ambiant - intrinsic dim)
     std::vector<AATC_pq> pqueues;
-    pqueues.resize(m_ambient_dim - m_intrinsic_dimension + 1);
+    pqueues.resize(m_ambient_dim - m_intrinsic_dim + 1);
 
     // For each triangulation
     for (std::size_t idx = 0 ; idx < m_points.size() ; ++idx)
@@ -831,7 +831,7 @@ public:
             Vector thickening_v = k_diff_points(inters_global, m_points[p]);
             FT squared_alpha = k_sqlen(thickening_v);
 
-            pqueues[simplex_dim - m_intrinsic_dimension].push(
+            pqueues[simplex_dim - m_intrinsic_dim].push(
               Simplex_and_alpha(p, full_simplex, squared_alpha, thickening_v));
           }
         }
@@ -883,7 +883,7 @@ public:
                 << std::endl;
     }
 
-    if (m_intrinsic_dimension < 1 || m_intrinsic_dimension > 3)
+    if (m_intrinsic_dim < 1 || m_intrinsic_dim > 3)
     {
       std::cerr << "Error: export_to_off => intrinsic dimension should be "
                    "between 1 and 3."
@@ -1007,9 +1007,9 @@ public:
          cit != ambient_dt.finite_full_cells_end() ; ++cit )
     {
       int lowest_dim =
-        (check_for_any_dimension_simplices ? 1 : m_intrinsic_dimension);
+        (check_for_any_dimension_simplices ? 1 : m_intrinsic_dim);
       int highest_dim =
-        (check_for_any_dimension_simplices ? m_ambient_dim : m_intrinsic_dimension);
+        (check_for_any_dimension_simplices ? m_ambient_dim : m_intrinsic_dim);
 
       for (int dim = lowest_dim ; dim <= highest_dim ; ++dim)
       {
@@ -1609,7 +1609,7 @@ next_face:
     typename Kernel::Scaled_vector_d  scaled_vec = m_k.scaled_vector_d_object();
 
     Tangent_space_basis ts;
-    ts.reserve(m_intrinsic_dimension);
+    ts.reserve(m_intrinsic_dim);
     ts.push_back(scaled_vec(t1, FT(1)/CGAL::sqrt(sqlen(t1))));
     ts.push_back(scaled_vec(t2, FT(1)/CGAL::sqrt(sqlen(t2))));
 
@@ -1621,13 +1621,13 @@ next_face:
 
     // CJTODO: this is only for torus_d
     Tangent_space_basis ts(p);
-    ts.reserve(m_intrinsic_dimension);
-    for (int dim = 0 ; dim < m_intrinsic_dimension ; ++dim)
+    ts.reserve(m_intrinsic_dim);
+    for (int dim = 0 ; dim < m_intrinsic_dim ; ++dim)
     {
       std::vector<FT> tt(m_ambient_dim, 0.);
       tt[2*dim] = -p[2*dim + 1];
       tt[2*dim + 1] = p[2*dim];
-      Vector t(2*m_intrinsic_dimension, tt.begin(), tt.end());
+      Vector t(2*m_intrinsic_dim, tt.begin(), tt.end());
       ts.push_back(t);
     }
 
@@ -1640,7 +1640,7 @@ next_face:
 #else
 
     unsigned int num_points_for_pca = static_cast<unsigned int>(
-      std::pow(BASE_VALUE_FOR_PCA, m_intrinsic_dimension));
+      std::pow(BASE_VALUE_FOR_PCA, m_intrinsic_dim));
 
     // Kernel functors
     typename Kernel::Construct_vector_d      constr_vec =
@@ -1699,7 +1699,7 @@ next_face:
     // The eigenvectors are sorted in increasing order of their corresponding
     // eigenvalues
     for (int j = m_ambient_dim - 1 ;
-         j >= m_ambient_dim - m_intrinsic_dimension ;
+         j >= m_ambient_dim - m_intrinsic_dim ;
          --j)
     {
       if (normalize_basis)
@@ -1721,7 +1721,7 @@ next_face:
     if (p_orth_space_basis)
     {
       p_orth_space_basis->origin() = p;
-      for (int j = m_ambient_dim - m_intrinsic_dimension - 1 ;
+      for (int j = m_ambient_dim - m_intrinsic_dim - 1 ;
            j >= 0 ;
            --j)
       {
@@ -1743,7 +1743,7 @@ next_face:
     }
 #if defined(CGAL_ALPHA_TC) && defined(CGAL_USE_A_FIXED_ALPHA)
     // Add the orthogonal vectors as "thickening vectors"
-    for (int j = m_ambient_dim - m_intrinsic_dimension - 1 ;
+    for (int j = m_ambient_dim - m_intrinsic_dim - 1 ;
           j >= 0 ;
           --j)
     {
@@ -1774,7 +1774,7 @@ next_face:
     //Vector t1(12., 15., 65.);
     //Vector t2(32., 5., 85.);
     //Tangent_space_basis ts;
-    //ts.reserve(m_intrinsic_dimension);
+    //ts.reserve(m_intrinsic_dim);
     //ts.push_back(diff_vec(t1, scaled_vec(n, inner_pdct(t1, n))));
     //ts.push_back(diff_vec(t2, scaled_vec(n, inner_pdct(t2, n))));
     //ts = compute_gram_schmidt_basis(ts, m_k);
@@ -1838,7 +1838,7 @@ next_face:
       tr_traits.compute_coordinate_d_object();
 
     Point global_point = tsb.origin();
-    for (int i = 0 ; i < m_intrinsic_dimension ; ++i)
+    for (int i = 0 ; i < m_intrinsic_dim ; ++i)
       global_point = k_transl(global_point,
                               k_scaled_vec(tsb[i], coord(p, i)));
 
@@ -1848,7 +1848,7 @@ next_face:
     {
       global_point = k_transl(
         global_point,
-        k_scaled_vec(tv[i].vec, coord(p, m_intrinsic_dimension + i)));
+        k_scaled_vec(tv[i].vec, coord(p, m_intrinsic_dim + i)));
     }
 #endif
     return global_point;
@@ -1868,7 +1868,7 @@ next_face:
     std::vector<FT> coords;
     // Ambiant-space coords of the projected point
     coords.reserve(tsb.dimension());
-    for (std::size_t i = 0 ; i < m_intrinsic_dimension ; ++i)
+    for (std::size_t i = 0 ; i < m_intrinsic_dim ; ++i)
     {
       // Local coords are given by the inner product with the vectors of tsb
       FT coord = inner_pdct(v, tsb[i]);
@@ -1920,7 +1920,7 @@ next_face:
     // Ambiant-space coords of the projected point
     std::vector<FT> p_proj(ccci(tsb.origin()), ccci(tsb.origin(), 0));
     coords.reserve(tsb.dimension());
-    for (std::size_t i = 0 ; i < m_intrinsic_dimension ; ++i)
+    for (std::size_t i = 0 ; i < m_intrinsic_dim ; ++i)
     {
       // Local coords are given by the inner product with the vectors of tsb
       FT c = inner_pdct(v, tsb[i]);
@@ -2206,7 +2206,7 @@ next_face:
 
     CGAL::Random_points_in_ball_d<Tr_bare_point>
       tr_point_in_ball_generator(
-        m_intrinsic_dimension, 
+        m_intrinsic_dim, 
         m_random_generator.get_double(0., m_half_sparsity));
 
     Tr_point local_random_transl =
@@ -2214,7 +2214,7 @@ next_face:
         *tr_point_in_ball_generator++, 0);
     Translation_for_perturb global_transl = k_constr_vec(m_ambient_dim);
     const Tangent_space_basis &tsb = m_tangent_spaces[point_idx];
-    for (int i = 0 ; i < m_intrinsic_dimension ; ++i)
+    for (int i = 0 ; i < m_intrinsic_dim ; ++i)
     {
       global_transl = k_transl(
         global_transl,
@@ -2386,7 +2386,7 @@ next_face:
 
         KNS_range kns_range = m_points_ds.query_ANN(
           global_center,
-          CGAL_TC_NUMBER_OF_PERTURBED_POINTS(m_intrinsic_dimension));
+          CGAL_TC_NUMBER_OF_PERTURBED_POINTS(m_intrinsic_dim));
         std::vector<std::size_t> neighbors;
         for (KNS_iterator nn_it = kns_range.begin() ;
              nn_it != kns_range.end() ;
@@ -2451,10 +2451,10 @@ next_face:
       return os;
     }
 
-    // If m_intrinsic_dimension = 1, we output each point two times
+    // If m_intrinsic_dim = 1, we output each point two times
     // to be able to export each segment as a flat triangle with 3 different
     // indices (otherwise, Meshlab detects degenerated simplices)
-    const int N = (m_intrinsic_dimension == 1 ? 2 : 1);
+    const int N = (m_intrinsic_dim == 1 ? 2 : 1);
 
     // Kernel functors
     typename Kernel::Compute_coordinate_d coord =
@@ -2723,7 +2723,7 @@ next_face:
 
     // CJTODO TEMP DEBUG
     // If co-intrinsic dimension = 1, let's compare normals
-    /*if (m_ambient_dim - m_intrinsic_dimension == 1)
+    /*if (m_ambient_dim - m_intrinsic_dim == 1)
     {
       typename Kernel::Scaled_vector_d k_scaled_vec =
         m_k.scaled_vector_d_object();
@@ -2748,7 +2748,7 @@ next_face:
         << inconsistent_simplex.size() - 1 << " simplex\n";
       
       // If co-intrinsic dimension = 1, let's compare normals
-      /*if (m_ambient_dim - m_intrinsic_dimension == 1)
+      /*if (m_ambient_dim - m_intrinsic_dim == 1)
       {
         std::cerr << "(dot product between normals = ";
         std::set<std::size_t>::const_iterator it_v = 
@@ -2908,7 +2908,7 @@ next_face:
         break;
       }
       // CJTODO TEMP
-      /*else if (m_ambient_dim - m_intrinsic_dimension == 1)
+      /*else if (m_ambient_dim - m_intrinsic_dim == 1)
       {
         typename Kernel::Difference_of_points_d k_diff_pts =
           m_k.difference_of_points_d_object();
@@ -3269,7 +3269,7 @@ next_face:
     std::set<std::set<std::size_t> > const *p_simpl_to_color_in_blue = NULL)
     const
   {
-    // If m_intrinsic_dimension = 1, each point is output two times
+    // If m_intrinsic_dim = 1, each point is output two times
     // (see export_vertices_to_off)
     num_OFF_simplices = 0;
     std::size_t num_maximal_simplices = 0;
@@ -3285,7 +3285,7 @@ next_face:
       Triangulation const& tr    = it_tr->tr();
       Tr_vertex_handle center_vh = it_tr->center_vertex();
 
-      if (&tr == NULL || tr.current_dimension() < m_intrinsic_dimension)
+      if (&tr == NULL || tr.current_dimension() < m_intrinsic_dim)
         continue;
 
       // Color for this star
@@ -3343,11 +3343,11 @@ next_face:
           }
         }
 
-        // If m_intrinsic_dimension = 1, each point is output two times,
+        // If m_intrinsic_dim = 1, each point is output two times,
         // so we need to multiply each index by 2
         // And if only 2 vertices, add a third one (each vertex is duplicated in
         // the file when m_intrinsic dim = 2)
-        if (m_intrinsic_dimension == 1)
+        if (m_intrinsic_dim == 1)
         {
           std::set<std::size_t> tmp_c;
           std::set<std::size_t>::iterator it = c.begin();
@@ -3408,7 +3408,7 @@ next_face:
 
         // In order to have only one time each simplex, we only keep it
         // if the lowest index is the index of the center vertex
-        if (*c.begin() != (m_intrinsic_dimension == 1 ? 2*idx : idx)
+        if (*c.begin() != (m_intrinsic_dim == 1 ? 2*idx : idx)
             && color_simplex == -1)
           continue;
 
@@ -3474,7 +3474,7 @@ public:
     typedef Simplicial_complex::Simplex                     Simplex;
     typedef Simplicial_complex::Simplex_range               Simplex_range;
 
-    // If m_intrinsic_dimension = 1, each point is output two times
+    // If m_intrinsic_dim = 1, each point is output two times
     // (see export_vertices_to_off)
     num_OFF_simplices = 0;
     std::size_t num_maximal_simplices = 0;
@@ -3521,14 +3521,14 @@ public:
 
       std::size_t num_vertices = c.size();
       // Do not export smaller dimension simplices
-      if (num_vertices < m_intrinsic_dimension + 1)
+      if (num_vertices < m_intrinsic_dim + 1)
         continue;
 
-      // If m_intrinsic_dimension = 1, each point is output two times,
+      // If m_intrinsic_dim = 1, each point is output two times,
       // so we need to multiply each index by 2
       // And if only 2 vertices, add a third one (each vertex is duplicated in
       // the file when m_intrinsic dim = 2)
-      if (m_intrinsic_dimension == 1)
+      if (m_intrinsic_dim == 1)
       {
         std::set<std::size_t> tmp_c;
         std::set<std::size_t>::iterator it = c.begin();
@@ -3617,7 +3617,7 @@ public:
   {
     std::ofstream csv_consistent("output/correlation_consistent.csv"); // CJTODO TEMP
     std::ofstream csv_inconsistent("output/correlation_inconsistent.csv"); // CJTODO TEMP
-    if (m_intrinsic_dimension < 3)
+    if (m_intrinsic_dim < 3)
     {
       std::cerr << std::endl
         << "==========================================================" << std::endl
@@ -3684,7 +3684,7 @@ public:
 
 private:
   const Kernel              m_k;
-  const int                 m_intrinsic_dimension;
+  const int                 m_intrinsic_dim;
   const double              m_half_sparsity;
   const double              m_sq_half_sparsity;
   const int                 m_ambient_dim;
