@@ -12,7 +12,7 @@ typedef CGAL::Surface_mesh<Point>          Surface_mesh;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/cube_quad.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/P.off";
   std::ifstream input(filename);
 
   Surface_mesh mesh;
@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 
   CGAL_assertion(is_pure_triangle(mesh));
 
-  std::ofstream cube_off("cube_tri.off");
+  std::ofstream cube_off("P_tri.off");
   cube_off << mesh;
   cube_off.close();
 
