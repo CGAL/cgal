@@ -618,10 +618,8 @@ public:
   {
     std::size_t num_simplices = 0;
     std::size_t num_inconsistent_simplices = 0;
-    typename Tr_container::const_iterator it_tr = m_triangulations.begin();
-    typename Tr_container::const_iterator it_tr_end = m_triangulations.end();
     // For each triangulation
-    for (std::size_t idx = 0 ; it_tr != it_tr_end ; ++it_tr, ++idx)
+    for (std::size_t idx = 0 ; idx < m_points.size() ; ++idx)
     {
       // For each cell
       Star::const_iterator it_inc_simplex = m_stars[idx].begin();
@@ -668,10 +666,8 @@ public:
   {
     int max_dim = -1;
 
-    typename Tr_container::const_iterator it_tr = m_triangulations.begin();
-    typename Tr_container::const_iterator it_tr_end = m_triangulations.end();
     // For each triangulation
-    for (std::size_t idx = 0 ; it_tr != it_tr_end ; ++it_tr, ++idx)
+    for (std::size_t idx = 0 ; idx < m_points.size() ; ++idx)
     {
       // For each cell of the star
       Star::const_iterator it_inc_simplex = m_stars[idx].begin();
@@ -814,10 +810,8 @@ public:
   {
     std::size_t num_simplices = 0;
     std::size_t num_inconsistent_simplices = 0;
-    typename Tr_container::const_iterator it_tr = m_triangulations.begin();
-    typename Tr_container::const_iterator it_tr_end = m_triangulations.end();
     // For each triangulation
-    for (std::size_t idx = 0 ; it_tr != it_tr_end ; ++it_tr, ++idx)
+    for (std::size_t idx = 0 ; idx < m_points.size() ; ++idx)
     {
       // We build a SC along the way in case it's inconsistent
       Simplicial_complex sc;
@@ -3422,10 +3416,8 @@ public:
     double sum_vol_edge_ratio_consistent = 0.;
     std::size_t num_inconsistent_simplices = 0;
     double sum_vol_edge_ratio_inconsistent = 0.;
-    typename Tr_container::const_iterator it_tr = m_triangulations.begin();
-    typename Tr_container::const_iterator it_tr_end = m_triangulations.end();
     // For each triangulation
-    for (std::size_t idx = 0 ; it_tr != it_tr_end ; ++it_tr, ++idx)
+    for (std::size_t idx = 0 ; idx < m_points.size() ; ++idx)
     {
       // For each cell
       Star::const_iterator it_inc_simplex = m_stars[idx].begin();
