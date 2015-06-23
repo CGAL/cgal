@@ -16,28 +16,30 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel>  Polyhedron;
 typedef Polyhedron::Vertex_handle   Vertex_handle;
 
-// extract vertices which are at most k (inclusive) far from vertex v
-std::vector<Vertex_handle> extract_k_ring(Vertex_handle v, int k)
+// extract vertices which are at most k (inclusive)
+// far from vertex v in the graph of edges
+void extract_k_ring(Vertex_handle v,
+                    int k,
+                    std::vector<Vertex_handle>& qv)
 {
   std::map<Vertex_handle, int>  D;
-  std::vector<Vertex_handle>    Q;
-  Q.push_back(v); D[v] = 0;
+  qv.push_back(v);
+  D[v] = 0;
   std::size_t current_index = 0;
 
   int dist_v;
-  while (current_index < Q.size() && (dist_v = D[Q[current_index]]) < k) {
-    v = Q[current_index++];
+  while (current_index < qv.size() && (dist_v = D[qv[current_index]]) < k)
+  {
+    v = qv[current_index++];
 
     Polyhedron::Halfedge_around_vertex_circulator e(v->vertex_begin()), e_end(e);
     do {
       Vertex_handle new_v = e->opposite()->vertex();
       if (D.insert(std::make_pair(new_v, dist_v + 1)).second) {
-        Q.push_back(new_v);
+        qv.push_back(new_v);
       }
     } while (++e != e_end);
   }
-
-  return Q;
 }
 
 int main(int argc, char* argv[])
@@ -66,11 +68,12 @@ int main(int argc, char* argv[])
   std::cout << "Refinement added " << new_vertices.size() << " vertices." << std::endl;
 
   Polyhedron::Vertex_iterator v = poly.vertices_begin();
-  std::advance(v, 82);
-  const std::vector<Vertex_handle>& region = extract_k_ring(v, 12);
+  std::advance(v, 82/*e.g.*/);
+  std::vector<Vertex_handle> region;
+  extract_k_ring(v, 12/*e.g.*/, region);
 
   bool success = CGAL::Polygon_mesh_processing::fair(poly, region);
-  std::cout << "Is fairing successful: " << success << std::endl;
+  std::cout << "Fairing : " << (success ? "succeeded" : "failed") << std::endl;
 
   std::ofstream faired_off("faired.off");
   faired_off << poly;
