@@ -48,8 +48,6 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
   endif()
 
   if(CGAL_AUTO_LINK_ENABLED)
-    set(${LIBRARY_NAME}_LIBRARY)
-
     set_target_properties( ${LIBRARY_NAME} PROPERTIES 
       OUTPUT_NAME_DEBUG          "${DEBUG_MANGLED_NAME}" 
       OUTPUT_NAME_RELEASE        "${RELEASE_MANGLED_NAME}" 
