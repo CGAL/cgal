@@ -2447,7 +2447,7 @@ namespace CGAL {
     typedef typename Kernel_traits<InputPoint>::Kernel InputKernel;
     typedef Cartesian_converter<InputKernel,Kernel> CC;
     typedef typename Kernel::Point_3 Point_3;
-  
+    CC cc=CC();
     Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count_cc<Point_3,CC>(cc)),
                         boost::make_transform_iterator(e, AFSR::Auto_count_cc<Point_3,CC>(cc) )  );
   

@@ -5,7 +5,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
-#include <CGAL/tuple.h>
 
 typedef CGAL::Simple_cartesian<double> K;
 
@@ -25,7 +24,7 @@ operator<<(std::ostream& os, const Facet& f)
 template <typename K>
 void fct(const char* fname)
 {
-  typedef K::Point_3  Point_3;
+  typedef typename K::Point_3  Point_3;
   std::ifstream in(fname); 
   std::vector<Point_3> points;
   std::vector<Facet> facets;
