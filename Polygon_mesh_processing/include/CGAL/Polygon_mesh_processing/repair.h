@@ -237,6 +237,8 @@ namespace internal {
 
 /// \ingroup PkgPolygonMeshProcessing
 /// removes the degenerate faces from a triangulated surface mesh.
+/// A face is considered degenerate if two of its vertices share the same location,
+/// or more generally if all its vertices are collinear.
 ///
 /// @pre `CGAL::is_pure_triangle(tmesh)`
 ///
@@ -250,8 +252,8 @@ namespace internal {
 /// \cgalNamedParamsBegin
 ///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap` \cgalParamEnd
 ///    \cgalParamBegin{geom_traits} a geometric traits class instance.
-///       The traits class must provide the nested types :
-///         - `Point_3`,
+///       The traits class must provide the nested type `Point_3`,
+///       and the nested functors :
 ///         - `Compare_distance_3` to compute the distance between 2 points
 ///         - `Collinear_are_ordered_along_line_3` to check whether 3 collinear points are ordered
 ///         - `Collinear_3` to check whether 3 points are collinear
@@ -261,7 +263,7 @@ namespace internal {
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-/// \return number of degenerate faces removed
+/// \return number of removed degenerate faces
 ///
 template <class TriangleMesh, class NamedParameters>
 std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
