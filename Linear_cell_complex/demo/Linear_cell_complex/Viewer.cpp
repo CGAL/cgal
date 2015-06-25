@@ -250,10 +250,11 @@ void Viewer::initDraw()
 {
     //Compile drawFacet
     //    std::cout << "Compile Display Lists : Faces, " << std::flush;
-    m_dlFaces = ::glGenLists(1);
+  /* Non flat shading does not work with tesselator. TODO
+     m_dlFaces = ::glGenLists(1);
     ::glNewList(m_dlFaces, GL_COMPILE);
     drawAllFaces(false);
-    ::glEndList();
+    ::glEndList(); */
 
     //Compile drawFacet with flat shading
     //    std::cout << "Faces (flat shading), " << std::flush;
@@ -286,8 +287,10 @@ void Viewer::draw()
 
   if ( !wireframe )
   {
-    if(flatShading) ::glCallList(m_dlFacesFlat);
-    else ::glCallList(m_dlFaces);
+    //if(flatShading)
+      ::glCallList(m_dlFacesFlat);
+    // Non flat shading does not work with tesselator TODO
+    // else ::glCallList(m_dlFaces);
   }
 
   if(edges) ::glCallList(m_dlEdges);
@@ -305,7 +308,7 @@ void Viewer::init()
 
   // Add custom key description (see keyPressEvent).
   setKeyDescription(Qt::Key_W, "Toggles wire frame display");
-  setKeyDescription(Qt::Key_F, "Toggles flat shading display");
+  //  setKeyDescription(Qt::Key_F, "Toggles flat shading display");
   setKeyDescription(Qt::Key_E, "Toggles edges display");
   setKeyDescription(Qt::Key_V, "Toggles vertices display");
 
@@ -322,7 +325,7 @@ void Viewer::init()
   ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
   // ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 
-  if (flatShading)
+  //  if (flatShading)
   {
     ::glShadeModel(GL_FLAT);
     ::glDisable(GL_BLEND);
@@ -331,14 +334,14 @@ void Viewer::init()
     ::glBlendFunc(GL_ONE, GL_ZERO);
     ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
   }
-  else
+  /*  else
   {
     ::glShadeModel(GL_SMOOTH);
     ::glEnable(GL_BLEND);
     ::glEnable(GL_LINE_SMOOTH);
     ::glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  }
+    }*/
 }
 
 void Viewer::keyPressEvent(QKeyEvent *e)
@@ -356,7 +359,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     handled = true;
     updateGL();
   }
-  else if ((e->key()==Qt::Key_F) && (modifiers==Qt::NoButton))
+  /*  else if ((e->key()==Qt::Key_F) && (modifiers==Qt::NoButton))
   {
     flatShading = !flatShading;
     if (flatShading)
@@ -378,7 +381,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     }
     handled = true;
     updateGL();
-  }
+    }*/
   else if ((e->key()==Qt::Key_E) && (modifiers==Qt::NoButton))
   {
     edges = !edges;
