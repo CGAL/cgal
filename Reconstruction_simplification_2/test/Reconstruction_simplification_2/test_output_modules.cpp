@@ -97,7 +97,7 @@ void test_index_output(Rs_2& rs2) {
   assert(points.size() >= 57 && points.size() <= 63);
   assert(edges.size() >= 28 && edges.size() <= 34);
 
-  for (int i = points.size() + 1 ; i < res.size() ; i++) {
+  for (std::size_t i = points.size() + 1 ; i < res.size() ; i++) {
     assert(res[i].substr(0,2) == "2 ");
   }
 }
