@@ -827,7 +827,7 @@ Regular_triangulation<RTTraits, TDS>
       typename RTTraits::Point_weight_d pw =
         geom_traits().point_weight_d_object();
       
-      if (pw(p) = pw(v->point()))
+      if (pw(p) == pw(v->point()))
         return v;
       // If dim == 0 and the new point has a bigger weight, 
       // we replace the point
