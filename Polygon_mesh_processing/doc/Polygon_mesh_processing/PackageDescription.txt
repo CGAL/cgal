@@ -50,7 +50,7 @@ and provides a list of the parameters that are used in this package.
 ## Predicate Functions and Classes ##
 - `CGAL::Polygon_mesh_processing::does_self_intersect()`
 - `CGAL::Polygon_mesh_processing::self_intersections()`
-- `CGAL::Point_inside_polygon_mesh`
+- `CGAL::Side_of_triangle_mesh`
 
 ## Orientation Functions ##
 - `CGAL::Polygon_mesh_processing::is_outward_oriented()`

@@ -5,6 +5,8 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
+#include <CGAL/Side_of_triangle_mesh.h>
+
 #include <CGAL/Timer.h>
 #include <boost/foreach.hpp>
 
@@ -102,7 +104,7 @@ void test(
 
   CGAL::Timer timer;
   timer.start();
-  CGAL::Point_inside_polygon_mesh<PolygonMesh, K> inside(mesh);
+  CGAL::Side_of_triangle_mesh<PolygonMesh, K> inside(mesh);
   std::cerr << "  Preprocessing took " << timer.time() << " sec." << std::endl;
   timer.reset();
 

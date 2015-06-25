@@ -19,10 +19,10 @@
 // Author(s)     : Sebastien Loriot and Ilker O. Yaz
 
 
-#ifndef CGAL_POINT_INSIDE_POLYGON_MESH_H
-#define CGAL_POINT_INSIDE_POLYGON_MESH_H
+#ifndef CGAL_SIDE_OF_TRIANGLE_MESH_H
+#define CGAL_SIDE_OF_TRIANGLE_MESH_H
 
-#include <CGAL/Polygon_mesh_processing/internal/Point_inside_polygon_mesh/Point_inside_vertical_ray_cast.h>
+#include <CGAL/Polygon_mesh_processing/internal/Side_of_triangle_mesh/Point_inside_vertical_ray_cast.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
 #include <CGAL/AABB_tree.h>
@@ -34,9 +34,21 @@ namespace CGAL {
 /** 
  * \ingroup PkgPolygonMeshProcessing
  * This class provides an efficient point location functionality with respect to a domain bounded
- * by one or several disjoint closed triangle mesh.
- * In case the triangle mesh as several connected components, a point is said to be inside the domain
+ * by one or several disjoint closed triangle meshes.
+ *
+ * A point is said to be on the bounded side of the domain
  * if an odd number of surfaces is crossed when walking from the point to infinity.
+ *
+ * The input triangle mesh is expected to contain no self-intersections
+ * and to be free from self-inclusions.
+ *
+ * In case the triangle mesh has several connected components,
+ * the same test is performed and returns correct results.
+ * In case of self-inclusions,
+ * the user should be aware that the predicate called
+ * inside every other sub-volume bounded by a nested surface
+ * will return in turns `ON_BOUNDED_SIDE` and `ON_UNBOUNDED_SIDE`,
+ * following the aforementioned parity criterion.
  *
  * This class depends on the package \ref PkgAABB_treeSummary.
  *
@@ -50,11 +62,12 @@ namespace CGAL {
  * \todo Code: Use this class as an implementation detail of Mesh_3's Polyhedral_mesh_domain_3.
        Remove `TriangleAccessor_3` as well as the concept in Mesh_3 since making `TriangleMesh`
        a model of `FaceListGraph` will make it useless
+
  */
 template <class TriangleMesh,
           class GeomTraits,
           class VertexPointMap = Default >
-class Point_inside_polygon_mesh
+class Side_of_triangle_mesh
 {
   // typedefs
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VertexPointMap> Primitive;
@@ -77,9 +90,9 @@ public:
    *
    * @pre `CGAL::is_closed(tmesh) && CGAL::is_pure_triangle(tmesh)`
    */
-  Point_inside_polygon_mesh(const TriangleMesh& tmesh,
-                            VertexPointMap vpmap,
-                            const GeomTraits& gt=GeomTraits())
+  Side_of_triangle_mesh(const TriangleMesh& tmesh,
+                        VertexPointMap vpmap,
+                        const GeomTraits& gt=GeomTraits())
   : ray_functor(gt.construct_ray_3_object())
   , vector_functor(gt.construct_vector_3_object())
   , own_tree(true)
@@ -100,8 +113,8 @@ public:
   *
   * @pre `CGAL::is_closed(tmesh) && CGAL::is_pure_triangle(tmesh)`
   */
-  Point_inside_polygon_mesh(const TriangleMesh& tmesh,
-                            const GeomTraits& gt=GeomTraits())
+  Side_of_triangle_mesh(const TriangleMesh& tmesh,
+                        const GeomTraits& gt=GeomTraits())
   : ray_functor(gt.construct_ray_3_object())
   , vector_functor(gt.construct_vector_3_object())
   , own_tree(true)
@@ -123,8 +136,8 @@ public:
   *
   * @pre `CGAL::is_closed(tmesh) && CGAL::is_pure_triangle(tmesh)`
   */
-  Point_inside_polygon_mesh(const AABB_tree& tree,
-    const GeomTraits& gt = GeomTraits())
+  Side_of_triangle_mesh(const AABB_tree& tree,
+                        const GeomTraits& gt = GeomTraits())
   : ray_functor(gt.construct_ray_3_object())
   , vector_functor(gt.construct_vector_3_object())
   , tree_ptr(&tree)
@@ -132,7 +145,7 @@ public:
   {
   }
 
-  ~Point_inside_polygon_mesh()
+  ~Side_of_triangle_mesh()
   {
     if (own_tree)
       delete tree_ptr;
@@ -159,4 +172,4 @@ public:
 
 } // namespace CGAL
 
-#endif //CGAL_POINT_INSIDE_POLYGON_MESH_H
+#endif //CGAL_SIDE_OF_TRIANGLE_MESH_H

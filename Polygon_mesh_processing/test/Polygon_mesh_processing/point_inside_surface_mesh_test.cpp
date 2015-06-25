@@ -4,7 +4,7 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/boost/graph/helpers.h>
 
-#include <CGAL/Point_inside_polygon_mesh.h>
+#include <CGAL/Side_of_triangle_mesh.h>
 
 #include "point_inside_helpers.h"
 
@@ -40,6 +40,10 @@ int main(int, char** argv)
   typedef CGAL::AABB_tree<AABB_traits>  AABB_tree;
 
   AABB_tree tree(faces(mesh).first, faces(mesh).second, mesh);
-  CGAL::Point_inside_polygon_mesh<Mesh, K> inside_test(tree);
+  CGAL::Side_of_triangle_mesh<Mesh, K> inside_test(tree);
 
+  CGAL::Bounded_side bs = inside_test(CGAL::ORIGIN);
+  std::cout << "Origin is " << bs << std::endl;
+
+  return 0;
 }

@@ -1,6 +1,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Point_inside_polygon_mesh.h>
+#include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
@@ -37,6 +37,10 @@ int main(int, char** argv)
   typedef CGAL::AABB_tree<AABB_traits>  AABB_tree;
 
   AABB_tree tree(faces(poly).first, faces(poly).second, poly);
-  CGAL::Point_inside_polygon_mesh<Polyhedron, K> inside_test(tree);
+  CGAL::Side_of_triangle_mesh<Polyhedron, K> inside_test(tree);
 
+  CGAL::Bounded_side bs = inside_test(CGAL::ORIGIN);
+  std::cout << "Origin is " << bs << std::endl;
+
+  return 0;
 }

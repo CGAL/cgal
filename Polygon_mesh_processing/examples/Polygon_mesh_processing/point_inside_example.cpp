@@ -4,7 +4,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/point_generators_3.h>
 
-#include <CGAL/Point_inside_polygon_mesh.h>
+#include <CGAL/Side_of_triangle_mesh.h>
 
 #include <vector>
 #include <fstream>
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  CGAL::Point_inside_polygon_mesh<Polyhedron, K> inside(poly);
+  CGAL::Side_of_triangle_mesh<Polyhedron, K> inside(poly);
 
   double size = max_coordinate(poly);
 

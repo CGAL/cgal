@@ -194,10 +194,23 @@ The intersecting triangles are displayed in dark grey on the right image.
 \cgalExample{Polygon_mesh_processing/self_intersections_example.cpp}
 
 
-\subsection PMPInsideTest Inside Test
+\subsection PMPInsideTest Side of Triangle Mesh
 
-The class `CGAL::Point_inside_polygon_mesh` provides a functor that tests whether a query point is 
-inside, outside, or on the boundary of the domain described by a given closed triangle mesh.
+The class `CGAL::Side_of_triangle_mesh` provides a functor that tests whether a query point is 
+inside, outside, or on the boundary of the domain bounded by a given closed triangle mesh.
+
+A point is said to be on the bounded side of the domain bounded by the input triangle mesh
+if an odd number of surfaces is crossed when walking from the point to infinity.
+The input triangle mesh is expected to contain no self-intersections
+and to be free from self-inclusions.
+
+The algorithm can handle the case of a triangle mesh with several connected components,
+and returns correct results.
+In case of self-inclusions, the ray intersections parity test is performed,
+and the execution will not fail.
+However, the user should be aware that the predicate
+alternately considers sub-volumes to be on the bounded and unbounded sides of the
+input triangle mesh.
 
 \subsubsection InsideExample Inside Test Example
 \cgalExample{Polygon_mesh_processing/point_inside_example.cpp}

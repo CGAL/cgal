@@ -11,7 +11,7 @@
 
 #include <CGAL/Timer.h>
 #include <CGAL/Random.h>
-#include <CGAL/Point_inside_polygon_mesh.h>
+#include <CGAL/Side_of_triangle_mesh.h>
 #include "ui_Point_inside_polyhedron_widget.h"
 
 #include <QAction>
@@ -99,7 +99,7 @@ public slots:
 
     // place all selected polyhedron and point items to vectors below
     std::vector<const Polyhedron*> polys;
-    typedef CGAL::Point_inside_polygon_mesh<Polyhedron, Kernel> Point_inside;
+    typedef CGAL::Side_of_triangle_mesh<Polyhedron, Kernel> Point_inside;
     std::vector<Point_inside*> inside_testers;// to put all polyhedra to query object
         // it does not support copy-construction so let's use pointers
     std::vector<Point_set*> point_sets;
