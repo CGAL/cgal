@@ -326,7 +326,7 @@ Section \ref PMPOrientation.
 
 
 ****************************************
-\section PMPNormalComp Computating Normals
+\section PMPNormalComp Computing Normals
 
 This package provides methods to compute normals on the polygon mesh.
 The normal can either be computed for each single face,
