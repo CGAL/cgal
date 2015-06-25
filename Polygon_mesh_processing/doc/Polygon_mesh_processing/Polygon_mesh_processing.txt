@@ -222,7 +222,7 @@ input triangle mesh.
 This package provides functions dealing with the orientation of faces in a closed polygon mesh.
 
 The function `CGAL::Polygon_mesh_processing::is_outward_oriented()` checks whether
-the polygon mesh is oriented such that the normals to all faces are oriented towards the
+an oriented polygon mesh is oriented such that the normals to all faces are oriented towards the
 outside of the domain bounded by the input polygon mesh.
 
 The function
