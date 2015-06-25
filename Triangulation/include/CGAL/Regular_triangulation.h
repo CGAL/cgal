@@ -112,7 +112,6 @@ public:
   using Base::rotate_rotor;
   using Base::infinite_vertex;
   using Base::insert_in_hole;
-  using Base::insert_outside_convex_hull_1;
   using Base::is_infinite;
   using Base::locate;
   using Base::points_begin;
@@ -270,7 +269,9 @@ public:
     CGAL_assertion( Vertex_handle() != hint );
     return insert(p, hint->full_cell());
   }
-
+  
+  Vertex_handle insert_outside_convex_hull_1(
+    const Weighted_point & p, Full_cell_handle s);
   Vertex_handle insert_outside_affine_hull(const Weighted_point &);
   Vertex_handle insert_in_conflicting_cell(
     const Weighted_point &, const Full_cell_handle,
@@ -827,7 +828,7 @@ Regular_triangulation<RTTraits, TDS>
       typename RTTraits::Point_weight_d pw =
         geom_traits().point_weight_d_object();
       
-      if (pw(p) == pw(v->point()))
+      if (pw(p) = pw(v->point()))
         return v;
       // If dim == 0 and the new point has a bigger weight, 
       // we replace the point
@@ -843,19 +844,46 @@ Regular_triangulation<RTTraits, TDS>
       // !NO break here!
     }
     default:
-      if( 1 == current_dimension() )
-      {
-        if( Base::OUTSIDE_CONVEX_HULL == lt )
-        {
-          return insert_outside_convex_hull_1(p, s);
-        }
-        Vertex_handle v = tds().insert_in_full_cell(s);
-        v->set_point(p);
-        return v;
-      }
+      if( 1 == current_dimension() && Base::OUTSIDE_CONVEX_HULL == lt)
+        return insert_outside_convex_hull_1(p, s);
       else
         return insert_in_conflicting_cell(p, s);
       break;
+  }
+}
+
+// NOT DOCUMENTED...
+template < class RTTraits, class TDS >
+typename Regular_triangulation<RTTraits, TDS>::Vertex_handle
+Regular_triangulation<RTTraits, TDS>
+::insert_outside_convex_hull_1(const Weighted_point & p, Full_cell_handle s)
+{
+  // This is a special case for dimension 1, because in that case, the right
+  // infinite full_cell is not correctly oriented... (sice its first vertex is the
+  // infinite one...
+  
+  bool in_conflict = is_in_conflict(p, s);
+
+  // If p is not in conflict with s, then p is hidden
+  // => we don't insert it
+  if (!in_conflict)
+  {
+    m_hidden_points.push_back(p);
+    return Vertex_handle();
+  }
+  else
+  {
+    CGAL_precondition( is_infinite(s) );
+    CGAL_precondition( 1 == current_dimension() );
+    int inf_v_index = s->index(infinite_vertex());
+    bool swap = (0 == s->neighbor(inf_v_index)->index(s));
+    Vertex_handle v = tds().insert_in_full_cell(s);
+    v->set_point(p);
+    if( swap )
+    {
+        s->swap_vertices(0, 1);
+    }
+    return v;
   }
 }
 
@@ -919,21 +947,15 @@ Regular_triangulation<RTTraits, TDS>
     }
     default:
     {
-      if( 1 == current_dimension() )
+      if( 1 == current_dimension() && Base::OUTSIDE_CONVEX_HULL == lt)
       {
         if (s->has_vertex(star_center))
-        {
-          if( Base::OUTSIDE_CONVEX_HULL == lt )
-          {
             return insert_outside_convex_hull_1(p, s);
-          }
-          Vertex_handle v = tds().insert_in_full_cell(s);
-          v->set_point(p);
-          return v;
-        }
       }
       else
+      {
         return insert_in_conflicting_cell(p, s, star_center);
+      }
     break;
     }
   }
@@ -950,22 +972,7 @@ Regular_triangulation<RTTraits, TDS>
 {
   typedef std::vector<Full_cell_handle> Full_cell_h_vector;
 
-  bool in_conflict;
-  if( current_dimension() < maximal_dimension() )
-  {
-    Conflict_pred_in_subspace c(
-      *this, p, 
-      coaffine_orientation_predicate(), 
-      power_test_in_flat_predicate());
-    in_conflict = c(s);
-  }
-  else
-  {
-    Orientation_d ori = geom_traits().orientation_d_object();
-    Power_test_d side = geom_traits().power_test_d_object();
-    Conflict_pred_in_fullspace c(*this, p, ori, side);
-    in_conflict = c(s);
-  }
+  bool in_conflict = is_in_conflict(p, s);
 
   // If p is not in conflict with s, then p is hidden
   // => we don't insert it
@@ -1069,7 +1076,7 @@ bool
 Regular_triangulation<RTTraits, TDS>
 ::is_in_conflict(const Weighted_point & p, Full_cell_const_handle s) const
 {
-  CGAL_precondition( 2 <= current_dimension() );
+  CGAL_precondition( 1 <= current_dimension() );
   if( current_dimension() < maximal_dimension() )
   {
     Conflict_pred_in_subspace c(
@@ -1093,7 +1100,7 @@ typename Regular_triangulation<RTTraits, TDS>::Facet
 Regular_triangulation<RTTraits, TDS>
 ::compute_conflict_zone(const Weighted_point & p, const Full_cell_handle s, OutputIterator out) const
 {
-  CGAL_precondition( 2 <= current_dimension() );
+  CGAL_precondition( 1 <= current_dimension() );
   if( current_dimension() < maximal_dimension() )
   {
     Conflict_pred_in_subspace c(
