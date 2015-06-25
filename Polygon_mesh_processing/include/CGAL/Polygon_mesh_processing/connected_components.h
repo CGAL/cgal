@@ -792,6 +792,14 @@ void keep_connected_components(PolygonMesh& pmesh
   using boost::get_param;
   using boost::choose_const_pmap;
 
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor   face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_iterator     face_iterator;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_iterator   vertex_iterator;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor   edge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_iterator     edge_iterator;
+
   //EdgeConstraintMap
   typedef typename boost::lookup_named_param_def <
     CGAL::edge_is_constrained_t,
@@ -819,6 +827,114 @@ void keep_connected_components(PolygonMesh& pmesh
   std::size_t num = connected_components(pmesh, face_cc,
     CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(ecmap).
     face_index_map(fim));
+
+  std::set<std::size_t> cc_to_keep;
+  BOOST_FOREACH(face_descriptor f, components_to_keep)
+    cc_to_keep.insert(face_cc[f]);
+
+  boost::vector_property_map<bool, VertexIndexMap> keep_vertex(vim);
+  BOOST_FOREACH(vertex_descriptor v, vertices(pmesh)){
+    keep_vertex[v] = false;
+  }
+  BOOST_FOREACH(face_descriptor f, faces(pmesh)){
+    if (cc_to_keep.find(face_cc[f]) != cc_to_keep.end())
+      face_cc[f] = 1;
+    else
+      face_cc[f] = 0;
+  }
+
+  BOOST_FOREACH(face_descriptor f, faces(pmesh)){
+    if (face_cc[f] == 1){
+      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f, pmesh), pmesh)){
+        vertex_descriptor v = target(h, pmesh);
+        keep_vertex[v] = true;
+      }
+    }
+  }
+
+  edge_iterator eb, ee;
+  for (boost::tie(eb, ee) = edges(pmesh); eb != ee;)
+  {
+    edge_descriptor e = *eb;
+    ++eb;
+    vertex_descriptor v = source(e, pmesh);
+    vertex_descriptor w = target(e, pmesh);
+    halfedge_descriptor h = halfedge(e, pmesh);
+    halfedge_descriptor oh = opposite(h, pmesh);
+    if (!keep_vertex[v] && !keep_vertex[w]){
+      // don't care about connectivity
+      // As vertices are not kept the faces and vertices will be removed later
+      remove_edge(e, pmesh);
+    }
+    else if (keep_vertex[v] && keep_vertex[w]){
+      face_descriptor fh = face(h, pmesh), ofh = face(oh, pmesh);
+      if (is_border(h, pmesh) && is_border(oh, pmesh)){
+#ifdef CGAL_CC_DEBUG
+        std::cerr << "null_face on both sides of " << e << " is kept\n";
+#endif
+      }
+      else if ((is_border(oh, pmesh) && face_cc[fh]) ||
+        (is_border(h, pmesh) && face_cc[ofh]) ||
+        (!is_border(oh, pmesh) && !is_border(h, pmesh) && face_cc[fh] && face_cc[ofh])){
+        // do nothing
+      }
+      else if (!is_border(h, pmesh) && face_cc[fh] && !is_border(oh, pmesh) && !face_cc[ofh]){
+        set_face(oh, boost::graph_traits<PolygonMesh>::null_face(), pmesh);
+      }
+      else if (!is_border(h, pmesh) && !face_cc[fh] && !is_border(oh, pmesh) && face_cc[ofh]){
+        set_face(h, boost::graph_traits<PolygonMesh>::null_face(), pmesh);
+      }
+      else {
+        // no face kept
+        assert((is_border(h, pmesh) || !face_cc[fh]) && (is_border(oh, pmesh) || !face_cc[ofh]));
+        // vertices pointing to e must change their halfedge
+        if (halfedge(v, pmesh) == oh){
+          set_halfedge(v, prev(h, pmesh), pmesh);
+        }
+        if (halfedge(w, pmesh) == h){
+          set_halfedge(w, prev(oh, pmesh), pmesh);
+        }
+        // shortcut the next pointers as e will be removed
+        set_next(prev(h, pmesh), next(oh, pmesh), pmesh);
+        set_next(prev(oh, pmesh), next(h, pmesh), pmesh);
+        remove_edge(e, pmesh);
+      }
+    }
+    else if (keep_vertex[v]){
+      if (halfedge(v, pmesh) == oh){
+        set_halfedge(v, prev(h, pmesh), pmesh);
+      }
+      set_next(prev(h, pmesh), next(oh, pmesh), pmesh);
+      remove_edge(e, pmesh);
+    }
+    else {
+      assert(keep_vertex[w]);
+      if (halfedge(w, pmesh) == h){
+        set_halfedge(w, prev(oh, pmesh), pmesh);
+      }
+      set_next(prev(oh, pmesh), next(h, pmesh), pmesh);
+      remove_edge(e, pmesh);
+    }
+  }
+
+  face_iterator fb, fe;
+  // We now can remove all vertices and faces not marked as kept
+  for (boost::tie(fb, fe) = faces(pmesh); fb != fe;){
+    face_descriptor f = *fb;
+    ++fb;
+    if (face_cc[f] != 1){
+      remove_face(f, pmesh);
+    }
+  }
+  vertex_iterator b, e;
+  for (boost::tie(b, e) = vertices(pmesh); b != e;){
+    vertex_descriptor v = *b;
+    ++b;
+    if (!keep_vertex[v]){
+      remove_vertex(v, pmesh);
+    }
+  }
+
 }
 
 } // namespace Polygon_mesh_processing

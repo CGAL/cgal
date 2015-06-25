@@ -70,13 +70,24 @@ int main(int argc, char* argv[])
   );
 
  std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
+ face_descriptor f_cc;
+ std::size_t n_cc = sm.number_of_faces() / 4;//any nb < number_of_faces
+ std::size_t n = 0;
  BOOST_FOREACH(face_descriptor f , faces(sm)){
    std::cout  << f << " in connected component " << fccmap[f] << std::endl;
+   if (n == n_cc)
+     f_cc = f;
+   ++n;
   }
  
  std::cerr << "We keep the two largest components" << std::endl; 
  PMP::keep_largest_connected_components(sm,2,
-   Constraint<Mesh>(sm,bound));
+   PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(sm,bound)));
+
+ std::vector<face_descriptor> ff;
+ ff.push_back(f_cc);
+ PMP::keep_connected_components(sm, ff,
+   PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(sm, bound)));
 
  std::cout << "mesh:\n" << sm << std::endl;
   return 0;
