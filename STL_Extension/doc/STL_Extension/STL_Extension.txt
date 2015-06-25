@@ -132,7 +132,7 @@ and catenating and splitting sets.
 
 \section stl_hash Hashing
 
-For handles and indices of vertices, halfedges, faces, etc., we provide specializations of `boost::hash<T>` and `std::hash<T>, so that they can be used with classes such as `boost::unordered_map`.
+For handles and indices of vertices, halfedges, faces, etc., we provide specializations of `boost::hash<T>` and `std::hash<T>`, so that they can be used with classes such as `boost::unordered_map`.
 
 \cgalExample{STL_Extension/unordered_map.cpp}
 

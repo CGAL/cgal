@@ -128,130 +128,113 @@ namespace CGAL {
     return ret;
   }
 
-    /// This class represents a vertex.
-    /// \cgalModels `Index`
-    /// \cgalModels `LessThanComparable`
-    /// \cgalModels `Hashable`
-    /// \sa `Halfedge_index`, `Edge_index`, `Face_index`
+    // Implementation for Surface_mesh::Vertex_index
+ 
     class SM_Vertex_index
  : public SM_Index<SM_Vertex_index>
     {
     public:
-        /// %Default constructor.
+
         SM_Vertex_index() : SM_Index<SM_Vertex_index>(-1) {}
 
         explicit SM_Vertex_index(size_type _idx) : SM_Index<SM_Vertex_index>(_idx) {}
 
-        /// prints the index and a short identification string to an ostream.
+
         friend std::ostream& operator<<(std::ostream& os, SM_Vertex_index const& v)
         {
           return (os << 'v' << (size_type)v );
         }
     };
 
-    /// This class represents a halfedge.
-    /// \cgalModels `Index`
-    /// \cgalModels `LessThanComparable`
-    /// \cgalModels `Hashable`
-    /// \sa `Vertex_index`, `Edge_index`, `Face_index`
+    // Implementation of Surface_mesh::Halfedge_index
     class SM_Halfedge_index
       : public SM_Index<SM_Halfedge_index>
     {
     public:
-        /// %Default constructor
+
         SM_Halfedge_index() : SM_Index<SM_Halfedge_index>(-1) {}
 
         explicit SM_Halfedge_index(size_type _idx) : SM_Index<SM_Halfedge_index>(_idx) {}
 
-        /// prints the index and a short identification string to an ostream.
         friend std::ostream& operator<<(std::ostream& os, SM_Halfedge_index const& h)
         {
           return (os << 'h' << (size_type)h );
         }
     };
 
-    /// This class represents a face
-    /// \cgalModels `Index`
-    /// \cgalModels `LessThanComparable`
-    /// \cgalModels `Hashable`
-    /// \sa `Vertex_index`, `Halfedge_index`, `Edge_index`
+    /// Implementation of Surfae_mesh::Face_index
     class SM_Face_index
       : public SM_Index<SM_Face_index>
     {
     public:
-        /// %Default constructor
+
         SM_Face_index() : SM_Index<SM_Face_index>(-1) {}
 
         explicit SM_Face_index(size_type _idx) : SM_Index<SM_Face_index>(_idx) {}
 
-        /// prints the index and a short identification string to an ostream.
+
         friend std::ostream& operator<<(std::ostream& os, SM_Face_index const& f)
         {
           return (os << 'f' << (size_type)f );
         }
     };
 
-    /// This class represents an edge.
-    /// \cgalModels `Index`
-    /// \cgalModels `LessThanComparable`
-    /// \cgalModels `Hashable`
-    /// \sa `Vertex_index`, `Halfedge_index`, `Face_index`
+    /// Implementation of Surface_mesh::Edge_index
     class SM_Edge_index
     {
     public:
         typedef boost::uint32_t size_type;
-        /// %Default constructor
+
         SM_Edge_index() : halfedge_(-1) { }
 
         SM_Edge_index(size_type idx) : halfedge_(idx * 2) { }
 
-        /// constructs an `SM_Edge_index` from a halfedge.
+
         SM_Edge_index(SM_Halfedge_index he) : halfedge_(he) { }
-        /// @cond CGAL_DOCUMENT_INTERNALS
-        /// returns the internal halfedge.
+
+        // returns the internal halfedge.
         SM_Halfedge_index halfedge() const { return halfedge_; }
 
-        /// returns the underlying index of this index.
+        // returns the underlying index of this index.
         operator size_type() const { return (size_type)halfedge_ / 2; }
 
-        /// resets index to be invalid (index=-1)
+        // resets index to be invalid (index=-1)
         void reset() { halfedge_.reset(); }
 
-        /// returns whether the index is valid, i.e., the index is not equal to -1.
+        // returns whether the index is valid, i.e., the index is not equal to -1.
         bool is_valid() const { return halfedge_.is_valid(); }
 
-        /// Are two indices equal?
+        // Are two indices equal?
         bool operator==(const SM_Edge_index& other) const { return (size_type)(*this) == (size_type)other; }
 
-        /// Are two indices different?
+        // Are two indices different?
         bool operator!=(const SM_Edge_index& other) const { return (size_type)(*this) != (size_type)other; }
 
-        /// compares by index.
+        // compares by index.
         bool operator<(const SM_Edge_index& other) const { return (size_type)(*this) < (size_type)other;}
 
-        /// decrements the internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// decrement.
+        // decrements the internal index. This operation does not
+        // guarantee that the index is valid or undeleted after the
+        // decrement.
         SM_Edge_index& operator--() { halfedge_ = SM_Halfedge_index((size_type)halfedge_ - 2); return *this; }
 
-        /// increments the internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// increment.
+        // increments the internal index. This operation does not
+        // guarantee that the index is valid or undeleted after the
+        // increment.
         SM_Edge_index& operator++() { halfedge_ = SM_Halfedge_index((size_type)halfedge_ + 2); return *this; }
 
-        /// decrements internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// decrement.
+        // decrements internal index. This operation does not
+        // guarantee that the index is valid or undeleted after the
+        // decrement.
         SM_Edge_index operator--(int) { SM_Edge_index tmp(*this); halfedge_ = SM_Halfedge_index((size_type)halfedge_ - 2); return tmp; }
 
-        /// increments internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// increment.
+        // increments internal index. This operation does not
+        // guarantee that the index is valid or undeleted after the
+        // increment.
         SM_Edge_index operator++(int) { SM_Edge_index tmp(*this); halfedge_ = SM_Halfedge_index((size_type)halfedge_ + 2); return tmp; }
 
-        /// @endcond 
 
-        /// prints the index and a short identification string to an ostream.
+      // prints the index and a short identification string to an ostream.
         friend std::ostream& operator<<(std::ostream& os, SM_Edge_index const& e)
         {
           return (os << 'e' << (size_type)e << " on " << e.halfedge());
@@ -272,7 +255,7 @@ namespace CGAL {
   /// surface. It is an alternative to the classes `HalfedgeDS` and `Polyhedron_3`
   /// defined in the packages  \ref PkgHDSSummary and \ref PkgPolyhedronSummary. 
   /// The main difference is that it is indexed based and not pointer based,
-  /// and that the mechanism for adding information to vertices, halfedges,
+  /// and that the mechanism for adding information to vertices, halfedges, edges,
   /// and faces is much simpler and done at runtime and not at compile time.
   /// When elements are removed, they are only marked as removed, and a garbage
   /// collection function must be called to really remove them. 
@@ -764,11 +747,10 @@ private:
 
     /// This class represents a vertex.
     /// \cgalModels `Index`
+    /// \cgalModels `LessThanComparable`
+    /// \cgalModels `Hashable`
     /// \sa `Halfedge_index`, `Edge_index`, `Face_index`
     class Vertex_index
-#ifndef DOXYGEN_RUNNING
- : public SM_Index<Vertex_index>
-#endif
     {
     public:
         /// %Default constructor.
@@ -790,11 +772,10 @@ private:
 
     /// This class represents a halfedge.
     /// \cgalModels `Index`
+    /// \cgalModels `LessThanComparable`
+    /// \cgalModels `Hashable`
     /// \sa `Vertex_index`, `Edge_index`, `Face_index`
     class Halfedge_index
-#ifndef DOXYGEN_RUNNING
-      : public SM_Index<Halfedge_index>
-#endif
     {
     public:
         /// %Default constructor
@@ -815,11 +796,10 @@ private:
 #ifdef DOXYGEN_RUNNING
     /// This class represents a face
     /// \cgalModels `Index`
+    /// \cgalModels `LessThanComparable`
+    /// \cgalModels `Hashable`
     /// \sa `Vertex_index`, `Halfedge_index`, `Edge_index`
     class Face_index
-#ifndef DOXYGEN_RUNNING
-      : public SM_Index<Face_index>
-#endif
     {
     public:
         /// %Default constructor
@@ -840,6 +820,8 @@ private:
 #ifdef DOXYGEN_RUNNING
     /// This class represents an edge.
     /// \cgalModels `Index`
+    /// \cgalModels `LessThanComparable`
+    /// \cgalModels `Hashable`
     /// \sa `Vertex_index`, `Halfedge_index`, `Face_index`
     class Edge_index
     {
@@ -2327,6 +2309,7 @@ private: //------------------------------------------------------- private data
     return os;
   }
 
+#ifndef DOXYGEN_RUNNING
   inline std::istream& sm_skip_comments( std::istream& in) {
       char c;
       in >> c;
@@ -2336,6 +2319,7 @@ private: //------------------------------------------------------- private data
         in.putback(c);
       return in;
   }
+#endif
 
   /// \relates Surface_mesh
   /// Extracts the surface mesh from an input stream in Ascii OFF format.
@@ -2975,8 +2959,10 @@ namespace std {
 #  pragma warning(disable:4099) // For VC10 it is class hash 
 #endif
 
+#ifndef DOXYGEN_RUNNING
   template < class T>
   struct hash;
+#endif
 
   template <>
   struct hash<CGAL::SM_Halfedge_index >

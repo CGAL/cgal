@@ -1,9 +1,12 @@
 
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arrangement_2.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Linear_cell_complex.h>
+#include <CGAL/boost/graph/graph_traits_Arrangement_2.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
 #include <map>
@@ -11,6 +14,9 @@
 
 
 typedef CGAL::Simple_cartesian<double> Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel> Arrangement_traits_2;
+typedef CGAL::Arrangement_2<Arrangement_traits_2> Arrangement_2;
+
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 typedef CGAL::Triangulation_2<Kernel> Triangulation_2;
@@ -33,8 +39,8 @@ fct(const P& )
 
 void fct2(Linear_cell_complex_3& lcc)
 {
-  typedef typename Linear_cell_complex_3::Dart_handle dh;
-  typedef typename Linear_cell_complex_3::Vertex_attribute_handle vh;
+  typedef Linear_cell_complex_3::Dart_handle dh;
+  typedef Linear_cell_complex_3::Vertex_attribute_handle vh;
 
   { // For dart handle
   std::map<dh, int> M;
@@ -55,6 +61,9 @@ void fct2(Linear_cell_complex_3& lcc)
 
 int main()
 {
+  Arrangement_2 A;
+  fct(A);
+
   Polyhedron P;
   fct(P);
 
