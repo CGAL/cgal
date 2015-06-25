@@ -12,7 +12,9 @@
  
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Sébastien Loriot, Jane Tournois, Ilker %O. Yaz}
-\cgalPkgDesc{This package provides functionality to fill holes, refine and fair triangulated regions on surface mesh.}
+\cgalPkgDesc{This package provides
+implements a collection of methods and classes for polygon mesh processing,
+ranging from basic operations on simplices, to complex geometry processing algorithms.}
 \cgalPkgManuals{Chapter_PolygonMeshProcessing,PkgPolygonMeshProcessing}
 \cgalPkgSummaryEnd
  
