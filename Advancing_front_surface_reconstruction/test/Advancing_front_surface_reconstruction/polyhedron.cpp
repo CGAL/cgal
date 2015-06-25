@@ -29,7 +29,7 @@ operator<<(std::ostream& os, const Facet& f)
 int main()  
 {
   Polyhedron polyhedron;
-  std::ifstream in("data.planar.xyz"); 
+  std::ifstream in("data/planar.xyz"); 
   std::vector<Point_3> points;
   std::vector<Facet> facets;
   
