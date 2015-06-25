@@ -35,6 +35,12 @@ make
 where the second line creates a `CMakeLists.txt` file (check
 its options in Section \ref seccreate_cgal_CMakeLists for various details).
 
+Note that, until CGAL 4.6, \ref seccreate_cgal_CMakeLists only recognized
+source files ending in `.cpp` or `.C`; if the above fails on the `cmake` command
+or produces an empty Makefile, check whether your source files go by such a name.
+Recent versions find all source files ending in
+`.cc`, `.cp`, `.cxx`, `.cpp`, `.CPP`, `.c++`, or `.C`.
+
 In a less ideal world, you probably have to install CMake, a makefile
 generator, and third party libraries. That is what this manual is about.
 
@@ -952,8 +958,9 @@ configuration.
 <DL>
 <DT><B>`-s source`</B><DD> If this parameter is given the script will
 create <B>a single executable</B> for 'source' linked with
-compilations of all other source files (`*.cpp`). This
-behaviour is usually needed for (graphical) demos. 
+compilations of all other source files
+(`*.cc`, `*.cp`, `*.cxx`, `*.cpp`, `*.CPP`, `*.c++`, or `*.C`).
+This behaviour is usually needed for (graphical) demos. 
 
 If the parameter is not given, the script creates <B>one executable for each given
 source file</B>.
@@ -983,7 +990,7 @@ contained in the `CGAL-\cgalReleaseNumber``/scripts` directory. It can be used
 to create `CMakeLists.txt` files for compiling \cgal
 applications. Executing `cgal_create_cmake_script` in an
 application directory creates a `CMakeLists.txt` containing
-rules for every `*.cpp` file there. The script is deprecated,
+rules for every C++ source file there. The script is deprecated,
 as it only works for applications with a single course file that only
 need libCGAL and libCGAL_Core.
 

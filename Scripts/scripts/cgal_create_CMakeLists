@@ -23,8 +23,9 @@
 #
 # Author(s)     : various
 
-# This script creates a CGAL cmake script with entries for .C and .cpp
-# files in the current directory - some options can be given or specified in a file
+# This script creates a CGAL cmake script with entries for files with a common
+# C++ file extension (as mentioned in the g++ man page) in the current directory.
+# Some options can be given or specified in a file.
 
 
 #LEDA
@@ -364,7 +365,7 @@ EOF
     cat << 'EOF'
 
 
-# Creating entries for all .cpp/.C files with "main" routine
+# Creating entries for all C++ files with "main" routine
 # ##########################################################
 
 EOF
@@ -392,10 +393,15 @@ if ( CGAL_Qt3_FOUND AND QT3_FOUND )
 EOF
       #-----------------------------------------------------------------------
 
-      for file in `ls *.C *.cpp 2> /dev/null | sort` ; do
+      for file in `ls *.cc *.cp *.cxx *.cpp *.CPP *.c++ *.C 2> /dev/null | sort` ; do
         # Create an executable for each cpp that  contains a function "main()"
-        BASE=`basename $file .C`
+        BASE=`basename $file .cc`
+        BASE=`basename $BASE .cp`
+        BASE=`basename $BASE .cxx`
         BASE=`basename $BASE .cpp`
+        BASE=`basename $BASE .CPP`
+        BASE=`basename $BASE .c++`
+        BASE=`basename $BASE .C`
         egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
         if [ $? -eq 0 ]; then
           echo "qt3_automoc( ${file} )"
@@ -435,10 +441,15 @@ EOF
       #-----------------------------------------------------------------------
     fi # qt4
 
-    for file in `ls *.C *.cpp 2> /dev/null | sort`; do
+    for file in `ls *.cc *.cp *.cxx *.cpp *.CPP *.c++ *.C 2> /dev/null | sort` ; do
       # Create an executable for each cpp that  contains a function "main()"
-      BASE=`basename $file .C`
+      BASE=`basename $file .cc`
+      BASE=`basename $BASE .cp`
+      BASE=`basename $BASE .cxx`
       BASE=`basename $BASE .cpp`
+      BASE=`basename $BASE .CPP`
+      BASE=`basename $BASE .c++`
+      BASE=`basename $BASE .C`
       egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
       if [ $? -eq 0 ]; then
         if [ "$qt4" = "y" ]; then
@@ -486,7 +497,7 @@ EOF
 EOF
     #-------------------------------------------------------------------------
 
-    for file in `ls *.C *.cpp 2> /dev/null | sort`; do
+    for file in `ls *.cc *.cp *.cxx *.cpp *.CPP *.c++ *.C 2> /dev/null | sort` ; do
       all="$all $file"
     done
 
@@ -556,8 +567,14 @@ EOF
           MOC_FILES="${BASE}.moc $MOC_FILES"
         fi
       done
-      for file in `ls *.cpp 2> /dev/null | sort`; do
-        BASE=`basename $file .cpp`
+      for file in `ls *.cc *.cp *.cxx *.cpp *.CPP *.c++ *.C 2> /dev/null | sort` ; do
+        BASE=`basename $file .cc`
+        BASE=`basename $BASE .cp`
+        BASE=`basename $BASE .cxx`
+        BASE=`basename $BASE .cpp`
+        BASE=`basename $BASE .CPP`
+        BASE=`basename $BASE .c++`
+        BASE=`basename $BASE .C`
         egrep 'Q_OBJECT' $file >/dev/null 2>&1
         if [ $? -eq 0 ]; then
           echo "  qt4_generate_moc( ${BASE}.cpp ${BASE}.moc )"
@@ -641,8 +658,38 @@ while getopts s:c:b:o:phvt OPT; do
   case "$OPT" in
     s)  SINGLE_SOURCE='y'
         SOURCE=$OPTARG
+        if [ "${SOURCE:(-3)}" = ".cc" ]; then
+           echo "Error: Source must not end with '.cc'!" >&2
+           echo
+           usage
+           exit 2
+        fi
+        if [ "${SOURCE:(-3)}" = ".cp" ]; then
+           echo "Error: Source must not end with '.cp'!" >&2
+           echo
+           usage
+           exit 2
+        fi
+        if [ "${SOURCE:(-4)}" = ".cxx" ]; then
+           echo "Error: Source must not end with '.cxx'!" >&2
+           echo
+           usage
+           exit 2
+        fi
         if [ "${SOURCE:(-4)}" = ".cpp" ]; then
            echo "Error: Source must not end with '.cpp'!" >&2
+           echo
+           usage
+           exit 2
+        fi
+        if [ "${SOURCE:(-4)}" = ".CPP" ]; then
+           echo "Error: Source must not end with '.CPP'!" >&2
+           echo
+           usage
+           exit 2
+        fi
+        if [ "${SOURCE:(-4)}" = ".c++" ]; then
+           echo "Error: Source must not end with '.c++'!" >&2
            echo
            usage
            exit 2
