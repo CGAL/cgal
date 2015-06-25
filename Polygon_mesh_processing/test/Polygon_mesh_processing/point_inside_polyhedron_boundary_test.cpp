@@ -10,9 +10,10 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
 
-int main(int, char** argv)
+int main(int argc, char** argv)
 {
-  std::ifstream input(argv[1]);
+  const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
+  std::ifstream input(filename);
   Polyhedron poly;
 
   if ( !input || !(input >> poly) || poly.empty() ){

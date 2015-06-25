@@ -42,12 +42,13 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<G> >{
 };
 
 
-int main(int, char* argv[]) 
+int main(int argc, char* argv[]) 
 {
   typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
   const double bound = std::cos(0.7* CGAL_PI);
+  const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
   Mesh sm;
-  std::ifstream in(argv[1]);
+  std::ifstream in(filename);
   in >> sm;
   
   std::vector<face_descriptor> cc;
