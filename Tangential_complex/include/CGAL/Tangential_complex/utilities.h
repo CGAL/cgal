@@ -145,24 +145,36 @@ namespace Tangential_complex_ {
     typedef typename Kernel::Vector_d                       Vector;
     typedef typename std::vector<Vector>::const_iterator    const_iterator;
 
-    Point m_origin; //fixme should probably be (const?) ref ?
+    std::size_t m_origin;
     std::vector<Vector> m_vectors;
 
-    Point& origin() { return m_origin; }
-    const Point& origin() const { return m_origin; }
+    std::size_t origin() const { return m_origin; }
+    void set_origin(std::size_t o) { m_origin = o; }
     const_iterator begin() const { return m_vectors.begin(); }
     const_iterator end() const { return m_vectors.end(); }
     std::size_t size() const { return m_vectors.size(); }
 
-    Vector& operator[](const std::size_t i) { return m_vectors[i]; }
-    const Vector& operator[](const std::size_t i) const { return m_vectors[i]; }
-    void push_back(const Vector& v) { m_vectors.push_back(v); }
-    void reserve(const std::size_t s) { m_vectors.reserve(s); }
+    Vector& operator[](const std::size_t i) 
+    {
+      return m_vectors[i]; 
+    }
+    const Vector& operator[](const std::size_t i) const 
+    {
+      return m_vectors[i];
+    }
+    void push_back(const Vector& v) 
+    {
+      m_vectors.push_back(v);
+    }
+    void reserve(const std::size_t s)
+    {
+      m_vectors.reserve(s);
+    }
 
     Basis() { }
-    Basis(const Point& p) : m_origin(p) { }
-    Basis(const Point& p, const std::vector<Vector>& vectors)
-      : m_origin(p), m_vectors(vectors)
+    Basis(std::size_t origin) : m_origin(origin) { }
+    Basis(std::size_t origin, const std::vector<Vector>& vectors)
+      : m_origin(origin), m_vectors(vectors)
     { }
     
 #ifdef CGAL_ALPHA_TC
@@ -192,10 +204,30 @@ namespace Tangential_complex_ {
     {
       return m_thickening_vectors;
     }
-    void add_thickening_vector(Vector const& vec, FT alpha_minus, FT alpha_plus)
+    void add_thickening_vector(
+      Vector const& vec, FT alpha_minus = FT(0), FT alpha_plus = FT(0))
     {
       m_thickening_vectors.push_back(
         Thickening_vector(vec, alpha_minus, alpha_plus));
+    }
+
+    void update_alpha_values_of_thickening_vectors(
+      Vector const& vec, Kernel const& k)
+    {
+      typename Kernel::Scalar_product_d k_scalar_pdct =
+        k.scalar_product_d_object();
+
+      for (Thickening_vectors::iterator it_v = m_thickening_vectors.begin(),
+                                        it_v_end = m_thickening_vectors.end() ;
+          it_v != it_v_end ; ++it_v)
+      {
+        const FT MARGIN = 0.001; // CJTODO TEMP
+        FT alpha_i = k_scalar_pdct(it_v->vec, vec);
+        if (alpha_i + MARGIN > it_v->alpha_plus)
+          it_v->alpha_plus = alpha_i + MARGIN;
+        else if (alpha_i - MARGIN < it_v->alpha_minus)
+          it_v->alpha_minus = alpha_i - MARGIN;
+      }
     }
 
     int dimension() const
@@ -209,11 +241,23 @@ namespace Tangential_complex_ {
     }
 #endif
   };
-
+  
+  // Using Gram-Schmidt
+  // * If the resulting vector after G-S algorithm is below "sqlen_threshold",
+  //   the vector considered linearly dependend to the existing vectors 
+  //   and is not added to the basis
+  // * Returns true if the vector was added to the basis
   template <typename K>
-  Basis<K> compute_gram_schmidt_basis(Basis<K> const& input_basis, K const& k)
+  bool add_vector_to_orthonormal_basis(
+    Basis<K> & basis, typename K::Vector_d const& v, K const& k, 
+    typename K::FT sqlen_threshold = typename K::FT(1e-13)
+#ifdef CGAL_ALPHA_TC
+    , bool add_to_thickening_vectors = false
+#endif
+    )
   {
     typedef Basis<K>                  Basis;
+    typedef typename K::FT            FT;
     typedef typename K::Vector_d      Vector;
 
     // Kernel functors
@@ -221,23 +265,57 @@ namespace Tangential_complex_ {
     typename K::Scalar_product_d        inner_pdct = k.scalar_product_d_object();
     typename K::Difference_of_vectors_d diff_vec   = k.difference_of_vectors_d_object();
 
+    Vector u = v;
+    for (int j = 0 ; j < basis.size() ; ++j)
+    {
+      Vector const& ej = basis[j];
+      Vector u_proj = scaled_vec(ej, inner_pdct(u, ej) / inner_pdct(ej, ej));
+      u = diff_vec(u, u_proj);
+    }
+    
+    FT sqlen_new_v = k.squared_length_d_object()(u);
+    bool add_it = (sqlen_new_v > sqlen_threshold);
+    if (add_it)
+    {
+      Vector new_v = scaled_vec(u, FT(1)/CGAL::sqrt(sqlen_new_v));
+
+      // If new_v is small, run the Gram-Schmidt once more to 
+      // re-orthogonalize it
+      if (sqlen_new_v < 0.01)
+      {
+        for (int j = 0 ; j < basis.size() ; ++j)
+        {
+          Vector const& ej = basis[j];
+          Vector new_v_proj = scaled_vec(
+            ej, inner_pdct(new_v, ej) / inner_pdct(ej, ej));
+          new_v = diff_vec(new_v, new_v_proj);
+        }
+        sqlen_new_v = k.squared_length_d_object()(new_v);
+        new_v = scaled_vec(new_v, FT(1)/CGAL::sqrt(sqlen_new_v));
+      }
+
+#ifdef CGAL_ALPHA_TC
+      if (add_to_thickening_vectors)
+        basis.add_thickening_vector(new_v);
+      else
+#endif
+        basis.push_back(new_v);
+    }
+    return add_it;
+  }
+
+  template <typename K>
+  Basis<K> compute_gram_schmidt_basis(Basis<K> const& input_basis, K const& k)
+  {
+    typedef Basis<K>                  Basis;
+
     Basis output_basis(input_basis.origin());
 
+    // Add vector one by one
     typename Basis::const_iterator inb_it = input_basis.begin();
     typename Basis::const_iterator inb_it_end = input_basis.end();
     for (int i = 0 ; inb_it != inb_it_end ; ++inb_it, ++i)
-    {
-      Vector u = *inb_it;
-
-      for (int j = 0 ; j < i ; ++j)
-      {
-        Vector const& ej = input_basis[j];
-        Vector u_proj = scaled_vec(ej, inner_pdct(u, ej) / inner_pdct(ej, ej));
-        u = diff_vec(u, u_proj);
-      }
-
-      output_basis.push_back(normalize_vector(u, k));
-    }
+      add_vector_to_orthonormal_basis(output_basis, *inb_it, k);
 
     return output_basis;
   }

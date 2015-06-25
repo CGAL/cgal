@@ -33,12 +33,13 @@
 //=========================== Alpha-TC or not? ================================
 
 #define CGAL_ALPHA_TC
-  #define CGAL_USE_A_FIXED_ALPHA
+  //#define CGAL_USE_A_FIXED_ALPHA
   const double CGAL_TC_ALPHA_VALUE = 0.3;
 
 //========================= Debugging & profiling =============================
 #define CGAL_TC_PROFILING
 #define CGAL_TC_VERBOSE
+#define CGAL_TC_PERFORM_EXTRA_CHECKS
 //#define CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
 //#define USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
 

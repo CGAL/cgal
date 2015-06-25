@@ -334,8 +334,9 @@ void make_tc(std::vector<Point> &points,
   }
   return;*/
   // CJTODO TEMP ===========================
-
-  //tc.check_if_all_simplices_are_in_the_ambient_delaunay();
+  
+  if (ambient_dim <= 4)
+    tc.check_if_all_simplices_are_in_the_ambient_delaunay();
 
   //tc.check_correlation_between_inconsistencies_and_fatness();
 
@@ -405,8 +406,11 @@ void make_tc(std::vector<Point> &points,
     //=========================================================================
     t.reset();
     // Try to solve the remaining inconstencies
-    //tc.check_and_solve_inconsistencies_by_adding_higher_dim_simplices();
+#ifdef CGAL_ALPHA_TC
     tc.solve_inconsistencies_using_adaptive_alpha_TC();
+#else
+    tc.check_and_solve_inconsistencies_by_adding_higher_dim_simplices();
+#endif
     fix2_time = t.elapsed(); t.reset();
     max_dim = tc.export_TC(complex, false);
     /*std::set<std::set<std::size_t> > not_delaunay_simplices;
@@ -656,8 +660,8 @@ int main()
             {
               points = generate_points_on_sphere_d<Kernel>(
                 num_points, ambient_dim,
-                std::atof(param1.c_str()),
-                std::atof(param2.c_str()));
+                std::atof(param1.c_str()),  // radius
+                std::atof(param2.c_str())); // radius_noise_percentage
             }
             else if (input == "generate_two_spheres_d")
             {
@@ -688,7 +692,8 @@ int main()
               points = generate_points_on_torus_d<Kernel>(
                 num_points, 
                 intrinsic_dim,
-                param1 == "Y");
+                param1 == "Y", // uniform
+                std::atof(param2.c_str())); // radius_noise_percentage
             }
             else if (input == "generate_klein_bottle_3D")
             {
