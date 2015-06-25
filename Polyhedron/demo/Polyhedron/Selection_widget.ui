@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>334</width>
-    <height>402</height>
+    <height>431</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -231,6 +231,16 @@
      <widget class="QPushButton" name="Erase_selected_facets_button">
       <property name="text">
        <string>Erase Selected Facets from Polyhedron Item</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Keep_connected_components_button">
+      <property name="toolTip">
+       <string extracomment="from selected facets"/>
+      </property>
+      <property name="text">
+       <string>Keep connected components of Selected Facets</string>
       </property>
      </widget>
     </item>

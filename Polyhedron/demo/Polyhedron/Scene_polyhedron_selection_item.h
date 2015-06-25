@@ -10,6 +10,7 @@
 #include <CGAL/gl_render.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <fstream>
 #include <boost/foreach.hpp>
@@ -612,6 +613,18 @@ public:
       polyhedron()->erase_facet((*fb)->halfedge());
     }
     selected_facets.clear();
+    changed_with_poly_item();
+  }
+
+  void keep_connected_components() {
+    if (selected_facets.empty()) { return; }
+
+    CGAL::Polygon_mesh_processing::keep_connected_components(*polyhedron()
+      , selected_facets
+      );
+    std::cout << "Todo : enter selected edges as constraints for connected components"
+      << std::endl;
+
     changed_with_poly_item();
   }
 
