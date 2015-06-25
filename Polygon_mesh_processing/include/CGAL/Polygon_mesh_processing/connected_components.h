@@ -765,6 +765,8 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
 *
 * \tparam PolygonMesh a model of `FaceListGraph`
 * \tparam NamedParameters a sequence of \ref namedparameters
+* \tparam FaceRange a range of `boost::graph_traits<PolygonMesh>::%face_descriptor`
+*         indicating the connected components to be kept.
 *
 * \param pmesh the polygon mesh
 * \param components_to_keep a face range, including one face or more on each component to be keep
@@ -779,6 +781,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
 *  \todo CODE
 */
 template <typename PolygonMesh
+        , typename FaceRange
         , typename NamedParameters>
 void keep_connected_components(PolygonMesh& pmesh
                              , const FaceRange& components_to_keep
