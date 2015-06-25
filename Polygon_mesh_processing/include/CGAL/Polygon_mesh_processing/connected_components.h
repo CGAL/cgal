@@ -536,7 +536,7 @@ connected_components(const PolygonMesh& pmesh,
 template <typename PolygonMesh, typename FaceComponentMap>
 typename boost::property_traits<FaceComponentMap>::value_type
 connected_components(const PolygonMesh& pmesh,
-                     FaceComponentMap& fcm)
+                     FaceComponentMap fcm)
 {
 
   return CGAL::Polygon_mesh_processing::connected_components(pmesh, fcm,
