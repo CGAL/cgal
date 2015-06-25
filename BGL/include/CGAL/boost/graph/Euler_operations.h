@@ -622,6 +622,7 @@ void remove_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
     h = nh;
   } while(h != end);
   remove_face(f, g);
+
   if(is_border(opposite(h, g),g))
     remove_edge(edge(h, g), g);
 }
@@ -820,7 +821,7 @@ add_face(const VertexRange& vr, Graph& g)
   /**
    * removes the incident face of `h` and changes all halfedges incident to the face into border halfedges. See `remove_face(g,h)` for a more generalized variant.
    *
-   * \pre None of the incident halfedges of the face is a border halfedge.
+   * \pre None of the incident edges of the face is a border edge.
    */
 template< typename Graph>
 void make_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
