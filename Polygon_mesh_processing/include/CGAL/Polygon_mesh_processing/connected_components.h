@@ -792,14 +792,6 @@ void keep_connected_components(PolygonMesh& pmesh
   using boost::get_param;
   using boost::choose_const_pmap;
 
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_iterator   vertex_iterator;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor   face_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::face_iterator     face_iterator;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor   edge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::edge_iterator     edge_iterator;
-
   //EdgeConstraintMap
   typedef typename boost::lookup_named_param_def <
     CGAL::edge_is_constrained_t,
@@ -827,11 +819,7 @@ void keep_connected_components(PolygonMesh& pmesh
   std::size_t num = connected_components(pmesh, face_cc,
     CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(ecmap).
     face_index_map(fim));
-
-
-
 }
-
 
 } // namespace Polygon_mesh_processing
 
