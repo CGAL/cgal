@@ -757,6 +757,78 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
+/*!
+* \ingroup PkgPolygonMeshProcessing
+*  keeps the connected components designated by the faces in `components_to_keep`,
+*  and erases the other connected components and all the isolated vertices.
+*  Two faces are considered in the same connected component if they share an edge that is not marked as constrained.
+*
+* \tparam PolygonMesh a model of `FaceListGraph`
+* \tparam NamedParameters a sequence of \ref namedparameters
+*
+* \param pmesh the polygon mesh
+* \param components_to_keep a face range, including one face or more on each component to be keep
+* \param np optional \ref namedparameters described below
+*
+* \cgalNamedParamsBegin
+*    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
+*    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
+*    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
+* \cgalNamedParamsEnd
+*
+*  \todo CODE
+*/
+template <typename PolygonMesh
+        , typename NamedParameters>
+void keep_connected_components(PolygonMesh& pmesh
+                             , const FaceRange& components_to_keep
+                             , const NamedParameters& np)
+{
+  typedef PolygonMesh PM;
+  using boost::choose_param;
+  using boost::get_param;
+  using boost::choose_const_pmap;
+
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_iterator   vertex_iterator;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor   face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_iterator     face_iterator;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor   edge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_iterator     edge_iterator;
+
+  //EdgeConstraintMap
+  typedef typename boost::lookup_named_param_def <
+    CGAL::edge_is_constrained_t,
+    NamedParameters,
+    internal::No_constraint<PolygonMesh>//default
+  > ::type                                               EdgeConstraintMap;
+  EdgeConstraintMap ecmap = choose_param(get_param(np, edge_is_constrained),
+    EdgeConstraintMap());
+
+  //FaceIndexMap
+  typedef typename GetFaceIndexMap<PM, NamedParameters>::type FaceIndexMap;
+  FaceIndexMap fim = choose_const_pmap(get_param(np, boost::face_index),
+    pmesh,
+    boost::face_index);
+
+  //vector_property_map
+  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
+
+  //VertexIndexMap
+  typedef typename GetVertexIndexMap<PM, NamedParameters>::type VertexIndexMap;
+  VertexIndexMap vim = choose_const_pmap(get_param(np, boost::vertex_index),
+    pmesh,
+    boost::vertex_index);
+
+  std::size_t num = connected_components(pmesh, face_cc,
+    CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(ecmap).
+    face_index_map(fim));
+
+
+
+}
+
 
 } // namespace Polygon_mesh_processing
 

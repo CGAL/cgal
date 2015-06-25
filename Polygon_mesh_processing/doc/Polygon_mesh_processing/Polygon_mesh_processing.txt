@@ -382,6 +382,11 @@ Then, `CGAL::Polygon_mesh_processing::connected_components()`
 collects all the connected components, and fills a property map
 with the indices of the different connected components.
 
+The function `CGAL::Polygon_mesh_processing::keep_connected_components()`
+enables the user to keep only a selection of connected components,
+provided as a range of faces that belong to the desired connected components
+(one or more per connected component).
+
 Finally, `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
 enables the user to keep only the largest connected components. This feature can
 for example be useful for noisy data were small connected components
