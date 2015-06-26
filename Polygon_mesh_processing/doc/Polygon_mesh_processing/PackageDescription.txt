@@ -71,12 +71,14 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::compute_vertex_normals()`
 - `CGAL::Polygon_mesh_processing::compute_normals()`
 
-## Other Classes and Functions ##
-- `CGAL::Polygon_mesh_slicer`
+## Connected Components
 - `CGAL::Polygon_mesh_processing::connected_component()`
 - `CGAL::Polygon_mesh_processing::connected_components()`
 - `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
 - `CGAL::Polygon_mesh_processing::keep_connected_components()`
+
+## Miscellaneous ##
+- `CGAL::Polygon_mesh_slicer`
 
 \todo make template parameter names uniform in other packages using BGL. Here we chose PolygonMesh as template parameter.
 It can be made short to PM. And TriangleMesh (or TM) specifies when the parameter should be a triangle mesh.
