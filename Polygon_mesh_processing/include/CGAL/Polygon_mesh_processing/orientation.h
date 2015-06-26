@@ -186,6 +186,39 @@ void reverse_face_orientations(PolygonMesh& pmesh)
   }
 }
 
+/*
+* \ingroup PkgPolygonMeshProcessing
+* reverses for each face in `face_range` the order of the vertices along the face boundary.
+*
+* @tparam PolygonMesh a model of `FaceListGraph`
+*/
+template<typename PolygonMesh, typename FaceRange>
+void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  BOOST_FOREACH(face_descriptor fd, face_range){
+    reverse_orientation(halfedge(fd,pmesh),pmesh);
+  }
+
+  // Note: A border edge is now parallel to its opposite edge.
+  // We scan all border edges for this property. If it holds, we
+  // reorient the associated hole and search again until no border
+  // edge with that property exists any longer. Then, all holes are
+  // reoriented.
+  BOOST_FOREACH(face_descriptor fd, face_range)
+    BOOST_FOREACH(halfedge_descriptor hd,
+                  halfedges_around_face(halfedge(fd, pmesh), pmesh))
+    {
+      halfedge_descriptor ohd = opposite(hd, pmesh);
+      if ( is_border(ohd, pmesh) &&
+         target(hd,pmesh) == target(ohd,pmesh))
+      {
+        reverse_orientation(ohd, pmesh);
+      }
+    }
+}
+
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 #endif // CGAL_ORIENT_POLYGON_MESH_H
