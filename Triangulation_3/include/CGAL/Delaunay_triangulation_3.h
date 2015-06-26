@@ -999,11 +999,6 @@ protected:
     : m_dt(dt), m_points(points), m_infos(infos), m_indices(indices), m_tls_hint(tls_hint)
     {}
 
-    // Constructor
-    Insert_point_with_info(const Insert_point_with_info &ip)
-    : m_dt(ip.m_dt), m_points(ip.m_points), m_infos(ip.m_infos), m_indices(ip.m_indices), m_tls_hint(ip.m_tls_hint)
-    {}
-
     // operator()
     void operator()( const tbb::blocked_range<size_t>& r ) const
     {
