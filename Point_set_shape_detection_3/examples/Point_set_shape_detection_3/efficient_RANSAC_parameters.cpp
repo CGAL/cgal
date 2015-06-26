@@ -37,7 +37,7 @@ int main()
   // Loads point set from a file. 
   // read_xyz_points_and_normals takes an OutputIterator for storing the points
   // and a property map to store the normal vector with each point.
-  std::ifstream stream("cube.pwn");
+  std::ifstream stream("data/cube.pwn");
 
   if (!stream ||
     !CGAL::read_xyz_points_and_normals(stream,
@@ -70,7 +70,7 @@ int main()
   parameters.probability = 0.05;
  
   // Detect shapes with at least 500 points.
-  parameters.min_points = 500;
+  parameters.min_points = 200;
 
   // Sets maximum Euclidean distance between a point and a shape.
   parameters.epsilon = 0.002;
