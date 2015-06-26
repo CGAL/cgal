@@ -37,16 +37,16 @@ void test_does_voronoi_face_and_alpha_tangent_subspace_intersect()
 
   osb.push_back(Vec(0.01, 0.995));
 
-  assert(does_voronoi_face_and_alpha_tangent_subspace_intersect(
+  assert(does_voronoi_face_and_fixed_alpha_tangent_subspace_intersect(
     points, 0, P, Q, osb, 0.0, k) == false);
     
-  assert(does_voronoi_face_and_alpha_tangent_subspace_intersect(
+  assert(does_voronoi_face_and_fixed_alpha_tangent_subspace_intersect(
     points, 0, P, Q, osb, 0.5, k) == false);
     
-  assert(does_voronoi_face_and_alpha_tangent_subspace_intersect(
+  assert(does_voronoi_face_and_fixed_alpha_tangent_subspace_intersect(
     points, 0, P, Q, osb, 1.0, k) == false);
     
-  assert(does_voronoi_face_and_alpha_tangent_subspace_intersect(
+  assert(does_voronoi_face_and_fixed_alpha_tangent_subspace_intersect(
     points, 0, P, Q, osb, 1.5, k) == true);
 }
 

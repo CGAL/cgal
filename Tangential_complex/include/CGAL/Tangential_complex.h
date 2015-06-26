@@ -228,7 +228,7 @@ private:
   typedef std::vector<Incident_simplex>                 Star;
   typedef std::vector<Star>                             Stars_container;
 
-  // For the priority queues of solve_inconsistencies_using_adaptive_alpha_TC
+  // For the priority queues of solve_inconsistencies_using_alpha_TC
   struct Simplex_and_alpha
   {
     Simplex_and_alpha() {}
@@ -852,14 +852,14 @@ private:
   }
 
 public:
-  void solve_inconsistencies_using_adaptive_alpha_TC()
+  void solve_inconsistencies_using_alpha_TC()
   {
 #ifdef CGAL_TC_PROFILING
     Wall_clock_timer t;
 #endif
 
 #ifdef CGAL_TC_VERBOSE
-    std::cerr << "Fixing inconsistencies using adaptive alpha TC..." << std::endl;
+    std::cerr << "Fixing inconsistencies using alpha TC..." << std::endl;
 #endif
 
     //-------------------------------------------------------------------------
@@ -948,7 +948,7 @@ public:
       if (!is_simplex_in_star(saa.m_center_point_index, saa.m_simplex))
       {
         std::cerr 
-          << "FAILED in solve_inconsistencies_using_adaptive_alpha_TC(): "
+          << "FAILED in solve_inconsistencies_using_alpha_TC(): "
           << "the simplex " << saa.m_center_point_index << ", ";
         std::copy(saa.m_simplex.begin(), saa.m_simplex.end(), 
           std::ostream_iterator<std::size_t>(std::cerr, ", ")); 
@@ -983,7 +983,7 @@ public:
       // CJTODO TEMP
       else
       {
-        std::cerr << "SUCCESS in solve_inconsistencies_using_adaptive_alpha_TC(): "
+        std::cerr << "SUCCESS in solve_inconsistencies_using_alpha_TC(): "
           << "the simplex " << saa.m_center_point_index << ", ";
         std::copy(saa.m_simplex.begin(), saa.m_simplex.end(), 
           std::ostream_iterator<std::size_t>(std::cerr, ", ")); 
@@ -1857,7 +1857,7 @@ next_face:
       m_k.squared_length_d_object();
     typename Kernel::Scaled_vector_d         scaled_vec =
       m_k.scaled_vector_d_object();
-    typename Kernel::Scalar_product_d        inner_pdct =
+    typename Kernel::Scalar_product_d        scalar_pdct =
       m_k.scalar_product_d_object();
     typename Kernel::Difference_of_vectors_d diff_vec =
       m_k.difference_of_vectors_d_object();
@@ -1967,7 +1967,7 @@ next_face:
 
     //Vector n = m_k.point_to_vector_d_object()(p);
     //n = scaled_vec(n, FT(1)/sqrt(sqlen(n)));
-    //std::cerr << "IP = " << inner_pdct(n, ts[0]) << " & " << inner_pdct(n, ts[1]) << std::endl;
+    //std::cerr << "IP = " << scalar_pdct(n, ts[0]) << " & " << scalar_pdct(n, ts[1]) << std::endl;
 
     return tsb;
     
@@ -1981,8 +1981,8 @@ next_face:
     //Vector t2(32., 5., 85.);
     //Tangent_space_basis ts;
     //ts.reserve(m_intrinsic_dim);
-    //ts.push_back(diff_vec(t1, scaled_vec(n, inner_pdct(t1, n))));
-    //ts.push_back(diff_vec(t2, scaled_vec(n, inner_pdct(t2, n))));
+    //ts.push_back(diff_vec(t1, scaled_vec(n, scalar_pdct(t1, n))));
+    //ts.push_back(diff_vec(t2, scaled_vec(n, scalar_pdct(t2, n))));
     //ts = compute_gram_schmidt_basis(ts, m_k);
     //return ts;
     */
@@ -2064,7 +2064,7 @@ next_face:
   Tr_bare_point project_point(const Point &p,
                               const Tangent_space_basis &tsb) const
   {
-    typename Kernel::Scalar_product_d inner_pdct =
+    typename Kernel::Scalar_product_d scalar_pdct =
       m_k.scalar_product_d_object();
     typename Kernel::Difference_of_points_d diff_points =
       m_k.difference_of_points_d_object();
@@ -2076,8 +2076,8 @@ next_face:
     coords.reserve(tsb.dimension());
     for (std::size_t i = 0 ; i < m_intrinsic_dim ; ++i)
     {
-      // Local coords are given by the inner product with the vectors of tsb
-      FT coord = inner_pdct(v, tsb[i]);
+      // Local coords are given by the scalar product with the vectors of tsb
+      FT coord = scalar_pdct(v, tsb[i]);
       coords.push_back(coord);
     }
         
@@ -2085,7 +2085,7 @@ next_face:
     Tangent_space_basis::Thickening_vectors const& tv = tsb.thickening_vectors();
     for (int i = 0 ; i < tv.size() ; ++i)
     {
-      FT coord = inner_pdct(v, tv[i].vec);
+      FT coord = scalar_pdct(v, tv[i].vec);
       coords.push_back(coord);
     }
 #endif
@@ -2112,7 +2112,7 @@ next_face:
                                             const Tr_traits &tr_traits) const
   {
     const int point_dim = m_k.point_dimension_d_object()(p);
-    typename Kernel::Scalar_product_d inner_pdct =
+    typename Kernel::Scalar_product_d scalar_pdct =
       m_k.scalar_product_d_object();
     typename Kernel::Difference_of_points_d diff_points =
       m_k.difference_of_points_d_object();
@@ -2133,8 +2133,8 @@ next_face:
     coords.reserve(tsb.dimension());
     for (std::size_t i = 0 ; i < m_intrinsic_dim ; ++i)
     {
-      // Local coords are given by the inner product with the vectors of tsb
-      FT c = inner_pdct(v, tsb[i]);
+      // Local coords are given by the scalar product with the vectors of tsb
+      FT c = scalar_pdct(v, tsb[i]);
       coords.push_back(c);
 
       // p_proj += c * tsb[i]
@@ -2147,7 +2147,7 @@ next_face:
     Tangent_space_basis::Thickening_vectors const& tv = tsb.thickening_vectors();
     for (int i = 0 ; i < tv.size() ; ++i)
     {
-      FT c = inner_pdct(v, tv[i].vec);
+      FT c = scalar_pdct(v, tv[i].vec);
       coords.push_back(c);
       
       // p_proj += c * tv[i].vec
@@ -2804,7 +2804,7 @@ next_face:
       m_k.squared_distance_d_object();
     typename Kernel::Difference_of_points_d k_diff_pts =
       m_k.difference_of_points_d_object();
-    typename Kernel::Scalar_product_d k_inner_pdct =
+    typename Kernel::Scalar_product_d k_scalar_pdct =
       m_k.scalar_product_d_object();
     typename Kernel::Construct_weighted_point_d k_constr_wp =
       m_k.construct_weighted_point_d_object();
@@ -2983,9 +2983,9 @@ next_face:
         compute_perturbed_point(q_idx), compute_perturbed_point(p_idx));
       pq = k_scaled_vec(pq, FT(1)/sqrt(k_sqlen(pq)));
       FT dot_product_1 = std::abs(
-          k_inner_pdct(m_orth_spaces[p_idx][0], pq));
+          k_scalar_pdct(m_orth_spaces[p_idx][0], pq));
       FT dot_product_2 = std::abs(
-          k_inner_pdct(m_orth_spaces[q_idx][0], pq));
+          k_scalar_pdct(m_orth_spaces[q_idx][0], pq));
       csv_stream << inside_pt_indices.size() << " ; ";
       csv_stream << dot_product_1 << " ; " << dot_product_2;
       csv_stream << std::endl;
@@ -3008,7 +3008,7 @@ next_face:
         for ( ; it_v != inconsistent_simplex.end() ; ++it_v)
         {
           FT dot_products_between_normals =
-            k_inner_pdct(m_tangent_spaces[i1][0], m_tangent_spaces[*it_v][0]);
+            k_scalar_pdct(m_tangent_spaces[i1][0], m_tangent_spaces[*it_v][0]);
           std::cerr << dot_products_between_normals << ", ";
           //csv_stream << " ; " <<dot_products_between_normals;
         }
@@ -3048,11 +3048,11 @@ next_face:
         const Weighted_point wp_w0 = k_constr_wp(k_drop_w(global_Cq), FT(0));
         FT a =
           (k_power_dist(cp_w0, ti_w) - k_power_dist(cp_w0, p_w)) /
-          (FT(2)*k_inner_pdct(k_diff_pts(cq, cp), k_diff_pts(ti, pt_p)));
+          (FT(2)*k_scalar_pdct(k_diff_pts(cq, cp), k_diff_pts(ti, pt_p)));
 #else
         FT a =
           (k_sqdist(cp, ti) - k_sqdist(cp, pt_p)) /
-          (FT(2)*k_inner_pdct(k_diff_pts(cq, cp), k_diff_pts(ti, pt_p)));
+          (FT(2)*k_scalar_pdct(k_diff_pts(cq, cp), k_diff_pts(ti, pt_p)));
 #endif
 
         if (a < min_a)
@@ -3166,15 +3166,15 @@ next_face:
           m_k.scaled_vector_d_object();
         typename Kernel::Squared_length_d k_sqlen =
           m_k.squared_length_d_object();
-        typename Kernel::Scalar_product_d k_inner_pdct =
+        typename Kernel::Scalar_product_d k_scalar_pdct =
           m_k.scalar_product_d_object();
         Vector pq = k_diff_pts(
           compute_perturbed_point(*it_point_idx), compute_perturbed_point(tr_index));
         pq = k_scaled_vec(pq, FT(1)/sqrt(k_sqlen(pq)));
         FT dot_product_1 = std::abs(
-            k_inner_pdct(m_orth_spaces[tr_index][0], pq));
+            k_scalar_pdct(m_orth_spaces[tr_index][0], pq));
         FT dot_product_2 = std::abs(
-            k_inner_pdct(m_orth_spaces[*it_point_idx][0], pq));
+            k_scalar_pdct(m_orth_spaces[*it_point_idx][0], pq));
         csv_stream << "0 ; ";
         csv_stream << dot_product_1 << " ; " << dot_product_2;
         csv_stream << std::endl;
@@ -3379,7 +3379,7 @@ next_face:
   // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
   // Q: vertices which are common neighbors of all vertices of P
   template <typename Indexed_point_range_a, typename Indexed_point_range_b>
-  bool does_voronoi_face_and_alpha_tangent_subspace_intersect(
+  bool does_voronoi_face_and_fixed_alpha_tangent_subspace_intersect(
       std::size_t center_pt_index,
       Indexed_point_range_a const& P,
       Indexed_point_range_b const& Q,

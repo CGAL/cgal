@@ -262,14 +262,14 @@ namespace Tangential_complex_ {
 
     // Kernel functors
     typename K::Scaled_vector_d         scaled_vec = k.scaled_vector_d_object();
-    typename K::Scalar_product_d        inner_pdct = k.scalar_product_d_object();
+    typename K::Scalar_product_d        scalar_pdct = k.scalar_product_d_object();
     typename K::Difference_of_vectors_d diff_vec   = k.difference_of_vectors_d_object();
 
     Vector u = v;
     for (int j = 0 ; j < basis.size() ; ++j)
     {
       Vector const& ej = basis[j];
-      Vector u_proj = scaled_vec(ej, inner_pdct(u, ej) / inner_pdct(ej, ej));
+      Vector u_proj = scaled_vec(ej, scalar_pdct(u, ej) / scalar_pdct(ej, ej));
       u = diff_vec(u, u_proj);
     }
     
@@ -287,7 +287,7 @@ namespace Tangential_complex_ {
         {
           Vector const& ej = basis[j];
           Vector new_v_proj = scaled_vec(
-            ej, inner_pdct(new_v, ej) / inner_pdct(ej, ej));
+            ej, scalar_pdct(new_v, ej) / scalar_pdct(ej, ej));
           new_v = diff_vec(new_v, new_v_proj);
         }
         sqlen_new_v = k.squared_length_d_object()(new_v);

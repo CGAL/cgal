@@ -407,7 +407,7 @@ void make_tc(std::vector<Point> &points,
     t.reset();
     // Try to solve the remaining inconstencies
 #ifdef CGAL_ALPHA_TC
-    tc.solve_inconsistencies_using_adaptive_alpha_TC();
+    tc.solve_inconsistencies_using_alpha_TC();
 #else
     tc.check_and_solve_inconsistencies_by_adding_higher_dim_simplices();
 #endif
