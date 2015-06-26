@@ -376,7 +376,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       const Parameters &options = Parameters()
       ///< %Parameters for shape detection.
                 ) {
-      // no shape types for detection or no points provided, exit
+      // No shape types for detection or no points provided, exit
       if (m_shape_factories.size() == 0 ||
           (m_inputIterator_beyond - m_inputIterator_first) == 0)
         return false;
@@ -396,26 +396,33 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
         m_available_octree_sizes[i] = m_direct_octrees[i]->size();
       }
 
-      // use bounding box diagonal as reference for default values
+      // Use bounding box diagonal as reference for default values
       Bbox_3 bbox = m_global_octree->boundingBox();
-      FT bboxDiagonal = (FT) CGAL::sqrt((bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin()) + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin()) + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
+      FT bboxDiagonal = (FT) CGAL::sqrt(
+          (bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin())
+        + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin()) 
+        + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
 
       m_options = options;
 
-      // epsilon or cluster_epsilon have been set by the user? if not, derive from bounding box diagonal
-      m_options.epsilon = (m_options.epsilon < 0) ? bboxDiagonal * (FT) 0.01 : m_options.epsilon;
-      m_options.cluster_epsilon = (m_options.cluster_epsilon < 0) ? bboxDiagonal * (FT) 0.01 : m_options.cluster_epsilon;
+      // Epsilon or cluster_epsilon have been set by the user?
+      // If not, derive from bounding box diagonal
+      m_options.epsilon = (m_options.epsilon < 0)
+        ? bboxDiagonal * (FT) 0.01 : m_options.epsilon;
 
-      // minimum number of points has been set?
+      m_options.cluster_epsilon = (m_options.cluster_epsilon < 0) 
+        ? bboxDiagonal * (FT) 0.01 : m_options.cluster_epsilon;
+
+      // Minimum number of points has been set?
       m_options.min_points = 
         (m_options.min_points >= m_num_available_points) ? 
           (std::size_t)((FT)0.001 * m_num_available_points) : 
           m_options.min_points;
       
-      // initializing the shape index
+      // Initializing the shape index
       m_shape_index.assign(m_num_available_points, -1);
 
-      // list of all randomly drawn candidates
+      // List of all randomly drawn candidates
       // with the minimum number of points
       std::vector<Shape *> candidates;
 
@@ -537,7 +544,8 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
                                  3 * m_options.epsilon,
                                  m_options.normal_threshold);
 
-        best_Candidate->connected_component(best_Candidate->m_indices, m_options.cluster_epsilon);
+        best_Candidate->connected_component(best_Candidate->m_indices,
+                                            m_options.cluster_epsilon);
 
         if (stop_probability((std::size_t) best_Candidate->expected_value(),
                             (m_num_available_points - numInvalid),
@@ -550,7 +558,8 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
             candidates.back() = NULL;
 
             //1. add best candidate to final result.
-            m_extracted_shapes->push_back(boost::shared_ptr<Shape>(best_Candidate));
+            m_extracted_shapes->push_back(
+                                    boost::shared_ptr<Shape>(best_Candidate));
 
             //2. remove the points
             //2.1 update boolean
@@ -581,51 +590,52 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
             nbNewCandidates--;
             nbFailedCandidates = 0;
             bestExp = 0;
-          }
 
-          std::vector<std::size_t> subsetSizes(m_num_subsets);
-          subsetSizes[0] = m_available_octree_sizes[0];
-          for (std::size_t i = 1;i<m_num_subsets;i++) {
-            subsetSizes[i] = subsetSizes[i-1] + m_available_octree_sizes[i];
-          }
-
-
-          //3. Remove points from candidates common with extracted primitive
-          //#pragma omp parallel for
-          bestExp = 0;
-          for (std::size_t i=0;i< candidates.size()-1;i++) {
-            if (candidates[i]) {
-              candidates[i]->update_points(m_shape_index);
-              candidates[i]->compute_bound(
-                subsetSizes[candidates[i]->m_nb_subset_used - 1],
-                m_num_available_points - numInvalid);
-
-              if (candidates[i]->max_bound() < m_options.min_points) {
-                delete candidates[i];
-                candidates[i] = NULL;
-              }
-              else {
-                bestExp = (candidates[i]->expected_value() > bestExp) ?
-                  candidates[i]->expected_value() : bestExp;
+            std::vector<std::size_t> subsetSizes(m_num_subsets);
+            subsetSizes[0] = m_available_octree_sizes[0];
+            for (std::size_t i = 1;i<m_num_subsets;i++) {
+              subsetSizes[i] = subsetSizes[i-1] + m_available_octree_sizes[i];
+            }
+  
+  
+            //3. Remove points from candidates common with extracted primitive
+            //#pragma omp parallel for
+            bestExp = 0;
+            for (std::size_t i=0;i< candidates.size()-1;i++) {
+              if (candidates[i]) {
+                candidates[i]->update_points(m_shape_index);
+                candidates[i]->compute_bound(
+                  subsetSizes[candidates[i]->m_nb_subset_used - 1],
+                  m_num_available_points - numInvalid);
+  
+                if (candidates[i]->max_bound() < m_options.min_points) {
+                  delete candidates[i];
+                  candidates[i] = NULL;
+                }
+                else {
+                  bestExp = (candidates[i]->expected_value() > bestExp) ?
+                    candidates[i]->expected_value() : bestExp;
+                }
               }
             }
-          }
-
-          std::size_t start = 0, end = candidates.size() - 1;
-          while (start < end) {
-            while (candidates[start] && start < end) start++;
-            while (!candidates[end] && start < end) end--;
-            if (!candidates[start] && candidates[end] && start < end) {
-              candidates[start] = candidates[end];
-              candidates[end] = NULL;
-              start++;
-              end--;
+  
+            std::size_t start = 0, end = candidates.size() - 1;
+            while (start < end) {
+              while (candidates[start] && start < end) start++;
+              while (!candidates[end] && start < end) end--;
+              if (!candidates[start] && candidates[end] && start < end) {
+                candidates[start] = candidates[end];
+                candidates[end] = NULL;
+                start++;
+                end--;
+              }
             }
+  
+            if (candidates[end]) end++;
+  
+            candidates.resize(end);
           }
-
-          candidates.resize(end);
         }
-
       }
       while((stop_probability(m_options.min_points,
                             m_num_available_points - numInvalid,
@@ -634,6 +644,12 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
                > m_options.probability
         && FT(m_num_available_points - numInvalid) >= m_options.min_points)
         || bestExp >= m_options.min_points);
+
+      // Clean up remaining candidates.
+      for (std::size_t i = 0;i<candidates.size();i++)
+        delete candidates[i];
+
+      candidates.resize(0);
 
       m_num_available_points -= numInvalid;
 
