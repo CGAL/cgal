@@ -38,7 +38,7 @@ bool test_scene() {
   // Loads point set from a file. 
   // read_xyz_points_and_normals takes an OutputIterator for storing the points
   // and a property map to store the normal vector with each point.
-  std::ifstream stream("cube.pwn");
+  std::ifstream stream("data/cube.pwn");
 
   if (!stream ||
     !CGAL::read_xyz_points_and_normals(stream,
