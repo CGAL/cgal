@@ -74,6 +74,8 @@ bool test_scene() {
   typename Efficient_ransac::Shape_range shapes = ransac.shapes();
 
   typename Efficient_ransac::Shape_range::iterator it = shapes.begin();
+  
+  FT average_distance = 0;
 
   // Iterate through all shapes and access each point.
   while (it != shapes.end()) {
@@ -98,9 +100,9 @@ bool test_scene() {
       index_it++;
     }
 
-    // Computes and prints average distance.
-    FT average_distance = sum_distances / shape->indices_of_assigned_points().size();
-
+    // Computes average distance.
+    average_distance += sum_distances / shape->indices_of_assigned_points().size();
+    
     // Proceeds with next detected shape.
     it++;
   }
@@ -108,6 +110,16 @@ bool test_scene() {
   // Check coverage. For this scene it should not fall below 85%
   double coverage = double(points.size() - ransac.number_of_unassigned_points()) / double(points.size());
   if (coverage < 0.85) {
+    std::cout << " failed" << std::endl;
+
+    return false;
+  }
+
+
+  // Check average distance. It should not lie above 0.02.
+  average_distance = average_distance / shapes.size();
+  std::cout << average_distance << " " << std::endl;
+  if (average_distance > 0.01) {
     std::cout << " failed" << std::endl;
 
     return false;
