@@ -116,10 +116,15 @@ public:
 
 public slots:
   void updateValue() {
-    float a, b, c;
+#if QGLVIEWER_VERSION >= 0x020600
+    typedef qreal qglviewer_real;
+#else // QGLViewer < 2.6.0
+    typedef float qglviewer_real;
+#endif // QGLViewer < 2.6.0
+    qglviewer_real a, b, c;
     frame->getPosition(a, b, c);
-    float sum1 = a + b + c;
-    float sum2 = v.x + v.y + v.z;
+    float sum1 = float(a + b + c);
+    float sum2 = float(v.x + v.y + v.z);
     sum1 /= sum2;
     setValue(sum1 * scale);
   }
