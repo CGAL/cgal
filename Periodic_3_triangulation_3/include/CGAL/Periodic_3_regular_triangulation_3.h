@@ -5953,6 +5953,10 @@ public:
 	  return vertices;
 	}
 
+	Periodic_point periodic_weighted_circumcenter(Cell_handle c) const {
+	    return Base::periodic_circumcenter(c, geom_traits().construct_weighted_circumcenter_3_object());
+	  }
+
   Oriented_side
   power_test(const Weighted_point &p, const Weighted_point &q) const
   {
