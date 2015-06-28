@@ -1475,6 +1475,69 @@ public:
     CGAL_assertion(false);
   return Point();
   }
+
+protected:
+  template <class ConstructCircumcenter>
+  Periodic_point periodic_circumcenter (Cell_handle c, ConstructCircumcenter construct_circumcenter) const
+  {
+    CGAL_triangulation_precondition(c != Cell_handle());
+
+    Point v = construct_circumcenter(c->vertex(0)->point(), c->vertex(1)->point(),
+        c->vertex(2)->point(), c->vertex(3)->point(), get_offset(c, 0), get_offset(c, 1), get_offset(c, 2),
+        get_offset(c, 3));
+
+    // check that v lies within the domain. If not: translate
+    Iso_cuboid dom = domain();
+    if (!(v.x() < dom.xmin()) && v.x() < dom.xmax() && !(v.y() < dom.ymin()) && v.y() < dom.ymax()
+        && !(v.z() < dom.zmin()) && v.z() < dom.zmax())
+      return std::make_pair(v, Offset());
+
+    int ox = -1, oy = -1, oz = -1;
+    if (v.x() < dom.xmin())
+      ox = 1;
+    else if (v.x() < dom.xmax())
+      ox = 0;
+    if (v.y() < dom.ymin())
+      oy = 1;
+    else if (v.y() < dom.ymax())
+      oy = 0;
+    if (v.z() < dom.zmin())
+      oz = 1;
+    else if (v.z() < dom.zmax())
+      oz = 0;
+    Offset transl_offx(0, 0, 0);
+    Offset transl_offy(0, 0, 0);
+    Offset transl_offz(0, 0, 0);
+    Point dv(v);
+
+    // Find the right offset such that the translation will yield a
+    // point inside the original domain.
+    while (dv.x() < dom.xmin() || !(dv.x() < dom.xmax()))
+    {
+      transl_offx.x() = transl_offx.x() + ox;
+      dv = point(std::make_pair(v, transl_offx));
+    }
+    while (dv.y() < dom.ymin() || !(dv.y() < dom.ymax()))
+    {
+      transl_offy.y() = transl_offy.y() + oy;
+      dv = point(std::make_pair(v, transl_offy));
+    }
+    while (dv.z() < dom.zmin() || !(dv.z() < dom.zmax()))
+    {
+      transl_offz.z() = transl_offz.z() + oz;
+      dv = point(std::make_pair(v, transl_offz));
+    }
+
+    Offset transl_off(transl_offx.x(), transl_offy.y(), transl_offz.z());
+    Periodic_point ppv(std::make_pair(v, transl_off));
+
+    CGAL_triangulation_assertion_code(Point rv(point(ppv));
+    )
+    CGAL_triangulation_assertion(!(rv.x() < dom.xmin()) && rv.x() < dom.xmax());
+    CGAL_triangulation_assertion(!(rv.y() < dom.ymin()) && rv.y() < dom.ymax());
+    CGAL_triangulation_assertion(!(rv.z() < dom.zmin()) && rv.z() < dom.zmax());
+    return ppv;
+  }
 };
 
 template < class GT, class TDS >
