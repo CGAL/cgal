@@ -476,6 +476,10 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
  * \ingroup PkgPolygonMeshProcessing
  *  computes for each face the index of the corresponding connected component.
  *  Two faces are recorded in the same connected component if they share an edge that is not marked as constrained.
+ *
+ *  A property map for `CGAL::face_index_t` should be either available as an internal property map 
+ *  to `pmesh` or provided as one of the \ref namedparameters.
+ *
  *  \tparam PolygonMesh a model of `FaceListGraph`
  *  \tparam FaceComponentMap a model of `WritablePropertyMap` with
         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
@@ -548,6 +552,10 @@ connected_components(const PolygonMesh& pmesh,
  *  erases the small connected components and all the isolated vertices.
  *  Keep `nb_components_to_keep` largest connected components. 
  *  Two faces are considered in the same connected component if they share an edge that is not marked as constrained.
+ *
+ * Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
+ * should be either available as internal property maps 
+ * to `pmesh` or provided as \ref namedparameters.
  *
  * \tparam PolygonMesh a model of `FaceListGraph`
  * \tparam NamedParameters a sequence of \ref namedparameters
@@ -751,6 +759,11 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
 *  keeps the connected components designated by the faces in `components_to_keep`,
 *  and erases the other connected components and all the isolated vertices.
 *  Two faces are considered in the same connected component if they share an edge that is not marked as constrained.
+*
+* Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
+* should be either available as internal property maps
+* to `pmesh` or provided as \ref namedparameters.
+*
 *
 * \tparam PolygonMesh a model of `FaceListGraph`
 * \tparam NamedParameters a sequence of \ref namedparameters
