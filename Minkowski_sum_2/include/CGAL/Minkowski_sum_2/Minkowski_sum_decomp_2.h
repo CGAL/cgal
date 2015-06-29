@@ -28,8 +28,8 @@
 namespace CGAL {
 
 /*! \class
- * A class for computing the Minkowski sum of two simple polygons based on
- * their decomposition two convex sub-polygons, taking the pairwise sums and
+ * A class for computing the Minkowski sum of two polygons based on their
+ * decomposition to convex sub-polygons, taking the pairwise sums and
  * computing the union of the sub-sums.
  */
 
