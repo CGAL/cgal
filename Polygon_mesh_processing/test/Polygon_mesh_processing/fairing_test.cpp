@@ -31,13 +31,13 @@ void test(const char* file_name)
   }
 
   //try to fair the mesh
-  unsigned int nbv = std::distance(vertices(poly).first
-                                 , vertices(poly).second);
+  std::size_t nbv = std::distance(vertices(poly).first
+                                , vertices(poly).second);
 
   CGAL::Polygon_mesh_processing::fair(poly, vertices(poly));
 
-  unsigned int nbv2 = std::distance(vertices(poly).first
-                                  , vertices(poly).second);
+  std::size_t nbv2 = std::distance(vertices(poly).first
+                                 , vertices(poly).second);
 
   CGAL_assertion(nbv == nbv2);
 
