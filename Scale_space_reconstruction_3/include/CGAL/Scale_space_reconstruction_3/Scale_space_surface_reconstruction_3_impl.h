@@ -126,7 +126,7 @@ sq_radius
 #endif // CGAL_LINKED_WITH_TBB
     void operator()( const std::size_t& i ) const {
 #if 1
-      Sphere sp(_pts[i], _sq_rd, 0);
+      Sphere sp(_pts[i], _sq_rd);
 
       Inc inc(_nn[i]);
       _tree.search(boost::make_function_output_iterator(inc),sp);
@@ -162,13 +162,11 @@ public:
 private:
     const Search_tree&  _tree;
     const CountVec&     _nn;
-    const PIMap&        _ind;
     Pointset&           _pts;
     
 public:
-    AdvanceSS(const Search_tree& tree, const CountVec& nn,
-              const PIMap& ind, Pointset& points)
-    : _tree(tree), _nn(nn), _ind(ind), _pts(points) {}
+    AdvanceSS(const Search_tree& tree, const CountVec& nn, Pointset& points)
+      : _tree(tree), _nn(nn),_pts(points) {}
     
 #ifdef CGAL_LINKED_WITH_TBB
     void operator()( const tbb::blocked_range< std::size_t >& range ) const {
@@ -187,7 +185,7 @@ public:
         for( typename Static_search::iterator nit = search.begin();
              nit != search.end() && column < _nn[i];
              ++nit, ++column ) {
-            pca.set_point( column, nit->first, 1.0 / _nn[ _ind.at( nit->first ) ] );
+          pca.set_point( column, boost::get<0>(nit->first), 1.0 / _nn[boost::get<1>(nit->first)] );
         }
 #else
         // Collect the vertices within the ball and their weights.
@@ -405,12 +403,12 @@ estimate_neighborhood_squared_radius( unsigned int neighbors, unsigned int sampl
     if( !_tree.is_built() )
         _tree.build();
 
-    for( Point_const_iterator it = _tree.begin(); it != _tree.end(); ++it ) {
+    for(typename Search_tree::const_iterator it = _tree.begin(); it != _tree.end(); ++it ) {
         unsigned int left = (unsigned int)( _tree.size() - handled );
         if( samples >= left || _generator.get_double() < double(samples - checked) / left ) {
             // The neighborhood should contain the point itself as well.
-            Static_search search( _tree, *it, neighbors+1 );
-            radius += sqrt( to_double( squared_distance( *it, ( search.end()-1 )->first ) ) );
+          Static_search search( _tree, boost::get<0>(*it), neighbors+1 );
+          radius += sqrt( to_double( squared_distance( boost::get<0>(*it), boost::get<0>(( search.end()-1 )->first ) ) ) );
             ++checked;
         }
         ++handled;
@@ -451,6 +449,9 @@ increase_scale( unsigned int iterations ) {
 
 
     for( unsigned int iter = 0; iter < iterations; ++iter ) {
+      _tree.clear();
+        _tree.insert(boost::make_zip_iterator(boost::make_tuple( _points.begin(), boost::counting_iterator<int>(0))),
+                     boost::make_zip_iterator(boost::make_tuple( _points.end() , boost::counting_iterator<int>(static_cast<int>(_points.size())))) );
         if( !_tree.is_built() )
             _tree.build();
 
@@ -458,24 +459,10 @@ increase_scale( unsigned int iterations ) {
         // This can be done concurrently.
         CountVec neighbors( _tree.size(), 0 );
         try_parallel( ComputeNN( _points, _tree, _squared_radius, neighbors ), 0, _tree.size() );
-        /*
-        for(int i =0; i < neighbors.size(); i++){
-          std::cerr << neighbors[i] << std::endl;
-        }
-        */
-        // Construct a mapping from each point to its index.
-        PIMap indices;
-        std::size_t index = 0;
-        for( typename Pointset::const_iterator pit = _points.begin(); pit != _points.end(); ++pit, ++index)
-            indices[ *pit ] = index;
-
-        // Compute the tranformed point locations.
+       
+        // Compute the transformed point locations.
         // This can be done concurrently.
-        try_parallel( AdvanceSS( _tree, neighbors, indices, _points ), 0, _tree.size() );
-
-        // Put the new points back in the tree.
-        _tree.clear();
-        _tree.insert( _points.begin(), _points.end() );
+        try_parallel( AdvanceSS( _tree, neighbors, _points ), 0, _tree.size() );
     }
 }
 
