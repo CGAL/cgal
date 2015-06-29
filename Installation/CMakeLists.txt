@@ -819,25 +819,6 @@ if (CGAL_BRANCH_BUILD AND CGAL_REPORT_DUPLICATE_FILES )
 
 endif()
 
-#--------------------------------------------------------------------------------------------------
-#
-#                                    -= USER SIDE SETTINGS =-
-#
-#--------------------------------------------------------------------------------------------------
-
-# Set CGAL_LIBRARY_INSTALLED, CGAL_Qt3_LIBRARY_INSTALLED and so on. Those
-# variables are the path to the libraries installed by the install
-# target. Used in the generation of the installed CGALConfig.cmake
-foreach(lib ${CGAL_CONFIGURED_LIBRARIES} CGAL) # note the added fake 'CGAL'
- if(${lib}_LIBRARY)
-    get_filename_component(lib_name "${${lib}_LIBRARY}" NAME)
-    set(${lib}_LIBRARY_INSTALLED "${CMAKE_INSTALL_PREFIX}/${CGAL_INSTALL_LIB_DIR}/${lib_name}")
- else()
-    set(${lib}_LIBRARY_INSTALLED "")
-  endif()
-  hide_variable(${lib}_LIBRARY_INSTALLED)
-endforeach()
-
 create_CGALconfig_files()
 
 #--------------------------------------------------------------------------------------------------
