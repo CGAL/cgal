@@ -121,6 +121,43 @@ public:
     solver().compute(*m_mat);
     return solver().info() == Eigen::Success;
   }
+
+   /// Solve the sparse linear system "At*A*X = At*B".
+   bool linear_solver_non_symmetric(const Matrix& A, const Vector& B, Vector& X, NT& D)
+   {
+      D = 1;          // Eigen does not support homogeneous coordinates
+
+      typename Matrix::EigenType At = A.eigen_object().transpose(); 
+
+      m_solver_sptr->compute(At * A.eigen_object());
+       
+      if(m_solver_sptr->info() != Eigen::Success)
+         return false;
+         
+      typename Vector::EigenType AtB = At * B.eigen_object();
+      X = m_solver_sptr->solve(AtB);
+
+      return m_solver_sptr->info() == Eigen::Success;
+   }
+
+  bool linear_solver_non_symmetric(const Matrix& A, const Vector& B, Vector& X)
+  {
+    CGAL_precondition(m_mat!=NULL); //pre_factor should have been called first
+    typename Matrix::EigenType At = A.eigen_object().transpose(); 
+    typename Vector::EigenType AtB = At * B.eigen_object();
+    X = solver().solve(AtB);
+    return solver().info() == Eigen::Success;
+  }
+
+  bool pre_factor_non_symmetric(const Matrix& A, NT& D)
+  {
+    D = 1;
+    
+    typename Matrix::EigenType At = A.eigen_object().transpose(); 
+    m_mat = &A.eigen_object();
+    solver().compute(At * A.eigen_object());
+    return solver().info() == Eigen::Success;
+  }
 	
   bool linear_solver(const Vector& B, Vector& X)
   {
