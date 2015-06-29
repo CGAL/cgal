@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
   }
 
   // create a property-map for sdf values
-  std::vector<double> sdf_values( num_faces(*input_triangle_mesh) );
+  std::vector<double> sdf_values( num_faces(tmesh) );
   Facet_with_id_pmap<double> sdf_property_map(sdf_values);
 
   // compute sdf values with skeleton
@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
   CGAL::sdf_values_postprocessing(tmesh, sdf_property_map);
 
   // create a property-map for segment-ids (it is an adaptor for this case)
-  std::vector<int> segment_ids( num_faces(*input_triangle_mesh) );
+  std::vector<int> segment_ids( num_faces(tmesh) );
   Facet_with_id_pmap<int> segment_property_map(segment_ids);
 
   // segment the mesh using default parameters

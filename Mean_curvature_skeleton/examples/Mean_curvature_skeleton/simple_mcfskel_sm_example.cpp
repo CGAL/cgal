@@ -1,91 +1,58 @@
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/extract_mean_curvature_flow_skeleton.h>
 
-#include <boost/property_map/property_map.hpp>
-#include <boost/graph/graph_traits.hpp>
-#include <boost/graph/adjacency_list.hpp>
-
 #include <fstream>
-#include <map>
 
-typedef CGAL::Simple_cartesian<double>                               Kernel;
-typedef Kernel::Point_3                                              Point;
-typedef CGAL::Surface_mesh<Point> Polyhedron;
+#include <boost/foreach.hpp>
 
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_iterator             vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::halfedge_descriptor         halfedge_descriptor;
+typedef CGAL::Simple_cartesian<double>                        Kernel;
+typedef Kernel::Point_3                                       Point;
+typedef CGAL::Surface_mesh<Point>                             Triangle_mesh;
 
-typedef boost::property_map<Polyhedron,CGAL::vertex_point_t>::type PPmap;
+typedef boost::graph_traits<Triangle_mesh>::vertex_descriptor    vertex_descriptor;
 
+typedef CGAL::Mean_curvature_flow_skeletonization<Triangle_mesh> Skeletonization;
+typedef Skeletonization::Skeleton                             Skeleton;
 
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
-
-typedef boost::graph_traits<Graph>::vertex_descriptor                  vertex_desc;
-typedef boost::graph_traits<Graph>::vertex_iterator                    vertex_iter;
-typedef boost::graph_traits<Graph>::edge_iterator                      edge_iter;
-
-typedef std::map<vertex_desc, std::vector<vertex_descriptor> >         Correspondence_map;
-typedef boost::associative_property_map<Correspondence_map>            Correspondence_PMap;
-
-typedef std::map<vertex_desc, Point>                                   GraphPointMap;
-typedef boost::associative_property_map<GraphPointMap>                 GraphPointPMap;
+typedef Skeleton::vertex_descriptor                           Skeleton_vertex;
+typedef Skeleton::edge_descriptor                             Skeleton_edge;
 
 
 // This example extracts a medially centered skeleton from a given mesh.
-int main()
+int main(int argc, char* argv[])
 {
-  Polyhedron mesh;
-  std::ifstream input("data/sindorelax.off");
+  std::ifstream input((argc>1)?argv[1]:"data/sindorelax.off");
+  Triangle_mesh tmesh;
+  input >> tmesh;
 
-  if ( !input || !(input >> mesh) || mesh.is_empty() ) {
-    std::cerr << "Cannot open data/sindorelax.off" << std::endl;
-    return 1;
-  }
+  Skeleton skeleton;
 
-  PPmap ppmap = get(CGAL::vertex_point, mesh);
-  Graph g;
-  GraphPointMap points_map;
-  GraphPointPMap points(points_map);
+  CGAL::extract_mean_curvature_flow_skeleton(tmesh, skeleton);
 
-  Correspondence_map corr_map;
-  Correspondence_PMap corr(corr_map);
+  std::cout << "Number of vertices of the skelton: " << boost::num_vertices(skeleton) << "\n";
+  std::cout << "Number of edges of the skelton: " << boost::num_edges(skeleton) << "\n";
 
-
-  CGAL::extract_mean_curvature_flow_skeleton(mesh, g, points, corr);
-#if 0
-  vertex_iterator vb, ve;
-
-  std::cout << "vertices: " << boost::num_vertices(g) << "\n";
-  std::cout << "edges: " << boost::num_edges(g) << "\n";
-
-  // Output all the edges.
-  edge_iter ei, ei_end;
-  for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
+  // Output all the edges of the skeleton.
+  BOOST_FOREACH(Skeleton_edge e, edges(skeleton))
   {
-    Point s = points[source(*ei, g)];
-    Point t = points[target(*ei, g)];
+    const Point& s = skeleton[source(e, skeleton)].point;
+    const Point& t = skeleton[target(e, skeleton)].point;
     std::cout << s << " " << t << "\n";
   }
 
-
-  // Output skeletal points and the corresponding surface points
-  vertex_iter gvb, gve;
-  for (boost::tie(gvb, gve) = boost::vertices(g); gvb != gve; ++gvb)
+  // Output skeleton points and the corresponding surface points
+  BOOST_FOREACH(Skeleton_vertex v, vertices(skeleton))
   {
-    vertex_desc i = *gvb;
-    Point skel = points[i];
-    std::cout << skel << ": ";
+    std::cout << skeleton[v].point << ": ";
 
-    for (size_t j = 0; j < corr[i].size(); ++j)
-    {
-      Point surf = ppmap[corr[i][j]];
-      std::cout << surf << " ";
-    }
+    BOOST_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
+      std::cout << get(CGAL::vertex_point, tmesh, vd)  << " ";
     std::cout << "\n";
   }
-#endif
+
   return 0;
 }
 

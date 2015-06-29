@@ -17,7 +17,7 @@ typedef boost::graph_traits<Triangle_mesh>::vertex_descriptor        vertex_desc
 typedef boost::graph_traits<Triangle_mesh>::vertex_iterator          vertex_iterator;
 typedef boost::graph_traits<Triangle_mesh>::halfedge_descriptor      halfedge_descriptor;
 
-typedef CGAL::Mean_curvature_flow_skeletonization<K, Triangle_mesh>  Skeletonization;
+typedef CGAL::Mean_curvature_flow_skeletonization<Triangle_mesh>     Skeletonization;
 typedef Skeletonization::Skeleton                                    Skeleton;
 
 typedef boost::graph_traits<Skeleton>::vertex_descriptor             vertex_desc;
@@ -54,8 +54,6 @@ int main(int argc, char* argv[])
   // get the correspondent surface points
   mcs.convert_to_skeleton(skeleton);
 
-  vertex_iterator vb, ve;
-
   std::cout << "vertices: " << num_vertices(skeleton) << "\n";
   std::cout << "edges: " << num_edges(skeleton) << "\n";
 
@@ -63,23 +61,20 @@ int main(int argc, char* argv[])
   edge_iter ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(skeleton); ei != ei_end; ++ei)
   {
-    Point s = skeleton[source(*ei, skeleton)].point;
-    Point t = skeleton[target(*ei, skeleton)].point;
+    const Point& s = skeleton[source(*ei, skeleton)].point;
+    const Point& t = skeleton[target(*ei, skeleton)].point;
     std::cout << s << " " << t << "\n";
   }
 
-
   // Output skeletal points and the corresponding surface points.
-  vertex_iter gvb, gve;
-  for (boost::tie(gvb, gve) = vertices(skeleton); gvb != gve; ++gvb)
+  BOOST_FOREACH(vertex_desc i, vertices(skeleton))
   {
-    vertex_desc i = *gvb;
-    Point skel = skeleton[i];
+    const Point& skel = skeleton[i].point;
     std::cout << skel << ": ";
 
     for (size_t j = 0; j < skeleton[i].vertices.size(); ++j)
     {
-      Point surf = skeleton[i].vertices[j];
+      const Point& surf = mesh.point(skeleton[i].vertices[j]);
       std::cout << surf << " ";
     }
     std::cout << "\n";
