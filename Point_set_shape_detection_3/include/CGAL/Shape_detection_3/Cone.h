@@ -279,16 +279,6 @@ namespace CGAL {
       return false;
     }
 
-    // U is longitude
-    virtual bool wraps_u() const {
-      return true;
-    }
-
-    // V is between caps
-    virtual bool wraps_v() const {
-      return false;
-    }
-
   private:
     FT m_angle;
     Point_3 m_apex;
