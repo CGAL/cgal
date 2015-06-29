@@ -24,19 +24,29 @@
 
 namespace CGAL {
 
-  template < class Kernel, class CellBase = Triangulation_cell_base_3<Kernel> >
-  class Advancing_front_surface_reconstruction_cell_base_3 : public CellBase
+  /*!
+  \ingroup PkgAdvancingFrontSurfaceReconstruction
+
+  The class `Advancing_front_surface_reconstruction_cell_base_3` is the default 
+  cell type for the class  `Advancing_front_surface_reconstruction`.
+
+  \tparam Traits has to be a model of `DelaunayTriangulationTraits_3`. 
+
+  \tparam Cb has to be a model of `TriangulationCellBase_3`.  
+  */
+  template < typename Traits, typename Cb = Triangulation_cell_base_3<Traits> >
+  class Advancing_front_surface_reconstruction_cell_base_3 : public Cb
   {
 
   public:
     template < typename TDS2 >
     struct Rebind_TDS {
-      typedef typename CellBase::template Rebind_TDS<TDS2>::Other  Cb2;
-      typedef Advancing_front_surface_reconstruction_cell_base_3<Kernel,Cb2>                    Other;
+      typedef typename Cb::template Rebind_TDS<TDS2>::Other  Cb2;
+      typedef Advancing_front_surface_reconstruction_cell_base_3<Traits,Cb2>                    Other;
     };
 
-    typedef typename CellBase::Vertex_handle Vertex_handle;
-    typedef typename CellBase::Cell_handle Cell_handle;
+    typedef typename Cb::Vertex_handle Vertex_handle;
+    typedef typename Cb::Cell_handle Cell_handle;
 
   private:
      
@@ -61,7 +71,7 @@ namespace CGAL {
   public:
   
     Advancing_front_surface_reconstruction_cell_base_3() 
-      : CellBase(),
+      : Cb(),
         _smallest_radius_facet_tab(NULL), selected_facet(0)
 #ifdef AFSR_LAZY
       , _circumcenter(NULL), _squared_radius(NULL)
@@ -75,7 +85,7 @@ namespace CGAL {
     }
   
     Advancing_front_surface_reconstruction_cell_base_3(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
-      : CellBase( v0, v1, v2, v3),
+      : Cb( v0, v1, v2, v3),
         _smallest_radius_facet_tab(NULL), selected_facet(0)
 #ifdef AFSR_LAZY
       , _circumcenter(NULL), _squared_radius(NULL)
@@ -90,8 +100,8 @@ namespace CGAL {
   
     Advancing_front_surface_reconstruction_cell_base_3(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
                                                        Cell_handle n0, Cell_handle n1, Cell_handle n2, Cell_handle n3)
-      : CellBase(v0,  v1,  v2, v3,
-                 n0,  n1,  n2, n3),
+      : Cb(v0,  v1,  v2, v3,
+           n0,  n1,  n2, n3),
         _smallest_radius_facet_tab(NULL), selected_facet(0)
 #ifdef AFSR_LAZY
       , _circumcenter(NULL), _squared_radius(NULL)

@@ -33,25 +33,35 @@ namespace CGAL {
 
   template <class B, class C> class Advancing_front_surface_reconstruction;
 
-  template <class K, class VertexBase = Triangulation_vertex_base_3<K> >
-  class Advancing_front_surface_reconstruction_vertex_base_3 : public VertexBase
+  /*!
+  \ingroup PkgAdvancingFrontSurfaceReconstruction
+
+  The class `Advancing_front_surface_reconstruction_vertex_base_3` is the default
+  vertex type for the class  `Advancing_front_surface_reconstruction`.
+
+  \tparam Traits has to be a model of `DelaunayTriangulationTraits_3`.
+
+  \tparam Vb has to be a model of `TriangulationVertexBase_3`.
+  */
+  template <typename Traits, typename Vb = Triangulation_vertex_base_3<Traits> >
+  class Advancing_front_surface_reconstruction_vertex_base_3 : public Vb
   {
   public:
 
     template < typename TDS2 >
     struct Rebind_TDS {
-      typedef typename VertexBase::template Rebind_TDS<TDS2>::Other  Vb2;
-      typedef Advancing_front_surface_reconstruction_vertex_base_3<K,Vb2>  Other;
+      typedef typename Vb::template Rebind_TDS<TDS2>::Other  Vb2;
+      typedef Advancing_front_surface_reconstruction_vertex_base_3<Traits,Vb2>  Other;
     };
 
 
     template <class B,class C> friend class Advancing_front_surface_reconstruction;
 
 
-    typedef VertexBase Base;
+    typedef Vb Base;
     typedef typename Base::Vertex_handle Vertex_handle;
     typedef typename Base::Cell_handle Cell_handle;
-    typedef typename VertexBase::Point Point;
+    typedef typename Vb::Point Point;
     typedef double coord_type;
   
     typedef Triple< Cell_handle, int, int > Edge;
@@ -106,27 +116,27 @@ namespace CGAL {
   public:
 
     Advancing_front_surface_reconstruction_vertex_base_3()
-      : VertexBase(), m_mark(-1), 
+      : Vb(), m_mark(-1), 
         m_post_mark(-1)
     {}
   
     Advancing_front_surface_reconstruction_vertex_base_3(const Point & p)
-      : VertexBase(p), m_mark(-1), 
+      : Vb(p), m_mark(-1), 
         m_post_mark(-1) 
     {}
   
     Advancing_front_surface_reconstruction_vertex_base_3(const Point & p, Cell_handle f)
-      : VertexBase(p, f), m_mark(-1), 
+      : Vb(p, f), m_mark(-1), 
         m_post_mark(-1) 
     {}
 
     Advancing_front_surface_reconstruction_vertex_base_3(Cell_handle f)
-      : VertexBase(f), m_mark(-1), 
+      : Vb(f), m_mark(-1), 
         m_post_mark(-1) 
     {}
 
     Advancing_front_surface_reconstruction_vertex_base_3(const Advancing_front_surface_reconstruction_vertex_base_3& other)
-      : VertexBase(other), m_mark(-1), 
+      : Vb(other), m_mark(-1), 
         m_post_mark(-1) 
     {}
 

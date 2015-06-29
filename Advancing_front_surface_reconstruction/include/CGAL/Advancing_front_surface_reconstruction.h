@@ -156,28 +156,118 @@ namespace CGAL {
     }
   };  
 
-  struct Always_false {
+  namespace AFSR{
+    struct Always_false {
 
-    template <typename T>
-    bool operator()(const T&, const T&, const T&) const
-    {
-      return false;
-    }
+      template <typename T>
+      bool operator()(const T&, const T&, const T&) const
+      {
+        return false;
+      }
+    };
+  } //end of namespa AFSR
 
-  };
 
+  /*!
+  \ingroup PkgAdvancingFrontSurfaceReconstruction
 
+  The class `Advancing_front_surface_reconstruction` enables advanced users to provide the unstructured 
+  point cloud in a 3D Delaunay triangulation. The reconstruction algorithm then marks vertices and faces
+  in the triangulation as being on the 2D surface embedded in 3D space, and constructs a 2D triangulation
+  data structure that describes the surface.  The vertices and facets of the 2D triangulation data structure 
+  store handles to the vertices and faces of the 3D triangulation, which enables the user to explore the
+  2D as well as 3D neighborhood of vertices and facets of the surface. 
+
+  \tparam Dt must be a `Delaunay_triangulation_3` with
+  `Advancing_front_surface_reconstruction_vertex_base_3` and `Advancing_front_surface_reconstruction_cell_base_3` blended into the vertex and cell type.
+  The default uses the `Exact_predicates_inexact_constructions_kernel` as geometric traits class.
+
+  \tparam F must be a functor with `bool operator()(Point,Point,Point)` returning `true` if a triangle should not appear in the output.
+          This functor enables the user to filter candidate triangles, for example based on its size.
+          The type `Point` must be the point type of the geometric traits class of the triangulation.
+          It defaults to a functor that always returns `false`.
+
+  */
   template <
-    class Triangulation_ = Default,
-    class Reject = Always_false>
+    class Dt = Default,
+    class F = Default>
   class Advancing_front_surface_reconstruction {
 
-    typedef typename Default::Get<Triangulation_,Delaunay_triangulation_3<Exact_predicates_inexact_constructions_kernel, Triangulation_data_structure_3<Advancing_front_surface_reconstruction_vertex_base_3<Exact_predicates_inexact_constructions_kernel>, Advancing_front_surface_reconstruction_cell_base_3<Exact_predicates_inexact_constructions_kernel> > > >::type Triangulation;
-
+    typedef typename Default::Get<Dt,Delaunay_triangulation_3<Exact_predicates_inexact_constructions_kernel, Triangulation_data_structure_3<Advancing_front_surface_reconstruction_vertex_base_3<Exact_predicates_inexact_constructions_kernel>, Advancing_front_surface_reconstruction_cell_base_3<Exact_predicates_inexact_constructions_kernel> > > >::type Triangulation;
+    typedef typename Default::Get<F,AFSR::Always_false>::type Filter;
   public:
+
+#ifdef DOXYGEN_RUNNING
+  /// \name Types
+  /// @{
+
+  /*!
+    The type of the 2D triangulation data structure describing the reconstructed surface, being a model of `TriangulationDataStructure_2`.
+    - The type `Triangulation_data_structure_2::Vertex` is model of the concept `TriangulationDataStructure_2::Vertex` and has additionally the
+    method `vertex_3()` that returns a `#Vertex_handle` to the associated 3D vertex.
+    - The type `Triangulation_data_structure_2::Face` is model of the concept `TriangulationDataStructure_2::Face` and  has additionally the
+    method `facet()` that returns the associated `#Facet`, and a method `bool is_on_surface()`
+    for testing if a face is part of the reconstructed surface or a face incident to a boundary edge.
+
+    In case the surface has boundaries, the 2D surface has one vertex which is associated to the infinite
+    vertex of the 3D triangulation.
+  */
+    typedef unspecified_type Triangulation_data_structure_2;
+
+  /*!
+  The type of the 3D triangulation.
+  */
+    typedef unspecified_type Triangulation_3;
+
+  /*!
+  The type of the triangle filter functor.
+  */
+    typedef unspecified_type Filter;  
+
+  /*!
+  The point type.
+  */
+    typedef typename Triangulation_3::Point Point;
+
+  /*!
+  The vertex handle type of the 3D triangulation.
+  */
+    typedef typename Triangulation_3::Vertex_handle Vertex_handle;
+
+  /*!
+  The cell handle type of the 3D triangulation.
+  */
+    typedef typename Triangulation_3::Cell_handle Cell_handle;
+
+  /*!
+  The facet type of the 3D triangulation.
+  */
+    typedef typename Triangulation_3::Facet Facet;
+
+  /*!
+    A bidirectional iterator range which enables to enumerate all points that were removed
+    from the 3D Delaunay triangulation during the surface reconstruction. The value type
+    of the iterator is `#Point`.
+  */
+    typedef unspecified_type Outlier_range;
+
+  /*!
+    A bidirectional iterator range which enables to visit all boundaries.
+    The value type of the iterator is `Vertex_on_boundary_range`.
+  */
+    typedef unspecified_type Boundary_range;
+
+ /*!
+    A bidirectional iterator range which enables to visit all vertices on a boundary.
+    The value type of the iterator is  `#Vertex_handle`
+  */
+    typedef unspecified_type Vertex_on_boundary_range;
+  /// @}
+#endif
+
     typedef Triangulation Triangulation_3;
     typedef typename Triangulation_3::Geom_traits Kernel;
-    typedef Advancing_front_surface_reconstruction<Triangulation_,Reject> Extract;
+    typedef Advancing_front_surface_reconstruction<Dt,F> Extract;
     typedef typename Triangulation_3::Geom_traits Geom_traits;
 
     typedef typename Kernel::FT coord_type;
@@ -279,7 +369,7 @@ namespace CGAL {
 
     Vertex_handle added_vertex;
     bool deal_with_2d;
-    Reject reject;
+    Filter filter;
     int max_connected_component;
     double K_init, K_step;
     std::list<Vertex_handle> interior_edges;
@@ -563,16 +653,22 @@ namespace CGAL {
 
 
   public:
-    Advancing_front_surface_reconstruction(Triangulation_3& T_,
-                                           Reject reject = Reject())
-      : T(T_), _number_of_border(1), COS_ALPHA_SLIVER(-0.86), 
+    /// \name Creation
+    /// @{
+
+    /*!
+    Constructor for the unstructured point cloud given as 3D Delaunay triangulation.
+    */
+    Advancing_front_surface_reconstruction(Triangulation_3& dt,
+                                           Filter filter = Filter())
+      : T(dt), _number_of_border(1), COS_ALPHA_SLIVER(-0.86), 
         NB_BORDER_MAX(15), DELTA(.86), min_K(HUGE_VAL), 
         eps(1e-7), inv_eps_2(coord_type(1)/(eps*eps)), eps_3(eps*eps*eps),
         STANDBY_CANDIDATE(3), STANDBY_CANDIDATE_BIS(STANDBY_CANDIDATE+1), 
         NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2),
       _vh_number(static_cast<int>(T.number_of_vertices())), _facet_number(0),
       _postprocessing_counter(0), _size_before_postprocessing(0), _number_of_connected_components(0),
-      deal_with_2d(false), reject(reject), max_connected_component(-1), K_init(1.1), K_step(.1)
+      deal_with_2d(false), filter(filter), max_connected_component(-1), K_init(1.1), K_step(.1)
     
     {
       if(T.dimension() == 2){
@@ -595,6 +691,9 @@ namespace CGAL {
       }
     }
 
+    /// @}
+
+
     /*
       ~Advancing_front_surface_reconstruction()
       {
@@ -607,6 +706,43 @@ namespace CGAL {
       }
     */
 
+    typedef Advancing_front_surface_reconstruction_boundary_iterator<Extract> Boundary_iterator; 
+
+    Boundary_iterator boundaries_begin() const
+    {
+      return Boundary_iterator(*this, next_mark());
+    }
+
+
+    Boundary_iterator boundaries_end() const
+    {
+      return Boundary_iterator(*this);
+    }
+
+    typedef std::list<Point> Outlier_range;
+
+    typedef CGAL::Triangulation_data_structure_2<AFSR::Surface_vertex_base_2<Kernel,Vertex_handle>,
+                                                 AFSR::Surface_face_base_2<Kernel, typename Triangulation_3::Facet> > TDS_2;
+
+    typedef TDS_2 Triangulation_data_structure_2;
+
+    mutable TDS_2 _tds_2;
+
+    mutable typename TDS_2::Vertex_handle _tds_2_inf;
+
+    /// \name Operations
+    /// @{
+
+    /*!
+    runs the surface reconstruction function.
+
+    \param radius_ratio_bound candidates incident to surface triangles which are not in the beta-wedge
+           are discarded, if the ratio of their radius and the radius of the surface triangle is larger than `radius_ratio_bound`.
+           Described in Section \ref AFSR_Boundaries
+    \param beta half the angle of the wedge in which only the radius of triangles counts for the plausibility of candidates.
+           Described in Section \ref AFSR_Selection
+
+    */
     void run(double radius_ratio_bound=5, double beta= 0.52)
     {
       K = radius_ratio_bound;
@@ -649,115 +785,34 @@ namespace CGAL {
       clear_vertices();
     }
 
-
-    typedef CGAL::Triangulation_data_structure_2<AFSR::Surface_vertex_base_2<Kernel,Vertex_handle>,
-                                                 AFSR::Surface_face_base_2<Kernel, typename Triangulation_3::Facet> > TDS_2;
-
-    typedef TDS_2 Triangulation_data_structure_2;
-
-    mutable TDS_2 _tds_2;
-
-    mutable typename TDS_2::Vertex_handle _tds_2_inf;
-
-    const TDS_2& triangulation_data_structure_2() const
+    /*!
+    returns the reconstructed surface.
+    */
+    const Triangulation_data_structure_2& triangulation_data_structure_2() const
     {
       return _tds_2;
     }
 
-  
-    bool
-    has_boundaries() const
-    {
-      return _tds_2_inf != typename TDS_2::Vertex_handle(); 
-    }
-    
-
-    bool has_on_surface(typename TDS_2::Vertex_handle vh) const
-    {
-      return vh != _tds_2_inf;
-    }
-   
-    bool has_on_surface(typename TDS_2::Face_handle fh) const
-    {
-      return fh->is_on_surface();
-    }
-  
- 
-   
-    bool has_on_surface(Facet fh) const
-    {
-      return fh.first->has_facet_on_surface(fh.second);
-    }
-
-
-
-    int number_of_connected_components() const
-    {
-      return _number_of_connected_components;
-    }
-
-
+    /*!
+    returns the underlying 3D Delaunay triangulation.
+    */
     Triangulation_3&
     triangulation_3() const
     {
       return T;
     }
 
-
-    int number_of_facets() const
-    {
-      return _facet_number;
-    }
-
-
-    int number_of_vertices() const
-    {
-      return _vh_number;
-    }
-
-
-    int number_of_outliers() const
-    {
-      return static_cast<int>(m_outliers.size());
-    }
-
-
-    typedef std::list<Point> Outlier_range;
-
-    typedef typename std::list<Point>::const_iterator Outlier_iterator;
-
+    /*!
+    returns an iterator range over the outliers.
+    */
     const Outlier_range& outliers() const
     {
       return m_outliers;
     }
 
-    
-    Outlier_iterator outliers_begin() const
-    {
-      return m_outliers.begin();
-    }
-
-
-    Outlier_iterator m_outliers_end() const
-    {
-      return m_outliers.end();
-    }
-
-
-    typedef Advancing_front_surface_reconstruction_boundary_iterator<Extract> Boundary_iterator; 
-
-    Boundary_iterator boundaries_begin() const
-    {
-      return Boundary_iterator(*this, next_mark());
-    }
-
-
-    Boundary_iterator boundaries_end() const
-    {
-      return Boundary_iterator(*this);
-    }
-    
-
+    /*!
+    returns an iterator range over the boundaries.
+    */
     const Boundary_range& boundaries() const
     {
       if(has_boundaries() && m_boundaries.empty()){
@@ -776,7 +831,83 @@ namespace CGAL {
   
       return  m_boundaries; 
     }
+    /// @}
 
+/// \name Predicates
+/// @{
+
+    /*!
+    returns `true` if the reconstructed surface has boundaries.
+    */
+    bool
+    has_boundaries() const
+    {
+      return _tds_2_inf != typename TDS_2::Vertex_handle(); 
+    }
+
+    /*!
+    returns `true` if the facet is on the surface.
+    */
+    bool
+    has_on_surface(Facet f) const
+    {
+      return f.first->has_facet_on_surface(f.second);
+    }
+
+    /*!
+    returns `true` if the facet `f2` is on the surface.
+    */
+    bool
+    has_on_surface(typename Triangulation_data_structure_2::Face_handle f2) const
+    {
+      return f2->is_on_surface();
+    }
+
+    /*!
+    returns `true` if the vertex `v2` is on the surface.
+    */
+    bool
+    has_on_surface(typename Triangulation_data_structure_2::Vertex_handle v2) const
+    {
+      return v2 != _tds_2_inf;
+    }
+    /// @}
+ 
+    int number_of_connected_components() const
+    {
+      return _number_of_connected_components;
+    }
+
+    int number_of_facets() const
+    {
+      return _facet_number;
+    }
+
+
+    int number_of_vertices() const
+    {
+      return _vh_number;
+    }
+
+
+    int number_of_outliers() const
+    {
+      return static_cast<int>(m_outliers.size());
+    }
+
+    typedef typename std::list<Point>::const_iterator Outlier_iterator;
+
+    
+    Outlier_iterator outliers_begin() const
+    {
+      return m_outliers.begin();
+    }
+
+
+    Outlier_iterator m_outliers_end() const
+    {
+      return m_outliers.end();
+    }
 
     int next_mark() const
     {
@@ -1208,7 +1339,7 @@ namespace CGAL {
               // If the triangle has a high perimeter,
               // we do not want to consider it as a good candidate.
 
-              if(reject(facet_it.first->vertex(n_i1)->point(),
+              if(filter(facet_it.first->vertex(n_i1)->point(),
                         facet_it.first->vertex(n_i2)->point(),
                         facet_it.first->vertex(n_i3)->point())){
                 tmp = HUGE_VAL;
@@ -1254,13 +1385,12 @@ namespace CGAL {
                                             -DELTA*sqrt(norm12*(P2Pn*P2Pn)))&&
                                            (P2P1*PnP1 >= 
                                             -DELTA*sqrt(norm12*(PnP1*PnP1))));
-                          /// \todo investigate why we simply do not skip this triangle
-                          /// but continue looking for a better candidate
-                          /// if (!border_facet){ 
+                          // \todo investigate why we simply do not skip this triangle
+                          // but continue looking for a better candidate
+                          // if (!border_facet){ 
                           min_facetA = facet_it; 
                           min_valueA = tmp;
                           min_valueP = pscal/norm;
-                          ///}
                         }
                     }
                 }
@@ -1357,7 +1487,7 @@ namespace CGAL {
                     coord_type value = smallest_radius_delaunay_sphere(c, index);
 
                     // we might not want the triangle, for example because it is too large
-                    if(reject(c->vertex((index+1)&3)->point(),
+                    if(filter(c->vertex((index+1)&3)->point(),
                               c->vertex((index+2)&3)->point(),
                               c->vertex((index+3)&3)->point())){
                       value = min_value;
@@ -2331,12 +2461,32 @@ namespace CGAL {
     };
   }
 
+  /*!
+  \ingroup PkgAdvancingFrontSurfaceReconstruction
 
-  template <typename PointIterator, typename IndexTripleIterator>
-  IndexTripleIterator
-  advancing_front_surface_reconstruction(PointIterator b,
-                                         PointIterator e,
-                                         IndexTripleIterator out,
+  For a sequence of points computes a sequence of index triples
+  describing the faces of the reconstructed surface.
+
+  \tparam PointInputIterator must be an input iterator with 3D points as value type.  This point type must
+  be convertible to `Exact_predicates_inexact_constructions_kernel::Point_3` with the `Cartesian_converter`.
+  \tparam IndicesOutputIterator must be an output iterator to which
+  `CGAL::cpp11::tuple<std::size_t,std::size_t,std::size_t>` can be assigned.
+
+  \param b iterator on the first point of the sequence
+  \param e past the end iterator of the point sequence
+  \param out output iterator
+  \param radius_ratio_bound candidates incident to surface triangles which are not in the beta-wedge
+         are discarded, if the ratio of their radius and the radius of the surface triangle is larger than `radius_ratio_bound`.
+         Described in Section \ref AFSR_Boundaries
+  \param beta half the angle of the wedge in which only the radius of triangles counts for the plausibility of candidates.
+         Described in Section \ref AFSR_Selection
+
+  */
+  template <typename PointInputIterator, typename IndicesOutputIterator>
+  IndicesOutputIterator
+  advancing_front_surface_reconstruction(PointInputIterator b,
+                                         PointInputIterator e,
+                                         IndicesOutputIterator out,
                                          double radius_ratio_bound = 5,
                                          double beta = 0.52 )
   {
@@ -2348,7 +2498,7 @@ namespace CGAL {
     typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
     typedef Advancing_front_surface_reconstruction<Triangulation_3> Reconstruction;
-    typedef typename std::iterator_traits<PointIterator>::value_type InputPoint;
+    typedef typename std::iterator_traits<PointInputIterator>::value_type InputPoint;
     typedef typename Kernel_traits<InputPoint>::Kernel InputKernel;
     typedef Cartesian_converter<InputKernel,Kernel> CC;
     typedef Kernel::Point_3 Point_3;
@@ -2363,12 +2513,34 @@ namespace CGAL {
     return out;
   }
 
+  /*!
+  \ingroup PkgAdvancingFrontSurfaceReconstruction
 
-  template <typename PointIterator, typename IndexTripleIterator, typename Filter>
-  IndexTripleIterator
-  advancing_front_surface_reconstruction(PointIterator b,
-                                         PointIterator e,
-                                         IndexTripleIterator out,
+  For a sequence of points computes a sequence of index triples
+  describing the faces of the reconstructed surface.
+
+  \tparam PointInputIterator must be an input iterator with 3D points as value type.  This point type must
+  be convertible to `Exact_predicates_inexact_constructions_kernel::Point_3` with the `Cartesian_converter`.
+  \tparam IndicesOutputIterator must be an output iterator to which
+  `CGAL::cpp11::tuple<std::size_t,std::size_t,std::size_t>` can be assigned.
+  \tparam Filter must be a functor with `bool operator()(Point,Point,Point)` where Point is `Exact_predicates_inexact_constructions_kernel::Point_3`.
+
+  \param b iterator on the first point of the sequence
+  \param e past the end iterator of the point sequence
+  \param out output iterator
+  \param radius_ratio_bound candidates incident to surface triangles which are not in the beta-wedge
+         are discarded, if the ratio of their radius and the radius of the surface triangle is larger than `radius_ratio_bound`.
+         Described in Section \ref AFSR_Boundaries
+  \param beta half the angle of the wedge in which only the radius of triangles counts for the plausibility of candidates.
+         Described in Section \ref AFSR_Selection
+  \param filter allows the user to filter candidate triangles, for example based on their size.
+
+  */
+  template <typename PointInputIterator, typename IndicesOutputIterator, typename Filter>
+  IndicesOutputIterator
+  advancing_front_surface_reconstruction(PointInputIterator b,
+                                         PointInputIterator e,
+                                         IndicesOutputIterator out,
                                          Filter filter,
                                          double radius_ratio_bound = 5,
                                          double beta = 0.52 )
@@ -2381,7 +2553,7 @@ namespace CGAL {
     typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
     typedef Advancing_front_surface_reconstruction<Triangulation_3,Filter> Reconstruction;
-    typedef typename std::iterator_traits<PointIterator>::value_type InputPoint;
+    typedef typename std::iterator_traits<PointInputIterator>::value_type InputPoint;
     typedef typename Kernel_traits<InputPoint>::Kernel InputKernel;
     typedef Cartesian_converter<InputKernel,Kernel> CC;
     typedef Kernel::Point_3 Point_3;
@@ -2397,10 +2569,10 @@ namespace CGAL {
   }
 
 
-  template <typename PointIterator, typename Kernel, typename Items,  template < class T, class I, class A> class HDS, typename Alloc,typename Filter>
+  template <typename PointInputIterator, typename Kernel, typename Items,  template < class T, class I, class A> class HDS, typename Alloc,typename Filter>
   void
-  advancing_front_surface_reconstruction(PointIterator b,
-                                         PointIterator e,
+  advancing_front_surface_reconstruction(PointInputIterator b,
+                                         PointInputIterator e,
                                          Polyhedron_3<Kernel,Items,HDS,Alloc>& polyhedron,
                                          Filter filter,
                                          double radius_ratio_bound = 5,
@@ -2413,7 +2585,7 @@ namespace CGAL {
     typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
     typedef Advancing_front_surface_reconstruction<Triangulation_3,Filter> Reconstruction;
-    typedef typename std::iterator_traits<PointIterator>::value_type InputPoint;
+    typedef typename std::iterator_traits<PointInputIterator>::value_type InputPoint;
     typedef typename Kernel_traits<InputPoint>::Kernel InputKernel;
     typedef Cartesian_converter<InputKernel,Kernel> CC;
     typedef typename Kernel::Point_3 Point_3;
@@ -2428,10 +2600,10 @@ namespace CGAL {
   }
 
 
-  template <typename PointIterator, typename Kernel, typename Items, template < class T, class I, class A> class HDS, typename Alloc>
+  template <typename PointInputIterator, typename Kernel, typename Items, template < class T, class I, class A> class HDS, typename Alloc>
   void
-  advancing_front_surface_reconstruction(PointIterator b,
-                                         PointIterator e,
+  advancing_front_surface_reconstruction(PointInputIterator b,
+                                         PointInputIterator e,
                                          Polyhedron_3<Kernel,Items,HDS,Alloc>& polyhedron,
                                          double radius_ratio_bound = 5,
                                          double beta = 0.52)
@@ -2443,7 +2615,7 @@ namespace CGAL {
     typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
     typedef Advancing_front_surface_reconstruction<Triangulation_3> Reconstruction;
-    typedef typename std::iterator_traits<PointIterator>::value_type InputPoint;
+    typedef typename std::iterator_traits<PointInputIterator>::value_type InputPoint;
     typedef typename Kernel_traits<InputPoint>::Kernel InputKernel;
     typedef Cartesian_converter<InputKernel,Kernel> CC;
     typedef typename Kernel::Point_3 Point_3;
