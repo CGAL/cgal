@@ -160,7 +160,7 @@ void reverse_orientation(typename boost::graph_traits<PolygonMesh>::halfedge_des
 }
 
 /**
-* \ingroup PkgPolygonMeshProcessing
+* \ingroup reverse_face_orientations_grp
 * reverses for each face the order of the vertices along the face boundary.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`
@@ -186,11 +186,15 @@ void reverse_face_orientations(PolygonMesh& pmesh)
   }
 }
 
-/*
-* \ingroup PkgPolygonMeshProcessing
+/**
+* \ingroup reverse_face_orientations_grp
 * reverses for each face in `face_range` the order of the vertices along the face boundary.
+* The function does not perform any control and if the orientation change of the faces
+* makes the polygon mesh invalid, the behavior is undefined.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`
+* @tparam FaceRange range of face descriptors, model of `Range`.
+*         Its iterator type is `InputIterator`.
 */
 template<typename PolygonMesh, typename FaceRange>
 void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
