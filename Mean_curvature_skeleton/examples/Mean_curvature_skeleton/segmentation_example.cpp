@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
   BOOST_FOREACH(Skeleton_vertex v, vertices(skeleton) )
   {
     const Point& skel_pt = skeleton[v].point;
-    BOOST_FOREACH(vertex_descriptor mesh_v, vertices(tmesh))
+    BOOST_FOREACH(vertex_descriptor mesh_v, skeleton[v].vertices)
     {
       const Point& mesh_pt = mesh_v->point();
       distances[mesh_v->id()] = std::sqrt(CGAL::squared_distance(skel_pt, mesh_pt));
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
   }
 
   // create a property-map for sdf values
-  std::vector<double> sdf_values;
+  std::vector<double> sdf_values( num_faces(*input_triangle_mesh) );
   Facet_with_id_pmap<double> sdf_property_map(sdf_values);
 
   // compute sdf values with skeleton
@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
   CGAL::sdf_values_postprocessing(tmesh, sdf_property_map);
 
   // create a property-map for segment-ids (it is an adaptor for this case)
-  std::vector<int> segment_ids;
+  std::vector<int> segment_ids( num_faces(*input_triangle_mesh) );
   Facet_with_id_pmap<int> segment_property_map(segment_ids);
 
   // segment the mesh using default parameters
