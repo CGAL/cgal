@@ -852,6 +852,7 @@ public:
    */
   void convert_to_skeleton(Skeleton& skeleton)
   {
+    skeleton.clear();
     Curve_skeleton skeletonization(m_tmesh, m_vertex_id_pmap, m_hedge_id_pmap, m_tmesh_point_pmap);
     skeletonization.extract_skeleton(skeleton);
   }
