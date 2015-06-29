@@ -17,8 +17,8 @@ struct Perimeter {
   template <typename Point>
   bool operator()(const Point& p, const Point& q, const Point& r) const
   {
-    // bound == 0 is better than bound < infinity 
-    // as it avoids the distance computations 
+    // bound == 0 is better than bound < infinity
+    // as it avoids the distance computations
     if(bound == 0){
       return false;
     }
@@ -44,21 +44,21 @@ typedef K::Point_3 Point_3;
 
 int main(int argc, char* argv[])
 {
-  std::ifstream in((argc>1)?argv[1]:"data/half.xyz"); 
+  std::ifstream in((argc>1)?argv[1]:"data/half.xyz");
   std::istream_iterator<Point_3> begin(in);
   std::istream_iterator<Point_3> end;
 
   Perimeter perimeter(0.5);
-  Triangulation_3 dt(begin, end); 
+  Triangulation_3 dt(begin, end);
   Reconstruction reconstruction(dt, perimeter);
 
   reconstruction.run();
-                
+
   std::cout << reconstruction.number_of_outliers() << " outliers:\n" << std::endl;
   BOOST_FOREACH(const Point_3& p, reconstruction.outliers()){
     std::cout << p << std::endl;
   }
-  
+
   std::cout << "Boundaries:" << std::endl ;
   BOOST_FOREACH(const Vertex_on_boundary_range & vobr, reconstruction.boundaries()){
     std::cout << "boundary\n";
@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
     BOOST_FOREACH(Vertex_handle v, vobr){
       std::cout << v->point() << std::endl;
     }
-  }  
-  
+  }
+
   return 0;
 }

@@ -63,7 +63,7 @@ namespace CGAL {
     typedef typename Base::Cell_handle Cell_handle;
     typedef typename Vb::Point Point;
     typedef double coord_type;
-  
+
     typedef Triple< Cell_handle, int, int > Edge;
     typedef std::pair< Edge, int > Edge_incident_facet;
     typedef std::pair< Edge_incident_facet, Edge_incident_facet > IO_edge_type;
@@ -87,8 +87,8 @@ namespace CGAL {
     typedef std::pair< criteria,  Edge_like > Incidence_request_elt;
     typedef std::list< Incidence_request_elt > Incidence_request_type;
     typedef typename Incidence_request_type::iterator Incidence_request_iterator;
-  
-  
+
+
     //-------------------- DATA MEMBERS ---------------------------------
 
     typedef int Info;  // so that we are a model of TriangulationVertexBaseWithInfo_3
@@ -110,34 +110,34 @@ namespace CGAL {
     // We do the same for the incidence requests
     typename std::list< Incidence_request_elt >::iterator m_ir_first, m_ir_last;
 
-  
+
     //-------------------- CONSTRUCTORS ---------------------------------
 
   public:
 
     Advancing_front_surface_reconstruction_vertex_base_3()
-      : Vb(), m_mark(-1), 
+      : Vb(), m_mark(-1),
         m_post_mark(-1)
     {}
-  
+
     Advancing_front_surface_reconstruction_vertex_base_3(const Point & p)
-      : Vb(p), m_mark(-1), 
-        m_post_mark(-1) 
+      : Vb(p), m_mark(-1),
+        m_post_mark(-1)
     {}
-  
+
     Advancing_front_surface_reconstruction_vertex_base_3(const Point & p, Cell_handle f)
-      : Vb(p, f), m_mark(-1), 
-        m_post_mark(-1) 
+      : Vb(p, f), m_mark(-1),
+        m_post_mark(-1)
     {}
 
     Advancing_front_surface_reconstruction_vertex_base_3(Cell_handle f)
-      : Vb(f), m_mark(-1), 
-        m_post_mark(-1) 
+      : Vb(f), m_mark(-1),
+        m_post_mark(-1)
     {}
 
     Advancing_front_surface_reconstruction_vertex_base_3(const Advancing_front_surface_reconstruction_vertex_base_3& other)
-      : Vb(other), m_mark(-1), 
-        m_post_mark(-1) 
+      : Vb(other), m_mark(-1),
+        m_post_mark(-1)
     {}
 
     //-------------------- MEMBER FUNCTIONS -----------------------------
@@ -163,19 +163,19 @@ namespace CGAL {
     {
       return m_id;
     }
- 
+
 
     //-------------------------------------------------------------------
   private:
 
     void delete_border()
     {
-      m_incident_border = NULL; 
+      m_incident_border = NULL;
     }
 
 
     inline Next_border_elt* next_on_border(const int& i) const
-    { 
+    {
       if (m_incident_border == NULL) return NULL; //vh is interior
       if (m_incident_border->first->first != NULL)
 	if (m_incident_border->first->second.second == i)
@@ -187,10 +187,10 @@ namespace CGAL {
     }
 
 
- 
+
 
     inline bool is_border_edge(Vertex_handle v) const
-    { 
+    {
       if (m_incident_border == NULL) return false;
       return ((m_incident_border->first->first == v)||
 	      (m_incident_border->second->first == v));
@@ -201,7 +201,7 @@ namespace CGAL {
       if (m_incident_border == NULL) return NULL;
       if (m_incident_border->first->first == v) return m_incident_border->first;
       if (m_incident_border->second->first == v) return m_incident_border->second;
-      return NULL; 
+      return NULL;
     }
 
   public:
@@ -230,8 +230,8 @@ namespace CGAL {
 	}
     }
 
- 
- 
+
+
     //-------------------------------------------------------------------
 
   public:
@@ -255,7 +255,7 @@ namespace CGAL {
     {
       return (m_mark < 0);
     }
-  
+
     //-------------------------------------------------------------------
   private:
 
@@ -273,7 +273,7 @@ namespace CGAL {
     {
       m_post_mark = i;
     }
-  
+
     inline bool is_post_marked(const int& i)
     {
       return (m_post_mark == i);

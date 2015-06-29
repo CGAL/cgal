@@ -11,7 +11,7 @@ typedef K::Point_3  Point_3;
 typedef CGAL::cpp11::array<std::size_t,3> Facet;
 
 namespace std {
-std::ostream& 
+std::ostream&
 operator<<(std::ostream& os, const Facet& f)
 {
   os << "3 " << f[0] << " " << f[1] << " " << f[2];
@@ -22,14 +22,14 @@ operator<<(std::ostream& os, const Facet& f)
 
 void fct(const char* fname)
 {
-  std::ifstream in(fname); 
+  std::ifstream in(fname);
   std::vector<Point_3> points;
   std::vector<Facet> facets;
-  
-  std::copy(std::istream_iterator<Point_3>(in), 
-            std::istream_iterator<Point_3>(), 
+
+  std::copy(std::istream_iterator<Point_3>(in),
+            std::istream_iterator<Point_3>(),
             std::back_inserter(points));
-  
+
   CGAL::advancing_front_surface_reconstruction(points.begin(),
                                                points.end(),
                                                std::back_inserter(facets));
@@ -43,7 +43,7 @@ void fct(const char* fname)
             std::ostream_iterator<Facet>(std::cout, "\n"));
 }
 
-int main()  
+int main()
 {
   fct("data/point.xyz");
   fct("data/segment.xyz");

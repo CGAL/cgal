@@ -33,7 +33,7 @@ namespace CGAL {
       : public Fb
     {
       typedef typename Fb::Triangulation_data_structure    Tds;
-  
+
     public:
       typedef typename Tds::Face_handle             Face_handle;
       typedef typename Tds::Vertex_handle           Vertex_handle;
@@ -53,17 +53,17 @@ namespace CGAL {
         : Fb(), _is_on_surface(true)
       {}
 
-      Surface_face_base_2(Vertex_handle v0, 
-                          Vertex_handle v1, 
+      Surface_face_base_2(Vertex_handle v0,
+                          Vertex_handle v1,
                           Vertex_handle v2)
         : Fb(v0, v1, v2), _is_on_surface(true)
       {}
 
-      Surface_face_base_2(Vertex_handle v0, 
-                          Vertex_handle v1, 
+      Surface_face_base_2(Vertex_handle v0,
+                          Vertex_handle v1,
                           Vertex_handle v2,
-                          Face_handle n0, 
-                          Face_handle n1, 
+                          Face_handle n0,
+                          Face_handle n1,
                           Face_handle n2)
         : Fb(v0, v1, v2, n0, n1, n2), _is_on_surface(true)
       {}
@@ -71,8 +71,8 @@ namespace CGAL {
       void set_facet(const F3& facet)
       {
         _facet = facet;
-      } 
-  
+      }
+
       const F3& facet() const
       {
         return _facet;
@@ -82,7 +82,7 @@ namespace CGAL {
       {
         _is_on_surface = is_on_surface;
       }
-  
+
       bool is_on_surface() const
       {
         return _is_on_surface;
@@ -91,7 +91,7 @@ namespace CGAL {
 
       void reorient()
       {
-        Fb::reorient(); 
+        Fb::reorient();
         if( is_on_surface()){
           _facet = std::make_pair(_facet.first->neighbor(_facet.second),
                                   _facet.first->neighbor(_facet.second)->index(_facet.first));

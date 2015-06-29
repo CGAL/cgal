@@ -18,11 +18,11 @@ int main(int argc, char* argv[])
   std::istream_iterator<Point_3> end;
 
   Triangulation_3 dt(begin,end);
-  
+
   Reconstruction reconstruction(dt);
 
   reconstruction.run();
-                
+
   const TDS_2& tds = reconstruction.triangulation_data_structure_2();
 
   std::cout << "solid produced with CGAL::Advancing_front_surface_reconstruction\n";
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
           j++;
         }
       }
-      std::cout << "  facet normal " 
+      std::cout << "  facet normal "
                 << CGAL::unit_normal(points[0],points[1], points[2]) << "\n"
                 << "  outer loop\n"
                 << "    vertex " << points[0]  << "\n"
@@ -51,6 +51,6 @@ int main(int argc, char* argv[])
     }
   }
     std::cout << "endsolid" << std::endl;
-  
+
   return 0;
 }

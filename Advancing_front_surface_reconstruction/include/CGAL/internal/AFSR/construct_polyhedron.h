@@ -44,7 +44,7 @@ namespace CGAL {
       {
         CGAL::Polyhedron_incremental_builder_3<HDS> B( hds, true);
         B.begin_surface( s.number_of_vertices(), s.number_of_facets(), 6* s.number_of_facets());
-      
+
         typedef typename Surface::TDS_2 TDS_2;
         typedef typename TDS_2::Face_iterator Face_iterator;
         typedef typename TDS_2::Vertex_iterator Vertex_iterator;
@@ -60,9 +60,9 @@ namespace CGAL {
             vit->vertex_3()->id() = index++;
           }
         }
-      
+
         for(Face_iterator fit = tds.faces_begin(); fit != tds.faces_end(); ++fit){
-        
+
           if(fit->is_on_surface()){
             B.begin_facet();
             for(int i=0; i < 3; i++){
@@ -73,7 +73,7 @@ namespace CGAL {
         }
         B.end_surface();
       }
-  
+
     };
 
     template <class Polyhedron, class Surface>

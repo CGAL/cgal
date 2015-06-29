@@ -8,9 +8,9 @@
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Tran Kai Frank Da, David Cohen-Steiner}
 \cgalPkgDesc{This package provides a greedy algorithm for surface reconstruction from an
-unorganized point set. Starting from a seed facet, a piecewise linear 
-surface is grown by adding Delaunay triangles one by one. The most 
-plausible triangles are added first, in a way that avoids the appearance 
+unorganized point set. Starting from a seed facet, a piecewise linear
+surface is grown by adding Delaunay triangles one by one. The most
+plausible triangles are added first, in a way that avoids the appearance
 of topological singularities. }
 \cgalPkgManuals{Chapter_Advancing_Front_Surface_Reconstruction,PkgAdvancingFrontSurfaceReconstruction}
 \cgalPkgSummaryEnd

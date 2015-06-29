@@ -51,13 +51,13 @@ namespace CGAL {
       V3 _vertex;
     public:
       Surface_vertex_base_2() : Vb() {}
-      Surface_vertex_base_2(Face_handle f) : Vb(f) {} 
+      Surface_vertex_base_2(Face_handle f) : Vb(f) {}
 
       void set_vertex(const V3& v)
       {
         _vertex = v;
       }
-  
+
       V3 vertex_3() const
       {
         return _vertex;

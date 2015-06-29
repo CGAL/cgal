@@ -27,12 +27,12 @@ namespace CGAL {
   /*!
   \ingroup PkgAdvancingFrontSurfaceReconstruction
 
-  The class `Advancing_front_surface_reconstruction_cell_base_3` is the default 
+  The class `Advancing_front_surface_reconstruction_cell_base_3` is the default
   cell type for the class  `Advancing_front_surface_reconstruction`.
 
-  \tparam Traits has to be a model of `DelaunayTriangulationTraits_3`. 
+  \tparam Traits has to be a model of `DelaunayTriangulationTraits_3`.
 
-  \tparam Cb has to be a model of `TriangulationCellBase_3`.  
+  \tparam Cb has to be a model of `TriangulationCellBase_3`.
   */
   template < typename Traits, typename Cb = Triangulation_cell_base_3<Traits> >
   class Advancing_front_surface_reconstruction_cell_base_3 : public Cb
@@ -49,14 +49,14 @@ namespace CGAL {
     typedef typename Cb::Cell_handle Cell_handle;
 
   private:
-     
+
 #ifdef AFSR_FACET_NUMBER
     int _facet_number[4];
 #endif
-    typedef double coord_type; 
-#ifdef AFSR_LAZY       
+    typedef double coord_type;
+#ifdef AFSR_LAZY
     typedef typename CGAL::Simple_cartesian<coord_type>::Point_3 D_Point;
-#endif 
+#endif
     //-------------------- DATA MEMBERS ---------------------------------
 
     coord_type* _smallest_radius_facet_tab;
@@ -64,13 +64,13 @@ namespace CGAL {
 #ifdef AFSR_LAZY
     D_Point* _circumcenter;
     coord_type* _squared_radius;
-#endif 
+#endif
 
     //-------------------- CONSTRUCTORS ----------------------------------
 
   public:
-  
-    Advancing_front_surface_reconstruction_cell_base_3() 
+
+    Advancing_front_surface_reconstruction_cell_base_3()
       : Cb(),
         _smallest_radius_facet_tab(NULL), selected_facet(0)
 #ifdef AFSR_LAZY
@@ -83,7 +83,7 @@ namespace CGAL {
       }
 #endif
     }
-  
+
     Advancing_front_surface_reconstruction_cell_base_3(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
       : Cb( v0, v1, v2, v3),
         _smallest_radius_facet_tab(NULL), selected_facet(0)
@@ -97,7 +97,7 @@ namespace CGAL {
       }
 #endif
     }
-  
+
     Advancing_front_surface_reconstruction_cell_base_3(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
                                                        Cell_handle n0, Cell_handle n1, Cell_handle n2, Cell_handle n3)
       : Cb(v0,  v1,  v2, v3,
@@ -130,7 +130,7 @@ namespace CGAL {
 
     //--------------------  MEMBER FUNCTIONS ----------------------------
   public:
-  
+
     inline void clear()
     {
       if (_smallest_radius_facet_tab != NULL)
@@ -149,12 +149,12 @@ namespace CGAL {
 
     //-------------------------------------------------------------------
     inline coord_type smallest_radius(const int& i)
-    { 
+    {
       if (_smallest_radius_facet_tab == NULL)
 	return -1;
       return _smallest_radius_facet_tab[i];
     }
-  
+
     inline void set_smallest_radius(const int& i, const coord_type& c)
     {
       if (_smallest_radius_facet_tab == NULL)
@@ -177,7 +177,7 @@ namespace CGAL {
       return false;
     }
 
-  
+
     //-------------------------------------------------------------------
 
 #ifdef FACET_NUMBER
@@ -197,14 +197,14 @@ namespace CGAL {
 
 
     //-------------------------------------------------------------------
-  
+
     inline void select_facet(const int& i)
     {
       selected_facet |= (1 << i);
     }
-  
+
     inline void unselect_facet(const int& i)
-    { 
+    {
       selected_facet &= (15 - (1 << i));
     }
 
@@ -217,9 +217,9 @@ namespace CGAL {
     {
       return (selected_facet & (1 << i)) != 0;
     }
- 
+
 #ifdef AFSR_LAZY
- 
+
     //-------------------------------------------------------------------
 
     inline D_Point* lazy_circumcenter()
@@ -231,16 +231,16 @@ namespace CGAL {
     {
       _circumcenter = new D_Point(p);
     }
-  
+
     //-------------------------------------------------------------------
 
     inline coord_type* lazy_squared_radius()
-    { 
+    {
       return _squared_radius;
     }
 
     inline void set_lazy_squared_radius(const coord_type& sr)
-    { 
+    {
       _squared_radius = new coord_type(sr);
     }
 

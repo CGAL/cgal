@@ -50,7 +50,7 @@ namespace CGAL {
   // This iterator allows to visit all contours. It has the particularity
   // that it visits the entry point of the contour twice. This allows to
   // detect that the traversal of the border is finished. One more increment
-  // brings us to the next vertex.  
+  // brings us to the next vertex.
 
 
 
@@ -70,7 +70,7 @@ namespace CGAL {
     Vertex_handle pos;
     bool first, last;
 
-  public:       
+  public:
     Advancing_front_surface_reconstruction_boundary_iterator(const Surface& S_, int m)
       : S(S_), mark(m), first_vertex(S.triangulation_3().finite_vertices_begin()), pos(first_vertex)
     {
@@ -142,19 +142,19 @@ namespace CGAL {
       }
       do {
         first_vertex++;
-      } while((first_vertex != S.triangulation_3().finite_vertices_end()) && 
-              (! ((first_vertex->is_on_border()) 
+      } while((first_vertex != S.triangulation_3().finite_vertices_end()) &&
+              (! ((first_vertex->is_on_border())
                   && ! first_vertex->is_post_marked(mark))));
       if(first_vertex != S.triangulation_3().finite_vertices_end()) {
         pos = first_vertex;
         pos->set_post_mark(mark);
         assert(pos->is_on_border());
-      
+
       } else {
         pos = NULL;
       }
     }
-  };  
+  };
 
   namespace AFSR{
     struct Always_false {
@@ -171,12 +171,12 @@ namespace CGAL {
   /*!
   \ingroup PkgAdvancingFrontSurfaceReconstruction
 
-  The class `Advancing_front_surface_reconstruction` enables advanced users to provide the unstructured 
+  The class `Advancing_front_surface_reconstruction` enables advanced users to provide the unstructured
   point cloud in a 3D Delaunay triangulation. The reconstruction algorithm then marks vertices and faces
   in the triangulation as being on the 2D surface embedded in 3D space, and constructs a 2D triangulation
-  data structure that describes the surface.  The vertices and facets of the 2D triangulation data structure 
+  data structure that describes the surface.  The vertices and facets of the 2D triangulation data structure
   store handles to the vertices and faces of the 3D triangulation, which enables the user to explore the
-  2D as well as 3D neighborhood of vertices and facets of the surface. 
+  2D as well as 3D neighborhood of vertices and facets of the surface.
 
   \tparam Dt must be a `Delaunay_triangulation_3` with
   `Advancing_front_surface_reconstruction_vertex_base_3` and `Advancing_front_surface_reconstruction_cell_base_3` blended into the vertex and cell type.
@@ -222,7 +222,7 @@ namespace CGAL {
   /*!
   The type of the triangle filter functor.
   */
-    typedef unspecified_type Filter;  
+    typedef unspecified_type Filter;
 
   /*!
   The point type.
@@ -287,7 +287,7 @@ namespace CGAL {
 
     typedef typename Triangulation_3::Cell_circulator  Cell_circulator;
     typedef typename Triangulation_3::Facet_circulator Facet_circulator;
-  
+
     typedef typename Triangulation_3::Locate_type Locate_type;
 
     typedef typename Triangulation_3::Finite_cells_iterator  Finite_cells_iterator;
@@ -299,19 +299,19 @@ namespace CGAL {
     typedef typename Triangulation_3::All_facets_iterator All_facets_iterator;
     typedef typename Triangulation_3::All_vertices_iterator  All_vertices_iterator;
     typedef typename Triangulation_3::All_edges_iterator  All_edges_iterator;
-  
+
     typedef typename Triangulation_3::Vertex::Edge_incident_facet Edge_incident_facet;
     typedef typename Triangulation_3::Vertex::IO_edge_type IO_edge_type;
     typedef typename Triangulation_3::Vertex::criteria criteria;
     typedef typename Triangulation_3::Vertex::Radius_edge_type Radius_edge_type;
     typedef typename Triangulation_3::Vertex::Border_elt Border_elt;
     typedef typename Triangulation_3::Vertex::Next_border_elt Next_border_elt;
-    typedef typename Triangulation_3::Vertex::Intern_successors_type Intern_successors_type; 
+    typedef typename Triangulation_3::Vertex::Intern_successors_type Intern_successors_type;
     typedef typename Triangulation_3::Vertex::Radius_ptr_type Radius_ptr_type;
 
     typedef typename Triangulation_3::Vertex::Incidence_request_iterator Incidence_request_iterator;
     typedef typename Triangulation_3::Vertex::Incidence_request_elt Incidence_request_elt;
-  
+
     typedef std::pair< Vertex_handle, Vertex_handle > Edge_like;
     typedef CGAL::Triple< Vertex_handle, Vertex_handle, Vertex_handle > Facet_like;
 
@@ -325,16 +325,16 @@ namespace CGAL {
     //=====================================================================
     //=====================================================================
 
- 
+
     typedef const std::list<std::list<Vertex_handle> > Boundary_range;
     typedef const std::list<Vertex_handle> Vertex_on_boundary_range;
 
-  private: 
+  private:
 
-    mutable std::list<std::list<Vertex_handle> >  m_boundaries;  
-  
+    mutable std::list<std::list<Vertex_handle> >  m_boundaries;
+
     Timer postprocess_timer, extend_timer, extend2_timer, init_timer;
-    
+
     Triangulation_3& T;
 
     Ordered_border_type _ordered_border;
@@ -378,22 +378,22 @@ namespace CGAL {
     typename std::list<Vertex_handle>::iterator ie_sentinel;
     std::list<Next_border_elt> nbe_pool;
     std::list<Intern_successors_type> ist_pool;
-  
+
 
     Intern_successors_type* new_border()
-    {  
+    {
       nbe_pool.push_back(Next_border_elt());
 
       Next_border_elt* p1 = & nbe_pool.back();
       nbe_pool.push_back(Next_border_elt());
       Next_border_elt* p2 = & nbe_pool.back();
-    
+
       Intern_successors_type ist(p1,p2);
       ist_pool.push_back(ist);
 
       Intern_successors_type* ret = &ist_pool.back();
 
-      ret->first->first = NULL; 
+      ret->first->first = NULL;
       ret->second->first = NULL;
       return ret;
     }
@@ -403,16 +403,16 @@ namespace CGAL {
     {
       if (vh->m_incident_border == NULL) return false; //vh is interior
       if (vh->m_incident_border->first->first != NULL)
-	{ 
+	{
 	  if (vh->m_incident_border->second->first != NULL)
 	    return ((vh->m_incident_border->first->second.second == i)||
 		    (vh->m_incident_border->second->second.second == i));
 	  return (vh->m_incident_border->first->second.second == i);
 	}
-      return false; //vh is still exterior   
+      return false; //vh is still exterior
     }
 
-    
+
     void remove_border_edge(Vertex_handle w, Vertex_handle v)
     {
       if (w->m_incident_border != NULL)
@@ -435,7 +435,7 @@ namespace CGAL {
 		  return;
 		}
 	      else
-		{ 
+		{
 		  w->m_incident_border->first->first = NULL;
 		  set_interior_edge(w,v);
 		  return;
@@ -462,7 +462,7 @@ namespace CGAL {
     }
 
     //-------------------------------------------------------------------
-    // pour gerer certaines aretes interieures: a savoir celle encore connectee au 
+    // pour gerer certaines aretes interieures: a savoir celle encore connectee au
     // bord (en fait seule, les aretes interieures reliant 2 bords nous
     // interressent...)
 
@@ -512,7 +512,7 @@ namespace CGAL {
 
 
     //-------------------------------------------------------------------
-  
+
     inline void set_incidence_request(Vertex_handle w, const Incidence_request_elt& ir)
     {
       if(w->m_ir_last == sentinel ){
@@ -533,7 +533,7 @@ namespace CGAL {
       }
       return (w->m_ir_last != sentinel );
     }
-  
+
     inline Incidence_request_iterator incidence_request_begin(Vertex_handle w)
     {
       return w->m_ir_first;
@@ -551,7 +551,7 @@ namespace CGAL {
     }
 
     inline void erase_incidence_request(Vertex_handle w)
-    { 
+    {
       if(w->m_ir_last != sentinel ){
 	assert(w->m_ir_first != sentinel );
 	w->m_ir_last++;
@@ -560,7 +560,7 @@ namespace CGAL {
 	w->m_ir_last = sentinel ;
       }
     }
-  
+
 
     void re_init(Vertex_handle w)
     {
@@ -599,7 +599,7 @@ namespace CGAL {
 
     void initialize_vertices_and_cells()
     {
-      
+
       Incidence_request_elt ire;
       incidence_requests.clear();
       incidence_requests.push_back(ire);
@@ -661,15 +661,15 @@ namespace CGAL {
     */
     Advancing_front_surface_reconstruction(Triangulation_3& dt,
                                            Filter filter = Filter())
-      : T(dt), _number_of_border(1), COS_ALPHA_SLIVER(-0.86), 
-        NB_BORDER_MAX(15), DELTA(.86), min_K(HUGE_VAL), 
+      : T(dt), _number_of_border(1), COS_ALPHA_SLIVER(-0.86),
+        NB_BORDER_MAX(15), DELTA(.86), min_K(HUGE_VAL),
         eps(1e-7), inv_eps_2(coord_type(1)/(eps*eps)), eps_3(eps*eps*eps),
-        STANDBY_CANDIDATE(3), STANDBY_CANDIDATE_BIS(STANDBY_CANDIDATE+1), 
+        STANDBY_CANDIDATE(3), STANDBY_CANDIDATE_BIS(STANDBY_CANDIDATE+1),
         NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2),
       _vh_number(static_cast<int>(T.number_of_vertices())), _facet_number(0),
       _postprocessing_counter(0), _size_before_postprocessing(0), _number_of_connected_components(0),
       deal_with_2d(false), filter(filter), max_connected_component(-1), K_init(1.1), K_step(.1)
-    
+
     {
       if(T.dimension() == 2){
         deal_with_2d = true;
@@ -706,7 +706,7 @@ namespace CGAL {
       }
     */
 
-    typedef Advancing_front_surface_reconstruction_boundary_iterator<Extract> Boundary_iterator; 
+    typedef Advancing_front_surface_reconstruction_boundary_iterator<Extract> Boundary_iterator;
 
     Boundary_iterator boundaries_begin() const
     {
@@ -752,7 +752,7 @@ namespace CGAL {
       }
       initialize_vertices_and_cells();
       bool re_init = false;
-      do 
+      do
         {
           _number_of_connected_components++;
 
@@ -770,14 +770,14 @@ namespace CGAL {
                   while(postprocessing()){
                     extend2_timer.start();
                     extend();
-                  
+
                     extend2_timer.stop();
                   }
                 }
-            } 
+            }
         }while(re_init &&
                ((_number_of_connected_components < max_connected_component)||
-                (max_connected_component < 0))); 
+                (max_connected_component < 0)));
 
       _tds_2_inf = AFSR::construct_surface(_tds_2, *this);
 
@@ -828,8 +828,8 @@ namespace CGAL {
           }while(*b != v);
         }
       }
-  
-      return  m_boundaries; 
+
+      return  m_boundaries;
     }
     /// @}
 
@@ -842,7 +842,7 @@ namespace CGAL {
     bool
     has_boundaries() const
     {
-      return _tds_2_inf != typename TDS_2::Vertex_handle(); 
+      return _tds_2_inf != typename TDS_2::Vertex_handle();
     }
 
     /*!
@@ -872,7 +872,7 @@ namespace CGAL {
       return v2 != _tds_2_inf;
     }
     /// @}
- 
+
     int number_of_connected_components() const
     {
       return _number_of_connected_components;
@@ -897,7 +897,7 @@ namespace CGAL {
 
     typedef typename std::list<Point>::const_iterator Outlier_iterator;
 
-    
+
     Outlier_iterator outliers_begin() const
     {
       return m_outliers.begin();
@@ -950,14 +950,14 @@ namespace CGAL {
     {
       Next_border_elt* it12 = border_elt(key.first, key.second);
       if (it12 != NULL)
-        {    
+        {
           result = it12->second;
           return true;
         }
 
       Next_border_elt* it21 =  border_elt(key.second, key.first);
       if (it21 != NULL)
-        {    
+        {
           result = it21->second;
           std::swap(key.first, key.second);
           return true;
@@ -969,13 +969,13 @@ namespace CGAL {
     bool is_border_elt(Edge_like& key) const {
       Next_border_elt* it12 =  border_elt(key.first, key.second);
       if (it12 != NULL)
-        {    
+        {
           return true;
         }
 
       Next_border_elt* it21 =  border_elt(key.second, key.first);
       if (it21 != NULL)
-        {    
+        {
           std::swap(key.first, key.second);
           return true;
         }
@@ -987,7 +987,7 @@ namespace CGAL {
     {
       Next_border_elt* it12 =  border_elt(key.first, key.second);
       if (it12 != NULL)
-        {    
+        {
           result = it12->second;
           return true;
         }
@@ -1002,14 +1002,14 @@ namespace CGAL {
     }
 
     //---------------------------------------------------------------------
-    bool is_ordered_border_elt(const Edge_like& e, 
+    bool is_ordered_border_elt(const Edge_like& e,
                                IO_edge_type* &ptr) const
     {
       Vertex_handle v1 = e.first;
 
       Next_border_elt* it12 =  border_elt(v1, e.second);
       if (it12 != NULL)
-        {   
+        {
           ptr = &it12->second.first.second;
           return true;
         }
@@ -1027,7 +1027,7 @@ namespace CGAL {
 
     //---------------------------------------------------------------------
     bool is_interior_edge(const Edge_like& key) const
-    // pour gerer certaines aretes interieures: a savoir celle encore connectee au 
+    // pour gerer certaines aretes interieures: a savoir celle encore connectee au
     // bord (en fait seule, les aretes interieures reliant 2 bords nous
     // interressent...)
     {
@@ -1073,11 +1073,11 @@ namespace CGAL {
       int i = e.second;
       int i1 = e.first.second, i2 = e.first.third;
       int i3 = (6 - e.second - i1 - i2);
-  
+
       Cell_handle n = c->neighbor(i);
       int j1 = n->index(c->vertex(i1)), j2 = n->index(c->vertex(i2));
       int j =  n->index(c->vertex(i3));
-      return Edge_incident_facet(Edge(n, j1, j2), j);  
+      return Edge_incident_facet(Edge(n, j1, j2), j);
     }
 
     //---------------------------------------------------------------------
@@ -1087,16 +1087,16 @@ namespace CGAL {
       int i = e.second;
       int i1 = e.first.second, i2 = e.first.third;
       int i3 = (6 - e.second - i1 - i2);
-  
+
       Cell_handle n = c->neighbor(i3);
       int j1 = n->index(c->vertex(i1)), j2 = n->index(c->vertex(i2));
       int j =  n->index(c->vertex(i));
-      return Edge_incident_facet(Edge(n, j1, j2), j);  
+      return Edge_incident_facet(Edge(n, j1, j2), j);
     }
 
     //---------------------------------------------------------------------
     bool
-    my_coplanar(const Point& p, const Point& q, 
+    my_coplanar(const Point& p, const Point& q,
                 const Point& r, const Point& s) const
     {
       coord_type qpx = q.x()-p.x();
@@ -1171,16 +1171,16 @@ namespace CGAL {
       return _border_count;
     }
 
- 
+
     //=====================================================================
-    coord_type 
+    coord_type
     smallest_radius_delaunay_sphere(const Cell_handle& c,
                                     const int& index) const
     {
       int i1, i2, i3;
 
-      if(deal_with_2d && ( (c->vertex((index+1) & 3) == added_vertex) 
-                           || (c->vertex((index+2) & 3) == added_vertex) 
+      if(deal_with_2d && ( (c->vertex((index+1) & 3) == added_vertex)
+                           || (c->vertex((index+2) & 3) == added_vertex)
                            || (c->vertex((index+3) & 3) == added_vertex) ))
         {
           return HUGE_VAL;
@@ -1214,7 +1214,7 @@ namespace CGAL {
       else
         {
           if (c_is_infinite||n_is_infinite||c_is_plane||n_is_plane)
-            { 
+            {
               int ind;
               Cell_handle cc;
               if(c_is_infinite||c_is_plane)
@@ -1230,7 +1230,7 @@ namespace CGAL {
               i1 = (ind+1) & 3;
               i2 = (ind+2) & 3;
               i3 = (ind+3) & 3;
-	
+
               const Point& pp0 = cc->vertex(ind)->point();
               const Point& pp1 = cc->vertex(i1)->point();
               const Point& pp2 = cc->vertex(i2)->point();
@@ -1289,7 +1289,7 @@ namespace CGAL {
 
 
     //---------------------------------------------------------------------
-    // For a border edge e we determine the incident facet which has the highest 
+    // For a border edge e we determine the incident facet which has the highest
     // chance to be a natural extension of the surface
 
     Radius_edge_type
@@ -1311,7 +1311,7 @@ namespace CGAL {
       const Point& p1 = c->vertex(i1)->point();
       const Point& p2 = c->vertex(i2)->point();
       const Point& pc = c->vertex(i3)->point();
-  
+
       Vector P2P1 = p1-p2, P2Pn, PnP1;
 
       Vector v2, v1 = cross_product(pc-p2, P2P1);
@@ -1321,7 +1321,7 @@ namespace CGAL {
 
       e_it = next(e_it);
       bool succ_start(true);
-  
+
       do
         {
           Cell_handle neigh = e_it.first.first;
@@ -1332,10 +1332,10 @@ namespace CGAL {
               int n_ind = facet_it.second;
               int n_i1 = e_it.first.second;
               int n_i2 = e_it.first.third;
-              int n_i3 = 6 - n_ind - n_i1 - n_i2; 
+              int n_i3 = 6 - n_ind - n_i1 - n_i2;
 
               coord_type tmp=0;
-	    
+
               // If the triangle has a high perimeter,
               // we do not want to consider it as a good candidate.
 
@@ -1344,32 +1344,32 @@ namespace CGAL {
                         facet_it.first->vertex(n_i3)->point())){
                 tmp = HUGE_VAL;
               }
-  
-	       
+
+
               if(tmp != HUGE_VAL){
                 tmp = smallest_radius_delaunay_sphere(neigh, n_ind);
               }
-	    
+
               Edge_like el1(neigh->vertex(n_i1),neigh->vertex(n_i3)),
                 el2(neigh->vertex(n_i2),neigh->vertex(n_i3));
-	    
+
               if ((tmp != HUGE_VAL)&&
                   neigh->vertex(n_i3)->not_interior()&&
                   (!is_interior_edge(el1))&&(!is_interior_edge(el2)))
                 {
                   const Point& pn = neigh->vertex(n_i3)->point();
-	 
+
                   P2Pn = pn-p2;
                   v2 = cross_product(P2P1,P2Pn);
 
-                  //pas necessaire de normer pour un bon echantillon: 
+                  //pas necessaire de normer pour un bon echantillon:
                   //            on peut alors tester v1*v2 >= 0
                   norm =  sqrt(norm1 * (v2*v2));
                   pscal = v1*v2;
                   // check if the triangle will produce a sliver on the surface
-                  bool sliver_facet = ((succ_start || (neigh == c_predone))&& 
+                  bool sliver_facet = ((succ_start || (neigh == c_predone))&&
                                        (pscal <= COS_ALPHA_SLIVER*norm));
-	      
+
                   if (succ_start) succ_start = false;
 
                   if (!sliver_facet)
@@ -1381,14 +1381,14 @@ namespace CGAL {
                           // We skip triangles having an internal angle along e
                           // whose cosinus is smaller than -DELTA
                           // that is the angle is larger than arcos(-DELTA)
-                          border_facet = !((P2P1*P2Pn >= 
+                          border_facet = !((P2P1*P2Pn >=
                                             -DELTA*sqrt(norm12*(P2Pn*P2Pn)))&&
-                                           (P2P1*PnP1 >= 
+                                           (P2P1*PnP1 >=
                                             -DELTA*sqrt(norm12*(PnP1*PnP1))));
                           // \todo investigate why we simply do not skip this triangle
                           // but continue looking for a better candidate
-                          // if (!border_facet){ 
-                          min_facetA = facet_it; 
+                          // if (!border_facet){
+                          min_facetA = facet_it;
                           min_valueA = tmp;
                           min_valueP = pscal/norm;
                         }
@@ -1402,18 +1402,18 @@ namespace CGAL {
       criteria value;
 
       if ((min_valueA == HUGE_VAL) || border_facet) // bad facets case
-        { 
+        {
           min_facet = Facet(c, i); // !!! sans aucune signification....
           value = NOT_VALID_CANDIDATE; // Attention a ne pas inserer dans PQ
         }
       else
         {
-          min_facet = min_facetA; 
+          min_facet = min_facetA;
 
           //si on considere seulement la pliure value appartient a [0, 2]
           //value = coord_type(1) - min_valueP;
- 
-          // si la pliure est bonne on note suivant le alpha sinon on prend en compte la 
+
+          // si la pliure est bonne on note suivant le alpha sinon on prend en compte la
           // pliure seule... pour discriminer entre les bons slivers...
           // si on veut discriminer les facettes de bonnes pliures plus finement
           // alors -(1+1/min_valueA) app a [-inf, -1]
@@ -1431,17 +1431,17 @@ namespace CGAL {
                 {
                   value = STANDBY_CANDIDATE; // tres mauvais candidat mauvaise pliure
                   // + grand alpha... a traiter plus tard....
-                  min_K = 
+                  min_K =
                     (std::min)(min_K,
                                min_valueA/tmp);
                 }
             }
         }
-  
+
       Cell_handle n = min_facet.first;
       int ni1 = n->index(c->vertex(i1)), ni2 = n->index(c->vertex(i2));
 
-      return 
+      return
         Radius_edge_type(value, IO_edge_type(e, Edge_incident_facet
                                              (Edge(n, ni1, ni2),
                                               min_facet.second)));
@@ -1460,8 +1460,8 @@ namespace CGAL {
 
       if (!re_init){
         Finite_facets_iterator end = T.finite_facets_end();
-        for(Finite_facets_iterator facet_it = T.finite_facets_begin(); 
-            facet_it != end; 
+        for(Finite_facets_iterator facet_it = T.finite_facets_begin();
+            facet_it != end;
             ++facet_it)
           {
             coord_type value = smallest_radius_delaunay_sphere((*facet_it).first,
@@ -1474,12 +1474,12 @@ namespace CGAL {
           }
       }else{ //if (re_init)
         Finite_facets_iterator end = T.finite_facets_end();
-        for(Finite_facets_iterator facet_it = T.finite_facets_begin(); 
-            facet_it != end; 
+        for(Finite_facets_iterator facet_it = T.finite_facets_begin();
+            facet_it != end;
             ++facet_it)
           {
             Cell_handle c = (*facet_it).first;
-            int index = (*facet_it).second;	 
+            int index = (*facet_it).second;
             if (c->vertex((index+1) & 3)->is_exterior())
               if (c->vertex((index+2) & 3)->is_exterior())
                 if (c->vertex((index+3) & 3)->is_exterior())
@@ -1505,7 +1505,7 @@ namespace CGAL {
       if (min_value != HUGE_VAL)
         {
           Cell_handle c_min = min_facet.first;
-	
+
           int ind = min_facet.second;
           i1 = (ind+1) & 3;
           i2 = (ind+2) & 3;
@@ -1523,7 +1523,7 @@ namespace CGAL {
                                              Border_elt(e23, _number_of_border));
           IO_edge_type* p31 = set_border_elt(c_min->vertex(i3), c_min->vertex(i1),
                                              Border_elt(e31, _number_of_border));
-  
+
           c_min->vertex(i1)->inc_mark();
           c_min->vertex(i2)->inc_mark();
           c_min->vertex(i3)->inc_mark();
@@ -1542,11 +1542,11 @@ namespace CGAL {
     //---------------------------------------------------------------------
     // test de reciprocite avant de recoller une oreille anti-singularite
     int
-    test_merge(const Edge_like& ordered_key, const Border_elt& result, 
+    test_merge(const Edge_like& ordered_key, const Border_elt& result,
                const Vertex_handle& v, const coord_type& ear_alpha)
     {
       Edge_incident_facet Ifacet = result.first.second.first;
-  
+
       const Point& p1 = (ordered_key.first)->point();
       const Point& p2 = (ordered_key.second)->point();
       const Point& pc = v->point();
@@ -1562,12 +1562,12 @@ namespace CGAL {
         v2 = cross_product(p1-p2,pn-p2);
       coord_type norm = sqrt((v1*v1)*(v2*v2));
 
-      if (v1*v2 > COS_BETA*norm)    
+      if (v1*v2 > COS_BETA*norm)
         return 1; // label bonne pliure sinon:
 
       if (ear_alpha <= K*smallest_radius_delaunay_sphere(neigh, n_ind))
         return 2; // label alpha coherent...
-    
+
       return 0; //sinon oreille a rejeter...
     }
 
@@ -1602,7 +1602,7 @@ namespace CGAL {
               v_it++)
             {
               IO_edge_type* ptr;
-	  
+
               if (is_ordered_border_elt(v_it->second, ptr))
                 _ordered_border.insert(Radius_ptr_type(v_it->first, ptr));
             }
@@ -1613,11 +1613,11 @@ namespace CGAL {
 
     //---------------------------------------------------------------------
     void
-    merge_ear(const Edge_like& ordered_el1, const Border_elt& result1, 
+    merge_ear(const Edge_like& ordered_el1, const Border_elt& result1,
               const Edge_like& ordered_key,
               const Vertex_handle& v1, const Vertex_handle& v2,
               const Edge_incident_facet& edge_Ifacet_2)
-    {  
+    {
       remove_border_elt(ordered_key);
       force_merge(ordered_el1, result1);
       Radius_edge_type e2 = compute_value(edge_Ifacet_2);
@@ -1632,7 +1632,7 @@ namespace CGAL {
 
       _ordered_border.insert(Radius_ptr_type(e2.first, p2));
 
-      //depiler les eventuelles requettes de connections avortees... zones etoilees, 
+      //depiler les eventuelles requettes de connections avortees... zones etoilees,
       //en effet le bord a change donc on peut peut etre maintenant.
       dequeue_incidence_request(v2);
       if (ordered_el1.first == v1)
@@ -1643,7 +1643,7 @@ namespace CGAL {
 
     //---------------------------------------------------------------------
     void
-    border_extend(const Edge_like& ordered_key, const Border_elt& result12, 
+    border_extend(const Edge_like& ordered_key, const Border_elt& result12,
                   const Vertex_handle& v1, const Vertex_handle& v2,
                   const Vertex_handle& v3,
                   const Radius_edge_type& e1, const Radius_edge_type& e2,
@@ -1666,9 +1666,9 @@ namespace CGAL {
           p1 = set_border_elt(v3, v1, Border_elt(e1,result12.second));
         }
 
-      v3->inc_mark(); 
+      v3->inc_mark();
 
-      //depiler les eventuelles requettes de connections avortees... zones etoilees, 
+      //depiler les eventuelles requettes de connections avortees... zones etoilees,
       //en effet le bord a change donc on peut peut etre maintenant.
       dequeue_incidence_request(v1);
       dequeue_incidence_request(v2);
@@ -1676,17 +1676,17 @@ namespace CGAL {
 
     //=====================================================================
     Validation_case
-    validate(const Edge_incident_facet& edge_Efacet, 
+    validate(const Edge_incident_facet& edge_Efacet,
              const criteria& value)
     {
-      int i = (6 - edge_Efacet.second 
+      int i = (6 - edge_Efacet.second
                - edge_Efacet.first.second
                - edge_Efacet.first.third);
       Cell_handle c =  edge_Efacet.first.first;
 
       Vertex_handle v1 = c->vertex(edge_Efacet.first.second),
         v2 = c->vertex(edge_Efacet.first.third);
-      	      
+
       Edge_like ordered_el1(c->vertex(i), v1);
       Edge_like ordered_el2(c->vertex(i), v2);
       Border_elt result1, result2, result12;
@@ -1704,13 +1704,13 @@ namespace CGAL {
         {
           if ((!is_interior_edge(ordered_el1))&&
               (!is_interior_edge(ordered_el2)))
-            { 
+            {
               //toujours utile meme avec l'essai de try_to_close_border avant
               //validate pour la resolution de singularite par oreille qui elle
               //doit etre dans Delaunay.
               if (is_border_el1&&is_border_el2)
-                { 
-                  remove_border_elt(ordered_key);			  
+                {
+                  remove_border_elt(ordered_key);
                   force_merge(ordered_el1, result1);
                   force_merge(ordered_el2, result2);
 
@@ -1718,18 +1718,18 @@ namespace CGAL {
                   dec_mark(v2);
                   dec_mark(c->vertex(i));
 
-                  select_facet(c, edge_Efacet.second);	
+                  select_facet(c, edge_Efacet.second);
 
                   return FINAL_CASE;
                 }
-              //--------------------------------------------------------------------- 
-              //on peut alors marquer v1 et on pourrait essayer de merger 
+              //---------------------------------------------------------------------
+              //on peut alors marquer v1 et on pourrait essayer de merger
               //sans faire de calcul inutile???
               if (is_border_el1)
                 {
-                  Edge_incident_facet edge_Ifacet_2(Edge(c, i, edge_Efacet.first.third), 
+                  Edge_incident_facet edge_Ifacet_2(Edge(c, i, edge_Efacet.first.third),
                                                     edge_Efacet.second);
-                  merge_ear(ordered_el1, result1, 
+                  merge_ear(ordered_el1, result1,
                             ordered_key, v1, v2, edge_Ifacet_2);
 
                   select_facet(c, edge_Efacet.second);
@@ -1740,44 +1740,44 @@ namespace CGAL {
               //idem pour v2
               if (is_border_el2)
                 {
-                  Edge_incident_facet edge_Ifacet_1(Edge(c, i, edge_Efacet.first.second), 
+                  Edge_incident_facet edge_Ifacet_1(Edge(c, i, edge_Efacet.first.second),
                                                     edge_Efacet.second);
-                  merge_ear(ordered_el2, result2, 
+                  merge_ear(ordered_el2, result2,
                             ordered_key, v2, v1, edge_Ifacet_1);
                   select_facet(c, edge_Efacet.second);
 
                   return EAR_CASE;
                 }
-	    
+
               //---------------------------------------------------------------------
               if ((!is_border_el1)&&(!is_border_el2))
-                { 
-                  // si on veut s'interdir de spliter un bord (pelure d'orange....) 
+                {
+                  // si on veut s'interdir de spliter un bord (pelure d'orange....)
                   // seulement c->vertex(i)->is_exterior()
                   // pour s'autoriser des split de bord surface a bord->sphere ou Moebius...
                   // alors || is_on_same_border:
-                  //       if (c->vertex(i)->is_exterior() || is_on_same_border) 
+                  //       if (c->vertex(i)->is_exterior() || is_on_same_border)
                   // pour passer au tore (changementde type de topologie)
                   // recoller deux bord different...
-                  //       if (c->vertex(i)->not_interior() deja teste en haut	      
-	      
+                  //       if (c->vertex(i)->not_interior() deja teste en haut
+
                   if(c->vertex(i)->is_exterior())
-                    {	
-                      Edge_incident_facet edge_Ifacet_1(Edge(c, i, edge_Efacet.first.second), 
+                    {
+                      Edge_incident_facet edge_Ifacet_1(Edge(c, i, edge_Efacet.first.second),
                                                         edge_Efacet.second);
-		  
-                      Edge_incident_facet edge_Ifacet_2(Edge(c, i, edge_Efacet.first.third), 
+
+                      Edge_incident_facet edge_Ifacet_2(Edge(c, i, edge_Efacet.first.third),
                                                         edge_Efacet.second);
                       e1 = compute_value(edge_Ifacet_1);
                       e2 = compute_value(edge_Ifacet_2);
-		  
-                      IO_edge_type* p1;  
-                      IO_edge_type* p2;		  
 
-                      border_extend(ordered_key, result12, 
+                      IO_edge_type* p1;
+                      IO_edge_type* p2;
+
+                      border_extend(ordered_key, result12,
                                     v1, v2, c->vertex(i),
                                     e1, e2, p1, p2);
-	     
+
                       // if e1 contain HUGE_VAL there is no candidates to
                       // continue: compute_value is not valid...
 
@@ -1792,19 +1792,19 @@ namespace CGAL {
                   else // c->vertex(i) is a border point (and now there's only 1
 		  // border incident to a point... _mark<1 even if th orientation
 		  // may be such as one vh has 2 successorson the same border...
-		  {	
+		  {
 		    // a ce niveau on peut tester si le recollement se fait en
 		    // maintenant la compatibilite d'orientation des bords (pour
 		    // surface orientable...) ou si elle est brisee...
-		    Edge_incident_facet edge_Ifacet_1(Edge(c, i, edge_Efacet.first.second), 
+		    Edge_incident_facet edge_Ifacet_1(Edge(c, i, edge_Efacet.first.second),
                                                       edge_Efacet.second);
-		    Edge_incident_facet edge_Ifacet_2(Edge(c, i, edge_Efacet.first.third), 
+		    Edge_incident_facet edge_Ifacet_2(Edge(c, i, edge_Efacet.first.third),
                                                       edge_Efacet.second);
 
 		    e1 = compute_value(edge_Ifacet_1);
 		    e2 = compute_value(edge_Ifacet_2);
 
-		    if ((e1.first >= STANDBY_CANDIDATE)&&(e2.first >= STANDBY_CANDIDATE)) 
+		    if ((e1.first >= STANDBY_CANDIDATE)&&(e2.first >= STANDBY_CANDIDATE))
 		      return NOT_VALID_CONNECTING_CASE;
 
 		    // vu compute value: les candidats oreilles fournis sont sans
@@ -1812,13 +1812,13 @@ namespace CGAL {
 		    Edge_incident_facet ear1 = e1.second.second;
 		    Edge_incident_facet ear2 = e2.second.second;
 
-		    int ear1_i = (6 - ear1.second 
+		    int ear1_i = (6 - ear1.second
 				  - ear1.first.second
 				  - ear1.first.third);
 		    Cell_handle ear1_c =  ear1.first.first;
 		    Border_elt result_ear1;
 
-		    int ear2_i = (6 - ear2.second 
+		    int ear2_i = (6 - ear2.second
 				  - ear2.first.second
 				  - ear2.first.third);
 		    Cell_handle ear2_c =  ear2.first.first;
@@ -1832,14 +1832,14 @@ namespace CGAL {
 			ear1_e = Edge_like(c->vertex(i), ear1_c ->vertex(ear1_i));
 			ear2_e = Edge_like(ear2_c ->vertex(ear2_i), c->vertex(i));
 		      }
-		    else 
+		    else
 		      {
 			ear1_e = Edge_like(ear1_c ->vertex(ear1_i), c->vertex(i));
 			ear2_e = Edge_like(c->vertex(i), ear2_c ->vertex(ear2_i));
 		      }
-		    
+
 		    //maintient la surface orientable
-		    bool is_border_ear1 = is_ordered_border_elt(ear1_e, result_ear1);		  
+		    bool is_border_ear1 = is_ordered_border_elt(ear1_e, result_ear1);
 		    bool is_border_ear2 = is_ordered_border_elt(ear2_e, result_ear2);
 		    bool ear1_valid(false), ear2_valid(false);
 		    if (is_border_ear1&&(e1.first < STANDBY_CANDIDATE)&&
@@ -1847,7 +1847,7 @@ namespace CGAL {
 			(result12.second==result_ear1.second))
 		      {
 			ear1_valid = test_merge(ear1_e, result_ear1, v1,
-						smallest_radius_delaunay_sphere(ear1_c, 
+						smallest_radius_delaunay_sphere(ear1_c,
                                                                                 ear1.second)) != 0;
 		      }
 		    if (is_border_ear2&&(e2.first < STANDBY_CANDIDATE)&&
@@ -1855,26 +1855,26 @@ namespace CGAL {
 			(result12.second==result_ear2.second))
 		      {
 			ear2_valid = test_merge(ear2_e, result_ear2, v2,
-						smallest_radius_delaunay_sphere(ear2_c, 
+						smallest_radius_delaunay_sphere(ear2_c,
                                                                                 ear2.second)) != 0;
-		      } 
-		    if ((!ear1_valid)&&(!ear2_valid)) 
+		      }
+		    if ((!ear1_valid)&&(!ear2_valid))
 		      return NOT_VALID_CONNECTING_CASE;
 
-		    IO_edge_type* p1;  
-		    IO_edge_type* p2;		  
+		    IO_edge_type* p1;
+		    IO_edge_type* p2;
 
-		    border_extend(ordered_key, result12, 
+		    border_extend(ordered_key, result12,
 				  v1, v2, c->vertex(i),
 				  e1, e2, p1, p2);
 
 		    if (ear1_valid&&ear2_valid&&(ear1_e==ear2_e))
 		      {
 			if (e1.first < e2.first)
-			  { 
+			  {
 			    Validation_case res = validate(ear1, e1.first);
 			    if (!((res == EAR_CASE)||(res == FINAL_CASE)))
-			      std::cerr << "+++probleme de recollement : cas " 
+			      std::cerr << "+++probleme de recollement : cas "
 					<< res << std::endl;
 			    e2 = compute_value(edge_Ifacet_2);
 
@@ -1891,14 +1891,14 @@ namespace CGAL {
 			  {
 			    Validation_case res = validate(ear2, e2.first);
 			    if (!((res == EAR_CASE)||(res == FINAL_CASE)))
-			      std::cerr << "+++probleme de recollement : cas " 
+			      std::cerr << "+++probleme de recollement : cas "
 					<< res << std::endl;
 			    e1 = compute_value(edge_Ifacet_1);
 
-			    if (ordered_key.first == v1) 
+			    if (ordered_key.first == v1)
 			      p1 = set_again_border_elt(v1, c->vertex(i),
 							Border_elt(e1, result1.second));
-			    else 
+			    else
 			      p1 = set_again_border_elt(c->vertex(i), v1,
 							Border_elt(e1, result1.second));
 
@@ -1912,14 +1912,14 @@ namespace CGAL {
 			  {
 			    Validation_case res = validate(ear1, e1.first);
 			    if (!((res == EAR_CASE)||(res == FINAL_CASE)))
-			      std::cerr << "+++probleme de recollement : cas " 
+			      std::cerr << "+++probleme de recollement : cas "
 					<< res << std::endl;
 			  }
 			if (ear2_valid)
 			  {
 			    Validation_case res = validate(ear2, e2.first);
 			    if (!((res == EAR_CASE)||(res == FINAL_CASE)))
-			      std::cerr << "+++probleme de recollement : cas " 
+			      std::cerr << "+++probleme de recollement : cas "
 					<< res << std::endl;
 			  }
 			// on met a jour la PQ s'il y a lieu... mais surtout pas
@@ -1928,7 +1928,7 @@ namespace CGAL {
 			  {
 			    _ordered_border.insert(Radius_ptr_type(e1.first, p1));
 			  }
-			if (!ear2_valid)		
+			if (!ear2_valid)
 			  {
 			    _ordered_border.insert(Radius_ptr_type(e2.first, p2));
 			  }
@@ -1937,7 +1937,7 @@ namespace CGAL {
 		    return CONNECTING_CASE;
 		  }
                 }
-            }							  	  
+            }
         }
       return NOT_VALID;
     }
@@ -1949,7 +1949,7 @@ namespace CGAL {
       if(!_ordered_border.empty())
         {
           Ordered_border_type _ordered_border_tmp;
-          do 
+          do
             {
               Ordered_border_iterator e_it = _ordered_border.begin();
               Edge_incident_facet mem_Ifacet =  e_it->second->first;
@@ -1966,12 +1966,12 @@ namespace CGAL {
                   // a garder pour un K un peu plus grand...
                   new_candidate.first = STANDBY_CANDIDATE_BIS;
                 }
-	    
+
               Border_elt result;
               Edge_like key_tmp(v1,v2);
               is_border_elt(key_tmp, result);
-              IO_edge_type* pnew = 
-                set_again_border_elt(key_tmp.first, key_tmp.second, 
+              IO_edge_type* pnew =
+                set_again_border_elt(key_tmp.first, key_tmp.second,
                                      Border_elt (new_candidate, result.second));
               _ordered_border_tmp.insert(Radius_ptr_type(new_candidate.first, pnew));
             }
@@ -1982,7 +1982,7 @@ namespace CGAL {
     }
 
     //---------------------------------------------------------------------
-    void 
+    void
     extend()
     {
       // initilisation de la variable globale K: qualite d'echantillonnage requise
@@ -1996,7 +1996,7 @@ namespace CGAL {
         {
           min_K = HUGE_VAL; // pour retenir le prochain K necessaire pour progresser...
           do
-            { 
+            {
 
               Ordered_border_iterator e_it = _ordered_border.begin();
 
@@ -2024,7 +2024,7 @@ namespace CGAL {
                   Validation_case validate_result = validate(candidate, value);
                   if ((validate_result == NOT_VALID)||
                       (validate_result == NOT_VALID_CONNECTING_CASE))
-                    { 
+                    {
                       Radius_edge_type new_candidate;
                       Border_elt result;
                       Edge_like key_tmp(v1,v2);
@@ -2034,13 +2034,13 @@ namespace CGAL {
                         set_incidence_request(c_ext->vertex(i3), value, key_tmp);
 
                       if (validate_result == NOT_VALID)
-                        { 
+                        {
                           new_candidate = compute_value(mem_Ifacet);
                           if ((new_candidate != mem_e_it))
                             // 			      &&(new_candidate.first < NOT_VALID_CANDIDATE))
                             {
-                              IO_edge_type* pnew = 
-                                set_again_border_elt(key_tmp.first, key_tmp.second, 
+                              IO_edge_type* pnew =
+                                set_again_border_elt(key_tmp.first, key_tmp.second,
                                                      Border_elt (new_candidate, result.second));
                               _ordered_border.insert(Radius_ptr_type(new_candidate.first,
                                                                      pnew));
@@ -2052,7 +2052,7 @@ namespace CGAL {
           while((!_ordered_border.empty())&&
                 (_ordered_border.begin()->first < STANDBY_CANDIDATE_BIS));
 
-          K += (std::max)(K_step, min_K - K + eps); 
+          K += (std::max)(K_step, min_K - K + eps);
           // on augmente progressivement le K mais on a deja rempli sans
           // faire des betises auparavant...
         }
@@ -2067,7 +2067,7 @@ namespace CGAL {
 
 
     //---------------------------------------------------------------------
-    // En principe, si l'allocateur de cellules etait bien fait on aurait pas besoin 
+    // En principe, si l'allocateur de cellules etait bien fait on aurait pas besoin
     // de mettre a jour les valeurs rajoutees pour les cellules a  la main...
 
     void
@@ -2076,13 +2076,13 @@ namespace CGAL {
       std::list<Cell_handle> ch_set;
       T.incident_cells(vh, std::back_inserter(ch_set));
       for (typename std::list<Cell_handle>::iterator c_it = ch_set.begin();
-           c_it != ch_set.end(); 
+           c_it != ch_set.end();
            c_it++)
         (*c_it)->clear();
     }
 
     //---------------------------------------------------------------------
-    void 
+    void
     swap_selected_facets_on_conflict_boundary(const Vertex_handle& vh)
     {
       std::list<Cell_handle> ch_set;
@@ -2095,7 +2095,7 @@ namespace CGAL {
           Cell_handle neigh = c->neighbor(index);
           int n_ind = neigh->index(c);
           neigh->set_smallest_radius(n_ind, -1); // pour obliger le recalcul
-          // si c est selectionnee c'est qu'elle est aussi le mem_IFacet renvoye par 
+          // si c est selectionnee c'est qu'elle est aussi le mem_IFacet renvoye par
           // compute_value... donc a swapper aussi
           if (c->is_selected_facet(index))
             {
@@ -2110,7 +2110,7 @@ namespace CGAL {
 
               if (is_border_elt(key))
                 {
-                  Edge_incident_facet ei_facet(Edge(neigh, i1, i2), 
+                  Edge_incident_facet ei_facet(Edge(neigh, i1, i2),
                                                n_ind);
                   *border_IO_elt(key.first, key.second) =
                     IO_edge_type(ei_facet, ei_facet);
@@ -2118,7 +2118,7 @@ namespace CGAL {
               key = Edge_like(neigh->vertex(i1), neigh->vertex(i3));
               if (is_border_elt(key))
                 {
-                  Edge_incident_facet ei_facet(Edge(neigh, i1, i3), 
+                  Edge_incident_facet ei_facet(Edge(neigh, i1, i3),
                                                n_ind);
                   *border_IO_elt(key.first, key.second) =
                     IO_edge_type(ei_facet, ei_facet);
@@ -2126,7 +2126,7 @@ namespace CGAL {
               key = Edge_like(neigh->vertex(i3), neigh->vertex(i2));
               if (is_border_elt(key))
                 {
-                  Edge_incident_facet ei_facet(Edge(neigh, i3, i2), 
+                  Edge_incident_facet ei_facet(Edge(neigh, i3, i2),
                                                n_ind);
                   *border_IO_elt(key.first, key.second) =
                     IO_edge_type(ei_facet, ei_facet);
@@ -2136,7 +2136,7 @@ namespace CGAL {
     }
 
     //---------------------------------------------------------------------
-    Facet 
+    Facet
     next_surface_facet(const Edge_incident_facet& start)
     {
       Edge_incident_facet circ = next(start);
@@ -2176,7 +2176,7 @@ namespace CGAL {
       int index = i_facet.second;
       int i3 = 6 - index - i1 - i2;
       Vertex_handle vh_int = c->vertex(i3);
-      ordered_map_erase(border_elt.second.first.first, 
+      ordered_map_erase(border_elt.second.first.first,
                         border_IO_elt(vh, vh_succ));
       remove_border_edge(vh, vh_succ);
       // 1- a virer au cas ou car vh va etre detruit
@@ -2188,21 +2188,21 @@ namespace CGAL {
 
           assert(c->is_selected_facet(index));
           unselect_facet(c, index);
- 
-          Facet f32 = 
-            next_surface_facet(Edge_incident_facet(Edge(c, i3, i2), 
+
+          Facet f32 =
+            next_surface_facet(Edge_incident_facet(Edge(c, i3, i2),
                                                    index));
 
           if (!vh_int->is_on_border())
             {
-              re_init(vh_int); 
+              re_init(vh_int);
               vh_int->inc_mark();
             }
 
-          Edge_incident_facet e32(Edge(f32.first, 
+          Edge_incident_facet e32(Edge(f32.first,
                                        f32.first->index(vh_int),
                                        f32.first->index(vh_succ)), f32.second);
-          Radius_edge_type rad_elt_32(STANDBY_CANDIDATE, IO_edge_type(e32, e32)); 
+          Radius_edge_type rad_elt_32(STANDBY_CANDIDATE, IO_edge_type(e32, e32));
           Border_elt result;
           if (is_ordered_border_elt(Edge_like(vh_int, vh), result))
             {
@@ -2218,16 +2218,16 @@ namespace CGAL {
           // 2- a virer a tout pris pour que maintenir le sens de interior edge
           remove_interior_edge(vh_int, vh_succ);
           remove_interior_edge(vh_succ, vh_int);
-      
-          IO_edge_type* p32 = set_border_elt(vh_int, vh_succ, 
+
+          IO_edge_type* p32 = set_border_elt(vh_int, vh_succ,
                                              Border_elt(rad_elt_32, border_index));
           _ordered_border.insert(Radius_ptr_type (STANDBY_CANDIDATE, p32));
 
           // incrementation...
           if (while_cond)
             {
-              Facet f31 = 
-                next_surface_facet(Edge_incident_facet(Edge(c, i3, i1), 
+              Facet f31 =
+                next_surface_facet(Edge_incident_facet(Edge(c, i3, i1),
                                                        index));
 
               c = f31.first;
@@ -2236,7 +2236,7 @@ namespace CGAL {
               vh_succ = vh_int;
               i2 = c->index(vh_int);
               i3 = 6 - index - i1 - i2;
-              vh_int = c->vertex(i3);      
+              vh_int = c->vertex(i3);
             }
         }
       while(while_cond);
@@ -2246,7 +2246,7 @@ namespace CGAL {
     bool
     create_singularity(const Vertex_handle& vh)
     {
-      // Pour reperer le cas de triangle isole 
+      // Pour reperer le cas de triangle isole
       if (vh->is_on_border())
         {
           // vh sommet 0
@@ -2262,13 +2262,13 @@ namespace CGAL {
             {
               int l = 6-i-j-k;
               Cell_handle neigh = c->neighbor(l);
-	  
+
               if
                 (c->is_selected_facet(l)||neigh->is_selected_facet(neigh->index(c)))
                 return true;
             }
         }
-  
+
 
       // Reperer le cas d'aretes interieures...
       std::list<Vertex_handle> vh_list;
@@ -2293,7 +2293,7 @@ namespace CGAL {
     {
       _vh_number--;
     }
- 
+
 
     struct Remove : public std::unary_function<Vertex_handle, bool>
     {
@@ -2305,18 +2305,18 @@ namespace CGAL {
 
       bool operator()(Vertex_handle vh) {
         if (vh->is_exterior())
-          { 
+          {
             E.swap_selected_facets_on_conflict_boundary(vh);
             E.re_init_for_free_cells_cache(vh);
             Point p = vh->point();
             T.remove(vh);
             E.dec_vh_number();
             E.store_outlier(p);
-	  
+
             return true;
           }
         else if (vh->is_on_border()&&(!E.create_singularity(vh)))
-          {      
+          {
             E.swap_selected_facets_on_conflict_boundary(vh);
             E.retract_border_for_incident_facets(vh);
             E.re_init_for_free_cells_cache(vh);
@@ -2324,7 +2324,7 @@ namespace CGAL {
             T.remove(vh);
             E.dec_vh_number();
             E.store_outlier(p);
-	  
+
             return true;
           }
         else
@@ -2345,12 +2345,12 @@ namespace CGAL {
       std::list<Vertex_handle> L_v;
 
       //  Pour controler les sommets choisis sur le bord...
-  
+
       // nombre d'aretes a partir duquel on considere que c'est irrecuperable NB_BORDER_MAX
 
       int vh_on_border_inserted(0);
       for(Finite_vertices_iterator v_it = T.finite_vertices_begin();
-          v_it != T.finite_vertices_end(); 
+          v_it != T.finite_vertices_end();
           v_it++)
         {
           erase_incidence_request(v_it);
@@ -2363,7 +2363,7 @@ namespace CGAL {
               int v_count(0);
               // collect all vertices on the border
               do
-                {		      
+                {
                   vh_it =  vprev_it->first_incident()->first;
                   L_v_tmp.push_back(vh_it);
                   vh_it->set_post_mark(_postprocessing_counter);
@@ -2380,7 +2380,7 @@ namespace CGAL {
                   vh_on_border_inserted += v_count;
                 }
 
-            } 
+            }
           if (v_it->is_exterior())
             L_v.push_back(v_it);
         }
@@ -2431,7 +2431,7 @@ namespace CGAL {
   }; // class Advancing_front_surface_reconstruction
 
   namespace AFSR {
-  
+
     template <typename T>
     struct Auto_count : public std::unary_function<const T&,std::pair<T,int> >{
       mutable int i;
@@ -2503,7 +2503,7 @@ namespace CGAL {
     typedef Cartesian_converter<InputKernel,Kernel> CC;
     typedef Kernel::Point_3 Point_3;
 
-    CC cc=CC();  
+    CC cc=CC();
     Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count_cc<Point_3,CC>(cc)),
                         boost::make_transform_iterator(e, AFSR::Auto_count_cc<Point_3,CC>(cc) )  );
 
@@ -2589,11 +2589,11 @@ namespace CGAL {
     typedef typename Kernel_traits<InputPoint>::Kernel InputKernel;
     typedef Cartesian_converter<InputKernel,Kernel> CC;
     typedef typename Kernel::Point_3 Point_3;
-  
+
     CC cc=CC();
     Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count_cc<Point_3,CC>(cc)),
                         boost::make_transform_iterator(e, AFSR::Auto_count_cc<Point_3,CC>(cc) )  );
-  
+
     Reconstruction R(dt, filter);
     R.run(radius_ratio_bound, beta);
     AFSR::construct_polyhedron(polyhedron, R);
@@ -2622,7 +2622,7 @@ namespace CGAL {
     CC cc=CC();
     Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count_cc<Point_3,CC>(cc)),
                         boost::make_transform_iterator(e, AFSR::Auto_count_cc<Point_3,CC>(cc) )  );
-  
+
     Reconstruction R(dt);
     R.run(radius_ratio_bound, beta);
     AFSR::construct_polyhedron(polyhedron, R);

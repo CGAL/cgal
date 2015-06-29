@@ -16,7 +16,7 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef CGAL::cpp11::array<std::size_t,3> Facet;
 
 namespace std {
-std::ostream& 
+std::ostream&
 operator<<(std::ostream& os, const Facet& f)
 {
   os << "3 " << f[0] << " " << f[1] << " " << f[2];
@@ -26,17 +26,17 @@ operator<<(std::ostream& os, const Facet& f)
 }
 
 
-int main()  
+int main()
 {
   Polyhedron polyhedron;
-  std::ifstream in("data/planar.xyz"); 
+  std::ifstream in("data/planar.xyz");
   std::vector<Point_3> points;
   std::vector<Facet> facets;
-  
-  std::copy(std::istream_iterator<Point_3>(in), 
-            std::istream_iterator<Point_3>(), 
+
+  std::copy(std::istream_iterator<Point_3>(in),
+            std::istream_iterator<Point_3>(),
             std::back_inserter(points));
-  
+
   CGAL::advancing_front_surface_reconstruction(points.begin(),
                                                points.end(),
                                                polyhedron);

@@ -62,8 +62,8 @@ namespace CGAL {
       std::map<Vh_pair, Edge> edge_map;
 
 
-      for(typename Triangulation::Finite_facets_iterator f_it = T.finite_facets_begin(); 
-          f_it != T.finite_facets_end(); 
+      for(typename Triangulation::Finite_facets_iterator f_it = T.finite_facets_begin();
+          f_it != T.finite_facets_end();
           f_it++)
         {
           typename Triangulation::Cell_handle n, c = (*f_it).first;
@@ -77,7 +77,7 @@ namespace CGAL {
               i1 = (ci+1) & 3;
               i2 = (ci+2) & 3;
               i3 = (ci+3) & 3;
-	  
+
               Face_handle fh = tds.create_face(vvh[vertex_index_map[c->vertex(i1)]],
                                                vvh[vertex_index_map[c->vertex(i2)]],
                                                vvh[vertex_index_map[c->vertex(i3)]]);
@@ -96,7 +96,7 @@ namespace CGAL {
               i3 = (ni+3) & 3;
               Face_handle fh = tds.create_face(vvh[vertex_index_map[n->vertex(i1)]],
                                                vvh[vertex_index_map[n->vertex(i2)]],
-                                               vvh[vertex_index_map[n->vertex(i3)]]); 
+                                               vvh[vertex_index_map[n->vertex(i3)]]);
               vvh[vertex_index_map[n->vertex(i1)]]->set_face(fh);
               vvh[vertex_index_map[n->vertex(i2)]]->set_face(fh);
               vvh[vertex_index_map[n->vertex(i3)]]->set_face(fh);
@@ -104,17 +104,17 @@ namespace CGAL {
                 tds.set_adjacency(fh, ih, edge_map);
               }
             }
-    
+
         }
-  
+
       if ( !edge_map.empty()) {
         vinf = tds.create_vertex();
         std::map<Vh_pair, Edge> inf_edge_map;
         while (!edge_map.empty()) {
           Face_handle fh = edge_map.begin()->second.first;
           int ih = edge_map.begin()->second.second;
-          Face_handle fn = tds.create_face( vinf, 
-                                            fh->vertex(TDS::cw(ih)), 
+          Face_handle fn = tds.create_face( vinf,
+                                            fh->vertex(TDS::cw(ih)),
                                             fh->vertex(TDS::ccw(ih)));
           vinf->set_face(fn);
           tds.set_adjacency(fn, 0, fh, ih);
@@ -124,8 +124,8 @@ namespace CGAL {
         }
         CGAL_triangulation_assertion(inf_edge_map.empty());
       }
-  
-  
+
+
       tds.reorient_faces();
       return vinf;
 

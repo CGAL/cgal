@@ -11,7 +11,7 @@ typedef K::Point_3  Point_3;
 typedef CGAL::cpp11::array<std::size_t,3> Facet;
 
 namespace std {
-  std::ostream& 
+  std::ostream&
   operator<<(std::ostream& os, const Facet& f)
   {
     os << "3 " << f[0] << " " << f[1] << " " << f[2];
@@ -32,8 +32,8 @@ struct Perimeter {
   template <typename Point>
   bool operator()(const Point& p, const Point& q, const Point& r) const
   {
-    // bound == 0 is better than bound < infinity 
-    // as it avoids the distance computations 
+    // bound == 0 is better than bound < infinity
+    // as it avoids the distance computations
     if(bound == 0){
       return false;
     }
@@ -48,14 +48,14 @@ struct Perimeter {
 
 int main(int argc, char* argv[])
 {
-  std::ifstream in((argc>1)?argv[1]:"data/half.xyz"); 
+  std::ifstream in((argc>1)?argv[1]:"data/half.xyz");
   std::vector<Point_3> points;
   std::vector<Facet> facets;
-  
-  std::copy(std::istream_iterator<Point_3>(in), 
-            std::istream_iterator<Point_3>(), 
+
+  std::copy(std::istream_iterator<Point_3>(in),
+            std::istream_iterator<Point_3>(),
             std::back_inserter(points));
-  
+
   Perimeter perimeter(0);
   CGAL::advancing_front_surface_reconstruction(points.begin(),
                                                points.end(),
@@ -69,6 +69,6 @@ int main(int argc, char* argv[])
   std::copy(facets.begin(),
             facets.end(),
             std::ostream_iterator<Facet>(std::cout, "\n"));
-  
+
   return 0;
 }
