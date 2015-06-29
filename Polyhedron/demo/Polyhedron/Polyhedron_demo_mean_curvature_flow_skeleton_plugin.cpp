@@ -128,7 +128,7 @@ public:
     return QList<QAction*>() << actionMCFSkeleton << actionConvert_to_medial_skeleton;
   }
 
-  bool applicable() const {
+  bool applicable(QAction*) const {
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
@@ -314,7 +314,7 @@ public:
     mcs->set_is_medially_centered(is_medially_centered);
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionMCFSkeleton_triggered();
   void on_actionConvert_to_medial_skeleton_triggered();
   void on_actionContract();

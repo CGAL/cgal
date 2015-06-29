@@ -290,7 +290,7 @@ void Scene_polyhedron_item::switch_transparency_on_off()
 
   for(; f != poly->facets_end(); ++f)
     f->set_patch_id( switch_on ? EMULATE_TRANSPARENCY : 0 );
-  emit itemChanged();
+  Q_EMIT itemChanged();
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
