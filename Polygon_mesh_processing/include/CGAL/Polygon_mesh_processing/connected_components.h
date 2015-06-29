@@ -934,8 +934,16 @@ void keep_connected_components(PolygonMesh& pmesh
       remove_vertex(v, pmesh);
     }
   }
-
 }
+
+template <typename PolygonMesh, typename FaceRange>
+void keep_connected_components(PolygonMesh& pmesh
+                             , const FaceRange& components_to_keep)
+{
+  keep_connected_components(pmesh, components_to_keep,
+    CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
 
 } // namespace Polygon_mesh_processing
 
