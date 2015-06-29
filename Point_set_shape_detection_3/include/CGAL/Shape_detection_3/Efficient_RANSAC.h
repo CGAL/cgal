@@ -189,6 +189,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       , m_global_octree(NULL)
       , m_num_subsets(0)
       , m_num_available_points(0)
+      , m_num_total_points(0)
       , m_valid_iterators(false)
     {}
 
@@ -223,7 +224,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
         m_extracted_shapes = boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
 
-        m_num_available_points = std::distance(
+        m_num_available_points = m_num_total_points = std::distance(
           m_inputIterator_first, m_inputIterator_beyond);
 
         m_valid_iterators = true;
@@ -248,17 +249,17 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       before by the user.
     */ 
     bool preprocess() {
-      if (m_num_available_points == 0)
+      if (m_num_total_points == 0)
         return false;
 
       // Generation of subsets
       m_num_subsets = (std::size_t)(std::max<std::ptrdiff_t>)((std::ptrdiff_t)
-        std::floor(std::log(double(m_num_available_points))/std::log(2.))-9, 2);
+        std::floor(std::log(double(m_num_total_points))/std::log(2.))-9, 2);
 
       // SUBSET GENERATION ->
       // approach with increasing subset sizes -> replace with octree later on
       Input_iterator last = m_inputIterator_beyond - 1;
-      std::size_t remainingPoints = m_num_available_points;
+      std::size_t remainingPoints = m_num_total_points;
 
       m_available_octree_sizes.resize(m_num_subsets);
       m_direct_octrees = new Direct_octree *[m_num_subsets];
@@ -356,8 +357,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
       m_extracted_shapes = boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
       
-      m_num_available_points = std::distance(
-        m_inputIterator_first, m_inputIterator_beyond);
+      m_num_available_points = m_num_total_points;
 
       clear_octrees();
     }
@@ -389,8 +389,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       // Reset data structures possibly used by former search
       m_extracted_shapes = 
         boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
-      m_num_available_points = std::distance(
-        m_inputIterator_first, m_inputIterator_beyond);
+      m_num_available_points = m_num_total_points;
 
       for (std::size_t i = 0;i<m_num_subsets;i++) {
         m_available_octree_sizes[i] = m_direct_octrees[i]->size();
@@ -827,6 +826,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     // maps index into points to assigned extracted primitive
     std::vector<int> m_shape_index;
     std::size_t m_num_available_points; 
+    std::size_t m_num_total_points;
 
     //give the index of the subset of point i
     std::vector<int> m_index_subsets;
