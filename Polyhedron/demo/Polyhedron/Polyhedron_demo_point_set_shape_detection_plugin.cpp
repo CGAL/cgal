@@ -107,9 +107,6 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
     CGAL::Timer task_timer; task_timer.start();
 
-    // First point to delete
-    Point_set::iterator first_point_to_remove = points->end();
-
     typedef CGAL::Identity_property_map<Point_set::Point_with_normal> PointPMap;
     typedef CGAL::Normal_of_point_with_normal_pmap<Point_set::Geom_traits> NormalPMap;
 
