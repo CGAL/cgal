@@ -28,7 +28,6 @@ find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
     include_directories (BEFORE "../../include")
 
-    create_single_source_cgal_program( "extract_skeleton_test.cpp" )
     create_single_source_cgal_program( "MCF_Skeleton_test.cpp" )
     create_single_source_cgal_program( "skeleton_connectivity_test.cpp" )
   else()

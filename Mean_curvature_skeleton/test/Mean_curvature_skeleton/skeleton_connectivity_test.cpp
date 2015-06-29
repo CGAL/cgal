@@ -12,31 +12,22 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/foreach.hpp>
 
 #include <fstream>
-#include <map>
+#include <set>
+#include <queue>
 
 typedef CGAL::Simple_cartesian<double>                               Kernel;
 typedef Kernel::Point_3                                              Point;
 typedef Kernel::Vector_3                                             Vector;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
+typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_descriptor;
 
-struct Skeleton_vertex_info
-{
-  std::size_t id;
-};
-
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Skeleton_vertex_info> Graph;
-
-typedef boost::graph_traits<Graph>::vertex_descriptor                  vertex_desc;
-typedef boost::graph_traits<Graph>::vertex_iterator                    vertex_iter;
-typedef boost::graph_traits<Graph>::in_edge_iterator                   in_edge_iter;
-
-typedef std::map<vertex_desc, std::vector<int> >                       Correspondence_map;
-typedef boost::associative_property_map<Correspondence_map>            GraphVerticesPMap;
-
-typedef std::map<vertex_desc, Point>                                   GraphPointMap;
-typedef boost::associative_property_map<GraphPointMap>                 GraphPointPMap;
+typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron>        Mean_curvature_skeleton;
+typedef Mean_curvature_skeleton::Skeleton                            Skeleton;
+typedef boost::graph_traits<Skeleton>::vertex_descriptor             vertex_desc;
+typedef boost::graph_traits<Skeleton>::edge_descriptor             edge_desc;
 
 // The input of the skeletonization algorithm must be a pure triangular closed
 // mesh and has only one component.
@@ -61,7 +52,7 @@ bool is_mesh_valid(Polyhedron& pMesh)
   ++output_it;
   if (num_component != 1)
   {
-    std::cerr << "The mesh is not a single closed mesh. It has " 
+    std::cerr << "The mesh is not a single closed mesh. It has "
               << num_component << " components.";
     return false;
   }
@@ -81,56 +72,69 @@ int main()
     return EXIT_FAILURE;
   }
 
-  Graph g;
-  GraphPointMap points_map;
-  GraphPointPMap points(points_map);
+  Skeleton skeleton;
 
-  Correspondence_map corr_map;
-  GraphVerticesPMap corr(corr_map);
+  CGAL::extract_mean_curvature_flow_skeleton(mesh, skeleton);
 
-  CGAL::extract_mean_curvature_flow_skeleton(mesh, g, points, corr);
-
-  int nb_vertices = num_vertices(g);
-  if (nb_vertices == 0)
+  if (num_vertices(skeleton) == 0)
   {
     std::cerr << "The number of skeletal points is zero!\n";
     return EXIT_FAILURE;
   }
 
-  std::queue<vertex_desc> qu;
-  std::map<vertex_desc, int> visited;
+// check all vertices are seen exactly once
+{
+  std::set<vertex_descriptor> visited;
+  BOOST_FOREACH(vertex_desc v, vertices(skeleton))
+  {
+    BOOST_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
+      if (!visited.insert(vd).second)
+      {
+        std::cerr << "A vertex was seen twice!\n";
+        return EXIT_FAILURE;
+      }
+  }
 
-  vertex_iter vi, vi_end;
-  boost::tie(vi, vi_end) = vertices(g);
-  qu.push(*vi);
-  visited[*vi] = true;
+  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh))
+  {
+    if (!visited.count(vd))
+    {
+      std::cerr << "A vertex was not seen!\n";
+      return EXIT_FAILURE;
+    }
+  }
+}
+
+// check the skeleton is connected
+{
+  std::queue<vertex_desc> qu;
+  std::set<vertex_desc> visited;
+
+  qu.push(*vertices(skeleton).first);
+  visited.insert(qu.back());
 
   while (!qu.empty())
   {
     vertex_desc cur = qu.front();
     qu.pop();
 
-    in_edge_iter eb, ee;
-    for (boost::tie(eb, ee) = in_edges(cur, g); eb != ee; ++eb)
+    BOOST_FOREACH(edge_desc ed, in_edges(cur, skeleton))
     {
-      vertex_desc next = source(*eb, g);
-      if (!visited.count(next))
-      {
+      vertex_desc next = source(ed, skeleton);
+      if (visited.insert(next).second)
         qu.push(next);
-        visited[next] = true;
-      }
     }
   }
 
-  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+  BOOST_FOREACH(vertex_desc vd, vertices(skeleton))
   {
-    if (!visited.count(*vi))
+    if (!visited.count(vd))
     {
       std::cerr << "Skeleton curve is not fully connected!\n";
       return EXIT_FAILURE;
     }
   }
-
+}
   std::cout << "Pass connectivity test.\n";
   return EXIT_SUCCESS;
 }
