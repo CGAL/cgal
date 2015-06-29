@@ -24,6 +24,7 @@ The \a faces are simple polygons.
 The \a edges are segments. Each edge connects two \a vertices,
 and is shared by two faces (including the \a null \a face for boundary edges).
 A polygon mesh can have any number of connected components, and also some self-intersections.
+In this package, a polygon mesh is considered to have the topology of a 2-manifold.
 
 \subsection PMPAPI API
 This package follows the BGL API described in \ref chapterBGL.
@@ -423,38 +424,37 @@ the propagation of a connected component index to cross it.
 The table below recapitulates the basic requirements of each function of this package.
 For each requirement, the table answers a question :
 - should the input mesh be a pure triangle mesh?
-- should the input mesh have the topology of a 2-manifold?
 - should the input mesh be self-intersection free?
 - should the input mesh be closed (with no boundary)?
 <center>
-Function or Class                     | Pure Triangle  | 2-manifold | Self-Intersection Free | Closed
-:------------------------------------ | :------------: | :--------: | :--------------------: | :-------:
-`fair()`                              |     no         |    no      |        no              |   no
-`refine()`                            |     no         |    no      |        no              |   no
-`triangulate_faces()`                 |     no         |    no      |        no              |   no
-`triangulate_hole()`                  |     no         |    no      |        no              |   no
-`triangulate_and_refine_hole()`       |     no         |    no      |        no              |   no
-`triangulate_refine_and_fair_hole()`  |     no         |    no      |        no              |   no
-`triangulate_hole_polyline()`         |     no         |    no      |        no              |   no
-`does_self_intersect()`               |     yes        |    no      |        no              |   no
-`self_intersections()`                |     yes        |    no      |        no              |   no
-`Side_of_triangle_mesh`               |     yes        |    no      |        yes             |   yes
-`is_outward_oriented()`               |     no         |    yes     |        no              |   yes
-`reverse_face_orientations()`         |     no         |    no      |        no              |   no
-`stitch_borders()`                    |     no         |    yes     |        no              |   no
-`polygon_soup_to_polygon_mesh()`      |     no         |    no      |        no              |   no
-`orient_polygon_soup()`               |     no         |    no      |        no              |   no
-`remove_degenerate_faces()`           |     yes        |    yes     |        no              |   no
-`compute_face_normal()`               |     no         |    no      |        no              |   no
-`compute_face_normals()`              |     no         |    no      |        no              |   no
-`compute_vertex_normal()`             |     no         |    yes?    |        no              |   no
-`compute_vertex_normals()`            |     no         |    yes?    |        no              |   no
-`compute_normals()`                   |     no         |    yes?    |        no              |   no
-`Polygon_mesh_slicer`                 |     yes        |    yes     |        yes             |   no
-`connected_component()`               |     no         |    no      |        no              |   no
-`connected_components()`              |     no         |    no      |        no              |   no
-`keep_largest_connected_components()` |     no         |    no      |        no              |   no
-`keep_connected_components()`         |     no         |    no      |        no              |   no
+Function or Class                     | Pure Triangle  | Self-Intersection Free | Closed
+:------------------------------------ | :------------: | :--------------------: | :-------:
+`fair()`                              |     no         |        no              |   no
+`refine()`                            |     no         |        no              |   no
+`triangulate_faces()`                 |     no         |        no              |   no
+`triangulate_hole()`                  |     no         |        no              |   no
+`triangulate_and_refine_hole()`       |     no         |        no              |   no
+`triangulate_refine_and_fair_hole()`  |     no         |        no              |   no
+`triangulate_hole_polyline()`         |     no         |        no              |   no
+`does_self_intersect()`               |     yes        |        no              |   no
+`self_intersections()`                |     yes        |        no              |   no
+`Side_of_triangle_mesh`               |     yes        |        yes             |   yes
+`is_outward_oriented()`               |     no         |        no              |   yes
+`reverse_face_orientations()`         |     no         |        no              |   no
+`stitch_borders()`                    |     no         |        no              |   no
+`polygon_soup_to_polygon_mesh()`      |     no         |        no              |   no
+`orient_polygon_soup()`               |     no         |        no              |   no
+`remove_degenerate_faces()`           |     yes        |        no              |   no
+`compute_face_normal()`               |     no         |        no              |   no
+`compute_face_normals()`              |     no         |        no              |   no
+`compute_vertex_normal()`             |     no         |        no              |   no
+`compute_vertex_normals()`            |     no         |        no              |   no
+`compute_normals()`                   |     no         |        no              |   no
+`Polygon_mesh_slicer`                 |     yes        |        yes             |   no
+`connected_component()`               |     no         |        no              |   no
+`connected_components()`              |     no         |        no              |   no
+`keep_largest_connected_components()` |     no         |        no              |   no
+`keep_connected_components()`         |     no         |        no              |   no
 </center>
 ****************************************
 \section PMPHistory Implementation History
