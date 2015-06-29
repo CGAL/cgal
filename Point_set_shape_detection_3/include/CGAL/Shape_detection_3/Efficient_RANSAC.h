@@ -268,7 +268,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
         if (s) {
           subsetSize >>= 1;
           for (std::size_t i = 0;i<subsetSize;i++) {
-            std::size_t index = default_random((std::numeric_limits<int>::max)()) % 2;
+            std::size_t index = default_random(2);
             index = index + (i<<1);
             index = (index >= remainingPoints) ? remainingPoints - 1 : index;
             indices[i] = index;
