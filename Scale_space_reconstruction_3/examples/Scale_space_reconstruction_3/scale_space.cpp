@@ -36,13 +36,12 @@ int main(int argc, char* argv[]) {
 	reconstruct.reconstruct_surface( points.begin(), points.end(), 4 );
     std::cerr << "Reconstruction done:" << std::endl;
     
-    std::ofstream out ("out.off");
     // Write the reconstruction.
     std::cerr << "Neighborhood radius^2 = " << reconstruct.neighborhood_squared_radius() << std::endl;
     for( std::size_t shell = 0; shell < reconstruct.number_of_shells(); ++shell ) {
-      //std::cerr << "Shell " << shell << std::endl;
+        std::cerr << "Shell " << shell << std::endl;
         for( Triple_iterator it = reconstruct.shell_begin( shell ); it != reconstruct.shell_end( shell ); ++it )
-          out << "3 "<< *it << std::endl; // We write a '3' in front so that it can be assembled into an OFF file
+          std::cout << "3 "<< *it << std::endl; // We write a '3' in front so that it can be assembled into an OFF file
     }
 
 	std::cerr << "Done." << std::endl;
