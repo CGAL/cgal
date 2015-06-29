@@ -899,9 +899,9 @@ edge, `li` and `lj` give the indices of its vertices.
 If there is no vertex in the triangulation yet, `lt` is set to
 `EMPTY` and `locate` returns the default constructed handle.
 
-`locate_offset` contains the offset to apply to the periodic geometric object
-corresponding to the returned combinatorial object so that this geometric object contains
-the query point.
+`locate_offset` is the offset that must be used by the function  
+periodic_tetrahedron() together with the returned cell, so that the
+constructed Periodic_tetrahedron contains the query point.
 
 The optional argument `start` is used as a starting place for the
 search.
