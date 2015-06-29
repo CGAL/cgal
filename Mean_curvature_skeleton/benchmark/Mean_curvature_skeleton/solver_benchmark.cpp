@@ -26,24 +26,6 @@ typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
 
-struct Skeleton_vertex_info
-{
-  std::size_t id;
-};
-
-typedef boost::adjacency_list<boost::vecS,
-                              boost::vecS,
-                              boost::undirectedS,
-                              Skeleton_vertex_info>                       Graph;
-
-typedef boost::graph_traits<Graph>::vertex_descriptor               vertex_desc;
-
-typedef std::map<vertex_desc, std::vector<int> >             Correspondence_map;
-typedef boost::associative_property_map<Correspondence_map>   GraphVerticesPMap;
-
-typedef std::map<vertex_desc, Point>                              GraphPointMap;
-typedef boost::associative_property_map<GraphPointMap>           GraphPointPMap;
-
 typedef CGAL::Eigen_solver_traits<
         Eigen::SparseLU<
         CGAL::Eigen_sparse_matrix<double>::EigenType,
@@ -99,29 +81,19 @@ int main()
     return EXIT_FAILURE;
   }
 
-  Graph g;
-  GraphPointMap points_map;
-  GraphPointPMap points(points_map);
 
-  Correspondence_map corr_map;
-  GraphVerticesPMap corr(corr_map);
 
   int NTEST = 10;
   double sum = 0;
   for (int i = 0; i < NTEST; i++)
   {
-    g.clear();
-    points_map.clear();
-    corr_map.clear();
-    Polyhedron mesh_copy(mesh);
-    CGAL::set_halfedgeds_items_id(mesh_copy);
+    typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron, D, D, SparseLU_solver> MCF_skel;
+    MCF_skel::Skeleton skeleton;
 
     CGAL::Timer timer;
     timer.start();
-    CGAL::Mean_curvature_flow_skeletonization<Polyhedron, D, D, D, SparseLU_solver>
-      mcf_skel(mesh_copy);
-    mcf_skel.contract_until_convergence();
-    mcf_skel.extract_skeleton(g, points, corr);
+    MCF_skel mcf_skel(mesh);
+    mcf_skel(skeleton);
     timer.stop();
     sum += timer.time();
   }
@@ -130,18 +102,13 @@ int main()
   sum = 0;
   for (int i = 0; i < NTEST; i++)
   {
-    g.clear();
-    points_map.clear();
-    corr_map.clear();
-    Polyhedron mesh_copy(mesh);
-    CGAL::set_halfedgeds_items_id(mesh_copy);
+    typedef CGAL::Mean_curvature_flow_skeletonization<Polyhedron, D, D, SimplicialLDLT_solver> MCF_skel;
+    MCF_skel::Skeleton skeleton;
 
     CGAL::Timer timer;
     timer.start();
-    CGAL::Mean_curvature_flow_skeletonization<Polyhedron, D, D, D, SimplicialLDLT_solver>
-      mcf_skel(mesh_copy);
-    mcf_skel.contract_until_convergence();
-    mcf_skel.extract_skeleton(g, points, corr);
+    MCF_skel mcf_skel(mesh);
+    mcf_skel(skeleton);
     timer.stop();
     sum += timer.time();
   }
