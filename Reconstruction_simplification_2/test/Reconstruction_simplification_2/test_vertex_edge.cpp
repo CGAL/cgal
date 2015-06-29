@@ -37,8 +37,7 @@ typedef Rt_2::Finite_edges_iterator Finite_edges_iterator;
 typedef Rt_2::Edge Edge;
 typedef Rt_2::Rec_edge_2 R_edge_2;
 
-PointMassList* load_xy_file(const std::string& fileName);
-PointMassList* simple_point_set();
+void simple_point_set(PointMassList &points);
 void test_num_of_vertices_in_triangulation();
 void test_edge_collapse();
 
@@ -127,7 +126,8 @@ void test_edge_collapse() {
 void test_num_of_vertices_in_triangulation() {
   std::cerr << "test_num_of_vertices_in_triangulation" << std::endl;
 
-  PointMassList points = *(simple_point_set());
+  PointMassList points;
+  simple_point_set(points);
 
   CGAL::Reconstruction_simplification_2<K, Point_property_map, Mass_property_map> rs2;
   int nb = 0;
@@ -144,24 +144,20 @@ void test_num_of_vertices_in_triangulation() {
   assert(points.size() == rt2.number_of_vertices());
 }
 
-PointMassList* simple_point_set() {
+void simple_point_set(PointMassList &points) {
 
-  PointMassList *points = new PointMassList();
-
-  points->push_back(std::make_pair(Point(0.1,0.1), 1));
-  points->push_back(std::make_pair(Point(0.4,0.1), 1));
-  points->push_back(std::make_pair(Point(0.6,0.1), 1));
-  points->push_back(std::make_pair(Point(0.9,0.1), 1));
-  points->push_back(std::make_pair(Point(0.9,0.4), 1));
-  points->push_back(std::make_pair(Point(0.9,0.6), 1));
-  points->push_back(std::make_pair(Point(0.9,0.9), 1));
-  points->push_back(std::make_pair(Point(0.6,0.9), 1));
-  points->push_back(std::make_pair(Point(0.4,0.9), 1));
-  points->push_back(std::make_pair(Point(0.1,0.9), 1));
-  points->push_back(std::make_pair(Point(0.1,0.6), 1));
-  points->push_back(std::make_pair(Point(0.1,0.4), 1));
-
-  return points;
+  points.push_back(std::make_pair(Point(0.1,0.1), 1));
+  points.push_back(std::make_pair(Point(0.4,0.1), 1));
+  points.push_back(std::make_pair(Point(0.6,0.1), 1));
+  points.push_back(std::make_pair(Point(0.9,0.1), 1));
+  points.push_back(std::make_pair(Point(0.9,0.4), 1));
+  points.push_back(std::make_pair(Point(0.9,0.6), 1));
+  points.push_back(std::make_pair(Point(0.9,0.9), 1));
+  points.push_back(std::make_pair(Point(0.6,0.9), 1));
+  points.push_back(std::make_pair(Point(0.4,0.9), 1));
+  points.push_back(std::make_pair(Point(0.1,0.9), 1));
+  points.push_back(std::make_pair(Point(0.1,0.6), 1));
+  points.push_back(std::make_pair(Point(0.1,0.4), 1));
 }
 
 
