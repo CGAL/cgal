@@ -188,8 +188,8 @@ void sample_random_cone(const std::size_t num_points,
     apex = random_point_in<K>(CGAL::Bbox_3(-5, -5, -5, 5, 5, 5));
     axis = random_normal<K>();
     angle = random_float((FT) 0.2, (FT) 1.4);
-    FT start  = random_float((FT) 0, (FT) 2.5);
-    FT end = start + random_float((FT) 0.5, (FT) 2.5);
+    FT start  = random_float((FT) 0, (FT) 1.0);
+    FT end = start + random_float((FT) 0.5, (FT) 1.5);
 
     mid = (start + end) / (FT) 2.0;
 
