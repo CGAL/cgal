@@ -549,7 +549,8 @@ i, int j) const;
 \cgalModifBegin
 Returns the periodic segment formed by the two point-offset pairs
 corresponding to the two vertices of edge `(c,i,j)`.
-A translation in accordance with `offset` is applied on the points-offets.
+
+A translation in accordance with `offset` is applied on the point-offet pairs.
 \pre \f$ i,j \in\{0,1,2,3\}\f$, \f$ i\neq j\f$
 \cgalModifEnd
 */
@@ -576,8 +577,10 @@ i) const;
 Returns the periodic triangle formed by the three point-offset pairs
 corresponding to the three vertices of facet
 `(c,i)`.
-A translation in accordance with `offset` is applied on the points-offets.
- The triangle is oriented so that its normal points to the
+
+A translation in accordance with `offset` is applied on the point-offet pairs.
+
+The triangle is oriented so that its normal points to the
 inside of cell `c`.
 \pre \f$ i \in\{0,1,2,3\}\f$
 \cgalModifEnd
@@ -599,7 +602,8 @@ Periodic_tetrahedron periodic_tetrahedron(const Cell_handle c) const;
 \cgalModifBegin
 Returns the periodic tetrahedron formed by the four point-offset pairs
 corresponding to the four vertices of `c`.
-A translation in accordance with `offset` is applied on the points-offets.
+
+A translation in accordance with `offset` is applied on the point-offet pairs.
 \cgalModifEnd
 */
 Periodic_tetrahedron periodic_tetrahedron(const Cell_handle c, Offset offset) const;
@@ -829,9 +833,10 @@ locate(const Point & query, Cell_handle start = Cell_handle()) const;
 Returns the cell that contains the query in its interior. If
 `query` lies on a facet, an edge or on a vertex, one of the cells
 having `query` on its boundary is returned.
-`locate_offset` contains the offset to apply to the Periodic_tetrahedron
-corresponding to the returned cell so that this Periodic_tetrahedron contains
-the query point.
+
+`locate_offset` is the offset that must be used by the function  
+periodic_tetrahedron() together with the returned cell, so that the
+constructed Periodic_tetrahedron contains the query point.
 
 The optional argument `start` is used as a starting place for the
 search.
