@@ -26,11 +26,21 @@
 #include <boost/iterator/transform_iterator.hpp>
 
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
-#include <CGAL/boost/graph/iterator.h>
+// ATTN: <CGAL/boost/graph/iterator.h> is included at the end of this
+// file, because we need to fix some calls in that file instead of
+// using ADL on broken compilers, hence those calls need to declared
+// before that.
 
 #include <CGAL/Surface_mesh.h>
 
+namespace CGAL {
 
+template<typename Graph>
+class In_edge_iterator;
+template<typename Graph>
+class Out_edge_iterator;
+
+}
 
 namespace boost {
 
@@ -532,8 +542,6 @@ bool is_valid(CGAL::Surface_mesh<P>& sm, bool verbose = false)
 
 } // namespace CGAL
 
-
-
-
+#include <CGAL/boost/graph/iterator.h>
 
 #endif // CGAL_BOOST_GRAPH_TRAITS_SURFACE_MESH_H

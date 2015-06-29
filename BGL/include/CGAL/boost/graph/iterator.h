@@ -20,8 +20,6 @@
 #ifndef CGAL_BGL_ITERATORS_H
 #define CGAL_BGL_ITERATORS_H
 
-#include <stdexcept>
-
 #include <boost/graph/graph_traits.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 
@@ -181,6 +179,28 @@ struct Opposite_face {
     return face(opposite(h,*g),*g);
   }
 };
+
+// With gcc 4.4 and std=c++0x do not use ADL to find next/prev.
+// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=40497
+template<typename A, typename Mesh>
+A adl_next(A a, const Mesh& m) {
+#if defined(__GXX_EXPERIMENTAL_CXX0X__) &&  __GNUC__ == 4 && __GNUC_MINOR__ == 4
+  return CGAL::next(a, m);
+#else
+  return next(a, m);
+#endif
+}
+
+template<typename A, typename Mesh>
+A adl_prev(A a, const Mesh& m) {
+#if defined(__GXX_EXPERIMENTAL_CXX0X__) &&  __GNUC__ == 4 && __GNUC_MINOR__ == 4
+  return CGAL::prev(a, m);
+#else
+  return prev(a, m);
+#endif
+}
+
+
 } // namespace internal
 /// \endcond
 
@@ -258,7 +278,7 @@ public:
   }
 
   Self& operator++() {
-    pos = next(opposite(pos,*g),*g);
+    pos = internal::adl_next(opposite(pos,*g),*g);
     if ( pos == anchor)
       ++winding;
     return *this;
@@ -271,7 +291,7 @@ public:
   Self& operator--() {
     if ( pos == anchor)
       --winding;
-    pos = opposite(prev(pos,*g),*g);
+    pos = opposite(internal::adl_prev(pos,*g),*g);
     return *this;
   }
   Self  operator--(int) {
@@ -358,7 +378,7 @@ public:
   }
 
   Self& operator++() {
-    pos = opposite(next(pos,*g),*g);
+    pos = opposite(internal::adl_next(pos,*g),*g);
     if ( pos == anchor)
       ++winding;
     return *this;
@@ -371,7 +391,7 @@ public:
   Self& operator--() {
     if ( pos == anchor)
       --winding;
-    pos = prev(opposite(pos,*g),*g);
+    pos = internal::adl_prev(opposite(pos,*g),*g);
     return *this;
   }
   Self  operator--(int) {
@@ -464,7 +484,7 @@ public:
     if ( pos == anchor)
       --winding;
   
-    pos = prev(pos,*g);
+    pos = internal::adl_prev(pos,*g);
     return *this;
   }
 
@@ -684,7 +704,7 @@ public:
   Self& operator++() 
   {
     CGAL_assertion(g != NULL);
-    pos = opposite(next(pos,*g),*g);
+    pos = opposite(internal::adl_next(pos,*g),*g);
     return *this;
   }
 
@@ -699,7 +719,7 @@ public:
   Self& operator--() 
   {
     CGAL_assertion(g != NULL);
-    pos = prev(opposite(pos,*g),*g);
+    pos = internal::adl_prev(opposite(pos,*g),*g);
     return *this;
   }
 
@@ -779,7 +799,7 @@ public:
   Self& operator++() 
   {
     CGAL_assertion(g != NULL);
-    pos = next(pos,*g);
+    pos = internal::adl_next(pos,*g);
     return *this;
   }
 
@@ -794,7 +814,7 @@ public:
   Self& operator--() 
   {
     CGAL_assertion(g != NULL);
-    pos = prev(pos,*g);
+    pos = internal::adl_prev(pos,*g);
     return *this;
   }
 
