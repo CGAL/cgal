@@ -1,95 +1,121 @@
-# CMake
-# Fernando de Goes (fdegoes@caltech.edu)
-# Copyright @ 2011
+# This is the CMake script for compiling the Reconstruction_simplification_2 demo.
+
 project(Reconstruction_simplification_2_demo)
 
-cmake_minimum_required(VERSION 2.4.5)
-cmake_policy(VERSION 2.4.5)
+cmake_minimum_required(VERSION 2.6.2)
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+  cmake_policy(VERSION 2.8.4)
+else()
+  cmake_policy(VERSION 2.6)
+endif()
 
 set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
 
-if(COMMAND cmake_policy)
-  cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
+# Include this package's headers first
+include_directories( BEFORE ./ ./include ../../include )
 
-############
-# Packages #
-############
+# Find CGAL and CGAL Qt4
+find_package(CGAL COMPONENTS Qt4)
+include( ${CGAL_USE_FILE} )
 
+# Find Qt4 itself
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
-
-find_package(OpenGL)
 find_package(Qt4)
-find_package(CGAL COMPONENTS Qt4)
 
+# Find OpenGL
+find_package(OpenGL)
 
+# Find QGLViewer
+if(QT4_FOUND)
+  include(${QT_USE_FILE})
+  find_package(QGLViewer )
+endif(QT4_FOUND)
 
-set(
-SRCS 
-glviewer.cpp 
-main.cpp 
-window.cpp 
-render.cpp 
-)
+if(CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
-set( 
-MOCS 
-moc_dialog_options.cxx 
-moc_glviewer.cxx 
-moc_window.cxx 
-)
+  include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
-set(
-UIS
-pwsrec.ui 
-options.ui
-)
+  set(
+  SRCS 
+  glviewer.cpp 
+  main.cpp 
+  window.cpp 
+  render.cpp 
+  )
 
-#########
-# Build #
-#########
+  set( 
+  MOCS 
+  moc_dialog_options.cxx 
+  moc_glviewer.cxx 
+  moc_window.cxx 
+  )
 
-# Includes
-include_directories(BEFORE . ./build)
-include(${QT_USE_FILE})
-include_directories(${GLUT_INCLUDE_DIR})
-include_directories(${OPENGL_INCLUDE_DIR})
-include(${CGAL_USE_FILE})
+  set(
+  UIS
+  pwsrec.ui 
+  options.ui
+  )
+  
+  qt4_wrap_ui( UI_FILES ${UIS} )
 
+  include(AddFileDependencies)
 
+  qt4_generate_moc( "window.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_window.cxx" )
+  add_file_dependencies( moc_window.cxx "${CMAKE_CURRENT_SOURCE_DIR}/window.h" )
 
-  include_directories (BEFORE "../../include")
-  include_directories (BEFORE "include")
+  qt4_generate_moc( "glviewer.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_glviewer.cxx" )
+  add_file_dependencies( moc_glviewer.cxx "${CMAKE_CURRENT_SOURCE_DIR}/glviewer.h" )
 
+  qt4_generate_moc( "dialog_options.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_dialog_options.cxx" )
+  add_file_dependencies( moc_dialog_options.cxx "${CMAKE_CURRENT_SOURCE_DIR}/dialog_options.h" )
 
+  qt4_add_resources ( RESOURCE_FILES pwsrec.qrc )
 
-# UI files
-qt4_wrap_ui( DT_UI_FILES ${UIS} )
+  add_executable  ( Reconstruction_simplification_2_demo ${SRCS} ${MOCS} ${UI_FILES} ${RESOURCE_FILES} ${CGAL_ADDITIONAL_FILES} ${CGAL_RESOURCE_FILES})
 
-# QRC files
-qt4_add_resources( DT_RESOURCE_FILES pwsrec.qrc )
+  # Link with Qt libraries
+  target_link_libraries( Reconstruction_simplification_2_demo ${QT_LIBRARIES} )
 
-# MOC files
-qt4_generate_moc( window.h moc_window.cxx )
-qt4_generate_moc( glviewer.h moc_glviewer.cxx )
-qt4_generate_moc( dialog_options.h moc_dialog_options.cxx )
+  # Link with CGAL
+  target_link_libraries( Reconstruction_simplification_2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
-# The executable itself.
-add_executable( ${PROJECT_NAME} ${SRCS} ${MOCS} ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
+  # Link with libQGLViewer, OpenGL
+  target_link_libraries( Reconstruction_simplification_2_demo ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 
-# Link with Qt libraries
-target_link_libraries( ${PROJECT_NAME} ${QT_LIBRARIES} )
+  # Link with CImg dependencies
+  if( NOT WIN32 )
+	  target_link_libraries( Reconstruction_simplification_2_demo -L/usr/X11R6/lib -lm -lpthread -lX11 )
+  endif()
     
-# Link with Glut and OpenGL
-target_link_libraries( ${PROJECT_NAME} ${GLUT_LIBRARY} ${OPENGL_LIBRARY} )
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS Reconstruction_simplification_2_demo )
 
-# Link with CImg dependencies
-if( NOT WIN32 )
-	target_link_libraries( ${PROJECT_NAME} -L/usr/X11R6/lib -lm -lpthread -lX11 )
-endif()
-    
-# Link with CGAL
-target_link_libraries( ${PROJECT_NAME} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+else (CGAL_FOUND AND CGAL_CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+
+  set(RS2_MISSING_DEPS "")
+
+  if(NOT CGAL_FOUND)
+    set(RS2_MISSING_DEPS "the CGAL library, ${RS2_MISSING_DEPS}")
+  endif()
+
+  if(NOT CGAL_Qt4_FOUND)
+    set(RS2_MISSING_DEPS "the CGAL Qt4 library, ${RS2_MISSING_DEPS}")
+  endif()
+
+  if(NOT QT4_FOUND)
+    set(RS2_MISSING_DEPS "Qt4, ${RS2_MISSING_DEPS}")
+  endif()
+
+  if(NOT OPENGL_FOUND)
+    set(RS2_MISSING_DEPS "OpenGL, ${RS2_MISSING_DEPS}")
+  endif()
+
+  if(NOT QGLVIEWER_FOUND)
+    set(RS2_MISSING_DEPS "QGLViewer, ${RS2_MISSING_DEPS}")
+  endif()
+
+  message(STATUS "NOTICE: This demo requires ${RS2_MISSING_DEPS}and will not be compiled.")
+
+endif (CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
