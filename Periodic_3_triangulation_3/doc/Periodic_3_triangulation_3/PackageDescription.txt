@@ -86,8 +86,13 @@ of the concept `Periodic_3Offset_3`.
 \cgalModifEnd
 
 - `TriangulationDataStructure_3`
-- `Periodic_3TriangulationDSCellBase_3`
 - `Periodic_3TriangulationDSVertexBase_3`
+- `Periodic_3TriangulationDSCellBase_3`
+
+\cgalModifBegin 
+- `Periodic_3RegularTriangulationDSCellBase_3`
+\cgalModifEnd
+
 - `Periodic_3Offset_3`
 
 ## Classes ##
@@ -102,8 +107,8 @@ of the concept `Periodic_3Offset_3`.
 \cgalModifEnd 
 
 - `CGAL::Periodic_3_triangulation_hierarchy_3<PTr>`
-- `CGAL::Periodic_3_triangulation_ds_cell_base_3<>`
 - `CGAL::Periodic_3_triangulation_ds_vertex_base_3<>`
+- `CGAL::Periodic_3_triangulation_ds_cell_base_3<>`
 - `CGAL::Periodic_3_offset_3`
 
 ### Traits Classes ###
