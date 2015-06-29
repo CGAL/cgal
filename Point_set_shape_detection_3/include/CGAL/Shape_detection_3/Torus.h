@@ -217,6 +217,13 @@ namespace CGAL {
         m_minorRad = CGAL::sqrt(minorRad2);
       }
 
+      // Drop if shape is probably sphere
+      if (m_majorRad < this->m_epsilon) {
+        this->m_is_valid = false;
+
+        return;
+      }
+
       //validate points and normals
       for (std::size_t i = 0;i<indices.size();i++) {
         // check distance
