@@ -160,12 +160,10 @@ int main()
 
   delete mcs;
   mcs = new Mean_curvature_skeleton(mesh);
-  g.clear();
-  mcs->convert_to_skeleton(g);
+  (*mcs)(g);
 
   delete mcs;
   mcs = new Mean_curvature_skeleton(mesh);
-  g.clear();
   mcs->contract_until_convergence();
   mcs->convert_to_skeleton(g);
 
