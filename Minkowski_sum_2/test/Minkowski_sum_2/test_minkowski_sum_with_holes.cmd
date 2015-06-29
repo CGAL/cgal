@@ -1,4 +1,4 @@
-rvtwu
+rvtwud
 data/pwh1.dat data/pwh1.dat
 data/pwh2.dat data/pwh2.dat
 data/pwh1.dat data/pwh2.dat
