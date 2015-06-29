@@ -583,15 +583,6 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_iterator edge_iterator;
 
-  //EdgeConstraintMap
-  typedef typename boost::lookup_named_param_def <
-    CGAL::edge_is_constrained_t,
-    NamedParameters,
-    internal::No_constraint<PolygonMesh>//default
-  > ::type                                               EdgeConstraintMap;
-  EdgeConstraintMap ecmap = choose_param(get_param(np, edge_is_constrained),
-                                         EdgeConstraintMap());
-
   //FaceIndexMap
   typedef typename GetFaceIndexMap<PM, NamedParameters>::type FaceIndexMap;
   FaceIndexMap fim = choose_const_pmap(get_param(np, boost::face_index),
@@ -607,9 +598,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh
                                          pmesh,
                                          boost::vertex_index);
 
-  std::size_t num = connected_components(pmesh, face_cc,
-    CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(ecmap).
-    face_index_map(fim));
+  std::size_t num = connected_components(pmesh, face_cc, np);
 
   if((num == 1)|| (nb_components_to_keep > num) ){
     return 0;
@@ -800,20 +789,11 @@ void keep_connected_components(PolygonMesh& pmesh
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor   edge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_iterator     edge_iterator;
 
-  //EdgeConstraintMap
-  typedef typename boost::lookup_named_param_def <
-    CGAL::edge_is_constrained_t,
-    NamedParameters,
-    internal::No_constraint<PolygonMesh>//default
-  > ::type                                               EdgeConstraintMap;
-  EdgeConstraintMap ecmap = choose_param(get_param(np, edge_is_constrained),
-    EdgeConstraintMap());
-
   //FaceIndexMap
   typedef typename GetFaceIndexMap<PM, NamedParameters>::type FaceIndexMap;
   FaceIndexMap fim = choose_const_pmap(get_param(np, boost::face_index),
-    pmesh,
-    boost::face_index);
+                                       pmesh,
+                                       boost::face_index);
 
   //vector_property_map
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
@@ -821,12 +801,10 @@ void keep_connected_components(PolygonMesh& pmesh
   //VertexIndexMap
   typedef typename GetVertexIndexMap<PM, NamedParameters>::type VertexIndexMap;
   VertexIndexMap vim = choose_const_pmap(get_param(np, boost::vertex_index),
-    pmesh,
-    boost::vertex_index);
+                                         pmesh,
+                                         boost::vertex_index);
 
-  std::size_t num = connected_components(pmesh, face_cc,
-    CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(ecmap).
-    face_index_map(fim));
+  std::size_t num = connected_components(pmesh, face_cc, np);
 
   std::set<std::size_t> cc_to_keep;
   BOOST_FOREACH(face_descriptor f, components_to_keep)
