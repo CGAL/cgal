@@ -162,6 +162,7 @@ else
       p_klein_function_plugin \
       p_sphere_function_plugin \
       p_tanglecube_function_plugin \
+      mean_curvature_flow_skeleton_plugin \
       all
   do
       if  ${MAKE_CMD} -f Makefile help | grep "$target" > /dev/null; then 
