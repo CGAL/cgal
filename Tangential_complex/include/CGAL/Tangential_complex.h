@@ -952,14 +952,15 @@ public:
           << "the simplex " << saa.m_center_point_index << ", ";
         std::copy(saa.m_simplex.begin(), saa.m_simplex.end(), 
           std::ostream_iterator<std::size_t>(std::cerr, ", ")); 
-        std::cerr << "was not added in the star\n";
+        std::cerr << "was not added in the star #" 
+          << saa.m_center_point_index << "\n";
 
         Indexed_simplex full_s = saa.m_simplex;
         full_s.insert(saa.m_center_point_index);
 
         // CJTODO TEMP
         bool is_this_simplex_somewhere = false;
-        for(auto ii : saa.m_simplex)
+        for(auto ii : saa.m_simplex) // CJTODO C++11
         {
           Indexed_simplex z = full_s;
           z.erase(ii);
@@ -978,7 +979,41 @@ public:
           std::cerr << "The simplex is in the ambiant Delaunay." << std::endl;
         else
           std::cerr << "The simplex is NOT in the ambiant Delaunay." << std::endl;
-          
+
+        std::cerr << "Checking simplices of the star #" 
+          << saa.m_center_point_index << std::endl;
+        Star const& star = m_stars[saa.m_center_point_index];
+        for (Star::const_iterator is = star.begin(), is_end = star.end() ;
+          is != is_end ; ++is)
+        { 
+          if (is_simplex_in_the_ambient_delaunay(*is))
+            std::cerr << "The simplex is in the ambiant Delaunay." << std::endl;
+          else
+          {
+            std::cerr << "The simplex is NOT in the ambiant Delaunay." << std::endl;
+            for(auto ii : *is) // CJTODO C++11
+              perturb(ii);
+          }
+        }
+         
+        std::cerr << "Perturbing the points..." << std::endl;
+        perturb(saa.m_center_point_index);
+        for(auto ii : saa.m_simplex) // CJTODO C++11
+          perturb(ii);
+        refresh_tangential_complex();
+        pqueues.clear();
+        pqueues.resize(m_ambient_dim - m_intrinsic_dim + 1);
+        
+        std::size_t num_inconsistent_simplices = 0;
+        // For each triangulation
+        for (std::size_t i = 0 ; i < m_points.size() ; ++i)
+          num_inconsistent_simplices += fill_pqueues_for_alpha_tc(i, pqueues);
+
+#ifdef CGAL_TC_VERBOSE
+        std::cerr
+          << "Num inconsistent simplices found when filling the priority queues: "
+          << num_inconsistent_simplices << std::endl;
+#endif
       }
       // CJTODO TEMP
       else
@@ -988,6 +1023,7 @@ public:
         std::copy(saa.m_simplex.begin(), saa.m_simplex.end(), 
           std::ostream_iterator<std::size_t>(std::cerr, ", ")); 
         std::cerr << "was successfully added in the star\n";
+        //check_if_all_simplices_are_in_the_ambient_delaunay();
       }
 #endif
       

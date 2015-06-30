@@ -39,6 +39,7 @@
 //========================= Debugging & profiling =============================
 #define CGAL_TC_PROFILING
 #define CGAL_TC_VERBOSE
+#define CGAL_TC_VERY_VERBOSE
 #define CGAL_TC_PERFORM_EXTRA_CHECKS
 //#define CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
 //#define USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
