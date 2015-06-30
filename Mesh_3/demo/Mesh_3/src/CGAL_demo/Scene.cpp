@@ -54,23 +54,18 @@ Scene::erase(int index)
     return -1;
 
   Scene_item* item = entries[index];
-<<<<<<< HEAD
 
  #if QT_VERSION >= 0x050000
   QAbstractListModel::beginResetModel();
-  emit itemAboutToBeDestroyed(item);
+  Q_EMIT itemAboutToBeDestroyed(item);
   delete item;
   entries.removeAt(index);
 
   selected_item = -1;
-  emit updated();
+  Q_EMIT updated();
   QAbstractListModel::endResetModel();
  #else
-
-  emit itemAboutToBeDestroyed(item);
-=======
   Q_EMIT itemAboutToBeDestroyed(item);
->>>>>>> cgal/master
   delete item;
   entries.removeAt(index);
 

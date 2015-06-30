@@ -75,7 +75,7 @@ private:
   void attrib_buffers(QGLViewer*) const;
   void compile_shaders();
 
-public slots:
+public Q_SLOTS:
     void changed();
 
 }; // end class Scene_polyhedron_item

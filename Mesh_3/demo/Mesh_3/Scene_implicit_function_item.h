@@ -117,7 +117,7 @@ private:
   void compile_shaders();
   void compute_texture(int, int);
 
-public slots:
+public Q_SLOTS:
     void changed();
 };
 

@@ -78,7 +78,7 @@ private:
   void attrib_buffers(QGLViewer*) const;
   void compile_shaders();
   void draw_Bbox(Bbox bbox, std::vector<float> *vertices);
-public slots:
+public Q_SLOTS:
     void changed();
 #endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 };
