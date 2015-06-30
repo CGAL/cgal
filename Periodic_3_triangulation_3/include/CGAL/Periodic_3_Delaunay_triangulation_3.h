@@ -722,16 +722,7 @@ public:
 
   template <class OutputIterator>
   OutputIterator dual(Vertex_handle v, OutputIterator points) const {
-    std::vector<Cell_handle> cells;
-    incident_cells(v,std::back_inserter(cells));
-
-    for (unsigned int i=0; i<cells.size() ; i++) {
-      Point dual_orig = periodic_circumcenter(cells[i]).first;
-      int idx = cells[i]->index(v);
-      Offset off = periodic_point(cells[i],idx).second;
-      Point dual = point(std::make_pair(dual_orig,-off));
-      *points++ = dual;
-    }
+    Base::dual(v, points, geom_traits().construct_circumcenter_3_object());
     return points;
   }
 
