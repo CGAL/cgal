@@ -6078,6 +6078,12 @@ public:
     Base::dual(c, i, j, points, geom_traits().construct_weighted_circumcenter_3_object());
     return points;
   }
+
+  template <class OutputIterator>
+  OutputIterator dual(Vertex_handle v, OutputIterator points) const {
+    Base::dual(v, points, geom_traits().construct_weighted_circumcenter_3_object());
+    return points;
+  }
   //@}
 };
 

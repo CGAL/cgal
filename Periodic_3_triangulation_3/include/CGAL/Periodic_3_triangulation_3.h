@@ -1574,6 +1574,21 @@ protected:
     } while (ccit != cstart);
     return points;
   }
+
+  template <class OutputIterator, class ConstructCircumcenter>
+  OutputIterator dual(Vertex_handle v, OutputIterator points, ConstructCircumcenter construct_circumcenter) const {
+    std::vector<Cell_handle> cells;
+    incident_cells(v,std::back_inserter(cells));
+
+    for (unsigned int i=0; i<cells.size() ; i++) {
+      Point dual_orig = periodic_circumcenter(cells[i], construct_circumcenter).first;
+      int idx = cells[i]->index(v);
+      Offset off = periodic_point(cells[i],idx).second;
+      Point dual = point(std::make_pair(dual_orig,-off));
+      *points++ = dual;
+    }
+    return points;
+  }
 };
 
 template < class GT, class TDS >
