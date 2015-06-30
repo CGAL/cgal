@@ -127,16 +127,14 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
                                            end=reconstruct.shell_end( sh );it!=end;++it)
         {
 	  for (unsigned int ind = 0; ind < 3; ++ ind)
-          {
-	    if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
-            {
-	      map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
-	      new_item->new_vertex (pts[(*it)[ind]].x (),
-				    pts[(*it)[ind]].y (),
-				    pts[(*it)[ind]].z ());
-	    }
+	    if (map_i2i.insert (std::make_pair ((*it)[ind], current_index)).second)
+	      {
+		new_item->new_vertex (pts[(*it)[ind]].x (),
+				      pts[(*it)[ind]].y (),
+				      pts[(*it)[ind]].z ());
+		++ current_index;
+	      }
 
-	  }
 	  new_item->new_triangle( map_i2i[(*it)[0]],
 				  map_i2i[(*it)[1]],
 				  map_i2i[(*it)[2]] );
@@ -163,16 +161,13 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
                                              end=reconstruct.shell_end( sh );it!=end;++it)
           {
 	    for (unsigned int ind = 0; ind < 3; ++ ind)
-            {
-	      if (map_i2i_smoothed.find ((*it)[ind]) == map_i2i_smoothed.end ())
-	      {
-		map_i2i_smoothed.insert (std::make_pair ((*it)[ind], current_index_smoothed ++));
-		new_item_smoothed->new_vertex (pts_smoothed[(*it)[ind]].x (),
-					       pts_smoothed[(*it)[ind]].y (),
-					       pts_smoothed[(*it)[ind]].z ());
-	      }
-
-	    }
+	      if (map_i2i_smoothed.insert (std::make_pair ((*it)[ind], current_index_smoothed)).second)
+		{
+		  new_item_smoothed->new_vertex (pts_smoothed[(*it)[ind]].x (),
+						 pts_smoothed[(*it)[ind]].y (),
+						 pts_smoothed[(*it)[ind]].z ());
+		  ++ current_index_smoothed;
+		}
 
 	    new_item_smoothed->new_triangle( map_i2i_smoothed[(*it)[0]],
 					     map_i2i_smoothed[(*it)[1]],
