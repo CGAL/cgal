@@ -224,9 +224,27 @@ namespace Tangential_complex_ {
         const FT MARGIN = 0.001; // CJTODO TEMP
         FT alpha_i = k_scalar_pdct(it_v->vec, vec);
         if (alpha_i + MARGIN > it_v->alpha_plus)
+        {
+#ifdef CGAL_TC_VERY_VERBOSE
+          std::cerr << "OLD alpha+ = " << it_v->alpha_plus << std::endl;
+#endif
           it_v->alpha_plus = alpha_i + MARGIN;
+#ifdef CGAL_TC_VERY_VERBOSE
+          std::cerr << "NEW alpha+ = " << it_v->alpha_plus << std::endl;
+          std::cerr << "NOT MODIFIED alpha- = " << it_v->alpha_minus << std::endl;
+#endif
+        }
         else if (alpha_i - MARGIN < it_v->alpha_minus)
+        {
+#ifdef CGAL_TC_VERY_VERBOSE
+          std::cerr << "OLD alpha- = " << it_v->alpha_minus << std::endl;
+#endif
           it_v->alpha_minus = alpha_i - MARGIN;
+#ifdef CGAL_TC_VERY_VERBOSE
+          std::cerr << "NEW alpha- = " << it_v->alpha_minus << std::endl;
+          std::cerr << "NOT MODIFIED alpha+ = " << it_v->alpha_plus << std::endl;
+#endif
+        }
       }
     }
 
@@ -272,6 +290,12 @@ namespace Tangential_complex_ {
       Vector u_proj = scaled_vec(ej, scalar_pdct(u, ej) / scalar_pdct(ej, ej));
       u = diff_vec(u, u_proj);
     }
+    for (int j = 0 ; j < basis.num_thickening_vectors() ; ++j)
+    {
+      Vector const& ej = basis.thickening_vectors()[j].vec;
+      Vector u_proj = scaled_vec(ej, scalar_pdct(u, ej) / scalar_pdct(ej, ej));
+      u = diff_vec(u, u_proj);
+    }
     
     FT sqlen_new_v = k.squared_length_d_object()(u);
     bool add_it = (sqlen_new_v > sqlen_threshold);
@@ -286,6 +310,13 @@ namespace Tangential_complex_ {
         for (int j = 0 ; j < basis.size() ; ++j)
         {
           Vector const& ej = basis[j];
+          Vector new_v_proj = scaled_vec(
+            ej, scalar_pdct(new_v, ej) / scalar_pdct(ej, ej));
+          new_v = diff_vec(new_v, new_v_proj);
+        }
+        for (int j = 0 ; j < basis.num_thickening_vectors() ; ++j)
+        {
+          Vector const& ej = basis.thickening_vectors()[j].vec;
           Vector new_v_proj = scaled_vec(
             ej, scalar_pdct(new_v, ej) / scalar_pdct(ej, ej));
           new_v = diff_vec(new_v, new_v_proj);
