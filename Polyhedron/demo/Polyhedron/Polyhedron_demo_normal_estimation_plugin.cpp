@@ -63,7 +63,7 @@ public:
 #endif
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionNormalEstimation_triggered();
   void on_actionNormalInversion_triggered();
 

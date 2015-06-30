@@ -65,7 +65,7 @@ public:
   virtual RenderingMode renderingMode() const { return rendering_mode; }
   virtual QString renderingModeName() const; // Rendering mode as a human readable string
 
-public slots:
+public Q_SLOTS:
   // Call that once you have finished changing something in the item
   // (either the properties or internal data)
   virtual void changed() {}
@@ -82,7 +82,7 @@ public slots:
 
   virtual void itemAboutToBeDestroyed(Scene_item*);
 
-signals:
+Q_SIGNALS:
   void aboutToBeDestroyed();
 
 protected:

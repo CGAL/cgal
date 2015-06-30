@@ -42,7 +42,7 @@ class CGAL_QT_EXPORT GraphicsItem : public QObject, public QGraphicsItem {
 #if QT_VERSION >= 0x040600
   Q_INTERFACES(QGraphicsItem)
 #endif
-public slots:
+public Q_SLOTS:
 
   virtual void modelChanged() = 0;
 };

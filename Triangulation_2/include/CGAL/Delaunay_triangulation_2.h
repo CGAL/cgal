@@ -34,6 +34,8 @@
 
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
+
+
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
 namespace CGAL {
@@ -48,7 +50,6 @@ public:
   typedef typename Geom_traits::Point_2       Point;
   typedef typename Geom_traits::Segment_2     Segment;
   typedef typename Geom_traits::Triangle_2    Triangle;
-  
 
   typedef typename Geom_traits::Orientation_2 Orientation_2;
   typedef typename Geom_traits::Compare_x_2   Compare_x;
@@ -81,7 +82,6 @@ public:
   using Triangulation::fill_hole_delaunay;
   using Triangulation::delete_vertex;
 #endif
-
 
  Delaunay_triangulation_2(const Gt& gt = Gt())
   : Triangulation_2<Gt,Tds>(gt) {}
@@ -134,7 +134,7 @@ public:
   Object dual(const Edge &e) const ;
   Object dual(const Edge_circulator& ec) const;
   Object dual(const Finite_edges_iterator& ei) const;
-  
+
   //INSERTION-REMOVAL
   Vertex_handle insert(const Point  &p, 
 		       Face_handle start = Face_handle() );
@@ -831,7 +831,7 @@ dual(const Edge_circulator& ec) const
 {
   return dual(*ec);
 }
-  
+
 template < class Gt, class Tds >
 inline Object
 Delaunay_triangulation_2<Gt,Tds>::
@@ -839,7 +839,7 @@ dual(const Finite_edges_iterator& ei) const
 {
   return dual(*ei);
 }
-  
+
 
 ///////////////////////////////////////////////////////////////
 //  INSERT

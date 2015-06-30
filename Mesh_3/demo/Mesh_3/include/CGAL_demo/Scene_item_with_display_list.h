@@ -20,7 +20,8 @@ public:
   // OpenGL drawing using a display list
   virtual void draw(QGLViewer* viewer) ;
   virtual void draw_edges(QGLViewer* viewer) ;
-public slots:
+public Q_SLOTS:
+
   // Call that once you have finished changing something in the item
   // (either the properties or internal data).
   virtual void changed();

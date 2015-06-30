@@ -41,7 +41,7 @@ public:
       qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionConvexHull_triggered();
 
 }; // end Polyhedron_demo_convex_hull_plugin

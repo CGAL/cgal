@@ -207,14 +207,14 @@ public:
     }
   }
 
-  const Root_of_2 & x() const { return get(base).x(); }
-  const Root_of_2 & y() const { return get(base).y(); }
-  const Root_of_2 & z() const { return get(base).z(); }
+  const Root_of_2 & x() const { return get_pointee_or_identity(base).x(); }
+  const Root_of_2 & y() const { return get_pointee_or_identity(base).y(); }
+  const Root_of_2 & z() const { return get_pointee_or_identity(base).z(); }
 	  
-  const Root_for_spheres_2_3 & coordinates() const { return get(base); }
+  const Root_for_spheres_2_3 & coordinates() const { return get_pointee_or_identity(base); }
 
   const CGAL::Bbox_3 bbox() const {
-    return get(base).bbox();
+    return get_pointee_or_identity(base).bbox();
   }
 
   bool operator==(const Circular_arc_point_3 &) const;

@@ -42,7 +42,6 @@ public:
 
 private:
   //Shaders elements
-
       int poly_vertexLocation;
       int points_vertexLocation;
       int normalsLocation;
@@ -57,6 +56,8 @@ private:
       std::vector<float> pos_points;
       std::vector<float> pos_poly;
       std::vector<float> normals;
+
+ public Q_SLOTS:
 
       QOpenGLBuffer buffers[3];
       QOpenGLVertexArrayObject vao[2];

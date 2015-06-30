@@ -34,12 +34,13 @@ Scene::addItem(Scene_item* item)
 
  #if QT_VERSION >= 0x050000
   QAbstractListModel::beginResetModel();
-  emit updated_bbox();
-  emit updated();
+  Q_EMIT updated_bbox();
+  Q_EMIT updated();
   QAbstractListModel::endResetModel();
  #else
-  emit updated_bbox();
-  emit updated();
+  Q_EMIT updated_bbox();
+  Q_EMIT updated();
+
   QAbstractListModel::reset();
  #endif
 
@@ -53,6 +54,7 @@ Scene::erase(int index)
     return -1;
 
   Scene_item* item = entries[index];
+<<<<<<< HEAD
 
  #if QT_VERSION >= 0x050000
   QAbstractListModel::beginResetModel();
@@ -66,11 +68,14 @@ Scene::erase(int index)
  #else
 
   emit itemAboutToBeDestroyed(item);
+=======
+  Q_EMIT itemAboutToBeDestroyed(item);
+>>>>>>> cgal/master
   delete item;
   entries.removeAt(index);
 
   selected_item = -1;
-  emit updated();
+  Q_EMIT updated();
   QAbstractListModel::reset();
  #endif
 
@@ -380,13 +385,13 @@ Scene::setData(const QModelIndex &index,
   case NameColumn:
     item->setName(value.toString());
     item->changed();
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
     return true;
     break;
   case ColorColumn:
     item->setColor(value.value<QColor>());
     item->changed();
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
     return true;
     break;
   case RenderingModeColumn:
@@ -398,14 +403,14 @@ Scene::setData(const QModelIndex &index,
     }
     item->setRenderingMode(rendering_mode);
     item->changed();
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
     return true;
     break;
   }
   case VisibleColumn:
     item->setVisible(value.toBool());
     item->changed();
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
     return true;
   default:
     return false;
@@ -437,14 +442,14 @@ void Scene::itemChanged(Item_id i)
     return;
 
   entries[i]->changed();
-  emit dataChanged(QAbstractItemModel::createIndex(i, 0),
+  Q_EMIT dataChanged(QAbstractItemModel::createIndex(i, 0),
     QAbstractItemModel::createIndex(i, LastColumn));
 }
 
 void Scene::itemChanged(Scene_item* item)
 {
   item->changed();
-  emit dataChanged(QAbstractItemModel::createIndex(0, 0),
+  Q_EMIT dataChanged(QAbstractItemModel::createIndex(0, 0),
     QAbstractItemModel::createIndex(entries.size() - 1, LastColumn));
 }
 
@@ -561,7 +566,7 @@ void Scene::setItemVisible(int index, bool b)
   if( index < 0 || index >= entries.size() )
     return;
   entries[index]->setVisible(b);
-  emit dataChanged(QAbstractItemModel::createIndex(index, VisibleColumn),
+  Q_EMIT dataChanged(QAbstractItemModel::createIndex(index, VisibleColumn),
     QAbstractItemModel::createIndex(index, VisibleColumn));
 }
 
@@ -572,7 +577,7 @@ void Scene::setItemA(int i)
   {
     item_B = -1;
   }
-  emit dataChanged(QAbstractItemModel::createIndex(0, ABColumn),
+  Q_EMIT dataChanged(QAbstractItemModel::createIndex(0, ABColumn),
     QAbstractItemModel::createIndex(entries.size()-1, ABColumn));
 }
 
@@ -583,8 +588,8 @@ void Scene::setItemB(int i)
   {
     item_A = -1;
   }
-  emit updated();
-  emit dataChanged(QAbstractItemModel::createIndex(0, ABColumn),
+  Q_EMIT updated();
+  Q_EMIT dataChanged(QAbstractItemModel::createIndex(0, ABColumn),
     QAbstractItemModel::createIndex(entries.size()-1, ABColumn));
 }
 

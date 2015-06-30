@@ -86,7 +86,7 @@ public:
   // auxiliary public function for QMainWindow
   QItemSelection createSelection(int i);
 
-public slots:
+public Q_SLOTS:
   // Notify the scene that an item was modified
   void itemChanged(Item_id i); 
   void itemChanged(Scene_item*);
@@ -94,7 +94,7 @@ public slots:
   virtual void setSelectedItem(Item_id i)
   {
     selected_item = i;
-    emit selectionChanged();
+    Q_EMIT selectionChanged();
   };
 
   // Accessors (setters)
@@ -102,7 +102,7 @@ public slots:
   void setItemA(int i);
   void setItemB(int i);
 
-signals:
+Q_SIGNALS:
   void updated_bbox();
   void updated();
   void itemAboutToBeDestroyed(Scene_item*);

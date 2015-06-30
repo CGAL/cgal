@@ -32,7 +32,7 @@ public:
   QList<QAction*> actions() const;
   bool applicable(QAction*) const;
 
-public slots:
+public Q_SLOTS:
   void on_actionDeformation_triggered();
   /////// Dock window signal handlers //////
   // what they do is simply transmiting required 'action' to selected scene_edit_polyhedron_item object

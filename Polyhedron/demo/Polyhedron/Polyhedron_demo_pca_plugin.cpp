@@ -47,7 +47,7 @@ public:
   }
 
 
-public slots:
+public Q_SLOTS:
   void on_actionFitPlane_triggered();
   void on_actionFitLine_triggered();
 

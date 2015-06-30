@@ -59,7 +59,7 @@ public:
     return QList<QAction*>() << actionScaleSpaceReconstruction;
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionScaleSpaceReconstruction_triggered();
 }; // end class Polyhedron_scale_space_reconstruction_plugin
 

@@ -1470,11 +1470,11 @@ restore_cells_and_boundary_facets(
     CGAL_assertion(it != boundary_facets_from_outside.end());
 
     // Restore facet attributes
-    if ( it->second.first != Surface_patch_index() )
+    if ( !( it->second.first == Surface_patch_index() ) )
       c3t3_.add_to_complex(new_facet, it->second.first);
 
     // Restore cell attributes
-    if ( it->second.second != Subdomain_index() )
+    if ( !( it->second.second == Subdomain_index() ) )
       c3t3_.add_to_complex(*cit, it->second.second);
 
     // if the new cell is in the domain, and it criterion value is less that

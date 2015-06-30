@@ -63,7 +63,7 @@ public:
     return QList<QAction*>();
   }
   
-public slots:
+public Q_SLOTS:
   void load_function() const;
   
 private:

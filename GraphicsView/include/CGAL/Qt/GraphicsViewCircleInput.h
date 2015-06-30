@@ -99,9 +99,9 @@ GraphicsViewCircleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	q = convert(qq);
 	if(m_pointsOnCircle == 1){
 	  typename K::FT sd = squared_distance(p,q);
-	  emit generate(CGAL::make_object(std::make_pair(p, sd)));
+	  Q_EMIT generate(CGAL::make_object(std::make_pair(p, sd)));
 	} else {
-	  emit generate(CGAL::make_object(std::make_pair(p, q)));
+	  Q_EMIT generate(CGAL::make_object(std::make_pair(p, q)));
 	}
 	count = 0;
       } 
@@ -122,7 +122,7 @@ GraphicsViewCircleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
       r = convert(qr);
       typename K::Collinear_2 collinear;
       if(! collinear(p,q,r)){
-	emit generate(CGAL::make_object(CGAL::make_array(p,q,r)));
+	Q_EMIT generate(CGAL::make_object(CGAL::make_array(p,q,r)));
 	count = 0;
       }
     }

@@ -20,7 +20,7 @@ Scene_item::~Scene_item() {
 
 void Scene_item::itemAboutToBeDestroyed(Scene_item* item) {
     if(this == item)
-        emit aboutToBeDestroyed();
+    Q_EMIT aboutToBeDestroyed();
 }
 
 
@@ -105,7 +105,7 @@ QMenu* Scene_item::contextMenu()
 }
 
 void Scene_item::changed() {
-    // emit itemChanged();
+  // Q_EMIT itemChanged();
 }
 
 void Scene_item::selection_changed(bool) {

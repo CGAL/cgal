@@ -106,7 +106,11 @@ find_package(GLEW)
 find_package(Boost COMPONENTS thread system)
 
 # Find QGLViewer
+
 if(Qt5_FOUND)
+
+ add_definitions(-DQT_NO_KEYWORDS)
+
   find_package(QGLViewer )
 endif(Qt5_FOUND)
 

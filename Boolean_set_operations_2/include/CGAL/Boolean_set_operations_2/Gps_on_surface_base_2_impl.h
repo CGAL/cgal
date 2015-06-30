@@ -36,7 +36,7 @@
 template <class Traits_, class TopTraits_, class ValidationPolicy>
 void Gps_on_surface_base_2<Traits_, TopTraits_,ValidationPolicy>::
 construct_polygon(Ccb_halfedge_const_circulator ccb, Polygon_2 & pgn,
-                  Traits_ * tr)
+                  const Traits_* tr)
 {
   typedef CGAL::Ccb_curve_iterator<Arrangement_on_surface_2>
     Ccb_curve_iterator;
@@ -77,18 +77,17 @@ public:
 
 
 protected:
-
-  Gps_traits*                            m_traits;
-  std::queue<Face_const_iterator>        m_holes_q;
-  std::list<Polygon_2>                   m_pgn_holes;
-  OutputIterator                         m_oi;
+  const Gps_traits* m_traits;
+  std::queue<Face_const_iterator> m_holes_q;
+  std::list<Polygon_2> m_pgn_holes;
+  OutputIterator m_oi;
 
 public:
-
   /*! Constructor */
-  Arr_bfs_scanner(Gps_traits* tr, OutputIterator oi) : m_traits(tr), m_oi(oi)
+  Arr_bfs_scanner(const Gps_traits* tr, OutputIterator oi) :
+    m_traits(tr),
+    m_oi(oi)
   {}
-
 
   void scan(Arrangement& arr)
   {
@@ -583,8 +582,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
   _construct_curves(const Polygon_2 & pgn, OutputIterator oi)
 {
-  std::pair<Curve_const_iterator,
-    Curve_const_iterator> itr_pair =
+  std::pair<Curve_const_iterator, Curve_const_iterator> itr_pair =
     m_traits->construct_curves_2_object()(pgn);
   std::copy (itr_pair.first, itr_pair.second, oi);
 }
@@ -597,9 +595,9 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   //if (!pgn.is_unbounded())
   if (!m_traits->construct_is_unbounded_object()(pgn))
   {
-    const Polygon_2& pgn_boundary = m_traits->construct_outer_boundary_object ()(pgn);
-    std::pair<Curve_const_iterator,
-      Curve_const_iterator> itr_pair =
+    const Polygon_2& pgn_boundary =
+      m_traits->construct_outer_boundary_object()(pgn);
+    std::pair<Curve_const_iterator, Curve_const_iterator> itr_pair =
       m_traits->construct_curves_2_object()(pgn_boundary);
     std::copy (itr_pair.first, itr_pair.second, oi);
   }
@@ -609,8 +607,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   for (hit = hpair.first; hit != hpair.second; ++hit)
   {
     const Polygon_2& pgn_hole = *hit;
-    std::pair<Curve_const_iterator,
-      Curve_const_iterator> itr_pair =
+    std::pair<Curve_const_iterator, Curve_const_iterator> itr_pair =
       m_traits->construct_curves_2_object()(pgn_hole);
     std::copy (itr_pair.first, itr_pair.second, oi);
   }

@@ -82,7 +82,7 @@ public:
         vao[i].destroy();
   }
 
-public slots:
+public Q_SLOTS:
   void init();
   void draw();
   void changed();
@@ -214,7 +214,7 @@ public slots:
    return true;
   }
 
-signals:
+Q_SIGNALS:
   void message(const QString & message, int timeout = 0 );
   void loaded_points(const QString &n);
 

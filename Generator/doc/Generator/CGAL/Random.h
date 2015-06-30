@@ -1,6 +1,7 @@
 namespace CGAL {
 
 /*!
+\ingroup PkgGenerators
 The class `Random` is a random numbers generator. It generates 
 uniformly distributed random `bool`, `int` and `double`. 
 It can be used as the random number generating function object in the 
@@ -180,6 +181,6 @@ bool operator == ( Random const& random2) const;
   The variable `default_random` is the default random numbers generator used for
   the generator functions and classes.
 */
-extern Random default_random;
+extern CGAL::Random default_random;
 
 } /* end namespace CGAL */

@@ -25,6 +25,9 @@ include_directories (BEFORE ../../../Triangulation_2/include)
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
+add_definitions(-DQT_NO_KEYWORDS)
+
+
 
 #--------------------------------
 # The "constrained Delaunay" demo: Constrained_Delaunay_triangulation_2

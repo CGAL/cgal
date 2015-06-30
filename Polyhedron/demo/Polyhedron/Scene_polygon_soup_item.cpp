@@ -395,7 +395,7 @@ void Scene_polygon_soup_item::load(Scene_polyhedron_item* poly_item) {
     CGAL::generic_print_polyhedron(std::cerr,
                                    *poly_item->polyhedron(),
                                    writer);
-    emit changed();
+  Q_EMIT changed();
 }
 
 void
@@ -438,11 +438,31 @@ bool
 Scene_polygon_soup_item::orient()
 {
 
-    if(isEmpty() || this->oriented)
-        return true; // nothing to do
+  if(isEmpty() || this->oriented)
+      return true; // nothing to do
+  oriented=true;
 
-    oriented = CGAL::orient_polygon_soup(soup->points, soup->polygons);
-    return oriented;
+  //first skip degenerate polygons
+  Polygon_soup::Polygons valid_polygons;
+  valid_polygons.reserve(soup->polygons.size());
+  BOOST_FOREACH(Polygon_soup::Polygon_3& polygon, soup->polygons)
+  {
+    std::set<std::size_t> vids;
+    bool to_remove=false;
+    BOOST_FOREACH(std::size_t id, polygon)
+    {
+      if (!vids.insert(id).second){
+        to_remove=true;
+        break;
+      }
+    }
+    if (!to_remove) valid_polygons.push_back(polygon);
+  }
+  if (valid_polygons.size()!=soup->polygons.size())
+    soup->polygons.swap(valid_polygons);
+
+  return CGAL::orient_polygon_soup(soup->points, soup->polygons);
+
 }
 
 

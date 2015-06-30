@@ -32,7 +32,7 @@ public:
       || qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionInsideOut_triggered();
 
 }; // end Polyhedron_demo_inside_out_plugin

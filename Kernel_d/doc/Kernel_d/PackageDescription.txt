@@ -95,6 +95,8 @@
 - `Kernel_d::Component_accessor_d`
 - `Kernel_d::Compute_coordinate_d`
 - `Kernel_d::ConstructCartesianConstIterator_d`
+- `Kernel_d::Construct_min_vertex_d`
+- `Kernel_d::Construct_max_vertex_d`
 - `Kernel_d::Contained_in_affine_hull_d`
 - `Kernel_d::Contained_in_linear_hull_d`
 - `Kernel_d::Contained_in_simplex_d`

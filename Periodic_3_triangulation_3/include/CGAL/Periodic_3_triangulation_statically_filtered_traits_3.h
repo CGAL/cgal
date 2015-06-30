@@ -37,7 +37,6 @@
 
 #include <CGAL/internal/Static_filters/tools.h>
 #include <CGAL/internal/Static_filters/Periodic_3_orientation_3.h>
-#include <CGAL/internal/Static_filters/Periodic_3_side_of_oriented_sphere_3.h>
 
 // TODO :
 // - add more predicates :
@@ -54,16 +53,9 @@ public:
 
   typedef internal::Static_filters_predicates::Periodic_3_orientation_3<Traits>
     Orientation_3;
-  typedef internal::Static_filters_predicates::Periodic_3_side_of_oriented_sphere_3<Traits>
-    Side_of_oriented_sphere_3;
 
   Orientation_3 orientation_3_object() const {
     return Orientation_3(&this->_domain,&this->_domain_e,&this->_domain_f);
-  }
-  Side_of_oriented_sphere_3  side_of_oriented_sphere_3_object() const {
-    return Side_of_oriented_sphere_3(&this->_domain,
-                                     &this->_domain_e,
-                                     &this->_domain_f);
   }
 };
 

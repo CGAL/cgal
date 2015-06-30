@@ -39,7 +39,7 @@ template <class R_>
 class Vector_3 : public R_::Kernel_base::Vector_3
 {
   typedef typename R_::RT                    RT;
-// http://www.cgal.org/Members/Manual_test/LAST/Developers_internal_manual/Developers_manual/Chapter_code_format.html#sec:programming_conventions
+// http://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
   typedef typename R_::FT                    FT_;
   typedef typename R_::Segment_3             Segment_3;
   typedef typename R_::Ray_3                 Ray_3;

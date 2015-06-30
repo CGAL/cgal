@@ -147,7 +147,7 @@ void MainWindow::on_actionLoad_Points_triggered()
   }
 
   // update viewer
-  emit( sceneChanged() );
+  Q_EMIT( sceneChanged() );
 }
 
 void MainWindow::on_actionSave_Points_triggered()
@@ -216,8 +216,10 @@ void MainWindow::on_actionGenerate_Points_triggered()
     viewer->setSelBuffSize();
 
     // update viewer
-    emit( sceneChanged() );
+    Q_EMIT( sceneChanged() );
     viewer->changed();
+
+
   }// if(isOk)
 }
 
@@ -232,7 +234,7 @@ void MainWindow::on_actionClear_Scene_triggered()
   viewer->clear();
 
   // update viewer
-  emit( sceneChanged() );
+  Q_EMIT( sceneChanged() );
 }
 
 void MainWindow::popupAboutCGAL()

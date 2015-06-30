@@ -1,9 +1,21 @@
 
+-------------------------------- Release 4.6.1 --------------------------------
+
+Release date: June 2015
+
+This release only fixes bugs. See the list of fixed bugs on Github:
+
+https://github.com/CGAL/cgal/issues?q=milestone%3A4.6.1+-label%3Ainvalid
+
+
 -------------------------------- Release 4.6 --------------------------------
 
-Release date: March 2015
+Release date: April 2015
 
 
+* Installation
+
+  - The required version of Boost is now 1.48 or higher.
 
 
 * 2D Polyline Simplification (new package)
@@ -40,11 +52,11 @@ Release date: March 2015
     alternative to the packages CGAL::Polyhedron_3 and CGAL::HalfedgeDS.
 
 
-* Triangulation (new package)
+* dD Triangulation (new package)
 
   - This new package provides classes for manipulating triangulations in
     Euclidean spaces whose dimension can be specified at compile-time or at
-    run-time.
+    run-time. It also provides a class that represents Delaunay triangulations.
 
 
 * dD Convex Hulls and Delaunay Triangulations

@@ -21,6 +21,8 @@
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
+//                 Pedro Machado Manhaes de Castro  <pmmc@cin.ufpe.br>
+//                 Alexandru Tifrea
 
 #ifndef CGAL_POINT_GENERATORS_3_H
 #define CGAL_POINT_GENERATORS_3_H 1
@@ -192,6 +194,113 @@ points_on_cube_grid_3( double a, std::size_t n, OutputIterator o)
     return points_on_square_grid_3(a, n, o, 
                  Creator_uniform_3<typename Kernel_traits<P>::Kernel::RT,P>());
 }
+
+template < class P, class Creator = 
+Creator_uniform_3<typename Kernel_traits<P>::Kernel::RT,P> >
+class Random_points_in_triangle_3 : public Random_generator_base<P> {
+	P _p,_q,_r;
+	void generate_point();
+public:
+	typedef P result_type;
+	typedef Random_points_in_triangle_3<P> This;
+	typedef typename Kernel_traits<P>::Kernel::Triangle_3 Triangle_3;
+	Random_points_in_triangle_3() {}
+	Random_points_in_triangle_3( const This& x,Random& rnd = default_random)
+	: Random_generator_base<P>( 1, rnd ),_p(x._p),_q(x._q),_r(x._r) {
+		generate_point();
+	}
+	Random_points_in_triangle_3( const P& p, const P& q, const P& r, Random& rnd = default_random)
+	: Random_generator_base<P>( 1, rnd ),_p(p),_q(q),_r(r) {
+		generate_point();
+	}
+	Random_points_in_triangle_3( const Triangle_3& triangle,Random& rnd = default_random)
+	: Random_generator_base<P>( 1,
+			rnd),_p(triangle[0]),_q(triangle[1]),_r(triangle[2]) {
+		generate_point();
+	}
+	This& operator++() {
+		generate_point();
+		return *this;
+	}
+	This operator++(int) {
+		This tmp = *this;
+		++(*this);
+		return tmp;
+	}
+};
+
+
+template<class P, class Creator >
+void Random_points_in_triangle_3<P, Creator>::generate_point() {
+	typedef typename Creator::argument_type T;
+	Creator creator;
+	double a1 = this->_rnd.get_double(0,1);
+	double a2 = this->_rnd.get_double(0,1);
+	if(a1>a2) std::swap(a1,a2);
+	double b1 = a1;
+	double b2 = a2-a1;
+	double b3 = 1.0-a2;
+	T ret[3];
+	for(int i = 0; i < 3; ++i) {
+	    ret[i] = T(to_double(_p[i])*b1+to_double(_q[i])*b2+to_double(_r[i])*b3);
+	}
+	this->d_item = creator(ret[0],ret[1],ret[2]);
+}
+
+template < class P, class Creator = 
+Creator_uniform_3<typename Kernel_traits<P>::Kernel::RT,P> >
+class Random_points_in_tetrahedron_3 : public Random_generator_base<P> {
+	P _p,_q,_r,_s;
+	void generate_point();
+public:
+	typedef P result_type;
+	typedef Random_points_in_tetrahedron_3<P> This;
+	typedef typename Kernel_traits<P>::Kernel::Tetrahedron_3 Tetrahedron_3;
+	Random_points_in_tetrahedron_3() {}
+	Random_points_in_tetrahedron_3( const This& x,Random& rnd = default_random)
+	: Random_generator_base<P>( 1, rnd ),_p(x._p),_q(x._q),_r(x._r),_s(x._s) {
+		generate_point();
+	}
+	Random_points_in_tetrahedron_3( const P& p, const P& q, const P& r, const P& s,Random& rnd = default_random)
+	: Random_generator_base<P>( 1, rnd ),_p(p),_q(q),_r(r),_s(s) {
+		generate_point();
+	}
+	Random_points_in_tetrahedron_3( const Tetrahedron_3& tetrahedron,Random& rnd = default_random)
+	: Random_generator_base<P>( 1, rnd),_p(tetrahedron[0]),_q(tetrahedron[1]),_r(tetrahedron[2]),_s(tetrahedron[3]) {
+		generate_point();
+	}
+	This& operator++() {
+		generate_point();
+		return *this;
+	}
+	This operator++(int) {
+		This tmp = *this;
+		++(*this);
+		return tmp;
+	}
+};
+
+template<class P, class Creator >
+void Random_points_in_tetrahedron_3<P, Creator>::generate_point() {
+	typedef typename Creator::argument_type T;
+	Creator creator;
+	double a[3];
+	for(int i = 0; i < 3; ++i) {
+		a[i]=this->_rnd.get_double(0,1);
+	}
+	std::sort(a,a+3);
+	double b[4];
+	b[0]=a[0];
+	b[1]=a[1]-a[0];
+	b[2]=a[2]-a[1];
+	b[3]=1.0-a[2];
+	T ret[3];
+	for(int i = 0; i < 3; ++i) {
+	    ret[i] = T(to_double(_p[i])*b[0]+to_double(_q[i])*b[1]+to_double(_r[i])*b[2]+to_double(_s[i])*b[3]);
+	}
+	this->d_item = creator(ret[0],ret[1],ret[2]);
+}
+
 
 
 } //namespace CGAL

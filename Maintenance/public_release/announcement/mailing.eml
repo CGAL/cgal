@@ -1,4 +1,5 @@
 Subject: CGAL 4.6 Released, Computational Geometry Algorithms Library
+From: Laurent Rineau <laurent.rineau@cgal.org>
 Content-Type: text/plain; charset="utf-8"
 Body: 
 
@@ -43,12 +44,12 @@ CGAL 4.5:
     CGAL::HalfedgeDS.
 
 
-  o Triangulation (new package)
+  o dD Triangulation (new package)
 
     This new package provides classes for manipulating triangulations in
     Euclidean spaces whose dimension can be specified at compile-time or at
-    run-time.
-
+    run-time. It also provides a class that represents Delaunay
+    triangulations.
 
   o 2D Triangulations
 

@@ -74,10 +74,8 @@ MainWindow::alphaChanged(int i)
   } else {
     scene.alpha_shape.set_alpha(0);
   }
-  viewer->alphaChanged();
-  emit (alphaChanged());
-
-
+  viewer->alphaChanged();  
+  Q_EMIT(alphaChanged());
 }
 
 void
@@ -107,7 +105,7 @@ MainWindow::open(QString fileName)
   this->addToRecentFiles(fileName);
   QApplication::restoreOverrideCursor();
   viewer->changed();
-  emit (sceneChanged());
+  Q_EMIT(sceneChanged());
 }
 
 

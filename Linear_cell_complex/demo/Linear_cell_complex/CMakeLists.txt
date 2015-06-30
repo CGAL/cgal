@@ -48,6 +48,8 @@ if ( NOT (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND
 
 else()
 
+add_definitions(-DQT_NO_KEYWORDS)
+
 include_directories(${QGLVIEWER_INCLUDE_DIR})
 include_directories(BEFORE . ../../include/)
 

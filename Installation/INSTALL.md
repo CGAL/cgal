@@ -26,11 +26,11 @@ To install CGAL, you need 'cmake' and several third-party libraries.
 Some are essential for entire CGAL, some are mandatory for particular
 CGAL packages, some are only needed for demos.
 
-   * CMake (>= 2.6.2), the build system used by CGAL
+   * CMake (>= 2.6.3), the build system used by CGAL
      Required for building CGAL
      On Windows, CMake >= 2.8.6 is required.
 
-   * Boost (>= 1.39)
+   * Boost (>= 1.48)
      Required for building CGAL and for applications using CGAL
      Required compiled Boost library: Boost.Thread, Boost.System
      Optional compiled Boost library: Boost.Program_options

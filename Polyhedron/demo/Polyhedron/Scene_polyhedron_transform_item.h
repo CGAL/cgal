@@ -21,7 +21,7 @@ public:
     QString toolTip() const;
     void draw_edges(Viewer_interface*) const;
     Bbox bbox() const;
-    ~Scene_polyhedron_transform_item();
+    ~Scene_polyhedron_transform_item() {delete frame; Q_EMIT killed();}
     bool manipulatable() const { return manipulable; }
     ManipulatedFrame* manipulatedFrame() { return frame; }
     void setManipulatable(bool b = true) { manipulable = b;}
@@ -42,7 +42,7 @@ private:
     void initialize_buffers(Viewer_interface *viewer) const;
     void compute_elements();
 
-signals:
+Q_SIGNALS:
     void stop();
     void killed();
 }; // end class Scene_polyhedron_transform_item

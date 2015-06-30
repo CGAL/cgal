@@ -58,7 +58,7 @@ private:
   Scene_interface::Item_id tr_item_index;
   bool started;
 
-public slots:
+public Q_SLOTS:
   void go();
   void transformed_killed();
 }; // end class Polyhedron_demo_transform_polyhedron_plugin

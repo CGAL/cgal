@@ -26,8 +26,8 @@ public:
   virtual qglviewer::Vec translationVector() const = 0;
   void itemAboutToBeDestroyed(Scene_item* item) {
     if(this == item) {
-      emit planeDestructionIncoming(this);
-      emit aboutToBeDestroyed();
+      Q_EMIT planeDestructionIncoming(this);
+      Q_EMIT aboutToBeDestroyed();
     }
   }
 
@@ -35,12 +35,12 @@ public:
 
   virtual qglviewer::ManipulatedFrame* manipulatedFrame() { return mFrame_; }
 
-signals:
+Q_SIGNALS:
   void planeDestructionIncoming(Volume_plane_interface*);
   void manipulated(int);
-private slots:
+private Q_SLOTS:
   void propagateManipulation() {
-    emit manipulated(getCurrentCube());
+    Q_EMIT manipulated(getCurrentCube());
   }
 protected:
   qglviewer::ManipulatedFrame* mFrame_;

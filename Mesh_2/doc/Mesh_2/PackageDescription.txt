@@ -2,13 +2,27 @@
 
 /// \defgroup PkgMesh2Concepts Concepts
 /// \ingroup PkgMesh2
+
+/// \defgroup PkgMesh2Functions Mesh Generation Functions
+/// \ingroup PkgMesh2
+/// The main function to generate a mesh is `refine_Delaunay_mesh_2()`. 
+/// The function `lloyd_optimize_mesh_2()` allows to optimize an existing mesh.
+
+/// \defgroup PkgMesh2Enum Enumerations
+/// \ingroup PkgMesh2
+
 /*!
 \addtogroup PkgMesh2
 \cgalPkgDescriptionBegin{2D Conforming Triangulations and Meshes,PkgMesh2Summary}
 \cgalPkgPicture{Mesh_2/fig/delaunaymesh-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Laurent Rineau}
-\cgalPkgDesc{This package implements a Delaunay refinement algorithm to construct  conforming triangulations and 2D meshes.  Conforming Delaunay triangulations are obtained from constrained Delaunay triangulations by refining constrained edges until they are Delaunay edges. Conforming Gabriel triangulations  are obtained by further refining constrained edges until they become Gabriel edges.  The package provides also a 2D mesh generator that refines triangles and constrained edges until user defined size and shape criteria on triangles are satisfied.  The package can handle intersecting input constraints  and set no restriction on the angle formed  by two constraints sharing an endpoint.}
+\cgalPkgDesc{This package implements a Delaunay refinement algorithm to construct conforming triangulations and 2D meshes. 
+Conforming Delaunay triangulations are obtained from constrained Delaunay triangulations by refining constrained edges until they are Delaunay edges.
+Conforming Gabriel triangulations  are obtained by further refining constrained edges until they become Gabriel edges.
+The package provides also a 2D mesh generator that refines triangles and constrained edges until user defined size and shape criteria on triangles are satisfied.
+The generated meshes can be optimized using the Lloyd algorithm, also provided in this package.
+The package can handle intersecting input constraints  and set no restriction on the angle formed  by two constraints sharing an endpoint.}
 \cgalPkgManuals{Chapter_2D_Conforming_Triangulations_and_Meshes,PkgMesh2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -27,11 +41,13 @@
 - `DelaunayMeshTraits_2`
 - `MeshingCriteria_2`
 - `DelaunayMeshFaceBase_2`
+- `DelaunayMeshVertexBase_2`
 
 ## Classes##
 - `CGAL::Triangulation_conformer_2<CDT>`
 - `CGAL::Delaunay_mesher_2<CDT, Criteria>`
 - `CGAL::Delaunay_mesh_face_base_2<Traits, Fb>`
+- `CGAL::Delaunay_mesh_vertex_base_2<Traits, Vb>`
 - `CGAL::Delaunay_mesh_criteria_2<CDT>`
 - `CGAL::Delaunay_mesh_size_criteria_2<CDT>`
 - `CGAL::Mesh_2::Face_badness`
@@ -40,5 +56,9 @@
 - `CGAL::make_conforming_Delaunay_2`
 - `CGAL::make_conforming_Gabriel_2`
 - `CGAL::refine_Delaunay_mesh_2`
+- `CGAL::lloyd_optimize_mesh_2`
+
+## Enumerations ##
+- `CGAL::Mesh_optimization_return_code`
 
 */

@@ -36,6 +36,7 @@
 
 namespace CGAL {
 
+
 /// \cond SKIP_DOXYGEN
 /// Property map that accesses a value from an iterator
 ///
@@ -285,7 +286,7 @@ Second_of_pair_property_map<Pair>
 /// 
 /// Property map that accesses the Nth item of a `boost::tuple`. 
 /// 
-/// \tparam N Index of the item to access.
+/// \tparam N %Index of the item to access.
 /// \tparam Tuple Instance of `boost::tuple`.
 /// 
 /// \cgalModels `LvaluePropertyMap`
@@ -321,7 +322,7 @@ Nth_of_tuple_property_map<N, typename CGAL::value_type_traits<Iter>::type>
 /// 
 /// Property map that accesses the Nth item of a `boost::tuple`. 
 /// 
-/// \tparam N Index of the item to access.
+/// \tparam N %Index of the item to access.
 /// \tparam Tuple Instance of `boost::tuple`.
 /// 
 /// \cgalModels `LvaluePropertyMap`

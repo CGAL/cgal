@@ -85,7 +85,7 @@ public:
   void c3t3_changed();
   void contextual_changed();
 
-public slots:
+public Q_SLOTS:
   inline void data_item_destroyed();
   virtual void setColor(QColor c);
   

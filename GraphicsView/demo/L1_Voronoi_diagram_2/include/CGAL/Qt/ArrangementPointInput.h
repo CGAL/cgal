@@ -48,7 +48,7 @@ template <typename T>
 void 
 ArrangementPointInput<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent* )
 {
-  emit (generate(CGAL::make_object(m_p)));
+  Q_EMIT (generate(CGAL::make_object(m_p)));
 }
 
 

@@ -44,7 +44,7 @@ class CGAL_QT_EXPORT GraphicsViewNavigation: public QObject {
 
   Q_OBJECT
 
-  signals:
+  Q_SIGNALS:
   void mouseCoordinates(QString);
 
 public:

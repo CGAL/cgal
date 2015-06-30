@@ -915,8 +915,10 @@ void Scene::load_points(const QString& fileName) {
     QString snv;
     int nv = static_cast<int>(p3dt.number_of_vertices());
     snv.setNum(nv);
-    emit message(QString("|V| = ") + snv, 0);
     changed();
+    Q_EMIT message(QString("|V| = ") + snv, 0);
+
+
     draw();
 }
 

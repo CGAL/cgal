@@ -23,10 +23,10 @@ class Polyhedron_demo_join_and_split_polyhedra_plugin:
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
-  QAction* actionJoinPolyhedra, *actionSplitPolyhedra;
+  QAction* actionJoinPolyhedra, *actionSplitPolyhedra, *actionColorConnectedComponents;
   Messages_interface* msg_interface;
 public:
-  QList<QAction*> actions() const { return QList<QAction*>() << actionJoinPolyhedra << actionSplitPolyhedra; }
+  QList<QAction*> actions() const { return QList<QAction*>() << actionJoinPolyhedra << actionSplitPolyhedra << actionColorConnectedComponents; }
   using Polyhedron_demo_plugin_helper::init;
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m)
   {
@@ -35,6 +35,8 @@ public:
     actionJoinPolyhedra->setObjectName("actionJoinPolyhedra");
     actionSplitPolyhedra= new QAction(tr("Split selected polyhedra"), mainWindow);
     actionSplitPolyhedra->setObjectName("actionSplitPolyhedra");
+    actionColorConnectedComponents = new QAction(tr("Color each connected component of selected polyhedra"), mainWindow);
+    actionColorConnectedComponents->setObjectName("actionColorConnectedComponents");
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
 
@@ -47,9 +49,10 @@ public:
     return false;
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionJoinPolyhedra_triggered();
   void on_actionSplitPolyhedra_triggered();
+  void on_actionColorConnectedComponents_triggered();
 
 }; // end Polyhedron_demo_polyhedron_stitching_plugin
 
@@ -130,6 +133,41 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
   }
 }
 
-//Q_EXPORT_PLUGIN2(Polyhedron_demo_join_and_split_polyhedra_plugin, Polyhedron_demo_join_and_split_polyhedra_plugin)
+struct Polyhedron_cc_marker{
+  int cc_index;
+  Polyhedron_cc_marker() : cc_index(0) {}
+  void start_new_connected_component(){
+    ++cc_index;
+  }
+
+  template <class Facet_iterator>
+  void mark(Facet_iterator begin, Facet_iterator end)
+  {
+    for(;begin!=end; ++begin)
+      (*begin)->set_patch_id(cc_index-1);
+  }
+};
+
+void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedComponents_triggered()
+{
+  Q_FOREACH(int index, scene->selectionIndices()) {
+    Scene_polyhedron_item* item =
+      qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+    if(item)
+    {
+      std::list<Polyhedron*> new_polyhedra;
+      Polyhedron_cc_marker marker;
+      CGAL::internal::mark_connected_components(
+        *item->polyhedron(),
+        CGAL::internal::Dummy_true(),
+        marker
+      );
+      item->changed();
+    }
+  }
+}
+
+Q_EXPORT_PLUGIN2(Polyhedron_demo_join_and_split_polyhedra_plugin, Polyhedron_demo_join_and_split_polyhedra_plugin)
+
 
 #include "Polyhedron_demo_join_and_split_polyhedra_plugin.moc"

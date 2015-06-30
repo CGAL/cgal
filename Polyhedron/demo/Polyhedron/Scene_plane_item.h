@@ -118,11 +118,11 @@ private:
     return diag * 0.7;
   }
 
-public slots:
-   virtual void changed()
+public Q_SLOTS:
+  virtual void changed()
   {
-compute_normals_and_vertices();
-are_buffers_filled = false;
+      compute_normals_and_vertices();
+      are_buffers_filled = false;
   }
 
   void setPosition(float x, float y, float z) {

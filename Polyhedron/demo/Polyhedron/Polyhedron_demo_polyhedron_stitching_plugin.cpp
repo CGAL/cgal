@@ -64,7 +64,7 @@ public:
     return false;
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionDetectBorders_triggered();
   void on_actionStitchBorders_triggered();
 

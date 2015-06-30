@@ -382,7 +382,7 @@ public:
         for(typename Tr::Iterator it = tr.iterator_begin() ; it != tr.iterator_end(); ++it) {
             tr.container().insert(*it);
         }
-        emit itemChanged();
+    Q_EMIT itemChanged();
     }
 
     // clear all of `active_handle_type`(vertex, facet or edge)
@@ -402,7 +402,7 @@ public:
 
         Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
         tr.container().clear();
-        emit itemChanged();
+    Q_EMIT itemChanged();
     }
 
     boost::optional<std::size_t> get_minimum_isolated_component() {
@@ -447,7 +447,7 @@ public:
         Travel_isolated_components().travel<HandleType>
                 (tr.iterator_begin(), tr.iterator_end(), tr.size(), tr.container(), visitor);
 
-        if(visitor.any_inserted) { emit itemChanged(); }
+    if(visitor.any_inserted) { Q_EMIT itemChanged(); }
         return visitor.minimum_visitor.minimum;
     }
 
@@ -527,7 +527,7 @@ public:
                 any_change |= tr.container().insert(*it).second;
             }
         }
-        if(any_change) { emit itemChanged(); }
+    if(any_change) { Q_EMIT itemChanged(); }
     }
 
     template <class Handle>
@@ -556,7 +556,7 @@ public:
                 any_change |= (tr.container().erase(*it)!=0);
             }
         }
-        if(any_change) { emit itemChanged(); }
+    if(any_change) { Q_EMIT itemChanged(); }
     }
 
     void erase_selected_facets() {
@@ -609,10 +609,10 @@ public:
     void changed_with_poly_item() {
         // no need to update indices
         poly_item->changed();
-        emit itemChanged();
+    Q_EMIT itemChanged();
     }
 
-public slots:
+public Q_SLOTS:
     void changed() {
         // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
       //  poly_item->changed();
@@ -679,7 +679,7 @@ protected:
             BOOST_FOREACH(HandleType h, selection)
                     any_change |= (tr.container().erase(h)!=0);
         }
-        if(any_change) { emit itemChanged(); }
+    if(any_change) { Q_EMIT itemChanged(); }
     }
 
     // members

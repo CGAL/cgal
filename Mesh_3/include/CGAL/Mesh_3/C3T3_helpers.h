@@ -40,12 +40,11 @@
 #endif
 
 #include <boost/foreach.hpp>
-#include <boost/range.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
 #include <boost/optional.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/function_output_iterator.hpp>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/unordered_set.hpp>
@@ -939,9 +938,9 @@ public:
    */
   void reset_cache() const
   {
-    namespace bl = boost::lambda;
-    std::for_each(c3t3_.cells_in_complex_begin(),c3t3_.cells_in_complex_end(),
-                  bl::bind(&Cell::reset_cache_validity, bl::_1) );
+    for(typename C3T3::Cells_in_complex_iterator it = c3t3_.cells_in_complex_begin();
+        it != c3t3_.cells_in_complex_end(); ++it)
+      it->reset_cache_validity();
   }
 
 private:
@@ -1207,7 +1206,8 @@ private:
       Intersection intersection = construct_intersection(dual);
       Surface_patch surface =
         (CGAL::cpp0x::get<2>(intersection) == 0) ? Surface_patch() :
-        domain_.surface_patch_index(CGAL::cpp0x::get<1>(intersection));
+        Surface_patch(
+          domain_.surface_patch_index(CGAL::cpp0x::get<1>(intersection)));
 
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
@@ -1492,7 +1492,7 @@ private:
       //add_to_complex sets the index, and updates the cell counter
       //if c should be in the c3t3, add_to_complex has to be used
       //to increment the nb of cells and facets in c3t3
-      if(Subdomain_index() != subdomain_index_)
+      if(!( Subdomain_index() == subdomain_index_ ))
         c3t3.add_to_complex(c, subdomain_index_);
       else
         c3t3.remove_from_complex(c);
@@ -1502,7 +1502,7 @@ private:
         std::size_t old_i = index_map.at(static_cast<std::size_t>(i));
         Surface_patch_index index = surface_index_table_[old_i];
         //add_to_complex sets the index, and updates the facet counter
-        if(Surface_patch_index() != index)
+        if(!( Surface_patch_index() == index ))
           c3t3.add_to_complex(Facet(c, i), index);
         else
           c3t3.remove_from_complex(Facet(c,i));
@@ -1521,7 +1521,7 @@ private:
         if (!c3t3.triangulation().is_infinite(Facet(c,i)))
         {
           Surface_patch_index index = surface_index_table_[0];
-          if (Surface_patch_index() != index)
+          if (!( Surface_patch_index() == index ))
             c3t3.add_to_complex(Facet(c, i), index);
           else
             c3t3.remove_from_complex(Facet(c, i));
@@ -2019,7 +2019,7 @@ private:
                                        true); /* update surface centers */
       // false means "do not update the c3t3"
       if ( c3t3_.is_in_complex(*fit) != (bool)sp ||
-           ((bool)sp && c3t3_.surface_patch_index(*fit) != sp.get()) )
+           ((bool)sp && !(c3t3_.surface_patch_index(*fit) == sp.get()) ) )
         return false;
     }
 
@@ -2110,10 +2110,10 @@ private:
   void reset_sliver_cache(CellForwardIterator cells_begin,
                             CellForwardIterator cells_end) const
   {
-    // std::cerr << "reset_sliver_cache\n";
-    namespace bl = boost::lambda;
-    std::for_each(cells_begin, cells_end,
-                  bl::bind(&Cell::reset_cache_validity, *bl::_1) );
+    while(cells_begin != cells_end) {
+      (*cells_begin)->reset_cache_validity();
+      ++cells_begin;
+    }
   }
 
   template <typename CellRange>
@@ -2127,9 +2127,10 @@ private:
   void reset_circumcenter_cache(CellForwardIterator cells_begin,
                             CellForwardIterator cells_end) const
   {
-    namespace bl = boost::lambda;
-    std::for_each(cells_begin, cells_end,
-                  bl::bind(&Cell::invalidate_circumcenter, *bl::_1) );
+    while(cells_begin != cells_end) {
+      (*cells_begin)->invalidate_circumcenter();
+      ++cells_begin;
+    }
   }
 
 

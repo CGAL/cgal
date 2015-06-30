@@ -17,9 +17,9 @@ for Cartesian kernels.
 \cgalHasModel \ref CGAL::Interval_nt_advanced
 \cgalHasModel `CGAL::Lazy_exact_nt<FieldNumberType>` 
 \cgalHasModel `CGAL::Quotient<RingNumberType>` 
-\cgalHasModel `CGAL::leda_rational` 
-\cgalHasModel `CGAL::leda_bigfloat` 
-\cgalHasModel `CGAL::leda_real` 
+\cgalHasModel `leda_rational` 
+\cgalHasModel `leda_bigfloat` 
+\cgalHasModel `leda_real` 
 
 \sa `RingNumberType` 
 \sa `Kernel` 

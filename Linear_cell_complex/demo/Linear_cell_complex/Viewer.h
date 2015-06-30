@@ -92,7 +92,7 @@ public:
 
   virtual QString helpString() const;
 
-public slots :
+public Q_SLOTS:
 
   void sceneChanged();
 

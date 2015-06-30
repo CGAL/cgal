@@ -476,9 +476,23 @@ if ( CMAKE_COMPILER_IS_GNUCXX )
   
     if ( RUNNING_CGAL_AUTO_TEST )
       uniquely_add_flags( CGAL_CXX_FLAGS "-Wall" )
+      # Remove -g from the relevant CMAKE_CXX_FLAGS. This will also
+      # propagate to the rest of the tests, since we overwrite those
+      # flags with the ones used to build CGAL.
+      string(REGEX REPLACE "-g( |$)" ""
+        CMAKE_CXX_FLAGS
+        "${CMAKE_CXX_FLAGS}")
+      # We only allow the release types DEBUG and RELEASE, but handle
+      # all possible values just to be sure.
+      foreach(release_type DEBUG RELEASE MINSIZEREL RELWITHDEBINFO)
+        string(REGEX REPLACE "-g( |$)" ""
+          CMAKE_CXX_FLAGS_${release_type}
+          "${CMAKE_CXX_FLAGS_${release_type}}")
+      endforeach()
+
     endif()
     
-    if ( "${GCC_VERSION}" MATCHES "^4." )
+    if ( "${GCC_VERSION}" MATCHES "^[4-9]." )
       message( STATUS "Using gcc version 4 or later. Adding -frounding-math" )
       uniquely_add_flags( CGAL_CXX_FLAGS "-frounding-math" )
     endif()

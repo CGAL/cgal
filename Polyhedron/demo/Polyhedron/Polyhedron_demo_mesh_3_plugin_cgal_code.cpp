@@ -327,7 +327,7 @@ else
         return diag * 0.7;
     }
 
-public slots:
+public Q_SLOTS:
     void export_facets_in_complex()
     {
         std::stringstream off_sstream;

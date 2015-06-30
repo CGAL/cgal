@@ -48,7 +48,7 @@ public:
     return QList<QAction*>() << actionOutlierRemoval;
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionOutlierRemoval_triggered();
 
 }; // end Polyhedron_demo_point_set_outliers_removal_plugin

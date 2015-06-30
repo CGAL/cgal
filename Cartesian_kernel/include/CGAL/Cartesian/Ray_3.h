@@ -67,11 +67,11 @@ public:
 
   const Point_3 &   source() const
   {
-      return get(base)[0];
+      return get_pointee_or_identity(base)[0];
   }
   const Point_3 &   second_point() const
   {
-      return get(base)[1];
+      return get_pointee_or_identity(base)[1];
   }
   Point_3     point(int i) const;
 

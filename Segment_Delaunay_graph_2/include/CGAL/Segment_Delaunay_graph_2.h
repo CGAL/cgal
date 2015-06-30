@@ -146,9 +146,11 @@ namespace Internal {
 } //namespace SegmentDelaunayGraph_2
 
 
-template<class Gt, class ST, class STag, class D_S, class LTag >
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx >
 class Segment_Delaunay_graph_hierarchy_2;
 
+template<class Gt, class ST, class D_S, class LTag >
+class Segment_Delaunay_graph_Linf_2;
 
 
 template<class Gt,
@@ -161,8 +163,15 @@ class Segment_Delaunay_graph_2
   : private Triangulation_2<
           Segment_Delaunay_graph_traits_wrapper_2<Gt>, D_S >
 {
-  friend class Segment_Delaunay_graph_hierarchy_2<Gt,ST,Tag_true,D_S,LTag>;
-  friend class Segment_Delaunay_graph_hierarchy_2<Gt,ST,Tag_false,D_S,LTag>;
+  friend class Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>;
+  friend class Segment_Delaunay_graph_hierarchy_2<Gt,ST,Tag_true,D_S,LTag,
+   Segment_Delaunay_graph_2<Gt,ST,D_S,LTag> >;
+  friend class Segment_Delaunay_graph_hierarchy_2<Gt,ST,Tag_false,D_S,LTag,
+   Segment_Delaunay_graph_2<Gt,ST,D_S,LTag> >;
+  friend class Segment_Delaunay_graph_hierarchy_2<Gt,ST,Tag_true,D_S,LTag,
+   Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag> >;
+  friend class Segment_Delaunay_graph_hierarchy_2<Gt,ST,Tag_false,D_S,LTag,
+   Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag> >;
 protected:
   // LOCAL TYPES
   //------------
@@ -300,12 +309,58 @@ protected:
   CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal::Which_list<Edge,List_tag>::List 
   List;
 
+
+protected:
+  // types for insert on segment functions
+  typedef Vertex_triple (Self::*Insert_on_Type)(
+      const Storage_site_2& ss, const Site_2& t,
+      Vertex_handle v, const Tag_true&);
+  Insert_on_Type insert_point_on_segment_ptr;
+
+  typedef Vertex_triple (Self::*Insert_Exact_on_Type)(
+      const Storage_site_2& ss, const Site_2& t,
+      Vertex_handle v);
+  Insert_Exact_on_Type insert_exact_point_on_segment_ptr;
+
+  Vertex_triple
+  insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
+			  Vertex_handle v, const Tag_true&);
+
+  Vertex_triple
+  insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
+				Vertex_handle v);
+
+private:
+  // CREATION helper
+  template<class ITag>
+  inline
+  void setup_if_intersecting_pointer(ITag tag) {
+    setup_if_intersecting_pointer_with_tag(tag);
+  }
+
+  void setup_if_intersecting_pointer_with_tag(Tag_false) {
+    insert_point_on_segment_ptr = NULL;
+  }
+
+  void setup_if_intersecting_pointer_with_tag(Tag_true) {
+    insert_point_on_segment_ptr = &Self::insert_point_on_segment;
+  }
+
+  void setup_insert_on_pointers_l2(void) {
+    Intersections_tag itag;
+    setup_if_intersecting_pointer(itag);
+    insert_exact_point_on_segment_ptr = &Self::insert_exact_point_on_segment;
+  }
+
 public:
   // CREATION
   //---------
   Segment_Delaunay_graph_2(const Geom_traits& gt = Geom_traits(),
 			   const Storage_traits& st = Storage_traits())
-    : DG(gt), st_(st) {}
+    : DG(gt), st_(st)
+  {
+    setup_insert_on_pointers_l2();
+  }
 
   template< class Input_iterator >
   Segment_Delaunay_graph_2(Input_iterator first, Input_iterator beyond,
@@ -313,6 +368,7 @@ public:
 			   const Storage_traits& st = Storage_traits())
     : DG(gt), st_(st)
   {
+    setup_insert_on_pointers_l2();
     insert(first, beyond);
   }
 
@@ -1052,14 +1108,6 @@ protected:
   Vertex_handle insert_point2(const Storage_site_2& ss,
 			      const Site_2& t, Vertex_handle vnear);
 
-  Triple<Vertex_handle,Vertex_handle,Vertex_handle>
-  insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
-			  Vertex_handle v, const Tag_true&);
-
-  Triple<Vertex_handle,Vertex_handle,Vertex_handle>
-  insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
-				Vertex_handle v);
-
   Vertex_handle insert_segment(const Storage_site_2& ss, const Site_2& t,
 			       Vertex_handle vnear);
 
@@ -1435,6 +1483,56 @@ protected:
 #endif
 
 
+// choosing the correct bisector constructors
+private:
+  template <typename T, typename Tag_has_bisector_constructions>
+  struct ConstructionHelper {};
+
+  // take constructors from L2
+  template <typename T>
+  struct ConstructionHelper<T, Tag_false>
+  {
+    typedef CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::
+              Construct_sdg_bisector_2<Gt,
+                Integral_domain_without_division_tag>
+            tagbis;
+    typedef CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::
+              Construct_sdg_bisector_ray_2<Gt,
+                Integral_domain_without_division_tag>
+            tagbisray;
+    typedef CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::
+              Construct_sdg_bisector_segment_2<Gt,
+                Integral_domain_without_division_tag>
+            tagbisseg;
+  };
+
+  // constructors from traits
+  template <typename T>
+  struct ConstructionHelper<T, Tag_true>
+  {
+    typedef
+            typename T:: template Construct_sdg_bisector_2
+              <Gt, Integral_domain_without_division_tag>
+            tagbis;
+    typedef
+            typename T:: template Construct_sdg_bisector_ray_2
+              <Gt, Integral_domain_without_division_tag>
+            tagbisray;
+    typedef
+            typename T:: template Construct_sdg_bisector_segment_2
+              <Gt, Integral_domain_without_division_tag>
+            tagbisseg;
+  };
+
+  template <typename T>
+  struct ConstructionChooser
+  {
+    typedef typename ConstructionHelper<T, typename T::Tag_has_bisector_constructions>::tagbis tagbis;
+    typedef typename ConstructionHelper<T, typename T::Tag_has_bisector_constructions>::tagbisray tagbisray;
+    typedef typename ConstructionHelper<T, typename T::Tag_has_bisector_constructions>::tagbisseg tagbisseg;
+  };
+
+
 protected:
   // TYPES AND ACCESS METHODS FOR VISUALIZATION
   //-------------------------------------------
@@ -1444,18 +1542,15 @@ protected:
   CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Construct_sdg_circle_2<Gt,Integral_domain_without_division_tag>
   Construct_sdg_circle_2;
 
-  typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Construct_sdg_bisector_2<Gt,Integral_domain_without_division_tag>
-  Construct_sdg_bisector_2;
-
-  typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Construct_sdg_bisector_ray_2<Gt,Integral_domain_without_division_tag>
-  Construct_sdg_bisector_ray_2;
-
-  typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::
-  Construct_sdg_bisector_segment_2<Gt,Integral_domain_without_division_tag>
-  Construct_sdg_bisector_segment_2;
+  typedef typename
+          ConstructionChooser<Geom_traits>::tagbis
+          Construct_sdg_bisector_2;
+  typedef typename
+          ConstructionChooser<Geom_traits>::tagbisray
+          Construct_sdg_bisector_ray_2;
+  typedef typename
+          ConstructionChooser<Geom_traits>::tagbisseg
+          Construct_sdg_bisector_segment_2;
 
   // access
   inline Construct_sdg_circle_2
@@ -1657,12 +1752,14 @@ protected:
   }
 
   inline Oriented_side
-  oriented_side(const Storage_site_2& q, const Storage_site_2& supp,
+  oriented_side(const Storage_site_2& s1, const Storage_site_2& s2,
+                const Storage_site_2& supp,
 		const Storage_site_2& p) const
   {
-    CGAL_precondition( q.is_point() && supp.is_segment() && p.is_point() );
+    CGAL_precondition( supp.is_segment() && p.is_point() );
     return
-      geom_traits().oriented_side_2_object()(q.site(), supp.site(), p.site());
+      geom_traits().oriented_side_2_object()(
+          s1.site(), s2.site(), supp.site(), p.site());
   }
 
   inline Oriented_side
@@ -1869,10 +1966,11 @@ protected:
   }
 
   inline Oriented_side
-  oriented_side(const Site_2& q, const Site_2& supp, const Site_2& p) const
+  oriented_side(const Site_2& s1, const Site_2&s2,
+                const Site_2& supp, const Site_2& p) const
   {
-    CGAL_precondition( q.is_point() && supp.is_segment() && p.is_point() );
-    return geom_traits().oriented_side_2_object()(q, supp, p);
+    CGAL_precondition( supp.is_segment() && p.is_point() );
+    return geom_traits().oriented_side_2_object()(s1, s2, supp, p);
   }
 
   inline Oriented_side

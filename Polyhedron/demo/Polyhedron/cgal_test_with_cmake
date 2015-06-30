@@ -105,6 +105,7 @@ else
       cut_plugin \
       demo_framework \
       edit_polyhedron_plugin \
+      features_detection_plugin \
       gocad_plugin \
       inside_out_plugin \
       intersection_plugin \
@@ -158,10 +159,12 @@ else
       transform_polyhedron_plugin \
       triangulate_facets_plugin \
       trivial_plugin \
+      vcm_normal_estimation_plugin \
       xyz_plugin \
       p_klein_function_plugin \
       p_sphere_function_plugin \
       p_tanglecube_function_plugin \
+      shortest_path_plugin \
       all
   do
       if  ${MAKE_CMD} -f Makefile help | grep "$target" > /dev/null; then 

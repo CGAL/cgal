@@ -1,0 +1,19 @@
+## -*- comment-start: "#"; -*-
+#
+# Checking equal_2 for points 
+# Format
+# <command> <point 1> <point 2> <expected result>
+#
+equal_points 0 1 false
+equal_points 0 0 true
+equal_points 1 1 true
+equal_points 2 1 false 
+#
+# Checking equal_2 for curves 
+# Format
+# <command> <curve 1> <curve 2> <expected result>
+#
+equal_curves 0 1 false
+equal_curves 1 0 false
+equal_curves 1 1 true
+equal_curves 0 0 true

@@ -336,7 +336,7 @@ public:
             Messages_interface* m);
   QList<QAction*> actions() const;
 
-public slots:
+public Q_SLOTS:
   void createCutPlane();
   void enableAction();
   void cut();

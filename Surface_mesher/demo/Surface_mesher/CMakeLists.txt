@@ -39,6 +39,8 @@ set( QT_USE_QTMAIN   TRUE )
 
 find_package(CGAL COMPONENTS ImageIO Qt5)
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND)
+
+  add_definitions(-DQT_NO_KEYWORDS)
   include( ${CGAL_USE_FILE} )
 
   find_package(Qt5 COMPONENTS OpenGL Xml )

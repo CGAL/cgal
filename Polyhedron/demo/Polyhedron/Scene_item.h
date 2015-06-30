@@ -132,7 +132,7 @@ public:
 
   // Event handling
   virtual bool keyPressEvent(QKeyEvent*){return false;}
-public slots:
+public Q_SLOTS:
   // Call that once you have finished changing something in the item
   // (either the properties or internal data)
   virtual void changed();
@@ -190,7 +190,7 @@ public slots:
                       double dir_y,
                       double dir_z);
 
-signals:
+Q_SIGNALS:
   void itemChanged();
   void aboutToBeDestroyed();
 

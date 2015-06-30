@@ -54,7 +54,7 @@ private:
 
   QAction*  actionPolyhedronCorefinement_3;
 
-public slots:
+public Q_SLOTS:
   void corefinement();
 
 }; // end class Polyhedron_demo_corefinement_plugin

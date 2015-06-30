@@ -115,7 +115,7 @@ GraphicsViewCircularArcInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event
     q = convert(qq);
     if( (event->button() == ::Qt::RightButton) && (p != q) ){
       qline->hide();
-      emit generate(CGAL::make_object(Line_arc_2(Segment_2(p,q))));
+      Q_EMIT generate(CGAL::make_object(Line_arc_2(Segment_2(p,q))));
       count = 0;
     } else {
       count = 2;
@@ -126,7 +126,7 @@ GraphicsViewCircularArcInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event
     typename K::Collinear_2 collinear;
     if(! collinear(p,q,r)){
       qcarc->hide();
-      emit generate(make_object(qcarc->arc()));
+      Q_EMIT generate(make_object(qcarc->arc()));
       count = 0;
     }
   }

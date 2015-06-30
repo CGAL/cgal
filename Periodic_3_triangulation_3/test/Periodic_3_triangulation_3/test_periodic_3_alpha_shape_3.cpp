@@ -23,7 +23,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Periodic_3_triangulation_traits_3.h>
+#include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
 #include <CGAL/Alpha_shape_3.h>
@@ -32,7 +32,7 @@
 
 // Inexact construction types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Gt;
-typedef CGAL::Periodic_3_triangulation_traits_3<Gt> K;
+typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<Gt> K;
 
 // Vertex type
 typedef CGAL::Periodic_3_triangulation_ds_vertex_base_3<> DsVb;
@@ -50,7 +50,7 @@ typedef CGAL::Alpha_shape_3<P3DT3>  Alpha_shape_3;
 
 //Exact construction types
 typedef CGAL::Exact_predicates_exact_constructions_kernel EGt;
-typedef CGAL::Periodic_3_triangulation_traits_3<Gt> EK;
+typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<Gt> EK;
 
 // Vertex type
 typedef CGAL::Triangulation_vertex_base_3<EK,DsVb> EVb;

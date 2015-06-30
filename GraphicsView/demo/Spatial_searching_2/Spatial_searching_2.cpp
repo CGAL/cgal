@@ -109,10 +109,10 @@ public:
     
     // default cursor
     QApplication::restoreOverrideCursor();
-    emit(changed());
+    Q_EMIT( changed());
   }
 
-public slots:
+public Q_SLOTS:
 
   virtual void open(QString fileName);
   void N_changed(int i);
@@ -125,7 +125,7 @@ public slots:
 
   void clear();
 
-signals:
+Q_SIGNALS:
   void changed();
 };
 
@@ -195,7 +195,7 @@ MainWindow::MainWindow()
 void MainWindow::N_changed(int i)
 {
   nearest_neighbor->setN(i);
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -213,7 +213,7 @@ void
 MainWindow::on_actionClear_triggered()
 {
   clear();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 void
@@ -281,7 +281,7 @@ MainWindow::open(QString fileName)
   QApplication::restoreOverrideCursor();
   this->addToRecentFiles(fileName);
   actionRecenter->trigger();
-  emit(changed());
+  Q_EMIT( changed());
     
 }
 

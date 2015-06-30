@@ -87,7 +87,7 @@ private:
     void uniform_attrib(Viewer_interface*, int) const;
     void compute_colors();
 
-public slots:
+public Q_SLOTS:
     void set_next_volume();
     void export_current_volume_as_polyhedron() const;
     void export_union_as_polyhedron() const;

@@ -63,7 +63,7 @@ public:
 
   const Rep& rep() const
   {
-    return CGAL::get(data);
+    return CGAL::get_pointee_or_identity(data);
   }
 
 #ifdef CGAL_CXX11

@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 #
 # =============================================================================
 # $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Scripts/developer_scripts/create_cgal_test $
@@ -9,8 +9,8 @@
 # coordinator   : Utrecht University
 # =============================================================================
 #
-# This script creates a cgal_test_with_cmake script with entries for all .C and .cpp
-# files in the current test directory.
+# This script creates a cgal_test_with_cmake script with entries for files with a common
+# C++ file extension (as mentioned in the g++ man page) in the current test directory.
 
 VERSION=1.1
 
@@ -156,13 +156,18 @@ EOF
   # C:\Windows\system32 is used instead of /usr/bin/sort
   PATH=/usr/bin:$PATH
 
-  for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
+  for file in `ls *.cc *.cp *.cxx *.cpp *.CPP *.c++ *.C 2> /dev/null | sort` ; do
     if [ -n "`grep '\<main\>' $file`" ] ; then
-      tmp=`basename $file .C`
-      tmp=`basename $tmp .cpp`
+      BASE=`basename $file .cc`
+      BASE=`basename $BASE .cp`
+      BASE=`basename $BASE .cxx`
+      BASE=`basename $BASE .cpp`
+      BASE=`basename $BASE .CPP`
+      BASE=`basename $BASE .c++`
+      BASE=`basename $BASE .C`
       cat <<EOF
-if grep -qE "^${tmp}:" Makefile; then
-  compile_and_run $tmp
+if grep -qE "^${BASE}:" Makefile; then
+  compile_and_run $BASE
   NEED_CLEAN=y
 fi
 EOF

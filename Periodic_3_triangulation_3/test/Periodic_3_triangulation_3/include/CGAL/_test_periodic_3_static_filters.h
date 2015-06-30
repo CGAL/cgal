@@ -23,14 +23,14 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/Periodic_3_triangulation_traits_3.h>
+#include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 
 #include <CGAL/Random.h>
 
 typedef CGAL::Simple_cartesian<CGAL::Quotient<CGAL::MP_Float> > EK;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     FK;
-typedef CGAL::Periodic_3_triangulation_traits_3<EK>             ETraits;
-typedef CGAL::Periodic_3_triangulation_traits_3<FK>             FTraits;
+typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<EK>             ETraits;
+typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<FK>             FTraits;
 
 typedef ETraits::Point_3              EPoint;
 typedef ETraits::Iso_cuboid_3         EIso_cuboid;

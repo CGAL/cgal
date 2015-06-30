@@ -19,7 +19,7 @@ include_directories (BEFORE ../../include)
 include_directories (BEFORE ./include)
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
-
+add_definitions(-DQT_NO_KEYWORDS)
 
 #--------------------------------
 # The "Delaunay" demo: Alpha_shapes_2

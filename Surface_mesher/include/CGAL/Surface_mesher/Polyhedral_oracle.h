@@ -21,9 +21,9 @@
 #ifndef CGAL_SURFACE_MESHER_POLYHEDRAL_ORACLE_H
 #define CGAL_SURFACE_MESHER_POLYHEDRAL_ORACLE_H
 
-#include <boost/static_warning.hpp>
 #include <utility>
 
+#include <CGAL/config.h> // CGAL_DEPRECATED
 #include <CGAL/iterator.h>
 #include <CGAL/Surface_mesher/Null_oracle_visitor.h>
 #include <CGAL/Surface_mesher/Has_edges.h>
@@ -392,14 +392,11 @@ private:
 template <class GT,
           class Visitor = Null_oracle_visitor
          >
-class Polyhedral : public Polyhedral_oracle<GT, Visitor>
+class CGAL_DEPRECATED Polyhedral : public Polyhedral_oracle<GT, Visitor>
 {
-  typedef int Deprecated__class__use__Polyhedral_oracle__instead;
-
   Polyhedral(Visitor visitor = Visitor())
     : Polyhedral_oracle<GT, Visitor>(visitor)
   {
-    BOOST_STATIC_WARNING(Deprecated__class__use__Polyhedral_oracle__instead() == 1);
   }
 };
 

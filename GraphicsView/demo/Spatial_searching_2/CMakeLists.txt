@@ -21,6 +21,8 @@ include_directories (BEFORE ../../../Spatial_searching/include)
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
+  add_definitions(-DQT_NO_KEYWORDS)
+
   #--------------------------------
   # Demo: Spatial_searching_2
   #--------------------------------

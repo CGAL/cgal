@@ -621,6 +621,123 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 CGAL_KD_DEFAULT_FUNCTOR(Side_of_oriented_sphere_tag,(CartesianDKernelFunctors::Side_of_oriented_sphere<K>),(Point_tag),(Point_dimension_tag,Squared_distance_to_origin_tag,Compute_point_cartesian_coordinate_tag));
 
 namespace CartesianDKernelFunctors {
+template <class R_> struct Construct_circumcenter : Store_kernel<R_> {
+  CGAL_FUNCTOR_INIT_STORE(Construct_circumcenter)
+  typedef typename Get_type<R_, Point_tag>::type Point;
+  typedef Point result_type;
+  typedef typename Get_type<R_, FT_tag>::type FT;
+  template <class Iter>
+  result_type operator()(Iter f, Iter e)const{
+    typedef typename Get_type<R_, Point_tag>::type      Point;
+    typedef typename R_::LA LA;
+    typename Get_functor<R_, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
+    typename Get_functor<R_, Construct_ttag<Point_tag> >::type cp(this->kernel());
+    typename Get_functor<R_, Point_dimension_tag>::type pd(this->kernel());
+    typename Get_functor<R_, Squared_distance_to_origin_tag>::type sdo(this->kernel());
+
+    Point const& p0=*f;
+    int d = pd(p0);
+    if (d+1 == std::distance(f,e))
+    {
+      // 2*(x-y).c == x^2-y^2
+      typedef typename LA::Square_matrix Matrix;
+      typedef typename LA::Vector Vec;
+      typedef typename LA::Construct_vector CVec;
+      FT const& n0 = sdo(p0);
+      Matrix m(d,d);
+      Vec b = typename CVec::Dimension()(d);
+      // Write the point coordinates in lines.
+      int i;
+      for(i=0; ++f!=e; ++i) {
+	Point const& p=*f;
+	for(int j=0;j<d;++j) {
+	  m(i,j)=2*(c(p,j)-c(p0,j));
+	  b[i] = sdo(p) - n0;
+	}
+      }
+      CGAL_assertion (i == d);
+      Vec res = typename CVec::Dimension()(d);;
+      //std::cout << "Mat: " << m << "\n Vec: " << one << std::endl;
+      LA::solve(res, CGAL_MOVE(m), CGAL_MOVE(b));
+      //std::cout << "Sol: " << res << std::endl;
+      return cp(d,LA::vector_begin(res),LA::vector_end(res));
+    }
+    else
+    {
+      /*
+       * Matrix P=(p1, p2, ...) (each point as a column)
+       * Matrix Q=2*t(p2-p1,p3-p1, ...) (each vector as a line)
+       * Matrix M: QP, adding a line of 1 at the top
+       * Vector B: (1, p2^2-p1^2, p3^2-p1^2, ...)
+       * Solve ML=B, the center of the sphere is PL
+       *
+       * It would likely be faster to write P then transpose, multiply,
+       * etc instead of doing it by hand.
+       */
+      // TODO: check for degenerate cases?
+
+      typedef typename R_::Max_ambient_dimension D2;
+      typedef typename R_::LA::template Rebind_dimension<Dynamic_dimension_tag,D2>::Other LAd;
+      typedef typename LAd::Square_matrix Matrix;
+      typedef typename LAd::Vector Vec;
+      typename Get_functor<R_, Scalar_product_tag>::type sp(this->kernel());
+      int k=static_cast<int>(std::distance(f,e));
+      int d=pd(p0);
+      Matrix m(k,k);
+      Vec b(k);
+      Vec l(k);
+      int j,i=0;
+      for(Iter f2=f;f2!=e;++f2,++i){
+	b(i)=m(i,i)=sdo(*f2);
+	j=0;
+	for(Iter f3=f;f3!=e;++f3,++j){
+	  m(j,i)=m(i,j)=sp(*f2,*f3);
+	}
+      }
+      for(i=1;i<k;++i){
+	b(i)-=b(0);
+	for(j=0;j<k;++j){
+	  m(i,j)=2*(m(i,j)-m(0,j));
+	}
+      }
+      for(j=0;j<k;++j) m(0,j)=1;
+      b(0)=1;
+
+      LAd::solve(l,CGAL_MOVE(m),CGAL_MOVE(b));
+
+      typename LA::Vector center=typename LA::Construct_vector::Dimension()(d);
+      for(i=0;i<d;++i) center(i)=0;
+      j=0;
+      for(Iter f2=f;f2!=e;++f2,++j){
+	for(i=0;i<d;++i){
+	  center(i)+=l(j)*c(*f2,i);
+	}
+      }
+
+      return cp(LA::vector_begin(center),LA::vector_end(center));
+    }
+  }
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Construct_circumcenter_tag,(CartesianDKernelFunctors::Construct_circumcenter<K>),(Point_tag),(Construct_ttag<Point_tag>,Compute_point_cartesian_coordinate_tag,Scalar_product_tag,Squared_distance_to_origin_tag,Point_dimension_tag));
+
+namespace CartesianDKernelFunctors {
+template <class R_> struct Squared_circumradius : Store_kernel<R_> {
+  CGAL_FUNCTOR_INIT_STORE(Squared_circumradius)
+  typedef typename Get_type<R_, FT_tag>::type result_type;
+  template <class Iter>
+  result_type operator()(Iter f, Iter e)const{
+    typename Get_functor<R_, Construct_circumcenter_tag>::type cc(this->kernel());
+    typename Get_functor<R_, Squared_distance_tag>::type sd(this->kernel());
+    return sd(cc(f, e), *f);
+  }
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Squared_circumradius_tag,(CartesianDKernelFunctors::Squared_circumradius<K>),(Point_tag),(Construct_circumcenter_tag,Squared_distance_tag));
+
+namespace CartesianDKernelFunctors {
 // TODO: implement it directly, it should be at least as fast as Side_of_oriented_sphere.
 template<class R_> struct Side_of_bounded_sphere : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Side_of_bounded_sphere)
@@ -631,6 +748,9 @@ template<class R_> struct Side_of_bounded_sphere : private Store_kernel<R_> {
 	template<class Iter>
 	result_type operator()(Iter f, Iter const& e) const {
 	  Point const& p0 = *f++; // *--e ?
+	  typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
+	  //FIXME: Doesn't work for non-full dimension.
+	  CGAL_assertion (std::distance(f,e) == pd(p0)+1);
 	  return operator() (f, e, p0);
 	}
 
@@ -661,6 +781,24 @@ template<class R_> struct Side_of_bounded_sphere : private Store_kernel<R_> {
 CGAL_KD_DEFAULT_FUNCTOR(Side_of_bounded_sphere_tag,(CartesianDKernelFunctors::Side_of_bounded_sphere<K>),(Point_tag),(Side_of_oriented_sphere_tag,Orientation_of_points_tag));
 
 namespace CartesianDKernelFunctors {
+template<class R_> struct Side_of_bounded_circumsphere : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Side_of_bounded_circumsphere)
+	typedef typename Get_type<R_, Bounded_side_tag>::type result_type;
+
+	template<class Iter, class P>
+	result_type operator()(Iter f, Iter const& e, P const& p0) const {
+	  // TODO: Special case when the dimension is full.
+	  typename Get_functor<R_, Construct_circumcenter_tag>::type cc(this->kernel());
+	  typename Get_functor<R_, Compare_distance_tag>::type cd(this->kernel());
+
+	  return enum_cast<Bounded_side>(cd(cc(f, e), *f, p0));
+	}
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Side_of_bounded_circumsphere_tag,(CartesianDKernelFunctors::Side_of_bounded_circumsphere<K>),(Point_tag),(Squared_distance_tag,Construct_circumcenter_tag));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Point_to_vector : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Point_to_vector)
 	typedef R_ R;
@@ -687,13 +825,13 @@ template<class R_> struct Vector_to_point : private Store_kernel<R_> {
 	typedef typename Get_type<R, RT_tag>::type RT;
 	typedef typename Get_type<R, Vector_tag>::type Vector;
 	typedef typename Get_type<R, Point_tag>::type Point;
-	typedef typename Get_functor<R, Construct_ttag<Point_tag> >::type CV;
+	typedef typename Get_functor<R, Construct_ttag<Point_tag> >::type CP;
 	typedef typename Get_functor<R, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
 	typedef Point result_type;
 	typedef Vector argument_type;
 	result_type operator()(argument_type const&v)const{
 		CI ci(this->kernel());
-		return CV(this->kernel())(ci(v,Begin_tag()),ci(v,End_tag()));
+		return CP(this->kernel())(ci(v,Begin_tag()),ci(v,End_tag()));
 	}
 };
 }

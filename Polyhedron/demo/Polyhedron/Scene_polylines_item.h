@@ -74,7 +74,7 @@ public:
         if (is_closed) polyline[end]=polyline[0];
     }
 
-public slots:
+public Q_SLOTS:
     virtual void changed();
     void change_corner_radii(double);
     void change_corner_radii();
@@ -85,7 +85,7 @@ public slots:
     void smooth(){
         for (Polylines_container::iterator pit=polylines.begin(),pit_end=polylines.end();pit!=pit_end;++pit)
             smooth(*pit);
-        emit itemChanged();
+    Q_EMIT itemChanged();
     }
 public:
     Polylines_container polylines;

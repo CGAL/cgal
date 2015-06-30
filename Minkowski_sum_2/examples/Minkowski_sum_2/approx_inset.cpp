@@ -1,63 +1,48 @@
 //! \file examples/Minkowski_sum_2/approx_inset.cpp
 // Computing the approximated inset of a polygon.
 
-#include "ms_rational_nt.h"
-#include <CGAL/Lazy_exact_nt.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/approximated_offset_2.h>
-#include <CGAL/offset_polygon_2.h>
-#include <CGAL/Timer.h>
+#include <fstream>
 #include <iostream>
+#include <list>
+#include <boost/timer.hpp>
 
-typedef CGAL::Lazy_exact_nt<Number_type>           Lazy_exact_nt;
+#include <CGAL/basic.h>
+#include <CGAL/approximated_offset_2.h>
 
-struct Kernel : public CGAL::Cartesian<Lazy_exact_nt> {};
-typedef CGAL::Polygon_2<Kernel>                    Polygon_2;
+#include "bops_circular.h"
 
-typedef CGAL::Gps_circle_segment_traits_2<Kernel>  Gps_traits_2;
-typedef Gps_traits_2::Polygon_2                    Offset_polygon_2;
-typedef Gps_traits_2::Polygon_with_holes_2         Offset_polygon_with_holes_2;
+typedef CGAL::Polygon_2<Kernel>                         Linear_polygon;
 
-int main ()
+int main(int argc, char* argv[])
 {
-  // Open the input file.
-  std::ifstream    in_file ("tight.dat");
+  // Open the input file and read a polygon.
+  const char* filename = (argc > 1) ? argv[1] : "tight.dat";
+  std::ifstream in_file(filename);
 
-  if (! in_file.is_open())
-  {
+  if (! in_file.is_open()) {
     std::cerr << "Failed to open the input file." << std::endl;
-    return (1);
+    return -1;
   }
 
   // Read the input polygon.
-  Polygon_2        P;
-
+  Linear_polygon P;
   in_file >> P;
   in_file.close();
 
-  std::cout << "Read an input polygon with "
-            << P.size() << " vertices." << std::endl;
+  std::cout << "Read an input polygon with " << P.size() << " vertices."
+            << std::endl;
 
   // Approximate the offset polygon.
-  const Number_type                      radius = 1;
-  const double                           err_bound = 0.00001;
-  std::list<Offset_polygon_2>            inset_polygons;
-  std::list<Offset_polygon_2>::iterator  iit;
-  CGAL::Timer                            timer;
+  std::list<Polygon_2> inset_polygons;
+  boost::timer timer;
+  approximated_inset_2(P, 1, 0.00001, std::back_inserter(inset_polygons));
+  double secs = timer.elapsed();
 
-  timer.start();
-  approximated_inset_2 (P, radius, err_bound,
-                        std::back_inserter (inset_polygons));
-  timer.stop();
-
-  std::cout << "The inset comprises " 
-            << inset_polygons.size() << " polygon(s)." << std::endl;
-  for (iit = inset_polygons.begin(); iit != inset_polygons.end(); ++iit)
-  {
-      std::cout << "    Polygon with "
-                << iit->size() << " vertices." << std::endl;
-  }
-  std::cout << "Inset computation took "
-            << timer.time() << " seconds." << std::endl;
-  return (0);
+  std::list<Polygon_2>::iterator it;
+  std::cout << "The inset comprises " << inset_polygons.size()
+            << " polygon(s)." << std::endl;
+  for (it = inset_polygons.begin(); it != inset_polygons.end(); ++it)
+    std::cout << "    Polygon with " << it->size() << " vertices." << std::endl;
+  std::cout << "Inset computation took " << secs << " seconds." << std::endl;
+  return 0;
 }

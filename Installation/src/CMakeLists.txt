@@ -117,8 +117,9 @@ set(CGAL_CONFIGURED_LIBRARIES "")
 foreach(package ${CGAL_CONFIGURED_PACKAGES}) 
   file(GLOB CONFIGURED_LIBS_IN_PACKAGE ${package}/src/CGAL_*/CMakeLists.txt)
   foreach (libconfigfile ${CONFIGURED_LIBS_IN_PACKAGE})
-    string(REPLACE "${package}/src/" "" libconfigfile ${libconfigfile})
-    string(REPLACE "//CMakeLists.txt" "" CGAL_CONFIGURED_LIBRARY_NAME ${libconfigfile})
+    get_filename_component(CGAL_CONFIGURED_LIBRARY_NAME ${libconfigfile} PATH)
+    get_filename_component(CGAL_CONFIGURED_LIBRARY_NAME ${CGAL_CONFIGURED_LIBRARY_NAME} NAME)
+
     if (NOT ${CGAL_CONFIGURED_LIBRARY_NAME} STREQUAL "CGAL")
 
      message(STATUS "Sources for CGAL component library '${CGAL_CONFIGURED_LIBRARY_NAME}' detected")

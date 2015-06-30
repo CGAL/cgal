@@ -13,6 +13,7 @@ typedef CGAL::Search_traits_2<K> Traits;
 typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_circle;
 typedef CGAL::Kd_tree<Traits> Tree;
 typedef CGAL::Random Random;
+
 int main() {
 
   const int N=1000;

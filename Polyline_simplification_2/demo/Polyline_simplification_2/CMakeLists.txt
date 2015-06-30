@@ -23,6 +23,8 @@ include_directories (BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
+add_definitions(-DQT_NO_KEYWORDS)
+
 
 # UI files (Qt Designer files)
 qt5_wrap_ui( CDT_UI_FILES Polyline_simplification_2.ui )
