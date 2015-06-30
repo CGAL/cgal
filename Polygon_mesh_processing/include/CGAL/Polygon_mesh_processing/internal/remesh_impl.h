@@ -149,6 +149,12 @@ namespace internal {
                             , const EdgeIsConstrainedMap& ecmap)
     {
       tag_halfedges_status(face_range, ecmap);
+
+#ifdef CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
+      BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
+        debug_normals(v);
+#endif
+
     }
 
     // split edges of edge_range that have their length > high
@@ -359,6 +365,10 @@ namespace internal {
       CGAL_assertion(halfedge_status_map_.size() == nb_valid_halfedges());
       debug_status_map();
       debug_self_intersections();
+#endif
+#ifdef CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
+      BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
+        debug_normals(v);
 #endif
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
@@ -956,7 +966,8 @@ namespace internal {
           halfedge_descriptor h = halfedge(e, mesh_);
           if (halfedge_status_map_[h] == PATCH)
             halfedge_status_map_[h] = PATCH_BORDER;
-          halfedge_descriptor hopp = opposite(halfedge(e, mesh_), mesh_);
+
+          halfedge_descriptor hopp = opposite(h, mesh_);
           if (halfedge_status_map_[hopp] == PATCH)
             halfedge_status_map_[hopp] = PATCH_BORDER;
         }
@@ -1195,14 +1206,20 @@ namespace internal {
 
     void debug_status_map() const
     {
+      unsigned int nb_border = 0;
+      unsigned int nb_mesh = 0;
+      unsigned int nb_patch = 0;
+      unsigned int nb_patch_border = 0;
+
       typedef typename std::map<halfedge_descriptor, Halfedge_status>::value_type
         HD_pair;
       BOOST_FOREACH(const HD_pair& hs, halfedge_status_map_)
       {
-        bool b1 = is_on_patch(hs.first);
-        bool b2 = is_on_patch_border(hs.first);
-        bool b3 = is_on_mesh(hs.first);
-        bool b4 = is_on_border(hs.first);
+        if(is_on_patch(hs.first))              nb_patch++;
+        else if(is_on_patch_border(hs.first))  nb_patch_border++;
+        else if(is_on_mesh(hs.first))          nb_mesh++;
+        else if(is_on_border(hs.first))        nb_border++;
+        else CGAL_assertion(false);
       }
     }
 
