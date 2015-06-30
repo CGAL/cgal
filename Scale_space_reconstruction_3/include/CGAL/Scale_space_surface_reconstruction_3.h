@@ -35,7 +35,6 @@
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Fuzzy_sphere.h>
-#include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Random.h>
 
 #include <CGAL/Scale_space_reconstruction_3/Shape_construction_3.h>

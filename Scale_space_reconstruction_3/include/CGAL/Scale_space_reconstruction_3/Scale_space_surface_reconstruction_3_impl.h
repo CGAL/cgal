@@ -214,12 +214,12 @@ public:
 template < class Gt, class FS, class Sh, class wA, class Ct >
 Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 Scale_space_surface_reconstruction_3( unsigned int neighbors, unsigned int samples )
-: _mean_neighbors(neighbors), _samples(samples), _squared_radius(-1), _shape(0) {}
+  :  _mean_neighbors(neighbors), _samples(samples), _squared_radius(-1), _shape(0) {}
 
 template < class Gt, class FS, class Sh, class wA, class Ct >
 Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 Scale_space_surface_reconstruction_3( FT sq_radius )
-: _mean_neighbors(0), _samples(0), _squared_radius(sq_radius), _shape(0) {
+  :  _mean_neighbors(0), _samples(0), _squared_radius(sq_radius), _shape(0) {
     CGAL_precondition( sq_radius >= 0 );
 }
 
