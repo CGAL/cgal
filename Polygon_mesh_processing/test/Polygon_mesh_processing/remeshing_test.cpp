@@ -1,3 +1,4 @@
+// data/joint_refined.off 0.1 5 data/joint-patch.selection.txt
 
 #define CGAL_PMP_REMESHING_DEBUG
 #define CGAL_DUMP_REMESHING_STEPS
@@ -27,91 +28,40 @@ typedef boost::graph_traits<Mesh>::edge_descriptor      edge_descriptor;
 typedef boost::graph_traits<Mesh>::vertex_descriptor    vertex_descriptor;
 typedef boost::graph_traits<Mesh>::face_descriptor      face_descriptor;
 
-// extract vertices which are at most k (inclusive) far from vertex v
-std::vector<vertex_descriptor> extract_k_ring(vertex_descriptor v,
-                                              int k,
-                                              const Mesh& m)
+
+void collect_patch(const char* file,
+                   const Mesh& m,
+                   std::set<face_descriptor>& patch)
 {
-  vertex_descriptor vv = v;
-
-  std::map<vertex_descriptor, int>  D;
-  std::vector<vertex_descriptor>    Q;
-  Q.push_back(vv);
-  D[vv] = 0;
-
-  std::size_t current_index = 0;
-  int dist_v;
-  while (current_index < Q.size() && (dist_v = D[Q[current_index]]) < k)
-  {
-    vv = Q[current_index++];
-    BOOST_FOREACH(halfedge_descriptor he,
-                  halfedges_around_target(halfedge(vv,m), m))
-    {
-      vertex_descriptor new_v = source(he, m);
-      if (D.insert(std::make_pair(new_v, dist_v + 1)).second) {
-        Q.push_back(new_v);
-      }
-    }
-  }
-  return Q;
-}
-
-std::set<face_descriptor> k_ring(vertex_descriptor v,
-                                    int k,
-                                    const Mesh& m)
-{
-  std::vector<vertex_descriptor> vring
-    = extract_k_ring(v, k - 1, m);
-
-  std::set<face_descriptor> kring;
-  BOOST_FOREACH(vertex_descriptor vd, vring)
-  {
-    BOOST_FOREACH(face_descriptor f,
-                  faces_around_target(halfedge(vd, m), m))
-    {
-      if (f == boost::graph_traits<Mesh>::null_face())
-        continue;
-      if (kring.find(f) == kring.end())
-        kring.insert(f);
-    }
-  }
-  return kring;
-}
-
-std::set<face_descriptor> collect_patch(const char* file,
-                                          const Mesh& m)
-{
-  std::set<face_descriptor> patch;
   std::ifstream in(file);
   if (!in.is_open())
-    return patch;
+    return;
 
   std::string line;
   std::size_t id;
 
-  if (!std::getline(in, line)) { return patch; }
+  if (!std::getline(in, line)) { return ; }
   std::istringstream vertex_line(line);
   while (vertex_line >> id) {
-    if (id >= m.number_of_vertices()) { return patch; }
+    if (id >= m.number_of_vertices()) { return ; }
     //do nothing with vertices
   }
 
-  if (!std::getline(in, line)) { return patch; }
+  if (!std::getline(in, line)) { return ; }
   std::istringstream facet_line(line);
   while (facet_line >> id) {
-    if (id >= m.number_of_faces()) { return patch; }
+    if (id >= m.number_of_faces()) { return ; }
     patch.insert(Mesh::Face_index(Mesh::size_type(id)));
   }
 
-  if (!std::getline(in, line)) { return patch; }
+  if (!std::getline(in, line)) { return ; }
   std::istringstream edge_line(line);
   while (edge_line >> id) {
-    if (id >= m.number_of_edges()) { return patch; }
+    if (id >= m.number_of_edges()) { return ; }
     //do nothing with edges
   }
 
   in.close();
-  return patch;
 }
 
 int main(int argc, char* argv[])
@@ -130,29 +80,13 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  double target_edge_length = (argc > 2) ? atof(argv[2])
-    : 0.079;
-  unsigned int nb_iter = (argc > 3) ? atoi(argv[3])
-    : 1;
-
-  unsigned int center_id = 26;
-  unsigned int i = 0;
-  vertex_descriptor patch_center;
-  BOOST_FOREACH(vertex_descriptor v, vertices(m))
-  {
-    if (i++ == center_id)
-    {
-      patch_center = v;
-      break;
-    }
-  }
-
+  double target_edge_length = (argc > 2) ? atof(argv[2]) : 0.079;
+  unsigned int nb_iter = (argc > 3) ? atoi(argv[3]) : 1;
   const char* selection_file = (argc > 4) ? argv[4]
     : "data/joint-patch.selection.txt";
-  const std::set<face_descriptor>& pre_patch = 
-    (argc > 4)
-    ? collect_patch(selection_file, m)
-    : k_ring(patch_center, 3, m);
+
+  std::set<face_descriptor> pre_patch;
+  collect_patch(selection_file, m, pre_patch);
 
   std::cout << "Test self intersections...";
   std::vector<std::pair<face_descriptor, face_descriptor> > facets;
@@ -178,10 +112,6 @@ int main(int argc, char* argv[])
   std::set<face_descriptor> patch;
   std::copy(pre_patch.begin(), pre_patch.end(),
             std::inserter(patch, patch.begin()));
-
-  //PMP::connected_component(face(border.front(), m),
-  //  m,
-  //  std::inserter(patch, patch.begin()));
 
   std::cout << "Start remeshing of " << selection_file
     << " (" << patch.size() << " faces)..." << std::endl;
