@@ -716,20 +716,7 @@ public:
   template <class OutputIterator>
   OutputIterator dual(Cell_handle c, int i, int j,
       OutputIterator points) const {
-    Cell_circulator cstart = incident_cells(c, i, j);
-
-    Offset offv = periodic_point(c,i).second;
-    Vertex_handle v = c->vertex(i);
-
-    Cell_circulator ccit = cstart;
-    do {
-      Point dual_orig = periodic_circumcenter(ccit).first;
-      int idx = ccit->index(v);
-      Offset off = periodic_point(ccit,idx).second;
-      Point dual = point(std::make_pair(dual_orig,-off+offv));
-      *points++ = dual;
-      ++ccit;
-    } while (ccit != cstart);
+    Base::dual(c, i, j, points, geom_traits().construct_circumcenter_3_object());
     return points;
   }
 

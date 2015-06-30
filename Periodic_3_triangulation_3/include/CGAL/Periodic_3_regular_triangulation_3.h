@@ -6066,6 +6066,18 @@ public:
     Base::canonical_dual_segment(c,i,ps, geom_traits().construct_weighted_circumcenter_3_object());
     return ps;
   }
+
+  template <class OutputIterator>
+  OutputIterator dual(const Edge & e, OutputIterator points) const {
+    return dual(e.first, e.second, e.third, points);
+  }
+
+  template <class OutputIterator>
+  OutputIterator dual(Cell_handle c, int i, int j,
+      OutputIterator points) const {
+    Base::dual(c, i, j, points, geom_traits().construct_weighted_circumcenter_3_object());
+    return points;
+  }
   //@}
 };
 
