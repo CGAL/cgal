@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 {
   typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
   const double bound = std::cos(0.7* CGAL_PI);
-  const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/blobby_1cc.off";
   Mesh sm;
   std::ifstream in(filename);
   in >> sm;
@@ -64,10 +64,12 @@ int main(int argc, char* argv[])
   std::cerr << "\nconnected components with edge constraints (dihedral angle < 3/4 pi)" << std::endl;
   Mesh::Property_map<face_descriptor,std::size_t> fccmap;
   fccmap = sm.add_property_map<face_descriptor,std::size_t>("f:CC").first; 
-  std::size_t num = PMP::connected_components(sm, fccmap,
-    CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
-      Constraint<Mesh>(sm,bound))
-  );
+  std::size_t num =
+    PMP::connected_components(sm,
+      fccmap,
+      CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
+        Constraint<Mesh>(sm,bound))
+    );
 
  std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
  face_descriptor f_cc;
@@ -80,13 +82,13 @@ int main(int argc, char* argv[])
    ++n;
   }
  
- std::cerr << "We keep the two largest components" << std::endl; 
- PMP::keep_largest_connected_components(sm,2,
-   PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(sm,bound)));
-
  std::vector<face_descriptor> ff;
  ff.push_back(f_cc);
  PMP::keep_connected_components(sm, ff,
+   PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(sm, bound)));
+
+ std::cerr << "We keep the two largest components" << std::endl;
+ PMP::keep_largest_connected_components(sm, 2,
    PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(sm, bound)));
 
  std::cout << "mesh:\n" << sm << std::endl;

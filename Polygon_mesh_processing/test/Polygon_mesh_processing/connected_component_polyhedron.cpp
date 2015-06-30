@@ -16,7 +16,7 @@ typedef Kernel::Point_3                                      Point;
 typedef CGAL::Polyhedron_3<Kernel> Mesh;
 typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> Mesh_with_id;
 
-void mesh_with_id(char* argv1)
+void mesh_with_id(const char* argv1)
 {
   typedef boost::graph_traits<Mesh_with_id>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<Mesh_with_id>::face_descriptor face_descriptor;
@@ -50,16 +50,15 @@ void mesh_with_id(char* argv1)
                                               fccmap);
   
   std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
-  BOOST_FOREACH(face_descriptor f , faces(sm)){
-    std::cout  << &*f << " in connected component " << fccmap[f] << std::endl;
-  }
- 
- PMP::keep_largest_connected_components(sm,2);
 
- std::cout << "mesh:\n" << sm << std::endl;
+  PMP::keep_largest_connected_components(sm,2);
+
+ std::ofstream ofile("blobby_2cc_id.off");
+ ofile << sm << std::endl;
+ ofile.close();
 }
 
-void mesh_no_id(char* argv1)
+void mesh_no_id(const char* argv1)
 {
   typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
@@ -90,23 +89,26 @@ void mesh_no_id(char* argv1)
     fccmap,
     PMP::parameters::face_index_map(fim));
   
- std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
-  BOOST_FOREACH(face_descriptor f , faces(sm)){
-    std::cout  << &*f << " in connected component " << fccmap[f] << std::endl;
-  }
- 
+  std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
+  //BOOST_FOREACH(face_descriptor f , faces(sm)){
+  //  std::cout  << &*f << " in connected component " << fccmap[f] << std::endl;
+  //}
+
   PMP::keep_largest_connected_components(sm
     , 2
     , PMP::parameters::vertex_index_map(vim).
       face_index_map(fim));
 
- std::cout << "mesh:\n" << sm << std::endl;
+  std::ofstream ofile("blobby_2cc_no_id.off");
+  ofile << sm << std::endl;
+  ofile.close();
 }
 
 
-int main(int, char* argv[]) 
+int main(int argc, char* argv[]) 
 {
-  mesh_with_id(argv[1]);
-  mesh_no_id(argv[1]);
+  const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
+  mesh_with_id(filename);
+  mesh_no_id(filename);
   return 0;
 }
