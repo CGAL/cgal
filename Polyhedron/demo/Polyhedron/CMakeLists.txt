@@ -44,8 +44,6 @@ add_subdirectory( implicit_functions )
 
 # Find CGAL
 
-
-
 option( POLYHEDRON_QTSCRIPT_DEBUGGER 
   "Activate the use of Qt Script Debugger in Polyhedron_3 demo" OFF)
 
@@ -97,7 +95,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
   include_directories ( ${GLEW_INCLUDE_DIR} )
 
-<<<<<<< HEAD
   qt5_wrap_ui( MainWindowUI_files MainWindow.ui )
   qt5_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
   qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
@@ -110,26 +107,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt5_wrap_ui( segmentationUI_FILES Mesh_segmentation_widget.ui)
   qt5_wrap_ui( selectionUI_FILES Selection_widget.ui)
   qt5_wrap_ui( funcUI_FILES Function_dialog.ui )
+  qt5_wrap_ui( shortestPathUI_FILES Shortest_path_widget.ui)
   qt5_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
   qt5_generate_moc( "File_loader_dialog.h" "${CMAKE_CURRENT_BINARY_DIR}/File_loader_dialog_moc.cpp" )
-=======
-  qt4_wrap_ui( MainWindowUI_files MainWindow.ui )
-  qt4_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
-  qt4_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
-  qt4_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
-  qt4_wrap_ui( meshingUI_FILES  Meshing_dialog.ui )
-  qt4_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
-  qt4_wrap_ui( PreferencesUI_FILES   Preferences.ui )
-  qt4_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
-  qt4_wrap_ui( polyhedron_slicerUI_FILES Polyhedron_slicer_widget.ui)
-  qt4_wrap_ui( segmentationUI_FILES Mesh_segmentation_widget.ui)
-  qt4_wrap_ui( selectionUI_FILES Selection_widget.ui)
-  qt4_wrap_ui( funcUI_FILES Function_dialog.ui )
-  qt4_wrap_ui( shortestPathUI_FILES Shortest_path_widget.ui )
-
-  qt4_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
-  qt4_generate_moc( "File_loader_dialog.h" "${CMAKE_CURRENT_BINARY_DIR}/File_loader_dialog_moc.cpp" )
->>>>>>> cgal/master
   add_file_dependencies( MainWindow_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h" )
   add_file_dependencies( File_loader_dialog_moc_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/File_loader_dialog.h" )
 
@@ -138,60 +118,12 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include( ${CMAKE_CURRENT_SOURCE_DIR}/polyhedron_demo_macros.cmake )
 
-<<<<<<< HEAD
+
   qt5_add_resources ( RESOURCE_FILES Polyhedron_3.qrc )
 
   qt5_generate_moc( "CGAL_demo/Viewer_interface.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
 
-  #qt5_automoc(Scene.cpp
-  #            Scene_item.cpp
-  #            Scene_plane_item.cpp
-  #            Scene_combinatorial_map_item.cpp
-  #            Scene_polygon_soup_item.cpp
-  #            Scene_polyhedron_item.cpp
-  #            Scene_polyhedron_transform_item.cpp
-  #            Scene_polylines_item.cpp
-  #            Scene_textured_polyhedron_item.cpp
-  #            Scene_c2t3_item.cpp
-  #            Scene_nef_polyhedron_item.cpp
-  #            Show_point_dialog.cpp
-  #            Mesher_base.cpp
-  #            Camera_positions_list.cpp
-  #            Scene_points_with_normal_item.cpp
-  #      		  Scene_polyhedron_item_decorator.cpp
-  #      		  Scene_polyhedron_selection_item.cpp
-  #      		  Scene_polyhedron_item_k_ring_selection.cpp
-  #            )
-  #qt5_automoc( Scene_implicit_function_item.cpp )
-=======
-  qt4_add_resources ( RESOURCE_FILES Polyhedron_3.qrc )
-
-  qt4_generate_moc( "CGAL_demo/Viewer_interface.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
-
-  qt4_automoc(Scene.cpp
-              Scene_item.cpp
-              Scene_plane_item.cpp
-              Scene_combinatorial_map_item.cpp
-              Scene_polygon_soup_item.cpp
-              Scene_polyhedron_item.cpp
-              Scene_polyhedron_transform_item.cpp
-              Scene_polylines_item.cpp
-              Scene_textured_polyhedron_item.cpp
-              Scene_c2t3_item.cpp
-              Scene_nef_polyhedron_item.cpp
-              Show_point_dialog.cpp
-              Mesher_base.cpp
-              Camera_positions_list.cpp
-              Scene_points_with_normal_item.cpp
-			  Scene_polyhedron_item_decorator.cpp
-			  Scene_polyhedron_selection_item.cpp
-			  Scene_polyhedron_item_k_ring_selection.cpp
-			  Scene_polyhedron_shortest_path_item.cpp
-              )
-  qt4_automoc( Scene_implicit_function_item.cpp )
->>>>>>> cgal/master
-
-
+  
   # AUXILIARY LIBRARIES
 
   # put plugins (which are shared libraries) at the same location as
@@ -267,7 +199,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_polyhedron_selection_item Scene_polyhedron_selection_item.cpp)# Scene_polyhedron_selection_item.moc)
   target_link_libraries(scene_polyhedron_selection_item scene_polyhedron_item_decorator scene_polyhedron_item_k_ring_selection)
  
-  add_item(scene_polyhedron_shortest_path_item Scene_polyhedron_shortest_path_item.cpp Scene_polyhedron_shortest_path_item.moc)
+  add_item(scene_polyhedron_shortest_path_item Scene_polyhedron_shortest_path_item.cpp)
+  
   target_link_libraries(scene_polyhedron_shortest_path_item scene_polyhedron_item_decorator scene_polyhedron_item scene_polylines_item)
 
   if(EIGEN3_FOUND )
@@ -437,11 +370,11 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     polyhedron_demo_plugin(normal_estimation_plugin Polyhedron_demo_normal_estimation_plugin ${normal_estimationUI_FILES})
     target_link_libraries(normal_estimation_plugin scene_points_with_normal_item)
     
-    qt4_wrap_ui( vcm_normal_estimationUI_FILES Polyhedron_demo_vcm_normal_estimation_plugin.ui)
+    qt5_wrap_ui( vcm_normal_estimationUI_FILES Polyhedron_demo_vcm_normal_estimation_plugin.ui)
     polyhedron_demo_plugin(vcm_normal_estimation_plugin Polyhedron_demo_vcm_normal_estimation_plugin ${vcm_normal_estimationUI_FILES})
     target_link_libraries(vcm_normal_estimation_plugin scene_points_with_normal_item)
 
-    qt4_wrap_ui( features_detection_pluginUI_FILES Polyhedron_demo_features_detection_plugin.ui)
+    qt5_wrap_ui( features_detection_pluginUI_FILES Polyhedron_demo_features_detection_plugin.ui)
     polyhedron_demo_plugin(features_detection_plugin Polyhedron_demo_features_detection_plugin ${features_detection_pluginUI_FILES})
     target_link_libraries(features_detection_plugin scene_points_with_normal_item)
     

@@ -38,7 +38,7 @@ struct light_info
 };
 
 Scene_points_with_normal_item::Scene_points_with_normal_item()
-    : Scene_item(6,2),
+    : Scene_item(6,3),
       m_points(new Point_set),
       positions_lines(0),
       color_lines(0),
@@ -60,7 +60,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item()
 
 // Copy constructor
 Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_with_normal_item& toCopy)
-    : Scene_item(6,2), // do not call superclass' copy constructor
+    : Scene_item(6,3), // do not call superclass' copy constructor
       m_points(new Point_set(*toCopy.m_points)),
       positions_lines(0),
       color_lines(0),
@@ -93,7 +93,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
 
 // Converts polyhedron to point set
 Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& input_mesh)
-    : Scene_item(6,2),
+    : Scene_item(6,3),
       m_points(new Point_set),
       positions_lines(0),
       color_lines(0),
@@ -204,64 +204,7 @@ void Scene_points_with_normal_item::initialize_buffers(Viewer_interface *viewer)
         program->release();
     }
     are_buffers_filled = true;
-  /*
 
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[6]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (positions_splats.size())*sizeof(double),
-                 positions_splats.data(), GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(4,
-                          3,
-                          GL_DOUBLE,
-                          GL_FALSE,
-                          0,
-                          NULL
-                          );
-    qFunc.glEnableVertexAttribArray(4);
-
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[7]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (tex_coords.size())*sizeof(double),
-                 tex_coords.data(), GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(5,
-                          2,
-                          GL_DOUBLE,
-                          GL_FALSE,
-                          0,
-                          NULL
-                          );
-    qFunc.glEnableVertexAttribArray(5);
-
-    qFunc.glBindBuffer(GL_ARRAY_BUFFER, buffer[8]);
-    qFunc.glBufferData(GL_ARRAY_BUFFER,
-                 (normals.size())*sizeof(double),
-                 normals.data(), GL_STATIC_DRAW);
-    qFunc.glVertexAttribPointer(6,
-                          3,
-                          GL_DOUBLE,
-                          GL_FALSE,
-                          0,
-                          NULL
-                          );
-    qFunc.glEnableVertexAttribArray(6);
-
-    // qFunc.glActiveTexture(GL_TEXTURE2);
-    qFunc.glBindTexture(GL_TEXTURE_2D, textureId);
-    qFunc.glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_RGB,
-                 1,
-                 1,
-                 0,
-                 GL_RGB,
-                 GL_UNSIGNED_BYTE,
-                 texture);
-    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-*/
 
 }
 void Scene_points_with_normal_item::compute_normals_and_vertices(void)

@@ -366,7 +366,7 @@ Scene_polygon_soup_item::load(std::istream& in)
     else soup->clear();
 
     bool result = CGAL::read_OFF(in, soup->points, soup->polygons);
-    emit changed();
+    Q_EMIT changed();
     return result;
 }
 

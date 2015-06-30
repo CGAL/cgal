@@ -15,13 +15,6 @@ Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer
     qFunc.initializeOpenGLFunctions();
 }
 
-Scene_polyhedron_transform_item::~Scene_polyhedron_transform_item()
-{
-
-    delete frame;
-    emit killed();
-}
-
 void Scene_polyhedron_transform_item::initialize_buffers(Viewer_interface *viewer =0) const
 {
     //vao for the edges

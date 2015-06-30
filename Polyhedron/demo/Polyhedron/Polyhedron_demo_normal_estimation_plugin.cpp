@@ -220,8 +220,4 @@ void Polyhedron_demo_normal_estimation_plugin::on_actionNormalEstimation_trigger
 #endif // !CGAL_DISABLE_NORMAL_ESTIMATION_PLUGIN
 }
 
-#if QT_VERSION < 0x050000
-Q_EXPORT_PLUGIN2(Polyhedron_demo_normal_estimation_plugin, Polyhedron_demo_normal_estimation_plugin)
-#endif
-
 #include "Polyhedron_demo_normal_estimation_plugin.moc"

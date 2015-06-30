@@ -29,6 +29,7 @@ class Polyhedron_demo_shortest_path_plugin :
 {
   Q_OBJECT
     Q_INTERFACES(Polyhedron_demo_plugin_interface)
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
 private:
 
   typedef boost::property_map<Polyhedron, boost::vertex_index_t>::type VertexIndexMap;
@@ -217,7 +218,6 @@ void Polyhedron_demo_shortest_path_plugin::new_item(int itemIndex)
 void Polyhedron_demo_shortest_path_plugin::on_actionMakeShortestPaths_triggered()
 {
   Scene_polyhedron_item* polyhedronItem = get_selected_item<Scene_polyhedron_item>();
-
   if (polyhedronItem)
   {
     if (m_shortestPathsMap.find(polyhedronItem) == m_shortestPathsMap.end())
@@ -299,7 +299,5 @@ void Polyhedron_demo_shortest_path_plugin::check_and_set_ids(Polyhedron* polyhed
     }
   }
 }
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_shortest_path_plugin, Polyhedron_demo_shortest_path_plugin)
 
 #include "Polyhedron_demo_shortest_path_plugin.moc"

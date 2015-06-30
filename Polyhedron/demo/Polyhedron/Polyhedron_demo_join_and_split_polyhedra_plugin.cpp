@@ -167,7 +167,5 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
   }
 }
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_join_and_split_polyhedra_plugin, Polyhedron_demo_join_and_split_polyhedra_plugin)
-
 
 #include "Polyhedron_demo_join_and_split_polyhedra_plugin.moc"

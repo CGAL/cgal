@@ -42,39 +42,37 @@ public:
 
 private:
   //Shaders elements
-      int poly_vertexLocation;
-      int points_vertexLocation;
-      int normalsLocation;
-      int mvpLocation;
-      int mvpLocation_points;
-      int mvLocation;
-      int colorLocation;
-      int colorLocation_points;
-      int lightLocation[5];
+    int poly_vertexLocation;
+    int points_vertexLocation;
+    int normalsLocation;
+    int mvpLocation;
+    int mvpLocation_points;
+    int mvLocation;
+    int colorLocation;
+    int colorLocation_points;
+    int lightLocation[5];
 
 
-      std::vector<float> pos_points;
-      std::vector<float> pos_poly;
-      std::vector<float> normals;
+    std::vector<float> pos_points;
+    std::vector<float> pos_poly;
+    std::vector<float> normals;
 
+    QOpenGLBuffer buffers[3];
+    QOpenGLVertexArrayObject vao[2];
+    QOpenGLShaderProgram rendering_program;
+    QOpenGLShaderProgram rendering_program_points;
+    void initialize_buffers();
+    void compute_elements();
+    void attrib_buffers(QGLViewer*);
+    void compile_shaders();
  public Q_SLOTS:
-
-      QOpenGLBuffer buffers[3];
-      QOpenGLVertexArrayObject vao[2];
-      QOpenGLShaderProgram rendering_program;
-      QOpenGLShaderProgram rendering_program_points;
-      void initialize_buffers();
-      void compute_elements();
-      void attrib_buffers(QGLViewer*);
-      void compile_shaders();
- public slots :
-        void initializeGL();
- void sceneChanged();
- void changed(){
-     compute_elements();
-     initialize_buffers();
- }
- void alphaChanged();
+    void initializeGL();
+    void sceneChanged();
+    void changed(){
+        compute_elements();
+        initialize_buffers();
+    }
+    void alphaChanged();
 
 };
 

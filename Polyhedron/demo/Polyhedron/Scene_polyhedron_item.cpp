@@ -933,6 +933,7 @@ Scene_polyhedron_item::draw_points(Viewer_interface* viewer) const {
 
     vaos[1]->bind();
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     //draw the points
     qFunc.glDrawArrays(GL_POINTS, 0, positions_lines.size()/4);
