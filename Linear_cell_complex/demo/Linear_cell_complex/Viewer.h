@@ -23,15 +23,17 @@
 
 #include "typedefs.h"
 #include <QGLViewer/qglviewer.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
 #include <QKeyEvent>
 
-#ifndef CALLBACK
-#define CALLBACK
-#endif
+/* TODO: code to draw non convex faces (since glu tesselator is now deprecated)
 
-static void CALLBACK monCombine(GLdouble c[3], void * /*d*/ [4], GLfloat /*w*/ [4], void **out)
+  #include <GL/glu.h>
+  #include <GL/glut.h>
+  #ifndef CALLBACK
+  #define CALLBACK
+  #endif
+
+static void CALLBACK monCombine(GLdouble c[3], void * d [4], GLfloat w [4], void **out)
 {
    GLdouble *nv = (GLdouble *) malloc(sizeof(GLdouble)*3);
    nv[0] = c[0];
@@ -39,6 +41,7 @@ static void CALLBACK monCombine(GLdouble c[3], void * /*d*/ [4], GLfloat /*w*/ [
    nv[2] = c[2];
    *out = nv;
 }
+*/
 
 class Viewer : public QGLViewer
 {
@@ -47,26 +50,26 @@ class Viewer : public QGLViewer
   CGAL::Timer timer;
   Scene* scene;
   bool wireframe;
-  //  bool flatShading;
+  bool flatShading;
   bool edges;
   bool vertices;
   CGAL::Bbox_3 bb;
 
-  //  GLuint m_dlFaces;
+  GLuint m_dlFaces;
   GLuint m_dlFacesFlat;
   GLuint m_dlEdges;
   GLuint m_dlVertices;
   bool m_displayListCreated;
   bool m_previous_scene_empty;
-  
-  GLUtesselator* FTess;
+
+  //  GLUtesselator* FTess;
 
   typedef LCC::Dart_handle Dart_handle;
   typedef LCC::Dart_const_handle Dart_const_handle;
 
 public:
   Viewer(QWidget* parent)
-    : QGLViewer(parent), wireframe(false), // flatShading(true),
+    : QGLViewer(parent), wireframe(false), flatShading(true),
       edges(true), vertices(true), m_displayListCreated(false),
       m_previous_scene_empty(true)
   {
@@ -75,16 +78,16 @@ public:
     newFormat.setSamples(16);
     this->setFormat(newFormat);
 
-    FTess = gluNewTess();
+    /*    FTess = gluNewTess();
     gluTessCallback(FTess, GLU_TESS_BEGIN,   (void (CALLBACK*)()) &glBegin);
     gluTessCallback(FTess, GLU_TESS_END,     (void (CALLBACK*)()) &glEnd);
     gluTessCallback(FTess, GLU_TESS_VERTEX,  (void (CALLBACK*)()) &glVertex3dv);
-    gluTessCallback(FTess, GLU_TESS_COMBINE, (void (CALLBACK*)()) &monCombine);
+    gluTessCallback(FTess, GLU_TESS_COMBINE, (void (CALLBACK*)()) &monCombine); */
   }
 
   ~Viewer()
   {
-      gluDeleteTess(FTess);
+    // gluDeleteTess(FTess);
   }
 
   void setScene(Scene* scene_)
