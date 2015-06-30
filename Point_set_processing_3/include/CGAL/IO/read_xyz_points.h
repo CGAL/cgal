@@ -76,7 +76,8 @@ read_xyz_points_and_normals(
   // value_type_traits is a workaround as back_insert_iterator's value_type is void
   //typedef typename value_type_traits<OutputIterator>::type Enriched_point;
   typedef OutputIteratorValueType Enriched_point;
-
+  
+  typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
 
@@ -95,8 +96,8 @@ read_xyz_points_and_normals(
   while(getline(stream,line))
   {
     // position + normal
-    double x,y,z;
-    double nx,ny,nz;
+    FT x,y,z;
+    FT nx,ny,nz;
 
     lineNumber++;
 
