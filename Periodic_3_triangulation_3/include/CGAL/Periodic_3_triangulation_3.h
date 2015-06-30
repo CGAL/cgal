@@ -1538,6 +1538,22 @@ protected:
     CGAL_triangulation_assertion(!(rv.z() < dom.zmin()) && rv.z() < dom.zmax());
     return ppv;
   }
+
+  template <class ConstructCircumcenter>
+  bool canonical_dual_segment(Cell_handle c, int i, Periodic_segment& ps, ConstructCircumcenter construct_circumcenter) const {
+    CGAL_triangulation_precondition(c != Cell_handle());
+    Offset off = neighbor_offset(c,i,c->neighbor(i));
+    Periodic_point p1 = periodic_circumcenter(c, construct_circumcenter);
+    Periodic_point p2 = periodic_circumcenter(c->neighbor(i), construct_circumcenter);
+    Offset o1 = -p1.second;
+    Offset o2 = combine_offsets(-p2.second,-off);
+    Offset cumm_off((std::min)(o1.x(),o2.x()),
+  (std::min)(o1.y(),o2.y()),(std::min)(o1.z(),o2.z()));
+    const std::pair<Point,Offset> pp1 = std::make_pair(point(p1), o1-cumm_off);
+    const std::pair<Point,Offset> pp2 = std::make_pair(point(p2), o2-cumm_off);
+    ps = make_array(pp1,pp2);
+    return (cumm_off == Offset(0,0,0));
+  }
 };
 
 template < class GT, class TDS >

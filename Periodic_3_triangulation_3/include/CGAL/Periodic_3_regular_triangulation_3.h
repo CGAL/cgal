@@ -5953,10 +5953,6 @@ public:
 	  return vertices;
 	}
 
-	Periodic_point periodic_weighted_circumcenter(Cell_handle c) const {
-	    return Base::periodic_circumcenter(c, geom_traits().construct_weighted_circumcenter_3_object());
-	  }
-
   Oriented_side
   power_test(const Weighted_point &p, const Weighted_point &q) const
   {
@@ -6051,6 +6047,26 @@ private:
     std::vector<Weighted_point> hidden;
   };
 #endif //CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+
+public:
+  Periodic_point periodic_weighted_circumcenter(Cell_handle c) const {
+    return Base::periodic_circumcenter(c, geom_traits().construct_weighted_circumcenter_3_object());
+  }
+
+  /** @name Voronoi diagram */ //@{
+  Bare_point dual(Cell_handle c) const {
+    return point(periodic_weighted_circumcenter(c));
+  }
+
+  Periodic_segment dual(const Facet & f) const {
+    return dual( f.first, f.second );
+  }
+  Periodic_segment dual(Cell_handle c, int i) const{
+    Periodic_segment ps;
+    Base::canonical_dual_segment(c,i,ps, geom_traits().construct_weighted_circumcenter_3_object());
+    return ps;
+  }
+  //@}
 };
 
 template < class Gt, class Tds >
