@@ -780,7 +780,6 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
 *    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
 * \cgalNamedParamsEnd
 *
-*  \todo CODE
 */
 template <typename PolygonMesh
         , typename FaceRange
