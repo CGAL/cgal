@@ -18,11 +18,11 @@ used in many applications, such as motion planning and computer-aided
 design and manufacturing. This package contains functions that compute
 the planar Minkowski sums of two polygons. (Here, \f$ A\f$ and \f$ B\f$
 are two closed polygons in \f$ \mathbb{R}^2\f$, which may have holes; see
-Chapter \ref Chapter_2D_Regularized_Boolean_Set-Operations "2D
-Regularized Boolean Set-Operations" for the precise definition of valid
+Chapter \ref Chapter_2D_Regularized_Boolean_Set-Operations
+"2D Regularized Boolean Set-Operations" for the precise definition of valid
 polygons), and the planar Minkowski sum of a simple polygon and a
 disc---an operation also referred to as <I>offsetting</I> or <I>dilating</I>
-a polygon). \cgalFootnote{The family of valid types of summands is slightly
+a polygon.\cgalFootnote{The family of valid types of summands is slightly
 broader for certain operations, e.g., a degenerate polygon consisting of
 line segments is a valid operand for the approximate-offsetting operation.}
 This package, like the \ref Chapter_2D_Regularized_Boolean_Set-Operations
@@ -32,7 +32,7 @@ by the \ref chapterArrangement_on_surface_2 "2D Arrangements" package.
 The two packages are integrated well to
 allow mixed operations. For example, it is possible to apply Boolean set
 operations on objects that are the result of Minkowski sum
-computations. \cgalFootnote{The operands of the Minkowski sum operations
+computations.\cgalFootnote{The operands of the Minkowski sum operations
 supported by this package must be (linear) polygons, as opposed to the
 operands of the Boolean set operations supported by the
 \ref Chapter_2D_Regularized_Boolean_Set-Operations
@@ -51,11 +51,11 @@ edges ordered according to the angle they form with the \f$ x\f$-axis. As the
 two input polygons are convex, their edges are already sorted by the angle
 they form with the \f$ x\f$-axis; see the figure above.
 The Minkowski sum can therefore be computed using an operation similar to the
-merge step of the merge-sort algorithm \cgalFootnote{See, for example,
+merge step of the merge-sort algorithm\cgalFootnote{See, for example,
 <a href="http://en.wikipedia.org/wiki/Merge_sort">
 http://en.wikipedia.org/wiki/Merge_sort</a>.} in \f$ O(m + n)\f$ time,
-starting from two bottommost vertices in \f$ P\f$ and in \f$ Q\f$ and merging
-the ordered list of edges.
+starting from the two bottommost vertices in \f$ P\f$ and in \f$ Q\f$ and
+merging the ordered list of edges.
 
 \cgalFigureBegin{mink_figonecyc,ms_convex_polygon.png,ms_concave_polygon.png,ms_convolution.png}
 The convolution of a convex polygon and a non-convex polygon. The convolution
@@ -95,11 +95,11 @@ positive orientations (i.e., their boundaries wind in a
 counterclockwise order around their interiors). The
 <I>convolution</I> of these two polygons \cgalCite{grs-kfcg-83},
 denoted \f$ P * Q\f$, is a collection of line segments of the form
-\f$ [p_i + q_j, p_{i+1} + q_j]\f$, \cgalFootnote{Throughout this
+\f$ [p_i + q_j, p_{i+1} + q_j]\f$,\cgalFootnote{Throughout this
 chapter, we increment or decrement an index of a vertex modulo the
 size of the polygon.} where the vector \f$ {\mathbf{p_i p_{i+1}}}\f$
 lies between \f$ {\mathbf{q_{j-1} q_j}}\f$ and
-\f$ {\mathbf{q_j q_{j+1}}}\f$, \cgalFootnote{We say that a vector
+\f$ {\mathbf{q_j q_{j+1}}}\f$,\cgalFootnote{We say that a vector
 \f$ {\mathbf v}\f$ lies between two vectors \f$ {\mathbf u}\f$ and
 \f$ {\mathbf w}\f$ if we reach \f$ {\mathbf v}\f$ strictly before
 reaching \f$ {\mathbf w}\f$ if we move all three vectors to the
@@ -114,7 +114,7 @@ The segments of the convolution form a number of closed (not
 necessarily simple) polygonal curves called <I>convolution cycles</I>.
 The Minkowski sum \f$ P \oplus Q\f$ is the set of points
 having a non-zero winding number with respect to the cycles of
-\f$ P * Q\f$. \cgalFootnote{Informally speaking, the winding number
+\f$ P * Q\f$.\cgalFootnote{Informally speaking, the winding number
 of a point \f$ p \in\mathbb{R}^2\f$ with respect to some planar curve
 \f$ \gamma\f$ is an integer number counting how many times does
 \f$ \gamma\f$ wind in a counterclockwise direction around \f$ p\f$.}
@@ -157,14 +157,29 @@ the sub-sums \f$ S_{ij}\f$ when using the decomposition approach. As
 both approaches construct the arrangement of these segments and
 extract the sum from this arrangement, computing Minkowski sum using
 the convolution approach usually generates a smaller intermediate
-arrangement, hence it is faster and consumes less space. In most cases,
+arrangement; hence it is faster and consumes less space. In most cases,
 the reduced convolution method is faster than the full convolution
 method, as the respective induced arrangement is usually much smaller.
 However, in degenerate cases with many holes in the Minkowski sum, the
 full convolution method can be preferable, as it avoids costly
 intersection tests.
 
-\subsection mink_ssecsum_conv Computing Minkowski Sum using Convolutions
+\subsection mink_ssec_hole_filter Filtering Out Holes
+
+If a hole in one polygon is relatively small compared to the other
+polygon, the hole is irrelevant for the computation of
+\f$P\oplus Q \f$ \cgalCite{bfhhm-epsph-15}; It implies that the hole
+can be removed (that is, filled up) before the main computation starts.
+Theoretically, we can always fill up all the holes of at least one
+polygon, transforming it into a simple polygon, and still obtain
+exactly the same Minkowski sum. Practically, we remove all holesin one
+polygon whose bounding boxes are, in \f$x \f$- or \f$y \f$-direction,
+smaller than, or as large as, the bounding box of the other polygon.
+Obliterating holes in the input summands speeds up the computation of
+Minkowski sums, regardless of the approach used to compute the
+Minkowski sum.
+
+\subsection mink_ssec_conv Computing Minkowski Sum using Convolutions
 
 The function template \link minkowski_sum_2()
 `minkowski_sum_2(P, Q)`\endlink accepts two polygons
@@ -182,7 +197,8 @@ the function \link minkowski_sum_full_convolution_2()
 the \link Polygon_2 `Polygon_2`\endlink class template. The types of
 operands accepted by the function \link
 minkowski_sum_reduced_convolution_2()
-`minkowski_sum_reduced_convolution_2(P, Q)`\endlink
+`minkowski_sum_reduced_convolution_2(P, Q)`\endlink (and by the
+function \link minkowski_sum_2() `minkowski_sum_2(P, Q)`\endlink)
 are instances of either the \link Polygon_2 `Polygon_2`\endlink or
 \link Polygon_with_holes_2 `Polygon_with_holes_2`\endlink class templates.
 Even when the input polygons are restricted to be simple polygons, they
@@ -229,7 +245,7 @@ in both summands is large, the decomposition approach runs faster. In
 the following we describe how to employ the decomposition-based
 Minkowski sum procedure.
 
-\subsection mink_ssecdecomp Decomposition Strategies
+\subsection mink_ssec_decomp_strategies Decomposition Strategies
 
 In order to compute Minkowski sums of two polygon \f$ P \f$ and
 \f$ Q \f$ using the decomposition method, issue the call
@@ -242,7 +258,7 @@ of a type that models the concept
 `PolygonWithHolesConvexDecomposition_2`, which refines the concept
 `PolygonConvexDecomposition_2`. The same holds for \f$Q \f$.
 The two concepts `PolygonConvexDecomposition_2` and
-`PolygonWithHolesConvexDecomposition` refine a `Functor` concept
+`PolygonWithHolesConvexDecomposition_2` refine a `Functor` concept
 variant. Namely, they both require the provision of a function
 operator (`operator()`). The function operator of the model of the
 concept `PolygonConvexDecomposition_2` accepts a planar simple
@@ -251,14 +267,25 @@ polygon, while the function operator of the model of the concept
 with holes. Both return a range of convex polygons that represents
 the convex decomposition of the input polygon. If the decomposition
 strategy that decomposes \f$P \f$ is the same as the strategy that
-decompose \f$Q \f$, you can omit the forth argument, and
-issue the call `minkowski_sum_2(P, Q, decomp)`.
+decomposes \f$Q \f$, you can omit the forth argument, and
+issue the call `minkowski_sum_2(P, Q, decomp)`, where `decomp`
+is an object that represents the common strategy.
+The class template `Polygon_nop_decomposition_2`, which models the
+concept `PolygonConvexDecomposition_2`, is a trivial convex
+decomposition strategy referred to as the <I>nop<I/> strategy; it
+merely passes the input polygon to the next stage intact; use it in
+cases you know that the corresponding input polygon is convex to
+start with. If both \f$P \f$ and \f$Q \f$ are known to be convex,
+you can issue the call `minkowski_sum_2(P, Q, nop)`, where `nop`
+is an object that represents the nop strategy.
 
 The Minkowski-sum package includes four models of the concept
-`PolygonConvexDecomposition_2` and two models of the refined concept
+`PolygonConvexDecomposition_2` (besides the trivial model
+`Polygon_nop_decomposition_2`) and two models of the refined concept
 `PolygonWithHolesConvexDecomposition_2` as described below. The first
-three are class templates that wrap the decomposition functions included
-in the \ref Chapter_2D_Polygon "Planar Polygon Partitioning" package.
+three are class templates that wrap the corresponding decomposition
+functions included in the
+\ref Chapter_2D_Polygon "Planar Polygon Partitioning" package.
 
 <UL>
 <LI>The `Optimal_convex_decomposition_2<Kernel>` class template uses
@@ -310,10 +337,7 @@ vertex and having rational-coordinate endpoints on both sides.
 
 The following are two models of the refined concept
 `PolygonWithHolesConvexDecomposition_2`. An instance of any one these
-two types can be used to decompose a polygon with holes. You can pass
-the instance as the third argument to call
-`minkowski_sum_2(P, Q, decomp)` to compute the Minkowski sum of two
-polygons with holes, \f$P \f$ and \f$Q \f$.
+two types can be used to decompose a polygon with holes.
 <UL>
 <LI>The `Polygon_vertical_decomposition_2<Kernel>` class template
 uses vertical decomposition to decompose the underlying arrangement;
@@ -331,6 +355,29 @@ the same input polygons used in
 angle-bisector decomposition strategy.
 
 \cgalExample{Minkowski_sum_2/sum_by_decomposition.cpp}
+
+\subsection mink_ssec_optimal_decomp Optimal Decomposition
+
+Decomposition methods that handle polygons with holes are typically
+more costly than decomposition methods that handle only simple
+polygons. The hole filtration (see \ref mink_ssec_hole_filter) is
+applied before the actual construction starts (be it convolution
+based or decomposition based). The filteration may result with a
+polygon that does not have holes, or even a convex polygon, but this
+is unkown at the time of the call. To this end, we introduce the
+overloaded function template
+`minkowski_sum_by_decomposition_2(P, Q, no_holes_decomp, with_holes_decomp)`,
+where `no_holes_decomp` and `with_holes_decomp` are objects that model
+the concepts `PolygonConvexDecomposition_2` and
+`PolygonWithHolesConvexDecomposition_2`, respectively. If after the
+application of the hole filtration \f$P\f$ remains a polygon with holes,
+then the strategy represented by the object `with_holes_decomp` is
+applied to it. If, however, \f$P\f$ turns into a polygon without holes,
+then the strategy represented by the object `no_holes_decomp` is applied
+to it, unless the result is a convex polygon, in which case the nop
+strategy is applied. If \f$P\f$ is a polygon without holes to start with,
+then only convexity is checked. (Checking whether the result is convex
+inccurs a small overhead though.) The same holds for \f$Q\f$.
 
 \section mink_secoffset Offsetting a Polygon
 
@@ -388,7 +435,7 @@ sub-polygon, and finally calculating the union of these offsets
 sub-polygons; see \cgalFigureRef{mink_figpgn_offset} (b). However, as
 with the case of the Minkowski sum of a pair of polygons, it is also more
 efficient to compute the <I>convolution cycle</I> of the polygon and the
-disc \f$ B_r\f$, \cgalFootnote{As the disc is convex, it is guaranteed
+disc \f$ B_r\f$,\cgalFootnote{As the disc is convex, it is guaranteed
 that the convolution curve comprises a single cycle.} which can be
 constructed by applying the process described in the previous
 paragraph for convex polygons: The only difference is that a circular arc
@@ -399,7 +446,7 @@ the last step consists of computing the winding numbers of the faces
 of the arrangement induced by the convolution cycle and discarding the
 faces with zero winding numbers.
 
-\subsection mink_ssecapprox_offset Approximating the Offset with a Guaranteed Error Bound
+\subsection mink_ssec_approx_offset Approximating the Offset with a Guaranteed Error Bound
 
 Let \f$ P \f$ be a counterclockwise-oriented simple polygon all
 vertices of which  \f$ p_0, \ldots, p_{n-1} \f$ have rational coordinates,
@@ -429,7 +476,7 @@ is supported by the line \f$ Ax + By + C' = 0 \f$, where
 rational number. Therefore, the line segments that compose the offset
 boundaries cannot be represented as segments of lines with rational
 coefficients.
-In Section \ref mink_ssecexact_offset we use the line-pair representation
+In Section \ref mink_ssec_exact_offset we use the line-pair representation
 to construct the offset polygonin an exact manner using the traits class
 for conic arcs.
 </UL>
@@ -504,7 +551,7 @@ the header file `bops_circular.h`, which defines the polygon types.
 
 \cgalExample{Minkowski_sum_2/approx_offset.cpp}
 
-\subsection mink_ssecexact_offset Computing the Exact Offset
+\subsection mink_ssec_exact_offset Computing the Exact Offset
 
 As mentioned in the previous section, it is possible to represent
 offset polygons in an exact manner if the edges of the polygons are
@@ -548,7 +595,7 @@ handles polygons with holes, such as the
 `Polygon_vertical_decomposition_2<Kernel>` class template.
 \cgalAdvancedEnd
 
-\subsection mink_ssecinner_offset Computing Inner Offsets
+\subsection mink_ssec_inner_offset Computing Inner Offsets
 
 An operation closely related to the (outer) offset computation, is
 computing the <I>inner offset</I> of a polygon, or <I>insetting</I> it
