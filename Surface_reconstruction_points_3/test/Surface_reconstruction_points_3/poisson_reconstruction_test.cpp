@@ -13,6 +13,7 @@
 #include <CGAL/trace.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
@@ -30,6 +31,7 @@
 #include <fstream>
 #include <math.h>
 
+#include <boost/foreach.hpp>
 
 // ----------------------------------------------------------------------------
 // Types
@@ -123,11 +125,10 @@ int main(int argc, char * argv[])
 
       // Converts Polyhedron vertices to point set.
       // Computes vertices normal from connectivity.
-      Polyhedron::Vertex_const_iterator v;
-      for (v = input_mesh.vertices_begin(); v != input_mesh.vertices_end(); v++)
-      {
+      BOOST_FOREACH(boost::graph_traits<Polyhedron>::vertex_descriptor v, 
+                    vertices(input_mesh)){
         const Point& p = v->point();
-        Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal<Kernel>(*v);
+        Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal(v,input_mesh);
         points.push_back(Point_with_normal(p,n));
       }
     }
