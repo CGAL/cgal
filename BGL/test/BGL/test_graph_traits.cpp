@@ -93,15 +93,17 @@ void test_vertex_iterators(G& g)
   typedef boost::graph_traits< G > Traits;
   typedef typename Traits::vertex_iterator vertex_iterator;
 
+  vertex_iterator vb, ve;
   std::size_t count = 0;
-  for (typename G::Vertex_iterator it = g.vertices_begin(); it != g.vertices_end(); ++it)
+  for(boost::tie(vb, ve) = vertices(g); vb != ve; ++vb){
     ++count;
+  }
 
   assert(count == num_vertices(g));
 
   // check that the iterators reach uniques
   id_map ids;
-  vertex_iterator vb, ve;
+
   count = 0;
   for(boost::tie(vb, ve) = vertices(g); vb != ve; ++vb) {
     std::pair<id_map::iterator, bool> r = ids.insert(get(boost::vertex_index, g, *vb));
