@@ -66,7 +66,7 @@ public:
   this->graphicsView->fitInView(0,0, 20, 20, Qt::KeepAspectRatio);
   }
               
-public slots:
+public Q_SLOTS:
 
   void processInput(CGAL::Object o);
 
@@ -86,7 +86,7 @@ public slots:
 
   virtual void open(QString fileName);
 
-signals:
+Q_SIGNALS:
   void changed();
 };
 
@@ -174,7 +174,7 @@ MainWindow::deltaChanged(double d)
   output.clear();
   CGAL::snap_rounding_2<Traits,std::list<Segment_2>::const_iterator,std::list<std::list<Point_2> > >(input.begin(), input.end(), output, delta, true, false);
   rgi->setDelta(delta, delta);
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -193,7 +193,7 @@ MainWindow::processInput(CGAL::Object o)
       std::cerr << points.size() << std::endl;
     }
   }
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 /* 
@@ -210,7 +210,7 @@ MainWindow::on_actionClear_triggered()
 {
   input.clear();
   output.clear();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -218,14 +218,14 @@ void
 MainWindow::on_actionShowGrid_toggled(bool checked)
 {
   rgi->setVisible(checked);
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 void
 MainWindow::on_actionShowInput_toggled(bool checked)
 {
   isgi->setVisible(checked);
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -234,7 +234,7 @@ void
 MainWindow::on_actionShowSnappedSegments_toggled(bool checked)
 {
   plgi->setVisible(checked);
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -269,7 +269,7 @@ MainWindow::open(QString fileName)
   QApplication::restoreOverrideCursor();
   this->addToRecentFiles(fileName);
   on_actionRecenter_triggered();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 void

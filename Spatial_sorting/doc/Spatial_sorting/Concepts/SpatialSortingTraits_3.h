@@ -3,7 +3,7 @@
 \ingroup PkgSpatialSortingConcepts
 \cgalConcept
 
-All 3D spatial sorting algorithms provided in \cgal are parameterized 
+All 3D spatial sorting algorithms, including sorting on the sphere, provided in \cgal are parameterized 
 by a traits class `Traits`, which defines the 
 primitives (objects and predicates) that the sorting algorithms use. 
 `SpatialSortingTraits_3` defines the complete set of primitives required in these 

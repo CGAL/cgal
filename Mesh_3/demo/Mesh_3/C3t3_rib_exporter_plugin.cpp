@@ -45,7 +45,7 @@ public:
     return QList<QAction*>() << actionCreateRib;
   }
   
-public slots:
+public Q_SLOTS:
   void create_rib();
   void height_changed(int i);
   void width_changed(int i);

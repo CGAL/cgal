@@ -375,7 +375,6 @@ test_Euler_operations()
   remove_center_vertex_test<Graph>();
   join_split_inverse<Graph>();
   satisfies_link_condition<Graph>();
-  
 }
 
 int main()

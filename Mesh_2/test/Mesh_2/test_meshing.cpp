@@ -18,17 +18,7 @@
 #include <iostream>
 #include <cassert>
 
-template <class CTr>
-typename CTr::size_type number_of_constrained_edges(const CTr& tr)
-{
-  typename CTr::size_type nedges = 0;
-  for(typename CTr::Finite_edges_iterator eit = tr.finite_edges_begin();
-      eit != tr.finite_edges_end();
-      ++eit)
-    if(tr.is_constrained(*eit))
-      ++nedges;
-  return nedges;
-}
+#include "test_utilities.h"
 
 template <typename K, typename CDT>
 struct Tester2;

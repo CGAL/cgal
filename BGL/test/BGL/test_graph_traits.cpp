@@ -4,8 +4,25 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
+#include <CGAL/use.h>
 
 typedef boost::unordered_set<std::size_t> id_map;
+
+template <typename Graph>
+void test_isolated_vertex(const Graph& g)
+{
+  std::cerr << typeid(g).name() << std::endl;
+  Graph G;
+  typedef boost::graph_traits< Graph > Traits;
+  typedef typename Traits::vertex_descriptor vertex_descriptor;
+  typedef typename Traits::halfedge_descriptor halfedge_descriptor;
+  vertex_descriptor v = add_vertex(G);
+  // the connectivity of v may be anything
+  set_halfedge(v, Traits::null_halfedge(), G);
+  halfedge_descriptor h = halfedge(v,G);
+  CGAL_USE(h);
+}
+
 
 template <typename Graph>
 void test_halfedge_around_vertex_iterator(const Graph& g)
@@ -76,15 +93,17 @@ void test_vertex_iterators(G& g)
   typedef boost::graph_traits< G > Traits;
   typedef typename Traits::vertex_iterator vertex_iterator;
 
+  vertex_iterator vb, ve;
   std::size_t count = 0;
-  for (typename G::Vertex_iterator it = g.vertices_begin(); it != g.vertices_end(); ++it)
+  for(boost::tie(vb, ve) = vertices(g); vb != ve; ++vb){
     ++count;
+  }
 
   assert(count == num_vertices(g));
 
   // check that the iterators reach uniques
   id_map ids;
-  vertex_iterator vb, ve;
+
   count = 0;
   for(boost::tie(vb, ve) = vertices(g); vb != ve; ++vb) {
     std::pair<id_map::iterator, bool> r = ids.insert(get(boost::vertex_index, g, *vb));
@@ -255,6 +274,7 @@ test(const std::vector<Graph>& graphs)
     test_faces(p);
     test_halfedge_around_vertex_iterator(p);
     test_halfedge_around_face_iterator(p);
+    test_isolated_vertex(p);
   }
 }
 

@@ -16,7 +16,7 @@
 // $Id$
 //
 // Author(s)     : Christophe Delage
-//               : Olivier Devillers
+//
 
 #ifndef CGAL_HILBERT_SORT_H
 #define CGAL_HILBERT_SORT_H
@@ -89,9 +89,6 @@ namespace internal {
 #endif
         (Hilbert_sort_d<Kernel, Policy> (k))(begin, end);
     }
-    
-
-
 }
 
 template <class RandomAccessIterator>

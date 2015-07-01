@@ -63,13 +63,13 @@ int main() {
   Solution::Unboundedness_certificate_iterator w =
     s.unboundedness_certificate_begin();
   // check w >= 0
-  assert (w[0] >= 0);
-  assert (w[1] >= 0);
+  assert (ET(w[0]) >= 0);
+  assert (ET(w[1]) >= 0);
   // check A w <= 0
-  assert (A[0][0] * w[0] + A[1][0] * w[1] <= 0);
-  assert (A[0][1] * w[0] + A[1][1] * w[1] <= 0);
+  assert (A[0][0] * ET(w[0]) + A[1][0] * ET(w[1]) <= 0);
+  assert (A[0][1] * ET(w[0]) + A[1][1] * ET(w[1]) <= 0);
   // check c^T w < 0
-  assert (c[0] * w[0] + c[1] * w[1] < 0);
+  assert (c[0] * ET(w[0]) + c[1] * ET(w[1]) < 0);
 
   return 0;
 }

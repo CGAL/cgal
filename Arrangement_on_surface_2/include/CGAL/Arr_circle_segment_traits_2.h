@@ -12,12 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Baruch Zukerman   <baruchzu@post.tau.ac.il>
+//                 Waqar Khan <wkhan@mpi-inf.mpg.de>
 
 #ifndef CGAL_ARR_CIRCLE_SEGMENT_TRAITS_2_H
 #define CGAL_ARR_CIRCLE_SEGMENT_TRAITS_2_H
@@ -37,11 +34,9 @@ namespace CGAL {
 /*! \class
  * A traits class for maintaining an arrangement of circles.
  */
-template <class Kernel_, bool Filter = true>
-class Arr_circle_segment_traits_2 
-{
+template <typename Kernel_, bool Filter = true>
+class Arr_circle_segment_traits_2 {
 public:
-
   typedef Kernel_                                        Kernel;
   typedef typename Kernel::FT                            NT;
   typedef typename Kernel::Point_2                       Rational_point_2;
@@ -55,17 +50,16 @@ public:
   typedef Arr_circle_segment_traits_2<Kernel, Filter>    Self;
 
   // Category tags:
-  typedef Tag_true                                     Has_left_category;
-  typedef Tag_true                                     Has_merge_category;
-  typedef Tag_false                                    Has_do_intersect_category;
+  typedef Tag_true                                   Has_left_category;
+  typedef Tag_true                                   Has_merge_category;
+  typedef Tag_false                                  Has_do_intersect_category;
 
-  typedef Arr_oblivious_side_tag                       Left_side_category;
-  typedef Arr_oblivious_side_tag                       Bottom_side_category;
-  typedef Arr_oblivious_side_tag                       Top_side_category;
-  typedef Arr_oblivious_side_tag                       Right_side_category;
-    
+  typedef Arr_oblivious_side_tag                     Left_side_category;
+  typedef Arr_oblivious_side_tag                     Bottom_side_category;
+  typedef Arr_oblivious_side_tag                     Top_side_category;
+  typedef Arr_oblivious_side_tag                     Right_side_category;
+
 protected:
-
   // Type definition for the intersection points mapping.
   typedef typename X_monotone_curve_2::Intersection_map   Intersection_map;
 
@@ -74,14 +68,13 @@ protected:
   bool m_use_cache;
 
 public:
-
   /*! Default constructor. */
   Arr_circle_segment_traits_2 (bool use_intersection_caching = false) :
     m_use_cache(use_intersection_caching)
   {}
 
   /*! Get the next curve index. */
-  static unsigned int get_index () 
+  static unsigned int get_index ()
   {
     static unsigned int index = 0;
     return (++index);
@@ -396,7 +389,7 @@ public:
     {}
 
     /*!
-     * Cut the given conic curve (ocv.is_in_x_range (p)r conic arc) into x-monotone subcurves 
+     * Cut the given conic curve (ocv.is_in_x_range (p)r conic arc) into x-monotone subcurves
      * and insert them to the given output iterator.
      * \param cv The curve.
      * \param oi The output iterator, whose value-type is Object. The returned
@@ -426,7 +419,7 @@ public:
       const typename Kernel::Circle_2&  circ = cv.supporting_circle();
       CGAL::Sign   sign_rad = CGAL::sign (circ.squared_radius());
       CGAL_precondition (sign_rad != NEGATIVE);
-      
+
       if (sign_rad == ZERO)
       {
         // Create an isolated point.
@@ -434,7 +427,7 @@ public:
         ++oi;
         return (oi);
       }
-      
+
       // The curve is circular: compute the to vertical tangency points
       // of the supporting circle.
       Point_2         vpts[2];
@@ -450,7 +443,7 @@ public:
                                                cv.orientation(),
                                                index));
         ++oi;
-        
+
         *oi = make_object (X_monotone_curve_2 (circ,
                                                vpts[1], vpts[0],
                                                cv.orientation(),
@@ -468,7 +461,7 @@ public:
                                                  cv.orientation(),
                                                  index));
           ++oi;
-        
+
           *oi = make_object (X_monotone_curve_2 (circ,
                                                  vpts[0], vpts[1],
                                                  cv.orientation(),
@@ -489,7 +482,7 @@ public:
                                                  cv.orientation(),
                                                  index));
           ++oi;
-        
+
           *oi = make_object (X_monotone_curve_2 (circ,
                                                  vpts[0], cv.target(),
                                                  cv.orientation(),
@@ -508,7 +501,7 @@ public:
           ++oi;
         }
       }
-      
+
       return (oi);
     }
   };
@@ -619,7 +612,7 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
@@ -674,7 +667,6 @@ public:
     return Compare_endpoints_xy_2();
   }
 
-
   class Construct_opposite_2
   {
   public:
@@ -693,8 +685,59 @@ public:
   Construct_opposite_2 construct_opposite_2_object() const
   {
     return Construct_opposite_2();
-  } 
+  }
 
+  class Trim_2 {
+  protected:
+    typedef Arr_circle_segment_traits_2<Kernel, Filter> Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Trim_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_circle_segment_traits_2<Kernel, Filter>;
+
+  public:
+    /*!\brief
+     * Returns a trimmed version of an arc
+     *
+     * \param xcv The arc
+     * \param src the new first endpoint
+     * \param tgt the new second endpoint
+     * \return The trimmed arc
+     *
+     * \pre src != tgt
+     * \pre both points must be interior and must lie on \c cv
+     */
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
+                                  const Point_2& src,
+                                  const Point_2& tgt)const
+    {
+      // make functor objects
+      CGAL_precondition_code(Compare_y_at_x_2 compare_y_at_x_2 =
+                             m_traits.compare_y_at_x_2_object());
+      CGAL_precondition_code(Equal_2 equal_2 = m_traits.equal_2_object());
+      Compare_x_2 compare_x_2 = m_traits.compare_x_2_object();
+      // Check whether source and taget are two distinct points and they lie
+      // on the line.
+      CGAL_precondition(compare_y_at_x_2(src, xcv) == EQUAL);
+      CGAL_precondition(compare_y_at_x_2(tgt, xcv) == EQUAL);
+      CGAL_precondition(! equal_2(src, tgt));
+
+      //check if the orientation conforms to the src and tgt.
+      if( (xcv.is_directed_right() && compare_x_2(src, tgt) == LARGER) ||
+          (! xcv.is_directed_right() && compare_x_2(src, tgt) == SMALLER) )
+        return (xcv.trim(tgt, src) );
+      else return (xcv.trim(src, tgt));
+    }
+  };
+
+  /*! Obtain a Trim_2 functor object. */
+  Trim_2 trim_2_object() const { return Trim_2(*this); }
 };
 
 } //namespace CGAL

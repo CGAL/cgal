@@ -132,14 +132,14 @@ get_corners(OutputIterator corners) const;
 Fills `curves` with the curve segments
 of the input domain.
 `curves` value type must be
-`CGAL::cpp11::tuple<Curve_segment_index,std::pair<Point_3,Index>,std::pair<Point_3,Index> >`.
+`CGAL::cpp11::tuple<Curve_segment_index,std::pair<Point_3,%Index>,std::pair<Point_3,%Index> >`.
 If the curve segment corresponding to an entry
 in curves is not a cycle, the pair of associated points should
 belong to
 two corners incident on the curve segment.
 If it is a cycle, then the same `Point_3` should be given twice and must be any
 point on the cycle.
-The `Index` values associated to the points are their indices w.r.t.\ their dimension.
+The `%Index` values associated to the points are their indices w.r.t.\ their dimension.
 */
 template <typename OutputIterator>
 OutputIterator

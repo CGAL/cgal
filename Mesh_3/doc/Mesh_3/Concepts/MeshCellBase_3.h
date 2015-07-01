@@ -78,7 +78,7 @@ typedef unspecified_type Surface_patch_index;;
  of the input complex on which a possible future Steiner vertex lies.
  Must match the type `MeshDomain_3::Index`.
 */
-typedef unspecified_type Index;;
+typedef unspecified_type Index;
 
 /// @} 
 

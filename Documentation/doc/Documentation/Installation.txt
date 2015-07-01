@@ -35,6 +35,12 @@ make
 where the second line creates a `CMakeLists.txt` file (check
 its options in Section \ref seccreate_cgal_CMakeLists for various details).
 
+Note that, until CGAL 4.6, \ref seccreate_cgal_CMakeLists only recognized
+source files ending in `.cpp` or `.C`; if the above fails on the `cmake` command
+or produces an empty Makefile, check whether your source files go by such a name.
+Recent versions find all source files ending in
+`.cc`, `.cp`, `.cxx`, `.cpp`, `.CPP`, `.c++`, or `.C`.
+
 In a less ideal world, you probably have to install CMake, a makefile
 generator, and third party libraries. That is what this manual is about.
 
@@ -161,7 +167,7 @@ In order to build the \cgal libraries, you need a \cpp compiler.
 In order to configure, build, and install the \cgal libraries, examples and
 demos, you need CMake, a cross-platform "makefile generator".
 If CMake is not installed already you can obtain it from <A HREF="http://www.cmake.org/">`http://www.cmake.org/`</A>.
-CMake version 2.6.2 or higher is required. On Windows, CMake 
+CMake version 2.6.3 or higher is required. On Windows, CMake 
 version 2.8.6 or higher is required, for a proper support of DLL's
 generation.
 This manual explains only those features of
@@ -347,7 +353,7 @@ installed as binaries.
 
 \cgal requires the \sc{Boost} libraries. In particular the header files
 and the threading library (`Boost.Thread` and
-`Boost.System` binaries). Version 1.39 (or higher) are needed.
+`Boost.System` binaries). Version 1.48 (or higher) are needed.
 
 On Windows, as auto-linking is used, you also need the binaries of
 `Boost.Serialization` and `Boost.DateTime`, but the
@@ -724,13 +730,13 @@ cmake -DWITH_examples=OFF -DWITH_demos=OFF -DCMAKE_BUILD_TYPE=Release
 -- MPFR libraries: /usr/lib/libmpfr.so
 -- MPFR definitions: 
 -- USING MPFR_VERSION = '3.0.0'
--- Boost version: 1.39.0
+-- Boost version: 1.48.0
 -- Found the following Boost libraries:
 -- thread
--- Boost include: /usr/include/boost_1_39_0/include/boost-1_39
+-- Boost include: /usr/include/boost_1_48_0/include/boost-1_48
 -- Boost libraries: /usr/lib/libboost_thread-mt.so;pthread
 -- Boost definitions: 
--- USING BOOST_VERSION = '1.39.0'
+-- USING BOOST_VERSION = '1.48.0'
 == Detect external libraries (DONE) ==
 
 == Write compiler_config.h ==
@@ -952,8 +958,9 @@ configuration.
 <DL>
 <DT><B>`-s source`</B><DD> If this parameter is given the script will
 create <B>a single executable</B> for 'source' linked with
-compilations of all other source files (`*.cpp`). This
-behaviour is usually needed for (graphical) demos. 
+compilations of all other source files
+(`*.cc`, `*.cp`, `*.cxx`, `*.cpp`, `*.CPP`, `*.c++`, or `*.C`).
+This behaviour is usually needed for (graphical) demos. 
 
 If the parameter is not given, the script creates <B>one executable for each given
 source file</B>.
@@ -983,7 +990,7 @@ contained in the `CGAL-\cgalReleaseNumber``/scripts` directory. It can be used
 to create `CMakeLists.txt` files for compiling \cgal
 applications. Executing `cgal_create_cmake_script` in an
 application directory creates a `CMakeLists.txt` containing
-rules for every `*.cpp` file there. The script is deprecated,
+rules for every C++ source file there. The script is deprecated,
 as it only works for applications with a single course file that only
 need libCGAL and libCGAL_Core.
 

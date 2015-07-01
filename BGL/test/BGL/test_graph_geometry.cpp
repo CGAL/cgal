@@ -48,7 +48,7 @@ is_pure_triangle_test()
   {
     // we have no impure data, this is a major snafu
   }
-  assert(CGAL::is_pure_triangle(pure));
+  assert(CGAL::is_triangle_mesh(pure));
 }
 
 int main()

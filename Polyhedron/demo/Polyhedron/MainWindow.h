@@ -52,7 +52,7 @@ public:
   /// `std::invalid_argument` if `fileinfo` specifies an invalid file
   Scene_item* load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_interface*);
 
-public slots:
+public Q_SLOTS:
   void updateViewerBBox();
   void open(QString);
 
@@ -100,7 +100,7 @@ public slots:
   bool hasPlugin(const QString&) const;
   void enableScriptDebugger(bool = true);
 
-protected slots:
+protected Q_SLOTS:
   void selectionChanged();
 
   void contextMenuRequested(const QPoint& global_pos);

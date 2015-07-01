@@ -59,7 +59,9 @@
 <td width="28%">
 
 <table CELLSPACING=0>
-<tr><td><a href="#release4.6">4.6</a>&nbsp;<td> (? 2015)
+<tr><td><a href="#release4.7">4.7</a>&nbsp;<td> (September 2015)
+<tr><td><a href="#release4.6.1">4.6.1</a>&nbsp;<td> (June 2015)
+<tr><td><a href="#release4.6">4.6</a>&nbsp;<td> (April 2015)
 <tr><td><a href="#release4.5.2">4.5.2</a>&nbsp;<td> (February 2015)
 <tr><td><a href="#release4.5.1">4.5.1</a>&nbsp;<td> (December 2014)
 <tr><td><a href="#release4.5">4.5</a>&nbsp;<td> (October 2014)
@@ -111,18 +113,162 @@ and <code>src/</code> directories).
 </table>
 
 <HR>
-
-<h2 id="release4.6">Release 4.6 </h2>
+<h2 id="release4.7">Release 4.7 </h2>
 <div>
-  <p>Release date: XXX 2015 </p>
+  <p>Release date: September 2015 </p>
 
 <!-- Installation (and general changes) -->
 <!-- New packages -->
+  <h3>Triangulated Surface Mesh Shortest Paths (new package)</h3>
+  <ul>
+    <li>
+      The package provides methods for computing shortest path on
+      triangulated surface meshes. Given a set of source points
+      on the surface, this package provides a data structure that
+      can efficiently provides the shortest path from any point on
+      the surface to the sources points.
+      There is no restriction on the genus or the number of connnected
+      components of the mesh.
+    </li>
+  </ul>
+<!-- Major and breaking changes -->
+  <h3>Approximation of Ridges and Umbilics on Triangulated Surface Meshes</h3>
+<ul>
+<li> This package now supports any model of the concept <code>FaceGraph</code>.
+<li> <b>Breaking change:</b> The package no longer support models of <code>TriangulatedSurfaceMesh</code> which are not at the same time model of the concept <code>FaceGraph</code>. 
+</li>
+</ul>
+<!-- Arithmetic and Algebra -->
+<!-- Combinatorial Algorithms -->
+<!-- Geometry Kernels -->
+<!-- Convex Hull Algorithms -->
+<!-- Polygons -->
+<!-- Cell Complexes and Polyhedra -->
+<!-- Arrangements -->
+  <h3>2D Arrangements</h3>
+  <ul>
+    <li>Introduced a new traits class, called
+      <code>Arr_polycurve_traits_2&lt;SubcurveTraits&gt;</code>, which handles
+      general piece-wise (polycurve) curves. The pieces do not necessarily
+      have to be linear.</li>
+    <li>Introduced two new concepts called
+      <code>ArrangementApproximateTraits_2</code> and
+      <code>ArrangementConstructXMonotoneCurveTraits_2</code>.
+      <ul>
+	<li>The existing <code>ArrangementLandmarkTraits_2</code> concept,
+	  which has two requirements, now refines the two respective concepts
+	  above.</li>
+	<li>The template parameter of the exsting
+	  <code>Arr_polyline_traits_2&lt;SegmentTraits&gt;</code> template must
+	  be substituted with a traits class that is a model of
+	  the <code>ArrangementConstructXMonotoneTraits_2</code> concept among
+	  the other when <code>Arr_polyline_traits_2</code> is
+	  instantiated.</li>
+      </ul></li>
+  </ul>
+  <h3>2D Minkowski Sums</h3>
+  <ul>
+    <li>Added support for polygons with holes and optimized the construction
+      of Minkowski sums.
+    <ul>
+      <li>Introduced an implementation of the "reduced convolution" method, a
+	variant of the method described in "2D Minkowski Sum of Polygons Using
+	Reduced Convolution" by Behar and Lien. The new method supports polygons
+	with holes and in many cases out pergorms the implementation of the
+	exsisting (full) convolution method.</li>
+      <li>Introduced two new classes that decompose polygons into convex pieces
+	(models of the <code>PolygonConvexDecomposition_2</code> concept) based
+	on vertical decomposition and constrained Delaunay triangulation,
+	respectively. These new models also support the convex decomposition of
+	polygons with holes.</li>
+    </ul></li>
+  </ul>
+
+<!-- Triangulations and Delaunay Triangulations -->
+<!-- Voronoi Diagrams -->
+<!-- Mesh Generation -->
+  <h3>2D Conforming Triangulations and Meshes</h3>
+  <ul>
+    <li>
+    Add an optimization method <code>CGAL::lloyd_optimize_mesh_2()</code> that implements
+    the Lloyd (or Centroidal Voronoi Tesselation) optimization algorithm
+    in a Constrained Delaunay Triangulation.
+    For optimization, the triangulation data structure on which the mesher relies
+    needs its <code>VertexBase</code> template parameter to be a model
+    of the new concept <code>DelaunayMeshVertexBase_2</code>.
+    </li>
+  </ul>
+<!-- Geometry Processing -->
+  <h3>Point Set Processing and Surface Reconstruction from Point Sets</h3>
+  <ul>
+    <li>
+    Add the function <code>CGAL::compute_vcm()</code> for computing the
+    Voronoi Covariance Measure (VCM) of a point set. The output of this function
+    can be used with the function <code>CGAL::vcm_is_on_feature_edge()</code>
+    to determine whether a point is on or close to a feature edge. The former
+    function is also internally used by <code>CGAL::vcm_estimate_normals()</code>
+    to estimate the normals of a point set and it is particularly suited to point
+    set with noise.
+    </li>
+  </ul>
+<!-- Spatial Searching and Sorting -->
+  <h3>Spatial Sorting</h3>
+  <ul>
+        <li>Add the possibility to sort points on a sphere along
+            a space-filling curve using the functions
+            <code>CGAL::hilbert_sort_on_sphere</code> and
+            <code>CGAL::spatial_sort_on_sphere</code>.</li>
+  </ul>
+<!-- Geometric Optimization -->
+<!-- Interpolation -->
+<!-- Support Library -->
+  <h3>Geometric Object Generators</h3>
+  <ul>
+    <li>Add new random generator of points in a 2D and 3D triangle and in a tetrahedron
+        (<code>CGAL::Random_points_in_triangle_2</code>,
+        <code>CGAL::Random_points_in_triangle_3</code>,
+        <code>CGAL::Random_points_in_tetrahedron_3</code>).
+    </li>
+  </ul>
+
+
+<!-- end of the div for 4.7 -->
+</div>
+
+<h2 id="release4.6.1">Release 4.6.1 </h2>
+<div>
+  <p>Release date: June 2015 </p>
+
+  <p>This release only fixes bugs. See the list of fixed bugs on Github:</p>
+  <p><a href="https://github.com/CGAL/cgal/issues?q=milestone%3A4.6.1+-label%3Ainvalid">
+    https://github.com/CGAL/cgal/issues?q=milestone%3A4.6.1+-label%3Ainvalid
+  </a></p>
+</div>
+
+<h2 id="release4.6">Release 4.6 </h2>
+<div>
+  <p>Release date: April 2015 </p>
+
+<!-- Installation (and general changes) -->
+  <h3>Installation</h3>
+  <ul>
+    <li>The required version of Boost is now 1.48 or higher.</li>
+  </ul>
+<!-- New packages -->
+  <h3>2D Polyline Simplification (new package)</h3>
+  <ul>
+    <li>This package enables to simplify polylines with the guarantee
+        that the topology of the polylines does not change. This can be
+        done for a single polyline as well as for a set of polyline
+        constraints in a constrained triangulation. The simplification
+        can be controlled with cost and stop functions.</li>
+  </ul>
+
   <h3>2D Generalized Barycentric Coordinates (new package)</h3>
   <ul>
-    <li>  This package offers an efficient and robust implementation of
-          two-dimensional closed-form generalized barycentric coordinates
-          defined for simple two-dimensional polygons.</li>
+    <li>This package offers an efficient and robust implementation of
+        two-dimensional closed-form generalized barycentric coordinates
+        defined for simple two-dimensional polygons.</li>
   </ul>
 
   <h3>Scale-Space Surface Reconstruction (new package)</h3>
@@ -139,25 +285,32 @@ and <code>src/</code> directories).
 
   <h3>Surface Mesh (new package)</h3>
   <ul>
-    <li>The surface mesh class provided by this package is a data structure
-      that can be used as halfedge data structure or polyhedral surface. It is
-      an alternative to the packages <code>CGAL::Polyhedron_3</code> and <code>CGAL::HalfedgeDS</code>. </li>
+    <li>The surface mesh class provided by this package is an implementation
+        of the halfedge data structure allowing to represent polyhedral surfaces.
+        It is an alternative to the packages <code>CGAL::Polyhedron_3</code>
+        and <code>CGAL::HalfedgeDS</code>. </li>
   </ul>
 
-  <h3>Triangulation (new package)</h3>
+  <h3>dD Triangulation (new package)</h3>
   <ul>
     <li>This new package provides classes for manipulating triangulations
-        in Euclidean spaces whose dimension can be specified at compile-time or at run-time.</li>
+        in Euclidean spaces whose dimension can be specified at
+        compile-time or at run-time. It also provides a class that
+        represents Delaunay triangulations.</li>
   </ul>
 
 <!-- Major and breaking changes -->
+  <h3>dD Convex Hulls and Delaunay Triangulations</h3>
+  <ul>
+    <li>This package is deprecated and the new package Triangulation should be used instead.</li>
+  </ul>
 <!-- Arithmetic and Algebra -->
 <!-- Combinatorial Algorithms -->
 <!-- Geometry Kernels -->
   <h3>dD Geometry Kernel</h3>
   <ul>
     <li> It has been reported that the recently introduced <code>Epick_d</code>
-      kernel may not work with Intel C++ Compiler prior to version 15. 
+      kernel may not work with Intel C++ Compiler prior to version 15.
       Documentation has been updated.</li>
   </ul>
 <!-- Convex Hull Algorithms -->
@@ -171,6 +324,8 @@ and <code>src/</code> directories).
     <li>Fix a robustness issue in <code>Convex_hull_traits_3</code>.
         This traits is used by default with the kernel
         <code>Exact_predicates_inexact_constructions_kernel</code>.</li>
+    <li>The function <code>CGAL::convex_hull_incremental_3</code> is deprecated and
+        the function <code>convex_hull_3</code> should be used instead.</li>
   </ul>
 <!-- Polygons -->
 <!-- Cell Complexes and Polyhedra -->
@@ -178,7 +333,7 @@ and <code>src/</code> directories).
   <ul>
     <li>Added <code>correct_invalid_attributes</code>,
       <code>set_automatic_attributes_management</code> and
-      <code>are_attributes_automatically_managed</code> methods in 
+      <code>are_attributes_automatically_managed</code> methods in
       <code>CombinatorialMap</code> concept. This allows high level
       operations to not update non void attributes during massive calls
       of these operations, but only after the end of their executions.
@@ -207,37 +362,40 @@ and <code>src/</code> directories).
 <!-- Spatial Searching and Sorting -->
   <h3>3D Fast Intersection and Distance Computation</h3>
   <ul>
-    <li>Add new constructors to <code>AABB_halfedge_graph_segment_primitive</code> and
-    <code>AABB_face_graph_triangle_primitive</code> in order to be able to build primitives
-    one by one.</li>
+    <li>Add new constructors
+    to <code>AABB_halfedge_graph_segment_primitive</code> and
+    <code>AABB_face_graph_triangle_primitive</code> in order to be able to
+    build primitives one by one.</li>
   </ul>
   <h3>Spatial Searching</h3>
   <ul>
     <li>
-      Fixed a bug in <code>CGAL::Splitters.h</code> sliding mitdpoint rule, 
+      Fixed a bug in <code>CGAL::Splitters.h</code> sliding midpoint rule,
       where degenerated point sets (e.g.,points on segment)
       caused the kd-tree to get linear.
     </li>
     <li>
       Improved performance of <code>Orthogonal_k_neighbor_search</code>.
-      Note that VC 2013 does not compile <code>boost::container::deque</code> of Boost 1_55
-      and does hence have a workaround which does not have the improvement.
+      Note that VC 2013 does not
+      compile <code>boost::container::deque</code> of Boost 1_55 and does
+      hence have a workaround which does not have the improvement.
     </li>
     <li>
       <b>Breaking change:</b> The concept <code>OrthogonalDistance</code> has
       new function overloads for <code>min_distance_to_rectangle</code> and
-      <code>max_distance_to_rectangle</code> with an additional reference 
+      <code>max_distance_to_rectangle</code> with an additional reference
       parameter <code>std::vector</code>.
     </li>
     <li>
-      <b>Breaking change:</b> The order of the points in the iterator range 
-      <code>[tree.begin(),tree.end()]</code> is not the order of 
+      <b>Breaking change:</b> The order of the points in the iterator range
+      <code>[tree.begin(),tree.end()]</code> is not the order of
       insertion of the points into the tree.  This was not guaranteed before
-      but might have beeen observed and exploited by users.
+      but might have been observed and exploited by users.
     </li>
     <li>
-      Derived <code>kd_tree_leaf_node</code> and <code>kd_tree_internal_node</code>
-      from <code>kd_tree_node</code> to save memory.
+      Derived <code>kd_tree_leaf_node</code>
+      and <code>kd_tree_internal_node</code> from <code>kd_tree_node</code>
+      to save memory.
     </li>
   </ul>
 <!-- Geometric Optimization -->
@@ -245,9 +403,9 @@ and <code>src/</code> directories).
 <!-- Support Library -->
   <h3>Geometric Object Generators</h3>
   <ul>
-    <li>Add a new function  <code>random_convex_hull_in_disc_2</code> that
-        efficiently generates a random polygon as the convex hull of uniform random
-        points chosen in a disc.</li>
+    <li>Add a new function <code>random_convex_hull_in_disc_2</code> that
+        efficiently generates a random polygon as the convex hull of
+        uniform random points chosen in a disc.</li>
   </ul>
 <!-- end of the div for 4.6 -->
 </div>
@@ -577,6 +735,12 @@ and <code>src/</code> directories).
   <h3>3D Periodic Triangulations</h3>
   <ul>
     <li>Add a method to locate point with inexact predicates.
+    </li>
+    <li>Rename Periodic_3_triangulation_traits_3 Periodic_3_Delaunay_triangulation_traits_3.
+    </li>
+    <li>Rename the concept Periodic_3TriangulationTraits_3 Periodic_3DelaunayTriangulationTraits_3.
+    </li>
+    <li>Create Periodic_3_triangulation_traits_3 and the concept Periodic_3TriangulationTraits_3. 
     </li>
   </ul>
 

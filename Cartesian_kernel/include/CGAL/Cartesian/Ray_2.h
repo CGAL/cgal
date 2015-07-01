@@ -55,13 +55,13 @@ public:
   const Point_2&
   source() const
   {
-    return get(base)[0];
+    return get_pointee_or_identity(base)[0];
   }
 
   const Point_2 &
   second_point() const
   {
-    return get(base)[1];
+    return get_pointee_or_identity(base)[1];
   }
 
   typename R_::Boolean   is_degenerate() const

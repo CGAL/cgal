@@ -169,7 +169,8 @@ constructs a conic arc supported by the conic curve
 \f$ r x^2 + s y^2 + t x y + u x + v y + w = 0\f$, going 
 in the given orientation `o` from the source point `ps` to 
 its target point `pt`. 
-\pre `ps` and `pt` both satisfy the equation of the supporting conic curve and define a bounded segment of this curve (e.g. in case of a hyperbolic arc, both point should be located on the same branch of the hyperbola). 
+\pre `ps` and `pt` both satisfy the equation of the supporting conic curve and define a bounded segment of this 
+curve (e.g. in case of a hyperbolic arc, both point should be located on the same branch of the hyperbola). 
 \pre `o` is not `COLLINEAR` if the supporting conic is curves, and must be `COLLINEAR` if it is not curved (a line or a line-pair). 
 */ 
 Curve_2 (const Rational& r, const Rational& s, 
@@ -203,7 +204,9 @@ and their exact locations are given implicitly, specified by the
 intersections of the supporting conic curve with 
 \f$ r_1 x^2 + s_1 y^2 + t_1 x y + u_1 x + v_1 y + w_1 = 0\f$ and 
 \f$ r_2 x^2 + s_2 y^2 + t_2 x y + u_2 x + v_2 y + w_2 = 0\f$, respectively. 
-\pre The two auxiliary curves specifying the endpoints really intersect with the supporting conic curve, such that the arc endpoints define a bounded segment of the supporting curve (e.g. in case of a hyperbolic arc, both point should be located on the same branch of the hyperbola). 
+\pre The two auxiliary curves specifying the endpoints really intersect with the supporting conic curve, 
+such that the arc endpoints define a bounded segment of the supporting 
+curve (e.g. in case of a hyperbolic arc, both point should be located on the same branch of the hyperbola). 
 \pre `o` is not `COLLINEAR` if the supporting conic is curves, and must be `COLLINEAR` if it is not curved (a line or a line-pair). 
 */ 
 Curve_2 (const Rational& r, const Rational& s, 
@@ -260,7 +263,8 @@ bool is_full_conic() const;
 /// @}
 
 /*! \name
-The six following methods return the coefficients of the supported conic, after their conversion to integer number (represented by the `Integer` type of the `NtTraits` class):
+The six following methods return the coefficients of the supported conic, after their conversion to integer 
+number (represented by the `Integer` type of the `NtTraits` class):
 */
 /// @{
 
@@ -380,6 +384,21 @@ const Point_2& right() const;
 /// @}
 
 }; /* end Arr_conic_traits_2::X_monotone_curve_2 */
+
+Class Trim_2{
+public:
+/// \name Creation 
+/// @{
+
+/*!
+Trims the given x-monotone curve to an from src to tgt.
+\ pre `src` and `tgt` lies on the curve 
+*/ 
+
+X_monotone_curve_2(const X_monotone_curve_2& xcv, 
+                                const Point_2& src,
+                                const Point_2& tgt)const
+}/* end Arr_conic_traits_2::Trim_2 */
 
 
 }; /* end Arr_conic_traits_2 */

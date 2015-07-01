@@ -65,6 +65,9 @@ find_package(OpenGL)
 
 # Find QGLViewer
 if(QT4_FOUND)
+
+  add_definitions(-DQT_NO_KEYWORDS)
+
   include(${QT_USE_FILE})
   include_directories( ${QT_INCLUDE_DIR}/QtScriptTools )
   find_package(QGLViewer )
@@ -103,6 +106,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( fairingUI_FILES Fairing_widget.ui)
   qt4_wrap_ui( selectionUI_FILES Selection_widget.ui)
   qt4_wrap_ui( funcUI_FILES Function_dialog.ui )
+  qt4_wrap_ui( shortestPathUI_FILES Shortest_path_widget.ui )
 
   qt4_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
   qt4_generate_moc( "File_loader_dialog.h" "${CMAKE_CURRENT_BINARY_DIR}/File_loader_dialog_moc.cpp" )
@@ -136,6 +140,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 			  Scene_polyhedron_item_decorator.cpp
 			  Scene_polyhedron_selection_item.cpp
 			  Scene_polyhedron_item_k_ring_selection.cpp
+			  Scene_polyhedron_shortest_path_item.cpp
               )
   qt4_automoc( Scene_implicit_function_item.cpp )
 
@@ -207,7 +212,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
  
   add_item(scene_polyhedron_selection_item Scene_polyhedron_selection_item.cpp Scene_polyhedron_selection_item.moc)
   target_link_libraries(scene_polyhedron_selection_item scene_polyhedron_item_decorator scene_polyhedron_item_k_ring_selection)
- 
+
+  add_item(scene_polyhedron_shortest_path_item Scene_polyhedron_shortest_path_item.cpp Scene_polyhedron_shortest_path_item.moc)
+  target_link_libraries(scene_polyhedron_shortest_path_item scene_polyhedron_item_decorator scene_polyhedron_item scene_polylines_item)
+
   if(EIGEN3_FOUND )
     add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
   endif()
@@ -371,6 +379,14 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     qt4_wrap_ui( normal_estimationUI_FILES Polyhedron_demo_normal_estimation_plugin.ui)
     polyhedron_demo_plugin(normal_estimation_plugin Polyhedron_demo_normal_estimation_plugin ${normal_estimationUI_FILES})
     target_link_libraries(normal_estimation_plugin scene_points_with_normal_item)
+
+    qt4_wrap_ui( vcm_normal_estimationUI_FILES Polyhedron_demo_vcm_normal_estimation_plugin.ui)
+    polyhedron_demo_plugin(vcm_normal_estimation_plugin Polyhedron_demo_vcm_normal_estimation_plugin ${vcm_normal_estimationUI_FILES})
+    target_link_libraries(vcm_normal_estimation_plugin scene_points_with_normal_item)
+
+    qt4_wrap_ui( features_detection_pluginUI_FILES Polyhedron_demo_features_detection_plugin.ui)
+    polyhedron_demo_plugin(features_detection_plugin Polyhedron_demo_features_detection_plugin ${features_detection_pluginUI_FILES})
+    target_link_libraries(features_detection_plugin scene_points_with_normal_item)
     
     polyhedron_demo_plugin(point_set_smoothing_plugin Polyhedron_demo_point_set_smoothing_plugin)
     target_link_libraries(point_set_smoothing_plugin scene_points_with_normal_item)
@@ -383,11 +399,12 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   else(EIGEN3_FOUND)
     message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Parameterization plugin will not be available.")
     message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Poisson reconstruction plugin will not be available.")
-    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Normal estimation plugin will not be available.")
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Normal estimation plugins will not be available.")
     message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Smoothing plugin will not be available.")
     message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Average spacing plugin will not be available.")
     message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Jet fitting plugin will not be available.")
     message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Scale space reconstruction plugin will not be available.")
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Feature detection plugin will not be available.")
   endif(EIGEN3_FOUND)
 
   polyhedron_demo_plugin(self_intersection_plugin Polyhedron_demo_self_intersection_plugin)
@@ -467,7 +484,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endif()
 
   polyhedron_demo_plugin(selection_plugin Polyhedron_demo_selection_plugin ${selectionUI_FILES})
-  target_link_libraries(selection_plugin scene_polyhedron_selection_item scene_points_with_normal_item)
+  target_link_libraries(selection_plugin scene_polyhedron_selection_item scene_points_with_normal_item scene_polylines_item)
+  
+  polyhedron_demo_plugin(shortest_path_plugin Polyhedron_demo_shortest_path_plugin ${shortestPathUI_FILES})
+  target_link_libraries(shortest_path_plugin scene_polyhedron_item scene_polylines_item scene_polyhedron_selection_item scene_polyhedron_shortest_path_item scene_basic_objects)
 #
 # Exporting
 #

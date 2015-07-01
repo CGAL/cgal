@@ -11,21 +11,21 @@ enum Umbilic_type { NON_GENERIC_UMBILIC, ELLIPTIC_UMBILIC, HYPERBOLIC_UMBILIC };
 /*!
 \ingroup PkgRidges_3
 
-The function `compute_umbilics()` is a shortcut to the method `compute()` of
-the class `Umbilic_approximation`. 
+The function `compute_umbilics()` is a shortcut to the 
+method `Umbilic_approximation::compute()`.  See `Umbilic_approximation::Umbilic_approximation()` for an explanation of the parameters.
 
 
 */
-template < class TriangulatedSurfaceMesh, 
-class Vertex2FTPropertyMap,
-class Vertex2VectorPropertyMap,
+template < class TriangleMesh, 
+class VertexFTMap,
+class VertexVectorMap,
 class OutputIterator>
-OutputIterator compute_umbilics(const TriangulatedSurfaceMesh &P,
-const Vertex2FTPropertyMap& vertex2k1_pm, 
-const Vertex2FTPropertyMap& vertex2k2_pm,
-const Vertex2VectorPropertyMap& vertex2d1_pm, 
-const Vertex2VectorPropertyMap& vertex2d2_pm,
-OutputIterator it, 
+OutputIterator compute_umbilics(const TriangleMesh &tm,
+                                VertexFTMap vertex_k1_pm, 
+                                VertexFTMap vertex_k2_pm,
+                                VertexVectorMap vertex_d1_pm, 
+                                VertexVectorMap vertex_d2_pm,
+                                OutputIterator it, 
 double size);
 
 } /* namespace CGAL */
@@ -39,26 +39,23 @@ namespace CGAL {
 The class `Umbilic_approximation` computes the approximation of 
 umbilics on a triangular polyhedral surface. 
 
-\tparam TriangulatedSurfaceMesh is the surface type. 
-\tparam Vertex2FTPropertyMap, Vertex2VectorPropertyMap provide 
-the differential properties of the surface associated to its vertices. 
+\tparam TriangleMesh is the surface type. In the following let `K` be `Kernel_traits<boost::property_traits<TriangleMesh,CGAL::vertex_point_t>::%value_type>::%Kernel`
+\tparam VertexFTMap A property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `K::FT` as value type.
+\tparam VertexVectorMap A property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `K::Vector_3` as value type.
 
-Requirements (checked at compile time) : 
-- the types `TriangulatedSurfaceMesh::Traits::FT` and 
-  `Vertex2FTPropertyMap::value_type` must coincide;
-- the types `TriangulatedSurfaceMesh::Traits::Vector_3` and 
-  `Vertex2VectorPropertyMap::value_type` must coincide; 
-- the types `TriangulatedSurfaceMesh::Vertex_handle`, 
-  `Vertex2FTPropertyMap::key_type` and 
-  `Vertex2VectorPropertyMap::key_type` must coincide; 
+\pre (checked at compile time)
+\pre The types `K::FT` and 
+  `boost::property_traits<VertexFTMap>::%value_type` must coincide.
+\pre  The types `K::Vector_3` and
+  `boost::property_traits<VertexVectorMap>::%value_type` must coincide.
+\pre The types `boost::graph_traits<TriangleMesh>::%vertex_descriptor`,
+  and `boost::property_traits<VertexFTMap>::%key_type`, and
+  `boost::property_traits<VertexVectorMap>::%key_type` must coincide.
 
 \sa `Umbilic` 
-\sa `TriangulatedSurfaceMesh` 
-\sa `Vertex2FTPropertyMap` 
-\sa `Vertex2VectorPropertyMap` 
 
 */
-template< typename TriangulatedSurfaceMesh, typename Vertex2FTPropertyMap, typename Vertex2VectorPropertyMap >
+template< typename TriangleMesh, typename VertexFTMap, typename VertexVectorMap >
 class Umbilic_approximation {
 public:
 
@@ -68,7 +65,7 @@ public:
 /*!
 
 */ 
-typedef typename TriangulatedSurfaceMesh::Traits::FT FT; 
+typedef typename TriangleMesh::Traits::FT FT; 
 
 /// @} 
 
@@ -76,23 +73,31 @@ typedef typename TriangulatedSurfaceMesh::Traits::FT FT;
 /// @{
 
 /*!
-default constructor. 
-*/ 
-Umbilic_approximation(const TriangulatedSurfaceMesh& P, 
-const Vertex2FTPropertyMap& vertex2k1_pm, 
-const Vertex2FTPropertyMap& vertex2k2_pm, 
-const Vertex2VectorPropertyMap& vertex2d1_pm, 
-const Vertex2VectorPropertyMap& vertex2d2_pm); 
+Constructor. 
 
+\param tm the triangle mesh
+\param vertex_k1_pm maximal principal curvatures
+\param vertex_k2_pm minimal principal curvatures
+\param vertex_d1_pm maximal principal directions of curvature
+\param vertex_d2_pm minimal principal directions of curvature
+*/ 
+Umbilic_approximation(const TriangleMesh& tm, 
+                      VertexFTMap vertex_k1_pm, 
+                      VertexFTMap vertex_k2_pm, 
+                      VertexVectorMap vertex_d1_pm, 
+                      VertexVectorMap vertex_d2_pm); 
+  
 /// @} 
 
 /// \name Operations 
 /// @{
 
 /*!
-Performs the approximation, `size` determines the size of the 
+Performs the approximation. The value of `size` determines the size of the 
 patches around vertices, taken as `size` times the size of the 
-1-ring. Umbilics are inserted into the `OutputIterator` `it` with value type `Umbilic*`. 
+1-ring. Umbilics are inserted into `it`.
+
+\tparam OutputIterator an output iterator with value type `Umbilic*`. 
 */ 
 template <class OutputIterator> OutputIterator compute(OutputIterator it, FT size); 
 
@@ -108,15 +113,10 @@ namespace CGAL {
 
 The class `Umbilic` stores the description of an umbilic. 
 
-\cgalHeading{Operations}
-
-The insert operator `<<` is overloaded for `Umbilic`, it 
-gives the location (3d coordinates of the vertex) and the type. 
-
 \sa `Umbilic_approximation` 
 
 */
-template< typename TriangulatedSurfaceMesh >
+template< typename TriangleMesh >
 class Umbilic {
 public:
 
@@ -126,12 +126,12 @@ public:
 /*!
 
 */ 
-typedef typename TriangulatedSurfaceMesh::Vertex_handle Vertex_handle; 
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor; 
 
 /*!
 
 */ 
-typedef typename TriangulatedSurfaceMesh::Halfedge_handle Halfedge_handle; 
+typedef typename TriangleMesh::halfedge_descriptor halfedge_descriptor; 
 
 /// @} 
 
@@ -141,7 +141,7 @@ typedef typename TriangulatedSurfaceMesh::Halfedge_handle Halfedge_handle;
 /*!
 
 */ 
-Vertex_handle vertex() const; 
+vertex_descriptor vertex() const; 
 
 /*!
 
@@ -151,9 +151,18 @@ Umbilic_type umbilic_type() const;
 /*!
 
 */ 
-const std::list<Halfedge_handle>& contour_list()const; 
+const std::list<halfedge_descriptor>& contour_list()const; 
 
 /// @}
 
 }; /* end Umbilic */
+
+/*!
+\relates Umbilic
+
+Writes the location and the umbilic type to `os`.
+*/
+template< typename TriangleMesh >
+std::ostream& operator<<(std::ostream& os, const Umbilic<TriangleMesh>& u);
+
 } /* end namespace CGAL */

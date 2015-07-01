@@ -61,7 +61,7 @@ private:
 public:
   MainWindow();
 
-public slots:
+public Q_SLOTS:
 
   void processInput(CGAL::Object o);
 
@@ -91,7 +91,7 @@ public slots:
 
   virtual void open(QString fileName);
 
-signals:
+Q_SIGNALS:
   void changed();
 };
 
@@ -207,7 +207,7 @@ MainWindow::processInput(CGAL::Object o)
                 p.y()- std::floor(p.y()/dy));
     triang.insert(p);
   }
-  emit(changed());
+  Q_EMIT( changed());
 
   if (was_empty)
     on_actionRecenter_triggered();
@@ -284,7 +284,7 @@ void
 MainWindow::on_actionClear_triggered()
 {
   triang.clear();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -322,7 +322,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   QApplication::restoreOverrideCursor();
 
   on_actionRecenter_triggered();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -330,7 +330,7 @@ void
 MainWindow::on_actionConvertTo9Cover_triggered() {
   if (triang.is_1_cover()) {
     triang.convert_to_9_sheeted_covering();
-    emit(changed());
+    Q_EMIT( changed());
   }
 }
 
@@ -338,7 +338,7 @@ void
 MainWindow::on_actionConvertTo1Cover_triggered() {
   if (!triang.is_1_cover()) {
     triang.convert_to_1_sheeted_covering();
-    emit(changed());
+    Q_EMIT( changed());
   }
 }
 
@@ -373,7 +373,7 @@ MainWindow::open(QString fileName)
   QApplication::restoreOverrideCursor();
   this->addToRecentFiles(fileName);
   actionRecenter->trigger();
-  emit(changed());
+  Q_EMIT( changed());
     
 }
 
@@ -407,27 +407,27 @@ MainWindow::on_actionRecenter_triggered()
 void MainWindow::on_actionNoneSimplicesEmphasized_triggered(bool)
 {
   pt_gi->setEmphasizedSimplices(PTGI::NONE);
-  emit changed();
+  Q_EMIT changed();
 }
 void MainWindow::on_actionUniqueSimplicesEmphasized_triggered(bool)
 {
   pt_gi->setEmphasizedSimplices(PTGI::UNIQUE);
-  emit changed();
+  Q_EMIT changed();
 }
 void MainWindow::on_actionStoredSimplicesEmphasized_triggered(bool)
 {
   pt_gi->setEmphasizedSimplices(PTGI::STORED);
-  emit changed();
+  Q_EMIT changed();
 }
 void MainWindow::on_actionUniqueCoverDomainSimplicesEmphasized_triggered(bool)
 {
   pt_gi->setEmphasizedSimplices(PTGI::UNIQUE_COVER_DOMAIN);
-  emit changed();
+  Q_EMIT changed();
 }
 void MainWindow::on_actionStoredCoverDomainSimplicesEmphasized_triggered(bool)
 {
   pt_gi->setEmphasizedSimplices(PTGI::STORED_COVER_DOMAIN);
-  emit changed();
+  Q_EMIT changed();
 }
 
 

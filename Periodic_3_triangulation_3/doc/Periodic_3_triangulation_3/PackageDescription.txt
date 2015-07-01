@@ -39,7 +39,8 @@ modify Delaunay triangulations. It takes the geometric traits as well
 as the triangulation data structure as template parameters.
 
 The geometric traits class must be a model of the concept
-`Periodic_3DelaunayTriangulationTraits_3`. It contains all
+`Periodic_3DelaunayTriangulationTraits_3` for periodic Delaunay triangulations,
+or `Periodic_3TriangulationTraits_3` for periodic triangulations. It must contains all
 predicates and constructions that are needed by the functions in the
 triangulation classes.
 
@@ -69,6 +70,7 @@ of the concept `Periodic_3Offset_3`.
 
 ## Concepts ##
 
+- `Periodic_3TriangulationTraits_3`
 - `Periodic_3DelaunayTriangulationTraits_3`
 - `TriangulationDataStructure_3`
 - `Periodic_3TriangulationDSCellBase_3`
@@ -89,6 +91,7 @@ of the concept `Periodic_3Offset_3`.
 ### Traits Classes ###
 
 - `CGAL::Periodic_3_triangulation_traits_3<Traits,Periodic_3Offset_3>`
+- `CGAL::Periodic_3_Delaunay_triangulation_traits_3<Traits,Periodic_3Offset_3>`
 
 ## Enums ##
 

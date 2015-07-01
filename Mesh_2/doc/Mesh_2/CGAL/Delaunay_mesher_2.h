@@ -38,6 +38,8 @@ components including at least one seed, or the union of the bounded
 connected components that do no contain any seed. Note that the unbounded 
 component of the plane is never meshed. 
 
+\sa `CGAL::lloyd_optimize_mesh_2`
+
 */
 template< typename CDT, typename Criteria >
 class Delaunay_mesher_2 {
@@ -255,7 +257,7 @@ bool step_by_step_refine_mesh();
 }; /* end Delaunay_mesher_2 */
 
 /*!
-\ingroup PkgMesh2
+\ingroup PkgMesh2Functions
 
 Refines the default domain defined by a constrained Delaunay
 triangulation without seeds into a mesh satisfying the criteria
@@ -277,7 +279,7 @@ void refine_Delaunay_mesh_2 (CDT &t, const Criteria& criteria = Criteria());
 
 /*!
 
-\ingroup PkgMesh2
+\ingroup PkgMesh2Functions
 
 Refines the default domain defined by a constrained
 Delaunay triangulation into a mesh

@@ -68,7 +68,7 @@ class Polyhedron_demo_hole_filling_polyline_plugin :
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
-  bool applicable() const { return qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex())); }
+  bool applicable(QAction *) const { return qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex())); }
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionHoleFillingPolyline; }
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m){
@@ -92,7 +92,7 @@ private:
     { return f.halfedge()->facet(); }
   };
   
-public slots:
+public Q_SLOTS:
   void hole_filling_polyline_action() {
     Scene_polylines_item* polylines_item = qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex()));
     if(!polylines_item) {

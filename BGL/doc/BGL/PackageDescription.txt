@@ -37,6 +37,9 @@
 /// \defgroup PkgBGLHelper Helper Classes
 /// \ingroup PkgBGL
 
+/// \defgroup PkgBGLHelperFct Helper Functions
+/// \ingroup PkgBGL
+
 /// \defgroup PkgBGLIterators Iterators and Circulators
 /// \ingroup PkgBGL
 
@@ -119,6 +122,28 @@ user might encounter.
 - `CGAL::HalfedgeDS_halfedge_max_base_with_id`
 - `CGAL::HalfedgeDS_face_max_base_with_id`
 - `CGAL::Polyhedron_items_with_id_3`
+- `CGAL::set_halfedgeds_items_id()`
+
+## Helper Functions ##
+- `CGAL::is_border()`
+- `CGAL::is_border_edge()`
+- `CGAL::is_bivalent()`
+- `CGAL::is_bivalent_mesh()`
+- `CGAL::is_trivalent()`
+- `CGAL::is_trivalent_mesh()`
+- `CGAL::is_closed()`
+
+- `CGAL::is_triangle()`
+- `CGAL::is_triangle_mesh()`
+- `CGAL::is_quad()`
+- `CGAL::is_quad_mesh()`
+
+- `CGAL::is_tetrahedron()`
+- `CGAL::is_hexahedron()`
+- `CGAL::make_triangle()`
+- `CGAL::make_tetrahedron()`
+- `CGAL::make_quad()`
+- `CGAL::make_hexahedron()`
 
 ## Iterators ##
 - `CGAL::Halfedge_around_source_iterator`
@@ -148,6 +173,7 @@ user might encounter.
 - `CGAL::Euler::split_loop()`
 - `CGAL::Euler::remove_face()`
 - `CGAL::Euler::make_hole()`
+- `CGAL::Euler::fill_hole()`
 - `CGAL::Euler::add_center_vertex()`
 - `CGAL::Euler::remove_center_vertex()`
 - `CGAL::Euler::add_vertex_and_face_to_border()` 

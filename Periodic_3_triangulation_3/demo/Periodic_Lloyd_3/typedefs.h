@@ -2,7 +2,7 @@
 #define TYPEDEFS_H
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Periodic_3_triangulation_traits_3.h>
+#include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Random.h>
@@ -23,7 +23,7 @@
 typedef double coord_type;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel EPIC;
-typedef CGAL::Periodic_3_triangulation_traits_3<EPIC> K;
+typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<EPIC> K;
 
 typedef K::FT         FT;
 typedef K::Point_3    Point_3;

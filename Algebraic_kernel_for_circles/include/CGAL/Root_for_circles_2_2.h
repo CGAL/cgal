@@ -57,10 +57,10 @@ class Root_for_circles_2_2 {
   }
 
   const Root_of_2& x() const 
-  { return get(x_); }
+  { return get_pointee_or_identity(x_); }
     
   const Root_of_2& y() const 
-  { return get(y_); }
+  { return get_pointee_or_identity(y_); }
 
   CGAL::Bbox_2 bbox() const
   {

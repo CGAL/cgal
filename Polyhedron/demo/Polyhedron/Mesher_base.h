@@ -14,7 +14,7 @@ public:
     is_stopped = true;
   };
   virtual ~Mesher_base() {}
-public slots:
+public Q_SLOTS:
   virtual void mesh() = 0;
   virtual void one_step() = 0;
 

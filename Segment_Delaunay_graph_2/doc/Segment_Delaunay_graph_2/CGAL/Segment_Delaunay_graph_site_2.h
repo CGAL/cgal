@@ -5,8 +5,8 @@ namespace CGAL {
 \ingroup PkgSegmentDelaunayGraph2
 
 The class `Segment_Delaunay_graph_site_2` is a model for the concept 
-`SegmentDelaunayGraphSite_2`. It is parametrized by a template 
-parameter `K` which must be a model of the `Kernel` concept. 
+`SegmentDelaunayGraphSite_2`. 
+\tparam K must be a model of the `Kernel` concept. 
 
 \cgalModels `SegmentDelaunayGraphSite_2`
 

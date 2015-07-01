@@ -710,7 +710,8 @@ public:
       const Kernel* kernel = m_traits;
       typename Kernel::Construct_opposite_direction_3 opposite_3 =
         kernel->construct_opposite_direction_3_object();
-      if (!kernel->equal_3_object()(opposite_3(p), r1)) return EQUAL;
+      Point_2 tmp1 = opposite_3(p);     // pacify msvc 10
+      if (!kernel->equal_3_object()(tmp1, r1)) return EQUAL;
 
       Sign xsign = Traits::x_sign(p);
       Sign ysign = Traits::y_sign(p);
@@ -2431,10 +2432,12 @@ public:
     m_is_degenerate(false),
     m_is_empty(false)
   {
+    // MSVC 10 complains when the casting below is not present probably due
+    // to a bug (in MSVC 10).
     CGAL_precondition_code(Kernel kernel);
     CGAL_precondition(!kernel.equal_3_object()
                       (kernel.construct_opposite_direction_3_object()(m_source),
-                       m_target));
+                       (const typename Kernel::Direction_3&)(m_target)));
     m_normal = construct_normal_3(m_source, m_target);
     init();
   }

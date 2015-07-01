@@ -84,20 +84,20 @@ template < class R >
 inline
 const typename RayH3<R>::Point_3 &
 RayH3<R>::source() const
-{ return get(base).first; }
+{ return get_pointee_or_identity(base).first; }
 
 template < class R >
 inline
 const typename RayH3<R>::Point_3 &
 RayH3<R>::start() const
-{ return get(base).first; }
+{ return get_pointee_or_identity(base).first; }
 
 template < class R >
 inline
 const typename RayH3<R>::Vector_3 &
 RayH3<R>::to_vector() const
 {
-  return get(base).second;
+  return get_pointee_or_identity(base).second;
 }
 
 template < class R >

@@ -34,7 +34,7 @@ class Polyhedron_demo_fairing_plugin :
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
-  bool applicable() const { 
+  bool applicable(QAction*) const { 
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
     || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));  
   }
@@ -57,7 +57,7 @@ public:
     connect(ui_widget.Refine_button,  SIGNAL(clicked()), this, SLOT(on_Refine_button_clicked()));
   }
 
-public slots:
+public Q_SLOTS:
   void fairing_action() {
     dock_widget->show();
     dock_widget->raise();

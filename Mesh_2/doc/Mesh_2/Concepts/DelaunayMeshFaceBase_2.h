@@ -21,25 +21,51 @@ meshing domain or not.
 class DelaunayMeshFaceBase_2 {
 public:
 
-/// \name Access Functions 
+/// \name Typedef
+/// @{
+/*! A typedef to describe an edge
+*/
+typedef std::pair<DelaunayMeshFaceBase_2, int> Edge;
+/// @}
+
+/// \name Functions
 /// @{
 
 /*!
-returns true if this face is in the domain to be refined. 
-*/ 
-bool is_in_domain() const; 
-
-
-
-
-
+returns true if this face is in the domain to be refined.
+*/
+bool is_in_domain() const;
 /*!
-sets if this face is in the domain. 
-*/ 
+sets if this face is in the domain.
+*/
 void set_in_domain(const bool b); 
 
 
+/*!
+return true if this face has its circumcenter hidden
+by a constrained edge. It does not "see" it,
+following the Constrained Delaunay triangulation visibility criterion.
+*/
+bool is_blind() const;
+/*!
+sets if this face is blind or not.
+*/
+void set_blind(const bool b);
 
+/*!
+If this face is blind, this function returns
+the first constrained edge that prevents it from "seeing"
+its circumcenter.
+\pre is_blind() returns true
+*/
+Edge blinding_constraint() const;
+
+/*!
+sets the edge that makes this face blind.
+\pre is_blind() returns true
+\pre e is a constrained edge
+*/
+void set_blinding_constraint(const Egde& e);
 
 
 /// @}

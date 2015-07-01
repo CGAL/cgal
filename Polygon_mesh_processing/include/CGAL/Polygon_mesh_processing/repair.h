@@ -240,7 +240,7 @@ namespace internal {
 /// A face is considered degenerate if two of its vertices share the same location,
 /// or more generally if all its vertices are collinear.
 ///
-/// @pre `CGAL::is_pure_triangle(tmesh)`
+/// @pre `CGAL::is_triangle_mesh(tmesh)`
 ///
 /// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
 ///        that has an internal property map for `boost::vertex_point_t`
@@ -269,7 +269,7 @@ template <class TriangleMesh, class NamedParameters>
 std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
                                     const NamedParameters& np)
 {
-  CGAL_assertion(CGAL::is_pure_triangle(tmesh));
+  CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
 
   using boost::choose_const_pmap;
   using boost::get_param;

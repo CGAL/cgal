@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>334</width>
-    <height>431</height>
+    <width>399</width>
+    <height>556</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -221,16 +221,16 @@
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="Create_polyhedron_item_button">
+     <widget class="QPushButton" name="Create_polyline_item_button">
       <property name="text">
-       <string>Create Polyhedron Item from Selected Facets</string>
+       <string>Create Polyline Item from Selected Edges</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="Erase_selected_facets_button">
+     <widget class="QPushButton" name="Create_polyhedron_item_button">
       <property name="text">
-       <string>Erase Selected Facets from Polyhedron Item</string>
+       <string>Create Polyhedron Item from Selected Facets</string>
       </property>
      </widget>
     </item>
@@ -245,15 +245,9 @@
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="Create_selection_item_button">
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
+     <widget class="QPushButton" name="Erase_selected_facets_button">
       <property name="text">
-       <string>Create Selection Item</string>
+       <string>Erase Selected Facets from Polyhedron Item</string>
       </property>
      </widget>
     </item>
@@ -269,6 +263,19 @@
        </size>
       </property>
      </spacer>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Create_selection_item_button">
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Create Selection Item</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

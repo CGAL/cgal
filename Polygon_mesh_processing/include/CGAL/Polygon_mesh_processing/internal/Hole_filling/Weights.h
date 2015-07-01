@@ -256,7 +256,7 @@ public:
       halfedge_descriptor he = halfedge(*e,pmesh());
       if( is_border(he,pmesh()) ) { continue; }
 
-      CGAL_assertion(CGAL::is_pure_triangle(pmesh()));
+      CGAL_assertion(CGAL::is_triangle_mesh(pmesh()));
       CGAL_assertion(v0 == target(he, pmesh()) || v0 == source(he, pmesh()));
       vertex_descriptor v1 = source(he, pmesh());
       vertex_descriptor v_op = target(next(he, pmesh()), pmesh());

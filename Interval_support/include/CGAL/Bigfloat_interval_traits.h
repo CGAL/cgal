@@ -23,16 +23,9 @@
 #ifndef CGAL_BIGFLOAT_INTERVAL_TRAITS_H
 #define CGAL_BIGFLOAT_INTERVAL_TRAITS_H
 
-#include<CGAL/basic.h>
-
-#include <boost/version.hpp>
-#if BOOST_VERSION >= 104000
-#  include <boost/serialization/static_warning.hpp>
-#else
-#  include <boost/static_warning.hpp>
-#endif
-
+#include <CGAL/basic.h>
 #include <CGAL/assertions.h>
+
 namespace CGAL {
 
 // TODO: rename this into MPFI_traits ? 

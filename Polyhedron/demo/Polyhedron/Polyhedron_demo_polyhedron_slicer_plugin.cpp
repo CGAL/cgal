@@ -36,7 +36,7 @@ class Polyhedron_demo_polyhedron_slicer_plugin :
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
-  bool applicable() const { return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())); }
+  bool applicable(QAction*) const { return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())); }
   void print_message(QString message) { messages->information(message);}
 
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m);
@@ -55,7 +55,7 @@ public:
     for(int i = 0; i < 6; ++i && total_ok) { total_ok &= oks[i];}
     return total_ok;
   }
-public slots:
+public Q_SLOTS:
   void slicer_widget_action();
   void on_Generate_button_clicked();
   bool on_Update_plane_button_clicked();

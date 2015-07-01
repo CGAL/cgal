@@ -58,9 +58,9 @@ public:
     bool           operator==(const LineH2<R>& l) const;
     bool           operator!=(const LineH2<R>& l) const;
 
-    const RT &     a() const { return get(base)[0]; }
-    const RT &     b() const { return get(base)[1]; }
-    const RT &     c() const { return get(base)[2]; }
+    const RT &     a() const { return get_pointee_or_identity(base)[0]; }
+    const RT &     b() const { return get_pointee_or_identity(base)[1]; }
+    const RT &     c() const { return get_pointee_or_identity(base)[2]; }
 
 };
 

@@ -86,13 +86,13 @@ private:
     
     // default cursor
     QApplication::restoreOverrideCursor();
-    emit(changed());
+    Q_EMIT( changed());
   }
 
 public:
   MainWindow();
 
-public slots:
+public Q_SLOTS:
 
   void on_actionClear_triggered();
 
@@ -106,7 +106,7 @@ public slots:
 
   void update_largest_empty_rectangle();
 
-signals:
+Q_SIGNALS:
   void changed();
 };
 
@@ -203,7 +203,7 @@ MainWindow::processInput(CGAL::Object o)
         ler.insert(p);
       }
     }
-    emit(changed());
+    Q_EMIT( changed());
   }
 
 }
@@ -220,7 +220,7 @@ void
 MainWindow::on_actionClear_triggered()
 {
   clear();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 void

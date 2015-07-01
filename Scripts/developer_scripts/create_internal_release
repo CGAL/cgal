@@ -208,7 +208,7 @@ sub install_packages() {
   close(LOG_CONFLICTS);
   unlink 'temppack.tar';
   ( -d "$ALLPACKAGESDIR/.git" ) && system("git --git-dir=$ALLPACKAGESDIR/.git --work-tree=$ALLPACKAGESDIR log -n1 '--format=format:SCM branch:%n%H %d%n%nShort log from master:%n' > .scm-branch");
-  ( -d "$ALLPACKAGESDIR/.git" ) && system("git --git-dir=$ALLPACKAGESDIR/.git --work-tree=$ALLPACKAGESDIR log --first-parent --format='%h %s%n  parents: %p%n' origin/master.. >> .scm-branch");
+  ( -d "$ALLPACKAGESDIR/.git" ) && system("git --git-dir=$ALLPACKAGESDIR/.git --work-tree=$ALLPACKAGESDIR log --first-parent --format='%h %s%n  parents: %p%n' cgal/master.. >> .scm-branch");
   # foreach my $file (sort keys(%files)) {
   #   print "$files{$file}: $file\n";
   # }

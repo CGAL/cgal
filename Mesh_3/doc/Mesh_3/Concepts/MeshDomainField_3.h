@@ -5,7 +5,7 @@
 The concept `MeshDomainField_3` describes a scalar field which could be queried 
 at any point of the space. 
 
-\cgalHasModel `CGAL::Mesh_constant_domain_field_3<Gt,Index>` 
+\cgalHasModel `CGAL::Mesh_constant_domain_field_3<Gt,%Index>` 
 
 \sa `MeshDomain_3` 
 \sa `MeshDomainWithFeatures_3` 
@@ -32,7 +32,7 @@ Point type.
 typedef unspecified_type Point_3; 
 
 /*!
-Index type for points. Must match the type `MeshDomain_3::Index`. 
+%Index type for points. Must match the type `MeshDomain_3::Index`. 
 */ 
 typedef unspecified_type Index; 
 

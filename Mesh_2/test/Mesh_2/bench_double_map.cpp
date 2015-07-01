@@ -15,6 +15,7 @@ typedef Map::size_type size_type;
 int main(int argc, char** argv)
 {
   size_type number_of_elements = 100000;
+  int nb_elements = static_cast<int>(number_of_elements);
   int number_of_loops = 10;
 
   if(argc > 1)
@@ -36,7 +37,7 @@ int main(int argc, char** argv)
       f.pop_front();
     time_pop.stop();
     time_insert.start();
-    for(size_type i = 0; i < number_of_elements; ++i)
+    for (int i = 0; i < nb_elements; ++i)
       f.insert(i, i);
     time_insert.stop();
   }

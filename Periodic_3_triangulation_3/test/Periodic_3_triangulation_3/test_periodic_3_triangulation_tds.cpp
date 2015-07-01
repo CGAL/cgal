@@ -20,7 +20,7 @@
 //                 Manuel Caroli
 
 #include <CGAL/Triangulation_data_structure_3.h>
-#include <CGAL/Periodic_3_triangulation_traits_3.h>
+#include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_triangulation_ds_cell_base_3.h>
 #include <CGAL/Periodic_3_triangulation_ds_vertex_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>

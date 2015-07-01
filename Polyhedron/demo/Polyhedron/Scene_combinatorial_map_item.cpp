@@ -48,7 +48,7 @@ Kernel::Vector_3 Scene_combinatorial_map_item::compute_face_normal(Combinatorial
 void Scene_combinatorial_map_item::set_next_volume(){
   ++volume_to_display;
   volume_to_display=volume_to_display%(combinatorial_map().attributes<3>().size()+1);
-  emit itemChanged();
+  Q_EMIT itemChanged();
 
   if (exportSelectedVolume!=NULL && ( volume_to_display==1 || volume_to_display==0 ) )
     exportSelectedVolume->setEnabled(!exportSelectedVolume->isEnabled());

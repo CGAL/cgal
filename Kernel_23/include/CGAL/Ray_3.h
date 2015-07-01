@@ -93,7 +93,7 @@ public:
   const Point_3 &   start() const;
   const Point_3 &   source() const
   {
-      return get(base).e0;
+      return get_pointee_or_identity(base).e0;
   }
 
   Direction_3 direction() const;

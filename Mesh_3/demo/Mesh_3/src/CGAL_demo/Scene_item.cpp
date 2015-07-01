@@ -6,7 +6,7 @@ Scene_item::~Scene_item() {}
 
 void Scene_item::itemAboutToBeDestroyed(Scene_item* item) {
   if(this == item)
-    emit aboutToBeDestroyed();
+    Q_EMIT aboutToBeDestroyed();
 }
 
 // Rendering mode as a human readable string

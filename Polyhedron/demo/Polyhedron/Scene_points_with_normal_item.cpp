@@ -95,7 +95,7 @@ void Scene_points_with_normal_item::deleteSelection()
   std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
-  emit itemChanged();
+  Q_EMIT itemChanged();
 }
 
 // Reset selection mark
@@ -103,7 +103,7 @@ void Scene_points_with_normal_item::resetSelection()
 {
   // Un-select all points
   m_points->select(m_points->begin(), m_points->end(), false);
-  emit itemChanged();
+  Q_EMIT itemChanged();
 }
   //Select duplicated points
 void Scene_points_with_normal_item::selectDuplicates()
@@ -112,7 +112,7 @@ void Scene_points_with_normal_item::selectDuplicates()
   for (Point_set::Point_iterator ptit=m_points->begin(); ptit!=m_points->end();++ptit )
     if ( !unique_points.insert(*ptit).second )
       m_points->select(&(*ptit));
-  emit itemChanged();
+  Q_EMIT itemChanged();
 }
 
 // Loads point set from .OFF file

@@ -37,6 +37,9 @@ SEGMENT_GEOM_TRAITS=0
 NON_CACHING_SEGMENT_GEOM_TRAITS=1
 POLYLINE_GEOM_TRAITS=2
 NON_CACHING_POLYLINE_GEOM_TRAITS=3
+POLYCURVE_CONIC_GEOM_TRAITS=14
+POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS=15
+POLYCURVE_BEZIER_GEOM_TRAITS=16
 LINEAR_GEOM_TRAITS=4
 CORE_CONIC_GEOM_TRAITS=5
 LINE_ARC_GEOM_TRAITS=6
@@ -47,6 +50,10 @@ BEZIER_GEOM_TRAITS=10
 GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS=11
 RATIONAL_ARC_GEOM_TRAITS=12
 ALGEBRAIC_GEOM_TRAITS=13
+POLYCURVE_CONIC_GEOM_TRAITS=14
+POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS=15
+POLYCURVE_BEZIER_GEOM_TRAITS=16
+FLAT_TORUS_GEOM_TRAITS=17
 
 PLANAR_BOUNDED_TOPOL_TRAITS=0
 PLANAR_UNBOUNDED_TOPOL_TRAITS=1
@@ -107,6 +114,12 @@ IS_IN_X_RANGE=24
 COMPARE_Y_POSITION=25
 IS_BETWEEN_CW=26
 COMPARE_CW_AROUND_POINT=27
+PUSH_BACK=28
+PUSH_FRONT=29
+NUMBER_OF_POINTS=32
+COMPARE_ENDPOINTS_XY=33
+CONSTRUCT_OPPOSITE=34
+TRIM=35
 
 #---------------------------------------------------------------------#
 #                    configure
@@ -227,6 +240,7 @@ run_test_alt()
 {
   basedata=`basename "$5"`
   OUTPUTFILE=ProgramOutput.$1.`echo $5 | tr '/' '.'`.$6
+  #echo ****generating file $OUTPUTFILE
   #  dirdata=`dirname "$datafile"`
   rm -f $OUTPUTFILE
   COMMAND="./$1"
@@ -488,6 +502,13 @@ execute_commands_new_structure()
     commands_indicator[MERGE]=0
     commands_indicator[ASSERTIONS]=0
     commands_indicator[CONSTRUCTOR]=0
+    commands_indicator[EQUAL]=0
+    commands_indicator[PUSH_BACK]=0
+    commands_indicator[PUSH_FRONT]=0
+    commands_indicator[NUMBER_OF_POINTS]=0
+    commands_indicator[COMPARE_ENDPOINTS_XY]=0
+    commands_indicator[CONSTRUCT_OPPOSITE]=0
+    commands_indicator[TRIM]=0
     i=1
     if [ $# -gt 2 ] ; then
 	for arg in $* ; do
@@ -576,6 +597,34 @@ execute_commands_new_structure()
     if [ ${commands_indicator[$CONSTRUCTOR]} -ne 0 ] ; then
 	run_trapped_test test_traits data/$1/points \
 	    data/$1/xcurves data/$1/curves data/$1/constructor $2
+    fi
+    if [ ${commands_indicator[$EQUAL]} -ne 0 ] ; then
+	run_trapped_test test_traits data/$1/points \
+	    data/$1/xcurves data/$1/curves data/$1/equal $2
+    fi
+    if [ ${commands_indicator[$PUSH_BACK]} -ne 0 ] ; then
+	run_trapped_test test_traits data/$1/points \
+	    data/$1/xcurves data/$1/curves data/$1/push_back $2
+    fi
+    if [ ${commands_indicator[$PUSH_FRONT]} -ne 0 ] ; then
+	run_trapped_test test_traits data/$1/points \
+	    data/$1/xcurves data/$1/curves data/$1/push_front $2
+    fi
+    if [ ${commands_indicator[$NUMBER_OF_POINTS]} -ne 0 ] ; then
+	run_trapped_test test_traits data/$1/points \
+	    data/$1/xcurves data/$1/curves data/$1/number_of_points $2
+    fi
+    if [ ${commands_indicator[$COMPARE_ENDPOINTS_XY]} -ne 0 ] ; then
+	run_trapped_test test_traits data/$1/points \
+	    data/$1/xcurves data/$1/curves data/$1/compare_endpoints_xy $2
+    fi
+    if [ ${commands_indicator[$CONSTRUCT_OPPOSITE]} -ne 0 ] ; then
+	run_trapped_test test_traits data/$1/points \
+	    data/$1/xcurves data/$1/curves data/$1/construct_opposite $2
+    fi
+    if [ ${commands_indicator[$TRIM]} -ne 0 ] ; then
+	run_trapped_test test_traits data/$1/points \
+	    data/$1/xcurves data/$1/curves data/$1/trim $2
     fi
 }
 
@@ -1048,6 +1097,124 @@ test_non_caching_segment_traits()
 }
 
 #---------------------------------------------------------------------#
+# polycurve conic traits
+#---------------------------------------------------------------------#
+test_polycurve_conic_traits()
+{
+  echo polycurve test starting
+  local nt=$CORE_EXPR_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$POLYCURVE_CONIC_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits conic_polycurve "$flags"
+  if [ -n "${SUCCESS}" ] ; then
+
+    # The input arguments for the execute_commands_new_structure,
+    # 1. Polycurve_conics is the directory name in "data"
+    # 2. polycurve_conic_traits is a string
+    # Execute_command_new_structure will only run the test on functors provided as the third, fourth and so on arguments.
+    # To see how the input data directory should be structured for each functor, check the execute_commands_new_structure function in this file.
+    execute_commands_new_structure polycurves_conics polycurve_conic_traits \
+      COMPARE_Y_AT_X \
+      INTERSECT \
+      EQUAL \
+      IS_VERTICAL \
+      SPLIT \
+      ARE_MERGEABLE \
+      COMPARE_Y_AT_X_LEFT \
+      COMPARE_Y_AT_X_RIGHT \
+      MAKE_X_MONOTONE \
+      PUSH_BACK \
+      PUSH_FRONT \
+      NUMBER_OF_POINTS \
+      VERTEX \
+      CONSTRUCT_OPPOSITE \
+      MERGE \
+      COMPARE_ENDPOINTS_XY \
+      TRIM
+
+  else
+    echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
+# polycurve arc traits
+#---------------------------------------------------------------------#
+test_polycurve_circular_arc_traits()
+{
+  local nt=$QUOTIENT_MP_FLOAT_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits circular_arc_polycurve "$flags"
+  if [ -n "${SUCCESS}" ] ; then
+   execute_commands_new_structure Polycurves_circular_arcs polycurve_circular_arc_traits \
+    COMPARE_Y_AT_X \
+    EQUAL \
+    IS_VERTICAL \
+    SPLIT \
+    ARE_MERGEABLE \
+    COMPARE_Y_AT_X_LEFT \
+    COMPARE_Y_AT_X_RIGHT \
+    MAKE_X_MONOTONE \
+    PUSH_BACK \
+    PUSH_FRONT \
+    NUMBER_OF_POINTS \
+    VERTEX \
+    CONSTRUCT_OPPOSITE \
+    MERGE \
+    COMPARE_ENDPOINTS_XY \
+    INTERSECT
+
+  else
+   echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
+# polycurve bezier traits
+#---------------------------------------------------------------------#
+test_polycurve_bezier_traits()
+{
+  local nt=$CORE_EXPR_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$POLYCURVE_BEZIER_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits bezier_polycurve "$flags"
+  if [ -n "${SUCCESS}" ] ; then
+   execute_commands_new_structure Polycurves_bezier test_polycurve_bezier_traits \
+    MERGE \
+    EQUAL \
+    IS_VERTICAL \
+    NUMBER_OF_POINTS \
+    PUSH_BACK \
+    PUSH_FRONT \
+    VERTEX \
+    ARE_MERGEABLE \
+    COMPARE_ENDPOINTS_XY
+    # TODO (add data for these tests)
+    # COMPARE_Y_AT_X \
+    # SPLIT \
+    # COMPARE_Y_AT_X_LEFT \
+    # COMPARE_Y_AT_X_RIGHT \
+    # MAKE_X_MONOTONE \
+    # CONSTRUCT_OPPOSITE \
+
+    # INTERSECT
+
+  else
+   echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
 # polyline traits
 #---------------------------------------------------------------------#
 test_polyline_traits()
@@ -1057,7 +1224,7 @@ test_polyline_traits()
   local geom_traits=$POLYLINE_GEOM_TRAITS;
   local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
 
-  compile_test_with_flags test_traits polylines "$flags"
+  compile_test_with_flags test_traits test_polylines "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_old_structure polylines polyline_traits \
       CONSTRUCTOR COMPARE_Y_AT_X_LEFT \
@@ -1450,6 +1617,8 @@ touch $ERRORFILE
 #                    compile and run the tests
 #---------------------------------------------------------------------#
 
+
+
 if [ $# -ne 0 ] ; then
     case $1 in
 	-cmake) TEST_WITH_CMAKE="TRUE" ;;
@@ -1472,6 +1641,9 @@ fi
 test_segment_traits
 test_non_caching_segment_traits
 test_polyline_traits
+test_polycurve_conic_traits
+test_polycurve_circular_arc_traits
+test_polycurve_bezier_traits
 test_non_caching_polyline_traits
 test_linear_traits
 test_conic_traits

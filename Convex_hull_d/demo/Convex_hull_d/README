@@ -1,4 +1,0 @@
-chull_3d-geomview-demo		random 3d convex hull (3d kernel) in geomview
-chull_dd-geomview-demo		random 3d convex hull (dd kernel) in geomview
-chull_dd-runtime		random dd runtime (incremental dimension)
-delaunay_dd-runtime		random dd runtime (incremental dimension)

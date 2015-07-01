@@ -75,7 +75,7 @@ static SegmentDelaunayGraphSite_2 construct_site_2(Point_2 p1, Point_2 p2,
                                                    Point_2 q1, Point_2 q2); 
 
 /*!
-Constructs a site from four points and a boolean: the 
+Constructs a site from four points and a Boolean: the 
 site represents a segment. If `b` is `true` the endpoints 
 are `p1` and \f$ p_\times\f$, otherwise \f$ p_\times\f$ and 
 `p2`. \f$ p_\times\f$ is the point of intersection of the segments 

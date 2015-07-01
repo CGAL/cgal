@@ -113,7 +113,6 @@ public:
 
   typedef typename Geom_traits::Point_2  Point;
 
-
   Constrained_Delaunay_triangulation_2(const Geom_traits& gt=Geom_traits()) 
     : Ctr(gt) { }
 
@@ -181,7 +180,6 @@ public:
   // get_boundary_of_conflicts(const Point  &p, 
   // 			       OutputItBoundaryEdges eit, 
   // 			       Face_handle start ) const;
-   
 
   // INSERTION-REMOVAL
   Vertex_handle insert(const Point & a, Face_handle start = Face_handle());

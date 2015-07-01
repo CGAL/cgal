@@ -95,7 +95,7 @@ void Scene_edit_polyhedron_item::deform()
   deform_mesh.deform();
 
   poly_item->changed(); // now we need to call poly_item changed to delete AABB tree 
-  emit itemChanged();
+  Q_EMIT itemChanged();
 }
 
 void Scene_edit_polyhedron_item::timerEvent(QTimerEvent* /*event*/)
@@ -105,7 +105,7 @@ void Scene_edit_polyhedron_item::timerEvent(QTimerEvent* /*event*/)
       deform();
     }
     else {
-      emit itemChanged(); // for redraw while Pivoting (since we close signals of manipulatedFrames while pivoting, 
+      Q_EMIT itemChanged(); // for redraw while Pivoting (since we close signals of manipulatedFrames while pivoting, 
                           // for now redraw with timer)
     }
   }
@@ -148,7 +148,7 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
     bool need_repaint = activate_closest_manipulated_frame(p.x(), p.y());
 
-    if(need_repaint) { emit itemChanged(); }
+    if(need_repaint) { Q_EMIT itemChanged(); }
   }
 
   return false;

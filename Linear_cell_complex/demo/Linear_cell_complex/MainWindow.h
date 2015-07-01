@@ -108,7 +108,7 @@ class MainWindow : public CGAL::Qt::DemosMainWindow, private Ui::MainWindow
 public:
   MainWindow(QWidget* parent = 0);
 
-public slots:
+public Q_SLOTS:
   // File menu
   void on_actionImportOFF_triggered();
   void on_actionAddOFF_triggered();
@@ -179,7 +179,7 @@ public slots:
   void onSierpinskiTriangleInc();
   void onSierpinskiTriangleDec();
 
-signals:
+Q_SIGNALS:
   void sceneChanged();
   
 protected:

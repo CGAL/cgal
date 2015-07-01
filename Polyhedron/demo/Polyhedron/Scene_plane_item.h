@@ -136,7 +136,7 @@ private:
     return diag * 0.7;
   }
 
-public slots:
+public Q_SLOTS:
   void setPosition(float x, float y, float z) {
     frame->setPosition(x, y, z);
   }

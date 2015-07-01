@@ -50,7 +50,7 @@ operator<<(std::ostream &os, const std::pair<T,T>& pair)
 #endif
 
 // -----------------------------------
-// Rebin_cell_pmap
+// Rebind_cell_pmap
 // -----------------------------------
 template <typename C3T3>
 class Rebind_cell_pmap
@@ -575,7 +575,7 @@ public:
         {
           // If another index is found, return value for edge vertice
           if (   r_c3t3_.is_in_complex(*it_facet)
-              && facet_index != r_c3t3_.surface_patch_index(*it_facet) )
+              && !( facet_index == r_c3t3_.surface_patch_index(*it_facet) ) )
             return edge_index_;
         }
 

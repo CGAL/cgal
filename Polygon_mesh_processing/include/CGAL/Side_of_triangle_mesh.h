@@ -88,7 +88,7 @@ public:
    * @param vpmap the property map with the points associated to the vertices of `tmesh`
    * @param gt an instance of the geometric traits class
    *
-   * @pre `CGAL::is_closed(tmesh) && CGAL::is_pure_triangle(tmesh)`
+   * @pre `CGAL::is_closed(tmesh) && CGAL::is_triangle_mesh(tmesh)`
    */
   Side_of_triangle_mesh(const TriangleMesh& tmesh,
                         VertexPointMap vpmap,
@@ -97,7 +97,7 @@ public:
   , vector_functor(gt.construct_vector_3_object())
   , own_tree(true)
   {
-    CGAL_assertion(CGAL::is_pure_triangle(tmesh));
+    CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
     CGAL_assertion(CGAL::is_closed(tmesh));
 
     tree_ptr = new AABB_tree(faces(tmesh).first,
@@ -111,7 +111,7 @@ public:
   * @param tmesh the triangulated surface mesh bounding the domain to be tested
   * @param gt an instance of the geometric traits class
   *
-  * @pre `CGAL::is_closed(tmesh) && CGAL::is_pure_triangle(tmesh)`
+  * @pre `CGAL::is_closed(tmesh) && CGAL::is_triangle_mesh(tmesh)`
   */
   Side_of_triangle_mesh(const TriangleMesh& tmesh,
                         const GeomTraits& gt=GeomTraits())
@@ -119,7 +119,7 @@ public:
   , vector_functor(gt.construct_vector_3_object())
   , own_tree(true)
   {
-    CGAL_assertion(CGAL::is_pure_triangle(tmesh));
+    CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
     CGAL_assertion(CGAL::is_closed(tmesh));
 
     tree_ptr = new AABB_tree(faces(tmesh).first,
@@ -134,7 +134,7 @@ public:
   * @param tree a \cgal `AABB_tree` with `AABB_face_graph_triangle_primitive` as `Primitive` type
   * @param gt an instance of the geometric traits class
   *
-  * @pre `CGAL::is_closed(tmesh) && CGAL::is_pure_triangle(tmesh)`
+  * @pre `CGAL::is_closed(tmesh) && CGAL::is_triangle_mesh(tmesh)`
   */
   Side_of_triangle_mesh(const AABB_tree& tree,
                         const GeomTraits& gt = GeomTraits())

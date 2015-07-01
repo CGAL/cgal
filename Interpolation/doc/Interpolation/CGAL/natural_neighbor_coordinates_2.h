@@ -53,7 +53,7 @@ computes the natural neighbor coordinates for `p` with respect to the
 points in the two-dimensional Delaunay triangulation `dt`. 
 
 \tparam Dt must be of type `Delaunay_triangulation_2<Traits, Tds>`. 
-\tparam OutputIterator must have the value type `std::pair<Dt::Point_2, Dt::Geom_traits::FT`. 
+\tparam OutputIterator must have the value type `std::pair<Dt::Point_2, Dt::Geom_traits::FT>`.
 
 The sequence of point/coordinate pairs
 that is computed by the function is placed starting at `out`. The

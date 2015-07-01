@@ -12,9 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
-//
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
 #ifndef ARRANGEMENT_DEMO_WINDOW_H
@@ -64,7 +61,7 @@ class ArrangementDemoWindow : public CGAL::Qt::DemosMainWindow
     CIRCULAR_ARC_TRAITS
     // ALGEBRAIC_TRAITS
   } TraitsType;
-    
+
   ArrangementDemoWindow(QWidget* parent = 0);
   ~ArrangementDemoWindow();
 
@@ -77,7 +74,7 @@ class ArrangementDemoWindow : public CGAL::Qt::DemosMainWindow
 
   template < class ArrType >
   void makeOverlayTab( ArrType* arr1, ArrType* arr2 );
-    
+
 public slots:
   void updateMode( QAction* a );
   void updateEnvelope( QAction* a );
@@ -95,7 +92,7 @@ public slots:
   void on_actionZoomOut_triggered( );
   void on_actionPreferences_triggered( );
   void on_actionFillColor_triggered( );
-    
+
 
 signals:
   void modelChanged( );

@@ -77,7 +77,7 @@ private:
 public:
   MainWindow();
 
-public slots:
+public Q_SLOTS:
 
   void processInput(CGAL::Object o);
 
@@ -107,7 +107,7 @@ public slots:
   void clear();
 
   virtual void open(QString);
-signals:
+Q_SIGNALS:
   void changed();
 };
 
@@ -199,7 +199,7 @@ MainWindow::processInput(CGAL::Object o)
       }
       poly.insert(poly.vertices_begin(), points.begin(), points.end());
     }
-    emit(changed());
+    Q_EMIT( changed());
   }
 }
 
@@ -217,7 +217,7 @@ MainWindow::on_actionClear_triggered()
   poly.clear();
   clear();
   this->actionCreateInputPolygon->setChecked(true);
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -243,7 +243,7 @@ MainWindow::open(QString fileName)
   clear();
 
   this->addToRecentFiles(fileName);
-  emit (changed());
+  Q_EMIT( changed());
 }
 
 
@@ -271,7 +271,7 @@ MainWindow::on_actionCreateInputPolygon_toggled(bool checked)
   } else {
     scene.removeEventFilter(pi);
   }
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 void

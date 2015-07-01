@@ -1,9 +1,9 @@
 if ( NOT CGAL_Boost_Setup )
 
   include(CGAL_TweakFindBoost)
-  # In the documentation, we say we require Boost-1.39, but technically we
-  # require 1.33.1. Some packages may require more recent versions, though.
-  find_package( Boost 1.33.1 REQUIRED thread system )
+  # In the documentation, we say we require Boost-1.48, but technically we
+  # require 1.39. Some packages may require more recent versions, though.
+  find_package( Boost 1.39 REQUIRED thread system )
 
   if(Boost_FOUND)
     if(DEFINED Boost_DIR AND NOT Boost_DIR)

@@ -6,9 +6,10 @@ namespace CGAL {
 
 The class `Segment_Delaunay_graph_traits_2` provides a model for the 
 `SegmentDelaunayGraphTraits_2` concept. 
-This class has two template parameters. The first template parameter 
-must be a model of the `Kernel` concept. The second template 
-parameter corresponds to how predicates are evaluated. There are two 
+
+\tparam K  must be a model of the `Kernel` concept. 
+
+\tparam MTag corresponds to how predicates are evaluated. There are two 
 possible values for `MTag`, namely `Field_with_sqrt_tag` and 
 `Field_tag`. The first one must be used when the number type 
 used in the representation supports the exact evaluation of signs of 
@@ -78,9 +79,11 @@ namespace CGAL {
 
 The class `Segment_Delaunay_graph_traits_without_intersections_2` provides a model for the 
 `SegmentDelaunayGraphTraits_2` concept. 
-This class has two template parameters. 
-The first template parameter must be a model of the `Kernel` 
-concept. The second template parameter corresponds to how predicates 
+
+\tparam K  must be a model of the `Kernel` 
+concept. 
+
+\tparam MTag corresponds to how predicates 
 are evaluated. There are two possible values for `MTag`, namely 
 `Field_with_sqrt_tag` and `Euclidean_ring_tag`. The first one 
 must be used when the number type used in the representation supports 

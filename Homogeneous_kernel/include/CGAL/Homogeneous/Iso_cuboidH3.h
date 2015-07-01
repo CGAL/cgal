@@ -213,13 +213,13 @@ template < class R >
 inline
 const typename Iso_cuboidH3<R>::Point_3 &
 Iso_cuboidH3<R>::min BOOST_PREVENT_MACRO_SUBSTITUTION () const
-{ return get(base)[0]; }
+{ return get_pointee_or_identity(base)[0]; }
 
 template < class R >
 inline
 const typename Iso_cuboidH3<R>::Point_3 &
 Iso_cuboidH3<R>::max BOOST_PREVENT_MACRO_SUBSTITUTION () const
-{ return get(base)[1]; }
+{ return get_pointee_or_identity(base)[1]; }
 
 template < class R >
 inline

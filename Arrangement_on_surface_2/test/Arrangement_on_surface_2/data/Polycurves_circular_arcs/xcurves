@@ -1,0 +1,118 @@
+##
+# ===============================
+#
+# POLYCURVES
+#
+# ===============================
+#
+# In order to construct a poly-curve out of N curves, all curves should be counter clockwise or counter-clockwise and the order should be from spacially left curve to right curve (doubt).
+#
+# Format:
+# 1.<Type of x-curve> 2.<Number of x-curves in a polycurve> 3.<center of circle > 4.<squared Radius of circle> 5.<Orientation of circle> 6.<source point> 7.<Target Point>(repeat 3 to 7 for number of curves time. )
+#
+# Types of curves
+# TODO define
+#
+# Second Quadrant
+# Curve 1: Circle center: (-10,0), Radius: 6, Source: (-10,6), Target: (-4,0) (Clockwise)
+# Curve 2: Circle center: (-2,0),  Radius: 2, Source: (-4,0),  Target: (0,0)  (Clockwise) 
+# Polycurve id: 0
+x 2 -10 0 36 -1 -10 6 -4 0 -2 0 4 -1 -4 0 0 0
+#
+# First and Second Quadrant
+# Curve 1: Circle center: (0,0), Radius: 1, Source: (-1,0), Target: (1,0) (Clockwise)
+# Curve 2: Circle center: (3,0), Radius: 2, Source: (1,0), Target: (5,0) (Clockwise) 
+# Polycurve id: 1
+x 2 0 0 1 -1 -1 0 1 0 3 0 4 -1 1 0 5 0
+#
+# First Quadrant
+# Curve 1: Circle center: (6,0), Radius: 1, Source: (5,0), Target: (7,0) (Clockwise)
+# Curve 2: Circle center: (8,0), Radius: 1, Source: (7,0), Target: (9,0) (Clockwise) 
+# Polycurve id: 2
+x 2 6 0 1 -1 5 0 7 0 8 0 1 -1 7 0 9 0
+#
+# Fourth Quadrant (opposite of polycurve id 2)
+# Curve 1: Circle center: (8,0), Radius: 1, Source: (9,0), Target: (7,0) (Counter-Clockwise)
+# Curve 2: Circle center: (6,0), Radius: 1, Source: (7,0), Target: (5,0) (Counter-Clockwise)
+# Polycurve id: 3
+x 2 8 0 1 1 9 0 7 0 6 0 1 1 7 0 5 0 
+#
+# First and Second Quadrant
+# Curve 1: Circle center: (0,0), Radius: 1, Source: (-1,0), Target: (1,0) (Clockwise)
+# Curve 2: Circle center: (3,0), Radius: 2, Source: (1,0),  Target: (5,0) (Clockwise) 
+# Curve 3: Circle center: (10,0),Radius: 5, Source: (5,0),  Target: (15,0)(Clockwise)
+# Polycurve id: 4
+x 3 0 0 1 -1 -1 0 1 0 3 0 4 -1 1 0 5 0 10 0 25 -1 5 0 15 0
+#
+# Second Quadrant
+# Curve 1: Circle center: (-10,5), Radius: 1, Source: (-11,5), Target: (-10,6) (Clockwise)
+# Curve 2: Circle center: (-10,0), Radius: 6, Source: (-10,6), Target: (-4,0) (Clockwise)
+# Curve 3: Circle center: (-2,0),  Radius: 2, Source: (-4,0),  Target: (0,0)  (Clockwise) 
+# Polycurve id: 5
+x 3 -10 5 1 -1 -11 5 -10 6 -10 0 36 -1 -10 6 -4 0 -2 0 4 -1 -4 0 0 0
+#
+# Second Quadrant
+# Curve 1: Circle center: (-10,10), Radius: 3, Source: (-10,13), Target: (-7,10) (Clockwise)
+# Polycurve id: 6
+x 1 -10 10 9 -1 -10 13 -7 10
+#
+# Second and Third Quadrant
+# Curve 1: Circle center: (-20,10), Radius: 13, Source: (-7,10), Target: (-33,10) (Clockwise)
+# Polycurve id: 7
+x 1 -20 10 13 -1 -7 10 -33 10
+#
+#
+# Second Quadrant
+# Curve 1: Circle center: (-20,10), Radius: 13, Source: (-33,10), Target: (-20,23) (Clockwise)
+# Polycurve id: 8
+x 1 -20 10 169 -1 -33 10 -20 23
+#
+# Second Quadrant
+# Curve 1: Circle center: (-20,25), Radius: 2, Source: (-20,23), Target: (-22,25) (Clockwise)
+# Polycurve id: 9
+x 1 -20 25 4 -1 -20 23 -22 25
+#
+# Second Quadrant
+# Curve 1: Circle center: (-20,25), Radius: 2, Source: (-22,25), Target: (-20,27) (Clockwise)
+# Polycurve id: 10
+x 1 -20 25 4 -1 -22 25 -20 27
+#
+# First and Second Quadrant
+# Curve 1: Circle center: (0,0), Radius: 1, Source: (-1,0), Target: (1,0) (Clockwise)
+# Curve 2: Circle center: (3,0), Radius: 2, Source: (1,0), Target: (5,0) (Clockwise) 
+# Curve 3: Circle center: (6,0), Radius: 1, Source: (5,0), Target: (7,0) (Clockwise)
+# Curve 4: Circle center: (8,0), Radius: 1, Source: (7,0), Target: (9,0) (Clockwise) 
+# Polycurve id: 11
+x 4 0 0 1 -1 -1 0 1 0 3 0 4 -1 1 0 5 0 6 0 1 -1 5 0 7 0 8 0 1 -1 7 0 9 0
+#
+# Second Quadrant
+# Curve 1: Circle center: (-12,0), Radius: 6, Source: (-12,6), Target: (-6,0) (Clockwise)
+# Curve 2: Circle center: (-3.5,0),  Radius: 2.5, Source: (-6,0),  Target: (-1,0)  (Clockwise) 
+# Polycurve id: 12
+x 2 -12 0 36 -1 -12 6 -6 0 -7 2 2.5 -1 -6 0 -1 0
+#
+# Second Quadrant
+# Curve 1: Circle center: (-12,0), Radius: 6, Source: (-12,6), Target: (-6,0) (Clockwise)
+# Curve 2: Circle center: (-3.5,0),  Radius: 2.5, Source: (-6,0),  Target: (-1,0)  (Clockwise) 
+# Curve 3: Circle center: (0,0), Radius: 1, Source: (-1,0), Target: (1,0) (Clockwise)
+# Curve 4: Circle center: (3,0), Radius: 2, Source: (1,0), Target: (5,0) (Clockwise) 
+# Polycurve id: 13
+x 4 -12 0 6 -1 -12 6 -6 0 -7 2 6.25 -1 -6 0 -1 0 0 0 1 -1 -1 0 1 0 3 0 2 -1 1 0 5 0
+#
+#
+# =============================
+#
+#  SEGMENTS
+#
+# =============================
+# Curve: Circle center: (10,0),Radius: 5, Source: (5,0),  Target: (15,0)(Clockwise)
+# Segment Id: 0
+s 10 0 25 -1 5 0 15 0
+#
+# Curve : Circle center: (-10,5), Radius: 1, Source: (-11,5), Target: (-10,6) (Clockwise)
+# Segment Id: 1
+s -10 5 1 -1 -11 5 -10 6
+#
+# Curve: Circle center: (10,10),Radius: 5, Source: (5,10),  Target: (15,10)(Clockwise)
+# Segment Id: 2
+s 10 10 25 -1 5 10 15 10

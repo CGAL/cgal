@@ -12,10 +12,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein   <wein_r@yahoo.com>
 
 #ifndef CGAL_EXACT_OFFSET_BASE_H
 #define CGAL_EXACT_OFFSET_BASE_H
@@ -37,9 +34,9 @@ template <class Traits_, class Container_>
 class Exact_offset_base_2
 {
 private:
-  
+
   typedef Traits_                                        Traits_2;
-  
+
   // Rational kernel types:
   typedef typename Traits_2::Rat_kernel                  Rat_kernel;
   typedef typename Rat_kernel::FT                        Rational;
@@ -66,14 +63,14 @@ private:
   typedef typename Traits_2::X_monotone_curve_2          X_monotone_curve_2;
 
   typedef CGAL::Gps_traits_2<Traits_2>                   Gps_traits_2;
- 
+
 protected:
 
   typedef CGAL::Polygon_2<Rat_kernel, Container_>        Polygon_2;
   typedef CGAL::Polygon_with_holes_2<Rat_kernel,
                                      Container_>         Polygon_with_holes_2;
   typedef typename Gps_traits_2::Polygon_2               Offset_polygon_2;
-  
+
 private:
 
   // Polygon-related types:
@@ -81,7 +78,7 @@ private:
 
 protected:
 
-  typedef Arr_labeled_traits_2<Traits_2>                 Labeled_traits_2; 
+  typedef Arr_labeled_traits_2<Traits_2>                 Labeled_traits_2;
 
   typedef typename Labeled_traits_2::X_monotone_curve_2  Labeled_curve_2;
 
@@ -89,7 +86,7 @@ public:
 
   /*! Default constructor. */
   Exact_offset_base_2 ()
-  {}    
+  {}
 
 protected:
 
@@ -114,9 +111,9 @@ protected:
     // Prepare circulators over the polygon vertices.
     const bool            forward = (pgn.orientation() == orient);
     Vertex_circulator     first, curr, next;
-    
+
     first = pgn.vertices_circulator();
-    curr = first; 
+    curr = first;
     next = first;
 
     // Traverse the polygon vertices and edges and construct the arcs that
@@ -163,7 +160,7 @@ protected:
 
       delta_x = x2 - x1;
       delta_y = y2 - y1;
-      len = nt_traits.sqrt (nt_traits.convert (CGAL::square (delta_x) + 
+      len = nt_traits.sqrt (nt_traits.convert (CGAL::square (delta_x) +
                                                CGAL::square (delta_y)));
 
       // The angle theta between the vector v and the x-axis is given by:
@@ -184,7 +181,7 @@ protected:
 
       // Construct the first offset vertex, which corresponds to the
       // source vertex of the current polygon edge.
-      op1 = Alg_point_2 (nt_traits.convert (x1) + trans_x, 
+      op1 = Alg_point_2 (nt_traits.convert (x1) + trans_x,
                          nt_traits.convert (y1) + trans_y);
 
       if (curr == first)
@@ -201,12 +198,12 @@ protected:
           arc = Curve_2 (Rat_circle_2 (*curr, sqr_r),
                          CGAL::COUNTERCLOCKWISE,
                          op2, op1);
-          
+
           // Subdivide the arc into x-monotone subarcs and append them to the
           // convolution cycle.
           xobjs.clear();
           f_make_x_monotone (arc, std::back_inserter(xobjs));
-          
+
           for (xobj_it = xobjs.begin(); xobj_it != xobjs.end(); ++xobj_it)
           {
             assign_success = CGAL::assign (xarc, *xobj_it);
@@ -225,7 +222,7 @@ protected:
 
       // Construct the second offset vertex, which corresponds to the
       // target vertex of the current polygon edge.
-      op2 = Alg_point_2 (nt_traits.convert (x2) + trans_x, 
+      op2 = Alg_point_2 (nt_traits.convert (x2) + trans_x,
                          nt_traits.convert (y2) + trans_y);
 
       // The equation of the line connecting op1 and op2 is given by:
@@ -248,7 +245,7 @@ protected:
 
       // Proceed to the next polygon vertex.
       curr = next;
-    
+
     } while (curr != first);
 
     if (! f_equal (op2, first_op))
@@ -258,21 +255,21 @@ protected:
       arc = Curve_2 (Rat_circle_2 (*first, sqr_r),
                      CGAL::COUNTERCLOCKWISE,
                      op2, first_op);
-      
+
       // Subdivide the arc into x-monotone subarcs and append them to the
       // convolution cycle.
       bool           is_last;
-      
+
       xobjs.clear();
       f_make_x_monotone (arc, std::back_inserter(xobjs));
-      
+
       xobj_it = xobjs.begin();
       while (xobj_it != xobjs.end())
       {
         assign_success = CGAL::assign (xarc, *xobj_it);
         CGAL_assertion (assign_success);
         CGAL_USE(assign_success);
-        
+
         ++xobj_it;
         is_last = (xobj_it == xobjs.end());
 

@@ -177,7 +177,7 @@ public:
   /// Adds cell \c cell to the 3D complex, with subdomain index \c index
   void add_to_complex(const Cell_handle& cell, const Subdomain_index& index)
   {
-    CGAL_precondition(index != Subdomain_index());
+    CGAL_precondition( !( index == Subdomain_index() ) );
 
     if ( ! is_in_complex(cell) )
     {
@@ -225,7 +225,7 @@ public:
   /// Returns \c true if cell \c cell belongs to the 3D complex
   bool is_in_complex(const Cell_handle& cell) const
   {
-    return ( subdomain_index(cell) != Subdomain_index() );
+    return !( subdomain_index(cell) == Subdomain_index() );
   }
 
   /// Returns the subdomain index of cell \c cell
@@ -335,7 +335,7 @@ private:
     bool operator()(Iterator it) const
     {
       if ( index_ == Surface_patch_index() ) { return ! c3t3_->is_in_complex(*it); }
-      else { return c3t3_->surface_patch_index(*it) != index_;  }
+      else { return !( c3t3_->surface_patch_index(*it) == index_ );  }
     }
   };
 
@@ -357,7 +357,7 @@ private:
     bool operator()(Cell_handle ch) const
     {
       if ( index_ == Subdomain_index() ) { return !r_self_->is_in_complex(ch); }
-      else { return r_self_->subdomain_index(ch) != index_; }
+      else { return !( r_self_->subdomain_index(ch) == index_ ); }
     }
   }; // end class Cell_not_in_complex
 
@@ -537,7 +537,7 @@ Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::add_to_complex(
     const int i,
     const Surface_patch_index& index)
 {
-  CGAL_precondition(index != Surface_patch_index());
+  CGAL_precondition( !( index == Surface_patch_index() ) );
 
   if ( ! is_in_complex(cell,i) )
   {

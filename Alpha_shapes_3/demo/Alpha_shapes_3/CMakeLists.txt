@@ -24,6 +24,8 @@ find_package(QGLViewer)
 
 if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
+  add_definitions(-DQT_NO_KEYWORDS)
+
   include(${QT_USE_FILE})
 
   include_directories (${QGLVIEWER_INCLUDE_DIR})

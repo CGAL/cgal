@@ -46,8 +46,6 @@
 #include <list>
 #include <limits>
 
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -1033,8 +1031,6 @@ bool
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 check_convergence() const
 {
-  namespace bl = boost::lambda;
-
   FT sum(0);
   for( typename std::multiset<FT>::const_iterator
        it = big_moves_.begin(), end = big_moves_.end() ; it != end ; ++it )

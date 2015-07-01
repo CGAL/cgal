@@ -87,19 +87,19 @@ public:
 
   const FT & a() const
   {
-      return get(base)[0];
+      return get_pointee_or_identity(base)[0];
   }
   const FT & b() const
   {
-      return get(base)[1];
+      return get_pointee_or_identity(base)[1];
   }
   const FT & c() const
   {
-      return get(base)[2];
+      return get_pointee_or_identity(base)[2];
   }
   const FT & d() const
   {
-      return get(base)[3];
+      return get_pointee_or_identity(base)[3];
   }
 
   Line_3       perpendicular_line(const Point_3 &p) const;

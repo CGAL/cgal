@@ -206,7 +206,7 @@ self_intersections( const FaceRange& face_range,
  * \ingroup PkgPolygonMeshProcessing
  * detects and records self-intersections of a triangulated surface mesh.
  * This function depends on the package \ref PkgBoxIntersectionDSummary
- * @pre `CGAL::is_pure_triangle(tmesh)`
+ * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
  * @tparam TriangleMesh a model of `FaceListGraph` that has an internal property map
 *         for `CGAL::vertex_point_t`
@@ -276,7 +276,7 @@ self_intersections( const FaceRange& face_range,
                     OutputIterator out,
                     const NamedParameters& np)
 {
-  CGAL_precondition(CGAL::is_pure_triangle(tmesh));
+  CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
 
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
@@ -336,7 +336,7 @@ OutputIterator self_intersections(const FaceRange& face_range,
  * \ingroup PkgPolygonMeshProcessing
  * tests if a triangulated surface mesh self-intersects.
  * This function depends on the package \ref PkgBoxIntersectionDSummary
- * @pre `CGAL::is_pure_triangle(tmesh)`
+ * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
  * @tparam TriangleMesh a model of `FaceListGraph` that has an internal property map
  *         for `CGAL::vertex_point_t`
@@ -360,7 +360,7 @@ template <class TriangleMesh
 bool does_self_intersect(const TriangleMesh& tmesh
                         , const NamedParameters& np)
 {
-  CGAL_precondition(CGAL::is_pure_triangle(tmesh));
+  CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
 
   try
   {

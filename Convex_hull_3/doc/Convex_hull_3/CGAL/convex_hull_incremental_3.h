@@ -3,6 +3,8 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull3Functions
 
+\deprecated This function relies on a package deprecated since \cgal 4.6 and thus is also deprecated.
+
 computes the convex hull polyhedron 
 of the three-dimensional points in the range [`first`,`beyond`)
 and assigns it to `P`. If `test_correctness` is set to

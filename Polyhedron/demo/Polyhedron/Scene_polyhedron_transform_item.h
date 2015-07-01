@@ -23,7 +23,7 @@ public:
   void direct_draw() const {}
   void draw() const;
   Bbox bbox() const;
-  ~Scene_polyhedron_transform_item() {delete frame; emit killed();}
+  ~Scene_polyhedron_transform_item() {delete frame; Q_EMIT killed();}
 
   bool manipulatable() const { return manipulable; }
   ManipulatedFrame* manipulatedFrame() { return frame; }
@@ -41,7 +41,7 @@ private:
   const Polyhedron* poly;
   qglviewer::Vec center_;
   
-signals:
+Q_SIGNALS:
   void stop();
   void killed();
 }; // end class Scene_polyhedron_transform_item

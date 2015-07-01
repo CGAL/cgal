@@ -142,7 +142,7 @@ private:
   bool m_view_mc; // that boolean is here even with if
 		  // CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
                   // is not defined.
-public slots:
+public Q_SLOTS:
 void display_marchin_cube();
 
 private:
@@ -159,11 +159,11 @@ private:
 public:
   void gl_draw_surface();
 
-signals:
+Q_SIGNALS:
 
   void new_bounding_box(double, double, double, double, double, double);
 
-public slots:
+public Q_SLOTS:
   void only_in();
   void set_inverse_normals(const bool);
   void set_two_sides(const bool);

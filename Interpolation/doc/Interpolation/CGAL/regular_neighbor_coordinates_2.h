@@ -22,7 +22,7 @@ meet the requirements for the traits class of the
 `polygon_area_2()` function. A model of this traits class is 
 `Regular_triangulation_euclidean_traits_2<K, Weight>`. 
 <LI>The value type of `OutputIterator` is equivalent to 
-`std::pair<Rt::Weighted_point, Rt::Geom_traits::FT>`, i.e.\ a pair 
+`std::pair<Rt::Weighted_point, Rt::Geom_traits::FT>`, i.e.\ a pair
 associating a point and its regular neighbor coordinate. 
 </OL> 
 
@@ -45,9 +45,9 @@ computes the regular neighbor coordinates for `p` with respect
 to the weighted points in the two-dimensional regular triangulation
 `rt`. 
 
-\tparam Rt must be a `Regular_triangulation_2<Traits, Tds>`. 
-\tparam OutputIterator must have the value type 
-`std::pair<Rt::Weighted_point, Rt::Geom_traits::FT`. The sequence of
+\tparam Rt must be a `Regular_triangulation_2<Traits, Tds>`.
+\tparam OutputIterator must have the value type
+`std::pair<Rt::Weighted_point, Rt::Geom_traits::FT>`. The sequence of
 point/coordinate pairs that is computed by the function is placed
 starting at `out`. 
 

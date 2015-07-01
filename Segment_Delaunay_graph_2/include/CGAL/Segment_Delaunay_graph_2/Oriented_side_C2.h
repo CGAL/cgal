@@ -60,6 +60,19 @@ public:
   typedef Oriented_side                       result_type;
   typedef Site_2                              argument_type;
 
+  // computes the oriented side of the Voronoi vertex of s1, s2, inf
+  // wrt the line that passes through the point p and its direction
+  // is the direction of the supporting line of s, rotated by 90
+  // degrees counterclockwise.
+  Oriented_side operator()(const Site_2& s1, const Site_2& s2,
+			   const Site_2& s, const Site_2& p) const
+  {
+    CGAL_precondition(s1.is_point() || s2.is_point());
+    CGAL_precondition(s1.is_segment() || s2.is_segment());
+
+    return this->operator()((s1.is_point()? s1: s2), s, p);
+  }
+
   // computes the oriented side of the point q
   // wrt the line that is passes through the point p and its direction
   // is the direction of the supporting line of s, rotated by 90

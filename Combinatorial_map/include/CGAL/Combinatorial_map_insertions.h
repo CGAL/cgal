@@ -20,6 +20,8 @@
 #ifndef CGAL_COMBINATORIAL_MAP_INSERTIONS_H
 #define CGAL_COMBINATORIAL_MAP_INSERTIONS_H
 
+#include <deque>
+
 namespace CGAL
 {
 /** @file Combinatorial_map_insertions.h

@@ -107,27 +107,27 @@ public:
 /*!
 
 */
-BaseTraits::Dimension D
+typedef BaseTraits::Dimension Dimension;
 
 /*!
 
 */ 
-Key Point_d; 
+typedef Key Point_d;
 
 /*!
 
 */ 
-BaseTraits::FT FT; 
+typedef BaseTraits::FT FT;
 
 /*!
 
 */ 
-BaseTraits::Cartesian_const_iterator_d Cartesian_const_iterator_d; 
+typedef BaseTraits::Cartesian_const_iterator_d Cartesian_const_iterator_d;
 
 /*!
 
 */ 
-BaseTraits Base; 
+typedef BaseTraits Base;
 
 /// @} 
 

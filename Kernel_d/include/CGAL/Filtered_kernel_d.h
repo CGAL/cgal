@@ -24,8 +24,6 @@
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/Kernel_d/Cartesian_converter_d.h>
 
-#include<boost/pool/pool_alloc.hpp>
-
 namespace CGAL {
 
 template<typename Kernel> // a dD kernel we want to filter

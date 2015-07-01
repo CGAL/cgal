@@ -100,7 +100,7 @@ protected:
     if(closed_ && points.size()>2){
       points.push_back(points.front());
     }
-    emit(generate(CGAL::make_object(points)));
+    Q_EMIT( generate(CGAL::make_object(points)));
   }
 }; // end class GraphicsViewPolylineInput
 

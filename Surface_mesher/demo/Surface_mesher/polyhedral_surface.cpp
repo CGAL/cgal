@@ -148,7 +148,7 @@ void Polyhedral_surface::display_nb_elements_in_status_bar() const
 void Polyhedral_surface::set_dirty()
 {
   is_dirty = true;
-  emit changed();
+  Q_EMIT changed();
 }
 
 void Polyhedral_surface::busy() const 
@@ -180,7 +180,7 @@ void Polyhedral_surface::set_sharp_edges_angle_bounds(const double lower_bound,
     surface_ptr->set_sharp_edges_angle_bounds(lower_bound, upper_bound);
     surface_ptr->set_sharp_vertices_angle_bounds(lower_bound, upper_bound);
     update_data_structures();
-    emit set_dirty();
+    Q_EMIT set_dirty();
   }
 }
 
@@ -209,7 +209,7 @@ void Polyhedral_surface::toggle_display_octree(bool b)
     construct_octree();
   }
   display_octree = b;
-  emit set_dirty();
+  Q_EMIT set_dirty();
 }
 
 void Polyhedral_surface::toggle_display_edges_octree(bool b)
@@ -219,25 +219,25 @@ void Polyhedral_surface::toggle_display_edges_octree(bool b)
     construct_octree();
   }
   display_edges_octree = b;
-  emit set_dirty();
+  Q_EMIT set_dirty();
 }
 
 void Polyhedral_surface::toggle_display_surface(bool b)
 {
   display_surface = b;
-  emit set_dirty();
+  Q_EMIT set_dirty();
 }
 
 void Polyhedral_surface::toggle_display_all_edges(bool b)
 {
   display_all_edges = b;
-  emit set_dirty();
+  Q_EMIT set_dirty();
 }
 
 void Polyhedral_surface::toggle_display_control_edges(bool b)
 {
   display_control_edges = b;
-  emit set_dirty();
+  Q_EMIT set_dirty();
 }
 
 void Polyhedral_surface::make_one_subdivision_step()
@@ -252,7 +252,7 @@ void Polyhedral_surface::make_one_subdivision_step()
     surface_ptr->compute_normals();
     surface_ptr->compute_type();
     update_data_structures();
-    emit set_dirty();
+    Q_EMIT set_dirty();
   }
 }
 
@@ -307,7 +307,7 @@ bool Polyhedral_surface::open(const QString& filename)
   
   QAction* actionInverse_normals = qFindChild<QAction*>(this, "actionInverse_normals");
   if(actionInverse_normals) actionInverse_normals->setChecked(false);
-  emit set_dirty();
+  Q_EMIT set_dirty();
   return true;
 }
 
@@ -344,7 +344,7 @@ void Polyhedral_surface::postSelection(const QPoint&)
                              "selected facet=%3%\n")
     % viewer->selectedName() % selected_edge % selected_facet;
 
-  emit set_dirty();
+  Q_EMIT set_dirty();
 }
   
 void Polyhedral_surface::draw(bool with_names)

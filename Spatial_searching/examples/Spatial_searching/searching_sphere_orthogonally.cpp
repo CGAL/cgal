@@ -25,7 +25,7 @@ int  main() {
   Distance tr_dist;
 
   Point_2 center = Construct_center_d()(query);
-  Neighbor_search N1(tree, center, K, 0.0, false); // eps=10.0, nearest=false
+  Neighbor_search N1(tree, center, K, 0.0, false); // eps=0.0, nearest=false
   std::cout << "For the query circle  " << std::endl
         <<  "The " << K << " approximate furthest neighbors are: " << std::endl;
   double radius = Compute_squared_radius_d()(query);

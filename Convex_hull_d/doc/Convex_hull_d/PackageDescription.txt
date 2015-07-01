@@ -18,6 +18,8 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
+\deprecated This package is deprecated since the version 4.6 of \cgal. The package \ref PkgTriangulationsSummary should be used instead.
+
 A subset \f$ S \subseteq \mathbb{R}^d\f$ is convex if for any two points \f$ p\f$ and \f$ q\f$
 in the set the line segment with endpoints \f$ p\f$ and \f$ q\f$ is contained
 in \f$ S\f$. The convex hull of a set \f$ S\f$ is 

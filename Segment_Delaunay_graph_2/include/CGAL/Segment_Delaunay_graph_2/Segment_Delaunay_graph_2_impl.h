@@ -139,11 +139,14 @@ insert_third(const Site_2& t, const Storage_site_2& ss)
   Site_2 s2 = f->vertex(1)->site();
   Site_2 s3 = f->vertex(2)->site();
 
-  Orientation o =
-    geom_traits().orientation_2_object()(s1, s2, s3);
+  Sign s12i3 = geom_traits().vertex_conflict_2_object()(s1, s2, s3);
+  Sign s21i3 = geom_traits().vertex_conflict_2_object()(s2, s1, s3);
 
-  if ( o != COLLINEAR ) {
-    if ( o == RIGHT_TURN ) {
+  CGAL_assertion(s12i3 != ZERO);
+  CGAL_assertion(s21i3 != ZERO);
+
+  if ( s12i3 != s21i3 ) {
+    if ( s21i3 == NEGATIVE ) {
       f->reorient();
       for (int i = 0; i < 3; i++) {
 	f->neighbor(i)->reorient();
@@ -335,7 +338,8 @@ insert_point(const Storage_site_2& ss, const Site_2& t,
     if ( at_res == AT2::INTERIOR ) {
       CGAL_assertion( t.is_input() );
 
-      Vertex_triple vt = insert_exact_point_on_segment(ss, t, vnearest);
+      Vertex_triple vt = (this->*insert_exact_point_on_segment_ptr)(
+          ss, t, vnearest);
       return vt.first;
     } else {
       // the point to be inserted does not belong to the interior of a
@@ -499,7 +503,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
       if ( is_infinite(fc) ) { n_inf++; }
       fc++;
     } while ( fc != fc_start );
-    CGAL_assertion( n_inf == 0 || n_inf == 2 || n_inf == 4 );
+    CGAL_assertion( n_inf % 2 == 0 );
   }
 #endif
 
@@ -524,13 +528,13 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
 	CGAL_assertion(  !is_infinite( ff1->vertex(ccw_v) )  );
 	CGAL_assertion( ff1->vertex(ccw_v)->site().is_point() );
 	sv_ep = ff1->vertex(ccw_v)->site();
+        os1 = oriented_side(v->site(), sv_ep, sitev_supp, t);
       } else {
 	CGAL_assertion(  !is_infinite( ff1->vertex( cw_v) )  );
 	CGAL_assertion( ff1->vertex( cw_v)->site().is_point() );
 	sv_ep = ff1->vertex( cw_v)->site();
+        os1 = oriented_side(sv_ep, v->site(), sitev_supp, t);
       }
-
-      os1 = oriented_side(sv_ep, sitev_supp, t);
     } else {
       os1 = oriented_side(fc1->vertex(0)->site(),
 			  fc1->vertex(1)->site(),
@@ -548,13 +552,13 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
 	CGAL_assertion(  !is_infinite( ff2->vertex(ccw_v) )  );
 	CGAL_assertion( ff2->vertex(ccw_v)->site().is_point() );
 	sv_ep = ff2->vertex(ccw_v)->site();
+        os2 = oriented_side(v->site(), sv_ep, sitev_supp, t);
       } else {
 	CGAL_assertion(  !is_infinite( ff2->vertex( cw_v) )  );
 	CGAL_assertion( ff2->vertex( cw_v)->site().is_point() );
 	sv_ep = ff2->vertex( cw_v)->site();
+        os2 = oriented_side(sv_ep, v->site(), sitev_supp, t);
       }
-
-      os2 = oriented_side(sv_ep, sitev_supp, t);
     } else {
       os2 = oriented_side(fc2->vertex(0)->site(),
 			  fc2->vertex(1)->site(),
@@ -569,7 +573,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
     }
 
     if ( !found_f2 &&
-	 os1 == ON_POSITIVE_SIDE && os2 != ON_POSITIVE_SIDE ) {
+         os1 != ON_NEGATIVE_SIDE && os2 == ON_NEGATIVE_SIDE ) {
       f2 = ff2;
       found_f2 = true;
     }
@@ -928,7 +932,7 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
     return v;
   }
 
-  Vertex_triple vt = insert_point_on_segment(ss, t, v, tag);
+  Vertex_triple vt = (this->*insert_point_on_segment_ptr)(ss, t, v, tag);
 
   Vertex_handle vsx = vt.first;
   
@@ -2564,17 +2568,13 @@ Object
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 primal(const Edge e) const
 {
-  typedef typename Gt::Line_2   Line_2;
-  typedef typename Gt::Ray_2    Ray_2;
-
   CGAL_precondition( !is_infinite(e) );
 
   if ( this->dimension() == 1 ) {
     Site_2 p = (e.first)->vertex(cw(e.second))->site();
     Site_2 q = (e.first)->vertex(ccw(e.second))->site();
 
-    Line_2 l = construct_sdg_bisector_2_object()(p,q);
-    return make_object(l);
+    return make_object(construct_sdg_bisector_2_object()(p,q));
   }
 
   // dimension == 2
@@ -2593,8 +2593,7 @@ primal(const Edge e) const
        is_infinite(e.first->neighbor(e.second)) )  {
     Site_2 p = (e.first)->vertex(cw(e.second))->site();
     Site_2 q = (e.first)->vertex(ccw(e.second))->site();
-    Line_2 l = construct_sdg_bisector_2_object()(p,q);
-    return make_object(l);
+    return make_object(construct_sdg_bisector_2_object()(p,q));
   }
 
   // only one of the adjacent faces is infinite
@@ -2618,8 +2617,7 @@ primal(const Edge e) const
   Site_2 q = ee.first->vertex(  cw(ee.second) )->site();
   Site_2 r = ee.first->vertex(     ee.second  )->site();
 
-  Ray_2 ray = construct_sdg_bisector_ray_2_object()(p,q,r);
-  return make_object(ray);
+  return make_object(construct_sdg_bisector_ray_2_object()(p,q,r));
 }
 
 //--------------------------------------------------------------------
@@ -2781,6 +2779,11 @@ void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 copy(Segment_Delaunay_graph_2& other)
 {
+  // copy the insert_on method pointers
+  insert_point_on_segment_ptr = other.insert_point_on_segment_ptr;
+  insert_exact_point_on_segment_ptr =
+    other.insert_exact_point_on_segment_ptr;
+
   // first copy the point container
   pc_ = other.pc_;
 

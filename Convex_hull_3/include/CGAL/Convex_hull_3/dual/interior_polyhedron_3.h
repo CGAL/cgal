@@ -29,7 +29,7 @@
 #include <limits>
 #include <CGAL/number_utils.h>
 
-// Taken from http://www.qhull.org/html/qhalf.htm
+// Description taken from http://www.qhull.org/html/qhalf.htm
 
 // If you do not know an interior point for the halfspaces, use linear programming
 // to find one. Assume, n halfspaces defined by: aj*x1+bj*x2+cj*x3+dj>=0, j=1..n.

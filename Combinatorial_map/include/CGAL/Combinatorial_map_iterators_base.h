@@ -36,6 +36,10 @@ namespace CGAL {
    *    the involution Bi.
    *  - CMap_non_basic_iterator<Map_,Ite> to transform the basic iterator Ite
    *    into the corresponding non basic iterator.
+   *  - CMap_range<Map,It,ConstIt,BasicIt> generic definition of a range
+   *    given an iterator and its const version
+   *  - CMap_const_range<Map,It,ConstIt,BasicIt> generic definition of a const
+   *    range given an iterator and its const version
    */
   //****************************************************************************
   /// OperationState: type to keep the last operation used by the previous ++.
@@ -56,7 +60,7 @@ namespace CGAL {
     OP_BETA21,     ///< Previous op was beta21.
     OP_JUMP,      ///< Previous op was a jump .
     OP_POP,       ///< Previous op pop a dart from a stack or a queue.
-    OP_END        ///< Previous op go out of the iterator.    
+    OP_END        ///< Previous op go out of the iterator.
   };
   //****************************************************************************
   /** Generic class of iterator onto darts.
@@ -87,14 +91,14 @@ namespace CGAL {
     typedef typename Base::value_type value_type;
     typedef typename Base::difference_type difference_type;
     typedef typename Base::pointer pointer;
-    typedef typename Base::reference reference;    
+    typedef typename Base::reference reference;
 
     /// true iff this iterator is basic
     typedef Tag_true Basic_iterator;
 
   public:
     /// Main constructor.
-    CMap_dart_iterator(Map& amap, Dart_handle adart): 
+    CMap_dart_iterator(Map& amap, Dart_handle adart):
       Base(adart),
       mmap(&amap),
       mfirst_dart(adart),
@@ -105,7 +109,7 @@ namespace CGAL {
     bool operator==(const Self& aiterator) const
     {
       return ( ((*this==mmap->null_handle) && (aiterator==mmap->null_handle)) ||
-               (mfirst_dart == aiterator.mfirst_dart && 
+               (mfirst_dart == aiterator.mfirst_dart &&
                static_cast<const Base&>(*this)==
                 static_cast<const Base&>(aiterator)) );
     }
@@ -119,7 +123,7 @@ namespace CGAL {
 
     /// Accessor to the combinatorial map.
     Map* get_combinatorial_map() const { return mmap; }
-    
+
     /// Rewind of the iterator to its beginning.
     void rewind()
     { set_current_dart(mfirst_dart); mprev_op = OP_NONE; }
@@ -179,7 +183,7 @@ namespace CGAL {
     OperationState mprev_op;
   };
   //****************************************************************************
-  /* Class CMap_extend_iterator<Map,Ite,Bi> which extend a given iterator by 
+  /* Class CMap_extend_iterator<Map,Ite,Bi> which extend a given iterator by
    * adding Bi and by using a stack and a mark.
    * General case when Ite does not have already a stack.
    */
@@ -198,7 +202,7 @@ namespace CGAL {
 
     CGAL_static_assertion( (Bi<=Map::dimension &&
                             boost::is_same<Ite_has_stack,Tag_false>::value) );
-    
+
   public:
     /// Main constructor.
     CMap_extend_iterator(Map& amap, Dart_handle adart, int amark):
@@ -247,7 +251,7 @@ namespace CGAL {
       }
       while ( this->cont() &&
               this->mmap->is_marked(*this, mmark_number) );
-      
+
       if ( !this->cont() )
       {
         if ( !mto_treat.empty() )
@@ -300,7 +304,7 @@ namespace CGAL {
     Dart_handle minitial_dart;
   };
   //****************************************************************************
-  /* Class CMap_extend_iterator<Map,Ite,Bi> which extend a given iterator by 
+  /* Class CMap_extend_iterator<Map,Ite,Bi> which extend a given iterator by
    * adding Bi and by using a stack and a mark.
    * Specialization when Ite has already a stack.
    */
@@ -371,18 +375,18 @@ namespace CGAL {
   //****************************************************************************
   //* Class CMap_non_basic_iterator allows to transform a basic_iterator onto
   //* a non basic one, depending if the basic iterator uses mark or not.
-  template <typename Map_,typename Basic_iterator, 
+  template <typename Map_,typename Basic_iterator,
             typename Use_mark=typename Basic_iterator::Use_mark>
   class CMap_non_basic_iterator;
   //****************************************************************************
   template <typename Map_,typename Base_>
-  class CMap_non_basic_iterator<Map_,Base_,Tag_true>: 
+  class CMap_non_basic_iterator<Map_,Base_,Tag_true>:
     public Base_
   {
   public:
     typedef CMap_non_basic_iterator<Map_,Base_,Tag_true> Self;
     typedef Base_ Base;
-    
+
     typedef typename Base::Map Map;
     typedef typename Base::Dart_handle Dart_handle;
 
@@ -391,7 +395,7 @@ namespace CGAL {
 
     CGAL_static_assertion( (boost::is_same<typename Base::Basic_iterator,
                             Tag_true>::value) );
-    
+
     /// Main constructor.
     CMap_non_basic_iterator(Map& amap, Dart_handle adart1):
       Base(amap, adart1, amap.get_new_mark())
@@ -405,11 +409,12 @@ namespace CGAL {
           (this->mmark_number)==1)
         unmark_treated_darts();
       this->mmap->free_mark(this->mmark_number);
+      this->mmark_number = -1; // To avoid basic class to try to unmark darts.
     }
 
     /// Copy constructor.
     CMap_non_basic_iterator(const Self& aiterator):
-      Base(aiterator)      
+      Base(aiterator)
     { this->mmap->share_a_mark(this->mmark_number); }
 
     /// Assignment operator.
@@ -421,6 +426,7 @@ namespace CGAL {
             (this->mmark_number)==1)
           unmark_treated_darts();
         this->mmap->free_mark(this->mmark_number);
+        this->mmark_number = -1;
 
         Base::operator=(aiterator);
         this->mmap->share_a_mark(this->mmark_number);
@@ -460,13 +466,13 @@ namespace CGAL {
   };
   //****************************************************************************
   template <typename Map_,typename Base_>
-  class CMap_non_basic_iterator<Map_,Base_,Tag_false>: 
+  class CMap_non_basic_iterator<Map_,Base_,Tag_false>:
     public Base_
   {
   public:
     typedef CMap_non_basic_iterator<Map_,Base_,Tag_false> Self;
     typedef Base_ Base;
-    
+
     typedef typename Base::Map Map;
     typedef typename Base::Dart_handle Dart_handle;
 
@@ -475,7 +481,7 @@ namespace CGAL {
 
     CGAL_static_assertion( (boost::is_same<typename Base::Basic_iterator,
                             Tag_true>::value) );
-    
+
     /// Main constructor.
     CMap_non_basic_iterator(Map& amap, Dart_handle adart):
       Base(amap, adart)
@@ -495,10 +501,10 @@ namespace CGAL {
     iterator end()               { return iterator(mmap,mmap.null_handle); }
     const_iterator begin() const { return const_iterator(mmap,mdart); }
     const_iterator end() const   { return const_iterator(mmap,mmap.null_handle); }
-    typename Map_::size_type size()
+    typename Map_::size_type size() const
     {
       if (msize==0)
-        for (const_iterator it=begin(); it!=end(); ++it)
+        for ( const_iterator it=begin(), itend=end(); it!=itend; ++it)
           ++msize;
       return msize;
     }
@@ -507,7 +513,7 @@ namespace CGAL {
   private:
     Map_ & mmap;
     typename Map_::Dart_handle mdart;
-    typename Map_::size_type msize;
+    mutable typename Map_::size_type msize;
   };
   //****************************************************************************
   template <typename Map_, typename It, typename Const_it>
@@ -523,7 +529,7 @@ namespace CGAL {
     iterator end()               { return iterator(mmap,mmap.null_handle,mmark); }
     const_iterator begin() const { return const_iterator(mmap,mdart,mmark); }
     const_iterator end() const   { return const_iterator(mmap,mmap.null_handle,mmark); }
-    typename Map_::size_type size()
+    typename Map_::size_type size() const
     {
       if (msize==0)
         for ( CMap_non_basic_iterator<Map_,const_iterator> it(mmap,mdart);
@@ -536,7 +542,7 @@ namespace CGAL {
   private:
     Map_ & mmap;
     typename Map_::Dart_handle mdart;
-    typename Map_::size_type msize;
+    mutable typename Map_::size_type msize;
     int mmark;
   };
   //****************************************************************************
@@ -550,10 +556,10 @@ namespace CGAL {
     {}
     const_iterator begin() const { return const_iterator(mmap,mdart); }
     const_iterator end() const   { return const_iterator(mmap,mmap.null_handle); }
-    typename Map_::size_type size()
+    typename Map_::size_type size() const
     {
       if (msize==0)
-        for (const_iterator it=begin(); it!=end(); ++it)
+        for ( const_iterator it=begin(), itend=end(); it!=itend; ++it)
           ++msize;
       return msize;
     }
@@ -562,7 +568,7 @@ namespace CGAL {
   private:
     const Map_ & mmap;
     typename Map_::Dart_const_handle mdart;
-    typename Map_::size_type msize;
+    mutable typename Map_::size_type msize;
   };
   //****************************************************************************
   template <typename Map_, typename Const_it>
@@ -575,7 +581,7 @@ namespace CGAL {
     {}
     const_iterator begin() const { return const_iterator(mmap,mdart,mmark); }
     const_iterator end() const   { return const_iterator(mmap,mmap.null_handle,mmark); }
-    typename Map_::size_type size()
+    typename Map_::size_type size() const
     {
       if (msize==0)
         for ( CMap_non_basic_iterator<Map_,const_iterator> it(mmap,mdart);
@@ -588,7 +594,7 @@ namespace CGAL {
   private:
     const Map_ & mmap;
     typename Map_::Dart_const_handle mdart;
-    typename Map_::size_type msize;
+    mutable typename Map_::size_type msize;
     int mmark;
   };
   //****************************************************************************

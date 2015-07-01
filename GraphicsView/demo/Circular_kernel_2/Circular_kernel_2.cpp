@@ -62,7 +62,7 @@ private:
 public:
   MainWindow();
 
-public slots:
+public Q_SLOTS:
 
   virtual void open(QString);
 
@@ -78,7 +78,7 @@ public slots:
   void on_actionRecenter_triggered();
 
 
-signals:
+Q_SIGNALS:
   void changed();
 };
 
@@ -175,7 +175,7 @@ MainWindow::processInput(CGAL::Object o)
     }
   }
   arcs.push_back(o);
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -202,7 +202,7 @@ MainWindow::on_actionClear_triggered()
 {
   arcs.clear();
   intersections.clear();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 void
@@ -265,7 +265,7 @@ MainWindow::open(QString fileName)
 	arcs.push_back(make_object(ca));
       }
     }
-    emit (changed());
+    Q_EMIT( changed());
 }
 
 void

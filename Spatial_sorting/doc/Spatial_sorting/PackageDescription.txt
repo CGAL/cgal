@@ -18,12 +18,11 @@
 
 /*!
 \addtogroup PkgSpatialSorting
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Spatial Sorting,PkgSpatialSortingSummary}
 \cgalPkgPicture{hilbert.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Christophe Delage and Olivier Devillers}
-\cgalPkgDesc{This package provides functions for sorting geometric objects in two, three and higher dimensions, in order to improve efficiency of incremental geometric algorithms.}
+\cgalPkgDesc{This package provides functions for sorting geometric objects in two, three and higher dimensions, including on a sphere, in order to improve efficiency of incremental geometric algorithms.}
 \cgalPkgManuals{Chapter_Spatial_Sorting,PkgSpatialSorting}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -37,12 +36,15 @@
 
 ## Functions ##
 - `CGAL::spatial_sort()`
+- `CGAL::spatial_sort_on_sphere()`
 - `CGAL::hilbert_sort()`
+- `CGAL::hilbert_sort_on_sphere()`
 
 ## Function Objects ##
 - `CGAL::Multiscale_sort<Sort>`
 - `CGAL::Hilbert_sort_2<Traits, PolicyTag>`
 - `CGAL::Hilbert_sort_3<Traits, PolicyTag>`
+- `CGAL::Hilbert_sort_on_sphere_3<Traits, PolicyTag>`
 - `CGAL::Hilbert_sort_d<Traits, PolicyTag>`
 
 ## Traits classes ##

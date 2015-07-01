@@ -18,7 +18,7 @@ sets of points.
 
 # Introduction #
 
-## Some definitions ##
+## Some Definitions ##
 
 A <I>finite abstract simplicial complex</I> is built on a finite set of
 vertices \f$ V\f$ and consists of a collection \f$ S\f$ of subsets of \f$ V\f$ such that
@@ -56,7 +56,7 @@ simplices (the empty set counts).
 See the <A HREF="http://en.wikipedia.org/wiki/Simplicial_complex">wikipedia
 entry</A> for more about simplicial complexes.
 
-## What's in this package? ##
+## What's in this Package? ##
 
 This \cgal package provides three main classes
 for creating and manipulating triangulations.
@@ -81,7 +81,7 @@ In a Delaunay triangulation, each face has the so-called
 circumscribing ball whose interior does not contain 
 any vertex of the triangulation.
 
-## Further definitions ##
+## Further Definitions ##
 
 An \f$ i\f$-face denotes an \f$ i\f$-dimensional simplex, or a simplex with \f$ i+1\f$
 vertices. When these vertices are embedded in Euclidean space, they must be
@@ -147,7 +147,7 @@ the sphere \f$ \mathbb{S}^d\f$.
 </DL>
 </BLOCKQUOTE> 
 
-## The class `Triangulation_data_structure` ##
+## The `Triangulation_data_structure` Class ##
 
 We give here some details about the class
 `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
@@ -199,7 +199,7 @@ on-the-fly, which is the default case.  Please refer to the
 documentation of that class template for specific details.
 --->
 
-###Template parameters###
+###Template Parameters###
 
 The `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
 class is designed in such a way that its user can choose
@@ -269,7 +269,7 @@ It is also possible to fix it at run time, as in the next example.
 
 \cgalExample{triangulation_data_structure_dynamic.cpp}
 
-### Barycentric subdivision ###
+### Barycentric Subdivision ###
 
 This example provides a function for computing the barycentric subdivision of a
 single full cell `c` in a triangulation data structure. The other
@@ -353,7 +353,7 @@ points. This gives us a handy way to count the convex hull vertices
 
 \cgalExample{triangulation.cpp}
 
-### Traversing the facets of the convex hull ###
+### Traversing the Facets of the Convex Hull ###
 
 Remember that a triangulation covers the convex hull of its
 vertices.
@@ -428,7 +428,7 @@ for the computation of Delaunay triangulations.
 
 ## Examples ##
 
-### Access to the conflict zone and to the full cells created during point insertion ###
+### Access to the Conflict Zone and to the Full Cells Created during Point Insertion ###
 
 When using a full cell type containing additional custom information, it may be
 useful to get an efficient access to the full cells that are going to be erased
@@ -478,6 +478,11 @@ Monique Teillaud and Sylvain Pion (`Triangulation_3`)
 and Mariette Yvinec (`Triangulation_2`).
 The first version was written by Samuel Hornus. The final version is a joint 
 work by Samuel Hornus, Olivier Devillers and Clément Jamin.
+
+Starting with the version 2.3 of \cgal, a package written by Susan Hert and Michael Seel
+was the first able to deal with triangulation and convex hulls in arbitrary
+dimension. It is deprecated since the version 4.6 of \cgal and this package should be used
+instead.
 
 */ 
 } /* namespace CGAL */

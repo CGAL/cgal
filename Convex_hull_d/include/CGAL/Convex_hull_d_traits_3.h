@@ -20,6 +20,9 @@
 
 #ifndef CGAL_CONVEX_HULL_D_TRAITS_3_H
 #define CGAL_CONVEX_HULL_D_TRAITS_3_H
+#define CGAL_DEPRECATED_HEADER "<CGAL/Convex_hull_d_traits_3.h>"
+#define CGAL_REPLACEMENT_HEADER "the Triangulation package (see http://doc.cgal.org/latest/Triangulation)"
+#include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Vector_3.h>

@@ -57,7 +57,7 @@ public:
         return QList<QAction*>() << actionSegmentation;
     }
 
-    bool applicable() const {
+    bool applicable(QAction*) const {
       return 
         qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
     }    
@@ -94,7 +94,7 @@ public:
     void init_color_map_sdf();
     void init_color_map_segmentation();
     
-    public slots:
+    public Q_SLOTS:
         void on_actionSegmentation_triggered();
         void on_Partition_button_clicked();
         void on_SDF_button_clicked();

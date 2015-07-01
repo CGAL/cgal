@@ -29,7 +29,7 @@ public:
     return QStringList() << "actionConvexHull";
   }
 
-  bool applicable() const {
+  bool applicable(QAction*) const {
     return 
       qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
       qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex())) ||
@@ -37,7 +37,7 @@ public:
       qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionConvexHull_triggered();
 
 }; // end Polyhedron_demo_convex_hull_plugin

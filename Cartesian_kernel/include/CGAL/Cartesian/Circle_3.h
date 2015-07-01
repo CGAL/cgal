@@ -126,7 +126,7 @@ public:
 
   const Plane_3& supporting_plane() const
   {
-    return get(base).second;
+    return get_pointee_or_identity(base).second;
   }
 
   const Sphere_3& supporting_sphere() const
@@ -146,7 +146,7 @@ public:
 
   const Sphere_3& diametral_sphere() const
   {
-    return get(base).first;
+    return get_pointee_or_identity(base).first;
   }
 
   double approximate_area() const

@@ -88,7 +88,7 @@ void distanceIpelet::protected_run(int fn)
   if (pt_list.end()!=it) {
     print_error_message(("More than two marks selected")); return;}
 
-  double length = sqrt( CGAL::squared_distance(p1,p2).to_double() );
+  double length = sqrt( CGAL::to_double(CGAL::squared_distance(p1,p2)) );
   char message[50];
   if (fn==0)
     sprintf(message,"Distance between marks is %f in ipe pts",length);

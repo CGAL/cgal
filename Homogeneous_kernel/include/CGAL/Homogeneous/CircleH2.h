@@ -115,13 +115,13 @@ template <class R>
 inline
 const typename CircleH2<R>::Point_2 &
 CircleH2<R>::center() const
-{ return get(base).template get<0>(); }
+{ return get_pointee_or_identity(base).template get<0>(); }
 
 template <class R>
 inline
 const typename CircleH2<R>::FT &
 CircleH2<R>::squared_radius() const
-{ return get(base).template get<1>(); }
+{ return get_pointee_or_identity(base).template get<1>(); }
 
 template <class R>
 CGAL_KERNEL_INLINE
@@ -137,7 +137,7 @@ template <class R>
 inline
 Orientation
 CircleH2<R>::orientation() const
-{ return get(base).template get<2>(); }
+{ return get_pointee_or_identity(base).template get<2>(); }
 
 template <class R>
 CGAL_KERNEL_INLINE

@@ -614,6 +614,11 @@
     <string>&amp;Look at...</string>
    </property>
   </action>
+  <action name="actionSaveSnapshot">
+   <property name="text">
+    <string>Save snapshot</string>
+   </property>
+  </action>
   <action name="actionDumpCamera">
    <property name="text">
     <string>&amp;Dump camera coordinates</string>
@@ -647,11 +652,7 @@
     <string>&amp;Preferences</string>
    </property>
   </action>
-  <action name="actionSaveSnapshot">
-   <property name="text">
-    <string>Save snapshot</string>
-   </property>
-  </action>
+
  </widget>
  <customwidgets>
   <customwidget>

@@ -1,0 +1,49 @@
+##
+# ===============================
+#
+# POLYCURVES
+#
+# ===============================
+#
+# In order to construct a poly-curve out of N curves, all curves should be counter clockwise or counter-clockwise and the order should be from spacially left curve to right curve (doubt).
+#
+# Format:
+# 1.<Type of curve> 2.<Number of curves in a polycurve> 3.<Circle center>  4. <Radius> 5.<Orientation> 6.<source point> 7.<Target point> (repeat 3 to 7 for number of curves times. )
+#
+# TODO:
+#	Add support for creating polycurves with different constructors types.
+#
+#
+# Second and Third Quadrant
+# Curve 1: Circle center: (-10,10), Radius: 3, Source: (-10,13), Target: (-7,10)  (Clockwise)
+# Curve 2: Circle center: (-20,10), Radius: 13,Source: (-7,10),  Target: (-20,23) (Clockwise)
+# Polycurve Id: 0
+c 2 -10 10 3 -1 -10 13 -7 10 -20 10 13 -1 -7 10 -20 23
+#
+#
+# Second and Third Quadrant
+# Curve 1: Circle center: (-10,10), Radius: 3, Source: (-10,13), Target: (-7,10)  (Clockwise)
+# Curve 2: Circle center: (-20,10), Radius: 13,Source: (-7,10),  Target: (-20,23) (Clockwise)
+# Curve 3: Circle center: (-20,25), Radius: 2 ,Source: (-20,23),  Target: (-20,27) (Clockwise)
+# Polycurve Id: 1
+c 3 -10 10 3 -1 -10 13 -7 10 -20 10 13 -1 -7 10 -20 23 -20 25 2 -1 -20 23 -20 27
+#
+# Second and Third Quadrant
+# Curve 1: Circle center: (-20,10), Radius: 13,Source: (-7,10),  Target: (-20,23) (Clockwise)
+# Curve 2: Circle center: (-20,25), Radius: 2 ,Source: (-20,23),  Target: (-20,27) (Clockwise)
+# Polycurve Id: 2
+c 2 -20 10 13 -1 -7 10 -20 23 -20 25 2 -1 -20 23 -20 27
+#
+# =============================
+#
+#  SEGMENTS
+#
+# =============================
+#
+# Curve: Circle center: (-20,25), Radius: 2 ,Source: (-20,23),  Target: (-20,25) (Clockwise)
+# Segment Id: 0
+s -20 25 2 -1 -20 23 -20 27
+#
+# Curve 1: Circle center: (-10,10), Radius: 3, Source: (-10,13), Target: (-7,10)  (Clockwise)
+# segment id: 1
+s -10 10 3 -1 -10 13 -7 10

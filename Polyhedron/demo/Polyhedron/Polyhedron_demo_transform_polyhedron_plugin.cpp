@@ -30,7 +30,7 @@ public:
     return QList<QAction*>() << actionTransformPolyhedron;
   }
 
-  bool applicable() const { 
+  bool applicable(QAction*) const { 
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
            qobject_cast<Scene_polyhedron_transform_item*>(scene->item(scene->mainSelectionIndex()));
   }
@@ -54,7 +54,7 @@ private:
   Scene_interface::Item_id tr_item_index;
   bool started;
 
-public slots:
+public Q_SLOTS:
   void go();
   void transformed_killed();
 }; // end class Polyhedron_demo_transform_polyhedron_plugin

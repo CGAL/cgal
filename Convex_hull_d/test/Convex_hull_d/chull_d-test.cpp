@@ -1,3 +1,5 @@
+#define CGAL_NO_DEPRECATION_WARNINGS
+
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>

@@ -20,10 +20,10 @@ for Homogeneous kernels.
 \cgalHasModel `CGAL::MP_Float` 
 \cgalHasModel `CGAL::Gmpzf`
 \cgalHasModel `CGAL::Quotient<RingNumberType>` 
-\cgalHasModel `CGAL::leda_integer` 
-\cgalHasModel `CGAL::leda_rational` 
-\cgalHasModel `CGAL::leda_bigfloat` 
-\cgalHasModel `CGAL::leda_real` 
+\cgalHasModel `leda_integer` 
+\cgalHasModel `leda_rational` 
+\cgalHasModel `leda_bigfloat` 
+\cgalHasModel `leda_real` 
 
 \sa `FieldNumberType` 
 

@@ -824,6 +824,7 @@ protected:
 	if(skip_volumes-- <= 0)
 	  scd.visit_shell_objects(SFace_const_handle(c->shells_begin()),V);
       B.end_surface();
+      if ( B.error() ) B.rollback();
     }
 
   };
@@ -977,6 +978,7 @@ protected:
       Visitor V(B,omit_vertex, scd,VI);
       scd.visit_shell_objects(sf, V);
       B.end_surface();
+      if ( B.error() ) B.rollback();
     }
 
   };

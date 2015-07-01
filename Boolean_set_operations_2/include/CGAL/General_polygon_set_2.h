@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$ $Date$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
@@ -38,7 +38,7 @@ class General_polygon_set_2 : public General_polygon_set_on_surface_2
 {
 protected:
   typedef General_polygon_set_2<Traits_, Dcel_>           Self;
-  
+
 public:
   typedef Traits_                                         Traits_2;
   typedef Dcel_                                           Dcel;
@@ -53,24 +53,20 @@ public:
   typedef typename Base::Polygon_with_holes_2             Polygon_with_holes_2;
 
   // default costructor
-  General_polygon_set_2() : Base()
-  {}
-
+  General_polygon_set_2() : Base() {}
 
   // constructor with traits object
-  General_polygon_set_2(Traits_2& tr) : Base(tr)
+  General_polygon_set_2(const Traits_2& tr) : Base(tr) {}
+
+  explicit General_polygon_set_2(const Polygon_2& pgn) : Base(pgn) {}
+
+  explicit General_polygon_set_2(const Polygon_with_holes_2& pgn_with_holes):
+   Base(pgn_with_holes)
   {}
-
-  explicit General_polygon_set_2(const Polygon_2& pgn) : Base(pgn)
-  { }
-
-  explicit General_polygon_set_2(const Polygon_with_holes_2& pgn_with_holes): 
-   Base(pgn_with_holes) 
-  { }
 
   // For some reason the below functions (the ones that we call "using" for)
   // are hidden by the function in this class and are not found in the parent's
-  // class (General_polygon_set_on_surface_2) when they are called on an 
+  // class (General_polygon_set_on_surface_2) when they are called on an
   // object of type General_polygon_set_2.
   // Check in the Vandervoorde / Stroustrup books what is the exact reason.
   // (There may be a better and more correct solution.)
@@ -96,7 +92,7 @@ public:
   }
 
   //@{
-  
+
   /*! Obtain a const reference to the underlying arrangement
    * \return the underlying arrangement.
    */

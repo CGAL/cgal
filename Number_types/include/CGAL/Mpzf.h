@@ -54,6 +54,10 @@
 #ifndef mpn_neg
 #define mpn_neg mpn_neg_n
 #endif
+// GMP-4.3.0 is missing mpn_sqr.
+#ifndef mpn_sqr
+#define mpn_sqr(dest,a,n) mpn_mul_n(dest,a,a,n)
+#endif
 // GMP before 5.0 doesn't provide mpn_copyi.
 #ifndef mpn_copyi
 #define mpn_copyi(dst, src, siz) std::copy((src), (src)+(siz), (dst))

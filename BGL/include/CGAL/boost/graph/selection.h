@@ -145,12 +145,11 @@ erode_face_selection(
     {
       hd = opposite(hd, graph);
       face_descriptor fd=face( hd, graph );
-      while( get(is_selected,fd) )
+      while( face(hd, graph)!=GT::null_face() && get(is_selected,fd) )
       {
         elements_to_remove.insert(fd);
         hd=opposite( next(hd, graph), graph );
         fd=face(hd, graph);
-        if ( face(hd, graph)==GT::null_face() ) break;
       }
     }
 

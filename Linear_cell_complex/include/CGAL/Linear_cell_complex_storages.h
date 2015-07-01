@@ -90,6 +90,15 @@ namespace CGAL {
         public Helper::template Attribute_const_range<i>
     {};
 
+    typedef typename Attribute_type<0>::type Vertex_attribute;
+    typedef typename Attribute_handle<0>::type Vertex_attribute_handle;
+    typedef typename Attribute_const_handle<0>::type
+    Vertex_attribute_const_handle;
+
+    typedef typename Attribute_range<0>::type Vertex_attribute_range;
+    typedef typename Attribute_const_range<0>::type
+    Vertex_attribute_const_range;
+
     /// Number of marks
     static const size_type NB_MARKS = 32;
 

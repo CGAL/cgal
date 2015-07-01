@@ -3,6 +3,8 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHullD
 
+\deprecated This package is deprecated since the version 4.6 of \cgal. The package \ref PkgTriangulationsSummary should be used instead.
+
 <A NAME="Index_anchor_0"></A> 
 
 The class `Convex_hull_d_traits_3` serves as a traits class for the class 

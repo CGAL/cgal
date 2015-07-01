@@ -5,15 +5,13 @@
 
 This concept describes the geometric types and predicates required to build
 a Delaunay triangulation. It corresponds to the first template parameter of the class 
-`Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`.
+`CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`.
 
 \cgalRefines ::TriangulationTraits.
 
-\cgalHasModel `CGAL::Cartesian_d<FT, Dim, LA>`
-\cgalHasModel `CGAL::Epick_d<Dim>` (recommended)
+\cgalHasModel `CGAL::Epick_d<Dim>`
 
 \sa `TriangulationTraits`
-\sa `DelaunayTriangulation`
 */
 class DelaunayTriangulationTraits {
 public:

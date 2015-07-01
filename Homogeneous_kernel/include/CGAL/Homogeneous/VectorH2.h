@@ -95,9 +95,9 @@ public:
    bool    operator==( const Null_vector&) const;
    bool    operator!=( const Null_vector& v) const;
 
-   const RT & hx() const { return CGAL::get(base)[0]; };
-   const RT & hy() const { return CGAL::get(base)[1]; };
-   const RT & hw() const { return CGAL::get(base)[2]; };
+   const RT & hx() const { return CGAL::get_pointee_or_identity(base)[0]; };
+   const RT & hy() const { return CGAL::get_pointee_or_identity(base)[1]; };
+   const RT & hw() const { return CGAL::get_pointee_or_identity(base)[2]; };
 
    FT      x()  const { return FT(hx()) / FT(hw()); };
    FT      y()  const { return FT(hy()) / FT(hw()); };
@@ -108,13 +108,13 @@ public:
 
    Cartesian_const_iterator cartesian_begin() const
    {
-     return make_cartesian_const_iterator_begin(CGAL::get(base).begin(),
-                                                boost::prior(CGAL::get(base).end()));
+     return make_cartesian_const_iterator_begin(CGAL::get_pointee_or_identity(base).begin(),
+                                                boost::prior(CGAL::get_pointee_or_identity(base).end()));
    }
 
    Cartesian_const_iterator cartesian_end() const
    {
-     return make_cartesian_const_iterator_end(boost::prior(CGAL::get(base).end()));
+     return make_cartesian_const_iterator_end(boost::prior(CGAL::get_pointee_or_identity(base).end()));
    }
 
    int     dimension() const;
@@ -181,7 +181,7 @@ const typename VectorH2<R>::RT &
 VectorH2<R>::homogeneous(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<=2) );
-  return CGAL::get(base)[i];
+  return CGAL::get_pointee_or_identity(base)[i];
 }
 
 template < class R >

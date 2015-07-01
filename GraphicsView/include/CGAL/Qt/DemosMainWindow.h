@@ -65,7 +65,7 @@ public:
 public:
   unsigned int maxNumberOfRecentFiles() const ;
 
-public slots:
+public Q_SLOTS:
   void setMaxNumberOfRecentFiles(const unsigned int);
 
 private:
@@ -88,7 +88,7 @@ protected:
   void readState(QString groupname = "MainWindow",
 		 Options what_to_save = Options(Size|State));
 
-protected slots:
+protected Q_SLOTS:
   void setUseAntialiasing(bool checked);
   void setUseOpenGL(bool checked);
   void popupAboutCGAL();
@@ -100,7 +100,7 @@ protected slots:
   void addToRecentFiles(QString fileName);
   void updateRecentFileActions();
 
-signals:
+Q_SIGNALS:
   void openRecentFile(QString filename);
 
 protected:

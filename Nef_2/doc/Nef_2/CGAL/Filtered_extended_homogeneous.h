@@ -10,6 +10,8 @@ representation based on a ring number type `RT`.
 
 \cgalModels `ExtendedKernelTraits_2`
 
+\tparam RT  must be a model of `RingNumberType`.
+
 \sa `CGAL::Extended_cartesian<FT>` 
 \sa `CGAL::Extended_homogeneous<RT>` 
 

@@ -94,10 +94,10 @@ void Viewer::drawWithNames()
 
 void Viewer::postSelection(const QPoint& p)
 {
-  emit selected(this->selectedName());
+  Q_EMIT selected(this->selectedName());
   // do a redraw
   draw();
-  emit pointSelected(p);
+  Q_EMIT pointSelected(p);
 }
 
 void Viewer::postDraw()

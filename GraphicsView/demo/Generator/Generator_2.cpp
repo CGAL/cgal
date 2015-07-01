@@ -89,13 +89,13 @@ private:
     }
     // default cursor
     QApplication::restoreOverrideCursor();
-    emit(changed());
+    Q_EMIT( changed());
   }
 
 public:
   MainWindow();
 
-public slots:
+public Q_SLOTS:
 
   void on_actionClear_triggered();
 
@@ -109,7 +109,7 @@ public slots:
   void on_actionGeneratePolytopeInDisc_triggered();
   void clear();
 
-signals:
+Q_SIGNALS:
   void changed();
 };
 
@@ -180,7 +180,7 @@ void
 MainWindow::on_actionClear_triggered()
 {
   clear();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 void
@@ -233,7 +233,7 @@ MainWindow::on_actionGenerateSegments_triggered()
   Seg_iterator g( rpos, rpoc);
   CGAL::cpp11::copy_n( g, 200, std::back_inserter(segments));
   
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -263,7 +263,7 @@ MainWindow::on_actionGenerateSegmentFans_triggered()
   Count_iterator t2_end(t2, 50);
   std::copy( t2_begin, t2_end, std::back_inserter(segments));
 
-  emit(changed());
+  Q_EMIT( changed());
 }
 void
 MainWindow::on_actionGeneratePolytopeInDisc_triggered()
@@ -314,7 +314,7 @@ MainWindow::on_actionGeneratePolytopeInDisc_triggered()
     // default cursor
     QApplication::restoreOverrideCursor();
     
-    emit(changed());
+    Q_EMIT( changed());
 }
 
 void

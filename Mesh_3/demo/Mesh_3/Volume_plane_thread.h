@@ -30,7 +30,7 @@ public:
     return item;
   }
 
-signals:
+Q_SIGNALS:
   void finished(Volume_plane_thread*);
 
 protected:
@@ -85,7 +85,7 @@ void X_plane_thread<Word>::run() {
 
     item->setName(name);
     item->moveToThread(QApplication::instance()->thread());
-    emit finished(this);
+    Q_EMIT finished(this);
 }
 
 template<typename Word>
@@ -104,7 +104,7 @@ void Y_plane_thread<Word>::run() {
                                    img->vx(), img->vy(), img->vz(), buffer);
     item->setName(name);
     item->moveToThread(QApplication::instance()->thread());
-    emit finished(this);
+    Q_EMIT finished(this);
 }
 
 template<typename Word>
@@ -122,7 +122,7 @@ void Z_plane_thread<Word>::run() {
                                  img->vx(), img->vy(), img->vz(), buffer);
   item->setName(name);
   item->moveToThread(QApplication::instance()->thread());
-  emit finished(this);
+  Q_EMIT finished(this);
 }
 
 #endif /* CGAL_VOLUME_PLANE_THREAD_H */

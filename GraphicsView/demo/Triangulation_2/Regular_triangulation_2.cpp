@@ -54,7 +54,7 @@ private:
 public:
   MainWindow();
 
-public slots:
+public Q_SLOTS:
 
   void processInput(CGAL::Object o);
 
@@ -75,7 +75,7 @@ public slots:
   void on_actionRecenter_triggered();
 
 
-signals:
+Q_SIGNALS:
   void changed();
 };
 
@@ -162,7 +162,7 @@ MainWindow::processInput(CGAL::Object o)
     dt.insert(wp);
   }
 
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -205,7 +205,7 @@ void
 MainWindow::on_actionClear_triggered()
 {
   dt.clear();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -231,7 +231,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   dt.insert(points.begin(), points.end());
   // default cursor
   QApplication::setOverrideCursor(Qt::ArrowCursor);
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -252,7 +252,7 @@ MainWindow::on_actionLoadPoints_triggered()
     dt.insert(points.begin(), points.end());
 
     actionRecenter->trigger();
-    emit(changed());
+    Q_EMIT( changed());
   }
 }
 

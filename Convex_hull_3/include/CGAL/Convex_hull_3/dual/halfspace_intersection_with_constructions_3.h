@@ -29,11 +29,7 @@
 
 // For interior_polyhedron_3
 #include <CGAL/Convex_hull_3/dual/interior_polyhedron_3.h>
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpq.h>
-#else
-#include <CGAL/MP_Float.h>
-#endif
+#include <CGAL/internal/Exact_type_selector.h>
 
 namespace CGAL
 {
@@ -100,7 +96,7 @@ namespace CGAL
                     do
                     {
                         B.add_vertex_to_facet(extreme_points[hf->facet()]);
-                    } while (++hf != h0);
+                    } while (--hf != h0);
                     B.end_facet();
                 }
 
@@ -129,15 +125,13 @@ namespace CGAL
               p_origin = boost::get(origin);
             } else {
               // choose exact integral type
-#ifdef CGAL_USE_GMP
-              typedef CGAL::Gmpq ET;
-#else
-              typedef CGAL::MP_Float ET;
-#endif
+              typedef typename internal::Exact_field_selector<void*>::Type ET;
+
               // find a point inside the intersection
               typedef Interior_polyhedron_3<K, ET> Interior_polyhedron;
               Interior_polyhedron interior;
-              bool res = interior.find(pbegin, pend);
+              CGAL_assertion_code(bool res = )
+              interior.find(pbegin, pend);
               CGAL_assertion_msg(res, "halfspace_intersection_with_constructions_3: problem when determing a point inside");
               p_origin = interior.inside_point();
             }
@@ -145,6 +139,9 @@ namespace CGAL
             // construct dual points to apply the convex hull
             std::vector<Point> dual_points;
             for (PlaneIterator p = pbegin; p != pend; ++p) {
+                // make sure the origin is on the negative side of all the planes
+                CGAL_assertion(p->has_on_negative_side(p_origin));
+
                 // translate plane
                 Plane translated_p(p->a(),
                                    p->b(),
@@ -161,27 +158,12 @@ namespace CGAL
         }
 
     // Compute the intersection of halfspaces by constructing explicitly
-    // the dual points with the traits class for convex_hull_3 given
-    // as an argument.
-    // An interior point is given.
-    template <class PlaneIterator, class Polyhedron, class Traits>
-    void halfspace_intersection_with_constructions_3(PlaneIterator pbegin,
-                                                     PlaneIterator pend,
-                                                     Polyhedron &P,
-                                                     typename Polyhedron::Vertex::Point_3 const& origin,
-                                                     const Traits & ch_traits) {
-      halfspace_intersection_with_constructions_3(pbegin, pend, P,
-                                                  boost::optional<typename Polyhedron::Vertex::Point_3>(origin),
-                                                  ch_traits);
-    }
-
-    // Compute the intersection of halfspaces by constructing explicitly
     // the dual points with the default traits class for convex_hull_3.
     template <class PlaneIterator, class Polyhedron>
     void halfspace_intersection_with_constructions_3 (PlaneIterator pbegin,
                                                       PlaneIterator pend,
                                                       Polyhedron &P,
-                                                      boost::optional<typename Polyhedron::Vertex::Point_3> const& origin) {
+                                                      boost::optional<typename Polyhedron::Vertex::Point_3> const& origin = boost::none) {
         typedef typename Kernel_traits<typename Polyhedron::Vertex::Point_3>::Kernel K;
         typedef typename K::Point_3 Point_3;
         typedef typename internal::Convex_hull_3::Default_traits_for_Chull_3<Point_3>::type Traits;
@@ -189,27 +171,7 @@ namespace CGAL
         halfspace_intersection_with_constructions_3(pbegin, pend, P, origin, Traits());
     }
 
-    // Compute the intersection of halfspaces by constructing explicitly
-    // the dual points with the default traits class for convex_hull_3.
-    // An interior point is given.
-    template <class PlaneIterator, class Polyhedron>
-    void halfspace_intersection_with_constructions_3 (PlaneIterator pbegin,
-                                                      PlaneIterator pend,
-                                                      Polyhedron &P,
-                                                      typename Polyhedron::Vertex::Point_3 const& origin) {
-      halfspace_intersection_with_constructions_3(pbegin, pend, P,
-                                                  boost::optional<typename Polyhedron::Vertex::Point_3>(origin));
-    }
 
-    // Compute the intersection of halfspaces by constructing explicitly
-    // the dual points with the default traits class for convex_hull_3.
-    // An interior point is not given.
-    template <class PlaneIterator, class Polyhedron>
-    void halfspace_intersection_with_constructions_3 (PlaneIterator pbegin,
-                                                      PlaneIterator pend,
-                                                      Polyhedron &P) {
-      halfspace_intersection_with_constructions_3(pbegin, pend, P, boost::none);
-    }
 } // namespace CGAL
 
 #endif // CGAL_HALFSPACE_INTERSECTION_WITH_CONSTRUCTION_3_H

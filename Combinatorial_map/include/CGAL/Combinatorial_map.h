@@ -3265,7 +3265,7 @@ namespace CGAL {
       iterator end()   { return iterator(mmap,mmap.null_handle); }
       const_iterator begin() const { return const_iterator(mmap); }
       const_iterator end() const   { return const_iterator(mmap,mmap.null_handle); }
-      size_type size()
+      size_type size() const
       { return mmap.number_of_darts(); }
       bool empty() const
       { return mmap.is_empty(); }
@@ -3337,10 +3337,10 @@ namespace CGAL {
       iterator end()   { return iterator(mmap,mmap.null_handle); }
       const_iterator begin() const { return const_iterator(mmap); }
       const_iterator end() const   { return const_iterator(mmap,mmap.null_handle); }
-      size_type size()
+      size_type size() const
       {
         if (msize==0)
-          for ( const_iterator it=begin(); it!=end(); ++it)
+          for ( const_iterator it=begin(), itend=end(); it!=itend; ++it)
             ++msize;
         return msize;
       }
@@ -3348,7 +3348,7 @@ namespace CGAL {
       { return mmap.is_empty(); }
     private:
       Self & mmap;
-      size_type msize;
+      mutable size_type msize;
     };
     //**************************************************************************
     // One_dart_per_cell_const_range
@@ -3360,10 +3360,10 @@ namespace CGAL {
       {}
       const_iterator begin() const { return const_iterator(mmap); }
       const_iterator end() const   { return const_iterator(mmap,mmap.null_handle); }
-      size_type size()
+      size_type size() const
       {
         if (msize==0)
-          for ( const_iterator it=begin(); it!=end(); ++it)
+          for ( const_iterator it=begin(), itend=end(); it!=itend; ++it)
             ++msize;
         return msize;
       }
@@ -3371,7 +3371,7 @@ namespace CGAL {
       { return mmap.is_empty(); }
     private:
       const Self & mmap;
-      size_type msize;
+      mutable size_type msize;
     };
     //**************************************************************************
     /// @return a range on the i-cells incindent to the given j-cell.

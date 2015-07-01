@@ -100,7 +100,7 @@ public:
     return QList<QAction*>() << actionMesh_3;
   }
   
-public slots:
+public Q_SLOTS:
   void mesh_3();
   void meshing_done(Meshing_thread* t);
   void status_report(QString str);

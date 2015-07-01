@@ -1,32 +1,72 @@
-Subject: CGAL 4.5.2 Released, Computational Geometry Algorithms Library
+Subject: CGAL 4.6 Released, Computational Geometry Algorithms Library
+From: Laurent Rineau <laurent.rineau@cgal.org>
 Content-Type: text/plain; charset="utf-8"
 Body: 
 
-The CGAL Open Source Project is pleased to announce the release 4.5.2
+The CGAL Open Source Project is pleased to announce the release 4.6
 of CGAL, the Computational Geometry Algorithms Library.
 
+Besides fixes to existing packages, the following has changed since
+CGAL 4.5:
 
-Version 4.5.2 is a bug-fix release for version 4.5. The following has been
-changed since CGAL-4.5.1:
+  o 2D Polyline Simplification (new package)
 
-  o General
-  
-    - Fix a bug that prevented the compilation with recent versions of Boost
-      (>=1.56) when explicit conversions operators (from C++11) are supported.
-      That prevented the compilation with Microsoft Visual Studio 2013.
-  
-  
-  o 3D Convex Hulls
-  
-    - Fix a non-robust predicate bug that was showing up when input points where
-      lexicographically sorted.
-  
-  
-  o 3D Mesh Generation
-  
-    - Fix a bug in the sliver perturbation optimization method. It could create
-      some holes on the surface of the mesh.
-  
+    This package enables to simplify polylines with the guarantee
+    that the topology of the polylines does not change. This can be
+    done for a single polyline as well as for a set of polyline
+    constraints in a constrained triangulation. The simplification
+    can be controlled with cost and stop functions.
+
+
+  o 2D Generalized Barycentric Coordinates (new package)
+
+    This package offers an efficient and robust implementation of two-
+    dimensional closed-form generalized barycentric coordinates defined for
+    simple two-dimensional polygons.
+
+
+  o Scale-Space Surface Reconstruction (new package)
+
+    This new package provides a class gathering a dedicated smoothing
+    algorithm and some convenience functions to help the creation of a
+    surface out of a point set using the 3D Alpha Shapes package. The
+    particularity of this reconstruction pipeline is that the input point
+    are in the output and no new points are created. Note that in the
+    current version, the output is a triangle soup that is not necessarily
+    a valid (manifold) polyhedral surface.
+
+
+  o Surface Mesh (new package)
+
+    The surface mesh class provided by this package is an implementation of
+    the halfedge data structure allowing to represent polyhedral surfaces.
+    It is an alternative to the packages CGAL::Polyhedron_3 and
+    CGAL::HalfedgeDS.
+
+
+  o dD Triangulation (new package)
+
+    This new package provides classes for manipulating triangulations in
+    Euclidean spaces whose dimension can be specified at compile-time or at
+    run-time. It also provides a class that represents Delaunay
+    triangulations.
+
+  o 2D Triangulations
+
+    The class Constrained_triangulation_plus_2 now can handle polylines as
+    constraints.
+
+
+  o Spatial Searching
+
+    - Improved performance of Orthogonal_k_neighbor_search.
+
+    - Breaking change: The concept OrthogonalDistance has new function
+      overloads for min_distance_to_rectangle and max_distance_to_rectangle
+      with an additional reference parameter std::vector.
+
+
+See http://www.cgal.org/releases.html for a complete list of changes.
 
 
 The CGAL project is a collaborative effort to develop a robust,

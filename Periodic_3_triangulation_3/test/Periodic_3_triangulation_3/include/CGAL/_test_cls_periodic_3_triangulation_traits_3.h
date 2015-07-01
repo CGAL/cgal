@@ -363,7 +363,7 @@ void _test_for_given_domain(const Traits & traits,
 
 template <class K>
 void _test_cls_periodic_3_triangulation_traits_3() {
-  typedef CGAL::Periodic_3_triangulation_traits_3<K> Traits;
+  typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<K> Traits;
   typedef typename Traits::Point_3 Point;
   typedef typename Traits::Iso_cuboid_3 Iso_cuboid;
 

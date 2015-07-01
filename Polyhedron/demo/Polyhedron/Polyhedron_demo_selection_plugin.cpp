@@ -5,6 +5,7 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_polyhedron_selection_item.h"
 #include "Scene_points_with_normal_item.h"
+#include "Scene_polylines_item.h"
 
 #include "Scene_interface.h"
 #include "Polyhedron_demo_plugin_helper.h"
@@ -16,6 +17,43 @@
 
 #include <map>
 
+#include <boost/graph/adjacency_list.hpp>
+#include <CGAL/boost/graph/split_graph_into_polylines.h>
+
+struct Is_terminal
+{
+  template <typename VertexDescriptor, typename Graph>
+  bool operator ()(VertexDescriptor , const Graph& )
+  {
+    return false; // degree(vd,g) != 2; is a bad test in case of parallel edges
+  }
+};
+
+
+template <typename Graph>
+struct Polyline_visitor
+{
+  Scene_polylines_item* item;
+  const Graph& points_pmap;
+
+  Polyline_visitor(Scene_polylines_item* item_,
+                   const Graph& points_property_map)
+    : item(item_),
+      points_pmap(points_property_map)
+  {}
+
+  void start_new_polyline()
+  {
+    item->polylines.push_back( Scene_polylines_item::Polyline() );
+  }
+
+  void add_node(typename boost::graph_traits<Graph>::vertex_descriptor vd)
+  {
+    item->polylines.back().push_back(points_pmap[vd]);
+  }
+  void end_polyline(){}
+};
+
 class Polyhedron_demo_selection_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
@@ -24,7 +62,7 @@ class Polyhedron_demo_selection_plugin :
     Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
-  bool applicable() const { 
+  bool applicable(QAction*) const { 
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
         || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex())); 
   }
@@ -55,6 +93,7 @@ public:
     connect(ui_widget.Insertion_radio_button, SIGNAL(toggled(bool)), this, SLOT(on_Insertion_radio_button_toggled(bool)));
     connect(ui_widget.Brush_size_spin_box, SIGNAL(valueChanged(int)), this, SLOT(on_Brush_size_spin_box_changed(int)));
     connect(ui_widget.Create_point_set_item_button, SIGNAL(clicked()), this, SLOT(on_Create_point_set_item_button_clicked()));
+    connect(ui_widget.Create_polyline_item_button, SIGNAL(clicked()), this, SLOT(on_Create_polyline_item_button_clicked()));
     connect(ui_widget.Erase_selected_facets_button, SIGNAL(clicked()), this, SLOT(on_Erase_selected_facets_button_clicked()));
     connect(ui_widget.Keep_connected_components_button, SIGNAL(clicked()), this, SLOT(on_Keep_connected_components_button_clicked()));
     connect(ui_widget.Dilate_erode_button, SIGNAL(clicked()), this, SLOT(on_Dilate_erode_button_clicked()));
@@ -66,7 +105,7 @@ public:
     } 
   }
 
-public slots:
+public Q_SLOTS:
   void selection_action() { 
     dock_widget->show();
     dock_widget->raise();
@@ -168,6 +207,62 @@ public slots:
     
     scene->addItem(point_item);
   }
+
+  void on_Create_polyline_item_button_clicked(){
+    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    if(!selection_item) {
+      print_message("Error: there is no selected polyhedron selection item!");
+      return;
+    }
+    if(selection_item->selected_edges.empty()) {
+      print_message("Error: there is no selected edge in polyhedron selection item!");
+      return;
+    }
+    Scene_polylines_item* polyline_item = new Scene_polylines_item();
+    polyline_item->setName(QString("%1-edges").arg(selection_item->name()));
+
+    typedef boost::adjacency_list < boost::listS,
+                                    boost::vecS,
+                                    boost::undirectedS,
+                                    Kernel::Point_3 > Edge_graph;
+    typedef Polyhedron::Vertex_handle Vertex_handle;
+    Edge_graph edge_graph;
+    std::map<Vertex_handle, Edge_graph::vertex_descriptor> p2vd;
+    std::map<Vertex_handle, Edge_graph::vertex_descriptor>::iterator it_find;
+    bool insert_OK;
+
+    for(Scene_polyhedron_selection_item::Selection_set_edge::iterator begin = selection_item->selected_edges.begin();
+       begin != selection_item->selected_edges.end(); ++begin)
+    {
+      Vertex_handle source = begin->halfedge()->opposite()->vertex();
+      boost::tie(it_find, insert_OK)
+        = p2vd.insert(std::make_pair(source, Edge_graph::vertex_descriptor()));
+      if (insert_OK)
+      {
+        it_find->second = add_vertex(edge_graph);
+        edge_graph[it_find->second] = source->point();
+      }
+      Edge_graph::vertex_descriptor src=it_find->second;
+
+      Vertex_handle target = begin->halfedge()->vertex();
+      boost::tie(it_find, insert_OK)
+        = p2vd.insert(std::make_pair(target, Edge_graph::vertex_descriptor()));
+      if (insert_OK)
+      {
+        it_find->second = add_vertex(edge_graph);
+        edge_graph[it_find->second] = target->point();
+      }
+      Edge_graph::vertex_descriptor tgt=it_find->second;
+      boost::add_edge(src, tgt, edge_graph);
+    }
+
+    Polyline_visitor<Edge_graph> polyline_visitor(polyline_item, edge_graph);
+    CGAL::split_graph_into_polylines( edge_graph,
+                                      polyline_visitor,
+                                      Is_terminal() );
+    scene->addItem(polyline_item);
+  }
+
   void on_Erase_selected_facets_button_clicked() {
     Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
     if(!selection_item) {

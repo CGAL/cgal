@@ -82,15 +82,15 @@ public:
   Vector_3    to_vector() const;
   Vector_3    vector() const { return to_vector(); }
 
-  const RT & dx() const { return get(base)[0]; }
-  const RT & dy() const { return get(base)[1]; }
-  const RT & dz() const { return get(base)[2]; }
-  const RT & x()  const { return get(base)[0]; }
-  const RT & y()  const { return get(base)[1]; }
-  const RT & z()  const { return get(base)[2]; }
-  const RT & hx() const { return get(base)[0]; }
-  const RT & hy() const { return get(base)[1]; }
-  const RT & hz() const { return get(base)[2]; }
+  const RT & dx() const { return get_pointee_or_identity(base)[0]; }
+  const RT & dy() const { return get_pointee_or_identity(base)[1]; }
+  const RT & dz() const { return get_pointee_or_identity(base)[2]; }
+  const RT & x()  const { return get_pointee_or_identity(base)[0]; }
+  const RT & y()  const { return get_pointee_or_identity(base)[1]; }
+  const RT & z()  const { return get_pointee_or_identity(base)[2]; }
+  const RT & hx() const { return get_pointee_or_identity(base)[0]; }
+  const RT & hy() const { return get_pointee_or_identity(base)[1]; }
+  const RT & hz() const { return get_pointee_or_identity(base)[2]; }
 };
 
 template <class R >

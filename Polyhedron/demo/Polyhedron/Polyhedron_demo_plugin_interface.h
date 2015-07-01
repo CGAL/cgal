@@ -26,7 +26,7 @@ public:
   //!
   //! @returns \c true, if the plugin is applicable, \c false
   //! otherwise
-  virtual bool applicable() const = 0;
+  virtual bool applicable(QAction*) const = 0;
   virtual QList<QAction*> actions() const = 0;
 };
 

@@ -1,0 +1,81 @@
+// Copyright (c) 2014  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s) : Jocelyn Meyron and Quentin Mérigot
+//
+
+#ifndef CGAL_VCM_ESTIMATE_EDGES_H
+#define CGAL_VCM_ESTIMATE_EDGES_H
+
+#include <CGAL/vcm_estimate_normals.h>
+
+namespace CGAL {
+
+/// \ingroup PkgPointSetProcessing
+/// determines if a point is on a sharp feature edge from a point set
+/// for which the Voronoi covariance Measures have been computed.
+///
+/// The sharpness of the edge, specified by parameter `threshold`, 
+/// is used to filtered points according to the external angle around a sharp feature.
+///
+/// A point is considered to be on a sharp feature if the external angle `alpha` at the edge is such that
+/// `alpha >> 2 / sqrt(3) * sqrt(threshold)`.
+/// In particular this means that if the input contains sharp features
+/// with different external angles, the one with the smallest external angle should be considered,
+/// which however would result in selecting more points on sharper regions.
+/// More details are provided in \cgalCite{cgal:mog-vbcfe-11}.
+///
+/// \tparam VCM_traits is a model of `VCMTraits`. If Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined
+///         then an overload using `Eigen_vcm_traits` is provided and this template parameter can be omitted.
+/// \sa CGAL::compute_vcm()`
+///
+template <class FT, class VCM_traits>
+bool
+vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
+                        double threshold,
+                        VCM_traits)
+{
+    cpp11::array<double,3> eigenvalues;
+    if (!VCM_traits::
+          diagonalize_selfadjoint_covariance_matrix(cov, eigenvalues) )
+    {
+        return false;
+    }
+
+    // Compute the ratio
+    double r = eigenvalues[1] / (eigenvalues[0] + eigenvalues[1] + eigenvalues[2]);
+    if (r >= threshold)
+        return true;
+
+    return false;
+}
+
+
+
+#ifdef CGAL_EIGEN3_ENABLED
+template <class FT>
+bool
+vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
+                        double threshold)
+{
+  return vcm_is_on_feature_edge(cov, threshold, Eigen_vcm_traits());
+}
+#endif
+
+} // namespace CGAL
+
+#endif // CGAL_VCM_ESTIMATE_EDGES_H

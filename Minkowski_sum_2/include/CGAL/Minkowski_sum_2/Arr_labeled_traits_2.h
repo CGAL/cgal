@@ -12,10 +12,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein   <wein_r@yahoo.com>
 
 #ifndef CGAL_ARR_LABELED_TRAITS_2_H
 #define CGAL_ARR_LABELED_TRAITS_2_H
@@ -29,7 +26,7 @@ namespace CGAL {
  * A meta-traits class that adds lables to points and to x-monotone curves,
  * such that the comparison of two points, as well as the computation of the
  * intersections between two segments can be easily filtered.
- */ 
+ */
 template <class Traits_>
 class Arr_labeled_traits_2 : public Traits_
 {
@@ -97,7 +94,7 @@ public:
     {}
 
     /*! Constructor from an x-monotone curve an a label. */
-    X_monotone_curve_2 (const Base_x_monotone_curve_2& p, 
+    X_monotone_curve_2 (const Base_x_monotone_curve_2& p,
                         const X_curve_label& label) :
       Base_x_monotone_curve_2 (p),
       _label (label)
@@ -133,7 +130,7 @@ public:
   // Inherited functors:
   typedef typename Base_traits_2::Is_vertical_2         Is_vertical_2;
   typedef typename Base_traits_2::Compare_y_at_x_2      Compare_y_at_x_2;
-  typedef typename Base_traits_2::Compare_y_at_x_right_2 
+  typedef typename Base_traits_2::Compare_y_at_x_right_2
                                                         Compare_y_at_x_right_2;
   typedef typename Base_traits_2::Equal_2               Equal_2;
 
@@ -235,7 +232,7 @@ public:
       else if (cv.label().right_count() == 0 && cv.label().left_count() == 1)
       {
         // A curve directed from right to left:
-        Point_label   label (cv.label().component(), 
+        Point_label   label (cv.label().component(),
                              cv.label().is_last() ? 0 : cv.label().index()+1);
 
         return (Point_2 (pt, label));
@@ -370,7 +367,7 @@ public:
       std::list<CGAL::Object>            base_objs;
 
       base->intersect_2_object() (cv1, cv2, std::back_inserter (base_objs));
-      
+
       if (base_objs.empty())
         return (oi);
 
@@ -387,7 +384,7 @@ public:
         if (base_pt != NULL)
         {
           // Attach an invalid label to an itersection point.
-          *oi = CGAL::make_object 
+          *oi = CGAL::make_object
             (std::make_pair (Point_2 (base_pt->first), base_pt->second));
           ++oi;
         }
@@ -397,8 +394,8 @@ public:
           CGAL_assertion (base_xcv != NULL);
 
           // Attach a merged label to the overlapping curve.
-          *oi = CGAL::make_object 
-            (X_monotone_curve_2 (*base_xcv, 
+          *oi = CGAL::make_object
+            (X_monotone_curve_2 (*base_xcv,
                                  X_curve_label (cv1.label(), cv2.label())));
           ++oi;
         }

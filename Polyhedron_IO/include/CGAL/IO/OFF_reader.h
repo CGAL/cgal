@@ -92,7 +92,7 @@ namespace CGAL{
           return false;
       }
     }
-    return (bool) in;
+    return in.good();
   }
 
 } // namespace CGAL

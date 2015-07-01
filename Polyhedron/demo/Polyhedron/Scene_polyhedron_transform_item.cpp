@@ -44,7 +44,7 @@ QString Scene_polyhedron_transform_item::toolTip() const {
 }
 bool Scene_polyhedron_transform_item::keyPressEvent(QKeyEvent* e){
   if (e->key()==Qt::Key_S){
-    emit stop();
+    Q_EMIT stop();
     return true;
   }
   return false;

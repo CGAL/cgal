@@ -297,22 +297,27 @@ kernels.
 <LI>They are all %Cartesian kernels.
 <LI>They all support constructions of points from <TT>double</TT> %Cartesian
 coordinates.
-<LI>All these 3 kernels provide exact geometric predicates.
+<LI>All these 5 kernels provide exact geometric predicates.
 <LI>They handle geometric constructions differently:
 <UL>
+<LI>`Exact_predicates_inexact_constructions_kernel`: provides exact
+geometric predicates, but geometric constructions may be inexact due to
+round-off errors. It is however enough for many \cgal algorithms, and
+faster than the kernels with exact constructions below.
 <LI>`Exact_predicates_exact_constructions_kernel`: provides exact
 geometric constructions, in addition to exact geometric predicates.
 <LI>`Exact_predicates_exact_constructions_kernel_with_sqrt`:
 same as `Exact_predicates_exact_constructions_kernel`, but the
-number type it provides
-(`Exact_predicates_exact_constructions_kernel_with_sqrt::FT`)
-supports the square root operation exactly
+number type is a model of concept `FieldWithSqrt`. 
 \cgalFootnote{Currently it requires having either LEDA or CORE installed.}.
-<LI>`Exact_predicates_inexact_constructions_kernel`: provides exact
-geometric predicates, but geometric constructions may be inexact due to
-round-off errors. It is however enough for most \cgal algorithms, and
-faster than both `Exact_predicates_exact_constructions_kernel` and
-`Exact_predicates_exact_constructions_kernel_with_sqrt`.
+<LI>`Exact_predicates_exact_constructions_kernel_with_kth_root`
+same as `Exact_predicates_exact_constructions_kernel`, but the
+number type is a model of concept `FieldWithKthRoot`. 
+\cgalFootnote{Currently it requires having either LEDA or CORE installed.}.
+<LI>`Exact_predicates_exact_constructions_kernel_with_root_of`:
+same as `Exact_predicates_exact_constructions_kernel`, but the
+number type is a model of concept `FieldWithRootOf`. 
+\cgalFootnote{Currently it requires having either LEDA or CORE installed.}.
 </UL>
 </UL>
 

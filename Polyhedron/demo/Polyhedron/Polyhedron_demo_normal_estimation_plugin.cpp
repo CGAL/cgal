@@ -50,7 +50,7 @@ public:
     return QList<QAction*>() << actionNormalEstimation << actionNormalInversion;
   }
 
-  bool applicable() const {
+  bool applicable(QAction*) const {
 #if CGAL_DISABLE_NORMAL_ESTIMATION_PLUGIN
     return false;
 #else
@@ -58,7 +58,7 @@ public:
 #endif
   }
 
-public slots:
+public Q_SLOTS:
   void on_actionNormalEstimation_triggered();
   void on_actionNormalInversion_triggered();
 

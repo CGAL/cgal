@@ -84,7 +84,7 @@ public:
   virtual void init(QMainWindow*, Scene_interface*, Messages_interface*);
   inline virtual QList<QAction*> actions() const;
   
-public slots:
+public Q_SLOTS:
 #ifndef CGAL_MESH_3_DEMO_DISABLE_ODT
   void odt();
 #endif

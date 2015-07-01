@@ -26,9 +26,9 @@ public:
 
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
   QList<QAction*> actions() const;
-  bool applicable() const;
+  bool applicable(QAction*) const;
 
-public slots:
+public Q_SLOTS:
   void on_actionDeformation_triggered();
   /////// Dock window signal handlers //////
   // what they do is simply transmiting required 'action' to selected scene_edit_polyhedron_item object
@@ -69,7 +69,7 @@ private:
 QList<QAction*> Polyhedron_demo_edit_polyhedron_plugin::actions() const {
   return QList<QAction*>() << actionDeformation;
 }
-bool Polyhedron_demo_edit_polyhedron_plugin::applicable() const { 
+bool Polyhedron_demo_edit_polyhedron_plugin::applicable(QAction*) const { 
   Q_FOREACH(Scene_interface::Item_id i, scene->selectionIndices())
   {
     if(qobject_cast<Scene_polyhedron_item*>(scene->item(i)) 

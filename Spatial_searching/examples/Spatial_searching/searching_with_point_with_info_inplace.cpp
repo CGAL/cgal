@@ -31,9 +31,9 @@ public:
 };
 
 
-typedef CGAL::Random_points_in_cube_3<Point_3>                                          Random_points_iterator;
-typedef CGAL::Search_traits_3<Kernel>                                                   Traits_base;
-typedef CGAL::Search_traits_adapter<Point,My_point_property_map,Traits_base>            Traits;
+typedef CGAL::Random_points_in_cube_3<Point_3>                               Random_points_iterator;
+typedef CGAL::Search_traits_3<Kernel>                                        Traits_base;
+typedef CGAL::Search_traits_adapter<Point,My_point_property_map,Traits_base> Traits;
 
 
 typedef CGAL::Orthogonal_k_neighbor_search<Traits>                      K_neighbor_search;
@@ -71,7 +71,8 @@ int main() {
   K_neighbor_search search(tree, query, K,0,true,tr_dist);
   for(K_neighbor_search::iterator it = search.begin(); it != search.end(); it++){
     std::cout << " d(q, nearest neighbor)=  "
-	      << tr_dist.inverse_of_transformed_distance(it->second) << " " << points[it->first] << " " << it->first << std::endl;
+	      << tr_dist.inverse_of_transformed_distance(it->second) << " " 
+              << points[it->first] << " " << it->first << std::endl;
   }
   return 0;
 }

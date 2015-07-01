@@ -277,7 +277,7 @@ private:
     return diag * 0.7;
   }
 
-public slots:
+public Q_SLOTS:
   void export_facets_in_complex()
   {
     std::stringstream off_sstream;
@@ -288,6 +288,7 @@ public slots:
     if(!item->load(off_sstream))
     {
       delete item;
+      off_sstream.clear();
       off_sstream.str(backup);
 
       // Try to read .off in a polygon soup
@@ -326,6 +327,7 @@ public:
       connect(actionExportFacetsInComplex,
               SIGNAL(triggered()),this,
               SLOT(export_facets_in_complex()));
+      menu->setProperty(prop_name, true);
     }
     return menu;
   }

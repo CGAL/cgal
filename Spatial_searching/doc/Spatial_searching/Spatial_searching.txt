@@ -163,7 +163,7 @@ which is a template method with an output iterator and a model of the
 concept `FuzzyQueryItem` as `Fuzzy_iso_box` 
 or `Fuzzy_sphere`. 
 For range searching of large data sets the user may set the parameter `bucket_size` 
-used in building the `k-d` tree to a large value (e.g. 100), 
+used in building the `kd` tree to a large value (e.g. 100), 
 because in general the query time will be less then using the default value.
 
 \section Spatial_SearchingSplitting_rule_section Splitting Rules 
@@ -273,7 +273,7 @@ using a `d`-dimensional iso-rectangle as an query object. Approximate
 range searching is illustrated by the fourth example. The fifth
 example illustrates k neighbor searching for a user defined point
 class. The sixth example shows how to choose another splitting rule in the
-`k-d` tree that is used as search tree. The last example shows two worst-case
+`kd` tree that is used as search tree. The last example shows two worst-case
 scenarios for different splitter types.
 
 \subsection Spatial_searchingExampleforKNeighborSearching Example for K Neighbor Searching
@@ -307,7 +307,7 @@ iterator category, that is one can make only one pass over the data.
 
 This example program illustrates approximate nearest and furthest
 neighbor searching using 4-dimensional %Cartesian coordinates. Five
-approximate nearest neighbors of the query rectangle
+approximate furthest neighbors of the query rectangle
 \f$ [0.1,0.2]^4\f$ are computed. Because the query object is a rectangle
 we cannot use the orthogonal neighbor search. As in the previous 
 examples we first initialize a search tree, create the search object
@@ -318,9 +318,9 @@ with the query, and obtain the result of the search as iterator range.
 \subsection Spatial_searchingExampleforaRangeQuery Example for a Range Query
 
 This example program illustrates approximate range querying for
-4-dimensional fuzzy iso-rectangles and spheres using homogeneous
-coordinates. The range queries are member functions of the `k-d` 
-tree class.
+4-dimensional fuzzy iso-rectangles and spheres using the higher
+dimensional kernel `Epick_d`.
+The range queries are member functions of the `kd` tree class.
 
 \cgalExample{Spatial_searching/fuzzy_range_query.cpp}
 
@@ -435,21 +435,21 @@ Blue: Gargoyle surface. Green: Gargoyle bbox random.
 
 \section Spatial_searchingSoftware Software Design
 
-\subsection Kd_tree_subsection The k-d tree 
+\subsection Kd_tree_subsection The kd Tree 
 
-Bentley \cgalCite{b-mbstu-75} introduced the `k-d` tree as a
-generalization of the binary search tree in higher dimensions. `k-d`
+Bentley \cgalCite{b-mbstu-75} introduced the `kd` tree as a
+generalization of the binary search tree in higher dimensions. `kd`
 trees hierarchically decompose space into a relatively small number of
 rectangles such that no rectangle contains too many input objects.
 For our purposes, a <I>rectangle</I> in real  `d` dimensional space,
 \f$ \mathbb{R}^d\f$, is the product of `d` closed intervals on the coordinate axes.
-`k-d` trees are obtained by partitioning point sets in \f$ \mathbb{R}^d\f$ using
+`kd` trees are obtained by partitioning point sets in \f$ \mathbb{R}^d\f$ using
 `(d-1)`-dimensional hyperplanes. Each node in the tree is split into
 two children by one such separating hyperplane. Several splitting
 rules (see Section \ref Spatial_SearchingSplitting_rule_section can
 be used to compute a separating `(d-1)`-dimensional hyperplane.
 
-Each internal node of the  `k-d` tree is associated with a rectangle
+Each internal node of the  `kd` tree is associated with a rectangle
 and a hyperplane orthogonal to one of the coordinate axis, which
 splits the rectangle into two parts. Therefore, such a hyperplane,
 defined by a splitting dimension and a splitting value, is called a
@@ -463,7 +463,7 @@ tree, not in the internal nodes.
 
 Friedmann, Bentley and Finkel \cgalCite{fbf-afbml-77} described the
 standard search algorithm to find the `k`th nearest neighbor by
-searching a `k-d` tree recursively.
+searching a `kd` tree recursively.
 
 When encountering a node of the tree, the algorithm first visits the
 child that is closest to the query point. On return, if the rectangle

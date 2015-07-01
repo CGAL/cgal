@@ -20,11 +20,11 @@ public:
   void dragEnterEvent(QDragEnterEvent *);
   void dropEvent(QDropEvent *event);
 
-public slots:
+public Q_SLOTS:
   void show_only(QString);
   void surface_open(const QString& filename);
 
-private slots:
+private Q_SLOTS:
   void on_action_Open_triggered();
   void on_action_Quit_triggered();
   void on_action_Clone_triggered();

@@ -57,9 +57,9 @@ public:
   {
     if (i>2) i = i%3;
     else if (i<0) i = (i%3) + 3;
-    return (i==0) ? get(base)[0] :
-      (i==1) ? get(base)[1] :
-      get(base)[2];
+    return (i==0) ? get_pointee_or_identity(base)[0] :
+      (i==1) ? get_pointee_or_identity(base)[1] :
+      get_pointee_or_identity(base)[2];
   }
   
   const Point_2 &

@@ -13,7 +13,7 @@ its argument.
 
 
 
-\cgalModels `Projection_object`
+\cgalModels `ProjectionObject`
 
 
 */
@@ -1022,7 +1022,7 @@ The class `Dereference` dereferences a pointer
 
 
 
-\cgalModels `Projection_object`
+\cgalModels `ProjectionObject`
 
 */
 template< typename Value >
@@ -1093,7 +1093,7 @@ The class `Get_address` gets the address of an lvalue
 
 
 
-\cgalModels `Projection_object`
+\cgalModels `ProjectionObject`
 
 
 */
@@ -1164,7 +1164,7 @@ on `Value`.
 
 
 
-\cgalModels `Projection_object`
+\cgalModels `ProjectionObject`
 
 */
 template< typename Value >
@@ -1235,7 +1235,7 @@ The class `Project_facet` calls the member function
 
 
 
-\cgalModels `Projection_object`
+\cgalModels `ProjectionObject`
 
 */
 template< typename Node >
@@ -1305,7 +1305,7 @@ The class `Project_next` calls the member function
 
 
 
-\cgalModels `Projection_object`
+\cgalModels `ProjectionObject`
 
 
 */
@@ -1375,7 +1375,7 @@ The class `Project_next_opposite` calls the member functions
 
 
 
-\cgalModels `Projection_object`
+\cgalModels `ProjectionObject`
 
 */
 template< typename Node >
@@ -1446,7 +1446,7 @@ The class `Project_normal` calls the member function
 
 
 
-\cgalModels `Projection_object`
+\cgalModels `ProjectionObject`
 
 
 */
@@ -1518,7 +1518,7 @@ The class `Project_opposite_prev` calls the member functions
 
 
 
-\cgalModels `Projection_object`
+\cgalModels `ProjectionObject`
 
 
 */
@@ -1590,7 +1590,7 @@ The class `Project_plane` calls the member function
 
 
 
-\cgalModels `Projection_object`
+\cgalModels `ProjectionObject`
 
 
 */
@@ -1662,7 +1662,7 @@ The class `Project_point` calls the member function
 
 
 
-\cgalModels `Projection_object`
+\cgalModels `ProjectionObject`
 
 */
 template< typename Node >
@@ -1733,7 +1733,7 @@ The class `Project_prev` calls the member function
 
 
 
-\cgalModels `Projection_object`
+\cgalModels `ProjectionObject`
 
 */
 template< typename Node >
@@ -1804,7 +1804,7 @@ The class `Project_vertex` calls the member function
 
 
 
-\cgalModels `Projection_object`
+\cgalModels `ProjectionObject`
 
 */
 template< typename Node >

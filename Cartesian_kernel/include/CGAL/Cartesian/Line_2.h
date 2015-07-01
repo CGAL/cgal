@@ -61,15 +61,15 @@ public:
 
   const FT & a() const
   {
-      return get(base)[0];
+      return get_pointee_or_identity(base)[0];
   }
   const FT & b() const
   {
-      return get(base)[1];
+      return get_pointee_or_identity(base)[1];
   }
   const FT & c() const
   {
-      return get(base)[2];
+      return get_pointee_or_identity(base)[2];
   }
 
 };

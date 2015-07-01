@@ -124,7 +124,7 @@ input/output functions.
 
 The class `Arrangement_2<Traits,Dcel>` is the main class in
 the arrangement package. It is used to represent planar
-arrangements and provides the interface needed to construct them,
+arrangements and it provides the interface needed to construct them,
 traverse them, and maintain them. An arrangement is defined by
 a geometric <I>traits</I> class that determines the family of planar
 curves that form the arrangement, and a \sc{Dcel} class, which
@@ -140,25 +140,28 @@ separate between the topological and geometric aspects of the planar
 subdivision. The separation is exhibited by the two template
 parameters of the `Arrangement_2` template:
 <UL>
-<LI>The `Traits` template-parameter should be instantiated with
-a model of the `ArrangementBasicTraits_2` concept. The traits
-class defines the types of \f$ x\f$-monotone curves and two-dimensional
-points, `X_monotone_curve_2` and `Point_2` respectively, and
-supports basic geometric predicates on them.
 
-In the first sections of this chapter we always use
-`Arr_segment_traits_2` as our traits class, to construct
-arrangements of line segments. However, the arrangement package
-contains several other traits classes that can handle also
-polylines (continuous piecewise-linear curves), conic arcs, and arcs
-of rational functions. We exemplify the usage of these traits classes
-in Section \ref arr_sectraits.
-<LI>The `Dcel` template-parameter should be instantiated with
-a class that is a model of the `ArrangementDcel` concept. The
-value of this parameter is `Arr_default_dcel<Traits>` by default.
-However, in many applications it is necessary
-to extend the \sc{Dcel} features; see Section \ref arr_secex_dcel for
-further explanations and examples.
+<LI>The `Traits` template-parameter should be instantiated with a
+  model of the `ArrangementBasicTraits_2` concept and optionally
+  additional geometry traits concepts. A model of the
+  `ArrangementBasicTraits_2` concept defines the types of \f$
+  x\f$-monotone curves and two-dimensional points, namely
+  `X_monotone_curve_2` and `Point_2`, respectively, and supports basic
+  geometric predicates on them.
+
+  In the first sections of this chapter we always use
+  `Arr_segment_traits_2` as our traits class, to construct
+  arrangements of line segments. However, the arrangement package
+  contains several other traits classes that can handle other types of
+  curves, such as polylines (continuous piecewise-linear curves),
+  conic arcs, and arcs of rational functions. We exemplify the usage
+  of these traits classes in Section \ref arr_sectraits.
+<LI>The `Dcel` template-parameter should be instantiated with a class
+  that is a model of the `ArrangementDcel` concept. The value of this
+  parameter is `Arr_default_dcel<Traits>` by default.  However, in
+  many applications it is necessary to extend the \sc{Dcel} features;
+  see Section \ref arr_secex_dcel for further explanations and
+  examples.
 </UL>
 
 \subsection Arrangement_on_surface_2ASimpleProgram A Simple Program
@@ -887,7 +890,7 @@ vary according to the user choice.} for answering queries:
   vertical ray emanating from the query point. It starts from the
   unbounded face of the arrangement and moves downward toward the
   query point until it locates the arrangement cell containing it.
-  
+
 <LI>`Arr_landmarks_point_location<Arrangement,Generator>`
   uses a set of <I>landmark</I> points, the location of which in the
   arrangement is known. It employs the <I>landmark</I> strategy. Given a
@@ -1794,22 +1797,38 @@ the concept `ArrangementBasicTraits_2`.
 
 \subsection arr_sssectr_lanmarks_concept The Landmarks Concept
 
-The landmark point-location strategy (see
-Section \ref arr_ssecpl) needs its associated arrangement to be
-instantiated with a model of the refined
-`ArrangementLandmarkTraits_2` traits concept. A model of this
-concept must define a fixed precision number type (typically
-`double`) and support the additional operations:
+The type of an arrangement associated with the landmark point-location
+strategy (see Section \ref arr_ssecpl) must be an instance of the
+`Arrangement_2<Traits,Dcel>` class template, where the `Traits`
+parameter is substituted with a model of the concept
+`ArrangementLandmarkTraits_2`. (Naturally, it can also model
+either the `ArrangementXMonotoneTraits_2` concept or the
+`ArrangementTraits_2` concept.) The `ArrangementLandmarkTraits_2`
+concept refines the two concepts `ArrangementApproximateTraits_2` and
+`ArrangementConstructXMonotoneCurveTraits_2`. Each of these two
+concepts, in turn, refines the concept `ArrangementBasicTraits_2`.
+
+A model of the `ArrangementApproximateTraits_2` concept must define a
+fixed precision number type (typically the double-precision
+floating-point `double`) and support the additional below (in addition
+to fulfilling the requirements listed by the `ArrangementBasicTraits_2`
+concept).
 <DL>
-<DT><B>`Approximate_2`:</B><DD>
-Given a point `p`, approximate the \f$ x\f$ and \f$ y\f$-coordinates
-of `p` using the fixed precision number type. We use this
-operation for approximate computations - there are certain
-operations in the search for the location of the point that need not
-be exact and we can perform them faster than other operations.
-<DT><B>`Construct_x_monotone_curve_2`:</B><DD> Given two points \f$ p_1\f$ and
-\f$ p_2\f$, this predicate constructs an \f$ x\f$-monotone curve connecting
-\f$ p_1\f$ and \f$ p_2\f$.
+<DT><B>`Approximate_2`:</B>
+<DD> Given a point `p`, approximate the \f$ x\f$ and \f$ y\f$-coordinates of
+`p` using the fixed precision number type. We use this operation for
+approximate computations---there are certain operations in the search
+for the location of the point that need not be exact and we can
+perform them faster than other operations.
+</DL>
+
+A model of the `ArrangementConstructXMonotoneCurveTraits_2` concept
+support the operation below (in addition to fulfilling the requirements
+listed by the `ArrangementBasicTraits_2` concept).
+<DL>
+<DT><B>`Construct_x_monotone_curve_2`:</B>
+<DD> Given two points \f$ p_1\f$ and \f$ p_2\f$, this predicate constructs an
+\f$ x\f$-monotone curve connecting \f$ p_1\f$ and \f$ p_2\f$.
 </DL>
 
 \subsection arr_sssectr_xmon_concept Supporting Intersecting x-Monotone Curves
@@ -2137,7 +2156,7 @@ from a `Kernel::Segment_2` object. Just like the default
 segment-traits class, the linear-traits class also use caching
 techniques to speed up its predicates and constructions.
 
-\subsection arr_ssectr_polylines The Polyline-Traits Class
+\subsection arr_ssectr_polylines The Polyline and Polycurve Traits Classes
 
 Polylines are continuous piecewise linear curves. Polylines are of
 particular interest, as they can be used to approximate more complex
@@ -2146,53 +2165,47 @@ comparison to higher-degree algebraic curves, as rational arithmetic
 is sufficient to carry out computations on polylines, and to construct
 arrangements of polylines in an exact and robust manner.
 
-The `Arr_polyline_traits_2<SegmentTraits>` class template handles
-bounded polylines. It models the same concepts that the type that
-substitutes the template parameter `SegmentTraits` (when
-`Arr_polyline_traits_2<SegmentTraits>` is instantiated) models. In
-particular, the type that substitutes the template parameter
-`SegmentTraits` must be a geometry-traits class that handles segments
-and models the following concepts
+The `Arr_polyline_traits_2<SubcurveTraits_2>` class template handles
+polylines. It models the concepts `ArrangementTraits_2`,
+and `ArrangementDirectionalXMonotoneTraits_2`. The type that
+substitutes the template parameter `SubcurveTraits_2` when
+`Arr_polyline_traits_2<SubcurveTraits_2>` is instantiated must be a
+geometry-traits class that models the following concepts:
 
-- `ArrangementTraits_2`
+- `ArrangementTraits_2`,
+- `ArrangementDirectionalXMonotoneTraits_2`,
+- `ArrangementConstructXMonotoneCurveTraits_2`.
 
-- `ArrangementDirectionalXMonotoneTraits_2` and optionally
+We refer to the type that substitutes the template parameter
+`SubcurveTraits_2` as the <em>subcurve traits</em> hereafter.
+If, in addition, the subcurve traits also models the concept
+`ArrangementApproximateTraits_2` then the instantiated
+`Arr_polyline_traits_2<SubcurveTraits>` type models the concept
+`ArrangementApproximateTraits_2` as well. (By definition, modeling the
+concepts `ArrangementApproximateTraits_2` and
+`ArrangementConstructXMonotoneCurveTraits_2` implies modeling the
+concept `ArrangementLandmarkTraits_2`.) The same holds for the
+`ArrangementOpenTraits_2` concept as well.
+Modeling the `ArrangementConstructXMonotoneCurveTraits_2` concept
+implies that the subcurve traits must support the construction of a
+unique (\f$x\f$-monotone) segment given two input points. Roughly
+speaking, it means that each operation defined by the subcurve traits
+must handle linear curves.
 
-- `ArrangementLandmarkTraits_2`.
-
-The types `Curve_2` and `X_monotone_curve_2` which are nested in
-`Arr_polyline_traits_2<SegmentTraits>` represent polylines and
-\f$x\f$-monotone polylines, respectively. We refer to the type that
-substitutes the template parameter `SegmentTraits` as the <em>segment
-traits</em> hereafter.
-
-Roughly speaking, the curves handled by each operation defined by the
-segment traits parameter are restricted to line segments. An instance
-of the polyline traits class-template inherits its nested point type,
-i.e., `Point_2` from the segment traits. The nested type `Curve_2` and
-`X_monotone_curve_2` represent polylines and \f$x\f$-monotone
-polylines respectively. The nested `X_monotone_curve_2` type inherits
-from the nested type `Curve_2`. A polyline and an \f$x\f$-monotone
-polyline are stored as vectors of `SegmentTraits::Curve_2` and
-`SegmentTraits::X_monotone_curve_2` respectively. We do not assume
-that a curve of type `Curve_2` nested in the segment traits class
-(i.e. a segment of a polyline) is necessarily \f$x\f$-monotone and we
-treat the `Curve_2` and `X_monotone_curve_2` types nested in the
-segment traits as different types. This makes the code as generic as
-possible and does not have a negative impact on the performance
-whatsoever. Nevertheless, the segment traits must support a
-construction of a unique \f$x\f$-monotone segment given two input
-points. Therefore, for instance, `Arr_circular_line_arc_traits_2`
-cannot be used as the template parameter. On the other hand,
-`Arr_segment_traits_2` supports this kind of construction. Currently,
-we only support traits classes that handle linear segments. As a
-matter of fact, by default, `Arr_segment_traits_2` is used to
-substitute the template parameter in case where no such parameter is
-provided. Note that in practice, as soon as `Arr_segment_traits_2` is
-used as the `SegmentTraits`, then the segments that a polyline
-comprises are linear segments. In particular, in this case the nested
-types `SegmentTraits::Curve_2` and `SegmentTraits::X_monotone_curve_2`
-are identical types representing linear segments.
+An instance of the polyline traits class-template inherits its nested
+point type, i.e., `Point_2`, from the subcurve traits, and defines the
+nested types `Curve_2` and `X_monotone_curve_2`, which are used to
+represent polylines and \f$x\f$-monotone polylines, respectively.  A
+polyline of the nested type `Curve_2` is stored as a vector of
+`SubcurveTraits_2::Curve_2` objects, and an \f$x\f$-monotone polyline
+of the nested type `X_monotone_curve_2` is stored as a vector of
+`SubcurveTraits_2::X_monotone_curve_2` objects.  The nested
+`X_monotone_curve_2` type inherits from the nested type `Curve_2`.  By
+default, `Arr_segment_traits_2` is used as the subcurve traits (in
+case where the `SubcurveTraits_2` parameter is omitted). In this case
+the nested types `SubcurveTraits_2::Curve_2` and
+`SubcurveTraits_2::X_monotone_curve_2` are identical types
+representing line segments.
 
 A polyline can be constructed given one of the following inputs:
 
@@ -2200,7 +2213,7 @@ A polyline can be constructed given one of the following inputs:
   range represent the endpoints of a segment of the polyline.
 
 - <b>A range of \a segments</b>. Note that , if the types
-`SegmentTraits::Curve_2` and `SegmentTraits::X_monotone_curve_2` are
+`SubcurveTraits_2::Curve_2` and `SubcurveTraits_2::X_monotone_curve_2` are
 not the same, then when `Make_x_monotone_2` is invoked the segments
 that compose the polyline will be broken into \f$x\f$-monotone
 parts.
@@ -2231,7 +2244,7 @@ be large.
 \cgalAdvancedBegin
 
 Technically speaking, it is possible to construct a general polyline
-which is neither well-oriented nor continuous. However, it is
+that is neither well-oriented nor continuous. However, it is
 impossible to use such polylines for the purpose of computing an
 arrangement.
 
@@ -2260,7 +2273,7 @@ size \f$m\f$ typically take \f$O(\log m)\f$ time.
 You are free to choose the underlying segment traits class. Your
 decision could be based, for example, on the number of expected
 intersection points; see Section \ref arr_ssectr_segs. Moreover, it
-is possible to substitute the `SegmentTraits` template parameter
+is possible to substitute the `SubcurveTraits_2` template parameter
 with a traits class that handles segments with some additional data
 attached to each individual segment; see Section
 \ref arr_ssecmeta_tr. This makes it possible to associate different
@@ -2281,6 +2294,22 @@ each \f$ x\f$-monotone polyline or the intersection points between two
 polylines:
 
 \cgalExample{Arrangement_on_surface_2/polylines.cpp}
+
+The traits class `Arr_polycurve_traits_2<GeometryTraits_2>` handles
+piecewise curves that are not necessarily linear, such as conic arcs,
+circular arcs, Bezier curves, or line segments. We call such a
+compound curve a <em>polycurve</em>. Similar to a polyline, a
+polycurve is a chain of subcurves, where each two neighboring
+subcurves in the chain share a common endpoint; that is, the polycurve
+is continuous. As a matter of fact, most characteristics of the
+`Arr_polyline_traits_2<GeometryTraits_2>` traits class apply also to
+the `Arr_polycurve_traits_2<GeometryTraits_2>` traits class. The only
+difference between the two, is that the latter is not a model of the
+concept `ArrangementConstructXMonotoneCurveTraits_2`, and as such, it
+is not able to construct a subcurve from two points. As a consequence,
+it does not support the operations that (i) construct a polycurve from
+a sequence of point, and (ii) push a point at the back or at the front
+of a non-empty polycurve.
 
 \subsection arr_ssectr_circ_seg A Traits Class for Circular Arcs and Line Segments
 

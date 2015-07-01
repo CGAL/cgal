@@ -13,7 +13,7 @@ public:
 
   void set_surface(Surface*);
 
-public slots:
+public Q_SLOTS:
   void interpolateToFitBoundingBox(double, double, double, double, double, double);
 
 protected :

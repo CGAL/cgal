@@ -140,7 +140,7 @@ def protect_upper_case(title):
   return title.replace("dD","{dD}").replace("2D","{2D}").replace("3D","{3D}").replace("CGAL","{CGAL}").replace("Qt","{Qt}").replace("Boost","{Boost}")
 
 def protect_accentuated_letters(authors):
-  res=authors.replace(u"é",r"{\'e}").replace(u"ä",r"{\"a}").replace(u"ö",r"{\"o}").replace(u"ñ",r"{\~n}").replace(u"ã",r"{\~a}").replace(u"ë",r"{\"e}").replace("%","")
+  res=authors.replace(u"é",r"{\'e}").replace(u"è",r"{\`e}").replace(u"É",r"{\'E}").replace(u"ä",r"{\"a}").replace(u"ö",r"{\"o}").replace(u"ñ",r"{\~n}").replace(u"ã",r"{\~a}").replace(u"ë",r"{\"e}").replace("%","")
   try:
     res.encode('ascii')
   except UnicodeEncodeError:

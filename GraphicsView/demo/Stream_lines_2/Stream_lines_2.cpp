@@ -61,7 +61,7 @@ private:
 public:
   MainWindow();
 
-public slots:
+public Q_SLOTS:
 
   void on_actionLoadPoints_triggered();
 
@@ -75,7 +75,7 @@ public slots:
 
   virtual void open(QString fileName);
 
-signals:
+Q_SIGNALS:
   void changed();
 };
 
@@ -132,7 +132,7 @@ MainWindow::MainWindow()
 void
 MainWindow::on_actionClear_triggered()
 {
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -155,7 +155,7 @@ MainWindow::on_actionGenerate_triggered()
   scene.addItem(rgi);
 
   on_actionRecenter_triggered();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -201,7 +201,7 @@ MainWindow::open(QString fileName)
   this->addToRecentFiles(fileName);
   //  actionRecenter->trigger();
   on_actionGenerate_triggered();
-  emit(changed());
+  Q_EMIT( changed());
     
 }
 

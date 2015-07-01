@@ -24,12 +24,12 @@ class MainWindow : public CGAL::Qt::DemosMainWindow, private Ui::MainWindow
   Scene scene;
   Timer timer;
 
-public slots:
+public Q_SLOTS:
   virtual void open(QString fileName);
   void open_file();
   void alphaChanged(int i);
 
-  signals:
+  Q_SIGNALS:
   void sceneChanged();
   void alphaChanged();
 };

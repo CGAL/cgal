@@ -7,7 +7,7 @@
 
 \cgalAutoToc
 
-\authors Pierre Alliez, Clément Jamin, Laurent Saboret, Nader Salman, Shihao Wu
+\authors Pierre Alliez, Clément Jamin, Quentin Mérigot, Jocelyn Meyron, Laurent Saboret, Nader Salman, Shihao Wu
 
 \section Point_set_processing_3Introduction Introduction
 
@@ -37,9 +37,9 @@ deals with surface reconstruction from point sets with normal attributes.
 Point set processing pipeline for surface reconstruction. The algorithms listed in gray are available from other CGAL components (bounding volumes and principal component analysis).
 \cgalFigureEnd
 
-\section Point_set_processing_3InputOutput Input/Output
 
-\subsection Point_set_processing_3PropertyMaps Property Maps
+
+\section Point_set_processing_3PropertyMaps Property Maps
 
 The algorithms of this component take as input parameters iterator
 ranges of 3D points, or of 3D points with normals. The property maps
@@ -65,6 +65,15 @@ See below examples using pair and tuple property maps.
 
 Users of this package may use other types to represent positions and
 normals if they implement the corresponding property maps.
+
+Points and normals can even be stored in separate containers 
+and accessed by their index, as any built-in vector is also
+a property map.
+
+\cgalExample{Point_set_processing_3/grid_simplify_indices.cpp}
+
+
+\section Point_set_processing_3InputOutput Input/Output
 
 \subsection Point_set_processing_3Streams Streams
 
@@ -172,6 +181,13 @@ Computing density weights for each point is an optional preprocessing. For examp
 Comparison between with and without density: Left: input. Middle: `require_uniform_sampling = false`. Right: `require_uniform_sampling=true`. 
 \cgalFigureEnd
 
+\subsubsection Point_set_processing_3WLOP_parameter_neighborhood_size Parameter: neighbor_radius
+Usually, the neighborhood of sample points should include at least two rings of neighboring sample points. Using a small neighborhood size may not be able to generate regularized result, while using big neighborhood size will make the sample points shrink into the interior of the local surface (under-fitting). The function will use a neighborhood size estimation if this parameter value is set to default or smaller that zero.
+
+\cgalFigureBegin{Point_set_processing_3figWLOP_parameter_neighborhood_size, WLOP_parameter_neighborhood_size.jpg}
+Comparison between different sizes of neighbor radius.
+\cgalFigureEnd
+
 \subsubsection Point_set_processing_3WLOP_parallel_performance Parallel Performance
 A parallel version of WLOP is provided and requires the executable to be linked against the 
 <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
@@ -239,6 +255,12 @@ at each point from the set by linear least squares fitting of a plane
 over its `k` nearest neighbors. This algorithm is simpler and
 faster than `jet_estimate_normals()`.
 
+Function `vcm_estimate_normals()` estimates the normal direction
+at each point from the set by using the Voronoi Covariance Measure
+of the point set. This algorithm is more complex and slower than
+the previous algorithms. It is based on the
+article \cgalCite{cgal:mog-vbcfe-11}.
+
 \section Point_set_processing_3NormalOrientation Normal Orientation
 
 Function `mst_orient_normals()` orients the normals of a set of
@@ -292,10 +314,36 @@ This parameter controls the preservation of sharp features.
 Upsampling for different sharpness_angle parameter values. The input containing 850 points is upsampled to 425K points in all cases depicted. 
 \cgalFigureEnd
 
+\subsubsection Point_set_processing_3upsample_neighborhood_size Parameter: neighbor_radius
+Usually, the neighborhood of sample points should include at least one ring of neighboring sample points. Using small neighborhood size may not be able to insert new points. Using big neighborhood size can fill small holes, but points inserted on the edges could be irregular. The function will use a neigbhorhood size estimation if this parameter value is set to default or smaller that zero.
 
-\subsection Point_set_processing_3ImplementationHistory Implementation History
+\cgalFigureBegin{Point_set_processing_3figupsample_neighborhood_size, upsample_neighborhood_size.jpg}
+Comparison between different sizes of neighbor radius. 
+\cgalFigureEnd
 
-Pierre Alliez and Laurent Saboret contributed the initial component. Nader Salman contributed the grid simplification. Started from GSoC'2013, three new algorithms were implemented by Shihao Wu and Clément Jamin: WLOP, bilateral smoothing and upsampling. 
+\section Point_set_processing_3FeaturesEstimation Feature Edges Estimation
+
+Function `vcm_is_on_feature_edge()` indicates if a points belong to a feature edges of the
+point set using its Voronoi Covariance Measure.
+It is based on the article \cgalCite{cgal:mog-vbcfe-11}.
+
+It first computes the VCM of the points set using `compute_vcm()`. Then, it estimates
+which points belong to a sharp edge by testing if a ratio of eigenvalues
+is greater than a given threshold.
+
+\subsection Point_set_processing_3Example_6 Example
+
+The following example reads a point set from a file, estimates the
+points that are on sharp edges:
+\cgalExample{Point_set_processing_3/edges_example.cpp}
+
+
+\section Point_set_processing_3ImplementationHistory Implementation History
+
+Pierre Alliez and Laurent Saboret contributed the initial component. Nader Salman contributed the grid simplification.
+Started from GSoC'2013, three new algorithms were implemented by Shihao Wu and Clément Jamin: WLOP, bilateral smoothing and upsampling.
+Started from GSoC'2014, Jocelyn Meyron with the help of Quentin Mérigot introduced the computation of the Voronoi covarience measure of a point set,
+as well as the normal and feature edge estimation functions based on it.
 
 */ 
 } /* namespace CGAL */

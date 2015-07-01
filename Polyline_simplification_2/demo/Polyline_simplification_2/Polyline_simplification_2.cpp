@@ -107,10 +107,10 @@ private:
   void loadPoly(QString);
   void loadOSM (QString);
 
-protected slots:
+protected Q_SLOTS:
 void open(QString);
 
-public slots:
+public Q_SLOTS:
 
   void processInput(CGAL::Object o);
 
@@ -130,7 +130,7 @@ public slots:
 
   double getThreshold() ;
   
-signals:
+Q_SIGNALS:
   void changed();
 };
 
@@ -238,10 +238,10 @@ MainWindow::processInput(CGAL::Object o)
         out << *it << std::endl;
       }
 #endif
-      emit(changed());
+      Q_EMIT( changed());
     }  
   }
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -274,7 +274,7 @@ MainWindow::on_actionClear_triggered()
 {
   m_pct.clear();
   mGI->modelChanged();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 Mode MainWindow::getSimplificationMode()
@@ -325,7 +325,7 @@ void MainWindow::on_actionSimplify_triggered()
    // default cursor
   QApplication::restoreOverrideCursor();
   mGI->modelChanged();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -447,7 +447,7 @@ void MainWindow::loadPoly(QString fileName)
     }
   }
       
-  emit(changed());
+  Q_EMIT( changed());
   
   actionRecenter->trigger();
 }
@@ -522,7 +522,7 @@ void MainWindow::loadOSM(QString fileName)
     statusBar()->showMessage(QString("Exception ocurred"));
   }
   
-  emit(changed());
+  Q_EMIT( changed());
   
   actionRecenter->trigger();
 }

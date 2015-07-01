@@ -1,0 +1,7 @@
+# -*- comment-start: "#"; -*-
+# 
+# Format
+# < command >	< xcurve 1 > < xcurve 2 > < expected merged X-curve > 
+#
+merge 1 2 11
+merge 12 1 13

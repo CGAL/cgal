@@ -244,12 +244,12 @@ namespace Polygon_mesh_processing {
   {
     std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor> patch;
 
-    CGAL_assertion(CGAL::is_pure_triangle(pmesh));
+    CGAL_assertion(CGAL::is_triangle_mesh(pmesh));
 
     face_out = triangulate_and_refine_hole
       (pmesh, border_halfedge, face_out, std::back_inserter(patch), np).first;
 
-    CGAL_assertion(CGAL::is_pure_triangle(pmesh));
+    CGAL_assertion(CGAL::is_triangle_mesh(pmesh));
 
     test_in_edges(pmesh, patch);
 

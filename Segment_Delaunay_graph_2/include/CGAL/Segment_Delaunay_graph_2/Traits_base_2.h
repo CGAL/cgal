@@ -198,6 +198,9 @@ public:
     return Construct_svd_vertex_2();
   }
 
+  // L2 traits do not contain bisector constructions
+  typedef Tag_false Tag_has_bisector_constructions;
+
   /*
   Construct_svd_circle_2
   construct_svd_circle_2_object() const {

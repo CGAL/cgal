@@ -48,7 +48,7 @@ public:
   bool delete_item() { return delete_poly_item; }
   void set_delete_item(bool delete_item) { delete_poly_item = delete_item; }
 
-public slots:
+public Q_SLOTS:
   void changed();
   void select(double orig_x,
               double orig_y,

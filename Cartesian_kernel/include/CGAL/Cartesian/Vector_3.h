@@ -34,7 +34,7 @@ namespace CGAL {
 template < class R_ >
 class VectorC3
 {
-// http://www.cgal.org/Members/Manual_test/LAST/Developers_internal_manual/Developers_manual/Chapter_code_format.html#sec:programming_conventions
+// http://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
   typedef typename R_::FT                   FT_;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Vector_3             Vector_3;
@@ -80,15 +80,15 @@ public:
 
   const FT_ & x() const
   {
-      return get(base)[0];
+      return get_pointee_or_identity(base)[0];
   }
   const FT_ & y() const
   {
-      return get(base)[1];
+      return get_pointee_or_identity(base)[1];
   }
   const FT_ & z() const
   {
-      return get(base)[2];
+      return get_pointee_or_identity(base)[2];
   }
 
   const FT_ & hx() const
@@ -110,12 +110,12 @@ public:
 
   Cartesian_const_iterator cartesian_begin() const
   {
-    return get(base).begin();
+    return get_pointee_or_identity(base).begin();
   }
 
   Cartesian_const_iterator cartesian_end() const
   {
-    return get(base).end();
+    return get_pointee_or_identity(base).end();
   }
 
   const FT_ & cartesian(int i) const;

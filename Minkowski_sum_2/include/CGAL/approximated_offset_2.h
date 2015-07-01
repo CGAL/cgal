@@ -12,10 +12,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein   <wein_r@yahoo.com>
 
 #ifndef CGAL_APPROXIMATED_OFFSET_H
 #define CGAL_APPROXIMATED_OFFSET_H
@@ -29,7 +26,7 @@ namespace CGAL {
 /*!
  * Approximate the offset of a given simple polygon by a given radius,
  * using the convolution method.
- * Note that as the input polygon may not be convex, its offset may not be 
+ * Note that as the input polygon may not be convex, its offset may not be
  * simply connected. The result is therefore represented as a polygon with
  * holes.
  * \param pgn The polygon.
@@ -96,7 +93,7 @@ approximated_offset_2 (const Polygon_with_holes_2<Kernel, Container>& pwh,
  * Approximate the offset of a given simple polygon by a given radius,
  * by decomposing it to convex sub-polygons and computing the union of their
  * offsets.
- * Note that as the input polygon may not be convex, its offset may not be 
+ * Note that as the input polygon may not be convex, its offset may not be
  * simply connected. The result is therefore represented as a polygon with
  * holes.
  * \param pgn The polygon.
@@ -132,7 +129,7 @@ approximated_offset_2 (const Polygon_2<Kernel, Container>& pgn,
 /*!
  * Approximate the inset of a given simple polygon by a given radius, using
  * the convolution method.
- * Note that as the input polygon may not be convex, its inset may not be 
+ * Note that as the input polygon may not be convex, its inset may not be
  * simply connected. The result is therefore represented as a set of polygons.
  * \param pgn The polygon.
  * \param r The inset radius.

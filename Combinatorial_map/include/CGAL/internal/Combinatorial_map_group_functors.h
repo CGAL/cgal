@@ -21,7 +21,6 @@
 #define CGAL_COMBINATORIAL_MAP_GROUP_FUNCTORS_H
 
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/internal/Combinatorial_map_internal_functors.h>
 #include <CGAL/Combinatorial_map_functors.h>
 
 /* Definition of functors used to group/ungroup attributes (we need functors

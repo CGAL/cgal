@@ -339,7 +339,7 @@ namespace CGAL {
           else if ( it->vertex(1) == atr.infinite_vertex() )
             dart = alcc.beta(res, 1);
           else if ( it->vertex(2) == atr.infinite_vertex() )
-            dart = alcc.beta(res, 2);
+            dart = alcc.beta(res, 1, 1);
           else if ( it->vertex(3) == atr.infinite_vertex() )
             dart = alcc.beta(res, 2, 0);
         }
@@ -545,6 +545,8 @@ namespace CGAL {
                                     <typename LCC::Traits> > (alcc, P);
   }
 
+  /** Export the alcc in off file format. If dimension>2, export all faces but only once.
+   */
   template < class LCC >
   void write_off(LCC& alcc, std::ostream& out)
   {
@@ -555,14 +557,11 @@ namespace CGAL {
     writer.header().set_polyhedral_surface(true);
     writer.header().set_halfedges( alcc.number_of_darts());
 
-    std::vector<unsigned int> cells; cells.push_back(2);
-    std::vector<unsigned int> res = alcc.count_cells(cells);
-
     // Print header.
     writer.write_header( out,
                          alcc.number_of_vertex_attributes(),
                          alcc.number_of_darts(),
-                         res[2]);
+                         alcc.template one_dart_per_cell<2>().size() );
 
     typedef typename LCC::Vertex_attribute_range::iterator VCI;
     VCI vit, vend = alcc.vertex_attributes().end();
@@ -587,23 +586,28 @@ namespace CGAL {
       {
         std::size_t n = 0;
         // First we count the number of vertices of the face.
-        for ( typename LCC::template Dart_of_cell_range<2>::iterator
-                itf=alcc.template darts_of_cell<2>(itall).begin(),
-                itfend=alcc.template darts_of_cell<2>(itall).end();
+        for ( typename LCC::template Dart_of_orbit_range<1>::iterator
+                itf=alcc.template darts_of_orbit<1>(itall).begin(),
+                itfend=alcc.template darts_of_orbit<1>(itall).end();
               itf!=itfend; ++itf, ++n );
 
         CGAL_assertion( n>=3 );
         writer.write_facet_begin(n);
 
         // Second we write the indices of vertices.
-        for ( typename LCC::template Dart_of_cell_range<2>::iterator
-                itf=alcc.template darts_of_cell<2>(itall).begin(),
-                itfend=alcc.template darts_of_cell<2>(itall).end();
+        for ( typename LCC::template Dart_of_orbit_range<1>::iterator
+                itf=alcc.template darts_of_orbit<1>(itall).begin(),
+                itfend=alcc.template darts_of_orbit<1>(itall).end();
               itf!=itfend; ++itf )
         {
           // TODO case with index
           writer.write_facet_vertex_index(index[VCI(alcc.vertex_attribute(itf))]);
-          alcc.mark(itf, m);
+
+          for ( typename LCC::template Dart_of_involution_basic_range<1>::iterator
+                  itinv=alcc.template darts_of_involution_basic<1>(itf, m).begin(),
+                  itinvend=alcc.template darts_of_involution_basic<1>(itf, m).end();
+                itinv!=itinvend; ++itinv )
+            alcc.mark(itinv, m);
         }
         writer.write_facet_end();
       }

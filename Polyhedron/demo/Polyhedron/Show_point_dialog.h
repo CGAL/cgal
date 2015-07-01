@@ -24,7 +24,7 @@ public:
   double get_y() const;
   double get_z() const;
 
-protected slots:
+protected Q_SLOTS:
   void interprete_string(const QString&);
 
 protected:

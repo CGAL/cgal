@@ -47,7 +47,7 @@ public:
 
   virtual QString toolTip() const;
 
-public slots:
+public Q_SLOTS:
   void plane_was_moved() { need_update_ = true; }
   void compute_function_grid() const;
 

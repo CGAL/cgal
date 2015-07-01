@@ -11,6 +11,8 @@
 #include <QVariant>
 #include <list>
 
+#include <limits>
+
 typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> Input_facets_AABB_tree;
@@ -126,6 +128,37 @@ init()
     compute_color_map(this->color(), max + 1, 
                       std::back_inserter(colors_));
   }
+
+  volume=-std::numeric_limits<double>::infinity();
+  area=-std::numeric_limits<double>::infinity();
+  if (poly->is_pure_triangle())
+  {
+    // compute the volume if the polyhedron is closed
+    if (poly->is_closed())
+    {
+      volume=0;
+      Polyhedron::Vertex::Point p(0,0,0);
+      Q_FOREACH(Polyhedron::Face_handle fh, faces(*poly))
+      {
+        volume+=CGAL::volume( p,
+                    fh->halfedge()->vertex()->point(),
+                    fh->halfedge()->next()->vertex()->point(),
+                    fh->halfedge()->prev()->vertex()->point() );
+      }
+    }
+
+    // compute the surface area
+    area=0;
+    Q_FOREACH(Polyhedron::Face_handle fh, faces(*poly))
+    {
+      area+=std::sqrt( CGAL::squared_area(
+              fh->halfedge()->vertex()->point(),
+              fh->halfedge()->next()->vertex()->point(),
+              fh->halfedge()->prev()->vertex()->point() )
+            );
+    }
+  }
+
 }
 
 
@@ -152,7 +185,7 @@ Scene_polyhedron_item::load(std::istream& in)
 bool 
 Scene_polyhedron_item::save(std::ostream& out) const
 {
-  out.precision(13);
+  out.precision(17);
   out << *poly;
   return (bool) out;
 }
@@ -163,16 +196,24 @@ Scene_polyhedron_item::toolTip() const
   if(!poly)
     return QString();
 
-  return QObject::tr("<p>Polyhedron <b>%1</b> (mode: %5, color: %6)</p>"
+  QString str =
+         QObject::tr("<p>Polyhedron <b>%1</b> (mode: %5, color: %6)</p>"
                      "<p>Number of vertices: %2<br />"
                      "Number of edges: %3<br />"
-                     "Number of facets: %4</p>")
+                     "Number of facets: %4")
     .arg(this->name())
     .arg(poly->size_of_vertices())
     .arg(poly->size_of_halfedges()/2)
     .arg(poly->size_of_facets())
     .arg(this->renderingModeName())
     .arg(this->color().name());
+  if (volume!=-std::numeric_limits<double>::infinity())
+    str+=QObject::tr("<br />Volume: %1").arg(volume);
+  if (area!=-std::numeric_limits<double>::infinity())
+    str+=QObject::tr("<br />Area: %1").arg(area);
+  str+="</p>";
+
+  return str;
 }
 
 QMenu* Scene_polyhedron_item::contextMenu()
@@ -220,7 +261,7 @@ QMenu* Scene_polyhedron_item::contextMenu()
 void Scene_polyhedron_item::show_only_feature_edges(bool b)
 {
   show_only_feature_edges_m = b;
-  emit itemChanged();
+  Q_EMIT itemChanged();
 }
 
 void Scene_polyhedron_item::enable_facets_picking(bool b)
@@ -300,7 +341,7 @@ void
 Scene_polyhedron_item::
 changed()
 {
-  emit item_is_about_to_be_changed();
+  Q_EMIT item_is_about_to_be_changed();
   delete_aabb_tree(this);
   init();
   Base::changed();
@@ -380,7 +421,7 @@ Scene_polyhedron_item::select(double orig_x,
               }
             }
 
-            emit selected_vertex((void*)(&*nearest_v));
+            Q_EMIT selected_vertex((void*)(&*nearest_v));
           }
 
           if(QObject::receivers(SIGNAL(selected_edge(void*))) > 0
@@ -403,17 +444,17 @@ Scene_polyhedron_item::select(double orig_x,
               }
             }
 
-            emit selected_halfedge((void*)(&*nearest_h));
-            emit selected_edge((void*)(std::min)(&*nearest_h, &*nearest_h->opposite()));
+            Q_EMIT selected_halfedge((void*)(&*nearest_h));
+            Q_EMIT selected_edge((void*)(std::min)(&*nearest_h, &*nearest_h->opposite()));
           }
           
-          emit selected_facet((void*)(&*selected_fh));
+          Q_EMIT selected_facet((void*)(&*selected_fh));
           if(erase_next_picked_facet_m) {
             polyhedron()->erase_facet(selected_fh->halfedge());
             polyhedron()->normalize_border();
             //set_erase_next_picked_facet(false);
             changed();
-            emit itemChanged();
+            Q_EMIT itemChanged();
           }
         }
       }

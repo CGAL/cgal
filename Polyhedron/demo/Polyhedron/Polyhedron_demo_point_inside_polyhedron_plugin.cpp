@@ -36,7 +36,7 @@ class Polyhedron_demo_point_inside_polyhedron_plugin :
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
-  bool applicable() const 
+  bool applicable(QAction*) const 
   {
     bool poly_item_exists = false;
     bool point_item_exists = false;
@@ -80,7 +80,8 @@ private:
     { return *poly_ptr; }
   };
 
-public slots:
+
+public Q_SLOTS:
   void point_inside_polyhedron_action() { 
     dock_widget->show();
     dock_widget->raise();
@@ -103,7 +104,7 @@ public slots:
     std::vector<Point_inside*> inside_testers;// to put all polyhedra to query object
         // it does not support copy-construction so let's use pointers
     std::vector<Point_set*> point_sets;
-    foreach(Scene_interface::Item_id id, scene->selectionIndices()) {
+    Q_FOREACH(Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
       if (poly_item)
         inside_testers.push_back(new Point_inside(*(poly_item->polyhedron())));
@@ -162,7 +163,7 @@ public slots:
       delete inside_testers[i];
 
     // for repaint
-    foreach(Scene_interface::Item_id id, scene->selectionIndices()) {
+    Q_FOREACH(Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_points_with_normal_item* point_item = qobject_cast<Scene_points_with_normal_item*>(scene->item(id));
       if(point_item) { 
         scene->itemChanged(point_item);
@@ -181,7 +182,7 @@ public slots:
     //   warning about '*bbox' not being initialized.
     // -- Laurent Rineau, 2014/10/30
 
-    foreach(Scene_interface::Item_id id, scene->selectionIndices()) {
+    Q_FOREACH(Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
       if(poly_item) {
         if(!bbox) {

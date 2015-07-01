@@ -259,9 +259,9 @@ public:
 public: // methods
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
   {
-    for (typename X_monotone_curve_2::Segment_const_iterator it =
-           curve.begin_segments();
-         it != curve.end_segments(); ++it)
+    for (typename X_monotone_curve_2::Subcurve_const_iterator it =
+           curve.begin_subcurves();
+         it != curve.end_subcurves(); ++it)
       {
         this->painterOstream << *it;
       }

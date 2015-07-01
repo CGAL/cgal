@@ -66,8 +66,6 @@
 #else
 #include <CGAL/Modifiable_priority_queue.h>
 #endif //CGAL_MESH_3_USE_RELAXED_HEAP
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
@@ -1551,11 +1549,11 @@ void
 Sliver_perturber<C3T3,Md,Sc,V_>::
 initialize_vertices_id() const
 {
-  namespace bl = boost::lambda;
   int cur_id = 0;
-
-  std::for_each(tr_.finite_vertices_begin(), tr_.finite_vertices_end(),
-                bl::bind(&Vertex::set_meshing_info, &bl::_1, bl::var(cur_id)++));
+  for(typename Tr::Finite_vertices_iterator it = tr_.finite_vertices_begin(); 
+      it != tr_.finite_vertices_end(); ++it) {
+    it->set_meshing_info(cur_id++);
+  }
 }
 
 

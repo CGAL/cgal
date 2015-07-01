@@ -65,17 +65,18 @@ template < class Gt,
               Segment_Delaunay_graph_hierarchy_vertex_base_2<
 		Segment_Delaunay_graph_vertex_base_2<ST> >,
               Segment_Delaunay_graph_face_base_2<Gt> >,
-	   class LTag = Tag_false>
+	   class LTag = Tag_false,
+           class SDGLx = Segment_Delaunay_graph_2<Gt,ST,D_S,LTag> >
 class Segment_Delaunay_graph_hierarchy_2
-  : public Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>
+  : public SDGLx
 {
 protected:
-  typedef Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>  Self;
+  typedef Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>  Self;
 
 public:
   // PUBLIC TYPES
   //-------------
-  typedef Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>  Base;
+  typedef SDGLx    Base;
 
   typedef typename Base::Geom_traits        Geom_traits;
   typedef typename Base::Storage_traits     Storage_traits;

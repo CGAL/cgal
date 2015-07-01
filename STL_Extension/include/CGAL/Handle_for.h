@@ -292,7 +292,7 @@ template <class T> inline bool identical(const T &t1, const T &t2) { return &t1 
 template <class T, class Allocator>
 inline
 const T&
-get(const Handle_for<T, Allocator> &h)
+get_pointee_or_identity(const Handle_for<T, Allocator> &h)
 {
     return *(h.Ptr());
 }
@@ -300,7 +300,7 @@ get(const Handle_for<T, Allocator> &h)
 template <class T>
 inline
 const T&
-get(const T &t)
+get_pointee_or_identity(const T &t)
 {
     return t;
 }

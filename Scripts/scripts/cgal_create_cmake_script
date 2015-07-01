@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Copyright (c) 1999,2000,2002-2007
 # Utrecht University (The Netherlands),
@@ -23,8 +23,8 @@
 #
 # Author(s)     : various
 
-# This script creates a CGAL cmake script with entries for all .C and .cpp
-# files in the current directory.
+# This script creates a CGAL cmake script with entries for files with a common
+# C++ file extension (as mentioned in the g++ man page) in the current directory.
 #
 # Usage: cgal_create_cmake_script TYPE
 #
@@ -58,7 +58,7 @@ EOF
   if [ "${TYPE}" = "demo" ] ; then
     target_name="${PROJECT}_${TYPE}"
     
-    for file in `ls "$SOURCE_DIR"*.C "$SOURCE_DIR"*.cpp 2>/dev/null | sort` ; do
+    for file in `ls "$SOURCE_DIR"*.cc "$SOURCE_DIR"*.cp "$SOURCE_DIR"*.cxx "$SOURCE_DIR"*.cpp "$SOURCE_DIR"*.CPP "$SOURCE_DIR"*.c++ "$SOURCE_DIR"*.C 2>/dev/null | sort` ; do
       all="$all $file"
     done
     if [ -z "${all}" ]; then return; fi
@@ -147,10 +147,15 @@ EOF
       echo
     fi
     
-    for file in `ls "$SOURCE_DIR"*.C "$SOURCE_DIR"*.cpp 2>/dev/null | sort` ; do
+    for file in `ls "$SOURCE_DIR"*.cc "$SOURCE_DIR"*.cp "$SOURCE_DIR"*.cxx "$SOURCE_DIR"*.cpp "$SOURCE_DIR"*.CPP "$SOURCE_DIR"*.c++ "$SOURCE_DIR"*.C 2>/dev/null | sort` ; do
       # Create an executable for each cpp that  contains a function "main()"
-      BASE=`basename $file .C`
+      BASE=`basename $file .cc`
+      BASE=`basename $BASE .cp`
+      BASE=`basename $BASE .cxx`
       BASE=`basename $BASE .cpp`
+      BASE=`basename $BASE .CPP`
+      BASE=`basename $BASE .c++`
+      BASE=`basename $BASE .C`
       egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
       if [ $? -eq 0 ]; then
         echo "  create_single_source_cgal_program( \"$file\" )"

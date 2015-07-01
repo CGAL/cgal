@@ -40,11 +40,11 @@ public:
     : QObject(parent)
   {}
 
-signals:
+Q_SIGNALS:
   void generate(CGAL::Object o);
   void modelChanged();
 
-public slots:
+public Q_SLOTS:
 
   virtual void processInput(CGAL::Object /*o*/) {}
 

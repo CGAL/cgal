@@ -75,12 +75,12 @@ public:
 
   const Point_3 &     point() const
   {
-      return get(base).first;
+      return get_pointee_or_identity(base).first;
   }
 
   const Vector_3 & to_vector() const
   {
-      return get(base).second;
+      return get_pointee_or_identity(base).second;
   }
 
   Direction_3 direction() const

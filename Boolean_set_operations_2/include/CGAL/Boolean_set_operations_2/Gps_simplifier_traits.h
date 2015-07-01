@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -59,12 +59,12 @@ public:
     return m_index;
   }
 
-  unsigned int& index() 
+  unsigned int& index()
   {
     return m_index;
   }
 
-  unsigned int& twin_bc() 
+  unsigned int& twin_bc()
   {
     return m_twin_bc;
   }
@@ -101,7 +101,7 @@ public:
   {
     return m_index;
   }
-  
+
   void set_index(unsigned int index)
   {
     m_index = index;
@@ -132,14 +132,14 @@ public:
   typedef typename Traits::Split_2                Base_Split_2;
 
 protected:
-  unsigned int m_pgn_size;
+  mutable unsigned int m_pgn_size;
 
-  
+
 public:
 
   typedef typename Base::X_monotone_curve_2       X_monotone_curve_2;
   typedef typename Base::Point_2                  Point_2;
-  typedef typename Base::Multiplicity             Multiplicity; 
+  typedef typename Base::Multiplicity             Multiplicity;
 
   typedef typename Base::Curve_data               Curve_data;
   typedef typename Base::Point_data               Point_data;
@@ -155,7 +155,7 @@ public:
     return m_pgn_size;
   }
 
-  void set_polygon_size(unsigned int pgn_size)
+  void set_polygon_size(unsigned int pgn_size) const
   {
     m_pgn_size = pgn_size;
   }
@@ -182,13 +182,13 @@ public:
     const Self * m_self_tr;
 
   public:
-   
+
     /*! Constructor. */
     Intersect_2 (const Base_Intersect_2& base,
                  const Base_Compare_endpoints_xy_2& base_cmp_endpoints,
                  const Base_Compare_xy_2& base_cmp_xy,
                  const Base_Construct_min_vertex_2& ,
-                 const Self*  tr) : 
+                 const Self*  tr) :
       m_base(base),
       m_base_cmp_endpoints(base_cmp_endpoints),
       m_base_cmp_xy(base_cmp_xy),
@@ -201,11 +201,11 @@ public:
                                OutputIterator oi) const
     {
       //// if the two curves are incident, do not intersect them
-      //if(m_self_tr->is_valid_index(cv1.data().index()) && 
+      //if(m_self_tr->is_valid_index(cv1.data().index()) &&
       //   m_self_tr->is_valid_index(cv2.data().index()))
       //{
-      //  unsigned int index_diff = 
-      //    (cv1.data().index() > cv2.data().index()) ? 
+      //  unsigned int index_diff =
+      //    (cv1.data().index() > cv2.data().index()) ?
       //    (cv1.data().index() - cv2.data().index()):
       //    (cv2.data().index() - cv1.data().index());
 
@@ -224,7 +224,7 @@ public:
         oi_end = m_base(cv2.base(), cv1.base(), oi);
 
       // convert objects that are associated with Base_X_monotone_curve_2 to
-      // the extenede X_monotone_curve_2 
+      // the extenede X_monotone_curve_2
       for(; oi != oi_end; ++oi)
       {
         base_pt = object_cast<std::pair<Base_Point_2, Multiplicity> >(&(*oi));
@@ -233,7 +233,7 @@ public:
         {
           Point_data pt_data(m_self_tr->invalid_index());
           Point_2 point_plus (base_pt->first, pt_data); // the extended point
-          *oi = CGAL::make_object(std::make_pair(point_plus, 
+          *oi = CGAL::make_object(std::make_pair(point_plus,
                                                  base_pt->second));
         }
         else
@@ -308,7 +308,7 @@ public:
       c1.set_data(Curve_data(cv_data.bc(),
                              cv_data.twin_bc(),
                              m_self_tr->invalid_index()));
-      
+
       c2.set_data(Curve_data(cv_data.bc(),
                              cv_data.twin_bc(),
                              m_self_tr->invalid_index()));
@@ -349,7 +349,7 @@ public:
       {
         return Point_2 (m_base(cv.base()), m_self_tr->invalid_index());
       }
-      
+
       Comparison_result res = m_base_cmp_endpoints(cv);
       Point_data pt_data;
       if(res == SMALLER)

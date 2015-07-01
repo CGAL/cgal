@@ -78,7 +78,7 @@ Point_handle hp2, Point_handle hq1, Point_handle hq2);
 
 /*!
 Constructs 
-a site from four point handles and a boolean. The storage site 
+a site from four point handles and a Boolean. The storage site 
 represents a segment. If `b` is `true`, the first endpoint 
 of the segment is the point associated with the handle `hp1` and 
 the second endpoint is the point of intersection of the segments the 

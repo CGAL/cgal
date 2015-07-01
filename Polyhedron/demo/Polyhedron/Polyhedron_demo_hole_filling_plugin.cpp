@@ -121,7 +121,7 @@ public:
     else {
       selected_holes.clear();
     }
-    emit itemChanged();
+    Q_EMIT itemChanged();
   }
 
   // filter events for selecting / activating holes with mouse input
@@ -152,7 +152,7 @@ public:
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
       bool need_repaint = activate_closest_hole(p.x(), p.y());
-      if(need_repaint) { emit itemChanged(); }
+      if(need_repaint) { Q_EMIT itemChanged(); }
     }
 
     // select closest hole
@@ -163,7 +163,7 @@ public:
         selected_holes.insert(active_hole);
       }
       else { selected_holes.erase(active_it); }
-      emit itemChanged();
+      Q_EMIT itemChanged();
     }
     return false;
   }
@@ -281,11 +281,11 @@ public:
   Polyline_data_list polyline_data_list;
   bool block_poly_item_changed;
 
-public slots:
+public Q_SLOTS:
   void poly_item_changed() {
     if(block_poly_item_changed) { return; }
     get_holes();
-    emit itemChanged();
+    Q_EMIT itemChanged();
   }
 
 }; // end class Scene_hole_visualizer
@@ -299,7 +299,7 @@ class Polyhedron_demo_hole_filling_plugin :
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
-  bool applicable() const { return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())); }
+  bool applicable(QAction*) const { return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())); }
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionHoleFilling; }
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m);
@@ -314,7 +314,7 @@ public:
     return NULL;
   }
 
-public slots:
+public Q_SLOTS:
   void hole_filling_action() { 
     dock_widget->show();
     dock_widget->raise();
@@ -362,7 +362,7 @@ private:
       ui_widget.Accept_button->setVisible(true);
       ui_widget.Reject_button->setVisible(true);
 
-      foreach( QWidget* w, ui_widget.dockWidgetContents->findChildren<QWidget*>() )
+      Q_FOREACH( QWidget* w, ui_widget.dockWidgetContents->findChildren<QWidget*>() )
       { w->setEnabled(false); }
 
       ui_widget.Accept_button->setEnabled(true);
@@ -372,7 +372,7 @@ private:
       ui_widget.Accept_button->setVisible(false);
       ui_widget.Reject_button->setVisible(false);
 
-      foreach( QWidget* w, ui_widget.dockWidgetContents->findChildren<QWidget*>() )
+      Q_FOREACH( QWidget* w, ui_widget.dockWidgetContents->findChildren<QWidget*>() )
       { w->setEnabled(true); }
     }
   }

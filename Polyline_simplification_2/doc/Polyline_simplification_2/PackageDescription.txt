@@ -17,7 +17,7 @@
 \cgalPkgPicture{PolylineSimplification-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Andreas Fabri}
-\cgalPkgDesc{This package  allows to simplify polylines with the guarantee that the topology of the polylines does not change. This can be done for a single polyline as well as for a set of polyline constraints in a constrained triangulation. The simplification can be controlled with cost and stop functions.}
+\cgalPkgDesc{This package  enables to simplify polylines with the guarantee that the topology of the polylines does not change. This can be done for a single polyline as well as for a set of polyline constraints in a constrained triangulation. The simplification can be controlled with cost and stop functions.}
 \cgalPkgManuals{Chapter_2D_Polyline_simplification,PkgPolylineSimplification2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin

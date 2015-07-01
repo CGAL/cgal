@@ -1,8 +1,5 @@
 /// \defgroup PkgRidges_3 Approximation of Ridges and Umbilics on Triangulated Surface Meshes Reference
 
-/// \defgroup PkgRidges_3Concepts Concepts
-/// \ingroup PkgRidges_3
-
 /// \defgroup PkgRidges_3Enums Enums
 /// \ingroup PkgRidges_3
 
@@ -18,7 +15,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
-\cgalPkgDependsOn{Solvers from \ref thirdpartyEigen.} 
+\cgalPkgDependsOn{ \ref PkgJet_fitting_3Summary and solvers from \ref thirdpartyEigen.} 
 \cgalPkgBib{cgal:cp-arutsm}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
@@ -26,21 +23,16 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
-- `TriangulatedSurfaceMesh`
-- `Vertex2FTPropertyMap`
-- `Vertex2VectorPropertyMap`
-
 ## Enums ##
 - `CGAL::Ridge_type`
 - `CGAL::Ridge_order`
 - `CGAL::Umbilic_type`
 
 ## Classes ##
-- `CGAL::Ridge_line<TriangulatedSurfaceMesh>`
-- `CGAL::Umbilic<TriangulatedSurfaceMesh>`
-- `CGAL::Ridge_approximation<TriangulatedSurfaceMesh,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>`
-- `CGAL::Umbilic_approximation<TriangulatedSurfaceMesh,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>`
+- `CGAL::Ridge_line<TriangleMesh>`
+- `CGAL::Umbilic<TriangleMesh>`
+- `CGAL::Ridge_approximation<TriangleMesh,VertexFTMap,VertexVectorMap>`
+- `CGAL::Umbilic_approximation<TriangleMesh,VertexFTMap,VertexVectorMap>`
 
 ## Global Functions ##
 - `CGAL::compute_max_ridges()`

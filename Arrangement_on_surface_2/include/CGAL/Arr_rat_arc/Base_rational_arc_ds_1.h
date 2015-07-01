@@ -31,8 +31,7 @@
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_kernel_d_1.h>
 
-#include <map>
-#include <boost/detail/algorithm.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 namespace Arr_rational_arc {

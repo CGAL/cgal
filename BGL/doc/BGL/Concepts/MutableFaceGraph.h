@@ -23,7 +23,7 @@ the requirement for operations to add faces and to modify face-halfedge relation
 
 Expression              | returns           | Description                           
 ----------------------- | ------------      | -----------
-`add_face(g)`           | `face_descriptor` | Adds a new face to the graph with no corresponding halfedge set.
+`add_face(g)`           | `face_descriptor` | Adds a new face to the graph without initializing the connectivity.
 `remove_face(f, g)`     | `void`            | Removes `f` from the graph.
 `set_face(h, f, g)`     | `void`            | Sets the corresponding face of `h` to `f`.
 `set_halfedge(f, h, g)` | `void`            | Sets the corresponding halfedge of `f` to `h`.

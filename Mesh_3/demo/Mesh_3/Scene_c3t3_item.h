@@ -80,7 +80,7 @@ public:
   // Call this if c3t3 has been modified
   void c3t3_changed();
 
-public slots:
+public Q_SLOTS:
   inline void data_item_destroyed();
   virtual void setColor(QColor c);
   

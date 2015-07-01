@@ -17,7 +17,7 @@
 // Author(s):      Thijs van Lankveld
 
     
-/// A concept for computing a approximation of a weighted point set.
+/// A concept for computing an approximation of a weighted point set.
 /** \ingroup PkgScaleSpaceReconstruction3Concepts
  *  \cgalConcept
  *  This approximation can be used to fit other points to the point set.

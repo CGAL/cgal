@@ -26,10 +26,10 @@ public:
     return QStringList() << "actionSimplify";
   }
 
-  bool applicable() const { 
+  bool applicable(QAction*) const { 
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
-public slots:
+public Q_SLOTS:
   void on_actionSimplify_triggered();
 
 }; // end Polyhedron_demo_mesh_simplification_plugin

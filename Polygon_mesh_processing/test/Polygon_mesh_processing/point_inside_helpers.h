@@ -17,7 +17,7 @@ void generate_near_boundary(const PolygonMesh& mesh,
                             std::vector<Point>& points,
                             std::vector<bool>& on_boundary)
 {
-  CGAL_assertion(CGAL::is_pure_triangle(mesh));
+  CGAL_assertion(CGAL::is_triangle_mesh(mesh));
 
   typedef typename CGAL::Kernel_traits<Point>::type K;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;

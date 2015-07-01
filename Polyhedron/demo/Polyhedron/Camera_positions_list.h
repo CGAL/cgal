@@ -15,9 +15,9 @@ public:
 
   void setViewer(Viewer_interface*);
 
-public slots:
+public Q_SLOTS:
   void load(QString filename);
-protected slots:
+protected Q_SLOTS:
   void on_plusButton_pressed();
   void on_minusButton_pressed();
   void on_upButton_pressed();

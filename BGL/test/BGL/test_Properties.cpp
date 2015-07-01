@@ -87,8 +87,8 @@ main()
 
 #if defined(CGAL_USE_OPENMESH)
   std::vector<OMesh> omeshs = omesh_data();
-  BOOST_FOREACH(OMesh p, sms){
-    index_uniqueness_om(p);
+  BOOST_FOREACH(OMesh p, omeshs){
+    index_uniqueness_omesh(p);
   }
 #endif
 

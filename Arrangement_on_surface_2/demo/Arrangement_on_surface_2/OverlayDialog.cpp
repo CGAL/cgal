@@ -12,9 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
-//
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
 #include "OverlayDialog.h"
@@ -44,7 +41,7 @@ OverlayDialog::OverlayDialog( ArrangementDemoWindow* parent,
 
   std::vector< QString > labels = parent->getTabLabels( );
   std::vector< CGAL::Object > arrangements = parent->getArrangements( );
-    
+
   for ( unsigned int i = 0; i < labels.size( ); ++i )
   {
     QListWidgetItem* item =
@@ -54,7 +51,11 @@ OverlayDialog::OverlayDialog( ArrangementDemoWindow* parent,
     QIcon icon;
     Seg_arr* seg;
     Pol_arr* pol;
+
+#ifdef CGAL_USE_CORE
     Conic_arr* conic;
+#endif
+
     Lin_arr* lin;
     Arc_arr* arc;
     // Alg_seg_arr* alg;
@@ -68,11 +69,15 @@ OverlayDialog::OverlayDialog( ArrangementDemoWindow* parent,
       icon.addFile(QString::fromUtf8(":/icons/yellow_icon.xpm"), QSize(),
                    QIcon::Normal, QIcon::Off);
     }
+
+#ifdef CGAL_USE_CORE
     else if ( CGAL::assign( conic, arrangements[ i ] ) )
     {
       icon.addFile(QString::fromUtf8(":/icons/red_icon.xpm"), QSize(),
                    QIcon::Normal, QIcon::Off);
     }
+#endif
+
     else if ( CGAL::assign( lin, arrangements[ i ] ) )
     {
       icon.addFile(QString::fromUtf8(":/icons/blue_icon.xpm"), QSize(),
@@ -162,7 +167,11 @@ void OverlayDialog::restrictSelection( QListWidgetItem* item )
   CGAL::Object o = item->data( ARRANGEMENT ).value< CGAL::Object >( );
   Seg_arr* seg;
   Pol_arr* pol;
+
+#ifdef CGAL_USE_CORE
   Conic_arr* conic;
+#endif
+
   Lin_arr* lin;
   Arc_arr* arc;
   // Alg_seg_arr* alg;
@@ -204,6 +213,8 @@ void OverlayDialog::restrictSelection( QListWidgetItem* item )
       otherItem->setFlags( flags );
     }
   }
+
+#ifdef CGAL_USE_CORE
   else if ( CGAL::assign( conic, o ) )
   {
     for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
@@ -223,6 +234,8 @@ void OverlayDialog::restrictSelection( QListWidgetItem* item )
       otherItem->setFlags( flags );
     }
   }
+#endif
+
   else if ( CGAL::assign( lin, o ) )
   {
     for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )

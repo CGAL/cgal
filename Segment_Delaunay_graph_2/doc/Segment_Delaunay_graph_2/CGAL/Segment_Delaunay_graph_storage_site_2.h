@@ -5,9 +5,9 @@ namespace CGAL {
 \ingroup PkgSegmentDelaunayGraph2
 
 The class `Segment_Delaunay_graph_storage_site_2` is a model for the concept 
-`SegmentDelaunayGraphStorageSite_2`. It is parametrized by a single 
-template parameter `Gt`, which must be a model of the 
-`SegmentDelaunayGraphTraits_2` concept. 
+`SegmentDelaunayGraphStorageSite_2`. 
+
+\tparam Gt must be a model of the `SegmentDelaunayGraphTraits_2` concept. 
 
 \cgalModels `SegmentDelaunayGraphStorageSite_2`
 

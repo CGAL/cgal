@@ -5,8 +5,9 @@ namespace CGAL {
 \mainpage User Manual 
 \anchor Chapter_dD_Convex_Hulls_and_Delaunay_Triangulations
 \anchor chapconvexhulld
-\cgalAutoToc
 \authors Susan Hert and Michael Seel
+
+\deprecated This package is deprecated since the version 4.6 of \cgal. The package \ref PkgTriangulationsSummary should be used instead.
 
 \section Convex_hull_dIntroduction Introduction
 
