@@ -41,7 +41,7 @@ if(CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FO
   set(
   SRCS 
   glviewer.cpp 
-  main.cpp 
+  Reconstruction_simplification_2_demo.cpp 
   window.cpp 
   render.cpp 
   )
