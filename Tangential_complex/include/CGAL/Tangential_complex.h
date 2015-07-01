@@ -1022,7 +1022,8 @@ public:
           << "the simplex " << saa.m_center_point_index << ", ";
         std::copy(saa.m_simplex.begin(), saa.m_simplex.end(), 
           std::ostream_iterator<std::size_t>(std::cerr, ", ")); 
-        std::cerr << "was successfully added in the star\n";
+        std::cerr << "was successfully added in the star #" 
+          << saa.m_center_point_index << "\n";
         //check_if_all_simplices_are_in_the_ambient_delaunay();
       }
 #endif
