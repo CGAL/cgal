@@ -45,11 +45,11 @@ public:
     : name_("unamed"),
       color_(defaultColor),
       visible_(true),
+      are_buffers_filled(false),
       rendering_mode(FlatPlusEdges),
       defaultContextMenu(0),
       buffersSize(20),
-      vaosSize(10),
-      are_buffers_filled(false)
+      vaosSize(10)
   {
 
       nbVaos = 0;
@@ -70,11 +70,11 @@ public:
     : name_("unamed"),
       color_(defaultColor),
       visible_(true),
+      are_buffers_filled(false),
       rendering_mode(FlatPlusEdges),
       defaultContextMenu(0),
       buffersSize(buffers_size),
-      vaosSize(vaos_size),
-      are_buffers_filled(false)
+      vaosSize(vaos_size)
   {
       nbVaos = 0;
       for(int i=0; i<vaosSize; i++)
