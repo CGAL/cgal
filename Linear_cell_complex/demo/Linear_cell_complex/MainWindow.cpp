@@ -976,7 +976,7 @@ double compute_angle3d(const Vector_3& v1, const Vector_3& v2)
 {
   double a = CGAL::to_double( (v1*v2) /
                               ( sqrt(v1.squared_length()) * sqrt(v2.squared_length()) ) ) ;
-  
+
   if (a < -1.0) return acos(-1.0)/M_PI*180.0;
   else if (a > 1.0) return acos(1.0)/M_PI*180.0;
   else return acos(a)/M_PI*180.0;
@@ -992,10 +992,11 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
 #endif
 
   scene.lcc->set_update_attributes(false);
-  
+
   std::vector<Dart_handle> edges;
   int treated =  scene.lcc->get_new_mark();
-  
+  int treated2 =  scene.lcc->get_new_mark();
+
   for ( LCC::Dart_range::iterator it= scene.lcc->darts().begin(),
           itend = scene.lcc->darts().end(); it!=itend; ++it )
   {
@@ -1006,7 +1007,7 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
         LCC::Vector normal1 = CGAL::compute_normal_of_cell_2(*scene.lcc,it);
         LCC::Vector normal2 = CGAL::compute_normal_of_cell_2(*scene.lcc, scene.lcc->beta<2>(it) );
         double angle = compute_angle3d(normal1, normal2);
-        
+
         if ( ((angle<5.0 || angle>355.0) || (angle<185.0 && angle>175.0)) )
         {
           edges.push_back(it);
@@ -1015,11 +1016,13 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
       CGAL::mark_cell<LCC, 1>(*scene.lcc, it, treated);
     }
   }
-  
-  
+
+
   for (std::vector<Dart_handle>::iterator it=edges.begin(),
          itend=edges.end(); it!=itend; ++it)
   {
+    CGAL::mark_cell<LCC, 1>(*scene.lcc, *it, treated2);
+
     if ( scene.lcc->beta<0, 2>(*it)==*it || scene.lcc->beta<1, 2>(*it)==*it)
     { // To process dangling edges
 
@@ -1028,12 +1031,17 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
       {
         if ( scene.lcc->beta<0, 2>(actu)==actu ) prev = scene.lcc->beta<1>(actu);
         else prev = scene.lcc->beta<0>(actu);
-        
-        CGAL::remove_cell<LCC, 1>(*scene.lcc, actu);
-        actu = prev;
-        std::cout<<&(*actu)<<std::endl;
+
+        if (scene.lcc->is_marked(actu, treated2) &&
+            (scene.lcc->beta<0, 2>(actu)!=actu || scene.lcc->beta<1, 2>(actu)!=actu) )
+        {
+          CGAL::remove_cell<LCC, 1>(*scene.lcc, actu);
+          actu = prev;
+        }
+        else
+          actu = NULL;
       }
-      while (scene.lcc->beta<0, 2>(actu)==actu || scene.lcc->beta<1, 2>(actu)==actu);
+      while (actu!=NULL && (scene.lcc->beta<0, 2>(actu)==actu || scene.lcc->beta<1, 2>(actu)==actu));
     }
     else if ( !CGAL::belong_to_same_cell<LCC, 2>(*scene.lcc, *it,
                                                  scene.lcc->beta<2>(*it)) )
@@ -1042,6 +1050,7 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
 
   assert(scene.lcc->is_whole_map_marked(treated));
   scene.lcc->free_mark(treated);
+  scene.lcc->free_mark(treated2);
 
   scene.lcc->set_update_attributes(true);
 
@@ -1138,7 +1147,7 @@ int get_free_edge(CDT::Face_handle fh)
   CGAL_assertion( number_of_existing_edge(fh)==2 );
   for (int i=0; i<3; ++i)
     if (!fh->info().exist_edge[i]) return i;
-  
+
   CGAL_assertion(false);
   return -1;
 }
@@ -1147,8 +1156,8 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
 {
   Vector_3 normal = CGAL::compute_normal_of_cell_2(lcc,d1);
   P_traits cdt_traits(normal);
-  CDT cdt(cdt_traits); 
-    
+  CDT cdt(cdt_traits);
+
   //inserting the constraints edge by edge
   LCC::Dart_of_orbit_range<1>::iterator
     it(lcc.darts_of_orbit<1>(d1).begin());
@@ -1158,7 +1167,7 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
 
    for (LCC::Dart_of_orbit_range<1>::iterator
           itend(lcc.darts_of_orbit<1>(d1).end()); it!=itend; ++it)
-   {     
+   {
      vh = cdt.insert(lcc.point(it));
      vh->info()=it;
      if( first==NULL )
@@ -1185,9 +1194,9 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
      fit->info().exist_edge[1]=false;
      fit->info().exist_edge[2]=false;
    }
-        
+
    std::queue<CDT::Face_handle> face_queue;
-      
+
    face_queue.push(cdt.infinite_vertex()->face());
    while(! face_queue.empty() )
    {
@@ -1215,7 +1224,7 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
      {
        fh->info().exist_edge[index]=true;
        opposite_fh->info().exist_edge[cdt.mirror_index(fh,index)]=true;
-       
+
        if ( !fh->info().is_external && number_of_existing_edge(fh)==2 )
          face_queue.push(fh);
        if ( !opposite_fh->info().is_external &&
@@ -1223,14 +1232,14 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
          face_queue.push(opposite_fh);
      }
    }
-   
+
    while( !face_queue.empty() )
    {
      CDT::Face_handle fh = face_queue.front();
      face_queue.pop();
      CGAL_assertion( number_of_existing_edge(fh)>=2 ); // i.e. ==2 or ==3
      CGAL_assertion( !fh->info().is_external );
-     
+
      if (number_of_existing_edge(fh)==2)
      {
        int index = get_free_edge(fh);
@@ -1241,19 +1250,19 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
                        exist_edge[cdt.mirror_index(fh,index)] );
        const CDT::Vertex_handle va = fh->vertex(cdt. cw(index));
        const CDT::Vertex_handle vb = fh->vertex(cdt.ccw(index));
-       
+
        Dart_handle ndart=
-         CGAL::insert_cell_1_in_cell_2(lcc,va->info(),vb->info());         
+         CGAL::insert_cell_1_in_cell_2(lcc,va->info(),vb->info());
        va->info()=lcc.beta<2>(ndart);
 
        fh->info().exist_edge[index]=true;
        opposite_fh->info().exist_edge[cdt.mirror_index(fh,index)]=true;
-       
+
        if ( !opposite_fh->info().is_external &&
             number_of_existing_edge(opposite_fh)==2 )
          face_queue.push(opposite_fh);
      }
-   }   
+   }
 }
 
 void MainWindow::on_actionTriangulate_all_facets_triggered()
@@ -1264,7 +1273,7 @@ void MainWindow::on_actionTriangulate_all_facets_triggered()
   CGAL::Timer timer;
   timer.start();
 #endif
-  
+
   std::vector<LCC::Dart_handle> v;
   for (LCC::One_dart_per_cell_range<2>::iterator
        it(scene.lcc->one_dart_per_cell<2>().begin()); it.cont(); ++it)
@@ -1274,7 +1283,7 @@ void MainWindow::on_actionTriangulate_all_facets_triggered()
           scene.lcc->info<3>(scene.lcc->beta<3>(it)).is_filled_and_visible()) )
       v.push_back(it);
   }
-  
+
   for (std::vector<LCC::Dart_handle>::iterator itv(v.begin());
        itv!=v.end(); ++itv)
     constrained_delaunay_triangulation(*scene.lcc, *itv);
