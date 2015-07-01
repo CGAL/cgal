@@ -1,7 +1,7 @@
 /*!
 \example BGL_arrangement_2/arr_print.h
 \example BGL_arrangement_2/arr_rational_nt.h
-\example BGL_arrangement_2/dual.cpp
+\example BGL_arrangement_2/arrangement_dual.cpp
 \example BGL_arrangement_2/primal.cpp
 \example BGL_polyhedron_3/cube.off
 \example BGL_polyhedron_3/distance.cpp
