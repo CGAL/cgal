@@ -2152,7 +2152,7 @@ private: //--------------------------------------------------- property handling
     template<class I, class T>
     std::pair<Property_map<I, T>, bool>
     add_property_map(const std::string& name, const T t=T()) {
-       return Property_selector<I>(this)().add<T>(name, t);
+       return Property_selector<I>(this)().template add<T>(name, t);
     }
 
  
