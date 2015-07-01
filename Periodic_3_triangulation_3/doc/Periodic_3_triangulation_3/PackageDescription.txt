@@ -32,30 +32,25 @@
 
 \cgalModifBegin 
 The main classes of the 3D Periodic Triangulation package are
-`Periodic_3_triangulation_3` 
-`Periodic_3_Delaunay_triangulation_3`
+`Periodic_3_triangulation_3`,
+`Periodic_3_Delaunay_triangulation_3`,
 and `Periodic_3_regular_triangulation_3`. 
  They contain functionality
 to access triangulations and to run queries on
 them. `Periodic_3_Delaunay_triangulation_3` can construct and
-modify Delaunay triangulationss, while
+modify Delaunay triangulations, while
 `Periodic_3_regular_triangulation_3` can do it for weighted Delaunay
 triangulations. They take the geometric traits as well
 as the triangulation data structure as template parameters.
+\cgalModifEnd 
 
 The geometric traits class of each triangulation class must be a model
 of its associated concept, i.e., it must contain all
 predicates and constructions that are needed by the 
 triangulation class.
-\cgalModifEnd 
 
 The package uses `Triangulation_data_structure_3` to represent the
-triangulation. The cells and vertices need to be models of the
-concepts `Periodic_3TriangulationDSCellBase_3` and
-`Periodic_3TriangulationDSVertexBase_3`, respectively.
-\cgalModifBegin 
-still true for regular ?
-\cgalModifEnd
+triangulation. 
 A triangulation is stored as a collection of vertices and cells that
 are linked together through incidence and adjacency relations. Each
 cell gives access to its four incident vertices and to its four

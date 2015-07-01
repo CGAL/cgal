@@ -7,7 +7,7 @@
 This is a new concept
 \cgalModifEnd
 
-The concept `Periodic_3RegularTriangulationTraits_3` is the first template parameter of the classes 
+The concept `Periodic_3RegularTriangulationTraits_3` is the first template parameter of the class 
 `Periodic_3_regular_triangulation_3`.
 It refines the concept
 `RegularTriangulationTraits_3` from the \cgal 3D Triangulations.
@@ -47,7 +47,7 @@ which determines the position of `t` with respect to the power sphere of `p, q, 
 `Oriented_side operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s, Weighted_point_3 t,
 Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r, Periodic_3_offset_3 o_s, Periodic_3_offset_3 o_t)`, 
 
-which is the same for the point-offset pair `(t,o_t)` with respect to the power sphere of the point=offset pais
+which is the same for the point-offset pair `(t,o_t)` with respect to the power sphere of the point-offset pairs
 `(p,o_p), (q,o_q), (r,o_r), (s,o_s)`. 
 \pre `p`, `q`, `r`, `s`, `t` lie inside the domain and `p, q, r, s` are not coplanar. 
 
@@ -102,7 +102,8 @@ typedef unspecified_type Power_test_3;
 /// @{
 
 /*!
-A predicate object that must provide the function operators
+A predicate object that must provide the function operators:
+
 \cgalModifBegin 
 remark: duplication with Delaunay traits
 \cgalModifEnd
@@ -129,7 +130,7 @@ typedef unspecified_type Coplanar_orientation_3;
 /// @{
 
 /*!
-A constructor object that must provide the function operators 
+A constructor object that must provide the function operators:
 
 `Weighted_point_3 operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s)`, 
 
@@ -138,7 +139,7 @@ which constructs the weighted circumcenter of four points and
 `Weighted_point_3 operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s, 
 Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q, Periodic_3_offset_3 o_r, Periodic_3_offset_3 o_s)`, 
 
-which constructs the circumcenter of four point-offset pairs. 
+which constructs the weighted circumcenter of four point-offset pairs. 
 \pre `p`, `q`, `r` and `s` as well as `(p,o_p)`, `(q,o_q)`, `(r,o_r)` and `(s,o_s)` must be non coplanar. `p`, `q`, `r`, `s` lie inside the domain. 
 */ 
 typedef unspecified_type Construct_weighted_circumcenter_3; 
@@ -156,7 +157,7 @@ Periodic_3_regular_triangulation_traits_3();
 /*!
 Copy constructor. 
 */ 
-Periodic_3_regular_triangulation_traits_3(const Periodic_triangulation_traits_3 & tr); 
+Periodic_3_regular_triangulation_traits_3(const Periodic_3_regular_triangulation_traits_3 & tr); 
 
 /// @} 
 
