@@ -18,8 +18,8 @@
 //
 // Author(s)     : Sebastien Loriot
 
-#ifndef _GET_NORMAL_
-#define _GET_NORMAL_
+#ifndef CGAL_MCS_GET_NORMAL_H
+#define CGAL_MCS_GET_NORMAL_H
 
 namespace CGAL {
 
@@ -87,4 +87,4 @@ typename Kernel::Vector_3 get_vertex_normal(const Vertex& v)
 
 } //namespace CGAL
 
-#endif // _GET_NORMAL_
+#endif // CGAL_MCS_GET_NORMAL_H

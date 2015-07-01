@@ -18,8 +18,8 @@
 //
 // Author(s)     : Sebastien Loriot
 
-#ifndef CGAL_SURFACE_MODELING_WEIGHTS_H
-#define CGAL_SURFACE_MODELING_WEIGHTS_H
+#ifndef CGAL_MCS_WEIGHTS_H
+#define CGAL_MCS_WEIGHTS_H
 /// @cond CGAL_DOCUMENT_INTERNAL
 
 #include <boost/graph/graph_traits.hpp>
@@ -362,4 +362,4 @@ public:
 }//namespace internal
 /// @endcond
 }//namespace CGAL
-#endif //CGAL_SURFACE_MODELING_WEIGHTS_H
+#endif //CGAL_MCS_WEIGHTS_H
