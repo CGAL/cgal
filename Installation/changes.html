@@ -131,6 +131,17 @@ and <code>src/</code> directories).
       components of the mesh.
     </li>
   </ul>
+  <h3>3D Point-Set Shape Detection (new package)</h3>
+  <ul>
+    <li>
+      This package implements the efficient RANSAC method for shape detection,
+      contributed by Schnabel et al. From an unstructured point set with
+      unoriented normals, the algorithm detects a set of shapes. Five
+      types of primitive shapes are provided by this package: plane,
+      sphere, cylinder, cone and torus. Detecting other types of shapes
+      is possible by implementing a class derived from a base shape.
+    </li>
+  </ul>
 <!-- Major and breaking changes -->
   <h3>Approximation of Ridges and Umbilics on Triangulated Surface Meshes</h3>
 <ul>
