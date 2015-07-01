@@ -692,71 +692,14 @@ public:
 
   /// Volume computations
 
-  // Note: Polygon area computation requires to evaluate square roots
-  // and thus cannot be done without changing the Traits concept.
-
   FT dual_volume(Vertex_handle v) const {
     return Base::dual_volume(v, geom_traits().construct_circumcenter_3_object());
   }
 
   /// Centroid computations
 
-  // Note: Centroid computation for polygons requires to evaluate
-  // square roots and thus cannot be done without changing the
-  // Traits concept.
-
-  // TODO: reuse the centroid computation from the PCA package
   Point dual_centroid(Vertex_handle v) const {
-    std::list<Edge> edges;
-    incident_edges(v, std::back_inserter(edges));
-
-    FT vol(0);
-    FT x(0), y(0), z(0);
-    for (typename std::list<Edge>::iterator eit = edges.begin() ; 
-	 eit != edges.end() ; ++eit) {
-
-      // compute the dual of the edge *eit but handle the translations
-      // with respect to the dual of v. That is why we cannot use one
-      // of the existing dual functions here.
-      Facet_circulator fstart = incident_facets(*eit);
-      Facet_circulator fcit = fstart;
-      std::vector<Point> pts;
-      do {
-	// TODO: possible speed-up by caching the circumcenters
-	Point dual_orig = periodic_circumcenter(fcit->first).first;
-	int idx = fcit->first->index(v);
-	Offset off = periodic_point(fcit->first,idx).second;
-	pts.push_back(point(std::make_pair(dual_orig,-off)));
-	++fcit;
-      } while (fcit != fstart);
-
-      Point orig(0,0,0);
-      FT tetvol;
-      for (unsigned int i=1 ; i<pts.size()-1 ; i++) {
-	tetvol = Tetrahedron(orig,pts[0],pts[i],pts[i+1]).volume();
-	x += (pts[0].x() + pts[i].x() + pts[i+1].x()) * tetvol;
-	y += (pts[0].y() + pts[i].y() + pts[i+1].y()) * tetvol;
-	z += (pts[0].z() + pts[i].z() + pts[i+1].z()) * tetvol;
-	vol += tetvol;
-      }
-    }
-    x /= ( 4 * vol );
-    y /= ( 4 * vol );
-    z /= ( 4 * vol );
-
-    Iso_cuboid d = domain();
-    x = (x < d.xmin() ? x+d.xmax()-d.xmin() 
-	: (x >= d.xmax() ? x-d.xmax()+d.xmin() : x));
-    y = (y < d.ymin() ? y+d.ymax()-d.ymin() 
-	: (y >= d.ymax() ? y-d.ymax()+d.ymin() : y));
-    z = (z < d.zmin() ? z+d.zmax()-d.zmin() 
-	: (z >= d.zmax() ? z-d.zmax()+d.zmin() : z));
-
-    CGAL_triangulation_postcondition((d.xmin()<=x)&&(x<d.xmax()));
-    CGAL_triangulation_postcondition((d.ymin()<=y)&&(y<d.ymax()));
-    CGAL_triangulation_postcondition((d.zmin()<=z)&&(z<d.zmax()));
-
-    return Point(x,y,z);
+    return Base::dual_centroid(v, geom_traits().construct_circumcenter_3_object());
   }
   //@}
   

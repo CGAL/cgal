@@ -6096,11 +6096,14 @@ public:
 
   /// Volume computations
 
-  // Note: Polygon area computation requires to evaluate square roots
-  // and thus cannot be done without changing the Traits concept.
-
   FT dual_volume(Vertex_handle v) const {
     return Base::dual_volume(v, geom_traits().construct_weighted_circumcenter_3_object());
+  }
+
+  /// Centroid computations
+
+  Bare_point dual_centroid(Vertex_handle v) const {
+    return Base::dual_centroid(v, geom_traits().construct_weighted_circumcenter_3_object());
   }
 //@}
 };
