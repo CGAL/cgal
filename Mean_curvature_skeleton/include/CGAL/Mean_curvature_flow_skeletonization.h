@@ -98,6 +98,10 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 
 namespace CGAL {
 
+  namespace parameters {
+
+  }
+
 /// @cond CGAL_DOCUMENT_INTERNAL
 
 namespace internal{
@@ -1119,10 +1123,12 @@ private:
     internal::Track_correspondence_visitor<mTriangleMesh, mVertexPointMap, Input_vertex_descriptor> vis
       (&m_tmesh_point_pmap, m_max_id, m_is_medially_centered);
 
+    // Workaround, as PMP has get_cost in a sub namespace
+    using namespace CGAL::parameters;
     std::size_t r = SMS::edge_collapse
                     (m_tmesh
                     ,stop
-                    ,CGAL::get_cost(SMS::Edge_length_cost<mTriangleMesh>())
+                    ,get_cost(SMS::Edge_length_cost<mTriangleMesh>())
                           .get_placement(placement)
                           .visitor(vis)
                           .edge_is_constrained_map(fixed_edge_map)
