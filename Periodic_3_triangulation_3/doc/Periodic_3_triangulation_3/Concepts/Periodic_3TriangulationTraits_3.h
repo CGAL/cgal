@@ -16,6 +16,9 @@ functor the version without offsets.
 
 \cgalHasModel CGAL::Periodic_3_triangulation_traits_3
 
+\sa Periodic_3DelaunayTriangulationTraits_3
+\sa Periodic_3RegularTriangulationTraits_3
+
 In addition to the requirements described for the traits class 
 TriangulationTraits_3, the geometric traits class of a
 Periodic triangulation must fulfill the following

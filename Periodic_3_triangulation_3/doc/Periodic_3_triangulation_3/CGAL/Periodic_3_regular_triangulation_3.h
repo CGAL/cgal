@@ -11,20 +11,14 @@ This class is new
 The class `Periodic_3_regular_triangulation_3` represents a 
 weighted Delaunay triangulation in three-dimensional periodic space. 
 
-\cgalHeading{Template Parameters}
+\tparam Periodic_3RegularTriangulationTraits_3 is the geometric traits class.
 
-The first template argument `PT` must be a model of the 
-`Periodic_3RegularTriangulationTraits_3` concept. 
-
-The second template argument `TDS` must be a model of the 
-`TriangulationDataStructure_3` concept with some additional 
-functionality in cells and vertices. 
+\tparam TriangulationDataStructure_3 is the triangulation data structure.
 Its default value is 
 `Triangulation_data_structure_3<Triangulation_vertex_base_3<PT,Periodic_3_triangulation_ds_vertex_base_3<>>,Regular_triangulation_cell_base_3<PT,Periodic_3_triangulation_ds_cell_base_3<>>>`. 
 
-\sa `Periodic_3_triangulation_3` 
 */
-template< typename PT, typename TDS >
+template< typename Periodic_3TriangulationTraits_3, typename TriangulationDataStructure_3 >
 class Periodic_3_regular_triangulation_3 : 
     public Periodic_3_triangulation_3<Periodic_3TriangulationTraits_3,
                                       TriangulationDataStructure_3>
@@ -35,13 +29,12 @@ public:
 /// @{
 
 /*!
-The type for points 
-`p` of weighted points \f$ {p}^{(w)}=(p,w_p)\f$ 
 */ 
 typedef Periodic_3RegularTriangulationTraits_3::Bare_point Bare_point;  
 
 /*!
-
+The type for points 
+`p` of weighted points \f$ {p}^{(w)}=(p,w_p)\f$ 
 */ 
 typedef Periodic_3RegularTriangulationTraits_3::Weighted_point_3 Weighted_point; 
 
@@ -85,14 +78,14 @@ const Geom_traits & traits = Geom_traits());
 /// @{
 
 /*!
-Returns the number of hidden poits. 
-*/ 
+Returns the number of hidden points.
+*/
 size_type number_of_hidden_points() const; 
 
 /// @} 
 
 /*! \name Insertion 
-powe
+
 The following methods insert points in the triangulation ensuring the
 property that all power spheres are regular. The inserted weighted points need
 to lie in the original domain (see Section \ref
@@ -266,6 +259,7 @@ cells in conflict.
 
 Returns the `Triple` composed of the resulting output iterators. 
 \pre `c` is in conflict with `p` and `p` lies in the original domain `domain`. 
+Its weight is non-negative and smaller than 1/64 times the squared cube edge length. 
 */ 
 template <class OutputIteratorBoundaryFacets, 
 class OutputIteratorCells, 
@@ -276,23 +270,24 @@ OutputIteratorInternalFacets>
 find_conflicts(const Weighted_point & p, Cell_handle c, 
 OutputIteratorBoundaryFacets bfit, 
 OutputIteratorCells cit, 
-OutputIteratorInternalFacets ifit); 
+OutputIteratorInternalFacets ifit) const; 
 
 /*!
 Similar to `find_conflicts()`, but reports the vertices that are on the 
 boundary of the conflict hole of `p`, in the output iterator `res`. 
 Returns the resulting output iterator. 
 \pre `c` is in conflict with `p` and `p` lies in the original domain `domain`. 
+Its weight is non-negative and smaller than 1/64 times the squared cube edge length. 
 */ 
 template <class OutputIterator> 
 OutputIterator 
 vertices_in_conflict(const Weighted_point & p, Cell_handle c, 
-OutputIterator res); 
+OutputIterator res) const; 
 
 
 /// @}
 
-/*! \name
+/* \name
 In the weighted setting, a face (cell, facet, edge or vertex) is said to be a
 Gabriel face iff the smallest sphere orthogonal to the weighted points 
 associated to its vertices, has a positive power product with the weighted 
@@ -302,30 +297,30 @@ The following member functions test the Gabriel property of the faces of the reg
 */
 /// @{
 
-/*!
+/*
 
 */ 
-bool is_Gabriel(Cell_handle c, int i); 
+// bool is_Gabriel(Cell_handle c, int i) const; 
 
-/*!
-
-*/ 
-bool is_Gabriel(Cell_handle c, int i, int j); 
-
-/*!
+/*
 
 */ 
-bool is_Gabriel(const Facet& f); 
+// bool is_Gabriel(Cell_handle c, int i, int j) const; 
 
-/*!
-
-*/ 
-bool is_Gabriel(const Edge& e); 
-
-/*!
+/*
 
 */ 
-bool is_Gabriel(Vertex_handle v); 
+// bool is_Gabriel(const Facet& f) const; 
+
+/*
+
+*/ 
+// bool is_Gabriel(const Edge& e) const; 
+
+/*
+
+*/ 
+// bool is_Gabriel(Vertex_handle v) const; 
 
 /// @} 
 
@@ -342,7 +337,7 @@ bool is_Gabriel(Vertex_handle v);
 Returns the representative of the weighted circumcenter of the four vertices 
 of c that lies in the original domain `domain`. 
 */ 
-Point dual(Cell_handle c) const; 
+Bare_point dual(Cell_handle c) const; 
 
 /*!
 Returns the dual of facet `f`, which is a periodic segment. 
