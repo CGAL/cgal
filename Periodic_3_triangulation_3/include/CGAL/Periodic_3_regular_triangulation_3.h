@@ -6093,6 +6093,15 @@ public:
   Stream& draw_dual(Stream& os) const {
     return Base::draw_dual(os, geom_traits().construct_weighted_circumcenter_3_object());
   }
+
+  /// Volume computations
+
+  // Note: Polygon area computation requires to evaluate square roots
+  // and thus cannot be done without changing the Traits concept.
+
+  FT dual_volume(Vertex_handle v) const {
+    return Base::dual_volume(v, geom_traits().construct_weighted_circumcenter_3_object());
+  }
 //@}
 };
 

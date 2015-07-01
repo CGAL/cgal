@@ -696,33 +696,7 @@ public:
   // and thus cannot be done without changing the Traits concept.
 
   FT dual_volume(Vertex_handle v) const {
-    std::list<Edge> edges;
-    incident_edges(v, std::back_inserter(edges));
-
-    FT vol(0);
-    for (typename std::list<Edge>::iterator eit = edges.begin() ; 
-	 eit != edges.end() ; ++eit) {
-
-      // compute the dual of the edge *eit but handle the translations
-      // with respect to the dual of v. That is why we cannot use one
-      // of the existing dual functions here.
-      Facet_circulator fstart = incident_facets(*eit);
-      Facet_circulator fcit = fstart;
-      std::vector<Point> pts;
-      do {
-	// TODO: possible speed-up by caching the circumcenters
-	Point dual_orig = periodic_circumcenter(fcit->first).first;
-	int idx = fcit->first->index(v);
-	Offset off = periodic_point(fcit->first,idx).second;
-	pts.push_back(point(std::make_pair(dual_orig,-off)));
-	++fcit;
-      } while (fcit != fstart);
-
-      Point orig(0,0,0);
-      for (unsigned int i=1 ; i<pts.size()-1 ; i++) 
-	vol += Tetrahedron(orig,pts[0],pts[i],pts[i+1]).volume();
-    }
-    return vol;
+    return Base::dual_volume(v, geom_traits().construct_circumcenter_3_object());
   }
 
   /// Centroid computations
