@@ -112,7 +112,7 @@ of the concept `Periodic_3Offset_3`.
 - `CGAL::Periodic_3_Delaunay_triangulation_traits_3<Traits,Periodic_3Offset_3>`
 
 \cgalModifBegin 
-- `CGAL::Periodic_3_regular_triangulation_traits_3<Traits,Periodic_3Offset_3>`
+- `CGAL::Periodic_3_regular_triangulation_traits_3<K,Periodic_3Offset_3>`
 \cgalModifEnd
 
 ## Enums ##
