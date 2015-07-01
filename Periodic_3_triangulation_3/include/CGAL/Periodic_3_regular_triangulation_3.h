@@ -6058,12 +6058,16 @@ public:
     return point(periodic_weighted_circumcenter(c));
   }
 
+  bool canonical_dual_segment(Cell_handle c, int i, Periodic_segment& ps) const {
+    return Base::canonical_dual_segment(c, i, ps, geom_traits().construct_weighted_circumcenter_3_object());
+  }
+
   Periodic_segment dual(const Facet & f) const {
     return dual( f.first, f.second );
   }
   Periodic_segment dual(Cell_handle c, int i) const{
     Periodic_segment ps;
-    Base::canonical_dual_segment(c,i,ps, geom_traits().construct_weighted_circumcenter_3_object());
+    canonical_dual_segment(c,i,ps);
     return ps;
   }
 
@@ -6084,7 +6088,12 @@ public:
     Base::dual(v, points, geom_traits().construct_weighted_circumcenter_3_object());
     return points;
   }
-  //@}
+
+  template <class Stream>
+  Stream& draw_dual(Stream& os) const {
+    return Base::draw_dual(os, geom_traits().construct_weighted_circumcenter_3_object());
+  }
+//@}
 };
 
 template < class Gt, class Tds >

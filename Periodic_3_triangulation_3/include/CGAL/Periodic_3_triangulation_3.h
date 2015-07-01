@@ -1539,6 +1539,52 @@ protected:
     return ppv;
   }
 
+private:
+bool is_canonical(const Facet &f) const {
+  if (number_of_sheets() == make_array(1,1,1)) return true;
+  Offset cell_off0 = int_to_off(f.first->offset((f.second+1)&3));
+  Offset cell_off1 = int_to_off(f.first->offset((f.second+2)&3));
+  Offset cell_off2 = int_to_off(f.first->offset((f.second+3)&3));
+  Offset diff_off((cell_off0.x() == 1
+    && cell_off1.x() == 1
+    && cell_off2.x() == 1)?-1:0,
+      (cell_off0.y() == 1
+    && cell_off1.y() == 1
+    && cell_off2.y() == 1)?-1:0,
+      (cell_off0.z() == 1
+    && cell_off1.z() == 1
+    && cell_off2.z() == 1)?-1:0);
+  Offset off0 = combine_offsets(get_offset(f.first, (f.second+1)&3),
+      diff_off);
+  Offset off1 = combine_offsets(get_offset(f.first, (f.second+2)&3),
+      diff_off);
+  Offset off2 = combine_offsets(get_offset(f.first, (f.second+3)&3),
+      diff_off);
+
+  // If there is one offset with entries larger than 1 then we are
+  // talking about a vertex that is too far away from the original
+  // domain to belong to a canonical triangle.
+  if (off0.x() > 1) return false;
+  if (off0.y() > 1) return false;
+  if (off0.z() > 1) return false;
+  if (off1.x() > 1) return false;
+  if (off1.y() > 1) return false;
+  if (off1.z() > 1) return false;
+  if (off2.x() > 1) return false;
+  if (off2.y() > 1) return false;
+  if (off2.z() > 1) return false;
+
+  // If there is one direction of space for which all offsets are
+  // non-zero then the edge is not canonical because we can
+  // take the copy closer towards the origin in that direction.
+  int offx = off0.x() & off1.x() & off2.x();
+  int offy = off0.y() & off1.y() & off2.y();
+  int offz = off0.z() & off1.z() & off2.z();
+
+  return (offx == 0 && offy == 0 && offz == 0);
+}
+
+protected:
   template <class ConstructCircumcenter>
   bool canonical_dual_segment(Cell_handle c, int i, Periodic_segment& ps, ConstructCircumcenter construct_circumcenter) const {
     CGAL_triangulation_precondition(c != Cell_handle());
@@ -1588,6 +1634,22 @@ protected:
       *points++ = dual;
     }
     return points;
+  }
+
+  template <class Stream, class ConstructCircumcenter>
+  Stream& draw_dual(Stream& os, ConstructCircumcenter construct_circumcenter) const {
+    CGAL_triangulation_assertion_code( unsigned int i = 0; )
+    for (Facet_iterator fit = facets_begin(), end = facets_end();
+   fit != end; ++fit) {
+      if (!is_canonical(*fit)) continue;
+      Periodic_segment pso;
+      canonical_dual_segment(fit->first, fit->second, pso, construct_circumcenter);
+      Segment so = segment(pso);
+      CGAL_triangulation_assertion_code ( ++i; )
+  os << so.source()<<' '<<so.target()<<' ';
+    }
+    CGAL_triangulation_assertion( i == number_of_facets() );
+    return os;
   }
 };
 
