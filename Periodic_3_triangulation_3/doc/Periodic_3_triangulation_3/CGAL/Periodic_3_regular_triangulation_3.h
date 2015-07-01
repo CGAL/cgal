@@ -392,7 +392,7 @@ Geom_traits::FT dual_volume(Vertex_handle v) const;
 /*!
 Returns the centroid of the cell of the power diagram dual to `v`. 
 */ 
-Point dual_centroid(Vertex_handle v) const; 
+Bare_point dual_centroid(Vertex_handle v) const; 
 
 /// @} 
 
