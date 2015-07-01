@@ -221,25 +221,25 @@ namespace Tangential_complex_ {
                                         it_v_end = m_thickening_vectors.end() ;
           it_v != it_v_end ; ++it_v)
       {
-        const FT MARGIN = 0.001; // CJTODO TEMP
+        const FT MARGIN_RATIO = 1.001; // CJTODO TEMP
         FT alpha_i = k_scalar_pdct(it_v->vec, vec);
-        if (alpha_i + MARGIN > it_v->alpha_plus)
+        if (alpha_i * MARGIN_RATIO > it_v->alpha_plus)
         {
 #ifdef CGAL_TC_VERY_VERBOSE
           std::cerr << "OLD alpha+ = " << it_v->alpha_plus << std::endl;
 #endif
-          it_v->alpha_plus = alpha_i + MARGIN;
+          it_v->alpha_plus = alpha_i * MARGIN_RATIO;
 #ifdef CGAL_TC_VERY_VERBOSE
           std::cerr << "NEW alpha+ = " << it_v->alpha_plus << std::endl;
           std::cerr << "NOT MODIFIED alpha- = " << it_v->alpha_minus << std::endl;
 #endif
         }
-        else if (alpha_i - MARGIN < it_v->alpha_minus)
+        else if (alpha_i * MARGIN_RATIO < it_v->alpha_minus)
         {
 #ifdef CGAL_TC_VERY_VERBOSE
           std::cerr << "OLD alpha- = " << it_v->alpha_minus << std::endl;
 #endif
-          it_v->alpha_minus = alpha_i - MARGIN;
+          it_v->alpha_minus = alpha_i * MARGIN_RATIO;
 #ifdef CGAL_TC_VERY_VERBOSE
           std::cerr << "NEW alpha- = " << it_v->alpha_minus << std::endl;
           std::cerr << "NOT MODIFIED alpha+ = " << it_v->alpha_plus << std::endl;
