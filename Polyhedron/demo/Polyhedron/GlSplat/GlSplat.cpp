@@ -479,7 +479,7 @@ void SplatRenderer::UniformParameters::update(float* mv, float* proj, GLint* vp)
   radiusScale = scale;
   preComputeRadius = - (std::max)(proj[0]*vp[2], proj[5]*vp[3]);
   depthOffset = 2.0;
-  oneOverEwaRadius = 0.70710678118654;
+  oneOverEwaRadius = (float)0.70710678118654;
   halfVp[0] = 0.5*vp[2];
   halfVp[1] = 0.5*vp[3];
   rayCastParameter1[0] = 2./(proj[0]*vp[2]);

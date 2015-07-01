@@ -49,6 +49,7 @@
     <addaction name="actionEraseAll"/>
     <addaction name="actionDuplicate"/>
     <addaction name="actionSaveAs"/>
+    <addaction name="actionSaveSnapshot"/>
     <addaction name="separator"/>
     <addaction name="actionLoad_Script"/>
     <addaction name="separator"/>
@@ -294,8 +295,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>545</width>
-            <height>178</height>
+            <width>540</width>
+            <height>177</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -644,6 +645,11 @@
   <action name="actionPreferences">
    <property name="text">
     <string>&amp;Preferences</string>
+   </property>
+  </action>
+  <action name="actionSaveSnapshot">
+   <property name="text">
+    <string>Save snapshot</string>
    </property>
   </action>
  </widget>

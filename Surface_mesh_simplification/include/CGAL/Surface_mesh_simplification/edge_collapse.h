@@ -157,7 +157,7 @@ int edge_collapse ( ECM& aSurface, ShouldStop const& aShould_stop )
   template<class ECM, class ShouldStop, class GT>
   int edge_collapse ( ECM& aSurface, ShouldStop const& aShould_stop) 
 {
-  return edge_collapse(aSurface,aShould_stop, CGAL::halfedge_index_map(get(boost::halfedge_index,aSurface)));
+  return edge_collapse(aSurface,aShould_stop, CGAL::parameters::halfedge_index_map(get(boost::halfedge_index,aSurface)));
 }
 
 } // namespace Surface_mesh_simplification

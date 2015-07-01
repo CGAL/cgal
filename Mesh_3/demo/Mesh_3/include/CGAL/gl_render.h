@@ -2,7 +2,7 @@
 #define _GL_RENDER_
 
 #include <CGAL/gl.h>
-#include <CGAL/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 template <class Polyhedron>
 void gl_render_facets(Polyhedron& polyhedron)
@@ -28,7 +28,7 @@ void gl_render_facets(Polyhedron& polyhedron)
     // If Flat shading: 1 normal per polygon
     if (shading == GL_FLAT)
     {
-      Vector n = compute_facet_normal<Facet,Kernel>(*f);
+      Vector n = CGAL::Polygon_mesh_processing::compute_facet_normal<Kernel>(*f);
       ::glNormal3d(n.x(),n.y(),n.z());
     }
 
@@ -40,7 +40,7 @@ void gl_render_facets(Polyhedron& polyhedron)
       // If Gouraud shading: 1 normal per vertex
       if (shading == GL_SMOOTH)
       {
-        Vector n = compute_vertex_normal<typename Polyhedron::Vertex,Kernel>(*he->vertex());
+        Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal<Kernel>(*he->vertex());
         ::glNormal3d(n.x(),n.y(),n.z());
       }
 

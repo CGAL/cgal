@@ -51,6 +51,7 @@ struct Polyline_visitor
   {
     item->polylines.back().push_back(points_pmap[vd]);
   }
+  void end_polyline(){}
 };
 
 class Polyhedron_demo_selection_plugin :
@@ -94,6 +95,7 @@ public:
     connect(ui_widget.Create_point_set_item_button, SIGNAL(clicked()), this, SLOT(on_Create_point_set_item_button_clicked()));
     connect(ui_widget.Create_polyline_item_button, SIGNAL(clicked()), this, SLOT(on_Create_polyline_item_button_clicked()));
     connect(ui_widget.Erase_selected_facets_button, SIGNAL(clicked()), this, SLOT(on_Erase_selected_facets_button_clicked()));
+    connect(ui_widget.Keep_connected_components_button, SIGNAL(clicked()), this, SLOT(on_Keep_connected_components_button_clicked()));
     connect(ui_widget.Dilate_erode_button, SIGNAL(clicked()), this, SLOT(on_Dilate_erode_button_clicked()));
     connect(ui_widget.Create_polyhedron_item_button, SIGNAL(clicked()), this, SLOT(on_Create_polyhedron_item_button_clicked()));
     QObject* scene = dynamic_cast<QObject*>(scene_interface);
@@ -269,6 +271,14 @@ public Q_SLOTS:
     }
 
     selection_item->erase_selected_facets();
+  }
+  void on_Keep_connected_components_button_clicked() {
+    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    if (!selection_item) {
+      print_message("Error: there is no selected polyhedron selection item!");
+      return;
+    }
+    selection_item->keep_connected_components();
   }
   void on_Create_polyhedron_item_button_clicked() {
     Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
