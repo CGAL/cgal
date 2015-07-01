@@ -36,11 +36,6 @@
  \file Shape_base.h
  */
 
-// CODE REVIEW
-// make code more modular: connected_component()
-// use const where relevant, eg wrapU
-// initialize all variables including max
-
 
 namespace CGAL {
   namespace Shape_detection_3 {
@@ -136,135 +131,113 @@ namespace CGAL {
       m_has_connected_component = true;
       if (!this->supports_connected_component())
         return connected_component_kdTree(indices, cluster_epsilon);
-
+      
+      // Fetching parameters
       FT min[] = {0,0}, max[] = {0,0};
 
       std::vector<std::pair<FT, FT> > parameter_space;
       parameter_space.resize(indices.size());
 
-      parameters(m_indices, parameter_space, min, max);
-      int i_min[2], i_max[2];
-      i_min[0] = (int) (min[0] / cluster_epsilon);
-      i_min[1] = (int) (min[1] / cluster_epsilon);
-      i_max[0] = (int) (max[0] / cluster_epsilon);
-      i_max[1] = (int) (max[1] / cluster_epsilon);
+      parameters(m_indices, parameter_space, cluster_epsilon, min, max);
 
-      std::size_t u_extent = CGAL::abs(i_max[0] - i_min[0]) + 1;
-      std::size_t v_extent = CGAL::abs(i_max[1] - i_min[1]) + 1;
+      // Determine required size of bitmap
+      std::size_t u_extent = std::size_t(ceil((max[0] - min[0]) / cluster_epsilon));
+      std::size_t v_extent = std::size_t(ceil((max[1] - min[1]) / cluster_epsilon));
 
-      std::vector<std::vector<std::size_t> > bitmap;
-      std::vector<bool> visited;
-      bitmap.resize(u_extent * v_extent);
-      visited.resize(u_extent * v_extent, false);
+      // Handle singular case
+      u_extent = (u_extent == 0) ? 1 : u_extent;
+      v_extent = (v_extent == 0) ? 1 : v_extent;
 
-      bool wrap_u = wraps_u();
-      bool wrap_v = wraps_v();
+      std::vector<unsigned int> bitmap;
+      bitmap.resize(u_extent * v_extent, 0);
+
+      // Fill bitmap
+      for (std::size_t i = 0;i<parameter_space.size();i++) {
+        int u = (int)((parameter_space[i].first - min[0]) / cluster_epsilon);
+        int v = (int)((parameter_space[i].second - min[1]) / cluster_epsilon);
+                
+        bitmap[v * int(u_extent) + u] = true;
+      }
+
+      // Iterate through the bitmap
+      std::vector<unsigned int> map;
+      map.reserve(64);
+      map.resize(2);
+      unsigned int label = 2;
+
+      for (std::size_t y = 0;y<v_extent;y++) {
+        for (std::size_t x = 0;x<u_extent;x++) {
+          if (!bitmap[y * u_extent + x])
+            continue;
+          unsigned int w = (x > 0) ? bitmap[y  * u_extent + x - 1] : 0;
+          unsigned int n = (y > 0) ? bitmap[(y - 1) * u_extent + x] : 0;
+          unsigned int nw = (x > 0 && y > 0) ? bitmap[(y - 1) * u_extent + x - 1] : 0;
+          unsigned int ne = ((x + 1 < u_extent) && y > 0) ? bitmap[(y - 1) * u_extent + x + 1] : 0;
+
+          // Find smallest set label;
+          unsigned int curLabel = map.size();
+          curLabel = (w != 0) ? (std::min<unsigned int>)(curLabel, w) : curLabel;
+          curLabel = (n != 0) ? (std::min<unsigned int>)(curLabel, n) : curLabel;
+          curLabel = (nw != 0) ? (std::min<unsigned int>)(curLabel, nw) : curLabel;
+          curLabel = (ne != 0) ? (std::min<unsigned int>)(curLabel, ne) : curLabel;
+
+          // Update merge map.
+          if (curLabel != map.size()) {
+            if (w > curLabel) update_label(map, w, curLabel);
+            if (nw > curLabel) update_label(map, nw, curLabel);
+            if (n > curLabel) update_label(map, n, curLabel);
+            if (ne > curLabel) update_label(map, ne, curLabel);
+          }
+          else map.push_back(map.size());
+
+          bitmap[y * u_extent + x] = curLabel;
+        }
+      }
+
+      // post_wrap to handle boundaries in different shape types.
+      post_wrap(bitmap, u_extent, v_extent, map);
+      
+      // Update labels
+      for (std::size_t y = 0;y<v_extent;y++)
+        for (std::size_t x = 0;x<u_extent;x++) {
+          int label = bitmap[y * u_extent + x];
+
+          if (!label)
+            continue;
+
+          if (map[label] != label)
+            bitmap[y * u_extent + x] = map[label];
+        }
+
+      // Count points per label.
+      std::vector<unsigned int> count(map.size(), 0);
 
       for (std::size_t i = 0;i<parameter_space.size();i++) {
         int u = (int)((parameter_space[i].first - min[0]) / cluster_epsilon);
         int v = (int)((parameter_space[i].second - min[1]) / cluster_epsilon);
 
-        if (u < 0 || (std::size_t)u >= u_extent) {
-          if (wrap_u) {
-            while (u < 0) u += (int) u_extent;
-            while (u >= (int) u_extent) u-= (int)u_extent;
-          }
-          else {
-            u = (u < 0) ? 0 : (u >= (int) u_extent) ? (int)u_extent - 1 : u;
-          }
-        }
-        if (v < 0 || v >= (int) v_extent) {
-          if (wrap_v) {
-            while (v < 0) v += (int) v_extent;
-            while (v >= (int) v_extent) v-= (int) v_extent;
-          }
-          else {
-            v = (v < 0) ? 0 : (v >= (int) v_extent) ? (int) v_extent - 1 : v;
-          }
-        }
-
-        bitmap[v * int(u_extent) + u].push_back(m_indices[i]);
+        count[bitmap[v * int(u_extent) + u]]++;
       }
 
-      std::vector<std::vector<std::size_t> > cluster;
-      for (std::size_t i = 0;i<(u_extent * v_extent);i++) {
-        cluster.push_back(std::vector<std::size_t>());
-        if (bitmap[i].empty())
-          continue;
-        if (visited[i])
-          continue;
+      // Find largest component. Start at index 2 as 0/1 are reserved for
+      // basic free/occupied bitmap labels.
+      int largest = 2;
+      for (std::size_t i = 3;i<count.size();i++)
+        largest = (count[largest] < count[i]) ? i : largest;
 
-        std::stack<std::size_t> fields;
-        fields.push(i);
-        while (!fields.empty()) {
-          std::size_t f = fields.top();
-          fields.pop();
-          if (visited[f])
-            continue;
-          visited[f] = true;
-          if (bitmap[f].empty())
-            continue;
+      // Extract sought-after indices.
+      std::vector<std::size_t> comp_indices;
+      comp_indices.reserve(count[largest]);
 
-          // copy indices
-          std::copy(bitmap[f].begin(), bitmap[f].end(),
-            std::back_inserter(cluster.back()));
+      for (std::size_t i = 0;i<parameter_space.size();i++) {
+        int u = (int)((parameter_space[i].first - min[0]) / cluster_epsilon);
+        int v = (int)((parameter_space[i].second - min[1]) / cluster_epsilon);
 
-          // grow 8-neighborhood
-          int v_index = int(f / u_extent);
-          int u_index = int(f % u_extent);
-          bool upper_border = v_index == 0;
-          bool lower_border = v_index == ((int)v_extent - 1);
-          bool left_border = u_index == 0;
-          bool right_border = u_index == ((int)u_extent - 1);
-
-          int n;
-          if (!upper_border) {
-            n = int(f - u_extent);
-            if (!visited[n])
-              fields.push(n);
-          }
-          else if (wrap_v) {
-            n = int((f + v_extent - 1) * u_extent);
-            if (!visited[n]) fields.push(n);
-          }
-
-          if (!left_border) {
-            n = int(f - 1);
-            if (!visited[n]) fields.push(n);
-          }
-          else if (wrap_u) {
-            n = int(f + u_extent - 1);
-            if (!visited[n]) fields.push(n);
-          }
-
-          if (!lower_border) {
-            n = int(f + u_extent);
-            if (!visited[n]) fields.push(n);
-          }
-          else if (wrap_v) {
-            n = int((f - (v_extent - 1)) * u_extent);
-            if (!visited[n]) fields.push(n);
-          }
-
-          if (!right_border) {
-            n = int(f) + 1;
-            if (!visited[n]) fields.push(n);
-          }
-          else if (wrap_u) {
-            n = int(f - u_extent + 1);
-            if (!visited[n]) fields.push(n);
-          }
-        }
+        if (bitmap[v * int(u_extent) + u] == largest)
+          comp_indices.push_back(indices[i]);
       }
 
-      std::size_t max_cluster = 0;
-      for (std::size_t i = 1;i<cluster.size();i++) {
-        if (cluster[i].size() > cluster[max_cluster].size()) {
-          max_cluster = i;
-        }
-      }
-
-      indices = cluster[max_cluster];
+      indices = comp_indices;
 
       return m_score = indices.size();
     }
@@ -423,6 +396,17 @@ namespace CGAL {
       return  m_upper_bound;
     }
 
+    virtual void post_wrap(const std::vector<unsigned int> &bitmap,
+                   const std::size_t &u_extent,
+                   const std::size_t &v_extent,
+                   std::vector<unsigned int> &labels) const {
+      // Avoid compiler warnings about unused parameters.
+      (void) bitmap;
+      (void) u_extent;
+      (void) v_extent;
+      (void) labels;
+    }
+
     // return last computed score, or -1 if no score yet
     FT inline score() const {
       return m_score;
@@ -435,6 +419,16 @@ namespace CGAL {
     // sorting is performed by expected value
     operator FT() const {
       return expected_value();
+    }
+
+    void inline update_label(std::vector<unsigned int> &labels, unsigned int i, unsigned int &new_value) const {
+      if (labels[i] != i)
+        update_label(labels, labels[i], new_value);
+
+      if (new_value < labels[i])
+        labels[i] = new_value;
+      else
+        new_value = labels[i];
     }
 
     void update_points(const std::vector<int> &shape_index) {
@@ -466,6 +460,7 @@ namespace CGAL {
 
     virtual void parameters(const std::vector<std::size_t>& indices,
                             std::vector<std::pair<FT, FT> >& parameter_space,
+                            FT &cluster_epsilon,
                             FT min[2],
                             FT max[2]) const {
       // Avoid compiler warnings about unused parameters.
@@ -554,14 +549,6 @@ namespace CGAL {
 
 
     virtual bool supports_connected_component() const {
-      return false;
-    };
-
-    virtual bool wraps_u() const {
-      return false;
-    };
-
-    virtual bool wraps_v() const {
       return false;
     };
 

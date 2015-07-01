@@ -140,8 +140,9 @@ namespace CGAL {
       this->m_is_valid = true;
     }
 
-    virtual void parameters(const std::vector<std::size_t>& indices,
-                            std::vector<std::pair<FT, FT> >& parameterSpace,
+    virtual void parameters(const std::vector<std::size_t> &indices,
+                            std::vector<std::pair<FT, FT> > &parameterSpace,
+                            FT &cluster_epsilon,                    
                             FT min[2],
                             FT max[2]) const {
       // Transform first point before to initialize min/max
@@ -189,14 +190,6 @@ namespace CGAL {
 
     virtual bool supports_connected_component() const {
       return true;
-    }
-
-    virtual bool wraps_u() const {
-      return false;
-    }
-
-    virtual bool wraps_v() const {
-      return false;
     }
 
   private:

@@ -340,14 +340,6 @@ namespace CGAL {
       return false;
     }
 
-    virtual bool wraps_u() const {
-      return false;
-    }
-
-    virtual bool wraps_v() const {
-      return false;
-    }
-
   private:
     FT getCircle(Point_3 &center, const Vector_3 &axis, std::vector<Point_3> p, FT &majorRad, FT &minorRad) const {
       // create spin image

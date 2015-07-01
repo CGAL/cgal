@@ -224,16 +224,6 @@ namespace CGAL {
       return false;
     }
 
-    // U is longitude
-    virtual bool wraps_u() const {
-      return true;
-    }
-
-    // V is latitude
-    virtual bool wraps_v() const {
-      return false;
-    }
-
   private:
     Sphere_3 m_sphere;
 /// \endcond

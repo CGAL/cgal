@@ -275,17 +275,17 @@ namespace CGAL {
           return 3;
       }
 
+    virtual void parameters(const std::vector<std::size_t> &indices,
+      std::vector<std::pair<FT, FT> > &parameterSpace,
+      FT &cluster_epsilon,
+      FT min[2],
+      FT max[2]) const {
+
+        // gap suchen? und dann shiften, um wrap zu vermeiden? vielleicht einfach später mit rad multiplizieren
+
+    }
+
     virtual bool supports_connected_component() const {
-      return false;
-    }
-
-    // U is longitude
-    virtual bool wraps_u() const {
-      return true;
-    }
-
-    // V is between caps
-    virtual bool wraps_v() const {
       return false;
     }
 

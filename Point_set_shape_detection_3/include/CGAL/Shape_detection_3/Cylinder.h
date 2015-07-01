@@ -154,12 +154,14 @@ namespace CGAL {
         return;
 
       this->m_is_valid = true;
+      this->m_wrap_u = true;
     }
 
-    void parameters(const std::vector<std::size_t> &indices,
-                    std::vector<std::pair<FT, FT> > &parameterSpace,                    
-                    FT min[2],
-                    FT max[2]) const {
+    virtual void parameters(const std::vector<std::size_t> &indices,
+                            std::vector<std::pair<FT, FT> > &parameterSpace,
+                            FT &cluster_epsilon,
+                            FT min[2],
+                            FT max[2]) const {
       Vector_3 d1 = Vector_3((FT) 0, (FT) 0, (FT) 1);
       Vector_3 a = m_axis.to_vector();
       a = a * ((FT)1.0 / CGAL::sqrt(a.squared_length()));
@@ -187,36 +189,120 @@ namespace CGAL {
       length = CGAL::sqrt(vec.squared_length());
       vec = vec * (FT)1.0 / length;
 
-      FT a1 = acos(vec * d1);
-      FT a2 = acos(vec * d2);
+      FT a1 = vec * d1;
+      a1 = (a1 < (FT) -1.0) ? (FT) -1.0 : ((a1 > (FT) 1.0) ? (FT) 1.0 : a1);
+      a1 = acos(a1);
+      FT a2 = vec * d2;
+      a2 = (a2 < (FT) -1.0) ? (FT) -1.0 : ((a2 > (FT) 1.0) ? (FT) 1.0 : a2);
+      a2 = acos(a2);
 
       FT u = FT((a2 < M_PI_2) ? 2 * M_PI - a1 : a1) * m_radius;
 
       parameterSpace[0] = std::pair<FT, FT>(u, v);
 
+      min[0] = max[0] = u;
       min[1] = max[1] = v;
 
       for (std::size_t i = 0;i<indices.size();i++) {
-        Vector_3 vec = this->point(indices[i]) - m_point_on_axis;
-        FT v = vec * a;
+        vec = this->point(indices[i]) - m_point_on_axis;
+        v = vec * a;
         vec = vec - ((vec * a) * a);
         length = CGAL::sqrt(vec.squared_length());
         vec = vec * (FT)1.0 / length;
 
-        FT a1 = acos(vec * d1);
-        FT a2 = acos(vec * d2);
+        a1 = vec * d1;
+        a1 = (a1 < (FT) -1.0) ? (FT) -1.0 : ((a1 > (FT) 1.0) ? (FT) 1.0 : a1);
+        a1 = acos(a1);
+        a2 = vec * d2;
+        a2 = (a2 < (FT) -1.0) ? (FT) -1.0 : ((a2 > (FT) 1.0) ? (FT) 1.0 : a2);
+        a2 = acos(a2);
 
-        FT u = FT((a2 < M_PI_2) ? 2 * M_PI - a1 : a1) * m_radius;
+        u = FT((a2 < M_PI_2) ? 2 * M_PI - a1 : a1) * m_radius;
+        min[0] = (std::min<FT>)(min[0], u);
+        max[0] = (std::max<FT>)(max[0], u);
+
         min[1] = (std::min<FT>)(min[1], v);
         max[1] = (std::max<FT>)(max[1], v);
 
         parameterSpace[i] = std::pair<FT, FT>(u, v);
       }
 
-      // Due to wrapping, the u parameter 'rotation around axis' always needs
-      // to be the full extend.
-      min[0] = 0;
-      max[0] = FT(M_PI * 2.0 * m_radius);
+      // Is close to wrapping around?
+      FT diff_to_full_range = min[0] + FT(M_PI * 2.0 * m_radius) - max[0];
+      if (diff_to_full_range < cluster_epsilon) {
+        m_wrap_u = true;
+        FT frac = (max[0] - min[0]) / cluster_epsilon;
+        FT trunc = floor(frac);
+        frac = frac - trunc;
+
+        if (frac < (FT) 0.5) {
+          cluster_epsilon = (max[0] - min[0]) / (trunc - (FT) 0.01);
+        }
+      }
+      else m_wrap_u = false;
+    }
+    
+    // The u coordinate corresponds to the rotation around the axis and
+    // therefore needs to be wrapped around.
+    virtual void post_wrap(const std::vector<unsigned int> &bitmap,
+      const std::size_t &u_extent,
+      const std::size_t &v_extent,
+      std::vector<unsigned int> &labels) const {
+        if (!m_wrap_u)
+          return;
+
+        // handle top index separately
+        unsigned int nw = bitmap[u_extent - 1];
+        unsigned int l = bitmap[0];
+
+        // Special case v_extent is just 1
+        if (v_extent == 1) {
+          if (nw && nw != l)
+            update_label(labels, (std::max<unsigned int>)(nw, l), l = (std::min<unsigned int>)(nw, l));
+
+          return;
+        }
+
+        unsigned int w = bitmap[2 * u_extent - 1];
+        unsigned int sw;
+
+        if (l) {
+          if (nw && nw != l)
+            update_label(labels, (std::max<unsigned int>)(nw, l), l = (std::min<unsigned int>)(nw, l));
+          else if (w && w != l)
+            update_label(labels, (std::max<unsigned int>)(w, l), l = (std::min<unsigned int>)(w, l));
+        }
+        
+        // handle mid indices
+        for (std::size_t y = 1;y<v_extent - 1;y++) {
+          l = bitmap[y * u_extent];
+          if (!l)
+            continue;
+
+          nw = bitmap[y * u_extent - 1];
+          w = bitmap[(y + 1) * u_extent - 1];
+          sw = bitmap[(y + 2) * u_extent - 1];
+
+          if (nw && nw != l)
+            update_label(labels, (std::max<unsigned int>)(nw, l), l = (std::min<unsigned int>)(nw, l));
+          if (w && w != l)
+            update_label(labels, (std::max<unsigned int>)(w, l), l = (std::min<unsigned int>)(w, l));
+          else if (sw && sw != l)
+            update_label(labels, (std::max<unsigned int>)(sw, l), l = (std::min<unsigned int>)(sw, l));
+        }
+
+        // handle last index
+        l = bitmap[(v_extent - 1) * u_extent];
+        if (!l)
+          return;
+
+        nw = bitmap[(v_extent - 1) * u_extent - 1];
+        w = bitmap[u_extent * v_extent - 1];
+
+        if (nw && nw != l)
+          update_label(labels, (std::max<unsigned int>)(nw, l), l = (std::min<unsigned int>)(nw, l));
+        else if (w && w != l)
+          update_label(labels, (std::max<unsigned int>)(w, l), l = (std::min<unsigned int>)(w, l));
     }
 
     virtual void squared_distance(const std::vector<std::size_t> &indices,
@@ -273,20 +359,11 @@ namespace CGAL {
       return true;
     }
 
-    // U is longitude
-    virtual bool wraps_u() const {
-      return true;
-    }
-
-    // V is between caps
-    virtual bool wraps_v() const {
-      return false;
-    }
-
   private:
     FT m_radius;
     Line_3 m_axis;
     Point_3 m_point_on_axis;
+    mutable bool m_wrap_u;
       
     /// \endcond
   };
