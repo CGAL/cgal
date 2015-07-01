@@ -88,8 +88,8 @@ void Viewer::drawOneFilledFace(Dart_handle dh, bool flat)
 
   ::glBegin(GL_POLYGON);
 
-  for (typename LCC::template Dart_of_orbit_range<1>::const_iterator
-         orbitIter = lcc.template darts_of_orbit<1>(dh).begin();
+  for (LCC::Dart_of_orbit_range<1>::const_iterator
+         orbitIter = lcc.darts_of_orbit<1>(dh).begin();
        orbitIter.cont(); ++orbitIter)
   {
     if(!flat)
