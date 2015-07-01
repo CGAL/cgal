@@ -7,21 +7,7 @@
 #include <QAction>
 
 #include <QInputDialog>
-namespace {
-void CGALglcolor(QColor c, int dv = 0)
-{
-    if ( 0 != dv )
-    {
-        // workaround for Qt-4.2.
-#if QT_VERSION < 0x040300
-#  define darker dark
-#endif
-        c = c.darker(dv);
-#undef darker
-    }
-    ::glColor4d(c.red()/255.0, c.green()/255.0, c.blue()/255.0, c.alpha()/255.0);
-}
-}
+
 struct light_info
 {
     //position
@@ -347,12 +333,12 @@ Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
 void
 Scene_polylines_item::compute_elements()
 {
-    positions_spheres.clear();
-    positions_wire_spheres.clear();
-    positions_lines.clear();
-    color_spheres.clear();
-    normals_spheres.clear();
-    positions_center.clear();
+    positions_spheres.resize(0);
+    positions_wire_spheres.resize(0);
+    positions_lines.resize(0);
+    color_spheres.resize(0);
+    normals_spheres.resize(0);
+    positions_center.resize(0);
     nbSpheres = 0;
 
     //Fills the VBO with the lines
@@ -482,7 +468,7 @@ Scene_polylines_item::compute_elements()
 
         //Convert the triangle coordinates to lines coordinates for the
         //Wiremode in the spheres
-        for(int i=0; i< positions_spheres.size(); i=i)
+        for(int i=0; i< (int) positions_spheres.size(); i=i)
         {
             //draw triangles
             if(i< (360/sectors)*12)
@@ -505,7 +491,7 @@ Scene_polylines_item::compute_elements()
                 i+=12;
             }
             //draw quads
-            else if((360/sectors) * 3 * 4 < i < positions_spheres.size() - (360/sectors) * 3 * 4)
+            else if((360/sectors) * 3 * 4 < i && i < (int)positions_spheres.size() - (360/sectors) * 3 * 4)
             {
                 //AB
                 for(int j=i; j<i+8; j++)
@@ -566,9 +552,11 @@ Scene_polylines_item::compute_elements()
 
 
 Scene_polylines_item::Scene_polylines_item() 
-    : d(new Scene_polylines_item_private()),positions_lines(0), positions_spheres(0),
-      normals_spheres(0), positions_center(0),color_spheres(0), positions_wire_spheres(0),nbSpheres(0),
-      rings(18), sectors(36), Scene_item(8,3)
+    :Scene_item(8,3)
+    ,d(new Scene_polylines_item_private())
+    ,nbSpheres(0)
+    ,rings(18)
+    ,sectors(36)
 {
     qFunc.initializeOpenGLFunctions();
     changed();

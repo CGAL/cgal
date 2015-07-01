@@ -64,13 +64,6 @@ struct DPoint {
 };
 Scene_nef_polyhedron_item::Scene_nef_polyhedron_item()
     : Scene_item(7,3),
-      positions_facets(0),
-      positions_lines(0),
-      color_lines(0),
-      color_facets(0),
-      color_points(0),
-      normals(0),
-      positions_points(0),
       nef_poly(new Nef_polyhedron)
 {
     is_selected = true;
@@ -79,13 +72,6 @@ Scene_nef_polyhedron_item::Scene_nef_polyhedron_item()
 
 Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(Nef_polyhedron* const p)
     : Scene_item(7,3),
-      positions_facets(0),
-      positions_lines(0),
-      color_lines(0),
-      color_facets(0),
-      color_points(0),
-      normals(0),
-      positions_points(0),
       nef_poly(p)
 {
     is_selected = true;
@@ -94,13 +80,6 @@ Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(Nef_polyhedron* const p)
 
 Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(const Nef_polyhedron& p)
     : Scene_item(7,3),
-      positions_facets(0),
-      positions_lines(0),
-      normals(0),
-      color_lines(0),
-      color_facets(0),
-      color_points(0),
-      positions_points(0),
       nef_poly(new Nef_polyhedron(p))
 {
      is_selected = true;
@@ -200,12 +179,13 @@ void Scene_nef_polyhedron_item::initialize_buffers(Viewer_interface *viewer) con
 void Scene_nef_polyhedron_item::compute_normals_and_vertices(void)
 {
      int count = 0;
-    positions_facets.clear();
-    positions_points.clear();
-    color_lines.clear();
-    color_facets.clear();
-    color_points.clear();
-    normals.clear();
+    positions_facets.resize(0);
+    positions_points.resize(0);
+    color_lines.resize(0);
+    color_facets.resize(0);
+    color_points.resize(0);
+    normals.resize(0);
+    positions_lines.resize(0);
     //The Facets
     {
         for(Nef_polyhedron::Halffacet_const_iterator

@@ -23,19 +23,13 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
 (Scene_polyhedron_item* poly_item,
  Ui::DeformMesh* ui_widget,
  QMainWindow* mw)
-    : ui_widget(ui_widget),
+    :Scene_item(20,8),
+      ui_widget(ui_widget),
       poly_item(poly_item),
       deform_mesh(*(poly_item->polyhedron()), Deform_mesh::Vertex_index_map(), Deform_mesh::Hedge_index_map(), Array_based_vertex_point_map(&positions)),
       is_rot_free(true),
       own_poly_item(true),
-      ROI_points(0),
-      control_points(0),
-      control_color(0),
-      ROI_color(0),
-      pos_sphere(0),
-      normals_sphere(0),
       k_ring_selector(poly_item, mw, Scene_polyhedron_item_k_ring_selection::Active_handle::VERTEX, true),
-      Scene_item(20,8),
       quadric(gluNewQuadric())
 {
     mw->installEventFilter(this);
@@ -331,8 +325,8 @@ void Scene_edit_polyhedron_item::initialize_buffers(Viewer_interface *viewer =0)
 
 void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
 {
-    ROI_points.clear();
-    control_points.clear();
+    ROI_points.resize(0);
+    control_points.resize(0);
     BOOST_FOREACH(vertex_descriptor vd, deform_mesh.roi_vertices())
     {
         if(!deform_mesh.is_control_vertex(vd))
@@ -345,11 +339,11 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
     centers_ROI.resize(ROI_points.size());
     ROI_color.resize(ROI_points.size());
     color_sphere_ROI.resize(ROI_points.size());
-    for(int i=0; i<centers_ROI.size(); i++)
+    for(int i=0; i<(int)centers_ROI.size(); i++)
     {
         centers_ROI[i] = ROI_points[i];
     }
-    for(int i=0; i<ROI_color.size(); i++)
+    for(int i=0; i<(int)ROI_color.size(); i++)
     {
         if(i%3==1)
         {
@@ -399,28 +393,28 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
 
         }
         centers_control.resize(control_points.size());
-        for(int i=0; i<centers_control.size(); i++)
+        for(int i=0; i<(int)centers_control.size(); i++)
         {
             centers_control[i]=control_points[i];
         }
     }
     color_sphere_control.resize(control_color.size());
-    for(int i=0; i<color_sphere_control.size(); i++)
+    for(int i=0; i<(int)color_sphere_control.size(); i++)
     {
         color_sphere_control[i] = control_color[i];
     }
 
     //The edges color
     color_edges.resize(edges.size());
-    for(int i =0; i< edges.size(); i++)
+    for(int i =0; i< (int)edges.size(); i++)
         color_edges[i]=0.0;
 
     //The box color
     color_bbox.resize(pos_bbox.size());
-    for(int i =0; i< pos_bbox.size(); i++)
+    for(int i =0; i< (int)pos_bbox.size(); i++)
         color_bbox[i]=0.0;
 
-    for(int i =0; i< pos_bbox.size(); i+=3)
+    for(int i =0; i< (int)pos_bbox.size(); i+=3)
         color_bbox[i]=1.0;
 
     //The axis
@@ -615,13 +609,9 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface*
             // draw bbox
             if(!ui_widget->ActivatePivotingCheckBox->isChecked())
             {
-                GLfloat colors[3];
                 GLfloat f_matrix[16];
                 GLfloat trans[3];
                 GLfloat trans2[3];
-                colors[0]=1.0;
-                colors[1]=0.0;
-                colors[2]=0.0;
 
                 trans[0] = hgb_data->frame->position().x;
                 trans[1] = hgb_data->frame->position().y;

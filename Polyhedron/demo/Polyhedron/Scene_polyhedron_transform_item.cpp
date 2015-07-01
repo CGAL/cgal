@@ -3,13 +3,13 @@
 #include "Polyhedron_type.h"
 
 Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer::Vec& pos,const Scene_polyhedron_item* poly_item_,const Scene_interface*):
+    Scene_item(1,1),
     poly_item(poly_item_),
     manipulable(false),
     frame(new ManipulatedFrame()),
-    positions_lines(0),
     poly(poly_item->polyhedron()),
-    center_(pos),
-    Scene_item(1,1)
+    center_(pos)
+
 {
     frame->setPosition(pos);
     qFunc.initializeOpenGLFunctions();
@@ -39,7 +39,7 @@ void Scene_polyhedron_transform_item::initialize_buffers(Viewer_interface *viewe
 
 void Scene_polyhedron_transform_item::compute_elements()
 {
-     positions_lines.clear();
+     positions_lines.resize(0);
     typedef Kernel::Point_3		Point;
     typedef Polyhedron::Edge_const_iterator	Edge_iterator;
 

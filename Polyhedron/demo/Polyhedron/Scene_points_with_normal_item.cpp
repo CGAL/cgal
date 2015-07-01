@@ -40,15 +40,6 @@ struct light_info
 Scene_points_with_normal_item::Scene_points_with_normal_item()
     : Scene_item(6,3),
       m_points(new Point_set),
-      positions_lines(0),
-      color_lines(0),
-      color_points(0),
-      positions_points(0),
-      normals(0),
-      positions_splats(0),
-      positions_selected_points(0),
-      color_selected_points(0),
-      tex_coords(0),
       m_has_normals(false)
 {
     setRenderingMode(Points);
@@ -62,15 +53,6 @@ Scene_points_with_normal_item::Scene_points_with_normal_item()
 Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_with_normal_item& toCopy)
     : Scene_item(6,3), // do not call superclass' copy constructor
       m_points(new Point_set(*toCopy.m_points)),
-      positions_lines(0),
-      color_lines(0),
-      color_points(0),
-      positions_points(0),
-      normals(0),
-      positions_splats(0),
-      positions_selected_points(0),
-      color_selected_points(0),
-      tex_coords(0),
       m_has_normals(toCopy.m_has_normals)
 {
     if (m_has_normals)
@@ -95,15 +77,6 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
 Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& input_mesh)
     : Scene_item(6,3),
       m_points(new Point_set),
-      positions_lines(0),
-      color_lines(0),
-      color_points(0),
-      positions_points(0),
-      normals(0),
-      positions_splats(0),
-      positions_selected_points(0),
-      color_selected_points(0),
-      tex_coords(0),
       m_has_normals(true)
 {
     // Converts Polyhedron vertices to point set.
@@ -209,14 +182,15 @@ void Scene_points_with_normal_item::initialize_buffers(Viewer_interface *viewer)
 }
 void Scene_points_with_normal_item::compute_normals_and_vertices(void)
 {
-    positions_points.clear();
-    positions_lines.clear();
-    positions_splats.clear();
-    positions_selected_points.clear();
-    color_points.clear();
-    color_lines.clear();
-    normals.clear();
-    tex_coords.clear();
+    positions_points.resize(0);
+    positions_lines.resize(0);
+    positions_splats.resize(0);
+    positions_selected_points.resize(0);
+    color_selected_points.resize(0);
+    color_points.resize(0);
+    color_lines.resize(0);
+    normals.resize(0);
+    tex_coords.resize(0);
 
     //The points
     {

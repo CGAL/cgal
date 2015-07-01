@@ -1,6 +1,5 @@
 #ifndef SCENE_POLYLINES_ITEM_H
 #define SCENE_POLYLINES_ITEM_H
-//#include <GL/glew.h>
 #include "Scene_polylines_item_config.h"
 #include "Viewer_interface.h"
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

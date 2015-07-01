@@ -383,6 +383,7 @@ QOpenGLShaderProgram* Scene_item::getShaderProgram(int name, Viewer_interface * 
         break;
     default:
         std::cerr<<"ERROR : Program not found."<<std::endl;
+        return 0;
     }
 }
 #include "Scene_item.moc"

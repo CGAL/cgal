@@ -1,6 +1,5 @@
 #ifndef SCENE_TEXTURED_POLYHEDRON_ITEM_H
 #define SCENE_TEXTURED_POLYHEDRON_ITEM_H
-//#include <GL/glew.h>
 #include "Scene_textured_polyhedron_item_config.h"
 #include "Scene_item.h"
 #include "Viewer_interface.h"

@@ -13,8 +13,8 @@ class Q_DECL_EXPORT Scene_bbox_item : public Scene_item
     Q_OBJECT
 public:
     Scene_bbox_item(const Scene_interface* scene_interface)
-        : scene(scene_interface),
-          Scene_item(1,1)
+        :  Scene_item(1,1), scene(scene_interface)
+
     {
 
         positions_lines.resize(0);

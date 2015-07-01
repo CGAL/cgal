@@ -97,10 +97,10 @@ void Scene_implicit_function_item::initialize_buffers(Viewer_interface *viewer =
 
 void Scene_implicit_function_item::compute_vertices_and_texmap(void)
 {
-    positions_tex_quad.clear();
-    positions_cube.clear();
-    positions_grid.clear();
-    texture_map.clear();
+    positions_tex_quad.resize(0);
+    positions_cube.resize(0);
+    positions_grid.resize(0);
+    texture_map.resize(0);
 
     const Bbox& b = bbox();
     float x,y,z;
@@ -332,7 +332,8 @@ void Scene_implicit_function_item::compute_vertices_and_texmap(void)
 
 Scene_implicit_function_item::
 Scene_implicit_function_item(Implicit_function_interface* f)
-    : function_(f)
+    :Scene_item(4,3)
+    , function_(f)
     , frame_(new ManipulatedFrame())
     , need_update_(true)
     , grid_size_(SCENE_IMPLICIT_GRID_SIZE)
@@ -340,11 +341,6 @@ Scene_implicit_function_item(Implicit_function_interface* f)
     , min_value_(0.)
     , blue_color_ramp_()
     , red_color_ramp_()
-    , positions_cube(0)
-    , positions_grid(0)
-    , positions_tex_quad(0)
-    , texture_map(0)
-    ,Scene_item(4,3)
 
 {
     texture = new Texture(grid_size_-1,grid_size_-1);
@@ -474,7 +470,6 @@ Scene_implicit_function_item::supportsRenderingMode(RenderingMode m) const
 
 void Scene_implicit_function_item::compute_texture(int i, int j)
 {
-    const Point& p = (implicit_grid_[i][j]).first;
     double v = (implicit_grid_[i][j]).second;
 
     if(is_nan(v)) {

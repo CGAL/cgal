@@ -16,14 +16,12 @@
 // $Id$
 //
 // Author: Laurent Rineau
-#include <GL/glew.h>
 #ifndef CGAL_GL_CHECK_ERROR_H
 #define CGAL_GL_CHECK_ERROR_H
-
+#include <QOpenGLFunctions>
 #include <iostream>
-#include <CGAL/glu.h>
 #include <string>
-
+/*
 
 namespace CGAL {
 
@@ -79,5 +77,5 @@ inline bool gl_check_link(GLuint *program)
 }
 
 } // end namespace CGAL
-
+*/
 #endif // CGAL_GL_CHECK_ERROR_H

@@ -206,7 +206,6 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
     scene->drawWithNames(viewer);
   else
     scene->draw(viewer);
-  CGAL::check_gl_error(__FILE__, __LINE__);
 }
 
 void Viewer::drawWithNames()

@@ -1,6 +1,5 @@
 #ifndef SCENE_POLYGON_SOUP_ITEM_H
 #define SCENE_POLYGON_SOUP_ITEM_H
-//#include <GL/glew.h>
 #include "Scene_polygon_soup_item_config.h"
 #include "Scene_item.h"
 #include "Viewer.h"

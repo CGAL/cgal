@@ -42,12 +42,6 @@ typedef Tr::Point Point_3;
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
 
-namespace {
-void CGALglcolor(QColor c)
-{
-    ::glColor4d(c.red()/255.0, c.green()/255.0, c.blue()/255.0, c.alpha()/255.0);
-}
-}
 
 class Q_DECL_EXPORT Scene_c3t3_item : public Scene_item
 {
@@ -56,7 +50,7 @@ public:
     typedef qglviewer::ManipulatedFrame ManipulatedFrame;
 
     Scene_c3t3_item(const C3t3& c3t3)
-        : c3t3_(c3t3), frame(new ManipulatedFrame()), last_known_scene(NULL), Scene_item(7,3)
+        : Scene_item(7,3), c3t3_(c3t3), frame(new ManipulatedFrame()), last_known_scene(NULL)
     {
         positions_lines.resize(0);
         positions_poly.resize(0);

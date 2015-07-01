@@ -38,7 +38,7 @@ class Q_DECL_EXPORT Scene_aabb_item : public Scene_item
 {
   Q_OBJECT
 public:
-  Scene_aabb_item(const AABB_tree& tree_) : tree(tree_), Scene_item(1,1)
+  Scene_aabb_item(const AABB_tree& tree_) : Scene_item(1,1), tree(tree_)
   {
       positions_lines.resize(0);
       qFunc.initializeOpenGLFunctions();
@@ -464,7 +464,7 @@ void Polyhedron_demo_cut_plugin::cut() {
         edges_item->edges.push_back(*inter_seg);
     }
   }
-  
+
   messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
   scene->itemChanged(edges_item);
   QApplication::restoreOverrideCursor();

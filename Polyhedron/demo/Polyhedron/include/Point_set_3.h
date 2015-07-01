@@ -13,7 +13,6 @@
 #include <deque>
 
 //#ifdef CGAL_GLEW_ENABLED
-//# include <GL/glew.h>
 //#else
 # include <CGAL/gl.h>
 //#endif

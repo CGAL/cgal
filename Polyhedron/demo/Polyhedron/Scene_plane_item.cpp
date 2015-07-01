@@ -32,8 +32,8 @@ void Scene_plane_item::initialize_buffers(Viewer_interface *viewer) const
 
 void Scene_plane_item::compute_normals_and_vertices(void)
 {
-    positions_quad.clear();
-    positions_lines.clear();
+    positions_quad.resize(0);
+    positions_lines.resize(0);
 
     const double diag = scene_diag();
     //The quad

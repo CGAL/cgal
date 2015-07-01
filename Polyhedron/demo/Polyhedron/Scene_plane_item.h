@@ -25,13 +25,11 @@ public:
   typedef qglviewer::ManipulatedFrame ManipulatedFrame;
 
   Scene_plane_item(const Scene_interface* scene_interface) 
-    : scene(scene_interface),
+      :Scene_item(2,2),
+      scene(scene_interface),
       manipulable(false),
       can_clone(true),
-      positions_lines(0),
-      positions_quad(0),
-      frame(new ManipulatedFrame()),
-      Scene_item(2,2)
+      frame(new ManipulatedFrame())
   {
     setNormal(0., 0., 1.);
     qFunc.initializeOpenGLFunctions();

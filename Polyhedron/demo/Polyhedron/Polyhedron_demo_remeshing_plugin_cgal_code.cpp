@@ -3,9 +3,6 @@
 
 #include "Polyhedron_type.h"
 #include "Scene_item.h"
-//#ifdef CGAL_GLEW_ENABLED
-//# include <GL/glew.h>
-//#endif
 #include <qgl.h>
 #include "Scene_polyhedron_item.h"
 #include "Scene_polygon_soup_item.h"

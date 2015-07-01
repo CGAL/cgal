@@ -428,9 +428,9 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
 void
 Scene_polyhedron_item::compute_normals_and_vertices(void)
 {
-    positions_facets.clear();
-    positions_lines.clear();
-    normals.clear();
+    positions_facets.resize(0);
+    positions_lines.resize(0);
+    normals.resize(0);
 
 
     //Facets
@@ -542,15 +542,11 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
 void
 Scene_polyhedron_item::compute_colors()
 {
-    color_lines.clear();
-    color_facets.clear();
-    color_lines_selected.clear();
-    color_facets_selected.clear();
+    color_lines.resize(0);
+    color_facets.resize(0);
+    color_lines_selected.resize(0);
+    color_facets_selected.resize(0);
     //Facets
-    typedef typename Polyhedron::Traits	    Kernel;
-    typedef typename Kernel::Point_3	    Point;
-    typedef typename Kernel::Vector_3	    Vector;
-    typedef typename Polyhedron::Facet	    Facet;
     typedef typename Polyhedron::Facet_iterator Facet_iterator;
     typedef typename Polyhedron::Halfedge_around_facet_circulator HF_circulator;
 
@@ -643,15 +639,8 @@ Scene_polyhedron_item::compute_colors()
 
 Scene_polyhedron_item::Scene_polyhedron_item()
     : Scene_item(10,4),
-      positions_facets(0),
-      positions_lines(0),
-      color_facets(0),
-      color_facets_selected(0),
-      color_lines(0),
-      color_lines_selected(0),
-      normals(0),
-      poly(new Polyhedron),
       is_Triangle(true),
+      poly(new Polyhedron),
       show_only_feature_edges_m(false),
       facet_picking_m(false),
       erase_next_picked_facet_m(false),
@@ -665,15 +654,8 @@ Scene_polyhedron_item::Scene_polyhedron_item()
 
 Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     : Scene_item(10,4),
-      positions_facets(0),
-      positions_lines(0),
-      color_facets(0),
-      color_facets_selected(0),
-      color_lines(0),
-      color_lines_selected(0),
-      normals(0),
-      poly(p),
       is_Triangle(true),
+      poly(p),
       show_only_feature_edges_m(false),
       facet_picking_m(false),
       erase_next_picked_facet_m(false),
@@ -687,15 +669,8 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
 
 Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     : Scene_item(10,4),
-      positions_facets(0),
-      positions_lines(0),
-      color_facets(0),
-      color_facets_selected(0),
-      color_lines(0),
-      color_lines_selected(0),
-      normals(0),
-      poly(new Polyhedron(p)),
       is_Triangle(true),
+      poly(new Polyhedron(p)),
       show_only_feature_edges_m(false),
       facet_picking_m(false),
       erase_next_picked_facet_m(false),
@@ -731,7 +706,7 @@ init()
             max = (std::max)(max, fit->patch_id());
         }
 
-        colors_.clear();
+        colors_.resize(0);
         compute_color_map(this->color(), max + 1,
                           std::back_inserter(colors_));
         qFunc.initializeOpenGLFunctions();
@@ -988,7 +963,7 @@ contextual_changed()
     prev_shading = cur_shading;
     cur_shading = new_shading;
     if(prev_shading != cur_shading)
-        if(cur_shading == GL_SMOOTH || cur_shading == GL_FLAT && prev_shading == GL_SMOOTH )
+        if(cur_shading == GL_SMOOTH || (cur_shading == GL_FLAT && prev_shading == GL_SMOOTH) )
         {
             //Change the normals
             changed();

@@ -272,9 +272,9 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
     //get the vertices and normals
 
     typedef Polygon_soup::Polygons::size_type size_type;
-    positions_poly.clear();
-    positions_lines.clear();
-    normals.clear();
+    positions_poly.resize(0);
+    positions_lines.resize(0);
+    normals.resize(0);
     for(Polygons_iterator it = soup->polygons.begin();
         it != soup->polygons.end(); ++it)
     {
@@ -338,7 +338,7 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
 
 Scene_polygon_soup_item::Scene_polygon_soup_item()
     : Scene_item(4,2),
-      soup(0),positions_poly(0),positions_lines(0), normals(0),
+      soup(0),
       oriented(false)
 {
  qFunc.initializeOpenGLFunctions();

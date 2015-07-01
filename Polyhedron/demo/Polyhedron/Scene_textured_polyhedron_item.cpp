@@ -93,11 +93,11 @@ void Scene_textured_polyhedron_item::initialize_buffers(Viewer_interface *viewer
 void
 Scene_textured_polyhedron_item::compute_normals_and_vertices(void)
 {
-    positions_facets.clear();
-    positions_lines.clear();
-    textures_map_facets.clear();
-    textures_map_lines.clear();
-    normals.clear();
+    positions_facets.resize(0);
+    positions_lines.resize(0);
+    textures_map_facets.resize(0);
+    textures_map_lines.resize(0);
+    normals.resize(0);
 
     typedef typename ::EPIC_kernel Kernel;
     typedef typename CGAL::Textured_items Items;
@@ -196,8 +196,7 @@ Scene_textured_polyhedron_item::compute_normals_and_vertices(void)
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item()
-    : Scene_item(5,2),positions_lines(0),positions_facets(0),normals(0),textures_map_facets(0),
-      textures_map_lines(0),poly(new Textured_polyhedron)
+    : Scene_item(5,2),poly(new Textured_polyhedron)
 {
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
     cur_shading=GL_FLAT;
@@ -208,8 +207,7 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item()
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(Textured_polyhedron* const p)
-    : Scene_item(5,2),smooth_shading(true),positions_lines(0),positions_facets(0),textures_map_facets(0),
-      textures_map_lines(0), poly(p)
+    : Scene_item(5,2),poly(p),smooth_shading(true)
 {
     cur_shading=GL_FLAT;
     is_selected=false;
@@ -219,8 +217,7 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(Textured_polyhedr
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(const Textured_polyhedron& p)
-    : Scene_item(5,2),smooth_shading(true),positions_lines(0),positions_facets(0),textures_map_facets(0),
-      textures_map_lines(0), poly(new Textured_polyhedron(p))
+    : Scene_item(5,2), poly(new Textured_polyhedron(p)),smooth_shading(true)
 {
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
     cur_shading=GL_FLAT;
