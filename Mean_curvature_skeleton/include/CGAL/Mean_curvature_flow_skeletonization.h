@@ -44,7 +44,7 @@
 #include <CGAL/internal/Mean_curvature_skeleton/get_normal.h>
 
 // Simplification function
-#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 
 // Curve skeleton data structure
 #include <CGAL/internal/Mean_curvature_skeleton/Curve_skeleton.h>
@@ -62,9 +62,6 @@
 
 // For Fixed_edge_map
 #include <CGAL/internal/Mean_curvature_skeleton/Fixed_edge_map.h>
-
-// For is_collapse_ok
-#include <CGAL/internal/Mean_curvature_skeleton/Collapse.h>
 
 // For detect_degenarcy
 #include <CGAL/internal/Mean_curvature_skeleton/Detect_degeneracy.h>
@@ -1107,7 +1104,7 @@ private:
       /// \todo do not use sqrt but square m_max_edge_length
       double edge_length = sqrt(squared_distance(get(m_tmesh_point_pmap, vi),
                                                  get(m_tmesh_point_pmap, vj)));
-      if (internal::is_collapse_ok(m_tmesh, h) && edge_length < m_max_edge_length)
+      if (Euler::satisfies_link_condition(edge(h, m_tmesh), m_tmesh) && edge_length < m_max_edge_length)
       {
         Point p = midpoint(
           get(vertex_point, m_tmesh, source(h, m_tmesh)),
@@ -1348,7 +1345,7 @@ private:
                                                 get(m_tmesh_point_pmap, v1)));
           if (length < elength_fixed)
           {
-            if (!internal::is_collapse_ok(m_tmesh, edge))
+            if (!Euler::satisfies_link_condition(ed, m_tmesh))
             {
               bad_counter++;
             }
