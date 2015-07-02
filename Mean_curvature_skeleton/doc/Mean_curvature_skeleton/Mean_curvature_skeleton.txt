@@ -6,8 +6,6 @@ namespace CGAL {
 \cgalAutoToc
 \author Xiang Gao, Sébastien Loriot and Andrea Tagliasacchi
 
-\todo clean up the algorithm description section and publish it
-
 \section MCFSkelSecMot Introduction
 
 \cgalFigureBegin{Main_image_suggestion, main_image_suggestion.png}
