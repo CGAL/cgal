@@ -22,6 +22,7 @@ if(POLICY CMP0042)
   cmake_policy(SET CMP0042 OLD)
 endif()
 
+
 # Creates a new CMake option, turned ON by default
 option(ACTIVATE_MSVC_PRECOMPILED_HEADERS
   "Activate precompiled headers in MSVC"
@@ -75,7 +76,6 @@ option(ACTIVATE_CONCURRENT_MESH_3
 # Find CGAL and CGAL Qt5
 find_package(CGAL COMPONENTS Qt5 ImageIO)
 include( ${CGAL_USE_FILE} )
-
 # And add -DCGAL_CONCURRENT_MESH_3 if that option is ON
 if( ACTIVATE_CONCURRENT_MESH_3 )
   add_definitions( -DCGAL_CONCURRENT_MESH_3 )
@@ -99,9 +99,6 @@ find_package(Qt5 COMPONENTS Xml Script OpenGL)
 # Find OpenGL
 find_package(OpenGL)
 
-# Find GLEW (for OpenGL-1.5 and OpenGL extensions)
-find_package(GLEW)
-
 # Find everybodies darling
 find_package(Boost COMPONENTS thread system)
 
@@ -110,8 +107,9 @@ find_package(Boost COMPONENTS thread system)
 if(Qt5_FOUND)
 
  add_definitions(-DQT_NO_KEYWORDS)
+ add_definitions(-DSCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE)
 
-  find_package(QGLViewer )
+ find_package(QGLViewer )
 endif(Qt5_FOUND)
 
 
@@ -119,14 +117,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
 
   # Add directory containing implicit function plugin source files
   add_subdirectory("implicit_functions")
-
-  if(GLEW_FOUND)
-    include_directories ( ${GLEW_INCLUDE_DIR} )
-    add_definitions(-DSCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE)
-  else(GLEW_FOUND)
-    message(STATUS "NOTICE: GLEW library is not found. 3D images rendering will not be available.")
-  endif(GLEW_FOUND)
-
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
@@ -200,10 +190,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
   qt5_use_modules(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} Xml Script OpenGL)
   target_link_libraries(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} ${SCENE_ITEM_LIB} ${CGAL_LIBRARIES} ${TBB_LIBRARIES})
   set_target_properties(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_segmented_image_item_EXPORTS)
-
-  if(GLEW_FOUND)
-    target_link_libraries(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} ${GLEW_LIBRARIES})
-  endif()
 
   set(SCENE_POLYHEDRON_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_polyhedron_item")
   add_library(${SCENE_POLYHEDRON_ITEM_LIB} SHARED
@@ -301,22 +287,16 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
   polyhedron_demo_plugin(${IO_IMAGE_PLUGIN_LIB} Io_image_plugin ${imgUI_FILES})
   target_link_libraries(${IO_IMAGE_PLUGIN_LIB} ${SCENE_SEGMENTED_IMAGE_ITEM_LIB})
 
-  if(GLEW_FOUND)
-    target_link_libraries(${IO_IMAGE_PLUGIN_LIB} ${GLEW_LIBRARIES})
-  endif()
-
   set(IO_OFF_PLUGIN_LIB "${MESH_3_LIB_PREFIX}io_off_plugin")
   polyhedron_demo_plugin(${IO_OFF_PLUGIN_LIB} Io_off_plugin)
   target_link_libraries(${IO_OFF_PLUGIN_LIB} ${SCENE_POLYHEDRON_ITEM_LIB} ${POLYGON_SOUP_LIB})
 
-  if(GLEW_FOUND)
+  if(Qt5_FOUND)
     set(VOLUME_PLANES_PLUGIN_LIB "${MESH_3_LIB_PREFIX}volume_planes_plugin")
     polyhedron_demo_plugin(${VOLUME_PLANES_PLUGIN_LIB} Volume_planes_plugin
                            ${VOLUME_MOC_OUTFILES}
-                           Volume_plane_intersection.cpp)                      
+                           Volume_plane_intersection.cpp)
     target_link_libraries(${VOLUME_PLANES_PLUGIN_LIB} ${SCENE_SEGMENTED_IMAGE_ITEM_LIB} ${VIEWER_LIB})
-  else()
-    message(STATUS "NOTICE: The Volume_plane plugin requires GLEW and will not be compiled.")
   endif()
 
   set(IO_C3T3_PLUGIN_LIB "${MESH_3_LIB_PREFIX}io_c3t3_plugin")

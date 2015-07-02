@@ -53,9 +53,6 @@ private:
   bool m_initialized;
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
   int m_voxel_scale;
- // GLuint m_vbo[3];
- // GLuint m_ibo;
-
   static const int vaoSize = 2;
   static const int vboSize = 6;
   mutable int poly_vertexLocation[1];

@@ -1,8 +1,4 @@
 #include "config.h"
-
-#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-//#  include <GL/glew.h>
-#endif
 #include "Scene_segmented_image_item.h"
 #include "Image_type.h"
 #include "ui_Image_res_dialog.h"
