@@ -130,20 +130,20 @@ Right: After two loops subdivision steps (44,460 vertices).
 \cgalFigureEnd
 
 Runtime in milliseconds of `extract_mean_curvature_flow_skeleton()` using
-`CGAL::Polyhedron_3<Simple_cartesian<double> >`. The code was compiled with
-clang version 4.1 with <code>-O3</code> as compiling flags and was run on a
-Intel(R) Core(TM) i5-3427U CPU @ 1.80GHz
+`Polyhedron_3<Simple_cartesian<double> >` as input data structure. The runtimes are similar if
+`Surface_mesh<Simple_cartesian<double>::%Point_3>` is used instead.
+The code was compiled using \cgal 4.7 with g++ 4.8.4 with <code>-O3 -DNDEBUG</code>
+as compiling flags and was run on a Intel(R) Core(TM) i7-2820QM CPU @ 2.30GHz
 
 
 <center>
-Number of vertices  | Runtime in ms |
--------------------:| -----------:  |
-2,775               |    1,097      |
-11,112              |    3,595      |
-44,460              |   14,841      |
+Number of loop subdivision of <code>elephant.off</code> | Number of vertices  | Runtime in s |
+-------------------------------------------------------:| -------------------:| -----------: |
+0                                                       |   2,775             |   0.768      |
+1                                                       |  11,112             |   2.212      |
+2                                                       |  44,460             |   9.948      |
+3                                                       | 177,852             |  41.248      |
 </center>
-
-\todo add Surface_mesh in the benchmark and make it more complete
 
 \section MCFSkelSecDesign Design and Implementation History
 
