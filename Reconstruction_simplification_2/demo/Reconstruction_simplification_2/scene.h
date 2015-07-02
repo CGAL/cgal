@@ -10,7 +10,7 @@
 // local
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include "Reconstruction_simplification_kerneled_2.h"
-#include "../../include/CGAL/Reconstruction_simplification_2.h"
+#include <CGAL/Reconstruction_simplification_2.h>
 
 
 
