@@ -27,7 +27,7 @@ typedef boost::graph_traits<Skeleton>::edge_iterator                 edge_iter;
 
 int main(int argc, char* argv[])
 {
-  std::ifstream input((argc>1)?argv[1]:"data/sindorelax.off");
+  std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
   Triangle_mesh mesh;
   input >> mesh;
 

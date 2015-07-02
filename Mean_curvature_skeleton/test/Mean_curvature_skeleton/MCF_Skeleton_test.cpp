@@ -75,10 +75,10 @@ bool check_value_equal(T a, T b)
 int main()
 {
   Polyhedron mesh;
-  std::ifstream input("data/sindorelax.off");
+  std::ifstream input("data/elephant.off");
 
   if ( !input || !(input >> mesh) || mesh.empty() ) {
-    std::cerr << "Cannot open data/sindorelax.off" << std::endl;
+    std::cerr << "Cannot open data/elephant.off" << std::endl;
     return EXIT_FAILURE;
   }
   if (!is_mesh_valid(mesh)) {

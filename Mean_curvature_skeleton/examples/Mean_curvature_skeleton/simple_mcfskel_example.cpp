@@ -25,7 +25,7 @@ typedef Skeleton::edge_descriptor                             Skeleton_edge;
 // This example extracts a medially centered skeleton from a given mesh.
 int main(int argc, char* argv[])
 {
-  std::ifstream input((argc>1)?argv[1]:"data/sindorelax.off");
+  std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
   Polyhedron tmesh;
   input >> tmesh;
 
