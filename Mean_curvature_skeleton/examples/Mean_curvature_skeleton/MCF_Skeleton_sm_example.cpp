@@ -9,37 +9,33 @@
 #include <fstream>
 //#include <map>
 
-typedef CGAL::Simple_cartesian<double>                               K;
-typedef K::Point_3                                                   Point;
-typedef CGAL::Surface_mesh<Point>                                    Triangle_mesh;
+typedef CGAL::Simple_cartesian<double>                        Kernel;
+typedef Kernel::Point_3                                       Point;
+typedef CGAL::Surface_mesh<Point>                             Triangle_mesh;
 
-typedef boost::graph_traits<Triangle_mesh>::vertex_descriptor        vertex_descriptor;
-typedef boost::graph_traits<Triangle_mesh>::vertex_iterator          vertex_iterator;
-typedef boost::graph_traits<Triangle_mesh>::halfedge_descriptor      halfedge_descriptor;
+typedef boost::graph_traits<Triangle_mesh>::vertex_descriptor vertex_descriptor;
 
-typedef CGAL::Mean_curvature_flow_skeletonization<Triangle_mesh>     Skeletonization;
-typedef Skeletonization::Skeleton                                    Skeleton;
+typedef CGAL::Mean_curvature_flow_skeletonization<Triangle_mesh> Skeletonization;
+typedef Skeletonization::Skeleton                             Skeleton;
 
-typedef boost::graph_traits<Skeleton>::vertex_descriptor             vertex_desc;
-typedef boost::graph_traits<Skeleton>::vertex_iterator               vertex_iter;
-typedef boost::graph_traits<Skeleton>::edge_iterator                 edge_iter;
-
+typedef Skeleton::vertex_descriptor                           Skeleton_vertex;
+typedef Skeleton::edge_descriptor                             Skeleton_edge;
 
 int main(int argc, char* argv[])
 {
   std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
-  Triangle_mesh mesh;
-  input >> mesh;
+  Triangle_mesh tmesh;
+  input >> tmesh;
 
   Skeleton skeleton;
-
-  Skeletonization mcs(mesh);
+  Skeletonization mcs(tmesh);
 
   // 1. Contract the mesh by mean curvature flow.
   mcs.contract_geometry();
 
   // 2. Collapse short edges and split bad triangles.
-  mcs.remesh();
+  mcs.collapse_edges();
+  mcs.split_faces();
 
   // 3. Fix degenerate vertices.
   mcs.detect_degeneracies();
@@ -50,36 +46,28 @@ int main(int argc, char* argv[])
   // Iteratively apply step 1 to 3 until convergence.
   mcs.contract_until_convergence();
 
-  // Convert the contracted mesh into a curve skeleton and 
+  // Convert the contracted mesh into a curve skeleton and
   // get the correspondent surface points
   mcs.convert_to_skeleton(skeleton);
 
-  std::cout << "vertices: " << num_vertices(skeleton) << "\n";
-  std::cout << "edges: " << num_edges(skeleton) << "\n";
+  std::cout << "Number of vertices of the skelton: " << boost::num_vertices(skeleton) << "\n";
+  std::cout << "Number of edges of the skelton: " << boost::num_edges(skeleton) << "\n";
 
-  // Output all the edges.
-  edge_iter ei, ei_end;
-  for (boost::tie(ei, ei_end) = edges(skeleton); ei != ei_end; ++ei)
+  // Output all the edges of the skeleton.
+  std::ofstream output("skel.cgal");
+  BOOST_FOREACH(Skeleton_edge e, edges(skeleton))
   {
-    const Point& s = skeleton[source(*ei, skeleton)].point;
-    const Point& t = skeleton[target(*ei, skeleton)].point;
-    std::cout << s << " " << t << "\n";
+    const Point& s = skeleton[source(e, skeleton)].point;
+    const Point& t = skeleton[target(e, skeleton)].point;
+    output << "2 "<< s << " " << t << "\n";
   }
+  output.close();
 
-  // Output skeletal points and the corresponding surface points.
-  BOOST_FOREACH(vertex_desc i, vertices(skeleton))
-  {
-    const Point& skel = skeleton[i].point;
-    std::cout << skel << ": ";
+  // Output skeleton points and the corresponding surface points
+  output.open("correspondance.cgal");
+  BOOST_FOREACH(Skeleton_vertex v, vertices(skeleton))
+    BOOST_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
+      output << "2 " << skeleton[v].point << "  " << get(CGAL::vertex_point, tmesh, vd)  << "\n";
 
-    for (size_t j = 0; j < skeleton[i].vertices.size(); ++j)
-    {
-      const Point& surf = mesh.point(skeleton[i].vertices[j]);
-      std::cout << surf << " ";
-    }
-    std::cout << "\n";
-  }
-  
   return 0;
 }
-
