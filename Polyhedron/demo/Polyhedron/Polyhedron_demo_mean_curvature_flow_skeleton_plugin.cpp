@@ -139,9 +139,9 @@ public:
     ui->omega_P->setValue(0.2);
     ui->omega_P->setSingleStep(0.1);
     ui->omega_P->setDecimals(3);
-    ui->min_edge_length->setDecimals(7);
-    ui->min_edge_length->setValue(0.002 * diag);
-    ui->min_edge_length->setSingleStep(0.0000001);
+    ui->max_edge_length->setDecimals(7);
+    ui->max_edge_length->setValue(0.002 * diag);
+    ui->max_edge_length->setSingleStep(0.0000001);
     ui->delta_area->setDecimals(7);
     ui->delta_area->setValue(1e-4);
     ui->delta_area->setSingleStep(1e-5);
@@ -210,7 +210,7 @@ public:
   bool check_mesh(Scene_polyhedron_item* item) {
     double omega_H = ui->omega_H->value();
     double omega_P = ui->omega_P->value();
-    double min_edge_length = ui->min_edge_length->value();
+    double max_edge_length = ui->max_edge_length->value();
     double delta_area = ui->delta_area->value();
     bool is_medially_centered = ui->is_medially_centered->isChecked();
 
@@ -229,7 +229,7 @@ public:
       //set algorithm parameters
       mcs->set_quality_speed_tradeoff(omega_H);
       mcs->set_medially_centered_speed_tradeoff(omega_P);
-      mcs->set_min_edge_length(min_edge_length);
+      mcs->set_max_edge_length(max_edge_length);
       mcs->set_is_medially_centered(is_medially_centered);
       mcs->set_area_variation_factor(delta_area);
 
@@ -263,7 +263,7 @@ public:
         //set algorithm parameters
         mcs->set_quality_speed_tradeoff(omega_H);
         mcs->set_medially_centered_speed_tradeoff(omega_P);
-        mcs->set_min_edge_length(min_edge_length);
+        mcs->set_max_edge_length(max_edge_length);
         mcs->set_is_medially_centered(is_medially_centered);
         mcs->set_area_variation_factor(delta_area);
 
@@ -284,7 +284,7 @@ public:
       {
         mcs->set_quality_speed_tradeoff(omega_H);
         mcs->set_medially_centered_speed_tradeoff(omega_P);
-        mcs->set_min_edge_length(min_edge_length);
+        mcs->set_max_edge_length(max_edge_length);
         mcs->set_area_variation_factor(delta_area);
         mcs->set_is_medially_centered(is_medially_centered);
       }
@@ -303,13 +303,13 @@ public:
   {
     double omega_H = ui->omega_H->value();
     double omega_P = ui->omega_P->value();
-    double min_edge_length = ui->min_edge_length->value();
+    double max_edge_length = ui->max_edge_length->value();
     double delta_area = ui->delta_area->value();
     bool is_medially_centered = ui->is_medially_centered->isChecked();
 
     mcs->set_quality_speed_tradeoff(omega_H);
     mcs->set_medially_centered_speed_tradeoff(omega_P);
-    mcs->set_min_edge_length(min_edge_length);
+    mcs->set_max_edge_length(max_edge_length);
     mcs->set_area_variation_factor(delta_area);
     mcs->set_is_medially_centered(is_medially_centered);
   }
@@ -402,7 +402,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionUpdateBBox()
 {
   double diag = scene->len_diagonal();
-  ui->min_edge_length->setValue(0.002 * diag);
+  ui->max_edge_length->setValue(0.002 * diag);
 }
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()

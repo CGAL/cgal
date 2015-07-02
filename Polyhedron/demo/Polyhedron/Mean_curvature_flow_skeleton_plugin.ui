@@ -66,14 +66,14 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_4">
            <item>
-            <widget class="QLabel" name="label_min_edge_length">
+            <widget class="QLabel" name="label_max_edge_length">
              <property name="text">
-              <string>min_edge_length</string>
+              <string>max_edge_length</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="min_edge_length"/>
+            <widget class="QDoubleSpinBox" name="max_edge_length"/>
            </item>
           </layout>
          </item>
@@ -162,9 +162,9 @@
     </layout>
    </widget>
    <zorder>omega_H</zorder>
-   <zorder>min_edge_length</zorder>
+   <zorder>max_edge_length</zorder>
    <zorder>label_omega_H</zorder>
-   <zorder>label_min_edge_length</zorder>
+   <zorder>label_max_edge_length</zorder>
    <zorder>pushButton_contract</zorder>
    <zorder>pushButton_collapse</zorder>
    <zorder>pushButton_split</zorder>

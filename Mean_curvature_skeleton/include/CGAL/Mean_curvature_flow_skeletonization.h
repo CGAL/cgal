@@ -289,8 +289,8 @@ private:
   double m_omega_H;
   /** Controling the smoothness of the medial approximation. */
   double m_omega_P;
-  /** Edges with length less than `min_edge_length` will be collapsed. */
-  double m_min_edge_length;
+  /** Edges with length less than `max_edge_length` will be collapsed. */
+  double m_max_edge_length;
   /** Triangles with angle greater than `alpha_TH` will be split. */
   double m_alpha_TH;
   /** Value very close to zero. */
@@ -356,7 +356,7 @@ double diagonal_length(const Bbox_3& bbox)
 }
 
 
-double init_min_edge_length()
+double init_max_edge_length()
 {
   vertex_iterator vb, ve;
   boost::tie(vb, ve) = vertices(m_tmesh);
@@ -382,7 +382,7 @@ public:
    * - `area_variation_factor() == 0.0001`
    * - `max_iterations() == 500`
    * - `is_medially_centered() == true`
-   * - `min_edge_length()` == 0.002 * the length of the diagonal of the bounding box of `tmesh`
+   * - `max_edge_length()` == 0.002 * the length of the diagonal of the bounding box of `tmesh`
    *
    * @pre `tmesh` is a triangulated surface mesh without borders and has exactly one connected component.
    * @param tmesh
@@ -424,10 +424,10 @@ public:
   }
 
   /// During the local remeshing step, an edge will be split
-  /// if it is longer than `min_edge_length()`.
-  double min_edge_length()
+  /// if it is longer than `max_edge_length()`.
+  double max_edge_length()
   {
-    return m_min_edge_length;
+    return m_max_edge_length;
   }
 
  void set_max_triangle_angle(double value)
@@ -435,9 +435,9 @@ public:
     m_alpha_TH = value;
   }
 
-  void set_min_edge_length(double value)
+  void set_max_edge_length(double value)
   {
-    m_min_edge_length = value;
+    m_max_edge_length = value;
   }
   /// @}
 
@@ -679,7 +679,7 @@ public:
   }
 
   /**
-   * Collapses edges of the meso-skeleton with length less than `min_edge_length()` and returns the number of edges collapsed.
+   * Collapses edges of the meso-skeleton with length less than `max_edge_length()` and returns the number of edges collapsed.
    */
   std::size_t collapse_edges()
   {
@@ -864,7 +864,7 @@ private:
     m_delta_area = 0.0001;
     m_max_iterations = 500;
     m_is_medially_centered = true;
-    m_min_edge_length =  init_min_edge_length();
+    m_max_edge_length =  init_max_edge_length();
     m_alpha_TH = 110 * (CGAL_PI / 180.0);
     m_zero_TH = 1e-7;
   }
@@ -1104,10 +1104,10 @@ private:
 
       vertex_descriptor vi = source(h, m_tmesh);
       vertex_descriptor vj = target(h, m_tmesh);
-      /// \todo do not use sqrt but square m_min_edge_length
+      /// \todo do not use sqrt but square m_max_edge_length
       double edge_length = sqrt(squared_distance(get(m_tmesh_point_pmap, vi),
                                                  get(m_tmesh_point_pmap, vj)));
-      if (internal::is_collapse_ok(m_tmesh, h) && edge_length < m_min_edge_length)
+      if (internal::is_collapse_ok(m_tmesh, h) && edge_length < m_max_edge_length)
       {
         Point p = midpoint(
           get(vertex_point, m_tmesh, source(h, m_tmesh)),
@@ -1310,7 +1310,7 @@ private:
       if (m_is_vertex_fixed_map.find(idx) == m_is_vertex_fixed_map.end())
       {
         bool willbefixed = internal::is_vertex_degenerate(m_tmesh, m_tmesh_point_pmap,
-                                                          v, m_min_edge_length);
+                                                          v, m_max_edge_length);
         if (willbefixed)
         {
           m_is_vertex_fixed_map[idx] = willbefixed;
@@ -1329,7 +1329,7 @@ private:
   std::size_t detect_degeneracies_heuristic()
   {
     std::size_t num_fixed = 0;
-    double elength_fixed = m_min_edge_length;
+    double elength_fixed = m_max_edge_length;
 
     BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
     {
