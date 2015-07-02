@@ -121,7 +121,7 @@ struct Skel_polyhedron_items_3: CGAL::Polyhedron_items_with_id_3 {
     template < class Refs, class Traits>
     struct Vertex_wrapper {
         typedef typename Traits::Point_3 Point;
-        typedef Skel_HDS_vertex_type< Refs, Point, std::size_t, vertex_descriptor> Vertex;
+      typedef Skel_HDS_vertex_type< Refs, Point, std::size_t, vertex_descriptor> Vertex;
     };
 };
 
@@ -660,7 +660,7 @@ public:
     compute_edge_weight();
 
   // AF: attention: num_vertices will not decrease for a Surface_mesh
-    int nver = num_vertices(m_tmesh);
+    int nver = static_cast<int>(num_vertices(m_tmesh));
     int nrows;
     if (m_is_medially_centered)
     {
@@ -697,7 +697,7 @@ public:
     // copy to surface mesh
     BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
     {
-      int id = get(m_vertex_id_pmap, vd);
+      int id = static_cast<int>(get(m_vertex_id_pmap, vd));
       int i = m_new_id[id];
       Point p(X[i], Y[i], Z[i]);
       put(m_tmesh_point_pmap, vd, p);
@@ -935,7 +935,7 @@ private:
 
     m_original_area = internal::get_surface_area(m_tmesh, m_tmesh_point_pmap);
 
-    m_vertex_id_count = num_vertices(m_tmesh);
+    m_vertex_id_count = static_cast<int>(num_vertices(m_tmesh));
     m_max_id = m_vertex_id_count;
 
     m_is_vertex_fixed_map.clear();
@@ -972,7 +972,7 @@ private:
 
     BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
     {
-      int id = get(m_vertex_id_pmap, vd);
+      int id = static_cast<int>(get(m_vertex_id_pmap, vd));
 
       int i = m_new_id[id];
       // if the vertex is fixed
@@ -998,7 +998,7 @@ private:
 
     BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
     {
-      int id = get(m_vertex_id_pmap, vd);
+      int id = static_cast<int>(get(m_vertex_id_pmap, vd));
       int i = m_new_id[id];
       double L = 1.0;
       // if the vertex is fixed
@@ -1011,7 +1011,7 @@ private:
       {
         vertex_descriptor vj = source(ed, m_tmesh);
         double wij = m_edge_weight[get(m_hedge_id_pmap, halfedge(ed, m_tmesh))] * 2.0;
-        int jd = get(m_vertex_id_pmap, vj);
+        int jd = static_cast<int>(get(m_vertex_id_pmap, vj));
         int j = m_new_id[jd];
         A.set_coef(i, j, wij * L, true);
         diagonal += -wij;
@@ -1032,7 +1032,7 @@ private:
     Point_inside_polyhedron_3<mTriangleMesh, Traits> test_inside(m_tmesh);
 
     // assemble right columns of linear system
-    int nver = num_vertices(m_tmesh);
+    int nver = static_cast<int>(num_vertices(m_tmesh));
     for (int i = 0; i < nver; ++i)
     {
       Bx[i] = 0;
@@ -1042,7 +1042,7 @@ private:
 
     BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
     {
-      int id = get(m_vertex_id_pmap, vd);
+      int id = static_cast<int>(get(m_vertex_id_pmap, vd));
       int i = m_new_id[id];
 
       double oh, op = 0.0;
@@ -1089,7 +1089,7 @@ private:
 
     BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
     {
-      int id = get(m_vertex_id_pmap, vd);
+      int id = static_cast<int>(get(m_vertex_id_pmap, vd));
       m_new_id[id] = cnt++;
     }
   }
@@ -1237,7 +1237,7 @@ private:
   void compute_incident_angle()
   {
     m_halfedge_angle.clear();
-    int ne = 2 * num_edges(m_tmesh);
+    int ne = 2 * static_cast<int>(num_edges(m_tmesh));
     m_halfedge_angle.resize(ne, 0);
 
     int idx = 0;
@@ -1248,7 +1248,7 @@ private:
 
     BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
     {
-      int e_id = get(m_hedge_id_pmap, hd);
+      int e_id = static_cast<int>(get(m_hedge_id_pmap, hd));
 
       if (is_border(hd, m_tmesh))
       {
@@ -1318,7 +1318,7 @@ private:
   /// Split triangles with an angle greater than `alpha_TH`.
   std::size_t split_flat_triangles()
   {
-    int ne = 2 * num_edges(m_tmesh);
+    int ne = 2 * static_cast<int>(num_edges(m_tmesh));
     compute_incident_angle();
 
     std::size_t cnt = 0;
@@ -1327,8 +1327,8 @@ private:
     {
       halfedge_descriptor ei = hd;
       halfedge_descriptor ej = opposite(ei, m_tmesh);
-      int ei_id = get(m_hedge_id_pmap, ei);
-      int ej_id = get(m_hedge_id_pmap, ej);
+      int ei_id = static_cast<int>(get(m_hedge_id_pmap, ei));
+      int ej_id = static_cast<int>(get(m_hedge_id_pmap, ej));
       if (ei_id < 0 || ei_id >= ne
        || ej_id < 0 || ej_id >= ne)
       {
@@ -1377,7 +1377,7 @@ private:
     std::size_t num_fixed = 0;
     BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
     {
-      int idx = get(m_vertex_id_pmap, v);
+      int idx = static_cast<int>(get(m_vertex_id_pmap, v));
 
       if (m_is_vertex_fixed_map.find(idx) == m_is_vertex_fixed_map.end())
       {
@@ -1405,7 +1405,7 @@ private:
 
     BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
     {
-      int idx = boost::get(m_vertex_id_pmap, v);
+      int idx = static_cast<int>(boost::get(m_vertex_id_pmap, v));
       if (m_is_vertex_fixed_map.find(idx) == m_is_vertex_fixed_map.end())
       {
         bool willbefixed = false;
@@ -1522,7 +1522,7 @@ private:
 
     BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
     {
-      int vid = get(m_vertex_id_pmap, v);
+      int vid = static_cast<int>(get(m_vertex_id_pmap, v));
       m_normals[vid] = internal::get_vertex_normal<typename mTriangleMesh::Vertex,Traits>(*v);
     }
   }

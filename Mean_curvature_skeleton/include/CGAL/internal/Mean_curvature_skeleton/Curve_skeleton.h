@@ -139,7 +139,7 @@ public:
     {
       if (!is_vertex_deleted[i])
       {
-        orig_vertex_id[id] = i;
+        orig_vertex_id[id] = static_cast<int>(i);
         new_vertex_id[i] = id++;
       }
     }
@@ -192,7 +192,7 @@ public:
 
     BOOST_FOREACH(vertex_descriptor vd, vertices(hg))
     {
-      int id = get(vertex_id_pmap, vd);
+      int id = static_cast<int>(get(vertex_id_pmap, vd));
       int new_id = new_vertex_id[id];
       if (new_id == -1)
       {
@@ -207,7 +207,7 @@ public:
         Point pv = get(hg_point_pmap, vd);
         pos = Point(pos.x() + pv.x(), pos.y() + pv.y(), pos.z() + pv.z());
       }
-      double num = record[id].size();
+      double num = static_cast<double>(record[id].size());
       curve[id_to_vd[new_id]].point = Point(pos.x() / num, pos.y() / num, pos.z() / num);
     }
   }
@@ -218,9 +218,9 @@ private:
   {
     MCFSKEL_DEBUG( std::cerr <<"init" << std::endl; )
 
-    int nb_edges = num_edges(hg);
-    int num_faces = hg.size_of_facets();
-    int nb_vertices = num_vertices(hg);
+    int nb_edges = static_cast<int>(num_edges(hg));
+    int num_faces = static_cast<int>(hg.size_of_facets());
+    int nb_vertices = static_cast<int>(num_vertices(hg));
     edge_to_face.resize(nb_edges);
     edge_to_vertex.resize(nb_edges);
     vertex_to_edge.resize(nb_vertices);
@@ -233,7 +233,7 @@ private:
     record.resize(nb_vertices);
     for (size_t i = 0; i < record.size(); ++i)
     {
-      record[i].push_back(i);
+      record[i].push_back(static_cast<int>(i));
     }
 
     id_to_descriptor.resize(nb_vertices);
@@ -244,7 +244,7 @@ private:
     int idx = 0;
     BOOST_FOREACH(vertex_descriptor vd, vertices(hg))
     {
-      surface_vertex_id[idx] = get(vertex_id_pmap, vd);
+      surface_vertex_id[idx] = static_cast<int>(get(vertex_id_pmap, vd));
       put(vertex_id_pmap, vd, idx++);
     }
 
@@ -274,7 +274,7 @@ private:
     {
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd,hg), hg))
       {
-        int id = get(hedge_id_pmap, hd);
+        int id = static_cast<int>(get(hedge_id_pmap, hd));
         face_to_edge[face_id].push_back(id);
         edge_to_face[id].push_back(face_id);
       }
@@ -284,11 +284,11 @@ private:
     // compute vertex-edge connectivity
     BOOST_FOREACH(vertex_descriptor vd, vertices(hg))
     {
-      int vid = get(vertex_id_pmap, vd);
+      int vid = static_cast<int>(get(vertex_id_pmap, vd));
       BOOST_FOREACH(edge_descriptor ed, in_edges(vd, hg))
       {
         halfedge_descriptor hd = halfedge(ed, hg);
-        int eid = get(hedge_id_pmap, hd);
+        int eid = static_cast<int>(get(hedge_id_pmap, hd));
         vertex_to_edge[vid].push_back(eid);
         edge_to_vertex[eid].push_back(vid);
       }
@@ -304,7 +304,7 @@ private:
     // shorter edge has higher priority
     BOOST_FOREACH(edge_descriptor ed, edges(hg))
     {
-      int id = get(hedge_id_pmap, halfedge(ed, hg));
+      int id = static_cast<int>(get(hedge_id_pmap, halfedge(ed, hg)));
       queue.insert(id);
     }
   }
@@ -469,7 +469,7 @@ private:
     {
       if (eid == edges[i])
       {
-        return std::make_pair(true, i);
+        return std::make_pair(true, static_cast<int>(i));
       }
     }
     return std::make_pair(false, -1);

@@ -97,10 +97,10 @@ bool is_vertex_degenerate(TriangleMesh& hg,
     }
   }
 
-  int V = vertices_in_disk.size();
-  int E = edges_in_disk.size() / 2;
-  int F = faces_in_disk.size();
-  int euler = V + F - E;
+  std::size_t V = vertices_in_disk.size();
+  std::size_t E = edges_in_disk.size() / 2;
+  std::size_t F = faces_in_disk.size();
+  std::size_t euler = V + F - E;
   if (euler != 1)
   {
     return true;
