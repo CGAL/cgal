@@ -7,7 +7,7 @@
 
 #include <CGAL/point_generators_3.h>
 
-#include <CGAL/Point_inside_polygon_mesh.h>
+#include <CGAL/Side_of_triangle_mesh.h>
 
 #include <vector>
 #include <fstream>
@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
   Mesh mesh;
   OpenMesh::IO::read_mesh(mesh, filename);
  
-  CGAL::Point_inside_polygon_mesh<Mesh, K> inside(mesh);
+  CGAL::Side_of_triangle_mesh<Mesh, K> inside(mesh);
 
   double size = max_coordinate(mesh);
 

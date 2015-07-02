@@ -25,8 +25,6 @@ int main(int argc, char* argv[])
      CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, mesh)).
                                                    geom_traits(Kernel()));
 
-  CGAL_assertion(CGAL::is_pure_triangle(mesh));
-
   OpenMesh::IO::write_mesh(mesh,"cube_tri.off");
 
   return 0;

@@ -24,8 +24,6 @@ int main(int argc, char* argv[])
 
   CGAL::Polygon_mesh_processing::triangulate_faces(mesh);
 
-  CGAL_assertion(is_pure_triangle(mesh));
-
   std::ofstream cube_off("P_tri.off");
   cube_off << mesh;
   cube_off.close();
