@@ -48,8 +48,8 @@ int main(int argc, char* argv[])
   // get the correspondent surface points
   mcs.convert_to_skeleton(skeleton);
 
-  std::cout << "Number of vertices of the skelton: " << boost::num_vertices(skeleton) << "\n";
-  std::cout << "Number of edges of the skelton: " << boost::num_edges(skeleton) << "\n";
+  std::cout << "Number of vertices of the skeleton: " << boost::num_vertices(skeleton) << "\n";
+  std::cout << "Number of edges of the skeleton: " << boost::num_edges(skeleton) << "\n";
 
   // Output all the edges of the skeleton.
   std::ofstream output("skel.cgal");

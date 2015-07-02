@@ -32,8 +32,8 @@ int main(int argc, char* argv[])
 
   CGAL::extract_mean_curvature_flow_skeleton(tmesh, skeleton);
 
-  std::cout << "Number of vertices of the skelton: " << boost::num_vertices(skeleton) << "\n";
-  std::cout << "Number of edges of the skelton: " << boost::num_edges(skeleton) << "\n";
+  std::cout << "Number of vertices of the skeleton: " << boost::num_vertices(skeleton) << "\n";
+  std::cout << "Number of edges of the skeleton: " << boost::num_edges(skeleton) << "\n";
 
   // Output all the edges of the skeleton.
   BOOST_FOREACH(Skeleton_edge e, edges(skeleton))
