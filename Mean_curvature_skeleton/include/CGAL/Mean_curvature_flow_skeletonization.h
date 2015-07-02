@@ -60,8 +60,8 @@
 // Some helper functions
 #include <CGAL/internal/Mean_curvature_skeleton/Utility.h>
 
-// For Fixed_edge_map
-#include <CGAL/internal/Mean_curvature_skeleton/Fixed_edge_map.h>
+// For fixed_edge_map
+#include <CGAL/Unique_hash_map.h>
 
 // For detect_degenarcy
 #include <CGAL/internal/Mean_curvature_skeleton/Detect_degeneracy.h>
@@ -664,7 +664,7 @@ public:
    */
   std::size_t collapse_edges()
   {
-    internal::Fixed_edge_map<mTriangleMesh> fixed_edge_map(m_tmesh);
+    Unique_hash_map<halfedge_descriptor, bool> fixed_edge_map;
     init_fixed_edge_map(fixed_edge_map);
 
     std::size_t num_collapses = 0;
@@ -1055,7 +1055,7 @@ private:
   }
 
   /// Collapse short edges by iteratively linear search.
-  std::size_t collapse_edges_linear(internal::Fixed_edge_map<mTriangleMesh>& fixed_edge_map)
+  std::size_t collapse_edges_linear(Unique_hash_map<halfedge_descriptor, bool>& fixed_edge_map)
   {
     std::vector<edge_descriptor> all_edges;
     all_edges.reserve(num_edges(m_tmesh));
@@ -1068,7 +1068,7 @@ private:
     for (size_t i = 0; i < all_edges.size(); ++i)
     {
       halfedge_descriptor h = halfedge(all_edges[i], m_tmesh);
-      if (fixed_edge_map.is_fixed(h))
+      if (is_fixed(h, fixed_edge_map))
       {
         continue;
       }
@@ -1089,9 +1089,9 @@ private:
         // since the surface mesh is closed, 6 halfedges will be collapsed
         // (opposite is automatically added)
         /// \todo edge should be removed from the queue rather than abusing the fixed_edge_map
-        fixed_edge_map.set_is_fixed(h, true);
-        fixed_edge_map.set_is_fixed(prev(h, m_tmesh), true);
-        fixed_edge_map.set_is_fixed(prev(opposite(h, m_tmesh), m_tmesh), true);
+        set_is_fixed(h, fixed_edge_map);
+        set_is_fixed(prev(h, m_tmesh), fixed_edge_map);
+        set_is_fixed(prev(opposite(h, m_tmesh), m_tmesh), fixed_edge_map);
 
         /// the mesh is closed, the target of h is always the one kept
         std::vector<Input_vertex_descriptor>& vec_kept = target(h, m_tmesh)->vertices;
@@ -1111,7 +1111,7 @@ private:
   }
 
   /// Fix an edge if both incident vertices are degenerate.
-  void init_fixed_edge_map(internal::Fixed_edge_map<mTriangleMesh>& fixed_edge_map)
+  void init_fixed_edge_map(Unique_hash_map<halfedge_descriptor, bool>& fixed_edge_map)
   {
     BOOST_FOREACH(edge_descriptor ed, edges(m_tmesh))
     {
@@ -1121,11 +1121,22 @@ private:
 
       if (vi->is_fixed && vj->is_fixed)
       {
-        fixed_edge_map.set_is_fixed(h, true); // opposite is automatically added
+        fixed_edge_map[h] = true;
+        fixed_edge_map[opposite(h,m_tmesh)] = true;
       }
     }
   }
 
+  bool is_fixed(halfedge_descriptor h, Unique_hash_map<halfedge_descriptor, bool>& fixed_edge_map)
+  {
+    return fixed_edge_map.is_defined(h);
+  }
+
+  void set_is_fixed(halfedge_descriptor h, Unique_hash_map<halfedge_descriptor, bool>& fixed_edge_map)
+  {
+    fixed_edge_map[h]=true;
+    fixed_edge_map[opposite(h, m_tmesh)]=true;
+  }
   // --------------------------------------------------------------------------
   // Triangle split
   // --------------------------------------------------------------------------
