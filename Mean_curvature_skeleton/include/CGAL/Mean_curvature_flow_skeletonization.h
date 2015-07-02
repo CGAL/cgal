@@ -337,7 +337,7 @@ double diagonal_length(const Bbox_3& bbox)
   double dz = bbox.zmax() - bbox.zmin();
 
   double diag = dx * dx + dy * dy + dz * dz;
-  return sqrt(diag);
+  return std::sqrt(diag);
 }
 
 
@@ -1044,7 +1044,6 @@ private:
   // --------------------------------------------------------------------------
 
   /// Track correspondent original surface points during collapse.
-  /// \todo remove this function and use a data member of the vertex instead for the poles
   void track_correspondence(vertex_descriptor v0, vertex_descriptor v1,
                             vertex_descriptor /* v */)
   {
@@ -1054,8 +1053,8 @@ private:
       const Point& pole1 = v1->pole;
 
       Point p1 = get(m_tmesh_point_pmap, v1);
-      double dis_to_pole0 = sqrt(squared_distance(pole0, p1));
-      double dis_to_pole1 = sqrt(squared_distance(pole1, p1));
+      double dis_to_pole0 = squared_distance(pole0, p1);
+      double dis_to_pole1 = squared_distance(pole1, p1);
       if (dis_to_pole0 < dis_to_pole1)
         v1->pole = v0->pole;
     }
@@ -1082,10 +1081,11 @@ private:
 
       vertex_descriptor vi = source(h, m_tmesh);
       vertex_descriptor vj = target(h, m_tmesh);
-      /// \todo do not use sqrt but square m_max_edge_length
-      double edge_length = sqrt(squared_distance(get(m_tmesh_point_pmap, vi),
-                                                 get(m_tmesh_point_pmap, vj)));
-      if (Euler::satisfies_link_condition(edge(h, m_tmesh), m_tmesh) && edge_length < m_max_edge_length)
+
+      double sq_edge_length = squared_distance(get(m_tmesh_point_pmap, vi),
+                                               get(m_tmesh_point_pmap, vj));
+      if (sq_edge_length < m_max_edge_length * m_max_edge_length &&
+          Euler::satisfies_link_condition(edge(h, m_tmesh), m_tmesh) )
       {
         Point p = midpoint(
           get(vertex_point, m_tmesh, source(h, m_tmesh)),
@@ -1173,9 +1173,9 @@ private:
         double dis2_ij = squared_distance(pi, pj);
         double dis2_ik = squared_distance(pi, pk);
         double dis2_jk = squared_distance(pj, pk);
-        double dis_ij = sqrt(dis2_ij);
-        double dis_ik = sqrt(dis2_ik);
-        double dis_jk = sqrt(dis2_jk);
+        double dis_ij = std::sqrt(dis2_ij);
+        double dis_ik = std::sqrt(dis2_ik);
+        double dis_jk = std::sqrt(dis2_jk);
 
         // A degenerate triangle will never undergo a split (but rather a collapse...)
         if (dis_ij < m_zero_TH || dis_ik < m_zero_TH || dis_jk < m_zero_TH)
@@ -1214,7 +1214,7 @@ private:
       Point pole_s = vs->pole;
       Point pole_t = vt->pole;
       Vector pole_st = pole_t - pole_s;
-      Vector p_projector = pole_st / sqrt(pole_st.squared_length());
+      Vector p_projector = pole_st / std::sqrt(pole_st.squared_length());
       Point pole_n = pole_s + p_projector * t;
       vnew->pole = pole_n;
     }
