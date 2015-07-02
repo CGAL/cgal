@@ -111,7 +111,7 @@ else
       intersection_plugin \
       io_implicit_function_plugin \
       jet_fitting_plugin \
-      join_polyhedra_plugin \
+      join_and_split_polyhedra_plugin \
       kernel_plugin \
       mesh_3_plugin \
       mesh_segmentation_plugin \
@@ -137,6 +137,7 @@ else
       polylines_io_plugin \
       remeshing_plugin \
       scene_basic_objects \
+      scale_space_reconstruction_plugin \
       scene_c2t3_item \
       scene_combinatorial_map_item \
       scene_edit_polyhedron_item \
@@ -148,12 +149,14 @@ else
       scene_polyhedron_item_decorator \
       scene_polyhedron_item_k_ring_selection \
       scene_polyhedron_selection_item \
+      scene_polyhedron_shortest_path_item \
       scene_polyhedron_transform_item \
       scene_polylines_item \
       scene_textured_polyhedron_item \
       selection_io_plugin \
       selection_plugin \
       self_intersection_plugin \
+      shortest_path_plugin \
       stl_plugin \
       subdivision_methods_plugin \
       transform_polyhedron_plugin \
