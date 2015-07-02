@@ -816,7 +816,7 @@ void keep_connected_components(PolygonMesh& pmesh
                                          pmesh,
                                          boost::vertex_index);
 
-  std::size_t num = connected_components(pmesh, face_cc, np);
+  connected_components(pmesh, face_cc, np);
 
   std::set<std::size_t> cc_to_keep;
   BOOST_FOREACH(face_descriptor f, components_to_keep)
