@@ -4,10 +4,7 @@
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
 #include <CGAL/Mean_curvature_flow_skeletonization.h>
 
-//#include <boost/property_map/property_map.hpp>
-
 #include <fstream>
-//#include <map>
 
 typedef CGAL::Simple_cartesian<double>                        Kernel;
 typedef Kernel::Point_3                                       Point;
