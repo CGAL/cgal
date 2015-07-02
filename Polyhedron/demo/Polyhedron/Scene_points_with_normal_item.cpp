@@ -290,43 +290,42 @@ void Scene_points_with_normal_item::computes_local_spacing(int k)
 
 QMenu* Scene_points_with_normal_item::contextMenu()
 {
-  const char* prop_name = "Menu modified by Scene_points_with_normal_item.";
+    const char* prop_name = "Menu modified by Scene_points_with_normal_item.";
 
-  QMenu* menu = Scene_item::contextMenu();
+    QMenu* menu = Scene_item::contextMenu();
 
-  // Use dynamic properties:
-  // http://doc.trolltech.com/lastest/qobject.html#property
-  bool menuChanged = menu->property(prop_name).toBool();
+    // Use dynamic properties:
+    // http://doc.trolltech.com/lastest/qobject.html#property
+    bool menuChanged = menu->property(prop_name).toBool();
 
-  if(!menuChanged) {
-    actionDeleteSelection = menu->addAction(tr("Delete Selection"));
-    actionDeleteSelection->setObjectName("actionDeleteSelection");
-    connect(actionDeleteSelection, SIGNAL(triggered()),this, SLOT(deleteSelection()));
+    if(!menuChanged) {
+        actionDeleteSelection = menu->addAction(tr("Delete Selection"));
+        actionDeleteSelection->setObjectName("actionDeleteSelection");
+        connect(actionDeleteSelection, SIGNAL(triggered()),this, SLOT(deleteSelection()));
 
-    actionResetSelection = menu->addAction(tr("Reset Selection"));
-    actionResetSelection->setObjectName("actionResetSelection");
-    connect(actionResetSelection, SIGNAL(triggered()),this, SLOT(resetSelection()));
+        actionResetSelection = menu->addAction(tr("Reset Selection"));
+        actionResetSelection->setObjectName("actionResetSelection");
+        connect(actionResetSelection, SIGNAL(triggered()),this, SLOT(resetSelection()));
 
-    actionSelectDuplicatedPoints = menu->addAction(tr("Select duplicated points"));
-    actionSelectDuplicatedPoints->setObjectName("actionSelectDuplicatedPoints");
-    connect(actionSelectDuplicatedPoints, SIGNAL(triggered()),this, SLOT(selectDuplicates()));
+        actionSelectDuplicatedPoints = menu->addAction(tr("Select duplicated points"));
+        actionSelectDuplicatedPoints->setObjectName("actionSelectDuplicatedPoints");
+        connect(actionSelectDuplicatedPoints, SIGNAL(triggered()),this, SLOT(selectDuplicates()));
 
+        menu->setProperty(prop_name, true);
+    }
 
-    menu->setProperty(prop_name, true);
-  }
+    if (isSelectionEmpty())
+    {
+        actionDeleteSelection->setDisabled(true);
+        actionResetSelection->setDisabled(true);
+    }
+    else
+    {
+        actionDeleteSelection->setDisabled(false);
+        actionResetSelection->setDisabled(false);
+    }
 
-  if (isSelectionEmpty())
-  {
-    actionDeleteSelection->setDisabled(true);
-    actionResetSelection->setDisabled(true);
-  }
-  else
-  {
-    actionDeleteSelection->setDisabled(false);
-    actionResetSelection->setDisabled(false);
-  }
-
-  return menu;
+    return menu;
 }
 
 void Scene_points_with_normal_item::setRenderingMode(RenderingMode m)

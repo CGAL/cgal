@@ -329,9 +329,8 @@ Scene_polygon_soup_item::new_vertex(const double& x,
                                     const double& y,
                                     const double& z)
 {
- if(!soup)
-    soup = new Polygon_soup;
-  soup->points.push_back(Point_3(x, y, z));
+
+    soup->points.push_back(Point_3(x, y, z));
 }
                                
 void 
