@@ -12,7 +12,7 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 
 int main(int argc, char** argv)
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/elephant.off";
   std::ifstream input(filename);
   Polyhedron poly;
 
@@ -27,7 +27,7 @@ int main(int argc, char** argv)
   test(poly, points, on_boundary);
 
   points.clear();
-  const int nb_query = (int)1.e6;
+  const int nb_query = (int)1.e4;
   points.reserve(nb_query);
   random_points<Point>(poly, nb_query, back_inserter(points));
   test(poly, points);

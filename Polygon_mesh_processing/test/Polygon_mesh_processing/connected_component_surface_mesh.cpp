@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 {
   typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
   const double bound = std::cos(0.7* CGAL_PI);
-  const char* filename = (argc > 1) ? argv[1] : "data/blobby_1cc.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
   Mesh sm;
   std::ifstream in(filename);
   in >> sm;

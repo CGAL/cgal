@@ -14,8 +14,10 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 
 
-int main(int, char** argv) {
-  std::ifstream input(argv[1]);
+int main(int argc, char** argv)
+{
+  const char* filename = (argc > 1) ? argv[1] : "data/elephant.off";
+  std::ifstream input(filename);
   Polyhedron poly;
 
   if ( !input || !(input >> poly) ){
@@ -32,10 +34,10 @@ int main(int, char** argv) {
      std::back_inserter(intersected_tris),
      CGAL::Polygon_mesh_processing::parameters::vertex_index_map(get(CGAL::vertex_point, poly)));
   bool intersecting_1 = !intersected_tris.empty();
-  CGAL_assertion(intersecting_1);
+  CGAL_assertion(!intersecting_1);
 
   std::cerr << "Self-intersection test took " << timer.time() << " sec." << std::endl;
-  std::cerr << intersected_tris.size() << " pairs of triangles are intersecting." << std::endl;
+  std::cerr << intersected_tris.size() << " pairs of triangles intersect." << std::endl;
 
   timer.reset();
   bool intersecting_2
@@ -45,7 +47,9 @@ int main(int, char** argv) {
   CGAL_assertion(intersecting_1 == intersecting_2);
 
   std::cerr << "does_self_intersect test took " << timer.time() << " sec." << std::endl;
-  std::cerr << (intersecting_2 ? "There is a self-intersection." : "There is no self-intersection.") << std::endl;
+  std::cerr
+    << (intersecting_2 ? "There is a self-intersection." : "There are no self-intersections.")
+    << std::endl;
 
   return 0;
 }

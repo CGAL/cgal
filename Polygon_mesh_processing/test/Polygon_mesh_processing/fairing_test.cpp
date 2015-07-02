@@ -19,15 +19,18 @@ typedef K::Vector_3 Vector;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
 
-void test(const char* file_name)
+void test(const char* filename)
 {
   //run test for a Polyhedron
-  std::ifstream input(file_name);
   Polyhedron poly; // file should contain oriented polyhedron
-  if (!input || !(input >> poly) || poly.empty())
+  std::ifstream input(filename);
+
+  if (!input || !(input >> poly))
   {
-    std::cerr << "Error: cannot read Polyhedron : " << file_name << "\n";
+    std::cerr << "Error: cannot read Polyhedron : " << filename << "\n";
+    CGAL_assertion(!poly.empty());
     CGAL_assertion(false);
+    return;
   }
 
   //try to fair the mesh
@@ -46,9 +49,13 @@ void test(const char* file_name)
   faired_off.close();
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-  test("data/elephant.off");
+  const char* filename = (argc > 1) ? argv[1] : "data/elephant.off";
+
+  test(filename);
 
   std::cerr << "All done." << std::endl;
+
+  return 0;
 }

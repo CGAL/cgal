@@ -31,7 +31,7 @@ void test(const char* file_name)
   bool before = CGAL::Polygon_mesh_processing::is_outward_oriented(poly);
   CGAL_assertion(before);
 
-  poly.inside_out();
+  CGAL::Polygon_mesh_processing::reverse_face_orientations(poly);
 
   bool after = CGAL::Polygon_mesh_processing::is_outward_oriented(poly);
   CGAL_assertion(!after);
@@ -51,7 +51,7 @@ void test(const char* file_name)
   before = CGAL::Polygon_mesh_processing::is_outward_oriented(mesh);
   CGAL_assertion(before);
 
-  poly.inside_out();
+  CGAL::Polygon_mesh_processing::reverse_face_orientations(mesh);
 
   after = CGAL::Polygon_mesh_processing::is_outward_oriented(mesh);
   CGAL_assertion(!after);

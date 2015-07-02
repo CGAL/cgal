@@ -50,7 +50,7 @@ int main()
     CGAL::Polygon_mesh_slicer<Mesh, K> slicer(m, tree);
     Polylines polylines;
     slicer(K::Plane_3(1,1,0,0), std::back_inserter(polylines));
-    assert(polylines.size()==1);
+    CGAL_assertion(polylines.size()==1);
   }
 
   std::ifstream input("data_slicer/open_cube_meshed.off");
@@ -67,34 +67,34 @@ int main()
 
   // test isolated vertex
   slicer(K::Plane_3(0,1,0,0), std::back_inserter(polylines));
-  assert(polylines.size()==2); // two polylines
-  assert( (polylines.front().size()==1) != (polylines.back().size()==1)); //only one isolated vertex
+  CGAL_assertion(polylines.size()==2); // two polylines
+  CGAL_assertion( (polylines.front().size()==1) != (polylines.back().size()==1)); //only one isolated vertex
 
 
   //test two nested polylines, one open and one closed
   polylines.clear();
   slicer(K::Plane_3(0,1,0,0.5), std::back_inserter(polylines));
-  assert(polylines.size()==2);// two polylines
-  assert( (polylines.front().front()==polylines.front().back()) !=
+  CGAL_assertion(polylines.size()==2);// two polylines
+  CGAL_assertion( (polylines.front().front()==polylines.front().back()) !=
           (polylines.back().front()==polylines.back().back()) ); //one open and one closed polyline
 
   // test only coplanar edges
   polylines.clear();
   slicer(K::Plane_3(0,0,1,1), std::back_inserter(polylines));
-  assert(polylines.size()==1); // one polyline
-  assert(polylines.front().front()==polylines.front().back()); // that is closed
+  CGAL_assertion(polylines.size()==1); // one polyline
+  CGAL_assertion(polylines.front().front()==polylines.front().back()); // that is closed
 
 
   //test only coplanar border edges
   polylines.clear();
   slicer(K::Plane_3(0,0,1,-1), std::back_inserter(polylines));
-  assert(polylines.size()==1); // one polyline
-  assert(polylines.front().front()!=polylines.front().back()); // that is closed
+  CGAL_assertion(polylines.size()==1); // one polyline
+  CGAL_assertion(polylines.front().front()!=polylines.front().back()); // that is closed
 
   //test no intersection
   polylines.clear();
   slicer(K::Plane_3(0,0,1,333), std::back_inserter(polylines));
-  assert(polylines.empty());
+  CGAL_assertion(polylines.empty());
 
   return 0;
 }
