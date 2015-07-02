@@ -26,6 +26,7 @@ void test_polyhedron(const char* fname)
   CGAL_assertion(poly.size_of_vertices() > 0);
   
   CGAL::Polygon_mesh_processing::stitch_borders(poly);
+  poly.normalize_border();
 
   CGAL_assertion(poly.is_valid(false, 5));
   std::cout << "OK\n";
@@ -65,5 +66,7 @@ int main()
   test_surface_mesh("data_stitching/mid_border.off");
   test_surface_mesh("data_stitching/multiple_incidence.off");
   test_surface_mesh("data_stitching/incidence_3.off");
+
+  return 0;
 }
 
