@@ -174,6 +174,15 @@ public:
     CGAL_triangulation_expensive_postcondition( is_valid() );
   }
 
+  template < typename InputIterator >
+  Periodic_3_regular_triangulation_3(InputIterator first, InputIterator last,
+      const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
+      const Geometric_traits& gt = Geometric_traits() )
+    : Base(domain, gt)
+  {
+    insert(first, last);
+  }
+
   void create_initial_triangulation()
   {
     CGAL_triangulation_assertion( cells_with_too_big_orthoball.empty() );
