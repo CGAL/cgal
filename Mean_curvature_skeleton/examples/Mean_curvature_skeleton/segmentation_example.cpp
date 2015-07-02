@@ -7,7 +7,7 @@
 #include <CGAL/mesh_segmentation.h>
 
 #include <fstream>
-#include <map>
+//#include <map>
 
 typedef CGAL::Simple_cartesian<double>                               Kernel;
 typedef Kernel::Point_3                                              Point;

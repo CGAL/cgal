@@ -1,20 +1,11 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Mean_curvature_flow_skeletonization.h>
-#include <CGAL/iterator.h>
 #include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Bbox_3.h>
-
-#include <boost/property_map/property_map.hpp>
-#include <boost/graph/graph_traits.hpp>
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/iterator/transform_iterator.hpp>
 
 #include <fstream>
-#include <map>
 
 typedef CGAL::Simple_cartesian<double>                               Kernel;
 typedef Kernel::Point_3                                              Point;
