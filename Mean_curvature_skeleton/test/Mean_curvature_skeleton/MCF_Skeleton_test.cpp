@@ -100,10 +100,10 @@ int main()
     return EXIT_FAILURE;
   }
 
-  double max_edge_length = 0.002;
-  mcs->set_max_edge_length(max_edge_length);
-  value = mcs->max_edge_length();
-  if (!check_value_equal(max_edge_length, value))
+  double min_edge_length = 0.002;
+  mcs->set_min_edge_length(min_edge_length);
+  value = mcs->min_edge_length();
+  if (!check_value_equal(min_edge_length, value))
   {
     return EXIT_FAILURE;
   }
