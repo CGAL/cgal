@@ -13,7 +13,6 @@
 #include <CGAL/predicates/Regular_triangulation_rtH3.h>
 #include <CGAL/predicates/predicates_on_weighted_points_cartesian_3.h>
 #include <CGAL/constructions/constructions_on_weighted_points_cartesian_3.h>
-#include <CGAL/Periodic_3_triangulation_traits_3.h>
 
 
 namespace CGAL
@@ -84,8 +83,7 @@ private:
 };
 
 template <class Kernel, class Off = typename CGAL::Periodic_3_offset_3>
-class Periodic_3_regular_triangulation_traits_base_3
- : public Periodic_3_triangulation_traits_base_3<Kernel, Off>
+class Periodic_3_regular_triangulation_traits_base_3 : public Kernel
 {
 public:
 	typedef Kernel                                                       K;
@@ -120,7 +118,13 @@ public:
 	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compute_critical_squared_radius_3> Compute_critical_squared_radius_3;
 	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compare_weighted_squared_radius_3> Compare_weighted_squared_radius_3;
 
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compare_xyz_3> Compare_xyz_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Orientation_3> Orientation_3;
   typedef Regular_traits_with_offsets_adaptor<Self, typename K::Coplanar_orientation_3> Coplanar_orientation_3;
+	typedef Periodic_3_construct_weighted_point_3<Self, typename K::Construct_point_3> Construct_point_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Construct_segment_3> Construct_segment_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Construct_triangle_3> Construct_triangle_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Construct_tetrahedron_3> Construct_tetrahedron_3;
 
 	void set_domain (const Iso_cuboid_3& domain)
 	{
@@ -187,10 +191,40 @@ public:
 		return Compare_weighted_squared_radius_3(&_domain);
 	}
 
+	Compare_xyz_3 compare_xyz_3_object () const
+	{
+		return Compare_xyz_3(&_domain);
+	}
+
+	Orientation_3 orientation_3_object () const
+	{
+		return Orientation_3(&_domain);
+	}
+
   Coplanar_orientation_3 coplanar_orientation_3_object () const
   {
     return Coplanar_orientation_3(&_domain);
   }
+
+	Construct_point_3 construct_point_3_object () const
+	{
+		return Construct_point_3(_domain);
+	}
+
+	Construct_segment_3 construct_segment_3_object () const
+	{
+		return Construct_segment_3(&_domain);
+	}
+
+	Construct_triangle_3 construct_triangle_3_object () const
+	{
+		return Construct_triangle_3(&_domain);
+	}
+
+	Construct_tetrahedron_3 construct_tetrahedron_3_object () const
+	{
+		return Construct_tetrahedron_3(&_domain);
+	}
 
 protected:
 	Iso_cuboid_3 _domain;
