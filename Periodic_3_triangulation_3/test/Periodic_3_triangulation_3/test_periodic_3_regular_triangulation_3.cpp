@@ -713,9 +713,9 @@ void test_insert_range (unsigned pt_count, unsigned seed)
   assert(p3rt3.number_of_sheets() == CGAL::make_array(1,1,1));
 }
 
-void test_construct_and_insert_range (unsigned pt_count, unsigned seed)
+void test_construction_and_insert_range (unsigned pt_count, unsigned seed)
 {
-  std::cout << "--- test_construct_and_insert_range" << std::endl;
+  std::cout << "--- test_construction_and_insert_range" << std::endl;
 
   CGAL::Random random(seed);
   typedef CGAL::Creator_uniform_3<double,Bare_point>  Creator;
@@ -865,25 +865,25 @@ int main (int argc, char** argv)
 
   CGAL::force_ieee_double_precision();
 
-//  test_construct_and_insert_range(800, 7);
-//  test_number_of_hidden_points();
-//  test_locate_geometry();
-//  test_dummy_points();
-//  test_construction();
-//  test_insert_1();
-//  test_insert_point();
-//  test_insert_hidden_point();
-//  test_insert_hiding_point();
-//  test_insert_a_point_twice();
-//  test_insert_two_points_with_the_same_position();
-//  test_remove();
-//  test_27_to_1_sheeted_covering();
   test_insert_range(800, 7);
+  test_construction_and_insert_range(800, 7);
+  test_number_of_hidden_points();
+  test_locate_geometry();
+  test_dummy_points();
+  test_construction();
+  test_insert_1();
+  test_insert_point();
+  test_insert_hidden_point();
+  test_insert_hiding_point();
+  test_insert_a_point_twice();
+  test_insert_two_points_with_the_same_position();
+  test_remove();
+  test_27_to_1_sheeted_covering();
 ////    Iso_cuboid unitaire ->  0 <= weight < 0.015625
-//  test_insert_rnd_as_delaunay(100, 0.);
-//  test_insert_rnd_as_delaunay(100, 0.01);
-//  test_insert_rnd_then_remove_all(5000, 7);
-//  test_insert_rnd_then_remove_all(5000, 12);
+  test_insert_rnd_as_delaunay(100, 0.);
+  test_insert_rnd_as_delaunay(100, 0.01);
+  test_insert_rnd_then_remove_all(5000, 7);
+  test_insert_rnd_then_remove_all(5000, 12);
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return EXIT_SUCCESS;

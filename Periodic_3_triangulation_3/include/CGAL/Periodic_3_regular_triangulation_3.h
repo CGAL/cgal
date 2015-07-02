@@ -177,10 +177,11 @@ public:
   template < typename InputIterator >
   Periodic_3_regular_triangulation_3(InputIterator first, InputIterator last,
       const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
-      const Geometric_traits& gt = Geometric_traits() )
+      const Geometric_traits& gt = Geometric_traits(),
+      bool is_large_point_set = false)
     : Base(domain, gt)
   {
-    insert(first, last);
+    insert(first, last, is_large_point_set);
   }
 
   void create_initial_triangulation()
@@ -363,7 +364,7 @@ public:
     Conflict_tester tester(*pbegin, this);
     Point_hider hider(this);
     Cover_manager cover_manager(*this);
-    double_vertices = Base::insert_in_conflict(points.begin(), points.end(), hint, tester, hider, cover_manager);
+    double_vertices = Base::insert_in_conflict(pbegin, points.end(), hint, tester, hider, cover_manager);
 
     if (is_large_point_set)
     {
