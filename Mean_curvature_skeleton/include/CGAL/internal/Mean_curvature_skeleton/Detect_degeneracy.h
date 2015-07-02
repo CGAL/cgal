@@ -127,12 +127,9 @@ void search_vertices_in_disk(TriangleMesh& hg,
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor            edge_descriptor;
 
-  std::map<vertex_descriptor, bool> vertex_visited;
-
   std::queue<vertex_descriptor> Q;
   Q.push(root);
   vertices_in_disk.insert(root);
-  vertex_visited[root] = true;
 
   double dist_TH = max_edge_length;
   while (!Q.empty())
@@ -145,13 +142,12 @@ void search_vertices_in_disk(TriangleMesh& hg,
       halfedge_descriptor hd = halfedge(ed, hg);
 
       vertex_descriptor new_v = target(ed, hg);
-      if (vertex_visited.find(new_v) == vertex_visited.end())
+      if (!vertices_in_disk.count(new_v))
       {
         double distance = std::sqrt(squared_distance(get(hg_point_pmap, new_v),
                                                      get(hg_point_pmap, root)));
         if (distance < dist_TH)
         {
-          vertex_visited[new_v] = true;
           Q.push(new_v);
           vertices_in_disk.insert(new_v);
         }
