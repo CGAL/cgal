@@ -2,7 +2,6 @@
 #define CGAL_TEST_PREFIX_H
 
 #define CGAL_USE_SURFACE_MESH
-#define CGAL_USE_OPENMESH
 
 #include <vector>
 #include <fstream>
