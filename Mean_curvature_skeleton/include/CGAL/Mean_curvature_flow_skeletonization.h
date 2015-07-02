@@ -46,15 +46,6 @@
 // Simplification function
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
-// Stop-condition policy
-#include <CGAL/internal/Mean_curvature_skeleton/Edge_minimum_length_stop_predicate.h>
-
-// Non-default cost and placement policies
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h>
-
-// Skip the geometric test
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Geometric_test_skipper.h>
-
 // Curve skeleton data structure
 #include <CGAL/internal/Mean_curvature_skeleton/Curve_skeleton.h>
 
@@ -68,9 +59,6 @@
 
 // Some helper functions
 #include <CGAL/internal/Mean_curvature_skeleton/Utility.h>
-
-// For correspondence tracking
-#include <CGAL/internal/Mean_curvature_skeleton/Track_correspondence_visitor.h>
 
 // For Fixed_edge_map
 #include <CGAL/internal/Mean_curvature_skeleton/Fixed_edge_map.h>
@@ -93,8 +81,6 @@
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
 #endif
-
-namespace SMS = CGAL::Surface_mesh_simplification;
 
 namespace CGAL {
 
@@ -126,14 +112,6 @@ struct Skel_polyhedron_items_3: CGAL::Polyhedron_items_with_id_3 {
 };
 
 } //end of namespace internal
-
-/// \ingroup PkgMeanCurvatureSkeleton3
-///@brief Edge collapse algorithm tag.
-enum Collapse_algorithm_tag
-{
-  SIMPLIFICATION, /**< algorithm from simplification package */
-  LINEAR          /**< iterative linear search */
-};
 
 /// \ingroup PkgMeanCurvatureSkeleton3
 ///@brief Degeneracy detection algorithm tag.
@@ -190,8 +168,6 @@ enum Degeneracy_algorithm_tag
 /// \endcode
 ///
 /// @cond CGAL_DOCUMENT_INTERNAL
-/// @tparam Collapse_algorithm_tag
-///         tag for selecting the edge collapse algorithm
 /// @tparam Degeneracy_algorithm_tag
 ///         tag for selecting the degeneracy detection algorithm
 /// @endcond
@@ -205,7 +181,6 @@ template <class TriangleMesh,
           class Traits_ = Default,
           class VertexPointMap_ = Default,
           class SparseLinearAlgebraTraits_d_ = Default,
-          Collapse_algorithm_tag Collapse_tag = LINEAR,
           Degeneracy_algorithm_tag Degeneracy_tag = EULER>
 #endif
 class Mean_curvature_flow_skeletonization
@@ -285,9 +260,6 @@ public:
                                    VertexIndexMap,
                                    HalfedgeIndexMap,
                                    mVertexPointMap>                            Curve_skeleton;
-
-  // Mesh simplification types
-  typedef SMS::Edge_profile<mTriangleMesh>                                     Profile;
 
   // Repeat Triangulation types
   typedef CGAL::Exact_predicates_exact_constructions_kernel                    Exact_kernel;
@@ -717,12 +689,7 @@ public:
     std::size_t num_collapses = 0;
     while (true)
     {
-      std::size_t cnt;
-      if (Collapse_tag == SIMPLIFICATION)
-        cnt = collapse_edges_simplification();
-      else
-        if (Collapse_tag == LINEAR)
-          cnt = collapse_edges_linear(fixed_edge_map);
+      std::size_t cnt = collapse_edges_linear(fixed_edge_map);
 
       if (cnt == 0) break;
       num_collapses += cnt;
@@ -1097,45 +1064,6 @@ private:
   // --------------------------------------------------------------------------
   // Edge collapse
   // --------------------------------------------------------------------------
-
-  /// Collapse short edges using simplification package.
-  std::size_t collapse_edges_simplification()
-  {
-    internal::Fixed_edge_map<mTriangleMesh> fixed_edge_map(m_tmesh);
-
-    init_fixed_edge_map(fixed_edge_map);
-
-
-    int edge_id = -1;
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
-    {
-      put(m_hedge_id_pmap, hd, ++edge_id);
-    }
-
-    // This is a stop predicate (defines when the algorithm terminates).
-    // The simplification stops when the length of all edges is greater
-    // than the minimum threshold.
-    CGAL::internal::Minimum_length_predicate<mTriangleMesh> stop(m_min_edge_length);
-
-    // midpoint placement without geometric test
-    SMS::Geometric_test_skipper< SMS::Midpoint_placement<mTriangleMesh> > placement;
-
-    internal::Track_correspondence_visitor<mTriangleMesh, mVertexPointMap, Input_vertex_descriptor> vis
-      (&m_tmesh_point_pmap, m_max_id, m_is_medially_centered);
-
-    // Workaround, as PMP has get_cost in a sub namespace
-    using namespace CGAL::parameters;
-    std::size_t r = SMS::edge_collapse
-                    (m_tmesh
-                    ,stop
-                    ,get_cost(SMS::Edge_length_cost<mTriangleMesh>())
-                          .get_placement(placement)
-                          .visitor(vis)
-                          .edge_is_constrained_map(fixed_edge_map)
-                    );
-
-    return r;
-  }
 
   /// Track correspondent original surface points during collapse.
   /// \todo remove this function and use a data member of the vertex instead for the poles
