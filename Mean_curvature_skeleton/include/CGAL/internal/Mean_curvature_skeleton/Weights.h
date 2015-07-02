@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Sebastien Loriot
 
@@ -30,11 +30,11 @@ namespace internal {
 
 struct Vector{
   double coords[3];
-  template<class Point>
-  Vector(const Point& b, const Point& a) {
-    coords[0] = a[0] - b[0];
-    coords[1] = a[1] - b[1];
-    coords[2] = a[2] - b[2];
+  template<class Traits>
+  Vector(const typename Traits::Point_3& b, const typename Traits::Point_3& a, const Traits& traits) {
+    coords[0] = traits.compute_x_3_object()(a) - traits.compute_x_3_object()(b);
+    coords[1] = traits.compute_y_3_object()(a) - traits.compute_y_3_object()(b);
+    coords[2] = traits.compute_z_3_object()(a) - traits.compute_z_3_object()(b);
   }
   double& operator[](int i)       { return coords[i]; }
   double  operator[](int i) const { return coords[i]; }
@@ -68,11 +68,12 @@ class Cotangent_value
 public:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
-  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
+  template<class Traits>
+  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2, const Traits& traits)
   {
-    Vector vec0(v2->point(), v1->point());
-    Vector vec1(v0->point(), v2->point());
-    Vector vec2(v1->point(), v0->point());
+    Vector vec0(v2->point(), v1->point(), traits);
+    Vector vec1(v0->point(), v2->point(), traits);
+    Vector vec2(v1->point(), v0->point(), traits);
     double e0_square = vec0.squared_length();
     double e1_square = vec1.squared_length();
     double e2_square = vec2.squared_length();
@@ -96,10 +97,11 @@ class Cotangent_value_Meyer
 public:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
-  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
+  template<class Traits>
+  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2, const Traits& traits)
   {
-    Vector a(v1->point(), v0->point());
-    Vector b(v1->point(), v2->point());
+    Vector a(v1->point(), v0->point(), traits);
+    Vector b(v1->point(), v2->point(), traits);
     double dot_ab = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     double dot_aa = a.squared_length();
     double dot_bb = b.squared_length();
@@ -113,10 +115,11 @@ class Cotangent_value_Meyer_secure
 public:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
-  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
+  template<class Traits>
+  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2, const Traits& traits)
   {
-    Vector a(v1->point(), v0->point());
-    Vector b(v1->point(), v2->point());
+    Vector a(v1->point(), v0->point(), traits);
+    Vector b(v1->point(), v2->point(), traits);
     double dot_ab = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     double dot_aa = a.squared_length();
     double dot_bb = b.squared_length();
@@ -137,11 +140,12 @@ class Cotangent_value_clamped : CotangentValue
 public:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
-  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
+  template<class Traits>
+  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2, const Traits& traits)
   {
     const double cot_1 = 57.289962;
     const double cot_89 = 0.017455;
-    double value = CotangentValue::operator()(v0, v1, v2);
+    double value = CotangentValue::operator()(v0, v1, v2, traits);
     return (std::max)(cot_89, (std::min)(value, cot_1));
   }
 };
@@ -152,9 +156,10 @@ class Cotangent_value_minimum_zero : CotangentValue
 public:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
-  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
+  template <class Traits>
+  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2, const Traits& traits)
   {
-    double value = CotangentValue::operator()(v0, v1, v2);
+    double value = CotangentValue::operator()(v0, v1, v2, traits);
     return (std::max)(0.0, value);
   }
 };
@@ -168,10 +173,11 @@ class Cotangent_value_area_weighted : CotangentValue
 public:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
-  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
+  template <class Traits>
+  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2, const Traits& traits)
   {
-    return CotangentValue::operator()(v0, v1, v2)
-      / std::sqrt(squared_area(v0->point(), v1->point(), v2->point()));
+    return CotangentValue::operator()(v0, v1, v2, traits)
+      / traits.compute_area_3_object()(v0->point(), v1->point(), v2->point());
   }
 };
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -192,7 +198,8 @@ public:
 
   // Returns the cotangent weight of specified halfedge_descriptor
   // Edge orientation is trivial
-  double operator()(halfedge_descriptor e, TriangleMesh& hg)
+  template <class Traits>
+  double operator()(halfedge_descriptor e, TriangleMesh& hg, const Traits& traits)
   {
      vertex_descriptor v0 = target(e, hg);
      vertex_descriptor v1 = source(e, hg);
@@ -208,7 +215,7 @@ public:
           halfedge_descriptor e_ccw = prev(opposite(e, hg), hg);
           v2 = source(e_ccw, hg);
        }
-       return ( CotangentValue::operator()(v0, v2, v1)/2.0 );
+       return ( CotangentValue::operator()(v0, v2, v1, traits)/2.0 );
      }
      else
      {
@@ -217,7 +224,7 @@ public:
         halfedge_descriptor e_ccw = prev(opposite(e, hg), hg);
         vertex_descriptor v3 = source(e_ccw, hg);
 
-        return ( CotangentValue::operator()(v0, v2, v1)/2.0 + CotangentValue::operator()(v0, v3, v1)/2.0 );
+        return ( CotangentValue::operator()(v0, v2, v1, traits)/2.0 + CotangentValue::operator()(v0, v3, v1, traits)/2.0 );
      }
   }
 };
@@ -235,7 +242,8 @@ public:
 
   // Returns the cotangent of the opposite angle of the edge
   // 0 for border edges (which does not have an opposite angle)
-  double operator()(halfedge_descriptor e, TriangleMesh& hg)
+  template <class Traits>
+  double operator()(halfedge_descriptor e, TriangleMesh& hg, const Traits& traits)
   {
      if( is_border(e, hg) ) { return 0.0;}
 
@@ -243,7 +251,7 @@ public:
      vertex_descriptor v1 = source(e, hg);
 
      vertex_descriptor v_op = target(next(e, hg), hg);
-     return CotangentValue::operator()(v0, v_op, v1);
+     return CotangentValue::operator()(v0, v_op, v1, traits);
   }
 };
 
@@ -259,11 +267,12 @@ public:
 
   // Returns the mean-value coordinate of specified halfedge_descriptor
   // Returns different value for different edge orientation (which is a normal behaivour according to formula)
-  double operator()(halfedge_descriptor e, TriangleMesh& hg)
+  template <class Traits>
+  double operator()(halfedge_descriptor e, TriangleMesh& hg, const Traits& traits)
   {
     vertex_descriptor v0 = target(e, hg);
     vertex_descriptor v1 = source(e, hg);
-    Vector vec(v1->point(), v0->point());
+    Vector vec(v1->point(), v0->point(), traits);
     double norm = std::sqrt( vec.squared_length() );
 
     // Only one triangle for border edges
@@ -279,7 +288,7 @@ public:
         v2 = source(e_ccw, hg);
       }
 
-      return ( half_tan_value_2(v1, v0, v2)/norm);
+      return ( half_tan_value_2(v1, v0, v2, traits)/norm);
     }
     else
     {
@@ -288,17 +297,18 @@ public:
       halfedge_descriptor e_ccw = prev(opposite(e, hg), hg);
       vertex_descriptor v3 = source(e_ccw, hg);
 
-      return ( half_tan_value_2(v1, v0, v2)/norm + half_tan_value_2(v1, v0, v3)/norm);
+      return ( half_tan_value_2(v1, v0, v2, traits)/norm + half_tan_value_2(v1, v0, v3, traits)/norm);
     }
   }
 
 private:
   // Returns the tangent value of half angle v0_v1_v2/2
-  double half_tan_value(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
+  template <class Traits>
+  double half_tan_value(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2, const Traits& traits)
   {
-    Vector vec0(v2->point(), v1->point());
-    Vector vec1(v0->point(), v2->point());
-    Vector vec2(v1->point(), v0->point());
+    Vector vec0(v2->point(), v1->point(), traits);
+    Vector vec1(v0->point(), v2->point(), traits);
+    Vector vec2(v1->point(), v0->point(), traits);
     double e0_square = vec0.squared_length();
     double e1_square = vec1.squared_length();
     double e2_square = vec2.squared_length();
@@ -312,10 +322,11 @@ private:
   }
 
   // My deviation built on Meyer_02
-  double half_tan_value_2(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
+  template <class Traits>
+  double half_tan_value_2(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2, const Traits& traits)
   {
-    Vector a(v1->point(), v0->point());
-    Vector b(v1->point(), v2->point());
+    Vector a(v1->point(), v0->point(), traits);
+    Vector b(v1->point(), v2->point(), traits);
     double dot_ab = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     double dot_aa = a.squared_length();
     double dot_bb = b.squared_length();
@@ -338,11 +349,12 @@ class Hybrid_weight : public PrimaryWeight, SecondaryWeight
 public:
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
 
-  double operator()(halfedge_descriptor e, TriangleMesh& hg)
+  template<class Traits>
+  double operator()(halfedge_descriptor e, TriangleMesh& hg, const Traits& traits)
   {
     double weight = PrimaryWeight::operator()(e, hg);
     //if(weight < 0) { std::cout << "Negative weight" << std::endl; }
-    return (weight >= 0) ? weight : SecondaryWeight::operator()(e, hg);
+    return (weight >= 0) ? weight : SecondaryWeight::operator()(e, hg, traits);
   }
 };
 
@@ -353,7 +365,8 @@ class Uniform_weight
 public:
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
 
-  double operator()(halfedge_descriptor /*e*/, TriangleMesh& /*hg*/)
+  template<class Traits>
+  double operator()(halfedge_descriptor /*e*/, TriangleMesh& /*hg*/,const Traits&)
   { return 1.0; }
 };
 

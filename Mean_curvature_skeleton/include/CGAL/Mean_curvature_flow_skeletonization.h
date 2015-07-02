@@ -260,6 +260,8 @@ private:
   HalfedgeIndexMap m_hedge_id_pmap;
   /** Storing the point for mTriangleMesh vertex_descriptor. */
   mVertexPointMap m_tmesh_point_pmap;
+  /** Traits class. */
+  Traits m_traits;
 
   /** Controling the velocity of movement and approximation quality. */
   double m_omega_H;
@@ -365,7 +367,6 @@ public:
    *        property map which associates a point to each vertex of the graph.
    * @param traits
    *        an instance of the traits class.
-   * \todo code: use the traits
    */
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       VertexPointMap vertex_point_map = get(CGAL::vertex_point, tmesh),
@@ -375,12 +376,15 @@ public:
 
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       VertexPointMap vertex_point_map,
-                                      Traits = Traits())
+                                      const Traits& traits = Traits())
+    : m_traits(traits)
   {
     init(tmesh, vertex_point_map);
   }
 
-  Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh)
+  Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
+                                      const Traits& traits = Traits())
+    : m_traits(traits)
   {
     init(tmesh, get(vertex_point, tmesh));
   }
@@ -643,7 +647,7 @@ public:
     {
       int id = static_cast<int>(get(m_vertex_id_pmap, vd));
       int i = m_new_id[id];
-      Point p(X[i], Y[i], Z[i]);
+      Point p =  m_traits.construct_point_3_object()(X[i], Y[i], Z[i]);
       put(m_tmesh_point_pmap, vd, p);
     }
 
@@ -746,7 +750,7 @@ public:
       remesh();
       detect_degeneracies();
 
-      double area = internal::get_surface_area(m_tmesh, m_tmesh_point_pmap);
+      double area = internal::get_surface_area(m_tmesh, m_tmesh_point_pmap, m_traits);
       double area_ratio = fabs(last_area - area) / m_original_area;
 
       MCFSKEL_INFO(std::cout << "area " << area << "\n";)
@@ -854,7 +858,7 @@ private:
       //, m_hedge_id_pmap(get(boost::halfedge_index, m_tmesh))
     m_are_poles_computed = false;
 
-    m_original_area = internal::get_surface_area(m_tmesh, m_tmesh_point_pmap);
+    m_original_area = internal::get_surface_area(m_tmesh, m_tmesh_point_pmap, m_traits);
 
     m_vertex_id_count = static_cast<int>(num_vertices(m_tmesh));
     m_max_id = m_vertex_id_count;
@@ -866,6 +870,15 @@ private:
   }
 
   // --------------------------------------------------------------------------
+  // Utilities
+  // --------------------------------------------------------------------------
+  double get_x(const Vector& v){ return m_traits.compute_x_3_object()(v); }
+  double get_y(const Vector& v){ return m_traits.compute_y_3_object()(v); }
+  double get_z(const Vector& v){ return m_traits.compute_z_3_object()(v); }
+  double get_x(const Point& v){ return m_traits.compute_x_3_object()(v); }
+  double get_y(const Point& v){ return m_traits.compute_y_3_object()(v); }
+  double get_z(const Point& v){ return m_traits.compute_z_3_object()(v); }
+  // --------------------------------------------------------------------------
   // Contraction
   // --------------------------------------------------------------------------
 
@@ -876,7 +889,7 @@ private:
     m_edge_weight.reserve(2 * num_edges(m_tmesh));
     BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
     {
-      m_edge_weight.push_back(this->m_weight_calculator(hd, m_tmesh));
+      m_edge_weight.push_back(m_weight_calculator(hd, m_tmesh, m_traits));
     }
   }
 
@@ -983,14 +996,14 @@ private:
           }
         }
       }
-      Bx[i + nver] = get(m_tmesh_point_pmap, vd).x() * oh;
-      By[i + nver] = get(m_tmesh_point_pmap, vd).y() * oh;
-      Bz[i + nver] = get(m_tmesh_point_pmap, vd).z() * oh;
+      Bx[i + nver] = get_x(get(m_tmesh_point_pmap, vd)) * oh;
+      By[i + nver] = get_y(get(m_tmesh_point_pmap, vd)) * oh;
+      Bz[i + nver] = get_z(get(m_tmesh_point_pmap, vd)) * oh;
       if (m_is_medially_centered)
       {
-        double x = to_double(vd->pole.x());
-        double y = to_double(vd->pole.y());
-        double z = to_double(vd->pole.z());
+        double x = get_x(vd->pole);
+        double y = get_y(vd->pole);
+        double z = get_z(vd->pole);
         Bx[i + nver * 2] = x * op;
         By[i + nver * 2] = y * op;
         Bz[i + nver * 2] = z * op;
@@ -1026,8 +1039,8 @@ private:
       const Point& pole1 = vkept->pole;
 
       Point p1 = get(m_tmesh_point_pmap, vkept);
-      double dis_to_pole0 = squared_distance(pole0, p1);
-      double dis_to_pole1 = squared_distance(pole1, p1);
+      double dis_to_pole0 = m_traits.compute_squared_distance_3_object()(pole0, p1);
+      double dis_to_pole1 = m_traits.compute_squared_distance_3_object()(pole1, p1);
       if (dis_to_pole0 < dis_to_pole1)
         vkept->pole = v0->pole;
     }
@@ -1043,8 +1056,9 @@ private:
     // an edge cannot be collapsed if both vertices are degenerate.
     if (vi->is_fixed && vj->is_fixed) return false;
 
-    double sq_edge_length = squared_distance(get(m_tmesh_point_pmap, vi),
-                                             get(m_tmesh_point_pmap, vj));
+    double sq_edge_length = m_traits.compute_squared_distance_3_object()(
+                              get(m_tmesh_point_pmap, vi),
+                              get(m_tmesh_point_pmap, vj));
     return sq_edge_length < m_min_edge_length * m_min_edge_length;
   }
 
@@ -1083,9 +1097,9 @@ private:
         Point pj = get(m_tmesh_point_pmap, vj);
         Point pk = get(m_tmesh_point_pmap, vk);
 
-        double dis2_ij = squared_distance(pi, pj);
-        double dis2_ik = squared_distance(pi, pk);
-        double dis2_jk = squared_distance(pj, pk);
+        double dis2_ij = m_traits.compute_squared_distance_3_object()(pi, pj);
+        double dis2_ik = m_traits.compute_squared_distance_3_object()(pi, pk);
+        double dis2_jk = m_traits.compute_squared_distance_3_object()(pj, pk);
         double dis_ij = std::sqrt(dis2_ij);
         double dis_ik = std::sqrt(dis2_ik);
         double dis_jk = std::sqrt(dis2_jk);
@@ -1104,6 +1118,12 @@ private:
     }
   }
 
+  void normalize(Vector& v)
+  {
+    double norm = std::sqrt(m_traits.compute_squared_length_3_object()(v));
+    v = m_traits.construct_divided_vector_3_object()(v, norm);
+  }
+
   /// Project the vertex `vk` to the line of `vs` and `vt`.
   Point project_vertex(const vertex_descriptor vs,
                        const vertex_descriptor vt,
@@ -1113,23 +1133,25 @@ private:
     Point ps = get(m_tmesh_point_pmap, vs);
     Point pt = get(m_tmesh_point_pmap, vt);
     Point pk = get(m_tmesh_point_pmap, vk);
-    CGAL::internal::Vector vec_st = CGAL::internal::Vector(ps, pt);
-    CGAL::internal::Vector vec_sk = CGAL::internal::Vector(ps, pk);
+    Vector vec_st = m_traits.construct_vector_3_object()(ps, pt);
+    Vector vec_sk = m_traits.construct_vector_3_object()(ps, pk);
 
-    vec_st.normalize();
-    double t = vec_st.dot(vec_sk);
-    Point st = Point(vec_st[0] * t, vec_st[1] * t, vec_st[2] * t);
-    Point pn = Point(ps[0] + st[0], ps[1] + st[1], ps[2] + st[2]);
+    normalize(vec_st);
+    double t = m_traits.compute_scalar_product_3_object()(vec_st,vec_sk);
+    Point st = m_traits.construct_point_3_object()( get_x(vec_st) * t, get_y(vec_st) * t, get_z(vec_st) * t);
+    Point pn = m_traits.construct_point_3_object()( get_x(ps) + get_x(st), get_y(ps) + get_y(st), get_z(ps) + get_z(st));
 
     // project the pole
     if (m_is_medially_centered)
     {
-      Point pole_s = vs->pole;
-      Point pole_t = vt->pole;
-      Vector pole_st = pole_t - pole_s;
-      Vector p_projector = pole_st / std::sqrt(pole_st.squared_length());
-      Point pole_n = pole_s + p_projector * t;
-      vnew->pole = pole_n;
+      const Point& pole_s = vs->pole;
+      const Point& pole_t = vt->pole;
+      Vector pole_st = m_traits.construct_vector_3_object()(pole_s, pole_t );
+      normalize(pole_st);
+      vnew->pole =  m_traits.construct_translated_point_3_object()(
+                        pole_s,
+                        m_traits.construct_scaled_vector_3_object()(pole_st, t)
+                     );
     }
     return pn;
   }
@@ -1201,7 +1223,7 @@ private:
       if (!v->is_fixed)
       {
         bool willbefixed = internal::is_vertex_degenerate(m_tmesh, m_tmesh_point_pmap,
-                                                          v, m_min_edge_length);
+                                                          v, m_min_edge_length, m_traits);
         if (willbefixed)
         {
           v->is_fixed=true;
@@ -1272,10 +1294,10 @@ private:
       {
         int pole_id = point_to_pole[vid][j];
         Point cell_point = cell_dual[pole_id];
-        Vector vt = cell_point - surface_point;
+        Vector vt = m_traits.construct_vector_3_object()(surface_point, cell_point);
         Vector n = m_normals[vid];
 
-        double t = vt * n;
+        double t = m_traits.compute_scalar_product_3_object()(vt, n);
 
         // choose the one with maximum distance along the normal
         if (t < 0 && t < max_neg_t)
@@ -1298,7 +1320,7 @@ private:
     BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
     {
       int vid = static_cast<int>(get(m_vertex_id_pmap, v));
-      m_normals[vid] = internal::get_vertex_normal<typename mTriangleMesh::Vertex,Traits>(*v);
+      m_normals[vid] = internal::get_vertex_normal(*v, m_traits);
     }
   }
 
@@ -1362,8 +1384,9 @@ std::size_t Mean_curvature_flow_skeletonization<TriangleMesh, Traits_, VertexPoi
       vertex_descriptor vi = source(h, m_tmesh);
       vertex_descriptor vj = target(h, m_tmesh);
 
-      Point p = midpoint( get(vertex_point, m_tmesh, vi),
-                          get(vertex_point, m_tmesh, vj) );
+      Point p = m_traits.construct_midpoint_3_object()(
+                  get(vertex_point, m_tmesh, vi),
+                  get(vertex_point, m_tmesh, vj) );
 
       // invalidate the edges that will be collapsed
       edges_to_collapse.erase(edge(prev(h, m_tmesh), m_tmesh));

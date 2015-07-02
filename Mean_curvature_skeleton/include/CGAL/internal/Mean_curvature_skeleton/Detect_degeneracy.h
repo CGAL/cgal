@@ -48,11 +48,12 @@ namespace internal {
 * @param root the given vertex
 * @param min_edge_length the diameter of the geodesic disk
 */
-template<class TriangleMesh, class TriangleMeshPointPMap>
+template<class TriangleMesh, class TriangleMeshPointPMap, class Traits>
 bool is_vertex_degenerate(TriangleMesh& hg,
                           TriangleMeshPointPMap& hg_point_pmap,
                           typename boost::graph_traits<TriangleMesh>::vertex_descriptor root,
-                          double min_edge_length)
+                          double min_edge_length,
+                          const Traits& traits)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor          vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
@@ -64,7 +65,7 @@ bool is_vertex_degenerate(TriangleMesh& hg,
   std::set<face_descriptor> faces_in_disk;
 
   vertices_in_disk.clear();
-  search_vertices_in_disk(hg, hg_point_pmap, root, vertices_in_disk, min_edge_length);
+  search_vertices_in_disk(hg, hg_point_pmap, root, vertices_in_disk, min_edge_length, traits);
 
   BOOST_FOREACH(vertex_descriptor vd, vertices_in_disk)
   {
@@ -116,12 +117,13 @@ bool is_vertex_degenerate(TriangleMesh& hg,
 * @param vertices_in_disk containing the found vertices within the disk
 * @param min_edge_length the diameter of the geodesic disk
 */
-template<class TriangleMesh, class TriangleMeshPointPMap>
+template<class TriangleMesh, class TriangleMeshPointPMap, class Traits>
 void search_vertices_in_disk(TriangleMesh& hg,
                              TriangleMeshPointPMap& hg_point_pmap,
                              typename boost::graph_traits<TriangleMesh>::vertex_descriptor root,
                              std::set<typename boost::graph_traits<TriangleMesh>::vertex_descriptor>& vertices_in_disk,
-                             double min_edge_length)
+                             double min_edge_length,
+                             const Traits& traits)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor          vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
@@ -144,8 +146,9 @@ void search_vertices_in_disk(TriangleMesh& hg,
       vertex_descriptor new_v = target(ed, hg);
       if (!vertices_in_disk.count(new_v))
       {
-        double distance = std::sqrt(squared_distance(get(hg_point_pmap, new_v),
-                                                     get(hg_point_pmap, root)));
+        double distance = std::sqrt(traits.compute_squared_distance_3_object()(
+                                      get(hg_point_pmap, new_v),
+                                      get(hg_point_pmap, root)) );
         if (distance < dist_TH)
         {
           Q.push(new_v);

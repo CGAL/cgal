@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Sebastien Loriot
 
@@ -25,33 +25,23 @@ namespace CGAL {
 
 namespace internal {
 
-template <class Facet, class Kernel>
-typename Kernel::Vector_3 get_facet_normal(const Facet& f)
+template <class Traits>
+void normalize(typename Traits::Vector_3& v, const Traits& traits)
 {
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::Vector_3 Vector;
-  typedef typename Facet::Halfedge_around_facet_const_circulator HF_circulator;
-  Vector normal = CGAL::NULL_VECTOR;
-  HF_circulator he = f.facet_begin();
-  HF_circulator end = he;
-  CGAL_For_all(he,end)
-  {
-    const Point& prev = he->prev()->vertex()->point();
-    const Point& curr = he->vertex()->point();
-    const Point& next = he->next()->vertex()->point();
-    Vector n = CGAL::cross_product(next-curr,prev-curr);
-    normal = normal + n;
-  }
-  return normal / std::sqrt(normal * normal);
+  double norm = std::sqrt(traits.compute_squared_length_3_object()(v));
+  v = traits.construct_divided_vector_3_object()(v, norm);
 }
 
-template <class Vertex, class Kernel>
-typename Kernel::Vector_3 get_vertex_normal(const Vertex& v)
+
+template <class Vertex, class Traits>
+typename Traits::Vector_3 get_vertex_normal(
+  Vertex& v,
+  const Traits& traits)
 {
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::Vector_3 Vector;
+  typedef typename Traits::Point_3 Point;
+  typedef typename Traits::Vector_3 Vector;
   typedef typename Vertex::Halfedge_around_vertex_const_circulator HV_circulator;
-  Vector normal = CGAL::NULL_VECTOR;
+  Vector normal = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
   HV_circulator he = v.vertex_begin();
   HV_circulator end = he;
   CGAL_For_all(he,end)
@@ -62,25 +52,27 @@ typename Kernel::Vector_3 get_vertex_normal(const Vertex& v)
       const Point& curr = he->vertex()->point();
       const Point& next = he->next()->vertex()->point();
 
-      Vector p1 = next - curr;
-      p1 = p1 / std::sqrt(p1 * p1);
-      Vector p2 = prev - curr;
-      p2 = p2 / std::sqrt(p2 * p2);
+      Vector p1 = traits.construct_vector_3_object()(curr, next);
+      normalize(p1, traits);
+      Vector p2 = traits.construct_vector_3_object()(curr, prev);
+      normalize(p2, traits);
 
-      double cosine = p1 * p2;
+      double cosine = traits.compute_scalar_product_3_object()(p1, p2);
       if      (cosine < -1.0) cosine = -1.0;
       else if (cosine >  1.0) cosine =  1.0;
       double angle = acos(cosine);
 
-      Vector n = CGAL::cross_product(next-curr,prev-curr);
-      n = n / std::sqrt(n * n);
-      n = n * angle;
+      Vector n = traits.construct_cross_product_vector_3_object()(
+        traits.construct_vector_3_object()(curr, next),
+        traits.construct_vector_3_object()(curr, prev) );
+      normalize(n, traits);
+      n = traits.construct_scaled_vector_3_object()(n, angle);
 
-//      Vector n = get_facet_normal<Facet,Kernel>(*he->facet());
-      normal = normal + n;
+      normal = traits.construct_sum_of_vectors_3_object()(normal, n);
     }
   }
-  return normal / std::sqrt(normal * normal);
+  normalize(normal, traits);
+  return normal;
 }
 
 } //namespace internal

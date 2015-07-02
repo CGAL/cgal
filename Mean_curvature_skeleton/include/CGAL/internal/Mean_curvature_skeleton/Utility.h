@@ -75,22 +75,10 @@ mesh_split(TriangleMesh& hg,
   return en;
 }
 
-template<class Vertex, class Kernel>
-double get_triangle_area(typename Kernel::Point_3 p1,
-                         typename Kernel::Point_3 p2,
-                         typename Kernel::Point_3 p3)
+template<class TriangleMesh, class TriangleMeshPointPMap, class Traits>
+double get_surface_area(TriangleMesh& hg, TriangleMeshPointPMap& hg_point_pmap, const Traits& traits)
 {
-  typedef typename Kernel::Vector_3 Vector;
-  Vector v12(p1, p2);
-  Vector v13(p1, p3);
-  return std::sqrt(cross_product(v12, v13).squared_length()) * 0.5;
-}
-
-template<class TriangleMesh, class TriangleMeshPointPMap>
-double get_surface_area(TriangleMesh& hg, TriangleMeshPointPMap& hg_point_pmap)
-{
-  typedef typename TriangleMesh::Traits                                  Kernel;
-  typedef typename Kernel::Point_3                                       Point;
+  typedef typename Traits::Point_3                                       Point;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor    face_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
@@ -105,10 +93,10 @@ double get_surface_area(TriangleMesh& hg, TriangleMeshPointPMap& hg_point_pmap)
     vertex_descriptor v2 = target(hd, hg);
     hd = next(hd, hg);
     vertex_descriptor v3 = target(hd, hg);
-    Point p1 = boost::get(hg_point_pmap, v1);
-    Point p2 = boost::get(hg_point_pmap, v2);
-    Point p3 = boost::get(hg_point_pmap, v3);
-    total_area += internal::get_triangle_area<vertex_descriptor, Kernel>(p1, p2, p3);
+    Point p1 = get(hg_point_pmap, v1);
+    Point p2 = get(hg_point_pmap, v2);
+    Point p3 = get(hg_point_pmap, v3);
+    total_area += traits.compute_area_3_object()(p1, p2, p3);
   }
   return total_area;
 }
