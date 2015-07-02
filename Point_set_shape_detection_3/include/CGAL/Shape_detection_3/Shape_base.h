@@ -163,7 +163,6 @@ namespace CGAL {
       std::vector<unsigned int> map;
       map.reserve(64);
       map.resize(2);
-      unsigned int label = 2;
 
       for (std::size_t y = 0;y<v_extent;y++) {
         for (std::size_t x = 0;x<u_extent;x++) {
@@ -195,12 +194,13 @@ namespace CGAL {
       }
 
       // post_wrap to handle boundaries in different shape types.
-      post_wrap(bitmap, u_extent, v_extent, map);
+      if (map.size() > 3)
+        post_wrap(bitmap, u_extent, v_extent, map);
       
       // Update labels
       for (std::size_t y = 0;y<v_extent;y++)
         for (std::size_t x = 0;x<u_extent;x++) {
-          int label = bitmap[y * u_extent + x];
+          unsigned int label = bitmap[y * u_extent + x];
 
           if (!label)
             continue;
@@ -221,7 +221,7 @@ namespace CGAL {
 
       // Find largest component. Start at index 2 as 0/1 are reserved for
       // basic free/occupied bitmap labels.
-      int largest = 2;
+      unsigned int largest = 2;
       for (std::size_t i = 3;i<count.size();i++)
         largest = (count[largest] < count[i]) ? i : largest;
 
@@ -421,7 +421,8 @@ namespace CGAL {
       return expected_value();
     }
 
-    void inline update_label(std::vector<unsigned int> &labels, unsigned int i, unsigned int &new_value) const {
+    void inline update_label(std::vector<unsigned int> &labels, unsigned int i,
+                             unsigned int &new_value) const {
       if (labels[i] != i)
         update_label(labels, labels[i], new_value);
 
@@ -466,6 +467,7 @@ namespace CGAL {
       // Avoid compiler warnings about unused parameters.
       (void)indices;
       (void)parameter_space;
+      (void)cluster_epsilon;
       (void)min;
       (void)max;
     }
@@ -522,7 +524,8 @@ namespace CGAL {
         arg != -std::numeric_limits<T>::infinity();
     }
 
-    void compute_bound(const std::size_t num_evaluated_points, const std::size_t num_available_points) {
+    void compute_bound(const std::size_t num_evaluated_points,
+                       const std::size_t num_available_points) {
       hypergeometrical_dist(-2 - num_evaluated_points,
                             -2 - num_available_points,
                             -1 - signed(m_indices.size()),
@@ -557,7 +560,8 @@ namespace CGAL {
     // 
     /// \cond SKIP_IN_MANUAL
     /*!
-      Contains indices of the inliers of the candidate, access to the point and normal data is provided via property maps.
+      Contains indices of the inliers of the candidate, access
+      to the point and normal data is provided via property maps.
      */
     std::vector<std::size_t> m_indices;
 

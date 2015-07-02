@@ -24,6 +24,17 @@
 
 #include <CGAL/Shape_detection_3/Shape_base.h>
 #include <CGAL/number_utils.h>
+#include <cmath>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+#ifndef M_PI_2
+#define M_PI_2 1.57079632679489661923
+#endif
+#ifndef M_PI_4
+#define M_PI_4 0.785398163397448309616
+#endif
 
 /*!
  \file Sphere.h
@@ -220,12 +231,304 @@ namespace CGAL {
       return 3;
     }
 
-    virtual bool supports_connected_component() const {
-      return false;
+    // Maps to the range [-1,1]^2
+    static void concentric_mapping(FT phi, FT proj, FT rad, FT &x, FT &y) {
+      phi = (phi < FT(-M_PI_4)) ? phi + FT(2 * M_PI) : phi;
+      FT r = FT(acos(double(CGAL::abs(proj)))) / FT(M_PI_2);
+
+      FT a = 0, b = 0;
+      if (phi < FT(M_PI_4)) {
+        a = r;
+        b = phi * r / FT(M_PI_4);
+      }
+      else if (phi < FT(3.0 * M_PI_4)) {
+        a = -FT(phi - M_PI_2) * r / FT(M_PI_4);
+        b = r;
+      }
+      else if (phi < FT(5.0 * M_PI_4)) {
+        a = -r;
+        b = (phi - FT(M_PI)) * (-r) / FT(M_PI_4);
+      }
+      else {
+        a = (phi - 3 * FT(M_PI_2)) * r / FT(M_PI_4);
+        b = -r;
+      }
+
+      x = a;
+      y = b;
+
+      // Map into hemisphere
+      if (proj >= 0)
+        y += 1;
+      else
+        y = -1 - y;
+
+      // Scale to surface distance
+      x = FT(x * M_PI_2 * rad);
+      y = FT(y * M_PI_2 * rad);
     }
 
+    virtual void parameters(const std::vector<std::size_t> &indices,
+                            std::vector<std::pair<FT, FT> > &parameterSpace,
+                            FT &cluster_epsilon,
+                            FT min[2],
+                            FT max[2]) const {
+      Vector_3 axis;
+      FT rad = radius();
+      // Take average normal as axis
+      for (std::size_t i = 0;i<indices.size();i++)
+        axis = axis + this->normal(indices[i]);
+      axis = axis / (CGAL::sqrt(axis.squared_length()));
+
+      // create basis x,y
+      Vector_3 d1 = Vector_3((FT) 0, (FT) 0, (FT) 1);
+      Vector_3 d2 = CGAL::cross_product(axis, d1);
+      FT l = d2.squared_length();
+      if (l < (FT)0.0001) {
+        d1 = Vector_3((FT) 1, (FT) 0, (FT) 0);
+        d2 = CGAL::cross_product(axis, d1);
+        l = d2.squared_length();
+      }
+      d2 = d2 / CGAL::sqrt(l);
+
+      d1 = CGAL::cross_product(axis, d2);
+      l = CGAL::sqrt(d1.squared_length());
+      if (l == 0)
+        return;
+
+      d1 = d1 * (FT)1.0 / l;
+
+      // Process first point separately to initialize min/max
+
+      Vector_3 vec = this->point(indices[0]) - m_sphere.center();
+      FT proj = axis * vec; // sign indicates northern or southern hemisphere
+      FT phi = atan2(vec * d2, vec * d1);
+      FT x, y;
+      concentric_mapping(phi, proj, rad, x, y);
+
+      min[0] = max[0] = x;
+      min[1] = max[1] = y;
+
+      parameterSpace[0] = std::pair<FT, FT>(x, y);
+
+      for (std::size_t i = 1;i<indices.size();i++) {
+        Vector_3 vec = this->point(indices[i]) - m_sphere.center();
+        proj = axis * vec; // sign indicates northern or southern hemisphere
+        phi = atan2(vec * d2, vec * d1);
+
+        concentric_mapping(phi, proj, rad, x, y);
+
+        min[0] = (std::min<FT>)(min[0], x);
+        max[0] = (std::max<FT>)(max[0], x);
+
+        min[1] = (std::min<FT>)(min[1], y);
+        max[1] = (std::max<FT>)(max[1], y);
+
+        parameterSpace[i] = std::pair<FT, FT>(x, y);
+      }
+
+      // Is close to wrapping around? Check all three directions separately
+      m_wrap_right = abs(max[0] - M_PI_2 * rad) < (cluster_epsilon * 0.5);
+      m_wrap_left = abs(min[0] + M_PI_2 * rad) < (cluster_epsilon * 0.5);
+
+      FT diff_top = CGAL::abs(-FT(M_PI * rad) - min[1]) 
+        + FT(M_PI * rad) - max[1];
+      m_wrap_top = diff_top < cluster_epsilon;
+
+      if (m_wrap_top || m_wrap_left || m_wrap_right) {
+        cluster_epsilon = FT(M_PI * rad)
+          / FT(floor((M_PI * rad) / cluster_epsilon));
+
+        // center bitmap at equator
+        FT required_space = ceil(
+          (std::max<FT>)(CGAL::abs(min[1]), max[1]) / cluster_epsilon)
+          * cluster_epsilon;
+        min[1] = -required_space;
+        max[1] = required_space;
+      }
+
+      m_equator = std::size_t((abs(min[1])) / cluster_epsilon - 0.5);
+    }
+
+    virtual void post_wrap(const std::vector<unsigned int> &bitmap,
+      const std::size_t &u_extent,
+      const std::size_t &v_extent,
+      std::vector<unsigned int> &labels) const {
+        unsigned int l;
+        unsigned int nw, n, ne;
+        if (m_wrap_top && v_extent > 2) {
+          // Handle first index separately.
+          l = bitmap[0];
+          if (l) {
+            n = bitmap[(v_extent - 1) * u_extent];
+
+            if (u_extent == 1) {
+              if (n && l != n) {
+                update_label(labels, (std::max<unsigned int>)(n, l),
+                             l = (std::min<unsigned int>)(n, l));
+                return;
+              }
+            }
+
+            ne = bitmap[(v_extent - 1) * u_extent + 1];
+
+            // diagonal wrapping
+            if (m_wrap_left && v_extent > 2) {
+              nw = bitmap[v_extent * u_extent - 1];
+              if (nw && nw != l)
+                update_label(labels, (std::max<unsigned int>)(nw, l),
+                             l = (std::min<unsigned int>)(nw, l));
+            }
+
+            if (n && n != l)
+              update_label(labels, (std::max<unsigned int>)(n, l),
+                           l = (std::min<unsigned int>)(n, l));
+            else if (ne && ne != l)
+              update_label(labels, (std::max<unsigned int>)(ne, l),
+                           l = (std::min<unsigned int>)(ne, l));
+          }
+
+          for (std::size_t i = 1;i<u_extent - 1;i++) {
+            l = bitmap[i];
+            if (!l)
+              continue;
+
+            nw = bitmap[(v_extent - 1) * u_extent + i - 1];
+            n = bitmap[(v_extent - 1) * u_extent + i];
+            ne = bitmap[(v_extent - 1) * u_extent + i + 1];
+
+            if (nw && nw != l)
+              update_label(labels, (std::max<unsigned int>)(nw, l),
+                           l = (std::min<unsigned int>)(nw, l));
+            if (n && n != l)
+              update_label(labels, (std::max<unsigned int>)(n, l),
+                           l = (std::min<unsigned int>)(n, l));
+            else if (ne && ne != l)
+              update_label(labels, (std::max<unsigned int>)(ne, l),
+                           l = (std::min<unsigned int>)(ne, l));
+          }
+
+          // Handle last index separately
+          l = bitmap[u_extent - 1];
+          if (l) {
+            n = bitmap[u_extent * v_extent - 1];
+            nw = bitmap[u_extent * v_extent - 2];
+
+            // diagonal wrapping
+            if (m_wrap_right && v_extent > 2) {
+              ne = bitmap[(v_extent - 1) * u_extent];
+              if (ne && ne != l)
+                update_label(labels, (std::max<unsigned int>)(ne, l),
+                             l = (std::min<unsigned int>)(ne, l));
+            }
+
+            if (n && n != l)
+              update_label(labels, (std::max<unsigned int>)(n, l), 
+                           l = (std::min<unsigned int>)(n, l));
+            else if (nw && nw != l)
+              update_label(labels, (std::max<unsigned int>)(nw, l),
+                           l = (std::min<unsigned int>)(nw, l));
+          }
+        }
+
+        // Walk upwards on the right side in the northern hemisphere
+        if (m_wrap_right && v_extent > 2) {
+          // First index
+          l = bitmap[(m_equator + 1) * u_extent - 1];
+          unsigned int ws = bitmap[(m_equator + 3) * u_extent - 1];
+          
+          if (l && ws && l != ws)
+            update_label(labels, (std::max<unsigned int>)(ws, l),
+                         l = (std::min<unsigned int>)(ws, l));
+
+          for (std::size_t i = 1;i<(v_extent>>1) - 1;i++) {
+            l = bitmap[(m_equator - i + 1) * u_extent - 1];
+            if (!l)
+              continue;
+
+            unsigned int wn = bitmap[(m_equator + i) * u_extent - 1];
+            unsigned int w = bitmap[(m_equator + i + 1) * u_extent - 1];
+            ws = bitmap[(m_equator + i + 2) * u_extent - 1];
+
+            if (wn && wn != l)
+              update_label(labels, (std::max<unsigned int>)(wn, l),
+                           l = (std::min<unsigned int>)(wn, l));
+            if (w && w != l)
+              update_label(labels, (std::max<unsigned int>)(w, l),
+                           l = (std::min<unsigned int>)(w, l));
+            else if (ws && ws != l)
+              update_label(labels, (std::max<unsigned int>)(ws, l),
+                           l = (std::min<unsigned int>)(ws, l));
+          }
+
+          // Last index
+          l = bitmap[u_extent - 1];
+          if (l) {
+            unsigned int w = bitmap[u_extent * v_extent - 1];
+            unsigned int wn = bitmap[(v_extent - 1) * u_extent - 1];
+
+            if (w && w != l)
+              update_label(labels, (std::max<unsigned int>)(w, l),
+                           l = (std::min<unsigned int>)(w, l));
+            else if (wn && wn != l)
+              update_label(labels, (std::max<unsigned int>)(wn, l),
+                                    l = (std::min<unsigned int>)(wn, l));
+          }
+        }
+
+        if (m_wrap_left && v_extent > 2) {
+          // First index
+          l = bitmap[(m_equator) * u_extent];
+          unsigned int es = bitmap[(m_equator + 2) * u_extent];
+
+          if (l && l != es)
+            update_label(labels, (std::max<unsigned int>)(es, l),
+                         l = (std::min<unsigned int>)(es, l));
+
+          for (std::size_t i = 1;i<(v_extent>>1) - 1;i++) {
+            l = bitmap[(m_equator - i) * u_extent];
+            if (!l)
+              continue;
+
+            unsigned int en = bitmap[(m_equator + i) * u_extent];
+            unsigned int e = bitmap[(m_equator + i + 1) * u_extent];
+            es = bitmap[(m_equator + i + 2) * u_extent];
+
+            if (en && en != l)
+              update_label(labels, (std::max<unsigned int>)(en, l),
+                           l = (std::min<unsigned int>)(en, l));
+            if (e && e != l)
+              update_label(labels, (std::max<unsigned int>)(e, l),
+                           l = (std::min<unsigned int>)(e, l));
+            else if (es && es != l)
+              update_label(labels, (std::max<unsigned int>)(es, l),
+                           l = (std::min<unsigned int>)(es, l));
+          }
+
+          // Last index
+          l = bitmap[0];
+          if (l) {
+            unsigned int w = bitmap[(v_extent - 1) * u_extent];
+            unsigned int wn = bitmap[(v_extent - 2) * u_extent];
+
+            if (w && w != l)
+              update_label(labels, (std::max<unsigned int>)(w, l),
+                           l = (std::min<unsigned int>)(w, l));
+            else if (wn && wn != l)
+              update_label(labels, (std::max<unsigned int>)(wn, l),
+                           l = (std::min<unsigned int>)(wn, l));
+          }
+        }
+    }
+
+    virtual bool supports_connected_component() const {
+      return true;
+    }
+    
   private:
     Sphere_3 m_sphere;
+    mutable bool m_wrap_right, m_wrap_top, m_wrap_left;
+    mutable std::size_t m_equator;
 /// \endcond
   };
 }
