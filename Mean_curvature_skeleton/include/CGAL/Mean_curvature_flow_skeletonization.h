@@ -60,9 +60,6 @@
 // Some helper functions
 #include <CGAL/internal/Mean_curvature_skeleton/Utility.h>
 
-// For fixed_edge_map
-#include <CGAL/Unique_hash_map.h>
-
 // For detect_degenarcy
 #include <CGAL/internal/Mean_curvature_skeleton/Detect_degeneracy.h>
 
@@ -158,17 +155,10 @@ struct Skel_polyhedron_items_3: CGAL::Polyhedron_items_with_id_3 {
 /// @tparam Degeneracy_algorithm_tag
 ///         tag for selecting the degeneracy detection algorithm
 /// @endcond
-#ifdef DOXYGEN_RUNNING
-template <class TriangleMesh,
-          class Traits = Default,
-          class VertexPointMap = Default,
-          class SparseLinearAlgebraTraits_d = Default>
-#else
 template <class TriangleMesh,
           class Traits_ = Default,
           class VertexPointMap_ = Default,
           class SparseLinearAlgebraTraits_d_ = Default>
-#endif
 class Mean_curvature_flow_skeletonization
 {
 // Public types
@@ -349,6 +339,7 @@ double init_min_edge_length()
   return 0.002 * diagonal_length(bbox);
 }
 
+std::size_t collapse_short_edges();
 // Public methods
 public:
 
@@ -664,18 +655,7 @@ public:
    */
   std::size_t collapse_edges()
   {
-    Unique_hash_map<halfedge_descriptor, bool> fixed_edge_map;
-    init_fixed_edge_map(fixed_edge_map);
-
-    std::size_t num_collapses = 0;
-    while (true)
-    {
-      std::size_t cnt = collapse_edges_linear(fixed_edge_map);
-
-      if (cnt == 0) break;
-      num_collapses += cnt;
-    }
-    return num_collapses;
+    return collapse_short_edges();
   }
 
   /**
@@ -1038,105 +1018,36 @@ private:
   // --------------------------------------------------------------------------
 
   /// Track correspondent original surface points during collapse.
-  void track_correspondence(vertex_descriptor v0, vertex_descriptor v1,
-                            vertex_descriptor /* v */)
+  void update_pole(vertex_descriptor v0, vertex_descriptor vkept)
   {
     if (m_is_medially_centered)
     {
       const Point& pole0 = v0->pole;
-      const Point& pole1 = v1->pole;
+      const Point& pole1 = vkept->pole;
 
-      Point p1 = get(m_tmesh_point_pmap, v1);
+      Point p1 = get(m_tmesh_point_pmap, vkept);
       double dis_to_pole0 = squared_distance(pole0, p1);
       double dis_to_pole1 = squared_distance(pole1, p1);
       if (dis_to_pole0 < dis_to_pole1)
-        v1->pole = v0->pole;
+        vkept->pole = v0->pole;
     }
   }
 
-  /// Collapse short edges by iteratively linear search.
-  std::size_t collapse_edges_linear(Unique_hash_map<halfedge_descriptor, bool>& fixed_edge_map)
+  bool edge_should_be_collapsed(edge_descriptor ed)
   {
-    std::vector<edge_descriptor> all_edges;
-    all_edges.reserve(num_edges(m_tmesh));
-    edge_iterator eb, ee;
+    halfedge_descriptor h = halfedge(ed, m_tmesh);
 
-    boost::tie(eb, ee) = edges(m_tmesh);
-    std::copy(eb, ee, std::back_inserter(all_edges));
+    vertex_descriptor vi = source(h, m_tmesh);
+    vertex_descriptor vj = target(h, m_tmesh);
 
-    std::size_t cnt = 0;
-    for (size_t i = 0; i < all_edges.size(); ++i)
-    {
-      halfedge_descriptor h = halfedge(all_edges[i], m_tmesh);
-      if (is_fixed(h, fixed_edge_map))
-      {
-        continue;
-      }
+    // an edge cannot be collapsed if both vertices are degenerate.
+    if (vi->is_fixed && vj->is_fixed) return false;
 
-      vertex_descriptor vi = source(h, m_tmesh);
-      vertex_descriptor vj = target(h, m_tmesh);
-
-      double sq_edge_length = squared_distance(get(m_tmesh_point_pmap, vi),
-                                               get(m_tmesh_point_pmap, vj));
-      if (sq_edge_length < m_min_edge_length * m_min_edge_length &&
-          Euler::satisfies_link_condition(edge(h, m_tmesh), m_tmesh) )
-      {
-        Point p = midpoint(
-          get(vertex_point, m_tmesh, source(h, m_tmesh)),
-          get(vertex_point, m_tmesh, target(h, m_tmesh)));
-
-        // invalidate the edges that will be collapsed
-        // since the surface mesh is closed, 6 halfedges will be collapsed
-        // (opposite is automatically added)
-        /// \todo edge should be removed from the queue rather than abusing the fixed_edge_map
-        set_is_fixed(h, fixed_edge_map);
-        set_is_fixed(prev(h, m_tmesh), fixed_edge_map);
-        set_is_fixed(prev(opposite(h, m_tmesh), m_tmesh), fixed_edge_map);
-
-        /// the mesh is closed, the target of h is always the one kept
-        std::vector<Input_vertex_descriptor>& vec_kept = target(h, m_tmesh)->vertices;
-        std::vector<Input_vertex_descriptor>& vec_removed = source(h, m_tmesh)->vertices;
-        vec_kept.insert(vec_kept.end(), vec_removed.begin(), vec_removed.end());
-        vertex_descriptor v = Euler::collapse_edge(edge(h, m_tmesh), m_tmesh);
-        put(m_tmesh_point_pmap, v, p);
-
-        CGAL_assertion(vj==v);
-        track_correspondence(vi, vj, v);
-
-        ++cnt;
-      }
-    }
-
-    return cnt;
+    double sq_edge_length = squared_distance(get(m_tmesh_point_pmap, vi),
+                                             get(m_tmesh_point_pmap, vj));
+    return sq_edge_length < m_min_edge_length * m_min_edge_length;
   }
 
-  /// Fix an edge if both incident vertices are degenerate.
-  void init_fixed_edge_map(Unique_hash_map<halfedge_descriptor, bool>& fixed_edge_map)
-  {
-    BOOST_FOREACH(edge_descriptor ed, edges(m_tmesh))
-    {
-      halfedge_descriptor h = halfedge(ed, m_tmesh);
-      vertex_descriptor vi = source(h, m_tmesh);
-      vertex_descriptor vj = target(h, m_tmesh);
-
-      if (vi->is_fixed && vj->is_fixed)
-      {
-        fixed_edge_map[h] = true;
-        fixed_edge_map[opposite(h,m_tmesh)] = true;
-      }
-    }
-  }
-
-  bool is_fixed(halfedge_descriptor h, Unique_hash_map<halfedge_descriptor, bool>& fixed_edge_map)
-  {
-    return fixed_edge_map.is_defined(h);
-  }
-
-  void set_is_fixed(halfedge_descriptor h, Unique_hash_map<halfedge_descriptor, bool>& fixed_edge_map)
-  {
-    fixed_edge_map[h]=true;
-    fixed_edge_map[opposite(h, m_tmesh)]=true;
-  }
   // --------------------------------------------------------------------------
   // Triangle split
   // --------------------------------------------------------------------------
@@ -1415,6 +1326,77 @@ private:
     }
   }
 };
+
+template <class TriangleMesh,
+          class Traits_,
+          class VertexPointMap_,
+          class SparseLinearAlgebraTraits_d_>
+std::size_t Mean_curvature_flow_skeletonization<TriangleMesh, Traits_, VertexPointMap_, SparseLinearAlgebraTraits_d_>::collapse_short_edges()
+{
+  std::size_t cnt=0, prev_cnt=0;
+
+  std::set<edge_descriptor> edges_to_collapse, non_topologically_valid_collapses;
+
+  BOOST_FOREACH(edge_descriptor ed, edges(m_tmesh))
+    if ( edge_should_be_collapsed(ed) )
+      edges_to_collapse.insert(ed);
+
+  do{
+    prev_cnt=cnt;
+    while(!edges_to_collapse.empty())
+    {
+      edge_descriptor ed = *edges_to_collapse.begin();
+      edges_to_collapse.erase(edges_to_collapse.begin());
+
+      // skip the edge is it became long enough
+      if ( !edge_should_be_collapsed(ed) ) continue;
+
+      if ( !Euler::satisfies_link_condition(ed,m_tmesh) )
+      {
+        non_topologically_valid_collapses.insert(ed);
+        continue;
+      }
+
+      halfedge_descriptor h = halfedge(ed, m_tmesh);
+
+      vertex_descriptor vi = source(h, m_tmesh);
+      vertex_descriptor vj = target(h, m_tmesh);
+
+      Point p = midpoint( get(vertex_point, m_tmesh, vi),
+                          get(vertex_point, m_tmesh, vj) );
+
+      // invalidate the edges that will be collapsed
+      edges_to_collapse.erase(edge(prev(h, m_tmesh), m_tmesh));
+      edges_to_collapse.erase(edge(prev(opposite(h, m_tmesh), m_tmesh), m_tmesh));
+
+      non_topologically_valid_collapses.erase(ed);
+      non_topologically_valid_collapses.erase(edge(prev(h, m_tmesh), m_tmesh));
+      non_topologically_valid_collapses.erase(edge(prev(opposite(h, m_tmesh), m_tmesh), m_tmesh));
+
+      // the mesh is closed, the target of h is always the one kept
+      put(m_tmesh_point_pmap, vj, p);
+      std::vector<Input_vertex_descriptor>& vec_kept = vj->vertices;
+      std::vector<Input_vertex_descriptor>& vec_removed = vi->vertices;
+      vec_kept.insert(vec_kept.end(), vec_removed.begin(), vec_removed.end());
+      if (vi->is_fixed) vj->is_fixed=true;
+      update_pole(vi, vj);
+
+      vertex_descriptor v = Euler::collapse_edge(ed, m_tmesh);
+
+      CGAL_assertion(vj==v);
+
+      BOOST_FOREACH(edge_descriptor oed, out_edges(v, m_tmesh))
+        if ( edge_should_be_collapsed(oed) ) edges_to_collapse.insert(oed);
+
+      ++cnt;
+    }
+    if (prev_cnt==cnt) break;
+    edges_to_collapse.swap(non_topologically_valid_collapses);
+  } while(!edges_to_collapse.empty());
+
+  return cnt;
+}
+
 
 } //namespace CGAL
 
