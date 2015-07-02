@@ -14,6 +14,8 @@
 #include <CGAL/predicates/predicates_on_weighted_points_cartesian_3.h>
 #include <CGAL/constructions/constructions_on_weighted_points_cartesian_3.h>
 
+#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
+
 
 namespace CGAL
 {
@@ -83,10 +85,10 @@ private:
 };
 
 template <class Kernel, class Off = typename CGAL::Periodic_3_offset_3>
-class Periodic_3_regular_triangulation_traits_base_3 : public Kernel
+class Periodic_3_regular_triangulation_traits_base_3 : public Regular_triangulation_euclidean_traits_3<Kernel>
 {
 public:
-	typedef Kernel                                                       K;
+	typedef Regular_triangulation_euclidean_traits_3<Kernel>             K;
 	typedef Off                                                          Offset;
 	typedef Periodic_3_regular_triangulation_traits_base_3<K, Offset>    Self;
 
