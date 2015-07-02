@@ -5,14 +5,8 @@
 #include <CGAL/Periodic_3_offset_3.h>
 #include <CGAL/Traits_with_offsets_adaptor.h>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Weighted_point.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Kernel_traits.h>
-
-#include <CGAL/predicates/Regular_triangulation_ftC3.h>
-#include <CGAL/predicates/Regular_triangulation_rtH3.h>
-#include <CGAL/predicates/predicates_on_weighted_points_cartesian_3.h>
-#include <CGAL/constructions/constructions_on_weighted_points_cartesian_3.h>
 
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
