@@ -51,4 +51,6 @@ int main()
   test("data_polygon_soup/one_duplicated_edge_sharing_vertex.off", 8);
   test("data_polygon_soup/partial_overlap.off", 4);
   test("data_polygon_soup/incompatible_orientation.off", 2);
+
+  return 0;
 }
