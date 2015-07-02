@@ -621,7 +621,7 @@ public:
   /// @{
 
   /**
-   * Run one contraction step following the mean curvature flow.
+   * Runs one contraction step following the mean curvature flow.
    */
   void contract_geometry()
   {
