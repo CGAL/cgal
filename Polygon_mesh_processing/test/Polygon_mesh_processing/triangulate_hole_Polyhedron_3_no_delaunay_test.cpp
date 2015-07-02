@@ -357,4 +357,6 @@ int main() {
 
   test_triangulate_refine_and_fair_hole_compile();
   std::cerr << "All Done!" << std::endl;
+
+  return 0;
 }
