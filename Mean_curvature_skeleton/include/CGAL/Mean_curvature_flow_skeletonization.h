@@ -406,8 +406,8 @@ public:
     return m_alpha_TH;
   }
 
-  /// During the local remeshing step, an edge will be split
-  /// if it is longer than `min_edge_length()`.
+  /// During the local remeshing step, an edge will be collapse
+  /// if it is length is less than `min_edge_length()`.
   double min_edge_length()
   {
     return m_min_edge_length;
