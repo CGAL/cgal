@@ -63,14 +63,18 @@ Periodic_3_regular_triangulation_3 & rt1);
 Equivalent to constructing an empty triangulation with the optional 
 domain and traits class arguments and calling `insert(first,last)`. 
 \pre The `value_type` of `first` and `last` are `Weighted_point`s lying inside `domain` and `domain` is a cube. 
-Their weights are non-negative and smaller than 1/64 times the squared cube edge length. 
+Their weights are non-negative and smaller than 1/64 times the squared cube edge length.
+If the fourth argument
+`is_large_point_set` is set to `true` a heuristic for
+optimizing the insertion of large point sets is applied.
 */ 
 template < class InputIterator > 
 Periodic_3_regular_triangulation_3 ( 
 InputIterator first, 
-InputIterator last, 
+InputIterator last,
 const Iso_cuboid & domain = Iso_cuboid(0,0,0,1,1,1), 
-const Geom_traits & traits = Geom_traits()); 
+const Geom_traits & traits = Geom_traits(),
+bool is_large_point_set = false);
 
 /// @} 
 
