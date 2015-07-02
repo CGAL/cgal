@@ -86,8 +86,8 @@ int main(int argc, char* argv[])
   CGAL::sdf_values_postprocessing(tmesh, sdf_property_map);
 
   // create a property-map for segment-ids (it is an adaptor for this case)
-  std::vector<int> segment_ids( num_faces(tmesh) );
-  Facet_with_id_pmap<int> segment_property_map(segment_ids);
+  std::vector<std::size_t> segment_ids( num_faces(tmesh) );
+  Facet_with_id_pmap<std::size_t> segment_property_map(segment_ids);
 
   // segment the mesh using default parameters
   std::cout << "Number of segments: "

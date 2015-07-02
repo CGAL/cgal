@@ -446,8 +446,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   CGAL::sdf_values_postprocessing(*input_triangle_mesh, sdf_property_map);
 
   // create a property-map for segment-ids (it is an adaptor for this case)
-  std::vector<int> segment_ids( num_faces(*input_triangle_mesh) );
-  Facet_with_id_pmap<int> segment_property_map(segment_ids);
+  std::vector<std::size_t> segment_ids( num_faces(*input_triangle_mesh) );
+  Facet_with_id_pmap<std::size_t> segment_property_map(segment_ids);
 
   // segment the mesh using default parameters
   std::cout << "Number of segments: "
