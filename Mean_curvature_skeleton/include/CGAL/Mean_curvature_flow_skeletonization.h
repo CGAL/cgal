@@ -85,8 +85,6 @@ namespace CGAL {
 
   }
 
-/// @cond CGAL_DOCUMENT_INTERNAL
-
 namespace internal{
 
 template < class Refs, class Point, class ID, class vertex_descriptor>
@@ -110,15 +108,6 @@ struct Skel_polyhedron_items_3: CGAL::Polyhedron_items_with_id_3 {
 
 } //end of namespace internal
 
-/// \ingroup PkgMeanCurvatureSkeleton3
-///@brief Degeneracy detection algorithm tag.
-enum Degeneracy_algorithm_tag
-{
-  HEURISTIC, /**< a simple heuristic */
-  EULER      /**< counting the euler characteristic */
-};
-
-/// @endcond
 
 /// \ingroup PkgMeanCurvatureSkeleton3
 /// Function object that enables to extract the mean curvature
@@ -177,8 +166,7 @@ template <class TriangleMesh,
 template <class TriangleMesh,
           class Traits_ = Default,
           class VertexPointMap_ = Default,
-          class SparseLinearAlgebraTraits_d_ = Default,
-          Degeneracy_algorithm_tag Degeneracy_tag = EULER>
+          class SparseLinearAlgebraTraits_d_ = Default>
 #endif
 class Mean_curvature_flow_skeletonization
 {
@@ -747,14 +735,7 @@ public:
    */
   std::size_t detect_degeneracies()
   {
-    if (Degeneracy_tag == HEURISTIC)
-    {
-      return detect_degeneracies_heuristic();
-    }
-    else if (Degeneracy_tag == EULER)
-    {
-      return detect_degeneracies_in_disk();
-    }
+    return detect_degeneracies_in_disk();
   }
 
   /// Performs subsequent calls to `contract_geometry()`, `collapse_edges()`, `split_faces()` and `detect_degeneracies()`
@@ -1312,50 +1293,6 @@ private:
         {
           m_is_vertex_fixed_map[idx] = willbefixed;
           num_fixed++;
-        }
-      }
-    }
-
-    MCFSKEL_INFO(std::cerr << "fixed " << num_fixed << " vertices.\n";)
-
-    return num_fixed;
-  }
-
-  /// Test degeneracy of a vertex by a simple heuristic looking for a
-  /// triangular cross section.
-  std::size_t detect_degeneracies_heuristic()
-  {
-    std::size_t num_fixed = 0;
-    double elength_fixed = m_max_edge_length;
-
-    BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
-    {
-      int idx = static_cast<int>(boost::get(m_vertex_id_pmap, v));
-      if (m_is_vertex_fixed_map.find(idx) == m_is_vertex_fixed_map.end())
-      {
-        bool willbefixed = false;
-        int bad_counter = 0;
-
-        BOOST_FOREACH(edge_descriptor ed, in_edges(v, m_tmesh))
-        {
-          halfedge_descriptor edge = halfedge(ed, m_tmesh);
-          vertex_descriptor v0 = source(edge, m_tmesh);
-          vertex_descriptor v1 = target(edge, m_tmesh);
-          double length = sqrt(squared_distance(get(m_tmesh_point_pmap, v0),
-                                                get(m_tmesh_point_pmap, v1)));
-          if (length < elength_fixed)
-          {
-            if (!Euler::satisfies_link_condition(ed, m_tmesh))
-            {
-              bad_counter++;
-            }
-          }
-        }
-        willbefixed = (bad_counter >= 2);
-        if (willbefixed)
-        {
-          m_is_vertex_fixed_map[idx] = willbefixed;
-          ++num_fixed;
         }
       }
     }
