@@ -209,4 +209,6 @@ int main() {
   test_should_be_no_output("data/collinear.polylines.txt", true);
   test_should_be_no_output("data/collinear.polylines.txt", false);
   std::cerr << "All Done!" << std::endl;
+
+  return 0;
 }
