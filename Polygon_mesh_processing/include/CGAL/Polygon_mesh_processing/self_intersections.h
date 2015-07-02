@@ -260,10 +260,27 @@ self_intersections(const TriangleMesh& tmesh, OutputIterator out)
  * Same as above but the self-intersections reported
  * are only limited to the faces in `face_range`.
  *
- * \tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
+ * @pre `CGAL::is_triangle_mesh(tmesh)`
+ *
+ * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
  *  model of `Range`.
  * Its iterator type is `RandomAccessIterator`.
- * \param face_range the range of faces to check for self-intersection.
+ * @tparam TriangleMesh a model of `FaceListGraph` that has an internal property map
+ *         for `CGAL::vertex_point_t`
+ * @tparam OutputIterator a model of `OutputIterator` holding objects of type
+ *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
+ * @tparam NamedParameters a sequence of \ref namedparameters
+ *
+ * @param face_range the range of faces to check for self-intersection.
+ * @param tmesh the triangulated surface mesh to be checked
+ * @param out output iterator to be filled with all pairs of non-adjacent faces that intersect
+ * @param np optional sequence of \ref namedparameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+ *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `SelfIntersectionTraits` \cgalParamEnd
+ * \cgalNamedParamsEnd
+
  */
 template <class TriangleMesh
         , class FaceRange
