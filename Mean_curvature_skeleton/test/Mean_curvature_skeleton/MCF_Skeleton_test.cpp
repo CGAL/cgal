@@ -82,7 +82,7 @@ int main()
 
   double value;
   bool bvalue;
-  int ivalue;
+  std::size_t ivalue;
 
   double omega_H = 0.2;
   mcs->set_quality_speed_tradeoff(omega_H);
@@ -124,7 +124,7 @@ int main()
     return EXIT_FAILURE;
   }
 
-  int max_iterations = 200;
+  std::size_t max_iterations = 200;
   mcs->set_max_iterations(max_iterations);
   ivalue = mcs->max_iterations();
   if (!check_value_equal(max_iterations, ivalue))
