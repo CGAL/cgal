@@ -91,10 +91,11 @@ template < class Refs, class Point, class ID, class vertex_descriptor>
 struct Skel_HDS_vertex_type : public HalfedgeDS_vertex_max_base_with_id<Refs, Point, ID>
 {
   typedef HalfedgeDS_vertex_max_base_with_id<Refs, Point, ID> Base;
-  Skel_HDS_vertex_type() : Base ()  {}
-  Skel_HDS_vertex_type( Point const& p) : Base(p) {}
+  Skel_HDS_vertex_type() : Base (), is_fixed(false)  {}
+  Skel_HDS_vertex_type( Point const& p) : Base(p), is_fixed(false) {}
   std::vector<vertex_descriptor> vertices;
   Point pole;
+  bool is_fixed;
 };
 
 template <class vertex_descriptor>
@@ -307,9 +308,6 @@ private:
   int m_max_id;
   /** Used when assembling the matrix. */
   std::map<int, int> m_new_id;
-
-  /** Store the id of fixed vertices. */
-  std::map<size_t, bool> m_is_vertex_fixed_map;
 
   /** The incident angle for a halfedge. */
   std::vector<double> m_halfedge_angle;
@@ -533,8 +531,7 @@ public:
     fixed_points.clear();
     BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
     {
-      int id = get(m_vertex_id_pmap, vd);
-      if (m_is_vertex_fixed_map.find(id) != m_is_vertex_fixed_map.end())
+      if (vd->is_fixed)
         fixed_points.push_back(get(m_tmesh_point_pmap, vd));
     }
   }
@@ -550,8 +547,7 @@ public:
     non_fixed_points.clear();
     BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
     {
-      int id = get(m_vertex_id_pmap, vd);
-      if (m_is_vertex_fixed_map.find(id) == m_is_vertex_fixed_map.end())
+      if (!vd->is_fixed)
         non_fixed_points.push_back(get(m_tmesh_point_pmap, vd));
     }
   }
@@ -883,8 +879,6 @@ private:
     m_vertex_id_count = static_cast<int>(num_vertices(m_tmesh));
     m_max_id = m_vertex_id_count;
 
-    m_is_vertex_fixed_map.clear();
-
     if (m_is_medially_centered)
       compute_voronoi_pole();
 
@@ -921,7 +915,7 @@ private:
 
       int i = m_new_id[id];
       // if the vertex is fixed
-      if (m_is_vertex_fixed_map.find(id) != m_is_vertex_fixed_map.end())
+      if (vd->is_fixed)
       {
         A.set_coef(i + nver, i, 1.0 / m_zero_TH, true);
       }
@@ -947,7 +941,7 @@ private:
       int i = m_new_id[id];
       double L = 1.0;
       // if the vertex is fixed
-      if (m_is_vertex_fixed_map.find(id) != m_is_vertex_fixed_map.end())
+      if (vd->is_fixed)
       {
         L = 0;
       }
@@ -991,7 +985,7 @@ private:
       int i = m_new_id[id];
 
       double oh, op = 0.0;
-      if (m_is_vertex_fixed_map.find(id) != m_is_vertex_fixed_map.end())
+      if (vd->is_fixed)
       {
         oh = 1.0 / m_zero_TH;
       }
@@ -1124,11 +1118,8 @@ private:
       halfedge_descriptor h = halfedge(ed, m_tmesh);
       vertex_descriptor vi = source(h, m_tmesh);
       vertex_descriptor vj = target(h, m_tmesh);
-      size_t vi_idx = get(m_vertex_id_pmap, vi);
-      size_t vj_idx = get(m_vertex_id_pmap, vj);
 
-      if (m_is_vertex_fixed_map.find(vi_idx) != m_is_vertex_fixed_map.end()
-       && m_is_vertex_fixed_map.find(vj_idx) != m_is_vertex_fixed_map.end())
+      if (vi->is_fixed && vj->is_fixed)
       {
         fixed_edge_map.set_is_fixed(h, true); // opposite is automatically added
       }
@@ -1285,14 +1276,14 @@ private:
     {
       int idx = static_cast<int>(get(m_vertex_id_pmap, v));
 
-      if (m_is_vertex_fixed_map.find(idx) == m_is_vertex_fixed_map.end())
+      if (!v->is_fixed)
       {
         bool willbefixed = internal::is_vertex_degenerate(m_tmesh, m_tmesh_point_pmap,
                                                           v, m_max_edge_length);
         if (willbefixed)
         {
-          m_is_vertex_fixed_map[idx] = willbefixed;
-          num_fixed++;
+          v->is_fixed=true;
+          ++num_fixed;
         }
       }
     }
