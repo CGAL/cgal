@@ -42,8 +42,7 @@
 
 typedef CGAL::Epeck K;
 typedef K::FT FT;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Regular_traits;
-typedef CGAL::Periodic_3_regular_triangulation_traits_3<Regular_traits> Traits;
+typedef CGAL::Periodic_3_regular_triangulation_traits_3<K> Traits;
 
 /* Explicit instantiation.
  * It allows us to test if the template class, instantiated with given template parameters, compiles.
