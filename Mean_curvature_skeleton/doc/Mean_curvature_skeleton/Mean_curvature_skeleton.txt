@@ -119,8 +119,8 @@ The elephant model is used to illustrate the performance of the
 mean curvature flow skeletonization procedure.
 Different resolutions of the model obtained by loop subdivision are used.
 
-As can be seen on \cgalFigureRef{MCFBenchComp}, the more sampled is the
-surface, the better the skeleton is inside the model.
+As can be seen on \cgalFigureRef{MCFBenchComp}, the more sampled the
+surface is, the better the skeleton is inside the model.
 
 \cgalFigureBegin{MCFBenchComp, comparison.png}
 Skeleton of the head of the elephant model.
