@@ -196,7 +196,12 @@ namespace CGAL {
       // post_wrap to handle boundaries in different shape types.
       if (map.size() > 3)
         post_wrap(bitmap, u_extent, v_extent, map);
-      
+
+      // Propagate label changes
+      for (std::size_t j = 3;j<map.size();j++) {
+        update_label(map, j, map[j]);
+      }
+
       // Update labels
       for (std::size_t y = 0;y<v_extent;y++)
         for (std::size_t x = 0;x<u_extent;x++) {

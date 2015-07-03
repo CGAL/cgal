@@ -234,6 +234,7 @@ namespace CGAL {
     // Maps to the range [-1,1]^2
     static void concentric_mapping(FT phi, FT proj, FT rad, FT &x, FT &y) {
       phi = (phi < FT(-M_PI_4)) ? phi + FT(2 * M_PI) : phi;
+      proj = (proj < -1.0) ? -1.0 : ((proj > 1.0) ? 1.0 : proj);
       FT r = FT(acos(double(CGAL::abs(proj)))) / FT(M_PI_2);
 
       FT a = 0, b = 0;
@@ -299,11 +300,12 @@ namespace CGAL {
       d1 = d1 * (FT)1.0 / l;
 
       // Process first point separately to initialize min/max
-
       Vector_3 vec = this->point(indices[0]) - m_sphere.center();
-      FT proj = axis * vec; // sign indicates northern or southern hemisphere
+
+      // sign indicates northern or southern hemisphere
+      FT proj = (axis * vec) / rad;
       FT phi = atan2(vec * d2, vec * d1);
-      FT x, y;
+      FT x = FT(0), y = FT(0);
       concentric_mapping(phi, proj, rad, x, y);
 
       min[0] = max[0] = x;
@@ -313,7 +315,8 @@ namespace CGAL {
 
       for (std::size_t i = 1;i<indices.size();i++) {
         Vector_3 vec = this->point(indices[i]) - m_sphere.center();
-        proj = axis * vec; // sign indicates northern or southern hemisphere
+        // sign indicates northern or southern hemisphere
+        proj = (axis * vec) / rad;
         phi = atan2(vec * d2, vec * d1);
 
         concentric_mapping(phi, proj, rad, x, y);
@@ -372,14 +375,6 @@ namespace CGAL {
 
             ne = bitmap[(v_extent - 1) * u_extent + 1];
 
-            // diagonal wrapping
-            if (m_wrap_left && v_extent > 2) {
-              nw = bitmap[v_extent * u_extent - 1];
-              if (nw && nw != l)
-                update_label(labels, (std::max<unsigned int>)(nw, l),
-                             l = (std::min<unsigned int>)(nw, l));
-            }
-
             if (n && n != l)
               update_label(labels, (std::max<unsigned int>)(n, l),
                            l = (std::min<unsigned int>)(n, l));
@@ -413,14 +408,6 @@ namespace CGAL {
           if (l) {
             n = bitmap[u_extent * v_extent - 1];
             nw = bitmap[u_extent * v_extent - 2];
-
-            // diagonal wrapping
-            if (m_wrap_right && v_extent > 2) {
-              ne = bitmap[(v_extent - 1) * u_extent];
-              if (ne && ne != l)
-                update_label(labels, (std::max<unsigned int>)(ne, l),
-                             l = (std::min<unsigned int>)(ne, l));
-            }
 
             if (n && n != l)
               update_label(labels, (std::max<unsigned int>)(n, l), 
