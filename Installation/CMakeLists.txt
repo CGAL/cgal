@@ -763,7 +763,6 @@ endforeach()
 
 include_directories (${CGAL_INCLUDE_DIRS})
 
-cache_get(CGAL_LIBRARY)
 cache_get(CGAL_3RD_PARTY_PRECONFIGURED )
 
 cache_get(CGAL_3RD_PARTY_DEFINITIONS   )
