@@ -312,7 +312,9 @@ public:
 			  Face_handle f1, 
 			  Face_handle f2, 
 			  Face_handle f3);
+
   void set_adjacency(Face_handle f0, int i0, Face_handle f1, int i1) const;
+
   void delete_face(Face_handle);
   void delete_vertex(Vertex_handle);
 
@@ -353,10 +355,12 @@ public:
   // HELPING
 private:
   typedef std::pair<Vertex_handle,Vertex_handle> Vh_pair;
+public:
   void  set_adjacency(Face_handle fh, 
 		      int ih, 
 		      std::map< Vh_pair, Edge>& edge_map);
   void reorient_faces();
+private:
   bool dim_down_precondition(Face_handle f, int i);
 
 public:
@@ -2270,24 +2274,24 @@ reorient_faces()
   std::set<Face_handle> oriented_set;
   std::stack<Face_handle>  st;
   Face_iterator fit = faces_begin();
-  int nf  = std::distance(faces_begin(),faces_end());
+  std::ptrdiff_t nf  = std::distance(faces_begin(),faces_end());
 
-  while (static_cast<int>(oriented_set.size()) != nf) {
-    while ( oriented_set.find(fit) != oriented_set.end()){
+  while (0 != nf) {
+    while ( !oriented_set.insert(fit).second ){
       ++fit; // find a germ for  non oriented components 
     }
     // orient component
-    oriented_set.insert(fit);
+    --nf;
     st.push(fit);
     while ( ! st.empty()) {
       Face_handle fh = st.top();
       st.pop();
       for(int ih = 0 ; ih < 3 ; ++ih){
 	Face_handle fn = fh->neighbor(ih);
-	if (oriented_set.find(fn) == oriented_set.end()){
+	if (oriented_set.insert(fn).second){
 	  int in = fn->index(fh);
 	  if (fn->vertex(cw(in)) != fh->vertex(ccw(ih))) fn->reorient();
-	  oriented_set.insert(fn);
+          --nf;
 	  st.push(fn);
 	}
       }
