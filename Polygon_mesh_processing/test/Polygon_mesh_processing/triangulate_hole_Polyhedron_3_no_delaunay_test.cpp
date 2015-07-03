@@ -52,7 +52,8 @@ void read_poly_with_borders(const char* file_name, Polyhedron& poly, std::vector
       border_reps.push_back(h);
       Halfedge_around_facet_circulator hf_around_facet(h,poly), done(hf_around_facet);
       do {
-        bool insertion_ok = border_map.insert(*hf_around_facet).second;
+        CGAL_assertion_code(bool insertion_ok = )
+        border_map.insert(*hf_around_facet).second;
         CGAL_assertion(insertion_ok);
       } while(++hf_around_facet != done);
     }
