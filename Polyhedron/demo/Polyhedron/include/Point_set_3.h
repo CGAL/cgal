@@ -18,7 +18,6 @@
 # include <CGAL/gl.h>
 #endif
 
-#include <QColor>
 
 /// The Point_set_3 class is array of points + normals of type
 /// Point_with_normal_3<Gt> (in fact
@@ -88,11 +87,6 @@ private:
 
   bool m_radii_are_uptodate;
 
-  double m_non_selected_diameter; // diameter of non-selected points
-  double m_selected_diameter; // diameter of selected points
-  QColor m_non_selected_color; // color for non-selected points
-  QColor m_selected_color; // color for selected points
-
 // Public methods
 public:
 
@@ -102,10 +96,6 @@ public:
     m_nb_selected_points = 0;
     m_bounding_box_is_valid = false;
     m_radii_are_uptodate = false;
-    m_non_selected_diameter = 1.0f;
-    m_selected_diameter = 4.0f;
-    m_non_selected_color = QColor(0, 255, 0);
-    m_selected_color = QColor(255, 0, 0);
   }
 
   // Default copy constructor and operator =() are fine.
@@ -222,10 +212,6 @@ public:
     // Draw *non-selected* points
     if (m_nb_selected_points < size())
     {
-      ::glPointSize(m_non_selected_diameter);
-      ::glColor3ub(m_non_selected_color.red(),
-                   m_non_selected_color.green(),
-                   m_non_selected_color.blue());
       ::glBegin(GL_POINTS);
       for (const_iterator it = begin(); it != end(); it++)
       {
@@ -239,10 +225,8 @@ public:
     // Draw *selected* points
     if (m_nb_selected_points > 0)
     {
-      ::glPointSize(m_selected_diameter);
-      ::glColor3ub(m_selected_color.red(),
-                   m_selected_color.green(),
-                   m_selected_color.blue());
+      ::glPointSize(4.f);    // selected => bigger
+      ::glColor3ub(255,0,0); // selected => red
       ::glBegin(GL_POINTS);
       for (const_iterator it = begin(); it != end(); it++)
       {
@@ -317,26 +301,6 @@ public:
   
   bool are_radii_uptodate() const { return m_radii_are_uptodate; }
   void set_radii_uptodate(bool /*on*/) { m_radii_are_uptodate = false; }
-
-  void set_non_selected_diameter(double diameter)
-  {
-    m_non_selected_diameter = diameter;
-  }
-
-  void set_selected_diameter(double diameter)
-  {
-    m_selected_diameter = diameter;
-  }
-
-  void set_non_selected_color(QColor color)
-  {
-    m_non_selected_color = color;
-  }
-
-  void set_selected_color(QColor color)
-  {
-    m_selected_color = color;
-  }
 
 // Private methods:
 private:

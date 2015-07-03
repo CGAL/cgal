@@ -185,11 +185,6 @@ public:
   void evaluate_script_quiet(QString script, 
                              const QString & fileName = QString());
 #endif
-public:
-  Ui::MainWindow* get_ui()
-  {
-    return ui;
-  }
 };
 
 #endif // ifndef MAINWINDOW_H
