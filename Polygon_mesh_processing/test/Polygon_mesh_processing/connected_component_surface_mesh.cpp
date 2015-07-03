@@ -91,6 +91,6 @@ int main(int argc, char* argv[])
  PMP::keep_largest_connected_components(sm, 2,
    PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(sm, bound)));
 
- std::cout << "mesh:\n" << sm << std::endl;
+// std::cout << "mesh:\n" << sm << std::endl;
   return 0;
 }

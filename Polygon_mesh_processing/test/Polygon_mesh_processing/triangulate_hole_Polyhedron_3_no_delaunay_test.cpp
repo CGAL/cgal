@@ -109,8 +109,8 @@ void test_triangulate_hole_weight(const char* file_name, bool use_DT) {
     if(patch.empty()) { continue; }
     Weight w_test = calculate_weight_for_patch(poly, patch.begin(), patch.end());
 
-    std::cerr << "  Weight returned by algo   : " << w_algo << std::endl;
-    std::cerr << "  Weight calculated by test : " << w_test << std::endl;
+    //std::cerr << "  Weight returned by algo   : " << w_algo << std::endl;
+    //std::cerr << "  Weight calculated by test : " << w_test << std::endl;
 
     const double epsilon = 1e-10;
     if(std::abs(w_algo.w.first - w_test.w.first) > epsilon) {
