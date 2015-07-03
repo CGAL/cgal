@@ -79,5 +79,5 @@ int main(int argc, char* argv[])
   faired_off << poly;
   faired_off.close();
 
-  return success;
+  return 0;
 }
