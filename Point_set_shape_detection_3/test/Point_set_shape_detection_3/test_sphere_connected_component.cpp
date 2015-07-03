@@ -11,7 +11,7 @@
 template <class K>
 bool test_sphere_connected_component() {
   const int NB_ROUNDS = 10;
-  const int NB_POINTS = 2000;
+  const int NB_POINTS = 4000;
 
   typedef typename K::FT                             FT;
   typedef CGAL::Point_with_normal_3<K>               Pwn;
@@ -56,7 +56,7 @@ bool test_sphere_connected_component() {
     // the cluster_epsilon.
     typename Efficient_ransac::Parameters parameters;
     parameters.probability = 0.05f;
-    parameters.min_points = NB_POINTS/10;
+    parameters.min_points = NB_POINTS/8;
     parameters.epsilon = 0.002f;
     parameters.normal_threshold = 0.9f;
 
@@ -64,9 +64,9 @@ bool test_sphere_connected_component() {
     // a single shape and a lower cluster_epsilon for the second half
     // to get two separated shapes.
     if (i < NB_ROUNDS/2)
-      parameters.cluster_epsilon = spacing * FT(1.5);
+      parameters.cluster_epsilon = spacing * FT(1.1);
     else
-      parameters.cluster_epsilon = spacing * FT(0.9);
+      parameters.cluster_epsilon = spacing * FT(0.35);
 
     if (!ransac.detect(parameters)) {
       std::cout << " aborted" << std::endl;
