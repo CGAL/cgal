@@ -75,10 +75,6 @@ public:
 
   PolygonMesh& pmesh_;
   Point_property_map ppmap;
-  
-private:
-  Cotangent_value_Meyer()
-  {}
 
 public:
   
