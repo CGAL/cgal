@@ -14,7 +14,7 @@
         The code is generic and works with any model of the `FaceListGraph`
         concept.
 }
-\cgalPkgManuals{Chapter_3D_Mean_Curvature_Skeleton,PkgMeanCurvatureSkeleton3}
+\cgalPkgManuals{Chapter_3D_Surface_mesh_skeletonization,PkgMeanCurvatureSkeleton3}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}

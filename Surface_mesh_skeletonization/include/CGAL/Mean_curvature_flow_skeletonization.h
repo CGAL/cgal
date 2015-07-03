@@ -38,16 +38,16 @@
 #include <CGAL/boost/graph/iterator.h>
 
 // Compute cotangent Laplacian
-#include <CGAL/internal/Mean_curvature_skeleton/Weights.h>
+#include <CGAL/internal/Surface_mesh_skeletonization/Weights.h>
 
 // Compute the vertex normal
-#include <CGAL/internal/Mean_curvature_skeleton/get_normal.h>
+#include <CGAL/internal/Surface_mesh_skeletonization/get_normal.h>
 
 // Simplification function
 #include <CGAL/boost/graph/Euler_operations.h>
 
 // Curve skeleton data structure
-#include <CGAL/internal/Mean_curvature_skeleton/Curve_skeleton.h>
+#include <CGAL/internal/Surface_mesh_skeletonization/Curve_skeleton.h>
 
 // For Voronoi diagram
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -55,13 +55,13 @@
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
 // For debugging macro
-#include <CGAL/internal/Mean_curvature_skeleton/Debug.h>
+#include <CGAL/internal/Surface_mesh_skeletonization/Debug.h>
 
 // Some helper functions
-#include <CGAL/internal/Mean_curvature_skeleton/Utility.h>
+#include <CGAL/internal/Surface_mesh_skeletonization/Utility.h>
 
 // For detect_degenarcy
-#include <CGAL/internal/Mean_curvature_skeleton/Detect_degeneracy.h>
+#include <CGAL/internal/Surface_mesh_skeletonization/Detect_degeneracy.h>
 
 // Inside mesh test
 #include <CGAL/Point_inside_polyhedron_3.h>

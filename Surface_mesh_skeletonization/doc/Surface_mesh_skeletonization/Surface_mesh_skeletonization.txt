@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 \mainpage User Manual
-\anchor Chapter_3D_Mean_Curvature_Skeleton
+\anchor Chapter_3D_Surface_mesh_skeletonization
 
 \cgalAutoToc
 \author Xiang Gao, Sébastien Loriot and Andrea Tagliasacchi
@@ -60,7 +60,7 @@ The following example shows how to extract a skeleton out of a triangulated
 surface mesh and how to access the point of each skeleton vertex and the
 set of input vertices associated.
 
-\cgalExample{Mean_curvature_skeleton/simple_mcfskel_example.cpp}
+\cgalExample{Surface_mesh_skeletonization/simple_mcfskel_example.cpp}
 
 
 \subsection MCFSkelSecAPI-AUUFO Advanced Usage with the Function Object
@@ -89,7 +89,7 @@ structure.
 In this example, we show how to use the API of the class
 `CGAL::Mean_curvature_flow_skeletonization`.
 
-\cgalExample{Mean_curvature_skeleton/MCF_Skeleton_sm_example.cpp}
+\cgalExample{Surface_mesh_skeletonization/MCF_Skeleton_sm_example.cpp}
 
 
 \subsection Mesh Segmentation through Skeletonization
@@ -110,7 +110,7 @@ Left: Curve skeleton extracted of a triangulated surface mesh;
 Right: Segmentation using the skeleton to compute a shape diameter function.
 \cgalFigureEnd
 
-\cgalExample{Mean_curvature_skeleton/segmentation_example.cpp}
+\cgalExample{Surface_mesh_skeletonization/segmentation_example.cpp}
 
 
 \section MCFSkelSecEvaluation Performance

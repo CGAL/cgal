@@ -120,5 +120,5 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Surface_modeling/doc/Surface_modeling/fig \
              ${CMAKE_SOURCE_DIR}/Barycentric_coordinates_2/doc/Barycentric_coordinates_2/fig \
              ${CMAKE_SOURCE_DIR}/Surface_mesh_shortest_path/doc/Surface_mesh_shortest_path/fig \
-             ${CMAKE_SOURCE_DIR}/Mean_curvature_skeleton/doc/Mean_curvature_skeleton/fig \
+             ${CMAKE_SOURCE_DIR}/Surface_mesh_skeletonization/doc/Surface_mesh_skeletonization/fig \
 

@@ -35,7 +35,7 @@
 #include <boost/graph/copy.hpp>
 
 // For debugging macro
-#include <CGAL/internal/Mean_curvature_skeleton/Debug.h>
+#include <CGAL/internal/Surface_mesh_skeletonization/Debug.h>
 
 namespace CGAL {
 namespace internal {
