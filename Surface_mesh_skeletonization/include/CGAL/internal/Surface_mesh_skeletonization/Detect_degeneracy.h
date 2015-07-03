@@ -126,7 +126,6 @@ void search_vertices_in_disk(TriangleMesh& hg,
                              const Traits& traits)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor          vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor            edge_descriptor;
 
   std::queue<vertex_descriptor> Q;
@@ -141,8 +140,6 @@ void search_vertices_in_disk(TriangleMesh& hg,
 
     BOOST_FOREACH(edge_descriptor ed, out_edges(v, hg))
     {
-      halfedge_descriptor hd = halfedge(ed, hg);
-
       vertex_descriptor new_v = target(ed, hg);
       if (!vertices_in_disk.count(new_v))
       {

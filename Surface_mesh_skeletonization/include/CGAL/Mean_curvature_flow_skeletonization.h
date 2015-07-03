@@ -1225,8 +1225,6 @@ private:
     std::size_t num_fixed = 0;
     BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
     {
-      int idx = static_cast<int>(get(m_vertex_id_pmap, v));
-
       if (!v->is_fixed)
       {
         bool willbefixed = internal::is_vertex_degenerate(m_tmesh, m_tmesh_point_pmap,
