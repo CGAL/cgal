@@ -78,4 +78,5 @@ int main(int,char** ) {
     out << poly;
     out.close();
   }
+  return 0;
 }
