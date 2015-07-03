@@ -93,12 +93,14 @@ public:
 
 // NON CLASS-MEMBER FUNCTIONS
 
+inline
 std::istream &
 operator>>(std::istream & is, No_vertex_data &)
 {
     return is;
 }
 
+inline
 std::ostream &
 operator<<(std::ostream & os, const No_vertex_data &)
 {
