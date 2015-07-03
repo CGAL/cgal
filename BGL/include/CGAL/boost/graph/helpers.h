@@ -23,7 +23,7 @@
 
 #include <boost/foreach.hpp>
 #include <CGAL/boost/graph/iterator.h>
-
+#include <CGAL/boost/graph/properties.h>
 
 
 namespace CGAL {
