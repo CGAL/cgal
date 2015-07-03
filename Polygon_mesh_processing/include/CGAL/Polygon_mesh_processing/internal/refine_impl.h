@@ -108,7 +108,6 @@ private:
     {
       CGAL_assertion(fd  != boost::graph_traits<PolygonMesh>::null_face());
 
-      halfedge_descriptor hh =  halfedge(fd,pmesh);
       vertex_descriptor vi = target(halfedge(fd,pmesh),pmesh);
       vertex_descriptor vj = target(next(halfedge(fd,pmesh),pmesh),pmesh);
       vertex_descriptor vk = target(prev(halfedge(fd,pmesh),pmesh),pmesh);
@@ -254,7 +253,6 @@ private:
     {
       Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(fd,pmesh),pmesh), done(circ);
       do {
-        vertex_descriptor v = target(*circ,pmesh);
         Halfedge_around_target_circulator<PolygonMesh> circ_v(*circ,pmesh), done_v(circ_v);
         bool internal_v = true;
         do {

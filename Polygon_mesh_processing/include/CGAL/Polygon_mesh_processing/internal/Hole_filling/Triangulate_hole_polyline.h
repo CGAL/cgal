@@ -321,7 +321,6 @@ private:
     {
       int v0      = vertices[e];
       int v1      = vertices[(e+1)%3];
-      int v_other = vertices[(e+2)%3];
         
       // check whether the edge is border
       bool border = (v0 + 1 == v1) || (v0 == n-1 && v1 == 0);

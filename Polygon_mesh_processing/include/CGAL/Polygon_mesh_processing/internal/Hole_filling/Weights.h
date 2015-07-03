@@ -97,10 +97,6 @@ public:
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    Point p0 = get(ppmap, v0);
-    Point p1 = get(ppmap, v1);
-    Point p2 = get(ppmap, v2);
-
     Vector a = get(ppmap, v0) - get(ppmap, v1);
     Vector b = get(ppmap, v2) - get(ppmap, v1);
     
