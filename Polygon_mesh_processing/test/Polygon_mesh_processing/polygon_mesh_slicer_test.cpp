@@ -29,8 +29,8 @@ typedef CGAL::Polyhedron_3<K> Mesh;
 typedef CGAL::AABB_halfedge_graph_segment_primitive<Mesh> HGSP;
 typedef CGAL::AABB_traits<K, HGSP>    AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits>  AABB_tree;
-typedef std::vector<K::Point_3> Polyline;
-typedef std::list< Polyline > Polylines;
+typedef std::vector<K::Point_3> Polyline_type;
+typedef std::list< Polyline_type > Polylines;
 
 
 int main()
