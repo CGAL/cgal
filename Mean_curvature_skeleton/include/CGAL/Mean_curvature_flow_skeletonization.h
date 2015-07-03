@@ -1261,10 +1261,10 @@ private:
     std::vector<std::pair<Exact_point, vertex_descriptor> > points;
     std::vector<std::vector<int> > point_to_pole(num_vertices(m_tmesh));
 
-    CGAL::Cartesian_converter<Traits, Exact_kernel> to_exact;
     BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
     {
-      Exact_point tp = to_exact( get(m_tmesh_point_pmap, v) );
+      const Point& input_pt = get(m_tmesh_point_pmap, v);
+      Exact_point tp(get_x(input_pt), get_y(input_pt), get_z(input_pt));
       points.push_back(std::make_pair(tp, v));
     }
 
@@ -1274,12 +1274,17 @@ private:
     int cell_id = 0;
     std::vector<Point> cell_dual;
     cell_dual.reserve(T.number_of_cells());
-    Cartesian_converter<Exact_kernel, Traits> to_input;
     for (cit = T.finite_cells_begin(); cit != T.finite_cells_end(); ++cit)
     {
       Cell_handle cell = cit;
       Exact_point point = T.dual(cell);
-      cell_dual.push_back( to_input(point) );
+      cell_dual.push_back(
+        m_traits.construct_point_3_object()(
+          to_double(point.x()),
+          to_double(point.y()),
+          to_double(point.z())
+        )
+      );
       // each cell has 4 incident vertices
       for (int i = 0; i < 4; ++i)
       {
