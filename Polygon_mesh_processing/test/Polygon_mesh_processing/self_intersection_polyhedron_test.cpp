@@ -33,17 +33,17 @@ int main(int argc, char** argv)
     (poly,
      std::back_inserter(intersected_tris),
      CGAL::Polygon_mesh_processing::parameters::vertex_index_map(get(CGAL::vertex_point, poly)));
-  bool intersecting_1 = !intersected_tris.empty();
+  CGAL_assertion_code(bool intersecting_1 = !intersected_tris.empty());
   CGAL_assertion(!intersecting_1);
 
   std::cerr << "Self-intersection test took " << timer.time() << " sec." << std::endl;
   std::cerr << intersected_tris.size() << " pairs of triangles intersect." << std::endl;
 
   timer.reset();
-  bool intersecting_2
-    = CGAL::Polygon_mesh_processing::does_self_intersect(poly,
-     CGAL::Polygon_mesh_processing::parameters::vertex_index_map(get(CGAL::vertex_point, poly)));
-  
+  CGAL_assertion_code(bool intersecting_2 =
+    CGAL::Polygon_mesh_processing::does_self_intersect(poly,
+      CGAL::Polygon_mesh_processing::parameters::vertex_index_map(get(CGAL::vertex_point, poly))));
+
   CGAL_assertion(intersecting_1 == intersecting_2);
 
   std::cerr << "does_self_intersect test took " << timer.time() << " sec." << std::endl;
