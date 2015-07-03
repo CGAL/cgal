@@ -234,7 +234,7 @@ namespace CGAL {
     // Maps to the range [-1,1]^2
     static void concentric_mapping(FT phi, FT proj, FT rad, FT &x, FT &y) {
       phi = (phi < FT(-M_PI_4)) ? phi + FT(2 * M_PI) : phi;
-      proj = (proj < -1.0) ? -1.0 : ((proj > 1.0) ? 1.0 : proj);
+      proj = (proj < FT(-1.0)) ? FT(-1.0) : ((proj > FT(1.0)) ? FT(1.0) : proj);
       FT r = FT(acos(double(CGAL::abs(proj)))) / FT(M_PI_2);
 
       FT a = 0, b = 0;
