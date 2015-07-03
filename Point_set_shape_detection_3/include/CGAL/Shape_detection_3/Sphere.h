@@ -26,15 +26,6 @@
 #include <CGAL/number_utils.h>
 #include <cmath>
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-#ifndef M_PI_2
-#define M_PI_2 1.57079632679489661923
-#endif
-#ifndef M_PI_4
-#define M_PI_4 0.785398163397448309616
-#endif
 
 /*!
  \file Sphere.h
@@ -281,7 +272,7 @@ namespace CGAL {
         axis = axis + this->normal(indices[i]);
       axis = axis / (CGAL::sqrt(axis.squared_length()));
 
-      // create basis x,y
+      // create basis d1, d2
       Vector_3 d1 = Vector_3((FT) 0, (FT) 0, (FT) 1);
       Vector_3 d2 = CGAL::cross_product(axis, d1);
       FT l = d2.squared_length();
