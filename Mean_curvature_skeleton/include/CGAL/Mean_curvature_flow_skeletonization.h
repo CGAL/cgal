@@ -466,8 +466,6 @@ public:
   /// of the medial axis of the mesh during the contraction steps, so will be the result skeleton.
   // (an additional energy is used during the contraction using the Voronoi poles of the input triangulated mesh
   // as attractors).
-  /// \todo mentionning the Voronoi pole is confusing here. Either refer to the ref manual
-  ///       or add something in the documentation of the class
   bool is_medially_centered()
   {
     return m_is_medially_centered;
@@ -1252,7 +1250,6 @@ private:
 
   /// Compute the Voronoi pole for surface vertices. The pole is the furthest
   /// vertex in the Voronoi cell containing the given vertex.
-  /// \todo only use exact points for the call to dual?
   void compute_voronoi_pole()
   {
     MCFSKEL_DEBUG(std::cout << "start compute_voronoi_pole\n";)
