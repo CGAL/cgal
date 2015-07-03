@@ -35,46 +35,6 @@
 namespace CGAL {
 namespace internal {
 
-/**
-* Split the edge
-* @param hg the mesh containing the given edge
-* @param ei the edge to be split
-*/
-template<class TriangleMesh>
-typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
-mesh_split(TriangleMesh& hg,
-           typename boost::graph_traits<TriangleMesh>::halfedge_descriptor ei)
-{
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor            halfedge_descriptor;
-
-
-  // halfedge_descriptor en = Euler::split_edge(ei, hg); // there is an issue in this function for now use the polyhedron version in the meantime
-  halfedge_descriptor en = hg.split_edge(ei);
-  en->vertex()->vertices.clear();
-  Euler::split_face(en, next(ei,hg), hg);
-
-  en->id() = -1;
-  opposite(en,hg)->id() = -1;
-  ei->id() = -1;
-  opposite(ei,hg)->id() = -1;
-  next(en,hg)->id() = -1;
-  opposite(next(en,hg),hg)->id() = -1;
-  next(next(en,hg),hg)->id() = -1;
-  next(en,hg)->id() = -1; // AF: the same as 3 lines above? error or duplicate?
-  halfedge_descriptor ej = opposite(en, hg);
-  if (! is_border(ej,hg))
-  {
-    Euler::split_face(opposite(ei,hg), next(ej,hg), hg);
-    next(ej,hg)->id() = -1;
-    halfedge_descriptor ei_op_next = next(opposite(ei,hg),hg);
-    ei_op_next->id() = -1;
-    opposite(ei_op_next,hg)->id() = -1;
-    next(ei_op_next,hg)->id() = -1;
-  }
-
-  return en;
-}
-
 template<class TriangleMesh, class TriangleMeshPointPMap, class Traits>
 double get_surface_area(TriangleMesh& hg, TriangleMeshPointPMap& hg_point_pmap, const Traits& traits)
 {

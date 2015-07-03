@@ -1159,50 +1159,59 @@ private:
   /// Split triangles with an angle greater than `alpha_TH`.
   std::size_t split_flat_triangles()
   {
-    int ne = 2 * static_cast<int>(num_edges(m_tmesh));
     compute_incident_angle();
 
-    std::size_t cnt = 0;
-    /// \todo this is unsafe, we loop over a sequence that we modify!!!
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
+    // collect edges that should be split because
+    // both opposite angle are larger than the
+    // threshold
+    std::vector<edge_descriptor> edges_to_split;
+    BOOST_FOREACH(edge_descriptor ed, edges(m_tmesh))
     {
-      halfedge_descriptor ei = hd;
+      halfedge_descriptor ei = halfedge(ed, m_tmesh);
       halfedge_descriptor ej = opposite(ei, m_tmesh);
       int ei_id = static_cast<int>(get(m_hedge_id_pmap, ei));
       int ej_id = static_cast<int>(get(m_hedge_id_pmap, ej));
-      if (ei_id < 0 || ei_id >= ne
-       || ej_id < 0 || ej_id >= ne)
-      {
-        continue;
-      }
+
+      double angle_i = m_halfedge_angle[ei_id];
+      double angle_j = m_halfedge_angle[ej_id];
+      if (angle_i >= m_alpha_TH && angle_j >= m_alpha_TH)
+        edges_to_split.push_back( ed );
+    }
+
+    // now split the edge
+    std::size_t cnt = 0;
+    BOOST_FOREACH(edge_descriptor ed, edges_to_split)
+    {
+      halfedge_descriptor ei = halfedge(ed, m_tmesh);
+      halfedge_descriptor ej = opposite(ei, m_tmesh);
+      int ei_id = static_cast<int>(get(m_hedge_id_pmap, ei));
+      int ej_id = static_cast<int>(get(m_hedge_id_pmap, ej));
 
       vertex_descriptor vs = source(ei, m_tmesh);
       vertex_descriptor vt = target(ei, m_tmesh);
 
       double angle_i = m_halfedge_angle[ei_id];
       double angle_j = m_halfedge_angle[ej_id];
-      if (angle_i < m_alpha_TH || angle_j < m_alpha_TH)
+
+      halfedge_descriptor ek = next(angle_i > angle_j ? ei : ej, m_tmesh);
+      vertex_descriptor vk = target(ek, m_tmesh);
+
+      // split the edge
+      halfedge_descriptor en = m_tmesh.split_edge(ei);
+      // split the incident faces
+      Euler::split_face(en, next(ei,m_tmesh), m_tmesh);
+      if (! is_border(ej,m_tmesh))
       {
-        continue;
+        Euler::split_face(ej, next(next(ej,m_tmesh),m_tmesh), m_tmesh);
       }
 
-      halfedge_descriptor ek;
-      if (angle_i > angle_j)
-      {
-        ek = next(ei, m_tmesh);
-      }
-      else
-      {
-        ek = next(ej, m_tmesh);
-      }
-      vertex_descriptor vk = target(ek, m_tmesh);
-      halfedge_descriptor en = internal::mesh_split(m_tmesh, ei);
       // set id for new vertex
       put(m_vertex_id_pmap, target(en,m_tmesh), m_vertex_id_count++);
       Point pn = project_vertex(vs, vt, vk, target(en, m_tmesh));
       // set point of new vertex
       put(m_tmesh_point_pmap, target(en,m_tmesh), pn);
-      cnt++;
+      target(en,m_tmesh)->vertices.clear(); // do no copy the info
+      ++cnt;
     }
     return cnt;
   }
