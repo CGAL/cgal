@@ -39,6 +39,7 @@
  \todo code: implement the random sampling of surface using the work started by Alexandru during its gsoc to get a better approximation of poles
  \todo code: expose in polygon mesh processing the function to compute the voronoi pole of a close triangle mesh
  \todo code: expose in polygon mesh processing the function to remesh locally a triangle mesh with the angle and edge length parameters
+ \todo code: expose in polygon mesh processing the function compute the surface area of a polygon mesh
  \todo code: avoid using EPEC for the triangulation
 */
 
