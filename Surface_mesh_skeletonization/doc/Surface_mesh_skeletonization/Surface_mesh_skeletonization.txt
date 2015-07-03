@@ -131,7 +131,8 @@ Right: After two loops subdivision steps (44,460 vertices).
 
 Runtime in milliseconds of `extract_mean_curvature_flow_skeleton()` using
 `Polyhedron_3<Simple_cartesian<double> >` as input data structure. The runtimes are similar if
-`Surface_mesh<Simple_cartesian<double>::%Point_3>` is used instead.
+`Surface_mesh<Simple_cartesian<double>::%Point_3>` is used instead. The solver used is the
+default one when \ref thirdpartyEigen is available.
 The code was compiled using \cgal 4.7 with g++ 4.8.4 with <code>-O3 -DNDEBUG</code>
 as compiling flags and was run on a Intel(R) Core(TM) i7-2820QM CPU @ 2.30GHz
 
