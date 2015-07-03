@@ -43,8 +43,8 @@ void mesh_with_id(const char* argv1)
   std::cerr << cc.size() << " faces in the CC of " << &*fd << std::endl;
 
   boost::vector_property_map<int,
-    typename boost::property_map<Mesh_with_id, boost::face_index_t>::type>
-    fccmap(get(boost::face_index,sm));
+    boost::property_map<Mesh_with_id, boost::face_index_t>::type>
+      fccmap(get(boost::face_index,sm));
 
   std::size_t num = PMP::connected_components(sm,
                                               fccmap);
@@ -82,7 +82,7 @@ void mesh_no_id(const char* argv1)
     = get(boost::face_external_index,sm);
 
   boost::vector_property_map<int,
-    typename boost::property_map<Mesh, boost::face_external_index_t>::type>
+    boost::property_map<Mesh, boost::face_external_index_t>::type>
       fccmap(fim);
 
   std::size_t num = PMP::connected_components(sm,
