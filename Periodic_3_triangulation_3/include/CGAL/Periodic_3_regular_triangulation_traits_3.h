@@ -82,45 +82,45 @@ template <class Kernel, class Off = typename CGAL::Periodic_3_offset_3>
 class Periodic_3_regular_triangulation_traits_base_3 : public Regular_triangulation_euclidean_traits_3<Kernel>
 {
 public:
-	typedef Regular_triangulation_euclidean_traits_3<Kernel>             K;
+  typedef Kernel                                                       K;
+  typedef Regular_triangulation_euclidean_traits_3<Kernel>             RT;
 	typedef Off                                                          Offset;
 	typedef Periodic_3_regular_triangulation_traits_base_3<K, Offset>    Self;
 
-	typedef typename K::FT                             FT;
-	typedef typename K::Weighted_point_3               Weighted_point_3;
-	typedef typename K::Point_3                        Point_3;
-	typedef typename K::Bare_point                     Bare_point;
-	typedef typename K::Weighted_point                 Weighted_point;
-	typedef typename K::Point                          Point;
+	typedef typename RT::FT                             FT;
+	typedef typename RT::Weighted_point_3               Weighted_point_3;
+	typedef typename RT::Point_3                        Point_3;
+	typedef typename RT::Bare_point                     Bare_point;
+	typedef typename RT::Weighted_point                 Weighted_point;
+	typedef typename RT::Point                          Point;
 
-	typedef typename K::RT RT;
-	typedef typename K::Vector_3 Vector_3;
+	typedef typename RT::Vector_3 Vector_3;
 	typedef Offset Periodic_3_offset_3;
-	typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+	typedef typename RT::Iso_cuboid_3 Iso_cuboid_3;
 
-	typedef typename K::Segment_3 Segment_3;
-	typedef typename K::Triangle_3 Triangle_3;
-  typedef typename K::Tetrahedron_3 Tetrahedron_3;
+	typedef typename RT::Segment_3 Segment_3;
+	typedef typename RT::Triangle_3 Triangle_3;
+  typedef typename RT::Tetrahedron_3 Tetrahedron_3;
 
-	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Power_test_3> Power_test_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compare_power_distance_3> Compare_power_distance_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename K::In_smallest_orthogonal_sphere_3> In_smallest_orthogonal_sphere_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Side_of_bounded_orthogonal_sphere_3> Side_of_bounded_orthogonal_sphere_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Does_simplex_intersect_dual_support_3> Does_simplex_intersect_dual_support_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Construct_weighted_circumcenter_3> Construct_weighted_circumcenter_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Construct_circumcenter_3> Construct_circumcenter_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compute_squared_radius_smallest_orthogonal_sphere_3> Compute_squared_radius_smallest_orthogonal_sphere_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compute_power_product_3> Compute_power_product_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compute_critical_squared_radius_3> Compute_critical_squared_radius_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compare_weighted_squared_radius_3> Compare_weighted_squared_radius_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Power_test_3> Power_test_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Compare_power_distance_3> Compare_power_distance_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::In_smallest_orthogonal_sphere_3> In_smallest_orthogonal_sphere_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Side_of_bounded_orthogonal_sphere_3> Side_of_bounded_orthogonal_sphere_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Does_simplex_intersect_dual_support_3> Does_simplex_intersect_dual_support_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Construct_weighted_circumcenter_3> Construct_weighted_circumcenter_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Construct_circumcenter_3> Construct_circumcenter_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Compute_squared_radius_smallest_orthogonal_sphere_3> Compute_squared_radius_smallest_orthogonal_sphere_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Compute_power_product_3> Compute_power_product_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Compute_critical_squared_radius_3> Compute_critical_squared_radius_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Compare_weighted_squared_radius_3> Compare_weighted_squared_radius_3;
 
-	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compare_xyz_3> Compare_xyz_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Orientation_3> Orientation_3;
-  typedef Regular_traits_with_offsets_adaptor<Self, typename K::Coplanar_orientation_3> Coplanar_orientation_3;
-	typedef Periodic_3_construct_weighted_point_3<Self, typename K::Construct_point_3> Construct_point_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Construct_segment_3> Construct_segment_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Construct_triangle_3> Construct_triangle_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Construct_tetrahedron_3> Construct_tetrahedron_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Compare_xyz_3> Compare_xyz_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Orientation_3> Orientation_3;
+  typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Coplanar_orientation_3> Coplanar_orientation_3;
+	typedef Periodic_3_construct_weighted_point_3<Self, typename RT::Construct_point_3> Construct_point_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Construct_segment_3> Construct_segment_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Construct_triangle_3> Construct_triangle_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Construct_tetrahedron_3> Construct_tetrahedron_3;
 
 	void set_domain (const Iso_cuboid_3& domain)
 	{
