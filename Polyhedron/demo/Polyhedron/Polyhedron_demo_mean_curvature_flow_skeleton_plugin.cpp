@@ -365,7 +365,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
                           | QDockWidget::DockWidgetClosable);
     dockWidget->setWindowTitle("Mean Curvature Flow Skeleton");
     mw->addDockWidget(Qt::LeftDockWidgetArea, dockWidget);
-    mw->tabifyDockWidget(static_cast<MainWindow*>(mw)->get_ui()->consoleDockWidget, dockWidget);
     dockWidget->show();
     dockWidget->raise();
 
@@ -503,8 +502,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
     skeleton_item->setName(QString("Medial skeleton curve of %1").arg(item->name()));
     scene->addItem(skeleton_item);
 
-    item->setGouraudMode();
-    item->switch_transparency_on_off();
+    item->setPointsMode();
 
     QApplication::restoreOverrideCursor();
   }
@@ -832,8 +830,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   if (InputMeshItemIndex >= 0)
   {
     scene->item(InputMeshItemIndex)->setVisible(true);
-    dynamic_cast<Scene_polyhedron_item*>(scene->item(InputMeshItemIndex))->switch_transparency_on_off();
-    scene->item(InputMeshItemIndex)->setGouraudMode();
+    scene->item(InputMeshItemIndex)->setPointsMode();
   }
 
   // update scene
