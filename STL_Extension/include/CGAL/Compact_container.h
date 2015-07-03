@@ -1147,7 +1147,7 @@ namespace internal {
                   Nullptr_t CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
-    return &*rhs == NULL;
+    return rhs == CC_iterator<DSC, Const>();
   }
 
   template < class DSC, bool Const >
@@ -1156,7 +1156,7 @@ namespace internal {
                   Nullptr_t CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
-    return &*rhs != NULL;
+    return rhs !=  CC_iterator<DSC, Const>();
   }
 
 } // namespace internal
