@@ -1027,8 +1027,6 @@ public:
       if (Dac ==  -(std::numeric_limits<FT>::max)() && Dbd ==
           -(std::numeric_limits<FT>::max)())
       {
-        // TODO: IV comment in std::cerr << red << "---
-            //No flips available ---" << white << std::endl;
         std::cerr << "--- No flips available ---"  << std::endl;
         return false;
       }
@@ -1036,8 +1034,6 @@ public:
       if ((std::max)(Dac, Dbd) + EPS < Dbc)
       {
         std::cerr.precision(10);
-        // TODO: IV comment in std::cerr << red << "--
-        //- Flip makes kernel worse ---" << white << std::endl;
         std::cerr << "--- Flip makes kernel worse ---"
             << std::endl;
         std::cerr << Dac << " or " << Dbd << " vs "
@@ -1072,8 +1068,6 @@ public:
     }
 
     if (verbose > 1)
-      //TODO: IV Comment in std::cerr << red << "---
-      //Flip makes kernel worse ---" << white << std::endl;
       std::cerr  << "Nb flips: "  << nb_flips << std::endl;
 
     return true;

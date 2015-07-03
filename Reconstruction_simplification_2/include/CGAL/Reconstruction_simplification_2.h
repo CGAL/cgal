@@ -22,7 +22,6 @@
 
 #include <CGAL/Reconstruction_triangulation_2.h>
 #include <CGAL/Reconstruction_edge_2.h>
-#include <CGAL/console_color.h>
 
 #include <CGAL/property_map.h>
 
@@ -451,7 +450,7 @@ public:
   // INIT //
   void insert_loose_bbox(const double x, const double y, const double size) {
     double timer = clock();
-    std::cerr << yellow << "insert loose bbox" << white << "...";
+    std::cerr << "insert loose bbox" << "...";
 
     int nb = static_cast<int>(m_dt.number_of_vertices());
     insert_point(Point(x - size, y - size), true, nb++);
@@ -459,15 +458,15 @@ public:
     insert_point(Point(x + size, y + size), true, nb++);
     insert_point(Point(x + size, y - size), true, nb++);
 
-    std::cerr << yellow << "done" << white << " (" << nb << " vertices, "
-        << yellow << time_duration(timer) << white << " s)"
+    std::cerr << "done" << " (" << nb << " vertices, "
+        << time_duration(timer) << " s)"
         << std::endl;
   }
 
   template<class Iterator>  // value_type = Point*
   void init(Iterator begin, Iterator beyond) {
     double timer = clock();
-    std::cerr << yellow << "init" << white << "...";
+    std::cerr << "init" << "...";
 
     int nb = static_cast<int>(m_dt.number_of_vertices());
     m_dt.infinite_vertex()->pinned() = true;
@@ -480,8 +479,8 @@ public:
       insert_point(point, false, nb++);
     }
 
-    std::cerr << yellow << "done" << white << " (" << nb << " vertices, "
-        << yellow << time_duration(timer) << white << " s)"
+    std::cerr << "done" << " (" << nb << " vertices, "
+        << time_duration(timer) << " s)"
         << std::endl;
   }
 
@@ -502,13 +501,12 @@ public:
   template<class Iterator>  // value_type = Sample_*
   void assign_samples(Iterator begin, Iterator end) {
     double timer = clock();
-    std::cerr << yellow << "assign samples" << white << "...";
+    std::cerr << "assign samples" << "...";
 
     m_dt.assign_samples(begin, end);
     m_dt.reset_all_costs();
 
-    std::cerr << yellow << "done" << white << " (" << yellow
-        << time_duration(timer) << white << " s)" << std::endl;
+    std::cerr << "done" << " (" << time_duration(timer) << " s)" << std::endl;
   }
 
   void reassign_samples() {
@@ -536,7 +534,7 @@ public:
     Vertex_handle t = m_dt.target_vertex(edge);
 
     if (m_verbose > 0) {
-      std::cerr << std::endl << green << "do collapse " << white << "("
+      std::cerr << std::endl << "do collapse " << "("
           << s->id() << "->" << t->id() << ") ... " << std::endl;
     }
 
@@ -556,8 +554,7 @@ public:
     // debug test
     ok = m_dt.check_kernel_test(edge);
     if (!ok) {
-      std::cerr << red << "do_collapse: kernel test failed: " << white
-          << std::endl;
+      std::cerr << "do_collapse: kernel test failed: " << std::endl;
       return false;
     }
     //
@@ -576,7 +573,7 @@ public:
     }
 
     if (m_verbose > 0) {
-      std::cerr << green << "done" << std::endl;
+      std::cerr << "done" << std::endl;
     }
 
     return true;
@@ -588,7 +585,7 @@ public:
     Vertex_handle t = m_dt.target_vertex(edge);
 
     if (m_verbose > 1) {
-      std::cerr << green << "simulate collapse " << white << "("
+      std::cerr << "simulate collapse " << "("
           << s->id() << "->" << t->id() << ") ... " << std::endl;
     }
 
@@ -602,16 +599,15 @@ public:
       ok = copy.make_collapsible(copy_edge, copy_hull.begin(),
           copy_hull.end(), m_verbose);
       if (!ok) {
-        std::cerr << yellow << "simulation: failed (make collapsible)"
-            << white << std::endl;
+        std::cerr << "simulation: failed (make collapsible)"
+            << std::endl;
         return false;
       }
     }
 
     ok = copy.check_kernel_test(copy_edge);
     if (!ok) {
-      std::cerr << yellow << "simulation: failed (kernel test)" << white
-          << std::endl;
+      std::cerr << "simulation: failed (kernel test)" << std::endl;
       return false;
     }
 
@@ -627,7 +623,7 @@ public:
     restore_samples(samples.begin(), samples.end());
 
     if (m_verbose > 1) {
-      std::cerr << green << "done" << white << std::endl;
+      std::cerr << "done" << std::endl;
     }
 
     return true;
@@ -1330,7 +1326,7 @@ public:
       else nb_solid++;
     }
 
-    std::cerr << blue << "STATS" << white << std::endl;
+    std::cerr << "STATS" << std::endl;
     std::cerr << "# vertices : " << m_dt.number_of_vertices()-4 << std::endl;
     std::cerr << "# triangles: " << m_dt.number_of_faces() << std::endl;
     std::cerr << "# edges: " << m_dt.tds().number_of_edges() << std::endl;
@@ -1394,7 +1390,7 @@ public:
    */
   void run_until(std::size_t np) {
     double timer = clock();
-    std::cerr << yellow << "reconstruct until " << white << np << " V";
+    std::cerr << "reconstruct until " << np << " V";
 
     std::size_t N = np + 4;
     std::size_t performed = 0;
@@ -1405,9 +1401,9 @@ public:
       performed++;
     }
 
-    std::cerr << yellow << " done" << white << " (" << performed
+    std::cerr << " done" << " (" << performed
         << " iters, " << m_dt.number_of_vertices() - 4 << " V "
-        << yellow << time_duration(timer) << white << " s)"
+        << time_duration(timer) << " s)"
         << std::endl;
   }
 
@@ -1419,7 +1415,7 @@ public:
    */
   void run(const unsigned steps) {
     double timer = clock();
-    std::cerr << yellow << "reconstruct " << steps << white;
+    std::cerr << "reconstruct " << steps;
 
     unsigned performed = 0;
     for (unsigned i = 0; i < steps; ++i) {
@@ -1429,9 +1425,9 @@ public:
       performed++;
     }
 
-    std::cerr << yellow << " done" << white << " (" << performed << "/"
+    std::cerr << " done" << " (" << performed << "/"
         << steps << " iters, " << m_dt.number_of_vertices() - 4
-        << " V, " << yellow << time_duration(timer) << white << " s)"
+        << " V, " << time_duration(timer) << " s)"
         << std::endl;
   }
 
@@ -1445,7 +1441,7 @@ public:
    */
   void relocate_all_points() {
     double timer = clock();
-    std::cerr << yellow << "relocate all points" << white << "...";
+    std::cerr << "relocate all points" << "...";
 
     m_mindex.clear(); // pqueue must be recomputed
 
@@ -1480,8 +1476,7 @@ public:
       }
     }
 
-    std::cerr << yellow << "done" << white << " (" << yellow
-        << time_duration(timer) << white << " s)" << std::endl;
+    std::cerr << "done" << " (" << time_duration(timer) << " s)" << std::endl;
   }
 
   /// @}

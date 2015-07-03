@@ -23,7 +23,7 @@ void R_s_k_2::print_stats() const
     else nb_solid++;
   }
 
-  std::cerr << blue << "STATS" << white << std::endl;
+  std::cerr << "STATS" << std::endl;
   std::cerr << "# vertices : " << m_dt.number_of_vertices()-4 << std::endl;
   std::cerr << "# triangles: " << m_dt.number_of_faces() << std::endl;
   std::cerr << "# edges: " << m_dt.tds().number_of_edges() << std::endl;
