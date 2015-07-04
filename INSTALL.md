@@ -21,7 +21,7 @@ git clone https://github.com/CGAL/cgal.git /path/to/cgal.git
 cd /path/to/cgal.git
 mkdir -p build/debug
 cd build/debug
-cmake -DBUILD_TYPE=Debug ../..
+cmake -DCMAKE_BUILD_TYPE=Debug ../..
 make
 ```
 
@@ -31,7 +31,7 @@ Here is an example of how to build the library in Release:
   > cd /path/to/cgal.git
   > mkdir -p build/debug
   > cd build/debug
-  > cmake -DBUILD_TYPE=Release ../..
+  > cmake -DCMAKE_BUILD_TYPE=Release ../..
   > make
 ```
 Note that *no installation is required* to use that version of CGAL once it has been compiled.
