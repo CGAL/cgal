@@ -29,20 +29,23 @@ void Scene_textured_polyhedron_item::initialize_buffers(Viewer_interface *viewer
         program->bind();
         vaos[0]->bind();
         buffers[0].bind();
-        buffers[0].allocate(positions_facets.data(), positions_facets.size()*sizeof(float));
+        buffers[0].allocate(positions_facets.data(),
+                            static_cast<int>(positions_facets.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[0].release();
 
         buffers[1].bind();
-        buffers[1].allocate(normals.data(), normals.size()*sizeof(float));
+        buffers[1].allocate(normals.data(),
+                            static_cast<int>(normals.size()*sizeof(float)));
         program->enableAttributeArray("normal");
         program->setAttributeBuffer("normal",GL_FLOAT,0,3);
         buffers[1].release();
 
 
         buffers[2].bind();
-        buffers[2].allocate(textures_map_facets.data(), textures_map_facets.size()*sizeof(float));
+        buffers[2].allocate(textures_map_facets.data(),
+                            static_cast<int>(textures_map_facets.size()*sizeof(float)));
         program->enableAttributeArray("v_texCoord");
         program->setAttributeBuffer("v_texCoord",GL_FLOAT,0,2);
         buffers[2].release();
@@ -56,14 +59,16 @@ void Scene_textured_polyhedron_item::initialize_buffers(Viewer_interface *viewer
         program->bind();
         vaos[1]->bind();
         buffers[3].bind();
-        buffers[3].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
+        buffers[3].allocate(positions_lines.data(),
+                            static_cast<int>(positions_lines.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[3].release();
 
 
         buffers[4].bind();
-        buffers[4].allocate(textures_map_lines.data(), textures_map_lines.size()*sizeof(float));
+        buffers[4].allocate(textures_map_lines.data(), 
+                            static_cast<int>(textures_map_lines.size()*sizeof(float)));
         program->enableAttributeArray("v_texCoord");
         program->setAttributeBuffer("v_texCoord",GL_FLOAT,0,2);
         buffers[4].release();
@@ -99,16 +104,16 @@ Scene_textured_polyhedron_item::compute_normals_and_vertices(void)
     textures_map_lines.resize(0);
     normals.resize(0);
 
-    typedef typename ::EPIC_kernel Kernel;
-    typedef typename CGAL::Textured_items Items;
-    typedef typename Kernel::Point_3 Point;
-    typedef typename Kernel::Vector_3 Vector;
-    typedef typename CGAL::Polyhedron_3<Kernel,Items> Base;
+    typedef ::EPIC_kernel Kernel;
+    typedef CGAL::Textured_items Items;
+    typedef Kernel::Point_3 Point;
+    typedef Kernel::Vector_3 Vector;
+    typedef CGAL::Polyhedron_3<Kernel,Items> Base;
 
-    typedef typename Base::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
-    typedef typename Base::Edge_iterator Edge_iterator;
-    typedef typename Base::Facet Facet;
-    typedef typename Base::Facet_iterator Facet_iterator;
+    typedef Base::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
+    typedef Base::Edge_iterator Edge_iterator;
+    typedef Base::Facet Facet;
+    typedef Base::Facet_iterator Facet_iterator;
 
     //Facets
     Facet_iterator f = poly->facets_begin();
@@ -137,7 +142,7 @@ Scene_textured_polyhedron_item::compute_normals_and_vertices(void)
             else if(cur_shading == GL_SMOOTH)
             {
 
-                const typename Facet::Normal_3& n = he->vertex()->normal();
+                const Facet::Normal_3& n = he->vertex()->normal();
                 normals.push_back(n[0]);
                 normals.push_back(n[1]);
                 normals.push_back(n[2]);
@@ -290,7 +295,7 @@ void Scene_textured_polyhedron_item::draw(Viewer_interface* viewer) const {
     attrib_buffers(viewer, PROGRAM_WITH_TEXTURE);
     program=getShaderProgram(PROGRAM_WITH_TEXTURE);
     program->bind();
-    qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/4);
+    qFunc.glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/4));
     //Clean-up
     program->release();
     vaos[0]->release();
@@ -306,7 +311,7 @@ void Scene_textured_polyhedron_item::draw_edges(Viewer_interface* viewer) const 
 
     program=getShaderProgram(PROGRAM_WITH_TEXTURED_EDGES);
     program->bind();
-    qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
+    qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/4));
     //Clean-up
     program->release();
     vaos[1]->release();
