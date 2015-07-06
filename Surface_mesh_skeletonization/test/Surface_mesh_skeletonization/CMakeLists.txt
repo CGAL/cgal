@@ -31,7 +31,7 @@ find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
     create_single_source_cgal_program( "MCF_Skeleton_test.cpp" )
     create_single_source_cgal_program( "skeleton_connectivity_test.cpp" )
   else()
-    message(STATUS "This program requires the Eigen library (3.2 or greater), and will not be compiled.")
+    message(STATUS "These tests require the Eigen library (3.2 or greater), and will not be compiled.")
   endif()
 else()
 

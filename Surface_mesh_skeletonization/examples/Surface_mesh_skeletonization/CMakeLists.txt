@@ -1,8 +1,8 @@
-# Created by the script cgal_create_cmake_script_with_options
-# This is the CMake script for compiling a set of CGAL applications.
+# Created by the script cgal_create_cmake_script
+# This is the CMake script for compiling a CGAL application.
 
-project( Mean_curvature_skeleton )
 
+project( Surface_mesh_skeletonization_ )
 
 cmake_minimum_required(VERSION 2.6.2)
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
@@ -13,64 +13,35 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
-set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
- 
-if ( COMMAND cmake_policy )
+find_package(CGAL QUIET COMPONENTS Core )
 
-  cmake_policy( SET CMP0003 NEW )  
+if ( CGAL_FOUND )
 
-endif()
+  include( ${CGAL_USE_FILE} )
 
-# CGAL and its components
-find_package( CGAL QUIET COMPONENTS  )
+  include( CGAL_CreateSingleSourceCGALProgram )
 
-if ( NOT CGAL_FOUND )
+  find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
-  message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  if(EIGEN3_FOUND)
+    include( ${EIGEN3_USE_FILE} )
 
-endif()
+    include( CGAL_CreateSingleSourceCGALProgram )
 
-# include helper file
-include( ${CGAL_USE_FILE} )
+    include_directories (BEFORE "../../include")
 
+    create_single_source_cgal_program( "simple_mcfskel_example.cpp" )
+    create_single_source_cgal_program( "simple_mcfskel_sm_example.cpp" )
+    create_single_source_cgal_program( "MCF_Skeleton_example.cpp" )
+    create_single_source_cgal_program( "MCF_Skeleton_sm_example.cpp" )
+    create_single_source_cgal_program( "segmentation_example.cpp" )
+  else()
+    message(STATUS "These programs require the Eigen library (3.2 or greater), and will not be compiled.")
+  endif()
 
-# Boost and its components
-find_package( Boost REQUIRED )
-
-if ( NOT Boost_FOUND )
-
-  message(STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()  
-
-endif()
-
-# include for local directory
-
-# include for local package
-include_directories( BEFORE ../../include )
-
-find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
-
-if(NOT EIGEN3_FOUND)
-  message(STATUS "NOTICE: Eigen 3.2 (or greater) is not found.")
 else()
-  include( ${EIGEN3_USE_FILE} )
-endif(NOT EIGEN3_FOUND)
 
-# Creating entries for all .cpp/.C files with "main" routine
-# ##########################################################
+  message(STATUS "This program requires the CGAL library, and will not be compiled.")
 
-include( CGAL_CreateSingleSourceCGALProgram )
-
-create_single_source_cgal_program( "simple_mcfskel_example.cpp" )
-
-create_single_source_cgal_program( "simple_mcfskel_sm_example.cpp" )
-
-create_single_source_cgal_program( "MCF_Skeleton_example.cpp" )
-
-create_single_source_cgal_program( "MCF_Skeleton_sm_example.cpp" )
-
-create_single_source_cgal_program( "segmentation_example.cpp" )
+endif()
 
