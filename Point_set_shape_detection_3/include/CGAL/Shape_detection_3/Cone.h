@@ -26,13 +26,6 @@
 #include <CGAL/number_utils.h>
 #include <cmath>
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-#ifndef M_PI_2
-#define M_PI_2 1.57079632679489661923
-#endif
-
 /*!
  \file Cone.h
  */
@@ -62,7 +55,7 @@ namespace CGAL {
     /// \endcond
 
 	
-    Cone() : Shape_base<Traits>() {}
+    Cone() : Shape_base<Traits>(), m_wrap(false) {}
       
     /*!
       The opening angle between the axis and the surface of the cone.
@@ -208,6 +201,8 @@ namespace CGAL {
       m_neg_sin_ang = -sin(m_angle);
       m_cos_ang = cos(m_angle);
 
+      this->m_cross_mask = (m_angle <= M_PI_4);
+
       this->m_is_valid = true;
     }
 
@@ -275,18 +270,176 @@ namespace CGAL {
           return 3;
       }
 
+    virtual void post_wrap(const std::vector<unsigned int> &bitmap,
+      const std::size_t &u_extent,
+      const std::size_t &v_extent,
+      std::vector<unsigned int> &labels) const {
+      if (!m_wrap)
+        return;
+      // handle top index separately
+      unsigned int nw = bitmap[u_extent - 1];
+      unsigned int l = bitmap[0];
+
+      // Special case v_extent is just 1
+      if (v_extent == 1) {
+        if (nw && nw != l)
+          update_label(labels, (std::max<unsigned int>)(nw, l), l = (std::min<unsigned int>)(nw, l));
+
+        return;
+      }
+
+      unsigned int w = bitmap[2 * u_extent - 1];
+      unsigned int sw;
+
+      if (l) {
+        if (nw && nw != l)
+          update_label(labels, (std::max<unsigned int>)(nw, l), l = (std::min<unsigned int>)(nw, l));
+        else if (w && w != l)
+          update_label(labels, (std::max<unsigned int>)(w, l), l = (std::min<unsigned int>)(w, l));
+      }
+
+      // handle mid indices
+      for (std::size_t y = 1;y<v_extent - 1;y++) {
+        l = bitmap[y * u_extent];
+        if (!l)
+          continue;
+
+        nw = bitmap[y * u_extent - 1];
+        w = bitmap[(y + 1) * u_extent - 1];
+        sw = bitmap[(y + 2) * u_extent - 1];
+
+        if (nw && nw != l)
+          update_label(labels, (std::max<unsigned int>)(nw, l), l = (std::min<unsigned int>)(nw, l));
+        if (w && w != l)
+          update_label(labels, (std::max<unsigned int>)(w, l), l = (std::min<unsigned int>)(w, l));
+        else if (sw && sw != l)
+          update_label(labels, (std::max<unsigned int>)(sw, l), l = (std::min<unsigned int>)(sw, l));
+      }
+
+      // handle last index
+      l = bitmap[(v_extent - 1) * u_extent];
+      if (!l)
+        return;
+
+      nw = bitmap[(v_extent - 1) * u_extent - 1];
+      w = bitmap[u_extent * v_extent - 1];
+
+      if (nw && nw != l)
+        update_label(labels, (std::max<unsigned int>)(nw, l), l = (std::min<unsigned int>)(nw, l));
+      else if (w && w != l)
+        update_label(labels, (std::max<unsigned int>)(w, l), l = (std::min<unsigned int>)(w, l));
+    }
+
     virtual void parameters(const std::vector<std::size_t> &indices,
       std::vector<std::pair<FT, FT> > &parameterSpace,
       FT &cluster_epsilon,
       FT min[2],
       FT max[2]) const {
 
-        // gap suchen? und dann shiften, um wrap zu vermeiden? vielleicht einfach später mit rad multiplizieren
+      // Create basis d1, d2
+      Vector_3 d1 = Vector_3((FT) 0, (FT) 0, (FT) 1);
+      Vector_3 d2 = CGAL::cross_product(m_axis, d1);
+      FT l = d2.squared_length();
+      if (l < (FT)0.0001) {
+        d1 = Vector_3((FT) 1, (FT) 0, (FT) 0);
+        d2 = CGAL::cross_product(m_axis, d1);
+        l = d2.squared_length();
+      }
+      d2 = d2 / CGAL::sqrt(l);
 
+      d1 = CGAL::cross_product(m_axis, d2);
+      l = CGAL::sqrt(d1.squared_length());
+      if (l == 0)
+        return;
+
+      d1 = d1 * (FT)1.0 / l;
+
+      if (m_angle > M_PI_4) {
+        // Projection onto a disk preserving distance to apex
+
+        m_wrap = false;
+
+        // First index separately to initialize min/max
+        Vector_3 d = this->point(indices[0]) - m_apex;
+        FT l = d * m_axis / m_cos_ang;
+        FT u = d * d1;
+        FT v = d * d2;
+        FT l2 = CGAL::sqrt(u * u + v * v);
+        u = u * l/l2;
+        v = v * l/l2;
+        min[0] = max[0] = u;
+        min[1] = max[1] = v;
+        parameterSpace[0] = std::pair<FT, FT>(u, v);
+
+        for (std::size_t i = 1;i<indices.size();i++) {
+          d = this->point(indices[i]) - m_apex;
+          l = d * m_axis / m_cos_ang;
+          u = d * d1;
+          v = d * d2;
+          l2 = CGAL::sqrt(u * u + v * v);
+          u = u * l/l2;
+          v = v * l/l2;
+
+          min[0] = (std::min<FT>)(min[0], u);
+          max[0] = (std::max<FT>)(max[0], u);
+
+          min[1] = (std::min<FT>)(min[1], v);
+          max[1] = (std::max<FT>)(max[1], v);
+
+          parameterSpace[i] = std::pair<FT, FT>(u, v);
+        }
+      }
+      else {
+        // Map onto triangle.
+        // u coordinate is arclength
+        // v coordinate is distance to apex
+
+        Vector_3 d = this->point(indices[0]) - m_apex;
+        FT v = d * m_axis / m_cos_ang;
+        FT phi = atan2(d * d2, d * d1);
+        FT radPerDist = -m_neg_sin_ang * v;
+        FT u = FT(phi + M_PI);// * radPerDist;
+        FT avg_v = v;
+
+        min[0] = max[0] = u;
+        min[1] = max[1] = v;
+        parameterSpace[0] = std::pair<FT, FT>(u, v);
+        for (std::size_t i = 1;i<indices.size();i++) {
+          d = this->point(indices[i]) - m_apex;
+          v = d * m_axis / m_cos_ang;
+          phi = atan2(d * d2, d * d1);
+          radPerDist = -m_neg_sin_ang * v;
+          u = FT(phi + M_PI);// * radPerDist;
+
+          min[0] = (std::min<FT>)(min[0], u);
+          max[0] = (std::max<FT>)(max[0], u);
+
+          min[1] = (std::min<FT>)(min[1], v);
+          max[1] = (std::max<FT>)(max[1], v);
+
+          avg_v += v;
+
+          parameterSpace[i] = std::pair<FT, FT>(u, v);
+        }
+
+        // Scale u parameter by average circumference to arc length
+        avg_v /= indices.size();
+        const FT scale = -m_neg_sin_ang * avg_v;
+
+        m_wrap = (min[0] + 2 * M_PI - max[0]) * scale < cluster_epsilon;
+
+        for (std::size_t i = 0;i<parameterSpace.size();i++) {
+          std::pair<FT, FT> p = parameterSpace[i];
+          parameterSpace[i] = std::pair<FT, FT>(p.first * scale, p.second);
+        }
+
+        min[0] *= scale;
+        max[0] *= scale;
+      }
     }
 
     virtual bool supports_connected_component() const {
-      return false;
+      return true;
     }
 
   private:
@@ -294,6 +447,7 @@ namespace CGAL {
     Point_3 m_apex;
     Vector_3 m_axis;
     FT m_neg_sin_ang, m_cos_ang;
+    mutable bool m_wrap;
       /// \endcond
   };
 }
