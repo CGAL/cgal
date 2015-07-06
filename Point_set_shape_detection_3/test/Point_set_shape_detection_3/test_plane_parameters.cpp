@@ -8,7 +8,6 @@
 #include <CGAL/property_map.h>
 #include <CGAL/number_utils.h>
 
-
 template <class K>
 bool test_plane_parameters() {
   const int NB_ROUNDS = 10;

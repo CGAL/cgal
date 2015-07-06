@@ -62,7 +62,7 @@ bool test_torus_connected_component() {
     // the cluster_epsilon.
     typename Efficient_ransac::Parameters parameters;
     parameters.probability = 0.05f;
-    parameters.min_points = NB_POINTS/10;
+    parameters.min_points = points.size()/10;
     parameters.epsilon = 0.002f;
     parameters.normal_threshold = 0.9f;
 

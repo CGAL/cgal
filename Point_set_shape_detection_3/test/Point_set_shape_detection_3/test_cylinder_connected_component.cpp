@@ -48,12 +48,8 @@ bool test_cylinder_connected_component() {
 
     FT spacing = (FT) 1.0;
 
-    save_scene("cylinder_pre.ply", points);
-
     filter_by_distance(pl, spacing * FT(0.5), points);
 
-    save_scene("cylinder_post.ply", points);
-    
     Efficient_ransac ransac;
 
     ransac.template add_shape_factory<Cylinder>();
@@ -64,7 +60,7 @@ bool test_cylinder_connected_component() {
     // the cluster_epsilon.
     typename Efficient_ransac::Parameters parameters;
     parameters.probability = 0.05f;
-    parameters.min_points = NB_POINTS/10;
+    parameters.min_points = points.size()/5;
     parameters.epsilon = 0.002f;
     parameters.normal_threshold = 0.9f;
 

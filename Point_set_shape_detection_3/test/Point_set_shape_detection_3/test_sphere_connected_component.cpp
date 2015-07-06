@@ -56,7 +56,7 @@ bool test_sphere_connected_component() {
     // the cluster_epsilon.
     typename Efficient_ransac::Parameters parameters;
     parameters.probability = 0.05f;
-    parameters.min_points = NB_POINTS/8;
+    parameters.min_points = points.size()/5;
     parameters.epsilon = 0.002f;
     parameters.normal_threshold = 0.9f;
 

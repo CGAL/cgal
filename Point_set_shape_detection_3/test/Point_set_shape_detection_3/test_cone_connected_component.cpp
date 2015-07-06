@@ -11,7 +11,7 @@
 template <class K>
 bool test_cone_connected_component() {
   const int NB_ROUNDS = 10;
-  const int NB_POINTS = 1000;
+  const int NB_POINTS = 2000;
 
   typedef typename K::FT                                      FT;
   typedef CGAL::Point_with_normal_3<K>                        Pwn;
@@ -29,29 +29,32 @@ bool test_cone_connected_component() {
 
   std::size_t success = 0;
 
-  for (int i = 0 ; i < NB_ROUNDS ; i++) {
+  for (int i = 0; i < NB_ROUNDS ; i++) {
     Pwn_vector points;
 
     // generate random points on a cone
-    CGAL::Bbox_3 bbox(-10, -10, -10, 10, 10, 10);
-    Vector axis = random_normal<K>();
-    Point apex = random_point_in<K>(bbox);
-    FT angle = random_float((FT) 0.2, (FT) 1.4);
-    FT start = 0.5;
-    FT end = 1.5;
+    FT spacing;
 
-    sample_cone(NB_POINTS, apex, axis, angle, start, end,
-      std::back_inserter(points)); 
-    
-    CGAL::Vector_3<K> n = random_normal<K>();
-    n = CGAL::cross_product(axis, n);
-    n = n * (FT) 1.0 / (CGAL::sqrt(n.squared_length()));
-    CGAL::Plane_3<K> pl(apex, n);
-    
-    FT spacing = angle;
+    do {
+      points.clear();
+      CGAL::Bbox_3 bbox(-10, -10, -10, 10, 10, 10);
+      Vector axis = random_normal<K>();
+      Point apex = random_point_in<K>(bbox);
+      FT angle = random_float((FT) 0.1, (FT) 1.4);
+      FT start = random_float((FT) 0, (FT) 2.0);
+      FT end = start + random_float((FT) 0.5, (FT) 2.0);
+      FT mid = (start + end) / (FT)2.0;
 
-    filter_by_distance(pl, spacing * FT(0.5), points);
+      sample_cone(NB_POINTS, apex, axis, angle, start, end,
+        std::back_inserter(points)); 
 
+      CGAL::Vector_3<K> n = random_normal<K>();
+      CGAL::Plane_3<K> pl(apex + mid * axis, n);
+
+      spacing = FT(0.75) * (mid / cos(angle)) * sin(angle);
+
+      filter_by_distance(pl, spacing * FT(0.5), points);
+    } while (points.size() < NB_POINTS / 2.0);
 
     Efficient_ransac ransac;
 
@@ -63,7 +66,7 @@ bool test_cone_connected_component() {
     // the cluster_epsilon.
     typename Efficient_ransac::Parameters parameters;
     parameters.probability = 0.05f;
-    parameters.min_points = NB_POINTS/10;
+    parameters.min_points = points.size()/4;
     parameters.epsilon = 0.002f;
     parameters.normal_threshold = 0.9f;
 
@@ -71,9 +74,9 @@ bool test_cone_connected_component() {
     // a single shape and a lower cluster_epsilon for the second half
     // to get two separated shapes.
     if (i < NB_ROUNDS/2)
-      parameters.cluster_epsilon = spacing * FT(1.5);
+      parameters.cluster_epsilon = spacing * FT(1.1);
     else
-      parameters.cluster_epsilon = spacing * FT(0.8);
+      parameters.cluster_epsilon = spacing * FT(0.35);
 
     if (!ransac.detect(parameters)) {
       std::cout << " aborted" << std::endl;
@@ -81,7 +84,6 @@ bool test_cone_connected_component() {
     }
 
     typename Efficient_ransac::Shape_range shapes = ransac.shapes();
-
     
     if (i < NB_ROUNDS/2 && shapes.size() != 1)
       continue;
