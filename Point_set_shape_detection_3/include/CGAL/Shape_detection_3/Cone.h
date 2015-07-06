@@ -201,8 +201,6 @@ namespace CGAL {
       m_neg_sin_ang = -sin(m_angle);
       m_cos_ang = cos(m_angle);
 
-      this->m_cross_mask = (m_angle <= M_PI_4);
-
       this->m_is_valid = true;
     }
 
