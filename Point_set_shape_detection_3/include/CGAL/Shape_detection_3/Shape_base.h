@@ -93,7 +93,8 @@ namespace CGAL {
       m_score(0),
       m_sum_expected_value(0),
       m_nb_subset_used(0),
-      m_has_connected_component(false) {
+      m_has_connected_component(false),
+      m_cross_mask(false) {
     }
 
     virtual ~Shape_base() {}
@@ -179,8 +180,8 @@ namespace CGAL {
             continue;
           unsigned int w = (x > 0) ? bitmap[y  * u_extent + x - 1] : 0;
           unsigned int n = (y > 0) ? bitmap[(y - 1) * u_extent + x] : 0;
-          unsigned int nw = (x > 0 && y > 0) ? bitmap[(y - 1) * u_extent + x - 1] : 0;
-          unsigned int ne = ((x + 1 < u_extent) && y > 0) ? bitmap[(y - 1) * u_extent + x + 1] : 0;
+          unsigned int nw = (m_cross_mask) ? 0 : ((x > 0 && y > 0) ? bitmap[(y - 1) * u_extent + x - 1] : 0);
+          unsigned int ne = (m_cross_mask) ? 0 : (((x + 1 < u_extent) && y > 0) ? bitmap[(y - 1) * u_extent + x + 1] : 0);
 
           // Find smallest set label;
           unsigned int curLabel = map.size();
@@ -596,6 +597,7 @@ namespace CGAL {
     //and thus indicate the next one to use
     std::size_t m_nb_subset_used;
     bool m_has_connected_component;
+    bool m_cross_mask;
 
     Input_iterator m_first;
 
