@@ -169,14 +169,14 @@ void test_triangulate_hole_should_be_no_output(const char* file_name) {
       CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(false));
     if(!patch.empty()) {
       std::cerr << "  Error: patch should be empty" << std::endl;
-      CGAL_assertion(false);
+      assert(false);
     }
 
     CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch),
       CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(true));
     if(!patch.empty()) {
       std::cerr << "  Error: patch should be empty" << std::endl;
-      CGAL_assertion(false);
+      assert(false);
     }
   }
 
@@ -198,13 +198,13 @@ void test_triangulate_and_refine_hole(const char* file_name) {
 
     if(patch_facets.empty()) {
       std::cerr << "  Error: empty patch created." << std::endl;
-      CGAL_assertion(false);
+      assert(false);
     }
   }
 
   if(!poly.is_valid() || ! is_closed(poly)) {
     std::cerr << "  Error: patched polyhedron is not valid or closed." << std::endl;
-    CGAL_assertion(false);
+    assert(false);
   }
 
   std::cout << "  Done!" << std::endl;
@@ -225,13 +225,13 @@ void test_triangulate_refine_and_fair_hole(const char* file_name) {
 
     if(patch_facets.empty()) {
       std::cerr << "  Error: empty patch created." << std::endl;
-      CGAL_assertion(false);
+      assert(false);
     }
   }
 
   if(!poly.is_valid() || ! is_closed(poly)) {
     std::cerr << "  Error: patched polyhedron is not valid or closed." << std::endl;
-    CGAL_assertion(false);
+    assert(false);
   }
 
   std::cout << "  Done!" << std::endl;
@@ -259,7 +259,7 @@ void test_ouput_iterators_triangulate_hole(const char* file_name) {
     if(patch.size() != (std::size_t)(output_it - &*patch_2.begin())) {
       std::cerr << "  Error: returned facet output iterator is not valid!" << std::endl;
       std::cerr << "  " << patch.size() << " vs " << (output_it - &*patch_2.begin()) << std::endl;
-      CGAL_assertion(false);
+      assert(false);
     }
   }
   std::cout << "  Done!" << std::endl;
@@ -293,13 +293,13 @@ void test_ouput_iterators_triangulate_and_refine_hole(const char* file_name) {
     if(patch_facets.size() != (std::size_t) (output_its.first - &*patch_facets_2.begin())) {
       std::cout << "  Error: returned facet output iterator is not valid!" << std::endl;
       std::cout << "  " << patch_facets.size() << " vs " << (output_its.first - &*patch_facets_2.begin()) << std::endl;
-      CGAL_assertion(false);
+      assert(false);
     }
 
     if(patch_vertices.size() != (std::size_t) (output_its.second - &*patch_vertices_2.begin())) {
       std::cerr << "  Error: returned vertex output iterator is not valid!" << std::endl;
       std::cerr << "  " << patch_vertices.size() << " vs " << (output_its.second - &*patch_vertices_2.begin()) << std::endl;
-      CGAL_assertion(false);
+      assert(false);
     }
   }
   std::cout << "  Done!" << std::endl;
@@ -311,7 +311,7 @@ void test_triangulate_refine_and_fair_hole_compile() {
     Eigen::SparseLU<
       CGAL::Eigen_sparse_matrix<double>::EigenType,
       Eigen::COLAMDOrdering<int> > >
-  Eigen_solver;
+  Default_solver;
 
   Polyhedron poly;
   std::vector<Halfedge_handle> border_reps;
@@ -322,9 +322,10 @@ void test_triangulate_refine_and_fair_hole_compile() {
   // use all param
   read_poly_with_borders("data/elephant_quad_hole.off", poly, border_reps);
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
-    (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
-     CGAL::Polygon_mesh_processing::parameters::weight_calculator(CGAL::internal::Uniform_weight_fairing<Polyhedron>(poly)).
-    sparse_linear_solver(Eigen_solver()));
+  (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
+  CGAL::Polygon_mesh_processing::parameters::weight_calculator(
+    CGAL::internal::Uniform_weight_fairing<Polyhedron>(poly)).
+    sparse_linear_solver(Default_solver()));
 
   // default solver
   read_poly_with_borders("data/elephant_quad_hole.off", poly, border_reps);
