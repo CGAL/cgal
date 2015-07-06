@@ -104,15 +104,7 @@ public:
 
 	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Power_test_3> Power_test_3;
 	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Compare_power_distance_3> Compare_power_distance_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::In_smallest_orthogonal_sphere_3> In_smallest_orthogonal_sphere_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Side_of_bounded_orthogonal_sphere_3> Side_of_bounded_orthogonal_sphere_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Does_simplex_intersect_dual_support_3> Does_simplex_intersect_dual_support_3;
 	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Construct_weighted_circumcenter_3> Construct_weighted_circumcenter_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Construct_circumcenter_3> Construct_circumcenter_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Compute_squared_radius_smallest_orthogonal_sphere_3> Compute_squared_radius_smallest_orthogonal_sphere_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Compute_power_product_3> Compute_power_product_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Compute_critical_squared_radius_3> Compute_critical_squared_radius_3;
-	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Compare_weighted_squared_radius_3> Compare_weighted_squared_radius_3;
 
 	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Compare_xyz_3> Compare_xyz_3;
 	typedef Regular_traits_with_offsets_adaptor<Self, typename RT::Orientation_3> Orientation_3;
@@ -142,49 +134,9 @@ public:
 		return Compare_power_distance_3(&_domain);
 	}
 
-	In_smallest_orthogonal_sphere_3 in_smallest_orthogonal_sphere_3_object () const
-	{
-		return In_smallest_orthogonal_sphere_3(&_domain);
-	}
-
-	Side_of_bounded_orthogonal_sphere_3 side_of_bounded_orthogonal_sphere_3_object () const
-	{
-		return Side_of_bounded_orthogonal_sphere_3(&_domain);
-	}
-
-	Does_simplex_intersect_dual_support_3 does_simplex_intersect_dual_support_3_object () const
-	{
-		return Does_simplex_intersect_dual_support_3(&_domain);
-	}
-
 	Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3_object () const
 	{
 		return Construct_weighted_circumcenter_3(&_domain);
-	}
-
-	Construct_circumcenter_3 construct_circumcenter_3_object () const
-	{
-		return Construct_circumcenter_3(&_domain);
-	}
-
-	Compute_power_product_3 compute_power_product_3_object () const
-	{
-		return Compute_power_product_3(&_domain);
-	}
-
-	Compute_squared_radius_smallest_orthogonal_sphere_3 compute_squared_radius_smallest_orthogonal_sphere_3_object () const
-	{
-		return Compute_squared_radius_smallest_orthogonal_sphere_3(&_domain);
-	}
-
-	Compute_critical_squared_radius_3 compute_critical_squared_radius_3_object () const
-	{
-		return Compute_critical_squared_radius_3(&_domain);
-	}
-
-	Compare_weighted_squared_radius_3 compare_weighted_squared_radius_3_object () const
-	{
-		return Compare_weighted_squared_radius_3(&_domain);
 	}
 
 	Compare_xyz_3 compare_xyz_3_object () const
