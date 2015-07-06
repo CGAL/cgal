@@ -25,6 +25,20 @@ export MPFR_LIB_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\lib"
 #paths depending on the compiler and the architecture
 export QGLVIEWERROOT="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\libQGLViewer-2.3.17"
 export QTDIR="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\QT-4.8.4"
+#export QTDIR="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\QT-5.4.1"
+
+if [ -d /cygdrive/c/3rdPartyLibs/VC${VC_VERSION}-${ARCH}/QT-5.5.0 ]; then
+   export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/VC${VC_VERSION}-${ARCH}/QT-5.5.0/*/msvc*/lib/cmake/Qt5`
+   if [ -d /cygdrive/c/3rdPartyLibs/VC${VC_VERSION}-${ARCH}/libQGLViewer-2.6.2 ]; then
+      export QGLVIEWERROOT="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\libQGLViewer-2.6.2"
+   fi
+else
+   export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/VC${VC_VERSION}-${ARCH}/QT-5*/*/msvc*/lib/cmake/Qt5`
+fi
+
+if [ -d /cygdrive/c/3rdPartyLibs/VC${VC_VERSION}-${ARCH}/libQGLViewer-2.6.2 ]; then
+   export QGLVIEWERROOT="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\libQGLViewer-2.6.2"
+fi
 
 export PATH="`cygpath $CGAL_DIR`/bin:`cygpath $GMP_LIB_DIR`:`cygpath $QTDIR`/bin:`cygpath $BOOST_LIBRARYDIR`:`cygpath $QGLVIEWERROOT`/QGLViewer/debug:`cygpath $QGLVIEWERROOT`/QGLViewer/release:/cygdrive/c/3rdPartyLibs/VC-${ARCH}/zlib":$PATH
 
@@ -35,3 +49,4 @@ if [ -n "${TBB_ARCH}" ]; then
   export TBB_ARCH_PLATFORM="${TBB_ARCH}/vc${VC_VERSION}"
   export PATH=$PATH:"${TBBROOT}\bin\\${TBB_ARCH}\vc${VC_VERSION}"
 fi
+
