@@ -774,7 +774,11 @@ public:
     std::pair<int, int> range(0, n-1);
     boost::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, range, tr, edge_exist);
     if(!res.template get<2>()) {
+      #ifndef CGAL_TEST_SUITE
       CGAL_warning(!"Returning no output. Dimension of 3D Triangulation is below 2!");
+      #else
+      std::cerr << "W: Returning no output. Dimension of 3D Triangulation is below 2!\n";
+      #endif
       return Weight::NOT_VALID();
     }
 
@@ -794,7 +798,11 @@ public:
       }
 
       if(W.get(0, n-1) == Weight::NOT_VALID()) {
+        #ifndef CGAL_TEST_SUITE
         CGAL_warning(!"Returning no output. No possible triangulation is found!");
+        #else
+        std::cerr << "W: Returning no output. No possible triangulation is found!\n";
+        #endif
         return Weight::NOT_VALID();
       }
 
@@ -1082,7 +1090,11 @@ private:
       (P, Q, W, lambda, e_start, edge_graph, WC, false);
     
     if(W.get(0, n-1) == Weight::NOT_VALID()) {
+      #ifndef CGAL_TEST_SUITE
       CGAL_warning(!"Returning no output. Filling hole with extra triangles is not successful!");
+      #else
+      std::cerr << "W: Returning no output. Filling hole with extra triangles is not successful!\n";
+      #endif
       return Weight::NOT_VALID();
     }
 
@@ -1122,7 +1134,11 @@ public:
     triangulate_all(P, Q, WC, std::make_pair(0,n-1), W, lambda);
 
     if(W.get(0,n-1) == Weight::NOT_VALID()) {
+      #ifndef CGAL_TEST_SUITE
       CGAL_warning(!"Returning no output. No possible triangulation is found!");
+      #else
+      std::cerr << "W: Returning no output. No possible triangulation is found!\n";
+      #endif
       return Weight::NOT_VALID();
     }
 

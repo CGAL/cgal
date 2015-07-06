@@ -121,7 +121,11 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
     Q.push_back(vpmap[target(next(opposite(next(*circ,pmesh),pmesh),pmesh),pmesh)]);
     P_edges.push_back(*circ);
     if(!vertex_map.insert(std::make_pair(target(*circ,pmesh), id++)).second) {
+      #ifndef CGAL_TEST_SUITE
       CGAL_warning(!"Returning no output. Non-manifold vertex is found on boundary!");
+      #else
+      std::cerr << "W: Returning no output. Non-manifold vertex is found on boundary!\n";
+      #endif
       return std::make_pair(out,
                             CGAL::internal::Weight_min_max_dihedral_and_area::NOT_VALID());
     }
