@@ -439,11 +439,11 @@ void MainWindow::on_actionWidely_variable_sampling_triggered()
 {
   bool ok;
   float d1 = QInputDialog::getDouble(
-      this, tr("Delta-angle"), tr("Delta-angle:"), 1, 0.01, 20.0, 0.01, &ok);
+      this, tr("Delta-angle"), tr("Delta-angle:"), 1, 0.01, 20.0, 2, &ok);
   if (!ok) return;
 
   float d2 = QInputDialog::getDouble(
-      this, tr("Delta-angle"), tr("Delta-angle:"), 10, 0.01, 30.0, 0.01, &ok);
+      this, tr("Delta-angle"), tr("Delta-angle:"), 10, 0.01, 30.0, 2, &ok);
   if (!ok) return;
 
   m_scene->append_widely_variable_sampling(d1, d2);

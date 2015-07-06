@@ -600,7 +600,6 @@ void R_s_k_2::draw_collapsible_edge(const float point_size,
   Triangulation copy;
   Edge copy_edge = copy_star(edge, copy);
   Vertex_handle copy_src = copy.source_vertex(copy_edge);
-  Vertex_handle copy_dst = copy.target_vertex(copy_edge);
 
   Edge_vector copy_hull;
   copy.get_edges_from_star_minus_link(copy_src, copy_hull, true);

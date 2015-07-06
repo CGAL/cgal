@@ -1237,7 +1237,7 @@ public:
   }
 
   Vector compute_gradient_for_plan1(const Edge& edge) {
-    FT M = m_dt.get_mass(edge);
+    //FT M = m_dt.get_mass(edge);
     const Point& pa = m_dt.source_vertex(edge)->point();
     const Point& pb = m_dt.target_vertex(edge)->point();
 
