@@ -138,12 +138,12 @@ Scene_polygon_soup_item::initialize_buffers(Viewer_interface* viewer) const
     are_buffers_filled = true;
 }
 
-typedef typename Polyhedron::Traits Traits;
-typedef typename Polygon_soup::Polygon_3 Facet;
+typedef Polyhedron::Traits Traits;
+typedef Polygon_soup::Polygon_3 Facet;
 typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
-typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
+typedef Polyhedron::Halfedge_handle Halfedge_handle;
 struct Face_info {
-    typename Polyhedron::Halfedge_handle e[3];
+    Polyhedron::Halfedge_handle e[3];
     bool is_external;
 };
 typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_handle,
@@ -164,7 +164,7 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
     const Point_3& pa = soup->points[pit->at(0)];
     const Point_3& pb = soup->points[pit->at(1)];
     const Point_3& pc = soup->points[pit->at(2)];
-    typename Traits::Vector_3 normal = CGAL::cross_product(pb-pa, pc -pa);
+    Traits::Vector_3 normal = CGAL::cross_product(pb-pa, pc -pa);
     normal = normal / std::sqrt(normal * normal);
 
     P_traits cdt_traits(normal);
@@ -175,10 +175,10 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
     int it_end =pit->size();
 
     // Iterates the vector of facet handles
-    typename CDT::Vertex_handle previous, first;
+    CDT::Vertex_handle previous, first;
     do {
 
-        typename CDT::Vertex_handle vh = cdt.insert(soup->points[pit->at(it)]);
+        CDT::Vertex_handle vh = cdt.insert(soup->points[pit->at(it)]);
         if(first == 0) {
             first = vh;
         }
@@ -191,7 +191,7 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
     cdt.insert_constraint(previous, first);
 
     // sets mark is_external
-    for(typename CDT::All_faces_iterator
+    for(CDT::All_faces_iterator
         pitt = cdt.all_faces_begin(),
         end = cdt.all_faces_end();
         pitt != end; ++pitt)
@@ -203,7 +203,7 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
     std::queue<typename CDT::Face_handle> face_queue;
     face_queue.push(cdt.infinite_vertex()->face());
     while(! face_queue.empty() ) {
-        typename CDT::Face_handle fh = face_queue.front();
+        CDT::Face_handle fh = face_queue.front();
         face_queue.pop();
         if(fh->info().is_external) continue;
         fh->info().is_external = true;
@@ -219,7 +219,7 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
     //iterates on the internal faces to add the vertices to the positions
     //and the normals to the appropriate vectors
     int count =0;
-    for(typename CDT::Finite_faces_iterator
+    for(CDT::Finite_faces_iterator
         ffit = cdt.finite_faces_begin(),
         end = cdt.finite_faces_end();
         ffit != end; ++ffit)

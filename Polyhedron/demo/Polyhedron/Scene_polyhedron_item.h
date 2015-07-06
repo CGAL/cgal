@@ -99,7 +99,7 @@ private:
 private:
     typedef Scene_item Base;
     typedef std::vector<QColor> Color_vector;
-    typedef typename Polyhedron::Facet_iterator Facet_iterator;
+    typedef Polyhedron::Facet_iterator Facet_iterator;
 
     Color_vector colors_;
 
