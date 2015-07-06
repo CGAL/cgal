@@ -135,11 +135,10 @@ and <code>src/</code> directories).
   <h3>Triangulated Surface Mesh Skeletonization (new package)</h3>
   <ul>
     <li>
-         This new package provides a (1D) curve skeleton extraction algorithm for
-         a triangulated poylgonal mesh without borders based on the mean curvature flow.
-         The particularity of this skeleton is that it has the same topology
-         as the input mesh. For each skeleton vertex one can obtain its location
-         and its corresponding vertices of the input mesh.
+         This package provides a (1D) curve skeleton extraction algorithm for
+         a triangulated polygonal mesh without borders based on the mean curvature flow.
+         The particularity of this skeleton is that it captures the topology of the input.
+         For each skeleton vertex one can obtain its location and its corresponding vertices from the input mesh.
          The code is generic and works with any model of the `FaceListGraph` concept.
     </li>
   </ul>
