@@ -179,8 +179,8 @@ namespace CGAL {
             continue;
           unsigned int w = (x > 0) ? bitmap[y  * u_extent + x - 1] : 0;
           unsigned int n = (y > 0) ? bitmap[(y - 1) * u_extent + x] : 0;
-          unsigned int nw = (x > 0 && y > 0) ? bitmap[(y - 1) * u_extent + x - 1];
-          unsigned int ne = ((x + 1 < u_extent) && y > 0) ? bitmap[(y - 1) * u_extent + x + 1];
+          unsigned int nw = (x > 0 && y > 0) ? bitmap[(y - 1) * u_extent + x - 1] : 0;
+          unsigned int ne = ((x + 1 < u_extent) && y > 0) ? bitmap[(y - 1) * u_extent + x + 1] : 0;
 
           // Find smallest set label;
           unsigned int curLabel = map.size();
