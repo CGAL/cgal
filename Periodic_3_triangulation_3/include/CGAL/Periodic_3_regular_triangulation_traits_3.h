@@ -8,8 +8,6 @@
 #include <CGAL/representation_tags.h>
 #include <CGAL/Kernel_traits.h>
 
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-
 
 namespace CGAL
 {
@@ -79,13 +77,13 @@ private:
 };
 
 template <class Kernel, class Off = typename CGAL::Periodic_3_offset_3>
-class Periodic_3_regular_triangulation_traits_base_3 : public Regular_triangulation_euclidean_traits_3<Kernel>
+class Periodic_3_regular_triangulation_traits_base_3 : public Kernel
 {
 public:
-  typedef Kernel                                                       K;
-  typedef Regular_triangulation_euclidean_traits_3<Kernel>             RT;
+  typedef Kernel K;
+  typedef K                                                       RT;
 	typedef Off                                                          Offset;
-	typedef Periodic_3_regular_triangulation_traits_base_3<K, Offset>    Self;
+	typedef Periodic_3_regular_triangulation_traits_base_3<RT, Offset>    Self;
 
 	typedef typename RT::FT                             FT;
 	typedef typename RT::Weighted_point_3               Weighted_point_3;
