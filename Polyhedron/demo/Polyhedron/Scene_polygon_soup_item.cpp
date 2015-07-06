@@ -326,16 +326,17 @@ Scene_polygon_soup_item::bbox() const {
 
 void 
 Scene_polygon_soup_item::new_vertex(const double& x,
-                               const double& y,
-                               const double& z)
+                                    const double& y,
+                                    const double& z)
 {
-  soup->points.push_back(Point_3(x, y, z));
+
+    soup->points.push_back(Point_3(x, y, z));
 }
                                
 void 
 Scene_polygon_soup_item::new_triangle(const std::size_t i,
-                                 const std::size_t j,
-                                 const std::size_t k)
+                                      const std::size_t j,
+                                      const std::size_t k)
 {
   Polygon_soup::Polygon_3 new_polygon(3);
   new_polygon[0] = i;

@@ -18,8 +18,6 @@
 #ifndef CGAL_SURFACE_MESH_FWD_H
 #define CGAL_SURFACE_MESH_FWD_H
 
-#include <string>
-
 /// \file Surface_mesh_fwd.h
 /// Forward declarations of the Surface_mesh package.
 

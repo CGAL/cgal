@@ -33,6 +33,7 @@ ALIASES                 += "cgalReleaseNumber=${CGAL_CREATED_VERSION_NUM}"
 
 # all image paths, maybe auto-generate this?
 IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
+             ${CMAKE_SOURCE_DIR}/Advancing_front_surface_reconstruction/doc/Advancing_front_surface_reconstruction/fig \
              ${CMAKE_SOURCE_DIR}/Algebraic_foundations/doc/Algebraic_foundations/fig \
              ${CMAKE_SOURCE_DIR}/AABB_tree/doc/AABB_tree/fig \
              ${CMAKE_SOURCE_DIR}/Polygon/doc/Polygon/fig \

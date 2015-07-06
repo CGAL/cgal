@@ -48,6 +48,12 @@ The type for weighted points.
 typedef Weighted_point <Bare_point, Weight> 
 Weighted_point_3; 
 
+/*!
+The type for points. 
+*/ 
+typedef Weighted_point <Bare_point, Weight> 
+Point_3; 
+
 /// @} 
 
 /// \name Types for Predicate Functors 

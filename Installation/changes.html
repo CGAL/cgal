@@ -119,6 +119,8 @@ and <code>src/</code> directories).
 
 <!-- Installation (and general changes) -->
 <!-- New packages -->
+
+<!-- sdglinf-philaris begin-->
   <h3>L Infinity Segment Delaunay Graphs (new pckage)</h3>
   <ul>
     <li>
@@ -128,6 +130,19 @@ and <code>src/</code> directories).
       and traits under the Euclidean distance. The segment Voronoi diagram in the max-norm has applications in VLSI CAD.
     </li>
   </ul>
+<!-- sdglinf-philaris end-->
+
+  <h3>Advancing Front Surface Reconstruction (new package)</h3>
+  <ul>
+    <li>
+      This package provides a greedy algorithm for surface reconstruction from an
+      unorganized point set. Starting from a seed facet, a piecewise linear 
+      surface is grown by adding Delaunay triangles one by one. The most 
+      plausible triangles are added first, in a way that avoids the appearance 
+      of topological singularities.
+    </li>
+  </ul>
+
   <h3>Triangulated Surface Mesh Shortest Paths (new package)</h3>
   <ul>
     <li>
@@ -150,6 +165,14 @@ and <code>src/</code> directories).
 <!-- Arithmetic and Algebra -->
 <!-- Combinatorial Algorithms -->
 <!-- Geometry Kernels -->
+  <h3>dD Geometry Kernel</h3>
+  <ul>
+    <li>
+      Epick_d gains 3 new functors: <code>Construct_circumcenter_d</code>,
+      <code>Compute_squared_radius_d</code>, <code>Side_of_bounded_sphere_d</code>.
+      Those are essential for the computation of alpha-shapes.
+    </li>
+  </ul>
 <!-- Convex Hull Algorithms -->
 <!-- Polygons -->
 <!-- Cell Complexes and Polyhedra -->
