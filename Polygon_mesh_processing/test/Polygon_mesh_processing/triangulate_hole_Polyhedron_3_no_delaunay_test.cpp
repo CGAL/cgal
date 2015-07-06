@@ -1,6 +1,7 @@
 //#define POLY 
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/internal/Hole_filling/do_not_use_DT3.h>
 #ifdef POLY
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
@@ -14,7 +15,6 @@
 #include <CGAL/boost/graph/helpers.h>
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
-#include <CGAL/Polygon_mesh_processing/internal/Hole_filling/do_not_use_DT3.h>
 
 #include <CGAL/assertions.h>
 
@@ -101,10 +101,8 @@ CGAL::internal::Weight_min_max_dihedral_and_area
 }
 
 
-void test_triangulate_hole_weight(const char* file_name, bool use_DT, std::size_t nb_remaining_holes) {
-  typedef CGAL::internal::Weight_min_max_dihedral_and_area Weight;
-
-  std::cout << "test_triangulate_hole_weight + useDT: " << use_DT << std::endl;
+void test_triangulate_hole_weight(const char* file_name, std::size_t nb_remaining_holes) {
+  std::cout << "test_triangulate_hole_weight"<< std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
   std::vector<Halfedge_handle> border_reps;
@@ -112,19 +110,9 @@ void test_triangulate_hole_weight(const char* file_name, bool use_DT, std::size_
 
   for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
     std::vector<Facet_handle> patch;
-    Weight w_algo = CGAL::Polygon_mesh_processing::internal::triangulate_hole_polygon_mesh(
-      poly, *it, back_inserter(patch), get(CGAL::vertex_point, poly), use_DT, Kernel()).second;
+    CGAL::Polygon_mesh_processing::triangulate_hole(
+      poly, *it, back_inserter(patch),CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(true));
     if(patch.empty()) { continue; }
-    Weight w_test = calculate_weight_for_patch(poly, patch.begin(), patch.end());
-
-    const double epsilon = 1e-10;
-    if( std::abs(w_algo.w.first - w_test.w.first) > epsilon ||
-        std::abs(w_algo.w.second - w_test.w.second) > epsilon )
-    {
-      std::cerr << "  Weight returned by algo   : " << w_algo << std::endl;
-      std::cerr << "  Weight calculated by test : " << w_test << std::endl;
-      assert(false);
-    }
   }
 
   detect_borders(poly, border_reps);
@@ -354,12 +342,10 @@ int main() {
     test_triangulate_refine_and_fair_hole(it->c_str());
     test_ouput_iterators_triangulate_and_refine_hole(it->c_str());
     test_ouput_iterators_triangulate_hole(it->c_str());
-    test_triangulate_hole_weight(it->c_str(), true, 0);
-    test_triangulate_hole_weight(it->c_str(), false, 0);
+    test_triangulate_hole_weight(it->c_str(), 0);
     std::cout << "------------------------------------------------" << std::endl;
   }
-  test_triangulate_hole_weight("data/RedCircleBox.off", true, 0);
-  test_triangulate_hole_weight("data/RedCircleBox.off", false, 0);
+  test_triangulate_hole_weight("data/RedCircleBox.off", 0);
 
   test_triangulate_hole_should_be_no_output("data/non_manifold_vertex.off");
   test_triangulate_hole_should_be_no_output("data/two_tris_collinear.off");
