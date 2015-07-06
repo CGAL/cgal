@@ -415,6 +415,7 @@ private:
       for (size_t j = 0; j < face_to_edge[fid].size(); ++j)
       {
         int e = face_to_edge[fid][j];
+        if (e==eid) continue;
         for (size_t k = 0; k < edge_to_face[e].size(); ++k)
         {
           if (edge_to_face[e][k] == fid)
@@ -425,6 +426,7 @@ private:
         }
       }
     }
+    edge_to_face[eid].clear();
   }
 
   void delete_edge(int p1, int p2, int eid)
