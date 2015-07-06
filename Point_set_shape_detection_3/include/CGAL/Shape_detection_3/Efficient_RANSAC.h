@@ -415,8 +415,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       // Minimum number of points has been set?
       m_options.min_points = 
         (m_options.min_points >= m_num_available_points) ? 
-          (std::size_t)((FT)0.001 * m_num_available_points) : 
+          (std::size_t)((FT)0.01 * m_num_available_points) : 
           m_options.min_points;
+      m_options.min_points = (m_options.min_points < 10) ? 10 : m_options.min_points;
       
       // Initializing the shape index
       m_shape_index.assign(m_num_available_points, -1);
