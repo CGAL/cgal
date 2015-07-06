@@ -101,7 +101,8 @@ Scene_polygon_soup_item::initialize_buffers(Viewer_interface* viewer) const
 
         vaos[0]->bind();
         buffers[0].bind();
-        buffers[0].allocate(positions_poly.data(), positions_poly.size()*sizeof(float));
+        buffers[0].allocate(positions_poly.data(),
+                            static_cast<int>(positions_poly.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[0].release();
@@ -109,7 +110,8 @@ Scene_polygon_soup_item::initialize_buffers(Viewer_interface* viewer) const
 
 
         buffers[1].bind();
-        buffers[1].allocate(normals.data(), normals.size()*sizeof(float));
+        buffers[1].allocate(normals.data(),
+                            static_cast<int>(normals.size()*sizeof(float)));
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_FLOAT,0,3);
         buffers[1].release();
@@ -125,7 +127,8 @@ Scene_polygon_soup_item::initialize_buffers(Viewer_interface* viewer) const
         vaos[1]->bind();
 
         buffers[3].bind();
-        buffers[3].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
+        buffers[3].allocate(positions_lines.data(),
+                            static_cast<int>(positions_lines.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[3].release();
@@ -171,8 +174,8 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
 
     CDT cdt(cdt_traits);
 
-    int it = 0;
-    int it_end =pit->size();
+    std::size_t it = 0;
+    std::size_t it_end =pit->size();
 
     // Iterates the vector of facet handles
     CDT::Vertex_handle previous, first;
@@ -552,7 +555,7 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     program->setAttributeValue("colors", v_colors);
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
-    qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
+    qFunc.glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly.size()/4));
     // Clean-up
     program->release();
     vaos[0]->release();
@@ -573,7 +576,7 @@ Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
     QColor color = this->color();
     program->setAttributeValue("colors", color);
     //draw the points
-    qFunc.glDrawArrays(GL_POINTS, 0, positions_lines.size()/4);
+    qFunc.glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size()/4));
     // Clean-up
     program->release();
     vaos[1]->release();
@@ -595,7 +598,7 @@ Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
 
     program->setAttributeValue("colors", color);
     //draw the edges
-    qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
+    qFunc.glDrawArrays(GL_LINES, 0,static_cast<GLsizei>( positions_lines.size()/4));
     // Clean-up
     program->release();
     vaos[1]->release();

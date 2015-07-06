@@ -57,7 +57,7 @@ if( POLYHEDRON_QTSCRIPT_DEBUGGER)
 endif()
 find_package(CGAL REQUIRED COMPONENTS Qt5)
 include( ${CGAL_USE_FILE} )
-find_package(Qt5 COMPONENTS OpenGL Script Xml ScriptTools)
+find_package(Qt5 COMPONENTS OpenGL Script Svg Xml ScriptTools)
 
 # Find Glew (required)
 find_package(GLEW)
@@ -237,14 +237,10 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     add_executable  ( Polyhedron_3
       MainWindow.cpp
       Polyhedron_3.cpp
-      Viewer.cpp
-      Scene.cpp
-    #MainWindow_moc.cpp
       File_loader_dialog_moc.cpp
-    # Viewer_moc.cpp
       ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
-    qt5_use_modules(Polyhedron_3 Gui OpenGL Xml Widgets Script )
+    qt5_use_modules(Polyhedron_3 Gui OpenGL Xml Widgets Script Svg )
     if(EIGEN3_FOUND)
 #      add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp )
     endif()

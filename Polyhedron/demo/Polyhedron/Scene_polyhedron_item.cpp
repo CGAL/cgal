@@ -329,7 +329,8 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
         program->bind();
         vaos[0]->bind();
         buffers[0].bind();
-        buffers[0].allocate(positions_facets.data(), positions_facets.size()*sizeof(float));
+        buffers[0].allocate(positions_facets.data(),
+                            static_cast<int>(positions_facets.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[0].release();
@@ -337,13 +338,15 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
 
 
         buffers[1].bind();
-        buffers[1].allocate(normals.data(), normals.size()*sizeof(float));
+        buffers[1].allocate(normals.data(),
+                            static_cast<int>(normals.size()*sizeof(float)));
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_FLOAT,0,3);
         buffers[1].release();
 
         buffers[2].bind();
-        buffers[2].allocate(color_facets.data(), color_facets.size()*sizeof(float));
+        buffers[2].allocate(color_facets.data(),
+                            static_cast<int>(color_facets.size()*sizeof(float)));
         program->enableAttributeArray("colors");
         program->setAttributeBuffer("colors",GL_FLOAT,0,3);
         buffers[2].release();
@@ -358,13 +361,15 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
         vaos[1]->bind();
 
         buffers[3].bind();
-        buffers[3].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
+        buffers[3].allocate(positions_lines.data(),
+                            static_cast<int>(positions_lines.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[3].release();
 
         buffers[4].bind();
-        buffers[4].allocate(color_lines.data(), color_lines.size()*sizeof(float));
+        buffers[4].allocate(color_lines.data(),
+                            static_cast<int>(color_lines.size()*sizeof(float)));
         program->enableAttributeArray("colors");
         program->setAttributeBuffer("colors",GL_FLOAT,0,3);
         buffers[4].release();
@@ -381,20 +386,23 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
 
 
         buffers[5].bind();
-        buffers[5].allocate(positions_facets.data(), positions_facets.size()*sizeof(float));
+        buffers[5].allocate(positions_facets.data(),
+                            static_cast<int>(positions_facets.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[5].release();
 
         buffers[6].bind();
-        buffers[6].allocate(normals.data(), normals.size()*sizeof(float));
+        buffers[6].allocate(normals.data(),
+                            static_cast<int>(normals.size()*sizeof(float)));
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_FLOAT,0,3);
         buffers[6].release();
 
 
         buffers[7].bind();
-        buffers[7].allocate(color_facets_selected.data(), color_facets_selected.size()*sizeof(float));
+        buffers[7].allocate(color_facets_selected.data(),
+                            static_cast<int>(color_facets_selected.size()*sizeof(float)));
         program->enableAttributeArray("colors");
         program->setAttributeBuffer("colors",GL_FLOAT,0,3);
         buffers[7].release();
@@ -408,13 +416,15 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
         vaos[3]->bind();
         program->bind();
         buffers[8].bind();
-        buffers[8].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
+        buffers[8].allocate(positions_lines.data(),
+                            static_cast<int>(positions_lines.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[8].release();
 
         buffers[9].bind();
-        buffers[9].allocate(color_lines_selected.data(), color_lines_selected.size()*sizeof(float));
+        buffers[9].allocate(color_lines_selected.data(),
+                            static_cast<int>(color_lines_selected.size()*sizeof(float)));
         program->enableAttributeArray("colors");
         program->setAttributeBuffer("colors",GL_FLOAT,0,3);
         buffers[9].release();
@@ -872,7 +882,7 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
     attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
     program->bind();
-    qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/4);
+    qFunc.glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/4));
     program->release();
     if(!is_selected)
         vaos[0]->release();
@@ -895,7 +905,7 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     //draw the edges
-    qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
+    qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/4));
     program->release();
     if(!is_selected)
         vaos[1]->release();
@@ -911,7 +921,7 @@ Scene_polyhedron_item::draw_points(Viewer_interface* viewer) const {
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     //draw the points
-    qFunc.glDrawArrays(GL_POINTS, 0, positions_lines.size()/4);
+    qFunc.glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size()/4));
     // Clean-up
     program->release();
     vaos[1]->release();
