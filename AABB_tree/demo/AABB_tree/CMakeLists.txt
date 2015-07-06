@@ -20,7 +20,7 @@ find_package(CGAL REQUIRED COMPONENTS Qt5 )
 include( ${CGAL_USE_FILE} )
 
 # Find Qt5 itself
-find_package(Qt5 COMPONENTS Xml Script OpenGL Gui)
+find_package(Qt5 COMPONENTS Xml Script OpenGL Gui Svg)
 
 # Find OpenGL
 find_package(OpenGL)
@@ -54,7 +54,7 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FO
                                        "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp" )
 
   add_executable  ( AABB_demo AABB_demo.cpp ${UI_FILES} ${RESOURCE_FILES} )
-  qt5_use_modules(AABB_demo Gui OpenGL Xml Script )
+  qt5_use_modules(AABB_demo Gui OpenGL Xml Script Svg )
   # Link with Qt libraries
   target_link_libraries( AABB_demo ${QT_LIBRARIES} )
 
