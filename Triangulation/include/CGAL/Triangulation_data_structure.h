@@ -894,8 +894,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
         if( v_idx != current_dimension() )
         {
             (*it)->swap_vertices(v_idx, current_dimension());
-            if( ( ! (*it)->has_vertex(star) ) || (current_dimension() > 2) )
-                (*it)->swap_vertices(current_dimension() - 2, current_dimension() - 1);
+            (*it)->swap_vertices(current_dimension() - 2, current_dimension() - 1);
         }
         (*it)->set_vertex(current_dimension(), Vertex_handle());
         (*it)->set_neighbor(current_dimension(), Full_cell_handle());
@@ -1143,11 +1142,6 @@ void Triangulation_data_structure<Dim, Vb, Fcb>
             // here, we could be clever so as to get consistent orientation
             for( int k = 1; k <= cur_dim; ++k )
                 associate_vertex_with_full_cell(S_new, k, vertex(S, k - 1));
-        }
-        else if( cur_dim == 2 )
-        {   // if cur. dim. is 2, we must take care of the 'rightmost' infinite vertex.
-            if( S->mirror_index(S->index(star)) == 0 )
-                swap_me = S;
         }
     }
     // now we setup the neighbors

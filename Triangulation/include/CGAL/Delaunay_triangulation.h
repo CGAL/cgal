@@ -365,24 +365,14 @@ Delaunay_triangulation<DCTraits, TDS>
             return Full_cell_handle();
         }
         Full_cell_handle left = v->full_cell();
-        if( is_infinite(left) && left->neighbor(0)->index(left) == 0 ) // we are on the infinite right.
-            left = left->neighbor(0);
         if( 0 == left->index(v) )
             left = left->neighbor(1);
         CGAL_assertion( 1 == left->index(v) );
         Full_cell_handle right = left->neighbor(0);
-        if( ! is_infinite(right) )
-        {
-            tds().associate_vertex_with_full_cell(left, 1, right->vertex(1));
-            set_neighbors(left, 0, right->neighbor(0), right->mirror_index(0));
-        }
-        else
-        {
-            tds().associate_vertex_with_full_cell(left, 1, left->vertex(0));
-            tds().associate_vertex_with_full_cell(left, 0, infinite_vertex());
-            set_neighbors(left, 0, left->neighbor(1), left->mirror_index(1));
-            set_neighbors(left, 1, right->neighbor(1), right->mirror_index(1));
-        }
+
+        tds().associate_vertex_with_full_cell(left, 1, right->vertex(1));
+        set_neighbors(left, 0, right->neighbor(0), right->mirror_index(0));
+
         tds().delete_vertex(v);
         tds().delete_full_cell(right);
         return left;
@@ -471,24 +461,16 @@ Delaunay_triangulation<DCTraits, TDS>
             {
                 int v_idx = (*it)->index(v);
                 tds().associate_vertex_with_full_cell(*it, v_idx, infinite_vertex());
-                if( v_idx != 0 )
-                {
-                    // we must put the infinite vertex at index 0.
-                    // OK, now with the new convention that the infinite vertex
-                    // does not have to be at index 0, this is not necessary,
-                    // but still, I prefer to keep this piece of code here. [-- Samuel Hornus]
-                    (*it)->swap_vertices(0, v_idx);
-                    // Now, we preserve the positive orientation of the full_cell
-                    (*it)->swap_vertices(current_dimension() - 1, current_dimension());
-                }
             }
             // Make the handles to infinite full cells searchable
             infinite_simps.make_searchable();
             // Then, modify the neighboring relation
             for( typename Simplices::iterator it = simps.begin(); it != simps.end(); ++it )
             {
-                for( int i = 1; i <= current_dimension(); ++i )
+                for( int i = 0; i <= current_dimension(); ++i )
                 {
+                    if (is_infinite((*it)->vertex(i)))
+                        continue;
                     (*it)->vertex(i)->set_full_cell(*it);
                     Full_cell_handle n = (*it)->neighbor(i);
                     // Was |n| a finite full cell prior to removing |v| ?
@@ -732,6 +714,35 @@ Delaunay_triangulation<DCTraits, TDS>
         CGAL_assertion( ZERO != o );
             if( NEGATIVE == o )
                 reorient_full_cells();
+
+        // We just inserted the second finite point and the right infinite
+        // cell is like : (inf_v, v), but we want it to be (v, inf_v) to be
+        // consistent with the rest of the cells
+        if (current_dimension() == 1)
+        {
+            // Is "inf_v_cell" the right infinite cell? 
+            // Then inf_v_index should be 1
+            if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0 
+                && inf_v_index == 0)
+            {
+                inf_v_cell->swap_vertices(
+                    current_dimension() - 1, current_dimension());
+            }
+            // Otherwise, let's find the right infinite cell
+            else
+            {
+                inf_v_cell = inf_v_cell->neighbor((inf_v_index + 1) % 2);
+                inf_v_index = inf_v_cell->index(infinite_vertex());
+                // Is "inf_v_cell" the right infinite cell? 
+                // Then inf_v_index should be 1
+                if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0 
+                    && inf_v_index == 0)
+                {
+                    inf_v_cell->swap_vertices(
+                        current_dimension() - 1, current_dimension());
+                }
+            }
+        }
     }
     return v;
 }

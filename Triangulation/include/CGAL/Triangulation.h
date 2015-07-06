@@ -756,6 +756,21 @@ protected:
     }
   };
 
+  void display_all_full_cells__debugging()
+  {
+    std::cerr << "ALL FULL CELLS:" << std::endl;
+    for (Full_cell_const_iterator cit = full_cells_begin() ;
+          cit != full_cells_end() ; ++cit )
+    {
+      std::cerr << std::hex << &*cit << ": ";
+      for (int jj = 0 ; jj <= current_dimension() ; ++jj)
+        std::cerr << (is_infinite(cit->vertex(jj)) ? 0xFFFFFFFF : (unsigned int)&*cit->vertex(jj)) << " - ";
+      std::cerr << std::dec << std::endl;
+    }
+    std::cerr << std::endl;
+  }
+
+
 }; // Triangulation<...>
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
@@ -769,17 +784,15 @@ Triangulation<TT, TDS>
 {
     if( current_dimension() < 1 )
         return;
+
     Full_cell_iterator sit = full_cells_begin();
     Full_cell_iterator send = full_cells_end();
-    while( sit != send )
+    for ( ; sit != send ; ++sit)
     {
-        if( is_infinite(sit) && (1 == current_dimension()) )
+        if( ! (is_infinite(sit) && (1 == current_dimension())) )
         {
-            ++sit;
-            continue;
+            sit->swap_vertices(current_dimension() - 1, current_dimension());
         }
-        sit->swap_vertices(current_dimension() - 1, current_dimension());
-        ++sit;
     }
 }
 
@@ -901,13 +914,8 @@ Triangulation<TT, TDS>
     CGAL_precondition( is_infinite(s) );
     CGAL_precondition( 1 == current_dimension() );
     int inf_v_index = s->index(infinite_vertex());
-    bool swap = (0 == s->neighbor(inf_v_index)->index(s));
     Vertex_handle v = tds().insert_in_full_cell(s);
     v->set_point(p);
-    if( swap )
-    {
-        s->swap_vertices(0, 1);
-    }
     return v;
 }
 
