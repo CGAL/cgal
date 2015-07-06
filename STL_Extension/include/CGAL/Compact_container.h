@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <vector>
 #include <cstring>
+#include <functional>
 
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
@@ -1159,8 +1160,39 @@ namespace internal {
     return &*rhs != NULL;
   }
 
+  template <class DSC, bool Const>
+  std::size_t hash_value(const CC_iterator<DSC, Const>&  i)
+  {
+    return reinterpret_cast<std::size_t>(&*i) / sizeof(typename DSC::value_type);
+  }
+
 } // namespace internal
 
 } //namespace CGAL
+
+namespace std {
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4099) // For VC10 it is class hash 
+#endif
+  
+  template < class T>
+  struct hash;
+  
+  template < class DSC, bool Const >
+  struct hash<CGAL::internal::CC_iterator<DSC, Const> >
+    : public std::unary_function<CGAL::internal::CC_iterator<DSC, Const>, std::size_t> {
+
+    std::size_t operator()(const CGAL::internal::CC_iterator<DSC, Const>& i) const
+    {
+      return reinterpret_cast<std::size_t>(&*i) / sizeof(typename DSC::value_type);
+    }
+  };
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
+}
 
 #endif // CGAL_COMPACT_CONTAINER_H

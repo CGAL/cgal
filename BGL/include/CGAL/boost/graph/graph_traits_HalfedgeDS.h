@@ -20,6 +20,8 @@
 #ifndef CGAL_BOOST_GRAPH_GRAPH_TRAITS_HALFEDGEDS_H
 #define CGAL_BOOST_GRAPH_GRAPH_TRAITS_HALFEDGEDS_H
 
+#include <functional>
+
 #include <boost/config.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/iterator/transform_iterator.hpp>
@@ -30,7 +32,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/boost/graph/iterator.h>
-
 #include <CGAL/Handle_hash_function.h>
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -216,5 +217,32 @@ public:
 
 
 } //namespace CGAL
+
+
+namespace std {
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4099) // For VC10 it is class hash 
+#endif
+
+  template < class T>
+  struct hash;
+
+  template <typename H>
+  struct hash<CGAL::internal::HDS_edge<H> > {
+    std::size_t operator()(const CGAL::internal::HDS_edge<H>& e) const
+    {
+      std::cerr << "HDS_edge HashFct" << std::endl;
+      std::hash<H> fct;
+      return fct(e.halfedge());
+    }
+  };
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
+}
 
 #endif // CGAL_BOOST_GRAPH_GRAPH_TRAITS_HALFEDGEDS_H

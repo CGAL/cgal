@@ -762,4 +762,22 @@ void sort();
 
 
 }; /* end In_place_list */
+
+/*!
+returns a hash value for the pointee of `i`. 
+\relates In_place_list
+*/ 
+
+  template <class T, bool>
+  std::size_t hash_value(const In_place_list<T,bool>::iterator  i);
+
+/*!
+returns a hash value for the pointee of `i`. 
+\relates In_place_list
+*/ 
+
+template <class T, class bool>
+std::size_t hash_value(const In_place_list<T,bool>::const_iterator i);
+
+
 } /* end namespace CGAL */

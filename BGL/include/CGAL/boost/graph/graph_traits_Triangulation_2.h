@@ -20,6 +20,8 @@
 #ifndef CGAL_GRAPH_TRAITS_TRIANGULATION_2_H
 #define CGAL_GRAPH_TRAITS_TRIANGULATION_2_H
 
+#include <functional>
+
 #include <boost/config.hpp>
 #include <boost/iterator_adaptors.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -40,8 +42,9 @@ namespace CGAL {
 
 template < class T, class EdgeBase >
 class Edge : public EdgeBase {
+
+public:
   typedef typename T::Face_handle Face_handle ;
-  public:
   
   Edge()
   {}
@@ -64,7 +67,12 @@ class Edge : public EdgeBase {
     this->first = e.first;
     this->second = e.second;
     return *this;
-}
+  }
+
+  friend std::size_t hash_value(const Edge& e)
+  {
+    return hash_value(e.first);
+  }
 
   bool operator==(const Edge& other) const
   {
@@ -247,6 +255,49 @@ public:
   }
 };
 
+    
+    template <typename Tr>
+    struct T2_halfedge_descriptor
+    {
+      typedef typename Tr::Face_handle face_descriptor;
+      face_descriptor first;
+      int second;
+      operator std::pair<face_descriptor, int>() { return std::make_pair(first,second); }
+      
+      T2_halfedge_descriptor()
+      {}
+      
+      T2_halfedge_descriptor(const typename Tr::Edge& e)
+        : first(e.first), second(e.second)
+      {}
+      
+      T2_halfedge_descriptor(face_descriptor fd, int i)
+        : first(fd), second(i)
+      {}
+      
+      friend std::size_t hash_value(const T2_halfedge_descriptor& h)
+      {
+        return hash_value(h.first);
+      } 
+      
+      bool operator==(const T2_halfedge_descriptor& other) const
+      {
+        return (first == other.first) && (second == other.second);
+      }
+      
+      bool operator!=(const T2_halfedge_descriptor& other) const
+      {
+        return (first != other.first) || (second != other.second);
+      }
+
+      bool operator<(const T2_halfedge_descriptor& other) const
+      {
+        if(first < other.first) return true;
+        if(first > other.first) return false;
+        return second  < other.second;
+      }
+    };
+
 
   } // namespace detail
 } // namespace CGAL
@@ -270,41 +321,7 @@ namespace boost {
     typedef typename CGAL::Triangulation_2<GT,TDS>::All_edges_iterator  edge_iterator;
 
 
-    // with just a typedef to Edge VC++ has ambiguities for function `next()`
-    struct halfedge_descriptor
-    {
-      face_descriptor first;
-      int second;
-      operator std::pair<face_descriptor, int>() { return std::make_pair(first,second); }
-      
-      halfedge_descriptor()
-      {}
-      
-      halfedge_descriptor(const typename Triangulation::Edge& e)
-        : first(e.first), second(e.second)
-      {}
-      
-      halfedge_descriptor(face_descriptor fd, int i)
-        : first(fd), second(i)
-      {}
-      
-      bool operator==(const halfedge_descriptor& other) const
-      {
-        return (first == other.first) && (second == other.second);
-      }
-      
-      bool operator!=(const halfedge_descriptor& other) const
-      {
-        return (first != other.first) || (second != other.second);
-      }
-
-      bool operator<(const halfedge_descriptor& other) const
-      {
-        if(first < other.first) return true;
-        if(first > other.first) return false;
-        return second  < other.second;
-      }
-    };
+    typedef CGAL::detail::T2_halfedge_descriptor<Triangulation> halfedge_descriptor;
 
     typedef typename CGAL::Triangulation_2<GT,TDS>::All_halfedges_iterator  halfedge_iterator;
 
@@ -810,6 +827,42 @@ namespace boost {
     typedef void type;
   };
 } // namespace boost
+
+
+namespace std {
+
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4099) // For VC10 it is class hash 
+#endif
+
+  template < class T>
+  struct hash;
+  
+  template < class T, class EdgeBase>
+  struct hash<CGAL::detail::Edge<T,EdgeBase> > {
+    std::size_t operator()(const CGAL::detail::Edge<T,EdgeBase>& e) const
+    {
+      std::cerr << "Triangulation_2::Edge HashFct" << std::endl;
+      return hash_value(e);
+    }
+  }; 
+
+  template < class Tr>
+  struct hash<CGAL::detail::T2_halfedge_descriptor<Tr> > {
+    std::size_t operator()(const CGAL::detail::T2_halfedge_descriptor<Tr>& e) const
+    {
+      std::cerr << "Triangulation_2::halfedge_descriptor HashFct" << std::endl;
+      return hash_value(e);
+    }
+  };
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
+} // namespace std
 
 //#include <CGAL/graph_traits_Delaunay_triangulation_2.h>
 
