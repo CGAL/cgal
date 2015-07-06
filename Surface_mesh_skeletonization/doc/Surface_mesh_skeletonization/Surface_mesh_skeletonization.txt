@@ -27,8 +27,9 @@ input triangulated surface mesh.
 
 \subsection MCFSkelSecAPI-IO Input and Output
 
-The input is a triangulated surface mesh, model of the `HalfedgeGraph`
-concept that has no boundary and that has only one connected component.
+The input is a triangulated surface mesh, model of the `FaceListGraph`
+concept (`CGAL::Surface_mesh`, `CGAL::Polyhedron_3`, ...)
+that has no boundary and that has only one connected component.
 The skeleton is provided as a graph of type
 <a href="http://www.boost.org/doc/libs/release/libs/graph/doc/adjacency_list.html"><code>boost::adjacency_list</code></a>.
 Each vertex of the skeleton is associated to a 3D location point and to the
@@ -48,7 +49,7 @@ Right: Each vertex of the input surface is associated to a skeleton vertex.
 \cgalFigureEnd
 
 \subsection MCFSkelSecAPI-FF Free Function
-If a \cgal model of the `HalfedgeGraph` concept such as
+If a \cgal model of the `FaceListGraph` concept such as
 `CGAL::Surface_mesh` or `CGAL::Polyhedron_3` is used as triangulated
 input surface mesh, \ref thirdpartyEigen 3.2 or later is available
 and `CGAL_EIGEN3_ENABLED` is defined, the function
