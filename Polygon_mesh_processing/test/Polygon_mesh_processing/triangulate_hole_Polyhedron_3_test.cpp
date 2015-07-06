@@ -35,16 +35,19 @@ typedef boost::graph_traits<Polyhedron>::halfedge_iterator    Halfedge_iterator;
 typedef CGAL::Halfedge_around_face_circulator<Polyhedron> Halfedge_around_facet_circulator;
 typedef boost::property_map<Polyhedron,CGAL::vertex_point_t>::type Point_property_map;
 
-void read_poly_with_borders(const char* file_name, Polyhedron& poly, std::vector<Halfedge_handle>& border_reps) {
-  border_reps.clear();
+void read_poly(const char* file_name, Polyhedron& poly) {
   poly.clear();
 
   std::ifstream input(file_name);
   if ( !input || !(input >> poly)  || (num_vertices(poly) == 0)){
     std::cerr << "  Error: can not read file." << std::endl;
-    CGAL_assertion(false);
+    assert(false);
   }
+}
 
+void detect_borders(Polyhedron& poly, std::vector<Halfedge_handle>& border_reps)
+{
+  border_reps.clear();
   std::set<Halfedge_handle> border_map;
   BOOST_FOREACH(Halfedge_handle h,  halfedges(poly)){
     if(face(h,poly)== boost::graph_traits<Polyhedron>::null_face() && border_map.find(h) == border_map.end()){
@@ -56,6 +59,12 @@ void read_poly_with_borders(const char* file_name, Polyhedron& poly, std::vector
       } while(++hf_around_facet != done);
     }
   }
+}
+
+void read_poly_with_borders(const char* file_name, Polyhedron& poly, std::vector<Halfedge_handle>& border_reps) 
+{
+  read_poly(file_name, poly);
+  detect_borders(poly, border_reps);
 }
 
 /******************************************************************/
@@ -91,11 +100,11 @@ CGAL::internal::Weight_min_max_dihedral_and_area
 }
 
 
-void test_triangulate_hole_weight(const char* file_name, bool use_DT) {
+void test_triangulate_hole_weight(const char* file_name, bool use_DT, std::size_t nb_remaining_holes) {
   typedef CGAL::internal::Weight_min_max_dihedral_and_area Weight;
 
-  std::cerr << "test_triangulate_hole_weight + useDT: " << use_DT << std::endl;
-  std::cerr << "  File: "<< file_name  << std::endl;
+  std::cout << "test_triangulate_hole_weight + useDT: " << use_DT << std::endl;
+  std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
   std::vector<Halfedge_handle> border_reps;
   read_poly_with_borders(file_name, poly, border_reps);
@@ -107,25 +116,25 @@ void test_triangulate_hole_weight(const char* file_name, bool use_DT) {
     if(patch.empty()) { continue; }
     Weight w_test = calculate_weight_for_patch(poly, patch.begin(), patch.end());
 
-    std::cerr << "  Weight returned by algo   : " << w_algo << std::endl;
-    std::cerr << "  Weight calculated by test : " << w_test << std::endl;
-
     const double epsilon = 1e-10;
-    if(std::abs(w_algo.w.first - w_test.w.first) > epsilon) {
-      CGAL_assertion(false);
-    }
-    if(std::abs(w_algo.w.second - w_test.w.second) > epsilon) {
-      CGAL_assertion(false);
+    if( std::abs(w_algo.w.first - w_test.w.first) > epsilon ||
+        std::abs(w_algo.w.second - w_test.w.second) > epsilon )
+    {
+      std::cerr << "  Weight returned by algo   : " << w_algo << std::endl;
+      std::cerr << "  Weight calculated by test : " << w_test << std::endl;
+      assert(false);
     }
   }
 
-  std::cerr << "  Done!" << std::endl;
+  detect_borders(poly, border_reps);
+  assert(border_reps.size()==nb_remaining_holes);
+  std::cout << "  Done!" << std::endl;
 }
 /******************************************************************/
 
 void test_triangulate_hole(const char* file_name) {
-  std::cerr << "test_triangulate_hole:" << std::endl;
-  std::cerr << "  File: "<< file_name  << std::endl;
+  std::cout << "test_triangulate_hole:" << std::endl;
+  std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
   std::vector<Halfedge_handle> border_reps;
   read_poly_with_borders(file_name, poly, border_reps);
@@ -144,12 +153,12 @@ void test_triangulate_hole(const char* file_name) {
     CGAL_assertion(false);
   }
   
-  std::cerr << "  Done!" << std::endl;
+  std::cout << "  Done!" << std::endl;
 }
 
 void test_triangulate_hole_should_be_no_output(const char* file_name) {
-  std::cerr << "test_triangulate_hole_should_be_no_output:" << std::endl;
-  std::cerr << "  File: "<< file_name  << std::endl;
+  std::cout << "test_triangulate_hole_should_be_no_output:" << std::endl;
+  std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
   std::vector<Halfedge_handle> border_reps;
   read_poly_with_borders(file_name, poly, border_reps);
@@ -171,12 +180,12 @@ void test_triangulate_hole_should_be_no_output(const char* file_name) {
     }
   }
 
-  std::cerr << "  Done!" << std::endl;
+  std::cout << "  Done!" << std::endl;
 }
 
 void test_triangulate_and_refine_hole(const char* file_name) {
-  std::cerr << "test_triangulate_and_refine_hole:" << std::endl;
-  std::cerr << "  File: "<< file_name  << std::endl;
+  std::cout << "test_triangulate_and_refine_hole:" << std::endl;
+  std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
   std::vector<Halfedge_handle> border_reps;
   read_poly_with_borders(file_name, poly, border_reps);
@@ -198,12 +207,12 @@ void test_triangulate_and_refine_hole(const char* file_name) {
     CGAL_assertion(false);
   }
 
-  std::cerr << "  Done!" << std::endl;
+  std::cout << "  Done!" << std::endl;
 }
 
 void test_triangulate_refine_and_fair_hole(const char* file_name) {
-  std::cerr << "test_triangulate_refine_and_fair_hole:" << std::endl;
-  std::cerr << "  File: "<< file_name  << std::endl;
+  std::cout << "test_triangulate_refine_and_fair_hole:" << std::endl;
+  std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
   std::vector<Halfedge_handle> border_reps;
   read_poly_with_borders(file_name, poly, border_reps);
@@ -225,12 +234,12 @@ void test_triangulate_refine_and_fair_hole(const char* file_name) {
     CGAL_assertion(false);
   }
 
-  std::cerr << "  Done!" << std::endl;
+  std::cout << "  Done!" << std::endl;
 }
 
 void test_ouput_iterators_triangulate_hole(const char* file_name) {
-  std::cerr << "test_ouput_iterators_triangulate_hole:" << std::endl;
-  std::cerr << "  File: "<< file_name  << std::endl;
+  std::cout << "test_ouput_iterators_triangulate_hole:" << std::endl;
+  std::cout << "  File: "<< file_name  << std::endl;
 
   Polyhedron poly, poly_2;
   std::vector<Halfedge_handle> border_reps, border_reps_2;
@@ -253,12 +262,12 @@ void test_ouput_iterators_triangulate_hole(const char* file_name) {
       CGAL_assertion(false);
     }
   }
-  std::cerr << "  Done!" << std::endl;
+  std::cout << "  Done!" << std::endl;
 }
 
 void test_ouput_iterators_triangulate_and_refine_hole(const char* file_name) {
-  std::cerr << "test_ouput_iterators_triangulate_and_refine_hole:" << std::endl;
-  std::cerr << "  File: "<< file_name  << std::endl;
+  std::cout << "test_ouput_iterators_triangulate_and_refine_hole:" << std::endl;
+  std::cout << "  File: "<< file_name  << std::endl;
 
   Polyhedron poly, poly_2;
   std::vector<Halfedge_handle> border_reps, border_reps_2;;
@@ -282,8 +291,8 @@ void test_ouput_iterators_triangulate_and_refine_hole(const char* file_name) {
         *it_2, &*patch_facets_2.begin(), &*patch_vertices_2.begin());
 
     if(patch_facets.size() != (std::size_t) (output_its.first - &*patch_facets_2.begin())) {
-      std::cerr << "  Error: returned facet output iterator is not valid!" << std::endl;
-      std::cerr << "  " << patch_facets.size() << " vs " << (output_its.first - &*patch_facets_2.begin()) << std::endl;
+      std::cout << "  Error: returned facet output iterator is not valid!" << std::endl;
+      std::cout << "  " << patch_facets.size() << " vs " << (output_its.first - &*patch_facets_2.begin()) << std::endl;
       CGAL_assertion(false);
     }
 
@@ -293,7 +302,7 @@ void test_ouput_iterators_triangulate_and_refine_hole(const char* file_name) {
       CGAL_assertion(false);
     }
   }
-  std::cerr << "  Done!" << std::endl;
+  std::cout << "  Done!" << std::endl;
 }
 
 
@@ -343,16 +352,16 @@ int main() {
     test_triangulate_refine_and_fair_hole(it->c_str());
     test_ouput_iterators_triangulate_and_refine_hole(it->c_str());
     test_ouput_iterators_triangulate_hole(it->c_str());
-    test_triangulate_hole_weight(it->c_str(), true);
-    test_triangulate_hole_weight(it->c_str(), false);
-    std::cerr << "------------------------------------------------" << std::endl;
+    test_triangulate_hole_weight(it->c_str(), true, 0);
+    test_triangulate_hole_weight(it->c_str(), false, 0);
+    std::cout << "------------------------------------------------" << std::endl;
   }
-  test_triangulate_hole_weight("data/RedCircleBox.off", true);
-  test_triangulate_hole_weight("data/RedCircleBox.off", false);
+  test_triangulate_hole_weight("data/RedCircleBox.off", true, 1);
+  test_triangulate_hole_weight("data/RedCircleBox.off", false, 0);
 
   test_triangulate_hole_should_be_no_output("data/non_manifold_vertex.off");
   test_triangulate_hole_should_be_no_output("data/two_tris_collinear.off");
 
   test_triangulate_refine_and_fair_hole_compile();
-  std::cerr << "All Done!" << std::endl;
+  std::cout << "All Done!" << std::endl;
 }
