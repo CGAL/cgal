@@ -43,7 +43,7 @@ void read_poly_with_borders(const char* file_name, Polyhedron& poly, std::vector
   std::ifstream input(file_name);
   if ( !input || !(input >> poly)  || (num_vertices(poly) == 0)){
     std::cerr << "  Error: can not read file." << std::endl;
-    CGAL_assertion(false);
+    assert(false);
   }
 
   std::set<Halfedge_handle> border_map;
@@ -54,7 +54,7 @@ void read_poly_with_borders(const char* file_name, Polyhedron& poly, std::vector
       do {
         CGAL_assertion_code(bool insertion_ok = )
         border_map.insert(*hf_around_facet).second;
-        CGAL_assertion(insertion_ok);
+        assert(insertion_ok);
       } while(++hf_around_facet != done);
     }
   }
@@ -114,10 +114,10 @@ void test_triangulate_hole_weight(const char* file_name, bool use_DT) {
 
     const double epsilon = 1e-10;
     if(std::abs(w_algo.w.first - w_test.w.first) > epsilon) {
-      CGAL_assertion(false);
+      assert(false);
     }
     if(std::abs(w_algo.w.second - w_test.w.second) > epsilon) {
-      CGAL_assertion(false);
+      assert(false);
     }
   }
 
@@ -137,13 +137,13 @@ void test_triangulate_hole(const char* file_name) {
     CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch));
     if(patch.empty()) {
       std::cerr << "  Error: empty patch created." << std::endl;
-      CGAL_assertion(false);
+      assert(false);
     }
   }
 
   if(!poly.is_valid() || ! is_closed(poly)) {
     std::cerr << "  Error: patched polyhedron is not valid or closed." << std::endl;
-    CGAL_assertion(false);
+    assert(false);
   }
   
   std::cerr << "  Done!" << std::endl;
@@ -162,14 +162,14 @@ void test_triangulate_hole_should_be_no_output(const char* file_name) {
       CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(false));
     if(!patch.empty()) {
       std::cerr << "  Error: patch should be empty" << std::endl;
-      CGAL_assertion(false);
+      assert(false);
     }
 
     CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch),
       CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(true));
     if(!patch.empty()) {
       std::cerr << "  Error: patch should be empty" << std::endl;
-      CGAL_assertion(false);
+      assert(false);
     }
   }
 
@@ -191,13 +191,13 @@ void test_triangulate_and_refine_hole(const char* file_name) {
 
     if(patch_facets.empty()) {
       std::cerr << "  Error: empty patch created." << std::endl;
-      CGAL_assertion(false);
+      assert(false);
     }
   }
 
   if(!poly.is_valid() || ! is_closed(poly)) {
     std::cerr << "  Error: patched polyhedron is not valid or closed." << std::endl;
-    CGAL_assertion(false);
+    assert(false);
   }
 
   std::cerr << "  Done!" << std::endl;
@@ -218,13 +218,13 @@ void test_triangulate_refine_and_fair_hole(const char* file_name) {
 
     if(patch_facets.empty()) {
       std::cerr << "  Error: empty patch created." << std::endl;
-      CGAL_assertion(false);
+      assert(false);
     }
   }
 
   if(!poly.is_valid() || ! is_closed(poly)) {
     std::cerr << "  Error: patched polyhedron is not valid or closed." << std::endl;
-    CGAL_assertion(false);
+    assert(false);
   }
 
   std::cerr << "  Done!" << std::endl;
@@ -252,7 +252,7 @@ void test_ouput_iterators_triangulate_hole(const char* file_name) {
     if(patch.size() != (std::size_t) (output_it - &*patch_2.begin())) {
       std::cerr << "  Error: returned facet output iterator is not valid!" << std::endl;
       std::cerr << "  " << patch.size() << " vs " << (output_it - &*patch_2.begin()) << std::endl;
-      CGAL_assertion(false);
+      assert(false);
     }
   }
   std::cerr << "  Done!" << std::endl;
@@ -286,13 +286,13 @@ void test_ouput_iterators_triangulate_and_refine_hole(const char* file_name) {
     if(patch_facets.size() != (std::size_t) (output_its.first - &*patch_facets_2.begin())) {
       std::cerr << "  Error: returned facet output iterator is not valid!" << std::endl;
       std::cerr << "  " << patch_facets.size() << " vs " << (output_its.first - &*patch_facets_2.begin()) << std::endl;
-      CGAL_assertion(false);
+      assert(false);
     }
 
     if(patch_vertices.size() != (std::size_t) (output_its.second - &*patch_vertices_2.begin())) {
       std::cerr << "  Error: returned vertex output iterator is not valid!" << std::endl;
       std::cerr << "  " << patch_vertices.size() << " vs " << (output_its.second - &*patch_vertices_2.begin()) << std::endl;
-      CGAL_assertion(false);
+      assert(false);
     }
   }
   std::cerr << "  Done!" << std::endl;

@@ -28,8 +28,8 @@ void test(const char* filename)
   if (!input || !(input >> poly))
   {
     std::cerr << "Error: cannot read Polyhedron : " << filename << "\n";
-    CGAL_assertion(!poly.empty());
-    CGAL_assertion(false);
+    assert(!poly.empty());
+    assert(false);
     return;
   }
 
@@ -42,7 +42,7 @@ void test(const char* filename)
   CGAL_assertion_code(std::size_t nbv2 =
     std::distance(vertices(poly).first, vertices(poly).second));
 
-  CGAL_assertion(nbv == nbv2);
+  assert(nbv == nbv2);
 
   std::ofstream faired_off("faired.off");
   faired_off << poly;

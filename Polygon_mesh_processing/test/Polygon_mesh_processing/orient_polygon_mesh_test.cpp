@@ -25,14 +25,14 @@ void test(const char* file_name)
   if ( !input || !(input >> poly) || poly.empty() )
   {
     std::cerr << "Error: cannot read Polyhedron : " << file_name << "\n";
-    CGAL_assertion(false);
+    assert(false);
   }
 
-  CGAL_assertion(CGAL::Polygon_mesh_processing::is_outward_oriented(poly));
+  assert(CGAL::Polygon_mesh_processing::is_outward_oriented(poly));
 
   CGAL::Polygon_mesh_processing::reverse_face_orientations(poly);
 
-  CGAL_assertion(!CGAL::Polygon_mesh_processing::is_outward_oriented(poly));
+  assert(!CGAL::Polygon_mesh_processing::is_outward_oriented(poly));
 
   std::cerr << "Polyhedron "<< file_name << " passed the test." << std::endl;
   poly.clear(); //empty memory
@@ -44,14 +44,14 @@ void test(const char* file_name)
   if (!(input >> mesh))
   {
     std::cerr << "Error: cannot read Surface_mesh : " << file_name << "\n";
-    CGAL_assertion(false);
+    assert(false);
   }
 
-  CGAL_assertion(CGAL::Polygon_mesh_processing::is_outward_oriented(mesh));
+  assert(CGAL::Polygon_mesh_processing::is_outward_oriented(mesh));
 
   CGAL::Polygon_mesh_processing::reverse_face_orientations(mesh);
 
-  CGAL_assertion(!CGAL::Polygon_mesh_processing::is_outward_oriented(mesh));
+  assert(!CGAL::Polygon_mesh_processing::is_outward_oriented(mesh));
 
   std::cerr << "Surface_mesh " << file_name << " passed the test." << std::endl;
 }

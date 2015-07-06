@@ -26,7 +26,7 @@ void test(const char* file_name)
   if (!(input >> mesh))
   {
     std::cerr << "Error: cannot read Surface_mesh : " << file_name << "\n";
-    CGAL_assertion(false);
+    assert(false);
   }
 
   Surface_mesh::Property_map<face_descriptor, Vector> fnormals;

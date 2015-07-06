@@ -23,12 +23,12 @@ void test_polyhedron(const char* fname)
     return;
   }
 
-  CGAL_assertion(poly.size_of_vertices() > 0);
+  assert(poly.size_of_vertices() > 0);
   
   CGAL::Polygon_mesh_processing::stitch_borders(poly);
   poly.normalize_border();
 
-  CGAL_assertion(poly.is_valid(false, 5));
+  assert(poly.is_valid(false, 5));
   std::cout << "OK\n";
 }
 
