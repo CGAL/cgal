@@ -22,9 +22,9 @@
 typedef Nef_polyhedron::Traits Traits;
 typedef Nef_polyhedron::Halffacet Facet;
 typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
-typedef typename Nef_polyhedron::Halfedge_const_handle Halfedge_handle;
+typedef Nef_polyhedron::Halfedge_const_handle Halfedge_handle;
 struct Face_info {
-    typename Nef_polyhedron::Halfedge_const_handle e[3];
+    Nef_polyhedron::Halfedge_const_handle e[3];
     bool is_external;
 };
 typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_handle,
@@ -106,7 +106,8 @@ void Scene_nef_polyhedron_item::initialize_buffers(Viewer_interface *viewer) con
 
         vaos[0]->bind();
         buffers[0].bind();
-        buffers[0].allocate(positions_facets.data(), positions_facets.size()*sizeof(double));
+        buffers[0].allocate(positions_facets.data(),
+                            static_cast<int>(positions_facets.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
         buffers[0].release();
@@ -114,13 +115,15 @@ void Scene_nef_polyhedron_item::initialize_buffers(Viewer_interface *viewer) con
 
 
         buffers[1].bind();
-        buffers[1].allocate(normals.data(), normals.size()*sizeof(double));
+        buffers[1].allocate(normals.data(),
+                            static_cast<int>(normals.size()*sizeof(double)));
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_DOUBLE,0,3);
         buffers[1].release();
 
         buffers[2].bind();
-        buffers[2].allocate(color_facets.data(), color_facets.size()*sizeof(double));
+        buffers[2].allocate(color_facets.data(),
+                            static_cast<int>(color_facets.size()*sizeof(double)));
         program->enableAttributeArray("colors");
         program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
         buffers[2].release();
@@ -135,7 +138,8 @@ void Scene_nef_polyhedron_item::initialize_buffers(Viewer_interface *viewer) con
 
         vaos[1]->bind();
         buffers[3].bind();
-        buffers[3].allocate(positions_lines.data(), positions_lines.size()*sizeof(double));
+        buffers[3].allocate(positions_lines.data(),
+                            static_cast<int>(positions_lines.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
         buffers[3].release();
@@ -143,7 +147,8 @@ void Scene_nef_polyhedron_item::initialize_buffers(Viewer_interface *viewer) con
 
 
         buffers[4].bind();
-        buffers[4].allocate(color_lines.data(), color_lines.size()*sizeof(double));
+        buffers[4].allocate(color_lines.data(),
+                            static_cast<int>(color_lines.size()*sizeof(double)));
         program->enableAttributeArray("colors");
         program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
         buffers[4].release();
@@ -158,7 +163,8 @@ void Scene_nef_polyhedron_item::initialize_buffers(Viewer_interface *viewer) con
 
         vaos[2]->bind();
         buffers[5].bind();
-        buffers[5].allocate(positions_points.data(), positions_points.size()*sizeof(double));
+        buffers[5].allocate(positions_points.data(),
+                            static_cast<int>(positions_points.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
         buffers[5].release();
@@ -166,7 +172,8 @@ void Scene_nef_polyhedron_item::initialize_buffers(Viewer_interface *viewer) con
 
 
         buffers[6].bind();
-        buffers[6].allocate(color_points.data(), color_points.size()*sizeof(double));
+        buffers[6].allocate(color_points.data(),
+                            static_cast<int>(color_points.size()*sizeof(double)));
         program->enableAttributeArray("colors");
         program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
         buffers[6].release();
@@ -210,12 +217,12 @@ void Scene_nef_polyhedron_item::compute_normals_and_vertices(void)
                     Nef_polyhedron::SHalfedge_const_handle h = fc;
                     Nef_polyhedron::SHalfedge_around_facet_const_circulator hc(h), he(hc);
 
-                    typename CDT::Vertex_handle previous, first;
+                    CDT::Vertex_handle previous, first;
 
                     do {
                         Nef_polyhedron::SVertex_const_handle v = hc->source();
                         const Nef_polyhedron::Point_3& point = v->source()->point();
-                        typename CDT::Vertex_handle vh = cdt.insert(point);
+                        CDT::Vertex_handle vh = cdt.insert(point);
                         if(first == 0) {
                             first = vh;
                         }
@@ -229,7 +236,7 @@ void Scene_nef_polyhedron_item::compute_normals_and_vertices(void)
                     cdt.insert_constraint(previous, first);
 
                     // sets mark is_external
-                    for(typename CDT::All_faces_iterator
+                    for(CDT::All_faces_iterator
                         fit = cdt.all_faces_begin(),
                         end = cdt.all_faces_end();
                         fit != end; ++fit)
@@ -242,7 +249,7 @@ void Scene_nef_polyhedron_item::compute_normals_and_vertices(void)
                     face_queue.push(cdt.infinite_vertex()->face());
 
                     while(! face_queue.empty() ) {
-                        typename CDT::Face_handle fh = face_queue.front();
+                        CDT::Face_handle fh = face_queue.front();
                         face_queue.pop();
                         if(fh->info().is_external) continue;
                         fh->info().is_external = true;
@@ -257,7 +264,7 @@ void Scene_nef_polyhedron_item::compute_normals_and_vertices(void)
                     //iterates on the internal faces to add the vertices to the positions
                     //and the normals to the appropriate vectors
 
-                    for(typename CDT::Finite_faces_iterator
+                    for(CDT::Finite_faces_iterator
                         ffit = cdt.finite_faces_begin(),
                         end = cdt.finite_faces_end();
                         ffit != end; ++ffit)
@@ -559,7 +566,7 @@ void Scene_nef_polyhedron_item::draw(Viewer_interface* viewer) const
     program=getShaderProgram(PROGRAM_WITH_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
     program->bind();
-    qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/3);
+    qFunc.glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/3));
     vaos[0]->release();
     program->release();
     GLfloat point_size;
@@ -579,7 +586,7 @@ void Scene_nef_polyhedron_item::draw_edges(Viewer_interface* viewer) const
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer ,PROGRAM_WITHOUT_LIGHT);
     program->bind();
-    qFunc.glDrawArrays(GL_LINES,0,positions_lines.size()/3);
+    qFunc.glDrawArrays(GL_LINES,0,static_cast<GLsizei>(positions_lines.size()/3));
     vaos[1]->release();
     program->release();
     if(renderingMode() == PointsPlusNormals)
@@ -600,7 +607,7 @@ void Scene_nef_polyhedron_item::draw_points(Viewer_interface* viewer) const
     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer ,PROGRAM_WITHOUT_LIGHT);
     program->bind();
-    qFunc.glDrawArrays(GL_POINTS,0,positions_points.size()/3);
+    qFunc.glDrawArrays(GL_POINTS,0,static_cast<GLsizei>(positions_points.size()/3));
     vaos[2]->release();
     program->release();
 

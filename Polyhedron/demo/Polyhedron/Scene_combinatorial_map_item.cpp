@@ -16,7 +16,8 @@ void Scene_combinatorial_map_item::initialize_buffers()
         std::cout<<"ERROR lors de la creation"<<std::endl;
     buffer[0].bind();
     buffer[0].setUsagePattern(QOpenGLBuffer::StaticDraw);
-    buffer[0].allocate(positions.data(),positions.size()*sizeof(float));
+    buffer[0].allocate(positions.data(),
+                       static_cast<int>(positions.size()*sizeof(float)));
     /*
     qFunc.glVertexAttribPointer(0, //number of the buffer
                           4, //number of floats to be taken
