@@ -50,7 +50,7 @@ public:
     GLubyte* getData(){return data; }
 
 };
-class Scene : public QObject, protected QOpenGLFunctions_3_3_Core
+class Scene : public QObject
 {
     Q_OBJECT
 public:
@@ -85,6 +85,7 @@ public:
 
 private:
     // member data
+    QOpenGLFunctions_3_3_Core gl;
     Bbox m_bbox;
     Polyhedron *m_pPolyhedron;
     std::list<Point> m_points;
