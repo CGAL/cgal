@@ -19,7 +19,7 @@ class Viewer : public QGLViewer, protected QOpenGLFunctions_3_3_Core{
   int nr_of_facets;
 public:
   Viewer(QWidget* parent)
-    : QGLViewer(parent)
+    : QGLViewer(createContext(),parent)
   {
     are_buffers_initialized = false;
   }
@@ -42,6 +42,16 @@ public:
   void draw();
 
 private:
+
+  static QGLContext* createContext()
+  {
+      QOpenGLContext *context = new QOpenGLContext();
+      QSurfaceFormat format;
+      format.setVersion(3,3);
+      format.setProfile(QSurfaceFormat::CompatibilityProfile);
+      context->setFormat(format);
+      return QGLContext::fromOpenGLContext(context);
+  }
   bool are_buffers_initialized;
   //Shaders elements
     int poly_vertexLocation;
