@@ -594,7 +594,7 @@ void Scene::draw(QGLViewer* viewer)
     QColor color;
     QMatrix4x4 fMatrix;
     fMatrix.setToIdentity();
-    if(m_view_polyhedron)
+    if(m_view_polyhedron && pos_poly.size()>0)
     {
         vao[2].bind();
         attrib_buffers(viewer);
@@ -606,7 +606,7 @@ void Scene::draw(QGLViewer* viewer)
         rendering_program.release();
         vao[2].release();
     }
-    if(m_view_points)
+    if(m_view_points && pos_points.size()>0)
     {
         ::glPointSize(2.0f);
         vao[0].bind();
@@ -620,7 +620,7 @@ void Scene::draw(QGLViewer* viewer)
         vao[0].release();
     }
 
-    if(m_view_segments)
+    if(m_view_segments && pos_lines.size()>0)
     {
         vao[1].bind();
         attrib_buffers(viewer);
@@ -632,7 +632,7 @@ void Scene::draw(QGLViewer* viewer)
         rendering_program.release();
         vao[1].release();
     }
-    if (m_view_plane)
+    if (m_view_plane && pos_plane.size()>0)
     {
         switch( m_cut_plane )
         {
