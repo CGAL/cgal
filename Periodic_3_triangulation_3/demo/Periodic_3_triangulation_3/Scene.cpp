@@ -653,6 +653,7 @@ void Scene::initialize_buffers()
     vao[10].release();
 
     rendering_program_cylinders.release();
+    are_buffers_initialized = true;
 
 }
 
@@ -752,6 +753,8 @@ void Scene::init() {
 
 // Draws the triangulation
 void Scene::draw() {
+    if(!are_buffers_initialized)
+        initialize_buffers();
     gl_draw_location();
 
     gl_draw_conflict();
@@ -1622,7 +1625,7 @@ void Scene::change_material(const QString &string) {
 void Scene::changed()
 {
     compute_elements();
-    initialize_buffers();
+    are_buffers_initialized = false;
 }
 
 void Scene::draw_sphere(float R, int prec)

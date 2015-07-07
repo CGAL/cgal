@@ -287,6 +287,7 @@ private:
       std::vector<float> transfo3_square;
       std::vector<float> transfo4_square;
 
+      bool are_buffers_initialized;
       QOpenGLBuffer buffers[24];
       QOpenGLVertexArrayObject vao[12];
       QOpenGLShaderProgram rendering_program;

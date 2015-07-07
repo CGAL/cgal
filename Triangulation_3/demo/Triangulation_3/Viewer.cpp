@@ -1,4 +1,5 @@
 #include <boost/config.hpp>
+#include <QDebug>
 
 #if defined(BOOST_MSVC)
 // Avoid warning concerning spatial_sort(QList::begin(), QList.end() QT "bug"
@@ -96,6 +97,7 @@ void Viewer::init()
                                 tr("Drag to add vertices to current selection in <u>Select</u> mode") );
 #endif
     compile_shaders();
+    are_buffers_initialized = false;
 }
 
 QString Viewer::helpString() const
@@ -351,8 +353,6 @@ void Viewer::compute_elements()
 
     pos_trackBall->resize(0);
     draw_sphere(m_fRadius, 35,points_trackBall, normals_trackBall);
-
-
     for(int i=0; i<3; i++)
         pos_trackBall->push_back(0.0);
     pos_emptySphere->resize(0);
@@ -493,8 +493,7 @@ void Viewer::compute_elements()
         pos_emptySphere->push_back(m_centerPt.x());
         pos_emptySphere->push_back(m_centerPt.y());
         pos_emptySphere->push_back(m_centerPt.z());
-
-        draw_sphere(m_fREmptyS, 35, points_emptySphere, normals_sphere);
+        draw_sphere(m_fREmptyS, 35, points_emptySphere, normals_emptySphere);
     }
 
 
@@ -729,12 +728,12 @@ void Viewer::initialize_buffers()
         rendering_program_spheres.setAttributeBuffer(centerLocation[0],GL_FLOAT,0,3);
         buffers[14].release();
 
-        buffers[15].bind();
-        buffers[15].allocate(normals_sphere->data(), normals_sphere->size()*sizeof(float));
+        buffers[32].bind();
+        buffers[32].allocate(normals_emptySphere->data(), normals_emptySphere->size()*sizeof(float));
         normalsLocation[0] = rendering_program_spheres.attributeLocation("normal");
         rendering_program_spheres.enableAttributeArray(normalsLocation[0]);
         rendering_program_spheres.setAttributeBuffer(normalsLocation[0],GL_FLOAT,0,3);
-        buffers[15].release();
+        buffers[32].release();
 
         buffers[16].bind();
         buffers[16].allocate(points_emptySphere->data(), points_emptySphere->size()*sizeof(float));
@@ -756,6 +755,7 @@ void Viewer::initialize_buffers()
         buffers[0].release();
 
         buffers[15].bind();
+        buffers[15].allocate(normals_sphere->data(), normals_sphere->size()*sizeof(float));
         normalsLocation[0] = rendering_program_spheres.attributeLocation("normal");
         rendering_program_spheres.enableAttributeArray(normalsLocation[0]);
         rendering_program_spheres.setAttributeBuffer(normalsLocation[0],GL_FLOAT,0,3);
@@ -1047,6 +1047,7 @@ void Viewer::initialize_buffers()
         vao[20].release();
     }
     rendering_program_cylinders.release();
+    are_buffers_initialized = true;
 }
 
 void Viewer::attrib_buffers(QGLViewer* viewer)
@@ -1139,6 +1140,8 @@ void Viewer::attrib_buffers(QGLViewer* viewer)
 
 void Viewer::draw()
 {
+    if(!are_buffers_initialized)
+        initialize_buffers();
     QFont fontPrompt("Arial", 8);
     attrib_buffers(this);
     if(m_isFlat)
@@ -1459,6 +1462,7 @@ void Viewer::draw()
             glDrawArraysInstanced(GL_TRIANGLES, 0, points_sphere->size()/3, pos_queryPoint->size()/3);
             vao[17].release();
             rendering_program_spheres.release();
+
             rendering_program.bind();
             vao[10].bind();
             rendering_program.setUniformValue(colorLocation[0], m_colorFacet);

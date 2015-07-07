@@ -11,6 +11,7 @@ Scene_polyhedron_item::Scene_polyhedron_item()
   : Scene_item(),
     poly(new Polyhedron)
 {
+    are_buffers_initialized = false;
     compile_shaders();
 }
 
@@ -18,6 +19,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
   : Scene_item(),
     poly(p)
 {
+    are_buffers_initialized = false;
     compile_shaders();
 }
 
@@ -25,6 +27,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
   : Scene_item(),
     poly(new Polyhedron(p))
 {
+    are_buffers_initialized = false;
     compile_shaders();
 }
 
@@ -203,7 +206,7 @@ void Scene_polyhedron_item::compute_elements()
 
 }
 
-void Scene_polyhedron_item::initialize_buffers()
+void Scene_polyhedron_item::initialize_buffers() const
 {
     rendering_program.bind();
 
@@ -260,10 +263,8 @@ void Scene_polyhedron_item::initialize_buffers()
         buffers[5].release();
 
         vao[2].release();
-
-
-
-    rendering_program.release();
+        rendering_program.release();
+        are_buffers_initialized = true;
 
 }
 
@@ -335,6 +336,8 @@ void Scene_polyhedron_item::attrib_buffers(QGLViewer* viewer) const
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 void Scene_polyhedron_item::draw(QGLViewer *viewer) const {
 
+    if(!are_buffers_initialized)
+        initialize_buffers();
     QColor color;
     GLint shading;
     ::glGetIntegerv(GL_SHADE_MODEL, &shading);
@@ -361,7 +364,8 @@ void Scene_polyhedron_item::draw(QGLViewer *viewer) const {
 
 }
 void Scene_polyhedron_item::draw_edges(QGLViewer *viewer) const {
-
+    if(!are_buffers_initialized)
+        initialize_buffers();
     QColor color;
 
     vao[2].bind();
@@ -377,9 +381,9 @@ void Scene_polyhedron_item::draw_edges(QGLViewer *viewer) const {
 
 }
 void Scene_polyhedron_item::draw_points(QGLViewer *viewer) const {
-
+    if(!are_buffers_initialized)
+        initialize_buffers();
     QColor color;
-
 
     vao[0].bind();
     attrib_buffers(viewer);
@@ -461,7 +465,7 @@ Scene_polyhedron_item::bbox() const {
 void Scene_polyhedron_item::changed()
 {
     compute_elements();
-    initialize_buffers();
+    are_buffers_initialized = false;
 }
 
 #include "Scene_polyhedron_item.moc"

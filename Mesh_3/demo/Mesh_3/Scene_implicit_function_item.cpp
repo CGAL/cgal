@@ -30,6 +30,7 @@ Scene_implicit_function_item(Implicit_function_interface* f)
   compute_min_max();
   compute_function_grid();
   connect(frame_, SIGNAL(modified()), this, SLOT(compute_function_grid()));
+  are_buffers_initialized = false;
 }
 
 
@@ -337,7 +338,7 @@ void Scene_implicit_function_item::compute_elements()
        }
 }
 
-void Scene_implicit_function_item::initialize_buffers()
+void Scene_implicit_function_item::initialize_buffers() const
 {
 
     rendering_program.bind();
@@ -388,6 +389,7 @@ void Scene_implicit_function_item::initialize_buffers()
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
     vao[1].release();
     tex_rendering_program.release();
+    are_buffers_initialized = true;
 }
 
 void Scene_implicit_function_item::attrib_buffers(QGLViewer* viewer) const
@@ -425,6 +427,8 @@ void Scene_implicit_function_item::attrib_buffers(QGLViewer* viewer) const
 void
 Scene_implicit_function_item::draw(QGLViewer* viewer) const
 {
+    if(!are_buffers_initialized)
+        initialize_buffers();
   QColor color;
   vao[0].bind();
   attrib_buffers(viewer);
@@ -551,7 +555,7 @@ compute_min_max()
 void Scene_implicit_function_item::changed()
 {
     compute_elements();
-    initialize_buffers();
+    are_buffers_initialized = false;
 }
 
 void Scene_implicit_function_item::compute_texture(int i, int j)

@@ -61,6 +61,7 @@ public:
     newFormat.setSampleBuffers(true);
     newFormat.setSamples(16);
     this->setFormat(newFormat);
+     are_buffers_initialized = false;
   }
   ~Viewer()
   {
@@ -98,6 +99,8 @@ public Q_SLOTS:
 
 
 private:
+
+  bool are_buffers_initialized;
   //Shaders elements
 
   int vertexLocation[3];

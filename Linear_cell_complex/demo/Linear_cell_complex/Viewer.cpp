@@ -30,6 +30,7 @@
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
 #include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
+#include <QDebug>
 
 typedef typename LCC::Traits Traits;
 typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
@@ -429,6 +430,7 @@ void Viewer::initialize_buffers()
     rendering_program_p_l.release();
     vao[3].release();
 
+    are_buffers_initialized = true;
 
 }
 
@@ -638,6 +640,7 @@ void Viewer::attrib_buffers(QGLViewer* viewer)
     colorLocation = rendering_program_p_l.uniformLocation("color");
      rendering_program.setUniformValue(mvpLocation[1], mvpMatrix);
      rendering_program_p_l.release();
+     are_buffers_initialized = true;
 }
 
 void
@@ -651,12 +654,15 @@ Viewer::sceneChanged()
 						     bb.ymax(),
 						     bb.zmax()));
     compute_elements();
-    initialize_buffers();
+    are_buffers_initialized = false;
   this->showEntireScene();
 }
 
 void Viewer::draw()
 {
+if(!are_buffers_initialized)
+    initialize_buffers();
+
 
 QColor color;
     if ( !wireframe )

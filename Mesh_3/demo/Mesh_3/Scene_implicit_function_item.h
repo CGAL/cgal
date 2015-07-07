@@ -90,6 +90,8 @@ private:
   Color_ramp blue_color_ramp_;
   Color_ramp red_color_ramp_;
 
+  mutable bool are_buffers_initialized;
+
   static const int vaoSize = 2;
   static const int vboSize = 3;
   mutable int vertexLocation[2];
@@ -111,7 +113,7 @@ private:
   mutable QOpenGLVertexArrayObject vao[vaoSize];
   mutable QOpenGLShaderProgram rendering_program;
   mutable QOpenGLShaderProgram tex_rendering_program;
-  void initialize_buffers();
+  void initialize_buffers() const;
   void compute_elements();
   void attrib_buffers(QGLViewer*) const;
   void compile_shaders();

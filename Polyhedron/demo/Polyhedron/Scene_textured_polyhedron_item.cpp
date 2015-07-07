@@ -208,6 +208,7 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item()
     is_selected=false;
     qFunc.initializeOpenGLFunctions();
     qFunc.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    qFunc.glGenTextures(1, &textureId);
     changed();
 }
 
@@ -218,6 +219,7 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(Textured_polyhedr
     is_selected=false;
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
     qFunc.initializeOpenGLFunctions();
+    qFunc.glGenTextures(1, &textureId);
     changed();
 }
 
@@ -228,6 +230,7 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(const Textured_po
     cur_shading=GL_FLAT;
     is_selected=false;
     qFunc.initializeOpenGLFunctions();
+    qFunc.glGenTextures(1, &textureId);
     changed();
 }
 

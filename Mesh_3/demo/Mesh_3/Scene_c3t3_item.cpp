@@ -525,7 +525,7 @@ void Scene_c3t3_item::compute_elements()
 
 }
 
-void Scene_c3t3_item::initialize_buffers()
+void Scene_c3t3_item::initialize_buffers() const
 {
     rendering_program.bind();
 
@@ -567,6 +567,7 @@ void Scene_c3t3_item::initialize_buffers()
         vao[1].release();
 
     rendering_program_grid.release();
+    are_buffers_initialized = true;
 
 }
 
@@ -659,6 +660,8 @@ enum { DRAW = 0, DRAW_EDGES = 1 };
 
 void
 Scene_c3t3_item::draw(QGLViewer *viewer)const {
+    if(!are_buffers_initialized)
+        initialize_buffers();
      vao[0].bind();
     attrib_buffers(viewer);
     rendering_program.bind();
@@ -669,6 +672,8 @@ Scene_c3t3_item::draw(QGLViewer *viewer)const {
 
 void
 Scene_c3t3_item::draw_edges(QGLViewer* viewer) const {
+    if(!are_buffers_initialized)
+        initialize_buffers();
     vao[1].bind();
     attrib_buffers(viewer);
     rendering_program_grid.bind();
@@ -990,7 +995,7 @@ Scene_c3t3_item::c3t3_changed()
   // Rebuild histogram
   build_histogram();
   compute_elements();
-  initialize_buffers();
+  are_buffers_initialized = false;
 }
 
 void
