@@ -110,6 +110,7 @@ private:
     
     Cut_planes_types m_cut_plane;
     bool are_buffers_initialized;
+    bool context_initialized;
   
 private:
     // utility functions
