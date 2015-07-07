@@ -9,6 +9,14 @@ Viewer::Viewer(QWidget* parent)
     m_pScene(NULL),
     m_custom_mouse(false)
 {
+    QSurfaceFormat format;
+    format.setVersion(3,3);
+    format.setProfile(QSurfaceFormat::CoreProfile);
+
+    QOpenGLContext qContext;
+    qContext.setFormat(format);
+    qContext.create();
+
 }
 
 void Viewer::setScene(Scene* pScene)
