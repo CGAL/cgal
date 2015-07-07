@@ -195,7 +195,7 @@ namespace CGAL {
 
       m_angle = acos(v1 * m_axis) + acos(v2 * m_axis) + acos(v3 * m_axis);
       m_angle /= (FT)3.0;
-      if (m_angle < 0 || m_angle > M_PI / (FT)2.12)
+      if (m_angle < 0 || m_angle > CGAL_M_PI / (FT)2.12)
         return;
 
       m_neg_sin_ang = -sin(m_angle);
@@ -352,7 +352,7 @@ namespace CGAL {
 
       d1 = d1 * (FT)1.0 / l;
 
-      if (m_angle > M_PI_4) {
+      if (m_angle > CGAL_M_PI_4) {
         // Projection onto a disk preserving distance to apex
 
         m_wrap = false;
@@ -396,7 +396,7 @@ namespace CGAL {
         FT v = d * m_axis / m_cos_ang;
         FT phi = atan2(d * d2, d * d1);
         FT radPerDist = -m_neg_sin_ang * v;
-        FT u = FT(phi + M_PI);// * radPerDist;
+        FT u = FT(phi + CGAL_M_PI);// * radPerDist;
         FT avg_v = v;
 
         min[0] = max[0] = u;
@@ -407,7 +407,7 @@ namespace CGAL {
           v = d * m_axis / m_cos_ang;
           phi = atan2(d * d2, d * d1);
           radPerDist = -m_neg_sin_ang * v;
-          u = FT(phi + M_PI);// * radPerDist;
+          u = FT(phi + CGAL_M_PI);// * radPerDist;
 
           min[0] = (std::min<FT>)(min[0], u);
           max[0] = (std::max<FT>)(max[0], u);
@@ -424,7 +424,7 @@ namespace CGAL {
         avg_v /= indices.size();
         const FT scale = -m_neg_sin_ang * avg_v;
 
-        m_wrap = (min[0] + 2 * M_PI - max[0]) * scale < cluster_epsilon;
+        m_wrap = (min[0] + 2 * CGAL_M_PI - max[0]) * scale < cluster_epsilon;
 
         for (std::size_t i = 0;i<parameterSpace.size();i++) {
           std::pair<FT, FT> p = parameterSpace[i];

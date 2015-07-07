@@ -26,13 +26,6 @@
 #include <CGAL/number_utils.h>
 #include <cmath>
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-#ifndef M_PI_2
-#define M_PI_2 1.57079632679489661923
-#endif
-
 /*!
  \file Cylinder.h
  */
@@ -196,7 +189,7 @@ namespace CGAL {
       a2 = (a2 < (FT) -1.0) ? (FT) -1.0 : ((a2 > (FT) 1.0) ? (FT) 1.0 : a2);
       a2 = acos(a2);
 
-      FT u = FT((a2 < M_PI_2) ? 2 * M_PI - a1 : a1) * m_radius;
+      FT u = FT((a2 < CGAL_M_PI_2) ? 2 * CGAL_M_PI - a1 : a1) * m_radius;
 
       parameterSpace[0] = std::pair<FT, FT>(u, v);
 
@@ -217,7 +210,7 @@ namespace CGAL {
         a2 = (a2 < (FT) -1.0) ? (FT) -1.0 : ((a2 > (FT) 1.0) ? (FT) 1.0 : a2);
         a2 = acos(a2);
 
-        u = FT((a2 < M_PI_2) ? 2 * M_PI - a1 : a1) * m_radius;
+        u = FT((a2 < CGAL_M_PI_2) ? 2 * CGAL_M_PI - a1 : a1) * m_radius;
         min[0] = (std::min<FT>)(min[0], u);
         max[0] = (std::max<FT>)(max[0], u);
 
@@ -228,7 +221,7 @@ namespace CGAL {
       }
 
       // Is close to wrapping around?
-      FT diff_to_full_range = min[0] + FT(M_PI * 2.0 * m_radius) - max[0];
+      FT diff_to_full_range = min[0] + FT(CGAL_M_PI * 2.0 * m_radius) - max[0];
       if (diff_to_full_range < cluster_epsilon) {
         m_wrap_u = true;
         FT frac = (max[0] - min[0]) / cluster_epsilon;

@@ -224,25 +224,25 @@ namespace CGAL {
 
     // Maps to the range [-1,1]^2
     static void concentric_mapping(FT phi, FT proj, FT rad, FT &x, FT &y) {
-      phi = (phi < FT(-M_PI_4)) ? phi + FT(2 * M_PI) : phi;
+      phi = (phi < FT(-CGAL_M_PI_4)) ? phi + FT(2 * CGAL_M_PI) : phi;
       proj = (proj < FT(-1.0)) ? FT(-1.0) : ((proj > FT(1.0)) ? FT(1.0) : proj);
-      FT r = FT(acos(double(CGAL::abs(proj)))) / FT(M_PI_2);
+      FT r = FT(acos(double(CGAL::abs(proj)))) / FT(CGAL_M_PI_2);
 
       FT a = 0, b = 0;
-      if (phi < FT(M_PI_4)) {
+      if (phi < FT(CGAL_M_PI_4)) {
         a = r;
-        b = phi * r / FT(M_PI_4);
+        b = phi * r / FT(CGAL_M_PI_4);
       }
-      else if (phi < FT(3.0 * M_PI_4)) {
-        a = -FT(phi - M_PI_2) * r / FT(M_PI_4);
+      else if (phi < FT(3.0 * CGAL_M_PI_4)) {
+        a = -FT(phi - CGAL_M_PI_2) * r / FT(CGAL_M_PI_4);
         b = r;
       }
-      else if (phi < FT(5.0 * M_PI_4)) {
+      else if (phi < FT(5.0 * CGAL_M_PI_4)) {
         a = -r;
-        b = (phi - FT(M_PI)) * (-r) / FT(M_PI_4);
+        b = (phi - FT(CGAL_M_PI)) * (-r) / FT(CGAL_M_PI_4);
       }
       else {
-        a = (phi - 3 * FT(M_PI_2)) * r / FT(M_PI_4);
+        a = (phi - 3 * FT(CGAL_M_PI_2)) * r / FT(CGAL_M_PI_4);
         b = -r;
       }
 
@@ -256,8 +256,8 @@ namespace CGAL {
         y = -1 - y;
 
       // Scale to surface distance
-      x = FT(x * M_PI_2 * rad);
-      y = FT(y * M_PI_2 * rad);
+      x = FT(x * CGAL_M_PI_2 * rad);
+      y = FT(y * CGAL_M_PI_2 * rad);
     }
 
     virtual void parameters(const std::vector<std::size_t> &indices,
@@ -322,16 +322,16 @@ namespace CGAL {
       }
 
       // Is close to wrapping around? Check all three directions separately
-      m_wrap_right = abs(max[0] - M_PI_2 * rad) < (cluster_epsilon * 0.5);
-      m_wrap_left = abs(min[0] + M_PI_2 * rad) < (cluster_epsilon * 0.5);
+      m_wrap_right = abs(max[0] - CGAL_M_PI_2 * rad) < (cluster_epsilon * 0.5);
+      m_wrap_left = abs(min[0] + CGAL_M_PI_2 * rad) < (cluster_epsilon * 0.5);
 
-      FT diff_top = CGAL::abs(-FT(M_PI * rad) - min[1]) 
-        + FT(M_PI * rad) - max[1];
+      FT diff_top = CGAL::abs(-FT(CGAL_M_PI * rad) - min[1]) 
+        + FT(CGAL_M_PI * rad) - max[1];
       m_wrap_top = diff_top < cluster_epsilon;
 
       if (m_wrap_top || m_wrap_left || m_wrap_right) {
-        cluster_epsilon = FT(M_PI * rad)
-          / FT(floor((M_PI * rad) / cluster_epsilon));
+        cluster_epsilon = FT(CGAL_M_PI * rad)
+          / FT(floor((CGAL_M_PI * rad) / cluster_epsilon));
 
         // center bitmap at equator
         FT required_space = ceil(
