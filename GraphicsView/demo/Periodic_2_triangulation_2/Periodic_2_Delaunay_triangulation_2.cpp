@@ -455,9 +455,9 @@ int main(int argc, char **argv)
   app.setOrganizationName("Nico Kruithof");
   app.setApplicationName("Periodic_2_Delaunay_triangulation_2 demo");
 
-  // Import resources from libCGAL (Qt4 or Qt5).
+  // Import resources from libCGAL (Qt5).
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT_INIT_RESOURCES;//New for Qt5 version !
+  CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;
   mainWindow.show();

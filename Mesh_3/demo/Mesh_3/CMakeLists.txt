@@ -148,15 +148,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
 
   qt5_add_resources ( RESOURCE_FILES Mesh_3.qrc )
 
-  #qt4_automoc( Scene_polyhedron_item.cpp )
-  #qt4_automoc( Scene_polygon_soup.cpp )
-  #qt4_automoc( Scene_segmented_image_item.cpp )
-  #qt4_automoc( Scene_c3t3_item.cpp )
-  #qt4_automoc( Scene_implicit_function_item.cpp )
-  #qt4_automoc( Optimizer_thread.cpp )
-  #qt4_automoc( Meshing_thread.cpp )
-  #qt4_automoc( Volume_plane_intersection.cpp )
-
   # put plugins (which are shared libraries) at the same location as
   # executable files
   set(LIBRARY_OUTPUT_PATH ${RUNTIME_OUTPUT_PATH})

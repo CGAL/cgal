@@ -17,7 +17,7 @@ if ( CGAL_FOUND )
   
   find_package(Qt3-patched )
   # FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
-  # that it can be used together with FindQt4: all its variables are prefixed
+  # that it can be used together with Qt5: all its variables are prefixed
   # by "QT3_" instead of "QT_".
   
   if(CGAL_Qt3_FOUND AND QT3_FOUND)

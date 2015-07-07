@@ -34,8 +34,6 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_
   # qrc files (resources files, that contain icons, at least)
   qt5_add_resources ( RESOURCE_FILES ./Alpha_shape_3.qrc )
 
-  #qt4_automoc( MainWindow.cpp Viewer.cpp)
-
   add_executable  ( Alpha_shape_3 Alpha_shape_3.cpp MainWindow.cpp Viewer.cpp ${uis}  ${RESOURCE_FILES} )
   qt5_use_modules(Alpha_shape_3 Xml Script OpenGL Svg)
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Alpha_shape_3 )
