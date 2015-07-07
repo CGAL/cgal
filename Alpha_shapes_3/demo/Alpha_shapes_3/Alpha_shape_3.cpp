@@ -13,6 +13,7 @@ int main(int argc, char** argv)
   application.setOrganizationDomain("geometryfactory.com");
   application.setOrganizationName("GeometryFactory");
   application.setApplicationName("Alpha Shape Reconstruction");
+  application.setAttribute(Qt::AA_UseDesktopOpenGL);
 
   // Import resources from libCGALQt (Qt4 or Qt5).
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE

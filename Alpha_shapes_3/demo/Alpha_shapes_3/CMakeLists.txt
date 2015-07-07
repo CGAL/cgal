@@ -14,7 +14,7 @@ endif()
 find_package(CGAL COMPONENTS Qt5)
 include(${CGAL_USE_FILE})
 
-find_package(Qt5 COMPONENTS Xml Script OpenGL)
+find_package(Qt5 COMPONENTS Xml Script OpenGL Svg)
 
 find_package(OpenGL)
 find_package(QGLViewer)
@@ -37,7 +37,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_
   #qt4_automoc( MainWindow.cpp Viewer.cpp)
 
   add_executable  ( Alpha_shape_3 Alpha_shape_3.cpp MainWindow.cpp Viewer.cpp ${uis}  ${RESOURCE_FILES} )
-  qt5_use_modules(Alpha_shape_3 Xml Script OpenGL)
+  qt5_use_modules(Alpha_shape_3 Xml Script OpenGL Svg)
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Alpha_shape_3 )
 
   target_link_libraries( Alpha_shape_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
