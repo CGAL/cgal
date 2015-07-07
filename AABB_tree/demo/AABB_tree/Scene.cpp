@@ -46,8 +46,6 @@ Scene::Scene()
     m_max_distance_function = (FT)0.0;
     texture = new Texture(m_grid_size,m_grid_size);
     are_buffers_initialized = false;
-    context_initialized = false;
-
 
 }
 
@@ -590,13 +588,7 @@ void Scene::update_bbox()
 }
 
 void Scene::draw(QGLViewer* viewer)
-{
-    if(!context_initialized)
-    {
-        initializeOpenGLFunctions();
-        glGenTextures(1, &textureId);
-        context_initialized = true;
-    }
+{       
     if(!are_buffers_initialized)
         initialize_buffers();
     QColor color;
@@ -610,7 +602,7 @@ void Scene::draw(QGLViewer* viewer)
         color.setRgbF(0.0,0.0,0.0);
         rendering_program.setUniformValue(colorLocation, color);
         rendering_program.setUniformValue(fLocation, fMatrix);
-        glDrawArrays(GL_LINES, 0, static_cast<Glsizei>(pos_poly.size()/3));
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_poly.size()/3));
         rendering_program.release();
         vao[2].release();
     }
@@ -623,7 +615,7 @@ void Scene::draw(QGLViewer* viewer)
         color.setRgbF(0.7,0.0,0.0);
         rendering_program.setUniformValue(colorLocation, color);
         rendering_program.setUniformValue(fLocation, fMatrix);
-        glDrawArrays(GL_POINTS, 0, static_cast<Glsizei>(pos_points.size()/3));
+        glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
         rendering_program.release();
         vao[0].release();
     }
@@ -636,7 +628,7 @@ void Scene::draw(QGLViewer* viewer)
         color.setRgbF(0.0,0.7,0.0);
         rendering_program.setUniformValue(colorLocation, color);
         rendering_program.setUniformValue(fLocation, fMatrix);
-        glDrawArrays(GL_LINES, 0, static_cast<Glsizei>(pos_lines.size()/3));
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_lines.size()/3));
         rendering_program.release();
         vao[1].release();
     }
@@ -658,7 +650,7 @@ void Scene::draw(QGLViewer* viewer)
             tex_rendering_program.bind();
             tex_rendering_program.setUniformValue(tex_fLocation, fMatrix);
 
-            glDrawArrays(GL_TRIANGLES, 0,static_cast<Glsizei>(pos_plane.size()/3));
+            glDrawArrays(GL_TRIANGLES, 0,static_cast<GLsizei>(pos_plane.size()/3));
             tex_rendering_program.release();
             vao[6].release();
             break;
@@ -674,7 +666,7 @@ void Scene::draw(QGLViewer* viewer)
             color.setRgbF(1.0,0.0,0.0);
             rendering_program.setUniformValue(colorLocation, color);
             rendering_program.setUniformValue(fLocation, fMatrix);
-            glDrawArrays(GL_LINES, 0, static_cast<Glsizei>(pos_cut_segments.size()/3));
+            glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_cut_segments.size()/3));
             ::glLineWidth(1.0f);
             rendering_program.release();
             vao[3].release();
@@ -1316,4 +1308,10 @@ void Scene::deactivate_cutting_plane()
 {
     disconnect(m_frame, SIGNAL(modified()), this, SLOT(cutting_plane()));
     m_view_plane = false;
+}
+void Scene::initGL()
+{
+    initializeOpenGLFunctions();
+    glGenTextures(1, &textureId);
+    compile_shaders();
 }
