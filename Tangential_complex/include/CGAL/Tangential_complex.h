@@ -1396,7 +1396,11 @@ private:
     // other threads are perturbing the positions
     const Point center_pt = compute_perturbed_point(i);
     Tangent_space_basis &tsb = m_tangent_spaces[i];
-
+    
+#if defined(CGAL_TC_VERY_VERBOSE) && defined(CGAL_ALPHA_TC)
+    std::cerr << "Base dimension, incl. thickening vectors: " 
+      << tsb.dimension() << std::endl;
+#endif
     // Estimate the tangent space
     if (!m_are_tangent_spaces_computed[i])
     {
@@ -1465,6 +1469,10 @@ private:
     if (verbose)
       std::cerr << "* Inserted point #" << i << std::endl;
 
+#ifdef CGAL_TC_VERY_VERBOSE
+    std::size_t num_attempts_to_insert_points = 1;
+    std::size_t num_inserted_points = 1;
+#endif
     //const int NUM_NEIGHBORS = 150;
     //KNS_range ins_range = m_points_ds.query_ANN(center_pt, NUM_NEIGHBORS);
     INS_range ins_range = m_points_ds.query_incremental_ANN(center_pt);
@@ -1500,11 +1508,18 @@ private:
         Tr_point proj_pt = project_point_and_compute_weight(
           neighbor_pt, neighbor_weight, tsb,
           local_tr_traits);
+        
+#ifdef CGAL_TC_VERY_VERBOSE
+        ++num_attempts_to_insert_points;
+#endif
 
         Tr_vertex_handle vh = local_tr.insert_if_in_star(proj_pt, center_vertex);
         //Tr_vertex_handle vh = local_tr.insert(proj_pt);
         if (vh != Tr_vertex_handle())
         {
+#ifdef CGAL_TC_VERY_VERBOSE
+          ++num_inserted_points;
+#endif
           if (verbose)
             std::cerr << "* Inserted point #" << neighbor_point_idx << std::endl;
 
@@ -1568,7 +1583,11 @@ private:
         }
       }
     }
-
+    
+#ifdef CGAL_TC_VERY_VERBOSE
+    std::cerr << "Inserted " << num_inserted_points << " points / " 
+      << num_attempts_to_insert_points << " attemps to compute the star\n";
+#endif
 #ifdef CGAL_ALPHA_TC
     if (tsb.num_thickening_vectors() == 0)
       update_star__no_thickening_vectors(i);
