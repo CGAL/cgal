@@ -25,7 +25,7 @@
 
 #if defined(CGAL_BUILD_SHARED_LIBS)
 
-#  if (defined(CGAL_Qt4_EXPORTS) || defined(CGAL_Qt5_EXPORTS)) // defined by CMake or in cpp files of the dll
+#  if defined(CGAL_Qt5_EXPORTS) // defined by CMake or in cpp files of the dll
 
 #    define CGAL_QT_EXPORT CGAL_DLL_EXPORT
 #    define CGAL_QT_EXPIMP_TEMPLATE

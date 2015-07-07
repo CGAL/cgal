@@ -186,24 +186,13 @@ void MainWindow::on_actionGenerate_Points_triggered()
 {
   bool isOk;
  
-  //New for Qt5 version !
-  #if QT_VERSION > 0x0500
-    int nPoints = QInputDialog::getInt(this,
-		"3D Triangulation demo", "Number of points: ",	// caption and label
-		100,	// default value
-		4,	// min value
-		2147483647,	// max value
-        1,	// step value of arrow button
-		&isOk);	// if OK is pressed
-  #else//Deprecated with Qt4.5.
-    int nPoints = QInputDialog::getInteger(this,
-		"3D Triangulation demo", "Number of points: ",	// caption and label
-		100,	// default value
-		4,	// min value
-		2147483647,	// max value
-        1,	// step value of arrow button
-		&isOk);	// if OK is pressed
-  #endif
+  int nPoints = QInputDialog::getInt(this,
+              "3D Triangulation demo", "Number of points: ",	// caption and label
+              100, // default value
+              4, // min value
+              2147483647, // max value
+              1, // step value of arrow button
+              &isOk); // if OK is pressed
 
 
   if ( isOk) {
