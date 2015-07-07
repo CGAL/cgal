@@ -113,6 +113,7 @@ else
       jet_fitting_plugin \
       join_polyhedra_plugin \
       kernel_plugin \
+      mean_curvature_flow_skeleton_plugin \
       mesh_3_plugin \
       mesh_segmentation_plugin \
       mesh_simplification_plugin \
@@ -165,7 +166,6 @@ else
       p_sphere_function_plugin \
       p_tanglecube_function_plugin \
       shortest_path_plugin \
-      mean_curvature_flow_skeleton_plugin \
       all
   do
       if  ${MAKE_CMD} -f Makefile help | grep "$target" > /dev/null; then 
