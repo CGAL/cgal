@@ -30,7 +30,7 @@ endif()
 add_definitions(-DCGAL_PROFILE_LCC_DEMO)
 
 ##################
-find_package(CGAL REQUIRED COMPONENTS Qt5)
+find_package(CGAL COMPONENTS Qt5)
 include(${CGAL_USE_FILE})
 
 find_package(Qt5 COMPONENTS Xml Script OpenGL)

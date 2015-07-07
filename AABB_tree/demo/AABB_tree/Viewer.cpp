@@ -31,6 +31,7 @@ void Viewer::initializeGL()
   QGLViewer::initializeGL();
   setBackgroundColor(::Qt::white);
   m_pScene->context = this->context();
+  qDebug()<<"context from viewer is valid :"<<this->context()->isValid();
   m_pScene->initGL();
 }
 

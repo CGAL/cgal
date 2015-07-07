@@ -26,7 +26,7 @@ include( ${CGAL_USE_FILE} )
 include( CGAL_CreateSingleSourceCGALProgram )
 
 # Boost and its components
-find_package( Boost REQUIRED )
+find_package( Boost )
 
 if ( NOT Boost_FOUND )
 

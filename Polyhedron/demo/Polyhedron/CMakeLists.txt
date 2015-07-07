@@ -53,7 +53,7 @@ set( QT_USE_QTOPENGL  TRUE )
 if( POLYHEDRON_QTSCRIPT_DEBUGGER)
   set( QT_USE_QTSCRIPTTOOLS  TRUE )
 endif()
-find_package(CGAL REQUIRED COMPONENTS Qt5)
+find_package(CGAL COMPONENTS Qt5)
 include( ${CGAL_USE_FILE} )
 find_package(Qt5 COMPONENTS OpenGL Script Svg Xml ScriptTools)
 

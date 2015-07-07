@@ -14,7 +14,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 include_directories( BEFORE ${Mesh_3_implicit_functions_BINARY_DIR} ../include )
 
 # Find CGAL and CGAL Qt5
-find_package(CGAL REQUIRED COMPONENTS Qt5)
+find_package(CGAL COMPONENTS Qt5)
 include( ${CGAL_USE_FILE} )
 
 # Find Qt5 itself
