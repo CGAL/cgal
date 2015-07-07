@@ -62,6 +62,7 @@ public:
       points_sphere = new std::vector<float>();
       points_trackBall = new std::vector<float>();
       normals_sphere = new std::vector<float>();
+      normals_emptySphere = new std::vector<float>();
       normals_trackBall= new std::vector<float>();
       transfo1_voronoi = new std::vector<float>();
       transfo2_voronoi = new std::vector<float>();
@@ -168,7 +169,7 @@ public Q_SLOTS:
   void changed()
   {
       compute_elements();
-      initialize_buffers();
+      are_buffers_initialized = false;
   }
   void clear() {
     m_pScene->eraseOldData();
@@ -341,7 +342,7 @@ private:
 
   QColor color;
   static const int vaoSize = 29;
-  static const int vboSize = 32;
+  static const int vboSize = 33;
   // define material
    QVector4D	ambient;
    QVector4D	diffuse;
@@ -355,6 +356,7 @@ private:
       int colorLocation[3];
       int lightLocation[5*2];
 
+      bool are_buffers_initialized;
       std::vector<float> *pos_emptyFacet;
       std::vector<float> *pos_emptySphere;
       std::vector<float> *points_emptySphere;
@@ -375,6 +377,7 @@ private:
       std::vector<float> *normals_cylinder;
       std::vector<float> *points_sphere;
       std::vector<float> *normals_sphere;
+      std::vector<float> *normals_emptySphere;
       std::vector<float> *normals_trackBall;
       std::vector<float> *transfo1_voronoi;
       std::vector<float> *transfo2_voronoi;
