@@ -108,7 +108,7 @@ private:
 
   static const int vaoSize = 2;
   static const int vboSize = 4;
-
+  mutable bool are_buffers_initialized;
   mutable int poly_vertexLocation[2];
   mutable int normalsLocation[2];
   mutable int mvpLocation[2];
@@ -129,7 +129,7 @@ private:
   mutable QOpenGLVertexArrayObject vao[vaoSize];
   mutable QOpenGLShaderProgram rendering_program;
   mutable QOpenGLShaderProgram rendering_program_grid;
-  void initialize_buffers();
+  void initialize_buffers() const;
   void compute_elements();
   void attrib_buffers(QGLViewer*) const;
   void compile_shaders();

@@ -64,11 +64,11 @@ private:
   std::vector<float> normal;
   std::vector<float> vertex_nm;
 
-
+  mutable bool are_buffers_initialized;
   mutable QOpenGLBuffer buffers[vboSize];
   mutable QOpenGLVertexArrayObject vao[vaoSize];
   mutable QOpenGLShaderProgram rendering_program;
-  void initialize_buffers();
+  void initialize_buffers() const;
   void compute_elements();
   void attrib_buffers(QGLViewer*) const;
   void compile_shaders();

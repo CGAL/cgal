@@ -48,6 +48,8 @@ public:
 
 private:
   Polyhedron* poly;
+  mutable
+  bool are_buffers_initialized;
 
   static const int vaoSize = 3;
   static const int vboSize = 6;
@@ -70,7 +72,7 @@ private:
   mutable QOpenGLBuffer buffers[vboSize];
   mutable QOpenGLVertexArrayObject vao[vaoSize];
   mutable QOpenGLShaderProgram rendering_program;
-  void initialize_buffers();
+  void initialize_buffers() const;
   void compute_elements();
   void attrib_buffers(QGLViewer*) const;
   void compile_shaders();

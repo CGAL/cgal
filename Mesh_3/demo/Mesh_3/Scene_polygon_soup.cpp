@@ -96,6 +96,7 @@ Scene_polygon_soup::Scene_polygon_soup()
     oriented(false)
 {
     compile_shaders();
+    are_buffers_initialized = false;
 }
 
 Scene_polygon_soup::~Scene_polygon_soup()
@@ -263,7 +264,7 @@ void Scene_polygon_soup::compute_elements()
     }
 }
 
-void Scene_polygon_soup::initialize_buffers()
+void Scene_polygon_soup::initialize_buffers() const
 {
     rendering_program.bind();
 
@@ -324,6 +325,7 @@ void Scene_polygon_soup::initialize_buffers()
         vao[2].release();
 
     rendering_program.release();
+    are_buffers_initialized = true;
 
 }
 
@@ -394,6 +396,8 @@ void Scene_polygon_soup::attrib_buffers(QGLViewer* viewer) const
 
 void
 Scene_polygon_soup::draw(QGLViewer * viewer) const  {
+    if(!are_buffers_initialized)
+        initialize_buffers();
 
     QColor color;
     vao[0].bind();
@@ -410,7 +414,8 @@ Scene_polygon_soup::draw(QGLViewer * viewer) const  {
 
 void
 Scene_polygon_soup::draw_edges(QGLViewer * viewer) const  {
-
+    if(!are_buffers_initialized)
+        initialize_buffers();
     QColor color;
     vao[1].bind();
     float current_color[4];
@@ -439,6 +444,8 @@ Scene_polygon_soup::draw_edges(QGLViewer * viewer) const  {
 void
 Scene_polygon_soup::draw_points(QGLViewer * viewer) const  {
 
+    if(!are_buffers_initialized)
+        initialize_buffers();
     QColor color;
     vao[0].bind();
     float current_color[4];
@@ -715,6 +722,6 @@ void Scene_polygon_soup::changed()
 {
    // Scene_item::changed();
     compute_elements();
-    initialize_buffers();
+    are_buffers_initialized = false;
 }
 #include "Scene_polygon_soup.moc"
