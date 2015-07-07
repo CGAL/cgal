@@ -3,7 +3,7 @@
 #include <CGAL/Tangential_complex.h>
 #include <CGAL/Random.h>
 
-#include "../../test/Tangential_complex/test_utilities.h"
+#include "../../test/Tangential_complex/testing_utilities.h"
 
 #include <CGAL/Metric_field.h> // Anisotropic metrics
 #include <Metric_field/Euclidean_metric_field.h>

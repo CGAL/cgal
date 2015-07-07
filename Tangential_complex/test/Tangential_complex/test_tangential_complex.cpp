@@ -12,7 +12,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Mesh_3/Profiling_tools.h>
 
-#include "test_utilities.h"
+#include "testing_utilities.h"
 
 #include <fstream>
 #include <math.h>

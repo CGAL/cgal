@@ -12,7 +12,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Mesh_3/Profiling_tools.h>
 
-#include "../../test/Tangential_complex/test_utilities.h"
+#include "../../test/Tangential_complex/testing_utilities.h"
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim_all.hpp>
