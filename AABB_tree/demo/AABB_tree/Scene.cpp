@@ -1311,6 +1311,7 @@ void Scene::deactivate_cutting_plane()
 }
 void Scene::initGL()
 {
+    qDebug()<<"context from scene is valid :"<<context->isValid();
     initializeOpenGLFunctions();
     glGenTextures(1, &textureId);
     compile_shaders();
