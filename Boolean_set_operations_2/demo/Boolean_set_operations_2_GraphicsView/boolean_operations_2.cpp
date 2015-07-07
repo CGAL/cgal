@@ -51,11 +51,7 @@ void trace( std::string s )
 #include <QDropEvent>
 #include <QSlider>
 #include <QProgressBar>
-
-//New for Qt5 version !
-#if QT_VERSION >= 0x050000
 #include <QMessageBox>
-#endif
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian_converter.h>

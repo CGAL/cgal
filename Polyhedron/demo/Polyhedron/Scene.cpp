@@ -69,15 +69,9 @@ Scene::addItem(Scene_item* item)
             this, SLOT(itemChanged()));
     if(bbox_before + item->bbox() != bbox_before)
 { Q_EMIT updated_bbox(); }
-#if QT_VERSION >= 0x050000
     QAbstractListModel::beginResetModel();
     Q_EMIT updated();
     QAbstractListModel::endResetModel();
-#else
-    Q_EMIT updated();
-
-    QAbstractListModel::reset();
-#endif
     Item_id id = m_entries.size() - 1;
   Q_EMIT newItem(id);
     return id;
@@ -122,15 +116,9 @@ Scene::erase(int index)
 
   selected_item = -1;
 
- #if QT_VERSION >= 0x050000
   QAbstractListModel::beginResetModel();
   Q_EMIT updated();
   QAbstractListModel::endResetModel();
- #else
-  Q_EMIT updated();
-  QAbstractListModel::reset();
- #endif
-
 
     if(--index >= 0)
         return index;
@@ -162,15 +150,10 @@ Scene::erase(QList<int> indices)
   }
 
   selected_item = -1;
- #if QT_VERSION >= 0x050000
   QAbstractListModel::beginResetModel();
   Q_EMIT updated();
   QAbstractListModel::endResetModel();
- #else
-  Q_EMIT updated();
-  QAbstractListModel::reset();
- #endif
-
+ 
   int index = max_index + 1 - indices.size();
   if(index >= m_entries.size()) {
     index = m_entries.size() - 1;
@@ -253,11 +236,6 @@ void Scene::initializeGL()
     glLightfv(GL_LIGHT0, GL_POSITION, position);
 
 }
-
-// workaround for Qt-4.2.
-#if QT_VERSION < 0x040300
-#  define lighter light
-#endif
 
 bool 
 Scene::keyPressEvent(QKeyEvent* e){

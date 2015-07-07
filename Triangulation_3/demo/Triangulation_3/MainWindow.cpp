@@ -125,13 +125,7 @@ void MainWindow::on_actionLoad_Points_triggered()
   viewer->clear();
 
   // parse fileName to get the file type
-  //New for Qt5 version.
-  #if QT_VERSION > 0x0500
-  std::string fname = fileName.toLatin1().data();//toAscii() deprecated with Qt5.
-  #else
-  std::string fname = fileName.toAscii().data();
-  #endif
-
+  std::string fname = fileName.toLatin1().data();
   std::string ftype = fname.substr( fname.find_last_of('.')+1 );
 
   if ( ftype.compare("off")==0 || ftype.compare("OFF")==0 ) { // read from OFF file
@@ -164,13 +158,7 @@ void MainWindow::on_actionSave_Points_triggered()
   if( fileName.isEmpty() )  return;
 
   // parse fileName to get the file type
-  //New for Qt5 version.
-  #if QT_VERSION > 0x0500
-  std::string fname = fileName.toLatin1().data();//toAscii() deprecated with Qt5.
-  #else
-  std::string fname = fileName.toAscii().data();
-  #endif
-
+  std::string fname = fileName.toLatin1().data();//toAscii()
   std::string ftype = fname.substr( fname.find_last_of('.')+1 );
 
   if ( ftype.compare("off")==0 || ftype.compare("OFF")==0 ) { // save to OFF file

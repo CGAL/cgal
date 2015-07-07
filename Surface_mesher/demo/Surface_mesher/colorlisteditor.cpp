@@ -45,12 +45,7 @@ ColorListEditor::ColorListEditor(QWidget *widget) : QComboBox(widget)
 
 QColor ColorListEditor::color() const
 {
-     //New for Qt5 version !
-     #if QT_VERSION >= 0x050000
- 	return itemData(currentIndex(), Qt::DecorationRole).value<QColor>();
-     #else
- 	return qVariantValue<QColor>(itemData(currentIndex(), Qt::DecorationRole));
-     #endif
+  return itemData(currentIndex(), Qt::DecorationRole).value<QColor>();
 }
 
 void ColorListEditor::setColor(QColor color)

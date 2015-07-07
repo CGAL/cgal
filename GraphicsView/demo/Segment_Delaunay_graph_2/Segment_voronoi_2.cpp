@@ -17,11 +17,8 @@
 #include <QInputDialog>
 #include <QDragEnterEvent>
 #include <QDropEvent>
-
-#if QT_VERSION >= 0x050000
 #include <QMessageBox>
 #include <QGraphicsLineItem>
-#endif
 
 // GraphicsView items and event filters (input classes)
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>

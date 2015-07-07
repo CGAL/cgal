@@ -121,23 +121,11 @@ public:
     // In other words, there is no toColor(), toImage(), or toPixmap() functions in QVariant.
     // Instead, use the QVariant::value() or the qVariantValue() template function
     m_colorVertex = settings.value( "Show/vertexcolor", QColor(255, 150, 0) ).value<QColor>();
-#if QT_VERSION >= 0x040600
     m_fSizeVertex = settings.value( "Show/vertexsize", 0.04f ).toFloat();
-#else
-    m_fSizeVertex = settings.value( "Show/vertexsize", 0.04f ).value<float>();
-#endif
     m_colorDEdge = settings.value( "Show/dedgecolor", QColor(0, 255, 0) ).value<QColor>();
-#if QT_VERSION >= 0x040600
     m_fSizeDEdge = settings.value( "Show/dedgesize", 0.01f ).toFloat();
-#else
-    m_fSizeDEdge = settings.value( "Show/dedgesize", 0.01f ).value<float>();
-#endif
     m_colorVEdge = settings.value( "Show/vedgecolor", QColor(0, 0, 255) ).value<QColor>();
-#if QT_VERSION >= 0x040600
     m_fSizeVEdge = settings.value( "Show/vedgesize", 0.01f ).toFloat();
-#else
-    m_fSizeVEdge = settings.value( "Show/vedgesize", 0.01f ).value<float>();
-#endif
     m_colorFacet = settings.value( "Show/facetcolor",
                              QColor(255, 255, 0, 96) ).value<QColor>();
     m_colorTrackball = settings.value( "Show/ballcolor",

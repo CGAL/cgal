@@ -74,10 +74,7 @@ class Mesh_3_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Plugin_interface)
-
-  #if QT_VERSION >= 0x050000
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
-  #endif
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
   typedef Plugin_helper Base;
 public:
@@ -429,9 +426,5 @@ get_approximate(double d, int precision, int& decimals)
   
   return std::floor(d)*std::pow(10.,decimals);
 }
-
-#if QT_VERSION < 0x050000
-Q_EXPORT_PLUGIN2(Mesh_3_plugin, Mesh_3_plugin)
-#endif
 
 #include "Mesh_3_plugin.moc"

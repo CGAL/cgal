@@ -177,8 +177,6 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)());
   bool ok = false;
 
-  //New for Qt5 version !
-  #if QT_VERSION >= 0x050000
   const int number_of_points = 
     QInputDialog::getInt(this, 
                              tr("Number of random points"),
@@ -188,17 +186,6 @@ MainWindow::on_actionInsertRandomPoints_triggered()
 							(std::numeric_limits<int>::max)(),
 							1,
 							&ok);
-  #else
-  const int number_of_points =
-	 QInputDialog::getInteger(this,
-							  tr("Number of random points"),
-							  tr("Enter number of random points"),
-							  100,
-							  0,
-							 (std::numeric_limits<int>::max)(),
-							 1,
-							 &ok);
-  #endif
 
   if(!ok) {
     return;

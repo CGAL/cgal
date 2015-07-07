@@ -27,11 +27,8 @@
 #include <QPolygonF>
 #include <QPointF>
 #include <QGraphicsLineItem> 
-
-//New for Qt5 version !
-#if QT_VERSION >= 0x050000
 #include <QGraphicsScene>
-#endif
+
 
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>

@@ -107,12 +107,7 @@ Values_list::Values_list(QWidget* parent):
 
   treeWidget->sortByColumn(Value, Qt::AscendingOrder);
    
-  //New for Qt5 version !
-  #if QT_VERSION >= 0x050000
- 	treeWidget->header()->setSectionsClickable(false);
-  #else
- 	treeWidget->header()->setClickable(false);
-  #endif
+  treeWidget->header()->setSectionsClickable(false);
 
 
   Values_delegate* values_delegate = new Values_delegate(parent);

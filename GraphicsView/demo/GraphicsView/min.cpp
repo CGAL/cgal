@@ -4,13 +4,9 @@
 #include <CGAL/Qt/GraphicsViewNavigation.h>
 #include <QLineF>
 #include <QRectF>
-
-//New for Qt5 version !
-#if QT_VERSION >= 0x050000
 #include <QApplication> 
 #include <QGraphicsScene>
 #include <QGraphicsView> 
-#endif
 
 int main(int argc, char **argv)
 {

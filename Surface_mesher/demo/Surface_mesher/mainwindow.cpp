@@ -14,11 +14,7 @@
 #include <QDoubleSpinBox>
 #include <QLabel>
 #include <QSettings>
-
-//New for Qt5 version !
-#if QT_VERSION >= 0x050000
 #include <QMimeData>
-#endif
 
 #include <QGLViewer/vec.h>
 

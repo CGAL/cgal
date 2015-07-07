@@ -11,10 +11,7 @@ class Polyhedron_demo_off_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
-
-  #if QT_VERSION >= 0x050000
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")//New for Qt5 version !
-  #endif
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 public:
   QString name() const { return "off_plugin"; }
@@ -86,10 +83,5 @@ bool Polyhedron_demo_off_plugin::save(const Scene_item* item, QFileInfo fileinfo
   return (poly_item && poly_item->save(out)) || 
     (soup_item && soup_item->save(out));
 }
-
-#if QT_VERSION < 0x050000
-#include <QtPlugin>
-Q_EXPORT_PLUGIN2(Polyhedron_demo_off_plugin, Polyhedron_demo_off_plugin)
-#endif
 
 #include "Polyhedron_demo_off_plugin.moc"

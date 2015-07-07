@@ -23,11 +23,8 @@
 #include "DeleteCurveMode.h"
 
 #include <iostream>
-
-//New for Qt5 version !
-#if QT_VERSION >= 0x050000
 #include <QItemEditorFactory>
-#endif
+
 
 PropertyValueDelegate::PropertyValueDelegate( QObject* parent ):
   QItemDelegate( parent )
@@ -70,7 +67,6 @@ createEditor( QWidget* parent, const QStyleOptionViewItem& option,
     editor = QItemDelegate::createEditor( parent, option, index );
   }*/
 
- //New for Qt5 version
  if ( myData.canConvert< QColor >() )
   {
     ColorItemEditor* colorEditor = new ColorItemEditor( parent );

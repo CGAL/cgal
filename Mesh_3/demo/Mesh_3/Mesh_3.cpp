@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 
   // Import resources from libCGALQt ( Qt5).
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT_INIT_RESOURCES; //New for Qt5 version !
+  CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;
   mainWindow.show();

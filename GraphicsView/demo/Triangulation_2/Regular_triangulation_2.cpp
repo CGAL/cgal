@@ -217,18 +217,10 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   Iso_rectangle_2 isor = convert(rect);
   CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)()); 
 
-  #if QT_VERSION >= 0x050000
   const int number_of_points = 
     QInputDialog::getInt(this, 
                              tr("Number of random points"),
                              tr("Enter number of random points"), 100, 0);
-  #else
-  const int number_of_points = 
-    QInputDialog::getInteger(this, 
-                             tr("Number of random points"),
-                             tr("Enter number of random points"), 100, 0);
-  #endif 
-
 
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);

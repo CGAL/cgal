@@ -219,10 +219,7 @@ private:
     void draw_triangle(const Kernel::Point_3& pa,
                        const Kernel::Point_3& pb,
                        const Kernel::Point_3& pc, bool is_cut) {
-        // workaround for Qt-4.2.
-#if QT_VERSION < 0x040300
-#  define darker dark
-#endif
+
 #undef darker
         Kernel::Vector_3 n = cross_product(pb - pa, pc - pa);
         n = n / CGAL::sqrt(n*n);
@@ -269,10 +266,7 @@ else
     void draw_triangle_edges(const Kernel::Point_3& pa,
                        const Kernel::Point_3& pb,
                        const Kernel::Point_3& pc) {
-        // workaround for Qt-4.2.
-#if QT_VERSION < 0x040300
-#  define darker dark
-#endif
+
 #undef darker
         Kernel::Vector_3 n = cross_product(pb - pa, pc - pa);
         n = n / CGAL::sqrt(n*n);

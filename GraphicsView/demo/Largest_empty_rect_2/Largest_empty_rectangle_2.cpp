@@ -62,7 +62,6 @@ private:
     G pg(radius);
     bool ok = false;
 
-  #if QT_VERSION >= 0x050000
     const int number_of_points = 
       QInputDialog::getInt(this, 
                                tr("Number of random points"),
@@ -72,18 +71,6 @@ private:
                                (std::numeric_limits<int>::max)(),
                                1,
                                &ok);
-  #else
-    const int number_of_points = 
-      QInputDialog::getInteger(this, 
-                               tr("Number of random points"),
-                               tr("Enter number of random points"),
-                               100,
-                               0,
-                               (std::numeric_limits<int>::max)(),
-                               1,
-                               &ok);
-  #endif
-
 
     if(!ok) {
       return;

@@ -75,10 +75,7 @@ class Mesh_3_optimization_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Plugin_interface)
-  
-  #if QT_VERSION >= 0x050000
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
-  #endif
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
   typedef Plugin_helper Base;
 public:
@@ -617,11 +614,6 @@ translate(CGAL::Mesh_optimization_return_code rc)
   
   return QString("ERROR");
 }
-
-
-#if QT_VERSION < 0x050000
-Q_EXPORT_PLUGIN2(Mesh_3_optimization_plugin, Mesh_3_optimization_plugin)
-#endif
 
 #include "Mesh_3_optimization_plugin.moc"
 

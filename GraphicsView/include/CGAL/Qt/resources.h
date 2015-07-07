@@ -24,10 +24,8 @@
 #include <CGAL/export/Qt.h>
 
 // cannot use namespaces because of the Q_INIT_RESOURCE macro
-//New for Qt5 version !
 CGAL_QT_EXPORT void CGAL_Qt_init_resources();
 
-//New for Qt5 version !
 #define CGAL_QT_INIT_RESOURCES do { CGAL_Qt_init_resources(); } while(0)
 // The do{}while(0) trick is used to make that macro value a regular
 // statement and not a compound statement.

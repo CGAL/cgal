@@ -59,7 +59,7 @@ class Polyhedron_demo_selection_plugin :
 {
     Q_OBJECT
     Q_INTERFACES(Polyhedron_demo_plugin_interface)
-    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
     bool applicable(QAction*) const {
         return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))

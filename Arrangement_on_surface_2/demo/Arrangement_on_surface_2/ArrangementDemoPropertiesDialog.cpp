@@ -62,7 +62,7 @@ QVariant ArrangementDemoPropertiesDialog::property( int index )
     res = item->data( Qt::DisplayRole );
   }
  */
- //New for Qt5 version !
+
   if ( myData.canConvert<QColor>() ||
        myData.canConvert<DeleteCurveMode>())
   {
