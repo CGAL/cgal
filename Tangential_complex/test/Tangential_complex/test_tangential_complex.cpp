@@ -100,7 +100,8 @@ int main()
     tc.compute_tangential_complex();
     double computation_time = t.elapsed(); t.reset();
     
-    tc.check_if_all_simplices_are_in_the_ambient_delaunay();
+    if (ambient_dim <= 4)
+      tc.check_if_all_simplices_are_in_the_ambient_delaunay();
 
     double export_before_time = -1.;
     if (INTRINSIC_DIMENSION <= 3)
