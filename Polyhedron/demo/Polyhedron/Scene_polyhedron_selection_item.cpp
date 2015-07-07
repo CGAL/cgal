@@ -26,7 +26,8 @@ void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewe
 
         vaos[0]->bind();
         buffers[0].bind();
-        buffers[0].allocate(positions_facets.data(), positions_facets.size()*sizeof(float));
+        buffers[0].allocate(positions_facets.data(),
+                            static_cast<int>(positions_facets.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffers[0].release();
@@ -34,7 +35,8 @@ void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewe
 
 
         buffers[1].bind();
-        buffers[1].allocate(normals.data(), normals.size()*sizeof(float));
+        buffers[1].allocate(normals.data(),
+                            static_cast<int>(normals.size()*sizeof(float)));
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_FLOAT,0,3);
         buffers[1].release();
@@ -51,7 +53,8 @@ void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewe
         vaos[1]->bind();
 
         buffers[2].bind();
-        buffers[2].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
+        buffers[2].allocate(positions_lines.data(),
+                            static_cast<int>(positions_lines.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffers[2].release();
@@ -69,7 +72,8 @@ void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewe
         vaos[2]->bind();
 
         buffers[3].bind();
-        buffers[3].allocate(positions_points.data(), positions_points.size()*sizeof(float));
+        buffers[3].allocate(positions_points.data(),
+                            static_cast<int>(positions_points.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffers[3].release();
@@ -179,7 +183,7 @@ void Scene_polyhedron_selection_item::draw(Viewer_interface* viewer) const
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
     program->bind();
-    qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_facets.size()/3);
+    qFunc.glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/3));
     program->release();
     vaos[0]->release();
     glPolygonOffset(offset_factor, offset_units);
@@ -196,7 +200,7 @@ void Scene_polyhedron_selection_item::draw_edges(Viewer_interface* viewer) const
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
-    qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
+    qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
     program->release();
     vaos[1]->release();
     qFunc.glLineWidth(1.f);
@@ -209,7 +213,7 @@ void Scene_polyhedron_selection_item::draw_points(Viewer_interface* viewer) cons
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
-    qFunc.glDrawArrays(GL_POINTS, 0, positions_points.size()/3);
+    qFunc.glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_points.size()/3));
     program->release();
     vaos[2]->release();
     qFunc.glPointSize(1.f);

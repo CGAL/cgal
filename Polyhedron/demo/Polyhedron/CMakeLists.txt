@@ -5,11 +5,9 @@ project( Polyhedron )
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-  cmake_policy(VERSION 2.8.4)
-else()
-  cmake_policy(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.11)
+if(POLICY CMP0043)
+  cmake_policy(SET CMP0043 OLD)
 endif()
 
 # Compatibility with CMake 3.0
@@ -57,11 +55,8 @@ if( POLYHEDRON_QTSCRIPT_DEBUGGER)
 endif()
 find_package(CGAL REQUIRED COMPONENTS Qt5)
 include( ${CGAL_USE_FILE} )
-find_package(Qt5 COMPONENTS OpenGL Script Xml ScriptTools)
+find_package(Qt5 COMPONENTS OpenGL Script Svg Xml ScriptTools)
 
-# Find Glew (required)
-find_package(GLEW)
-set(GLEW_FOUND FALSE)#TEMP to be removed once GlSplat has been redone
 # Find OpenGL
 find_package(OpenGL)
 
@@ -73,13 +68,6 @@ if(Qt5_FOUND)
   find_package(QGLViewer )
 
 endif(Qt5_FOUND)
-if(GLEW_FOUND)
-  include_directories ( ${GLEW_INCLUDE_DIR} )
-  add_definitions(-DCGAL_GLEW_ENABLED)
-else(GLEW_FOUND)
-  message(STATUS "NOTICE: GLEW library is not found. Splat rendering will not be available.")
-endif(GLEW_FOUND)
-
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 if (EIGEN3_FOUND)
@@ -93,7 +81,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   find_package(Boost COMPONENTS thread system)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
-  include_directories ( ${GLEW_INCLUDE_DIR} )
 
   qt5_wrap_ui( MainWindowUI_files MainWindow.ui )
   qt5_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
@@ -175,14 +162,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_polyhedron_transform_item Scene_polyhedron_transform_item.cpp )#Scene_polyhedron_transform_item.moc)
   # special
   target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)
-
-  if(GLEW_FOUND)
-    qt5_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
-    add_library(gl_splat SHARED
-      GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
-    qt5_use_modules(gl_splat OpenGL Widgets Gui Xml)
-    target_link_libraries(gl_splat ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES})
-  endif(GLEW_FOUND)
   
   add_item(scene_combinatorial_map_item Scene_combinatorial_map_item.cpp)# Scene_combinatorial_map_item.moc)
   # special
@@ -216,10 +195,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_nef_rendering.cpp)
   target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item)
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)# Scene_points_with_normal_item.moc)
-  if(GLEW_FOUND)
-    target_link_libraries( scene_points_with_normal_item gl_splat ${GLEW_LIBRARIES} )
-    target_link_libraries( demo_framework gl_splat ${GLEW_LIBRARIES} )
-  endif(GLEW_FOUND)
 
   foreach( lib 
       demo_framework
@@ -237,14 +212,10 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     add_executable  ( Polyhedron_3
       MainWindow.cpp
       Polyhedron_3.cpp
-      Viewer.cpp
-      Scene.cpp
-    #MainWindow_moc.cpp
       File_loader_dialog_moc.cpp
-    # Viewer_moc.cpp
       ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
-    qt5_use_modules(Polyhedron_3 Gui OpenGL Xml Widgets Script )
+    qt5_use_modules(Polyhedron_3 Gui OpenGL Xml Widgets Script Svg )
     if(EIGEN3_FOUND)
 #      add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp )
     endif()
@@ -265,10 +236,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries( Polyhedron_3 ${QT_LIBRARIES} )
   target_link_libraries( Polyhedron_3 demo_framework )
   target_link_libraries( Polyhedron_3 point_dialog )
-
-  if(GLEW_FOUND)
-    target_link_libraries( Polyhedron_3 gl_splat ${GLEW_LIBRARIES} )
-  endif(GLEW_FOUND)
 
   # Link with CGAL
   target_link_libraries( Polyhedron_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
@@ -484,14 +451,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     scene_polylines_item
     NAMESPACE Polyhedron_
     APPEND FILE polyhedron_demo_targets.cmake)
-
-  if(GLEW_FOUND)
-    export(
-      TARGETS
-      gl_splat
-      NAMESPACE Polyhedron_
-      APPEND FILE polyhedron_demo_targets.cmake)
-  endif(GLEW_FOUND)
 
   configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)
 

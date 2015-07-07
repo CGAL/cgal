@@ -101,7 +101,8 @@ Scene_polygon_soup_item::initialize_buffers(Viewer_interface* viewer) const
 
         vaos[0]->bind();
         buffers[0].bind();
-        buffers[0].allocate(positions_poly.data(), positions_poly.size()*sizeof(float));
+        buffers[0].allocate(positions_poly.data(),
+                            static_cast<int>(positions_poly.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[0].release();
@@ -109,7 +110,8 @@ Scene_polygon_soup_item::initialize_buffers(Viewer_interface* viewer) const
 
 
         buffers[1].bind();
-        buffers[1].allocate(normals.data(), normals.size()*sizeof(float));
+        buffers[1].allocate(normals.data(),
+                            static_cast<int>(normals.size()*sizeof(float)));
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_FLOAT,0,3);
         buffers[1].release();
@@ -125,7 +127,8 @@ Scene_polygon_soup_item::initialize_buffers(Viewer_interface* viewer) const
         vaos[1]->bind();
 
         buffers[3].bind();
-        buffers[3].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
+        buffers[3].allocate(positions_lines.data(),
+                            static_cast<int>(positions_lines.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[3].release();
@@ -138,12 +141,12 @@ Scene_polygon_soup_item::initialize_buffers(Viewer_interface* viewer) const
     are_buffers_filled = true;
 }
 
-typedef typename Polyhedron::Traits Traits;
-typedef typename Polygon_soup::Polygon_3 Facet;
+typedef Polyhedron::Traits Traits;
+typedef Polygon_soup::Polygon_3 Facet;
 typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
-typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
+typedef Polyhedron::Halfedge_handle Halfedge_handle;
 struct Face_info {
-    typename Polyhedron::Halfedge_handle e[3];
+    Polyhedron::Halfedge_handle e[3];
     bool is_external;
 };
 typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_handle,
@@ -164,21 +167,21 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
     const Point_3& pa = soup->points[pit->at(0)];
     const Point_3& pb = soup->points[pit->at(1)];
     const Point_3& pc = soup->points[pit->at(2)];
-    typename Traits::Vector_3 normal = CGAL::cross_product(pb-pa, pc -pa);
+    Traits::Vector_3 normal = CGAL::cross_product(pb-pa, pc -pa);
     normal = normal / std::sqrt(normal * normal);
 
     P_traits cdt_traits(normal);
 
     CDT cdt(cdt_traits);
 
-    int it = 0;
-    int it_end =pit->size();
+    std::size_t it = 0;
+    std::size_t it_end =pit->size();
 
     // Iterates the vector of facet handles
-    typename CDT::Vertex_handle previous, first;
+    CDT::Vertex_handle previous, first;
     do {
 
-        typename CDT::Vertex_handle vh = cdt.insert(soup->points[pit->at(it)]);
+        CDT::Vertex_handle vh = cdt.insert(soup->points[pit->at(it)]);
         if(first == 0) {
             first = vh;
         }
@@ -191,7 +194,7 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
     cdt.insert_constraint(previous, first);
 
     // sets mark is_external
-    for(typename CDT::All_faces_iterator
+    for(CDT::All_faces_iterator
         pitt = cdt.all_faces_begin(),
         end = cdt.all_faces_end();
         pitt != end; ++pitt)
@@ -203,7 +206,7 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
     std::queue<typename CDT::Face_handle> face_queue;
     face_queue.push(cdt.infinite_vertex()->face());
     while(! face_queue.empty() ) {
-        typename CDT::Face_handle fh = face_queue.front();
+        CDT::Face_handle fh = face_queue.front();
         face_queue.pop();
         if(fh->info().is_external) continue;
         fh->info().is_external = true;
@@ -219,7 +222,7 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
     //iterates on the internal faces to add the vertices to the positions
     //and the normals to the appropriate vectors
     int count =0;
-    for(typename CDT::Finite_faces_iterator
+    for(CDT::Finite_faces_iterator
         ffit = cdt.finite_faces_begin(),
         end = cdt.finite_faces_end();
         ffit != end; ++ffit)
@@ -552,7 +555,7 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     program->setAttributeValue("colors", v_colors);
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
-    qFunc.glDrawArrays(GL_TRIANGLES, 0, positions_poly.size()/4);
+    qFunc.glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly.size()/4));
     // Clean-up
     program->release();
     vaos[0]->release();
@@ -573,7 +576,7 @@ Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
     QColor color = this->color();
     program->setAttributeValue("colors", color);
     //draw the points
-    qFunc.glDrawArrays(GL_POINTS, 0, positions_lines.size()/4);
+    qFunc.glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size()/4));
     // Clean-up
     program->release();
     vaos[1]->release();
@@ -595,7 +598,7 @@ Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
 
     program->setAttributeValue("colors", color);
     //draw the edges
-    qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/4);
+    qFunc.glDrawArrays(GL_LINES, 0,static_cast<GLsizei>( positions_lines.size()/4));
     // Clean-up
     program->release();
     vaos[1]->release();
