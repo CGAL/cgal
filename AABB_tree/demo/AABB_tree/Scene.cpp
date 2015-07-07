@@ -304,7 +304,7 @@ void Scene::initialize_buffers()
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
     vao[6].release();
 
-    are_buffers_initialized == true;
+    are_buffers_initialized = true;
 
 
 
