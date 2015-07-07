@@ -224,7 +224,7 @@ namespace CGAL {
 
     // Maps to the range [-1,1]^2
     static void concentric_mapping(FT phi, FT proj, FT rad, FT &x, FT &y) {
-      phi = (phi < FT(-CGAL_M_PI_4)) ? phi + FT(2 * CGAL_M_PI) : phi;
+      phi = (phi < FT(-CGAL_M_PI_4)) ? phi + FT(2 * CGAL_PI) : phi;
       proj = (proj < FT(-1.0)) ? FT(-1.0) : ((proj > FT(1.0)) ? FT(1.0) : proj);
       FT r = FT(acos(double(CGAL::abs(proj)))) / FT(CGAL_M_PI_2);
 
@@ -239,7 +239,7 @@ namespace CGAL {
       }
       else if (phi < FT(5.0 * CGAL_M_PI_4)) {
         a = -r;
-        b = (phi - FT(CGAL_M_PI)) * (-r) / FT(CGAL_M_PI_4);
+        b = (phi - FT(CGAL_PI)) * (-r) / FT(CGAL_M_PI_4);
       }
       else {
         a = (phi - 3 * FT(CGAL_M_PI_2)) * r / FT(CGAL_M_PI_4);
@@ -325,13 +325,13 @@ namespace CGAL {
       m_wrap_right = abs(max[0] - CGAL_M_PI_2 * rad) < (cluster_epsilon * 0.5);
       m_wrap_left = abs(min[0] + CGAL_M_PI_2 * rad) < (cluster_epsilon * 0.5);
 
-      FT diff_top = CGAL::abs(-FT(CGAL_M_PI * rad) - min[1]) 
-        + FT(CGAL_M_PI * rad) - max[1];
+      FT diff_top = CGAL::abs(-FT(CGAL_PI * rad) - min[1]) 
+        + FT(CGAL_PI * rad) - max[1];
       m_wrap_top = diff_top < cluster_epsilon;
 
       if (m_wrap_top || m_wrap_left || m_wrap_right) {
-        cluster_epsilon = FT(CGAL_M_PI * rad)
-          / FT(floor((CGAL_M_PI * rad) / cluster_epsilon));
+        cluster_epsilon = FT(CGAL_PI * rad)
+          / FT(floor((CGAL_PI * rad) / cluster_epsilon));
 
         // center bitmap at equator
         FT required_space = ceil(
