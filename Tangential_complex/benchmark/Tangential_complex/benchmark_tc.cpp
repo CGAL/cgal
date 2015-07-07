@@ -533,6 +533,8 @@ void make_tc(std::vector<Point> &points,
 
 int main()
 {
+  CGAL::set_error_behaviour(CGAL::ABORT);
+
 #ifdef CGAL_LINKED_WITH_TBB
 # ifdef _DEBUG
   int num_threads = 1;
