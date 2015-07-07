@@ -109,6 +109,7 @@ private:
     Edge_tree m_edge_tree;
     
     Cut_planes_types m_cut_plane;
+    bool are_buffers_initialized;
   
 private:
     // utility functions

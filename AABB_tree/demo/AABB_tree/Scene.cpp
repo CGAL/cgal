@@ -18,7 +18,7 @@
 
 #include <QOpenGLFunctions_3_3_Core>
 #include <QOpenGLShader>
-
+#include <QDebug>
 
 // constants
 const int slow_distance_grid_size = 100;
@@ -44,6 +44,7 @@ Scene::Scene()
     m_blue_ramp.build_blue();
     m_max_distance_function = (FT)0.0;
     texture = new Texture(m_grid_size,m_grid_size);
+    are_buffers_initialized = false;
 
 
 }
@@ -75,6 +76,8 @@ Scene::~Scene()
 void Scene::compile_shaders()
 {
     initializeOpenGLFunctions();
+    glGenTextures(1, &textureId);
+    qDebug()<<"textureId = "<<textureId;
     if(! buffers[0].create() || !buffers[1].create() || !buffers[2].create() || !buffers[3].create() || !buffers[4].create() || !buffers[5].create() || !buffers[6].create() || !buffers[7].create())
     {
         std::cerr<<"VBO Creation FAILED"<<std::endl;
@@ -300,6 +303,8 @@ void Scene::initialize_buffers()
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
     vao[6].release();
 
+    are_buffers_initialized == true;
+
 
 
 }
@@ -511,7 +516,8 @@ void Scene::changed()
         compute_elements(_UNSIGNED);
     else
         compute_elements(_SIGNED);
-    initialize_buffers();
+    are_buffers_initialized = false;
+
 }
 
 int Scene::open(QString filename)
@@ -582,6 +588,8 @@ void Scene::update_bbox()
 
 void Scene::draw(QGLViewer* viewer)
 {
+    if(!are_buffers_initialized)
+        initialize_buffers();
     QColor color;
     QMatrix4x4 fMatrix;
     fMatrix.setToIdentity();
