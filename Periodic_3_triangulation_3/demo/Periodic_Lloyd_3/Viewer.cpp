@@ -14,6 +14,7 @@ Viewer::init()
       qglviewer::Vec( 1., 1., 1.));
   glEnable(GL_LINE_SMOOTH);
   compile_shaders();
+  are_buffers_initialized = false;
 }
 
 void
@@ -26,6 +27,8 @@ Viewer::sceneChanged()
 void
 Viewer::draw()
 {
+  if(!are_buffers_initialized)
+      initialize_buffers();
   QColor color;
  //the points
   ::glEnable(GL_BLEND);
@@ -164,6 +167,7 @@ void Viewer::initialize_buffers()
     buffers[3].release();
     vao[3].release();
     rendering_program.release();
+    are_buffers_initialized = true;
 }
 
 void Viewer::compute_elements()
@@ -310,6 +314,6 @@ void Viewer::compile_shaders()
 void Viewer::changed()
 {
     compute_elements();
-    initialize_buffers();
+    are_buffers_initialized = false;
 }
 #include "Viewer.moc"

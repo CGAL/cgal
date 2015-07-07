@@ -59,7 +59,7 @@ private:
       int mvpLocation[3];
       int colorLocation[3];
 
-
+      bool are_buffers_initialized;
       std::vector<float> pos_points;
       std::vector<float> pos_lines;
       std::vector<float> pos_8lines2D;
