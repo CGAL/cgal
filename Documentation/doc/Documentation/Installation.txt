@@ -66,10 +66,10 @@ For instance, use macports in the following way:
 sudo port install cgal
 </PRE>
 
-or if Qt4 are desired
+or if Qt5 are desired
 
 <PRE>
-sudo port install cgal +qt4 +universal +demos
+sudo port install cgal +qt5 +universal +demos
 </PRE>
 
 The setup is similar for <a href="http://mxcl.github.com/homebrew/"><tt>homebrew</tt></a> .
@@ -298,7 +298,6 @@ We next list the libraries and essential 3rd party software
 | `CGAL_Core` | `WITH_CGAL_Core`  | The CORE library for algebraic numbers.\cgalFootnote{CGAL_Core is not part of \cgal, but a custom version of the \sc{Core} library distributed by \cgal for the user convenience and it has it's own license.}  | \sc{Gmp} and \sc{Mpfr} |
 | `CGAL_ImageIO` | `WITH_CGAL_ImageIO` | Utilities to read and write image files  | \sc{OpenGL}, \sc{zlib}, \sc{Vtk}(optional) |
 | `CGAL_Qt3`  | `WITH_CGAL_Qt3` | `CGAL::Qt_widget` used by \sc{Qt}3-based demos  | \sc{Qt}3 and \sc{OpenGL}  |
-| `CGAL_Qt4`  | `WITH_CGAL_Qt4` | `QGraphicsView` support for \sc{Qt}4-based demos | \sc{Qt}4 and \sc{OpenGL} |
 | `CGAL_Qt5`  | `WITH_CGAL_Qt5` | `QGraphicsView` support for \sc{Qt}5-based demos | \sc{Qt}5 and \sc{OpenGL} |
 
 \subsection installation_debug Debug vs. Release
@@ -333,7 +332,7 @@ see \ref sec3partysoftwareconfig to specify the location of 3rd
 party software.
 
 The libraries \stl (shipped with any compiler) and \sc{Boost} are essential to all components (i.e.\ libCGAL,
-libCGAL_Core, libCGAL_ImageIO, libCGAL_Qt3, libCGAL_Qt4 and libCGAL_Qt5).
+libCGAL_Core, libCGAL_ImageIO, libCGAL_Qt3 and libCGAL_Qt5).
 
 \subsection thirdpartystl Standard Template Library (STL) 
 
@@ -375,7 +374,7 @@ As on Windows there is no canonical directory for where to find
 
 \subsection thirdpartyMPFR GMP and MPFR
 
-The components libCGAL, libCGAL_Core, libCGAL_Qt3, libCGAL_Qt4 and libCGAL_Qt5 require 
+The components libCGAL, libCGAL_Core, libCGAL_Qt3 and libCGAL_Qt5 require 
 \sc{Gmp} and \sc{Mpfr} which are libraries for multi precision integers and rational numbers,
 and for multi precision floating point numbers.
 
@@ -407,24 +406,23 @@ for instance, on Windows, you can download it from <A HREF="http://www.zlib.net/
 \sc{OpenGL} (Open Graphics Library) provides an API for applications that
 produce 2D and 3D computer graphics.
 
-In \cgal the library is essential for the components libCGAL_Qt3,
-libCGAL_Qt4 and libCGAL_Qt5, as well as libCGAL_ImageIO and for various demos.
+In \cgal the library is essential for the components libCGAL_Qt3
+and libCGAL_Qt5, as well as libCGAL_ImageIO and for various demos.
 
 Typically, \sc{OpenGL} is preinstalled on systems; if not, it can be
 downloaded from <A HREF="http://www.opengl.org/">`http://www.opengl.org/`</A>.
 
-\subsection thirdpartyQt Qt3, Qt4 and Qt5
+\subsection thirdpartyQt Qt3 and Qt5
 
 Qt is a cross-platform application and UI framework.
 
 The component libCGAL_Qt3 requires \sc{Qt}3 installed on your system, while
-the component libCGAL_Qt4 requires \sc{Qt}4 installed on your system as 
-the component libCGAL_Qt5 requires \sc{Qt}5. 
+the component libCGAL_Qt5 requires \sc{Qt}5 installed on your system. 
 In case \sc{Qt} is not yet installed on your system, you can download 
 it from <A HREF="http://qt-project.org/">`http://qt-project.org/`</A>.
 
 Older demos of \cgal use libCGAL_Qt3 and \sc{Qt}3, while newer and newly
-developed demos require libCGAL_Qt4 and \sc{Qt}4 or libCGAL_Qt5 and \sc{Qt}5.
+developed demos require libCGAL_Qt5 and \sc{Qt}5.
 
 Having \sc{Qt}4 version 4.3.0 or higher or \sc{Qt}5 version 5.3.0 is recommended.
 
@@ -673,6 +671,8 @@ and the following command-line call to `cmake`:
 cmake -DWITH_examples=OFF -DWITH_demos=OFF -DCMAKE_BUILD_TYPE=Release 
 /path/to/unpacked/CGAL-tarball/
 </PRE>
+
+\todo update the output of cmake
 
 <PRE>
 -- The CXX compiler identification is GNU
@@ -967,8 +967,8 @@ If the parameter is not given, the script creates <B>one executable for each giv
 source file</B>.
 <DT><B>`-c com1:com2:...`</B><DD> Lists components ("com1",
 "com2") of \cgal to which the executable(s) should be linked. Valid components are \cgal's
-libraries (i.e.\ "Core", "ImageIO", "Qt3", "Qt4" and "Qt5"; note
-that it only make sense to either pick "Qt3", "Qt4" or "Qt5") and all
+libraries (i.e.\ "Core", "ImageIO", "Qt3" and "Qt5"; note
+that it only make sense to either pick "Qt3" or "Qt5") and all
 preconfigured 3rd party software, such as "MPFI", "RS3"). An example is `-c Core:GMP:RS3:MPFI`
 
 <DT><B>`-b boost1:boost2:...`</B><DD> Lists components ("boost1",
@@ -1002,8 +1002,8 @@ this file within a CMake script sets up include paths and libraries to
 link with \cgal and essential third party libraries. Beyond,
 `find_package` can demand for `COMPONENTS` of \cgal,
 that is, all \cgal libraries `libCGAL_Core` (<i>Core</i>),
-libCGAL_ImageIO (<i>ImageIO</i>) , libCGAL_Qt3 (<i>Qt3</i>), libCGAL_Qt4
-(<i>Qt4</i>) and libCGAL_Qt5(<i>Qt5</i>) or optional 3rd party software such as <i>MPFI</i>, <i>RS3</i>.
+libCGAL_ImageIO (<i>ImageIO</i>) , libCGAL_Qt3 (<i>Qt3</i>) and libCGAL_Qt5
+(<i>Qt5</i>) or optional 3rd party software such as <i>MPFI</i>, <i>RS3</i>.
 A user is free to create the `CMakeLists.txt`
 without calling the script (manual creation).
 
@@ -1061,7 +1061,6 @@ configure and build. Their values can be ON or OFF.
 | `WITH_demos`        | OFF   |
 | `WITH_CGAL_Core`    | ON    |
 | `WITH_CGAL_Qt3`     | ON    |
-| `WITH_CGAL_Qt4`     | ON    |
 | `WITH_CGAL_Qt5`     | ON    |
 | `WITH_CGAL_ImageIO` | ON    |
 
@@ -1214,26 +1213,6 @@ the header files and the full pathnames of the \sc{Qt}3 libraries.
 | `QT3_MOC_EXECUTABLE`  | Full pathname to the moc executable of \sc{Qt}3 | CMake |
 | `QT3_UIC_EXECUTABLE`  | Full pathname to the uic executable of \sc{Qt}3 | CMake |
 
-
-
-\subsection installation_qt4 Qt4 Library
-
-The CMake scripts that search for \sc{Qt}4 can use the introspection feature
-of the tool `qmake` included in \sc{Qt}4 distributions. If \sc{Qt}4 is not
-automatically found, it is sufficient to set the `PATH`
-environment variable, so that \sc{Qt}4 `qmake` tool is in the path, and
-before \sc{Qt}3 `qmake` if that one exists. One can alternatively set the
-CMake variable `QT_QMAKE_EXECUTABLE`. The following variables
-should be then assigned automatically by CMake.
-
-| Variable              | Description           | Type        |
-| :-                    | :-                    | :-             |
-| `QT_INCLUDE_DIR`      | Directory containing the `QtCore/qglobal.h` file  | CMake |
-|`QT_LIBRARY_DIR`       | Directory containing the compiled \sc{Qt}4 libraries | CMake |
-| `QT_(xyz)_LIBRARY`    | Full pathname to the compiled 'xyz' \sc{Qt}4 library\cgalFootnote{If both release and debug versions are available, this variable contains a list of the following form: 'optimized;<fullpath-to-release-lib>;debug;<fullpath-to-debug-lib>', where the 'optimized' and 'debug' tags should appear verbatim.} | CMake |
-| `QT_QMAKE_EXECUTABLE` | Full pathname to the qmake executable of \sc{Qt}4 | CMake |
-| `QT_MOC_EXECUTABLE`   | Full pathname to the moc executable of \sc{Qt}4 | CMake |
-| `QT_UIC_EXECUTABLE`   | Full pathname to the uic executable of \sc{Qt}4 | CMake |
 
 \subsection installation_qt5 Qt5 Library
 
