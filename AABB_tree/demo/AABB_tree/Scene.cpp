@@ -20,6 +20,7 @@
 #include <QOpenGLShader>
 #include <QDebug>
 
+
 // constants
 const int slow_distance_grid_size = 100;
 const int fast_distance_grid_size = 20;

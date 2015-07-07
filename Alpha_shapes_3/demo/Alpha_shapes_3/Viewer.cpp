@@ -185,6 +185,8 @@ void Viewer::initialize_buffers()
 
     rendering_program_points.release();
     vao[0].release();
+
+    are_buffers_initialized = true;
 }
 
 
@@ -315,6 +317,8 @@ void Viewer::compute_elements()
 void
 Viewer::draw()
 {
+    if(!are_buffers_initialized)
+        initialize_buffers();
     QColor color;
     //points
     vao[1].bind();

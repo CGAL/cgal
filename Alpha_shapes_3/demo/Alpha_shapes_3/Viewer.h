@@ -21,6 +21,7 @@ public:
   Viewer(QWidget* parent)
     : QGLViewer(parent)
   {
+    are_buffers_initialized = false;
   }
   ~Viewer()
   {
@@ -41,6 +42,7 @@ public:
   void draw();
 
 private:
+  bool are_buffers_initialized;
   //Shaders elements
     int poly_vertexLocation;
     int points_vertexLocation;
@@ -70,7 +72,7 @@ private:
     void sceneChanged();
     void changed(){
         compute_elements();
-        initialize_buffers();
+        are_buffers_initialized = false;
     }
     void alphaChanged();
 
