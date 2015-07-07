@@ -168,7 +168,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
   set(VIEWER_LIB "${MESH_3_LIB_PREFIX}viewer")
   add_library(${VIEWER_LIB} SHARED
     ${DEMO_SRC_DIR}/Viewer.cpp Viewer_moc.cpp)
-  qt5_use_modules(${VIEWER_LIB} Xml Script OpenGL)
+  qt5_use_modules(${VIEWER_LIB} Xml Script OpenGL Svg)
   target_link_libraries(${VIEWER_LIB} ${QGLVIEWER_LIBRARIES} ${QT_LIBRARIES} ${OPENGL_LIBRARIES})
   set_target_properties(${VIEWER_LIB} PROPERTIES DEFINE_SYMBOL viewer_EXPORTS)
 
@@ -178,28 +178,28 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
     Scene_item_moc.cpp
     ${DEMO_SRC_DIR}/Scene_item_with_display_list.cpp
     ${DEMO_SRC_DIR}/Plugin_helper.cpp)
-  qt5_use_modules(${SCENE_ITEM_LIB} Xml Script OpenGL)
+  qt5_use_modules(${SCENE_ITEM_LIB} Xml Script OpenGL Svg)
   set_target_properties(${SCENE_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_item_EXPORTS)
   target_link_libraries(${SCENE_ITEM_LIB} ${QT_LIBRARIES} ${OPENGL_LIBRARIES})
 
   set(SCENE_SEGMENTED_IMAGE_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_segmented_image_item")
   add_library(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} SHARED
     Scene_segmented_image_item.cpp)# Scene_segmented_image_item.moc)
-  qt5_use_modules(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} Xml Script OpenGL)
+  qt5_use_modules(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} Xml Script OpenGL Svg)
   target_link_libraries(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} ${SCENE_ITEM_LIB} ${CGAL_LIBRARIES} ${TBB_LIBRARIES})
   set_target_properties(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_segmented_image_item_EXPORTS)
 
   set(SCENE_POLYHEDRON_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_polyhedron_item")
   add_library(${SCENE_POLYHEDRON_ITEM_LIB} SHARED
     Scene_polyhedron_item.cpp )#Scene_polyhedron_item.moc)
-  qt5_use_modules(${SCENE_POLYHEDRON_ITEM_LIB} Xml Script OpenGL)
+  qt5_use_modules(${SCENE_POLYHEDRON_ITEM_LIB} Xml Script OpenGL Svg)
   target_link_libraries(${SCENE_POLYHEDRON_ITEM_LIB} ${SCENE_ITEM_LIB} ${CGAL_LIBRARIES} ${TBB_LIBRARIES})
   set_target_properties(${SCENE_POLYHEDRON_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_polyhedron_item_EXPORTS)
 
   set(POLYGON_SOUP_LIB "${MESH_3_LIB_PREFIX}polygon_soup")
   add_library(${POLYGON_SOUP_LIB} SHARED
     Scene_polygon_soup.cpp )#Scene_polygon_soup.moc)
-  qt5_use_modules(${POLYGON_SOUP_LIB} Xml Script OpenGL)
+  qt5_use_modules(${POLYGON_SOUP_LIB} Xml Script OpenGL Svg)
   target_link_libraries(${POLYGON_SOUP_LIB} ${SCENE_ITEM_LIB} ${CGAL_LIBRARIES} ${TBB_LIBRARIES})
   set_target_properties(${POLYGON_SOUP_LIB} PROPERTIES DEFINE_SYMBOL polygon_soup_EXPORTS)
 
@@ -209,14 +209,14 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
  # LIST(APPEND SCENE_C3T3_ITEM_LIB_SOURCE_FILES Scene_c3t3_item.moc)
   add_library(${SCENE_C3T3_ITEM_LIB} SHARED
     ${SCENE_C3T3_ITEM_LIB_SOURCE_FILES})
-  qt5_use_modules(${SCENE_C3T3_ITEM_LIB} Xml Script OpenGL)
+  qt5_use_modules(${SCENE_C3T3_ITEM_LIB} Xml Script OpenGL Svg)
   target_link_libraries(${SCENE_C3T3_ITEM_LIB} ${SCENE_ITEM_LIB} ${QGLVIEWER_LIBRARIES} ${QT_LIBRARIES} ${CGAL_LIBRARIES} ${Boost_LIBRARIES} ${TBB_LIBRARIES})
   set_target_properties(${SCENE_C3T3_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_c3t3_item_EXPORTS)
 
   set(SCENE_IMPLICIT_FUNCTION_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_implicit_function_item")
   add_library(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} SHARED
     Scene_implicit_function_item.cpp Color_ramp.cpp)#Scene_implicit_function_item.moc)
-  qt5_use_modules(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} Xml Script OpenGL)
+  qt5_use_modules(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} Xml Script OpenGL Svg)
   target_link_libraries(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} ${SCENE_ITEM_LIB} ${QGLVIEWER_LIBRARIES} ${QT_LIBRARIES} ${TBB_LIBRARIES})
   set_target_properties(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_implicit_function_item_EXPORTS)
 
@@ -232,7 +232,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
     #ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" MESH_3_SOURCE_FILES)
     LIST(APPEND MESH_3_SOURCE_FILES ${UI_FILES} ${RESOURCE_FILES})
     add_executable( Mesh_3 ${MESH_3_SOURCE_FILES} )
-    qt5_use_modules(Mesh_3 Xml Script OpenGL)
+    qt5_use_modules(Mesh_3 Xml Script OpenGL Svg)
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Mesh_3 )
 
   # Link with Qt libraries
@@ -271,7 +271,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
     add_file_dependencies( ${plugin_implementation_base_name}.moc "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
 
     add_library(${plugin_name} MODULE ${option} ${plugin_implementation_base_name}.moc ${plugin_implementation_base_name}.cpp ${other_sources})
-    qt5_use_modules(${plugin_name} Xml Script OpenGL)
+    qt5_use_modules(${plugin_name} Xml Script OpenGL Svg)
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${plugin_name} )
     # Link with Qt
     target_link_libraries( ${plugin_name} ${QT_LIBRARIES} )

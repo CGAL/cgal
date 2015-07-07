@@ -597,10 +597,10 @@ void Viewer::compute_elements()
             //prevent great circles
             while (p.x()==0 && p.y()==0 && p.z()==0) {  p=*++gen; }
 
-            const typename EPIC::Point_3 origin(0,0,0);
-            const typename EPIC::Plane_3 plane(p, p-origin);
-            typename EPIC::Vector_3 base1=plane.base1();
-            typename EPIC::Vector_3 base2=plane.base2();
+            const EPIC::Point_3 origin(0,0,0);
+            const EPIC::Plane_3 plane(p, p-origin);
+            EPIC::Vector_3 base1=plane.base1();
+            EPIC::Vector_3 base2=plane.base2();
             base1=base1/CGAL::sqrt(base1.squared_length());
             base2=base2/CGAL::sqrt(base2.squared_length());
             const double radius=CGAL::sqrt( CGAL::to_double( 1 - CGAL::squared_distance(origin,p) ) );
@@ -608,8 +608,8 @@ void Viewer::compute_elements()
             const double step=2 * CGAL_PI / nb_pt_per_circle;
 
             for (double theta = 0; theta < 2 * CGAL_PI-step ; theta += step) {
-                const typename EPIC::Point_3 a=p + ( radius*cos(theta)*base1 + radius*sin(theta)*base2 );
-                const typename EPIC::Point_3 b=p + ( radius*cos(theta+step)*base1 + radius*sin(theta+step)*base2 );
+                const EPIC::Point_3 a=p + ( radius*cos(theta)*base1 + radius*sin(theta)*base2 );
+                const EPIC::Point_3 b=p + ( radius*cos(theta+step)*base1 + radius*sin(theta+step)*base2 );
                 pos_lines.push_back(a.x());pos_lines.push_back(a.y());pos_lines.push_back(a.z());
                 normals_lines.push_back(a.x());normals_lines.push_back(a.y());normals_lines.push_back(a.z());
                 pos_lines.push_back(b.x());pos_lines.push_back(b.y());pos_lines.push_back(b.z());
