@@ -11,7 +11,7 @@ find_package(CGAL REQUIRED COMPONENTS Qt5)
 
 include(${CGAL_USE_FILE})
 
-find_package(Qt5 COMPONENTS Xml Script OpenGL)
+find_package(Qt5 COMPONENTS Xml Script OpenGL Svg)
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
@@ -19,7 +19,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
   add_executable  ( min min.cpp )
 
-  qt5_use_modules(min Xml Script OpenGL)
+  qt5_use_modules(min Xml Script OpenGL Svg)
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS min )
 

@@ -18,7 +18,7 @@ set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
 
-find_package(Qt5 COMPONENTS Xml Script OpenGL)
+find_package(Qt5 COMPONENTS Xml Script OpenGL Svg)
 include_directories (BEFORE ../../include)
 include_directories (BEFORE ./include)
 
@@ -42,7 +42,7 @@ qt5_generate_moc( "Segment_voronoi_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Segment_v
 # The executable itself.
 add_executable  ( Segment_voronoi_2 Segment_voronoi_2.cpp Segment_voronoi_2.moc ${CDT_UI_FILES} ${CDT_RESOURCE_FILES} )
 
-qt5_use_modules(Segment_voronoi_2 Xml Script OpenGL)
+qt5_use_modules(Segment_voronoi_2 Xml Script OpenGL Svg)
 
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS Segment_voronoi_2 )
 

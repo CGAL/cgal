@@ -14,7 +14,7 @@ include(${CGAL_USE_FILE})
 
 
 
-find_package(Qt5 COMPONENTS Xml Script OpenGL)
+find_package(Qt5 COMPONENTS Xml Script OpenGL Svg)
 
 include_directories (BEFORE ../../include)
 
@@ -37,7 +37,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
   # The executable itself.
   add_executable  ( Circular_kernel_2 Circular_kernel_2.cpp Circular_kernel_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
 
-  qt5_use_modules(Circular_kernel_2 Xml Script OpenGL)
+  qt5_use_modules(Circular_kernel_2 Xml Script OpenGL Svg)
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Circular_kernel_2 )
 

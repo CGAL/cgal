@@ -606,7 +606,7 @@ void Scene::draw(QGLViewer* viewer)
         color.setRgbF(0.0,0.0,0.0);
         rendering_program.setUniformValue(colorLocation, color);
         rendering_program.setUniformValue(fLocation, fMatrix);
-        glDrawArrays(GL_LINES, 0, static_cast<Glsizei>(pos_poly.size()/3));
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_poly.size()/3));
         rendering_program.release();
         vao[2].release();
     }
@@ -619,7 +619,7 @@ void Scene::draw(QGLViewer* viewer)
         color.setRgbF(0.7,0.0,0.0);
         rendering_program.setUniformValue(colorLocation, color);
         rendering_program.setUniformValue(fLocation, fMatrix);
-        glDrawArrays(GL_POINTS, 0, static_cast<Glsizei>(pos_points.size()/3));
+        glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
         rendering_program.release();
         vao[0].release();
     }
@@ -632,7 +632,7 @@ void Scene::draw(QGLViewer* viewer)
         color.setRgbF(0.0,0.7,0.0);
         rendering_program.setUniformValue(colorLocation, color);
         rendering_program.setUniformValue(fLocation, fMatrix);
-        glDrawArrays(GL_LINES, 0, static_cast<Glsizei>(pos_lines.size()/3));
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_lines.size()/3));
         rendering_program.release();
         vao[1].release();
     }
@@ -654,7 +654,7 @@ void Scene::draw(QGLViewer* viewer)
             tex_rendering_program.bind();
             tex_rendering_program.setUniformValue(tex_fLocation, fMatrix);
 
-            glDrawArrays(GL_TRIANGLES, 0,static_cast<Glsizei>(pos_plane.size()/3));
+            glDrawArrays(GL_TRIANGLES, 0,static_cast<GLsizei>(pos_plane.size()/3));
             tex_rendering_program.release();
             vao[6].release();
             break;
@@ -670,7 +670,7 @@ void Scene::draw(QGLViewer* viewer)
             color.setRgbF(1.0,0.0,0.0);
             rendering_program.setUniformValue(colorLocation, color);
             rendering_program.setUniformValue(fLocation, fMatrix);
-            glDrawArrays(GL_LINES, 0, static_cast<Glsizei>(pos_cut_segments.size()/3));
+            glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_cut_segments.size()/3));
             ::glLineWidth(1.0f);
             rendering_program.release();
             vao[3].release();
