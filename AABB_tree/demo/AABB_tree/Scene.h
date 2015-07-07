@@ -81,6 +81,7 @@ public:
     void update_bbox();
     Bbox bbox() { return m_bbox; }
     ManipulatedFrame* manipulatedFrame() const { return m_frame; }
+    void initGL();
 
 private:
     // member data
@@ -110,7 +111,6 @@ private:
     
     Cut_planes_types m_cut_plane;
     bool are_buffers_initialized;
-    bool context_initialized;
   
 private:
     // utility functions
@@ -167,6 +167,7 @@ private:
     void initialize_buffers();
     void compute_elements(int mode);
     void attrib_buffers(QGLViewer*);
+    void compile_shaders();
     void compute_texture(int, int, Color_ramp, Color_ramp);
 
 public:
@@ -250,7 +251,6 @@ public slots:
     // cutting plane
     void cutting_plane();
     void changed();
-    void compile_shaders();
 }; // end class Scene
 
 #endif // SCENE_H

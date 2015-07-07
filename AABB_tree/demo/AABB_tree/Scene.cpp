@@ -46,8 +46,6 @@ Scene::Scene()
     m_max_distance_function = (FT)0.0;
     texture = new Texture(m_grid_size,m_grid_size);
     are_buffers_initialized = false;
-    context_initialized = false;
-
 
 }
 
@@ -590,13 +588,7 @@ void Scene::update_bbox()
 }
 
 void Scene::draw(QGLViewer* viewer)
-{
-    if(!context_initialized)
-    {
-        initializeOpenGLFunctions();
-        glGenTextures(1, &textureId);
-        context_initialized = true;
-    }
+{       
     if(!are_buffers_initialized)
         initialize_buffers();
     QColor color;
@@ -1316,4 +1308,10 @@ void Scene::deactivate_cutting_plane()
 {
     disconnect(m_frame, SIGNAL(modified()), this, SLOT(cutting_plane()));
     m_view_plane = false;
+}
+void Scene::initGL()
+{
+    initializeOpenGLFunctions();
+    glGenTextures(1, &textureId);
+    compile_shaders();
 }
