@@ -50,6 +50,7 @@ public:
     GLubyte* getData(){return data; }
 
 };
+class Viewer;
 class Scene : public QObject
 {
     Q_OBJECT
@@ -81,11 +82,11 @@ public:
     void update_bbox();
     Bbox bbox() { return m_bbox; }
     ManipulatedFrame* manipulatedFrame() const { return m_frame; }
-    void initGL();
+    void initGL(Viewer *viewer);
 
 private:
     // member data
-    QOpenGLFunctions_3_3_Core gl;
+    QOpenGLFunctions_3_3_Core *gl;
     Bbox m_bbox;
     Polyhedron *m_pPolyhedron;
     std::list<Point> m_points;

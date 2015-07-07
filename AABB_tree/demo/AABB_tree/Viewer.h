@@ -18,6 +18,7 @@ public:
   void draw();
   void initializeGL();
   void setScene(Scene* pScene);
+  QOpenGLContext *oglContext()const {return oglContext_;}
 
 protected:
   virtual void mousePressEvent(QMouseEvent* e);
@@ -26,6 +27,7 @@ protected:
 private:
   Scene* m_pScene;
   bool m_custom_mouse;
+  QOpenGLContext *oglContext_;
 }; // end class Viewer
 
 #endif // VIEWER_H

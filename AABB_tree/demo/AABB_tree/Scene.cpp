@@ -19,6 +19,7 @@
 #include <QOpenGLFunctions_3_3_Core>
 #include <QOpenGLShader>
 #include <QDebug>
+#include "Viewer.h"
 
 
 // constants
@@ -288,8 +289,8 @@ void Scene::initialize_buffers()
     buffers[7].release();
     tex_rendering_program.release();
 
-    gl.glBindTexture(GL_TEXTURE_2D, textureId);
-    gl.glTexImage2D(GL_TEXTURE_2D,
+    gl->glBindTexture(GL_TEXTURE_2D, textureId);
+    gl->glTexImage2D(GL_TEXTURE_2D,
                  0,
                  GL_RGB,
                  texture->getWidth(),
@@ -298,10 +299,10 @@ void Scene::initialize_buffers()
                  GL_RGB,
                  GL_UNSIGNED_BYTE,
                  texture->getData());
-    gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
-    gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
+    gl->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    gl->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    gl->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
+    gl->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
     vao[6].release();
 
     are_buffers_initialized = true;
@@ -602,20 +603,20 @@ void Scene::draw(QGLViewer* viewer)
         color.setRgbF(0.0,0.0,0.0);
         rendering_program.setUniformValue(colorLocation, color);
         rendering_program.setUniformValue(fLocation, fMatrix);
-        gl.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_poly.size()/3));
+        gl->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_poly.size()/3));
         rendering_program.release();
         vao[2].release();
     }
     if(m_view_points && pos_points.size()>0)
     {
-        gl.glPointSize(2.0f);
+        gl->glPointSize(2.0f);
         vao[0].bind();
         attrib_buffers(viewer);
         rendering_program.bind();
         color.setRgbF(0.7,0.0,0.0);
         rendering_program.setUniformValue(colorLocation, color);
         rendering_program.setUniformValue(fLocation, fMatrix);
-        gl.glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
+        gl->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
         rendering_program.release();
         vao[0].release();
     }
@@ -628,7 +629,7 @@ void Scene::draw(QGLViewer* viewer)
         color.setRgbF(0.0,0.7,0.0);
         rendering_program.setUniformValue(colorLocation, color);
         rendering_program.setUniformValue(fLocation, fMatrix);
-        gl.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_lines.size()/3));
+        gl->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_lines.size()/3));
         rendering_program.release();
         vao[1].release();
     }
@@ -640,8 +641,8 @@ void Scene::draw(QGLViewer* viewer)
         case UNSIGNED_FACETS:
         case SIGNED_FACETS:
 
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, textureId);
+            gl->glActiveTexture(GL_TEXTURE0);
+            gl->glBindTexture(GL_TEXTURE_2D, textureId);
 
             for(int i=0; i< 16 ; i++)
                 fMatrix.data()[i] =  m_frame->matrix()[i];
@@ -650,7 +651,7 @@ void Scene::draw(QGLViewer* viewer)
             tex_rendering_program.bind();
             tex_rendering_program.setUniformValue(tex_fLocation, fMatrix);
 
-            gl.glDrawArrays(GL_TRIANGLES, 0,static_cast<GLsizei>(pos_plane.size()/3));
+            gl->glDrawArrays(GL_TRIANGLES, 0,static_cast<GLsizei>(pos_plane.size()/3));
             tex_rendering_program.release();
             vao[6].release();
             break;
@@ -666,7 +667,7 @@ void Scene::draw(QGLViewer* viewer)
             color.setRgbF(1.0,0.0,0.0);
             rendering_program.setUniformValue(colorLocation, color);
             rendering_program.setUniformValue(fLocation, fMatrix);
-            gl.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_cut_segments.size()/3));
+            gl->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_cut_segments.size()/3));
             ::glLineWidth(1.0f);
             rendering_program.release();
             vao[3].release();
@@ -679,7 +680,7 @@ void Scene::draw(QGLViewer* viewer)
             color.setRgbF(.6f, .6f, .6f);
             rendering_program.setUniformValue(colorLocation, color);
             rendering_program.setUniformValue(fLocation, fMatrix);
-            gl.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_grid.size()/3));
+            gl->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_grid.size()/3));
             rendering_program.release();
             vao[5].release();
 
@@ -694,7 +695,7 @@ void Scene::draw(QGLViewer* viewer)
             color.setRgbF(.6f, .85f, 1.f, .65f);
             rendering_program.setUniformValue(colorLocation, color);
             rendering_program.setUniformValue(fLocation, fMatrix);
-            gl.glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_plane.size()/3));
+            gl->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_plane.size()/3));
             ::glDisable(GL_BLEND);
             rendering_program.release();
             vao[4].release();
@@ -1309,10 +1310,24 @@ void Scene::deactivate_cutting_plane()
     disconnect(m_frame, SIGNAL(modified()), this, SLOT(cutting_plane()));
     m_view_plane = false;
 }
-void Scene::initGL()
+void Scene::initGL(Viewer *viewer)
 {
     //qDebug()<<"context from scene is valid :"<<context->isValid();
-    gl.initializeOpenGLFunctions();
-    gl.glGenTextures(1, &textureId);
+    //gl = 0;
+    //gl = viewer->context()->versionFunctions<QOpenGLFunctions_3_3_Core>();
+    gl = new QOpenGLFunctions_3_3_Core();
+
+    //if (!gl) {
+    //    qFatal("Could not obtain required OpenGL context version");
+    //    exit(1);
+    //}
+    qDebug()<<"Context's major version ="<<viewer->context()->format().majorVersion();
+    if(!gl->initializeOpenGLFunctions())
+    {
+        qFatal("ERROR : OpenGL Functions not initialized. Check your OpenGL Verison (should be >=3.3)");
+        exit(1);
+    }
+
+    gl->glGenTextures(1, &textureId);
     compile_shaders();
 }

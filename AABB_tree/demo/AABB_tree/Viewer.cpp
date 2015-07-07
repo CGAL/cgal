@@ -2,21 +2,21 @@
 #include "Scene.h"
 #include <QMouseEvent>
 #include <QGLFunctions>
-
+QGLContext* createContext()
+{
+    QOpenGLContext *context = new QOpenGLContext();
+    QSurfaceFormat format;
+    format.setVersion(3,3);
+    format.setProfile(QSurfaceFormat::CompatibilityProfile);
+    context->setFormat(format);
+    return QGLContext::fromOpenGLContext(context);
+}
 
 Viewer::Viewer(QWidget* parent)
-  : QGLViewer(parent),
+  : QGLViewer(createContext(),parent),
     m_pScene(NULL),
     m_custom_mouse(false)
 {
-    QSurfaceFormat format;
-    format.setVersion(3,3);
-    format.setProfile(QSurfaceFormat::CoreProfile);
-
-    QOpenGLContext qContext;
-    qContext.setFormat(format);
-    qContext.create();
-
 }
 
 void Viewer::setScene(Scene* pScene)
@@ -38,7 +38,7 @@ void Viewer::initializeGL()
 {
   QGLViewer::initializeGL();
   setBackgroundColor(::Qt::white);
-  m_pScene->initGL();
+  m_pScene->initGL(this);
 }
 
 void Viewer::mousePressEvent(QMouseEvent* e)
