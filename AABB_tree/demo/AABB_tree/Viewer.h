@@ -25,6 +25,16 @@ protected:
   virtual void mouseReleaseEvent(QMouseEvent* e);
   
 private:
+  static QGLContext* createContext()
+  {
+      QOpenGLContext *context = new QOpenGLContext();
+      QSurfaceFormat format;
+      format.setVersion(3,3);
+      format.setProfile(QSurfaceFormat::CompatibilityProfile);
+      context->setFormat(format);
+      return QGLContext::fromOpenGLContext(context);
+  }
+
   Scene* m_pScene;
   bool m_custom_mouse;
   QOpenGLContext *oglContext_;
