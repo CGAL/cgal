@@ -46,6 +46,7 @@ Scene::Scene()
     m_max_distance_function = (FT)0.0;
     texture = new Texture(m_grid_size,m_grid_size);
     are_buffers_initialized = false;
+    context_initialized = false;
 
 
 }
@@ -76,9 +77,6 @@ Scene::~Scene()
 
 void Scene::compile_shaders()
 {
-    initializeOpenGLFunctions();
-    glGenTextures(1, &textureId);
-    qDebug()<<"textureId = "<<textureId;
     if(! buffers[0].create() || !buffers[1].create() || !buffers[2].create() || !buffers[3].create() || !buffers[4].create() || !buffers[5].create() || !buffers[6].create() || !buffers[7].create())
     {
         std::cerr<<"VBO Creation FAILED"<<std::endl;
@@ -589,6 +587,12 @@ void Scene::update_bbox()
 
 void Scene::draw(QGLViewer* viewer)
 {
+    if(!context_initialized)
+    {
+        initializeOpenGLFunctions();
+        glGenTextures(1, &textureId);
+        context_initialized = true;
+    }
     if(!are_buffers_initialized)
         initialize_buffers();
     QColor color;
