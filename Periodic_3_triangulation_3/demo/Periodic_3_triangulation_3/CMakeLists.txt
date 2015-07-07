@@ -10,7 +10,7 @@ if(POLICY CMP0043)
 endif()
 
 # Find CGAL
-find_package(CGAL REQUIRED COMPONENTS Qt5)
+find_package(CGAL COMPONENTS Qt5)
 include( ${CGAL_USE_FILE} )
 
 # Find Qt5 itself

@@ -14,7 +14,7 @@ endif()
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../include )
 # Find CGAL and CGAL Qt5
-find_package(CGAL REQUIRED COMPONENTS Qt5 )
+find_package(CGAL COMPONENTS Qt5 )
 include( ${CGAL_USE_FILE} )
 
 # Find Qt5 itself
