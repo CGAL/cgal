@@ -60,7 +60,10 @@ int main(int argc, char **argv)
     mainWindow.enableScriptDebugger();
     args.removeAt(0);
   }
-  mainWindow.load_script(QFileInfo("autostart.js"));
+  QFileInfo autostart_js("autostart.js");
+  if(autostart_js.exists()) {
+    mainWindow.load_script(autostart_js);
+  }
 #endif
   Q_FOREACH(QString filename, args) {
     mainWindow.open(filename);
