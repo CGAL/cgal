@@ -93,6 +93,7 @@ h1 {
 \package_listing{Surface_mesher}
 \package_listing{Surface_reconstruction_points_3}
 \package_listing{Scale_space_reconstruction_3}
+\package_listing{Advancing_front_surface_reconstruction}
 \package_listing{Skin_surface_3}
 \package_listing{Mesh_3}
 
