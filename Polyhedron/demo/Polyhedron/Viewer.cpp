@@ -83,21 +83,15 @@ bool Viewer::inFastDrawing() const {
 void Viewer::draw()
 {
   d->inFastDrawing = false;
-  // ::glFogf(GL_FOG_END, 2*sceneRadius());
-  // ::glEnable(GL_FOG);
   QGLViewer::draw();
   d->draw_aux(false, this);
-  // drawLight(GL_LIGHT0);
 }
 
 void Viewer::fastDraw()
 {
   d->inFastDrawing = true;
-  // ::glFogf(GL_FOG_END, 2*sceneRadius());
-  // ::glEnable(GL_FOG);
   QGLViewer::fastDraw();
   d->draw_aux(false, this);
-  // drawLight(GL_LIGHT0);
 }
 
 void Viewer::initializeGL()
@@ -107,11 +101,6 @@ void Viewer::initializeGL()
   setBackgroundColor(::Qt::white);
   d->scene->initializeGL();
 
-  // ::glFogf(GL_FOG_DENSITY, 0.05f);
-  // ::glHint(GL_FOG_HINT, GL_NICEST);
-  // ::glFogi(GL_FOG_MODE, GL_LINEAR);
-  // static const GLfloat fogColor[] = {0.5f, 0.5f, 0.5f, 1};
-  // ::glFogfv(GL_FOG_COLOR, fogColor);
 }
 
 #include <QMouseEvent>

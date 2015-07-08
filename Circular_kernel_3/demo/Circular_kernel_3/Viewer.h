@@ -10,6 +10,8 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel EPIC;
 
 class Viewer : public QGLViewer, QOpenGLFunctions_3_3_Core
 {
+public:
+    Viewer(QWidget* parent = 0);
   GLuint dl_nb;
 protected :
   virtual void draw();

@@ -38,6 +38,7 @@ int main(int argc, char **argv)
   app.setOrganizationDomain("inria.fr");
   app.setOrganizationName("INRIA");
   app.setApplicationName("AABB tree demo");
+  //for windows
   app.setAttribute(Qt::AA_UseDesktopOpenGL);
 
   // Import resources from libCGALQt (Qt4 or Qt5).

@@ -1355,9 +1355,9 @@ void Scene::gl_draw_location() {
                 Point cp = Point(c.x(),c.y(),c.z());
                 // project facet center
                 double px,py,pz;
-                gluProject(cp.x(),cp.y(),cp.z(),
-                           modelMatrix, projMatrix, viewport,
-                           &px,&py,&pz);
+              //  gluProject(cp.x(),cp.y(),cp.z(),
+              //             modelMatrix, projMatrix, viewport,
+              //             &px,&py,&pz);
                 cf.push_back(Projected_triangle(pz,Triangle(p,q,r)));
             }
         }

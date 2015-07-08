@@ -12,7 +12,7 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
-
+#include <CGAL/Qt/CreateOpenGLContext.h>
 #include <iostream>
 using namespace qglviewer;
 
@@ -24,7 +24,7 @@ class Viewer : public QGLViewer, QOpenGLFunctions_3_3_Core {
 
 public:
   Viewer(QWidget* parent)
-    : QGLViewer(parent)
+    : QGLViewer(CGAL::Qt::createOpenGLContext(),parent)
     , m_showAxis(false)
     , m_showVertex(true)
     , m_showDEdge(true)

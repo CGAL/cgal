@@ -36,6 +36,8 @@ int main(int argc, char** argv)
   application.setOrganizationDomain("cgal.org");
   application.setOrganizationName("CNRS and LIRIS' Establishments");
   application.setApplicationName("3D Linear Cell Complex");
+  //for windows
+  application.setAttribute(Qt::AA_UseDesktopOpenGL);
 
   // Import resources from libCGALQt4 or libCGALQt5.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE

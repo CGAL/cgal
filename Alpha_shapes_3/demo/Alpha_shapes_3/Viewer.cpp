@@ -2,8 +2,13 @@
 #include <vector>
 #include <CGAL/bounding_box.h>
 #include <QGLViewer/vec.h>
+#include "CGAL/Qt/CreateOpenGLContext.h"
 
-
+Viewer::Viewer(QWidget* parent)
+  : QGLViewer(CGAL::Qt::createOpenGLContext(),parent)
+{
+  are_buffers_initialized = false;
+}
 
 
 void Viewer::compile_shaders()

@@ -3,7 +3,11 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Exact_spherical_kernel_3.h>
 #include <vector>
-
+#include "CGAL/IO/Qt_widget_createContext.h"
+Viewer::Viewer(QWidget* parent )
+  : QGLViewer(CGAL::createContext(),parent)
+{
+}
 
 void Viewer::compile_shaders()
 {

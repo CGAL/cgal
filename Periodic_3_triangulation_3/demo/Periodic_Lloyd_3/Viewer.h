@@ -7,6 +7,7 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
+#include <CGAL/Qt/CreateOpenGLContext.h>
 
 
 class Viewer : public QGLViewer, QOpenGLFunctions_3_3_Core {
@@ -21,7 +22,7 @@ class Viewer : public QGLViewer, QOpenGLFunctions_3_3_Core {
   int nr_of_facets;
 public:
   Viewer(QWidget* parent)
-    : QGLViewer(parent)
+    : QGLViewer(CGAL::Qt::createOpenGLContext(), parent)
   {}
   ~Viewer()
   {

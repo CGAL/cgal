@@ -38,6 +38,7 @@ if (CGAL_FOUND AND OPENGL_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND TARGET Qt5
   # use the Qt MOC preprocessor on classes that derive from QObject
   qt5_generate_moc( "Scene.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_Scene.cpp" )
   qt5_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_MainWindow.cpp" )
+  qt5_generate_moc( "Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_Viewer.cpp" )
 
   if(DEFINED QT_QCOLLECTIONGENERATOR_EXECUTABLE)
   else()
@@ -55,11 +56,12 @@ if (CGAL_FOUND AND OPENGL_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND TARGET Qt5
   # Make sure the compiler can find generated .moc files
   include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
   include_directories( ${QT_INCLUDE_DIR} )
-  include_directories( ../../include )
+  include_directories( ../../include .)
 
   # The executable itself
   add_executable  ( periodic_3_triangulation_3_demo
                     Scene.cpp moc_Scene.cpp
+                    Viewer.cpp moc_Viewer.cpp
                     periodic_3_triangulation_3_demo.cpp
                     MainWindow.ui moc_MainWindow.cpp
                     ${UI_FILES} ${RESOURCE_FILES} Periodic_3_triangulation_3.qhc)

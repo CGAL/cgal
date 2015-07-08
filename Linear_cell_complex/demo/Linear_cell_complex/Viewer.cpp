@@ -30,6 +30,7 @@
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
 #include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
+#include <CGAL/Qt/CreateOpenGLContext.h>
 #include <QDebug>
 
 typedef typename LCC::Traits Traits;
@@ -49,6 +50,17 @@ typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
         TDS,
         Itag>             CDTbase;
 typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
+
+Viewer::Viewer(QWidget* parent)
+  : QGLViewer(CGAL::Qt::createOpenGLContext(),parent), wireframe(false), flatShading(true),
+    edges(true), vertices(true), m_displayListCreated(false)
+{
+  QGLFormat newFormat = this->format();
+  newFormat.setSampleBuffers(true);
+  newFormat.setSamples(16);
+  this->setFormat(newFormat);
+   are_buffers_initialized = false;
+}
 //Make sure all the facets are triangles
 bool
 Viewer::is_Triangulated()

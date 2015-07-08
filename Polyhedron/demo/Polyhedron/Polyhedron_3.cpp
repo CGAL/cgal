@@ -38,6 +38,8 @@ int main(int argc, char **argv)
   app.setOrganizationDomain("geometryfactory.com");
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Polyhedron_3 demo");
+  //for windows
+  app.setAttribute(Qt::AA_UseDesktopOpenGL);
 
   // Import resources from libCGAL (Qt4 or Qt5).
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE

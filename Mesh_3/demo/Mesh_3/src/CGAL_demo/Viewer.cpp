@@ -1,8 +1,9 @@
 #include <CGAL_demo/Viewer.h>
 #include <CGAL_demo/Scene_draw_interface.h>
+#include <CGAL/Qt/CreateOpenGLContext.h>
 
 Viewer::Viewer(QWidget* parent, bool antialiasing)
-  : QGLViewer(parent),
+  : QGLViewer(CGAL::Qt::createOpenGLContext(), parent),
     scene(0),
     antialiasing(antialiasing),
     twosides(false),

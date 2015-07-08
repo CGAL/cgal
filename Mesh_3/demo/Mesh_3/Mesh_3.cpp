@@ -10,6 +10,8 @@ int main(int argc, char **argv)
   app.setOrganizationDomain("geometryfactory.com");
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Mesh_3 demo");
+  //for windows
+  app.setAttribute(Qt::AA_UseDesktopOpenGL);
 
   // Import resources from libCGALQt ( Qt5).
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE

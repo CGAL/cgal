@@ -75,7 +75,6 @@ public:
   }
 
   ~Scene() {
-    gluDeleteQuadric(pQuadric);
     for(int i=0; i<24; i++)
         buffers[i].destroy();
     for(int i=0; i<12; i++)
@@ -308,7 +307,6 @@ private:
   QString materials[6];
   QTimer* timer;
   GLuint l_triangulation, l_domain;
-  GLUquadricObj* pQuadric;
 
   bool flying_ball;
   bool dlocate, dconflict;

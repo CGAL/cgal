@@ -2,9 +2,10 @@
 #include "Scene.h"
 #include <QMouseEvent>
 #include <QGLFunctions>
+#include <CGAL/Qt/CreateOpenGLContext.h>
 
 Viewer::Viewer(QWidget* parent)
-  : QGLViewer(createContext(),parent),
+  : QGLViewer(CGAL::Qt::createOpenGLContext(),parent),
     m_pScene(NULL),
     m_custom_mouse(false)
 {

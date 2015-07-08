@@ -1321,7 +1321,6 @@ void Scene::initGL(Viewer *viewer)
     //    qFatal("Could not obtain required OpenGL context version");
     //    exit(1);
     //}
-    qDebug()<<"Context's major version ="<<viewer->context()->format().majorVersion();
     if(!gl->initializeOpenGLFunctions())
     {
         qFatal("ERROR : OpenGL Functions not initialized. Check your OpenGL Verison (should be >=3.3)");
