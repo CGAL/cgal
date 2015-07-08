@@ -64,7 +64,7 @@ int main()
   ransac.add_shape_factory<Sphere>();
   ransac.add_shape_factory<Cylinder>();
   ransac.add_shape_factory<Cone>();
-  ransac.add_shape_factory<Torus>();
+  //ransac.add_shape_factory<Torus>();
 
   // Sets parameters for shape detection.
   Efficient_ransac::Parameters parameters;
