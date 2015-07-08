@@ -46,6 +46,7 @@ bool test_sphere_parameters() {
         points.push_back(random_pwn_in<K>(bbox));
 
     Efficient_ransac ransac;
+    Traits traits = ransac.traits();
 
     ransac.template add_shape_factory<Sphere>();
 
@@ -83,7 +84,9 @@ bool test_sphere_parameters() {
 
     // Check center.
     Point pos = sphere->center();
-    if ((pos - center).squared_length() > (FT) 0.0004)
+    FT center_pos_sqlen = traits.compute_squared_length_3_object()(
+      traits.construct_vector_3(center, pos));
+    if (center_pos_sqlen > FT(0.0004))
       continue;
 
     std::string info = sphere->info();

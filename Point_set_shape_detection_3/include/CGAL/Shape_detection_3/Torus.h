@@ -96,9 +96,9 @@ namespace CGAL {
      */
     std::string info() const {
       std::stringstream sstr;
-      sstr << "Type: torus center(" << m_center.x() << ", " << m_center.y();
-      sstr << ", " << m_center.z() << ") axis(" << m_axis.x() << ", ";
-      sstr << m_axis.y() << ", " << m_axis.z() << ") major radius = ";
+      sstr << "Type: torus center(" << this->get_x(m_center) << ", " << this->get_y(m_center);
+      sstr << ", " << this->get_z(m_center) << ") axis(" << this->get_x(m_axis) << ", ";
+      sstr << this->get_y(m_axis) << ", " << this->get_z(m_axis) << ") major radius = ";
       sstr << m_majorRad << " minor radius = " << m_minorRad << " #Pts: ";
       sstr << this->m_indices.size();
 
@@ -109,13 +109,13 @@ namespace CGAL {
       Computes squared Euclidean distance from query point to the shape.
       */
     FT squared_distance(const Point_3 &p) const {
-      const Vector_3 d = p - m_center;
+      const Vector_3 d = this->constr_vec(m_center, p);
       
 	    // height over symmetry plane
-      const FT height = d * m_axis;
+      const FT height = this->scalar_pdct(d, m_axis);
 
       // distance from axis in plane
-      const FT l = CGAL::sqrt(d * d - height * height);
+      const FT l = CGAL::sqrt(this->scalar_pdct(d, d) - height * height);
 
       // inPlane distance from circle
       const FT l2 = m_majorRad - l;
@@ -142,14 +142,14 @@ namespace CGAL {
       }
 
       // Implemented method from 'Geometric least-squares fitting of spheres, cylinders, cones and tori' by G. Lukacs,A.D. Marshall, R. R. Martin
-      const FT a01 = CGAL::cross_product(n[0], n[1]) * n[2];
-      const FT b01 = CGAL::cross_product(n[0], n[1]) * n[3];
-      const FT a0 = CGAL::cross_product(p[2] - p[1], n[0]) * n[2];
-      const FT b0 = CGAL::cross_product(p[3] - p[1], n[0]) * n[3];
-      const FT a1 = CGAL::cross_product(p[0] - p[2], n[1]) * n[2];
-      const FT b1 = CGAL::cross_product(p[0] - p[3], n[1]) * n[3];
-      const FT a = CGAL::cross_product(p[0] - p[2], p[1] - p[0]) * n[2];
-      const FT b = CGAL::cross_product(p[0] - p[3], p[1] - p[0]) * n[3];
+      const FT a01 = this->cross_pdct(n[0], n[1]) * n[2];
+      const FT b01 = this->cross_pdct(n[0], n[1]) * n[3];
+      const FT a0 = this->cross_pdct(p[2] - p[1], n[0]) * n[2];
+      const FT b0 = this->cross_pdct(p[3] - p[1], n[0]) * n[3];
+      const FT a1 = this->cross_pdct(p[0] - p[2], n[1]) * n[2];
+      const FT b1 = this->cross_pdct(p[0] - p[3], n[1]) * n[3];
+      const FT a = this->cross_pdct(p[0] - p[2], p[1] - p[0]) * n[2];
+      const FT b = this->cross_pdct(p[0] - p[3], p[1] - p[0]) * n[3];
 
       FT div = (b1 * a01 - b01 * a1);
       if (div == 0)
@@ -182,7 +182,7 @@ namespace CGAL {
         c1 = p[0] + n[0] * x1;
         axis1 = c1 - (p[1] + n[1] * y1);
 
-        FT l = axis1.squared_length();
+        FT l = this->sqlen(axis1);
         if (l > (FT)0.00001 && l == l) {
           axis1 = axis1 / CGAL::sqrt(l);
           dist1 = getCircle(c1, axis1, p, majorRad1, minorRad1);
@@ -197,7 +197,7 @@ namespace CGAL {
         c2 = p[0] + n[0] * x2;
         axis2 = c2 - (p[1] + n[1] * y2);
 
-        FT l = axis2.squared_length();
+        FT l = this->sqlen(axis2);
         if (l > (FT)0.00001 && l == l) {
           axis2 = axis2 / CGAL::sqrt(l);
           dist2 = getCircle(c2, axis2, p, majorRad2, minorRad2);
@@ -235,20 +235,20 @@ namespace CGAL {
         // check normal deviation
         Vector_3 d = p[i] - m_center;
 
-        Vector_3 in_plane = CGAL::cross_product(m_axis,
-          CGAL::cross_product(m_axis, d));
-        if (in_plane * d < 0)
+        Vector_3 in_plane = this->cross_pdct(m_axis,
+          this->cross_pdct(m_axis, d));
+        if (this->scalar_pdct(in_plane, d) < 0)
           in_plane = -in_plane;
 
-        FT length = CGAL::sqrt(in_plane.squared_length());
+        FT length = CGAL::sqrt(this->sqlen(in_plane));
         if (length == 0)
           return;
 
         in_plane = in_plane / length;
 
-        d = p[i] - (m_center + in_plane * m_majorRad);
+        d = p[i] - (m_center + this->scalar_pdct(in_plane, m_majorRad));
 
-        length = CGAL::sqrt(d.squared_length());
+        length = CGAL::sqrt(this->sqlen(d));
         if (length == 0)
           return;
 
@@ -266,11 +266,11 @@ namespace CGAL {
                                   std::vector<FT> &dists) const {
       for (std::size_t i = 0;i<indices.size();i++) {
         Point_3 po = this->point(indices[i]);
-        Vector_3 d = po - m_center;
+        Vector_3 d = this->constr_vec(m_center, po);
         // height over symmetry plane
-        const FT p = d * m_axis;
+        const FT p = this->scalar_pdct(d, m_axis);
         // distance from axis in plane
-        FT l = CGAL::sqrt(d * d - p * p);
+        FT l = CGAL::sqrt(this->scalar_pdct(d, d) - p * p);
 
         // inPlane distance from circle
         const FT l2 = m_majorRad - l;
@@ -286,12 +286,12 @@ namespace CGAL {
       for (std::size_t i = 0;i<indices.size();i++) {
         Vector_3 d = this->point(indices[i]) - m_center;
 
-        Vector_3 in_plane = CGAL::cross_product(m_axis,
-                                              CGAL::cross_product(m_axis, d));
-        if (in_plane * d < 0)
+        Vector_3 in_plane = this->cross_pdct(m_axis,
+                                              this->cross_pdct(m_axis, d));
+        if (this->scalar_pdct(in_plane, d) < 0)
           in_plane = -in_plane;
 
-        FT length = (FT) CGAL::sqrt(in_plane.squared_length());
+        FT length = (FT) CGAL::sqrt(this->sqlen(in_plane));
 
         // If length is 0 the point is on the axis, maybe in the apex. We
         // accept any normal for that position.
@@ -300,23 +300,23 @@ namespace CGAL {
           continue;
         }
 
-        in_plane = in_plane / CGAL::sqrt(in_plane.squared_length());
+        in_plane = in_plane / CGAL::sqrt(this->sqlen(in_plane));
 
-        d = this->point(indices[i]) - (m_center + in_plane * m_majorRad);
-        d = d / CGAL::sqrt(d.squared_length());
+        d = this->point(indices[i]) - (m_center + this->scalar_pdct(in_plane, m_majorRad));
+        d = d / CGAL::sqrt(this->sqlen(d));
         angles[i] = CGAL::abs(d * this->normal(indices[i]));
       }
     }
 
     FT cos_to_normal(const Point_3 &p, const Vector_3 &n) const {
-      Vector_3 d = p - m_center;
+      Vector_3 d = this->constr_vec(m_center, p);
 
-      Vector_3 in_plane = CGAL::cross_product(m_axis,
-                                           CGAL::cross_product(m_axis, d));
-      if (in_plane * d < 0)
+      Vector_3 in_plane = this->cross_pdct(m_axis,
+                                           this->cross_pdct(m_axis, d));
+      if (this->scalar_pdct(in_plane, d) < 0)
         in_plane = -in_plane;
       
-      float length = CGAL::sqrt(in_plane.squared_length());
+      float length = CGAL::sqrt(this->sqlen(in_plane));
 
       // If length is 0 the point is on the axis, maybe in the apex. We
       // accept any normal for that position.
@@ -324,10 +324,10 @@ namespace CGAL {
         return (FT)1.0;
       }
 
-      in_plane = in_plane / CGAL::sqrt(in_plane.squared_length());
+      in_plane = in_plane / CGAL::sqrt(this->sqlen(in_plane));
 
-      d = p - (m_center + in_plane * m_majorRad);
-      d = d / CGAL::sqrt(d.squared_length());
+      d = p - (m_center + this->scalar_pdct(in_plane, m_majorRad));
+      d = d / CGAL::sqrt(this->sqlen(d));
 
       return CGAL::abs(d * n);
     }
@@ -347,12 +347,12 @@ namespace CGAL {
       pts.resize(p.size());
       for (unsigned int i = 0;i<p.size();i++) {
         Vector_3 d = p[i] - center;
-        FT e = d * axis;
-        FT f = d * d - e * e;
+        FT e = this->scalar_pdct(d, axis);
+        FT f = this->scalar_pdct(d, d) - e * e;
         if (f <= 0)
           pts[i] = Point_2(e, (FT) 0);
         else
-          pts[i] = Point_2(e, CGAL::sqrt(d * d - e * e));
+          pts[i] = Point_2(e, CGAL::sqrt(this->scalar_pdct(d, d) - e * e));
       }
 
       if (CGAL::collinear(pts[0], pts[1], pts[2])) {
@@ -360,11 +360,12 @@ namespace CGAL {
       }
 
       Circle c(pts[0], pts[1], pts[2]);
-      minorRad = c.squared_radius();
-      majorRad = c.center().y();
-      center = center + c.center().x() * axis;
+      minorRad = this->sqradius(c);
+      majorRad = this->get_y(this->sph_center(c));
+      center = center + this->get_x(this->sph_center(c)) * axis;
 
-      return CGAL::abs((pts[3] - c.center()).squared_length() - c.squared_radius());
+      return CGAL::abs(
+        this->sqlen(this->constr_vec(this->sph_center(c), pts[3])) - this->sqradius(c));
     }
 
     Point_3 m_center;

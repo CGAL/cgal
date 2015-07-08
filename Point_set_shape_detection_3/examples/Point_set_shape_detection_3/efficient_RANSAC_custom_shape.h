@@ -33,9 +33,9 @@ protected:
     const Point p2 = this->point(indices[1]);
     const Point p3 = this->point(indices[2]);
 
-    m_normal = CGAL::cross_product(p1 - p2, p1 - p3);
+    m_normal = this->cross_pdct(p1 - p2, p1 - p3);
 
-    m_normal = m_normal * (1.0 / sqrt(m_normal.squared_length()));
+    m_normal = m_normal * (1.0 / sqrt(this->sqlen(m_normal)));
     m_d = -(p1[0] * m_normal[0] + p1[1] * m_normal[1] + p1[2] * m_normal[2]);
 
     this->m_is_valid = true;
@@ -69,8 +69,8 @@ protected:
   // Returns a string with shape parameters.
   virtual std::string info() const {
     std::stringstream sstr;
-    sstr << "Type: plane (" << m_normal.x() << ", " 
-      << m_normal.y() << ", " << m_normal.z() << ")x - " <<
+    sstr << "Type: plane (" << this->get_x(m_normal) << ", " 
+      << this->get_y(m_normal) << ", " << this->get_z(m_normal) << ")x - " <<
       m_d << " = 0" << " #Pts: " << this->m_indices.size();
 
     return sstr.str();

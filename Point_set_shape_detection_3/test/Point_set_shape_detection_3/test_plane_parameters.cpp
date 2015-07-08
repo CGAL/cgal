@@ -44,6 +44,7 @@ bool test_plane_parameters() {
       }
 
       Efficient_ransac ransac;
+      Traits &traits = ransac.traits();
 
       ransac.template add_shape_factory<Plane>();
 
@@ -73,7 +74,8 @@ bool test_plane_parameters() {
       if (!pl)
         continue;
 
-      const FT phi = normal * pl->plane_normal();
+      const FT phi = traits.compute_scalar_product_3_object()(
+        normal, pl->plane_normal());
       const FT sign = (phi < 0) ? -1.0f : 1.0f;
 
       const FT dist2 = pl->d();

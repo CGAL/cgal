@@ -21,15 +21,15 @@ bool test_scene() {
     K, Pwn_vector, Point_map, Normal_map>                     Traits;
 
   typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>
-    Efficient_ransac;
+                                                              Efficient_ransac;
 
-  typedef typename Efficient_ransac::Point_index_range Point_index_range;
+  typedef typename Efficient_ransac::Point_index_range        Point_index_range;
 
-  typedef CGAL::Shape_detection_3::Plane<Traits>     Plane;
-  typedef CGAL::Shape_detection_3::Cone<Traits>      Cone;
-  typedef CGAL::Shape_detection_3::Cylinder<Traits>  Cylinder;
-  typedef CGAL::Shape_detection_3::Sphere<Traits>    Sphere;
-  typedef CGAL::Shape_detection_3::Torus<Traits>     Torus;
+  typedef CGAL::Shape_detection_3::Plane<Traits>              Plane;
+  typedef CGAL::Shape_detection_3::Cone<Traits>               Cone;
+  typedef CGAL::Shape_detection_3::Cylinder<Traits>           Cylinder;
+  typedef CGAL::Shape_detection_3::Sphere<Traits>             Sphere;
+  typedef CGAL::Shape_detection_3::Torus<Traits>              Torus;
 
   Pwn_vector points;
 
@@ -40,8 +40,10 @@ bool test_scene() {
 
   if (!stream ||
     !CGAL::read_xyz_points_and_normals(stream,
-    std::back_inserter(points),
-    Normal_map())) 
+      std::back_inserter(points),
+      Point_map(),
+      Normal_map(),
+      Traits()))  // CJTODO: remove this last param
   {
     std::cerr << "Error: cannot read file cube.pwn" << std::endl;
     return EXIT_FAILURE;
@@ -94,7 +96,7 @@ bool test_scene() {
       const Pwn &p = *(points.begin() + (*index_it));
 
       // Adds Euclidean distance between point and shape.
-      sum_distances += CGAL::sqrt((*it)->squared_distance(p));
+      //sum_distances += CGAL::sqrt((*it)->squared_distance(p)); //CJTODO A REMETTRE
 
       // Proceeds with next point.
       index_it++;

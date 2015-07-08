@@ -41,19 +41,19 @@ bool test_torus_connected_component() {
 
     sample_torus(NB_POINTS, center, axis,
       major_radius, minor_radius, std::back_inserter(points));
+    
+    Efficient_ransac ransac;
+    Traits const& traits = ransac.traits();
 
     CGAL::Vector_3<K> n = random_normal<K>();
-    n = CGAL::cross_product(axis, n);
-    n = n * (FT) 1.0 / (CGAL::sqrt(n.squared_length()));
+    n = traits.compute_cross_product_3_object()(axis, n);
+    n = n * (FT) 1.0 / (CGAL::sqrt(this->sqlen(n)));
     CGAL::Plane_3<K> pl(center, n);
 
     FT spacing = (FT) 1;
 
     filter_by_distance(pl, spacing * FT(0.5), points);
     
-    Efficient_ransac ransac;
-
-
     ransac.template add_shape_factory<Torus>();
 
     ransac.set_input(points);

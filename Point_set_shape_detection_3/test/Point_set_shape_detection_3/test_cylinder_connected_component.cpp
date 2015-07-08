@@ -42,8 +42,8 @@ bool test_cylinder_connected_component() {
        radius, 0.5, std::back_inserter(points));
     
     CGAL::Vector_3<K> n = random_normal<K>();
-    n = CGAL::cross_product(axis, n);
-    n = n * (FT) 1.0 / (CGAL::sqrt(n.squared_length()));
+    n = this->cross_pdct(axis, n);
+    n = n * (FT) 1.0 / (CGAL::sqrt(this->sqlen(n)));
     CGAL::Plane_3<K> pl(center, n);
 
     FT spacing = (FT) 1.0;

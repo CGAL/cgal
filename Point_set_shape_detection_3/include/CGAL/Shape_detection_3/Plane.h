@@ -58,7 +58,7 @@ namespace CGAL {
       Conversion operator to `Plane_3` type.
      */
     operator Plane_3() const {
-      return Plane_3(m_normal.x(), m_normal.y(), m_normal.z(), m_d);
+      return Plane_3(this->get_x(m_normal), this->get_y(m_normal), this->get_z(m_normal), m_d);
     }
             
     /*!
@@ -80,7 +80,8 @@ namespace CGAL {
       Computes squared Euclidean distance from query point to the shape.
      */
     FT squared_distance(const Point_3 &p) const {
-      FT d = (p - m_point_on_primitive) * m_normal;
+      FT d = this->scalar_pdct(
+        this->constr_vec(p, m_point_on_primitive), m_normal);
       return d * d;
     }
 
@@ -91,8 +92,8 @@ namespace CGAL {
      */
     std::string info() const {
       std::stringstream sstr;
-      sstr << "Type: plane (" << m_normal.x() << ", " << m_normal.y() 
-        << ", " << m_normal.z() << ")x - " << m_d << "= 0"
+      sstr << "Type: plane (" << this->get_x(m_normal) << ", " << this->get_y(m_normal) 
+        << ", " << this->get_z(m_normal) << ")x - " << m_d << "= 0"
         << " #Pts: " << this->m_indices.size();
 
       return sstr.str();
@@ -106,35 +107,38 @@ namespace CGAL {
       Point_3 p2 = this->point(indices[1]);
       Point_3 p3 = this->point(indices[2]);
 
-      m_normal = CGAL::cross_product(p1 - p2, p1 - p3);
+      m_normal = this->cross_pdct(
+        this->constr_vec(p2, p1), this->constr_vec(p3, p1));
 
-      FT length = CGAL::sqrt(m_normal.squared_length());
+      FT length = CGAL::sqrt(this->sqlen(m_normal));
 
       // Are the points almost singular?
       if (length < (FT)0.0001) {
         return;
       }
 
-      m_normal = m_normal * ((FT)1.0 / length);
-      m_d = -(p1[0] * m_normal[0] + p1[1] * m_normal[1] + p1[2] * m_normal[2]);
+      m_normal = this->scale(m_normal, (FT)1.0 / length);
+      m_d = -(this->get_x(p1) * this->get_x(m_normal) 
+        + this->get_y(p1) * this->get_y(m_normal) 
+        + this->get_z(p1) * this->get_z(m_normal));
 
       //check deviation of the 3 normal
       Vector_3 l_v;
       for (std::size_t i = 0;i<3;i++) {
         l_v = this->normal(indices[i]);
 
-        if (CGAL::abs(l_v * m_normal)
-            < this->m_normal_threshold * CGAL::sqrt(l_v.squared_length())) {
+        if (CGAL::abs(this->scalar_pdct(l_v, m_normal))
+            < this->m_normal_threshold * CGAL::sqrt(this->sqlen(l_v))) {
           this->m_is_valid = false;
           return;
         }
 
         m_point_on_primitive = p1;
-        m_base1 = CGAL::cross_product(p1 - p2, m_normal);
-        m_base1 = m_base1 * ((FT)1.0 / CGAL::sqrt(m_base1.squared_length()));
+        m_base1 = this->cross_pdct(this->constr_vec(p2, p1), m_normal);
+        m_base1 = this->scale(m_base1, ((FT)1.0 / CGAL::sqrt(this->sqlen(m_base1))));
 
-        m_base2 = CGAL::cross_product(m_base1, m_normal);
-        m_base2 = m_base2 * ((FT)1.0 / CGAL::sqrt(m_base2.squared_length()));
+        m_base2 = this->cross_pdct(m_base1, m_normal);
+        m_base2 = this->scale(m_base2, ((FT)1.0 / CGAL::sqrt(this->sqlen(m_base2))));
       }
 
       this->m_is_valid = true;
@@ -146,17 +150,18 @@ namespace CGAL {
                             FT min[2],
                             FT max[2]) const {
       // Transform first point before to initialize min/max
-      Vector_3 p = (this->point(indices[0]) - m_point_on_primitive);
-      FT u = p * m_base1;
-      FT v = p * m_base2;
+      Vector_3 p = this->constr_vec(
+        m_point_on_primitive, this->point(indices[0]));
+      FT u = this->scalar_pdct(p, m_base1);
+      FT v = this->scalar_pdct(p, m_base2);
       parameterSpace[0] = std::pair<FT, FT>(u, v);
       min[0] = max[0] = u;
       min[1] = max[1] = v;
 
       for (std::size_t i = 1;i<indices.size();i++) {
-        p = (this->point(indices[i]) - m_point_on_primitive);
-        u = p * m_base1;
-        v = p * m_base2;
+        p = this->constr_vec(m_point_on_primitive, this->point(indices[i]));
+        u = this->scalar_pdct(p, m_base1);
+        v = this->scalar_pdct(p, m_base2);
         min[0] = (std::min<FT>)(min[0], u);
         max[0] = (std::max<FT>)(max[0], u);
         min[1] = (std::min<FT>)(min[1], v);
@@ -168,7 +173,9 @@ namespace CGAL {
     virtual void squared_distance(const std::vector<std::size_t> &indices,
                                   std::vector<FT> &dists) const {
       for (std::size_t i = 0;i<indices.size();i++) {
-        const FT d = (this->point(indices[i]) - m_point_on_primitive) * m_normal;
+        const FT d = this->scalar_pdct(
+          this->constr_vec(m_point_on_primitive, this->point(indices[i])), 
+          m_normal);
         dists[i] = d * d;
       }
     }
@@ -176,12 +183,13 @@ namespace CGAL {
     virtual void cos_to_normal(const std::vector<std::size_t> &indices, 
                                std::vector<FT> &angles) const {
       for (std::size_t i = 0;i<indices.size();i++) {
-        angles[i] = CGAL::abs(this->normal(indices[i]) * m_normal);
+        angles[i] = CGAL::abs(
+          this->scalar_pdct(this->normal(indices[i]), m_normal));
       }
     }
 
     FT cos_to_normal(const Point_3 &, const Vector_3 &n) const{
-      return CGAL::abs(n * m_normal);
+      return CGAL::abs(this->scalar_pdct(n, m_normal));
     } 
     
     virtual std::size_t minimum_sample_size() const {

@@ -49,6 +49,7 @@ bool test_cone_parameters() {
         points.push_back(random_pwn_in<K>(bbox));
         
     Efficient_ransac ransac;
+    Traits traits = ransac.traits();
 
     ransac.template add_shape_factory<Cone>();
     
@@ -87,7 +88,9 @@ bool test_cone_parameters() {
 
     // Check apex.
     Point pos = cone->apex();
-    if ((pos - apex).squared_length() > (FT) 0.0004)
+    FT apex_pos_sqlen = traits.compute_squared_length_3_object()(
+      traits.construct_vector_3(apex, pos));
+    if (apex_pos_sqlen > FT(0.0004))
       continue;
 
     std::string info = cone->info();

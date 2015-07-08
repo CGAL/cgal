@@ -201,6 +201,15 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     }
 
     /*!
+      Retrieves the traits class.
+     */
+    const Traits&
+    traits() const
+    {
+      return m_traits;
+    }
+
+    /*!
       Sets the input data. The range must stay valid
       until the detection has been performed and the access to the
       results is no longer required. The data in the input is reordered by the methods
@@ -222,7 +231,8 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
         clear();
 
-        m_extracted_shapes = boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
+        m_extracted_shapes = 
+          boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
 
         m_num_available_points = m_num_total_points = std::distance(
           m_input_iterator_first, m_input_iterator_beyond);
@@ -285,13 +295,15 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
             m_input_iterator_first[indices[std::size_t(j)]] = tmp;
             last--;
           } while (j > 0);
-          m_direct_octrees[s] = new Direct_octree(last + 1,
+          m_direct_octrees[s] = new Direct_octree(
+            m_traits, last + 1,
             last + subsetSize + 1,
             remainingPoints - subsetSize);
         }
         else
-          m_direct_octrees[0] = new Direct_octree(m_input_iterator_first,
-          m_input_iterator_first + (subsetSize), 
+          m_direct_octrees[0] = new Direct_octree(
+            m_traits, m_input_iterator_first,
+            m_input_iterator_first + (subsetSize), 
           0);
 
         m_available_octree_sizes[s] = subsetSize;
@@ -300,7 +312,8 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
         remainingPoints -= subsetSize;
       }
 
-      m_global_octree = new Indexed_octree(m_input_iterator_first, m_input_iterator_beyond);
+      m_global_octree = new Indexed_octree(
+        m_traits, m_input_iterator_first, m_input_iterator_beyond);
       m_global_octree->createTree();
 
       return true;
@@ -355,7 +368,8 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
       std::vector<int>().swap(m_shape_index);
 
-      m_extracted_shapes = boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
+      m_extracted_shapes = 
+        boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
       
       m_num_available_points = m_num_total_points;
 

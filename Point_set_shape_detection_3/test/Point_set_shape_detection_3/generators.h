@@ -23,9 +23,9 @@ CGAL::Vector_3<K> random_normal() {
     n = CGAL::Vector_3<K>(random_float((FT) -1.0, (FT) 1.0),
                random_float((FT) -1.0, (FT) 1.0),
                random_float((FT) -1.0, (FT) 1.0));
-  } while (n.squared_length() < (FT) 0.001);
+  } while (this->sqlen(n) < (FT) 0.001);
 
-  n = n * (FT) 1.0 / (CGAL::sqrt(n.squared_length()));
+  n = n * (FT) 1.0 / (CGAL::sqrt(this->sqlen(n)));
 
   return n;
 }
@@ -50,7 +50,7 @@ CGAL::Point_with_normal_3<K> random_pwn_in(const CGAL::Bbox_3 &bbox) {
 template <class K>
 CGAL::Vector_3<K> normalize(CGAL::Vector_3<K> const& v) {
   typedef typename K::FT FT;
-  FT l = CGAL::sqrt(v.squared_length());
+  FT l = CGAL::sqrt(this->sqlen(v));
   if (l < (FT) 0.00001)
     return CGAL::Vector_3<K>((FT) 0, (FT) 0, (FT) 0);
   else return v * l;
@@ -65,7 +65,7 @@ void sample_sphere(const std::size_t num_points,
     CGAL::Vector_3<K> direction(random_float((FT) -1, (FT) 1), 
       random_float((FT) -1, (FT) 1), 
       random_float((FT) -1,(FT)  1));
-    direction = direction * ((FT) 1.0 / CGAL::sqrt(direction.squared_length()));
+    direction = direction * ((FT) 1.0 / CGAL::sqrt(this->sqlen(direction)));
 
     CGAL::Point_3<K> p = center + direction * radius;
 
@@ -101,11 +101,11 @@ void sample_cylinder(const std::size_t num_points,
         random_float((FT) -1, (FT) 1), 
         random_float((FT) -1, (FT) 1));
       normal = normal - ((normal * axis) * axis);
-      if (normal.squared_length() < (FT)0.0001) {
+      if (this->sqlen(normal) < (FT)0.0001) {
         i--;
         continue;
       }
-      normal = normal * ((FT)1.0 / CGAL::sqrt(normal.squared_length()));
+      normal = normal * ((FT)1.0 / CGAL::sqrt(this->sqlen(normal)));
 
       FT l = random_float(-length, length);
 
@@ -130,7 +130,7 @@ void sample_random_cylinder(const std::size_t num_points,
     // the origin with 'axis' as normal.
     CGAL::Vector_3<K> u = random_normal<K>();
     CGAL::Vector_3<K> v = CGAL::cross_product(u, axis);
-    v = v * 1.0 / CGAL::sqrt(v.squared_length());
+    v = v * 1.0 / CGAL::sqrt(this->sqlen(v));
     u = CGAL::cross_product(v, axis);
 
     center = CGAL::ORIGIN + random_float((FT) -5, (FT) 5) * u + random_float((FT) -5, (FT) 5) * v;
@@ -156,21 +156,21 @@ void sample_cone(const std::size_t num_points,
       random_float((FT)-1, (FT) 1), 
       random_float((FT)-1, (FT) 1));
     normal = normal - ((normal * axis) * axis);
-    if (normal.squared_length() < (FT) 0.0001) {
+    if (this->sqlen(normal) < (FT) 0.0001) {
       i--;
       continue;
     }
-    normal = normal * ((FT) 1.0 / CGAL::sqrt(normal.squared_length()));
+    normal = normal * ((FT) 1.0 / CGAL::sqrt(this->sqlen(normal)));
 
     FT l = random_float(s, e);
 
     CGAL::Point_3<K> p = apex + axis * l + (l * radiusGrow) * normal;
 
     // axis is pointing down from apex
-    normal = normal * (FT) 1.0 / (CGAL::sqrt(normal.squared_length()));
+    normal = normal * (FT) 1.0 / (CGAL::sqrt(this->sqlen(normal)));
     // normal is pointing from axis to surface point
     normal = normal * cosAng - axis * sinAng;
-    l = CGAL::sqrt(normal.squared_length());
+    l = CGAL::sqrt(this->sqlen(normal));
     if ((FT) 0.95 > l || l > (FT) 1.05)
       std::cout << "normal not normalized" << std::endl;
 
@@ -212,19 +212,19 @@ void sample_random_parallelogram_in_box(const std::size_t num_points,
     CGAL::Vector_3<K> a = p[1] - p[0];
     CGAL::Vector_3<K> b = p[2] - p[0];
 
-    if (a.squared_length() < (FT) 4.0 || b.squared_length() < (FT) 4.0) {
+    if (this->sqlen(a) < (FT) 4.0 || this->sqlen(b) < (FT) 4.0) {
       normal = CGAL::Vector_3<K>((FT) 0, (FT) 0, (FT) 0);
       continue;
     }
 
-    a = a * 1.0 / CGAL::sqrt(a.squared_length());
-    b = b * 1.0 / CGAL::sqrt(b.squared_length());
+    a = a * 1.0 / CGAL::sqrt(this->sqlen(a));
+    b = b * 1.0 / CGAL::sqrt(this->sqlen(b));
 
     normal = CGAL::cross_product(a, b);
     // repeat if angle between a and b is small
-  } while (normal.squared_length() < (FT) 0.2);
+  } while (this->sqlen(normal) < (FT) 0.2);
 
-  normal = normal * (FT) 1.0 / CGAL::sqrt(normal.squared_length());
+  normal = normal * (FT) 1.0 / CGAL::sqrt(this->sqlen(normal));
   dist = -((p[0] - CGAL::ORIGIN) * normal);
 
   // sample
@@ -252,12 +252,12 @@ void sample_torus(const std::size_t num_points,
   // calculate basis  
   CGAL::Vector_3<K> b1, b2;
   b1 = CGAL::cross_product(axis, CGAL::Vector_3<K>((FT) 0, (FT) 0, (FT) 1));
-  if (b1.squared_length() < (FT) 0.1)
+  if (this->sqlen(b1) < (FT) 0.1)
     b1 = CGAL::cross_product(axis, CGAL::Vector_3<K>((FT) 0, (FT) 1, (FT) 0));
-  b1 = b1 / CGAL::sqrt(b1.squared_length());
+  b1 = b1 / CGAL::sqrt(this->sqlen(b1));
 
   b2 = CGAL::cross_product(axis, b1);
-  b2 = b2 / CGAL::sqrt(b2.squared_length());
+  b2 = b2 / CGAL::sqrt(this->sqlen(b2));
 
   for (size_t i = 0 ; i < num_points ; ++i)
   {
@@ -265,7 +265,7 @@ void sample_torus(const std::size_t num_points,
     FT phi = random_float((FT) 0, (FT) (2 * 3.141592656));
 
     CGAL::Vector_3<K> normal = sin(tau) * b1 + cos(tau) * b2;
-    normal = normal / CGAL::sqrt(normal.squared_length());
+    normal = normal / CGAL::sqrt(this->sqlen(normal));
     CGAL::Point_3<K> p = center + major_radius * normal;
     normal = sin(phi) * normal + cos(phi) * axis;
     p = p + minor_radius * normal;
