@@ -16,10 +16,10 @@ int main(int argc, char** argv)
   //for Windows
   application.setAttribute(Qt::AA_UseDesktopOpenGL);
 
-  // Import resources from libCGALQt (Qt4 or Qt5).
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
+  // Import resources from libCGALQt (Qt5).
+  // See http://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
 
-  CGAL_QT_INIT_RESOURCES; //New for Qt5 version !
+  CGAL_QT_INIT_RESOURCES;
   Q_INIT_RESOURCE(Alpha_shape_3);
   
   MainWindow mw;

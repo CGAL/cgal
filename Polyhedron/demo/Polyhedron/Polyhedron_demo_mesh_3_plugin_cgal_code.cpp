@@ -219,10 +219,7 @@ private:
     void draw_triangle(const Kernel::Point_3& pa,
                        const Kernel::Point_3& pb,
                        const Kernel::Point_3& pc, bool is_cut) {
-        // workaround for Qt-4.2.
-#if QT_VERSION < 0x040300
-#  define darker dark
-#endif
+
 #undef darker
         Kernel::Vector_3 n = cross_product(pb - pa, pc - pa);
         n = n / CGAL::sqrt(n*n);
@@ -269,10 +266,7 @@ else
     void draw_triangle_edges(const Kernel::Point_3& pa,
                        const Kernel::Point_3& pb,
                        const Kernel::Point_3& pc) {
-        // workaround for Qt-4.2.
-#if QT_VERSION < 0x040300
-#  define darker dark
-#endif
+
 #undef darker
         Kernel::Vector_3 n = cross_product(pb - pa, pc - pa);
         n = n / CGAL::sqrt(n*n);
@@ -360,7 +354,7 @@ public:
         QMenu* menu = Scene_item::contextMenu();
 
         // Use dynamic properties:
-        // http://doc.trolltech.com/lastest/qobject.html#property
+        // http://doc.qt.io/qt-5/qobject.html#property
         bool menuChanged = menu->property(prop_name).toBool();
 
         if(!menuChanged) {

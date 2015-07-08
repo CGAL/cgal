@@ -149,10 +149,7 @@ class Volume_plane_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Plugin_interface)
-
-  #if QT_VERSION >= 0x050000
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
-  #endif
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
   Volume_plane_plugin() : planeSwitch(NULL), sc(NULL), mw(NULL)
@@ -382,11 +379,5 @@ private:
     DoubleConverter x = { minmax }; pxr_.setFC(x);
   }
 };
-
-
-
-#if QT_VERSION < 0x050000
-Q_EXPORT_PLUGIN2(Volume_plane_plugin, Volume_plane_plugin)
-#endif
 
 #include "Volume_planes_plugin.moc"

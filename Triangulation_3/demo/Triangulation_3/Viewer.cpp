@@ -1760,12 +1760,7 @@ void Viewer::mousePressEvent(QMouseEvent *event)
     // pos() holds the mouse cursor's position relative to the receiving widget
 
     // Get event modifiers key
-#if QT_VERSION < 0x040000
-    // Bug in Qt : use 0x0f00 instead of Qt::KeyButtonMask with Qt versions < 3.1
-    const Qt::ButtonState modifiers = (Qt::ButtonState)(event->state() & Qt::KeyButtonMask);
-#else
     const Qt::KeyboardModifiers modifiers = event->modifiers();
-#endif
 
     if( m_curMode == INSERT_V
             && event->button() == Qt::LeftButton && modifiers == Qt::SHIFT ) {
@@ -1952,11 +1947,8 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
     /* SEL mode - Left: terminate multiple point selection */
     else if( m_curMode == SELECT && m_isPress ) {
         // might swap left/right and top/bottom to make rectanle valid
-#if QT_VERSION < 0x040000
-        m_rectSel = m_rectSel.normalize();
-#else
         m_rectSel = m_rectSel.normalized();
-#endif
+
         if( m_rectSel.width() == 1 && m_rectSel.height() == 1 ) { /* select a point */
             // set a default selection window
             setSelectRegionWidth( 10 );
@@ -2067,12 +2059,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 void Viewer::wheelEvent(QWheelEvent *event)
 {
     // Get event modifiers key
-#if QT_VERSION < 0x040000
-    // Bug in Qt : use 0x0f00 instead of Qt::KeyButtonMask with Qt versions < 3.1
-    const Qt::ButtonState modifiers = (Qt::ButtonState)(event->state() & Qt::KeyButtonMask);
-#else
     const Qt::KeyboardModifiers modifiers = event->modifiers();
-#endif
 
     if( (m_curMode == INSERT_V || m_curMode == FINDNB || m_curMode == EMPTYSPH )
             && modifiers == Qt::SHIFT ) {
@@ -2146,12 +2133,7 @@ void Viewer::wheelEvent(QWheelEvent *event)
 void Viewer::keyPressEvent(QKeyEvent *event)
 {
     // Get event modifiers key
-#if QT_VERSION < 0x040000
-    // Bug in Qt : use 0x0f00 instead of Qt::KeyButtonMask with Qt versions < 3.1
-    const Qt::ButtonState modifiers = (Qt::ButtonState)(event->state() & Qt::KeyButtonMask);
-#else
     const Qt::KeyboardModifiers modifiers = event->modifiers();
-#endif
 
     /* Insert the newly inserted point as a vertex */
     if( m_curMode == INSERT_PT && m_hasNewPt

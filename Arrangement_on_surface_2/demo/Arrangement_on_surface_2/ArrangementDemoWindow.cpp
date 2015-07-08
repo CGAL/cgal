@@ -1184,7 +1184,6 @@ void ArrangementDemoWindow::on_actionPreferences_triggered( )
   {
     typedef ArrangementDemoPropertiesDialog Dialog;
 
-    //New for Qt5 version !
     QColor edgeColor =  dialog->property(Dialog::EDGE_COLOR_KEY).value<QColor>();
 
     unsigned int edgeWidth = dialog->property(Dialog::EDGE_WIDTH_KEY).value<unsigned int>();

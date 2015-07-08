@@ -55,14 +55,8 @@ void Polyhedron_demo_plugin_helper::autoConnectActions()
       i < metaObject->methodCount();
       ++i)
   {
-#if QT_VERSION >= 0x050000
     const int pos = QString(metaObject->method(i).methodSignature()).indexOf('(');
     methodsNames << QString(metaObject->method(i).methodSignature()).left(pos);
-#else
-    const int pos = QString(metaObject->method(i).signature()).indexOf('(');
-    methodsNames << QString(metaObject->method(i).signature()).left(pos);
-#endif
-
 
     methods << metaObject->method(i);
   }
@@ -80,14 +74,8 @@ void Polyhedron_demo_plugin_helper::autoConnectActions()
         
       if(action_method.methodType() == QMetaMethod::Signal)
       {
-//New for Qt5 version !
-#if QT_VERSION >= 0x050000
         const int pos = QString(action_method.methodSignature()).indexOf('(');
         QString methodName = QString(action_method.methodSignature()).left(pos);
-#else
-        const int pos = QString(action_method.signature()).indexOf('(');
-        QString methodName = QString(action_method.signature()).left(pos);
-#endif
 
         QString slotName = 
           QString("on_%1_%2").arg(action->objectName()).arg(methodName);
@@ -95,33 +83,17 @@ void Polyhedron_demo_plugin_helper::autoConnectActions()
         int index = methodsNames.indexOf(slotName);
         if(index>=0 && !connected.contains(slotName)) 
         {
-//New for Qt5 version !
-#if QT_VERSION >= 0x050000
             const bool ok = QObject::connect(action, 
                              qPrintable(QString("2%1").arg(QString(action_method.methodSignature()))),
                              thisObject,
                              qPrintable(QString("1%1").arg(QString(methods[index].methodSignature()))));
-#else
-           const bool ok = QObject::connect(action, 
-                             qPrintable(QString("2%1").arg(action_method.signature())),
-                             thisObject,
-                             qPrintable(QString("1%1").arg(methods[index].signature())));
-#endif
 
           if(!ok)
           {
-	   //New for Qt5 version !
-	   #if QT_VERSION >= 0x050000
             qDebug() << thisObject->tr("Cannot connect method %1.%2 to slot %3!")
               .arg(action->objectName())
               .arg(QString(action_method.methodSignature()))
               .arg(QString(methods[index].methodSignature()));
-	   #else
-            qDebug() << thisObject->tr("Cannot connect method %1.%2 to slot %3!")
-              .arg(action->objectName())
-              .arg(action_method.signature())
-              .arg(methods[index].signature());
-	   #endif
           }
           else {
 //             qDebug("  ->Connected!");

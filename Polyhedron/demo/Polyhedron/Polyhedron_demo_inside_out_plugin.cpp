@@ -15,10 +15,7 @@ class Polyhedron_demo_inside_out_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
-
-  #if QT_VERSION >= 0x050000
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
-  #endif
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
   // used by Polyhedron_demo_plugin_helper
@@ -69,9 +66,5 @@ void Polyhedron_demo_inside_out_plugin::on_actionInsideOut_triggered()
     QApplication::restoreOverrideCursor();
   }
 }
-
-#if QT_VERSION < 0x050000
-Q_EXPORT_PLUGIN2(Polyhedron_demo_inside_out_plugin, Polyhedron_demo_inside_out_plugin)
-#endif
 
 #include "Polyhedron_demo_inside_out_plugin.moc"

@@ -19,11 +19,7 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QClipboard>
-
- //New for Qt5 version !
- #if QT_VERSION >= 0x050000 
- #include <QMimeData>
- #endif
+#include <QMimeData>
 
 #include <CGAL_demo/Plugin_interface.h>
 #include <CGAL_demo/Io_plugin_interface.h>
@@ -67,22 +63,12 @@ MainWindow::MainWindow(QWidget* parent)
 
   treeView->header()->setStretchLastSection(false);
 
- //New for Qt5 version !
- #if QT_VERSION >= 0x050000
   treeView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
   treeView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
   treeView->header()->setSectionResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
   treeView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
   treeView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
   treeView->header()->setSectionResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
- #else
-  treeView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
-  treeView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
-  treeView->header()->setResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
-  treeView->header()->setResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
-  treeView->header()->setResizeMode(Scene::ABColumn, QHeaderView::Fixed);
-  treeView->header()->setResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
- #endif
 
   treeView->resizeColumnToContents(Scene::ColorColumn);
   treeView->resizeColumnToContents(Scene::RenderingModeColumn);

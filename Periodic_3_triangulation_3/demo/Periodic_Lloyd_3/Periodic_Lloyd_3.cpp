@@ -12,9 +12,9 @@ int main(int argc, char** argv)
   //for windows
   application.setAttribute(Qt::AA_UseDesktopOpenGL);
 
-  // Import resources from libCGAL (Qt4 or QT5).
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT_INIT_RESOURCES;//New for Qt5 version !
+  // Import resources from libCGAL (QT5).
+  // See http://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
+  CGAL_QT_INIT_RESOURCES;
   Q_INIT_RESOURCE(Periodic_Lloyd_3);
 
   MainWindow mw;

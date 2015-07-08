@@ -6,7 +6,7 @@ an open source license. It is also possible to obtain commercial licenses
 from GeometryFactory (www.geometryfactory.com) for all or parts of CGAL.
 
 The source code of the CGAL library can be found in the directories
-"src/CGAL", "src/CGALQt", "src/CGALQt4" and "include/CGAL" (with the
+"src/CGAL", "src/CGALQt", "src/CGALQt5" and "include/CGAL" (with the
 exception of "include/CGAL/CORE", "include/CGAL/OpenNL").
 It is specified in each file of the CGAL library which
 license applies to it. This is either the GNU General Public License

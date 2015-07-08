@@ -21,7 +21,7 @@ class Polyhedron_demo_join_and_split_polyhedra_plugin:
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
   QAction* actionJoinPolyhedra, *actionSplitPolyhedra, *actionColorConnectedComponents;
   Messages_interface* msg_interface;

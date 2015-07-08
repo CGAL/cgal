@@ -8,7 +8,7 @@ class Polyhedron_demo_selection_io_plugin :
 {
     Q_OBJECT
     Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
-    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
     QString name() const { return "selection_io_plugin"; }
     QString nameFilters() const { return "Selection files (*.selection.txt)"; }

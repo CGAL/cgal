@@ -19,10 +19,7 @@ class Polyhedron_demo_mesh_simplification_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
-
-  #if QT_VERSION >= 0x050000
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
-  #endif
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
   // used by Polyhedron_demo_plugin_helper
@@ -52,27 +49,14 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
     // get option (#edges)
     bool ok;
   
-  //New for Qt5 version !
-  #if QT_VERSION >= 0x050000
-      const int nb_edges = 
-      QInputDialog::getInt(mw, tr("Stop condition"),
-      tr("Number of edges:"),
-      (int)(pMesh->size_of_halfedges () / 4), // default value: current #edges / 2 
-      3, // min = one triangle
-      (int)pMesh->size_of_halfedges(), // max #edges
-      1, // step for the spinbox
-      &ok);
-  #else
     const int nb_edges = 
-      QInputDialog::getInteger(mw, tr("Stop condition"),
-      tr("Number of edges:"),
-      (int)(pMesh->size_of_halfedges () / 4), // default value: current #edges / 2 
-      3, // min = one triangle
-      (int)pMesh->size_of_halfedges(), // max #edges
-      1, // step for the spinbox
-      &ok);
-  #endif
-
+    QInputDialog::getInt(mw, tr("Stop condition"),
+    tr("Number of edges:"),
+    (int)(pMesh->size_of_halfedges () / 4), // default value: current #edges / 2 
+    3, // min = one triangle
+    (int)pMesh->size_of_halfedges(), // max #edges
+    1, // step for the spinbox
+    &ok);
 
     // check user cancellation
     if(!ok)
@@ -96,9 +80,5 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
     QApplication::restoreOverrideCursor();
   }
 }
-
-#if QT_VERSION < 0x050000
-Q_EXPORT_PLUGIN2(Polyhedron_demo_mesh_simplification_plugin, Polyhedron_demo_mesh_simplification_plugin)
-#endif
 
 #include "Polyhedron_demo_mesh_simplification_plugin.moc"

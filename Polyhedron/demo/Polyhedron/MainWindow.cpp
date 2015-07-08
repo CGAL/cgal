@@ -157,26 +157,12 @@ MainWindow::MainWindow(QWidget* parent)
   sceneView->setItemDelegate(new SceneDelegate(this));
 
   sceneView->header()->setStretchLastSection(false);
-
-//New for Qt5 version !
-#if QT_VERSION >= 0x050000
-
   sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
   sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
   sceneView->header()->setSectionResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
   sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
   sceneView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
   sceneView->header()->setSectionResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
-#else
-
-  sceneView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
-  sceneView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
-  sceneView->header()->setResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
-  sceneView->header()->setResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
-  sceneView->header()->setResizeMode(Scene::ABColumn, QHeaderView::Fixed);
-  sceneView->header()->setResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
-#endif
-
   sceneView->resizeColumnToContents(Scene::ColorColumn);
   sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
   sceneView->resizeColumnToContents(Scene::ABColumn);

@@ -63,14 +63,9 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
 /*  volumeList->setColumnWidth(0,85);
   volumeList->setColumnWidth(1,35);
   volumeList->setColumnWidth(2,35);*/
-  
-//New for Qt5 version !
-#if QT_VERSION >= 0x050000
- volumeList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-#else
- volumeList->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-#endif
 
+  volumeList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+ 
   volumeList->setSelectionMode(QAbstractItemView::NoSelection);
   //volumeList->setSelectionBehavior(QAbstractItemView::SelectRows);
   volumeListDock->setWidget(volumeList);

@@ -33,10 +33,10 @@
 #include <CGAL/Qt/CreateOpenGLContext.h>
 #include <QDebug>
 
-typedef typename LCC::Traits Traits;
+typedef LCC::Traits Traits;
 typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
 struct Face_info {
-    typename LCC::Dart_handle e[3];
+    LCC::Dart_handle e[3];
     bool is_external;
 };
 typedef CGAL::Triangulation_vertex_base_with_info_2<Dart_handle,
@@ -116,7 +116,7 @@ void Viewer::triangulate_facet()
             {
 
                 //Computes the normal of the facet
-                typename Traits::Vector_3 normal = CGAL::compute_normal_of_cell_2(lcc,dartIter);
+                Traits::Vector_3 normal = CGAL::compute_normal_of_cell_2(lcc,dartIter);
                 normal = normal/(CGAL::sqrt(normal*normal));
 
                 P_traits cdt_traits(normal);
@@ -127,9 +127,9 @@ void Viewer::triangulate_facet()
                      he_circ_end(he_circ_end);
 
                 // Iterates on the vector of facet handles
-                typename CDT::Vertex_handle previous, first;
+                CDT::Vertex_handle previous, first;
                 do {
-                    typename CDT::Vertex_handle vh = cdt.insert(lcc.point(he_circ));
+                    CDT::Vertex_handle vh = cdt.insert(lcc.point(he_circ));
                     if(first == 0) {
                         first = vh;
                     }
@@ -142,7 +142,7 @@ void Viewer::triangulate_facet()
                 cdt.insert_constraint(previous, first);
 
                 // sets mark is_external
-                for(typename CDT::All_faces_iterator
+                for(CDT::All_faces_iterator
                     fit = cdt.all_faces_begin(),
                     end = cdt.all_faces_end();
                     fit != end; ++fit)
@@ -150,10 +150,10 @@ void Viewer::triangulate_facet()
                     fit->info().is_external = false;
                 }
                 //check if the facet is external or internal
-                std::queue<typename CDT::Face_handle> face_queue;
+                std::queue<CDT::Face_handle> face_queue;
                 face_queue.push(cdt.infinite_vertex()->face());
                 while(! face_queue.empty() ) {
-                    typename CDT::Face_handle fh = face_queue.front();
+                    CDT::Face_handle fh = face_queue.front();
                     face_queue.pop();
                     if(fh->info().is_external) continue;
                     fh->info().is_external = true;
@@ -167,7 +167,7 @@ void Viewer::triangulate_facet()
 
                 //iterates on the internal faces to add the vertices to the positions
                 //and the normals to the appropriate vectors
-                for(typename CDT::Finite_faces_iterator
+                for(CDT::Finite_faces_iterator
                     ffit = cdt.finite_faces_begin(),
                     end = cdt.finite_faces_end();
                     ffit != end; ++ffit)

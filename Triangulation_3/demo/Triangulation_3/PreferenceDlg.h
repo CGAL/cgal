@@ -2,9 +2,6 @@
 #define PREFERENCE_DLG_H
 
 #include <QDialog>
-
-//New for Qt5 version !
-#if QT_VERSION >= 0x050000
 #include <QColorDialog>
 
 #include <QGridLayout>
@@ -18,7 +15,7 @@
 #include <QPushButton>
 
 #include <QSpinBox>
-#endif
+
 
 class QLabel;
 class QSpinBox;

@@ -12,7 +12,7 @@ find_package(CGAL COMPONENTS Qt5)
 
 include(${CGAL_USE_FILE})
 
-find_package(Qt5 COMPONENTS Xml Script OpenGL)
+find_package(Qt5 COMPONENTS Xml Script OpenGL Svg)
 include_directories (BEFORE ../../include)
 include_directories (BEFORE ./include)
 include_directories (BEFORE ../../../Matrix_search/include)
@@ -37,7 +37,7 @@ qt5_generate_moc( "Bounding_volumes.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Bounding_v
 # The executable itself.
 add_executable  ( Bounding_volumes Bounding_volumes.cpp Bounding_volumes.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
 
-qt5_use_modules(Bounding_volumes Xml Script OpenGL)
+qt5_use_modules(Bounding_volumes Xml Script OpenGL Svg)
 
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS Bounding_volumes )
 

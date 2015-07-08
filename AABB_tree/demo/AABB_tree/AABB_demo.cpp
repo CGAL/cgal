@@ -26,11 +26,8 @@
 #include "MainWindow.h"
 #include <QApplication>
 #include <CGAL/Qt/resources.h>
+#include <QMimeData>
 
- //New for Qt5 version !
- #if QT_VERSION >= 0x050000 
- #include <QMimeData>
- #endif
 
 int main(int argc, char **argv)
 {
@@ -41,9 +38,8 @@ int main(int argc, char **argv)
   //for windows
   app.setAttribute(Qt::AA_UseDesktopOpenGL);
 
-  // Import resources from libCGALQt (Qt4 or Qt5).
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT_INIT_RESOURCES;//New for Qt5 version !
+  // Import resources from libCGALQt (Qt5).
+  CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;
   mainWindow.show();

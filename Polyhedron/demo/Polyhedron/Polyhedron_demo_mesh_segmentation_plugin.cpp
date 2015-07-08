@@ -49,10 +49,7 @@ class Polyhedron_demo_mesh_segmentation_plugin :
 {
     Q_OBJECT
     Q_INTERFACES(Polyhedron_demo_plugin_interface)
-
-  #if QT_VERSION >= 0x050000
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
-  #endif
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 private:
     typedef std::map<Scene_polyhedron_item*, std::vector<double> > Item_sdf_map;
@@ -352,9 +349,5 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_segmentation(
         color_vector.push_back(aColor);     
     }    
 }
-
-#if QT_VERSION < 0x050000
-Q_EXPORT_PLUGIN2(Polyhedron_demo_mesh_segmentation_plugin, Polyhedron_demo_mesh_segmentation_plugin)
-#endif
 
 #include "Polyhedron_demo_mesh_segmentation_plugin.moc"

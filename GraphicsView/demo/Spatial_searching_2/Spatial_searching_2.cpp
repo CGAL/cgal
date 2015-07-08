@@ -68,7 +68,6 @@ public:
     G pg(radius);
     bool ok = false;
 
-  #if QT_VERSION >= 0x050000
     const int number_of_points = 
       QInputDialog::getInt(this, 
                                tr("Number of random points"),
@@ -78,18 +77,6 @@ public:
                                (std::numeric_limits<int>::max)(),
                                1,
                                &ok);
-  #else
-    const int number_of_points = 
-      QInputDialog::getInteger(this, 
-                               tr("Number of random points"),
-                               tr("Enter number of random points"),
-                               100,
-                               0,
-                               (std::numeric_limits<int>::max)(),
-                               1,
-                               &ok);
-  #endif
-
 
     if(!ok) {
       return;
@@ -201,7 +188,7 @@ void MainWindow::N_changed(int i)
 
 /* 
  *  Qt Automatic Connections
- *  http://doc.trolltech.com/4.4/designer-using-a-component.html#automatic-connections
+ *  http://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
  * 
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
@@ -303,9 +290,9 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Spatial_searching_2 demo");
 
-  // Import resources from libCGAL (Qt4 or Qt5).
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT_INIT_RESOURCES;//New for Qt5 version !
+  // Import resources from libCGAL (Qt5).
+  // See http://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
+  CGAL_QT_INIT_RESOURCES;
   Q_INIT_RESOURCE(Spatial_searching_2);
 
   MainWindow mainWindow;

@@ -90,13 +90,8 @@ MainWindow::newPointSet()
 {
   bool ok;
 
-  #if QT_VERSION >= 0x050000
   int numberOfPoints = QInputDialog::getInt(this,
       "Periodic Lloyd", "Number of points: ", 100, 0, 2147483647, 1, &ok );
-  #else
-  int numberOfPoints = QInputDialog::getInteger(this,
-      "Periodic Lloyd", "Number of points: ", 100, 0, 2147483647, 1, &ok );
-  #endif
   
   if (ok) newPoints(numberOfPoints);
 }

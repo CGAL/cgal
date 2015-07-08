@@ -34,10 +34,7 @@ class Polyhedron_demo_point_inside_polyhedron_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
-
-  #if QT_VERSION >= 0x050000
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
-  #endif
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
   bool applicable(QAction*) const 
@@ -190,7 +187,6 @@ public Q_SLOTS:
 
     // take number of points param
     bool ok;
-    #if QT_VERSION >= 0x050000
     const int nb_points = 
       QInputDialog::getInt(mw, tr("Number of Points"),
       tr("Number of Points:"),
@@ -199,16 +195,6 @@ public Q_SLOTS:
       (int)1.e9, // max
       10, // step for the spinbox
       &ok);
-   #else
-   const int nb_points = 
-      QInputDialog::getInteger(mw, tr("Number of Points"),
-      tr("Number of Points:"),
-      100000, // default value
-      1, // min
-      (int)1.e9, // max
-      10, // step for the spinbox
-      &ok);
-   #endif
 
     if(!ok) { return; }
 
@@ -241,9 +227,5 @@ private:
   Ui::Point_inside_polyhedron* ui_widget;
 
 }; // end Polyhedron_demo_point_inside_polyhedron_plugin
-
-#if QT_VERSION < 0x050000
-Q_EXPORT_PLUGIN2(Polyhedron_demo_point_inside_polyhedron_plugin, Polyhedron_demo_point_inside_polyhedron_plugin)
-#endif
 
 #include "Polyhedron_demo_point_inside_polyhedron_plugin.moc"

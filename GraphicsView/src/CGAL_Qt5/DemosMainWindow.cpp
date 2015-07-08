@@ -38,11 +38,9 @@
 #include <QDesktopWidget>
 #include <QRegExp>
 #include <QSvgGenerator>
-
-//New for Qt5 version !
 #include <QtCore>
 #include <QtOpenGL>
-//End of the news things for Qt5 version !
+
 
 #include <CGAL/config.h> // needed to get CGAL_VERSION_STR
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -187,9 +185,8 @@ void
 DemosMainWindow::setUseAntialiasing(bool checked)
 {
   view->setRenderHint(QPainter::Antialiasing, checked);
-#if QT_VERSION >= 0x040300
   view->setRenderHint(QPainter::HighQualityAntialiasing, checked);
-#endif
+
   statusBar()->showMessage(tr("Antialiasing %1activated").arg(checked?"":"de-"),
                            1000);
 }

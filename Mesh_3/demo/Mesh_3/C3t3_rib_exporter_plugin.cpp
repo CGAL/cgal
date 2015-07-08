@@ -34,10 +34,7 @@ class C3t3_rib_exporter_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Plugin_interface)
-
-  #if QT_VERSION >= 0x050000
-   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
-  #endif
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
   C3t3_rib_exporter_plugin();
@@ -1181,11 +1178,5 @@ write_background(const QColor& color, std::ofstream& out)
   out << " " << -corner << " " <<  corner << " " << depth_pos << " ";
   out << "]" << std::endl;
 }
-
-
-#if QT_VERSION < 0x050000
-#include <QtPlugin>
-Q_EXPORT_PLUGIN2(C3t3_rib_exporter_plugin, C3t3_rib_exporter_plugin)
-#endif
 
 #include "C3t3_rib_exporter_plugin.moc"

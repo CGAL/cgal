@@ -8,4 +8,4 @@ Shift: pour // aux axes.
 
 Affichage du (x,y) par rapport à l'origine de l'objet en cours.
 
-Integrer src/CGALQt4 dans le build process de CGAL, avec CMake.
+Integrer src/CGALQt5 dans le build process de CGAL, avec CMake.

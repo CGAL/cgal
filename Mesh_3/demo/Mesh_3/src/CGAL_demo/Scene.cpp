@@ -32,17 +32,10 @@ Scene::addItem(Scene_item* item)
   connect(this, SIGNAL(itemAboutToBeDestroyed(Scene_item*)),
           item, SLOT(itemAboutToBeDestroyed(Scene_item*)));
 
- #if QT_VERSION >= 0x050000
   QAbstractListModel::beginResetModel();
   Q_EMIT updated_bbox();
   Q_EMIT updated();
   QAbstractListModel::endResetModel();
- #else
-  Q_EMIT updated_bbox();
-  Q_EMIT updated();
-
-  QAbstractListModel::reset();
- #endif
 
   return entries.size() - 1;
 }
@@ -55,7 +48,6 @@ Scene::erase(int index)
 
   Scene_item* item = entries[index];
 
- #if QT_VERSION >= 0x050000
   QAbstractListModel::beginResetModel();
   Q_EMIT itemAboutToBeDestroyed(item);
   delete item;
@@ -64,15 +56,6 @@ Scene::erase(int index)
   selected_item = -1;
   Q_EMIT updated();
   QAbstractListModel::endResetModel();
- #else
-  Q_EMIT itemAboutToBeDestroyed(item);
-  delete item;
-  entries.removeAt(index);
-
-  selected_item = -1;
-  Q_EMIT updated();
-  QAbstractListModel::reset();
- #endif
 
   if(--index >= 0)
     return index;
@@ -126,11 +109,6 @@ Scene::duplicate(Item_id index)
 void Scene::initializeGL()
 {
 }
-
-// workaround for Qt-4.2.
-#if QT_VERSION < 0x040300
-#  define lighter light
-#endif
 
 void 
 Scene::draw(QGLViewer* viewer)
