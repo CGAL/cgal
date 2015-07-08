@@ -10,12 +10,13 @@
 
 
 // Type declarations
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::FT                                          FT;
-typedef CGAL::Point_with_normal_3<Kernel>                   Point_with_normal;
-typedef std::vector<Point_with_normal>                      Pwn_vector;
-typedef CGAL::Identity_property_map<Point_with_normal>      Point_map;
-typedef CGAL::Normal_of_point_with_normal_pmap<Kernel>      Normal_map;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
+typedef Kernel::FT                                           FT;
+// CJTODO: when testing done, use Kernel::Point_3 and Kernel::Vector_3
+typedef std::pair<CGAL::Point__3, CGAL::Vector__3>           Point_with_normal;
+typedef std::vector<Point_with_normal>                       Pwn_vector;
+typedef CGAL::First_of_pair_property_map<Point_with_normal>  Point_map;
+typedef CGAL::Second_of_pair_property_map<Point_with_normal> Normal_map;
 
 // In Efficient_RANSAC_traits the basic types, i.e., Point and Vector types
 // as well as iterator type and property maps, are defined.
@@ -42,7 +43,9 @@ int main()
   if (!stream ||
     !CGAL::read_xyz_points_and_normals(stream,
       std::back_inserter(points),
-      Normal_map())) 
+      Point_map(),
+      Normal_map(),
+      Traits())) // CJTODO: remove this last param
   {
     std::cerr << "Error: cannot read file cube.pwn" << std::endl;
     return EXIT_FAILURE;

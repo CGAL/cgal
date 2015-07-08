@@ -199,15 +199,41 @@ namespace CGAL {
           else return (last - first + 1);
         }
       };
+
+      // --------------------------------------------------------------------------
+      // Utilities
+      // --------------------------------------------------------------------------
+      FT get_x(const Vector& v){ return m_traits.compute_x_3_object()(v); }
+      FT get_y(const Vector& v){ return m_traits.compute_y_3_object()(v); }
+      FT get_z(const Vector& v){ return m_traits.compute_z_3_object()(v); }
+      FT get_x(const Point& p){ return m_traits.compute_x_3_object()(p); }
+      FT get_y(const Point& p){ return m_traits.compute_y_3_object()(p); }
+      FT get_z(const Point& p){ return m_traits.compute_z_3_object()(p); }
+      FT get_coord(const Point& p, unsigned int d)
+      {
+        CGAL_assertion(d >= 0 && d < 3);
+        switch (d)
+        {
+          case 0: return get_x(p);
+          case 1: return get_y(p);
+          case 2: return get_z(p);
+          default: return FT(0);
+        }
+      }
+      Point transl(const Point& p, const Vector &v)
+      { return m_traits.construct_translated_point_3_object()(p, v); }
         
     public:
-      Octree() : m_bucket_size(20), m_set_max_level(10), m_root(NULL) {}
-      Octree(const Input_iterator &first,
+      Octree(Sd_traits const& traits) 
+        : m_traits(traits), m_bucket_size(20), m_set_max_level(10), m_root(NULL) {}
+      Octree(Sd_traits const& traits,
+             const Input_iterator &first,
              const Input_iterator &beyond,
              std::size_t offset = 0,
              std::size_t bucketSize = 20, 
              std::size_t maxLevel = 10)
              : PointAccessor(first, beyond, offset),
+               m_traits(traits),
                m_root(NULL),
                m_bucket_size(bucketSize),
                m_set_max_level(maxLevel) {}
@@ -257,34 +283,34 @@ namespace CGAL {
           std::size_t zLowYHighXSplit, zLowYLowXSplit, zLowYSplit;
           std::size_t zHighYSplit, zHighYHighXSplit, zHighYLowXSplit;
 
-          std::size_t zSplit = split(cell->first, cell->last, 2, cell->center[2]);
+          std::size_t zSplit = split(cell->first, cell->last, 2, get_z(cell->center));
 
           if (zSplit != size_t_max) {
 
-            zLowYSplit = split(cell->first, zSplit, 1, cell->center[1]);
+            zLowYSplit = split(cell->first, zSplit, 1, get_y(cell->center));
             if (zLowYSplit != size_t_max) {
               zLowYLowXSplit = split(cell->first,
-                                     zLowYSplit, 0, cell->center[0]);
+                                     zLowYSplit, 0, get_x(cell->center));
               zLowYHighXSplit = split(zLowYSplit + 1,
-                                      zSplit, 0, cell->center[0]); 
+                                      zSplit, 0, get_x(cell->center)); 
             }
             else {
               zLowYLowXSplit = size_t_max;
-              zLowYHighXSplit = split(cell->first, zSplit, 0, cell->center[0]);
+              zLowYHighXSplit = split(cell->first, zSplit, 0, get_x(cell->center));
             }
 
-            zHighYSplit = split(zSplit + 1, cell->last, 1, cell->center[1]);  
+            zHighYSplit = split(zSplit + 1, cell->last, 1, get_y(cell->center));  
 
             if (zHighYSplit != size_t_max) {
               zHighYHighXSplit = split(zHighYSplit + 1,
-                                       cell->last, 0, cell->center[0]);
+                                       cell->last, 0, get_x(cell->center));
               zHighYLowXSplit = split(zSplit + 1,
-                                      zHighYSplit, 0, cell->center[0]);
+                                      zHighYSplit, 0, get_x(cell->center));
             }
             else {
               zHighYLowXSplit = size_t_max;
               zHighYHighXSplit = split(zSplit + 1,
-                                       cell->last, 0, cell->center[0]);
+                                       cell->last, 0, get_x(cell->center));
             }
           }
           else {
@@ -295,25 +321,25 @@ namespace CGAL {
             zHighYSplit = split(cell->first,
                                 cell->last,
                                 1,
-                                cell->center[1]); 
+                                get_y(cell->center)); 
 
             if (zHighYSplit != size_t_max) {
               zHighYHighXSplit = split(zHighYSplit + 1, 
                                        cell->last, 
                                        0, 
-                                       cell->center[0]);
+                                       get_x(cell->center));
 
               zHighYLowXSplit = split(cell->first, 
                                       zHighYSplit,
                                       0, 
-                                      cell->center[0]); 
+                                      get_x(cell->center)); 
             }
             else {
               zHighYLowXSplit = size_t_max;
               zHighYHighXSplit = split(cell->first,
                                        cell->last, 
                                        0,
-                                       cell->center[0]);
+                                       get_x(cell->center));
             }
           }
 
@@ -328,8 +354,8 @@ namespace CGAL {
                   //---
                   cell->child[7] = new Cell(cell->first,
                                             zLowYLowXSplit, 
-                                            cell->center
-                                              + Vector(-width,-width,-width),
+                                            transl(cell->center,
+                                              Vector(-width,-width,-width)),
                                             cell->level + 1);
 
                   if (cell->child[7]->size() > m_bucket_size)
@@ -342,8 +368,8 @@ namespace CGAL {
                 //+--
                 cell->child[6] = new Cell(zLowYLowXSplit + 1,
                                           zLowYSplit, 
-                                          cell->center
-                                            + Vector(width,-width,-width),
+                                          transl(cell->center,
+                                            Vector(width,-width,-width)),
                                           cell->level + 1);
 
                 if (cell->child[6]->size() > m_bucket_size)
@@ -358,8 +384,8 @@ namespace CGAL {
                 //-+-
                 cell->child[5] = new Cell(zLowYSplit + 1, 
                                           zLowYHighXSplit, 
-                                          cell->center 
-                                            + Vector(-width, width,-width), 
+                                          transl(cell->center,
+                                            Vector(-width, width,-width)),
                                           cell->level + 1);
 
                 if (cell->child[5]->size() > m_bucket_size)
@@ -372,8 +398,8 @@ namespace CGAL {
               //++-
               cell->child[4] = new Cell(zLowYHighXSplit + 1,
                                         zSplit, 
-                                        cell->center
-                                          + Vector(width, width,-width),
+                                        transl(cell->center,
+                                          Vector(width, width,-width)),
                                         cell->level + 1);
 
               if (cell->child[4]->size() > m_bucket_size)
@@ -389,8 +415,8 @@ namespace CGAL {
                 //--+
                 cell->child[3] = new Cell(zSplit + 1,
                                           zHighYLowXSplit,
-                                          cell->center
-                                            + Vector(-width,-width, width),
+                                          transl(cell->center,
+                                            Vector(-width,-width, width)),
                                           cell->level + 1);
 
                 if (cell->child[3]->size() > m_bucket_size)
@@ -403,8 +429,8 @@ namespace CGAL {
               //+-+
               cell->child[2] = new Cell(zHighYLowXSplit + 1,
                                         zHighYSplit, 
-                                        cell->center + 
-                                          Vector(width,-width, width),
+                                        transl(cell->center, 
+                                          Vector(width,-width, width)),
                                         cell->level + 1);
 
               if (cell->child[2]->size() > m_bucket_size)
@@ -419,8 +445,8 @@ namespace CGAL {
               //-++
               cell->child[1] = new Cell(zHighYSplit + 1,
                                         zHighYHighXSplit, 
-                                        cell->center + 
-                                          Vector(-width, width, width), 
+                                        transl(cell->center, 
+                                          Vector(-width, width, width)), 
                                         cell->level + 1);
 
               if (cell->child[1]->size() > m_bucket_size)
@@ -434,8 +460,8 @@ namespace CGAL {
               //+++
               cell->child[0] = new Cell(zHighYHighXSplit + 1, 
                                         cell->last,
-                                        cell->center +
-                                          Vector(width, width, width),
+                                        transl(cell->center,
+                                          Vector(width, width, width)),
                                         cell->level + 1);
 
               if (cell->child[0]->size() > m_bucket_size)
@@ -462,9 +488,9 @@ namespace CGAL {
         Cell *cur = m_root;
 
         while (cur && cur->level < level) {
-          upperX = cur->center[0] <= p[0];
-          upperY = cur->center[1] <= p[1];
-          upperZ = cur->center[2] <= p[2];
+          upperX = get_x(cur->center) <= get_x(p);
+          upperY = get_y(cur->center) <= get_y(p);
+          upperZ = get_z(cur->center) <= get_z(p);
 
           if (upperZ) {
             if (upperY)
@@ -541,7 +567,7 @@ namespace CGAL {
 
           FT width = m_width / (1<<(cell->level));
 
-          FT diag = CGAL::sqrt(3 * width * width) + epsilon;
+          FT diag = CGAL::sqrt(3. * width * width) + epsilon;
 
           FT dist = candidate->squared_distance(cell->center);
 
@@ -591,22 +617,22 @@ namespace CGAL {
                     (std::numeric_limits<FT>::min)()};
 
         for (std::size_t i = 0;i<this->size();i++) {
-            Point p = get(m_point_pmap, *this->at(i));
-          min[0] = (std::min<FT>)(min[0], p.x());
-          min[1] = (std::min<FT>)(min[1], p.y());
-          min[2] = (std::min<FT>)(min[2], p.z());
-          max[0] = (std::max<FT>)(max[0], p.x());
-          max[1] = (std::max<FT>)(max[1], p.y());
-          max[2] = (std::max<FT>)(max[2], p.z());
+          Point p = get(m_point_pmap, *this->at(i));
+          min[0] = (std::min<FT>)(min[0], get_x(p));
+          min[1] = (std::min<FT>)(min[1], get_y(p));
+          max[2] = (std::min<FT>)(max[2], get_z(p));
+          max[0] = (std::max<FT>)(max[0], get_x(p));
+          max[1] = (std::max<FT>)(max[1], get_y(p));
+          max[2] = (std::max<FT>)(max[2], get_z(p));
         }
 
-        m_bBox = Bbox_3(min[0], min[1], min[2], max[0], max[1], max[2]);
+        m_bBox = Bbox_3(min[0], min[1], max[2], max[0], max[1], max[2]);
 
         m_width = (std::max)(max[0] - min[0], 
-          (std::max)(max[1] - min[1], max[2] - min[2])) * (FT) 0.5;
+          (std::max)(max[1] - min[1], max[2] - max[2])) * (FT) 0.5;
         m_center = Point((min[0] + max[0]) * (FT) 0.5,
                          (min[1] + max[1]) * (FT) 0.5,
-                         (min[2] + max[2]) * (FT) 0.5);
+                         (max[2] + max[2]) * (FT) 0.5);
 
         return m_bBox;
       }
@@ -624,50 +650,56 @@ namespace CGAL {
         while(first < last) {
           // find first above threshold
           Point p1 = get(m_point_pmap, *this->at(first));
-          FT v1 = p1[(int) dimension];
-          while (get(m_point_pmap,
-                     *this->at(first))[(int) dimension] < threshold
+          FT v1 = get_coord(p1, static_cast<unsigned int>(dimension));
+          while (get_coord(
+                   get(m_point_pmap, *this->at(first)),
+                   static_cast<unsigned int>(dimension)) < threshold
                  && first < last) {
             first++;
           }
 
           // check if last has been reached
           if (first == last) {
-            return (get(m_point_pmap,
-                        *this->at(first))[(int) dimension] < threshold) ?
+            return (get_coord(
+                      get(m_point_pmap, *this->at(first)),
+                      static_cast<unsigned int>(dimension)) < threshold) ?
                    first : (first == origFirst) ? size_t_max : first - 1;
           }
 
           // find last below threshold
           p1 = get(m_point_pmap, *this->at(last));
-          v1 = p1[(int) dimension];
-          while (get(m_point_pmap, 
-                 *this->at(last))[(int) dimension] >= threshold
+          v1 = get_coord(p1, static_cast<unsigned int>(dimension));
+          while (get_coord(
+                   get(m_point_pmap, *this->at(last)),
+                   static_cast<unsigned int>(dimension)) >= threshold
                  && last > first) {
             last--;
           }
 
           // check if first has been reached
           if (last == first) {
-            return (get(m_point_pmap,
-                        *this->at(first))[(int) dimension] < threshold) ?
+            return (get_coord(
+                      get(m_point_pmap, *this->at(first)),
+                      static_cast<unsigned int>(dimension)) < threshold) ?
                     first : (first == origFirst) ? size_t_max : first - 1;
           }
 
           this->swap(first, last);
           p1 = get(m_point_pmap, *this->at(first));
-          v1 = p1[(int) dimension];
+          v1 = get_coord(p1, static_cast<unsigned int>(dimension));
           p1 = get(m_point_pmap, *this->at(last));
-          v1 = p1[(int) dimension];
+          v1 = get_coord(p1, static_cast<unsigned int>(dimension));
           first++;
           last--;
         }
 
-        return (get(m_point_pmap,
-                    *this->at(first))[(int) dimension] < threshold) ?
+        return (get_coord(
+                  get(m_point_pmap, *this->at(first)),
+                  static_cast<unsigned int>(dimension)) < threshold) ?
                first : (first == origFirst) ? size_t_max : first - 1;
       }
 
+      Sd_traits m_traits;
       Bbox_3 m_bBox;
       Cell *m_root;
       Point m_center;

@@ -71,14 +71,14 @@ namespace CGAL {
       Access to the center.
      */
     Point_3 center() const {
-      return m_sphere.center();
+      return this->sph_center(m_sphere);
     }
       
     /*!
       Access to the radius of the sphere.
      */
     FT radius() const {
-      return CGAL::sqrt(m_sphere.squared_radius());
+      return CGAL::sqrt(this->sqradius(m_sphere));
     }
 
     /// \cond SKIP_IN_MANUAL
@@ -86,7 +86,10 @@ namespace CGAL {
       Computes the squared Euclidean distance from query point to the shape.
       */
     FT squared_distance(const Point_3 &p) const {
-      const FT d = CGAL::sqrt((m_sphere.center() - p).squared_length()) - CGAL::sqrt(m_sphere.squared_radius());
+      const FT d = CGAL::sqrt(
+        this->sqlen(this->constr_vec(
+          p, this->sph_center(m_sphere)))) 
+        - CGAL::sqrt(this->sqradius(m_sphere));
       return d * d;
     }
     
@@ -96,11 +99,11 @@ namespace CGAL {
      */
     std::string info() const {
       std::stringstream sstr;
-      Point_3 c = m_sphere.center();
-      FT r = CGAL::sqrt(m_sphere.squared_radius());
+      Point_3 c = this->sph_center(m_sphere);
+      FT r = CGAL::sqrt(this->sqradius(m_sphere));
 
-      sstr << "Type: sphere center: (" << c.x() << ", " << c.y();
-      sstr << ", " << c.z() << ") radius:" << r;
+      sstr << "Type: sphere center: (" << this->get_x(c) << ", " << this->get_y(c);
+      sstr << ", " << this->get_z(c) << ") radius:" << r;
       sstr << " #Pts: " <<  this->m_indices.size();
 
       return sstr.str();
@@ -120,11 +123,11 @@ namespace CGAL {
 
       // Determine center: select midpoint of shortest line segment
       // between p1 and p2. Implemented from "3D game engine design" by Eberly 2001
-      Vector_3 diff = p1 - p2;
-      FT a = n1 * n1;
-      FT b = -(n1 * n2);
-      FT c = n2 * n2;
-      FT d = n1 * diff;
+      Vector_3 diff = this->constr_vec(p2, p1);
+      FT a = this->scalar_pdct(n1, n1);
+      FT b = -this->scalar_pdct(n1, n2);
+      FT c = this->scalar_pdct(n2, n2);
+      FT d = this->scalar_pdct(n1, diff);
 
       FT det = CGAL::abs(a * c - b * b);
 
@@ -134,58 +137,61 @@ namespace CGAL {
         return;
       }
 
-      FT e = -n2 * diff;
+      FT e = -this->scalar_pdct(n2, diff);
       FT invDet = (FT) 1.0 / det;
       FT s = (b * e - c * d) * invDet;
       FT t = (d * b - a * e) * invDet;
 
-      Point_3 center = CGAL::ORIGIN + (FT)0.5 * (((p1 + s * n1) - CGAL::ORIGIN)
-                     + ((p2 + t * n2) - CGAL::ORIGIN));
+      Vector_3 v_transl = this->sum_vectors(
+        this->constr_vec(this->transl(p1, this->scale(n1, s)), CGAL::ORIGIN),
+        this->constr_vec(this->transl(p2, this->scale(n2, t)), CGAL::ORIGIN));
+      Point_3 center = this->transl(
+        CGAL::ORIGIN, this->scale(v_transl, (FT)0.5));
 
-      Vector_3 v1 = (p1 - center);
-      Vector_3 v2 = (p2 - center);
-      FT d1 = CGAL::sqrt(v1.squared_length());
-      FT d2 = CGAL::sqrt(v2.squared_length());
+      Vector_3 v1 = (this->constr_vec(center, p1));
+      Vector_3 v2 = (this->constr_vec(center, p2));
+      FT d1 = CGAL::sqrt(this->sqlen(v1));
+      FT d2 = CGAL::sqrt(this->sqlen(v2));
 
       if (CGAL::abs(d1 - d2) > (FT)2.0 * this->m_epsilon) {
         this->m_is_valid = false;
         return;
       }
 
-      v1 = v1 * ((FT)1.0 / d1);
-      v2 = v2 * ((FT)1.0 / d2);
+      v1 = this->scale(v1, (FT)1.0 / d1);
+      v2 = this->scale(v2, (FT)1.0 / d2);
 
-      if (n1 * v1 < this->m_normal_threshold ||
-          n2 * v2 < this->m_normal_threshold) {
+      if (this->scalar_pdct(n1, v1) < this->m_normal_threshold ||
+          this->scalar_pdct(n2, v2) < this->m_normal_threshold) {
         this->m_is_valid = false;
         return;
       }
 
-      Vector_3 v3 = (p3 - center);
-      FT d3 = CGAL::sqrt(v3.squared_length());
-      v3 = v3 * ((FT)1.0 / d3);
+      Vector_3 v3 = this->constr_vec(center, p3);
+      FT d3 = CGAL::sqrt(this->sqlen(v3));
+      v3 = this->scale(v3, (FT)1.0 / d3);
 
       FT radius = (d1 + d2) * (FT)0.5;
 
       if (CGAL::abs(d3 - radius) > this->m_epsilon ||
-          n3 * v3 < this->m_normal_threshold) {
+          this->scalar_pdct(n3, v3) < this->m_normal_threshold) {
         this->m_is_valid = false;
         return;
       }
 
       this->m_is_valid = true;
 
-      m_sphere = Sphere_3(center, radius * radius);
+      m_sphere = this->constr_sphere(center, radius * radius);
     }
 
     virtual void squared_distance(const std::vector<std::size_t> &indices,
                                   std::vector<FT> &dists) const {
 
-      FT radius = CGAL::sqrt(m_sphere.squared_radius());
+      FT radius = CGAL::sqrt(this->sqradius(m_sphere));
 
       for (std::size_t i = 0;i<indices.size();i++) {
-        dists[i] = CGAL::sqrt((m_sphere.center()
-          - this->point(indices[i])).squared_length())
+        dists[i] = CGAL::sqrt(this->sqlen(this->constr_vec(
+          this->sph_center(m_sphere), this->point(indices[i]))))
           - radius;
 
         dists[i] = dists[i] * dists[i];
@@ -195,27 +201,29 @@ namespace CGAL {
     virtual void cos_to_normal(const std::vector<std::size_t> &indices, 
                                std::vector<FT> &angles) const {
       for (std::size_t i = 0;i<indices.size();i++) {
-        Vector_3 n = m_sphere.center() - this->point(indices[i]);
+        Vector_3 n = this->constr_vec(
+          this->point(indices[i]),
+          this->sph_center(m_sphere));
 
-        FT length = CGAL::sqrt(n.squared_length());
+        FT length = CGAL::sqrt(this->sqlen(n));
         if (length == 0) {
           angles[i] = (FT)1.0;
           continue;
         }
 
-        n = n * (FT)1.0 / length;
-        angles[i] = CGAL::abs(this->normal(indices[i]) * n);
+        n = this->scale(n, (FT)1.0 / length);
+        angles[i] = CGAL::abs(this->scalar_pdct(this->normal(indices[i]), n));
       }
     }
 
     virtual FT cos_to_normal(const Point_3 &p, const Vector_3 &n) const {
-      Vector_3 sphere_normal = m_sphere.center() - p;
-      FT length = (FT)(CGAL::sqrt(n.squared_length()));
+      Vector_3 sphere_normal = this->constr_vec(p, this->sph_center(m_sphere));
+      FT length = (FT)(CGAL::sqrt(this->sqlen(n)));
       if (length == 0)
         return 1;
 
-      sphere_normal = sphere_normal * ((FT)1.0 / length);
-      return CGAL::abs(sphere_normal * n);
+      sphere_normal = this->scale(sphere_normal, (FT)1.0 / length);
+      return CGAL::abs(this->scalar_pdct(sphere_normal, n));
     }
       
     virtual std::size_t minimum_sample_size() const {
@@ -269,33 +277,34 @@ namespace CGAL {
       FT rad = radius();
       // Take average normal as axis
       for (std::size_t i = 0;i<indices.size();i++)
-        axis = axis + this->normal(indices[i]);
-      axis = axis / (CGAL::sqrt(axis.squared_length()));
+        axis = this->sum_vectors(axis, this->normal(indices[i]));
+      axis = this->scale(axis, FT(1) / CGAL::sqrt(this->sqlen(axis)));
 
       // create basis d1, d2
       Vector_3 d1 = Vector_3((FT) 0, (FT) 0, (FT) 1);
-      Vector_3 d2 = CGAL::cross_product(axis, d1);
-      FT l = d2.squared_length();
+      Vector_3 d2 = this->cross_pdct(axis, d1);
+      FT l = this->sqlen(d2);
       if (l < (FT)0.0001) {
         d1 = Vector_3((FT) 1, (FT) 0, (FT) 0);
-        d2 = CGAL::cross_product(axis, d1);
-        l = d2.squared_length();
+        d2 = this->cross_pdct(axis, d1);
+        l = this->sqlen(d2);
       }
-      d2 = d2 / CGAL::sqrt(l);
+      d2 = this->scale(d2, FT(1) / CGAL::sqrt(l));
 
-      d1 = CGAL::cross_product(axis, d2);
-      l = CGAL::sqrt(d1.squared_length());
+      d1 = this->cross_pdct(axis, d2);
+      l = CGAL::sqrt(this->sqlen(d1));
       if (l == 0)
         return;
 
-      d1 = d1 * (FT)1.0 / l;
+      d1 = this->scale(d1, (FT)1.0 / l);
 
       // Process first point separately to initialize min/max
-      Vector_3 vec = this->point(indices[0]) - m_sphere.center();
+      Vector_3 vec = this->constr_vec(
+        this->sph_center(m_sphere), this->point(indices[0]));
 
       // sign indicates northern or southern hemisphere
-      FT proj = (axis * vec) / rad;
-      FT phi = atan2(vec * d2, vec * d1);
+      FT proj = (this->scalar_pdct(axis, vec)) / rad;
+      FT phi = atan2(this->scalar_pdct(vec, d2), this->scalar_pdct(vec, d1));
       FT x = FT(0), y = FT(0);
       concentric_mapping(phi, proj, rad, x, y);
 
@@ -305,10 +314,11 @@ namespace CGAL {
       parameterSpace[0] = std::pair<FT, FT>(x, y);
 
       for (std::size_t i = 1;i<indices.size();i++) {
-        Vector_3 vec = this->point(indices[i]) - m_sphere.center();
+        Vector_3 vec = this->constr_vec(
+          this->sph_center(m_sphere), this->point(indices[i]));
         // sign indicates northern or southern hemisphere
-        proj = (axis * vec) / rad;
-        phi = atan2(vec * d2, vec * d1);
+        proj = (this->scalar_pdct(axis, vec)) / rad;
+        phi = atan2(this->scalar_pdct(vec, d2), this->scalar_pdct(vec, d1));
 
         concentric_mapping(phi, proj, rad, x, y);
 

@@ -48,6 +48,7 @@ bool test_cylinder_parameters() {
 
 
     Efficient_ransac ransac;
+    Traits traits = ransac.traits();
 
     ransac.template add_shape_factory<Cylinder>();
 
@@ -87,8 +88,10 @@ bool test_cylinder_parameters() {
       continue;
 
     pos = pos - ((pos - CGAL::ORIGIN) * axis) * axis;
-
-    if ((pos - center).squared_length() > 0.0004)
+    
+    FT center_pos_sqlen = traits.compute_squared_length_3_object()(
+      traits.construct_vector_3(center, pos));
+    if (center_pos_sqlen > FT(0.0004))
       continue;
 
     std::string info = cyl->info();

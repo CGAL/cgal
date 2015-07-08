@@ -27,8 +27,6 @@
 #include <boost/tuple/tuple.hpp>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Fuzzy_sphere.h>
-#include <CGAL/Search_traits_3.h>
-#include <CGAL/squared_distance_3.h>
 #include <CGAL/property_map.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Random.h>
@@ -83,7 +81,10 @@ namespace CGAL {
     typedef typename Traits::FT FT; ///< number type.
     typedef typename Traits::Point_3 Point_3; ///< point type.
     typedef typename Traits::Vector_3 Vector_3; ///< vector type.
+    typedef typename Traits::Sphere_3 Sphere_3; ///< sphere type.
+    typedef typename Traits::Line_3 Line_3; ///< line type.
 
+    // \todo The property maps should be passed here instead of `compute`
     Shape_base() :
     m_is_valid(false),
       m_lower_bound((std::numeric_limits<FT>::min)()),
@@ -602,6 +603,43 @@ namespace CGAL {
     virtual bool supports_connected_component() const {
       return false;
     };
+
+    
+      // --------------------------------------------------------------------------
+      // Utilities
+      // --------------------------------------------------------------------------
+      FT get_x(const Vector_3& v) const { return m_traits.compute_x_3_object()(v); }
+      FT get_y(const Vector_3& v) const { return m_traits.compute_y_3_object()(v); }
+      FT get_z(const Vector_3& v) const { return m_traits.compute_z_3_object()(v); }
+      FT get_x(const Point_3& p) const { return m_traits.compute_x_3_object()(p); }
+      FT get_y(const Point_3& p) const { return m_traits.compute_y_3_object()(p); }
+      FT get_z(const Point_3& p) const { return m_traits.compute_z_3_object()(p); }
+      
+      Vector_3 constr_vec(const Point_3& p, const Point_3& q) const
+      { return m_traits.construct_vector_3_object()(p, q); }
+      Vector_3 constr_vec(const Line_3& l) const
+      { return m_traits.construct_vector_3_object()(l); }
+      Sphere_3 constr_sphere(const Point_3& c, FT r) const
+      { return m_traits.construct_sphere_3_object()(c, r); }
+      Point_3 constr_point_on(const Line_3& l) const
+      { return m_traits.construct_point_on_3_object()(l); }
+
+      FT sqlen(const Vector_3& v) const
+      { return m_traits.compute_squared_length_3_object()(v); }
+      Vector_3 scale(const Vector_3& v, FT scale) const
+      { return m_traits.construct_scaled_vector_3_object()(v, scale); }
+      Vector_3 sum_vectors(const Vector_3& u, const Vector_3& v) const
+      { return m_traits.construct_sum_of_vectors_3_object()(u, v); }
+      Point_3 transl(const Point_3& p, const Vector_3 &v) const
+      { return m_traits.construct_translated_point_3_object()(p, v); }
+      FT scalar_pdct(const Vector_3& u, const Vector_3& v) const
+      { return m_traits.compute_scalar_product_3_object()(u, v); }
+      Vector_3 cross_pdct(const Vector_3& u, const Vector_3& v) const
+      { return m_traits.compute_cross_product_3_object()(u, v); }
+      Point_3 sph_center(const Sphere_3& s) const
+      { return m_traits.construct_center_3_object()(s); }
+      FT sqradius(const Sphere_3& s) const
+      { return m_traits.compute_squared_radius_3_object()(s); }
 
   protected:
     /// \endcond

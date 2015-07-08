@@ -86,9 +86,9 @@ namespace CGAL {
     std::string info() const {
         std::stringstream sstr;
         
-        sstr << "Type: cone apex: (" << m_apex.x() << ", " << m_apex.y();
-        sstr << ", " << m_apex.z() << ") axis: (" << m_axis.x() << ", ";
-        sstr << m_axis.y() << ", " << m_axis.z() << ") angle:" << m_angle;
+        sstr << "Type: cone apex: (" << this->get_x(m_apex) << ", " << this->get_y(m_apex);
+        sstr << ", " << this->get_z(m_apex) << ") axis: (" << this->get_x(m_axis) << ", ";
+        sstr << this->get_y(m_axis) << ", " << this->get_z(m_axis) << ") angle:" << m_angle;
         sstr << " #Pts: " << this->m_indices.size();
         
         return sstr.str();
@@ -98,11 +98,11 @@ namespace CGAL {
     Computes squared Euclidean distance from query point to the shape.
     */ 
     FT squared_distance(const Point_3 &p) const {
-      Vector_3 toApex = p - m_apex;
-      FT a = toApex.squared_length();
+      Vector_3 toApex = this->constr_vec(m_apex, p);
+      FT a = this->sqlen(toApex);
 
       // projection on axis
-      FT b = toApex * m_axis;
+      FT b = this->scalar_pdct(toApex, m_axis);
 
       // distance to axis
       if (a - b * b <= 0)
@@ -130,70 +130,74 @@ namespace CGAL {
 
       // first calculate intersection of three planes -> apex
 
-      Vector_3 lineDir = CGAL::cross_product(n1, n2);
-      FT length = CGAL::sqrt(lineDir.squared_length());
+      Vector_3 lineDir = this->cross_pdct(n1, n2);
+      FT length = CGAL::sqrt(this->sqlen(lineDir));
       if (length == 0)
         return;
 
-      lineDir = lineDir * (FT)1.0 / length;
+      lineDir = this->scale(lineDir, (FT)1.0 / length);
 
       // lineDir not normalized direction of intersection lines
       //  of two planes (p1, n1) and (p2, n2)
       // get point on line by moving point p1 onto line
-      Vector_3 orthLineInPlane = CGAL::cross_product(n1, lineDir);
-      length = CGAL::sqrt(orthLineInPlane.squared_length());
+      Vector_3 orthLineInPlane = this->cross_pdct(n1, lineDir);
+      length = CGAL::sqrt(this->sqlen(orthLineInPlane));
       if (length == 0)
         return;
 
-      orthLineInPlane = orthLineInPlane * (FT)1.0 / length;
+      orthLineInPlane = this->scale(orthLineInPlane, (FT)1.0 / length);
 
       // distance of p1 to (p2, n2)
-      FT d = (p1 - CGAL::ORIGIN) * n2 - (p2 - CGAL::ORIGIN) * n2;
+      FT d = this->scalar_pdct(this->constr_vec(CGAL::ORIGIN, p1), n2)
+        - this->scalar_pdct(this->constr_vec(CGAL::ORIGIN, p2), n2);
       // projection of orthLineInPlane onto p2
-      FT l = orthLineInPlane * n2;
+      FT l = this->scalar_pdct(orthLineInPlane, n2);
       if (l == 0)
         return;
 
-      Point_3 pointOnLine = p1 - (d/l) * orthLineInPlane;
+      Point_3 pointOnLine = this->transl(
+        p1, this->scale(orthLineInPlane, -d/l));
 
       // distance of pLineDir to (p3, n3)
-      d = (pointOnLine - CGAL::ORIGIN) * n3 - (p3 - CGAL::ORIGIN) * n3;
-      l = lineDir * n3;
+      d = this->scalar_pdct(this->constr_vec(CGAL::ORIGIN, pointOnLine), n3)
+        - this->scalar_pdct(this->constr_vec(CGAL::ORIGIN, p3), n3);
+      l = this->scalar_pdct(lineDir, n3);
       if (l == 0)
         return;
 
-      m_apex = pointOnLine - (d/l) * lineDir;
+      m_apex = this->transl(pointOnLine, this->scale(lineDir, -d/l));
 
       // 2. find axis
-      Vector_3 v1 = p1 - m_apex;
-      length = CGAL::sqrt(v1.squared_length());
+      Vector_3 v1 = this->constr_vec(m_apex, p1);
+      length = CGAL::sqrt(this->sqlen(v1));
       if (length == 0)
         return;
-      v1 = v1 * (FT)1.0 / length;
-      Point_3 c1 = m_apex + v1;
+      v1 = this->scale(v1, (FT)1.0 / length);
+      Point_3 c1 = this->transl(m_apex, v1);
 
-      Vector_3 v2 = p2 - m_apex;
-      length = CGAL::sqrt(v2.squared_length());
+      Vector_3 v2 = this->constr_vec(m_apex, p2);
+      length = CGAL::sqrt(this->sqlen(v2));
       if (length == 0)
         return;
-      v2 = v2 * (FT)1.0 / length;
-      Point_3 c2 = m_apex + v2;
+      v2 = this->scale(v2, (FT)1.0 / length);
+      Point_3 c2 = this->transl(m_apex, v2);
 
-      Vector_3 v3 = p3 - m_apex;
-      length = CGAL::sqrt(v3.squared_length());
+      Vector_3 v3 = this->constr_vec(m_apex, p3);
+      length = CGAL::sqrt(this->sqlen(v3));
       if (length == 0)
         return;
-      v3 = v3 * (FT)1.0 / length;
-      Point_3 c3 = m_apex + v3;
+      v3 = this->scale(v3, (FT)1.0 / length);
+      Point_3 c3 = this->transl(m_apex, v3);
 
-      m_axis = CGAL::cross_product(c1 - c2, c1 - c3);
-      m_axis = (orthLineInPlane * m_axis < 0) ? -m_axis : m_axis;
-      length = CGAL::sqrt(m_axis.squared_length());
+      m_axis = this->cross_pdct(this->constr_vec(c2, c1), this->constr_vec(c3, c1));
+      m_axis = (this->scalar_pdct(orthLineInPlane, m_axis) < 0) ? 
+        this->scale(m_axis, FT(-1)) : m_axis;
+      length = CGAL::sqrt(this->sqlen(m_axis));
       if (length == 0)
         return;
-      m_axis = m_axis * (FT)1.0 / length;
+      m_axis = this->scale(m_axis, (FT)1.0 / length);
 
-      m_angle = acos(v1 * m_axis) + acos(v2 * m_axis) + acos(v3 * m_axis);
+      m_angle = acos(this->scalar_pdct(v1, m_axis)) + acos(this->scalar_pdct(v2, m_axis)) + acos(this->scalar_pdct(v3, m_axis));
       m_angle /= (FT)3.0;
       if (m_angle < 0 || m_angle > CGAL_PI / (FT)2.12)
         return;
@@ -207,12 +211,12 @@ namespace CGAL {
     virtual void squared_distance(const std::vector<std::size_t> &indices,
                                   std::vector<FT> &dists) const {
       for (std::size_t i = 0;i<indices.size();i++) {
-          Vector_3 to_apex = this->point(indices[i]) - m_apex;
+          Vector_3 to_apex = this->constr_vec(m_apex, this->point(indices[i]));
 
-          FT a = to_apex.squared_length();
+          FT a = this->sqlen(to_apex);
 
           // projection on axis
-          FT b = to_apex * m_axis;
+          FT b = this->scalar_pdct(to_apex, m_axis);
 
           // distance to axis
           FT l = CGAL::sqrt(a - b * b);
@@ -229,39 +233,43 @@ namespace CGAL {
                                std::vector<FT> &angles) const {
       for (std::size_t i = 0;i<indices.size();i++) {
           // construct vector orthogonal to axis in direction of the point
-        Vector_3 a = this->point(indices[i]) - m_apex;
+        Vector_3 a = this->constr_vec(m_apex, this->point(indices[i]));
 
-          Vector_3 b = CGAL::cross_product(m_axis, 
-                                         CGAL::cross_product(m_axis, a));
-          b = (a * b < 0) ? -b : b;
-          FT length = CGAL::sqrt(b.squared_length());
+          Vector_3 b = this->cross_pdct(m_axis, 
+                                         this->cross_pdct(m_axis, a));
+          b = (this->scalar_pdct(a, b) < 0) ? this->scale(b, FT(-1)) : b;
+          FT length = CGAL::sqrt(this->sqlen(b));
 
           if (length == 0) {
             angles[i] = (FT)1.0;
             continue;
           }
 
-          b = b * (FT)1.0 / length;
-          b = m_cos_ang * b + m_neg_sin_ang * m_axis;
+          b = this->scale(b, (FT)1.0 / length);
+          b = this->sum_vectors(
+            this->scale(b, m_cos_ang), 
+            this->scale(m_axis, m_neg_sin_ang));
 
-          angles[i] = CGAL::abs(this->normal(indices[i]) * b);
+          angles[i] = CGAL::abs(this->scalar_pdct(this->normal(indices[i]), b));
         }
       }
 
     virtual FT cos_to_normal(const Point_3 &p, const Vector_3 &n) const {
       // construct vector orthogonal to axis in direction of the point
-      Vector_3 a = p - m_apex;
-      Vector_3 b = CGAL::cross_product(m_axis, CGAL::cross_product(m_axis, a));
-      b = (a * b < 0) ? -b : b;
-      FT length = CGAL::sqrt(b.squared_length());
+      Vector_3 a = this->constr_vec(m_apex, p);
+      Vector_3 b = this->cross_pdct(m_axis, this->cross_pdct(m_axis, a));
+      b = (this->scalar_pdct(a, b) < 0) ? this->scale(b, FT(-1)) : b;
+      FT length = CGAL::sqrt(this->sqlen(b));
       if (length == 0) {
         return (FT)1.0;
       }
 
-      b = b * (FT)1.0 / length;
-      b = m_cos_ang * b + m_neg_sin_ang * m_axis;
+      b = this->scale(b, (FT)1.0 / length);
+      b = this->sum_vectors(
+        this->scale(b, m_cos_ang), 
+        this->scale(m_axis, m_neg_sin_ang));
 
-      return CGAL::abs(n * b);
+      return CGAL::abs(this->scalar_pdct(n, b));
     }
       
     virtual std::size_t minimum_sample_size() const {
@@ -336,21 +344,21 @@ namespace CGAL {
 
       // Create basis d1, d2
       Vector_3 d1 = Vector_3((FT) 0, (FT) 0, (FT) 1);
-      Vector_3 d2 = CGAL::cross_product(m_axis, d1);
-      FT l = d2.squared_length();
+      Vector_3 d2 = this->cross_pdct(m_axis, d1);
+      FT l = this->sqlen(d2);
       if (l < (FT)0.0001) {
         d1 = Vector_3((FT) 1, (FT) 0, (FT) 0);
-        d2 = CGAL::cross_product(m_axis, d1);
-        l = d2.squared_length();
+        d2 = this->cross_pdct(m_axis, d1);
+        l = this->sqlen(d2);
       }
-      d2 = d2 / CGAL::sqrt(l);
+      d2 = this->scale(d2, FT(1) / CGAL::sqrt(l));
 
-      d1 = CGAL::cross_product(m_axis, d2);
-      l = CGAL::sqrt(d1.squared_length());
+      d1 = this->cross_pdct(m_axis, d2);
+      l = CGAL::sqrt(this->sqlen(d1));
       if (l == 0)
         return;
 
-      d1 = d1 * (FT)1.0 / l;
+      d1 = this->scale(d1, (FT)1.0 / l);
 
       if (m_angle > CGAL_M_PI_4) {
         // Projection onto a disk preserving distance to apex
@@ -358,10 +366,10 @@ namespace CGAL {
         m_wrap = false;
 
         // First index separately to initialize min/max
-        Vector_3 d = this->point(indices[0]) - m_apex;
-        FT l = d * m_axis / m_cos_ang;
-        FT u = d * d1;
-        FT v = d * d2;
+        Vector_3 d = this->constr_vec(m_apex, this->point(indices[0]));
+        FT l = this->scalar_pdct(d, m_axis) / m_cos_ang;
+        FT u = this->scalar_pdct(d, d1);
+        FT v = this->scalar_pdct(d, d2);
         FT l2 = CGAL::sqrt(u * u + v * v);
         u = u * l/l2;
         v = v * l/l2;
@@ -370,10 +378,10 @@ namespace CGAL {
         parameterSpace[0] = std::pair<FT, FT>(u, v);
 
         for (std::size_t i = 1;i<indices.size();i++) {
-          d = this->point(indices[i]) - m_apex;
-          l = d * m_axis / m_cos_ang;
-          u = d * d1;
-          v = d * d2;
+          d = this->constr_vec(m_apex, this->point(indices[i]));
+          l = this->scalar_pdct(d, m_axis) / m_cos_ang;
+          u = this->scalar_pdct(d, d1);
+          v = this->scalar_pdct(d, d2);
           l2 = CGAL::sqrt(u * u + v * v);
           u = u * l/l2;
           v = v * l/l2;
@@ -392,9 +400,9 @@ namespace CGAL {
         // u coordinate is arclength
         // v coordinate is distance to apex
 
-        Vector_3 d = this->point(indices[0]) - m_apex;
-        FT v = d * m_axis / m_cos_ang;
-        FT phi = atan2(d * d2, d * d1);
+        Vector_3 d = this->constr_vec(m_apex, this->point(indices[0]));
+        FT v = this->scalar_pdct(d, m_axis) / m_cos_ang;
+        FT phi = atan2(this->scalar_pdct(d, d2), this->scalar_pdct(d, d1));
         FT radPerDist = -m_neg_sin_ang * v;
         FT u = FT(phi + CGAL_PI);// * radPerDist;
         FT avg_v = v;
@@ -403,9 +411,9 @@ namespace CGAL {
         min[1] = max[1] = v;
         parameterSpace[0] = std::pair<FT, FT>(u, v);
         for (std::size_t i = 1;i<indices.size();i++) {
-          d = this->point(indices[i]) - m_apex;
-          v = d * m_axis / m_cos_ang;
-          phi = atan2(d * d2, d * d1);
+          d = this->constr_vec(m_apex, this->point(indices[i]));
+          v = this->scalar_pdct(d, m_axis) / m_cos_ang;
+          phi = atan2(this->scalar_pdct(d, d2), this->scalar_pdct(d, d1));
           radPerDist = -m_neg_sin_ang * v;
           u = FT(phi + CGAL_PI);// * radPerDist;
 
