@@ -299,7 +299,7 @@ namespace CGAL {
     }
 
     virtual void squared_distance(const std::vector<std::size_t> &indices,
-                                  std::vector<FT> &dists) {
+                                  std::vector<FT> &dists) const {
       Vector_3 a = m_axis.to_vector();
       a = a * ((FT)1.0 / CGAL::sqrt(a.squared_length()));
       for (std::size_t i = 0;i<indices.size();i++) {

@@ -348,7 +348,7 @@ namespace CGAL {
       The distances will be stored in the so called parameter.
      */
     virtual void squared_distance(const std::vector<std::size_t> &indices,
-                                  std::vector<FT> &distances) = 0;
+                                  std::vector<FT> &distances) const = 0;
 
     /*!
       Computes the deviation of the point normal from the surface normal at the

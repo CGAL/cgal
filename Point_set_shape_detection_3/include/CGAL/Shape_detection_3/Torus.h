@@ -263,7 +263,7 @@ namespace CGAL {
     }
 
     virtual void squared_distance(const std::vector<std::size_t> &indices,
-                                  std::vector<FT> &dists) {
+                                  std::vector<FT> &dists) const {
       for (std::size_t i = 0;i<indices.size();i++) {
         Point_3 po = this->point(indices[i]);
         Vector_3 d = po - m_center;

@@ -179,7 +179,7 @@ namespace CGAL {
     }
 
     virtual void squared_distance(const std::vector<std::size_t> &indices,
-                                  std::vector<FT> &dists) {
+                                  std::vector<FT> &dists) const {
 
       FT radius = CGAL::sqrt(m_sphere.squared_radius());
 
