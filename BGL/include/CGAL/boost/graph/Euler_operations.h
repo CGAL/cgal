@@ -976,8 +976,8 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
     join_vertex(pq,g);
     lP_Erased = true ;
   }    
-  
-  CGAL_assertion(is_valid(g));
+
+  CGAL_expensive_assertion(is_valid(g));
 
   return lP_Erased ? q : p ;
 }
