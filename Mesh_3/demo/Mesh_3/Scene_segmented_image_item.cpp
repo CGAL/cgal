@@ -717,7 +717,7 @@ Scene_segmented_image_item::initialize_buffers()
 
   draw_Bbox(bbox(), v_box);
   std::vector<float> nul_vec(0);
-  for(int i=0; i<v_box->size(); i++)
+  for(std::size_t i=0; i<v_box->size(); i++)
       nul_vec.push_back(0.0);
 
   rendering_program.bind();
@@ -748,7 +748,7 @@ Scene_segmented_image_item::initialize_buffers()
   vao[0].release();
 
   color.resize(0);
-  for(int i=0; i<helper.color_size()/sizeof(GLuint); i++)
+  for(std::size_t i=0; i<helper.color_size()/sizeof(GLuint); i++)
       color.push_back(0.0);
 
   vao[1].bind();
