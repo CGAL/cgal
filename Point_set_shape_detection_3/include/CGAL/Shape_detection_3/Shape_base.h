@@ -31,6 +31,7 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/property_map.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Random.h>
 
 /*!
  \file Shape_base.h
@@ -468,6 +469,42 @@ namespace CGAL {
 
     bool is_valid() const {
       return m_is_valid;
+    }
+
+    // Two shapes are considered the same if from 18 points randomly selected
+    // from the shapes at least 12 match both shapes
+    bool is_same(const Shape_base *other) const {
+      if (!other)
+        return false;
+
+      const std::size_t num = 9;
+      int score = 0;
+      std::vector<std::size_t> indices(num);
+      for (std::size_t i = 0;i<num;i++)
+        indices[i] = m_indices[default_random(m_indices.size())];
+      
+      std::vector<FT> dists(num), angles(num);
+      other->squared_distance(indices, dists);
+      other->cos_to_normal(indices, angles);
+
+      for (std::size_t i = 0;i<num;i++)
+        if (dists[i] <= m_epsilon && angles[i] > m_normal_threshold)
+          score++;
+
+      if (score < 3)
+        return false;
+
+      for (std::size_t i = 0;i<num;i++)
+        indices[i] = other->m_indices[default_random(other->m_indices.size())];
+
+      this->squared_distance(indices, dists);
+      this->cos_to_normal(indices, angles);
+
+      for (std::size_t i = 0;i<num;i++)
+        if (dists[i] <= m_epsilon && angles[i] > m_normal_threshold)
+          score++;
+
+      return (score >= 12);
     }
 
     virtual void parameters(const std::vector<std::size_t>& indices,
