@@ -101,13 +101,13 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
     
     target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
     
-  else( QGLVIEWER_FOUND)
+  else( QGLVIEWER_FOUND AND Qt5_FOUND)
     message(STATUS "NOTICE: This demo needs libQGLViewer, and will not be compiled.")
-  endif( QGLVIEWER_FOUND)
-else(CGAL_FOUND AND CGAL_Qt5_FOUND)
+  endif( QGLVIEWER_FOUND AND Qt5_FOUND)
+else(CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
   if(RUNNING_CGAL_AUTO_TEST)
     # Just to avoid a warning from CMake if that variable is set on the command line...
   endif()
 
   message(STATUS "NOTICE: This demo needs Qt5, and will not be compiled.")
-endif(CGAL_FOUND AND CGAL_Qt5_FOUND)
+endif(CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)

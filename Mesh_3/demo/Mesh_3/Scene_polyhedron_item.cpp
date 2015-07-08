@@ -253,7 +253,7 @@ void Scene_polyhedron_item::initialize_buffers() const
         buffers[4].release();
         std::vector<float> empty_array;
         empty_array.resize(0);
-        for(int i=0; i<v_edge.size(); i++)
+        for(std::size_t i=0; i<v_edge.size(); i++)
             empty_array.push_back(0.0);
         buffers[5].bind();
         buffers[5].allocate(empty_array.data(), empty_array.size()*sizeof(float));

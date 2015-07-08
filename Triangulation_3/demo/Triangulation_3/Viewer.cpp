@@ -1559,7 +1559,7 @@ void Viewer::draw()
         drawText( width()-200, 40, tr("Shift+Wheel: Resize trackball"), fontPrompt );
 
     }
-    if(m_curMode != NORMAL && m_showTrackball)
+    if(m_selMode != NORMAL && m_showTrackball)
     {
         rendering_program_spheres.bind();
         vao[11].bind();
@@ -2390,9 +2390,9 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
 {
     vertices->resize(0);
     normals->resize(0);
-    int rings=360/prec, sectors=360/prec;
-    float T, P;
-    float x[4],y[4],z[4];
+    // int rings=360/prec, sectors=360/prec;
+    // float T, P;
+    // float x[4],y[4],z[4];
     //Closing nicely the tubes will cause z-fighting and the spherical parts will get all messy
     /*
 //top of the cylinder

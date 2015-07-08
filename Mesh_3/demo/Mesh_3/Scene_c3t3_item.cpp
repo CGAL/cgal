@@ -19,18 +19,6 @@
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
 
-namespace {
-  void CGALglcolor(QColor c, int dv = 0)
-  {
-    if ( 0 != dv )
-    {
-      c = c.darker(dv);
-#undef darker
-    }
-    
-    ::glColor4f(c.red()/255.0, c.green()/255.0, c.blue()/255.0, c.alpha()/255.0);
-  }
-}
 struct Scene_c3t3_item_priv {
   Scene_c3t3_item_priv() : c3t3() {}
   Scene_c3t3_item_priv(const C3t3& c3t3_) : c3t3(c3t3_) {}
