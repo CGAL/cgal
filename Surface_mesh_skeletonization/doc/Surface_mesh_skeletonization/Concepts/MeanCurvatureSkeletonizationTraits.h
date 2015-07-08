@@ -27,97 +27,97 @@ typedef unspecified_type FT;
 
 /*!
  * Function object type that provides
- * `Point_3 operator()(FT x, FT y, FT z)`
+ * `Point_3 operator()(FT x, FT y, FT z) const`
  * returning the point with `x`, `y` and `z` as Cartesian coordinates.
  */
 typedef unspecified_type Construct_point_3;
 
 /*!
- * Function object type that provides `Point_3 operator()(Point_3 p1, Point_3 p2)`
- * returning the vector `p1p2`, and `Point_3 operator()(NULL_VECTOR)` returning the null vector.
+ * Function object type that provides `Point_3 operator()(Point_3 p1, Point_3 p2) const`
+ * returning the vector `p1p2`, and `Point_3 operator()(NULL_VECTOR) const` returning the null vector.
  */
 typedef unspecified_type Construct_vector_3;
 
 /*!
  * Function object type that provides
- * `Vector_3 operator()(Vector_3 v, FT t)`
+ * `Vector_3 operator()(Vector_3 v, FT t) const`
  * returning the vector `t * v`.
  */
 typedef unspecified_type Construct_scaled_vector_3;
 
 /*!
  * Function object type that provides
- * `Vector_3 operator()(Vector_3 v, FT t)`
+ * `Vector_3 operator()(Vector_3 v, FT t) const`
  * returning the vector `v / t`.
  */
 typedef unspecified_type Construct_divided_vector_3;
 
 /*!
  * Function object type that provides
- * `Vector_3 operator()(Vector_3 v1, Vector_3 v2)`
+ * `Vector_3 operator()(Vector_3 v1, Vector_3 v2) const`
  * returning the cross-product vector of `v1` and `v2`.
  */
 typedef unspecified_type Construct_cross_product_vector_3;
 
 /*!
  * Function object type that provides
- * `Vector_3 operator()(Vector_3 v1, Vector_3 v2)`
+ * `Vector_3 operator()(Vector_3 v1, Vector_3 v2) const`
  * returning the `v1+v2`.
  */
 typedef unspecified_type Construct_sum_of_vectors_3;
 
 /*!
  * Function object type that provides
- * `Point_3 operator()(Point_3 p1, Point_3 p2)`
+ * `Point_3 operator()(Point_3 p1, Point_3 p2) const`
  * returning the midpoint of `p1` and `p2`.
  */
 typedef unspecified_type Construct_midpoint_3;
 
 /*!
  * Function object type that provides
- * `FT operator()(Point_3 p, Point_3 q)`
+ * `FT operator()(Point_3 p, Point_3 q) const`
  * returning the squared distance between `p` and `q`.
  */
 typedef unspecified_type Compute_squared_distance_3;
 
 /*!
  * Function object type that provides
- * `FT operator()(Vector_3 v)`
+ * `FT operator()(Vector_3 v) const`
  * returning the squared length of `v`.
  */
 typedef unspecified_type Compute_squared_length_3;
 
 /*!
  * Function object type that provides
- * `FT operator()(Point_3 p1,Point_3 p2,Point_3 p3)`
+ * `FT operator()(Point_3 p1,Point_3 p2,Point_3 p3) const`
  * returning the area of the triangle defined by `p1`, `p2` and `p3`.
  */
 typedef unspecified_type Compute_area_3;
 
 /*!
  * Function object type that provides
- * `FT operator()(Vector_3 v1, Vector_3 v2)`
+ * `FT operator()(Vector_3 v1, Vector_3 v2) const`
  * returning the scalar product of `v1` and `v2`.
  */
 typedef unspecified_type Compute_scalar_product_3;
 
 /*!
  * Function object type that provides
- * `FT operator()(Point_3 p)` and `FT operator()(Vector_3 v)`
+ * `FT operator()(Point_3 p)` and `FT operator()(Vector_3 v) const`
  * returning the `x` coordinate of a point and a vector respectively.
  */
 typedef unspecified_type Compute_x_3;
 
 /*!
  * Function object type that provides
- * `FT operator()(Point_3 p)` and `FT operator()(Vector_3 v)`
+ * `FT operator()(Point_3 p)` and `FT operator()(Vector_3 v) const`
  * returning the `y` coordinate of a point and a vector respectively.
  */
 typedef unspecified_type Compute_y_3;
 
 /*!
  * Function object type that provides
- * `FT operator()(Point_3 p)` and `FT operator()(Vector_3 v)`
+ * `FT operator()(Point_3 p)` and `FT operator()(Vector_3 v) const`
  * returning the `z` coordinate of a point and a vector respectively.
  */
 typedef unspecified_type Compute_z_3;
