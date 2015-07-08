@@ -193,7 +193,7 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit)
         positions_facets.push_back(ffit->vertex(2)->point().z());
         positions_facets.push_back(1.0);
 
-        if (cur_shading == GL_FLAT || cur_shading == GL_SMOOTH)
+        if (cur_shading == Flat || cur_shading == FlatPlusEdges || cur_shading == Gouraud)
         {
 
             typedef Kernel::Vector_3	    Vector;
@@ -470,7 +470,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
             {
 
                 // If Flat shading:1 normal per polygon added once per vertex
-                if (cur_shading == GL_FLAT)
+                if (cur_shading == FlatPlusEdges || cur_shading == Flat )
                 {
 
                     Vector n = compute_facet_normal<Facet,Kernel>(*f);
@@ -480,7 +480,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
                 }
 
                 // If Gouraud shading: 1 normal per vertex
-                else if (cur_shading == GL_SMOOTH)
+                else if (cur_shading == Gouraud)
                 {
 
                     Vector n = compute_vertex_normal<typename Polyhedron::Vertex,Kernel>(*he->vertex());
@@ -656,7 +656,7 @@ Scene_polyhedron_item::Scene_polyhedron_item()
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
 {
-    cur_shading=GL_FLAT;
+    cur_shading=FlatPlusEdges;
     is_selected = true;
     init();
 
@@ -671,7 +671,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
 {
-    cur_shading=GL_FLAT;
+    cur_shading=FlatPlusEdges;
     is_selected = true;
     init();
     changed();
@@ -686,7 +686,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
 {
-    cur_shading=GL_FLAT;
+    cur_shading=FlatPlusEdges;
     is_selected=true;
     init();
     changed();
@@ -971,9 +971,9 @@ contextual_changed()
     GLint new_shading;
     qFunc.glGetIntegerv(GL_SHADE_MODEL, &new_shading);
     prev_shading = cur_shading;
-    cur_shading = new_shading;
+    cur_shading = renderingMode();
     if(prev_shading != cur_shading)
-        if(cur_shading == GL_SMOOTH || (cur_shading == GL_FLAT && prev_shading == GL_SMOOTH) )
+        if(cur_shading == Flat || cur_shading == FlatPlusEdges ||cur_shading == Gouraud)
         {
             //Change the normals
             changed();
@@ -986,7 +986,7 @@ Scene_polyhedron_item::selection_changed(bool p_is_selected)
     if(p_is_selected != is_selected)
     {
         is_selected = p_is_selected;
-        initialize_buffers();
+         are_buffers_filled = false;
     }
 
 }

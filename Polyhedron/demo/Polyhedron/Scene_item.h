@@ -208,8 +208,8 @@ protected:
   RenderingMode rendering_mode;
   QMenu* defaultContextMenu;
 
-  int prev_shading;
-  int cur_shading;
+  RenderingMode prev_shading;
+  RenderingMode cur_shading;
 
   mutable QOpenGLFunctions_3_3_Core qFunc;
   int buffersSize;

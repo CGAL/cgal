@@ -59,7 +59,7 @@ void Polyhedron_demo_point_set_smoothing_plugin::on_actionJetSmoothing_triggered
     bool ok;
 
     const unsigned int nb_neighbors =
-      QInputDialog::getInteger((QWidget*)mw,
+      QInputDialog::getInt((QWidget*)mw,
                                tr("Jet Smoothing"), // dialog title
                                tr("Number of neighbors:"), // field label
                                24, // default value = fast

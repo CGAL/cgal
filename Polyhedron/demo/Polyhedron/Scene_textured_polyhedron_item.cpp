@@ -204,7 +204,7 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item()
     : Scene_item(5,2),poly(new Textured_polyhedron)
 {
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
-    cur_shading=GL_FLAT;
+    cur_shading=FlatPlusEdges;
     is_selected=false;
     qFunc.initializeOpenGLFunctions();
     qFunc.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -215,7 +215,7 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item()
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(Textured_polyhedron* const p)
     : Scene_item(5,2),poly(p),smooth_shading(true)
 {
-    cur_shading=GL_FLAT;
+    cur_shading=FlatPlusEdges;
     is_selected=false;
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
     qFunc.initializeOpenGLFunctions();
@@ -227,7 +227,7 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(const Textured_po
     : Scene_item(5,2), poly(new Textured_polyhedron(p)),smooth_shading(true)
 {
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
-    cur_shading=GL_FLAT;
+    cur_shading=FlatPlusEdges;
     is_selected=false;
     qFunc.initializeOpenGLFunctions();
     qFunc.glGenTextures(1, &textureId);
@@ -354,7 +354,7 @@ contextual_changed()
     GLint new_shading;
     qFunc.glGetIntegerv(GL_SHADE_MODEL, &new_shading);
     prev_shading = cur_shading;
-    cur_shading = new_shading;
+    cur_shading = renderingMode();
     if(prev_shading != cur_shading)
     {
         changed();
