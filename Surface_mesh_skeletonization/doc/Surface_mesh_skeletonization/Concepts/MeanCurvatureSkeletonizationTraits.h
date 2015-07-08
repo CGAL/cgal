@@ -128,46 +128,46 @@ typedef unspecified_type Compute_z_3;
 /// @{
 
 Construct_point_3
-construct_point_3_object;
+construct_point_3_object();
 
 Construct_vector_3
-construct_vector_3_object;
+construct_vector_3_object();
 
 Construct_scaled_vector_3
-construct_scaled_vector_3_object;
+construct_scaled_vector_3_object();
 
 Construct_divided_vector_3
-construct_divided_vector_3_object;
+construct_divided_vector_3_object();
 
 Construct_cross_product_vector_3
-construct_cross_product_vector_3_object;
+construct_cross_product_vector_3_object();
 
 Construct_sum_of_vectors_3
-construct_sum_of_vectors_3_object;
+construct_sum_of_vectors_3_object();
 
 Construct_midpoint_3
-construct_midpoint_3_object;
+construct_midpoint_3_object();
 
 Compute_squared_distance_3
-compute_squared_distance_3_object;
+compute_squared_distance_3_object();
 
 Compute_squared_length_3
-compute_squared_length_3_object;
+compute_squared_length_3_object();
 
 Compute_area_3
-compute_area_3_object;
+compute_area_3_object();
 
 Compute_scalar_product_3
-compute_scalar_product_3_object;
+compute_scalar_product_3_object();
 
 Compute_x_3
-compute_x_3_object;
+compute_x_3_object();
 
 Compute_y_3
-compute_y_3_object;
+compute_y_3_object();
 
 Compute_z_3
-compute_z_3_object;
+compute_z_3_object();
 
 /// @}
 
