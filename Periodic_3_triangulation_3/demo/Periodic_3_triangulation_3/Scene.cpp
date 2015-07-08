@@ -935,7 +935,9 @@ void Scene::update_position()
     if(y>1.)y-=1.;
     if(z>1.)z-=1.;
     moving_point = Point(x,y,z);
-    float moving_ball[] = {moving_point.x(), moving_point.y(), moving_point.z()};
+    float moving_ball[] = {float(moving_point.x()),
+                           float(moving_point.y()),
+                           float(moving_point.z())};
     vao[4].bind();
     buffers[5].bind();
     buffers[5].allocate(moving_ball, 3*sizeof(float));
