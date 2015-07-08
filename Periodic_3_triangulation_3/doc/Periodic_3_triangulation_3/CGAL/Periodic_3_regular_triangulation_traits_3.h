@@ -11,18 +11,10 @@ This class is new
 The class `Periodic_3_regular_triangulation_traits_3` is designed as a default traits class for the
 class `Periodic_3_regular_triangulation_3<Periodic_3RegularTriangulationTraits_3,TriangulationDataStructure_3>`.
 
-\tparam K must be a model of the `Kernel` concept. 
+\tparam K must be a model of the `RegularTriangulationTraits_3` concept.
 \tparam Periodic_3Offset_3 must be a model of the concept `Periodic_3Offset_3` and defaults to `Periodic_3_offset_3`. 
 
 \cgalModels Periodic_3RegularTriangulationTraits_3
-
-In addition to the types and predicates that are required by concept
-`Periodic_3RegularTriangulationTraits_3`, this class provides all
-predicates and constructions that are inherited from the class
-`Regular_triangulation_euclidean_traits_3`. Note that all these predicates
-and constructions are enriched with function operators that take
-weighted points and offsets as arguments, to compute on point-offset
-pairs.
 
 This template class is specialized for 
 `CGAL::Filtered_kernel`, so that it automatically provides 
