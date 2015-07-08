@@ -12,7 +12,7 @@ int main(int argc, char **argv)
   app.setApplicationName("Mesh_3 demo");
 
   // Import resources from libCGALQt ( Qt5).
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
+  // See http://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
   CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;

@@ -38,7 +38,7 @@ int main(int argc, char** argv)
   application.setApplicationName("3D Linear Cell Complex");
 
   // Import resources from libCGALQt5
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
+  // See http://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
   CGAL_Qt_init_resources();// that function is in a DLL
   Q_INIT_RESOURCE(Linear_cell_complex_3);
 
