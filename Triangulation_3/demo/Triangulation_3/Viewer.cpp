@@ -1559,7 +1559,7 @@ void Viewer::draw()
         drawText( width()-200, 40, tr("Shift+Wheel: Resize trackball"), fontPrompt );
 
     }
-    if(m_curMode != NORMAL && m_showTrackball)
+    if(m_selMode != NORMAL && m_showTrackball)
     {
         rendering_program_spheres.bind();
         vao[11].bind();
