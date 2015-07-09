@@ -85,7 +85,7 @@ bool test_sphere_parameters() {
     // Check center.
     Point pos = sphere->center();
     FT center_pos_sqlen = traits.compute_squared_length_3_object()(
-      traits.construct_vector_3(center, pos));
+      traits.construct_vector_3_object()(center, pos));
     if (center_pos_sqlen > FT(0.0004))
       continue;
 

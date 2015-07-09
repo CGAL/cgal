@@ -14,6 +14,7 @@ bool test_cylinder_parameters() {
   const int NB_ROUNDS = 10;
   const int NB_POINTS = 1000;
   
+  typedef typename K::FT                                      FT;
   typedef CGAL::Point_with_normal_3<K>                        Pwn;
   typedef CGAL::Point_3<K>                                    Point;
   typedef CGAL::Vector_3<K>                                   Vector;
@@ -90,7 +91,7 @@ bool test_cylinder_parameters() {
     pos = pos - ((pos - CGAL::ORIGIN) * axis) * axis;
     
     FT center_pos_sqlen = traits.compute_squared_length_3_object()(
-      traits.construct_vector_3(center, pos));
+      traits.construct_vector_3_object()(center, pos));
     if (center_pos_sqlen > FT(0.0004))
       continue;
 

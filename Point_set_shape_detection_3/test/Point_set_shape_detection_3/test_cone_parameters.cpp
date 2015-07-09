@@ -89,7 +89,7 @@ bool test_cone_parameters() {
     // Check apex.
     Point pos = cone->apex();
     FT apex_pos_sqlen = traits.compute_squared_length_3_object()(
-      traits.construct_vector_3(apex, pos));
+      traits.construct_vector_3_object()(apex, pos));
     if (apex_pos_sqlen > FT(0.0004))
       continue;
 

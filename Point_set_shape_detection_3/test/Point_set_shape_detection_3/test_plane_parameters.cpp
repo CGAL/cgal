@@ -44,7 +44,7 @@ bool test_plane_parameters() {
       }
 
       Efficient_ransac ransac;
-      Traits &traits = ransac.traits();
+      Traits const& traits = ransac.traits();
 
       ransac.template add_shape_factory<Plane>();
 
