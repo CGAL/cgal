@@ -141,7 +141,7 @@ namespace CGAL {
       m_point_on_axis = this->transl(p1, this->scale(xDir, m_radius));
       m_radius = CGAL::abs(m_radius);
 
-      m_axis = m_traits.construct_line_3_object()(m_point_on_axis, axis);
+      m_axis = this->m_traits.construct_line_3_object()(m_point_on_axis, axis);
 
       if (squared_distance(p1) > this->m_epsilon ||
           (cos_to_normal(p1, n1) < this->m_normal_threshold))
