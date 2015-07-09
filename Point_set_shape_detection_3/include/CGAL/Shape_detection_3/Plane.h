@@ -146,7 +146,7 @@ namespace CGAL {
 
     virtual void parameters(const std::vector<std::size_t> &indices,
                             std::vector<std::pair<FT, FT> > &parameterSpace,
-                            FT &cluster_epsilon,                    
+                            FT &,                    
                             FT min[2],
                             FT max[2]) const {
       // Transform first point before to initialize min/max
