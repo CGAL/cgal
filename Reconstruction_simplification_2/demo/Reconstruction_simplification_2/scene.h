@@ -359,7 +359,7 @@ public:
     ifs.close();
   }
 
-#ifdef CGAL_USE_CIMG3
+#ifdef CGAL_USE_CIMG
   void load_image(const QString& fileName) {
     std::cerr << "read image...";
     cimg_library::CImg<float> image(qPrintable(fileName));
