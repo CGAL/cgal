@@ -129,7 +129,7 @@ Scene_textured_polyhedron_item::compute_normals_and_vertices(void)
         {
 
             // If Flat shading:1 normal per polygon added once per vertex
-            if (cur_shading == GL_FLAT)
+            if (cur_shading == Flat || cur_shading == FlatPlusEdges)
             {
 
                 Vector n = compute_facet_normal<Facet,Kernel>(*f);
@@ -139,7 +139,7 @@ Scene_textured_polyhedron_item::compute_normals_and_vertices(void)
             }
 
             // If Gouraud shading: 1 normal per vertex
-            else if(cur_shading == GL_SMOOTH)
+            else if(cur_shading == Gouraud)
             {
 
                 const Facet::Normal_3& n = he->vertex()->normal();
