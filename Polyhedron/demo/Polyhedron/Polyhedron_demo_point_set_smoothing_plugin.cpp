@@ -67,7 +67,6 @@ void Polyhedron_demo_point_set_smoothing_plugin::on_actionJetSmoothing_triggered
                            1000, // max
                            1, // step
                            &ok);
-
     if(!ok) return;
 
     QApplication::setOverrideCursor(Qt::WaitCursor);

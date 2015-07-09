@@ -294,7 +294,7 @@ void Scene_polygon_soup::initialize_buffers() const
         buffers[2].release();
         std::vector<float> empty_array;
         empty_array.resize(0);
-        for(int i=0; i<v_edge.size(); i++)
+        for(std::size_t i=0; i<v_edge.size(); i++)
             empty_array.push_back(0.0);
         buffers[3].bind();
         buffers[3].allocate(empty_array.data(), empty_array.size()*sizeof(float));
@@ -313,7 +313,7 @@ void Scene_polygon_soup::initialize_buffers() const
         rendering_program.setAttributeBuffer(poly_vertexLocation[0],GL_FLOAT,0,3);
         buffers[4].release();
         empty_array.resize(0);
-        for(int i=0; i<v_edge.size(); i++)
+        for(std::size_t i=0; i<v_edge.size(); i++)
             empty_array.push_back(0.0);
         buffers[5].bind();
         buffers[5].allocate(empty_array.data(), empty_array.size()*sizeof(float));

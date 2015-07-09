@@ -1,11 +1,8 @@
-cmake_minimum_required(VERSION 2.4.5)
-
 project (Periodic_2_Triangulation_2_demo)
 
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-
-if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )
+cmake_minimum_required(VERSION 2.8.11)
+if(POLICY CMP0043)
+  cmake_policy(SET CMP0043 OLD)
 endif()
 
 find_package(CGAL COMPONENTS Qt5)

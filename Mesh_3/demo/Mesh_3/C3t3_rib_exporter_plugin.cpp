@@ -716,8 +716,6 @@ void
 C3t3_rib_exporter_plugin::
 write_surface_cells(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
 {
-  typedef Kernel::Oriented_side Side;
-
   for ( C3t3::Cells_in_complex_iterator it_cell = c3t3.cells_in_complex_begin(),
        end = c3t3.cells_in_complex_end() ; it_cell != end ; ++it_cell )
   {
@@ -788,6 +786,8 @@ write_surface_cells(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
       QColor edgecolor = facecolor.darker(150);
       
       /*
+      typedef Kernel::Oriented_side Side;
+
       // Transparency on the negative side of the plane
       const Side s0 = plane.oriented_side(c->vertex(0)->point());
       const Side s1 = plane.oriented_side(c->vertex(1)->point());
