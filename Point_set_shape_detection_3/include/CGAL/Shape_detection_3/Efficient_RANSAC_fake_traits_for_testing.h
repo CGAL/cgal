@@ -162,7 +162,7 @@ namespace CGAL {
     
     struct Construct_point_on_3
     {
-      Point_3 operator()(Line_3 const&) { return Point_3(); }
+      Point_3 operator()(Line_3 const&, int) { return Point_3(); }
     };
     Construct_point_on_3 construct_point_on_3_object() const
     { return Construct_point_on_3(); }

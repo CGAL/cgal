@@ -622,7 +622,7 @@ namespace CGAL {
       Sphere_3 constr_sphere(const Point_3& c, FT r) const
       { return m_traits.construct_sphere_3_object()(c, r); }
       Point_3 constr_point_on(const Line_3& l) const
-      { return m_traits.construct_point_on_3_object()(l); }
+      { return m_traits.construct_point_on_3_object()(l, 0); }
 
       FT sqlen(const Vector_3& v) const
       { return m_traits.compute_squared_length_3_object()(v); }
