@@ -159,7 +159,8 @@ void Viewer::initialize_buffers()
 
     vao[0].bind();
     buffers[0].bind();
-    buffers[0].allocate(pos_poly.data(), pos_poly.size()*sizeof(float));
+    buffers[0].allocate(pos_poly.data(),
+                        static_cast<int>(pos_poly.size()*sizeof(float)));
     poly_vertexLocation = rendering_program.attributeLocation("vertex");
     rendering_program.bind();
     rendering_program.enableAttributeArray(poly_vertexLocation);
@@ -167,7 +168,8 @@ void Viewer::initialize_buffers()
     buffers[0].release();
 
     buffers[1].bind();
-    buffers[1].allocate(normals.data(), normals.size()*sizeof(float));
+    buffers[1].allocate(normals.data(), 
+                        static_cast<int>(normals.size()*sizeof(float)));
     normalsLocation = rendering_program.attributeLocation("normal");
     rendering_program.bind();
     rendering_program.enableAttributeArray(normalsLocation);
@@ -180,7 +182,8 @@ void Viewer::initialize_buffers()
 
     vao[1].bind();
     buffers[2].bind();
-    buffers[2].allocate(pos_points.data(), pos_points.size()*sizeof(float));
+    buffers[2].allocate(pos_points.data(),
+                        static_cast<int>(pos_points.size()*sizeof(float)));
     points_vertexLocation = rendering_program_points.attributeLocation("vertex");
     rendering_program_points.bind();
     rendering_program_points.enableAttributeArray(points_vertexLocation);
@@ -333,7 +336,7 @@ Viewer::draw()
     glPointSize(5);
     ::glEnable(GL_POINT_SMOOTH);
     rendering_program_points.setUniformValue(colorLocation_points, color);
-    glDrawArrays(GL_POINTS, 0, pos_points.size()/3);
+    glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
     rendering_program_points.release();
     vao[1].release();
     //facets
@@ -342,7 +345,7 @@ Viewer::draw()
     rendering_program.bind();
     color.setRgbF(0.5f, 1.0f, 0.5f);
     rendering_program.setUniformValue(colorLocation, color);
-    glDrawArrays(GL_TRIANGLES, 0, pos_poly.size()/3);
+    glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_poly.size()/3));
     rendering_program.release();
     vao[0].release();
 
