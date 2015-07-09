@@ -24,7 +24,8 @@ void Scene_polyhedron_transform_item::initialize_buffers(Viewer_interface *viewe
 
         vaos[0]->bind();
         buffers[0].bind();
-        buffers[0].allocate(positions_lines.data(), positions_lines.size()*sizeof(float));
+        buffers[0].allocate(positions_lines.data(),
+                            static_cast<int>(positions_lines.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffers[0].release();
@@ -75,7 +76,7 @@ void Scene_polyhedron_transform_item::draw_edges(Viewer_interface* viewer) const
         f_matrix.data()[i] = (float)frame->matrix()[i];
     }
     program->setUniformValue("f_matrix", f_matrix);
-    qFunc.glDrawArrays(GL_LINES, 0, positions_lines.size()/3);
+    qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
     vaos[0]->release();
     program->release();
 
