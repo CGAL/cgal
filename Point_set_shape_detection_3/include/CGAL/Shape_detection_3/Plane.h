@@ -34,7 +34,7 @@ namespace CGAL {
      \ingroup PkgPointSetShapeDetection3Shapes
      \brief Plane implements Shape_base. The plane is represented by the normal vector and the distance to the origin.
      \tparam Traits a model of `EfficientRANSACTraits` with the additional 
-             requirement that the type `Traits::Plane_3` is provided.
+             requirement for planes (see `EfficientRANSACTraits` documentation).
      */
   template <class Traits>
   class Plane : public Shape_base<Traits> {

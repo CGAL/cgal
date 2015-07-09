@@ -24,7 +24,7 @@ public:
   typedef unspecified_type Point_3;
   /// The vector type
   typedef unspecified_type Vector_3;
-  /// The sphere type, only required if you want to detect spheres
+  /// The sphere type, only required if you want to detect spheres or tori
   typedef unspecified_type Sphere_3;
   /// The line type, only required if you want to detect cylinders
   typedef unspecified_type Line_3;
@@ -67,19 +67,22 @@ public:
    * Function object type that provides `Point_3 operator()(Point_3 p1, Point_3 p2)`
    * returning the vector `p1p2`, `Vector_3 operator()(NULL_VECTOR)` returning 
    * the null vector, and `Vector_3 operator()(Line_3 l)` returning 
-   * a vector having the same direction as `l`.
+   * a vector having the same direction as `l` 
+   * (this last one is only required if you want to detect cylinders).
    */
   typedef unspecified_type Construct_vector_3;
   
   /*!
    * Function object type that provides `Sphere_3 operator()(Point_3 c, FT r)`
    * returning the sphere of center `p` and radius `r`.
+   * Only required if you want to detect spheres or tori.
    */
   typedef unspecified_type Construct_sphere_3;
   
   /*!
    * Function object type that provides `Line_3 operator()(Point_3 p, Vector_3 d)`
    * returning the line going through  `p` in the direction of `d`.
+   * Only required if you want to detect cylinders.
    */
   typedef unspecified_type Construct_line_3;
   
@@ -88,6 +91,7 @@ public:
    * `Point_3 operator()(const Line_3& l, int i)`
    * returning an arbitrary point on `l`. `i` is not used and can vbe of 
    * any value.
+   * Only required if you want to detect cylinders.
    */
   typedef unspecified_type Construct_point_on_3;
 
@@ -158,6 +162,7 @@ public:
    * Function object type that provides
    * `Point_3 operator()(const Sphere_3& s)`
    * returning the center of the sphere `s`.
+   * Only required if you want to detect spheres or tori.
    */
   typedef unspecified_type Construct_center_3;
 
@@ -165,6 +170,7 @@ public:
    * Function object type that provides
    * `FT operator()(const Sphere_3& s)`
    * returning the squared radius of the sphere `s`.
+   * Only required if you want to detect spheres or tori.
    */
   typedef unspecified_type Compute_squared_radius_3;
 
@@ -179,12 +185,15 @@ public:
   Construct_vector_3
   construct_vector_3_object();
 
+  /// Only required if you want to detect spheres or tori.
   Construct_sphere_3
   construct_sphere_3_object();
   
+  /// Only required if you want to detect cylinders.
   Construct_line_3
   construct_line_3_object();
   
+  /// Only required if you want to detect cylinders.
   Construct_point_on_3
   construct_point_on_3_object();
 
@@ -214,10 +223,12 @@ public:
 
   Construct_translated_point_3 
   construct_translated_point_3_object();
-
+  
+  /// Only required if you want to detect spheres.
   Construct_center_3
   construct_center_3_object();
-
+  
+  /// Only required if you want to detect spheres or tori.
   Compute_squared_radius_3
   compute_squared_radius_3_object();
 

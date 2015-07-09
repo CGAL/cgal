@@ -37,7 +37,7 @@ namespace CGAL {
      by the axis, i.e. a point and direction, and the radius. The cylinder is
      unbounded, thus caps are not modelled.
      \tparam Traits a model of `EfficientRANSACTraits` with the additional 
-             requirement that the type `Traits::Line_3` is provided.
+             requirement for cylinders (see `EfficientRANSACTraits` documentation).
      \ingroup PkgPointSetShapeDetection3Shapes
      */
   template <class Traits>
@@ -105,6 +105,16 @@ namespace CGAL {
 
   protected:
       /// \cond SKIP_IN_MANUAL
+    
+    // ------------------------------------------------------------------------
+    // Utilities
+    // ------------------------------------------------------------------------
+    using Shape_base<Traits>::constr_vec;
+    Vector_3 constr_vec(const Line_3& l) const
+    { return m_traits.construct_vector_3_object()(l); }
+    Point_3 constr_point_on(const Line_3& l) const
+    { return m_traits.construct_point_on_3_object()(l, 0); }
+
     virtual void create_shape(const std::vector<std::size_t> &indices) {
       Point_3 p1 = this->point(indices[0]);
       Point_3 p2 = this->point(indices[1]);

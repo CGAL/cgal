@@ -81,8 +81,6 @@ namespace CGAL {
     typedef typename Traits::FT FT; ///< number type.
     typedef typename Traits::Point_3 Point_3; ///< point type.
     typedef typename Traits::Vector_3 Vector_3; ///< vector type.
-    typedef typename Traits::Sphere_3 Sphere_3; ///< sphere type.
-    typedef typename Traits::Line_3 Line_3; ///< line type.
 
     // \todo The property maps should be passed here instead of `compute`
     Shape_base() :
