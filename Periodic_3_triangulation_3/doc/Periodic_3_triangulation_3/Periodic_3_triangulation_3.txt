@@ -274,9 +274,9 @@ chapter \ref Triangulation3secTraits "3D Triangulations") in that it
 implements all objects, predicates and constructions with
 using offsets.
 
-The class `Periodic_3_regular_triangulation_traits_3<Kernel,Periodic_3Offset_3>`
+The class `Periodic_3_regular_triangulation_traits_3<RegularTriangulationTraits_3,Periodic_3Offset_3>`
 provides the required functionality. It expects two template
-parameters: A model of the concept `Kernel`
+parameters: A model of the concept `RegularTriangulationTraits_3`
 and a model of the concept `Periodic_3Offset_3`.
 
 The second parameter `Periodic_3Offset_3` defaults to
@@ -289,9 +289,9 @@ The second parameter `Periodic_3Offset_3` defaults to
 The kernels `Cartesian`, `Homogeneous`,
 `Simple_cartesian`, `Simple_homogeneous` and
 `Filtered_kernel` can all be used as models for template parameters
-`TriangulationTraits_3`, `DelaunayTriangulationTraits_3`, 
+`TriangulationTraits_3`, `DelaunayTriangulationTraits_3`.
 \cgalModifBegin 
-as well as for template parameter `Kernel` in periodic regular triangulations. 
+The traits class `Regular_triangulation_euclidean_traits_3` can be used for the template parameter `RegularTriangulationTraits_3`. 
 \cgalModifEnd 
 The periodic triangulation classes provide exact
 predicates and exact constructions if these respective template parameters
