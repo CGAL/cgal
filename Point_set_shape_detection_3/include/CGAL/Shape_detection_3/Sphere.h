@@ -154,8 +154,8 @@ namespace CGAL {
       FT t = (d * b - a * e) * invDet;
 
       Vector_3 v_transl = this->sum_vectors(
-        this->constr_vec(this->transl(p1, this->scale(n1, s)), CGAL::ORIGIN),
-        this->constr_vec(this->transl(p2, this->scale(n2, t)), CGAL::ORIGIN));
+        this->constr_vec(CGAL::ORIGIN, this->transl(p1, this->scale(n1, s))),
+        this->constr_vec(CGAL::ORIGIN, this->transl(p2, this->scale(n2, t))));
       Point_3 center = this->transl(
         CGAL::ORIGIN, this->scale(v_transl, (FT)0.5));
 
@@ -351,8 +351,11 @@ namespace CGAL {
       m_wrap_top = diff_top < cluster_epsilon;
 
       if (m_wrap_top || m_wrap_left || m_wrap_right) {
-        cluster_epsilon = FT(CGAL_PI * rad)
+        FT adjusted_cf = FT(CGAL_PI * rad)
           / FT(floor((CGAL_PI * rad) / cluster_epsilon));
+
+        if (adjusted_cf < 2 * cluster_epsilon)
+          cluster_epsilon = adjusted_cf;
 
         // center bitmap at equator
         FT required_space = ceil(
