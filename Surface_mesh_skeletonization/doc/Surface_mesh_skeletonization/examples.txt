@@ -1,0 +1,7 @@
+/*!
+\example Surface_mesh_skeletonization/simple_mcfskel_example.cpp
+\example Surface_mesh_skeletonization/MCF_Skeleton_example.cpp
+\example Surface_mesh_skeletonization/segmentation_example.cpp
+\example Surface_mesh_skeletonization/MCF_Skeleton_sm_example.cpp
+\example Surface_mesh_skeletonization/simple_mcfskel_sm_example.cpp
+*/
