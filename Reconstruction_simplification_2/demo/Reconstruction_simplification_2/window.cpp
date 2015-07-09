@@ -136,22 +136,8 @@ void MainWindow::addRecentFiles(QMenu* menu, QAction* insertBeforeAction)
 
 void MainWindow::open(const QString& filename)
 {
-  bool use_grad = false;
-  if (filename.contains(".bmp", Qt::CaseInsensitive))
-  {
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, tr("Open BMP"), "Use gradient?",
-        QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-    if (reply == QMessageBox::Yes)
-      use_grad = true;
-    else if (reply == QMessageBox::No)
-      use_grad = false;
-    else
-      return;
-  }
-
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  m_scene->load(filename, use_grad);
+  m_scene->load(filename, this);
   QApplication::restoreOverrideCursor();
   addToRecentFiles(filename);
   update();

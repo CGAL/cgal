@@ -34,6 +34,21 @@ if(QT4_FOUND)
   find_package(QGLViewer )
 endif(QT4_FOUND)
 
+# Find CImg
+find_path(CIMG_INCLUDE_DIR
+          NAMES CImg.h
+          HINTS ENV CIMG_INC_DIR
+          DOC "Path to the header of the CImg library")
+
+if (CIMG_INCLUDE_DIR)
+  add_definitions(-DCGAL_USE_CIMG)
+  include_directories(${CIMG_INCLUDE_DIR})
+  MESSAGE(STATUS "CImg library found, the demo can load point set from image files.")
+else()
+  MESSAGE(STATUS "CImg library was not found, the demo will not be able to load point set. "
+                 "Try setting the environment variable CIMG_INC_DIR to point to the path of the directory containing CImg.h.")
+endif()
+
 if(CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )

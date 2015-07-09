@@ -6,6 +6,7 @@
 
 //Qt
 #include <QtOpenGL>
+#include <QWidget>
 
 // local
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -13,8 +14,9 @@
 #include <CGAL/Reconstruction_simplification_2.h>
 
 
-
-#include "third/CImg.h"
+#ifdef CGAL_USE_CIMG
+#include <CImg.h>
+#endif
 #include "random.h"
 #include <utility>      // std::pair
 #include <vector>
@@ -253,7 +255,7 @@ public:
 
   // IO SAMPLES //
 
-  void load(const QString& filename, const bool gradient) {
+  void load(const QString& filename, QWidget* qw) {
     // TODO: load xml
 
     if (filename.contains(".xy", Qt::CaseInsensitive)) {
@@ -280,8 +282,21 @@ public:
       return;
     }
 
+#ifdef CGAL_USE_CIMG
     if (filename.contains(".bmp", Qt::CaseInsensitive)) {
-      if (gradient)
+      bool use_gradient = false;
+
+      QMessageBox::StandardButton reply;
+      reply = QMessageBox::question(qw, QString("Open BMP"), "Use gradient?",
+          QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+      if (reply == QMessageBox::Yes)
+        use_gradient = true;
+      else if (reply == QMessageBox::No)
+        use_gradient = false;
+      else
+        return;
+
+      if (use_gradient)
         load_gradient(filename);
       else
         load_image(filename);
@@ -289,7 +304,12 @@ public:
       return;
     }
 
-    std::cerr << "Invalid file (try .xy, .dat, .bmp)" << std::endl;
+    std::cerr << "Invalid file (try .xy, .txt, .gtn, .dat, .bmp)" << std::endl;
+#else
+    CGAL_USE(qw);
+    std::cerr << "Invalid file (try .xy, .txt, .gtn, .dat)" << std::endl;
+#endif
+
   }
 
   void load_xy_file(const QString& fileName) {
@@ -339,6 +359,7 @@ public:
     ifs.close();
   }
 
+#ifdef CGAL_USE_CIMG3
   void load_image(const QString& fileName) {
     std::cerr << "read image...";
     cimg_library::CImg<float> image(qPrintable(fileName));
@@ -386,6 +407,7 @@ public:
     }
     std::cerr << "done (" << m_samples.size() << ")" << std::endl;
   }
+#endif
 
   void print_vertex(Vertex vertex) {
     std::cout <<"vertex " <<  vertex << std::endl;
