@@ -129,6 +129,17 @@ namespace CGAL {
 
   protected:
     /// \cond SKIP_IN_MANUAL
+
+    // ------------------------------------------------------------------------
+    // Utilities
+    // ------------------------------------------------------------------------
+    Sphere_3 constr_sphere(const Point_3& c, FT r) const
+    { return m_traits.construct_sphere_3_object()(c, r); }
+    Point_3 sph_center(const Sphere_3& s) const
+    { return m_traits.construct_center_3_object()(s); }
+    FT sqradius(const Sphere_3& s) const
+    { return m_traits.compute_squared_radius_3_object()(s); }
+
     void create_shape(const std::vector<std::size_t> &indices) {
       std::vector<Point_3> p;
       std::vector<Vector_3> n;
