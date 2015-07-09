@@ -635,7 +635,7 @@ namespace CGAL {
       FT scalar_pdct(const Vector_3& u, const Vector_3& v) const
       { return m_traits.compute_scalar_product_3_object()(u, v); }
       Vector_3 cross_pdct(const Vector_3& u, const Vector_3& v) const
-      { return m_traits.compute_cross_product_3_object()(u, v); }
+      { return m_traits.construct_cross_product_vector_3_object()(u, v); }
       Point_3 sph_center(const Sphere_3& s) const
       { return m_traits.construct_center_3_object()(s); }
       FT sqradius(const Sphere_3& s) const

@@ -221,10 +221,10 @@ namespace CGAL {
     Compute_scalar_product_3 compute_scalar_product_3_object() const
     { return Compute_scalar_product_3(); }
     
-    struct Compute_cross_product_3
+    struct Construct_cross_product_vector_3
     { Vector_3 operator()(Vector_3 const&, Vector_3 const&) const { return Vector_3(); } };
-    Compute_cross_product_3 compute_cross_product_3_object() const
-    { return Compute_cross_product_3(); }
+    Construct_cross_product_vector_3 construct_cross_product_vector_3_object() const
+    { return Construct_cross_product_vector_3(); }
     
     struct Construct_center_3
     { Point_3 operator()(Sphere_3 const&) const { return Point_3(); } };
