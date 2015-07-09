@@ -211,6 +211,11 @@ namespace CGAL {
     Construct_sum_of_vectors_3 construct_sum_of_vectors_3_object() const
     { return Construct_sum_of_vectors_3(); }
 
+    struct Construct_translated_point_3
+    { Point_3 operator()(Point_3 const&, Vector_3 const&) const { return Point_3(); } };
+    Construct_translated_point_3 construct_translated_point_3_object() const
+    { return Construct_translated_point_3(); }
+    
     struct Compute_scalar_product_3
     { FT operator()(Vector_3 const&, Vector_3 const&) const { return 0; } };
     Compute_scalar_product_3 compute_scalar_product_3_object() const
@@ -220,11 +225,6 @@ namespace CGAL {
     { Vector_3 operator()(Vector_3 const&, Vector_3 const&) const { return Vector_3(); } };
     Compute_cross_product_3 compute_cross_product_3_object() const
     { return Compute_cross_product_3(); }
-    
-    struct Construct_translated_point_3
-    { Point_3 operator()(Point_3 const&, Vector_3 const&) const { return Point_3(); } };
-    Construct_translated_point_3 construct_translated_point_3_object() const
-    { return Construct_translated_point_3(); }
     
     struct Construct_center_3
     { Point_3 operator()(Sphere_3 const&) const { return Point_3(); } };
