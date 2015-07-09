@@ -558,11 +558,13 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
         best_candidate->m_indices.clear();
 
-        best_expected = best_candidate->m_score = 
+        best_candidate->m_score = 
           m_global_octree->score(best_candidate,
                                  m_shape_index,
-                                 3 * m_options.epsilon,
+                                 FT(3) * m_options.epsilon,
                                  m_options.normal_threshold);
+
+        best_expected = static_cast<FT>(best_candidate->m_score);
 
         best_candidate->connected_component(best_candidate->m_indices,
                                             m_options.cluster_epsilon);
