@@ -22,9 +22,18 @@ public:
 
   /// The point type
   typedef unspecified_type Point_3;
-
   /// The vector type
   typedef unspecified_type Vector_3;
+  /// The sphere type, only required if you want to detect spheres
+  typedef unspecified_type Sphere_3;
+  /// The line type, only required if you want to detect cylinders
+  typedef unspecified_type Line_3;
+  /// The plane type, only required if you want to detect planes
+  typedef unspecified_type Plane_3;
+  /// The 2D point type, only required if you want to detect tori
+  typedef unspecified_type Point_2;
+  /// The circle type, only required if you want to detect tori
+  typedef unspecified_type Circle_2;
 
   /// The number type of the Cartesian coordinates of types Point_3
   typedef unspecified_type FT;
@@ -41,7 +50,7 @@ public:
   /// as key type and `Vector_3` as value type.
   typedef unspecified_type Normal_map;
 
-  /// a model of `SearchTraits` where `SearchTraits::point_d` is `Point_3`, 
+  /// a model of `SearchTraits`
   /// where `SearchTraits::point_d` is `Point_3`,
   /// `SearchTraits::Dimension` is ` CGAL::Dimension_tag<3>`,
   /// and `SearchTraits::FT` is ` FT`,
@@ -73,6 +82,15 @@ public:
    * returning the line going through  `p` in the direction of `d`.
    */
   typedef unspecified_type Construct_line_3;
+  
+  /*!
+   * Function object type that provides
+   * `Point_3 operator()(const Line_3& l)`
+   * returning an arbitrary point on `l`. It holds `point(i) == point(j)`,
+   * iff `i == j`. Furthermore, it is directed from `point(i)` to `point(j)`,
+   * for all `i < j`.
+   */
+  typedef unspecified_type Construct_point_on_3;
 
   /*!
    * Function object type that provides
@@ -117,13 +135,6 @@ public:
   typedef unspecified_type Construct_sum_of_vectors_3;
 
   /*!
-  * Function object type that provides
-  * `FT operator()(Point_3 p, Point_3 q)`
-  * returning the squared distance between `p` and `q`.
-  */
- //typedef unspecified_type Compute_squared_distance_3;
- 
-  /*!
   * Function object type that provides:
   * `Point_3 operator()(Point_3 p, Vector_3 v)`
   * returning  the point obtained by translating `p` by the vector `v`. 
@@ -158,15 +169,6 @@ public:
    */
   typedef unspecified_type Compute_squared_radius_3;
 
-  /*!
-   * Function object type that provides
-   * `Point_3 operator()(const Line_3& l)`
-   * returning an arbitrary point on `l`. It holds `point(i) == point(j)`,
-   * iff `i == j`. Furthermore, it is directed from `point(i)` to `point(j)`,
-   * for all `i < j`.
-   */
-  typedef unspecified_type Construct_point_on_3;
-
 /// @}
 
 /// \name Access to Function Objects
@@ -183,6 +185,9 @@ public:
   
   Construct_line_3
   construct_line_3_object();
+  
+  Construct_point_on_3
+  construct_point_on_3_object();
 
   Compute_x_3
   compute_x_3_object();
@@ -196,9 +201,6 @@ public:
   Compute_squared_length_3
   compute_squared_length_3_object();
 
-  //Compute_squared_distance_3
-  //compute_squared_distance_3_object();
-  
   Construct_scaled_vector_3
   construct_scaled_vector_3_object();
 
@@ -219,9 +221,6 @@ public:
 
   Compute_squared_radius_3
   compute_squared_radius_3_object();
-
-  Construct_point_on_3
-  construct_point_on_3_object();
 
 /// @}
 };
