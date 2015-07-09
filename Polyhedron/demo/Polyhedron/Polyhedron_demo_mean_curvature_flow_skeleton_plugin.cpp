@@ -457,7 +457,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   int i=0;
   BOOST_FOREACH(Polyhedron::Face_handle fd, faces(*segmented_polyhedron))
   {
-    fd->set_patch_id( segment_ids[i++] );
+    fd->set_patch_id( static_cast<int>(segment_ids[i++] ));
   }
 
   scene->item(InputMeshItemIndex)->setVisible(false);
@@ -560,7 +560,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   update_parameters(mcs);
-  int num_collapses = mcs->collapse_edges();
+  std::size_t num_collapses = mcs->collapse_edges();
   std::cout << "collapsed " << num_collapses << " edges.\n";
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
@@ -591,7 +591,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   update_parameters(mcs);
-  int num_split = mcs->split_faces();
+  std::size_t num_split = mcs->split_faces();
   std::cout << "split " << num_split << " triangles.\n";
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
