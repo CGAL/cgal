@@ -567,7 +567,7 @@ namespace CGAL {
 
           FT width = m_width / (1<<(cell->level));
 
-          FT diag = CGAL::sqrt(3. * width * width) + epsilon;
+          FT diag = CGAL::sqrt(FT(3) * width * width) + epsilon;
 
           FT dist = candidate->squared_distance(cell->center);
 
