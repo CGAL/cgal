@@ -36,6 +36,7 @@ class Polyhedron_demo_point_set_shape_detection_plugin :
 {
   Q_OBJECT
     Q_INTERFACES(Polyhedron_demo_plugin_interface)
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
     QAction* actionDetect;
 
 public:
@@ -184,6 +185,6 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
   }
 }
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_point_set_shape_detection_plugin, Polyhedron_demo_point_set_shape_detection_plugin)
+#include <QtPlugin>
 
 #include "Polyhedron_demo_point_set_shape_detection_plugin.moc"
