@@ -37,9 +37,6 @@ void CGALglcolor(QColor c)
 //    assert(ms_splatting!=0 && "A Scene object must be created before requesting the splatting object");
 //    return ms_splatting;
 //}
-#ifdef  scene_EXPORTS
-#pragma message("scene_EXPORTS is defined")
-#endif
 
 Scene::Scene(QObject* parent)
     : QAbstractListModel(parent),

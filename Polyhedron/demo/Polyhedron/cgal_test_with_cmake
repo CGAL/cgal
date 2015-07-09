@@ -165,6 +165,7 @@ else
       p_sphere_function_plugin \
       p_tanglecube_function_plugin \
       shortest_path_plugin \
+      advancing_front_plugin \
       all
   do
       if  ${MAKE_CMD} -f Makefile help | grep "$target" > /dev/null; then 
