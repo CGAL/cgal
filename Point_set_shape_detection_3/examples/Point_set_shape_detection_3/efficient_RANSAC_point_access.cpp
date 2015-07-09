@@ -123,7 +123,7 @@ int main()
       const Point_with_normal &p = *(points.begin() + (*index_it));
 
       // Adds Euclidean distance between point and shape.
-      sum_distances += CGAL::sqrt((*it)->squared_distance(p));
+      sum_distances += CGAL::sqrt((*it)->squared_distance(p.first));
 
       // Proceeds with next point.
       index_it++;

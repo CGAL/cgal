@@ -60,6 +60,8 @@ namespace CGAL {
     ///
     struct Circle_2 {};
     ///
+    struct Vector_2 {};
+    ///
     struct Plane_3 {};
     ///
     struct Point_2 {};
@@ -137,6 +139,14 @@ namespace CGAL {
     { return Construct_point_3(); }
     
 
+    struct Construct_point_2
+    {
+      Point_2 operator()() { return Point_2(); }
+      Point_2 operator()(FT a, FT b) { return Point_2(); }
+    };
+    Construct_point_2 construct_point_2_object() const
+    { return Construct_point_2(); }
+    
     struct Construct_vector_3
     {
       Vector_3 operator()(Null_vector const&) { return NULL_VECTOR; }
@@ -145,13 +155,28 @@ namespace CGAL {
     };
     Construct_vector_3 construct_vector_3_object() const
     { return Construct_vector_3(); }
-    
+
+    struct Construct_vector_2
+    {
+      Vector_2 operator()(Null_vector const&) { return NULL_VECTOR; }
+      Vector_2 operator()(Point_2 const&, Point_2 const&) { return Vector_2(); }
+    };
+    Construct_vector_2 construct_vector_2_object() const
+    { return Construct_vector_2(); }
+
     struct Construct_sphere_3
     {
       Sphere_3 operator()(Point_3 const&, FT) { return Sphere_3(); }
     };
     Construct_sphere_3 construct_sphere_3_object() const
     { return Construct_sphere_3(); }
+
+    struct Construct_circle_2
+    {
+      Circle_2 operator()(Point_2 const&, Point_2 const&, Point_2 const&) { return Circle_2(); }
+    };
+    Construct_circle_2 construct_circle_2_object() const
+    { return Construct_circle_2(); }
     
     struct Construct_line_3
     {
@@ -167,6 +192,22 @@ namespace CGAL {
     Construct_point_on_3 construct_point_on_3_object() const
     { return Construct_point_on_3(); }
 
+    struct Compute_x_2
+    {
+      FT operator()(Point_2 const&) const { return 0; } 
+      FT operator()(Vector_2 const&) const { return 0; } 
+    };
+    Compute_x_2 compute_x_2_object() const
+    { return Compute_x_2(); }
+
+    struct Compute_y_2
+    {
+      FT operator()(Point_2 const&) const { return 0; } 
+      FT operator()(Vector_2 const&) const { return 0; } 
+    };
+    Compute_y_2 compute_y_2_object() const
+    { return Compute_y_2(); }
+
     struct Compute_x_3
     {
       FT operator()(Point_3 const&) const { return 0; } 
@@ -174,7 +215,7 @@ namespace CGAL {
     };
     Compute_x_3 compute_x_3_object() const
     { return Compute_x_3(); }
-    
+
     struct Compute_y_3
     {
       FT operator()(Point_3 const&) const { return 0; } 
@@ -191,11 +232,16 @@ namespace CGAL {
 
     Compute_z_3 compute_z_3_object() const
     { return Compute_z_3(); }
-    
+
     struct Compute_squared_length_3
     { FT operator()(Vector_3 const&) const { return 0; } };
     Compute_squared_length_3 compute_squared_length_3_object() const
     { return Compute_squared_length_3(); }
+
+    struct Compute_squared_length_2
+    { FT operator()(Vector_2 const&) const { return 0; } };
+    Compute_squared_length_2 compute_squared_length_2_object() const
+    { return Compute_squared_length_2(); }
     
     struct Construct_scaled_vector_3 
     {
@@ -230,11 +276,27 @@ namespace CGAL {
     { Point_3 operator()(Sphere_3 const&) const { return Point_3(); } };
     Construct_center_3 construct_center_3_object() const
     { return Construct_center_3(); }
-    
+
     struct Compute_squared_radius_3
     { FT operator()(Sphere_3 const&) const { return 0; } };
     Compute_squared_radius_3 compute_squared_radius_3_object() const
     { return Compute_squared_radius_3(); }
+
+    struct Compute_squared_radius_2
+    { FT operator()(Circle_2 const&) const { return 0; } };
+    Compute_squared_radius_2 compute_squared_radius_2_object() const
+    { return Compute_squared_radius_2(); }
+
+    struct Construct_center_2
+    { Point_2 operator()(Circle_2 const&) const { return Point_2(); } };
+    Construct_center_2 construct_center_2_object() const
+    { return Construct_center_2(); }
+
+    /*struct Collinear_2
+    { result_type operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+      { return false; } };
+    Collinear_2 construct_collinear_2_object() const
+    { return Collinear_2(); }*/
     
     /*struct Compute_squared_distance_3
     { FT operator()(Point_3 const&, Point_3 const&) const { return 0; } };

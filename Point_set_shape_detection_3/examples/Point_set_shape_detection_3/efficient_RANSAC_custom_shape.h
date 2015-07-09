@@ -22,7 +22,7 @@ public:
 
   //  Computes squared Euclidean distance from query point to the shape.
   virtual FT squared_distance(const Point &p) const {
-    const FT sd = (p - m_point_on_primitive) * m_normal;
+    const FT sd = (this->constr_vec(m_point_on_primitive, p)) * m_normal;
     return sd * sd;
   }
 
@@ -43,7 +43,7 @@ protected:
 
   // Computes squared Euclidean distance from a set of points.
   virtual void squared_distance(const std::vector<std::size_t> &indices,
-                                std::vector<FT> &dists) {
+                                std::vector<FT> &dists) const {
       for (std::size_t i = 0; i < indices.size(); i++) {
         const FT sd = (this->point(indices[i])
           - m_point_on_primitive) * m_normal;

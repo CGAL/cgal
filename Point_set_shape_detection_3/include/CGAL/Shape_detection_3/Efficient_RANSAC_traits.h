@@ -63,6 +63,8 @@ namespace CGAL {
     ///
     typedef typename Gt::Point_2 Point_2;
     ///
+    typedef typename Gt::Vector_2 Vector_2;
+    ///
     typedef InputRange Input_range;
     ///
     typedef InputPointMap Point_map;
@@ -73,15 +75,23 @@ namespace CGAL {
     ///
     Efficient_RANSAC_traits(const Gt& gt =  Gt())
       : m_gt(gt) {}
-    
+
     typedef typename Gt::Construct_point_3 Construct_point_3;
     Construct_point_3 construct_point_3_object() const 
     { return m_gt.construct_point_3_object(); }
-    
+
     typedef typename Gt::Construct_vector_3 Construct_vector_3;
     Construct_vector_3 construct_vector_3_object() const
     { return m_gt.construct_vector_3_object(); }
-    
+
+    typedef typename Gt::Construct_point_2 Construct_point_2;
+    Construct_point_2 construct_point_2_object() const 
+    { return m_gt.construct_point_2_object(); }
+
+    typedef typename Gt::Construct_vector_2 Construct_vector_2;
+    Construct_vector_2 construct_vector_2_object() const
+    { return m_gt.construct_vector_2_object(); }
+
     typedef typename Gt::Construct_sphere_3 Construct_sphere_3;
     Construct_sphere_3 construct_sphere_3_object() const
     { return m_gt.construct_sphere_3_object(); }
@@ -89,10 +99,22 @@ namespace CGAL {
     typedef typename Gt::Construct_line_3 Construct_line_3;
     Construct_line_3 construct_line_3_object() const
     { return m_gt.construct_line_3_object(); }
+
+    typedef typename Gt::Construct_circle_2 Construct_circle_2;
+    Construct_circle_2 construct_circle_2_object() const
+    { return m_gt.construct_circle_2_object(); }
     
     typedef typename Gt::Construct_point_on_3 Construct_point_on_3;
     Construct_point_on_3 construct_point_on_3_object() const
     { return m_gt.construct_point_on_3_object(); }
+
+    typedef typename Gt::Compute_x_2 Compute_x_2;
+    Compute_x_2 compute_x_2_object() const
+    { return m_gt.compute_x_2_object(); }
+
+    typedef typename Gt::Compute_y_2 Compute_y_2;
+    Compute_y_2 compute_y_2_object() const
+    { return m_gt.compute_y_2_object(); }
 
     typedef typename Gt::Compute_x_3 Compute_x_3;
     Compute_x_3 compute_x_3_object() const
@@ -105,10 +127,14 @@ namespace CGAL {
     typedef typename Gt::Compute_z_3 Compute_z_3;
     Compute_z_3 compute_z_3_object() const
     { return m_gt.compute_z_3_object(); }
-    
+
     typedef typename Gt::Compute_squared_length_3 Compute_squared_length_3;
     Compute_squared_length_3 compute_squared_length_3_object() const
     { return m_gt.compute_squared_length_3_object(); }
+
+    typedef typename Gt::Compute_squared_length_2 Compute_squared_length_2;
+    Compute_squared_length_2 compute_squared_length_2_object() const
+    { return m_gt.compute_squared_length_2_object(); }
     
     typedef typename Gt::Construct_scaled_vector_3 Construct_scaled_vector_3;
     Construct_scaled_vector_3 construct_scaled_vector_3_object() const
@@ -129,15 +155,23 @@ namespace CGAL {
     typedef typename Gt::Construct_cross_product_vector_3 Construct_cross_product_vector_3;
     Construct_cross_product_vector_3 construct_cross_product_vector_3_object() const
     { return m_gt.construct_cross_product_vector_3_object(); }
-    
+
     typedef typename Gt::Construct_center_3 Construct_center_3;
     Construct_center_3 construct_center_3_object() const
     { return m_gt.construct_center_3_object(); }
-    
+
+    typedef typename Gt::Construct_center_2 Construct_center_2;
+    Construct_center_2 construct_center_2_object() const
+    { return m_gt.construct_center_2_object(); }
+
     typedef typename Gt::Compute_squared_radius_3 Compute_squared_radius_3;
     Compute_squared_radius_3 compute_squared_radius_3_object() const
     { return m_gt.compute_squared_radius_3_object(); }
-    
+
+    typedef typename Gt::Compute_squared_radius_2 Compute_squared_radius_2;
+    Compute_squared_radius_2 compute_squared_radius_2_object() const
+    { return m_gt.compute_squared_radius_2_object(); }
+
   private:
     Gt m_gt;
   };

@@ -48,12 +48,17 @@ namespace CGAL {
      ///< property map to access the location of an input point.
     typedef typename Traits::Normal_map Normal_map;
      ///< property map to access the unoriented normal of an input point.
-    typedef typename Traits::FT FT; ///< number type.
-    typedef typename Traits::Point_3 Point_3; ///< point type.
-    typedef typename Traits::Vector_3 Vector_3; ///< vector type.
+    typedef typename Traits::FT FT;
+    ///< number type.
+    typedef typename Traits::Point_3 Point_3;
+    ///< point type.
+    typedef typename Traits::Vector_3 Vector_3;
+    ///< vector type.
+    typedef typename Traits::Vector_2 Vector_2;
+    ///< 2D vector type.
     typedef typename Traits::Point_2 Point_2;
-     ///< 2D point type used during construction.
-    typedef typename Traits::Circle_2 Circle;
+    ///< 2D point type used during construction.
+    typedef typename Traits::Circle_2 Circle_2;
      ///< cricle type used during construction.
     /// \endcond
 
@@ -132,12 +137,25 @@ namespace CGAL {
     // ------------------------------------------------------------------------
     // Utilities
     // ------------------------------------------------------------------------
-    Sphere_3 constr_sphere(const Point_3& c, FT r) const
-    { return m_traits.construct_sphere_3_object()(c, r); }
-    Point_3 sph_center(const Sphere_3& s) const
-    { return m_traits.construct_center_3_object()(s); }
-    FT sqradius(const Sphere_3& s) const
-    { return m_traits.compute_squared_radius_3_object()(s); }
+    FT get_x_2(const Vector_2& v) const { return m_traits.compute_x_2_object()(v); }
+    FT get_y_2(const Vector_2& v) const { return m_traits.compute_y_2_object()(v); }
+    FT get_x_2(const Point_2& p) const { return m_traits.compute_x_2_object()(p); }
+    FT get_y_2(const Point_2& p) const { return m_traits.compute_y_2_object()(p); }
+
+    Circle_2 constr_circle(const Point_2& a, const Point_2& b,const Point_2& c) const
+    { return m_traits.construct_circle_2_object()(a, b, c); }
+    Point_2 circle_center(const Circle_2& s) const
+    { return m_traits.construct_center_2_object()(s); }
+    FT sqradius(const Circle_2& s) const
+    { return m_traits.compute_squared_radius_2_object()(s); }
+    Point_2 constr_point_2(FT a, FT b) const
+    { return m_traits.construct_point_2_object()(a, b); }
+    Vector_2 constr_vec_2(const Point_2 &a, const Point_2 &b) const
+    { return m_traits.construct_vector_2_object()(a, b); }
+    FT sqlen_2(const Vector_2& v) const
+    { return m_traits.compute_squared_length_2_object()(v); }
+    bool collinear_2(const Point_2& p, const Point_2& q, const Point_2& r) const
+    { return m_traits.construct_collinear_2_object()(p, q, r); }
 
     void create_shape(const std::vector<std::size_t> &indices) {
       std::vector<Point_3> p;
@@ -152,14 +170,14 @@ namespace CGAL {
       }
 
       // Implemented method from 'Geometric least-squares fitting of spheres, cylinders, cones and tori' by G. Lukacs,A.D. Marshall, R. R. Martin
-      const FT a01 = this->cross_pdct(n[0], n[1]) * n[2];
-      const FT b01 = this->cross_pdct(n[0], n[1]) * n[3];
-      const FT a0 = this->cross_pdct(p[2] - p[1], n[0]) * n[2];
-      const FT b0 = this->cross_pdct(p[3] - p[1], n[0]) * n[3];
-      const FT a1 = this->cross_pdct(p[0] - p[2], n[1]) * n[2];
-      const FT b1 = this->cross_pdct(p[0] - p[3], n[1]) * n[3];
-      const FT a = this->cross_pdct(p[0] - p[2], p[1] - p[0]) * n[2];
-      const FT b = this->cross_pdct(p[0] - p[3], p[1] - p[0]) * n[3];
+      const FT a01 = this->scalar_pdct(this->cross_pdct(n[0], n[1]), n[2]);
+      const FT b01 = this->scalar_pdct(this->cross_pdct(n[0], n[1]), n[3]);
+      const FT a0 = this->scalar_pdct(this->cross_pdct(this->constr_vec(p[1], p[2]), n[0]), n[2]);
+      const FT b0 = this->scalar_pdct(this->cross_pdct(this->constr_vec(p[1], p[3]), n[0]), n[3]);
+      const FT a1 = this->scalar_pdct(this->cross_pdct(this->constr_vec(p[2], p[0]), n[1]), n[2]);
+      const FT b1 = this->scalar_pdct(this->cross_pdct(this->constr_vec(p[3], p[0]), n[1]), n[3]);
+      const FT a = this->scalar_pdct(this->cross_pdct(this->constr_vec(p[2], p[0]), this->constr_vec(p[0], p[1])), n[2]);
+      const FT b = this->scalar_pdct(this->cross_pdct(this->constr_vec(p[3], p[0]), this->constr_vec(p[0], p[1])), n[3]);
 
       FT div = (b1 * a01 - b01 * a1);
       if (div == 0)
@@ -189,12 +207,12 @@ namespace CGAL {
       Point_3 c1;
       Vector_3 axis1;
       if (is_finite(x1) && is_finite(y1)) {
-        c1 = p[0] + n[0] * x1;
-        axis1 = c1 - (p[1] + n[1] * y1);
+        c1 = this->transl(p[0], this->scale(n[0], x1));
+        axis1 = this->constr_vec(this->transl(p[1], this->scale(n[1], y1)), c1);
 
         FT l = this->sqlen(axis1);
         if (l > (FT)0.00001 && l == l) {
-          axis1 = axis1 / CGAL::sqrt(l);
+          axis1 = this->scale(axis1, FT(1.0) / CGAL::sqrt(l));
           dist1 = getCircle(c1, axis1, p, majorRad1, minorRad1);
         }
       }
@@ -204,12 +222,12 @@ namespace CGAL {
       Point_3 c2;
       Vector_3 axis2;
       if (is_finite(x2) && is_finite(y2)) {
-        c2 = p[0] + n[0] * x2;
-        axis2 = c2 - (p[1] + n[1] * y2);
+        c2 = this->transl(p[0], this->scale(n[0], x2));
+        axis2 = this->constr_vec(this->transl(p[1], this->scale(n[1], y2)), c2);
 
         FT l = this->sqlen(axis2);
         if (l > (FT)0.00001 && l == l) {
-          axis2 = axis2 / CGAL::sqrt(l);
+          axis2 = this->scale(axis2, FT(1.0) / CGAL::sqrt(l));
           dist2 = getCircle(c2, axis2, p, majorRad2, minorRad2);
         }
       }
@@ -243,27 +261,27 @@ namespace CGAL {
         }
 
         // check normal deviation
-        Vector_3 d = p[i] - m_center;
+        Vector_3 d = this->constr_vec(m_center, p[i]);
 
         Vector_3 in_plane = this->cross_pdct(m_axis,
           this->cross_pdct(m_axis, d));
         if (this->scalar_pdct(in_plane, d) < 0)
-          in_plane = -in_plane;
+          in_plane = this->scale(in_plane, FT(-1.0));
 
         FT length = CGAL::sqrt(this->sqlen(in_plane));
         if (length == 0)
           return;
 
-        in_plane = in_plane / length;
+        in_plane = this->scale(in_plane, FT(1.0) / length);
 
-        d = p[i] - (m_center + this->scalar_pdct(in_plane, m_majorRad));
+        d = this->constr_vec((this->transl(m_center, this->scale(in_plane, m_majorRad))), p[i]);
 
         length = CGAL::sqrt(this->sqlen(d));
         if (length == 0)
           return;
 
-        d = d / length;
-        if (CGAL::abs(d * n[i]) < this->m_normal_threshold) {
+        d = this->scale(d, FT(1.0) / length);
+        if (CGAL::abs(this->scalar_pdct(d, n[i])) < this->m_normal_threshold) {
           this->m_is_valid = false;
           return;
         }
@@ -294,12 +312,12 @@ namespace CGAL {
     virtual void cos_to_normal(const std::vector<std::size_t> &indices, 
                                std::vector<FT> &angles) const {
       for (std::size_t i = 0;i<indices.size();i++) {
-        Vector_3 d = this->point(indices[i]) - m_center;
+        Vector_3 d = this->constr_vec(m_center, this->point(indices[i]));
 
         Vector_3 in_plane = this->cross_pdct(m_axis,
                                               this->cross_pdct(m_axis, d));
         if (this->scalar_pdct(in_plane, d) < 0)
-          in_plane = -in_plane;
+          in_plane = this->scale(in_plane, FT(-1.0));
 
         FT length = (FT) CGAL::sqrt(this->sqlen(in_plane));
 
@@ -310,11 +328,11 @@ namespace CGAL {
           continue;
         }
 
-        in_plane = in_plane / CGAL::sqrt(this->sqlen(in_plane));
+        in_plane = this->scale(in_plane,FT(1.0) / CGAL::sqrt(this->sqlen(in_plane)));
 
-        d = this->point(indices[i]) - (m_center + this->scalar_pdct(in_plane, m_majorRad));
-        d = d / CGAL::sqrt(this->sqlen(d));
-        angles[i] = CGAL::abs(d * this->normal(indices[i]));
+        d = this->constr_vec((this->transl(m_center, this->scale(in_plane, m_majorRad))), this->point(indices[i]));
+        d = this->scale(d, FT(1.0) / CGAL::sqrt(this->sqlen(d)));
+        angles[i] = CGAL::abs(this->scalar_pdct(d, this->normal(indices[i])));
       }
     }
 
@@ -356,26 +374,26 @@ namespace CGAL {
       std::vector<Point_2> pts;
       pts.resize(p.size());
       for (unsigned int i = 0;i<p.size();i++) {
-        Vector_3 d = p[i] - center;
+        Vector_3 d = this->constr_vec(center, p[i]);
         FT e = this->scalar_pdct(d, axis);
         FT f = this->scalar_pdct(d, d) - e * e;
         if (f <= 0)
-          pts[i] = Point_2(e, (FT) 0);
+          pts[i] = this->constr_point_2(e, (FT) 0);
         else
-          pts[i] = Point_2(e, CGAL::sqrt(this->scalar_pdct(d, d) - e * e));
+          pts[i] = this->constr_point_2(e, CGAL::sqrt(this->scalar_pdct(d, d) - e * e));
       }
 
-      if (CGAL::collinear(pts[0], pts[1], pts[2])) {
+      if (this->collinear_2(pts[0], pts[1], pts[2])) {
         return (std::numeric_limits<FT>::max)();
       }
 
-      Circle c(pts[0], pts[1], pts[2]);
+      Circle_2 c = this->constr_circle(pts[0], pts[1], pts[2]);
       minorRad = this->sqradius(c);
-      majorRad = this->get_y(this->sph_center(c));
-      center = center + this->get_x(this->sph_center(c)) * axis;
+      majorRad = this->get_y_2(this->circle_center(c));
+      center = this->transl(center, this->scale(axis, this->get_x_2(this->circle_center(c))));
 
       return CGAL::abs(
-        this->sqlen(this->constr_vec(this->sph_center(c), pts[3])) - this->sqradius(c));
+        this->sqlen_2(this->constr_vec_2(this->circle_center(c), pts[3])) - this->sqradius(c));
     }
 
     Point_3 m_center;
