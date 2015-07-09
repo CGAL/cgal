@@ -93,28 +93,27 @@ namespace CGAL {
         self& operator--() { return *this; }
         self  operator--(int) { return *this; }
 
-        self& operator+=(difference_type i) { return *this; }
-        self& operator-=(difference_type i) { return *this; }
-        self operator+(difference_type i) const { return *this; }
-        self operator-(difference_type i) const { return *this; }
+        self& operator+=(difference_type) { return *this; }
+        self& operator-=(difference_type) { return *this; }
+        self operator+(difference_type) const { return *this; }
+        self operator-(difference_type) const { return *this; }
 
-        difference_type operator-(self x) const { return 0; }
+        difference_type operator-(self ) const { return 0; }
 
         value_type operator*() const { return value_type(); }
-        value_type operator[](difference_type i) const { return value_type(); }
+        value_type operator[](difference_type ) const { return value_type(); }
 
-        bool operator==(const self& x) const { return true; }
-        bool operator!=(const self& x) const { return true; }
-        bool operator<(const self& x) const  { return true; }
+        bool operator==(const self& ) const { return true; }
+        bool operator!=(const self& ) const { return true; }
+        bool operator<(const self& ) const  { return true; }
       };
 
       struct Construct_cartesian_const_iterator_d{
-        typedef typename Point_3 Point_d;
-        typedef typename Cartesian_const_iterator_d  Cartesian_const_iterator_d;
+        typedef Point_3 Point_d;
         typedef Cartesian_const_iterator_d result_type;
 
-        Cartesian_const_iterator_d operator()(Point_d const& p) const { return Cartesian_const_iterator_d(); }
-        Cartesian_const_iterator_d operator()(Point_d const& p, int) const { return Cartesian_const_iterator_d(); }
+        Cartesian_const_iterator_d operator()(Point_d const& ) const { return Cartesian_const_iterator_d(); }
+        Cartesian_const_iterator_d operator()(Point_d const& , int) const { return Cartesian_const_iterator_d(); }
       };
       struct Iso_box_d{};
       struct Sphere_d{};
