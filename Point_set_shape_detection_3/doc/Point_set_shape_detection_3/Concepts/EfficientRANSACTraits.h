@@ -86,9 +86,8 @@ public:
   /*!
    * Function object type that provides
    * `Point_3 operator()(const Line_3& l, int i)`
-   * returning an arbitrary point on `l`. It holds `point(i) == point(j)`,
-   * iff `i == j`. Furthermore, it is directed from `point(i)` to `point(j)`,
-   * for all `i < j`.
+   * returning an arbitrary point on `l`. `i` is not used and can vbe of 
+   * any value.
    */
   typedef unspecified_type Construct_point_on_3;
 
