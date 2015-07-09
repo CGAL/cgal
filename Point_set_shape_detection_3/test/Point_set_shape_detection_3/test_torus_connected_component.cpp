@@ -46,7 +46,7 @@ bool test_torus_connected_component() {
     Traits const& traits = ransac.traits();
 
     CGAL::Vector_3<K> n = random_normal<K>();
-    n = traits.compute_cross_product_3_object()(axis, n);
+    n = traits.construct_cross_product_vector_3_object()(axis, n);
     n = n * (FT) 1.0 / (CGAL::sqrt(this->sqlen(n)));
     CGAL::Plane_3<K> pl(center, n);
 
