@@ -93,7 +93,7 @@ The behavior of the algorithm is controlled via the following parameters.
 
 During simplification of the internal triangulation some recursive edge flip operators are required to guarantee that the triangulation remain valid when applying a half edge collapse operator (see Figure \cgalFigureRef{2D_Reconstruction_Simplification_edgeflip}). Calling set_use_flip(false) prevents the algorithm from using edge flips, yielding shorter computational times at the price of suboptimal results as not all edges can be considered for being collapsible.
 
-\cgalFigureBegin{2D_Reconstruction_Simplification_edgeflip,edgeflip.png}
+\cgalFigureBegin{2D_Reconstruction_Simplification_edgeflip,edgeflip.jpg}
 Edge flipping. Left: the blue edge creates fold-overs because of blocking edges shown in black. Middle: after running the recursive edge flipping procedure the blue edge is collapsible. Right: triangulation after collapse.
 \cgalFigureEnd
 
