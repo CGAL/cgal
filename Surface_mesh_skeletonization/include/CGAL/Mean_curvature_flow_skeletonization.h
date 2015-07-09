@@ -632,11 +632,10 @@ public:
     MCFSKEL_DEBUG(std::cerr << "before solve\n";)
 
     // solve "At * A * X = At * B".
-    double D;
-    m_solver.pre_factor_non_symmetric(A, D);
-    m_solver.linear_solver_non_symmetric(A, Bx, X);
-    m_solver.linear_solver_non_symmetric(A, By, Y);
-    m_solver.linear_solver_non_symmetric(A, Bz, Z);
+    m_solver.normal_equation_factor(A);
+    m_solver.normal_equation_solver(Bx, X);
+    m_solver.normal_equation_solver(By, Y);
+    m_solver.normal_equation_solver(Bz, Z);
 
     MCFSKEL_DEBUG(std::cerr << "after solve\n";)
 

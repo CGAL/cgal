@@ -31,6 +31,7 @@
 ## Concepts ##
 
 - `MeanCurvatureSkeletonizationTraits`
+- `NormalEquationSparseLinearAlgebraTraits_d`
 
 ## Classes ##
 
