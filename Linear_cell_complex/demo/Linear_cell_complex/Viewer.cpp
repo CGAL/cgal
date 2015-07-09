@@ -123,8 +123,8 @@ void Viewer::triangulate_facet()
                 CDT cdt(cdt_traits);
 
                LCC::Dart_of_orbit_range<1>::const_iterator
-                     he_circ = lcc.darts_of_orbit<1>(dartIter).begin(),
-                     he_circ_end(he_circ_end);
+                 he_circ = lcc.darts_of_orbit<1>(dartIter).begin(),
+                 he_circ_end(he_circ);
 
                 // Iterates on the vector of facet handles
                 CDT::Vertex_handle previous, first;
@@ -363,7 +363,7 @@ void Viewer::initialize_buffers()
     vao[0].bind();
     //points of the facets
     buffers[0].bind();
-    buffers[0].allocate(pos_facets.data(), pos_facets.size()*sizeof(float));
+    buffers[0].allocate(pos_facets.data(), static_cast<int>(pos_facets.size()*sizeof(float)));
     vertexLocation[0] = rendering_program.attributeLocation("vertex");
     rendering_program.bind();
     rendering_program.enableAttributeArray(vertexLocation[0]);
@@ -372,7 +372,7 @@ void Viewer::initialize_buffers()
     buffers[0].release();
     //normals of the facets
     buffers[1].bind();
-    buffers[1].allocate(flat_normals.data(), flat_normals.size()*sizeof(float));
+    buffers[1].allocate(flat_normals.data(), static_cast<int>(flat_normals.size()*sizeof(float)));
     normalsLocation = rendering_program.attributeLocation("normal");
     rendering_program.bind();
     rendering_program.enableAttributeArray(normalsLocation);
@@ -380,7 +380,7 @@ void Viewer::initialize_buffers()
     buffers[1].release();
     //colors of the facets
     buffers[2].bind();
-    buffers[2].allocate(colors.data(), colors.size()*sizeof(float));
+    buffers[2].allocate(colors.data(), static_cast<int>(colors.size()*sizeof(float)));
     colorsLocation = rendering_program.attributeLocation("color");
     rendering_program.bind();
     rendering_program.enableAttributeArray(colorsLocation);
@@ -392,7 +392,7 @@ void Viewer::initialize_buffers()
     vao[1].bind();
     //points of the facets
     buffers[3].bind();
-    buffers[3].allocate(pos_facets.data(), pos_facets.size()*sizeof(float));
+    buffers[3].allocate(pos_facets.data(), static_cast<int>(pos_facets.size()*sizeof(float)));
     vertexLocation[0] = rendering_program.attributeLocation("vertex");
     rendering_program.bind();
     rendering_program.enableAttributeArray(vertexLocation[0]);
@@ -401,7 +401,7 @@ void Viewer::initialize_buffers()
     buffers[3].release();
     //normals of the facets
     buffers[4].bind();
-    buffers[4].allocate(smooth_normals.data(), smooth_normals.size()*sizeof(float));
+    buffers[4].allocate(smooth_normals.data(), static_cast<int>(smooth_normals.size()*sizeof(float)));
     normalsLocation = rendering_program.attributeLocation("normal");
     rendering_program.bind();
     rendering_program.enableAttributeArray(normalsLocation);
@@ -409,7 +409,7 @@ void Viewer::initialize_buffers()
     buffers[4].release();
     //colors of the facets
     buffers[5].bind();
-    buffers[5].allocate(colors.data(), colors.size()*sizeof(float));
+    buffers[5].allocate(colors.data(), static_cast<int>(colors.size()*sizeof(float)));
     colorsLocation = rendering_program.attributeLocation("color");
     rendering_program.bind();
     rendering_program.enableAttributeArray(colorsLocation);
@@ -421,7 +421,7 @@ void Viewer::initialize_buffers()
     //The lines
     vao[2].bind();
     buffers[6].bind();
-    buffers[6].allocate(pos_lines.data(), pos_lines.size()*sizeof(float));
+    buffers[6].allocate(pos_lines.data(), static_cast<int>(pos_lines.size()*sizeof(float)));
     vertexLocation[2] = rendering_program_p_l.attributeLocation("vertex");
     rendering_program_p_l.bind();
     rendering_program_p_l.enableAttributeArray(vertexLocation[2]);
@@ -433,7 +433,7 @@ void Viewer::initialize_buffers()
     //The points
     vao[3].bind();
     buffers[7].bind();
-    buffers[7].allocate(pos_points.data(), pos_points.size()*sizeof(float));
+    buffers[7].allocate(pos_points.data(), static_cast<int>(pos_points.size()*sizeof(float)));
     vertexLocation[2] = rendering_program_p_l.attributeLocation("vertex");
     rendering_program_p_l.bind();
     rendering_program_p_l.enableAttributeArray(vertexLocation[2]);
@@ -685,7 +685,7 @@ QColor color;
           vao[0].bind();
           attrib_buffers(this);
           rendering_program.bind();
-          glDrawArrays(GL_TRIANGLES, 0, pos_facets.size()/3);
+          glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_facets.size()/3));
           rendering_program.release();
           vao[0].release();
       }
@@ -694,7 +694,7 @@ QColor color;
           vao[1].bind();
           attrib_buffers(this);
           rendering_program.bind();
-          glDrawArrays(GL_TRIANGLES, 0, pos_facets.size()/3);
+          glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_facets.size()/3));
           rendering_program.release();
           vao[1].release();
       }
@@ -706,7 +706,7 @@ QColor color;
         color.setRgbF(0.2f, 0.2f, 0.7f);
         rendering_program_p_l.bind();
         rendering_program_p_l.setAttributeValue(colorLocation,color);
-        glDrawArrays(GL_LINES, 0, pos_lines.size()/3);
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_lines.size()/3));
         rendering_program_p_l.release();
         vao[2].release();
     }
@@ -718,7 +718,7 @@ QColor color;
         color.setRgbF(.2f,.2f,.6f);
         rendering_program_p_l.bind();
         rendering_program_p_l.setAttributeValue(colorLocation,color);
-        glDrawArrays(GL_POINTS, 0, pos_points.size()/3);
+        glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
         rendering_program_p_l.release();
         vao[3].release();
     }
