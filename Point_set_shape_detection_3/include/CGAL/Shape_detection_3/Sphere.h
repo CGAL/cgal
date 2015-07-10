@@ -41,6 +41,8 @@ namespace CGAL {
      */
   template <class Traits>
   class Sphere : public Shape_base<Traits> {
+    using Shape_base<Traits>::update_label;
+
   public:    
     /// \cond SKIP_IN_MANUAL
     typedef typename Traits::Point_map Point_map;
