@@ -113,6 +113,7 @@ else
       jet_fitting_plugin \
       join_polyhedra_plugin \
       kernel_plugin \
+      mean_curvature_flow_skeleton_plugin \
       mesh_3_plugin \
       mesh_segmentation_plugin \
       mesh_simplification_plugin \
