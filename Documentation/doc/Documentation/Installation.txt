@@ -1216,22 +1216,9 @@ the header files and the full pathnames of the \sc{Qt}3 libraries.
 
 \subsection installation_qt5 Qt5 Library
 
-The CMake scripts that search for \sc{Qt}5 can use the introspection feature
-of the tool `qmake` included in \sc{Qt}5 distributions. If \sc{Qt}5 is not
-automatically found, it is sufficient to set the `PATH`
-environment variable, so that \sc{Qt}5 `qmake` tool is in the path, and
-before \sc{Qt}3 `qmake` if that one exists. Moreover, it is important to does not mistake \sc{Qt}5 `qmake` with \sc{Qt}4 `qmake`. One can alternatively set the
-CMake variable `QT_QMAKE_EXECUTABLE`. The following variables
-should be then assigned automatically by CMake.
-
-| Variable              | Description           | Type        |
-| :-                    | :-                    | :-             |
-| `QT_INCLUDE_DIR`      | Directory containing the `QtCore/qglobal.h` file  | CMake |
-| `QT_LIBRARY_DIR`      | Directory containing the compiled \sc{Qt}5 libraries | CMake |
-| `QT_(xyz)_LIBRARY`    | Full pathname to the compiled 'xyz' \sc{Qt}5 library\cgalFootnote{If both release and debug versions are available, this variable contains a list of the following form: 'optimized;<fullpath-to-release-lib>;debug;<fullpath-to-debug-lib>', where the 'optimized' and 'debug' tags should appear verbatim.} | CMake |
-| `QT_QMAKE_EXECUTABLE` | Full pathname to the qmake executable of \sc{Qt}5 | CMake |
-| `QT_MOC_EXECUTABLE`   | Full pathname to the moc executable of \sc{Qt}5 | CMake |
-| `QT_UIC_EXECUTABLE`   | Full pathname to the uic executable of \sc{Qt}5 | CMake |
+You must set the cmake or environment variable `Qt5_DIR` to point to the path
+to the directory containing the file `Qt5Config.cmake` created by your \sc{Qt}5 installation. If you are
+using the open source edition it should be `<path>/qt-everywhere-opensource-src-<version>/qtbase/lib/cmake/Qt5`.
 
 \subsection installation_leda LEDA Library
 
