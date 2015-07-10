@@ -63,11 +63,12 @@ public:
    * `Point_3 operator()(FT x, FT y, FT z)`
    * returning the point with `x`, `y` and `z` as Cartesian coordinates.
    */
-  //typedef unspecified_type Construct_point_3;
+  typedef unspecified_type Construct_point_3;
 
   /*!
    * Function object type that provides 
-   * `Vector_3 operator()(Point_3 p1, Point_3 p2)`
+   * `Vector_3 operator()(Point_3 p1, Point_3 p2)` and 
+   * `Vector_3 operator()(Origin p1, Point_3 p2)`
    * returning the vector `p1p2`, `Vector_3 operator()(NULL_VECTOR)` returning 
    * the null vector, and `Vector_3 operator()(Line_3 l)` returning 
    * a vector having the same direction as `l` 
@@ -256,8 +257,8 @@ public:
 /// \name Access to Function Objects
 /// @{
   
-  /*Construct_point_3
-  construct_point_3_object();*/
+  Construct_point_3
+  construct_point_3_object();
 
   Construct_vector_3
   construct_vector_3_object();

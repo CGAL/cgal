@@ -76,9 +76,9 @@ namespace CGAL {
     Efficient_RANSAC_traits(const Gt& gt =  Gt())
       : m_gt(gt) {}
 
-    /*typedef typename Gt::Construct_point_3 Construct_point_3;
+    typedef typename Gt::Construct_point_3 Construct_point_3;
     Construct_point_3 construct_point_3_object() const 
-    { return m_gt.construct_point_3_object(); }*/
+    { return m_gt.construct_point_3_object(); }
 
     typedef typename Gt::Construct_vector_3 Construct_vector_3;
     Construct_vector_3 construct_vector_3_object() const

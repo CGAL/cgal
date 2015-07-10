@@ -131,17 +131,17 @@ namespace CGAL {
       }
     };
     
-    /*struct Construct_point_3
+    struct Construct_point_3
     {
-      Point_3 operator()() { return Point_3(); }
+      Point_3 operator()(FT, FT, FT) { return Point_3(); }
     };
     Construct_point_3 construct_point_3_object() const
-    { return Construct_point_3(); }*/
+    { return Construct_point_3(); }
     
 
     struct Construct_point_2
     {
-      Point_2 operator()(FT a, FT b) { return Point_2(); }
+      Point_2 operator()(FT, FT) { return Point_2(); }
     };
     Construct_point_2 construct_point_2_object() const
     { return Construct_point_2(); }
@@ -150,6 +150,7 @@ namespace CGAL {
     {
       Vector_3 operator()(Null_vector const&) { return NULL_VECTOR; }
       Vector_3 operator()(Point_3 const&, Point_3 const&) { return Vector_3(); }
+      Vector_3 operator()(Origin const&, Point_3 const&) { return Vector_3(); }
       Vector_3 operator()(Line_3 const&) { return Vector_3(); }
     };
     Construct_vector_3 construct_vector_3_object() const
