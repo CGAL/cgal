@@ -34,6 +34,8 @@ public:
   typedef unspecified_type Point_2;
   /// The circle type, only required if you want to detect tori
   typedef unspecified_type Circle_2;
+  /// The 2D vector type, only required if you want to detect tori
+  typedef unspecified_type Vector_3;
 
   /// The number type of the Cartesian coordinates of types Point_3
   typedef unspecified_type FT;
@@ -61,10 +63,11 @@ public:
    * `Point_3 operator()(FT x, FT y, FT z)`
    * returning the point with `x`, `y` and `z` as Cartesian coordinates.
    */
-  typedef unspecified_type Construct_point_3;
+  //typedef unspecified_type Construct_point_3;
 
   /*!
-   * Function object type that provides `Point_3 operator()(Point_3 p1, Point_3 p2)`
+   * Function object type that provides 
+   * `Vector_3 operator()(Point_3 p1, Point_3 p2)`
    * returning the vector `p1p2`, `Vector_3 operator()(NULL_VECTOR)` returning 
    * the null vector, and `Vector_3 operator()(Line_3 l)` returning 
    * a vector having the same direction as `l` 
@@ -88,12 +91,37 @@ public:
   
   /*!
    * Function object type that provides
-   * `Point_3 operator()(const Line_3& l, int i)`
+   * `Point_3 operator()(Line_3 l, int i)`
    * returning an arbitrary point on `l`. `i` is not used and can vbe of 
    * any value.
    * Only required if you want to detect cylinders.
    */
   typedef unspecified_type Construct_point_on_3;
+  
+  /*!
+   * Function object type that provides
+   * `Point_2 operator()(FT x, FT y)`
+   * returning the 2D point with `x` and `y` as Cartesian coordinates.
+   * Only required if you want to detect tori.
+   */
+  typedef unspecified_type Construct_point_2;
+  
+  /*!
+   * Function object type that provides 
+   * `Vector_2 operator()(Point_2 p1, Point_2 p2)`
+   * returning the vector `p1p2`, `Vector_2 operator()(NULL_VECTOR)` returning 
+   * the null vector.
+   * Only required if you want to detect tori.
+   */
+  typedef unspecified_type Construct_vector_2;
+  
+  /*!
+   * Function object type that provides 
+   * `Circle_2 operator()(Point_2 p1, Point_2 p2, Point_2 p3)`
+   * returning the circle going through `p1`, `p2` and `p3`.
+   * Only required if you want to detect tori.
+   */
+  typedef unspecified_type Construct_circle_2;
 
   /*!
    * Function object type that provides
@@ -118,10 +146,34 @@ public:
   
   /*!
    * Function object type that provides
+   * `FT operator()(Point_2 p)` and `FT operator()(Vector_2 v)`
+   * returning the `x` coordinate of a point and a vector respectively.
+   * Only required if you want to detect tori.
+   */
+  typedef unspecified_type Compute_x_2;
+
+  /*!
+   * Function object type that provides
+   * `FT operator()(Point_2 p)` and `FT operator()(Vector_2 v)`
+   * returning the `y` coordinate of a point and a vector respectively.
+   * Only required if you want to detect tori.
+   */
+  typedef unspecified_type Compute_y_2;
+
+  /*!
+   * Function object type that provides
    * `FT operator()(Vector_3 v)`
    * returning the squared length of `v`.
    */
   typedef unspecified_type Compute_squared_length_3;
+  
+  /*!
+   * Function object type that provides
+   * `FT operator()(Vector_2 v)`
+   * returning the squared length of `v`.
+   * Only required if you want to detect tori.
+   */
+  typedef unspecified_type Compute_squared_length_2;
 
   /*!
    * Function object type that provides
@@ -160,27 +212,52 @@ public:
   
   /*!
    * Function object type that provides
-   * `Point_3 operator()(const Sphere_3& s)`
+   * `Point_3 operator()(Sphere_3 s)`
    * returning the center of the sphere `s`.
    * Only required if you want to detect spheres or tori.
    */
   typedef unspecified_type Construct_center_3;
+  
+  /*!
+   * Function object type that provides
+   * `Point_2 operator()(Circle_2 c)`
+   * returning the center of the circle `c`.
+   * Only required if you want to detect tori.
+   */
+  typedef unspecified_type Construct_center_2;
 
   /*!
    * Function object type that provides
-   * `FT operator()(const Sphere_3& s)`
+   * `FT operator()(Sphere_3 s)`
    * returning the squared radius of the sphere `s`.
    * Only required if you want to detect spheres or tori.
    */
   typedef unspecified_type Compute_squared_radius_3;
+  
+  /*!
+   * Function object type that provides
+   * `FT operator()(Circle_2 c)`
+   * returning the squared radius of the circle `c`.
+   * Only required if you want to detect tori.
+   */
+  typedef unspecified_type Compute_squared_radius_2;
+  
+  /*!
+   * Function object type that provides
+   * `bool operator(Point_2 p, Point_2 q, Point_2 r)`
+   * returning true if the points `p`, `q`, and `r` are collinear and
+   * false otherwise.
+   * Only required if you want to detect tori.
+  */ 
+  typedef unspecified_type Collinear_2; 
 
 /// @}
 
 /// \name Access to Function Objects
 /// @{
   
-  Construct_point_3
-  construct_point_3_object();
+  /*Construct_point_3
+  construct_point_3_object();*/
 
   Construct_vector_3
   construct_vector_3_object();
@@ -196,6 +273,18 @@ public:
   /// Only required if you want to detect cylinders.
   Construct_point_on_3
   construct_point_on_3_object();
+  
+  /// Only required if you want to detect tori.
+  Construct_point_2 
+  construct_point_2_object();
+
+  /// Only required if you want to detect tori.
+  Construct_vector_2 
+  construct_vector_2_object();
+
+  /// Only required if you want to detect tori.
+  Construct_circle_2 
+  construct_circle_2_object();
 
   Compute_x_3
   compute_x_3_object();
@@ -206,8 +295,20 @@ public:
   Compute_z_3
   compute_z_3_object();
   
+  /// Only required if you want to detect tori.
+  Compute_x_2
+  compute_x_2_object();
+
+  /// Only required if you want to detect tori.
+  Compute_y_2
+  compute_y_2_object();
+
   Compute_squared_length_3
   compute_squared_length_3_object();
+
+  /// Only required if you want to detect tori.
+  Compute_squared_length_2 
+  compute_squared_length_2_object();
 
   Construct_scaled_vector_3
   construct_scaled_vector_3_object();
@@ -227,10 +328,22 @@ public:
   /// Only required if you want to detect spheres.
   Construct_center_3
   construct_center_3_object();
+
+  /// Only required if you want to detect tori.
+  Construct_center_2 
+  construct_center_2_object();
   
   /// Only required if you want to detect spheres or tori.
   Compute_squared_radius_3
   compute_squared_radius_3_object();
+
+  /// Only required if you want to detect tori.
+  Compute_squared_radius_2 
+  compute_squared_radius_2_object();
+  
+  /// Only required if you want to detect tori.
+  Collinear_2 
+  collinear_2_object();
 
 /// @}
 };
