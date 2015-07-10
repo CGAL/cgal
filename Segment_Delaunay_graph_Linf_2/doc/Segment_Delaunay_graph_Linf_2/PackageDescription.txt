@@ -18,7 +18,7 @@ the Voronoi diagram of a set of points and segments under the
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.X}
+\cgalPkgSince{4.7}
 \cgalPkgDependsOn{\ref PkgSegmentDelaunayGraph2Summary}
 \cgalPkgBib{cgal:cdp-sdglinf2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
