@@ -23,12 +23,12 @@ void Scene::compile_shaders()
         std::cerr<<"VAO Creation FAILED"<<std::endl;
     }
     //prepare the sphere model that will be instanced rendered in draw.
-    draw_sphere(0.02,15);
+    draw_sphere(0.02f,15);
     //prepare the tube model that will be instanced rendered when drawing the cube.
-    draw_cylinder(0.01,25, points_cube, normals_cylinder);
+    draw_cylinder(0.01f,25, points_cube, normals_cylinder);
 
     //prepare the tube model that will be instanced rendered when drawing the triangulation.
-    draw_cylinder(0.005,25, points_cylinder, normals_cylinder);
+    draw_cylinder(0.005f,25, points_cylinder, normals_cylinder);
 
 
     //Vertex source code
@@ -426,7 +426,7 @@ void Scene::initialize_buffers()
 
     vao[0].bind();
     buffers[0].bind();
-    buffers[0].allocate(pos_points.data(), pos_points.size()*sizeof(float));
+    buffers[0].allocate(pos_points.data(), static_cast<int>(pos_points.size()*sizeof(float)));
     poly_vertexLocation[0] = rendering_program.attributeLocation("vertex");
     rendering_program.enableAttributeArray(poly_vertexLocation[0]);
     rendering_program.setAttributeBuffer(poly_vertexLocation[0],GL_FLOAT,0,3);
@@ -436,7 +436,7 @@ void Scene::initialize_buffers()
 
     vao[1].bind();
     buffers[1].bind();
-    buffers[1].allocate(pos_tube.data(), pos_tube.size()*sizeof(float));
+    buffers[1].allocate(pos_tube.data(), static_cast<int>(pos_tube.size()*sizeof(float)));
     poly_vertexLocation[0] = rendering_program.attributeLocation("vertex");
     rendering_program.enableAttributeArray(poly_vertexLocation[0]);
     rendering_program.setAttributeBuffer(poly_vertexLocation[0],GL_FLOAT,0,3);
@@ -445,7 +445,7 @@ void Scene::initialize_buffers()
 
     vao[11].bind();
     buffers[23].bind();
-    buffers[23].allocate(pos_square.data(), pos_square.size()*sizeof(float));
+    buffers[23].allocate(pos_square.data(), static_cast<int>(pos_square.size()*sizeof(float)));
     poly_vertexLocation[0] = rendering_program.attributeLocation("vertex");
     rendering_program.enableAttributeArray(poly_vertexLocation[0]);
     rendering_program.setAttributeBuffer(poly_vertexLocation[0],GL_FLOAT,0,3);
@@ -454,7 +454,7 @@ void Scene::initialize_buffers()
 
     vao[2].bind();
     buffers[2].bind();
-    buffers[2].allocate(pos_cube.data(), pos_cube.size()*sizeof(float));
+    buffers[2].allocate(pos_cube.data(), static_cast<int>(pos_cube.size()*sizeof(float)));
     poly_vertexLocation[0] = rendering_program.attributeLocation("vertex");
     rendering_program.enableAttributeArray(poly_vertexLocation[0]);
     rendering_program.setAttributeBuffer(poly_vertexLocation[0],GL_FLOAT,0,3);
@@ -467,14 +467,14 @@ void Scene::initialize_buffers()
 
     vao[3].bind();
     buffers[3].bind();
-    buffers[3].allocate(points_spheres.data(), points_spheres.size()*sizeof(float));
+    buffers[3].allocate(points_spheres.data(), static_cast<int>(points_spheres.size()*sizeof(float)));
     poly_vertexLocation[1] = rendering_program_spheres.attributeLocation("vertex");
     rendering_program_spheres.enableAttributeArray(poly_vertexLocation[1]);
     rendering_program_spheres.setAttributeBuffer(poly_vertexLocation[1],GL_FLOAT,0,3);
     buffers[3].release();
 
     buffers[4].bind();
-    buffers[4].allocate(normals_spheres.data(), normals_spheres.size()*sizeof(float));
+    buffers[4].allocate(normals_spheres.data(), static_cast<int>(normals_spheres.size()*sizeof(float)));
     rendering_program_spheres.bind();
     normalsLocation[0] = rendering_program_spheres.attributeLocation("normal");
     rendering_program_spheres.enableAttributeArray(normalsLocation[0]);
@@ -496,28 +496,28 @@ void Scene::initialize_buffers()
     rendering_program_cylinders.bind();
     vao[8].bind();
     buffers[8].bind();
-    buffers[8].allocate(points_cube->data(), points_cube->size()*sizeof(float));
+    buffers[8].allocate(points_cube->data(), static_cast<int>(points_cube->size()*sizeof(float)));
     poly_vertexLocation[2] = rendering_program_cylinders.attributeLocation("vertex");
     rendering_program_cylinders.enableAttributeArray(poly_vertexLocation[2]);
     rendering_program_cylinders.setAttributeBuffer(poly_vertexLocation[2],GL_FLOAT,0,3);
     buffers[8].release();
 
     buffers[9].bind();
-    buffers[9].allocate(normals_cylinder->data(), normals_cylinder->size()*sizeof(float));
+    buffers[9].allocate(normals_cylinder->data(), static_cast<int>(normals_cylinder->size()*sizeof(float)));
     normalsLocation[1] = rendering_program_cylinders.attributeLocation("normal");
     rendering_program_cylinders.enableAttributeArray(normalsLocation[1]);
     rendering_program_cylinders.setAttributeBuffer(normalsLocation[1],GL_FLOAT,0,3);
     buffers[9].release();
 
     buffers[10].bind();
-    buffers[10].allocate(transfo1_cube.data(), transfo1_cube.size()*sizeof(float));
+    buffers[10].allocate(transfo1_cube.data(), static_cast<int>(transfo1_cube.size()*sizeof(float)));
     centerLocation[1] = rendering_program_cylinders.attributeLocation("transfo1");
     rendering_program_cylinders.enableAttributeArray(centerLocation[1]);
     rendering_program_cylinders.setAttributeBuffer(centerLocation[1],GL_FLOAT,0,4);
     buffers[10].release();
 
     buffers[11].bind();
-    buffers[11].allocate(transfo2_cube.data(), transfo2_cube.size()*sizeof(float));
+    buffers[11].allocate(transfo2_cube.data(), static_cast<int>(transfo2_cube.size()*sizeof(float)));
     centerLocation[2] = rendering_program_cylinders.attributeLocation("transfo2");
     rendering_program_cylinders.enableAttributeArray(centerLocation[2]);
     rendering_program_cylinders.setAttributeBuffer(centerLocation[2],GL_FLOAT,0,4);
@@ -525,14 +525,14 @@ void Scene::initialize_buffers()
 
 
     buffers[12].bind();
-    buffers[12].allocate(transfo3_cube.data(), transfo3_cube.size()*sizeof(float));
+    buffers[12].allocate(transfo3_cube.data(), static_cast<int>(transfo3_cube.size()*sizeof(float)));
     centerLocation[3] = rendering_program_cylinders.attributeLocation("transfo3");
     rendering_program_cylinders.enableAttributeArray(centerLocation[3]);
     rendering_program_cylinders.setAttributeBuffer(centerLocation[3],GL_FLOAT,0,4);
     buffers[12].release();
 
     buffers[13].bind();
-    buffers[13].allocate(transfo4_cube.data(), transfo4_cube.size()*sizeof(float));
+    buffers[13].allocate(transfo4_cube.data(), static_cast<int>(transfo4_cube.size()*sizeof(float)));
     centerLocation[4] = rendering_program_cylinders.attributeLocation("transfo4");
     rendering_program_cylinders.enableAttributeArray(centerLocation[4]);
     rendering_program_cylinders.setAttributeBuffer(centerLocation[4],GL_FLOAT,0,4);
@@ -549,7 +549,7 @@ void Scene::initialize_buffers()
     vao[8].release();
     vao[9].bind();
     buffers[14].bind();
-    buffers[14].allocate(points_cylinder->data(), points_cylinder->size()*sizeof(float));
+    buffers[14].allocate(points_cylinder->data(), static_cast<int>(points_cylinder->size()*sizeof(float)));
     poly_vertexLocation[2] = rendering_program_cylinders.attributeLocation("vertex");
     rendering_program_cylinders.enableAttributeArray(poly_vertexLocation[2]);
     rendering_program_cylinders.setAttributeBuffer(poly_vertexLocation[2],GL_FLOAT,0,3);
@@ -562,14 +562,14 @@ void Scene::initialize_buffers()
     buffers[9].release();
 
     buffers[15].bind();
-    buffers[15].allocate(transfo1_cylinder.data(), transfo1_cylinder.size()*sizeof(float));
+    buffers[15].allocate(transfo1_cylinder.data(), static_cast<int>(transfo1_cylinder.size()*sizeof(float)));
     centerLocation[1] = rendering_program_cylinders.attributeLocation("transfo1");
     rendering_program_cylinders.enableAttributeArray(centerLocation[1]);
     rendering_program_cylinders.setAttributeBuffer(centerLocation[1],GL_FLOAT,0,4);
     buffers[15].release();
 
     buffers[16].bind();
-    buffers[16].allocate(transfo2_cylinder.data(), transfo2_cylinder.size()*sizeof(float));
+    buffers[16].allocate(transfo2_cylinder.data(), static_cast<int>(transfo2_cylinder.size()*sizeof(float)));
     centerLocation[2] = rendering_program_cylinders.attributeLocation("transfo2");
     rendering_program_cylinders.enableAttributeArray(centerLocation[2]);
     rendering_program_cylinders.setAttributeBuffer(centerLocation[2],GL_FLOAT,0,4);
@@ -577,14 +577,14 @@ void Scene::initialize_buffers()
 
 
     buffers[17].bind();
-    buffers[17].allocate(transfo3_cylinder.data(), transfo3_cylinder.size()*sizeof(float));
+    buffers[17].allocate(transfo3_cylinder.data(), static_cast<int>(transfo3_cylinder.size()*sizeof(float)));
     centerLocation[3] = rendering_program_cylinders.attributeLocation("transfo3");
     rendering_program_cylinders.enableAttributeArray(centerLocation[3]);
     rendering_program_cylinders.setAttributeBuffer(centerLocation[3],GL_FLOAT,0,4);
     buffers[17].release();
 
     buffers[18].bind();
-    buffers[18].allocate(transfo4_cylinder.data(), transfo4_cylinder.size()*sizeof(float));
+    buffers[18].allocate(transfo4_cylinder.data(), static_cast<int>(transfo4_cylinder.size()*sizeof(float)));
     centerLocation[4] = rendering_program_cylinders.attributeLocation("transfo4");
     rendering_program_cylinders.enableAttributeArray(centerLocation[4]);
     rendering_program_cylinders.setAttributeBuffer(centerLocation[4],GL_FLOAT,0,4);
@@ -614,14 +614,14 @@ void Scene::initialize_buffers()
     buffers[9].release();
 
     buffers[19].bind();
-    buffers[19].allocate(transfo1_square.data(), transfo1_square.size()*sizeof(float));
+    buffers[19].allocate(transfo1_square.data(), static_cast<int>(transfo1_square.size()*sizeof(float)));
     centerLocation[1] = rendering_program_cylinders.attributeLocation("transfo1");
     rendering_program_cylinders.enableAttributeArray(centerLocation[1]);
     rendering_program_cylinders.setAttributeBuffer(centerLocation[1],GL_FLOAT,0,4);
     buffers[19].release();
 
     buffers[20].bind();
-    buffers[20].allocate(transfo2_square.data(), transfo2_square.size()*sizeof(float));
+    buffers[20].allocate(transfo2_square.data(), static_cast<int>(transfo2_square.size()*sizeof(float)));
     centerLocation[2] = rendering_program_cylinders.attributeLocation("transfo2");
     rendering_program_cylinders.enableAttributeArray(centerLocation[2]);
     rendering_program_cylinders.setAttributeBuffer(centerLocation[2],GL_FLOAT,0,4);
@@ -629,14 +629,14 @@ void Scene::initialize_buffers()
 
 
     buffers[21].bind();
-    buffers[21].allocate(transfo3_square.data(), transfo3_square.size()*sizeof(float));
+    buffers[21].allocate(transfo3_square.data(), static_cast<int>(transfo3_square.size()*sizeof(float)));
     centerLocation[3] = rendering_program_cylinders.attributeLocation("transfo3");
     rendering_program_cylinders.enableAttributeArray(centerLocation[3]);
     rendering_program_cylinders.setAttributeBuffer(centerLocation[3],GL_FLOAT,0,4);
     buffers[21].release();
 
     buffers[22].bind();
-    buffers[22].allocate(transfo4_square.data(), transfo4_square.size()*sizeof(float));
+    buffers[22].allocate(transfo4_square.data(), static_cast<int>(transfo4_square.size()*sizeof(float)));
     centerLocation[4] = rendering_program_cylinders.attributeLocation("transfo4");
     rendering_program_cylinders.enableAttributeArray(centerLocation[4]);
     rendering_program_cylinders.setAttributeBuffer(centerLocation[4],GL_FLOAT,0,4);
@@ -773,7 +773,7 @@ void Scene::draw() {
         ::glEnable(GL_POINT_SMOOTH);
 
         rendering_program.setUniformValue(colorLocation[0], color);
-        glDrawArrays(GL_POINTS, 0, pos_points.size()/3);
+        glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
         rendering_program.release();
         vao[0].release();
         //draw the moving ball
@@ -797,7 +797,7 @@ void Scene::draw() {
         rendering_program.bind();
 
         rendering_program.setUniformValue(colorLocation[0], color);
-        glDrawArrays(GL_LINES, 0, pos_tube.size()/3);
+        glDrawArrays(GL_LINES, 0,  static_cast<GLsizei>(pos_tube.size()/3));
         rendering_program.release();
         vao[1].release();
 
@@ -809,7 +809,7 @@ void Scene::draw() {
             attrib_buffers(ui->viewer);
             rendering_program.bind();
             rendering_program.setUniformValue(colorLocation[0], color);
-            glDrawArrays(GL_LINES, 0, pos_cube.size()/3);
+            glDrawArrays(GL_LINES, 0,  static_cast<GLsizei>(pos_cube.size()/3));
             rendering_program.release();
             vao[2].release();
         }
@@ -820,7 +820,7 @@ void Scene::draw() {
             attrib_buffers(ui->viewer);
             rendering_program.bind();
             rendering_program.setUniformValue(colorLocation[0], color);
-            glDrawArrays(GL_LINES, 0, pos_square.size()/3);
+            glDrawArrays(GL_LINES, 0,  static_cast<GLsizei>(pos_square.size()/3));
             rendering_program.release();
             vao[11].release();
         }
@@ -834,7 +834,7 @@ void Scene::draw() {
             change_material(materials[DOMAIN_COLOR]);
             attrib_buffers(ui->viewer);
             rendering_program_cylinders.bind();
-            glDrawArraysInstanced(GL_TRIANGLES, 0, points_cube->size()/3, transfo1_cube.size()/4);
+            glDrawArraysInstanced(GL_TRIANGLES, 0,  static_cast<GLsizei>(points_cube->size()/3),  static_cast<GLsizei>(transfo1_cube.size()/4));
             rendering_program_cylinders.release();
             vao[8].release();
         }
@@ -845,7 +845,7 @@ void Scene::draw() {
             change_material(materials[DOMAIN_COLOR]);
             attrib_buffers(ui->viewer);
             rendering_program_cylinders.bind();
-            glDrawArraysInstanced(GL_TRIANGLES, 0, points_cube->size()/3, transfo1_square.size()/4);
+            glDrawArraysInstanced(GL_TRIANGLES, 0,  static_cast<GLsizei>(points_cube->size()/3),  static_cast<GLsizei>(transfo1_square.size()/4));
             rendering_program_cylinders.release();
             vao[10].release();
         }
@@ -854,7 +854,7 @@ void Scene::draw() {
         change_material(materials[VERTEX_COLOR]);
         attrib_buffers(ui->viewer);
         rendering_program_spheres.bind();
-        glDrawArraysInstanced(GL_TRIANGLES, 0, points_spheres.size()/3,pos_points.size()/3);
+        glDrawArraysInstanced(GL_TRIANGLES, 0,  static_cast<GLsizei>(points_spheres.size()/3),  static_cast<GLsizei>(pos_points.size()/3));
         rendering_program_spheres.release();
         vao[3].release();
 
@@ -864,7 +864,7 @@ void Scene::draw() {
             change_material(materials[FLYING_BALL_COLOR]);
             attrib_buffers(ui->viewer);
             rendering_program_spheres.bind();
-            glDrawArraysInstanced(GL_TRIANGLES, 0, points_spheres.size()/3,1);
+            glDrawArraysInstanced(GL_TRIANGLES, 0,  static_cast<GLsizei>(points_spheres.size()/3),1);
             rendering_program_spheres.release();
             vao[7].release();
         }
@@ -873,7 +873,7 @@ void Scene::draw() {
         change_material(materials[EDGE_COLOR]);
         attrib_buffers(ui->viewer);
         rendering_program_cylinders.bind();
-        glDrawArraysInstanced(GL_TRIANGLES, 0, points_cylinder->size()/3, transfo1_cylinder.size()/4);
+        glDrawArraysInstanced(GL_TRIANGLES, 0,  static_cast<GLsizei>(points_cylinder->size()/3),  static_cast<GLsizei>(transfo1_cylinder.size()/4));
         rendering_program_cylinders.release();
         vao[9].release();
     }
@@ -886,7 +886,7 @@ void Scene::draw() {
         rendering_program.bind();
         color.setRgbF(0.f, 0.f , 0.5f, 0.5f);
         rendering_program.setUniformValue(colorLocation[0], color);
-        glDrawArrays(GL_TRIANGLES, 0, pos_location.size()/3);
+        glDrawArrays(GL_TRIANGLES, 0,  static_cast<GLsizei>(pos_location.size()/3));
         rendering_program.release();
         vao[5].release();
     }
@@ -896,7 +896,7 @@ void Scene::draw() {
         rendering_program.bind();
         color.setRgbF(0.69f, 0.18f , 0.26f, 0.6f);
         rendering_program.setUniformValue(colorLocation[0], color);
-        glDrawArrays(GL_TRIANGLES, 0, pos_conflict.size()/3);
+        glDrawArrays(GL_TRIANGLES, 0,  static_cast<GLsizei>(pos_conflict.size()/3));
         rendering_program.release();
         vao[6].release();
     }
@@ -1380,7 +1380,7 @@ void Scene::gl_draw_location() {
     }
     vao[5].bind();
     buffers[6].bind();
-    buffers[6].allocate(pos_location.data(), pos_location.size()*sizeof(float));
+    buffers[6].allocate(pos_location.data(), static_cast<int>(pos_location.size()*sizeof(float)));
     rendering_program.bind();
     poly_vertexLocation[0] = rendering_program.attributeLocation("vertex");
     rendering_program.enableAttributeArray(poly_vertexLocation[0]);
@@ -1495,7 +1495,7 @@ void Scene::gl_draw_conflict() {
     // glEnd();
     vao[6].bind();
     buffers[7].bind();
-    buffers[7].allocate(pos_conflict.data(), pos_conflict.size()*sizeof(float));
+    buffers[7].allocate(pos_conflict.data(), static_cast<int>(pos_conflict.size()*sizeof(float)));
     rendering_program.bind();
     poly_vertexLocation[0] = rendering_program.attributeLocation("vertex");
     rendering_program.enableAttributeArray(poly_vertexLocation[0]);

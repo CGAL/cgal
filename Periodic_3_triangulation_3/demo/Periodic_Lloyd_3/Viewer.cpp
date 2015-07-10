@@ -50,7 +50,7 @@ Viewer::draw()
   color.setRgbF(1.0f, 0.72f, 0.06f);
   rendering_program.bind();
   rendering_program.setUniformValue(colorLocation[0], color);
-  glDrawArrays(GL_POINTS, 0, pos_points.size()/3);
+  glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
   rendering_program.release();
   vao[0].release();
 
@@ -64,7 +64,7 @@ Viewer::draw()
   color.setRgbF(0.27f, 0.51f, 0.7f);
   rendering_program.bind();
   rendering_program.setUniformValue(colorLocation[0], color);
-  glDrawArrays(GL_LINES, 0, pos_lines.size()/3);
+  glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_lines.size()/3));
   rendering_program.release();
   vao[1].release();
 
@@ -73,7 +73,7 @@ Viewer::draw()
       color.setRgbF(0.69f, 0.77f, 0.87f);
       rendering_program.bind();
       rendering_program.setUniformValue(colorLocation[0], color);
-      glDrawArrays(GL_LINES, 0, pos_8lines2D.size()/3);
+      glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_8lines2D.size()/3));
       rendering_program.release();
       vao[2].release();
 
@@ -83,7 +83,7 @@ Viewer::draw()
           color.setRgbF(0.69f, 0.77f, 0.87f);
           rendering_program.bind();
           rendering_program.setUniformValue(colorLocation[0], color);
-          glDrawArrays(GL_LINES, 0, pos_8lines.size()/3);
+          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_8lines.size()/3));
           rendering_program.release();
           vao[3].release();
       }
@@ -132,7 +132,7 @@ void Viewer::initialize_buffers()
 
     vao[0].bind();
     buffers[0].bind();
-    buffers[0].allocate(pos_points.data(), pos_points.size()*sizeof(float));
+    buffers[0].allocate(pos_points.data(), static_cast<int>(pos_points.size()*sizeof(float)));
     vertexLocation[0] = rendering_program.attributeLocation("vertex");
     rendering_program.enableAttributeArray(vertexLocation[0]);
     rendering_program.setAttributeBuffer(vertexLocation[0],GL_FLOAT,0,3);
@@ -142,7 +142,7 @@ void Viewer::initialize_buffers()
 
     vao[1].bind();
     buffers[1].bind();
-    buffers[1].allocate(pos_lines.data(), pos_lines.size()*sizeof(float));
+    buffers[1].allocate(pos_lines.data(), static_cast<int>(pos_lines.size()*sizeof(float)));
     vertexLocation[0] = rendering_program.attributeLocation("vertex");
     rendering_program.enableAttributeArray(vertexLocation[0]);
     rendering_program.setAttributeBuffer(vertexLocation[0],GL_FLOAT,0,3);
@@ -151,7 +151,7 @@ void Viewer::initialize_buffers()
 
     vao[2].bind();
     buffers[2].bind();
-    buffers[2].allocate(pos_8lines2D.data(), pos_8lines2D.size()*sizeof(float));
+    buffers[2].allocate(pos_8lines2D.data(), static_cast<int>(pos_8lines2D.size()*sizeof(float)));
     vertexLocation[0] = rendering_program.attributeLocation("vertex");
     rendering_program.enableAttributeArray(vertexLocation[0]);
     rendering_program.setAttributeBuffer(vertexLocation[0],GL_FLOAT,0,3);
@@ -160,7 +160,7 @@ void Viewer::initialize_buffers()
 
     vao[3].bind();
     buffers[3].bind();
-    buffers[3].allocate(pos_8lines.data(), pos_8lines.size()*sizeof(float));
+    buffers[3].allocate(pos_8lines.data(), static_cast<int>(pos_8lines.size()*sizeof(float)));
     vertexLocation[0] = rendering_program.attributeLocation("vertex");
     rendering_program.enableAttributeArray(vertexLocation[0]);
     rendering_program.setAttributeBuffer(vertexLocation[0],GL_FLOAT,0,3);

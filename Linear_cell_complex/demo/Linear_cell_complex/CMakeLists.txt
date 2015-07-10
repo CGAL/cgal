@@ -9,7 +9,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 2.8.10)
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
@@ -33,7 +33,7 @@ add_definitions(-DCGAL_PROFILE_LCC_DEMO)
 find_package(CGAL COMPONENTS Qt5)
 include(${CGAL_USE_FILE})
 
-find_package(Qt5 COMPONENTS Xml Script OpenGL)
+find_package(Qt5 COMPONENTS Xml Script OpenGL Svg)
 
 find_package(OpenGL)
 find_package(QGLViewer)
@@ -65,7 +65,7 @@ add_executable(Linear_cell_complex_3_demo
   Linear_cell_complex_pqq_subdivision.cpp
   ${uis} ${RESOURCE_FILES} )
 
-qt5_use_modules(Linear_cell_complex_3_demo Xml Script OpenGL)
+qt5_use_modules(Linear_cell_complex_3_demo Xml Script OpenGL Svg)
 add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3_demo)
 
 target_link_libraries(Linear_cell_complex_3_demo ${CGAL_LIBRARIES}
