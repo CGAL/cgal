@@ -84,6 +84,7 @@ h1 {
 \section PartVoronoiDiagrams Voronoi Diagrams
 
 \package_listing{Segment_Delaunay_graph_2}
+\package_listing{Segment_Delaunay_graph_Linf_2}
 \package_listing{Apollonius_graph_2}
 \package_listing{Voronoi_diagram_2}
 
