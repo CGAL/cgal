@@ -137,25 +137,25 @@ namespace CGAL {
     // ------------------------------------------------------------------------
     // Utilities
     // ------------------------------------------------------------------------
-    FT get_x_2(const Vector_2& v) const { return m_traits.compute_x_2_object()(v); }
-    FT get_y_2(const Vector_2& v) const { return m_traits.compute_y_2_object()(v); }
-    FT get_x_2(const Point_2& p) const { return m_traits.compute_x_2_object()(p); }
-    FT get_y_2(const Point_2& p) const { return m_traits.compute_y_2_object()(p); }
+    FT get_x_2(const Vector_2& v) const { return this->m_traits.compute_x_2_object()(v); }
+    FT get_y_2(const Vector_2& v) const { return this->m_traits.compute_y_2_object()(v); }
+    FT get_x_2(const Point_2& p) const { return this->m_traits.compute_x_2_object()(p); }
+    FT get_y_2(const Point_2& p) const { return this->m_traits.compute_y_2_object()(p); }
 
     Circle_2 constr_circle(const Point_2& a, const Point_2& b,const Point_2& c) const
-    { return m_traits.construct_circle_2_object()(a, b, c); }
+    { return this->m_traits.construct_circle_2_object()(a, b, c); }
     Point_2 circle_center(const Circle_2& s) const
-    { return m_traits.construct_center_2_object()(s); }
+    { return this->m_traits.construct_center_2_object()(s); }
     FT sqradius(const Circle_2& s) const
-    { return m_traits.compute_squared_radius_2_object()(s); }
+    { return this->m_traits.compute_squared_radius_2_object()(s); }
     Point_2 constr_point_2(FT a, FT b) const
-    { return m_traits.construct_point_2_object()(a, b); }
+    { return this->m_traits.construct_point_2_object()(a, b); }
     Vector_2 constr_vec_2(const Point_2 &a, const Point_2 &b) const
-    { return m_traits.construct_vector_2_object()(a, b); }
+    { return this->m_traits.construct_vector_2_object()(a, b); }
     FT sqlen_2(const Vector_2& v) const
-    { return m_traits.compute_squared_length_2_object()(v); }
+    { return this->m_traits.compute_squared_length_2_object()(v); }
     bool collinear_2(const Point_2& p, const Point_2& q, const Point_2& r) const
-    { return m_traits.collinear_2_object()(p, q, r); }
+    { return this->m_traits.collinear_2_object()(p, q, r); }
 
     void create_shape(const std::vector<std::size_t> &indices) {
       std::vector<Point_3> p;

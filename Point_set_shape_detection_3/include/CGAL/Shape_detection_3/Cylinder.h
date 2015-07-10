@@ -111,9 +111,9 @@ namespace CGAL {
     // ------------------------------------------------------------------------
     using Shape_base<Traits>::constr_vec;
     Vector_3 constr_vec(const Line_3& l) const
-    { return m_traits.construct_vector_3_object()(l); }
+    { return this->m_traits.construct_vector_3_object()(l); }
     Point_3 constr_point_on(const Line_3& l) const
-    { return m_traits.construct_point_on_3_object()(l, 0); }
+    { return this->m_traits.construct_point_on_3_object()(l, 0); }
 
     virtual void create_shape(const std::vector<std::size_t> &indices) {
       Point_3 p1 = this->point(indices[0]);
