@@ -161,7 +161,10 @@ namespace CGAL {
       for (std::size_t i = 0;i<parameter_space.size();i++) {
         int u = (int)((parameter_space[i].first - min[0]) / cluster_epsilon);
         int v = (int)((parameter_space[i].second - min[1]) / cluster_epsilon);
-                
+
+        u = (u < 0) ? 0 : ((u >= u_extent) ? u_extent - 1 : u);
+        v = (v < 0) ? 0 : ((v >= v_extent) ? v_extent - 1 : v);
+
         bitmap[v * int(u_extent) + u] = true;
       }
 
@@ -174,17 +177,33 @@ namespace CGAL {
         for (std::size_t x = 0;x<u_extent;x++) {
           if (!bitmap[y * u_extent + x])
             continue;
-          unsigned int w = (x > 0) ? bitmap[y  * u_extent + x - 1] : 0;
-          unsigned int n = (y > 0) ? bitmap[(y - 1) * u_extent + x] : 0;
-          unsigned int nw = (x > 0 && y > 0) ? bitmap[(y - 1) * u_extent + x - 1] : 0;
-          unsigned int ne = ((x + 1 < u_extent) && y > 0) ? bitmap[(y - 1) * u_extent + x + 1] : 0;
+
+          unsigned int w = (x > 0) ?
+            bitmap[y  * u_extent + x - 1] : 0;
+
+          unsigned int n = (y > 0) ?
+            bitmap[(y - 1) * u_extent + x] : 0;
+
+          unsigned int nw = (x > 0 && y > 0) ?
+            bitmap[(y - 1) * u_extent + x - 1] : 0;
+
+          unsigned int ne = ((x + 1 < u_extent) && y > 0) ?
+            bitmap[(y - 1) * u_extent + x + 1] : 0;
 
           // Find smallest set label;
           unsigned int curLabel = static_cast<unsigned int>(map.size());
-          curLabel = (w != 0) ? (std::min<unsigned int>)(curLabel, w) : curLabel;
-          curLabel = (n != 0) ? (std::min<unsigned int>)(curLabel, n) : curLabel;
-          curLabel = (nw != 0) ? (std::min<unsigned int>)(curLabel, nw) : curLabel;
-          curLabel = (ne != 0) ? (std::min<unsigned int>)(curLabel, ne) : curLabel;
+
+          curLabel = (w != 0) ?
+            (std::min<unsigned int>)(curLabel, w) : curLabel;
+
+          curLabel = (n != 0) ?
+            (std::min<unsigned int>)(curLabel, n) : curLabel;
+
+          curLabel = (nw != 0) ?
+            (std::min<unsigned int>)(curLabel, nw) : curLabel;
+
+          curLabel = (ne != 0) ? 
+            (std::min<unsigned int>)(curLabel, ne) : curLabel;
 
           // Update merge map.
           if (curLabel != map.size()) {
@@ -204,9 +223,8 @@ namespace CGAL {
         post_wrap(bitmap, u_extent, v_extent, map);
 
       // Propagate label changes
-      for (unsigned int j = 3 ; j < static_cast<unsigned int>(map.size()) ; j++) {
+      for (unsigned int j = 3; j < static_cast<unsigned int>(map.size()); j++)
         update_label(map, j, map[j]);
-      }
 
       // Update labels
       for (std::size_t y = 0;y<v_extent;y++)
@@ -233,7 +251,7 @@ namespace CGAL {
       // Find largest component. Start at index 2 as 0/1 are reserved for
       // basic free/occupied bitmap labels.
       unsigned int largest = 2;
-      for (unsigned int i = 3 ; i < static_cast<unsigned int>(count.size()) ; i++)
+      for (unsigned int i = 3; i < static_cast<unsigned int>(count.size()); i++)
         largest = (count[largest] < count[i]) ? i : largest;
 
       // Extract sought-after indices.
