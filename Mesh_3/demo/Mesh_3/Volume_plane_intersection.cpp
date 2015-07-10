@@ -130,7 +130,12 @@ void Volume_plane_intersection::attrib_buffers(QGLViewer* viewer) const
 }
 
 void Volume_plane_intersection::draw(QGLViewer *viewer) const {
-  glLineWidth(4.0f);
+    if(!are_ogfunctions_initialized)
+    {
+        gl.initializeOpenGLFunctions();
+        are_ogfunctions_initialized = true;
+    }
+  gl.glLineWidth(4.0f);
   attrib_buffers(viewer);
   if(b && c) {
 
@@ -149,7 +154,7 @@ void Volume_plane_intersection::draw(QGLViewer *viewer) const {
        c_mat.data()[i] = (float)mat[i];
     }
     rendering_program.setUniformValue("f_matrix", b_mat*c_mat);
-    glDrawArrays(GL_LINES, 0, 2);
+    gl.glDrawArrays(GL_LINES, 0, 2);
     rendering_program.release();
     vao[0].release();
   }
@@ -170,7 +175,7 @@ void Volume_plane_intersection::draw(QGLViewer *viewer) const {
          c_mat.data()[i] = (float)mat[i];
       }
       rendering_program.setUniformValue("f_matrix", a_mat*c_mat);
-      glDrawArrays(GL_LINES, 0, 2);
+      gl.glDrawArrays(GL_LINES, 0, 2);
       rendering_program.release();
       vao[1].release();
   }
@@ -191,12 +196,12 @@ void Volume_plane_intersection::draw(QGLViewer *viewer) const {
          b_mat.data()[i] = (float)mat[i];
       }
       rendering_program.setUniformValue("f_matrix", a_mat*b_mat);
-      glDrawArrays(GL_LINES, 0, 2);
+      gl.glDrawArrays(GL_LINES, 0, 2);
       rendering_program.release();
       vao[2].release();
   }
 
-  glLineWidth(1.0f);
+  gl.glLineWidth(1.0f);
 }
 
 #include "Volume_plane_intersection.moc"

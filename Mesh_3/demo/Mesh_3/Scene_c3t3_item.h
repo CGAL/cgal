@@ -13,7 +13,6 @@
 #include <CGAL/gl.h>
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
-#include <QOpenGLFunctions_3_2_Core>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>

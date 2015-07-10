@@ -69,18 +69,26 @@ Q_SIGNALS:
   void x(int);
 
 public:
+  PixelReader():are_glfunctions_initialized(false){}
   void setIC(const IntConverter& x) { ic = x; fc = boost::optional<DoubleConverter>(); }
   void setFC(const DoubleConverter& x) { fc = x; ic = boost::optional<IntConverter>(); }
 
 private:
   boost::optional<IntConverter> ic;
   boost::optional<DoubleConverter> fc;
+  QOpenGLFunctions_3_3_Core gl;
+  bool are_glfunctions_initialized;
 
   void getPixel(const QPoint& e) {
+      if(!are_glfunctions_initialized)
+      {
+       gl.initializeOpenGLFunctions();
+       are_glfunctions_initialized = true;
+      }
     float data[3];
     int vp[4];
-    glGetIntegerv(GL_VIEWPORT, vp);
-    glReadPixels(e.x(), vp[3] - e.y(), 1, 1, GL_RGB, GL_FLOAT, data);
+    gl.glGetIntegerv(GL_VIEWPORT, vp);
+    gl.glReadPixels(e.x(), vp[3] - e.y(), 1, 1, GL_RGB, GL_FLOAT, data);
 
     if(fc) {
       Q_EMIT x( (*fc)(data[0]) );
