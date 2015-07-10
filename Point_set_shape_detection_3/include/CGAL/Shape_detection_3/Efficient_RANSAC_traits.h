@@ -76,9 +76,9 @@ namespace CGAL {
     Efficient_RANSAC_traits(const Gt& gt =  Gt())
       : m_gt(gt) {}
 
-    typedef typename Gt::Construct_point_3 Construct_point_3;
+    /*typedef typename Gt::Construct_point_3 Construct_point_3;
     Construct_point_3 construct_point_3_object() const 
-    { return m_gt.construct_point_3_object(); }
+    { return m_gt.construct_point_3_object(); }*/
 
     typedef typename Gt::Construct_vector_3 Construct_vector_3;
     Construct_vector_3 construct_vector_3_object() const
@@ -171,6 +171,10 @@ namespace CGAL {
     typedef typename Gt::Compute_squared_radius_2 Compute_squared_radius_2;
     Compute_squared_radius_2 compute_squared_radius_2_object() const
     { return m_gt.compute_squared_radius_2_object(); }
+    
+    typedef typename Gt::Collinear_2 Collinear_2;
+    Collinear_2 collinear_2_object() const
+    { return m_gt.collinear_2_object(); }
 
   private:
     Gt m_gt;

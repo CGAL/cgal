@@ -155,7 +155,7 @@ namespace CGAL {
     FT sqlen_2(const Vector_2& v) const
     { return m_traits.compute_squared_length_2_object()(v); }
     bool collinear_2(const Point_2& p, const Point_2& q, const Point_2& r) const
-    { return m_traits.construct_collinear_2_object()(p, q, r); }
+    { return m_traits.collinear_2_object()(p, q, r); }
 
     void create_shape(const std::vector<std::size_t> &indices) {
       std::vector<Point_3> p;

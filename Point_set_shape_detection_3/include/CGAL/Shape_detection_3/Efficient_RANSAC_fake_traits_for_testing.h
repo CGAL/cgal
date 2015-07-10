@@ -131,17 +131,16 @@ namespace CGAL {
       }
     };
     
-    struct Construct_point_3
+    /*struct Construct_point_3
     {
       Point_3 operator()() { return Point_3(); }
     };
     Construct_point_3 construct_point_3_object() const
-    { return Construct_point_3(); }
+    { return Construct_point_3(); }*/
     
 
     struct Construct_point_2
     {
-      Point_2 operator()() { return Point_2(); }
       Point_2 operator()(FT a, FT b) { return Point_2(); }
     };
     Construct_point_2 construct_point_2_object() const
@@ -292,11 +291,13 @@ namespace CGAL {
     Construct_center_2 construct_center_2_object() const
     { return Construct_center_2(); }
 
-    /*struct Collinear_2
-    { result_type operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
-      { return false; } };
-    Collinear_2 construct_collinear_2_object() const
-    { return Collinear_2(); }*/
+    struct Collinear_2
+    { 
+      bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+      { return false; } 
+    };
+    Collinear_2 collinear_2_object() const
+    { return Collinear_2(); }
     
     /*struct Compute_squared_distance_3
     { FT operator()(Point_3 const&, Point_3 const&) const { return 0; } };
