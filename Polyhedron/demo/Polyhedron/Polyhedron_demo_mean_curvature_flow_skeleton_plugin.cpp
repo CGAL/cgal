@@ -502,6 +502,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
 
     skeleton_item->setName(QString("Medial skeleton curve of %1").arg(item->name()));
     scene->addItem(skeleton_item);
+    skeleton_item->changed();
 
     item->setPointsMode();
 
@@ -819,19 +820,23 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 
   skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
   scene->addItem(skeleton);
+  skeleton->changed();
 
   // set the fixed points and contracted mesh as invisible
   if (fixedPointsItemIndex >= 0)
   {
     scene->item(fixedPointsItemIndex)->setVisible(false);
+    scene->itemChanged(fixedPointsItemIndex);
   }
   scene->item(contractedItemIndex)->setVisible(false);
+  scene->itemChanged(contractedItemIndex);
   // display the original mesh in transparent mode
   item->setVisible(false);
   if (InputMeshItemIndex >= 0)
   {
     scene->item(InputMeshItemIndex)->setVisible(true);
     scene->item(InputMeshItemIndex)->setPointsMode();
+    scene->itemChanged(InputMeshItemIndex);
   }
 
   // update scene
