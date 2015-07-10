@@ -116,7 +116,7 @@ public:
     dockWidget = NULL;
     ui = NULL;
 
-    actionMCFSkeleton = new QAction(tr("Mean Curvature Skeleton"), mainWindow);
+    actionMCFSkeleton = new QAction(tr("Mean Curvature Skeleton (Advanced)"), mainWindow);
     actionMCFSkeleton->setObjectName("actionMCFSkeleton");
 
     actionConvert_to_medial_skeleton = new QAction(tr("Extract Medial Skeleton"), mainWindow);
