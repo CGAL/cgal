@@ -13,7 +13,8 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
 typedef Kernel::FT                                           FT;
 // CJTODO: when testing done, use Kernel::Point_3 and Kernel::Vector_3
-typedef std::pair<CGAL::Point__3, CGAL::Vector__3>           Point_with_normal;
+//typedef std::pair<CGAL::Point__3, CGAL::Vector__3>           Point_with_normal;
+typedef std::pair<Kernel::Point_3, Kernel::Vector_3>         Point_with_normal;
 typedef std::vector<Point_with_normal>                       Pwn_vector;
 typedef CGAL::First_of_pair_property_map<Point_with_normal>  Point_map;
 typedef CGAL::Second_of_pair_property_map<Point_with_normal> Normal_map;
