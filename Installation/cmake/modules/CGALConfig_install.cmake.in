@@ -8,6 +8,9 @@
 
 set(CGAL_CONFIG_LOADED TRUE)
 
+get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+include("${CGAL_CONFIG_DIR}/CGALExports.cmake")
+
 # CGAL_DIR is the directory where this CGALConfig.cmake is installed
 set(CGAL_INSTALL_PREFIX "@CMAKE_INSTALL_PREFIX@")
 
@@ -41,11 +44,27 @@ set(WITH_CGAL_ImageIO "@WITH_CGAL_ImageIO@" )
 set(WITH_CGAL_Qt3     "@WITH_CGAL_Qt3@" )
 set(WITH_CGAL_Qt5     "@WITH_CGAL_Qt5@" )
 
-set(CGAL_LIBRARY         "@CGAL_LIBRARY_INSTALLED@")
-set(CGAL_Core_LIBRARY    "@CGAL_Core_LIBRARY_INSTALLED@")
-set(CGAL_ImageIO_LIBRARY "@CGAL_ImageIO_LIBRARY_INSTALLED@")
-set(CGAL_Qt3_LIBRARY     "@CGAL_Qt3_LIBRARY_INSTALLED@")
-set(CGAL_Qt5_LIBRARY     "@CGAL_Qt5_LIBRARY_INSTALLED@")
+macro(CGAL_get_property_optional VAR TARGET PROPERTY)
+  if(TARGET ${TARGET})
+    get_property(${VAR} TARGET ${TARGET} PROPERTY ${PROPERTY})
+  else()
+    set(${VAR} "")
+  endif()
+endmacro()
+
+if(NOT MSVC)
+  CGAL_get_property_optional(CGAL_LIBRARY CGAL::CGAL LOCATION)
+  CGAL_get_property_optional(CGAL_Core_LIBRARY CGAL::CGAL_Core LOCATION)
+  CGAL_get_property_optional(CGAL_ImageIO_LIBRARY CGAL::CGAL_ImageIO LOCATION)
+  CGAL_get_property_optional(CGAL_Qt3_LIBRARY CGAL::CGAL_Qt3 LOCATION)
+  CGAL_get_property_optional(CGAL_Qt5_LIBRARY CGAL::CGAL_Qt5 LOCATION)
+else()
+  set(CGAL_LIBRARY         "")
+  set(CGAL_Core_LIBRARY    "")
+  set(CGAL_ImageIO_LIBRARY "")
+  set(CGAL_Qt3_LIBRARY     "")
+  set(CGAL_Qt5_LIBRARY     "")
+endif()
 
 set(CGAL_3RD_PARTY_INCLUDE_DIRS   "@CGAL_3RD_PARTY_INCLUDE_DIRS@" )
 set(CGAL_3RD_PARTY_DEFINITIONS    "@CGAL_3RD_PARTY_DEFINITIONS@" )

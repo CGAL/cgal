@@ -69,7 +69,9 @@ if( Qt5_FOUND )
 
     add_dependencies( CGAL_Qt5 CGAL )
 
-    target_link_libraries( CGAL_Qt5 ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_Qt5_3RD_PARTY_LIBRARIES} )
+    # CGAL_Qt5 only depends on CGAL in DEBUG, but we still link it in
+    # both build types.
+    target_link_libraries( CGAL_Qt5 CGAL ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_Qt5_3RD_PARTY_LIBRARIES} )
 
     add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt5_3RD_PARTY_DEFINITIONS} )
 
