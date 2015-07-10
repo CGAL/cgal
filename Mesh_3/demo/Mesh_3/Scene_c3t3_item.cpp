@@ -18,7 +18,6 @@
 #include <CGAL/gl.h>
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
-
 struct Scene_c3t3_item_priv {
   Scene_c3t3_item_priv() : c3t3() {}
   Scene_c3t3_item_priv(const C3t3& c3t3_) : c3t3(c3t3_) {}
@@ -515,21 +514,21 @@ void Scene_c3t3_item::initialize_buffers() const
 
         vao[0].bind();
         buffers[0].bind();
-        buffers[0].allocate(v_poly.data(), v_poly.size()*sizeof(float));
+        buffers[0].allocate(v_poly.data(), static_cast<int>(v_poly.size()*sizeof(float)));
         poly_vertexLocation[0] = rendering_program.attributeLocation("vertex");
         rendering_program.enableAttributeArray(poly_vertexLocation[0]);
         rendering_program.setAttributeBuffer(poly_vertexLocation[0],GL_FLOAT,0,3);
         buffers[0].release();
 
         buffers[1].bind();
-        buffers[1].allocate(normal.data(), normal.size()*sizeof(float));
+        buffers[1].allocate(normal.data(), static_cast<int>(normal.size()*sizeof(float)));
         normalsLocation[0] = rendering_program.attributeLocation("normal");
         rendering_program.enableAttributeArray(normalsLocation[0]);
         rendering_program.setAttributeBuffer(normalsLocation[0],GL_FLOAT,0,3);
         buffers[1].release();
 
         buffers[2].bind();
-        buffers[2].allocate(color_triangles.data(), color_triangles.size()*sizeof(float));
+        buffers[2].allocate(color_triangles.data(), static_cast<int>(color_triangles.size()*sizeof(float)));
         colorLocation[0] = rendering_program.attributeLocation("inColor");
         rendering_program.enableAttributeArray(colorLocation[0]);
         rendering_program.setAttributeBuffer(colorLocation[0],GL_FLOAT,0,3);
@@ -543,7 +542,7 @@ void Scene_c3t3_item::initialize_buffers() const
 
         vao[1].bind();
         buffers[3].bind();
-        buffers[3].allocate(v_grid->data(), v_grid->size()*sizeof(float));
+        buffers[3].allocate(v_grid->data(), static_cast<int>(v_grid->size()*sizeof(float)));
         poly_vertexLocation[1] = rendering_program.attributeLocation("vertex");
         rendering_program.enableAttributeArray(poly_vertexLocation[1]);
         rendering_program.setAttributeBuffer(poly_vertexLocation[1],GL_FLOAT,0,3);
@@ -580,7 +579,7 @@ void Scene_c3t3_item::attrib_buffers(QGLViewer* viewer) const
 
     QVector4D	position(0.0f,0.0f,1.0f,1.0f );
     GLboolean isTwoSide;
-    glGetBooleanv(GL_LIGHT_MODEL_TWO_SIDE,&isTwoSide);
+    gl.glGetBooleanv(GL_LIGHT_MODEL_TWO_SIDE,&isTwoSide);
     // define material
      QVector4D	ambient;
      QVector4D	diffuse;
@@ -644,18 +643,28 @@ enum { DRAW = 0, DRAW_EDGES = 1 };
 
 void
 Scene_c3t3_item::draw(QGLViewer *viewer)const {
+    if(!are_ogfunctions_initialized)
+    {
+        gl.initializeOpenGLFunctions();
+        are_ogfunctions_initialized = true;
+    }
     if(!are_buffers_initialized)
         initialize_buffers();
      vao[0].bind();
     attrib_buffers(viewer);
     rendering_program.bind();
-    glDrawArrays(GL_TRIANGLES, 0, v_poly.size()/3);
+    gl.glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(v_poly.size()/3));
     rendering_program.release();
     vao[0].release();
 }
 
 void
 Scene_c3t3_item::draw_edges(QGLViewer* viewer) const {
+    if(!are_ogfunctions_initialized)
+    {
+        gl.initializeOpenGLFunctions();
+        are_ogfunctions_initialized = true;
+    }
     if(!are_buffers_initialized)
         initialize_buffers();
     vao[1].bind();
@@ -664,7 +673,7 @@ Scene_c3t3_item::draw_edges(QGLViewer* viewer) const {
     QColor color;
     color.setRgbF(this->color().redF(), this->color().greenF(), this->color().blueF());
     rendering_program_grid.setUniformValue(colorLocation[1], color);
-    glDrawArrays(GL_LINES, 0, v_grid->size()/3);
+    gl.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_grid->size()/3));
     rendering_program_grid.release();
     vao[1].release();
 }

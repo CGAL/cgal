@@ -24,7 +24,7 @@ Scene_implicit_function_item(Implicit_function_interface* f)
 {
   compile_shaders();
   texture = new Texture(grid_size_,grid_size_);
-  glGenTextures(1, &textureId);
+  gl.glGenTextures(1, &textureId);
   blue_color_ramp_.build_blue();
   red_color_ramp_.build_red();
   compute_min_max();
@@ -373,8 +373,8 @@ void Scene_implicit_function_item::initialize_buffers() const
     buffers[2].release();
     tex_rendering_program.release();
 
-    glBindTexture(GL_TEXTURE_2D, textureId);
-    glTexImage2D(GL_TEXTURE_2D,
+    gl.glBindTexture(GL_TEXTURE_2D, textureId);
+    gl.glTexImage2D(GL_TEXTURE_2D,
                  0,
                  GL_RGB,
                  texture->getWidth(),
@@ -383,7 +383,7 @@ void Scene_implicit_function_item::initialize_buffers() const
                  GL_RGB,
                  GL_UNSIGNED_BYTE,
                  texture->getData());
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
@@ -427,6 +427,11 @@ void Scene_implicit_function_item::attrib_buffers(QGLViewer* viewer) const
 void
 Scene_implicit_function_item::draw(QGLViewer* viewer) const
 {
+    if(!are_ogfunctions_initialized)
+    {
+        gl.initializeOpenGLFunctions();
+        are_ogfunctions_initialized = true;
+    }
     if(!are_buffers_initialized)
         initialize_buffers();
   QColor color;
