@@ -329,6 +329,16 @@ void Volume::only_in()
 #include <vtkDICOMImageReader.h>
 #include <vtkImageReader.h>
 #include <vtkImageGaussianSmooth.h>
+#include <vtkDemandDrivenPipeline.h>
+
+Volume::~Volume()
+{
+  if(vtk_reader) vtk_reader->Delete();
+  if(vtk_image) vtk_image->Delete();
+  if(dicom_reader) dicom_reader->Delete();
+  if(executive) executive->Delete();
+  if(smoother) smoother->Delete();
+}
 
 bool Volume::opendir(const QString& dirname) 
 {
@@ -342,15 +352,21 @@ bool Volume::opendir(const QString& dirname)
   }
   else
   {
-    vtkDICOMImageReader* dicom_reader = vtkDICOMImageReader::New();
+    dicom_reader = vtkDICOMImageReader::New();
     dicom_reader->SetDirectoryName(dirname.toUtf8());
-    vtkImageGaussianSmooth* smoother = vtkImageGaussianSmooth::New();
+
+    executive =
+      vtkDemandDrivenPipeline::SafeDownCast(dicom_reader->GetExecutive());
+    if (executive)
+    {
+      executive->SetReleaseDataFlag(0, 0); // where 0 is the port index
+    }
+
+    smoother = vtkImageGaussianSmooth::New();
     smoother->SetStandardDeviations(1., 1., 1.);
     smoother->SetInputConnection(dicom_reader->GetOutputPort());
     smoother->Update();
-    vtkImageData* vtk_image = smoother->GetOutput();
-    dicom_reader->SetReleaseDataFlag(false);
-    vtk_image->SetReleaseDataFlag(false);
+    vtk_image = smoother->GetOutput();
     vtk_image->Print(std::cerr);
     if(!m_image.read_vtk_image_data(vtk_image))
     {
@@ -365,7 +381,8 @@ bool Volume::opendir(const QString& dirname)
       finish_open();
       result = true;
     }
-    dicom_reader->Delete();
+    // if(executive) executive->Delete();
+    // dicom_reader->Delete();
     // smoother->Delete();
   }
   return result;
@@ -391,7 +408,7 @@ bool Volume::open_vtk(const QString& filename)
   }
   else
   {
-    vtkImageReader* vtk_reader = vtkImageReader::New();
+    vtk_reader = vtkImageReader::New();
     vtk_reader->SetFileName(filename.toUtf8());
     vtk_reader->SetDataScalarTypeToUnsignedChar();
     vtk_reader->SetDataExtent(0, 249, 0, 249, 0,  124);
@@ -399,7 +416,7 @@ bool Volume::open_vtk(const QString& filename)
     vtk_reader->SetFileDimensionality(3);
     vtk_reader->Update();
     vtk_reader->Print(std::cerr);
-    vtkImageData* vtk_image = vtk_reader->GetOutput();
+    vtk_image = vtk_reader->GetOutput();
     vtk_image->Print(std::cerr);
     if(!m_image.read_vtk_image_data(vtk_image))
     {
@@ -485,6 +502,10 @@ bool Volume::open_xt(const QString& filename)
 }
 
 #else // CGAL_USE_VTK
+Volume::~Volume()
+{
+}
+
 bool Volume::opendir(const QString&)
 {
   return false;

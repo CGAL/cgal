@@ -21,6 +21,14 @@
 #include <QString>
 #include <QFileInfo>
 
+#ifdef CGAL_USE_VTK
+class vtkImageReader;
+class vtkImageData;
+class vtkDICOMImageReader;
+class vtkDemandDrivenPipeline;
+class vtkImageGaussianSmooth;
+#endif // CGAL_USE_VTK
+
 class QTreeWidgetItem;
 
 // kernel
@@ -83,7 +91,7 @@ class Volume : public Surface
   Q_OBJECT
 public:
   Volume(MainWindow* mw);
-  ~Volume() {}
+  ~Volume();
 
 private:
   Binary_image m_image;
@@ -142,6 +150,15 @@ private:
   bool m_view_mc; // that boolean is here even with if
 		  // CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
                   // is not defined.
+
+#ifdef CGAL_USE_VTK
+  vtkImageReader* vtk_reader;
+  vtkImageData* vtk_image;
+  vtkDICOMImageReader* dicom_reader;
+  vtkDemandDrivenPipeline* executive;
+  vtkImageGaussianSmooth* smoother;
+#endif // CGAL_USE_VTK
+
 public Q_SLOTS:
 void display_marchin_cube();
 
