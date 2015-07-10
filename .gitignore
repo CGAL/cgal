@@ -921,6 +921,9 @@ Triangulation/test/Triangulation/output-pcds*
 Triangulation/test/Triangulation/pc
 Triangulation/test/Triangulation/pcds
 Triangulation/test/Triangulation/torture
+/Triangulation/examples/Triangulation/cgal_test_with_cmake
+/Triangulation/test/Triangulation/cgal_test_with_cmake
+/Triangulation/test/Triangulation/output-tds-*
 Triangulation_2/CMakeLists.txt
 Triangulation_2/cgal_test_with_cmake
 Triangulation_2/demo/Triangulation_2/Makefile
