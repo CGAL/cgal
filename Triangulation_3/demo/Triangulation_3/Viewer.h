@@ -8,18 +8,23 @@
 #include <QSettings>
 #include "PreferenceDlg.h"
 
+#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLVertexArrayObject>
+#include <QOpenGLBuffer>
+#include <QOpenGLShaderProgram>
+#include <CGAL/Qt/CreateOpenGLContext.h>
 #include <iostream>
 using namespace qglviewer;
 
 class MainWindow;
 
-class Viewer : public QGLViewer {
+class Viewer : public QGLViewer, QOpenGLFunctions_3_3_Core {
 
   Q_OBJECT
 
 public:
   Viewer(QWidget* parent)
-    : QGLViewer(parent)
+    : QGLViewer(CGAL::Qt::createOpenGLContext(),parent)
     , m_showAxis(false)
     , m_showVertex(true)
     , m_showDEdge(true)
@@ -36,8 +41,53 @@ public:
     , m_hasEmptyS(false)
     , m_showTrackball(true)
     , m_pDlgPrefer(NULL)
-   {}
+    {
+      pos_emptyFacet = new std::vector<float>();
+      pos_emptySphere= new std::vector<float>();
+      points_emptySphere = new std::vector<float>();
+      pos_points = new std::vector<float>();
+      pos_newPoint = new std::vector<float>();
+      pos_selectedVertex = new std::vector<float>();
+      pos_movingPoint = new std::vector<float>();
+      pos_queryPoint = new std::vector<float>();
+      pos_trackBall  = new std::vector<float>();
+      pos_voronoi = new std::vector<float>();
+      pos_delaunay = new std::vector<float>();
+      pos_facets = new std::vector<float>();
+      pos_newFacet = new std::vector<float>();
+      pos_nearest_neighbor = new std::vector<float>();
+      points_locationSphere = new std::vector<float>();
+      points_cylinder = new std::vector<float>();
+      normals_cylinder = new std::vector<float>();
+      points_sphere = new std::vector<float>();
+      points_trackBall = new std::vector<float>();
+      normals_sphere = new std::vector<float>();
+      normals_emptySphere = new std::vector<float>();
+      normals_trackBall= new std::vector<float>();
+      transfo1_voronoi = new std::vector<float>();
+      transfo2_voronoi = new std::vector<float>();
+      transfo3_voronoi = new std::vector<float>();
+      transfo4_voronoi = new std::vector<float>();
+      transfo1_delaunay = new std::vector<float>();
+      transfo2_delaunay = new std::vector<float>();
+      transfo3_delaunay = new std::vector<float>();
+      transfo4_delaunay = new std::vector<float>();
+      incremental_points = new std::vector<float>();
+      incremental_next_point = new std::vector<float>();
+      incremental_facet = new std::vector<float>();
+      incremental_conflict = new std::vector<float>();
+    }
 
+  ~Viewer()
+  {
+      for(int i=0; i< vboSize; i++)
+          buffers[i].destroy();
+
+      for(int i=0; i< vaoSize; i++)
+          vao[i].destroy();
+
+
+  }
   enum Mode { NONE, INSERT_V, INSERT_PT, MOVE, SELECT, FINDNB, EMPTYSPH };
 
 public:
@@ -71,23 +121,11 @@ public:
     // In other words, there is no toColor(), toImage(), or toPixmap() functions in QVariant.
     // Instead, use the QVariant::value() or the qVariantValue() template function
     m_colorVertex = settings.value( "Show/vertexcolor", QColor(255, 150, 0) ).value<QColor>();
-#if QT_VERSION >= 0x040600
     m_fSizeVertex = settings.value( "Show/vertexsize", 0.04f ).toFloat();
-#else
-    m_fSizeVertex = settings.value( "Show/vertexsize", 0.04f ).value<float>();
-#endif
     m_colorDEdge = settings.value( "Show/dedgecolor", QColor(0, 255, 0) ).value<QColor>();
-#if QT_VERSION >= 0x040600
     m_fSizeDEdge = settings.value( "Show/dedgesize", 0.01f ).toFloat();
-#else
-    m_fSizeDEdge = settings.value( "Show/dedgesize", 0.01f ).value<float>();
-#endif
     m_colorVEdge = settings.value( "Show/vedgecolor", QColor(0, 0, 255) ).value<QColor>();
-#if QT_VERSION >= 0x040600
     m_fSizeVEdge = settings.value( "Show/vedgesize", 0.01f ).toFloat();
-#else
-    m_fSizeVEdge = settings.value( "Show/vedgesize", 0.01f ).value<float>();
-#endif
     m_colorFacet = settings.value( "Show/facetcolor",
                              QColor(255, 255, 0, 96) ).value<QColor>();
     m_colorTrackball = settings.value( "Show/ballcolor",
@@ -116,6 +154,11 @@ public:
 
 public Q_SLOTS:
   // clear scene
+  void changed()
+  {
+      compute_elements();
+      are_buffers_initialized = false;
+  }
   void clear() {
     m_pScene->eraseOldData();
     m_hasNewPt = false;
@@ -212,14 +255,11 @@ protected:
 
 private:
   // draw a 3d effect vertex
-  void drawVertex(const Point_3& p, const QColor& clr, float r);
+  void drawVertex(const Point_3& p, const QColor& clr, float r, std::vector<float> *vertices);
   // draw a 3d effect edge
-  void drawEdge(const Point_3& from, const Point_3& to, const QColor& clr, float r);
+  void drawEdge(const Point_3& from, const Point_3& to, const QColor& clr, float r, std::vector<float> *vertices);
   // draw a facet
-  void drawFacet(const Triangle_3& t, const QColor& clr);
-  // draw a sphere with/without Axis
-  void drawSphere(float r, const QColor& clr, const Point_3& center=CGAL::ORIGIN);
-
+  void drawFacet(const Triangle_3& t, const QColor& clr, std::vector<float> *vertices);
   // test whether the give 3D point is on the sphere
   inline bool isOnSphere( const Point_3 & pt ) {
     return ( (pt.x()*pt.x() + pt.y()*pt.y() + pt.z()*pt.z()) == (m_fRadius*m_fRadius) );
@@ -229,6 +269,7 @@ private:
   bool computeIntersect( const QPoint & pos, Vec & pt );
   // compute the conflict region
   void computeConflict( Point_3 pt );
+
 
 private:
   Scene* m_pScene;
@@ -285,6 +326,71 @@ private:
   QColor m_colorEmptySphere;
   // trackball resizing fineness
   int m_iStep;
+
+
+  QColor color;
+  static const int vaoSize = 29;
+  static const int vboSize = 33;
+  // define material
+   QVector4D	ambient;
+   QVector4D	diffuse;
+   QVector4D	specular;
+   GLfloat      shininess ;
+      int poly_vertexLocation[3];
+      int normalsLocation[3];
+      int mvpLocation[3];
+      int mvLocation[2];
+      int centerLocation[5];
+      int colorLocation[3];
+      int lightLocation[5*2];
+
+      bool are_buffers_initialized;
+      std::vector<float> *pos_emptyFacet;
+      std::vector<float> *pos_emptySphere;
+      std::vector<float> *points_emptySphere;
+      std::vector<float> *pos_points;
+      std::vector<float> *pos_newPoint;
+      std::vector<float> *pos_selectedVertex;
+      std::vector<float> *pos_movingPoint;
+      std::vector<float> *pos_queryPoint;
+      std::vector<float> *pos_trackBall;
+      std::vector<float> *points_trackBall;
+      std::vector<float> *pos_voronoi;
+      std::vector<float> *pos_delaunay;
+      std::vector<float> *pos_facets;
+      std::vector<float> *pos_newFacet;
+      std::vector<float> *pos_nearest_neighbor;
+      std::vector<float> *points_locationSphere;
+      std::vector<float> *points_cylinder;
+      std::vector<float> *normals_cylinder;
+      std::vector<float> *points_sphere;
+      std::vector<float> *normals_sphere;
+      std::vector<float> *normals_emptySphere;
+      std::vector<float> *normals_trackBall;
+      std::vector<float> *transfo1_voronoi;
+      std::vector<float> *transfo2_voronoi;
+      std::vector<float> *transfo3_voronoi;
+      std::vector<float> *transfo4_voronoi;
+      std::vector<float> *transfo1_delaunay;
+      std::vector<float> *transfo2_delaunay;
+      std::vector<float> *transfo3_delaunay;
+      std::vector<float> *transfo4_delaunay;
+      std::vector<float> *incremental_points;
+      std::vector<float> *incremental_next_point;
+      std::vector<float> *incremental_facet;
+      std::vector<float> *incremental_conflict;
+
+      QOpenGLBuffer buffers[vboSize];
+      QOpenGLVertexArrayObject vao[vaoSize];
+      QOpenGLShaderProgram rendering_program;
+      QOpenGLShaderProgram rendering_program_spheres;
+      QOpenGLShaderProgram rendering_program_cylinders;
+      void initialize_buffers();
+      void compute_elements();
+      void attrib_buffers(QGLViewer*);
+      void compile_shaders();
+      void draw_cylinder(float R, int prec, std::vector<float> *vertices, std::vector<float> *normals);
+      void draw_sphere(float R, int prec, std::vector<float> *vertices, std::vector<float> *normals);
 };
 
 #endif

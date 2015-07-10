@@ -64,8 +64,8 @@ CGAL packages, some are only needed for demos.
      - Qt3 (>= 3.3)
        ftp://ftp.qt.nokia.com/qt/source/
 
-     - Qt4 (>= 4.3)
-       http://qt.nokia.com/
+     - Qt5 (>= 5.3)
+       http://qt-project.org/
 
      - libQGLViewer
        http://www.libqglviewer.com/

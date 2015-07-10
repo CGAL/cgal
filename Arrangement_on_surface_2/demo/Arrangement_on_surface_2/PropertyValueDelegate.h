@@ -21,6 +21,9 @@
 #define PROPERTY_VALUE_DELEGATE_H
 
 #include <QtGui>
+#include <QItemDelegate>
+#include <QSpinBox>
+
 
 class PropertyValueDelegate : public QItemDelegate
 {

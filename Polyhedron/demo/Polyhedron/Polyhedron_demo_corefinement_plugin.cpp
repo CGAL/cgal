@@ -25,6 +25,7 @@ class Polyhedron_demo_corefinement_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
 
@@ -166,14 +167,13 @@ void Polyhedron_demo_corefinement_plugin::corefinement()
     new_item->setName(tr("boundary intersection"));
     new_item->setColor(Qt::green);
     new_item->setRenderingMode(Wireframe);
-    scene->addItem(new_item);
+    scene->addItem(new_item);  
+    new_item->changed();
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
       
   }
 
   QApplication::restoreOverrideCursor();
 }
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_corefinement_plugin, Polyhedron_demo_corefinement_plugin)
 
 #include "Polyhedron_demo_corefinement_plugin.moc"

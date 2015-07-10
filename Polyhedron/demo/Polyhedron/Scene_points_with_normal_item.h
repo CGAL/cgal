@@ -1,11 +1,10 @@
 #ifndef POINT_SET_ITEM_H
 #define POINT_SET_ITEM_H
-
+#include "Scene_item.h"
 #include "Scene_points_with_normal_item_config.h"
 #include "Polyhedron_type_fwd.h"
 #include "Kernel_type.h"
 #include "Point_set_3.h"
-#include "Scene_item_with_display_list.h"
 
 #include <iostream>
 
@@ -19,7 +18,7 @@ class QAction;
 
 // This class represents a point set in the OpenGL scene
 class SCENE_POINTS_WITH_NORMAL_ITEM_EXPORT Scene_points_with_normal_item
-  : public Scene_item_with_display_list
+  : public Scene_item
 {
   Q_OBJECT
 
@@ -45,16 +44,16 @@ public:
   // Function for displaying meta-data of the item
   virtual QString toolTip() const;
 
+  virtual void changed();
+  virtual void selection_changed(bool);
+
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const;
-  // Points OpenGL drawing in a display list
-  virtual void direct_draw() const;
-  // Normals OpenGL drawing
-  void draw_normals() const;
-  virtual void draw_edges() const { draw_normals(); }//to tweak scene
 
-  // Splat OpenGL drawing
-  virtual void draw_splats() const;
+  virtual void draw_edges(Viewer_interface* viewer) const;
+  virtual void draw_points(Viewer_interface*) const;
+
+  virtual void draw_splats(Viewer_interface*) const;
   
   // Gets wrapped point set
   Point_set*       point_set();
@@ -88,6 +87,29 @@ private:
   QAction* actionDeleteSelection;
   QAction* actionResetSelection;
   QAction* actionSelectDuplicatedPoints;
+
+
+  std::vector<double> positions_lines;
+  std::vector<double> positions_points;
+  std::vector<double> positions_splats;
+  std::vector<double> positions_selected_points;
+  std::vector<double> color_lines;
+  std::vector<double> color_points;
+  std::vector<double> color_selected_points;
+  std::vector<double> normals;
+  std::vector<double> tex_coords;
+
+  mutable int texture[3];
+
+  mutable QOpenGLShaderProgram *program;
+  mutable GLuint textureId;
+  mutable GLint sampler_location;
+
+  void initialize_buffers(Viewer_interface *viewer) const;
+
+  void compute_normals_and_vertices(void);
+
+
 }; // end class Scene_points_with_normal_item
 
 

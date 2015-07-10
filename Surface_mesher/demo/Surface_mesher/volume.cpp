@@ -601,8 +601,10 @@ void Volume::export_off()
 {
   QFileDialog filedialog(mw, tr("Export surface to file"));
   filedialog.setFileMode(QFileDialog::AnyFile);
-  filedialog.setFilter(tr("OFF files (*.off);;"
-                          "All files (*)"));
+  
+  filedialog.setNameFilter(tr("OFF files (*.off);;"
+                              "All files (*)"));
+  
   filedialog.setAcceptMode(QFileDialog::AcceptSave);
   filedialog.setDefaultSuffix("off");
   if(filedialog.exec())
@@ -630,8 +632,11 @@ void Volume::save_image_to_inr()
 {
   QFileDialog filedialog(mw, tr("Export image to Inrimage format"));
   filedialog.setFileMode(QFileDialog::AnyFile);
-  filedialog.setFilter(tr("Inrimage files (*.inr);;"
-                          "Compressed Inrimage files (*.inr.gz)"));
+  
+  filedialog.setNameFilter(tr("Inrimage files (*.inr);;"
+                              "Compressed Inrimage files (*.inr.gz)"));
+
+
   filedialog.setAcceptMode(QFileDialog::AcceptSave);
   filedialog.setDefaultSuffix("inr.gz");
   if(filedialog.exec())

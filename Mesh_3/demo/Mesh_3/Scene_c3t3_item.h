@@ -3,7 +3,7 @@
 
 #include "Scene_c3t3_item_config.h"
 #include "C3t3_type.h"
-#include <CGAL_demo/Scene_item_with_display_list.h>
+#include <CGAL_demo/Scene_item.h>
 
 #include <QVector>
 #include <QColor>
@@ -13,11 +13,15 @@
 #include <CGAL/gl.h>
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
+#include <QOpenGLFunctions_3_2_Core>
+#include <QOpenGLVertexArrayObject>
+#include <QOpenGLBuffer>
+#include <QOpenGLShaderProgram>
 
 struct Scene_c3t3_item_priv;
 
 class SCENE_C3T3_ITEM_EXPORT Scene_c3t3_item
-  : public Scene_item_with_display_list
+  : public Scene_item
 {
   Q_OBJECT
 public:
@@ -67,8 +71,8 @@ public:
     return (m != Gouraud); // CHECK THIS!
   }
 
-  void direct_draw() const;
-  void direct_draw_edges() const;
+  void draw(QGLViewer* viewer) const;
+  void draw_edges(QGLViewer* viewer) const;
   
   // data item
   inline const Scene_item* data_item() const;
@@ -79,6 +83,7 @@ public:
   
   // Call this if c3t3 has been modified
   void c3t3_changed();
+  void contextual_changed();
 
 public Q_SLOTS:
   inline void data_item_destroyed();
@@ -90,7 +95,6 @@ private:
   QColor get_histogram_color(const double v) const;
   
 protected:
-  void direct_draw(int) const;
   Scene_c3t3_item_priv* d;
 
   qglviewer::ManipulatedFrame* frame;
@@ -101,6 +105,35 @@ private:
   
   typedef std::set<int> Indices;
   Indices indices_;
+
+  static const int vaoSize = 2;
+  static const int vboSize = 4;
+  mutable bool are_buffers_initialized;
+  mutable int poly_vertexLocation[2];
+  mutable int normalsLocation[2];
+  mutable int mvpLocation[2];
+  mutable int mvLocation[2];
+  mutable int fmatLocation;
+  mutable int colorLocation[2];
+  mutable int lightLocation[5*2];
+  mutable int twosideLocation;
+
+  std::vector<float> v_poly;
+  std::vector<float> normal;
+  std::vector<float> color_triangles;
+  std::vector<float> *v_grid;
+
+
+
+  mutable QOpenGLBuffer buffers[vboSize];
+  mutable QOpenGLVertexArrayObject vao[vaoSize];
+  mutable QOpenGLShaderProgram rendering_program;
+  mutable QOpenGLShaderProgram rendering_program_grid;
+  void initialize_buffers() const;
+  void compute_elements();
+  void attrib_buffers(QGLViewer*) const;
+  void compile_shaders();
+  void draw_grid(float diag, std::vector<float> *positions_grid);
 };
 
 inline
@@ -136,5 +169,7 @@ Scene_c3t3_item::data_item_destroyed()
 {
   set_data_item(NULL);
 }
+
+
 
 #endif // SCENE_C3T3_ITEM_H

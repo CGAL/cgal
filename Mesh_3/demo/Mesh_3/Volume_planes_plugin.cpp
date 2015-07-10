@@ -149,6 +149,8 @@ class Volume_plane_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+
 public:
   Volume_plane_plugin() : planeSwitch(NULL), sc(NULL), mw(NULL)
     {
@@ -377,10 +379,5 @@ private:
     DoubleConverter x = { minmax }; pxr_.setFC(x);
   }
 };
-
-
-
-
-Q_EXPORT_PLUGIN2(Volume_plane_plugin, Volume_plane_plugin)
 
 #include "Volume_planes_plugin.moc"

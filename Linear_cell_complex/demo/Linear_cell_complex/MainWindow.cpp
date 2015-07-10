@@ -44,7 +44,7 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
   setupUi (this);
 
   scene.lcc = new LCC;
-
+  
   volumeListDock = new QDockWidget(QString(tr("Volume List")),this);
   volumeListDock->setAllowedAreas(Qt::RightDockWidgetArea |
                                   Qt::LeftDockWidgetArea);
@@ -63,7 +63,9 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
 /*  volumeList->setColumnWidth(0,85);
   volumeList->setColumnWidth(1,35);
   volumeList->setColumnWidth(2,35);*/
-  volumeList->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+
+  volumeList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+ 
   volumeList->setSelectionMode(QAbstractItemView::NoSelection);
   //volumeList->setSelectionBehavior(QAbstractItemView::SelectRows);
   volumeListDock->setWidget(volumeList);

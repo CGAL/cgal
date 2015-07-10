@@ -28,7 +28,7 @@
 #include <list>
 
 #include <CGAL/intersection_2.h>
-#include <CGAL/auto_link/Qt4.h>
+#include <CGAL/auto_link/Qt.h>
 
 #include <boost/mpl/has_xxx.hpp>
 
@@ -182,6 +182,6 @@ public:
 
 };
 
-} // namesapce Qt
+} // namespace Qt
 } // namespace CGAL
 #endif // CGAL_QT_CONVERTER_H

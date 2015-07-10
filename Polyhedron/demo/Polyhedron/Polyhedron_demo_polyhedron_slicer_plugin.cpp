@@ -2,7 +2,6 @@
 #include <CGAL/AABB_intersections.h>
 
 #include "Messages_interface.h"
-#include "Scene_item_with_display_list.h"
 #include "Scene_plane_item.h"
 #include "Scene_polyhedron_item.h"
 #include "Scene_polylines_item.h"
@@ -33,6 +32,7 @@ class Polyhedron_demo_polyhedron_slicer_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
   bool applicable(QAction*) const { return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())); }
@@ -309,6 +309,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
       new_polylines_item->setColor(Qt::green);
       new_polylines_item->setRenderingMode(Wireframe);
       scene->addItem(new_polylines_item);
+      new_polylines_item->changed();
     }
   }
 }
@@ -358,6 +359,5 @@ void Polyhedron_demo_polyhedron_slicer_plugin::intersection_of_plane_Polyhedra_3
   }
   print_message(QString("%1 axis aligned planes are found, and points are projected...").arg(nb_projection));
 }
-Q_EXPORT_PLUGIN2(Polyhedron_demo_polyhedron_slicer_plugin, Polyhedron_demo_polyhedron_slicer_plugin)
 
 #include "Polyhedron_demo_polyhedron_slicer_plugin.moc"

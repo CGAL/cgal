@@ -17,6 +17,7 @@ class Polyhedron_demo_orient_soup_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
   void init(QMainWindow* mainWindow,
@@ -138,12 +139,12 @@ void Polyhedron_demo_orient_soup_plugin::shuffle()
     if(poly_item) {
       item = new Scene_polygon_soup_item();
       item->setName(poly_item->name());
-      item->setColor(poly_item->color());
       item->setRenderingMode(poly_item->renderingMode());
       item->setVisible(poly_item->visible());
       item->setProperty("source filename", poly_item->property("source filename"));
       item->load(poly_item);
       item->shuffle_orientations();
+      item->setColor(poly_item->color());
       scene->replaceItem(index, item);
       delete poly_item;
     }
@@ -164,7 +165,5 @@ void Polyhedron_demo_orient_soup_plugin::displayNonManifoldEdges()
     scene->itemChanged(item);
   }
 }
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_orient_soup_plugin, Polyhedron_demo_orient_soup_plugin)
 
 #include "Polyhedron_demo_orient_soup_plugin.moc"

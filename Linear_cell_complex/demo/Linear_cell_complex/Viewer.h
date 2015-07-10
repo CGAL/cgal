@@ -25,7 +25,11 @@
 #include <QGLViewer/qglviewer.h>
 #include <QKeyEvent>
 
-class Viewer : public QGLViewer
+#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLVertexArrayObject>
+#include <QGLBuffer>
+#include <QOpenGLShaderProgram>
+class Viewer : public QGLViewer, QOpenGLFunctions_3_3_Core
 {
   Q_OBJECT
 
@@ -48,16 +52,23 @@ class Viewer : public QGLViewer
 
 
 public:
-  Viewer(QWidget* parent)
-    : QGLViewer(parent), wireframe(false), flatShading(true),
-      edges(true), vertices(true), m_displayListCreated(false)
+  Viewer(QWidget* parent);
+  ~Viewer()
   {
-    QGLFormat newFormat = this->format();
-    newFormat.setSampleBuffers(true);
-    newFormat.setSamples(16);
-    this->setFormat(newFormat);
-  }
+      buffers[0].destroy();
+      buffers[1].destroy();
+      buffers[2].destroy();
+      buffers[3].destroy();
+      buffers[4].destroy();
+      buffers[5].destroy();
+      buffers[6].destroy();
+      buffers[7].destroy();
+      vao[0].destroy();
+      vao[1].destroy();
+      vao[2].destroy();
+      vao[3].destroy();
 
+  }
   void setScene(Scene* scene_)
   {
     scene = scene_;
@@ -76,11 +87,38 @@ public Q_SLOTS:
 
   void sceneChanged();
 
-protected:
-  void initDraw();
-  void drawAllFaces(bool flat);
-  void drawAllEdges();
-  void drawAllVertices();
-};
 
+private:
+
+  bool are_buffers_initialized;
+  //Shaders elements
+
+  int vertexLocation[3];
+  int normalsLocation;
+  int mvpLocation[2];
+  int mvLocation;
+  int colorLocation;
+  int colorsLocation;
+  int lightLocation[5];
+
+
+  std::vector<float> pos_points;
+  std::vector<float> pos_lines;
+  std::vector<float> pos_facets;
+  std::vector<float> smooth_normals;
+  std::vector<float> flat_normals;
+  std::vector <float> colors;
+
+  QGLBuffer buffers[10];
+  QOpenGLVertexArrayObject vao[10];
+  QOpenGLShaderProgram rendering_program;
+  QOpenGLShaderProgram rendering_program_p_l;
+
+  void initialize_buffers();
+  void compute_elements();
+  void attrib_buffers(QGLViewer*);
+  void compile_shaders();
+  void triangulate_facet();
+  bool is_Triangulated();
+};
 #endif

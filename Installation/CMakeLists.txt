@@ -6,18 +6,10 @@
 project(CGAL CXX C)
 
 # Minimal version of CMake:
-if(WIN32)
-  cmake_minimum_required(VERSION 2.8.6)
-else()
-  cmake_minimum_required(VERSION 2.6.2)
-endif()
+cmake_minimum_required(VERSION 2.8.10)
 
 # Tested version:
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-  cmake_policy(VERSION 2.8.4)
-else()
-  cmake_policy(VERSION 2.6)
-endif()
+cmake_policy(VERSION 2.8.11)
 
 #
 # Compatibility with CMake 3.0
@@ -539,7 +531,7 @@ endmacro()
  
 # this is the place to tell which external libs are supporting
 # Remarks: 
-#  External libs Qt3 and Qt34are configured when Qt3 or Qt4 as lib of cgal are required
+#  External libs Qt3 and Qt34are configured when Qt3 or Qt5 as lib of cgal are required
 #  Coin is used in KDS, but no FindCoin or FindCOIN exists
 #  There exists FindF2C, FindIPE, FindMKL, but they are only used to support supporting libs
 list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR ZLIB OpenGL LEDA MPFI RS RS3 OpenNL Eigen3 BLAS LAPACK QGLViewer ESBTL Coin3D NTL IPE)
@@ -558,7 +550,7 @@ set(SPECIAL_PREFIXES "${SPECIAL_PREFIXES}set(CGAL_EXT_LIB_${library}_PREFIX \"${
 set(CGAL_EXT_LIB_${library}_PREFIX ${prefix})
 endmacro()
 
-set_special_prefix(Qt4 QT)
+set_special_prefix(Qt5 QT)
 set_special_prefix(Eigen3 EIGEN3)
 set_special_prefix(QGLViewer QGLVIEWER)
 set_special_prefix(Coin3D COIN3D)

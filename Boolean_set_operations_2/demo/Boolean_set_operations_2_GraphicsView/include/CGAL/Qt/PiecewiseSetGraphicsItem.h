@@ -103,7 +103,7 @@ void Piecewise_set_graphics_item<S,D,P>::update_set_bbox( Piecewise_set const& a
   aSet.polygons_with_holes( std::back_inserter(vec) ) ;
   
   for( Region_const_iterator rit = vec.begin(); rit != vec.end() ; ++ rit )
-    update_region_bbox(*rit,aBboxBuilder);
+    this->update_region_bbox(*rit,aBboxBuilder);//This added for Qt5 version !
 }
 
 template <class S, class D, class P>
@@ -114,7 +114,7 @@ void Piecewise_set_graphics_item<S,D,P>::draw_set( Piecewise_set const& aSet, QP
   aSet.polygons_with_holes( std::back_inserter(vec) ) ;
   
   for( Region_const_iterator rit = vec.begin(); rit != vec.end() ; ++ rit )
-    draw_region(*rit,aPath);
+    this->draw_region(*rit,aPath);//This added for Qt5 version !
 }
 
 } // namespace Qt

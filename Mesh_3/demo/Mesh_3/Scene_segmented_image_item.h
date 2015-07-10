@@ -6,7 +6,10 @@
 #include "Image_type_fwd.h"
 #include "Scene_segmented_image_item_config.h"
 #include <CGAL/gl.h>
-
+#include<QGLViewer/qglviewer.h>
+#include <QOpenGLVertexArrayObject>
+#include <QOpenGLBuffer>
+#include <QOpenGLShaderProgram>
 typedef CGAL::Image_3 Image;
 
 class SCENE_SEGMENTED_IMAGE_ITEM_EXPORT Scene_segmented_image_item 
@@ -28,18 +31,17 @@ public:
   virtual bool supportsRenderingMode(RenderingMode m) const;
 
   // draw
-  virtual void direct_draw() const { draw(); }
-  virtual void direct_draw_edges() const { draw_edges(); }
-  virtual void draw() const;
-  virtual void draw_edges() const { draw_gl_edges(); }
+  virtual void direct_draw(QGLViewer* viewer) const { draw(viewer); }
+  virtual void direct_draw_edges(QGLViewer* viewer) const { draw_edges(viewer); }
+  virtual void draw(QGLViewer*) const;
+  virtual void draw_edges(QGLViewer* viewer) const { draw_gl(viewer); }
   
   virtual QString toolTip() const;
   
   const Image* image() const { return m_image; }
 
 private:
-  void draw_gl() const;
-  void draw_gl_edges() const;
+  void draw_gl(QGLViewer* viewer) const;
   
   void initialize_buffers();
   GLint ibo_size() const;
@@ -51,8 +53,30 @@ private:
   bool m_initialized;
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
   int m_voxel_scale;
-  GLuint m_vbo[3];
-  GLuint m_ibo;
+  static const int vaoSize = 2;
+  static const int vboSize = 6;
+  mutable int poly_vertexLocation[1];
+  mutable int normalsLocation[1];
+  mutable int mvpLocation[1];
+  mutable int mvLocation[1];
+  mutable int colorLocation[1];
+  mutable int lightLocation[5];
+  mutable int twosideLocation;
+
+   std::vector<float> *v_box;
+   std::vector<float> color;
+
+
+  mutable QOpenGLBuffer m_vbo[vboSize];
+  mutable QOpenGLBuffer *m_ibo;
+  mutable QOpenGLVertexArrayObject vao[vaoSize];
+  mutable QOpenGLShaderProgram rendering_program;
+  void draw_bbox();
+  void attrib_buffers(QGLViewer*) const;
+  void compile_shaders();
+  void draw_Bbox(Bbox bbox, std::vector<float> *vertices);
+public Q_SLOTS:
+    void changed();
 #endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 };
 

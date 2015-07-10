@@ -157,13 +157,12 @@ MainWindow::MainWindow(QWidget* parent)
   sceneView->setItemDelegate(new SceneDelegate(this));
 
   sceneView->header()->setStretchLastSection(false);
-  sceneView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
-  sceneView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
-  sceneView->header()->setResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
-  sceneView->header()->setResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
-  sceneView->header()->setResizeMode(Scene::ABColumn, QHeaderView::Fixed);
-  sceneView->header()->setResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
-
+  sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
+  sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
+  sceneView->header()->setSectionResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
+  sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
+  sceneView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
+  sceneView->header()->setSectionResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
   sceneView->resizeColumnToContents(Scene::ColorColumn);
   sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
   sceneView->resizeColumnToContents(Scene::ABColumn);
@@ -180,7 +179,7 @@ MainWindow::MainWindow(QWidget* parent)
           viewer, SLOT(updateGL()));
 
   connect(scene, SIGNAL(updated()),
-          viewer, SLOT(update()));
+          viewer, SLOT(updateGL()));
 
   connect(scene, SIGNAL(updated()),
           this, SLOT(selectionChanged()));

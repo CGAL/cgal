@@ -83,7 +83,7 @@ discoverInfiniteComponent(const CDT & ct)
     Face_handle fh = queue.front();
     queue.pop_front();
     fh->set_in_domain(false);
-
+	
     for(int i = 0; i < 3; i++)
     {
       Face_handle fi = fh->neighbor(i);
@@ -95,7 +95,7 @@ discoverInfiniteComponent(const CDT & ct)
 }
 
 template<typename SeedList>
-void
+void 
 discoverComponents(const CDT & ct,
                    const SeedList& seeds)
 {
@@ -212,7 +212,7 @@ public Q_SLOTS:
   void on_actionShow_seeds_toggled(bool checked);
 
   void on_actionInsertPolyline_toggled(bool checked);
-
+  
   void on_actionInsertSeeds_OnOff_toggled(bool checked);
   
   void on_actionCircumcenter_toggled(bool checked);
@@ -284,10 +284,10 @@ MainWindow::MainWindow()
   pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, true); // inputs polylines which are not closed
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(processInput(CGAL::Object)));
-
+    
   tcc = new CGAL::Qt::TriangulationCircumcircle<CDT>(&scene, &cdt, this);
   tcc->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-
+  
   dms = new CGAL::Qt::DelaunayMeshInsertSeeds<CDT>(&scene, &cdt, this);//input seeds
   QObject::connect(dms, SIGNAL(generate(CGAL::Object)),
                    this, SLOT(processInput(CGAL::Object)));
@@ -351,7 +351,7 @@ MainWindow::processInput(CGAL::Object o)
       cdt.insert(points.front());
     else
       insert_polyline(points.begin(), points.end());
-  }
+    }
   else
   {
     // Seed (from Shift + left clic)
@@ -371,7 +371,7 @@ MainWindow::processInput(CGAL::Object o)
 
 /* 
  *  Qt Automatic Connections
- *  http://doc.trolltech.com/4.4/designer-using-a-component.html#automatic-connections
+ *  http://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
  * 
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
@@ -777,8 +777,9 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   Iso_rectangle_2 isor = convert(rect);
   CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)());
   bool ok = false;
+
   const int number_of_points = 
-    QInputDialog::getInteger(this, 
+    QInputDialog::getInt(this, 
                              tr("Number of random points"),
                              tr("Enter number of random points"),
 			     100,
@@ -855,9 +856,8 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Constrained_Delaunay_triangulation_2 demo");
 
-  // Import resources from libCGALQt4.
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+  // Import resources from libCGAL (Qt5).
+  CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;
   mainWindow.show();

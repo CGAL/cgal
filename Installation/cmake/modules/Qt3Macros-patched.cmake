@@ -3,7 +3,7 @@
 #  macro QT3_AUTOMOC(inputfile ... )
 #  macro QT3_GENERATE_MOC(inputfile outputfile )
 #
-# Adapted to Qt3 and CGAL from FindQt4.cmake (included in CMake 2.4)
+# Adapted to Qt3 for compatibility with Qt5 and CGAL
 
 INCLUDE(AddFileDependencies)
 

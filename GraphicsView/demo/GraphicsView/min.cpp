@@ -4,6 +4,9 @@
 #include <CGAL/Qt/GraphicsViewNavigation.h>
 #include <QLineF>
 #include <QRectF>
+#include <QApplication> 
+#include <QGraphicsScene>
+#include <QGraphicsView> 
 
 int main(int argc, char **argv)
 {

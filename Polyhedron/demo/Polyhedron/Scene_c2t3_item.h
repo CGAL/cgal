@@ -2,10 +2,9 @@
 #define SCENE_C2T3_ITEM_H
 
 #include "Scene_c2t3_item_config.h"
-#include "Scene_item_with_display_list.h"
 #include "C2t3_type.h"
 #include <iostream>
-
+#include "Scene_item.h"
 #include <qgl.h>
 #include <QtCore/qglobal.h>
 #include <CGAL/gl.h>
@@ -104,7 +103,6 @@ private:
                             const Tr::Point& pc) {
     Tr::Geom_traits::Vector_3 n = cross_product(pb - pa, pc -pa);
     n = n / CGAL::sqrt(n*n);
-
     ::glNormal3d(n.x(),n.y(),n.z());
 
     ::glVertex3d(pa.x(),pa.y(),pa.z());

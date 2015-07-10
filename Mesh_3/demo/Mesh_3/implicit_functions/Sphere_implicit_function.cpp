@@ -25,7 +25,6 @@
 #include <QObject>
 #include "Implicit_function_interface.h"
 
-
 const double radius = 1.;
 
 class Sphere_implicit_function :
@@ -34,7 +33,8 @@ class Sphere_implicit_function :
 {
   Q_OBJECT
   Q_INTERFACES(Implicit_function_interface)
-  
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.Mesh3Demo.Implicit_function_interface/1.0")
+
 public:
   virtual QString name() const { return "Sphere function"; }
   
@@ -50,8 +50,4 @@ public:
   }
 };
 
-
-
-#include <QtPlugin>
-Q_EXPORT_PLUGIN2(Sphere_implicit_function, Sphere_implicit_function)
 #include "Sphere_implicit_function.moc"

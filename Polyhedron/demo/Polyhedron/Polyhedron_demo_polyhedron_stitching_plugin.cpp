@@ -36,6 +36,8 @@ class Polyhedron_demo_polyhedron_stitching_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+
   QAction* actionDetectBorders;
   QAction* actionStitchBorders;
 public:
@@ -131,6 +133,7 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionDetectBorders_trigger
         new_item->setName(tr("Boundary of %1").arg(item->name()));
         new_item->setColor(Qt::red);
         scene->addItem(new_item);
+        new_item->changed();
       }
     }
   }
@@ -151,7 +154,5 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchBorders_trigger
     }
   }
 }
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_polyhedron_stitching_plugin, Polyhedron_demo_polyhedron_stitching_plugin)
 
 #include "Polyhedron_demo_polyhedron_stitching_plugin.moc"

@@ -1,11 +1,6 @@
 #ifndef CGAL_VOLUME_PLANE_H
 #define CGAL_VOLUME_PLANE_H
 
-
-#if SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-  #include <GL/glew.h>
-#endif 
-
 #include <CGAL_demo/Scene_item.h>
 
 #include <vector>
@@ -15,6 +10,9 @@
 #include <QGLViewer/qglviewer.h>
 
 #include "Volume_plane_interface.h"
+#include <QOpenGLVertexArrayObject>
+#include <QOpenGLBuffer>
+#include <QOpenGLShaderProgram>
 
 #if !defined(NDEBUG)
 inline
@@ -76,13 +74,14 @@ public:
 
   unsigned int cube() {return currentCube; }
 
-  void draw() const;
+  void draw(QGLViewer* viewer)const;
 
   unsigned int aDim() const { return adim_; }
   unsigned int bDim() const { return bdim_; }
   unsigned int cDim() const { return cdim_; }
 
   qglviewer::Vec translationVector() const { return translationVector(*this); }
+
   unsigned int getCurrentCube() const { return currentCube; }
 
   // uses a public init function to make enable construction in
@@ -90,9 +89,14 @@ public:
   void init();
 
 private:
-  static const char* vertexShader; 
+  static const char* vertexShader_source;
 
-  static const char* fragmentShader;
+  static const char* fragmentShader_source;
+
+  static const char* vertexShader_bordures_source;
+
+  static const char* fragmentShader_bordures_source;
+
 
   qglviewer::Vec translationVector(x_tag) const {
     return qglviewer::Vec(xscale_, 0.0, 0.0);
@@ -132,9 +136,13 @@ private:
   const double xscale_, yscale_, zscale_;
   mutable int currentCube;
 
-  GLuint vVBO;
-  GLuint program;
-  std::vector< std::pair<GLuint, unsigned int> > ebos;
+  mutable QOpenGLBuffer vVBO;
+  mutable QOpenGLBuffer cbuffer;
+  mutable QOpenGLBuffer rectBuffer;
+  mutable std::vector<float> v_rec;
+  mutable QOpenGLShaderProgram program_bordures;
+  mutable QOpenGLShaderProgram program;
+  mutable std::vector< std::pair<QOpenGLBuffer, unsigned int> > ebos;
   std::vector< float > colors_;
 
   QString name(x_tag) const { return tr("X Slice for %1").arg(name_); }
@@ -142,24 +150,27 @@ private:
   QString name(z_tag) const { return tr("Z Slice for %2").arg(name_); }
 
   void drawRectangle(x_tag) const {
-      glVertex3f(0.0f, 0.0f, 0.0f);
-      glVertex3f(0.0f, (adim_ - 1) * yscale_, 0.0f);
-      glVertex3f(0.0f, (adim_ - 1) * yscale_, (bdim_ - 1) * zscale_);
-      glVertex3f(0.0f, 0.0f, (bdim_ - 1) * zscale_);
+
+
+      v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      v_rec.push_back(0.0f); v_rec.push_back((adim_ - 1) * yscale_); v_rec.push_back(0.0f);
+      v_rec.push_back(0.0f); v_rec.push_back((adim_ - 1) * yscale_); v_rec.push_back((bdim_ - 1) * zscale_);
+      v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * zscale_);
+
   }
 
   void drawRectangle(y_tag) const {
-      glVertex3f(0.0f, 0.0f, 0.0f);
-      glVertex3f((adim_ - 1) * xscale_, 0.0f, 0.0f);
-      glVertex3f((adim_ - 1) * xscale_, 0.0f, (bdim_ - 1) * zscale_);
-      glVertex3f(0.0f, 0.0f, (bdim_ - 1) * zscale_);
+      v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      v_rec.push_back((adim_ - 1) * xscale_);v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      v_rec.push_back((adim_ - 1) * xscale_);v_rec.push_back(0.0f);v_rec.push_back( (bdim_ - 1) * zscale_);
+      v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * zscale_);
   }
 
   void drawRectangle(z_tag) const {
-      glVertex3f(0.0f, 0.0f, 0.0f);
-      glVertex3f((adim_ - 1) * xscale_, 0.0f, 0.0f);
-      glVertex3f((adim_ - 1) * xscale_, (bdim_ - 1) * yscale_, 0.0f);
-      glVertex3f(0.0f, (bdim_ - 1) * yscale_, 0.0f);
+      v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      v_rec.push_back((adim_ - 1) * xscale_); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      v_rec.push_back((adim_ - 1) * xscale_); v_rec.push_back((bdim_ - 1) * yscale_); v_rec.push_back(0.0f);
+      v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * yscale_); v_rec.push_back(0.0f);
   }
 
   qglviewer::Constraint* setConstraint(x_tag) {
@@ -193,19 +204,41 @@ private:
 };
 
 template<typename T>
-const char* Volume_plane<T>::vertexShader = 
-      "#version 120 \n"
-      "attribute float color;"
-      "varying vec4 fullColor; \n"
+const char* Volume_plane<T>::vertexShader_source =
+      "#version 330 \n"
+      "in vec4 vertex; \n"
+      "in float color; \n"
+      "uniform highp mat4 mvp_matrix; \n"
+      "uniform highp mat4 f_matrix; \n"
+      "out vec4 fullColor; \n"
       "void main() \n"
-      "{ gl_Position = ftransform(); \n"
-      "  fullColor = vec4(color, color, color, 1.0f); } \n";
+      "{ gl_Position = mvp_matrix * f_matrix * vertex; \n"
+      " fullColor = vec4(color, color, color, 1.0f); } \n";
 
 template<typename T>
-const char* Volume_plane<T>::fragmentShader = 
-      "#version 120 \n"
+const char* Volume_plane<T>::fragmentShader_source =
+      "#version 330\n"
       "in vec4 fullColor; \n"
       "void main() { gl_FragColor = fullColor; } \n";
+
+template<typename T>
+const char* Volume_plane<T>::vertexShader_bordures_source =
+      "#version 330 \n"
+      "in vec4 vertex; \n"
+      "uniform vec4 color; \n"
+      "uniform highp mat4 mvp_matrix; \n"
+      "uniform highp mat4 f_matrix; \n"
+      "out vec4 fullColor; \n"
+      "void main() \n"
+      "{ gl_Position = mvp_matrix * f_matrix * vertex; \n"
+      " fullColor = color; } \n";
+
+template<typename T>
+const char* Volume_plane<T>::fragmentShader_bordures_source =
+      "#version 330\n"
+      "in vec4 fullColor; \n"
+      "void main() { gl_FragColor = fullColor; } \n";
+
 
 
 template<typename T>
@@ -220,71 +253,89 @@ Volume_plane<T>::Volume_plane(unsigned int adim, unsigned int bdim, unsigned int
 
 template<typename T>
 Volume_plane<T>::~Volume_plane() {
-  for(std::vector< std::pair< GLuint, unsigned int> >::const_iterator it = ebos.begin(); 
+  for(std::vector< std::pair< QOpenGLBuffer, unsigned int> >::iterator it = ebos.begin();
       it != ebos.end(); ++it) { 
-    glDeleteBuffers(1, &(it->first));
+      it->first.destroy();
   }
-  glDeleteProgram(program);
+  program.release();
 }
 
 template<typename T>
-void Volume_plane<T>::draw() const {
+void Volume_plane<T>::draw(QGLViewer *viewer) const {
   updateCurrentCube();
 
-  glDisable(GL_LIGHTING);
 
-  glPushMatrix();
-  glMultMatrixd(mFrame_->matrix());
 
+  GLdouble mat[16];
+  viewer->camera()->getModelViewProjectionMatrix(mat);
+  QMatrix4x4 mvp;
+  QMatrix4x4 f;
+  for(int i=0; i<16; i++)
+  {
+      mvp.data()[i] = (float)mat[i];
+      f.data()[i] = (float)mFrame_->matrix()[i];
+  }
+
+
+  program_bordures.bind();
+  program_bordures.setUniformValue("mvp_matrix", mvp);
+  program_bordures.setUniformValue("f_matrix", f);
+  program_bordures.release();
   GLint renderMode;
   glGetIntegerv(GL_RENDER_MODE, &renderMode);
   printGlError(__LINE__);
-  if(renderMode == GL_SELECT) {
-    // draw a quick bounding box
-    glBegin(GL_QUADS);
-    drawRectangle(*this);
-    glEnd();
 
-    glPopMatrix();
-    glEnable(GL_LIGHTING);
-    return;
-  }
 
-  glLineWidth(3.0f);
-  glBegin(GL_LINE_LOOP);
+  glLineWidth(4.0f);
+  v_rec.resize(0);
   drawRectangle(*this);
-  glEnd();
+
+  program_bordures.bind();
+  rectBuffer.create();
+  rectBuffer.bind();
+  rectBuffer.allocate(v_rec.data(), v_rec.size()*sizeof(float));
+  program_bordures.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+  program_bordures.enableAttributeArray("vertex");
+  float current_color[4];
+  glGetFloatv(GL_CURRENT_COLOR, current_color);
+  QColor color;
+  color.setRgbF(current_color[0], current_color[1], current_color[2]);
+  program_bordures.setUniformValue("color",color);
+  glDrawArrays(GL_LINE_LOOP, 0, v_rec.size()/3);
+  rectBuffer.release();
+  program_bordures.release();
   glLineWidth(1.0f);
 
-  glUseProgram(program);
+  program.bind();
+  int mvpLoc = program.uniformLocation("mvp_matrix");
+  int fLoc = program.uniformLocation("f_matrix");
+  program.setUniformValue(mvpLoc, mvp);
+  program.setUniformValue(fLoc, f);
+  vVBO.bind();
+  int vloc = program.attributeLocation("vertex");
+  program.enableAttributeArray(vloc);
+  program.setAttributeBuffer(vloc, GL_FLOAT, 0, 3);
+  vVBO.release();
 
-  glBindBuffer(GL_ARRAY_BUFFER, vVBO);
-  glVertexPointer(3, GL_FLOAT, 0, 0);
-  glEnableClientState(GL_VERTEX_ARRAY);
+  cbuffer.bind();
+  int colorLoc = program.attributeLocation("color");
+  program.enableAttributeArray(colorLoc);
+  program.setAttributeBuffer(colorLoc, GL_FLOAT, (currentCube*sizeof(float)) * (bdim_) * (adim_), 1, 0 );
+  cbuffer.release();
 
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glVertexAttribPointer(7, 1, GL_FLOAT, GL_FALSE, 0, &(colors_[ currentCube * adim_ * bdim_ ]));
-  glEnableVertexAttribArray(7);
 
   printGlError(__LINE__);
 
-  for(unsigned int i = 0; i < ebos.size(); ++i)
+ for(unsigned int i = 0; i < ebos.size(); ++i)
   {
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebos[i].first);
-    glDrawElements(GL_QUADS, ebos[i].second, GL_UNSIGNED_INT, 0);
+      ebos[i].first.bind();
+      glDrawElements(GL_TRIANGLES, ebos[i].second, GL_UNSIGNED_INT, 0);
+      ebos[i].first.release();
   }
 
+  cbuffer.release();
   printGlError(__LINE__);
-
-  glDisableClientState(GL_VERTEX_ARRAY);
-  glDisableVertexAttribArray(7);
-  glPopMatrix();
-
-  glUseProgram(0);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-  glEnable(GL_LIGHTING);
+  program.release();
 
   printGlError(__LINE__);
 }
@@ -311,90 +362,89 @@ void Volume_plane<T>::init() {
   glGetIntegerv(GL_MAX_ELEMENTS_INDICES, &maxi);
   glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &maxv);
   assert((vertices.size( ) / 3) < (unsigned int)maxi);
-
-  glGenBuffers(1, &vVBO);
-  glBindBuffer(GL_ARRAY_BUFFER, vVBO);
-
-  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  vVBO.create();
+  vVBO.bind();
+  vVBO.allocate(vertices.data(),sizeof(float) * vertices.size());
+  vVBO.release();
   printGlError(__LINE__);
 
   // for each patch
   std::vector<unsigned int> indices;
   for(unsigned int j = 0; j < adim_ - 1; ++j) {
     for(unsigned int k = 0; k < bdim_ - 1; ++k) {
-      indices.push_back( j * bdim_ + k );
-      assert(indices.back() < (vertices.size() / 3));
-    
-      indices.push_back( j * bdim_ + (k + 1) );
-      assert(indices.back() < (vertices.size() / 3));
-    
-      indices.push_back( (j+1) * bdim_ + (k+1) );
-      assert(indices.back() < (vertices.size() / 3));
-    
-      indices.push_back( (j+1) * bdim_ + (k) );
-      assert(indices.back() < (vertices.size() / 3));
+        //0
+        indices.push_back( j * bdim_ + k );
+        assert(indices.back() < (vertices.size() / 3));
+
+        //1
+        indices.push_back( j * bdim_ + (k + 1) );
+        assert(indices.back() < (vertices.size() / 3));
+
+        //3
+        indices.push_back( (j+1) * bdim_ + (k+1) );
+        assert(indices.back() < (vertices.size() / 3));
+
+        //0
+        indices.push_back( j * bdim_ + k );
+        assert(indices.back() < (vertices.size() / 3));
+
+        //3
+        indices.push_back( (j+1) * bdim_ + (k+1) );
+        assert(indices.back() < (vertices.size() / 3));
+
+        //2
+        indices.push_back( (j+1) * bdim_ + (k) );
+        assert(indices.back() < (vertices.size() / 3));
+
     }
   }
 
-  assert((indices.size() / 4) == (adim_ - 1) * (bdim_ - 1));
-
-  const unsigned int slice = 64000;
+  assert((indices.size() / 6) == (adim_ - 1) * (bdim_ - 1));
+  //slice must be multiple of 3.
+  const unsigned int slice = 63399;
   for(unsigned int i = 0; i < indices.size(); i+=slice)
   {
-    GLuint ebo;
+    QOpenGLBuffer ebo = QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
     unsigned int left_over = (i + slice) > indices.size()  ? std::distance(indices.begin() + i, indices.end()) : slice;
-    glGenBuffers(1, &ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * left_over, &indices[i], GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    ebo.create();
+    ebo.bind();
+    ebo.allocate(&indices[i],sizeof(unsigned int) * left_over);
+    ebo.release();
     ebos.push_back(std::make_pair(ebo, left_over));
   }
+
+  cbuffer.create();
+  cbuffer.bind();
+  cbuffer.allocate(colors_.data(),colors_.size()*sizeof(float));
+  cbuffer.release();
 
   printGlError(__LINE__);
 }
 
 template<typename T>
 void Volume_plane<T>::initShaders() {
-  program = glCreateProgram();
-  GLint status;
-  char buffer[1024];
-  int len;
+    program.create();
 
-  GLuint vertex = glCreateShader(GL_VERTEX_SHADER);
-  GLint* lengths = { 0 };
-  glShaderSource(vertex, 1, &vertexShader, lengths);
-  glCompileShader(vertex);
-  glGetShaderiv(vertex, GL_COMPILE_STATUS, &status);
 
-  glGetShaderInfoLog(vertex, 1024, &len, buffer);
-  std::cout << "VertexShader: " << buffer << std::endl;
-  assert(status == GL_TRUE);
+  QOpenGLShader *vertex = new QOpenGLShader(QOpenGLShader::Vertex);
 
-  printGlError(__LINE__);
+  vertex->compileSourceCode(vertexShader_source);
+  QOpenGLShader *fragment= new QOpenGLShader(QOpenGLShader::Fragment);
+  fragment->compileSourceCode(fragmentShader_source);
+  program.addShader(vertex);
+  program.addShader(fragment);
+  program.link();
 
-  GLuint fragment = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragment, 1, &fragmentShader, lengths);
-  glCompileShader(fragment);
-  glGetShaderiv(fragment, GL_COMPILE_STATUS, &status);
 
-  glGetShaderInfoLog(fragment, 1024, &len, buffer);
-  std::cout << "FragmentShader: " << buffer << std::endl;
+  program_bordures.create();
+  QOpenGLShader *vertex_bordures = new QOpenGLShader(QOpenGLShader::Vertex);
 
-  assert(status == GL_TRUE);
-
-  printGlError(__LINE__);
-
-  glAttachShader(program, vertex);
-  glAttachShader(program, fragment);
-
-  glBindAttribLocation(program, 7, "color");
-
-  glLinkProgram(program);
-  glGetProgramiv(program, GL_LINK_STATUS, &status);
-  assert(status == GL_TRUE);
-
-  printGlError(__LINE__);
+  vertex_bordures->compileSourceCode(vertexShader_bordures_source);
+  QOpenGLShader *fragment_bordures= new QOpenGLShader(QOpenGLShader::Fragment);
+  fragment_bordures->compileSourceCode(fragmentShader_bordures_source);
+  program_bordures.addShader(vertex_bordures);
+  program_bordures.addShader(fragment_bordures);
+  program_bordures.link();
 }
 
 
