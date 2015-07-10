@@ -11,8 +11,6 @@
 
 // Type declarations
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
-// CJTODO: when testing done, use Kernel::Point_3 and Kernel::Vector_3
-//typedef std::pair<CGAL::Point__3, CGAL::Vector__3>           Point_with_normal;
 typedef std::pair<Kernel::Point_3, Kernel::Vector_3>         Point_with_normal;
 typedef std::vector<Point_with_normal>                       Pwn_vector;
 typedef CGAL::First_of_pair_property_map<Point_with_normal>  Point_map;
@@ -39,8 +37,7 @@ int main()
     !CGAL::read_xyz_points_and_normals(stream,
       std::back_inserter(points),
       Point_map(),
-      Normal_map(),
-      Traits())) // CJTODO: remove this last param
+      Normal_map()))
   {
       std::cerr << "Error: cannot read file cube.pwn" << std::endl;
       return EXIT_FAILURE;

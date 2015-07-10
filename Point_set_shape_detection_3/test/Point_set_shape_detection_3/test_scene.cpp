@@ -42,8 +42,7 @@ bool test_scene() {
     !CGAL::read_xyz_points_and_normals(stream,
       std::back_inserter(points),
       Point_map(),
-      Normal_map(),
-      Traits()))  // CJTODO: remove this last param
+      Normal_map()))
   {
     std::cerr << "Error: cannot read file cube.pwn" << std::endl;
     return EXIT_FAILURE;
@@ -96,7 +95,7 @@ bool test_scene() {
       const Pwn &p = *(points.begin() + (*index_it));
 
       // Adds Euclidean distance between point and shape.
-      //sum_distances += CGAL::sqrt((*it)->squared_distance(p)); //CJTODO A REMETTRE
+      sum_distances += CGAL::sqrt((*it)->squared_distance(p));
 
       // Proceeds with next point.
       index_it++;
