@@ -110,6 +110,7 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig \
              ${CMAKE_SOURCE_DIR}/Segment_Delaunay_graph_Linf_2/doc/Segment_Delaunay_graph_Linf_2/fig \
              ${CMAKE_SOURCE_DIR}/Straight_skeleton_2/doc/Straight_skeleton_2/fig \
+             ${CMAKE_SOURCE_DIR}/Visibility_2/doc/Visibility_2/fig \
              ${CMAKE_SOURCE_DIR}/Voronoi_diagram_2/doc/Voronoi_diagram_2/fig \
              ${CMAKE_SOURCE_DIR}/Surface_mesh_simplification/doc/Surface_mesh_simplification/fig \
              ${CMAKE_SOURCE_DIR}/Surface_mesh_skeletonization/doc/Surface_mesh_skeletonization/fig \
