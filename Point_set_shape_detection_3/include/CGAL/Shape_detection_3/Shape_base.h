@@ -162,8 +162,8 @@ namespace CGAL {
         int u = (int)((parameter_space[i].first - min[0]) / cluster_epsilon);
         int v = (int)((parameter_space[i].second - min[1]) / cluster_epsilon);
 
-        u = (u < 0) ? 0 : ((u >= u_extent) ? u_extent - 1 : u);
-        v = (v < 0) ? 0 : ((v >= v_extent) ? v_extent - 1 : v);
+        u = (u < 0) ? 0 : (((std::size_t)u >= u_extent) ? (int)u_extent - 1 : u);
+        v = (v < 0) ? 0 : (((std::size_t)v >= v_extent) ? (int)v_extent - 1 : v);
 
         bitmap[v * int(u_extent) + u] = true;
       }

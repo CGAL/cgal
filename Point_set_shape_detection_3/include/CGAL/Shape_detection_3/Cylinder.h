@@ -263,8 +263,10 @@ namespace CGAL {
 
         // Special case v_extent is just 1
         if (v_extent == 1) {
-          if (nw && nw != l)
-            update_label(labels, (std::max<unsigned int>)(nw, l), l = (std::min<unsigned int>)(nw, l));
+          if (nw && nw != l) {
+            l = (std::min<unsigned int>)(nw, l);
+            update_label(labels, (std::max<unsigned int>)(nw, l), l);
+          }
 
           return;
         }
@@ -273,10 +275,14 @@ namespace CGAL {
         unsigned int sw;
 
         if (l) {
-          if (nw && nw != l)
-            update_label(labels, (std::max<unsigned int>)(nw, l), l = (std::min<unsigned int>)(nw, l));
-          else if (w && w != l)
-            update_label(labels, (std::max<unsigned int>)(w, l), l = (std::min<unsigned int>)(w, l));
+          if (nw && nw != l) {
+            l = (std::min<unsigned int>)(nw, l);
+            update_label(labels, (std::max<unsigned int>)(nw, l), l);
+          }
+          else if (w && w != l) {
+            l = (std::min<unsigned int>)(w, l);
+            update_label(labels, (std::max<unsigned int>)(w, l), l);
+          }
         }
         
         // handle mid indices
@@ -289,12 +295,18 @@ namespace CGAL {
           w = bitmap[(y + 1) * u_extent - 1];
           sw = bitmap[(y + 2) * u_extent - 1];
 
-          if (nw && nw != l)
-            update_label(labels, (std::max<unsigned int>)(nw, l), l = (std::min<unsigned int>)(nw, l));
-          if (w && w != l)
-            update_label(labels, (std::max<unsigned int>)(w, l), l = (std::min<unsigned int>)(w, l));
-          else if (sw && sw != l)
-            update_label(labels, (std::max<unsigned int>)(sw, l), l = (std::min<unsigned int>)(sw, l));
+          if (nw && nw != l) {
+            l = (std::min<unsigned int>)(nw, l);
+            update_label(labels, (std::max<unsigned int>)(nw, l), l);
+          }
+          if (w && w != l) {
+            l = (std::min<unsigned int>)(w, l);
+            update_label(labels, (std::max<unsigned int>)(w, l), l);
+          }
+          else if (sw && sw != l) {
+            l = (std::min<unsigned int>)(sw, l);
+            update_label(labels, (std::max<unsigned int>)(sw, l), l);
+          }
         }
 
         // handle last index
@@ -305,10 +317,14 @@ namespace CGAL {
         nw = bitmap[(v_extent - 1) * u_extent - 1];
         w = bitmap[u_extent * v_extent - 1];
 
-        if (nw && nw != l)
-          update_label(labels, (std::max<unsigned int>)(nw, l), l = (std::min<unsigned int>)(nw, l));
-        else if (w && w != l)
-          update_label(labels, (std::max<unsigned int>)(w, l), l = (std::min<unsigned int>)(w, l));
+        if (nw && nw != l) {
+          l = (std::min<unsigned int>)(nw, l);
+          update_label(labels, (std::max<unsigned int>)(nw, l), l);
+        }
+        else if (w && w != l) {
+          l = (std::min<unsigned int>)(w, l);
+          update_label(labels, (std::max<unsigned int>)(w, l), l);
+        }
     }
 
     virtual void squared_distance(const std::vector<std::size_t> &indices,

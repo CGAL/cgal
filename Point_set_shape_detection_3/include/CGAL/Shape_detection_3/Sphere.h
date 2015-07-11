@@ -384,20 +384,22 @@ namespace CGAL {
 
             if (u_extent == 1) {
               if (n && l != n) {
-                update_label(labels, (std::max<unsigned int>)(n, l),
-                             l = (std::min<unsigned int>)(n, l));
+                l = (std::min<unsigned int>)(n, l);
+                update_label(labels, (std::max<unsigned int>)(n, l), l);
                 return;
               }
             }
 
             ne = bitmap[(v_extent - 1) * u_extent + 1];
 
-            if (n && n != l)
-              update_label(labels, (std::max<unsigned int>)(n, l),
-                           l = (std::min<unsigned int>)(n, l));
-            else if (ne && ne != l)
-              update_label(labels, (std::max<unsigned int>)(ne, l),
-                           l = (std::min<unsigned int>)(ne, l));
+            if (n && n != l) {
+              l = (std::min<unsigned int>)(n, l);
+              update_label(labels, (std::max<unsigned int>)(n, l), l);
+            }
+            else if (ne && ne != l) {
+              l = (std::min<unsigned int>)(ne, l);
+              update_label(labels, (std::max<unsigned int>)(ne, l), l);
+            }
           }
 
           for (std::size_t i = 1;i<u_extent - 1;i++) {
@@ -409,15 +411,18 @@ namespace CGAL {
             n = bitmap[(v_extent - 1) * u_extent + i];
             ne = bitmap[(v_extent - 1) * u_extent + i + 1];
 
-            if (nw && nw != l)
-              update_label(labels, (std::max<unsigned int>)(nw, l),
-                           l = (std::min<unsigned int>)(nw, l));
-            if (n && n != l)
-              update_label(labels, (std::max<unsigned int>)(n, l),
-                           l = (std::min<unsigned int>)(n, l));
-            else if (ne && ne != l)
-              update_label(labels, (std::max<unsigned int>)(ne, l),
-                           l = (std::min<unsigned int>)(ne, l));
+            if (nw && nw != l) {
+              l = (std::min<unsigned int>)(nw, l);
+              update_label(labels, (std::max<unsigned int>)(nw, l), l);
+            }
+            if (n && n != l) {
+              l = (std::min<unsigned int>)(n, l);
+              update_label(labels, (std::max<unsigned int>)(n, l), l);
+            }
+            else if (ne && ne != l) {
+              l = (std::min<unsigned int>)(ne, l);
+              update_label(labels, (std::max<unsigned int>)(ne, l), l);
+            }
           }
 
           // Handle last index separately
@@ -426,12 +431,14 @@ namespace CGAL {
             n = bitmap[u_extent * v_extent - 1];
             nw = bitmap[u_extent * v_extent - 2];
 
-            if (n && n != l)
-              update_label(labels, (std::max<unsigned int>)(n, l), 
-                           l = (std::min<unsigned int>)(n, l));
-            else if (nw && nw != l)
-              update_label(labels, (std::max<unsigned int>)(nw, l),
-                           l = (std::min<unsigned int>)(nw, l));
+            if (n && n != l) {
+              l = (std::min<unsigned int>)(n, l);
+              update_label(labels, (std::max<unsigned int>)(n, l), l);
+            }
+            else if (nw && nw != l) {
+              l = (std::min<unsigned int>)(nw, l);
+              update_label(labels, (std::max<unsigned int>)(nw, l), l);
+            }
           }
         }
 
@@ -441,9 +448,10 @@ namespace CGAL {
           l = bitmap[(m_equator + 1) * u_extent - 1];
           unsigned int ws = bitmap[(m_equator + 3) * u_extent - 1];
           
-          if (l && ws && l != ws)
-            update_label(labels, (std::max<unsigned int>)(ws, l),
-                         l = (std::min<unsigned int>)(ws, l));
+          if (l && ws && l != ws) {
+            l = (std::min<unsigned int>)(ws, l);
+            update_label(labels, (std::max<unsigned int>)(ws, l), l);
+          }
 
           for (std::size_t i = 1;i<(v_extent>>1) - 1;i++) {
             l = bitmap[(m_equator - i + 1) * u_extent - 1];
@@ -454,15 +462,18 @@ namespace CGAL {
             unsigned int w = bitmap[(m_equator + i + 1) * u_extent - 1];
             ws = bitmap[(m_equator + i + 2) * u_extent - 1];
 
-            if (wn && wn != l)
-              update_label(labels, (std::max<unsigned int>)(wn, l),
-                           l = (std::min<unsigned int>)(wn, l));
-            if (w && w != l)
-              update_label(labels, (std::max<unsigned int>)(w, l),
-                           l = (std::min<unsigned int>)(w, l));
-            else if (ws && ws != l)
-              update_label(labels, (std::max<unsigned int>)(ws, l),
-                           l = (std::min<unsigned int>)(ws, l));
+            if (wn && wn != l) {
+              l = (std::min<unsigned int>)(wn, l);
+              update_label(labels, (std::max<unsigned int>)(wn, l), l);
+            }
+            if (w && w != l) {
+              l = (std::min<unsigned int>)(w, l);
+              update_label(labels, (std::max<unsigned int>)(w, l), l);
+            }
+            else if (ws && ws != l) {
+              l = (std::min<unsigned int>)(ws, l);
+              update_label(labels, (std::max<unsigned int>)(ws, l), l);
+            }
           }
 
           // Last index
@@ -471,12 +482,14 @@ namespace CGAL {
             unsigned int w = bitmap[u_extent * v_extent - 1];
             unsigned int wn = bitmap[(v_extent - 1) * u_extent - 1];
 
-            if (w && w != l)
-              update_label(labels, (std::max<unsigned int>)(w, l),
-                           l = (std::min<unsigned int>)(w, l));
-            else if (wn && wn != l)
-              update_label(labels, (std::max<unsigned int>)(wn, l),
-                                    l = (std::min<unsigned int>)(wn, l));
+            if (w && w != l) {
+              l = (std::min<unsigned int>)(w, l);
+              update_label(labels, (std::max<unsigned int>)(w, l), l);
+            }
+            else if (wn && wn != l) {
+              l = (std::min<unsigned int>)(wn, l);
+              update_label(labels, (std::max<unsigned int>)(wn, l), l);
+            }
           }
         }
 
@@ -485,9 +498,10 @@ namespace CGAL {
           l = bitmap[(m_equator) * u_extent];
           unsigned int es = bitmap[(m_equator + 2) * u_extent];
 
-          if (l && l != es)
-            update_label(labels, (std::max<unsigned int>)(es, l),
-                         l = (std::min<unsigned int>)(es, l));
+          if (l && l != es) {
+            l = (std::min<unsigned int>)(es, l);
+            update_label(labels, (std::max<unsigned int>)(es, l), l);
+          }
 
           for (std::size_t i = 1;i<(v_extent>>1) - 1;i++) {
             l = bitmap[(m_equator - i) * u_extent];
@@ -498,15 +512,18 @@ namespace CGAL {
             unsigned int e = bitmap[(m_equator + i + 1) * u_extent];
             es = bitmap[(m_equator + i + 2) * u_extent];
 
-            if (en && en != l)
-              update_label(labels, (std::max<unsigned int>)(en, l),
-                           l = (std::min<unsigned int>)(en, l));
-            if (e && e != l)
-              update_label(labels, (std::max<unsigned int>)(e, l),
-                           l = (std::min<unsigned int>)(e, l));
-            else if (es && es != l)
-              update_label(labels, (std::max<unsigned int>)(es, l),
-                           l = (std::min<unsigned int>)(es, l));
+            if (en && en != l) {
+              l = (std::min<unsigned int>)(en, l);
+              update_label(labels, (std::max<unsigned int>)(en, l), l);
+            }
+            if (e && e != l) {
+              l = (std::min<unsigned int>)(e, l);
+              update_label(labels, (std::max<unsigned int>)(e, l), l);
+            }
+            else if (es && es != l) {
+              l = (std::min<unsigned int>)(es, l);
+              update_label(labels, (std::max<unsigned int>)(es, l), l);
+            }
           }
 
           // Last index
@@ -515,12 +532,14 @@ namespace CGAL {
             unsigned int w = bitmap[(v_extent - 1) * u_extent];
             unsigned int wn = bitmap[(v_extent - 2) * u_extent];
 
-            if (w && w != l)
-              update_label(labels, (std::max<unsigned int>)(w, l),
-                           l = (std::min<unsigned int>)(w, l));
-            else if (wn && wn != l)
-              update_label(labels, (std::max<unsigned int>)(wn, l),
-                           l = (std::min<unsigned int>)(wn, l));
+            if (w && w != l) {
+              l = (std::min<unsigned int>)(w, l);
+              update_label(labels, (std::max<unsigned int>)(w, l), l);
+            }
+            else if (wn && wn != l) {
+              l = (std::min<unsigned int>)(wn, l);
+              update_label(labels, (std::max<unsigned int>)(wn, l), l);
+            }
           }
         }
     }

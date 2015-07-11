@@ -522,17 +522,18 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
             if (failed_candidates >= 10000)
               force_exit = true;
+            
+            keep_searching = (stop_probability(m_options.min_points,
+              m_num_available_points - num_invalid, 
+              generated_candidates, m_global_octree->maxLevel())
+                    > m_options.probability);
         } while( !force_exit
           && stop_probability((std::size_t) best_expected,
                              m_num_available_points - num_invalid, 
                              generated_candidates,
                              m_global_octree->maxLevel()) 
                 > m_options.probability
-          && (keep_searching = (stop_probability(m_options.min_points,
-                             m_num_available_points - num_invalid, 
-                             generated_candidates,
-                             m_global_octree->maxLevel())
-                > m_options.probability)));
+          && keep_searching);
         // end of generate candidate
 
         if (force_exit) {
@@ -695,12 +696,13 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
   
             candidates.resize(end);
           }
+          keep_searching = (stop_probability(m_options.min_points,
+            m_num_available_points - num_invalid,
+            generated_candidates, 
+            m_global_octree->maxLevel())
+              > m_options.probability);
       }
-      while((keep_searching = (stop_probability(m_options.min_points,
-                            m_num_available_points - num_invalid,
-                            generated_candidates, 
-                            m_global_octree->maxLevel())
-               > m_options.probability)
+      while((keep_searching
         && FT(m_num_available_points - num_invalid) >= m_options.min_points)
         || best_expected >= m_options.min_points);
 
