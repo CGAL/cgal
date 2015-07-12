@@ -272,7 +272,7 @@ issue the call `minkowski_sum_2(P, Q, decomp)`, where `decomp`
 is an object that represents the common strategy.
 The class template `Polygon_nop_decomposition_2`, which models the
 concept `PolygonConvexDecomposition_2`, is a trivial convex
-decomposition strategy referred to as the <I>nop<I/> strategy; it
+decomposition strategy referred to as the <I>nop</I> strategy; it
 merely passes the input polygon to the next stage intact; use it in
 cases you know that the corresponding input polygon is convex to
 start with. If both \f$P \f$ and \f$Q \f$ are known to be convex,
