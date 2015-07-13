@@ -41,7 +41,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
   include( ${CGAL_USE_FILE} )
 
-  find_package(Qt5 COMPONENTS OpenGL Xml )
+  find_package(Qt5 QUIET COMPONENTS OpenGL Xml )
   find_package(QGLViewer )
   find_package(OpenGL    )
   

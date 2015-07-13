@@ -55,7 +55,7 @@ if( POLYHEDRON_QTSCRIPT_DEBUGGER)
 endif()
 find_package(CGAL COMPONENTS Qt5)
 include( ${CGAL_USE_FILE} )
-find_package(Qt5 COMPONENTS OpenGL Script Svg Xml ScriptTools)
+find_package(Qt5 QUIET COMPONENTS OpenGL Script Svg Xml ScriptTools)
 
 # Find OpenGL
 find_package(OpenGL)

@@ -18,7 +18,7 @@ find_package(CGAL COMPONENTS Qt5)
 include( ${CGAL_USE_FILE} )
 
 # Find Qt5 itself
-find_package(Qt5 COMPONENTS Xml Script OpenGL)
+find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL)
 
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)

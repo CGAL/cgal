@@ -4,7 +4,7 @@ if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
 
-find_package(Qt5 COMPONENTS OpenGL Svg QUIET)
+find_package(Qt5 QUIET COMPONENTS OpenGL Svg QUIET)
 
 find_package(OpenGL QUIET )
 

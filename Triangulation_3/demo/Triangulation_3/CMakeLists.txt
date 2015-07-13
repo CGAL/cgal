@@ -17,7 +17,7 @@ find_package(CGAL  COMPONENTS Qt5)
 include(${CGAL_USE_FILE})
 
 
-find_package(Qt5 COMPONENTS Xml Script OpenGL)
+find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL)
 
 find_package(OpenGL)
 

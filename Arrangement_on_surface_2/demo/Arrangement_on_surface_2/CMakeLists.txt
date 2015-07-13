@@ -10,7 +10,7 @@ endif()
 find_package(CGAL COMPONENTS Core Qt5 )
 include( ${CGAL_USE_FILE} )
 
-find_package( Qt5 COMPONENTS Script Widgets )
+find_package( Qt5 QUIET COMPONENTS Script Widgets )
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
   include_directories( ./ )
