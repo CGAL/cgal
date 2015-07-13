@@ -128,8 +128,8 @@ run()
   fi
   
 
-  compile test 
-  run test
+  compile test_snap_rounding_2
+  run test_snap_rounding_2
 
   if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
     #

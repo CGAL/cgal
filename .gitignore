@@ -1158,3 +1158,5 @@ gmon.*
 /Stream_support/test/Stream_support/CMakeLists.txt
 /Stream_support/test/Stream_support/cgal_test_with_cmake
 /*.html
+/Snap_rounding_2/test/Snap_rounding_2/CMakeLists.txt
+/Snap_rounding_2/test/Snap_rounding_2/data/out
