@@ -1223,6 +1223,7 @@ namespace internal {
       }
     }
 
+#ifdef CGAL_PMP_REMESHING_DEBUG
     void debug_self_intersections() const
     {
       std::cout << "Test self intersections...";
@@ -1247,6 +1248,7 @@ namespace internal {
       CGAL_assertion(facets.empty());
       std::cout << "done." << std::endl;
     }
+#endif
 
     void debug_normals(const vertex_descriptor& v) const
     {
