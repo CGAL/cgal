@@ -73,6 +73,8 @@ struct Polyline_visitor
     Polyline& polyline = polylines.back();
     polyline.push_back(skeleton[vd].point);
   }
+
+  void end_polyline(){}
 };
 
 template<class ValueType>
